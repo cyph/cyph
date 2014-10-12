@@ -2,7 +2,7 @@ package api
 
 var config = struct {
 	AllowedOrigins   map[string]none
-	IMConnectTimeout uint
+	IMConnectTimeout int
 }{
 	map[string]none{
 		"cyph.com":          empty,
