@@ -1,21 +1,33 @@
 package api
 
 import (
+	"appengine"
 	"crypto/rand"
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
+	"io/ioutil"
 	"math/big"
 	"net/http"
 )
 
-type handlerArgs struct {
-	Writer  http.ResponseWriter
+type HandlerArgs struct {
+	Context appengine.Context
 	Request *http.Request
+	Writer  http.ResponseWriter
 	Vars    map[string]string
 }
-type handler func(handlerArgs) (interface{}, int)
-type handlers map[string]handler
+type Handler func(HandlerArgs) (interface{}, int)
+type Handlers map[string]Handler
+
+type ImData struct {
+	ChannelId    string
+	ChannelToken string
+	Destroy      bool
+	Message      string
+	Misc         string
+}
+
 type none struct{}
 
 var methods = struct {
@@ -64,11 +76,22 @@ func generateLongId() string {
 	return generateGuid(52)
 }
 
-func handleFunc(pattern string, handler handler) {
-	handleFuncs(pattern, handlers{methods.GET: handler})
+func getImData(b []byte) ImData {
+	var imData ImData
+	json.Unmarshal(b, imData)
+	return imData
 }
 
-func handleFuncs(pattern string, handlers handlers) {
+func getImDataFromRequest(h HandlerArgs) ImData {
+	requestBody, _ := ioutil.ReadAll(h.Request.Body)
+	return getImData(requestBody)
+}
+
+func handleFunc(pattern string, handler Handler) {
+	handleFuncs(pattern, Handlers{methods.GET: handler})
+}
+
+func handleFuncs(pattern string, handlers Handlers) {
 	if !isRouterActive {
 		http.Handle("/", router)
 		isRouterActive = true
@@ -78,7 +101,7 @@ func handleFuncs(pattern string, handlers handlers) {
 		if handler, ok := handlers[r.Method]; ok {
 			initHandler(w, r)
 
-			responseBody, responseCode := handler(handlerArgs{w, r, mux.Vars(r)})
+			responseBody, responseCode := handler(HandlerArgs{appengine.NewContext(r), r, w, mux.Vars(r)})
 
 			w.WriteHeader(responseCode)
 

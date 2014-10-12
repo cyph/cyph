@@ -1,8 +1,12 @@
 package api
 
+import (
+	"time"
+)
+
 var config = struct {
 	AllowedOrigins   map[string]none
-	IMConnectTimeout int
+	IMConnectTimeout time.Duration
 }{
 	map[string]none{
 		"cyph.com":          empty,
