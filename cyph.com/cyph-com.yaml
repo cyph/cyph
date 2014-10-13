@@ -6,11 +6,6 @@ api_version: 1
 threadsafe: yes
 
 handlers:
-- url: /(.*)
-  static_files: \1
-  upload: .*
-  secure: always
-
 - url: /
   static_files: index.html
   upload: index.html
@@ -19,4 +14,9 @@ handlers:
 - url: /beta
   static_files: beta/index.html
   upload: beta/index.html
+  secure: always
+
+- url: /(.*)
+  static_files: \1
+  upload: .*
   secure: always
