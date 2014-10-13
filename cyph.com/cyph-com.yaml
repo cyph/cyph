@@ -6,6 +6,7 @@ api_version: 1
 threadsafe: yes
 
 handlers:
-- url: /
-  static_dir: /cyph.com
+- url: .*
+  static_files: \1
+  upload: .*
   secure: always
