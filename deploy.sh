@@ -3,7 +3,9 @@
 dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd) # $(dirname `readlink -f "${0}" || realpath "${0}"`)
 
-./git.sh 'deploy'
+comment="${*}"
+test "${comment}" == "" && comment=deploy
+./git.sh "${comment}"
 
 rm -rf .build
 mkdir .build
