@@ -7,5 +7,5 @@ threadsafe: yes
 
 handlers:
 - url: /
-  static_dir: /
+  static_dir: /cyph.com
   secure: always
