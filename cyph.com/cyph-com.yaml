@@ -10,3 +10,13 @@ handlers:
   static_files: \1
   upload: .*
   secure: always
+
+- url: /
+  static_files: index.html
+  upload: index.html
+  secure: always
+
+- url: /beta
+  static_files: beta/index.html
+  upload: beta/index.html
+  secure: always
