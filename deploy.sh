@@ -19,4 +19,6 @@ cd ../../..
 goapp deploy default/app.yaml cyph.com/cyph-com.yaml cyph.im/cyph-im.yaml cyph.me/cyph-me.yaml
 # goapp deploy default/app.yaml `ls !(default)/*.yaml | tr '\n' ' '`
 
+appcfg.py update_dispatch .
+
 cd "${dir}"
