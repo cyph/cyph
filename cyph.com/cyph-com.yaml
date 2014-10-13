@@ -1,0 +1,11 @@
+application: cyphme
+module: cyph-com
+version: prod
+runtime: python27
+api_version: 1
+threadsafe: yes
+
+handlers:
+- url: .*
+  static_dir: /
+  secure: always
