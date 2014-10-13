@@ -1,14 +1,14 @@
 application: cyphme
 
 dispatch:
-- url: api.cyph.com/*
+- url: "api.cyph.com/*"
   module: default
 
-- url: www.cyph.com/*
+- url: "www.cyph.com/*"
   module: cyph-com
 
-- url: www.cyph.im/*
+- url: "www.cyph.im/*"
   module: cyph-im
 
-- url: www.cyph.me/*
+- url: "www.cyph.me/*"
   module: cyph-me
