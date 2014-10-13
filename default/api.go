@@ -86,5 +86,5 @@ func imCreate(h HandlerArgs) (interface{}, int) {
 }
 
 func root(h HandlerArgs) (interface{}, int) {
-	return "Welcome to the Cyph API, lad", http.StatusOK
+	return "Welcome to Cyph, lad", http.StatusOK
 }
