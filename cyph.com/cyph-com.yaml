@@ -11,7 +11,7 @@ handlers:
   upload: index.html
   secure: always
 
-- url: /beta
+- url: /beta[/]?
   static_files: beta/index.html
   upload: beta/index.html
   secure: always
