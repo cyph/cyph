@@ -30,7 +30,7 @@ function pushState (path, shouldReplace) {
 }
 
 function setUpChannel (channelData) {
-	var channel	= goog.appengine.Channel(channelData.ChannelToken);
+	var channel	= new goog.appengine.Channel(channelData.ChannelToken);
 
 	function sendMessage (o, opts, retries) {
 		$.ajax({
@@ -108,9 +108,10 @@ window.onpopstate	= function () {
 			url: BASE_URL + 'ims/' + state
 		});
 	}
-
 	/* 404 */
-	statusNotFound();
+	else {
+		statusNotFound();
+	}
 };
 
 window.onpopstate();
