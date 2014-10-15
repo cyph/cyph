@@ -1,6 +1,7 @@
 var BASE_URL			= '//api.cyph.com/';
 var authors				= {me: 1, friend: 2, app: 3}
 var isHistoryAvailable	= typeof history != 'undefined';
+var channel;
 
 function addMessageToChat (text, author) {
 	console.log(arguments);
@@ -29,34 +30,35 @@ function pushState (path, shouldReplace) {
 	window.onpopstate();
 }
 
+function sendMessage (o, opts, retries) {
+	opts	= opts || {};
+	retries	= retries || 0;
+
+	$.ajax({
+		async: opts.async == undefined ? true : opts.async,
+		data: o,
+		error: function () {
+			if (retries < 3) {
+				setTimeout(function () { sendMessage(o, opts, retries + 1) }, 2000);
+			}
+			else if (opts.errorHandler) {
+				opts.errorHandler();
+			}
+		},
+		type: 'POST',
+		url: BASE_URL + 'channels/' + channel.id
+	});
+}
+
 function setUpChannel (channelData) {
-	var channel	= new goog.appengine.Channel(channelData.ChannelToken);
-
-	function sendMessage (o, opts, retries) {
-		opts	= opts || {};
-		retries	= retries || 0;
-
-		$.ajax({
-			async: opts.async == undefined ? true : opts.async,
-			data: o,
-			error: function () {
-				if (retries < 3) {
-					setTimeout(function () { sendMessage(o, opts, retries + 1) }, 2000);
-				}
-				else if (opts.errorHandler) {
-					opts.errorHandler();
-				}
-			},
-			type: 'POST',
-			url: BASE_URL + 'channels/' + channelData.ChannelId
-		});
-	}
-	window.testMessage	= sendMessage;
+	channel		= new goog.appengine.Channel(channelData.ChannelToken);
+	channel.id	= channelData.ChannelId;
 
 	var socket	= channel.open({
 		onopen: function () {},
 		onmessage: function (data) {
 			var o	= JSON.parse(data);
+			console.log(o);
 
 			if (o.Misc == 'connect') {
 				beginChat(true);
