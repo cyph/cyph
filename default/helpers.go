@@ -21,11 +21,15 @@ type Handler func(HandlerArgs) (interface{}, int)
 type Handlers map[string]Handler
 
 type ImData struct {
+	Destroy bool
+	Message string
+	Misc    string
+}
+
+type ImSetup struct {
 	ChannelId    string
 	ChannelToken string
-	Destroy      bool
-	Message      string
-	Misc         string
+	IsCreator    bool
 }
 
 type none struct{}
