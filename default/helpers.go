@@ -9,7 +9,6 @@ import (
 	"io/ioutil"
 	"math/big"
 	"net/http"
-	"net/url"
 )
 
 type HandlerArgs struct {
@@ -90,9 +89,9 @@ func getImData(b []byte) ImData {
 func getImDataFromRequest(h HandlerArgs) ImData {
 	if len(h.Request.Form) > 0 {
 		return ImData{
-			Destroy: h.Request.Form.get("Destroy") == "true",
-			Message: h.Request.Form.get("Message"),
-			Misc:    h.Request.Form.get("Misc"),
+			Destroy: h.Request.Form.Get("Destroy") == "true",
+			Message: h.Request.Form.Get("Message"),
+			Misc:    h.Request.Form.Get("Misc"),
 		}
 	}
 
