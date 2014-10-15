@@ -6,6 +6,11 @@ api_version: 1
 threadsafe: yes
 
 handlers:
+- url: /
+  static_files: index.html
+  upload: index.html
+  secure: always
+
 - url: /new
   static_files: index.html
   upload: index.html
