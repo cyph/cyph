@@ -11,9 +11,12 @@ var config = struct {
 	map[string]none{
 		"cyph.com":          empty,
 		"beta.cyph.com":     empty,
+		"www.cyph.com":      empty,
 		"cyph.im":           empty,
+		"www.cyph.im":       empty,
 		"beta.cyph.im":      empty,
 		"cyph.me":           empty,
+		"www.cyph.me":       empty,
 		"beta.cyph.me":      empty,
 		"api.cyph.com":      empty,
 		"beta.api.cyph.com": empty,
