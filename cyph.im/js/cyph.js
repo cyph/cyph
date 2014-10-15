@@ -37,10 +37,10 @@ function setUpChannel (channelData) {
 			async: opts.async == undefined ? true : opts.async,
 			data: o,
 			error: function () {
-				retries = retries || 0;
+				retries = (retries || 0) + 1;
 
 				if (retries < 3) {
-					setTimeout(fuction () { sendMessage(o, opts, retries + 1) }, 2000);
+					setTimeout(fuction () { sendMessage(o, opts, retries) }, 2000);
 				}
 				else if (opts.errorHandler) {
 					opts.errorHandler();
