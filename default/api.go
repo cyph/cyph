@@ -25,7 +25,7 @@ func channelClose(h HandlerArgs) (interface{}, int) {
 func channelReceive(h HandlerArgs) (interface{}, int) {
 	imData := getImDataFromRequest(h)
 
-	if imData.Message != "" || imData.Misc != "" {
+	if imData.Destroy != false || imData.Message != "" || (imData.Misc != "" && imData.Misc != "pong") {
 		channel.SendJSON(h.Context, h.Vars["id"], imData)
 	}
 
@@ -35,9 +35,9 @@ func channelReceive(h HandlerArgs) (interface{}, int) {
 func imConnect(h HandlerArgs) (interface{}, int) {
 	for i := 0; i < 2; i++ {
 		if item, err := memcache.Get(h.Context, h.Vars["id"]+strconv.Itoa(i)); err != memcache.ErrCacheMiss {
-			imDataString := string(item.Value)
+			imSetupString := string(item.Value)
 			memcache.Delete(h.Context, item.Key)
-			return imDataString, http.StatusOK
+			return imSetupString, http.StatusOK
 		}
 	}
 
@@ -70,7 +70,7 @@ func imCreate(h HandlerArgs) (interface{}, int) {
 		}
 
 		token, _ := channel.Create(h.Context, channelId)
-		val, _ := json.Marshal(ImData{ChannelId: otherchannelId, ChannelToken: token})
+		val, _ := json.Marshal(ImSetup{ChannelId: otherchannelId, ChannelToken: token, IsCreator: i == 0})
 		imIdItems[i].Value = val
 		memcache.Set(h.Context, &imIdItems[i])
 	}
