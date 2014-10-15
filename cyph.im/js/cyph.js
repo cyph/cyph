@@ -48,6 +48,7 @@ function setUpChannel (channelData) {
 			url: BASE_URL + 'channels/' + channelData.ChannelId
 		});
 	}
+	window.testMessage	= sendMessage;
 
 	var socket	= channel.open({
 		onopen: function () {},
