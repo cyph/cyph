@@ -33,12 +33,15 @@ function setUpChannel (channelData) {
 	var channel	= new goog.appengine.Channel(channelData.ChannelToken);
 
 	function sendMessage (o, opts, retries) {
+		opts	= opts || {};
+		retries	= retries || 0;
+
 		$.ajax({
 			async: opts.async == undefined ? true : opts.async,
 			data: o,
 			error: function () {
 				if (retries < 3) {
-					setTimeout(function () { sendMessage(o, opts, (retries || 0) + 1) }, 2000);
+					setTimeout(function () { sendMessage(o, opts, retries + 1) }, 2000);
 				}
 				else if (opts.errorHandler) {
 					opts.errorHandler();
