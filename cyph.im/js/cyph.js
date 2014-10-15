@@ -36,8 +36,7 @@ function sendMessage (o, opts, retries) {
 
 	$.ajax({
 		async: opts.async == undefined ? true : opts.async,
-		contentType: 'application/json',
-		data: JSON.stringify(o),
+		data: o,
 		error: function () {
 			if (retries < 3) {
 				setTimeout(function () { sendMessage(o, opts, retries + 1) }, 2000);
