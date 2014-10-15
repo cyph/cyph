@@ -87,10 +87,6 @@ func getImData(b []byte) ImData {
 }
 
 func getImDataFromRequest(h HandlerArgs) ImData {
-	if len(h.Form) > 0 {
-		return ImData{Destroy: h.Form["Destroy"] == "true", Message: h["Message"], Misc: h["Misc"]}
-	}
-
 	requestBody, _ := ioutil.ReadAll(h.Request.Body)
 	return getImData(requestBody)
 }
