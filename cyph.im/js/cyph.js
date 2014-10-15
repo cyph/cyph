@@ -45,6 +45,7 @@ function sendMessage (o, opts, retries) {
 				opts.errorHandler();
 			}
 		},
+		success: opts.callback,
 		type: 'POST',
 		url: BASE_URL + 'channels/' + channel.id
 	});
