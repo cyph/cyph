@@ -31,7 +31,8 @@ func channelReceive(h HandlerArgs) (interface{}, int) {
 	}
 
 	// return nil, http.StatusOK
-	return ioutil.ReadAll(h.Request.Body), http.StatusOK
+	x, _ := ioutil.ReadAll(h.Request.Body)
+	return x, http.StatusOK
 }
 
 func imConnect(h HandlerArgs) (interface{}, int) {
