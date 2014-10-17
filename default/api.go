@@ -4,6 +4,7 @@ import (
 	"appengine/channel"
 	"appengine/memcache"
 	"encoding/json"
+	"ioutil"
 	"net/http"
 	"strconv"
 	"time"
@@ -30,7 +31,7 @@ func channelReceive(h HandlerArgs) (interface{}, int) {
 	}
 
 	// return nil, http.StatusOK
-	return imData, http.StatusOK
+	return ioutil.ReadAll(h.Request.Body), http.StatusOK
 }
 
 func imConnect(h HandlerArgs) (interface{}, int) {
