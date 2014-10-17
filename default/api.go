@@ -2,7 +2,6 @@ package api
 
 import (
 	"appengine/channel"
-	"appengine/delay"
 	"appengine/memcache"
 	"encoding/json"
 	"net/http"
