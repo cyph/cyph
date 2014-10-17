@@ -2,15 +2,55 @@ var BASE_URL			= 'https://api.cyph.com/';
 var authors				= {me: 1, friend: 2, app: 3}
 var isHistoryAvailable	= typeof history != 'undefined';
 var channel;
+var otr;
 
 function addMessageToChat (text, author) {
-	console.log('addMessageToChat');
-	console.log(arguments);
+	if (author == authors.app) {
+		console.log('<b>' + text + '</b>');
+	}
+	else {
+		console.log((author == authors.me ? 'me' : 'friend') + ': ' + text);
+	}
 }
 
-function beginChat (wasWaiting) {
-	console.log('beginChat');
-	console.log(arguments);
+function beginChat () {
+	console.log('connected');
+
+	if (channel.data.IsCreator) {
+		console.log('I am the Creator');
+	}
+}
+
+function cryptoInit () {
+	otr	= new OTR({
+		fragment_size: 32768,
+		send_interval: 200,
+		debug: false,
+		instance_tag: OTR.makeInstanceTag(),
+		priv: new DSA()
+	});
+
+	otr.ALLOW_V2			= false;
+	otr.ALLOW_V3			= true;
+	otr.REQUIRE_ENCRYPTION	= true;
+
+	otr.on('error', function (error) {
+		addMessageToChat('ERROR: ' + error, authors.app);
+	});
+
+	otr.on('ui', function (message, wasEncrypted) {
+		addMessageToChat(message, authors.friend);
+	});
+
+	otr.on('io', function (message) {
+		sendChannelData({Message: message});
+	});
+
+	otr.on('status', function (state) {
+		if (state == OTR.CONST.STATUS_AKE_SUCCESS) {
+			beginChat();
+		}
+	});
 }
 
 function pushState (path, shouldReplace) {
@@ -32,16 +72,17 @@ function pushState (path, shouldReplace) {
 	window.onpopstate();
 }
 
-function sendMessage (o, opts, retries) {
+function sendChannelData (o, opts, retries) {
 	opts	= opts || {};
 	retries	= retries || 0;
 
 	$.ajax({
 		async: opts.async == undefined ? true : opts.async,
 		data: o,
+		dataType: 'json',
 		error: function () {
 			if (retries < 3) {
-				setTimeout(function () { sendMessage(o, opts, retries + 1) }, 2000);
+				setTimeout(function () { sendChannelData(o, opts, retries + 1) }, 2000);
 			}
 			else if (opts.errorHandler) {
 				opts.errorHandler();
@@ -49,29 +90,29 @@ function sendMessage (o, opts, retries) {
 		},
 		success: opts.callback,
 		type: 'POST',
-		url: BASE_URL + 'channels/' + channel.id
+		url: BASE_URL + 'channels/' + channel.data.ChannelId
 	});
 }
 
+function sendMessage (message) {
+	addMessageToChat(message, authors.me);
+	otr.sendMsg(message);
+}
+
 function setUpChannel (channelData) {
-	channel		= new goog.appengine.Channel(channelData.ChannelToken);
-	channel.id	= channelData.ChannelId;
+	channel			= new goog.appengine.Channel(channelData.ChannelToken);
+	channel.data	= channelData;
 
 	var socket	= channel.open({
 		onopen: function () {},
 		onmessage: function (data) {
 			var o	= JSON.parse(data.data);
-			console.log('onmessage');
-			console.log(o);
 
-			if (o.Misc == 'connect') {
-				beginChat(true);
-			}
 			if (o.Misc == 'ping') {
-				sendMessage({Misc: 'pong'});
+				sendChannelData({Misc: 'pong'});
 			}
 			if (o.Message) {
-				addMessageToChat(o.Message, authors.friend);
+				otr.receiveMsg(o.Message);
 			}
 			if (o.Destroy) {
 				addMessageToChat('friend has terminated chat', authors.app);
@@ -83,13 +124,20 @@ function setUpChannel (channelData) {
 	});
 
 	window.addEventListener('beforeunload', function () {
-		sendMessage({Destroy: true}, true);
+		sendChannelData({Destroy: true}, true);
 		socket.close();
 	});
 
-	if (!channelData.IsCreator) {
-		sendMessage({Misc: 'connect'}, {
-			callback: function () { beginChat() },
+	if (!channel.data.IsCreator) {
+		sendChannelData({Misc: 'connect'}, {
+			callback: function (data) {
+				if (data.Misc == 'pong') {
+					otr.sendQueryMsg();
+				}
+				else {
+					statusNotFound();
+				}
+			},
 			errorHandler: statusNotFound
 		});
 	}
@@ -124,4 +172,5 @@ window.onpopstate	= function () {
 	}
 };
 
+cryptoInit();
 window.onpopstate();
