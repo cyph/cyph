@@ -31,7 +31,8 @@ func channelReceive(h HandlerArgs) (interface{}, int) {
 	}
 
 	// return nil, http.StatusOK
-	x, _ := ioutil.ReadAll(h.Request.Body)
+	// x, _ := ioutil.ReadAll(h.Request.Body)
+	x := json.Marshal(h.Request.Form)
 	return x, http.StatusOK
 }
 
