@@ -18,6 +18,10 @@ cd github.com/gorilla
 git clone git://github.com/gorilla/mux.git
 cd ../../..
 
+cd cyph.im/lib
+wget https://api.cyph.com/_ah/channel/jsapi -O goog.appengine.Channel.js
+cd ../..
+
 goapp deploy default/app.yaml cyph.com/cyph-com.yaml cyph.im/cyph-im.yaml cyph.me/cyph-me.yaml
 # goapp deploy default/app.yaml `ls !(default)/*.yaml | tr '\n' ' '`
 
