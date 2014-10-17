@@ -3,12 +3,20 @@ application: cyphme
 dispatch:
 - url: "api.cyph.com/*"
   module: default
+- url: "api.cyph.com.localhost/*"
+  module: default
 
 - url: "www.cyph.com/*"
+  module: cyph-com
+- url: "www.cyph.com.localhost/*"
   module: cyph-com
 
 - url: "www.cyph.im/*"
   module: cyph-im
+- url: "www.cyph.im.localhost/*"
+  module: cyph-im
 
 - url: "www.cyph.me/*"
+  module: cyph-me
+- url: "www.cyph.me.localhost/*"
   module: cyph-me
