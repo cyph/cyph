@@ -4,7 +4,6 @@ import (
 	"appengine/channel"
 	"appengine/memcache"
 	"encoding/json"
-	"io/ioutil"
 	"net/http"
 	"strconv"
 	"time"
@@ -32,7 +31,7 @@ func channelReceive(h HandlerArgs) (interface{}, int) {
 
 	// return nil, http.StatusOK
 	// x, _ := ioutil.ReadAll(h.Request.Body)
-	x := json.Marshal(h.Request.Form)
+	x, _ := json.Marshal(h.Request.Form)
 	return x, http.StatusOK
 }
 
