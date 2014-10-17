@@ -4,7 +4,7 @@ import (
 	"appengine/channel"
 	"appengine/memcache"
 	"encoding/json"
-	"ioutil"
+	"io/ioutil"
 	"net/http"
 	"strconv"
 	"time"
