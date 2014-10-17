@@ -1,8 +1,7 @@
 var BASE_URL			= 'https://api.cyph.com/';
 var authors				= {me: 1, friend: 2, app: 3}
 var isHistoryAvailable	= typeof history != 'undefined';
-var channel;
-var otr;
+var channel, otr, isConnected;
 
 function addMessageToChat (text, author) {
 	if (author == authors.app) {
@@ -14,6 +13,8 @@ function addMessageToChat (text, author) {
 }
 
 function beginChat () {
+	isConnected	= true;
+
 	console.log('connected');
 
 	if (channel.data.IsCreator) {
@@ -34,20 +35,27 @@ function cryptoInit () {
 	otr.ALLOW_V3			= true;
 	otr.REQUIRE_ENCRYPTION	= true;
 
+	/*
 	otr.on('error', function (error) {
 		addMessageToChat('ERROR: ' + error, authors.app);
 	});
+	*/
 
 	otr.on('ui', function (message, wasEncrypted) {
-		addMessageToChat(message, authors.friend);
+		if (wasEncrypted) {
+			addMessageToChat(message, authors.friend);
+		}
 	});
 
 	otr.on('io', function (message) {
-		sendChannelData({Message: message});
+		/* TODO: figure out wtf is up with these errors and if it's actually a vulnerability */
+		if (message != '?OTR Error:An OTR error has occurred.') {
+			sendChannelData({Message: message});
+		}
 	});
 
 	otr.on('status', function (state) {
-		if (state == OTR.CONST.STATUS_AKE_SUCCESS) {
+		if (!isConnected && state == OTR.CONST.STATUS_AKE_SUCCESS) {
 			beginChat();
 		}
 	});
@@ -129,17 +137,13 @@ function setUpChannel (channelData) {
 	});
 
 	if (!channel.data.IsCreator) {
-		sendChannelData({Misc: 'connect'}, {
-			callback: function (data) {
-				if (data.Misc == 'pong') {
-					otr.sendQueryMsg();
-				}
-				else {
-					statusNotFound();
-				}
-			},
-			errorHandler: statusNotFound
-		});
+		otr.sendQueryMsg();
+
+		setTimeout(function () {
+			if (!isConnected) {
+				statusNotFound();
+			}
+		}, 60000);
 	}
 }
 
