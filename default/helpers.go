@@ -79,12 +79,6 @@ func generateLongId() string {
 	return generateGuid(52)
 }
 
-func getImData(b []byte) ImData {
-	var imData ImData
-	json.Unmarshal(b, imData)
-	return imData
-}
-
 func getImDataFromRequest(h HandlerArgs) ImData {
 	return ImData{
 		Destroy: h.Request.PostFormValue("Destroy") == "true",
