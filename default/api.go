@@ -2,6 +2,7 @@ package api
 
 import (
 	"appengine/channel"
+	"appengine/delay"
 	"appengine/memcache"
 	"encoding/json"
 	"net/http"
@@ -75,14 +76,18 @@ func imCreate(h HandlerArgs) (interface{}, int) {
 		memcache.Set(h.Context, &imIdItems[i])
 	}
 
-	time.AfterFunc(config.IMConnectTimeout*time.Minute, func() {
-		if item, _ := memcache.Get(h.Context, imIdItems[1].Key); string(item.Value) == string(imIdItems[1].Value) {
-			channel.SendJSON(h.Context, longId+"1", ImData{Destroy: true})
-			memcache.DeleteMulti(h.Context, []string{imIdItems[0].Key, imIdItems[1].Key})
-		}
-	})
+	laterImTeardown.Call(h.Context, longId, imIdItems[0].Key, imIdItems[1].Key, imIdItems[1].Value)
 
 	return imId, http.StatusOK
+}
+
+func imTeardown(c appengine.Context, longId string, key0 string, key1 string, value1 string) {
+	time.AfterFunc(config.IMConnectTimeout*time.Minute, func() {
+		if item, _ := memcache.Get(c, key1); string(item.Value) == string(value1) {
+			channel.SendJSON(c, longId+"1", ImData{Destroy: true})
+			memcache.DeleteMulti(c, []string{key0, key1})
+		}
+	})
 }
 
 func root(h HandlerArgs) (interface{}, int) {

@@ -2,6 +2,7 @@ package api
 
 import (
 	"appengine"
+	"appengine/delay"
 	"crypto/rand"
 	"encoding/json"
 	"fmt"
@@ -52,6 +53,8 @@ var methods = struct {
 	"OPTIONS",
 	"CONNECT",
 }
+
+var laterImTeardown = delay.Func("imTeardown", imTeardown)
 
 var empty = struct{}{}
 
