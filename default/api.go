@@ -29,9 +29,7 @@ func channelReceive(h HandlerArgs) (interface{}, int) {
 		channel.SendJSON(h.Context, h.Vars["id"], imData)
 	}
 
-	// return nil, http.StatusOK
-	// x, _ := ioutil.ReadAll(h.Request.Body)
-	return imData, http.StatusOK
+	return nil, http.StatusOK
 }
 
 func imConnect(h HandlerArgs) (interface{}, int) {

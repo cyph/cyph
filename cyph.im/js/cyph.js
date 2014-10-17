@@ -60,7 +60,7 @@ function setUpChannel (channelData) {
 	var socket	= channel.open({
 		onopen: function () {},
 		onmessage: function (data) {
-			var o	= JSON.parse(data);
+			var o	= JSON.parse(data.data);
 			console.log('onmessage');
 			console.log(o);
 
