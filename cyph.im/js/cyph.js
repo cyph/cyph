@@ -1,4 +1,4 @@
-var BASE_URL			= '//api.cyph.com/';
+var BASE_URL			= 'https://api.cyph.com/';
 var authors				= {me: 1, friend: 2, app: 3}
 var isHistoryAvailable	= typeof history != 'undefined';
 var channel;
