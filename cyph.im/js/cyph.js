@@ -4,10 +4,12 @@ var isHistoryAvailable	= typeof history != 'undefined';
 var channel;
 
 function addMessageToChat (text, author) {
+	console.log('addMessageToChat');
 	console.log(arguments);
 }
 
 function beginChat (wasWaiting) {
+	console.log('beginChat');
 	console.log(arguments);
 }
 
@@ -36,7 +38,7 @@ function sendMessage (o, opts, retries) {
 
 	$.ajax({
 		async: opts.async == undefined ? true : opts.async,
-		data: o,
+		data: JSON.stringify(o),
 		error: function () {
 			if (retries < 3) {
 				setTimeout(function () { sendMessage(o, opts, retries + 1) }, 2000);
@@ -59,6 +61,7 @@ function setUpChannel (channelData) {
 		onopen: function () {},
 		onmessage: function (data) {
 			var o	= JSON.parse(data);
+			console.log('onmessage');
 			console.log(o);
 
 			if (o.Misc == 'connect') {
@@ -84,7 +87,7 @@ function setUpChannel (channelData) {
 		socket.close();
 	});
 
-	if (channelData.IsCreator) {
+	if (!channelData.IsCreator) {
 		sendMessage({Misc: 'connect'}, {
 			callback: function () { beginChat() },
 			errorHandler: statusNotFound
