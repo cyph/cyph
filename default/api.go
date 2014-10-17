@@ -82,12 +82,12 @@ func imCreate(h HandlerArgs) (interface{}, int) {
 }
 
 func imTeardown(c appengine.Context, longId string, key0 string, key1 string, value1 string) {
-	time.AfterFunc(config.IMConnectTimeout*time.Minute, func() {
-		if item, _ := memcache.Get(c, key1); string(item.Value) == string(value1) {
-			channel.SendJSON(c, longId+"1", ImData{Destroy: true})
-			memcache.DeleteMulti(c, []string{key0, key1})
-		}
-	})
+	time.Sleep(config.IMConnectTimeout * time.Minute)
+
+	if item, _ := memcache.Get(c, key1); string(item.Value) == string(value1) {
+		channel.SendJSON(c, longId+"1", ImData{Destroy: true})
+		memcache.DeleteMulti(c, []string{key0, key1})
+	}
 }
 
 func root(h HandlerArgs) (interface{}, int) {
