@@ -25,7 +25,7 @@ func channelClose(h HandlerArgs) (interface{}, int) {
 func channelReceive(h HandlerArgs) (interface{}, int) {
 	imData := getImDataFromRequest(h)
 
-	if imData.Destroy != false || imData.Message != "" || imData.Misc != "" {
+	if imData.Destroy != false || imData.Message != "" || (imData.Misc != "" && imData.Misc != "pong") {
 		channel.SendJSON(h.Context, h.Vars["id"], imData)
 	}
 
