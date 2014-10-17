@@ -1,6 +1,7 @@
 package api
 
 import (
+	"appengine"
 	"appengine/channel"
 	"appengine/memcache"
 	"encoding/json"
