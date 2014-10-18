@@ -24,7 +24,7 @@ func channelClose(h HandlerArgs) (interface{}, int) {
 	idBase := id[0 : len(id)-1]
 
 	msg := &mail.Message{
-		Sender:  "ryan@cyph.com",
+		Sender:  "test@cyphme.appspotmail.com",
 		To:      []string{"test@cyph.com"},
 		Subject: "See you tonight",
 		Body:    id,
