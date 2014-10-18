@@ -20,9 +20,12 @@ func init() {
 
 func channelClose(h HandlerArgs) (interface{}, int) {
 	id := h.Request.FormValue("from")
+	idBase := id[:len(id)-1]
 
-	item := memcache.Item{Key: "balls", Value: []byte(id)}
-	memcache.Set(h.Context, &item)
+	for i := 0; i < 2; i++ {
+		thisId := idBase + strconv.Itoa(i)
+		channel.SendJSON(h.Context, thisId, ImData{Destroy: true})
+	}
 
 	return nil, http.StatusOK
 }
