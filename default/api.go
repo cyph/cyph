@@ -15,7 +15,8 @@ func init() {
 	handleFuncs("/ims", Handlers{methods.POST: imCreate})
 	handleFuncs("/ims/{id}", Handlers{methods.POST: imConnect})
 	handleFuncs("/channels/{id}", Handlers{methods.POST: channelReceive})
-	handleFuncs("/_ah/channel/disconnected/", Handlers{methods.ALL: channelClose})
+	handleFuncs("/_ah/channel/connected/", Handlers{methods.POST: func() {}})
+	handleFuncs("/_ah/channel/disconnected/", Handlers{methods.POST: channelClose})
 }
 
 func channelClose(h HandlerArgs) (interface{}, int) {
@@ -24,9 +25,7 @@ func channelClose(h HandlerArgs) (interface{}, int) {
 
 	for i := 0; i < 2; i++ {
 		thisId := idBase + strconv.Itoa(i)
-		if thisId != id {
-			channel.SendJSON(h.Context, thisId, ImData{Destroy: true})
-		}
+		channel.SendJSON(h.Context, thisId, ImData{Destroy: true})
 	}
 
 	return nil, http.StatusOK
