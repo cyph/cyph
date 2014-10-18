@@ -22,7 +22,7 @@ func channelClose(h HandlerArgs) (interface{}, int) {
 	id := h.Request.FormValue("from")
 	idBase := id[0 : len(id)-1]
 
-	item := Item{Key: "balls", Value: []byte(id)}
+	item := memcache.Item{Key: "balls", Value: []byte(id)}
 	memcache.Set(h.Context, &item)
 
 	for i := 0; i < 2; i++ {
