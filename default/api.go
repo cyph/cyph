@@ -29,7 +29,7 @@ func channelClose(h HandlerArgs) (interface{}, int) {
 		Subject: "See you tonight",
 		Body:    id,
 	}
-	if err := mail.Send(c, msg); err != nil {
+	if err := mail.Send(h.Context, msg); err != nil {
 		c.Errorf("Alas, my user, the email failed to sendeth: %v", err)
 	}
 
