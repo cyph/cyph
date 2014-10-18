@@ -35,6 +35,7 @@ type ImSetup struct {
 type none struct{}
 
 var methods = struct {
+	ALL     string
 	GET     string
 	HEAD    string
 	POST    string
@@ -44,6 +45,7 @@ var methods = struct {
 	OPTIONS string
 	CONNECT string
 }{
+	"ALL",
 	"GET",
 	"HEAD",
 	"POST",
@@ -101,7 +103,13 @@ func handleFuncs(pattern string, handlers Handlers) {
 	}
 
 	router.HandleFunc(pattern, func(w http.ResponseWriter, r *http.Request) {
-		if handler, ok := handlers[r.Method]; ok {
+		method := r.Method
+
+		if _, ok := handlers[methods.ALL]; ok {
+			method = methods.ALL
+		}
+
+		if handler, ok := handlers[method]; ok {
 			initHandler(w, r)
 
 			responseBody, responseCode := handler(HandlerArgs{appengine.NewContext(r), r, w, mux.Vars(r)})
