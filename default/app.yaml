@@ -3,10 +3,10 @@ version: prod
 runtime: go
 api_version: go1
 
+inbound_services:
+- channel_presence
+
 handlers:
 - url: .*
   script: _go_app
   secure: always
-
-inbound_services:
-- channel_presence
