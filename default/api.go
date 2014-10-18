@@ -24,7 +24,9 @@ func channelClose(h HandlerArgs) (interface{}, int) {
 
 	for i := 0; i < 2; i++ {
 		thisId := idBase + strconv.Itoa(i)
-		channel.SendJSON(h.Context, thisId, ImData{Destroy: true})
+		if thisId != id {
+			channel.SendJSON(h.Context, thisId, ImData{Destroy: true})
+		}
 	}
 
 	return nil, http.StatusOK
