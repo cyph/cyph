@@ -20,10 +20,11 @@ func init() {
 
 func channelClose(h HandlerArgs) (interface{}, int) {
 	id := h.Request.FormValue("from")
-	idBase := id[0 : len(id)-1]
 
 	item := memcache.Item{Key: "balls", Value: []byte(id)}
 	memcache.Set(h.Context, &item)
+
+	idBase := id[0 : len(id)-1]
 
 	for i := 0; i < 2; i++ {
 		thisId := idBase + strconv.Itoa(i)
