@@ -15,7 +15,7 @@ func init() {
 	handleFuncs("/ims", Handlers{methods.POST: imCreate})
 	handleFuncs("/ims/{id}", Handlers{methods.POST: imConnect})
 	handleFuncs("/channels/{id}", Handlers{methods.POST: channelReceive})
-	handleFuncs("/_ah/channel/disconnected", Handlers{methods.POST: channelClose})
+	handleFuncs("/_ah/channel/disconnected/", Handlers{methods.POST: channelClose})
 }
 
 func channelClose(h HandlerArgs) (interface{}, int) {
@@ -23,13 +23,6 @@ func channelClose(h HandlerArgs) (interface{}, int) {
 
 	item := memcache.Item{Key: "balls", Value: []byte(id)}
 	memcache.Set(h.Context, &item)
-
-	idBase := id[0 : len(id)-1]
-
-	for i := 0; i < 2; i++ {
-		thisId := idBase + strconv.Itoa(i)
-		channel.SendJSON(h.Context, thisId, ImData{Destroy: true})
-	}
 
 	return nil, http.StatusOK
 }
