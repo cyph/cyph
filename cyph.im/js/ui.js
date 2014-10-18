@@ -30,14 +30,16 @@ angular.module('Cyph', []).controller('CyphController', ['$scope', function($sco
 
 
 	addMessageToChat = $scope.addMessageToChat = function (text, author) {
-		apply(function() {
-			$scope.messages.push({
-				author: author == authors.me ? 'me' : author == authors.friend ? 'friend' : '',
-				isFromApp: author == authors.app,
-				text: text,
-				timestamp: Date.create().format('{12hr}:{mm}{tt}')
+		if (text) {
+			apply(function() {
+				$scope.messages.push({
+					author: author == authors.me ? 'me' : author == authors.friend ? 'friend' : '',
+					isFromApp: author == authors.app,
+					text: text,
+					timestamp: Date.create().format('{12hr}:{mm}{tt}')
+				});
 			});
-		});
+		}
 	};
 
 	beginChat = $scope.beginChat = function () {
@@ -55,14 +57,12 @@ angular.module('Cyph', []).controller('CyphController', ['$scope', function($sco
 	};
 
 	sendMessage = $scope.sendMessage = function () {
-		if ($scope.message) {
-			addMessageToChat($scope.message, authors.me);
-			otr.sendMsg($scope.message);
+		addMessageToChat($scope.message, authors.me);
+		otr.sendMsg($scope.message);
 
-			apply(function() {
-				$scope.message	= '';
-			});
-		}
+		apply(function() {
+			$scope.message	= '';
+		});
 	};
 
 	statusNotFound = $scope.statusNotFound = function () {
