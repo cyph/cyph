@@ -131,3 +131,5 @@ func initHandler(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Access-Control-Allow-Origin", "*")
 	}
 }
+
+func nullHandler(h HandlerArgs) {}
