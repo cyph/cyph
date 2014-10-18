@@ -10,7 +10,3 @@ handlers:
 - url: .*
   script: _go_app
   secure: always
-
-- url: /_ah/channel/disconnected
-  script: _go_app
-  secure: always
