@@ -55,12 +55,14 @@ angular.module('Cyph', []).controller('CyphController', ['$scope', function($sco
 	};
 
 	sendMessage = $scope.sendMessage = function () {
-		addMessageToChat($scope.message, authors.me);
-		otr.sendMsg($scope.message);
+		if ($scope.message) {
+			addMessageToChat($scope.message, authors.me);
+			otr.sendMsg($scope.message);
 
-		apply(function() {
-			$scope.message	= '';
-		});
+			apply(function() {
+				$scope.message	= '';
+			});
+		}
 	};
 
 	statusNotFound = $scope.statusNotFound = function () {
