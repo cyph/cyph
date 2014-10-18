@@ -1,7 +1,7 @@
 var BASE_URL			= 'https://api.cyph.com/';
 var authors				= {me: 1, friend: 2, app: 3};
 var isHistoryAvailable	= typeof history != 'undefined';
-var channel, otr, isConnected;
+var channel, otr, isConnected, socket;
 
 function cryptoInit () {
 	otr	= new OTR({
@@ -92,7 +92,7 @@ function setUpChannel (channelData) {
 	channel			= new goog.appengine.Channel(channelData.ChannelToken);
 	channel.data	= channelData;
 
-	var socket	= channel.open({
+	socket	= channel.open({
 		onopen: function () {},
 		onmessage: function (data) {
 			var o	= JSON.parse(data.data);
