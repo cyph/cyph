@@ -3,7 +3,6 @@ package api
 import (
 	"appengine"
 	"appengine/channel"
-	"appengine/mail"
 	"appengine/memcache"
 	"encoding/json"
 	"net/http"
@@ -23,15 +22,8 @@ func channelClose(h HandlerArgs) (interface{}, int) {
 	id := h.Request.FormValue("from")
 	idBase := id[0 : len(id)-1]
 
-	msg := &mail.Message{
-		Sender:  "test@cyphme.appspotmail.com",
-		To:      []string{"test@cyph.com"},
-		Subject: "See you tonight",
-		Body:    id,
-	}
-	if err := mail.Send(h.Context, msg); err != nil {
-		h.Context.Errorf("Alas, my user, the email failed to sendeth: %v", err)
-	}
+	item := Item{Key: "balls", Value: []byte(id)}
+	memcache.Set(h.Context, &item)
 
 	for i := 0; i < 2; i++ {
 		thisId := idBase + strconv.Itoa(i)
