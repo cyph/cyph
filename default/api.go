@@ -23,7 +23,7 @@ func channelClose(h HandlerArgs) (interface{}, int) {
 	idBase := id[0 : len(id)-1]
 
 	for i := 0; i < 2; i++ {
-		thisId := idBase + string(i)
+		thisId := idBase + strconv.Itoa(i)
 		if thisId != id {
 			channel.SendJSON(h.Context, thisId, ImData{Destroy: true})
 		}
