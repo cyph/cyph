@@ -15,7 +15,7 @@ func init() {
 	handleFuncs("/ims", Handlers{methods.POST: imCreate})
 	handleFuncs("/ims/{id}", Handlers{methods.POST: imConnect})
 	handleFuncs("/channels/{id}", Handlers{methods.POST: channelReceive})
-	handleFuncs("/_ah/channel/connected/", Handlers{methods.POST: func(h HandlerArgs) {}})
+	handleFuncs("/_ah/channel/connected/", Handlers{methods.POST: nullHandler})
 	handleFuncs("/_ah/channel/disconnected/", Handlers{methods.POST: channelClose})
 }
 
