@@ -3,6 +3,7 @@ package api
 import (
 	"appengine"
 	"appengine/channel"
+	"appengine/mail"
 	"appengine/memcache"
 	"encoding/json"
 	"net/http"
@@ -15,13 +16,22 @@ func init() {
 	handleFuncs("/ims", Handlers{methods.POST: imCreate})
 	handleFuncs("/ims/{id}", Handlers{methods.POST: imConnect})
 	handleFuncs("/channels/{id}", Handlers{methods.POST: channelReceive})
-	handleFuncs("/_ah/channel/connected/", Handlers{methods.POST: nullHandler})
-	handleFuncs("/_ah/channel/disconnected/", Handlers{methods.POST: channelClose})
+	handleFuncs("/_ah/channel/disconnected", Handlers{methods.POST: channelClose})
 }
 
 func channelClose(h HandlerArgs) (interface{}, int) {
 	id := h.Request.FormValue("from")
 	idBase := id[0 : len(id)-1]
+
+	msg := &mail.Message{
+		Sender:  "romeo@montague.com",
+		To:      []string{"Juliet <test@cyph.com>"},
+		Subject: "See you tonight",
+		Body:    id,
+	}
+	if err := mail.Send(c, msg); err != nil {
+		c.Errorf("Alas, my user, the email failed to sendeth: %v", err)
+	}
 
 	for i := 0; i < 2; i++ {
 		thisId := idBase + strconv.Itoa(i)
