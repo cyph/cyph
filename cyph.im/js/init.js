@@ -1,0 +1,2 @@
+cryptoInit();
+window.onpopstate();

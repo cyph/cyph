@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class='no-js'>
+<html class='no-js' ng-app='Cyph'>
 	<head>
 		<meta charset='utf-8' />
 		<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1' />
@@ -29,24 +29,42 @@
 	</head>
 	<body>
 
-		<div>
-			
-		</div>
+		<div ng-controller='CyphController'>
+			<div ng-show='state == states.loading'>
+				Connecting...
+			</div>
 
+			<div ng-show='state == states.chat'>
+				<div>Chat:</div>
+				<div ng-repeat='message in messages'>
+					<strong ng-hide='message.isFromApp'>{{message.author}}: </strong>
+					<span ng-class='{appMessage: message.isFromApp}'>{{message.text}}</span>
+					<span class='pull-right'>{{message.timestamp}}</span>
+				</div>
+				<form ng-show='isAlive' ng-submit='sendMessage()'>
+					<input type='text' ng-model='message' />
+					<input type='submit' class='invisibleSubmit' />
+				</form>
+			</div>
 
-		<div id='footer'>
-			<hr />
-			<footer>
-				<p>
-					&copy; Cyph 2014
-						&nbsp;&bull;&nbsp;
-					<a href='mailto:hello@cyph.com'>hello@cyph.com</a>
-						&nbsp;&bull;&nbsp;
-					+1(337) 935 0016
-						&nbsp;&bull;&nbsp;
-					<a href='//twitter.com/cyphapp'>@cyph</a>
-				</p>
-			</footer>
+			<div ng-show='state == states.error'>
+				<strong style='color: crimson'>error, bitch</strong>
+			</div>
+
+			<div id='footer'>
+				<hr />
+				<footer>
+					<p>
+						&copy; Cyph 2014
+							&nbsp;&bull;&nbsp;
+						<a href='mailto:hello@cyph.com'>hello@cyph.com</a>
+							&nbsp;&bull;&nbsp;
+						+1(337) 935 0016
+							&nbsp;&bull;&nbsp;
+						<a href='//twitter.com/cyphapp'>@cyph</a>
+					</p>
+				</footer>
+			</div>
 		</div>
 
 
@@ -61,6 +79,8 @@
 		<script src='lib/goog.appengine.Channel.js'></script>
 		
 		<script src='js/cyph.js'></script>
+		<script src='js/ui.js'></script>
+		<script src='js/init.js'></script>
 
 	</body>
 </html>

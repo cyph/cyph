@@ -3,25 +3,6 @@ var authors				= {me: 1, friend: 2, app: 3};
 var isHistoryAvailable	= typeof history != 'undefined';
 var channel, otr, isConnected;
 
-function addMessageToChat (text, author) {
-	if (author == authors.app) {
-		console.log('<b>' + text + '</b>');
-	}
-	else {
-		console.log((author == authors.me ? 'me' : 'friend') + ': ' + text);
-	}
-}
-
-function beginChat () {
-	isConnected	= true;
-
-	console.log('connected');
-
-	if (channel.data.IsCreator) {
-		console.log('I am the Creator');
-	}
-}
-
 function cryptoInit () {
 	otr	= new OTR({
 		fragment_size: 32768,
@@ -56,9 +37,14 @@ function cryptoInit () {
 
 	otr.on('status', function (state) {
 		if (!isConnected && state == OTR.CONST.STATUS_AKE_SUCCESS) {
+			isConnected	= true;
 			beginChat();
 		}
 	});
+}
+
+function pushNotFound () {
+	pushState('/404');
 }
 
 function pushState (path, shouldReplace) {
@@ -102,11 +88,6 @@ function sendChannelData (o, opts, retries) {
 	});
 }
 
-function sendMessage (message) {
-	addMessageToChat(message, authors.me);
-	otr.sendMsg(message);
-}
-
 function setUpChannel (channelData) {
 	channel			= new goog.appengine.Channel(channelData.ChannelToken);
 	channel.data	= channelData;
@@ -123,7 +104,7 @@ function setUpChannel (channelData) {
 				otr.receiveMsg(o.Message);
 			}
 			if (o.Destroy) {
-				addMessageToChat('friend has terminated chat', authors.app);
+				closeChat();
 				socket.close();
 			}
 		},
@@ -141,21 +122,21 @@ function setUpChannel (channelData) {
 
 		setTimeout(function () {
 			if (!isConnected) {
-				statusNotFound();
+				pushNotFound();
 			}
 		}, 60000);
 	}
 }
 
-function statusNotFound () {
-	console.log(404);
-}
-
 window.onpopstate	= function () {
-	var state	= location.pathname.split('/').last();
+	var state	= document.location.pathname.split('/').last();
 
+	/* Root */
+	if (state == '') {
+		document.location.replace('https://www.cyph.com/');
+	}
 	/* New chat room */
-	if (state == 'new') {
+	else if (state == 'new') {
 		$.post(BASE_URL + 'ims', function (id) {
 			pushState('/' + id, true);
 		});
@@ -164,7 +145,7 @@ window.onpopstate	= function () {
 	else if (state.length == 7) {
 		$.ajax({
 			dataType: 'json',
-			error: statusNotFound,
+			error: pushNotFound,
 			success: setUpChannel,
 			type: 'POST',
 			url: BASE_URL + 'ims/' + state
@@ -175,6 +156,3 @@ window.onpopstate	= function () {
 		statusNotFound();
 	}
 };
-
-cryptoInit();
-window.onpopstate();
