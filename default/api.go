@@ -14,11 +14,20 @@ func init() {
 	handleFunc("/", root)
 	handleFuncs("/ims", Handlers{methods.POST: imCreate})
 	handleFuncs("/ims/{id}", Handlers{methods.POST: imConnect})
-	handleFuncs("/channels/{id}", Handlers{methods.DELETE: channelClose, methods.POST: channelReceive})
+	handleFuncs("/channels/{id}", Handlers{methods.POST: channelReceive})
+	handleFuncs("/_ah/channel/disconnected", Handlers{methods.POST: channelClose})
 }
 
 func channelClose(h HandlerArgs) (interface{}, int) {
-	channel.SendJSON(h.Context, h.Vars["id"], ImData{Destroy: true})
+	id := h.Request.FormValue("from")
+	idBase := id[0 : len(id)-1]
+
+	for i := 0; i < 2; i++ {
+		thisId := idBase + string(i)
+		if thisId != id {
+			channel.SendJSON(h.Context, thisId, ImData{Destroy: true})
+		}
+	}
 
 	return nil, http.StatusOK
 }

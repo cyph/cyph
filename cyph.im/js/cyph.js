@@ -113,7 +113,6 @@ function setUpChannel (channelData) {
 	});
 
 	window.addEventListener('beforeunload', function () {
-		sendChannelData({Destroy: true}, true);
 		socket.close();
 	});
 
