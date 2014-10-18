@@ -132,4 +132,4 @@ func initHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func nullHandler(h HandlerArgs) {}
+func nullHandler(h HandlerArgs) (interface{}, int) {}
