@@ -21,6 +21,11 @@ handlers:
   upload: index.html
   secure: always
 
+- url: /404
+  static_files: index.html
+  upload: index.html
+  secure: always
+
 - url: /(.*)
   static_files: \1
   upload: .*
