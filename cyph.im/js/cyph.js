@@ -3,48 +3,6 @@ var authors				= {me: 1, friend: 2, app: 3};
 var isHistoryAvailable	= typeof history != 'undefined';
 var channel, otr, isConnected, socket;
 
-function ajax (o) {
-	var req	= new XMLHttpRequest();
-
-	req.open(o.type, o.url, o.async);
-
-	function dothemove () {
-		var response	= req.responseText;
-		if (response && o.dataType == 'json') {
-			response	= JSON.parse(response);
-		}
-
-		if (req.status == 200) {
-			o.success && o.success(response);
-		}
-		else {
-			o.error && o.error(response);
-		}
-	}
-
-	if (o.async !== false) {
-		req.onreadystatechange	= function () {
-			if (req.readyState == 4) {
-				dothemove();
-			}
-		};
-	}
-
-	var data	= o.data;
-	if (typeof data == 'object') {
-		data	= Object.keys(data).map(function (k) {
-			return encodeURIComponent(k) + '=' + encodeURIComponent(data[k]);
-		}).join('&');
-
-		req.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-	}
-	req.send(data);
-
-	if (o.async === false) {
-		dothemove();
-	}
-}
-
 function cryptoInit () {
 	otr	= new OTR({
 		fragment_size: 5000,
@@ -112,7 +70,7 @@ function sendChannelData (data, opts, retries) {
 	opts	= opts || {};
 	retries	= retries || 0;
 
-	ajax({
+	$.ajax({
 		async: opts.async == undefined ? true : opts.async,
 		data: data,
 		error: function () {
@@ -181,17 +139,13 @@ window.onpopstate	= function () {
 	}
 	/* New chat room */
 	else if (state == 'new') {
-		ajax({
-			success: function (id) {
-				pushState('/' + id, true);
-			},
-			type: 'POST',
-			url: BASE_URL + 'ims'
+		$.post(BASE_URL + 'ims', function (id) {
+			pushState('/' + id, true);
 		});
 	}
 	/* Join existing chat room */
 	else if (state.length == 7) {
-		ajax({
+		$.ajax({
 			dataType: 'json',
 			error: pushNotFound,
 			success: setUpChannel,
