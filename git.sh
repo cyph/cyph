@@ -14,4 +14,9 @@ chmod -R 777 .
 git commit -a -m "gofmt: ${*}"
 git push
 
+./sassupdate.sh
+chmod -R 777 .
+git commit -a -m "sass compile: ${*}"
+git push
+
 cd "${dir}"

@@ -1,10 +1,10 @@
 .appMessage {
-	font-weight: bold;
-}
+  font-weight: bold; }
 
 .invisibleSubmit {
-	position: absolute;
-	left: -9999px;
-	width: 1px;
-	height: 1px;
-}
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px; }
+
+/*# sourceMappingURL=cyph.css.map */
