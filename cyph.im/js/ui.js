@@ -59,7 +59,7 @@ angular.module('Cyph', ['mobile-angular-ui']).controller('CyphController', ['$sc
 	};
 
 	closeChat = $scope.closeChat = function () {
-		addMessageToChat('friend has terminated chat', authors.app);
+		addMessageToChat('This cyph has been disconnected.', authors.app);
 
 		apply(function() {
 			$scope.isAlive	= false;
@@ -73,8 +73,10 @@ angular.module('Cyph', ['mobile-angular-ui']).controller('CyphController', ['$sc
 			$scope.message	= '';
 		});
 
-		addMessageToChat(message, authors.me);
-		otr.sendMsg(message);
+		if (message) {
+			addMessageToChat(message, authors.me);
+			otr.sendMsg(message);
+		}
 	};
 
 	statusNotFound = $scope.statusNotFound = function () {
