@@ -23,7 +23,7 @@ rm goog.appengine.Channel.js
 wget https://api.cyph.com/_ah/channel/jsapi -O goog.appengine.Channel.js
 cd ../..
 
-find . -name '*.js' | grep -v '.min.js$' | xargs -I% uglifyjs "%" -o "%"
+find . -name '*.js' | grep -v lib | xargs -I% uglifyjs "%" -o "%"
 
 goapp deploy default/app.yaml cyph.com/cyph-com.yaml cyph.im/cyph-im.yaml cyph.me/cyph-me.yaml
 # goapp deploy default/app.yaml `ls !(default)/*.yaml | tr '\n' ' '`
