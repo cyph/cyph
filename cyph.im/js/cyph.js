@@ -91,8 +91,6 @@ function setUpChannel (channelData) {
 	channel			= new goog.appengine.Channel(channelData.ChannelToken);
 	channel.data	= channelData;
 
-	var isDead		= false;
-
 	socket	= channel.open({
 		onopen: function () {},
 		onmessage: function (data) {
@@ -104,8 +102,7 @@ function setUpChannel (channelData) {
 			if (o.Message) {
 				otr.receiveMsg(o.Message);
 			}
-			if (o.Destroy && !isDead) {
-				isDead	= true;
+			if (o.Destroy) {
 				closeChat();
 				socket.close();
 			}

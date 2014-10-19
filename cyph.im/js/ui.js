@@ -61,12 +61,17 @@ angular.module('Cyph', ['mobile-angular-ui']).controller('CyphController', ['$sc
 		});
 	};
 
+	var isChatClosed	= false;
 	closeChat = $scope.closeChat = function () {
-		addMessageToChat('This cyph has been disconnected.', authors.app);
+		if (!isChatClosed) {
+			isChatClosed	= true;
 
-		apply(function() {
-			$scope.isAlive	= false;
-		});
+			addMessageToChat('This cyph has been disconnected.', authors.app);
+
+			apply(function() {
+				$scope.isAlive	= false;
+			});
+		}
 	};
 
 	sendMessage = $scope.sendMessage = function () {
@@ -87,4 +92,9 @@ angular.module('Cyph', ['mobile-angular-ui']).controller('CyphController', ['$sc
 			$scope.state	= $scope.states.error;
 		});
 	};
+
+
+	/* Init */
+	cryptoInit();
+	window.onpopstate();
 }]);

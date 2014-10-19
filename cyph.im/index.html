@@ -38,8 +38,6 @@
 			</div>
 
 			<div ng-show='state == states.chat'>
-				<div class='desktop-only'>Desktop chat:</div>
-				<div class='mobile-only'>Mobile chat:</div>
 				<div ng-repeat='message in messages'>
 					<strong ng-hide='message.isFromApp'>{{message.author}}: </strong>
 					<span ng-class='{appMessage: message.isFromApp}'>{{message.text}}</span>
@@ -55,7 +53,7 @@
 				<strong style='color: crimson'>error, bitch</strong>
 			</div>
 
-			<div id='footer'>
+			<div id='footer' class='desktop-only'>
 				<hr />
 				<footer>
 					<p>
@@ -86,7 +84,6 @@
 		
 		<script src='js/cyph.js'></script>
 		<script src='js/ui.js'></script>
-		<script src='js/init.js'></script>
 
 	</body>
 </html>

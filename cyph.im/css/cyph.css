@@ -8,13 +8,10 @@
   height: 1px; }
 
 /* Mobile and desktop classes */
-@media (min-width: 992px) {
-  .desktop-only {
-    display: block !important; } }
-@media (max-width: 991px) {
+@media only screen and (min-width: 992px) {
   .mobile-only {
-    display: block !important; }
-
+    display: none !important; } }
+@media only screen and (max-width: 991px) {
   .desktop-only {
     display: none !important; } }
 

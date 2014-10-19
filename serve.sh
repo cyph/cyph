@@ -3,6 +3,7 @@
 dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd) # $(dirname `readlink -f "${0}" || realpath "${0}"`)
 
+ps ux | grep sass | awk '{print $2}' | xargs kill -9
 ps ux | grep dev_appserver | awk '{print $2}' | xargs kill -9
 
 # PORT=8080
@@ -12,6 +13,7 @@ ps ux | grep dev_appserver | awk '{print $2}' | xargs kill -9
 # 	bash -c "nohup `echo "$cmd" | sed "s/ADMIN_PORT/$ADMIN_PORT/" | sed "s/PORT/$PORT/"` &"
 # done
 
+find "$1" -name '*.scss' | perl -pe 's/(.*)\.scss/\1/g' | xargs -I% sass --watch "%.scss":"%.css" &
 dev_appserver.py $1/*.yaml
 
 cd "${dir}"
