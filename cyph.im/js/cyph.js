@@ -111,7 +111,7 @@ function setUpChannel (channelData) {
 			}
 		},
 		onerror: function () {},
-		onclose: function () {}
+		onclose: closeChat
 	});
 
 	window.addEventListener('beforeunload', function () {
