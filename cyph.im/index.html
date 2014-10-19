@@ -38,7 +38,8 @@
 			</div>
 
 			<div ng-show='state == states.chat'>
-				<div>Chat:</div>
+				<div class='desktop-only'>Desktop chat:</div>
+				<div class='mobile-only'>Mobile chat:</div>
 				<div ng-repeat='message in messages'>
 					<strong ng-hide='message.isFromApp'>{{message.author}}: </strong>
 					<span ng-class='{appMessage: message.isFromApp}'>{{message.text}}</span>
@@ -63,8 +64,11 @@
 						<a href='mailto:hello@cyph.com'>hello@cyph.com</a>
 							&nbsp;&bull;&nbsp;
 						+1(337) 935 0016
-							&nbsp;&bull;&nbsp;
-						<a href='//twitter.com/cyphapp'>@cyph</a>
+
+						<!-- 
+								&nbsp;&bull;&nbsp;
+							<a href='//twitter.com/cyphapp'>@cyph</a>
+						-->
 					</p>
 				</footer>
 			</div>
