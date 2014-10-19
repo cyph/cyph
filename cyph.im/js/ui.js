@@ -1,6 +1,6 @@
 var addMessageToChat, beginChat, closeChat, sendMessage, statusNotFound;
 
-angular.module('Cyph', []).controller('CyphController', ['$scope', function($scope) {
+angular.module('Cyph', ['mobile-angular-ui']).controller('CyphController', ['$scope', function($scope) {
 	$scope.isAlive	= true;
 
 	$scope.messages	= [];
@@ -32,11 +32,21 @@ angular.module('Cyph', []).controller('CyphController', ['$scope', function($sco
 	addMessageToChat = $scope.addMessageToChat = function (text, author) {
 		if (text) {
 			apply(function() {
+				var date	= new Date();
+				var hour	= date.getHours();
+				var ampm	= 'am';
+				var minute	= ('0' + date.getMinutes()).slice(-2);
+
+				if (hour > 12) {
+					hour	-= 12;
+					ampm	= 'pm';
+				}
+
 				$scope.messages.push({
 					author: author == authors.me ? 'me' : author == authors.friend ? 'friend' : '',
 					isFromApp: author == authors.app,
 					text: text,
-					timestamp: Date.create().format('{12hr}:{mm}{tt}')
+					timestamp: hour + ':' + minute + ampm
 				});
 			});
 		}
@@ -57,12 +67,14 @@ angular.module('Cyph', []).controller('CyphController', ['$scope', function($sco
 	};
 
 	sendMessage = $scope.sendMessage = function () {
-		addMessageToChat($scope.message, authors.me);
-		otr.sendMsg($scope.message);
+		var message	= $scope.message;
 
 		apply(function() {
 			$scope.message	= '';
 		});
+
+		addMessageToChat(message, authors.me);
+		otr.sendMsg(message);
 	};
 
 	statusNotFound = $scope.statusNotFound = function () {
