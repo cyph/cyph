@@ -7,4 +7,15 @@
   width: 1px;
   height: 1px; }
 
+/* Mobile and desktop classes */
+@media (min-width: 992px) {
+  .desktop-only {
+    display: block !important; } }
+@media (max-width: 991px) {
+  .mobile-only {
+    display: block !important; }
+
+  .desktop-only {
+    display: none !important; } }
+
 /*# sourceMappingURL=cyph.css.map */
