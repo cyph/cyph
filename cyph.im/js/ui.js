@@ -37,9 +37,12 @@ angular.module('Cyph', ['mobile-angular-ui']).controller('CyphController', ['$sc
 				var ampm	= 'am';
 				var minute	= ('0' + date.getMinutes()).slice(-2);
 
-				if (hour > 12) {
+				if (hour >= 12) {
 					hour	-= 12;
 					ampm	= 'pm';
+				}
+				if (hour == 0) {
+					hour	= 12;
 				}
 
 				$scope.messages.push({
