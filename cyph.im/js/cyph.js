@@ -3,6 +3,9 @@ var authors				= {me: 1, friend: 2, app: 3};
 var isHistoryAvailable	= typeof history != 'undefined';
 var channel, otr, isConnected, socket;
 
+var ajax	= $.ajax;
+
+/*
 function ajax (o) {
 	var req	= new XMLHttpRequest();
 
@@ -44,6 +47,7 @@ function ajax (o) {
 		dothemove();
 	}
 }
+*/
 
 function cryptoInit () {
 	otr	= new OTR({
