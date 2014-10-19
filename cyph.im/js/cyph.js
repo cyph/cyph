@@ -168,7 +168,7 @@ function setUpChannel (channelData) {
 			if (!isConnected) {
 				pushNotFound();
 			}
-		}, 60000);
+		}, 180000);
 	}
 }
 
