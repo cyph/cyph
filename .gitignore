@@ -1,1 +1,4 @@
 .build
+.sass-cache
+.DS_Store
+nohup.out
