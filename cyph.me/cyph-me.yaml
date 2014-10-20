@@ -11,7 +11,7 @@ handlers:
   upload: index.html
   secure: always
   http_headers:
-    Content-Security-Policy: script-src 'self'
+    Content-Security-Policy: script-src 'self' 'unsafe-eval'
     X-Frame-Options: deny
 
 - url: /(.*)
@@ -19,5 +19,5 @@ handlers:
   upload: .*
   secure: always
   http_headers:
-    Content-Security-Policy: script-src 'self'
+    Content-Security-Policy: script-src 'self' 'unsafe-eval'
     X-Frame-Options: deny
