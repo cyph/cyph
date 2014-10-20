@@ -10,23 +10,38 @@ handlers:
   static_files: index.html
   upload: index.html
   secure: always
+  http_headers:
+    Content-Security-Policy: script-src 'self'
+    X-Frame-Options: deny
 
 - url: /new
   static_files: index.html
   upload: index.html
   secure: always
+  http_headers:
+    Content-Security-Policy: script-src 'self'
+    X-Frame-Options: deny
 
 - url: /[A-Za-z0-9]{7}
   static_files: index.html
   upload: index.html
   secure: always
+  http_headers:
+    Content-Security-Policy: script-src 'self'
+    X-Frame-Options: deny
 
 - url: /404
   static_files: index.html
   upload: index.html
   secure: always
+  http_headers:
+    Content-Security-Policy: script-src 'self'
+    X-Frame-Options: deny
 
 - url: /(.*)
   static_files: \1
   upload: .*
   secure: always
+  http_headers:
+    Content-Security-Policy: script-src 'self'
+    X-Frame-Options: deny

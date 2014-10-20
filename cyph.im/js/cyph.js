@@ -98,6 +98,7 @@ function setUpChannel (channelData) {
 			}
 			else {
 				changeState(states.settingUpCrypto);
+				sendChannelData({Misc: 'connect'});
 				otr.sendQueryMsg();
 
 				setTimeout(function () {
@@ -112,6 +113,9 @@ function setUpChannel (channelData) {
 
 			if (o.Misc == 'ping') {
 				sendChannelData({Misc: 'pong'});
+			}
+			if (o.Misc == 'connect' && state == states.waitingForFriend) {
+				changeState(states.settingUpCrypto);
 			}
 			if (o.Message) {
 				if (state == states.waitingForFriend) {
@@ -129,7 +133,7 @@ function setUpChannel (channelData) {
 		onclose: closeChat
 	});
 
-	$(window).on('beforeunload', function () {
+	window.addEventListener('beforeunload', function () {
 		sendChannelData({Destroy: true});
 		socket.close();
 	});

@@ -10,8 +10,14 @@ handlers:
   static_files: index.html
   upload: index.html
   secure: always
+  http_headers:
+    Content-Security-Policy: script-src 'self'
+    X-Frame-Options: deny
 
 - url: /(.*)
   static_files: \1
   upload: .*
   secure: always
+  http_headers:
+    Content-Security-Policy: script-src 'self'
+    X-Frame-Options: deny
