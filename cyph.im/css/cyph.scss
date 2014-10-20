@@ -1,14 +1,11 @@
 .appMessage {
 	font-weight: bold;
+	padding-top: 20px;
 }
 
-.invisibleSubmit {
-	position: absolute;
-	left: -9999px;
-	width: 1px;
-	height: 1px;
+#message {
+	resize: none;
 }
-
 
 
 

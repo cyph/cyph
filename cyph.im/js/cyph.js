@@ -38,7 +38,7 @@ function cryptoInit () {
 	otr.on('status', function (state) {
 		if (!isConnected && state == OTR.CONST.STATUS_AKE_SUCCESS) {
 			isConnected	= true;
-			beginChat();
+			changeState(states.chat);
 		}
 	});
 }
@@ -92,7 +92,21 @@ function setUpChannel (channelData) {
 	channel.data	= channelData;
 
 	socket	= channel.open({
-		onopen: function () {},
+		onopen: function () {
+			if (channel.data.IsCreator) {
+				changeState(states.waitingForFriend);
+			}
+			else {
+				changeState(states.settingUpCrypto);
+				otr.sendQueryMsg();
+
+				setTimeout(function () {
+					if (!isConnected) {
+						pushNotFound();
+					}
+				}, 180000);
+			}
+		},
 		onmessage: function (data) {
 			var o	= JSON.parse(data.data);
 
@@ -100,6 +114,10 @@ function setUpChannel (channelData) {
 				sendChannelData({Misc: 'pong'});
 			}
 			if (o.Message) {
+				if (state == states.waitingForFriend) {
+					changeState(states.settingUpCrypto);
+				}
+
 				otr.receiveMsg(o.Message);
 			}
 			if (o.Destroy) {
@@ -111,20 +129,10 @@ function setUpChannel (channelData) {
 		onclose: closeChat
 	});
 
-	window.addEventListener('beforeunload', function () {
+	$(window).on('beforeunload', function () {
 		sendChannelData({Destroy: true});
 		socket.close();
 	});
-
-	if (!channel.data.IsCreator) {
-		otr.sendQueryMsg();
-
-		setTimeout(function () {
-			if (!isConnected) {
-				pushNotFound();
-			}
-		}, 180000);
-	}
 }
 
 window.onpopstate	= function () {
@@ -136,6 +144,8 @@ window.onpopstate	= function () {
 	}
 	/* New chat room */
 	else if (state == 'new') {
+		changeState(states.spinningUp);
+
 		$.post(BASE_URL + 'ims', function (id) {
 			pushState('/' + id, true);
 		});
@@ -152,6 +162,6 @@ window.onpopstate	= function () {
 	}
 	/* 404 */
 	else {
-		statusNotFound();
+		changeState(states.error);
 	}
 };

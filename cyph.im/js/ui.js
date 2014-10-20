@@ -1,4 +1,4 @@
-var addMessageToChat, beginChat, closeChat, sendMessage, statusNotFound;
+var addMessageToChat, changeState, closeChat, sendMessage, state, states, statusNotFound;
 
 angular.module('Cyph', ['mobile-angular-ui']).controller('CyphController', ['$scope', function($scope) {
 	$scope.isAlive	= true;
@@ -7,13 +7,16 @@ angular.module('Cyph', ['mobile-angular-ui']).controller('CyphController', ['$sc
 
 	$scope.message	= '';
 
-	$scope.states	= {
-		loading: 0,
+	states = $scope.states = {
+		none: 0,
+		spinningUp: 1,
+		waitingForFriend: 2,
+		settingUpCrypto: 3,
 		chat: 200,
 		error: 404
 	};
 
-	$scope.state	= $scope.states.loading;
+	state = $scope.state = $scope.states.none;
 
 
 	/* https://coderwall.com/p/ngisma */
@@ -55,17 +58,14 @@ angular.module('Cyph', ['mobile-angular-ui']).controller('CyphController', ['$sc
 		}
 	};
 
-	beginChat = $scope.beginChat = function () {
+	changeState = $scope.changeState = function (state) {
 		apply(function() {
-			$scope.state	= $scope.states.chat;
+			state = $scope.state = state;
 		});
 	};
 
-	var isChatClosed	= false;
 	closeChat = $scope.closeChat = function () {
-		if (!isChatClosed) {
-			isChatClosed	= true;
-
+		if ($scope.isAlive) {
 			addMessageToChat('This cyph has been disconnected.', authors.app);
 
 			apply(function() {
@@ -87,14 +87,23 @@ angular.module('Cyph', ['mobile-angular-ui']).controller('CyphController', ['$sc
 		}
 	};
 
-	statusNotFound = $scope.statusNotFound = function () {
-		apply(function() {
-			$scope.state	= $scope.states.error;
-		});
-	};
-
 
 	/* Init */
 	cryptoInit();
 	window.onpopstate();
 }]);
+
+/*** onenterpress attribute handler ***/
+$('[onenterpress]').each(function () {
+	$(this).keypress(function(e) {
+		if (e.keyCode == 13 && !e.shiftKey) {
+			var onenterpress	= this.getAttribute('onenterpress');
+
+			if (onenterpress) {
+				eval(onenterpress);
+				e.preventDefault();
+			}
+
+		}
+	});
+});
