@@ -33,8 +33,16 @@
 	<body>
 
 		<div ng-controller='CyphController'>
-			<div ng-show='state == states.loading'>
-				Connecting...
+			<div ng-show='state == states.spinningUp'>
+				Now spinning up your cyph room...
+			</div>
+
+			<div ng-show='state == states.waitingForFriend'>
+				Waiting for your friend to connect...
+			</div>
+
+			<div ng-show='state == states.settingUpCrypto'>
+				Negotiating secure connection...
 			</div>
 
 			<div ng-show='state == states.chat'>
@@ -43,10 +51,14 @@
 					<span ng-class='{appMessage: message.isFromApp}'>{{message.text}}</span>
 					<span class='pull-right'>{{message.timestamp}}</span>
 				</div>
-				<form ng-show='isAlive' ng-submit='sendMessage()'>
-					<input type='text' ng-model='message' />
-					<input type='submit' class='invisibleSubmit' />
-				</form>
+				<textarea
+					id='message'
+					ng-show='isAlive'
+					ng-model='message'
+					class='form-control'
+					onenterpress='sendMessage()'
+					placeholder="Send a secure message..."
+				></textarea>
 			</div>
 
 			<div ng-show='state == states.error'>
@@ -61,7 +73,7 @@
 							&nbsp;&bull;&nbsp;
 						<a href='mailto:hello@cyph.com'>hello@cyph.com</a>
 							&nbsp;&bull;&nbsp;
-						+1(337) 935 0016
+						+1(931) CYPH-INC
 
 						<!-- 
 								&nbsp;&bull;&nbsp;
