@@ -30,7 +30,7 @@ md-toolbar {
 	}
 }
 
-md-item, [flex] {
+:not(textarea) {
 	border: 0px !important;
 }
 

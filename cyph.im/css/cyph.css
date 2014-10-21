@@ -22,7 +22,7 @@ md-toolbar {
   md-toolbar .logo {
     height: 25px; }
 
-md-item, [flex] {
+:not(textarea) {
   border: 0px !important; }
 
 a {
