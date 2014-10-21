@@ -93,11 +93,25 @@ angular.module('Cyph', ['ngMaterial']).controller('CyphController', ['$scope', f
 	window.onpopstate();
 }]);
 
-$(window).click(function () {
-	if (screenfull.enabled && !screenfull.isFullscreen) {
-		screenfull.request();
+var isMobile	= (function () {
+	try {
+		document.createEvent('TouchEvent');
+		return true;
 	}
-});
+	catch (e) {
+		return false;
+	}
+}());
+
+if (isMobile) {
+	$('html').addClass('mobile');
+
+	$(window).click(function () {
+		if (screenfull.enabled && !screenfull.isFullscreen) {
+			screenfull.request();
+		}
+	});
+}
 
 /*** onenterpress attribute handler ***/
 $('[onenterpress]').each(function () {
