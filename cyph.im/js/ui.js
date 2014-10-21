@@ -118,9 +118,15 @@ var isMobile	= (function () {
 	}
 }());
 
+var shouldGoFullScreen	= true;
 function fullScreen () {
-	if (screenfull.enabled && !screenfull.isFullscreen) {
-		screenfull.request();
+	if (shouldGoFullScreen && screenfull.enabled) {
+		if (!screenfull.isFullscreen) {
+			screenfull.request();
+		}
+		else {
+			shouldGoFullScreen	= false;
+		}
 	}
 }
 
