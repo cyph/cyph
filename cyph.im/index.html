@@ -24,74 +24,85 @@
 		<meta name='msapplication-TileColor' content='#8b62d9'>
 		<meta name='msapplication-TileImage' content='img/favicon/mstile-144x144.png'>
 
-		<link rel='stylesheet' href='lib/mobile-angular-ui/css/mobile-angular-ui-hover.min.css' />
-		<link rel='stylesheet' href='lib/mobile-angular-ui/css/mobile-angular-ui-base.min.css' />
-		<link rel='stylesheet' href='lib/mobile-angular-ui/css/mobile-angular-ui-desktop.min.css' />
+		<link rel='stylesheet' href='lib/bower_components/angular-material/angular-material.css' />
 
 		<link rel='stylesheet' href='css/cyph.css' />
 	</head>
-	<body>
+	<body ng-controller='CyphController' layout='vertical' layout-fill class='md-theme-purple'>
 
-		<div ng-controller='CyphController'>
-			<div ng-show='state == states.spinningUp'>
-				Now spinning up your cyph room...
+		<md-toolbar class='mobile-only'>
+			<div class='md-toolbar-tools'>
+				<img class='logo' src='/img/logo.white.horizontal.header.png' />
+				<span flex></span>
 			</div>
+		</md-toolbar>
 
-			<div ng-show='state == states.waitingForFriend'>
-				Waiting for your friend to connect...
-			</div>
-
-			<div ng-show='state == states.settingUpCrypto'>
-				Negotiating secure connection...
-			</div>
-
-			<div ng-show='state == states.chat'>
-				<div ng-repeat='message in messages'>
-					<strong ng-hide='message.isFromApp'>{{message.author}}: </strong>
-					<span ng-class='{appMessage: message.isFromApp}'>{{message.text}}</span>
-					<span class='pull-right'>{{message.timestamp}}</span>
-				</div>
-				<textarea
-					id='message'
-					ng-show='isAlive'
-					ng-model='message'
-					class='form-control'
-					onenterpress='sendMessage()'
-					placeholder="Send a secure message..."
-				></textarea>
-			</div>
-
-			<div ng-show='state == states.error'>
-				<strong style='color: crimson'>error, bitch</strong>
-			</div>
-
-			<div id='footer' class='desktop-only'>
-				<hr />
-				<footer>
-					<p>
-						&copy; Cyph 2014
-							&nbsp;&bull;&nbsp;
-						<a href='mailto:hello@cyph.com'>hello@cyph.com</a>
-							&nbsp;&bull;&nbsp;
-						+1(931) CYPH-INC
-
-						<!-- 
-								&nbsp;&bull;&nbsp;
-							<a href='//twitter.com/cyphapp'>@cyph</a>
-						-->
-					</p>
-				</footer>
-			</div>
+		<div flex ng-show='state == states.spinningUp'>
+			Now spinning up your cyph room...
 		</div>
 
+		<div flex ng-show='state == states.waitingForFriend'>
+			Waiting for your friend to connect...
+		</div>
 
-		<script src='lib/jquery.min.js'></script>
-		<script src='lib/angular.min.js'></script>
-		<script src='lib/mobile-angular-ui/js/mobile-angular-ui.min.js'></script>
-		<script src='lib/otr/dep/bigint.js'></script>
-		<script src='lib/otr/dep/crypto.js'></script>
-		<script src='lib/otr/dep/eventemitter.js'></script>
-		<script src='lib/otr/otr.min.js'></script>
+		<div flex ng-show='state == states.settingUpCrypto'>
+			Negotiating secure connection...
+		</div>
+
+		<div flex ng-show='state == states.error'>
+			<strong>error, bitch</strong>
+		</div>
+
+		<div flex ng-show='state == states.none'></div>
+
+		<div flex ng-show='state == states.chat'>
+			<md-content>
+				<md-list layout='vertical'>
+					<md-item ng-repeat='message in messages' layout='horizontal'>
+						<span>
+							<strong ng-hide='message.isFromApp'>{{message.author}}: </strong>
+							<span ng-class='{appMessage: message.isFromApp}'>{{message.text}}</span>
+						</span>
+						<span flex style='text-align: right'>{{message.timestamp}}</span>
+					</md-item>
+				</md-list>
+			</md-content>
+		</div>
+
+		<footer>
+			<textarea
+				id='message'
+				ng-show='state == states.chat && isAlive'
+				ng-model='message'
+				onenterpress='sendMessage()'
+				placeholder="Send a secure message..."
+			></textarea>
+
+			<div id='footer' class='desktop-only'>
+				&copy; Cyph 2014
+					&nbsp;&bull;&nbsp;
+				<a href='mailto:hello@cyph.com'>hello@cyph.com</a>
+					&nbsp;&bull;&nbsp;
+				<a href='tel:+19312974462' title='+1(931) 297 4462'>+1(931) CYPH INC</a>
+
+				<!--
+						&nbsp;&bull;&nbsp;
+					<a href='//twitter.com/cyphapp'>@cyph</a>
+				-->
+			</div>
+		</footer>
+
+
+		<script src='lib/bower_components/jquery/dist/jquery.min.js'></script>
+		<script src='lib/bower_components/angular/angular.min.js'></script>
+		<script src='lib/bower_components/angular-aria/angular-aria.js'></script>
+		<script src='lib/bower_components/angular-animate/angular-animate.js'></script>
+		<script src='lib/bower_components/hammerjs/hammer.js'></script>
+		<script src='lib/bower_components/angular-material/angular-material.js'></script>
+		<script src='lib/bower_components/otr/build/dep/bigint.js'></script>
+		<script src='lib/bower_components/otr/build/dep/crypto.js'></script>
+		<script src='lib/bower_components/otr/build/dep/eventemitter.js'></script>
+		<script src='lib/bower_components/otr/build/otr.min.js'></script>
 		<script src='lib/goog.appengine.Channel.js'></script>
 		
 		<script src='js/cyph.js'></script>

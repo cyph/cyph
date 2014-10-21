@@ -1,6 +1,6 @@
 var addMessageToChat, changeState, closeChat, sendMessage, state, states, statusNotFound;
 
-angular.module('Cyph', ['mobile-angular-ui']).controller('CyphController', ['$scope', function($scope) {
+angular.module('Cyph', ['ngMaterial']).controller('CyphController', ['$scope', function($scope) {
 	$scope.isAlive	= true;
 
 	$scope.messages	= [];

@@ -3,12 +3,36 @@
   padding-top: 20px; }
 
 #message {
+  width: 100%;
   resize: none; }
+
+#footer {
+  margin-top: 10px; }
+
+[flex] {
+  overflow: scroll; }
+
+*.md-theme-purple {
+  background-color: #8b62d9 !important; }
+
+md-toolbar {
+  background-color: #7239DD; }
+  md-toolbar .logo {
+    height: 30px; }
+
+a {
+  color: inherit; }
+
+textarea {
+  background-color: #f1f1f1; }
 
 /* Mobile and desktop classes */
 @media only screen and (min-width: 992px) {
   .mobile-only {
-    display: none !important; } }
+    display: none !important; }
+
+  body {
+    padding: 10px; } }
 @media only screen and (max-width: 991px) {
   .desktop-only {
     display: none !important; } }
