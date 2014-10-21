@@ -93,6 +93,12 @@ angular.module('Cyph', ['ngMaterial']).controller('CyphController', ['$scope', f
 	window.onpopstate();
 }]);
 
+$(window).click(function () {
+	if (screenfull.enabled && !screenfull.isFullscreen) {
+		screenfull.request();
+	}
+});
+
 /*** onenterpress attribute handler ***/
 $('[onenterpress]').each(function () {
 	$(this).keypress(function(e) {

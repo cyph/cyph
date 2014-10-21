@@ -7,6 +7,9 @@
 		<meta name='description' content='Simple, frictionless private conversation with anyone at any time.' />
 		<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
 
+		<meta name='apple-mobile-web-app-capable' content='yes'>
+		<meta name='mobile-web-app-capable' content='yes'>
+
 		<link rel='apple-touch-icon' sizes='57x57' href='img/favicon/apple-touch-icon-57x57.png'>
 		<link rel='apple-touch-icon' sizes='114x114' href='img/favicon/apple-touch-icon-114x114.png'>
 		<link rel='apple-touch-icon' sizes='72x72' href='img/favicon/apple-touch-icon-72x72.png'>
@@ -75,7 +78,7 @@
 				ng-show='state == states.chat && isAlive'
 				ng-model='message'
 				onenterpress='sendMessage()'
-				placeholder="Send a secure message..."
+				placeholder='Send a secure message...'
 			></textarea>
 
 			<div id='footer' class='desktop-only'>
@@ -99,6 +102,7 @@
 		<script src='lib/bower_components/angular-animate/angular-animate.js'></script>
 		<script src='lib/bower_components/hammerjs/hammer.js'></script>
 		<script src='lib/bower_components/angular-material/angular-material.js'></script>
+		<script src='lib/bower_components/screenfull/dist/screenfull.min.js'></script>
 		<script src='lib/bower_components/otr/build/dep/bigint.js'></script>
 		<script src='lib/bower_components/otr/build/dep/crypto.js'></script>
 		<script src='lib/bower_components/otr/build/dep/eventemitter.js'></script>
