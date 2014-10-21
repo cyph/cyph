@@ -16,9 +16,10 @@
   background-color: #8b62d9 !important; }
 
 md-toolbar {
+  height: 40px;
   background-color: #7239DD; }
   md-toolbar .logo {
-    height: 30px; }
+    height: 20px; }
 
 a {
   color: inherit; }
