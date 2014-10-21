@@ -61,7 +61,7 @@
 
 		<div flex ng-show='state == states.none'></div>
 
-		<div flex ng-show='state == states.chat'>
+		<div id='messageList' flex ng-show='state == states.chat'>
 			<md-content>
 				<md-list layout='vertical'>
 					<md-item ng-repeat='message in messages' layout='horizontal'>
