@@ -131,7 +131,7 @@ function setUpChannel (channelData) {
 	});
 
 	$(window).on('beforeunload', function () {
-		return 'Are you sure that you want to close this cyph? Your messages will no longer be retrievable.';
+		return 'After closing Cyph, your messages will no longer be retrievable.';
 	});
 
 	$(window).unload(function () {

@@ -93,6 +93,21 @@ angular.module('Cyph', ['ngMaterial']).controller('CyphController', ['$scope', f
 	window.onpopstate();
 }]);
 
+/*** onenterpress attribute handler ***/
+$('[onenterpress]').each(function () {
+	$(this).keypress(function(e) {
+		if (e.keyCode == 13 && !e.shiftKey) {
+			var onenterpress	= this.getAttribute('onenterpress');
+
+			if (onenterpress) {
+				eval(onenterpress);
+				e.preventDefault();
+			}
+
+		}
+	});
+});
+
 var isMobile	= (function () {
 	try {
 		document.createEvent('TouchEvent');
@@ -111,22 +126,5 @@ function fullScreen () {
 
 if (isMobile) {
 	$('html').addClass('mobile');
-
-	$(window).once('click', fullScreen);
-	$(window).focus(fullScreen);
+	$(window).click(fullScreen);
 }
-
-/*** onenterpress attribute handler ***/
-$('[onenterpress]').each(function () {
-	$(this).keypress(function(e) {
-		if (e.keyCode == 13 && !e.shiftKey) {
-			var onenterpress	= this.getAttribute('onenterpress');
-
-			if (onenterpress) {
-				eval(onenterpress);
-				e.preventDefault();
-			}
-
-		}
-	});
-});
