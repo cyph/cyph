@@ -130,7 +130,11 @@ function setUpChannel (channelData) {
 		onclose: closeChat
 	});
 
-	window.addEventListener('beforeunload', function () {
+	$(window).on('beforeunload', function () {
+		return 'Are you sure that you want to close this cyph? Your messages will no longer be retrievable.';
+	});
+
+	$(window).unload(function () {
 		sendChannelData({Destroy: true});
 		socket.close();
 	});
