@@ -135,7 +135,7 @@ function setUpChannel (channelData) {
 	});
 
 	$(window).unload(function () {
-		sendChannelData({Destroy: true});
+		sendChannelData({Destroy: true}, {async: false});
 		socket.close();
 	});
 }
