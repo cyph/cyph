@@ -37,8 +37,8 @@ func channelReceive(h HandlerArgs) (interface{}, int) {
 		for i := 0; i < 5; i++ {
 			err := channel.SendJSON(h.Context, h.Vars["id"], imData)
 
-			if err {
-				time.sleep(time.Second)
+			if err != nil {
+				time.Sleep(time.Second)
 			} else {
 				break
 			}
