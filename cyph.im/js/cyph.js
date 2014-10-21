@@ -99,7 +99,9 @@ function setUpChannel (channelData) {
 	socket	= channel.open({
 		onopen: function () {
 			if (channel.data.IsCreator) {
-				changeState(states.waitingForFriend);
+				setTimeout(function () {
+					changeState(states.waitingForFriend);
+				}, 2500);
 			}
 			else {
 				changeState(states.settingUpCrypto);
