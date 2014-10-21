@@ -36,9 +36,14 @@ function cryptoInit () {
 	});
 
 	otr.on('status', function (state) {
-		if (!isConnected && state == OTR.CONST.STATUS_AKE_SUCCESS) {
-			isConnected	= true;
-			changeState(states.chat);
+		if (!isConnected) {
+			if (state == OTR.CONST.STATUS_AKE_SUCCESS) {
+				isConnected	= true;
+				changeState(states.chat);
+			}
+			else {
+				changeState(states.settingUpCrypto);
+			}
 		}
 	});
 }
@@ -98,7 +103,6 @@ function setUpChannel (channelData) {
 			}
 			else {
 				changeState(states.settingUpCrypto);
-				sendChannelData({Misc: 'connect'});
 				otr.sendQueryMsg();
 
 				setTimeout(function () {
@@ -114,14 +118,7 @@ function setUpChannel (channelData) {
 			if (o.Misc == 'ping') {
 				sendChannelData({Misc: 'pong'});
 			}
-			if (o.Misc == 'connect' && state == states.waitingForFriend) {
-				changeState(states.settingUpCrypto);
-			}
 			if (o.Message) {
-				if (state == states.waitingForFriend) {
-					changeState(states.settingUpCrypto);
-				}
-
 				otr.receiveMsg(o.Message);
 			}
 			if (o.Destroy) {
