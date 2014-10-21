@@ -9,8 +9,8 @@
 #footer {
   margin-top: 10px; }
 
-[flex] {
-  overflow: scroll; }
+#messageList {
+  overflow-y: scroll; }
 
 *.md-theme-purple {
   background-color: #8b62d9 !important; }

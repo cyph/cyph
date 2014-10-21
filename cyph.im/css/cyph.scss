@@ -12,8 +12,8 @@
 	margin-top: 10px;
 }
 
-[flex] {
-	overflow: scroll;
+#messageList {
+	overflow-y: scroll;
 }
 
 *.md-theme-purple {
