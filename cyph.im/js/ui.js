@@ -103,14 +103,17 @@ var isMobile	= (function () {
 	}
 }());
 
+function fullScreen () {
+	if (screenfull.enabled && !screenfull.isFullscreen) {
+		screenfull.request();
+	}
+}
+
 if (isMobile) {
 	$('html').addClass('mobile');
 
-	$(window).click(function () {
-		if (screenfull.enabled && !screenfull.isFullscreen) {
-			screenfull.request();
-		}
-	});
+	$(window).once('click', fullScreen);
+	$(window).focus(fullScreen);
 }
 
 /*** onenterpress attribute handler ***/

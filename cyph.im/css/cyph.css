@@ -17,10 +17,13 @@
 
 md-toolbar {
   background-color: #7239DD;
-  height: 40px !important;
-  min-height: 40px !important; }
+  height: 50px !important;
+  min-height: 50px !important; }
   md-toolbar .logo {
-    height: 20px; }
+    height: 25px; }
+
+md-item, [flex] {
+  border: 0px !important; }
 
 a {
   color: inherit; }
