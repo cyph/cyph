@@ -21,8 +21,9 @@
 }
 
 md-toolbar {
-	height: 40px;
 	background-color: #7239DD;
+	height: 40px !important;
+	min-height: 40px !important;
 
 	.logo {
 		height: 20px;
@@ -40,7 +41,7 @@ textarea {
 
 /* Mobile and desktop classes */
 
-@media only screen and (min-width: 992px) {
+html:not(.mobile) {
 	.mobile-only  {
 		display: none !important;
 	}
@@ -50,7 +51,7 @@ textarea {
 	}
 }
 
-@media only screen and (max-width: 991px) {
+html.mobile {
 	.desktop-only  {
 		display: none !important;
 	}
