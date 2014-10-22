@@ -125,20 +125,22 @@ angular.module('Cyph', ['ngMaterial']).controller('CyphController', ['$scope', f
 
 	function setUpFullScreenEvent () {
 		function fullScreen () {
-			if (screenfull.enabled && !screenfull.isFullscreen && state == states.chat) {
+			if (screenfull.enabled && !screenfull.isFullscreen && $scope.state == $scope.states.chat) {
 				screenfull.request();
-				$(window).off('click', fullScreen);
+
+				if (screenfull.isFullscreen) {
+					$(window).off('click', fullScreen);
+				}
 			}
 		}
 
-		$(window).off('click', fullScreen);
-		$(window).click(fullScreen);
+		$(window).off('click', fullScreen).click(fullScreen);
 	}
 
 	if (isMobile) {
 		$('html').addClass('mobile');
 		setUpFullScreenEvent();
-		$(document).on('hide', setUpFullScreenEvent);
+		$(window).on('hide', setUpFullScreenEvent);
 	}
 
 	cryptoInit();
