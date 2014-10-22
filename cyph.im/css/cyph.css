@@ -6,21 +6,47 @@
   width: 100%;
   resize: none; }
 
+#messageWrapper {
+  position: relative; }
+
+#sendbutton {
+  position: absolute;
+  height: 90%;
+  top: 5%;
+  right: 10px; }
+
 #footer {
   margin-top: 10px; }
 
 #messageList {
   overflow-y: scroll; }
 
-*.md-theme-purple {
+*.md-theme-purple, #loading {
   background-color: #8b62d9 !important; }
+
+#loading {
+  position: fixed;
+  top: -1px;
+  left: -1px;
+  width: 101%;
+  height: 101%;
+  z-index: 999; }
+  #loading > div {
+    height: 60px;
+    width: 60px;
+    position: fixed;
+    top: calc(50% - 30px);
+    left: calc(50% - 30px); }
 
 md-toolbar {
   background-color: #7239DD;
-  height: 50px !important;
-  min-height: 50px !important; }
-  md-toolbar .logo {
-    height: 25px; }
+  height: 40px !important;
+  min-height: 40px !important; }
+  md-toolbar img {
+    height: 25px !important; }
+
+md-button img {
+  height: 100%; }
 
 :not(textarea) {
   border: 0px !important; }
@@ -39,5 +65,74 @@ html:not(.mobile) body {
 
 html.mobile .desktop-only {
   display: none !important; }
+
+/*** SpinKit animations: http://tobiasahlin.com/spinkit/ ***/
+/* Loading screen */
+.double-bounce1, .double-bounce2 {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: white;
+  opacity: 0.6;
+  position: absolute;
+  top: 0;
+  left: 0;
+  -webkit-animation: bounce 2.0s infinite ease-in-out;
+  animation: bounce 2.0s infinite ease-in-out; }
+
+.double-bounce2 {
+  -webkit-animation-delay: -1.0s;
+  animation-delay: -1.0s; }
+
+@-webkit-keyframes bounce {
+  0%, 100% {
+    -webkit-transform: scale(0); }
+  50% {
+    -webkit-transform: scale(1); } }
+@keyframes bounce {
+  0%, 100% {
+    transform: scale(0);
+    -webkit-transform: scale(0); }
+  50% {
+    transform: scale(1);
+    -webkit-transform: scale(1); } }
+/* Post-load spinner (on top of logo) */
+.spinner {
+  margin: 100px auto 0;
+  width: 70px;
+  text-align: center; }
+
+.spinner > div {
+  width: 18px;
+  height: 18px;
+  background-color: #333;
+  border-radius: 100%;
+  display: inline-block;
+  -webkit-animation: bouncedelay 1.4s infinite ease-in-out;
+  animation: bouncedelay 1.4s infinite ease-in-out;
+  /* Prevent first frame from flickering when animation starts */
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both; }
+
+.spinner .bounce1 {
+  -webkit-animation-delay: -0.32s;
+  animation-delay: -0.32s; }
+
+.spinner .bounce2 {
+  -webkit-animation-delay: -0.16s;
+  animation-delay: -0.16s; }
+
+@-webkit-keyframes bouncedelay {
+  0%, 80%, 100% {
+    -webkit-transform: scale(0); }
+  40% {
+    -webkit-transform: scale(1); } }
+@keyframes bouncedelay {
+  0%, 80%, 100% {
+    transform: scale(0);
+    -webkit-transform: scale(0); }
+  40% {
+    transform: scale(1);
+    -webkit-transform: scale(1); } }
 
 /*# sourceMappingURL=cyph.css.map */

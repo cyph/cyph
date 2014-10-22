@@ -1,4 +1,4 @@
-var addMessageToChat, changeState, closeChat, sendMessage, state, states, statusNotFound;
+var addMessageToChat, changeState, closeChat, isMobile, sendMessage, state, states, statusNotFound;
 
 angular.module('Cyph', ['ngMaterial']).controller('CyphController', ['$scope', function($scope) {
 	$scope.isAlive	= true;
@@ -88,49 +88,61 @@ angular.module('Cyph', ['ngMaterial']).controller('CyphController', ['$scope', f
 	};
 
 
-	/* Init */
-	cryptoInit();
-	window.onpopstate();
-}]);
+	isMobile	= (localStorage && localStorage.forceMobile && localStorage.forceMobile != 'false') || (function () {
+		try {
+			document.createEvent('TouchEvent');
+			return true;
+		}
+		catch (e) {
+			return false;
+		}
+	}());
 
-/*** onenterpress attribute handler ***/
-$('[onenterpress]').each(function () {
-	$(this).keypress(function(e) {
-		if (e.keyCode == 13 && !e.shiftKey) {
-			var onenterpress	= this.getAttribute('onenterpress');
 
-			if (onenterpress) {
-				eval(onenterpress);
-				e.preventDefault();
-			}
+	/* onenterpress attribute handler */
 
+	$('[onenterpress]').each(function () {
+		var $this			= $(this);
+		var enterpressOnly	= $this.attr('enterpress-only');
+
+		if (!enterpressOnly || enterpressOnly == (isMobile ? 'mobile' : 'desktop')) {
+			$this.keypress(function(e) {
+				if (e.keyCode == 13 && !e.shiftKey) {
+					var onenterpress	= $this.attr('onenterpress');
+
+					if (onenterpress) {
+						eval(onenterpress);
+						e.preventDefault();
+					}
+
+				}
+			});
 		}
 	});
-});
 
-var isMobile	= (function () {
-	try {
-		document.createEvent('TouchEvent');
-		return true;
-	}
-	catch (e) {
-		return false;
-	}
-}());
 
-var shouldGoFullScreen	= true;
-function fullScreen () {
-	if (shouldGoFullScreen && screenfull.enabled) {
-		if (!screenfull.isFullscreen) {
-			screenfull.request();
+	/* Init */
+
+	function setUpFullScreenEvent () {
+		function fullScreen () {
+			if (screenfull.enabled && !screenfull.isFullscreen && state == states.chat) {
+				screenfull.request();
+				$(window).off('click', fullScreen);
+			}
 		}
-		else {
-			shouldGoFullScreen	= false;
-		}
-	}
-}
 
-if (isMobile) {
-	$('html').addClass('mobile');
-	$(window).click(fullScreen);
-}
+		$(window).off('click', fullScreen);
+		$(window).click(fullScreen);
+	}
+
+	if (isMobile) {
+		$('html').addClass('mobile');
+		setUpFullScreenEvent();
+		$(document).on('hide', setUpFullScreenEvent);
+	}
+
+	cryptoInit();
+	window.onpopstate();
+
+	$('#loading').hide();
+}]);

@@ -1,0 +1,15 @@
+{
+  "name": "jquery-visibility",
+  "homepage": "https://github.com/mathiasbynens/jquery-visibility",
+  "version": "1.0.7",
+  "_release": "1.0.7",
+  "_resolution": {
+    "type": "version",
+    "tag": "v1.0.7",
+    "commit": "f4ccd34685246299ad0978df68f268d9a6a55864"
+  },
+  "_source": "git://github.com/mathiasbynens/jquery-visibility.git",
+  "_target": "~1.0.7",
+  "_originalSource": "jquery-visibility",
+  "_direct": true
+}
