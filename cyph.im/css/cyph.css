@@ -6,6 +6,12 @@
   width: 100%;
   resize: none; }
 
+.mobile #message {
+  height: 48px;
+  font-size: 21px;
+  line-height: 21px;
+  padding: 13px; }
+
 #messageWrapper {
   position: relative; }
 
