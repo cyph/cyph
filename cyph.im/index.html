@@ -37,8 +37,8 @@
 			<div class='md-toolbar-tools'>
 				<img class='logo' src='/img/logo.white.horizontal.header.png' />
 				<span flex></span>
-				<md-button>
-					|
+				<md-button aria-label='Menu'>
+					<img src='/img/icons/menu.png' />
 				</md-button>
 			</div>
 		</md-toolbar>
@@ -75,14 +75,30 @@
 			</md-content>
 		</div>
 
+		<div id='loading'>
+			<div class='double-bounce1'></div>
+			<div class='double-bounce2'></div>
+		</div>
+
 		<footer>
-			<textarea
-				id='message'
-				ng-show='state == states.chat && isAlive'
-				ng-model='message'
-				onenterpress='sendMessage()'
-				placeholder='Send a secure message...'
-			></textarea>
+			<div id='messageWrapper' ng-show='state == states.chat && isAlive'>
+				<textarea
+					id='message'
+					ng-model='message'
+					onenterpress='sendMessage()'
+					enterpress-only='desktop'
+					placeholder='Send a secure message...'
+				></textarea>
+				<md-button
+					id='sendbutton'
+					ng-show='message != ""'
+					onclick='sendMessage()'
+					class='mobile-only'
+					aria-label='Send'
+				>
+					<img src='/img/icons/send.png' />
+				</md-button>
+			</div>
 
 			<div id='footer' class='desktop-only'>
 				&copy; Cyph 2014
@@ -100,6 +116,7 @@
 
 
 		<script src='lib/bower_components/jquery/dist/jquery.min.js'></script>
+		<script src='lib/bower_components/jquery-visibility/jquery-visibility.js'></script>
 		<script src='lib/bower_components/angular/angular.min.js'></script>
 		<script src='lib/bower_components/angular-aria/angular-aria.js'></script>
 		<script src='lib/bower_components/angular-animate/angular-animate.js'></script>
