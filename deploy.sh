@@ -27,6 +27,7 @@ find . -name '*.js' | grep -v lib | xargs -I% uglifyjs "%" -o "%"
 find . -name '*.css' | xargs -I% cleancss -o "%" "%"
 find . -name '*.html' | xargs -I% html-minifier --minify-js --minify-css --remove-comments --collapse-whitespace "%" -o "%"
 
+ls */*.yaml | xargs -I% appcfg.py rollback %
 goapp deploy default/app.yaml cyph.com/cyph-com.yaml cyph.im/cyph-im.yaml cyph.me/cyph-me.yaml
 # goapp deploy default/app.yaml `ls !(default)/*.yaml | tr '\n' ' '`
 
