@@ -2,10 +2,10 @@
  * Angular Material Design
  * https://github.com/angular/material
  * @license MIT
- * v0.4.2
+ * v0.4.1
  */
 (function() {
-angular.module('ngMaterial', ["ng","ngAnimate","ngAria","material.core","material.decorators","material.animations","material.components.bottomSheet","material.components.button","material.components.card","material.components.checkbox","material.components.content","material.components.dialog","material.components.divider","material.components.icon","material.components.list","material.components.progressCircular","material.components.progressLinear","material.components.radioButton","material.components.sidenav","material.components.slider","material.components.sticky","material.components.subheader","material.components.swipe","material.components.switch","material.components.tabs","material.components.textField","material.components.toast","material.components.toolbar","material.components.tooltip","material.components.whiteframe","material.services.aria","material.services.attrBind","material.services.compiler","material.services.interimElement","material.services.media","material.services.registry"]);})();
+angular.module('ngMaterial', ["ng","ngAnimate","ngAria","material.core","material.decorators","material.animations","material.components.bottomSheet","material.components.button","material.components.card","material.components.checkbox","material.components.content","material.components.dialog","material.components.divider","material.components.icon","material.components.list","material.components.progressCircular","material.components.progressLinear","material.components.radioButton","material.components.sidenav","material.components.slider","material.components.sticky","material.components.subheader","material.components.swipe","material.components.switch","material.components.tabs","material.components.textField","material.components.toast","material.components.toolbar","material.components.tooltip","material.components.whiteframe","material.services.aria","material.services.attrBind","material.services.compiler","material.services.interimElement","material.services.registry"]);})();
 
 (function() {
   /**
@@ -45,7 +45,7 @@ angular.module('material.core')
 
 (function() {
 angular.module('material.core')
-.factory('$mdUtil', ['$cacheFactory', function($cacheFactory) {
+.factory('$mdUtil', function() {
   var SPECIAL_CHARS_REGEXP = /([\:\-\_]+(.))/g;
   /* for nextUid() function below */
   var uid = ['0','0','0'];
@@ -119,11 +119,6 @@ angular.module('material.core')
      * @see iterator below
      */
     iterator: iterator,
-
-    /**
-     * @see cacheFactory below
-     */
-    cacheFactory: cacheFactory,
 
     // Returns a function, that, as long as it continues to be invoked, will not
     // be triggered. The function will be called after it stops being called for
@@ -466,33 +461,7 @@ angular.module('material.core')
       return _items.length ? _items[_items.length - 1] : null;
     }
   }
-
-  /*
-   * Angular's $cacheFactory doesn't have a keys() method,
-   * so we add one ourself.
-   */
-  function cacheFactory(id, options) {
-    var cache = $cacheFactory(id, options);
-
-    var keys = {};
-    cache._put = cache.put;
-    cache.put = function(k,v) {
-      keys[k] = true;
-      return cache._put(k, v);
-    };
-    cache._remove = cache.remove;
-    cache.remove = function(k) {
-      delete keys[k];
-      return cache._remove(k);
-    };
-
-    cache.keys = function() {
-      return Object.keys(keys);
-    };
-
-    return cache;
-  }
-}]);
+});
 
 /* 
  * Since removing jQuery from the demos, some code that uses `element.focus()` is broken.
@@ -1246,7 +1215,7 @@ function MdButtonDirective(ngHrefDirectives, $mdInkRipple, $mdAria, $mdUtil ) {
         });
 
       return function postLink(scope, element, attr) {
-        $mdAria.expect(element, 'aria-label', true);
+        $mdAria.expect(element, 'aria-label', element.text());
         $mdInkRipple.attachButtonBehavior(element);
       };
     }
@@ -1386,6 +1355,8 @@ function MdCheckboxDirective(inputDirectives, $mdInkRipple, $mdAria, $mdConstant
     tAttrs.tabIndex = 0;
     tElement.attr('role', tAttrs.type);
 
+    $mdAria.expect(tElement, 'aria-label', tElement.text());
+
     return function postLink(scope, element, attr, ngModelCtrl) {
       var checked = false;
 
@@ -1397,8 +1368,6 @@ function MdCheckboxDirective(inputDirectives, $mdInkRipple, $mdAria, $mdConstant
         $parsers: [],
         $formatters: []
       };
-
-      $mdAria.expect(tElement, 'aria-label', true);
 
       // Reuse the original input[type=checkbox] directive from Angular core.
       // This is a bit hacky as we need our own event listener and own render
@@ -1430,6 +1399,7 @@ function MdCheckboxDirective(inputDirectives, $mdInkRipple, $mdAria, $mdConstant
 
       function render() {
         checked = ngModelCtrl.$viewValue;
+        // element.attr('aria-checked', checked);
         if(checked) {
           element.addClass(CHECKED_CSS);
         } else {
@@ -1750,7 +1720,7 @@ function MdDialogService($timeout, $rootElement, $mdEffects, $animate, $mdAria, 
       dialogContent = element;
     }
     var defaultText = $mdUtil.stringFromTextBody(dialogContent.text(), 3);
-    $mdAria.expect(element, 'aria-label', true, defaultText);
+    $mdAria.expect(element, 'aria-label', defaultText);
   }
 }
 })();
@@ -2428,7 +2398,7 @@ function mdRadioButtonDirective($mdAria, $mdUtil) {
         'aria-checked' : 'false'
       });
 
-      $mdAria.expect(element, 'aria-label', true);
+      $mdAria.expect(element, 'aria-label', element.text());
 
       /**
        * Build a unique ID for each radio button that will be used with aria-activedescendant.
@@ -2456,7 +2426,6 @@ function mdRadioButtonDirective($mdAria, $mdUtil) {
 angular.module('material.components.sidenav', [
   'material.core',
   'material.services.registry',
-  'material.services.media',
   'material.animations'
 ])
   .factory('$mdSidenav', [
@@ -2465,9 +2434,8 @@ angular.module('material.components.sidenav', [
   ])
   .directive('mdSidenav', [
     '$timeout',
-    '$animate',
-    '$parse',
-    '$mdMedia',
+    '$mdEffects',
+    '$$rAF',
     '$mdConstant',
     mdSidenavDirective 
   ])
@@ -2499,12 +2467,24 @@ function mdSidenavController($scope, $element, $attrs, $timeout, $mdSidenav, $md
   this.isOpen = function() {
     return !!$scope.isOpen;
   };
+
+  /**
+   * Toggle the side menu to open or close depending on its current state.
+   */
   this.toggle = function() {
     $scope.isOpen = !$scope.isOpen;
   };
+
+  /**
+   * Open the side menu
+   */
   this.open = function() {
     $scope.isOpen = true;
   };
+
+  /**
+   * Close the side menu
+   */
   this.close = function() {
     $scope.isOpen = false;
   };
@@ -2542,16 +2522,32 @@ function mdSidenavService($mdComponentRegistry) {
 
     return {
       isOpen: function() {
-        return instance && instance.isOpen();
+        if (!instance) { return; }
+        return instance.isOpen();
       },
+      /**
+       * Toggle the given sidenav
+       * @param handle the specific sidenav to toggle
+       */
       toggle: function() {
-        instance && instance.toggle();
+        if(!instance) { return; }
+        instance.toggle();
       },
-      open: function() {
-        instance && instance.open();
+      /**
+       * Open the given sidenav
+       * @param handle the specific sidenav to open
+       */
+      open: function(handle) {
+        if(!instance) { return; }
+        instance.open();
       },
-      close: function() {
-        instance && instance.close();
+      /**
+       * Close the given sidenav
+       * @param handle the specific sidenav to close
+       */
+      close: function(handle) {
+        if(!instance) { return; }
+        instance.close();
       }
     };
   };
@@ -2567,7 +2563,8 @@ function mdSidenavService($mdComponentRegistry) {
  *
  * A Sidenav component that can be opened and closed programatically.
  *
- * By default, upon opening it will slide out on top of the main content area.
+ * When used properly with a layout, it will seamleslly stay open on medium
+ * and larger screens, while being hidden by default on mobile devices.
  *
  * @usage
  * <hljs lang="html">
@@ -2583,9 +2580,7 @@ function mdSidenavService($mdComponentRegistry) {
  *     </md-button>
  *   </md-content>
  *
- *   <md-sidenav component-id="right" 
- *     is-locked-open="$media('min-width: 333px')"
- *     class="md-sidenav-right">
+ *   <md-sidenav component-id="right" class="md-sidenav-right">
  *     Right Nav!
  *   </md-sidenav>
  * </div>
@@ -2599,79 +2594,69 @@ function mdSidenavService($mdComponentRegistry) {
  *   };
  * });
  * </hljs>
- *
- * @param {expression=} is-open A model bound to whether the sidenav is opened.
- * @param {string=} component-id componentId to use with $mdSidenav service.
- * @param {expression=} is-locked-open When this expression evalutes to true,
- * the sidenav 'locks open': it falls into the content's flow instead
- * of appearing over it. This overrides the `is-open` attribute.
- *
- * A $media() function is exposed to the is-locked-open attribute, which
- * can be given a media query or one of the `sm`, `md` or `lg` presets.
- * Examples:
- *
- *   - `<md-sidenav is-locked-open="shouldLockOpen"></md-sidenav>`
- *   - `<md-sidenav is-locked-open="$media('min-width: 1000px')"></md-sidenav>`
- *   - `<md-sidenav is-locked-open="$media('sm')"></md-sidenav>` <!-- locks open on small screens !-->
  */
-function mdSidenavDirective($timeout, $animate, $parse, $mdMedia, $mdConstant) {
+function mdSidenavDirective($timeout, $mdEffects, $$rAF, $mdConstant) {
   return {
     restrict: 'E',
-    scope: {
-      isOpen: '=?'
-    },
+    scope: {},
     controller: '$mdSidenavController',
-    compile: function(element) {
-      element.addClass('closed');
-      element.attr('tabIndex', '-1');
-      return postLink;
-    }
+    compile: compile
   };
 
-  function postLink(scope, element, attr, sidenavCtrl) {
-    var isLockedOpenParsed = $parse(attr.isLockedOpen);
-    var backdrop = angular.element(
-      '<md-backdrop class="md-sidenav-backdrop opaque">'
-    );
+  function compile(element, attr) {
+    element.addClass('closed');
 
-    scope.$watch('isOpen', setOpen);
-    scope.$watch(function() {
-      return isLockedOpenParsed(scope.$parent, {
-        $media: $mdMedia
-      });
-    }, function(isLocked) {
-      element.toggleClass('locked-open', !!isLocked);
-      backdrop.toggleClass('locked-open', !!isLocked);
-    });
+    return postLink;
+  }
+  function postLink(scope, element, attr, sidenavCtrl) {
+    var backdrop = angular.element('<md-backdrop class="md-sidenav-backdrop">');
+
+    scope.$watch('isOpen', onShowHideSide);
+    element.on($mdEffects.TRANSITIONEND_EVENT, onTransitionEnd);
 
     /**
      * Toggle the SideNav view and attach/detach listeners
      * @param isOpen
      */
-    function setOpen(isOpen) {
+    function onShowHideSide(isOpen) {
       var parent = element.parent();
 
-      parent[isOpen ? 'on' : 'off']('keydown', onKeyDown);
-      $animate[isOpen ? 'enter' : 'leave'](backdrop, parent);
-      backdrop[isOpen ? 'on' : 'off']('click', close);
+      if (isOpen) {
+        element.removeClass('closed');
 
-      $animate[isOpen ? 'removeClass' : 'addClass'](element, 'closed').then(function() {
-        // If we opened, and haven't closed again before the animation finished
-        if (scope.isOpen) {
-          element.focus();
-        }
+        parent.append(backdrop);
+        backdrop.on('click', close);
+        parent.on('keydown', onKeyDown);
+
+      } else {
+        backdrop.remove();
+        backdrop.off('click', close);
+        parent.off('keydown', onKeyDown);
+      }
+
+      // Wait until the next frame, so that if the `closed` class was just removed the 
+      // element has a chance to 're-initialize' from being display: none.
+      $$rAF(function() {
+        element.toggleClass('open', !!scope.isOpen);
       });
+    }
+
+    function onTransitionEnd(ev) {
+      if (ev.target === element[0] && !scope.isOpen) {
+        element.addClass('closed');
+      }
     }
 
     /**
      * Auto-close sideNav when the `escape` key is pressed.
      * @param evt
      */
-    function onKeyDown(ev) {
-      if (ev.which === $mdConstant.KEY_CODE.ESCAPE) {
+    function onKeyDown(evt) {
+      if(evt.which === $mdConstant.KEY_CODE.ESCAPE){
         close();
-        ev.preventDefault();
-        ev.stopPropagation();
+
+        evt.preventDefault();
+        evt.stopPropagation();
       }
     }
 
@@ -2681,6 +2666,9 @@ function mdSidenavDirective($timeout, $animate, $parse, $mdMedia, $mdConstant) {
      * to close() and perform its own actions.
      */
     function close() {
+
+      onShowHideSide( false );
+
       $timeout(function(){
         sidenavCtrl.close();
       });
@@ -2803,7 +2791,6 @@ function SliderController(scope, element, attr, $$rAF, $window, $mdEffects, $mdA
     var trackContainer = angular.element(element[0].querySelector('.slider-track-container'));
     var activeTrack = angular.element(element[0].querySelector('.slider-track-fill'));
     var tickContainer = angular.element(element[0].querySelector('.slider-track-ticks'));
-    var throttledRefreshDimensions = $mdUtil.throttle(refreshSliderDimensions, 5000);
 
     // Default values, overridable by attrs
     attr.min ? attr.$observe('min', updateMin) : updateMin(0);
@@ -2820,8 +2807,7 @@ function SliderController(scope, element, attr, $$rAF, $window, $mdEffects, $mdA
       updateAriaDisabled(!!attr.disabled);
     }
 
-    $mdAria.expect(element, 'aria-label', false);
-
+    $mdAria.expect(element, 'aria-label');
     element.attr('tabIndex', 0);
     element.attr('role', 'slider');
     element.on('keydown', keydownListener);
@@ -2910,6 +2896,7 @@ function SliderController(scope, element, attr, $$rAF, $window, $mdEffects, $mdA
      * Refreshing Dimensions
      */
     var sliderDimensions = {};
+    var throttledRefreshDimensions = $mdUtil.throttle(refreshSliderDimensions, 5000);
     refreshSliderDimensions();
     function refreshSliderDimensions() {
       sliderDimensions = trackContainer[0].getBoundingClientRect();
@@ -3260,7 +3247,6 @@ function MdSticky($document, $mdEffects, $compile, $$rAF, $mdUtil) {
         current = current.offsetParent;
       }
       item.height = item.element.prop('offsetHeight');
-      item.clone.css('margin-left', item.left + 'px');
     }
 
 
@@ -4484,13 +4470,12 @@ angular.module('material.components.whiteframe', []);
 angular.module('material.services.aria', [])
 
 .service('$mdAria', [
-  '$$rAF',
   '$log',
   AriaService
 ]);
 
-function AriaService($$rAF, $log) {
-  var messageTemplate = 'ARIA: Attribute "%s", required for accessibility, is missing on "%s"';
+function AriaService($log) {
+  var messageTemplate = 'ARIA: Attribute "%s", required for accessibility, is missing on "%s"!';
   var defaultValueTemplate = 'Default value was set: %s="%s".';
 
   return {
@@ -4501,31 +4486,23 @@ function AriaService($$rAF, $log) {
    * Check if expected ARIA has been specified on the target element
    * @param element
    * @param attrName
-   * @param copyElementText
-   * @param {optional} defaultValue
+   * @param defaultValue
    */
-  function expectAttribute(element, attrName, copyElementText, defaultValue) {
+  function expectAttribute(element, attrName, defaultValue) {
 
-    $$rAF(function(){
+    var node = element[0];
+    if (!node.hasAttribute(attrName)) {
+      var hasDefault = angular.isDefined(defaultValue);
 
-      var node = element[0];
-      if (!node.hasAttribute(attrName)) {
-
-        var hasDefault;
-        if(copyElementText === true){
-          if(!defaultValue) defaultValue = element.text().trim();
-          hasDefault = angular.isDefined(defaultValue) && defaultValue.length;
-        }
-
-        if (hasDefault) {
-          defaultValue = String(defaultValue).trim();
-          element.attr(attrName, defaultValue);
-        } else {
-          $log.warn(messageTemplate, attrName, node);
-          $log.warn(node);
-        }
+      if (hasDefault) {
+        defaultValue = String(defaultValue).trim();
+        // $log.warn(messageTemplate + ' ' + defaultValueTemplate,
+        //           attrName, getTagString(node), attrName, defaultValue);
+        element.attr(attrName, defaultValue);
+      } else {
+        // $log.warn(messageTemplate, attrName, getTagString(node));
       }
-    });
+    }
   }
 
 
@@ -4978,63 +4955,6 @@ function InterimElementFactory($q, $rootScope, $timeout, $rootElement, $animate,
   };
 }
 
-})();
-
-(function() {
-angular.module('material.services.media', [
-  'material.core'
-])
-
-.factory('$mdMedia', [
-  '$window',
-  '$mdUtil',
-  '$timeout',
-  mdMediaFactory
-]);
-
-function mdMediaFactory($window, $mdUtil, $timeout) {
-  var cache = $mdUtil.cacheFactory('$mdMedia', { capacity: 15 });
-  var presets = {
-    sm: '(min-width: 600px)',
-    md: '(min-width: 960px)',
-    lg: '(min-width: 1200px)'
-  };
-
-  angular.element($window).on('resize', updateAll);
-
-  return $mdMedia;
-
-  function $mdMedia(query) {
-    query = validate(query);
-    var result;
-    if ( !angular.isDefined(result = cache.get(query)) ) {
-      return add(query);
-    }
-    return result;
-  }
-
-  function validate(query) {
-    return presets[query] || (
-      query.charAt(0) != '(' ?  ('(' + query + ')') : query
-    );
-  }
-
-  function add(query) {
-    return cache.put(query, !!$window.matchMedia(query).matches);
-  }
-  
-  function updateAll() {
-    var keys = cache.keys();
-    if (keys.length) {
-      for (var i = 0, ii = keys.length; i < ii; i++) {
-        cache.put(keys[i], !!$window.matchMedia(keys[i]).matches);
-      }
-      // trigger an $digest()
-      $timeout(angular.noop);
-    }
-  }
-
-}
 })();
 
 (function() {
@@ -5695,7 +5615,7 @@ function MdTabDirective($mdInkRipple, $compile, $mdAria, $mdUtil, $mdConstant) {
           'aria-labelledby': tabId
         });
 
-        $mdAria.expect(element, 'aria-label', true);
+        $mdAria.expect(element, 'aria-label', element.text());
       }
 
     };

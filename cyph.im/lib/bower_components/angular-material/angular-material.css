@@ -2,10 +2,11 @@
  * Angular Material Design
  * https://github.com/angular/material
  * @license MIT
- * v0.4.2
+ * v0.4.1
  */
 *, *:before, *:after {
-  box-sizing: border-box; }
+  -moz-box-sizing: border-box;
+       box-sizing: border-box; }
 
 :focus {
   outline: none; }
@@ -88,10 +89,12 @@ textarea {
 
 input[type="radio"], input[type="checkbox"] {
   padding: 0;
-  box-sizing: border-box; }
+  -moz-box-sizing: border-box;
+       box-sizing: border-box; }
 input[type="search"] {
   -webkit-appearance: textfield;
-  box-sizing: content-box;
+  -moz-box-sizing: content-box;
+       box-sizing: content-box;
   -webkit-box-sizing: content-box; }
   input[type="search"]::-webkit-search-decoration, input[type="search"]::-webkit-search-cancel-button {
     -webkit-appearance: none; }
@@ -257,7 +260,8 @@ input[type="search"] {
           transition: box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1); }
 
 [layout] {
-  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+       box-sizing: border-box;
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -1304,7 +1308,7 @@ md-backdrop {
   -webkit-transition: all 0.2s ease-out;
           transition: all 0.2s ease-out; }
   md-backdrop.opaque {
-    background-color: rgba(0, 0, 0, 0.3); }
+    background-color: rgba(0, 0, 0, 0.4); }
   md-backdrop.ng-enter {
     -webkit-transition-delay: 0.1s;
             transition-delay: 0.1s; }
@@ -1463,7 +1467,8 @@ md-bottom-sheet {
         width: 48px; }
       md-bottom-sheet.grid md-item .md-icon-container {
         display: inline-block;
-        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+             box-sizing: border-box;
         height: 48px;
         width: 48px;
         margin: 8px 0; }
@@ -1642,7 +1647,8 @@ md-button {
 
 md-card {
   display: block;
-  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+       box-sizing: border-box;
   box-shadow: 0px 2px 5px 0 rgba(0, 0, 0, 0.26);
   margin: 8px;
   padding: 8px;
@@ -1797,7 +1803,8 @@ md-dialog {
     display: -ms-flexbox;
     display: flex;
     flex-order: 2;
-    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+         box-sizing: border-box;
     -webkit-box-align: center;
     -webkit-align-items: center;
         -ms-flex-align: center;
@@ -1851,7 +1858,8 @@ md-item-content {
   -webkit-flex-direction: row;
       -ms-flex-direction: row;
           flex-direction: row;
-  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+       box-sizing: border-box;
   position: relative;
   padding: 0px 0px 0px 0px; }
 
@@ -2514,46 +2522,41 @@ md-sidenav {
   position: absolute;
   width: 304px;
   bottom: 0;
-  z-index: 8;
   background-color: white;
-  overflow: auto; }
-  md-sidenav.closed {
-    display: none; }
-  md-sidenav.closed-add, md-sidenav.closed-remove {
-    display: block;
-    /* this is required as of 1.3x to properly
-       apply all styling in a show/hide animation */
-    -webkit-transition: 0s all;
-            transition: 0s all; }
-  md-sidenav.closed-add.closed-add-active, md-sidenav.closed-remove.closed-remove-active {
-    -webkit-transition: -webkit-transform 0.3s ease-in-out;
-            transition: transform 0.3s ease-in-out; }
-  md-sidenav.locked-open, md-sidenav.locked-open.closed, md-sidenav.locked-open.closed.material-sidenav-left, md-sidenav.locked-open.closed, md-sidenav.locked-open.closed.material-sidenav-right {
-    position: static;
-    display: block;
-    -webkit-transform: translate3d(0, 0, 0);
-            transform: translate3d(0, 0, 0); }
+  -webkit-transition: -webkit-transform 0.3s ease-in-out;
+          transition: transform 0.3s ease-in-out; }
 
-.md-sidenav-backdrop.locked-open {
-  display: none; }
-
-.md-sidenav-left {
+.md-sidenav-left, md-sidenav {
   left: 0;
   top: 0;
-  -webkit-transform: translate3d(0%, 0, 0);
-          transform: translate3d(0%, 0, 0); }
-  .md-sidenav-left.closed {
-    -webkit-transform: translate3d(-100%, 0, 0);
-            transform: translate3d(-100%, 0, 0); }
+  -webkit-transform: translate3d(-100%, 0, 0);
+          transform: translate3d(-100%, 0, 0); }
+  .md-sidenav-left.open, md-sidenav.open {
+    -webkit-transform: translate3d(0%, 0, 0);
+            transform: translate3d(0%, 0, 0);
+    z-index: 8; }
 
 .md-sidenav-right {
   left: 100%;
   top: 0;
-  -webkit-transform: translate3d(-100%, 0, 0);
-          transform: translate3d(-100%, 0, 0); }
-  .md-sidenav-right.closed {
-    -webkit-transform: translate3d(0%, 0, 0);
-            transform: translate3d(0%, 0, 0); }
+  -webkit-transform: translate3d(100%, 0, 0);
+          transform: translate3d(100%, 0, 0); }
+  .md-sidenav-right.open {
+    -webkit-transform: translate3d(-100%, 0, 0);
+            transform: translate3d(-100%, 0, 0);
+    z-index: 8; }
+
+@media (min-width: 960px) {
+  md-sidenav {
+    position: static;
+    -webkit-transform: translate3d(0, 0, 0) !important;
+            transform: translate3d(0, 0, 0) !important; }
+  .md-sidenav-backdrop {
+    display: none !important; } }
+
+@media (max-width: 416px) {
+  md-sidenav {
+    max-width: 75%; } }
 
 @-webkit-keyframes sliderFocusThumb {
   0% {
@@ -2904,7 +2907,8 @@ md-tabs {
 .tabs-header {
   width: 100%;
   height: 48px;
-  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+       box-sizing: border-box;
   position: relative;
   background-color: #4285F4; }
 
@@ -2967,7 +2971,8 @@ md-tabs[center] .tabs-header:not(.tab-paginating) .tabs-header-items {
     display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;
-    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+         box-sizing: border-box;
     -webkit-transition: -webkit-transform 0.2s linear;
             transition: transform 0.2s linear;
     -webkit-transform: translate3d(0, 0, 0);
@@ -2984,7 +2989,8 @@ md-tabs[center] .tabs-header:not(.tab-paginating) .tabs-header-items {
 md-tabs-ink-bar {
   left: 0;
   bottom: 0;
-  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+       box-sizing: border-box;
   -webkit-transition: all 0.2s linear;
           transition: all 0.2s linear; }
 
@@ -3005,7 +3011,8 @@ md-tab {
   -webkit-justify-content: center;
       -ms-flex-pack: center;
           justify-content: center;
-  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+       box-sizing: border-box;
   position: relative;
   z-index: 0;
   overflow: hidden;
@@ -3202,7 +3209,8 @@ md-toast {
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+       box-sizing: border-box;
   -webkit-box-align: center;
   -webkit-align-items: center;
       -ms-flex-align: center;
@@ -3501,16 +3509,21 @@ md-tooltip {
             animation-duration: 200ms; }
 
 .md-whiteframe-z1 {
+  z-index: 1;
   box-shadow: 0px 2px 5px 0 rgba(0, 0, 0, 0.26); }
 
 .md-whiteframe-z2 {
+  z-index: 2;
   box-shadow: 0px 8px 17px rgba(0, 0, 0, 0.2); }
 
 .md-whiteframe-z3 {
+  z-index: 3;
   box-shadow: 0px 17px 50px rgba(0, 0, 0, 0.19); }
 
 .md-whiteframe-z4 {
+  z-index: 4;
   box-shadow: 0px 16px 28px 0 rgba(0, 0, 0, 0.22); }
 
 .md-whiteframe-z5 {
+  z-index: 5;
   box-shadow: 0px 27px 24px 0 rgba(0, 0, 0, 0.2); }

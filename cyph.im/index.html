@@ -67,7 +67,7 @@
 					<md-item ng-repeat='message in messages' layout='horizontal'>
 						<span>
 							<strong ng-hide='message.isFromApp'>{{message.author}}: </strong>
-							<span ng-class='{appMessage: message.isFromApp}'>{{message.text}}</span>
+							<span btf-markdown='message.text' ng-class='{appMessage: message.isFromApp}'></span>
 						</span>
 						<span flex style='text-align: right'>{{message.timestamp}}</span>
 					</md-item>
@@ -122,6 +122,9 @@
 		<script src='lib/bower_components/angular-animate/angular-animate.js'></script>
 		<script src='lib/bower_components/hammerjs/hammer.js'></script>
 		<script src='lib/bower_components/angular-material/angular-material.js'></script>
+		<script src='lib/bower_components/angular-sanitize/angular-sanitize.min.js'></script>
+		<script src='lib/bower_components/showdown/compressed/showdown.js'></script>
+		<script src='lib/bower_components/angular-markdown-directive/markdown.js'></script>
 		<script src='lib/bower_components/screenfull/dist/screenfull.min.js'></script>
 		<script src='lib/bower_components/otr/build/dep/bigint.js'></script>
 		<script src='lib/bower_components/otr/build/dep/crypto.js'></script>
