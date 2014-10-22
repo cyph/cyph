@@ -54,6 +54,12 @@ md-toolbar {
 md-button img {
   height: 100%; }
 
+btf-markdown > p:first-child, [btf-markdown] > p:first-child {
+  display: inline; }
+btf-markdown > p:not(:first-child), [btf-markdown] > p:not(:first-child) {
+  margin: 0px;
+  margin-left: 25px; }
+
 :not(textarea) {
   border: 0px !important; }
 

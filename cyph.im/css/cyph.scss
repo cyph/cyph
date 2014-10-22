@@ -71,6 +71,17 @@ md-button {
 	}
 }
 
+btf-markdown, [btf-markdown] {
+	> p:first-child {
+		display: inline;
+	}
+
+	> p:not(:first-child) {
+		margin: 0px;
+		margin-left: 25px;
+	}
+}
+
 :not(textarea) {
 	border: 0px !important;
 }
