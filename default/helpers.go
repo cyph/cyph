@@ -21,6 +21,7 @@ type Handler func(HandlerArgs) (interface{}, int)
 type Handlers map[string]Handler
 
 type ImData struct {
+	Id      string
 	Destroy bool
 	Message string
 	Misc    string
@@ -55,6 +56,7 @@ var methods = struct {
 }
 
 var laterImTeardown = delay.Func("imTeardown", imTeardown)
+var laterSendChannelMessage = delay.Func("sendChannelMessage", sendChannelMessageTask)
 
 var empty = struct{}{}
 
