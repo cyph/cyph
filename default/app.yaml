@@ -10,3 +10,5 @@ handlers:
 - url: .*
   script: _go_app
   secure: always
+  http_headers:
+    Access-Control-Allow-Methods: POST,GET,OPTIONS,PUT,DELETE
