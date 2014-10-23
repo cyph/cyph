@@ -73,7 +73,10 @@ func imCreate(h HandlerArgs) (interface{}, int) {
 		}
 	}
 
-	imIdItems := []memcache.Item{{Key: imId + "0"}, {Key: imId + "1", Value: []byte{}}}
+	imIdItems := []memcache.Item{
+		{Key: imId + "0", Expiration: config.DefaultMemcacheExpiration * time.Minute},
+		{Key: imId + "1", Value: []byte{}, Expiration: config.DefaultMemcacheExpiration * time.Minute},
+	}
 	memcache.Set(h.Context, &imIdItems[1])
 
 	for i := range imIdItems {

@@ -5,10 +5,11 @@ import (
 )
 
 var config = struct {
-	AllowedOrigins     map[string]none
-	IMConnectTimeout   time.Duration
-	MessageSendTimeout time.Duration
-	MessageSendRetries int
+	AllowedOrigins            map[string]none
+	DefaultMemcacheExpiration time.Duration
+	IMConnectTimeout          time.Duration
+	MessageSendTimeout        time.Duration
+	MessageSendRetries        int
 }{
 	map[string]none{
 		"cyph.com":          empty,
