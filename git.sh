@@ -16,11 +16,11 @@ mv goog.appengine.Channel.js.new goog.appengine.Channel.js
 cd ../..
 find . -name '*.go' -print0 | xargs -0 -I% gofmt -w "%"
 ./sassupdate.sh
-for d in $(find . -type d -name bower_components | perl -pe 's/(.*)bower_components/\1/g') ; do
-	cd "${d}"
-	bower update
-	cd "${scriptdir}"
-done
+# for d in $(find . -type d -name bower_components | perl -pe 's/(.*)bower_components/\1/g') ; do
+# 	cd "${d}"
+# 	bower update
+# 	cd "${scriptdir}"
+# done
 chmod -R 777 .
 git commit -a -m "gofmt, sass compile, lib updates: ${*}"
 git push
