@@ -10,6 +10,5 @@
   },
   "_source": "git://github.com/mathiasbynens/jquery-visibility.git",
   "_target": "~1.0.7",
-  "_originalSource": "jquery-visibility",
-  "_direct": true
+  "_originalSource": "jquery-visibility"
 }
