@@ -103,7 +103,14 @@ func handleFuncs(pattern string, handlers Handlers) {
 	}
 
 	router.HandleFunc(pattern, func(w http.ResponseWriter, r *http.Request) {
-		if handler, ok := handlers[r.Method]; ok {
+		var method string
+		if m, ok := r.Header["Access-Control-Request-Method"]; ok && len(m) > 0 {
+			method = m[0]
+		} else {
+			method = r.Method
+		}
+
+		if handler, ok := handlers[method]; ok {
 			initHandler(w, r)
 
 			responseBody, responseCode := handler(HandlerArgs{appengine.NewContext(r), r, w, mux.Vars(r)})
