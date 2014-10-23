@@ -25,6 +25,8 @@ var config = struct {
 		"beta.api.cyph.com": empty,
 	},
 
+	30,
+
 	10,
 
 	15,
