@@ -29,7 +29,7 @@ func channelClose(h HandlerArgs) (interface{}, int) {
 	idBase := id[:len(id)-1]
 
 	item := memcache.Item{Key: id + "-closed", Value: []byte{}, Expiration: config.MessageSendTimeout * time.Minute}
-	memcache.Set(c, &item)
+	memcache.Set(h.Context, &item)
 
 	for i := 0; i < 2; i++ {
 		thisId := idBase + strconv.Itoa(i)
@@ -118,7 +118,7 @@ func sendChannelMessage(c appengine.Context, channelId string, imData ImData) {
 
 	imData.Id = id
 	b, _ := json.Marshal(imData)
-	imDataString = string(b)
+	imDataString := string(b)
 
 	laterSendChannelMessage.Call(c, id, channelId, imDataString)
 }

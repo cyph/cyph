@@ -10,23 +10,19 @@ git add .
 git commit -a -m "${*}"
 git push
 
+cd cyph.im/lib
+rm goog.appengine.Channel.js
+wget https://api.cyph.com/_ah/channel/jsapi -O goog.appengine.Channel.js
+cd ../..
 find . -name '*.go' -print0 | xargs -0 -I% gofmt -w "%"
-chmod -R 777 .
-git commit -a -m "gofmt: ${*}"
-git push
-
 ./sassupdate.sh
-chmod -R 777 .
-git commit -a -m "sass compile: ${*}"
-git push
-
 for d in $(find . -type d -name bower_components | perl -pe 's/(.*)bower_components/\1/g') ; do
 	cd "${d}"
 	bower update
 	cd "${scriptdir}"
 done
 chmod -R 777 .
-git commit -a -m "bower update: ${*}"
+git commit -a -m "gofmt, sass compile, lib updates: ${*}"
 git push
 
 cd "${dir}"

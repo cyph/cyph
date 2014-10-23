@@ -18,11 +18,6 @@ cd github.com/gorilla
 git clone git://github.com/gorilla/mux.git
 cd ../../..
 
-cd cyph.im/lib
-rm goog.appengine.Channel.js
-wget https://api.cyph.com/_ah/channel/jsapi -O goog.appengine.Channel.js
-cd ../..
-
 find . -name '*.js' | grep -v lib | xargs -I% uglifyjs "%" -o "%"
 find . -name '*.css' | xargs -I% cleancss -o "%" "%"
 find . -name '*.html' | xargs -I% html-minifier --minify-js --minify-css --remove-comments --collapse-whitespace "%" -o "%"
