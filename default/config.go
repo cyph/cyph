@@ -27,9 +27,9 @@ var config = struct {
 	10,
 
 	15,
-}
 
-config.MessageSendRetries = (config.MessageSendTimeout - 5) * 6,
+	(config.MessageSendTimeout - 5) * 6,
+}
 
 var imIdAddressSpace = []string{
 	"0",
