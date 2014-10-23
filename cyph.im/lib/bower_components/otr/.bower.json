@@ -15,6 +15,5 @@
   },
   "_source": "git://github.com/arlolra/otr.git",
   "_target": "~0.2.13",
-  "_originalSource": "otr",
-  "_direct": true
+  "_originalSource": "otr"
 }
