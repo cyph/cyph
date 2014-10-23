@@ -15,16 +15,25 @@ func init() {
 	handleFuncs("/ims", Handlers{methods.POST: imCreate})
 	handleFuncs("/ims/{id}", Handlers{methods.POST: imConnect})
 	handleFuncs("/channels/{id}", Handlers{methods.POST: channelReceive})
+	handleFuncs("/messages/{id}", Handlers{methods.PUT: channelAck})
 	handleFuncs("/_ah/channel/disconnected/", Handlers{methods.POST: channelClose})
+}
+
+func channelAck(h HandlerArgs) (interface{}, int) {
+	memcache.Delete(h.Context, h.Vars["id"])
+	return nil, http.StatusOK
 }
 
 func channelClose(h HandlerArgs) (interface{}, int) {
 	id := h.Request.FormValue("from")
 	idBase := id[:len(id)-1]
 
+	item := memcache.Item{Key: id + "-closed", Value: []byte{}, Expiration: config.MessageSendTimeout * time.Minute}
+	memcache.Set(c, &item)
+
 	for i := 0; i < 2; i++ {
 		thisId := idBase + strconv.Itoa(i)
-		channel.SendJSON(h.Context, thisId, ImData{Destroy: true})
+		sendChannelMessage(h.Context, thisId, ImData{Destroy: true})
 	}
 
 	return nil, http.StatusOK
@@ -34,15 +43,7 @@ func channelReceive(h HandlerArgs) (interface{}, int) {
 	imData := getImDataFromRequest(h)
 
 	if imData.Destroy != false || imData.Message != "" || (imData.Misc != "" && imData.Misc != "pong") {
-		for i := 0; i < 5; i++ {
-			err := channel.SendJSON(h.Context, h.Vars["id"], imData)
-
-			if err != nil {
-				time.Sleep(time.Second)
-			} else {
-				break
-			}
-		}
+		sendChannelMessage(h.Context, h.Vars["id"], imData)
 	}
 
 	return nil, http.StatusOK
@@ -78,15 +79,15 @@ func imCreate(h HandlerArgs) (interface{}, int) {
 	for i := range imIdItems {
 		channelId := longId + strconv.Itoa(i)
 
-		var otherchannelId string
+		var otherChannelId string
 		if i == 0 {
-			otherchannelId = longId + "1"
+			otherChannelId = longId + "1"
 		} else {
-			otherchannelId = longId + "0"
+			otherChannelId = longId + "0"
 		}
 
 		token, _ := channel.Create(h.Context, channelId)
-		val, _ := json.Marshal(ImSetup{ChannelId: otherchannelId, ChannelToken: token, IsCreator: i == 0})
+		val, _ := json.Marshal(ImSetup{ChannelId: otherChannelId, ChannelToken: token, IsCreator: i == 0})
 		imIdItems[i].Value = val
 		memcache.Set(h.Context, &imIdItems[i])
 	}
@@ -107,4 +108,37 @@ func imTeardown(c appengine.Context, longId string, key0 string, key1 string, va
 
 func root(h HandlerArgs) (interface{}, int) {
 	return "Welcome to Cyph, lad", http.StatusOK
+}
+
+func sendChannelMessage(c appengine.Context, channelId string, imData ImData) {
+	id := generateLongId()
+
+	item := memcache.Item{Key: id, Value: []byte{}, Expiration: config.MessageSendTimeout * time.Minute}
+	memcache.Set(c, &item)
+
+	imData.Id = id
+	b, _ := json.Marshal(imData)
+	imDataString = string(b)
+
+	laterSendChannelMessage.Call(c, id, channelId, imDataString)
+}
+
+func sendChannelMessageTask(c appengine.Context, id string, channelId string, imData string) {
+	/* Retry every 10 seconds until timeout before giving up, but stop if channel dies */
+
+	channelClosed := channelId + "-closed"
+
+	for i := 0; i < config.MessageSendRetries; i++ {
+		if _, err := memcache.Get(c, channelClosed); err != memcache.ErrCacheMiss {
+			break
+		}
+
+		if _, err := memcache.Get(c, id); err == memcache.ErrCacheMiss {
+			break
+		} else {
+			channel.Send(c, channelId, imData)
+		}
+
+		time.Sleep(10 * time.Second)
+	}
 }

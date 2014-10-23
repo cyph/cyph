@@ -5,8 +5,10 @@ import (
 )
 
 var config = struct {
-	AllowedOrigins   map[string]none
-	IMConnectTimeout time.Duration
+	AllowedOrigins     map[string]none
+	IMConnectTimeout   time.Duration
+	MessageSendTimeout time.Duration
+	MessageSendRetries int
 }{
 	map[string]none{
 		"cyph.com":          empty,
@@ -23,7 +25,11 @@ var config = struct {
 	},
 
 	10,
+
+	15,
 }
+
+config.MessageSendRetries = (config.MessageSendTimeout - 5) * 6,
 
 var imIdAddressSpace = []string{
 	"0",

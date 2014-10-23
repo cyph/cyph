@@ -54,9 +54,9 @@ md-toolbar {
 md-button img {
   height: 100%; }
 
-btf-markdown > p:first-child, [btf-markdown] > p:first-child {
+btf-markdown > :first-child, [btf-markdown] > :first-child {
   display: inline; }
-btf-markdown > p:not(:first-child), [btf-markdown] > p:not(:first-child) {
+btf-markdown > :not(:first-child), [btf-markdown] > :not(:first-child) {
   margin: 0px;
   margin-left: 25px; }
 

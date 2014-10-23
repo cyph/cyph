@@ -96,6 +96,8 @@ function setUpChannel (channelData) {
 	channel			= new goog.appengine.Channel(channelData.ChannelToken);
 	channel.data	= channelData;
 
+	var receivedMessages	= {};
+
 	socket	= channel.open({
 		onopen: function () {
 			if (channel.data.IsCreator) {
@@ -117,15 +119,20 @@ function setUpChannel (channelData) {
 		onmessage: function (data) {
 			var o	= JSON.parse(data.data);
 
-			if (o.Misc == 'ping') {
-				sendChannelData({Misc: 'pong'});
-			}
-			if (o.Message) {
-				otr.receiveMsg(o.Message);
-			}
-			if (o.Destroy) {
-				closeChat();
-				socket.close();
+			if (!receivedMessages[o.Id]) {
+				receivedMessages[o.Id]	= true;
+				$.ajax({type: 'PUT', url: BASE_URL + 'messages/' + o.Id});
+
+				if (o.Misc == 'ping') {
+					sendChannelData({Misc: 'pong'});
+				}
+				if (o.Message) {
+					otr.receiveMsg(o.Message);
+				}
+				if (o.Destroy) {
+					closeChat();
+					socket.close();
+				}
 			}
 		},
 		onerror: function () {},
