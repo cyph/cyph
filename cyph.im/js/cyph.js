@@ -39,7 +39,17 @@ function cryptoInit () {
 		if (!isConnected) {
 			if (state == OTR.CONST.STATUS_AKE_SUCCESS) {
 				isConnected	= true;
+
 				changeState(states.chat);
+
+				$(window).on('beforeunload', function () {
+					return 'After closing Cyph, your messages will no longer be retrievable.';
+				});
+
+				$(window).unload(function () {
+					sendChannelData({Destroy: true}, {async: false});
+					socket.close();
+				});
 			}
 			else {
 				changeState(states.settingUpCrypto);
@@ -137,15 +147,6 @@ function setUpChannel (channelData) {
 		},
 		onerror: function () {},
 		onclose: closeChat
-	});
-
-	$(window).on('beforeunload', function () {
-		return 'After closing Cyph, your messages will no longer be retrievable.';
-	});
-
-	$(window).unload(function () {
-		sendChannelData({Destroy: true}, {async: false});
-		socket.close();
 	});
 }
 
