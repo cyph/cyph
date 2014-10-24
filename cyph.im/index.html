@@ -97,7 +97,7 @@
 					<md-item ng-repeat='message in messages' layout='horizontal'>
 						<span class='message'>
 							<strong ng-hide='message.isFromApp'>{{message.author}}: </strong>
-							<span btf-markdown='message.text' ng-class='{appMessage: message.isFromApp}'></span>
+							<span btf-markdown='message.text' ng-class='{"app-message": message.isFromApp}'></span>
 						</span>
 						<span flex style='text-align: right'>{{message.timestamp}}</span>
 					</md-item>
@@ -111,9 +111,10 @@
 		</div>
 
 		<footer>
-			<div id='messageWrapper' ng-show='state == states.chat && isAlive'>
+			<div id='footer-left' class='desktop-only'>&nbsp;</div>
+			<div id='message-wrapper' ng-show='state == states.chat && isAlive'>
 				<textarea
-					id='messageBox'
+					id='message-box'
 					ng-model='message'
 					onenterpress='sendMessage()'
 					enterpress-only='desktop'
