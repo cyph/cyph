@@ -31,17 +31,47 @@
 
 		<link rel='stylesheet' href='css/cyph.css' />
 	</head>
-	<body ng-controller='CyphController' layout='vertical' layout-fill class='md-theme-purple'>
+	<body ng-controller='CyphController' layout='vertical' layout-fill>
 
 		<md-toolbar class='mobile-only'>
 			<div class='md-toolbar-tools'>
-				<img class='logo' src='/img/logo.white.horizontal.header.png' />
+				<a class='logo' href='https://www.cyph.com' target='_blank'>
+					<img deferred-src='/img/logo.white.horizontal.header.png' />
+				</a>
 				<span flex></span>
-				<md-button aria-label='Menu'>
-					<img src='/img/icons/menu.png' />
+				<md-button aria-label='Menu' ng-click='openMobileMenu()'>
+					<img deferred-src='/img/icons/menu.png' />
 				</md-button>
 			</div>
 		</md-toolbar>
+
+		<div class='mobile-only'>
+			<md-sidenav component-id='menu' class='md-sidenav-right'>
+				<md-toolbar>
+					<h1 class='md-toolbar-tools'>Settings</h1>
+				</md-toolbar>
+				<md-content class='md-content-padding'>
+					<div>
+						<md-button ng-click='twoFactor()'>Verify identity</md-button>
+					</div>
+					<div>
+						<md-button ng-click='showCyphertext()'>Why is this secure?</md-button>
+					</div>
+					<div>
+						<md-button ng-click='disconnect()'>Disconnect</md-button>
+					</div>
+				</md-content>
+			</md-sidenav>
+		</div>
+
+		<div id='desktop-sidebar' class='desktop-only'>
+			<a class='logo' href='https://www.cyph.com' target='_blank'>
+				<img deferred-src='/img/logo.white.vertical.png' />
+			</a>
+			<md-button ng-click='twoFactor()'>Verify identity</md-button>
+			<md-button ng-click='showCyphertext()'>Why is this secure?</md-button>
+			<md-button ng-click='disconnect()'>Disconnect</md-button>
+		</div>
 
 		<div flex ng-show='state == states.spinningUp'>
 			Now spinning up your cyph room...
@@ -65,7 +95,7 @@
 			<md-content>
 				<md-list layout='vertical'>
 					<md-item ng-repeat='message in messages' layout='horizontal'>
-						<span>
+						<span class='message'>
 							<strong ng-hide='message.isFromApp'>{{message.author}}: </strong>
 							<span btf-markdown='message.text' ng-class='{appMessage: message.isFromApp}'></span>
 						</span>
@@ -83,7 +113,7 @@
 		<footer>
 			<div id='messageWrapper' ng-show='state == states.chat && isAlive'>
 				<textarea
-					id='message'
+					id='messageBox'
 					ng-model='message'
 					onenterpress='sendMessage()'
 					enterpress-only='desktop'
@@ -96,7 +126,7 @@
 					class='mobile-only'
 					aria-label='Send'
 				>
-					<img src='/img/icons/send.png' />
+					<img deferred-src='/img/icons/send.png' />
 				</md-button>
 			</div>
 
