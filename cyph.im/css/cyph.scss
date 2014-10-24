@@ -1,14 +1,26 @@
+body, #loading, md-sidenav {
+	background-color: #8b62d9 !important;
+}
+
+body, .md-button-inner {
+	color: #f1f1f1 !important;
+}
+
+md-button {
+	color: #444;
+}
+
 .appMessage {
 	font-weight: bold;
 	padding-top: 20px;
 }
 
-#message {
+#messageBox {
 	width: 100%;
 	resize: none;
 }
 
-.mobile #message {
+html.mobile #messageBox {
 	height: 48px;
 	font-size: 17px;
 	line-height: 22px;
@@ -34,8 +46,35 @@
 	overflow-y: scroll;
 }
 
-*.md-theme-purple, #loading {
-	background-color: #8b62d9 !important;
+.message {
+	width: 85%;
+	word-wrap: break-word;
+	-webkit-hyphens: auto;
+	-moz-hyphens: auto;
+	-ms-hyphens: auto;
+	hyphens: auto;
+}
+
+#desktop-sidebar {
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	height: 100%;
+	width: 15%;
+	padding: 10px;
+
+	.logo > img {
+		width: 60%;
+		margin: 0px auto;
+		margin-bottom: 50px;
+		display: block;
+	}
+
+	md-button {
+		font-size: 14px;
+		width: 100%;
+		margin-bottom: 6px;
+	}
 }
 
 #loading {
@@ -104,6 +143,8 @@ html:not(.mobile) {
 
 	body {
 		padding: 10px;
+		padding-left: 15%;
+		padding-right: 20px;
 	}
 }
 

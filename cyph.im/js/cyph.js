@@ -140,7 +140,6 @@ function setUpChannel (channelData) {
 					otr.receiveMsg(o.Message);
 				}
 				if (o.Destroy) {
-					closeChat();
 					socket.close();
 				}
 			}

@@ -1,8 +1,8 @@
-var addMessageToChat, changeState, closeChat, isMobile, sendMessage, state, states, statusNotFound;
+var addMessageToChat, changeState, closeChat, isMobile, platformString, sendMessage, state, states, statusNotFound;
 
 angular.
 	module('Cyph', ['ngMaterial', 'ngSanitize', 'btford.markdown']).
-	controller('CyphController', ['$scope', function($scope) {
+	controller('CyphController', ['$scope', '$mdSidenav', function($scope, $mdSidenav) {
 		$scope.isAlive	= true;
 
 		$scope.messages	= [];
@@ -69,6 +69,7 @@ angular.
 		closeChat = $scope.closeChat = function () {
 			if ($scope.isAlive) {
 				addMessageToChat('This cyph has been disconnected.', authors.app);
+				sendChannelData({Destroy: true});
 
 				apply(function() {
 					$scope.isAlive	= false;
@@ -90,6 +91,31 @@ angular.
 		};
 
 
+		$scope.disconnect	= function() {
+			socket.close();
+		};
+
+		$scope.openMobileMenu	= function() {
+			$mdSidenav('menu').toggle();
+		};
+
+		$scope.showCyphertext	= function() {
+			alert(
+				'This feature hasn\'t been implemented yet, but it will ' +
+				'briefly show the actual cyphertext as proof that the chat ' +
+				'is encrypted.'
+			);
+		};
+
+		$scope.twoFactor	= function() {
+			alert(
+				'This feature hasn\'t been implemented yet, but it will ' +
+				'freeze the chat until both users have verified their ' +
+				'identities via two-factor authentication.'
+			);
+		};
+
+
 		isMobile	= (localStorage && localStorage.forceMobile && localStorage.forceMobile != 'false') || (function () {
 			try {
 				document.createEvent('TouchEvent');
@@ -100,6 +126,14 @@ angular.
 			}
 		}());
 
+		platformString	= isMobile ? 'mobile' : 'desktop';
+
+
+		$('.' + platformString + '-only [deferred-src]').each(function () {
+			var $this	= $(this);
+			$this.attr('src', $this.attr('deferred-src'));
+		});
+
 
 		/* onenterpress attribute handler */
 
@@ -107,7 +141,7 @@ angular.
 			var $this			= $(this);
 			var enterpressOnly	= $this.attr('enterpress-only');
 
-			if (!enterpressOnly || enterpressOnly == (isMobile ? 'mobile' : 'desktop')) {
+			if (!enterpressOnly || enterpressOnly == platformString) {
 				$this.keypress(function(e) {
 					if (e.keyCode == 13 && !e.shiftKey) {
 						var onenterpress	= $this.attr('onenterpress');
@@ -144,6 +178,12 @@ angular.
 			setUpFullScreenEvent();
 			$(window).on('hide', setUpFullScreenEvent);
 		}
+
+		$('md-button').click(function () {
+			setTimeout(function () {
+				$('md-button, md-button *').blur();
+			}, 500);
+		});
 
 		cryptoInit();
 		window.onpopstate();
