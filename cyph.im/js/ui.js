@@ -175,8 +175,8 @@ angular.
 
 		if (isMobile) {
 			$('html').addClass('mobile');
-			setUpFullScreenEvent();
-			$(window).on('hide', setUpFullScreenEvent);
+			// setUpFullScreenEvent();
+			// $(window).on('hide', setUpFullScreenEvent);
 		}
 
 		$('md-button').click(function () {
@@ -187,6 +187,7 @@ angular.
 
 		cryptoInit();
 		window.onpopstate();
+		Notification.requestPermission();
 
 		$('#loading').hide();
 	}])
