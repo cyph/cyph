@@ -100,15 +100,15 @@
 				<md-list layout='vertical'>
 					<md-item
 						class='message-item'
-						ng-class='{unread: message.author == authors.friend}'
+						ng-class='{unread: message.isFromFriend}'
 						ng-repeat='message in messages'
 						layout='horizontal'
 					>
 						<span class='message'>
-							<strong ng-hide='message.author == authors.app'>{{message.author}}: </strong>
+							<strong ng-hide='message.isFromApp'>{{message.author}}: </strong>
 							<span
 								btf-markdown='message.text'
-								ng-class='{"app-message": message.author == authors.app}'
+								ng-class='{"app-message": message.isFromApp}'
 							></span>
 						</span>
 						<span flex style='text-align: right'>{{message.timestamp}}</span>
