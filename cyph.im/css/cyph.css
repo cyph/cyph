@@ -36,9 +36,10 @@ html.mobile #message-box {
 
 #sendbutton {
   position: absolute;
-  height: 90%;
-  top: 5%;
-  right: 10px; }
+  height: 80%;
+  top: 10%;
+  right: 6px;
+  opacity: 0.75; }
 
 #footer {
   margin-top: 10px; }
