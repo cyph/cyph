@@ -75,7 +75,6 @@ angular.
 
 					$scope.messages.push({
 						author: author == authors.me ? 'me' : author == authors.friend ? 'friend' : '',
-						isFromApp: author == authors.app,
 						text: text,
 						timestamp: hour + ':' + minute + ampm
 					});

@@ -98,10 +98,18 @@
 		<div id='message-list' flex ng-show='state == states.chat'>
 			<md-content>
 				<md-list layout='vertical'>
-					<md-item class='message-item unread' ng-repeat='message in messages' layout='horizontal'>
+					<md-item
+						class='message-item'
+						ng-class='{unread: message.author == authors.friend}'
+						ng-repeat='message in messages'
+						layout='horizontal'
+					>
 						<span class='message'>
-							<strong ng-hide='message.isFromApp'>{{message.author}}: </strong>
-							<span btf-markdown='message.text' ng-class='{"app-message": message.isFromApp}'></span>
+							<strong ng-hide='message.author == authors.app'>{{message.author}}: </strong>
+							<span
+								btf-markdown='message.text'
+								ng-class='{"app-message": message.author == authors.app}'
+							></span>
 						</span>
 						<span flex style='text-align: right'>{{message.timestamp}}</span>
 					</md-item>
@@ -137,7 +145,7 @@
 				></textarea>
 				<img
 					id='sendbutton'
-					ng-show='message != ""'
+					ng-hide='message == ""'
 					onclick='sendMessage()'
 					class='mobile-only'
 					aria-label='Send'
