@@ -299,6 +299,9 @@ angular.
 
 		cryptoInit();
 		window.onpopstate();
-		Notification.requestPermission();
+
+		if (window.Notification) {
+			Notification.requestPermission();
+		}
 	}])
 ;
