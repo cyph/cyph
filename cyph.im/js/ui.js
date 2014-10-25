@@ -1,4 +1,15 @@
-var addMessageToChat, changeState, closeChat, isMobile, platformString, sendMessage, state, states, statusNotFound;
+var
+	addMessageToChat,
+	changeState,
+	closeChat,
+	isMobile,
+	notify,
+	platformString,
+	sendMessage,
+	state,
+	states,
+	statusNotFound
+;
 
 angular.
 	module('Cyph', ['ngMaterial', 'ngSanitize', 'btford.markdown']).
@@ -8,6 +19,8 @@ angular.
 		$scope.messages	= [];
 
 		$scope.message	= '';
+
+		$scope.unreadMessages	= 0;
 
 		states = $scope.states = {
 			none: 0,
@@ -36,6 +49,16 @@ angular.
 
 		addMessageToChat = $scope.addMessageToChat = function (text, author) {
 			if (text) {
+				switch (author) {
+					case authors.friend:
+						notify('friend: ' + text);
+						break;
+
+					case authors.app:
+						notify(text);
+						break;
+				}
+
 				apply(function() {
 					var date	= new Date();
 					var hour	= date.getHours();
@@ -99,6 +122,11 @@ angular.
 			$mdSidenav('menu').toggle();
 		};
 
+		var $messageList	= $('#message-list');
+		$scope.scrollDown	= function() {
+			$messageList.animate({scrollTop: $messageList[0].scrollHeight}, 350);
+		};
+
 		$scope.showCyphertext	= function() {
 			alert(
 				'This feature hasn\'t been implemented yet, but it will ' +
@@ -116,7 +144,7 @@ angular.
 		};
 
 
-		isMobile	= (localStorage && localStorage.forceMobile && localStorage.forceMobile != 'false') || (function () {
+		isMobile	= (function () {
 			try {
 				document.createEvent('TouchEvent');
 				return true;
@@ -127,6 +155,18 @@ angular.
 		}());
 
 		platformString	= isMobile ? 'mobile' : 'desktop';
+
+		$.fn.tap	= function (callback, onOrOff) {
+			var $this		= $(this);
+			var eventName	= isMobile ? 'touchstart' : 'click';
+
+			if (onOrOff === false) {
+				$this.off(eventName, callback);
+			}
+			else {
+				$this.on(eventName, callback);
+			}
+		}
 
 
 		$('.' + platformString + '-only [deferred-src]').each(function () {
@@ -157,6 +197,41 @@ angular.
 		});
 
 
+		/* Notifications */
+
+		var notifyTitle			= 'Cyph';
+		var notifyIcon			= '/img/favicon/apple-touch-icon-180x180.png';
+		var notifyAudio			= new Audio('/audio/beep.wav');
+		var openNotifications	= [];
+
+		notify	= function (message) {
+			if (Visibility.hidden()) {
+				if (window.Notification) {
+					var notification	= new Notification(notifyTitle, {body: message, icon: notifyIcon});
+
+					openNotifications.push(notification);
+
+					notification.onclose	= function () {
+						while (openNotifications.length > 0) {
+							openNotifications.pop().close();
+						}
+					};
+
+					notification.onclick	= function () {
+						window.focus();
+						notification.onclose();
+					};
+				}
+
+				notifyAudio.play();
+
+				if (navigator.vibrate) {
+					navigator.vibrate(200);
+				}
+			}
+		};
+
+
 		/* Init */
 
 		function setUpFullScreenEvent () {
@@ -165,12 +240,12 @@ angular.
 					screenfull.request();
 
 					if (screenfull.isFullscreen) {
-						$(window).off('click', fullScreen);
+						$(window).tap(fullScreen, false);
 					}
 				}
 			}
 
-			$(window).off('click', fullScreen).click(fullScreen);
+			$(window).tap(fullScreen, false).tap(fullScreen);
 		}
 
 		if (isMobile) {
@@ -179,16 +254,51 @@ angular.
 			// $(window).on('hide', setUpFullScreenEvent);
 		}
 
-		$('md-button').click(function () {
+		$('md-button').tap(function () {
 			setTimeout(function () {
 				$('md-button, md-button *').blur();
 			}, 500);
 		});
 
+		var unreadMessage	= '.message-item.unread';
+
+		$('#message-list md-list').on('DOMNodeInserted', function (e) {
+			var $elem	= $(e.target);
+
+			if (!$elem.is(unreadMessage)) {
+				return;
+			}
+
+			var isHidden	= Visibility.hidden();
+			var currentScrollPosition	=
+				$messageList[0].scrollHeight -
+				($messageList[0].scrollTop + $messageList[0].clientHeight)
+			;
+
+			if (!isHidden && ($elem.height() + 50) > currentScrollPosition) {
+				$scope.scrollDown();
+				$elem.removeClass('unread');
+			}
+
+			if (isHidden || !$elem.is(':appeared')) {
+				apply(function () { $scope.unreadMessages += 1 });
+
+				var intervalId	= setInterval(function () {
+					if (!Visibility.hidden() && ($elem.is(':appeared') || $elem.nextAll(':not(.unread)').length > 0)) {
+						clearInterval(intervalId);
+						$elem.removeClass('unread');
+						apply(function () { $scope.unreadMessages -= 1 });
+
+						if ($elem.nextAll().length == 0) {
+							$scope.scrollDown();
+						}
+					}
+				}, 100);
+			}
+		});
+
 		cryptoInit();
 		window.onpopstate();
 		Notification.requestPermission();
-
-		$('#loading').hide();
 	}])
 ;

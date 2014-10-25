@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html class='no-js' ng-app='Cyph'>
+<html class='no-js' ng-app='Cyph' ng-controller='CyphController'>
 	<head>
 		<meta charset='utf-8' />
 		<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1' />
-		<title>Cyph - Privacy starts here.</title>
+		<title ng-bind='(unreadMessages > 0 ? ("(" + unreadMessages + ") ") : "") + "Cyph - Privacy starts here."'>
+			Cyph - Privacy starts here.
+		</title>
 		<meta name='description' content='Simple, frictionless private conversation with anyone at any time.' />
 		<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
 
@@ -31,7 +33,7 @@
 
 		<link rel='stylesheet' href='css/cyph.css' />
 	</head>
-	<body ng-controller='CyphController' layout='vertical' layout-fill>
+	<body layout='vertical' layout-fill>
 
 		<md-toolbar class='mobile-only'>
 			<div class='md-toolbar-tools'>
@@ -39,7 +41,7 @@
 					<img deferred-src='/img/logo.white.horizontal.header.png' />
 				</a>
 				<span flex></span>
-				<md-button aria-label='Menu' ng-click='openMobileMenu()'>
+				<md-button aria-label='Menu' ng-show='state == states.chat' ng-click='openMobileMenu()'>
 					<img deferred-src='/img/icons/menu.png' />
 				</md-button>
 			</div>
@@ -55,7 +57,7 @@
 						<md-button ng-click='twoFactor()'>Verify identity</md-button>
 					</div>
 					<div>
-						<md-button ng-click='showCyphertext()'>Why is this secure?</md-button>
+						<md-button ng-click='showCyphertext()'>How Cyph works</md-button>
 					</div>
 					<div>
 						<md-button ng-click='disconnect()'>Disconnect</md-button>
@@ -68,9 +70,11 @@
 			<a class='logo' href='https://www.cyph.com' target='_blank'>
 				<img deferred-src='/img/logo.white.vertical.png' />
 			</a>
-			<md-button ng-click='twoFactor()'>Verify identity</md-button>
-			<md-button ng-click='showCyphertext()'>Why is this secure?</md-button>
-			<md-button ng-click='disconnect()'>Disconnect</md-button>
+			<section ng-show='state == states.chat'>
+				<md-button ng-click='twoFactor()'>Verify identity</md-button>
+				<md-button ng-click='showCyphertext()'>How Cyph works</md-button>
+				<md-button ng-click='disconnect()'>Disconnect</md-button>
+			</section>
 		</div>
 
 		<div flex ng-show='state == states.spinningUp'>
@@ -91,10 +95,10 @@
 
 		<div flex ng-show='state == states.none'></div>
 
-		<div id='messageList' flex ng-show='state == states.chat'>
+		<div id='message-list' flex ng-show='state == states.chat'>
 			<md-content>
 				<md-list layout='vertical'>
-					<md-item ng-repeat='message in messages' layout='horizontal'>
+					<md-item class='message-item unread' ng-repeat='message in messages' layout='horizontal'>
 						<span class='message'>
 							<strong ng-hide='message.isFromApp'>{{message.author}}: </strong>
 							<span btf-markdown='message.text' ng-class='{"app-message": message.isFromApp}'></span>
@@ -105,13 +109,25 @@
 			</md-content>
 		</div>
 
-		<div id='loading'>
+		<div id='loading' ng-show='state == states.none'>
 			<div class='double-bounce1'></div>
 			<div class='double-bounce2'></div>
 		</div>
 
 		<footer>
 			<div id='message-wrapper' ng-show='state == states.chat && isAlive'>
+				<md-subheader
+					id='new-messages'
+					ng-show='unreadMessages > 0'
+					class='md-subheader-colored md-sticky-clone'
+					sticky-state='active'
+					ng-click='scrollDown()'
+				>
+					<strong>&#8595;&nbsp;&nbsp;</strong>
+					{{unreadMessages}} new
+					<span ng-bind='"message" + (unreadMessages > 1 ? "s" : "")'></span>
+				</md-subheader>
+
 				<textarea
 					id='message-box'
 					ng-model='message'
@@ -139,7 +155,7 @@
 
 				<!--
 						&nbsp;&bull;&nbsp;
-					<a href='//twitter.com/cyphapp'>@cyph</a>
+					<a href='//twitter.com/cyph'>@cyph</a>
 				-->
 			</div>
 		</footer>
@@ -147,6 +163,7 @@
 
 		<script src='lib/bower_components/jquery/dist/jquery.min.js'></script>
 		<script src='lib/bower_components/jquery-visibility/jquery-visibility.js'></script>
+		<script src='lib/jquery.appear/jquery.appear.js'></script>
 		<script src='lib/bower_components/angular/angular.min.js'></script>
 		<script src='lib/bower_components/angular-aria/angular-aria.js'></script>
 		<script src='lib/bower_components/angular-animate/angular-animate.js'></script>
