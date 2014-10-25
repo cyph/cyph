@@ -98,12 +98,7 @@
 		<div id='message-list' flex ng-show='state == states.chat'>
 			<md-content>
 				<md-list layout='vertical'>
-					<md-item
-						class='message-item'
-						ng-class='{unread: message.isFromFriend}'
-						ng-repeat='message in messages'
-						layout='horizontal'
-					>
+					<md-item class='message-item unread' ng-repeat='message in messages' layout='horizontal'>
 						<span class='message'>
 							<strong ng-hide='message.isFromApp'>{{message.author}}: </strong>
 							<span
@@ -156,14 +151,11 @@
 			<div id='footer' class='desktop-only'>
 				&copy; Cyph 2014
 					&nbsp;&bull;&nbsp;
+				<a href='//twitter.com/cyph'>@cyph</a>
+					&nbsp;&bull;&nbsp;
 				<a href='mailto:hello@cyph.com'>hello@cyph.com</a>
 					&nbsp;&bull;&nbsp;
 				<a href='tel:+19312974462' title='+1(931) 297 4462'>+1(931) CYPH INC</a>
-
-				<!--
-						&nbsp;&bull;&nbsp;
-					<a href='//twitter.com/cyph'>@cyph</a>
-				-->
 			</div>
 		</footer>
 
