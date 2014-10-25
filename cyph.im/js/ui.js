@@ -51,7 +51,7 @@ angular.
 			if (text) {
 				switch (author) {
 					case authors.friend:
-						notify('friend: ' + text);
+						notify('New message!');
 						break;
 
 					case authors.app:
