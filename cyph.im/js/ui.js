@@ -168,7 +168,7 @@ angular.
 		}
 
 
-		$('.' + platformString + '-only [deferred-src]').each(function () {
+		$('.' + platformString + '-only [deferred-src], [deferred-src].' + platformString + '-only').each(function () {
 			var $this	= $(this);
 			$this.attr('src', $this.attr('deferred-src'));
 		});
