@@ -201,11 +201,18 @@ angular.
 
 		var notifyTitle			= 'Cyph';
 		var notifyIcon			= '/img/favicon/apple-touch-icon-180x180.png';
-		var notifyAudio			= new Audio('/audio/beep.wav');
+		var notifyAudio			= new Audio('/audio/beep.mp3');
+		var disableNotify		= false;
 		var openNotifications	= [];
 
+		Visibility.change(function (e, state) {
+			if (state != 'hidden') {
+				disableNotify	= false;
+			}
+		});
+
 		notify	= function (message) {
-			if (Visibility.hidden()) {
+			if (!disableNotify && Visibility.hidden()) {
 				if (window.Notification) {
 					var notification	= new Notification(notifyTitle, {body: message, icon: notifyIcon});
 
@@ -214,6 +221,10 @@ angular.
 					notification.onclose	= function () {
 						while (openNotifications.length > 0) {
 							openNotifications.pop().close();
+						}
+
+						if (Visibility.hidden()) {
+							disableNotify	= true;
 						}
 					};
 
