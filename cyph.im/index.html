@@ -57,7 +57,7 @@
 						<md-button ng-click='twoFactor()'>Verify identity</md-button>
 					</div>
 					<div>
-						<md-button ng-click='showCyphertext()'>How Cyph works</md-button>
+						<md-button ng-click='showCyphertext()'>Show cyphertext</md-button>
 					</div>
 					<div>
 						<md-button ng-click='disconnect()'>Disconnect</md-button>
@@ -72,7 +72,7 @@
 			</a>
 			<section ng-show='state == states.chat'>
 				<md-button ng-click='twoFactor()'>Verify identity</md-button>
-				<md-button ng-click='showCyphertext()'>How Cyph works</md-button>
+				<md-button ng-click='showCyphertext()'>Show cyphertext</md-button>
 				<md-button ng-click='disconnect()'>Disconnect</md-button>
 			</section>
 		</div>
@@ -135,15 +135,14 @@
 					enterpress-only='desktop'
 					placeholder='Send a secure message...'
 				></textarea>
-				<md-button
+				<img
 					id='sendbutton'
 					ng-show='message != ""'
 					onclick='sendMessage()'
 					class='mobile-only'
 					aria-label='Send'
-				>
-					<img deferred-src='/img/icons/send.png' />
-				</md-button>
+					deferred-src='/img/icons/send.png'
+				/>
 			</div>
 
 			<div id='footer' class='desktop-only'>
