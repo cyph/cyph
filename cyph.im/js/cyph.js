@@ -50,29 +50,14 @@ function cryptoInit () {
 					sendChannelData({Destroy: true}, {async: false});
 					socket.close();
 				});
+
+				notify('Connected!');
 			}
 			else {
 				changeState(states.settingUpCrypto);
 			}
 		}
 	});
-}
-
-var notifyTitle	= 'Cyph';
-var notifyIcon	= '/img/favicon/apple-touch-icon-180x180.png';
-
-function notify (message) {
-	if (Visibility.hidden()) {
-		if (window.Notification) {
-			new Notification(notifyTitle, {body: message, icon: notifyIcon});
-		}
-		else if (navigator.mozNotification) {
-			 navigator.mozNotification
-			 	.createNotification(notifyTitle, message, notifyIcon)
-				.show()
-			;
-		}
-	}
 }
 
 function pushNotFound () {

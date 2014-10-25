@@ -6,13 +6,32 @@ body, .md-button-inner {
 	color: #f1f1f1 !important;
 }
 
-md-button {
-	color: #444;
+html:not(.mobile) {
+	md-button {
+		color: #444;
+		background-color: #7d4fd3 !important;
+	}
+
+	md-button.focus, md-button:hover {
+		background-color: #7239dd !important;
+	}
+
+	md-button img {
+		height: 100%;
+	}
+}
+
+md-sidenav md-button {
+	width: 100%;
+
+	* {
+		text-align: left;
+	}
 }
 
 .app-message {
 	font-weight: bold;
-	padding-top: 20px;
+	margin-top: 20px;
 }
 
 #message-box {
@@ -55,14 +74,21 @@ html.mobile #message-box {
 	hyphens: auto;
 }
 
+.message-item:not(.unread) {
+	-webkit-animation: inkRippleCheckbox 0.35s linear 0s 1 normal;
+	-moz-animation: inkRippleCheckbox 0.35s linear 0s 1 normal;
+	-ms-animation: inkRippleCheckbox 0.35s linear 0s 1 normal;
+	-o-animation: inkRippleCheckbox 0.35s linear 0s 1 normal;
+	animation: inkRippleCheckbox 0.35s linear 0s 1 normal;
+}
+
 #desktop-sidebar {
 	position: fixed;
 	top: 0px;
 	left: 0px;
 	height: 100%;
 	width: 200px;
-	padding: 10px;
-	padding-right: 10px;
+	padding: 20px;
 
 	.logo > img {
 		width: 60%;
@@ -96,18 +122,12 @@ html.mobile #message-box {
 }
 
 md-toolbar {
-	background-color: #7239DD;
+	background-color: #7239dd;
 	height: 40px !important;
 	min-height: 40px !important;
 
 	img {
 		height: 25px !important;
-	}
-}
-
-md-button {
-	img {
-		height: 100%;
 	}
 }
 
@@ -132,6 +152,17 @@ a {
 
 textarea {
 	background-color: #f1f1f1;
+}
+
+#new-messages {
+	color: #8b62d9;
+	width: 100%;
+	text-align: center;
+	margin-top: -20px;
+	cursor: pointer;
+}
+#new-messages:after {
+	width: 100%;
 }
 
 
