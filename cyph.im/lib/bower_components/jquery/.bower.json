@@ -33,5 +33,6 @@
   },
   "_source": "git://github.com/jquery/jquery.git",
   "_target": "~2.1.1",
-  "_originalSource": "jquery"
+  "_originalSource": "jquery",
+  "_direct": true
 }

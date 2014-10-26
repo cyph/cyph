@@ -19,5 +19,6 @@
   },
   "_source": "git://github.com/btford/angular-markdown-directive.git",
   "_target": "~0.3.0",
-  "_originalSource": "angular-markdown-directive"
+  "_originalSource": "angular-markdown-directive",
+  "_direct": true
 }
