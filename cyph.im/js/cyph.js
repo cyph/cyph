@@ -42,7 +42,7 @@ function cryptoInit () {
 			if (state == OTR.CONST.STATUS_AKE_SUCCESS) {
 				isConnected	= true;
 
-				changeState(states.chat);
+				beginChat();
 
 				$(window).on('beforeunload', function () {
 					return disconnectWarning;
