@@ -110,6 +110,10 @@ angular.
 			});
 
 			if (message) {
+				if (isMobile) {
+					$('#message-box').focus();
+				}
+
 				addMessageToChat(message, authors.me);
 				otr.sendMsg(message);
 			}

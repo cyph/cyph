@@ -129,7 +129,7 @@ textarea {
   background-color: #f1f1f1; }
 
 #new-messages {
-  background-color: white;
+  background-color: white !important;
   color: #8b62d9;
   width: 100%;
   text-align: center;
