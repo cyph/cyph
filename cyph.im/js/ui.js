@@ -96,11 +96,11 @@ angular.
 					.css({display: 'inline', width: 'auto', visibility: 'hidden', position: 'fixed'})
 					.appendTo('body')
 				;
+				var $both	= $this.add($clone);
 
-				while ($clone.width() >  $this.width()) {
+				for (var i = 0 ; i < 10 && $clone.width() > $this.width() ; ++i) {
 					var newFontSize	= parseInt($this.css('font-size'), 10) - 1;
-					$this.css('font-size', newFontSize + 'px');
-					$clone.css('font-size', newFontSize + 'px');
+					$both.css('font-size', newFontSize + 'px');
 				}
 
 				$clone.remove();
