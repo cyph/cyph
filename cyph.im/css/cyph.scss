@@ -279,3 +279,9 @@ html.mobile {
 		-webkit-transform: scale(1.0);
 	}
 }
+
+/* Why is this line missing from Angular Material's bower package? */
+
+md-backdrop.opaque {
+	background-color: rgba(0, 0, 0, 0.3);
+}

@@ -121,7 +121,7 @@ angular.
 		};
 
 		$scope.openMobileMenu	= function() {
-			$mdSidenav('menu').toggle();
+			$mdSidenav('menu').open();
 		};
 
 		var $messageList	= $('#message-list');

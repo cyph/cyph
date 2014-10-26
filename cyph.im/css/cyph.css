@@ -205,5 +205,8 @@ html.mobile .desktop-only {
   40% {
     transform: scale(1);
     -webkit-transform: scale(1); } }
+/* Why is this line missing from Angular Material's bower package? */
+md-backdrop.opaque {
+  background-color: rgba(0, 0, 0, 0.3); }
 
 /*# sourceMappingURL=cyph.css.map */

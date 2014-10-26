@@ -28,5 +28,6 @@
   },
   "_source": "git://github.com/sindresorhus/screenfull.js.git",
   "_target": "~1.2.1",
-  "_originalSource": "screenfull"
+  "_originalSource": "screenfull",
+  "_direct": true
 }
