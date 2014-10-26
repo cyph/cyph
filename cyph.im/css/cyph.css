@@ -1,6 +1,6 @@
 html, body {
-  max-width: 100%;
-  overflow-x: hidden; }
+  max-width: 100% !important;
+  overflow-x: hidden !important; }
 
 body, #loading, md-sidenav {
   background-color: #8b62d9 !important; }
