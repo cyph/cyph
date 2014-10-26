@@ -53,13 +53,13 @@
 			</md-toolbar>
 			<md-content class='md-content-padding'>
 				<div>
-					<md-button ng-click='twoFactor()'>Verify identity</md-button>
+					<md-button aria-label='Verify identity' ng-click='twoFactor()'>Verify identity</md-button>
 				</div>
 				<div>
-					<md-button ng-click='showCyphertext()'>Show cyphertext</md-button>
+					<md-button aria-label='Show cyphertext' ng-click='showCyphertext()'>Show cyphertext</md-button>
 				</div>
 				<div>
-					<md-button ng-click='disconnect()'>Disconnect</md-button>
+					<md-button aria-label='Disconnect' ng-click='disconnect()'>Disconnect</md-button>
 				</div>
 			</md-content>
 		</md-sidenav>
@@ -69,9 +69,9 @@
 				<img deferred-src='/img/logo.white.vertical.png' />
 			</a>
 			<section ng-show='state == states.chat'>
-				<md-button ng-click='twoFactor()'>Verify identity</md-button>
-				<md-button ng-click='showCyphertext()'>Show cyphertext</md-button>
-				<md-button ng-click='disconnect()'>Disconnect</md-button>
+				<md-button aria-label='Verify identity' ng-click='twoFactor()'>Verify identity</md-button>
+				<md-button aria-label='Show cyphertext' ng-click='showCyphertext()'>Show cyphertext</md-button>
+				<md-button aria-label='Disconnect' ng-click='disconnect()'>Disconnect</md-button>
 			</section>
 		</div>
 
