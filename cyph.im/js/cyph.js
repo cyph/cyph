@@ -62,6 +62,11 @@ function cryptoInit () {
 	});
 }
 
+function forceEnglish () {
+	localStorage.forceLanguage	= 'en';
+	document.location.pathname	= '/new';
+}
+
 function getString (name) {
 	return $('meta[name="' + name + '"]').attr('content');
 }
