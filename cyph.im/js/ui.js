@@ -122,12 +122,15 @@ angular.
 
 		$scope.disconnect	= function() {
 			socket.close();
+
+			if (isMobile) {
+				$mdSidenav('menu').close();
+			}
 		};
 
 		$scope.openMobileMenu	= function() {
 			$mdSidenav('menu').open();
 		};
-		$('[component-id="menu"] md-button').click(function () { $mdSidenav('menu').close(); });
 
 		var $messageList	= $('#message-list');
 		$scope.scrollDown	= function() {
@@ -140,6 +143,10 @@ angular.
 				'briefly show the actual cyphertext as proof that the chat ' +
 				'is encrypted.'
 			);
+
+			if (isMobile) {
+				$mdSidenav('menu').close();
+			}
 		};
 
 		$scope.twoFactor	= function() {
@@ -148,6 +155,10 @@ angular.
 				'freeze the chat until both users have verified their ' +
 				'identities via two-factor authentication.'
 			);
+
+			if (isMobile) {
+				$mdSidenav('menu').close();
+			}
 		};
 
 
