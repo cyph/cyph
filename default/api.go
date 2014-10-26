@@ -92,8 +92,9 @@ func imCreate(h HandlerArgs) (interface{}, int) {
 		token, _ := channel.Create(h.Context, channelId)
 		val, _ := json.Marshal(ImSetup{ChannelId: otherChannelId, ChannelToken: token, IsCreator: i == 0})
 		imIdItems[i].Value = val
-		memcache.Set(h.Context, &imIdItems[i])
 	}
+
+	memcache.SetMulti(h.Context, &imIdItems)
 
 	laterImTeardown.Call(h.Context, longId, imIdItems[0].Key, imIdItems[1].Key, imIdItems[1].Value)
 
