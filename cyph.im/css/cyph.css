@@ -111,7 +111,8 @@ md-toolbar {
   height: 40px !important;
   min-height: 40px !important; }
   md-toolbar img {
-    height: 25px !important; }
+    height: 25px !important;
+    vertical-align: middle; }
 
 btf-markdown > :first-child, [btf-markdown] > :first-child {
   display: inline; }
