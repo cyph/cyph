@@ -88,13 +88,16 @@ def translate(text, language):
 		try:
 			cyphInstance	= re.match(cyph + u' ', text, flags = re.IGNORECASE)
 
+			if cyphInstance is not None:
+				text	= re.sub(cyphInstance, placeholder + u' ', text)
+
 			translation	= translator.translate(text, language)
 			
 			if 'ArgumentException' in translation:
 				raise Exception(translation)
 			
 			if cyphInstance is not None:
-				translation	= re.sub(placeholder, cyphInstance, translation, flags = re.IGNORECASE)
+				translation	= re.sub(placeholder, cyphInstance[0:-1], translation, flags = re.IGNORECASE)
 
 			return translation
 			
