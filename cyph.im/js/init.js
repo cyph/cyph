@@ -1,18 +1,32 @@
 /* Redirect to appropriate translation */
-var language	=
+var defaultLanguage	= 'en';
+var language		=
 	(localStorage && localStorage.forceLanguage) ||
 	navigator.language ||
 	navigator.userLanguage ||
 	navigator.browserLanguage ||
 	navigator.systemLanguage ||
-	'en'
+	defaultLanguage
 ;
 
 if (['zh-CHS', 'zh-CHT'].indexOf(language) < 0) {
 	language	= language.split('-')[0];
 }
 
-var req	= new XMLHttpRequest();
-req.open('GET', '/' + language + '.html', false);
-req.send();
+var req;
+
+function getCode () {
+	req	= new XMLHttpRequest();
+	req.open('GET', '/' + language + '.html', false);
+	req.send();
+}
+
+getCode();
+if (req.status != 200) {
+	language	= defaultLanguage;
+	getCode();
+}
+
+document.open();
 document.write(req.responseText);
+document.close();

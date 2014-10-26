@@ -23,6 +23,7 @@ var config = struct {
 		"beta.cyph.me":      empty,
 		"api.cyph.com":      empty,
 		"beta.api.cyph.com": empty,
+		"cyph.steveho.lt":   empty,
 	},
 
 	30,
