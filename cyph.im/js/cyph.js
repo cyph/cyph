@@ -115,10 +115,12 @@ function setUpChannel (channelData) {
 			if (channel.data.IsCreator) {
 				setTimeout(function () {
 					changeState(states.waitingForFriend);
+					cryptoInit();
 				}, 2500);
 			}
 			else {
 				changeState(states.settingUpCrypto);
+				cryptoInit();
 				otr.sendQueryMsg();
 
 				setTimeout(function () {

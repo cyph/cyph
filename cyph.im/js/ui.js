@@ -123,6 +123,7 @@ angular.
 		$scope.openMobileMenu	= function() {
 			$mdSidenav('menu').open();
 		};
+		$('[component-id="menu"] md-button').click(function () { $mdSidenav('menu').close(); });
 
 		var $messageList	= $('#message-list');
 		$scope.scrollDown	= function() {
@@ -310,7 +311,7 @@ angular.
 			}
 		});
 
-		cryptoInit();
+		
 		window.onpopstate();
 
 		if (window.Notification) {
