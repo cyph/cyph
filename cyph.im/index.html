@@ -47,24 +47,22 @@
 			</div>
 		</md-toolbar>
 
-		<div class='mobile-only'>
-			<md-sidenav component-id='menu' class='md-sidenav-right'>
-				<md-toolbar>
-					<h1 class='md-toolbar-tools'>Settings</h1>
-				</md-toolbar>
-				<md-content class='md-content-padding'>
-					<div>
-						<md-button ng-click='twoFactor()'>Verify identity</md-button>
-					</div>
-					<div>
-						<md-button ng-click='showCyphertext()'>Show cyphertext</md-button>
-					</div>
-					<div>
-						<md-button ng-click='disconnect()'>Disconnect</md-button>
-					</div>
-				</md-content>
-			</md-sidenav>
-		</div>
+		<md-sidenav component-id='menu' class='md-sidenav-right mobile-only'>
+			<md-toolbar>
+				<h1 class='md-toolbar-tools'>Settings</h1>
+			</md-toolbar>
+			<md-content class='md-content-padding'>
+				<div>
+					<md-button ng-click='twoFactor()'>Verify identity</md-button>
+				</div>
+				<div>
+					<md-button ng-click='showCyphertext()'>Show cyphertext</md-button>
+				</div>
+				<div>
+					<md-button ng-click='disconnect()'>Disconnect</md-button>
+				</div>
+			</md-content>
+		</md-sidenav>
 
 		<div id='desktop-sidebar' class='desktop-only'>
 			<a class='logo' href='https://www.cyph.com' target='_blank'>
