@@ -35,6 +35,8 @@ function cryptoInit () {
 		}
 	});
 
+	var connectedNotification	= getString('connectedNotification');
+	var disconnectWarning		= getString('disconnectWarning');
 	otr.on('status', function (state) {
 		if (!isConnected) {
 			if (state == OTR.CONST.STATUS_AKE_SUCCESS) {
@@ -43,7 +45,7 @@ function cryptoInit () {
 				changeState(states.chat);
 
 				$(window).on('beforeunload', function () {
-					return 'After closing Cyph, your messages will no longer be retrievable.';
+					return disconnectWarning;
 				});
 
 				$(window).unload(function () {
@@ -51,13 +53,17 @@ function cryptoInit () {
 					socket.close();
 				});
 
-				notify('Connected!');
+				notify(connectedNotification);
 			}
 			else {
 				changeState(states.settingUpCrypto);
 			}
 		}
 	});
+}
+
+function getString (name) {
+	return $('meta[name="' + name + '"]').attr('content');
 }
 
 function pushNotFound () {
