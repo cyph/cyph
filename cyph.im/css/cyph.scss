@@ -68,7 +68,7 @@ html.mobile #message-box {
 }
 
 .message {
-	width: 85%;
+	max-width: 85%;
 	word-wrap: break-word;
 	-webkit-hyphens: auto;
 	-moz-hyphens: auto;
