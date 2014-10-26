@@ -42,7 +42,7 @@ function cryptoInit () {
 			if (state == OTR.CONST.STATUS_AKE_SUCCESS) {
 				isConnected	= true;
 
-				changeState(states.chat);
+				beginChat();
 
 				$(window).on('beforeunload', function () {
 					return disconnectWarning;
@@ -126,7 +126,7 @@ function setUpChannel (channelData) {
 			if (channel.data.IsCreator) {
 				setTimeout(function () {
 					changeState(states.waitingForFriend);
-					setTimeout(cryptoInit, 100);
+					setTimeout(cryptoInit, 2500);
 				}, 2500);
 			}
 			else {
