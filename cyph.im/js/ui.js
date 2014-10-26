@@ -326,7 +326,29 @@ angular.
 			}
 		});
 
+
+		/* Adjust font size for translations */
+
+		$('md-button').each(function () {
+			var $this	= $(this);
+			var $clone	= $this
+				.clone()
+				.css({display: 'inline', width: 'auto', visibility: 'hidden', position: 'fixed'})
+				.appendTo('body')
+			;
+
+			if ($clone.width() >  $this.width()) {
+				var newFontSize	= parseInt($this.css('font-size'), 10) - 1;
+				$this.css('font-size', newFontSize + 'px');
+				$clone.css('font-size', newFontSize + 'px');
+			}
+
+			$clone.remove();
+		});
+
 		
+		/* Do the move lad */
+
 		window.onpopstate();
 
 		if (window.Notification) {
