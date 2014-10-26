@@ -27,6 +27,7 @@ if (req.status != 200) {
 	getCode();
 }
 
+document.head.innerHTML	= '';
 document.open();
 document.write(req.responseText);
 document.close();
