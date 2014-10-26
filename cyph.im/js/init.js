@@ -1,4 +1,8 @@
-/* Redirect to appropriate translation */
+function forceEnglish () {
+	localStorage.forceLanguage	= 'en';
+	document.location.pathname	= '/new';
+}
+
 var language	=
 	(localStorage && localStorage.forceLanguage) ||
 	navigator.language ||

@@ -14,6 +14,7 @@ var
 angular.
 	module('Cyph', ['ngMaterial', 'ngSanitize', 'btford.markdown']).
 	controller('CyphController', ['$scope', '$mdSidenav', function($scope, $mdSidenav) {
+		$scope.language			= language;
 		$scope.isAlive			= true;
 		$scope.messages			= [];
 		$scope.message			= '';

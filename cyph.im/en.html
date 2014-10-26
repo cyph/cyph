@@ -110,7 +110,7 @@
 							<strong
 								translate
 								ng-hide='message.isFromApp'
-								ng-bind='(author == authors.me ? "me" : "friend") + ": "'
+								ng-bind='(message.author == authors.me ? "me" : "friend") + ": "'
 							></strong>
 							<span
 								btf-markdown='message.text'
@@ -169,6 +169,8 @@
 				<a href='mailto:hello@cyph.com'>hello@cyph.com</a>
 					&nbsp;&bull;&nbsp;
 				<a href='tel:+19312974462' title='+1(931) 297 4462'>+1(931) CYPH INC</a>
+					&nbsp;&bull;&nbsp;
+				<a onclick='forceEnglish()' ng-hide='language == "en"'>View in original English</a>
 			</div>
 		</footer>
 

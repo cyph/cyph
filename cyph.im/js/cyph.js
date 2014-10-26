@@ -121,19 +121,21 @@ function setUpChannel (channelData) {
 			if (channel.data.IsCreator) {
 				setTimeout(function () {
 					changeState(states.waitingForFriend);
-					cryptoInit();
+					setTimeout(cryptoInit, 100);
 				}, 2500);
 			}
 			else {
 				changeState(states.settingUpCrypto);
-				cryptoInit();
-				otr.sendQueryMsg();
-
 				setTimeout(function () {
-					if (!isConnected) {
-						pushNotFound();
-					}
-				}, 180000);
+					cryptoInit();
+					otr.sendQueryMsg();
+
+					setTimeout(function () {
+						if (!isConnected) {
+							pushNotFound();
+						}
+					}, 180000);
+				}, 100);
 			}
 		},
 		onmessage: function (data) {
