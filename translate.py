@@ -10,8 +10,10 @@ from bs4 import BeautifulSoup
 from microsofttranslator import Translator
 
 
+global cyph, clientId, clientSecret, translator, placeholder
+
 codec		= 'utf8'
-placeholder	= u'CYPH'
+placeholder	= u'CYPHCYPHCYPHCYPHCYPHCYPH'
 
 languages	= [
 	'ar',
@@ -66,7 +68,6 @@ attrs	= [
 	'aria-label'
 ]
 
-global cyph, clientId, clientSecret, translator
 cyph			= u'cyph'
 clientId		= 'Cyph'
 clientSecret	= 'LfiDxnyyYXugFVGNnGiPXbydDIAaYNSQmvVv0AHnTD0='
@@ -85,15 +86,16 @@ def translate(text, language):
 	
 	for i in range(5):
 		try:
+			cyphInstance	= re.match(cyph + u' ', text, flags = re.IGNORECASE)
+
 			translation	= translator.translate(text, language)
 			
 			if 'ArgumentException' in translation:
 				raise Exception(translation)
-
-			cyphInstance	= re.match(cyph, text, flags = re.IGNORECASE)
-			if cyphInstance is not None:
-				translation	= re.sub(cyph, cyphInstance, translation, flags = re.IGNORECASE)
 			
+			if cyphInstance is not None:
+				translation	= re.sub(placeholder, cyphInstance, translation, flags = re.IGNORECASE)
+
 			return translation
 			
 		except Exception, e:
