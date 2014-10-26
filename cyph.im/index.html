@@ -1,17 +1,13 @@
 <!DOCTYPE html>
-<html class='no-js' ng-app='Cyph' ng-controller='CyphController'>
+<html>
 	<head>
 		<meta charset='utf-8' />
 		<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1' />
-		<title ng-bind='(unreadMessages > 0 ? ("(" + unreadMessages + ") ") : "") + "Cyph - Privacy starts here."'>
-			Cyph - Privacy starts here.
-		</title>
-		<meta name='description' content='Simple, frictionless private conversation with anyone at any time.' />
+		<title>Cyph - Privacy starts here.</title>
+		<meta translate name='description' content='Simple, frictionless private conversation with anyone at any time.' />
 		<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
-
 		<meta name='apple-mobile-web-app-capable' content='yes'>
 		<meta name='mobile-web-app-capable' content='yes'>
-
 		<link rel='apple-touch-icon' sizes='57x57' href='img/favicon/apple-touch-icon-57x57.png'>
 		<link rel='apple-touch-icon' sizes='114x114' href='img/favicon/apple-touch-icon-114x114.png'>
 		<link rel='apple-touch-icon' sizes='72x72' href='img/favicon/apple-touch-icon-72x72.png'>
@@ -28,159 +24,6 @@
 		<link rel='icon' type='image/png' href='img/favicon/favicon-32x32.png' sizes='32x32'>
 		<meta name='msapplication-TileColor' content='#8b62d9'>
 		<meta name='msapplication-TileImage' content='img/favicon/mstile-144x144.png'>
-
-		<link rel='stylesheet' href='lib/bower_components/angular-material/angular-material.css' />
-
-		<link rel='stylesheet' href='css/cyph.css' />
+		<script src='js/init.js'></script>
 	</head>
-	<body layout='vertical' layout-fill>
-
-		<md-toolbar class='mobile-only'>
-			<div class='md-toolbar-tools'>
-				<a class='logo' href='https://www.cyph.com' target='_blank'>
-					<img deferred-src='/img/logo.white.horizontal.header.png' />
-				</a>
-				<span flex></span>
-				<md-button aria-label='Menu' ng-show='state == states.chat' ng-click='openMobileMenu()'>
-					<img deferred-src='/img/icons/menu.png' />
-				</md-button>
-			</div>
-		</md-toolbar>
-
-		<md-sidenav component-id='menu' class='md-sidenav-right mobile-only'>
-			<md-toolbar>
-				<h1 class='md-toolbar-tools'>Settings</h1>
-			</md-toolbar>
-			<md-content class='md-content-padding'>
-				<div>
-					<md-button aria-label='Verify identity' ng-click='twoFactor()'>Verify identity</md-button>
-				</div>
-				<div>
-					<md-button aria-label='Show cyphertext' ng-click='showCyphertext()'>Show cyphertext</md-button>
-				</div>
-				<div>
-					<md-button aria-label='Disconnect' ng-click='disconnect()'>Disconnect</md-button>
-				</div>
-			</md-content>
-		</md-sidenav>
-
-		<div id='desktop-sidebar' class='desktop-only'>
-			<a class='logo' href='https://www.cyph.com' target='_blank'>
-				<img deferred-src='/img/logo.white.vertical.png' />
-			</a>
-			<section ng-show='state == states.chat'>
-				<md-button aria-label='Verify identity' ng-click='twoFactor()'>Verify identity</md-button>
-				<md-button aria-label='Show cyphertext' ng-click='showCyphertext()'>Show cyphertext</md-button>
-				<md-button aria-label='Disconnect' ng-click='disconnect()'>Disconnect</md-button>
-			</section>
-		</div>
-
-		<div flex ng-show='state == states.spinningUp'>
-			Now spinning up your cyph room...
-		</div>
-
-		<div flex ng-show='state == states.waitingForFriend'>
-			Waiting for your friend to connect...
-		</div>
-
-		<div flex ng-show='state == states.settingUpCrypto'>
-			Negotiating secure connection...
-		</div>
-
-		<div flex ng-show='state == states.error'>
-			<strong>error, bitch</strong>
-		</div>
-
-		<div flex ng-show='state == states.none'></div>
-
-		<div id='message-list' flex ng-show='state == states.chat'>
-			<md-content>
-				<md-list layout='vertical'>
-					<md-item class='message-item unread' ng-repeat='message in messages' layout='horizontal'>
-						<span class='message'>
-							<strong ng-hide='message.isFromApp'>{{message.author}}: </strong>
-							<span
-								btf-markdown='message.text'
-								ng-class='{"app-message": message.isFromApp}'
-							></span>
-						</span>
-						<span flex style='text-align: right'>{{message.timestamp}}</span>
-					</md-item>
-				</md-list>
-			</md-content>
-		</div>
-
-		<div id='loading' ng-show='state == states.none'>
-			<div class='double-bounce1'></div>
-			<div class='double-bounce2'></div>
-		</div>
-
-		<footer>
-			<div id='message-wrapper' ng-show='state == states.chat && isAlive'>
-				<md-subheader
-					id='new-messages'
-					ng-show='unreadMessages > 0'
-					class='md-subheader-colored md-sticky-clone'
-					sticky-state='active'
-					ng-click='scrollDown()'
-				>
-					<strong>&#8595;&nbsp;&nbsp;</strong>
-					{{unreadMessages}} new
-					<span ng-bind='"message" + (unreadMessages > 1 ? "s" : "")'></span>
-				</md-subheader>
-
-				<textarea
-					id='message-box'
-					ng-model='message'
-					onenterpress='sendMessage()'
-					enterpress-only='desktop'
-					placeholder='Send a secure message...'
-				></textarea>
-				<img
-					id='sendbutton'
-					ng-hide='message == ""'
-					onclick='sendMessage()'
-					class='mobile-only'
-					aria-label='Send'
-					deferred-src='/img/icons/send.png'
-				/>
-			</div>
-
-			<div id='footer' class='desktop-only'>
-				&copy; Cyph 2014
-					&nbsp;&bull;&nbsp;
-				<a href='//twitter.com/cyph' target='_blank'>@cyph</a>
-					&nbsp;&bull;&nbsp;
-				<a href='mailto:hello@cyph.com'>hello@cyph.com</a>
-					&nbsp;&bull;&nbsp;
-				<a href='tel:+19312974462' title='+1(931) 297 4462'>+1(931) CYPH INC</a>
-			</div>
-		</footer>
-
-
-		<script src='lib/bower_components/jquery/dist/jquery.min.js'></script>
-		<script src='lib/jquery.appear/jquery.appear.js'></script>
-		<script src='lib/bower_components/angular/angular.min.js'></script>
-		<script src='lib/bower_components/angular-aria/angular-aria.js'></script>
-		<script src='lib/bower_components/angular-animate/angular-animate.js'></script>
-		<script src='lib/bower_components/hammerjs/hammer.js'></script>
-		<script src='lib/bower_components/angular-material/angular-material.js'></script>
-		<script src='lib/bower_components/angular-sanitize/angular-sanitize.min.js'></script>
-		<script src='lib/bower_components/showdown/compressed/showdown.js'></script>
-		<script src='lib/bower_components/angular-markdown-directive/markdown.js'></script>
-		<script src='lib/bower_components/screenfull/dist/screenfull.min.js'></script>
-		<script src='lib/bower_components/visibilityjs/lib/visibility.core.js'></script>
-		<script src='lib/bower_components/visibilityjs/lib/visibility.timers.js'></script>
-		<script src='lib/bower_components/visibilityjs/lib/visibility.fallback.js'></script>
-		<script src='lib/bower_components/visibilityjs/lib/visibility.js'></script>
-		<script src='lib/bower_components/otr/build/dep/bigint.js'></script>
-		<script src='lib/bower_components/otr/build/dep/crypto.js'></script>
-		<script src='lib/bower_components/otr/build/dep/eventemitter.js'></script>
-		<script src='lib/bower_components/otr/build/otr.min.js'></script>
-		<script src='lib/goog.appengine.Channel.js'></script>
-		
-		<script src='js/cyph.js'></script>
-		<script src='js/ui.js'></script>
-
-	</body>
 </html>

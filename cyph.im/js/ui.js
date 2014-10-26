@@ -14,13 +14,11 @@ var
 angular.
 	module('Cyph', ['ngMaterial', 'ngSanitize', 'btford.markdown']).
 	controller('CyphController', ['$scope', '$mdSidenav', function($scope, $mdSidenav) {
-		$scope.isAlive	= true;
-
-		$scope.messages	= [];
-
-		$scope.message	= '';
-
+		$scope.isAlive			= true;
+		$scope.messages			= [];
+		$scope.message			= '';
 		$scope.unreadMessages	= 0;
+		$scope.authors			= authors;
 
 		states = $scope.states = {
 			none: 0,
@@ -30,7 +28,6 @@ angular.
 			chat: 200,
 			error: 404
 		};
-
 		state = $scope.state = $scope.states.none;
 
 
@@ -47,11 +44,12 @@ angular.
 		}
 
 
+		var newMessageNotification	= getString('newMessageNotification');
 		addMessageToChat = $scope.addMessageToChat = function (text, author) {
 			if (text) {
 				switch (author) {
 					case authors.friend:
-						notify('New message!');
+						notify(newMessageNotification);
 						break;
 
 					case authors.app:
@@ -74,7 +72,7 @@ angular.
 					}
 
 					$scope.messages.push({
-						author: author == authors.me ? 'me' : author == authors.friend ? 'friend' : '',
+						author: author,
 						isFromApp: author == authors.app,
 						isFromFriend: author == authors.friend,
 						isFromMe: author == authors.me,
@@ -91,9 +89,10 @@ angular.
 			});
 		};
 
+		var disconnectedNotification	= getString('disconnectedNotification');
 		closeChat = $scope.closeChat = function () {
 			if ($scope.isAlive) {
-				addMessageToChat('This cyph has been disconnected.', authors.app);
+				addMessageToChat(disconnectedNotification, authors.app);
 				sendChannelData({Destroy: true});
 
 				apply(function() {
