@@ -94,7 +94,7 @@ func imCreate(h HandlerArgs) (interface{}, int) {
 		imIdItems[i].Value = val
 	}
 
-	memcache.SetMulti(h.Context, &imIdItems)
+	memcache.SetMulti(h.Context, []*memcache.Item{&imIdItems[0], &imIdItems[1]})
 
 	laterImTeardown.Call(h.Context, longId, imIdItems[0].Key, imIdItems[1].Key, imIdItems[1].Value)
 
