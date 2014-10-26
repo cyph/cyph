@@ -84,29 +84,32 @@ def translate(text, language):
 	if text.isspace():
 		return text
 	
-	for i in range(5):
-		try:
-			cyphInstance	= re.match(cyph + u' ', text, flags = re.IGNORECASE)
+	try:
+		for i in range(5):
+			try:
+				cyphInstance	= re.match(cyph + u' ', text, flags = re.IGNORECASE)
 
-			if cyphInstance is not None:
-				text	= re.sub(cyphInstance, placeholder + u' ', text)
+				if cyphInstance is not None:
+					text	= re.sub(cyphInstance, placeholder + u' ', text)
 
-			translation	= translator.translate(text, language)
-			
-			if 'ArgumentException' in translation:
-				raise Exception(translation)
-			
-			if cyphInstance is not None:
-				translation	= re.sub(placeholder, cyphInstance[0:-1], translation, flags = re.IGNORECASE)
+				translation	= translator.translate(text, language)
+				
+				if 'ArgumentException' in translation:
+					raise Exception(translation)
+				
+				if cyphInstance is not None:
+					translation	= re.sub(placeholder, cyphInstance[0:-1], translation, flags = re.IGNORECASE)
 
-			return translation
-			
-		except Exception, e:
-			print(e)
-			time.sleep(20)
-			translator	= Translator(clientId, clientSecret)
-	
-	return text
+				return translation
+				
+			except Exception, e:
+				print(e)
+				time.sleep(20)
+				translator	= Translator(clientId, clientSecret)
+		
+		return text
+	except:
+		return u''
 
 
 # Do the move
@@ -130,7 +133,7 @@ for language in languages:
 			print(ngBind)
 
 			quotes	= re.findall('"[^"]*"', ngBind)
-			for i in range(len(quotes) - 1):
+			for i in range(len(quotes)):
 				quote	= unicode(quotes[i])
 				print(quote)
 				ngBind	= ngBind.replace(quote, '"' + translate(quote[1:-1], language) + '"', 1)
