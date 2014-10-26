@@ -44,6 +44,8 @@ html.mobile #message-box {
   font-size: 17px;
   line-height: 22px;
   padding: 13px; }
+html.mobile #message-box:focus ~ #new-messages {
+  display: none; }
 
 #message-wrapper {
   position: relative; }

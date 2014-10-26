@@ -59,11 +59,17 @@ html:not(.mobile) {
 	}
 }
 
-html.mobile #message-box {
-	height: 48px;
-	font-size: 17px;
-	line-height: 22px;
-	padding: 13px;
+html.mobile {
+	#message-box {
+		height: 48px;
+		font-size: 17px;
+		line-height: 22px;
+		padding: 13px;
+	}
+
+	#message-box:focus ~ #new-messages {
+		display: none;
+	}
 }
 
 #message-wrapper {

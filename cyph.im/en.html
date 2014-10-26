@@ -130,20 +130,6 @@
 
 		<footer>
 			<div id='message-wrapper' ng-show='state == states.chat && isAlive'>
-				<md-subheader
-					id='new-messages'
-					ng-show='unreadMessages > 0'
-					class='md-subheader-colored md-sticky-clone'
-					sticky-state='active'
-					ng-click='scrollDown()'
-				>
-					<strong>&#8595;&nbsp;&nbsp;</strong>
-					<span
-						translate
-						ng-bind='unreadMessages + " " + "new" + " " + (unreadMessages > 1 ? "messages" : "message")'
-					></span>
-				</md-subheader>
-
 				<textarea
 					id='message-box'
 					ng-model='message'
@@ -159,6 +145,20 @@
 					aria-label='Send'
 					deferred-src='/img/icons/send.png'
 				/>
+
+				<md-subheader
+					id='new-messages'
+					ng-show='unreadMessages > 0'
+					class='md-subheader-colored md-sticky-clone'
+					sticky-state='active'
+					ng-click='scrollDown()'
+				>
+					<strong>&#8595;&nbsp;&nbsp;</strong>
+					<span
+						translate
+						ng-bind='unreadMessages + " " + "new" + " " + (unreadMessages > 1 ? "messages" : "message")'
+					></span>
+				</md-subheader>
 			</div>
 
 			<div id='footer' class='desktop-only'>
