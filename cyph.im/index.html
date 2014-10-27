@@ -84,7 +84,7 @@
 			</section>
 		</div>
 		
-		<div flex></div>
+		<div flex ng-show='state != states.chat'></div>
 
 		<img class='loading' src='/img/logo.animated.gif' ng-show='state != states.chat && state != states.error' style='width:250px;height:250px;'/>
 
@@ -103,7 +103,7 @@
 			Negotiating secure connection...
 		</div>
 		
-		<div flex></div>
+		<div flex ng-show='state != states.chat'></div>
 
 		<div flex ng-show='state == states.error'>
 			<strong translate>error, bitch</strong>
