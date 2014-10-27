@@ -81,9 +81,6 @@ f.close()
 def translate(text, language):
 	global cyph, clientId, clientSecret, translator
 
-	if not isinstance(text, (str, unicode)):
-		return u''
-
 	if text.isspace():
 		return text
 	
@@ -134,6 +131,9 @@ for language in languages:
 
 			quotes	= re.findall('"[^"]*"', ngBind)
 			for i in range(len(quotes)):
+				if not isinstance(quotes[i], (str, unicode)):
+					continue
+
 				quote	= unicode(quotes[i])
 				print(quote)
 				ngBind	= ngBind.replace(quote, '"' + translate(quote[1:-1], language) + '"', 1)
