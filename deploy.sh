@@ -18,11 +18,11 @@ cd github.com/gorilla
 git clone git://github.com/gorilla/mux.git
 cd ../../..
 
-for d in cyph.im ; do
-	cd $d
-	../translate.py
-	cd ..
-done
+# for d in cyph.im ; do
+# 	cd $d
+# 	../translate.py
+# 	cd ..
+# done
 
 find . -name '*.js' | grep -v lib | xargs -I% uglifyjs "%" -o "%"
 find . -name '*.css' | xargs -I% cleancss -o "%" "%"
