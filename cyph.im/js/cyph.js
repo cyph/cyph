@@ -170,7 +170,7 @@ window.onpopstate	= function () {
 	var state	= document.location.pathname.split('/').slice(-1)[0];
 
 	/* Root */
-	if (state == '') {
+	if (state.length == 2 || ['', 'zh-CHS', 'zh-CHT'].indexOf(state) > -1) {
 		document.location.replace('https://www.cyph.com/');
 	}
 	/* New chat room */
