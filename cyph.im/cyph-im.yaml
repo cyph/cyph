@@ -6,9 +6,7 @@ api_version: 1
 threadsafe: true
 
 handlers:
-
 # Main
-
 - url: /
   static_files: index.html
   upload: index.html
@@ -39,7 +37,6 @@ handlers:
 
 
 # Translations
-
 - url: /([a-z]{2})
   static_files: \1.html
   upload: \1.html
@@ -70,7 +67,6 @@ handlers:
 
 
 # Chinese translatons
-
 - url: /(zh-CH[ST])
   static_files: \1.html
   upload: \1.html
@@ -101,7 +97,6 @@ handlers:
 
 
 # Else
-
 - url: /(.*)
   static_files: \1
   upload: .*
