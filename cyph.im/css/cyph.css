@@ -118,7 +118,6 @@ html.mobile #message-box:focus ~ #new-messages {
   vertical-align: middle;
   margin-left: auto;
   margin-right: auto;
-  top: 25%;
   left: -75px;
   position: relative;
   font-weight: bold;
@@ -127,6 +126,73 @@ html.mobile #message-box:focus ~ #new-messages {
 .loading a {
   pading-top: 15px; }
 
+input.loading {
+  -moz-border-radius: 50px;
+  -webkit-border-radius: 50px;
+  border-radius: 50px;
+  margin-top: 18px;
+  padding: 12px;
+  font-family: ubuntu;
+  font-size: 16px;
+  font-weight: normal;
+  width: 25%;
+  text-align: center;
+  background-color: #fff; }
+
+input.loading, button.loading {
+  -webkit-animation: fadein 2s;
+  /* Safari, Chrome and Opera > 12.1 */
+  -moz-animation: fadein 2s;
+  /* Firefox < 16 */
+  -ms-animation: fadein 2s;
+  /* Internet Explorer */
+  -o-animation: fadein 2s;
+  /* Opera < 12.1 */
+  animation: fadein 2s; }
+
+button.loading {
+  width: 30px;
+  background-color: white;
+  border: 0;
+  background-position: 3px 4px;
+  background-image: url("/img/icons/copy.svg");
+  height: 32px;
+  background-repeat: no-repeat;
+  left: 78px;
+  top: -41px;
+  -moz-border-radius: 50px;
+  -webkit-border-radius: 50px;
+  border-radius: 50px; }
+
+@keyframes fadein {
+  from {
+    opacity: 0; }
+  to {
+    opacity: 1; } }
+/* Firefox < 16 */
+@-moz-keyframes fadein {
+  from {
+    opacity: 0; }
+  to {
+    opacity: 1; } }
+/* Safari, Chrome and Opera > 12.1 */
+@-webkit-keyframes fadein {
+  from {
+    opacity: 0; }
+  to {
+    opacity: 1; } }
+/* Internet Explorer */
+@-ms-keyframes fadein {
+  from {
+    opacity: 0; }
+  to {
+    opacity: 1; } }
+/* Opera < 12.1 */
+@-o-keyframes fadein {
+  from {
+    opacity: 0; }
+  to {
+    opacity: 1; } }
 .message {
   max-width: 85%;
   word-wrap: break-word;

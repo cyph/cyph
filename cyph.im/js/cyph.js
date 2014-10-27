@@ -125,7 +125,8 @@ function setUpChannel (channelData) {
 		onopen: function () {
 			if (channel.data.IsCreator) {
 				setTimeout(function () {
-					changeState(states.waitingForFriend);
+				   	changeState(states.waitingForFriend);
+					$('input.loading').val(document.URL);
 					setTimeout(cryptoInit, 2500);
 				}, 2500);
 			}
