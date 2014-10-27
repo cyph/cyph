@@ -86,10 +86,11 @@ def translate(text, language):
 	
 	for i in range(5):
 		try:
-			cyphInstance	= re.match(cyph + u' ', text, flags = re.IGNORECASE)
+			cyphInstance	= re.search(cyph + u' ', text, flags = re.IGNORECASE)
 
 			if cyphInstance is not None:
-				text	= re.sub(cyphInstance, placeholder + u' ', text)
+				cyphInstance	= cyphInstance.group()
+				text			= re.sub(cyphInstance, placeholder + u' ', text)
 
 			translation	= translator.translate(text, language)
 			
