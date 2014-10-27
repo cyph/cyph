@@ -81,35 +81,35 @@ f.close()
 def translate(text, language):
 	global cyph, clientId, clientSecret, translator
 
+	if not isinstance(text, (str, unicode)):
+		return u''
+
 	if text.isspace():
 		return text
 	
-	try:
-		for i in range(5):
-			try:
-				cyphInstance	= re.match(cyph + u' ', text, flags = re.IGNORECASE)
+	for i in range(5):
+		try:
+			cyphInstance	= re.match(cyph + u' ', text, flags = re.IGNORECASE)
 
-				if cyphInstance is not None:
-					text	= re.sub(cyphInstance, placeholder + u' ', text)
+			if cyphInstance is not None:
+				text	= re.sub(cyphInstance, placeholder + u' ', text)
 
-				translation	= translator.translate(text, language)
-				
-				if 'ArgumentException' in translation:
-					raise Exception(translation)
-				
-				if cyphInstance is not None:
-					translation	= re.sub(placeholder, cyphInstance[0:-1], translation, flags = re.IGNORECASE)
+			translation	= translator.translate(text, language)
+			
+			if 'ArgumentException' in translation:
+				raise Exception(translation)
+			
+			if cyphInstance is not None:
+				translation	= re.sub(placeholder, cyphInstance[0:-1], translation, flags = re.IGNORECASE)
 
-				return translation
-				
-			except Exception, e:
-				print(e)
-				time.sleep(20)
-				translator	= Translator(clientId, clientSecret)
-		
-		return text
-	except:
-		return u''
+			return translation
+			
+		except Exception, e:
+			print(e)
+			time.sleep(20)
+			translator	= Translator(clientId, clientSecret)
+	
+	return text
 
 
 # Do the move
