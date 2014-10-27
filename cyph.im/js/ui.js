@@ -161,16 +161,25 @@ angular.
 		};
 
 		$scope.showCyphertext	= function() {
-			alert(
-				'This feature hasn\'t been implemented yet, but it will ' +
-				'briefly show the actual cyphertext as proof that the chat ' +
-				'is encrypted.'
-			);
+		   alert(
+		      'This feature hasn\'t been implemented yet, but it will ' +
+		      'briefly show the actual cyphertext as proof that the chat ' +
+		      'is encrypted.'
+		   );
 
 			if (isMobile) {
 				$mdSidenav('menu').close();
 			}
-		};
+			/*if(!$messageList.hasClass('curtain')){*/
+			/*$messageList.addClass('curtain');*/
+			/*$('#cyphertext').addClass('active');*/
+			/*}*/
+			/*else {*/
+			/*$messageList.removeClass('curtain');*/
+			/*$('#cyphertext').removeClass('active');*/
+			/*}*/
+	     
+		     };
 
 		$scope.twoFactor	= function() {
 			alert(

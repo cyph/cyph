@@ -59,10 +59,73 @@ html.mobile #message-box:focus ~ #new-messages {
   z-index: 10; }
 
 #footer {
-  margin-top: 10px; }
+  margin-top: 10px;
+  position: relative;
+  text-align: center;
+  left: -75px;
+  padding: 15px 0px 5px 0px; }
 
 #message-list {
   overflow-y: scroll; }
+
+#message-list.curtain {
+  transform: translateY(-90%);
+  height: 10%;
+  -webkit-transition: all 750ms cubic-bezier(1, 0, 0, 1);
+  /* older webkit */
+  -webkit-transition: all 750ms cubic-bezier(1, -0.6, 0, 1.65);
+  -moz-transition: all 750ms cubic-bezier(1, -0.6, 0, 1.65);
+  -o-transition: all 750ms cubic-bezier(1, -0.6, 0, 1.65);
+  transition: all 750ms cubic-bezier(1, -0.6, 0, 1.65);
+  /* custom */
+  -webkit-transition-timing-function: cubic-bezier(1, 0, 0, 1);
+  /* older webkit */
+  -webkit-transition-timing-function: cubic-bezier(1, -0.6, 0, 1.65);
+  -moz-transition-timing-function: cubic-bezier(1, -0.6, 0, 1.65);
+  -o-transition-timing-function: cubic-bezier(1, -0.6, 0, 1.65);
+  transition-timing-function: cubic-bezier(1, -0.6, 0, 1.65);
+  /* custom */ }
+
+#cyphertext {
+  background-color: #fff;
+  height: 0%;
+  opacity: 0;
+  height: 0;
+  position: absolute;
+  overflow-y: scroll;
+  color: #000; }
+
+#cyphertext.active {
+  position: relative;
+  opacity: 1;
+  height: 100%;
+  -webkit-transition: all 750ms cubic-bezier(1, 0, 0, 1);
+  /* older webkit */
+  -webkit-transition: all 750ms cubic-bezier(1, -0.6, 0, 1.65);
+  -moz-transition: all 750ms cubic-bezier(1, -0.6, 0, 1.65);
+  -o-transition: all 750ms cubic-bezier(1, -0.6, 0, 1.65);
+  transition: all 750ms cubic-bezier(1, -0.6, 0, 1.65);
+  /* custom */
+  -webkit-transition-timing-function: cubic-bezier(1, 0, 0, 1);
+  /* older webkit */
+  -webkit-transition-timing-function: cubic-bezier(1, -0.6, 0, 1.65);
+  -moz-transition-timing-function: cubic-bezier(1, -0.6, 0, 1.65);
+  -o-transition-timing-function: cubic-bezier(1, -0.6, 0, 1.65);
+  transition-timing-function: cubic-bezier(1, -0.6, 0, 1.65);
+  /* custom */ }
+
+.loading {
+  vertical-align: middle;
+  margin-left: auto;
+  margin-right: auto;
+  top: 25%;
+  left: -75px;
+  position: relative;
+  font-weight: bold;
+  font-size: 24px; }
+
+.loading a {
+  pading-top: 15px; }
 
 .message {
   max-width: 85%;
