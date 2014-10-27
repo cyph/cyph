@@ -6,6 +6,7 @@
 import json
 import re
 import time
+from subprocess import check_output
 from bs4 import BeautifulSoup
 from microsofttranslator import Translator
 
@@ -166,3 +167,30 @@ for language in languages:
 	
 	f.write(unicode(html).encode(codec))
 	f.close()
+
+
+
+yaml		= check_output('ls *.yaml | head -n1', shell=True)[0:-1]
+f			= open(yaml, 'r')
+yamlText	= f.read()
+f.close()
+
+handlers		= yamlText.split('handlers:')[1].split('# TRANSLATIONS')[0]
+yamlTextSplit	= yamlText.split('# TRANSLATIONS')
+yamlText		= yamlTextSplit[0]
+yamlTextEnd		= yamlTextSplit[1]
+
+languages.append('en')
+
+for language in languages:
+	newHandlers	= handlers.replace('url: ', 'url: /' + language)
+	newHandlers	= newHandlers.replace('/' + language + '/\n', '/' + language + '\n')
+	newHandlers	= newHandlers.replace('index.html', language + '.html')
+
+	yamlText	+= newHandlers
+
+yamlText	+= yamlTextEnd
+
+f	= open(yaml, 'w')
+f.write(yamlText)
+f.close()

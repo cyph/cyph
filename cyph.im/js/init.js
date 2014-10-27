@@ -1,5 +1,3 @@
-document.head.innerHTML	= '';
-
 /* Redirect to appropriate translation */
 var defaultLanguage	= 'en';
 var language		=
@@ -15,20 +13,9 @@ if (['zh-CHS', 'zh-CHT'].indexOf(language) < 0) {
 	language	= language.split('-')[0];
 }
 
-var req;
-
-function getCode () {
-	req	= new XMLHttpRequest();
-	req.open('GET', '/' + language + '.html', false);
-	req.send();
-}
-
-getCode();
-if (req.status != 200) {
+if (language == defaultLanguage || document.location.pathname.indexOf('/' + defaultLanguage + '/') == 0) {
 	language	= defaultLanguage;
-	getCode();
 }
-
-document.open();
-document.write(req.responseText);
-document.close();
+else {
+	document.location.pathname	= '/' + language + document.location.pathname;
+}
