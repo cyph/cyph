@@ -1,3 +1,5 @@
+document.head.innerHTML	= '';
+
 /* Redirect to appropriate translation */
 var defaultLanguage	= 'en';
 var language		=
@@ -27,7 +29,6 @@ if (req.status != 200) {
 	getCode();
 }
 
-document.removeChild(document.documentElement);
 document.open();
 document.write(req.responseText);
 document.close();
