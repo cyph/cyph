@@ -8,7 +8,7 @@
 			translate
 			ng-bind='(unreadMessages > 0 ? ("(" + unreadMessages + ") ") : "") + "Cyph - Privacy starts here."'
 		>
-			Cyph - Privacy starts here.
+			TEST	Cyph - Privacy starts here.
 		</title>
 		<meta translate name='description' content='Simple, frictionless private conversation with anyone at any time.' />
 		<meta translate name='newMessageNotification' content='New message!' />
@@ -84,15 +84,18 @@
 			</section>
 		</div>
 
-		<div flex translate ng-show='state == states.spinningUp'>
+		<img class='loading' src='/img/logo.animated.gif' ng-show='state != states.chat && state != states.error' style='width:250px;height:250px;'/>
+
+		<div class='loading' flex translate ng-show='state == states.spinningUp'>
 			Now spinning up your cyph room...
 		</div>
-
-		<div flex translate ng-show='state == states.waitingForFriend'>
-			Waiting for your friend to connect...
+		
+		<div class='loading'  flex translate ng-show='state == states.waitingForFriend'>
+		   
+		   	Waiting for your friend to connect...
 		</div>
 
-		<div flex translate ng-show='state == states.settingUpCrypto'>
+		<div class='loading' flex translate ng-show='state == states.settingUpCrypto'>
 			Negotiating secure connection...
 		</div>
 
@@ -122,6 +125,27 @@
 				</md-list>
 			</md-content>
 		</div>
+
+		<div id='cyphertext' ng-animate='active' >
+                        <md-content>
+                                <md-list layout='vertical'>
+                                        <md-item class='message-item unread' ng-repeat='message in messages' layout='horizontal'>
+                                                <span class='message'>
+                                                        <strong
+                                                                translate
+                                                                ng-hide='message.isFromApp'
+                                                                ng-bind='(message.author == authors.me ? "me" : "friend") + ": "'
+                                                        ></strong>
+                                                        <span
+                                                                btf-markdown='message.text'
+                                                                ng-class='{"app-message": message.isFromApp}'
+                                                        ></span>
+                                                </span>
+                                                <span flex style='text-align: right'>{{message.timestamp}}</span>
+                                        </md-item>
+                                </md-list>
+                        </md-content>
+                </div>
 
 		<div id='loading' ng-show='state == states.none'>
 			<div class='double-bounce1'></div>
