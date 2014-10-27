@@ -8,7 +8,7 @@
 			translate
 			ng-bind='(unreadMessages > 0 ? ("(" + unreadMessages + ") ") : "") + "Cyph - Privacy starts here."'
 		>
-			TEST	Cyph - Privacy starts here.
+			Cyph - Privacy starts here.
 		</title>
 		<meta translate name='description' content='Simple, frictionless private conversation with anyone at any time.' />
 		<meta translate name='newMessageNotification' content='New message!' />
@@ -83,21 +83,27 @@
 				<md-button translate aria-label='Disconnect' ng-click='disconnect()'>Disconnect</md-button>
 			</section>
 		</div>
+		
+		<div flex></div>
 
 		<img class='loading' src='/img/logo.animated.gif' ng-show='state != states.chat && state != states.error' style='width:250px;height:250px;'/>
 
-		<div class='loading' flex translate ng-show='state == states.spinningUp'>
+		<div class='loading' translate ng-show='state == states.spinningUp'>
 			Now spinning up your cyph room...
 		</div>
 		
-		<div class='loading'  flex translate ng-show='state == states.waitingForFriend'>
+		<div class='loading'  translate ng-show='state == states.waitingForFriend'>
 		   
 		   	Waiting for your friend to connect...
 		</div>
+		
+		<input class='loading' type='text'  ng-show='state == states.waitingForFriend' /><button class='loading' type='submit' ng-show='state == states.waitingForFriend' onclick="$('button.loading').zclip({path:'js/ZeroClipboard.swf',copy:$('input.loading').val()});" ></button>
 
-		<div class='loading' flex translate ng-show='state == states.settingUpCrypto'>
+		<div class='loading' translate ng-show='state == states.settingUpCrypto'>
 			Negotiating secure connection...
 		</div>
+		
+		<div flex></div>
 
 		<div flex ng-show='state == states.error'>
 			<strong translate>error, bitch</strong>
@@ -129,7 +135,7 @@
 		<div id='cyphertext' ng-animate='active' >
                         <md-content>
                                 <md-list layout='vertical'>
-                                        <md-item class='message-item unread' ng-repeat='message in messages' layout='horizontal'>
+				<md-item class='cyphertext-item' ng-repeat='message in messages' layout='horizontal'>
                                                 <span class='message'>
                                                         <strong
                                                                 translate
@@ -227,6 +233,8 @@
 		<script src='lib/bower_components/otr/build/otr.min.js'></script>
 		<script src='lib/goog.appengine.Channel.js'></script>
 		
+		<script src='js/jquery.zclip.min.js'></script>	
+
 		<script src='js/cyph.js'></script>
 		<script src='js/ui.js'></script>
 
