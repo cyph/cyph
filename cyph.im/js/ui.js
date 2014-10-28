@@ -392,6 +392,10 @@ angular.
 		/* Do the move lad */
 
 		cryptoInit();
+
+		if (isHistoryAvailable && history.replaceState) {
+			history.replaceState({}, '', '/' + getUrlState());
+		}
 		window.onpopstate();
 
 		if (window.Notification) {
