@@ -436,7 +436,7 @@ angular.
 		if (isHistoryAvailable && history.replaceState) {
 			history.replaceState({}, '', '/' + getUrlState());
 		}
-		window.onpopstate();
+		processUrlState();
 
 		if (window.Notification) {
 			Notification.requestPermission();

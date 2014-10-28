@@ -16,6 +16,12 @@ handlers:
   http_headers:
     X-Frame-Options: deny
 
+- url: /unsupportedbrowser
+  static_files: unsupportedbrowser.html
+  upload: unsupportedbrowser.html
+  http_headers:
+    X-Frame-Options: deny
+
 - url: /new
   static_files: index.html
   upload: index.html

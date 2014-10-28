@@ -165,7 +165,7 @@ html.mobile {
 html:not(.mobile) {
 	.loading {
 		font-size: 20px;
-		top: calc(20px + 66.5%);
+		top: calc(66.5% - 20px);
 	}
 	.loading > * {
 		left: -91.5px;
@@ -185,7 +185,7 @@ html:not(.mobile) {
 }
 html:not(.mobile) .loading:after {
 	background-image: url('/img/logo.animated.gif');
-	top: 33.5%;
+	top: calc(33.5% - 60px);
 }
 html.mobile .loading:after {
 	background-image: url('/img/logo.animated.small.gif');
