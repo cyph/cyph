@@ -6,7 +6,9 @@ api_version: 1
 threadsafe: true
 
 handlers:
+
 # Main
+
 - url: /
   static_files: index.html
   upload: index.html
@@ -37,66 +39,38 @@ handlers:
 
 
 # Translations
-- url: /([a-z]{2})
+
+- url: /(BALLS)
   static_files: \1.html
-  upload: \1.html
+  upload: .*\.html
   secure: always
   http_headers:
     X-Frame-Options: deny
 
-- url: /([a-z]{2})/new
+- url: /(BALLS)/new
   static_files: \1.html
-  upload: \1.html
+  upload: .*\.html
   secure: always
   http_headers:
     X-Frame-Options: deny
 
-- url: /([a-z]{2})/[A-Za-z0-9]{7}
+- url: /(BALLS)/[A-Za-z0-9]{7}
   static_files: \1.html
-  upload: \1.html
+  upload: .*\.html
   secure: always
   http_headers:
     X-Frame-Options: deny
 
-- url: /([a-z]{2})/404
+- url: /(BALLS)/404
   static_files: \1.html
-  upload: \1.html
-  secure: always
-  http_headers:
-    X-Frame-Options: deny
-
-
-# Chinese translatons
-- url: /(zh-CH[ST])
-  static_files: \1.html
-  upload: \1.html
-  secure: always
-  http_headers:
-    X-Frame-Options: deny
-
-- url: /(zh-CH[ST])/new
-  static_files: \1.html
-  upload: \1.html
-  secure: always
-  http_headers:
-    X-Frame-Options: deny
-
-- url: /(zh-CH[ST])/[A-Za-z0-9]{7}
-  static_files: \1.html
-  upload: \1.html
-  secure: always
-  http_headers:
-    X-Frame-Options: deny
-
-- url: /(zh-CH[ST])/404
-  static_files: \1.html
-  upload: \1.html
+  upload: .*\.html
   secure: always
   http_headers:
     X-Frame-Options: deny
 
 
 # Else
+
 - url: /(.*)
   static_files: \1
   upload: .*

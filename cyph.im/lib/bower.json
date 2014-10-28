@@ -27,6 +27,7 @@
     "otr": "~0.2.13",
     "screenfull": "~1.2.1",
     "angular": "~1.3.0",
-    "visibilityjs": "~1.2.1"
+    "visibilityjs": "~1.2.1",
+    "angular-timer": "~1.1.7"
   }
 }
