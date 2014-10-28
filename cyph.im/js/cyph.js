@@ -57,9 +57,6 @@ function cryptoInit () {
 
 					notify(connectedNotification);
 				}
-				else {
-					changeState(states.settingUpCrypto);
-				}
 			}
 		});
 
@@ -151,6 +148,8 @@ function setUpChannel (channelData) {
 			else {
 				changeState(states.settingUpCrypto);
 
+				sendChannelData({Misc: 'connect'});
+
 				if (otr) {
 					otr.sendQueryMsg();
 				}
@@ -175,6 +174,9 @@ function setUpChannel (channelData) {
 				if (o.Misc == 'ping') {
 					sendChannelData({Misc: 'pong'});
 				}
+				if (o.Misc == 'connect') {
+					changeState(states.settingUpCrypto);
+				}
 				if (o.Message) {
 					logCyphertext(o.Message, authors.friend);
 
@@ -183,7 +185,6 @@ function setUpChannel (channelData) {
 					}
 					else {
 						otrPostInit	= o.Message;
-						changeState(states.settingUpCrypto);
 					}
 				}
 				if (o.Destroy) {
