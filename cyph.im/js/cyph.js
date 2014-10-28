@@ -183,6 +183,7 @@ function setUpChannel (channelData) {
 					}
 					else {
 						otrPostInit	= o.Message;
+						changeState(states.settingUpCrypto);
 					}
 				}
 				if (o.Destroy) {

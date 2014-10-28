@@ -4,7 +4,6 @@ var
 	beginWaiting,
 	changeState,
 	closeChat,
-	cyphertext,
 	isMobile,
 	logCyphertext,
 	notify,
@@ -20,6 +19,7 @@ angular.
 	controller('CyphController', ['$scope', '$mdSidenav', function($scope, $mdSidenav) {
 		$scope.language			= language;
 		$scope.isAlive			= true;
+		$scope.cyphertext		= [];
 		$scope.messages			= [];
 		$scope.message			= '';
 		$scope.unreadMessages	= 0;
@@ -35,8 +35,6 @@ angular.
 			error: 404
 		};
 		state = $scope.state = $scope.states.none;
-
-		cyphertext = $scope.cyphertext = [];
 
 
 		/* https://coderwall.com/p/ngisma */
@@ -285,12 +283,6 @@ angular.
 		var disableNotify		= false;
 		var openNotifications	= [];
 
-		Visibility.change(function (e, state) {
-			if (state != 'hidden') {
-				disableNotify	= false;
-			}
-		});
-
 		notify	= function (message) {
 			if (!disableNotify && Visibility.hidden()) {
 				if (window.Notification) {
@@ -325,25 +317,45 @@ angular.
 
 		/* Init */
 
-		function setUpFullScreenEvent () {
+		var setUpFullScreenEvent;
+
+		if (isMobile) {
+			$('html').addClass('mobile');
+
+			var $messageBox			= $('#message-box');
+			var $messageBoxOverlay	= $('#message-box-overlay');
+
 			function fullScreen () {
 				if (screenfull.enabled && !screenfull.isFullscreen && $scope.state == $scope.states.chat) {
 					screenfull.request();
 
 					if (screenfull.isFullscreen) {
-						$(window).tap(fullScreen, false);
+						$messageBoxOverlay.tap(fullScreen, false);
 					}
 				}
 			}
 
-			$(window).tap(fullScreen, false).tap(fullScreen);
+			setUpFullScreenEvent	= function () {
+				$messageBox.blur();
+				$messageBoxOverlay.tap(fullScreen, false).tap(fullScreen);
+			}
+
+			setUpFullScreenEvent();
+
+			$messageBoxOverlay.tap(function () {
+				setTimeout(function () { $messageBox.focus() }, 250);
+			});
 		}
 
-		if (isMobile) {
-			$('html').addClass('mobile');
-			// setUpFullScreenEvent();
-			// $(window).on('hide', setUpFullScreenEvent);
-		}
+		/* For notify and mobile fullscreen */
+		Visibility.change(function (e, state) {
+			if (state != 'hidden') {
+				disableNotify	= false;
+			}
+			else if (setUpFullScreenEvent) {
+				setUpFullScreenEvent();
+			}
+		});
 
 		$('md-button').tap(function () {
 			setTimeout(function () {
