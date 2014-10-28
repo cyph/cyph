@@ -1,4 +1,5 @@
 @import 'bourbon/bourbon';
+@import 'fonts.css';
 
 
 html, body {
@@ -146,29 +147,32 @@ html.mobile {
 
 .loading {
 	position: relative;
-	font-size: 16px;
+	letter-spacing: 1px;
+	text-align: center;
+	font-family: 'Ubuntu', sans-serif;
 
 	> :first-child {
 		position: absolute;
-		top: 25px;
+		bottom: 20%;
 		width: 100%;
-		text-align: center;
-		letter-spacing: 1px;
-	}
-
-	> :not(:first-child) {
-		position: absolute;
-		bottom: 50px;
-		width: 100%;
-		text-align: center;
 	}
 }
-html:not(.mobile) .loading > * {
-	left: -91.5px;
+html.mobile {
+	.loading {
+		font-size: 18px;
+	}
+}
+html:not(.mobile) {
+	.loading {
+		font-size: 20px;
+	}
+	.loading > * {
+		left: -91.5px;
+	}
 }
 
 .loading:after {
-	background-size: auto 50%;
+	background-size: auto 33%;
 	background-repeat: no-repeat;
 	background-position: top center;
 	position: fixed;
@@ -193,7 +197,7 @@ html.mobile .loading:after {
 	outline: none;
 	background-color: #f1f1f1;
 	box-shadow: 0 0 10px #7239dd;
-	padding: 3px 0px 3px 3px;
+	padding: 5px;
 	border: 1px solid #8b62d9;
 }
 
@@ -283,7 +287,7 @@ body > .curtain:not(#cyphertext):not(#desktop-sidebar) {
 	padding-left: 12.5%;
 	font-size: 12px;
 	overflow-y: scroll;
-	font-family: 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Bitstream Vera Sans Mono', monospace;
+	font-family: 'Ubuntu Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Bitstream Vera Sans Mono', monospace;
 	background-color: #141414;
 	color: #3bfc34;
 	@include transition(opacity 1s linear 2s);
@@ -292,6 +296,19 @@ body > .curtain:not(#cyphertext):not(#desktop-sidebar) {
 	pointer-events: all;
 	opacity: 1;
 	@include transition(opacity 2s linear);
+}
+
+
+
+@include keyframes(fadein) {
+	from {
+		opacity: 0;
+		pointer-events: none;
+	}
+
+	to {
+		opacity: 1;
+	}
 }
 
 
