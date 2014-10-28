@@ -1,7 +1,7 @@
 var BASE_URL			= 'https://api.cyph.com/';
 var authors				= {me: 1, friend: 2, app: 3};
 var isHistoryAvailable	= typeof history != 'undefined';
-var channel, otr, isConnected, socket, sendOtrQueryMsgOnInit;
+var channel, otr, isConnected, socket, otrPostInit;
 
 function cryptoInit () {
 	function cryptoInitHelper (key) {
@@ -63,7 +63,10 @@ function cryptoInit () {
 			}
 		});
 
-		if (sendOtrQueryMsgOnInit) {
+		if (typeof otrPostInit == 'string') {
+			otr.receiveMsg(otrPostInit);
+		}
+		else if (otrPostInit) {
 			otr.sendQueryMsg();
 		}
 	}
@@ -139,9 +142,7 @@ function setUpChannel (channelData) {
 	socket	= channel.open({
 		onopen: function () {
 			if (channel.data.IsCreator) {
-				setTimeout(function () {
-					beginWaiting();
-				}, 2500);
+				beginWaiting();
 			}
 			else {
 				changeState(states.settingUpCrypto);
@@ -150,7 +151,7 @@ function setUpChannel (channelData) {
 					otr.sendQueryMsg();
 				}
 				else {
-					sendOtrQueryMsgOnInit	= true;
+					otrPostInit	= true;
 				}
 
 				setTimeout(function () {
@@ -172,7 +173,13 @@ function setUpChannel (channelData) {
 				}
 				if (o.Message) {
 					logCyphertext(o.Message, authors.friend);
-					otr.receiveMsg(o.Message);
+
+					if (otr) {
+						otr.receiveMsg(o.Message);
+					}
+					else {
+						otrPostInit	= o.Message;
+					}
 				}
 				if (o.Destroy) {
 					socket.close();
