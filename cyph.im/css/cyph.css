@@ -111,43 +111,25 @@ html.mobile #message-box:focus ~ #new-messages, html.mobile #message-box:focus ~
     width: 100%;
     margin-bottom: 6px; }
 
-.loading {
-  position: relative;
+.loading > :nth-child(2) {
+  margin-left: auto;
+  margin-right: auto;
+  height: 200px;
+  height: 33vh;
+  display: block;
+  margin-bottom: 10px; }
+.loading > :nth-child(3) {
   letter-spacing: 1px;
   text-align: center;
   font-family: 'Ubuntu', sans-serif; }
-  .loading > :first-child {
-    position: absolute;
-    width: 100%; }
 
 html.mobile .loading {
   font-size: 18px;
-  top: calc(120px + 33%); }
+  padding: 10px; }
 
 html:not(.mobile) .loading {
   font-size: 20px;
-  top: calc(66.5% - 20px); }
-html:not(.mobile) .loading > * {
-  left: -91.5px; }
-
-.loading:after {
-  background-size: auto 33%;
-  background-repeat: no-repeat;
-  background-position: top center;
-  position: fixed;
-  left: 0px;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  content: ' '; }
-
-html:not(.mobile) .loading:after {
-  background-image: url("/img/logo.animated.gif");
-  top: calc(33.5% - 60px); }
-
-html.mobile .loading:after {
-  background-image: url("/img/logo.animated.small.gif");
-  top: 100px; }
+  margin-left: -110px; }
 
 #copy-url input {
   text-align: center;
