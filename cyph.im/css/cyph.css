@@ -118,7 +118,7 @@ html.mobile #message-box:focus ~ #new-messages, html.mobile #message-box:focus ~
   font-family: 'Ubuntu', sans-serif; }
   .loading > :first-child {
     position: absolute;
-    bottom: 20%;
+    top: 60%;
     width: 100%; }
 
 html.mobile .loading {
@@ -251,24 +251,30 @@ body > .curtain:not(#cyphertext):not(#desktop-sidebar) {
   -moz-transition: opacity 2s linear;
   transition: opacity 2s linear; }
 
-@-webkit-keyframes fadein {
-  from {
-    opacity: 0;
-    pointer-events: none; }
-  to {
-    opacity: 1; } }
-@-moz-keyframes fadein {
-  from {
-    opacity: 0;
-    pointer-events: none; }
-  to {
-    opacity: 1; } }
-@keyframes fadein {
-  from {
-    opacity: 0;
-    pointer-events: none; }
-  to {
-    opacity: 1; } }
+[ng-view]:not(.active) {
+  opacity: 0;
+  pointer-events: none;
+  position: fixed; }
+
+[ng-view].active {
+  -webkit-transition: all 0.75s linear;
+  -moz-transition: all 0.75s linear;
+  transition: all 0.75s linear; }
+
+#chat-begin-message {
+  font-weight: bold;
+  font-family: 'Ubuntu', sans-serif;
+  text-align: center;
+  padding-top: 10%;
+  width: 100%;
+  background-color: #8b62d9 !important; }
+
+html:not(.mobile) #chat-begin-message {
+  font-size: 150px; }
+
+html.mobile #chat-begin-message {
+  font-size: 50px; }
+
 /* Mobile and desktop classes */
 html:not(.mobile) .mobile-only {
   display: none !important; }
