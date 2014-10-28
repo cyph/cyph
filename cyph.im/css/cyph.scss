@@ -1,6 +1,7 @@
-@import "bourbon/bourbon";
+@import 'bourbon/bourbon';
 
-body, #loading, md-sidenav {
+
+body, #pre-load, md-sidenav {
 	background-color: #8b62d9 !important;
 }
 
@@ -96,132 +97,6 @@ html.mobile {
 	overflow-y: scroll;
 }
 
-#message-list.curtain {
-  transform: translateY(-90%);
-  height: 10%;
-  -webkit-transition: all 750ms cubic-bezier(1, 0, 0, 1);
-  /* older webkit */
-  -webkit-transition: all 750ms cubic-bezier(1, -0.6, 0, 1.65);
-  -moz-transition: all 750ms cubic-bezier(1, -0.6, 0, 1.65);
-  -o-transition: all 750ms cubic-bezier(1, -0.6, 0, 1.65);
-  transition: all 750ms cubic-bezier(1, -0.6, 0, 1.65);
-  /* custom */
-  -webkit-transition-timing-function: cubic-bezier(1, 0, 0, 1);
-  /* older webkit */
-  -webkit-transition-timing-function: cubic-bezier(1, -0.6, 0, 1.65);
-  -moz-transition-timing-function: cubic-bezier(1, -0.6, 0, 1.65);
-  -o-transition-timing-function: cubic-bezier(1, -0.6, 0, 1.65);
-  transition-timing-function: cubic-bezier(1, -0.6, 0, 1.65);
-  /* custom */ 
-}
-
-#cyphertext{
-	background-color:#fff;
-        height:0%;
-        opacity:0;
-        height: 0;
-        position: absolute;
-	overflow-y: scroll;
-	color: #000;
-}
-
-#cyphertext.active{
-        position:relative;
-        opacity:1;
-        height:100%;
-        -webkit-transition: all 750ms cubic-bezier(1.000, 0, 0.000, 1); /* older webkit */
-        -webkit-transition: all 750ms cubic-bezier(1.000, -0.600, 0.000, 1.650);
-        -moz-transition: all 750ms cubic-bezier(1.000, -0.600, 0.000, 1.650);
-        -o-transition: all 750ms cubic-bezier(1.000, -0.600, 0.000, 1.650);
-        transition: all 750ms cubic-bezier(1.000, -0.600, 0.000, 1.650); /* custom */
-
-        -webkit-transition-timing-function: cubic-bezier(1.000, 0, 0.000, 1); /* older webkit */
-        -webkit-transition-timing-function: cubic-bezier(1.000, -0.600, 0.000, 1.650);
-        -moz-transition-timing-function: cubic-bezier(1.000, -0.600, 0.000, 1.650);
-        -o-transition-timing-function: cubic-bezier(1.000, -0.600, 0.000, 1.650);
-        transition-timing-function: cubic-bezier(1.000, -0.600, 0.000, 1.650); /* custom */
-}
-
-.loading {
-	vertical-align: middle;
-   	margin-left: auto;
-   	margin-right: auto;
-	left: -75px;
-	position: relative;
-	font-weight: bold;
-	font-size: 24px;
-}
-
-.loading a {
-   pading-top:15px;
-}
-
-input.loading {
-      -moz-border-radius: 50px;
-      -webkit-border-radius: 50px;
-      border-radius: 50px;
-      margin-top: 18px;
-      padding: 12px;
-      font-family: ubuntu;
-      font-size: 16px;
-      font-weight: normal;
-      width: 25%;
-      text-align:center;
-      background-color: #fff;
-}
-
-input.loading, button.loading {
-      -webkit-animation: fadein 2s; /* Safari, Chrome and Opera > 12.1 */
-       -moz-animation: fadein 2s; /* Firefox < 16 */
-        -ms-animation: fadein 2s; /* Internet Explorer */
-         -o-animation: fadein 2s; /* Opera < 12.1 */
-            animation: fadein 2s;
-}
-
-button.loading {
-   width: 30px;
-   background-color: white;
-   border: 0;
-   background-position: 3px 4px;
-   background-image: url("/img/icons/copy.svg");
-   height: 32px;
-   background-repeat: no-repeat;
-   left: 78px;
-   top: -41px;
-   -moz-border-radius: 50px;
-   -webkit-border-radius: 50px;
-   border-radius: 50px;
-}
-@keyframes fadein {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-}
-
-/* Firefox < 16 */
-@-moz-keyframes fadein {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-}
-
-/* Safari, Chrome and Opera > 12.1 */
-@-webkit-keyframes fadein {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-}
-
-/* Internet Explorer */
-@-ms-keyframes fadein {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-}
-
-/* Opera < 12.1 */
-@-o-keyframes fadein {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-}
-
-
 .message {
 	max-width: 85%;
 	word-wrap: break-word;
@@ -237,7 +112,6 @@ button.loading {
 	top: 0px;
 	left: 0px;
 	height: 100%;
-
 	width: 200px;
 	padding: 20px;
 
@@ -255,7 +129,62 @@ button.loading {
 	}
 }
 
-#loading {
+
+.loading {
+	position: relative;
+	font-size: 16px;
+
+	> :first-child {
+		position: absolute;
+		top: 25px;
+		width: 100%;
+		text-align: center;
+		letter-spacing: 1px;
+	}
+
+	> :not(:first-child) {
+		position: absolute;
+		bottom: 50px;
+		width: 100%;
+		text-align: center;
+	}
+}
+html:not(.mobile) .loading > * {
+	left: -91.5px;
+}
+
+.loading:after {
+	background-size: auto 50%;
+	background-repeat: no-repeat;
+	background-position: top center;
+	position: fixed;
+	top: 100px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+	content: ' ';
+}
+html:not(.mobile) .loading:after {
+	background-image: url('/img/logo.animated.gif');
+}
+html.mobile .loading:after {
+	background-image: url('/img/logo.animated.small.gif');
+}
+
+#copy-url input {
+	text-align: center;
+	margin-left: auto;
+	margin-right: auto;
+	outline: none;
+	background-color: #f1f1f1;
+	box-shadow: 0 0 10px #7239dd;
+	padding: 3px 0px 3px 3px;
+	border: 1px solid #8b62d9;
+}
+
+
+#pre-load {
 	position: fixed;
 	top: -1px;
 	left: -1px;
@@ -294,7 +223,7 @@ btf-markdown, [btf-markdown] {
 	}
 }
 
-:not(textarea) {
+:not(textarea):not(md-text-float):not(md-input-group):not(input) {
 	border: 0px !important;
 }
 
@@ -317,6 +246,40 @@ textarea {
 #new-messages:after {
 	width: 100%;
 }
+
+
+
+body > .curtain:not(#cyphertext):not(#desktop-sidebar) {
+	@include transform(translateX(5000px));
+	@include transition(all 5s ease-in-out);
+}
+#desktop-sidebar.curtain, #desktop-sidebar *.curtain {
+	@include transform(translateY(-5000px));
+	@include transition(all 10s ease-in-out);
+}
+#cyphertext {
+	pointer-events: none;
+	opacity: 0;
+	position: fixed;
+	top: -1px;
+	left: -1px;
+	width: 101%;
+	height: 101%;
+	padding-top: 20px;
+	padding-left: 12.5%;
+	font-size: 12px;
+	overflow-y: scroll;
+	font-family: 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Bitstream Vera Sans Mono', monospace;
+	background-color: #141414;
+	color: #3bfc34;
+	@include transition(opacity 2s linear);
+}
+#cyphertext.curtain {
+	pointer-events: all;
+	opacity: 1;
+	@include transition(opacity 2s linear);
+}
+
 
 
 /* Mobile and desktop classes */

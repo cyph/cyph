@@ -13,7 +13,7 @@ ps ux | grep dev_appserver | awk '{print $2}' | xargs kill -9
 # 	bash -c "nohup `echo "$cmd" | sed "s/ADMIN_PORT/$ADMIN_PORT/" | sed "s/PORT/$PORT/"` &"
 # done
 
-find "$1" -name '*.scss' | perl -pe 's/(.*)\.scss/\1/g' | xargs -I% sass --watch "%.scss":"%.css" &
+sass --watch $1 &
 dev_appserver.py $1/*.yaml
 
 cd "${dir}"

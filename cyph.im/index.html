@@ -18,29 +18,29 @@
 
 		<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
 
-		<meta name='apple-mobile-web-app-capable' content='yes'>
-		<meta name='mobile-web-app-capable' content='yes'>
+		<meta name='apple-mobile-web-app-capable' content='yes' />
+		<meta name='mobile-web-app-capable' content='yes' />
 
-		<link rel='apple-touch-icon' sizes='57x57' href='img/favicon/apple-touch-icon-57x57.png'>
-		<link rel='apple-touch-icon' sizes='114x114' href='img/favicon/apple-touch-icon-114x114.png'>
-		<link rel='apple-touch-icon' sizes='72x72' href='img/favicon/apple-touch-icon-72x72.png'>
-		<link rel='apple-touch-icon' sizes='144x144' href='img/favicon/apple-touch-icon-144x144.png'>
-		<link rel='apple-touch-icon' sizes='60x60' href='img/favicon/apple-touch-icon-60x60.png'>
-		<link rel='apple-touch-icon' sizes='120x120' href='img/favicon/apple-touch-icon-120x120.png'>
-		<link rel='apple-touch-icon' sizes='76x76' href='img/favicon/apple-touch-icon-76x76.png'>
-		<link rel='apple-touch-icon' sizes='152x152' href='img/favicon/apple-touch-icon-152x152.png'>
-		<link rel='apple-touch-icon' sizes='180x180' href='img/favicon/apple-touch-icon-180x180.png'>
-		<link rel='icon' type='image/png' href='img/favicon/favicon-192x192.png' sizes='192x192'>
-		<link rel='icon' type='image/png' href='img/favicon/favicon-160x160.png' sizes='160x160'>
-		<link rel='icon' type='image/png' href='img/favicon/favicon-96x96.png' sizes='96x96'>
-		<link rel='icon' type='image/png' href='img/favicon/favicon-16x16.png' sizes='16x16'>
-		<link rel='icon' type='image/png' href='img/favicon/favicon-32x32.png' sizes='32x32'>
-		<meta name='msapplication-TileColor' content='#8b62d9'>
-		<meta name='msapplication-TileImage' content='img/favicon/mstile-144x144.png'>
+		<link rel='apple-touch-icon' sizes='57x57' href='/img/favicon/apple-touch-icon-57x57.png' />
+		<link rel='apple-touch-icon' sizes='114x114' href='/img/favicon/apple-touch-icon-114x114.png' />
+		<link rel='apple-touch-icon' sizes='72x72' href='/img/favicon/apple-touch-icon-72x72.png' />
+		<link rel='apple-touch-icon' sizes='144x144' href='/img/favicon/apple-touch-icon-144x144.png' />
+		<link rel='apple-touch-icon' sizes='60x60' href='/img/favicon/apple-touch-icon-60x60.png' />
+		<link rel='apple-touch-icon' sizes='120x120' href='/img/favicon/apple-touch-icon-120x120.png' />
+		<link rel='apple-touch-icon' sizes='76x76' href='/img/favicon/apple-touch-icon-76x76.png' />
+		<link rel='apple-touch-icon' sizes='152x152' href='/img/favicon/apple-touch-icon-152x152.png' />
+		<link rel='apple-touch-icon' sizes='180x180' href='/img/favicon/apple-touch-icon-180x180.png' />
+		<link rel='icon' type='image/png' href='/img/favicon/favicon-192x192.png' sizes='192x192' />
+		<link rel='icon' type='image/png' href='/img/favicon/favicon-160x160.png' sizes='160x160' />
+		<link rel='icon' type='image/png' href='/img/favicon/favicon-96x96.png' sizes='96x96' />
+		<link rel='icon' type='image/png' href='/img/favicon/favicon-16x16.png' sizes='16x16' />
+		<link rel='icon' type='image/png' href='/img/favicon/favicon-32x32.png' sizes='32x32' />
+		<meta name='msapplication-TileColor' content='#8b62d9' />
+		<meta name='msapplication-TileImage' content='/img/favicon/mstile-144x144.png' />
 
-		<link rel='stylesheet' href='lib/bower_components/angular-material/angular-material.css' />
+		<link rel='stylesheet' href='/lib/bower_components/angular-material/angular-material.css' />
 
-		<link rel='stylesheet' href='css/cyph.css' />
+		<link rel='stylesheet' href='/css/cyph.css' />
 	</head>
 	<body layout='vertical' layout-fill>
 
@@ -50,7 +50,7 @@
 					<img deferred-src='/img/logo.white.horizontal.header.png' />
 				</a>
 				<span flex></span>
-				<md-button aria-label='Menu' ng-show='state == states.chat' ng-click='openMobileMenu()'>
+				<md-button translate aria-label='Menu' ng-show='state == states.chat' ng-click='openMobileMenu()'>
 					<img deferred-src='/img/icons/menu.png' />
 				</md-button>
 			</div>
@@ -83,30 +83,24 @@
 				<md-button translate aria-label='Disconnect' ng-click='disconnect()'>Disconnect</md-button>
 			</section>
 		</div>
-		
-		<div flex ng-show='state != states.chat'></div>
 
-		<img class='loading' src='/img/logo.animated.gif' ng-show='state != states.chat && state != states.error' style='width:250px;height:250px;'/>
+		<div class='loading' flex translate ng-show='state == states.spinningUp'>
+			<div translate>Now spinning up your cyph room...</div>
+		</div>
 
-		<div class='loading' translate ng-show='state == states.spinningUp'>
-			Now spinning up your cyph room...
+		<div class='loading' flex ng-show='state == states.waitingForFriend'>
+			<div translate>Waiting for your friend to connect...</div>
+			<div>
+				<md-text-float id='copy-url' ng-model='copyUrl' disabled></md-text-float>
+			</div>
 		</div>
-		
-		<div class='loading'  translate ng-show='state == states.waitingForFriend'>
-		   
-		   	Waiting for your friend to connect...
-		</div>
-		
-		<input class='loading' type='text'  ng-show='state == states.waitingForFriend' /><button class='loading' type='submit' ng-show='state == states.waitingForFriend' onclick="$('button.loading').zclip({path:'js/ZeroClipboard.swf',copy:$('input.loading').val()});" ></button>
 
-		<div class='loading' translate ng-show='state == states.settingUpCrypto'>
-			Negotiating secure connection...
+		<div class='loading' flex translate ng-show='state == states.settingUpCrypto'>
+			<div translate>Negotiating secure connection...</div>
 		</div>
-		
-		<div flex ng-show='state != states.chat'></div>
 
 		<div flex ng-show='state == states.error'>
-			<strong translate>error, bitch</strong>
+			<div translate>error, bitch</div>
 		</div>
 
 		<div flex ng-show='state == states.none'></div>
@@ -132,28 +126,7 @@
 			</md-content>
 		</div>
 
-		<div id='cyphertext' ng-animate='active' >
-                        <md-content>
-                                <md-list layout='vertical'>
-				<md-item class='cyphertext-item' ng-repeat='message in messages' layout='horizontal'>
-                                                <span class='message'>
-                                                        <strong
-                                                                translate
-                                                                ng-hide='message.isFromApp'
-                                                                ng-bind='(message.author == authors.me ? "me" : "friend") + ": "'
-                                                        ></strong>
-                                                        <span
-                                                                btf-markdown='message.text'
-                                                                ng-class='{"app-message": message.isFromApp}'
-                                                        ></span>
-                                                </span>
-                                                <span flex style='text-align: right'>{{message.timestamp}}</span>
-                                        </md-item>
-                                </md-list>
-                        </md-content>
-                </div>
-
-		<div id='loading' ng-show='state == states.none'>
+		<div id='pre-load' ng-show='state == states.none'>
 			<div class='double-bounce1'></div>
 			<div class='double-bounce2'></div>
 		</div>
@@ -161,6 +134,7 @@
 		<footer>
 			<div id='message-wrapper' ng-show='state == states.chat && isAlive'>
 				<textarea
+					translate
 					id='message-box'
 					ng-model='message'
 					onenterpress='sendMessage()'
@@ -168,6 +142,7 @@
 					placeholder='Send a secure message...'
 				></textarea>
 				<img
+					translate
 					id='sendbutton'
 					ng-hide='message == ""'
 					onclick='sendMessage()'
@@ -203,40 +178,56 @@
 				<!--
 					<span ng-hide='language == "en"'>
 							&nbsp;&bull;&nbsp;
-						<a href onclick='forceEnglish()'>English</a>
+						<a href='/en/new'>English</a>
 					</span>
 				-->
 			</div>
 		</footer>
 
+		<div id='cyphertext'>
+			<md-content>
+				<md-list layout='vertical'>
+					<md-item class='message-item unread' ng-repeat='message in cyphertext' layout='horizontal'>
+						<span class='message'>
+							<strong
+								translate
+								ng-bind='(message.author == authors.me ? "me" : "friend") + ": "'
+							></strong>
+							<span flex>{{message.text}}</span>
+							<br />
+							<br />
+						</span>
+					</md-item>
+				</md-list>
+			</md-content>
+		</div>
 
-		<script src='js/init.js'></script>
 
-		<script src='lib/bower_components/jquery/dist/jquery.min.js'></script>
-		<script src='lib/jquery.appear/jquery.appear.js'></script>
-		<script src='lib/bower_components/angular/angular.min.js'></script>
-		<script src='lib/bower_components/angular-aria/angular-aria.js'></script>
-		<script src='lib/bower_components/angular-animate/angular-animate.js'></script>
-		<script src='lib/bower_components/hammerjs/hammer.js'></script>
-		<script src='lib/bower_components/angular-material/angular-material.js'></script>
-		<script src='lib/bower_components/angular-sanitize/angular-sanitize.min.js'></script>
-		<script src='lib/bower_components/showdown/compressed/showdown.js'></script>
-		<script src='lib/bower_components/angular-markdown-directive/markdown.js'></script>
-		<script src='lib/bower_components/screenfull/dist/screenfull.min.js'></script>
-		<script src='lib/bower_components/visibilityjs/lib/visibility.core.js'></script>
-		<script src='lib/bower_components/visibilityjs/lib/visibility.timers.js'></script>
-		<script src='lib/bower_components/visibilityjs/lib/visibility.fallback.js'></script>
-		<script src='lib/bower_components/visibilityjs/lib/visibility.js'></script>
-		<script src='lib/bower_components/otr/build/dep/bigint.js'></script>
-		<script src='lib/bower_components/otr/build/dep/crypto.js'></script>
-		<script src='lib/bower_components/otr/build/dep/eventemitter.js'></script>
-		<script src='lib/bower_components/otr/build/otr.min.js'></script>
-		<script src='lib/goog.appengine.Channel.js'></script>
+		<script src='/js/translate.js'></script>
+
+		<script src='/lib/bower_components/jquery/dist/jquery.min.js'></script>
+		<script src='/lib/jquery.appear/jquery.appear.js'></script>
+		<script src='/lib/bower_components/angular/angular.min.js'></script>
+		<script src='/lib/bower_components/angular-aria/angular-aria.js'></script>
+		<script src='/lib/bower_components/angular-animate/angular-animate.js'></script>
+		<script src='/lib/bower_components/hammerjs/hammer.js'></script>
+		<script src='/lib/bower_components/angular-material/angular-material.js'></script>
+		<script src='/lib/bower_components/angular-sanitize/angular-sanitize.min.js'></script>
+		<script src='/lib/bower_components/showdown/compressed/showdown.js'></script>
+		<script src='/lib/bower_components/angular-markdown-directive/markdown.js'></script>
+		<script src='/lib/bower_components/screenfull/dist/screenfull.min.js'></script>
+		<script src='/lib/bower_components/visibilityjs/lib/visibility.core.js'></script>
+		<script src='/lib/bower_components/visibilityjs/lib/visibility.timers.js'></script>
+		<script src='/lib/bower_components/visibilityjs/lib/visibility.fallback.js'></script>
+		<script src='/lib/bower_components/visibilityjs/lib/visibility.js'></script>
+		<script src='/lib/bower_components/otr/build/dep/bigint.js'></script>
+		<script src='/lib/bower_components/otr/build/dep/crypto.js'></script>
+		<script src='/lib/bower_components/otr/build/dep/eventemitter.js'></script>
+		<script src='/lib/bower_components/otr/build/otr.min.js'></script>
+		<script src='/lib/goog.appengine.Channel.js'></script>
 		
-		<script src='js/jquery.zclip.min.js'></script>	
-
-		<script src='js/cyph.js'></script>
-		<script src='js/ui.js'></script>
+		<script src='/js/cyph.js'></script>
+		<script src='/js/ui.js'></script>
 
 	</body>
 </html>

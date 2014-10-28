@@ -1,9 +1,12 @@
 var
 	addMessageToChat,
 	beginChat,
+	beginWaiting,
 	changeState,
 	closeChat,
+	cyphertext,
 	isMobile,
+	logCyphertext,
 	notify,
 	platformString,
 	sendMessage,
@@ -21,6 +24,7 @@ angular.
 		$scope.message			= '';
 		$scope.unreadMessages	= 0;
 		$scope.authors			= authors;
+		$scope.copyUrl			= '';
 
 		states = $scope.states = {
 			none: 0,
@@ -31,6 +35,8 @@ angular.
 			error: 404
 		};
 		state = $scope.state = $scope.states.none;
+
+		cyphertext = $scope.cyphertext = [];
 
 
 		/* https://coderwall.com/p/ngisma */
@@ -86,25 +92,46 @@ angular.
 		};
 
 		beginChat = $scope.beginChat = function () {
-			changeState(states.chat);
+			changeState($scope.states.chat);
 
 			/* Adjust font size for translations */
-			$('md-button').each(function () {
-				var $this	= $(this);
-				var $clone	= $this
-					.clone()
-					.css({display: 'inline', width: 'auto', visibility: 'hidden', position: 'fixed'})
-					.appendTo('body')
-				;
-				var $both	= $this.add($clone);
+			if (!isMobile) {
+				$('md-button').each(function () {
+					var $this	= $(this);
+					var $clone	= $this
+						.clone()
+						.css({display: 'inline', width: 'auto', visibility: 'hidden', position: 'fixed'})
+						.appendTo('body')
+					;
+					var $both	= $this.add($clone);
 
-				for (var i = 0 ; i < 10 && $clone.width() > $this.width() ; ++i) {
-					var newFontSize	= parseInt($this.css('font-size'), 10) - 1;
-					$both.css('font-size', newFontSize + 'px');
-				}
+					for (var i = 0 ; i < 10 && $clone.width() > $this.width() ; ++i) {
+						var newFontSize	= parseInt($this.css('font-size'), 10) - 1;
+						$both.css('font-size', newFontSize + 'px');
+					}
 
-				$clone.remove();
+					$clone.remove();
+				});
+			}
+		};
+
+		beginWaiting = $scope.beginWaiting = function () {
+			changeState($scope.states.waitingForFriend);
+
+			apply(function () {
+				$scope.copyUrl	= 'http://cyph.im' + document.location.pathname;
 			});
+
+			var $copyUrl		= $('#copy-url input');
+			var copyUrlLength	= $scope.copyUrl.length;
+			var copyUrlInterval	= setInterval(function () {
+				if ($scope.state == $scope.states.waitingForFriend) {
+					$copyUrl[0].setSelectionRange(0, copyUrlLength);
+				}
+				else {
+					clearInterval(copyUrlInterval);
+				}
+			}, 250);
 		};
 
 		changeState = $scope.changeState = function (state) {
@@ -121,6 +148,14 @@ angular.
 
 				apply(function() {
 					$scope.isAlive	= false;
+				});
+			}
+		};
+
+		logCyphertext = $scope.logCyphertext = function (text, author) {
+			if (text) {
+				apply(function() {
+					$scope.cyphertext.push({author: author, text: text});
 				});
 			}
 		};
@@ -160,26 +195,16 @@ angular.
 			$messageList.animate({scrollTop: $messageList[0].scrollHeight}, 350);
 		};
 
+		var curtainClass	= 'curtain';
+		var $everything		= $('*');
 		$scope.showCyphertext	= function() {
-		   alert(
-		      'This feature hasn\'t been implemented yet, but it will ' +
-		      'briefly show the actual cyphertext as proof that the chat ' +
-		      'is encrypted.'
-		   );
+			$everything.addClass(curtainClass);
+			setTimeout(function () { $everything.removeClass(curtainClass) }, 7500);
 
 			if (isMobile) {
 				$mdSidenav('menu').close();
 			}
-			/*if(!$messageList.hasClass('curtain')){*/
-			/*$messageList.addClass('curtain');*/
-			/*$('#cyphertext').addClass('active');*/
-			/*}*/
-			/*else {*/
-			/*$messageList.removeClass('curtain');*/
-			/*$('#cyphertext').removeClass('active');*/
-			/*}*/
-	     
-		     };
+		};
 
 		$scope.twoFactor	= function() {
 			alert(
@@ -210,12 +235,17 @@ angular.
 			var $this		= $(this);
 			var eventName	= isMobile ? 'touchstart' : 'click';
 
-			if (onOrOff === false) {
+			if (!callback) {
+				$this.trigger(eventName);
+			}
+			else if (onOrOff === false) {
 				$this.off(eventName, callback);
 			}
 			else {
 				$this.on(eventName, callback);
 			}
+
+			return $this;
 		}
 
 
@@ -361,6 +391,7 @@ angular.
 		
 		/* Do the move lad */
 
+		cryptoInit();
 		window.onpopstate();
 
 		if (window.Notification) {

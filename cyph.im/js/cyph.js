@@ -1,65 +1,80 @@
 var BASE_URL			= 'https://api.cyph.com/';
 var authors				= {me: 1, friend: 2, app: 3};
 var isHistoryAvailable	= typeof history != 'undefined';
-var channel, otr, isConnected, socket;
+var channel, otr, isConnected, socket, sendOtrQueryMsgOnInit;
 
 function cryptoInit () {
-	otr	= new OTR({
-		fragment_size: 5000,
-		send_interval: 200,
-		debug: false,
-		instance_tag: OTR.makeInstanceTag(),
-		priv: new DSA()
-	});
+	function cryptoInitHelper (key) {
+		otr	= new OTR({
+			fragment_size: 5000,
+			send_interval: 200,
+			debug: false,
+			instance_tag: OTR.makeInstanceTag(),
+			priv: key
+		});
 
-	otr.ALLOW_V2			= false;
-	otr.ALLOW_V3			= true;
-	otr.REQUIRE_ENCRYPTION	= true;
+		otr.ALLOW_V2			= false;
+		otr.ALLOW_V3			= true;
+		otr.REQUIRE_ENCRYPTION	= true;
 
-	/*
-	otr.on('error', function (error) {
-		addMessageToChat('ERROR: ' + error, authors.app);
-	});
-	*/
+		/*
+		otr.on('error', function (error) {
+			addMessageToChat('ERROR: ' + error, authors.app);
+		});
+		*/
 
-	otr.on('ui', function (message, wasEncrypted) {
-		if (wasEncrypted) {
-			addMessageToChat(message, authors.friend);
-		}
-	});
-
-	otr.on('io', function (message) {
-		/* TODO: figure out wtf is up with these errors and if it's actually a vulnerability */
-		if (message != '?OTR Error:An OTR error has occurred.') {
-			sendChannelData({Message: message});
-		}
-	});
-
-	var connectedNotification	= getString('connectedNotification');
-	var disconnectWarning		= getString('disconnectWarning');
-	otr.on('status', function (state) {
-		if (!isConnected) {
-			if (state == OTR.CONST.STATUS_AKE_SUCCESS) {
-				isConnected	= true;
-
-				beginChat();
-
-				$(window).on('beforeunload', function () {
-					return disconnectWarning;
-				});
-
-				$(window).unload(function () {
-					sendChannelData({Destroy: true}, {async: false});
-					socket.close();
-				});
-
-				notify(connectedNotification);
+		otr.on('ui', function (message, wasEncrypted) {
+			if (wasEncrypted) {
+				addMessageToChat(message, authors.friend);
 			}
-			else {
-				changeState(states.settingUpCrypto);
+		});
+
+		otr.on('io', function (message) {
+			/* TODO: figure out wtf is up with these errors and if it's actually a vulnerability */
+			if (message != '?OTR Error:An OTR error has occurred.') {
+				sendChannelData({Message: message});
+				logCyphertext(message, authors.me);
 			}
+		});
+
+		var connectedNotification	= getString('connectedNotification');
+		var disconnectWarning		= getString('disconnectWarning');
+		otr.on('status', function (state) {
+			if (!isConnected) {
+				if (state == OTR.CONST.STATUS_AKE_SUCCESS) {
+					isConnected	= true;
+
+					beginChat();
+
+					$(window).on('beforeunload', function () {
+						return disconnectWarning;
+					});
+
+					$(window).unload(function () {
+						sendChannelData({Destroy: true}, {async: false});
+						socket.close();
+					});
+
+					notify(connectedNotification);
+				}
+				else {
+					changeState(states.settingUpCrypto);
+				}
+			}
+		});
+
+		if (sendOtrQueryMsgOnInit) {
+			otr.sendQueryMsg();
 		}
-	});
+	}
+
+	try {
+		DSA.createInWebWorker({path: '/lib/bower_components/otr/dsa-webworker.js'}, cryptoInitHelper);
+	}
+	catch (e) {
+		console.log(e);
+		cryptoInitHelper(new DSA());
+	}
 }
 
 function forceEnglish () {
@@ -125,23 +140,24 @@ function setUpChannel (channelData) {
 		onopen: function () {
 			if (channel.data.IsCreator) {
 				setTimeout(function () {
-				   	changeState(states.waitingForFriend);
-					$('input.loading').val(document.URL);
-					setTimeout(cryptoInit, 2500);
+					beginWaiting();
 				}, 2500);
 			}
 			else {
 				changeState(states.settingUpCrypto);
-				setTimeout(function () {
-					cryptoInit();
-					otr.sendQueryMsg();
 
-					setTimeout(function () {
-						if (!isConnected) {
-							pushNotFound();
-						}
-					}, 180000);
-				}, 100);
+				if (otr) {
+					otr.sendQueryMsg();
+				}
+				else {
+					sendOtrQueryMsgOnInit	= true;
+				}
+
+				setTimeout(function () {
+					if (!isConnected) {
+						pushNotFound();
+					}
+				}, 180000);
 			}
 		},
 		onmessage: function (data) {
@@ -155,6 +171,7 @@ function setUpChannel (channelData) {
 					sendChannelData({Misc: 'pong'});
 				}
 				if (o.Message) {
+					logCyphertext(o.Message, authors.friend);
 					otr.receiveMsg(o.Message);
 				}
 				if (o.Destroy) {
