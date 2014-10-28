@@ -322,6 +322,7 @@ angular.
 		if (isMobile) {
 			$('html').addClass('mobile');
 
+			var $window				= $(window);
 			var $messageBox			= $('#message-box');
 			var $messageBoxOverlay	= $('#message-box-overlay');
 
@@ -347,10 +348,11 @@ angular.
 					$messageBox.focus();
 					setTimeout(function () {
 						$messageBox.blur();
+						$window.click();
 						setTimeout(function () {
 							$messageBox.focus();
-						}, 100);
-					}, 100);
+						}, 250);
+					}, 250);
 				}, 500);
 			});
 		}
