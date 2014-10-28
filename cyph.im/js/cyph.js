@@ -208,6 +208,10 @@ window.onpopstate	= function () {
 	}
 	/* Join existing chat room */
 	else if (state.length == 7) {
+		if (isHistoryAvailable && history.replaceState) {
+			history.replaceState({}, '/' + state, path);
+		}
+
 		$.ajax({
 			dataType: 'json',
 			error: pushNotFound,
