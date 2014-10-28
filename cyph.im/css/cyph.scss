@@ -65,6 +65,7 @@ html.mobile {
 		font-size: 17px;
 		line-height: 22px;
 		padding: 13px;
+		padding-right: 60px;
 	}
 
 	#message-box:focus ~ #new-messages {
@@ -80,7 +81,7 @@ html.mobile {
 	position: absolute;
 	height: 80%;
 	top: 10%;
-	right: 6px;
+	right: 20px;
 	opacity: 0.75;
 	z-index: 10;
 }
