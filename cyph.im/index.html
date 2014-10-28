@@ -126,11 +126,6 @@
 			</md-content>
 		</div>
 
-		<div id='pre-load' ng-show='state == states.none'>
-			<div class='double-bounce1'></div>
-			<div class='double-bounce2'></div>
-		</div>
-
 		<footer>
 			<div id='message-wrapper' ng-show='state == states.chat && isAlive'>
 				<textarea
@@ -200,6 +195,11 @@
 					</md-item>
 				</md-list>
 			</md-content>
+		</div>
+
+		<div id='pre-load' ng-show='state == states.none'>
+			<div class='double-bounce1'></div>
+			<div class='double-bounce2'></div>
 		</div>
 
 
