@@ -189,6 +189,11 @@ textarea {
 #new-messages:after {
   width: 100%; }
 
+#error {
+  margin-left: auto;
+  margin-right: auto;
+  padding: 5% 10%; }
+
 body > .curtain:not(#cyphertext):not(#desktop-sidebar) {
   -webkit-transform: translateX(5000px);
   -moz-transform: translateX(5000px);
