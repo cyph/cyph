@@ -343,7 +343,15 @@ angular.
 			setUpFullScreenEvent();
 
 			$messageBoxOverlay.tap(function () {
-				setTimeout(function () { $messageBox.focus() }, 1000);
+				setTimeout(function () {
+					$messageBox.focus();
+					setTimeout(function () {
+						$messageBox.blur();
+						setTimeout(function () {
+							$messageBox.focus();
+						}, 100);
+					}, 100);
+				}, 500);
 			});
 		}
 
