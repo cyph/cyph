@@ -197,7 +197,18 @@ angular.
 		var $everything		= $('*');
 		$scope.showCyphertext	= function() {
 			$everything.addClass(curtainClass);
-			setTimeout(function () { $everything.removeClass(curtainClass) }, 7500);
+
+			function removeClass () {
+				$everything.removeClass(curtainClass);
+			}
+
+			var timeoutId	= setTimeout(removeClass, 10000);
+			setTimeout(function () {
+				$('#cyphertext').tap(function () {
+					removeClass();
+					clearTimeout(timeoutId);
+				}, true, true);
+			}, 3500);
 
 			if (isMobile) {
 				$mdSidenav('menu').close();
@@ -229,7 +240,7 @@ angular.
 
 		platformString	= isMobile ? 'mobile' : 'desktop';
 
-		$.fn.tap	= function (callback, onOrOff) {
+		$.fn.tap	= function (callback, onOrOff, once) {
 			var $this		= $(this);
 			var eventName	= isMobile ? 'touchstart' : 'click';
 
@@ -238,6 +249,9 @@ angular.
 			}
 			else if (onOrOff === false) {
 				$this.off(eventName, callback);
+			}
+			else if (once === true) {
+				$this.one(eventName, callback);
 			}
 			else {
 				$this.on(eventName, callback);
