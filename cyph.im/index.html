@@ -84,24 +84,44 @@
 			</section>
 		</div>
 
-		<div ng-view class='loading' flex translate ng-class='{active: state == states.spinningUp}'>
+		<div ng-view class='loading' layout='vertical' layout-fill flex ng-class='{active: state == states.spinningUp}'>
+			<div flex></div>
+			<img src='/img/logo.animated.gif' />
 			<div translate>Now spinning up your cyph room...</div>
+			<div flex></div>
 		</div>
 
-		<div ng-view class='loading' flex ng-class='{active: state == states.waitingForFriend}'>
+		<div ng-view class='loading' layout='vertical' layout-fill flex ng-class='{active: state == states.waitingForFriend}'>
+			<div flex></div>
+			<img src='/img/logo.animated.gif' />
 			<div>
 				<div translate>Just have your friend open this link, and we're good to go!</div>
 				<br />
 				<md-text-float id='copy-url' ng-model='copyUrl'></md-text-float>
 			</div>
+			<div flex></div>
 		</div>
 
-		<div ng-view class='loading' flex translate ng-class='{active: state == states.settingUpCrypto}'>
+		<div ng-view class='loading' layout='vertical' layout-fill flex ng-class='{active: state == states.settingUpCrypto}'>
+			<div flex></div>
+			<img src='/img/logo.animated.gif' />
 			<div translate>Negotiating secure connection...</div>
+			<div flex></div>
 		</div>
 
-		<div ng-view flex ng-class='{active: state == states.error}'>
-			<div translate>error, bitch</div>
+		<div id='404' ng-view flex ng-class='{active: state == states.error}'>
+			<div>
+				<p>
+					<strong translate>Uh-oh, bitch!</strong>
+				</p>
+				<p translate>Reasons why one might find themselves at this page:</p>
+				<ul>
+					<li translate>The cyph chat you're trying to connect to has already been connected to (someone else got here first or you clicked twice) or has expired</li>
+					<li translate>A glitch in the matrix</li>
+					<li translate>You're just guessing random URLs</li>
+					<li translate>We done goofed</li>
+				</ul>
+			</div>
 		</div>
 
 		<div id='chat-begin-message' translate ng-view flex ng-class='{active: state == states.chatBeginMessage}'>
