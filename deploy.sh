@@ -25,8 +25,11 @@ for d in cyph.im ; do
 	cd ..
 done
 
+echo 'JS Minify'
 find . -name '*.js' | grep -v lib | xargs -I% uglifyjs "%" -o "%"
+echo 'CSS Minify'
 find . -name '*.css' | xargs -I% cleancss -o "%" "%"
+echo 'HTML Minify'
 find . -name '*.html' | xargs -I% html-minifier --minify-js --minify-css --remove-comments --collapse-whitespace "%" -o "%"
 
 ls */*.yaml | xargs -I% appcfg.py rollback %
