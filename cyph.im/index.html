@@ -84,11 +84,11 @@
 			</section>
 		</div>
 
-		<div class='loading' flex translate ng-show='state == states.spinningUp'>
+		<div ng-view class='loading' flex translate ng-class='{active: state == states.spinningUp}'>
 			<div translate>Now spinning up your cyph room...</div>
 		</div>
 
-		<div class='loading' flex ng-show='state == states.waitingForFriend'>
+		<div ng-view class='loading' flex ng-class='{active: state == states.waitingForFriend}'>
 			<div>
 				<div translate>Just have your friend open this link, and we're good to go!</div>
 				<br />
@@ -96,17 +96,19 @@
 			</div>
 		</div>
 
-		<div class='loading' flex translate ng-show='state == states.settingUpCrypto'>
+		<div ng-view class='loading' flex translate ng-class='{active: state == states.settingUpCrypto}'>
 			<div translate>Negotiating secure connection...</div>
 		</div>
 
-		<div flex ng-show='state == states.error'>
+		<div ng-view flex ng-class='{active: state == states.error}'>
 			<div translate>error, bitch</div>
 		</div>
 
-		<div flex ng-show='state == states.none'></div>
+		<div id='chat-begin-message' translate ng-view flex ng-class='{active: state == states.chatBeginMessage}'>
+			Connected!
+		</div>
 
-		<div id='message-list' flex ng-show='state == states.chat'>
+		<div id='message-list' ng-view flex ng-class='{active: state == states.chat}'>
 			<md-content>
 				<md-list layout='vertical'>
 					<md-item class='message-item unread' ng-repeat='message in messages' layout='horizontal'>
@@ -126,6 +128,8 @@
 				</md-list>
 			</md-content>
 		</div>
+
+		<div id='blank' ng-view flex ng-class='{active: state == states.blank}'></div>
 
 		<footer>
 			<div id='message-wrapper' ng-show='state == states.chat && isAlive'>

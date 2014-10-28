@@ -31,6 +31,8 @@ angular.
 			spinningUp: 1,
 			waitingForFriend: 2,
 			settingUpCrypto: 3,
+			chatBeginMessage: 4,
+			blank: 5,
 			chat: 200,
 			error: 404
 		};
@@ -90,33 +92,42 @@ angular.
 		};
 
 		beginChat = $scope.beginChat = function () {
-			changeState($scope.states.chat);
+			changeState($scope.states.chatBeginMessage);
 
-			/* Adjust font size for translations */
-			if (!isMobile) {
-				$('md-button').each(function () {
-					var $this	= $(this);
-					var $clone	= $this
-						.clone()
-						.css({display: 'inline', width: 'auto', visibility: 'hidden', position: 'fixed'})
-						.appendTo('body')
-					;
-					var $both	= $this.add($clone);
+			setTimeout(function () {
+				changeState($scope.states.chat);
 
-					for (var i = 0 ; i < 10 && $clone.width() > $this.width() ; ++i) {
-						var newFontSize	= parseInt($this.css('font-size'), 10) - 1;
-						$both.css('font-size', newFontSize + 'px');
-					}
+				/* Adjust font size for translations */
+				if (!isMobile) {
+					$('md-button').each(function () {
+						var $this	= $(this);
+						var $clone	= $this
+							.clone()
+							.css({display: 'inline', width: 'auto', visibility: 'hidden', position: 'fixed'})
+							.appendTo('body')
+						;
+						var $both	= $this.add($clone);
 
-					$clone.remove();
-				});
-			}
+						for (var i = 0 ; i < 10 && $clone.width() > $this.width() ; ++i) {
+							var newFontSize	= parseInt($this.css('font-size'), 10) - 1;
+							$both.css('font-size', newFontSize + 'px');
+						}
+
+						$clone.remove();
+					});
+				}
+			}, 3000);
 		};
 
 		beginWaiting = $scope.beginWaiting = function () {
 			changeState($scope.states.waitingForFriend);
 
-			var copyUrl		= 'http://' + document.location.host.replace('www.', '') + document.location.pathname;
+			var copyUrl		=
+				document.location.protocol + '//' +
+				document.location.host.replace('www.', '') +
+				document.location.pathname
+			;
+
 			var $copyUrl	= $('#copy-url input');
 
 			var copyUrlInterval	= setInterval(function () {
