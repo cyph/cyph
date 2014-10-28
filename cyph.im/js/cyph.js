@@ -90,6 +90,37 @@ function getUrlState () {
 	return document.location.pathname.split('/').slice(-1)[0];
 }
 
+function processUrlState () {
+	var state	= getUrlState();
+
+	/* Root */
+	if (state.length == 2 || ['', 'zh-CHS', 'zh-CHT'].indexOf(state) > -1) {
+		document.location.replace('https://www.cyph.com/');
+	}
+	/* New chat room */
+	else if (state == 'new') {
+		changeState(states.spinningUp);
+
+		$.post(BASE_URL + 'ims', function (id) {
+			pushState('/' + id, true);
+		});
+	}
+	/* Join existing chat room */
+	else if (state.length == 7) {
+		$.ajax({
+			dataType: 'json',
+			error: pushNotFound,
+			success: setUpChannel,
+			type: 'POST',
+			url: BASE_URL + 'ims/' + state
+		});
+	}
+	/* 404 */
+	else {
+		changeState(states.error);
+	}
+}
+
 function pushNotFound () {
 	pushState('/404');
 }
@@ -110,7 +141,7 @@ function pushState (path, shouldReplace) {
 		return;
 	}
 
-	window.onpopstate();
+	processUrlState();
 }
 
 function sendChannelData (data, opts, retries) {
@@ -196,34 +227,3 @@ function setUpChannel (channelData) {
 		onclose: closeChat
 	});
 }
-
-window.onpopstate	= function () {
-	var state	= getUrlState();
-
-	/* Root */
-	if (state.length == 2 || ['', 'zh-CHS', 'zh-CHT'].indexOf(state) > -1) {
-		document.location.replace('https://www.cyph.com/');
-	}
-	/* New chat room */
-	else if (state == 'new') {
-		changeState(states.spinningUp);
-
-		$.post(BASE_URL + 'ims', function (id) {
-			pushState('/' + id, true);
-		});
-	}
-	/* Join existing chat room */
-	else if (state.length == 7) {
-		$.ajax({
-			dataType: 'json',
-			error: pushNotFound,
-			success: setUpChannel,
-			type: 'POST',
-			url: BASE_URL + 'ims/' + state
-		});
-	}
-	/* 404 */
-	else {
-		changeState(states.error);
-	}
-};
