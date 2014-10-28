@@ -228,9 +228,9 @@ body > .curtain:not(#cyphertext):not(#desktop-sidebar) {
   font-family: 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Bitstream Vera Sans Mono', monospace;
   background-color: #141414;
   color: #3bfc34;
-  -webkit-transition: opacity 2s linear;
-  -moz-transition: opacity 2s linear;
-  transition: opacity 2s linear; }
+  -webkit-transition: opacity 1s linear 2s;
+  -moz-transition: opacity 1s linear 2s;
+  transition: opacity 1s linear 2s; }
 
 #cyphertext.curtain {
   pointer-events: all;
