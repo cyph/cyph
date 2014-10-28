@@ -322,7 +322,7 @@ angular.
 		if (isMobile) {
 			$('html').addClass('mobile');
 
-			var $window				= $(window);
+			var $body				= $('body');
 			var $messageBox			= $('#message-box');
 			var $messageBoxOverlay	= $('#message-box-overlay');
 
@@ -346,12 +346,9 @@ angular.
 			$messageBoxOverlay.tap(function () {
 				setTimeout(function () {
 					$messageBox.focus();
+					$body.tap();
 					setTimeout(function () {
-						$messageBox.blur();
-						$window.click();
-						setTimeout(function () {
-							$messageBox.focus();
-						}, 250);
+						$messageBox.blur()focus();
 					}, 250);
 				}, 500);
 			});
