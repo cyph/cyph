@@ -89,6 +89,10 @@ function getString (name) {
 	return $('meta[name="' + name + '"]').attr('content');
 }
 
+function getUrlState () {
+	return document.location.pathname.split('/').slice(-1)[0];
+}
+
 function pushNotFound () {
 	pushState('/404');
 }
@@ -192,7 +196,7 @@ function setUpChannel (channelData) {
 }
 
 window.onpopstate	= function () {
-	var state	= document.location.pathname.split('/').slice(-1)[0];
+	var state	= getUrlState();
 
 	/* Root */
 	if (state.length == 2 || ['', 'zh-CHS', 'zh-CHT'].indexOf(state) > -1) {
@@ -208,10 +212,6 @@ window.onpopstate	= function () {
 	}
 	/* Join existing chat room */
 	else if (state.length == 7) {
-		if (isHistoryAvailable && history.replaceState) {
-			history.replaceState({}, '/' + state, path);
-		}
-
 		$.ajax({
 			dataType: 'json',
 			error: pushNotFound,
