@@ -273,7 +273,7 @@ body > .curtain:not(#cyphertext):not(#desktop-sidebar) {
 	font-family: 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Bitstream Vera Sans Mono', monospace;
 	background-color: #141414;
 	color: #3bfc34;
-	@include transition(opacity 2s linear);
+	@include transition(opacity 1s linear 2s);
 }
 #cyphertext.curtain {
 	pointer-events: all;
