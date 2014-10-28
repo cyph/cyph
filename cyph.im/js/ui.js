@@ -24,7 +24,6 @@ angular.
 		$scope.message			= '';
 		$scope.unreadMessages	= 0;
 		$scope.authors			= authors;
-		$scope.copyUrl			= '';
 
 		states = $scope.states = {
 			none: 0,
@@ -118,15 +117,13 @@ angular.
 		beginWaiting = $scope.beginWaiting = function () {
 			changeState($scope.states.waitingForFriend);
 
-			apply(function () {
-				$scope.copyUrl	= 'http://cyph.im' + document.location.pathname;
-			});
-
+			var copyUrl			= 'http://cyph.im' + document.location.pathname;
 			var $copyUrl		= $('#copy-url input');
-			var copyUrlLength	= $scope.copyUrl.length;
+
 			var copyUrlInterval	= setInterval(function () {
 				if ($scope.state == $scope.states.waitingForFriend) {
-					$copyUrl[0].setSelectionRange(0, copyUrlLength);
+					$copyUrl.val(copyUrl);
+					$copyUrl[0].setSelectionRange(0, copyUrl.length);
 				}
 				else {
 					clearInterval(copyUrlInterval);
