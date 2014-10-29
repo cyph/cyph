@@ -8,6 +8,7 @@ var
 	logCyphertext,
 	notify,
 	platformString,
+	scrolling,
 	sendMessage,
 	state,
 	states,
@@ -88,6 +89,8 @@ angular.
 						timestamp: hour + ':' + minute + ampm
 					});
 				});
+
+				scrolling.update();
 			}
 		};
 
@@ -199,9 +202,14 @@ angular.
 			$mdSidenav('menu').open();
 		};
 
-		var $messageList	= $('#message-list');
+		var $messageList	= $('#message-list, #message-list > md-content');
 		$scope.scrollDown	= function() {
-			$messageList.animate({scrollTop: $messageList[0].scrollHeight}, 350);
+			$messageList.each(function () {
+				var $this	= $(this);
+				$this.animate({scrollTop: $this[0].scrollHeight}, 350);
+			});
+
+			scrolling.update();
 		};
 
 		var curtainClass	= 'curtain';
@@ -342,13 +350,15 @@ angular.
 
 		/* Init */
 
+		var userAgent	= navigator.userAgent.toLowerCase();
+
 		var setUpFullScreenEvent;
 
 		if (isMobile) {
 			$('html').addClass('mobile');
 
 			/* TODO: determine which platforms would benefit from this */
-			if (navigator.userAgent.toLowerCase().indexOf('android') > -1) {
+			if (userAgent.indexOf('android') > -1) {
 				var $body				= $('body');
 				var $messageBox			= $('#message-box');
 				var $messageBoxOverlay	= $('#message-box-overlay');
@@ -379,9 +389,18 @@ angular.
 				});
 			}
 		}
-		else {
-			$('.nano').nanoScroller();
-		}
+
+
+		/* OS X-style scrollbars */
+		scrolling	= {
+			isNanoScroller: !isMobile && userAgent.indexOf('mac os x') < 0,
+			update: function () {
+				if (this.isNanoScroller) {
+					$('.nano').nanoScroller();
+				}
+			}
+		};
+
 
 		/* For notify and mobile fullscreen */
 		Visibility.change(function (e, state) {
@@ -438,6 +457,8 @@ angular.
 
 		
 		/* Do the move lad */
+
+		scrolling.update();
 
 		cryptoInit();
 
