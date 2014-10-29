@@ -109,24 +109,24 @@
 			<div flex></div>
 		</div>
 		
-		 <md-content id='error' ng-view flex ng-class='{active: state == states.error}'>
-		    <div>
-				<h1 translate> I'm sorry, but your cyph is in another castle... </h1>
-		       </div>
-		       <img src='/img/404.png'/>
-		       <div>
-			  <p>
-				  <strong translate>Uh-oh!</strong>
-			  </p>
-			  <p translate>Reasons why one might find themselves at this page:</p>
-			  <ul>
-				  <li translate>The cyph chat you're trying to connect to has already been connected to (someone else got here first or you clicked twice) or has expired</li>
-				  <li translate>A glitch in the matrix</li>
-				  <li translate>You're just guessing random URLs</li>
-				  <li translate>We done goofed</li>
-			  </ul>
-                                </div>
-                </md-content>
+		<md-content id='error' ng-view flex ng-class='{active: state == states.error}'>
+			<div>
+				<h1 translate>I'm sorry, but your cyph is in another castle...</h1>
+			</div>
+			<img src='/img/404.png'/>
+			<div>
+				<p>
+					<strong translate>Uh-oh!</strong>
+				</p>
+					<p translate>Reasons why one might find themselves at this page:</p>
+				<ul>
+					<li translate>The cyph chat you're trying to connect to has already been connected to (someone else got here first or you clicked twice) or has expired</li>
+					<li translate>A glitch in the matrix</li>
+					<li translate>You're just guessing random URLs</li>
+					<li translate>We done goofed</li>
+				</ul>
+			</div>
+		</md-content>
 
 		<div id='chat-begin-message' translate ng-view flex ng-class='{active: state == states.chatBeginMessage}'>
 			Connected!
