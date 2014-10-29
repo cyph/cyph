@@ -112,7 +112,7 @@ html.mobile {
 #message-list:not(.nano) {
 	overflow-y: scroll;
 }
-#message-list.nano > md-content {
+html:not(.mobile) #message-list > md-content {
 	padding-right: 10px;
 }
 
@@ -310,7 +310,6 @@ body > .curtain:not(#cyphertext):not(#desktop-sidebar) {
 	width: 101%;
 	height: 101%;
 	font-size: 13px;
-	overflow-y: scroll;
 	font-family: 'Ubuntu Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Bitstream Vera Sans Mono', monospace;
 	background-color: #141414;
 	color: #3bfc34;
@@ -320,6 +319,9 @@ body > .curtain:not(#cyphertext):not(#desktop-sidebar) {
 		padding-top: 20px;
 		padding-left: 12.5%;
 	}
+}
+#cyphertext:not(.nano) {
+	overflow-y: scroll;
 }
 #cyphertext.curtain {
 	pointer-events: all;
