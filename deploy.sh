@@ -34,7 +34,7 @@ if [ "${staging}" == '' ] ; then
 fi
 
 echo 'JS Minify'
-find . -name '*.js' | grep -v lib | xargs -I% uglifyjs '%' -o '%'
+find . -name '*.js' | grep -v lib/bower_components/otr | xargs -I% uglifyjs '%' -o '%'
 echo 'CSS Minify'
 find . -name '*.css' | xargs -I% cleancss -o '%' '%'
 echo 'HTML Minify'
