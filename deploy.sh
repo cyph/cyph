@@ -41,6 +41,7 @@ echo 'HTML Minify'
 find . -name '*.html' | xargs -I% html-minifier --minify-js --minify-css --remove-comments --collapse-whitespace "%" -o "%"
 
 if [ $staging ] ; then
+	ls cyph.im/js/*.js | xargs -i% sed -i.bak 's/api.cyph.com/staging-dot-cyphme.appspot.com/g' %
 	ls */*.yaml | xargs -I% sed -i.bak 's/version: prod/version: staging/g' %
 fi
 
