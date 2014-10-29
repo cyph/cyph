@@ -306,14 +306,17 @@ body > .curtain:not(#cyphertext):not(#desktop-sidebar) {
 	left: -1px;
 	width: 101%;
 	height: 101%;
-	padding-top: 20px;
-	padding-left: 12.5%;
-	font-size: 12px;
+	font-size: 13px;
 	overflow-y: scroll;
 	font-family: 'Ubuntu Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Bitstream Vera Sans Mono', monospace;
 	background-color: #141414;
 	color: #3bfc34;
 	@include transition(opacity 1s linear 2s);
+
+	md-content {
+		padding-top: 20px;
+		padding-left: 12.5%;
+	}
 }
 #cyphertext.curtain {
 	pointer-events: all;

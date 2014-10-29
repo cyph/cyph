@@ -133,8 +133,8 @@
 			Connected!
 		</div>
 
-		<div id='message-list' ng-view flex ng-class='{active: state == states.chat}'>
-			<md-content>
+		<div id='message-list' ng-view flex class='nano' ng-class='{active: state == states.chat}'>
+			<md-content class='nano-content'>
 				<md-list layout='vertical'>
 					<md-item class='message-item unread' ng-repeat='message in messages' layout='horizontal'>
 						<span class='message'>
@@ -211,8 +211,8 @@
 			</div>
 		</footer>
 
-		<div id='cyphertext'>
-			<md-content>
+		<div id='cyphertext' class='nano'>
+			<md-content class='nano-content'>
 				<md-list layout='vertical'>
 					<md-item class='message-item unread' ng-repeat='message in cyphertext' layout='horizontal'>
 						<span class='message'>
