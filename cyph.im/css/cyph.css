@@ -195,7 +195,30 @@ textarea {
   margin-right: auto;
   padding: 5% 10%; }
 
-body > .curtain:not(#cyphertext):not(#desktop-sidebar) {
+#error img {
+  width: 75%;
+  margin-left: auto;
+  margin-right: auto;
+  display: inherit;
+  position: relative;
+  left: -75px; }
+
+#error h1 {
+  font-family: ubuntu;
+  font-size: 32px;
+  text-align: center;
+  position: relative;
+  left: -75px; }
+
+html.mobile #error h1 {
+  left: 0 !important;
+  font-size: 20px; }
+
+html.mobile #error img {
+  left: 0 !important;
+  width: 100%; }
+
+bodr > .curtain:not(#cyphertext):not(#desktop-sidebar) {
   -webkit-transform: translateX(5000px);
   -moz-transform: translateX(5000px);
   -ms-transform: translateX(5000px);
