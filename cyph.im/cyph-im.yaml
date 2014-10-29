@@ -77,6 +77,14 @@ handlers:
 
 # Else
 
+- url: /(lib/.*)
+  static_files: \1
+  upload: .*
+  secure: always
+  http_headers:
+    Cache-Control: public, max-age=604800
+    X-Frame-Options: deny
+
 - url: /(.*)
   static_files: \1
   upload: .*

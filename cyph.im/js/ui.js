@@ -385,7 +385,7 @@ angular.
 				$messageBoxOverlay.tap(function () {
 					setTimeout(function () {
 						$messageBox.focus();
-					}, 500);
+					}, 2000);
 				});
 			}
 		}
