@@ -195,7 +195,6 @@ textarea {
   margin-right: auto;
   padding: 5% 10%; }
   #error #errorHero {
-    height: 80vh;
     text-align: center; }
   #error img {
     max-width: 100%;
@@ -209,6 +208,8 @@ html.mobile #error img {
 
 html:not(.mobile) #errorHero {
   margin-left: -110px; }
+  html:not(.mobile) #errorHero #errorHero {
+    height: 80vh; }
 
 body > .curtain:not(#cyphertext):not(#desktop-sidebar) {
   -webkit-transform: translateX(5000px);

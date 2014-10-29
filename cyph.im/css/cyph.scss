@@ -257,7 +257,6 @@ textarea {
 	padding: 5% 10%;
 
 	#errorHero {
-		height: 80vh;
 		text-align: center;
 	}
 
@@ -277,6 +276,10 @@ html.mobile #error {
 }
 html:not(.mobile) #errorHero {
 	margin-left: -110px;
+
+	#errorHero {
+		height: 80vh;
+	}
 }
 
 
