@@ -7,6 +7,57 @@ threadsafe: true
 
 handlers:
 
+# Cached resources
+
+- url: /(lib/.*)
+  static_files: \1
+  upload: .*
+  secure: always
+  http_headers:
+    Cache-Control: public, max-age=604800
+
+- url: /(img/.*)
+  static_files: \1
+  upload: .*
+  secure: always
+  http_headers:
+    Cache-Control: public, max-age=604800
+
+- url: /(audio/.*)
+  static_files: \1
+  upload: .*
+  secure: always
+  http_headers:
+    Cache-Control: public, max-age=604800
+
+- url: /(css/fonts/.*)
+  static_files: \1
+  upload: .*
+  secure: always
+  http_headers:
+    Cache-Control: public, max-age=604800
+
+- url: /(css/preload.*)
+  static_files: \1
+  upload: .*
+  secure: always
+  http_headers:
+    Cache-Control: public, max-age=604800
+
+- url: /(js/cryptoPolyfill.js)
+  static_files: \1
+  upload: .*
+  secure: always
+  http_headers:
+    Cache-Control: public, max-age=604800
+
+- url: /(js/translate.js)
+  static_files: \1
+  upload: .*
+  secure: always
+  http_headers:
+    Cache-Control: public, max-age=604800
+
 # Main
 
 - url: /
@@ -14,12 +65,14 @@ handlers:
   upload: index.html
   secure: always
   http_headers:
+    Cache-Control: no-store
     X-Frame-Options: deny
 
 - url: /unsupportedbrowser
   static_files: unsupportedbrowser.html
   upload: unsupportedbrowser.html
   http_headers:
+    Cache-Control: no-store
     X-Frame-Options: deny
 
 - url: /new
@@ -27,6 +80,7 @@ handlers:
   upload: index.html
   secure: always
   http_headers:
+    Cache-Control: no-store
     X-Frame-Options: deny
 
 - url: /[A-Za-z0-9]{7}
@@ -34,6 +88,7 @@ handlers:
   upload: index.html
   secure: always
   http_headers:
+    Cache-Control: no-store
     X-Frame-Options: deny
 
 - url: /404
@@ -41,6 +96,7 @@ handlers:
   upload: index.html
   secure: always
   http_headers:
+    Cache-Control: no-store
     X-Frame-Options: deny
 
 
@@ -51,6 +107,7 @@ handlers:
   upload: .*\.html
   secure: always
   http_headers:
+    Cache-Control: no-store
     X-Frame-Options: deny
 
 - url: /(BALLS)/new
@@ -58,6 +115,7 @@ handlers:
   upload: .*\.html
   secure: always
   http_headers:
+    Cache-Control: no-store
     X-Frame-Options: deny
 
 - url: /(BALLS)/[A-Za-z0-9]{7}
@@ -72,22 +130,16 @@ handlers:
   upload: .*\.html
   secure: always
   http_headers:
+    Cache-Control: no-store
     X-Frame-Options: deny
 
 
 # Else
-
-- url: /(lib/.*)
-  static_files: \1
-  upload: .*
-  secure: always
-  http_headers:
-    Cache-Control: public, max-age=604800
-    X-Frame-Options: deny
 
 - url: /(.*)
   static_files: \1
   upload: .*
   secure: always
   http_headers:
+    Cache-Control: no-store
     X-Frame-Options: deny
