@@ -252,10 +252,6 @@ textarea {
 
 
 #error {
-	margin-left: auto;
-	margin-right: auto;
-	padding: 5% 10%;
-
 	#errorHero {
 		text-align: center;
 	}
@@ -266,6 +262,8 @@ textarea {
 	}
 }
 html.mobile #error {
+	padding: 5px;
+
 	h1 {
 		left: 0 !important;
 		font-size: 20px;
@@ -274,11 +272,11 @@ html.mobile #error {
 		left: 0 !important;
 	}
 }
-html:not(.mobile) #errorHero {
+html:not(.mobile) #error {
 	margin-left: -110px;
 
 	#errorHero {
-		height: 80vh;
+		height: 100vh;
 	}
 }
 
