@@ -252,13 +252,22 @@ textarea {
 
 
 #error {
-	#errorHero {
+	overflow-x: hidden;
+
+	h1 {
+		padding: 0px 110px;
 		text-align: center;
+		font-family: 'Ubuntu', sans-serif;
 	}
 
 	img {
-		max-width: 100%;
-		max-height: 80vh;
+		width: 100%;
+		margin-bottom: 30px;
+	}
+
+	.antiscroll-inner {
+		width: 100% !important;
+		height: 100% !important;
 	}
 }
 html.mobile #error {
@@ -268,16 +277,13 @@ html.mobile #error {
 		left: 0 !important;
 		font-size: 20px;
 	}
+
 	img {
 		left: 0 !important;
 	}
 }
 html:not(.mobile) #error {
 	margin-left: -110px;
-
-	#errorHero {
-		height: 100vh;
-	}
 }
 
 
