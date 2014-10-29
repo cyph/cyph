@@ -252,34 +252,31 @@ textarea {
 
 
 #error {
-        margin-left: auto;
-        margin-right: auto;
-        padding: 5% 10%;
-}
+	margin-left: auto;
+	margin-right: auto;
+	padding: 5% 10%;
 
-#error img{
-        width: 75%;
-        margin-left: auto;
-        margin-right: auto;
-        display: inherit;
-        position: relative;
-        left: -75px;
-}
-#error h1{
-        font-family: ubuntu;
-        font-size: 32px;
-        text-align: center;
-        position: relative;
-        left: -75px;
-}
+	#errorHero {
+		height: 80vh;
+		text-align: center;
+	}
 
-html.mobile #error h1{
-      left: 0 !important;
-      font-size: 20px;
+	img {
+		max-width: 100%;
+		max-height: 80vh;
+	}
 }
-html.mobile #error img{
-      left: 0 !important;
-      width: 100%
+html.mobile #error {
+	h1 {
+		left: 0 !important;
+		font-size: 20px;
+	}
+	img {
+		left: 0 !important;
+	}
+}
+html:not(.mobile) #errorHero {
+	margin-left: -110px;
 }
 
 
