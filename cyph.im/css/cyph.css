@@ -190,11 +190,18 @@ textarea {
 #new-messages:after {
   width: 100%; }
 
-#error #errorHero {
-  text-align: center; }
-#error img {
-  max-width: 100%;
-  max-height: 80vh; }
+#error {
+  overflow-x: hidden; }
+  #error h1 {
+    padding: 0px 110px;
+    text-align: center;
+    font-family: 'Ubuntu', sans-serif; }
+  #error img {
+    width: 100%;
+    margin-bottom: 30px; }
+  #error .antiscroll-inner {
+    width: 100% !important;
+    height: 100% !important; }
 
 html.mobile #error {
   padding: 5px; }
@@ -206,8 +213,6 @@ html.mobile #error {
 
 html:not(.mobile) #error {
   margin-left: -110px; }
-  html:not(.mobile) #error #errorHero {
-    height: 100vh; }
 
 body > .curtain:not(#cyphertext):not(#desktop-sidebar) {
   -webkit-transform: translateX(5000px);

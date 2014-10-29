@@ -379,6 +379,9 @@ angular.
 				});
 			}
 		}
+		else {
+			$('.antiscroll-wrap').antiscroll();
+		}
 
 		/* For notify and mobile fullscreen */
 		Visibility.change(function (e, state) {
