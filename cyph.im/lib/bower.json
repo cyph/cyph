@@ -31,6 +31,7 @@
     "visibilityjs": "~1.2.1",
     "angular-timer": "~1.1.7",
     "antiscroll": "*",
-    "angular-antiscroll": "*"
+    "angular-antiscroll": "*",
+    "nanoscroller": "~0.8.4"
   }
 }
