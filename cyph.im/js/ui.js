@@ -349,7 +349,8 @@ angular.
 
 			var $body				= $('body');
 			var $messageBox			= $('#message-box');
-			var $messageBoxOverlay	= $('#message-box-overlay');
+			var $messageBoxOverlay	= $messageBox; // TEST
+			// var $messageBoxOverlay	= $('#message-box-overlay'); // TEST
 
 			function fullScreen () {
 				if (screenfull.enabled && !screenfull.isFullscreen && $scope.state == $scope.states.chat) {
@@ -369,9 +370,10 @@ angular.
 			setUpFullScreenEvent();
 
 			$messageBoxOverlay.tap(function () {
+				$messageBox.blur(); // TEST
 				setTimeout(function () {
 					$messageBox.focus();
-				}, 1000);
+				}, 500);
 			});
 		}
 

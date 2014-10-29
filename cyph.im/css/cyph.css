@@ -69,7 +69,9 @@ html.mobile #message-box:focus ~ #new-messages, html.mobile #message-box:focus ~
   bottom: -1px;
   left: -1px;
   height: 60px;
-  width: 100%; }
+  width: 100%;
+  display: none;
+  /* TEST */ }
 
 #footer {
   margin-top: 10px;
