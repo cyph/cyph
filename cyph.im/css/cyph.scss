@@ -252,8 +252,6 @@ textarea {
 
 
 #error {
-	overflow-x: hidden;
-
 	h1 {
 		padding: 0px 110px;
 		text-align: center;
@@ -261,13 +259,11 @@ textarea {
 	}
 
 	img {
-		width: 100%;
-		margin-bottom: 30px;
-	}
-
-	.antiscroll-inner {
-		width: 100% !important;
-		height: 100% !important;
+		max-width: 100%;
+		max-height: 100vh;
+		margin-left: auto;
+		margin-right: auto;
+		display: block;
 	}
 }
 html.mobile #error {
@@ -351,6 +347,15 @@ html.mobile {
 
 
 
+/* nanoScroller styling */
+
+.nano {
+	.nano-pane {
+		background-color: transparent;
+	}
+}
+
+
 /* Mobile and desktop classes */
 
 html:not(.mobile) {
@@ -362,6 +367,10 @@ html:not(.mobile) {
 		padding: 10px;
 		padding-left: 200px;
 		padding-right: 20px;
+	}
+
+	* {
+		outline: none !important;
 	}
 }
 

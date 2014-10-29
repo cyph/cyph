@@ -380,7 +380,7 @@ angular.
 			}
 		}
 		else {
-			$('.antiscroll-wrap').antiscroll();
+			$('.nano').nanoScroller();
 		}
 
 		/* For notify and mobile fullscreen */

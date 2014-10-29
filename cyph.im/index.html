@@ -39,7 +39,7 @@
 		<meta name='msapplication-TileImage' content='/img/favicon/mstile-144x144.png' />
 
 		<link rel='stylesheet' href='/lib/bower_components/angular-material/angular-material.css' />
-		<link rel='stylesheet' href='/lib/bower_components/antiscroll/antiscroll.css' />
+		<link rel='stylesheet' href='/lib/bower_components/nanoscroller/bin/css/nanoscroller.css' />
 
 		<link rel='stylesheet' href='/css/cyph.css' />
 	</head>
@@ -110,20 +110,18 @@
 			<div flex></div>
 		</div>
 		
-		<md-content id='error' ng-view flex ng-class='{active: state == states.error}'>
-			<div class='antiscroll-wrap'>
-				<div class='antiscroll-inner'>
-					<h1 translate>I'm sorry, but your cyph is in another castle...</h1>
-					<img src='/img/404.png' />
-					<p translate>Reasons why you may be here:</p>
-					<ul>
-						<li translate>The cyph you're looking for has expired</li>
-						<li translate>The cyph you're looking for has already been connected to (someone else got here first, or you clicked twice)</li>
-						<li translate>A glitch in the matrix</li>
-						<li translate>You're just guessing random URLs</li>
-						<li translate>We done goofed</li>
-					</ul>
-				</div>
+		<md-content id='error' ng-view flex class='nano' ng-class='{active: state == states.error}'>
+			<div class='nano-content'>
+				<h1 translate>I'm sorry, but your cyph is in another castle...</h1>
+				<img src='/img/404.png' />
+				<p translate>Reasons why you may be here:</p>
+				<ul>
+					<li translate>The cyph you're looking for has expired</li>
+					<li translate>The cyph you're looking for has already been connected to (someone else got here first, or you clicked twice)</li>
+					<li translate>A glitch in the matrix</li>
+					<li translate>You're just guessing random URLs</li>
+					<li translate>We done goofed</li>
+				</ul>
 			</div>
 		</md-content>
 
@@ -238,7 +236,7 @@
 
 		<script src='/lib/bower_components/jquery/dist/jquery.min.js'></script>
 		<script src='/lib/jquery.appear/jquery.appear.js'></script>
-		<script src='/lib/bower_components/antiscroll/antiscroll.js'></script>
+		<script src='/lib/bower_components/nanoscroller/bin/javascripts/jquery.nanoscroller.min.js'></script>
 		<script src='/lib/bower_components/angular/angular.min.js'></script>
 		<script src='/lib/bower_components/angular-aria/angular-aria.js'></script>
 		<script src='/lib/bower_components/angular-animate/angular-animate.js'></script>
