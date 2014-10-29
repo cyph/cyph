@@ -24,7 +24,7 @@ cd github.com/gorilla
 git clone git://github.com/gorilla/mux.git
 cd ../../..
 
-if [ $staging == '' ] ; then
+if [ "${staging}" == '' ] ; then
 	for d in cyph.im ; do
 		cd $d
 		cp index.html en.html
