@@ -252,40 +252,34 @@ textarea {
 
 
 #error {
-	h1 {
-		text-align: center;
-		font-family: 'Ubuntu', sans-serif;
-	}
-
-	img {
-		width: 75%;
-		margin-left: auto;
-		margin-right: auto;
-		display: block;
-	}
+        margin-left: auto;
+        margin-right: auto;
+        padding: 5% 10%;
 }
-html.mobile #error {
-	padding: 5px;
 
-	h1 {
-		left: 0 !important;
-		font-size: 20px;
-	}
-
-	img {
-		left: 0 !important;
-	}
+#error img{
+        width: 75%;
+        margin-left: auto;
+        margin-right: auto;
+        display: inherit;
+        position: relative;
+        left: -75px;
 }
-html:not(.mobile) #error {
-	padding: 5% 10%;
-	margin-left: -38px;
-	margin-right: auto;
+#error h1{
+        font-family: ubuntu;
+        font-size: 32px;
+        text-align: center;
+        position: relative;
+        left: -75px;
+}
 
-	#errorExplanation {
-		margin-left: auto;
-		margin-right: auto;
-		width: 75%;
-	}
+html.mobile #error h1{
+      left: 0 !important;
+      font-size: 20px;
+}
+html.mobile #error img{
+      left: 0 !important;
+      width: 100%
 }
 
 
@@ -353,15 +347,6 @@ html.mobile {
 
 
 
-/* nanoScroller styling */
-
-.nano {
-	.nano-pane {
-		background-color: transparent;
-	}
-}
-
-
 /* Mobile and desktop classes */
 
 html:not(.mobile) {
@@ -373,10 +358,6 @@ html:not(.mobile) {
 		padding: 10px;
 		padding-left: 200px;
 		padding-right: 20px;
-	}
-
-	* {
-		outline: none !important;
 	}
 }
 
