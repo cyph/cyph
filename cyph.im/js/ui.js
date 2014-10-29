@@ -347,34 +347,37 @@ angular.
 		if (isMobile) {
 			$('html').addClass('mobile');
 
-			var $body				= $('body');
-			var $messageBox			= $('#message-box');
-			var $messageBoxOverlay	= $messageBox; // TEST
-			// var $messageBoxOverlay	= $('#message-box-overlay'); // TEST
+			/* TODO: determine which platforms would benefit from this */
+			if (navigator.userAgent.toLowerCase().indexOf('android') > -1) {
+				var $body				= $('body');
+				var $messageBox			= $('#message-box');
+				var $messageBoxOverlay	= $('#message-box-overlay');
 
-			function fullScreen () {
-				if (screenfull.enabled && !screenfull.isFullscreen && $scope.state == $scope.states.chat) {
-					screenfull.request();
+				$messageBoxOverlay.show();
 
-					if (screenfull.isFullscreen) {
-						$messageBoxOverlay.tap(fullScreen, false);
+				function fullScreen () {
+					if (screenfull.enabled && !screenfull.isFullscreen && $scope.state == $scope.states.chat) {
+						screenfull.request();
+
+						if (screenfull.isFullscreen) {
+							$messageBoxOverlay.tap(fullScreen, false);
+						}
 					}
 				}
+
+				setUpFullScreenEvent	= function () {
+					$messageBox.blur();
+					$messageBoxOverlay.tap(fullScreen, false).tap(fullScreen);
+				}
+
+				setUpFullScreenEvent();
+
+				$messageBoxOverlay.tap(function () {
+					setTimeout(function () {
+						$messageBox.focus();
+					}, 500);
+				});
 			}
-
-			setUpFullScreenEvent	= function () {
-				$messageBox.blur();
-				$messageBoxOverlay.tap(fullScreen, false).tap(fullScreen);
-			}
-
-			setUpFullScreenEvent();
-
-			$messageBoxOverlay.tap(function () {
-				$messageBox.blur(); // TEST
-				setTimeout(function () {
-					$messageBox.focus();
-				}, 500);
-			});
 		}
 
 		/* For notify and mobile fullscreen */
