@@ -3,9 +3,9 @@
 dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd) # $(dirname `readlink -f "${0}" || realpath "${0}"`)
 
-staging=''
-if [ "${1}" == '--staging' ] ; then 
-	staging=true
+staging=true
+if [ "${1}" == '--prod' ] ; then 
+	staging=''
 	shift
 fi
 
