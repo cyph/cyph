@@ -6,9 +6,15 @@ dispatch:
 
 - url: "www.cyph.com/*"
   module: cyph-com
+- url: "staging.cyph.com/*"
+  module: cyph-com
 
 - url: "www.cyph.im/*"
   module: cyph-im
+- url: "staging.cyph.im/*"
+  module: cyph-im
 
 - url: "www.cyph.me/*"
+  module: cyph-me
+- url: "staging.cyph.me/*"
   module: cyph-me

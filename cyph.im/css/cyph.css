@@ -70,8 +70,7 @@ html.mobile #message-box:focus ~ #new-messages, html.mobile #message-box:focus ~
   left: -1px;
   height: 60px;
   width: 100%;
-  display: none;
-  /* TEST */ }
+  display: none; }
 
 #footer {
   margin-top: 10px;
