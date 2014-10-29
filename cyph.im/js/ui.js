@@ -401,6 +401,10 @@ angular.
 			}
 		};
 
+		if (!scrolling.isNanoScroller) {
+			$('.nano, .nano-content').removeClass('nano').removeClass('nano-content');
+		}
+
 
 		/* For notify and mobile fullscreen */
 		Visibility.change(function (e, state) {

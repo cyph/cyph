@@ -79,8 +79,11 @@ html.mobile #message-box:focus ~ #new-messages, html.mobile #message-box:focus ~
   left: -75px;
   padding: 15px 0px 5px 0px; }
 
-#message-list {
+#message-list:not(.nano) {
   overflow-y: scroll; }
+
+#message-list.nano > md-content {
+  padding-right: 10px; }
 
 .message {
   max-width: 85%;
