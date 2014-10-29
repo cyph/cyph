@@ -197,7 +197,6 @@ textarea {
   text-align: center;
   font-family: 'Ubuntu', sans-serif; }
 #error img {
-  width: 75%;
   margin-left: auto;
   margin-right: auto;
   display: block; }
@@ -205,10 +204,9 @@ textarea {
 html.mobile #error {
   padding: 5px; }
   html.mobile #error h1 {
-    left: 0 !important;
     font-size: 20px; }
   html.mobile #error img {
-    left: 0 !important; }
+    width: 100%; }
 
 html:not(.mobile) #error {
   padding: 5% 10%;
@@ -217,6 +215,8 @@ html:not(.mobile) #error {
   html:not(.mobile) #error #errorExplanation {
     margin-left: auto;
     margin-right: auto;
+    width: 75%; }
+  html:not(.mobile) #error img {
     width: 75%; }
 
 body > .curtain:not(#cyphertext):not(#desktop-sidebar) {
