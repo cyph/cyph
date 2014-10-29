@@ -42,7 +42,11 @@ find . -name '*.html' | xargs -I% html-minifier --minify-js --minify-css --remov
 
 if [ $staging ] ; then
 	ls cyph.im/js/*.js | xargs -I% sed -i.bak 's/api.cyph.com/staging-dot-cyphme.appspot.com/g' %
-	ls */*.yaml | xargs -I% sed -i.bak 's/version: prod/version: staging/g' %
+
+	for yaml in ls */*.yaml ; do
+		cat $yaml | sed 's/version: prod/version: staging/g' | perl -pe 's/(- url: .*)/\1\n  login: admin/g' > $yaml.new
+		mv $yaml.new $yaml
+	done
 fi
 
 # ls */*.yaml | xargs -I% appcfg.py rollback %
