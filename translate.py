@@ -168,8 +168,15 @@ for language in languages:
 	f.close()
 
 
+	if language is 'zh-CHS':
+		f	= open('zh.html', 'w')
+		f.write(unicode(html).encode(codec))
+		f.close()
+
+
 
 languages.append('en')
+languages.append('zh')
 yaml		= check_output('ls *.yaml | head -n1', shell=True)[0:-1]
 f			= open(yaml, 'r')
 yamlText	= f.read().replace('BALLS', '|'.join(languages))
