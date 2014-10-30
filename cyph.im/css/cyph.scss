@@ -127,6 +127,7 @@ html:not(.mobile) {
 	.message-item {
 		.message {
 			max-width: 85%;
+			padding-bottom: 5px;
 		}
 
 		.message-timestamp {
@@ -447,7 +448,6 @@ html:not(.mobile) #error {
 	font-weight: bold;
 	font-family: 'Ubuntu', sans-serif;
 	text-align: center;
-	padding-top: 10%;
 	width: 100%;
 	background-color: #8b62d9 !important;
 }
