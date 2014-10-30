@@ -403,10 +403,10 @@ html:not(.mobile) #error {
 #main.curtain {
 	height: 10%;
 	@include transform(translateY(-90%));
-	@include transition(transform 2s cubic-bezier(1, 0, 0, 1));
+	@include transition(transform 2s cubic-bezier(1, 0, 0, 1), height 2s cubic-bezier(1, 0, 0, 1));
 }
 #main:not(.curtain) {
-	@include transition(transform 2s cubic-bezier(1, 0, 0, 1));
+	@include transition(transform 2s cubic-bezier(1, 0, 0, 1), height 2s cubic-bezier(1, 0, 0, 1));
 }
 #main {
 	position: relative;
@@ -427,6 +427,10 @@ html:not(.mobile) #error {
 	md-content {
 		padding-top: 20px;
 		padding-left: 12.5%;
+	}
+
+	.message-item {
+		margin-left: 0px;
 	}
 }
 #cyphertext:not(.nano) {

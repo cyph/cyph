@@ -290,14 +290,14 @@ html:not(.mobile) #error {
   -ms-transform: translateY(-90%);
   -o-transform: translateY(-90%);
   transform: translateY(-90%);
-  -webkit-transition: -webkit-transform 2s cubic-bezier(1, 0, 0, 1);
-  -moz-transition: -moz-transform 2s cubic-bezier(1, 0, 0, 1);
-  transition: transform 2s cubic-bezier(1, 0, 0, 1); }
+  -webkit-transition: -webkit-transform 2s cubic-bezier(1, 0, 0, 1), height 2s cubic-bezier(1, 0, 0, 1);
+  -moz-transition: -moz-transform 2s cubic-bezier(1, 0, 0, 1), height 2s cubic-bezier(1, 0, 0, 1);
+  transition: transform 2s cubic-bezier(1, 0, 0, 1), height 2s cubic-bezier(1, 0, 0, 1); }
 
 #main:not(.curtain) {
-  -webkit-transition: -webkit-transform 2s cubic-bezier(1, 0, 0, 1);
-  -moz-transition: -moz-transform 2s cubic-bezier(1, 0, 0, 1);
-  transition: transform 2s cubic-bezier(1, 0, 0, 1); }
+  -webkit-transition: -webkit-transform 2s cubic-bezier(1, 0, 0, 1), height 2s cubic-bezier(1, 0, 0, 1);
+  -moz-transition: -moz-transform 2s cubic-bezier(1, 0, 0, 1), height 2s cubic-bezier(1, 0, 0, 1);
+  transition: transform 2s cubic-bezier(1, 0, 0, 1), height 2s cubic-bezier(1, 0, 0, 1); }
 
 #main {
   position: relative;
@@ -317,6 +317,8 @@ html:not(.mobile) #error {
   #cyphertext md-content {
     padding-top: 20px;
     padding-left: 12.5%; }
+  #cyphertext .message-item {
+    margin-left: 0px; }
 
 #cyphertext:not(.nano) {
   overflow-y: scroll; }

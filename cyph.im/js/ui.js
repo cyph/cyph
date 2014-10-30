@@ -240,10 +240,7 @@ angular.
 			});
 
 			if (message) {
-				if (isMobile) {
-					$('#message-box').focus();
-				}
-
+				$scope.scrollDown();
 				addMessageToChat(message, authors.me);
 				otr.sendMsg(message);
 			}
@@ -286,14 +283,16 @@ angular.
 			$mdToast.show({
 				template: '<md-toast>' + cypherToast1 + '</md-toast>',
 				hideDelay: 2000,
-				position: cypherToastPosition
+				position: cypherToastPosition,
+				detachSwipe: function () {}
 			});
 
 			setTimeout(function () {
 				$mdToast.show({
 					template: '<md-toast>' + cypherToast2 + '</md-toast>',
 					hideDelay: 3000,
-					position: cypherToastPosition
+					position: cypherToastPosition,
+					detachSwipe: function () {}
 				});
 
 				setTimeout(function () {
@@ -306,7 +305,8 @@ angular.
 							$mdToast.show({
 								template: '<md-toast>' + cypherToast3 + '</md-toast>',
 								hideDelay: 1000,
-								position: cypherToastPosition
+								position: cypherToastPosition,
+								detachSwipe: function () {}
 							});
 
 							/* Workaround for Angular Material bug */
@@ -322,7 +322,7 @@ angular.
 							removeClass();
 							clearTimeout(timeoutId);
 						}, true, true);
-					}, 2000);
+					}, 3500);
 				}, 3000);
 			}, 2000);
 		};
@@ -452,11 +452,12 @@ angular.
 
 			/* TODO: determine which platforms would benefit from this */
 			if (userAgent.indexOf('android') > -1) {
+				var focusLock			= false;
 				var shouldGoFullScreen	= false;
 
 				var $body				= $('body');
 				var $messageBox			= $('#message-box');
-				var $focusLock			= $('#message-box-overlay');
+				var $focusBlock			= $('#message-box-overlay');
 
 				setUpFullScreenEvent	= function () {
 					$messageBox.blur();
@@ -466,14 +467,21 @@ angular.
 				setUpFullScreenEvent();
 
 				function messageBoxFocus () {
-					$focusLock.hide();
+					$focusBlock.hide();
 					$messageBox.focus();
 					$scope.scrollDown();
+					focusLock	= false;
 				}
 
 				function messageBoxFocusEvent () {
+					if (focusLock) {
+						return;
+					}
+
 					if (shouldGoFullScreen && screenfull.enabled && !screenfull.isFullscreen) {
-						$focusLock.show();
+						focusLock	= true;
+
+						$focusBlock.show();
 						$messageBox.blur();
 						screenfull.request();
 
@@ -485,9 +493,11 @@ angular.
 									$scope.scrollDown();
 								});
 							}
-						}, 15000);
+						}, 5000);
 
 						if (screenfull.isFullscreen) {
+							shouldGoFullScreen	= false;
+
 							$body.focus();
 							setTimeout(messageBoxFocus, 2500);
 						}
