@@ -85,14 +85,20 @@
 
 		<div ng-view class='loading' layout='vertical' layout-fill flex ng-class='{active: state == states.spinningUp}'>
 			<div flex></div>
-			<img src='/img/logo.animated.gif' />
+			<img class='logo-animation' src='/img/logo.animated.gif' />
 			<div translate>Now spinning up your cyph room...</div>
 			<div flex></div>
 		</div>
 
 		<div ng-view class='loading' layout='vertical' layout-fill flex ng-class='{active: state == states.waitingForFriend}'>
 			<div flex></div>
-			<img src='/img/logo.animated.gif' />
+			<div id='timerContainer'>
+				<span translate>Link expires in</span>
+				<timer id='timer' interval='1000' countdown='600' autostart='false' finish-callback='abortSetup()'>
+					{{minutes}}:{{sseconds}}
+				</timer>
+			</div>
+			<img class='logo-animation' src='/img/logo.animated.gif' />
 			<div>
 				<div translate>Just have your friend open this link, and we're good to go!</div>
 				<br />
@@ -103,11 +109,23 @@
 
 		<div ng-view class='loading' layout='vertical' layout-fill flex ng-class='{active: state == states.settingUpCrypto}'>
 			<div flex></div>
-			<img src='/img/logo.animated.gif' />
+			<img class='logo-animation' src='/img/logo.animated.gif' />
 			<div translate>Negotiating secure connection...</div>
 			<div flex></div>
 		</div>
-		
+
+		<div ng-view class='loading' layout='vertical' layout-fill flex ng-class='{active: state == states.aborted}'>
+			<div flex></div>
+			<img class='logo-animation' src='/img/logo.white.icon.png' />
+			<div>
+				<div translate>This cyph has been aborted.</div>
+				<br />
+				<span translate>Please</span>
+				<a translate href='/new'>try again</a>.
+			</div>
+			<div flex></div>
+		</div>
+
 		<md-content id='error' ng-view flex class='nano' ng-class='{active: state == states.error}'>
 			<div class='nano-content'>
 				<div>
@@ -271,6 +289,7 @@
 		<script src='/lib/bower_components/angular-sanitize/angular-sanitize.min.js'></script>
 		<script src='/lib/bower_components/showdown/compressed/showdown.js'></script>
 		<script src='/lib/bower_components/angular-markdown-directive/markdown.js'></script>
+		<script src='/lib/bower_components/angular-timer/dist/angular-timer.min.js'></script>
 		<script src='/lib/bower_components/screenfull/dist/screenfull.min.js'></script>
 		<script src='/lib/bower_components/visibilityjs/lib/visibility.core.js'></script>
 		<script src='/lib/bower_components/visibilityjs/lib/visibility.timers.js'></script>

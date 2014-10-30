@@ -14,7 +14,7 @@ from microsofttranslator import Translator
 global cyph, clientId, clientSecret, translator, placeholder
 
 codec		= 'utf8'
-placeholder	= u'☭'
+placeholder	= u'☁'
 
 languages	= [
 	'ar',

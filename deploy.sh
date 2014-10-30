@@ -40,6 +40,8 @@ find . -name '*.css' | xargs -I% cleancss -o '%' '%'
 echo 'HTML Minify'
 find . -name '*.html' | xargs -I% html-minifier --minify-js --minify-css --remove-comments --collapse-whitespace '%' -o '%'
 
+ls */*.yaml | xargs -I% sed -i.bak 's/max-age=0/max-age=6048000/g' %
+
 if [ $staging ] ; then
 	ls cyph.im/js/*.js | xargs -I% sed -i.bak 's/api.cyph.com/staging-dot-cyphme.appspot.com/g' %
 
