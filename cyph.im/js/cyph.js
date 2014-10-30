@@ -170,6 +170,8 @@ function setUpChannel (channelData) {
 	channel.data	= channelData;
 
 	var receivedMessages	= {};
+	var pongReceived		= false;
+	var pingInterval;
 
 	socket	= channel.open({
 		onopen: function () {
@@ -205,6 +207,9 @@ function setUpChannel (channelData) {
 				if (o.Misc == 'ping') {
 					sendChannelData({Misc: 'pong'});
 				}
+				if (o.Misc == 'pong') {
+					pongReceived	= true;
+				}
 				if (o.Misc == 'connect') {
 					changeState(states.settingUpCrypto);
 				}
@@ -224,6 +229,21 @@ function setUpChannel (channelData) {
 			}
 		},
 		onerror: function () {},
-		onclose: closeChat
+		onclose: function () {
+			clearInterval(pingInterval);
+			closeChat();
+		}
 	});
+
+	/* Intermittent check to verify chat is still alive */
+	pingInterval	= setInterval(function () {
+		pongReceived	= false;
+		sendChannelData({Misc: 'ping'});
+
+		setTimeout(function () {
+			if (pongReceived == false) {
+				socket.close();
+			}
+		}, 120000);
+	}, 300000);
 }
