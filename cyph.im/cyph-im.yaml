@@ -14,49 +14,49 @@ handlers:
   upload: .*
   secure: always
   http_headers:
-    Cache-Control: public, max-age=604800
+    Cache-Control: public, max-age=6048000
 
 - url: /(img/.*)
   static_files: \1
   upload: .*
   secure: always
   http_headers:
-    Cache-Control: public, max-age=604800
+    Cache-Control: public, max-age=6048000
 
 - url: /(audio/.*)
   static_files: \1
   upload: .*
   secure: always
   http_headers:
-    Cache-Control: public, max-age=604800
+    Cache-Control: public, max-age=6048000
 
 - url: /(css/fonts/.*)
   static_files: \1
   upload: .*
   secure: always
   http_headers:
-    Cache-Control: public, max-age=604800
+    Cache-Control: public, max-age=6048000
 
 - url: /(css/preload.*)
   static_files: \1
   upload: .*
   secure: always
   http_headers:
-    Cache-Control: public, max-age=604800
+    Cache-Control: public, max-age=6048000
 
 - url: /(js/cryptoPolyfill.js)
   static_files: \1
   upload: .*
   secure: always
   http_headers:
-    Cache-Control: public, max-age=604800
+    Cache-Control: public, max-age=6048000
 
 - url: /(js/translate.js)
   static_files: \1
   upload: .*
   secure: always
   http_headers:
-    Cache-Control: public, max-age=604800
+    Cache-Control: public, max-age=6048000
 
 # Main
 
@@ -65,14 +65,14 @@ handlers:
   upload: index.html
   secure: always
   http_headers:
-    Cache-Control: public, max-age=604800
+    Cache-Control: public, max-age=6048000
     X-Frame-Options: deny
 
 - url: /unsupportedbrowser
   static_files: unsupportedbrowser.html
   upload: unsupportedbrowser.html
   http_headers:
-    Cache-Control: public, max-age=604800
+    Cache-Control: public, max-age=6048000
     X-Frame-Options: deny
 
 - url: /new
@@ -80,7 +80,7 @@ handlers:
   upload: index.html
   secure: always
   http_headers:
-    Cache-Control: public, max-age=604800
+    Cache-Control: public, max-age=6048000
     X-Frame-Options: deny
 
 - url: /[A-Za-z0-9]{7}
@@ -88,7 +88,7 @@ handlers:
   upload: index.html
   secure: always
   http_headers:
-    Cache-Control: public, max-age=604800
+    Cache-Control: public, max-age=6048000
     X-Frame-Options: deny
 
 - url: /404
@@ -96,7 +96,7 @@ handlers:
   upload: index.html
   secure: always
   http_headers:
-    Cache-Control: public, max-age=604800
+    Cache-Control: public, max-age=6048000
     X-Frame-Options: deny
 
 
@@ -107,7 +107,7 @@ handlers:
   upload: .*\.html
   secure: always
   http_headers:
-    Cache-Control: public, max-age=604800
+    Cache-Control: public, max-age=6048000
     X-Frame-Options: deny
 
 - url: /(BALLS)/new
@@ -115,7 +115,7 @@ handlers:
   upload: .*\.html
   secure: always
   http_headers:
-    Cache-Control: public, max-age=604800
+    Cache-Control: public, max-age=6048000
     X-Frame-Options: deny
 
 - url: /(BALLS)/[A-Za-z0-9]{7}
@@ -123,7 +123,7 @@ handlers:
   upload: .*\.html
   secure: always
   http_headers:
-    Cache-Control: public, max-age=604800
+    Cache-Control: public, max-age=6048000
     X-Frame-Options: deny
 
 - url: /(BALLS)/404
@@ -131,7 +131,7 @@ handlers:
   upload: .*\.html
   secure: always
   http_headers:
-    Cache-Control: public, max-age=604800
+    Cache-Control: public, max-age=6048000
     X-Frame-Options: deny
 
 
@@ -142,5 +142,5 @@ handlers:
   upload: .*
   secure: always
   http_headers:
-    Cache-Control: public, max-age=604800
+    Cache-Control: public, max-age=6048000
     X-Frame-Options: deny
