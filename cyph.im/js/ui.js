@@ -54,16 +54,18 @@ angular.
 
 
 		var newMessageNotification	= getString('newMessageNotification');
-		addMessageToChat = $scope.addMessageToChat = function (text, author) {
+		addMessageToChat = $scope.addMessageToChat = function (text, author, shouldNotify) {
 			if (text) {
-				switch (author) {
-					case authors.friend:
-						notify(newMessageNotification);
-						break;
+				if (shouldNotify !== false) {
+					switch (author) {
+						case authors.friend:
+							notify(newMessageNotification);
+							break;
 
-					case authors.app:
-						notify(text);
-						break;
+						case authors.app:
+							notify(text);
+							break;
+					}
 				}
 
 				apply(function() {
@@ -123,6 +125,8 @@ angular.
 						$clone.remove();
 					});
 				}
+
+				addMessageToChat('You may now speak.', authors.app, false);
 			}, 3000);
 		};
 
