@@ -165,8 +165,9 @@ html.mobile {
 	}
 
 	.message-item.author-me {
-		/* background-color: #7c4cd5; */
-		background-color: #8755e0;
+		/** background-color: #7c4cd5; **/
+		/* background-color: #8755e0; */
+		background-color: #8252db;
 		margin-right: 5%;
 
 		.message {
@@ -184,15 +185,17 @@ html.mobile {
 		position: absolute;
 		border-style: solid;
 		border-width: 18px 0px 0px 12px;
-		/* border-color: transparent #7c4cd5; */
-		border-color: transparent #8755e0;
+		/** border-color: transparent #7c4cd5; **/
+		/* border-color: transparent #8755e0; */
+		border-color: transparent #8252db;
 		right: -12px;
 		bottom: 0px;
 	}
 
 	.message-item.author-friend {
-		/* background-color: #7d4dd2; */
-		background-color: #7c4cd5;
+		/** background-color: #7d4dd2; **/
+		/* background-color: #7c4cd5; */
+		background-color: #784ec5;
 		margin-left: 5%;
 
 		.message {
@@ -209,8 +212,9 @@ html.mobile {
 		position: absolute;
 		border-style: solid;
 		border-width: 0px 12px 18px 0px;
-		/* border-color: transparent #7d4dd2; */
-		border-color: transparent #7c4cd5;
+		/** border-color: transparent #7d4dd2; **/
+		/* border-color: transparent #7c4cd5; */
+		border-color: transparent #784ec5;
 		left: -12px;
 		top: 0px;
 	}
@@ -307,7 +311,7 @@ html:not(.mobile) {
 }
 
 md-toolbar {
-	background-color: #7239dd;
+	background-color: #7d4fd3;
 	height: 40px !important;
 	min-height: 40px !important;
 
