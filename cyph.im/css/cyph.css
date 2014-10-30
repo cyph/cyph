@@ -85,13 +85,79 @@ html.mobile #message-box:focus ~ #new-messages, html.mobile #message-box:focus ~
 html:not(.mobile) #message-list > md-content {
   padding-right: 10px; }
 
-.message {
-  max-width: 85%;
+.message-item .message {
   word-wrap: break-word;
   -webkit-hyphens: auto;
   -moz-hyphens: auto;
   -ms-hyphens: auto;
   hyphens: auto; }
+
+html:not(.mobile) .message-item .message {
+  max-width: 85%; }
+html:not(.mobile) .message-item .message-timestamp {
+  text-align: right; }
+
+html.mobile .message-item {
+  position: relative;
+  max-width: 80%;
+  min-width: 60px;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-top: 10px;
+  padding-bottom: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 5px; }
+  html.mobile .message-item .message {
+    width: 100%; }
+  html.mobile .message-item .message-timestamp {
+    position: absolute;
+    bottom: 5px;
+    font-size: 10px; }
+  html.mobile .message-item .message-author {
+    display: none; }
+html.mobile .message-item.author-me {
+  background-color: #8755e0;
+  margin-right: 5%; }
+  html.mobile .message-item.author-me .message {
+    text-align: left;
+    /* text-align: right; */ }
+  html.mobile .message-item.author-me .message-timestamp {
+    text-align: right;
+    right: 10px; }
+html.mobile .message-item.author-me:after {
+  content: '';
+  position: absolute;
+  border-style: solid;
+  border-width: 18px 0px 0px 12px;
+  border-color: transparent #8755e0;
+  right: -12px;
+  bottom: 0px; }
+html.mobile .message-item.author-friend {
+  background-color: #7c4cd5;
+  margin-left: 5%; }
+  html.mobile .message-item.author-friend .message {
+    text-align: left; }
+  html.mobile .message-item.author-friend .message-timestamp {
+    text-align: left;
+    left: 10px; }
+html.mobile .message-item.author-friend:after {
+  content: '';
+  position: absolute;
+  border-style: solid;
+  border-width: 0px 12px 18px 0px;
+  border-color: transparent #7c4cd5;
+  left: -12px;
+  top: 0px; }
+html.mobile .message-item.author-app {
+  width: 90%;
+  background-color: transparent; }
+  html.mobile .message-item.author-app .message {
+    text-align: center; }
+  html.mobile .message-item.author-app .message-timestamp {
+    text-align: center;
+    width: 100%;
+    left: 0px; }
 
 .message-item:not(.unread) {
   -webkit-animation: inkRippleCheckbox 0.35s linear 0s 1 normal;
@@ -156,7 +222,9 @@ md-toolbar {
 btf-markdown > :first-child, [btf-markdown] > :first-child {
   display: inline; }
 btf-markdown > :not(:first-child), [btf-markdown] > :not(:first-child) {
-  margin: 0px;
+  margin: 0px; }
+
+html:not(.mobile) btf-markdown > :not(:first-child), [btf-markdown] > :not(:first-child) {
   margin-left: 25px; }
 
 :not(textarea):not(md-text-float):not(md-input-group):not(input) {

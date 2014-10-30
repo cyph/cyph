@@ -82,6 +82,10 @@ angular.
 
 					$scope.messages.push({
 						author: author,
+						authorClass: 'author-' + (
+							author == authors.me ? 'me' :
+								author == authors.friend ? 'friend' : 'app'
+						),
 						isFromApp: author == authors.app,
 						isFromFriend: author == authors.friend,
 						isFromMe: author == authors.me,
