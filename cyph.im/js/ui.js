@@ -233,11 +233,11 @@ angular.
 
 
 		$scope.disconnect	= function() {
+			socket.close();
+
 			if (isMobile) {
 				$mdSidenav('menu').close();
 			}
-
-			socket.close();
 		};
 
 		$scope.openMobileMenu	= function() {
@@ -304,15 +304,15 @@ angular.
 		};
 
 		$scope.twoFactor	= function() {
-			if (isMobile) {
-				$mdSidenav('menu').close();
-			}
-
 			alert(
 				'This feature hasn\'t been implemented yet, but it will ' +
 				'freeze the chat until both users have verified their ' +
 				'identities via two-factor authentication.'
 			);
+
+			if (isMobile) {
+				$mdSidenav('menu').close();
+			}
 		};
 
 
