@@ -90,6 +90,17 @@ function getUrlState () {
 	return document.location.pathname.split('/').slice(-1)[0];
 }
 
+var urlPatternSimple	= new RegExp(/^https?:\/\/.*/);
+var urlPatternAdvanced	= new RegExp(
+	'^(https?:\\/\\/)?((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]' +
+		'{2,}|((\\d{1,3}\\.){3}\\d{1,3}))(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)' +
+		'*(\\?[;&a-z\\d%_.~+=-]*)?(\\#[-a-z\\d_]*)?$',
+	'i'
+);
+function isValidUrl(s) {
+	return urlPatternSimple.test(s) || urlPatternAdvanced.test(s);
+}
+
 function processUrlState () {
 	var state	= getUrlState();
 

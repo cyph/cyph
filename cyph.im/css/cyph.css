@@ -290,14 +290,14 @@ html:not(.mobile) #error {
   -ms-transform: translateY(-90%);
   -o-transform: translateY(-90%);
   transform: translateY(-90%);
-  -webkit-transition: all 2s cubic-bezier(1, 0, 0, 1);
-  -moz-transition: all 2s cubic-bezier(1, 0, 0, 1);
-  transition: all 2s cubic-bezier(1, 0, 0, 1); }
+  -webkit-transition: -webkit-transform 2s cubic-bezier(1, 0, 0, 1);
+  -moz-transition: -moz-transform 2s cubic-bezier(1, 0, 0, 1);
+  transition: transform 2s cubic-bezier(1, 0, 0, 1); }
 
 #main:not(.curtain) {
-  -webkit-transition: all 2s cubic-bezier(1, 0, 0, 1);
-  -moz-transition: all 2s cubic-bezier(1, 0, 0, 1);
-  transition: all 2s cubic-bezier(1, 0, 0, 1); }
+  -webkit-transition: -webkit-transform 2s cubic-bezier(1, 0, 0, 1);
+  -moz-transition: -moz-transform 2s cubic-bezier(1, 0, 0, 1);
+  transition: transform 2s cubic-bezier(1, 0, 0, 1); }
 
 #main {
   position: relative;
@@ -327,9 +327,9 @@ html:not(.mobile) #error {
   position: fixed; }
 
 [ng-view].active {
-  -webkit-transition: all 0.75s linear;
-  -moz-transition: all 0.75s linear;
-  transition: all 0.75s linear; }
+  -webkit-transition: opacity 0.75s linear;
+  -moz-transition: opacity 0.75s linear;
+  transition: opacity 0.75s linear; }
 
 #chat-begin-message {
   font-weight: bold;
@@ -362,7 +362,10 @@ html.mobile .desktop-only {
   display: none !important; }
 
 /* Why is this line missing from Angular Material's bower package? */
-md-backdrop.opaque {
+md-backdrop {
   background-color: rgba(0, 0, 0, 0.3); }
+
+md-sidenav {
+  z-index: 7; }
 
 /*# sourceMappingURL=cyph.css.map */

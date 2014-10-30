@@ -81,6 +81,24 @@ angular.
 					}
 				}
 
+				text	= text
+					.split(' ')
+					.map(function (s) {
+						if (isValidUrl(s)) {
+							return '[' +
+								s +
+								'](//' +
+								s.replace(/^\/\//, '').replace(/^http:\/\//, '').replace(/^https:\/\//, '') +
+								')'
+							;
+						}
+						else {
+							return s;
+						}
+					})
+					.join(' ')
+				;
+
 				apply(function() {
 					var date	= new Date();
 					var hour	= date.getHours();
