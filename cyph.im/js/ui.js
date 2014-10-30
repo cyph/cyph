@@ -461,7 +461,7 @@ angular.
 									$scope.scrollDown();
 								});
 							}
-						}, 5000);
+						}, 15000);
 
 						if (screenfull.isFullscreen) {
 							$body.focus();
