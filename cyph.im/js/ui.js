@@ -126,7 +126,7 @@ angular.
 					});
 				}
 
-				addMessageToChat('You may now speak.', authors.app, false);
+				addMessageToChat(getString('introductoryMessage'), authors.app, false);
 			}, 3000);
 		};
 
@@ -386,12 +386,7 @@ angular.
 					$scope.scrollDown();
 				}
 
-				$messageBox.focus(function (e) {
-					if (focusLock) {
-						e.preventDefault();
-						return;
-					}
-
+				$messageBox.focus(function () {
 					if (shouldGoFullScreen && screenfull.enabled && !screenfull.isFullscreen) {
 						$focusLock.show();
 						$messageBox.blur();
