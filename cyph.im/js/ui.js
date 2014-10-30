@@ -18,7 +18,7 @@ var
 
 angular.
 	module('Cyph', ['ngMaterial', 'ngSanitize', 'btford.markdown', 'timer']).
-	controller('CyphController', ['$scope', '$mdSidenav', function($scope, $mdSidenav) {
+	controller('CyphController', ['$scope', '$mdSidenav', '$mdToast', function($scope, $mdSidenav, $mdToast) {
 		$scope.language			= language;
 		$scope.isAlive			= true;
 		$scope.cyphertext		= [];
@@ -233,11 +233,11 @@ angular.
 
 
 		$scope.disconnect	= function() {
-			socket.close();
-
 			if (isMobile) {
 				$mdSidenav('menu').close();
 			}
+
+			socket.close();
 		};
 
 		$scope.openMobileMenu	= function() {
@@ -254,38 +254,65 @@ angular.
 			scrolling.update();
 		};
 
-		var curtainClass	= 'curtain';
-		var $everything		= $('*');
+		var curtainClass		= 'curtain';
+		var $everything			= $('*');
+		var cypherToastPosition	= 'top right';
+		var cypherToast1		= getString('cypherToast1');
+		var cypherToast2		= getString('cypherToast2');
+		var cypherToast3		= getString('cypherToast3');
 		$scope.showCyphertext	= function() {
-			$everything.addClass(curtainClass);
-
-			function removeClass () {
-				$everything.removeClass(curtainClass);
-			}
-
-			var timeoutId	= setTimeout(removeClass, 10000);
-			setTimeout(function () {
-				$('#cyphertext').tap(function () {
-					removeClass();
-					clearTimeout(timeoutId);
-				}, true, true);
-			}, 3500);
-
 			if (isMobile) {
 				$mdSidenav('menu').close();
 			}
+
+			$mdToast.show({
+				template: '<md-toast>' + cypherToast1 + '</md-toast>',
+				hideDelay: 2000,
+				position: cypherToastPosition
+			});
+
+			setTimeout(function () {
+				$mdToast.show({
+					template: '<md-toast>' + cypherToast2 + '</md-toast>',
+					hideDelay: 3000,
+					position: cypherToastPosition
+				});
+
+				setTimeout(function () {
+					$everything.addClass(curtainClass);
+
+					function removeClass () {
+						$everything.removeClass(curtainClass);
+						setTimeout(function () {
+							$mdToast.show({
+								template: '<md-toast>' + cypherToast3 + '</md-toast>',
+								hideDelay: 1000,
+								position: cypherToastPosition
+							});
+						}, 2000);
+					}
+
+					var timeoutId	= setTimeout(removeClass, 10000);
+					setTimeout(function () {
+						$('#cyphertext').tap(function () {
+							removeClass();
+							clearTimeout(timeoutId);
+						}, true, true);
+					}, 2000);
+				}, 3000);
+			}, 2000);
 		};
 
 		$scope.twoFactor	= function() {
+			if (isMobile) {
+				$mdSidenav('menu').close();
+			}
+
 			alert(
 				'This feature hasn\'t been implemented yet, but it will ' +
 				'freeze the chat until both users have verified their ' +
 				'identities via two-factor authentication.'
 			);
-
-			if (isMobile) {
-				$mdSidenav('menu').close();
-			}
 		};
 
 
@@ -478,6 +505,9 @@ angular.
 		Visibility.change(function (e, state) {
 			if (state != 'hidden') {
 				disableNotify	= false;
+				while (openNotifications.length > 0) {
+					openNotifications.pop().close();
+				}
 			}
 			else if (setUpFullScreenEvent) {
 				setUpFullScreenEvent();
