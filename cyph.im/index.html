@@ -160,8 +160,10 @@
 			</div>
 		</md-content>
 
-		<div id='chat-begin-message' translate ng-view flex ng-class='{active: state == states.chatBeginMessage}'>
-			Connected!
+		<div id='chat-begin-message' ng-view layout='vertical' layout-fill flex ng-class='{active: state == states.chatBeginMessage}'>
+			<div flex></div>
+			<div translate>Connected!</div>
+			<div flex></div>
 		</div>
 
 		<div id='message-list' ng-view flex class='nano' ng-class='{active: state == states.chat}'>

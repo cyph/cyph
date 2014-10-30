@@ -283,12 +283,18 @@ angular.
 
 					function removeClass () {
 						$everything.removeClass(curtainClass);
+
 						setTimeout(function () {
 							$mdToast.show({
 								template: '<md-toast>' + cypherToast3 + '</md-toast>',
 								hideDelay: 1000,
 								position: cypherToastPosition
 							});
+
+							/* Workaround for Angular Material bug */
+							setTimeout(function () {
+								$('md-toast:visible').remove();
+							}, 2000);
 						}, 2000);
 					}
 
