@@ -403,10 +403,10 @@ html:not(.mobile) #error {
 #main.curtain {
 	height: 10%;
 	@include transform(translateY(-90%));
-	@include transition(all 2s cubic-bezier(1, 0, 0, 1));
+	@include transition(transform 2s cubic-bezier(1, 0, 0, 1));
 }
 #main:not(.curtain) {
-	@include transition(all 2s cubic-bezier(1, 0, 0, 1));
+	@include transition(transform 2s cubic-bezier(1, 0, 0, 1));
 }
 #main {
 	position: relative;
@@ -441,7 +441,7 @@ html:not(.mobile) #error {
 	position: fixed;
 }
 [ng-view].active {
-	@include transition(all 0.75s linear);
+	@include transition(opacity 0.75s linear);
 }
 
 #chat-begin-message {
@@ -500,6 +500,9 @@ html.mobile {
 
 /* Why is this line missing from Angular Material's bower package? */
 
-md-backdrop.opaque {
+md-backdrop {
 	background-color: rgba(0, 0, 0, 0.3);
+}
+md-sidenav {
+	z-index: 7;
 }
