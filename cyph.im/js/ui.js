@@ -381,6 +381,7 @@ angular.
 
 				function messageBoxFocus () {
 					$messageBox.focus();
+					$scope.scrollDown();
 					focusLock	= false;
 				}
 
@@ -407,6 +408,11 @@ angular.
 					else {
 						shouldGoFullScreen	= false;
 					}
+				});
+			}
+			else {
+				$messageBox.focus(function () {
+					$scope.scrollDown();
 				});
 			}
 		}
