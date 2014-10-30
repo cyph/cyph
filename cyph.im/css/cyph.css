@@ -190,9 +190,6 @@ html.mobile .message-item.author-app {
   font-family: 'Ubuntu Mono', monospace;
   padding-left: 10px; }
 
-#timerContainer {
-  margin-bottom: 20px; }
-
 .loading > .logo-animation {
   margin-left: auto;
   margin-right: auto;

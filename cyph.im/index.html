@@ -92,17 +92,18 @@
 
 		<div ng-view class='loading' layout='vertical' layout-fill flex ng-class='{active: state == states.waitingForFriend}'>
 			<div flex></div>
-			<div id='timerContainer'>
-				<span translate>Link expires in</span>
-				<timer id='timer' interval='1000' countdown='600' autostart='false' finish-callback='abortSetup()'>
-					{{minutes}}:{{sseconds}}
-				</timer>
-			</div>
 			<img class='logo-animation' src='/img/logo.animated.gif' />
 			<div>
 				<div translate>Just have your friend open this link, and we're good to go!</div>
 				<br />
 				<md-text-float id='copy-url' ng-model='copyUrl'></md-text-float>
+				<br />
+				<div id='timerContainer'>
+					<span translate>Link expires in</span>
+					<timer id='timer' interval='1000' countdown='600' autostart='false' finish-callback='abortSetup()'>
+						{{minutes}}:{{sseconds}}
+					</timer>
+				</div>
 			</div>
 			<div flex></div>
 		</div>
