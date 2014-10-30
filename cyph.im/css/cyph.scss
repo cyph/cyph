@@ -146,6 +146,7 @@ html.mobile {
 		margin-left: auto;
 		margin-right: auto;
 		margin-top: 5px;
+		font-size: 18px;
 
 		.message {
 			width: 100%;
@@ -154,7 +155,7 @@ html.mobile {
 		.message-timestamp {
 			position: absolute;
 			bottom: 5px;
-			font-size: 10px;
+			font-size: 11px;
 		}
 
 		.message-author {
@@ -314,9 +315,11 @@ btf-markdown, [btf-markdown] {
 	}
 }
 
-html:not(.mobile) btf-markdown, [btf-markdown] {
-	> :not(:first-child) {
-		margin-left: 25px;
+html:not(.mobile) {
+	btf-markdown, [btf-markdown] {
+		> :not(:first-child) {
+			margin-left: 25px;
+		}
 	}
 }
 
