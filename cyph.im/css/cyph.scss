@@ -116,15 +116,119 @@ html:not(.mobile) #message-list > md-content {
 	padding-right: 10px;
 }
 
-.message {
-	max-width: 85%;
-	word-wrap: break-word;
-	@include hyphens(auto);
+
+.message-item {
+	.message {
+		word-wrap: break-word;
+		@include hyphens(auto);
+	}
+}
+html:not(.mobile) {
+	.message-item {
+		.message {
+			max-width: 85%;
+		}
+
+		.message-timestamp {
+			text-align: right;
+		}
+	}
+}
+html.mobile {
+	.message-item {
+		position: relative;
+		max-width: 80%;
+		min-width: 60px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-top: 10px;
+		padding-bottom: 20px;
+		margin-left: auto;
+		margin-right: auto;
+		margin-top: 5px;
+
+		.message {
+			width: 100%;
+		}
+
+		.message-timestamp {
+			position: absolute;
+			bottom: 5px;
+			font-size: 10px;
+		}
+
+		.message-author {
+			display: none;
+		}
+	}
+
+	.message-item.author-me {
+		background-color: #8755e0;
+		margin-right: 5%;
+
+		.message {
+			text-align: left;
+			/* text-align: right; */
+		}
+
+		.message-timestamp {
+			text-align: right;
+			right: 10px;
+		}
+	}
+	.message-item.author-me:after {
+		content: '';
+		position: absolute;
+		border-style: solid;
+		border-width: 18px 0px 0px 12px;
+		border-color: transparent #8755e0;
+		right: -12px;
+		bottom: 0px;
+	}
+
+	.message-item.author-friend {
+		background-color: #7c4cd5;
+		margin-left: 5%;
+
+		.message {
+			text-align: left;
+		}
+
+		.message-timestamp {
+			text-align: left;
+			left: 10px;
+		}
+	}
+	.message-item.author-friend:after {
+		content: '';
+		position: absolute;
+		border-style: solid;
+		border-width: 0px 12px 18px 0px;
+		border-color: transparent #7c4cd5;
+		left: -12px;
+		top: 0px;
+	}
+
+	.message-item.author-app {
+		width: 90%;
+		background-color: transparent;
+
+		.message {
+			text-align: center;
+		}
+
+		.message-timestamp {
+			text-align: center;
+			width: 100%;
+			left: 0px;
+		}
+	}
 }
 
 .message-item:not(.unread) {
 	@include animation(inkRippleCheckbox 0.35s linear 0s 1 normal);
 }
+
 
 #desktop-sidebar {
 	position: fixed;
@@ -207,6 +311,11 @@ btf-markdown, [btf-markdown] {
 
 	> :not(:first-child) {
 		margin: 0px;
+	}
+}
+
+html:not(.mobile) btf-markdown, [btf-markdown] {
+	> :not(:first-child) {
 		margin-left: 25px;
 	}
 }
