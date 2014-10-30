@@ -96,7 +96,12 @@ angular.
 					});
 				});
 
-				scrolling.update();
+				if (author == authors.me) {
+					$scope.scrollDown();
+				}
+				else {
+					scrolling.update();
+				}
 			}
 		};
 
@@ -386,11 +391,21 @@ angular.
 					$scope.scrollDown();
 				}
 
-				$messageBox.focus(function () {
+				function messageBoxFocusEvent () {
 					if (shouldGoFullScreen && screenfull.enabled && !screenfull.isFullscreen) {
 						$focusLock.show();
 						$messageBox.blur();
 						screenfull.request();
+
+						/* Assume the user doesn't like fullscreen if they close it quickly */
+						setTimeout(function () {
+							if (!screenfull.isFullscreen) {
+								$messageBox.off('focus', messageBoxFocusEvent);
+								$messageBox.focus(function () {
+									$scope.scrollDown();
+								});
+							}
+						}, 5000);
 
 						if (screenfull.isFullscreen) {
 							$body.focus();
@@ -403,7 +418,9 @@ angular.
 					else {
 						shouldGoFullScreen	= false;
 					}
-				});
+				}
+
+				$messageBox.focus(messageBoxFocusEvent);
 			}
 			else {
 				$messageBox.focus(function () {
