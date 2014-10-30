@@ -1,12 +1,12 @@
 @import url(fonts.css);
-html, body {
+html, body, #main {
   max-width: 100%;
   overflow-x: hidden; }
 
-body, md-sidenav {
+#main, md-sidenav {
   background-color: #8b62d9 !important; }
 
-body, .md-button-inner {
+#main, .md-button-inner {
   color: #f1f1f1 !important; }
 
 html:not(.mobile) md-button {
@@ -282,29 +282,28 @@ html:not(.mobile) #error {
   html:not(.mobile) #error img {
     width: 75%; }
 
-body > .curtain:not(#cyphertext):not(#desktop-sidebar) {
-  -webkit-transform: translateX(5000px);
-  -moz-transform: translateX(5000px);
-  -ms-transform: translateX(5000px);
-  -o-transform: translateX(5000px);
-  transform: translateX(5000px);
-  -webkit-transition: all 5s ease-in-out;
-  -moz-transition: all 5s ease-in-out;
-  transition: all 5s ease-in-out; }
+#main.curtain {
+  height: 10%;
+  -webkit-transform: translateY(-90%);
+  -moz-transform: translateY(-90%);
+  -ms-transform: translateY(-90%);
+  -o-transform: translateY(-90%);
+  transform: translateY(-90%);
+  -webkit-transition: all 2s cubic-bezier(1, 0, 0, 1);
+  -moz-transition: all 2s cubic-bezier(1, 0, 0, 1);
+  transition: all 2s cubic-bezier(1, 0, 0, 1); }
 
-#desktop-sidebar.curtain, #desktop-sidebar *.curtain {
-  -webkit-transform: translateY(-5000px);
-  -moz-transform: translateY(-5000px);
-  -ms-transform: translateY(-5000px);
-  -o-transform: translateY(-5000px);
-  transform: translateY(-5000px);
-  -webkit-transition: all 10s ease-in-out;
-  -moz-transition: all 10s ease-in-out;
-  transition: all 10s ease-in-out; }
+#main:not(.curtain) {
+  -webkit-transition: all 2s cubic-bezier(1, 0, 0, 1);
+  -moz-transition: all 2s cubic-bezier(1, 0, 0, 1);
+  transition: all 2s cubic-bezier(1, 0, 0, 1); }
+
+#main {
+  position: relative;
+  z-index: 2; }
 
 #cyphertext {
-  pointer-events: none;
-  opacity: 0;
+  z-index: 1;
   position: fixed;
   top: -1px;
   left: -1px;
@@ -313,23 +312,13 @@ body > .curtain:not(#cyphertext):not(#desktop-sidebar) {
   font-size: 13px;
   font-family: 'Ubuntu Mono', monospace;
   background-color: #141414;
-  color: #3bfc34;
-  -webkit-transition: opacity 1s linear 2s;
-  -moz-transition: opacity 1s linear 2s;
-  transition: opacity 1s linear 2s; }
+  color: #3bfc34; }
   #cyphertext md-content {
     padding-top: 20px;
     padding-left: 12.5%; }
 
 #cyphertext:not(.nano) {
   overflow-y: scroll; }
-
-#cyphertext.curtain {
-  pointer-events: all;
-  opacity: 1;
-  -webkit-transition: opacity 2s linear;
-  -moz-transition: opacity 2s linear;
-  transition: opacity 2s linear; }
 
 [ng-view]:not(.active) {
   opacity: 0;
@@ -362,7 +351,7 @@ html.mobile #chat-begin-message {
 /* Mobile and desktop classes */
 html:not(.mobile) .mobile-only {
   display: none !important; }
-html:not(.mobile) body {
+html:not(.mobile) #main {
   padding: 10px;
   padding-left: 200px;
   padding-right: 20px; }
