@@ -1,4 +1,5 @@
 var
+	abortSetup,
 	addMessageToChat,
 	beginChat,
 	beginWaiting,
@@ -16,7 +17,7 @@ var
 ;
 
 angular.
-	module('Cyph', ['ngMaterial', 'ngSanitize', 'btford.markdown']).
+	module('Cyph', ['ngMaterial', 'ngSanitize', 'btford.markdown', 'timer']).
 	controller('CyphController', ['$scope', '$mdSidenav', function($scope, $mdSidenav) {
 		$scope.language			= language;
 		$scope.isAlive			= true;
@@ -35,6 +36,7 @@ angular.
 			chatBeginMessage: 4,
 			blank: 5,
 			chat: 200,
+			aborted: 400,
 			error: 404
 		};
 		state = $scope.state = $scope.states.none;
@@ -53,8 +55,19 @@ angular.
 		}
 
 
+
+		abortSetup = $scope.abortSetup = function () {
+			changeState($scope.states.aborted);
+			sendChannelData({Destroy: true});
+			$scope.disconnect();
+		};
+
 		var newMessageNotification	= getString('newMessageNotification');
 		addMessageToChat = $scope.addMessageToChat = function (text, author, shouldNotify) {
+			if ($scope.state == $scope.states.aborted) {
+				return;
+			}
+
 			if (text) {
 				if (shouldNotify !== false) {
 					switch (author) {
@@ -106,7 +119,12 @@ angular.
 		};
 
 		beginChat = $scope.beginChat = function () {
+			if ($scope.state == $scope.states.aborted) {
+				return;
+			}
+
 			changeState($scope.states.chatBeginMessage);
+			$('#timer')[0].stop();
 
 			setTimeout(function () {
 				changeState($scope.states.chat);
@@ -157,6 +175,8 @@ angular.
 					clearInterval(copyUrlInterval);
 				}
 			}, 250);
+
+			$('#timer')[0].start();
 		};
 
 		changeState = $scope.changeState = function (state) {
@@ -167,13 +187,22 @@ angular.
 
 		var disconnectedNotification	= getString('disconnectedNotification');
 		closeChat = $scope.closeChat = function () {
-			if ($scope.isAlive) {
-				addMessageToChat(disconnectedNotification, authors.app);
-				sendChannelData({Destroy: true});
+			if ($scope.state == $scope.states.aborted) {
+				return;
+			}
 
-				apply(function() {
-					$scope.isAlive	= false;
-				});
+			if ($scope.isAlive) {
+				if ($scope.state == $scope.states.chat) {
+					addMessageToChat(disconnectedNotification, authors.app);
+					sendChannelData({Destroy: true});
+
+					apply(function() {
+						$scope.isAlive	= false;
+					});
+				}
+				else {
+					abortSetup();
+				}
 			}
 		};
 

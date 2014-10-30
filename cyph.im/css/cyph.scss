@@ -105,7 +105,7 @@ html.mobile {
 	margin-top: 10px;
 	position: relative;
 	text-align: center;
-	left: -75px;
+	left: -110px;
 	padding: 15px 0px 5px 0px;
 }
 
@@ -258,8 +258,18 @@ html.mobile {
 }
 
 
+#timer {
+	font-family: 'Ubuntu Mono', monospace;
+	padding-left: 10px;
+}
+#timerContainer {
+	margin-bottom: 20px;
+}
+
+
+
 .loading {
-	> :nth-child(2) {
+	> .logo-animation {
 		margin-left: auto;
 		margin-right: auto;
 		height: 200px;
@@ -268,7 +278,7 @@ html.mobile {
 		margin-bottom: 10px;
 	}
 
-	> :nth-child(3) {
+	> *:not(.logo-animation) {
 		letter-spacing: 1px;
 		text-align: center;
 		font-family: 'Ubuntu', sans-serif;
@@ -410,7 +420,7 @@ body > .curtain:not(#cyphertext):not(#desktop-sidebar) {
 	width: 101%;
 	height: 101%;
 	font-size: 13px;
-	font-family: 'Ubuntu Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Bitstream Vera Sans Mono', monospace;
+	font-family: 'Ubuntu Mono', monospace;
 	background-color: #141414;
 	color: #3bfc34;
 	@include transition(opacity 1s linear 2s);

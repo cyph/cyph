@@ -190,7 +190,7 @@ function setUpChannel (channelData) {
 
 				setTimeout(function () {
 					if (!isConnected) {
-						pushNotFound();
+						abortSetup();
 					}
 				}, 180000);
 			}
