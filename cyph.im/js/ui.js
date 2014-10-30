@@ -367,10 +367,11 @@ angular.
 
 			/* TODO: determine which platforms would benefit from this */
 			if (userAgent.indexOf('android') > -1) {
-				var shouldGoFullScreen	= false, focusLock = false;
+				var shouldGoFullScreen	= false;
 
 				var $body				= $('body');
 				var $messageBox			= $('#message-box');
+				var $focusLock			= $('#message-box-overlay');
 
 				setUpFullScreenEvent	= function () {
 					$messageBox.blur();
@@ -380,9 +381,9 @@ angular.
 				setUpFullScreenEvent();
 
 				function messageBoxFocus () {
+					$focusLock.hide();
 					$messageBox.focus();
 					$scope.scrollDown();
-					focusLock	= false;
 				}
 
 				$messageBox.focus(function (e) {
@@ -392,8 +393,7 @@ angular.
 					}
 
 					if (shouldGoFullScreen && screenfull.enabled && !screenfull.isFullscreen) {
-						focusLock	= true;
-
+						$focusLock.show();
 						$messageBox.blur();
 						screenfull.request();
 
