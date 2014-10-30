@@ -362,36 +362,39 @@ angular.
 			$('html').addClass('mobile');
 
 			/* TODO: determine which platforms would benefit from this */
-			if (userAgent.indexOf('android') > -1) {
+			// if (userAgent.indexOf('android') > -1) {
+				var shouldGoFullScreen	= false;
+
 				var $body				= $('body');
 				var $messageBox			= $('#message-box');
-				var $messageBoxOverlay	= $('#message-box-overlay');
-
-				$messageBoxOverlay.show();
-
-				function fullScreen () {
-					if (screenfull.enabled && !screenfull.isFullscreen && $scope.state == $scope.states.chat) {
-						screenfull.request();
-
-						if (screenfull.isFullscreen) {
-							$messageBoxOverlay.tap(fullScreen, false);
-						}
-					}
-				}
 
 				setUpFullScreenEvent	= function () {
 					$messageBox.blur();
-					$messageBoxOverlay.tap(fullScreen, false).tap(fullScreen);
+					shouldGoFullScreen	= true;
 				}
 
 				setUpFullScreenEvent();
 
-				$messageBoxOverlay.tap(function () {
-					setTimeout(function () {
-						$messageBox.focus();
-					}, 2000);
+				$messageBox.focus(function () {
+					if (shouldGoFullScreen && screenfull.enabled && !screenfull.isFullscreen) {
+						shouldGoFullScreen	= false;
+
+						$messageBox.blur();
+						screenfull.request();
+
+						if (screenfull.isFullscreen) {
+							$body.focus();
+							setTimeout(function () { $messageBox.focus() }, 2500);
+						}
+						else {
+							$messageBox.focus();
+						}
+					}
+					else {
+						shouldGoFullScreen	= false;
+					}
 				});
-			}
+			// }
 		}
 
 

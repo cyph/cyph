@@ -74,7 +74,7 @@ html.mobile {
 		padding-right: 60px;
 	}
 
-	#message-box:focus ~ #new-messages, #message-box:focus ~ #message-box-overlay {
+	#message-box:focus ~ #new-messages {
 		display: none;
 	}
 }
@@ -90,15 +90,6 @@ html.mobile {
 	right: 20px;
 	opacity: 0.75;
 	z-index: 10;
-}
-
-#message-box-overlay {
-	position: fixed;
-	bottom: -1px;
-	left: -1px;
-	height: 60px;
-	width: 100%;
-	display: none;
 }
 
 #footer {
