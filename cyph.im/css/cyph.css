@@ -50,7 +50,7 @@ html.mobile #message-box {
   line-height: 22px;
   padding: 13px;
   padding-right: 60px; }
-html.mobile #message-box:focus ~ #new-messages, html.mobile #message-box:focus ~ #message-box-overlay {
+html.mobile #message-box:focus ~ #new-messages {
   display: none; }
 
 #message-wrapper {
@@ -63,14 +63,6 @@ html.mobile #message-box:focus ~ #new-messages, html.mobile #message-box:focus ~
   right: 20px;
   opacity: 0.75;
   z-index: 10; }
-
-#message-box-overlay {
-  position: fixed;
-  bottom: -1px;
-  left: -1px;
-  height: 60px;
-  width: 100%;
-  display: none; }
 
 #footer {
   margin-top: 10px;
