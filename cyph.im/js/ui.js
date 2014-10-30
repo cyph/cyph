@@ -362,8 +362,8 @@ angular.
 			$('html').addClass('mobile');
 
 			/* TODO: determine which platforms would benefit from this */
-			// if (userAgent.indexOf('android') > -1) {
-				var shouldGoFullScreen	= false;
+			if (userAgent.indexOf('android') > -1) {
+				var shouldGoFullScreen	= false, focusLock = false;
 
 				var $body				= $('body');
 				var $messageBox			= $('#message-box');
@@ -375,26 +375,36 @@ angular.
 
 				setUpFullScreenEvent();
 
-				$messageBox.focus(function () {
+				function messageBoxFocus () {
+					$messageBox.focus();
+					focusLock	= false;
+				}
+
+				$messageBox.focus(function (e) {
+					if (focusLock) {
+						e.preventDefault();
+						return;
+					}
+
 					if (shouldGoFullScreen && screenfull.enabled && !screenfull.isFullscreen) {
-						shouldGoFullScreen	= false;
+						focusLock	= true;
 
 						$messageBox.blur();
 						screenfull.request();
 
 						if (screenfull.isFullscreen) {
 							$body.focus();
-							setTimeout(function () { $messageBox.focus() }, 2500);
+							setTimeout(messageBoxFocus, 2500);
 						}
 						else {
-							$messageBox.focus();
+							messageBoxFocus();
 						}
 					}
 					else {
 						shouldGoFullScreen	= false;
 					}
 				});
-			// }
+			}
 		}
 
 
