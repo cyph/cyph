@@ -107,13 +107,14 @@ html.mobile .message-item {
   padding-bottom: 20px;
   margin-left: auto;
   margin-right: auto;
-  margin-top: 5px; }
+  margin-top: 5px;
+  font-size: 18px; }
   html.mobile .message-item .message {
     width: 100%; }
   html.mobile .message-item .message-timestamp {
     position: absolute;
     bottom: 5px;
-    font-size: 10px; }
+    font-size: 11px; }
   html.mobile .message-item .message-author {
     display: none; }
 html.mobile .message-item.author-me {
@@ -224,7 +225,7 @@ btf-markdown > :first-child, [btf-markdown] > :first-child {
 btf-markdown > :not(:first-child), [btf-markdown] > :not(:first-child) {
   margin: 0px; }
 
-html:not(.mobile) btf-markdown > :not(:first-child), [btf-markdown] > :not(:first-child) {
+html:not(.mobile) btf-markdown > :not(:first-child), html:not(.mobile) [btf-markdown] > :not(:first-child) {
   margin-left: 25px; }
 
 :not(textarea):not(md-text-float):not(md-input-group):not(input) {
