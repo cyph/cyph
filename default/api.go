@@ -96,7 +96,7 @@ func imCreate(h HandlerArgs) (interface{}, int) {
 
 	memcache.SetMulti(h.Context, []*memcache.Item{&imIdItems[0], &imIdItems[1]})
 
-	laterImTeardown.Call(h.Context, longId, imIdItems[0].Key, imIdItems[1].Key, imIdItems[1].Value)
+	laterImTeardown.Call(h.Context, longId, imIdItems[0].Key, imIdItems[1].Key, string(imIdItems[1].Value))
 
 	return imId, http.StatusOK
 }
