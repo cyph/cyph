@@ -74,7 +74,7 @@ clientId		= 'Cyph'
 clientSecret	= 'LfiDxnyyYXugFVGNnGiPXbydDIAaYNSQmvVv0AHnTD0='
 translator		= Translator(clientId, clientSecret)
 
-f			= open('index.html', 'r')
+f			= open('en.html', 'r')
 baseHtml	= f.read()
 f.close()
 
