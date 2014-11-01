@@ -91,6 +91,8 @@ html:not(.mobile) #message-list > md-content {
   -moz-hyphens: auto;
   -ms-hyphens: auto;
   hyphens: auto; }
+.message-item img {
+  width: 50%; }
 
 html:not(.mobile) .message-item .message {
   max-width: 85%;

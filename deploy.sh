@@ -24,14 +24,12 @@ cd github.com/gorilla
 git clone git://github.com/gorilla/mux.git
 cd ../../..
 
-if [ "${staging}" == '' ] ; then
-	for d in cyph.im ; do
-		cd $d
-		cp index.html en.html
-		../translate.py
-		cd ..
-	done
-fi
+for d in cyph.im ; do
+	cd $d
+	cp index.html en.html
+	../translate.py
+	cd ..
+done
 
 echo 'JS Minify'
 find . -name '*.js' | grep -v lib/bower_components/otr | grep -v '\.min\.js' | xargs -I% uglifyjs '%' -o '%'

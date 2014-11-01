@@ -122,6 +122,10 @@ html:not(.mobile) #message-list > md-content {
 		word-wrap: break-word;
 		@include hyphens(auto);
 	}
+
+	img {
+		width: 50%;
+	}
 }
 html:not(.mobile) {
 	.message-item {
