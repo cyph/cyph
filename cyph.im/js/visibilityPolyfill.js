@@ -3,7 +3,7 @@
 window.FocusVisibility	= {
 	_callbacks: [],
 	_hidden: false,
-	hidden: functon () { return this._hidden },
+	hidden: function () { return this._hidden },
 	change: function (callback) { this._callbacks.push(callback) }
 };
 
