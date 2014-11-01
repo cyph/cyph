@@ -14,49 +14,49 @@ handlers:
   upload: .*
   secure: always
   http_headers:
-    Cache-Control: public, max-age=0
+    Cache-Control: public, max-age=604800
 
 - url: /(img/.*)
   static_files: \1
   upload: .*
   secure: always
   http_headers:
-    Cache-Control: public, max-age=0
+    Cache-Control: public, max-age=604800
 
 - url: /(audio/.*)
   static_files: \1
   upload: .*
   secure: always
   http_headers:
-    Cache-Control: public, max-age=0
+    Cache-Control: public, max-age=604800
 
 - url: /(css/fonts/.*)
   static_files: \1
   upload: .*
   secure: always
   http_headers:
-    Cache-Control: public, max-age=0
+    Cache-Control: public, max-age=604800
 
 - url: /(css/preload.*)
   static_files: \1
   upload: .*
   secure: always
   http_headers:
-    Cache-Control: public, max-age=0
+    Cache-Control: public, max-age=604800
 
 - url: /(js/cryptoPolyfill.js)
   static_files: \1
   upload: .*
   secure: always
   http_headers:
-    Cache-Control: public, max-age=0
+    Cache-Control: public, max-age=604800
 
 - url: /(js/translate.js)
   static_files: \1
   upload: .*
   secure: always
   http_headers:
-    Cache-Control: public, max-age=0
+    Cache-Control: public, max-age=604800
 
 # Main
 
@@ -123,7 +123,6 @@ handlers:
   upload: .*\.html
   secure: always
   http_headers:
-    Cache-Control: no-store
     X-Frame-Options: deny
 
 - url: /(BALLS)/404
