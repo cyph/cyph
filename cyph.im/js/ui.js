@@ -240,7 +240,13 @@ angular.
 			});
 
 			if (message) {
-				$scope.scrollDown();
+				if (isMobile) {
+					$('#message-box').focus();
+				}
+				else {
+					$scope.scrollDown();
+				}
+
 				addMessageToChat(message, authors.me);
 				otr.sendMsg(message);
 			}
