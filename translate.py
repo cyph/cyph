@@ -74,7 +74,7 @@ clientId		= 'Cyph'
 clientSecret	= 'LfiDxnyyYXugFVGNnGiPXbydDIAaYNSQmvVv0AHnTD0='
 translator		= Translator(clientId, clientSecret)
 
-f			= open('en.html', 'r')
+f			= open('index.html', 'r')
 baseHtml	= f.read()
 f.close()
 
@@ -122,6 +122,7 @@ def translate(text, language):
 			if cyphInstance is not None:
 				translation	= re.sub(placeholder, cyphInstance[0:-1], translation, flags = re.IGNORECASE)
 
+			cyphtranslations[language][originalText]	= translation
 			return translation
 			
 		except Exception, e:
@@ -129,7 +130,6 @@ def translate(text, language):
 			time.sleep(20)
 			translator	= Translator(clientId, clientSecret)
 	
-	cyphtranslations[language][originalText]	= text
 	return text
 
 
