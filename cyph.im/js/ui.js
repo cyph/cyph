@@ -410,7 +410,7 @@ angular.
 		/* Visibility */
 
 		if (!isMobile) {
-			window.Visibility	= window.FocusVisibility;
+			window.Visibility	= new FocusVisibility;
 		}
 
 

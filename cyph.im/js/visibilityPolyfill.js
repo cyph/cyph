@@ -1,22 +1,22 @@
 /* An almost-compatible replacement for visibilityjs that actually works */
 
-window.FocusVisibility	= {
-	_callbacks: [],
-	_hidden: false,
-	hidden: function () { return this._hidden },
-	change: function (callback) { this._callbacks.push(callback) }
-};
+function FocusVisibility () {
+	var self	= this;
 
-(function () {
+	self._callbacks	= [];
+	self._hidden	= false;
+	self.hidden		= function () { return self._hidden };
+	self.change		= function (callback) { self._callbacks.push(callback) };
+
 	function visibilityChange (isHidden) {
 		return function (e) {
-			if (FocusVisibility._hidden != isHidden) {
-				FocusVisibility._hidden	= isHidden;
+			if (self._hidden != isHidden) {
+				self._hidden	= isHidden;
 
 				var state	= isHidden ? 'hidden' : 'visible';
 
-				for (var i in FocusVisibility._callbacks) {
-					FocusVisibility._callbacks[i](e, state);
+				for (var i in self._callbacks) {
+					self._callbacks[i](e, state);
 				}
 			}
 		};
@@ -24,4 +24,4 @@ window.FocusVisibility	= {
 
 	$(window).blur(visibilityChange(true));
 	$(window).focus(visibilityChange(false));
-}());
+}

@@ -128,7 +128,7 @@
 				<div translate>This cyph has been aborted.</div>
 				<br />
 				<span translate>Please</span>
-				<a translate href='/new'>try again</a>.
+				<a translate target='_self' href='/new'>try again</a>.
 			</div>
 			<div flex></div>
 		</div>
@@ -190,7 +190,15 @@
 								ng-class='{"app-message": message.isFromApp}'
 							></span>
 						</span>
-						<span flex class='message-timestamp'>{{message.timestamp}}</span>
+						<span flex class='message-timestamp'>
+							<span class='mobile-only' ng-show='message.author == authors.me'>
+								<span translate>me</span> &nbsp;&mdash;&nbsp;
+							</span>
+							{{message.timestamp}}
+							<span class='mobile-only' ng-show='message.author == authors.friend'>
+								&nbsp;&mdash;&nbsp; <span translate>friend</span>
+							</span>
+						</span>
 					</md-item>
 				</md-list>
 			</md-content>
@@ -242,12 +250,12 @@
 					&nbsp;&bull;&nbsp;
 				<a href='mailto:hello@cyph.com'>hello@cyph.com</a>
 					&nbsp;&bull;&nbsp;
-				<a href='tel:+19312974462' title='+1(931) 297 4462'>+1(931) CYPH INC</a>
+				<a target='_self' href='tel:+19312974462' title='+1(931) 297 4462'>+1(931) CYPH INC</a>
 
 				<!--
 					<span ng-hide='language == "en"'>
 							&nbsp;&bull;&nbsp;
-						<a href='/en/new'>English</a>
+						<a target='_self' href='/en/new'>English</a>
 					</span>
 				-->
 			</div>
