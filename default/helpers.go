@@ -3,7 +3,6 @@ package api
 import (
 	"appengine"
 	"appengine/delay"
-	"appengine/mail"
 	"crypto/rand"
 	"encoding/json"
 	"fmt"

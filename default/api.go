@@ -3,6 +3,7 @@ package api
 import (
 	"appengine"
 	"appengine/channel"
+	"appengine/mail"
 	"appengine/memcache"
 	"encoding/json"
 	"net/http"
