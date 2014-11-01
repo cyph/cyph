@@ -456,13 +456,14 @@ angular.
 		if (isMobile) {
 			$('html').addClass('mobile');
 
+			var $messageBox	= $('#message-box');
+
 			/* TODO: determine which platforms would benefit from this */
 			if (userAgent.indexOf('android') > -1) {
 				var focusLock			= false;
 				var shouldGoFullScreen	= false;
 
 				var $body				= $('body');
-				var $messageBox			= $('#message-box');
 				var $focusBlock			= $('#message-box-overlay');
 
 				setUpFullScreenEvent	= function () {
