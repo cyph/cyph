@@ -6,6 +6,7 @@
 import json
 import re
 import time
+from os.path import expanduser
 from subprocess import check_output
 from bs4 import BeautifulSoup
 from microsofttranslator import Translator
@@ -77,13 +78,34 @@ f			= open('en.html', 'r')
 baseHtml	= f.read()
 f.close()
 
+cyphtranslationsPath	= expanduser('~/.cyphtranslations.json')
+try:
+	f					= open(cyphtranslationsPath, 'r')
+	cyphtranslations	= json.loads(f.read())
+	f.close()
+except:
+	cyphtranslations	= {}
+
+
 
 def translate(text, language):
 	global cyph, clientId, clientSecret, translator
 
 	if text.isspace():
 		return text
-	
+
+	try:
+		cyphtranslations[language]
+	except:
+		cyphtranslations[language]	= {}
+
+	try:
+		return cyphtranslations[language][text]
+	except:
+		print
+
+	originalText	= text
+
 	for i in range(5):
 		try:
 			cyphInstance	= re.search(cyph + u' ', text, flags = re.IGNORECASE)
@@ -107,6 +129,7 @@ def translate(text, language):
 			time.sleep(20)
 			translator	= Translator(clientId, clientSecret)
 	
+	cyphtranslations[language][originalText]	= text
 	return text
 
 
@@ -172,6 +195,12 @@ for language in languages:
 		f	= open('zh.html', 'w')
 		f.write(unicode(html).encode(codec))
 		f.close()
+
+
+
+f	= open(cyphtranslationsPath, 'w')
+f.write(json.dumps(cyphtranslations))
+f.close()
 
 
 
