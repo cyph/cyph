@@ -423,7 +423,7 @@ angular.
 		var openNotifications	= [];
 
 		notify	= function (message) {
-			if (!disableNotify && Visibility.hidden) {
+			if (!disableNotify && Visibility.hidden()) {
 				if (window.Notification) {
 					var notification	= new Notification(notifyTitle, {body: message, icon: notifyIcon});
 
@@ -434,7 +434,7 @@ angular.
 							openNotifications.pop().close();
 						}
 
-						if (Visibility.hidden) {
+						if (Visibility.hidden()) {
 							disableNotify	= true;
 						}
 					};
@@ -550,8 +550,8 @@ angular.
 
 
 		/* For notify and mobile fullscreen */
-		Visibility.change(function (isHidden) {
-			if (!isHidden) {
+		Visibility.change(function (e, state) {
+			if (state != 'hidden') {
 				disableNotify	= false;
 				while (openNotifications.length > 0) {
 					openNotifications.pop().close();
@@ -577,7 +577,7 @@ angular.
 				return;
 			}
 
-			var isHidden	= Visibility.hidden;
+			var isHidden	= Visibility.hidden();
 			var currentScrollPosition	=
 				$messageList[0].scrollHeight -
 				($messageList[0].scrollTop + $messageList[0].clientHeight)
@@ -592,7 +592,7 @@ angular.
 				apply(function () { $scope.unreadMessages += 1 });
 
 				var intervalId	= setInterval(function () {
-					if (!Visibility.hidden && ($elem.is(':appeared') || $elem.nextAll(':not(.unread)').length > 0)) {
+					if (!Visibility.hidden() && ($elem.is(':appeared') || $elem.nextAll(':not(.unread)').length > 0)) {
 						clearInterval(intervalId);
 						$elem.removeClass('unread');
 						apply(function () { $scope.unreadMessages -= 1 });
