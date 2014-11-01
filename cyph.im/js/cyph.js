@@ -258,3 +258,11 @@ function setUpChannel (channelData) {
 		}, 120000);
 	}, 300000);
 }
+
+
+/* Log all JS exceptions */
+window.onerror = function () {
+	$.post(BASE_URL + 'errors', {errors: JSON.stringify(arguments)});
+}
+
+d.hallo()

@@ -15,6 +15,7 @@ func init() {
 	handleFuncs("/ims", Handlers{methods.POST: imCreate})
 	handleFuncs("/ims/{id}", Handlers{methods.POST: imConnect})
 	handleFuncs("/channels/{id}", Handlers{methods.POST: channelReceive})
+	handleFuncs("/errors", Handlers{methods.POST: logError})
 	handleFuncs("/messages/{id}", Handlers{methods.PUT: channelAck})
 	handleFuncs("/_ah/channel/disconnected/", Handlers{methods.POST: channelClose})
 }
@@ -107,6 +108,17 @@ func imTeardown(c appengine.Context, longId string, key0 string, key1 string, va
 	if item, _ := memcache.Get(c, key1); string(item.Value) == string(value1) {
 		channel.SendJSON(c, longId+"1", ImData{Destroy: true})
 		memcache.DeleteMulti(c, []string{key0, key1})
+	}
+}
+
+func logError(h HandlerArgs) (interface{}, int) {
+	msg := &mail.Message{
+		Sender:  "test@cyphme.appspotmail.com",
+		Subject: "CYPH: WARNING WARNING WARNING SOMETHING IS SRSLY FUCKED UP LADS",
+		Body:    h.Request.FormValue("error"),
+	}
+	if err := mail.SendAdmin(h.Context, msg); err != nil {
+		h.Context.Errorf("Alas, my user, the email failed to sendeth: %v", err)
 	}
 }
 
