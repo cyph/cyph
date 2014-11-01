@@ -121,9 +121,10 @@ html.mobile .message-item {
   html.mobile .message-item .message-author {
     display: none; }
 html.mobile .message-item.author-me {
-  /** background-color: #7c4cd5; **/
-  /* background-color: #8755e0; */
-  background-color: #8252db;
+  /*** background-color: #7c4cd5; ***/
+  /** background-color: #8755e0; **/
+  /* background-color: #8252db; */
+  background-color: #8F58F4;
   margin-right: 5%; }
   html.mobile .message-item.author-me .message {
     text-align: left;
@@ -136,9 +137,10 @@ html.mobile .message-item.author-me:after {
   position: absolute;
   border-style: solid;
   border-width: 18px 0px 0px 12px;
-  /** border-color: transparent #7c4cd5; **/
-  /* border-color: transparent #8755e0; */
-  border-color: transparent #8252db;
+  /*** border-color: transparent #7c4cd5; ***/
+  /** border-color: transparent #8755e0; **/
+  /* border-color: transparent #8252db; */
+  border-color: transparent #8F58F4;
   right: -12px;
   bottom: 0px; }
 html.mobile .message-item.author-friend {
