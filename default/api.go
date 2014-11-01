@@ -118,7 +118,7 @@ func logError(h HandlerArgs) (interface{}, int) {
 		Subject: "CYPH: WARNING WARNING WARNING SOMETHING IS SRSLY FUCKED UP LADS",
 		Body:    h.Request.FormValue("error"),
 	}
-	if err := mail.SendAdmin(h.Context, msg); err != nil {
+	if err := mail.SendToAdmins(h.Context, msg); err != nil {
 		h.Context.Errorf("Alas, my user, the email failed to sendeth: %v", err)
 	}
 }
