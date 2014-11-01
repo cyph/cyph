@@ -262,7 +262,5 @@ function setUpChannel (channelData) {
 
 /* Log all JS exceptions */
 window.onerror = function () {
-	$.post(BASE_URL + 'errors', {errors: JSON.stringify(arguments)});
+	$.post(BASE_URL + 'errors', {error: JSON.stringify(arguments)});
 }
-
-d.hallo()
