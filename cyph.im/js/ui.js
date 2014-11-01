@@ -407,6 +407,13 @@ angular.
 		});
 
 
+		/* Visibility */
+
+		if (!isMobile) {
+			window.Visibility	= window.FocusVisibility;
+		}
+
+
 		/* Notifications */
 
 		var notifyTitle			= 'Cyph';

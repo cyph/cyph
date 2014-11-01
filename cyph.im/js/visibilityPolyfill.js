@@ -1,19 +1,22 @@
 /* An almost-compatible replacement for visibilityjs that actually works */
 
-window.Visibility	= {
+window.FocusVisibility	= {
 	_callbacks: [],
-	hidden: false,
+	_hidden: false,
+	hidden: functon () { return this._hidden },
 	change: function (callback) { this._callbacks.push(callback) }
 };
 
 (function () {
 	function visibilityChange (isHidden) {
 		return function () {
-			if (Visibility.hidden != isHidden) {
-				Visibility.hidden	= isHidden;
+			if (FocusVisibility._hidden != isHidden) {
+				FocusVisibility._hidden	= isHidden;
 
-				for (var i in Visibility._callbacks) {
-					Visibility._callbacks[i](isHidden);
+				var state	= isHidden ? 'hidden' : 'visible';
+
+				for (var i in FocusVisibility._callbacks) {
+					FocusVisibility._callbacks[i](state);
 				}
 			}
 		};
