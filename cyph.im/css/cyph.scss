@@ -124,7 +124,9 @@ html:not(.mobile) #message-list > md-content {
 	}
 
 	img {
-		width: 50%;
+		max-width: 25%;
+		margin-top: 10px;
+		margin-bottom: 10px;
 	}
 }
 html:not(.mobile) {
@@ -166,6 +168,12 @@ html.mobile {
 		.message-author {
 			display: none;
 		}
+
+		img {
+			margin-left: auto;
+			margin-right: auto;
+			display: block;
+		}
 	}
 
 	.message-item.author-me {
@@ -173,6 +181,7 @@ html.mobile {
 		/** background-color: #8755e0; **/
 		/* background-color: #8252db; */
 		background-color: #8F58F4;
+		box-shadow: 0 0 5px #8F58F4;
 		margin-right: 5%;
 
 		.message {
@@ -185,23 +194,29 @@ html.mobile {
 			right: 10px;
 		}
 	}
-	.message-item.author-me:after {
+	.message-item.author-me:after, .message-item.author-me:before {
 		content: '';
 		position: absolute;
 		border-style: solid;
 		border-width: 18px 0px 0px 12px;
-		/*** border-color: transparent #7c4cd5; ***/
-		/** border-color: transparent #8755e0; **/
-		/* border-color: transparent #8252db; */
-		border-color: transparent #8F58F4;
-		right: -12px;
 		bottom: 0px;
+	}
+	.message-item.author-me:after {
+		border-color: transparent #8f58f4;
+		right: -12px;
+	}
+	.message-item.author-me:before {
+		border-color: transparent transparent;
+		right: -5px;
+		box-shadow: 0 0 5px #8f58f4;
+		@include transform(rotate(33deg));
 	}
 
 	.message-item.author-friend {
 		/** background-color: #7d4dd2; **/
 		/* background-color: #7c4cd5; */
 		background-color: #7d53cb;
+		box-shadow: 0 0 5px #7d53cb;
 		margin-left: 5%;
 
 		.message {
@@ -213,16 +228,22 @@ html.mobile {
 			left: 10px;
 		}
 	}
-	.message-item.author-friend:after {
+	.message-item.author-friend:after, .message-item.author-friend:before {
 		content: '';
 		position: absolute;
 		border-style: solid;
 		border-width: 0px 12px 18px 0px;
-		/** border-color: transparent #7d4dd2; **/
-		/* border-color: transparent #7c4cd5; */
+		top: 0px;
+	}
+	.message-item.author-friend:after {
 		border-color: transparent #7d53cb;
 		left: -12px;
-		top: 0px;
+	}
+	.message-item.author-friend:before {
+		border-color: transparent transparent;
+		left: -5px;
+		box-shadow: 0 0 5px #7d53cb;
+		@include transform(rotate(-33deg));
 	}
 
 	.message-item.author-app {
