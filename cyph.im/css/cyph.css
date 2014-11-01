@@ -105,7 +105,7 @@ html:not(.mobile) .message-item .message-timestamp {
 html.mobile .message-item {
   position: relative;
   max-width: 80%;
-  min-width: 60px;
+  min-width: 120px;
   padding-left: 15px;
   padding-right: 15px;
   padding-top: 10px;
@@ -127,11 +127,8 @@ html.mobile .message-item {
     margin-right: auto;
     display: block; }
 html.mobile .message-item.author-me {
-  /*** background-color: #7c4cd5; ***/
-  /** background-color: #8755e0; **/
-  /* background-color: #8252db; */
-  background-color: #8F58F4;
-  box-shadow: 0 0 5px #8F58F4;
+  background-color: #8652e4;
+  box-shadow: 0 0 5px #8652e4;
   margin-right: 5%; }
   html.mobile .message-item.author-me .message {
     text-align: left;
@@ -146,20 +143,18 @@ html.mobile .message-item.author-me:after, html.mobile .message-item.author-me:b
   border-width: 18px 0px 0px 12px;
   bottom: 0px; }
 html.mobile .message-item.author-me:after {
-  border-color: transparent #8f58f4;
+  border-color: transparent #8652e4;
   right: -12px; }
 html.mobile .message-item.author-me:before {
   border-color: transparent transparent;
-  right: -5px;
-  box-shadow: 0 0 5px #8f58f4;
-  -webkit-transform: rotate(33deg);
-  -moz-transform: rotate(33deg);
-  -ms-transform: rotate(33deg);
-  -o-transform: rotate(33deg);
-  transform: rotate(33deg); }
+  right: 0px;
+  box-shadow: 5px 1px 5px #8652e4;
+  -webkit-transform: rotate(-35deg);
+  -moz-transform: rotate(-35deg);
+  -ms-transform: rotate(-35deg);
+  -o-transform: rotate(-35deg);
+  transform: rotate(-35deg); }
 html.mobile .message-item.author-friend {
-  /** background-color: #7d4dd2; **/
-  /* background-color: #7c4cd5; */
   background-color: #7d53cb;
   box-shadow: 0 0 5px #7d53cb;
   margin-left: 5%; }
@@ -179,13 +174,13 @@ html.mobile .message-item.author-friend:after {
   left: -12px; }
 html.mobile .message-item.author-friend:before {
   border-color: transparent transparent;
-  left: -5px;
-  box-shadow: 0 0 5px #7d53cb;
-  -webkit-transform: rotate(-33deg);
-  -moz-transform: rotate(-33deg);
-  -ms-transform: rotate(-33deg);
-  -o-transform: rotate(-33deg);
-  transform: rotate(-33deg); }
+  left: 0px;
+  box-shadow: 5px 1px 5px #7d53cb;
+  -webkit-transform: rotate(-215deg);
+  -moz-transform: rotate(-215deg);
+  -ms-transform: rotate(-215deg);
+  -o-transform: rotate(-215deg);
+  transform: rotate(-215deg); }
 html.mobile .message-item.author-app {
   width: 90%;
   background-color: transparent; }
