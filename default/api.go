@@ -121,6 +121,8 @@ func logError(h HandlerArgs) (interface{}, int) {
 	if err := mail.SendToAdmins(h.Context, msg); err != nil {
 		h.Context.Errorf("Alas, my user, the email failed to sendeth: %v", err)
 	}
+
+	return nil, http.StatusOK
 }
 
 func root(h HandlerArgs) (interface{}, int) {
