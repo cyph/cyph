@@ -9,14 +9,14 @@ window.FocusVisibility	= {
 
 (function () {
 	function visibilityChange (isHidden) {
-		return function () {
+		return function (e) {
 			if (FocusVisibility._hidden != isHidden) {
 				FocusVisibility._hidden	= isHidden;
 
 				var state	= isHidden ? 'hidden' : 'visible';
 
 				for (var i in FocusVisibility._callbacks) {
-					FocusVisibility._callbacks[i](state);
+					FocusVisibility._callbacks[i](e, state);
 				}
 			}
 		};
