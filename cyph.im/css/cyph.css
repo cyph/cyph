@@ -119,7 +119,8 @@ html.mobile .message-item {
   html.mobile .message-item .message-timestamp {
     position: absolute;
     bottom: 5px;
-    font-size: 11px; }
+    font-size: 10px;
+    color: #dddddd; }
   html.mobile .message-item .message-author {
     display: none; }
   html.mobile .message-item img {
@@ -262,6 +263,9 @@ btf-markdown > :not(:first-child), [btf-markdown] > :not(:first-child) {
 
 html:not(.mobile) btf-markdown > :not(:first-child), html:not(.mobile) [btf-markdown] > :not(:first-child) {
   margin-left: 25px; }
+
+html.mobile btf-markdown p, html.mobile [btf-markdown] p {
+  line-height: 150%; }
 
 :not(textarea):not(md-text-float):not(md-input-group):not(input) {
   border: 0px !important; }
