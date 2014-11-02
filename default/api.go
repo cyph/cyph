@@ -106,7 +106,7 @@ func imCreate(h HandlerArgs) (interface{}, int) {
 func imTeardown(c appengine.Context, longId string, key0 string, key1 string, value1 string) {
 	time.Sleep(config.IMConnectTimeout * time.Minute)
 
-	if item, ok := memcache.Get(c, key1); ok && string(item.Value) == string(value1) {
+	if item, err := memcache.Get(c, key1); err != memcache.ErrCacheMiss && string(item.Value) == string(value1) {
 		channel.SendJSON(c, longId+"1", ImData{Destroy: true})
 		memcache.DeleteMulti(c, []string{key0, key1})
 	}
