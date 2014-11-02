@@ -162,7 +162,8 @@ html.mobile {
 		.message-timestamp {
 			position: absolute;
 			bottom: 5px;
-			font-size: 11px;
+			font-size: 10px;
+			color: #dddddd;
 		}
 
 		.message-author {
@@ -352,11 +353,17 @@ btf-markdown, [btf-markdown] {
 		margin: 0px;
 	}
 }
-
 html:not(.mobile) {
 	btf-markdown, [btf-markdown] {
 		> :not(:first-child) {
 			margin-left: 25px;
+		}
+	}
+}
+html.mobile {
+	btf-markdown, [btf-markdown] {
+		p {
+			line-height: 150%;
 		}
 	}
 }

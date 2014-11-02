@@ -90,15 +90,14 @@ function getUrlState () {
 	return document.location.pathname.split('/').slice(-1)[0];
 }
 
-var urlPatternSimple	= new RegExp(/^https?:\/\/.*/);
-var urlPatternAdvanced	= new RegExp(
-	'^(https?:\\/\\/)?((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]' +
-		'{2,}|((\\d{1,3}\\.){3}\\d{1,3}))(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)' +
-		'*(\\?[;&a-z\\d%_.~+=-]*)?(\\#[-a-z\\d_]*)?$',
-	'i'
-);
+/*
+	Note: not using the previous exhaustive/correct valid URL pattern because
+	it spikes the CPU to 100% with the string 'aoeuidhtns-aoeuhtns-aoeuidhtns-aoeuidhtns-'
+*/
+var urlProtocolPattern	= /^(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?$/;
+var urlExtensionPattern	= /.*(\.co|\.im|\.me|\.org|\.net|\.io|\.ly|\.edu|\.gov|\.de|\.mil|\.in|\.fm|\.am|\.xxx).*/;
 function isValidUrl(s) {
-	return urlPatternSimple.test(s) || urlPatternAdvanced.test(s);
+	return urlProtocolPattern.test(s) || urlExtensionPattern.test(s);
 }
 
 function processUrlState () {
