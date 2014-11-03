@@ -254,6 +254,6 @@ function setUpChannel (channelData) {
 			if (pongReceived == false) {
 				socket.close();
 			}
-		}, 120000);
-	}, 300000);
+		}, 60000);
+	}, 90000);
 }
