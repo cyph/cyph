@@ -73,6 +73,16 @@
 					<md-button translate aria-label='Show cyphertext' ng-click='showCyphertext()'>Show cyphertext</md-button>
 				</div>
 				<div>
+					<md-button
+						translate
+						aria-label='Formatting help'
+						ng-click='baseButtonClick()'
+						href='//www.reddit.com/wiki/commenting#wiki_posting'
+					>
+						Formatting help
+					</md-button>
+				</div>
+				<div>
 					<md-button translate aria-label='Disconnect' ng-click='disconnect()'>Disconnect</md-button>
 				</div>
 			</md-content>
@@ -85,6 +95,14 @@
 			<section ng-show='state == states.chat'>
 				<md-button translate aria-label='Verify identity' ng-click='twoFactor()'>Verify identity</md-button>
 				<md-button translate aria-label='Show cyphertext' ng-click='showCyphertext()'>Show cyphertext</md-button>
+				<md-button
+					translate
+					aria-label='Formatting help'
+					ng-click='baseButtonClick()'
+					href='//www.reddit.com/wiki/commenting#wiki_posting'
+				>
+					Formatting help
+				</md-button>
 				<md-button translate aria-label='Disconnect' ng-click='disconnect()'>Disconnect</md-button>
 			</section>
 		</div>
@@ -217,15 +235,39 @@
 					placeholder='Send a secure message...'
 				></textarea>
 
-				<img
+				<md-button
 					translate
 					id='send-button'
 					ng-hide='message == ""'
 					onclick='sendMessage()'
 					class='mobile-only'
 					aria-label='Send'
-					deferred-src='/img/icons/send.png'
-				/>
+				>
+					<img deferred-src='/img/icons/send.png' />
+				</md-button>
+
+				<md-button
+					translate
+					id='insert-photo-mobile'
+					ng-show='message == ""'
+					class='mobile-only'
+					aria-label='Insert Photo'
+				>
+					<img deferred-src='/img/icons/insertphoto.grey.png' />
+					<input accept='image/*' type='file' onchange='insertPhoto(this.files)' />
+				</md-button>
+
+				<md-button
+					translate
+					id='insert-photo-desktop'
+					ng-show='message == ""'
+					class='md-button-fab desktop-only'
+					aria-label='Insert Photo'
+				>
+					<img deferred-src='/img/icons/insertphoto.png' />
+					<input accept='image/*' type='file' onchange='insertPhoto(this.files)' />
+				</md-button>
+
 				<div id='message-box-overlay'></div>
 
 				<md-subheader
@@ -292,6 +334,7 @@
 
 		<link rel='stylesheet' href='/lib/bower_components/angular-material/angular-material.css' />
 		<link rel='stylesheet' href='/lib/bower_components/nanoscroller/bin/css/nanoscroller.css' />
+		<link rel='stylesheet' href='/lib/bower_components/magnific-popup/dist/magnific-popup.css' />
 
 		<link rel='stylesheet' href='/css/cyph.css' />
 
@@ -305,6 +348,7 @@
 
 		<script src='/lib/jquery.appear/jquery.appear.js'></script>
 		<script src='/lib/bower_components/nanoscroller/bin/javascripts/jquery.nanoscroller.min.js'></script>
+		<script src='/lib/bower_components/magnific-popup/dist/jquery.magnific-popup.min.js'></script>
 		<script src='/lib/bower_components/angular/angular.min.js'></script>
 		<script src='/lib/bower_components/angular-aria/angular-aria.js'></script>
 		<script src='/lib/bower_components/angular-animate/angular-animate.js'></script>

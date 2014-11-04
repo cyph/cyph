@@ -6,8 +6,8 @@ var channel, otr, isConnected, socket, otrPostInit;
 function cryptoInit () {
 	function cryptoInitHelper (key) {
 		otr	= new OTR({
-			fragment_size: 5000,
-			send_interval: 200,
+			fragment_size: 25600,
+			send_interval: 500,
 			debug: false,
 			instance_tag: OTR.makeInstanceTag(),
 			priv: key
