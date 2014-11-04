@@ -40,8 +40,8 @@ html:not(.mobile) #message-box {
   padding: 3px;
   border: 1px solid #dddddd;
   margin: 5px 10px;
-  height: 64px;
-  width: calc(100% - 20px); }
+  height: 60px;
+  width: calc(100% - 29px); }
 html:not(.mobile) #message-box:focus {
   box-shadow: 0px 0px 10px #7239dd;
   border: 1px solid #8b62d9; }
@@ -61,8 +61,10 @@ html.mobile #message-box:focus ~ #new-messages {
 
 #insert-photo-desktop {
   position: absolute;
-  top: 4px;
-  right: 15px; }
+  top: 9px;
+  right: 29px;
+  height: 42px;
+  width: 42px; }
   #insert-photo-desktop img {
     height: 80%; }
 

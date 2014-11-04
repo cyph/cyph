@@ -59,8 +59,8 @@ html:not(.mobile) {
 		padding: 3px;
 		border: 1px solid #dddddd;
 		margin: 5px 10px;
-		height: 64px;
-		width: calc(100% - 20px);
+		height: 60px;
+		width: calc(100% - 29px);
 	}
 
 	#message-box:focus {
@@ -90,8 +90,10 @@ html.mobile {
 
 #insert-photo-desktop {
 	position: absolute;
-	top: 4px;
-	right: 15px;
+	top: 9px;
+	right: 29px;
+	height: 42px;
+	width: 42px;
 
 	img {
 		height: 80%;
