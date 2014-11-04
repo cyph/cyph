@@ -5,6 +5,7 @@ var
 	beginWaiting,
 	changeState,
 	closeChat,
+	insertPhoto,
 	isMobile,
 	logCyphertext,
 	notify,
@@ -186,6 +187,7 @@ angular.
 				if ($scope.state == $scope.states.waitingForFriend) {
 					apply(function () {
 						$scope.copyUrl	= copyUrl;
+						$copyUrl.focus();
 						$copyUrl[0].setSelectionRange(0, copyUrl.length);
 					});
 				}
@@ -224,6 +226,37 @@ angular.
 			}
 		};
 
+		var photoMax	= 1000;
+		insertPhoto = $scope.insertPhoto = function (files) {
+			if (files && files.length > 0) {
+				var canvas	= document.createElement('canvas');
+				var ctx		= canvas.getContext('2d');
+
+				var img		= new Image;
+
+				img.onload	= function() {
+					var widthFactor		= photoMax / img.width;
+					widthFactor			= widthFactor > 1 ? 1 : widthFactor;
+					var heightFactor	= photoMax / img.height;
+					heightFactor		= heightFactor > 1 ? 1 : heightFactor;
+					var factor			= Math.min(widthFactor, heightFactor);
+
+					canvas.width	= img.width * factor;
+					canvas.height	= img.height * factor;
+
+					ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+					
+					var result	= canvas.toDataURL('image/jpeg', 0.75);
+
+					URL.revokeObjectURL(img.src);
+
+					sendMessage('![](' + result + ')');
+				}
+
+				img.src		= URL.createObjectURL(files[0]);
+			}
+		};
+
 		logCyphertext = $scope.logCyphertext = function (text, author) {
 			if (text) {
 				apply(function() {
@@ -232,12 +265,14 @@ angular.
 			}
 		};
 
-		sendMessage = $scope.sendMessage = function () {
-			var message	= $scope.message;
+		sendMessage = $scope.sendMessage = function (message) {
+			if (!message) {
+				message	= $scope.message;
 
-			apply(function() {
-				$scope.message	= '';
-			});
+				apply(function() {
+					$scope.message	= '';
+				});
+			}
 
 			if (message) {
 				if (isMobile) {
@@ -253,12 +288,16 @@ angular.
 		};
 
 
-		$scope.disconnect	= function() {
-			socket.close();
-
+		$scope.baseButtonClick	= function() {
 			if (isMobile) {
 				$mdSidenav('menu').close();
 			}
+		};
+
+		$scope.disconnect	= function() {
+			socket.close();
+
+			$scope.baseButtonClick();
 		};
 
 		$scope.openMobileMenu	= function() {
@@ -275,6 +314,7 @@ angular.
 			scrolling.update();
 		};
 
+		var showCyphertextLock	= false;
 		var curtainClass		= 'curtain';
 		var $everything			= $('*');
 		var cypherToastPosition	= 'top right';
@@ -282,9 +322,13 @@ angular.
 		var cypherToast2		= getString('cypherToast2');
 		var cypherToast3		= getString('cypherToast3');
 		$scope.showCyphertext	= function() {
-			if (isMobile) {
-				$mdSidenav('menu').close();
+			$scope.baseButtonClick();
+
+			if (showCyphertextLock) {
+				return;
 			}
+
+			showCyphertextLock	= true;
 
 			$mdToast.show({
 				template: '<md-toast>' + cypherToast1 + '</md-toast>',
@@ -318,6 +362,7 @@ angular.
 							/* Workaround for Angular Material bug */
 							setTimeout(function () {
 								$('md-toast:visible').remove();
+								showCyphertextLock	= false;
 							}, 2000);
 						}, 2000);
 					}
@@ -340,9 +385,7 @@ angular.
 				'identities via two-factor authentication.'
 			);
 
-			if (isMobile) {
-				$mdSidenav('menu').close();
-			}
+			$scope.baseButtonClick();
 		};
 
 
@@ -379,10 +422,12 @@ angular.
 		}
 
 
-		$('.' + platformString + '-only [deferred-src], [deferred-src].' + platformString + '-only').each(function () {
-			var $this	= $(this);
-			$this.attr('src', $this.attr('deferred-src'));
-		});
+		$('.' + platformString + '-only [deferred-src], [deferred-src].' + platformString + '-only').
+			each(function () {
+				var $this	= $(this);
+				$this.attr('src', $this.attr('deferred-src'));
+			})
+		;
 
 
 		/* onenterpress attribute handler */
@@ -568,41 +613,71 @@ angular.
 			}, 500);
 		});
 
-		var unreadMessage	= '.message-item.unread';
+		var observer	= new MutationObserver(function (mutations) {
+			mutations.forEach(function (mutation) {
+				var $elem		= $(mutation.addedNodes.length > 0 ? mutation.addedNodes[0] : mutation.target);
 
-		$('#message-list md-list').on('DOMNodeInserted', function (e) {
-			var $elem	= $(e.target);
+				/* Process read-ness and scrolling */
+				if ($elem.is('.message-item.unread')) {
+					var isHidden	= Visibility.hidden();
+					var currentScrollPosition	=
+						$messageList[0].scrollHeight -
+						($messageList[0].scrollTop + $messageList[0].clientHeight)
+					;
 
-			if (!$elem.is(unreadMessage)) {
-				return;
-			}
-
-			var isHidden	= Visibility.hidden();
-			var currentScrollPosition	=
-				$messageList[0].scrollHeight -
-				($messageList[0].scrollTop + $messageList[0].clientHeight)
-			;
-
-			if (!isHidden && ($elem.height() + 50) > currentScrollPosition) {
-				$scope.scrollDown();
-				$elem.removeClass('unread');
-			}
-
-			if (isHidden || !$elem.is(':appeared')) {
-				apply(function () { $scope.unreadMessages += 1 });
-
-				var intervalId	= setInterval(function () {
-					if (!Visibility.hidden() && ($elem.is(':appeared') || $elem.nextAll(':not(.unread)').length > 0)) {
-						clearInterval(intervalId);
+					if (!isHidden && ($elem.height() + 50) > currentScrollPosition) {
+						$scope.scrollDown();
 						$elem.removeClass('unread');
-						apply(function () { $scope.unreadMessages -= 1 });
-
-						if ($elem.nextAll().length == 0) {
-							$scope.scrollDown();
-						}
 					}
-				}, 100);
-			}
+
+					if (isHidden || !$elem.is(':appeared')) {
+						apply(function () { $scope.unreadMessages += 1 });
+
+						var intervalId	= setInterval(function () {
+							if (!Visibility.hidden() && ($elem.is(':appeared') || $elem.nextAll(':not(.unread)').length > 0)) {
+								clearInterval(intervalId);
+								$elem.removeClass('unread');
+								apply(function () { $scope.unreadMessages -= 1 });
+
+								if ($elem.nextAll().length == 0) {
+									$scope.scrollDown();
+								}
+							}
+						}, 100);
+					}
+				}
+
+				/* Process image lightboxes */
+				else if ($elem.is('p:not(.processed)')) {
+					var $html	= $($elem[0].outerHTML);
+
+					$html.find('img').each(function () {
+						var $this	= $(this);
+
+						if ($this.parent().prop('tagName').toLowerCase() != 'a') {
+							var $a	= $('<a></a>')
+							$a.attr('href', $this.attr('src'));
+
+							$this.before($a);
+							$this.detach();
+							$a.append($this);
+
+							$a.magnificPopup({type: 'image'});
+						}
+					});
+
+					$html.addClass('processed');
+
+					$elem.replaceWith($html);
+				}
+			});
+		});
+
+		observer.observe($('#message-list md-list')[0], {
+			childList: true,
+			attributes: false,
+			characterData: false,
+			subtree: true
 		});
 
 		

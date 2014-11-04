@@ -2,6 +2,10 @@
 @import 'fonts.css';
 
 
+* {
+	-webkit-font-smoothing: antialiased;
+}
+
 html, body, #main {
 	max-width: 100%;
 	overflow-x: hidden;
@@ -43,6 +47,7 @@ md-sidenav md-button {
 	margin-top: 20px;
 }
 
+
 #message-box {
 	resize: none;
 }
@@ -54,6 +59,7 @@ html:not(.mobile) {
 		padding: 3px;
 		border: 1px solid #dddddd;
 		margin: 5px 10px;
+		height: 64px;
 		width: calc(100% - 20px);
 	}
 
@@ -82,13 +88,36 @@ html.mobile {
 	position: relative;
 }
 
-#send-button {
+#insert-photo-desktop {
+	position: absolute;
+	top: 4px;
+	right: 15px;
+
+	img {
+		height: 80%;
+	}
+}
+md-button input[type='file'] {
+	position: absolute;
+	top: -200%;
+	left: -200%;
+	width: 400% !important;
+	height: 400% !important;
+}
+#send-button, #insert-photo-mobile {
 	position: absolute;
 	height: 80%;
 	top: 10%;
 	right: 20px;
 	opacity: 0.75;
-	z-index: 10;
+	z-index: 5;
+	width: 38px;
+	height: 38px;
+
+	* {
+		width: 100%;
+		height: 100%;
+	}
 }
 
 #message-box-overlay {
@@ -130,6 +159,9 @@ html:not(.mobile) #message-list > md-content {
 		max-width: 25%;
 		margin-top: 10px;
 		margin-bottom: 10px;
+		margin-left: auto;
+		margin-right: auto;
+		display: block;
 	}
 }
 .message-item.author-me {
@@ -182,12 +214,6 @@ html.mobile {
 
 		.message-author {
 			display: none;
-		}
-
-		img {
-			margin-left: auto;
-			margin-right: auto;
-			display: block;
 		}
 	}
 
@@ -390,6 +416,7 @@ textarea {
 	text-align: center;
 	margin-top: -20px;
 	cursor: pointer;
+	z-index: 6;
 }
 #new-messages:after {
 	width: 100%;
@@ -535,6 +562,18 @@ html.mobile {
 	.desktop-only  {
 		display: none !important;
 	}
+}
+
+
+/* Lightbox */
+
+.mfp-figure:after
+{
+	background: none !important;
+	box-shadow: none !important;
+}
+.mfp-figure img {
+	max-height: 80vh !important;
 }
 
 
