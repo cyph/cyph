@@ -3,11 +3,14 @@ var authors				= {me: 1, friend: 2, app: 3};
 var isHistoryAvailable	= typeof history != 'undefined';
 var channel, otr, isConnected, socket, otrPostInit;
 
+// $.ajaxSetup({headers: {'Content-Encoding': 'gzip'}});
+
+
 function cryptoInit () {
 	function cryptoInitHelper (key) {
 		otr	= new OTR({
 			fragment_size: 25600,
-			send_interval: 500,
+			send_interval: 0,
 			debug: false,
 			instance_tag: OTR.makeInstanceTag(),
 			priv: key
@@ -77,28 +80,30 @@ function cryptoInit () {
 	}
 }
 
-function forceEnglish () {
-	localStorage.forceLanguage	= 'en';
-	document.location.pathname	= '/new';
-}
 
 function getString (name) {
 	return $('meta[name="' + name + '"]').attr('content');
 }
 
+
 function getUrlState () {
 	return document.location.pathname.split('/').slice(-1)[0];
 }
+
 
 /*
 	Note: not using the previous exhaustive/correct valid URL pattern because
 	it spikes the CPU to 100% with the string 'aoeuidhtns-aoeuhtns-aoeuidhtns-aoeuidhtns-'
 */
+
+var urlInvalidStarts	= {'!': true, '[': true};
 var urlProtocolPattern	= /^(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?$/;
 var urlExtensionPattern	= /.*(\.co|\.im|\.me|\.org|\.net|\.io|\.ly|\.edu|\.gov|\.de|\.mil|\.in|\.fm|\.am|\.xxx).*/;
+
 function isValidUrl(s) {
-	return urlProtocolPattern.test(s) || urlExtensionPattern.test(s);
+	return !urlInvalidStarts[s[0]] && (urlProtocolPattern.test(s) || urlExtensionPattern.test(s));
 }
+
 
 function processUrlState () {
 	var state	= getUrlState();
@@ -131,9 +136,11 @@ function processUrlState () {
 	}
 }
 
+
 function pushNotFound () {
 	pushState('/404');
 }
+
 
 function pushState (path, shouldReplace) {
 	if (shouldReplace && isHistoryAvailable && history.replaceState) {
@@ -154,26 +161,44 @@ function pushState (path, shouldReplace) {
 	processUrlState();
 }
 
-function sendChannelData (data, opts, retries) {
-	opts	= opts || {};
-	retries	= retries || 0;
 
-	$.ajax({
-		async: opts.async == undefined ? true : opts.async,
-		data: data,
-		error: function () {
-			if (retries < 3) {
-				setTimeout(function () { sendChannelData(data, opts, retries + 1) }, 2000);
-			}
-			else if (opts.errorHandler) {
-				opts.errorHandler();
-			}
-		},
-		success: opts.callback,
-		type: 'POST',
-		url: BASE_URL + 'channels/' + channel.data.ChannelId
-	});
+var sendChannelDataLock		= false;
+var sendChannelDataQueue	= [];
+
+setInterval(function () {
+	if (sendChannelDataLock) {
+		return;
+	}
+
+	var item	= sendChannelDataQueue.shift();
+
+	if (item) {
+		sendChannelDataLock	= true;
+
+		var data	= item.data;
+		var opts	= item.opts;
+
+		$.ajax({
+			async: opts.async == undefined ? true : opts.async,
+			data: data,
+			error: function () {
+				sendChannelDataQueue.unshift(item);
+				sendChannelDataLock	= false;
+			},
+			success: function () {
+				sendChannelDataLock	= false;
+				opts.callback && opts.callback();
+			},
+			type: 'POST',
+			url: BASE_URL + 'channels/' + channel.data.ChannelId
+		});
+	}
+}, 25);
+
+function sendChannelData (data, opts) {
+	sendChannelDataQueue.push({data: data, opts: opts || {}});
 }
+
 
 function setUpChannel (channelData) {
 	channel			= new goog.appengine.Channel(channelData.ChannelToken);

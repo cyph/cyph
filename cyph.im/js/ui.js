@@ -148,6 +148,12 @@ angular.
 			setTimeout(function () {
 				changeState($scope.states.chat);
 
+				/* Fix file upload buttons */
+				$('md-button input[type="file"]').each(function () {
+					var $this	= $(this);
+					$this.parent().parent().append($this.detach());
+				});
+
 				/* Adjust font size for translations */
 				if (!isMobile) {
 					$('md-button').each(function () {
@@ -226,34 +232,74 @@ angular.
 			}
 		};
 
-		var photoMax	= 1000;
-		insertPhoto = $scope.insertPhoto = function (files) {
+		var photoMax	= 1920;
+		insertPhoto = $scope.insertPhoto = function (elem) {
+			var files	= elem.files;
+
 			if (files && files.length > 0) {
-				var canvas	= document.createElement('canvas');
-				var ctx		= canvas.getContext('2d');
-
-				var img		= new Image;
-
-				img.onload	= function() {
-					var widthFactor		= photoMax / img.width;
-					widthFactor			= widthFactor > 1 ? 1 : widthFactor;
-					var heightFactor	= photoMax / img.height;
-					heightFactor		= heightFactor > 1 ? 1 : heightFactor;
-					var factor			= Math.min(widthFactor, heightFactor);
-
-					canvas.width	= img.width * factor;
-					canvas.height	= img.height * factor;
-
-					ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-					
-					var result	= canvas.toDataURL('image/jpeg', 0.75);
-
-					URL.revokeObjectURL(img.src);
-
+				function sendImage (result) {
 					sendMessage('![](' + result + ')');
 				}
 
-				img.src		= URL.createObjectURL(files[0]);
+				var file	= files[0];
+
+
+				if (file.type == 'image/svg+xml') {
+					var reader		= new FileReader;
+
+					reader.onload	= function () {
+						sendImage(reader.result);
+					};
+
+					reader.readAsDataURL(file);
+				}
+				else {
+					var canvas	= document.createElement('canvas');
+					var ctx		= canvas.getContext('2d');
+
+					var img		= new Image;
+
+					img.onload	= function() {
+						var widthFactor		= photoMax / img.width;
+						widthFactor			= widthFactor > 1 ? 1 : widthFactor;
+						var heightFactor	= photoMax / img.height;
+						heightFactor		= heightFactor > 1 ? 1 : heightFactor;
+						var factor			= Math.min(widthFactor, heightFactor);
+
+						canvas.width	= img.width * factor;
+						canvas.height	= img.height * factor;
+
+						ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+						/* Cherry pick 100 of the pixels and check for >50% transparency */
+						var hasTransparency	= false;
+
+						if (file.type != 'image/jpeg') {
+							var pixelData	= ctx.getImageData(0, 0, img.width, img.height).data;
+							var increment	= Math.ceil(pixelData.length / 400) * 4;
+
+							for (var i = 3 ; i < pixelData.length ; i += increment) {
+								if (pixelData[i] < 128) {
+									hasTransparency	= true;
+									break;
+								}
+							}
+						}
+
+						var result	= hasTransparency ? canvas.toDataURL() : canvas.toDataURL(
+							'image/jpeg',
+							Math.min(960 / Math.max(canvas.width, canvas.height), 1)
+						);
+
+						URL.revokeObjectURL(img.src);
+
+						sendImage(result);
+
+						$(elem).val('');
+					}
+
+					img.src		= URL.createObjectURL(file);
+				}
 			}
 		};
 
