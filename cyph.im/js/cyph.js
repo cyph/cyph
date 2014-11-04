@@ -3,8 +3,6 @@ var authors				= {me: 1, friend: 2, app: 3};
 var isHistoryAvailable	= typeof history != 'undefined';
 var channel, otr, isConnected, socket, otrPostInit;
 
-// $.ajaxSetup({headers: {'Content-Encoding': 'gzip'}});
-
 
 function cryptoInit () {
 	function cryptoInitHelper (key) {
