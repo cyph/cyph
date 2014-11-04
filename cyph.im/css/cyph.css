@@ -70,10 +70,10 @@ html.mobile #message-box:focus ~ #new-messages {
 
 md-button input[type='file'] {
   position: absolute;
-  top: -200%;
-  left: -200%;
-  width: 400% !important;
-  height: 400% !important; }
+  top: -2000%;
+  left: -2000%;
+  width: 4000% !important;
+  height: 4000% !important; }
 
 #send-button, #insert-photo-mobile {
   position: absolute;

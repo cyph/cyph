@@ -58,6 +58,13 @@ handlers:
   http_headers:
     Cache-Control: public, max-age=0
 
+- url: /(.*\.map)
+  static_files: \1
+  upload: .*
+  secure: always
+  http_headers:
+    Cache-Control: public, max-age=0
+
 # Main
 
 - url: /
