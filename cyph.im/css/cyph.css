@@ -121,7 +121,6 @@ html:not(.mobile) #message-list > md-content {
   max-width: 25%;
   margin-top: 10px;
   margin-bottom: 10px;
-  margin-left: auto;
   margin-right: auto;
   display: block; }
 
@@ -139,6 +138,8 @@ html:not(.mobile) .message-item {
   html:not(.mobile) .message-item .message {
     max-width: 85%;
     padding-bottom: 5px; }
+  html:not(.mobile) .message-item img {
+    margin-left: 20vh; }
   html:not(.mobile) .message-item .message-timestamp {
     text-align: right; }
 
@@ -156,6 +157,8 @@ html.mobile .message-item {
   font-size: 18px; }
   html.mobile .message-item .message {
     width: 100%; }
+  html.mobile .message-item img {
+    margin-left: auto; }
   html.mobile .message-item .message-timestamp {
     position: absolute;
     bottom: 5px;
