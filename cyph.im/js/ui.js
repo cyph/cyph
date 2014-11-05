@@ -577,74 +577,23 @@ angular.
 		if (isMobile) {
 			$('html').addClass('mobile');
 
-			var $messageBox	= $('#message-box');
+			$('#message-box').focus(function () {
+				$scope.scrollDown();
+			});
 
-			/* TODO: determine which platforms would benefit from this */
-			if (userAgent.indexOf('android') > -1) {
-				var focusLock			= false;
-				var shouldGoFullScreen	= false;
 
-				var $body				= $('body');
-				var $focusBlock			= $('#message-box-overlay');
+			var $body	= $('body');
 
-				setUpFullScreenEvent	= function () {
-					$messageBox.blur();
-					shouldGoFullScreen	= true;
-				}
-
-				setUpFullScreenEvent();
-
-				function messageBoxFocus () {
-					$focusBlock.hide();
-					$messageBox.focus();
-					$scope.scrollDown();
-					focusLock	= false;
-				}
-
-				function messageBoxFocusEvent () {
-					if (focusLock) {
-						return;
-					}
-
-					if (shouldGoFullScreen && screenfull.enabled && !screenfull.isFullscreen) {
-						focusLock	= true;
-
-						$focusBlock.show();
-						$messageBox.blur();
-						screenfull.request();
-
-						/* Assume the user doesn't like fullscreen if they close it quickly */
-						setTimeout(function () {
-							if (!screenfull.isFullscreen) {
-								$messageBox.off('focus', messageBoxFocusEvent);
-								$messageBox.focus(function () {
-									$scope.scrollDown();
-								});
-							}
-						}, 5000);
-
-						if (screenfull.isFullscreen) {
-							shouldGoFullScreen	= false;
-
-							$body.focus();
-							setTimeout(messageBoxFocus, 2500);
-						}
-						else {
-							messageBoxFocus();
-						}
-					}
-					else {
-						shouldGoFullScreen	= false;
-					}
-				}
-
-				$messageBox.focus(messageBoxFocusEvent);
+			function setBodyHeight () {
+				$body.height(
+					window.innerHeight > window.innerWidth ?
+						(window.innerHeight + 50) + 'px' :
+						''
+				);
 			}
-			else {
-				$messageBox.focus(function () {
-					$scope.scrollDown();
-				});
-			}
+
+			setBodyHeight();
+			$(window).on('orientationchange', setBodyHeight);
 		}
 
 
