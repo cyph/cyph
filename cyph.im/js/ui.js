@@ -591,18 +591,24 @@ angular.
 
 			var $body	= $('body');
 
+			function isPortrait () {
+				if (window.screen && window.screen.orientation && window.screen.orientation.type) {
+					return window.screen.orientation.type.split('-')[0] == 'portrait';
+				}
+				else if (!isNaN(window.orientation)) {
+					return Math.abs(window.orientation) != 90;
+				}
+				else {
+					return false;
+				}
+			}
+
 			function setBodyHeight () {
-				$body.height(
-					window.innerHeight > window.innerWidth ?
-						(window.outerHeight + 50) + 'px' :
-						''
-				);
+				$body.height(isPortrait() ? (window.outerHeight + 50) + 'px' : '');
 			}
 
 			setBodyHeight();
-			$(window).on('orientationchange', function () {
-				setTimeout(setBodyHeight, 100);
-			});
+			$(window).on('orientationchange', setBodyHeight);
 		}
 
 
