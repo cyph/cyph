@@ -593,7 +593,7 @@ angular.
 
 			function setBodyHeight () {
 				$body.height(
-					window.outerHeight > window.outerWidth ?
+					window.innerHeight > window.innerWidth ?
 						(window.outerHeight + 50) + 'px' :
 						''
 				);
