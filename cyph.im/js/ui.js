@@ -589,6 +589,7 @@ angular.
 			});
 
 
+			/*
 			var $body			= $('body');
 			var portraitHeight	= (window.outerHeight + 50) + 'px';
 
@@ -610,6 +611,7 @@ angular.
 
 			setBodyHeight();
 			$(window).on('orientationchange', setBodyHeight);
+			*/
 		}
 
 
