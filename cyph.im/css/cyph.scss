@@ -596,6 +596,12 @@ html.mobile {
 	background: none !important;
 	box-shadow: none !important;
 }
+.mfp-content {
+	pointer-events: none !important;
+}
+.mfp-wrap {
+	max-height: 100vh !important;
+}
 /*
 .mfp-figure img {
 	max-height: 80vh !important;
