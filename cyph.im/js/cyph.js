@@ -1,7 +1,8 @@
 var BASE_URL			= 'https://api.cyph.com/';
 var authors				= {me: 1, friend: 2, app: 3};
 var isHistoryAvailable	= typeof history != 'undefined';
-var channel, otr, isConnected, socket, otrPostInit;
+var otrPostInit			= [];
+var channel, otr, isConnected, socket;
 
 
 function cryptoInit () {
@@ -61,11 +62,13 @@ function cryptoInit () {
 			}
 		});
 
-		if (typeof otrPostInit == 'string') {
-			otr.receiveMsg(otrPostInit);
-		}
-		else if (otrPostInit) {
+		if (otrPostInit[0] === true) {
 			otr.sendQueryMsg();
+		}
+		else {
+			while (otrPostInit.length > 0) {
+				otr.receiveMsg(otrPostInit.shift());
+			}
 		}
 	}
 
@@ -234,7 +237,7 @@ function setUpChannel (channelData) {
 					otr.sendQueryMsg();
 				}
 				else {
-					otrPostInit	= true;
+					otrPostInit.push(true);
 				}
 
 				setTimeout(function () {
@@ -267,7 +270,7 @@ function setUpChannel (channelData) {
 						otr.receiveMsg(o.Message);
 					}
 					else {
-						otrPostInit	= o.Message;
+						otrPostInit.push(o.Message);
 					}
 				}
 				if (o.Destroy) {
