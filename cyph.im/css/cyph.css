@@ -455,7 +455,7 @@ html.mobile .desktop-only {
   pointer-events: none !important; }
 
 .mfp-wrap, .mfp-wrap * {
-  max-height: 100vh !important; }
+  overflow: hidden !important; }
 
 /*
 .mfp-figure img {
