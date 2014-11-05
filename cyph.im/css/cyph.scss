@@ -20,13 +20,15 @@ html, body, #main {
 }
 
 html:not(.mobile) {
-	md-button {
-		color: #444;
-		background-color: #7d4fd3 !important;
-	}
+	#desktop-sidebar, #message-wrapper {
+		md-button {
+			color: #444;
+			background-color: #7d4fd3 !important;
+		}
 
-	md-button.focus, md-button:hover {
-		background-color: #7239dd !important;
+		md-button.focus, md-button:hover {
+			background-color: #7239dd !important;
+		}
 	}
 
 	md-button img {
@@ -518,6 +520,21 @@ html:not(.mobile) #error {
 	.message-item {
 		margin-left: 0px;
 	}
+
+	#cyphertext-close {
+		position: fixed;
+		top: 30px;
+		right: 5%;
+
+		.md-button-inner {
+			color: #3bfc34 !important;
+			font-size: 30px;
+		}
+	}
+
+	md-button.focus, md-button:hover {
+		background-color: #202020 !important;
+	}
 }
 #cyphertext:not(.nano) {
 	overflow-y: scroll;
@@ -590,23 +607,27 @@ html.mobile {
 
 /* Lightbox */
 
-.mfp-figure:after
-{
+.mfp-wrap, .mfp-wrap * {
+	overflow: hidden !important;
+}
+.mfp-figure:after {
 	background: none !important;
 	box-shadow: none !important;
 }
 .mfp-content {
 	pointer-events: none !important;
-}
-.mfp-wrap, .mfp-wrap * {
-	overflow: hidden !important;
-}
-/*
-.mfp-figure img {
-	max-height: 80vh !important;
-}
-*/
 
+	.mfp-figure {
+		figure {
+			box-shadow: 0px 0px 15px black;
+
+			img {
+				max-height: 80vh !important;
+				padding: 0px !important;
+			}
+		}
+	}
+}
 
 /* Why is this line missing from Angular Material's bower package? */
 

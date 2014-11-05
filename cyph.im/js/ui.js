@@ -17,6 +17,7 @@ var
 	statusNotFound
 ;
 
+
 angular.
 	module('Cyph', ['ngMaterial', 'ngSanitize', 'btford.markdown', 'timer']).
 	controller('CyphController', ['$scope', '$mdSidenav', '$mdToast', function($scope, $mdSidenav, $mdToast) {
@@ -63,7 +64,9 @@ angular.
 			$scope.disconnect();
 		};
 
+
 		var newMessageNotification	= getString('newMessageNotification');
+
 		addMessageToChat = $scope.addMessageToChat = function (text, author, shouldNotify) {
 			if ($scope.state == $scope.states.aborted) {
 				return;
@@ -137,6 +140,7 @@ angular.
 			}
 		};
 
+
 		beginChat = $scope.beginChat = function () {
 			if ($scope.state == $scope.states.aborted) {
 				return;
@@ -178,6 +182,7 @@ angular.
 			}, 3000);
 		};
 
+
 		beginWaiting = $scope.beginWaiting = function () {
 			changeState($scope.states.waitingForFriend);
 
@@ -205,13 +210,16 @@ angular.
 			$('#timer')[0].start();
 		};
 
+
 		changeState = $scope.changeState = function (state) {
 			apply(function() {
 				state = $scope.state = state;
 			});
 		};
 
+
 		var disconnectedNotification	= getString('disconnectedNotification');
+
 		closeChat = $scope.closeChat = function () {
 			if ($scope.state == $scope.states.aborted) {
 				return;
@@ -232,7 +240,9 @@ angular.
 			}
 		};
 
+
 		var photoMax	= 1920;
+
 		insertPhoto = $scope.insertPhoto = function (elem) {
 			var files	= elem.files;
 
@@ -303,6 +313,7 @@ angular.
 			}
 		};
 
+
 		logCyphertext = $scope.logCyphertext = function (text, author) {
 			if (text) {
 				apply(function() {
@@ -310,6 +321,7 @@ angular.
 				});
 			}
 		};
+
 
 		sendMessage = $scope.sendMessage = function (message) {
 			if (!message) {
@@ -329,9 +341,10 @@ angular.
 				}
 
 				addMessageToChat(message, authors.me);
-				otr.sendMsg(message);
+				otr.sendMsg(padMessage(message));
 			}
 		};
+
 
 
 		$scope.baseButtonClick	= function() {
@@ -340,17 +353,21 @@ angular.
 			}
 		};
 
+
 		$scope.disconnect	= function() {
 			socket.close();
 
 			$scope.baseButtonClick();
 		};
 
+
 		$scope.openMobileMenu	= function() {
 			$mdSidenav('menu').open();
 		};
 
+
 		var $messageList	= $('#message-list, #message-list > md-content');
+
 		$scope.scrollDown	= function() {
 			$messageList.each(function () {
 				var $this	= $(this);
@@ -360,6 +377,7 @@ angular.
 			scrolling.update();
 		};
 
+
 		var showCyphertextLock	= false;
 		var curtainClass		= 'curtain';
 		var $everything			= $('*');
@@ -367,6 +385,30 @@ angular.
 		var cypherToast1		= getString('cypherToast1');
 		var cypherToast2		= getString('cypherToast2');
 		var cypherToast3		= getString('cypherToast3');
+
+		$scope.closeCyphertext	= function () {
+			if ($('.' + curtainClass).length < 1) {
+				return;
+			}
+
+			$everything.removeClass(curtainClass);
+
+			setTimeout(function () {
+				$mdToast.show({
+					template: '<md-toast>' + cypherToast3 + '</md-toast>',
+					hideDelay: 1000,
+					position: cypherToastPosition,
+					detachSwipe: function () {}
+				});
+
+				/* Workaround for Angular Material bug */
+				setTimeout(function () {
+					$('md-toast:visible').remove();
+					showCyphertextLock	= false;
+				}, 2000);
+			}, 2000);
+		};
+
 		$scope.showCyphertext	= function() {
 			$scope.baseButtonClick();
 
@@ -393,36 +435,10 @@ angular.
 
 				setTimeout(function () {
 					$everything.addClass(curtainClass);
-
-					function removeClass () {
-						$everything.removeClass(curtainClass);
-
-						setTimeout(function () {
-							$mdToast.show({
-								template: '<md-toast>' + cypherToast3 + '</md-toast>',
-								hideDelay: 1000,
-								position: cypherToastPosition,
-								detachSwipe: function () {}
-							});
-
-							/* Workaround for Angular Material bug */
-							setTimeout(function () {
-								$('md-toast:visible').remove();
-								showCyphertextLock	= false;
-							}, 2000);
-						}, 2000);
-					}
-
-					var timeoutId	= setTimeout(removeClass, 10000);
-					setTimeout(function () {
-						$('#cyphertext').tap(function () {
-							removeClass();
-							clearTimeout(timeoutId);
-						}, true, true);
-					}, 3500);
 				}, 3000);
 			}, 2000);
 		};
+
 
 		$scope.twoFactor	= function() {
 			alert(
@@ -433,6 +449,7 @@ angular.
 
 			$scope.baseButtonClick();
 		};
+
 
 
 		isMobile	= (function () {
@@ -446,6 +463,14 @@ angular.
 		}());
 
 		platformString	= isMobile ? 'mobile' : 'desktop';
+
+		$('.' + platformString + '-only [deferred-src], [deferred-src].' + platformString + '-only').
+			each(function () {
+				var $this	= $(this);
+				$this.attr('src', $this.attr('deferred-src'));
+			})
+		;
+
 
 		$.fn.tap	= function (callback, onOrOff, once) {
 			var $this		= $(this);
@@ -468,14 +493,6 @@ angular.
 		}
 
 
-		$('.' + platformString + '-only [deferred-src], [deferred-src].' + platformString + '-only').
-			each(function () {
-				var $this	= $(this);
-				$this.attr('src', $this.attr('deferred-src'));
-			})
-		;
-
-
 		/* onenterpress attribute handler */
 
 		$('[onenterpress]').each(function () {
@@ -491,7 +508,6 @@ angular.
 							eval(onenterpress);
 							e.preventDefault();
 						}
-
 					}
 				});
 			}
