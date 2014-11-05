@@ -601,24 +601,24 @@ html.mobile {
 .mfp-wrap, .mfp-wrap * {
 	overflow: hidden !important;
 }
+.mfp-figure {
+	figure {
+		box-shadow: 0px 0px 15px black;
+
+		img {
+			max-height: 80vh !important;
+			padding: 0px !important;
+		}
+	}
+}
 .mfp-figure:after {
 	background: none !important;
 	box-shadow: none !important;
 }
-.mfp-content {
-	pointer-events: none !important;
-
-	.mfp-figure {
-		figure {
-			box-shadow: 0px 0px 15px black;
-
-			img {
-				max-height: 80vh !important;
-				padding: 0px !important;
-			}
-		}
-	}
+html.mobile .mfp-content {
+	pointer-events: none !important;	
 }
+
 
 /* Why is this line missing from Angular Material's bower package? */
 
