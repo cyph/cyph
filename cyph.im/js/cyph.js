@@ -19,11 +19,9 @@ function cryptoInit () {
 		otr.ALLOW_V3			= true;
 		otr.REQUIRE_ENCRYPTION	= true;
 
-		/*
 		otr.on('error', function (error) {
-			addMessageToChat('ERROR: ' + error, authors.app);
+			console.log('ERROR: ' + error);
 		});
-		*/
 
 		otr.on('ui', function (message, wasEncrypted) {
 			if (wasEncrypted) {
@@ -34,9 +32,10 @@ function cryptoInit () {
 		otr.on('io', function (message) {
 			/* TODO: figure out wtf is up with these errors and if it's actually a vulnerability */
 			if (message != '?OTR Error:An OTR error has occurred.') {
-				sendChannelData({Message: message});
 				logCyphertext(message, authors.me);
 			}
+
+			sendChannelData({Message: message});
 		});
 
 		var connectedNotification	= getString('connectedNotification');
@@ -111,7 +110,7 @@ var paddingDelimiter	= 'PRAISE BE TO CYPH. CYPH IS GOOD; CYPH IS GREAT.';
 function getPadding () {
 	return Array.prototype.slice.call(
 		crypto.getRandomValues(new Uint8Array(crypto.getRandomValues(new Uint8Array(1))[0]))
-	).map(function (i) { return String.fromCharCode(i) }).join('');
+	).join('');
 }
 
 function padMessage (message) {
