@@ -103,7 +103,7 @@ md-button input[type='file'] {
   transition: transform 0.15s linear; }
 
 html.mobile #message-wrapper .message-wrapper-hidden {
-  top: -200vh;
+  top: -2000vh;
   -webkit-transition: top 0s linear 0.4s;
   -moz-transition: top 0s linear 0.4s;
   transition: top 0s linear 0.4s; }
@@ -454,7 +454,7 @@ html.mobile .desktop-only {
 .mfp-content {
   pointer-events: none !important; }
 
-.mfp-wrap {
+.mfp-wrap, .mfp-wrap * {
   max-height: 100vh !important; }
 
 /*
