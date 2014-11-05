@@ -56,6 +56,18 @@ function cryptoInit () {
 					});
 
 					notify(connectedNotification);
+
+					/* Intermittent check to verify chat is still alive */
+					pingInterval	= setInterval(function () {
+						pongReceived	= false;
+						sendChannelData({Misc: 'ping'});
+
+						setTimeout(function () {
+							if (pongReceived == false) {
+								socket.close();
+							}
+						}, 150000);
+					}, 210000);
 				}
 			}
 		});
@@ -104,7 +116,7 @@ function isValidUrl(s) {
 }
 
 
-var paddingDelimiter	= 'PRAISE BE TO CYPH. CYPH IS GOOD; CYPH IS GREAT.';
+var paddingDelimiter	= 'PRAISE BE TO CYPH';
 
 function getPadding () {
 	return Array.prototype.slice.call(
@@ -282,16 +294,4 @@ function setUpChannel (channelData) {
 			closeChat();
 		}
 	});
-
-	/* Intermittent check to verify chat is still alive */
-	pingInterval	= setInterval(function () {
-		pongReceived	= false;
-		sendChannelData({Misc: 'ping'});
-
-		setTimeout(function () {
-			if (pongReceived == false) {
-				socket.close();
-			}
-		}, 60000);
-	}, 90000);
 }
