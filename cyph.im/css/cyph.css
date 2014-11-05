@@ -3,7 +3,7 @@
   -webkit-font-smoothing: antialiased; }
 
 html, body, #main {
-  max-width: 100%;
+  max-width: 100% !important;
   overflow-x: hidden; }
 
 #main, md-sidenav {
