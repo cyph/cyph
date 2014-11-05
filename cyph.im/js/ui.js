@@ -409,6 +409,13 @@ angular.
 			}, 2000);
 		};
 
+		/* Close cyphertext on esc */
+		$(document).keyup(function(e) {
+			if (e.keyCode == 27) {
+				$scope.closeCyphertext();
+			}
+		});
+
 		$scope.showCyphertext	= function() {
 			$scope.baseButtonClick();
 
