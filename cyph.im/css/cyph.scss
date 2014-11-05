@@ -121,6 +121,21 @@ md-button input[type='file'] {
 		height: 100%;
 	}
 }
+#message-wrapper {
+	.message-wrapper-hidden {
+		@include transform(translateY(50vh) !important);
+		@include transition(transform 0.25s linear);
+	}
+	:not(.message-wrapper-hidden) {
+		@include transition(transform 0.15s linear);
+	}
+}
+html.mobile #message-wrapper {
+	.message-wrapper-hidden {
+		top: -200vh;
+		@include transition(top 0s linear 0.4s);
+	}
+}
 
 #message-box-overlay {
 	position: fixed;
@@ -581,9 +596,11 @@ html.mobile {
 	background: none !important;
 	box-shadow: none !important;
 }
+/*
 .mfp-figure img {
 	max-height: 80vh !important;
 }
+*/
 
 
 /* Why is this line missing from Angular Material's bower package? */

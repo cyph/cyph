@@ -238,7 +238,7 @@
 				<md-button
 					translate
 					id='send-button'
-					ng-hide='message == ""'
+					ng-class='{"message-wrapper-hidden": message == ""}'
 					onclick='sendMessage()'
 					class='mobile-only'
 					aria-label='Send'
@@ -249,7 +249,7 @@
 				<md-button
 					translate
 					id='insert-photo-mobile'
-					ng-show='message == ""'
+					ng-class='{"message-wrapper-hidden": message != ""}'
 					class='mobile-only'
 					aria-label='Insert Photo'
 				>
@@ -260,7 +260,7 @@
 				<md-button
 					translate
 					id='insert-photo-desktop'
-					ng-show='message == ""'
+					ng-class='{"message-wrapper-hidden": message != ""}'
 					class='md-button-fab desktop-only'
 					aria-label='Insert Photo'
 				>
