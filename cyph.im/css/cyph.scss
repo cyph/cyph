@@ -121,7 +121,7 @@ md-button input[type='file'] {
 		height: 100%;
 	}
 }
-#message-wrapper {
+html:not(.mobile) #message-wrapper {
 	.message-wrapper-hidden {
 		@include transform(translateY(50vh) !important);
 		@include transition(transform 0.25s linear);
@@ -132,8 +132,7 @@ md-button input[type='file'] {
 }
 html.mobile #message-wrapper {
 	.message-wrapper-hidden {
-		top: -2000vh;
-		@include transition(top 0s linear 0.4s);
+		display: none;
 	}
 }
 

@@ -88,7 +88,7 @@ md-button input[type='file'] {
     width: 100%;
     height: 100%; }
 
-#message-wrapper .message-wrapper-hidden {
+html:not(.mobile) #message-wrapper .message-wrapper-hidden {
   -webkit-transform: translateY(50vh) !important;
   -moz-transform: translateY(50vh) !important;
   -ms-transform: translateY(50vh) !important;
@@ -97,16 +97,13 @@ md-button input[type='file'] {
   -webkit-transition: -webkit-transform 0.25s linear;
   -moz-transition: -moz-transform 0.25s linear;
   transition: transform 0.25s linear; }
-#message-wrapper :not(.message-wrapper-hidden) {
+html:not(.mobile) #message-wrapper :not(.message-wrapper-hidden) {
   -webkit-transition: -webkit-transform 0.15s linear;
   -moz-transition: -moz-transform 0.15s linear;
   transition: transform 0.15s linear; }
 
 html.mobile #message-wrapper .message-wrapper-hidden {
-  top: -2000vh;
-  -webkit-transition: top 0s linear 0.4s;
-  -moz-transition: top 0s linear 0.4s;
-  transition: top 0s linear 0.4s; }
+  display: none; }
 
 #message-box-overlay {
   position: fixed;
