@@ -254,7 +254,7 @@ angular.
 				var file	= files[0];
 
 
-				if (file.type == 'image/svg+xml') {
+				if (file.type == 'image/svg+xml' || file.type == 'image/gif') {
 					var reader		= new FileReader;
 
 					reader.onload	= function () {
@@ -589,7 +589,8 @@ angular.
 			});
 
 
-			var $body	= $('body');
+			var $body			= $('body');
+			var portraitHeight	= (window.outerHeight + 50) + 'px';
 
 			function isPortrait () {
 				if (window.screen && window.screen.orientation && window.screen.orientation.type) {
@@ -604,7 +605,7 @@ angular.
 			}
 
 			function setBodyHeight () {
-				$body.height(isPortrait() ? (window.outerHeight + 50) + 'px' : '');
+				$body.height(isPortrait() ? portraitHeight : '');
 			}
 
 			setBodyHeight();
