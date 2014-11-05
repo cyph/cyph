@@ -88,6 +88,26 @@ md-button input[type='file'] {
     width: 100%;
     height: 100%; }
 
+#message-wrapper .message-wrapper-hidden {
+  -webkit-transform: translateY(50vh) !important;
+  -moz-transform: translateY(50vh) !important;
+  -ms-transform: translateY(50vh) !important;
+  -o-transform: translateY(50vh) !important;
+  transform: translateY(50vh) !important;
+  -webkit-transition: -webkit-transform 0.25s linear;
+  -moz-transition: -moz-transform 0.25s linear;
+  transition: transform 0.25s linear; }
+#message-wrapper :not(.message-wrapper-hidden) {
+  -webkit-transition: -webkit-transform 0.15s linear;
+  -moz-transition: -moz-transform 0.15s linear;
+  transition: transform 0.15s linear; }
+
+html.mobile #message-wrapper .message-wrapper-hidden {
+  top: -200vh;
+  -webkit-transition: top 0s linear 0.4s;
+  -moz-transition: top 0s linear 0.4s;
+  transition: top 0s linear 0.4s; }
+
 #message-box-overlay {
   position: fixed;
   bottom: -1px;
@@ -431,9 +451,11 @@ html.mobile .desktop-only {
   background: none !important;
   box-shadow: none !important; }
 
+/*
 .mfp-figure img {
-  max-height: 80vh !important; }
-
+	max-height: 80vh !important;
+}
+*/
 /* Why is this line missing from Angular Material's bower package? */
 md-backdrop {
   background-color: rgba(0, 0, 0, 0.3); }
