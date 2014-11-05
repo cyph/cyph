@@ -8,7 +8,7 @@ function cryptoInit () {
 	function cryptoInitHelper (key) {
 		otr	= new OTR({
 			fragment_size: 25600,
-			send_interval: 0,
+			send_interval: 50,
 			debug: false,
 			instance_tag: OTR.makeInstanceTag(),
 			priv: key
