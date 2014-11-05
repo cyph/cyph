@@ -20,7 +20,7 @@ function cryptoInit () {
 		otr.REQUIRE_ENCRYPTION	= true;
 
 		otr.on('error', function (error) {
-			console.log('ERROR: ' + error);
+			console.log(error);
 		});
 
 		otr.on('ui', function (message, wasEncrypted) {
@@ -32,10 +32,9 @@ function cryptoInit () {
 		otr.on('io', function (message) {
 			/* TODO: figure out wtf is up with these errors and if it's actually a vulnerability */
 			if (message != '?OTR Error:An OTR error has occurred.') {
+				sendChannelData({Message: message});
 				logCyphertext(message, authors.me);
 			}
-
-			sendChannelData({Message: message});
 		});
 
 		var connectedNotification	= getString('connectedNotification');
