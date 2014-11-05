@@ -26,7 +26,7 @@ function cryptoInit () {
 
 		otr.on('ui', function (message, wasEncrypted) {
 			if (wasEncrypted) {
-				addMessageToChat(message, authors.friend);
+				addMessageToChat(padMessageRemove(message), authors.friend);
 			}
 		});
 
@@ -100,6 +100,23 @@ var urlExtensionPattern	= /.*(\.co|\.im|\.me|\.org|\.net|\.io|\.ly|\.edu|\.gov|\
 
 function isValidUrl(s) {
 	return !urlInvalidStarts[s[0]] && (urlProtocolPattern.test(s) || urlExtensionPattern.test(s));
+}
+
+
+var paddingDelimiter	= 'PRAISE BE TO CYPH. CYPH IS GOOD; CYPH IS GREAT.';
+
+function getPadding () {
+	return Array.prototype.slice.call(
+		crypto.getRandomValues(new Uint8Array(crypto.getRandomValues(new Uint8Array(1))[0]))
+	).map(function (i) { return String.fromCharCode(i) }).join('');
+}
+
+function padMessage (message) {
+	return getPadding() + paddingDelimiter + message + paddingDelimiter + getPadding();
+}
+
+function padMessageRemove (message) {
+	return message.split(paddingDelimiter)[1];
 }
 
 
