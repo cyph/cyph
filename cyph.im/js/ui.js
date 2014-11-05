@@ -281,20 +281,27 @@ angular.
 
 						ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-						/* Cherry pick 100 of the pixels and check for >50% transparency */
-						var hasTransparency	= false;
+						/*
+							/* Cherry pick 100 of the pixels and check for >75% transparency *
+							var hasTransparency	= false;
 
-						if (file.type != 'image/jpeg') {
-							var pixelData	= ctx.getImageData(0, 0, img.width, img.height).data;
-							var increment	= Math.ceil(pixelData.length / 400) * 4;
+							if (file.type != 'image/jpeg') {
+								var pixelData	= ctx.getImageData(0, 0, img.width, img.height).data;
+								var increment	= Math.ceil(pixelData.length / 400) * 4;
 
-							for (var i = 3 ; i < pixelData.length ; i += increment) {
-								if (pixelData[i] < 128) {
-									hasTransparency	= true;
-									break;
+								for (var i = 3 ; i < pixelData.length ; i += increment) {
+									if (pixelData[i] < 64) {
+										hasTransparency	= true;
+										break;
+									}
 								}
 							}
-						}
+						*/
+
+						var hasTransparency	=
+							file.type != 'image/jpeg' &&
+							ctx.getImageData(0, 0, img.width, img.height).data[3] != 255
+						;
 
 						var result	= hasTransparency ? canvas.toDataURL() : canvas.toDataURL(
 							'image/jpeg',
