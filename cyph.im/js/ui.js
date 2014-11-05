@@ -593,15 +593,16 @@ angular.
 
 			function setBodyHeight () {
 				$body.height(
-					(
-						window.outerHeight +
-							(window.outerHeight > window.outerWidth ? 50 : 0)
-					) + 'px'
+					window.outerHeight > window.outerWidth ?
+						(window.outerHeight + 50) + 'px' :
+						''
 				);
 			}
 
 			setBodyHeight();
-			$(window).on('orientationchange', setBodyHeight);
+			$(window).on('orientationchange', function () {
+				setTimeout(setBodyHeight, 100);
+			});
 		}
 
 
