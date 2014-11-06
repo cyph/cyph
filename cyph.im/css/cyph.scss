@@ -79,6 +79,7 @@ html.mobile {
 		line-height: 22px;
 		padding: 13px;
 		padding-right: 60px;
+		box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.35);
 	}
 
 	#message-box:focus ~ #new-messages {
@@ -334,6 +335,7 @@ html.mobile {
 		font-size: 14px;
 		width: 100%;
 		margin-bottom: 6px;
+		box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5)
 	}
 }
 
@@ -389,6 +391,7 @@ md-toolbar {
 	background-color: #7d4fd3;
 	height: 40px !important;
 	min-height: 40px !important;
+	box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.75);
 
 	img {
 		height: 25px !important;
@@ -523,8 +526,9 @@ html:not(.mobile) #error {
 		}
 	}
 
-	md-button.focus, md-button:hover {
+	md-button {
 		background-color: #202020 !important;
+		box-shadow: rgba(25, 130, 25, 0.137255) 0px 0px 4px 0px, rgba(25, 130, 25, 0.278431) 0px 4px 8px 0px;
 	}
 }
 #cyphertext:not(.nano) {

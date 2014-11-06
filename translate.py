@@ -6,7 +6,6 @@
 import json
 import re
 import time
-from os.path import expanduser
 from subprocess import check_output
 from bs4 import BeautifulSoup
 from microsofttranslator import Translator
@@ -17,51 +16,9 @@ global cyph, clientId, clientSecret, translator, placeholder
 codec		= 'utf8'
 placeholder	= u'☁'
 
-languages	= [
-	'ar',
-	'bg',
-	'ca',
-	'zh-CHS',
-	'zh-CHT',
-	'cs',
-	'da',
-	'nl',
-	'et',
-	'fi',
-	'fr',
-	'de',
-	'el',
-	'ht',
-	'he',
-	'hi',
-	'mww',
-	'hu',
-	'id',
-	'it',
-	'ja',
-	'tlh',
-	'ko',
-	'lv',
-	'lt',
-	'ms',
-	'mt',
-	'no',
-	'fa',
-	'pl',
-	'pt',
-	'ro',
-	'ru',
-	'sk',
-	'sl',
-	'es',
-	'sv',
-	'th',
-	'tr',
-	'uk',
-	'ur',
-	'vi',
-	'cy'
-]
+f			= open('../languages.json', 'r')
+languages	= json.loads(f.read()).keys()
+f.close()
 
 attrs	= [
 	'content',
@@ -78,26 +35,17 @@ f			= open('en.html', 'r')
 baseHtml	= f.read()
 f.close()
 
-cyphtranslationsPath	= expanduser('~/.cyphtranslations.json')
-try:
-	f					= open(cyphtranslationsPath, 'r')
-	cyphtranslations	= json.loads(f.read())
-	f.close()
-except:
-	cyphtranslations	= {}
+cyphtranslations	= {}
 
 
 
 def translate(text, language):
 	global cyph, clientId, clientSecret, translator
 
-	if text.isspace():
+	if re.match('[A-Za-z]', text) is None:
 		return text
 
-	try:
-		cyphtranslations[language]
-	except:
-		cyphtranslations[language]	= {}
+	text	= text.strip()
 
 	try:
 		return cyphtranslations[language][text]
@@ -136,6 +84,16 @@ def translate(text, language):
 # Do the move
 
 for language in languages:
+	cyphtranslationsPath	= '../translations/' + language + '.json'
+	try:
+		f	= open(cyphtranslationsPath, 'r')
+		cyphtranslations[language]	= json.loads(f.read())
+		f.close()
+	except:
+		cyphtranslations[language]	= {}
+
+
+
 	f		= open(language + '.html', 'w')
 	html	= BeautifulSoup(baseHtml)
 	
@@ -198,9 +156,9 @@ for language in languages:
 
 
 
-f	= open(cyphtranslationsPath, 'w')
-f.write(json.dumps(cyphtranslations))
-f.close()
+	f	= open(cyphtranslationsPath, 'w')
+	f.write(json.dumps(cyphtranslations[language]))
+	f.close()
 
 
 

@@ -9,18 +9,25 @@ var language		=
 	defaultLanguage
 ;
 
+if (language == 'zh-tw') {
+	language	= 'zh-CHT';
+}
 if (['zh-CHS', 'zh-CHT'].indexOf(language) < 0) {
 	language	= language.split('-')[0];
 }
+
+
+var supportedLanguages	= {BALLS: true};
+
 
 var possibleLanguage	= document.location.pathname.split('/')[1];
 
 if (language == defaultLanguage) {
 	language	= defaultLanguage;
 }
-else if (possibleLanguage.length == 2 || ['zh-CHS', 'zh-CHT, mww', 'tlh'].indexOf(possibleLanguage) > -1) {
+else if (possibleLanguage.length == 2 || ['zh-CHS', 'zh-CHT', 'tlh'].indexOf(possibleLanguage) > -1) {
 	language	= possibleLanguage;
 }
-else {
+else if (supportedLanguages[language]) {
 	document.location.pathname	= '/' + language + document.location.pathname;
 }
