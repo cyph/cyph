@@ -10,3 +10,9 @@ handlers:
 - url: .*
   script: _go_app
   secure: always
+
+- url: /analytics/.*
+  static_files: analytics.html
+  upload: analytics.html
+  http_headers:
+    Cache-Control: public, max-age=0
