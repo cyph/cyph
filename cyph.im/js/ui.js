@@ -131,6 +131,8 @@ angular.
 					});
 				});
 
+				$scope.scrollDown(true);
+
 				if (author == authors.me) {
 					$scope.scrollDown();
 				}
@@ -375,14 +377,14 @@ angular.
 
 		var $messageList	= $('#message-list, #message-list > md-content');
 
-		$scope.scrollDown	= function() {
-			$messageList
-				.add('#cyphertext.curtain, #cyphertext.curtain > md-content')
-				.each(function () {
-					var $this	= $(this);
-					$this.animate({scrollTop: $this[0].scrollHeight}, 350);
-				})
-			;
+		$scope.scrollDown	= function(shouldScrollCyphertext) {
+			(shouldScrollCyphertext ?
+				$('#cyphertext.curtain, #cyphertext.curtain > md-content') :
+				$messageList
+			).each(function () {
+				var $this	= $(this);
+				$this.animate({scrollTop: $this[0].scrollHeight}, 350);
+			});
 
 			scrolling.update();
 		};
