@@ -12,7 +12,7 @@ from microsofttranslator import Translator
 
 
 global cyph, clientId, clientSecret, translator, placeholder
-global cyphtranslations, languages, attrs, codec, 
+global cyphtranslations, languages, attrs, codec, baseHtml
 
 codec		= 'utf8'
 placeholder	= u'☁'
