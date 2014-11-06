@@ -98,12 +98,6 @@ for language in languages:
 	html	= BeautifulSoup(baseHtml, 'html5lib')
 	
 	for elem in html.select('[translate]'):
-		if 'A glitch in the matrix' in str(elem):
-			print('<FUCK MAINE FUCK MAINE FUCK MAINE>')
-			print(str(elem))
-			print(elem.string)
-			print('</FUCK MAINE FUCK MAINE FUCK MAINE>')
-
 		for attr in attrs:
 			value	= elem.get(attr)
 			if value is not None:
