@@ -95,11 +95,9 @@ for language in languages:
 
 
 	f		= open(language + '.html', 'w')
-	html	= BeautifulSoup(baseHtml, 'html')
+	html	= BeautifulSoup(baseHtml, 'html5lib')
 	
 	for elem in html.select('[translate]'):
-		print(elem.tag.name)
-
 		for attr in attrs:
 			value	= elem.get(attr)
 			if value is not None:
