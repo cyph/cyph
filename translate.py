@@ -63,10 +63,10 @@ def translate(text, language):
 				text			= re.sub(cyphInstance, placeholder + u' ', text)
 
 			translation	= translator.translate(text, language)
-			
+
 			if 'ArgumentException' in translation:
 				raise Exception(translation)
-			
+
 			if cyphInstance is not None:
 				translation	= re.sub(placeholder, cyphInstance[0:-1], translation, flags = re.IGNORECASE)
 
@@ -95,7 +95,7 @@ for language in languages:
 
 
 	f		= open(language + '.html', 'w')
-	html	= BeautifulSoup(baseHtml)
+	html	= BeautifulSoup(baseHtml, 'xml')
 	
 	for elem in html.select('[translate]'):
 		for attr in attrs:
