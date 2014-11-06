@@ -157,14 +157,14 @@ for language in languages:
 
 
 	f	= open(cyphtranslationsPath, 'w')
-	f.write(json.dumps(cyphtranslations[language]))
+	f.write(json.dumps(cyphtranslations[language], sort_keys = True, indent = True))
 	f.close()
 
 
 
 languages.append('en')
 languages.append('zh')
-yaml		= check_output('ls *.yaml | head -n1', shell=True)[0:-1]
+yaml		= check_output('ls *.yaml | head -n1', shell = True)[0:-1]
 f			= open(yaml, 'r')
 yamlText	= f.read().replace('BALLS', '|'.join(languages))
 f.close()
