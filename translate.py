@@ -164,7 +164,7 @@ for language in languages:
 		f		= open('../../english.json', 'w')
 		keys	= cyphtranslations[language].keys()
 		keys.sort()
-		f.write(json.dumps(keys, indent = 4, separators = (',')))
+		f.write(json.dumps(keys, indent = 4))
 		f.close()
 
 
