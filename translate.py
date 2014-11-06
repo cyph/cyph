@@ -125,10 +125,15 @@ for language in languages:
 
 		
 		
-		text		= unicode(elem.get_text(strip = True))
+		text		= unicode(elem.string)
 		
-		if len(elem.contents) > 0 or text.isspace():
+		if elem.string is None or text.isspace():
+			print('EMPTY')
+			print(elem)
 			continue
+
+		if text is 'A glitch in the matrix':
+			print('FUCK MAINE FUCK MAINE FUCK MAINE')
 		
 		bindings	= re.findall('\\{\\{.*?\\}\\}', text)
 		
