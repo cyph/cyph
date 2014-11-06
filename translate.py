@@ -156,7 +156,7 @@ for language in languages:
 	f.close()
 
 
-	if unicode(language) is u'zh-CHS':
+	if u'zh-CHS' in unicode(language):
 		f	= open('zh.html', 'w')
 		f.write(unicode(html).encode(codec))
 		f.close()
