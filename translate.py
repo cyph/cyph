@@ -154,6 +154,12 @@ for language in languages:
 		f.write(unicode(html).encode(codec))
 		f.close()
 
+		f		= open('../../english.json', 'w')
+		keys	= cyphtranslations[language]
+		keys.sort()
+		f.write(json.dumps(keys, indent = 4, separators = (',')))
+		f.close()
+
 
 
 	f	= open(cyphtranslationsPath, 'w')
