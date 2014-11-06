@@ -12,6 +12,7 @@ from microsofttranslator import Translator
 
 
 global cyph, clientId, clientSecret, translator, placeholder
+global cyphtranslations, languages, attrs, codec, 
 
 codec		= 'utf8'
 placeholder	= u'☁'
@@ -40,7 +41,9 @@ cyphtranslations	= {}
 
 
 def translate(text, language):
-	global cyph, clientId, clientSecret, translator
+	global cyph, clientId, clientSecret, translator, cyphtranslations
+
+	text	= unicode(text)
 
 	if re.match('[A-Za-z]', text) is None:
 		return text
