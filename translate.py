@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+# Why the hell did I write this in Python? Python is banned from any further use in this company.
+
 # https://github.com/buu700/napster.fm/blob/master/translate.py
 
 import json
@@ -154,7 +156,7 @@ for language in languages:
 	f.close()
 
 
-	if language is 'zh-CHS':
+	if unicode(language) is u'zh-CHS':
 		f	= open('zh.html', 'w')
 		f.write(unicode(html).encode(codec))
 		f.close()
