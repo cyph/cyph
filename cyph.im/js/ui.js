@@ -376,10 +376,13 @@ angular.
 		var $messageList	= $('#message-list, #message-list > md-content');
 
 		$scope.scrollDown	= function() {
-			$messageList.each(function () {
-				var $this	= $(this);
-				$this.animate({scrollTop: $this[0].scrollHeight}, 350);
-			});
+			$messageList
+				.add('#cyphertext.curtain, #cyphertext.curtain > md-content')
+				.each(function () {
+					var $this	= $(this);
+					$this.animate({scrollTop: $this[0].scrollHeight}, 350);
+				})
+			;
 
 			scrolling.update();
 		};

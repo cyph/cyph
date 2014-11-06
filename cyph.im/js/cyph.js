@@ -2,7 +2,7 @@ var BASE_URL			= 'https://api.cyph.com/';
 var authors				= {me: 1, friend: 2, app: 3};
 var isHistoryAvailable	= typeof history != 'undefined';
 var otrPostInit			= [];
-var channel, otr, isConnected, socket;
+var channel, otr, isConnected, pongReceived, socket;
 
 
 function cryptoInit () {
@@ -58,16 +58,25 @@ function cryptoInit () {
 					notify(connectedNotification);
 
 					/* Intermittent check to verify chat is still alive */
-					pingInterval	= setInterval(function () {
+					var droppedPings	= 0;
+					var pingInterval	= setInterval(function () {
 						pongReceived	= false;
 						sendChannelData({Misc: 'ping'});
 
 						setTimeout(function () {
 							if (pongReceived == false) {
+								++droppedPings;
+							}
+							else {
+								droppedPings	= 0;
+							}
+
+							if (droppedPings >= 3) {
+								clearInterval(pingInterval);
 								socket.close();
 							}
-						}, 150000);
-					}, 210000);
+						}, 30000);
+					}, 45000);
 				}
 			}
 		});
@@ -230,8 +239,6 @@ function setUpChannel (channelData) {
 	channel.data	= channelData;
 
 	var receivedMessages	= {};
-	var pongReceived		= false;
-	var pingInterval;
 
 	socket	= channel.open({
 		onopen: function () {
@@ -289,9 +296,6 @@ function setUpChannel (channelData) {
 			}
 		},
 		onerror: function () {},
-		onclose: function () {
-			clearInterval(pingInterval);
-			closeChat();
-		}
+		onclose: closeChat
 	});
 }

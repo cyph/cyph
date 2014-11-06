@@ -28,6 +28,8 @@ for d in cyph.im ; do
 	cd $d
 	cp index.html en.html
 	../translate.py
+	sed -i.bak "s/{BALLS: true}/`cat ../languages.json | perl -pe 's/\s+//g' | sed 's/\\\\{/\\\\\\\\{/g' | sed 's/\\\\}/\\\\\\\\}/g'`/" \
+		js/translate.js
 	cd ..
 done
 

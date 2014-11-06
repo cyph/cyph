@@ -52,7 +52,8 @@ html.mobile #message-box {
   font-size: 17px;
   line-height: 22px;
   padding: 13px;
-  padding-right: 60px; }
+  padding-right: 60px;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.35); }
 html.mobile #message-box:focus ~ #new-messages {
   display: none; }
 
@@ -256,7 +257,8 @@ html.mobile .message-item.author-app {
   #desktop-sidebar md-button {
     font-size: 14px;
     width: 100%;
-    margin-bottom: 6px; }
+    margin-bottom: 6px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5); }
 
 #timer {
   font-family: 'Ubuntu Mono', monospace;
@@ -295,7 +297,8 @@ html:not(.mobile) .loading {
 md-toolbar {
   background-color: #7d4fd3;
   height: 40px !important;
-  min-height: 40px !important; }
+  min-height: 40px !important;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.75); }
   md-toolbar img {
     height: 25px !important;
     vertical-align: middle; }
@@ -398,8 +401,9 @@ html:not(.mobile) #error {
     #cyphertext #cyphertext-close .md-button-inner {
       color: #3bfc34 !important;
       font-size: 30px; }
-  #cyphertext md-button.focus, #cyphertext md-button:hover {
-    background-color: #202020 !important; }
+  #cyphertext md-button {
+    background-color: #202020 !important;
+    box-shadow: rgba(25, 130, 25, 0.13725) 0px 0px 4px 0px, rgba(25, 130, 25, 0.27843) 0px 4px 8px 0px; }
 
 #cyphertext:not(.nano) {
   overflow-y: scroll; }
