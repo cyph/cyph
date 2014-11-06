@@ -137,19 +137,28 @@ for language in languages:
 			print('EMPTY')
 			print(elem)
 			continue
-		
+
+		if 'A glitch in the matrix' in str(elem):
+			print('<balls>')
+			print(str(elem))
+			print(text)
+
 		bindings	= re.findall('\\{\\{.*?\\}\\}', text)
 		
 		# Swap out Angular bindings with placeholders
 		for i in range(len(bindings)):
 			text	= text.replace(bindings[i], placeholder + str(i))
-		
+		if 'A glitch in the matrix' in str(elem):
+			print(text)
 		text		= translate(text, language)
-		
+		if 'A glitch in the matrix' in str(elem):
+			print(text)
 		# Swap out placeholders with Angular bindings
 		for i in range(len(bindings)):
 			text	= text.replace(placeholder + str(i), bindings[i])
-		
+		if 'A glitch in the matrix' in str(elem):
+			print(text)
+			print('</balls>')
 		elem.string.replace_with(text)
 		print(text)
 	
