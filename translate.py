@@ -157,7 +157,7 @@ for language in languages:
 
 
 	f	= open(cyphtranslationsPath, 'w')
-	f.write(json.dumps(cyphtranslations[language], sort_keys = True, indent = True))
+	f.write(json.dumps(cyphtranslations[language], sort_keys = True, indent = True, separators = (',', ': ')))
 	f.close()
 
 
