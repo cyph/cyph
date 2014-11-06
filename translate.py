@@ -98,11 +98,10 @@ for language in languages:
 	html	= BeautifulSoup(baseHtml, 'html5lib')
 	
 	for elem in html.select('[translate]'):
-		if 'A glitch in the matrix' in str(elem):
-			print('<FUCK MAINE FUCK MAINE FUCK MAINE>')
-			print(str(elem))
-			print(elem.string)
-			print('</FUCK MAINE FUCK MAINE FUCK MAINE>')
+		print('<FUCK MAINE FUCK MAINE FUCK MAINE>')
+		print(str(elem))
+		print(elem.string)
+		print('</FUCK MAINE FUCK MAINE FUCK MAINE>')
 
 		for attr in attrs:
 			value	= elem.get(attr)
@@ -138,27 +137,29 @@ for language in languages:
 			print(elem)
 			continue
 
-		if 'A glitch in the matrix' in str(elem):
-			print('<balls>')
-			print(str(elem))
-			print(text)
+		print('<balls>')
+		print(str(elem))
+		print(text)
 
 		bindings	= re.findall('\\{\\{.*?\\}\\}', text)
 		
 		# Swap out Angular bindings with placeholders
 		for i in range(len(bindings)):
 			text	= text.replace(bindings[i], placeholder + str(i))
-		if 'A glitch in the matrix' in str(elem):
-			print(text)
+
+		print(text)
+
 		text		= translate(text, language)
-		if 'A glitch in the matrix' in str(elem):
-			print(text)
+
+		print(text)
+
 		# Swap out placeholders with Angular bindings
 		for i in range(len(bindings)):
 			text	= text.replace(placeholder + str(i), bindings[i])
-		if 'A glitch in the matrix' in str(elem):
-			print(text)
-			print('</balls>')
+
+		print(text)
+		print('</balls>')
+
 		elem.string.replace_with(text)
 		print(text)
 	
