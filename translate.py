@@ -125,7 +125,7 @@ for language in languages:
 
 		
 		
-		text		= unicode(elem.get_text(), strip = True)
+		text		= unicode(elem.get_text(strip = True))
 		
 		if len(elem.children) > 0 or text.isspace():
 			continue
