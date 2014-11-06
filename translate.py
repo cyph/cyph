@@ -84,7 +84,7 @@ def translate(text, language):
 # Do the move
 
 for language in languages:
-	cyphtranslationsPath	= '../translations/' + language + '.json'
+	cyphtranslationsPath	= '../../translations/' + language + '.json'
 	try:
 		f	= open(cyphtranslationsPath, 'r')
 		cyphtranslations[language]	= json.loads(f.read())
