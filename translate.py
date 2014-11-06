@@ -95,7 +95,7 @@ for language in languages:
 
 
 	f		= open(language + '.html', 'w')
-	html	= BeautifulSoup(baseHtml, 'xml')
+	html	= BeautifulSoup(baseHtml, 'html')
 	
 	for elem in html.select('[translate]'):
 		for attr in attrs:
