@@ -127,7 +127,7 @@ for language in languages:
 		
 		text		= unicode(elem.get_text(strip = True))
 		
-		if len(elem.children) > 0 or text.isspace():
+		if len(elem.contents) > 0 or text.isspace():
 			continue
 		
 		bindings	= re.findall('\\{\\{.*?\\}\\}', text)
