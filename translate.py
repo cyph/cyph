@@ -128,6 +128,8 @@ for language in languages:
 		text		= unicode(elem.string)
 		
 		if elem.string is None or text.isspace():
+			print('EMPTY')
+			print(elem)
 			continue
 		
 		bindings	= re.findall('\\{\\{.*?\\}\\}', text)
