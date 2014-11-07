@@ -161,10 +161,13 @@ for language in languages:
 		f.write(unicode(html).encode(codec))
 		f.close()
 
-		f		= open('../../english.json', 'w')
-		keys	= cyphtranslations[language].keys()
-		keys.sort()
-		f.write(json.dumps(keys, indent = 4))
+		f		= open('../../translations/en.json', 'w')
+		english	= cyphtranslations[language].copy()
+
+		for k in english:
+			english[k]	= k
+
+		f.write(json.dumps(english, sort_keys = True, indent = 4, separators = (',', ': ')))
 		f.close()
 
 
