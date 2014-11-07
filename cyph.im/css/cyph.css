@@ -6,7 +6,7 @@ html, body, #main {
   max-width: 100% !important;
   overflow-x: hidden; }
 
-#main, md-sidenav {
+html, body, #main, md-sidenav {
   background-color: #8b62d9 !important; }
 
 #main, .md-button-inner {
