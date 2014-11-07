@@ -594,16 +594,31 @@ angular.
 			});
 
 
-			var $body			= $('body');
+			/* $(function () {
+				var $body	= $('body');
+				var heights	= {};
 
-			function setBodyHeight () {
-				$body.height((window.outerHeight + 50) + 'px');
-			}
+				if (window.outerHeight > window.outerWidth) {
+					heights.portrait	= window.outerHeight;
+					heights.landscape	= window.outerWidth;
+				}
+				else {
+					heights.portrait	= window.outerWidth;
+					heights.landscape	= window.outerHeight;
+				}
 
-			setBodyHeight();
-			$(window).on('orientationchange', function () {
-				setTimeout(setBodyHeight, 500);
-			});
+				function setBodyHeight () {
+					$body.height(
+						((window.outerHeight >= heights.portrait ? heights.portrait : heights.landscape) + 50)
+							+ 'px'
+					);
+				}
+
+				setBodyHeight();
+				$(window).on('orientationchange', function () {
+					setTimeout(setBodyHeight, 1000);
+				});
+			}); */
 		}
 
 
