@@ -602,7 +602,7 @@ angular.
 
 			setBodyHeight();
 			$(window).on('orientationchange', function () {
-				setTimeout(setBodyHeight, 250);
+				setTimeout(setBodyHeight, 500);
 			});
 		}
 
