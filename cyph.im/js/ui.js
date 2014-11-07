@@ -594,29 +594,14 @@ angular.
 			});
 
 
-			/*
 			var $body			= $('body');
-			var portraitHeight	= (window.outerHeight + 50) + 'px';
-
-			function isPortrait () {
-				if (window.screen && window.screen.orientation && window.screen.orientation.type) {
-					return window.screen.orientation.type.split('-')[0] == 'portrait';
-				}
-				else if (!isNaN(window.orientation)) {
-					return Math.abs(window.orientation) != 90;
-				}
-				else {
-					return false;
-				}
-			}
 
 			function setBodyHeight () {
-				$body.height(isPortrait() ? portraitHeight : '');
+				$body.height((window.outerHeight + 50) + 'px');
 			}
 
 			setBodyHeight();
 			$(window).on('orientationchange', setBodyHeight);
-			*/
 		}
 
 
