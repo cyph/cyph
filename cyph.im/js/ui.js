@@ -601,7 +601,9 @@ angular.
 			}
 
 			setBodyHeight();
-			$(window).on('orientationchange', setBodyHeight);
+			$(window).on('orientationchange', function () {
+				setTimeout(setBodyHeight, 250);
+			});
 		}
 
 
