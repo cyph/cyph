@@ -423,6 +423,12 @@ html:not(.mobile) {
 	}
 }
 
+blockquote {
+	border-left: 2px solid !important;
+	padding-left: 10px;
+	display: block;
+}
+
 :not(textarea):not(md-text-float):not(md-input-group):not(input) {
 	border: 0px !important;
 }
