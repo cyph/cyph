@@ -6,7 +6,7 @@ function getPadding () {
 	).join('');
 }
 
-var paddingDelimiter	= getPadding();
+var paddingDelimiter	= '☁☁☁ PRAISE BE TO CYPH ☀☀☀';
 
 function padMessage (message) {
 	return getPadding() + paddingDelimiter + message + paddingDelimiter + getPadding();
