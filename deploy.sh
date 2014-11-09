@@ -28,7 +28,7 @@ for d in cyph.im ; do
 	cd $d
 
 	# Cache bust
-	cat index.html | perl -pe "s/(\\/js.*?\\.js)/\1?`date +%s`/g" | perl -pe "s/(\/css\/cyph\.css)/\1?`date +%s`/g" > en.html
+	cat index.html | perl -pe "s/(\\/js.*?\\.js)/\1VERSION`date +%s`/g" | perl -pe "s/(\/css\/cyph\.css)/\1VERSION`date +%s`/g" > en.html
 	cp -f en.html index.html
 
 	../translate.py
