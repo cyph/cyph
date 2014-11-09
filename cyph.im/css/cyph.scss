@@ -3,12 +3,9 @@
 
 
 * {
-	-webkit-font-smoothing: antialiased;
-}
-@-moz-document url-prefix() {
-	*:not(strong) {
-		font-weight: 200;
-	}
+	-webkit-font-smoothing: antialiased !important;
+	-moz-osx-font-smoothing: grayscale !important;
+	text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.004) !important;
 }
 
 html, body, #main {
@@ -325,7 +322,7 @@ html.mobile {
 
 
 #desktop-sidebar {
-	position: fixed;
+	position: absolute;
 	top: 0px;
 	left: 0px;
 	height: 100%;
@@ -503,12 +500,12 @@ html:not(.mobile) #error {
 }
 
 
-#main.curtain, #desktop-sidebar.curtain {
+#main.curtain {
 	height: 10%;
 	@include transform(translateY(-90%));
 	@include transition(transform 2s cubic-bezier(1, 0, 0, 1), height 2s cubic-bezier(1, 0, 0, 1));
 }
-#main:not(.curtain), #desktop-sidebar:not(.curtain) {
+#main:not(.curtain) {
 	@include transition(transform 2s cubic-bezier(1, 0, 0, 1), height 2s cubic-bezier(1, 0, 0, 1));
 }
 #main {
