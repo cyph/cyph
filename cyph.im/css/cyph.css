@@ -1,10 +1,9 @@
 @import url(fonts.css);
 * {
-  -webkit-font-smoothing: antialiased; }
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.004) !important; }
 
-@-moz-document url-prefix() {
-  *:not(strong) {
-    font-weight: 200; } }
 html, body, #main {
   max-width: 100% !important;
   overflow-x: hidden; }
@@ -247,7 +246,7 @@ html.mobile .message-item.author-app {
   animation: inkRippleCheckbox 0.35s linear 0s 1 normal; }
 
 #desktop-sidebar {
-  position: fixed;
+  position: absolute;
   top: 0px;
   left: 0px;
   height: 100%;
@@ -374,7 +373,7 @@ html:not(.mobile) #error {
   html:not(.mobile) #error img {
     width: 75%; }
 
-#main.curtain, #desktop-sidebar.curtain {
+#main.curtain {
   height: 10%;
   -webkit-transform: translateY(-90%);
   -moz-transform: translateY(-90%);
@@ -385,7 +384,7 @@ html:not(.mobile) #error {
   -moz-transition: -moz-transform 2s cubic-bezier(1, 0, 0, 1), height 2s cubic-bezier(1, 0, 0, 1);
   transition: transform 2s cubic-bezier(1, 0, 0, 1), height 2s cubic-bezier(1, 0, 0, 1); }
 
-#main:not(.curtain), #desktop-sidebar:not(.curtain) {
+#main:not(.curtain) {
   -webkit-transition: -webkit-transform 2s cubic-bezier(1, 0, 0, 1), height 2s cubic-bezier(1, 0, 0, 1);
   -moz-transition: -moz-transform 2s cubic-bezier(1, 0, 0, 1), height 2s cubic-bezier(1, 0, 0, 1);
   transition: transform 2s cubic-bezier(1, 0, 0, 1), height 2s cubic-bezier(1, 0, 0, 1); }

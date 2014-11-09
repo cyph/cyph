@@ -326,7 +326,7 @@ angular.
 		logCyphertext = $scope.logCyphertext = function (text, author) {
 			if (text) {
 				apply(function() {
-					$scope.cyphertext.push({author: author, text: text});
+					$scope.cyphertext.push({author: author, text: text.replace(/\//g, '∕')});
 				});
 			}
 		};
