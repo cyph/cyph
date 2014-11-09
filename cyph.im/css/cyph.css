@@ -374,7 +374,7 @@ html:not(.mobile) #error {
   html:not(.mobile) #error img {
     width: 75%; }
 
-#main.curtain {
+#main.curtain, #desktop-sidebar.curtain {
   height: 10%;
   -webkit-transform: translateY(-90%);
   -moz-transform: translateY(-90%);
@@ -385,7 +385,7 @@ html:not(.mobile) #error {
   -moz-transition: -moz-transform 2s cubic-bezier(1, 0, 0, 1), height 2s cubic-bezier(1, 0, 0, 1);
   transition: transform 2s cubic-bezier(1, 0, 0, 1), height 2s cubic-bezier(1, 0, 0, 1); }
 
-#main:not(.curtain) {
+#main:not(.curtain), #desktop-sidebar:not(.curtain) {
   -webkit-transition: -webkit-transform 2s cubic-bezier(1, 0, 0, 1), height 2s cubic-bezier(1, 0, 0, 1);
   -moz-transition: -moz-transform 2s cubic-bezier(1, 0, 0, 1), height 2s cubic-bezier(1, 0, 0, 1);
   transition: transform 2s cubic-bezier(1, 0, 0, 1), height 2s cubic-bezier(1, 0, 0, 1); }

@@ -503,12 +503,12 @@ html:not(.mobile) #error {
 }
 
 
-#main.curtain {
+#main.curtain, #desktop-sidebar.curtain {
 	height: 10%;
 	@include transform(translateY(-90%));
 	@include transition(transform 2s cubic-bezier(1, 0, 0, 1), height 2s cubic-bezier(1, 0, 0, 1));
 }
-#main:not(.curtain) {
+#main:not(.curtain), #desktop-sidebar:not(.curtain) {
 	@include transition(transform 2s cubic-bezier(1, 0, 0, 1), height 2s cubic-bezier(1, 0, 0, 1));
 }
 #main {
