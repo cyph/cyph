@@ -350,7 +350,7 @@ angular.
 				}
 
 				addMessageToChat(message, authors.me);
-				otr.sendMsg(padMessage(message));
+				otr.sendMsg(message);
 			}
 		};
 
@@ -727,8 +727,6 @@ angular.
 		/* Do the move lad */
 
 		scrolling.update();
-
-		cryptoInit();
 
 		if (isHistoryAvailable && history.replaceState) {
 			history.replaceState({}, '', '/' + getUrlState());
