@@ -5,6 +5,11 @@
 * {
 	-webkit-font-smoothing: antialiased;
 }
+@-moz-document url-prefix() {
+	*:not(strong) {
+		font-weight: 200;
+	}
+}
 
 html, body, #main {
 	max-width: 100% !important;
@@ -45,8 +50,11 @@ md-sidenav md-button {
 }
 
 .app-message {
-	font-weight: bold;
 	margin-top: 20px;
+
+	* {
+		font-weight: bold;
+	}
 }
 
 
@@ -560,11 +568,14 @@ html:not(.mobile) #error {
 }
 
 #chat-begin-message {
-	font-weight: bold;
 	font-family: 'Ubuntu', sans-serif;
 	text-align: center;
 	width: 100%;
 	background-color: #8b62d9 !important;
+
+	* {
+		font-weight: bold;
+	}
 }
 html:not(.mobile) {
 	#chat-begin-message {

@@ -2,6 +2,9 @@
 * {
   -webkit-font-smoothing: antialiased; }
 
+@-moz-document url-prefix() {
+  *:not(strong) {
+    font-weight: 200; } }
 html, body, #main {
   max-width: 100% !important;
   overflow-x: hidden; }
@@ -26,8 +29,9 @@ md-sidenav md-button {
     text-align: left; }
 
 .app-message {
-  font-weight: bold;
   margin-top: 20px; }
+  .app-message * {
+    font-weight: bold; }
 
 #message-box {
   resize: none; }
@@ -431,11 +435,12 @@ html:not(.mobile) #error {
   transition: opacity 0.75s linear; }
 
 #chat-begin-message {
-  font-weight: bold;
   font-family: 'Ubuntu', sans-serif;
   text-align: center;
   width: 100%;
   background-color: #8b62d9 !important; }
+  #chat-begin-message * {
+    font-weight: bold; }
 
 html:not(.mobile) #chat-begin-message {
   font-size: 150px; }
