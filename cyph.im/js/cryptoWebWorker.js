@@ -6,7 +6,7 @@ function getPadding () {
 	).join('');
 }
 
-var paddingDelimiter	= 'PRAISE BE TO CYPH';
+var paddingDelimiter	= getPadding();
 
 function padMessage (message) {
 	return getPadding() + paddingDelimiter + message + paddingDelimiter + getPadding();
