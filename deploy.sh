@@ -26,7 +26,11 @@ cd ../../..
 
 for d in cyph.im ; do
 	cd $d
-	cp index.html en.html
+
+	# Cache bust
+	cat index.html | perl -pe "s/(\\/js.*?\\.js)/\1?`date +%s`/g" | perl -pe "s/(\/css\/cyph\.css)/\1?`date +%s`/g" > en.html
+	cp -f en.html index.html
+
 	../translate.py
 	sed -i.bak "s/{BALLS: true}/`cat ../languages.json | perl -pe 's/\s+//g' | sed 's/\\\\{/\\\\\\\\{/g' | sed 's/\\\\}/\\\\\\\\}/g'`/" \
 		js/translate.js
