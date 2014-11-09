@@ -44,6 +44,20 @@ handlers:
   http_headers:
     Cache-Control: public, max-age=0
 
+- url: /(js/cryptoPolyfill.js)
+  static_files: \1
+  upload: .*
+  secure: always
+  http_headers:
+    Cache-Control: public, max-age=0
+
+- url: /(js/translate.js)
+  static_files: \1
+  upload: .*
+  secure: always
+  http_headers:
+    Cache-Control: public, max-age=0
+
 - url: /(.*\.map)
   static_files: \1
   upload: .*
