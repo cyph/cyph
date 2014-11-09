@@ -1,104 +1,86 @@
 var BASE_URL			= 'https://api.cyph.com/';
 var authors				= {me: 1, friend: 2, app: 3};
 var isHistoryAvailable	= typeof history != 'undefined';
-var otrPostInit			= [];
-var channel, otr, isConnected, pongReceived, socket;
+var channel, isConnected, pongReceived, socket;
 
 
-function cryptoInit () {
-	function cryptoInitHelper (key) {
-		otr	= new OTR({
-			fragment_size: 25600,
-			send_interval: 50,
-			debug: false,
-			instance_tag: OTR.makeInstanceTag(),
-			priv: key
-		});
+/* Init crypto */
 
-		otr.ALLOW_V2			= false;
-		otr.ALLOW_V3			= true;
-		otr.REQUIRE_ENCRYPTION	= true;
+var otrWorker	= new Worker('/js/cryptoWebWorker.js');
 
-		otr.on('error', function (error) {
-			console.log(error);
-		});
+var connectedNotification	= getString('connectedNotification');
+var disconnectWarning		= getString('disconnectWarning');
 
-		otr.on('ui', function (message, wasEncrypted) {
-			if (wasEncrypted) {
-				addMessageToChat(padMessageRemove(message), authors.friend);
-			}
-		});
+otrWorker.onmessage	= function (e) {
+	switch (e.data.eventName) {
+		case 'ui':
+			addMessageToChat(e.data.message, authors.friend);
+			break;
 
-		otr.on('io', function (message) {
-			/* TODO: figure out wtf is up with these errors and if it's actually a vulnerability */
-			if (message != '?OTR Error:An OTR error has occurred.') {
-				sendChannelData({Message: message});
-				logCyphertext(message, authors.me);
-			}
-		});
+		case 'io':
+			sendChannelData({Message: e.data.message});
+			logCyphertext(e.data.message, authors.me);
+			break;
 
-		var connectedNotification	= getString('connectedNotification');
-		var disconnectWarning		= getString('disconnectWarning');
-		otr.on('status', function (state) {
+		case 'connected':
 			if (!isConnected) {
-				if (state == OTR.CONST.STATUS_AKE_SUCCESS) {
-					isConnected	= true;
+				isConnected	= true;
 
-					beginChat();
+				beginChat();
 
-					$(window).on('beforeunload', function () {
-						return disconnectWarning;
-					});
+				$(window).on('beforeunload', function () {
+					return disconnectWarning;
+				});
 
-					$(window).unload(function () {
-						sendChannelData({Destroy: true}, {async: false});
-						socket.close();
-					});
+				$(window).unload(function () {
+					sendChannelData({Destroy: true}, {async: false});
+					socket.close();
+				});
 
-					notify(connectedNotification);
+				notify(connectedNotification);
 
-					/* Intermittent check to verify chat is still alive */
-					var droppedPings	= 0;
-					var pingInterval	= setInterval(function () {
-						pongReceived	= false;
-						sendChannelData({Misc: 'ping'});
+				/* Intermittent check to verify chat is still alive */
+				var droppedPings	= 0;
+				var pingInterval	= setInterval(function () {
+					pongReceived	= false;
+					sendChannelData({Misc: 'ping'});
 
-						setTimeout(function () {
-							if (pongReceived == false) {
-								++droppedPings;
-							}
-							else {
-								droppedPings	= 0;
-							}
+					setTimeout(function () {
+						if (pongReceived == false) {
+							++droppedPings;
+						}
+						else {
+							droppedPings	= 0;
+						}
 
-							if (droppedPings >= 3) {
-								clearInterval(pingInterval);
-								socket.close();
-							}
-						}, 30000);
-					}, 45000);
-				}
+						if (droppedPings >= 3) {
+							clearInterval(pingInterval);
+							socket.close();
+						}
+					}, 30000);
+				}, 45000);
 			}
-		});
+			break;
+	}
+};
 
-		if (otrPostInit[0] === true) {
-			otr.sendQueryMsg();
-		}
-		else {
-			while (otrPostInit.length > 0) {
-				otr.receiveMsg(otrPostInit.shift());
-			}
-		}
-	}
+var randomSeed	= new Uint8Array(50000);
+crypto.getRandomValues(randomSeed);
+otrWorker.postMessage({method: 0, message: randomSeed});
 
-	try {
-		DSA.createInWebWorker({path: '/lib/bower_components/otr/dsa-webworker.js'}, cryptoInitHelper);
+var otr	= {
+	sendQueryMsg: function () {
+		otrWorker.postMessage({method: 1});
+	},
+	sendMsg: function (message) {
+		otrWorker.postMessage({method: 2, message: message});
+	},
+	receiveMsg: function (message) {
+		otrWorker.postMessage({method: 3, message: message});
 	}
-	catch (e) {
-		console.log(e);
-		cryptoInitHelper(new DSA());
-	}
-}
+};
+
+/* End crypto init */
 
 
 function getString (name) {
@@ -122,23 +104,6 @@ var urlExtensionPattern	= /.*(\.co|\.im|\.me|\.org|\.net|\.io|\.ly|\.edu|\.gov|\
 
 function isValidUrl(s) {
 	return !urlInvalidStarts[s[0]] && (urlProtocolPattern.test(s) || urlExtensionPattern.test(s));
-}
-
-
-var paddingDelimiter	= 'PRAISE BE TO CYPH';
-
-function getPadding () {
-	return Array.prototype.slice.call(
-		crypto.getRandomValues(new Uint8Array(crypto.getRandomValues(new Uint8Array(1))[0]))
-	).join('');
-}
-
-function padMessage (message) {
-	return getPadding() + paddingDelimiter + message + paddingDelimiter + getPadding();
-}
-
-function padMessageRemove (message) {
-	return message.split(paddingDelimiter)[1];
 }
 
 
@@ -247,15 +212,8 @@ function setUpChannel (channelData) {
 			}
 			else {
 				changeState(states.settingUpCrypto);
-
 				sendChannelData({Misc: 'connect'});
-
-				if (otr) {
-					otr.sendQueryMsg();
-				}
-				else {
-					otrPostInit.push(true);
-				}
+				otr.sendQueryMsg();
 
 				setTimeout(function () {
 					if (!isConnected) {
@@ -281,14 +239,8 @@ function setUpChannel (channelData) {
 					changeState(states.settingUpCrypto);
 				}
 				if (o.Message) {
+					otr.receiveMsg(o.Message);
 					logCyphertext(o.Message, authors.friend);
-
-					if (otr) {
-						otr.receiveMsg(o.Message);
-					}
-					else {
-						otrPostInit.push(o.Message);
-					}
 				}
 				if (o.Destroy) {
 					socket.close();
