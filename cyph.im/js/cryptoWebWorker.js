@@ -1,12 +1,12 @@
 var otr;
 
-var paddingDelimiter	= 'PRAISE BE TO CYPH';
-
 function getPadding () {
 	return Array.prototype.slice.call(
 		crypto.getRandomValues(new Uint8Array(crypto.getRandomValues(new Uint8Array(1))[0] + 100))
 	).join('');
 }
+
+var paddingDelimiter	= 'PRAISE BE TO CYPH';
 
 function padMessage (message) {
 	return getPadding() + paddingDelimiter + message + paddingDelimiter + getPadding();
