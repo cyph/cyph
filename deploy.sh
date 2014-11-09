@@ -28,7 +28,7 @@ for d in cyph.im ; do
 	cd $d
 
 	# Cache bust
-	for f in `find . -type f` ; do
+	find . -type f -print0 | while read -d $'\0' f ; do
 		safeF=$(echo "$f" | sed 's/\.\///g' | sed 's/\//\\\//g' | sed 's/ /\\ /g' | sed 's/\_/\\_/g')
 
 		for g in index.html js/*.js css/*.css ; do
