@@ -26,7 +26,7 @@ onmessage	= function (e) {
 					crypto	= msCrypto;
 				}
 				else {
-					importScripts('/lib/isaac.min.js');debugger;
+					importScripts('/lib/isaac.min.js');
 					isaac.seed(e.data.message);
 					crypto	= {
 						getRandomValues: function (array) {
