@@ -51,14 +51,14 @@ handlers:
   http_headers:
     Cache-Control: public, max-age=0
 
-- url: /(css/.*)VERSION.*
+- url: /(css/.*)
   static_files: \1
   upload: .*
   secure: always
   http_headers:
     Cache-Control: public, max-age=0
 
-- url: /(js/.*)VERSION.*
+- url: /(js/.*)
   static_files: \1
   upload: .*
   secure: always
