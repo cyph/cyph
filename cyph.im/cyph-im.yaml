@@ -7,64 +7,6 @@ threadsafe: true
 
 handlers:
 
-# Cached resources
-
-- url: /(lib/.*)
-  static_files: \1
-  upload: .*
-  secure: always
-  http_headers:
-    Cache-Control: public, max-age=0
-
-- url: /(img/.*)
-  static_files: \1
-  upload: .*
-  secure: always
-  http_headers:
-    Cache-Control: public, max-age=0
-
-- url: /(audio/.*)
-  static_files: \1
-  upload: .*
-  secure: always
-  http_headers:
-    Cache-Control: public, max-age=0
-
-- url: /(css/fonts/.*)
-  static_files: \1
-  upload: .*
-  secure: always
-  http_headers:
-    Cache-Control: public, max-age=0
-
-- url: /(css/preload.*)
-  static_files: \1
-  upload: .*
-  secure: always
-  http_headers:
-    Cache-Control: public, max-age=0
-
-- url: /(.*\.map)
-  static_files: \1
-  upload: .*
-  secure: always
-  http_headers:
-    Cache-Control: public, max-age=0
-
-- url: /(css/.*)
-  static_files: \1
-  upload: .*
-  secure: always
-  http_headers:
-    Cache-Control: public, max-age=0
-
-- url: /(js/.*)
-  static_files: \1
-  upload: .*
-  secure: always
-  http_headers:
-    Cache-Control: public, max-age=0
-
 # Main
 
 - url: /
@@ -149,5 +91,5 @@ handlers:
   upload: .*
   secure: always
   http_headers:
-    Cache-Control: no-store
+    Cache-Control: public, max-age=0
     X-Frame-Options: deny

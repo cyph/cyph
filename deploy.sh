@@ -28,9 +28,18 @@ for d in cyph.im ; do
 	cd $d
 
 	# Cache bust
-	cat index.html | perl -pe "s/(\\/js.*?\\.js)/\1?`date +%s`/g" | perl -pe "s/(\/css\/cyph\.css)/\1?`date +%s`/g" > en.html
-	cp -f en.html index.html
+	for f in `find . -type f` ; do
+		safeF=$(echo "$f" | sed 's/\.\///g' | sed 's/\//\\\//g' | sed 's/ /\\ /g' | sed 's/\_/\\_/g')
 
+		for g in index.html js/*.js css/*.css ; do
+			if ( grep -o $safeF $g ) ; then
+				cat $g | perl -pe "s/(\\/$safeF)/\1?`md5 "$f" | perl -pe 's/.* = //g'`/g" > $g.new
+				mv $g.new $g
+			fi
+		done
+	done
+
+	cp -f en.html index.html
 	../translate.py
 	sed -i.bak "s/{BALLS: true}/`cat ../languages.json | perl -pe 's/\s+//g' | sed 's/\\\\{/\\\\\\\\{/g' | sed 's/\\\\}/\\\\\\\\}/g'`/" \
 		js/translate.js
