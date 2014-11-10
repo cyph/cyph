@@ -51,7 +51,7 @@ onmessage	= function (e) {
 
 			otr	= new OTR({
 				fragment_size: 25600,
-				send_interval: 50,
+				send_interval: 0,
 				debug: false,
 				instance_tag: OTR.makeInstanceTag(),
 				priv: new DSA()
