@@ -107,8 +107,10 @@ func imTeardown(c appengine.Context, longId string, key0 string, key1 string, va
 	time.Sleep(config.IMConnectTimeout * time.Minute)
 
 	if item, err := memcache.Get(c, key1); err != memcache.ErrCacheMiss && string(item.Value) == string(value1) {
+		channel.SendJSON(c, longId+"0", ImData{Destroy: true})
 		channel.SendJSON(c, longId+"1", ImData{Destroy: true})
-		memcache.DeleteMulti(c, []string{key0, key1})
+		memcache.Delete(c, key0)
+		memcache.Delete(c, key1)
 	}
 }
 
@@ -138,6 +140,12 @@ func sendChannelMessage(c appengine.Context, channelId string, imData ImData) {
 	imData.Id = id
 	b, _ := json.Marshal(imData)
 	imDataString := string(b)
+
+	for true {
+		if _, err := memcache.Get(c, id); err != memcache.ErrCacheMiss {
+			break
+		}
+	}
 
 	laterSendChannelMessage.Call(c, id, channelId, imDataString)
 }
