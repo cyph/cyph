@@ -225,15 +225,14 @@ function setUpChannel (channelData) {
 		onmessage: function (data) {
 			var o	= JSON.parse(data.data);
 
+			pongReceived	= true;
+
 			if (!receivedMessages[o.Id]) {
 				receivedMessages[o.Id]	= true;
 				$.ajax({type: 'PUT', url: BASE_URL + 'messages/' + o.Id});
 
 				if (o.Misc == 'ping') {
 					sendChannelData({Misc: 'pong'});
-				}
-				if (o.Misc == 'pong') {
-					pongReceived	= true;
 				}
 				if (o.Misc == 'connect') {
 					changeState(states.settingUpCrypto);
