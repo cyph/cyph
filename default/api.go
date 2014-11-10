@@ -145,6 +145,8 @@ func sendChannelMessage(c appengine.Context, channelId string, imData ImData) {
 		if _, err := memcache.Get(c, id); err != memcache.ErrCacheMiss {
 			break
 		}
+
+		time.Sleep(10 * time.Millisecond)
 	}
 
 	laterSendChannelMessage.Call(c, id, channelId, imDataString)
