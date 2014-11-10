@@ -21,6 +21,8 @@ func init() {
 	handleFuncs("/_ah/channel/disconnected/", Handlers{methods.POST: channelClose})
 }
 
+/*** Handlers ***/
+
 func channelAck(h HandlerArgs) (interface{}, int) {
 	memcache.Delete(h.Context, h.Vars["id"])
 	return nil, http.StatusOK
@@ -103,17 +105,6 @@ func imCreate(h HandlerArgs) (interface{}, int) {
 	return imId, http.StatusOK
 }
 
-func imTeardown(c appengine.Context, longId string, key0 string, key1 string, value1 string) {
-	time.Sleep(config.IMConnectTimeout * time.Minute)
-
-	if item, err := memcache.Get(c, key1); err != memcache.ErrCacheMiss && string(item.Value) == string(value1) {
-		channel.SendJSON(c, longId+"0", ImData{Destroy: true})
-		channel.SendJSON(c, longId+"1", ImData{Destroy: true})
-		memcache.Delete(c, key0)
-		memcache.Delete(c, key1)
-	}
-}
-
 func logError(h HandlerArgs) (interface{}, int) {
 	msg := &mail.Message{
 		Sender:  "test@cyphme.appspotmail.com",
@@ -131,6 +122,8 @@ func root(h HandlerArgs) (interface{}, int) {
 	return "Welcome to Cyph, lad", http.StatusOK
 }
 
+/*** Helpers ***/
+
 func sendChannelMessage(c appengine.Context, channelId string, imData ImData) {
 	id := generateLongId()
 
@@ -141,15 +134,19 @@ func sendChannelMessage(c appengine.Context, channelId string, imData ImData) {
 	b, _ := json.Marshal(imData)
 	imDataString := string(b)
 
-	for true {
-		if _, err := memcache.Get(c, id); err != memcache.ErrCacheMiss {
-			break
-		}
-
-		time.Sleep(10 * time.Millisecond)
-	}
-
 	laterSendChannelMessage.Call(c, id, channelId, imDataString)
+}
+
+/*** Tasks ***/
+
+func imTeardown(c appengine.Context, longId string, key0 string, key1 string, value1 string) {
+	time.Sleep(config.IMConnectTimeout * time.Minute)
+
+	if item, err := memcache.Get(c, key1); err != memcache.ErrCacheMiss && string(item.Value) == string(value1) {
+		channel.SendJSON(c, longId+"0", ImData{Destroy: true})
+		channel.SendJSON(c, longId+"1", ImData{Destroy: true})
+		memcache.DeleteMulti(c, []string{key0, key1})
+	}
 }
 
 func sendChannelMessageTask(c appengine.Context, id string, channelId string, imData string) {
