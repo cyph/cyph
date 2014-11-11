@@ -204,9 +204,9 @@ func sendChannelMessageTask(c appengine.Context, id string) {
 				sentIncrement++
 				sent++
 
-				imData := ImData{}
+				var imData ImData
 				imDataString := string(item.Value)
-				json.Unmarshal(item.Value, imData)
+				d := json.Unmarshal(item.Value, &imData)
 
 				/* Send + retry logic */
 
