@@ -125,7 +125,7 @@ func sendChannelMessage(c appengine.Context, channelId string, imData ImData) {
 	n, _ := memcache.Increment(c, id+"-messageCount", 1, 0)
 	n -= 1
 
-	imData.Id = id + "-message" + n
+	imData.Id = id + "-message" + strconv.FormatInt(n, 10)
 	imData.Recipient = channelId
 	imDataBytes, _ := json.Marshal(imData)
 
@@ -162,19 +162,24 @@ func sendChannelMessageTask(c appengine.Context, id string) {
 
 		for true {
 			count, _ := memcache.Increment(c, countKey, 0, 0)
-			sentIncrement := 0
 			sent, _ := memcache.Increment(c, sentKey, 0, 0)
+
+			var sentIncrement int64
+			sentIncrement = 0
 
 			if closedValue, _ := memcache.Increment(c, closedKey, 0, 0); closedValue > 0 {
 				channel.Send(c, id+"0", destroyJson)
 				channel.Send(c, id+"1", destroyJson)
 
-				var keys [count + 4]string
+				numKeys := count + 4
+				keys := make([]string, numKeys, numKeys)
 				keys[count] = lockKey
 				keys[count+1] = closedKey
 				keys[count+2] = countKey
 				keys[count+3] = sentKey
-				for i := 0; i < count; i++ {
+
+				var i uint64
+				for i = 0; i < count; i++ {
 					keys[i] = id + "-message" + strconv.Itoa(i)
 				}
 				memcache.DeleteMulti(c, keys)
@@ -187,9 +192,10 @@ func sendChannelMessageTask(c appengine.Context, id string) {
 			}
 
 			for count > sent {
-				messageKey := id + "-message" + sent
+				messageKey := id + "-message" + strconv.FormatInt(sent, 10)
 
-				if item, err := memcache.Get(c, messageKey); err == memcache.ErrCacheMiss {
+				item, err := memcache.Get(c, messageKey)
+				if err == memcache.ErrCacheMiss {
 					time.Sleep(10 * time.Millisecond)
 					continue
 				}
