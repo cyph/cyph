@@ -181,7 +181,7 @@ func sendChannelMessageTask(c appengine.Context, id string) {
 				keys[count+1] = closedKey
 				keys[count+2] = countKey
 				keys[count+3] = sentKey
-				keys[count+4] = "-connect"
+				keys[count+4] = id + "-connect"
 
 				var i uint64
 				for i = 0; i < count; i++ {
