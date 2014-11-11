@@ -40,7 +40,7 @@ otrWorker.onmessage	= function (e) {
 				notify(connectedNotification);
 
 				/* Intermittent check to verify chat is still alive */
-				var pingInterval	= setInterval(function () { sendChannelData({Misc: 'ping'}) }, 30000);
+				var pingInterval	= setInterval(function () { sendChannelData({Misc: 'ping'}) }, 15000);
 				var pongInterval	= setInterval(function () {
 					if (pongReceived) {
 						pongReceived	= false;
@@ -50,7 +50,7 @@ otrWorker.onmessage	= function (e) {
 						clearInterval(pongInterval);
 						socket.close();
 					}
-				}, 120000);
+				}, 60000);
 			}
 			break;
 	}
