@@ -32,7 +32,7 @@ func channelClose(h HandlerArgs) (interface{}, int) {
 	id := h.Request.FormValue("from")
 	idBase := id[:len(id)-1]
 
-	memcache.Increment(c, idBase+"-closed", 1, 0)
+	memcache.Increment(h.Context, idBase+"-closed", 1, 0)
 	laterSendChannelMessage.Call(h.Context, idBase)
 
 	return nil, http.StatusOK
