@@ -217,11 +217,14 @@ function setUpChannel (channelData) {
 			}
 		},
 		onmessage: function (data) {
-			if (!data.data) {
+			var o
+
+			try {
+				o	= JSON.parse(data.data);
+			}
+			catch (e) {
 				return;
 			}
-
-			var o	= JSON.parse(data.data);
 
 			pongReceived	= true;
 
