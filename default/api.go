@@ -51,7 +51,8 @@ func channelReceive(h HandlerArgs) (interface{}, int) {
 func imConnect(h HandlerArgs) (interface{}, int) {
 	idBase := h.Vars["id"]
 	connect := idBase + "-connect"
-	id := idBase + strconv.FormatUint(memcache.Increment(h.Context, connect, 1, 0)-1, 10)
+	n, _ := memcache.Increment(h.Context, connect, 1, 0)
+	id := idBase + strconv.FormatUint(n-1, 10)
 
 	if item, err := memcache.Get(h.Context, id); err != memcache.ErrCacheMiss {
 		imSetupString := string(item.Value)
