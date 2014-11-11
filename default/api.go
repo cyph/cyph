@@ -160,7 +160,10 @@ func sendChannelMessageTask(c appengine.Context, id string) {
 			id + "1": false,
 		}
 
-		for true {
+		channel.Send(c, id+"0", "")
+		channel.Send(c, id+"1", "")
+
+		for {
 			count, _ := memcache.Increment(c, countKey, 0, 0)
 			sent, _ := memcache.Increment(c, sentKey, 0, 0)
 
@@ -214,7 +217,7 @@ func sendChannelMessageTask(c appengine.Context, id string) {
 				if !noMoreRetries[imData.Recipient] {
 					go func() {
 						i := 0
-						for true {
+						for {
 							time.Sleep(1 * time.Second)
 
 							if _, err := memcache.Get(c, messageKey); err == memcache.ErrCacheMiss {
