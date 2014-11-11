@@ -165,7 +165,7 @@ func sendChannelMessageTask(c appengine.Context, id string) {
 			id + "1": false,
 		}
 
-		for {
+		for numTries := 0; true; numTries++ {
 			count, _ := memcache.Increment(c, countKey, 0, 0)
 			sent, _ := memcache.Increment(c, sentKey, 0, 0)
 
@@ -193,8 +193,13 @@ func sendChannelMessageTask(c appengine.Context, id string) {
 				return
 			}
 
+			/* Avoid letting task exceed deadline */
+
 			if count == sent {
 				break
+			} else if numTries > 0 {
+				laterSendChannelMessage.Call(c, id)
+				return
 			}
 
 			for count > sent {
@@ -220,18 +225,19 @@ func sendChannelMessageTask(c appengine.Context, id string) {
 				channel.Send(c, channelId, imDataString)
 
 				if !noMoreRetries[channelId] {
-					i := 0
+					i := 1
 					for {
+						time.Sleep(50 * time.Millisecond)
+
 						if _, err := memcache.Get(c, messageKey); err == memcache.ErrCacheMiss {
 							break
 						} else if i >= config.MessageSendRetries {
 							noMoreRetries[channelId] = true
 							break
-						} else {
+						} else if i%10 == 0 {
 							channel.Send(c, channelId, imDataString)
 						}
 
-						time.Sleep(10 * time.Millisecond)
 						i++
 					}
 				}
