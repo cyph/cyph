@@ -127,7 +127,7 @@ func sendChannelMessage(c appengine.Context, channelId string, imData ImData) {
 	n -= 1
 
 	imData.Id = id + "-message" + strconv.FormatUint(n, 10)
-	imData.Recipient = channelId[channelIdEnd]
+	imData.Recipient = channelId[channelIdEnd:]
 	imDataBytes, _ := json.Marshal(imData)
 
 	item := memcache.Item{Key: imData.Id, Value: imDataBytes, Expiration: config.MessageSendTimeout * time.Minute}
