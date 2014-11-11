@@ -180,7 +180,7 @@ func sendChannelMessageTask(c appengine.Context, id string) {
 
 				var i uint64
 				for i = 0; i < count; i++ {
-					keys[i] = id + "-message" + FormatUint(i, 10)
+					keys[i] = id + "-message" + strconv.FormatUint(i, 10)
 				}
 				memcache.DeleteMulti(c, keys)
 
