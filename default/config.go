@@ -32,6 +32,7 @@ var config = struct {
 		"staging-dot-cyph-me-dot-cyphme.appspot.com":  empty,
 		"staging-dot-cyphme.appspot.com":              empty,
 		"cyph.steveho.lt":                             empty,
+		"localhost":                                   empty,
 	},
 
 	30,

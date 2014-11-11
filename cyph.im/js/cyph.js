@@ -214,22 +214,19 @@ function setUpChannel (channelData) {
 				changeState(states.settingUpCrypto);
 				sendChannelData({Misc: 'connect'});
 				otr.sendQueryMsg();
-
-				setTimeout(function () {
-					if (!isConnected) {
-						abortSetup();
-					}
-				}, 180000);
 			}
 		},
 		onmessage: function (data) {
+			console.log(data); // test
 			var o	= JSON.parse(data.data);
 
 			pongReceived	= true;
 
-			if (!receivedMessages[o.Id]) {
-				receivedMessages[o.Id]	= true;
-				$.ajax({type: 'PUT', url: BASE_URL + 'messages/' + o.Id});
+			if (!o.Id || !receivedMessages[o.Id]) {
+				if (o.Id) {
+					receivedMessages[o.Id]	= true;
+					$.ajax({type: 'PUT', url: BASE_URL + 'messages/' + o.Id});
+				}
 
 				if (o.Misc == 'ping') {
 					sendChannelData({Misc: 'pong'});
