@@ -57,8 +57,8 @@ otrWorker.onmessage	= function (e) {
 							clearInterval(pingInterval);
 							socket.close();
 						}
-					}, 30000);
-				}, 45000);
+					}, 60000);
+				}, 120000);
 			}
 			break;
 	}
