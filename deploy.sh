@@ -3,8 +3,13 @@
 dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd) # $(dirname `readlink -f "${0}" || realpath "${0}"`)
 
+all=''
 staging=true
-if [ "${1}" == '--prod' ] ; then 
+if [ "${1}" == '--prod' ] ; then
+	staging=''
+	shift
+elif [ "${1}" == '--all' ] ; then
+	all=true
 	staging=''
 	shift
 fi
@@ -72,5 +77,9 @@ goapp deploy default/app.yaml cyph.com/cyph-com.yaml cyph.im/cyph-im.yaml cyph.m
 appcfg.py update_dispatch .
 
 ../git.sh translations
+
+if [ $all ] ; then
+	../deploy.sh
+fi
 
 cd "${dir}"
