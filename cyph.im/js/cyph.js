@@ -218,6 +218,11 @@ function setUpChannel (channelData) {
 		},
 		onmessage: function (data) {
 			console.log(data); // test
+
+			if (!data.data) {
+				return;
+			}
+
 			var o	= JSON.parse(data.data);
 
 			pongReceived	= true;
