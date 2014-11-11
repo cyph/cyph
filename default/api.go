@@ -160,9 +160,6 @@ func sendChannelMessageTask(c appengine.Context, id string) {
 			id + "1": false,
 		}
 
-		channel.Send(c, id+"0", "")
-		channel.Send(c, id+"1", "")
-
 		for {
 			count, _ := memcache.Increment(c, countKey, 0, 0)
 			sent, _ := memcache.Increment(c, sentKey, 0, 0)
@@ -212,7 +209,11 @@ func sendChannelMessageTask(c appengine.Context, id string) {
 
 				/* Send + retry logic */
 
-				channel.Send(c, imData.Recipient, imDataString)
+				for i := 0; i < config.MessageSendRetries; i++ {
+					if channel.Send(c, imData.Recipient, imDataString) == nil {
+						break
+					}
+				}
 
 				if !noMoreRetries[imData.Recipient] {
 					go func() {
