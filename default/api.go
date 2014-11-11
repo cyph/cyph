@@ -12,6 +12,8 @@ import (
 )
 
 func init() {
+	laterSendChannelMessageTwo = laterSendChannelMessage
+
 	handleFunc("/", root)
 	handleFuncs("/ims", Handlers{methods.POST: imCreate})
 	handleFuncs("/ims/{id}", Handlers{methods.POST: imConnect})
