@@ -59,8 +59,8 @@ var methods = struct {
 var destroyJson = "{\"Destroy\": true}"
 
 var laterImTeardown = delay.Func("imTeardown", imTeardown)
-var laterSendChannelMessage = delay.Func("sendChannelMessage", sendChannelMessageTask)
-var laterSendChannelMessageTwo *delay.Function
+var laterSendChannelMessageBase = delay.Func("sendChannelMessage", sendChannelMessageTask)
+var laterSendChannelMessage *delay.Function
 
 var empty = struct{}{}
 

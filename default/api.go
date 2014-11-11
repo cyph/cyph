@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	laterSendChannelMessageTwo = laterSendChannelMessage
+	laterSendChannelMessage = laterSendChannelMessageBase
 
 	handleFunc("/", root)
 	handleFuncs("/ims", Handlers{methods.POST: imCreate})
@@ -233,5 +233,5 @@ func sendChannelMessageTask(c appengine.Context, id string) {
 	memcache.IncrementExisting(c, sentKey, sentIncrement)
 
 	time.Sleep(1500 * time.Millisecond)
-	laterSendChannelMessageTwo.Call(c, id)
+	laterSendChannelMessage.Call(c, id)
 }
