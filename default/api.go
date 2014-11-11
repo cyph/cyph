@@ -121,13 +121,15 @@ func root(h HandlerArgs) (interface{}, int) {
 
 func sendChannelMessage(c appengine.Context, channelId string, imData ImData) {
 	id := channelId[0 : len(channelId)-1]
-	n, _ := memcache.Increment(c, id+"-messageCount", 1, 0) - 1
+
+	n, _ := memcache.Increment(c, id+"-messageCount", 1, 0)
+	n -= 1
 
 	imData.Id = id + "-message" + n
 	imData.Recipient = channelId
-	imDataBytes, _ := gMarshal(imData)
+	imDataBytes, _ := json.Marshal(imData)
 
-	item := memcache.Item{Key: imData.id, Value: imDataBytes, Expiration: config.MessageSendTimeout * time.Minute}
+	item := memcache.Item{Key: imData.Id, Value: imDataBytes, Expiration: config.MessageSendTimeout * time.Minute}
 	memcache.Set(c, &item)
 
 	laterSendChannelMessage.Call(c, id)
@@ -140,7 +142,7 @@ func imTeardown(c appengine.Context, longId string, key0 string, key1 string, va
 
 	if item, err := memcache.Get(c, key1); err != memcache.ErrCacheMiss && string(item.Value) == string(value1) {
 		memcache.Increment(c, longId+"-closed", 1, 0)
-		laterSendChannelMessage.Call(h.Context, longId)
+		laterSendChannelMessage.Call(c, longId)
 		memcache.DeleteMulti(c, []string{key0, key1})
 	}
 }
@@ -164,8 +166,8 @@ func sendChannelMessageTask(c appengine.Context, id string) {
 			sent, _ := memcache.Increment(c, sentKey, 0, 0)
 
 			if closedValue, _ := memcache.Increment(c, closedKey, 0, 0); closedValue > 0 {
-				channel.send(h.Context, id+"0", "{Destroy: true}")
-				channel.send(h.Context, id+"1", "{Destroy: true}")
+				channel.Send(c, id+"0", destroyJson)
+				channel.Send(c, id+"1", destroyJson)
 
 				var keys [count + 4]string
 				keys[count] = lockKey
