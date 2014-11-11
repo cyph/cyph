@@ -40,24 +40,16 @@ otrWorker.onmessage	= function (e) {
 				notify(connectedNotification);
 
 				/* Intermittent check to verify chat is still alive */
-				var droppedPings	= 0;
-				var pingInterval	= setInterval(function () {
-					pongReceived	= false;
-					sendChannelData({Misc: 'ping'});
-
-					setTimeout(function () {
-						if (pongReceived == false) {
-							++droppedPings;
-						}
-						else {
-							droppedPings	= 0;
-						}
-
-						if (droppedPings >= 3) {
-							clearInterval(pingInterval);
-							socket.close();
-						}
-					}, 60000);
+				var pingInterval	= setInterval(function () { sendChannelData({Misc: 'ping'}) }, 30000);
+				var pongInterval	= setInterval(function () {
+					if (pongReceived) {
+						pongReceived	= false;
+					}
+					else {
+						clearInterval(pingInterval);
+						clearInterval(pongInterval);
+						socket.close();
+					}
 				}, 120000);
 			}
 			break;

@@ -227,7 +227,9 @@ func sendChannelMessageTask(c appengine.Context, id string) {
 			}
 		}
 
-		count, _ = memcache.Increment(c, countKey, 0, 0)
+		if count == sent {
+			count, _ = memcache.Increment(c, countKey, 0, 0)
+		}
 	}
 
 	memcache.IncrementExisting(c, sentKey, sentIncrement)
