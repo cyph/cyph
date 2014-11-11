@@ -212,14 +212,14 @@ func sendChannelMessageTask(c appengine.Context, id string) {
 		if !noMoreRetries[channelId] {
 			i := 1
 			for {
-				time.Sleep(100 * time.Millisecond)
+				time.Sleep(50 * time.Millisecond)
 
 				if _, err := memcache.Get(c, messageKey); err == memcache.ErrCacheMiss {
 					break
 				} else if i >= config.MessageSendRetries {
 					noMoreRetries[channelId] = true
 					break
-				} else if i%10 == 0 {
+				} else if i%20 == 0 {
 					channel.Send(c, channelId, imDataString)
 				}
 
