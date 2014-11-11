@@ -194,12 +194,6 @@ func sendChannelMessageTask(c appengine.Context, id string) {
 			return
 		}
 
-		/* Avoid letting task exceed deadline */
-
-		if count == sent {
-			break
-		}
-
 		for count > sent {
 			messageKey := id + "-message" + strconv.FormatUint(sent, 10)
 
