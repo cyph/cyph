@@ -217,8 +217,6 @@ function setUpChannel (channelData) {
 			}
 		},
 		onmessage: function (data) {
-			console.log(data); // test
-
 			if (!data.data) {
 				return;
 			}
