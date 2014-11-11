@@ -209,30 +209,24 @@ func sendChannelMessageTask(c appengine.Context, id string) {
 
 				/* Send + retry logic */
 
-				for i := 0; i < config.MessageSendRetries; i++ {
-					if channel.Send(c, imData.Recipient, imDataString) == nil {
-						break
-					}
-				}
+				channel.Send(c, imData.Recipient, imDataString)
 
 				if !noMoreRetries[imData.Recipient] {
-					go func() {
-						i := 0
-						for {
-							time.Sleep(1 * time.Second)
+					i := 0
+					for {
+						time.Sleep(1 * time.Second)
 
-							if _, err := memcache.Get(c, messageKey); err == memcache.ErrCacheMiss {
-								break
-							} else if i >= config.MessageSendRetries {
-								noMoreRetries[imData.Recipient] = true
-								break
-							} else {
-								channel.Send(c, imData.Recipient, imDataString)
-							}
-
-							i++
+						if _, err := memcache.Get(c, messageKey); err == memcache.ErrCacheMiss {
+							break
+						} else if i >= config.MessageSendRetries {
+							noMoreRetries[imData.Recipient] = true
+							break
+						} else {
+							channel.Send(c, imData.Recipient, imDataString)
 						}
-					}()
+
+						i++
+					}
 				}
 			}
 
