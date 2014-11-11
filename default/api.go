@@ -120,13 +120,14 @@ func root(h HandlerArgs) (interface{}, int) {
 /*** Helpers ***/
 
 func sendChannelMessage(c appengine.Context, channelId string, imData ImData) {
-	id := channelId[0 : len(channelId)-1]
+	channelIdEnd := len(channelId) - 1
+	id := channelId[:channelIdEnd]
 
 	n, _ := memcache.Increment(c, id+"-messageCount", 1, 0)
 	n -= 1
 
 	imData.Id = id + "-message" + strconv.FormatUint(n, 10)
-	imData.Recipient = channelId
+	imData.Recipient = channelId[channelIdEnd]
 	imDataBytes, _ := json.Marshal(imData)
 
 	item := memcache.Item{Key: imData.Id, Value: imDataBytes, Expiration: config.MessageSendTimeout * time.Minute}
@@ -209,10 +210,11 @@ func sendChannelMessageTask(c appengine.Context, id string) {
 
 				/* Send + retry logic */
 
-				channel.Send(c, imData.Recipient, imDataString)
-				channel.Send(c, imData.Recipient, imDataString)
+				channelId := id + imData.Recipient
 
-				if !noMoreRetries[imData.Recipient] {
+				channel.Send(c, channelId, imDataString)
+
+				if !noMoreRetries[channelId] {
 					i := 0
 					for {
 						time.Sleep(1 * time.Second)
@@ -220,10 +222,10 @@ func sendChannelMessageTask(c appengine.Context, id string) {
 						if _, err := memcache.Get(c, messageKey); err == memcache.ErrCacheMiss {
 							break
 						} else if i >= config.MessageSendRetries {
-							noMoreRetries[imData.Recipient] = true
+							noMoreRetries[channelId] = true
 							break
 						} else {
-							channel.Send(c, imData.Recipient, imDataString)
+							channel.Send(c, channelId, imDataString)
 						}
 
 						i++
