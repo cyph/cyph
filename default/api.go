@@ -49,14 +49,17 @@ func channelReceive(h HandlerArgs) (interface{}, int) {
 }
 
 func imConnect(h HandlerArgs) (interface{}, int) {
-	for i := 0; i < 2; i++ {
-		if item, err := memcache.Get(h.Context, h.Vars["id"]+strconv.Itoa(i)); err != memcache.ErrCacheMiss {
-			imSetupString := string(item.Value)
-			memcache.Delete(h.Context, item.Key)
-			return imSetupString, http.StatusOK
-		}
+	idBase := h.Vars["id"]
+	connect := idBase + "-connect"
+	id := idBase + strconv.FormatUint(memcache.Increment(h.Context, connect, 1, 0)-1, 10)
+
+	if item, err := memcache.Get(h.Context, id); err != memcache.ErrCacheMiss {
+		imSetupString := string(item.Value)
+		memcache.Delete(h.Context, item.Key)
+		return imSetupString, http.StatusOK
 	}
 
+	memcache.Delete(h.Context, connect)
 	return nil, http.StatusNotFound
 }
 
@@ -172,12 +175,13 @@ func sendChannelMessageTask(c appengine.Context, id string) {
 				channel.Send(c, id+"0", destroyJson)
 				channel.Send(c, id+"1", destroyJson)
 
-				numKeys := count + 4
+				numKeys := count + 5
 				keys := make([]string, numKeys, numKeys)
 				keys[count] = lockKey
 				keys[count+1] = closedKey
 				keys[count+2] = countKey
 				keys[count+3] = sentKey
+				keys[count+4] = "-connect"
 
 				var i uint64
 				for i = 0; i < count; i++ {
@@ -217,8 +221,6 @@ func sendChannelMessageTask(c appengine.Context, id string) {
 				if !noMoreRetries[channelId] {
 					i := 0
 					for {
-						time.Sleep(1 * time.Second)
-
 						if _, err := memcache.Get(c, messageKey); err == memcache.ErrCacheMiss {
 							break
 						} else if i >= config.MessageSendRetries {
@@ -228,6 +230,7 @@ func sendChannelMessageTask(c appengine.Context, id string) {
 							channel.Send(c, channelId, imDataString)
 						}
 
+						time.Sleep(10 * time.Millisecond)
 						i++
 					}
 				}
