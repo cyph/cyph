@@ -210,6 +210,7 @@ func sendChannelMessageTask(c appengine.Context, id string) {
 				/* Send + retry logic */
 
 				channel.Send(c, imData.Recipient, imDataString)
+				channel.Send(c, imData.Recipient, imDataString)
 
 				if !noMoreRetries[imData.Recipient] {
 					i := 0
