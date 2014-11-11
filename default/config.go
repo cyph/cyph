@@ -40,7 +40,7 @@ var config = struct {
 
 	15,
 
-	60, // (config.MessageSendTimeout - 5) * 6
+	100,
 }
 
 var imIdAddressSpace = []string{
