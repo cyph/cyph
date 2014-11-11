@@ -41,7 +41,7 @@ var config = struct {
 
 	15,
 
-	10000,
+	2000,
 }
 
 var imIdAddressSpace = []string{
