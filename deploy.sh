@@ -76,10 +76,10 @@ goapp deploy default/app.yaml cyph.com/cyph-com.yaml cyph.im/cyph-im.yaml cyph.m
 
 appcfg.py update_dispatch .
 
-../git.sh translations
-
 if [ $all ] ; then
 	../deploy.sh
+else
+	../git.sh translations
 fi
 
 cd "${dir}"
