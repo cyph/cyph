@@ -198,7 +198,7 @@ func sendChannelMessageTask(c appengine.Context, id string) {
 			if count == sent {
 				break
 			} else if numTries > 0 {
-				laterSendChannelMessage.Call(c, id)
+				laterSendChannelMessageTwo.Call(c, id)
 				return
 			}
 
