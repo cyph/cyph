@@ -10,7 +10,8 @@
 
 html, body, #main {
 	max-width: 100% !important;
-	overflow-x: hidden;
+	max-height: 100% !important;
+	overflow: hidden;
 }
 
 html, body, #main, md-sidenav {
@@ -129,18 +130,13 @@ md-button input[type='file'] {
 		height: 100%;
 	}
 }
-html:not(.mobile) #message-wrapper {
+#message-wrapper {
 	.message-wrapper-hidden {
 		@include transform(translateY(50vh) !important);
 		@include transition(transform 0.25s linear);
 	}
 	:not(.message-wrapper-hidden) {
 		@include transition(transform 0.15s linear);
-	}
-}
-html.mobile #message-wrapper {
-	.message-wrapper-hidden {
-		display: none;
 	}
 }
 
