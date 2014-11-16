@@ -1,26 +1,5 @@
 @import 'bourbon/bourbon';
-@import 'fonts.css';
 
-
-* {
-	-webkit-font-smoothing: antialiased !important;
-	-moz-osx-font-smoothing: grayscale !important;
-	text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.004) !important;
-}
-
-html, body, #main {
-	max-width: 100% !important;
-	max-height: 100% !important;
-	overflow: hidden;
-}
-
-html, body, #main, md-sidenav {
-	background-color: #8b62d9 !important;
-}
-
-#main, .md-button-inner {
-	color: #f1f1f1 !important;
-}
 
 html:not(.mobile) {
 	#desktop-sidebar, #message-wrapper {
@@ -39,13 +18,6 @@ html:not(.mobile) {
 	}
 }
 
-md-sidenav md-button {
-	width: 100%;
-
-	* {
-		text-align: left;
-	}
-}
 
 .app-message {
 	margin-top: 20px;
@@ -140,13 +112,6 @@ md-button input[type='file'] {
 	}
 }
 
-#footer {
-	margin-top: 10px;
-	position: relative;
-	text-align: center;
-	left: -110px;
-	padding: 15px 0px 5px 0px;
-}
 
 #message-list:not(.nano) {
 	overflow-y: scroll;
@@ -388,59 +353,6 @@ html:not(.mobile) {
 	border: 1px solid #8b62d9;
 }
 
-md-toolbar {
-	background-color: #7d4fd3;
-	height: 40px !important;
-	min-height: 40px !important;
-	box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.75);
-
-	img {
-		height: 25px !important;
-		vertical-align: middle;
-	}
-}
-#mobile-toolbar {
-	position: fixed;
-	top: 0px;
-}
-html.mobile #main {
-	padding-top: 40px;
-}
-
-btf-markdown, [btf-markdown] {
-	> :first-child {
-		display: inline;
-	}
-
-	> :not(:first-child) {
-		margin: 0px;
-	}
-}
-html:not(.mobile) {
-	btf-markdown, [btf-markdown] {
-		> :not(:first-child) {
-			margin-left: 25px;
-		}
-	}
-}
-
-blockquote {
-	border-left: 2px solid !important;
-	padding-left: 10px;
-	display: block;
-}
-
-:not(textarea):not(md-text-float):not(md-input-group):not(input) {
-	border: 0px !important;
-}
-
-a {
-	color: inherit;
-}
-
-textarea {
-	background-color: #f1f1f1;
-}
 
 #new-messages {
 	background-color: white !important;
@@ -496,18 +408,6 @@ html:not(.mobile) #error {
 }
 
 
-#main.curtain {
-	height: 10%;
-	@include transform(translateY(-90%));
-	@include transition(transform 2s cubic-bezier(1, 0, 0, 1), height 2s cubic-bezier(1, 0, 0, 1));
-}
-#main:not(.curtain) {
-	@include transition(transform 2s cubic-bezier(1, 0, 0, 1), height 2s cubic-bezier(1, 0, 0, 1));
-}
-#main {
-	position: relative;
-	z-index: 2;
-}
 #cyphertext {
 	z-index: 1;
 	position: fixed;
@@ -550,16 +450,6 @@ html:not(.mobile) #error {
 }
 
 
-
-[ng-view]:not(.active) {
-	opacity: 0;
-	pointer-events: none;
-	position: fixed;
-}
-[ng-view].active {
-	@include transition(opacity 0.75s linear);
-}
-
 #chat-begin-message {
 	font-family: 'Ubuntu', sans-serif;
 	text-align: center;
@@ -579,73 +469,4 @@ html.mobile {
 	#chat-begin-message {
 		font-size: 50px;
 	}
-}
-
-
-
-/* nanoScroller styling */
-
-.nano {
-	.nano-pane {
-		background-color: transparent;
-	}
-}
-
-
-/* Mobile and desktop classes */
-
-html:not(.mobile) {
-	.mobile-only  {
-		display: none !important;
-	}
-
-	#main {
-		padding: 10px;
-		padding-left: 200px;
-		padding-right: 20px;
-	}
-
-	* {
-		outline: none !important;
-	}
-}
-
-html.mobile {
-	.desktop-only  {
-		display: none !important;
-	}
-}
-
-
-/* Lightbox */
-
-.mfp-wrap, .mfp-wrap * {
-	overflow: hidden !important;
-}
-.mfp-figure {
-	figure {
-		box-shadow: 0px 0px 15px black;
-
-		img {
-			max-height: 80vh !important;
-			padding: 0px !important;
-		}
-	}
-}
-.mfp-figure:after {
-	background: none !important;
-	box-shadow: none !important;
-}
-html.mobile .mfp-content {
-	pointer-events: none !important;
-}
-
-
-/* Why is this line missing from Angular Material's bower package? */
-
-md-backdrop {
-	background-color: rgba(0, 0, 0, 0.3);
-}
-md-sidenav {
-	z-index: 7;
 }
