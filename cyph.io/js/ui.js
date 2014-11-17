@@ -87,7 +87,7 @@ angular.
 
 		/* OS X-style scrollbars */
 		scrolling	= {
-			isNanoScroller: !isMobile && navigator.userAgent.indexOf('mac os x') < 0,
+			isNanoScroller: true, // !isMobile && navigator.userAgent.indexOf('mac os x') < 0,
 			update: function () {
 				if (this.isNanoScroller) {
 					$('.nano').nanoScroller();
