@@ -120,7 +120,6 @@ angular.
 			}
 			else if (scrollTop >= parseInt($newCyphShadow.css('top'), 10)) {
 				$fixedHeaderStuff.addClass(fixedHeaderClass);
-				$newCyph.css({transform: '', top: ''});
 			}
 			else {
 				$fixedHeaderStuff.removeClass(fixedHeaderClass);
