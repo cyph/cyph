@@ -1,6 +1,12 @@
 @import 'bourbon/bourbon';
 
 
+html, body, #main {
+	max-width: 100% !important;
+	max-height: 100% !important;
+	overflow: hidden;
+}
+
 html:not(.mobile) {
 	#main {
 		padding: 10px;

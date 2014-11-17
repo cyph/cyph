@@ -32,7 +32,7 @@
 		<link rel='stylesheet' href='/css/preload.css' />
 	</head>
 	<body>
-		<section id='main' layout='vertical' layout-fill>
+		<section id='main' layout='vertical' class='nano'><div class='nano-content'>
 
 		<!-- <md-sidenav component-id='menu' class='md-sidenav-right'>
 			<md-content class='md-content-padding'>
@@ -69,52 +69,68 @@
 			</md-content>
 		</md-sidenav> -->
 
-		<div layout='vertical' layout-fill flex>
-			<div id='hero'>
-				<md-button id='new-cyph' translate href='//cyph.im/new' aria-label='Start new cyph'>Start new cyph</md-button>
-			</div>
+		<a id='logo' href='/'>
+			<img src='/img/logo.white.horizontal.header.png' />
+		</a>
 
-			<md-toolbar>
-				<div class='md-toolbar-tools'>
-					<a class='logo' href='/'>
-						<img src='/img/logo.white.horizontal.header.png' />
-					</a>
+		<img id='bouncing-down-arrow' class='animated' ng-click='scrollDown()' src='/img/icons/downarrow.png' />
+
+
+		<section>
+			<md-button id='new-cyph' translate href='//cyph.im/new' aria-label='Start new cyph'>Start new cyph</md-button>
+			<div id='new-cyph-shadow'></div>
+		</section>
+
+		<md-toolbar id='main-toolbar'>
+			<div class='md-toolbar-tools'>
+				<span flex></span>
+				<md-button
+					translate
+					aria-label='About'
+					ng-click='baseButtonClick()'
+					href='//www.reddit.com/wiki/commenting/.compact#wiki_posting'
+				>
+					About
+				</md-button>
+				<md-button
+					translate
+					aria-label='FAQ'
+					ng-click='baseButtonClick()'
+					href='//www.reddit.com/wiki/commenting/.compact#wiki_posting'
+				>
+					FAQ
+				</md-button>
+				<md-button
+					translate
+					aria-label='Blog'
+					ng-click='baseButtonClick()'
+					href='//www.reddit.com/wiki/commenting/.compact#wiki_posting'
+				>
+					Blog
+				</md-button>
+
+				<!--
 					<span flex></span>
-					<md-button
-						translate
-						aria-label='About'
-						ng-click='baseButtonClick()'
-						href='//www.reddit.com/wiki/commenting/.compact#wiki_posting'
-					>
-						About
+					<md-button translate aria-label='Menu' ng-click='openMobileMenu()'>
+						<img src='/img/icons/menu.png' />
 					</md-button>
-					<md-button
-						translate
-						aria-label='FAQ'
-						ng-click='baseButtonClick()'
-						href='//www.reddit.com/wiki/commenting/.compact#wiki_posting'
-					>
-						FAQ
-					</md-button>
-					<md-button
-						translate
-						aria-label='Blog'
-						ng-click='baseButtonClick()'
-						href='//www.reddit.com/wiki/commenting/.compact#wiki_posting'
-					>
-						Blog
-					</md-button>
+				-->
+			</div>
+		</md-toolbar>
 
-					<!--
-						<span flex></span>
-						<md-button translate aria-label='Menu' ng-click='openMobileMenu()'>
-							<img src='/img/icons/menu.png' />
-						</md-button>
-					-->
-				</div>
-			</md-toolbar>
+		<section id='hero-section'>
+			<div id='hero-text' class='animated' translate>Privacy starts here.</div>
+		</section>
 
-			<footer id='footer'>
+		<section>
+			But maybe not here...
+		</section>
+
+		<footer id='footer'>
+			<section>
+				Content above footer
+			</section>
+			<div>
 				&copy; Cyph 2014
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&bull;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				<a target='_blank' href='//twitter.com/cyph'>@cyph</a>
@@ -126,10 +142,11 @@
 
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&bull;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				<a target='_self' href='bitcoin:1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd'>1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd</a>
-			</footer>
-		</div>
+			</div>
+		</footer>
 
-		</section>
+
+		</div></section>
 
 
 
@@ -148,6 +165,7 @@
 
 		<link rel='stylesheet' href='/lib/bower_components/angular-material/angular-material.css' />
 		<link rel='stylesheet' href='/lib/bower_components/nanoscroller/bin/css/nanoscroller.css' />
+		<link rel='stylesheet' href='/lib/bower_components/animate.css/animate.min.css' />
 
 		<link rel='stylesheet' href='/css/cyph.base.css' />
 		<link rel='stylesheet' href='/css/cyph.com.css' />
