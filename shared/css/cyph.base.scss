@@ -90,6 +90,9 @@ blockquote {
 a {
 	color: inherit;
 }
+a:not(:hover) {
+	text-decoration: none;
+}
 
 textarea {
 	background-color: #f1f1f1;
