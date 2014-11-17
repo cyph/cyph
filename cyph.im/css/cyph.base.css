@@ -24,7 +24,7 @@ md-sidenav md-button {
   margin-top: 10px;
   position: relative;
   text-align: center;
-  left: -110px;
+  font-size: 15px;
   padding: 15px 0px 5px 0px; }
 
 md-toolbar {
@@ -102,10 +102,6 @@ textarea {
 /* Mobile and desktop classes */
 html:not(.mobile) .mobile-only {
   display: none !important; }
-html:not(.mobile) #main {
-  padding: 10px;
-  padding-left: 200px;
-  padding-right: 20px; }
 html:not(.mobile) * {
   outline: none !important; }
 
