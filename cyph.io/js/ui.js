@@ -86,10 +86,10 @@ angular.
 
 		scrolling.update();
 
-		$(function () {
-			setTimeout(function () {
+		/*
+			$(function () {
 				$('#pre-load').addClass('load-complete');
-			}, 350);
-		});
+			});
+		*/
 	}])
 ;

@@ -347,9 +347,9 @@ html:not(.mobile) #error {
     font-weight: bold; }
 
 html:not(.mobile) #chat-begin-message {
-  font-size: 150px; }
+  font-size: 25vh; }
 
 html.mobile #chat-begin-message {
-  font-size: 50px; }
+  font-size: 12vh; }
 
 /*# sourceMappingURL=cyph.im.css.map */

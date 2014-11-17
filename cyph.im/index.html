@@ -329,7 +329,7 @@
 			</md-button>
 		</div>
 
-		<div id='pre-load' ng-show='state == states.none'>
+		<div id='pre-load' ng-class='{"load-complete": state != states.none}'>
 			<div class='double-bounce1'></div>
 			<div class='double-bounce2'></div>
 		</div>
