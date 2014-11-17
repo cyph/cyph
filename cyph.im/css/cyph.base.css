@@ -4,11 +4,6 @@
   -moz-osx-font-smoothing: grayscale !important;
   text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.004) !important; }
 
-html, body, #main {
-  max-width: 100% !important;
-  max-height: 100% !important;
-  overflow: hidden; }
-
 html, body, #main, md-sidenav {
   background-color: #8b62d9 !important; }
 
@@ -31,10 +26,13 @@ md-toolbar {
   background-color: #7d4fd3;
   height: 40px !important;
   min-height: 40px !important;
-  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.75); }
+  box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75); }
   md-toolbar img {
     height: 25px !important;
     vertical-align: middle; }
+
+html:not(.mobile) md-toolbar {
+  box-shadow: 0px 5px 5px -5px rgba(0, 0, 0, 0.75); }
 
 #mobile-toolbar {
   position: fixed;
