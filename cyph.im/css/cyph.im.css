@@ -1,3 +1,7 @@
+html:not(.mobile) #main {
+  padding: 10px;
+  padding-left: 200px;
+  padding-right: 20px; }
 html:not(.mobile) #desktop-sidebar md-button, html:not(.mobile) #message-wrapper md-button {
   color: #444;
   background-color: #7d4fd3 !important; }
