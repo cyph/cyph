@@ -1,15 +1,13 @@
-var BASE_URL			= 'https://api.cyph.com/';
-var authors				= {me: 1, friend: 2, app: 3};
-var isHistoryAvailable	= typeof history != 'undefined';
+var BASE_URL				= 'https://api.cyph.com/';
+var authors					= {me: 1, friend: 2, app: 3};
+var isHistoryAvailable		= typeof history != 'undefined';
+var preConnectMessageQueue	= [];
 var channel, isConnected, pongReceived, socket;
 
 
 /* Init crypto */
 
 var otrWorker	= new Worker('/js/cryptoWebWorker.js');
-
-var connectedNotification	= getString('connectedNotification');
-var disconnectWarning		= getString('disconnectWarning');
 
 otrWorker.onmessage	= function (e) {
 	switch (e.data.eventName) {
@@ -26,31 +24,11 @@ otrWorker.onmessage	= function (e) {
 			if (!isConnected) {
 				isConnected	= true;
 
-				beginChat();
+				markAllAsSent();
 
-				$(window).on('beforeunload', function () {
-					return disconnectWarning;
-				});
-
-				$(window).unload(function () {
-					sendChannelData({Destroy: true}, {async: false});
-					socket.close();
-				});
-
-				notify(connectedNotification);
-
-				/* Intermittent check to verify chat is still alive */
-				var pingInterval	= setInterval(function () { sendChannelData({Misc: 'ping'}) }, 15000);
-				var pongInterval	= setInterval(function () {
-					if (pongReceived) {
-						pongReceived	= false;
-					}
-					else {
-						clearInterval(pingInterval);
-						clearInterval(pongInterval);
-						socket.close();
-					}
-				}, 60000);
+				while (preConnectMessageQueue.length > 0) {
+					otr.sendMsg(preConnectMessageQueue.shift());
+				}
 			}
 			break;
 	}
@@ -65,7 +43,12 @@ var otr	= {
 		otrWorker.postMessage({method: 1});
 	},
 	sendMsg: function (message) {
-		otrWorker.postMessage({method: 2, message: message});
+		if (isConnected) {
+			otrWorker.postMessage({method: 2, message: message});
+		}
+		else {
+			preConnectMessageQueue.push(message);
+		}
 	},
 	receiveMsg: function (message) {
 		otrWorker.postMessage({method: 3, message: message});
@@ -75,8 +58,56 @@ var otr	= {
 /* End crypto init */
 
 
+var connectedNotification	= getString('connectedNotification');
+var disconnectWarning		= getString('disconnectWarning');
+
+function beginChat () {
+	beginChatUi(function () {
+		$(window).on('beforeunload', function () {
+			return disconnectWarning;
+		});
+
+		$(window).unload(function () {
+			sendChannelData({Destroy: true}, {async: false});
+			socket.close();
+		});
+
+		/* Intermittent check to verify chat is still alive */
+		var pingInterval	= setInterval(function () { sendChannelData({Misc: 'ping'}) }, 15000);
+		var pongInterval	= setInterval(function () {
+			if (pongReceived) {
+				pongReceived	= false;
+			}
+			else {
+				clearInterval(pingInterval);
+				clearInterval(pongInterval);
+				socket.close();
+			}
+		}, 60000);
+	});
+}
+
+
 function getString (name) {
 	return $('meta[name="' + name + '"]').attr('content');
+}
+
+
+function getTimestamp () {
+	var date	= new Date();
+	var hour	= date.getHours();
+	var ampm	= 'am';
+	var minute	= ('0' + date.getMinutes()).slice(-2);
+
+	if (hour >= 12) {
+		hour	-= 12;
+		ampm	= 'pm';
+	}
+	if (hour == 0) {
+		hour	= 12;
+	}
+
+	return hour + ':' + minute + ampm;
 }
 
 
@@ -203,7 +234,7 @@ function setUpChannel (channelData) {
 				beginWaiting();
 			}
 			else {
-				changeState(states.settingUpCrypto);
+				beginChat();
 				sendChannelData({Misc: 'connect'});
 				otr.sendQueryMsg();
 			}
@@ -230,7 +261,7 @@ function setUpChannel (channelData) {
 					sendChannelData({Misc: 'pong'});
 				}
 				if (o.Misc == 'connect') {
-					changeState(states.settingUpCrypto);
+					beginChat();
 				}
 				if (o.Message) {
 					otr.receiveMsg(o.Message);

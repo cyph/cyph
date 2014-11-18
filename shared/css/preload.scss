@@ -36,14 +36,14 @@
 	top: 0;
 	left: 0;
 
-	@include animation(bounce 2.0s infinite ease-in-out);
+	@include animation(preloadbounce 2.0s infinite ease-in-out);
 }
 
 .double-bounce2 {
 	@include animation-delay(-1.0s);
 }
 
-@include keyframes(bounce) {
+@include keyframes(preloadbounce) {
 	0%, 100% {
 		@include transform(scale(0.0));
 	}

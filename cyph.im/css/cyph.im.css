@@ -100,6 +100,18 @@ md-button input[type='file'] {
 html:not(.mobile) #message-list > md-content {
   padding-right: 10px; }
 
+#message-list > :not(.is-connected) .message-item:not(:first-child) {
+  opacity: 0.5; }
+  #message-list > :not(.is-connected) .message-item:not(:first-child) .message-timestamp .ellipsis-spinner {
+    display: inline; }
+
+#message-list .message-item {
+  -webkit-transition: opacity 1s ease-in-out;
+  -moz-transition: opacity 1s ease-in-out;
+  transition: opacity 1s ease-in-out; }
+  #message-list .message-item .message-timestamp .ellipsis-spinner {
+    display: none; }
+
 .message-item .message {
   word-wrap: break-word;
   -webkit-hyphens: auto;
@@ -356,5 +368,56 @@ html:not(.mobile) #chat-begin-message {
 
 html.mobile #chat-begin-message {
   font-size: 12vh; }
+
+/*** SpinKit animation: http://tobiasahlin.com/spinkit/ ***/
+.ellipsis-spinner {
+  margin: 100px auto 0;
+  width: 70px;
+  text-align: center; }
+  .ellipsis-spinner > div {
+    width: 12px;
+    height: 12px;
+    background-color: #f1f1f1;
+    border-radius: 100%;
+    display: inline-block;
+    -webkit-animation: ellipsis-spinner 1.4s infinite ease-in-out;
+    -moz-animation: ellipsis-spinner 1.4s infinite ease-in-out;
+    animation: ellipsis-spinner 1.4s infinite ease-in-out;
+    /* Prevent first frame from flickering when animation starts */
+    -webkit-animation-fill-mode: both;
+    -moz-animation-fill-mode: both;
+    animation-fill-mode: both; }
+  .ellipsis-spinner .bounce1 {
+    -webkit-animation-delay: -0.32s;
+    -moz-animation-delay: -0.32s;
+    animation-delay: -0.32s; }
+  .ellipsis-spinner .bounce2 {
+    -webkit-animation-delay: -0.16s;
+    -moz-animation-delay: -0.16s;
+    animation-delay: -0.16s; }
+
+@-webkit-keyframes ellipsis-spinner {
+  0%, 80%, 100% {
+    -webkit-transform: scale(0); }
+  40% {
+    -webkit-transform: scale(1); } }
+@-moz-keyframes ellipsis-spinner {
+  0%, 80%, 100% {
+    -moz-transform: scale(0); }
+  40% {
+    -moz-transform: scale(1); } }
+@keyframes ellipsis-spinner {
+  0%, 80%, 100% {
+    -webkit-transform: scale(0);
+    -moz-transform: scale(0);
+    -ms-transform: scale(0);
+    -o-transform: scale(0);
+    transform: scale(0); }
+  40% {
+    -webkit-transform: scale(1);
+    -moz-transform: scale(1);
+    -ms-transform: scale(1);
+    -o-transform: scale(1);
+    transform: scale(1); } }
 
 /*# sourceMappingURL=cyph.im.css.map */
