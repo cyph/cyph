@@ -133,6 +133,26 @@ html:not(.mobile) #message-list > md-content {
 }
 
 
+#message-list > :not(.is-connected) {
+	.message-item:not(:first-child) {
+		opacity: 0.5;
+
+		.message-timestamp .ellipsis-spinner {
+			display: inline;
+		}
+	}
+}
+#message-list {
+	.message-item {
+		@include transition(opacity 1s ease-in-out);
+
+		.message-timestamp .ellipsis-spinner {
+			display: none;
+		}
+	}
+}
+
+
 .message-item {
 	.message {
 		word-wrap: break-word;
@@ -480,5 +500,44 @@ html:not(.mobile) {
 html.mobile {
 	#chat-begin-message {
 		font-size: 12vh;
+	}
+}
+
+
+/*** SpinKit animation: http://tobiasahlin.com/spinkit/ ***/
+
+.ellipsis-spinner {
+	margin: 100px auto 0;
+	width: 70px;
+	text-align: center;
+	
+	> div {
+		width: 12px;
+		height: 12px;
+		background-color: #f1f1f1;
+		border-radius: 100%;
+		display: inline-block;
+
+		@include animation(ellipsis-spinner 1.4s infinite ease-in-out);
+		/* Prevent first frame from flickering when animation starts */
+		@include animation-fill-mode(both);
+	}
+
+	.bounce1 {
+		@include animation-delay(-0.32s);
+	}
+
+	.bounce2 {
+		@include animation-delay(-0.16s);
+	}
+}
+
+@include keyframes(ellipsis-spinner) {
+	0%, 80%, 100% { 
+		@include transform(scale(0.0));
+	}
+
+	40% { 
+		@include transform(scale(1.0));
 	}
 }

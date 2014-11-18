@@ -1,13 +1,14 @@
 var
 	abortSetup,
 	addMessageToChat,
-	beginChat,
+	beginChatUi,
 	beginWaiting,
 	changeState,
 	closeChat,
 	insertPhoto,
 	isMobile,
 	logCyphertext,
+	markAllAsSent,
 	notify,
 	platformString,
 	scrolling,
@@ -20,9 +21,10 @@ var
 
 angular.
 	module('Cyph', ['ngMaterial', 'ngSanitize', 'btford.markdown', 'timer']).
-	controller('CyphController', ['$scope', '$mdSidenav', '$mdToast', function($scope, $mdSidenav, $mdToast) {
+	controller('CyphController', ['$scope', '$mdSidenav', '$mdToast', function ($scope, $mdSidenav, $mdToast) {
 		$scope.language			= language;
 		$scope.isAlive			= true;
+		$scope.isConnected		= false;
 		$scope.cyphertext		= [];
 		$scope.messages			= [];
 		$scope.message			= '';
@@ -103,20 +105,7 @@ angular.
 					.join(' ')
 				;
 
-				apply(function() {
-					var date	= new Date();
-					var hour	= date.getHours();
-					var ampm	= 'am';
-					var minute	= ('0' + date.getMinutes()).slice(-2);
-
-					if (hour >= 12) {
-						hour	-= 12;
-						ampm	= 'pm';
-					}
-					if (hour == 0) {
-						hour	= 12;
-					}
-
+				apply(function () {
 					$scope.messages.push({
 						author: author,
 						authorClass: 'author-' + (
@@ -127,7 +116,7 @@ angular.
 						isFromFriend: author == authors.friend,
 						isFromMe: author == authors.me,
 						text: text,
-						timestamp: hour + ':' + minute + ampm
+						timestamp: ($scope.isConnected || author == authors.app) ? getTimestamp() : ''
 					});
 				});
 
@@ -143,15 +132,22 @@ angular.
 		};
 
 
-		beginChat = $scope.beginChat = function () {
+		beginChatUi = $scope.beginChatUi = function (callback) {
 			if ($scope.state == $scope.states.aborted) {
 				return;
 			}
 
+			notify(connectedNotification);
 			changeState($scope.states.chatBeginMessage);
 			$('#timer')[0].stop();
 
 			setTimeout(function () {
+				if ($scope.state == $scope.states.aborted) {
+					return;
+				}
+
+				callback && callback();
+
 				changeState($scope.states.chat);
 
 				/* Fix file upload buttons */
@@ -214,7 +210,7 @@ angular.
 
 
 		changeState = $scope.changeState = function (state) {
-			apply(function() {
+			apply(function () {
 				state = $scope.state = state;
 			});
 		};
@@ -228,11 +224,11 @@ angular.
 			}
 
 			if ($scope.isAlive) {
-				if ($scope.state == $scope.states.chat) {
+				if ($scope.isConnected) {
 					addMessageToChat(disconnectedNotification, authors.app);
 					sendChannelData({Destroy: true});
 
-					apply(function() {
+					apply(function () {
 						$scope.isAlive	= false;
 					});
 				}
@@ -303,10 +299,25 @@ angular.
 
 		logCyphertext = $scope.logCyphertext = function (text, author) {
 			if (text) {
-				apply(function() {
+				apply(function () {
 					$scope.cyphertext.push({author: author, text: text.replace(/\//g, '∕')});
 				});
 			}
+		};
+
+
+		markAllAsSent = $scope.markAllAsSent = function () {
+			apply(function () {
+				for (var i = 0 ; i < $scope.messages.length ; ++i) {
+					var message	= $scope.messages[i];
+
+					if (!message.timestamp) {
+						message.timestamp	= getTimestamp();
+					}
+				}
+
+				$scope.isConnected	= true;
+			});
 		};
 
 
@@ -314,7 +325,7 @@ angular.
 			if (!message) {
 				message	= $scope.message;
 
-				apply(function() {
+				apply(function () {
 					$scope.message	= '';
 				});
 			}
@@ -334,28 +345,28 @@ angular.
 
 
 
-		$scope.baseButtonClick	= function() {
+		$scope.baseButtonClick	= function () {
 			if (isMobile) {
 				$mdSidenav('menu').close();
 			}
 		};
 
 
-		$scope.disconnect	= function() {
+		$scope.disconnect	= function () {
 			socket.close();
 
 			$scope.baseButtonClick();
 		};
 
 
-		$scope.openMobileMenu	= function() {
+		$scope.openMobileMenu	= function () {
 			$mdSidenav('menu').open();
 		};
 
 
 		var $messageList	= $('#message-list, #message-list > md-content');
 
-		$scope.scrollDown	= function(shouldScrollCyphertext) {
+		$scope.scrollDown	= function (shouldScrollCyphertext) {
 			(shouldScrollCyphertext ?
 				$('#cyphertext.curtain, #cyphertext.curtain > md-content') :
 				$messageList
@@ -400,13 +411,13 @@ angular.
 		};
 
 		/* Close cyphertext on esc */
-		$(document).keyup(function(e) {
+		$(document).keyup(function (e) {
 			if (e.keyCode == 27) {
 				$scope.closeCyphertext();
 			}
 		});
 
-		$scope.showCyphertext	= function() {
+		$scope.showCyphertext	= function () {
 			$scope.baseButtonClick();
 
 			if (showCyphertextLock) {
@@ -437,7 +448,7 @@ angular.
 		};
 
 
-		$scope.twoFactor	= function() {
+		$scope.twoFactor	= function () {
 			alert(
 				'This feature hasn\'t been implemented yet, but it will ' +
 				'freeze the chat until both users have verified their ' +
@@ -497,7 +508,7 @@ angular.
 			var enterpressOnly	= $this.attr('enterpress-only');
 
 			if (!enterpressOnly || enterpressOnly == platformString) {
-				$this.keypress(function(e) {
+				$this.keypress(function (e) {
 					if (e.keyCode == 13 && !e.shiftKey) {
 						var onenterpress	= $this.attr('onenterpress');
 

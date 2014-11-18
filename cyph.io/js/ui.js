@@ -1,6 +1,6 @@
 angular.
 	module('Cyph', ['ngMaterial']).
-	controller('CyphController', ['$scope', '$mdSidenav', '$mdToast', function($scope, $mdSidenav, $mdToast) {
+	controller('CyphController', ['$scope', '$mdSidenav', '$mdToast', function ($scope, $mdSidenav, $mdToast) {
 		var $body				= $('#main > :first-child');
 		var $heroSection		= $('#hero-section');
 		var $heroText			= $('#hero-text');
@@ -59,17 +59,17 @@ angular.
 
 
 
-		$scope.baseButtonClick	= function() {
+		$scope.baseButtonClick	= function () {
 			$mdSidenav('menu').close();
 		};
 
 
-		$scope.openMobileMenu	= function() {
+		$scope.openMobileMenu	= function () {
 			$mdSidenav('menu').open();
 		};
 
 
-		$scope.scrollDown	= function() {
+		$scope.scrollDown	= function () {
 			$heroText.removeClass('bounceInDown').addClass('bounceOutRight');
 
 			setTimeout(function () {

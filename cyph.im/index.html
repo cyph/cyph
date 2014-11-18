@@ -187,7 +187,7 @@
 		</div>
 
 		<div id='message-list' ng-view flex class='nano' ng-class='{active: state == states.chat}'>
-			<md-content class='nano-content'>
+			<md-content class='nano-content' ng-class='{"is-connected": isConnected}'>
 				<md-list layout='vertical'>
 					<md-item
 						class='message-item unread'
@@ -212,7 +212,15 @@
 							<span class='mobile-only' ng-show='message.author == authors.me'>
 								<span translate>me</span> &nbsp;&mdash;&nbsp;
 							</span>
+
 							{{message.timestamp}}
+
+							<span class='ellipsis-spinner'>
+								<div class='bounce1'></div>
+								<div class='bounce2'></div>
+								<div class='bounce3'></div>
+							</span>
+
 							<span class='mobile-only' ng-show='message.author == authors.friend'>
 								&nbsp;&mdash;&nbsp; <span translate>friend</span>
 							</span>
