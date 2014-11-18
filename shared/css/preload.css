@@ -30,26 +30,26 @@
   position: absolute;
   top: 0;
   left: 0;
-  -webkit-animation: bounce 2s infinite ease-in-out;
-  -moz-animation: bounce 2s infinite ease-in-out;
-  animation: bounce 2s infinite ease-in-out; }
+  -webkit-animation: preloadbounce 2s infinite ease-in-out;
+  -moz-animation: preloadbounce 2s infinite ease-in-out;
+  animation: preloadbounce 2s infinite ease-in-out; }
 
 .double-bounce2 {
   -webkit-animation-delay: -1s;
   -moz-animation-delay: -1s;
   animation-delay: -1s; }
 
-@-webkit-keyframes bounce {
+@-webkit-keyframes preloadbounce {
   0%, 100% {
     -webkit-transform: scale(0); }
   50% {
     -webkit-transform: scale(1); } }
-@-moz-keyframes bounce {
+@-moz-keyframes preloadbounce {
   0%, 100% {
     -moz-transform: scale(0); }
   50% {
     -moz-transform: scale(1); } }
-@keyframes bounce {
+@keyframes preloadbounce {
   0%, 100% {
     -webkit-transform: scale(0);
     -moz-transform: scale(0);
