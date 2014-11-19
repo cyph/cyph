@@ -294,6 +294,7 @@ function setUpChannel (channelData) {
 					friendIsTyping(false);
 				}
 				if (o.Message) {
+					friendIsTyping(false);
 					otr.receiveMsg(o.Message);
 					logCyphertext(o.Message, authors.friend);
 				}
