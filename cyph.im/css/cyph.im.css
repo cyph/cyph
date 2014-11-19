@@ -113,7 +113,11 @@ html:not(.mobile) #message-list > md-content {
   transition: opacity 1s ease-in-out; }
   #message-list .message-item .message-timestamp .message-pending {
     display: none; }
+#message-list md-content {
+  z-index: 2;
+  position: relative; }
 #message-list #setting-up-crypto {
+  z-index: 1;
   position: absolute;
   pointer-events: none;
   width: 100%;
