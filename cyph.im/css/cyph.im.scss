@@ -137,7 +137,7 @@ html:not(.mobile) #message-list > md-content {
 	.message-item:not(:first-child) {
 		opacity: 0.75;
 
-		.message-timestamp .ellipsis-spinner {
+		.message-timestamp .message-pending {
 			display: inline;
 		}
 	}
@@ -146,11 +146,12 @@ html:not(.mobile) #message-list > md-content {
 		opacity: 0.25;
 	}
 }
+
 #message-list {
 	.message-item {
 		@include transition(opacity 1s ease-in-out);
 
-		.message-timestamp .ellipsis-spinner {
+		.message-timestamp .message-pending {
 			display: none;
 		}
 	}
@@ -164,6 +165,27 @@ html:not(.mobile) #message-list > md-content {
 		margin-left: 0px;
 
 		opacity: 0;
+		@include transition(opacity 1s ease-in-out);
+	}
+
+	#friend-is-typing {
+		margin-top: 20px;
+		width: 100%;
+		text-align: center;
+
+		opacity: 0;
+		@include transition(opacity 1s ease-in-out);
+
+		.ellipsis-spinner > div {
+			width: 8px;
+			height: 8px;
+		}
+	}
+}
+
+#message-list.is-connected {
+	#friend-is-typing.show {
+		opacity: 1;
 		@include transition(opacity 1s ease-in-out);
 	}
 }

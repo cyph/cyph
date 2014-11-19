@@ -102,7 +102,7 @@ html:not(.mobile) #message-list > md-content {
 
 #message-list:not(.is-connected) .message-item:not(:first-child) {
   opacity: 0.75; }
-  #message-list:not(.is-connected) .message-item:not(:first-child) .message-timestamp .ellipsis-spinner {
+  #message-list:not(.is-connected) .message-item:not(:first-child) .message-timestamp .message-pending {
     display: inline; }
 #message-list:not(.is-connected) #setting-up-crypto {
   opacity: 0.25; }
@@ -111,7 +111,7 @@ html:not(.mobile) #message-list > md-content {
   -webkit-transition: opacity 1s ease-in-out;
   -moz-transition: opacity 1s ease-in-out;
   transition: opacity 1s ease-in-out; }
-  #message-list .message-item .message-timestamp .ellipsis-spinner {
+  #message-list .message-item .message-timestamp .message-pending {
     display: none; }
 #message-list #setting-up-crypto {
   position: absolute;
@@ -121,6 +121,23 @@ html:not(.mobile) #message-list > md-content {
   left: 0px;
   margin-left: 0px;
   opacity: 0;
+  -webkit-transition: opacity 1s ease-in-out;
+  -moz-transition: opacity 1s ease-in-out;
+  transition: opacity 1s ease-in-out; }
+#message-list #friend-is-typing {
+  margin-top: 20px;
+  width: 100%;
+  text-align: center;
+  opacity: 0;
+  -webkit-transition: opacity 1s ease-in-out;
+  -moz-transition: opacity 1s ease-in-out;
+  transition: opacity 1s ease-in-out; }
+  #message-list #friend-is-typing .ellipsis-spinner > div {
+    width: 8px;
+    height: 8px; }
+
+#message-list.is-connected #friend-is-typing.show {
+  opacity: 1;
   -webkit-transition: opacity 1s ease-in-out;
   -moz-transition: opacity 1s ease-in-out;
   transition: opacity 1s ease-in-out; }

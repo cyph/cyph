@@ -208,7 +208,7 @@
 
 							{{message.timestamp}}
 
-							<span class='ellipsis-spinner'>
+							<span class='message-pending ellipsis-spinner'>
 								<div class='bounce1'></div>
 								<div class='bounce2'></div>
 								<div class='bounce3'></div>
@@ -217,6 +217,14 @@
 							<span class='mobile-only' ng-show='message.author == authors.friend'>
 								&nbsp;&mdash;&nbsp; <span translate>friend</span>
 							</span>
+						</span>
+					</md-item>
+
+					<md-item id='friend-is-typing' ng-class='{"show": isFriendTyping}'>
+						<span class='ellipsis-spinner'>
+							<div class='bounce1'></div>
+							<div class='bounce2'></div>
+							<div class='bounce3'></div>
 						</span>
 					</md-item>
 				</md-list>
