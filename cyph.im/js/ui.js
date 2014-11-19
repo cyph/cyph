@@ -5,6 +5,7 @@ var
 	beginWaiting,
 	changeState,
 	closeChat,
+	friendIsTyping,
 	insertPhoto,
 	isMobile,
 	logCyphertext,
@@ -25,6 +26,7 @@ angular.
 		$scope.language			= language;
 		$scope.isAlive			= true;
 		$scope.isConnected		= false;
+		$scope.isFriendTyping	= false;
 		$scope.cyphertext		= [];
 		$scope.messages			= [];
 		$scope.message			= '';
@@ -235,6 +237,13 @@ angular.
 					abortSetup();
 				}
 			}
+		};
+
+
+		friendIsTyping = $scope.friendIsTyping = function (isFriendTyping) {
+			apply(function () {
+				$scope.isFriendTyping	= isFriendTyping;
+			});
 		};
 
 
@@ -709,6 +718,17 @@ angular.
 			attributes: false,
 			characterData: false,
 			subtree: true
+		});
+
+
+		var imtypingyo	= false;
+		$('#message-box').change(function () {
+			var newImtypingYo	= $(this).val() != '';
+
+			if (imtypingyo != newImtypingYo) {
+				imtypingyo	= newImtypingYo;
+				sendChannelData({Misc: imtypingyo ? 'imtypingyo' : 'donetyping'});
+			}
 		});
 
 		
