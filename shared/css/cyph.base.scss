@@ -117,6 +117,7 @@ textarea {
 	position: fixed;
 }
 [ng-view].active {
+	position: relative;
 	@include transition(opacity 0.75s linear);
 }
 

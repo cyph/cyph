@@ -132,13 +132,6 @@
 			<div flex></div>
 		</div>
 
-		<div ng-view class='loading' layout='vertical' layout-fill flex ng-class='{active: state == states.settingUpCrypto}'>
-			<div flex></div>
-			<img class='logo-animation' src='/img/logo.animated.gif' />
-			<div translate>Negotiating secure connection...</div>
-			<div flex></div>
-		</div>
-
 		<div ng-view class='loading' layout='vertical' layout-fill flex ng-class='{active: state == states.aborted}'>
 			<div flex></div>
 			<img class='logo-animation' src='/img/logo.white.icon.png' />
@@ -186,8 +179,8 @@
 			<div flex></div>
 		</div>
 
-		<div id='message-list' ng-view flex class='nano' ng-class='{active: state == states.chat}'>
-			<md-content class='nano-content' ng-class='{"is-connected": isConnected}'>
+		<div id='message-list' ng-view flex class='nano' ng-class='{active: state == states.chat, "is-connected": isConnected}'>
+			<md-content class='nano-content'>
 				<md-list layout='vertical'>
 					<md-item
 						class='message-item unread'
@@ -228,6 +221,13 @@
 					</md-item>
 				</md-list>
 			</md-content>
+
+			<div id='setting-up-crypto' class='loading' layout='vertical' layout-fill flex>
+				<div flex></div>
+				<img class='logo-animation' src='/img/logo.animated.gif' />
+				<div translate>Negotiating secure connection...</div>
+				<div flex></div>
+			</div>
 		</div>
 
 		<div id='blank' ng-view flex ng-class='{active: state == states.blank}'></div>
