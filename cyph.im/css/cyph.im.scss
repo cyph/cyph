@@ -158,6 +158,7 @@ html:not(.mobile) #message-list > md-content {
 
 	#setting-up-crypto {
 		position: absolute;
+		pointer-events: none;
 		width: 100%;
 		height: 100%;
 		top: 0px;
