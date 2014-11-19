@@ -1,8 +1,9 @@
-var BASE_URL				= 'https://api.cyph.com/';
-var authors					= {me: 1, friend: 2, app: 3};
-var isHistoryAvailable		= typeof history != 'undefined';
-var preConnectMessageQueue	= [];
-var channel, isConnected, pongReceived, socket;
+var BASE_URL						= 'https://api.cyph.com/';
+var authors							= {me: 1, friend: 2, app: 3};
+var isHistoryAvailable				= typeof history != 'undefined';
+var preConnectMessageReceiveQueue	= [];
+var preConnectMessageSendQueue		= [];
+var channel, isConnected, isOtrReady, pongReceived, shouldSendQueryMessage, socket;
 
 
 /* Init crypto */
@@ -26,10 +27,23 @@ otrWorker.onmessage	= function (e) {
 
 				markAllAsSent();
 
-				while (preConnectMessageQueue.length > 0) {
-					otr.sendMsg(preConnectMessageQueue.shift());
+				while (preConnectMessageSendQueue.length > 0) {
+					otr.sendMsg(preConnectMessageSendQueue.shift());
 				}
 			}
+			break;
+
+		case 'ready':
+			isOtrReady	= true;
+
+			if (shouldSendQueryMessage) {
+				otr.sendQueryMsg();
+			}
+
+			while (preConnectMessageSendQueue.length > 0) {
+				otr.receiveMsg(preConnectMessageReceiveQueue.shift());
+			}
+
 			break;
 	}
 };
@@ -40,18 +54,28 @@ otrWorker.postMessage({method: 0, message: randomSeed});
 
 var otr	= {
 	sendQueryMsg: function () {
-		otrWorker.postMessage({method: 1});
+		if (isOtrReady) {
+			otrWorker.postMessage({method: 1});
+		}
+		else {
+			shouldSendQueryMessage	= true;
+		}
 	},
 	sendMsg: function (message) {
 		if (isConnected) {
 			otrWorker.postMessage({method: 2, message: message});
 		}
 		else {
-			preConnectMessageQueue.push(message);
+			preConnectMessageSendQueue.push(message);
 		}
 	},
 	receiveMsg: function (message) {
-		otrWorker.postMessage({method: 3, message: message});
+		if (isOtrReady) {
+			otrWorker.postMessage({method: 3, message: message});
+		}
+		else {
+			preConnectMessageReceiveQueue.push(message);
+		}
 	}
 };
 
@@ -262,6 +286,12 @@ function setUpChannel (channelData) {
 				}
 				if (o.Misc == 'connect') {
 					beginChat();
+				}
+				if (o.Misc == 'imtypingyo') {
+					friendIsTyping(true);
+				}
+				if (o.Misc == 'donetyping') {
+					friendIsTyping(false);
 				}
 				if (o.Message) {
 					otr.receiveMsg(o.Message);

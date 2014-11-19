@@ -80,6 +80,8 @@ onmessage	= function (e) {
 				}
 			});
 
+			postMessage({eventName: 'ready'});
+
 			break;
 
 		/* Send query message */
