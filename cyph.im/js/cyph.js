@@ -40,7 +40,7 @@ otrWorker.onmessage	= function (e) {
 				otr.sendQueryMsg();
 			}
 
-			while (preConnectMessageSendQueue.length > 0) {
+			while (preConnectMessageReceiveQueue.length > 0) {
 				otr.receiveMsg(preConnectMessageReceiveQueue.shift());
 			}
 
