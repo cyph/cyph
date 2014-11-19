@@ -36,9 +36,8 @@ angular.
 			none: 0,
 			spinningUp: 1,
 			waitingForFriend: 2,
-			settingUpCrypto: 3,
-			chatBeginMessage: 4,
-			blank: 5,
+			chatBeginMessage: 3,
+			blank: 4,
 			chat: 200,
 			aborted: 400,
 			error: 404

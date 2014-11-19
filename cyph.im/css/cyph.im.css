@@ -100,10 +100,12 @@ md-button input[type='file'] {
 html:not(.mobile) #message-list > md-content {
   padding-right: 10px; }
 
-#message-list > :not(.is-connected) .message-item:not(:first-child) {
-  opacity: 0.5; }
-  #message-list > :not(.is-connected) .message-item:not(:first-child) .message-timestamp .ellipsis-spinner {
+#message-list:not(.is-connected) .message-item:not(:first-child) {
+  opacity: 0.75; }
+  #message-list:not(.is-connected) .message-item:not(:first-child) .message-timestamp .ellipsis-spinner {
     display: inline; }
+#message-list:not(.is-connected) #setting-up-crypto {
+  opacity: 0.25; }
 
 #message-list .message-item {
   -webkit-transition: opacity 1s ease-in-out;
@@ -111,6 +113,17 @@ html:not(.mobile) #message-list > md-content {
   transition: opacity 1s ease-in-out; }
   #message-list .message-item .message-timestamp .ellipsis-spinner {
     display: none; }
+#message-list #setting-up-crypto {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0px;
+  left: 0px;
+  margin-left: 0px;
+  opacity: 0;
+  -webkit-transition: opacity 1s ease-in-out;
+  -moz-transition: opacity 1s ease-in-out;
+  transition: opacity 1s ease-in-out; }
 
 .message-item .message {
   word-wrap: break-word;
