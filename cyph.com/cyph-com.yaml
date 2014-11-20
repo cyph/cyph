@@ -25,5 +25,5 @@ handlers:
   upload: .*
   secure: always
   http_headers:
-  	Cache-Control: public, max-age=0
+    Cache-Control: public, max-age=0
     X-Frame-Options: deny
