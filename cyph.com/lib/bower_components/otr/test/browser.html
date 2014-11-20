@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Test OTR</title>
+  </head>
+  <body></body>
+
+  <script>
+    var start = (new Date()).getTime();
+  </script>
+
+  <!-- Load dependencies -->
+  <script src="../build/dep/salsa20.js"></script>
+  <script src="../build/dep/bigint.js"></script>
+  <script src="../build/dep/crypto.js"></script>
+  <script src="../build/dep/eventemitter.js"></script>
+
+  <!-- Load otr.js or otr.min.js -->
+  <script src="../build/otr.js"></script>
+
+  <!-- Ready to go! -->
+  <script>
+    function append(html) {
+      var p = document.createElement('span');
+      p.innerHTML = html;
+      document.body.appendChild(p);
+    }
+    append('loading scripts / seeding random took <strong>' + ((new Date()).getTime() - start) + 'ms</strong>');
+    var ui = function (msg) { console.log(msg); };
+    var err = function (err) { console.log(err); };
+    var userA = new OTR();
+    userA.on('ui', ui);
+    userA.on('io', function (msg) {
+      userB.receiveMsg(msg);
+    });
+    userA.on('error', err);
+    append('<br />generating OTR object took <strong>' + ((new Date()).getTime() - start) + 'ms</strong>');
+    var userB = new OTR();
+    userB.on('ui', ui);
+    userB.on('io', userA.receiveMsg);
+    userB.on('error', err);
+    start = (new Date()).getTime();
+    userA.sendQueryMsg()
+    userA.on('status', function (state) {
+      if (state === OTR.CONST.STATUS_AKE_SUCCESS) {
+        append('<br />ake took <strong>' + ((new Date()).getTime() - start) + 'ms</strong>');
+        append('<br />message state is ' + (userA.msgstate ? 'encrypted' : 'plaintext') + '</strong>');
+      }
+    })
+  </script>
+
+</html>
