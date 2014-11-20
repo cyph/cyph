@@ -1,5 +1,5 @@
 application: cyphme
-module: cyph-com
+module: cyph-io
 version: prod
 runtime: python27
 api_version: 1
@@ -25,4 +25,5 @@ handlers:
   upload: .*
   secure: always
   http_headers:
+    Cache-Control: public, max-age=0
     X-Frame-Options: deny
