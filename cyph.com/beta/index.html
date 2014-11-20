@@ -1,10 +1,172 @@
-1. From your phone or computer, open <a href='https://www.cyph.im/new'>cyph.im/new</a>
-<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Alternatively, for the Klingon version, open <a href='https://www.cyph.im/tlh/new'>cyph.im/tlh/new</a>.
-<br /><br />
-2. Send link to friend
-<br /><br />
-3. Discuss secrets
+<!DOCTYPE html>
+<html class='no-js' ng-app='Cyph' ng-controller='CyphController'>
+	<head>
+		<meta charset='utf-8' />
+		<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1' />
 
-<script src='//api.cyph.com/analytics.js'></script>
+		<title translate>Cyph - Privacy starts here.</title>
+		<meta translate name='description' content='Simple, frictionless private conversation with anyone at any time.' />
+
+		<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
+
+		<meta name='apple-mobile-web-app-capable' content='yes' />
+		<meta name='mobile-web-app-capable' content='yes' />
+
+		<link rel='apple-touch-icon' sizes='57x57' href='/img/favicon/apple-touch-icon-57x57.png' />
+		<link rel='apple-touch-icon' sizes='114x114' href='/img/favicon/apple-touch-icon-114x114.png' />
+		<link rel='apple-touch-icon' sizes='72x72' href='/img/favicon/apple-touch-icon-72x72.png' />
+		<link rel='apple-touch-icon' sizes='144x144' href='/img/favicon/apple-touch-icon-144x144.png' />
+		<link rel='apple-touch-icon' sizes='60x60' href='/img/favicon/apple-touch-icon-60x60.png' />
+		<link rel='apple-touch-icon' sizes='120x120' href='/img/favicon/apple-touch-icon-120x120.png' />
+		<link rel='apple-touch-icon' sizes='76x76' href='/img/favicon/apple-touch-icon-76x76.png' />
+		<link rel='apple-touch-icon' sizes='152x152' href='/img/favicon/apple-touch-icon-152x152.png' />
+		<link rel='apple-touch-icon' sizes='180x180' href='/img/favicon/apple-touch-icon-180x180.png' />
+		<link rel='icon' type='image/png' href='/img/favicon/favicon-192x192.png' sizes='192x192' />
+		<link rel='icon' type='image/png' href='/img/favicon/favicon-160x160.png' sizes='160x160' />
+		<link rel='icon' type='image/png' href='/img/favicon/favicon-96x96.png' sizes='96x96' />
+		<link rel='icon' type='image/png' href='/img/favicon/favicon-16x16.png' sizes='16x16' />
+		<link rel='icon' type='image/png' href='/img/favicon/favicon-32x32.png' sizes='32x32' />
+		<meta name='msapplication-TileColor' content='#8b62d9' />
+		<meta name='msapplication-TileImage' content='/img/favicon/mstile-144x144.png' />
+
+		<link rel='stylesheet' href='/css/preload.css' />
+	</head>
+	<body>
+		<section id='main' layout='vertical' class='nano'><div class='nano-content'>
+
+		<!-- <md-sidenav component-id='menu' class='md-sidenav-right'>
+			<md-content class='md-content-padding'>
+				<div>
+					<md-button
+						translate
+						aria-label='About'
+						ng-click='baseButtonClick()'
+						href='//www.reddit.com/wiki/commenting/.compact#wiki_posting'
+					>
+						About
+					</md-button>
+				</div>
+				<div>
+					<md-button
+						translate
+						aria-label='FAQ'
+						ng-click='baseButtonClick()'
+						href='//www.reddit.com/wiki/commenting/.compact#wiki_posting'
+					>
+						FAQ
+					</md-button>
+				</div>
+				<div>
+					<md-button
+						translate
+						aria-label='Blog'
+						ng-click='baseButtonClick()'
+						href='//www.reddit.com/wiki/commenting/.compact#wiki_posting'
+					>
+						Blog
+					</md-button>
+				</div>
+			</md-content>
+		</md-sidenav> -->
+
+		<a id='logo' href='/'>
+			<img src='/img/logo.white.horizontal.header.png' />
+		</a>
+
+		<img id='bouncing-down-arrow' class='animated' ng-click='scrollDown()' src='/img/icons/downarrow.png' />
+
+
+		<section>
+			<md-button id='new-cyph' translate href='//cyph.im/new' aria-label='Start new cyph'>Start new cyph</md-button>
+			<div id='new-cyph-shadow'></div>
+		</section>
+
+		<md-toolbar id='main-toolbar'>
+			<div class='md-toolbar-tools'></div>
+		</md-toolbar>
+
+		<section id='hero-section'>
+			<div id='hero-text' class='animated' translate>Privacy starts here.</div>
+			<div style='padding: 200px'>
+				<p>
+					End-to-end encryption is hard, but it shouldn’t be. We believe that everyone deserves privacy, not only security experts.
+				</p>
+				<p>
+					Cyph is a next-generation messenger app that delivers cryptography to the masses, making privacy the new status quo.
+				</p>
+				<p>
+					It was founded by two former SpaceX engineers and childhood friends to meet their own high standards of what chat should be: completely secure and delightfully dope.
+				</p>
+				<p>
+					With Cyph, never again will you need to ask someone else to install or configure or sign up for anything, when all you need is a one-off private discussion. Just one click and you’re secure.
+				</p>
+				<p>
+					Officially launching on November 24.
+				</p>
+			</div>
+		</section>
+
+		<footer id='footer'>
+			<section></section>
+			<div>
+				&copy; Cyph 2014
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&bull;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<a target='_blank' href='//twitter.com/cyph'>@cyph</a>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&bull;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<a href='mailto:hello@cyph.com'>hello@cyph.com</a>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&bull;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<a target='_self' href='tel:+19312974462' title='+1(931) 297 4462'>+1(931) CYPH INC</a>
+			</div>
+		</footer>
+
+
+		</div></section>
+
+
+
+		<div id='background-video'>
+			<video autoplay loop><source src='/video/background.mp4' type='video/mp4'></video>
+		</div>
+
+		<!--
+			<div id='pre-load'>
+				<div class='double-bounce1'></div>
+				<div class='double-bounce2'></div>
+			</div>
+		-->
+
+
+
+		<link rel='stylesheet' href='/lib/bower_components/angular-material/angular-material.css' />
+		<link rel='stylesheet' href='/lib/bower_components/nanoscroller/bin/css/nanoscroller.css' />
+		<link rel='stylesheet' href='/lib/bower_components/animate.css/animate.min.css' />
+
+		<link rel='stylesheet' href='/css/cyph.base.css' />
+		<link rel='stylesheet' href='/css/cyph.com.css' />
+
+
+		<script src='/lib/bower_components/jquery/dist/jquery.min.js'></script>
+
+		<script src='/js/errorlog.js'></script>
+
+		<script src='/lib/bower_components/nanoscroller/bin/javascripts/jquery.nanoscroller.min.js'></script>
+		<script src='/lib/bower_components/angular/angular.min.js'></script>
+		<script src='/lib/bower_components/angular-aria/angular-aria.js'></script>
+		<script src='/lib/bower_components/angular-animate/angular-animate.js'></script>
+		<script src='/lib/bower_components/hammerjs/hammer.js'></script>
+		<script src='/lib/bower_components/angular-material/angular-material.js'></script>
+
+		<script src='/js/ui.js'></script>
+
+		<script>
+			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+			})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+			ga('create', 'UA-56220601-1', 'auto');
+			ga('send', 'pageview');
+		</script>
+
+	</body>
+</html>

@@ -1,0 +1,185 @@
+@import 'bourbon/bourbon';
+@import 'fonts.css';
+
+
+* {
+	-webkit-font-smoothing: antialiased !important;
+	-moz-osx-font-smoothing: grayscale !important;
+	text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.004) !important;
+}
+
+html, body, #main, md-sidenav {
+	background-color: #8b62d9 !important;
+}
+
+#main, .md-button-inner {
+	color: #f1f1f1 !important;
+}
+
+
+md-sidenav md-button {
+	width: 100%;
+
+	* {
+		text-align: left;
+	}
+}
+
+
+#footer {
+	margin-top: 10px;
+	position: relative;
+	text-align: center;
+	font-size: 15px;
+	padding: 15px 0px 5px 0px;
+}
+
+
+md-toolbar {
+	background-color: #7d4fd3;
+	height: 40px !important;
+	min-height: 40px !important;
+	box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75);
+
+	img {
+		height: 25px !important;
+		vertical-align: middle;
+	}
+}
+html:not(.mobile) md-toolbar {
+	box-shadow: 0px 5px 5px -5px rgba(0, 0, 0, 0.75);
+}
+#mobile-toolbar {
+	position: fixed;
+	top: 0px;
+}
+html.mobile #main {
+	padding-top: 40px;
+}
+
+btf-markdown, [btf-markdown] {
+	> :first-child {
+		display: inline;
+	}
+
+	> :not(:first-child) {
+		margin: 0px;
+	}
+}
+html:not(.mobile) {
+	btf-markdown, [btf-markdown] {
+		> :not(:first-child) {
+			margin-left: 25px;
+		}
+	}
+}
+
+blockquote {
+	border-left: 2px solid !important;
+	padding-left: 10px;
+	display: block;
+}
+
+:not(textarea):not(md-text-float):not(md-input-group):not(input) {
+	border: 0px !important;
+}
+
+a {
+	color: inherit;
+}
+#footer a:not(:hover) {
+	text-decoration: none;
+}
+
+textarea {
+	background-color: #f1f1f1;
+}
+
+
+#main.curtain {
+	height: 10%;
+	@include transform(translateY(-90%));
+	@include transition(transform 2s cubic-bezier(1, 0, 0, 1), height 2s cubic-bezier(1, 0, 0, 1));
+}
+#main:not(.curtain) {
+	@include transition(transform 2s cubic-bezier(1, 0, 0, 1), height 2s cubic-bezier(1, 0, 0, 1));
+}
+#main {
+	position: relative;
+	z-index: 2;
+}
+
+
+
+[ng-view]:not(.active) {
+	opacity: 0;
+	pointer-events: none;
+	position: fixed;
+}
+[ng-view].active {
+	position: relative;
+	@include transition(opacity 0.75s linear);
+}
+
+
+
+/* nanoScroller styling */
+
+.nano {
+	.nano-pane {
+		background-color: transparent;
+	}
+}
+
+
+/* Mobile and desktop classes */
+
+html:not(.mobile) {
+	.mobile-only  {
+		display: none !important;
+	}
+
+	* {
+		outline: none !important;
+	}
+}
+
+html.mobile {
+	.desktop-only  {
+		display: none !important;
+	}
+}
+
+
+/* Lightbox */
+
+.mfp-wrap, .mfp-wrap * {
+	overflow: hidden !important;
+}
+.mfp-figure {
+	figure {
+		box-shadow: 0px 0px 15px black;
+
+		img {
+			max-height: 80vh !important;
+			padding: 0px !important;
+		}
+	}
+}
+.mfp-figure:after {
+	background: none !important;
+	box-shadow: none !important;
+}
+html.mobile .mfp-content {
+	pointer-events: none !important;
+}
+
+
+/* Why is this line missing from Angular Material's bower package? */
+
+md-backdrop {
+	background-color: rgba(0, 0, 0, 0.3);
+}
+md-sidenav {
+	z-index: 7;
+}
