@@ -15,8 +15,8 @@ section#main {
   height: 101%;
   background-color: black; }
   #background-video > video {
-    width: 100%;
-    min-height: 100%; }
+    min-height: 100%;
+    min-width: 100%; }
 
 :not(.md-toolbar-tools) > md-button {
   font-size: 14px;
@@ -80,8 +80,11 @@ md-button.focus, md-button:hover {
 #logo {
   top: 15px;
   left: 30px;
-  height: 35px;
-  width: auto; }
+  height: 35px; }
+  #logo > img {
+    height: auto !important;
+    max-height: 100%;
+    max-width: calc(50vh - 185px); }
 
 #bouncing-down-arrow {
   width: auto;
