@@ -620,6 +620,7 @@ angular.
 
 
 		/* OS X-style scrollbars */
+
 		scrolling	= {
 			isNanoScroller: !isMobile && navigator.userAgent.toLowerCase().indexOf('mac os x') < 0,
 			update: function () {
@@ -635,6 +636,7 @@ angular.
 
 
 		/* For notify and mobile fullscreen */
+
 		Visibility.change(function (e, state) {
 			if (state != 'hidden') {
 				disableNotify	= false;

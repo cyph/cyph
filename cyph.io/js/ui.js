@@ -79,13 +79,14 @@ angular.
 
 				setTimeout(function () {
 					$heroText.removeClass('bounceOutRight').addClass('bounceInDown');
-				}, 1000);
+				}, 250);
 			}, 250);
 		};
 
 
 
 		/* OS X-style scrollbars */
+
 		scrolling	= {
 			isNanoScroller: true, // !isMobile && navigator.userAgent.indexOf('mac os x') < 0,
 			update: function () {
@@ -141,7 +142,24 @@ angular.
 		}, 2500);
 
 
-		
+
+		/* Background video dimensions */
+
+		var $video	= $('#background-video > video');
+		var $window	= $(window);
+
+		function adjustVideoMargins () {
+			$video.css({
+				'margin-left': 0 - ($video.width() - $window.width()) / 2,
+				'margin-top': 0 - ($video.height() - $window.height()) / 2
+			});
+		}
+
+		setTimeout(adjustVideoMargins, 1500);
+		$window.on('resize', adjustVideoMargins);
+
+
+
 		/* Do the move lad */
 
 		scrolling.update();
