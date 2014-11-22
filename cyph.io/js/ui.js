@@ -28,7 +28,7 @@ angular.
 
 
 
-		isMobile	= (function () {
+		var isMobile	= (function () {
 			try {
 				document.createEvent('TouchEvent');
 				return true;
@@ -38,13 +38,15 @@ angular.
 			}
 		}());
 
+		var platformString	= isMobile ? 'mobile' : 'desktop';
+
 		if (isMobile) {
 			$html.addClass('mobile');
 
-			$video.find(':not(img)').remove();
+			$video.children(':not(img)').remove();
 		}
 		else {
-			$video.find('img').remove();
+			$video.children('img').remove();
 		}
 
 		$video	= $video.children(':first-child');
@@ -200,6 +202,15 @@ angular.
 
 		$(adjustVideoMargins);
 		$window.on('resize', adjustVideoMargins);
+
+
+
+		$('.' + platformString + '-only [deferred-src], [deferred-src].' + platformString + '-only').
+			each(function () {
+				var $this	= $(this);
+				$this.attr('src', $this.attr('deferred-src'));
+			})
+		;
 
 
 
