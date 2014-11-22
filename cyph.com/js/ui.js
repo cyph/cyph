@@ -2,12 +2,13 @@ angular.
 	module('Cyph', ['ngMaterial']).
 	controller('CyphController', ['$scope', '$mdSidenav', '$mdToast', function ($scope, $mdSidenav, $mdToast) {
 		var $window				= $(window);
+		var $html				= $('html');
 		var $body				= $('#main > :first-child');
 		var $heroText			= $('#hero-text');
 		var $newCyph			= $('#new-cyph');
 		var $newCyphShadow		= $('#new-cyph-shadow');
 		var $bouncingDownArrow	= $('#bouncing-down-arrow');
-		var $video				= $('#background-video > video');
+		var $video				= $('#background-video');
 		var $fixedHeaderStuff	= $newCyph.add('#main-toolbar').add($bouncingDownArrow);
 		var fixedHeaderClass	= 'fixed-header';
 
@@ -36,6 +37,18 @@ angular.
 				return false;
 			}
 		}());
+
+		if (isMobile) {
+			$html.addClass('mobile');
+
+			$video.find(':not(img)').remove();
+		}
+		else {
+			$video.find('img').remove();
+		}
+
+		$video	= $video.children();
+
 
 
 		$.fn.tap	= function (callback, onOrOff, once) {
@@ -146,15 +159,34 @@ angular.
 
 		/* Background video dimensions */
 
+		var videoAspectRatio	= 16 / 9;
+
 		function adjustVideoMargins () {
-			$video.css({
-				'margin-left': 0 - ($video.width() - $window.width()) / 2,
-				'margin-top': 0 - ($video.height() - $window.height()) / 2
-			});
+			var windowAspectRatio	= window.innerWidth / window.innerHeight;
+
+			if (windowAspectRatio > videoAspectRatio) {
+				var height	= $video.width() / videoAspectRatio;
+
+				$video.css({
+					'height': height,
+					'width': 0,
+					'margin-top': 0 - ((height - window.innerHeight) / 2),
+					'margin-left': 0
+				});
+			}
+			else if (windowAspectRatio < videoAspectRatio) {
+				var width	= videoAspectRatio * $video.height();
+
+				$video.css({
+					'height': 0,
+					'width': width,
+					'margin-top': 0,
+					'margin-left': 0 - ((width - window.innerWidth) / 2)
+				});
+			}
 		}
 
-		$video[0].onplay	= adjustVideoMargins;
-		setTimeout(adjustVideoMargins, 5000);
+		$(adjustVideoMargins);
 		$window.on('resize', adjustVideoMargins);
 
 
