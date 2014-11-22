@@ -153,7 +153,8 @@ angular.
 			});
 		}
 
-		setTimeout(adjustVideoMargins, 1500);
+		$video[0].onplay	= adjustVideoMargins;
+		setTimeout(adjustVideoMargins, 5000);
 		$window.on('resize', adjustVideoMargins);
 
 
