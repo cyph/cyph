@@ -73,7 +73,7 @@ md-button input[type='file'] {
   top: 10%;
   right: 20px;
   opacity: 0.75;
-  z-index: 5;
+  z-index: 3;
   width: 38px;
   height: 38px; }
   #send-button *, #insert-photo-mobile * {
@@ -105,7 +105,7 @@ html:not(.mobile) #message-list > md-content {
   #message-list:not(.is-connected) .message-item:not(:first-child) .message-timestamp .message-pending {
     display: inline; }
 #message-list:not(.is-connected) #setting-up-crypto {
-  opacity: 0.25; }
+  opacity: 0.075; }
 
 #message-list .message-item {
   -webkit-transition: opacity 1s ease-in-out;
@@ -177,7 +177,7 @@ html:not(.mobile) .message-item {
     max-width: 85%;
     padding-bottom: 5px; }
   html:not(.mobile) .message-item img {
-    margin-left: 20vh; }
+    margin-left: 10vw; }
   html:not(.mobile) .message-item .message-timestamp {
     text-align: right; }
 
@@ -288,17 +288,21 @@ html.mobile .message-item.author-app {
     margin-bottom: 6px;
     box-shadow: 0px 0px 2px #7239dd; }
 
+#mobile-toolbar {
+  z-index: 6; }
+
 #timer {
   font-family: 'Ubuntu Mono', monospace;
   padding-left: 10px; }
 
 .loading > .logo-animation {
-  margin-left: auto;
-  margin-right: auto;
-  height: 200px;
   height: 33vh;
-  display: block;
   margin-bottom: 10px; }
+  .loading > .logo-animation > img {
+    height: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    display: block; }
 .loading > *:not(.logo-animation) {
   letter-spacing: 1px;
   text-align: center;
@@ -329,7 +333,7 @@ html:not(.mobile) .loading {
   text-align: center;
   margin-top: -20px;
   cursor: pointer;
-  z-index: 6; }
+  z-index: 4; }
 
 #new-messages:after {
   width: 100%; }
@@ -398,11 +402,8 @@ html:not(.mobile) #error {
   #chat-begin-message * {
     font-weight: bold; }
 
-html:not(.mobile) #chat-begin-message {
-  font-size: 25vh; }
-
-html.mobile #chat-begin-message {
-  font-size: 12vh; }
+#chat-begin-message {
+  font-size: 14vw; }
 
 /*** SpinKit animation: http://tobiasahlin.com/spinkit/ ***/
 .ellipsis-spinner {

@@ -66,7 +66,7 @@
 				<h1 translate class='md-toolbar-tools'>Settings</h1>
 			</md-toolbar>
 			<md-content class='md-content-padding'>
-				<div>
+				<div ng-hide='true'>
 					<md-button translate aria-label='Verify Identity' ng-click='twoFactor()'>Verify Identity</md-button>
 				</div>
 				<div>
@@ -93,7 +93,7 @@
 				<img deferred-src='/img/logo.white.vertical.png' />
 			</a>
 			<section ng-show='state == states.chat'>
-				<md-button translate aria-label='Verify Identity' ng-click='twoFactor()'>Verify Identity</md-button>
+				<md-button translate aria-label='Verify Identity' ng-click='twoFactor()' ng-hide='true'>Verify Identity</md-button>
 				<md-button translate aria-label='Show Cyphertext' ng-click='showCyphertext()'>Show Cyphertext</md-button>
 				<md-button
 					translate
@@ -109,14 +109,14 @@
 
 		<div ng-view class='loading' layout='vertical' layout-fill flex ng-class='{active: state == states.spinningUp}'>
 			<div flex></div>
-			<img class='logo-animation' src='/img/logo.animated.gif' />
+			<div class='logo-animation'><img src='/img/logo.animated.gif' /></div>
 			<div translate>Now spinning up your cyph room...</div>
 			<div flex></div>
 		</div>
 
 		<div ng-view class='loading' layout='vertical' layout-fill flex ng-class='{active: state == states.waitingForFriend}'>
 			<div flex></div>
-			<img class='logo-animation' src='/img/logo.animated.gif' />
+			<div class='logo-animation'><img src='/img/logo.animated.gif' /></div>
 			<div>
 				<div translate>Just have your friend open this link, and we're good to go!</div>
 				<br />
@@ -134,7 +134,7 @@
 
 		<div ng-view class='loading' layout='vertical' layout-fill flex ng-class='{active: state == states.aborted}'>
 			<div flex></div>
-			<img class='logo-animation' src='/img/logo.white.icon.png' />
+			<div class='logo-animation'><img src='/img/logo.white.icon.png' /></div>
 			<div>
 				<div translate>This cyph has been aborted.</div>
 				<br />
@@ -232,7 +232,7 @@
 
 			<div id='setting-up-crypto' class='loading' layout='vertical' layout-fill flex>
 				<div flex></div>
-				<img class='logo-animation' src='/img/logo.animated.gif' />
+				<div class='logo-animation'><img src='/img/logo.animated.gif' /></div>
 				<div translate>Negotiating secure connection...</div>
 				<div flex></div>
 			</div>
@@ -246,6 +246,7 @@
 					translate
 					id='message-box'
 					ng-model='message'
+					ng-change='onMessageChange()'
 					onenterpress='sendMessage()'
 					enterpress-only='desktop'
 					placeholder='Send a secure message...'
@@ -301,15 +302,15 @@
 
 			<div id='footer' class='desktop-only'>
 				&copy; Cyph 2014
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&bull;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				<a href='//twitter.com/cyph'>@cyph</a>
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&bull;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				<a href='mailto:hello@cyph.com'>hello@cyph.com</a>
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&bull;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				<a target='_self' href='tel:+19312974462' title='+1(931) 297 4462'>+1(931) CYPH INC</a>
 				<!-- <a target='_self' href='tel:+18447472974' title='+1 THIS IS CYPH'>+1 THIS IS CYPH</a> -->
 
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&bull;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				<a target='_self' href='bitcoin:1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd'>1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd</a>
 			</div>
 		</footer>

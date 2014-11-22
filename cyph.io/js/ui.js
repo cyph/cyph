@@ -1,12 +1,13 @@
 angular.
 	module('Cyph', ['ngMaterial']).
 	controller('CyphController', ['$scope', '$mdSidenav', '$mdToast', function ($scope, $mdSidenav, $mdToast) {
+		var $window				= $(window);
 		var $body				= $('#main > :first-child');
-		var $heroSection		= $('#hero-section');
 		var $heroText			= $('#hero-text');
 		var $newCyph			= $('#new-cyph');
 		var $newCyphShadow		= $('#new-cyph-shadow');
 		var $bouncingDownArrow	= $('#bouncing-down-arrow');
+		var $video				= $('#background-video > video');
 		var $fixedHeaderStuff	= $newCyph.add('#main-toolbar').add($bouncingDownArrow);
 		var fixedHeaderClass	= 'fixed-header';
 
@@ -74,7 +75,7 @@ angular.
 
 			setTimeout(function () {
 				$body.animate({
-					scrollTop: $heroSection[0].scrollHeight
+					scrollTop: $window.height()
 				}, 1000);
 
 				setTimeout(function () {
@@ -144,9 +145,6 @@ angular.
 
 
 		/* Background video dimensions */
-
-		var $video	= $('#background-video > video');
-		var $window	= $(window);
 
 		function adjustVideoMargins () {
 			$video.css({

@@ -23,6 +23,17 @@ var
 angular.
 	module('Cyph', ['ngMaterial', 'ngSanitize', 'btford.markdown', 'timer']).
 	controller('CyphController', ['$scope', '$mdSidenav', '$mdToast', function ($scope, $mdSidenav, $mdToast) {
+		var $window				= $(window);
+		var $html				= $('html');
+		var $everything			= $('*');
+		var $messageBox			= $('#message-box');
+		var $messageList		= $('#message-list, #message-list > md-content');
+		var $timer				= $('#timer');
+		var $fileUploadButtons	= $('md-button input[type="file"]');
+		var $buttons			= $('md-button');
+		var $copyUrl			= $('#copy-url input');
+		var $cyphertext			= $('#cyphertext.curtain, #cyphertext.curtain > md-content');
+
 		$scope.language			= language;
 		$scope.isAlive			= true;
 		$scope.isConnected		= false;
@@ -140,7 +151,7 @@ angular.
 
 			notify(connectedNotification);
 			changeState($scope.states.chatBeginMessage);
-			$('#timer')[0].stop();
+			$timer[0].stop();
 
 			setTimeout(function () {
 				if ($scope.state == $scope.states.aborted) {
@@ -152,14 +163,14 @@ angular.
 				changeState($scope.states.chat);
 
 				/* Fix file upload buttons */
-				$('md-button input[type="file"]').each(function () {
+				$fileUploadButtons.each(function () {
 					var $this	= $(this);
 					$this.parent().parent().append($this.detach());
 				});
 
 				/* Adjust font size for translations */
 				if (!isMobile) {
-					$('md-button').each(function () {
+					$buttons.each(function () {
 						var $this	= $(this);
 						var $clone	= $this
 							.clone()
@@ -191,8 +202,6 @@ angular.
 				document.location.pathname
 			;
 
-			var $copyUrl	= $('#copy-url input');
-
 			var copyUrlInterval	= setInterval(function () {
 				if ($scope.state == $scope.states.waitingForFriend) {
 					apply(function () {
@@ -206,7 +215,7 @@ angular.
 				}
 			}, 250);
 
-			$('#timer')[0].start();
+			$timer[0].start();
 		};
 
 
@@ -219,15 +228,17 @@ angular.
 
 		var disconnectedNotification	= getString('disconnectedNotification');
 
-		closeChat = $scope.closeChat = function () {
+		closeChat = $scope.closeChat = function (callback) {
 			if ($scope.state == $scope.states.aborted) {
 				return;
 			}
 
 			if ($scope.isAlive) {
+				friendIsTyping(false);
+
 				if ($scope.isConnected) {
 					addMessageToChat(disconnectedNotification, authors.app);
-					sendChannelData({Destroy: true});
+					sendChannelData({Destroy: true}, {callback: callback});
 
 					apply(function () {
 						$scope.isAlive	= false;
@@ -336,11 +347,13 @@ angular.
 				apply(function () {
 					$scope.message	= '';
 				});
+
+				$scope.onMessageChange();
 			}
 
 			if (message) {
 				if (isMobile) {
-					$('#message-box').focus();
+					$messageBox.focus();
 				}
 				else {
 					$scope.scrollDown();
@@ -361,9 +374,21 @@ angular.
 
 
 		$scope.disconnect	= function () {
-			socket.close();
+			socketClose();
 
 			$scope.baseButtonClick();
+		};
+
+
+		var imtypingyo	= false;
+
+		$scope.onMessageChange	= function () {
+			var newImtypingYo	= $scope.message != '';
+
+			if (imtypingyo != newImtypingYo) {
+				imtypingyo	= newImtypingYo;
+				sendChannelData({Misc: imtypingyo ? 'imtypingyo' : 'donetyping'});
+			}
 		};
 
 
@@ -372,11 +397,9 @@ angular.
 		};
 
 
-		var $messageList	= $('#message-list, #message-list > md-content');
-
 		$scope.scrollDown	= function (shouldScrollCyphertext) {
 			(shouldScrollCyphertext ?
-				$('#cyphertext.curtain, #cyphertext.curtain > md-content') :
+				$cyphertext :
 				$messageList
 			).each(function () {
 				var $this	= $(this);
@@ -389,7 +412,6 @@ angular.
 
 		var showCyphertextLock	= false;
 		var curtainClass		= 'curtain';
-		var $everything			= $('*');
 		var cypherToastPosition	= 'top right';
 		var cypherToast1		= getString('cypherToast1');
 		var cypherToast2		= getString('cypherToast2');
@@ -584,9 +606,9 @@ angular.
 		var setUpFullScreenEvent;
 
 		if (isMobile) {
-			$('html').addClass('mobile');
+			$html.addClass('mobile');
 
-			$('#message-box').focus(function () {
+			$messageBox.focus(function () {
 				$scope.scrollDown();
 			});
 
@@ -649,7 +671,7 @@ angular.
 			}
 		});
 
-		$('md-button').tap(function () {
+		$buttons.tap(function () {
 			setTimeout(function () {
 				$('md-button, md-button *').blur();
 			}, 500);
@@ -720,17 +742,6 @@ angular.
 			attributes: false,
 			characterData: false,
 			subtree: true
-		});
-
-
-		var imtypingyo	= false;
-		$('#message-box').change(function () {
-			var newImtypingYo	= $(this).val() != '';
-
-			if (imtypingyo != newImtypingYo) {
-				imtypingyo	= newImtypingYo;
-				sendChannelData({Misc: imtypingyo ? 'imtypingyo' : 'donetyping'});
-			}
 		});
 
 		
