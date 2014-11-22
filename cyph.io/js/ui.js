@@ -47,7 +47,7 @@ angular.
 			$video.find('img').remove();
 		}
 
-		$video	= $video.children();
+		$video	= $video.children(':first-child');
 
 
 
@@ -159,12 +159,24 @@ angular.
 
 		/* Background video dimensions */
 
-		var videoAspectRatio	= 16 / 9;
+		var videoAspectRatio		= 16 / 9;
+
+		var logoHidePaddingWidth	= 150;
+		var logoHidePaddingHeight	= (logoHidePaddingWidth / videoAspectRatio);
 
 		function adjustVideoMargins () {
 			var windowAspectRatio	= window.innerWidth / window.innerHeight;
 
-			if (windowAspectRatio > videoAspectRatio) {
+			/* Zoom in to hide YouTube logo when potentially visible; else, just centre and scale */
+			if (!isMobile && 0.2 > Math.abs(videoAspectRatio - windowAspectRatio)) {
+				$video.css({
+					'height': window.innerHeight + logoHidePaddingHeight,
+					'width': window.innerWidth + logoHidePaddingWidth,
+					'margin-top': 0 - (logoHidePaddingHeight / 2),
+					'margin-left': 0 - (logoHidePaddingWidth / 2)
+				});
+			}
+			else if (windowAspectRatio > videoAspectRatio) {
 				var height	= $video.width() / videoAspectRatio;
 
 				$video.css({
