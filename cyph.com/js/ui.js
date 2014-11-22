@@ -1,12 +1,13 @@
 angular.
 	module('Cyph', ['ngMaterial']).
 	controller('CyphController', ['$scope', '$mdSidenav', '$mdToast', function ($scope, $mdSidenav, $mdToast) {
+		var $window				= $(window);
 		var $body				= $('#main > :first-child');
-		var $heroSection		= $('#hero-section');
 		var $heroText			= $('#hero-text');
 		var $newCyph			= $('#new-cyph');
 		var $newCyphShadow		= $('#new-cyph-shadow');
 		var $bouncingDownArrow	= $('#bouncing-down-arrow');
+		var $video				= $('#background-video > video');
 		var $fixedHeaderStuff	= $newCyph.add('#main-toolbar').add($bouncingDownArrow);
 		var fixedHeaderClass	= 'fixed-header';
 
@@ -74,18 +75,19 @@ angular.
 
 			setTimeout(function () {
 				$body.animate({
-					scrollTop: $heroSection[0].scrollHeight
+					scrollTop: $window.height()
 				}, 1000);
 
 				setTimeout(function () {
 					$heroText.removeClass('bounceOutRight').addClass('bounceInDown');
-				}, 1000);
+				}, 250);
 			}, 250);
 		};
 
 
 
 		/* OS X-style scrollbars */
+
 		scrolling	= {
 			isNanoScroller: true, // !isMobile && navigator.userAgent.indexOf('mac os x') < 0,
 			update: function () {
@@ -141,7 +143,21 @@ angular.
 		}, 2500);
 
 
-		
+
+		/* Background video dimensions */
+
+		function adjustVideoMargins () {
+			$video.css({
+				'margin-left': 0 - ($video.width() - $window.width()) / 2,
+				'margin-top': 0 - ($video.height() - $window.height()) / 2
+			});
+		}
+
+		setTimeout(adjustVideoMargins, 1500);
+		$window.on('resize', adjustVideoMargins);
+
+
+
 		/* Do the move lad */
 
 		scrolling.update();

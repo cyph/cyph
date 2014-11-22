@@ -105,7 +105,7 @@ md-button input[type='file'] {
 	top: 10%;
 	right: 20px;
 	opacity: 0.75;
-	z-index: 5;
+	z-index: 3;
 	width: 38px;
 	height: 38px;
 
@@ -143,7 +143,7 @@ html:not(.mobile) #message-list > md-content {
 	}
 
 	#setting-up-crypto {
-		opacity: 0.25;
+		opacity: 0.075;
 	}
 }
 
@@ -235,7 +235,7 @@ html:not(.mobile) {
 		}
 
 		img {
-			margin-left: 20vh;
+			margin-left: 10vw;
 		}
 
 		.message-timestamp {
@@ -383,6 +383,11 @@ html.mobile {
 }
 
 
+#mobile-toolbar {
+	z-index: 6;
+}
+
+
 #timer {
 	font-family: 'Ubuntu Mono', monospace;
 	padding-left: 10px;
@@ -392,12 +397,15 @@ html.mobile {
 
 .loading {
 	> .logo-animation {
-		margin-left: auto;
-		margin-right: auto;
-		height: 200px;
 		height: 33vh;
-		display: block;
 		margin-bottom: 10px;
+
+		> img {
+			height: 100%;
+			margin-left: auto;
+			margin-right: auto;
+			display: block;
+		}
 	}
 
 	> *:not(.logo-animation) {
@@ -438,7 +446,7 @@ html:not(.mobile) {
 	text-align: center;
 	margin-top: -20px;
 	cursor: pointer;
-	z-index: 6;
+	z-index: 4;
 }
 #new-messages:after {
 	width: 100%;
@@ -537,15 +545,8 @@ html:not(.mobile) #error {
 		font-weight: bold;
 	}
 }
-html:not(.mobile) {
-	#chat-begin-message {
-		font-size: 25vh;
-	}
-}
-html.mobile {
-	#chat-begin-message {
-		font-size: 12vh;
-	}
+#chat-begin-message {
+	font-size: 14vw;
 }
 
 

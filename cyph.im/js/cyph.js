@@ -93,7 +93,7 @@ function beginChat () {
 
 		$(window).unload(function () {
 			sendChannelData({Destroy: true}, {async: false});
-			socket.close();
+			socketClose();
 		});
 
 		/* Intermittent check to verify chat is still alive */
@@ -105,7 +105,7 @@ function beginChat () {
 			else {
 				clearInterval(pingInterval);
 				clearInterval(pongInterval);
-				socket.close();
+				socketClose();
 			}
 		}, 60000);
 	});
@@ -294,16 +294,22 @@ function setUpChannel (channelData) {
 					friendIsTyping(false);
 				}
 				if (o.Message) {
-					friendIsTyping(false);
 					otr.receiveMsg(o.Message);
 					logCyphertext(o.Message, authors.friend);
 				}
 				if (o.Destroy) {
-					socket.close();
+					socketClose();
 				}
 			}
 		},
 		onerror: function () {},
 		onclose: closeChat
+	});
+}
+
+
+function socketClose () {
+	closeChat(function () {
+		socket.close();
 	});
 }
