@@ -14,7 +14,7 @@ section#main {
   width: 101%;
   height: 101%;
   background-color: black; }
-  #background-video > video {
+  #background-video > * {
     min-height: 100%;
     min-width: 100%; }
 

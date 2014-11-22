@@ -1,8 +1,0 @@
-{
-  "name": "angular-aria",
-  "version": "1.3.0-rc.4",
-  "main": "./angular-aria.js",
-  "dependencies": {
-    "angular": "1.3.0-rc.4"
-  }
-}
