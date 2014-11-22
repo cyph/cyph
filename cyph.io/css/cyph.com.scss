@@ -6,7 +6,7 @@ section#main {
 }
 
 #main section {
-	min-height: 100vh;
+	min-height: calc(100vh + 50px);
 	padding: 50px;
 	position: relative;
 }
