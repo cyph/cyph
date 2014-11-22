@@ -1,0 +1,22 @@
+application: cyphme
+module: cyph-io
+version: prod
+runtime: python27
+api_version: 1
+threadsafe: true
+
+handlers:
+- url: /
+  static_files: index.html
+  upload: index.html
+  secure: always
+  http_headers:
+    X-Frame-Options: deny
+
+- url: /(.*)
+  static_files: \1
+  upload: .*
+  secure: always
+  http_headers:
+    Cache-Control: public, max-age=0
+    X-Frame-Options: deny
