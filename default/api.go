@@ -166,7 +166,9 @@ func sendChannelMessage(c appengine.Context, channelId string, imData ImData) {
 	item := memcache.Item{Key: imData.Id, Value: imDataBytes, Expiration: config.MessageSendTimeout * time.Minute}
 	memcache.Set(c, &item)
 
-	memcache.Increment(c, "totalMessages", 1, 0)
+	if imData.Message != "" {
+		memcache.Increment(c, "totalMessages", 1, 0)
+	}
 }
 
 /*** Tasks ***/
