@@ -7,6 +7,7 @@ import (
 	"appengine/memcache"
 	"encoding/json"
 	"net/http"
+	"sharded_counter"
 	"strconv"
 	"time"
 )
@@ -21,6 +22,7 @@ func init() {
 	handleFuncs("/errors", Handlers{methods.POST: logError})
 	handleFuncs("/messages/{id}", Handlers{methods.PUT: channelAck})
 	handleFuncs("/_ah/channel/disconnected/", Handlers{methods.POST: channelClose})
+	handleFuncs("/stats", Handlers{methods.GET: getStats})
 }
 
 /*** Handlers ***/
@@ -49,6 +51,13 @@ func channelReceive(h HandlerArgs) (interface{}, int) {
 	return nil, http.StatusOK
 }
 
+func getStats(h HandlerArgs) (interface{}, int) {
+	return Stats{
+		TotalCyphs:    sharded_counter.Count(h.Context, "totalCyphs"),
+		TotalMessages: sharded_counter.Count(h.Context, "totalMessages"),
+	}, http.StatusOK
+}
+
 func imConnect(h HandlerArgs) (interface{}, int) {
 	idBase := h.Vars["id"]
 	connect := idBase + "-connect"
@@ -66,6 +75,12 @@ func imConnect(h HandlerArgs) (interface{}, int) {
 }
 
 func imCreate(h HandlerArgs) (interface{}, int) {
+	incrementChannel := make(chan int)
+	go func() {
+		sharded_counter.Increment(h.Context, "totalCyphs")
+		incrementChannel <- 0
+	}()
+
 	imId := generateImId()
 	longId := generateLongId()
 
@@ -103,6 +118,7 @@ func imCreate(h HandlerArgs) (interface{}, int) {
 	laterSendChannelMessage.Call(h.Context, longId)
 	laterImTeardown.Call(h.Context, longId, imIdItems[0].Key, imIdItems[1].Key, string(imIdItems[1].Value))
 
+	<-incrementChannel
 	return imId, http.StatusOK
 }
 
@@ -126,6 +142,15 @@ func root(h HandlerArgs) (interface{}, int) {
 /*** Helpers ***/
 
 func sendChannelMessage(c appengine.Context, channelId string, imData ImData) {
+	var incrementCounter <-chan int
+	if imData.Message != "" {
+		incrementChannel = make(chan int)
+		go func() {
+			sharded_counter.Increment(h.Context, "totalMessages")
+			incrementChannel <- 0
+		}()
+	}
+
 	channelIdEnd := len(channelId) - 1
 	id := channelId[:channelIdEnd]
 
@@ -138,6 +163,10 @@ func sendChannelMessage(c appengine.Context, channelId string, imData ImData) {
 
 	item := memcache.Item{Key: imData.Id, Value: imDataBytes, Expiration: config.MessageSendTimeout * time.Minute}
 	memcache.Set(c, &item)
+
+	if incrementChannel != nil {
+		<-incrementChannel
+	}
 }
 
 /*** Tasks ***/
