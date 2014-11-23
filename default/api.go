@@ -55,10 +55,10 @@ func channelReceive(h HandlerArgs) (interface{}, int) {
 }
 
 func getStats(h HandlerArgs) (interface{}, int) {
-	totalCyphs, _ := memcache.Get(h.Context, "totalCyphs")
-	totalMessages, _ := memcache.Get(h.Context, "totalMessages")
+	totalCyphs, _ := memcache.Increment(h.Context, "totalCyphs", 0, 0)
+	totalMessages, _ := memcache.Increment(h.Context, "totalMessages", 0, 0)
 
-	return Stats{TotalCyphs: totalCyphs, TotalMessages: totalMessages, TotalSignups: 0}, http.StatusOK
+	return Stats{TotalCyphs: int64(totalCyphs), TotalMessages: int64(totalMessages), TotalSignups: 0}, http.StatusOK
 }
 
 func imConnect(h HandlerArgs) (interface{}, int) {
@@ -115,7 +115,7 @@ func imCreate(h HandlerArgs) (interface{}, int) {
 	laterSendChannelMessage.Call(h.Context, longId)
 	laterImTeardown.Call(h.Context, longId, imIdItems[0].Key, imIdItems[1].Key, string(imIdItems[1].Value))
 
-	memcache.Increment(c, "totalCyphs", 1, 0)
+	memcache.Increment(h.Context, "totalCyphs", 1, 0)
 
 	return imId, http.StatusOK
 }
@@ -134,11 +134,14 @@ func logError(h HandlerArgs) (interface{}, int) {
 }
 
 func logStats(h HandlerArgs) (interface{}, int) {
-	stats, _ := getStats(h)
+	s, _ := getStats(h)
+	stats := s.(Stats)
 
-	key := datastore.NewKey(h.Context, "Timestamp", "", time.Now().Unix(), nil)
+	key := datastore.NewKey(h.Context, "Stats", "", time.Now().Unix(), nil)
 
-	datastore.Put(h.Context, key, stats)
+	if _, err := datastore.Put(h.Context, key, &stats); err != nil {
+		return err.Error(), http.StatusInternalServerError
+	}
 
 	return nil, http.StatusOK
 }
