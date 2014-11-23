@@ -16,10 +16,11 @@ func init() {
 	laterSendChannelMessage = laterSendChannelMessageBase
 
 	handleFunc("/", root)
-	handleFuncs("/ims", Handlers{methods.POST: imCreate})
-	handleFuncs("/ims/{id}", Handlers{methods.POST: imConnect})
+	handleFuncs("/betasignups", Handlers{methods.PUT: betaSignup})
 	handleFuncs("/channels/{id}", Handlers{methods.POST: channelReceive})
 	handleFuncs("/errors", Handlers{methods.POST: logError})
+	handleFuncs("/ims", Handlers{methods.POST: imCreate})
+	handleFuncs("/ims/{id}", Handlers{methods.POST: imConnect})
 	handleFuncs("/messages/{id}", Handlers{methods.PUT: channelAck})
 	handleFuncs("/_ah/channel/disconnected/", Handlers{methods.POST: channelClose})
 
@@ -29,6 +30,36 @@ func init() {
 }
 
 /*** Handlers ***/
+
+func betaSignup(h HandlerArgs) (interface{}, int) {
+	betaSignup := getBetaSignupFromRequest(h)
+
+	key := datastore.NewKey(h.Context, "BetaSignup", betaSignup.Email, 0, nil)
+
+	existingBetaSignup := new(BetaSignup)
+	if err := datastore.Get(h.Context, key, existingBetaSignup); err == nil {
+		if existingBetaSignup.Country != "" {
+			betaSignup.Country = existingBetaSignup.Country
+		}
+		if existingBetaSignup.Language != "" {
+			betaSignup.Language = existingBetaSignup.Language
+		}
+		if existingBetaSignup.Name != "" {
+			betaSignup.Name = existingBetaSignup.Name
+		}
+		if existingBetaSignup.Time != 0 {
+			betaSignup.Time = existingBetaSignup.Time
+		}
+	} else {
+		memcache.Increment(h.Context, "totalSignups", 1, 0)
+	}
+
+	if _, err := datastore.Put(h.Context, key, &betaSignup); err != nil {
+		return err.Error(), http.StatusInternalServerError
+	}
+
+	return nil, http.StatusOK
+}
 
 func channelAck(h HandlerArgs) (interface{}, int) {
 	memcache.Delete(h.Context, h.Vars["id"])
@@ -57,8 +88,13 @@ func channelReceive(h HandlerArgs) (interface{}, int) {
 func getStats(h HandlerArgs) (interface{}, int) {
 	totalCyphs, _ := memcache.Increment(h.Context, "totalCyphs", 0, 0)
 	totalMessages, _ := memcache.Increment(h.Context, "totalMessages", 0, 0)
+	totalSignups, _ := memcache.Increment(h.Context, "totalSignups", 0, 0)
 
-	return Stats{TotalCyphs: int64(totalCyphs), TotalMessages: int64(totalMessages), TotalSignups: 0}, http.StatusOK
+	return Stats{
+		TotalCyphs:    int64(totalCyphs),
+		TotalMessages: int64(totalMessages),
+		TotalSignups:  int64(totalSignups),
+	}, http.StatusOK
 }
 
 func imConnect(h HandlerArgs) (interface{}, int) {
