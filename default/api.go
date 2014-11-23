@@ -3,11 +3,11 @@ package api
 import (
 	"appengine"
 	"appengine/channel"
+	"appengine/datastore"
 	"appengine/mail"
 	"appengine/memcache"
 	"encoding/json"
 	"net/http"
-	"sharded_counter"
 	"strconv"
 	"time"
 )
@@ -22,7 +22,10 @@ func init() {
 	handleFuncs("/errors", Handlers{methods.POST: logError})
 	handleFuncs("/messages/{id}", Handlers{methods.PUT: channelAck})
 	handleFuncs("/_ah/channel/disconnected/", Handlers{methods.POST: channelClose})
+
+	/* Admin-restricted methods */
 	handleFuncs("/stats", Handlers{methods.GET: getStats})
+	handleFuncs("/tasks/logstats", Handlers{methods.GET: logStats})
 }
 
 /*** Handlers ***/
@@ -52,10 +55,10 @@ func channelReceive(h HandlerArgs) (interface{}, int) {
 }
 
 func getStats(h HandlerArgs) (interface{}, int) {
-	totalCyphs, _ := sharded_counter.Count(h.Context, "totalCyphs")
-	totalMessages, _ := sharded_counter.Count(h.Context, "totalMessages")
+	totalCyphs, _ := memcache.Get(h.Context, "totalCyphs")
+	totalMessages, _ := memcache.Get(h.Context, "totalMessages")
 
-	return Stats{TotalCyphs: totalCyphs, TotalMessages: totalMessages}, http.StatusOK
+	return Stats{TotalCyphs: totalCyphs, TotalMessages: totalMessages, TotalSignups: 0}, http.StatusOK
 }
 
 func imConnect(h HandlerArgs) (interface{}, int) {
@@ -75,12 +78,6 @@ func imConnect(h HandlerArgs) (interface{}, int) {
 }
 
 func imCreate(h HandlerArgs) (interface{}, int) {
-	incrementChannel := make(chan int)
-	go func() {
-		sharded_counter.Increment(h.Context, "totalCyphs")
-		incrementChannel <- 0
-	}()
-
 	imId := generateImId()
 	longId := generateLongId()
 
@@ -118,7 +115,8 @@ func imCreate(h HandlerArgs) (interface{}, int) {
 	laterSendChannelMessage.Call(h.Context, longId)
 	laterImTeardown.Call(h.Context, longId, imIdItems[0].Key, imIdItems[1].Key, string(imIdItems[1].Value))
 
-	<-incrementChannel
+	memcache.Increment(c, "totalCyphs", 1, 0)
+
 	return imId, http.StatusOK
 }
 
@@ -135,6 +133,16 @@ func logError(h HandlerArgs) (interface{}, int) {
 	return nil, http.StatusOK
 }
 
+func logStats(h HandlerArgs) (interface{}, int) {
+	stats, _ := getStats(h)
+
+	key := datastore.NewKey(h.Context, "Timestamp", "", time.Now().Unix(), nil)
+
+	datastore.Put(h.Context, key, stats)
+
+	return nil, http.StatusOK
+}
+
 func root(h HandlerArgs) (interface{}, int) {
 	return "Welcome to Cyph, lad", http.StatusOK
 }
@@ -142,15 +150,6 @@ func root(h HandlerArgs) (interface{}, int) {
 /*** Helpers ***/
 
 func sendChannelMessage(c appengine.Context, channelId string, imData ImData) {
-	var incrementChannel chan int
-	if imData.Message != "" {
-		incrementChannel = make(chan int)
-		go func() {
-			sharded_counter.Increment(c, "totalMessages")
-			incrementChannel <- 0
-		}()
-	}
-
 	channelIdEnd := len(channelId) - 1
 	id := channelId[:channelIdEnd]
 
@@ -164,9 +163,7 @@ func sendChannelMessage(c appengine.Context, channelId string, imData ImData) {
 	item := memcache.Item{Key: imData.Id, Value: imDataBytes, Expiration: config.MessageSendTimeout * time.Minute}
 	memcache.Set(c, &item)
 
-	if incrementChannel != nil {
-		<-incrementChannel
-	}
+	memcache.Increment(c, "totalMessages", 1, 0)
 }
 
 /*** Tasks ***/
