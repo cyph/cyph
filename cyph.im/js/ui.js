@@ -768,9 +768,9 @@ angular.
 		}
 
 
-		/* Temporary warning for IE */
+		/* Temporary warning for desktop IE */
 
-		if (navigator.userAgent.indexOf('MSIE ') >= 0 || navigator.userAgent.indexOf('Trident/') >= 0) {
+		if (!isMobile && (navigator.userAgent.indexOf('MSIE ') >= 0 || navigator.userAgent.indexOf('Trident/') >= 0)) {
 			alert(
 				"We won't stop you from using Internet Explorer, but it is a *very* poor life choice.\n\n" +
 				"IE doesn't work very well with Cyph (or in general).\n\nYou have been warned."
