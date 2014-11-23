@@ -19,6 +19,11 @@ handlers:
   http_headers:
     Cache-Control: public, max-age=0
 
+- url: /stats[/]?
+  login: admin
+  script: _go_app
+  secure: always
+
 - url: .*
   script: _go_app
   secure: always
