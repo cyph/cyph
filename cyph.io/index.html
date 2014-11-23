@@ -78,7 +78,6 @@
 
 		<section>
 			<md-button id='new-cyph' translate href='//cyph.im/new' aria-label='Start new cyph'>Start new cyph</md-button>
-			<div id='new-cyph-shadow'></div>
 		</section>
 
 		<md-toolbar id='main-toolbar'>
@@ -151,11 +150,11 @@
 
 
 		<div id='background-video'>
-			<iframe
-				src='//www.youtube.com/embed/bmi1QDuD9z4?autoplay=1&controls=0&loop=1&playsinline=1&rel=0&playlist=bmi1QDuD9z4&modestbranding=1&showinfo=0&fs=0&theme=dark'
-				frameborder='0'
-				class='desktop-only'
-			></iframe>
+			<video autoplay loop class='desktop-only'>
+				<source src='/video/background.webm' type='video/webm' />
+				<source src='/video/background.mp4' type='video/mp4' />
+				<source src='/video/background.ogv' type='video/ogg' />
+			</video>
 
 			<img deferred-src='/video/background.gif' class='mobile-only' />
 		</div>
