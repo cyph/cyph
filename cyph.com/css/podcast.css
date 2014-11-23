@@ -1,3 +1,61 @@
+.beta-signup-form {
+  opacity: 0;
+  color: #f1f1f1;
+  width: 25vw;
+  margin-left: 10vw;
+  margin-top: 40vh; }
+  .beta-signup-form * {
+    color: #f1f1f1;
+    display: block;
+    width: 100%; }
+  .beta-signup-form md-input-group.md-input-focused * {
+    color: #4305ba !important;
+    border-color: #4305ba !important; }
+  .beta-signup-form md-button {
+    font-family: 'Ubuntu' !important;
+    line-height: 50px !important;
+    font-size: 18px !important;
+    box-shadow: 0px 4px 10px -1px rgba(0, 0, 0, 0.25) !important;
+    margin: 25px 50px;
+    width: calc(100% - 100px); }
+
+.beta-signup-form + div {
+  opacity: 0;
+  pointer-events: none;
+  position: fixed;
+  z-index: 99;
+  top: 0px;
+  left: 0px;
+  width: 101%;
+  height: 101%;
+  font-size: 5vw;
+  padding: 15vh 15vw;
+  background-color: rgba(97, 51, 163, 0.75);
+  font-family: 'Ubuntu' !important; }
+
+.beta-signup-form.complete {
+  -webkit-transform: translateY(-500vh) !important;
+  -moz-transform: translateY(-500vh) !important;
+  -ms-transform: translateY(-500vh) !important;
+  -o-transform: translateY(-500vh) !important;
+  transform: translateY(-500vh) !important;
+  -webkit-transition: -webkit-transform 2s linear;
+  -moz-transition: -moz-transform 2s linear;
+  transition: transform 2s linear; }
+
+.beta-signup-form.complete + div, .beta-signup-form.visible {
+  opacity: 1;
+  -webkit-transition: opacity 500ms 1s linear;
+  -moz-transition: opacity 500ms 1s linear;
+  transition: opacity 500ms 1s linear; }
+
+.penn-text {
+  margin-left: 55vw;
+  margin-top: -180px; }
+
+#hero-text {
+  top: 50px !important; }
+
 section#main {
   background-color: rgba(139, 98, 217, 0.75) !important; }
 
@@ -47,7 +105,7 @@ md-button.focus, md-button:hover {
   width: 100%;
   text-align: center;
   position: absolute;
-  top: 100px;
+  top: 75px;
   margin-left: -50px; }
 
 #main-toolbar, #new-cyph.fixed-header {
@@ -119,4 +177,7 @@ md-button.focus, md-button:hover {
   #footer .footer-info {
     padding: 0px 5%; }
 
-/*# sourceMappingURL=cyph.com.css.map */
+#hero-text img {
+  width: 35%; }
+
+/*# sourceMappingURL=podcast.css.map */

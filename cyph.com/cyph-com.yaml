@@ -14,8 +14,15 @@ handlers:
     X-Frame-Options: deny
 
 - url: /beta[/]?
-  static_files: beta/index.html
-  upload: beta/index.html
+  static_files: betaredirect.html
+  upload: betaredirect.html
+  secure: always
+  http_headers:
+    X-Frame-Options: deny
+
+- url: /penn[/]?
+  static_files: podcast.html
+  upload: podcast.html
   secure: always
   http_headers:
     X-Frame-Options: deny
