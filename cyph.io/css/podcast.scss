@@ -1,6 +1,60 @@
 @import 'bourbon/bourbon';
 
 
+.beta-signup-form {
+	color: #f1f1f1;
+	width: 25vw;
+
+	* {
+		color: #f1f1f1;
+		display: block;
+		width: 100%;
+	}
+
+	md-input-group.md-input-focused * {
+		color: #4305ba !important;
+		border-color: #4305ba !important;
+	}
+
+	md-button {
+		font-family: 'Ubuntu' !important;
+		line-height: 50px !important;
+		font-size: 18px !important;
+		box-shadow: 0px 4px 10px -1px rgba(0, 0, 0, 0.25) !important;
+
+		margin: 25px 50px;
+		width: calc(100% - 100px);
+	}
+}
+
+.beta-signup-form + div {
+	opacity: 0;
+	pointer-events: none;
+	position: fixed;
+	z-index: 99;
+	top: 0px;
+	left: 0px;
+	width: 101%;
+	height: 101%;
+	font-size: 5vw;
+	padding: 15vh 15vw;
+	background-color: rgba(97, 51, 163, 0.75);
+	font-family: 'Ubuntu' !important;
+}
+
+.beta-signup-form.complete {
+	@include transform(translateY(-500vh) !important);
+	@include transition(transform 2s linear);
+}
+
+.beta-signup-form.complete + div {
+	opacity: 1;
+	@include transition(opacity 500ms 1s linear);
+}
+
+
+
+
 section#main {
 	background-color: rgba(139, 98, 217, 0.75) !important;
 }
