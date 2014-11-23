@@ -43,12 +43,7 @@ md-button.focus, md-button:hover {
 	line-height: 50px;
 	font-size: 18px;
 	box-shadow: 0px 4px 10px -1px rgba(0, 0, 0, 0.25);
-}
-#new-cyph-shadow {
-	visibility: hidden;
-	pointer-events: none;
-}
-#new-cyph, #new-cyph-shadow {
+
 	position: absolute;
 	top: calc(50% - 31px);
 	left: calc(50% - 100px);

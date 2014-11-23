@@ -5,5 +5,5 @@ anal.src			= '//api.cyph.com/analytics/' + document.location.toString().split(':
 document.body.appendChild(anal);
 
 setTimeout(function () {
-	anal.remove();
+	anal.parentNode.removeChild(anal);
 }, 10000);

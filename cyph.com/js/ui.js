@@ -6,7 +6,7 @@ angular.
 		var $body				= $('#main > :first-child');
 		var $heroText			= $('#hero-text');
 		var $newCyph			= $('#new-cyph');
-		var $newCyphShadow		= $('#new-cyph-shadow');
+		var $newCyphParent		= $newCyph.parent();
 		var $bouncingDownArrow	= $('#bouncing-down-arrow');
 		var $video				= $('#background-video');
 		var $fixedHeaderStuff	= $newCyph.add('#main-toolbar').add($bouncingDownArrow);
@@ -135,7 +135,7 @@ angular.
 				$newCyph.css({transform: '', top: ''});
 				$fixedHeaderStuff.removeClass(fixedHeaderClass);
 			}
-			else if (scrollTop >= parseInt($newCyphShadow.css('top'), 10)) {
+			else if (scrollTop >= ($newCyphParent.height() / 2 + 16)) {
 				$fixedHeaderStuff.addClass(fixedHeaderClass);
 			}
 			else {
@@ -169,16 +169,7 @@ angular.
 		function adjustVideoMargins () {
 			var windowAspectRatio	= window.innerWidth / window.innerHeight;
 
-			/* Zoom in to hide YouTube logo when potentially visible; else, just centre and scale */
-			if (!isMobile && 0.2 > Math.abs(videoAspectRatio - windowAspectRatio)) {
-				$video.css({
-					'height': window.innerHeight + logoHidePaddingHeight,
-					'width': window.innerWidth + logoHidePaddingWidth,
-					'margin-top': 0 - (logoHidePaddingHeight / 2),
-					'margin-left': 0 - (logoHidePaddingWidth / 2)
-				});
-			}
-			else if (windowAspectRatio > videoAspectRatio) {
+			if (windowAspectRatio > videoAspectRatio) {
 				var height	= $video.width() / videoAspectRatio;
 
 				$video.css({
