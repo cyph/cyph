@@ -73,11 +73,6 @@
 	font-family: 'Ubuntu' !important;
 }
 
-.beta-signup-form.complete {
-	@include transform(translateY(-500vh) !important);
-	@include transition(transform 2s linear);
-}
-
 .beta-signup-form.complete + div, .beta-signup-form.visible {
 	opacity: 1;
 	@include transition(opacity 500ms 1s linear);
