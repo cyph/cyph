@@ -1,5 +1,4 @@
 .beta-signup-form-container {
-  height: 100vh;
   width: 85vw;
   margin-top: 275px;
   margin-left: auto;
@@ -10,6 +9,11 @@
     float: left; }
   .beta-signup-form-container > :nth-child(2) {
     float: right; }
+
+.beta-signup-form-container:after {
+  clear: both;
+  content: '';
+  display: block; }
 
 .beta-signup-form {
   opacity: 0;
