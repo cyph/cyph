@@ -249,7 +249,9 @@ angular.
 			});
 		};
 
-		$('.beta-signup-form').addClass('visible');
+		setTimeout(function () {
+			$('.beta-signup-form').addClass('visible');
+		}, 500);
 
 
 

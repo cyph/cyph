@@ -1,12 +1,29 @@
 @import 'bourbon/bourbon';
 
 
+.beta-signup-form-container {
+	height: 100vh;
+	width: 85vw;
+	margin-top: 40vh;
+	margin-left: auto;
+	margin-right: auto;
+
+	> * {
+		width: calc(50% - 25px);
+	}
+
+	> :nth-child(1) {
+		float: left;
+	}
+
+	> :nth-child(2) {
+		float: right;
+	}
+}
+
 .beta-signup-form {
 	opacity: 0;
 	color: #f1f1f1;
-	width: 25vw;
-	margin-left: 10vw;
-	margin-top: 40vh;
 
 	* {
 		color: #f1f1f1;
@@ -20,14 +37,20 @@
 	}
 
 	md-button {
-		font-family: 'Ubuntu' !important;
-		line-height: 50px !important;
-		font-size: 18px !important;
-		box-shadow: 0px 4px 10px -1px rgba(0, 0, 0, 0.25) !important;
-
 		margin: 25px 50px;
 		width: calc(100% - 100px);
 	}
+}
+
+.beta-signup-form md-button, #new-cyph-footer {
+	font-family: 'Ubuntu' !important;
+	line-height: 50px !important;
+	font-size: 18px !important;
+	box-shadow: 0px 4px 10px -1px rgba(0, 0, 0, 0.25) !important;
+}
+#new-cyph-footer {
+	width: 200px;
+	@include transform(scale(0.75) !important);
 }
 
 .beta-signup-form + div {
@@ -55,11 +78,6 @@
 	@include transition(opacity 500ms 1s linear);
 }
 
-
-.penn-text {
-	margin-left: 55vw;
-	margin-top: -180px;
-}
 
 #hero-text {
 	top: 50px !important;
