@@ -2,7 +2,7 @@ section#main {
   background-color: rgba(139, 98, 217, 0.75) !important; }
 
 #main section {
-  min-height: calc(100vh + 50px);
+  min-height: 100vh;
   padding: 50px;
   position: relative; }
 
