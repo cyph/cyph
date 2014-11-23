@@ -1,204 +1,95 @@
-<!DOCTYPE html>
-<html class='no-js' ng-app='Cyph' ng-controller='CyphController'>
+<html>
 	<head>
-		<meta charset='utf-8' />
-		<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1' />
-
-		<title translate>Cyph &ndash; Privacy starts here.</title>
-		<meta translate name='description' content='Simple, frictionless private conversation with anyone at any time.' />
-
-		<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
-
-		<meta name='apple-mobile-web-app-capable' content='yes' />
-		<meta name='mobile-web-app-capable' content='yes' />
-
-		<link rel='apple-touch-icon' sizes='57x57' href='/img/favicon/apple-touch-icon-57x57.png' />
-		<link rel='apple-touch-icon' sizes='114x114' href='/img/favicon/apple-touch-icon-114x114.png' />
-		<link rel='apple-touch-icon' sizes='72x72' href='/img/favicon/apple-touch-icon-72x72.png' />
-		<link rel='apple-touch-icon' sizes='144x144' href='/img/favicon/apple-touch-icon-144x144.png' />
-		<link rel='apple-touch-icon' sizes='60x60' href='/img/favicon/apple-touch-icon-60x60.png' />
-		<link rel='apple-touch-icon' sizes='120x120' href='/img/favicon/apple-touch-icon-120x120.png' />
-		<link rel='apple-touch-icon' sizes='76x76' href='/img/favicon/apple-touch-icon-76x76.png' />
-		<link rel='apple-touch-icon' sizes='152x152' href='/img/favicon/apple-touch-icon-152x152.png' />
-		<link rel='apple-touch-icon' sizes='180x180' href='/img/favicon/apple-touch-icon-180x180.png' />
-		<link rel='icon' type='image/png' href='/img/favicon/favicon-192x192.png' sizes='192x192' />
-		<link rel='icon' type='image/png' href='/img/favicon/favicon-160x160.png' sizes='160x160' />
-		<link rel='icon' type='image/png' href='/img/favicon/favicon-96x96.png' sizes='96x96' />
-		<link rel='icon' type='image/png' href='/img/favicon/favicon-16x16.png' sizes='16x16' />
-		<link rel='icon' type='image/png' href='/img/favicon/favicon-32x32.png' sizes='32x32' />
-		<meta name='msapplication-TileColor' content='#8b62d9' />
-		<meta name='msapplication-TileImage' content='/img/favicon/mstile-144x144.png' />
-
-		<link rel='stylesheet' href='/css/preload.css' />
+	<title>Cyph &ndash; Privacy starts here.</title>
+	<link rel="apple-touch-icon" sizes="57x57" href="/tmp/apple-touch-icon-57x57.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="/tmp/apple-touch-icon-114x114.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="/tmp/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="/tmp/apple-touch-icon-144x144.png">
+	<link rel="apple-touch-icon" sizes="60x60" href="/tmp/apple-touch-icon-60x60.png">
+	<link rel="apple-touch-icon" sizes="120x120" href="/tmp/apple-touch-icon-120x120.png">
+	<link rel="apple-touch-icon" sizes="76x76" href="/tmp/apple-touch-icon-76x76.png">
+	<link rel="apple-touch-icon" sizes="152x152" href="/tmp/apple-touch-icon-152x152.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="/tmp/apple-touch-icon-180x180.png">
+	<link rel="icon" type="image/png" href="/tmp/favicon-192x192.png" sizes="192x192">
+	<link rel="icon" type="image/png" href="/tmp/favicon-160x160.png" sizes="160x160">
+	<link rel="icon" type="image/png" href="/tmp/favicon-96x96.png" sizes="96x96">
+	<link rel="icon" type="image/png" href="/tmp/favicon-16x16.png" sizes="16x16">
+	<link rel="icon" type="image/png" href="/tmp/favicon-32x32.png" sizes="32x32">
+	<meta name="msapplication-TileColor" content="#8b62d9">
+	<meta name="msapplication-TileImage" content="/tmp/mstile-144x144.png">
+	 <script src="/tmp/jquery.min.js"></script>
+	<link href='/tmp/ubuntu.css' rel='stylesheet' type='text/css'>
 	</head>
 	<body>
-		<section id='main' layout='vertical' class='nano'><div class='nano-content'>
-
-		<!-- <md-sidenav component-id='menu' class='md-sidenav-right'>
-			<md-content class='md-content-padding'>
-				<div>
-					<md-button
-						translate
-						aria-label='About'
-						ng-click='baseButtonClick()'
-						href='//www.reddit.com/wiki/commenting/.compact#wiki_posting'
-					>
-						About
-					</md-button>
-				</div>
-				<div>
-					<md-button
-						translate
-						aria-label='FAQ'
-						ng-click='baseButtonClick()'
-						href='//www.reddit.com/wiki/commenting/.compact#wiki_posting'
-					>
-						FAQ
-					</md-button>
-				</div>
-				<div>
-					<md-button
-						translate
-						aria-label='Blog'
-						ng-click='baseButtonClick()'
-						href='//www.reddit.com/wiki/commenting/.compact#wiki_posting'
-					>
-						Blog
-					</md-button>
-				</div>
-			</md-content>
-		</md-sidenav> -->
-
-		<a id='logo' href='/'>
-			<img src='/img/logo.white.horizontal.header.png' />
-		</a>
-
-		<img id='bouncing-down-arrow' class='animated' ng-click='scrollDown()' src='/img/icons/downarrow.png' />
-
-
-		<section>
-			<md-button id='new-cyph' translate href='//cyph.im/new' aria-label='Start new cyph'>Start new cyph</md-button>
-			<div id='new-cyph-shadow'></div>
-		</section>
-
-		<md-toolbar id='main-toolbar'>
-			<div class='md-toolbar-tools'>
-				<span flex></span>
-				<md-button
-					translate
-					aria-label='About'
-					ng-click='baseButtonClick()'
-					href='//www.reddit.com/wiki/commenting/.compact#wiki_posting'
-				>
-					About
-				</md-button>
-				<md-button
-					translate
-					aria-label='FAQ'
-					ng-click='baseButtonClick()'
-					href='//www.reddit.com/wiki/commenting/.compact#wiki_posting'
-				>
-					FAQ
-				</md-button>
-				<md-button
-					translate
-					aria-label='Blog'
-					ng-click='baseButtonClick()'
-					href='//www.reddit.com/wiki/commenting/.compact#wiki_posting'
-				>
-					Blog
-				</md-button>
-
-				<!--
-					<span flex></span>
-					<md-button translate aria-label='Menu' ng-click='openMobileMenu()'>
-						<img src='/img/icons/menu.png' />
-					</md-button>
-				-->
+	<style>
+	body{
+	background-color: #8b62da;
+	}
+	.soon{
+	font-family: 'Ubuntu', sans-serif;
+	font-weight: bold;
+	color: #FFFFFF;
+	font-size: 5vw;
+	-webkit-transform: rotateX(-90deg) translateZ(-50px);
+	transform: rotateX(-90deg) translateZ(-50px);
+	}
+	.container{
+	position: relative;
+	width:20%;
+	-webkit-font-smoothing:antialiased;
+	text-align: center;
+	margin: 0 auto;
+	top:20%;
+	height: 100px;
+	}
+	.text-container {
+    position: relative;
+	-webkit-font-smoothing:antialiased;
+	text-align: center;
+	margin: 0 auto;
+	-webkit-transition: -webkit-transform .33s;
+	transition: transform .33s; /* Animate the transform properties */
+	-webkit-transform-style: preserve-3d;
+	transform-style: preserve-3d; /* <-NB */
+	}
+	.container img{
+		width: 100%;
+		float:left;
+	}
+	.container:hover .text-container{
+		-webkit-transform: rotateX(90deg);
+		transform: rotateX(90deg); /* Text bleed at 90º */
+				
+	}
+	.logotext{
+		-webkit-transform: translateZ(50px);
+	    transform: translateZ(50px);
+		font-family: 'Ubuntu', sans-serif;
+		font-weight: bold;
+		top: -55px;
+		height:20px;
+		color: #FFFFFF;
+		font-size: 6vw;
+	}
+	</style>
+	<script>
+		$('.text-container').css({'height' : ($('.container').height() * 1.2) +'px'});
+	</script>
+		<div class='container'>
+				<div><img class='logo' src='/tmp/cyph-castle.png'/></div>
+				<div class='text-container'>
+				<div class='logotext'>cyph</div>
+				<div class='soon'>coming soon</div>
 			</div>
-		</md-toolbar>
-
-		<section id='hero-section'>
-			<div id='hero-text' class='animated' translate>Privacy starts here.</div>
-		</section>
-
-		<section>
-			But maybe not here...
-		</section>
-
-		<footer id='footer'>
-			<section>
-				Content above footer
-			</section>
-			<div class='footer-info'>
-				&copy; Cyph 2014
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<a target='_blank' href='//twitter.com/cyph'>@cyph</a>
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<a href='mailto:hello@cyph.com'>hello@cyph.com</a>
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<a target='_self' href='tel:+19312974462' title='+1(931) 297 4462'>+1(931) CYPH INC</a>
-				<!-- <a target='_self' href='tel:+18447472974' title='+1 THIS IS CYPH'>+1 THIS IS CYPH</a> -->
-
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<a target='_self' href='bitcoin:1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd'>1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd</a>
-			</div>
-		</footer>
-
-
-		</div></section>
-
-
-
-		<div id='background-video'>
-			<iframe
-				src='//www.youtube.com/embed/bmi1QDuD9z4?autoplay=1&controls=0&loop=1&playsinline=1&rel=0&playlist=bmi1QDuD9z4&modestbranding=1&showinfo=0&fs=0'
-				frameborder='0'
-				class='desktop-only'
-			></iframe>
-
-			<img src='/video/background.gif' class='mobile-only' />
 		</div>
+	<script>
+		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-		<!--
-			<div id='pre-load'>
-				<div class='double-bounce1'></div>
-				<div class='double-bounce2'></div>
-			</div>
-		-->
-
-
-
-		<link rel='stylesheet' href='/lib/bower_components/angular-material/angular-material.css' />
-		<link rel='stylesheet' href='/lib/bower_components/nanoscroller/bin/css/nanoscroller.css' />
-		<link rel='stylesheet' href='/lib/bower_components/animate.css/animate.min.css' />
-
-		<link rel='stylesheet' href='/css/cyph.base.css' />
-		<link rel='stylesheet' href='/css/cyph.com.css' />
-
-
-		<script src='/lib/bower_components/jquery/dist/jquery.min.js'></script>
-
-		<script src='/js/errorlog.js'></script>
-
-		<script src='/lib/bower_components/nanoscroller/bin/javascripts/jquery.nanoscroller.min.js'></script>
-		<script src='/lib/bower_components/angular/angular.min.js'></script>
-		<script src='/lib/bower_components/angular-aria/angular-aria.js'></script>
-		<script src='/lib/bower_components/angular-animate/angular-animate.js'></script>
-		<script src='/lib/bower_components/hammerjs/hammer.js'></script>
-		<script src='/lib/bower_components/angular-material/angular-material.js'></script>
-
-		<script src='/js/ui.js'></script>
-
-		<script>
-			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-			})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-			ga('create', 'UA-56220601-1', 'auto');
-			ga('send', 'pageview');
-		</script>
-
+		ga('create', 'UA-56220601-1', 'auto');
+		ga('send', 'pageview');
+	</script>
 	</body>
 </html>
