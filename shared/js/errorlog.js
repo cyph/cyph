@@ -4,7 +4,7 @@ window.onerror = function () {
 		error: JSON.stringify(arguments) +
 			'\n\n' + navigator.userAgent +
 			'\n\n' + navigator.language +
-			'\n\n' + language +
+			'\n\n' + (typeof language == 'undefined' ? '' : language) +
 			'\n\n' + document.location.toString()
 	});
 }
