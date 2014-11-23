@@ -202,12 +202,21 @@ angular.
 				document.location.pathname
 			;
 
+			var noMoreAutoFocus	= false;
+
 			var copyUrlInterval	= setInterval(function () {
 				if ($scope.state == $scope.states.waitingForFriend) {
 					apply(function () {
 						$scope.copyUrl	= copyUrl;
-						$copyUrl.focus();
-						$copyUrl[0].setSelectionRange(0, copyUrl.length);
+
+						if (!noMoreAutoFocus || $copyUrl.is(':focus')) {
+							$copyUrl.focus();
+							$copyUrl[0].setSelectionRange(0, copyUrl.length);
+
+							if (isMobile) {
+								noMoreAutoFocus	= true;
+							}
+						}
 					});
 				}
 				else {
