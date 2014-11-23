@@ -58,16 +58,6 @@
   background-color: rgba(97, 51, 163, 0.75);
   font-family: 'Ubuntu' !important; }
 
-.beta-signup-form.complete {
-  -webkit-transform: translateY(-500vh) !important;
-  -moz-transform: translateY(-500vh) !important;
-  -ms-transform: translateY(-500vh) !important;
-  -o-transform: translateY(-500vh) !important;
-  transform: translateY(-500vh) !important;
-  -webkit-transition: -webkit-transform 2s linear;
-  -moz-transition: -moz-transform 2s linear;
-  transition: transform 2s linear; }
-
 .beta-signup-form.complete + div, .beta-signup-form.visible {
   opacity: 1;
   -webkit-transition: opacity 500ms 1s linear;
