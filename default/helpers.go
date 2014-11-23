@@ -37,6 +37,7 @@ type ImSetup struct {
 type Stats struct {
 	TotalCyphs    int
 	TotalMessages int
+	TotalSignups  int
 }
 
 type none struct{}
