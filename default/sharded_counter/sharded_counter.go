@@ -13,9 +13,11 @@ import (
 	"appengine/memcache"
 )
 
+/*
 type counterConfig struct {
 	Shards int
 }
+*/
 
 type shard struct {
 	Name  string
@@ -23,7 +25,7 @@ type shard struct {
 }
 
 const (
-	defaultShards = 20
+	defaultShards = 100 // 20
 	configKind    = "GeneralCounterShardConfig"
 	shardKind     = "GeneralCounterShard"
 )
@@ -61,23 +63,26 @@ func Count(c appengine.Context, name string) (int, error) {
 
 // Increment increments the named counter.
 func Increment(c appengine.Context, name string) error {
-	// Get counter config.
-	var cfg counterConfig
-	ckey := datastore.NewKey(c, configKind, name, 0, nil)
-	err := datastore.RunInTransaction(c, func(c appengine.Context) error {
-		err := datastore.Get(c, ckey, &cfg)
-		if err == datastore.ErrNoSuchEntity {
-			cfg.Shards = defaultShards
-			_, err = datastore.Put(c, ckey, &cfg)
+	/*
+		// Get counter config.
+		var cfg counterConfig
+		ckey := datastore.NewKey(c, configKind, name, 0, nil)
+		err := datastore.RunInTransaction(c, func(c appengine.Context) error {
+			err := datastore.Get(c, ckey, &cfg)
+			if err == datastore.ErrNoSuchEntity {
+				cfg.Shards = defaultShards
+				_, err = datastore.Put(c, ckey, &cfg)
+			}
+			return err
+		}, nil)
+		if err != nil {
+			return err
 		}
-		return err
-	}, nil)
-	if err != nil {
-		return err
-	}
+	*/
+
 	var s shard
 	err = datastore.RunInTransaction(c, func(c appengine.Context) error {
-		shardName := fmt.Sprintf("%s-shard%d", name, rand.Intn(cfg.Shards))
+		shardName := fmt.Sprintf("%s-shard%d", name, rand.Intn( /* cfg.Shards */ defaultShards))
 		key := datastore.NewKey(c, shardKind, shardName, 0, nil)
 		err := datastore.Get(c, key, &s)
 		// A missing entity and a present entity will both work.
@@ -96,6 +101,7 @@ func Increment(c appengine.Context, name string) error {
 	return nil
 }
 
+/*
 // IncreaseShards increases the number of shards for the named counter to n.
 // It will never decrease the number of shards.
 func IncreaseShards(c appengine.Context, name string, n int) error {
@@ -120,3 +126,4 @@ func IncreaseShards(c appengine.Context, name string, n int) error {
 		return err
 	}, nil)
 }
+*/

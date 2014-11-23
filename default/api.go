@@ -52,10 +52,10 @@ func channelReceive(h HandlerArgs) (interface{}, int) {
 }
 
 func getStats(h HandlerArgs) (interface{}, int) {
-	return Stats{
-		TotalCyphs:    sharded_counter.Count(h.Context, "totalCyphs"),
-		TotalMessages: sharded_counter.Count(h.Context, "totalMessages"),
-	}, http.StatusOK
+	totalCyphs, _ := sharded_counter.Count(h.Context, "totalCyphs")
+	totalMessages, _ := sharded_counter.Count(h.Context, "totalMessages")
+
+	return Stats{TotalCyphs: totalCyphs, TotalMessages: totalMessages}, http.StatusOK
 }
 
 func imConnect(h HandlerArgs) (interface{}, int) {
@@ -142,11 +142,11 @@ func root(h HandlerArgs) (interface{}, int) {
 /*** Helpers ***/
 
 func sendChannelMessage(c appengine.Context, channelId string, imData ImData) {
-	var incrementCounter <-chan int
+	var incrementChannel chan int
 	if imData.Message != "" {
 		incrementChannel = make(chan int)
 		go func() {
-			sharded_counter.Increment(h.Context, "totalMessages")
+			sharded_counter.Increment(c, "totalMessages")
 			incrementChannel <- 0
 		}()
 	}
