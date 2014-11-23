@@ -9,6 +9,7 @@ import (
 	"github.com/gorilla/mux"
 	"math/big"
 	"net/http"
+	"time"
 )
 
 type HandlerArgs struct {
@@ -19,6 +20,14 @@ type HandlerArgs struct {
 }
 type Handler func(HandlerArgs) (interface{}, int)
 type Handlers map[string]Handler
+
+type BetaSignup struct {
+	Country  string
+	Email    string
+	Language string
+	Name     string
+	Time     int64
+}
 
 type ImData struct {
 	Id        string
@@ -92,6 +101,16 @@ func generateImId() string {
 
 func generateLongId() string {
 	return generateGuid(52)
+}
+
+func getBetaSignupFromRequest(h HandlerArgs) BetaSignup {
+	return BetaSignup{
+		Country:  h.Request.PostFormValue("Country"),
+		Email:    h.Request.PostFormValue("Email"),
+		Language: h.Request.PostFormValue("Language"),
+		Name:     h.Request.PostFormValue("Name"),
+		Time:     time.Now().Unix(),
+	}
 }
 
 func getImDataFromRequest(h HandlerArgs) ImData {
