@@ -34,6 +34,11 @@ type ImSetup struct {
 	IsCreator    bool
 }
 
+type Stats struct {
+	TotalCyphs    int
+	TotalMessages int
+}
+
 type none struct{}
 
 var methods = struct {
