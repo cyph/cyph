@@ -1,7 +1,7 @@
 .beta-signup-form-container {
   height: 100vh;
   width: 85vw;
-  margin-top: 40vh;
+  margin-top: 275px;
   margin-left: auto;
   margin-right: auto; }
   .beta-signup-form-container > * {
@@ -22,8 +22,9 @@
     color: #4305ba !important;
     border-color: #4305ba !important; }
   .beta-signup-form md-button {
-    margin: 25px 50px;
-    width: calc(100% - 100px); }
+    margin: 25px auto;
+    width: calc(100% - 100px);
+    min-width: 200px; }
 
 .beta-signup-form md-button, #new-cyph-footer {
   font-family: 'Ubuntu' !important;
@@ -71,6 +72,8 @@
 
 #hero-text {
   top: 50px !important; }
+  #hero-text img {
+    width: 450px !important; }
 
 section#main {
   background-color: rgba(139, 98, 217, 0.75) !important; }
