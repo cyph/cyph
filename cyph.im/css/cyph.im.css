@@ -276,7 +276,8 @@ html.mobile .message-item.author-app {
   left: 0px;
   height: 100%;
   width: 200px;
-  padding: 20px; }
+  padding: 20px;
+  z-index: 10; }
   #desktop-sidebar .logo > img {
     width: 60%;
     margin: 0px auto;
