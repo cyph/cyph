@@ -22,6 +22,7 @@ type Handler func(HandlerArgs) (interface{}, int)
 type Handlers map[string]Handler
 
 type BetaSignup struct {
+	Comment  string
 	Country  string
 	Email    string
 	Language string
@@ -105,6 +106,7 @@ func generateLongId() string {
 
 func getBetaSignupFromRequest(h HandlerArgs) BetaSignup {
 	return BetaSignup{
+		Comment:  h.Request.PostFormValue("Comment"),
 		Country:  h.Request.PostFormValue("Country"),
 		Email:    h.Request.PostFormValue("Email"),
 		Language: h.Request.PostFormValue("Language"),
