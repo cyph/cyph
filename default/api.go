@@ -34,10 +34,17 @@ func init() {
 func betaSignup(h HandlerArgs) (interface{}, int) {
 	betaSignup := getBetaSignupFromRequest(h)
 
+	if betaSignup.Email == "" {
+		return nil, http.StatusOK
+	}
+
 	key := datastore.NewKey(h.Context, "BetaSignup", betaSignup.Email, 0, nil)
 
 	existingBetaSignup := new(BetaSignup)
 	if err := datastore.Get(h.Context, key, existingBetaSignup); err == nil {
+		if existingBetaSignup.Comment != "" {
+			betaSignup.Comment = existingBetaSignup.Comment
+		}
 		if existingBetaSignup.Country != "" {
 			betaSignup.Country = existingBetaSignup.Country
 		}
