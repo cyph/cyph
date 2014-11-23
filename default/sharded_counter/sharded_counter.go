@@ -81,7 +81,7 @@ func Increment(c appengine.Context, name string) error {
 	*/
 
 	var s shard
-	err = datastore.RunInTransaction(c, func(c appengine.Context) error {
+	err := datastore.RunInTransaction(c, func(c appengine.Context) error {
 		shardName := fmt.Sprintf("%s-shard%d", name, rand.Intn( /* cfg.Shards */ defaultShards))
 		key := datastore.NewKey(c, shardKind, shardName, 0, nil)
 		err := datastore.Get(c, key, &s)
