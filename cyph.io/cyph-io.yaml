@@ -13,6 +13,13 @@ handlers:
   http_headers:
     X-Frame-Options: deny
 
+- url: /penn[/]?
+  static_files: podcast.html
+  upload: podcast.html
+  secure: always
+  http_headers:
+    X-Frame-Options: deny
+
 - url: /(.*)
   static_files: \1
   upload: .*
