@@ -4,6 +4,7 @@ angular.
 		var $window				= $(window);
 		var $html				= $('html');
 		var $body				= $('#main > :first-child');
+		var $betaSignup			= $('.beta-signup');
 		var $heroText			= $('#hero-text');
 		var $newCyph			= $('#new-cyph');
 		var $newCyphParent		= $newCyph.parent();
@@ -202,6 +203,51 @@ angular.
 				$this.attr('src', $this.attr('deferred-src'));
 			})
 		;
+
+
+
+
+		/***** Beta signup stuff *****/
+
+		var language		= (
+			navigator.language ||
+			navigator.userLanguage ||
+			navigator.browserLanguage ||
+			navigator.systemLanguage
+		).toLowerCase().split('-');
+
+		$scope.betaSignupState	= 0;
+
+		$scope.betaSignup		= {
+			Language: language[0],
+			Country: language[1]
+		};
+
+		var retries	= 0;
+		$scope.submitBetaSignup	= function () {
+			$.ajax({
+				type: 'PUT',
+				url: 'https://api.cyph.com/betasignups',
+				data: $scope.betaSignup,
+				error: function () {
+					if (++retries < 5) {
+						$scope.submitBetaSignup();
+					}
+					else {
+						retries	= 0;
+					}
+				},
+				success: function () {
+					apply(function () {
+						++$scope.betaSignupState;
+					});
+
+					setTimeout(function () {
+						document.location	= '/';
+					}, 5000);
+				}
+			});
+		};
 
 
 

@@ -77,7 +77,14 @@
 
 
 		<section>
-			<md-button id='new-cyph' translate href='//cyph.im/new' aria-label='Start new cyph'>Start new cyph</md-button>
+			<form class='beta-signup-form' ng-submit='submitBetaSignup()' ng-class='{complete: betaSignupState > 0}'>
+				<md-text-float label='email' ng-model='betaSignup.Email'></md-text-float>
+				<md-text-float label='name (optional)' ng-model='betaSignup.Name'></md-text-float>
+				<md-button type='submit' aria-label='Sign up for beta'>Sign up for beta</md-button>
+			</form>
+			<div>
+				Thanks a ton for signing up! You'll hear from one of us shortly. :)
+			</div>
 		</section>
 
 		<md-toolbar id='main-toolbar'>
