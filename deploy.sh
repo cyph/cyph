@@ -75,6 +75,7 @@ goapp deploy default/app.yaml cyph.com/cyph-com.yaml cyph.im/cyph-im.yaml cyph.m
 # goapp deploy default/app.yaml `ls !(default)/*.yaml | tr '\n' ' '`
 
 appcfg.py update_dispatch .
+ls */cron.yaml | sed 's/cron.yaml//g' | xargs -I% appcfg.py update_cron %
 
 if [ $all ] ; then
 	../deploy.sh
