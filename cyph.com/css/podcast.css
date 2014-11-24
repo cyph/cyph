@@ -1,4 +1,4 @@
-html:not(.load-complete) [ng-show], html:not(.load-complete) [ng-hide], html:not(.load-complete) [ng-class] {
+html:not(.load-complete) section:not(#main), html:not(.load-complete) footer {
   display: none; }
 
 .beta-signup-form-container {
