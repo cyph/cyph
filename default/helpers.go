@@ -27,6 +27,7 @@ type BetaSignup struct {
 	Email    string
 	Language string
 	Name     string
+	Referer  string
 	Time     int64
 }
 
@@ -111,6 +112,7 @@ func getBetaSignupFromRequest(h HandlerArgs) BetaSignup {
 		Email:    h.Request.PostFormValue("Email"),
 		Language: h.Request.PostFormValue("Language"),
 		Name:     h.Request.PostFormValue("Name"),
+		Referer:  h.Request.Referer(),
 		Time:     time.Now().Unix(),
 	}
 }
