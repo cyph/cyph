@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -34,35 +35,34 @@ func init() {
 func betaSignup(h HandlerArgs) (interface{}, int) {
 	betaSignup := getBetaSignupFromRequest(h)
 
-	if betaSignup.Email == "" {
-		return nil, http.StatusOK
-	}
+	if strings.Contains(betaSignup.Email, "@") {
+		key := datastore.NewKey(h.Context, "BetaSignup", betaSignup.Email, 0, nil)
 
-	key := datastore.NewKey(h.Context, "BetaSignup", betaSignup.Email, 0, nil)
+		existingBetaSignup := new(BetaSignup)
 
-	existingBetaSignup := new(BetaSignup)
-	if err := datastore.Get(h.Context, key, existingBetaSignup); err == nil {
-		if existingBetaSignup.Comment != "" {
-			betaSignup.Comment = existingBetaSignup.Comment
+		if err := datastore.Get(h.Context, key, existingBetaSignup); err == nil {
+			if existingBetaSignup.Comment != "" {
+				betaSignup.Comment = existingBetaSignup.Comment
+			}
+			if existingBetaSignup.Country != "" {
+				betaSignup.Country = existingBetaSignup.Country
+			}
+			if existingBetaSignup.Language != "" {
+				betaSignup.Language = existingBetaSignup.Language
+			}
+			if existingBetaSignup.Name != "" {
+				betaSignup.Name = existingBetaSignup.Name
+			}
+			if existingBetaSignup.Time != 0 {
+				betaSignup.Time = existingBetaSignup.Time
+			}
+		} else {
+			memcache.Increment(h.Context, "totalSignups", 1, 0)
 		}
-		if existingBetaSignup.Country != "" {
-			betaSignup.Country = existingBetaSignup.Country
-		}
-		if existingBetaSignup.Language != "" {
-			betaSignup.Language = existingBetaSignup.Language
-		}
-		if existingBetaSignup.Name != "" {
-			betaSignup.Name = existingBetaSignup.Name
-		}
-		if existingBetaSignup.Time != 0 {
-			betaSignup.Time = existingBetaSignup.Time
-		}
-	} else {
-		memcache.Increment(h.Context, "totalSignups", 1, 0)
-	}
 
-	if _, err := datastore.Put(h.Context, key, &betaSignup); err != nil {
-		return err.Error(), http.StatusInternalServerError
+		if _, err := datastore.Put(h.Context, key, &betaSignup); err != nil {
+			return err.Error(), http.StatusInternalServerError
+		}
 	}
 
 	return nil, http.StatusOK
