@@ -314,7 +314,7 @@ angular.
 				imageFile	= elem.files[0];
 
 				if (imageFile.type == 'image/svg+xml' || imageFile.type == 'image/gif') {
-					reader.readAsDataURL(file);
+					reader.readAsDataURL(imageFile);
 				}
 				else {
 					img.src		= URL.createObjectURL(imageFile);
