@@ -55,6 +55,9 @@ func betaSignup(h HandlerArgs) (interface{}, int) {
 			if existingBetaSignup.Name != "" {
 				betaSignup.Name = existingBetaSignup.Name
 			}
+			if existingBetaSignup.Referer != "" {
+				betaSignup.Referer = existingBetaSignup.Referer
+			}
 			if existingBetaSignup.Time != 0 {
 				betaSignup.Time = existingBetaSignup.Time
 			}
