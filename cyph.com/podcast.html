@@ -77,7 +77,7 @@
 			<img id='bouncing-down-arrow' class='animated' ng-click='scrollDown()' src='/img/icons/downarrow.png' />
 		-->
 
-		<section>
+		<section ng-show='podcast == "penn"'>
 			<div id='hero-text' class='animated bounceInDown'>
 				<img src='/img/penn.png'>
 			</div>
@@ -95,16 +95,100 @@
 						<h1>About Cyph</h1>
 					</p>
 					<p>
-						Encryption is hard, but it shouldn’t be. We believe that <i>everyone</i> deserves privacy, not only security experts.
+						Encryption is hard, but using it shouldn’t be. We believe <i>everyone</i> deserves privacy, not only security experts.
 					</p>
 					<p>
-						Cyph is a next-generation messenger app that delivers cryptography to the masses, making privacy the new status quo.
+						Cyph is a next-generation messenger app that makes privacy the new status quo.
 					</p>
 					<p>
 						With Cyph, never again will you need to ask someone else to install or configure or sign up for anything, when all you need is a one-off private discussion.
 					</p>
 					<p>
-						Just one click and you’re secure.
+						One click and you’re secure.
+					</p>
+				</div>
+
+				<form class='beta-signup-form' ng-submit='submitBetaSignup()' ng-class='{complete: betaSignupState > 0}'>
+					<md-text-float label='email' ng-model='betaSignup.Email'></md-text-float>
+					<md-text-float label='name (optional)' ng-model='betaSignup.Name'></md-text-float>
+					<md-button type='submit' aria-label='Sign up for beta'>Sign up for beta</md-button>
+				</form>
+				<div>
+					Thanks a ton for signing up! You'll hear from us shortly. :)
+				</div>
+			</div>
+		</section>
+
+		<section ng-show='podcast == "jjgo"'>
+			<div id='hero-text' class='animated bounceInLeft'>
+				<img src='/img/jjgo.png'>
+			</div>
+
+			<div class='beta-signup-form-container'>
+				<div>
+					<p>
+						Welcome Jordan, Jesse, Go! listeners!
+					</p>
+					<p>
+						Sign up on the right, and get bumped to the front of our waitlist for Cyph v2.
+					</p>
+					<p>
+						<br />
+						<h1>About Cyph</h1>
+					</p>
+					<p>
+						Encryption is hard, but using it shouldn’t be. We believe <i>everyone</i> deserves privacy, not only security experts.
+					</p>
+					<p>
+						Cyph is a next-generation messenger app that makes privacy the new status quo.
+					</p>
+					<p>
+						With Cyph, never again will you need to ask someone else to install or configure or sign up for anything, when all you need is a one-off private discussion.
+					</p>
+					<p>
+						One click and you’re secure.
+					</p>
+				</div>
+
+				<form class='beta-signup-form' ng-submit='submitBetaSignup()' ng-class='{complete: betaSignupState > 0}'>
+					<md-text-float label='email' ng-model='betaSignup.Email'></md-text-float>
+					<md-text-float label='name (optional)' ng-model='betaSignup.Name'></md-text-float>
+					<md-button type='submit' aria-label='Sign up for beta'>Sign up for beta</md-button>
+				</form>
+				<div>
+					Thanks a ton for signing up! You'll hear from us shortly. :)
+				</div>
+			</div>
+		</section>
+
+		<section ng-show='podcast == "ventura"'>
+			<div id='hero-text' class='animated bounceInDown'>
+				<img src='/img/ventura.jpg'>
+			</div>
+
+			<div class='beta-signup-form-container'>
+				<div>
+					<p>
+						Welcome We The People listeners!
+					</p>
+					<p>
+						Sign up on the right, and get bumped to the front of our waitlist for Cyph v2.
+					</p>
+					<p>
+						<br />
+						<h1>About Cyph</h1>
+					</p>
+					<p>
+						Encryption is hard, but using it shouldn’t be. We believe <i>everyone</i> deserves privacy, not only security experts.
+					</p>
+					<p>
+						Cyph is a next-generation messenger app that makes privacy the new status quo.
+					</p>
+					<p>
+						With Cyph, never again will you need to ask someone else to install or configure or sign up for anything, when all you need is a one-off private discussion.
+					</p>
+					<p>
+						One click and you’re secure.
 					</p>
 				</div>
 
@@ -199,12 +283,11 @@
 			<img deferred-src='/video/background.gif' class='mobile-only' />
 		</div>
 
-		<!--
-			<div id='pre-load'>
-				<div class='double-bounce1'></div>
-				<div class='double-bounce2'></div>
-			</div>
-		-->
+
+		<div id='pre-load'>
+			<div class='double-bounce1'></div>
+			<div class='double-bounce2'></div>
+		</div>
 
 
 
