@@ -63,8 +63,16 @@ func betaSignup(h HandlerArgs) (interface{}, int) {
 		}
 
 		if _, err := datastore.Put(h.Context, key, &betaSignup); err != nil {
+			logError(h)
 			return err.Error(), http.StatusInternalServerError
 		}
+
+		jsonBetaSignup, _ := json.Marshal(betaSignup)
+		mail.SendToAdmins(h.Context, &mail.Message{
+			Sender:  "test@cyphme.appspotmail.com",
+			Subject: "NEW SIGNUP LADS",
+			Body:    string(jsonBetaSignup),
+		})
 	}
 
 	return nil, http.StatusOK
@@ -166,14 +174,11 @@ func imCreate(h HandlerArgs) (interface{}, int) {
 }
 
 func logError(h HandlerArgs) (interface{}, int) {
-	msg := &mail.Message{
+	mail.SendToAdmins(h.Context, &mail.Message{
 		Sender:  "test@cyphme.appspotmail.com",
 		Subject: "CYPH: WARNING WARNING WARNING SOMETHING IS SRSLY FUCKED UP LADS",
 		Body:    h.Request.FormValue("error"),
-	}
-	if err := mail.SendToAdmins(h.Context, msg); err != nil {
-		h.Context.Errorf("Alas, my user, the email failed to sendeth: %v", err)
-	}
+	})
 
 	return nil, http.StatusOK
 }
