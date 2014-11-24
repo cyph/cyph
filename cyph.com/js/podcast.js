@@ -13,6 +13,8 @@ angular.
 		var $fixedHeaderStuff	= $newCyph.add('#main-toolbar').add($bouncingDownArrow);
 		var fixedHeaderClass	= 'fixed-header';
 
+		$scope.podcast = document.location.pathname.split('/').slice(-1)[0];
+
 
 
 		/* https://coderwall.com/p/ngisma */
@@ -259,10 +261,6 @@ angular.
 
 		scrolling.update();
 
-		/*
-			$(function () {
-				$('#pre-load').addClass('load-complete');
-			});
-		*/
+		$('#pre-load').addClass('load-complete');
 	}])
 ;
