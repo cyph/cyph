@@ -2,7 +2,7 @@
 
 
 html:not(.load-complete) {
-	[ng-show], [ng-hide], [ng-class] {
+	section:not(#main), footer {
 		display: none;
 	}
 }
