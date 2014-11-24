@@ -36,6 +36,8 @@ func betaSignup(h HandlerArgs) (interface{}, int) {
 	betaSignup := getBetaSignupFromRequest(h)
 
 	if strings.Contains(betaSignup.Email, "@") {
+		betaSignup.Email = strings.ToLower(betaSignup.Email)
+
 		key := datastore.NewKey(h.Context, "BetaSignup", betaSignup.Email, 0, nil)
 
 		existingBetaSignup := new(BetaSignup)
