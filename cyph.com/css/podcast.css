@@ -1,3 +1,6 @@
+html:not(.load-complete) [ng-show], html:not(.load-complete) [ng-hide], html:not(.load-complete) [ng-class] {
+  display: none; }
+
 .beta-signup-form-container {
   width: 85vw;
   margin-top: 275px;

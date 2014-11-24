@@ -1,6 +1,12 @@
 @import 'bourbon/bourbon';
 
 
+html:not(.load-complete) {
+	[ng-show], [ng-hide], [ng-class] {
+		display: none;
+	}
+}
+
 .beta-signup-form-container {
 	width: 85vw;
 	margin-top: 275px;

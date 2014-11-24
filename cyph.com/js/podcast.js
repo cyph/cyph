@@ -261,6 +261,8 @@ angular.
 
 		scrolling.update();
 
-		$('#pre-load').addClass('load-complete');
+		$(function () {
+			$('html').addClass('load-complete');
+		});
 	}])
 ;
