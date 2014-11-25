@@ -2,7 +2,7 @@
 
 
 html:not(.load-complete) {
-	section:not(#main), footer {
+	section:not(#main), footer, #bouncing-down-arrow {
 		display: none;
 	}
 }
@@ -303,8 +303,19 @@ md-button.focus, md-button:hover {
 
 
 
-#hero-section {
+#hero-section, #about {
 	background-color: rgba(0, 0, 0, 0.15);
+}
+
+#home-beta-signup {
+	padding: 0px !important;
+	height: 210px !important;
+	max-height: 210px !important;
+	min-height: 210px !important;
+
+	.section-content-container {
+		margin-top: 90px;
+	}
 }
 
 
