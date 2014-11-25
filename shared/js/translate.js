@@ -9,6 +9,9 @@ var language		=
 ;
 var languagePair	= language.split('-');
 
+/* Temporary */
+if (document.location.host.indexOf('cyph.com') < 0) {
+
 if (localStorage && localStorage.forceLanguage) {
 	language	= localStorage.forceLanguage;
 }
@@ -34,4 +37,6 @@ else if (possibleLanguage.length == 2 || ['zh-CHS', 'zh-CHT', 'tlh'].indexOf(pos
 }
 else if (supportedLanguages[language]) {
 	document.location.pathname	= '/' + language + document.location.pathname;
+}
+
 }
