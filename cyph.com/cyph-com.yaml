@@ -6,11 +6,15 @@ api_version: 1
 threadsafe: true
 
 handlers:
+
+# Main
+
 - url: /
   static_files: index.html
   upload: index.html
   secure: always
   http_headers:
+    Cache-Control: no-store
     X-Frame-Options: deny
 
 - url: /beta[/]?
@@ -18,17 +22,18 @@ handlers:
   upload: betaredirect.html
   secure: always
   http_headers:
+    Cache-Control: public, max-age=0
     X-Frame-Options: deny
 
 
-
-#Podcasts
+# Podcasts
 
 - url: /penn[/]?
   static_files: index.html
   upload: index.html
   secure: always
   http_headers:
+    Cache-Control: no-store
     X-Frame-Options: deny
 
 - url: /jjgo[/]?
@@ -36,6 +41,7 @@ handlers:
   upload: index.html
   secure: always
   http_headers:
+    Cache-Control: no-store
     X-Frame-Options: deny
 
 - url: /ventura[/]?
@@ -43,6 +49,7 @@ handlers:
   upload: index.html
   secure: always
   http_headers:
+    Cache-Control: no-store
     X-Frame-Options: deny
 
 - url: /sawbones[/]?
@@ -50,6 +57,7 @@ handlers:
   upload: index.html
   secure: always
   http_headers:
+    Cache-Control: no-store
     X-Frame-Options: deny
 
 - url: /judgejohn[/]?
@@ -57,6 +65,7 @@ handlers:
   upload: index.html
   secure: always
   http_headers:
+    Cache-Control: no-store
     X-Frame-Options: deny
 
 - url: /mybrother[/]?
@@ -64,6 +73,7 @@ handlers:
   upload: index.html
   secure: always
   http_headers:
+    Cache-Control: no-store
     X-Frame-Options: deny
 
 - url: /security[/]?
@@ -71,14 +81,46 @@ handlers:
   upload: index.html
   secure: always
   http_headers:
+    Cache-Control: no-store
     X-Frame-Options: deny
 
 
+# Translations
 
-- url: /(.*)
+- url: /(BALLS)
+  static_files: \1.html
+  upload: .*\.html
+  secure: always
+  http_headers:
+    Cache-Control: no-store
+    X-Frame-Options: deny
+
+- url: /(BALLS)/.*
+  static_files: \1.html
+  upload: .*\.html
+  secure: always
+  http_headers:
+    Cache-Control: no-store
+    X-Frame-Options: deny
+
+
+# Else
+
+- url: /(.*\..*)
   static_files: \1
   upload: .*
   secure: always
   http_headers:
     Cache-Control: public, max-age=0
+    X-Frame-Options: deny
+
+
+# 404
+
+- url: /.*
+  static_files: index.html
+  upload: index.html
+  secure: always
+  http_headers:
+    Cache-Control: no-store
     X-Frame-Options: deny
