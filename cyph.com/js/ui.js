@@ -1,4 +1,4 @@
-var openPodcast, error;
+var openPodcast, openAbout, openTos, openPrivacyPolicy, openError;
 
 
 angular.
@@ -19,8 +19,11 @@ angular.
 		var fixedHeaderClass	= 'fixed-header';
 
 
-		$scope.isError	= false;
-		$scope.podcast	= '';
+		$scope.isAbout			= false;
+		$scope.isError			= false;
+		$scope.isPrivacyPolicy	= false;
+		$scope.isTos			= false;
+		$scope.podcast			= '';
 
 
 
@@ -48,7 +51,25 @@ angular.
 			setTimeout(function () { $heroText.show() }, 1);
 		};
 
-		error	= $scope.error = function (isError) {
+		openAbout	= $scope.openAbout = function (isAbout) {
+			apply(function () {
+				$scope.isAbout	= isAbout;
+			});
+		};
+
+		openTos	= $scope.openTos = function (isTos) {
+			apply(function () {
+				$scope.isTos	= isTos;
+			});
+		};
+
+		openPrivacyPolicy	= $scope.openPrivacyPolicy = function (isPrivacyPolicy) {
+			apply(function () {
+				$scope.isPrivacyPolicy	= isPrivacyPolicy;
+			});
+		};
+
+		openError	= $scope.openError = function (isError) {
 			apply(function () {
 				$scope.isError	= isError;
 			});
@@ -209,7 +230,7 @@ angular.
 					apply(function () {
 						++$scope.betaSignupState;
 					});
-				}, 500 + (isMobile ? 500 : 0));
+				}, isMobile ? 1000 : 500);
 			}
 
 			setTimeout(function () {

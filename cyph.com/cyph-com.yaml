@@ -25,6 +25,30 @@ handlers:
     Cache-Control: public, max-age=0
     X-Frame-Options: deny
 
+- url: /about[/]?
+  static_files: index.html
+  upload: index.html
+  secure: always
+  http_headers:
+    Cache-Control: no-store
+    X-Frame-Options: deny
+
+- url: /termsofservice[/]?
+  static_files: index.html
+  upload: index.html
+  secure: always
+  http_headers:
+    Cache-Control: no-store
+    X-Frame-Options: deny
+
+- url: /privacypolicy[/]?
+  static_files: index.html
+  upload: index.html
+  secure: always
+  http_headers:
+    Cache-Control: no-store
+    X-Frame-Options: deny
+
 
 # Podcasts
 

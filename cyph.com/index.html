@@ -32,7 +32,7 @@
 		<link rel='stylesheet' href='/css/preload.css' />
 	</head>
 	<body>
-		<section id='main' layout='vertical' class='nano' ng-class='{"unisection-mode": podcast || isError}'>
+		<section id='main' layout='vertical' class='nano' ng-class='{"unisection-mode": podcast || isError || isAbout || isTos || isPrivacyPolicy}'>
 		<div class='nano-content'>
 
 		<!-- <md-sidenav component-id='menu' class='md-sidenav-right'>
@@ -83,33 +83,15 @@
 
 		<md-toolbar id='main-toolbar'>
 			<div class='md-toolbar-tools'>
-				<span flex></span>
-				<md-button
-					translate
-					aria-label='About'
-					ng-click='baseButtonClick()'
-					href='//www.reddit.com/wiki/commenting/.compact#wiki_posting'
-				>
-					About
-				</md-button>
-				<md-button
-					translate
-					aria-label='FAQ'
-					ng-click='baseButtonClick()'
-					href='//www.reddit.com/wiki/commenting/.compact#wiki_posting'
-				>
-					FAQ
-				</md-button>
-				<md-button
-					translate
-					aria-label='Blog'
-					ng-click='baseButtonClick()'
-					href='//www.reddit.com/wiki/commenting/.compact#wiki_posting'
-				>
-					Blog
-				</md-button>
-
 				<!--
+					<span flex></span>
+					<md-button
+						translate
+						aria-label='About Us'
+						href='/about'
+					>
+						About Us
+					</md-button>
 					<span flex></span>
 					<md-button translate aria-label='Menu' ng-click='openMobileMenu()'>
 						<img src='/img/icons/menu.png' />
@@ -119,8 +101,10 @@
 		</md-toolbar>
 
 		<section id='hero-section'>
-			<div class='hero-text animated' translate>Privacy starts here.</div>
-			<div style='padding: 10%; padding-top: 200px;'>
+			<div class='hero-text animated' translate>
+				Privacy starts here.
+			</div>
+			<div class='section-content-container'>
 				<p>
 					<span translate>Encryption is hard, but using it shouldn’t be. We believe</span>
 					<i translate>everyone</i>
@@ -130,13 +114,44 @@
 					Cyph is a next-generation messenger app that makes privacy the new status quo.
 				</p>
 				<p translate>
-					It was founded by two former SpaceX engineers and childhood friends to meet their own high standards of what chat should be: completely private and delightfully dope.
-				</p>
-				<p translate>
 					With Cyph, never again will you need to ask someone else to install or configure or sign up for anything, when all you need is a one-off private discussion.
 				</p>
 				<p translate>
 					One click and you’re secure.
+				</p>
+				<p>
+					<br />
+					<form class='beta-signup-form' ng-submit='submitBetaSignup()'>
+						<div ng-show='betaSignupState == 0'>
+							<div translate>
+								<p translate>
+									Pumped up for more Cyph awesomeness?
+								</p>
+								<p translate>
+									Join the waitlist for Cyph v2!
+								</p>
+							</div>
+							<md-text-float type='email' label='email' ng-model='betaSignup.Email' translate></md-text-float>
+						</div>
+
+						<div ng-show='betaSignupState == 1'>
+							<div>
+								<p translate>
+									Thanks so much for signing up!
+								</p>
+								<p translate>
+									Feel free to add your name as well. :)
+								</p>
+							</div>
+							<md-text-float label='name (optional)' ng-model='betaSignup.Name' translate></md-text-float>
+						</div>
+
+						<div ng-show='betaSignupState == 2'>
+							Your soul is ours.
+						</div>
+
+						<md-button type='submit' ng-hide='true'></md-button>
+					</form>
 				</p>
 			</div>
 		</section>
@@ -146,12 +161,12 @@
 				<img class='podcast-logo'>
 			</div>
 
-			<div class='beta-signup-form-container'>
+			<div class='section-content-container'>
 				<div>
 					<p>
 						<form class='beta-signup-form' ng-submit='submitBetaSignup()'>
 							<div ng-show='betaSignupState == 0'>
-								<div translate>
+								<div>
 									<p>
 										<span translate>Welcome</span>
 										<i ng-show='podcast == "penn"'>Penn's Sunday School</i>
@@ -209,8 +224,33 @@
 			</div>
 		</section>
 
-		<section translate>
-			But maybe not here...
+
+		<!-- <section id='about' ng-show='isAbout' class='unisection'> -->
+
+		<section>
+			<div class='hero-text' translate>
+				About Us
+			</div>
+			<div class='section-content-container'>
+				<p translate>
+					Cyph was founded by two former SpaceX engineers to meet their own high standards of what chat should be: completely private and delightfully dope.
+				</p>
+				<p translate>
+					<div class='founder-photos'>
+						<div>
+							<img src='/img/ryan.png' />
+							<strong>Ryan Lester</strong>
+						</div>
+						<div>
+							<img src='/img/josh.png' />
+							<strong>Baron Joshua Cyrus Boehm</strong>
+						</div>
+					</div>
+				</p>
+				<p translate>
+					What should we put here?
+				</p>
+			</div>
 		</section>
 
 		<section id='error' ng-show='isError' class='unisection'>
@@ -234,8 +274,30 @@
 			</div>
 		</section>
 
+		<section id='termsofservice' ng-show='isTos' class='unisection'>
+			<div class='hero-text' translate>
+				Terms of Service
+			</div>
+			<div class='section-content-container'>
+				<p translate>
+					N/A
+				</p>
+			</div>
+		</section>
+
+		<section id='privacypolicy' ng-show='isPrivacyPolicy' class='unisection'>
+			<div class='hero-text' translate>
+				Privacy Policy
+			</div>
+			<div class='section-content-container'>
+				<p translate>
+					We keep your shit private yo
+				</p>
+			</div>
+		</section>
+
 		<footer id='footer'>
-			<section ng-hide='podcast'>
+			<section ng-hide='podcast || ((isError || isAbout || isTos || isPrivacyPolicy) && betaSignupState > 2)'>
 				<form class='beta-signup-form' ng-submit='submitBetaSignup()'>
 					<div ng-show='betaSignupState == 0'>
 						<div translate>
@@ -262,7 +324,7 @@
 				</form>
 			</section>
 
-			<section ng-show='podcast'>
+			<section ng-show='podcast || ((isError || isAbout || isTos || isPrivacyPolicy) && betaSignupState > 2)'>
 				<md-button
 					id='new-cyph-footer'
 					href='//cyph.im/new'
@@ -286,6 +348,11 @@
 
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				<a target='_self' href='bitcoin:1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd'>1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd</a>
+			</div>
+			<div class='footer-bullshit'>
+				<a href='/termsofservice'>Terms of Service</a>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<a href='/privacypolicy'>Privacy Policy</a>
 			</div>
 		</footer>
 
