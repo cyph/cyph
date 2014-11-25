@@ -1,3 +1,5 @@
+/* TODO: Replace all these one-off functions with a changeState implementation */
+
 function processUrlState () {
 	var state	= getUrlState();
 
@@ -7,22 +9,29 @@ function processUrlState () {
 		indexOf(state) > -1
 	;
 
+	openPodcast();
+	openAbout();
+	openTos();
+	openPrivacyPolicy();
+	openError();
+
 	if (isPodcast) {
 		openPodcast(state);
-		return;
 	}
-	else {
-		openPodcast();
+	else if (state == 'about') {
+		pushState('/404');
+		// openAbout(true);
 	}
-
-	if (state == '404') {
-		error(true);
+	else if (state == 'termsofservice') {
+		openTos(true);
+	}
+	else if (state == 'privacypolicy') {
+		openPrivacyPolicy(true);
+	}
+	else if (state == '404') {
+		openError(true);
 	}
 	else if (state != '') {
 		pushState('/404');
-		return;
-	}
-	else {
-		error();
 	}
 }

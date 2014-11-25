@@ -128,6 +128,11 @@ func imConnect(h HandlerArgs) (interface{}, int) {
 	if item, err := memcache.Get(h.Context, id); err != memcache.ErrCacheMiss {
 		imSetupString := string(item.Value)
 		memcache.Delete(h.Context, item.Key)
+
+		if n == 2 {
+			memcache.Increment(h.Context, "totalCyphs", 1, 0)
+		}
+
 		return imSetupString, http.StatusOK
 	}
 
@@ -172,8 +177,6 @@ func imCreate(h HandlerArgs) (interface{}, int) {
 
 	laterSendChannelMessage.Call(h.Context, longId)
 	laterImTeardown.Call(h.Context, longId, imIdItems[0].Key, imIdItems[1].Key, string(imIdItems[1].Value))
-
-	memcache.Increment(h.Context, "totalCyphs", 1, 0)
 
 	return imId, http.StatusOK
 }
