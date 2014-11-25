@@ -32,7 +32,7 @@
 		<link rel='stylesheet' href='/css/preload.css' />
 	</head>
 	<body>
-		<section id='main' layout='vertical' class='nano' ng-class='{"podcast-mode": podcast}'>
+		<section id='main' layout='vertical' class='nano' ng-class='{"unisection-mode": podcast || isError}'>
 		<div class='nano-content'>
 
 		<!-- <md-sidenav component-id='menu' class='md-sidenav-right'>
@@ -74,7 +74,7 @@
 			<img src='/img/logo.white.horizontal.header.png' />
 		</a>
 
-		<img id='bouncing-down-arrow' class='animated' ng-click='scrollDown()' src='/img/icons/downarrow.png' ng-hide='podcast' />
+		<img id='bouncing-down-arrow' class='animated' ng-click='scrollDown()' src='/img/icons/downarrow.png' />
 
 
 		<section>
@@ -141,7 +141,7 @@
 			</div>
 		</section>
 
-		<section id='podcast-section'>
+		<section id='podcast-section' ng-show='podcast' class='unisection'>
 			<div class='hero-text animated' ng-class='{bounceInDown: podcast != "jjgo", bounceInLeft: podcast == "jjgo"}'>
 				<img class='podcast-logo'>
 			</div>
@@ -149,18 +149,43 @@
 			<div class='beta-signup-form-container'>
 				<div>
 					<p>
-						<span translate>Welcome</span>
-						<i ng-show='podcast == "penn"'>Penn's Sunday School</i>
-						<i ng-show='podcast == "jjgo"'>Jordan, Jesse, Go!</i>
-						<i ng-show='podcast == "ventura"'>We The People</i>
-						<i ng-show='podcast == "sawbones"'>Sawbones</i>
-						<i ng-show='podcast == "judgejohn"'>Judge John Hodgman</i>
-						<i ng-show='podcast == "mybrother"'>My Brother, My Brother and Me</i>
-						<i ng-show='podcast == "security"'>The Security Brief</i>
-						<span translate>listeners!</span>
-					</p>
-					<p translate>
-						Sign up on the right, and get bumped to the front of our waitlist for Cyph v2.
+						<form class='beta-signup-form' ng-submit='submitBetaSignup()'>
+							<div ng-show='betaSignupState == 0'>
+								<div translate>
+									<p>
+										<span translate>Welcome</span>
+										<i ng-show='podcast == "penn"'>Penn's Sunday School</i>
+										<i ng-show='podcast == "jjgo"'>Jordan, Jesse, Go!</i>
+										<i ng-show='podcast == "ventura"'>We The People</i>
+										<i ng-show='podcast == "sawbones"'>Sawbones</i>
+										<i ng-show='podcast == "judgejohn"'>Judge John Hodgman</i>
+										<i ng-show='podcast == "mybrother"'>My Brother, My Brother and Me</i>
+										<i ng-show='podcast == "security"'>The Security Brief</i>
+										<span translate>listeners!</span>
+									</p>
+									<p translate>
+										Sign up below, and get bumped to the front of our waitlist for Cyph v2.
+									</p>
+								</div>
+								<md-text-float type='email' label='email' ng-model='betaSignup.Email' translate></md-text-float>
+							</div>
+
+							<div ng-show='betaSignupState == 1'>
+								<div translate>
+									Thanks so much for signing up!
+								</div>
+								<div translate>
+									Feel free to add your name as well. :)
+								</div>
+								<md-text-float label='name (optional)' ng-model='betaSignup.Name' translate></md-text-float>
+							</div>
+
+							<div ng-show='betaSignupState == 2'>
+								He's coming. Run.
+							</div>
+
+							<md-button type='submit' ng-hide='true'></md-button>
+						</form>
 					</p>
 					<p>
 						<br />
@@ -181,20 +206,32 @@
 						One click and you’re secure.
 					</p>
 				</div>
-
-				<form class='beta-signup-form' ng-submit='submitBetaSignup()' ng-class='{complete: betaSignupState > 0}'>
-					<md-text-float type='email' label='email' ng-model='betaSignup.Email' translate></md-text-float>
-					<md-text-float label='name (optional)' ng-model='betaSignup.Name' translate></md-text-float>
-					<md-button type='submit' aria-label='Sign up for beta' translate>Sign up for beta</md-button>
-				</form>
-				<div translate>
-					Thanks so much for signing up! You'll hear from us shortly. :)
-				</div>
 			</div>
 		</section>
 
 		<section translate>
 			But maybe not here...
+		</section>
+
+		<section id='error' ng-show='isError' class='unisection'>
+			<div>
+				<h1 translate>I'm sorry, but your cyph is in another castle...</h1>
+			</div>
+			<img src='/img/404.png' />
+			<div id='errorExplanation'>
+				<p translate>Reasons why you may have landed here:</p>
+				<ul>
+					<li translate>
+						A glitch in the matrix
+					</li>
+					<li translate>
+						You're just guessing random URLs
+					</li>
+					<li translate>
+						We broke something
+					</li>
+				</ul>
+			</div>
 		</section>
 
 		<footer id='footer'>

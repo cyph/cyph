@@ -29,7 +29,7 @@ cd github.com/gorilla
 git clone git://github.com/gorilla/mux.git
 cd ../../..
 
-for d in cyph.im ; do
+for d in cyph.im cyph.com ; do
 	cd $d
 
 	# Cache bust
