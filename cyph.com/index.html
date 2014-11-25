@@ -153,7 +153,7 @@
 						You rock.
 					</div>
 
-					<md-button type='submit' ng-hide='true'></md-button>
+					<md-button type='submit' aria-label='Sign up for beta'>Sign up for beta</md-button>
 				</form>
 			</div>
 		</section>
@@ -294,7 +294,10 @@
 			</div>
 			<div class='section-content-container'>
 				<p translate>
-					N/A
+					Gonna update this later, but for now let's just say that you can't sue us or murder us for any reason and we make no guarantees about anything.
+				</p>
+				<p translate>
+					(It's not like anyone will ever read this anyway.)
 				</p>
 			</div>
 		</section>
@@ -305,8 +308,28 @@
 			</div>
 			<div class='section-content-container'>
 				<p translate>
-					We keep your shit private yo
+					Gonna update this pretty soon (unlike the ToS, this is actually kind of important considering what we do), but the main things are:
 				</p>
+				<ul>
+					<li translate>
+						Our corporate site / landing page had Google Analytics included
+					</li>
+					<li translate>
+						Our actual app briefly loads Google Analytics in a sandboxed iframe then deletes the iframe after 10 seconds
+					</li>
+					<li translate>
+						Our backend keeps track of: total cyphs started, total number of messages sent, total beta invite list signups
+					</li>
+					<li translate>
+						Our server keeps a log of all incoming requests
+					</li>
+					<li translate>
+						We absolutely, 100%, NEVER and NEVER WILL ever send or store plaintext versions of your encrypted data
+					</li>
+					<li translate>
+						Obligatory canary: we have not been approached by any government with a request to backdoor our code
+					</li>
+				</ul>
 			</div>
 		</section>
 
@@ -367,6 +390,8 @@
 				<a href='/termsofservice'>Terms of Service</a>
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				<a href='/privacypolicy'>Privacy Policy</a>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<a target='_blank' href='//www.youtube.com/watch?v=YChUrtGTi98'>Promo Video</a>
 			</div>
 		</footer>
 

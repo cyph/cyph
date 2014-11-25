@@ -46,12 +46,17 @@ md-button.focus, md-button:hover {
 
 .hero-text {
   font-family: 'Ubuntu';
-  font-size: 36px;
   width: 100%;
   text-align: center;
   position: absolute;
   top: 100px;
   margin-left: -50px; }
+
+html:not(.mobile) .hero-text {
+  font-size: 50px; }
+
+html.mobile .hero-text {
+  font-size: 36px; }
 
 #main-toolbar, #new-cyph.fixed-header {
   top: 0px !important; }
@@ -136,10 +141,12 @@ md-button.focus, md-button:hover {
   font-family: 'Ubuntu', sans-serif;
   font-size: 2.5vw; }
 #error > * {
-  width: 75%;
+  width: 66%;
   margin-left: auto;
   margin-right: auto;
   display: block; }
+#error li {
+  margin-bottom: 15px; }
 
 .section-content-container {
   width: 100%;
@@ -151,6 +158,8 @@ md-button.focus, md-button:hover {
     padding-bottom: 15px; }
   .section-content-container md-input-group {
     padding: 0px 10vw; }
+  .section-content-container li {
+    margin-bottom: 15px; }
 
 .founder-photos {
   padding: 20px; }
@@ -241,12 +250,23 @@ md-button.focus, md-button:hover {
   background-color: rgba(0, 0, 0, 0.15); }
 
 #home-beta-signup {
+  text-align: center !important;
   padding: 0px !important;
-  height: 210px !important;
-  max-height: 210px !important;
-  min-height: 210px !important; }
+  height: 250px !important;
+  max-height: 250px !important;
+  min-height: 250px !important; }
   #home-beta-signup .section-content-container {
-    margin-top: 90px; }
+    margin-top: 50px; }
+  #home-beta-signup md-button {
+    -webkit-transform: scale(0.75) !important;
+    -moz-transform: scale(0.75) !important;
+    -ms-transform: scale(0.75) !important;
+    -o-transform: scale(0.75) !important;
+    transform: scale(0.75) !important;
+    width: 200px !important;
+    display: block;
+    margin-left: auto;
+    margin-right: auto; }
 
 /* Note: put general solution in cyph.base.scss */
 #main, #main > div {
