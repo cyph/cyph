@@ -230,7 +230,7 @@ angular.
 					apply(function () {
 						++$scope.betaSignupState;
 					});
-				}, isMobile ? 1000 : 500);
+				}, 1500);
 			}
 
 			setTimeout(function () {
