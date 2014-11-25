@@ -51,12 +51,14 @@
     "You may now speak.": "Anda boleh berbicara sekarang.",
     "You're just guessing random URLs": "Anda hanya menebak URL secara acak",
     "deserves privacy, not only security experts.": "pantas privasi, tidak hanya ahli keamanan.",
+    "email": "TranslateApiException: The Azure Market Place Translator Subscription associated with the request credentials has zero balance. : ID=5641.V2_Json.Translate.42872290",
     "everyone": "Semua orang",
     "friend": "teman",
     "listeners!": "pendengar!",
     "me": "saya",
     "message": "pesan",
     "messages": "pesan",
+    "name (optional)": "Nama (opsional)",
     "new": "baru",
     "try again": "coba lagi"
 }

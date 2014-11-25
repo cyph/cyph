@@ -51,12 +51,14 @@
     "You may now speak.": "Ara podeu parlar.",
     "You're just guessing random URLs": "Esteu posant URLs a l'atzar!",
     "deserves privacy, not only security experts.": "mereix intimitat, no nom\u00e9s experts en seguretat.",
+    "email": "TranslateApiException: The Azure Market Place Translator Subscription associated with the request credentials has zero balance. : ID=5641.V2_Json.Translate.4287215E",
     "everyone": "tothom",
     "friend": "amic",
     "listeners!": "oients!",
     "me": "jo",
     "message": "missatge",
     "messages": "missatges",
+    "name (optional)": "TranslateApiException: The Azure Market Place Translator Subscription associated with the request credentials has zero balance. : ID=5641.V2_Json.Translate.42872171",
     "new": "nou",
     "try again": "intentar de nou"
 }

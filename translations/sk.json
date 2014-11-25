@@ -51,12 +51,14 @@
     "You may now speak.": "Teraz m\u00f4\u017ee\u0161 hovori\u0165.",
     "You're just guessing random URLs": "N\u00e1hodne h\u00e1da\u0161 URL",
     "deserves privacy, not only security experts.": "zasl\u00fa\u017ei si s\u00fakromie, nie len odborn\u00edci na bezpe\u010dnos\u0165.",
+    "email": "TranslateApiException: The Azure Market Place Translator Subscription associated with the request credentials has zero balance. : ID=6346.V2_Json.Translate.3D11EAF0",
     "everyone": "V\u0161etci",
     "friend": "priate\u013e/ka",
     "listeners!": "posluch\u00e1\u010di!",
     "me": "mi",
     "message": "spr\u00e1va",
     "messages": "spr\u00e1vy",
+    "name (optional)": "TranslateApiException: The Azure Market Place Translator Subscription associated with the request credentials has zero balance. : ID=5107.V2_Json.Translate.4279E43B",
     "new": "nov\u00fd/\u00e1",
     "try again": "sk\u00fas to znovu"
 }
