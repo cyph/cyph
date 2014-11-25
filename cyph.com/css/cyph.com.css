@@ -127,17 +127,34 @@ md-button.focus, md-button:hover {
     margin-left: auto;
     margin-right: auto; }
 
-.beta-signup-form-container {
-  width: 85vw;
-  margin-top: 275px;
+#error h1 {
+  text-align: center;
+  font-family: 'Ubuntu', sans-serif;
+  font-size: 2.5vw; }
+#error > * {
+  width: 75%;
   margin-left: auto;
-  margin-right: auto; }
-  .beta-signup-form-container > * {
-    width: calc(50% - 25px); }
-  .beta-signup-form-container > :nth-child(1) {
-    float: left; }
-  .beta-signup-form-container > :nth-child(2) {
-    float: right; }
+  margin-right: auto;
+  display: block; }
+
+.beta-signup-form-container {
+  width: 50vw;
+  margin-top: 175px;
+  margin-left: auto;
+  margin-right: auto;
+  	/*
+  	> * {
+  		width: calc(50% - 25px);
+  	}
+  
+  	> :nth-child(1) {
+  		float: left;
+  	}
+  
+  	> :nth-child(2) {
+  		float: right;
+  	}
+  	*/ }
 
 .beta-signup-form-container:after {
   clear: both;
@@ -149,8 +166,9 @@ md-button.focus, md-button:hover {
   color: #f1f1f1; }
   .beta-signup-form * {
     color: #f1f1f1;
-    display: block;
     width: 100%; }
+  .beta-signup-form *:not(p):not(p *) {
+    display: block; }
   .beta-signup-form md-input-group.md-input-focused * {
     color: #c9adff !important;
     border-color: #c9adff !important; }
@@ -193,16 +211,13 @@ md-button.focus, md-button:hover {
   -moz-transition: opacity 500ms 1s linear;
   transition: opacity 500ms 1s linear; }
 
-#podcast-section {
-  display: none; }
-  #podcast-section .hero-text {
-    top: 50px; }
-    #podcast-section .hero-text img {
-      width: 450px; }
+#podcast-section .hero-text {
+  top: 50px; }
+  #podcast-section .hero-text img {
+    width: 75vw;
+    max-width: 450px; }
 
-#main.podcast-mode #podcast-section {
-  display: block; }
-#main.podcast-mode section:not(#podcast-section) {
+#main.unisection-mode > div > section:not(.unisection), #main.unisection-mode #bouncing-down-arrow {
   display: none; }
 
 /*# sourceMappingURL=cyph.com.css.map */

@@ -152,12 +152,31 @@ md-button.focus, md-button:hover {
 }
 
 
+
+#error {
+	h1 {
+		text-align: center;
+		font-family: 'Ubuntu', sans-serif;
+		font-size: 2.5vw;
+	}
+
+	> * {
+		width: 75%;
+		margin-left: auto;
+		margin-right: auto;
+		display: block;
+	}
+}
+
+
+
 .beta-signup-form-container {
-	width: 85vw;
-	margin-top: 275px;
+	width: 50vw;
+	margin-top: 175px;
 	margin-left: auto;
 	margin-right: auto;
 
+	/*
 	> * {
 		width: calc(50% - 25px);
 	}
@@ -169,6 +188,7 @@ md-button.focus, md-button:hover {
 	> :nth-child(2) {
 		float: right;
 	}
+	*/
 }
 .beta-signup-form-container:after {
 	clear: both;
@@ -182,8 +202,10 @@ md-button.focus, md-button:hover {
 
 	* {
 		color: #f1f1f1;
-		display: block;
 		width: 100%;
+	}
+	*:not(p):not(p *) {
+		display: block;
 	}
 
 	md-input-group.md-input-focused * {
@@ -230,23 +252,18 @@ md-button.focus, md-button:hover {
 }
 
 #podcast-section {
-	display: none;
-
 	.hero-text {
 		top: 50px;
 
 		img {
-			width: 450px;
+			width: 75vw;
+			max-width: 450px;
 		}
 	}
 }
 
-#main.podcast-mode {
-	#podcast-section {
-		display: block;
-	}
-
-	section:not(#podcast-section) {
+#main.unisection-mode {
+	> div > section:not(.unisection), #bouncing-down-arrow {
 		display: none;
 	}
 }

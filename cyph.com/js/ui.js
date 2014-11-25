@@ -1,4 +1,4 @@
-var openPodcast;
+var openPodcast, error;
 
 
 angular.
@@ -19,6 +19,7 @@ angular.
 		var fixedHeaderClass	= 'fixed-header';
 
 
+		$scope.isError	= false;
 		$scope.podcast	= '';
 
 
@@ -45,6 +46,12 @@ angular.
 			$heroText.hide();
 			podcast && $podcastLogo.attr('src', '/img/' + podcast + '.png');
 			setTimeout(function () { $heroText.show() }, 1);
+		};
+
+		error	= $scope.error = function (isError) {
+			apply(function () {
+				$scope.isError	= isError;
+			});
 		};
 
 
@@ -222,11 +229,6 @@ angular.
 						else {
 							retries	= 0;
 						}
-					},
-					success: function () {
-						setTimeout(function () {
-							pushState('/');
-						}, 7000);
 					}
 				});
 			}
