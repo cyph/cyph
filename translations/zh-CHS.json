@@ -51,12 +51,14 @@
     "You may now speak.": "\u60a8\u73b0\u5728\u53ef\u4ee5\u8bf4\u8bdd\u4e86\u3002",
     "You're just guessing random URLs": "\u60a8\u7684\u7f51\u5740\u662f\u4e71\u731c\u7684",
     "deserves privacy, not only security experts.": "\u503c\u5f97\u9690\u79c1\uff0c\u4e0d\u4ec5\u5b89\u5168\u4e13\u5bb6\u3002",
+    "email": "\u7535\u5b50\u90ae\u4ef6",
     "everyone": "\u6bcf\u4e2a\u4eba\u90fd",
     "friend": "\u597d\u53cb",
     "listeners!": "\u542c\u4f17 \uff01",
     "me": "\u6211",
     "message": "\u6d88\u606f",
     "messages": "\u6d88\u606f",
+    "name (optional)": "\u540d\u79f0 \uff08\u53ef\u9009\uff09",
     "new": "\u65b0",
     "try again": "\u91cd\u8bd5"
 }

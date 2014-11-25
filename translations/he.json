@@ -51,12 +51,14 @@
     "You may now speak.": "\u05d0\u05ea/\u05d4 \u05e8\u05e9\u05d0\u05d9/\u05ea \u05dc\u05d3\u05d1\u05e8 \u05e2\u05db\u05e9\u05d9\u05d5.",
     "You're just guessing random URLs": "\u05d0\u05ea\u05d4 \u05e4\u05e9\u05d5\u05d8 \u05de\u05e0\u05d7\u05e9 \u05db\u05ea\u05d5\u05d1\u05d5\u05ea URL \u05d0\u05e7\u05e8\u05d0\u05d9\u05d5\u05ea",
     "deserves privacy, not only security experts.": "\u05e8\u05d0\u05d5\u05d9 \u05e4\u05e8\u05d8\u05d9\u05d5\u05ea, \u05dc\u05d0 \u05e8\u05e7 \u05de\u05d5\u05de\u05d7\u05d9 \u05d0\u05d1\u05d8\u05d7\u05d4.",
+    "email": "TranslateApiException: The Azure Market Place Translator Subscription associated with the request credentials has zero balance. : ID=5107.V2_Json.Translate.4279E395",
     "everyone": "\u05db\u05d5\u05dc\u05dd",
     "friend": "\u05d7\u05d1\u05e8",
     "listeners!": "\u05d4\u05de\u05d0\u05d6\u05d9\u05e0\u05d9\u05dd!",
     "me": "\u05d0\u05e0\u05d9",
     "message": "\u05d4\u05d5\u05d3\u05e2\u05d4",
     "messages": "\u05d4\u05d5\u05d3\u05e2\u05d5\u05ea",
+    "name (optional)": "TranslateApiException: The Azure Market Place Translator Subscription associated with the request credentials has zero balance. : ID=5641.V2_Json.Translate.42872710",
     "new": "\u05d7\u05d3\u05e9",
     "try again": "\u05e0\u05d9\u05e1\u05d9\u05d5\u05df \u05d7\u05d5\u05d6\u05e8"
 }

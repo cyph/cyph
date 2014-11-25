@@ -51,12 +51,14 @@
     "You may now speak.": "\uc774\uc81c \ub9d0\ud574\ub3c4 \ub429\ub2c8\ub2e4.",
     "You're just guessing random URLs": "URL\uc744 \ubb34\uc791\uc704\ub85c \ucd94\uce21\ud558\uc168\uc2b5\ub2c8\ub2e4.",
     "deserves privacy, not only security experts.": "\uac1c\uc778 \uc815\ubcf4 \ubcf4\ud638 \uc815\ucc45\uc744 \ubfd0\ub9cc \uc544\ub2c8\ub77c \ubcf4\uc548 \uc804\ubb38\uac00 \uc758\ud558\uc5ec \uac00\uce58\uac00 \uc788\ub2e4.",
+    "email": "TranslateApiException: The Azure Market Place Translator Subscription associated with the request credentials has zero balance. : ID=5641.V2_Json.Translate.42872735",
     "everyone": "\ubaa8\ub450",
     "friend": "\uce5c\uad6c",
     "listeners!": "\uccad\ucde8\uc790!",
     "me": "\ub098",
     "message": "\uba54\uc2dc\uc9c0",
     "messages": "\uba54\uc2dc\uc9c0",
+    "name (optional)": "TranslateApiException: The Azure Market Place Translator Subscription associated with the request credentials has zero balance. : ID=5005.V2_Json.Translate.427B5EB4",
     "new": "\ucd94\uac00\uc0ac\ud56d",
     "try again": "\ub2e4\uc2dc \uc2dc\ub3c4"
 }
