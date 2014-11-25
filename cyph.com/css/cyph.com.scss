@@ -1,6 +1,12 @@
 @import 'bourbon/bourbon';
 
 
+html:not(.load-complete) {
+	section:not(#main), footer {
+		display: none;
+	}
+}
+
 section#main {
 	background-color: rgba(139, 98, 217, 0.75) !important;
 }
@@ -52,7 +58,7 @@ md-button.focus, md-button:hover {
 	width: 200px;
 }
 
-#hero-text {
+.hero-text {
 	font-family: 'Ubuntu';
 	font-size: 7vw;
 	width: 100%;
@@ -135,5 +141,112 @@ md-button.focus, md-button:hover {
 
 	.footer-info {
 		padding: 0px 5%;
+	}
+
+	.beta-signup-form {
+		width: 100%;
+		max-width: 300px;
+		margin-left: auto;
+		margin-right: auto;
+	}
+}
+
+
+.beta-signup-form-container {
+	width: 85vw;
+	margin-top: 275px;
+	margin-left: auto;
+	margin-right: auto;
+
+	> * {
+		width: calc(50% - 25px);
+	}
+
+	> :nth-child(1) {
+		float: left;
+	}
+
+	> :nth-child(2) {
+		float: right;
+	}
+}
+.beta-signup-form-container:after {
+	clear: both;
+	content: '';
+	display: block;
+}
+
+.beta-signup-form {
+	opacity: 0;
+	color: #f1f1f1;
+
+	* {
+		color: #f1f1f1;
+		display: block;
+		width: 100%;
+	}
+
+	md-input-group.md-input-focused * {
+		color: #c9adff !important;
+		border-color: #c9adff !important;
+	}
+
+	md-button {
+		margin: 25px auto;
+		width: calc(100% - 100px);
+		min-width: 200px;
+	}
+}
+
+.beta-signup-form md-button, #new-cyph-footer {
+	font-family: 'Ubuntu' !important;
+	line-height: 50px !important;
+	font-size: 18px !important;
+	box-shadow: 0px 4px 10px -1px rgba(0, 0, 0, 0.25) !important;
+}
+#new-cyph-footer {
+	width: 200px;
+	@include transform(scale(0.75) !important);
+}
+
+.beta-signup-form + div {
+	opacity: 0;
+	pointer-events: none;
+	position: fixed;
+	z-index: 99;
+	top: 0px;
+	left: 0px;
+	width: 101%;
+	height: 101%;
+	font-size: 5vw;
+	padding: 15vh 15vw;
+	background-color: rgba(97, 51, 163, 0.75);
+	font-family: 'Ubuntu' !important;
+}
+
+.beta-signup-form.complete + div, .beta-signup-form.visible {
+	opacity: 1;
+	@include transition(opacity 500ms 1s linear);
+}
+
+#podcast-section {
+	display: none;
+
+	.hero-text {
+		top: 50px;
+
+		img {
+			width: 450px;
+		}
+	}
+}
+
+#main.podcast-mode {
+	#podcast-section {
+		display: block;
+	}
+
+	section:not(#podcast-section) {
+		display: none;
 	}
 }

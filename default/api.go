@@ -37,6 +37,8 @@ func betaSignup(h HandlerArgs) (interface{}, int) {
 
 	if strings.Contains(betaSignup.Email, "@") {
 		betaSignup.Email = strings.ToLower(betaSignup.Email)
+		betaSignup.Country = strings.ToLower(betaSignup.Country)
+		betaSignup.Language = strings.ToLower(betaSignup.Language)
 
 		key := datastore.NewKey(h.Context, "BetaSignup", betaSignup.Email, 0, nil)
 

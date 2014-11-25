@@ -20,26 +20,60 @@ handlers:
   http_headers:
     X-Frame-Options: deny
 
+
+
+#Podcasts
+
 - url: /penn[/]?
-  static_files: podcast.html
-  upload: podcast.html
+  static_files: index.html
+  upload: index.html
   secure: always
   http_headers:
     X-Frame-Options: deny
 
 - url: /jjgo[/]?
-  static_files: podcast.html
-  upload: podcast.html
+  static_files: index.html
+  upload: index.html
   secure: always
   http_headers:
     X-Frame-Options: deny
 
 - url: /ventura[/]?
-  static_files: podcast.html
-  upload: podcast.html
+  static_files: index.html
+  upload: index.html
   secure: always
   http_headers:
     X-Frame-Options: deny
+
+- url: /sawbones[/]?
+  static_files: index.html
+  upload: index.html
+  secure: always
+  http_headers:
+    X-Frame-Options: deny
+
+- url: /judgejohn[/]?
+  static_files: index.html
+  upload: index.html
+  secure: always
+  http_headers:
+    X-Frame-Options: deny
+
+- url: /mybrother[/]?
+  static_files: index.html
+  upload: index.html
+  secure: always
+  http_headers:
+    X-Frame-Options: deny
+
+- url: /security[/]?
+  static_files: index.html
+  upload: index.html
+  secure: always
+  http_headers:
+    X-Frame-Options: deny
+
+
 
 - url: /(.*)
   static_files: \1
