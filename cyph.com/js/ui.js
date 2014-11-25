@@ -209,7 +209,7 @@ angular.
 					apply(function () {
 						++$scope.betaSignupState;
 					});
-				}, 500);
+				}, 500 + (isMobile ? 500 : 0));
 			}
 
 			setTimeout(function () {
@@ -238,7 +238,7 @@ angular.
 
 		setTimeout(function () {
 			$betaSignupForm.addClass('visible');
-		}, 1500 + (isMobile ? 750 : 0));
+		}, 500);
 
 
 
