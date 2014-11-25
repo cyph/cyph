@@ -138,7 +138,8 @@ md-button.focus, md-button:hover {
   display: block; }
 
 .beta-signup-form-container {
-  width: 50vw;
+  width: 100%;
+  max-width: 600px;
   margin-top: 175px;
   margin-left: auto;
   margin-right: auto;
