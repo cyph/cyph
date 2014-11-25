@@ -238,7 +238,7 @@ angular.
 
 		setTimeout(function () {
 			$betaSignupForm.addClass('visible');
-		}, 500);
+		}, 1500 + (isMobile ? 750 : 0));
 
 
 
