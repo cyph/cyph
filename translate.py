@@ -26,7 +26,8 @@ f.close()
 attrs	= [
 	'content',
 	'placeholder',
-	'aria-label'
+	'aria-label',
+	'label'
 ]
 
 cyph			= u'cyph'
