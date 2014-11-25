@@ -149,11 +149,11 @@
 						<md-text-float label='name (optional)' ng-model='betaSignup.Name' translate></md-text-float>
 					</div>
 
-					<div ng-show='betaSignupState == 2'>
+					<div ng-show='betaSignupState > 1'>
 						You rock.
 					</div>
 
-					<md-button type='submit' aria-label='Sign up for beta'>Sign up for beta</md-button>
+					<md-button type='submit' aria-label='Sign up for beta' ng-hide='betaSignupState > 1'>Sign up for beta</md-button>
 				</form>
 			</div>
 		</section>
