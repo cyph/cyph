@@ -32,7 +32,8 @@
 		<link rel='stylesheet' href='/css/preload.css' />
 	</head>
 	<body>
-		<section id='main' layout='vertical' class='nano'><div class='nano-content'>
+		<section id='main' layout='vertical' class='nano' ng-class='{"podcast-mode": podcast}'>
+		<div class='nano-content'>
 
 		<!-- <md-sidenav component-id='menu' class='md-sidenav-right'>
 			<md-content class='md-content-padding'>
@@ -73,7 +74,7 @@
 			<img src='/img/logo.white.horizontal.header.png' />
 		</a>
 
-		<img id='bouncing-down-arrow' class='animated' ng-click='scrollDown()' src='/img/icons/downarrow.png' />
+		<img id='bouncing-down-arrow' class='animated' ng-click='scrollDown()' src='/img/icons/downarrow.png' ng-hide='podcast' />
 
 
 		<section>
@@ -81,32 +82,161 @@
 		</section>
 
 		<md-toolbar id='main-toolbar'>
-			<div class='md-toolbar-tools'></div>
+			<div class='md-toolbar-tools'>
+				<span flex></span>
+				<md-button
+					translate
+					aria-label='About'
+					ng-click='baseButtonClick()'
+					href='//www.reddit.com/wiki/commenting/.compact#wiki_posting'
+				>
+					About
+				</md-button>
+				<md-button
+					translate
+					aria-label='FAQ'
+					ng-click='baseButtonClick()'
+					href='//www.reddit.com/wiki/commenting/.compact#wiki_posting'
+				>
+					FAQ
+				</md-button>
+				<md-button
+					translate
+					aria-label='Blog'
+					ng-click='baseButtonClick()'
+					href='//www.reddit.com/wiki/commenting/.compact#wiki_posting'
+				>
+					Blog
+				</md-button>
+
+				<!--
+					<span flex></span>
+					<md-button translate aria-label='Menu' ng-click='openMobileMenu()'>
+						<img src='/img/icons/menu.png' />
+					</md-button>
+				-->
+			</div>
 		</md-toolbar>
 
 		<section id='hero-section'>
-			<div id='hero-text' class='animated' translate>Privacy starts here.</div>
+			<div class='hero-text animated' translate>Privacy starts here.</div>
 			<div style='padding: 10%; padding-top: 200px;'>
 				<p>
-					Encryption is hard, but using it shouldn’t be. We believe <i>everyone</i> deserves privacy, not only security experts.
+					<span translate>Encryption is hard, but using it shouldn’t be. We believe</span>
+					<i translate>everyone</i>
+					<span translate>deserves privacy, not only security experts.</span>
 				</p>
-				<p>
+				<p translate>
 					Cyph is a next-generation messenger app that makes privacy the new status quo.
 				</p>
-				<p>
+				<p translate>
 					It was founded by two former SpaceX engineers and childhood friends to meet their own high standards of what chat should be: completely private and delightfully dope.
 				</p>
-				<p>
+				<p translate>
 					With Cyph, never again will you need to ask someone else to install or configure or sign up for anything, when all you need is a one-off private discussion.
 				</p>
-				<p>
+				<p translate>
 					One click and you’re secure.
 				</p>
 			</div>
 		</section>
 
+		<section id='podcast-section'>
+			<div class='hero-text animated' ng-class='{bounceInDown: podcast != "jjgo", bounceInLeft: podcast == "jjgo"}'>
+				<img class='podcast-logo'>
+			</div>
+
+			<div class='beta-signup-form-container'>
+				<div>
+					<p>
+						<span translate>Welcome</span>
+						<i ng-show='podcast == "penn"'>Penn's Sunday School</i>
+						<i ng-show='podcast == "jjgo"'>Jordan, Jesse, Go!</i>
+						<i ng-show='podcast == "ventura"'>We The People</i>
+						<i ng-show='podcast == "sawbones"'>Sawbones</i>
+						<i ng-show='podcast == "judgejohn"'>Judge John Hodgman</i>
+						<i ng-show='podcast == "mybrother"'>My Brother, My Brother and Me</i>
+						<i ng-show='podcast == "security"'>The Security Brief</i>
+						<span translate>listeners!</span>
+					</p>
+					<p translate>
+						Sign up on the right, and get bumped to the front of our waitlist for Cyph v2.
+					</p>
+					<p>
+						<br />
+						<h1 translate>About Cyph</h1>
+					</p>
+					<p>
+						<span translate>Encryption is hard, but using it shouldn’t be. We believe</span>
+						<i translate>everyone</i>
+						<span translate>deserves privacy, not only security experts.</span>
+					</p>
+					<p translate>
+						Cyph is a next-generation messenger app that makes privacy the new status quo.
+					</p>
+					<p translate>
+						With Cyph, never again will you need to ask someone else to install or configure or sign up for anything, when all you need is a one-off private discussion.
+					</p>
+					<p translate>
+						One click and you’re secure.
+					</p>
+				</div>
+
+				<form class='beta-signup-form' ng-submit='submitBetaSignup()' ng-class='{complete: betaSignupState > 0}'>
+					<md-text-float type='email' label='email' ng-model='betaSignup.Email' translate></md-text-float>
+					<md-text-float label='name (optional)' ng-model='betaSignup.Name' translate></md-text-float>
+					<md-button type='submit' aria-label='Sign up for beta' translate>Sign up for beta</md-button>
+				</form>
+				<div translate>
+					Thanks so much for signing up! You'll hear from us shortly. :)
+				</div>
+			</div>
+		</section>
+
+		<section translate>
+			But maybe not here...
+		</section>
+
 		<footer id='footer'>
-			<section></section>
+			<section ng-hide='podcast'>
+				<form class='beta-signup-form' ng-submit='submitBetaSignup()'>
+					<div ng-show='betaSignupState == 0'>
+						<div translate>
+							Join the waitlist for Cyph v2!
+						</div>
+						<md-text-float type='email' label='email' ng-model='betaSignup.Email' translate></md-text-float>
+					</div>
+
+					<div ng-show='betaSignupState == 1'>
+						<div translate>
+							Thanks so much for signing up!
+						</div>
+						<div translate>
+							Feel free to add your name as well. :)
+						</div>
+						<md-text-float label='name (optional)' ng-model='betaSignup.Name' translate></md-text-float>
+					</div>
+
+					<div ng-show='betaSignupState == 2'>
+						He's coming. Run.
+					</div>
+
+					<md-button type='submit' ng-hide='true'></md-button>
+				</form>
+			</section>
+
+			<section ng-show='podcast'>
+				<md-button
+					id='new-cyph-footer'
+					href='//cyph.im/new'
+					target='_blank'
+					aria-label='Start new cyph'
+					translate
+				>
+					Start new cyph
+				</md-button>
+			</section>
+
 			<div class='footer-info'>
 				&copy; Cyph 2014
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -123,7 +253,8 @@
 		</footer>
 
 
-		</div></section>
+		</div>
+		</section>
 
 
 
@@ -134,7 +265,7 @@
 				<source src='/video/background.ogv' type='video/ogg' />
 			</video>
 
-			<img src='/video/background.gif' class='mobile-only' />
+			<img deferred-src='/video/background.gif' class='mobile-only' />
 		</div>
 
 		<!--
@@ -153,6 +284,7 @@
 		<link rel='stylesheet' href='/css/cyph.base.css' />
 		<link rel='stylesheet' href='/css/cyph.com.css' />
 
+		<script src='/js/translate.js'></script>
 
 		<script src='/lib/bower_components/jquery/dist/jquery.min.js'></script>
 
@@ -165,6 +297,8 @@
 		<script src='/lib/bower_components/hammerjs/hammer.js'></script>
 		<script src='/lib/bower_components/angular-material/angular-material.js'></script>
 
+		<script src='/js/cyph.js'></script>
+		<script src='/js/cyph.com.js'></script>
 		<script src='/js/ui.js'></script>
 
 		<script>
