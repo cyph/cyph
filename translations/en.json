@@ -51,12 +51,14 @@
     "You may now speak.": "You may now speak.",
     "You're just guessing random URLs": "You're just guessing random URLs",
     "deserves privacy, not only security experts.": "deserves privacy, not only security experts.",
+    "email": "email",
     "everyone": "everyone",
     "friend": "friend",
     "listeners!": "listeners!",
     "me": "me",
     "message": "message",
     "messages": "messages",
+    "name (optional)": "name (optional)",
     "new": "new",
     "try again": "try again"
 }
