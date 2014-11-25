@@ -1,16 +1,25 @@
+var openPodcast;
+
+
 angular.
 	module('Cyph', ['ngMaterial']).
 	controller('CyphController', ['$scope', '$mdSidenav', '$mdToast', function ($scope, $mdSidenav, $mdToast) {
 		var $window				= $(window);
 		var $html				= $('html');
 		var $body				= $('#main > :first-child');
-		var $heroText			= $('#hero-text');
+		var $betaSignup			= $('.beta-signup');
+		var $betaSignupForm		= $('.beta-signup-form');
+		var $podcastLogo		= $('.podcast-logo');
+		var $heroText			= $('.hero-text');
 		var $newCyph			= $('#new-cyph');
 		var $newCyphParent		= $newCyph.parent();
 		var $bouncingDownArrow	= $('#bouncing-down-arrow');
 		var $video				= $('#background-video');
 		var $fixedHeaderStuff	= $newCyph.add('#main-toolbar').add($bouncingDownArrow);
 		var fixedHeaderClass	= 'fixed-header';
+
+
+		$scope.podcast	= '';
 
 
 
@@ -28,50 +37,15 @@ angular.
 
 
 
-		var isMobile	= (function () {
-			try {
-				document.createEvent('TouchEvent');
-				return true;
-			}
-			catch (e) {
-				return false;
-			}
-		}());
+		openPodcast	= $scope.openPodcast = function (podcast) {
+			apply(function () {
+				$scope.podcast	= podcast || '';
+			});
 
-		var platformString	= isMobile ? 'mobile' : 'desktop';
-
-		if (isMobile) {
-			$html.addClass('mobile');
-
-			$video.children(':not(img)').remove();
-		}
-		else {
-			$video.children('img').remove();
-		}
-
-		$video	= $video.children(':first-child');
-
-
-
-		$.fn.tap	= function (callback, onOrOff, once) {
-			var $this		= $(this);
-			var eventName	= isMobile ? 'touchstart' : 'click';
-
-			if (!callback) {
-				$this.trigger(eventName);
-			}
-			else if (onOrOff === false) {
-				$this.off(eventName, callback);
-			}
-			else if (once === true) {
-				$this.one(eventName, callback);
-			}
-			else {
-				$this.on(eventName, callback);
-			}
-
-			return $this;
-		}
+			$heroText.hide();
+			podcast && $podcastLogo.attr('src', '/img/' + podcast + '.png');
+			setTimeout(function () { $heroText.show() }, 1);
+		};
 
 
 
@@ -98,6 +72,19 @@ angular.
 				}, 250);
 			}, 250);
 		};
+
+
+
+		if (isMobile) {
+			$html.addClass('mobile');
+
+			$video.children(':not(img)').remove();
+		}
+		else {
+			$video.children('img').remove();
+		}
+
+		$video	= $video.children(':first-child');
 
 
 
@@ -196,12 +183,60 @@ angular.
 
 
 
-		$('.' + platformString + '-only [deferred-src], [deferred-src].' + platformString + '-only').
-			each(function () {
-				var $this	= $(this);
-				$this.attr('src', $this.attr('deferred-src'));
-			})
-		;
+		/***** Beta signup stuff *****/
+
+		$scope.betaSignupState	= 0;
+
+		$scope.betaSignup		= {
+			Language: languagePair[0],
+			Country: languagePair[1]
+		};
+
+		$scope.submitBetaSignup	= function () {
+			apply(function () {
+				++$scope.betaSignupState;
+			});
+
+			if ($scope.betaSignupState == 2) {
+				setTimeout(function () {
+					apply(function () {
+						++$scope.betaSignupState;
+					});
+				}, 500);
+			}
+
+			setTimeout(function () {
+				$($betaSignupForm.find('input:visible')[0]).focus();
+			}, 100);
+
+			var retries	= 0;
+			function dothemove () {
+				$.ajax({
+					type: 'PUT',
+					url: BASE_URL + 'betasignups',
+					data: $scope.betaSignup,
+					error: function () {
+						if (++retries < 5) {
+							dothemove();
+						}
+						else {
+							retries	= 0;
+						}
+					},
+					success: function () {
+						setTimeout(function () {
+							pushState('/');
+						}, 7000);
+					}
+				});
+			}
+
+			dothemove();
+		};
+
+		setTimeout(function () {
+			$betaSignupForm.addClass('visible');
+		}, 500);
 
 
 
@@ -209,10 +244,13 @@ angular.
 
 		scrolling.update();
 
-		/*
-			$(function () {
-				$('#pre-load').addClass('load-complete');
-			});
-		*/
+		if (isHistoryAvailable && history.replaceState) {
+			history.replaceState({}, '', '/' + getUrlState());
+		}
+		processUrlState();
+
+		$(function () {
+			$('html').addClass('load-complete');
+		});
 	}])
 ;
