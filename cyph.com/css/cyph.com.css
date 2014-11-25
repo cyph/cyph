@@ -1,4 +1,4 @@
-html:not(.load-complete) section:not(#main), html:not(.load-complete) footer {
+html:not(.load-complete) section:not(#main), html:not(.load-complete) footer, html:not(.load-complete) #bouncing-down-arrow {
   display: none; }
 
 section#main {
@@ -237,8 +237,16 @@ md-button.focus, md-button:hover {
 #main.unisection-mode > div > section:not(.unisection), #main.unisection-mode #bouncing-down-arrow {
   display: none; }
 
-#hero-section {
+#hero-section, #about {
   background-color: rgba(0, 0, 0, 0.15); }
+
+#home-beta-signup {
+  padding: 0px !important;
+  height: 210px !important;
+  max-height: 210px !important;
+  min-height: 210px !important; }
+  #home-beta-signup .section-content-container {
+    margin-top: 90px; }
 
 /* Note: put general solution in cyph.base.scss */
 #main, #main > div {

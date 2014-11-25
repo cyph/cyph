@@ -119,40 +119,42 @@
 				<p translate>
 					One click and you’re secure.
 				</p>
-				<p>
-					<br />
-					<form class='beta-signup-form' ng-submit='submitBetaSignup()'>
-						<div ng-show='betaSignupState == 0'>
-							<div translate>
-								<p translate>
-									Pumped up for more Cyph awesomeness?
-								</p>
-								<p translate>
-									Join the waitlist for Cyph v2!
-								</p>
-							</div>
-							<md-text-float type='email' label='email' ng-model='betaSignup.Email' translate></md-text-float>
-						</div>
+			</div>
+		</section>
 
-						<div ng-show='betaSignupState == 1'>
-							<div>
-								<p translate>
-									Thanks so much for signing up!
-								</p>
-								<p translate>
-									Feel free to add your name as well. :)
-								</p>
-							</div>
-							<md-text-float label='name (optional)' ng-model='betaSignup.Name' translate></md-text-float>
+		<section id='home-beta-signup'>
+			<div class='section-content-container'>
+				<form class='beta-signup-form' ng-submit='submitBetaSignup()'>
+					<div ng-show='betaSignupState == 0'>
+						<div translate>
+							<p translate>
+								Pumped up for more Cyph awesomeness?
+							</p>
+							<p translate>
+								Join the waitlist for Cyph v2! (Coming soon to an Internet near you.)
+							</p>
 						</div>
+						<md-text-float type='email' label='email' ng-model='betaSignup.Email' translate></md-text-float>
+					</div>
 
-						<div ng-show='betaSignupState == 2'>
-							Your soul is ours.
+					<div ng-show='betaSignupState == 1'>
+						<div>
+							<p translate>
+								Thanks so much for signing up!
+							</p>
+							<p translate>
+								Feel free to add your name as well. :)
+							</p>
 						</div>
+						<md-text-float label='name (optional)' ng-model='betaSignup.Name' translate></md-text-float>
+					</div>
 
-						<md-button type='submit' ng-hide='true'></md-button>
-					</form>
-				</p>
+					<div ng-show='betaSignupState == 2'>
+						You rock.
+					</div>
+
+					<md-button type='submit' ng-hide='true'></md-button>
+				</form>
 			</div>
 		</section>
 
@@ -196,7 +198,7 @@
 							</div>
 
 							<div ng-show='betaSignupState == 2'>
-								He's coming. Run.
+								You rock.
 							</div>
 
 							<md-button type='submit' ng-hide='true'></md-button>
@@ -227,7 +229,7 @@
 
 		<!-- <section id='about' ng-show='isAbout' class='unisection'> -->
 
-		<section>
+		<section id='about'>
 			<div class='hero-text' translate>
 				About Us
 			</div>
@@ -248,7 +250,19 @@
 					</div>
 				</p>
 				<p translate>
-					What should we put here?
+					We've been friends since we first met 17 years ago, and we've since spent a lot of time working together over the years – most recently for Elon Musk on a small team at SpaceX.
+				</p>
+				<p translate>
+					The two of us have always been pretty big on keeping private things private, which turns out not to be a trivial goal. Even ignoring government surveillance, the issue is fundamentally the same: sending data openly through the Internet involves trusting <i>a lot</i> of random strangers.
+				</p>
+				<p translate>
+					Over time, we'd variously used PGP, Pidgin OTR, and a number of different encrypted chat services; and never been quite satisfied.
+				</p>
+				<p translate>
+					We knew there had to be a better way, that a future where everyone could have privacy was possible.
+				</p>
+				<p translate>
+					So, we started Cyph.
 				</p>
 			</div>
 		</section>
@@ -317,7 +331,7 @@
 					</div>
 
 					<div ng-show='betaSignupState == 2'>
-						He's coming. Run.
+						You rock.
 					</div>
 
 					<md-button type='submit' ng-hide='true'></md-button>
