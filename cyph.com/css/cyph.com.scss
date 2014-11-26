@@ -317,6 +317,11 @@ html.mobile .hero-text {
 
 
 
+#hero-section {
+	height: 90vh !important;
+	max-height: 90vh !important;
+	min-height: 90vh !important;
+}
 #hero-section, #about {
 	background-color: rgba(0, 0, 0, 0.15);
 }

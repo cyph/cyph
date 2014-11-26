@@ -4,9 +4,14 @@ dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd) # $(dirname `readlink -f "${0}" || realpath "${0}"`)
 
 all=''
+nobackend=''
 staging=true
 if [ "${1}" == '--prod' ] ; then
 	staging=''
+	shift
+elif [ "${1}" == '--prodnobackend' ] ; then
+	staging=''
+	nobackend=true
 	shift
 elif [ "${1}" == '--all' ] ; then
 	all=true
@@ -23,11 +28,15 @@ mkdir .build
 cp -rf * .build/
 cd .build
 
-cd default
-mkdir -p github.com/gorilla
-cd github.com/gorilla
-git clone git://github.com/gorilla/mux.git
-cd ../../..
+if [ $nobackend ] ; then
+	rm -rf default
+else
+	cd default
+	mkdir -p github.com/gorilla
+	cd github.com/gorilla
+	git clone git://github.com/gorilla/mux.git
+	cd ../../..
+fi
 
 for d in cyph.im cyph.com ; do
 	cd $d
