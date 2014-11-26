@@ -8,6 +8,19 @@ var channel, isConnected, isOtrReady, pongReceived, shouldSendQueryMessage, sock
 
 var otrWorker	= new Worker('/js/cryptoWebWorker.js');
 
+var sharedSecret		= document.location.hash.split('#')[1];
+var sharedSecretLength	= 7;
+
+if (!sharedSecret || sharedSecret.length != sharedSecretLength) {
+	var a	= new Uint8Array(sharedSecretLength);
+	crypto.getRandomValues(a);
+
+	sharedSecret	= Array.prototype.slice.call(a).
+		map(function (n) { return addressSpace[n % addressSpace.length] }).
+		join('')
+	;
+}
+
 otrWorker.onmessage	= function (e) {
 	switch (e.data.eventName) {
 		case 'ui':
@@ -19,15 +32,9 @@ otrWorker.onmessage	= function (e) {
 			logCyphertext(e.data.message, authors.me);
 			break;
 
-		case 'connected':
-			if (!isConnected) {
-				isConnected	= true;
-
-				markAllAsSent();
-
-				while (preConnectMessageSendQueue.length > 0) {
-					otr.sendMsg(preConnectMessageSendQueue.shift());
-				}
+		case 'smpinit':
+			if (channel.data.IsCreator) {
+				otr.smpSecret(sharedSecret);
 			}
 			break;
 
@@ -43,12 +50,26 @@ otrWorker.onmessage	= function (e) {
 			}
 
 			break;
+
+		case 'abort':
+			abortSetup();
+			break;
+
+		case 'connected':
+			isConnected	= true;
+
+			markAllAsSent();
+
+			while (preConnectMessageSendQueue.length > 0) {
+				otr.sendMsg(preConnectMessageSendQueue.shift());
+			}
+			break;
 	}
 };
 
 var randomSeed	= new Uint8Array(50000);
 crypto.getRandomValues(randomSeed);
-otrWorker.postMessage({method: 0, message: randomSeed});
+otrWorker.postMessage({method: 0, message: {randomSeed: randomSeed, sharedSecret: sharedSecret}});
 
 var otr	= {
 	sendQueryMsg: function () {
@@ -74,6 +95,9 @@ var otr	= {
 		else {
 			preConnectMessageReceiveQueue.push(message);
 		}
+	},
+	smpSecret: function (secret, question) {
+		otrWorker.postMessage({method: 4, message: {secret: secret, question: question}});
 	}
 };
 
