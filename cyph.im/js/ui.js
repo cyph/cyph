@@ -73,6 +73,7 @@ angular.
 
 
 		abortSetup = $scope.abortSetup = function () {
+			$window.off('beforeunload');
 			changeState($scope.states.aborted);
 			sendChannelData({Destroy: true});
 			$scope.disconnect();
