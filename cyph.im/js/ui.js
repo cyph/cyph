@@ -81,6 +81,7 @@ angular.
 
 
 		var newMessageNotification	= getString('newMessageNotification');
+		var imageMarkup				= '![](';
 
 		addMessageToChat = $scope.addMessageToChat = function (text, author, shouldNotify) {
 			if ($scope.state == $scope.states.aborted) {
@@ -103,6 +104,19 @@ angular.
 				text	= text
 					.split(' ')
 					.map(function (s) {
+						/* Disable inline external images */
+						if (s.indexOf(imageMarkup) > -1) {
+							var url	= (s.split(imageMarkup)[1] || '');
+
+							if (url.slice(-1)[0] == ')') {
+								url	= url.slice(0, -1);
+							}
+
+							if (url.indexOf('data:image/') != 0) {
+								s	= url;
+							}
+						}
+
 						if (isValidUrl(s)) {
 							return '[' +
 								s +
