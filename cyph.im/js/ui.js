@@ -199,7 +199,8 @@ angular.
 			var copyUrl		=
 				document.location.protocol + '//' +
 				document.location.host.replace('www.', '') +
-				document.location.pathname
+				document.location.pathname +
+				'#' + sharedSecret
 			;
 
 			var noMoreAutoFocus	= false;

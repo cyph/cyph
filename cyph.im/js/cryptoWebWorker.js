@@ -1,4 +1,4 @@
-var otr;
+var otr, addressSpace, sharedSecret;
 
 function getPadding () {
 	return Array.prototype.slice.call(
@@ -21,13 +21,15 @@ onmessage	= function (e) {
 	switch (e.data.method) {
 		/* Init */
 		case 0:
+			sharedSecret	= e.data.message.sharedSecret;
+
 			if (typeof crypto == 'undefined') {
 				if (typeof msCrypto != 'undefined') {
 					crypto	= msCrypto;
 				}
 				else {
 					importScripts('/lib/isaac.min.js');
-					isaac.seed(e.data.message);
+					isaac.seed(e.data.message.randomSeed);
 					crypto	= {
 						getRandomValues: function (array) {
 							var max	= Math.pow(2, (array.BYTES_PER_ELEMENT || 4) * 8) - 1;
@@ -61,6 +63,22 @@ onmessage	= function (e) {
 			otr.ALLOW_V3			= true;
 			otr.REQUIRE_ENCRYPTION	= true;
 
+			otr.on('smp', function (type, data, act) {
+				switch (type) {
+					case 'question':
+						otr.smpSecret(sharedSecret);
+						break;
+
+					case 'trust':
+						postMessage({eventName: (data ? 'connected' : 'abort')});
+						break;
+
+					case 'abort':
+						postMessage({eventName: 'abort'});
+						break;
+				}
+			});
+
 			otr.on('ui', function (message, wasEncrypted) {
 				if (wasEncrypted) {
 					postMessage({eventName: 'ui', message: padMessageRemove(message)});
@@ -74,14 +92,15 @@ onmessage	= function (e) {
 				}
 			});
 
+			var isConnected;
 			otr.on('status', function (state) {
-				if (state == OTR.CONST.STATUS_AKE_SUCCESS) {
-					postMessage({eventName: 'connected'});
+				if (state == OTR.CONST.STATUS_AKE_SUCCESS && !isConnected) {
+					isConnected	= true;
+					postMessage({eventName: 'smpinit'});
 				}
 			});
 
 			postMessage({eventName: 'ready'});
-
 			break;
 
 		/* Send query message */
@@ -97,6 +116,11 @@ onmessage	= function (e) {
 		/* Receive message */
 		case 3:
 			otr.receiveMsg(e.data.message);
+			break;
+
+		/* SMP */
+		case 4:
+			otr.smpSecret(e.data.message.secret, e.data.message.question);
 			break;
 	}
 };
