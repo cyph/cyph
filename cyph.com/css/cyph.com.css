@@ -246,11 +246,6 @@ html.mobile .hero-text {
 #main.unisection-mode > div > section:not(.unisection), #main.unisection-mode #bouncing-down-arrow {
   display: none; }
 
-#hero-section {
-  height: 90vh !important;
-  max-height: 90vh !important;
-  min-height: 90vh !important; }
-
 #hero-section, #about {
   background-color: rgba(0, 0, 0, 0.15); }
 
