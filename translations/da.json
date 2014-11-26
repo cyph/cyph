@@ -36,6 +36,7 @@
     "Our actual app briefly loads Google Analytics in a sandboxed iframe then deletes the iframe after 10 seconds": "TranslateApiException: The Azure Market Place Translator Subscription associated with the request credentials has zero balance. : ID=3444.V2_Json.Translate.420EFCB6",
     "Our backend keeps track of: total cyphs started, total number of messages sent, total beta invite list signups": "TranslateApiException: The Azure Market Place Translator Subscription associated with the request credentials has zero balance. : ID=6346.V2_Json.Translate.3E1224BC",
     "Our corporate site / landing page had Google Analytics included": "TranslateApiException: The Azure Market Place Translator Subscription associated with the request credentials has zero balance. : ID=5641.V2_Json.Translate.435E5B1E",
+    "Our corporate site / landing page has Google Analytics included": "Vores corporate site / destinationsside har Google Analytics inkluderet",
     "Our server keeps a log of all incoming requests": "TranslateApiException: The Azure Market Place Translator Subscription associated with the request credentials has zero balance. : ID=5641.V2_Json.Translate.435E5B57",
     "Over time, we'd variously used PGP, Pidgin OTR, and a number of different encrypted chat services; and never been quite satisfied.": "TranslateApiException: The Azure Market Place Translator Subscription associated with the request credentials has zero balance. : ID=3444.V2_Json.Translate.42000985",
     "Please": "Venligst",

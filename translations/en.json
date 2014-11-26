@@ -36,6 +36,7 @@
     "Our actual app briefly loads Google Analytics in a sandboxed iframe then deletes the iframe after 10 seconds": "Our actual app briefly loads Google Analytics in a sandboxed iframe then deletes the iframe after 10 seconds",
     "Our backend keeps track of: total cyphs started, total number of messages sent, total beta invite list signups": "Our backend keeps track of: total cyphs started, total number of messages sent, total beta invite list signups",
     "Our corporate site / landing page had Google Analytics included": "Our corporate site / landing page had Google Analytics included",
+    "Our corporate site / landing page has Google Analytics included": "Our corporate site / landing page has Google Analytics included",
     "Our server keeps a log of all incoming requests": "Our server keeps a log of all incoming requests",
     "Over time, we'd variously used PGP, Pidgin OTR, and a number of different encrypted chat services; and never been quite satisfied.": "Over time, we'd variously used PGP, Pidgin OTR, and a number of different encrypted chat services; and never been quite satisfied.",
     "Please": "Please",
