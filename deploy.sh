@@ -28,16 +28,6 @@ mkdir .build
 cp -rf * .build/
 cd .build
 
-if [ $nobackend ] ; then
-	rm -rf default
-else
-	cd default
-	mkdir -p github.com/gorilla
-	cd github.com/gorilla
-	git clone git://github.com/gorilla/mux.git
-	cd ../../..
-fi
-
 for d in cyph.im cyph.com ; do
 	cd $d
 
@@ -79,8 +69,18 @@ if [ $staging ] ; then
 	done
 fi
 
+if [ "${nobackend}" == '' ] ; then
+	cd default
+	mkdir -p github.com/gorilla
+	cd github.com/gorilla
+	git clone git://github.com/gorilla/mux.git
+	cd ../../..
+
+	goapp deploy default/app.yaml
+fi
+
 # ls */*.yaml | xargs -I% appcfg.py rollback %
-goapp deploy default/app.yaml cyph.com/cyph-com.yaml cyph.im/cyph-im.yaml cyph.me/cyph-me.yaml
+goapp deploy cyph.com/cyph-com.yaml cyph.im/cyph-im.yaml cyph.me/cyph-me.yaml
 # goapp deploy default/app.yaml `ls !(default)/*.yaml | tr '\n' ' '`
 
 appcfg.py update_dispatch .
