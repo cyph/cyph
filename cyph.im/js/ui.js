@@ -218,17 +218,19 @@ angular.
 				'#' + sharedSecret
 			;
 
-			$copyUrl.on('focus', function () {
-				var isSelected	= true;
-				try {
-					isSelected	= getSelection().toString().length == copyUrl.length;
-				}
-				catch (e) {}
+			if (!isIOS) {
+				$copyUrl.on('focus', function () {
+					var isSelected	= true;
+					try {
+						isSelected	= getSelection().toString().length == copyUrl.length;
+					}
+					catch (e) {}
 
-				if (isIOS || !isSelected) {
-					$copyUrl[0].setSelectionRange(0, copyUrl.length);
-				}
-			});
+					if (!isSelected) {
+						$copyUrl[0].setSelectionRange(0, copyUrl.length);
+					}
+				});
+			}
 
 			var copyUrlInterval	= setInterval(function () {
 				if ($scope.state == $scope.states.waitingForFriend) {
