@@ -225,7 +225,7 @@ angular.
 					apply(function () {
 						$scope.copyUrl	= copyUrl;
 
-						if (!noMoreAutoFocus || $copyUrl.is(':focus')) {
+						if (!isIOS && (!noMoreAutoFocus || $copyUrl.is(':focus'))) {
 							$copyUrl.focus();
 							$copyUrl[0].setSelectionRange(0, copyUrl.length);
 

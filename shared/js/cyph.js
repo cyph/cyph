@@ -83,6 +83,8 @@ var isMobile	= (function () {
 
 var platformString	= isMobile ? 'mobile' : 'desktop';
 
+var isIOS	= /(iPad|iPhone|iPod)/g.test(navigator.userAgent);
+
 $.fn.tap	= function (callback, onOrOff, once) {
 	var $this		= $(this);
 	var eventName	= isMobile ? 'touchstart' : 'click';
