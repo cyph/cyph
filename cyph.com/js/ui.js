@@ -6,7 +6,7 @@ angular.
 	controller('CyphController', ['$scope', '$mdSidenav', '$mdToast', function ($scope, $mdSidenav, $mdToast) {
 		var $window				= $(window);
 		var $html				= $('html');
-		var $body				= $('#main > :first-child');
+		var $body				= $('body');
 		var $betaSignup			= $('.beta-signup');
 		var $betaSignupForm		= $('.beta-signup-form');
 		var $podcastLogo		= $('.podcast-logo');
@@ -116,22 +116,6 @@ angular.
 
 
 
-		/* OS X-style scrollbars */
-
-		scrolling	= {
-			isNanoScroller: true, // !isMobile && navigator.userAgent.indexOf('mac os x') < 0,
-			update: function () {
-				if (this.isNanoScroller) {
-					$('.nano').nanoScroller();
-				}
-			}
-		};
-
-		if (!scrolling.isNanoScroller) {
-			$('.nano, .nano-content').removeClass('nano').removeClass('nano-content');
-		}
-
-
 		$('md-button').tap(function () {
 			setTimeout(function () {
 				$('md-button, md-button *').blur();
@@ -142,9 +126,9 @@ angular.
 
 		/* Header / new cyph button animation */
 
-		$body.scroll(function () {
+		$window.scroll(function () {
 			var viewportHeight	= Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-			var scrollTop		= this.scrollTop;
+			var scrollTop		= document.body.scrollTop;
 
 			if (scrollTop == 0) {
 				$newCyph.css({transform: '', top: ''});
@@ -264,8 +248,6 @@ angular.
 
 
 		/* Do the move lad */
-
-		scrolling.update();
 
 		if (isHistoryAvailable && history.replaceState) {
 			history.replaceState({}, '', '/' + getUrlState());

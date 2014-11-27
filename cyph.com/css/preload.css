@@ -13,13 +13,6 @@
     top: calc(50% - 30px);
     left: calc(50% - 30px); }
 
-#pre-load.load-complete {
-  pointer-events: none;
-  opacity: 0;
-  -webkit-transition: opacity 0.25s linear;
-  -moz-transition: opacity 0.25s linear;
-  transition: opacity 0.25s linear; }
-
 /*** SpinKit animation: http://tobiasahlin.com/spinkit/ ***/
 .double-bounce1, .double-bounce2 {
   width: 100%;
