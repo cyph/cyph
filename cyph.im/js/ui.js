@@ -218,15 +218,18 @@ angular.
 				'#' + sharedSecret
 			;
 
+			function setCopyUrl () {
+				apply(function () {
+					$scope.copyUrl	= copyUrl;
+				});
+			}
+
 			function selectCopyUrl () {
 				$copyUrl[0].setSelectionRange(0, copyUrl.length);
 			}
 
 			if (isIOS) {
-				apply(function () {
-					$scope.copyUrl	= copyUrl;
-				});
-
+				setCopyUrl();
 				$copyUrl.focus();
 				setTimeout(selectCopyUrl, 1000);
 			}
@@ -234,9 +237,7 @@ angular.
 				var noMoreAutoFocus	= false;
 				var copyUrlInterval	= setInterval(function () {
 					if ($scope.state == $scope.states.waitingForFriend) {
-						apply(function () {
-							$scope.copyUrl	= copyUrl;
-						});
+						setCopyUrl();
 
 						if (!noMoreAutoFocus) {
 							$copyUrl.focus();
