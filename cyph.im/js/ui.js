@@ -220,6 +220,10 @@ angular.
 
 			var noMoreAutoFocus	= false;
 
+			$copyUrl.focus(function () {
+				$copyUrl[0].setSelectionRange(0, copyUrl.length);
+			});
+
 			var copyUrlInterval	= setInterval(function () {
 				if ($scope.state == $scope.states.waitingForFriend) {
 					apply(function () {
@@ -227,7 +231,6 @@ angular.
 
 						if (!isIOS && (!noMoreAutoFocus || $copyUrl.is(':focus'))) {
 							$copyUrl.focus();
-							$copyUrl[0].setSelectionRange(0, copyUrl.length);
 
 							if (isMobile) {
 								noMoreAutoFocus	= true;
