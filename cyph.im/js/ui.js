@@ -219,23 +219,26 @@ angular.
 			;
 
 			function setCopyUrl () {
-				apply(function () {
-					$scope.copyUrl	= copyUrl;
-				});
+				if ($scope.copyUrl != copyUrl) {
+					apply(function () {
+						$scope.copyUrl	= copyUrl;
+					});
+				}
 			}
 
 			function selectCopyUrl () {
 				$copyUrl[0].setSelectionRange(0, copyUrl.length);
 			}
 
+			$copyUrl.on('focus', function () {
+				setTimeout(selectCopyUrl, 250);
+			});
+
 			if (isIOS) {
 				setCopyUrl();
 				$copyUrl.focus();
-				setTimeout(selectCopyUrl, 1000);
 			}
 			else {
-				$copyUrl.focus(selectCopyUrl);
-
 				var noMoreAutoFocus	= false;
 				var copyUrlInterval	= setInterval(function () {
 					if ($scope.state == $scope.states.waitingForFriend) {
