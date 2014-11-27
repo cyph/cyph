@@ -218,8 +218,15 @@ angular.
 				'#' + sharedSecret
 			;
 
-			if (!isIOS) {
-				$copyUrl.on('focus', function () {
+			function selectCopyUrl () {
+				$copyUrl[0].setSelectionRange(0, copyUrl.length);
+			}
+
+			$copyUrl.on('focus', function () {
+				if (isIOS) {
+					setTimeout(selectCopyUrl, 800);
+				}
+				else {
 					var isSelected	= true;
 					try {
 						isSelected	= getSelection().toString().length == copyUrl.length;
@@ -227,10 +234,10 @@ angular.
 					catch (e) {}
 
 					if (!isSelected) {
-						$copyUrl[0].setSelectionRange(0, copyUrl.length);
+						selectCopyUrl();
 					}
-				});
-			}
+				}
+			});
 
 			var copyUrlInterval	= setInterval(function () {
 				if ($scope.state == $scope.states.waitingForFriend) {
