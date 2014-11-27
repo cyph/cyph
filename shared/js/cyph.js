@@ -71,7 +71,11 @@ function pushState (path, shouldReplace) {
 
 
 
-var isMobile	= (function () {
+var isAndroid	= /Android/g.test(navigator.userAgent);
+var isIOS		= /(iPad|iPhone|iPod)/g.test(navigator.userAgent);
+var isWP		= /iemobile/g.test(navigator.userAgent);
+
+var isMobile	= isAndroid || isIOS || isWP || (function () {
 	try {
 		document.createEvent('TouchEvent');
 		return true;
@@ -82,8 +86,6 @@ var isMobile	= (function () {
 }());
 
 var platformString	= isMobile ? 'mobile' : 'desktop';
-
-var isIOS	= /(iPad|iPhone|iPod)/g.test(navigator.userAgent);
 
 $.fn.tap	= function (callback, onOrOff, once) {
 	var $this		= $(this);
