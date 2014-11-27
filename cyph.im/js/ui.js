@@ -223,32 +223,35 @@ angular.
 			}
 
 			if (isIOS) {
-				$copyUrl.on('focus', function () {
-					setTimeout(selectCopyUrl, 800);
+				apply(function () {
+					$scope.copyUrl	= copyUrl;
 				});
+
+				$copyUrl.focus();
+				setTimeout(selectCopyUrl, 1000);
 			}
+			else {
+				var noMoreAutoFocus	= false;
+				var copyUrlInterval	= setInterval(function () {
+					if ($scope.state == $scope.states.waitingForFriend) {
+						apply(function () {
+							$scope.copyUrl	= copyUrl;
+						});
 
-			var noMoreAutoFocus	= isIOS;
+						if (!noMoreAutoFocus) {
+							$copyUrl.focus();
+							selectCopyUrl();
 
-			var copyUrlInterval	= setInterval(function () {
-				if ($scope.state == $scope.states.waitingForFriend) {
-					apply(function () {
-						$scope.copyUrl	= copyUrl;
-					});
-
-					if (!noMoreAutoFocus) {
-						$copyUrl.focus();
-						selectCopyUrl();
-
-						if (isWP) {
-							noMoreAutoFocus	= true;
+							if (isWP) {
+								noMoreAutoFocus	= true;
+							}
 						}
 					}
-				}
-				else {
-					clearInterval(copyUrlInterval);
-				}
-			}, 250);
+					else {
+						clearInterval(copyUrlInterval);
+					}
+				}, 250);
+			}
 
 			$timer[0].start();
 		};
