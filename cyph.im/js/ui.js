@@ -221,7 +221,7 @@ angular.
 			var noMoreAutoFocus	= false;
 
 			$copyUrl.focus(function () {
-				$copyUrl[0].setSelectionRange(0, copyUrl.length);
+				this.setSelectionRange(0, copyUrl.length);
 			});
 
 			var copyUrlInterval	= setInterval(function () {
