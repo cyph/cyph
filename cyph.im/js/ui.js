@@ -222,22 +222,13 @@ angular.
 				$copyUrl[0].setSelectionRange(0, copyUrl.length);
 			}
 
-			$copyUrl.on('focus', function () {
-				if (isIOS) {
+			if (isIOS) {
+				$copyUrl.on('focus', function () {
 					setTimeout(selectCopyUrl, 800);
-				}
-				else {
-					var isSelected	= true;
-					try {
-						isSelected	= getSelection().toString().length == copyUrl.length;
-					}
-					catch (e) {}
+				});
+			}
 
-					if (!isSelected) {
-						selectCopyUrl();
-					}
-				}
-			});
+			var noMoreAutoFocus	= isIOS;
 
 			var copyUrlInterval	= setInterval(function () {
 				if ($scope.state == $scope.states.waitingForFriend) {
@@ -245,8 +236,13 @@ angular.
 						$scope.copyUrl	= copyUrl;
 					});
 
-					if (!isIOS && !$copyUrl.is(':focus')) {
+					if (!noMoreAutoFocus && !$copyUrl.is(':focus')) {
 						$copyUrl.focus();
+						selectCopyUrl();
+
+						if (isWP) {
+							noMoreAutoFocus	= true;
+						}
 					}
 				}
 				else {
