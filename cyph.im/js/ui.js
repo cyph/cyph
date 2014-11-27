@@ -234,6 +234,8 @@ angular.
 				setTimeout(selectCopyUrl, 1000);
 			}
 			else {
+				$copyUrl.focus(selectCopyUrl);
+
 				var noMoreAutoFocus	= false;
 				var copyUrlInterval	= setInterval(function () {
 					if ($scope.state == $scope.states.waitingForFriend) {
@@ -241,7 +243,6 @@ angular.
 
 						if (!noMoreAutoFocus) {
 							$copyUrl.focus();
-							selectCopyUrl();
 
 							if (isWP) {
 								noMoreAutoFocus	= true;
