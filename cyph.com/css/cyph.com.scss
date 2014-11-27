@@ -2,7 +2,7 @@
 
 
 html:not(.load-complete) {
-	section:not(#main), footer, #bouncing-down-arrow {
+	#main > section, footer, #bouncing-down-arrow {
 		display: none;
 	}
 }
@@ -11,8 +11,10 @@ section#main {
 	background-color: rgba(139, 98, 217, 0.75) !important;
 }
 
-#main section {
+#main, #main section {
 	min-height: 100vh;
+}
+#main section {
 	padding: 50px;
 	position: relative;
 }
@@ -310,7 +312,7 @@ html.mobile .hero-text {
 }
 
 #main.unisection-mode {
-	> div > section:not(.unisection), #bouncing-down-arrow {
+	> section:not(.unisection), #bouncing-down-arrow {
 		display: none;
 	}
 }
@@ -324,9 +326,9 @@ html.mobile .hero-text {
 #home-beta-signup {
 	text-align: center !important;
 	padding: 0px !important;
-	height: 250px !important;
-	max-height: 250px !important;
-	min-height: 250px !important;
+	height: 300px !important;
+	max-height: 300px !important;
+	min-height: 300px !important;
 
 	.section-content-container {
 		margin-top: 50px;
@@ -339,12 +341,4 @@ html.mobile .hero-text {
 		margin-left: auto;
 		margin-right: auto
 	}
-}
-
-
-
-/* Note: put general solution in cyph.base.scss */
-
-#main, #main > div {
-	outline: none;
 }
