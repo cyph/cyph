@@ -133,7 +133,6 @@ html:not(.mobile) #message-list > md-content {
 #message-list #friend-is-typing {
   margin-top: 20px;
   width: 100%;
-  text-align: center;
   opacity: 0;
   -webkit-transition: opacity 1s ease-in-out;
   -moz-transition: opacity 1s ease-in-out;
@@ -141,6 +140,13 @@ html:not(.mobile) #message-list > md-content {
   #message-list #friend-is-typing .ellipsis-spinner > div {
     width: 8px;
     height: 8px; }
+
+html:not(.mobile) #friend-is-typing {
+  text-align: left;
+  padding-left: 20px; }
+
+html.mobile #friend-is-typing {
+  text-align: center; }
 
 #message-list.is-connected #friend-is-typing.show {
   opacity: 1;
