@@ -229,7 +229,10 @@ angular.
 					apply(function () {
 						$scope.copyUrl	= copyUrl;
 
-						if (!isIOS && (!noMoreAutoFocus || $copyUrl.is(':focus'))) {
+						if ($copyUrl.is(':focus')) {
+							$copyUrl[0].setSelectionRange(0, copyUrl.length);
+						}
+						else if (!isIOS && !noMoreAutoFocus) {
 							$copyUrl.focus();
 
 							if (isMobile) {
