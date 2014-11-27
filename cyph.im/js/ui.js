@@ -218,6 +218,18 @@ angular.
 				'#' + sharedSecret
 			;
 
+			$copyUrl.on('focus', function () {
+				var isSelected	= true;
+				try {
+					isSelected	= getSelection().toString().length == copyUrl.length;
+				}
+				catch (e) {}
+
+				if (!isSelected) {
+					$copyUrl[0].setSelectionRange(0, copyUrl.length);
+				}
+			});
+
 			var copyUrlInterval	= setInterval(function () {
 				if ($scope.state == $scope.states.waitingForFriend) {
 					apply(function () {
@@ -225,16 +237,6 @@ angular.
 
 						if (!$copyUrl.is(':focus')) {
 							$copyUrl.focus();
-						}
-
-						var isSelected	= true;
-						try {
-							isSelected	= getSelection().toString().length == copyUrl.length;
-						}
-						catch (e) {}
-
-						if (!isSelected) {
-							$copyUrl[0].setSelectionRange(0, copyUrl.length);
 						}
 					});
 				}
