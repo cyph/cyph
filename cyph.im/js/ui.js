@@ -225,7 +225,7 @@ angular.
 				}
 				catch (e) {}
 
-				if (!isSelected) {
+				if (isIOS || !isSelected) {
 					$copyUrl[0].setSelectionRange(0, copyUrl.length);
 				}
 			});
@@ -234,11 +234,11 @@ angular.
 				if ($scope.state == $scope.states.waitingForFriend) {
 					apply(function () {
 						$scope.copyUrl	= copyUrl;
-
-						if (!$copyUrl.is(':focus')) {
-							$copyUrl.focus();
-						}
 					});
+
+					if (!isIOS && !$copyUrl.is(':focus')) {
+						$copyUrl.focus();
+					}
 				}
 				else {
 					clearInterval(copyUrlInterval);
