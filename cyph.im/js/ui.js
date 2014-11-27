@@ -218,25 +218,23 @@ angular.
 				'#' + sharedSecret
 			;
 
-			var noMoreAutoFocus	= false;
-
-			$copyUrl.focus(function () {
-				setTimeout(function () {
-					$copyUrl[0].setSelectionRange(0, copyUrl.length);
-				}, 100);
-			});
-
 			var copyUrlInterval	= setInterval(function () {
 				if ($scope.state == $scope.states.waitingForFriend) {
 					apply(function () {
 						$scope.copyUrl	= copyUrl;
 
-						if (!noMoreAutoFocus && !$copyUrl.is(':focus')) {
+						if (!$copyUrl.is(':focus')) {
 							$copyUrl.focus();
+						}
 
-							if (isMobile) {
-								noMoreAutoFocus	= true;
-							}
+						var isSelected	= true;
+						try {
+							isSelected	= getSelection().toString().length == copyUrl.length;
+						}
+						catch (e) {}
+
+						if (!isSelected) {
+							$copyUrl[0].setSelectionRange(0, copyUrl.length);
 						}
 					});
 				}
