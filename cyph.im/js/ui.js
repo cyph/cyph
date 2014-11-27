@@ -230,26 +230,24 @@ angular.
 				$copyUrl[0].setSelectionRange(0, copyUrl.length);
 			}
 
-			if (isIOS) {
-				setCopyUrl();
-				selectCopyUrl();
-			}
-			else {
-				var copyUrlInterval	= setInterval(function () {
-					if ($scope.state == $scope.states.waitingForFriend) {
-						setCopyUrl();
+			var noMoreAutoFocus	= false;
+			var copyUrlInterval	= setInterval(function () {
+				if ($scope.state == $scope.states.waitingForFriend) {
+					setCopyUrl();
 
-						if ($copyUrl.is(':focus')) {
-							$copyUrl.focus();
-						}
-
+					if (!noMoreAutoFocus) {
+						$copyUrl.focus();
 						selectCopyUrl();
+
+						if (isWP || isIOS) {
+							noMoreAutoFocus	= true;
+						}
 					}
-					else {
-						clearInterval(copyUrlInterval);
-					}
-				}, 250);
-			}
+				}
+				else {
+					clearInterval(copyUrlInterval);
+				}
+			}, 250);
 
 			$timer[0].start();
 		};
