@@ -236,7 +236,7 @@ angular.
 						$scope.copyUrl	= copyUrl;
 					});
 
-					if (!noMoreAutoFocus && !$copyUrl.is(':focus')) {
+					if (!noMoreAutoFocus) {
 						$copyUrl.focus();
 						selectCopyUrl();
 
