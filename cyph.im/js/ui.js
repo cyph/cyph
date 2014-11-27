@@ -230,7 +230,7 @@ angular.
 
 							setTimeout(function () {
 								$copyUrl[0].setSelectionRange(0, copyUrl.length);
-							}, 100);
+							}, isIOS ? 500 : 10);
 
 							if (isMobile) {
 								noMoreAutoFocus	= true;
