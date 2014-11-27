@@ -179,7 +179,6 @@ html:not(.mobile) #message-list > md-content {
 	#friend-is-typing {
 		margin-top: 20px;
 		width: 100%;
-		text-align: center;
 
 		opacity: 0;
 		@include transition(opacity 1s ease-in-out);
@@ -189,6 +188,14 @@ html:not(.mobile) #message-list > md-content {
 			height: 8px;
 		}
 	}
+}
+
+html:not(.mobile) #friend-is-typing {
+	text-align: left;
+	padding-left: 20px;
+}
+html.mobile #friend-is-typing {
+	text-align: center;
 }
 
 #message-list.is-connected {
