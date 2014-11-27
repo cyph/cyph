@@ -6,7 +6,7 @@ angular.
 	controller('CyphController', ['$scope', '$mdSidenav', '$mdToast', function ($scope, $mdSidenav, $mdToast) {
 		var $window				= $(window);
 		var $html				= $('html');
-		var $body				= $('body');
+		var $body				= $html.add($('body'));
 		var $betaSignup			= $('.beta-signup');
 		var $betaSignupForm		= $('.beta-signup-form');
 		var $podcastLogo		= $('.podcast-logo');
@@ -128,7 +128,7 @@ angular.
 
 		$window.scroll(function () {
 			var viewportHeight	= Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-			var scrollTop		= document.body.scrollTop;
+			var scrollTop		= window.pageYOffset;
 
 			if (scrollTop == 0) {
 				$newCyph.css({transform: '', top: ''});
