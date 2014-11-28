@@ -36,7 +36,7 @@
 		<meta property='og:type' content='website' />
 	</head>
 	<body>
-		<section id='main' layout='vertical' ng-class='{"unisection-mode": podcast || isError || isAbout || isTos || isPrivacyPolicy}'>
+		<section id='main' layout='vertical' ng-class='{"unisection-mode": podcast || isError || isAbout || isFaq || isTos || isPrivacyPolicy}'>
 
 		<!-- <md-sidenav component-id='menu' class='md-sidenav-right'>
 			<md-content class='md-content-padding'>
@@ -291,6 +291,24 @@
 			</div>
 		</section>
 
+		<section id='faq' ng-show='isFaq' class='unisection'>
+			<div class='hero-text' translate>
+				Frequently Asked Questions
+			</div>
+			<div class='section-content-container'>
+				<ul>
+					<li translate>
+						<p>
+							<strong>Dear Cyph, what's coming soon?</strong>
+						</p>
+						<p>
+							Threat model, design specs / how it works, and a FAQ page with more than one question. Stay tuned!
+						</p>
+					</li>
+				</ul>
+			</div>
+		</section>
+
 		<section id='termsofservice' ng-show='isTos' class='unisection'>
 			<div class='hero-text' translate>
 				Terms of Service
@@ -337,7 +355,7 @@
 		</section>
 
 		<footer id='footer'>
-			<section ng-hide='podcast || ((isError || isAbout || isTos || isPrivacyPolicy) && betaSignupState > 2)'>
+			<section ng-hide='podcast || ((isError || isAbout || isFaq || isTos || isPrivacyPolicy) && betaSignupState > 2)'>
 				<form class='beta-signup-form' ng-submit='submitBetaSignup()'>
 					<div ng-show='betaSignupState == 0'>
 						<div translate>
@@ -364,7 +382,7 @@
 				</form>
 			</section>
 
-			<section ng-show='podcast || ((isError || isAbout || isTos || isPrivacyPolicy) && betaSignupState > 2)'>
+			<section ng-show='podcast || ((isError || isAbout || isFaq || isTos || isPrivacyPolicy) && betaSignupState > 2)'>
 				<md-button
 					id='new-cyph-footer'
 					href='//cyph.im/new'
@@ -390,6 +408,8 @@
 				<a target='_self' href='bitcoin:1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd'>1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd</a>
 			</div>
 			<div class='footer-bullshit'>
+				<a href='/faq'>FAQ</a>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				<a href='/termsofservice'>Terms of Service</a>
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				<a href='/privacypolicy'>Privacy Policy</a>
