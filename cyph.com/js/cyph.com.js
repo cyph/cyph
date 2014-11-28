@@ -22,6 +22,9 @@ function processUrlState () {
 		pushState('/404');
 		// openAbout(true);
 	}
+	else if (state == 'faq') {
+		openFaq(true);
+	}
 	else if (state == 'termsofservice') {
 		openTos(true);
 	}
