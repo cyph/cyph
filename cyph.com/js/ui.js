@@ -14,7 +14,7 @@ angular.
 		var $newCyph			= $('#new-cyph');
 		var $newCyphParent		= $newCyph.parent();
 		var $bouncingDownArrow	= $('#bouncing-down-arrow');
-		var $video				= $('#background-video');
+		var $video				= $('#background-video > :first-child');
 		var $founderPhotos		= $('.founder-photos');
 		var $ryanPhoto			= $founderPhotos.children(':nth-child(1)');
 		var $joshPhoto			= $founderPhotos.children(':nth-child(2)');
@@ -109,13 +109,12 @@ angular.
 		if (isMobile) {
 			$html.addClass('mobile');
 
-			$video.children(':not(img)').remove();
+			$html.one('scroll', function () {
+				var video			= $video[0];
+				video.currentTime	= 2.16;
+				video.play();
+			});
 		}
-		else {
-			$video.children('img').remove();
-		}
-
-		$video	= $video.children(':first-child');
 
 
 
