@@ -1,4 +1,4 @@
-var openPodcast, openAbout, openTos, openPrivacyPolicy, openError;
+var openPodcast, openAbout, openFaq, openTos, openPrivacyPolicy, openError;
 
 
 angular.
@@ -24,6 +24,7 @@ angular.
 
 		$scope.isAbout			= false;
 		$scope.isError			= false;
+		$scope.isFaq			= false;
 		$scope.isPrivacyPolicy	= false;
 		$scope.isTos			= false;
 		$scope.podcast			= '';
@@ -57,6 +58,12 @@ angular.
 		openAbout	= $scope.openAbout = function (isAbout) {
 			apply(function () {
 				$scope.isAbout	= isAbout;
+			});
+		};
+
+		openFaq	= $scope.openFaq = function (isFaq) {
+			apply(function () {
+				$scope.isFaq	= isFaq;
 			});
 		};
 
