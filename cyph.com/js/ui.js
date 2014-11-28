@@ -109,11 +109,7 @@ angular.
 		if (isMobile) {
 			$html.addClass('mobile');
 
-			$html.one('click', function () {
-				var video			= $video[0];
-				video.currentTime	= 2.16;
-				video.play();
-			});
+			$video.attr('poster', $video.attr('mobile-poster'));
 		}
 
 
