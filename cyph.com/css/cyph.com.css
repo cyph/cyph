@@ -242,7 +242,7 @@ html.mobile .hero-text {
   transition: opacity 500ms 1s linear; }
 
 #podcast-section .hero-text {
-  top: 50px; }
+  top: 20px; }
   #podcast-section .hero-text img {
     width: 75vw;
     max-width: 450px; }
