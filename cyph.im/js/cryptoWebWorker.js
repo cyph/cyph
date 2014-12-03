@@ -16,6 +16,17 @@ function padMessageRemove (message) {
 	return message.split(paddingDelimiter)[1];
 }
 
+function importScriptsAndRetry () {
+	for (var i = 0 ; i < arguments.length ; ++i) {
+		try {
+			importScripts(arguments[i])
+		}
+		catch (e) {
+			--i;
+		}
+	}
+}
+
 
 onmessage	= function (e) {
 	switch (e.data.method) {
@@ -28,7 +39,7 @@ onmessage	= function (e) {
 					crypto	= msCrypto;
 				}
 				else {
-					importScripts('/lib/isaac.min.js');
+					importScriptsAndRetry('/lib/isaac.min.js');
 					isaac.seed(e.data.message.randomSeed);
 					crypto	= {
 						getRandomValues: function (array) {
@@ -44,7 +55,7 @@ onmessage	= function (e) {
 				}
 			}
 
-			importScripts(
+			importScriptsAndRetry(
 				'/lib/bower_components/otr/build/dep/bigint.js',
 				'/lib/bower_components/otr/build/dep/crypto.js',
 				'/lib/bower_components/otr/build/dep/eventemitter.js',
