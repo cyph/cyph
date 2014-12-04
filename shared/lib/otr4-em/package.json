@@ -1,0 +1,18 @@
+{
+    "name":     "otr4-em",
+    "version":  "v0.0.21",
+    "main": "index.js",
+    "description": "Off-the-Record Messaging Protocol [emscripten libotr4.1.0]",
+    "homepage": "https://github.com/mnaamani/otr4-em",
+    "keywords" : ["crypto","otr","privacy","off the record","otrm","protocol","encryption"],
+    "author":{
+        "name":"Mokhtar Naamani",
+        "email":"mokhtar.naamani@gmail.com",
+        "url":"https://github.com/mnaamani"
+    },
+    "repository":{
+        "type":"git",
+        "url":"git@github.com:mnaamani/otr4-em.git"
+    },
+    "license": "GPLv2"
+}
