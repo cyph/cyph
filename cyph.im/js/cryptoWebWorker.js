@@ -106,9 +106,9 @@ onmessage	= function (e) {
 					});
 
 					otr.on('message', function (message, wasEncrypted) {
-						// if (wasEncrypted) {
+						if (wasEncrypted) {
 							postMessage({eventName: 'ui', message: padMessageRemove(message)});
-						// }
+						}
 					});
 
 					otr.on('inject_message', function (message) {
