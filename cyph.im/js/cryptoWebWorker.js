@@ -1,4 +1,4 @@
-var otr, addressSpace, sharedSecret;
+var otr, addressSpace, isInitiator, sharedSecret;
 
 function getPadding () {
 	return Array.prototype.slice.call(
@@ -32,6 +32,7 @@ onmessage	= function (e) {
 	switch (e.data.method) {
 		/* Init */
 		case 0:
+			isInitiator		= e.data.message.isInitiator;
 			sharedSecret	= e.data.message.sharedSecret;
 
 			if (typeof crypto == 'undefined') {
@@ -55,83 +56,98 @@ onmessage	= function (e) {
 				}
 			}
 
+			window	= {crypto: crypto};
+
 			importScriptsAndRetry(
-				'/lib/bower_components/otr/build/dep/bigint.js',
-				'/lib/bower_components/otr/build/dep/crypto.js',
-				'/lib/bower_components/otr/build/dep/eventemitter.js',
-				'/lib/bower_components/otr/build/otr.min.js'
+				'/lib/otr4-em/lib/async.js',
+				'/lib/otr4-em/lib/bigint.js',
+				'/lib/otr4-em/lib/libotr4.js',
+				'/lib/otr4-em/lib/libotr-js-bindings.js',
+				'/lib/otr4-em/lib/otr-module.js'
 			);
 
-			otr	= new OTR({
-				fragment_size: 25600,
-				send_interval: 10,
-				debug: false,
-				instance_tag: OTR.makeInstanceTag(),
-				priv: new DSA()
-			});
 
-			otr.ALLOW_V2			= false;
-			otr.ALLOW_V3			= true;
-			otr.REQUIRE_ENCRYPTION	= true;
+			var accountnames	= {true: 'me', false: 'friend'};
 
-			otr.on('smp', function (type, data, act) {
-				switch (type) {
-					case 'question':
-						otr.smpSecret(sharedSecret);
-						break;
+			var settings	= {
+				keys:'/keys',
+				fingerprints:'/fp',
+				instags:'/instags',
+				accountname: accountnames[isInitiator],
+				protocol: 'cyph'
+			};
 
-					case 'trust':
-						postMessage({eventName: (data ? 'connected' : 'abort')});
-						break;
+			var user	= new OTR.User(settings);
 
-					case 'abort':
+			user.generateKey(settings.accountname, settings.protocol, function () {
+				user.generateInstag(settings.accountname, settings.protocol, function () {
+					otr	= new OTR.Session(
+						user,
+						user.ConnContext(
+							settings.accountname,
+							settings.protocol,
+							accountnames[!isInitiator]
+						), {
+						policy: OTR.POLICY('ALLOW_V3'),
+						MTU: 25600
+					});
+
+					otr.on('smp_request', function () {
+						otr.respond_smp(sharedSecret);
+					});
+					otr.on('smp_complete', function () {
+						postMessage({eventName: 'connected'});
+					});
+					otr.on('smp_failed', function () {
 						postMessage({eventName: 'abort'});
-						break;
-				}
-			});
+					});
+					otr.on('smp_aborted', function () {
+						postMessage({eventName: 'abort'});
+					});
 
-			otr.on('ui', function (message, wasEncrypted) {
-				if (wasEncrypted) {
-					postMessage({eventName: 'ui', message: padMessageRemove(message)});
-				}
-			});
+					otr.on('message', function (message, wasEncrypted) {
+						// if (wasEncrypted) {
+							postMessage({eventName: 'ui', message: padMessageRemove(message)});
+						// }
+					});
 
-			otr.on('io', function (message) {
-				/* TODO: figure out wtf is up with these errors and if it's actually a vulnerability */
-				if (message != '?OTR Error:An OTR error has occurred.') {
-					postMessage({eventName: 'io', message: message});
-				}
-			});
+					otr.on('inject_message', function (message) {
+						if (message && message.indexOf('otr.cypherpunks.ca') > -1) {
+							message	= '?OTRv3?';
+						}
 
-			var isConnected;
-			otr.on('status', function (state) {
-				if (state == OTR.CONST.STATUS_AKE_SUCCESS && !isConnected) {
-					isConnected	= true;
-					postMessage({eventName: 'smpinit'});
-				}
-			});
+						postMessage({eventName: 'io', message: message});
+					});
 
-			postMessage({eventName: 'ready'});
+					var isConnected;
+					otr.on('gone_secure', function () {
+						if (!isConnected) {
+							isConnected	= true;
+							
+							if (isInitiator) {
+								otr.start_smp(sharedSecret);
+							}
+						}
+					});
+
+					postMessage({eventName: 'ready'});
+				});
+			});
 			break;
 
 		/* Send query message */
 		case 1:
-			otr.sendQueryMsg();
+			otr.connect();
 			break;
 
 		/* Send message */
 		case 2:
-			otr.sendMsg(padMessage(e.data.message));
+			otr.send(padMessage(e.data.message));
 			break;
 
 		/* Receive message */
 		case 3:
-			otr.receiveMsg(e.data.message);
-			break;
-
-		/* SMP */
-		case 4:
-			otr.smpSecret(e.data.message.secret, e.data.message.question);
+			otr.recv(e.data.message);
 			break;
 	}
 };

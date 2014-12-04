@@ -32,12 +32,6 @@ otrWorker.onmessage	= function (e) {
 			logCyphertext(e.data.message, authors.me);
 			break;
 
-		case 'smpinit':
-			if (channel.data.IsCreator) {
-				otr.smpSecret(sharedSecret);
-			}
-			break;
-
 		case 'ready':
 			isOtrReady	= true;
 
@@ -45,8 +39,12 @@ otrWorker.onmessage	= function (e) {
 				otr.sendQueryMsg();
 			}
 
+			var i	= 0;
 			while (preConnectMessageReceiveQueue.length > 0) {
-				otr.receiveMsg(preConnectMessageReceiveQueue.shift());
+				var message	= preConnectMessageReceiveQueue.shift();
+				setTimeout(function () {
+					otr.receiveMsg(message);
+				}, 50 * i++);
 			}
 
 			break;
@@ -60,8 +58,12 @@ otrWorker.onmessage	= function (e) {
 
 			markAllAsSent();
 
+			var i	= 0;
 			while (preConnectMessageSendQueue.length > 0) {
-				otr.sendMsg(preConnectMessageSendQueue.shift());
+				var message	= preConnectMessageSendQueue.shift();
+				setTimeout(function () {
+					otr.sendMsg(message);
+				}, 50 * i++);
 			}
 			break;
 	}
@@ -69,7 +71,11 @@ otrWorker.onmessage	= function (e) {
 
 var randomSeed	= new Uint8Array(50000);
 crypto.getRandomValues(randomSeed);
-otrWorker.postMessage({method: 0, message: {randomSeed: randomSeed, sharedSecret: sharedSecret}});
+otrWorker.postMessage({method: 0, message: {
+	randomSeed: randomSeed,
+	sharedSecret: sharedSecret,
+	isInitiator: getUrlState() == 'new'
+}});
 
 var otr	= {
 	sendQueryMsg: function () {
@@ -95,9 +101,6 @@ var otr	= {
 		else {
 			preConnectMessageReceiveQueue.push(message);
 		}
-	},
-	smpSecret: function (secret, question) {
-		otrWorker.postMessage({method: 4, message: {secret: secret, question: question}});
 	}
 };
 
