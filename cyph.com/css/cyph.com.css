@@ -244,8 +244,8 @@ html.mobile .hero-text {
 #podcast-section .hero-text {
   top: 20px; }
   #podcast-section .hero-text img {
-    width: 75vw;
-    max-width: 450px; }
+    max-width: 450px;
+    max-height: 175px; }
 
 #main.unisection-mode > section:not(.unisection), #main.unisection-mode #bouncing-down-arrow {
   display: none; }
