@@ -22,7 +22,12 @@ function importScriptsAndRetry () {
 			importScripts(arguments[i])
 		}
 		catch (e) {
-			--i;
+			if (e.name == 'NetworkError') {
+				--i;
+			}
+			else {
+				throw e;
+			}
 		}
 	}
 }
