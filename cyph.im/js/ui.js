@@ -118,12 +118,7 @@ angular.
 						}
 
 						if (isValidUrl(s)) {
-							return '[' +
-								s +
-								'](//' +
-								s.replace(/^\/\//, '').replace(/^http:\/\//, '').replace(/^https:\/\//, '') +
-								')'
-							;
+							return '[' + s + '](' + s + ')';
 						}
 						else {
 							return s;
