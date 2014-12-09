@@ -102,7 +102,7 @@ angular.
 				}
 
 				text	= text
-					.split(' ')
+					.split(/\s+/)
 					.map(function (s) {
 						/* Disable inline external images */
 						if (s.indexOf(imageMarkup) > -1) {
