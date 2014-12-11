@@ -3,6 +3,8 @@
 dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd) # $(dirname `readlink -f "${0}" || realpath "${0}"`)
 
+# TODO: Find a more robust way of handling arguments
+
 all=''
 nobackend=''
 staging=true
@@ -16,6 +18,13 @@ elif [ "${1}" == '--prodnobackend' ] ; then
 elif [ "${1}" == '--all' ] ; then
 	all=true
 	staging=''
+	shift
+fi
+
+site=''
+if [ "${1}" == '--site' ] ; then
+	shift
+	site="${1}"
 	shift
 fi
 
@@ -79,9 +88,13 @@ if [ "${nobackend}" == '' ] ; then
 	goapp deploy default/app.yaml
 fi
 
-# ls */*.yaml | xargs -I% appcfg.py rollback %
-goapp deploy cyph.com/cyph-com.yaml cyph.im/cyph-im.yaml cyph.me/cyph-me.yaml
-# goapp deploy default/app.yaml `ls !(default)/*.yaml | tr '\n' ' '`
+if [ $site ] ; then
+	goapp deploy $site/*.yaml
+else
+	# ls */*.yaml | xargs -I% appcfg.py rollback %
+	goapp deploy cyph.com/cyph-com.yaml cyph.im/cyph-im.yaml cyph.me/cyph-me.yaml
+	# goapp deploy default/app.yaml `ls !(default)/*.yaml | tr '\n' ' '`
+fi
 
 appcfg.py update_dispatch .
 ls */cron.yaml | sed 's/cron.yaml//g' | xargs -I% appcfg.py update_cron %

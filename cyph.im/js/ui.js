@@ -22,7 +22,7 @@ var
 
 angular.
 	module('Cyph', ['ngMaterial', 'ngSanitize', 'btford.markdown', 'timer']).
-	controller('CyphController', ['$scope', '$mdSidenav', '$mdToast', function ($scope, $mdSidenav, $mdToast) {
+	controller('CyphController', ['$scope', '$mdSidenav', '$mdToast', '$mdDialog', function ($scope, $mdSidenav, $mdToast, $mdDialog) {
 		var $window				= $(window);
 		var $html				= $('html');
 		var $everything			= $('*');
