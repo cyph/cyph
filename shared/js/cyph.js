@@ -71,11 +71,16 @@ function pushState (path, shouldReplace) {
 
 
 
-var isAndroid	= /Android/g.test(navigator.userAgent);
-var isIOS		= /(iPad|iPhone|iPod)/g.test(navigator.userAgent);
-var isWP		= /iemobile/g.test(navigator.userAgent);
+var userAgent	= navigator.userAgent.toLowerCase();
 
-var isMobile	= isAndroid || isIOS || isWP || (function () {
+var isAndroid	= /android/.test(userAgent);
+var isIOS		= /ipad|iphone|ipod/.test(userAgent);
+var isWP		= /iemobile/.test(userAgent);
+var isWebOS		= /webos/.test(userAgent);
+var isBB		= /blackberry/.test(userAgent);
+var isOperaMini	= /opera mini/.test(userAgent);
+
+var isMobile	= isAndroid || isIOS || isWP || isWebOS || isBB || isOperaMini || (function () {
 	try {
 		document.createEvent('TouchEvent');
 		return true;
