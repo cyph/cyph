@@ -26,7 +26,17 @@ function getTimestamp () {
 
 
 function getUrlState () {
-	return document.location.pathname.split('/').slice(-1)[0];
+	var split	= document.location.pathname.split('/');
+
+	var a	= split.slice(-1)[0];
+	var b	= split.slice(-2)[0];
+
+	if (!a && b) {
+		return b;
+	}
+	else {
+		return a;
+	}
 }
 
 
