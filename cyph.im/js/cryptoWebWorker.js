@@ -33,7 +33,7 @@ function importScriptsAndRetry () {
 }
 
 function sendFakeMessage () {
-	otr.send(getPadding() + paddingDelimiter + paddingDelimiter + getPadding() + getPadding());
+	otr.send(getPadding() + paddingDelimiter + getPadding() + paddingDelimiter + getPadding());
 	setTimeout(sendFakeMessage, crypto.getRandomValues(new Uint8Array(1))[0] * 500);
 }
 
