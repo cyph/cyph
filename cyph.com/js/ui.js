@@ -116,7 +116,10 @@ angular.
 		if (isMobile) {
 			$html.addClass('mobile');
 
-			$video.attr('poster', $video.attr('mobile-poster'));
+			var $mobilePoster	= $('<img />');
+			$mobilePoster.attr('src', $video.attr('mobile-poster'));
+			$video.replaceWith($mobilePoster);
+			$video				= $mobilePoster;
 		}
 
 
