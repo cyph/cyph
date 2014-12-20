@@ -173,7 +173,11 @@
 						<form class='beta-signup-form' ng-submit='submitBetaSignup()'>
 							<div ng-show='betaSignupState == 0'>
 								<div>
-									<p>
+									<p ng-show='podcast == "betalist"'>
+										<span translate>Welcome</span>
+										<span>Betalisters!</span>
+									</p>
+									<p ng-hide='podcast == "betalist"'>
 										<span translate>Welcome</span>
 										<i ng-show='podcast == "penn"'>Penn's Sunday School</i>
 										<i ng-show='podcast == "jjgo"'>Jordan, Jesse, Go!</i>
