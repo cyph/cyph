@@ -267,7 +267,7 @@ angular.
 
 				if ($scope.isConnected) {
 					addMessageToChat(disconnectedNotification, authors.app);
-					sendChannelData({Destroy: true}, {callback: callback});
+					sendChannelDataBase({Destroy: true}, {callback: callback});
 
 					apply(function () {
 						$scope.isAlive	= false;
@@ -416,7 +416,7 @@ angular.
 
 			if (imtypingyo != newImtypingYo) {
 				imtypingyo	= newImtypingYo;
-				sendChannelData({Misc: imtypingyo ? 'imtypingyo' : 'donetyping'});
+				sendChannelData({Misc: imtypingyo ? channelDataMisc.imtypingyo : channelDataMisc.donetyping});
 			}
 		};
 

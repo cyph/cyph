@@ -32,11 +32,6 @@ function importScriptsAndRetry () {
 	}
 }
 
-function sendFakeMessage () {
-	otr.send(padMessage(''));
-	setTimeout(sendFakeMessage, crypto.getRandomValues(new Uint8Array(1))[0] * 500);
-}
-
 
 onmessage	= function (e) {
 	switch (e.data.method) {
@@ -133,8 +128,6 @@ onmessage	= function (e) {
 					otr.on('gone_secure', function () {
 						if (!isConnected) {
 							isConnected	= true;
-
-							sendFakeMessage();
 							
 							if (isInitiator) {
 								otr.start_smp(sharedSecret);
