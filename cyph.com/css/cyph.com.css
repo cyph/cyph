@@ -2,7 +2,8 @@ html:not(.load-complete) #main > section, html:not(.load-complete) footer, html:
   display: none; }
 
 section#main {
-  background-color: rgba(139, 98, 217, 0.75) !important; }
+  background-color: rgba(139, 98, 217, 0.75) !important;
+  overflow-x: hidden; }
 
 #main, #main section {
   min-height: 100vh; }
