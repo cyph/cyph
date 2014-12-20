@@ -241,6 +241,11 @@ html.mobile .hero-text {
   -moz-transition: opacity 500ms 1s linear;
   transition: opacity 500ms 1s linear; }
 
+.hidden-submit-button {
+  visibility: hidden;
+  position: absolute;
+  pointer-events: none; }
+
 #podcast-section .hero-text {
   top: 20px; }
   #podcast-section .hero-text img {
