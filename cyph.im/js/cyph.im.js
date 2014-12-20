@@ -1,6 +1,17 @@
 var authors							= {me: 1, friend: 2, app: 3};
 var preConnectMessageReceiveQueue	= [];
 var preConnectMessageSendQueue		= [];
+
+var CHANNEL_DATA_PREFIX	= 'CHANNEL DATA: ';
+
+var channelDataMisc	= {
+	connect: 1,
+	ping: 2,
+	pong: 3,
+	imtypingyo: 4,
+	donetyping: 5
+};
+
 var channel, isConnected, isOtrReady, pongReceived, shouldSendQueryMessage, socket;
 
 
@@ -24,11 +35,20 @@ if (!sharedSecret || sharedSecret.length != sharedSecretLength) {
 otrWorker.onmessage	= function (e) {
 	switch (e.data.eventName) {
 		case 'ui':
-			addMessageToChat(e.data.message, authors.friend);
+			if (e.data.message) {
+				var channelDataSplit	= e.data.message.split(CHANNEL_DATA_PREFIX);
+
+				if (!channelDataSplit[0] && channelDataSplit[1]) {
+					receiveChannelData({data: channelDataSplit[1]});
+				}
+				else {
+					addMessageToChat(e.data.message, authors.friend);
+				}
+			}
 			break;
 
 		case 'io':
-			sendChannelData({Message: e.data.message});
+			sendChannelDataBase({Message: e.data.message});
 			logCyphertext(e.data.message, authors.me);
 			break;
 
@@ -41,10 +61,12 @@ otrWorker.onmessage	= function (e) {
 
 			var i	= 0;
 			while (preConnectMessageReceiveQueue.length > 0) {
-				var message	= preConnectMessageReceiveQueue.shift();
-				setTimeout(function () {
-					otr.receiveMsg(message);
-				}, 50 * i++);
+				(function () {
+					var message	= preConnectMessageReceiveQueue.shift();
+					setTimeout(function () {
+						otr.receiveMsg(message);
+					}, 50 * i++);
+				}());
 			}
 
 			break;
@@ -60,10 +82,12 @@ otrWorker.onmessage	= function (e) {
 
 			var i	= 0;
 			while (preConnectMessageSendQueue.length > 0) {
-				var message	= preConnectMessageSendQueue.shift();
-				setTimeout(function () {
-					otr.sendMsg(message);
-				}, 50 * i++);
+				(function () {
+					var message	= preConnectMessageSendQueue.shift();
+					setTimeout(function () {
+						otr.sendMsg(message);
+					}, 50 * i++);
+				}());
 			}
 			break;
 	}
@@ -117,23 +141,30 @@ function beginChat () {
 		});
 
 		$(window).unload(function () {
-			sendChannelData({Destroy: true}, {async: false});
+			sendChannelDataBase({Destroy: true}, {async: false});
 			socketClose();
 		});
 
-		/* Intermittent check to verify chat is still alive */
-		var pingInterval	= setInterval(function () { sendChannelData({Misc: 'ping'}) }, 15000);
-		var pongInterval	= setInterval(function () {
-			if (pongReceived) {
-				pongReceived	= false;
-			}
-			else {
-				clearInterval(pingInterval);
-				clearInterval(pongInterval);
-				socketClose();
-			}
-		}, 60000);
+		pingPong();
 	});
+}
+
+
+/* Intermittent check to verify chat is still alive + send fake encrypted chatter */
+
+function pingPong () {
+	if (pongReceived !== false) {
+		pongReceived	= false;
+	}
+	else {
+		socketClose();
+		return;
+	}
+
+	setTimeout(function () {
+		sendChannelData({Misc: channelDataMisc.ping});
+		setTimeout(pingPong, 60000);
+	}, crypto.getRandomValues(new Uint8Array(1))[0] * 250);
 }
 
 
@@ -169,6 +200,49 @@ function processUrlState () {
 }
 
 
+var receivedMessages	= {};
+
+function receiveChannelData (data) {
+	var o;
+
+	try {
+		o	= JSON.parse(data.data);
+	}
+	catch (e) {
+		return;
+	}
+
+	pongReceived	= true;
+
+	if (!o.Id || !receivedMessages[o.Id]) {
+		if (o.Id) {
+			receivedMessages[o.Id]	= true;
+			$.ajax({type: 'PUT', url: BASE_URL + 'messages/' + o.Id});
+		}
+
+		if (o.Misc == channelDataMisc.ping) {
+			sendChannelData({Misc: channelDataMisc.pong});
+		}
+		if (o.Misc == channelDataMisc.connect) {
+			beginChat();
+		}
+		if (o.Misc == channelDataMisc.imtypingyo) {
+			friendIsTyping(true);
+		}
+		if (o.Misc == channelDataMisc.donetyping) {
+			friendIsTyping(false);
+		}
+		if (o.Message) {
+			otr.receiveMsg(o.Message);
+			logCyphertext(o.Message, authors.friend);
+		}
+		if (o.Destroy) {
+			socketClose();
+		}
+	}
+}
+
+
 var sendChannelDataLock		= false;
 var sendChannelDataQueue	= [];
 
@@ -199,16 +273,18 @@ setInterval(function () {
 	});
 }, 100);
 
-function sendChannelData (data, opts) {
+function sendChannelDataBase (data, opts) {
 	sendChannelDataQueue.push({data: data, opts: opts || {}});
+}
+
+function sendChannelData (data) {
+	otr.sendMsg(CHANNEL_DATA_PREFIX + JSON.stringify(data));
 }
 
 
 function setUpChannel (channelData) {
 	channel			= new goog.appengine.Channel(channelData.ChannelToken);
 	channel.data	= channelData;
-
-	var receivedMessages	= {};
 
 	socket	= channel.open({
 		onopen: function () {
@@ -217,49 +293,11 @@ function setUpChannel (channelData) {
 			}
 			else {
 				beginChat();
-				sendChannelData({Misc: 'connect'});
+				sendChannelDataBase({Misc: channelDataMisc.connect});
 				otr.sendQueryMsg();
 			}
 		},
-		onmessage: function (data) {
-			var o
-
-			try {
-				o	= JSON.parse(data.data);
-			}
-			catch (e) {
-				return;
-			}
-
-			pongReceived	= true;
-
-			if (!o.Id || !receivedMessages[o.Id]) {
-				if (o.Id) {
-					receivedMessages[o.Id]	= true;
-					$.ajax({type: 'PUT', url: BASE_URL + 'messages/' + o.Id});
-				}
-
-				if (o.Misc == 'ping') {
-					sendChannelData({Misc: 'pong'});
-				}
-				if (o.Misc == 'connect') {
-					beginChat();
-				}
-				if (o.Misc == 'imtypingyo') {
-					friendIsTyping(true);
-				}
-				if (o.Misc == 'donetyping') {
-					friendIsTyping(false);
-				}
-				if (o.Message) {
-					otr.receiveMsg(o.Message);
-					logCyphertext(o.Message, authors.friend);
-				}
-				if (o.Destroy) {
-					socketClose();
-				}
-			}
-		},
+		onmessage: receiveChannelData,
 		onerror: function () {},
 		onclose: closeChat
 	});
