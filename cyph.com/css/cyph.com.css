@@ -250,6 +250,7 @@ html.mobile .hero-text {
 #podcast-section .hero-text {
   top: 20px; }
   #podcast-section .hero-text img {
+    width: 75%;
     max-width: 450px;
     max-height: 175px; }
 
