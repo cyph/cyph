@@ -17,7 +17,7 @@ angular.
 		var $video				= $('#background-video > :first-child');
 		var $founderPhotos		= $('.founder-photos');
 		var $ryanPhoto			= $founderPhotos.children(':nth-child(1)');
-		var $joshPhoto			= $founderPhotos.children(':nth-child(2)');
+		var $joshPhoto			= $founderPhotos.children(':nth-child(3)');
 		var $fixedHeaderStuff	= $newCyph.add('#main-toolbar').add($bouncingDownArrow);
 		var fixedHeaderClass	= 'fixed-header';
 

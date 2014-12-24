@@ -166,24 +166,18 @@ html.mobile .hero-text {
 
 .founder-photos {
   padding: 20px; }
-  .founder-photos > * {
-    width: calc(40%); }
-    .founder-photos > * * {
-      width: 100%;
-      display: block;
-      margin-left: auto;
-      margin-right: auto;
-      text-align: center; }
-    .founder-photos > * img {
-      width: 75%;
-      max-width: 200px;
-      margin-bottom: 20px;
-      border-radius: 100%;
-      box-shadow: 0px 4px 10px -1px rgba(0, 0, 0, 0.25) !important; }
-  .founder-photos > :nth-child(1) {
-    float: left; }
-  .founder-photos > :nth-child(2) {
-    float: right; }
+  .founder-photos > * * {
+    width: 100%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center; }
+  .founder-photos > * img {
+    width: 80%;
+    max-width: 200px;
+    margin-bottom: 20px;
+    border-radius: 100%;
+    box-shadow: 0px 4px 10px -1px rgba(0, 0, 0, 0.25) !important; }
   .founder-photos > *:not(.bounceInLeft):not(.bounceInRight) {
     visibility: hidden; }
 
