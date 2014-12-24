@@ -1,0 +1,15 @@
+{
+  "name": "unsemantic",
+  "version": "1.0.1",
+  "description": "Fluid grid for mobile, tablet, and desktop.",
+  "license": [
+    "GPL",
+    "MIT"
+  ],
+  "main": [
+    "assets/stylesheets/unsemantic-grid-responsive-no-ie7.css",
+    "assets/stylesheets/unsemantic-grid-responsive-tablet-no-ie7.css"
+  ],
+  "ignore": [
+  ]
+}
