@@ -7,6 +7,10 @@
 html, body, #main, md-sidenav {
   background-color: #8b62d9 !important; }
 
+body {
+  height: 200% !important;
+  padding-bottom: 100% !important; }
+
 #main, .md-button-inner {
   color: #f1f1f1 !important; }
 
