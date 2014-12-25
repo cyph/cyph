@@ -141,7 +141,7 @@ angular.
 			founderPhotosOffset	= founderPhotosOffset	= $founderPhotos.offset().top - 500;
 		}, 1000);
 
-		$window.scroll(function () {
+		setInterval(function () {
 			var viewportHeight	= Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
 			var scrollTop		= window.pageYOffset;
 
@@ -168,7 +168,7 @@ angular.
 
 				founderPhotosOffset	= undefined;
 			}
-		});
+		}, isMobile ? 50 : 10);
 
 		setInterval(function () {
 			$bouncingDownArrow.removeClass('bounce');
