@@ -17,7 +17,7 @@ angular.
 		var $video				= $('#background-video > :first-child');
 		var $founderPhotos		= $('.founder-photos');
 		var $ryanPhoto			= $founderPhotos.children(':nth-child(1)');
-		var $joshPhoto			= $founderPhotos.children(':nth-child(3)');
+		var $joshPhoto			= $founderPhotos.children(':nth-child(2)');
 		var $fixedHeaderStuff	= $newCyph.add('#main-toolbar').add($bouncingDownArrow);
 		var fixedHeaderClass	= 'fixed-header';
 
@@ -115,7 +115,9 @@ angular.
 
 		if (isMobile) {
 			$html.addClass('mobile');
+		}
 
+		if (isMobile || location.hostname == 'localhost') {
 			var $mobilePoster	= $('<img />');
 			$mobilePoster.attr('src', $video.attr('mobile-poster'));
 			$video.replaceWith($mobilePoster);
