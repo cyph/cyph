@@ -136,11 +136,6 @@ angular.
 
 		/* Header / new cyph button animation */
 
-		var founderPhotosOffset;
-		setTimeout(function () {
-			founderPhotosOffset	= founderPhotosOffset	= $founderPhotos.offset().top - 500;
-		}, 1000);
-
 		$window.scroll(function () {
 			var viewportHeight	= Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
 			var scrollTop		= window.pageYOffset;
@@ -160,13 +155,6 @@ angular.
 				if (ratio > 0.62) {
 					$newCyph.css('transform', 'scale(' + ratio + ')');
 				}
-			}
-
-			if (founderPhotosOffset && (scrollTop >= founderPhotosOffset)) {
-				$ryanPhoto.addClass('bounceInLeft');
-				$joshPhoto.addClass('bounceInRight');
-
-				founderPhotosOffset	= undefined;
 			}
 		});
 
@@ -294,6 +282,7 @@ angular.
 
 		$(function () {
 			$('html').addClass('load-complete');
+			new WOW().init();
 		});
 	}])
 ;
