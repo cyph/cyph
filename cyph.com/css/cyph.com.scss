@@ -283,19 +283,8 @@ html.mobile #new-cyph-section {
 }
 
 .founder-photos {
-	padding: 20px;
-
 	> * {
-		* {
-			width: 100%;
-			display: block;
-			margin-left: auto;
-			margin-right: auto;
-			text-align: center;
-		}
-
 		img {
-			width: 80%;
 			max-width: 200px;
 			margin-bottom: 20px;
 			border-radius: 100%;
@@ -307,10 +296,46 @@ html.mobile #new-cyph-section {
 		visibility: hidden;
 	}
 }
-.founder-photos:after {
-	clear: both;
-	content: '';
-	display: block;
+html.mobile {
+	.founder-photos {
+		margin-left: -50px;
+		width: calc(100% + 100px);
+
+		img {
+			width: 100%;
+		}
+
+		strong {
+			margin-top: calc(16.5vw - 20px);
+		}
+		strong.mobile-pull-33 {
+			text-align: right;
+		}
+	}
+}
+html:not(.mobile) {
+	.founder-photos {
+		padding: 20px;
+
+		> * {
+			img {
+				width: 80%;
+			}
+
+			* {
+				width: 100%;
+				display: block;
+				margin-left: auto;
+				margin-right: auto;
+				text-align: center;
+			}
+		}
+	}
+	.founder-photos:after {
+		clear: both;
+		content: '';
+		display: block;
+	}
 }
 
 .beta-signup-form {
