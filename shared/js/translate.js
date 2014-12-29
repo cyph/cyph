@@ -16,6 +16,9 @@ if (localStorage && localStorage.forceLanguage) {
 	language	= localStorage.forceLanguage;
 }
 
+if (language == 'nb') {
+	language	= 'no';
+}
 if (language == 'zh-tw') {
 	language	= 'zh-CHT';
 }

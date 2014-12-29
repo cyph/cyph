@@ -117,7 +117,7 @@ angular.
 			$html.addClass('mobile');
 		}
 
-		if (isMobile || location.hostname == 'localhost') {
+		if (isMobile) { // || location.hostname == 'localhost') {
 			var $mobilePoster	= $('<img />');
 			$mobilePoster.attr('src', $video.attr('mobile-poster'));
 			$video.replaceWith($mobilePoster);
@@ -141,7 +141,7 @@ angular.
 			founderPhotosOffset	= founderPhotosOffset	= $founderPhotos.offset().top - 500;
 		}, 1000);
 
-		setInterval(function () {
+		$window.scroll(function () {
 			var viewportHeight	= Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
 			var scrollTop		= window.pageYOffset;
 
@@ -168,7 +168,7 @@ angular.
 
 				founderPhotosOffset	= undefined;
 			}
-		}, isMobile ? 50 : 10);
+		});
 
 		setInterval(function () {
 			$bouncingDownArrow.removeClass('bounce');
@@ -182,29 +182,45 @@ angular.
 
 		/* Background video dimensions */
 
+		var addressBarHeight		= 60;
 		var videoAspectRatio		= 16 / 9;
 
 		var logoHidePaddingWidth	= 150;
 		var logoHidePaddingHeight	= (logoHidePaddingWidth / videoAspectRatio);
 
-		function adjustVideoMargins () {
-			var windowAspectRatio	= window.innerWidth / window.innerHeight;
+		var previousAspectRatio;
+		var previousHeight			= window.innerHeight;
 
-			if (windowAspectRatio > videoAspectRatio) {
-				var height	= $video.width() / videoAspectRatio;
+		function adjustVideoMargins () {
+			var heightDelta			= window.innerHeight - previousHeight;
+			var isAddressBarHidden	= heightDelta > 0 && heightDelta < 75;
+			previousHeight			= window.innerHeight;
+
+			var windowAspectRatio	= window.innerWidth / window.innerHeight;
+			var aspectRatio			= windowAspectRatio > videoAspectRatio;
+
+			if (aspectRatio == previousAspectRatio && isAddressBarHidden) {
+				return;
+			}
+
+			previousAspectRatio		= aspectRatio;
+
+			if (aspectRatio) {
+				var height	= window.innerWidth / videoAspectRatio;
 
 				$video.css({
 					'height': height,
-					'width': 0,
-					'margin-top': 0 - ((height - window.innerHeight) / 2),
+					'width': window.innerWidth,
+					'margin-top': 0 - ((height - window.innerHeight) / 2) + (addressBarHeight / 2),
 					'margin-left': 0
 				});
 			}
-			else if (windowAspectRatio < videoAspectRatio) {
-				var width	= videoAspectRatio * $video.height();
+			else {
+				var height	= window.innerHeight + addressBarHeight;
+				var width	= videoAspectRatio * height;
 
 				$video.css({
-					'height': 0,
+					'height': height,
 					'width': width,
 					'margin-top': 0,
 					'margin-left': 0 - ((width - window.innerWidth) / 2)
