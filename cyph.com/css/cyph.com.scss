@@ -61,6 +61,12 @@ md-button.focus, md-button:hover {
 	width: 200px;
 }
 
+html.mobile #new-cyph-section {
+	height: 0px;
+	min-height: 0px;
+	padding: 0px;
+}
+
 .hero-text {
 	font-family: 'Ubuntu';
 	width: 100%;

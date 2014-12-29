@@ -136,35 +136,40 @@ angular.
 
 		/* Header / new cyph button animation */
 
-		$window.scroll(function () {
-			var viewportHeight	= Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-			var scrollTop		= window.pageYOffset;
+		if (isMobile) {
+			$fixedHeaderStuff.addClass(fixedHeaderClass);
+		}
+		else {
+			$window.scroll(function () {
+				var viewportHeight	= Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+				var scrollTop		= window.pageYOffset;
 
-			if (scrollTop == 0) {
-				$newCyph.css({transform: '', top: ''});
-				$fixedHeaderStuff.removeClass(fixedHeaderClass);
-			}
-			else if (scrollTop >= ($newCyphParent.height() / 2 + 16)) {
-				$fixedHeaderStuff.addClass(fixedHeaderClass);
-			}
-			else {
-				$fixedHeaderStuff.removeClass(fixedHeaderClass);
-
-				var ratio	= (viewportHeight - scrollTop) / viewportHeight;
-
-				if (ratio > 0.62) {
-					$newCyph.css('transform', 'scale(' + ratio + ')');
+				if (scrollTop == 0) {
+					$newCyph.css({transform: '', top: ''});
+					$fixedHeaderStuff.removeClass(fixedHeaderClass);
 				}
-			}
-		});
+				else if (scrollTop >= ($newCyphParent.height() / 2 + 16)) {
+					$fixedHeaderStuff.addClass(fixedHeaderClass);
+				}
+				else {
+					$fixedHeaderStuff.removeClass(fixedHeaderClass);
 
-		setInterval(function () {
-			$bouncingDownArrow.removeClass('bounce');
+					var ratio	= (viewportHeight - scrollTop) / viewportHeight;
 
-			setTimeout(function () {
-				$bouncingDownArrow.addClass('bounce');
-			}, 100);
-		}, 2500);
+					if (ratio > 0.62) {
+						$newCyph.css('transform', 'scale(' + ratio + ')');
+					}
+				}
+			});
+
+			setInterval(function () {
+				$bouncingDownArrow.removeClass('bounce');
+
+				setTimeout(function () {
+					$bouncingDownArrow.addClass('bounce');
+				}, 100);
+			}, 2500);
+		}
 
 
 
@@ -282,7 +287,7 @@ angular.
 
 		$(function () {
 			$('html').addClass('load-complete');
-			new WOW().init();
+			new WOW({live: false}).init();
 		});
 	}])
 ;
