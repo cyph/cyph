@@ -10,7 +10,7 @@ angular.
 		var $betaSignup			= $('.beta-signup');
 		var $betaSignupForm		= $('.beta-signup-form');
 		var $podcastLogo		= $('.podcast-logo');
-		var $heroText			= $('.hero-text');
+		var $heroText			= $('#hero-section .hero-text');
 		var $newCyph			= $('#new-cyph');
 		var $newCyphParent		= $newCyph.parent();
 		var $bouncingDownArrow	= $('#bouncing-down-arrow');
