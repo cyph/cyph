@@ -213,18 +213,37 @@
 			</div>
 		</section>
 
+		<section id='laptop-screenshot-section'>
+			<div class='wow fadeIn grid-container' data-wow-delay='250ms'>
+				<div class='grid-33 tablet-grid-33 mobile-grid-100 mobile-push-100'>
+					<div class='hero-text' translate>
+						Works Everywhere
+					</div>
+					<div class='section-content-container'>
+						<p translate>
+							Cyph from your desktop, laptop, tablet, and phone!
+						</p>
+					</div>
+				</div>
+
+				<img class='grid-66 tablet-grid-66 mobile-grid-100 mobile-pull-100 screenshot' src='/img/laptop-screenshot.png' />
+			</div>
+		</section>
+
 		<section id='home-beta-signup'>
+			<div class='hero-text' translate>
+				No Registration Required
+			</div>
 			<div class='section-content-container'>
+				<p translate>
+					Click the button at the top of your screen to cyph right now!
+				</p>
 				<form class='beta-signup-form' ng-submit='submitBetaSignup()'>
 					<div ng-show='betaSignupState == 0'>
-						<div translate>
-							<p translate>
-								Pumped up for more Cyph awesomeness?
-							</p>
-							<p translate>
-								Join the waitlist for Cyph v2! (Coming soon to an Internet near you.)
-							</p>
-						</div>
+						<strong translate>However</strong>,
+						<span translate>if you’re pumped up for more Cyph awesomeness,</span>
+						<div translate>join the waitlist for Cyph v2! (Coming soon to an Internet near you.)</div>
+						<br />
 						<md-text-float type='email' label='email' ng-model='betaSignup.Email' translate></md-text-float>
 					</div>
 
@@ -246,6 +265,28 @@
 
 					<md-button type='submit' aria-label='Sign up for beta' ng-hide='betaSignupState > 1'>Sign up for beta</md-button>
 				</form>
+			</div>
+		</section>
+
+		<section id='why-cyph-section'>
+			<div class='hero-text' translate>
+				Why Cyph?
+			</div>
+			<div class='section-content-container'>
+				<p>
+					<span translate>Encryption is hard, but using it shouldn’t be. We believe</span>
+					<i translate>everyone</i>
+					<span translate>deserves privacy, not only security experts.</span>
+				</p>
+				<p translate>
+					Cyph is a next-generation messenger app that makes privacy the new status quo.
+				</p>
+				<p translate>
+					With Cyph, never again will you need to ask someone else to install or configure or sign up for anything, when all you need is a one-off private discussion.
+				</p>
+				<p translate>
+					One click and you’re secure.
+				</p>
 			</div>
 		</section>
 
@@ -326,7 +367,7 @@
 
 		<section id='about'>
 			<div class='hero-text' translate>
-				About Us
+				Our Story
 			</div>
 			<div class='section-content-container'>
 				<p translate>
