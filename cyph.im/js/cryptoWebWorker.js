@@ -40,6 +40,47 @@ onmessage	= function (e) {
 			isInitiator		= e.data.message.isInitiator;
 			sharedSecret	= e.data.message.sharedSecret;
 
+			if (true) { //typeof console == 'undefined') {
+				var noop	= function () {};
+				var methods	= [
+					'assert',
+					'clear',
+					'count',
+					'debug',
+					'dir',
+					'dirxml',
+					'error',
+					'exception',
+					'group',
+					'groupCollapsed',
+					'groupEnd',
+					'info',
+					'log',
+					'markTimeline',
+					'profile',
+					'profiles',
+					'profileEnd',
+					'show',
+					'table',
+					'time',
+					'timeEnd',
+					'timeline',
+					'timelineEnd',
+					'timeStamp',
+					'trace',
+					'warn'
+				];
+
+				console	= {};
+				for (var i = 0 ; i < methods.length ; ++i) {
+					console[methods[i]]	= noop;
+				}
+
+				delete noop;
+				delete methods;
+			}
+
+
 			if (typeof crypto == 'undefined') {
 				if (typeof msCrypto != 'undefined') {
 					crypto	= msCrypto;
