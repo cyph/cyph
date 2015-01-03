@@ -135,7 +135,7 @@ onmessage	= function (e) {
 							accountnames[!isInitiator]
 						), {
 						policy: OTR.POLICY('ALLOW_V3'),
-						MTU: 25600
+						MTU: 30000
 					});
 
 					otr.on('smp_request', function () {
