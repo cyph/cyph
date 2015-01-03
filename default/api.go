@@ -223,7 +223,8 @@ func sendChannelMessage(c appengine.Context, channelId string, imData ImData) {
 
 	memcache.Increment(c, key, 1, 0)
 
-	for i := 0; i < config.MessageSendRetries; i++ {
+	var i time.Duration
+	for i = 0; i < config.MessageSendRetries; i++ {
 		channel.SendJSON(c, channelId, imData)
 		time.Sleep((100 + (i * 100)) * time.Millisecond)
 
