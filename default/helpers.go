@@ -32,11 +32,10 @@ type BetaSignup struct {
 }
 
 type ImData struct {
-	Id        string
-	Destroy   bool
-	Message   string
-	Misc      string
-	Recipient string
+	Id      string
+	Destroy bool
+	Message string
+	Misc    string
 }
 
 type ImSetup struct {
@@ -73,11 +72,7 @@ var methods = struct {
 	"CONNECT",
 }
 
-var destroyJson = "{\"Destroy\": true}"
-
 var laterImTeardown = delay.Func("imTeardown", imTeardown)
-var laterSendChannelMessageBase = delay.Func("sendChannelMessage", sendChannelMessageTask)
-var laterSendChannelMessage *delay.Function
 
 var empty = struct{}{}
 
