@@ -8,7 +8,6 @@ var config = struct {
 	AllowedOrigins            map[string]none
 	DefaultMemcacheExpiration time.Duration
 	IMConnectTimeout          time.Duration
-	MessageSendTimeout        time.Duration
 	MessageSendRetries        int
 }{
 	map[string]none{
@@ -39,9 +38,7 @@ var config = struct {
 
 	10,
 
-	15,
-
-	2000,
+	20,
 }
 
 var imIdAddressSpace = []string{

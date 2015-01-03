@@ -14,8 +14,6 @@ import (
 )
 
 func init() {
-	laterSendChannelMessage = laterSendChannelMessageBase
-
 	handleFunc("/", root)
 	handleFuncs("/betasignups", Handlers{methods.PUT: betaSignup})
 	handleFuncs("/channels/{id}", Handlers{methods.POST: channelReceive})
@@ -84,7 +82,7 @@ func betaSignup(h HandlerArgs) (interface{}, int) {
 }
 
 func channelAck(h HandlerArgs) (interface{}, int) {
-	memcache.Delete(h.Context, h.Vars["id"])
+	memcache.Delete(h.Context, "messageAck-"+h.Vars["id"])
 	return nil, http.StatusOK
 }
 
@@ -92,7 +90,7 @@ func channelClose(h HandlerArgs) (interface{}, int) {
 	id := h.Request.FormValue("from")
 	idBase := id[:len(id)-1]
 
-	memcache.Increment(h.Context, idBase+"-closed", 1, 0)
+	channelCloseHelper(c, idBase)
 
 	return nil, http.StatusOK
 }
@@ -175,7 +173,6 @@ func imCreate(h HandlerArgs) (interface{}, int) {
 
 	memcache.SetMulti(h.Context, []*memcache.Item{&imIdItems[0], &imIdItems[1]})
 
-	laterSendChannelMessage.Call(h.Context, longId)
 	laterImTeardown.Call(h.Context, longId, imIdItems[0].Key, imIdItems[1].Key, string(imIdItems[1].Value))
 
 	return imId, http.StatusOK
@@ -210,22 +207,29 @@ func root(h HandlerArgs) (interface{}, int) {
 
 /*** Helpers ***/
 
+func channelCloseHelper(c appengine.Context, idBase string) {
+	for _, i := range []string{"0", "1"} {
+		sendChannelMessageBase(c, idBase+i, ImData{Destroy: true})
+	}
+}
+
 func sendChannelMessage(c appengine.Context, channelId string, imData ImData) {
-	channelIdEnd := len(channelId) - 1
-	id := channelId[:channelIdEnd]
-
-	n, _ := memcache.Increment(c, id+"-messageCount", 1, 0)
-	n -= 1
-
-	imData.Id = id + "-message" + strconv.FormatUint(n, 10)
-	imData.Recipient = channelId[channelIdEnd:]
-	imDataBytes, _ := json.Marshal(imData)
-
-	item := memcache.Item{Key: imData.Id, Value: imDataBytes, Expiration: config.MessageSendTimeout * time.Minute}
-	memcache.Set(c, &item)
-
 	if imData.Message != "" {
 		memcache.Increment(c, "totalMessages", 1, 0)
+	}
+
+	imData.Id = id + strconv.FormatInt(time.Now().Unix(), 10)
+	key := "messageAck-" + imData.Id
+
+	memcache.Increment(c, key, 1, 0)
+
+	for i = 0; i < config.MessageSendRetries; i++ {
+		channel.SendJSON(c, channelId, imData)
+		time.Sleep((100 + (i * 100)) * time.Millisecond)
+
+		if _, err := memcache.Get(c, key); err == memcache.ErrCacheMiss {
+			break
+		}
 	}
 }
 
@@ -235,94 +239,7 @@ func imTeardown(c appengine.Context, longId string, key0 string, key1 string, va
 	time.Sleep(config.IMConnectTimeout * time.Minute)
 
 	if item, err := memcache.Get(c, key1); err != memcache.ErrCacheMiss && string(item.Value) == string(value1) {
-		memcache.Increment(c, longId+"-closed", 1, 0)
+		channelCloseHelper(c, longId)
 		memcache.DeleteMulti(c, []string{key0, key1})
 	}
-}
-
-func sendChannelMessageTask(c appengine.Context, id string) {
-	closedKey := id + "-closed"
-	countKey := id + "-messageCount"
-	sentKey := id + "-messagesSent"
-
-	noMoreRetries := map[string]bool{
-		id + "0": false,
-		id + "1": false,
-	}
-
-	count, _ := memcache.Increment(c, countKey, 0, 0)
-	sent, _ := memcache.Increment(c, sentKey, 0, 0)
-
-	var sentIncrement int64
-	sentIncrement = 0
-
-	if closedValue, _ := memcache.Increment(c, closedKey, 0, 0); closedValue > 0 {
-		channel.Send(c, id+"0", destroyJson)
-		channel.Send(c, id+"1", destroyJson)
-
-		numKeys := count + 4
-		keys := make([]string, numKeys, numKeys)
-		keys[count] = closedKey
-		keys[count+1] = countKey
-		keys[count+2] = sentKey
-		keys[count+3] = id + "-connect"
-
-		var i uint64
-		for i = 0; i < count; i++ {
-			keys[i] = id + "-message" + strconv.FormatUint(i, 10)
-		}
-		memcache.DeleteMulti(c, keys)
-
-		return
-	}
-
-	for count > sent {
-		messageKey := id + "-message" + strconv.FormatUint(sent, 10)
-
-		item, err := memcache.Get(c, messageKey)
-		if err == memcache.ErrCacheMiss {
-			time.Sleep(10 * time.Millisecond)
-			continue
-		}
-
-		sentIncrement++
-		sent++
-
-		var imData ImData
-		imDataString := string(item.Value)
-		json.Unmarshal(item.Value, &imData)
-
-		/* Send + retry logic */
-
-		channelId := id + imData.Recipient
-
-		channel.Send(c, channelId, imDataString)
-
-		if !noMoreRetries[channelId] {
-			i := 1
-			for {
-				time.Sleep(50 * time.Millisecond)
-
-				if _, err := memcache.Get(c, messageKey); err == memcache.ErrCacheMiss {
-					break
-				} else if i >= config.MessageSendRetries {
-					noMoreRetries[channelId] = true
-					break
-				} else if i%20 == 0 {
-					channel.Send(c, channelId, imDataString)
-				}
-
-				i++
-			}
-		}
-
-		if count == sent {
-			count, _ = memcache.Increment(c, countKey, 0, 0)
-		}
-	}
-
-	memcache.IncrementExisting(c, sentKey, sentIncrement)
-
-	time.Sleep(1500 * time.Millisecond)
-	laterSendChannelMessage.Call(c, id)
 }
