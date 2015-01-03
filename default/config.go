@@ -8,7 +8,7 @@ var config = struct {
 	AllowedOrigins            map[string]none
 	DefaultMemcacheExpiration time.Duration
 	IMConnectTimeout          time.Duration
-	MessageSendRetries        int
+	MessageSendRetries        time.Duration
 }{
 	map[string]none{
 		"cyph.com":                                    empty,
