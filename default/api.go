@@ -90,7 +90,7 @@ func channelClose(h HandlerArgs) (interface{}, int) {
 	id := h.Request.FormValue("from")
 	idBase := id[:len(id)-1]
 
-	channelCloseHelper(c, idBase)
+	channelCloseHelper(h.Context, idBase)
 
 	return nil, http.StatusOK
 }
@@ -209,7 +209,7 @@ func root(h HandlerArgs) (interface{}, int) {
 
 func channelCloseHelper(c appengine.Context, idBase string) {
 	for _, i := range []string{"0", "1"} {
-		sendChannelMessageBase(c, idBase+i, ImData{Destroy: true})
+		sendChannelMessage(c, idBase+i, ImData{Destroy: true})
 	}
 }
 
@@ -218,12 +218,12 @@ func sendChannelMessage(c appengine.Context, channelId string, imData ImData) {
 		memcache.Increment(c, "totalMessages", 1, 0)
 	}
 
-	imData.Id = id + strconv.FormatInt(time.Now().Unix(), 10)
+	imData.Id = channelId + strconv.FormatInt(time.Now().Unix(), 10)
 	key := "messageAck-" + imData.Id
 
 	memcache.Increment(c, key, 1, 0)
 
-	for i = 0; i < config.MessageSendRetries; i++ {
+	for i := 0; i < config.MessageSendRetries; i++ {
 		channel.SendJSON(c, channelId, imData)
 		time.Sleep((100 + (i * 100)) * time.Millisecond)
 
