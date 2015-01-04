@@ -18,19 +18,14 @@ function padMessageRemove (message) {
 	return decodeURIComponent(escape(atob(message))).split(paddingDelimiter)[1];
 }
 
-var getTimestamp	= (performance && performance.now) ?
-	function () {
-		return performance.now();
-	} :
-	function () {
-		var now	= Date.now();
-		if (now == previousNow) {
-			++now;
-		}
-		previousNow	= now;
-		return now;
+function getTimestamp () {
+	var now	= Date.now();
+	if (previousNow >= now) {
+		now	= previousNow + 1;
 	}
-;
+	previousNow	= now;
+	return now;
+}
 
 function importScriptsAndRetry () {
 	for (var i = 0 ; i < arguments.length ; ++i) {
@@ -66,45 +61,42 @@ onmessage	= function (e) {
 			isInitiator		= e.data.message.isInitiator;
 			sharedSecret	= e.data.message.sharedSecret;
 
-			if (typeof console == 'undefined') {
-				var noop	= function () {};
-				var methods	= [
-					'assert',
-					'clear',
-					'count',
-					'debug',
-					'dir',
-					'dirxml',
-					'error',
-					'exception',
-					'group',
-					'groupCollapsed',
-					'groupEnd',
-					'info',
-					'log',
-					'markTimeline',
-					'profile',
-					'profiles',
-					'profileEnd',
-					'show',
-					'table',
-					'time',
-					'timeEnd',
-					'timeline',
-					'timelineEnd',
-					'timeStamp',
-					'trace',
-					'warn'
-				];
-
-				console	= {};
-				for (var i = 0 ; i < methods.length ; ++i) {
-					console[methods[i]]	= noop;
-				}
-
-				delete noop;
-				delete methods;
+			/* Safely disable console */
+			var noop	= function () {};
+			var methods	= [
+				'assert',
+				'clear',
+				'count',
+				'debug',
+				'dir',
+				'dirxml',
+				'error',
+				'exception',
+				'group',
+				'groupCollapsed',
+				'groupEnd',
+				'info',
+				'log',
+				'markTimeline',
+				'profile',
+				'profiles',
+				'profileEnd',
+				'show',
+				'table',
+				'time',
+				'timeEnd',
+				'timeline',
+				'timelineEnd',
+				'timeStamp',
+				'trace',
+				'warn'
+			];
+			console	= {};
+			for (var i = 0 ; i < methods.length ; ++i) {
+				console[methods[i]]	= noop;
 			}
+			delete noop;
+			delete methods;
 
 
 			if (typeof crypto == 'undefined') {
