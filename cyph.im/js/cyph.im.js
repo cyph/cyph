@@ -277,7 +277,7 @@ setInterval(function () {
 		type: 'POST',
 		url: BASE_URL + 'channels/' + channel.data.ChannelId
 	});
-}, 10);
+}, 50);
 
 function sendChannelDataBase (data, opts) {
 	sendChannelDataQueue.push({data: data, opts: opts || {}});
