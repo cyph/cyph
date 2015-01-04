@@ -155,7 +155,7 @@ onmessage	= function (e) {
 					otr.on('message', function (message, wasEncrypted) {
 						if (wasEncrypted) {
 							var o					= JSON.parse(message);
-							receivedMessages[o.id]	= (receivedMessages[o.id] || '') + padMessageRemove(message);
+							receivedMessages[o.id]	= (receivedMessages[o.id] || '') + padMessageRemove(o.message);
 
 							if (o.last) {
 								postMessage({eventName: 'ui', message: receivedMessages[o.id]});
