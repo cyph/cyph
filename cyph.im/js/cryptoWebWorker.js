@@ -1,6 +1,7 @@
 var incomingMessages			= {};
 var receivedMessages			= {};
-var otr, addressSpace, isInitiator, sharedSecret, processIncomingMessagesTimeoutID;
+var completeReceivedMessages	= {};
+var otr, addressSpace, isInitiator, sharedSecret, processIncomingMessagesTimeoutID, processReceivedMessagesTimeoutID;
 
 function getPadding () {
 	return Array.prototype.slice.call(
@@ -34,15 +35,25 @@ function importScriptsAndRetry () {
 	}
 }
 
-function processIncomingMessages () {
-	var keys	= Object.keys(incomingMessages).sort(function (a, b) { return a - b });
+function processMessagesTemplate (o, f) {
+	return function () {
+		var keys	= Object.keys(o).sort(function (a, b) { return a - b });
 
-	for (var i = 0 ; i < keys.length ; ++i) {
-		var k	= keys[i];
-		otr.recv(incomingMessages[k]);
-		delete incomingMessages[k];
-	}
+		for (var i = 0 ; i < keys.length ; ++i) {
+			var k	= keys[i];
+			f(o[k]);
+			delete o[k];
+		}
+	};
 }
+
+var processIncomingMessages	= processMessagesTemplate(incomingMessages, function (message) {
+	otr.recv(message);
+});
+
+var processReceivedMessages	= processMessagesTemplate(completeReceivedMessages, function (message) {
+	postMessage({eventName: 'ui', message: message});
+});
 
 
 onmessage	= function (e) {
@@ -177,8 +188,11 @@ onmessage	= function (e) {
 							receivedMessages[o.id].pieces[o.index]	= padMessageRemove(o.message);
 
 							if (++receivedMessages[o.id].total == o.total) {
-								postMessage({eventName: 'ui', message: receivedMessages[o.id].pieces.join('')});
+								completeReceivedMessages[o.id]	= receivedMessages[o.id].pieces.join('');
 								delete receivedMessages[o.id];
+
+								clearTimeout(processReceivedMessagesTimeoutID);
+								processReceivedMessagesTimeoutID	= setTimeout(processReceivedMessages, 1000);
 							}
 						}
 					});
