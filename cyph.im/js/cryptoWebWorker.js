@@ -196,7 +196,7 @@ onmessage	= function (e) {
 		/* Send message */
 		case 2:
 			var id			= Date.now();
-			var messages	= e.data.message.match(/.{1,10240}/g);
+			var messages	= e.data.message.match(/.{1,5120}/g);
 
 			for (var i = 0 ; i < messages.length ; ++i) {
 				otr.send(JSON.stringify({
