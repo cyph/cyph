@@ -254,38 +254,19 @@ function receiveChannelData (data) {
 }
 
 
-var sendChannelDataLock		= false;
-var sendChannelDataQueue	= [];
-
-setInterval(function () {
-	if (sendChannelDataLock || sendChannelDataQueue.length < 1) {
-		return;
-	}
-
-	sendChannelDataLock	= true;
-
-	var item	= sendChannelDataQueue.shift();
-	var data	= item.data;
-	var opts	= item.opts;
+function sendChannelDataBase (data, opts) {
+	opts	= opts || {};
 
 	$.ajax({
 		async: opts.async == undefined ? true : opts.async,
 		data: data,
 		error: function () {
-			sendChannelDataQueue.unshift(item);
-			sendChannelDataLock	= false;
+			sendChannelDataBase(data, opts);
 		},
-		success: function () {
-			sendChannelDataLock	= false;
-			opts.callback && opts.callback();
-		},
+		success: opts.callback,
 		type: 'POST',
 		url: BASE_URL + 'channels/' + channel.data.ChannelId
 	});
-}, 100);
-
-function sendChannelDataBase (data, opts) {
-	sendChannelDataQueue.push({data: data, opts: opts || {}});
 }
 
 function sendChannelData (data) {
