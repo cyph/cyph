@@ -254,16 +254,8 @@ function receiveChannelData (data) {
 }
 
 
-var sendChannelDataQueue	= [];
-
-setInterval(function () {
-	if (sendChannelDataQueue.length < 1) {
-		return;
-	}
-
-	var item	= sendChannelDataQueue.shift();
-	var data	= item.data;
-	var opts	= item.opts;
+function sendChannelDataBase (data, opts) {
+	opts	= opts || {};
 
 	$.ajax({
 		async: opts.async == undefined ? true : opts.async,
@@ -277,10 +269,6 @@ setInterval(function () {
 		type: 'POST',
 		url: BASE_URL + 'channels/' + channel.data.ChannelId
 	});
-}, 50);
-
-function sendChannelDataBase (data, opts) {
-	sendChannelDataQueue.push({data: data, opts: opts || {}});
 }
 
 function sendChannelData (data) {
