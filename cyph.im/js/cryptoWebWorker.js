@@ -1,3 +1,4 @@
+var receivedMessages	= {};
 var otr, addressSpace, isInitiator, sharedSecret;
 
 function getPadding () {
@@ -9,11 +10,11 @@ function getPadding () {
 var paddingDelimiter	= '☁☁☁ PRAISE BE TO CYPH ☀☀☀';
 
 function padMessage (message) {
-	return getPadding() + paddingDelimiter + message + paddingDelimiter + getPadding();
+	return btoa(unescape(encodeURIComponent(getPadding() + paddingDelimiter + message + paddingDelimiter + getPadding())));
 }
 
 function padMessageRemove (message) {
-	return message.split(paddingDelimiter)[1];
+	return decodeURIComponent(escape(atob(message))).split(paddingDelimiter)[1];
 }
 
 function importScriptsAndRetry () {
@@ -153,7 +154,13 @@ onmessage	= function (e) {
 
 					otr.on('message', function (message, wasEncrypted) {
 						if (wasEncrypted) {
-							postMessage({eventName: 'ui', message: padMessageRemove(message)});
+							var o					= JSON.parse(message);
+							receivedMessages[o.id]	= (receivedMessages[o.id] || '') + padMessageRemove(message);
+
+							if (o.last) {
+								postMessage({eventName: 'ui', message: receivedMessages[o.id]});
+								delete receivedMessages[o.id];
+							}
 						}
 					});
 
@@ -188,7 +195,16 @@ onmessage	= function (e) {
 
 		/* Send message */
 		case 2:
-			otr.send(padMessage(e.data.message));
+			var id			= Date.now();
+			var messages	= e.data.message.match(/.{1,10240}/g);
+
+			for (var i = 0 ; i < messages.length ; ++i) {
+				otr.send(JSON.stringify({
+					id: id,
+					last: i + 1 == messages.length,
+					message: padMessage(messages[i])
+				}));
+			}
 			break;
 
 		/* Receive message */
