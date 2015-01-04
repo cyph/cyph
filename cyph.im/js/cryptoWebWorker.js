@@ -1,5 +1,6 @@
-var receivedMessages	= {};
-var otr, addressSpace, isInitiator, sharedSecret;
+var receivedMessages			= {};
+var completeReceivedMessages	= {};
+var otr, addressSpace, isInitiator, sharedSecret, processReceivedMessagesTimeoutID;
 
 function getPadding () {
 	return Array.prototype.slice.call(
@@ -30,6 +31,16 @@ function importScriptsAndRetry () {
 				throw e;
 			}
 		}
+	}
+}
+
+function processReceivedMessages () {
+	var keys	= Object.keys(completeReceivedMessages).sort(function (a, b) { return a - b });
+
+	for (var i = 0 ; i < keys.length ; ++i) {
+		var k	= keys[i];
+		postMessage({eventName: 'ui', message: completeReceivedMessages[k]});
+		delete completeReceivedMessages[k];
 	}
 }
 
@@ -154,12 +165,23 @@ onmessage	= function (e) {
 
 					otr.on('message', function (message, wasEncrypted) {
 						if (wasEncrypted) {
-							var o					= JSON.parse(message);
-							receivedMessages[o.id]	= (receivedMessages[o.id] || '') + padMessageRemove(o.message);
+							var o	= JSON.parse(message);
 
-							if (o.last) {
-								postMessage({eventName: 'ui', message: receivedMessages[o.id]});
+							if (!receivedMessages[o.id]) {
+								receivedMessages[o.id]	= {
+									pieces: [],
+									total: 0
+								}
+							}
+
+							receivedMessages[o.id].pieces[o.index]	= padMessageRemove(o.message);
+
+							if (++receivedMessages[o.id].total == o.total) {
+								completeReceivedMessages[o.id]	= receivedMessages[o.id].pieces.join('');
 								delete receivedMessages[o.id];
+
+								clearTimeout(processReceivedMessagesTimeoutID);
+								processReceivedMessagesTimeoutID	= setTimeout(processReceivedMessages, 1000);
 							}
 						}
 					});
@@ -195,13 +217,14 @@ onmessage	= function (e) {
 
 		/* Send message */
 		case 2:
-			var id			= Date.now() + crypto.getRandomValues(new Uint8Array(1))[0];
+			var id			= Date.now();
 			var messages	= e.data.message.match(/.{1,5120}/g);
 
 			for (var i = 0 ; i < messages.length ; ++i) {
 				otr.send(JSON.stringify({
 					id: id,
-					last: i + 1 == messages.length,
+					index: i,
+					total: messages.length,
 					message: padMessage(messages[i])
 				}));
 			}
