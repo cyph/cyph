@@ -195,7 +195,7 @@ onmessage	= function (e) {
 
 		/* Send message */
 		case 2:
-			var id			= Date.now();
+			var id			= Date.now() + crypto.getRandomValues(new Uint8Array(1))[0];
 			var messages	= e.data.message.match(/.{1,5120}/g);
 
 			for (var i = 0 ; i < messages.length ; ++i) {
