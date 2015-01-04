@@ -254,19 +254,33 @@ function receiveChannelData (data) {
 }
 
 
-function sendChannelDataBase (data, opts) {
-	opts	= opts || {};
+var sendChannelDataQueue	= [];
+
+setInterval(function () {
+	if (sendChannelDataQueue.length < 1) {
+		return;
+	}
+
+	var item	= sendChannelDataQueue.shift();
+	var data	= item.data;
+	var opts	= item.opts;
 
 	$.ajax({
 		async: opts.async == undefined ? true : opts.async,
 		data: data,
 		error: function () {
-			sendChannelDataBase(data, opts);
+			sendChannelDataQueue.unshift(item);
 		},
-		success: opts.callback,
+		success: function () {
+			opts.callback && opts.callback();
+		},
 		type: 'POST',
 		url: BASE_URL + 'channels/' + channel.data.ChannelId
 	});
+}, 10);
+
+function sendChannelDataBase (data, opts) {
+	sendChannelDataQueue.push({data: data, opts: opts || {}});
 }
 
 function sendChannelData (data) {

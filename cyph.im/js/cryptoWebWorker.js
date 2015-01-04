@@ -34,21 +34,15 @@ function importScriptsAndRetry () {
 	}
 }
 
-function processMessagesTemplate (o, f) {
-	return function () {
-		var keys	= Object.keys(o).sort(function (a, b) { return a - b });
+function processIncomingMessages () {
+	var keys	= Object.keys(incomingMessages).sort(function (a, b) { return a - b });
 
-		for (var i = 0 ; i < keys.length ; ++i) {
-			var k	= keys[i];
-			f(o[k]);
-			delete o[k];
-		}
-	};
+	for (var i = 0 ; i < keys.length ; ++i) {
+		var k	= keys[i];
+		otr.recv(incomingMessages[k]);
+		delete incomingMessages[k];
+	}
 }
-
-var processIncomingMessages	= processMessagesTemplate(incomingMessages, function (message) {
-	otr.recv(message);
-});
 
 
 onmessage	= function (e) {
