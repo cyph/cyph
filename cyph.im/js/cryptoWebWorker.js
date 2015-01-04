@@ -1,6 +1,6 @@
+var incomingMessages			= {};
 var receivedMessages			= {};
-var completeReceivedMessages	= {};
-var otr, addressSpace, isInitiator, sharedSecret, processReceivedMessagesTimeoutID;
+var otr, addressSpace, isInitiator, sharedSecret, processIncomingMessagesTimeoutID;
 
 function getPadding () {
 	return Array.prototype.slice.call(
@@ -34,13 +34,13 @@ function importScriptsAndRetry () {
 	}
 }
 
-function processReceivedMessages () {
-	var keys	= Object.keys(completeReceivedMessages).sort(function (a, b) { return a - b });
+function processIncomingMessages () {
+	var keys	= Object.keys(incomingMessages).sort(function (a, b) { return a - b });
 
 	for (var i = 0 ; i < keys.length ; ++i) {
 		var k	= keys[i];
-		postMessage({eventName: 'ui', message: completeReceivedMessages[k]});
-		delete completeReceivedMessages[k];
+		otr.recv(incomingMessages[k]);
+		delete incomingMessages[k];
 	}
 }
 
@@ -177,11 +177,8 @@ onmessage	= function (e) {
 							receivedMessages[o.id].pieces[o.index]	= padMessageRemove(o.message);
 
 							if (++receivedMessages[o.id].total == o.total) {
-								completeReceivedMessages[o.id]	= receivedMessages[o.id].pieces.join('');
+								postMessage({eventName: 'ui', message: receivedMessages[o.id].pieces.join('')});
 								delete receivedMessages[o.id];
-
-								clearTimeout(processReceivedMessagesTimeoutID);
-								processReceivedMessagesTimeoutID	= setTimeout(processReceivedMessages, 1000);
 							}
 						}
 					});
@@ -191,7 +188,10 @@ onmessage	= function (e) {
 							message	= '?OTRv3?';
 						}
 
-						postMessage({eventName: 'io', message: message});
+						postMessage({eventName: 'io', message: JSON.stringify({
+							id: Date.now(),
+							message: message
+						})});
 					});
 
 					var isConnected;
@@ -232,7 +232,11 @@ onmessage	= function (e) {
 
 		/* Receive message */
 		case 3:
-			otr.recv(e.data.message);
+			var o					= JSON.parse(e.data.message);
+			incomingMessages[o.id]	= o.message;
+
+			clearTimeout(processIncomingMessagesTimeoutID);
+			processIncomingMessagesTimeoutID	= setTimeout(processIncomingMessages, 1000);
 			break;
 	}
 };
