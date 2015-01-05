@@ -118,7 +118,6 @@ var otr	= {
 		}
 	},
 	receiveMsg: function (message) {
-		console.log(message);
 		if (isOtrReady) {
 			otrPostMessage({method: 3, message: message});
 		}
@@ -253,23 +252,31 @@ function receiveChannelData (data) {
 }
 
 
-function sendChannelDataBase (data, opts) {
-	opts	= opts || {};
+var sendChannelDataQueue	= [];
 
-	$.ajax({
-		async: opts.async == undefined ? true : opts.async,
-		data: data,
-		error: function () {
-			setTimeout(function () {
-				sendChannelDataBase(data, opts);
-			}, 50);
-		},
-		success: function () {
-			opts.callback && opts.callback();
-		},
-		type: 'POST',
-		url: BASE_URL + 'channels/' + channel.data.ChannelId
-	});
+setInterval(function () {
+	if (sendChannelDataQueue.length) {
+		var item	= sendChannelDataQueue.shift();
+		var data	= item.data;
+		var opts	= item.opts;
+
+		$.ajax({
+			async: opts.async == undefined ? true : opts.async,
+			data: data,
+			error: function () {
+				sendChannelDataQueue.unshift(item);
+			},
+			success: function () {
+				opts.callback && opts.callback();
+			},
+			type: 'POST',
+			url: BASE_URL + 'channels/' + channel.data.ChannelId
+		});
+	}
+}, 250);
+
+function sendChannelDataBase (data, opts) {
+	sendChannelDataQueue.push({data: data, opts: opts || {}});
 }
 
 function sendChannelData (data) {

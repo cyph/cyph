@@ -222,9 +222,12 @@ onmessage	= function (e) {
 
 		/* Receive message */
 		case 3:
-			var o					= JSON.parse(e.data.message);
-			incomingMessages[o.id]	= o.message;
-			incomingMessagesMax		= Math.max(incomingMessagesMax, o.id);
+			var o	= JSON.parse(e.data.message);
+
+			if (o.id >= incomingMessageId) {
+				incomingMessages[o.id]	= o.message;
+				incomingMessagesMax		= Math.max(incomingMessagesMax, o.id);
+			}
 			break;
 	}
 };
