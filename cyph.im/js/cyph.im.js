@@ -335,7 +335,7 @@ function setUpChannel (channelData) {
 function eventLoop () {
 	/* send */
 	try {
-		if (sendChannelDataQueue.length && pendingChannelMessages < 2) {
+		if (sendChannelDataQueue.length && pendingChannelMessages < 10) {
 			var item	= sendChannelDataQueue.shift();
 			var data	= item.data;
 			var opts	= item.opts;
@@ -345,7 +345,7 @@ function eventLoop () {
 			$.ajax({
 				async: opts.async == undefined ? true : opts.async,
 				data: data,
-				timeout: 25000,
+				timeout: 30000,
 				error: function () {
 					sendChannelDataQueue.unshift(item);
 					--pendingChannelMessages;
@@ -408,7 +408,7 @@ function eventLoop () {
 	}
 	catch (e) {}
 
-	setTimeout(eventLoop, 100);
+	setTimeout(eventLoop, 50);
 }
 
 eventLoop();
