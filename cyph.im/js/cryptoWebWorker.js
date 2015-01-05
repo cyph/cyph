@@ -232,11 +232,11 @@ onmessage	= function (e) {
 			break;
 	}
 
-	postMessage({eventName: 'unlock'});
+	postMessage({eventName: 'lock', message: false});
 };
 
 setInterval(function () {
-	if (outgoingMessages.length) {
+	while (outgoingMessages.length) {
 		otr.send(outgoingMessages.pop());
 	}
 }, 100);
