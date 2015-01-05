@@ -33,14 +33,12 @@ if (!sharedSecret || sharedSecret.length != sharedSecretLength) {
 	;
 }
 
-var otrPostMessageLock	= false;
 var otrPostMessageQueue	= [];
 setInterval(function () {
-	if (otrPostMessageQueue.length && !otrPostMessageLock) {
-		otrPostMessageLock	= true;
+	if (otrPostMessageQueue.length) {
 		otrWorker.postMessage(otrPostMessageQueue.pop());
 	}
-}, 10);
+}, 1000);
 function otrPostMessage (message) {
 	otrPostMessageQueue.push(message);
 }
@@ -90,10 +88,6 @@ otrWorker.onmessage	= function (e) {
 			while (preConnectMessageSendQueue.length > 0) {
 				otr.sendMsg(preConnectMessageSendQueue.shift());
 			}
-			break;
-
-		case 'lock':
-			otrPostMessageLock	= e.data.message;
 			break;
 	}
 };
