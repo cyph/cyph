@@ -237,7 +237,7 @@ setInterval(function () {
 	if (outgoingMessages.length) {
 		otr.send(outgoingMessages.pop());
 	}
-}, 50);
+}, 10);
 
 setInterval(function () {
 	if (incomingMessageId <= incomingMessagesMax && incomingMessages[incomingMessageId]) {
@@ -245,4 +245,4 @@ setInterval(function () {
 		delete incomingMessages[incomingMessageId];
 		++incomingMessageId;
 	}
-}, 100);
+}, 10);
