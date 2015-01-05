@@ -231,6 +231,8 @@ onmessage	= function (e) {
 			incomingMessagesMax		= Math.max(incomingMessagesMax, o.id);
 			break;
 	}
+
+	postMessage({eventName: 'unlock'});
 };
 
 setInterval(function () {
