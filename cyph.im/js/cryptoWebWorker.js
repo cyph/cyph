@@ -45,7 +45,7 @@ onmessage	= function (e) { onmessageQueue.push(e) };
 function eventLoop () {
 	/* Original onmessage logic */
 	try {
-		while (onmessageQueue.length) {
+		if (onmessageQueue.length) {
 			var e	= onmessageQueue.shift();
 
 			switch (e.data.method) {
@@ -146,7 +146,7 @@ function eventLoop () {
 									accountnames[!isInitiator]
 								), {
 								policy: OTR.POLICY('ALLOW_V3'),
-								MTU: 30000
+								MTU: 31744
 							});
 
 							otr.on('smp_request', function () {
@@ -217,7 +217,7 @@ function eventLoop () {
 				/* Send message */
 				case 2:
 					var id			= crypto.getRandomValues(new Uint32Array(1))[0];
-					var messages	= e.data.message.match(/.{1,16384}/g);
+					var messages	= e.data.message.match(/.{1,10240}/g);
 
 					for (var i = 0 ; i < messages.length ; ++i) {
 						outgoingMessages.push(JSON.stringify({
@@ -245,7 +245,7 @@ function eventLoop () {
 
 	/* otr.send */
 	try {
-		while (outgoingMessages.length) {
+		if (outgoingMessages.length) {
 			otr.send(outgoingMessages.shift());
 		}
 	}
@@ -253,7 +253,7 @@ function eventLoop () {
 
 	/* otr.recv */
 	try {
-		while (incomingMessageId <= incomingMessagesMax && incomingMessages[incomingMessageId]) {
+		if (incomingMessageId <= incomingMessagesMax && incomingMessages[incomingMessageId]) {
 			otr.recv(incomingMessages[incomingMessageId]);
 			delete incomingMessages[incomingMessageId];
 			++incomingMessageId;
