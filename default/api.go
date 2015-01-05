@@ -218,7 +218,7 @@ func sendChannelMessage(c appengine.Context, channelId string, imData ImData) in
 		memcache.Increment(c, "totalMessages", 1, 0)
 	}
 
-	imData.Id = channelId + generateGuid(20)
+	imData.Id = channelId + noncsGuid(52)
 	key := "messageAck-" + imData.Id
 
 	memcache.Increment(c, key, 1, 0)
