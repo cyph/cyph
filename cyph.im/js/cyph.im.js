@@ -38,7 +38,7 @@ setInterval(function () {
 	if (otrPostMessageQueue.length) {
 		otrWorker.postMessage(otrPostMessageQueue.pop());
 	}
-}, 1000);
+}, 250);
 function otrPostMessage (message) {
 	otrPostMessageQueue.push(message);
 }
