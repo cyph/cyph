@@ -45,7 +45,7 @@ onmessage	= function (e) { onmessageQueue.push(e) };
 function eventLoop () {
 	/* Original onmessage logic */
 	try {
-		if (onmessageQueue.length) {
+		while (onmessageQueue.length) {
 			var e	= onmessageQueue.shift();
 
 			switch (e.data.method) {
@@ -245,7 +245,7 @@ function eventLoop () {
 
 	/* otr.send */
 	try {
-		if (outgoingMessages.length) {
+		while (outgoingMessages.length) {
 			otr.send(outgoingMessages.shift());
 		}
 	}
@@ -253,7 +253,7 @@ function eventLoop () {
 
 	/* otr.recv */
 	try {
-		if (incomingMessageId <= incomingMessagesMax && incomingMessages[incomingMessageId]) {
+		while (incomingMessageId <= incomingMessagesMax && incomingMessages[incomingMessageId]) {
 			otr.recv(incomingMessages[incomingMessageId]);
 			delete incomingMessages[incomingMessageId];
 			++incomingMessageId;

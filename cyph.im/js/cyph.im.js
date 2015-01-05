@@ -335,7 +335,7 @@ function setUpChannel (channelData) {
 function eventLoop () {
 	/* send */
 	try {
-		if (sendChannelDataQueue.length && pendingChannelMessages < 10) {
+		while (sendChannelDataQueue.length && pendingChannelMessages < 10) {
 			var item	= sendChannelDataQueue.shift();
 			var data	= item.data;
 			var opts	= item.opts;
@@ -363,7 +363,7 @@ function eventLoop () {
 
 	/* receive */
 	try {
-		if (receiveChannelDataQueue.length) {
+		while (receiveChannelDataQueue.length) {
 			var o	= JSON.parse(receiveChannelDataQueue.shift().data);
 
 			pongReceived	= true;
