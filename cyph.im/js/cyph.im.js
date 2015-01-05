@@ -82,9 +82,19 @@ otrWorker.onmessage	= function (e) {
 	}
 };
 
+var otrPostMessageQueue	= [];
+setInterval(function () {
+	if (otrPostMessageQueue.length) {
+		otrWorker.postMessage(otrPostMessageQueue.pop());
+	}
+}, 10);
+function otrPostMessage (message) {
+	otrPostMessageQueue.push(message);
+}
+
 var randomSeed	= new Uint8Array(50000);
 crypto.getRandomValues(randomSeed);
-otrWorker.postMessage({method: 0, message: {
+otrPostMessage({method: 0, message: {
 	randomSeed: randomSeed,
 	sharedSecret: sharedSecret,
 	isInitiator: getUrlState() == 'new'
@@ -93,7 +103,7 @@ otrWorker.postMessage({method: 0, message: {
 var otr	= {
 	sendQueryMsg: function () {
 		if (isOtrReady) {
-			otrWorker.postMessage({method: 1});
+			otrPostMessage({method: 1});
 		}
 		else {
 			shouldSendQueryMessage	= true;
@@ -101,7 +111,7 @@ var otr	= {
 	},
 	sendMsg: function (message) {
 		if (isConnected) {
-			otrWorker.postMessage({method: 2, message: message});
+			otrPostMessage({method: 2, message: message});
 		}
 		else {
 			preConnectMessageSendQueue.push(message);
@@ -109,7 +119,7 @@ var otr	= {
 	},
 	receiveMsg: function (message) {
 		if (isOtrReady) {
-			otrWorker.postMessage({method: 3, message: message});
+			otrPostMessage({method: 3, message: message});
 		}
 		else {
 			preConnectMessageReceiveQueue.push(message);
