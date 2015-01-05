@@ -6,6 +6,8 @@ var incomingMessageId	= 0;
 var incomingMessagesMax	= 0;
 var otr, addressSpace, isInitiator, sharedSecret, processIncomingMessagesTimeoutID;
 
+var oldConsole	= console;
+
 function getPadding () {
 	return Array.prototype.slice.call(
 		crypto.getRandomValues(new Uint8Array(crypto.getRandomValues(new Uint8Array(1))[0] + 100))
@@ -223,6 +225,7 @@ onmessage	= function (e) {
 
 		/* Receive message */
 		case 3:
+			oldConsole.log(e.data.message);
 			var o					= JSON.parse(e.data.message);
 			incomingMessages[o.id]	= o.message;
 			incomingMessagesMax		= Math.max(incomingMessagesMax, o.id);
@@ -242,4 +245,4 @@ setInterval(function () {
 		delete incomingMessages[incomingMessageId];
 		++incomingMessageId;
 	}
-}, 50);
+}, 100);
