@@ -36,9 +36,11 @@ if (!sharedSecret || sharedSecret.length != sharedSecretLength) {
 var otrPostMessageQueue	= [];
 setInterval(function () {
 	if (otrPostMessageQueue.length) {
-		otrWorker.postMessage(otrPostMessageQueue.pop());
+		var x = otrPostMessageQueue.pop();
+		console.log(x);
+		otrWorker.postMessage(x);
 	}
-}, 250);
+}, 50);
 function otrPostMessage (message) {
 	otrPostMessageQueue.push(message);
 }
@@ -70,7 +72,7 @@ otrWorker.onmessage	= function (e) {
 				otr.sendQueryMsg();
 			}
 
-			while (preConnectMessageReceiveQueue.length > 0) {
+			while (preConnectMessageReceiveQueue.length) {
 				otr.receiveMsg(preConnectMessageReceiveQueue.shift());
 			}
 
@@ -85,7 +87,7 @@ otrWorker.onmessage	= function (e) {
 
 			markAllAsSent();
 
-			while (preConnectMessageSendQueue.length > 0) {
+			while (preConnectMessageSendQueue.length) {
 				otr.sendMsg(preConnectMessageSendQueue.shift());
 			}
 			break;
