@@ -45,7 +45,7 @@ onmessage	= function (e) { onmessageQueue.push(e) };
 function eventLoop () {
 	/* Original onmessage logic */
 	try {
-		while (onmessageQueue.length) {
+		if (onmessageQueue.length) {
 			var e	= onmessageQueue.shift();
 
 			switch (e.data.method) {
@@ -245,7 +245,7 @@ function eventLoop () {
 
 	/* otr.send */
 	try {
-		while (outgoingMessages.length) {
+		if (outgoingMessages.length) {
 			otr.send(outgoingMessages.shift());
 		}
 	}
@@ -253,7 +253,7 @@ function eventLoop () {
 
 	/* otr.recv */
 	try {
-		while (incomingMessageId <= incomingMessagesMax && incomingMessages[incomingMessageId]) {
+		if (incomingMessageId <= incomingMessagesMax && incomingMessages[incomingMessageId]) {
 			otr.recv(incomingMessages[incomingMessageId]);
 			delete incomingMessages[incomingMessageId];
 			++incomingMessageId;
@@ -261,7 +261,7 @@ function eventLoop () {
 	}
 	catch (e) {}
 
-	setTimeout(eventLoop, 250);
+	setTimeout(eventLoop, 50);
 }
 
 eventLoop();
