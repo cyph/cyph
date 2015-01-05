@@ -3,11 +3,12 @@ package api
 import (
 	"appengine"
 	"appengine/delay"
-	"crypto/rand"
+	csRand "crypto/rand"
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
 	"math/big"
+	noncsRand "math/rand"
 	"net/http"
 	"time"
 )
@@ -79,13 +80,25 @@ var empty = struct{}{}
 var router = mux.NewRouter()
 var isRouterActive = false
 
-var imIdAddressSpaceLength = big.NewInt(int64(len(imIdAddressSpace)))
+var imIdAddressSpaceLength = len(imIdAddressSpace)
+var imIdAddressSpaceLengthBig = big.NewInt(int64(imIdAddressSpaceLength))
 
-func generateGuid(length int) string {
+func noncsGuid(length int) string {
 	var id = ""
 
 	for i := 0; i < length; i++ {
-		x, _ := rand.Int(rand.Reader, imIdAddressSpaceLength)
+		x := noncsRand.Intn(imIdAddressSpaceLength)
+		id += imIdAddressSpace[x]
+	}
+
+	return id
+}
+
+func csGuid(length int) string {
+	var id = ""
+
+	for i := 0; i < length; i++ {
+		x, _ := csRand.Int(csRand.Reader, imIdAddressSpaceLengthBig)
 		id += imIdAddressSpace[x.Int64()]
 	}
 
@@ -93,11 +106,11 @@ func generateGuid(length int) string {
 }
 
 func generateImId() string {
-	return generateGuid(7)
+	return csGuid(7)
 }
 
 func generateLongId() string {
-	return generateGuid(52)
+	return csGuid(52)
 }
 
 func getBetaSignupFromRequest(h HandlerArgs) BetaSignup {
