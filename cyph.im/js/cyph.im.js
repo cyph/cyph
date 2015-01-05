@@ -249,7 +249,9 @@ function sendChannelDataBase (data, opts) {
 		async: opts.async == undefined ? true : opts.async,
 		data: data,
 		error: function () {
-			sendChannelDataQueue.unshift(item);
+			setTimeout(function () {
+				sendChannelDataBase(data, opts);
+			}, 50);
 		},
 		success: function () {
 			opts.callback && opts.callback();

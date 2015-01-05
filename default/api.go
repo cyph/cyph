@@ -99,7 +99,7 @@ func channelReceive(h HandlerArgs) (interface{}, int) {
 	imData := getImDataFromRequest(h)
 
 	if imData.Destroy != false || imData.Message != "" || imData.Misc != "" {
-		sendChannelMessage(h.Context, h.Vars["id"], imData)
+		return nil, sendChannelMessage(h.Context, h.Vars["id"], imData)
 	}
 
 	return nil, http.StatusOK
@@ -213,7 +213,7 @@ func channelCloseHelper(c appengine.Context, idBase string) {
 	}
 }
 
-func sendChannelMessage(c appengine.Context, channelId string, imData ImData) {
+func sendChannelMessage(c appengine.Context, channelId string, imData ImData) int {
 	if imData.Message != "" {
 		memcache.Increment(c, "totalMessages", 1, 0)
 	}
@@ -229,9 +229,11 @@ func sendChannelMessage(c appengine.Context, channelId string, imData ImData) {
 		time.Sleep((100 + (i * 100)) * time.Millisecond)
 
 		if _, err := memcache.Get(c, key); err == memcache.ErrCacheMiss {
-			break
+			return http.StatusOK
 		}
 	}
+
+	return http.StatusInternalServerError
 }
 
 /*** Tasks ***/
