@@ -60,14 +60,8 @@ otrWorker.onmessage	= function (e) {
 				otr.sendQueryMsg();
 			}
 
-			var i	= 0;
 			while (preConnectMessageReceiveQueue.length > 0) {
-				(function () {
-					var message	= preConnectMessageReceiveQueue.shift();
-					setTimeout(function () {
-						otr.receiveMsg(message);
-					}, 50 * i++);
-				}());
+				otr.receiveMsg(preConnectMessageReceiveQueue.shift());
 			}
 
 			break;
@@ -81,14 +75,8 @@ otrWorker.onmessage	= function (e) {
 
 			markAllAsSent();
 
-			var i	= 0;
 			while (preConnectMessageSendQueue.length > 0) {
-				(function () {
-					var message	= preConnectMessageSendQueue.shift();
-					setTimeout(function () {
-						otr.sendMsg(message);
-					}, 50 * i++);
-				}());
+				otr.sendMsg(preConnectMessageSendQueue.shift());
 			}
 			break;
 	}
