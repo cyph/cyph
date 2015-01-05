@@ -189,119 +189,6 @@ function processUrlState () {
 }
 
 
-var receivedMessages	= {};
-
-function receiveChannelData (data) {
-	var o;
-
-	try {
-		o	= JSON.parse(data.data);
-	}
-	catch (e) {
-		return;
-	}
-
-	pongReceived	= true;
-
-	if (!o.Id || !receivedMessages[o.Id]) {
-		if (o.Id) {
-			receivedMessages[o.Id]	= true;
-			$.ajax({type: 'PUT', url: BASE_URL + 'messages/' + o.Id});
-		}
-
-		if (o.Misc == channelDataMisc.ping) {
-			sendChannelData({Misc: channelDataMisc.pong});
-		}
-		else if (o.Misc == channelDataMisc.connect) {
-			beginChat();
-		}
-		else if (o.Misc == channelDataMisc.imtypingyo) {
-			friendIsTyping(true);
-		}
-		else if (o.Misc == channelDataMisc.donetyping) {
-			friendIsTyping(false);
-		}
-		else if (o.Misc && o.Misc.indexOf(WEBRTC_DATA_PREFIX) == 0) {
-			var webRTCData	= JSON.parse(o.Misc.split(WEBRTC_DATA_PREFIX)[1]);
-			var key			= Object.keys(webRTCData)[0];
-
-			if (webRTC[key]) {
-				webRTC[key](webRTCData[key]);
-			}
-		}
-
-		if (o.Message) {
-			otr.receiveMsg(o.Message);
-			logCyphertext(o.Message, authors.friend);
-		}
-
-		if (o.Destroy) {
-			socketClose();
-		}
-	}
-}
-
-
-var sendChannelDataQueue	= [];
-var pendingChannelMessages	= 0;
-
-setInterval(function () {
-	/* Send messages in chunks of 5 */
-	while (sendChannelDataQueue.length && pendingChannelMessages < 5) {
-		var item	= sendChannelDataQueue.shift();
-		var data	= item.data;
-		var opts	= item.opts;
-
-		++pendingChannelMessages;
-
-		$.ajax({
-			async: opts.async == undefined ? true : opts.async,
-			data: data,
-			timeout: 25000,
-			error: function () {
-				sendChannelDataQueue.unshift(item);
-			},
-			success: function () {
-				--pendingChannelMessages;
-				opts.callback && opts.callback();
-			},
-			type: 'POST',
-			url: BASE_URL + 'channels/' + channel.data.ChannelId
-		});
-	}
-}, 100);
-
-function sendChannelDataBase (data, opts) {
-	sendChannelDataQueue.push({data: data, opts: opts || {}});
-}
-
-function sendChannelData (data) {
-	otr.sendMsg(CHANNEL_DATA_PREFIX + JSON.stringify(data));
-}
-
-
-function setUpChannel (channelData) {
-	channel			= new goog.appengine.Channel(channelData.ChannelToken);
-	channel.data	= channelData;
-
-	socket	= channel.open({
-		onopen: function () {
-			if (channel.data.IsCreator) {
-				beginWaiting();
-			}
-			else {
-				beginChat();
-				sendChannelDataBase({Misc: channelDataMisc.connect});
-				otr.sendQueryMsg();
-			}
-		},
-		onmessage: receiveChannelData,
-		onerror: function () {},
-		onclose: closeChat
-	});
-}
-
-
 /* Logic for handling WebRTC connections (used for file transfers and voice/video chat) */
 
 var PeerConnection		= window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
@@ -401,3 +288,124 @@ function socketClose () {
 		socket.close();
 	});
 }
+
+
+
+var sendChannelDataQueue	= [];
+var pendingChannelMessages	= 0;
+
+var receiveChannelDataQueue	= [];
+var receivedMessages		= {};
+
+function sendChannelDataBase (data, opts) {
+	sendChannelDataQueue.push({data: data, opts: opts || {}});
+}
+
+function sendChannelData (data) {
+	otr.sendMsg(CHANNEL_DATA_PREFIX + JSON.stringify(data));
+}
+
+function setUpChannel (channelData) {
+	channel			= new goog.appengine.Channel(channelData.ChannelToken);
+	channel.data	= channelData;
+
+	socket	= channel.open({
+		onopen: function () {
+			if (channel.data.IsCreator) {
+				beginWaiting();
+			}
+			else {
+				beginChat();
+				sendChannelDataBase({Misc: channelDataMisc.connect});
+				otr.sendQueryMsg();
+			}
+		},
+		onmessage: function (data) {
+			receiveChannelDataQueue.push(data);
+		},
+		onerror: function () {},
+		onclose: closeChat
+	});
+}
+
+/* Event loop for processing incoming and outgoing messages */
+
+function eventLoop () {
+	/* send */
+	try {
+		if (sendChannelDataQueue.length && pendingChannelMessages < 10) {
+			var item	= sendChannelDataQueue.shift();
+			var data	= item.data;
+			var opts	= item.opts;
+
+			++pendingChannelMessages;
+
+			$.ajax({
+				async: opts.async == undefined ? true : opts.async,
+				data: data,
+				timeout: 25000,
+				error: function () {
+					sendChannelDataQueue.unshift(item);
+				},
+				success: function () {
+					--pendingChannelMessages;
+					opts.callback && opts.callback();
+				},
+				type: 'POST',
+				url: BASE_URL + 'channels/' + channel.data.ChannelId
+			});
+		}
+	}
+	catch (e) {}
+
+	/* receive */
+	try {
+		if (receiveChannelDataQueue.length) {
+			var o	= JSON.parse(receiveChannelDataQueue.shift().data);
+
+			pongReceived	= true;
+
+			if (!o.Id || !receivedMessages[o.Id]) {
+				if (o.Id) {
+					receivedMessages[o.Id]	= true;
+					$.ajax({type: 'PUT', url: BASE_URL + 'messages/' + o.Id});
+				}
+
+				if (o.Misc == channelDataMisc.ping) {
+					sendChannelData({Misc: channelDataMisc.pong});
+				}
+				else if (o.Misc == channelDataMisc.connect) {
+					beginChat();
+				}
+				else if (o.Misc == channelDataMisc.imtypingyo) {
+					friendIsTyping(true);
+				}
+				else if (o.Misc == channelDataMisc.donetyping) {
+					friendIsTyping(false);
+				}
+				else if (o.Misc && o.Misc.indexOf(WEBRTC_DATA_PREFIX) == 0) {
+					var webRTCData	= JSON.parse(o.Misc.split(WEBRTC_DATA_PREFIX)[1]);
+					var key			= Object.keys(webRTCData)[0];
+
+					if (webRTC[key]) {
+						webRTC[key](webRTCData[key]);
+					}
+				}
+
+				if (o.Message) {
+					otr.receiveMsg(o.Message);
+					logCyphertext(o.Message, authors.friend);
+				}
+
+				if (o.Destroy) {
+					socketClose();
+				}
+			}
+		}
+	}
+	catch (e) {}
+
+	setTimeout(eventLoop, 50);
+}
+
+eventLoop();
