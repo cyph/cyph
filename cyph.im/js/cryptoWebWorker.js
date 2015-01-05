@@ -1,6 +1,7 @@
-var incomingMessages			= {};
-var receivedMessages			= {};
-var otr, addressSpace, isInitiator, sharedSecret, previousNow, processIncomingMessagesTimeoutID;
+var incomingMessages	= {};
+var receivedMessages	= {};
+var currentMessageId	= 0;
+var otr, addressSpace, isInitiator, sharedSecret, processIncomingMessagesTimeoutID;
 
 function getPadding () {
 	return Array.prototype.slice.call(
@@ -16,15 +17,6 @@ function padMessage (message) {
 
 function padMessageRemove (message) {
 	return decodeURIComponent(escape(atob(message))).split(paddingDelimiter)[1];
-}
-
-function getTimestamp () {
-	var now	= Date.now();
-	if (previousNow >= now) {
-		now	= previousNow + 1;
-	}
-	previousNow	= now;
-	return now;
 }
 
 function importScriptsAndRetry () {
@@ -195,7 +187,7 @@ onmessage	= function (e) {
 						}
 
 						postMessage({eventName: 'io', message: JSON.stringify({
-							id: getTimestamp(),
+							id: currentMessageId++,
 							message: message
 						})});
 					});
@@ -223,7 +215,7 @@ onmessage	= function (e) {
 
 		/* Send message */
 		case 2:
-			var id			= getTimestamp();
+			var id			= currentMessageId++;
 			var messages	= e.data.message.match(/.{1,10240}/g);
 
 			for (var i = 0 ; i < messages.length ; ++i) {
