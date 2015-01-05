@@ -33,16 +33,6 @@ if (!sharedSecret || sharedSecret.length != sharedSecretLength) {
 	;
 }
 
-var otrPostMessageQueue	= [];
-setInterval(function () {
-	if (otrPostMessageQueue.length) {
-		otrWorker.postMessage(otrPostMessageQueue.pop());
-	}
-}, 500);
-function otrPostMessage (message) {
-	otrPostMessageQueue.push(message);
-}
-
 otrWorker.onmessage	= function (e) {
 	switch (e.data.eventName) {
 		case 'ui':
@@ -94,7 +84,7 @@ otrWorker.onmessage	= function (e) {
 
 var randomSeed	= new Uint8Array(50000);
 crypto.getRandomValues(randomSeed);
-otrPostMessage({method: 0, message: {
+otrWorker.postMessage({method: 0, message: {
 	randomSeed: randomSeed,
 	sharedSecret: sharedSecret,
 	isInitiator: getUrlState() == 'new'
@@ -103,7 +93,7 @@ otrPostMessage({method: 0, message: {
 var otr	= {
 	sendQueryMsg: function () {
 		if (isOtrReady) {
-			otrPostMessage({method: 1});
+			otrWorker.postMessage({method: 1});
 		}
 		else {
 			shouldSendQueryMessage	= true;
@@ -111,7 +101,7 @@ var otr	= {
 	},
 	sendMsg: function (message) {
 		if (isConnected) {
-			otrPostMessage({method: 2, message: message});
+			otrWorker.postMessage({method: 2, message: message});
 		}
 		else {
 			preConnectMessageSendQueue.push(message);
@@ -119,7 +109,7 @@ var otr	= {
 	},
 	receiveMsg: function (message) {
 		if (isOtrReady) {
-			otrPostMessage({method: 3, message: message});
+			otrWorker.postMessage({method: 3, message: message});
 		}
 		else {
 			preConnectMessageReceiveQueue.push(message);
@@ -216,7 +206,6 @@ function receiveChannelData (data) {
 	if (!o.Id || !receivedMessages[o.Id]) {
 		if (o.Id) {
 			receivedMessages[o.Id]	= true;
-			console.log(o);
 			$.ajax({type: 'PUT', url: BASE_URL + 'messages/' + o.Id});
 		}
 
@@ -274,7 +263,7 @@ setInterval(function () {
 			url: BASE_URL + 'channels/' + channel.data.ChannelId
 		});
 	}
-}, 500);
+}, 50);
 
 function sendChannelDataBase (data, opts) {
 	sendChannelDataQueue.push({data: data, opts: opts || {}});
