@@ -348,6 +348,7 @@ function eventLoop () {
 				timeout: 25000,
 				error: function () {
 					sendChannelDataQueue.unshift(item);
+					--pendingChannelMessages;
 				},
 				success: function () {
 					--pendingChannelMessages;
@@ -407,7 +408,7 @@ function eventLoop () {
 	}
 	catch (e) {}
 
-	setTimeout(eventLoop, 50);
+	setTimeout(eventLoop, 100);
 }
 
 eventLoop();
