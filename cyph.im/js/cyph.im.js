@@ -216,6 +216,7 @@ function receiveChannelData (data) {
 	if (!o.Id || !receivedMessages[o.Id]) {
 		if (o.Id) {
 			receivedMessages[o.Id]	= true;
+			console.log(o);
 			$.ajax({type: 'PUT', url: BASE_URL + 'messages/' + o.Id});
 		}
 
