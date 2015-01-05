@@ -226,10 +226,12 @@ func sendChannelMessage(c appengine.Context, channelId string, imData ImData) in
 	var i time.Duration
 	for i = 0; i < config.MessageSendRetries; i++ {
 		channel.SendJSON(c, channelId, imData)
-		time.Sleep((1000 + (i * 100)) * time.Millisecond)
 
-		if _, err := memcache.Get(c, key); err == memcache.ErrCacheMiss {
-			return http.StatusOK
+		for j := 0; j < 20; j++ {
+			time.Sleep(50 * time.Millisecond)
+			if _, err := memcache.Get(c, key); err == memcache.ErrCacheMiss {
+				return http.StatusOK
+			}
 		}
 	}
 
