@@ -201,8 +201,6 @@ function receiveChannelData (data) {
 		return;
 	}
 
-	console.log('received: ' + data.data);
-
 	pongReceived	= true;
 
 	if (!o.Id || !receivedMessages[o.Id]) {
@@ -244,34 +242,23 @@ function receiveChannelData (data) {
 }
 
 
-var sendChannelDataQueue	= [];
-
-setInterval(function () {
-	if (sendChannelDataQueue.length) {
-		var item	= sendChannelDataQueue.shift();
-		var data	= item.data;
-		var opts	= item.opts;
-
-		console.log('sending: ' + JSON.stringify(item));
-
-		$.ajax({
-			async: opts.async == undefined ? true : opts.async,
-			data: data,
-			error: function () {
-				console.log('failed to send: ' + JSON.stringify(item));
-				sendChannelDataQueue.unshift(item);
-			},
-			success: function () {
-				opts.callback && opts.callback();
-			},
-			type: 'POST',
-			url: BASE_URL + 'channels/' + channel.data.ChannelId
-		});
-	}
-}, 50);
-
 function sendChannelDataBase (data, opts) {
-	sendChannelDataQueue.push({data: data, opts: opts || {}});
+	opts	= opts || {};
+
+	$.ajax({
+		async: opts.async == undefined ? true : opts.async,
+		data: data,
+		error: function () {
+			setTimeout(function () {
+				sendChannelDataBase(data, opts);
+			}, 50);
+		},
+		success: function () {
+			opts.callback && opts.callback();
+		},
+		type: 'POST',
+		url: BASE_URL + 'channels/' + channel.data.ChannelId
+	});
 }
 
 function sendChannelData (data) {
