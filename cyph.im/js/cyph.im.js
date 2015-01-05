@@ -38,7 +38,7 @@ setInterval(function () {
 	if (otrPostMessageQueue.length) {
 		otrWorker.postMessage(otrPostMessageQueue.pop());
 	}
-}, 50);
+}, 250);
 function otrPostMessage (message) {
 	otrPostMessageQueue.push(message);
 }
@@ -273,7 +273,7 @@ setInterval(function () {
 			url: BASE_URL + 'channels/' + channel.data.ChannelId
 		});
 	}
-}, 250);
+}, 500);
 
 function sendChannelDataBase (data, opts) {
 	sendChannelDataQueue.push({data: data, opts: opts || {}});
