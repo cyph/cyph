@@ -33,6 +33,18 @@ if (!sharedSecret || sharedSecret.length != sharedSecretLength) {
 	;
 }
 
+var otrPostMessageLock	= false;
+var otrPostMessageQueue	= [];
+setInterval(function () {
+	if (otrPostMessageQueue.length && !otrPostMessageLock) {
+		otrPostMessageLock	= true;
+		otrWorker.postMessage(otrPostMessageQueue.pop());
+	}
+}, 10);
+function otrPostMessage (message) {
+	otrPostMessageQueue.push(message);
+}
+
 otrWorker.onmessage	= function (e) {
 	switch (e.data.eventName) {
 		case 'ui':
@@ -79,18 +91,12 @@ otrWorker.onmessage	= function (e) {
 				otr.sendMsg(preConnectMessageSendQueue.shift());
 			}
 			break;
+
+		case 'lock':
+			otrPostMessageLock	= e.data.message;
+			break;
 	}
 };
-
-var otrPostMessageQueue	= [];
-setInterval(function () {
-	if (otrPostMessageQueue.length) {
-		otrWorker.postMessage(otrPostMessageQueue.pop());
-	}
-}, 100);
-function otrPostMessage (message) {
-	otrPostMessageQueue.push(message);
-}
 
 var randomSeed	= new Uint8Array(50000);
 crypto.getRandomValues(randomSeed);
