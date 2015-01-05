@@ -118,6 +118,7 @@ var otr	= {
 		}
 	},
 	receiveMsg: function (message) {
+		console.log(message);
 		if (isOtrReady) {
 			otrPostMessage({method: 3, message: message});
 		}
