@@ -100,6 +100,12 @@ var isMobile	= isAndroid || isIOS || isWP || isWebOS || isBB || isOperaMini || (
 	}
 }());
 
+var isFFMobile	=
+	/fennec/.test(userAgent) ||
+	(/firefox/.test(userAgent) && (isMobile || /mobile/.test(userAgent) || /tablet/.test(userAgent))
+);
+isMobile		= isMobile || isFFMobile;
+
 var platformString	= isMobile ? 'mobile' : 'desktop';
 
 $.fn.tap	= function (callback, onOrOff, once) {
