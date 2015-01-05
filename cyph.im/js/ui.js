@@ -161,7 +161,7 @@ angular.
 
 			notify(connectedNotification);
 			changeState($scope.states.chatBeginMessage);
-			$timer[0].stop();
+			$timer && $timer[0].stop();
 
 			setTimeout(function () {
 				if ($scope.state == $scope.states.aborted) {
@@ -244,7 +244,14 @@ angular.
 				}
 			}, 250);
 
-			$timer[0].start();
+			/* Temporary fix for iOS and mobile Firefox issue */
+			if (isIOS || isFFMobile) {
+				$timer.remove();
+				delete $timer;
+			}
+			else {
+				$timer[0].start();
+			}
 		};
 
 
