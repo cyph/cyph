@@ -1,6 +1,8 @@
 var incomingMessages	= {};
 var receivedMessages	= {};
 var currentMessageId	= 0;
+var incomingMessageId	= 0;
+var incomingMessagesMax	= 0;
 var otr, addressSpace, isInitiator, sharedSecret, processIncomingMessagesTimeoutID;
 
 function getPadding () {
@@ -32,16 +34,6 @@ function importScriptsAndRetry () {
 				throw e;
 			}
 		}
-	}
-}
-
-function processIncomingMessages () {
-	var keys	= Object.keys(incomingMessages).sort(function (a, b) { return a - b });
-
-	for (var i = 0 ; i < keys.length ; ++i) {
-		var k	= keys[i];
-		otr.recv(incomingMessages[k]);
-		delete incomingMessages[k];
 	}
 }
 
@@ -215,7 +207,7 @@ onmessage	= function (e) {
 
 		/* Send message */
 		case 2:
-			var id			= currentMessageId++;
+			var id			= crypto.getRandomValues(new Uint32Array(1))[0];
 			var messages	= e.data.message.match(/.{1,10240}/g);
 
 			for (var i = 0 ; i < messages.length ; ++i) {
@@ -232,9 +224,15 @@ onmessage	= function (e) {
 		case 3:
 			var o					= JSON.parse(e.data.message);
 			incomingMessages[o.id]	= o.message;
-
-			clearTimeout(processIncomingMessagesTimeoutID);
-			processIncomingMessagesTimeoutID	= setTimeout(processIncomingMessages, 500);
+			incomingMessagesMax		= Math.max(incomingMessagesMax, o.id);
 			break;
 	}
 };
+
+setInterval(function () {
+	if (incomingMessageId <= incomingMessagesMax && incomingMessages[incomingMessageId]) {
+		otr.recv(incomingMessages[incomingMessageId]);
+		delete incomingMessages[incomingMessageId];
+		++incomingMessageId;
+	}
+}, 10);
