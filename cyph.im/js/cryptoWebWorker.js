@@ -1,4 +1,5 @@
 var incomingMessages	= {};
+var outgoingMessages	= [];
 var receivedMessages	= {};
 var currentMessageId	= 0;
 var incomingMessageId	= 0;
@@ -211,7 +212,7 @@ onmessage	= function (e) {
 			var messages	= e.data.message.match(/.{1,10240}/g);
 
 			for (var i = 0 ; i < messages.length ; ++i) {
-				otr.send(JSON.stringify({
+				outgoingMessages.push(JSON.stringify({
 					id: id,
 					index: i,
 					total: messages.length,
@@ -230,9 +231,15 @@ onmessage	= function (e) {
 };
 
 setInterval(function () {
+	if (outgoingMessages.length) {
+		otr.send(outgoingMessages.pop());
+	}
+}, 50);
+
+setInterval(function () {
 	if (incomingMessageId <= incomingMessagesMax && incomingMessages[incomingMessageId]) {
 		otr.recv(incomingMessages[incomingMessageId]);
 		delete incomingMessages[incomingMessageId];
 		++incomingMessageId;
 	}
-}, 10);
+}, 50);
