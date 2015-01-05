@@ -244,28 +244,32 @@ function receiveChannelData (data) {
 
 var sendChannelDataQueue	= [];
 
-setInterval(function () {
-	if (sendChannelDataQueue.length < 1) {
-		return;
+function sendChannelDataHelper () {
+	try {
+		if (sendChannelDataQueue.length) {
+			var item	= sendChannelDataQueue.shift();
+			var data	= item.data;
+			var opts	= item.opts;
+
+			$.ajax({
+				async: opts.async == undefined ? true : opts.async,
+				data: data,
+				error: function () {
+					sendChannelDataQueue.unshift(item);
+				},
+				success: function () {
+					opts.callback && opts.callback();
+				},
+				type: 'POST',
+				url: BASE_URL + 'channels/' + channel.data.ChannelId
+			});
+		}
 	}
+	catch (e) {}
 
-	var item	= sendChannelDataQueue.shift();
-	var data	= item.data;
-	var opts	= item.opts;
-
-	$.ajax({
-		async: opts.async == undefined ? true : opts.async,
-		data: data,
-		error: function () {
-			sendChannelDataQueue.unshift(item);
-		},
-		success: function () {
-			opts.callback && opts.callback();
-		},
-		type: 'POST',
-		url: BASE_URL + 'channels/' + channel.data.ChannelId
-	});
-}, 50);
+	setTimeout(sendChannelDataHelper, 100);
+}
+sendChannelDataHelper();
 
 function sendChannelDataBase (data, opts) {
 	sendChannelDataQueue.push({data: data, opts: opts || {}});
