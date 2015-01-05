@@ -231,15 +231,15 @@ onmessage	= function (e) {
 };
 
 setInterval(function () {
-	while (outgoingMessages.length) {
+	if (outgoingMessages.length) {
 		otr.send(outgoingMessages.pop());
 	}
-}, 500);
+}, 50);
 
 setInterval(function () {
-	while (incomingMessageId <= incomingMessagesMax && incomingMessages[incomingMessageId]) {
+	if (incomingMessageId <= incomingMessagesMax && incomingMessages[incomingMessageId]) {
 		otr.recv(incomingMessages[incomingMessageId]);
 		delete incomingMessages[incomingMessageId];
 		++incomingMessageId;
 	}
-}, 500);
+}, 50);
