@@ -242,16 +242,22 @@ function receiveChannelData (data) {
 }
 
 
-function sendChannelDataBase (data, opts) {
-	opts	= opts || {};
+var sendChannelDataQueue	= [];
+
+setInterval(function () {
+	if (sendChannelDataQueue.length < 1) {
+		return;
+	}
+
+	var item	= sendChannelDataQueue.shift();
+	var data	= item.data;
+	var opts	= item.opts;
 
 	$.ajax({
 		async: opts.async == undefined ? true : opts.async,
 		data: data,
 		error: function () {
-			setTimeout(function () {
-				sendChannelDataBase(data, opts);
-			}, 50);
+			sendChannelDataQueue.unshift(item);
 		},
 		success: function () {
 			opts.callback && opts.callback();
@@ -259,6 +265,10 @@ function sendChannelDataBase (data, opts) {
 		type: 'POST',
 		url: BASE_URL + 'channels/' + channel.data.ChannelId
 	});
+}, 50);
+
+function sendChannelDataBase (data, opts) {
+	sendChannelDataQueue.push({data: data, opts: opts || {}});
 }
 
 function sendChannelData (data) {
