@@ -335,7 +335,7 @@ function setUpChannel (channelData) {
 function eventLoop () {
 	/* send */
 	try {
-		if (sendChannelDataQueue.length && pendingChannelMessages < 5) {
+		if (sendChannelDataQueue.length && pendingChannelMessages < 3) {
 			var item	= sendChannelDataQueue.shift();
 			var data	= item.data;
 			var opts	= item.opts;
