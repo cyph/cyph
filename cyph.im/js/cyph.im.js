@@ -36,9 +36,7 @@ if (!sharedSecret || sharedSecret.length != sharedSecretLength) {
 var otrPostMessageQueue	= [];
 setInterval(function () {
 	if (otrPostMessageQueue.length) {
-		var x = otrPostMessageQueue.pop();
-		console.log(x);
-		otrWorker.postMessage(x);
+		otrWorker.postMessage(otrPostMessageQueue.pop());
 	}
 }, 50);
 function otrPostMessage (message) {
