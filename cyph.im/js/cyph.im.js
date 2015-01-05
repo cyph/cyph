@@ -305,6 +305,10 @@ function sendChannelData (data) {
 	otr.sendMsg(CHANNEL_DATA_PREFIX + JSON.stringify(data));
 }
 
+function receiveChannelData (data) {
+	receiveChannelDataQueue.push(data);
+}
+
 function setUpChannel (channelData) {
 	channel			= new goog.appengine.Channel(channelData.ChannelToken);
 	channel.data	= channelData;
@@ -320,9 +324,7 @@ function setUpChannel (channelData) {
 				otr.sendQueryMsg();
 			}
 		},
-		onmessage: function (data) {
-			receiveChannelDataQueue.push(data);
-		},
+		onmessage: receiveChannelData,
 		onerror: function () {},
 		onclose: closeChat
 	});
