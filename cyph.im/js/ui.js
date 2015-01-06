@@ -163,6 +163,9 @@ angular.
 			changeState($scope.states.chatBeginMessage);
 			$timer && $timer[0].stop();
 
+			/* Stop mobile browsers from keeping this selected */
+			$copyUrl.remove();
+
 			setTimeout(function () {
 				if ($scope.state == $scope.states.aborted) {
 					return;
@@ -247,7 +250,7 @@ angular.
 
 			/* Temporary fix for iOS and mobile Firefox issue */
 			if (isIOS) {
-				var expireTime	= new Date(Date.now() + 600000).toLocaleTimeString().toLowerCase().replace(/(.*:.*):.* /, '$1');
+				var expireTime	= new Date(Date.now() + 600000).toLocaleTimeString().toLowerCase().replace(/(.*:.*):.*? /, '$1');
 				$timer.parent().text('Link expires at ' + expireTime)
 				delete $timer;
 			}

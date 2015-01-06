@@ -30,6 +30,10 @@ html:not(.mobile) {
 	}
 }
 
+input, textarea {
+	border-radius: 0px;
+}
+
 
 .app-message {
 	margin-top: 20px;

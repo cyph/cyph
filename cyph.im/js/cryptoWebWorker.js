@@ -93,6 +93,10 @@ function eventLoop () {
 					delete methods;
 
 
+					if (typeof atob == 'undefined' || typeof btoa == 'undefined') {
+						importScriptsAndRetry('/lib/bower_components/base64/base64.min.js');
+					}
+
 					if (typeof crypto == 'undefined') {
 						if (typeof msCrypto != 'undefined') {
 							crypto	= msCrypto;
@@ -118,10 +122,11 @@ function eventLoop () {
 
 					importScriptsAndRetry('/lib/bower_components/otr4-em/build/otr-web.js');
 
+
 					var user	= new OTR.User().account('me', 'cyph');
 
-					user.generateKey(function () {
-						user.generateInstag(function () {
+					user.generateInstag(function () {
+						user.generateKey(function () {
 							otr	= user.contact('friend').openSession({
 								policy: OTR.POLICY.ALLOW_V3,
 								MTU: 31744
