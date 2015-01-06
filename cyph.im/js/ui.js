@@ -241,6 +241,7 @@ angular.
 						selectCopyUrl();
 
 						if (isFFMobile || (isMobile && !isAndroid)) {
+							setTimeout(selectCopyUrl, 250);
 							noMoreAutoFocus	= true;
 						}
 					}
