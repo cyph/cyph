@@ -234,7 +234,7 @@ angular.
 						$copyUrl.focus();
 						selectCopyUrl();
 
-						if (isMobile && !isAndroid) {
+						if (isFFMobile || (isMobile && !isAndroid)) {
 							noMoreAutoFocus	= true;
 						}
 					}
