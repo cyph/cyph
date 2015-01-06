@@ -1,6 +1,7 @@
 var authors							= {me: 1, friend: 2, app: 3};
 var preConnectMessageReceiveQueue	= [];
 var preConnectMessageSendQueue		= [];
+var otrWorkerOnMessageQueue			= [];
 
 var CHANNEL_DATA_PREFIX	= 'CHANNEL DATA: ';
 var WEBRTC_DATA_PREFIX	= 'webrtc: ';
@@ -33,54 +34,7 @@ if (!sharedSecret || sharedSecret.length != sharedSecretLength) {
 	;
 }
 
-otrWorker.onmessage	= function (e) {
-	switch (e.data.eventName) {
-		case 'ui':
-			if (e.data.message) {
-				var channelDataSplit	= e.data.message.split(CHANNEL_DATA_PREFIX);
-
-				if (!channelDataSplit[0] && channelDataSplit[1]) {
-					receiveChannelData({data: channelDataSplit[1]});
-				}
-				else {
-					addMessageToChat(e.data.message, authors.friend);
-				}
-			}
-			break;
-
-		case 'io':
-			sendChannelDataBase({Message: e.data.message});
-			logCyphertext(e.data.message, authors.me);
-			break;
-
-		case 'ready':
-			isOtrReady	= true;
-
-			if (shouldSendQueryMessage) {
-				otr.sendQueryMsg();
-			}
-
-			while (preConnectMessageReceiveQueue.length) {
-				otr.receiveMsg(preConnectMessageReceiveQueue.shift());
-			}
-
-			break;
-
-		case 'abort':
-			abortSetup();
-			break;
-
-		case 'connected':
-			isConnected	= true;
-
-			markAllAsSent();
-
-			while (preConnectMessageSendQueue.length) {
-				otr.sendMsg(preConnectMessageSendQueue.shift());
-			}
-			break;
-	}
-};
+otrWorker.onmessage	= function (e) { otrWorkerOnMessageQueue.push(e) };
 
 var randomSeed	= new Uint8Array(50000);
 crypto.getRandomValues(randomSeed);
@@ -334,6 +288,60 @@ function setUpChannel (channelData) {
 
 function eventLoop () {
 	try {
+		/*** otrWorker onmessage ***/
+
+		if (otrWorkerOnMessageQueue.length) {
+			var e	= otrWorkerOnMessageQueue.shift();
+
+			switch (e.data.eventName) {
+				case 'ui':
+					if (e.data.message) {
+						var channelDataSplit	= e.data.message.split(CHANNEL_DATA_PREFIX);
+
+						if (!channelDataSplit[0] && channelDataSplit[1]) {
+							receiveChannelData({data: channelDataSplit[1]});
+						}
+						else {
+							addMessageToChat(e.data.message, authors.friend);
+						}
+					}
+					break;
+
+				case 'io':
+					sendChannelDataBase({Message: e.data.message});
+					logCyphertext(e.data.message, authors.me);
+					break;
+
+				case 'ready':
+					isOtrReady	= true;
+
+					if (shouldSendQueryMessage) {
+						otr.sendQueryMsg();
+					}
+
+					while (preConnectMessageReceiveQueue.length) {
+						otr.receiveMsg(preConnectMessageReceiveQueue.shift());
+					}
+
+					break;
+
+				case 'abort':
+					abortSetup();
+					break;
+
+				case 'connected':
+					isConnected	= true;
+
+					markAllAsSent();
+
+					while (preConnectMessageSendQueue.length) {
+						otr.sendMsg(preConnectMessageSendQueue.shift());
+					}
+					break;
+			}
+		}
+
+
 		/*** send ***/
 
 		if (sendChannelDataQueue.length && pendingChannelMessages < 3) {

@@ -30,7 +30,8 @@
     "wow": "~1.0.2",
     "jquery.appear": "morr/jquery.appear#~0.3.3",
     "isaac.js": "rubycon/isaac.js",
-    "otr4-em": "mnaamani/otr4-em"
+    "otr4-em": "mnaamani/otr4-em",
+    "base64": "~0.3.0"
   },
   "resolutions": {
     "angular": "1.3.0-rc.4"
