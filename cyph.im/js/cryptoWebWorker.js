@@ -116,51 +116,32 @@ function eventLoop () {
 
 					window	= {crypto: crypto};
 
-					importScriptsAndRetry(
-						'/lib/otr4-em/lib/async.js',
-						'/lib/otr4-em/lib/bigint.js',
-						'/lib/otr4-em/lib/libotr4.js',
-						'/lib/otr4-em/lib/libotr-js-bindings.js',
-						'/lib/otr4-em/lib/otr-module.js'
-					);
+					importScriptsAndRetry('/lib/bower_components/otr4-em/build/otr-web.js');
 
+					var user	= new OTR.User().account('me', 'cyph');
 
-					var accountnames	= {true: 'me', false: 'friend'};
-
-					var settings	= {
-						keys:'/keys',
-						fingerprints:'/fp',
-						instags:'/instags',
-						accountname: accountnames[isInitiator],
-						protocol: 'cyph'
-					};
-
-					var user	= new OTR.User(settings);
-
-					user.generateKey(settings.accountname, settings.protocol, function () {
-						user.generateInstag(settings.accountname, settings.protocol, function () {
-							otr	= new OTR.Session(
-								user,
-								user.ConnContext(
-									settings.accountname,
-									settings.protocol,
-									accountnames[!isInitiator]
-								), {
-								policy: OTR.POLICY('ALLOW_V3'),
+					user.generateKey(function () {
+						user.generateInstag(function () {
+							otr	= user.contact('friend').openSession({
+								policy: OTR.POLICY.ALLOW_V3,
 								MTU: 31744
 							});
 
-							otr.on('smp_request', function () {
-								otr.respond_smp(sharedSecret);
-							});
-							otr.on('smp_complete', function () {
-								postMessage({eventName: 'connected'});
-							});
-							otr.on('smp_failed', function () {
-								postMessage({eventName: 'abort'});
-							});
-							otr.on('smp_aborted', function () {
-								postMessage({eventName: 'abort'});
+							otr.on('smp', function (type) {
+								switch (type) {
+									case 'request':
+										otr.smpRespond(sharedSecret);
+										break;
+
+									case 'complete':
+										postMessage({eventName: 'connected'});
+										break;
+
+									case 'failed':
+									case 'aborted':
+										postMessage({eventName: 'abort'});
+										break;
+								}
 							});
 
 							otr.on('message', function (message, wasEncrypted) {
@@ -200,7 +181,7 @@ function eventLoop () {
 									isConnected	= true;
 									
 									if (isInitiator) {
-										otr.start_smp(sharedSecret);
+										otr.smpStart(sharedSecret);
 									}
 								}
 							});
@@ -212,7 +193,7 @@ function eventLoop () {
 
 				/* Send query message */
 				case 1:
-					otr.connect();
+					otr.start();
 					break;
 
 				/* Send message */
