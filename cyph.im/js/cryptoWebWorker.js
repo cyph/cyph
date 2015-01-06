@@ -43,8 +43,9 @@ function importScriptsAndRetry () {
 onmessage	= function (e) { onmessageQueue.push(e) };
 
 function eventLoop () {
-	/* Original onmessage logic */
 	try {
+		/*** Original onmessage logic ****/
+
 		if (onmessageQueue.length) {
 			var e	= onmessageQueue.shift();
 
@@ -240,28 +241,26 @@ function eventLoop () {
 					break;
 			}
 		}
-	}
-	catch (e) {}
 
-	/* otr.send */
-	try {
+
+		/*** otr.send ***/
+
 		if (outgoingMessages.length) {
 			otr.send(outgoingMessages.shift());
 		}
-	}
-	catch (e) {}
 
-	/* otr.recv */
-	try {
+
+		/*** otr.recv ***/
+
 		if (incomingMessageId <= incomingMessagesMax && incomingMessages[incomingMessageId]) {
 			otr.recv(incomingMessages[incomingMessageId]);
 			delete incomingMessages[incomingMessageId];
 			++incomingMessageId;
 		}
 	}
-	catch (e) {}
-
-	setTimeout(eventLoop, 50);
+	finally {
+		setTimeout(eventLoop, 50);
+	}
 }
 
 eventLoop();
