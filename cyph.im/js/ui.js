@@ -234,7 +234,7 @@ angular.
 						$copyUrl.focus();
 						selectCopyUrl();
 
-						if (isWP || isIOS || isFFMobile) {
+						if (isMobile && !isAndroid) {
 							noMoreAutoFocus	= true;
 						}
 					}
@@ -245,8 +245,9 @@ angular.
 			}, 250);
 
 			/* Temporary fix for iOS and mobile Firefox issue */
-			if (isIOS || isFFMobile) {
-				$timer.remove();
+			if (isIOS) {
+				var expireTime	= new Date(Date.now() + 600000).toLocaleTimeString().toLowerCase().replace(/(.*:.*):.* /, '$1');
+				$timer.parent().text('Link expires at ' + expireTime)
 				delete $timer;
 			}
 			else {
