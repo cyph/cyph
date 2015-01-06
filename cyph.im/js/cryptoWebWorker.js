@@ -98,7 +98,7 @@ function eventLoop () {
 							crypto	= msCrypto;
 						}
 						else {
-							importScriptsAndRetry('/lib/isaac.min.js');
+							importScriptsAndRetry('/lib/bower_components/isaac.js/isaac.js');
 							isaac.seed(e.data.message.randomSeed);
 							crypto	= {
 								getRandomValues: function (array) {

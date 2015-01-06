@@ -1,0 +1,12 @@
+{
+  "name": "jquery-appear",
+  "version": "0.2.2",
+  "main": ["build/jquery.appear.min.js"],
+  "ignore": [
+    "samples",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": ">= 1.6"
+  }
+}
