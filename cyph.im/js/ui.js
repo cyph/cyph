@@ -214,7 +214,7 @@ angular.
 			;
 
 			function setCopyUrl () {
-				if ($copyUrl.text() != copyUrl) {
+				if (!$copyUrl.text()) {
 					apply(function () {
 						$scope.copyUrl	= '';
 					});
