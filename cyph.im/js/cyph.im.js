@@ -333,8 +333,9 @@ function setUpChannel (channelData) {
 /* Event loop for processing incoming and outgoing messages */
 
 function eventLoop () {
-	/* send */
 	try {
+		/*** send ***/
+
 		if (sendChannelDataQueue.length && pendingChannelMessages < 3) {
 			var item	= sendChannelDataQueue.shift();
 			var data	= item.data;
@@ -358,11 +359,10 @@ function eventLoop () {
 				url: BASE_URL + 'channels/' + channel.data.ChannelId
 			});
 		}
-	}
-	catch (e) {}
 
-	/* receive */
-	try {
+
+		/*** receive ***/
+
 		if (receiveChannelDataQueue.length) {
 			var o	= JSON.parse(receiveChannelDataQueue.shift().data);
 
@@ -406,9 +406,9 @@ function eventLoop () {
 			}
 		}
 	}
-	catch (e) {}
-
-	setTimeout(eventLoop, 50);
+	finally {
+		setTimeout(eventLoop, 50);
+	}
 }
 
 eventLoop();
