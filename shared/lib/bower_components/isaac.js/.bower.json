@@ -1,0 +1,14 @@
+{
+  "name": "isaac.js",
+  "homepage": "https://github.com/rubycon/isaac.js",
+  "_release": "e64e3a3cc8",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "e64e3a3cc8e5fa2b610a73276da4210a0af507b9"
+  },
+  "_source": "git://github.com/rubycon/isaac.js.git",
+  "_target": "*",
+  "_originalSource": "rubycon/isaac.js",
+  "_direct": true
+}

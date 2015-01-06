@@ -1,0 +1,25 @@
+{
+  "name": "jquery-appear",
+  "version": "0.2.2",
+  "main": [
+    "build/jquery.appear.min.js"
+  ],
+  "ignore": [
+    "samples",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": ">= 1.6"
+  },
+  "homepage": "https://github.com/emn178/jquery-appear",
+  "_release": "0.2.2",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.2.2",
+    "commit": "09169476b5eafc3df9bfde568616063db3b31db3"
+  },
+  "_source": "git://github.com/emn178/jquery-appear.git",
+  "_target": "~0.2.2",
+  "_originalSource": "jquery-appear",
+  "_direct": true
+}

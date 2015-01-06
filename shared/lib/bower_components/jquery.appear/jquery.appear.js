@@ -23,7 +23,7 @@
 
   function process() {
     check_lock = false;
-    for (var index = 0, selectorsLength = selectors.length; index < selectorsLength; index++) {
+    for (var index = 0; index < selectors.length; index++) {
       var $appeared = $(selectors[index]).filter(function() {
         return $(this).is(':appeared');
       });
