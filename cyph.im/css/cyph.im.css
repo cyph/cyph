@@ -15,6 +15,9 @@ html:not(.mobile) #desktop-sidebar md-button.focus, html:not(.mobile) #desktop-s
 html:not(.mobile) md-button img {
   height: 100%; }
 
+input, textarea {
+  border-radius: 0px; }
+
 .app-message {
   margin-top: 20px; }
   .app-message * {
