@@ -1,5 +1,5 @@
 /*
- * angular-markdown-directive v0.3.0
+ * angular-markdown-directive v0.3.1
  * (c) 2013-2014 Brian Ford http://briantford.com
  * License: MIT
  */
@@ -18,7 +18,7 @@ angular.module('btford.markdown', ['ngSanitize']).
       }
     };
   }).
-  directive('btfMarkdown', function ($sanitize, markdownConverter) {
+  directive('btfMarkdown', ['$sanitize', 'markdownConverter', function ($sanitize, markdownConverter) {
     return {
       restrict: 'AE',
       link: function (scope, element, attrs) {
@@ -33,4 +33,4 @@ angular.module('btford.markdown', ['ngSanitize']).
         }
       }
     };
-  });
+  }]);
