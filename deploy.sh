@@ -84,14 +84,15 @@ if [ "${nobackend}" == '' ] ; then
 	mkdir -p github.com/gorilla
 	cd github.com/gorilla
 	git clone git://github.com/gorilla/mux.git
-	cd ../../..
+	cd ../..
 
-	mkdir -p github.com/oschwald
-	cd github.com/oschwald
-	git clone git://github.com/oschwald/maxminddb-golang.git
-	git clone git://github.com/oschwald/geoip2-golang.git
-	cd ../../..
+	# mkdir -p github.com/oschwald
+	# cd github.com/oschwald
+	# git clone git://github.com/oschwald/maxminddb-golang.git
+	# git clone git://github.com/oschwald/geoip2-golang.git
+	# cd ../..
 
+	cd ..
 	goapp deploy default/app.yaml
 fi
 

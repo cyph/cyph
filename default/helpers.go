@@ -1,13 +1,13 @@
 package api
 
 import (
+	"./geoip2"
 	"appengine"
 	"appengine/delay"
 	csRand "crypto/rand"
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
-	"github.com/oschwald/geoip2-golang"
 	"math/big"
 	noncsRand "math/rand"
 	"net"
