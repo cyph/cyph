@@ -37,7 +37,7 @@
 		<meta property='og:type' content='website' />
 	</head>
 	<body>
-		<section id='main' layout='vertical' ng-class='{"unisection-mode": podcast || isError || isAbout || isFaq || isTos || isPrivacyPolicy}'>
+		<section id='main' layout='column' ng-class='{"unisection-mode": podcast || isError || isAbout || isFaq || isTos || isPrivacyPolicy}'>
 
 		<!-- <md-sidenav component-id='menu' class='md-sidenav-right'>
 			<md-content class='md-content-padding'>
@@ -82,7 +82,9 @@
 
 
 		<section id='new-cyph-section'>
-			<md-button id='new-cyph' translate href='//www.cyph.im/new' aria-label='Start new cyph'>Start new cyph</md-button>
+			<md-button id='new-cyph' aria-label='Start new cyph'>
+				<a translate href='//www.cyph.im/new'>Start new cyph</a>
+			</md-button>
 		</section>
 
 		<md-toolbar id='main-toolbar'>
@@ -337,7 +339,7 @@
 								You rock.
 							</div>
 
-							<md-button type='submit' class='hidden-submit-button'></md-button>
+							<md-button type='submit' class='hidden-submit-button' aria-label=''></md-button>
 						</form>
 					</p>
 					<p>
@@ -511,19 +513,17 @@
 						You rock.
 					</div>
 
-					<md-button type='submit' class='hidden-submit-button'></md-button>
+					<md-button type='submit' class='hidden-submit-button' aria-label=''></md-button>
 				</form>
 			</section>
 
 			<section ng-show='podcast || ((isError || isAbout || isFaq || isTos || isPrivacyPolicy) && betaSignupState > 2)'>
 				<md-button
 					id='new-cyph-footer'
-					href='//www.cyph.im/new'
 					target='_blank'
 					aria-label='Start new cyph'
-					translate
 				>
-					Start new cyph
+					<a translate href='//www.cyph.im/new'>Start new cyph</a>
 				</md-button>
 			</section>
 

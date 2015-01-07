@@ -35,7 +35,7 @@ section#main {
 	}
 }
 
-:not(.md-toolbar-tools) > md-button {
+:not(.md-toolbar-tools) > .md-button {
 	font-size: 14px;
 	width: auto;
 	margin-bottom: 6px;
@@ -43,7 +43,7 @@ section#main {
 	color: #444;
 	background-color: #7d4fd3 !important;
 }
-md-button.focus, md-button:hover {
+.md-button.focus, .md-button:hover {
 	background-color: #7239dd !important;
 }
 
@@ -342,8 +342,9 @@ html:not(.mobile) {
 	opacity: 0;
 	color: #f1f1f1;
 
-	* {
+	*, md-input-group.md-default-theme * {
 		color: #f1f1f1;
+		border-color: #f1f1f1;
 		width: 100%;
 	}
 	*:not(p):not(p *) {
@@ -355,14 +356,18 @@ html:not(.mobile) {
 		border-color: #c9adff !important;
 	}
 
-	md-button {
+	md-input-group.md-default-theme label {
+		font-size: 0.75em;
+	}
+
+	.md-button {
 		margin: 25px auto;
 		width: calc(100% - 100px);
 		min-width: 200px;
 	}
 }
 
-.beta-signup-form md-button, #new-cyph-footer {
+.beta-signup-form .md-button, #new-cyph-footer {
 	font-family: 'Ubuntu' !important;
 	line-height: 50px !important;
 	font-size: 18px !important;
@@ -430,7 +435,7 @@ html:not(.mobile) {
 #home-beta-signup {
 	text-align: center !important;
 
-	md-button {
+	.md-button {
 		@include transform(scale(0.75) !important);
 		width: 200px !important;
 		display: block;
