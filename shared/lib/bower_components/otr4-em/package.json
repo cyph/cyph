@@ -1,6 +1,6 @@
 {
 	"name": "otr4-em",
-	"version": "v0.1.1",
+	"version": "v0.1.2",
 	"main": "index.js",
 	"description": "Off-the-Record Messaging Protocol [emscripten libotr4.1.0]",
 	"homepage": "https://github.com/mnaamani/otr4-em",
