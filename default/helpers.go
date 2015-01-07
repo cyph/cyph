@@ -7,9 +7,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
+	"github.com/oschwald/geoip2-golang"
 	"math/big"
 	noncsRand "math/rand"
+	"net"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -80,6 +83,8 @@ var empty = struct{}{}
 var router = mux.NewRouter()
 var isRouterActive = false
 
+var geoipdb, _ = geoip2.Open("GeoIP2-Country.mmdb")
+
 var imIdAddressSpaceLength = len(imIdAddressSpace)
 var imIdAddressSpaceLengthBig = big.NewInt(int64(imIdAddressSpaceLength))
 
@@ -113,12 +118,24 @@ func generateLongId() string {
 	return csGuid(52)
 }
 
+func geolocate(h HandlerArgs) string {
+	return geolocateIp(h.Request.RemoteAddr)
+}
+
+func geolocateIp(ip string) string {
+	record, err := geoipdb.Country(net.ParseIP(ip))
+	if err != nil {
+		return ""
+	}
+	return record.Country.IsoCode
+}
+
 func getBetaSignupFromRequest(h HandlerArgs) BetaSignup {
 	return BetaSignup{
 		Comment:  h.Request.PostFormValue("Comment"),
-		Country:  h.Request.PostFormValue("Country"),
-		Email:    h.Request.PostFormValue("Email"),
-		Language: h.Request.PostFormValue("Language"),
+		Country:  geolocate(h),
+		Email:    strings.ToLower(h.Request.PostFormValue("Email")),
+		Language: strings.ToLower(h.Request.PostFormValue("Language")),
 		Name:     h.Request.PostFormValue("Name"),
 		Referer:  h.Request.Referer(),
 		Time:     time.Now().Unix(),

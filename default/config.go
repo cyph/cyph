@@ -6,6 +6,7 @@ import (
 
 var config = struct {
 	AllowedOrigins            map[string]none
+	BannedCountries           map[string]none
 	DefaultMemcacheExpiration time.Duration
 	IMConnectTimeout          time.Duration
 	MessageSendRetries        time.Duration
@@ -32,6 +33,14 @@ var config = struct {
 		"staging-dot-cyphme.appspot.com":              empty,
 		"cyph.steveho.lt":                             empty,
 		"localhost":                                   empty,
+	},
+
+	map[string]none{
+		"cu": empty,
+		"ir": empty,
+		"kp": empty,
+		"sd": empty,
+		"sy": empty,
 	},
 
 	30,
