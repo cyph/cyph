@@ -24,7 +24,7 @@ section#main {
     min-height: 100%;
     min-width: 100%; }
 
-:not(.md-toolbar-tools) > md-button {
+:not(.md-toolbar-tools) > .md-button {
   font-size: 14px;
   width: auto;
   margin-bottom: 6px;
@@ -32,7 +32,7 @@ section#main {
   color: #444;
   background-color: #7d4fd3 !important; }
 
-md-button.focus, md-button:hover {
+.md-button.focus, .md-button:hover {
   background-color: #7239dd !important; }
 
 #new-cyph {
@@ -242,20 +242,23 @@ html:not(.mobile) .founder-photos:after {
 .beta-signup-form {
   opacity: 0;
   color: #f1f1f1; }
-  .beta-signup-form * {
+  .beta-signup-form *, .beta-signup-form md-input-group.md-default-theme * {
     color: #f1f1f1;
+    border-color: #f1f1f1;
     width: 100%; }
   .beta-signup-form *:not(p):not(p *) {
     display: block; }
   .beta-signup-form md-input-group.md-input-focused * {
     color: #c9adff !important;
     border-color: #c9adff !important; }
-  .beta-signup-form md-button {
+  .beta-signup-form md-input-group.md-default-theme label {
+    font-size: 0.75em; }
+  .beta-signup-form .md-button {
     margin: 25px auto;
     width: calc(100% - 100px);
     min-width: 200px; }
 
-.beta-signup-form md-button, #new-cyph-footer {
+.beta-signup-form .md-button, #new-cyph-footer {
   font-family: 'Ubuntu' !important;
   line-height: 50px !important;
   font-size: 18px !important;
@@ -313,7 +316,7 @@ html:not(.mobile) .founder-photos:after {
 
 #home-beta-signup {
   text-align: center !important; }
-  #home-beta-signup md-button {
+  #home-beta-signup .md-button {
     -webkit-transform: scale(0.75) !important;
     -moz-transform: scale(0.75) !important;
     -ms-transform: scale(0.75) !important;
