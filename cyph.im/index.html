@@ -47,7 +47,7 @@
 		<base target='_blank' />
 	</head>
 	<body>
-		<section id='main' layout='vertical' layout-fill>
+		<section id='main' layout='column' layout-fill>
 
 		<md-toolbar id='mobile-toolbar' class='mobile-only'>
 			<div class='md-toolbar-tools'>
@@ -61,11 +61,11 @@
 			</div>
 		</md-toolbar>
 
-		<md-sidenav component-id='menu' class='md-sidenav-right mobile-only'>
+		<md-sidenav md-component-id='menu' class='md-sidenav-right mobile-only'>
 			<md-toolbar>
 				<h1 translate class='md-toolbar-tools'>Settings</h1>
 			</md-toolbar>
-			<md-content class='md-content-padding'>
+			<md-content class='md-padding'>
 				<div ng-hide='true'>
 					<md-button translate aria-label='Verify Identity' ng-click='twoFactor()'>Verify Identity</md-button>
 				</div>
@@ -74,12 +74,10 @@
 				</div>
 				<div>
 					<md-button
-						translate
 						aria-label='Formatting Help'
 						ng-click='baseButtonClick()'
-						href='//www.reddit.com/wiki/commenting/.compact#wiki_posting'
 					>
-						Formatting Help
+						<a translate href='//www.reddit.com/wiki/commenting/.compact#wiki_posting'>Formatting Help</a>
 					</md-button>
 				</div>
 				<div>
@@ -96,25 +94,23 @@
 				<md-button translate aria-label='Verify Identity' ng-click='twoFactor()' ng-hide='true'>Verify Identity</md-button>
 				<md-button translate aria-label='Show Cyphertext' ng-click='showCyphertext()'>Show Cyphertext</md-button>
 				<md-button
-					translate
 					aria-label='Formatting Help'
 					ng-click='baseButtonClick()'
-					href='//www.reddit.com/wiki/commenting/.compact#wiki_posting'
 				>
-					Formatting Help
+					<a translate href='//www.reddit.com/wiki/commenting/.compact#wiki_posting'>Formatting Help</a>
 				</md-button>
 				<md-button translate aria-label='Disconnect' ng-click='disconnect()'>Disconnect</md-button>
 			</section>
 		</div>
 
-		<div ng-view class='loading' layout='vertical' layout-fill flex ng-class='{active: state == states.spinningUp}'>
+		<div ng-view class='loading' layout='column' layout-fill flex ng-class='{active: state == states.spinningUp}'>
 			<div flex></div>
 			<div class='logo-animation'><img src='/img/logo.animated.gif' /></div>
 			<div translate>Now spinning up your cyph room...</div>
 			<div flex></div>
 		</div>
 
-		<div ng-view class='loading' layout='vertical' layout-fill flex ng-class='{active: state == states.waitingForFriend}'>
+		<div ng-view class='loading' layout='column' layout-fill flex ng-class='{active: state == states.waitingForFriend}'>
 			<div flex></div>
 			<div class='logo-animation'><img src='/img/logo.animated.gif' /></div>
 			<div>
@@ -132,7 +128,7 @@
 			<div flex></div>
 		</div>
 
-		<div ng-view class='loading' layout='vertical' layout-fill flex ng-class='{active: state == states.aborted}'>
+		<div ng-view class='loading' layout='column' layout-fill flex ng-class='{active: state == states.aborted}'>
 			<div flex></div>
 			<div class='logo-animation'><img src='/img/logo.white.icon.png' /></div>
 			<div>
@@ -173,7 +169,7 @@
 			</div>
 		</md-content>
 
-		<div id='chat-begin-message' ng-view layout='vertical' layout-fill flex ng-class='{active: state == states.chatBeginMessage}'>
+		<div id='chat-begin-message' ng-view layout='column' layout-fill flex ng-class='{active: state == states.chatBeginMessage}'>
 			<div flex></div>
 			<div translate>Connected!</div>
 			<div flex></div>
@@ -181,7 +177,7 @@
 
 		<div id='message-list' ng-view flex class='nano' ng-class='{active: state == states.chat, "is-connected": isConnected}'>
 			<md-content class='nano-content'>
-				<md-list layout='vertical'>
+				<md-list layout='column'>
 					<md-item
 						class='message-item unread'
 						ng-class='message.authorClass'
@@ -230,7 +226,7 @@
 				</md-list>
 			</md-content>
 
-			<div id='setting-up-crypto' class='loading' layout='vertical' layout-fill flex>
+			<div id='setting-up-crypto' class='loading' layout='column' layout-fill flex>
 				<div flex></div>
 				<div class='logo-animation'><img src='/img/logo.animated.gif' /></div>
 				<div translate>Negotiating secure connection...</div>
@@ -278,7 +274,7 @@
 					translate
 					id='insert-photo-desktop'
 					ng-class='{"message-wrapper-hidden": message != ""}'
-					class='md-button-fab desktop-only'
+					class='md-fab desktop-only'
 					aria-label='Insert Photo'
 				>
 					<img deferred-src='/img/icons/insertphoto.png' />
@@ -321,7 +317,7 @@
 
 		<div id='cyphertext' class='nano'>
 			<md-content class='nano-content'>
-				<md-list layout='vertical'>
+				<md-list layout='column'>
 					<md-item class='message-item unread' ng-repeat='message in cyphertext' layout='horizontal'>
 						<span class='message'>
 							<strong
@@ -339,7 +335,7 @@
 				translate
 				id='cyphertext-close'
 				aria-label='Close Cyphertext'
-				class='md-button-fab md-theme-grey'
+				class='md-fab md-theme-grey'
 				ng-click='closeCyphertext()'
 			>
 				<strong>&times;</strong>

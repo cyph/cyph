@@ -280,7 +280,9 @@ function setUpChannel (channelData) {
 		},
 		onmessage: receiveChannelData,
 		onerror: function () {},
-		onclose: closeChat
+		onclose: function () {
+			closeChat();
+		}
 	});
 }
 

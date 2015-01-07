@@ -12,17 +12,15 @@ html, body, #main, md-sidenav {
 	background-color: #8b62d9 !important;
 }
 
-#main, .md-button-inner {
+#main, .md-button {
 	color: #f1f1f1 !important;
 }
 
 
-md-sidenav md-button {
+md-sidenav .md-button {
 	width: 100%;
-
-	* {
-		text-align: left;
-	}
+	text-align: left;
+	height: 35px;
 }
 
 
@@ -35,7 +33,7 @@ md-sidenav md-button {
 }
 
 
-md-toolbar {
+md-toolbar, md-toolbar.md-default-theme {
 	background-color: #7d4fd3;
 	height: 40px !important;
 	min-height: 40px !important;
@@ -175,11 +173,54 @@ html.mobile .mfp-content {
 }
 
 
-/* Why is this line missing from Angular Material's bower package? */
+/*** Angular Material patches (from 0.4 to 0.6 upgrade) ***/
 
-md-backdrop {
-	background-color: rgba(0, 0, 0, 0.3);
+md-content.md-default-theme {
+	background-color: transparent;
 }
-md-sidenav {
-	z-index: 7;
+
+html > body p {
+	line-height: 100%;
 }
+
+input, textarea {
+	line-height: 26px;
+}
+
+button.md-button.md-fab {
+	z-index: auto;
+}
+
+.md-button > a {
+	text-decoration: none;
+}
+
+section[layout-fill] {
+	min-height: 0px;
+	height: 100%;
+}
+
+md-toolbar .md-toolbar-tools {
+	height: 40px;
+	min-height: 40px;
+	max-height: 40px;
+}
+
+
+@include keyframes(inkRippleCheckbox) {
+	0% {
+		@include transform(scale(0));
+		opacity: 0.4;
+	}
+
+	50% {
+		@include transform(scale(1));
+		opacity: 0.4;
+	}
+
+	100% {
+		@include transform(scale(1));
+		opacity: 0;
+	}
+}
+

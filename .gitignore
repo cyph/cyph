@@ -2,3 +2,5 @@
 .sass-cache
 .DS_Store
 nohup.out
+shared/lib/.oldbower
+
