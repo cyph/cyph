@@ -6,8 +6,6 @@ package geoip2
 
 import (
 	"net"
-
-	"./maxminddb"
 )
 
 // The City structure corresponds to the data in the GeoIP2/GeoLite2 City
@@ -107,24 +105,24 @@ type ISP struct {
 	Organization                 string `maxminddb:"organization"`
 }
 
-// Reader holds the maxminddb.Reader structure. It should be created
+// Reader holds the MMReader structure. It should be created
 // using the Open function.
 type Reader struct {
-	mmdbReader *maxminddb.Reader
+	mmdbReader *MMReader
 }
 
 // Open takes a string path to a file and returns a Reader structure or an
 // error. The database file is opened using a memory map. Use the Close method
 // on the Reader object to return the resources to the system.
 func Open(file string) (*Reader, error) {
-	reader, err := maxminddb.Open(file)
+	reader, err := MMOpen(file)
 	return &Reader{mmdbReader: reader}, err
 }
 
 // FromBytes takes a byte slice corresponding to a GeoIP2/GeoLite2 database
 // file and returns a Reader structure or an error.
 func FromBytes(bytes []byte) (*Reader, error) {
-	reader, err := maxminddb.FromBytes(bytes)
+	reader, err := MMFromBytes(bytes)
 	return &Reader{mmdbReader: reader}, err
 }
 
