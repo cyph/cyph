@@ -15,6 +15,8 @@ import (
 
 func init() {
 	handleFunc("/", root)
+	handleFuncs("/amibanned", Handlers{methods.GET: amIBanned})
+	handleFuncs("/geolocatetest/{ip}", Handlers{methods.GET: geolocateTest})
 	handleFuncs("/betasignups", Handlers{methods.PUT: betaSignup})
 	handleFuncs("/channels/{id}", Handlers{methods.POST: channelReceive})
 	handleFuncs("/errors", Handlers{methods.POST: logError})
@@ -30,14 +32,22 @@ func init() {
 
 /*** Handlers ***/
 
+func amIBanned(h HandlerArgs) (interface{}, int) {
+	isBanned := false
+	if _, ok := config.BannedCountries[geolocate(h)]; ok {
+		isBanned = true
+	}
+	return isBanned, http.StatusOK
+}
+
+func geolocateTest(h HandlerArgs) (interface{}, int) {
+	return geolocateIp(h.Vars["ip"]), http.StatusOK
+}
+
 func betaSignup(h HandlerArgs) (interface{}, int) {
 	betaSignup := getBetaSignupFromRequest(h)
 
 	if strings.Contains(betaSignup.Email, "@") {
-		betaSignup.Email = strings.ToLower(betaSignup.Email)
-		betaSignup.Country = strings.ToLower(betaSignup.Country)
-		betaSignup.Language = strings.ToLower(betaSignup.Language)
-
 		key := datastore.NewKey(h.Context, "BetaSignup", betaSignup.Email, 0, nil)
 
 		existingBetaSignup := new(BetaSignup)
