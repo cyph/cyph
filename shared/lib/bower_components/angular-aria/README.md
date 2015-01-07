@@ -1,12 +1,35 @@
-# bower-angular-aria
+# packaged angular-aria
 
-This repo is for distribution on `bower`. The source for this module is in the
+This repo is for distribution on `npm` and `bower`. The source for this module is in the
 [main AngularJS repo](https://github.com/angular/angular.js/tree/master/src/ngAria).
 Please file issues and pull requests against that repo.
 
 ## Install
 
-Install with `bower`:
+You can install this package either with `npm` or with `bower`.
+
+### npm
+
+```shell
+npm install angular-aria
+```
+
+Add a `<script>` to your `index.html`:
+
+```html
+<script src="/node_modules/angular-aria/angular-aria.js"></script>
+```
+
+Then add `ngAria` as a dependency for your app:
+
+```javascript
+angular.module('myApp', ['ngAria']);
+```
+
+Note that this package is not in CommonJS format, so doing `require('angular-aria')` will
+return `undefined`.
+
+### bower
 
 ```shell
 bower install angular-aria
@@ -18,7 +41,7 @@ Add a `<script>` to your `index.html`:
 <script src="/bower_components/angular-aria/angular-aria.js"></script>
 ```
 
-And add `ngAria` as a dependency for your app:
+Then add `ngAria` as a dependency for your app:
 
 ```javascript
 angular.module('myApp', ['ngAria']);

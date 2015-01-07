@@ -1,5 +1,5 @@
 /**
- * angular-timer - v1.1.9 - 2014-11-23 7:22 PM
+ * angular-timer - v1.2.0 - 2014-12-15 6:34 PM
  * https://github.com/siddii/angular-timer
  *
  * Copyright (c) 2014 Siddique Hameed
@@ -61,7 +61,11 @@ var timerModule = angular.module('timer', [])
         $scope.$on('timer-clear', function () {
           $scope.clear();
         });
-
+        
+        $scope.$on('timer-reset', function () {
+          $scope.reset();
+        });
+        
         $scope.$on('timer-set-countdown', function (e, countdown) {
           $scope.countdown = countdown;
         });
@@ -107,6 +111,16 @@ var timerModule = angular.module('timer', [])
           $scope.isRunning = false;
         };
 
+        $scope.reset = $element[0].reset = function () {
+          $scope.startTime = $scope.startTimeAttr ? new Date($scope.startTimeAttr) : new Date();
+          $scope.endTime = $scope.endTimeAttr ? new Date($scope.endTimeAttr) : null;
+          $scope.countdown = $scope.countdownattr && parseInt($scope.countdownattr, 10) > 0 ? parseInt($scope.countdownattr, 10) : undefined;
+          resetTimeout();
+          tick();
+          $scope.isRunning = false;
+          $scope.clear();
+        };
+        
         $element.bind('$destroy', function () {
           resetTimeout();
           $scope.isRunning = false;
@@ -160,13 +174,20 @@ var timerModule = angular.module('timer', [])
             $scope.months = Math.floor((($scope.millis / (3600000)) / 24 / 30) % 12);
             $scope.years = Math.floor(($scope.millis / (3600000)) / 24 / 365);
           }
-          // plural - singular unit decision
-          $scope.secondsS = ($scope.seconds === 1 || $scope.seconds === 0) ? '' : 's';
-          $scope.minutesS = ($scope.minutes === 1 || $scope.minutes === 0) ? '' : 's';
-          $scope.hoursS = ($scope.hours === 1 || $scope.hours === 0) ? '' : 's';
-          $scope.daysS = ($scope.days === 1 || $scope.days === 0)? '' : 's';
-          $scope.monthsS = ($scope.months === 1 || $scope.months === 0)? '' : 's';
-          $scope.yearsS = ($scope.years === 1 || $scope.years === 0)? '' : 's';
+          // plural - singular unit decision (old syntax, for backwards compatibility and English only, could be deprecated!)
+          $scope.secondsS = ($scope.seconds === 1) ? '' : 's';
+          $scope.minutesS = ($scope.minutes === 1) ? '' : 's';
+          $scope.hoursS = ($scope.hours === 1) ? '' : 's';
+          $scope.daysS = ($scope.days === 1)? '' : 's';
+          $scope.monthsS = ($scope.months === 1)? '' : 's';
+          $scope.yearsS = ($scope.years === 1)? '' : 's';
+          // new plural-singular unit decision functions (for custom units and multilingual support)
+          $scope.secondUnit = function(singleSecond, pluralSecond){if($scope.seconds === 1){if(singleSecond){return singleSecond;} return 'second';} if(pluralSecond){return pluralSecond;} return 'seconds';};
+          $scope.minuteUnit = function(singleMinute, pluralMinute){if($scope.minutes === 1){if(singleMinute){return singleMinute;} return 'minute';} if(pluralMinute){return pluralMinute;} return 'minutes';};
+          $scope.hourUnit = function(singleHour, pluralHour){if($scope.hours === 1){if(singleHour){return singleHour;} return 'hour';} if(pluralHour){return pluralHour;} return 'hours';};
+          $scope.dayUnit = function(singleDay, pluralDay){if($scope.days === 1){if(singleDay){return singleDay;} return 'day';} if(pluralDay){return pluralDay;} return 'days';};
+          $scope.monthUnit = function(singleMonth, pluralMonth){if($scope.months === 1){if(singleMonth){return singleMonth;} return 'month';} if(pluralMonth){return pluralMonth;} return 'months';};
+          $scope.yearUnit = function(singleYear, pluralYear){if($scope.years === 1){if(singleYear){return singleYear;} return 'year';} if(pluralYear){return pluralYear;} return 'years';};
           //add leading zero if number is smaller than 10
           $scope.sseconds = $scope.seconds < 10 ? '0' + $scope.seconds : $scope.seconds;
           $scope.mminutes = $scope.minutes < 10 ? '0' + $scope.minutes : $scope.minutes;

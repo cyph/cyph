@@ -25,12 +25,12 @@
     "mdown"
   ],
   "license": "https://github.com/showdownjs/showdown/blob/master/license.txt",
-  "version": "0.3.3",
-  "_release": "0.3.3",
+  "version": "0.3.4",
+  "_release": "0.3.4",
   "_resolution": {
     "type": "version",
-    "tag": "0.3.3",
-    "commit": "e05c00d18b9c59ce668623de96b0888d959ec184"
+    "tag": "0.3.4",
+    "commit": "24c34596c198fde7bea61aeccc60045258bfd103"
   },
   "_source": "git://github.com/coreyti/showdown.git",
   "_target": "~0.3.1",
