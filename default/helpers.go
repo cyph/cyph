@@ -127,7 +127,7 @@ func geolocateIp(ip string) string {
 	if err != nil {
 		return ""
 	}
-	return record.Country.IsoCode
+	return strings.ToLower(record.Country.IsoCode)
 }
 
 func getBetaSignupFromRequest(h HandlerArgs) BetaSignup {
