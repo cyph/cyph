@@ -1,4 +1,4 @@
-package maxminddb
+package geoip2
 
 import (
 	"bytes"

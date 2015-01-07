@@ -1,4 +1,4 @@
-package maxminddb
+package geoip2
 
 import (
 	"bytes"
@@ -13,9 +13,9 @@ const dataSectionSeparatorSize = 16
 
 var metadataStartMarker = []byte("\xAB\xCD\xEFMaxMind.com")
 
-// Reader holds the data corresponding to the MaxMind DB file. Its only public
+// MMReader holds the data corresponding to the MaxMind DB file. Its only public
 // field is Metadata, which contains the metadata from the MaxMind DB file.
-type Reader struct {
+type MMReader struct {
 	hasMappedFile bool
 	buffer        []byte
 	decoder       decoder
@@ -39,16 +39,16 @@ type Metadata struct {
 	RecordSize               uint              `maxminddb:"record_size"`
 }
 
-// Open takes a string path to a MaxMind DB file and returns a Reader
+// Open takes a string path to a MaxMind DB file and returns a MMReader
 // structure or an error. The database file is opened using a memory map. Use
-// the Close method on the Reader object to return the resources to the
+// the Close method on the MMReader object to return the resources to the
 // system.
-func Open(file string) (*Reader, error) {
+func MMOpen(file string) (*MMReader, error) {
 	for i := 0; ; i++ {
 		bytes, err := ioutil.ReadFile(file)
 
 		if err == nil {
-			return FromBytes(bytes)
+			return MMFromBytes(bytes)
 		} else if i > 5 {
 			return nil, err
 		}
@@ -56,8 +56,8 @@ func Open(file string) (*Reader, error) {
 }
 
 // FromBytes takes a byte slice corresponding to a MaxMind DB file and returns
-// a Reader structure or an error.
-func FromBytes(buffer []byte) (*Reader, error) {
+// a MMReader structure or an error.
+func MMFromBytes(buffer []byte) (*MMReader, error) {
 	metadataStart := bytes.LastIndex(buffer, metadataStartMarker)
 
 	if metadataStart == -1 {
@@ -78,14 +78,14 @@ func FromBytes(buffer []byte) (*Reader, error) {
 	searchTreeSize := metadata.NodeCount * metadata.RecordSize / 4
 	decoder := decoder{buffer, searchTreeSize + dataSectionSeparatorSize}
 
-	reader := &Reader{buffer: buffer, decoder: decoder, Metadata: metadata, ipv4Start: 0}
+	MMReader := &MMReader{buffer: buffer, decoder: decoder, Metadata: metadata, ipv4Start: 0}
 
-	reader.ipv4Start, err = reader.startNode()
+	MMReader.ipv4Start, err = MMReader.startNode()
 
-	return reader, err
+	return MMReader, err
 }
 
-func (r *Reader) startNode() (uint, error) {
+func (r *MMReader) startNode() (uint, error) {
 	if r.Metadata.IPVersion != 6 {
 		return 0, nil
 	}
@@ -117,7 +117,7 @@ func (r *Reader) startNode() (uint, error) {
 // Currently the decoder expect most data types to correspond exactly (e.g.,
 // a uint64 database type must be decoded into a uint64 Go type). In the
 // future, this may be made more flexible.
-func (r *Reader) Lookup(ipAddress net.IP, result interface{}) error {
+func (r *MMReader) Lookup(ipAddress net.IP, result interface{}) error {
 	if ipAddress == nil {
 		return errors.New("ipAddress passed to Lookup cannot be nil")
 	}
@@ -143,7 +143,7 @@ func (r *Reader) Lookup(ipAddress net.IP, result interface{}) error {
 	return r.resolveDataPointer(pointer, rv)
 }
 
-func (r *Reader) findAddressInTree(ipAddress net.IP) (uint, error) {
+func (r *MMReader) findAddressInTree(ipAddress net.IP) (uint, error) {
 
 	bitCount := uint(len(ipAddress) * 8)
 
@@ -173,7 +173,7 @@ func (r *Reader) findAddressInTree(ipAddress net.IP) (uint, error) {
 	return 0, errors.New("invalid node in search tree")
 }
 
-func (r *Reader) readNode(nodeNumber uint, index uint) (uint, error) {
+func (r *MMReader) readNode(nodeNumber uint, index uint) (uint, error) {
 	RecordSize := r.Metadata.RecordSize
 
 	baseOffset := nodeNumber * RecordSize / 4
@@ -202,7 +202,7 @@ func (r *Reader) readNode(nodeNumber uint, index uint) (uint, error) {
 	return uint(uintFromBytes(prefix, nodeBytes)), nil
 }
 
-func (r *Reader) resolveDataPointer(pointer uint, result reflect.Value) error {
+func (r *MMReader) resolveDataPointer(pointer uint, result reflect.Value) error {
 	nodeCount := r.Metadata.NodeCount
 	searchTreeSize := r.Metadata.RecordSize * nodeCount / 4
 
@@ -217,6 +217,6 @@ func (r *Reader) resolveDataPointer(pointer uint, result reflect.Value) error {
 }
 
 // Close unmaps the database file from virtual memory and returns the
-// resources to the system. If called on a Reader opened using FromBytes,
+// resources to the system. If called on a MMReader opened using FromBytes,
 // this method does nothing.
-func (r *Reader) Close() {}
+func (r *MMReader) Close() {}
