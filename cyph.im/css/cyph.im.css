@@ -7,12 +7,12 @@ html:not(.mobile) #main {
   padding: 10px;
   padding-left: 200px;
   padding-right: 20px; }
-html:not(.mobile) #desktop-sidebar md-button, html:not(.mobile) #message-wrapper md-button {
+html:not(.mobile) #desktop-sidebar .md-button, html:not(.mobile) #message-wrapper .md-button {
   color: #444;
   background-color: #7d4fd3 !important; }
-html:not(.mobile) #desktop-sidebar md-button.focus, html:not(.mobile) #desktop-sidebar md-button:hover, html:not(.mobile) #message-wrapper md-button.focus, html:not(.mobile) #message-wrapper md-button:hover {
+html:not(.mobile) #desktop-sidebar .md-button.focus, html:not(.mobile) #desktop-sidebar .md-button:hover, html:not(.mobile) #message-wrapper .md-button.focus, html:not(.mobile) #message-wrapper .md-button:hover {
   background-color: #7239dd !important; }
-html:not(.mobile) md-button img {
+html:not(.mobile) .md-button img {
   height: 100%; }
 
 input, textarea {
@@ -33,7 +33,7 @@ html:not(.mobile) #message-box {
   outline: none;
   padding: 3px;
   border: 1px solid #dddddd;
-  margin: 5px 10px;
+  margin: 0px 10px;
   height: 60px;
   width: calc(100% - 29px); }
 html:not(.mobile) #message-box:focus {
@@ -63,7 +63,7 @@ html.mobile #message-box:focus ~ #new-messages {
   #insert-photo-desktop img {
     height: 80%; }
 
-md-button input[type='file'] {
+.md-button input[type='file'] {
   position: absolute;
   top: -2000%;
   left: -2000%;
@@ -294,10 +294,10 @@ html.mobile .message-item.author-app {
     margin: 0px auto;
     margin-bottom: 50px;
     display: block; }
-  #desktop-sidebar md-button {
+  #desktop-sidebar .md-button {
     font-size: 14px;
     width: 100%;
-    margin-bottom: 6px;
+    margin-bottom: 10px;
     box-shadow: 0px 0px 2px #7239dd; }
 
 #mobile-toolbar {
@@ -395,11 +395,10 @@ html:not(.mobile) #error {
   #cyphertext #cyphertext-close {
     position: fixed;
     top: 30px;
-    right: 5%; }
-    #cyphertext #cyphertext-close .md-button-inner {
-      color: #3bfc34 !important;
-      font-size: 30px; }
-  #cyphertext md-button {
+    right: 5%;
+    color: #3bfc34 !important;
+    font-size: 30px; }
+  #cyphertext .md-button {
     background-color: #202020 !important;
     box-shadow: rgba(25, 130, 25, 0.13725) 0px 0px 4px 0px, rgba(25, 130, 25, 0.27843) 0px 4px 8px 0px; }
 

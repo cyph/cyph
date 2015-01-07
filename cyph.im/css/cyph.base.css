@@ -7,13 +7,13 @@
 html, body, #main, md-sidenav {
   background-color: #8b62d9 !important; }
 
-#main, .md-button-inner {
+#main, .md-button {
   color: #f1f1f1 !important; }
 
-md-sidenav md-button {
-  width: 100%; }
-  md-sidenav md-button * {
-    text-align: left; }
+md-sidenav .md-button {
+  width: 100%;
+  text-align: left;
+  height: 35px; }
 
 #footer {
   margin-top: 10px;
@@ -22,12 +22,12 @@ md-sidenav md-button {
   font-size: 15px;
   padding: 15px 0px 5px 0px; }
 
-md-toolbar {
+md-toolbar, md-toolbar.md-default-theme {
   background-color: #7d4fd3;
   height: 40px !important;
   min-height: 40px !important;
   box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75); }
-  md-toolbar img {
+  md-toolbar img, md-toolbar.md-default-theme img {
     height: 25px !important;
     vertical-align: middle; }
 
@@ -127,11 +127,72 @@ html.mobile .desktop-only {
 html.mobile .mfp-content {
   pointer-events: none !important; }
 
-/* Why is this line missing from Angular Material's bower package? */
-md-backdrop {
-  background-color: rgba(0, 0, 0, 0.3); }
+/*** Angular Material patches (from 0.4 to 0.6 upgrade) ***/
+md-content.md-default-theme {
+  background-color: transparent; }
 
-md-sidenav {
-  z-index: 7; }
+html > body p {
+  line-height: 100%; }
+
+input, textarea {
+  line-height: 26px; }
+
+button.md-button.md-fab {
+  z-index: auto; }
+
+.md-button > a {
+  text-decoration: none; }
+
+section[layout-fill] {
+  min-height: 0px;
+  height: 100%; }
+
+md-toolbar .md-toolbar-tools {
+  height: 40px;
+  min-height: 40px;
+  max-height: 40px; }
+
+@-webkit-keyframes inkRippleCheckbox {
+  0% {
+    -webkit-transform: scale(0);
+    opacity: 0.4; }
+  50% {
+    -webkit-transform: scale(1);
+    opacity: 0.4; }
+  100% {
+    -webkit-transform: scale(1);
+    opacity: 0; } }
+@-moz-keyframes inkRippleCheckbox {
+  0% {
+    -moz-transform: scale(0);
+    opacity: 0.4; }
+  50% {
+    -moz-transform: scale(1);
+    opacity: 0.4; }
+  100% {
+    -moz-transform: scale(1);
+    opacity: 0; } }
+@keyframes inkRippleCheckbox {
+  0% {
+    -webkit-transform: scale(0);
+    -moz-transform: scale(0);
+    -ms-transform: scale(0);
+    -o-transform: scale(0);
+    transform: scale(0);
+    opacity: 0.4; }
+  50% {
+    -webkit-transform: scale(1);
+    -moz-transform: scale(1);
+    -ms-transform: scale(1);
+    -o-transform: scale(1);
+    transform: scale(1);
+    opacity: 0.4; }
+  100% {
+    -webkit-transform: scale(1);
+    -moz-transform: scale(1);
+    -ms-transform: scale(1);
+    -o-transform: scale(1);
+    transform: scale(1);
+    opacity: 0; } }
 
 /*# sourceMappingURL=cyph.base.css.map */
