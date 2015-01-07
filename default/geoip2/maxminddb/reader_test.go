@@ -3,13 +3,13 @@ package maxminddb
 import (
 	"errors"
 	"fmt"
+	. "gopkg.in/check.v1"
 	"io/ioutil"
 	"math/big"
 	"math/rand"
 	"net"
 	"testing"
 	"time"
-	. "gopkg.in/check.v1"
 )
 
 func TestMaxMindDbReader(t *testing.T) { TestingT(t) }

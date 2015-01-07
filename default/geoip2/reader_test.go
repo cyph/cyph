@@ -2,11 +2,11 @@ package geoip2
 
 import (
 	"fmt"
+	. "launchpad.net/gocheck"
 	"math/rand"
 	"net"
 	"testing"
 	"time"
-	. "launchpad.net/gocheck"
 )
 
 func TestGeoIP2(t *testing.T) { TestingT(t) }
