@@ -120,28 +120,7 @@ function eventLoop () {
 
 					window	= {crypto: crypto};
 
-
-					while (!localStorage.cryptoCodes) {
-						try {
-							var req	= new XMLHttpRequest();
-							req.open('get', e.data.message.baseUrl + 'cryptocodes', false);
-							req.send();
-
-							var o	= JSON.parse(req.responseText);
-
-							if (o.Banned) {
-								postMessage({eventName: 'banned'});
-								return;
-							}
-							else {
-								localStorage.cryptoCodes	= o.Codes;
-							}
-						}
-						catch (e) {}
-					}
-
-					eval(localStorage.cryptoCodes);
-
+					eval(e.data.message.cryptoCodes);
 
 					var user	= new OTR.User().account('me', 'cyph');
 
