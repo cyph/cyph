@@ -18,7 +18,7 @@ func init() {
 	handleFunc("/", root)
 	handleFuncs("/betasignups", Handlers{methods.PUT: betaSignup})
 	handleFuncs("/channels/{id}", Handlers{methods.POST: channelReceive})
-	handleFuncs("/cryptocodes", Handlers{methods.POST: getCryptoCodes})
+	handleFuncs("/cryptocodes", Handlers{methods.GET: getCryptoCodes})
 	handleFuncs("/errors", Handlers{methods.POST: logError})
 	handleFuncs("/ims", Handlers{methods.POST: imCreate})
 	handleFuncs("/ims/{id}", Handlers{methods.POST: imConnect})
