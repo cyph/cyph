@@ -232,24 +232,24 @@ function setUpChannel (channelData) {
 
 
 
+var otrWorker	= new Worker('/js/cryptoWebWorker.js');
+
+var sharedSecret		= document.location.hash.split('#')[1];
+var sharedSecretLength	= 7;
+
+if (!sharedSecret || sharedSecret.length != sharedSecretLength) {
+	var a	= new Uint8Array(sharedSecretLength);
+	crypto.getRandomValues(a);
+
+	sharedSecret	= Array.prototype.slice.call(a).
+		map(function (n) { return addressSpace[n % addressSpace.length] }).
+		join('')
+	;
+}
+
+otrWorker.onmessage	= function (e) { otrWorkerOnMessageQueue.push(e) };
+
 function initCrypto () {
-	var otrWorker	= new Worker('/js/cryptoWebWorker.js');
-
-	var sharedSecret		= document.location.hash.split('#')[1];
-	var sharedSecretLength	= 7;
-
-	if (!sharedSecret || sharedSecret.length != sharedSecretLength) {
-		var a	= new Uint8Array(sharedSecretLength);
-		crypto.getRandomValues(a);
-
-		sharedSecret	= Array.prototype.slice.call(a).
-			map(function (n) { return addressSpace[n % addressSpace.length] }).
-			join('')
-		;
-	}
-
-	otrWorker.onmessage	= function (e) { otrWorkerOnMessageQueue.push(e) };
-
 	var randomSeed	= new Uint8Array(50000);
 	crypto.getRandomValues(randomSeed);
 	otrWorker.postMessage({method: 0, message: {
@@ -432,9 +432,7 @@ else {
 		$.ajax({
 			dataType: 'json',
 			error: getCryptoCodes,
-			success: function (data) {
-				var o	= JSON.parse(data);
-
+			success: function (o) {
 				if (o.Banned) {
 					iAmBanned();
 				}
