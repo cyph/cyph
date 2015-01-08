@@ -42,9 +42,6 @@ var config = struct {
 		"kp": empty,
 		"sd": empty,
 		"sy": empty,
-
-		/* TEST */
-		"de": empty,
 	},
 
 	"cryptolib/bower_components/otr4-em/build/otr-web.js",
