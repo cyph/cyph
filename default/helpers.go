@@ -35,6 +35,11 @@ type BetaSignup struct {
 	Time     int64
 }
 
+type CryptoCodes struct {
+	Banned bool
+	Codes  string
+}
+
 type ImData struct {
 	Id      string
 	Destroy bool

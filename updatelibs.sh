@@ -24,7 +24,14 @@ bower install --save \
 	visibilityjs \
 	wow \
 	rubycon/isaac.js \
-	morr/jquery.appear \
-	mnaamani/otr4-em
+	morr/jquery.appear
+
+cd ../cryptolib
+
+rm -rf .oldbower
+mkdir .oldbower
+mv bower* .oldbower/
+
+bower install --save mnaamani/otr4-em
 
 cd "${dir}"

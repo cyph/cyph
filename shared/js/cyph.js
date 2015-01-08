@@ -1,5 +1,5 @@
-var BASE_URL						= 'https://api.cyph.com/';
-var isHistoryAvailable				= typeof history != 'undefined';
+var BASE_URL			= 'https://api.cyph.com/';
+var isHistoryAvailable	= typeof history != 'undefined';
 
 
 function getString (name) {
