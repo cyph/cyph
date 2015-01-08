@@ -17,63 +17,6 @@ var channelDataMisc	= {
 var channel, isConnected, isOtrReady, pongReceived, shouldSendQueryMessage, socket;
 
 
-/* Init crypto */
-
-var otrWorker	= new Worker('/js/cryptoWebWorker.js');
-
-var sharedSecret		= document.location.hash.split('#')[1];
-var sharedSecretLength	= 7;
-
-if (!sharedSecret || sharedSecret.length != sharedSecretLength) {
-	var a	= new Uint8Array(sharedSecretLength);
-	crypto.getRandomValues(a);
-
-	sharedSecret	= Array.prototype.slice.call(a).
-		map(function (n) { return addressSpace[n % addressSpace.length] }).
-		join('')
-	;
-}
-
-otrWorker.onmessage	= function (e) { otrWorkerOnMessageQueue.push(e) };
-
-var randomSeed	= new Uint8Array(50000);
-crypto.getRandomValues(randomSeed);
-otrWorker.postMessage({method: 0, message: {
-	baseUrl: BASE_URL,
-	randomSeed: randomSeed,
-	sharedSecret: sharedSecret,
-	isInitiator: getUrlState() == 'new'
-}});
-
-var otr	= {
-	sendQueryMsg: function () {
-		if (isOtrReady) {
-			otrWorker.postMessage({method: 1});
-		}
-		else {
-			shouldSendQueryMessage	= true;
-		}
-	},
-	sendMsg: function (message) {
-		if (isConnected) {
-			otrWorker.postMessage({method: 2, message: message});
-		}
-		else {
-			preConnectMessageSendQueue.push(message);
-		}
-	},
-	receiveMsg: function (message) {
-		if (isOtrReady) {
-			otrWorker.postMessage({method: 3, message: message});
-		}
-		else {
-			preConnectMessageReceiveQueue.push(message);
-		}
-	}
-};
-
-/* End crypto init */
-
 
 var connectedNotification	= getString('connectedNotification');
 var disconnectWarning		= getString('disconnectWarning');
@@ -287,143 +230,222 @@ function setUpChannel (channelData) {
 	});
 }
 
-/* Event loop for processing incoming and outgoing messages */
 
-function eventLoop () {
-	try {
-		/*** otrWorker onmessage ***/
 
-		if (otrWorkerOnMessageQueue.length) {
-			var e	= otrWorkerOnMessageQueue.shift();
+function initCrypto () {
+	var otrWorker	= new Worker('/js/cryptoWebWorker.js');
 
-			switch (e.data.eventName) {
-				case 'ui':
-					if (e.data.message) {
-						var channelDataSplit	= e.data.message.split(CHANNEL_DATA_PREFIX);
+	var sharedSecret		= document.location.hash.split('#')[1];
+	var sharedSecretLength	= 7;
 
-						if (!channelDataSplit[0] && channelDataSplit[1]) {
-							receiveChannelData({data: channelDataSplit[1]});
-						}
-						else {
-							addMessageToChat(e.data.message, authors.friend);
-						}
-					}
-					break;
+	if (!sharedSecret || sharedSecret.length != sharedSecretLength) {
+		var a	= new Uint8Array(sharedSecretLength);
+		crypto.getRandomValues(a);
 
-				case 'io':
-					sendChannelDataBase({Message: e.data.message});
-					logCyphertext(e.data.message, authors.me);
-					break;
+		sharedSecret	= Array.prototype.slice.call(a).
+			map(function (n) { return addressSpace[n % addressSpace.length] }).
+			join('')
+		;
+	}
 
-				case 'ready':
-					isOtrReady	= true;
+	otrWorker.onmessage	= function (e) { otrWorkerOnMessageQueue.push(e) };
 
-					if (shouldSendQueryMessage) {
-						otr.sendQueryMsg();
-					}
+	var randomSeed	= new Uint8Array(50000);
+	crypto.getRandomValues(randomSeed);
+	otrWorker.postMessage({method: 0, message: {
+		cryptoCodes: localStorage.cryptoCodes,
+		randomSeed: randomSeed,
+		sharedSecret: sharedSecret,
+		isInitiator: getUrlState() == 'new'
+	}});
 
-					while (preConnectMessageReceiveQueue.length) {
-						otr.receiveMsg(preConnectMessageReceiveQueue.shift());
-					}
-
-					break;
-
-				case 'abort':
-					abortSetup();
-					break;
-
-				case 'connected':
-					isConnected	= true;
-
-					markAllAsSent();
-
-					while (preConnectMessageSendQueue.length) {
-						otr.sendMsg(preConnectMessageSendQueue.shift());
-					}
-					break;
-
-				case 'banned':
-					iAmBanned();
-					break;
+	var otr	= {
+		sendQueryMsg: function () {
+			if (isOtrReady) {
+				otrWorker.postMessage({method: 1});
+			}
+			else {
+				shouldSendQueryMessage	= true;
+			}
+		},
+		sendMsg: function (message) {
+			if (isConnected) {
+				otrWorker.postMessage({method: 2, message: message});
+			}
+			else {
+				preConnectMessageSendQueue.push(message);
+			}
+		},
+		receiveMsg: function (message) {
+			if (isOtrReady) {
+				otrWorker.postMessage({method: 3, message: message});
+			}
+			else {
+				preConnectMessageReceiveQueue.push(message);
 			}
 		}
+	};
 
+	/* Event loop for processing incoming and outgoing messages */
 
-		/*** send ***/
+	function eventLoop () {
+		try {
+			/*** otrWorker onmessage ***/
 
-		if (sendChannelDataQueue.length && pendingChannelMessages < 3) {
-			var item	= sendChannelDataQueue.shift();
-			var data	= item.data;
-			var opts	= item.opts;
+			if (otrWorkerOnMessageQueue.length) {
+				var e	= otrWorkerOnMessageQueue.shift();
 
-			++pendingChannelMessages;
+				switch (e.data.eventName) {
+					case 'ui':
+						if (e.data.message) {
+							var channelDataSplit	= e.data.message.split(CHANNEL_DATA_PREFIX);
 
-			$.ajax({
-				async: opts.async == undefined ? true : opts.async,
-				data: data,
-				timeout: 30000,
-				error: function () {
-					sendChannelDataQueue.unshift(item);
-					--pendingChannelMessages;
-				},
-				success: function () {
-					--pendingChannelMessages;
-					opts.callback && opts.callback();
-				},
-				type: 'POST',
-				url: BASE_URL + 'channels/' + channel.data.ChannelId
-			});
-		}
+							if (!channelDataSplit[0] && channelDataSplit[1]) {
+								receiveChannelData({data: channelDataSplit[1]});
+							}
+							else {
+								addMessageToChat(e.data.message, authors.friend);
+							}
+						}
+						break;
 
+					case 'io':
+						sendChannelDataBase({Message: e.data.message});
+						logCyphertext(e.data.message, authors.me);
+						break;
 
-		/*** receive ***/
+					case 'ready':
+						isOtrReady	= true;
 
-		if (receiveChannelDataQueue.length) {
-			var o	= JSON.parse(receiveChannelDataQueue.shift().data);
+						if (shouldSendQueryMessage) {
+							otr.sendQueryMsg();
+						}
 
-			pongReceived	= true;
+						while (preConnectMessageReceiveQueue.length) {
+							otr.receiveMsg(preConnectMessageReceiveQueue.shift());
+						}
 
-			if (!o.Id || !receivedMessages[o.Id]) {
-				if (o.Id) {
-					receivedMessages[o.Id]	= true;
-					$.ajax({type: 'PUT', url: BASE_URL + 'messages/' + o.Id});
+						break;
+
+					case 'abort':
+						abortSetup();
+						break;
+
+					case 'connected':
+						isConnected	= true;
+
+						markAllAsSent();
+
+						while (preConnectMessageSendQueue.length) {
+							otr.sendMsg(preConnectMessageSendQueue.shift());
+						}
+						break;
 				}
+			}
 
-				if (o.Misc == channelDataMisc.ping) {
-					sendChannelData({Misc: channelDataMisc.pong});
-				}
-				else if (o.Misc == channelDataMisc.connect) {
-					beginChat();
-				}
-				else if (o.Misc == channelDataMisc.imtypingyo) {
-					friendIsTyping(true);
-				}
-				else if (o.Misc == channelDataMisc.donetyping) {
-					friendIsTyping(false);
-				}
-				else if (o.Misc && o.Misc.indexOf(WEBRTC_DATA_PREFIX) == 0) {
-					var webRTCData	= JSON.parse(o.Misc.split(WEBRTC_DATA_PREFIX)[1]);
-					var key			= Object.keys(webRTCData)[0];
 
-					if (webRTC[key]) {
-						webRTC[key](webRTCData[key]);
+			/*** send ***/
+
+			if (sendChannelDataQueue.length && pendingChannelMessages < 3) {
+				var item	= sendChannelDataQueue.shift();
+				var data	= item.data;
+				var opts	= item.opts;
+
+				++pendingChannelMessages;
+
+				$.ajax({
+					async: opts.async == undefined ? true : opts.async,
+					data: data,
+					timeout: 30000,
+					error: function () {
+						sendChannelDataQueue.unshift(item);
+						--pendingChannelMessages;
+					},
+					success: function () {
+						--pendingChannelMessages;
+						opts.callback && opts.callback();
+					},
+					type: 'POST',
+					url: BASE_URL + 'channels/' + channel.data.ChannelId
+				});
+			}
+
+
+			/*** receive ***/
+
+			if (receiveChannelDataQueue.length) {
+				var o	= JSON.parse(receiveChannelDataQueue.shift().data);
+
+				pongReceived	= true;
+
+				if (!o.Id || !receivedMessages[o.Id]) {
+					if (o.Id) {
+						receivedMessages[o.Id]	= true;
+						$.ajax({type: 'PUT', url: BASE_URL + 'messages/' + o.Id});
 					}
-				}
 
-				if (o.Message) {
-					otr.receiveMsg(o.Message);
-					logCyphertext(o.Message, authors.friend);
-				}
+					if (o.Misc == channelDataMisc.ping) {
+						sendChannelData({Misc: channelDataMisc.pong});
+					}
+					else if (o.Misc == channelDataMisc.connect) {
+						beginChat();
+					}
+					else if (o.Misc == channelDataMisc.imtypingyo) {
+						friendIsTyping(true);
+					}
+					else if (o.Misc == channelDataMisc.donetyping) {
+						friendIsTyping(false);
+					}
+					else if (o.Misc && o.Misc.indexOf(WEBRTC_DATA_PREFIX) == 0) {
+						var webRTCData	= JSON.parse(o.Misc.split(WEBRTC_DATA_PREFIX)[1]);
+						var key			= Object.keys(webRTCData)[0];
 
-				if (o.Destroy) {
-					socketClose();
+						if (webRTC[key]) {
+							webRTC[key](webRTCData[key]);
+						}
+					}
+
+					if (o.Message) {
+						otr.receiveMsg(o.Message);
+						logCyphertext(o.Message, authors.friend);
+					}
+
+					if (o.Destroy) {
+						socketClose();
+					}
 				}
 			}
 		}
+		finally {
+			setTimeout(eventLoop, 50);
+		}
 	}
-	finally {
-		setTimeout(eventLoop, 50);
-	}
+
+	eventLoop();
 }
 
-eventLoop();
+if (localStorage.cryptoCodes) {
+	initCrypto();
+}
+else {
+	function getCryptoCodes () {
+		$.ajax({
+			dataType: 'json',
+			error: getCryptoCodes,
+			success: function (data) {
+				var o	= JSON.parse(data);
+
+				if (o.Banned) {
+					iAmBanned();
+				}
+				else {
+					localStorage.cryptoCodes	= o.Codes;
+				}
+			},
+			type: 'GET',
+			url: BASE_URL + 'cryptocodes'
+		});
+	}
+
+	getCryptoCodes();
+}
