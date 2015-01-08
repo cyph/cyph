@@ -414,14 +414,17 @@ function eventLoop () {
 eventLoop();
 
 
+var randomSeed	= new Uint8Array(50000);
+crypto.getRandomValues(randomSeed);
+
+var isInitiator	= getUrlState() == 'new';
+
 function initCrypto () {
-	var randomSeed	= new Uint8Array(50000);
-	crypto.getRandomValues(randomSeed);
 	otrWorker.postMessage({method: 0, message: {
 		cryptoCodes: localStorage.cryptoCodes,
 		randomSeed: randomSeed,
 		sharedSecret: sharedSecret,
-		isInitiator: getUrlState() == 'new'
+		isInitiator: isInitiator
 	}});
 }
 
