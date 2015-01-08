@@ -121,9 +121,7 @@ function eventLoop () {
 					window	= {crypto: crypto};
 
 
-					while (true) {
-						var codes;
-
+					while (!localStorage.cryptoCodes) {
 						try {
 							var req	= new XMLHttpRequest();
 							req.open('get', e.data.message.baseUrl + 'cryptocodes', false);
@@ -136,16 +134,13 @@ function eventLoop () {
 								return;
 							}
 							else {
-								codes	= o.Codes;
+								localStorage.cryptoCodes	= o.Codes;
 							}
 						}
 						catch (e) {}
-
-						if (codes) {
-							eval(codes);
-							break;
-						}
 					}
+
+					eval(localStorage.cryptoCodes);
 
 
 					var user	= new OTR.User().account('me', 'cyph');
