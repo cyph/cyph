@@ -440,6 +440,7 @@ else {
 				}
 				else {
 					localStorage.cryptoCodes	= o.Codes;
+					initCrypto();
 				}
 			},
 			type: 'GET',
