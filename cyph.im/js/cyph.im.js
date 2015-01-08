@@ -14,7 +14,7 @@ var channelDataMisc	= {
 	donetyping: '5'
 };
 
-var channel, isConnected, isOtrReady, pongReceived, shouldSendQueryMessage, socket;
+var channel, isBanned, isConnected, isOtrReady, pongReceived, shouldSendQueryMessage, socket;
 
 
 /* Init crypto */
@@ -78,6 +78,31 @@ function initCrypto () {
 	}});
 }
 
+if (localStorage.cryptoCodes) {
+	initCrypto();
+}
+else {
+	function getCryptoCodes () {
+		$.ajax({
+			dataType: 'json',
+			error: getCryptoCodes,
+			success: function (o) {
+				if (o.Banned) {
+					iAmBanned();
+				}
+				else {
+					localStorage.cryptoCodes	= o.Codes;
+					initCrypto();
+				}
+			},
+			type: 'GET',
+			url: BASE_URL + 'cryptocodes'
+		});
+	}
+
+	getCryptoCodes();
+}
+
 /* End crypto init */
 
 
@@ -119,6 +144,10 @@ function pingPong () {
 
 
 function processUrlState () {
+	if (isBanned) {
+		return;
+	}
+
 	var state	= getUrlState();
 
 	/* Root */
@@ -132,9 +161,6 @@ function processUrlState () {
 		$.post(BASE_URL + 'ims', function (id) {
 			pushState('/' + id, true);
 		});
-	}
-	else if (state == 'blocked') {
-		iAmBanned();
 	}
 	/* Join existing chat room */
 	else if (state.length == 7) {
@@ -434,29 +460,3 @@ function eventLoop () {
 }
 
 eventLoop();
-
-
-if (localStorage.cryptoCodes) {
-	initCrypto();
-}
-else {
-	function getCryptoCodes () {
-		$.ajax({
-			dataType: 'json',
-			error: getCryptoCodes,
-			success: function (o) {
-				if (o.Banned) {
-					pushState('/blocked');
-				}
-				else {
-					localStorage.cryptoCodes	= o.Codes;
-					initCrypto();
-				}
-			},
-			type: 'GET',
-			url: BASE_URL + 'cryptocodes'
-		});
-	}
-
-	getCryptoCodes();
-}
