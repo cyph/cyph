@@ -249,6 +249,171 @@ if (!sharedSecret || sharedSecret.length != sharedSecretLength) {
 
 otrWorker.onmessage	= function (e) { otrWorkerOnMessageQueue.push(e) };
 
+var otr	= {
+	sendQueryMsg: function () {
+		if (isOtrReady) {
+			otrWorker.postMessage({method: 1});
+		}
+		else {
+			shouldSendQueryMessage	= true;
+		}
+	},
+	sendMsg: function (message) {
+		if (isConnected) {
+			otrWorker.postMessage({method: 2, message: message});
+		}
+		else {
+			preConnectMessageSendQueue.push(message);
+		}
+	},
+	receiveMsg: function (message) {
+		if (isOtrReady) {
+			otrWorker.postMessage({method: 3, message: message});
+		}
+		else {
+			preConnectMessageReceiveQueue.push(message);
+		}
+	}
+};
+
+/* Event loop for processing incoming and outgoing messages */
+
+function eventLoop () {
+	try {
+		/*** otrWorker onmessage ***/
+
+		if (otrWorkerOnMessageQueue.length) {
+			var e	= otrWorkerOnMessageQueue.shift();
+
+			switch (e.data.eventName) {
+				case 'ui':
+					if (e.data.message) {
+						var channelDataSplit	= e.data.message.split(CHANNEL_DATA_PREFIX);
+
+						if (!channelDataSplit[0] && channelDataSplit[1]) {
+							receiveChannelData({data: channelDataSplit[1]});
+						}
+						else {
+							addMessageToChat(e.data.message, authors.friend);
+						}
+					}
+					break;
+
+				case 'io':
+					sendChannelDataBase({Message: e.data.message});
+					logCyphertext(e.data.message, authors.me);
+					break;
+
+				case 'ready':
+					isOtrReady	= true;
+
+					if (shouldSendQueryMessage) {
+						otr.sendQueryMsg();
+					}
+
+					while (preConnectMessageReceiveQueue.length) {
+						otr.receiveMsg(preConnectMessageReceiveQueue.shift());
+					}
+
+					break;
+
+				case 'abort':
+					abortSetup();
+					break;
+
+				case 'connected':
+					isConnected	= true;
+
+					markAllAsSent();
+
+					while (preConnectMessageSendQueue.length) {
+						otr.sendMsg(preConnectMessageSendQueue.shift());
+					}
+					break;
+			}
+		}
+
+
+		/*** send ***/
+
+		if (sendChannelDataQueue.length && pendingChannelMessages < 3) {
+			var item	= sendChannelDataQueue.shift();
+			var data	= item.data;
+			var opts	= item.opts;
+
+			++pendingChannelMessages;
+
+			$.ajax({
+				async: opts.async == undefined ? true : opts.async,
+				data: data,
+				timeout: 30000,
+				error: function () {
+					sendChannelDataQueue.unshift(item);
+					--pendingChannelMessages;
+				},
+				success: function () {
+					--pendingChannelMessages;
+					opts.callback && opts.callback();
+				},
+				type: 'POST',
+				url: BASE_URL + 'channels/' + channel.data.ChannelId
+			});
+		}
+
+
+		/*** receive ***/
+
+		if (receiveChannelDataQueue.length) {
+			var o	= JSON.parse(receiveChannelDataQueue.shift().data);
+
+			pongReceived	= true;
+
+			if (!o.Id || !receivedMessages[o.Id]) {
+				if (o.Id) {
+					receivedMessages[o.Id]	= true;
+					$.ajax({type: 'PUT', url: BASE_URL + 'messages/' + o.Id});
+				}
+
+				if (o.Misc == channelDataMisc.ping) {
+					sendChannelData({Misc: channelDataMisc.pong});
+				}
+				else if (o.Misc == channelDataMisc.connect) {
+					beginChat();
+				}
+				else if (o.Misc == channelDataMisc.imtypingyo) {
+					friendIsTyping(true);
+				}
+				else if (o.Misc == channelDataMisc.donetyping) {
+					friendIsTyping(false);
+				}
+				else if (o.Misc && o.Misc.indexOf(WEBRTC_DATA_PREFIX) == 0) {
+					var webRTCData	= JSON.parse(o.Misc.split(WEBRTC_DATA_PREFIX)[1]);
+					var key			= Object.keys(webRTCData)[0];
+
+					if (webRTC[key]) {
+						webRTC[key](webRTCData[key]);
+					}
+				}
+
+				if (o.Message) {
+					otr.receiveMsg(o.Message);
+					logCyphertext(o.Message, authors.friend);
+				}
+
+				if (o.Destroy) {
+					socketClose();
+				}
+			}
+		}
+	}
+	finally {
+		setTimeout(eventLoop, 50);
+	}
+}
+
+eventLoop();
+
+
 function initCrypto () {
 	var randomSeed	= new Uint8Array(50000);
 	crypto.getRandomValues(randomSeed);
@@ -258,170 +423,6 @@ function initCrypto () {
 		sharedSecret: sharedSecret,
 		isInitiator: getUrlState() == 'new'
 	}});
-
-	var otr	= {
-		sendQueryMsg: function () {
-			if (isOtrReady) {
-				otrWorker.postMessage({method: 1});
-			}
-			else {
-				shouldSendQueryMessage	= true;
-			}
-		},
-		sendMsg: function (message) {
-			if (isConnected) {
-				otrWorker.postMessage({method: 2, message: message});
-			}
-			else {
-				preConnectMessageSendQueue.push(message);
-			}
-		},
-		receiveMsg: function (message) {
-			if (isOtrReady) {
-				otrWorker.postMessage({method: 3, message: message});
-			}
-			else {
-				preConnectMessageReceiveQueue.push(message);
-			}
-		}
-	};
-
-	/* Event loop for processing incoming and outgoing messages */
-
-	function eventLoop () {
-		try {
-			/*** otrWorker onmessage ***/
-
-			if (otrWorkerOnMessageQueue.length) {
-				var e	= otrWorkerOnMessageQueue.shift();
-
-				switch (e.data.eventName) {
-					case 'ui':
-						if (e.data.message) {
-							var channelDataSplit	= e.data.message.split(CHANNEL_DATA_PREFIX);
-
-							if (!channelDataSplit[0] && channelDataSplit[1]) {
-								receiveChannelData({data: channelDataSplit[1]});
-							}
-							else {
-								addMessageToChat(e.data.message, authors.friend);
-							}
-						}
-						break;
-
-					case 'io':
-						sendChannelDataBase({Message: e.data.message});
-						logCyphertext(e.data.message, authors.me);
-						break;
-
-					case 'ready':
-						isOtrReady	= true;
-
-						if (shouldSendQueryMessage) {
-							otr.sendQueryMsg();
-						}
-
-						while (preConnectMessageReceiveQueue.length) {
-							otr.receiveMsg(preConnectMessageReceiveQueue.shift());
-						}
-
-						break;
-
-					case 'abort':
-						abortSetup();
-						break;
-
-					case 'connected':
-						isConnected	= true;
-
-						markAllAsSent();
-
-						while (preConnectMessageSendQueue.length) {
-							otr.sendMsg(preConnectMessageSendQueue.shift());
-						}
-						break;
-				}
-			}
-
-
-			/*** send ***/
-
-			if (sendChannelDataQueue.length && pendingChannelMessages < 3) {
-				var item	= sendChannelDataQueue.shift();
-				var data	= item.data;
-				var opts	= item.opts;
-
-				++pendingChannelMessages;
-
-				$.ajax({
-					async: opts.async == undefined ? true : opts.async,
-					data: data,
-					timeout: 30000,
-					error: function () {
-						sendChannelDataQueue.unshift(item);
-						--pendingChannelMessages;
-					},
-					success: function () {
-						--pendingChannelMessages;
-						opts.callback && opts.callback();
-					},
-					type: 'POST',
-					url: BASE_URL + 'channels/' + channel.data.ChannelId
-				});
-			}
-
-
-			/*** receive ***/
-
-			if (receiveChannelDataQueue.length) {
-				var o	= JSON.parse(receiveChannelDataQueue.shift().data);
-
-				pongReceived	= true;
-
-				if (!o.Id || !receivedMessages[o.Id]) {
-					if (o.Id) {
-						receivedMessages[o.Id]	= true;
-						$.ajax({type: 'PUT', url: BASE_URL + 'messages/' + o.Id});
-					}
-
-					if (o.Misc == channelDataMisc.ping) {
-						sendChannelData({Misc: channelDataMisc.pong});
-					}
-					else if (o.Misc == channelDataMisc.connect) {
-						beginChat();
-					}
-					else if (o.Misc == channelDataMisc.imtypingyo) {
-						friendIsTyping(true);
-					}
-					else if (o.Misc == channelDataMisc.donetyping) {
-						friendIsTyping(false);
-					}
-					else if (o.Misc && o.Misc.indexOf(WEBRTC_DATA_PREFIX) == 0) {
-						var webRTCData	= JSON.parse(o.Misc.split(WEBRTC_DATA_PREFIX)[1]);
-						var key			= Object.keys(webRTCData)[0];
-
-						if (webRTC[key]) {
-							webRTC[key](webRTCData[key]);
-						}
-					}
-
-					if (o.Message) {
-						otr.receiveMsg(o.Message);
-						logCyphertext(o.Message, authors.friend);
-					}
-
-					if (o.Destroy) {
-						socketClose();
-					}
-				}
-			}
-		}
-		finally {
-			setTimeout(eventLoop, 50);
-		}
-	}
-
-	eventLoop();
 }
 
 if (localStorage.cryptoCodes) {
