@@ -60,7 +60,7 @@ for d in cyph.im cyph.com ; do
 done
 
 echo 'JS Minify'
-find . -name '*.js' | grep -v '\.oldbower' | grep -v cryptolib | grep -v '\.min\.js' | xargs -I% uglifyjs '%' -o '%'
+find . -name '*.js' | grep -v '\.oldbower' | grep -v '\.min\.js' | xargs -I% uglifyjs '%' -o '%'
 echo 'CSS Minify'
 find . -name '*.css' | xargs -I% cleancss -o '%' '%'
 echo 'HTML Minify'
