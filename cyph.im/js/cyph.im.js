@@ -133,6 +133,9 @@ function processUrlState () {
 			pushState('/' + id, true);
 		});
 	}
+	else if (state == 'blocked') {
+		iAmBanned();
+	}
 	/* Join existing chat room */
 	else if (state.length == 7) {
 		$.ajax({
@@ -443,7 +446,7 @@ else {
 			error: getCryptoCodes,
 			success: function (o) {
 				if (o.Banned) {
-					iAmBanned();
+					pushState('/blocked');
 				}
 				else {
 					localStorage.cryptoCodes	= o.Codes;
