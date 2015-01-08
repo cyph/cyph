@@ -7,6 +7,7 @@ import (
 	"appengine/mail"
 	"appengine/memcache"
 	"encoding/json"
+	"io/ioutil"
 	"net/http"
 	"strconv"
 	"strings"
@@ -15,8 +16,6 @@ import (
 
 func init() {
 	handleFunc("/", root)
-	handleFuncs("/amibanned", Handlers{methods.GET: amIBanned})
-	handleFuncs("/geolocatetest/{ip}", Handlers{methods.GET: geolocateTest})
 	handleFuncs("/betasignups", Handlers{methods.PUT: betaSignup})
 	handleFuncs("/channels/{id}", Handlers{methods.POST: channelReceive})
 	handleFuncs("/errors", Handlers{methods.POST: logError})
@@ -31,18 +30,6 @@ func init() {
 }
 
 /*** Handlers ***/
-
-func amIBanned(h HandlerArgs) (interface{}, int) {
-	isBanned := false
-	if _, ok := config.BannedCountries[geolocate(h)]; ok {
-		isBanned = true
-	}
-	return isBanned, http.StatusOK
-}
-
-func geolocateTest(h HandlerArgs) (interface{}, int) {
-	return geolocateIp(h.Vars["ip"]), http.StatusOK
-}
 
 func betaSignup(h HandlerArgs) (interface{}, int) {
 	betaSignup := getBetaSignupFromRequest(h)
@@ -113,6 +100,26 @@ func channelReceive(h HandlerArgs) (interface{}, int) {
 	}
 
 	return nil, http.StatusOK
+}
+
+func getCryptoCodes(h HandlerArgs) (interface{}, int) {
+	_, isBanned := config.BannedCountries[geolocate(h)]
+
+	codes := ""
+	for !isBanned {
+		buf, err := ioutil.ReadFile(config.CryptoCodesPath)
+		if err == nil {
+			codes = string(buf)
+			break
+		} else {
+			time.Sleep(1 * time.Second)
+		}
+	}
+
+	return CryptoCodes{
+		Banned: isBanned,
+		Codes:  codes,
+	}, http.StatusOK
 }
 
 func getStats(h HandlerArgs) (interface{}, int) {

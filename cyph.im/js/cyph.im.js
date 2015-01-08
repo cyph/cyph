@@ -39,6 +39,7 @@ otrWorker.onmessage	= function (e) { otrWorkerOnMessageQueue.push(e) };
 var randomSeed	= new Uint8Array(50000);
 crypto.getRandomValues(randomSeed);
 otrWorker.postMessage({method: 0, message: {
+	baseUrl: BASE_URL,
 	randomSeed: randomSeed,
 	sharedSecret: sharedSecret,
 	isInitiator: getUrlState() == 'new'
@@ -339,6 +340,10 @@ function eventLoop () {
 					while (preConnectMessageSendQueue.length) {
 						otr.sendMsg(preConnectMessageSendQueue.shift());
 					}
+					break;
+
+				case 'banned':
+					iAmBanned();
 					break;
 			}
 		}

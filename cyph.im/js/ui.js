@@ -6,6 +6,7 @@ var
 	changeState,
 	closeChat,
 	friendIsTyping,
+	iAmBanned,
 	insertPhoto,
 	isMobile,
 	logCyphertext,
@@ -53,7 +54,8 @@ angular.
 			blank: 4,
 			chat: 200,
 			aborted: 400,
-			error: 404
+			error: 404,
+			banned: 666
 		};
 		state = $scope.state = $scope.states.none;
 
@@ -296,6 +298,14 @@ angular.
 			apply(function () {
 				$scope.isFriendTyping	= isFriendTyping;
 			});
+		};
+
+
+		iAmBanned = $scope.iAmBanned = function () {
+			$window.off('beforeunload');
+			changeState($scope.states.banned);
+			sendChannelData({Destroy: true});
+			$scope.disconnect();
 		};
 
 

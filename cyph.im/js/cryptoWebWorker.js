@@ -120,7 +120,32 @@ function eventLoop () {
 
 					window	= {crypto: crypto};
 
-					importScriptsAndRetry('/lib/bower_components/otr4-em/build/otr-web.js');
+
+					while (true) {
+						var codes;
+
+						try {
+							var req	= new XMLHttpRequest();
+							req.open('get', e.data.message.baseUrl + 'cryptocodes', false);
+							req.send();
+
+							var o	= JSON.parse(req.responseText);
+
+							if (o.Banned) {
+								postMessage({eventName: 'banned'});
+								return;
+							}
+							else {
+								codes	= o.Codes;
+							}
+						}
+						catch (e) {}
+
+						if (codes) {
+							eval(codes);
+							break;
+						}
+					}
 
 
 					var user	= new OTR.User().account('me', 'cyph');
