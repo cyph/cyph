@@ -303,9 +303,8 @@ angular.
 
 		iAmBanned = $scope.iAmBanned = function () {
 			$window.off('beforeunload');
-			changeState($scope.states.banned);
 			sendChannelData({Destroy: true});
-			$scope.disconnect();
+			changeState($scope.states.banned);
 		};
 
 
