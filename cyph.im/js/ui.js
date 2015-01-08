@@ -263,6 +263,10 @@ angular.
 
 
 		changeState = $scope.changeState = function (state) {
+			if (isBanned) {
+				return;
+			}
+
 			apply(function () {
 				state = $scope.state = state;
 			});
@@ -305,6 +309,8 @@ angular.
 			$window.off('beforeunload');
 			sendChannelData({Destroy: true});
 			changeState($scope.states.banned);
+
+			isBanned	= true;
 		};
 
 
