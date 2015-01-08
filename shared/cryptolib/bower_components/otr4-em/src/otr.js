@@ -985,7 +985,7 @@
         var session = this;
         var sec = secret || undefined;
         if (!sec) {
-            sec = this.parameters || undefined;
+            sec = this.parameters.secret || undefined;
         }
         if (!sec) {
             throw (new Error("No Secret Provided"));
