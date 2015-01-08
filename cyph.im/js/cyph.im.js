@@ -17,6 +17,69 @@ var channelDataMisc	= {
 var channel, isConnected, isOtrReady, pongReceived, shouldSendQueryMessage, socket;
 
 
+/* Init crypto */
+
+var otrWorker	= new Worker('/js/cryptoWebWorker.js');
+
+var sharedSecret		= document.location.hash.split('#')[1];
+var sharedSecretLength	= 7;
+
+if (!sharedSecret || sharedSecret.length != sharedSecretLength) {
+	var a	= new Uint8Array(sharedSecretLength);
+	crypto.getRandomValues(a);
+
+	sharedSecret	= Array.prototype.slice.call(a).
+		map(function (n) { return addressSpace[n % addressSpace.length] }).
+		join('')
+	;
+}
+
+otrWorker.onmessage	= function (e) { otrWorkerOnMessageQueue.push(e) };
+
+var otr	= {
+	sendQueryMsg: function () {
+		if (isOtrReady) {
+			otrWorker.postMessage({method: 1});
+		}
+		else {
+			shouldSendQueryMessage	= true;
+		}
+	},
+	sendMsg: function (message) {
+		if (isConnected) {
+			otrWorker.postMessage({method: 2, message: message});
+		}
+		else {
+			preConnectMessageSendQueue.push(message);
+		}
+	},
+	receiveMsg: function (message) {
+		if (isOtrReady) {
+			otrWorker.postMessage({method: 3, message: message});
+		}
+		else {
+			preConnectMessageReceiveQueue.push(message);
+		}
+	}
+};
+
+
+var randomSeed	= new Uint8Array(50000);
+crypto.getRandomValues(randomSeed);
+
+var isInitiator	= getUrlState() == 'new';
+
+function initCrypto () {
+	otrWorker.postMessage({method: 0, message: {
+		cryptoCodes: localStorage.cryptoCodes,
+		randomSeed: randomSeed,
+		sharedSecret: sharedSecret,
+		isInitiator: isInitiator
+	}});
+}
+
+/* End crypto init */
+
 
 var connectedNotification	= getString('connectedNotification');
 var disconnectWarning		= getString('disconnectWarning');
@@ -232,50 +295,6 @@ function setUpChannel (channelData) {
 
 
 
-var otrWorker	= new Worker('/js/cryptoWebWorker.js');
-
-var sharedSecret		= document.location.hash.split('#')[1];
-var sharedSecretLength	= 7;
-
-if (!sharedSecret || sharedSecret.length != sharedSecretLength) {
-	var a	= new Uint8Array(sharedSecretLength);
-	crypto.getRandomValues(a);
-
-	sharedSecret	= Array.prototype.slice.call(a).
-		map(function (n) { return addressSpace[n % addressSpace.length] }).
-		join('')
-	;
-}
-
-otrWorker.onmessage	= function (e) { otrWorkerOnMessageQueue.push(e) };
-
-var otr	= {
-	sendQueryMsg: function () {
-		if (isOtrReady) {
-			otrWorker.postMessage({method: 1});
-		}
-		else {
-			shouldSendQueryMessage	= true;
-		}
-	},
-	sendMsg: function (message) {
-		if (isConnected) {
-			otrWorker.postMessage({method: 2, message: message});
-		}
-		else {
-			preConnectMessageSendQueue.push(message);
-		}
-	},
-	receiveMsg: function (message) {
-		if (isOtrReady) {
-			otrWorker.postMessage({method: 3, message: message});
-		}
-		else {
-			preConnectMessageReceiveQueue.push(message);
-		}
-	}
-};
-
 /* Event loop for processing incoming and outgoing messages */
 
 function eventLoop () {
@@ -413,20 +432,6 @@ function eventLoop () {
 
 eventLoop();
 
-
-var randomSeed	= new Uint8Array(50000);
-crypto.getRandomValues(randomSeed);
-
-var isInitiator	= getUrlState() == 'new';
-
-function initCrypto () {
-	otrWorker.postMessage({method: 0, message: {
-		cryptoCodes: localStorage.cryptoCodes,
-		randomSeed: randomSeed,
-		sharedSecret: sharedSecret,
-		isInitiator: isInitiator
-	}});
-}
 
 if (localStorage.cryptoCodes) {
 	initCrypto();
