@@ -70,7 +70,7 @@ def translate(text, language):
 
 			translation	= translator.translate(text, language)
 
-			if 'ArgumentException' in translation:
+			if 'ArgumentException' in translation or 'TranslateApiException' in translation:
 				raise Exception(translation)
 
 			if cyphInstance is not None:
