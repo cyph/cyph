@@ -303,6 +303,9 @@ html.mobile .message-item.author-app {
 #mobile-toolbar {
   z-index: 6; }
 
+html.mobile #main {
+  padding-top: 40px; }
+
 #timer {
   font-family: 'Ubuntu Mono', monospace;
   padding-left: 10px; }
