@@ -100,7 +100,7 @@ html.mobile #new-cyph-section {
   margin-bottom: 50px;
   font-size: 125%; }
 
-html.mobile #coming-soon > * > *, #coming-soon:hover > #coming-soon-title > *, #coming-soon:hover > :hover > * {
+html.mobile #coming-soon > * > *, #coming-soon:hover #coming-soon-title > *, #coming-soon:hover > :hover > * {
   opacity: 0.75; }
 
 /* Targeting screens smaller than what Unsemantic considers a "tablet" */
