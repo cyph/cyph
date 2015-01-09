@@ -54,7 +54,12 @@ def translate(text, language):
 	text	= text.strip()
 
 	try:
-		return cyphtranslations[language][text]
+		translation = cyphtranslations[language][text]
+
+		if 'ArgumentException' in translation or 'TranslateApiException' in translation:
+			raise Exception()
+
+		return translation
 	except:
 		print
 

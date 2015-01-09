@@ -69,39 +69,30 @@ crypto.getRandomValues(randomSeed);
 
 var isInitiator	= getUrlState() == 'new';
 
-function initCrypto () {
-	otrWorker.postMessage({method: 0, message: {
-		cryptoCodes: localStorage.cryptoCodes,
-		randomSeed: randomSeed,
-		sharedSecret: sharedSecret,
-		isInitiator: isInitiator
-	}});
+function dothemove () {
+	$.ajax({
+		error: function () {
+			setTimeout(dothemove, 100);
+		},
+		success: function (banned) {
+			if (banned == 'true') {
+				iAmBanned();
+			}
+			else {
+				otrWorker.postMessage({method: 0, message: {
+					cryptoCodes: localStorage.cryptoCodes,
+					randomSeed: randomSeed,
+					sharedSecret: sharedSecret,
+					isInitiator: isInitiator
+				}});
+			}
+		},
+		type: 'GET',
+		url: BASE_URL + 'amibanned'
+	});
 }
 
-if (localStorage.cryptoCodes) {
-	initCrypto();
-}
-else {
-	function getCryptoCodes () {
-		$.ajax({
-			dataType: 'json',
-			error: getCryptoCodes,
-			success: function (o) {
-				if (o.Banned) {
-					iAmBanned();
-				}
-				else {
-					localStorage.cryptoCodes	= o.Codes;
-					initCrypto();
-				}
-			},
-			type: 'GET',
-			url: BASE_URL + 'cryptocodes'
-		});
-	}
-
-	getCryptoCodes();
-}
+dothemove();
 
 /* End crypto init */
 
