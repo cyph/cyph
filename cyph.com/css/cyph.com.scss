@@ -121,8 +121,10 @@ html.mobile #new-cyph-section {
 }
 
 #coming-soon {
-	opacity: 0.25;
-	@include transition(opacity 0.25s ease-in-out);
+	> * {
+		opacity: 0.25;
+		@include transition(opacity 0.25s ease-in-out);
+	}
 
 	#coming-soon-title {
 		text-align: center;
@@ -131,7 +133,7 @@ html.mobile #new-cyph-section {
 	}
 }
 
-#coming-soon:hover, html.mobile #coming-soon {
+#coming-soon:hover #coming-soon-title, html.mobile #coming-soon > *, #coming-soon:hover > *:hover {
 	opacity: 0.75;
 }
 
