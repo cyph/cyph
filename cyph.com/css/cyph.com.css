@@ -90,17 +90,17 @@ html.mobile #new-cyph-section {
       padding: 2px 10px;
       display: block; }
 
-#coming-soon {
+#coming-soon > * {
   opacity: 0.25;
   -webkit-transition: opacity 0.25s ease-in-out;
   -moz-transition: opacity 0.25s ease-in-out;
   transition: opacity 0.25s ease-in-out; }
-  #coming-soon #coming-soon-title {
-    text-align: center;
-    margin-bottom: 50px;
-    font-size: 125%; }
+#coming-soon #coming-soon-title {
+  text-align: center;
+  margin-bottom: 50px;
+  font-size: 125%; }
 
-#coming-soon:hover, html.mobile #coming-soon {
+#coming-soon:hover #coming-soon-title, html.mobile #coming-soon > *, #coming-soon:hover > *:hover {
   opacity: 0.75; }
 
 /* Targeting screens smaller than what Unsemantic considers a "tablet" */
