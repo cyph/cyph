@@ -1,3 +1,5 @@
+window	= this;
+
 var onmessageQueue		= [];
 var incomingMessages	= {};
 var outgoingMessages	= [];
@@ -117,8 +119,6 @@ function eventLoop () {
 							};
 						}
 					}
-
-					window	= {crypto: crypto};
 
 					importScriptsAndRetry('/cryptolib/bower_components/otr4-em/build/otr-web.js');
 
