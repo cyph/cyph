@@ -140,7 +140,7 @@
 			<div flex></div>
 		</div>
 
-		<div ng-view class='loading' layout='column' layout-fill flex ng-class='{active: state == states.banned}'>
+		<div id='banned-view' ng-view class='loading' layout='column' layout-fill flex ng-class='{active: state == states.banned}'>
 			<div flex></div>
 			<div class='logo-animation'><img src='/img/logo.white.icon.png' /></div>
 			<div>
@@ -149,8 +149,10 @@
 					<a href='http://en.wikipedia.org/wiki/Export_of_cryptography_from_the_United_States' translate>restrictions on the export of cryptography from the United States</a>,
 					<span translate>we are required to block Cyph in Iran, Cuba, Sudan, Syria, and the Democratic People's Republic of Korea.</span>
 				</p>
-				<p translate>
-					We have a few potential solutions to this problem in the works, but until then you'll have to either leave your country or deceive us with Tor, a VPN, or a proxy.
+				<p>
+					<span translate>We have a few potential solutions to this problem in the works, but until then you'll have to either leave your country or deceive us with</span>
+					<a href='https://www.torproject.org/'>Tor</a>,
+					<span translate>a VPN, or a proxy.</span>
 				</p>
 			</div>
 			<div flex></div>
