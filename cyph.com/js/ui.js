@@ -249,7 +249,11 @@ angular.
 			}
 
 			setTimeout(function () {
-				$($betaSignupForm.find('input:visible')[0]).focus();
+				/* Temporary workaround */
+				var $input	= $betaSignupForm.find('input:visible');
+				if ($input.length == 1) {
+					$input.focus();
+				}
 			}, 100);
 
 			var retries	= 0;
