@@ -75,7 +75,7 @@ function dothemove () {
 			setTimeout(dothemove, 100);
 		},
 		success: function (banned) {
-			if (banned == 'true') {
+			if (banned == true) {
 				iAmBanned();
 			}
 			else {
