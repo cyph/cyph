@@ -41,9 +41,6 @@ var config = struct {
 		"kp": empty,
 		"sd": empty,
 		"sy": empty,
-
-		/* TEST */
-		"us": empty,
 	},
 
 	30,
