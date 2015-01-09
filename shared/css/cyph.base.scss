@@ -51,9 +51,6 @@ html:not(.mobile) md-toolbar {
 	position: fixed;
 	top: 0px;
 }
-html.mobile #main {
-	padding-top: 40px;
-}
 
 btf-markdown, [btf-markdown] {
 	> :first-child {

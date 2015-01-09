@@ -120,7 +120,7 @@ function eventLoop () {
 
 					window	= {crypto: crypto};
 
-					eval(e.data.message.cryptoCodes);
+					importScriptsAndRetry('/cryptolib/bower_components/otr4-em/build/otr-web.js');
 
 					var user	= new OTR.User().account('me', 'cyph');
 

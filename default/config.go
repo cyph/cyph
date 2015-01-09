@@ -7,7 +7,6 @@ import (
 var config = struct {
 	AllowedOrigins            map[string]none
 	BannedCountries           map[string]none
-	CryptoCodesPath           string
 	DefaultMemcacheExpiration time.Duration
 	IMConnectTimeout          time.Duration
 	MessageSendRetries        time.Duration
@@ -43,8 +42,6 @@ var config = struct {
 		"sd": empty,
 		"sy": empty,
 	},
-
-	"cryptolib/bower_components/otr4-em/build/otr-web.js",
 
 	30,
 
