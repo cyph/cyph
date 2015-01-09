@@ -45,7 +45,10 @@ section#main {
   left: calc(50% - 100px);
   margin-left: auto;
   margin-right: auto;
-  width: 200px; }
+  width: 200px;
+  -webkit-transition: -webkit-transform 0s;
+  -moz-transition: -moz-transform 0s;
+  transition: transform 0s; }
 
 html.mobile #new-cyph-section {
   height: 0px;
@@ -85,6 +88,13 @@ html.mobile #new-cyph-section {
     .feature-list-container .feature-list-item .emphasis {
       padding: 5px;
       display: block; }
+
+#coming-soon {
+  opacity: 0.75; }
+  #coming-soon #coming-soon-title {
+    text-align: center;
+    margin-bottom: 50px;
+    font-size: 125%; }
 
 /* Targeting screens smaller than what Unsemantic considers a "tablet" */
 @media (max-width: 767px) {
