@@ -318,7 +318,9 @@ angular.
 				$this.attr('class', $this.attr('class').replace(new RegExp(platformClass, 'g'), ''));
 			});
 
-			new WOW({live: false}).init();
+			if (!isMobile) {
+				new WOW({live: false}).init();
+			}
 		});
 	}])
 ;
