@@ -76,6 +76,8 @@ if [ $staging ] ; then
 		cat $yaml | perl -pe 's/(- url: .*)/\1\n  login: admin/g' > $yaml.new
 		mv $yaml.new $yaml
 	done
+else
+	ls */*.yaml | xargs -I% sed -i.bak 's/version: staging/version: prod/g' %
 fi
 
 if [ "${nobackend}" == '' ] ; then
