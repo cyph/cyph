@@ -106,6 +106,8 @@ var isFFMobile	=
 );
 isMobile		= isMobile || isFFMobile;
 
+var isTablet	= isMobile && window.outerWidth > 767;
+
 var platformString	= isMobile ? 'mobile' : 'desktop';
 
 $.fn.tap	= function (callback, onOrOff, once) {
