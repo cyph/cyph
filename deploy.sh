@@ -37,6 +37,15 @@ mkdir .build
 cp -rf * .build/
 cd .build
 
+
+# Branch config setup
+branch="$(git branch | awk '/^\*/{print $2}')"
+if [ $branch == 'prod' ] ; then
+	branch='staging'
+fi
+ls */*.yaml | xargs -I% sed -i.bak "s/version: master/version: ${branch}/g" %
+
+
 for d in cyph.im cyph.com ; do
 	cd $d
 
