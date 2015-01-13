@@ -291,6 +291,14 @@ angular.
 
 		$(function () {
 			$('html').addClass('load-complete');
+
+			var wowDelay			= 'data-wow-delay';
+			var platformWowDelay	= platformString + '-' + wowDelay;
+			$('[' + platformWowDelay + ']').each(function () {
+				var $this	= $(this);
+				$this.attr(wowDelay, $this.attr(platformWowDelay));
+			});
+
 			new WOW({live: false}).init();
 		});
 	}])
