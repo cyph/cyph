@@ -1,5 +1,5 @@
 application: cyphme
-version: prod
+version: staging
 runtime: go
 api_version: go1
 
