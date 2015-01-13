@@ -71,7 +71,7 @@ ls */*.yaml | xargs -I% sed -i.bak 's/max-age=0/max-age=604800/g' %
 if [ $staging ] ; then
 	ls cyph.im/js/*.js | xargs -I% sed -i.bak 's/api.cyph.com/staging-dot-cyphme.appspot.com/g' %
 
-	ls */*.yaml | xargs -I% sed -i.bak 's/version: prod/version: staging/g' %
+	# ls */*.yaml | xargs -I% sed -i.bak 's/version: prod/version: staging/g' %
 	for yaml in `ls */cyph*.yaml` ; do
 		cat $yaml | perl -pe 's/(- url: .*)/\1\n  login: admin/g' > $yaml.new
 		mv $yaml.new $yaml
