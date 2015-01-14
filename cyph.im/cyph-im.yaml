@@ -49,41 +49,6 @@ handlers:
     X-Frame-Options: deny
 
 
-# Translations
-
-- url: /(BALLS)
-  static_files: \1.html
-  upload: .*\.html
-  secure: always
-  http_headers:
-    Cache-Control: no-store
-    X-Frame-Options: deny
-
-- url: /(BALLS)/new
-  static_files: \1.html
-  upload: .*\.html
-  secure: always
-  http_headers:
-    Cache-Control: no-store
-    X-Frame-Options: deny
-
-- url: /(BALLS)/[A-Za-z0-9]{7}
-  static_files: \1.html
-  upload: .*\.html
-  secure: always
-  http_headers:
-    Cache-Control: no-store
-    X-Frame-Options: deny
-
-- url: /(BALLS)/404
-  static_files: \1.html
-  upload: .*\.html
-  secure: always
-  http_headers:
-    Cache-Control: no-store
-    X-Frame-Options: deny
-
-
 # Else
 
 - url: /(.*)

@@ -1,47 +1,90 @@
-/*** TODO: Rewrite all translation-related code to perform translation at run-time ***/
-
-
-/* Redirect to appropriate translation */
 var defaultLanguage	= 'en';
-var language		=
+
+var language		= (
 	navigator.language ||
 	navigator.userLanguage ||
 	navigator.browserLanguage ||
 	navigator.systemLanguage ||
 	defaultLanguage
-;
+).toLowerCase();
+
 var languagePair	= language.split('-');
 
-/* Temporary */
-if (document.location.host.indexOf('cyph.com') < 0) {
+function htmlDecode (value) {
+	return $('<div />').html(value).text();
+}
+
+
+if (typeof translations != 'undefined') {
 	if (localStorage && localStorage.forceLanguage) {
-		language	= localStorage.forceLanguage;
+		language	= localStorage.forceLanguage.toLowerCase();
 	}
 
 	if (language == 'nb') {
 		language	= 'no';
 	}
+	if (language == 'zh-cn') {
+		language	= 'zh-chs';
+	}
 	if (language == 'zh-tw') {
-		language	= 'zh-CHT';
-	}
-	if (['zh-CHS', 'zh-CHT'].indexOf(language) < 0) {
-		language	= languagePair[0];
+		language	= 'zh-cht';
 	}
 
 
-	var supportedLanguages	= {BALLS: true};
+	if (language != defaultLanguage) {
+		var o			= {};
+		var translation	= translations[language];
+
+		for (var k in translation) {
+			o[htmlDecode(k)]	= htmlDecode(translation[k]);
+		}
+
+		translation	= o;
+		delete o;
 
 
-	var possibleLanguage	= document.location.pathname.split('/')[1];
+		$('[translate]').each(function () {
+			var $this	= $(this);
+			var ngBind	= $this.attr('ng-bind');
+			var html	= $this.html().trim();
 
-	if (language == defaultLanguage) {
-		language	= defaultLanguage;
+			for (var i = 0 ; i < this.attributes.length ; ++i) {
+				var value	= this.attributes[i].value;
+
+				if (value) {
+					var valueTranslation	= translation[value];
+
+					if (valueTranslation) {
+						this.attributes[i].value	= valueTranslation;
+					}
+				}
+			}
+
+			if (ngBind) {
+				$this.attr('ng-bind', ngBind.replace(/"([^"]*)"/g, function (match, value) {
+					var valueTranslation	= translation[value];
+
+					if (valueTranslation) {
+						return '"' + valueTranslation + '"';
+					}
+					else {
+						return match;
+					}
+				}));
+			}
+
+			if (html) {
+				$this.html(html.replace(/(.*?)(\{\{.*?\}\}|$)/g, function (match, value, binding) {
+					var valueTranslation	= translation[value];
+
+					if (valueTranslation) {
+						return valueTranslation + binding;
+					}
+					else {
+						return match;
+					}
+				}));
+			}
+		});
 	}
-	else if (possibleLanguage.length == 2 || ['zh-CHS', 'zh-CHT', 'tlh'].indexOf(possibleLanguage) > -1) {
-		language	= possibleLanguage;
-	}
-	else if (supportedLanguages[language]) {
-		document.location.pathname	= '/' + language + document.location.pathname;
-	}
-
 }

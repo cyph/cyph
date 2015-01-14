@@ -117,25 +117,6 @@ handlers:
     X-Frame-Options: deny
 
 
-# Translations
-
-- url: /(BALLS)
-  static_files: \1.html
-  upload: .*\.html
-  secure: always
-  http_headers:
-    Cache-Control: no-store
-    X-Frame-Options: deny
-
-- url: /(BALLS)/.*
-  static_files: \1.html
-  upload: .*\.html
-  secure: always
-  http_headers:
-    Cache-Control: no-store
-    X-Frame-Options: deny
-
-
 # Else
 
 - url: /(.*\..*)

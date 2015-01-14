@@ -160,7 +160,7 @@ function processUrlState () {
 	var state	= getUrlState();
 
 	/* Root */
-	if (state.length == 2 || ['', 'zh-CHS', 'zh-CHT'].indexOf(state) > -1) {
+	if (!state) {
 		document.location.replace('https://www.cyph.com/');
 	}
 	/* New chat room */
