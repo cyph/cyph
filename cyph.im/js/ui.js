@@ -204,7 +204,7 @@ angular.
 
 							$clone.remove();
 						});
-					}, 500);
+					}, 3000);
 				}
 
 				addMessageToChat(getString('introductoryMessage'), authors.app, false);
