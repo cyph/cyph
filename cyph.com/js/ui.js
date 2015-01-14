@@ -226,8 +226,7 @@ angular.
 		$scope.betaSignupState	= 0;
 
 		$scope.betaSignup		= {
-			Language: languagePair[0],
-			Country: languagePair[1]
+			Language: language
 		};
 
 		$scope.submitBetaSignup	= function () {
