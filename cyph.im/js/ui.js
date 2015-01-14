@@ -186,17 +186,19 @@ angular.
 				/* Adjust font size for translations */
 				if (!isMobile) {
 					$buttons.each(function () {
-						var $this	= $(this);
-						var $clone	= $this
+						var $this		= $(this);
+						var $clone		= $this
 							.clone()
 							.css({display: 'inline', width: 'auto', visibility: 'hidden', position: 'fixed'})
 							.appendTo('body')
 						;
-						var $both	= $this.add($clone);
+						var $both		= $this.add($clone);
 
-						for (var i = 0 ; i < 10 && $clone.width() > $this.width() ; ++i) {
-							var newFontSize	= parseInt($this.css('font-size'), 10) - 1;
-							$both.css('font-size', newFontSize + 'px');
+						var fontSize	= parseInt($this.css('font-size'), 10);
+
+						while ($clone.width() > $this.width()) {
+							fontSize	-= 1;
+							$both.css('font-size', fontSize + 'px');
 						}
 
 						$clone.remove();
