@@ -214,8 +214,9 @@ angular.
 			var copyUrl		=
 				document.location.protocol + '//' +
 				document.location.host.replace('www.', '') +
-				document.location.pathname +
-				'#' + sharedSecret
+				'/#' +
+				document.location.pathname.substr(1) +
+				sharedSecret
 			;
 
 			function setCopyUrl () {

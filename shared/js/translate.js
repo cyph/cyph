@@ -1,3 +1,6 @@
+/*** TODO: Rewrite all translation-related code to perform translation at run-time ***/
+
+
 /* Redirect to appropriate translation */
 var defaultLanguage	= 'en';
 var language		=
@@ -11,35 +14,34 @@ var languagePair	= language.split('-');
 
 /* Temporary */
 if (document.location.host.indexOf('cyph.com') < 0) {
+	if (localStorage && localStorage.forceLanguage) {
+		language	= localStorage.forceLanguage;
+	}
 
-if (localStorage && localStorage.forceLanguage) {
-	language	= localStorage.forceLanguage;
-}
-
-if (language == 'nb') {
-	language	= 'no';
-}
-if (language == 'zh-tw') {
-	language	= 'zh-CHT';
-}
-if (['zh-CHS', 'zh-CHT'].indexOf(language) < 0) {
-	language	= languagePair[0];
-}
-
-
-var supportedLanguages	= {BALLS: true};
+	if (language == 'nb') {
+		language	= 'no';
+	}
+	if (language == 'zh-tw') {
+		language	= 'zh-CHT';
+	}
+	if (['zh-CHS', 'zh-CHT'].indexOf(language) < 0) {
+		language	= languagePair[0];
+	}
 
 
-var possibleLanguage	= document.location.pathname.split('/')[1];
+	var supportedLanguages	= {BALLS: true};
 
-if (language == defaultLanguage) {
-	language	= defaultLanguage;
-}
-else if (possibleLanguage.length == 2 || ['zh-CHS', 'zh-CHT', 'tlh'].indexOf(possibleLanguage) > -1) {
-	language	= possibleLanguage;
-}
-else if (supportedLanguages[language]) {
-	document.location.pathname	= '/' + language + document.location.pathname;
-}
+
+	var possibleLanguage	= document.location.pathname.split('/')[1];
+
+	if (language == defaultLanguage) {
+		language	= defaultLanguage;
+	}
+	else if (possibleLanguage.length == 2 || ['zh-CHS', 'zh-CHT', 'tlh'].indexOf(possibleLanguage) > -1) {
+		language	= possibleLanguage;
+	}
+	else if (supportedLanguages[language]) {
+		document.location.pathname	= '/' + language + document.location.pathname;
+	}
 
 }
