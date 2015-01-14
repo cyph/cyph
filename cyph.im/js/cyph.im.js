@@ -6,6 +6,8 @@ var otrWorkerOnMessageQueue			= [];
 var CHANNEL_DATA_PREFIX	= 'CHANNEL DATA: ';
 var WEBRTC_DATA_PREFIX	= 'webrtc: ';
 
+var SECRET_LENGTH	= 7;
+
 var channelDataMisc	= {
 	connect: '1',
 	ping: '2',
@@ -14,18 +16,26 @@ var channelDataMisc	= {
 	donetyping: '5'
 };
 
-var channel, isBanned, isConnected, isOtrReady, pongReceived, shouldSendQueryMessage, socket;
+var channel, isBanned, isConnected, isOtrReady, pongReceived, sharedSecret, shouldSendQueryMessage, socket;
 
 
 /* Init crypto */
 
 var otrWorker	= new Worker('/js/cryptoWebWorker.js');
 
-var sharedSecret		= document.location.hash.split('#')[1];
-var sharedSecretLength	= 7;
+var urlFragment		= document.location.hash.split('#')[1];
 
-if (!sharedSecret || sharedSecret.length != sharedSecretLength) {
-	var a	= new Uint8Array(sharedSecretLength);
+if (urlFragment && urlFragment.length == (SECRET_LENGTH * 2)) {
+	sharedSecret	= urlFragment.substr(SECRET_LENGTH);
+	urlFragment		= urlFragment.substr(0, SECRET_LENGTH);
+}
+
+if (urlFragment) {
+	history.pushState({}, '', '/' + urlFragment);
+}
+
+if (!sharedSecret || sharedSecret.length != SECRET_LENGTH) {
+	var a	= new Uint8Array(SECRET_LENGTH);
 	crypto.getRandomValues(a);
 
 	sharedSecret	= Array.prototype.slice.call(a).
@@ -154,7 +164,7 @@ function processUrlState () {
 		});
 	}
 	/* Join existing chat room */
-	else if (state.length == 7) {
+	else if (state.length == SECRET_LENGTH) {
 		$.ajax({
 			dataType: 'json',
 			error: pushNotFound,
