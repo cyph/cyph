@@ -30,8 +30,7 @@ angular.
 		var $messageBox			= $('#message-box');
 		var $messageList		= $('#message-list, #message-list > md-content');
 		var $timer				= $('#timer');
-		var $fileUploadButtons	= $('md-button input[type="file"]');
-		var $buttons			= $('md-button');
+		var $buttons			= $('.md-button');
 		var $copyUrl			= $('#copy-url input');
 		var $cyphertext			= $('#cyphertext.curtain, #cyphertext.curtain > md-content');
 
@@ -177,34 +176,26 @@ angular.
 
 				changeState($scope.states.chat);
 
-				/* Fix file upload buttons */
-				$fileUploadButtons.each(function () {
-					var $this	= $(this);
-					$this.parent().parent().append($this.detach());
-				});
-
 				/* Adjust font size for translations */
 				if (!isMobile) {
-					setTimeout(function () {
-						$buttons.each(function () {
-							var $this		= $(this);
-							var $clone		= $this
-								.clone()
-								.css({display: 'inline', width: 'auto', visibility: 'hidden', position: 'fixed'})
-								.appendTo('body')
-							;
-							var $both		= $this.add($clone);
+					$buttons.each(function () {
+						var $this		= $(this);
+						var $clone		= $this
+							.clone()
+							.css({display: 'inline', width: 'auto', visibility: 'hidden', position: 'fixed'})
+							.appendTo('body')
+						;
+						var $both		= $this.add($clone);
 
-							var fontSize	= parseInt($this.css('font-size'), 10);
+						var fontSize	= parseInt($this.css('font-size'), 10);
 
-							while ($clone.width() > $this.width()) {
-								fontSize	-= 1;
-								$both.css('font-size', fontSize + 'px');
-							}
+						while ($clone.width() > $this.width()) {
+							fontSize	-= 1;
+							$both.css('font-size', fontSize + 'px');
+						}
 
-							$clone.remove();
-						});
-					}, 3000);
+						$clone.remove();
+					});
 				}
 
 				addMessageToChat(getString('introductoryMessage'), authors.app, false);
@@ -667,12 +658,6 @@ angular.
 			else if (setUpFullScreenEvent) {
 				setUpFullScreenEvent();
 			}
-		});
-
-		$buttons.tap(function () {
-			setTimeout(function () {
-				$('md-button, md-button *').blur();
-			}, 500);
 		});
 
 		var observer	= new MutationObserver(function (mutations) {

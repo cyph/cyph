@@ -110,26 +110,6 @@ var isTablet	= isMobile && window.outerWidth > 767;
 
 var platformString	= isMobile ? 'mobile' : 'desktop';
 
-$.fn.tap	= function (callback, onOrOff, once) {
-	var $this		= $(this);
-	var eventName	= isMobile ? 'touchstart' : 'click';
-
-	if (!callback) {
-		$this.trigger(eventName);
-	}
-	else if (onOrOff === false) {
-		$this.off(eventName, callback);
-	}
-	else if (once === true) {
-		$this.one(eventName, callback);
-	}
-	else {
-		$this.on(eventName, callback);
-	}
-
-	return $this;
-}
-
 $('.' + platformString + '-only [deferred-src], [deferred-src].' + platformString + '-only').
 	each(function () {
 		var $this	= $(this);
