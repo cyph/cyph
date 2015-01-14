@@ -72,5 +72,5 @@ for language in languages:
 			translations[language][phrase]	= translation[phrase]
 
 f	= open('js/translations.js', 'w')
-f.write('translations = ' + json.dumps(translations) + ';')
+f.write('var translations = ' + json.dumps(translations) + ';')
 f.close()
