@@ -38,7 +38,8 @@ if (typeof translations != 'undefined') {
 		var translation	= translations[language];
 
 		for (var k in translation) {
-			o[htmlDecode(k)]	= htmlDecode(translation[k]);
+			// o[htmlDecode(k)]	= htmlDecode(translation[k]);
+			o[k]	= htmlDecode(translation[k]);
 		}
 
 		translation	= o;
