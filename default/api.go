@@ -239,7 +239,7 @@ func sendChannelMessage(c appengine.Context, channelId string, imData ImData) in
 	}
 
 	memcache.Delete(c, key)
-	return http.StatusInternalServerError
+	return http.StatusTeapot
 }
 
 /*** Tasks ***/
