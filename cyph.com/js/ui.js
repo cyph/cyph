@@ -129,14 +129,6 @@ angular.
 
 
 
-		$('md-button').tap(function () {
-			setTimeout(function () {
-				$('md-button, md-button *').blur();
-			}, 500);
-		});
-
-
-
 		/* Header / new cyph button animation */
 
 		if (isMobile) {
