@@ -1,6 +1,6 @@
-var defaultLanguage	= 'en';
+var defaultLanguage			= 'en';
 
-var language		= (
+var language				= (
 	navigator.language ||
 	navigator.userLanguage ||
 	navigator.browserLanguage ||
@@ -8,7 +8,9 @@ var language		= (
 	defaultLanguage
 ).toLowerCase();
 
-var languagePair	= language.split('-');
+var languagePair			= language.split('-');
+
+var translatedAttributes	= ['content', 'placeholder', 'aria-label', 'label'];
 
 function htmlDecode (value) {
 	return $('<div />').html(value).text();
@@ -48,14 +50,15 @@ if (typeof translations != 'undefined') {
 			var ngBind	= $this.attr('ng-bind');
 			var html	= $this.html().trim();
 
-			for (var i = 0 ; i < this.attributes.length ; ++i) {
-				var value	= this.attributes[i].value;
+			for (var i = 0 ; i < translatedAttributes.length ; ++i) {
+				var attr	= translatedAttributes[i];
+				var value	= $this.attr(attr);
 
 				if (value) {
 					var valueTranslation	= translation[value];
 
 					if (valueTranslation) {
-						this.attributes[i].value	= valueTranslation;
+						$this.attr(attr, valueTranslation);
 					}
 				}
 			}
