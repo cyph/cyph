@@ -117,8 +117,6 @@ ls */cron.yaml | sed 's/cron.yaml//g' | xargs -I% appcfg.py update_cron %
 
 if [ $all ] ; then
 	../deploy.sh
-else
-	../git.sh translations
 fi
 
 cd "${dir}"
