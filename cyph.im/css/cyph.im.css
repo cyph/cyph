@@ -421,7 +421,7 @@ html:not(.mobile) #error {
     font-weight: bold; }
 
 #chat-begin-message {
-  font-size: 14vw; }
+  font-size: 12vw; }
 
 /*** SpinKit animation: http://tobiasahlin.com/spinkit/ ***/
 .ellipsis-spinner {
