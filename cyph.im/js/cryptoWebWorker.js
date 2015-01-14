@@ -1,3 +1,7 @@
+function cryptoWebWorker () {
+
+
+
 window	= this;
 
 var onmessageQueue		= [];
@@ -28,7 +32,7 @@ function padMessageRemove (message) {
 function importScriptsAndRetry () {
 	for (var i = 0 ; i < arguments.length ; ++i) {
 		try {
-			importScripts(arguments[i])
+			importScripts(location.origin + arguments[i])
 		}
 		catch (e) {
 			if (e.name == 'NetworkError') {
@@ -249,3 +253,7 @@ function eventLoop () {
 }
 
 eventLoop();
+
+
+
+}
