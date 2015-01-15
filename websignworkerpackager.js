@@ -6,15 +6,15 @@ var args	= process.argv.slice(2);
 var path	= args[0];
 
 var newText	= fs.readFileSync(path).toString().replace(
-	/importScriptsAndRetry\(["'](.*?)["']\);/g,
+	/importScriptsAndRetry\(["'](.*?)["']\)/g,
 	function (match, value) {
-		console.log('REPLACING WEB WORKER IMPORT: ' + match);
+		// console.log('REPLACING WEB WORKER IMPORT: ' + match);
 
 		if (value[0] == '/') {
 			value	= value.slice(1);
 		}
 
-		return '(function () { ' + fs.readFileSync(value.split('?')[0]).toString() + ' }());';
+		return '(function () { ' + fs.readFileSync(value.split('?')[0]).toString() + ' }())';
 	}
 );
 
