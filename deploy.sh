@@ -85,6 +85,10 @@ for d in cyph.im ; do
 	mv index.html $d.pkg
 	mv websign.html index.html
 
+	shasum -p -a 512 $d.pkg | perl -pe 's/(.*) .*/\1/' > $d.hash
+	gpg --clearsign $d.hash
+	mv $d.hash.* $d.hash
+
 	cd ..
 done
 
