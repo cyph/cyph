@@ -6,13 +6,6 @@ api_version: go1
 inbound_services:
 - channel_presence
 
-handlers:
-- url: /analytics.js
-  static_files: analytics.js
-  upload: analytics.js
-  http_headers:
-    Cache-Control: public, max-age=0
-
 - url: /analytics/.*
   static_files: analytics.html
   upload: analytics.html
