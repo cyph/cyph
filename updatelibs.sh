@@ -33,7 +33,14 @@ mkdir .oldbower
 mv bower* .oldbower/
 
 bower install --save \
-	mnaamani/otr4-em \
-	openpgp
+	mnaamani/otr4-em
+	# openpgp
+
+rm -rf openpgp
+mkdir openpgp
+cd openpgp
+openpgpversion="$(curl -s https://github.com/openpgpjs/openpgpjs/releases/latest | perl -pe "s/.*tag\\/(.*?)['\"].*/\1/g")"
+wget "https://github.com/openpgpjs/openpgpjs/releases/download/${openpgpversion}/openpgp.min.js"
+wget "https://github.com/openpgpjs/openpgpjs/releases/download/${openpgpversion}/openpgp.worker.min.js"
 
 cd "${dir}"
