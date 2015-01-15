@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html manifest='websign.appcache'>
+	<body>
+		<script>
+			var req		= new XMLHttpRequest();
+			req.onload	= function () {
+				document.open('text/html');
+				document.write(req.responseText);
+				document.close();
+			};
+			req.open('get', '/cyph.im.pkg', true);
+			req.send();
+		</script>
+	</body>
+</html>
