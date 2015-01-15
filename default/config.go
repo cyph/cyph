@@ -7,6 +7,8 @@ import (
 var config = struct {
 	AllowedOrigins            map[string]none
 	BannedCountries           map[string]none
+	Continents                map[string]none
+	DefaultContinent          string
 	DefaultMemcacheExpiration time.Duration
 	IMConnectTimeout          time.Duration
 	MessageSendRetries        time.Duration
@@ -42,6 +44,18 @@ var config = struct {
 		"sd": empty,
 		"sy": empty,
 	},
+
+	map[string]none{
+		"af": empty,
+		/* "an": empty, */
+		"as": empty,
+		"eu": empty,
+		"na": empty,
+		"oc": empty,
+		"sa": empty,
+	},
+
+	"eu",
 
 	30,
 

@@ -17,6 +17,7 @@ func init() {
 	handleFunc("/", root)
 	handleFuncs("/amibanned", Handlers{methods.GET: amIBanned})
 	handleFuncs("/betasignups", Handlers{methods.PUT: betaSignup})
+	handleFuncs("/continent", Handlers{methods.GET: getContinent})
 	handleFuncs("/channels/{id}", Handlers{methods.POST: channelReceive})
 	handleFuncs("/errors", Handlers{methods.POST: logError})
 	handleFuncs("/ims", Handlers{methods.POST: imCreate})
@@ -32,7 +33,8 @@ func init() {
 /*** Handlers ***/
 
 func amIBanned(h HandlerArgs) (interface{}, int) {
-	_, isBanned := config.BannedCountries[geolocate(h)]
+	country, _ := geolocate(h)
+	_, isBanned := config.BannedCountries[country]
 	return isBanned, http.StatusOK
 }
 
@@ -105,6 +107,11 @@ func channelReceive(h HandlerArgs) (interface{}, int) {
 	}
 
 	return nil, http.StatusOK
+}
+
+func getContinent(h HandlerArgs) (interface{}, int) {
+	_, continent := geolocate(h)
+	return continent, http.StatusOK
 }
 
 func getStats(h HandlerArgs) (interface{}, int) {
