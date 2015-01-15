@@ -2,6 +2,9 @@ CACHE MANIFEST
 
 CACHE:
 # index.html
+# js/cryptoPolyfill.js
+# cryptolib/openpgp/openpgp.min.js
+# cryptolib/openpgp/openpgp.worker.min.js
 # websign.appcache
 
 NETWORK:
