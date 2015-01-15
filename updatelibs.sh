@@ -34,6 +34,6 @@ mv bower* .oldbower/
 
 bower install --save \
 	mnaamani/otr4-em \
-	openpgpjs
+	openpgp
 
 cd "${dir}"
