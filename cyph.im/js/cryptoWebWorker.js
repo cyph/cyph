@@ -11,7 +11,7 @@ var receivedMessages	= {};
 var currentMessageId	= 0;
 var incomingMessageId	= 0;
 var incomingMessagesMax	= 0;
-var otr, addressSpace, isInitiator, sharedSecret, processIncomingMessagesTimeoutID, isaac;
+var otr, addressSpace, isInitiator, sharedSecret, processIncomingMessagesTimeoutID;
 
 function getPadding () {
 	return Array.prototype.slice.call(

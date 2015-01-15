@@ -14,7 +14,7 @@ var newText	= fs.readFileSync(path).toString().replace(
 			value	= value.slice(1);
 		}
 
-		return '(function () { ' + fs.readFileSync(value.split('?')[0]).toString() + ' }())';
+		return fs.readFileSync(value.split('?')[0]).toString();
 	}
 );
 
