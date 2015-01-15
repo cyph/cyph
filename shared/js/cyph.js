@@ -154,3 +154,16 @@ $('[onenterpress]').each(function () {
 		});
 	}
 });
+
+$(function () {
+	$('button > a').each(function () {
+		var $this	= $(this);
+		var $button	= $this.parent();
+
+		$this.css('pointer-events', 'none');
+
+		$button.click(function () {
+			$this[0].click();
+		});
+	});
+});
