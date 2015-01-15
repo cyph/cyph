@@ -79,7 +79,7 @@ for d in cyph.im ; do
 	cd $d
 
 	# Merge imported libraries into Worker
-	node -e "(fs = require('fs')) && fs.writeFileSync('js/cryptoWebWorker.js', fs.readFileSync('js/cryptoWebWorker.js').toString().replace(/importScriptsAndRetry\\([\"']\/(.*?)[\"']\\);/g, function (match, value) { return '(function () { ' + fs.readFileSync(value.split('?')[0]).toString() + ' }());' }))"
+	../websignworkerpackager.js js/cryptoWebWorker.js
 
 	../websignpackager.py
 	mv index.html $d.pkg
