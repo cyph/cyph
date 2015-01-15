@@ -6,4 +6,4 @@
         root.libotr4Module = moduleScope.Module;
     }
 
-}).call();
+}).call(this);
