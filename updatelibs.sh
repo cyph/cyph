@@ -32,6 +32,8 @@ rm -rf .oldbower
 mkdir .oldbower
 mv bower* .oldbower/
 
-bower install --save mnaamani/otr4-em
+bower install --save \
+	mnaamani/otr4-em \
+	openpgpjs
 
 cd "${dir}"
