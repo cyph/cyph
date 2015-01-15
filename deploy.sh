@@ -89,6 +89,20 @@ for d in cyph.im ; do
 	gpg --clearsign $d.hash
 	mv $d.hash.* $d.hash
 
+	currentDir="$(pwd)"
+	cd ../../..
+	git clone git@github.com:cyph/cyph.github.io.git github.io
+	cd github.io
+	git reset --hard
+	git pull
+	cp -f $currentDir/$d.pkg websign/
+	cp -f $currentDir/$d.hash websign/
+	git add .
+	chmod -R 777 .
+	git commit -a -m 'package update'
+	git push
+	cd $currentDir
+
 	cd ..
 done
 
