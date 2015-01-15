@@ -1,5 +1,10 @@
 <!DOCTYPE html>
 <html manifest='websign.appcache'>
+	<head>
+		<meta charset='utf-8' />
+		<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1' />
+		<meta name='google' content='notranslate' />
+	</head>
 	<body>
 		<script src='js/cryptoPolyfill.js'></script>
 
@@ -24,8 +29,8 @@
 			/*** Helpers ***/
 
 			/* TODO: Do something else */
-			function abort () {
-				throw new Error('Aborted');
+			function abort (errorMessage) {
+				throw new Error('Aborted: ' + errorMessage);
 			}
 
 			function hash (data) {
@@ -65,12 +70,12 @@
 							document.close();
 						}
 						else {
-							abort();
+							abort('payload is bad');
 						}
 					});
 				}
 				else {
-					abort();
+					abort('no good hash');
 				}
 			});
 		</script>
