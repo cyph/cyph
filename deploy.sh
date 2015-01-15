@@ -84,6 +84,8 @@ for d in cyph.im ; do
 	../websignpackager.py
 	mv index.html $d.pkg
 	mv websign.html index.html
+
+	cd ..
 done
 
 
