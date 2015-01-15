@@ -14,9 +14,10 @@ f.close()
 
 
 for elem in html.select('script[src]'):
-	path	= elem.get('src')
-	if path[0] is '/':
+	path		= unicode(elem.get('src'))
+	if path[0] == '/':
 		path	= path[1:]
+	path		= unicode.split(path, '?')[0]
 
 	f			= open(path, 'r')
 	elem.string	= f.read()
@@ -25,9 +26,10 @@ for elem in html.select('script[src]'):
 	del elem['src']
 
 for elem in html.select('link[rel="stylesheet"]'):
-	path	= elem.get('href')
-	if path[0] is '/':
+	path		= unicode(elem.get('href'))
+	if path[0] == '/':
 		path	= path[1:]
+	path		= unicode.split(path, '?')[0]
 
 	f			= open(path, 'r')
 	elem.string	= f.read()
