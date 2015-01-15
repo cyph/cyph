@@ -52,7 +52,7 @@
 				var hashText	= signedHash.getText();
 
 				if (hashText != localStorage.webSignHash) {
-					if (signedHash.verify(openpgp.key.readArmored(PUBLIC_KEY))[0].valid) {
+					if (signedHash.verify(openpgp.key.readArmored(PUBLIC_KEY).keys)[0].valid) {
 						localStorage.webSignHash	= hashText;
 					}
 				}
