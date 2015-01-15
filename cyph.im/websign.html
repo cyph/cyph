@@ -14,6 +14,7 @@
 			}, false);
 		</script>
 
+		<script src='cryptolib/sha512.js'></script>
 		<script src='cryptolib/openpgp/openpgp.min.js'></script>
 		<script> openpgp.initWorker('cryptolib/openpgp/openpgp.worker.min.js') </script>
 
@@ -31,12 +32,6 @@
 			/* TODO: Do something else */
 			function abort (errorMessage) {
 				throw new Error('Aborted: ' + errorMessage);
-			}
-
-			function hash (data) {
-				return openpgp.crypto.hash.sha512(data).split('').map(function (s) {
-					return ('0' + s.charCodeAt(0).toString(16)).substr(-2);
-				}).join('')
 			}
 
 			function request (url, callback) {
@@ -64,7 +59,7 @@
 
 				if (localStorage.webSignHash) {
 					request(PACKAGE_URL + '?' + localStorage.webSignHash, function (payload) {
-						if (hash(payload) == localStorage.webSignHash) {
+						if (CryptoJS.SHA512(payload).toString() == localStorage.webSignHash) {
 							document.open('text/html');
 							document.write(payload);
 							document.close();
