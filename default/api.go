@@ -15,7 +15,6 @@ import (
 
 func init() {
 	handleFunc("/", root)
-	handleFuncs("/amibanned", Handlers{methods.GET: amIBanned})
 	handleFuncs("/betasignups", Handlers{methods.PUT: betaSignup})
 	handleFuncs("/continent", Handlers{methods.GET: getContinent})
 	handleFuncs("/channels/{id}", Handlers{methods.POST: channelReceive})
@@ -31,12 +30,6 @@ func init() {
 }
 
 /*** Handlers ***/
-
-func amIBanned(h HandlerArgs) (interface{}, int) {
-	country, _ := geolocate(h)
-	_, isBanned := config.BannedCountries[country]
-	return isBanned, http.StatusOK
-}
 
 func betaSignup(h HandlerArgs) (interface{}, int) {
 	betaSignup := getBetaSignupFromRequest(h)

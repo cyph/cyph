@@ -93,30 +93,12 @@ crypto.getRandomValues(randomSeed);
 
 var isInitiator	= getUrlState() == 'new';
 
-function dothemove () {
-	$.ajax({
-		error: function () {
-			setTimeout(dothemove, 100);
-		},
-		success: function (banned) {
-			if (banned.toString() == 'true') {
-				iAmBanned();
-			}
-			else {
-				otrWorker.postMessage({method: 0, message: {
-					cryptoCodes: localStorage.cryptoCodes,
-					randomSeed: randomSeed,
-					sharedSecret: sharedSecret,
-					isInitiator: isInitiator
-				}});
-			}
-		},
-		type: 'GET',
-		url: BASE_URL + 'amibanned'
-	});
-}
-
-dothemove();
+otrWorker.postMessage({method: 0, message: {
+	cryptoCodes: localStorage.cryptoCodes,
+	randomSeed: randomSeed,
+	sharedSecret: sharedSecret,
+	isInitiator: isInitiator
+}});
 
 /* End crypto init */
 
