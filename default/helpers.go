@@ -118,22 +118,32 @@ func generateLongId() string {
 	return csGuid(52)
 }
 
-func geolocate(h HandlerArgs) string {
+func geolocate(h HandlerArgs) (string, string) {
 	return geolocateIp(h.Request.RemoteAddr)
 }
 
-func geolocateIp(ip string) string {
+func geolocateIp(ip string) (string, string) {
 	record, err := geoipdb.Country(net.ParseIP(ip))
 	if err != nil {
-		return ""
+		return "", ""
 	}
-	return strings.ToLower(record.Country.IsoCode)
+
+	country := strings.ToLower(record.Country.IsoCode)
+	continent := strings.ToLower(record.Continent.Code)
+
+	if _, ok := config.Continents[continent]; !ok {
+		continent = config.DefaultContinent
+	}
+
+	return country, continent
 }
 
 func getBetaSignupFromRequest(h HandlerArgs) BetaSignup {
+	country, _ := geolocate(h)
+
 	return BetaSignup{
 		Comment:  h.Request.PostFormValue("Comment"),
-		Country:  geolocate(h),
+		Country:  country,
 		Email:    strings.ToLower(h.Request.PostFormValue("Email")),
 		Language: strings.ToLower(h.Request.PostFormValue("Language")),
 		Name:     h.Request.PostFormValue("Name"),
