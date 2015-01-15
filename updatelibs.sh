@@ -36,6 +36,8 @@ bower install --save \
 	mnaamani/otr4-em
 	# openpgp
 
+wget http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/sha512.js
+
 rm -rf openpgp
 mkdir openpgp
 cd openpgp
