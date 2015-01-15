@@ -1,0 +1,8 @@
+CACHE MANIFEST
+
+CACHE:
+# index.html
+# websign.appcache
+
+NETWORK:
+*
