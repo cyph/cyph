@@ -72,6 +72,22 @@ find . -name '*.css' | xargs -I% cleancss -o '%' '%'
 echo 'HTML Minify'
 find . -name '*.html' | xargs -I% html-minifier --minify-js --minify-css --remove-comments --collapse-whitespace '%' -o '%'
 
+
+
+### WebSign-related stuff
+for d in cyph.im ; do
+	cd $d
+
+	# Merge imported libraries into Worker
+	node -e "(fs = require('fs')) && fs.writeFileSync('js/cryptoWebWorker.js', fs.readFileSync('js/cryptoWebWorker.js').toString().replace(/importScriptsAndRetry\('\/(.*?)'\);/g, function (match, value) { return fs.readFileSync(value).toString() }))"
+
+	../websignpackager.py
+	mv index.html $d.pkg
+	mv websign.html index.html
+done
+
+
+
 ls */*.yaml | xargs -I% sed -i.bak 's/max-age=0/max-age=604800/g' %
 
 if [ $staging ] ; then
