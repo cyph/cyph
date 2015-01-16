@@ -54,7 +54,7 @@
 
 			var URL_PROTOCOL	= 'https://'
 			var CDN_URL_BASE	= '.cdn.cyph.com/websign/';
-			var HASH_PATH		= 'cyph.im.hash';
+			var HASH_PATH		= 'cyph.im.hash?';
 			var PACKAGE_PATH	= 'cyph.im.pkg?';
 
 			var PUBLIC_KEYS		= [
@@ -88,7 +88,7 @@
 
 				var cdnUrl	= URL_PROTOCOL + continent + CDN_URL_BASE;
 
-				request(cdnUrl + HASH_PATH, function (response) {
+				request(cdnUrl + HASH_PATH + Date.now(), function (response) {
 					var signedHash	= openpgp.cleartext.readArmored(response);
 					var hashText	= signedHash.getText();
 
