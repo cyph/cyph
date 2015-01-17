@@ -1,59 +1,49 @@
 <html><body>
 
-<script>
-	var events	= [];
-	window.addEventListener('message', function (e) { events.push(e) }, false);
-</script>
 <script src='/_ah/channel/jsapi'></script>
 <script>
-	var eventLoopDelay	= 50;
-	var channels		= {};
+	var channels	= {};
+
+	function postMessage (message, e) {
+		e.source.postMessage(message, e.origin);
+	}
 
 	function callback (eventName, e) {
 		return function () {
-			e.source.postMessage({
+			postMessage({
 				eventName: eventName,
 				args: Array.prototype.slice.call(arguments),
 				id: e.data.id
-			}, e.origin);
+			}, e);
 		};
 	}
 
-	function eventLoop () {
-		try {
-			if (events.length) {
-				var e	= events.shift();
+	window.addEventListener('message', function (e) {
+		switch (e.data.method) {
+			case 'new':
+				channels[e.data.id]	= {channel: new goog.appengine.Channel(e.data.token)};
+				break;
 
-				switch (e.data.method) {
-					case 'new':
-						channels[e.data.id]	= {channel: new goog.appengine.Channel(e.data.token)};
-						break;
+			case 'open':
+				var o	= channels[e.data.id];
 
-					case 'open':
-						var o	= channels[e.data.id];
+				o.socket	= o.channel.open({
+					onopen: callback('onopen'),
+					onmessage: callback('onmessage'),
+					onerror: callback('onerror'),
+					onclose: callback('onclose')
+				});
+				break;
 
-						o.socket	= o.channel.open({
-							onopen: callback('onopen'),
-							onmessage: callback('onmessage'),
-							onerror: callback('onerror'),
-							onclose: callback('onclose')
-						});
+			case 'close':
+				channels[e.data.id].socket.close();
+				break;
 
-						eventLoopDelay	= 500;
-						break;
-
-					case 'close':
-						channels[e.data.id].socket.close();
-						break;
-				}
-			}
+			default:
+				postMessage({pong: true});
+				break;
 		}
-		finally {
-			setTimeout(eventLoop, eventLoopDelay);
-		}
-	}
-
-	eventLoop();
+	}, false);
 </script>
 
 </body></html>
