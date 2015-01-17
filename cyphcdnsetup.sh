@@ -17,7 +17,7 @@ sed -i 's/\/\/.*archive.ubuntu.com/\/\/archive.ubuntu.com/g' /etc/apt/sources.li
 bash -c 'echo "deb http://archive.ubuntu.com/ubuntu/ trusty restricted" >> /etc/apt/sources.list'
 
 export DEBIAN_FRONTEND=noninteractive
-apt-add-repository ppa:nginx/development
+apt-add-repository -y ppa:nginx/development
 apt-get -y --force-yes update
 apt-get -y --force-yes dist-upgrade
 apt-get -y --force-yes install nginx openssl unzip
