@@ -19,6 +19,12 @@ handlers:
   http_headers:
     Cache-Control: public, max-age=0
 
+- url: /channelframe
+  static_files: channel.html
+  upload: channel.html
+  http_headers:
+    Cache-Control: public, max-age=0
+
 - url: /stats[/]?
   login: admin
   script: _go_app

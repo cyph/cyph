@@ -7,17 +7,17 @@ cd $(cd "$(dirname "$0")"; pwd) # $(dirname `readlink -f "${0}" || realpath "${0
 
 all=''
 nobackend=''
-staging=true
+test=true
 if [ "${1}" == '--prod' ] ; then
-	staging=''
+	test=''
 	shift
 elif [ "${1}" == '--prodnobackend' ] ; then
-	staging=''
+	test=''
 	nobackend=true
 	shift
 elif [ "${1}" == '--all' ] ; then
 	all=true
-	staging=''
+	test=''
 	shift
 fi
 
@@ -74,8 +74,8 @@ find . -name '*.html' | xargs -I% html-minifier --minify-js --minify-css --remov
 
 ls */*.yaml | xargs -I% sed -i.bak 's/max-age=0/max-age=604800/g' %
 
-if [ $staging ] ; then
-	ls cyph.im/js/*.js | xargs -I% sed -i.bak 's/api.cyph.com/staging-dot-cyphme.appspot.com/g' %
+if [ $test ] ; then
+	ls cyph.im/js/*.js | xargs -I% sed -i.bak "s/api.cyph.com/${branch}-dot-cyphme.appspot.com/g" %
 
 	# ls */*.yaml | xargs -I% sed -i.bak 's/version: prod/version: staging/g' %
 	for yaml in `ls */cyph*.yaml` ; do
