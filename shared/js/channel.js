@@ -1,21 +1,43 @@
-var channelFrameOrigin		= BASE_URL.slice(0, -1);
-
-var channelFrame			= document.createElement('iframe');
-channelFrame.style.display	= 'none';
-channelFrame.src			= channelFrameOrigin + '/channelframe';
-
-document.body.appendChild(channelFrame);
-
-
-var openChannels	= [];
-
-function channelFramePostMessage (message) {
-	channelFrame.contentWindow.postMessage(message, channelFrameOrigin);
+var goog;
+if (!goog) {
+	goog	= {};
+}
+if (!goog.appengine) {
+	goog.appengine	= {};
 }
 
+goog.appengine.Channel	= (function () {
+
+
+var channelFrame				= document.createElement('iframe');
+var channelFrameOrigin			= BASE_URL.slice(0, -1);
+var isChannelFrameReady			= false;
+var channelFrameMessageQueue	= [];
+var openChannels				= [];
+var channelFramePingInterval;
+
+function channelFramePostMessage (message, ping) {
+	if (isChannelFrameReady || ping) {
+		channelFrame.contentWindow.postMessage(message, channelFrameOrigin);
+	}
+	else {
+		channelFrameMessageQueue.push(message);
+	}
+}
 
 window.addEventListener('message', function (e) {
 	if (e.origin == channelFrameOrigin) {
+		if (e.data.ready) {
+			clearInterval(channelFramePingInterval);
+			isChannelFrameReady	= true;
+
+			while (channelFrameMessageQueue.length) {
+				channelFramePostMessage(channelFrameMessageQueue.shift());
+			}
+
+			return;
+		}
+
 		var o	= openChannels[e.data.id];
 
 		if (o) {
@@ -29,22 +51,24 @@ window.addEventListener('message', function (e) {
 });
 
 
-var goog;
-if (!goog) {
-	goog	= {};
-}
-if (!goog.appengine) {
-	goog.appengine	= {};
-}
+channelFrame.style.display	= 'none';
+channelFrame.src			= channelFrameOrigin + '/channelframe';
 
-goog.appengine.Channel	= function (token) {
+document.body.appendChild(channelFrame);
+
+channelFramePingInterval	= setInterval(function () {
+	channelFramePostMessage(null, true);
+}, 100);
+
+
+function channel (token) {
 	this.id	= openChannels.length;
 	openChannels.push(null);
 
 	channelFramePostMessage({method: 'new', token: token, id: this.id});
 }
 
-goog.appengine.Channel.prototype.open	= function (o) {
+channel.prototype.open	= function (o) {
 	var id	= this.id;
 
 	openChannels[id]	= o;
@@ -56,3 +80,9 @@ goog.appengine.Channel.prototype.open	= function (o) {
 
 	return o;
 };
+
+
+return channel;
+
+
+}());
