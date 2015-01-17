@@ -4,13 +4,13 @@
 <script>
 	var channels	= {};
 
-	function postMessage (message, e) {
+	function postMessageToOrigin (message, e) {
 		e.source.postMessage(message, e.origin);
 	}
 
 	function callback (eventName, e) {
 		return function () {
-			postMessage({
+			postMessageToOrigin({
 				eventName: eventName,
 				args: Array.prototype.slice.call(arguments),
 				id: e.data.id
@@ -40,7 +40,7 @@
 				break;
 
 			default:
-				postMessage({pong: true});
+				postMessageToOrigin({pong: true}, e);
 				break;
 		}
 	}, false);
