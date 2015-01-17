@@ -76,6 +76,7 @@ find . -name '*.html' | xargs -I% html-minifier --minify-js --minify-css --remov
 ls */*.yaml | xargs -I% sed -i.bak 's/max-age=0/max-age=604800/g' %
 
 if [ $test ] ; then
+	sed -i.bak "s/staging/${branch}/g" default/config.go
 	ls cyph.im/js/*.js | xargs -I% sed -i.bak "s/api.cyph.com/${branch}-dot-cyphme.appspot.com/g" %
 
 	# ls */*.yaml | xargs -I% sed -i.bak 's/version: prod/version: staging/g' %
