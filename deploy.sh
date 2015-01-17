@@ -73,6 +73,20 @@ echo 'HTML Minify'
 find . -name '*.html' | xargs -I% html-minifier --minify-js --minify-css --remove-comments --collapse-whitespace '%' -o '%'
 
 
+ls */*.yaml | xargs -I% sed -i.bak 's/max-age=0/max-age=604800/g' %
+
+if [ $test ] ; then
+	ls cyph.im/js/*.js | xargs -I% sed -i.bak "s/api.cyph.com/${branch}-dot-cyphme.appspot.com/g" %
+
+	# ls */*.yaml | xargs -I% sed -i.bak 's/version: prod/version: staging/g' %
+	for yaml in `ls */cyph*.yaml` ; do
+		cat $yaml | perl -pe 's/(- url: .*)/\1\n  login: admin/g' > $yaml.new
+		mv $yaml.new $yaml
+	done
+else
+	ls */*.yaml | xargs -I% sed -i.bak 's/version: staging/version: prod/g' %
+fi
+
 
 ### WebSign-related stuff
 for d in cyph.im ; do
@@ -107,20 +121,8 @@ for d in cyph.im ; do
 done
 
 
+find . -name '*.bak' | xargs rm
 
-ls */*.yaml | xargs -I% sed -i.bak 's/max-age=0/max-age=604800/g' %
-
-if [ $test ] ; then
-	ls cyph.im/js/*.js | xargs -I% sed -i.bak "s/api.cyph.com/${branch}-dot-cyphme.appspot.com/g" %
-
-	# ls */*.yaml | xargs -I% sed -i.bak 's/version: prod/version: staging/g' %
-	for yaml in `ls */cyph*.yaml` ; do
-		cat $yaml | perl -pe 's/(- url: .*)/\1\n  login: admin/g' > $yaml.new
-		mv $yaml.new $yaml
-	done
-else
-	ls */*.yaml | xargs -I% sed -i.bak 's/version: staging/version: prod/g' %
-fi
 
 if [ "${nobackend}" == '' ] ; then
 	cd default
