@@ -1,8 +1,13 @@
 <html><body>
 
+<script>
+	var events	= [];
+	window.addEventListener('message', function (e) { events.push(e) }, false);
+</script>
 <script src='/_ah/channel/jsapi'></script>
 <script>
-	var channels	= {};
+	var eventLoopDelay	= 50;
+	var channels		= {};
 
 	function callback (eventName, e) {
 		return function () {
@@ -14,28 +19,41 @@
 		};
 	}
 
-	window.addEventListener('message', function (e) {
-		switch (e.data.method) {
-			case 'new':
-				channels[e.data.id]	= {channel: new goog.appengine.Channel(e.data.token)};
-				break;
+	function eventLoop () {
+		try {
+			if (events.length) {
+				var e	= events.shift();
 
-			case 'open':
-				var o	= channels[e.data.id];
+				switch (e.data.method) {
+					case 'new':
+						channels[e.data.id]	= {channel: new goog.appengine.Channel(e.data.token)};
+						break;
 
-				o.socket	= o.channel.open({
-					onopen: callback('onopen'),
-					onmessage: callback('onmessage'),
-					onerror: callback('onerror'),
-					onclose: callback('onclose')
-				});
-				break;
+					case 'open':
+						var o	= channels[e.data.id];
 
-			case 'close':
-				channels[e.data.id].socket.close();
-				break;
+						o.socket	= o.channel.open({
+							onopen: callback('onopen'),
+							onmessage: callback('onmessage'),
+							onerror: callback('onerror'),
+							onclose: callback('onclose')
+						});
+
+						eventLoopDelay	= 1000;
+						break;
+
+					case 'close':
+						channels[e.data.id].socket.close();
+						break;
+				}
+			}
 		}
-	}, false);
+		finally {
+			setTimeout(eventLoop, eventLoopDelay);
+		}
+	}
+
+	eventLoop();
 </script>
 
 </body></html>
