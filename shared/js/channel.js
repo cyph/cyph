@@ -7,7 +7,7 @@ channelFrame.src			= channelFrameOrigin + '/channelframe';
 document.body.appendChild(channelFrame);
 
 
-var openChannels	= {};
+var openChannels	= [];
 
 function channelFramePostMessage (message) {
 	channelFrame.contentWindow.postMessage(message, channelFrameOrigin);
@@ -38,7 +38,9 @@ if (!goog.appengine) {
 }
 
 goog.appengine.Channel	= function (token) {
-	this.id	= Date.now() + '-' + crypto.getRandomValues(new Uint32Array(1))[0];
+	this.id	= openChannels.length;
+	openChannels.push(null);
+
 	channelFramePostMessage({method: 'new', token: token, id: this.id});
 }
 
