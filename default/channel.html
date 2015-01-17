@@ -1,0 +1,41 @@
+<html><body>
+
+<script src='/_ah/channel/jsapi'></script>
+<script>
+	var channels	= {};
+
+	function callback (eventName, e) {
+		return function () {
+			e.source.postMessage({
+				eventName: eventName,
+				args: Array.prototype.slice.call(arguments),
+				id: e.data.id
+			}, e.origin);
+		};
+	}
+
+	window.addEventListener('message', function (e) {
+		switch (e.data.method) {
+			case 'new':
+				channels[e.data.id]	= {channel: new goog.appengine.Channel(e.data.token)};
+				break;
+
+			case 'open':
+				var o	= channels[e.data.id];
+
+				o.socket	= o.channel.open({
+					onopen: callback('onopen'),
+					onmessage: callback('onmessage'),
+					onerror: callback('onerror'),
+					onclose: callback('onclose')
+				});
+				break;
+
+			case 'close':
+				channels[e.data.id].socket.close();
+				break;
+		}
+	}, false);
+</script>
+
+</body></html>
