@@ -28,10 +28,10 @@
 				var o	= channels[e.data.id];
 
 				o.socket	= o.channel.open({
-					onopen: callback('onopen'),
-					onmessage: callback('onmessage'),
-					onerror: callback('onerror'),
-					onclose: callback('onclose')
+					onopen: callback('onopen', e),
+					onmessage: callback('onmessage', e),
+					onerror: callback('onerror', e),
+					onclose: callback('onclose', e)
 				});
 				break;
 
