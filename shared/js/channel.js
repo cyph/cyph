@@ -18,7 +18,7 @@ var channelFramePingInterval;
 
 function channelFramePostMessage (message, ping) {
 	if (isChannelFrameReady || ping) {
-		channelFrame.contentWindow.postMessage(message, '*');
+		channelFrame.contentWindow.postMessage(message, channelFrameOrigin);
 	}
 	else {
 		channelFrameMessageQueue.push(message);
@@ -27,7 +27,7 @@ function channelFramePostMessage (message, ping) {
 
 window.addEventListener('message', function (e) {
 	if (e.origin == channelFrameOrigin) {
-		if (e.data.ready) {
+		if (e.data.pong) {
 			clearInterval(channelFramePingInterval);
 			isChannelFrameReady	= true;
 
