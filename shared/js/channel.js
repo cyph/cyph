@@ -18,7 +18,7 @@ var channelFramePingInterval;
 
 function channelFramePostMessage (message, ping) {
 	if (isChannelFrameReady || ping) {
-		channelFrame.contentWindow.postMessage(message, channelFrameOrigin);
+		channelFrame.contentWindow.postMessage(message, '*');
 	}
 	else {
 		channelFrameMessageQueue.push(message);
