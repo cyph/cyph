@@ -57,7 +57,7 @@ channelFrame.src			= channelFrameOrigin + '/channelframe';
 document.body.appendChild(channelFrame);
 
 channelFramePingInterval	= setInterval(function () {
-	channelFramePostMessage(null, true);
+	channelFramePostMessage({}, true);
 }, 100);
 
 
