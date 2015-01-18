@@ -248,7 +248,7 @@ function eventLoop () {
 		}
 	}
 	finally {
-		setTimeout(eventLoop, 100);
+		setTimeout(eventLoop, 50);
 	}
 }
 

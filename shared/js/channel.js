@@ -13,6 +13,7 @@ var channelFrame				= document.createElement('iframe');
 var channelFrameOrigin			= BASE_URL.slice(0, -1);
 var isChannelFrameReady			= false;
 var channelFrameMessageQueue	= [];
+var receiveMessageQueue			= [];
 var openChannels				= [];
 var channelFramePingInterval;
 
@@ -27,28 +28,44 @@ function channelFramePostMessage (message, ping) {
 
 window.addEventListener('message', function (e) {
 	if (e.origin == channelFrameOrigin) {
-		if (e.data.pong) {
-			clearInterval(channelFramePingInterval);
-			isChannelFrameReady	= true;
+		receiveMessageQueue.push(e);
+	}
+});
 
-			while (channelFrameMessageQueue.length) {
-				channelFramePostMessage(channelFrameMessageQueue.shift());
+
+function eventLoop () {
+	try {
+		if (receiveMessageQueue.length) {
+			var e	= receiveMessageQueue.shift();
+
+			if (e.data.pong) {
+				clearInterval(channelFramePingInterval);
+				isChannelFrameReady	= true;
+
+				while (channelFrameMessageQueue.length) {
+					channelFramePostMessage(channelFrameMessageQueue.shift());
+				}
+
+				return;
 			}
 
-			return;
-		}
+			var o	= openChannels[e.data.id];
 
-		var o	= openChannels[e.data.id];
+			if (o) {
+				var f	= o[e.data.eventName];
 
-		if (o) {
-			var f	= o[e.data.eventName];
-
-			if (f) {
-				f.apply(null, e.data.args);
+				if (f) {
+					f.apply(null, e.data.args);
+				}
 			}
 		}
 	}
-});
+	finally {
+		setTimeout(eventLoop, 50);
+	}
+}
+
+eventLoop();
 
 
 channelFrame.style.display	= 'none';
