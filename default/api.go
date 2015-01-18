@@ -240,19 +240,14 @@ func sendChannelMessage(c appengine.Context, channelId string, imData ImData) in
 	for i = 0; i < config.MessageSendRetries; i++ {
 		/* Make sure only one message is sent over this channel at a time */
 		mutexValue, _ := memcache.Increment(c, mutexKey, 1, 0)
-		if mutexValue != 1 {
-			mutexPosition := mutexValue - 1
-			for {
-				time.Sleep(25 * time.Millisecond)
-
-				if mutexValue, _ = memcache.Increment(c, mutexKey, 0, 0); mutexValue == mutexPosition {
-					break
-				}
-			}
+		for mutexValue != 1 {
+			memcache.Increment(c, mutexKey, -1, 0)
+			time.Sleep(50 * time.Millisecond)
+			mutexValue, _ = memcache.Increment(c, mutexKey, 1, 0)
 		}
 
 		channel.SendJSON(c, channelId, imData)
-		time.Sleep(25 * time.Millisecond)
+		time.Sleep(50 * time.Millisecond)
 
 		memcache.Increment(c, mutexKey, -1, 0)
 
