@@ -375,7 +375,7 @@ function eventLoop () {
 
 		/*** send ***/
 
-		if (sendChannelDataQueue.length && pendingChannelMessages < 3) {
+		if (sendChannelDataQueue.length && pendingChannelMessages < 1) {
 			var item	= sendChannelDataQueue.shift();
 			var data	= item.data;
 			var opts	= item.opts;
@@ -407,10 +407,13 @@ function eventLoop () {
 
 			pongReceived	= true;
 
+			if (o.Id) {
+				$.ajax({type: 'PUT', url: BASE_URL + 'messages/' + o.Id});
+			}
+
 			if (!o.Id || !receivedMessages[o.Id]) {
 				if (o.Id) {
 					receivedMessages[o.Id]	= true;
-					$.ajax({type: 'PUT', url: BASE_URL + 'messages/' + o.Id});
 				}
 
 				if (o.Misc == channelDataMisc.ping) {
