@@ -14,7 +14,6 @@ cd $(cd "$(dirname "$0")"; pwd) # $(dirname `readlink -f "${0}" || realpath "${0
 
 sed -i 's/# deb /deb /g' /etc/apt/sources.list
 sed -i 's/\/\/.*archive.ubuntu.com/\/\/archive.ubuntu.com/g' /etc/apt/sources.list
-bash -c 'echo "deb http://archive.ubuntu.com/ubuntu/ trusty restricted" >> /etc/apt/sources.list'
 
 export DEBIAN_FRONTEND=noninteractive
 apt-add-repository -y ppa:nginx/development
