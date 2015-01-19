@@ -49,6 +49,8 @@ function importScriptsAndRetry () {
 onmessage	= function (e) { onmessageQueue.push(e) };
 
 function eventLoop () {
+	var delay	= 10;
+
 	try {
 		/*** Original onmessage logic ****/
 
@@ -234,21 +236,28 @@ function eventLoop () {
 
 		/*** otr.send ***/
 
-		if (outgoingMessages.length) {
+		else if (outgoingMessages.length) {
 			otr.send(outgoingMessages.shift());
 		}
 
 
 		/*** otr.recv ***/
 
-		if (incomingMessageId <= incomingMessagesMax && incomingMessages[incomingMessageId]) {
+		else if (incomingMessageId <= incomingMessagesMax && incomingMessages[incomingMessageId]) {
 			otr.recv(incomingMessages[incomingMessageId]);
 			delete incomingMessages[incomingMessageId];
 			++incomingMessageId;
 		}
+
+
+		/*** else ***/
+
+		else {
+			delay	= 50;
+		}
 	}
 	finally {
-		setTimeout(eventLoop, 50);
+		setTimeout(eventLoop, delay);
 	}
 }
 
