@@ -220,7 +220,6 @@ func channelCloseHelper(c appengine.Context, idBase string) {
 	for _, i := range []string{"0", "1"} {
 		id := idBase + i
 		sendChannelMessage(c, id, ImData{Destroy: true})
-		memcache.Delete(c, "mutex-"+id)
 	}
 }
 
@@ -234,22 +233,9 @@ func sendChannelMessage(c appengine.Context, channelId string, imData ImData) in
 
 	memcache.Increment(c, key, 1, 0)
 
-	mutexKey := "mutex-" + channelId
-
 	var i time.Duration
 	for i = 0; i < config.MessageSendRetries; i++ {
-		/* Make sure only one message is sent over this channel at a time */
-		mutexValue, _ := memcache.Increment(c, mutexKey, 1, 0)
-		for mutexValue != 1 {
-			memcache.Increment(c, mutexKey, -1, 0)
-			time.Sleep(50 * time.Millisecond)
-			mutexValue, _ = memcache.Increment(c, mutexKey, 1, 0)
-		}
-
 		channel.SendJSON(c, channelId, imData)
-		time.Sleep(50 * time.Millisecond)
-
-		memcache.Increment(c, mutexKey, -1, 0)
 
 		for j := 0; j < 20; j++ {
 			time.Sleep(50 * time.Millisecond)
