@@ -324,6 +324,8 @@ function setUpChannel (channelData) {
 /* Event loop for processing incoming and outgoing messages */
 
 function eventLoop () {
+	var delay	= 10;
+
 	try {
 		/*** otrWorker onmessage ***/
 
@@ -381,7 +383,7 @@ function eventLoop () {
 
 		/*** send ***/
 
-		if (sendChannelDataQueue.length && pendingChannelMessages < 3) {
+		else if (sendChannelDataQueue.length && pendingChannelMessages < 2) {
 			var item	= sendChannelDataQueue.shift();
 			var data	= item.data;
 			var opts	= item.opts;
@@ -408,7 +410,7 @@ function eventLoop () {
 
 		/*** receive ***/
 
-		if (receiveChannelDataQueue.length) {
+		else if (receiveChannelDataQueue.length) {
 			var o	= JSON.parse(receiveChannelDataQueue.shift().data);
 
 			pongReceived	= true;
@@ -453,9 +455,16 @@ function eventLoop () {
 				}
 			}
 		}
+
+
+		/*** else ***/
+
+		else {
+			delay	= 50;
+		}
 	}
 	finally {
-		setTimeout(eventLoop, 50);
+		setTimeout(eventLoop, delay);
 	}
 }
 
