@@ -14,7 +14,7 @@ var channelDataMisc	= {
 	donetyping: '5'
 };
 
-var channel, isBanned, isConnected, isOtrReady, pongReceived, shouldSendQueryMessage, socket;
+var channel, isBanned, isConnected, isKill, isOtrReady, pongReceived, shouldSendQueryMessage, socket;
 
 
 /* Init crypto */
@@ -34,12 +34,29 @@ if (!sharedSecret || sharedSecret.length != sharedSecretLength) {
 	;
 }
 
+var otrWorkerMessageCount	= 0;
+var otrWorkerUnacked		= {};
+function otrWorkerPostMessage (o) {
+	if (!o.ACK_ID) {
+		o.ACK_ID	= otrWorkerMessageCount++;
+		otrWorkerUnacked[o.ACK_ID]	= true;
+	}
+
+	otrWorker.postMessage(o);
+
+	setTimeout(function () {
+		if (otrWorkerUnacked[o.ACK_ID]) {
+			otrWorkerPostMessage(o);
+		}
+	}, 500);
+}
+
 otrWorker.onmessage	= function (e) { otrWorkerOnMessageQueue.push(e) };
 
 var otr	= {
 	sendQueryMsg: function () {
 		if (isOtrReady) {
-			otrWorker.postMessage({method: 1});
+			otrWorkerPostMessage({method: 1});
 		}
 		else {
 			shouldSendQueryMessage	= true;
@@ -47,7 +64,7 @@ var otr	= {
 	},
 	sendMsg: function (message) {
 		if (isConnected) {
-			otrWorker.postMessage({method: 2, message: message});
+			otrWorkerPostMessage({method: 2, message: message});
 		}
 		else {
 			preConnectMessageSendQueue.push(message);
@@ -55,7 +72,7 @@ var otr	= {
 	},
 	receiveMsg: function (message) {
 		if (isOtrReady) {
-			otrWorker.postMessage({method: 3, message: message});
+			otrWorkerPostMessage({method: 3, message: message});
 		}
 		else {
 			preConnectMessageReceiveQueue.push(message);
@@ -79,7 +96,7 @@ function dothemove () {
 				iAmBanned();
 			}
 			else {
-				otrWorker.postMessage({method: 0, message: {
+				otrWorkerPostMessage({method: 0, message: {
 					cryptoCodes: localStorage.cryptoCodes,
 					randomSeed: randomSeed,
 					sharedSecret: sharedSecret,
@@ -130,7 +147,7 @@ function pingPong () {
 	setTimeout(function () {
 		sendChannelData({Misc: channelDataMisc.ping});
 		setTimeout(pingPong, 60000);
-	}, crypto.getRandomValues(new Uint8Array(1))[0] * 250);
+	}, 30000 + crypto.getRandomValues(new Uint8Array(1))[0] * 250);
 }
 
 
@@ -267,6 +284,7 @@ function setUpWebRTC (isInitiator) {
 function socketClose () {
 	closeChat(function () {
 		socket.close();
+		isKill	= true;
 	});
 }
 
@@ -327,6 +345,10 @@ function eventLoop () {
 			var e	= otrWorkerOnMessageQueue.shift();
 
 			switch (e.data.eventName) {
+				case 'ack':
+					delete otrWorkerUnacked[e.data.message];
+					break;
+
 				case 'ui':
 					if (e.data.message) {
 						var channelDataSplit	= e.data.message.split(CHANNEL_DATA_PREFIX);
@@ -377,10 +399,12 @@ function eventLoop () {
 
 		/*** send ***/
 
-		else if (sendChannelDataQueue.length && pendingChannelMessages < 2) {
+		else if (!isKill && sendChannelDataQueue.length && pendingChannelMessages < 1) {
 			var item	= sendChannelDataQueue.shift();
 			var data	= item.data;
 			var opts	= item.opts;
+
+			data.Id		= Date.now() + '-' + crypto.getRandomValues(new Uint32Array(1))[0];
 
 			++pendingChannelMessages;
 
@@ -409,15 +433,7 @@ function eventLoop () {
 
 			pongReceived	= true;
 
-			if (o.Id) {
-				$.ajax({type: 'PUT', url: BASE_URL + 'messages/' + o.Id});
-			}
-
 			if (!o.Id || !receivedMessages[o.Id]) {
-				if (o.Id) {
-					receivedMessages[o.Id]	= true;
-				}
-
 				if (o.Misc == channelDataMisc.ping) {
 					sendChannelData({Misc: channelDataMisc.pong});
 				}
@@ -447,6 +463,14 @@ function eventLoop () {
 				if (o.Destroy) {
 					socketClose();
 				}
+
+				if (o.Id) {
+					receivedMessages[o.Id]	= true;
+				}
+			}
+
+			if (o.Id) {
+				$.ajax({type: 'PUT', url: BASE_URL + 'messages/' + o.Id});
 			}
 		}
 

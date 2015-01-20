@@ -53,7 +53,17 @@ function importScriptsAndRetry () {
 }
 
 
-onmessage	= function (e) { onmessageQueue.push(e) };
+var ackedMessages	= {};
+
+onmessage	= function (e) {
+	if (!ackedMessages[e.data.ACK_ID]) {
+		onmessageQueue.push(e);
+		ackedMessages[e.data.ACK_ID]	= true;
+	}
+
+	postMessage({eventName: 'ack', message: e.data.ACK_ID});
+};
+
 
 function eventLoop () {
 	var delay	= 10;
