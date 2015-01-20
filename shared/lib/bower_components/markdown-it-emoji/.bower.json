@@ -1,0 +1,41 @@
+{
+  "name": "markdown-it-emoji",
+  "main": "dist/markdown-it-emoji.js",
+  "homepage": "https://github.com/markdown-it/markdown-it-emoji",
+  "description": "Emoji and emoticon plugin for markdown-it markdown parser.",
+  "keywords": [
+    "markdown-it-plugin",
+    "markdown-it",
+    "markdown",
+    "emoji",
+    "emojies",
+    "emoticon",
+    "emoticons"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "benchmark",
+    "bower_components",
+    "coverage",
+    "demo",
+    "docs",
+    "lib",
+    "node_modules",
+    "support",
+    "test",
+    "Makefile",
+    "index*"
+  ],
+  "version": "0.1.3",
+  "_release": "0.1.3",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.1.3",
+    "commit": "98e40e8fba26d5ab9c19659b17e915b65101f709"
+  },
+  "_source": "git://github.com/markdown-it/markdown-it-emoji.git",
+  "_target": "~0.1.3",
+  "_originalSource": "markdown-it-emoji",
+  "_direct": true
+}
