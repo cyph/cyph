@@ -34,29 +34,12 @@ if (!sharedSecret || sharedSecret.length != sharedSecretLength) {
 	;
 }
 
-var otrWorkerMessageCount	= 0;
-var otrWorkerUnacked		= {};
-function otrWorkerPostMessage (o) {
-	if (!o.ACK_ID) {
-		o.ACK_ID	= otrWorkerMessageCount++;
-		otrWorkerUnacked[o.ACK_ID]	= true;
-	}
-
-	otrWorker.postMessage(o);
-
-	setTimeout(function () {
-		if (otrWorkerUnacked[o.ACK_ID]) {
-			otrWorkerPostMessage(o);
-		}
-	}, 500);
-}
-
 otrWorker.onmessage	= function (e) { otrWorkerOnMessageQueue.push(e) };
 
 var otr	= {
 	sendQueryMsg: function () {
 		if (isOtrReady) {
-			otrWorkerPostMessage({method: 1});
+			otrWorker.postMessage({method: 1});
 		}
 		else {
 			shouldSendQueryMessage	= true;
@@ -64,7 +47,7 @@ var otr	= {
 	},
 	sendMsg: function (message) {
 		if (isConnected) {
-			otrWorkerPostMessage({method: 2, message: message});
+			otrWorker.postMessage({method: 2, message: message});
 		}
 		else {
 			preConnectMessageSendQueue.push(message);
@@ -72,7 +55,7 @@ var otr	= {
 	},
 	receiveMsg: function (message) {
 		if (isOtrReady) {
-			otrWorkerPostMessage({method: 3, message: message});
+			otrWorker.postMessage({method: 3, message: message});
 		}
 		else {
 			preConnectMessageReceiveQueue.push(message);
@@ -96,7 +79,7 @@ function dothemove () {
 				iAmBanned();
 			}
 			else {
-				otrWorkerPostMessage({method: 0, message: {
+				otrWorker.postMessage({method: 0, message: {
 					cryptoCodes: localStorage.cryptoCodes,
 					randomSeed: randomSeed,
 					sharedSecret: sharedSecret,
@@ -345,10 +328,6 @@ function eventLoop () {
 			var e	= otrWorkerOnMessageQueue.shift();
 
 			switch (e.data.eventName) {
-				case 'ack':
-					delete otrWorkerUnacked[e.data.message];
-					break;
-
 				case 'ui':
 					if (e.data.message) {
 						var channelDataSplit	= e.data.message.split(CHANNEL_DATA_PREFIX);
