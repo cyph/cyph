@@ -34,44 +34,38 @@ window.addEventListener('message', function (e) {
 
 
 function eventLoop () {
-	var delay	= 10;
+	if (receiveMessageQueue.length) {
+		var e	= receiveMessageQueue.shift();
 
-	try {
-		if (receiveMessageQueue.length) {
-			var e	= receiveMessageQueue.shift();
+		if (e.data.pong) {
+			clearInterval(channelFramePingInterval);
+			isChannelFrameReady	= true;
 
-			if (e.data.pong) {
-				clearInterval(channelFramePingInterval);
-				isChannelFrameReady	= true;
-
-				while (channelFrameMessageQueue.length) {
-					channelFramePostMessage(channelFrameMessageQueue.shift());
-				}
-
-				return;
+			while (channelFrameMessageQueue.length) {
+				channelFramePostMessage(channelFrameMessageQueue.shift());
 			}
 
-			var o	= openChannels[e.data.id];
+			return;
+		}
 
-			if (o) {
-				var f	= o[e.data.eventName];
+		var o	= openChannels[e.data.id];
 
-				if (f) {
-					f.apply(null, e.data.args);
-				}
+		if (o) {
+			var f	= o[e.data.eventName];
+
+			if (f) {
+				f.apply(null, e.data.args);
 			}
 		}
-
-		else {
-			delay	= 50;
-		}
-	}
-	finally {
-		setTimeout(eventLoop, delay);
 	}
 }
 
-eventLoop();
+if (typeof TICK_EVENT != 'undefined') {
+	document.addEventListener(TICK_EVENT.type, eventLoop);
+}
+else {
+	setInterval(eventLoop, 50);
+}
 
 
 channelFrame.style.display	= 'none';
