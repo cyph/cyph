@@ -49,7 +49,7 @@ var markdown	= new markdownit({
 	use(markdownitEmoji)
 ;
 
-markdown.renderer.rules.emoji = function(token, idx) {
+markdown.renderer.rules.emoji	= function(token, idx) {
 	return twemoji.parse(token[idx].to, {base: '/lib/bower_components/twemoji/'});
 };
 
