@@ -16,12 +16,24 @@ var channelDataMisc	= {
 	donetyping: '5'
 };
 
-var channel, isBanned, isConnected, isOtrReady, pongReceived, sharedSecret, shouldSendQueryMessage, socket;
+<<<<<<< HEAD
+var channel, isBanned, isConnected, isKill, isOtrReady, pongReceived, sharedSecret, shouldSendQueryMessage, socket;
+=======
+var channel, isBanned, isConnected, isOtrReady, pongReceived, shouldSendQueryMessage, socket;
+>>>>>>> origin/prod
 
 
 /* Init crypto */
 
-var otrWorker		= makeWorker(cryptoWebWorker);
+/* Convert the function into a string and directly make it a Worker */
+var otrWorker	= new Worker(
+	window.URL.createObjectURL(
+		new Blob(
+			[cryptoWebWorker.toString().replace(/.*?\{((.|\n)*)\}/, '$1')],
+			{ type: 'text/javascript'}
+		)
+	)
+);
 
 var urlFragment		= document.location.hash.split('#')[1];
 
