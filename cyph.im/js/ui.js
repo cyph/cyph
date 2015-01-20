@@ -44,6 +44,7 @@ var markdown	= new markdownit({
 		return '';
 	}
 }).
+	disable('image').
 	use(markdownitSup).
 	use(markdownitEmoji)
 ;
@@ -115,7 +116,6 @@ angular.
 
 
 		var newMessageNotification	= getString('newMessageNotification');
-		var imageMarkup				= '![](';
 
 		addMessageToChat = $scope.addMessageToChat = function (text, author, shouldNotify) {
 			if ($scope.state == $scope.states.aborted) {
@@ -134,23 +134,6 @@ angular.
 							break;
 					}
 				}
-
-				/* Disable inline external images */
-				text	= text.replace(/\S+/g, function (s) {
-					if (s.indexOf(imageMarkup) > -1) {
-						var url	= (s.split(imageMarkup)[1] || '');
-
-						if (url.slice(-1)[0] == ')') {
-							url	= url.slice(0, -1);
-						}
-
-						if (url.indexOf('data:image/') != 0) {
-							s	= url;
-						}
-					}
-
-					return s;
-				});
 
 				apply(function () {
 					$scope.messages.push({
@@ -798,7 +781,19 @@ angular.
 			replace: true,
 			link: function (scope, element, attrs) {
 				function set(val) {
-					element.html(markdown.render(val).replace(/\<\/blockquote\>\n\<blockquote\>\n/g, ''));
+					val	= markdown.render(val);
+
+					/* TODO: Get markdown-it team to implement these features natively */
+
+					/* Merge blockquotes like reddit */
+					val	= val.replace(/\<\/blockquote\>\n\<blockquote\>\n/g, '');
+
+					/* Images */
+					val	= val.replace(/!\<a href="(data:image\/.*?)"><\/a>/g, function (match, value) {
+						return '<img src="' + value + '" />';
+					});
+
+					element.html(val);
 				}
 
 				set(scope.ngMarkdown || '');
