@@ -655,6 +655,12 @@ angular.
 				});
 			}); */
 		}
+		else {
+			var messageBoxLineHeight	= parseInt($messageBox.css('line-height'), 10);
+			$messageBox.on('keyup', function () {
+				$messageBox.height(messageBoxLineHeight * $messageBox.val().split('\n').length);
+			});
+		}
 
 
 		/* OS X-style scrollbars */
@@ -762,6 +768,8 @@ angular.
 
 		
 		/* Do the move lad */
+
+		tabIndent.renderAll();
 
 		scrolling.update();
 

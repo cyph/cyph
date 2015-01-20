@@ -61,6 +61,9 @@ a {
 textarea {
   background-color: #f1f1f1; }
 
+.tabIndent-rendered {
+  background-image: none !important; }
+
 #main.curtain {
   height: 10%;
   -webkit-transform: translateY(-90%);
