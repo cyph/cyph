@@ -13,6 +13,8 @@ mv bower* .oldbower/
 bower install --save \
 	angular-material \
 	markdown-it \
+	markdown-it-sup \
+	highlight.js \
 	angular-timer \
 	animate.css \
 	base64 \
