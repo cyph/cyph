@@ -56,6 +56,8 @@ function importScriptsAndRetry () {
 onmessage	= function (e) { onmessageQueue.push(e) };
 
 function eventLoop () {
+	var delay	= 10;
+
 	try {
 		/*** Original onmessage logic ****/
 
@@ -253,9 +255,16 @@ function eventLoop () {
 			delete incomingMessages[incomingMessageId];
 			++incomingMessageId;
 		}
+
+
+		/*** else ***/
+
+		else {
+			delay	= 50;
+		}
 	}
 	finally {
-		setTimeout(eventLoop, 50);
+		setTimeout(eventLoop, delay);
 	}
 }
 
