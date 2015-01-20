@@ -21,7 +21,25 @@ var channel, isBanned, isConnected, isOtrReady, pongReceived, sharedSecret, shou
 
 /* Init crypto */
 
+<<<<<<< HEAD
+/* Convert the function into a string and directly make it a Worker */
+var cryptoWebWorkerString	= cryptoWebWorker.toString();
+cryptoWebWorkerString		= cryptoWebWorkerString.slice(
+	cryptoWebWorkerString.indexOf('{') + 1,
+	cryptoWebWorkerString.lastIndexOf('}')
+);
+
+var otrWorker	= new Worker(
+	window.URL.createObjectURL(
+		new Blob(
+			[cryptoWebWorkerString],
+			{ type: 'text/javascript'}
+		)
+	)
+);
+=======
 var otrWorker		= makeWorker(cryptoWebWorker);
+>>>>>>> origin/master
 
 var urlFragment		= document.location.hash.split('#')[1];
 

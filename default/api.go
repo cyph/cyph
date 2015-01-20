@@ -217,29 +217,34 @@ func channelCloseHelper(c appengine.Context, idBase string) {
 }
 
 func sendChannelMessage(c appengine.Context, channelId string, imData ImData) int {
-	key := "messageAck-" + imData.Id
-
-	memcache.Increment(c, key, 1, 0)
-
-	var i time.Duration
-	for i = 0; i < config.MessageSendRetries; i++ {
+	if imData.Unloading {
 		channel.SendJSON(c, channelId, imData)
+		return http.StatusOK
+	} else {
+		key := "messageAck-" + imData.Id
 
-		for j := 0; j < 20; j++ {
-			time.Sleep(50 * time.Millisecond)
+		memcache.Increment(c, key, 1, 0)
 
-			if _, err := memcache.Get(c, key); err == memcache.ErrCacheMiss {
-				if imData.Message != "" {
-					memcache.Increment(c, "totalMessages", 1, 0)
+		var i time.Duration
+		for i = 0; i < config.MessageSendRetries; i++ {
+			channel.SendJSON(c, channelId, imData)
+
+			for j := 0; j < 20; j++ {
+				time.Sleep(50 * time.Millisecond)
+
+				if _, err := memcache.Get(c, key); err == memcache.ErrCacheMiss {
+					if imData.Message != "" {
+						memcache.Increment(c, "totalMessages", 1, 0)
+					}
+
+					return http.StatusOK
 				}
-
-				return http.StatusOK
 			}
 		}
-	}
 
-	memcache.Delete(c, key)
-	return http.StatusTeapot
+		memcache.Delete(c, key)
+		return http.StatusTeapot
+	}
 }
 
 /*** Tasks ***/
