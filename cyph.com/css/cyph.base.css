@@ -38,18 +38,16 @@ html:not(.mobile) md-toolbar {
   position: fixed;
   top: 0px; }
 
-btf-markdown > :first-child, [btf-markdown] > :first-child {
+ng-markdown > :only-child:not(pre):not(blockquote), [ng-markdown] > :only-child:not(pre):not(blockquote) {
   display: inline; }
-btf-markdown > :not(:first-child), [btf-markdown] > :not(:first-child) {
-  margin: 0px; }
+ng-markdown > pre, ng-markdown > blockquote, ng-markdown > :not(:only-child), [ng-markdown] > pre, [ng-markdown] > blockquote, [ng-markdown] > :not(:only-child) {
+  margin: 10px; }
+ng-markdown blockquote, [ng-markdown] blockquote {
+  border-left: 2px solid #f1f1f1 !important;
+  padding-left: 10px; }
 
-html:not(.mobile) btf-markdown > :not(:first-child), html:not(.mobile) [btf-markdown] > :not(:first-child) {
+html:not(.mobile) ng-markdown > :not(:first-child), html:not(.mobile) [ng-markdown] > :not(:first-child) {
   margin-left: 25px; }
-
-blockquote {
-  border-left: 2px solid !important;
-  padding-left: 10px;
-  display: block; }
 
 :not(textarea):not(md-text-float):not(md-input-group):not(input) {
   border: 0px !important; }
