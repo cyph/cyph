@@ -2,28 +2,6 @@ var BASE_URL			= 'https://api.cyph.com/';
 var isHistoryAvailable	= typeof history != 'undefined';
 
 
-/* Trigger event loops from Web Worker instead of setTimeout (http://stackoverflow.com/a/12522580/459881) */
-var TICK_EVENT	= document.createEvent('Event');
-TICK_EVENT.initEvent('eventlooptick', true, true);
-
-function makeWorker (f) {
-	var s	= f.toString();
-	s		= s.slice(s.indexOf('{') + 1, s.lastIndexOf('}'));
-
-	return new Worker(window.URL.createObjectURL(new Blob([s], {type: 'text/javascript'})));
-}
-
-function initTicker () {
-	var worker	= makeWorker(function () {
-		setInterval(function () {
-			postMessage({eventName: 'eventlooptick'});
-		}, 50);
-	});
-
-	worker.onmessage	= function () { document.dispatchEvent(TICK_EVENT) };
-}
-
-
 function getString (name) {
 	return $('meta[name="' + name + '"]').attr('content');
 }
@@ -155,3 +133,34 @@ $(function () {
 		});
 	});
 });
+
+
+/* Trigger event loops from Web Worker instead of setTimeout (http://stackoverflow.com/a/12522580/459881) */
+var TICK_EVENT	= document.createEvent('Event');
+TICK_EVENT.initEvent('eventlooptick', true, true);
+
+function makeWorker (f) {
+	var s	= f.toString();
+	s		= s.slice(s.indexOf('{') + 1, s.lastIndexOf('}'));
+
+	return new Worker(window.URL.createObjectURL(new Blob([s], {type: 'text/javascript'})));
+}
+
+function initTicker () {
+	function dispatchTick () {
+		document.dispatchEvent(TICK_EVENT);
+	}
+
+	if (isMobile) {
+		setInterval(dispatchTick, 100);
+	}
+	else {
+		var worker	= makeWorker(function () {
+			setInterval(function () {
+				postMessage({eventName: 'eventlooptick'});
+			}, 50);
+		});
+
+		worker.onmessage	= dispatchTick;
+	}
+}
