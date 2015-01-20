@@ -46,7 +46,7 @@ ng-markdown blockquote, [ng-markdown] blockquote {
   border-left: 2px solid #f1f1f1 !important;
   padding-left: 10px; }
 
-html:not(.mobile) ng-markdown > :not(:first-child), html:not(.mobile) [ng-markdown] > :not(:first-child) {
+html:not(.mobile) ng-markdown > pre, html:not(.mobile) ng-markdown > blockquote, html:not(.mobile) ng-markdown > :not(:only-child), html:not(.mobile) [ng-markdown] > pre, html:not(.mobile) [ng-markdown] > blockquote, html:not(.mobile) [ng-markdown] > :not(:only-child) {
   margin-left: 25px; }
 
 :not(textarea):not(md-text-float):not(md-input-group):not(input) {
