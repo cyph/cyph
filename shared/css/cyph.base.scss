@@ -68,7 +68,7 @@ ng-markdown, [ng-markdown] {
 }
 html:not(.mobile) {
 	ng-markdown, [ng-markdown] {
-		> :not(:first-child) {
+		> pre, > blockquote, > :not(:only-child) {
 			margin-left: 25px;
 		}
 	}
