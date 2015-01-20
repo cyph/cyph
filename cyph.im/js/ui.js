@@ -8,6 +8,7 @@ var
 	friendIsTyping,
 	iAmBanned,
 	insertPhoto,
+	isAlive,
 	isMobile,
 	logCyphertext,
 	markAllAsSent,
@@ -69,7 +70,6 @@ angular.
 		var $cyphertext			= $('#cyphertext.curtain, #cyphertext.curtain > md-content');
 
 		$scope.language			= language;
-		$scope.isAlive			= true;
 		$scope.isConnected		= false;
 		$scope.isFriendTyping	= false;
 		$scope.cyphertext		= [];
@@ -78,6 +78,8 @@ angular.
 		$scope.unreadMessages	= 0;
 		$scope.authors			= authors;
 		$scope.copyUrl			= '';
+
+		isAlive = $scope.isAlive = true;
 
 		states = $scope.states = {
 			none: 0,
@@ -294,7 +296,7 @@ angular.
 					sendChannelDataBase({Destroy: true}, {callback: callback});
 
 					apply(function () {
-						$scope.isAlive	= false;
+						isAlive = $scope.isAlive = false;
 					});
 				}
 				else {
