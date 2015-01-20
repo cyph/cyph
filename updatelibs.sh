@@ -15,6 +15,8 @@ bower install --save \
 	markdown-it \
 	markdown-it-sup \
 	highlight.js \
+	twemoji \
+	markdown-it-emoji \
 	angular-timer \
 	animate.css \
 	base64 \
