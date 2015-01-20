@@ -36,8 +36,8 @@ type BetaSignup struct {
 }
 
 type ImData struct {
-	Id        string
 	Destroy   bool
+	Id        string
 	Message   string
 	Misc      string
 	Unloading bool
@@ -155,9 +155,11 @@ func getBetaSignupFromRequest(h HandlerArgs) BetaSignup {
 
 func getImDataFromRequest(h HandlerArgs) ImData {
 	return ImData{
-		Destroy: h.Request.PostFormValue("Destroy") == "true",
-		Message: h.Request.PostFormValue("Message"),
-		Misc:    h.Request.PostFormValue("Misc"),
+		Destroy:   h.Request.PostFormValue("Destroy") == "true",
+		Id:        h.Request.PostFormValue("Id"),
+		Message:   h.Request.PostFormValue("Message"),
+		Misc:      h.Request.PostFormValue("Misc"),
+		Unloading: h.Request.PostFormValue("Unloading") == "true",
 	}
 }
 
