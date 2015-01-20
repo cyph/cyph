@@ -60,8 +60,8 @@ function eventLoop () {
 	}
 }
 
-if (typeof TICK_EVENT != 'undefined') {
-	document.addEventListener(TICK_EVENT.type, eventLoop);
+if (typeof onTick != 'undefined') {
+	onTick(eventLoop);
 }
 else {
 	setInterval(eventLoop, 50);
