@@ -27,7 +27,8 @@ bower install --save \
 	visibilityjs \
 	wow \
 	rubycon/isaac.js \
-	morr/jquery.appear
+	morr/jquery.appear \
+	julianlam/tabIndent.js
 
 wget https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/default.min.css -O highlight.js.min.css
 wget https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js
