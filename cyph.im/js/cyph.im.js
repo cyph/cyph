@@ -16,7 +16,7 @@ var channelDataMisc	= {
 	donetyping: '5'
 };
 
-var channel, isBanned, isConnected, isOtrReady, pongReceived, sharedSecret, shouldSendQueryMessage, socket;
+var channel, isBanned, isConnected, isKill, isOtrReady, pongReceived, sharedSecret, shouldSendQueryMessage, socket;
 
 
 /* Init crypto */
@@ -136,7 +136,7 @@ function pingPong () {
 	setTimeout(function () {
 		sendChannelData({Misc: channelDataMisc.ping});
 		setTimeout(pingPong, 60000);
-	}, crypto.getRandomValues(new Uint8Array(1))[0] * 250);
+	}, 30000 + crypto.getRandomValues(new Uint8Array(1))[0] * 250);
 }
 
 
@@ -273,6 +273,7 @@ function setUpWebRTC (isInitiator) {
 function socketClose () {
 	closeChat(function () {
 		socket.close();
+		isKill	= true;
 	});
 }
 
@@ -383,10 +384,12 @@ function eventLoop () {
 
 		/*** send ***/
 
-		else if (sendChannelDataQueue.length && pendingChannelMessages < 2) {
+		else if (!isKill && sendChannelDataQueue.length && pendingChannelMessages < 1) {
 			var item	= sendChannelDataQueue.shift();
 			var data	= item.data;
 			var opts	= item.opts;
+
+			data.Id		= Date.now() + '-' + crypto.getRandomValues(new Uint32Array(1))[0];
 
 			++pendingChannelMessages;
 
@@ -415,15 +418,7 @@ function eventLoop () {
 
 			pongReceived	= true;
 
-			if (o.Id) {
-				$.ajax({type: 'PUT', url: BASE_URL + 'messages/' + o.Id});
-			}
-
 			if (!o.Id || !receivedMessages[o.Id]) {
-				if (o.Id) {
-					receivedMessages[o.Id]	= true;
-				}
-
 				if (o.Misc == channelDataMisc.ping) {
 					sendChannelData({Misc: channelDataMisc.pong});
 				}
@@ -453,6 +448,14 @@ function eventLoop () {
 				if (o.Destroy) {
 					socketClose();
 				}
+
+				if (o.Id) {
+					receivedMessages[o.Id]	= true;
+				}
+			}
+
+			if (o.Id) {
+				$.ajax({type: 'PUT', url: BASE_URL + 'messages/' + o.Id});
 			}
 		}
 

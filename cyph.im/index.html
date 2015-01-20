@@ -213,7 +213,7 @@
 							></strong>
 							<span
 								class='message-text'
-								btf-markdown='message.text'
+								ng-markdown='message.text'
 								ng-class='{"app-message": message.isFromApp}'
 							></span>
 						</span>
@@ -262,7 +262,9 @@
 					translate
 					id='message-box'
 					ng-model='message'
+					ng-trim='false'
 					ng-change='onMessageChange()'
+					class='tabIndent'
 					onenterpress='sendMessage()'
 					enterpress-only='desktop'
 					placeholder='Send a secure message...'
@@ -317,7 +319,7 @@
 			</div>
 
 			<div id='footer' class='desktop-only'>
-				&copy; Cyph 2014
+				&copy; Cyph 2015
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				<a href='//twitter.com/cyph'>@cyph</a>
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -372,6 +374,7 @@
 		<link rel='stylesheet' href='/lib/bower_components/angular-material/angular-material.min.css' />
 		<link rel='stylesheet' href='/lib/bower_components/nanoscroller/bin/css/nanoscroller.css' />
 		<link rel='stylesheet' href='/lib/bower_components/magnific-popup/dist/magnific-popup.css' />
+		<link rel='stylesheet' href='/lib/highlight.js.min.css' />
 
 		<link rel='stylesheet' href='/css/fonts.css' />
 		<link rel='stylesheet' href='/css/cyph.base.css' />
@@ -392,14 +395,17 @@
 		<script src='/lib/bower_components/angular-animate/angular-animate.min.js'></script>
 		<script src='/lib/bower_components/hammerjs/hammer.min.js'></script>
 		<script src='/lib/bower_components/angular-material/angular-material.min.js'></script>
-		<script src='/lib/bower_components/angular-sanitize/angular-sanitize.min.js'></script>
-		<script src='/lib/bower_components/showdown/compressed/Showdown.min.js'></script>
-		<script src='/lib/bower_components/angular-markdown-directive/markdown.js'></script>
+		<script src='/lib/bower_components/markdown-it/dist/markdown-it.min.js'></script>
+		<script src='/lib/bower_components/markdown-it-sup/dist/markdown-it-sup.min.js'></script>
+		<script src='/lib/highlight.min.js'></script>
+		<script src='/lib/bower_components/twemoji/twemoji.min.js'></script>
+		<script src='/lib/bower_components/markdown-it-emoji/dist/markdown-it-emoji.min.js'></script>
 		<script src='/lib/bower_components/angular-timer/dist/angular-timer.min.js'></script>
 		<script src='/lib/bower_components/visibilityjs/lib/visibility.core.js'></script>
 		<script src='/lib/bower_components/visibilityjs/lib/visibility.timers.js'></script>
 		<script src='/lib/bower_components/visibilityjs/lib/visibility.fallback.js'></script>
 		<script src='/lib/bower_components/visibilityjs/lib/visibility.js'></script>
+		<script src='/lib/bower_components/tabIndent.js/js/tabIndent.js'></script>
 
 		<script src='/js/visibilityPolyfill.js'></script>
 		<script src='/js/addressSpace.js'></script>
