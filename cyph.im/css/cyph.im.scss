@@ -220,13 +220,19 @@ html.mobile #friend-is-typing {
 		}
 	}
 
-	img {
+	img:not(.emoji) {
 		max-width: 25%;
 		margin-top: 10px;
 		margin-bottom: 10px;
 		margin-right: auto;
 		display: block;
 		box-shadow: 0px 4px 10px -1px rgba(0, 0, 0, 0.4);
+	}
+
+	.emoji {
+		height: 1.2em;
+		margin-bottom: -.2em;
+		margin-left: .2em;
 	}
 }
 .message-item.author-me {
@@ -247,7 +253,7 @@ html:not(.mobile) {
 			padding-bottom: 5px;
 		}
 
-		img {
+		img:not(.emoji) {
 			margin-left: 10vw;
 		}
 
@@ -274,7 +280,7 @@ html.mobile {
 			width: 100%;
 		}
 
-		img {
+		img:not(.emoji) {
 			margin-left: auto;
 		}
 
