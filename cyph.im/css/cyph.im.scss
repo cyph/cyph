@@ -55,7 +55,8 @@ html:not(.mobile) {
 		padding: 3px;
 		border: 1px solid #dddddd;
 		margin: 0px 10px;
-		height: 60px;
+		min-height: 60px;
+		max-height: 120px;
 		width: calc(100% - 29px);
 	}
 
