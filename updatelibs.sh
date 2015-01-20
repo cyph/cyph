@@ -14,7 +14,6 @@ bower install --save \
 	angular-material \
 	markdown-it \
 	markdown-it-sup \
-	highlight.js \
 	twemoji \
 	markdown-it-emoji \
 	angular-timer \
@@ -29,6 +28,9 @@ bower install --save \
 	wow \
 	rubycon/isaac.js \
 	morr/jquery.appear
+
+wget https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/default.min.css -O highlight.js.min.css
+wget https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js
 
 cd ../cryptolib
 

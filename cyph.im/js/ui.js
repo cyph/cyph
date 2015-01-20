@@ -22,12 +22,12 @@ var
 
 
 /* Stuff for ng-markdown directive */
-// var hljs		= require('highlight.js');
+
 var markdown	= new markdownit({
 	html: false,
 	linkify: true,
 	typographer: true,
-	quotes: (language == 'ru' ? '«»' : language == 'de' ? '„“' : '“”') + '‘’' /*,
+	quotes: (language == 'ru' ? '«»' : language == 'de' ? '„“' : '“”') + '‘’',
 	highlight: function (str, lang) {
 		if (lang && hljs.getLanguage(lang)) {
 			try {
@@ -42,10 +42,15 @@ var markdown	= new markdownit({
 		catch (__) {}
 
 		return '';
-	}*/
-}) /*.
-	use(require('markdown-it-sup'))
-*/;
+	}
+}).
+	use(markdownitSup).
+	use(markdownitEmoji)
+;
+
+markdown.renderer.rules.emoji = function(token, idx) {
+	return twemoji.parse(token[idx].to, {base: '/lib/bower_components/twemoji/'});
+};
 
 
 angular.
@@ -726,7 +731,7 @@ angular.
 				else if ($elem.is('p:not(.processed)')) {
 					var $html	= $($elem[0].outerHTML);
 
-					$html.find('img').each(function () {
+					$html.find('img:not(.emoji)').each(function () {
 						var $this	= $(this);
 
 						if ($this.parent().prop('tagName').toLowerCase() != 'a') {

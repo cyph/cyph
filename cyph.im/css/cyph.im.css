@@ -165,13 +165,17 @@ html.mobile #friend-is-typing {
   hyphens: auto; }
   .message-item .message > * {
     padding-top: 5px; }
-.message-item img {
+.message-item img:not(.emoji) {
   max-width: 25%;
   margin-top: 10px;
   margin-bottom: 10px;
   margin-right: auto;
   display: block;
   box-shadow: 0px 4px 10px -1px rgba(0, 0, 0, 0.4); }
+.message-item .emoji {
+  height: 1.2em;
+  margin-bottom: -.2em;
+  margin-left: .2em; }
 
 .message-item.author-me {
   background-color: #8652e4;
@@ -187,7 +191,7 @@ html:not(.mobile) .message-item {
   html:not(.mobile) .message-item .message {
     max-width: 85%;
     padding-bottom: 5px; }
-  html:not(.mobile) .message-item img {
+  html:not(.mobile) .message-item img:not(.emoji) {
     margin-left: 10vw; }
   html:not(.mobile) .message-item .message-timestamp {
     text-align: right; }
@@ -206,7 +210,7 @@ html.mobile .message-item {
   font-size: 18px; }
   html.mobile .message-item .message {
     width: 100%; }
-  html.mobile .message-item img {
+  html.mobile .message-item img:not(.emoji) {
     margin-left: auto; }
   html.mobile .message-item .message-timestamp {
     position: absolute;
