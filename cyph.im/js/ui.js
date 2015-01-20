@@ -21,8 +21,35 @@ var
 ;
 
 
+/* Stuff for ng-markdown directive */
+// var hljs		= require('highlight.js');
+var markdown	= new markdownit({
+	html: false,
+	linkify: true,
+	typographer: true,
+	quotes: (language == 'ru' ? '«»' : language == 'de' ? '„“' : '“”') + '‘’' /*,
+	highlight: function (str, lang) {
+		if (lang && hljs.getLanguage(lang)) {
+			try {
+				return hljs.highlight(lang, str).value;
+			}
+			catch (__) {}
+		}
+
+		try {
+			return hljs.highlightAuto(str).value;
+		}
+		catch (__) {}
+
+		return '';
+	}*/
+}) /*.
+	use(require('markdown-it-sup'))
+*/;
+
+
 angular.
-	module('Cyph', ['ngMaterial', 'ngSanitize', 'btford.markdown', 'timer']).
+	module('Cyph', ['ngMaterial', 'timer']).
 	controller('CyphController', ['$scope', '$mdSidenav', '$mdToast', '$mdDialog', function ($scope, $mdSidenav, $mdToast, $mdDialog) {
 		var $window				= $(window);
 		var $html				= $('html');
@@ -103,31 +130,22 @@ angular.
 					}
 				}
 
-				text	= text
-					.split(/\s+/)
-					.map(function (s) {
-						/* Disable inline external images */
-						if (s.indexOf(imageMarkup) > -1) {
-							var url	= (s.split(imageMarkup)[1] || '');
+				/* Disable inline external images */
+				text	= text.replace(/\S+/g, function (s) {
+					if (s.indexOf(imageMarkup) > -1) {
+						var url	= (s.split(imageMarkup)[1] || '');
 
-							if (url.slice(-1)[0] == ')') {
-								url	= url.slice(0, -1);
-							}
-
-							if (url.indexOf('data:image/') != 0) {
-								s	= url;
-							}
+						if (url.slice(-1)[0] == ')') {
+							url	= url.slice(0, -1);
 						}
 
-						if (isValidUrl(s)) {
-							return '[' + s + '](' + s + ')';
+						if (url.indexOf('data:image/') != 0) {
+							s	= url;
 						}
-						else {
-							return s;
-						}
-					})
-					.join(' ')
-				;
+					}
+
+					return s;
+				});
 
 				apply(function () {
 					$scope.messages.push({
@@ -760,5 +778,19 @@ angular.
 				"IE doesn't work very well with Cyph (or in general).\n\nYou have been warned."
 			);
 		}
-	}])
+	}]).
+	directive('ngMarkdown', function () {
+		return {
+			restrict: 'A',
+			replace: true,
+			link: function (scope, element, attrs) {
+				function set(val) {
+					element.html(markdown.render(val).replace(/\<\/blockquote\>\n\<blockquote\>\n/g, ''));
+				}
+
+				set(scope.ngMarkdown || '');
+				scope.$watch(attrs.ngMarkdown, set);
+			}
+		};
+	});
 ;
