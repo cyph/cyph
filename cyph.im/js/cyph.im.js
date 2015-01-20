@@ -447,7 +447,7 @@ function setUpChannel (channelData) {
 
 /* Event loop for processing incoming and outgoing messages */
 
-function eventLoop () {
+onTick(function () {
 	/*** otrWorker onmessage ***/
 	if (otrWorkerOnMessageQueue.length) {
 		otrWorkerOnMessageHandler(otrWorkerOnMessageQueue.shift());
@@ -462,8 +462,4 @@ function eventLoop () {
 	else if (receiveChannelDataQueue.length) {
 		receiveChannelDataHandler(receiveChannelDataQueue.shift());
 	}
-}
-
-document.addEventListener(TICK_EVENT.type, eventLoop);
-
-initTicker();
+});
