@@ -36,10 +36,11 @@ type BetaSignup struct {
 }
 
 type ImData struct {
-	Id      string
-	Destroy bool
-	Message string
-	Misc    string
+	Id        string
+	Destroy   bool
+	Message   string
+	Misc      string
+	Unloading bool
 }
 
 type ImSetup struct {
