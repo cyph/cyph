@@ -34,8 +34,6 @@ window.addEventListener('message', function (e) {
 
 
 function eventLoop () {
-	var delay	= 10;
-
 	try {
 		if (receiveMessageQueue.length) {
 			var e	= receiveMessageQueue.shift();
@@ -61,13 +59,9 @@ function eventLoop () {
 				}
 			}
 		}
-
-		else {
-			delay	= 50;
-		}
 	}
 	finally {
-		setTimeout(eventLoop, delay);
+		setTimeout(eventLoop, 50);
 	}
 }
 

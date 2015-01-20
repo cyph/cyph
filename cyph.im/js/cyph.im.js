@@ -318,8 +318,6 @@ function setUpChannel (channelData) {
 /* Event loop for processing incoming and outgoing messages */
 
 function eventLoop () {
-	var delay	= 10;
-
 	try {
 		/*** otrWorker onmessage ***/
 
@@ -449,16 +447,9 @@ function eventLoop () {
 				}
 			}
 		}
-
-
-		/*** else ***/
-
-		else {
-			delay	= 50;
-		}
 	}
 	finally {
-		setTimeout(eventLoop, delay);
+		setTimeout(eventLoop, 50);
 	}
 }
 

@@ -211,7 +211,7 @@
 							></strong>
 							<span
 								class='message-text'
-								btf-markdown='message.text'
+								ng-markdown='message.text'
 								ng-class='{"app-message": message.isFromApp}'
 							></span>
 						</span>
@@ -260,6 +260,7 @@
 					translate
 					id='message-box'
 					ng-model='message'
+					ng-trim='false'
 					ng-change='onMessageChange()'
 					onenterpress='sendMessage()'
 					enterpress-only='desktop'
@@ -315,7 +316,7 @@
 			</div>
 
 			<div id='footer' class='desktop-only'>
-				&copy; Cyph 2014
+				&copy; Cyph 2015
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				<a href='//twitter.com/cyph'>@cyph</a>
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -390,9 +391,7 @@
 		<script src='/lib/bower_components/angular-animate/angular-animate.min.js'></script>
 		<script src='/lib/bower_components/hammerjs/hammer.min.js'></script>
 		<script src='/lib/bower_components/angular-material/angular-material.min.js'></script>
-		<script src='/lib/bower_components/angular-sanitize/angular-sanitize.min.js'></script>
-		<script src='/lib/bower_components/showdown/compressed/Showdown.min.js'></script>
-		<script src='/lib/bower_components/angular-markdown-directive/markdown.js'></script>
+		<script src='/lib/bower_components/markdown-it/dist/markdown-it.min.js'></script>
 		<script src='/lib/bower_components/angular-timer/dist/angular-timer.min.js'></script>
 		<script src='/lib/bower_components/visibilityjs/lib/visibility.core.js'></script>
 		<script src='/lib/bower_components/visibilityjs/lib/visibility.timers.js'></script>
