@@ -53,11 +53,11 @@ html:not(.mobile) md-toolbar {
 }
 
 ng-markdown, [ng-markdown] {
-	> :only-child:not(pre):not(blockquote) {
+	> p:only-child {
 		display: inline;
 	}
 
-	> pre, > blockquote, > :not(:only-child) {
+	:not(p:only-child) {
 		margin: 10px;
 	}
 
@@ -68,7 +68,7 @@ ng-markdown, [ng-markdown] {
 }
 html:not(.mobile) {
 	ng-markdown, [ng-markdown] {
-		> pre, > blockquote, > :not(:only-child) {
+		:not(p:only-child) {
 			margin-left: 25px;
 		}
 	}
