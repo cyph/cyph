@@ -1,7 +1,7 @@
 #
 # Name    : wow
 # Author  : Matthieu Aussaguel, http://mynameismatthieu.com/, @mattaussaguel
-# Version : 1.0.2
+# Version : 1.0.3
 # Repo    : https://github.com/matthieua/WOW
 # Website : http://mynameismatthieu.com/wow
 #
@@ -72,8 +72,8 @@ getComputedStyle = @getComputedStyle or \
   (el, pseudo) ->
     @getPropertyValue = (prop) ->
       prop = 'styleFloat' if prop is 'float'
-      prop.replace(getComputedStyleRX, (_, char)->
-        char.toUpperCase()
+      prop.replace(getComputedStyleRX, (_, _char)->
+        _char.toUpperCase()
       ) if getComputedStyleRX.test prop
       el.currentStyle?[prop] or null
     @
@@ -86,6 +86,7 @@ class @WOW
     offset:       0
     mobile:       true
     live:         true
+    callback:     null
 
   constructor: (options = {}) ->
     @scrolled = true
@@ -110,9 +111,10 @@ class @WOW
         @resetStyle()
       else
         @applyStyle(box, true) for box in @boxes
-        @util().addEvent window, 'scroll', @scrollHandler
-        @util().addEvent window, 'resize', @scrollHandler
-        @interval = setInterval @scrollCallback, 50
+    if !@disabled()
+      @util().addEvent window, 'scroll', @scrollHandler
+      @util().addEvent window, 'resize', @scrollHandler
+      @interval = setInterval @scrollCallback, 50
     if @config.live
       new MutationObserver (records) =>
         for record in records
@@ -149,6 +151,7 @@ class @WOW
   show: (box) ->
     @applyStyle(box)
     box.className = "#{box.className} #{@config.animateClass}"
+    @config.callback(box) if @config.callback?
 
   applyStyle: (box, hidden) ->
     duration  = box.getAttribute('data-wow-duration')
