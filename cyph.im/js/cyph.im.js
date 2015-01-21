@@ -158,7 +158,7 @@ function beginChat () {
 
 		$(window).unload(function () {
 			if (isAlive) {
-				sendChannelDataBase({Destroy: true, Unloading: true});
+				sendChannelDataBase({Destroy: true});
 				socketClose();
 			}
 		});
@@ -337,6 +337,10 @@ function sendChannelData (data) {
 function sendChannelDataBase (data, opts) {
 	var item	= {data: data, opts: opts || {}};
 
+	if (item.data.Destroy) {
+		item.data.Unloading	= true;
+	}
+
 	if (item.data.Unloading) {
 		sendChannelDataHandler(item);
 	}
@@ -462,4 +466,11 @@ onTick(function () {
 	else if (receiveChannelDataQueue.length) {
 		receiveChannelDataHandler(receiveChannelDataQueue.shift());
 	}
+
+	/*** else ***/
+	else {
+		return false;
+	}
+
+	return true;
 });

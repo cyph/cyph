@@ -170,18 +170,24 @@ function onTick (f) {
 
 	if (tickFunctions.length == 1) {
 		function processTicks () {
+			var shouldContinue	= false;
+
 			for (var i = 0 ; i < tickFunctions.length ; ++i) {
-				tickFunctions[i]();
+				shouldContinue	= shouldContinue || tickFunctions[i]();
 			}
+
+			return shouldContinue;
 		}
 
 		if (isMobile) {
 			function processTickEventLoop () {
+				var shouldContinue;
+
 				try {
-					processTicks();
+					shouldContinue	= processTicks();
 				}
 				finally {
-					setTimeout(processTickEventLoop, 100);
+					setTimeout(processTickEventLoop, shouldContinue ? 25 : 500);
 				}
 			}
 
