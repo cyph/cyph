@@ -33,7 +33,7 @@ window.addEventListener('message', function (e) {
 });
 
 
-function eventLoop () {
+onTick(function () {
 	if (receiveMessageQueue.length) {
 		var e	= receiveMessageQueue.shift();
 
@@ -58,14 +58,13 @@ function eventLoop () {
 			}
 		}
 	}
-}
 
-if (typeof onTick != 'undefined') {
-	onTick(eventLoop);
-}
-else {
-	setInterval(eventLoop, 50);
-}
+	else {
+		return false;
+	}
+
+	return true;
+});
 
 
 channelFrame.style.display	= 'none';
