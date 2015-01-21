@@ -136,8 +136,7 @@ $(function () {
 
 
 /* Trigger event loops from Web Worker instead of setTimeout (http://stackoverflow.com/a/12522580/459881) */
-var TICK_EVENT	= document.createEvent('Event');
-TICK_EVENT.initEvent('eventlooptick', true, true);
+var tickFunctions	= [];
 
 function makeWorker (f) {
 	var s	= f.toString();
@@ -146,21 +145,54 @@ function makeWorker (f) {
 	return new Worker(window.URL.createObjectURL(new Blob([s], {type: 'text/javascript'})));
 }
 
-function initTicker () {
-	function dispatchTick () {
-		document.dispatchEvent(TICK_EVENT);
-	}
+function onTick (f) {
+	tickFunctions.push(f);
 
-	if (isMobile) {
-		setInterval(dispatchTick, 100);
-	}
-	else {
-		var worker	= makeWorker(function () {
-			setInterval(function () {
-				postMessage({eventName: 'eventlooptick'});
-			}, 50);
-		});
+	if (tickFunctions.length == 1) {
+		function processTicks () {
+			var shouldContinue	= false;
 
-		worker.onmessage	= dispatchTick;
+			for (var i = 0 ; i < tickFunctions.length ; ++i) {
+				shouldContinue	= shouldContinue || tickFunctions[i]();
+			}
+
+			return shouldContinue;
+		}
+
+		if (isMobile) {
+			function processTickEventLoop () {
+				var shouldContinue;
+
+				try {
+					shouldContinue	= processTicks();
+				}
+				finally {
+					setTimeout(processTickEventLoop, shouldContinue ? 25 : 500);
+				}
+			}
+
+			processTickEventLoop();
+
+		}
+		else {
+			var worker	= makeWorker(function () {
+				setInterval(function () {
+					postMessage({eventName: 'tick'});
+				}, 50);
+			});
+
+			var processTicksLock;
+			worker.onmessage	= function () {
+				if (!processTicksLock) {
+					processTicksLock	= true;
+					try {
+						processTicks();
+					}
+					finally {
+						processTicksLock	= false;
+					}
+				}
+			};
+		}
 	}
 }
