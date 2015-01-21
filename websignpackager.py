@@ -20,7 +20,7 @@ for elem in html.select('script[src]'):
 	path		= unicode.split(path, '?')[0]
 
 	f			= open(path, 'r')
-	elem.string	= re.sub('//# sourceMappingURL=.*?\.map', '', f.read())
+	elem.string	= re.sub('</script>', '<\\/script>', re.sub('//# sourceMappingURL=.*?\.map', '', f.read()))
 	f.close()
 
 	del elem['src']
