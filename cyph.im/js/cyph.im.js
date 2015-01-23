@@ -3,6 +3,8 @@ var preConnectMessageReceiveQueue	= [];
 var preConnectMessageSendQueue		= [];
 var otrWorkerOnMessageQueue			= [];
 
+var isAlive	= false;
+
 var CHANNEL_DATA_PREFIX	= 'CHANNEL DATA: ';
 var WEBRTC_DATA_PREFIX	= 'webrtc: ';
 
