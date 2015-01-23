@@ -8,7 +8,6 @@ var
 	friendIsTyping,
 	iAmBanned,
 	insertPhoto,
-	isAlive,
 	isMobile,
 	logCyphertext,
 	markAllAsSent,
