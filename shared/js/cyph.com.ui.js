@@ -31,6 +31,7 @@ angular.
 		$scope.isPrivacyPolicy	= false;
 		$scope.isTos			= false;
 		$scope.podcast			= '';
+		$scope.isOnion			= isOnion;
 
 
 
@@ -120,7 +121,7 @@ angular.
 			$html.addClass('mobile');
 		}
 
-		if (isMobile) { // || location.hostname == 'localhost') {
+		if (isMobile || isOnion) {
 			var $mobilePoster	= $('<img />');
 			$mobilePoster.attr('src', $video.attr('mobile-poster'));
 			$video.replaceWith($mobilePoster);

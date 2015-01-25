@@ -15,7 +15,6 @@ import (
 
 func init() {
 	handleFunc("/", root)
-	handleFuncs("/amibanned", Handlers{methods.GET: amIBanned})
 	handleFuncs("/betasignups", Handlers{methods.PUT: betaSignup})
 	handleFuncs("/continent", Handlers{methods.GET: getContinent})
 	handleFuncs("/channels/{id}", Handlers{methods.POST: channelReceive})
@@ -23,6 +22,7 @@ func init() {
 	handleFuncs("/ims", Handlers{methods.POST: imCreate})
 	handleFuncs("/ims/{id}", Handlers{methods.POST: imConnect})
 	handleFuncs("/messages/{id}", Handlers{methods.PUT: channelAck})
+	handleFuncs("/websignerrors", Handlers{methods.POST: logWebSignError})
 	handleFuncs("/_ah/channel/disconnected/", Handlers{methods.POST: channelClose})
 
 	/* Admin-restricted methods */
@@ -31,12 +31,6 @@ func init() {
 }
 
 /*** Handlers ***/
-
-func amIBanned(h HandlerArgs) (interface{}, int) {
-	country, _ := geolocate(h)
-	_, isBanned := config.BannedCountries[country]
-	return isBanned, http.StatusOK
-}
 
 func betaSignup(h HandlerArgs) (interface{}, int) {
 	betaSignup := getBetaSignupFromRequest(h)
@@ -188,13 +182,7 @@ func imCreate(h HandlerArgs) (interface{}, int) {
 }
 
 func logError(h HandlerArgs) (interface{}, int) {
-	mail.SendToAdmins(h.Context, &mail.Message{
-		Sender:  "test@cyphme.appspotmail.com",
-		Subject: "CYPH: WARNING WARNING WARNING SOMETHING IS SRSLY FUCKED UP LADS",
-		Body:    h.Request.FormValue("error"),
-	})
-
-	return nil, http.StatusOK
+	return logErrorHelper("CYPH: WARNING WARNING WARNING SOMETHING IS SRSLY FUCKED UP LADS", h)
 }
 
 func logStats(h HandlerArgs) (interface{}, int) {
@@ -210,6 +198,10 @@ func logStats(h HandlerArgs) (interface{}, int) {
 	return nil, http.StatusOK
 }
 
+func logWebSignError(h HandlerArgs) (interface{}, int) {
+	return logErrorHelper("SOMEONE JUST GOT THE WEBSIGN ERROR SCREEN LADS", h)
+}
+
 func root(h HandlerArgs) (interface{}, int) {
 	return "Welcome to Cyph, lad", http.StatusOK
 }
@@ -221,6 +213,16 @@ func channelCloseHelper(c appengine.Context, idBase string) {
 		id := idBase + i
 		sendChannelMessage(c, id, ImData{Destroy: true})
 	}
+}
+
+func logErrorHelper(subject string, h HandlerArgs) (interface{}, int) {
+	mail.SendToAdmins(h.Context, &mail.Message{
+		Sender:  "test@cyphme.appspotmail.com",
+		Subject: subject,
+		Body:    h.Request.FormValue("error"),
+	})
+
+	return nil, http.StatusOK
 }
 
 func sendChannelMessage(c appengine.Context, channelId string, imData ImData) int {
