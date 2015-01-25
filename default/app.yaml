@@ -25,18 +25,12 @@ handlers:
   login: admin
   script: _go_app
   secure: always
-  http_headers:
-    Strict-Transport-Security: max-age=31536000; includeSubdomains;
 
 - url: /tasks/.*
   login: admin
   script: _go_app
   secure: always
-  http_headers:
-    Strict-Transport-Security: max-age=31536000; includeSubdomains;
 
 - url: .*
   script: _go_app
   secure: always
-  http_headers:
-    Strict-Transport-Security: max-age=31536000; includeSubdomains;
