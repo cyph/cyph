@@ -1,5 +1,5 @@
 var BASE_URL			= 'https://api.cyph.com/';
-var ONION_URL			= 'http://cyphdbyhiddenbhs.onion';
+var ONION_URL			= 'https://cyphdbyhiddenbhs.onion';
 var isHistoryAvailable	= typeof history != 'undefined';
 var isOnion				= document.location.host.split('.').slice(-1)[0] == 'onion';
 
