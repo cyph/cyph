@@ -6,7 +6,7 @@ var
 	changeState,
 	closeChat,
 	friendIsTyping,
-	iAmBanned,
+	warnWebSignObsolete,
 	insertPhoto,
 	isMobile,
 	logCyphertext,
@@ -76,6 +76,7 @@ angular.
 		$scope.unreadMessages	= 0;
 		$scope.authors			= authors;
 		$scope.copyUrl			= '';
+		$scope.isOnion			= isOnion;
 
 		isAlive = $scope.isAlive = true;
 
@@ -88,7 +89,7 @@ angular.
 			chat: 200,
 			aborted: 400,
 			error: 404,
-			banned: 666
+			webSignObsolete: 666
 		};
 		state = $scope.state = $scope.states.none;
 
@@ -218,6 +219,7 @@ angular.
 			var copyUrl		=
 				document.location.protocol + '//' +
 				document.location.host.replace('www.', '') +
+				(isOnion ? '/im' : '') +
 				'/#' +
 				document.location.pathname.substr(1) +
 				sharedSecret
@@ -268,7 +270,7 @@ angular.
 
 
 		changeState = $scope.changeState = function (state) {
-			if (isBanned) {
+			if (isWebSignObsolete) {
 				return;
 			}
 
@@ -296,7 +298,7 @@ angular.
 						isAlive = $scope.isAlive = false;
 					});
 				}
-				else {
+				else if (!isWebSignObsolete) {
 					abortSetup();
 				}
 			}
@@ -310,12 +312,15 @@ angular.
 		};
 
 
-		iAmBanned = $scope.iAmBanned = function () {
+		warnWebSignObsolete = $scope.warnWebSignObsolete = function () {
 			$window.off('beforeunload');
 			sendChannelData({Destroy: true});
-			changeState($scope.states.banned);
+			changeState($scope.states.webSignObsolete);
 
-			isBanned	= true;
+			isWebSignObsolete	= true;
+			isAlive				= false;
+
+			errorLog('websignerrors')();
 		};
 
 
