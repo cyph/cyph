@@ -37,14 +37,33 @@
 
 		<script src='js/cryptoInit.js'></script>
 
-		<script>
+		<script>(function () {
+
 			/* Detect when the server triggers a local cache wipe and give
 				the application the opportunity to show a big scary warning */
 
-			applicationCache.addEventListener('obsolete', function () {
+			function setWebSignObsolete () {
 				window.webSignObsolete	= true;
-			}, false);
-		</script>
+			}
+
+			applicationCache.addEventListener('error', setWebSignObsolete, false);
+			applicationCache.addEventListener('obsolete', setWebSignObsolete, false);
+			applicationCache.addEventListener('updateready', setWebSignObsolete, false);
+
+			setTimeout(function () {
+				if (
+					[
+						applicationCache.UNCACHED,
+						applicationCache.OBSOLETE,
+						applicationCache.UPDATEREADY
+					].
+						indexOf(applicationCache.status) > -1
+				) {
+					setWebSignObsolete();
+				}
+			}, 1000);
+
+		}());</script>
 
 		<script src='cryptolib/sha512.js'></script>
 		<script src='cryptolib/openpgp/openpgp.min.js'></script>

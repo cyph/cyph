@@ -76,7 +76,7 @@ for d in cyph.im cyph.com ; do
 done
 
 
-ls */*.yaml | xargs -I% sed -i.bak 's/max-age=0/max-age=604800/g' %
+ls */*.yaml | xargs -I% sed -i.bak 's/max-age=0/max-age=31536000/g' %
 
 if [ $test ] ; then
 	sed -i.bak "s/staging/${branch}/g" default/config.go
