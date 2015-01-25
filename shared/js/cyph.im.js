@@ -3,8 +3,12 @@ var preConnectMessageReceiveQueue	= [];
 var preConnectMessageSendQueue		= [];
 var otrWorkerOnMessageQueue			= [];
 
+var isAlive	= false;
+
 var CHANNEL_DATA_PREFIX	= 'CHANNEL DATA: ';
 var WEBRTC_DATA_PREFIX	= 'webrtc: ';
+
+var SECRET_LENGTH	= 7;
 
 var channelDataMisc	= {
 	connect: '1',
@@ -14,14 +18,11 @@ var channelDataMisc	= {
 	donetyping: '5'
 };
 
-var channel, isBanned, isConnected, isOtrReady, pongReceived, shouldSendQueryMessage, socket;
+var channel, isWebSignObsolete, isConnected, isOtrReady, pongReceived, sharedSecret, shouldSendQueryMessage, socket;
 
 
 /* Init crypto */
 
-<<<<<<< HEAD
-var otrWorker	= new Worker('/js/cryptoWebWorker.js');
-=======
 var otrWorker		= makeWorker(cryptoWebWorker);
 
 var urlFragment		= document.location.hash.split('#')[1];
@@ -30,13 +31,13 @@ if (urlFragment && urlFragment.length == (SECRET_LENGTH * 2)) {
 	sharedSecret	= urlFragment.substr(SECRET_LENGTH);
 	urlFragment		= urlFragment.substr(0, SECRET_LENGTH);
 }
->>>>>>> a6fe2d1... use new makeWorker function for cryptoWebWorker
 
-var sharedSecret		= document.location.hash.split('#')[1];
-var sharedSecretLength	= 7;
+if (urlFragment) {
+	history.pushState({}, '', '/' + urlFragment);
+}
 
-if (!sharedSecret || sharedSecret.length != sharedSecretLength) {
-	var a	= new Uint8Array(sharedSecretLength);
+if (!sharedSecret || sharedSecret.length != SECRET_LENGTH) {
+	var a	= new Uint8Array(SECRET_LENGTH);
 	crypto.getRandomValues(a);
 
 	sharedSecret	= Array.prototype.slice.call(a).
@@ -130,30 +131,26 @@ crypto.getRandomValues(randomSeed);
 
 var isInitiator	= getUrlState() == 'new';
 
-function dothemove () {
-	$.ajax({
-		error: function () {
-			setTimeout(dothemove, 100);
-		},
-		success: function (banned) {
-			if (banned.toString() == 'true') {
-				iAmBanned();
-			}
-			else {
-				otrWorker.postMessage({method: 0, message: {
-					cryptoCodes: localStorage.cryptoCodes,
-					randomSeed: randomSeed,
-					sharedSecret: sharedSecret,
-					isInitiator: isInitiator
-				}});
-			}
-		},
-		type: 'GET',
-		url: BASE_URL + 'amibanned'
-	});
-}
+if (window.webSignObsolete) {
+	function warnWebSignObsoleteWrapper () {
+		if (typeof warnWebSignObsolete == 'undefined') {
+			setTimeout(warnWebSignObsoleteWrapper, 1000);
+		}
+		else {
+			warnWebSignObsolete();
+		}
+	}
 
-dothemove();
+	warnWebSignObsoleteWrapper();
+}
+else {
+	otrWorker.postMessage({method: 0, message: {
+		cryptoCodes: localStorage.cryptoCodes,
+		randomSeed: randomSeed,
+		sharedSecret: sharedSecret,
+		isInitiator: isInitiator
+	}});
+}
 
 /* End crypto init */
 
@@ -169,7 +166,7 @@ function beginChat () {
 
 		$(window).unload(function () {
 			if (isAlive) {
-				sendChannelDataBase({Destroy: true, Unloading: true});
+				sendChannelDataBase({Destroy: true});
 				socketClose();
 			}
 		});
@@ -198,15 +195,15 @@ function pingPong () {
 
 
 function processUrlState () {
-	if (isBanned) {
+	if (isWebSignObsolete) {
 		return;
 	}
 
 	var state	= getUrlState();
 
 	/* Root */
-	if (state.length == 2 || ['', 'zh-CHS', 'zh-CHT'].indexOf(state) > -1) {
-		document.location.replace('https://www.cyph.com/');
+	if (!state) {
+		document.location.replace(isOnion ? '/' : 'https://www.cyph.com/');
 	}
 	/* New chat room */
 	else if (state == 'new') {
@@ -217,7 +214,7 @@ function processUrlState () {
 		});
 	}
 	/* Join existing chat room */
-	else if (state.length == 7) {
+	else if (state.length == SECRET_LENGTH) {
 		$.ajax({
 			dataType: 'json',
 			error: pushNotFound,
@@ -348,6 +345,10 @@ function sendChannelData (data) {
 function sendChannelDataBase (data, opts) {
 	var item	= {data: data, opts: opts || {}};
 
+	if (item.data.Destroy) {
+		item.data.Unloading	= true;
+	}
+
 	if (item.data.Unloading) {
 		sendChannelDataHandler(item);
 	}
@@ -458,7 +459,7 @@ function setUpChannel (channelData) {
 
 /* Event loop for processing incoming and outgoing messages */
 
-function eventLoop () {
+onTick(function () {
 	/*** otrWorker onmessage ***/
 	if (otrWorkerOnMessageQueue.length) {
 		otrWorkerOnMessageHandler(otrWorkerOnMessageQueue.shift());
@@ -473,8 +474,11 @@ function eventLoop () {
 	else if (receiveChannelDataQueue.length) {
 		receiveChannelDataHandler(receiveChannelDataQueue.shift());
 	}
-}
 
-document.addEventListener(TICK_EVENT.type, eventLoop);
+	/*** else ***/
+	else {
+		return false;
+	}
 
-initTicker();
+	return true;
+});

@@ -50,6 +50,7 @@ for d in cyph.im cyph.com ; do
 	cd $d
 
 	# Cache bust
+	echo 'Cache bust'
 	find . -type f -print0 | while read -d $'\0' f ; do
 		safeF=$(echo "$f" | sed 's/\.\///g' | sed 's/\//\\\//g' | sed 's/ /\\ /g' | sed 's/\_/\\_/g')
 
@@ -62,19 +63,23 @@ for d in cyph.im cyph.com ; do
 	done
 
 	../translate.py
+
+	# Minify
+	echo 'JS Minify'
+	ls js/*.js | xargs -I% uglifyjs '%' -o '%'
+	echo 'CSS Minify'
+	ls css/*.css | xargs -I% cleancss -o '%' '%'
+	echo 'HTML Minify'
+	ls index.html | xargs -I% html-minifier --minify-js --minify-css --remove-comments --collapse-whitespace '%' -o '%'
+
 	cd ..
 done
 
-echo 'JS Minify'
-find . -name '*.js' | grep -v '\.oldbower' | grep -v cryptolib | grep -v '\.min\.js' | xargs -I% uglifyjs '%' -o '%'
-echo 'CSS Minify'
-find . -name '*.css' | xargs -I% cleancss -o '%' '%'
-echo 'HTML Minify'
-find . -name '*.html' | xargs -I% html-minifier --minify-js --minify-css --remove-comments --collapse-whitespace '%' -o '%'
 
-ls */*.yaml | xargs -I% sed -i.bak 's/max-age=0/max-age=604800/g' %
+ls */*.yaml | xargs -I% sed -i.bak 's/max-age=0/max-age=31536000/g' %
 
 if [ $test ] ; then
+	sed -i.bak "s/staging/${branch}/g" default/config.go
 	ls cyph.im/js/*.js | xargs -I% sed -i.bak "s/api.cyph.com/${branch}-dot-cyphme.appspot.com/g" %
 
 	# ls */*.yaml | xargs -I% sed -i.bak 's/version: prod/version: staging/g' %
@@ -85,6 +90,45 @@ if [ $test ] ; then
 else
 	ls */*.yaml | xargs -I% sed -i.bak 's/version: staging/version: prod/g' %
 fi
+
+
+### WebSign-related stuff
+for d in cyph.im ; do
+	cd $d
+
+	echo 'WebSign'
+
+	# Merge imported libraries into Worker
+	../websignworkerpackager.js js/cryptoWebWorker.js
+
+	../websignpackager.py
+	mv index.html $d.pkg
+	mv websign.html index.html
+
+	shasum -p -a 512 $d.pkg | perl -pe 's/(.*) .*/\1/' > $d.hash
+	gpg --clearsign $d.hash
+	mv $d.hash.* $d.hash
+
+	currentDir="$(pwd)"
+	cd ../../..
+	git clone git@github.com:cyph/cyph.github.io.git github.io
+	cd github.io
+	git reset --hard
+	git pull
+	cp -f $currentDir/$d.pkg websign/
+	cp -f $currentDir/$d.hash websign/
+	git add .
+	chmod -R 777 .
+	git commit -a -m 'package update'
+	git push
+	cd $currentDir
+
+	cd ..
+done
+
+
+find . -name '*.bak' | xargs rm
+
 
 if [ "${nobackend}" == '' ] ; then
 	cd default

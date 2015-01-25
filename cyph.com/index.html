@@ -83,7 +83,7 @@
 
 		<section id='new-cyph-section'>
 			<md-button id='new-cyph' aria-label='Start new cyph'>
-				<a translate href='//www.cyph.im/#new'>Start new cyph</a>
+				<a translate ng-href='{{(isOnion ? "/im" : "https://www.cyph.im") + "/#new"}}'>Start new cyph</a>
 			</md-button>
 		</section>
 
@@ -531,7 +531,7 @@
 					target='_blank'
 					aria-label='Start new cyph'
 				>
-					<a translate href='//www.cyph.im/#new'>Start new cyph</a>
+					<a translate ng-href='{{(isOnion ? "/im" : "https://www.cyph.im") + "/#new"}}'>Start new cyph</a>
 				</md-button>
 			</section>
 
@@ -585,14 +585,13 @@
 		<link rel='stylesheet' href='/lib/bower_components/angular-material/angular-material.css' />
 		<link rel='stylesheet' href='/lib/bower_components/animate.css/animate.min.css' />
 
+		<link rel='stylesheet' href='/css/fonts.css' />
 		<link rel='stylesheet' href='/css/cyph.base.css' />
 		<link rel='stylesheet' href='/css/cyph.com.css' />
 
 		<script src='/js/translate.js'></script>
 
 		<script src='/lib/bower_components/jquery/dist/jquery.min.js'></script>
-
-		<script src='/js/errorlog.js'></script>
 
 		<script src='/lib/bower_components/angular/angular.min.js'></script>
 		<script src='/lib/bower_components/angular-aria/angular-aria.js'></script>
@@ -603,7 +602,7 @@
 
 		<script src='/js/cyph.js'></script>
 		<script src='/js/cyph.com.js'></script>
-		<script src='/js/ui.js'></script>
+		<script src='/js/cyph.com.ui.js'></script>
 
 		<script>
 			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
