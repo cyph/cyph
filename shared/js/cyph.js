@@ -4,7 +4,7 @@ var isHistoryAvailable	= typeof history != 'undefined';
 var isOnion				= document.location.host.split('.').slice(-1)[0] == 'onion';
 
 if (isOnion) {
-	var BASE_URL	= '/api/';
+	BASE_URL	= '/api/';
 }
 else {
 	$.get(ONION_URL + '/ping', function (data) {
