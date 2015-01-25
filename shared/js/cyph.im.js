@@ -3,6 +3,8 @@ var preConnectMessageReceiveQueue	= [];
 var preConnectMessageSendQueue		= [];
 var otrWorkerOnMessageQueue			= [];
 
+var isAlive	= false;
+
 var CHANNEL_DATA_PREFIX	= 'CHANNEL DATA: ';
 var WEBRTC_DATA_PREFIX	= 'webrtc: ';
 
@@ -16,24 +18,12 @@ var channelDataMisc	= {
 	donetyping: '5'
 };
 
-<<<<<<< HEAD
-var channel, isBanned, isConnected, isKill, isOtrReady, pongReceived, sharedSecret, shouldSendQueryMessage, socket;
-=======
-var channel, isBanned, isConnected, isOtrReady, pongReceived, shouldSendQueryMessage, socket;
->>>>>>> origin/prod
+var channel, isWebSignObsolete, isConnected, isOtrReady, pongReceived, sharedSecret, shouldSendQueryMessage, socket;
 
 
 /* Init crypto */
 
-/* Convert the function into a string and directly make it a Worker */
-var otrWorker	= new Worker(
-	window.URL.createObjectURL(
-		new Blob(
-			[cryptoWebWorker.toString().replace(/.*?\{((.|\n)*)\}/, '$1')],
-			{ type: 'text/javascript'}
-		)
-	)
-);
+var otrWorker		= makeWorker(cryptoWebWorker);
 
 var urlFragment		= document.location.hash.split('#')[1];
 
@@ -141,30 +131,26 @@ crypto.getRandomValues(randomSeed);
 
 var isInitiator	= getUrlState() == 'new';
 
-function dothemove () {
-	$.ajax({
-		error: function () {
-			setTimeout(dothemove, 100);
-		},
-		success: function (banned) {
-			if (banned.toString() == 'true') {
-				iAmBanned();
-			}
-			else {
-				otrWorker.postMessage({method: 0, message: {
-					cryptoCodes: localStorage.cryptoCodes,
-					randomSeed: randomSeed,
-					sharedSecret: sharedSecret,
-					isInitiator: isInitiator
-				}});
-			}
-		},
-		type: 'GET',
-		url: BASE_URL + 'amibanned'
-	});
-}
+if (window.webSignObsolete) {
+	function warnWebSignObsoleteWrapper () {
+		if (typeof warnWebSignObsolete == 'undefined') {
+			setTimeout(warnWebSignObsoleteWrapper, 1000);
+		}
+		else {
+			warnWebSignObsolete();
+		}
+	}
 
-dothemove();
+	warnWebSignObsoleteWrapper();
+}
+else {
+	otrWorker.postMessage({method: 0, message: {
+		cryptoCodes: localStorage.cryptoCodes,
+		randomSeed: randomSeed,
+		sharedSecret: sharedSecret,
+		isInitiator: isInitiator
+	}});
+}
 
 /* End crypto init */
 
@@ -180,7 +166,7 @@ function beginChat () {
 
 		$(window).unload(function () {
 			if (isAlive) {
-				sendChannelDataBase({Destroy: true, Unloading: true});
+				sendChannelDataBase({Destroy: true});
 				socketClose();
 			}
 		});
@@ -209,7 +195,7 @@ function pingPong () {
 
 
 function processUrlState () {
-	if (isBanned) {
+	if (isWebSignObsolete) {
 		return;
 	}
 
@@ -217,7 +203,7 @@ function processUrlState () {
 
 	/* Root */
 	if (!state) {
-		document.location.replace('https://www.cyph.com/');
+		document.location.replace(isOnion ? '/' : 'https://www.cyph.com/');
 	}
 	/* New chat room */
 	else if (state == 'new') {
@@ -359,6 +345,10 @@ function sendChannelData (data) {
 function sendChannelDataBase (data, opts) {
 	var item	= {data: data, opts: opts || {}};
 
+	if (item.data.Destroy) {
+		item.data.Unloading	= true;
+	}
+
 	if (item.data.Unloading) {
 		sendChannelDataHandler(item);
 	}
@@ -469,7 +459,7 @@ function setUpChannel (channelData) {
 
 /* Event loop for processing incoming and outgoing messages */
 
-function eventLoop () {
+onTick(function () {
 	/*** otrWorker onmessage ***/
 	if (otrWorkerOnMessageQueue.length) {
 		otrWorkerOnMessageHandler(otrWorkerOnMessageQueue.shift());
@@ -484,8 +474,11 @@ function eventLoop () {
 	else if (receiveChannelDataQueue.length) {
 		receiveChannelDataHandler(receiveChannelDataQueue.shift());
 	}
-}
 
-document.addEventListener(TICK_EVENT.type, eventLoop);
+	/*** else ***/
+	else {
+		return false;
+	}
 
-initTicker();
+	return true;
+});
