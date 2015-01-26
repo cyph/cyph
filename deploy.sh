@@ -83,10 +83,12 @@ if [ $test ] ; then
 	ls cyph.im/js/*.js | xargs -I% sed -i.bak "s/api.cyph.com/${branch}-dot-cyphme.appspot.com/g" %
 
 	# ls */*.yaml | xargs -I% sed -i.bak 's/version: prod/version: staging/g' %
-	for yaml in `ls */cyph*.yaml` ; do
-		cat $yaml | perl -pe 's/(- url: .*)/\1\n  login: admin/g' > $yaml.new
-		mv $yaml.new $yaml
-	done
+
+	# Temporarily disabled admin restriction on test environments
+	# for yaml in `ls */cyph*.yaml` ; do
+	#	cat $yaml | perl -pe 's/(- url: .*)/\1\n  login: admin/g' > $yaml.new
+	#	mv $yaml.new $yaml
+	# done
 else
 	ls */*.yaml | xargs -I% sed -i.bak 's/version: staging/version: prod/g' %
 fi
