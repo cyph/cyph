@@ -4,11 +4,9 @@ dir="$(pwd)"
 scriptdir="$(cd "$(dirname "$0")"; pwd)" # $(dirname `readlink -f "${0}" || realpath "${0}"`)
 cd "${scriptdir}"
 
+rm -rf shared/lib shared/cryptolib
+mkdir shared/lib shared/cryptolib
 cd shared/lib
-
-rm -rf .oldbower
-mkdir .oldbower
-mv bower* .oldbower/
 
 bower install --save \
 	angular-material \
@@ -33,10 +31,6 @@ wget https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/default.min.
 wget https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js -O highlight.min.js
 
 cd ../cryptolib
-
-rm -rf .oldbower
-mkdir .oldbower
-mv bower* .oldbower/
 
 bower install --save \
 	mnaamani/otr4-em
