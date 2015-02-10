@@ -1,4 +1,4 @@
-addressSpace	= [
+var addressSpace	= [
 	'0',
 	'1',
 	'2',
@@ -60,3 +60,13 @@ addressSpace	= [
 	'Y',
 	'Z'
 ];
+
+function generateGuid (length) {
+	var a	= new Uint8Array(length);
+	crypto.getRandomValues(a);
+
+	return Array.prototype.slice.call(a).
+		map(function (n) { return addressSpace[n % addressSpace.length] }).
+		join('')
+	;
+}

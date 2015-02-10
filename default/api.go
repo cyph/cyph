@@ -19,9 +19,10 @@ func init() {
 	handleFuncs("/continent", Handlers{methods.GET: getContinent})
 	handleFuncs("/channels/{id}", Handlers{methods.POST: channelReceive})
 	handleFuncs("/errors", Handlers{methods.POST: logError})
-	handleFuncs("/ims", Handlers{methods.POST: imCreate})
 	handleFuncs("/ims/{id}", Handlers{methods.POST: imConnect})
+	handleFuncs("/ims/{id}/{longid}", Handlers{methods.POST: imCreate})
 	handleFuncs("/messages/{id}", Handlers{methods.PUT: channelAck})
+	handleFuncs("/smperrors", Handlers{methods.POST: logSmpError})
 	handleFuncs("/websignerrors", Handlers{methods.POST: logWebSignError})
 	handleFuncs("/_ah/channel/disconnected/", Handlers{methods.POST: channelClose})
 
@@ -142,8 +143,8 @@ func imConnect(h HandlerArgs) (interface{}, int) {
 }
 
 func imCreate(h HandlerArgs) (interface{}, int) {
-	imId := generateImId()
-	longId := generateLongId()
+	imId := h.Vars["id"]
+	longId := h.Vars["longid"]
 
 	for {
 		if _, err := memcache.Get(h.Context, imId+"1"); err == memcache.ErrCacheMiss {
@@ -185,6 +186,10 @@ func logError(h HandlerArgs) (interface{}, int) {
 	return logErrorHelper("CYPH: WARNING WARNING WARNING SOMETHING IS SRSLY FUCKED UP LADS", h)
 }
 
+func logSmpError(h HandlerArgs) (interface{}, int) {
+	return logErrorHelper("SMP JUST FAILED FOR SOMEONE LADS", h)
+}
+
 func logStats(h HandlerArgs) (interface{}, int) {
 	s, _ := getStats(h)
 	stats := s.(Stats)
@@ -216,10 +221,12 @@ func channelCloseHelper(c appengine.Context, idBase string) {
 }
 
 func logErrorHelper(subject string, h HandlerArgs) (interface{}, int) {
+	country, _ := geolocate(h)
+
 	mail.SendToAdmins(h.Context, &mail.Message{
 		Sender:  "test@cyphme.appspotmail.com",
 		Subject: subject,
-		Body:    h.Request.FormValue("error"),
+		Body:    h.Request.FormValue("error") + "\n\nCountry: " + country,
 	})
 
 	return nil, http.StatusOK
