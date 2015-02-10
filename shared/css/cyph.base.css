@@ -9,6 +9,9 @@ html, body, #main, md-sidenav {
 #main, .md-button {
   color: #f1f1f1 !important; }
 
+html .md-button {
+  font-weight: normal; }
+
 md-sidenav .md-button {
   width: 100%;
   text-align: left;
