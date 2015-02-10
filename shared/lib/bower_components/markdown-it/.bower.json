@@ -25,15 +25,15 @@
     "Makefile",
     "index*"
   ],
-  "version": "3.0.4",
-  "_release": "3.0.4",
+  "version": "3.0.5",
+  "_release": "3.0.5",
   "_resolution": {
     "type": "version",
-    "tag": "3.0.4",
-    "commit": "bf846041fc6dbeaac82f47ce7ad04f9b054d368c"
+    "tag": "3.0.5",
+    "commit": "0dc415f1d24fbaf65c4bb95e533976a4dc7153a4"
   },
   "_source": "git://github.com/markdown-it/markdown-it.git",
-  "_target": "~3.0.4",
+  "_target": "~3.0.5",
   "_originalSource": "markdown-it",
   "_direct": true
 }
