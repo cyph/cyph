@@ -8,7 +8,8 @@ var isAlive	= false;
 var CHANNEL_DATA_PREFIX	= 'CHANNEL DATA: ';
 var WEBRTC_DATA_PREFIX	= 'webrtc: ';
 
-var SECRET_LENGTH	= 7;
+var SECRET_LENGTH		= 7;
+var LONG_SECRET_LENGTH	= 52;
 
 var channelDataMisc	= {
 	connect: '1',
@@ -37,13 +38,7 @@ if (urlFragment) {
 }
 
 if (!sharedSecret || sharedSecret.length != SECRET_LENGTH) {
-	var a	= new Uint8Array(SECRET_LENGTH);
-	crypto.getRandomValues(a);
-
-	sharedSecret	= Array.prototype.slice.call(a).
-		map(function (n) { return addressSpace[n % addressSpace.length] }).
-		join('')
-	;
+	sharedSecret	= generateGuid(SECRET_LENGTH);
 }
 
 otrWorker.onmessage	= function (e) { otrWorkerOnMessageQueue.push(e) };
@@ -110,6 +105,7 @@ function otrWorkerOnMessageHandler (e) {
 			break;
 
 		case 'abort':
+			errorLog('smperrors')();
 			abortSetup();
 			break;
 
@@ -219,7 +215,7 @@ function processUrlState () {
 	else if (state == 'new') {
 		changeState(states.spinningUp);
 
-		$.post(BASE_URL + 'ims', function (id) {
+		$.post(BASE_URL + 'ims/' + generateGuid(SECRET_LENGTH) + '/' + generateGuid(LONG_SECRET_LENGTH), function (id) {
 			pushState('/' + id, true);
 		});
 	}
