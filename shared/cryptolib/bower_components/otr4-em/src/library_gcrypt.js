@@ -1,6 +1,6 @@
 mergeInto(LibraryManager.library, {
   i32______gpg_err_init_to_void_____:function(){},
-  $BIGINT__postset:'BIGINT = globalScope["BigInt"] || require("../bigint")',
+  $BIGINT__postset:'BIGINT = globalScope["BigInt"]',
   $BIGINT: {},
   $GCRYPT__deps: ['i32______gpg_err_init_to_void_____','$BIGINT'],
   $GCRYPT__postset:
