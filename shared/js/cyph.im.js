@@ -131,26 +131,36 @@ crypto.getRandomValues(randomSeed);
 
 var isInitiator	= getUrlState() == 'new';
 
-if (window.webSignObsolete) {
-	function warnWebSignObsoleteWrapper () {
-		if (typeof warnWebSignObsolete == 'undefined') {
-			setTimeout(warnWebSignObsoleteWrapper, 1000);
-		}
-		else {
-			warnWebSignObsolete();
-		}
-	}
 
-	warnWebSignObsoleteWrapper();
+/* TODO: Consider enabling the Walken warning after further testing */
+
+if (window.webSignObsolete) {
+	/*
+		function warnWebSignObsoleteWrapper () {
+			if (typeof warnWebSignObsolete == 'undefined') {
+				setTimeout(warnWebSignObsoleteWrapper, 1000);
+			}
+			else {
+				warnWebSignObsolete();
+			}
+		}
+
+		warnWebSignObsoleteWrapper();
+	*/
+
+	errorLog('websignerrors')();
 }
-else {
-	otrWorker.postMessage({method: 0, message: {
-		cryptoCodes: localStorage.cryptoCodes,
-		randomSeed: randomSeed,
-		sharedSecret: sharedSecret,
-		isInitiator: isInitiator
-	}});
-}
+
+// else {
+
+otrWorker.postMessage({method: 0, message: {
+	cryptoCodes: localStorage.cryptoCodes,
+	randomSeed: randomSeed,
+	sharedSecret: sharedSecret,
+	isInitiator: isInitiator
+}});
+
+// }
 
 /* End crypto init */
 
