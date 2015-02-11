@@ -217,10 +217,7 @@ angular.
 			changeState($scope.states.waitingForFriend);
 
 			var copyUrl		=
-				document.location.protocol + '//' +
-				document.location.host.replace('www.', '') +
-				(isOnion ? '/im' : '') +
-				'/#' +
+				'https://cyph.im/#' +
 				document.location.pathname.substr(1) +
 				sharedSecret
 			;

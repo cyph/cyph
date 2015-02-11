@@ -48,23 +48,18 @@
 
 
 	var isOnion		= document.location.host.split('.').slice(-1)[0] == 'onion';
-	var scriptUrl	= (isOnion ? '/google/talkgadget/' : 'https://talkgadget.google.com/talkgadget/') + 'channel.js';
 
-	function loadScript (src, body) {
-		var script	= document.createElement('script');
+	var script	= document.createElement('script');
+	script.src	= (isOnion ? '/google/talkgadget/' : 'https://talkgadget.google.com/talkgadget/') + 'channel.js';
+	document.body.appendChild(script);
 
-		if (src) {
-			script.src	= src;
+	/* Wait until script is loaded, then do the move */
+	var dothemoveInterval	= setInterval(function () {
+		if (goog && goog.appengine && goog.appengine.Channel) {
+			clearInterval(dothemoveInterval);
+			dothemove();
 		}
-		else if (body) {
-			script.innerText	= body;
-		}
-
-		document.body.appendChild(script);
-	}
-
-	loadScript(scriptUrl);
-	loadScript(null, 'dothemove()');
+	}, 250);
 </script>
 
 </body></html>
