@@ -107,18 +107,17 @@ for d in cyph.im ; do
 	mv index.html $d.pkg
 	mv websign.html index.html
 
-	shasum -p -a 512 $d.pkg | perl -pe 's/(.*) .*/\1/' > $d.hash
-	gpg --clearsign $d.hash
-	mv $d.hash.* $d.hash
-
 	currentDir="$(pwd)"
 	cd ../../..
 	git clone git@github.com:cyph/cyph.github.io.git github.io
 	cd github.io
 	git reset --hard
 	git pull
+
 	cp -f $currentDir/$d.pkg websign/
-	cp -f $currentDir/$d.hash websign/
+	echo "{\"hash\":\"$(shasum -p -a 512 $currentDir/$d.pkg | perl -pe 's/(.*) .*/\1/')\",\"timestamp\":$(date +%s)000}" |
+		gpg --clearsign > websign/$d.hash
+
 	git add .
 	chmod -R 777 .
 	git commit -a -m 'package update'
