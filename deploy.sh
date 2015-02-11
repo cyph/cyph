@@ -115,7 +115,9 @@ for d in cyph.im ; do
 	git pull
 
 	cp -f $currentDir/$d.pkg websign/
-	echo "{\"hash\":\"$(shasum -p -a 512 $currentDir/$d.pkg | perl -pe 's/(.*) .*/\1/')\",\"timestamp\":$(date +%s)000}" |
+
+	HASH_TTL=3944620 # 1.5 months
+	echo "{\"hash\":\"$(shasum -p -a 512 $currentDir/$d.pkg | perl -pe 's/(.*) .*/\1/')\",\"expires\":$(($(date +%s)+${HASH_TTL}))000}" |
 		gpg --clearsign > websign/$d.hash
 
 	git add .
