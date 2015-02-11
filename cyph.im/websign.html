@@ -179,7 +179,7 @@
 
 						/* If more recent than previous known good hash,
 							validate signature before accepting it */
-						if (hashTimestamp > previousHashTimestamp) {
+						if (!previousHashTimestamp || hashTimestamp > previousHashTimestamp) {
 							var isValid	= PUBLIC_KEYS.
 								map(function (key) { return signedHash.verify(openpgp.key.readArmored(key).keys)[0].valid }).
 								reduce(function (a, b) { return a || b })
