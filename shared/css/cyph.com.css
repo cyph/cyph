@@ -225,7 +225,7 @@ html.mobile #coming-soon > * > *, #coming-soon:hover #coming-soon-title > *, #co
   margin-right: auto; }
   .section-content-container > p {
     padding-bottom: 15px; }
-  .section-content-container md-input-group {
+  .section-content-container md-input-container {
     padding: 0px 10vw; }
   .section-content-container li {
     margin-bottom: 15px; }
@@ -266,16 +266,16 @@ html:not(.mobile) .founder-photos:after {
 .beta-signup-form {
   opacity: 0;
   color: #f1f1f1; }
-  .beta-signup-form *, .beta-signup-form md-input-group.md-default-theme * {
+  .beta-signup-form *, .beta-signup-form md-input-container.md-default-theme * {
     color: #f1f1f1;
     border-color: #f1f1f1;
     width: 100%; }
   .beta-signup-form *:not(p):not(p *) {
     display: block; }
-  .beta-signup-form md-input-group.md-input-focused * {
+  .beta-signup-form md-input-container.md-input-focused * {
     color: #c9adff !important;
     border-color: #c9adff !important; }
-  .beta-signup-form md-input-group.md-default-theme label {
+  .beta-signup-form md-input-container.md-default-theme label {
     font-size: 0.75em; }
   .beta-signup-form .md-button {
     margin: 25px auto;
