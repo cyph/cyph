@@ -164,27 +164,30 @@
 
 				/* Get latest signed hash */
 				request(cdnUrl + HASH_PATH + Date.now(), function (signedHashText) {
-					var previousHash		= localStorage.webSignHash;
-					var previousHashExpires	= parseInt(localStorage.webSignHashExpires, 10);
+					var previousHash			= localStorage.webSignHash;
+					var previousHashTimestamp	= parseInt(localStorage.webSignHashTimestamp, 10);
+					var previousHashExpires		= parseInt(localStorage.webSignHashExpires, 10);
 
 					try {
 						var signedHash	= openpgp.cleartext.readArmored(signedHashText);
 
-						var o			= JSON.parse(signedHash.getText());
-						var hashText	= o.hash;
-						var hashExpires	= o.expires;
+						var o				= JSON.parse(signedHash.getText());
+						var hashText		= o.hash;
+						var hashTimestamp	= o.timestamp;
+						var hashExpires		= o.expires;
 
-						/* If more recent than previous known good hash,
+						/* If not expired and more recent than previous known good hash,
 							validate signature before accepting it */
-						if (!previousHashExpires || hashExpires > previousHashExpires) {
+						if ((!previousHashTimestamp || hashTimestamp > previousHashTimestamp) && hashExpires > Date.now()) {
 							var isValid	= PUBLIC_KEYS.
 								map(function (key) { return signedHash.verify(openpgp.key.readArmored(key).keys)[0].valid }).
 								reduce(function (a, b) { return a || b })
 							;
 
 							if (isValid) {
-								localStorage.webSignHash		= hashText;
-								localStorage.webSignHashExpires	= hashExpires;
+								localStorage.webSignHash			= hashText;
+								localStorage.webSignHashTimestamp	= hashTimestamp;
+								localStorage.webSignHashExpires		= hashExpires;
 							}
 						}
 					}
@@ -195,9 +198,10 @@
 						then if that fails retry everything with default fallback CDN node,
 						then finally abort if that still fails */
 					getPackage(cdnUrl, function () {
-						if (previousHash && previousHashExpires) {
-							localStorage.webSignHash		= previousHash;
-							localStorage.webSignHashExpires	= previousHashExpires;
+						if (previousHash && previousHashTimestamp && previousHashExpires) {
+							localStorage.webSignHash			= previousHash;
+							localStorage.webSignHashTimestamp	= previousHashTimestamp;
+							localStorage.webSignHashExpires		= previousHashExpires;
 						}
 
 						getPackage(cdnUrl, function () {
