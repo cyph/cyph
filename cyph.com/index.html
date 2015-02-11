@@ -254,7 +254,10 @@
 						<span translate>if you’re pumped up for more Cyph awesomeness,</span>
 						<div translate>join the waitlist for Cyph v2! (Coming soon to an Internet near you.)</div>
 						<br />
-						<md-text-float type='email' label='email' ng-model='betaSignup.Email' translate></md-text-float>
+						<md-input-container>
+							<label translate>email</label>
+							<input type='email' ng-model='betaSignup.Email' />
+						</md-input-container>
 					</div>
 
 					<div ng-show='betaSignupState == 1'>
@@ -266,7 +269,10 @@
 								Feel free to add your name as well. :)
 							</p>
 						</div>
-						<md-text-float label='name (optional)' ng-model='betaSignup.Name' translate></md-text-float>
+						<md-input-container>
+							<label translate>name (optional)</label>
+							<input ng-model='betaSignup.Name' />
+						</md-input-container>
 					</div>
 
 					<div ng-show='betaSignupState > 1'>
@@ -330,7 +336,10 @@
 										Sign up below, and get bumped to the front of our waitlist for Cyph v2.
 									</p>
 								</div>
-								<md-text-float type='email' label='email' ng-model='betaSignup.Email' translate></md-text-float>
+								<md-input-container>
+									<label translate>email</label>
+									<input type='email' ng-model='betaSignup.Email' />
+								</md-input-container>
 							</div>
 
 							<div ng-show='betaSignupState == 1'>
@@ -340,7 +349,10 @@
 								<div translate>
 									Feel free to add your name as well. :)
 								</div>
-								<md-text-float label='name (optional)' ng-model='betaSignup.Name' translate></md-text-float>
+								<md-input-container>
+									<label translate>name (optional)</label>
+									<input ng-model='betaSignup.Name' />
+								</md-input-container>
 							</div>
 
 							<div ng-show='betaSignupState == 2'>
@@ -504,7 +516,10 @@
 						<div translate>
 							Join the waitlist for Cyph v2!
 						</div>
-						<md-text-float type='email' label='email' ng-model='betaSignup.Email' translate></md-text-float>
+						<md-input-container>
+							<label translate>email</label>
+							<input type='email' ng-model='betaSignup.Email' />
+						</md-input-container>
 					</div>
 
 					<div ng-show='betaSignupState == 1'>
@@ -514,7 +529,10 @@
 						<div translate>
 							Feel free to add your name as well. :)
 						</div>
-						<md-text-float label='name (optional)' ng-model='betaSignup.Name' translate></md-text-float>
+						<md-input-container>
+							<label translate>name (optional)</label>
+							<input ng-model='betaSignup.Name' />
+						</md-input-container>
 					</div>
 
 					<div ng-show='betaSignupState == 2'>

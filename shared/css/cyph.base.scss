@@ -77,7 +77,7 @@ html:not(.mobile) {
 	}
 }
 
-:not(textarea):not(md-text-float):not(md-input-group):not(input) {
+:not(textarea):not(md-input-container):not(input) {
 	border: 0px !important;
 }
 

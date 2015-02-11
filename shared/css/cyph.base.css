@@ -51,7 +51,7 @@ ng-markdown blockquote, [ng-markdown] blockquote {
 html:not(.mobile) ng-markdown :not(p:only-child), html:not(.mobile) [ng-markdown] :not(p:only-child) {
   margin-left: 25px; }
 
-:not(textarea):not(md-text-float):not(md-input-group):not(input) {
+:not(textarea):not(md-input-container):not(input) {
   border: 0px !important; }
 
 a {
