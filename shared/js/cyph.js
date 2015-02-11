@@ -7,6 +7,8 @@ if (isOnion) {
 	BASE_URL	= '/api/';
 }
 else {
+	var theRest	= document.location.toString().split(document.location.host)[1];
+
 	$.get(ONION_URL + '/ping', function (data) {
 		if (data == 'pong') {
 			var path	= '';
@@ -20,7 +22,7 @@ else {
 					break;
 			}
 
-			document.location.href	= ONION_URL + path + document.location.toString().split(document.location.host)[1];
+			document.location.href	= ONION_URL + path + theRest;
 		}
 	});
 }
