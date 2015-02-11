@@ -47,41 +47,24 @@
 	}
 
 
-	function request (url, callback, errorHandler, retries) {
-		var req		= new XMLHttpRequest();
-		req.open('get', url, true);
+	var isOnion		= document.location.host.split('.').slice(-1)[0] == 'onion';
+	var scriptUrl	= (isOnion ? '/google/talkgadget/' : 'https://talkgadget.google.com/talkgadget/') + 'channel.js';
 
-		req.onreadystatechange = function () {
-			if (req.readyState == 4) {
-				if (req.status == 200) {
-					callback(req.responseText);
-				}
-				else {
-					retries	= retries || 0;
+	function loadScript (src, body) {
+		var script	= document.createElement('script');
 
-					if (retries > 3) {
-						if (errorHandler) {
-							errorHandler(req.statusText);
-						}
-						else {
-							callback(null);
-						}
-					}
-					else {
-						request(url, callback, errorHandler, retries + 1);
-					}
-				}
-			}
-		};
+		if (src) {
+			script.src	= src;
+		}
+		else if (body) {
+			script.innerText	= body;
+		}
 
-		req.send();
+		document.getElementsByTagName('head')[0].appendChild(script);
 	}
 
-
-	var isOnion	= document.location.host.split('.').slice(-1)[0] == 'onion';
-	var script	= (isOnion ? '/google/talkgadget/' : 'https://talkgadget.google.com/talkgadget/') + 'channel.js';
-
-	request(script, dothemove);
+	loadScript(scriptUrl);
+	loadScript(null, 'dothemove()');
 </script>
 
 </body></html>
