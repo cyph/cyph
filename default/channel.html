@@ -55,7 +55,7 @@
 
 	/* Wait until script is loaded, then do the move */
 	var dothemoveInterval	= setInterval(function () {
-		if (goog && goog.appengine && goog.appengine.Channel) {
+		if (typeof goog != 'undefined' && goog.appengine && goog.appengine.Channel) {
 			clearInterval(dothemoveInterval);
 			dothemove();
 		}
