@@ -1,49 +1,87 @@
 <html><body>
 
-<script src='https://talkgadget.google.com/talkgadget/channel.js'></script>
 <script>
-	var channels	= {};
+	function dothemove () {
+		var channels	= {};
 
-	function postMessageToOrigin (message, e) {
-		e.source.postMessage(message, e.origin);
-	}
-
-	function callback (eventName, e) {
-		return function () {
-			postMessageToOrigin({
-				eventName: eventName,
-				args: Array.prototype.slice.call(arguments),
-				id: e.data.id
-			}, e);
-		};
-	}
-
-	window.addEventListener('message', function (e) {
-		switch (e.data.method) {
-			case 'new':
-				channels[e.data.id]	= {channel: new goog.appengine.Channel(e.data.token)};
-				break;
-
-			case 'open':
-				var o	= channels[e.data.id];
-
-				o.socket	= o.channel.open({
-					onopen: callback('onopen', e),
-					onmessage: callback('onmessage', e),
-					onerror: callback('onerror', e),
-					onclose: callback('onclose', e)
-				});
-				break;
-
-			case 'close':
-				channels[e.data.id].socket.close();
-				break;
-
-			default:
-				postMessageToOrigin({pong: true}, e);
-				break;
+		function postMessageToOrigin (message, e) {
+			e.source.postMessage(message, e.origin);
 		}
-	}, false);
+
+		function callback (eventName, e) {
+			return function () {
+				postMessageToOrigin({
+					eventName: eventName,
+					args: Array.prototype.slice.call(arguments),
+					id: e.data.id
+				}, e);
+			};
+		}
+
+		window.addEventListener('message', function (e) {
+			switch (e.data.method) {
+				case 'new':
+					channels[e.data.id]	= {channel: new goog.appengine.Channel(e.data.token)};
+					break;
+
+				case 'open':
+					var o	= channels[e.data.id];
+
+					o.socket	= o.channel.open({
+						onopen: callback('onopen', e),
+						onmessage: callback('onmessage', e),
+						onerror: callback('onerror', e),
+						onclose: callback('onclose', e)
+					});
+					break;
+
+				case 'close':
+					channels[e.data.id].socket.close();
+					break;
+
+				default:
+					postMessageToOrigin({pong: true}, e);
+					break;
+			}
+		}, false);
+	}
+
+
+	function request (url, callback, errorHandler, retries) {
+		var req		= new XMLHttpRequest();
+		req.open('get', url, true);
+
+		req.onreadystatechange = function () {
+			if (req.readyState == 4) {
+				if (req.status == 200) {
+					callback(req.responseText);
+				}
+				else {
+					retries	= retries || 0;
+
+					if (retries > 3) {
+						if (errorHandler) {
+							errorHandler(req.statusText);
+						}
+						else {
+							callback(null);
+						}
+					}
+					else {
+						request(url, callback, errorHandler, retries + 1);
+					}
+				}
+			}
+		};
+
+		req.send();
+	}
+
+
+	var isOnion	= document.location.host.split('.').slice(-1)[0] == 'onion';
+	var script	= (isOnion ? '/google/talkgadget/' : 'https://talkgadget.google.com/talkgadget/') + 'channel.js';
+
+	request(script, dothemove);
 </script>
 
 </body></html>
