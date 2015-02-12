@@ -13,7 +13,7 @@
     top: calc(50% - 30px);
     left: calc(50% - 30px); }
 
-#pre-load.load-complete {
+#pre-load.load-complete, html.load-complete #pre-load {
   pointer-events: none;
   opacity: 0;
   -webkit-transition: opacity 0.25s linear;
