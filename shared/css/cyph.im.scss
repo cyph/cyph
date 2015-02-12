@@ -389,7 +389,7 @@ html.mobile {
 	z-index: 10;
 
 	.logo > img {
-		width: 60%;
+		width: 70%;
 		margin: 0px auto;
 		margin-bottom: 50px;
 		display: block;
@@ -406,6 +406,11 @@ html.mobile {
 
 #mobile-toolbar {
 	z-index: 6;
+
+	.logo > img {
+		height: 30px !important;
+		margin-left: -5px;
+	}
 }
 html.mobile #main {
 	padding-top: 40px;
