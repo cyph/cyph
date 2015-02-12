@@ -424,6 +424,10 @@ html:not(.mobile) {
 	@include transition(opacity 500ms 1s linear);
 }
 
+#main:not(.unisection-mode) #footer .beta-signup-form {
+	display: none;
+}
+
 .hidden-submit-button {
 	visibility: hidden;
 	position: absolute;
