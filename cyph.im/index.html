@@ -6,9 +6,9 @@
 
 		<title
 			translate
-			ng-bind='(unreadMessages > 0 ? ("(" + unreadMessages + ") ") : "") + "Cyph – Privacy starts here."'
+			ng-bind='(unreadMessages > 0 ? ("(" + unreadMessages + ") ") : "") + "Cyph – Encrypted Messenger"'
 		>
-			Cyph &ndash; Privacy starts here.
+			Cyph &ndash; Encrypted Messenger
 		</title>
 		<meta translate name='description' content='Cyph is a next-generation messenger app that makes privacy the new status quo.' />
 		<meta translate name='newMessageNotification' content='New message!' />
@@ -54,7 +54,7 @@
 		<md-toolbar id='mobile-toolbar' class='mobile-only'>
 			<div class='md-toolbar-tools'>
 				<a class='logo' ng-href='{{isOnion ? "/" : "https://www.cyph.com"}}'>
-					<img deferred-src='/img/logo.white.horizontal.header.png' />
+					<img deferred-src='/img/betalogo.mobile.png' />
 				</a>
 				<span flex></span>
 				<md-button translate aria-label='Menu' ng-show='state == states.chat' ng-click='openMobileMenu()'>
@@ -90,7 +90,7 @@
 
 		<div id='desktop-sidebar' class='desktop-only'>
 			<a class='logo' ng-href='{{isOnion ? "/" : "https://www.cyph.com"}}'>
-				<img deferred-src='/img/logo.white.vertical.png' />
+				<img deferred-src='/img/betalogo.png' />
 			</a>
 			<section ng-show='state == states.chat'>
 				<md-button translate aria-label='Verify Identity' ng-click='twoFactor()' ng-hide='true'>Verify Identity</md-button>
