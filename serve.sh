@@ -14,6 +14,7 @@ ps ux | grep dev_appserver | awk '{print $2}' | xargs kill -9
 # done
 
 sass --watch $1 &
+sass --watch shared &
 dev_appserver.py $1/*.yaml
 
 cd "${dir}"
