@@ -230,8 +230,11 @@ function processUrlState () {
 		});
 	}
 	/* 404 */
-	else {
+	else if (state == '404') {
 		changeState(states.error);
+	}
+	else {
+		pushNotFound();
 	}
 }
 
