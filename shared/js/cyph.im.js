@@ -112,11 +112,13 @@ function otrWorkerOnMessageHandler (e) {
 		case 'connected':
 			isConnected	= true;
 
-			markAllAsSent();
-
 			while (preConnectMessageSendQueue.length) {
 				otr.sendMsg(preConnectMessageSendQueue.shift());
 			}
+			break;
+
+		case 'authenticated':
+			markAllAsSent();
 			break;
 	}
 }
@@ -216,7 +218,9 @@ function processUrlState () {
 		changeState(states.spinningUp);
 
 		$.post(BASE_URL + 'ims/' + generateGuid(SECRET_LENGTH) + '/' + generateGuid(LONG_SECRET_LENGTH), function (id) {
-			pushState('/' + id, true);
+			setTimeout(function () {
+				pushState('/' + id, true);
+			}, 500);
 		});
 	}
 	/* Join existing chat room */

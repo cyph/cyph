@@ -147,7 +147,8 @@ angular.
 						isFromFriend: author == authors.friend,
 						isFromMe: author == authors.me,
 						text: text,
-						timestamp: ($scope.isConnected || author == authors.app) ? getTimestamp() : ''
+						// timestamp: ($scope.isConnected || author == authors.app) ? getTimestamp() : ''
+						timestamp: getTimestamp()
 					});
 				});
 
@@ -390,6 +391,7 @@ angular.
 
 		markAllAsSent = $scope.markAllAsSent = function () {
 			apply(function () {
+				/*
 				for (var i = 0 ; i < $scope.messages.length ; ++i) {
 					var message	= $scope.messages[i];
 
@@ -397,6 +399,7 @@ angular.
 						message.timestamp	= getTimestamp();
 					}
 				}
+				*/
 
 				$scope.isConnected	= true;
 			});
