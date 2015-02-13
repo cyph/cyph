@@ -379,6 +379,8 @@ html:not(.mobile) .loading {
   margin-left: auto;
   margin-right: auto;
   display: block; }
+#error li {
+  margin-bottom: 15px; }
 
 html.mobile #error {
   padding: 5px; }
