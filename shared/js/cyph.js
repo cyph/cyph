@@ -1,5 +1,47 @@
 var BASE_URL			= 'https://api.cyph.com/';
+var ONION_URL			= 'https://cyphdbyhiddenbhs.onion';
 var isHistoryAvailable	= typeof history != 'undefined';
+var isOnion				= document.location.host.split('.').slice(-1)[0] == 'onion';
+
+if (isOnion) {
+	BASE_URL	= '/api/';
+}
+else {
+	var theRest	= document.location.toString().split(document.location.host)[1];
+
+	$.get(ONION_URL + '/ping', function (data) {
+		if (data == 'pong') {
+			var path	= '';
+			switch (document.location.hostname) {
+				case 'www.cyph.im':
+					path	= '/im';
+					break;
+
+				case 'www.cyph.me':
+					path	= '/me';
+					break;
+			}
+
+			document.location.href	= ONION_URL + path + theRest;
+		}
+	});
+}
+
+
+/* Log all JS exceptions */
+function errorLog (apiMethod) {
+	return function () {
+		$.post(BASE_URL + apiMethod, {
+			error: JSON.stringify(arguments) +
+				'\n\n' + navigator.userAgent +
+				'\n\n' + navigator.language +
+				'\n\n' + (typeof language == 'undefined' ? '' : language) +
+				'\n\n' + document.location.toString()
+		});
+	};
+}
+window.onerror	= errorLog('errors');
+
 
 
 function getString (name) {
@@ -95,26 +137,6 @@ isMobile		= isMobile || isFFMobile;
 var isTablet	= isMobile && window.outerWidth > 767;
 
 var platformString	= isMobile ? 'mobile' : 'desktop';
-
-$.fn.tap	= function (callback, onOrOff, once) {
-	var $this		= $(this);
-	var eventName	= isMobile ? 'touchstart' : 'click';
-
-	if (!callback) {
-		$this.trigger(eventName);
-	}
-	else if (onOrOff === false) {
-		$this.off(eventName, callback);
-	}
-	else if (once === true) {
-		$this.one(eventName, callback);
-	}
-	else {
-		$this.on(eventName, callback);
-	}
-
-	return $this;
-}
 
 $('.' + platformString + '-only [deferred-src], [deferred-src].' + platformString + '-only').
 	each(function () {

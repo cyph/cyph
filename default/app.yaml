@@ -7,23 +7,19 @@ inbound_services:
 - channel_presence
 
 handlers:
-- url: /analytics.js
-  static_files: analytics.js
-  upload: analytics.js
-  http_headers:
-    Cache-Control: public, max-age=0
-
 - url: /analytics/.*
   static_files: analytics.html
   upload: analytics.html
   http_headers:
     Cache-Control: public, max-age=0
+    Strict-Transport-Security: max-age=31536000; includeSubdomains;
 
 - url: /channelframe
   static_files: channel.html
   upload: channel.html
   http_headers:
     Cache-Control: public, max-age=0
+    Strict-Transport-Security: max-age=31536000; includeSubdomains;
 
 - url: /stats[/]?
   login: admin

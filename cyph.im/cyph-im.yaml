@@ -16,6 +16,7 @@ handlers:
   http_headers:
     Cache-Control: no-store
     X-Frame-Options: deny
+    Strict-Transport-Security: max-age=31536000; includeSubdomains;
 
 - url: /unsupportedbrowser
   static_files: unsupportedbrowser.html
@@ -23,6 +24,7 @@ handlers:
   http_headers:
     Cache-Control: no-store
     X-Frame-Options: deny
+    Strict-Transport-Security: max-age=31536000; includeSubdomains;
 
 - url: /new
   static_files: index.html
@@ -31,6 +33,7 @@ handlers:
   http_headers:
     Cache-Control: no-store
     X-Frame-Options: deny
+    Strict-Transport-Security: max-age=31536000; includeSubdomains;
 
 - url: /[A-Za-z0-9]{7}
   static_files: index.html
@@ -39,6 +42,7 @@ handlers:
   http_headers:
     Cache-Control: no-store
     X-Frame-Options: deny
+    Strict-Transport-Security: max-age=31536000; includeSubdomains;
 
 - url: /404
   static_files: index.html
@@ -47,41 +51,7 @@ handlers:
   http_headers:
     Cache-Control: no-store
     X-Frame-Options: deny
-
-
-# Translations
-
-- url: /(BALLS)
-  static_files: \1.html
-  upload: .*\.html
-  secure: always
-  http_headers:
-    Cache-Control: no-store
-    X-Frame-Options: deny
-
-- url: /(BALLS)/new
-  static_files: \1.html
-  upload: .*\.html
-  secure: always
-  http_headers:
-    Cache-Control: no-store
-    X-Frame-Options: deny
-
-- url: /(BALLS)/[A-Za-z0-9]{7}
-  static_files: \1.html
-  upload: .*\.html
-  secure: always
-  http_headers:
-    Cache-Control: no-store
-    X-Frame-Options: deny
-
-- url: /(BALLS)/404
-  static_files: \1.html
-  upload: .*\.html
-  secure: always
-  http_headers:
-    Cache-Control: no-store
-    X-Frame-Options: deny
+    Strict-Transport-Security: max-age=31536000; includeSubdomains;
 
 
 # Else
@@ -93,3 +63,4 @@ handlers:
   http_headers:
     Cache-Control: public, max-age=0
     X-Frame-Options: deny
+    Strict-Transport-Security: max-age=31536000; includeSubdomains;
