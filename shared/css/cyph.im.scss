@@ -511,6 +511,10 @@ html:not(.mobile) {
 		margin-right: auto;
 		display: block;
 	}
+
+	li {
+		margin-bottom: 15px;
+	}
 }
 html.mobile #error {
 	padding: 5px;
