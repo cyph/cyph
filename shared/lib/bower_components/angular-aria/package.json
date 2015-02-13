@@ -1,7 +1,8 @@
 {
   "name": "angular-aria",
-  "version": "1.3.9",
+  "version": "1.3.13",
   "description": "AngularJS module for making accessibility easy",
+  "main": "angular-aria.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

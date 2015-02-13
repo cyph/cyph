@@ -1,45 +1,93 @@
-/* Redirect to appropriate translation */
-var defaultLanguage	= 'en';
-var language		=
+var defaultLanguage			= 'en';
+
+var language				= (
 	navigator.language ||
 	navigator.userLanguage ||
 	navigator.browserLanguage ||
 	navigator.systemLanguage ||
 	defaultLanguage
-;
-var languagePair	= language.split('-');
+).toLowerCase();
 
-/* Temporary */
-if (document.location.host.indexOf('cyph.com') < 0) {
+var languagePair			= language.split('-');
 
-if (localStorage && localStorage.forceLanguage) {
-	language	= localStorage.forceLanguage;
-}
+var translatedAttributes	= ['content', 'placeholder', 'aria-label', 'label'];
 
-if (language == 'nb') {
-	language	= 'no';
-}
-if (language == 'zh-tw') {
-	language	= 'zh-CHT';
-}
-if (['zh-CHS', 'zh-CHT'].indexOf(language) < 0) {
-	language	= languagePair[0];
+function htmlDecode (value) {
+	return $('<div />').html(value).text();
 }
 
 
-var supportedLanguages	= {BALLS: true};
+if (typeof translations != 'undefined') {
+	if (localStorage && localStorage.forceLanguage) {
+		language	= localStorage.forceLanguage.toLowerCase();
+	}
+
+	if (language == 'nb') {
+		language	= 'no';
+	}
+	if (language == 'zh-cn') {
+		language	= 'zh-chs';
+	}
+	if (language == 'zh-tw') {
+		language	= 'zh-cht';
+	}
 
 
-var possibleLanguage	= document.location.pathname.split('/')[1];
+	if (language != defaultLanguage) {
+		var o			= {};
+		var translation	= translations[language];
 
-if (language == defaultLanguage) {
-	language	= defaultLanguage;
-}
-else if (possibleLanguage.length == 2 || ['zh-CHS', 'zh-CHT', 'tlh'].indexOf(possibleLanguage) > -1) {
-	language	= possibleLanguage;
-}
-else if (supportedLanguages[language]) {
-	document.location.pathname	= '/' + language + document.location.pathname;
-}
+		for (var k in translation) {
+			o[k]	= htmlDecode(translation[k]);
+		}
 
+		translation	= o;
+		delete o;
+
+
+		$('[translate]').each(function () {
+			var $this	= $(this);
+			var ngBind	= $this.attr('ng-bind');
+			var html	= $this.html().trim();
+
+			for (var i = 0 ; i < translatedAttributes.length ; ++i) {
+				var attr	= translatedAttributes[i];
+				var value	= $this.attr(attr);
+
+				if (value) {
+					var valueTranslation	= translation[value];
+
+					if (valueTranslation) {
+						$this.attr(attr, valueTranslation);
+					}
+				}
+			}
+
+			if (ngBind) {
+				$this.attr('ng-bind', ngBind.replace(/"([^"]*)"/g, function (match, value) {
+					var valueTranslation	= translation[value];
+
+					if (valueTranslation) {
+						return '"' + valueTranslation + '"';
+					}
+					else {
+						return match;
+					}
+				}));
+			}
+
+			if (html) {
+				$this.html(html.replace(/(.*?)(\{\{.*?\}\}|$)/g, function (match, value, binding) {
+					var valueTranslation	= translation[value];
+
+					if (valueTranslation) {
+						return valueTranslation + binding;
+					}
+					else {
+						return match;
+					}
+				}));
+			}
+		});
+	}
 }

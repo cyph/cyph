@@ -16,6 +16,7 @@ handlers:
   http_headers:
     Cache-Control: no-store
     X-Frame-Options: deny
+    Strict-Transport-Security: max-age=31536000; includeSubdomains;
 
 - url: /beta[/]?
   static_files: betaredirect.html
@@ -24,6 +25,7 @@ handlers:
   http_headers:
     Cache-Control: public, max-age=0
     X-Frame-Options: deny
+    Strict-Transport-Security: max-age=31536000; includeSubdomains;
 
 - url: /about[/]?
   static_files: index.html
@@ -32,6 +34,7 @@ handlers:
   http_headers:
     Cache-Control: no-store
     X-Frame-Options: deny
+    Strict-Transport-Security: max-age=31536000; includeSubdomains;
 
 - url: /faq[/]?
   static_files: index.html
@@ -40,6 +43,7 @@ handlers:
   http_headers:
     Cache-Control: no-store
     X-Frame-Options: deny
+    Strict-Transport-Security: max-age=31536000; includeSubdomains;
 
 - url: /termsofservice[/]?
   static_files: index.html
@@ -48,6 +52,7 @@ handlers:
   http_headers:
     Cache-Control: no-store
     X-Frame-Options: deny
+    Strict-Transport-Security: max-age=31536000; includeSubdomains;
 
 - url: /privacypolicy[/]?
   static_files: index.html
@@ -56,6 +61,7 @@ handlers:
   http_headers:
     Cache-Control: no-store
     X-Frame-Options: deny
+    Strict-Transport-Security: max-age=31536000; includeSubdomains;
 
 
 # Podcasts
@@ -67,6 +73,7 @@ handlers:
   http_headers:
     Cache-Control: no-store
     X-Frame-Options: deny
+    Strict-Transport-Security: max-age=31536000; includeSubdomains;
 
 - url: /jjgo[/]?
   static_files: index.html
@@ -75,6 +82,7 @@ handlers:
   http_headers:
     Cache-Control: no-store
     X-Frame-Options: deny
+    Strict-Transport-Security: max-age=31536000; includeSubdomains;
 
 - url: /ventura[/]?
   static_files: index.html
@@ -83,6 +91,7 @@ handlers:
   http_headers:
     Cache-Control: no-store
     X-Frame-Options: deny
+    Strict-Transport-Security: max-age=31536000; includeSubdomains;
 
 - url: /sawbones[/]?
   static_files: index.html
@@ -91,6 +100,7 @@ handlers:
   http_headers:
     Cache-Control: no-store
     X-Frame-Options: deny
+    Strict-Transport-Security: max-age=31536000; includeSubdomains;
 
 - url: /judgejohn[/]?
   static_files: index.html
@@ -99,6 +109,7 @@ handlers:
   http_headers:
     Cache-Control: no-store
     X-Frame-Options: deny
+    Strict-Transport-Security: max-age=31536000; includeSubdomains;
 
 - url: /mybrother[/]?
   static_files: index.html
@@ -107,6 +118,7 @@ handlers:
   http_headers:
     Cache-Control: no-store
     X-Frame-Options: deny
+    Strict-Transport-Security: max-age=31536000; includeSubdomains;
 
 - url: /security[/]?
   static_files: index.html
@@ -115,25 +127,7 @@ handlers:
   http_headers:
     Cache-Control: no-store
     X-Frame-Options: deny
-
-
-# Translations
-
-- url: /(BALLS)
-  static_files: \1.html
-  upload: .*\.html
-  secure: always
-  http_headers:
-    Cache-Control: no-store
-    X-Frame-Options: deny
-
-- url: /(BALLS)/.*
-  static_files: \1.html
-  upload: .*\.html
-  secure: always
-  http_headers:
-    Cache-Control: no-store
-    X-Frame-Options: deny
+    Strict-Transport-Security: max-age=31536000; includeSubdomains;
 
 
 # Else
@@ -145,6 +139,7 @@ handlers:
   http_headers:
     Cache-Control: public, max-age=0
     X-Frame-Options: deny
+    Strict-Transport-Security: max-age=31536000; includeSubdomains;
 
 
 # 404
@@ -156,3 +151,4 @@ handlers:
   http_headers:
     Cache-Control: no-store
     X-Frame-Options: deny
+    Strict-Transport-Security: max-age=31536000; includeSubdomains;

@@ -4,7 +4,7 @@ This module exposes a simple event emitting API which wraps around libotr4.1.0 c
 
 You can install the module directly from npm registry:
 
-    npm install otr4-em
+	npm install otr4-em
 
 A short [tutorial](https://github.com/mnaamani/otr4-em/blob/master/doc/tutorial.md) is available.
 
@@ -15,7 +15,7 @@ For version's older than v0.1.0 see documentation [here](https://github.com/mnaa
 Example Use:
 - [node](https://github.com/mnaamani/otr4-em/blob/master/examples/index.js)
 - [in the browser](https://github.com/mnaamani/otr4-em/blob/master/examples/index.html)
-- [chrome packaged app](https://github.com/mnaamani/TEO/tree/master/build/chrome)
+
 
 Related projects:
 - [otr talk](https://github.com/mnaamani/node-otr-talk) p2p chat (command line chat app)

@@ -4,11 +4,9 @@ dir="$(pwd)"
 scriptdir="$(cd "$(dirname "$0")"; pwd)" # $(dirname `readlink -f "${0}" || realpath "${0}"`)
 cd "${scriptdir}"
 
+rm -rf shared/lib shared/cryptolib
+mkdir shared/lib shared/cryptolib
 cd shared/lib
-
-rm -rf .oldbower
-mkdir .oldbower
-mv bower* .oldbower/
 
 bower install --save \
 	angular-material \
@@ -34,10 +32,17 @@ wget https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js -O
 
 cd ../cryptolib
 
-rm -rf .oldbower
-mkdir .oldbower
-mv bower* .oldbower/
+bower install --save \
+	mnaamani/otr4-em
+	# openpgp
 
-bower install --save mnaamani/otr4-em
+wget http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/sha512.js
+
+rm -rf openpgp
+mkdir openpgp
+cd openpgp
+openpgpversion="$(curl -s https://github.com/openpgpjs/openpgpjs/releases/latest | perl -pe "s/.*tag\\/(.*?)['\"].*/\1/g")"
+wget "https://github.com/openpgpjs/openpgpjs/releases/download/${openpgpversion}/openpgp.min.js"
+wget "https://github.com/openpgpjs/openpgpjs/releases/download/${openpgpversion}/openpgp.worker.min.js"
 
 cd "${dir}"
