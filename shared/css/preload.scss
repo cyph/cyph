@@ -18,7 +18,7 @@
 	}
 }
 
-#pre-load.load-complete {
+#pre-load.load-complete, html.load-complete #pre-load {
 	pointer-events: none;
 	opacity: 0;
 	@include transition(opacity 0.25s linear);

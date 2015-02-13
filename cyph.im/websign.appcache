@@ -1,0 +1,13 @@
+CACHE MANIFEST
+
+CACHE:
+index.html
+js/cryptoInit.js
+cryptolib/sha512.js
+cryptolib/openpgp/openpgp.min.js
+cryptolib/openpgp/openpgp.worker.min.js
+css/preload.css
+websign.appcache
+
+NETWORK:
+*

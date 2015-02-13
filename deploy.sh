@@ -50,6 +50,7 @@ for d in cyph.im cyph.com ; do
 	cd $d
 
 	# Cache bust
+	echo 'Cache bust'
 	find . -type f -print0 | while read -d $'\0' f ; do
 		safeF=$(echo "$f" | sed 's/\.\///g' | sed 's/\//\\\//g' | sed 's/ /\\ /g' | sed 's/\_/\\_/g')
 
@@ -61,33 +62,80 @@ for d in cyph.im cyph.com ; do
 		done
 	done
 
-	cp index.html en.html
 	../translate.py
-	sed -i.bak "s/{BALLS: true}/`cat ../languages.json | perl -pe 's/\s+//g' | sed 's/\\\\{/\\\\\\\\{/g' | sed 's/\\\\}/\\\\\\\\}/g'`/" \
-		js/translate.js
+
+	# Minify
+	echo 'JS Minify'
+	ls js/*.js | xargs -I% uglifyjs '%' -o '%'
+	echo 'CSS Minify'
+	ls css/*.css | xargs -I% cleancss -o '%' '%'
+	echo 'HTML Minify'
+	ls index.html | xargs -I% html-minifier --minify-js --minify-css --remove-comments --collapse-whitespace '%' -o '%'
+
 	cd ..
 done
 
-echo 'JS Minify'
-find . -name '*.js' | grep -v '\.oldbower' | grep -v cryptolib | grep -v '\.min\.js' | xargs -I% uglifyjs '%' -o '%'
-echo 'CSS Minify'
-find . -name '*.css' | xargs -I% cleancss -o '%' '%'
-echo 'HTML Minify'
-find . -name '*.html' | xargs -I% html-minifier --minify-js --minify-css --remove-comments --collapse-whitespace '%' -o '%'
 
-ls */*.yaml | xargs -I% sed -i.bak 's/max-age=0/max-age=604800/g' %
+ls */*.yaml | xargs -I% sed -i.bak 's/max-age=0/max-age=31536000/g' %
 
 if [ $test ] ; then
+	sed -i.bak "s/staging/${branch}/g" default/config.go
 	ls cyph.im/js/*.js | xargs -I% sed -i.bak "s/api.cyph.com/${branch}-dot-cyphme.appspot.com/g" %
 
 	# ls */*.yaml | xargs -I% sed -i.bak 's/version: prod/version: staging/g' %
-	for yaml in `ls */cyph*.yaml` ; do
-		cat $yaml | perl -pe 's/(- url: .*)/\1\n  login: admin/g' > $yaml.new
-		mv $yaml.new $yaml
-	done
+
+	# Temporarily disabled admin restriction on test environments
+	# for yaml in `ls */cyph*.yaml` ; do
+	#	cat $yaml | perl -pe 's/(- url: .*)/\1\n  login: admin/g' > $yaml.new
+	#	mv $yaml.new $yaml
+	# done
 else
 	ls */*.yaml | xargs -I% sed -i.bak 's/version: staging/version: prod/g' %
 fi
+
+
+### WebSign-related stuff
+for d in cyph.im ; do
+	cd $d
+
+	echo 'WebSign'
+
+	# Merge imported libraries into Worker
+	../websignworkerpackager.js js/cryptoWebWorker.js
+
+	../websignpackager.py
+	mv index.html $d.pkg
+	mv websign.html index.html
+
+	currentDir="$(pwd)"
+	cd ../../..
+	git clone git@github.com:cyph/cyph.github.io.git github.io
+	cd github.io
+	git reset --hard
+	git pull
+
+	cp -f $currentDir/$d.pkg websign/
+
+	HASH_TTL=3944620 # 1.5 months
+	echo "\
+	{
+		\"hash\": \"$(shasum -p -a 512 $currentDir/$d.pkg | perl -pe 's/(.*) .*/\1/')\",
+		\"timestamp\": $(date +%s)000,
+		\"expires\": $(($(date +%s)+${HASH_TTL}))000
+	}" | gpg --clearsign > websign/$d.hash
+
+	git add .
+	chmod -R 777 .
+	git commit -a -m 'package update'
+	git push
+	cd $currentDir
+
+	cd ..
+done
+
+
+find . -name '*.bak' | xargs rm
+
 
 if [ "${nobackend}" == '' ] ; then
 	cd default
@@ -120,8 +168,6 @@ ls */cron.yaml | sed 's/cron.yaml//g' | xargs -I% appcfg.py update_cron %
 
 if [ $all ] ; then
 	../deploy.sh
-else
-	../git.sh translations
 fi
 
 cd "${dir}"

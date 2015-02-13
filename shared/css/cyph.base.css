@@ -1,4 +1,3 @@
-@import url(fonts.css);
 * {
   -webkit-font-smoothing: antialiased !important;
   -moz-osx-font-smoothing: grayscale !important;
@@ -9,6 +8,9 @@ html, body, #main, md-sidenav {
 
 #main, .md-button {
   color: #f1f1f1 !important; }
+
+html .md-button {
+  font-weight: normal; }
 
 md-sidenav .md-button {
   width: 100%;
@@ -49,7 +51,7 @@ ng-markdown blockquote, [ng-markdown] blockquote {
 html:not(.mobile) ng-markdown :not(p:only-child), html:not(.mobile) [ng-markdown] :not(p:only-child) {
   margin-left: 25px; }
 
-:not(textarea):not(md-text-float):not(md-input-group):not(input) {
+:not(textarea):not(md-input-container):not(input) {
   border: 0px !important; }
 
 a {

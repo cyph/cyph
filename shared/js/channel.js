@@ -10,7 +10,7 @@ goog.appengine.Channel	= (function () {
 
 
 var channelFrame				= document.createElement('iframe');
-var channelFrameOrigin			= BASE_URL.slice(0, -1);
+var channelFrameOrigin			= isOnion ? ONION_URL : BASE_URL.slice(0, -1);
 var isChannelFrameReady			= false;
 var channelFrameMessageQueue	= [];
 var receiveMessageQueue			= [];
@@ -19,7 +19,7 @@ var channelFramePingInterval;
 
 function channelFramePostMessage (message, ping) {
 	if (isChannelFrameReady || ping) {
-		channelFrame.contentWindow.postMessage(message, channelFrameOrigin);
+		channelFrame.contentWindow.postMessage(message, '*');
 	}
 	else {
 		channelFrameMessageQueue.push(message);
@@ -68,7 +68,7 @@ onTick(function () {
 
 
 channelFrame.style.display	= 'none';
-channelFrame.src			= channelFrameOrigin + '/channelframe';
+channelFrame.src			= channelFrameOrigin + (isOnion ? BASE_URL : '/') + 'channelframe';
 
 document.body.appendChild(channelFrame);
 

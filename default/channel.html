@@ -1,49 +1,65 @@
 <html><body>
 
-<script src='https://talkgadget.google.com/talkgadget/channel.js'></script>
 <script>
-	var channels	= {};
+	function dothemove () {
+		var channels	= {};
 
-	function postMessageToOrigin (message, e) {
-		e.source.postMessage(message, e.origin);
-	}
-
-	function callback (eventName, e) {
-		return function () {
-			postMessageToOrigin({
-				eventName: eventName,
-				args: Array.prototype.slice.call(arguments),
-				id: e.data.id
-			}, e);
-		};
-	}
-
-	window.addEventListener('message', function (e) {
-		switch (e.data.method) {
-			case 'new':
-				channels[e.data.id]	= {channel: new goog.appengine.Channel(e.data.token)};
-				break;
-
-			case 'open':
-				var o	= channels[e.data.id];
-
-				o.socket	= o.channel.open({
-					onopen: callback('onopen', e),
-					onmessage: callback('onmessage', e),
-					onerror: callback('onerror', e),
-					onclose: callback('onclose', e)
-				});
-				break;
-
-			case 'close':
-				channels[e.data.id].socket.close();
-				break;
-
-			default:
-				postMessageToOrigin({pong: true}, e);
-				break;
+		function postMessageToOrigin (message, e) {
+			e.source.postMessage(message, e.origin);
 		}
-	}, false);
+
+		function callback (eventName, e) {
+			return function () {
+				postMessageToOrigin({
+					eventName: eventName,
+					args: Array.prototype.slice.call(arguments),
+					id: e.data.id
+				}, e);
+			};
+		}
+
+		window.addEventListener('message', function (e) {
+			switch (e.data.method) {
+				case 'new':
+					channels[e.data.id]	= {channel: new goog.appengine.Channel(e.data.token)};
+					break;
+
+				case 'open':
+					var o	= channels[e.data.id];
+
+					o.socket	= o.channel.open({
+						onopen: callback('onopen', e),
+						onmessage: callback('onmessage', e),
+						onerror: callback('onerror', e),
+						onclose: callback('onclose', e)
+					});
+					break;
+
+				case 'close':
+					channels[e.data.id].socket.close();
+					break;
+
+				default:
+					postMessageToOrigin({pong: true}, e);
+					break;
+			}
+		}, false);
+	}
+
+
+	var isOnion		= document.location.host.split('.').slice(-1)[0] == 'onion';
+
+	var script	= document.createElement('script');
+	script.src	= (isOnion ? '/google/talkgadget/' : 'https://talkgadget.google.com/talkgadget/') + 'channel.js';
+	document.body.appendChild(script);
+
+	/* Wait until script is loaded, then do the move */
+	var dothemoveInterval	= setInterval(function () {
+		if (typeof goog != 'undefined' && goog.appengine && goog.appengine.Channel) {
+			clearInterval(dothemoveInterval);
+			dothemove();
+		}
+	}, 250);
 </script>
 
 </body></html>

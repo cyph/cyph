@@ -136,15 +136,6 @@ mergeInto(LibraryManager.library, {
         _free(err_msg);
   },
     
-  msgops_callback_resent_msg_prefix__postset:
-        '_msgops_callback_resent_msg_prefix.prefix=allocate("[resent"].length+1,"i8",ALLOC_STATIC);'+
-        'writeStringToMemory("[resent"],_msgops_callback_resent_msg_prefix.prefix);',
-  msgops_callback_resent_msg_prefix:function(){
-        return this.prefix;
-  },
-  msgops_callback_resent_msg_prefix_free:function(){
-        return;
-  },
   msgops_callback_handle_smp_event__deps:['do_smp_request','do_smp_complete',
         'do_smp_failed','do_smp_error','do_smp_aborted'],
   msgops_callback_handle_smp_event: function(opdata, smp_event,context, progress, question){
