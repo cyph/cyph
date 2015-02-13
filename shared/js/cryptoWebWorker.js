@@ -155,7 +155,7 @@ function eventLoop () {
 										break;
 
 									case 'complete':
-										postMessage({eventName: 'connected'});
+										postMessage({eventName: 'authenticated'});
 										break;
 
 									case 'failed':
@@ -200,7 +200,9 @@ function eventLoop () {
 							otr.on('gone_secure', function () {
 								if (!isConnected) {
 									isConnected	= true;
-									
+
+									postMessage({eventName: 'connected'});
+
 									if (isInitiator) {
 										otr.smpStart(sharedSecret);
 									}
