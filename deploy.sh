@@ -84,54 +84,52 @@ if [ $test ] ; then
 
 	# ls */*.yaml | xargs -I% sed -i.bak 's/version: prod/version: staging/g' %
 
-	# Temporarily disabled admin restriction on test environments
-	# for yaml in `ls */cyph*.yaml` ; do
-	#	cat $yaml | perl -pe 's/(- url: .*)/\1\n  login: admin/g' > $yaml.new
-	#	mv $yaml.new $yaml
-	# done
+	for yaml in `ls */cyph*.yaml` ; do
+		cat $yaml | perl -pe 's/(- url: .*)/\1\n  login: admin/g' > $yaml.new
+		mv $yaml.new $yaml
+	done
 else
 	ls */*.yaml | xargs -I% sed -i.bak 's/version: staging/version: prod/g' %
-fi
 
+	### WebSign-related stuff
+	for d in cyph.im ; do
+		cd $d
 
-### WebSign-related stuff
-for d in cyph.im ; do
-	cd $d
+		echo 'WebSign'
 
-	echo 'WebSign'
+		# Merge imported libraries into Worker
+		../websignworkerpackager.js js/cryptoWebWorker.js
 
-	# Merge imported libraries into Worker
-	../websignworkerpackager.js js/cryptoWebWorker.js
+		../websignpackager.py
+		mv index.html $d.pkg
+		mv websign.html index.html
 
-	../websignpackager.py
-	mv index.html $d.pkg
-	mv websign.html index.html
+		currentDir="$(pwd)"
+		cd ../../..
+		git clone git@github.com:cyph/cyph.github.io.git github.io
+		cd github.io
+		git reset --hard
+		git pull
 
-	currentDir="$(pwd)"
-	cd ../../..
-	git clone git@github.com:cyph/cyph.github.io.git github.io
-	cd github.io
-	git reset --hard
-	git pull
+		cp -f $currentDir/$d.pkg websign/
 
-	cp -f $currentDir/$d.pkg websign/
-
-	HASH_TTL=3944620 # 1.5 months
-	echo "\
+		HASH_TTL=3944620 # 1.5 months
+		echo "\
 	{
 		\"hash\": \"$(shasum -p -a 512 $currentDir/$d.pkg | perl -pe 's/(.*) .*/\1/')\",
 		\"timestamp\": $(date +%s)000,
 		\"expires\": $(($(date +%s)+${HASH_TTL}))000
 	}" | gpg --clearsign > websign/$d.hash
 
-	git add .
-	chmod -R 777 .
-	git commit -a -m 'package update'
-	git push
-	cd $currentDir
+		git add .
+		chmod -R 777 .
+		git commit -a -m 'package update'
+		git push
+		cd $currentDir
 
-	cd ..
-done
+		cd ..
+	done
+fi
 
 
 find . -name '*.bak' | xargs rm
