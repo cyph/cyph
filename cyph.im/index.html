@@ -238,11 +238,13 @@
 
 							{{message.timestamp}}
 
-							<span class='message-pending ellipsis-spinner'>
-								<div class='bounce1'></div>
-								<div class='bounce2'></div>
-								<div class='bounce3'></div>
-							</span>
+							<!--
+								<span class='message-pending ellipsis-spinner'>
+									<div class='bounce1'></div>
+									<div class='bounce2'></div>
+									<div class='bounce3'></div>
+								</span>
+							-->
 
 							<span class='mobile-only' ng-show='message.author == authors.friend'>
 								&nbsp;&mdash;&nbsp; <span translate>friend</span>
@@ -263,7 +265,7 @@
 			<div id='setting-up-crypto' class='loading' layout='column' layout-fill flex>
 				<div flex></div>
 				<div class='logo-animation'><img src='/img/logo.animated.gif' /></div>
-				<div translate>Negotiating secure connection...</div>
+				<div translate>Authenticating connection...</div>
 				<div flex></div>
 			</div>
 		</div>
