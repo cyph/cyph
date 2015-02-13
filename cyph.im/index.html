@@ -183,6 +183,10 @@
 				<div id='errorExplanation'>
 					<p translate>Reasons why you may have landed here:</p>
 					<ul>
+						<li>
+							<span translate>You may have clicked a cyph link from a buggy messaging client (e.g. it's been reported that iOS has issues with this), in which case you should</span>
+							<a translate target='_self' ng-href='{{isOnion ? "/im/#new" : "/#new"}}'>try again</a>.
+						</li>
 						<li translate>
 							The cyph you're looking for has expired
 						</li>
