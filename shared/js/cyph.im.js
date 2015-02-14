@@ -209,12 +209,8 @@ function processUrlState () {
 
 	var state	= getUrlState();
 
-	/* Root */
-	if (!state) {
-		document.location.replace(isOnion ? '/' : 'https://www.cyph.com/');
-	}
 	/* New chat room */
-	else if (state == 'new') {
+	if (state == 'new') {
 		changeState(states.spinningUp);
 
 		$.post(BASE_URL + 'ims/' + generateGuid(SECRET_LENGTH) + '/' + generateGuid(LONG_SECRET_LENGTH), function (id) {
@@ -234,8 +230,11 @@ function processUrlState () {
 		});
 	}
 	/* 404 */
-	else {
+	else if (state == '404') {
 		changeState(states.error);
+	}
+	else {
+		pushNotFound();
 	}
 }
 
