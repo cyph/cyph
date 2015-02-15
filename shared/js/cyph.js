@@ -111,14 +111,7 @@ function pushState (path, shouldReplace) {
 
 var userAgent	= navigator.userAgent.toLowerCase();
 
-var isAndroid	= /android/.test(userAgent);
-var isIOS		= /ipad|iphone|ipod/.test(userAgent);
-var isWP		= /iemobile/.test(userAgent);
-var isWebOS		= /webos/.test(userAgent);
-var isBB		= /blackberry/.test(userAgent);
-var isOperaMini	= /opera mini/.test(userAgent);
-
-var isMobile	= isAndroid || isIOS || isWP || isWebOS || isBB || isOperaMini || (function () {
+var isTouch		= (function () {
 	try {
 		document.createEvent('TouchEvent');
 		return true;
@@ -127,6 +120,15 @@ var isMobile	= isAndroid || isIOS || isWP || isWebOS || isBB || isOperaMini || (
 		return false;
 	}
 }());
+
+var isAndroid	= /android/.test(userAgent);
+var isIOS		= /ipad|iphone|ipod/.test(userAgent);
+var isWP		= /iemobile/.test(userAgent);
+var isWebOS		= /webos/.test(userAgent);
+var isBB		= /blackberry/.test(userAgent);
+var isOperaMini	= /opera mini/.test(userAgent);
+
+var isMobile	= isAndroid || isIOS || isWP || isWebOS || isBB || isOperaMini;
 
 var isFFMobile	=
 	/fennec/.test(userAgent) ||
