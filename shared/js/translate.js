@@ -45,49 +45,51 @@ if (typeof translations != 'undefined') {
 		delete o;
 
 
-		$('[translate]').each(function () {
-			var $this	= $(this);
-			var ngBind	= $this.attr('ng-bind');
-			var html	= $this.html().trim();
+		$(function () {
+			$('[translate]').each(function () {
+				var $this	= $(this);
+				var ngBind	= $this.attr('ng-bind');
+				var html	= $this.html().trim();
 
-			for (var i = 0 ; i < translatedAttributes.length ; ++i) {
-				var attr	= translatedAttributes[i];
-				var value	= $this.attr(attr);
+				for (var i = 0 ; i < translatedAttributes.length ; ++i) {
+					var attr	= translatedAttributes[i];
+					var value	= $this.attr(attr);
 
-				if (value) {
-					var valueTranslation	= translation[value];
+					if (value) {
+						var valueTranslation	= translation[value];
 
-					if (valueTranslation) {
-						$this.attr(attr, valueTranslation);
+						if (valueTranslation) {
+							$this.attr(attr, valueTranslation);
+						}
 					}
 				}
-			}
 
-			if (ngBind) {
-				$this.attr('ng-bind', ngBind.replace(/"([^"]*)"/g, function (match, value) {
-					var valueTranslation	= translation[value];
+				if (ngBind) {
+					$this.attr('ng-bind', ngBind.replace(/"([^"]*)"/g, function (match, value) {
+						var valueTranslation	= translation[value];
 
-					if (valueTranslation) {
-						return '"' + valueTranslation + '"';
-					}
-					else {
-						return match;
-					}
-				}));
-			}
+						if (valueTranslation) {
+							return '"' + valueTranslation + '"';
+						}
+						else {
+							return match;
+						}
+					}));
+				}
 
-			if (html) {
-				$this.html(html.replace(/(.*?)(\{\{.*?\}\}|$)/g, function (match, value, binding) {
-					var valueTranslation	= translation[value];
+				if (html) {
+					$this.html(html.replace(/(.*?)(\{\{.*?\}\}|$)/g, function (match, value, binding) {
+						var valueTranslation	= translation[value];
 
-					if (valueTranslation) {
-						return valueTranslation + binding;
-					}
-					else {
-						return match;
-					}
-				}));
-			}
+						if (valueTranslation) {
+							return valueTranslation + binding;
+						}
+						else {
+							return match;
+						}
+					}));
+				}
+			});
 		});
 	}
 }
