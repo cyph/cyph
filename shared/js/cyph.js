@@ -5,7 +5,7 @@ var BASE_URL			= isLocalhost ? 'http://localhost:8080/' : isOnion ? '/api/' : 'h
 var ONION_URL			= 'https://cyphdbyhiddenbhs.onion';
 var isHistoryAvailable	= typeof history != 'undefined';
 
-if (!isOnion) {
+if (!isLocalhost && !isOnion) {
 	var theRest	= document.location.toString().split(document.location.host)[1];
 
 	$.get(ONION_URL + '/ping', function (data) {
