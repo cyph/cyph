@@ -2,7 +2,7 @@
  * Angular Material Design
  * https://github.com/angular/material
  * @license MIT
- * v0.7.1
+ * v0.8.0-rc1-master-f704dda
  */
 goog.provide('ng.material.components.dialog');
 goog.require('ng.material.components.backdrop');
@@ -43,9 +43,11 @@ MdDialogDirective.$inject = ["$$rAF", "$mdTheming"];
  * @module material.components.dialog
  *
  * @description
- * `$mdDialog` opens a dialog over the app and provides a simple promise API.
+ * `$mdDialog` opens a dialog over the app to inform users about critical information or require
+ *  them to make decisions. There are two approaches for setup: a simple promise API
+ *  and regular object syntax.
  *
- * ### Restrictions
+ * ## Restrictions
  *
  * - The dialog is always given an isolate scope.
  * - The dialog's template must have an outer `<md-dialog>` element.
@@ -53,12 +55,15 @@ MdDialogDirective.$inject = ["$$rAF", "$mdTheming"];
  *   an element with class `md-actions` for the dialog's actions.
  *
  * @usage
- * #### HTML
+ * ### HTML
  *
  * <hljs lang="html">
  * <div  ng-app="demoApp" ng-controller="EmployeeController">
  *   <md-button ng-click="showAlert()" class="md-raised md-warn">
  *     Employee Alert!
+ *   </md-button>
+ *   <md-button ng-click="showDialog($event)" class="md-raised">
+ *     Custom Dialog
  *   </md-button>
  *   <md-button ng-click="closeAlert()" ng-disabled="!hasAlert()" class="md-raised">
  *     Close Alert
@@ -69,8 +74,73 @@ MdDialogDirective.$inject = ["$$rAF", "$mdTheming"];
  * </div>
  * </hljs>
  *
- * #### JavaScript
+ * ### JavaScript: object syntax
+ * <hljs lang="js">
+ * (function(angular, undefined){
+ *   "use strict";
  *
+ *   angular
+ *    .module('demoApp', ['ngMaterial'])
+ *    .controller('AppCtrl', AppController);
+ *
+ *   function AppController($scope, $mdDialog) {
+ *     var alert;
+ *     $scope.showAlert = showAlert;
+ *     $scope.showDialog = showDialog;
+ *     $scope.items = [1, 2, 3];
+ *
+ *     // Internal method
+ *     function showAlert() {
+ *       alert = $mdDialog.alert({
+ *         title: 'Attention',
+ *         content: 'This is an example of how easy dialogs can be!',
+ *         ok: 'Close'
+ *       });
+ *
+ *       $mdDialog
+ *         .show( alert )
+ *         .finally(function() {
+ *           alert = undefined;
+ *         });
+ *     }
+ *
+ *     function showDialog($event) {
+ *        var parentEl = angular.element(document.body);
+ *        $mdDialog.show({
+ *          parent: parentEl,
+ *          targetEvent: $event,
+ *          template:
+ *            '<md-dialog aria-label="List dialog">' +
+ *            '  <md-content>'+
+ *            '    <md-list>'+
+ *            '      <md-item ng-repeat="item in items">'+
+ *            '       <p>Number {{item}}</p>' +
+ *            '      </md-item>'+
+ *            '    </md-list>'+
+ *            '  </md-content>' +
+ *            '  <div class="md-actions">' +
+ *            '    <md-button ng-click="closeDialog()">' +
+ *            '      Close Dialog' +
+ *            '    </md-button>' +
+ *            '  </div>' +
+ *            '</md-dialog>',
+ *          locals: {
+ *            items: $scope.items
+ *          },
+ *          controller: DialogController
+ *       });
+ *       function DialogController(scope, $mdDialog, items) {
+ *         scope.items = items;
+ *         scope.closeDialog = function() {
+ *           $mdDialog.hide();
+ *         }
+ *       }
+ *     }
+ *
+ * })(angular);
+ * </hljs>
+ *
+ * ### JavaScript: promise API syntax, custom dialog template
  * <hljs lang="js">
  * (function(angular, undefined){
  *   "use strict";
@@ -176,6 +246,7 @@ MdDialogDirective.$inject = ["$$rAF", "$mdTheming"];
  * - $mdDialogPreset#title(string) - sets title to string
  * - $mdDialogPreset#content(string) - sets content / message to string
  * - $mdDialogPreset#ok(string) - sets okay button text to string
+ * - $mdDialogPreset#theme(string) - sets the theme of the dialog
  *
  */
 
@@ -195,6 +266,7 @@ MdDialogDirective.$inject = ["$$rAF", "$mdTheming"];
  * - $mdDialogPreset#content(string) - sets content / message to string
  * - $mdDialogPreset#ok(string) - sets okay button text to string
  * - $mdDialogPreset#cancel(string) - sets cancel button text to string
+ * - $mdDialogPreset#theme(string) - sets the theme of the dialog
  *
  */
 
@@ -222,7 +294,7 @@ MdDialogDirective.$inject = ["$$rAF", "$mdTheming"];
  *   - `escapeToClose` - `{boolean=}`: Whether the user can press escape to close the dialog.
  *     Default true.
  *   - `controller` - `{string=}`: The controller to associate with the dialog. The controller
- *     will be injected with the local `$hideDialog`, which is a function used to hide the dialog.
+ *     will be injected with the local `$mdDialog`, which passes along a scope for the dialog.
  *   - `locals` - `{object=}`: An object containing key/value pairs. The keys will be used as names
  *     of values to inject into the controller. For example, `locals: {three: 3}` would inject
  *     `three` into the controller, with the value 3. If `bindToController` is true, they will be
@@ -237,7 +309,7 @@ MdDialogDirective.$inject = ["$$rAF", "$mdTheming"];
  *     finished.
  *
  * @returns {promise} A promise that can be resolved with `$mdDialog.hide()` or
- * rejected with `mdDialog.cancel()`.
+ * rejected with `$mdDialog.cancel()`.
  */
 
 /**
@@ -264,7 +336,7 @@ function MdDialogProvider($$interimElementProvider) {
 
   var alertDialogMethods = ['title', 'content', 'ariaLabel', 'ok'];
 
-  advancedDialogOptions.$inject = ["$mdDialog"];
+  advancedDialogOptions.$inject = ["$mdDialog", "$mdTheming"];
   dialogDefaultOptions.$inject = ["$timeout", "$rootElement", "$compile", "$animate", "$mdAria", "$document", "$mdUtil", "$mdConstant", "$mdTheming", "$$rAF", "$q", "$mdDialog"];
   return $$interimElementProvider('$mdDialog')
     .setDefaults({
@@ -272,19 +344,19 @@ function MdDialogProvider($$interimElementProvider) {
       options: dialogDefaultOptions
     })
     .addPreset('alert', {
-      methods: ['title', 'content', 'ariaLabel', 'ok'],
+      methods: ['title', 'content', 'ariaLabel', 'ok', 'theme'],
       options: advancedDialogOptions
     })
     .addPreset('confirm', {
-      methods: ['title', 'content', 'ariaLabel', 'ok', 'cancel'],
+      methods: ['title', 'content', 'ariaLabel', 'ok', 'cancel', 'theme'],
       options: advancedDialogOptions
     });
 
   /* @ngInject */
-  function advancedDialogOptions($mdDialog) {
+  function advancedDialogOptions($mdDialog, $mdTheming) {
     return {
       template: [
-        '<md-dialog aria-label="{{ dialog.ariaLabel }}">',
+        '<md-dialog md-theme="{{ dialog.theme }}" aria-label="{{ dialog.ariaLabel }}">',
           '<md-content>',
             '<h2>{{ dialog.title }}</h2>',
             '<p>{{ dialog.content }}</p>',
@@ -308,7 +380,8 @@ function MdDialogProvider($$interimElementProvider) {
         };
       },
       controllerAs: 'dialog',
-      bindToController: true
+      bindToController: true,
+      theme: $mdTheming.defaultTheme()
     };
   }
 
@@ -452,7 +525,7 @@ function MdDialogProvider($$interimElementProvider) {
           .css($mdConstant.CSS.TRANSFORM, '');
       });
 
-      return dialogTransitionEnd(dialogEl);
+      return $mdUtil.transitionEndPromise(dialogEl);
     }
 
     function dialogPopOut(container, parentElement, clickElement) {
@@ -461,7 +534,7 @@ function MdDialogProvider($$interimElementProvider) {
       dialogEl.addClass('transition-out').removeClass('transition-in');
       transformToClickElement(dialogEl, clickElement);
 
-      return dialogTransitionEnd(dialogEl);
+      return $mdUtil.transitionEndPromise(dialogEl);
     }
 
     function transformToClickElement(dialogEl, clickElement) {

@@ -2,7 +2,7 @@
  * Angular Material Design
  * https://github.com/angular/material
  * @license MIT
- * v0.7.1
+ * v0.8.0-rc1-master-f704dda
  */
 goog.provide('ng.material.components.toast');
 goog.require('ng.material.components.button');
@@ -39,7 +39,7 @@ function MdToastDirective() {
  * on the screen with an optional duration, and provides a simple promise API.
  *
  *
- * ### Restrictions on custom toasts
+ * ## Restrictions on custom toasts
  * - The toast's template must have an outer `<md-toast>` element.
  * - For a toast action, use element with class `md-action`.
  * - Add the class `md-capsule` for curved corners.
@@ -89,6 +89,16 @@ function MdToastDirective() {
  * - $mdToastPreset#action(string) - adds an action button, which resolves the promise returned from `show()` if clicked.
  * - $mdToastPreset#highlightAction(boolean) - sets action button to be highlighted
  * - $mdToastPreset#capsule(boolean) - adds 'md-capsule' class to the toast (curved corners)
+ * - $mdToastPreset#theme(boolean) - sets the theme on the toast to theme (default is `$mdThemingProvider`'s default theme)
+ */
+
+/**
+ * @ngdoc method
+ * @name $mdToast#updateContent
+ * 
+ * @description
+ * Updates the content of an existing toast. Useful for updating things like counts, etc.
+ *
  */
 
  /**
@@ -146,6 +156,8 @@ function MdToastDirective() {
  *
  * @param {*=} response An argument for the resolved promise.
  *
+ * @returns {promise} a promise that is called when the existing element is removed from the DOM
+ *
  */
 
 /**
@@ -158,42 +170,55 @@ function MdToastDirective() {
  *
  * @param {*=} response An argument for the rejected promise.
  *
+ * @returns {promise} a promise that is called when the existing element is removed from the DOM
+ *
  */
 
 function MdToastProvider($$interimElementProvider) {
-
-  toastDefaultOptions.$inject = ["$timeout", "$animate", "$mdTheming", "$mdToast"];
-  return $$interimElementProvider('$mdToast')
+  var activeToastContent;
+  var $mdToast = $$interimElementProvider('$mdToast')
     .setDefaults({
       methods: ['position', 'hideDelay', 'capsule'],
       options: toastDefaultOptions
     })
     .addPreset('simple', {
       argOption: 'content',
-      methods: ['content', 'action', 'highlightAction'],
-      options: /* @ngInject */ ["$mdToast", function($mdToast) {
-        return {
+      methods: ['content', 'action', 'highlightAction', 'theme'],
+      options: /* @ngInject */ ["$mdToast", "$mdTheming", function($mdToast, $mdTheming) {
+        var opts = {
           template: [
-            '<md-toast ng-class="{\'md-capsule\': toast.capsule}">',
+            '<md-toast md-theme="{{ toast.theme }}" ng-class="{\'md-capsule\': toast.capsule}">',
               '<span flex>{{ toast.content }}</span>',
               '<md-button class="md-action" ng-if="toast.action" ng-click="toast.resolve()" ng-class="{\'md-highlight\': toast.highlightAction}">',
                 '{{ toast.action }}',
               '</md-button>',
             '</md-toast>'
           ].join(''),
-          controller: function mdToastCtrl() {
+          controller: /* @ngInject */ ["$scope", function mdToastCtrl($scope) {
+            var self = this;
+            $scope.$watch(function() { return activeToastContent; }, function() {
+              self.content = activeToastContent;
+            });
             this.resolve = function() {
               $mdToast.hide();
             };
-          },
+          }],
+          theme: $mdTheming.defaultTheme(),
           controllerAs: 'toast',
           bindToController: true
         };
+        return opts;
       }]
+    })
+    .addMethod('updateContent', function(newContent) {
+      activeToastContent = newContent;
     });
 
+  toastDefaultOptions.$inject = ["$timeout", "$animate", "$mdToast"];
+    return $mdToast;
+
   /* @ngInject */
-  function toastDefaultOptions($timeout, $animate, $mdTheming, $mdToast) {
+  function toastDefaultOptions($timeout, $animate, $mdToast) {
     return {
       onShow: onShow,
       onRemove: onRemove,
@@ -204,6 +229,7 @@ function MdToastProvider($$interimElementProvider) {
 
     function onShow(scope, element, options) {
       // 'top left' -> 'md-top md-left'
+      activeToastContent = options.content;
       element.addClass(options.position.split(' ').map(function(pos) {
         return 'md-' + pos;
       }).join(' '));
