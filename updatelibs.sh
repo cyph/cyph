@@ -9,7 +9,7 @@ mkdir shared/lib shared/cryptolib
 cd shared/lib
 
 bower install --save \
-	angular-material \
+	angular-material#master \
 	markdown-it \
 	markdown-it-sup \
 	twemoji \
