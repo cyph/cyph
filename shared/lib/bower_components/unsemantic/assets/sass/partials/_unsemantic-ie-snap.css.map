@@ -1,0 +1,7 @@
+{
+"version": 3,
+"mappings": "AASA,yBAA0B;EACxB,aAEC;IADC,KAAK,EAAE,KAAK",
+"sources": ["_unsemantic-ie-snap.scss"],
+"names": [],
+"file": "_unsemantic-ie-snap.css"
+}
