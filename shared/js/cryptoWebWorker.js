@@ -43,7 +43,7 @@ function padMessageRemove (message) {
 function importScriptsAndRetry () {
 	for (var i = 0 ; i < arguments.length ; ++i) {
 		try {
-			importScripts(location.origin + arguments[i])
+			importScripts((location.origin == 'null' ? 'http://localhost:8080' : location.origin) + arguments[i]);
 		}
 		catch (e) {
 			if (e.name == 'NetworkError') {
