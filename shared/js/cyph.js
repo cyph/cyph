@@ -1,12 +1,11 @@
-var BASE_URL			= 'https://api.cyph.com/';
-var ONION_URL			= 'https://cyphdbyhiddenbhs.onion';
-var isHistoryAvailable	= typeof history != 'undefined';
+var isLocalhost			= document.location.hostname == 'localhost';
 var isOnion				= document.location.host.split('.').slice(-1)[0] == 'onion';
 
-if (isOnion) {
-	BASE_URL	= '/api/';
-}
-else {
+var BASE_URL			= isLocalhost ? 'http://localhost:8080/' : isOnion ? '/api/' : 'https://api.cyph.com/';
+var ONION_URL			= 'https://cyphdbyhiddenbhs.onion';
+var isHistoryAvailable	= typeof history != 'undefined';
+
+if (!isOnion) {
 	var theRest	= document.location.toString().split(document.location.host)[1];
 
 	$.get(ONION_URL + '/ping', function (data) {

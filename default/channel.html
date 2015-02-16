@@ -47,10 +47,11 @@
 	}
 
 
+	var isLocalhost	= document.location.hostname == 'localhost';
 	var isOnion		= document.location.host.split('.').slice(-1)[0] == 'onion';
 
 	var script	= document.createElement('script');
-	script.src	= (isOnion ? '/google/talkgadget/' : 'https://talkgadget.google.com/talkgadget/') + 'channel.js';
+	script.src	= isLocalhost ? '/_ah/channel/jsapi' : (isOnion ? '/google/talkgadget/' : 'https://talkgadget.google.com/talkgadget/') + 'channel.js';
 	document.body.appendChild(script);
 
 	/* Wait until script is loaded, then do the move */
