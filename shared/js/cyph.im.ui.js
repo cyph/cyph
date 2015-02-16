@@ -539,8 +539,8 @@ angular.
 
 				setTimeout(function () {
 					$everything.addClass(curtainClass);
-				}, 3000);
-			}, 2000);
+				}, 3500);
+			}, 2500);
 		};
 
 
