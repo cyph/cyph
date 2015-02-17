@@ -218,7 +218,7 @@ angular.
 			changeState($scope.states.waitingForFriend);
 
 			var copyUrl		=
-				(isLocalhost ? 'http://localhost:8082' : 'https://cyph.im') +
+				(isOnion ? 'https://cyph.im' : document.location.origin.replace('www.', '')) +
 				'/#' +
 				document.location.pathname.substr(1) +
 				sharedSecret

@@ -162,13 +162,7 @@ html:not(.mobile) #message-list > md-content {
 		}
 	}
 
-	md-content {
-		z-index: 2;
-		position: relative;
-	}
-
 	#setting-up-crypto {
-		z-index: 1;
 		position: absolute;
 		pointer-events: none;
 		width: 100%;
