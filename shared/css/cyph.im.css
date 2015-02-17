@@ -73,9 +73,8 @@ html.mobile #message-box:focus ~ #new-messages {
   opacity: 0; }
 
 #send-button, #insert-photo-mobile {
-  position: absolute;
-  height: 80%;
-  top: 10%;
+  position: fixed;
+  bottom: 5px;
   right: 20px;
   opacity: 0.75;
   z-index: 3;
