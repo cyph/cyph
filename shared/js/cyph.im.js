@@ -197,7 +197,7 @@ function pingPong () {
 
 	setTimeout(function () {
 		sendChannelData({Misc: channelDataMisc.ping});
-		setTimeout(pingPong, 60000);
+		setTimeout(pingPong, 120000);
 	}, 30000 + crypto.getRandomValues(new Uint8Array(1))[0] * 250);
 }
 
