@@ -43,7 +43,7 @@ function padMessageRemove (message) {
 function importScriptsAndRetry () {
 	for (var i = 0 ; i < arguments.length ; ++i) {
 		try {
-			importScripts((location.origin == 'null' ? 'http://localhost:8080' : location.origin) + arguments[i]);
+			importScripts((location.origin == 'null' ? 'http://localhost:8082' : location.origin) + arguments[i]);
 		}
 		catch (e) {
 			if (e.name == 'NetworkError') {
@@ -121,7 +121,7 @@ function eventLoop () {
 							crypto	= msCrypto;
 						}
 						else {
-							importScriptsAndRetry('/lib/bower_components/isaac.js/isaac.js');
+							importScriptsAndRetry('/cryptolib/bower_components/isaac.js/isaac.js');
 							isaac.seed(e.data.message.randomSeed);
 							crypto	= {
 								getRandomValues: function (array) {
