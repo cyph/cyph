@@ -365,6 +365,22 @@ angular.
 			sendImage(result);
 		};
 
+		/* More reliable hack to handle these buttons */
+		$(function () {
+			$buttons.find('input[type="file"]').each(function () {
+				var elem	= this;
+
+				$(this).click(function (e) {
+					e.stopPropagation();
+					e.preventDefault();
+				}).parent().click(function () {
+					var e	= document.createEvent('MouseEvents');
+					e.initEvent('click', true, false);
+					elem.dispatchEvent(e);
+				});
+			});
+		});
+
 		insertPhoto = $scope.insertPhoto = function (elem) {
 			if (elem.files && elem.files.length > 0) {
 				imageFile	= elem.files[0];
