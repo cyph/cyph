@@ -19,7 +19,7 @@ var channelDataMisc	= {
 	donetyping: '5'
 };
 
-var channel, isWebSignObsolete, isConnected, isOtrReady, pongReceived, sharedSecret, shouldSendQueryMessage, socket;
+var channel, isWebSignObsolete, isConnected, isOtrReady, lastIncomingMessageTimestamp, sharedSecret, shouldSendQueryMessage, socket;
 
 
 /* Init crypto */
@@ -187,18 +187,15 @@ function beginChat () {
 /* Intermittent check to verify chat is still alive + send fake encrypted chatter */
 
 function pingPong () {
-	if (pongReceived !== false) {
-		pongReceived	= false;
+	if (Date.now() - lastIncomingMessageTimestamp > 150000) {
+		socketClose();
 	}
 	else {
-		socketClose();
-		return;
+		setTimeout(function () {
+			sendChannelData({Misc: channelDataMisc.ping});
+			pingPong();
+		}, 30000 + crypto.getRandomValues(new Uint8Array(1))[0] * 250);
 	}
-
-	setTimeout(function () {
-		sendChannelData({Misc: channelDataMisc.ping});
-		setTimeout(pingPong, 120000);
-	}, 30000 + crypto.getRandomValues(new Uint8Array(1))[0] * 250);
 }
 
 
@@ -398,11 +395,11 @@ function receiveChannelData (data) {
 function receiveChannelDataHandler (item) {
 	var o	= JSON.parse(item.data);
 
-	pongReceived	= true;
+	lastMessageReceioved	= Date.now();
 
 	if (!o.Id || !receivedMessages[o.Id]) {
 		if (o.Misc == channelDataMisc.ping) {
-			sendChannelData({Misc: channelDataMisc.pong});
+			// sendChannelData({Misc: channelDataMisc.pong});
 		}
 		else if (o.Misc == channelDataMisc.connect) {
 			beginChat();
