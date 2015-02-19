@@ -2,7 +2,7 @@
  * Angular Material Design
  * https://github.com/angular/material
  * @license MIT
- * v0.8.0-rc1-master-f704dda
+ * v0.8.0-rc1-master-42cff13
  */
 *, *:before, *:after {
   box-sizing: border-box; }
@@ -170,9 +170,9 @@ md-tab > .md-ripple-container .md-ripple {
     opacity: 0.2; }
 
 /* Sizes:
-  0    <= size <= 600  Phone
-  600  <= size <= 960  Tablet
-  960  <= size <= 1200 Tablet-Landscape
+  0    <= size < 600  Phone
+  600  <= size < 960  Tablet
+  960  <= size < 1200 Tablet-Landscape
   1200 <= size         PC
 */
 [layout] {
@@ -562,7 +562,7 @@ md-tab > .md-ripple-container .md-ripple {
  * `show-md hide-gt-sm` should show from 0px to 960px and hide at >960px
  * `hide-gt-md show-gt-sm` should show everywhere (show overrides hide)`
  */
-@media (max-width: 600px) {
+@media (max-width: 599px) {
   [hide-sm]:not([show-sm]):not([show]), [hide]:not([show-sm]):not([show]) {
     display: none; }
 
@@ -1287,7 +1287,7 @@ md-tab > .md-ripple-container .md-ripple {
     max-height: 66.66%; }
  }
 
-@media (min-width: 600px) and (max-width: 960px) {
+@media (min-width: 600px) and (max-width: 959px) {
   [hide]:not([show-gt-sm]):not([show-md]):not([show]), [hide-gt-sm]:not([show-gt-sm]):not([show-md]):not([show]) {
     display: none; }
 
@@ -2015,7 +2015,7 @@ md-tab > .md-ripple-container .md-ripple {
     max-height: 66.66%; }
  }
 
-@media (min-width: 960px) and (max-width: 1200px) {
+@media (min-width: 960px) and (max-width: 1199px) {
   [hide]:not([show-gt-sm]):not([show-gt-md]):not([show-lg]):not([show]), [hide-gt-sm]:not([show-gt-sm]):not([show-gt-md]):not([show-lg]):not([show]), [hide-gt-md]:not([show-gt-sm]):not([show-gt-md]):not([show-lg]):not([show]) {
     display: none; }
 
@@ -2933,10 +2933,12 @@ md-autocomplete {
       transition: background 0.15s linear;
       cursor: pointer;
       margin: 0; }
-      md-autocomplete ul li.ng-enter {
+      md-autocomplete ul li.ng-enter, md-autocomplete ul li.ng-hide-remove {
+        transition: none;
         -webkit-animation: md-autocomplete-list-in 0.2s;
                 animation: md-autocomplete-list-in 0.2s; }
-      md-autocomplete ul li.ng-leave {
+      md-autocomplete ul li.ng-leave, md-autocomplete ul li.ng-hide-add {
+        transition: none;
         -webkit-animation: md-autocomplete-list-out 0.2s;
                 animation: md-autocomplete-list-out 0.2s; }
 
@@ -5502,6 +5504,128 @@ md-radio-group {
 .radioButtondemoBasicUsage md-radio-group {
   border: none; }
 
+.md-select-menu-container {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 99;
+  opacity: 0; }
+  .md-select-menu-container:not(.md-clickable) {
+    pointer-events: none; }
+  .md-select-menu-container md-progress-circular {
+    display: table;
+    margin: 24px auto !important; }
+  .md-select-menu-container.md-active {
+    opacity: 1; }
+    .md-select-menu-container.md-active md-select-menu {
+      transition: -webkit-transform all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+      transition: transform all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+      transition-duration: 200ms; }
+      .md-select-menu-container.md-active md-select-menu > * {
+        opacity: 1;
+        transition: all 0.3s cubic-bezier(0.55, 0, 0.55, 0.2);
+        transition-duration: 200ms;
+        transition-delay: 100ms; }
+  .md-select-menu-container.md-leave {
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.55, 0, 0.55, 0.2);
+    transition-duration: 250ms; }
+
+md-select {
+  display: inline-block;
+  margin-top: 20px; }
+  md-select:hover {
+    cursor: pointer; }
+  md-select:focus .md-select-label {
+    border-bottom: 2px solid;
+    padding-bottom: 7px; }
+
+.md-select-label {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  padding-top: 9px;
+  padding-right: 32px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid;
+  font-size: 0.875em;
+  line-height: 0.8em;
+  position: relative;
+  box-sizing: border-box;
+  min-width: 64px; }
+  .md-select-label .md-select-icon:after {
+    content: '\25BC';
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-align-items: center;
+        -ms-flex-align: center;
+            align-items: center;
+    position: absolute;
+    height: 100%;
+    top: 0px;
+    right: 2px;
+    speak: none;
+    -webkit-transform: scaleY(0.6) scaleX(1);
+            transform: scaleY(0.6) scaleX(1); }
+
+md-select-menu {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  box-shadow: 0px 2px 5px 0 rgba(0, 0, 0, 0.26);
+  -webkit-transform-origin: 0 0;
+          transform-origin: 0 0;
+  -webkit-transform: scale(1);
+          transform: scale(1);
+  max-height: 256px; }
+  md-select-menu.md-reverse {
+    -webkit-flex-direction: column-reverse;
+        -ms-flex-direction: column-reverse;
+            flex-direction: column-reverse; }
+  md-select-menu:not(.md-overflow) md-content {
+    padding-top: 8px;
+    padding-bottom: 8px; }
+  md-select-menu md-content {
+    min-width: 136px; }
+  md-select-menu > * {
+    opacity: 0; }
+
+md-option {
+  cursor: pointer;
+  position: relative;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  width: auto;
+  padding: 0 16px 0 16px;
+  height: 48px; }
+  md-option .md-text {
+    width: auto;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.875em; }
+
+md-optgroup {
+  display: block; }
+  md-optgroup label {
+    display: block;
+    font-size: 0.75em;
+    text-transform: uppercase;
+    padding: 16px 8px; }
+  md-optgroup md-option {
+    padding-left: 24px; }
+
 md-sidenav {
   position: absolute;
   width: 304px;
@@ -6367,14 +6491,23 @@ md-tooltip {
                 transform: translate(-50%, -50%) scale(0);
         opacity: 0; }
   md-tooltip .md-content {
+    position: relative;
     max-width: 240px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     padding: 8px;
     background: transparent;
-    opacity: 0.3;
-    transition: inherit; }
+    opacity: 0; }
+    md-tooltip .md-content.md-show-add {
+      transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+      opacity: 0; }
+    md-tooltip .md-content.md-show, md-tooltip .md-content.md-show-add-active {
+      opacity: 1; }
+    md-tooltip .md-content.md-show-remove {
+      transition: all 0.3s cubic-bezier(0.55, 0, 0.55, 0.2); }
+      md-tooltip .md-content.md-show-remove.md-show-remove-active {
+        opacity: 0; }
   md-tooltip.md-hide {
     transition: all 0.3s cubic-bezier(0.55, 0, 0.55, 0.2); }
   md-tooltip.md-show {
@@ -6382,8 +6515,6 @@ md-tooltip {
     pointer-events: auto;
     -webkit-transform: translate3d(0, 0, 0);
             transform: translate3d(0, 0, 0); }
-    md-tooltip.md-show .md-content {
-      opacity: 0.99; }
 
 .md-whiteframe-z1 {
   box-shadow: 0px 2px 5px 0 rgba(0, 0, 0, 0.26); }

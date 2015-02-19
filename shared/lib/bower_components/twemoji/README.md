@@ -162,7 +162,7 @@ The function to invoke in order to generate images `src`.
 
 By default it is a function like the following one:
 ```js
-function imageSourceGenrator(icon, options) {
+function imageSourceGenerator(icon, options) {
   return ''.concat(
     options.base, // by default Twitter Inc. CDN
     options.size, // by default "36x36" string
@@ -238,8 +238,9 @@ To exclude certain characters from being replaced by twemoji.js, call twemoji.pa
 twemoji.parse(document.body, {
     callback: function(icon, options, variant) {
         switch ( icon ) {
-            case 'a9':      // copyright
-            case 'ae':      // trademark
+            case 'a9':      // © copyright
+            case 'ae':      // ® registered trademark
+            case '2122':    // ™ trademark
                 return false;
         }
         return ''.concat(options.base, options.size, '/', icon, options.ext);
@@ -271,6 +272,7 @@ However, we consider the guide a bit onerous and as a project, will accept a men
 ## Committers and Contributors
 * Andrea Giammarchi (Twitter)
 * Chris Aniszczyk (Twitter)
+* Tom Wuttke (Twitter)
 * Joen Asmussen (WordPress)
 * Marcus Kazmierczak (WordPress)
 

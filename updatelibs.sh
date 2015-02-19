@@ -23,7 +23,6 @@ bower install --save \
 	unsemantic \
 	visibilityjs \
 	wow \
-	rubycon/isaac.js \
 	morr/jquery.appear \
 	julianlam/tabIndent.js
 
@@ -33,7 +32,8 @@ wget https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js -O
 cd ../cryptolib
 
 bower install --save \
-	mnaamani/otr4-em
+	mnaamani/otr4-em \
+	rubycon/isaac.js
 	# openpgp
 
 wget http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/sha512.js
