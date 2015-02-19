@@ -98,12 +98,7 @@ html.mobile {
 	}
 }
 .md-button input[type='file'] {
-	position: absolute;
-	top: -2000%;
-	left: -2000%;
-	width: 4000% !important;
-	height: 4000% !important;
-	opacity: 0;
+	display: none;
 }
 #send-button, #insert-photo-mobile {
 	position: fixed;
