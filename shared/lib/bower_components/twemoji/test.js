@@ -346,7 +346,11 @@ wru.test([{
     div.innerHTML = '5\ufe0f\u20e3';
     twemoji.parse(div);
     wru.assert('recognized as graphical',
-      div.innerHTML === '<img class="emoji" draggable="false" alt="5️⃣" src="http://twemoji.maxcdn.com/36x36/35-20e3.png">');
+      div.firstChild.className === 'emoji' &&
+      div.firstChild.getAttribute('draggable') === 'false' &&
+      div.firstChild.getAttribute('alt') === "5️⃣" &&
+      div.firstChild.src === 'http://twemoji.maxcdn.com/36x36/35-20e3.png'
+    );
     wru.assert('the length is preserved',
       div.getElementsByTagName('img')[0].alt.length === 3);
   }
@@ -357,8 +361,64 @@ wru.test([{
     div.innerHTML = '5\u20e3';
     twemoji.parse(div);
     wru.assert('recognized as graphical',
-      div.innerHTML === '<img class="emoji" draggable="false" alt="5⃣" src="http://twemoji.maxcdn.com/36x36/35-20e3.png">');
+      div.firstChild.className === 'emoji' &&
+      div.firstChild.getAttribute('draggable') === 'false' &&
+      div.firstChild.getAttribute('alt') === "5⃣" &&
+      div.firstChild.src === 'http://twemoji.maxcdn.com/36x36/35-20e3.png'
+    );
     wru.assert('the length is preserved',
       div.getElementsByTagName('img')[0].alt.length === 2);
+  }
+},{
+  name: 'multiple parsing using a callback',
+  test: function () {
+    wru.assert(
+      'FE0E is still ignored',
+      twemoji.parse('\u25c0 \u25c0\ufe0e \u25c0\ufe0f', {
+        callback: function(icon){ return 'icon'; }
+      }) ===
+      '<img class="emoji" draggable="false" alt="\u25c0" src="icon"> \u25c0\ufe0e <img class="emoji" draggable="false" alt="\u25c0\ufe0f" src="icon">'
+    );
+  }
+},{
+  name: 'non standard variant within others',
+  test: function () {
+    var a = [
+      'normal',
+      'forced-as-text',
+      'forced-as-apple-graphic',
+      'forced-as-graphic'
+    ];
+    wru.assert('normal forced-as-text forced-as-apple-graphic forced-as-graphic' ===
+      twemoji.replace('\u25c0 \u25c0\ufe0e 5\ufe0f\u20e3 \u25c0\ufe0f', function(match, icon, variant){
+        if (variant === '\uFE0E') return a[1];
+        if (variant === '\uFE0F') return a[3];
+        if (!variant) return a[
+          icon.length === 3 && icon.charAt(1) === '\uFE0F' ? 2 : 0
+        ];
+      })
+    );
+  }
+},{
+  name: 'invalid variants and chars',
+  test: function () {
+    var div = document.createElement('div');
+    var img;
+    div.innerHTML = twemoji.parse('"\u2b1c\uFE0F"');
+    img = div.getElementsByTagName('img')[0];
+    wru.assert('correct img.alt 1', img.alt === "\u2b1c\uFE0F");
+    wru.assert('correct img.src 1', img.src.slice(-8) === '2b1c.png');
+    // other variants should be ignored
+    div.innerHTML = twemoji.parse('"\u2b1c\uFE00"');
+    img = div.getElementsByTagName('img')[0];
+    wru.assert('correct img.alt 2', img.alt === "\u2b1c");
+    wru.assert('correct img.src 2', img.src.slice(-8) === '2b1c.png');
+    div.removeChild(img);
+    // the variant without meanings are still there
+    div.innerHTML === '"\uFE00"';
+    // when there is a trailing \uFE0E there should be no image
+    div.innerHTML = twemoji.parse('"\u2b1c\uFE0E"');
+    wru.assert('correct length', div.getElementsByTagName('img').length === 0);
+    wru.assert('expected html', div.innerHTML === '"\u2b1c\uFE0E"');
   }
 }]);
