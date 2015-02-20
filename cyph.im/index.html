@@ -181,12 +181,12 @@
 				</div>
 				<img src='/img/404.png' />
 				<div id='errorExplanation'>
+					<p>
+						<span translate>Please</span>
+						<a translate target='_self' ng-href='{{isOnion ? "/im/#new" : "/#new"}}'>try again</a>.
+					</p>
 					<p translate>Reasons why you may have landed here:</p>
 					<ul>
-						<li>
-							<span translate>You may have clicked a cyph link from a buggy messaging client (e.g. it's been reported that iOS has issues with this), in which case you should</span>
-							<a translate target='_self' ng-href='{{isOnion ? "/im/#new" : "/#new"}}'>try again</a>
-						</li>
 						<li translate>
 							The cyph you're looking for has expired
 						</li>
@@ -195,7 +195,7 @@
 						</li>
 						<li translate>
 							A glitch in the matrix
-							</li>
+						</li>
 						<li translate>
 							You're just guessing random URLs
 						</li>
