@@ -395,7 +395,7 @@ function receiveChannelData (data) {
 function receiveChannelDataHandler (item) {
 	var o	= JSON.parse(item.data);
 
-	lastMessageReceioved	= Date.now();
+	lastIncomingMessageTimestamp	= Date.now();
 
 	if (!o.Id || !receivedMessages[o.Id]) {
 		if (o.Misc == channelDataMisc.ping) {
