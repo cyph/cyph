@@ -74,7 +74,9 @@ html.mobile #message-box:focus ~ #new-messages {
   opacity: 0.75;
   z-index: 3;
   width: 38px;
-  height: 38px; }
+  height: 38px;
+  /* Crazy fix to prevent jankiness upon message send on mobile */
+  pointer-events: none; }
   #send-button *, #insert-photo-mobile * {
     width: 100%;
     height: 100%; }
