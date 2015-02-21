@@ -187,7 +187,7 @@ function beginChat () {
 /* Intermittent check to verify chat is still alive + send fake encrypted chatter */
 
 function pingPong () {
-	if (Date.now() - lastIncomingMessageTimestamp > 150000) {
+	if (Date.now() - lastIncomingMessageTimestamp > 180000) {
 		socketClose();
 	}
 	else {
