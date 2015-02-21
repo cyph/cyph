@@ -738,7 +738,7 @@ angular.
 						apply(function () { $scope.unreadMessages += 1 });
 
 						var intervalId	= setInterval(function () {
-							if (!Visibility.hidden() && ($elem.is(':appeared') || $elem.nextAll(':not(.unread)').length > 0)) {
+							if (!Visibility.hidden() && ($elem.is(':appeared') || $elem.nextAll('.message-item:not(.unread)').length > 0)) {
 								clearInterval(intervalId);
 								$elem.removeClass('unread');
 								apply(function () { $scope.unreadMessages -= 1 });
