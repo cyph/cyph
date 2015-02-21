@@ -113,6 +113,9 @@ html.mobile {
 		width: 100%;
 		height: 100%;
 	}
+
+	/* Crazy fix to prevent jankiness upon message send on mobile */
+	pointer-events: none;
 }
 #message-wrapper {
 	.message-wrapper-hidden {

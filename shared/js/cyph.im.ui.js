@@ -66,6 +66,8 @@ angular.
 		var $buttons			= $('.md-button');
 		var $copyUrl			= $('#copy-url input');
 		var $cyphertext			= $('#cyphertext.curtain, #cyphertext.curtain > md-content');
+		var $sendButton			= $('#send-button');
+		var $insertPhotoMobile	= $('#insert-photo-mobile');
 
 		$scope.language			= language;
 		$scope.isConnected		= false;
@@ -400,6 +402,10 @@ angular.
 		logCyphertext = $scope.logCyphertext = function (text, author) {
 			if (text) {
 				apply(function () {
+					if (isMobile && $scope.cyphertext.length > 5) {
+						$scope.cyphertext.shift();
+					}
+
 					$scope.cyphertext.push({author: author, text: JSON.parse(text).message});
 				});
 			}
@@ -435,17 +441,31 @@ angular.
 			}
 
 			if (message) {
-				if (isMobile) {
-					$messageBox.focus();
-				}
-				else {
-					$scope.scrollDown();
-				}
-
 				addMessageToChat(message, authors.me);
+				$scope.scrollDown();
 				otr.sendMsg(message);
 			}
 		};
+
+		/* Crazy fix to prevent jankiness upon message send on mobile */
+		if (isMobile) {
+			var mobileButtons	= [$sendButton, $insertPhotoMobile];
+
+			$messageBox.click(function (e) {
+				for (var i = 0 ; i < mobileButtons.length ; ++i) {
+					var $button	= mobileButtons[i];
+					var bounds	= $button.bounds();
+
+					if (
+						(e.pageY > bounds.top && e.pageY < bounds.bottom) &&
+						(e.pageX > bounds.left && e.pageX < bounds.right)
+					) {
+						$button.click();
+						return;
+					}
+				}
+			});
+		}
 
 
 
