@@ -64,7 +64,8 @@ angular.
 		var $messageList		= $('#message-list, #message-list > md-content');
 		var $timer				= $('#timer');
 		var $buttons			= $('.md-button');
-		var $copyUrl			= $('#copy-url input');
+		var $copyUrlInput		= $('#copy-url-input input');
+		var $copyUrlLink		= $('#copy-url-link');
 		var $cyphertext			= $('#cyphertext.curtain, #cyphertext.curtain > md-content');
 		var $sendButton			= $('#send-button');
 		var $insertPhotoMobile	= $('#insert-photo-mobile');
@@ -176,7 +177,7 @@ angular.
 			$timer && $timer[0].stop();
 
 			/* Stop mobile browsers from keeping this selected */
-			$copyUrl.remove();
+			$copyUrlInput.remove();
 
 			setTimeout(function () {
 				if ($scope.state == $scope.states.aborted) {
@@ -235,28 +236,29 @@ angular.
 			}
 
 			function selectCopyUrl () {
-				$copyUrl[0].setSelectionRange(0, copyUrl.length);
+				$copyUrlInput[0].setSelectionRange(0, copyUrl.length);
 			}
 
-			var noMoreAutoFocus	= false;
-			var copyUrlInterval	= setInterval(function () {
-				if ($scope.state == $scope.states.waitingForFriend) {
-					setCopyUrl();
+			if (isMobile) {
+				setCopyUrl();
 
-					if (!noMoreAutoFocus) {
-						$copyUrl.focus();
+				/* Only allow right-clicking (for copying the link) */
+				$copyUrlLink.click(function (e) {
+					e.preventDefault();
+				});
+			}
+			else {
+				var copyUrlInterval	= setInterval(function () {
+					if ($scope.state == $scope.states.waitingForFriend) {
+						setCopyUrl();
+						$copyUrlInput.focus();
 						selectCopyUrl();
-
-						if (isFFMobile || (isMobile && !isAndroid)) {
-							setTimeout(selectCopyUrl, 250);
-							noMoreAutoFocus	= true;
-						}
 					}
-				}
-				else {
-					clearInterval(copyUrlInterval);
-				}
-			}, 250);
+					else {
+						clearInterval(copyUrlInterval);
+					}
+				}, 250);
+			}
 
 			/* Temporary fix for iOS and mobile Firefox issue */
 			if (isIOS) {
