@@ -1,6 +1,6 @@
 {
   "name": "markdown-it",
-  "version": "3.0.6",
+  "version": "3.0.7",
   "description": "Markdown-it - modern pluggable markdown parser.",
   "keywords": [
     "markdown",
@@ -19,12 +19,14 @@
   },
   "license": "MIT",
   "main": "index.js",
+  "bin": { "markdown-it": "bin/markdown-it.js" },
   "scripts": {
     "test": "make test"
   },
   "dependencies": {
-    "argparse": "~ 0.1.16",
-    "autolinker": "~ 0.15.2"
+    "argparse": "~ 1.0.0",
+    "autolinker": "~ 0.15.2",
+    "uc.micro": "~ 0.1.0"
   },
   "devDependencies": {
     "ansi": "~0.3.0",
