@@ -1,11 +1,11 @@
 {
   "name": "otr4-em",
   "homepage": "https://github.com/mnaamani/otr4-em",
-  "_release": "77ed0c6a45",
+  "_release": "26a380e236",
   "_resolution": {
     "type": "branch",
     "branch": "master",
-    "commit": "77ed0c6a45c6ce7b87fb1bb8d900fc458857ad70"
+    "commit": "26a380e2362a52533326070e0d3b262eacbb3d3d"
   },
   "_source": "git://github.com/mnaamani/otr4-em.git",
   "_target": "*",
