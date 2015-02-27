@@ -1,3 +1,12 @@
+3.0.7 / 2015-02-22
+------------------
+
+- Match table columns count by header.
+- Added basic CLI support.
+- Added \v \f to valid whitespaces.
+- Use external package for unicode data (punctuation).
+
+
 3.0.6 / 2015-02-12
 ------------------
 

@@ -2,10 +2,9 @@
  * Angular Material Design
  * https://github.com/angular/material
  * @license MIT
- * v0.8.0-rc1-master-42cff13
+ * v0.7.1
  */
 goog.provide('ng.material.core');
-goog.require('ng.material.components.icon');
 
 (function() {
 'use strict';
@@ -14,52 +13,12 @@ goog.require('ng.material.components.icon');
  * Initialization function that validates environment
  * requirements.
  */
-var iconProvider;
-
 angular
-  .module('material.core', [ 'material.core.theming', 'material.components.icon' ])
-  .config( MdCoreConfigure )
-  .run( ["$templateCache", function( $templateCache ){
-
-    // These process is needed to pre-configure icons used internally
-    // with specific components. Note: these are SVGs and not font-icons.
-    //
-    // NOTE: any SVGs used below that are **also** available in `material-fonts` should
-    // be removed from this startup process.
+  .module('material.core', ['material.core.theming'])
+  .config(MdCoreConfigure);
 
 
-    var svgRegistry = [
-      {
-        id : 'tabs-arrow',
-        url: 'tabs-arrow.svg',
-        svg: '<svg version="1.1" x="0px" y="0px" viewBox="0 0 24 24"><g id="tabs-arrow"><polygon points="15.4,7.4 14,6 8,12 14,18 15.4,16.6 10.8,12 "/></g></svg>'
-      },
-      {
-        id : 'close',
-        url: 'close.svg',
-        svg: '<svg version="1.1" x="0px" y="0px" viewBox="0 0 24 24"><g id="close"><path d="M19 6.41l-1.41-1.41-5.59 5.59-5.59-5.59-1.41 1.41 5.59 5.59-5.59 5.59 1.41 1.41 5.59-5.59 5.59 5.59 1.41-1.41-5.59-5.59z"/></g></svg>'
-      },
-      {
-        id:  'cancel',
-        url: 'cancel.svg',
-        svg: '<svg version="1.1" x="0px" y="0px" viewBox="0 0 24 24"><g id="cancel"><path d="M12 2c-5.53 0-10 4.47-10 10s4.47 10 10 10 10-4.47 10-10-4.47-10-10-10zm5 13.59l-1.41 1.41-3.59-3.59-3.59 3.59-1.41-1.41 3.59-3.59-3.59-3.59 1.41-1.41 3.59 3.59 3.59-3.59 1.41 1.41-3.59 3.59 3.59 3.59z"/></g></svg>'
-      }
-    ];
-
-    svgRegistry.forEach(function(asset){
-      iconProvider.icon(asset.id,  asset.url);
-      $templateCache.put(asset.url, asset.svg);
-    });
-
-    // Remove reference
-    iconProvider = null;
-
-  }]);
-
-
-function MdCoreConfigure($provide, $mdThemingProvider, $mdIconProvider ) {
-
-  iconProvider =  $mdIconProvider;
+function MdCoreConfigure($provide, $mdThemingProvider) {
   $provide.decorator('$$rAF', ["$delegate", rAFDecorator]);
 
   $mdThemingProvider.theme('default')
@@ -68,7 +27,7 @@ function MdCoreConfigure($provide, $mdThemingProvider, $mdIconProvider ) {
     .warnPalette('red')
     .backgroundPalette('grey');
 }
-MdCoreConfigure.$inject = ["$provide", "$mdThemingProvider", "$mdIconProvider"];
+MdCoreConfigure.$inject = ["$provide", "$mdThemingProvider"];
 
 function rAFDecorator( $delegate ) {
   /**
@@ -124,8 +83,7 @@ function MdConstantFactory($$rAF, $sniffer) {
       LEFT_ARROW : 37,
       UP_ARROW : 38,
       RIGHT_ARROW : 39,
-      DOWN_ARROW : 40,
-      TAB : 9
+      DOWN_ARROW : 40
     },
     CSS: {
       /* Constants */
@@ -133,7 +91,6 @@ function MdConstantFactory($$rAF, $sniffer) {
       ANIMATIONEND: 'animationend' + (webkit ? ' webkitAnimationEnd' : ''),
 
       TRANSFORM: vendorProperty('transform'),
-      TRANSFORM_ORIGIN: vendorProperty('transformOrigin'),
       TRANSITION: vendorProperty('transition'),
       TRANSITION_DURATION: vendorProperty('transitionDuration'),
       ANIMATION_PLAY_STATE: vendorProperty('animationPlayState'),
@@ -149,15 +106,7 @@ function MdConstantFactory($$rAF, $sniffer) {
       'gt-md': '(min-width: 960px)',
       'lg': '(min-width: 960px) and (max-width: 1200px)',
       'gt-lg': '(min-width: 1200px)'
-    },
-    MEDIA_PRIORITY: [
-      'gt-lg',
-      'lg',
-      'gt-md',
-      'md',
-      'gt-sm',
-      'sm'
-    ]
+    }
   };
 }
 MdConstantFactory.$inject = ["$$rAF", "$sniffer"];
@@ -189,10 +138,6 @@ MdConstantFactory.$inject = ["$$rAF", "$sniffer"];
    */
   function Iterator(items, reloop) {
     var trueFn = function() { return true; };
-
-    if (items && !angular.isArray(items)) {
-      items = Array.prototype.slice.call(items);
-    }
 
     reloop = !!reloop;
     var _items = items || [ ];
@@ -356,40 +301,41 @@ MdConstantFactory.$inject = ["$$rAF", "$sniffer"];
     }
 
     /**
-     * Find the next item. If reloop is true and at the end of the list, it will go back to the
-     * first item. If given, the `validate` callback will be used to determine whether the next item
-     * is valid. If not valid, it will try to find the next item again.
-     *
-     * @param {boolean} backwards Specifies the direction of searching (forwards/backwards)
-     * @param {*} item The item whose subsequent item we are looking for
-     * @param {Function=} validate The `validate` function
-     * @param {integer=} limit The recursion limit
-     *
-     * @returns {*} The subsequent item or null
+     * Find the next item. If reloop is true and at the end of the list, it will
+     * go back to the first item. If given ,the `validate` callback will be used
+     * determine whether the next item is valid. If not valid, it will try to find the
+     * next item again.
+     * @param item
+     * @param {optional} validate Validate function
+     * @param {optional} limit Recursion limit
+     * @returns {*}
      */
     function findSubsequentItem(backwards, item, validate, limit) {
       validate = validate || trueFn;
 
       var curIndex = indexOf(item);
-      while (true) {
-        if (!inRange(curIndex)) return null;
-
-        var nextIndex = curIndex + (backwards ? -1 : 1);
-        var foundItem = null;
-        if (inRange(nextIndex)) {
-          foundItem = _items[nextIndex];
-        } else if (reloop) {
-          foundItem = backwards ? last() : first();
-          nextIndex = indexOf(foundItem);
-        }
-
-        if ((foundItem === null) || (nextIndex === limit)) return null;
-        if (validate(foundItem)) return foundItem;
-
-        if (angular.isUndefined(limit)) limit = nextIndex;
-
-        curIndex = nextIndex;
+      if (!inRange(curIndex)) {
+        return null;
       }
+
+      var nextIndex = curIndex + (backwards ? -1 : 1);
+      var foundItem = null;
+      if (inRange(nextIndex)) {
+        foundItem = _items[nextIndex];
+      } else if (reloop) {
+        foundItem = backwards ? last() : first();
+        nextIndex = indexOf(foundItem);
+      }
+
+      if ((foundItem === null) || (nextIndex === limit)) {
+        return null;
+      }
+
+      if (angular.isUndefined(limit)) {
+        limit = nextIndex;
+      }
+
+      return validate(foundItem) ? foundItem : findSubsequentItem(backwards, foundItem, validate, limit);
     }
   }
 
@@ -409,13 +355,7 @@ angular.module('material.core')
  */
 function mdMediaFactory($mdConstant, $rootScope, $window) {
   var queries = {};
-  var mqls = {};
   var results = {};
-  var normalizeCache = {};
-
-  $mdMedia.getResponsiveAttribute = getResponsiveAttribute;
-  $mdMedia.getQuery = getQuery;
-  $mdMedia.watchResponsiveAttributes = watchResponsiveAttributes;
 
   return $mdMedia;
 
@@ -439,67 +379,18 @@ function mdMediaFactory($mdConstant, $rootScope, $window) {
   }
 
   function add(query) {
-    var result = mqls[query] = $window.matchMedia(query);
+    var result = $window.matchMedia(query);
     result.addListener(onQueryChange);
     return (results[result.media] = !!result.matches);
   }
 
-  function onQueryChange(query) {
+  function onQueryChange() {
+    var query = this;
     $rootScope.$evalAsync(function() {
       results[query.media] = !!query.matches;
     });
   }
 
-  function getQuery(name) {
-    return mqls[name];
-  }
-
-  function getResponsiveAttribute(attrs, attrName) {
-    for (var i = 0; i < $mdConstant.MEDIA_PRIORITY.length; i++) {
-      var mediaName = $mdConstant.MEDIA_PRIORITY[i];
-      if (!mqls[queries[mediaName]].matches) {
-        continue;
-      }
-
-      var normalizedName = getNormalizedName(attrs, attrName + '-' + mediaName);
-      if (attrs[normalizedName]) {
-        return attrs[normalizedName];
-      }
-    }
-
-    // fallback on unprefixed
-    return attrs[getNormalizedName(attrs, attrName)];
-  }
-
-  function watchResponsiveAttributes(attrNames, attrs, watchFn) {
-    var unwatchFns = [];
-    attrNames.forEach(function(attrName) {
-      var normalizedName = getNormalizedName(attrs, attrName);
-      if (attrs[normalizedName]) {
-        unwatchFns.push(
-            attrs.$observe(normalizedName, angular.bind(void 0, watchFn, null)));
-      }
-
-      for (var mediaName in $mdConstant.MEDIA) {
-        var normalizedName = getNormalizedName(attrs, attrName + '-' + mediaName);
-        if (!attrs[normalizedName]) {
-          return;
-        }
-
-        unwatchFns.push(attrs.$observe(normalizedName, angular.bind(void 0, watchFn, mediaName)));
-      }
-    });
-
-    return function unwatch() {
-      unwatchFns.forEach(function(fn) { fn(); })
-    };
-  }
-
-  // Improves performance dramatically
-  function getNormalizedName(attrs, attrName) {
-    return normalizeCache[attrName] ||
-        (normalizeCache[attrName] = attrs.$normalize(attrName));
-  }
 }
 mdMediaFactory.$inject = ["$mdConstant", "$rootScope", "$window"];
 
@@ -515,77 +406,29 @@ mdMediaFactory.$inject = ["$mdConstant", "$rootScope", "$window"];
 var nextUniqueId = ['0','0','0'];
 
 angular.module('material.core')
-.factory('$mdUtil', ["$cacheFactory", "$document", "$timeout", "$q", "$mdConstant", function($cacheFactory, $document, $timeout, $q, $mdConstant) {
+.factory('$mdUtil', ["$document", "$timeout", function($document, $timeout) {
   var Util;
 
-  function getNode(el) {
-    return el[0] || el;
-  }
-
   return Util = {
-    now: window.performance ?
-      angular.bind(window.performance, window.performance.now) : 
-      Date.now,
+    now: window.performance ? angular.bind(window.performance, window.performance.now) : Date.now,
 
-    clientRect: function(element, offsetParent, isOffsetRect) {
-      var node = getNode(element);
-      offsetParent = getNode(offsetParent || node.offsetParent || document.body);
+    elementRect: function(element, offsetParent) {
+      var node = element[0];
+      offsetParent = offsetParent || node.offsetParent || document.body;
+      offsetParent = offsetParent[0] || offsetParent;
       var nodeRect = node.getBoundingClientRect();
-
-      // The user can ask for an offsetRect: a rect relative to the offsetParent,
-      // or a clientRect: a rect relative to the page
-      var offsetRect = isOffsetRect ?
-        offsetParent.getBoundingClientRect() : 
-        { left: 0, top: 0, width: 0, height: 0 };
+      var parentRect = offsetParent.getBoundingClientRect();
       return {
-        left: nodeRect.left - offsetRect.left + offsetParent.scrollLeft,
-        top: nodeRect.top - offsetRect.top + offsetParent.scrollTop,
+        left: nodeRect.left - parentRect.left + offsetParent.scrollLeft,
+        top: nodeRect.top - parentRect.top + offsetParent.scrollTop,
         width: nodeRect.width,
         height: nodeRect.height
       };
-    },
-    offsetRect: function(element, offsetParent) {
-      return Util.clientRect(element, offsetParent, true);
-    },
-    
-    // Mobile safari only allows you to set focus in click event listeners...
-    forceFocus: function(element) {
-      var node = element[0] || element;
-
-      document.addEventListener('click', function focusOnClick(ev) {
-        if (ev.target === node && ev.$focus) {
-          node.focus();
-          ev.stopImmediatePropagation();
-          ev.preventDefault();
-          node.removeEventListener('click', focusOnClick);
-        }
-      }, true);
-
-      var newEvent = document.createEvent('MouseEvents');
-      newEvent.initMouseEvent('click', false, true, window, {}, 0, 0, 0, 0,
-                       false, false, false, false, 0, null);
-      newEvent.$material = true;
-      newEvent.$focus = true;
-      node.dispatchEvent(newEvent);
-    },
-
-    transitionEndPromise: function(element) {
-      var deferred = $q.defer();
-      element.on($mdConstant.CSS.TRANSITIONEND, finished);
-      function finished(ev) {
-        // Make sure this transitionend didn't bubble up from a child
-        if (ev.target === element[0]) {
-          element.off($mdConstant.CSS.TRANSITIONEND, finished);
-          deferred.resolve();
-        }
-      }
-      return deferred.promise;
     },
 
     fakeNgModel: function() {
       return {
         $fake: true,
-        $setTouched : angular.noop,
         $setViewValue: function(value) {
           this.$viewValue = value;
           this.$render(value);
@@ -638,16 +481,6 @@ angular.module('material.core')
           recent = now;
         }
       };
-    },
-
-    /**
-     * Measures the number of milliseconds taken to run the provided callback
-     * function. Uses a high-precision timer if available.
-     */
-    time: function time(cb) {
-      var start = Util.now();
-      cb();
-      return Util.now() - start;
     },
 
     /**
@@ -791,7 +624,7 @@ function AriaService($$rAF, $log, $window) {
 
     if (!node.hasAttribute(attrName) && !childHasAttribute(node, attrName)) {
 
-      defaultValue = angular.isString(defaultValue) ? defaultValue.trim() : '';
+      defaultValue = angular.isString(defaultValue) && defaultValue.trim() || '';
       if (defaultValue.length) {
         element.attr(attrName, defaultValue);
       } else {
@@ -812,12 +645,8 @@ function AriaService($$rAF, $log, $window) {
 
   function expectWithText(element, attrName) {
     expectAsync(element, attrName, function() {
-      return getText(element);
+      return element.text().trim();
     });
-  }
-
-  function getText(element) {
-    return element.text().trim();
   }
 
   function childHasAttribute(node, attrName) {
@@ -912,7 +741,7 @@ function mdCompilerService($q, $http, $injector, $compile, $controller, $templat
     *     the element and instantiate the provided controller (if given).
     *   - `locals` - `{object}`: The locals which will be passed into the controller once `link` is
     *     called. If `bindToController` is true, they will be coppied to the ctrl instead
-    *   - `bindToController` - `bool`: bind the locals to the controller, instead of passing them in. These values will not be available until after initialization.
+    *   - `bindToController` - `bool`: bind the locals to the controller, instead of passing them in
     */
   this.compile = function(options) {
     var templateUrl = options.templateUrl;
@@ -975,6 +804,7 @@ function mdCompilerService($q, $http, $injector, $compile, $controller, $templat
               scope[controllerAs] = ctrl;
             }
           }
+
           return linkFn(scope);
         }
       };
@@ -1136,7 +966,7 @@ angular.module('material.core')
       },
       onEnd: function(ev, pointer) {
         if (pointer.distance < this.state.options.maxDistance) {
-          this.dispatchEvent(ev, 'click');
+          this.dispatchEvent(ev, 'click', null, ev);
         }
       }
     });
@@ -1289,9 +1119,7 @@ angular.module('material.core')
     onCancel: angular.noop,
     options: {},
 
-    dispatchEvent: typeof window.jQuery !== 'undefined' && angular.element === window.jQuery ?
-      jQueryDispatchEvent :
-      nativeDispatchEvent,
+    dispatchEvent: dispatchEvent,
 
     start: function(ev, pointer) {
       if (this.state.isRunning) return;
@@ -1338,7 +1166,7 @@ angular.module('material.core')
       element.on('$destroy', onDestroy);
 
       return onDestroy;
-
+      
       function onDestroy() {
         delete element[0].$mdGesture[self.name];
         element.off('$destroy', onDestroy);
@@ -1346,43 +1174,24 @@ angular.module('material.core')
     },
   };
 
-  function jQueryDispatchEvent(srcEvent, eventType, eventPointer) {
-    eventPointer = eventPointer || pointer;
-    var eventObj = new angular.element.Event(eventType)
-
-    eventObj.$material = true;
-    eventObj.pointer = eventPointer;
-    eventObj.srcEvent = srcEvent;
-
-    angular.extend(eventObj, {
-      clientX: eventPointer.x,
-      clientY: eventPointer.y,
-      screenX: eventPointer.x,
-      screenY: eventPointer.y,
-      pageX: eventPointer.x,
-      pageY: eventPointer.y,
-      ctrlKey: srcEvent.ctrlKey,
-      altKey: srcEvent.altKey,
-      shiftKey: srcEvent.shiftKey,
-      metaKey: srcEvent.metaKey
-    });
-    angular.element(eventPointer.target).trigger(eventObj);
-  }
-
+  var customEventOptions = {
+    bubbles: true,
+    cancelable: true
+  };
   /*
-   * NOTE: nativeDispatchEvent is very performance sensitive.
+   * NOTE: dispatchEvent is very performance sensitive. 
    */
-  function nativeDispatchEvent(srcEvent, eventType, eventPointer) {
+  function dispatchEvent(srcEvent, eventType, eventPointer, /*original DOMEvent */ev) {
     eventPointer = eventPointer || pointer;
     var eventObj;
 
     if (eventType === 'click') {
       eventObj = document.createEvent('MouseEvents');
       eventObj.initMouseEvent(
-        'click', true, true, window, srcEvent.detail,
-        eventPointer.x, eventPointer.y, eventPointer.x, eventPointer.y,
-        srcEvent.ctrlKey, srcEvent.altKey, srcEvent.shiftKey, srcEvent.metaKey,
-        srcEvent.button, srcEvent.relatedTarget || null
+        'click', true, true, window, ev.detail,
+        ev.screenX, ev.screenY, ev.clientX, ev.clientY, 
+        ev.ctrlKey, ev.altKey, ev.shiftKey, ev.metaKey,
+        ev.button, ev.relatedTarget || null
       );
 
     } else {
@@ -1442,16 +1251,12 @@ function InterimElementProvider() {
    */
   function createInterimElementProvider(interimFactoryName) {
     var EXPOSED_METHODS = ['onHide', 'onShow', 'onRemove'];
-
-    var customMethods = {};
     var providerConfig = {
       presets: {}
     };
-
     var provider = {
       setDefaults: setDefaults,
       addPreset: addPreset,
-      addMethod: addMethod,
       $get: factory
     };
 
@@ -1472,15 +1277,6 @@ function InterimElementProvider() {
     function setDefaults(definition) {
       providerConfig.optionsFactory = definition.options;
       providerConfig.methods = (definition.methods || []).concat(EXPOSED_METHODS);
-      return provider;
-    }
-
-    /**
-     * Add a method to the factory that isn't specific to any interim element operations
-     */
-
-    function addMethod(name, fn) {
-      customMethods[name] = fn;
       return provider;
     }
 
@@ -1529,11 +1325,6 @@ function InterimElementProvider() {
       defaultMethods = providerConfig.methods || [];
       // This must be invoked after the publicService is initialized
       defaultOptions = invokeFactory(providerConfig.optionsFactory, {});
-
-      // Copy over the simple custom methods
-      angular.forEach(customMethods, function(fn, name) {
-        publicService[name] = fn;
-      });
 
       angular.forEach(providerConfig.presets, function(definition, name) {
         var presetDefaults = invokeFactory(definition.optionsFactory, {});
@@ -1663,16 +1454,15 @@ function InterimElementProvider() {
        */
       function show(options) {
         if (stack.length) {
-          return service.cancel().then(function() {
-            return show(options);
-          });
-        } else {
-          var interimElement = new InterimElement(options);
-          stack.push(interimElement);
-          return interimElement.show().then(function() {
-            return interimElement.deferred.promise;
-          });
+          service.cancel();
         }
+
+        var interimElement = new InterimElement(options);
+
+        stack.push(interimElement);
+        return interimElement.show().then(function() {
+          return interimElement.deferred.promise;
+        });
       }
 
       /*
@@ -1689,9 +1479,11 @@ function InterimElementProvider() {
        */
       function hide(response) {
         var interimElement = stack.shift();
-        return interimElement && interimElement.remove().then(function() {
+        interimElement && interimElement.remove().then(function() {
           interimElement.deferred.resolve(response);
         });
+
+        return interimElement ? interimElement.deferred.promise : $q.when(response);
       }
 
       /*
@@ -1703,14 +1495,16 @@ function InterimElementProvider() {
        * Removes the `$interimElement` from the DOM and rejects the promise returned from `show`
        *
        * @param {*} reason Data to reject the promise with
-       * @returns Promise that will be resolved after the element has been removed.
+       * @returns Promise that will be rejected after the element has been removed.
        *
        */
       function cancel(reason) {
         var interimElement = stack.shift();
-        return $q.when(interimElement && interimElement.remove().then(function() {
+        interimElement && interimElement.remove().then(function() {
           interimElement.deferred.reject(reason);
-        }));
+        });
+
+        return interimElement ? interimElement.deferred.promise : $q.reject(reason);
       }
 
 
@@ -1720,11 +1514,10 @@ function InterimElementProvider() {
        */
       function InterimElement(options) {
         var self;
-        var hideTimeout, element, showDone, removeDone;
+        var hideTimeout, element;
 
         options = options || {};
         options = angular.extend({
-          preserveScope: false,
           scope: options.scope || $rootScope.$new(options.isolateScope),
           onShow: function(scope, element, options) {
             return $animate.enter(element, options.parent);
@@ -1744,25 +1537,18 @@ function InterimElementProvider() {
           options: options,
           deferred: $q.defer(),
           show: function() {
-            return showDone = $mdCompiler.compile(options).then(function(compileData) {
+            return $mdCompiler.compile(options).then(function(compileData) {
               angular.extend(compileData.locals, self.options);
 
-              element = compileData.link(options.scope);
-
               // Search for parent at insertion time, if not specified
-              if (angular.isFunction(options.parent)) {
-                options.parent = options.parent(options.scope, element, options);
-              } else if (angular.isString(options.parent)) {
+              if (angular.isString(options.parent)) {
                 options.parent = angular.element($document[0].querySelector(options.parent));
-              }
-
-              // If parent querySelector/getter function fails, or it's just null,
-              // find a default.
-              if (!(options.parent || {}).length) {
+              } else if (!options.parent) {
                 options.parent = $rootElement.find('body');
                 if (!options.parent.length) options.parent = $rootElement;
               }
 
+              element = compileData.link(options.scope);
               if (options.themable) $mdTheming(element);
               var ret = options.onShow(options.scope, element, options);
               return $q.when(ret)
@@ -1777,7 +1563,7 @@ function InterimElementProvider() {
                   hideTimeout = $timeout(service.cancel, options.hideDelay) ;
                 }
               }
-            }, function(reason) { showDone = true; self.deferred.reject(reason); });
+            });
           },
           cancelTimeout: function() {
             if (hideTimeout) {
@@ -1787,12 +1573,9 @@ function InterimElementProvider() {
           },
           remove: function() {
             self.cancelTimeout();
-            return removeDone = $q.when(showDone).then(function() {
-              var ret = element ? options.onRemove(options.scope, element, options) : true;
-              return $q.when(ret).then(function() {
-                if (!options.preserveScope) options.scope.$destroy();
-                removeDone = true;
-              });
+            var ret = options.onRemove(options.scope, element, options);
+            return $q.when(ret).then(function() {
+              options.scope.$destroy();
             });
           }
         };
@@ -2985,7 +2768,7 @@ function ThemingProvider($mdColorPalette) {
 
       self[colorType + 'Color'] = function() {
         var args = Array.prototype.slice.call(arguments);
-        console.warn('$mdThemingProviderTheme.' + colorType + 'Color() has been deprecated. ' +
+        console.warn('$mdThemingProviderTheme.' + colorType + 'Color() has been depricated. ' +
                      'Use $mdThemingProviderTheme.' + colorType + 'Palette() instead.');
         return self[colorType + 'Palette'].apply(self, args);
       };
@@ -3041,9 +2824,6 @@ function ThemingProvider($mdColorPalette) {
     };
 
     applyTheme.registered = registered;
-    applyTheme.defaultTheme = function() {
-      return defaultTheme;
-    };
 
     return applyTheme;
 
@@ -3192,7 +2972,7 @@ function generateThemes($injector) {
     });
     if (theme.colors.primary.name == theme.colors.accent.name) {
       console.warn("$mdThemingProvider: Using the same palette for primary and" +
-                   " accent. This violates the material design spec.");
+                   "accent. This violates the material design spec.");
     }
   });
 

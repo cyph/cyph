@@ -24,23 +24,17 @@ function User(files) {
 		if (files.keys) {
 			try {
 				this.loadKeysFromFS(files.keys);
-			} catch (e) {
-				console.error("Warning Reading Keys:", e);
-			}
+			} catch (e) {}
 		}
 		if (files.fingerprints) {
 			try {
 				this.loadFingerprintsFromFS(files.fingerprints);
-			} catch (e) {
-				console.error("Warning Reading Fingerprints:", e);
-			}
+			} catch (e) {}
 		}
 		if (files.instags) {
 			try {
 				this.loadInstagsFromFS(files.instags);
-			} catch (e) {
-				console.error("Warning Reading Instags:", e);
-			}
+			} catch (e) {}
 		}
 	}
 }

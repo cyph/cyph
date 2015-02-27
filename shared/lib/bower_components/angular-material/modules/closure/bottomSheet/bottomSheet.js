@@ -2,7 +2,7 @@
  * Angular Material Design
  * https://github.com/angular/material
  * @license MIT
- * v0.8.0-rc1-master-42cff13
+ * v0.7.1
  */
 goog.provide('ng.material.components.bottomSheet');
 goog.require('ng.material.components.backdrop');
@@ -37,7 +37,7 @@ function MdBottomSheetDirective() {
  * @description
  * `$mdBottomSheet` opens a bottom sheet over the app and provides a simple promise API.
  *
- * ## Restrictions
+ * ### Restrictions
  *
  * - The bottom sheet's template must have an outer `<md-bottom-sheet>` element.
  * - Add the `md-grid` class to the bottom sheet for a grid layout.
