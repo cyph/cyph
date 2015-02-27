@@ -55,7 +55,7 @@ function runTest (i) {
 
 		test.it('should load the app: ' + JSON.stringify(o), function () {
 			driver.wait(function () {
-				return driver.isElementPresent(webdriver.By.id('copy-url')).then(function (isPresent) {
+				return driver.isElementPresent(webdriver.By.id('copy-url-input')).then(function (isPresent) {
 					return isPresent == !o.shouldFail;
 				});
 			}, o.shouldFail ? 5000 : 120000);

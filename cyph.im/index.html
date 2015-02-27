@@ -118,9 +118,12 @@
 			<div>
 				<div translate>Just have your friend open this link, and we're good to go!</div>
 				<br />
-				<md-input-container id='copy-url'>
+
+				<md-input-container id='copy-url-input' class='desktop-only'>
 					<input ng-model='copyUrl' />
 				</md-input-container>
+				<a id='copy-url-link' class='mobile-only' ng-href='{{copyUrl}}'>{{copyUrl}}</a>
+
 				<br />
 				<div>
 					<span translate>Link expires in</span>
