@@ -446,10 +446,5 @@
 
 		<script src='/js/analytics.js'></script>
 
-		<!-- Removing unsafe-inline from CSP, now that application code has been loaded -->
-		<script>
-			$('head').append("<meta http-equiv='Content-Security-Policy' content=\"script-src 'self' 'unsafe-eval'\" />");
-		</script>
-
 	</body>
 </html>
