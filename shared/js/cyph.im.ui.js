@@ -389,6 +389,8 @@ angular.
 			if (elem.files && elem.files.length > 0) {
 				imageFile	= elem.files[0];
 
+				/* This logic supports SVG, but SVGs are blocked elsewhere as per
+					http://dl.acm.org/citation.cfm?id=2046735 */
 				if (imageFile.type == 'image/svg+xml' || imageFile.type == 'image/gif') {
 					reader.readAsDataURL(imageFile);
 				}
@@ -826,7 +828,7 @@ angular.
 					val	= val.replace(/\<\/blockquote\>\n\<blockquote\>\n/g, '');
 
 					/* Images */
-					val	= val.replace(/!\<a href="(data:image\/.*?)"><\/a>/g, function (match, value) {
+					val	= val.replace(/!\<a href="(data:image\/(png|jpeg|gif)\;.*?)"><\/a>/g, function (match, value) {
 						return '<img src="' + value + '" />';
 					});
 

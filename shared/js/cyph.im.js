@@ -207,7 +207,7 @@ function processUrlState () {
 	var state	= getUrlState();
 
 	/* New chat room */
-	if (state == 'new') {
+	if (state == 'new' || !state) {
 		changeState(states.spinningUp);
 
 		$.post(BASE_URL + 'ims/' + generateGuid(SECRET_LENGTH) + '/' + generateGuid(LONG_SECRET_LENGTH), function (id) {

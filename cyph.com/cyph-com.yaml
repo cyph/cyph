@@ -17,6 +17,7 @@ handlers:
     Cache-Control: no-store
     X-Frame-Options: deny
     Strict-Transport-Security: max-age=31536000; includeSubdomains;
+    Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google-analytics.com
 
 - url: /beta[/]?
   static_files: betaredirect.html
@@ -26,6 +27,7 @@ handlers:
     Cache-Control: public, max-age=0
     X-Frame-Options: deny
     Strict-Transport-Security: max-age=31536000; includeSubdomains;
+    Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google-analytics.com
 
 - url: /about[/]?
   static_files: index.html
@@ -35,6 +37,7 @@ handlers:
     Cache-Control: no-store
     X-Frame-Options: deny
     Strict-Transport-Security: max-age=31536000; includeSubdomains;
+    Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google-analytics.com
 
 - url: /faq[/]?
   static_files: index.html
@@ -44,6 +47,7 @@ handlers:
     Cache-Control: no-store
     X-Frame-Options: deny
     Strict-Transport-Security: max-age=31536000; includeSubdomains;
+    Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google-analytics.com
 
 - url: /termsofservice[/]?
   static_files: index.html
@@ -53,6 +57,7 @@ handlers:
     Cache-Control: no-store
     X-Frame-Options: deny
     Strict-Transport-Security: max-age=31536000; includeSubdomains;
+    Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google-analytics.com
 
 - url: /privacypolicy[/]?
   static_files: index.html
@@ -62,6 +67,7 @@ handlers:
     Cache-Control: no-store
     X-Frame-Options: deny
     Strict-Transport-Security: max-age=31536000; includeSubdomains;
+    Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google-analytics.com
 
 
 # Podcasts
@@ -74,6 +80,7 @@ handlers:
     Cache-Control: no-store
     X-Frame-Options: deny
     Strict-Transport-Security: max-age=31536000; includeSubdomains;
+    Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google-analytics.com
 
 - url: /jjgo[/]?
   static_files: index.html
@@ -83,6 +90,7 @@ handlers:
     Cache-Control: no-store
     X-Frame-Options: deny
     Strict-Transport-Security: max-age=31536000; includeSubdomains;
+    Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google-analytics.com
 
 - url: /ventura[/]?
   static_files: index.html
@@ -92,6 +100,7 @@ handlers:
     Cache-Control: no-store
     X-Frame-Options: deny
     Strict-Transport-Security: max-age=31536000; includeSubdomains;
+    Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google-analytics.com
 
 - url: /sawbones[/]?
   static_files: index.html
@@ -101,6 +110,7 @@ handlers:
     Cache-Control: no-store
     X-Frame-Options: deny
     Strict-Transport-Security: max-age=31536000; includeSubdomains;
+    Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google-analytics.com
 
 - url: /judgejohn[/]?
   static_files: index.html
@@ -110,6 +120,7 @@ handlers:
     Cache-Control: no-store
     X-Frame-Options: deny
     Strict-Transport-Security: max-age=31536000; includeSubdomains;
+    Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google-analytics.com
 
 - url: /mybrother[/]?
   static_files: index.html
@@ -119,6 +130,7 @@ handlers:
     Cache-Control: no-store
     X-Frame-Options: deny
     Strict-Transport-Security: max-age=31536000; includeSubdomains;
+    Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google-analytics.com
 
 - url: /security[/]?
   static_files: index.html
@@ -128,6 +140,7 @@ handlers:
     Cache-Control: no-store
     X-Frame-Options: deny
     Strict-Transport-Security: max-age=31536000; includeSubdomains;
+    Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google-analytics.com
 
 
 # Else
@@ -140,6 +153,7 @@ handlers:
     Cache-Control: public, max-age=0
     X-Frame-Options: deny
     Strict-Transport-Security: max-age=31536000; includeSubdomains;
+    Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google-analytics.com
 
 
 # 404
@@ -152,3 +166,4 @@ handlers:
     Cache-Control: no-store
     X-Frame-Options: deny
     Strict-Transport-Security: max-age=31536000; includeSubdomains;
+    Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google-analytics.com
