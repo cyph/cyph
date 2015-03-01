@@ -389,9 +389,7 @@ angular.
 			if (elem.files && elem.files.length > 0) {
 				imageFile	= elem.files[0];
 
-				/* This logic supports SVG, but SVGs are blocked elsewhere as per
-					http://dl.acm.org/citation.cfm?id=2046735 */
-				if (imageFile.type == 'image/svg+xml' || imageFile.type == 'image/gif') {
+				if (imageFile.type == 'image/gif') {
 					reader.readAsDataURL(imageFile);
 				}
 				else {
