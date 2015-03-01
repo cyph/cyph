@@ -122,7 +122,12 @@
 				<md-input-container id='copy-url-input' class='desktop-only'>
 					<input ng-model='copyUrl' />
 				</md-input-container>
-				<a id='copy-url-link' class='mobile-only' ng-href='{{copyUrl}}'>{{copyUrl}}</a>
+
+				<div class='mobile-only'>
+					<a id='copy-url-link' ng-href='{{copyUrl}}'>{{copyUrl}}</a>
+					<br />
+					<div translate>(Hold the link and hit copy.)</div>
+				</div>
 
 				<br />
 				<div>
