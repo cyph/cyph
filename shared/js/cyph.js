@@ -139,32 +139,44 @@ var isTablet	= isMobile && window.outerWidth > 767;
 
 var platformString	= isMobile ? 'mobile' : 'desktop';
 
-$('.' + platformString + '-only [deferred-src], [deferred-src].' + platformString + '-only').
-	each(function () {
-		var $this	= $(this);
-		$this.attr('src', $this.attr('deferred-src'));
-	})
-;
-
-$('[onenterpress]').each(function () {
-	var $this			= $(this);
-	var enterpressOnly	= $this.attr('enterpress-only');
-
-	if (!enterpressOnly || enterpressOnly == platformString) {
-		$this.keypress(function (e) {
-			if (e.keyCode == 13 && !e.shiftKey) {
-				var onenterpress	= $this.attr('onenterpress');
-
-				if (onenterpress) {
-					eval(onenterpress);
-					e.preventDefault();
-				}
-			}
-		});
-	}
-});
-
 $(function () {
+	$('.' + platformString + '-only [deferred-src], [deferred-src].' + platformString + '-only').
+		each(function () {
+			var $this	= $(this);
+			$this.attr('src', $this.attr('deferred-src'));
+		})
+	;
+
+	$('[on-enterpress]').each(function () {
+		var $this			= $(this);
+		var enterpressOnly	= $this.attr('enterpress-only');
+
+		if (!enterpressOnly || enterpressOnly == platformString) {
+			var onenterpress	= $this.attr('on-enterpress');
+
+			$this.keypress(function (e) {
+				if (e.keyCode == 13 && !e.shiftKey) {
+					if (onenterpress) {
+						eval(onenterpress);
+						e.preventDefault();
+					}
+				}
+			});
+		}
+	});
+
+	['click', 'change'].forEach(function (eventName) {
+		var attribute	= 'on-' + eventName;
+
+		$('[' + attribute + ']').each(function () {
+			var $this	= $(this);
+
+			$this.on(eventName, function () {
+				eval($this.attr(attribute));
+			});
+		});
+	});
+
 	$('button > a').each(function () {
 		var $this	= $(this);
 		var $button	= $this.parent();

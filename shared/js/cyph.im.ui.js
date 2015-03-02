@@ -498,7 +498,9 @@ angular.
 
 
 		$scope.openMobileMenu	= function () {
-			$mdSidenav('menu').open();
+			setTimeout(function () {
+				$mdSidenav('menu').open();
+			}, 250);
 		};
 
 
