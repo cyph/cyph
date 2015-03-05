@@ -19,7 +19,16 @@ var channelDataMisc	= {
 	donetyping: '5'
 };
 
-var channel, isWebSignObsolete, isConnected, isOtrReady, lastIncomingMessageTimestamp, sharedSecret, shouldSendQueryMessage;
+var
+	channel,
+	isWebSignObsolete,
+	isConnected,
+	isOtrReady,
+	lastIncomingMessageTimestamp,
+	lastOutgoingMessageTimestamp,
+	sharedSecret,
+	shouldSendQueryMessage
+;
 
 
 /* Init crypto */
@@ -374,9 +383,16 @@ function sendChannelDataBase (data, callback) {
 	sendChannelDataQueue.push({data: data, callback: callback});
 }
 
-function sendChannelDataHandler (item) {
-	item.data.Id	= Date.now() + '-' + crypto.getRandomValues(new Uint32Array(1))[0];
-	channel.send(item.data, item.callback);
+function sendChannelDataHandler (items) {
+	lastOutgoingMessageTimestamp	= Date.now();
+
+	channel.send(
+		items.map(function (item) {
+			item.data.Id	= Date.now() + '-' + crypto.getRandomValues(new Uint32Array(1))[0];
+			return item.data;
+		}),
+		items.map(function (item) { return item.callback })
+	);
 }
 
 function receiveChannelData (data) {
@@ -442,19 +458,30 @@ function setUpChannel (channelName) {
 /* Event loop for processing incoming messages */
 
 onTick(function () {
-	/*** otrWorker onmessage ***/
-	if (otrWorkerOnMessageQueue.length) {
-		otrWorkerOnMessageHandler(otrWorkerOnMessageQueue.shift());
-	}
-
 	/*** send ***/
-	else if (isAlive && sendChannelDataQueue.length) {
-		sendChannelDataHandler(sendChannelDataQueue.shift());
+	if (
+		isAlive &&
+		sendChannelDataQueue.length &&
+		(
+			sendChannelDataQueue.length >= 8 ||
+			!lastOutgoingMessageTimestamp ||
+			(Date.now() - lastOutgoingMessageTimestamp) > 500
+		)
+	) {
+		var sendChannelDataQueueSlice	= sendChannelDataQueue.slice(0, 8);
+		sendChannelDataQueue			= sendChannelDataQueue.slice(8);
+
+		sendChannelDataHandler(sendChannelDataQueueSlice);
 	}
 
 	/*** receive ***/
 	else if (receiveChannelDataQueue.length) {
 		receiveChannelDataHandler(receiveChannelDataQueue.shift());
+	}
+
+	/*** otrWorker onmessage ***/
+	else if (otrWorkerOnMessageQueue.length) {
+		otrWorkerOnMessageHandler(otrWorkerOnMessageQueue.shift());
 	}
 
 	/*** else ***/
