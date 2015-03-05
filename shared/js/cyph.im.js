@@ -78,7 +78,7 @@ function otrWorkerOnMessageHandler (e) {
 				var channelDataSplit	= e.data.message.split(CHANNEL_DATA_PREFIX);
 
 				if (!channelDataSplit[0] && channelDataSplit[1]) {
-					receiveChannelData({data: channelDataSplit[1]});
+					receiveChannelData(JSON.parse(channelDataSplit[1]));
 				}
 				else {
 					addMessageToChat(e.data.message, authors.friend);
