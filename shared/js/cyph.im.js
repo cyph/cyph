@@ -19,7 +19,7 @@ var channelDataMisc	= {
 	donetyping: '5'
 };
 
-var channel, isWebSignObsolete, isConnected, isOtrReady, lastIncomingMessageTimestamp, sharedSecret, shouldSendQueryMessage, socket;
+var channel, isWebSignObsolete, isConnected, isOtrReady, lastIncomingMessageTimestamp, sharedSecret, shouldSendQueryMessage;
 
 
 /* Init crypto */
@@ -119,6 +119,7 @@ function otrWorkerOnMessageHandler (e) {
 
 		case 'authenticated':
 			markAllAsSent();
+			pingPong();
 			break;
 	}
 }
@@ -175,11 +176,9 @@ function beginChat () {
 		$(window).unload(function () {
 			if (isAlive) {
 				sendChannelDataBase({Destroy: true});
-				socketClose();
+				channelClose();
 			}
 		});
-
-		pingPong();
 	});
 }
 
@@ -188,7 +187,7 @@ function beginChat () {
 
 function pingPong () {
 	if (Date.now() - lastIncomingMessageTimestamp > 180000) {
-		socketClose();
+		channelClose();
 	}
 	else {
 		setTimeout(function () {
@@ -204,30 +203,54 @@ function processUrlState () {
 		return;
 	}
 
-	var state	= getUrlState();
+	var urlState	= getUrlState();
 
 	/* New chat room */
-	if (state == 'new' || !state) {
+	if (urlState == 'new' || !urlState) {
 		changeState(states.spinningUp);
 
-		$.post(BASE_URL + 'ims/' + generateGuid(SECRET_LENGTH) + '/' + generateGuid(LONG_SECRET_LENGTH), function (id) {
-			setTimeout(function () {
-				pushState('/' + id, true);
-			}, 500);
+		var queueName	= generateGuid(SECRET_LENGTH);
+
+		pushState('/' + queueName, true, true);
+
+		var queue	= new Queue(queueName, {
+			onopen: function () {
+				var channelName	= generateGuid(LONG_SECRET_LENGTH);
+
+				queue.send(channelName, function () {
+					setUpChannel(channelName);
+				});
+			},
+			onclose: function () {
+				setTimeout(function () {
+					if (state == states.waitingForFriend) {
+						abortSetup();
+					}
+				}, 2000);
+			}
 		});
 	}
 	/* Join existing chat room */
-	else if (state.length == SECRET_LENGTH) {
-		$.ajax({
-			dataType: 'json',
-			error: pushNotFound,
-			success: setUpChannel,
-			type: 'POST',
-			url: BASE_URL + 'ims/' + state
+	else if (urlState.length == SECRET_LENGTH) {
+		var queue	= new Queue(urlState, {
+			onopen: function () {
+				var channelName;
+
+				queue.receive(function (message) {
+					channelName	= message;
+					setUpChannel(channelName);
+				}, function () {
+					if (!channelName) {
+						pushNotFound();
+					}
+
+					queue.close();
+				}, 1, 10);
+			}
 		});
 	}
 	/* 404 */
-	else if (state == '404') {
+	else if (urlState == '404') {
 		changeState(states.error);
 	}
 	else {
@@ -330,16 +353,15 @@ function setUpWebRTC (isInitiator) {
 }
 
 
-function socketClose () {
+function channelClose () {
 	closeChat(function () {
-		socket.close();
+		channel.close();
 	});
 }
 
 
 
 var sendChannelDataQueue	= [];
-var pendingChannelMessages	= 0;
 
 var receiveChannelDataQueue	= [];
 var receivedMessages		= {};
@@ -348,60 +370,24 @@ function sendChannelData (data) {
 	otr.sendMsg(CHANNEL_DATA_PREFIX + JSON.stringify(data));
 }
 
-function sendChannelDataBase (data, opts) {
-	var item	= {data: data, opts: opts || {}};
-
-	if (item.data.Destroy) {
-		item.data.Unloading	= true;
-	}
-
-	if (item.data.Unloading) {
-		sendChannelDataHandler(item);
-	}
-	else {
-		sendChannelDataQueue.push(item);
-	}
+function sendChannelDataBase (data, callback) {
+	sendChannelDataQueue.push({data: data, callback: callback});
 }
 
 function sendChannelDataHandler (item) {
-	var data	= item.data;
-	var opts	= item.opts;
-
-	data.Id		= Date.now() + '-' + crypto.getRandomValues(new Uint32Array(1))[0];
-
-	++pendingChannelMessages;
-
-	$.ajax({
-		async: data.Unloading ? false : opts.async !== false,
-		data: data,
-		timeout: opts.timeout || 30000,
-		error: function () {
-			sendChannelDataQueue.unshift(item);
-			--pendingChannelMessages;
-		},
-		success: function () {
-			--pendingChannelMessages;
-			opts.callback && opts.callback();
-		},
-		type: 'POST',
-		url: BASE_URL + 'channels/' + channel.data.ChannelId
-	});
+	item.data.Id	= Date.now() + '-' + crypto.getRandomValues(new Uint32Array(1))[0];
+	channel.send(item.data, item.callback);
 }
 
 function receiveChannelData (data) {
 	receiveChannelDataQueue.push(data);
 }
 
-function receiveChannelDataHandler (item) {
-	var o	= JSON.parse(item.data);
-
+function receiveChannelDataHandler (o) {
 	lastIncomingMessageTimestamp	= Date.now();
 
 	if (!o.Id || !receivedMessages[o.Id]) {
-		if (o.Misc == channelDataMisc.ping) {
-			// sendChannelData({Misc: channelDataMisc.pong});
-		}
-		else if (o.Misc == channelDataMisc.connect) {
+		if (o.Misc == channelDataMisc.connect) {
 			beginChat();
 		}
 		else if (o.Misc == channelDataMisc.imtypingyo) {
@@ -425,26 +411,19 @@ function receiveChannelDataHandler (item) {
 		}
 
 		if (o.Destroy) {
-			socketClose();
+			channelClose();
 		}
 
 		if (o.Id) {
 			receivedMessages[o.Id]	= true;
 		}
 	}
-
-	if (o.Id) {
-		$.ajax({type: 'PUT', url: BASE_URL + 'messages/' + o.Id});
-	}
 }
 
-function setUpChannel (channelData) {
-	channel			= new goog.appengine.Channel(channelData.ChannelToken);
-	channel.data	= channelData;
-
-	socket	= channel.open({
-		onopen: function () {
-			if (channel.data.IsCreator) {
+function setUpChannel (channelName) {
+	channel	= new Channel(channelName, {
+		onopen: function (isCreator) {
+			if (isCreator) {
 				beginWaiting();
 			}
 			else {
@@ -454,16 +433,13 @@ function setUpChannel (channelData) {
 			}
 		},
 		onmessage: receiveChannelData,
-		onerror: function () {},
-		onclose: function () {
-			closeChat();
-		}
+		onclose: closeChat
 	});
 }
 
 
 
-/* Event loop for processing incoming and outgoing messages */
+/* Event loop for processing incoming messages */
 
 onTick(function () {
 	/*** otrWorker onmessage ***/
@@ -471,14 +447,14 @@ onTick(function () {
 		otrWorkerOnMessageHandler(otrWorkerOnMessageQueue.shift());
 	}
 
-	/*** send ***/
-	else if (isAlive && sendChannelDataQueue.length && pendingChannelMessages < 2) {
-		sendChannelDataHandler(sendChannelDataQueue.shift());
-	}
-
 	/*** receive ***/
 	else if (receiveChannelDataQueue.length) {
 		receiveChannelDataHandler(receiveChannelDataQueue.shift());
+	}
+
+	/*** send ***/
+	else if (isAlive && sendChannelDataQueue.length) {
+		sendChannelDataHandler(sendChannelDataQueue.shift());
 	}
 
 	/*** else ***/

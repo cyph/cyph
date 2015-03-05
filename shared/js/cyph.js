@@ -86,7 +86,7 @@ function pushNotFound () {
 }
 
 
-function pushState (path, shouldReplace) {
+function pushState (path, shouldReplace, shouldNotProcess) {
 	if (shouldReplace && isHistoryAvailable && history.replaceState) {
 		history.replaceState({}, '', path);
 	}
@@ -102,7 +102,9 @@ function pushState (path, shouldReplace) {
 		return;
 	}
 
-	processUrlState();
+	if (!shouldNotProcess) {
+		processUrlState();
+	}
 }
 
 

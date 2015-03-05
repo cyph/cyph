@@ -1,16 +1,11 @@
 package api
 
-import (
-	"time"
-)
-
 var config = struct {
-	AllowedOrigins            map[string]none
-	Continents                map[string]none
-	DefaultContinent          string
-	DefaultMemcacheExpiration time.Duration
-	IMConnectTimeout          time.Duration
-	MessageSendRetries        time.Duration
+	AllowedOrigins     map[string]none
+	Continents         map[string]none
+	DefaultContinent   string
+	AwsAccessKeyId     string
+	AwsSecretAccessKey string
 }{
 	map[string]none{
 		"cyph.com":                                    empty,
@@ -52,72 +47,7 @@ var config = struct {
 
 	"eu",
 
-	30,
+	"AKIAIN2DSULSB77U4S2A",
 
-	10,
-
-	20,
-}
-
-var imIdAddressSpace = []string{
-	"0",
-	"1",
-	"2",
-	"3",
-	"4",
-	"5",
-	"6",
-	"7",
-	"8",
-	"9",
-	"a",
-	"b",
-	"c",
-	"d",
-	"e",
-	"f",
-	"g",
-	"h",
-	"i",
-	"j",
-	"k",
-	"m",
-	"n",
-	"o",
-	"p",
-	"q",
-	"r",
-	"s",
-	"t",
-	"u",
-	"v",
-	"w",
-	"x",
-	"y",
-	"z",
-	"A",
-	"B",
-	"C",
-	"D",
-	"E",
-	"F",
-	"G",
-	"H",
-	"J",
-	"K",
-	"L",
-	"M",
-	"N",
-	"O",
-	"P",
-	"Q",
-	"R",
-	"S",
-	"T",
-	"U",
-	"V",
-	"W",
-	"X",
-	"Y",
-	"Z",
+	"0CIKxPmA5bLCKU+J31cnU22a8gPkCeY7fdxt/2av",
 }
