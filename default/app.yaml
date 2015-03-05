@@ -14,9 +14,9 @@ handlers:
     Cache-Control: public, max-age=0
     Strict-Transport-Security: max-age=31536000; includeSubdomains;
 
-- url: /channelframe
-  static_files: channel.html
-  upload: channel.html
+- url: /sqsframe
+  static_files: sqs.html
+  upload: sqs.html
   http_headers:
     Cache-Control: public, max-age=0
     Strict-Transport-Security: max-age=31536000; includeSubdomains;

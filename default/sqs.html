@@ -1,0 +1,41 @@
+<html><body>
+
+<script src='https://sdk.amazonaws.com/js/aws-sdk-2.1.14.min.js'></script>
+<script>
+	var sqs;
+
+	function onmessage (e) {
+		if (e.data.method == 'init') {
+			sqs	= new AWS.SQS(e.data.config);
+			return;
+		}
+
+
+		if (e.data.args) {
+			e.data.args	= JSON.parse(e.data.args);
+		}
+		else {
+			e.data.args	= [];
+		}
+
+		for (var i = 0 ; i < e.data.args.length ; ++i) {
+			var arg			= e.data.args[i];
+			var callbackId	= arg && arg.callbackId;
+
+			if (callbackId) {
+				e.data.args[i]	= function () {
+					e.source.postMessage({
+						callbackId: callbackId,
+						args: JSON.stringify(Array.prototype.slice.call(arguments))
+					}, e.origin);
+				};
+			}
+		}
+
+		sqs[e.data.method].apply(sqs, e.data.args);
+	}
+
+	window.addEventListener('message', onmessage, false);
+</script>
+
+</body></html>

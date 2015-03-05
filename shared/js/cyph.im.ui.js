@@ -272,13 +272,13 @@ angular.
 		};
 
 
-		changeState = $scope.changeState = function (state) {
+		changeState = $scope.changeState = function (s) {
 			if (isWebSignObsolete) {
 				return;
 			}
 
 			apply(function () {
-				state = $scope.state = state;
+				state = $scope.state = s;
 			});
 		};
 
@@ -295,7 +295,7 @@ angular.
 
 				if ($scope.isConnected) {
 					addMessageToChat(disconnectedNotification, authors.app);
-					sendChannelDataBase({Destroy: true}, {callback: callback});
+					sendChannelDataBase({Destroy: true}, callback);
 
 					apply(function () {
 						isAlive = $scope.isAlive = false;
@@ -479,7 +479,7 @@ angular.
 
 
 		$scope.disconnect	= function () {
-			socketClose();
+			channelClose();
 
 			$scope.baseButtonClick();
 		};
