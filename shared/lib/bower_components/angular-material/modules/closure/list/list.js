@@ -2,7 +2,7 @@
  * Angular Material Design
  * https://github.com/angular/material
  * @license MIT
- * v0.8.2-master-7950588
+ * v0.8.3-master-c9aae9b
  */
 goog.provide('ng.material.components.list');
 goog.require('ng.material.core');
@@ -19,7 +19,8 @@ angular.module('material.components.list', [
   'material.core'
 ])
   .directive('mdList', mdListDirective)
-  .directive('mdItem', mdItemDirective);
+  .directive('mdItem', mdItemDirective)
+  .directive('mdListItem', mdItemDirective);
 
 /**
  * @ngdoc directive

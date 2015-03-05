@@ -1,16 +1,24 @@
 {
   "name": "animate.css",
-  "version": "3.2.1",
+  "version": "3.2.3",
   "main": "./animate.css",
+  "ignore": [
+    ".*",
+    "src",
+    "*.yml",
+    "Gemfile",
+    "Gemfile.lock",
+    "*.md"
+  ],
   "homepage": "https://github.com/daneden/animate.css",
-  "_release": "3.2.1",
+  "_release": "3.2.3",
   "_resolution": {
     "type": "version",
-    "tag": "3.2.1",
-    "commit": "1adcdbfbc1322782d0673ca381688393b7deb288"
+    "tag": "3.2.3",
+    "commit": "4c37d5ba35251e7925883bf0eeaa3f60c4d17108"
   },
   "_source": "git://github.com/daneden/animate.css.git",
-  "_target": "~3.2.1",
+  "_target": "~3.2.3",
   "_originalSource": "animate.css",
   "_direct": true
 }
