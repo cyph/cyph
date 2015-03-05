@@ -114,7 +114,7 @@ angular.
 		abortSetup = $scope.abortSetup = function () {
 			$window.off('beforeunload');
 			changeState($scope.states.aborted);
-			sendChannelData({Destroy: true});
+			channelClose();
 			$scope.disconnect();
 		};
 
@@ -285,7 +285,7 @@ angular.
 
 		var disconnectedNotification	= getString('disconnectedNotification');
 
-		closeChat = $scope.closeChat = function (callback) {
+		closeChat = $scope.closeChat = function () {
 			if ($scope.state == $scope.states.aborted) {
 				return;
 			}
@@ -295,7 +295,6 @@ angular.
 
 				if ($scope.isConnected) {
 					addMessageToChat(disconnectedNotification, authors.app);
-					sendChannelDataBase({Destroy: true}, callback);
 
 					apply(function () {
 						isAlive = $scope.isAlive = false;
@@ -317,7 +316,7 @@ angular.
 
 		warnWebSignObsolete = $scope.warnWebSignObsolete = function () {
 			$window.off('beforeunload');
-			sendChannelData({Destroy: true});
+			channelClose();
 			changeState($scope.states.webSignObsolete);
 
 			isWebSignObsolete	= true;
