@@ -81,7 +81,8 @@ var sqs	= (function () {
 		'deleteQueue',
 		'getQueueUrl',
 		'receiveMessage',
-		'sendMessage'
+		'sendMessage',
+		'sendMessageBatch'
 	].forEach(function (methodName) {
 		wrapper[methodName]	= function (o, f, shouldRetryUntilSuccessful) {
 			function wrapperHelper () {
@@ -224,10 +225,34 @@ Queue.prototype.receive	= function (messageHandler, onComplete, maxNumberOfMessa
 };
 
 Queue.prototype.send	= function (message, f) {
-	sqs.sendMessage({
-		QueueUrl: this.queueUrl,
-		MessageBody: JSON.stringify({message: message})
-	}, f, true);
+	if (typeof message == 'string' || !message.length) {
+		sqs.sendMessage({
+			QueueUrl: this.queueUrl,
+			MessageBody: JSON.stringify({message: message})
+		}, f, true);
+	}
+	else {
+		sqs.sendMessageBatch({
+			QueueUrl: this.queueUrl,
+			Entries: message.map(function (s, i) {
+				return {
+					Id: (i + 1).toString(),
+					MessageBody: JSON.stringify({message: s})
+				};
+			})
+		}, function () {
+			for (var i = 0 ; i < f.length ; ++i) {
+				var thisCallback	= f[i];
+
+				if (thisCallback) {
+					try {
+						thisCallback.apply(this, arguments);
+					}
+					catch (e) {}
+				}
+			}
+		}, true);
+	}
 };
 
 
