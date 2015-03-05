@@ -1,6 +1,6 @@
 {
   "name": "markdown-it",
-  "version": "3.0.7",
+  "version": "3.1.0",
   "description": "Markdown-it - modern pluggable markdown parser.",
   "keywords": [
     "markdown",
@@ -10,13 +10,7 @@
     "markdown-it-plugin"
   ],
   "homepage": "https://github.com/markdown-it/markdown-it",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/markdown-it/markdown-it.git"
-  },
-  "bugs": {
-    "url": "https://github.com/markdown-it/markdown-it/issues"
-  },
+  "repository": "markdown-it/markdown-it",
   "license": "MIT",
   "main": "index.js",
   "bin": { "markdown-it": "bin/markdown-it.js" },
@@ -25,7 +19,8 @@
   },
   "dependencies": {
     "argparse": "~ 1.0.0",
-    "autolinker": "~ 0.15.2",
+    "linkify-it": "~ 0.1.2",
+    "mdurl": "~ 1.0.0",
     "uc.micro": "~ 0.1.0"
   },
   "devDependencies": {
@@ -33,8 +28,8 @@
     "autoprefixer-stylus": "~0.5.0",
     "benchmark": "~1.0.0",
     "browserify": "*",
-    "chai": "~1.10.0",
-    "commonmark": "~ 0.17.1",
+    "chai": "~2.1.0",
+    "commonmark": "~0.18.1",
     "coveralls": "~2.11.2",
     "eslint": "0.13.0",
     "eslint-plugin-nodeca": "^1.0.0",

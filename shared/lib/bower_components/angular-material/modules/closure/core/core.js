@@ -2,7 +2,7 @@
  * Angular Material Design
  * https://github.com/angular/material
  * @license MIT
- * v0.8.2-master-7950588
+ * v0.8.3-master-c9aae9b
  */
 goog.provide('ng.material.core');
 
@@ -355,18 +355,40 @@ MdConstantFactory.$inject = ["$$rAF", "$sniffer"];
 
 })();
 
+(function(){
+
 angular.module('material.core')
 .factory('$mdMedia', mdMediaFactory);
 
 /**
- * Exposes a function on the '$mdMedia' service which will return true or false,
- * whether the given media query matches. Re-evaluates on resize. Allows presets
- * for 'sm', 'md', 'lg'.
+ * @ngdoc service
+ * @name $mdMedia
+ * @module material.core
  *
- * @example $mdMedia('sm') == true if device-width <= sm
- * @example $mdMedia('(min-width: 1200px)') == true if device-width >= 1200px
- * @example $mdMedia('max-width: 300px') == true if device-width <= 300px (sanitizes input, adding parens)
+ * @description
+ * `$mdMedia` is used to evaluate whether a given media query is true or false given the
+ * current device's screen / window size. The media query will be re-evaluated on resize, allowing
+ * you to register a watch.
+ *
+ * `$mdMedia` also has pre-programmed support for media queries that match the layout breakpoints.
+ *  (`sm`, `gt-sm`, `md`, `gt-md`, `lg`, `gt-lg`).
+ *
+ * @returns {boolean} a boolean representing whether or not the given media query is true or false.
+ *
+ * @usage
+ * <hljs lang="js">
+ * app.controller('MyController', function($mdMedia, $scope) {
+ *   $scope.$watch(function() { return $mdMedia('lg'); }, function(big) {
+ *     $scope.bigScreen = big;
+ *   });
+ *
+ *   $scope.screenIsSmall = $mdMedia('sm');
+ *   $scope.customQuery = $mdMedia('(min-width: 1234px)');
+ *   $scope.anotherCustom = $mdMedia('max-width: 300px');
+ * });
+ * </hljs>
  */
+
 function mdMediaFactory($mdConstant, $rootScope, $window) {
   var queries = {};
   var mqls = {};
@@ -463,6 +485,9 @@ function mdMediaFactory($mdConstant, $rootScope, $window) {
 }
 mdMediaFactory.$inject = ["$mdConstant", "$rootScope", "$window"];
 
+
+})();
+
 (function() {
 'use strict';
 
@@ -539,16 +564,18 @@ angular.module('material.core')
       node.dispatchEvent(newEvent);
     },
 
-    transitionEndPromise: function(element) {
+    transitionEndPromise: function(element, opts) {
+      opts = opts || {};
       var deferred = $q.defer();
       element.on($mdConstant.CSS.TRANSITIONEND, finished);
       function finished(ev) {
         // Make sure this transitionend didn't bubble up from a child
-        if (ev.target === element[0]) {
+        if (!ev || ev.target === element[0]) {
           element.off($mdConstant.CSS.TRANSITIONEND, finished);
           deferred.resolve();
         }
       }
+      if (opts.timeout) $timeout(finished, opts.timeout);
       return deferred.promise;
     },
 
@@ -1959,7 +1986,7 @@ function InkRippleService($window, $timeout) {
 
   function attachButtonBehavior(scope, element, options) {
     return attach(scope, element, angular.extend({
-      isFAB: element.hasClass('md-fab'),
+      fullRipple: true,
       isMenuItem: element.hasClass('md-menu-item'),
       center: false,
       dimBackground: true
@@ -1978,7 +2005,8 @@ function InkRippleService($window, $timeout) {
     return attach(scope, element, angular.extend({
       center: false,
       dimBackground: true,
-      outline: true
+      outline: false,
+      rippleSize: 'full'
     }, options));
   }
 
@@ -1994,7 +2022,7 @@ function InkRippleService($window, $timeout) {
       mousedownPauseTime: 150,
       dimBackground: false,
       outline: false,
-      isFAB: false,
+      fullRipple: true,
       isMenuItem: false,
       fitRipple: false
     }, options);
@@ -2013,10 +2041,10 @@ function InkRippleService($window, $timeout) {
 
     switch (rippleSizeSetting) {
       case 'full':
-        options.isFAB = true;
+        options.fullRipple = true;
         break;
       case 'partial':
-        options.isFAB = false;
+        options.fullRipple = false;
         break;
     }
 
@@ -2210,7 +2238,7 @@ function InkRippleService($window, $timeout) {
           height = Math.max(top, height - top);
           size = 2 * Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2));
         } else {
-          multiplier = options.isFAB ? 1.1 : 0.8;
+          multiplier = options.fullRipple ? 1.1 : 0.8;
           size = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2)) * multiplier;
           if (options.fitRipple) {
             size = Math.min(height, width, size);
@@ -2226,7 +2254,7 @@ function InkRippleService($window, $timeout) {
        * @param {number} the left cursor offset
        * @param {number} the top cursor offset
        *
-       * @returns {{backgroundColor: *, width: string, height: string, marginLeft: string, marginTop: string}}
+       * @returns {{backgroundColor: string, borderColor: string, width: string, height: string}}
        */
       function getRippleCss(size, left, top) {
         var rect,
@@ -2262,7 +2290,7 @@ function InkRippleService($window, $timeout) {
          * @returns {string} rgb color
          */
         function rgbaToRGB(color) {
-          return color.replace('rgba', 'rgb').replace(/,[^\)\,]+\)/, ')');
+          return color.replace('rgba', 'rgb').replace(/,[^\),]+\)/, ')');
         }
       }
     }
@@ -2274,10 +2302,10 @@ function InkRippleService($window, $timeout) {
     function onPressDown(ev) {
       if (!isRippleAllowed()) return;
 
-      var ripple = createRipple(ev.pointer.x, ev.pointer.y);
+      createRipple(ev.pointer.x, ev.pointer.y);
       isHeld = true;
     }
-    function onPressUp(ev) {
+    function onPressUp() {
       isHeld = false;
       var ripple = ripples[ ripples.length - 1 ];
       $timeout(function () { updateElement(ripple); }, 0, false);
