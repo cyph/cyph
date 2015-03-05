@@ -447,14 +447,14 @@ onTick(function () {
 		otrWorkerOnMessageHandler(otrWorkerOnMessageQueue.shift());
 	}
 
-	/*** receive ***/
-	else if (receiveChannelDataQueue.length) {
-		receiveChannelDataHandler(receiveChannelDataQueue.shift());
-	}
-
 	/*** send ***/
 	else if (isAlive && sendChannelDataQueue.length) {
 		sendChannelDataHandler(sendChannelDataQueue.shift());
+	}
+
+	/*** receive ***/
+	else if (receiveChannelDataQueue.length) {
+		receiveChannelDataHandler(receiveChannelDataQueue.shift());
 	}
 
 	/*** else ***/
