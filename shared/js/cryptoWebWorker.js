@@ -145,7 +145,7 @@ function eventLoop () {
 						user.generateKey(function () {
 							otr	= user.contact('friend').openSession({
 								policy: OTR.POLICY.ALLOW_V3,
-								MTU: 31744
+								MTU: 255000
 							});
 
 							otr.on('smp', function (type) {
@@ -222,7 +222,7 @@ function eventLoop () {
 				/* Send message */
 				case 2:
 					var id			= crypto.getRandomValues(new Uint32Array(1))[0];
-					var messages	= chunkString(e.data.message, 10240);
+					var messages	= chunkString(e.data.message, 100000);
 
 					for (var i = 0 ; i < messages.length ; ++i) {
 						outgoingMessages.push(JSON.stringify({

@@ -2,14 +2,10 @@ package api
 
 import (
 	"appengine"
-	"appengine/delay"
-	csRand "crypto/rand"
 	"encoding/json"
 	"fmt"
 	"geoip2"
 	"github.com/gorilla/mux"
-	"math/big"
-	noncsRand "math/rand"
 	"net"
 	"net/http"
 	"strings"
@@ -33,20 +29,6 @@ type BetaSignup struct {
 	Name     string
 	Referer  string
 	Time     int64
-}
-
-type ImData struct {
-	Destroy   bool
-	Id        string
-	Message   string
-	Misc      string
-	Unloading bool
-}
-
-type ImSetup struct {
-	ChannelId    string
-	ChannelToken string
-	IsCreator    bool
 }
 
 type Stats struct {
@@ -77,47 +59,12 @@ var methods = struct {
 	"CONNECT",
 }
 
-var laterImTeardown = delay.Func("imTeardown", imTeardown)
-
 var empty = struct{}{}
 
 var router = mux.NewRouter()
 var isRouterActive = false
 
 var geoipdb, _ = geoip2.Open("GeoIP2-Country.mmdb")
-
-var imIdAddressSpaceLength = len(imIdAddressSpace)
-var imIdAddressSpaceLengthBig = big.NewInt(int64(imIdAddressSpaceLength))
-
-func noncsGuid(length int) string {
-	var id = ""
-
-	for i := 0; i < length; i++ {
-		x := noncsRand.Intn(imIdAddressSpaceLength)
-		id += imIdAddressSpace[x]
-	}
-
-	return id
-}
-
-func csGuid(length int) string {
-	var id = ""
-
-	for i := 0; i < length; i++ {
-		x, _ := csRand.Int(csRand.Reader, imIdAddressSpaceLengthBig)
-		id += imIdAddressSpace[x.Int64()]
-	}
-
-	return id
-}
-
-func generateImId() string {
-	return csGuid(7)
-}
-
-func generateLongId() string {
-	return csGuid(52)
-}
 
 func geolocate(h HandlerArgs) (string, string) {
 	return geolocateIp(h.Request.RemoteAddr)
@@ -150,16 +97,6 @@ func getBetaSignupFromRequest(h HandlerArgs) BetaSignup {
 		Name:     h.Request.PostFormValue("Name"),
 		Referer:  h.Request.Referer(),
 		Time:     time.Now().Unix(),
-	}
-}
-
-func getImDataFromRequest(h HandlerArgs) ImData {
-	return ImData{
-		Destroy:   h.Request.PostFormValue("Destroy") == "true",
-		Id:        h.Request.PostFormValue("Id"),
-		Message:   h.Request.PostFormValue("Message"),
-		Misc:      h.Request.PostFormValue("Misc"),
-		Unloading: h.Request.PostFormValue("Unloading") == "true",
 	}
 }
 
