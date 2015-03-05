@@ -14,7 +14,7 @@ bower install --save \
 	markdown-it-sup \
 	twemoji \
 	markdown-it-emoji \
-	angular-timer \
+	angular-timer#1.2.1 \
 	animate.css \
 	base64 \
 	jquery \
@@ -37,6 +37,7 @@ bower install --save \
 	# openpgp
 
 wget http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/sha512.js
+wget http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/hmac-sha256.js
 
 mkdir openpgp
 cd openpgp
