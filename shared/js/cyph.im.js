@@ -183,10 +183,7 @@ function beginChat () {
 		});
 
 		$(window).unload(function () {
-			if (isAlive) {
-				sendChannelDataBase({Destroy: true});
-				channelClose();
-			}
+			channelClose();
 		});
 	});
 }
@@ -362,10 +359,13 @@ function setUpWebRTC (isInitiator) {
 }
 
 
-function channelClose () {
-	closeChat(function () {
-		channel.close();
-	});
+function channelClose (hasReceivedDestroySignal) {
+	if (hasReceivedDestroySignal) {
+		channel.close(closeChat);
+	}
+	else if (isAlive) {
+		channel.send({Destroy: true}, closeChat, true);
+	}
 }
 
 
@@ -427,7 +427,7 @@ function receiveChannelDataHandler (o) {
 		}
 
 		if (o.Destroy) {
-			channelClose();
+			channelClose(true);
 		}
 
 		if (o.Id) {
@@ -449,7 +449,7 @@ function setUpChannel (channelName) {
 			}
 		},
 		onmessage: receiveChannelData,
-		onclose: closeChat
+		onclose: channelClose
 	});
 }
 

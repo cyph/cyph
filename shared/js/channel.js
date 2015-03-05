@@ -122,6 +122,8 @@ function Queue (queueName, handlers) {
 	var self	= this;
 	handlers	= handlers || {};
 
+	self.isAlive	= true;
+
 	sqs.createQueue({
 		QueueName: QUEUE_PREFIX + queueName,
 		Attributes: {
@@ -141,6 +143,7 @@ function Queue (queueName, handlers) {
 			function onmessageHelper () {
 				self.receive(handlers.onmessage, function (err, data) {
 					if (err && err.code == NON_EXISTENT_QUEUE) {
+						self.isAlive	= false;
 						handlers.onclose && handlers.onclose.apply(self, arguments);
 					}
 					else {
@@ -157,6 +160,7 @@ function Queue (queueName, handlers) {
 					QueueName: QUEUE_PREFIX + queueName
 				}, function (err, data) {
 					if (err && err.code == NON_EXISTENT_QUEUE) {
+						self.isAlive	= false;
 						handlers.onclose.apply(self, arguments);
 					}
 					else {
@@ -170,88 +174,85 @@ function Queue (queueName, handlers) {
 	}, true);
 }
 
-Queue.prototype.close	= function (shouldCloseSynchronously) {
-	/* TODO: balls */
-	if (shouldCloseSynchronously) {
-		$.ajax({
-			async: false,
-			timeout: 30000,
-			type: 'GET',
-			url: this.queueUrl + '?' + $.param({
-				Action: 'DeleteQueue',
-				Version: sqsConfig.apiVersion,
-				AWSAccessKeyID: sqsConfig.accessKeyId,
-				AWSSecretAccessKey: sqsConfig.secretAccessKey
-			})
-		});
-	}
-	else {
-		sqs.deleteQueue({QueueUrl: this.queueUrl}, null, true);
+Queue.prototype.close	= function (callback) {
+	var self	= this;
+
+	if (self.isAlive) {
+		sqs.deleteQueue({QueueUrl: this.queueUrl}, function () {
+			self.isAlive	= false;
+			callback && callback.apply(self, arguments);
+		}, true);
 	}
 };
 
 Queue.prototype.receive	= function (messageHandler, onComplete, maxNumberOfMessages, waitTimeSeconds) {
 	var self	= this;
 
-	sqs.receiveMessage({
-		QueueUrl: self.queueUrl,
-		MaxNumberOfMessages: maxNumberOfMessages || 10,
-		WaitTimeSeconds: waitTimeSeconds || 20
-	}, function (err, data) {
-		try {
-			if (messageHandler && data && data.Messages) {
-				for (var i = 0 ; i < data.Messages.length ; ++i) {
-					var message	= data.Messages[i];
-					var messageBody	= message.Body;
+	if (self.isAlive) {
+		sqs.receiveMessage({
+			QueueUrl: self.queueUrl,
+			MaxNumberOfMessages: maxNumberOfMessages || 10,
+			WaitTimeSeconds: waitTimeSeconds || 20
+		}, function (err, data) {
+			try {
+				if (messageHandler && data && data.Messages) {
+					for (var i = 0 ; i < data.Messages.length ; ++i) {
+						var message	= data.Messages[i];
+						var messageBody	= message.Body;
 
-					sqs.deleteMessage({
-						QueueUrl: self.queueUrl,
-						ReceiptHandle: message.ReceiptHandle
-					});
+						sqs.deleteMessage({
+							QueueUrl: self.queueUrl,
+							ReceiptHandle: message.ReceiptHandle
+						});
 
-					try {
-						messageBody	= JSON.parse(messageBody).message;
+						try {
+							messageBody	= JSON.parse(messageBody).message;
+						}
+						catch (e) {}
+
+						messageHandler(messageBody);
 					}
-					catch (e) {}
-
-					messageHandler(messageBody);
 				}
 			}
-		}
-		finally {
-			onComplete && onComplete.apply(self, arguments);
-		}
-	});
+			finally {
+				onComplete && onComplete.apply(self, arguments);
+			}
+		});
+	}
 };
 
-Queue.prototype.send	= function (message, f) {
-	if (typeof message == 'string' || !message.length) {
-		sqs.sendMessage({
-			QueueUrl: this.queueUrl,
-			MessageBody: JSON.stringify({message: message})
-		}, f, true);
-	}
-	else {
-		sqs.sendMessageBatch({
-			QueueUrl: this.queueUrl,
-			Entries: message.map(function (s, i) {
-				return {
-					Id: (i + 1).toString(),
-					MessageBody: JSON.stringify({message: s})
-				};
-			})
-		}, function () {
-			for (var i = 0 ; i < f.length ; ++i) {
-				var thisCallback	= f[i];
+Queue.prototype.send	= function (message, callback, isSynchronous) {
+	var self	= this;
 
-				if (thisCallback) {
-					try {
-						thisCallback.apply(this, arguments);
+	if (self.isAlive) {
+		if (typeof message == 'string' || !message.length) {
+			sqs.sendMessage({
+				QueueUrl: this.queueUrl,
+				MessageBody: JSON.stringify({message: message})
+			}, callback, true);
+		}
+		else {
+			sqs.sendMessageBatch({
+				QueueUrl: this.queueUrl,
+				Entries: message.map(function (s, i) {
+					return {
+						Id: (i + 1).toString(),
+						MessageBody: JSON.stringify({message: s})
+					};
+				})
+			}, callback && (!callback.length ? callback : function () {
+				for (var i = 0 ; i < callback.length ; ++i) {
+					var thisCallback	= callback[i];
+
+					if (thisCallback) {
+						try {
+							thisCallback.apply(this, arguments);
+						}
+						catch (e) {}
 					}
-					catch (e) {}
 				}
-			}
-		}, true);
+			}), true);
+		}
 	}
 };
 
@@ -282,9 +283,12 @@ function Channel (channelName, handlers) {
 	});
 }
 
-Channel.prototype.close	= function () {
-	this.inQueue.close.apply(this.inQueue, arguments);
-	this.outQueue.close.apply(this.outQueue, arguments);
+Channel.prototype.close	= function (callback) {
+	var self	= this;
+
+	self.inQueue.close(function () {
+		self.outQueue.close(callback);
+	});
 };
 
 Channel.prototype.receive	= function () {
