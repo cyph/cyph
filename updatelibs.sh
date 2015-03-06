@@ -45,4 +45,7 @@ cd openpgp
 wget "https://raw.githubusercontent.com/openpgpjs/openpgpjs/master/dist/openpgp.min.js"
 wget "https://raw.githubusercontent.com/openpgpjs/openpgpjs/master/dist/openpgp.worker.min.js"
 
+cd ../../..
+./sassupdate.sh
+
 cd "${dir}"
