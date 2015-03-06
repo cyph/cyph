@@ -137,8 +137,6 @@ function otrWorkerOnMessageHandler (e) {
 var randomSeed	= new Uint8Array(50000);
 crypto.getRandomValues(randomSeed);
 
-var isInitiator	= getUrlState() == 'new';
-
 
 /* TODO: Consider enabling the Walken warning after further testing */
 
@@ -164,8 +162,7 @@ if (window.webSignObsolete) {
 otrWorker.postMessage({method: 0, message: {
 	cryptoCodes: localStorage.cryptoCodes,
 	randomSeed: randomSeed,
-	sharedSecret: sharedSecret,
-	isInitiator: isInitiator
+	sharedSecret: sharedSecret
 }});
 
 // }
@@ -192,15 +189,19 @@ function beginChat () {
 /* Intermittent check to verify chat is still alive + send fake encrypted chatter */
 
 function pingPong () {
-	if (Date.now() - lastIncomingMessageTimestamp > 180000) {
-		channelClose();
-	}
-	else {
-		setTimeout(function () {
+	var nextPing	= 0;
+
+	onTick(function () {
+		var now	= Date.now();
+
+		if (now - lastIncomingMessageTimestamp > 180000) {
+			channelClose();
+		}
+		else if (now > nextPing) {
+			nextPing	= now + (30000 + crypto.getRandomValues(new Uint8Array(1))[0] * 250);
 			sendChannelData({Misc: channelDataMisc.ping});
-			pingPong();
-		}, 30000 + crypto.getRandomValues(new Uint8Array(1))[0] * 250);
-	}
+		}
+	});
 }
 
 
@@ -400,9 +401,9 @@ function receiveChannelData (data) {
 }
 
 function receiveChannelDataHandler (o) {
-	lastIncomingMessageTimestamp	= Date.now();
-
 	if (!o.Id || !receivedMessages[o.Id]) {
+		lastIncomingMessageTimestamp	= Date.now();
+
 		if (o.Misc == channelDataMisc.connect) {
 			beginChat();
 		}
