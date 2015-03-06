@@ -12,7 +12,6 @@ git push
 
 find . -name '*.go' -print0 | xargs -0 -I% gofmt -w "%"
 ./sassupdate.sh
-./sassupdate.sh
 # for d in $(find . -type d -name bower_components | perl -pe 's/(.*)bower_components/\1/g') ; do
 # 	cd "${d}"
 # 	bower update
