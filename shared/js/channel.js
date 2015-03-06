@@ -244,7 +244,13 @@ Queue.prototype.send	= function (message, callback, isSynchronous) {
 		}
 		else if (isSynchronous) {
 			for (var i = 0 ; i < message.length ; +i) {
-				self.send(message[i], callback.length ? callback[i] : callback, true);
+				self.send(
+					message[i],
+					callback && callback.length ?
+						callback[i] :
+						(i == message.length - 1) && callback,
+					true
+				);
 			}
 		}
 		else {
