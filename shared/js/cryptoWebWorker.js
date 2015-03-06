@@ -211,7 +211,7 @@ function eventLoop () {
 
 							setTimeout(function () {
 								postMessage({eventName: 'ready'});
-							}, 500);
+							}, 1000);
 						});
 					});
 					break;
