@@ -24,7 +24,8 @@ bower install --save \
 	visibilityjs \
 	wow \
 	morr/jquery.appear \
-	julianlam/tabIndent.js
+	julianlam/tabIndent.js \
+	aws-sdk-js
 
 wget https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/default.min.css -O highlight.js.min.css
 wget https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js -O highlight.min.js
