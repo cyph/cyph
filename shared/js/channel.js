@@ -232,6 +232,8 @@ Queue.prototype.send	= function (message, callback, isSynchronous) {
 					type: requestMethod,
 					url: this.queueUrl + '?' + query + '&X-Amz-Signature=' + signature
 				});
+
+				callback && callback();
 			}
 			else {
 				sqs.sendMessage({
