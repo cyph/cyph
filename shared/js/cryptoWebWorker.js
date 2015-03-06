@@ -209,7 +209,9 @@ function eventLoop () {
 								}
 							});
 
-							postMessage({eventName: 'ready'});
+							setTimeout(function () {
+								postMessage({eventName: 'ready'});
+							}, 500);
 						});
 					});
 					break;
