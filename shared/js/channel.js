@@ -226,10 +226,92 @@ Queue.prototype.send	= function (message, callback, isSynchronous) {
 
 	if (self.isAlive) {
 		if (typeof message == 'string' || !message.length) {
-			sqs.sendMessage({
-				QueueUrl: this.queueUrl,
-				MessageBody: JSON.stringify({message: message})
-			}, callback, true);
+			var messageBody	= JSON.stringify({message: message});
+
+			if (isSynchronous) {
+				var date		= new Date;
+				var timestamp	= date.toISOString();
+				var dateString	= timestamp.split('T')[0].replace(/-/g, '');
+
+				var requestMethod	= 'GET';
+				var algorithm		= 'AWS4-HMAC-SHA256';
+				var hostHeader		= 'host';
+				var terminator		= 'aws4_request';
+				var service			= 'sqs';
+				var host			= self.queueUrl.split('/')[2];
+				var uri				= self.queueUrl.split(host)[1];
+
+				var credential		=
+					dateString + '/' +
+					sqsConfig.region + '/' +
+					service + '/' +
+					terminator
+				;
+
+				var query	= $.param({
+					Action: 'SendMessage',
+					MessageBody: messageBody,
+					Timestamp: timestamp,
+					Version: sqsConfig.apiVersion,
+					'X-Amz-Algorithm': algorithm,
+					'X-Amz-Credential': sqsConfig.accessKeyId + '/' + credential,
+					'X-Amz-Date': timestamp,
+					'X-Amz-SignedHeaders': hostHeader
+				});
+
+				var canonicalRequest	=
+					requestMethod + '\n' +
+					uri + '\n' +
+					query + '\n' +
+					hostHeader + ':' + host + '\n\n' +
+					hostHeader + '\n' +
+					CryptoJS.SHA256('').toString()
+				;
+
+				var stringToSign	=
+					algorithm + '\n' +
+					timestamp.split('.')[0].match(/[0-9A-Za-z]/g).join('') + 'Z\n' +
+					credential + '\n' +
+					CryptoJS.SHA256(canonicalRequest).toString()
+				;
+
+
+				var signature	= CryptoJS.HmacSHA256(
+					stringToSign,
+					CryptoJS.HmacSHA256(
+						terminator,
+						CryptoJS.HmacSHA256(
+							service,
+							CryptoJS.HmacSHA256(
+								sqsConfig.region,
+								CryptoJS.HmacSHA256(
+									dateString,
+									'AWS4' + sqsConfig.secretAccessKey
+								)
+							)
+						)
+					)
+				).toString();
+
+
+				$.ajax({
+					async: false,
+					timeout: 30000,
+					type: requestMethod,
+					url: this.queueUrl + '?' + query + '&X-Amz-Signature=' + signature
+				});
+			}
+			else {
+				sqs.sendMessage({
+					QueueUrl: this.queueUrl,
+					MessageBody: messageBody
+				}, callback, true);
+			}
+		}
+		else if (isSynchronous) {
+			for (var i = 0 ; i < message.length ; +i) {
+				self.send(message[i], callback.length ? callback[i] : callback, true);
+			}
 		}
 		else {
 			sqs.sendMessageBatch({
@@ -298,5 +380,3 @@ Channel.prototype.receive	= function () {
 Channel.prototype.send	= function () {
 	this.outQueue.send.apply(this.outQueue, arguments);
 };
-
-
