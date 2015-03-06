@@ -232,48 +232,36 @@ function onTick (f) {
 	tickFunctions.push(f);
 
 	if (tickFunctions.length == 1) {
-		var worker, processTicksLock;
-
 		function processTicks () {
+			var shouldContinue	= false;
+
+			for (var i = 0 ; i < tickFunctions.length ; ++i) {
+				shouldContinue	= shouldContinue || tickFunctions[i]();
+			}
+
+			return shouldContinue;
+		}
+
+		var worker	= makeWorker(function () {
+			setInterval(function () {
+				postMessage({eventName: 'tick'});
+			}, interval);
+		}, {
+			interval: isMobile ? 1000 : 50
+		});
+
+		var processTicksLock;
+		worker.onmessage	= function () {
 			if (!processTicksLock) {
 				processTicksLock	= true;
-
 				try {
-					for (var i = 0 ; i < tickFunctions.length ; ++i) {
-						tickFunctions[i]();
-					}
+					processTicks();
 				}
 				finally {
 					processTicksLock	= false;
 				}
 			}
-		}
-
-		function processTickEventLoop () {
-			processTicks();
-			setTimeout(processTickEventLoop, 25);
-		}
-
-		function processTickWorker (interval) {
-			worker	= makeWorker(function () {
-				setInterval(function () {
-					postMessage({eventName: 'tick'});
-				}, interval);
-			}, {
-				interval: interval
-			});
-
-			worker.onmessage	= processTicks;
-		}
-
-
-		if (isMobile) {
-			processTickEventLoop();
-			setTimeout(function () { processTickWorker(2500) }, 10000);
-		}
-		else {
-			processTickWorker(50);
-		}
+		};
 	}
 }
 
