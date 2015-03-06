@@ -484,16 +484,19 @@ angular.
 		};
 
 
-		var imtypingyo	= false;
+		var imtypingyo, previousMessage;
 
 		$scope.onMessageChange	= function () {
-			var newImtypingYo	= $scope.message != '';
+			var newImtypingYo	= $scope.message != '' && $scope.message != previousMessage;
+			previousMessage		= $scope.message;
 
 			if (imtypingyo != newImtypingYo) {
 				imtypingyo	= newImtypingYo;
 				sendChannelData({Misc: imtypingyo ? channelDataMisc.imtypingyo : channelDataMisc.donetyping});
 			}
 		};
+
+		setInterval($scope.onMessageChange, 5000);
 
 
 		$scope.openMobileMenu	= function () {
