@@ -2,7 +2,8 @@ var sqsConfig	= {
 	apiVersion: '2012-11-05',
 	region: 'us-east-1',
 	accessKeyId: 'AKIAIN2DSULSB77U4S2A',
-	secretAccessKey: '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'
+	secretAccessKey: '0CIKxPmA5bLCKU+J31cnU22a8gPkCeY7fdxt/2av',
+	endpoint: isLocalhost ? 'http://localhost:4568' : null
 };
 
 var NON_EXISTENT_QUEUE	= 'AWS.SimpleQueueService.NonExistentQueue';
@@ -12,65 +13,7 @@ var CHANNEL_IDS			= {true: '0', false: '1'};
 
 
 var sqs	= (function () {
-	var sqsFrame		= document.createElement('iframe');
-	var sqsFrameOrigin	= isOnion ? ONION_URL : BASE_URL.slice(0, -1);
-	var sqsFrameIsReady	= false;
-
-	sqsFrame.style.display	= 'none';
-	sqsFrame.src			= sqsFrameOrigin + (isOnion ? BASE_URL : '/') + 'sqsframe';
-
-	document.body.appendChild(sqsFrame);
-
-	function sqsFramePostMessage (message) {
-		sqsFrame.contentWindow.postMessage(message, '*');
-	}
-
-	$(function () {
-		$(sqsFrame).load(function () {
-			sqsFramePostMessage({method: 'init', config: sqsConfig});
-
-			setTimeout(function () {
-				sqsFrameIsReady	= true;
-			}, 250);
-		});
-	});
-
-
-	var callbacks			= {};
-	var callbackCount		= 0;
-	var receiveMessageQueue	= [];
-
-	function callback (f) {
-		if (!f) {
-			return null;
-		}
-
-		var callbackId			= ++callbackCount;
-		callbacks[callbackId]	= f;
-		return {callbackId: callbackId};
-	}
-
-	window.addEventListener('message', function (e) {
-		if (e.origin == sqsFrameOrigin) {
-			receiveMessageQueue.push(e);
-		}
-	});
-
-	onTick(function () {
-		if (receiveMessageQueue.length) {
-			var e	= receiveMessageQueue.shift();
-			var f	= callbacks[e.data.callbackId];
-
-			if (f) {
-				f.apply(null, JSON.parse(e.data.args));
-			}
-
-			return true;
-		}
-
-		return false;
-	});
-
+	var innerSqs	= new AWS.SQS(sqsConfig);
 
 	var wrapper	= {};
 
@@ -86,25 +29,14 @@ var sqs	= (function () {
 	].forEach(function (methodName) {
 		wrapper[methodName]	= function (o, f, shouldRetryUntilSuccessful) {
 			function wrapperHelper () {
-				if (sqsFrameIsReady) {
-					sqsFramePostMessage({
-						method: methodName,
-						args: JSON.stringify([
-							o,
-							callback(!shouldRetryUntilSuccessful ? f : function (err) {
-								if (err) {
-									setTimeout(wrapperHelper, 50);
-								}
-								else if (f) {
-									f.apply(this, arguments);
-								}
-							})
-						])
-					});
-				}
-				else {
-					setTimeout(wrapperHelper, 50);
-				}
+				innerSqs[methodName](o, !shouldRetryUntilSuccessful ? f : function (err) {
+					if (err) {
+						setTimeout(wrapperHelper, 50);
+					}
+					else if (f) {
+						f.apply(this, arguments);
+					}
+				});
 			}
 
 			wrapperHelper();
