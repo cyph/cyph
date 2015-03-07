@@ -1,0 +1,16 @@
+application: cyphme
+module: jobs
+version: master
+runtime: python27
+api_version: 1
+threadsafe: true
+
+handlers:
+- url: /.*
+  script: jobs.application
+  login: admin
+  secure: always
+
+libraries:
+- name: ssl
+  version: "latest"

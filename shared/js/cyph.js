@@ -238,9 +238,11 @@ function onTick (f) {
 			if (!processTicksLock) {
 				processTicksLock	= true;
 
+				var now	= Date.now();
+
 				try {
 					for (var i = 0 ; i < tickFunctions.length ; ++i) {
-						tickFunctions[i]();
+						tickFunctions[i](now);
 					}
 				}
 				finally {

@@ -191,9 +191,7 @@ function beginChat () {
 function pingPong () {
 	var nextPing	= 0;
 
-	onTick(function () {
-		var now	= Date.now();
-
+	onTick(function (now) {
 		if (now - lastIncomingMessageTimestamp > 180000) {
 			channelClose();
 		}
@@ -458,7 +456,7 @@ function setUpChannel (channelName) {
 
 /* Event loop for processing incoming messages */
 
-onTick(function () {
+onTick(function (now) {
 	/*** send ***/
 	if (
 		isAlive &&
@@ -466,7 +464,7 @@ onTick(function () {
 		(
 			sendChannelDataQueue.length >= 8 ||
 			!lastOutgoingMessageTimestamp ||
-			(Date.now() - lastOutgoingMessageTimestamp) > 500
+			(now - lastOutgoingMessageTimestamp) > 500
 		)
 	) {
 		var sendChannelDataQueueSlice	= sendChannelDataQueue.slice(0, 8);

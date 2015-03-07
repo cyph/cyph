@@ -25,7 +25,8 @@ var sqs	= (function () {
 		'getQueueUrl',
 		'receiveMessage',
 		'sendMessage',
-		'sendMessageBatch'
+		'sendMessageBatch',
+		'setQueueAttributes'
 	].forEach(function (methodName) {
 		wrapper[methodName]	= function (o, f, shouldRetryUntilSuccessful) {
 			function wrapperHelper () {
@@ -296,8 +297,29 @@ function Channel (channelName, handlers) {
 			onclose: handlers.onclose,
 			onopen: function () {
 				self.outQueue	= new Queue(channelName + CHANNEL_IDS[!isCreator], {
-					onopen: handlers.onopen && function () {
-						handlers.onopen(isCreator);
+					onopen: function () {
+						handlers.onopen && handlers.onopen(isCreator);
+
+
+						/* Keep this channel alive by touching it every 30 minutes */
+						var lastTouched		= Date.now();
+						var periodToggle	= false;
+						var periodValues	= {true: '7200', false: '7201'};
+
+						onTick(function (now) {
+							if (self.inQueue.isAlive && (now - lastTouched > 1800000)) {
+								lastTouched		= now;
+
+								sqs.setQueueAttributes({
+									QueueUrl: self.inQueue.queueUrl,
+									Attributes: {
+										MessageRetentionPeriod: periodValues[periodToggle]
+									}
+								}, function () {
+									periodToggle	= !periodToggle;
+								});
+							}
+						});
 					}
 				});
 			}
