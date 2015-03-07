@@ -48,7 +48,7 @@ var config = struct {
 
 	"eu",
 
-	"us-east-1",
+	"us.east",
 
 	"AKIAJGDHDZ44LQNDWUFQ",
 
