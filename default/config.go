@@ -4,6 +4,7 @@ var config = struct {
 	AllowedOrigins     map[string]none
 	Continents         map[string]none
 	DefaultContinent   string
+	AwsRegion          string
 	AwsAccessKeyId     string
 	AwsSecretAccessKey string
 }{
@@ -46,6 +47,8 @@ var config = struct {
 	},
 
 	"eu",
+
+	"us-east-1",
 
 	"AKIAIN2DSULSB77U4S2A",
 
