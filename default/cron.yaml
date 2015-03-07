@@ -1,4 +1,0 @@
-cron:
-- description: log stats
-  url: /tasks/logstats
-  schedule: every 15 minutes
