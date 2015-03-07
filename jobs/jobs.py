@@ -30,7 +30,7 @@ class CleanUpChannels(webapp2.RequestHandler):
 
 			# If it's both old and empty, assume it's inactive and delete it
 			if ageHours > 3 and messages < 1:
-				sqsManager.delete_queue(queued)
+				sqsManager.delete_queue(queue)
 
 
 		self.response.headers['Content-Type'] = 'text/plain'
