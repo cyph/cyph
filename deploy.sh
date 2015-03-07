@@ -146,6 +146,10 @@ if [ "${nobackend}" == '' ] ; then
 	mkdir -p github.com/goamz
 	cd github.com/goamz
 	git clone git://github.com/goamz/goamz.git
+	mv goamz/sqs ./
+	rm -rf goamz
+	mkdir goamz
+	mv sqs goamz/
 	cd ../..
 
 	# mkdir -p github.com/oschwald
