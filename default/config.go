@@ -50,7 +50,7 @@ var config = struct {
 
 	"us-east-1",
 
-	"AKIAIN2DSULSB77U4S2A",
+	"AKIAJGDHDZ44LQNDWUFQ",
 
-	"0CIKxPmA5bLCKU+J31cnU22a8gPkCeY7fdxt/2av",
+	"J1VZmYsZyBXxk4XcM/0L5uP2TTNXU1ZwFNExANJw",
 }
