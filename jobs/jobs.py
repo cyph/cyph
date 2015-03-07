@@ -9,11 +9,7 @@ import boto.sqs
 
 class CleanUpChannels(webapp2.RequestHandler):
 	def get(self):
-		sqsManager	= boto.sqs.connect_to_region(
-			'us-east-1',
-			aws_access_key_id='AKIAJGDHDZ44LQNDWUFQ',
-			aws_secret_access_key='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'
-		)
+		sqsManager	= boto.sqs.connect_to_region('us-east-1')
 
 		# Get all channel queues
 		queues	= sqsManager.get_all_queues(prefix='channels-')

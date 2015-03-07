@@ -150,6 +150,10 @@ if [ "${nobackend}" == '' ] ; then
 	# cd ../..
 
 	cd ..
+
+	# AWS credentials
+	cat ~/.config/cyph-jobs.vars >> jobs/jobs.yaml
+
 	goapp deploy default/app.yaml jobs/jobs.yaml
 fi
 
