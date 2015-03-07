@@ -162,7 +162,7 @@ else
 fi
 
 appcfg.py update_dispatch .
-ls */cron.yaml | sed 's/cron.yaml//g' | xargs -I% appcfg.py -A cyphme update_cron %
+appcfg.py -A cyphme update_cron .
 
 if [ $all ] ; then
 	../deploy.sh
