@@ -5,9 +5,7 @@ import (
 	"appengine/mail"
 	"appengine/memcache"
 	"encoding/json"
-	"github.com/goamz/goamz/sqs"
 	"net/http"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -22,7 +20,6 @@ func init() {
 
 	/* Admin-restricted methods */
 	handleFuncs("/stats", Handlers{methods.GET: getStats})
-	handleFuncs("/tasks/cleanupchannels", Handlers{methods.GET: cleanUpChannels})
 	handleFuncs("/tasks/logstats", Handlers{methods.GET: logStats})
 }
 
@@ -109,54 +106,6 @@ func root(h HandlerArgs) (interface{}, int) {
 }
 
 /*** Scheduled tasks ***/
-
-func cleanUpChannels(h HandlerArgs) (interface{}, int) {
-	sqsManager, err := sqs.NewFrom(
-		config.AwsAccessKeyId,
-		config.AwsSecretAccessKey,
-		config.AwsRegion,
-	)
-
-	if err == nil {
-		/* Get all channel queues */
-		queues, err := sqsManager.ListQueues("channels-")
-
-		if err == nil {
-			for i := range queues.QueueUrl {
-				queue := sqsManager.QueueFromArn(queues.QueueUrl[i])
-
-				/* Get last modified timestamp (generally same as creation timestamp) */
-				timestampAttr, err := queue.GetQueueAttributes("LastModifiedTimestamp")
-
-				if err == nil && len(timestampAttr.Attributes) > 0 {
-					t, err := strconv.ParseInt(timestampAttr.Attributes[0].Value, 10, 64)
-
-					if err == nil {
-						timestamp := time.Unix(t, 0)
-
-						/* If it's at least a day old, it may be abandoned */
-						if time.Now().Sub(timestamp).Hours() > 2 { // 24 {
-
-							/* Get # of messages queued up here */
-							messagesAttr, err := queue.GetQueueAttributes("ApproximateNumberOfMessages")
-
-							if err == nil && len(messagesAttr.Attributes) > 0 {
-								n, err := strconv.ParseInt(messagesAttr.Attributes[0].Value, 10, 64)
-
-								/* If empty, assume it's inactive and delete it */
-								if err == nil && n < 1 {
-									queue.Delete()
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	return nil, http.StatusOK
-}
 
 func logStats(h HandlerArgs) (interface{}, int) {
 	s, _ := getStats(h)

@@ -1,12 +1,9 @@
 package api
 
 var config = struct {
-	AllowedOrigins     map[string]none
-	Continents         map[string]none
-	DefaultContinent   string
-	AwsRegion          string
-	AwsAccessKeyId     string
-	AwsSecretAccessKey string
+	AllowedOrigins   map[string]none
+	Continents       map[string]none
+	DefaultContinent string
 }{
 	map[string]none{
 		"cyph.com":                                    empty,
@@ -47,10 +44,4 @@ var config = struct {
 	},
 
 	"eu",
-
-	"us.east",
-
-	"AKIAJGDHDZ44LQNDWUFQ",
-
-	"J1VZmYsZyBXxk4XcM/0L5uP2TTNXU1ZwFNExANJw",
 }

@@ -143,15 +143,6 @@ if [ "${nobackend}" == '' ] ; then
 	git clone git://github.com/gorilla/mux.git
 	cd ../..
 
-	mkdir -p github.com/goamz
-	cd github.com/goamz
-	git clone git://github.com/goamz/goamz.git
-	mv goamz/sqs ./
-	rm -rf goamz
-	mkdir goamz
-	mv sqs goamz/
-	cd ../..
-
 	# mkdir -p github.com/oschwald
 	# cd github.com/oschwald
 	# git clone git://github.com/oschwald/maxminddb-golang.git
@@ -159,7 +150,7 @@ if [ "${nobackend}" == '' ] ; then
 	# cd ../..
 
 	cd ..
-	goapp deploy default/app.yaml
+	goapp deploy default/app.yaml jobs/jobs.yaml
 fi
 
 if [ $site ] ; then
