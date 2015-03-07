@@ -2,3 +2,7 @@ cron:
 - description: log stats
   url: /tasks/logstats
   schedule: every 15 minutes
+
+- description: clean up SQS queues
+  url: /tasks/cleanupchannels
+  schedule: every 3 hours
