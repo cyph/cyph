@@ -9,6 +9,7 @@ var sqsConfig	= {
 var NON_EXISTENT_QUEUE	= 'AWS.SimpleQueueService.NonExistentQueue';
 var QUEUE_PREFIX		= 'channels-';
 var CHANNEL_IDS			= {true: '0', false: '1'};
+var PERIOD_VALUES		= {true: '7200', false: '7201'};
 
 
 
@@ -60,7 +61,7 @@ function Queue (queueName, handlers) {
 	sqs.createQueue({
 		QueueName: QUEUE_PREFIX + queueName,
 		Attributes: {
-			MessageRetentionPeriod: '7200',
+			MessageRetentionPeriod: PERIOD_VALUES[true],
 			ReceiveMessageWaitTimeSeconds: '20'
 		}
 	}, function (err, data) {
@@ -304,7 +305,6 @@ function Channel (channelName, handlers) {
 						/* Keep this channel alive by touching it every 30 minutes */
 						var lastTouched		= Date.now();
 						var periodToggle	= false;
-						var periodValues	= {true: '7200', false: '7201'};
 
 						onTick(function (now) {
 							if (self.inQueue.isAlive && (now - lastTouched > 1800000)) {
@@ -313,7 +313,7 @@ function Channel (channelName, handlers) {
 								sqs.setQueueAttributes({
 									QueueUrl: self.inQueue.queueUrl,
 									Attributes: {
-										MessageRetentionPeriod: periodValues[periodToggle]
+										MessageRetentionPeriod: PERIOD_VALUES[periodToggle]
 									}
 								}, function () {
 									periodToggle	= !periodToggle;
