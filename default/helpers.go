@@ -31,12 +31,6 @@ type BetaSignup struct {
 	Time     int64
 }
 
-type Stats struct {
-	TotalCyphs    int64
-	TotalMessages int64
-	TotalSignups  int64
-}
-
 type none struct{}
 
 var methods = struct {
