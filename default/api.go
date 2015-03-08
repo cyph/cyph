@@ -26,6 +26,8 @@ func init() {
 /*** Public API ***/
 
 func betaSignup(h HandlerArgs) (interface{}, int) {
+	isNewSignup := false
+
 	betaSignup := getBetaSignupFromRequest(h)
 
 	if strings.Contains(betaSignup.Email, "@") {
@@ -53,6 +55,7 @@ func betaSignup(h HandlerArgs) (interface{}, int) {
 				betaSignup.Time = existingBetaSignup.Time
 			}
 		} else {
+			isNewSignup = true
 			memcache.Increment(h.Context, "totalSignups", 1, 0)
 		}
 
@@ -69,7 +72,7 @@ func betaSignup(h HandlerArgs) (interface{}, int) {
 		})
 	}
 
-	return nil, http.StatusOK
+	return isNewSignup, http.StatusOK
 }
 
 func getContinent(h HandlerArgs) (interface{}, int) {

@@ -30,12 +30,18 @@ if (!isLocalhost && !isOnion) {
 /* Log all JS exceptions */
 function errorLog (apiMethod) {
 	return function () {
+		var exception	= JSON.stringify(arguments);
+
 		$.post(BASE_URL + apiMethod, {
-			error: JSON.stringify(arguments) +
+			error: exception +
 				'\n\n' + navigator.userAgent +
 				'\n\n' + navigator.language +
 				'\n\n' + (typeof language == 'undefined' ? '' : language) +
 				'\n\n' + document.location.toString()
+		});
+
+		anal.send('exception', {
+			exDescription: exception
 		});
 	};
 }
