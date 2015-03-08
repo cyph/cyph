@@ -264,6 +264,16 @@ angular.
 						else {
 							retries	= 0;
 						}
+					},
+					success: function (isNew) {
+						if (isNew == 'true') {
+							anal.send({
+								hitType: 'event',
+								eventCategory: 'signup',
+								eventAction: 'new',
+								eventValue: 1
+							});
+						}
 					}
 				});
 			}

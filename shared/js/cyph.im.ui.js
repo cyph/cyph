@@ -114,7 +114,7 @@ angular.
 		abortSetup = $scope.abortSetup = function () {
 			$window.off('beforeunload');
 			changeState($scope.states.aborted);
-			sendChannelData({Destroy: true});
+			channelClose();
 			$scope.disconnect();
 		};
 
@@ -272,20 +272,20 @@ angular.
 		};
 
 
-		changeState = $scope.changeState = function (state) {
+		changeState = $scope.changeState = function (s) {
 			if (isWebSignObsolete) {
 				return;
 			}
 
 			apply(function () {
-				state = $scope.state = state;
+				state = $scope.state = s;
 			});
 		};
 
 
 		var disconnectedNotification	= getString('disconnectedNotification');
 
-		closeChat = $scope.closeChat = function (callback) {
+		closeChat = $scope.closeChat = function () {
 			if ($scope.state == $scope.states.aborted) {
 				return;
 			}
@@ -295,7 +295,6 @@ angular.
 
 				if ($scope.isConnected) {
 					addMessageToChat(disconnectedNotification, authors.app);
-					sendChannelDataBase({Destroy: true}, {callback: callback});
 
 					apply(function () {
 						isAlive = $scope.isAlive = false;
@@ -317,7 +316,7 @@ angular.
 
 		warnWebSignObsolete = $scope.warnWebSignObsolete = function () {
 			$window.off('beforeunload');
-			sendChannelData({Destroy: true});
+			channelClose();
 			changeState($scope.states.webSignObsolete);
 
 			isWebSignObsolete	= true;
@@ -479,22 +478,25 @@ angular.
 
 
 		$scope.disconnect	= function () {
-			socketClose();
+			channelClose();
 
 			$scope.baseButtonClick();
 		};
 
 
-		var imtypingyo	= false;
+		var imtypingyo, previousMessage;
 
 		$scope.onMessageChange	= function () {
-			var newImtypingYo	= $scope.message != '';
+			var newImtypingYo	= $scope.message != '' && $scope.message != previousMessage;
+			previousMessage		= $scope.message;
 
 			if (imtypingyo != newImtypingYo) {
 				imtypingyo	= newImtypingYo;
 				sendChannelData({Misc: imtypingyo ? channelDataMisc.imtypingyo : channelDataMisc.donetyping});
 			}
 		};
+
+		setInterval($scope.onMessageChange, 5000);
 
 
 		$scope.openMobileMenu	= function () {

@@ -1,0 +1,20 @@
+{
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Action": [
+				"sqs:CreateQueue",
+				"sqs:DeleteMessage",
+				"sqs:DeleteMessageBatch",
+				"sqs:DeleteQueue",
+				"sqs:GetQueueUrl",
+				"sqs:ReceiveMessage",
+				"sqs:SendMessage",
+				"sqs:SendMessageBatch",
+				"sqs:SetQueueAttributes"
+			],
+			"Effect": "Allow",
+			"Resource": "arn:aws:sqs:us-east-1:606472071681:channels-*"
+		}
+	]
+}

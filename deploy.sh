@@ -64,13 +64,15 @@ for d in cyph.im cyph.com ; do
 
 	../translate.py
 
-	# Minify
-	echo 'JS Minify'
-	ls js/*.js | xargs -I% uglifyjs '%' -o '%'
-	echo 'CSS Minify'
-	ls css/*.css | xargs -I% cleancss -o '%' '%'
-	echo 'HTML Minify'
-	ls index.html | xargs -I% html-minifier --minify-js --minify-css --remove-comments --collapse-whitespace '%' -o '%'
+	# if [ "${test}" == '' -a "${branch}" != 'staging' ] ; then
+		# Minify
+		echo 'JS Minify'
+		ls js/*.js | xargs -I% uglifyjs '%' -o '%'
+		echo 'CSS Minify'
+		ls css/*.css | xargs -I% cleancss -o '%' '%'
+		echo 'HTML Minify'
+		ls index.html | xargs -I% html-minifier --minify-js --minify-css --remove-comments --collapse-whitespace '%' -o '%'
+	# fi
 
 	cd ..
 done
@@ -150,7 +152,11 @@ if [ "${nobackend}" == '' ] ; then
 	# cd ../..
 
 	cd ..
-	goapp deploy default/app.yaml
+
+	# AWS credentials
+	cat ~/.config/cyph-jobs.vars >> jobs/jobs.yaml
+
+	goapp deploy default/app.yaml jobs/jobs.yaml
 fi
 
 if [ $site ] ; then
@@ -162,7 +168,7 @@ else
 fi
 
 appcfg.py update_dispatch .
-ls */cron.yaml | sed 's/cron.yaml//g' | xargs -I% appcfg.py update_cron %
+appcfg.py -A cyphme update_cron .
 
 if [ $all ] ; then
 	../deploy.sh
