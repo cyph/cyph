@@ -206,9 +206,9 @@ function makeWorker (f, vars) {
 	s		= s.slice(s.indexOf('{') + 1, s.lastIndexOf('}'));
 
 	if (vars) {
-		for (var k in vars) {
-			s	= s.replace(new RegExp(k, 'g', vars[k]));
-		}
+		Object.keys(vars).forEach(function (k) {
+			s	= s.replace(new RegExp(k, 'g'), vars[k]);
+		});
 	}
 
 	var blob, worker;
