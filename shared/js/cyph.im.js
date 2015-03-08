@@ -392,6 +392,13 @@ function sendChannelDataHandler (items) {
 		}),
 		items.map(function (item) { return item.callback })
 	);
+
+	anal.send({
+		hitType: 'event',
+		eventCategory: 'message',
+		eventAction: 'sent',
+		eventValue: items.length
+	});
 }
 
 function receiveChannelData (data) {
@@ -445,6 +452,13 @@ function setUpChannel (channelName) {
 				beginChat();
 				sendChannelDataBase({Misc: channelDataMisc.connect});
 				otr.sendQueryMsg();
+
+				anal.send({
+					hitType: 'event',
+					eventCategory: 'cyph',
+					eventAction: 'started',
+					eventValue: 1
+				});
 			}
 		},
 		onmessage: receiveChannelData,
@@ -489,4 +503,13 @@ onTick(function (now) {
 	}
 
 	return true;
+});
+
+
+
+/* Set Analytics information */
+
+anal.set({
+	appName: 'cyph.im',
+	appVersion: 'Web'
 });
