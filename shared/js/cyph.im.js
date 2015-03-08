@@ -178,10 +178,6 @@ function beginChat () {
 		$(window).on('beforeunload', function () {
 			return disconnectWarning;
 		});
-
-		$(window).unload(function () {
-			channelClose();
-		});
 	});
 }
 
@@ -460,6 +456,10 @@ function setUpChannel (channelName) {
 					eventValue: 1
 				});
 			}
+
+			$(window).unload(function () {
+				channelClose();
+			});
 		},
 		onmessage: receiveChannelData,
 		onclose: channelClose
