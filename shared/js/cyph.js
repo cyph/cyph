@@ -277,7 +277,7 @@ function onTick (f) {
 
 		if (isMobile) {
 			processTickEventLoop();
-			setTimeout(function () { processTickWorker(2500) }, 10000);
+			setTimeout(function () { processTickWorker(500) }, 2500);
 		}
 		else {
 			processTickWorker(50);
