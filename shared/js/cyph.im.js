@@ -19,7 +19,16 @@ var channelDataMisc	= {
 	donetyping: '5'
 };
 
-var channel, isWebSignObsolete, isConnected, isOtrReady, lastIncomingMessageTimestamp, sharedSecret, shouldSendQueryMessage, socket;
+var
+	channel,
+	isWebSignObsolete,
+	isConnected,
+	isOtrReady,
+	lastIncomingMessageTimestamp,
+	lastOutgoingMessageTimestamp,
+	sharedSecret,
+	shouldSendQueryMessage
+;
 
 
 /* Init crypto */
@@ -78,7 +87,7 @@ function otrWorkerOnMessageHandler (e) {
 				var channelDataSplit	= e.data.message.split(CHANNEL_DATA_PREFIX);
 
 				if (!channelDataSplit[0] && channelDataSplit[1]) {
-					receiveChannelData({data: channelDataSplit[1]});
+					receiveChannelData(JSON.parse(channelDataSplit[1]));
 				}
 				else {
 					addMessageToChat(e.data.message, authors.friend);
@@ -119,6 +128,7 @@ function otrWorkerOnMessageHandler (e) {
 
 		case 'authenticated':
 			markAllAsSent();
+			pingPong();
 			break;
 	}
 }
@@ -126,8 +136,6 @@ function otrWorkerOnMessageHandler (e) {
 
 var randomSeed	= new Uint8Array(50000);
 crypto.getRandomValues(randomSeed);
-
-var isInitiator	= getUrlState() == 'new';
 
 
 /* TODO: Consider enabling the Walken warning after further testing */
@@ -154,8 +162,7 @@ if (window.webSignObsolete) {
 otrWorker.postMessage({method: 0, message: {
 	cryptoCodes: localStorage.cryptoCodes,
 	randomSeed: randomSeed,
-	sharedSecret: sharedSecret,
-	isInitiator: isInitiator
+	sharedSecret: sharedSecret
 }});
 
 // }
@@ -171,15 +178,6 @@ function beginChat () {
 		$(window).on('beforeunload', function () {
 			return disconnectWarning;
 		});
-
-		$(window).unload(function () {
-			if (isAlive) {
-				sendChannelDataBase({Destroy: true});
-				socketClose();
-			}
-		});
-
-		pingPong();
 	});
 }
 
@@ -187,15 +185,17 @@ function beginChat () {
 /* Intermittent check to verify chat is still alive + send fake encrypted chatter */
 
 function pingPong () {
-	if (Date.now() - lastIncomingMessageTimestamp > 180000) {
-		socketClose();
-	}
-	else {
-		setTimeout(function () {
+	var nextPing	= 0;
+
+	onTick(function (now) {
+		if (now - lastIncomingMessageTimestamp > 180000) {
+			channelClose();
+		}
+		else if (now > nextPing) {
+			nextPing	= now + (30000 + crypto.getRandomValues(new Uint8Array(1))[0] * 250);
 			sendChannelData({Misc: channelDataMisc.ping});
-			pingPong();
-		}, 30000 + crypto.getRandomValues(new Uint8Array(1))[0] * 250);
-	}
+		}
+	});
 }
 
 
@@ -204,30 +204,54 @@ function processUrlState () {
 		return;
 	}
 
-	var state	= getUrlState();
+	var urlState	= getUrlState();
 
 	/* New chat room */
-	if (state == 'new' || !state) {
+	if (urlState == 'new' || !urlState) {
 		changeState(states.spinningUp);
 
-		$.post(BASE_URL + 'ims/' + generateGuid(SECRET_LENGTH) + '/' + generateGuid(LONG_SECRET_LENGTH), function (id) {
-			setTimeout(function () {
-				pushState('/' + id, true);
-			}, 500);
+		var queueName	= generateGuid(SECRET_LENGTH);
+
+		pushState('/' + queueName, true, true);
+
+		var queue	= new Queue(queueName, {
+			onopen: function () {
+				var channelName	= generateGuid(LONG_SECRET_LENGTH);
+
+				queue.send(channelName, function () {
+					setUpChannel(channelName);
+				});
+			},
+			onclose: function () {
+				setTimeout(function () {
+					if (state == states.waitingForFriend) {
+						abortSetup();
+					}
+				}, 2000);
+			}
 		});
 	}
 	/* Join existing chat room */
-	else if (state.length == SECRET_LENGTH) {
-		$.ajax({
-			dataType: 'json',
-			error: pushNotFound,
-			success: setUpChannel,
-			type: 'POST',
-			url: BASE_URL + 'ims/' + state
+	else if (urlState.length == SECRET_LENGTH) {
+		var queue	= new Queue(urlState, {
+			onopen: function () {
+				var channelName;
+
+				queue.receive(function (message) {
+					channelName	= message;
+					setUpChannel(channelName);
+				}, function () {
+					if (!channelName) {
+						pushNotFound();
+					}
+
+					queue.close();
+				}, 1, 10);
+			}
 		});
 	}
 	/* 404 */
-	else if (state == '404') {
+	else if (urlState == '404') {
 		changeState(states.error);
 	}
 	else {
@@ -330,16 +354,18 @@ function setUpWebRTC (isInitiator) {
 }
 
 
-function socketClose () {
-	closeChat(function () {
-		socket.close();
-	});
+function channelClose (hasReceivedDestroySignal) {
+	if (hasReceivedDestroySignal) {
+		channel.close(closeChat);
+	}
+	else if (isAlive) {
+		channel.send({Destroy: true}, closeChat, true);
+	}
 }
 
 
 
 var sendChannelDataQueue	= [];
-var pendingChannelMessages	= 0;
 
 var receiveChannelDataQueue	= [];
 var receivedMessages		= {};
@@ -348,43 +374,26 @@ function sendChannelData (data) {
 	otr.sendMsg(CHANNEL_DATA_PREFIX + JSON.stringify(data));
 }
 
-function sendChannelDataBase (data, opts) {
-	var item	= {data: data, opts: opts || {}};
-
-	if (item.data.Destroy) {
-		item.data.Unloading	= true;
-	}
-
-	if (item.data.Unloading) {
-		sendChannelDataHandler(item);
-	}
-	else {
-		sendChannelDataQueue.push(item);
-	}
+function sendChannelDataBase (data, callback) {
+	sendChannelDataQueue.push({data: data, callback: callback});
 }
 
-function sendChannelDataHandler (item) {
-	var data	= item.data;
-	var opts	= item.opts;
+function sendChannelDataHandler (items) {
+	lastOutgoingMessageTimestamp	= Date.now();
 
-	data.Id		= Date.now() + '-' + crypto.getRandomValues(new Uint32Array(1))[0];
+	channel.send(
+		items.map(function (item) {
+			item.data.Id	= Date.now() + '-' + crypto.getRandomValues(new Uint32Array(1))[0];
+			return item.data;
+		}),
+		items.map(function (item) { return item.callback })
+	);
 
-	++pendingChannelMessages;
-
-	$.ajax({
-		async: data.Unloading ? false : opts.async !== false,
-		data: data,
-		timeout: opts.timeout || 30000,
-		error: function () {
-			sendChannelDataQueue.unshift(item);
-			--pendingChannelMessages;
-		},
-		success: function () {
-			--pendingChannelMessages;
-			opts.callback && opts.callback();
-		},
-		type: 'POST',
-		url: BASE_URL + 'channels/' + channel.data.ChannelId
+	anal.send({
+		hitType: 'event',
+		eventCategory: 'message',
+		eventAction: 'sent',
+		eventValue: items.length
 	});
 }
 
@@ -392,16 +401,11 @@ function receiveChannelData (data) {
 	receiveChannelDataQueue.push(data);
 }
 
-function receiveChannelDataHandler (item) {
-	var o	= JSON.parse(item.data);
-
-	lastIncomingMessageTimestamp	= Date.now();
-
+function receiveChannelDataHandler (o) {
 	if (!o.Id || !receivedMessages[o.Id]) {
-		if (o.Misc == channelDataMisc.ping) {
-			// sendChannelData({Misc: channelDataMisc.pong});
-		}
-		else if (o.Misc == channelDataMisc.connect) {
+		lastIncomingMessageTimestamp	= Date.now();
+
+		if (o.Misc == channelDataMisc.connect) {
 			beginChat();
 		}
 		else if (o.Misc == channelDataMisc.imtypingyo) {
@@ -425,60 +429,72 @@ function receiveChannelDataHandler (item) {
 		}
 
 		if (o.Destroy) {
-			socketClose();
+			channelClose(true);
 		}
 
 		if (o.Id) {
 			receivedMessages[o.Id]	= true;
 		}
 	}
-
-	if (o.Id) {
-		$.ajax({type: 'PUT', url: BASE_URL + 'messages/' + o.Id});
-	}
 }
 
-function setUpChannel (channelData) {
-	channel			= new goog.appengine.Channel(channelData.ChannelToken);
-	channel.data	= channelData;
-
-	socket	= channel.open({
-		onopen: function () {
-			if (channel.data.IsCreator) {
+function setUpChannel (channelName) {
+	channel	= new Channel(channelName, {
+		onopen: function (isCreator) {
+			if (isCreator) {
 				beginWaiting();
 			}
 			else {
 				beginChat();
 				sendChannelDataBase({Misc: channelDataMisc.connect});
 				otr.sendQueryMsg();
+
+				anal.send({
+					hitType: 'event',
+					eventCategory: 'cyph',
+					eventAction: 'started',
+					eventValue: 1
+				});
 			}
+
+			$(window).unload(function () {
+				channelClose();
+			});
 		},
 		onmessage: receiveChannelData,
-		onerror: function () {},
-		onclose: function () {
-			closeChat();
-		}
+		onclose: channelClose
 	});
 }
 
 
 
-/* Event loop for processing incoming and outgoing messages */
+/* Event loop for processing incoming messages */
 
-onTick(function () {
-	/*** otrWorker onmessage ***/
-	if (otrWorkerOnMessageQueue.length) {
-		otrWorkerOnMessageHandler(otrWorkerOnMessageQueue.shift());
-	}
-
+onTick(function (now) {
 	/*** send ***/
-	else if (isAlive && sendChannelDataQueue.length && pendingChannelMessages < 2) {
-		sendChannelDataHandler(sendChannelDataQueue.shift());
+	if (
+		isAlive &&
+		sendChannelDataQueue.length &&
+		(
+			sendChannelDataQueue.length >= 8 ||
+			!lastOutgoingMessageTimestamp ||
+			(now - lastOutgoingMessageTimestamp) > 500
+		)
+	) {
+		var sendChannelDataQueueSlice	= sendChannelDataQueue.slice(0, 8);
+		sendChannelDataQueue			= sendChannelDataQueue.slice(8);
+
+		sendChannelDataHandler(sendChannelDataQueueSlice);
 	}
 
 	/*** receive ***/
 	else if (receiveChannelDataQueue.length) {
 		receiveChannelDataHandler(receiveChannelDataQueue.shift());
+	}
+
+	/*** otrWorker onmessage ***/
+	else if (otrWorkerOnMessageQueue.length) {
+		otrWorkerOnMessageHandler(otrWorkerOnMessageQueue.shift());
 	}
 
 	/*** else ***/
@@ -487,4 +503,13 @@ onTick(function () {
 	}
 
 	return true;
+});
+
+
+
+/* Set Analytics information */
+
+anal.set({
+	appName: 'cyph.im',
+	appVersion: 'Web'
 });

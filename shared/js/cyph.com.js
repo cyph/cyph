@@ -38,3 +38,12 @@ function processUrlState () {
 		pushState('/404');
 	}
 }
+
+
+
+/* Set Analytics information */
+
+anal.set({
+	appName: 'cyph.com',
+	appVersion: 'Web'
+});
