@@ -37,9 +37,11 @@ if (typeof translations != 'undefined') {
 		var o			= {};
 		var translation	= translations[language];
 
-		Object.keys(translation).forEach(function (k) {
-			o[k]	= htmlDecode(translation[k]);
-		});
+		if (translation) {
+			Object.keys(translation).forEach(function (k) {
+				o[k]	= htmlDecode(translation[k]);
+			});
+		}
 
 		translation	= o;
 		delete o;
