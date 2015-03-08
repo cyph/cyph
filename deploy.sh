@@ -64,13 +64,15 @@ for d in cyph.im cyph.com ; do
 
 	../translate.py
 
-	# Minify
-	echo 'JS Minify'
-	ls js/*.js | xargs -I% uglifyjs '%' -o '%'
-	echo 'CSS Minify'
-	ls css/*.css | xargs -I% cleancss -o '%' '%'
-	echo 'HTML Minify'
-	ls index.html | xargs -I% html-minifier --minify-js --minify-css --remove-comments --collapse-whitespace '%' -o '%'
+	if [ "${test}" == '' -a "${branch}" != 'staging' ] ; then
+		# Minify
+		echo 'JS Minify'
+		ls js/*.js | xargs -I% uglifyjs '%' -o '%'
+		echo 'CSS Minify'
+		ls css/*.css | xargs -I% cleancss -o '%' '%'
+		echo 'HTML Minify'
+		ls index.html | xargs -I% html-minifier --minify-js --minify-css --remove-comments --collapse-whitespace '%' -o '%'
+	fi
 
 	cd ..
 done
