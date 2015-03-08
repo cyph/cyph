@@ -1,5 +1,6 @@
 {
   "name": "angular-material",
+  "version": "0.8.3",
   "dependencies": {
     "angular": "1.3.x",
     "angular-animate": "1.3.x",
@@ -10,14 +11,14 @@
     "angular-material.css"
   ],
   "homepage": "https://github.com/angular/bower-material",
-  "_release": "ab633a1015",
+  "_release": "0.8.3",
   "_resolution": {
-    "type": "branch",
-    "branch": "master",
-    "commit": "ab633a10155d60bedeecd9ff58dad87400009ad7"
+    "type": "version",
+    "tag": "v0.8.3",
+    "commit": "581d64fef23ce04ed2831a2ef0f14615fdb9aeb1"
   },
   "_source": "git://github.com/angular/bower-material.git",
-  "_target": "master",
+  "_target": "~0.8.3",
   "_originalSource": "angular-material",
   "_direct": true
 }
