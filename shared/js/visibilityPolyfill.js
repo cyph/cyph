@@ -15,8 +15,9 @@ function FocusVisibility () {
 
 				var state	= isHidden ? 'hidden' : 'visible';
 
-				for (var i in self._callbacks) {
-					self._callbacks[i](e, state);
+				for (var i = 0 ; i < self._callbacks.length ; ++i) {
+					var callback	= self._callbacks[i];
+					callback && callback(e, state);
 				}
 			}
 		};

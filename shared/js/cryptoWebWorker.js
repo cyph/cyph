@@ -71,7 +71,6 @@ function eventLoop () {
 			switch (e.data.method) {
 				/* Init */
 				case 0:
-					isInitiator		= e.data.message.isInitiator;
 					sharedSecret	= e.data.message.sharedSecret;
 
 					/* Safely disable console */
@@ -209,13 +208,16 @@ function eventLoop () {
 								}
 							});
 
-							postMessage({eventName: 'ready'});
+							setTimeout(function () {
+								postMessage({eventName: 'ready'});
+							}, 500);
 						});
 					});
 					break;
 
 				/* Send query message */
 				case 1:
+					isInitiator	= true;
 					otr.start();
 					break;
 

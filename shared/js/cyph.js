@@ -30,12 +30,18 @@ if (!isLocalhost && !isOnion) {
 /* Log all JS exceptions */
 function errorLog (apiMethod) {
 	return function () {
+		var exception	= JSON.stringify(arguments);
+
 		$.post(BASE_URL + apiMethod, {
-			error: JSON.stringify(arguments) +
+			error: exception +
 				'\n\n' + navigator.userAgent +
 				'\n\n' + navigator.language +
 				'\n\n' + (typeof language == 'undefined' ? '' : language) +
 				'\n\n' + document.location.toString()
+		});
+
+		anal.send('exception', {
+			exDescription: exception
 		});
 	};
 }
@@ -86,7 +92,7 @@ function pushNotFound () {
 }
 
 
-function pushState (path, shouldReplace) {
+function pushState (path, shouldReplace, shouldNotProcess) {
 	if (shouldReplace && isHistoryAvailable && history.replaceState) {
 		history.replaceState({}, '', path);
 	}
@@ -102,7 +108,9 @@ function pushState (path, shouldReplace) {
 		return;
 	}
 
-	processUrlState();
+	if (!shouldNotProcess) {
+		processUrlState();
+	}
 }
 
 
@@ -193,9 +201,15 @@ $(function () {
 /* Trigger event loops from Web Worker instead of setTimeout (http://stackoverflow.com/a/12522580/459881) */
 var tickFunctions	= [];
 
-function makeWorker (f) {
+function makeWorker (f, vars) {
 	var s	= f.toString();
 	s		= s.slice(s.indexOf('{') + 1, s.lastIndexOf('}'));
+
+	if (vars) {
+		Object.keys(vars).forEach(function (k) {
+			s	= s.replace(new RegExp(k, 'g'), vars[k]);
+		});
+	}
 
 	var blob, worker;
 
@@ -224,50 +238,49 @@ function onTick (f) {
 	tickFunctions.push(f);
 
 	if (tickFunctions.length == 1) {
+		var worker, processTicksLock;
+
 		function processTicks () {
-			var shouldContinue	= false;
+			if (!processTicksLock) {
+				processTicksLock	= true;
 
-			for (var i = 0 ; i < tickFunctions.length ; ++i) {
-				shouldContinue	= shouldContinue || tickFunctions[i]();
-			}
-
-			return shouldContinue;
-		}
-
-		if (isMobile) {
-			function processTickEventLoop () {
-				var shouldContinue;
+				var now	= Date.now();
 
 				try {
-					shouldContinue	= processTicks();
+					for (var i = 0 ; i < tickFunctions.length ; ++i) {
+						tickFunctions[i](now);
+					}
 				}
 				finally {
-					setTimeout(processTickEventLoop, shouldContinue ? 25 : 500);
+					processTicksLock	= false;
 				}
 			}
-
-			processTickEventLoop();
-
 		}
-		else {
-			var worker	= makeWorker(function () {
+
+		function processTickEventLoop () {
+			processTicks();
+			setTimeout(processTickEventLoop, 25);
+		}
+
+		function processTickWorker (interval) {
+			worker	= makeWorker(function () {
 				setInterval(function () {
 					postMessage({eventName: 'tick'});
-				}, 50);
+				}, interval);
+			}, {
+				interval: interval
 			});
 
-			var processTicksLock;
-			worker.onmessage	= function () {
-				if (!processTicksLock) {
-					processTicksLock	= true;
-					try {
-						processTicks();
-					}
-					finally {
-						processTicksLock	= false;
-					}
-				}
-			};
+			worker.onmessage	= processTicks;
+		}
+
+
+		if (isMobile) {
+			processTickEventLoop();
+			setTimeout(function () { processTickWorker(500) }, 2500);
+		}
+		else {
+			processTickWorker(50);
 		}
 	}
 }
