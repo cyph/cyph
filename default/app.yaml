@@ -3,9 +3,6 @@ version: master
 runtime: go
 api_version: go1
 
-inbound_services:
-- channel_presence
-
 handlers:
 - url: /anal/.*
   static_files: anal.html
@@ -13,16 +10,6 @@ handlers:
   http_headers:
     Cache-Control: public, max-age=0
     Strict-Transport-Security: max-age=31536000; includeSubdomains;
-
-- url: /stats[/]?
-  login: admin
-  script: _go_app
-  secure: always
-
-- url: /tasks/.*
-  login: admin
-  script: _go_app
-  secure: always
 
 - url: .*
   script: _go_app
