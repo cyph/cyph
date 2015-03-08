@@ -3,11 +3,9 @@ package api
 import (
 	"appengine/datastore"
 	"appengine/mail"
-	"appengine/memcache"
 	"encoding/json"
 	"net/http"
 	"strings"
-	"time"
 )
 
 func init() {
@@ -17,10 +15,6 @@ func init() {
 	handleFuncs("/errors", Handlers{methods.POST: logError})
 	handleFuncs("/smperrors", Handlers{methods.POST: logSmpError})
 	handleFuncs("/websignerrors", Handlers{methods.POST: logWebSignError})
-
-	/* Admin-restricted methods */
-	handleFuncs("/stats", Handlers{methods.GET: getStats})
-	handleFuncs("/tasks/logstats", Handlers{methods.GET: logStats})
 }
 
 /*** Public API ***/
@@ -56,7 +50,6 @@ func betaSignup(h HandlerArgs) (interface{}, int) {
 			}
 		} else {
 			isNewSignup = true
-			memcache.Increment(h.Context, "totalSignups", 1, 0)
 		}
 
 		if _, err := datastore.Put(h.Context, key, &betaSignup); err != nil {
@@ -80,18 +73,6 @@ func getContinent(h HandlerArgs) (interface{}, int) {
 	return continent, http.StatusOK
 }
 
-func getStats(h HandlerArgs) (interface{}, int) {
-	totalCyphs, _ := memcache.Increment(h.Context, "totalCyphs", 0, 0)
-	totalMessages, _ := memcache.Increment(h.Context, "totalMessages", 0, 0)
-	totalSignups, _ := memcache.Increment(h.Context, "totalSignups", 0, 0)
-
-	return Stats{
-		TotalCyphs:    int64(totalCyphs),
-		TotalMessages: int64(totalMessages),
-		TotalSignups:  int64(totalSignups),
-	}, http.StatusOK
-}
-
 func logError(h HandlerArgs) (interface{}, int) {
 	return logErrorHelper("CYPH: WARNING WARNING WARNING SOMETHING IS SRSLY FUCKED UP LADS", h)
 }
@@ -106,21 +87,6 @@ func logWebSignError(h HandlerArgs) (interface{}, int) {
 
 func root(h HandlerArgs) (interface{}, int) {
 	return "Welcome to Cyph, lad", http.StatusOK
-}
-
-/*** Scheduled tasks ***/
-
-func logStats(h HandlerArgs) (interface{}, int) {
-	s, _ := getStats(h)
-	stats := s.(Stats)
-
-	key := datastore.NewKey(h.Context, "Stats", "", time.Now().Unix(), nil)
-
-	if _, err := datastore.Put(h.Context, key, &stats); err != nil {
-		return err.Error(), http.StatusInternalServerError
-	}
-
-	return nil, http.StatusOK
 }
 
 /*** Helpers ***/
