@@ -37,24 +37,42 @@
 
 		<script src='js/cryptoInit.js'></script>
 
-		<script>
-			/* Detect anomalous cache wipes and give the
-				application the opportunity to warn us */
-
-			function setWebSignObsolete () {
-				window.webSignObsolete	= true;
-			}
-
-			applicationCache.addEventListener('error', setWebSignObsolete, false);
-			applicationCache.addEventListener('obsolete', setWebSignObsolete, false);
-			applicationCache.addEventListener('updateready', setWebSignObsolete, false);
-		</script>
-
 		<script src='cryptolib/sha512.js'></script>
 		<script src='cryptolib/openpgp/openpgp.min.js'></script>
 		<script> openpgp.initWorker('cryptolib/openpgp/openpgp.worker.min.js') </script>
 
 		<script>(function () {
+			/* Detect if WebSign bootstrap has changed */
+
+			var WEBSIGN_FILES	= [
+				'index.html',
+				'js/cryptoInit.js',
+				'js/workerHelper.js',
+				'cryptolib/sha512.js',
+				'cryptolib/openpgp/openpgp.min.js',
+				'cryptolib/openpgp/openpgp.worker.min.js',
+				'css/preload.css',
+				'websign.appcache'
+			];
+
+			var bootstrapText	= '';
+
+			for (var i = 0 ; i < WEBSIGN_FILES.length ; ++i) {
+				var req	= new XMLHttpRequest();
+				req.open('get', WEBSIGN_FILES[i], false);
+				req.send();
+				bootstrapText	+= req.responseText;
+			}
+
+			var bootstrapHash	= CryptoJS.SHA512(bootstrapText).toString();
+
+			if (localStorage.webSignBootstrapHash && localStorage.webSignBootstrapHash != bootstrapHash) {
+				window.webSignObsolete	= true;
+			}
+
+			localStorage.webSignBootstrapHash	= bootstrapHash;
+
+
 
 			/*** Configuration ***/
 
@@ -123,17 +141,6 @@
 				if (localStorage.webSignHash && parseInt(localStorage.webSignHashExpires, 10) > Date.now()) {
 					request(cdnUrl + PACKAGE_PATH + localStorage.webSignHash, function (payload) {
 						if (CryptoJS.SHA512(payload).toString() == localStorage.webSignHash) {
-							if (
-								[
-									applicationCache.UNCACHED,
-									applicationCache.OBSOLETE,
-									applicationCache.UPDATEREADY
-								].
-									indexOf(applicationCache.status) > -1
-							) {
-								setWebSignObsolete();
-							}
-
 							document.open('text/html');
 							document.write(payload);
 							document.close();
