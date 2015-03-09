@@ -138,9 +138,9 @@ var randomSeed	= new Uint8Array(50000);
 crypto.getRandomValues(randomSeed);
 
 
-/* TODO: Consider enabling the Walken warning after further testing */
+/* TODO: Enable the Walken warning after further testing */
 
-if (window.webSignObsolete) {
+if (window.webSignInvalidated) {
 	/*
 		function warnWebSignObsoleteWrapper () {
 			if (typeof warnWebSignObsolete == 'undefined') {
