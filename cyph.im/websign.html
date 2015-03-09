@@ -67,7 +67,7 @@
 			var bootstrapHash	= CryptoJS.SHA512(bootstrapText).toString();
 
 			if (localStorage.webSignBootstrapHash && localStorage.webSignBootstrapHash != bootstrapHash) {
-				window.webSignObsolete	= true;
+				window.webSignInvalidated	= true;
 			}
 
 			localStorage.webSignBootstrapHash	= bootstrapHash;
