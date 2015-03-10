@@ -9,12 +9,24 @@
 	height: 101%;
 	z-index: 999;
 
-	> div {
+	> div:not(.message) {
 		height: 60px;
 		width: 60px;
 		position: fixed;
 		top: calc(50% - 30px);
 		left: calc(50% - 30px);
+	}
+
+	> div.message {
+		position: fixed;
+		top: calc(50% + 60px);
+		left: 0px;
+		z-index: 999;
+		width: 100%;
+		text-align: center;
+		color: #f1f1f1;
+		opacity: 0.75;
+		font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif;
 	}
 }
 
