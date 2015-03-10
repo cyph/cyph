@@ -117,6 +117,9 @@ Queue.prototype.close	= function (callback) {
 			callback && callback.apply(self, arguments);
 		}, true);
 	}
+	else if (callback) {
+		callback();
+	}
 };
 
 Queue.prototype.receive	= function (messageHandler, onComplete, maxNumberOfMessages, waitTimeSeconds) {
@@ -287,6 +290,10 @@ Queue.prototype.send	= function (message, callback, isSynchronous) {
 function Channel (channelName, handlers) {
 	var self	= this;
 	handlers	= handlers || {};
+
+	function onclose () {
+		self.close(handlers.onclose);
+	}
 	
 	sqs.getQueueUrl({
 		QueueName: QUEUE_PREFIX + channelName + CHANNEL_IDS[true]
@@ -295,14 +302,15 @@ function Channel (channelName, handlers) {
 
 		self.inQueue	= new Queue(channelName + CHANNEL_IDS[isCreator], {
 			onmessage: handlers.onmessage,
-			onclose: handlers.onclose,
+			onclose: onclose,
 			onopen: function () {
 				self.outQueue	= new Queue(channelName + CHANNEL_IDS[!isCreator], {
+					onclose: onclose,
 					onopen: function () {
 						handlers.onopen && handlers.onopen(isCreator);
 
 
-						/* Keep this channel alive by touching it every 30 minutes */
+						/* Keep this channel alive by touching it every 10 minutes */
 						var lastTouched		= Date.now();
 						var periodToggle	= false;
 
