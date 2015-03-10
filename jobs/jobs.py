@@ -9,7 +9,7 @@ import boto.sqs
 
 class CleanUpChannels(webapp2.RequestHandler):
 	def get(self):
-		sqsManager	= boto.sqs.connect_to_region('us-east-1')
+		sqsManager	= boto.sqs.connect_to_region('eu-central-1')
 
 		# Get all channel queues
 		queues	= sqsManager.get_all_queues(prefix='channels-')
