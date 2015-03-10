@@ -1,6 +1,6 @@
 var sqsConfig	= {
 	apiVersion: '2012-11-05',
-	region: 'us-east-1',
+	region: 'eu-central-1',
 	accessKeyId: 'AKIAIN2DSULSB77U4S2A',
 	secretAccessKey: '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',
 	endpoint: isLocalhost ? 'http://localhost:4568' : null
