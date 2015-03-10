@@ -64,7 +64,7 @@ for d in cyph.im cyph.com ; do
 
 	../translate.py
 
-	if [ "${test}" == '' -a "${branch}" != 'staging' ] ; then
+	if [ "${branch}" == 'staging' ] ; then
 		# Minify
 		echo 'JS Minify'
 		ls js/*.js | xargs -I% uglifyjs '%' -o '%'
