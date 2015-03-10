@@ -307,7 +307,7 @@ function Channel (channelName, handlers) {
 						var periodToggle	= false;
 
 						onTick(function (now) {
-							if (self.inQueue.isAlive && (now - lastTouched > 1800000)) {
+							if (self.inQueue.isAlive && (now - lastTouched > 600000)) {
 								lastTouched		= now;
 
 								sqs.setQueueAttributes({
