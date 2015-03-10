@@ -3,6 +3,7 @@ CACHE MANIFEST
 CACHE:
 index.html
 js/cryptoInit.js
+js/webSignPublicKeys.js
 js/workerHelper.js
 cryptolib/sha512.js
 cryptolib/openpgp/openpgp.min.js

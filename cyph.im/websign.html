@@ -8,7 +8,7 @@
 		<meta name='apple-mobile-web-app-capable' content='yes' />
 		<meta name='mobile-web-app-capable' content='yes' />
 
-		<title>Verifying package signature...</title>
+		<title>Cyph &ndash; Encrypted Messenger</title>
 
 		<link rel='apple-touch-icon' sizes='57x57' href='/img/favicon/apple-touch-icon-57x57.png' />
 		<link rel='apple-touch-icon' sizes='114x114' href='/img/favicon/apple-touch-icon-114x114.png' />
@@ -33,9 +33,18 @@
 		<div id='pre-load'>
 			<div class='double-bounce1'></div>
 			<div class='double-bounce2'></div>
+			<div class='message'>
+				<p>
+					Validating cryptographic signature...
+				</p>
+				<p>
+					Please wait; this may take a few seconds.
+				</p>
+			</div>
 		</div>
 
 		<script src='js/cryptoInit.js'></script>
+		<script src='js/webSignPublicKeys.js'></script>
 
 		<script src='cryptolib/sha512.js'></script>
 		<script src='cryptolib/openpgp/openpgp.min.js'></script>
@@ -44,33 +53,40 @@
 		<script>(function () {
 			/* Detect if WebSign bootstrap has changed */
 
-			var WEBSIGN_FILES	= [
-				'index.html',
-				'js/cryptoInit.js',
-				'js/workerHelper.js',
-				'cryptolib/sha512.js',
-				'cryptolib/openpgp/openpgp.min.js',
-				'cryptolib/openpgp/openpgp.worker.min.js',
-				'css/preload.css',
-				'websign.appcache'
-			];
+			function detectWebSignInvalidation () {
+				var WEBSIGN_FILES	= [
+					'index.html',
+					'js/cryptoInit.js',
+					'js/webSignPublicKeys.js',
+					'js/workerHelper.js',
+					'cryptolib/sha512.js',
+					'cryptolib/openpgp/openpgp.min.js',
+					'cryptolib/openpgp/openpgp.worker.min.js',
+					'css/preload.css',
+					'websign.appcache'
+				];
 
-			var bootstrapText	= '';
+				var bootstrapText	= '';
 
-			for (var i = 0 ; i < WEBSIGN_FILES.length ; ++i) {
-				var req	= new XMLHttpRequest();
-				req.open('get', WEBSIGN_FILES[i], false);
-				req.send();
-				bootstrapText	+= req.responseText;
+				for (var i = 0 ; i < WEBSIGN_FILES.length ; ++i) {
+					var req	= new XMLHttpRequest();
+					req.open('get', WEBSIGN_FILES[i], false);
+					req.send();
+					bootstrapText	+= req.responseText;
+				}
+
+				var bootstrapHash	= CryptoJS.SHA512(bootstrapText).toString();
+
+				if (localStorage.webSignBootstrapHash && localStorage.webSignBootstrapHash != bootstrapHash) {
+					window.webSignInvalidated	= true;
+				}
+
+				localStorage.webSignBootstrapHash	= bootstrapHash;
 			}
 
-			var bootstrapHash	= CryptoJS.SHA512(bootstrapText).toString();
-
-			if (localStorage.webSignBootstrapHash && localStorage.webSignBootstrapHash != bootstrapHash) {
-				window.webSignInvalidated	= true;
-			}
-
-			localStorage.webSignBootstrapHash	= bootstrapHash;
+			applicationCache.addEventListener('error', detectWebSignInvalidation, false);
+			applicationCache.addEventListener('obsolete', detectWebSignInvalidation, false);
+			applicationCache.addEventListener('updateready', detectWebSignInvalidation, false);
 
 
 
@@ -85,11 +101,6 @@
 			var CDN_URL_BASE		= isOnion ? '/cdn/websign/' : '.cdn.cyph.com/websign/';
 			var HASH_PATH			= 'cyph.im.hash?';
 			var PACKAGE_PATH		= 'cyph.im.pkg?';
-
-			var PUBLIC_KEYS			= [
-				'-----BEGIN PGP PUBLIC KEY BLOCK-----\nVersion: GnuPG v1\n\n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\nQsR4uXNdGHY6gw==\n=QQvt\n-----END PGP PUBLIC KEY BLOCK-----',
-				'-----BEGIN PGP PUBLIC KEY BLOCK-----\nVersion: GnuPG v1.4.12 (GNU/Linux)\n\n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\nH0t4x2136myBQq5FkOOHUzgDBKk=\n=YbLL\n-----END PGP PUBLIC KEY BLOCK-----'
-			];
 
 
 
@@ -141,6 +152,8 @@
 				if (localStorage.webSignHash && parseInt(localStorage.webSignHashExpires, 10) > Date.now()) {
 					request(cdnUrl + PACKAGE_PATH + localStorage.webSignHash, function (payload) {
 						if (CryptoJS.SHA512(payload).toString() == localStorage.webSignHash) {
+							detectWebSignInvalidation();
+
 							document.open('text/html');
 							document.write(payload);
 							document.close();
@@ -185,11 +198,21 @@
 
 						/* If not expired and more recent than previous known good hash,
 							validate signature before accepting it */
-						if ((!previousHashTimestamp || hashTimestamp > previousHashTimestamp) && hashExpires > Date.now()) {
-							var isValid	= PUBLIC_KEYS.
-								map(function (key) { return signedHash.verify(openpgp.key.readArmored(key).keys)[0].valid }).
-								reduce(function (a, b) { return a || b })
-							;
+						if (
+							(!previousHashTimestamp || hashTimestamp > previousHashTimestamp) &&
+							hashExpires > Date.now()
+						) {
+							var isValid;
+
+							for (var i = 0 ; i < PUBLIC_KEYS.length ; ++i) {
+								isValid	= signedHash.verify(
+									openpgp.key.readArmored(PUBLIC_KEYS[i]).keys
+								)[0].valid;
+
+								if (isValid) {
+									break;
+								}
+							}
 
 							if (isValid) {
 								localStorage.webSignHash			= hashText;
