@@ -146,7 +146,7 @@ Queue.prototype.receive	= function (messageHandler, onComplete, maxNumberOfMessa
 						sqs.deleteMessage({
 							QueueUrl: self.queueUrl,
 							ReceiptHandle: message.ReceiptHandle
-						});
+						}, function () {});
 
 						try {
 							messageBody	= JSON.parse(messageBody).message;
