@@ -9,7 +9,7 @@ var sqsConfig	= {
 var NON_EXISTENT_QUEUE	= 'AWS.SimpleQueueService.NonExistentQueue';
 var QUEUE_PREFIX		= 'channels-';
 var CHANNEL_IDS			= {true: '0', false: '1'};
-var PERIOD_VALUES		= {true: '7200', false: '7201'};
+var PERIOD_VALUES		= {true: '1800', false: '1801'};
 
 
 
