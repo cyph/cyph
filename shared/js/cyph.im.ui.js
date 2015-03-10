@@ -470,17 +470,21 @@ angular.
 
 
 
-		$scope.baseButtonClick	= function () {
+		$scope.baseButtonClick	= function (callback) {
 			if (isMobile) {
-				$mdSidenav('menu').close();
+				setTimeout(function () {
+					$mdSidenav('menu').close();
+					callback && callback();
+				}, 250);
+			}
+			else {
+				callback && callback();
 			}
 		};
 
 
 		$scope.disconnect	= function () {
-			channelClose();
-
-			$scope.baseButtonClick();
+			$scope.baseButtonClick(channelClose);
 		};
 
 
@@ -557,44 +561,44 @@ angular.
 		});
 
 		$scope.showCyphertext	= function () {
-			$scope.baseButtonClick();
+			$scope.baseButtonClick(function () {
+				if (showCyphertextLock) {
+					return;
+				}
 
-			if (showCyphertextLock) {
-				return;
-			}
+				showCyphertextLock	= true;
 
-			showCyphertextLock	= true;
-
-			$mdToast.show({
-				template: '<md-toast>' + cypherToast1 + '</md-toast>',
-				hideDelay: 2000,
-				position: cypherToastPosition,
-				detachSwipe: function () {}
-			});
-
-			setTimeout(function () {
 				$mdToast.show({
-					template: '<md-toast>' + cypherToast2 + '</md-toast>',
-					hideDelay: 3000,
+					template: '<md-toast>' + cypherToast1 + '</md-toast>',
+					hideDelay: 2000,
 					position: cypherToastPosition,
 					detachSwipe: function () {}
 				});
 
 				setTimeout(function () {
-					$everything.addClass(curtainClass);
-				}, 3500);
-			}, 2500);
+					$mdToast.show({
+						template: '<md-toast>' + cypherToast2 + '</md-toast>',
+						hideDelay: 3000,
+						position: cypherToastPosition,
+						detachSwipe: function () {}
+					});
+
+					setTimeout(function () {
+						$everything.addClass(curtainClass);
+					}, 3500);
+				}, 2500);
+			});
 		};
 
 
 		$scope.twoFactor	= function () {
-			alert(
-				'This feature hasn\'t been implemented yet, but it will ' +
-				'freeze the chat until both users have verified their ' +
-				'identities via two-factor authentication.'
-			);
-
-			$scope.baseButtonClick();
+			$scope.baseButtonClick(function () {
+				alert(
+					'This feature hasn\'t been implemented yet, but it will ' +
+					'freeze the chat until both users have verified their ' +
+					'identities via two-factor authentication.'
+				);
+			});
 		};
 
 
