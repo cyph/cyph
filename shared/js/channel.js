@@ -22,6 +22,7 @@ var sqs	= (function () {
 	[
 		'createQueue',
 		'deleteMessage',
+		'deleteMessageBatch',
 		'deleteQueue',
 		'getQueueUrl',
 		'receiveMessage',
@@ -98,7 +99,7 @@ function Queue (queueName, handlers) {
 						handlers.onclose.apply(self, arguments);
 					}
 					else {
-						setTimeout(oncloseHelper, 10000);
+						setTimeout(oncloseHelper, 30000);
 					}
 				});
 			}
@@ -133,6 +134,11 @@ Queue.prototype.receive	= function (messageHandler, onComplete, maxNumberOfMessa
 		}, function (err, data) {
 			try {
 				if (messageHandler && data && data.Messages) {
+					sqs.deleteMessageBatch({
+						QueueUrl: this.queueUrl,
+						Entries: data.Messages
+					});
+
 					for (var i = 0 ; i < data.Messages.length ; ++i) {
 						var message	= data.Messages[i];
 						var messageBody	= message.Body;
