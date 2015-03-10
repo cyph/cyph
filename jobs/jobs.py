@@ -25,7 +25,7 @@ class CleanUpChannels(webapp2.RequestHandler):
 			messages	= long(attributes['ApproximateNumberOfMessages']) + long(attributes['ApproximateNumberOfMessagesNotVisible'])
 
 			# If it's both old and empty, assume it's inactive and delete it
-			if ageHours > 3 and messages < 1:
+			if ageHours > 1 and messages < 1:
 				sqsManager.delete_queue(queue)
 
 
