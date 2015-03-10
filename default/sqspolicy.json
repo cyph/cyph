@@ -14,7 +14,7 @@
 				"sqs:SetQueueAttributes"
 			],
 			"Effect": "Allow",
-			"Resource": "arn:aws:sqs:us-east-1:606472071681:channels-*"
+			"Resource": "arn:aws:sqs:*:606472071681:channels-*"
 		}
 	]
 }
