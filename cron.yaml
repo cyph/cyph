@@ -1,5 +1,5 @@
 cron:
 - description: clean up SQS queues
   url: /cleanupchannels
-  schedule: every 2 hours
+  schedule: every 30 minutes
   target: jobs
