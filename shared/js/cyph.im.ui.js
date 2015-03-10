@@ -221,7 +221,7 @@ angular.
 			changeState($scope.states.waitingForFriend);
 
 			var copyUrl		=
-				(isOnion ? 'https://www.cyph.im' : document.location.origin) +
+				((!isOnion && document.location.origin) || 'https://www.cyph.im') +
 				'/#' +
 				document.location.pathname.substr(1) +
 				sharedSecret
@@ -260,9 +260,13 @@ angular.
 				}, 250);
 			}
 
-			/* Temporary fix for iOS and mobile Firefox issue */
-			if (isIOS) {
-				var expireTime	= new Date(Date.now() + 600000).toLocaleTimeString().toLowerCase().replace(/(.*:.*):.*? /, '$1');
+			if (isIE) {
+				var expireTime	= new Date(Date.now() + 600000)
+					.toLocaleTimeString()
+					.toLowerCase()
+					.replace(/(.*:.*):.*? /, '$1')
+				;
+
 				$timer.parent().text('Link expires at ' + expireTime)
 				delete $timer;
 			}
@@ -813,7 +817,7 @@ angular.
 
 		/* Temporary warning for desktop IE */
 
-		if (!isMobile && (navigator.userAgent.indexOf('MSIE ') >= 0 || navigator.userAgent.indexOf('Trident/') >= 0)) {
+		if (!isMobile && isIE) {
 			alert(
 				"We won't stop you from using Internet Explorer, but it is a *very* poor life choice.\n\n" +
 				"IE doesn't work very well with Cyph (or in general).\n\nYou have been warned."
