@@ -19,13 +19,13 @@ class CleanUpChannels(webapp2.RequestHandler):
 
 			# Get last modified timestamp
 			timestamp	= datetime.datetime.fromtimestamp(long(attributes['LastModifiedTimestamp']))
-			ageHours	= (datetime.datetime.now() - timestamp).seconds / 3600.0
+			ageMinutes	= (datetime.datetime.now() - timestamp).seconds / 60.0
 
 			# Get # of messages queued up here
 			messages	= long(attributes['ApproximateNumberOfMessages']) + long(attributes['ApproximateNumberOfMessagesNotVisible'])
 
 			# If it's both old and empty, assume it's inactive and delete it
-			if ageHours > 1 and messages < 1:
+			if ageMinutes > 30 and messages < 1:
 				sqsManager.delete_queue(queue)
 
 
