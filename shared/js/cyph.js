@@ -128,6 +128,8 @@ var isTouch		= (function () {
 	}
 }());
 
+var isIE		= /msie |trident\//.test(userAgent);
+
 var isAndroid	= /android/.test(userAgent);
 var isIOS		= /ipad|iphone|ipod/.test(userAgent);
 var isWP		= /iemobile/.test(userAgent);
@@ -257,9 +259,9 @@ function onTick (f) {
 			}
 		}
 
-		function processTickEventLoop () {
+		function processTickEventLoop (interval) {
 			processTicks();
-			setTimeout(processTickEventLoop, 25);
+			setTimeout(processTickEventLoop, interval);
 		}
 
 		function processTickWorker (interval) {
@@ -276,7 +278,7 @@ function onTick (f) {
 
 
 		if (isMobile) {
-			processTickEventLoop();
+			processTickEventLoop(25);
 			setTimeout(function () { processTickWorker(500) }, 2500);
 		}
 		else {
