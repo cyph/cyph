@@ -19,16 +19,6 @@ handlers:
     Strict-Transport-Security: max-age=31536000; includeSubdomains;
     Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google-analytics.com
 
-- url: /beta[/]?
-  static_files: betaredirect.html
-  upload: betaredirect.html
-  secure: always
-  http_headers:
-    Cache-Control: public, max-age=0
-    X-Frame-Options: deny
-    Strict-Transport-Security: max-age=31536000; includeSubdomains;
-    Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google-analytics.com
-
 - url: /about[/]?
   static_files: index.html
   upload: index.html
