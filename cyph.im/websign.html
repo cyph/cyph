@@ -78,7 +78,7 @@
 				var bootstrapHash	= CryptoJS.SHA512(bootstrapText).toString();
 
 				if (localStorage.webSignBootstrapHash && localStorage.webSignBootstrapHash != bootstrapHash) {
-					window.webSignInvalidated	= true;
+					window.webSignBootstrapChanged	= true;
 				}
 
 				localStorage.webSignBootstrapHash	= bootstrapHash;
@@ -99,7 +99,7 @@
 			var URL_PROTOCOL		= isOnion ? '' : 'https://'
 			var DEFAULT_CONTINENT	= isOnion ? '' : 'eu';
 			var CDN_URL_BASE		= isOnion ? '/cdn/websign/' : '.cdn.cyph.com/websign/';
-			var HASH_PATH			= 'cyph.im.hash?';
+			var HASH_PATH			= 'cyph.im.hash2?';
 			var PACKAGE_PATH		= 'cyph.im.pkg?';
 
 
@@ -189,30 +189,38 @@
 					var previousHashExpires		= parseInt(localStorage.webSignHashExpires, 10);
 
 					try {
-						var signedHash	= openpgp.cleartext.readArmored(signedHashText);
+						var signedHashes	= [];
 
-						var o				= JSON.parse(signedHash.getText());
+						signedHashes.push(openpgp.cleartext.readArmored(signedHashText));
+						signedHashes.push(openpgp.cleartext.readArmored(signedHashes[0].getText()));
+
+						var o				= JSON.parse(signedHashes[1].getText());
 						var hashText		= o.hash;
 						var hashTimestamp	= o.timestamp;
 						var hashExpires		= o.expires;
 
 						/* If not expired and more recent than previous known good hash,
-							validate signature before accepting it */
+							validate signatures before accepting it */
 						if (
 							(!previousHashTimestamp || hashTimestamp > previousHashTimestamp) &&
 							hashExpires > Date.now()
 						) {
-							var isValid;
+							var isValid	= signedHashes
+								.map(function (signedHash) {
+									for (var i = 0 ; i < PUBLIC_KEYS.length ; ++i) {
+										if (
+											signedHash.verify(
+												openpgp.key.readArmored(PUBLIC_KEYS[i]).keys
+											)[0].valid
+										) {
+											return true;
+										}
+									}
 
-							for (var i = 0 ; i < PUBLIC_KEYS.length ; ++i) {
-								isValid	= signedHash.verify(
-									openpgp.key.readArmored(PUBLIC_KEYS[i]).keys
-								)[0].valid;
-
-								if (isValid) {
-									break;
-								}
-							}
+									return false;
+								}).
+								reduce(function (a, b) { return a || b })
+							;
 
 							if (isValid) {
 								localStorage.webSignHash			= hashText;
