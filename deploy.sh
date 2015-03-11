@@ -123,6 +123,9 @@ else
 		\"expires\": $(($(date +%s)+${HASH_TTL}))000
 	}" | gpg --clearsign > websign/$d.hash
 
+		# Temporary measure, in preparation for requiring two signatures on each release
+		cat websign/$d.hash | gpg --clearsign -u 'Alternate Key' > websign/$d.hash2
+
 		git add .
 		chmod -R 777 .
 		git commit -a -m 'package update'
