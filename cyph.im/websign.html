@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html manifest='websign.appcache'>
+<html manifest='cyph.appcache'>
 	<head>
 		<meta charset='utf-8' />
 		<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1' />
@@ -27,7 +27,7 @@
 		<meta name='msapplication-TileColor' content='#8b62d9' />
 		<meta name='msapplication-TileImage' content='/img/favicon/mstile-144x144.png' />
 
-		<link rel='stylesheet' href='css/loading.css' />
+		<link rel='stylesheet' href='websign/css/loading.css' />
 	</head>
 	<body>
 		<div id='pre-load'>
@@ -43,27 +43,27 @@
 			</div>
 		</div>
 
-		<script src='js/cryptoInit.js'></script>
-		<script src='js/webSignPublicKeys.js'></script>
+		<script src='websign/js/cryptoInit.js'></script>
+		<script src='websign/js/webSignPublicKeys.js'></script>
 
-		<script src='cryptolib/sha512.js'></script>
-		<script src='cryptolib/openpgp/openpgp.min.js'></script>
-		<script> openpgp.initWorker('cryptolib/openpgp/openpgp.worker.min.js') </script>
+		<script src='websign/lib/sha512.js'></script>
+		<script src='websign/lib/openpgp/openpgp.min.js'></script>
+		<script> openpgp.initWorker('websign/lib/openpgp/openpgp.worker.min.js') </script>
 
 		<script>(function () {
 			/* Detect if WebSign bootstrap has changed */
 
 			function detectWebSignInvalidation () {
 				var WEBSIGN_FILES	= [
+					'cyph.appcache',
 					'index.html',
-					'js/cryptoInit.js',
-					'js/webSignPublicKeys.js',
-					'js/workerHelper.js',
-					'cryptolib/sha512.js',
-					'cryptolib/openpgp/openpgp.min.js',
-					'cryptolib/openpgp/openpgp.worker.min.js',
-					'css/loading.css',
-					'websign.appcache'
+					'websign/css/loading.css',
+					'websign/js/cryptoInit.js',
+					'websign/js/webSignPublicKeys.js',
+					'websign/js/workerHelper.js',
+					'websign/lib/sha512.js',
+					'websign/lib/openpgp/openpgp.min.js',
+					'websign/lib/openpgp/openpgp.worker.min.js'
 				];
 
 				var bootstrapText	= '';
@@ -78,10 +78,11 @@
 				var bootstrapHash	= CryptoJS.SHA512(bootstrapText).toString();
 
 				if (localStorage.webSignBootstrapHash && localStorage.webSignBootstrapHash != bootstrapHash) {
-					window.webSignBootstrapChanged	= true;
+					window.webSignWarning	= true;
 				}
 
-				localStorage.webSignBootstrapHash	= bootstrapHash;
+				localStorage.webSignBootstrapHashOld	= localStorage.webSignBootstrapHash;
+				localStorage.webSignBootstrapHash		= bootstrapHash;
 			}
 
 			applicationCache.addEventListener('error', detectWebSignInvalidation, false);
