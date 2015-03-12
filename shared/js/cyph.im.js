@@ -19,6 +19,12 @@ var channelDataMisc	= {
 	donetyping: '5'
 };
 
+var webSignHashes	= {
+	currentBootstrapHash: localStorage.webSignBootHash,
+	previousBootstrapHash: localStorage.webSignBootHashOld,
+	packageHash: localStorage.webSignHash
+};
+
 var
 	channel,
 	isWebSignObsolete,
@@ -140,7 +146,7 @@ crypto.getRandomValues(randomSeed);
 
 /* TODO: Enable the Walken warning after further testing */
 
-if (window.webSignWarning) {
+if (window.webSignWarn) {
 	/*
 		function warnWebSignObsoleteWrapper () {
 			if (typeof warnWebSignObsolete == 'undefined') {
@@ -154,7 +160,7 @@ if (window.webSignWarning) {
 		warnWebSignObsoleteWrapper();
 	*/
 
-	errorLog('walkenerrors')();
+	errorLog('wserrors')();
 }
 
 // else {
