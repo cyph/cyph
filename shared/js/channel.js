@@ -129,31 +129,35 @@ Queue.prototype.receive	= function (messageHandler, onComplete, maxNumberOfMessa
 	if (self.isAlive) {
 		sqs.receiveMessage({
 			QueueUrl: self.queueUrl,
+
+			/* Ensure that only one recipient opens any particular message */
+			AttributeNames: ['ApproximateReceiveCount'],
+			VisibilityTimeout: 43200,
+
 			MaxNumberOfMessages: maxNumberOfMessages || 10,
 			WaitTimeSeconds: waitTimeSeconds || 20
 		}, function (err, data) {
 			try {
-				if (messageHandler && data && data.Messages) {
+				if (data && data.Messages) {
 					sqs.deleteMessageBatch({
 						QueueUrl: this.queueUrl,
 						Entries: data.Messages
-					});
+					}, function () {});
 
-					for (var i = 0 ; i < data.Messages.length ; ++i) {
-						var message	= data.Messages[i];
-						var messageBody	= message.Body;
+					if (messageHandler) {
+						for (var i = 0 ; i < data.Messages.length ; ++i) {
+							var message	= data.Messages[i];
+							var messageBody	= message.Body;
 
-						sqs.deleteMessage({
-							QueueUrl: self.queueUrl,
-							ReceiptHandle: message.ReceiptHandle
-						}, function () {});
+							if (message.Attributes.ApproximateReceiveCount == '1') {
+								try {
+									messageBody	= JSON.parse(messageBody).message;
+								}
+								catch (e) {}
 
-						try {
-							messageBody	= JSON.parse(messageBody).message;
+								messageHandler(messageBody);
+							}
 						}
-						catch (e) {}
-
-						messageHandler(messageBody);
 					}
 				}
 			}
