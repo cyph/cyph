@@ -219,7 +219,7 @@ function processUrlState () {
 			$.ajax({
 				type: 'POST',
 				url: BASE_URL + 'channels/' + id,
-				data: {channel: channelName},
+				data: {channelName: channelName},
 				success: function (data) {
 					if (data == channelName) {
 						setUpChannel(channelName);
