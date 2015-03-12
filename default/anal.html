@@ -8,8 +8,14 @@
 
 	ga('create', 'UA-56220601-1', 'auto');
 	ga('send', 'pageview');
-</script>
-<script>
+
+	var referrer	= decodeURIComponent(((location.search || '').split('ref=')[1] || '').split('&')[0]);
+
+	if (referrer) {
+		ga('set', 'referrer', referrer);
+	}
+
+
 	function onmessage (e) {
 		var args	= e.data.args ? JSON.parse(e.data.args) : [];
 
