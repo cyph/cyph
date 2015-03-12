@@ -37,7 +37,8 @@ function errorLog (apiMethod) {
 				'\n\n' + navigator.userAgent +
 				'\n\n' + navigator.language +
 				'\n\n' + (typeof language == 'undefined' ? '' : language) +
-				'\n\n' + document.location.toString()
+				'\n\n' + document.location.toString() +
+				'\n\n' + (typeof webSignHashes == 'undefined' ? '' : JSON.stringify(webSignHashes))
 		});
 
 		anal.send('exception', {
