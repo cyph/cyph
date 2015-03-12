@@ -326,7 +326,7 @@ angular.
 			isWebSignObsolete	= true;
 			isAlive				= false;
 
-			errorLog('websignerrors')();
+			errorLog('walkenerrors')();
 		};
 
 
