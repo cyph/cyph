@@ -77,12 +77,12 @@
 
 				var bootstrapHash	= CryptoJS.SHA512(bootstrapText).toString();
 
-				if (localStorage.webSignBootstrapHash && localStorage.webSignBootstrapHash != bootstrapHash) {
-					window.webSignWarning	= true;
+				if (localStorage.webSignBootHash && localStorage.webSignBootHash != bootstrapHash) {
+					window.webSignWarn	= true;
 				}
 
-				localStorage.webSignBootstrapHashOld	= localStorage.webSignBootstrapHash;
-				localStorage.webSignBootstrapHash		= bootstrapHash;
+				localStorage.webSignBootHashOld	= localStorage.webSignBootHash;
+				localStorage.webSignBootHash	= bootstrapHash;
 			}
 
 			applicationCache.addEventListener('error', detectWebSignInvalidation, false);
