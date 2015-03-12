@@ -13,7 +13,8 @@ var anal	= (function () {
 			analFrameOrigin +
 			(isOnion ? BASE_URL : '/') +
 			'anal/' +
-			location.host.replace('www.', '') + location.pathname + location.search
+			location.host.replace('www.', '') + location.pathname + location.search +
+			(document.referrer ? ('?ref=' + document.referrer) : '')
 		;
 
 		document.body.appendChild(analFrame);
