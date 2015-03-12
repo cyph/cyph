@@ -14,7 +14,11 @@ var anal	= (function () {
 			(isOnion ? BASE_URL : '/') +
 			'anal/' +
 			location.host.replace('www.', '') + location.pathname + location.search +
-			(document.referrer ? ('?ref=' + document.referrer) : '')
+			(
+				document.referrer && !/https:\/\/www.cyph.[a-z]+\//.test(document.referrer) ?
+				('?ref=' + document.referrer) :
+				''
+			)
 		;
 
 		document.body.appendChild(analFrame);
