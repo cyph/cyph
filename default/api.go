@@ -72,18 +72,17 @@ func betaSignup(h HandlerArgs) (interface{}, int) {
 
 func channelSetup(h HandlerArgs) (interface{}, int) {
 	id := h.Vars["id"]
-	channelName := h.Request.FormValue("channelName")
+	channelName := ""
 	status := http.StatusOK
 
 	if item, err := memcache.Get(h.Context, id); err != memcache.ErrCacheMiss {
-		memcache.Set(h.Context, &memcache.Item{
-			Key:        id,
-			Value:      []byte{},
-			Expiration: config.MemcacheExpiration,
-		})
+		oldValue := item.Value
+		item.Value = []byte{}
 
-		channelName = string(item.Value)
-	} else if channelName != "" {
+		if err := memcache.CompareAndSwap(h.Context, item); err != memcache.ErrCASConflict {
+			channelName = string(oldValue)
+		}
+	} else if channelName = h.Request.FormValue("channelName"); channelName != "" {
 		memcache.Set(h.Context, &memcache.Item{
 			Key:        id,
 			Value:      []byte(channelName),
