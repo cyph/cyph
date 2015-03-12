@@ -16,7 +16,7 @@ func init() {
 	handleFuncs("/continent", Handlers{methods.GET: getContinent})
 	handleFuncs("/errors", Handlers{methods.POST: logError})
 	handleFuncs("/smperrors", Handlers{methods.POST: logSmpError})
-	handleFuncs("/walkenerrors", Handlers{methods.POST: logWebSignError})
+	handleFuncs("/wserrors", Handlers{methods.POST: logWebSignError})
 }
 
 /*** Public API ***/
