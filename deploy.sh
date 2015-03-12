@@ -46,11 +46,19 @@ fi
 ls */*.yaml | xargs -I% sed -i.bak "s/version: master/version: ${branch}/g" %
 
 
+if [ "${branch}" == 'staging' ] ; then
+	# Minify
+	echo 'JS Minify'
+	ls shared/js/*.js | xargs -I% uglifyjs '%' -o '%'
+	echo 'CSS Minify'
+	ls shared/css/*.css | xargs -I% cleancss -o '%' '%'
+fi
+
 for d in cyph.im cyph.com ; do
 	cd $d
 
 	# Cache bust
-	echo 'Cache bust'
+	echo "Cache bust ${d}"
 	find . -type f -print0 | while read -d $'\0' f ; do
 		safeF=$(echo "$f" | sed 's/\.\///g' | sed 's/\//\\\//g' | sed 's/ /\\ /g' | sed 's/\_/\\_/g')
 
@@ -64,15 +72,8 @@ for d in cyph.im cyph.com ; do
 
 	../translate.py
 
-	if [ "${branch}" == 'staging' ] ; then
-		# Minify
-		echo 'JS Minify'
-		ls js/*.js | xargs -I% uglifyjs '%' -o '%'
-		echo 'CSS Minify'
-		ls css/*.css | xargs -I% cleancss -o '%' '%'
-		echo 'HTML Minify'
-		ls index.html | xargs -I% html-minifier --minify-js --minify-css --remove-comments --collapse-whitespace '%' -o '%'
-	fi
+	echo "HTML Minify ${d}"
+	ls index.html | xargs -I% html-minifier --minify-js --minify-css --remove-comments --collapse-whitespace '%' -o '%'
 
 	cd ..
 done
