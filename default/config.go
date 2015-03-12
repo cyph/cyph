@@ -1,9 +1,14 @@
 package api
 
+import (
+	"time"
+)
+
 var config = struct {
-	AllowedOrigins   map[string]none
-	Continents       map[string]none
-	DefaultContinent string
+	AllowedOrigins     map[string]none
+	Continents         map[string]none
+	DefaultContinent   string
+	MemcacheExpiration time.Duration
 }{
 	map[string]none{
 		"cyph.com":                                    empty,
@@ -44,4 +49,6 @@ var config = struct {
 	},
 
 	"eu",
+
+	(48 * time.Hour),
 }
