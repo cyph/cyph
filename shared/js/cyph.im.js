@@ -140,7 +140,7 @@ crypto.getRandomValues(randomSeed);
 
 /* TODO: Enable the Walken warning after further testing */
 
-if (window.webSignBootstrapChanged) {
+if (window.webSignWarning) {
 	/*
 		function warnWebSignObsoleteWrapper () {
 			if (typeof warnWebSignObsolete == 'undefined') {
@@ -154,7 +154,7 @@ if (window.webSignBootstrapChanged) {
 		warnWebSignObsoleteWrapper();
 	*/
 
-	errorLog('websignerrors')();
+	errorLog('walkenerrors')();
 }
 
 // else {

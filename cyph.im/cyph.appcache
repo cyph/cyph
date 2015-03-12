@@ -1,0 +1,15 @@
+CACHE MANIFEST
+
+CACHE:
+cyph.appcache
+index.html
+websign/css/loading.css
+websign/js/cryptoInit.js
+websign/js/webSignPublicKeys.js
+websign/js/workerHelper.js
+websign/lib/sha512.js
+websign/lib/openpgp/openpgp.min.js
+websign/lib/openpgp/openpgp.worker.min.js
+
+NETWORK:
+*

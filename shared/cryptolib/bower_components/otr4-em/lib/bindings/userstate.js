@@ -15,6 +15,7 @@ var BigInt = require("../bigint.js");
 var OtrlPrivKey = require("./privkey.js").OtrlPrivKey;
 var OtrlInsTag = require("./instag.js").OtrlInsTag;
 var GcryptError = require("./error.js").GcryptError;
+var OtrlConnContext = require("./context.js").OtrlConnContext;
 
 module.exports.OtrlUserState = OtrlUserState;
 
