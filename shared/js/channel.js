@@ -129,11 +129,6 @@ Queue.prototype.receive	= function (messageHandler, onComplete, maxNumberOfMessa
 	if (self.isAlive) {
 		sqs.receiveMessage({
 			QueueUrl: self.queueUrl,
-
-			/* Ensure that only one recipient opens any particular message */
-			AttributeNames: ['ApproximateReceiveCount'],
-			VisibilityTimeout: 43200,
-
 			MaxNumberOfMessages: maxNumberOfMessages || 10,
 			WaitTimeSeconds: waitTimeSeconds || 20
 		}, function (err, data) {
@@ -149,14 +144,12 @@ Queue.prototype.receive	= function (messageHandler, onComplete, maxNumberOfMessa
 							var message	= data.Messages[i];
 							var messageBody	= message.Body;
 
-							if (message.Attributes.ApproximateReceiveCount == '1') {
-								try {
-									messageBody	= JSON.parse(messageBody).message;
-								}
-								catch (e) {}
-
-								messageHandler(messageBody);
+							try {
+								messageBody	= JSON.parse(messageBody).message;
 							}
+							catch (e) {}
+
+							messageHandler(messageBody);
 						}
 					}
 				}

@@ -210,44 +210,39 @@ function processUrlState () {
 	if (urlState == 'new' || !urlState) {
 		changeState(states.spinningUp);
 
-		var queueName	= generateGuid(SECRET_LENGTH);
+		function startNewCyph () {
+			var id			= generateGuid(SECRET_LENGTH);
+			var channelName	= generateGuid(LONG_SECRET_LENGTH);
 
-		pushState('/' + queueName, true, true);
+			pushState('/' + id, true, true);
 
-		var queue	= new Queue(queueName, {
-			onopen: function () {
-				var channelName	= generateGuid(LONG_SECRET_LENGTH);
-
-				queue.send(channelName, function () {
-					setUpChannel(channelName);
-				});
-			},
-			onclose: function () {
-				setTimeout(function () {
-					if (state == states.waitingForFriend) {
-						abortSetup();
+			$.ajax({
+				type: 'POST',
+				url: BASE_URL + 'channels/' + id,
+				data: {channel: channelName},
+				success: function (data) {
+					if (data == channelName) {
+						setUpChannel(channelName);
 					}
-				}, 2000);
-			}
-		});
+					else {
+						startNewCyph();
+					}
+				},
+				error: startNewCyph
+			});
+		}
+
+		startNewCyph();
 	}
 	/* Join existing chat room */
 	else if (urlState.length == SECRET_LENGTH) {
-		var queue	= new Queue(urlState, {
-			onopen: function () {
-				var channelName;
-
-				queue.receive(function (message) {
-					channelName	= message;
-					setUpChannel(channelName);
-				}, function () {
-					if (!channelName) {
-						pushNotFound();
-					}
-
-					queue.close();
-				}, 1, 10);
-			}
+		$.ajax({
+			type: 'POST',
+			url: BASE_URL + 'channels/' + urlState,
+			success: function (channelName) {
+				setUpChannel(channelName);
+			},
+			error: pushNotFound
 		});
 	}
 	/* 404 */
