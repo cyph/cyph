@@ -42,7 +42,7 @@ let 'updateday %= 7'
 
 crontab -l > /cyphcdn.cron
 echo '0,30 * * * * /cyphcdn.sh' >> /cyphcdn.cron
-echo "0 ${updatehour} * * ${updateday} /update.sh" >> /cyphcdn.cron
+echo "45 ${updatehour} * * ${updateday} /update.sh" >> /cyphcdn.cron
 crontab /cyphcdn.cron
 rm /cyphcdn.cron
 
