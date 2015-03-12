@@ -16,7 +16,7 @@ var anal	= (function () {
 			location.host.replace('www.', '') + location.pathname + location.search +
 			(
 				document.referrer && !/https:\/\/www.cyph.[a-z]+\//.test(document.referrer) ?
-				('?ref=' + document.referrer) :
+				('?ref=' + encodeURIComponent(document.referrer)) :
 				''
 			)
 		;
