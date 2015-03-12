@@ -3,6 +3,7 @@ package api
 import (
 	"appengine/datastore"
 	"appengine/mail"
+	"appengine/memcache"
 	"encoding/json"
 	"net/http"
 	"strings"
@@ -11,6 +12,7 @@ import (
 func init() {
 	handleFunc("/", root)
 	handleFuncs("/betasignups", Handlers{methods.PUT: betaSignup})
+	handleFuncs("/channels/{id}", Handlers{methods.POST: channelSetup})
 	handleFuncs("/continent", Handlers{methods.GET: getContinent})
 	handleFuncs("/errors", Handlers{methods.POST: logError})
 	handleFuncs("/smperrors", Handlers{methods.POST: logSmpError})
@@ -66,6 +68,34 @@ func betaSignup(h HandlerArgs) (interface{}, int) {
 	}
 
 	return isNewSignup, http.StatusOK
+}
+
+func channelSetup(h HandlerArgs) (interface{}, int) {
+	id := h.Vars["id"]
+	channelName := h.Request.FormValue("channelName")
+	status := http.StatusOK
+
+	if item, err := memcache.Get(h.Context, id); err != memcache.ErrCacheMiss {
+		memcache.Set(h.Context, &memcache.Item{
+			Key:        id,
+			Value:      []byte{},
+			Expiration: config.MemcacheExpiration,
+		})
+
+		channelName = string(item.Value)
+	} else if channelName != "" {
+		memcache.Set(h.Context, &memcache.Item{
+			Key:        id,
+			Value:      []byte(channelName),
+			Expiration: config.MemcacheExpiration,
+		})
+	}
+
+	if channelName == "" {
+		status = http.StatusNotFound
+	}
+
+	return channelName, status
 }
 
 func getContinent(h HandlerArgs) (interface{}, int) {
