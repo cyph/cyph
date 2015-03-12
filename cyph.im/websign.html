@@ -81,7 +81,8 @@
 					window.webSignWarning	= true;
 				}
 
-				localStorage.webSignBootstrapHash	= bootstrapHash;
+				localStorage.webSignBootstrapHashOld	= localStorage.webSignBootstrapHash;
+				localStorage.webSignBootstrapHash		= bootstrapHash;
 			}
 
 			applicationCache.addEventListener('error', detectWebSignInvalidation, false);

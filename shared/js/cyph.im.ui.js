@@ -81,6 +81,11 @@ angular.
 		$scope.copyUrl			= '';
 		$scope.isOnion			= isOnion;
 
+		$scope.webSignHashes	= encodeURIComponent('Hello Ryan and Josh,\n\n\n\n\n\n---\n\n' + JSON.stringify({
+			current: localStorage.webSignBootstrapHash,
+			previous: localStorage.webSignBootstrapHashOld
+		}));
+
 		isAlive = $scope.isAlive = true;
 
 		states = $scope.states = {
