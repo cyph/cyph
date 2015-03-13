@@ -67,9 +67,9 @@ for d in cyph.im cyph.com ; do
 	if [ "${branch}" == 'staging' ] ; then
 		# Minify
 		echo "JS Minify ${d}"
-		ls shared/js/*.js | xargs -I% uglifyjs '%' -o '%'
+		ls js/*.js | xargs -I% uglifyjs -m '%' -o '%'
 		echo "CSS Minify ${d}"
-		ls shared/css/*.css | xargs -I% cleancss -o '%' '%'
+		ls css/*.css | xargs -I% cleancss -o '%' '%'
 		echo "HTML Minify ${d}"
 		ls index.html | xargs -I% html-minifier --minify-js --minify-css --remove-comments --collapse-whitespace '%' -o '%'
 	fi
