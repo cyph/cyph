@@ -832,8 +832,8 @@ angular.
 
 		/* Hooks for HTML into minified code */
 
-		window['sendMessage']	= sendMessage;
-		window['insertPhoto']	= insertPhoto;
+		window.sendMessage	= sendMessage;
+		window.insertPhoto	= insertPhoto;
 	}]).
 	directive('ngMarkdown', function () {
 		return {
