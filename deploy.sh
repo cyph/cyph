@@ -46,14 +46,6 @@ fi
 ls */*.yaml | xargs -I% sed -i.bak "s/version: master/version: ${branch}/g" %
 
 
-if [ "${branch}" == 'staging' ] ; then
-	# Minify
-	echo 'JS Minify'
-	ls shared/js/*.js | xargs -I% uglifyjs '%' -o '%'
-	echo 'CSS Minify'
-	ls shared/css/*.css | xargs -I% cleancss -o '%' '%'
-fi
-
 for d in cyph.im cyph.com ; do
 	cd $d
 
@@ -72,8 +64,15 @@ for d in cyph.im cyph.com ; do
 
 	../translate.py
 
-	echo "HTML Minify ${d}"
-	ls index.html | xargs -I% html-minifier --minify-js --minify-css --remove-comments --collapse-whitespace '%' -o '%'
+	if [ "${branch}" == 'staging' ] ; then
+		# Minify
+		echo "JS Minify ${d}"
+		ls shared/js/*.js | xargs -I% uglifyjs '%' -o '%'
+		echo "CSS Minify ${d}"
+		ls shared/css/*.css | xargs -I% cleancss -o '%' '%'
+		echo "HTML Minify ${d}"
+		ls index.html | xargs -I% html-minifier --minify-js --minify-css --remove-comments --collapse-whitespace '%' -o '%'
+	fi
 
 	cd ..
 done
