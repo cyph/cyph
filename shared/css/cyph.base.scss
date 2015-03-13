@@ -96,6 +96,11 @@ textarea {
 	background-image: none !important;
 }
 
+pre {
+	white-space: pre-wrap;
+	@include word-wrap;
+}
+
 
 #main.curtain {
 	height: 10%;
