@@ -828,12 +828,6 @@ angular.
 				"IE doesn't work very well with Cyph (or in general).\n\nYou have been warned."
 			);
 		}
-
-
-		/* Hooks for HTML into minified code */
-
-		window.sendMessage	= sendMessage;
-		window.insertPhoto	= insertPhoto;
 	}]).
 	directive('ngMarkdown', function () {
 		return {

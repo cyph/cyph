@@ -209,9 +209,7 @@ function makeWorker (f, vars) {
 	s		= s.slice(s.indexOf('{') + 1, s.lastIndexOf('}'));
 
 	if (vars) {
-		Object.keys(vars).forEach(function (k) {
-			s	= s.replace(new RegExp(k, 'g'), vars[k]);
-		});
+		s	= s.replace(new RegExp('this.vars', 'g'), JSON.stringify(vars));
 	}
 
 	var blob, worker;
@@ -267,9 +265,11 @@ function onTick (f) {
 
 		function processTickWorker (interval) {
 			worker	= makeWorker(function () {
+				var vars	= this.vars;
+
 				setInterval(function () {
 					postMessage({eventName: 'tick'});
-				}, interval);
+				}, vars.interval);
 			}, {
 				interval: interval
 			});
