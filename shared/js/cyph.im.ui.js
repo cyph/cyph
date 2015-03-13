@@ -831,6 +831,7 @@ angular.
 
 
 		/* Hooks for HTML into minified code */
+
 		window['sendMessage']	= sendMessage;
 		window['insertPhoto']	= insertPhoto;
 	}]).
