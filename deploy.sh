@@ -51,7 +51,7 @@ for d in cyph.im cyph.com ; do
 
 	# Cache bust
 	echo "Cache bust ${d}"
-	find . -type f -print0 | while read -d $'\0' f ; do
+	find . ! -wholename '*websign*' -type f -print0 | while read -d $'\0' f ; do
 		safeF=$(echo "$f" | sed 's/\.\///g' | sed 's/\//\\\//g' | sed 's/ /\\ /g' | sed 's/\_/\\_/g')
 
 		for g in index.html js/*.js css/*.css ; do
