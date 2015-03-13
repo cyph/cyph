@@ -66,6 +66,12 @@ textarea {
 .tabIndent-rendered {
   background-image: none !important; }
 
+pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-all; }
+
 #main.curtain {
   height: 10%;
   -webkit-transform: translateY(-90%);
