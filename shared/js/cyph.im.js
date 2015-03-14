@@ -19,12 +19,6 @@ var channelDataMisc	= {
 	donetyping: '5'
 };
 
-var webSignHashes	= {
-	currentBootstrapHash: localStorage.webSignBootHash,
-	previousBootstrapHash: localStorage.webSignBootHashOld,
-	packageHash: localStorage.webSignHash
-};
-
 var
 	channel,
 	isWebSignObsolete,
@@ -146,7 +140,11 @@ crypto.getRandomValues(randomSeed);
 
 /* TODO: Enable the Walken warning after further testing */
 
-if (window.webSignWarn) {
+if (
+	typeof webSign != 'undefined' &&
+	webSign.detectInvalidation() &&
+	!WEBSIGN_HASHES[localStorage.webSignBootHash]
+) {
 	/*
 		function warnWebSignObsoleteWrapper () {
 			if (typeof warnWebSignObsolete == 'undefined') {
