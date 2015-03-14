@@ -14,9 +14,6 @@ func init() {
 	handleFuncs("/betasignups", Handlers{methods.PUT: betaSignup})
 	handleFuncs("/channels/{id}", Handlers{methods.POST: channelSetup})
 	handleFuncs("/continent", Handlers{methods.GET: getContinent})
-	handleFuncs("/errors", Handlers{methods.POST: logError})
-	handleFuncs("/smperrors", Handlers{methods.POST: logSmpError})
-	handleFuncs("/wserrors", Handlers{methods.POST: logWebSignError})
 }
 
 /*** Public API ***/
@@ -55,7 +52,6 @@ func betaSignup(h HandlerArgs) (interface{}, int) {
 		}
 
 		if _, err := datastore.Put(h.Context, key, &betaSignup); err != nil {
-			logError(h)
 			return err.Error(), http.StatusInternalServerError
 		}
 
@@ -102,32 +98,6 @@ func getContinent(h HandlerArgs) (interface{}, int) {
 	return continent, http.StatusOK
 }
 
-func logError(h HandlerArgs) (interface{}, int) {
-	return logErrorHelper("CYPH: WARNING WARNING WARNING SOMETHING IS SRSLY FUCKED UP LADS", h)
-}
-
-func logSmpError(h HandlerArgs) (interface{}, int) {
-	return logErrorHelper("SMP JUST FAILED FOR SOMEONE LADS", h)
-}
-
-func logWebSignError(h HandlerArgs) (interface{}, int) {
-	return logErrorHelper("SOMEONE JUST GOT THE WEBSIGN ERROR SCREEN LADS", h)
-}
-
 func root(h HandlerArgs) (interface{}, int) {
 	return "Welcome to Cyph, lad", http.StatusOK
-}
-
-/*** Helpers ***/
-
-func logErrorHelper(subject string, h HandlerArgs) (interface{}, int) {
-	country, _ := geolocate(h)
-
-	mail.SendToAdmins(h.Context, &mail.Message{
-		Sender:  "test@cyphme.appspotmail.com",
-		Subject: subject,
-		Body:    h.Request.FormValue("error") + "\n\nCountry: " + country,
-	})
-
-	return nil, http.StatusOK
 }

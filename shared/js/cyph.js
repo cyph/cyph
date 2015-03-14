@@ -27,22 +27,36 @@ if (!isLocalhost && !isOnion) {
 }
 
 
-/* Log all JS exceptions */
-function errorLog (apiMethod) {
+
+function errorLog (subject, shouldIncludeBootstrapText) {
 	return function () {
 		var exception	= JSON.stringify(arguments);
 
-		$.post(BASE_URL + apiMethod, {
-			error: exception +
-				'\n\n' + navigator.userAgent +
-				'\n\n' + navigator.language +
-				'\n\n' + (typeof language == 'undefined' ? '' : language) +
-				'\n\n' + document.location.toString() +
-				'\n\n' + (
-					typeof webSign == 'undefined' ?
-						'' :
-						webSign.toString(apiMethod == 'wserrors')
-				)
+		$.ajax({
+			type: 'POST',
+			url: 'https://mandrillapp.com/api/1.0/messages/send.json',
+			data: {
+				key: 'HNz4JExN1MtpKz8uP2RD1Q',
+				message: {
+					from_email: 'test@mandrillapp.com',
+					to: [{
+						email: 'errors@cyph.com',
+						type: 'to'
+					}],
+					autotext: 'true',
+					subject: 'CYPH: ' + subject,
+					text: exception +
+						'\n\n' + navigator.userAgent +
+						'\n\n' + navigator.language +
+						'\n\n' + (typeof language == 'undefined' ? '' : language) +
+						'\n\n' + document.location.toString() +
+						'\n\n' + (
+							typeof webSign == 'undefined' ?
+								'' :
+								webSign.toString(shouldIncludeBootstrapText)
+						)
+				}
+			}
 		});
 
 		anal.send('exception', {
@@ -50,7 +64,10 @@ function errorLog (apiMethod) {
 		});
 	};
 }
-window.onerror	= errorLog('errors');
+
+window.onerror		= errorLog('WARNING WARNING WARNING SOMETHING IS SRSLY FUCKED UP LADS');
+window.smpError		= errorLog('SMP JUST FAILED FOR SOMEONE LADS');
+window.webSignError	= errorLog('SOMEONE JUST GOT THE WEBSIGN ERROR SCREEN LADS', true);
 
 
 
