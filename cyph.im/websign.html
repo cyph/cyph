@@ -51,43 +51,58 @@
 		<script> openpgp.initWorker('websign/lib/openpgp/openpgp.worker.min.js') </script>
 
 		<script>(function () {
+			window.webSign	= {};
+
+
+
 			/* Detect if WebSign bootstrap has changed */
 
-			function detectWebSignInvalidation () {
-				var WEBSIGN_FILES	= [
-					'cyph.appcache',
-					'index.html',
-					'websign/css/loading.css',
-					'websign/js/cryptoInit.js',
-					'websign/js/webSignPublicKeys.js',
-					'websign/js/workerHelper.js',
-					'websign/lib/sha512.js',
-					'websign/lib/openpgp/openpgp.min.js',
-					'websign/lib/openpgp/openpgp.worker.min.js'
-				];
+			var WEBSIGN_FILES	= [
+				'cyph.appcache',
+				'index.html',
+				'websign/css/loading.css',
+				'websign/js/cryptoInit.js',
+				'websign/js/webSignPublicKeys.js',
+				'websign/js/workerHelper.js',
+				'websign/lib/sha512.js',
+				'websign/lib/openpgp/openpgp.min.js',
+				'websign/lib/openpgp/openpgp.worker.min.js'
+			];
 
+			webSign.getBootstrapText	= function () {
 				var bootstrapText	= '';
 
 				for (var i = 0 ; i < WEBSIGN_FILES.length ; ++i) {
+					var file	= WEBSIGN_FILES[i];
+
 					var req	= new XMLHttpRequest();
-					req.open('get', WEBSIGN_FILES[i], false);
+					req.open('get', file, false);
 					req.send();
-					bootstrapText	+= req.responseText;
+
+					bootstrapText	+= file + ':\n\n' + req.responseText + '\n\n\n\n\n\n';
 				}
 
-				var bootstrapHash	= CryptoJS.SHA512(bootstrapText).toString();
+				return bootstrapText;
+			};
 
-				if (localStorage.webSignBootHash && localStorage.webSignBootHash != bootstrapHash) {
-					window.webSignWarn	= true;
-				}
+			webSign.toString	= function (shouldIncludeBootstrapText) {
+				return
+					'current bootstrap hash: ' + localStorage.webSignBootHash +
+					'\n\nprevious bootstrap hash: ' + localStorage.webSignBootHashOld +
+					'\n\npackage hash: ' + localStorage.webSignHash +
+					(shouldIncludeBootstrapText ? ('\n\n\n\n' + webSign.getBootstrapText()) : '')
+				;
+			};
 
+			/* Call this in application code */
+			webSign.detectInvalidation	= function () {
 				localStorage.webSignBootHashOld	= localStorage.webSignBootHash;
-				localStorage.webSignBootHash	= bootstrapHash;
-			}
+				localStorage.webSignBootHash	= CryptoJS.SHA512(webSign.getBootstrapText()).toString();
 
-			applicationCache.addEventListener('error', detectWebSignInvalidation, false);
-			applicationCache.addEventListener('obsolete', detectWebSignInvalidation, false);
-			applicationCache.addEventListener('updateready', detectWebSignInvalidation, false);
+				return localStorage.webSignBootHashOld != 'undefined' &&
+					localStorage.webSignBootHashOld != localStorage.webSignBootHash
+				;
+			}
 
 
 
@@ -153,8 +168,6 @@
 				if (localStorage.webSignHash && parseInt(localStorage.webSignHashExpires, 10) > Date.now()) {
 					request(cdnUrl + PACKAGE_PATH + localStorage.webSignHash, function (payload) {
 						if (CryptoJS.SHA512(payload).toString() == localStorage.webSignHash) {
-							detectWebSignInvalidation();
-
 							document.open('text/html');
 							document.write(payload);
 							document.close();
@@ -171,8 +184,8 @@
 			}
 
 			function makeCdnUrl (continent) {
-				window.webSignContinent	= continent || DEFAULT_CONTINENT;
-				return URL_PROTOCOL + window.webSignContinent + CDN_URL_BASE;
+				webSign.continent	= continent || DEFAULT_CONTINENT;
+				return URL_PROTOCOL + webSign.continent + CDN_URL_BASE;
 			}
 
 
