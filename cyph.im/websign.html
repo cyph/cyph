@@ -86,8 +86,9 @@
 			};
 
 			webSign.toString	= function (shouldIncludeBootstrapText) {
-				return
-					'current bootstrap hash: ' + localStorage.webSignBootHash +
+				return '' +
+					'\n\ncontinent: ' + webSign.continent +
+					'\n\ncurrent bootstrap hash: ' + localStorage.webSignBootHash +
 					'\n\nprevious bootstrap hash: ' + localStorage.webSignBootHashOld +
 					'\n\npackage hash: ' + localStorage.webSignHash +
 					(shouldIncludeBootstrapText ? ('\n\n\n\n' + webSign.getBootstrapText()) : '')

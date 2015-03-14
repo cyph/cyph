@@ -114,7 +114,7 @@ function otrWorkerOnMessageHandler (e) {
 			break;
 
 		case 'abort':
-			errorLog('smperrors')();
+			smpError();
 			abortSetup();
 			break;
 
@@ -158,7 +158,7 @@ if (
 		warnWebSignObsoleteWrapper();
 	*/
 
-	errorLog('wserrors')();
+	webSignError();
 }
 
 // else {
