@@ -289,7 +289,8 @@ function onTick (f) {
 
 				try {
 					for (var i = 0 ; i < tickFunctions.length ; ++i) {
-						tickFunctions[i](now);
+						var f	= tickFunctions[i];
+						f && f(now);
 					}
 				}
 				finally {
@@ -326,6 +327,12 @@ function onTick (f) {
 			processTickWorker(50);
 		}
 	}
+
+	return tickFunctions.length - 1;
+}
+
+function tickOff (id) {
+	delete tickFunctions[id];
 }
 
 

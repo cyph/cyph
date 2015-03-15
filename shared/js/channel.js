@@ -277,8 +277,11 @@ function Channel (channelName, handlers, config) {
 						var lastTouched		= Date.now();
 						var periodToggle	= false;
 
-						onTick(function (now) {
-							if (self.inQueue.isAlive && (now - lastTouched > 600000)) {
+						var tickId	= onTick(function (now) {
+							if (!self.inQueue.isAlive) {
+								tickOff(tickId);
+							}
+							else if (now - lastTouched > 600000) {
 								lastTouched		= now;
 
 								self.sqs.setQueueAttributes({
