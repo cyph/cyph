@@ -158,7 +158,8 @@ crypto.getRandomValues(randomSeed);
 
 if (
 	typeof webSign != 'undefined' &&
-	webSign.detectInvalidation() &&
+	webSign.detectChange &&
+	webSign.detectChange() &&
 	!WEBSIGN_HASHES[localStorage.webSignBootHash]
 ) {
 	/*
