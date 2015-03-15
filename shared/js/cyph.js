@@ -5,6 +5,10 @@ var BASE_URL			= isLocalhost ? 'http://localhost:8080/' : isOnion ? '/api/' : 'h
 var ONION_URL			= 'https://cyphdbyhiddenbhs.onion';
 var isHistoryAvailable	= typeof history != 'undefined';
 
+
+
+/* Redirect to Onion site when on Tor */
+
 if (!isLocalhost && !isOnion) {
 	var theRest	= document.location.toString().split(document.location.host)[1];
 
@@ -27,26 +31,62 @@ if (!isLocalhost && !isOnion) {
 }
 
 
-/* Log all JS exceptions */
-function errorLog (apiMethod) {
+
+function errorLog (subject, shouldIncludeBootstrapText) {
 	return function () {
 		var exception	= JSON.stringify(arguments);
 
-		$.post(BASE_URL + apiMethod, {
-			error: exception +
-				'\n\n' + navigator.userAgent +
-				'\n\n' + navigator.language +
-				'\n\n' + (typeof language == 'undefined' ? '' : language) +
-				'\n\n' + document.location.toString() +
-				'\n\n' + (typeof webSignHashes == 'undefined' ? '' : JSON.stringify(webSignHashes))
+		var message		= exception +
+			'\n\n' + navigator.userAgent +
+			'\n\n' + navigator.language +
+			'\n\n' + (typeof language == 'undefined' ? '' : language) +
+			'\n\n' + document.location.toString() +
+			'\n\n' + (
+				typeof webSign == 'undefined' ?
+					'' :
+					webSign.toString(shouldIncludeBootstrapText)
+			)
+		;
+
+		$.ajax({
+			type: 'POST',
+			url: 'https://mandrillapp.com/api/1.0/messages/send.json',
+			data: {
+				key: 'HNz4JExN1MtpKz8uP2RD1Q',
+				message: {
+					from_email: 'test@mandrillapp.com',
+					to: [{
+						email: 'errors@cyph.com',
+						type: 'to'
+					}],
+					autotext: 'true',
+					subject: 'CYPH: ' + subject,
+					text: message
+				}
+			}
 		});
+
+		/* makeAwsRequest({
+			action: 'SendEmail',
+			url: 'https://email.us-east-1.amazonaws.com',
+			service: 'ses',
+			params: {
+				'Destination.ToAddresses.member.1': 'errors@cyph.com',
+				'Message.Body.Text.Data': message,
+				'Message.Subject.Data': 'CYPH: ' + subject,
+				'Source': 'test@amazonses.heisenberg.co'
+			}
+		}); */
 
 		anal.send('exception', {
 			exDescription: exception
 		});
 	};
 }
-window.onerror	= errorLog('errors');
+
+window.onerror		= errorLog('WARNING WARNING WARNING SOMETHING IS SRSLY FUCKED UP LADS');
+window.smpError		= errorLog('SMP JUST FAILED FOR SOMEONE LADS');
+window.webSignError	= errorLog('SOMEONE JUST GOT THE WEBSIGN ERROR SCREEN LADS', true);
 
 
 
