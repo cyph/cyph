@@ -5,8 +5,9 @@ var otrWorkerOnMessageQueue			= [];
 
 var isAlive	= false;
 
-var CHANNEL_DATA_PREFIX	= 'CHANNEL DATA: ';
-var WEBRTC_DATA_PREFIX	= 'webrtc: ';
+var CHANNEL_DATA_PREFIX		= 'CHANNEL DATA: ';
+var CHANNEL_RATCHET_PREFIX	= 'CHANNEL RATCHET: ';
+var WEBRTC_DATA_PREFIX		= 'WEBRTC: ';
 
 var SECRET_LENGTH		= 7;
 var LONG_SECRET_LENGTH	= 52;
@@ -21,6 +22,7 @@ var channelDataMisc	= {
 
 var
 	channel,
+	oldChannel,
 	isWebSignObsolete,
 	isConnected,
 	isOtrReady,
@@ -129,6 +131,20 @@ function otrWorkerOnMessageHandler (e) {
 		case 'authenticated':
 			markAllAsSent();
 			pingPong();
+
+			/* Ratchet channels every 10 - 20 minutes */
+			if (e.data.message) {
+				function ratchetLoop () {
+					setTimeout(
+						ratchetLoop,
+						600000 + crypto.getRandomValues(new Uint8Array(1))[0] * 2350
+					);
+
+					ratchetChannels();
+				}
+
+				ratchetLoop();
+			}
 			break;
 	}
 }
@@ -215,18 +231,18 @@ function processUrlState () {
 		changeState(states.spinningUp);
 
 		function startNewCyph () {
-			var id			= generateGuid(SECRET_LENGTH);
-			var channelName	= generateGuid(LONG_SECRET_LENGTH);
+			var id					= generateGuid(SECRET_LENGTH);
+			var channelDescriptor	= getChannelDescriptor();
 
 			pushState('/' + id, true, true);
 
 			$.ajax({
 				type: 'POST',
 				url: BASE_URL + 'channels/' + id,
-				data: {channelName: channelName},
+				data: {channelDescriptor: channelDescriptor},
 				success: function (data) {
-					if (data == channelName) {
-						setUpChannel(channelName);
+					if (data == channelDescriptor) {
+						setUpChannel(channelDescriptor);
 					}
 					else {
 						startNewCyph();
@@ -243,8 +259,8 @@ function processUrlState () {
 		$.ajax({
 			type: 'POST',
 			url: BASE_URL + 'channels/' + urlState,
-			success: function (channelName) {
-				setUpChannel(channelName);
+			success: function (channelDescriptor) {
+				setUpChannel(channelDescriptor);
 			},
 			error: pushNotFound
 		});
@@ -353,12 +369,22 @@ function setUpWebRTC (isInitiator) {
 }
 
 
+
+function channelSend () {
+	var c	= (oldChannel && oldChannel.isAlive()) ?
+		oldChannel :
+		channel
+	;
+
+	c.send.apply(c, arguments);
+}
+
 function channelClose (hasReceivedDestroySignal) {
 	if (hasReceivedDestroySignal) {
 		channel.close(closeChat);
 	}
 	else if (isAlive) {
-		channel.send({Destroy: true}, closeChat, true);
+		channelSend({Destroy: true}, closeChat, true);
 	}
 }
 
@@ -380,7 +406,7 @@ function sendChannelDataBase (data, callback) {
 function sendChannelDataHandler (items) {
 	lastOutgoingMessageTimestamp	= Date.now();
 
-	channel.send(
+	channelSend(
 		items.map(function (item) {
 			item.data.Id	= Date.now() + '-' + crypto.getRandomValues(new Uint32Array(1))[0];
 			return item.data;
@@ -421,6 +447,9 @@ function receiveChannelDataHandler (o) {
 				webRTC[key](webRTCData[key]);
 			}
 		}
+		else if (o.Misc && o.Misc.indexOf(CHANNEL_RATCHET_PREFIX) == 0) {
+			ratchetChannels(o.Misc.split(CHANNEL_RATCHET_PREFIX)[1]);
+		}
 
 		if (o.Message) {
 			otr.receiveMsg(o.Message);
@@ -437,8 +466,8 @@ function receiveChannelDataHandler (o) {
 	}
 }
 
-function setUpChannel (channelName) {
-	channel	= new Channel(channelName, {
+function setUpChannel (channelDescriptor) {
+	channel	= new Channel(channelDescriptor, {
 		onopen: function (isCreator) {
 			if (isCreator) {
 				beginWaiting();
@@ -460,9 +489,42 @@ function setUpChannel (channelName) {
 				channelClose();
 			});
 		},
-		onmessage: receiveChannelData,
-		onclose: channelClose
+		onmessage: receiveChannelData
 	});
+}
+
+
+
+/*
+	Alice: create new channel, send descriptor over old channel
+	Bob: join new channel, ack descriptor over old channel
+	Alice: destroy old channel, inform of destruction over new channel
+	Bob: destroy old channel
+*/
+
+function ratchetChannels (channelDescriptor) {
+	if (oldChannel) {
+		if (channelDescriptor) {
+			setTimeout(function () {
+				oldChannel.close(function () {
+					sendChannelData({Misc: CHANNEL_RATCHET_PREFIX});
+				});
+
+				oldChannel	= null;
+			}, 60000);
+		}
+		else {
+			oldChannel	= null;
+		}
+	}
+	else {
+		channelDescriptor	= channelDescriptor || getChannelDescriptor();
+
+		oldChannel	= channel;
+		channel		= new Channel(channelDescriptor, {onmessage: receiveChannelData});
+
+		sendChannelData({Misc: CHANNEL_RATCHET_PREFIX + channelDescriptor});
+	}
 }
 
 
