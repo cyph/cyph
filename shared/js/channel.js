@@ -1,11 +1,3 @@
-var sqsConfig	= {
-	apiVersion: '2012-11-05',
-	region: 'eu-central-1',
-	accessKeyId: 'AKIAIN2DSULSB77U4S2A',
-	secretAccessKey: '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',
-	endpoint: isLocalhost ? 'http://localhost:4568' : null
-};
-
 var NON_EXISTENT_QUEUE	= 'AWS.SimpleQueueService.NonExistentQueue';
 var QUEUE_PREFIX		= 'channels-';
 var CHANNEL_IDS			= {true: '0', false: '1'};
@@ -13,10 +5,26 @@ var PERIOD_VALUES		= {true: '1800', false: '1801'};
 
 
 
-var sqs	= (function () {
-	var innerSqs	= new AWS.SQS(sqsConfig);
+function getChannelDescriptor () {
+	return JSON.stringify({
+		name: generateGuid(LONG_SECRET_LENGTH),
+		region: AWS_REGIONS[
+			crypto.getRandomValues(new Uint8Array(1))[0] %
+			AWS_REGIONS.length
+		]
+	});
+}
 
-	var wrapper	= {};
+function SQS (config) {
+	config	= config || {};
+
+	if (isLocalhost) {
+		config.endpoint	= 'http://localhost:4568';
+	}
+
+	var wrapper	= {
+		innerSqs: new AWS.SQS(config)
+	};
 
 	/* Add methods that take an object and an optional callback */
 	[
@@ -32,7 +40,7 @@ var sqs	= (function () {
 	].forEach(function (methodName) {
 		wrapper[methodName]	= function (o, f, shouldRetryUntilSuccessful) {
 			function wrapperHelper () {
-				innerSqs[methodName](o, !shouldRetryUntilSuccessful ? f : function (err) {
+				wrapper.innerSqs[methodName](o, !shouldRetryUntilSuccessful ? f : function (err) {
 					if (err) {
 						setTimeout(wrapperHelper, 50);
 					}
@@ -47,19 +55,22 @@ var sqs	= (function () {
 	});
 
 	return wrapper;
-}());
+}
 
 
 
 /* Unidirectional queue */
 
-function Queue (queueName, handlers) {
+function Queue (queueName, handlers, config) {
 	var self	= this;
 	handlers	= handlers || {};
+	config		= config || {};
+
+	self.sqs	= SQS(config);
 
 	self.isAlive	= true;
 
-	sqs.createQueue({
+	self.sqs.createQueue({
 		QueueName: QUEUE_PREFIX + queueName,
 		Attributes: {
 			MessageRetentionPeriod: PERIOD_VALUES[true],
@@ -81,7 +92,7 @@ function Queue (queueName, handlers) {
 						self.isAlive	= false;
 						handlers.onclose && handlers.onclose.apply(self, arguments);
 					}
-					else {
+					else if (self.isAlive) {
 						setTimeout(onmessageHelper, 50);
 					}
 				});
@@ -91,14 +102,14 @@ function Queue (queueName, handlers) {
 		}
 		else if (handlers.onclose) {
 			function oncloseHelper () {
-				sqs.getQueueUrl({
+				self.sqs.getQueueUrl({
 					QueueName: QUEUE_PREFIX + queueName
 				}, function (err, data) {
 					if (err && err.code == NON_EXISTENT_QUEUE) {
 						self.isAlive	= false;
 						handlers.onclose.apply(self, arguments);
 					}
-					else {
+					else if (self.isAlive) {
 						setTimeout(oncloseHelper, 30000);
 					}
 				});
@@ -113,10 +124,11 @@ Queue.prototype.close	= function (callback) {
 	var self	= this;
 
 	if (self.isAlive) {
-		sqs.deleteQueue({QueueUrl: this.queueUrl}, function () {
-			self.isAlive	= false;
+		self.isAlive	= false;
+
+		self.sqs.deleteQueue({QueueUrl: self.queueUrl}, function () {
 			callback && callback.apply(self, arguments);
-		}, true);
+		});
 	}
 	else if (callback) {
 		callback();
@@ -127,15 +139,15 @@ Queue.prototype.receive	= function (messageHandler, onComplete, maxNumberOfMessa
 	var self	= this;
 
 	if (self.isAlive) {
-		sqs.receiveMessage({
+		self.sqs.receiveMessage({
 			QueueUrl: self.queueUrl,
 			MaxNumberOfMessages: maxNumberOfMessages || 10,
 			WaitTimeSeconds: waitTimeSeconds || 20
 		}, function (err, data) {
 			try {
-				if (data && data.Messages) {
-					sqs.deleteMessageBatch({
-						QueueUrl: this.queueUrl,
+				if (data && data.Messages && data.Messages.length > 0) {
+					self.sqs.deleteMessageBatch({
+						QueueUrl: self.queueUrl,
 						Entries: data.Messages
 					}, function () {});
 
@@ -169,83 +181,20 @@ Queue.prototype.send	= function (message, callback, isSynchronous) {
 			var messageBody	= JSON.stringify({message: message});
 
 			if (isSynchronous) {
-				var date		= new Date;
-				var timestamp	= date.toISOString();
-				var dateString	= timestamp.split('T')[0].replace(/-/g, '');
-
-				var requestMethod	= 'GET';
-				var algorithm		= 'AWS4-HMAC-SHA256';
-				var hostHeader		= 'host';
-				var terminator		= 'aws4_request';
-				var service			= 'sqs';
-				var host			= self.queueUrl.split('/')[2];
-				var uri				= self.queueUrl.split(host)[1];
-
-				var credential		=
-					dateString + '/' +
-					sqsConfig.region + '/' +
-					service + '/' +
-					terminator
-				;
-
-				var query	= $.param({
-					Action: 'SendMessage',
-					MessageBody: messageBody,
-					Timestamp: timestamp,
-					Version: sqsConfig.apiVersion,
-					'X-Amz-Algorithm': algorithm,
-					'X-Amz-Credential': sqsConfig.accessKeyId + '/' + credential,
-					'X-Amz-Date': timestamp,
-					'X-Amz-SignedHeaders': hostHeader
-				});
-
-				var canonicalRequest	=
-					requestMethod + '\n' +
-					uri + '\n' +
-					query + '\n' +
-					hostHeader + ':' + host + '\n\n' +
-					hostHeader + '\n' +
-					CryptoJS.SHA256('').toString()
-				;
-
-				var stringToSign	=
-					algorithm + '\n' +
-					timestamp.split('.')[0].match(/[0-9A-Za-z]/g).join('') + 'Z\n' +
-					credential + '\n' +
-					CryptoJS.SHA256(canonicalRequest).toString()
-				;
-
-
-				var signature	= CryptoJS.HmacSHA256(
-					stringToSign,
-					CryptoJS.HmacSHA256(
-						terminator,
-						CryptoJS.HmacSHA256(
-							service,
-							CryptoJS.HmacSHA256(
-								sqsConfig.region,
-								CryptoJS.HmacSHA256(
-									dateString,
-									'AWS4' + sqsConfig.secretAccessKey
-								)
-							)
-						)
-					)
-				).toString();
-
-
-				$.ajax({
-					async: false,
-					timeout: 30000,
-					type: requestMethod,
-					url: this.queueUrl + '?' + query + '&X-Amz-Signature=' + signature
-				});
-
-				callback && callback();
+				makeAwsRequest({
+					action: 'SendMessage',
+					url: self.queueUrl,
+					service: 'sqs',
+					region: self.sqs.innerSqs.config.region,
+					isSynchronous: true,
+					params: {
+						MessageBody: messageBody
+					}
+				}, callback);
 			}
 			else {
-				sqs.sendMessage({
-					QueueUrl: this.queueUrl,
+				self.sqs.sendMessage({
+					QueueUrl: self.queueUrl,
 					MessageBody: messageBody
 				}, callback, true);
 			}
@@ -262,8 +211,8 @@ Queue.prototype.send	= function (message, callback, isSynchronous) {
 			}
 		}
 		else {
-			sqs.sendMessageBatch({
-				QueueUrl: this.queueUrl,
+			self.sqs.sendMessageBatch({
+				QueueUrl: self.queueUrl,
 				Entries: message.map(function (s, i) {
 					return {
 						Id: (i + 1).toString(),
@@ -290,15 +239,26 @@ Queue.prototype.send	= function (message, callback, isSynchronous) {
 
 /* Bidirectional channel, comprised of two queues */
 
-function Channel (channelName, handlers) {
+function Channel (channelName, handlers, config) {
 	var self	= this;
 	handlers	= handlers || {};
+	config		= config || {};
+
+	try {
+		var channelDescriptor	= JSON.parse(channelName);
+		self.descriptor			= channelName;
+		channelName				= channelDescriptor.name;
+		config.region			= channelDescriptor.region;
+	}
+	catch (e) {}
+
+	self.sqs	= SQS(config);
 
 	function onclose () {
 		self.close(handlers.onclose);
 	}
 	
-	sqs.getQueueUrl({
+	self.sqs.getQueueUrl({
 		QueueName: QUEUE_PREFIX + channelName + CHANNEL_IDS[true]
 	}, function (err, data) {
 		var isCreator	= !!err;
@@ -321,7 +281,7 @@ function Channel (channelName, handlers) {
 							if (self.inQueue.isAlive && (now - lastTouched > 600000)) {
 								lastTouched		= now;
 
-								sqs.setQueueAttributes({
+								self.sqs.setQueueAttributes({
 									QueueUrl: self.inQueue.queueUrl,
 									Attributes: {
 										MessageRetentionPeriod: PERIOD_VALUES[periodToggle]
@@ -332,9 +292,9 @@ function Channel (channelName, handlers) {
 							}
 						});
 					}
-				});
+				}, config);
 			}
-		});
+		}, config);
 	});
 }
 
@@ -344,6 +304,10 @@ Channel.prototype.close	= function (callback) {
 	self.inQueue.close(function () {
 		self.outQueue.close(callback);
 	});
+};
+
+Channel.prototype.isAlive	= function () {
+	return this.inQueue.isAlive && this.outQueue.isAlive;
 };
 
 Channel.prototype.receive	= function () {
