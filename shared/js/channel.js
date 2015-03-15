@@ -270,10 +270,8 @@ function Channel (channelName, handlers, config) {
 				self.outQueue	= new Queue(channelName + CHANNEL_IDS[!isCreator], {
 					onclose: onclose,
 					onopen: function () {
-						handlers.onopen && handlers.onopen(isCreator);
-
-
 						/* Keep this channel alive by touching it every 10 minutes */
+
 						var lastTouched		= Date.now();
 						var periodToggle	= false;
 
@@ -294,6 +292,9 @@ function Channel (channelName, handlers, config) {
 								});
 							}
 						});
+
+
+						handlers.onopen && handlers.onopen(isCreator);
 					}
 				}, config);
 			}
