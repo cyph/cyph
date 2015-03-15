@@ -1,8 +1,5 @@
 var sqsConfig	= {
-	apiVersion: '2012-11-05',
 	region: 'eu-central-1',
-	accessKeyId: 'AKIAIN2DSULSB77U4S2A',
-	secretAccessKey: '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',
 	endpoint: isLocalhost ? 'http://localhost:4568' : null
 };
 
@@ -113,7 +110,7 @@ Queue.prototype.close	= function (callback) {
 	var self	= this;
 
 	if (self.isAlive) {
-		sqs.deleteQueue({QueueUrl: this.queueUrl}, function () {
+		sqs.deleteQueue({QueueUrl: self.queueUrl}, function () {
 			self.isAlive	= false;
 			callback && callback.apply(self, arguments);
 		}, true);
@@ -133,9 +130,9 @@ Queue.prototype.receive	= function (messageHandler, onComplete, maxNumberOfMessa
 			WaitTimeSeconds: waitTimeSeconds || 20
 		}, function (err, data) {
 			try {
-				if (data && data.Messages) {
+				if (data && data.Messages && data.Messages.length > 0) {
 					sqs.deleteMessageBatch({
-						QueueUrl: this.queueUrl,
+						QueueUrl: self.queueUrl,
 						Entries: data.Messages
 					}, function () {});
 
@@ -169,83 +166,20 @@ Queue.prototype.send	= function (message, callback, isSynchronous) {
 			var messageBody	= JSON.stringify({message: message});
 
 			if (isSynchronous) {
-				var date		= new Date;
-				var timestamp	= date.toISOString();
-				var dateString	= timestamp.split('T')[0].replace(/-/g, '');
-
-				var requestMethod	= 'GET';
-				var algorithm		= 'AWS4-HMAC-SHA256';
-				var hostHeader		= 'host';
-				var terminator		= 'aws4_request';
-				var service			= 'sqs';
-				var host			= self.queueUrl.split('/')[2];
-				var uri				= self.queueUrl.split(host)[1];
-
-				var credential		=
-					dateString + '/' +
-					sqsConfig.region + '/' +
-					service + '/' +
-					terminator
-				;
-
-				var query	= $.param({
-					Action: 'SendMessage',
-					MessageBody: messageBody,
-					Timestamp: timestamp,
-					Version: sqsConfig.apiVersion,
-					'X-Amz-Algorithm': algorithm,
-					'X-Amz-Credential': sqsConfig.accessKeyId + '/' + credential,
-					'X-Amz-Date': timestamp,
-					'X-Amz-SignedHeaders': hostHeader
-				});
-
-				var canonicalRequest	=
-					requestMethod + '\n' +
-					uri + '\n' +
-					query + '\n' +
-					hostHeader + ':' + host + '\n\n' +
-					hostHeader + '\n' +
-					CryptoJS.SHA256('').toString()
-				;
-
-				var stringToSign	=
-					algorithm + '\n' +
-					timestamp.split('.')[0].match(/[0-9A-Za-z]/g).join('') + 'Z\n' +
-					credential + '\n' +
-					CryptoJS.SHA256(canonicalRequest).toString()
-				;
-
-
-				var signature	= CryptoJS.HmacSHA256(
-					stringToSign,
-					CryptoJS.HmacSHA256(
-						terminator,
-						CryptoJS.HmacSHA256(
-							service,
-							CryptoJS.HmacSHA256(
-								sqsConfig.region,
-								CryptoJS.HmacSHA256(
-									dateString,
-									'AWS4' + sqsConfig.secretAccessKey
-								)
-							)
-						)
-					)
-				).toString();
-
-
-				$.ajax({
-					async: false,
-					timeout: 30000,
-					type: requestMethod,
-					url: this.queueUrl + '?' + query + '&X-Amz-Signature=' + signature
-				});
-
-				callback && callback();
+				makeAwsRequest({
+					action: 'SendMessage',
+					url: self.queueUrl,
+					service: 'sqs',
+					region: sqsConfig.region,
+					isSynchronous: true,
+					params: {
+						MessageBody: messageBody
+					}
+				}, callback);
 			}
 			else {
 				sqs.sendMessage({
-					QueueUrl: this.queueUrl,
+					QueueUrl: self.queueUrl,
 					MessageBody: messageBody
 				}, callback, true);
 			}
@@ -263,7 +197,7 @@ Queue.prototype.send	= function (message, callback, isSynchronous) {
 		}
 		else {
 			sqs.sendMessageBatch({
-				QueueUrl: this.queueUrl,
+				QueueUrl: self.queueUrl,
 				Entries: message.map(function (s, i) {
 					return {
 						Id: (i + 1).toString(),
