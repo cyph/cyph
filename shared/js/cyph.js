@@ -33,8 +33,23 @@ if (!isLocalhost && !isOnion) {
 
 
 function errorLog (subject, shouldIncludeBootstrapText) {
-	return function () {
-		var exception	= JSON.stringify(arguments);
+	return function (errorMessage, url, line, column, errorObject) {
+		var exception;
+
+		if (errorObject && errorObject.stack) {
+			exception	= errorObject.stack;
+		}
+		else if (errorMessage) {
+			exception	=
+				errorMessage + '\n\n' +
+				'URL: ' + url + '\n' +
+				'Line: ' + line + '\n' +
+				'Column: ' + column
+			;
+		}
+
+		/* Strip URL fragment where applicable */
+		exception	= (exception || '').replace(/#.*/g, '');
 
 		var message		= exception +
 			'\n\n' + navigator.userAgent +
