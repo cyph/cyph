@@ -68,7 +68,7 @@ func betaSignup(h HandlerArgs) (interface{}, int) {
 
 func channelSetup(h HandlerArgs) (interface{}, int) {
 	id := h.Vars["id"]
-	channelName := ""
+	channelDescriptor := ""
 	status := http.StatusOK
 
 	if item, err := memcache.Get(h.Context, id); err != memcache.ErrCacheMiss {
@@ -76,21 +76,21 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 		item.Value = []byte{}
 
 		if err := memcache.CompareAndSwap(h.Context, item); err != memcache.ErrCASConflict {
-			channelName = string(oldValue)
+			channelDescriptor = string(oldValue)
 		}
-	} else if channelName = h.Request.FormValue("channelName"); channelName != "" {
+	} else if channelDescriptor = h.Request.FormValue("channelDescriptor"); channelDescriptor != "" {
 		memcache.Set(h.Context, &memcache.Item{
 			Key:        id,
-			Value:      []byte(channelName),
+			Value:      []byte(channelDescriptor),
 			Expiration: config.MemcacheExpiration,
 		})
 	}
 
-	if channelName == "" {
+	if channelDescriptor == "" {
 		status = http.StatusNotFound
 	}
 
-	return channelName, status
+	return channelDescriptor, status
 }
 
 func getContinent(h HandlerArgs) (interface{}, int) {
