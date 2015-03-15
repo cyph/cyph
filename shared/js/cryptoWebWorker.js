@@ -159,7 +159,7 @@ function eventLoop () {
 										break;
 
 									case 'complete':
-										postMessage({eventName: 'authenticated'});
+										postMessage({eventName: 'authenticated', message: isInitiator});
 										break;
 
 									case 'failed':

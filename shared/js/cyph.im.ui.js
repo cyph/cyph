@@ -83,7 +83,7 @@ angular.
 
 		$scope.webSignHashes	= encodeURIComponent(
 			'Hello Ryan and Josh,\n\n\n\n\n\n---\n\n' +
-				JSON.stringify(webSignHashes)
+				(typeof webSign == 'undefined' ? '' : webSign.toString())
 		);
 
 		isAlive = $scope.isAlive = true;
@@ -331,7 +331,7 @@ angular.
 			isWebSignObsolete	= true;
 			isAlive				= false;
 
-			errorLog('wserrors')();
+			webSignError();
 		};
 
 
