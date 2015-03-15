@@ -1,8 +1,3 @@
-var sqsConfig	= {
-	region: 'eu-central-1',
-	endpoint: isLocalhost ? 'http://localhost:4568' : null
-};
-
 var NON_EXISTENT_QUEUE	= 'AWS.SimpleQueueService.NonExistentQueue';
 var QUEUE_PREFIX		= 'channels-';
 var CHANNEL_IDS			= {true: '0', false: '1'};
@@ -10,10 +5,26 @@ var PERIOD_VALUES		= {true: '1800', false: '1801'};
 
 
 
-var sqs	= (function () {
-	var innerSqs	= new AWS.SQS(sqsConfig);
+function getChannelDescriptor () {
+	return JSON.stringify({
+		name: generateGuid(LONG_SECRET_LENGTH),
+		region: AWS_REGIONS[
+			crypto.getRandomValues(new Uint8Array(1))[0] %
+			AWS_REGIONS.length
+		]
+	});
+}
 
-	var wrapper	= {};
+function SQS (config) {
+	config	= config || {};
+
+	if (isLocalhost) {
+		config.endpoint	= 'http://localhost:4568';
+	}
+
+	var wrapper	= {
+		innerSqs: new AWS.SQS(config)
+	};
 
 	/* Add methods that take an object and an optional callback */
 	[
@@ -29,7 +40,7 @@ var sqs	= (function () {
 	].forEach(function (methodName) {
 		wrapper[methodName]	= function (o, f, shouldRetryUntilSuccessful) {
 			function wrapperHelper () {
-				innerSqs[methodName](o, !shouldRetryUntilSuccessful ? f : function (err) {
+				wrapper.innerSqs[methodName](o, !shouldRetryUntilSuccessful ? f : function (err) {
 					if (err) {
 						setTimeout(wrapperHelper, 50);
 					}
@@ -44,19 +55,22 @@ var sqs	= (function () {
 	});
 
 	return wrapper;
-}());
+}
 
 
 
 /* Unidirectional queue */
 
-function Queue (queueName, handlers) {
+function Queue (queueName, handlers, config) {
 	var self	= this;
 	handlers	= handlers || {};
+	config		= config || {};
+
+	self.sqs	= SQS(config);
 
 	self.isAlive	= true;
 
-	sqs.createQueue({
+	self.sqs.createQueue({
 		QueueName: QUEUE_PREFIX + queueName,
 		Attributes: {
 			MessageRetentionPeriod: PERIOD_VALUES[true],
@@ -78,7 +92,7 @@ function Queue (queueName, handlers) {
 						self.isAlive	= false;
 						handlers.onclose && handlers.onclose.apply(self, arguments);
 					}
-					else {
+					else if (self.isAlive) {
 						setTimeout(onmessageHelper, 50);
 					}
 				});
@@ -88,14 +102,14 @@ function Queue (queueName, handlers) {
 		}
 		else if (handlers.onclose) {
 			function oncloseHelper () {
-				sqs.getQueueUrl({
+				self.sqs.getQueueUrl({
 					QueueName: QUEUE_PREFIX + queueName
 				}, function (err, data) {
 					if (err && err.code == NON_EXISTENT_QUEUE) {
 						self.isAlive	= false;
 						handlers.onclose.apply(self, arguments);
 					}
-					else {
+					else if (self.isAlive) {
 						setTimeout(oncloseHelper, 30000);
 					}
 				});
@@ -110,10 +124,11 @@ Queue.prototype.close	= function (callback) {
 	var self	= this;
 
 	if (self.isAlive) {
-		sqs.deleteQueue({QueueUrl: self.queueUrl}, function () {
-			self.isAlive	= false;
+		self.isAlive	= false;
+
+		self.sqs.deleteQueue({QueueUrl: self.queueUrl}, function () {
 			callback && callback.apply(self, arguments);
-		}, true);
+		});
 	}
 	else if (callback) {
 		callback();
@@ -124,14 +139,14 @@ Queue.prototype.receive	= function (messageHandler, onComplete, maxNumberOfMessa
 	var self	= this;
 
 	if (self.isAlive) {
-		sqs.receiveMessage({
+		self.sqs.receiveMessage({
 			QueueUrl: self.queueUrl,
 			MaxNumberOfMessages: maxNumberOfMessages || 10,
 			WaitTimeSeconds: waitTimeSeconds || 20
 		}, function (err, data) {
 			try {
 				if (data && data.Messages && data.Messages.length > 0) {
-					sqs.deleteMessageBatch({
+					self.sqs.deleteMessageBatch({
 						QueueUrl: self.queueUrl,
 						Entries: data.Messages
 					}, function () {});
@@ -170,7 +185,7 @@ Queue.prototype.send	= function (message, callback, isSynchronous) {
 					action: 'SendMessage',
 					url: self.queueUrl,
 					service: 'sqs',
-					region: sqsConfig.region,
+					region: self.sqs.innerSqs.config.region,
 					isSynchronous: true,
 					params: {
 						MessageBody: messageBody
@@ -178,7 +193,7 @@ Queue.prototype.send	= function (message, callback, isSynchronous) {
 				}, callback);
 			}
 			else {
-				sqs.sendMessage({
+				self.sqs.sendMessage({
 					QueueUrl: self.queueUrl,
 					MessageBody: messageBody
 				}, callback, true);
@@ -196,7 +211,7 @@ Queue.prototype.send	= function (message, callback, isSynchronous) {
 			}
 		}
 		else {
-			sqs.sendMessageBatch({
+			self.sqs.sendMessageBatch({
 				QueueUrl: self.queueUrl,
 				Entries: message.map(function (s, i) {
 					return {
@@ -224,15 +239,26 @@ Queue.prototype.send	= function (message, callback, isSynchronous) {
 
 /* Bidirectional channel, comprised of two queues */
 
-function Channel (channelName, handlers) {
+function Channel (channelName, handlers, config) {
 	var self	= this;
 	handlers	= handlers || {};
+	config		= config || {};
+
+	try {
+		var channelDescriptor	= JSON.parse(channelName);
+		self.descriptor			= channelName;
+		channelName				= channelDescriptor.name;
+		config.region			= channelDescriptor.region;
+	}
+	catch (e) {}
+
+	self.sqs	= SQS(config);
 
 	function onclose () {
 		self.close(handlers.onclose);
 	}
 	
-	sqs.getQueueUrl({
+	self.sqs.getQueueUrl({
 		QueueName: QUEUE_PREFIX + channelName + CHANNEL_IDS[true]
 	}, function (err, data) {
 		var isCreator	= !!err;
@@ -255,7 +281,7 @@ function Channel (channelName, handlers) {
 							if (self.inQueue.isAlive && (now - lastTouched > 600000)) {
 								lastTouched		= now;
 
-								sqs.setQueueAttributes({
+								self.sqs.setQueueAttributes({
 									QueueUrl: self.inQueue.queueUrl,
 									Attributes: {
 										MessageRetentionPeriod: PERIOD_VALUES[periodToggle]
@@ -266,9 +292,9 @@ function Channel (channelName, handlers) {
 							}
 						});
 					}
-				});
+				}, config);
 			}
-		});
+		}, config);
 	});
 }
 
@@ -278,6 +304,10 @@ Channel.prototype.close	= function (callback) {
 	self.inQueue.close(function () {
 		self.outQueue.close(callback);
 	});
+};
+
+Channel.prototype.isAlive	= function () {
+	return this.inQueue.isAlive && this.outQueue.isAlive;
 };
 
 Channel.prototype.receive	= function () {
