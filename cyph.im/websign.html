@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html manifest='cyph.appcache'>
+<html manifest='cyph.im.appcache'>
 	<head>
 		<meta charset='utf-8' />
 		<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1' />
@@ -58,7 +58,7 @@
 			/* Detect if WebSign bootstrap has changed */
 
 			var WEBSIGN_FILES	= [
-				'cyph.appcache',
+				'cyph.im.appcache',
 				'/',
 				'websign/css/loading.css',
 				'websign/js/cryptoInit.js',
@@ -96,7 +96,7 @@
 			};
 
 			/* Call this in application code */
-			webSign.detectInvalidation	= function () {
+			webSign.detectChange	= function () {
 				localStorage.webSignBootHashOld	= localStorage.webSignBootHash;
 				localStorage.webSignBootHash	= CryptoJS.SHA512(webSign.getBootstrapText()).toString();
 
