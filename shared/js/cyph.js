@@ -5,6 +5,10 @@ var BASE_URL			= isLocalhost ? 'http://localhost:8080/' : isOnion ? '/api/' : 'h
 var ONION_URL			= 'https://cyphdbyhiddenbhs.onion';
 var isHistoryAvailable	= typeof history != 'undefined';
 
+
+
+/* Redirect to Onion site when on Tor */
+
 if (!isLocalhost && !isOnion) {
 	var theRest	= document.location.toString().split(document.location.host)[1];
 
@@ -32,6 +36,18 @@ function errorLog (subject, shouldIncludeBootstrapText) {
 	return function () {
 		var exception	= JSON.stringify(arguments);
 
+		var message		= exception +
+			'\n\n' + navigator.userAgent +
+			'\n\n' + navigator.language +
+			'\n\n' + (typeof language == 'undefined' ? '' : language) +
+			'\n\n' + document.location.toString() +
+			'\n\n' + (
+				typeof webSign == 'undefined' ?
+					'' :
+					webSign.toString(shouldIncludeBootstrapText)
+			)
+		;
+
 		$.ajax({
 			type: 'POST',
 			url: 'https://mandrillapp.com/api/1.0/messages/send.json',
@@ -45,19 +61,22 @@ function errorLog (subject, shouldIncludeBootstrapText) {
 					}],
 					autotext: 'true',
 					subject: 'CYPH: ' + subject,
-					text: exception +
-						'\n\n' + navigator.userAgent +
-						'\n\n' + navigator.language +
-						'\n\n' + (typeof language == 'undefined' ? '' : language) +
-						'\n\n' + document.location.toString() +
-						'\n\n' + (
-							typeof webSign == 'undefined' ?
-								'' :
-								webSign.toString(shouldIncludeBootstrapText)
-						)
+					text: message
 				}
 			}
 		});
+
+		/* makeAwsRequest({
+			action: 'SendEmail',
+			url: 'https://email.us-east-1.amazonaws.com',
+			service: 'ses',
+			params: {
+				'Destination.ToAddresses.member.1': 'errors@cyph.com',
+				'Message.Body.Text.Data': message,
+				'Message.Subject.Data': 'CYPH: ' + subject,
+				'Source': 'test@amazonses.heisenberg.co'
+			}
+		}); */
 
 		anal.send('exception', {
 			exDescription: exception
