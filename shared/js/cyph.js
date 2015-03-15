@@ -48,10 +48,7 @@ function errorLog (subject, shouldIncludeBootstrapText) {
 			;
 		}
 
-		/* Strip URL fragment where applicable */
-		exception	= (exception || '').replace(/#.*/g, '');
-
-		var message		= exception +
+		var message		= (exception || '') +
 			'\n\n' + navigator.userAgent +
 			'\n\n' + navigator.language +
 			'\n\n' + (typeof language == 'undefined' ? '' : language) +
@@ -62,6 +59,9 @@ function errorLog (subject, shouldIncludeBootstrapText) {
 					webSign.toString(shouldIncludeBootstrapText)
 			)
 		;
+
+		/* Strip URL fragment where applicable */
+		message	= message.replace(/#.*/g, '');
 
 		$.ajax({
 			type: 'POST',
