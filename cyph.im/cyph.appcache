@@ -2,7 +2,7 @@ CACHE MANIFEST
 
 CACHE:
 cyph.appcache
-index.html
+/
 websign/css/loading.css
 websign/js/cryptoInit.js
 websign/js/webSignPublicKeys.js
