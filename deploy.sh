@@ -107,14 +107,14 @@ else
 
 		echo 'WebSign'
 
-		# Merge in base64'd images and audio
-		find img audio -type f -print0 | while read -d $'\0' f ; do
+		# Merge in base64'd images, audio, and fonts
+		find img audio css/fonts -type f -print0 | while read -d $'\0' f ; do
 			for g in index.html js/*.js css/*.css ; do
 				if ( grep -o "$f" $g ) ; then
 					dataURI="data:$(echo -n "$(file --mime-type "$f")" | perl -pe 's/.*\s+(.*?)$/\1/g');base64,$(base64 "$f")"
 
-					sed -i.bak "s|/$f|$dataURI|g" $g
-					rm $g.bak
+					cat $g | sed "s|/$f|$dataURI|g" > $g.new
+					mv $g.new $g
 				fi
 			done
 		done
