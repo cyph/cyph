@@ -518,8 +518,12 @@ function ratchetChannels (channelDescriptor) {
 		shouldUseOldChannel	= true;
 
 		channelDescriptor	= channelDescriptor || getChannelDescriptor();
-		channel				= new Channel(channelDescriptor, {onmessage: receiveChannelData});
-		sendChannelData({Misc: CHANNEL_RATCHET_PREFIX + channelDescriptor});
+		channel				= new Channel(channelDescriptor, {
+			onopen: function () {
+				sendChannelData({Misc: CHANNEL_RATCHET_PREFIX + channelDescriptor});
+			},
+			onmessage: receiveChannelData
+		});
 	}
 }
 
