@@ -3,7 +3,8 @@ var preConnectMessageReceiveQueue	= [];
 var preConnectMessageSendQueue		= [];
 var otrWorkerOnMessageQueue			= [];
 
-var isAlive	= false;
+var isAlive			= false;
+var useOldChannel	= true;
 
 var CHANNEL_DATA_PREFIX		= 'CHANNEL DATA: ';
 var CHANNEL_RATCHET_PREFIX	= 'CHANNEL RATCHET: ';
@@ -372,7 +373,7 @@ function setUpWebRTC (isInitiator) {
 
 
 function channelSend () {
-	var c	= (oldChannel && oldChannel.isAlive()) ?
+	var c	= (useOldChannel && oldChannel && oldChannel.isAlive()) ?
 		oldChannel :
 		channel
 	;
@@ -497,33 +498,27 @@ function setUpChannel (channelDescriptor) {
 
 
 /*
-	Alice: create new channel, send descriptor over old channel
-	Bob: join new channel, ack descriptor over old channel
-	Alice: destroy old channel, inform of destruction over new channel
-	Bob: destroy old channel
+	Alice: create new channel, send descriptor over old channel, destroy old-old channel
+	Bob: join new channel, ack descriptor over old channel, destroy old-old channel
+	Alice: deprecate old channel, inform of deprecation over new channel
+	Bob: deprecation old channel
 */
 
 function ratchetChannels (channelDescriptor) {
-	if (oldChannel) {
-		if (channelDescriptor) {
-			setTimeout(function () {
-				oldChannel.close(function () {
-					sendChannelData({Misc: CHANNEL_RATCHET_PREFIX});
-				});
+	if (useOldChannel) {
+		useOldChannel	= false;
 
-				oldChannel	= null;
-			}, 60000);
-		}
-		else {
-			oldChannel	= null;
+		if (channelDescriptor) {
+			sendChannelData({Misc: CHANNEL_RATCHET_PREFIX});
 		}
 	}
 	else {
+		oldChannel && oldChannel.close();
+		oldChannel		= channel;
+		useOldChannel	= true;
+
 		channelDescriptor	= channelDescriptor || getChannelDescriptor();
-
-		oldChannel	= channel;
-		channel		= new Channel(channelDescriptor, {onmessage: receiveChannelData});
-
+		channel				= new Channel(channelDescriptor, {onmessage: receiveChannelData});
 		sendChannelData({Misc: CHANNEL_RATCHET_PREFIX + channelDescriptor});
 	}
 }
