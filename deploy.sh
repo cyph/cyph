@@ -68,13 +68,14 @@ done
 # Cache bust
 echo "Cache bust"
 find shared ! -wholename '*websign*' -type f -print0 | while read -d $'\0' f ; do
-	safeF=$(echo "$f" | sed 's/shared\///g' | sed 's/\//\\\//g' | sed 's/ /\\ /g' | sed 's/\_/\\_/g')
+	f="$(echo "$f" | sed 's/shared\///g')"
+	safeF="$(echo "$f" | sed 's/\//\\\//g' | sed 's/ /\\ /g' | sed 's/\_/\\_/g')"
 
 	for d in cyph.com ; do
 		cd $d
 
 		for g in index.html js/*.js css/*.css ; do
-			if ( grep -o $safeF $g ) ; then
+			if ( grep -o "$safeF" $g ) ; then
 				cat $g | perl -pe "s/(\\/$safeF)/\1?`md5 "$f" | perl -pe 's/.* = //g'`/g" > $g.new
 				mv $g.new $g
 			fi
@@ -109,7 +110,7 @@ else
 		# Merge in base64'd images and audio
 		find img audio -type f -print0 | while read -d $'\0' f ; do
 			for g in index.html js/*.js css/*.css ; do
-				if ( grep -o $f $g ) ; then
+				if ( grep -o "$f" $g ) ; then
 					dataURI="data:$(echo -n "$(file --mime-type "$f")" | perl -pe 's/.*\s+(.*?)$/\1/g');base64,$(base64 "$f")"
 
 					sed "s|/$f|$dataURI|g" > $g.new
