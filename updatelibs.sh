@@ -37,15 +37,9 @@ bower install --save \
 	rubycon/isaac.js
 	# openpgp
 
-wget http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/sha512.js
 wget http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/hmac-sha256.js
 
-mkdir openpgp
-cd openpgp
-wget "https://raw.githubusercontent.com/openpgpjs/openpgpjs/master/dist/openpgp.min.js"
-wget "https://raw.githubusercontent.com/openpgpjs/openpgpjs/master/dist/openpgp.worker.min.js"
-
-cd ../../..
+cd ../..
 ./sassupdate.sh
 
 cd "${dir}"
