@@ -3,8 +3,8 @@ var preConnectMessageReceiveQueue	= [];
 var preConnectMessageSendQueue		= [];
 var otrWorkerOnMessageQueue			= [];
 
-var isAlive			= false;
-var useOldChannel	= true;
+var isAlive				= false;
+var shouldUseOldChannel	= false;
 
 var CHANNEL_DATA_PREFIX		= 'CHANNEL DATA: ';
 var CHANNEL_RATCHET_PREFIX	= 'CHANNEL RATCHET: ';
@@ -373,7 +373,7 @@ function setUpWebRTC (isInitiator) {
 
 
 function channelSend () {
-	var c	= (useOldChannel && oldChannel && oldChannel.isAlive()) ?
+	var c	= (shouldUseOldChannel && oldChannel && oldChannel.isAlive()) ?
 		oldChannel :
 		channel
 	;
@@ -505,8 +505,8 @@ function setUpChannel (channelDescriptor) {
 */
 
 function ratchetChannels (channelDescriptor) {
-	if (useOldChannel) {
-		useOldChannel	= false;
+	if (shouldUseOldChannel) {
+		shouldUseOldChannel	= false;
 
 		if (channelDescriptor) {
 			sendChannelData({Misc: CHANNEL_RATCHET_PREFIX});
@@ -514,8 +514,8 @@ function ratchetChannels (channelDescriptor) {
 	}
 	else {
 		oldChannel && oldChannel.close();
-		oldChannel		= channel;
-		useOldChannel	= true;
+		oldChannel			= channel;
+		shouldUseOldChannel	= true;
 
 		channelDescriptor	= channelDescriptor || getChannelDescriptor();
 		channel				= new Channel(channelDescriptor, {onmessage: receiveChannelData});
