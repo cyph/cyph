@@ -283,7 +283,7 @@ function makeWorker (f, vars) {
 		worker	= new Worker(URL.createObjectURL(blob));
 	}
 	catch (e) {
-		worker	= new Worker('websign/js/workerHelper.js');
+		worker	= new Worker('/websign/js/workerHelper.js');
 		worker.postMessage(s);
 	}
 
