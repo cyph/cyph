@@ -113,7 +113,7 @@ else
 				if ( grep -o "$f" $g ) ; then
 					dataURI="data:$(echo -n "$(file --mime-type "$f")" | perl -pe 's/.*\s+(.*?)$/\1/g');base64,$(base64 "$f")"
 
-					sed -i.bak "s|/$f|$dataURI|g"
+					sed -i.bak "s|/$f|$dataURI|g" $g
 					rm $g.bak
 				fi
 			done
