@@ -135,7 +135,7 @@ else
 		git clean -f
 		git pull
 
-		cp -f websign/$d.pkg websign/
+		cp -f $currentDir/$d.pkg websign/
 
 		HASH_TTL=3944620 # 1.5 months
 		echo "\
