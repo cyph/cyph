@@ -68,7 +68,7 @@ done
 # Cache bust
 echo "Cache bust"
 find shared ! -wholename '*websign*' -type f -print0 | while read -d $'\0' f ; do
-	safeF=$(echo "$f" | sed 's/\.\/shared\///g' | sed 's/\//\\\//g' | sed 's/ /\\ /g' | sed 's/\_/\\_/g')
+	safeF=$(echo "$f" | sed 's/shared\///g' | sed 's/\//\\\//g' | sed 's/ /\\ /g' | sed 's/\_/\\_/g')
 
 	for d in cyph.com ; do
 		cd $d
