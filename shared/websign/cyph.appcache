@@ -9,8 +9,7 @@ CACHE:
 /websign/lib/sha512.js
 /websign/lib/openpgp/openpgp.min.js
 /websign/lib/openpgp/openpgp.worker.min.js
-/websign/lib/lzma-d-min.js
-/websign/websign.appcache
+/websign/cyph.appcache
 
 NETWORK:
 *
