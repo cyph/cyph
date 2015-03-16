@@ -6,6 +6,8 @@
 
 > Superscript (`<sup>`) tag plugin for [markdown-it](https://github.com/markdown-it/markdown-it) markdown parser.
 
+__v1.+ requires `markdown-it` v4.+, see changelog.__
+
 `29^th^` => `29<sup>th</sup>`
 
 Markup is based on [pandoc](http://johnmacfarlane.net/pandoc/README.html#superscripts-and-subscripts) definition. But nested markup is currently not supported.
@@ -26,7 +28,7 @@ bower install markdown-it-sup --save
 var md = require('markdown-it')()
             .use(require('markdown-it-sup'));
 
-md.render('29^th') // => '<p>29<sup>th</sup></p>'
+md.render('29^th^') // => '<p>29<sup>th</sup></p>'
 ```
 
 _Differences in browser._ If you load script directly into the page, without
