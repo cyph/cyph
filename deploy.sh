@@ -136,7 +136,6 @@ else
 		git pull
 
 		cp -f websign/$d.pkg websign/
-		lzma -ek websign/$d.pkg
 
 		HASH_TTL=3944620 # 1.5 months
 		echo "\
