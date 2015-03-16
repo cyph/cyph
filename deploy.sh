@@ -46,21 +46,9 @@ fi
 ls */*.yaml | xargs -I% sed -i.bak "s/version: master/version: ${branch}/g" %
 
 
+# Translate + minify
 for d in cyph.im cyph.com ; do
 	cd $d
-
-	# Cache bust
-	echo "Cache bust ${d}"
-	find . ! -wholename '*websign*' -type f -print0 | while read -d $'\0' f ; do
-		safeF=$(echo "$f" | sed 's/\.\///g' | sed 's/\//\\\//g' | sed 's/ /\\ /g' | sed 's/\_/\\_/g')
-
-		for g in index.html js/*.js css/*.css ; do
-			if ( grep -o $safeF $g ) ; then
-				cat $g | perl -pe "s/(\\/$safeF)/\1?`md5 "$f" | perl -pe 's/.* = //g'`/g" > $g.new
-				mv $g.new $g
-			fi
-		done
-	done
 
 	../translate.py
 
@@ -75,6 +63,25 @@ for d in cyph.im cyph.com ; do
 	fi
 
 	cd ..
+done
+
+# Cache bust
+echo "Cache bust"
+find shared ! -wholename '*websign*' -type f -print0 | while read -d $'\0' f ; do
+	safeF=$(echo "$f" | sed 's/\.\///g' | sed 's/\//\\\//g' | sed 's/ /\\ /g' | sed 's/\_/\\_/g')
+
+	for d in cyph.com ; do
+		cd $d
+
+		for g in index.html js/*.js css/*.css ; do
+			if ( grep -o $safeF $g ) ; then
+				cat $g | perl -pe "s/(\\/$safeF)/\1?`md5 "$f" | perl -pe 's/.* = //g'`/g" > $g.new
+				mv $g.new $g
+			fi
+		done
+
+		cd ..
+	done
 done
 
 
@@ -99,6 +106,20 @@ else
 
 		echo 'WebSign'
 
+		# Merge in base64'd images and audio
+		find img audio -type f -print0 | while read -d $'\0' f ; do
+			safeF=$(echo "$f" | sed 's/\.\///g' | sed 's/\//\\\//g' | sed 's/ /\\ /g' | sed 's/\_/\\_/g')
+
+			for g in index.html js/*.js css/*.css ; do
+				if ( grep -o $safeF $g ) ; then
+					dataURI="data:$(echo -n "$(file --mime-type "$f")" | perl -pe 's/.*\s+(.*?)$/\1/g');base64,$(base64 "$f")"
+
+					cat $g | perl -pe "s/\\/$safeF/$dataURI/g" > $g.new
+					mv $g.new $g
+				fi
+			done
+		done
+
 		# Merge imported libraries into Worker
 		../websignworkerpackager.js js/cryptoWebWorker.js
 
@@ -111,6 +132,7 @@ else
 		git clone git@github.com:cyph/cyph.github.io.git github.io
 		cd github.io
 		git reset --hard
+		git clean -f
 		git pull
 
 		cp -f $currentDir/$d.pkg websign/
@@ -141,21 +163,6 @@ find . -name '*.bak' | xargs rm
 
 
 if [ "${nobackend}" == '' ] ; then
-	cd default
-
-	mkdir -p github.com/gorilla
-	cd github.com/gorilla
-	git clone git://github.com/gorilla/mux.git
-	cd ../..
-
-	# mkdir -p github.com/oschwald
-	# cd github.com/oschwald
-	# git clone git://github.com/oschwald/maxminddb-golang.git
-	# git clone git://github.com/oschwald/geoip2-golang.git
-	# cd ../..
-
-	cd ..
-
 	# AWS credentials
 	cat ~/.config/cyph-jobs.vars >> jobs/jobs.yaml
 
