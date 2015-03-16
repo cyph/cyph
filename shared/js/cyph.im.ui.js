@@ -50,7 +50,7 @@ var markdown	= new markdownit({
 ;
 
 markdown.renderer.rules.emoji	= function(token, idx) {
-	return twemoji.parse(token[idx].to, {base: '/lib/bower_components/twemoji/'});
+	return twemoji.parse(token[idx].content, {base: '/lib/bower_components/twemoji/'});
 };
 
 
