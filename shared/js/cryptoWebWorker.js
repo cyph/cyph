@@ -40,7 +40,7 @@ function padMessageRemove (message) {
 	return decodeURIComponent(escape(atob(message))).split(paddingDelimiter)[1];
 }
 
-function importScriptsAndRetry () {
+window.importScriptsAndRetry	= function () {
 	var origin	= location.origin && location.origin != 'null' ?
 		location.origin :
 		'http://localhost:8082'
@@ -59,7 +59,7 @@ function importScriptsAndRetry () {
 			}
 		}
 	}
-}
+};
 
 
 onmessage	= function (e) { onmessageQueue.push(e) };
@@ -117,7 +117,7 @@ function eventLoop () {
 
 
 					if (typeof atob == 'undefined' || typeof btoa == 'undefined') {
-						importScriptsAndRetry('/lib/bower_components/base64/base64.min.js');
+						window.importScriptsAndRetry('/lib/bower_components/base64/base64.min.js');
 					}
 
 					if (typeof crypto == 'undefined') {
@@ -125,7 +125,7 @@ function eventLoop () {
 							crypto	= msCrypto;
 						}
 						else {
-							importScriptsAndRetry('/cryptolib/bower_components/isaac.js/isaac.js');
+							window.importScriptsAndRetry('/cryptolib/bower_components/isaac.js/isaac.js');
 							isaac.seed(e.data.message.randomSeed);
 							crypto	= {
 								getRandomValues: function (array) {
@@ -141,7 +141,7 @@ function eventLoop () {
 						}
 					}
 
-					importScriptsAndRetry('/cryptolib/bower_components/otr4-em/build/otr-web.js');
+					window.importScriptsAndRetry('/cryptolib/bower_components/otr4-em/build/otr-web.js');
 
 					var user	= new OTR.User().account('me', 'cyph');
 
