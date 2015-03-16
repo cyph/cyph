@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html manifest='cyph.im.appcache'>
+<html manifest='/websign/websign.appcache'>
 	<head>
 		<meta charset='utf-8' />
 		<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1' />
@@ -27,7 +27,7 @@
 		<meta name='msapplication-TileColor' content='#8b62d9' />
 		<meta name='msapplication-TileImage' content='/img/favicon/mstile-144x144.png' />
 
-		<link rel='stylesheet' href='websign/css/loading.css' />
+		<link rel='stylesheet' href='/websign/css/loading.css' />
 	</head>
 	<body>
 		<div id='pre-load'>
@@ -43,12 +43,13 @@
 			</div>
 		</div>
 
-		<script src='websign/js/cryptoInit.js'></script>
-		<script src='websign/js/webSignPublicKeys.js'></script>
+		<script src='/websign/js/cryptoInit.js'></script>
+		<script src='/websign/js/webSignPublicKeys.js'></script>
 
-		<script src='websign/lib/sha512.js'></script>
-		<script src='websign/lib/openpgp/openpgp.min.js'></script>
-		<script> openpgp.initWorker('websign/lib/openpgp/openpgp.worker.min.js') </script>
+		<script src='/websign/lib/sha512.js'></script>
+		<script src='/websign/lib/openpgp/openpgp.min.js'></script>
+		<script> openpgp.initWorker('/websign/lib/openpgp/openpgp.worker.min.js') </script>
+		<script src='/websign/lib/lzma-d-min.js'></script>
 
 		<script>(function () {
 			window.webSign	= {};
@@ -58,15 +59,16 @@
 			/* Detect if WebSign bootstrap has changed */
 
 			var WEBSIGN_FILES	= [
-				'cyph.im.appcache',
 				'/',
-				'websign/css/loading.css',
-				'websign/js/cryptoInit.js',
-				'websign/js/webSignPublicKeys.js',
-				'websign/js/workerHelper.js',
-				'websign/lib/sha512.js',
-				'websign/lib/openpgp/openpgp.min.js',
-				'websign/lib/openpgp/openpgp.worker.min.js'
+				'/websign/css/loading.css',
+				'/websign/js/cryptoInit.js',
+				'/websign/js/webSignPublicKeys.js',
+				'/websign/js/workerHelper.js',
+				'/websign/lib/sha512.js',
+				'/websign/lib/openpgp/openpgp.min.js',
+				'/websign/lib/openpgp/openpgp.worker.min.js',
+				'/websign/lib/lzma-d-min.js',
+				'/websign/websign.appcache'
 			];
 
 			webSign.getBootstrapText	= function () {
@@ -117,7 +119,7 @@
 			var DEFAULT_CONTINENT	= isOnion ? '' : 'eu';
 			var CDN_URL_BASE		= isOnion ? '/cdn/websign/' : '.cdn.cyph.com/websign/';
 			var HASH_PATH			= 'cyph.im.hash2?';
-			var PACKAGE_PATH		= 'cyph.im.pkg?';
+			var PACKAGE_PATH		= 'cyph.im.pkg.lzma?';
 
 
 
@@ -127,14 +129,25 @@
 				document.location.href	= (isOnion ? '' : 'https://www.cyph.com') + '/404';
 			}
 
-			function request (url, callback, errorHandler, retries) {
+			function request (url, callback, errorHandler, isLzma, retries) {
 				var req		= new XMLHttpRequest();
 				req.open('get', url, true);
+
+				if (isLzma) {
+					req.responseType	= 'arraybuffer';
+				}
 
 				req.onreadystatechange = function () {
 					if (req.readyState == 4) {
 						if (req.status == 200) {
-							callback(req.responseText);
+							if (isLzma) {
+								LZMA.decompress(new Uint8Array(req.response), function (data) {
+									callback(data);
+								});
+							}
+							else {
+								callback(req.responseText);
+							}
 						}
 						else {
 							retries	= retries || 0;
@@ -148,7 +161,7 @@
 								}
 							}
 							else {
-								request(url, callback, errorHandler, retries + 1);
+								request(url, callback, errorHandler, isLzma, retries + 1);
 							}
 						}
 					}
@@ -176,7 +189,7 @@
 						else {
 							errorHandler();
 						}
-					}, errorHandler);
+					}, errorHandler, true);
 				}
 				/* Hash is bad or outdated */
 				else {
