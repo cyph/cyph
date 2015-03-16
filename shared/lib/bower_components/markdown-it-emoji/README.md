@@ -2,9 +2,11 @@
 
 [![Build Status](https://img.shields.io/travis/markdown-it/markdown-it-emoji/master.svg?style=flat)](https://travis-ci.org/markdown-it/markdown-it-emoji)
 [![NPM version](https://img.shields.io/npm/v/markdown-it-emoji.svg?style=flat)](https://www.npmjs.org/package/markdown-it-emoji)
-[![Coverage Status](https://img.shields.io/coveralls/markdown-it/markdown-it-emoji/master.svg?style=flat)](https://coveralls.io/r/markdown-it/markdown-it-emoji?branch=dev)
+[![Coverage Status](https://img.shields.io/coveralls/markdown-it/markdown-it-emoji/master.svg?style=flat)](https://coveralls.io/r/markdown-it/markdown-it-emoji?branch=master)
 
 > Plugin for [markdown-it](https://github.com/markdown-it/markdown-it) markdown parser, adding emoji & emoticon syntax support.
+
+__v1.+ requires `markdown-it` v4.+, see changelog.__
 
 Two versions:
 
@@ -65,7 +67,7 @@ Render as span blocks (for example, to use custom iconic font):
 // initialize
 
 md.renderer.rules.emoji = function(token, idx) {
-  return '<span class="emoji emoji_' + token[idx].name + '></span>';
+  return '<span class="emoji emoji_' + token[idx].markup + '"></span>';
 };
 ```
 
@@ -78,7 +80,7 @@ Or use [twemoji](https://github.com/twitter/twemoji):
 var twemoji = require('twemoji')
 
 md.renderer.rules.emoji = function(token, idx) {
-  return twemoji.parse(token[idx].to);
+  return twemoji.parse(token[idx].content);
 };
 ```
 

@@ -25,15 +25,15 @@
     "Makefile",
     "index*"
   ],
-  "version": "0.1.0",
-  "_release": "0.1.0",
+  "version": "1.0.0",
+  "_release": "1.0.0",
   "_resolution": {
     "type": "version",
-    "tag": "0.1.0",
-    "commit": "ef019a202a34d82cdee0af67c69e160b86bfcf03"
+    "tag": "1.0.0",
+    "commit": "2b34a1526e88dfde5ec47fdd35dfa84f4e198abb"
   },
   "_source": "git://github.com/markdown-it/markdown-it-sup.git",
-  "_target": "~0.1.0",
+  "_target": "~1.0.0",
   "_originalSource": "markdown-it-sup",
   "_direct": true
 }
