@@ -67,7 +67,7 @@ done
 
 # Cache bust
 echo "Cache bust"
-find shared ! -wholename '*websign*' -type f -print0 | while read -d $'\0' f ; do
+find shared ! -wholename '*fonts/*' ! -wholename '*twemoji*' ! -wholename '*websign*' -type f -print0 | while read -d $'\0' f ; do
 	f="$(echo "$f" | sed 's/shared\///g')"
 	safeF="$(echo "$f" | sed 's/\//\\\//g' | sed 's/ /\\ /g' | sed 's/\_/\\_/g')"
 
