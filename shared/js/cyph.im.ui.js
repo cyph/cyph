@@ -79,6 +79,7 @@ angular.
 		$scope.unreadMessages	= 0;
 		$scope.authors			= authors;
 		$scope.copyUrl			= '';
+		$scope.copyUrlEncoded	= '';
 		$scope.isOnion			= isOnion;
 
 		$scope.webSignHashes	= encodeURIComponent(
@@ -235,7 +236,8 @@ angular.
 			function setCopyUrl () {
 				if ($scope.copyUrl != copyUrl) {
 					apply(function () {
-						$scope.copyUrl	= copyUrl;
+						$scope.copyUrl			= copyUrl;
+						$scope.copyUrlEncoded	= encodeURIComponent(copyUrl);
 					});
 				}
 			}
@@ -382,13 +384,22 @@ angular.
 			$buttons.find('input[type="file"]').each(function () {
 				var elem	= this;
 
+				var isClicked;
+
 				$(this).click(function (e) {
 					e.stopPropagation();
 					e.preventDefault();
 				}).parent().click(function () {
-					var e	= document.createEvent('MouseEvents');
-					e.initEvent('click', true, false);
-					elem.dispatchEvent(e);
+					if (!isClicked) {
+						isClicked	= true;
+						var e	= document.createEvent('MouseEvents');
+						e.initEvent('click', true, false);
+						elem.dispatchEvent(e);
+
+						setTimeout(function () {
+							isClicked	= false;
+						}, 500);
+					}
 				});
 			});
 		});
@@ -828,6 +839,9 @@ angular.
 				"IE doesn't work very well with Cyph (or in general).\n\nYou have been warned."
 			);
 		}
+	}]).
+	config(['$compileProvider', function ($compileProvider) {
+		$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|sms):/);
 	}]).
 	directive('ngMarkdown', function () {
 		return {
