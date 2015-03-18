@@ -249,7 +249,8 @@ $(function () {
 
 		$this.css('pointer-events', 'none');
 
-		$button.click(function () {
+		/* Using mouseup instead of click because of Angular Material weirdness */
+		$button.on('mouseup', function () {
 			$this[0].click();
 		});
 	});

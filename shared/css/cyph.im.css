@@ -18,7 +18,7 @@ html:not(.mobile) #desktop-sidebar .md-fab, html:not(.mobile) #message-wrapper .
   width: 42px; }
   html:not(.mobile) #desktop-sidebar .md-fab img, html:not(.mobile) #message-wrapper .md-fab img, #copy-url-mobile .md-fab img {
     height: 80%;
-    margin-top: 10%; }
+    vertical-align: middle; }
 html:not(.mobile) #desktop-sidebar .md-button.focus, html:not(.mobile) #desktop-sidebar .md-button:hover, html:not(.mobile) #message-wrapper .md-button.focus, html:not(.mobile) #message-wrapper .md-button:hover, #copy-url-mobile .md-button.focus, #copy-url-mobile .md-button:hover {
   background-color: #7239dd !important; }
 
