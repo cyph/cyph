@@ -14,19 +14,29 @@ html:not(.mobile) {
 		padding-right: 20px;
 	}
 
-	#desktop-sidebar, #message-wrapper {
-		.md-button {
-			color: #444;
-			background-color: #7d4fd3 !important;
-		}
+	.md-button img {
+		height: 100%;
+	}
+}
 
-		.md-button.focus, .md-button:hover {
-			background-color: #7239dd !important;
+html:not(.mobile) #desktop-sidebar, html:not(.mobile) #message-wrapper, #copy-url-mobile {
+	.md-button {
+		color: #444;
+		background-color: #7d4fd3 !important;
+	}
+
+	.md-fab {
+		height: 42px;
+		width: 42px;
+
+		img {
+			height: 80%;
+			margin-top: 10%;
 		}
 	}
 
-	.md-button img {
-		height: 100%;
+	.md-button.focus, .md-button:hover {
+		background-color: #7239dd !important;
 	}
 }
 
@@ -90,12 +100,6 @@ html.mobile {
 	position: absolute;
 	top: 9px;
 	right: 29px;
-	height: 42px;
-	width: 42px;
-
-	img {
-		height: 80%;
-	}
 }
 .md-button input[type='file'] {
 	display: none;
@@ -481,6 +485,11 @@ html:not(.mobile) {
 	display: block;
 	font-size: 130%;
 	word-wrap: break-word;
+}
+
+#copy-url-mobile .divider {
+	width: 21px;
+	display: inline-block;
 }
 
 
