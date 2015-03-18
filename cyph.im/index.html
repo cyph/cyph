@@ -123,10 +123,30 @@
 					<input ng-model='copyUrl' />
 				</md-input-container>
 
-				<div class='mobile-only'>
+				<div id='copy-url-mobile' class='mobile-only'>
 					<a id='copy-url-link' ng-href='{{copyUrl}}'>{{copyUrl}}</a>
 					<br />
-					<div translate>(Hold the link and hit copy.)</div>
+					<div>
+						<md-button
+							translate
+							class='md-fab'
+							aria-label='SMS'
+						>
+							<img deferred-src='/img/icons/sms.png' />
+							<a ng-href='sms:?body={{copyUrl}}'></a>
+						</md-button>
+
+						<span class='divider'>&nbsp;</span>
+
+						<md-button
+							translate
+							class='md-fab'
+							aria-label='Email'
+						>
+							<img deferred-src='/img/icons/email.png' />
+							<a ng-href='mailto:?body={{copyUrl}}'></a>
+						</md-button>
+					</div>
 				</div>
 
 				<br />

@@ -7,13 +7,20 @@ html:not(.mobile) #main {
   padding: 10px;
   padding-left: 200px;
   padding-right: 20px; }
-html:not(.mobile) #desktop-sidebar .md-button, html:not(.mobile) #message-wrapper .md-button {
-  color: #444;
-  background-color: #7d4fd3 !important; }
-html:not(.mobile) #desktop-sidebar .md-button.focus, html:not(.mobile) #desktop-sidebar .md-button:hover, html:not(.mobile) #message-wrapper .md-button.focus, html:not(.mobile) #message-wrapper .md-button:hover {
-  background-color: #7239dd !important; }
 html:not(.mobile) .md-button img {
   height: 100%; }
+
+html:not(.mobile) #desktop-sidebar .md-button, html:not(.mobile) #message-wrapper .md-button, #copy-url-mobile .md-button {
+  color: #444;
+  background-color: #7d4fd3 !important; }
+html:not(.mobile) #desktop-sidebar .md-fab, html:not(.mobile) #message-wrapper .md-fab, #copy-url-mobile .md-fab {
+  height: 42px;
+  width: 42px; }
+  html:not(.mobile) #desktop-sidebar .md-fab img, html:not(.mobile) #message-wrapper .md-fab img, #copy-url-mobile .md-fab img {
+    height: 80%;
+    margin-top: 10%; }
+html:not(.mobile) #desktop-sidebar .md-button.focus, html:not(.mobile) #desktop-sidebar .md-button:hover, html:not(.mobile) #message-wrapper .md-button.focus, html:not(.mobile) #message-wrapper .md-button:hover, #copy-url-mobile .md-button.focus, #copy-url-mobile .md-button:hover {
+  background-color: #7239dd !important; }
 
 input, textarea {
   border-radius: 0px; }
@@ -58,11 +65,7 @@ html.mobile #message-box:focus ~ #new-messages {
 #insert-photo-desktop {
   position: absolute;
   top: 9px;
-  right: 29px;
-  height: 42px;
-  width: 42px; }
-  #insert-photo-desktop img {
-    height: 80%; }
+  right: 29px; }
 
 .md-button input[type='file'] {
   display: none; }
@@ -357,6 +360,10 @@ html:not(.mobile) .loading {
   display: block;
   font-size: 130%;
   word-wrap: break-word; }
+
+#copy-url-mobile .divider {
+  width: 21px;
+  display: inline-block; }
 
 #new-messages {
   background-color: white !important;
