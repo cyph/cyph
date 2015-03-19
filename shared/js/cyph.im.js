@@ -133,6 +133,10 @@ function otrWorkerOnMessageHandler (e) {
 			markAllAsSent();
 			pingPong();
 
+			if (webRTC.isSupported) {
+				sendWebRTCDataToPeer();
+			}
+
 			/* Ratchet channels every 10 - 20 minutes */
 			if (e.data.message) {
 				function ratchetLoop () {
@@ -285,7 +289,6 @@ var SessionDescription	= window.mozRTCSessionDescription || window.RTCSessionDes
 navigator.getUserMedia	= navigator.getUserMedia || navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
 
 var webRTC	= {
-	channel: null,
 	peer: null,
 
 	isAvailable: false,
@@ -293,46 +296,31 @@ var webRTC	= {
 	isSupported: !!PeerConnection,
 
 	addIceCandidate: function (candidate) {
-		webRTC.peer.addIceCandidate(new IceCandidate(JSON.parse(candidate)));
-	},
-
-	bindChannelEvents: function () {
-		webRTC.channel.onopen		= function () {
-			webRTC.isAvailable	= true;
-			console.log('WebRTC Channel Open');
-		};
-
-		webRTC.channel.onmessage	= function (e) {
-			console.log(e.data);
-		};
+		if (webRTC.isAvailable) {
+			webRTC.peer.addIceCandidate(new IceCandidate(JSON.parse(candidate)));
+		}
+		else {
+			setTimeout(function () {
+				webRTC.addIceCandidate(candidate);
+			}, 500);
+		}
 	},
 
 	receiveAnswer: function (answer) {
 		webRTC.peer.setRemoteDescription(new SessionDescription(JSON.parse(answer)));
+		webRTC.isAvailable	= true;
 	},
 
 	receiveOffer: function (offer) {
-		setUpWebRTC(false);
-
-		webRTC.peer.ondatachannel = function (e) {
-			webRTC.channel	= e.channel;
-			webRTC.bindChannelEvents();
-		};
-
-		webRTC.peer.setRemoteDescription(new SessionDescription(JSON.parse(offer)));
-
-		webRTC.peer.createAnswer(function (answer) {
-			webRTC.peer.setLocalDescription(answer);
-			sendWebRTCDataToPeer({receiveAnswer: JSON.stringify(answer)});
-		});
+		setUpWebRTC(offer);
 	}
 };
 
 function sendWebRTCDataToPeer (o) {
-	sendChannelData({Misc: WEBRTC_DATA_PREFIX + JSON.stringify(o)});
+	sendChannelData({Misc: WEBRTC_DATA_PREFIX + (o ? JSON.stringify(o) : '')});
 }
 
-function setUpWebRTC (isInitiator) {
+function setUpWebRTC (opt_offer) {
 	if (!webRTC.isSupported) {
 		return;
 	}
@@ -358,16 +346,30 @@ function setUpWebRTC (isInitiator) {
 		}
 	};
 
-	if (isInitiator !== false) {
-		webRTC.channel	= webRTC.peer.createDataChannel('subspace', {});
+	webRTC.peer.onaddstream	= function (e) {
+		$('#video-call')[0].src	= URL.createObjectURL(e.stream);
+	};
 
-		webRTC.bindChannelEvents();
+	navigator.getUserMedia({video: true, audio: true}, function (stream) {
+		webRTC.peer.addStream(stream);
 
-		webRTC.peer.createOffer(function (offer) {
-			webRTC.peer.setLocalDescription(offer);
-			sendWebRTCDataToPeer({receiveOffer: JSON.stringify(offer)});
-		});
-	}
+		if (!opt_offer) {
+			webRTC.peer.createOffer(function (offer) {
+				webRTC.peer.setLocalDescription(offer);
+				sendWebRTCDataToPeer({receiveOffer: JSON.stringify(offer)});
+			});
+		}
+		else {
+			webRTC.peer.setRemoteDescription(new SessionDescription(JSON.parse(opt_offer)));
+
+			webRTC.peer.createAnswer(function (answer) {
+				webRTC.peer.setLocalDescription(answer);
+				sendWebRTCDataToPeer({receiveAnswer: JSON.stringify(answer)});
+
+				webRTC.isAvailable	= true;
+			});
+		}
+	}, function () {});
 }
 
 
@@ -442,11 +444,18 @@ function receiveChannelDataHandler (o) {
 			friendIsTyping(false);
 		}
 		else if (o.Misc && o.Misc.indexOf(WEBRTC_DATA_PREFIX) == 0) {
-			var webRTCData	= JSON.parse(o.Misc.split(WEBRTC_DATA_PREFIX)[1]);
-			var key			= Object.keys(webRTCData)[0];
+			var webRTCDataString	= o.Misc.split(WEBRTC_DATA_PREFIX)[1];
 
-			if (webRTC[key]) {
-				webRTC[key](webRTCData[key]);
+			if (webRTCDataString) {
+				var webRTCData	= JSON.parse(o.Misc.split(WEBRTC_DATA_PREFIX)[1]);
+				var key			= Object.keys(webRTCData)[0];
+
+				if (webRTC[key]) {
+					webRTC[key](webRTCData[key]);
+				}
+			}
+			else if (webRTC.isSupported) {
+				enableWebRTC();
 			}
 		}
 		else if (o.Misc && o.Misc.indexOf(CHANNEL_RATCHET_PREFIX) == 0) {
