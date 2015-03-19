@@ -10,17 +10,17 @@ html:not(.mobile) #main {
 html:not(.mobile) .md-button img {
   height: 100%; }
 
-html:not(.mobile) #desktop-sidebar .md-button, html:not(.mobile) #message-wrapper .md-button, #copy-url-mobile .md-button {
+html:not(.mobile) #desktop-sidebar .md-button:not([disabled="disabled"]), html:not(.mobile) #message-wrapper .md-button:not([disabled="disabled"]), #copy-url-mobile .md-button:not([disabled="disabled"]) {
   color: #444;
   background-color: #7d4fd3 !important; }
+  html:not(.mobile) #desktop-sidebar .md-button:not([disabled="disabled"]).focus, html:not(.mobile) #desktop-sidebar .md-button:not([disabled="disabled"]):hover, html:not(.mobile) #message-wrapper .md-button:not([disabled="disabled"]).focus, html:not(.mobile) #message-wrapper .md-button:not([disabled="disabled"]):hover, #copy-url-mobile .md-button:not([disabled="disabled"]).focus, #copy-url-mobile .md-button:not([disabled="disabled"]):hover {
+    background-color: #7239dd !important; }
 html:not(.mobile) #desktop-sidebar .md-fab, html:not(.mobile) #message-wrapper .md-fab, #copy-url-mobile .md-fab {
   height: 42px;
   width: 42px; }
   html:not(.mobile) #desktop-sidebar .md-fab img, html:not(.mobile) #message-wrapper .md-fab img, #copy-url-mobile .md-fab img {
     height: 80%;
     vertical-align: middle; }
-html:not(.mobile) #desktop-sidebar .md-button.focus, html:not(.mobile) #desktop-sidebar .md-button:hover, html:not(.mobile) #message-wrapper .md-button.focus, html:not(.mobile) #message-wrapper .md-button:hover, #copy-url-mobile .md-button.focus, #copy-url-mobile .md-button:hover {
-  background-color: #7239dd !important; }
 
 input, textarea {
   border-radius: 0px; }
@@ -281,6 +281,14 @@ html.mobile .message-item.author-app {
   -moz-animation: inkRippleCheckbox 0.35s linear 0s 1 normal;
   animation: inkRippleCheckbox 0.35s linear 0s 1 normal; }
 
+html:not(.mobile) .video-call-start {
+  margin-left: 33px;
+  margin-right: 10px;
+  margin-top: 10px; }
+
+#video-call:not([src]) {
+  display: none; }
+
 #desktop-sidebar {
   position: absolute;
   top: 0px;
@@ -294,7 +302,7 @@ html.mobile .message-item.author-app {
     margin: 0px auto;
     margin-bottom: 50px;
     display: block; }
-  #desktop-sidebar .md-button {
+  #desktop-sidebar .md-button:not(.md-fab), #desktop-sidebar .md-fab[disabled="disabled"] {
     font-size: 14px;
     width: 100%;
     margin-bottom: 10px;

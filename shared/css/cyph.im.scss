@@ -20,9 +20,13 @@ html:not(.mobile) {
 }
 
 html:not(.mobile) #desktop-sidebar, html:not(.mobile) #message-wrapper, #copy-url-mobile {
-	.md-button {
+	.md-button:not([disabled="disabled"]) {
 		color: #444;
 		background-color: #7d4fd3 !important;
+
+		&.focus, &:hover {
+			background-color: #7239dd !important;
+		}
 	}
 
 	.md-fab {
@@ -33,10 +37,6 @@ html:not(.mobile) #desktop-sidebar, html:not(.mobile) #message-wrapper, #copy-ur
 			height: 80%;
 			vertical-align: middle;
 		}
-	}
-
-	.md-button.focus, .md-button:hover {
-		background-color: #7239dd !important;
 	}
 }
 
@@ -374,6 +374,19 @@ html.mobile {
 }
 
 
+html:not(.mobile) .video-call-start {
+	margin-left: 33px;
+	margin-right: 10px;
+	margin-top: 10px;
+}
+
+#video-call {
+	&:not([src]) {
+		display: none;
+	}
+}
+
+
 #desktop-sidebar {
 	position: absolute;
 	top: 0px;
@@ -390,7 +403,7 @@ html.mobile {
 		display: block;
 	}
 
-	.md-button {
+	.md-button:not(.md-fab), .md-fab[disabled="disabled"] {
 		font-size: 14px;
 		width: 100%;
 		margin-bottom: 10px;
