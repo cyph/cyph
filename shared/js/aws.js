@@ -17,7 +17,10 @@ AWS.config	= new AWS.Config({
 	apiVersions: {
 		ses: '2010-12-01',
 		sqs: '2012-11-05'
-	}
+	},
+
+	/* Workaround for TorBrowser issues */
+	signatureVersion: 'v2'
 });
 
 
