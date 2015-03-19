@@ -5,6 +5,7 @@ var
 	beginWaiting,
 	changeState,
 	closeChat,
+	enableWebRTC,
 	friendIsTyping,
 	warnWebSignObsolete,
 	insertPhoto,
@@ -81,6 +82,7 @@ angular.
 		$scope.copyUrl			= '';
 		$scope.copyUrlEncoded	= '';
 		$scope.isOnion			= isOnion;
+		$scope.webRTC			= false;
 
 		$scope.webSignHashes	= encodeURIComponent(
 			'Hello Ryan and Josh,\n\n\n\n\n\n---\n\n' +
@@ -315,6 +317,13 @@ angular.
 					abortSetup();
 				}
 			}
+		};
+
+
+		enableWebRTC = $scope.enableWebRTC = function () {
+			apply(function () {
+				$scope.webRTC	= true;
+			});
 		};
 
 
@@ -608,6 +617,11 @@ angular.
 					}, 3500);
 				}, 2500);
 			});
+		};
+
+
+		$scope.startVideoCall	= function () {
+			setUpWebRTC();
 		};
 
 

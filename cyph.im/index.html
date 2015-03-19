@@ -102,6 +102,24 @@
 					<a translate href='https://www.reddit.com/wiki/commenting/.compact#wiki_posting'>Formatting Help</a>
 				</md-button>
 				<md-button translate aria-label='Disconnect' ng-click='disconnect()'>Disconnect</md-button>
+
+				<md-button
+					translate
+					class='md-fab video-call-start'
+					aria-label='Video Call'
+					ng-disabled='!webRTC'
+					ng-click='startVideoCall()'
+				>
+					<img deferred-src='/img/icons/video.on.png' />
+				</md-button>
+				<md-button
+					translate
+					class='md-fab voice-call-start'
+					aria-label='Voice Call'
+					ng-disabled='!webRTC'
+				>
+					<img deferred-src='/img/icons/voice.on.png' />
+				</md-button>
 			</section>
 		</div>
 
@@ -244,6 +262,8 @@
 
 		<div id='message-list' ng-view flex class='nano' ng-class='{active: state == states.chat, "is-connected": isConnected}'>
 			<md-content class='nano-content'>
+				<video id='video-call' autoplay></video>
+
 				<md-list layout='column'>
 					<md-item
 						class='message-item unread'
