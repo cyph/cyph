@@ -652,6 +652,10 @@ html:not(.mobile) .formatting-help {
 		padding-left: 10%;
 		padding-right: 10%;
 	}
+
+	td {
+		padding-left: 20px;
+	}
 }
 html.mobile .formatting-help {
 	font-size: 75%;

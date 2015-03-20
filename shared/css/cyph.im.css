@@ -475,6 +475,8 @@ html:not(.mobile) #error {
 html:not(.mobile) .formatting-help md-content {
   padding-left: 10%;
   padding-right: 10%; }
+html:not(.mobile) .formatting-help td {
+  padding-left: 20px; }
 
 html.mobile .formatting-help {
   font-size: 75%; }
