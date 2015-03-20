@@ -33,7 +33,13 @@ if (!isLocalhost && !isOnion) {
 
 
 function errorLog (subject, shouldIncludeBootstrapText) {
+	var numEmails	= 0;
+
 	return function (errorMessage, url, line, column, errorObject) {
+		if (numEmails++ > 50) {
+			return;
+		}
+
 		var exception;
 
 		if (errorObject && errorObject.stack) {
