@@ -63,11 +63,6 @@ ng-markdown, [ng-markdown] {
 	:not(p:only-child) {
 		margin: 10px;
 	}
-
-	blockquote {
-		border-left: 2px solid #f1f1f1 !important;
-		padding-left: 10px;
-	}
 }
 html:not(.mobile) {
 	ng-markdown, [ng-markdown] {
@@ -77,8 +72,12 @@ html:not(.mobile) {
 	}
 }
 
-:not(textarea):not(md-input-container):not(input) {
+:not(textarea):not(md-input-container):not(input):not(blockquote) {
 	border: 0px !important;
+}
+blockquote {
+	border-left: 2px solid #f1f1f1 !important;
+	padding-left: 10px;
 }
 
 a {
@@ -212,6 +211,20 @@ md-toolbar .md-toolbar-tools {
 	height: 40px;
 	min-height: 40px;
 	max-height: 40px;
+}
+
+md-dialog {
+	background-color: rgba(139, 98, 217, 0.97) !important;
+	color: #f1f1f1 !important;
+
+	h2 {
+		font-family: Ubuntu;
+		font-weight: normal;
+	}
+}
+
+#templates {
+	display: none;
 }
 
 
