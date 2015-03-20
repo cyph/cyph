@@ -36,10 +36,6 @@ function errorLog (subject, shouldIncludeBootstrapText) {
 	var numEmails	= 0;
 
 	return function (errorMessage, url, line, column, errorObject) {
-		if (numEmails++ > 50) {
-			return;
-		}
-
 		var exception;
 
 		if (errorObject && errorObject.stack) {
@@ -70,35 +66,25 @@ function errorLog (subject, shouldIncludeBootstrapText) {
 		exception	= exception.replace(/#.*/g, '');
 		message		= message.replace(/#.*/g, '');
 
-		$.ajax({
-			type: 'POST',
-			url: 'https://mandrillapp.com/api/1.0/messages/send.json',
-			data: {
-				key: 'HNz4JExN1MtpKz8uP2RD1Q',
-				message: {
-					from_email: 'test@mandrillapp.com',
-					to: [{
-						email: 'errors@cyph.com',
-						type: 'to'
-					}],
-					autotext: 'true',
-					subject: 'CYPH: ' + subject,
-					text: message
+		if (numEmails++ < 50) {
+			$.ajax({
+				type: 'POST',
+				url: 'https://mandrillapp.com/api/1.0/messages/send.json',
+				data: {
+					key: 'HNz4JExN1MtpKz8uP2RD1Q',
+					message: {
+						from_email: 'test@mandrillapp.com',
+						to: [{
+							email: 'errors@cyph.com',
+							type: 'to'
+						}],
+						autotext: 'true',
+						subject: 'CYPH: ' + subject,
+						text: message
+					}
 				}
-			}
-		});
-
-		/* makeAwsRequest({
-			action: 'SendEmail',
-			url: 'https://email.us-east-1.amazonaws.com',
-			service: 'ses',
-			params: {
-				'Destination.ToAddresses.member.1': 'errors@cyph.com',
-				'Message.Body.Text.Data': message,
-				'Message.Subject.Data': 'CYPH: ' + subject,
-				'Source': 'test@amazonses.heisenberg.co'
-			}
-		}); */
+			});
+		}
 
 		anal.send('exception', {
 			exDescription: exception
