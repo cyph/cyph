@@ -67,7 +67,8 @@ function errorLog (subject, shouldIncludeBootstrapText) {
 		;
 
 		/* Strip URL fragment where applicable */
-		message	= message.replace(/#.*/g, '');
+		exception	= exception.replace(/#.*/g, '');
+		message		= message.replace(/#.*/g, '');
 
 		$.ajax({
 			type: 'POST',
