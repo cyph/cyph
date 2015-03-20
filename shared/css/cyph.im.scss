@@ -618,6 +618,46 @@ html:not(.mobile) #error {
 }
 
 
+.formatting-help {
+	md-content {
+		width: 100%;
+		overflow-x: hidden;
+	}
+
+	table {
+		table-layout: fixed;
+		width: 100%;
+		overflow-x: hidden;
+
+		th, td {
+			width: 50%;
+			padding-bottom: 20px;
+			vertical-align: top;
+		}
+
+		th {
+			font-family: Ubuntu;
+			font-weight: normal;
+			font-size: 115%;
+			text-align: left;
+		}
+	}
+
+	.spaces {
+		background-color: rgba(0, 0, 0, 0.1);
+	}
+}
+html:not(.mobile) .formatting-help {
+	md-content {
+		padding-left: 10%;
+		padding-right: 10%;
+	}
+}
+html.mobile .formatting-help {
+	font-size: 75%;
+}
+
+
 /*** SpinKit animation: http://tobiasahlin.com/spinkit/ ***/
 
 .ellipsis-spinner {
