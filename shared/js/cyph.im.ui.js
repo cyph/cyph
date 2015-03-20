@@ -499,21 +499,38 @@ angular.
 
 
 
+		var isButtonClickLocked;
+
 		$scope.baseButtonClick	= function (callback) {
-			if (isMobile) {
+			if (!isButtonClickLocked) {
+				isButtonClickLocked	= true;
+
 				setTimeout(function () {
-					$mdSidenav('menu').close();
+					if (isMobile) {
+						$mdSidenav('menu').close();
+					}
+
 					callback && callback();
+
+					setTimeout(function () {
+						isButtonClickLocked	= false;
+					});
 				}, 250);
-			}
-			else {
-				callback && callback();
 			}
 		};
 
 
 		$scope.disconnect	= function () {
 			$scope.baseButtonClick(channelClose);
+		};
+
+
+		$scope.formattingHelp	= function () {
+			$scope.baseButtonClick(function () {
+				$mdDialog.show({
+					template: $('#templates > .formatting-help')[0].outerHTML
+				});
+			});
 		};
 
 

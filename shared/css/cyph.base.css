@@ -44,15 +44,16 @@ ng-markdown > p:only-child, [ng-markdown] > p:only-child {
   display: inline; }
 ng-markdown :not(p:only-child), [ng-markdown] :not(p:only-child) {
   margin: 10px; }
-ng-markdown blockquote, [ng-markdown] blockquote {
-  border-left: 2px solid #f1f1f1 !important;
-  padding-left: 10px; }
 
 html:not(.mobile) ng-markdown :not(p:only-child), html:not(.mobile) [ng-markdown] :not(p:only-child) {
   margin-left: 25px; }
 
-:not(textarea):not(md-input-container):not(input) {
+:not(textarea):not(md-input-container):not(input):not(blockquote) {
   border: 0px !important; }
+
+blockquote {
+  border-left: 2px solid #f1f1f1 !important;
+  padding-left: 10px; }
 
 a {
   color: inherit; }
@@ -157,6 +158,16 @@ md-toolbar .md-toolbar-tools {
   height: 40px;
   min-height: 40px;
   max-height: 40px; }
+
+md-dialog {
+  background-color: rgba(139, 98, 217, 0.97) !important;
+  color: #f1f1f1 !important; }
+  md-dialog h2 {
+    font-family: Ubuntu;
+    font-weight: normal; }
+
+#templates {
+  display: none; }
 
 @-webkit-keyframes inkRippleCheckbox {
   0% {

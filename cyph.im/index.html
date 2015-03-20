@@ -75,12 +75,7 @@
 					<md-button translate aria-label='Show Cyphertext' ng-click='showCyphertext()'>Show Cyphertext</md-button>
 				</div>
 				<div>
-					<md-button
-						aria-label='Formatting Help'
-						ng-click='baseButtonClick()'
-					>
-						<a translate href='https://www.reddit.com/wiki/commenting/.compact#wiki_posting'>Formatting Help</a>
-					</md-button>
+					<md-button translate aria-label='Formatting Help' ng-click='formattingHelp()'>Formatting Help</md-button>
 				</div>
 				<div>
 					<md-button translate aria-label='Disconnect' ng-click='disconnect()'>Disconnect</md-button>
@@ -95,12 +90,7 @@
 			<section ng-show='state == states.chat'>
 				<md-button translate aria-label='Verify Identity' ng-click='twoFactor()' ng-hide='true'>Verify Identity</md-button>
 				<md-button translate aria-label='Show Cyphertext' ng-click='showCyphertext()'>Show Cyphertext</md-button>
-				<md-button
-					aria-label='Formatting Help'
-					ng-click='baseButtonClick()'
-				>
-					<a translate href='https://www.reddit.com/wiki/commenting/.compact#wiki_posting'>Formatting Help</a>
-				</md-button>
+				<md-button translate aria-label='Formatting Help' ng-click='formattingHelp()'>Formatting Help</md-button>
 				<md-button translate aria-label='Disconnect' ng-click='disconnect()'>Disconnect</md-button>
 
 				<md-button
@@ -436,6 +426,106 @@
 		<div id='pre-load' ng-class='{"load-complete": state != states.none}'>
 			<div class='double-bounce1'></div>
 			<div class='double-bounce2'></div>
+		</div>
+
+
+
+		<div id='templates'>
+			<md-dialog class='formatting-help'>
+				<md-content>
+					<h2>
+						Formatting Help
+					</h2>
+					<p>
+						<span translate>Cyph uses a version of Markdown called</span>
+						<a href='http://commonmark.org/'>CommonMark</a>
+						<span translate>
+							for formatting. We also support various extensions &ndash;
+							including emojis and code fencing.
+						</span>
+					</p>
+					<p translate>
+						The following examples are shamelessly copied from reddit:
+					</p>
+					<table>
+						<tbody>
+							<tr>
+								<th>you type:</th>
+								<th>you see:</th>
+							</tr>
+							<tr>
+								<td>*italics*</td>
+								<td><em>italics</em></td>
+							</tr>
+							<tr>
+								<td>**bold**</td>
+								<td><b>bold</b></td>
+							</tr>
+							<tr>
+								<td>[cyph me!](https://cyph.com)</td>
+								<td><a href='https://cyph.com'>cyph me!</a></td>
+							</tr>
+							<tr>
+								<td>
+									<br />
+									* item 1
+									<br />
+									* item 2
+									<br />
+									* item 3
+								</td>
+								<td>
+									<ul>
+										<li>item 1</li>
+										<li>item 2</li>
+										<li>item 3</li>
+									</ul>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<br />
+									&gt; quoted text
+								</td>
+								<td>
+									<blockquote>quoted text</blockquote>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									Lines starting with tabs are treated like code:
+
+									<br />
+									<br />
+
+									<span class='spaces'>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+									if 1 * 2 &lt; 3:
+									<br />
+									<span class='spaces'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+									print "hello!"
+									<br />
+								</td>
+								<td>
+									Lines starting with tabs are treated like code:
+
+									<br />
+									<br />
+
+									<pre>if 1 * 2 &lt; 3:<br />&nbsp;&nbsp;&nbsp;&nbsp;print "hello!"</pre>
+								</td>
+							</tr>
+							<tr>
+								<td>~~strikethrough~~</td>
+								<td><strike>strikethrough</strike></td>
+							</tr>
+							<tr>
+								<td>super^script</td>
+								<td>super<sup>script</sup></td>
+							</tr>
+						</tbody>
+					</table>
+				</md-content>
+			</md-dialog>
 		</div>
 
 
