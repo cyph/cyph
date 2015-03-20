@@ -380,7 +380,7 @@ function channelSend () {
 		channel
 	;
 
-	c.send.apply(c, arguments);
+	c && c.send.apply(c, arguments);
 }
 
 function channelClose (hasReceivedDestroySignal) {
