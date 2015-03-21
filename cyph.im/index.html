@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class='no-js' ng-app='Cyph' ng-controller='CyphController'>
+<html class='no-js' ng-app='Cyph' ng-controller='CyphController' ng-class='{"video": isVideoCall}'>
 	<head>
 		<meta charset='utf-8' />
 		<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1' />
@@ -250,10 +250,15 @@
 			<div flex></div>
 		</div>
 
+		<div id='video-call' ng-view flex ng-class='{active: state == states.chat}'>
+			<video class='friend' autoplay loop>
+				<source src='/video/background.webm' type='video/webm' />
+			</video>
+			<video class='me' autoplay></video>
+		</div>
+
 		<div id='message-list' ng-view flex class='nano' ng-class='{active: state == states.chat, "is-connected": isConnected}'>
 			<md-content class='nano-content'>
-				<video id='video-call' autoplay></video>
-
 				<md-list layout='column'>
 					<md-item
 						class='message-item unread'
