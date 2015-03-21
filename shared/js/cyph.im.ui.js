@@ -82,7 +82,8 @@ angular.
 		$scope.copyUrl			= '';
 		$scope.copyUrlEncoded	= '';
 		$scope.isOnion			= isOnion;
-		$scope.webRTC			= false;
+		$scope.isWebRTCEnabled	= false;
+		$scope.isVideoCall		= false;
 
 		$scope.webSignHashes	= encodeURIComponent(
 			'Hello Ryan and Josh,\n\n\n\n\n\n---\n\n' +
@@ -322,7 +323,7 @@ angular.
 
 		enableWebRTC = $scope.enableWebRTC = function () {
 			apply(function () {
-				$scope.webRTC	= true;
+				$scope.isWebRTCEnabled	= true;
 			});
 		};
 

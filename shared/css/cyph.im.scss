@@ -380,8 +380,69 @@ html:not(.mobile) .video-call-start {
 	margin-top: 10px;
 }
 
-#video-call {
-	&:not([src]) {
+html:not(.video) #video-call {
+	display: none;
+}
+html.video {
+	#video-call {
+		height: 100%;
+		width: 100%;
+		background: black;
+		overflow: hidden !important;
+
+		.me {
+			position: absolute;
+			bottom: 0px;
+			right: 0px;
+		}
+	}
+}
+@media all and (orientation: landscape) {
+	#video-call {
+		.friend {
+			width: 100%;
+			margin-top: 50%;
+			@include transform(translateY(-100%));
+		}
+
+		.me {
+			width: 20vw;
+		}
+	}
+}
+@media all and (orientation: portrait) {
+	#video-call {
+		.friend {
+			height: 100%;
+			margin-left: 50%;
+			@include transform(translateX(-50%));
+		}
+
+		.me {
+			max-height: 25vh;
+			width: 50vw;
+		}
+	}
+}
+html.video:not(.mobile) {
+	#video-call {
+		height: calc(100% - 210px);
+	}
+
+	#message-list {
+		max-height: 100px;
+	}
+
+	#setting-up-crypto {
+		display: none;
+	}
+}
+html.video.mobile {
+	#video-call {
+
+	}
+
+	#message-list, #message-wrapper {
 		display: none;
 	}
 }
