@@ -329,8 +329,22 @@ angular.
 		};
 
 
-		confirmDialog = $scope.confirmDialog = function (o, callback) {
-			$mdDialog.show($mdDialog.confirm(o)).then(callback).catch(callback);
+		confirmDialog = $scope.confirmDialog = function (o, callback, opt_timeout) {
+			var promise	= $mdDialog.show($mdDialog.confirm(o));
+
+			var timeoutId;
+			if (opt_timeout) {
+				timeoutId	= setTimeout(function () {
+					$mdDialog.cancel(promise);
+				}, opt_timeout);
+			}
+
+			function f (ok) {
+				timeoutId && clearTimeout(timeoutId);
+				callback && callback(ok === true);
+			}
+
+			promise.then(f).catch(f);
 		};
 
 
@@ -682,11 +696,13 @@ angular.
 
 		$scope.videoCallButton	= function () {
 			$scope.baseButtonClick(function () {
-				if (!$scope.isVideoCall) {
-					webRTC.helpers.requestCall(true);
-				}
-				else {
-					webRTC.helpers.setUpStream({video: !webRTC.streamOptions.video});
+				if ($scope.isWebRTCEnabled) {
+					if (!$scope.isVideoCall) {
+						webRTC.helpers.requestCall(true);
+					}
+					else {
+						webRTC.helpers.setUpStream({video: !webRTC.streamOptions.video});
+					}
 				}
 			});
 		};
@@ -701,13 +717,28 @@ angular.
 
 		$scope.voiceCallButton	= function () {
 			$scope.baseButtonClick(function () {
-				if (!$scope.isVideoCall) {
-					webRTC.helpers.requestCall(false);
-				}
-				else {
-					webRTC.helpers.setUpStream({audio: !webRTC.streamOptions.audio});
+				if ($scope.isWebRTCEnabled) {
+					if (!$scope.isVideoCall) {
+						webRTC.helpers.requestCall(false);
+					}
+					else {
+						webRTC.helpers.setUpStream({audio: !webRTC.streamOptions.audio});
+					}
 				}
 			});
+		};
+
+
+		$scope.webRTCDisabledAlert	= function () {
+			var message	= $('#webrtc-disabled-message').attr('title');
+
+			if (message) {
+				alertDialog({
+					title: getString('videoCallingTitle'),
+					content: message,
+					ok: getString('ok')
+				});
+			}
 		};
 
 

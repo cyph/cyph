@@ -324,6 +324,7 @@ var webRTC	= {
 		},
 
 		kill: function () {
+			var wasAccepted		= webRTC.isAccepted;
 			webRTC.isAccepted	= false;
 
 			toggleVideoCall(false);
@@ -342,11 +343,17 @@ var webRTC	= {
 					delete webRTC.remoteStream;
 				}
 
-				alertDialog({
-					title: getString('videoCallingTitle'),
-					content: getString('webRTCDisconnect'),
-					ok: getString('ok')
-				});
+				if (wasAccepted) {
+					var webRTCDisconnect	= getString('webRTCDisconnect');
+
+					alertDialog({
+						title: getString('videoCallingTitle'),
+						content: webRTCDisconnect,
+						ok: getString('ok')
+					});
+
+					addMessageToChat(webRTCDisconnect, authors.app, false);
+				}
 			}, 500);
 		},
 
@@ -444,7 +451,7 @@ var webRTC	= {
 					else {
 						sendWebRTCDataToPeer({decline: true});
 					}
-				});
+				}, 500000);
 			}
 		},
 
@@ -477,6 +484,13 @@ var webRTC	= {
 							ok: getString('ok')
 						});
 					}, 250);
+
+					/* Time out if request hasn't been accepted within 10 minutes */
+					setTimeout(function () {
+						if (!webRTC.isAvailable) {
+							webRTC.isAccepted	= false;
+						}
+					}, 600000);
 				}
 			});
 		},
@@ -524,6 +538,16 @@ var webRTC	= {
 
 				if (!opt_offer) {
 					webRTC.peer.createOffer(function (offer) {
+						offer.sdp	= offer.sdp.
+							split('\n').
+							filter(function (line) {
+								return line.indexOf('urn:ietf:params:rtp-hdrext:ssrc-audio-level') < 0 &&
+									line.indexOf('b=AS:') < 0
+								;
+							}).
+							join('\n')
+						;
+
 						webRTC.peer.setLocalDescription(offer);
 						sendWebRTCDataToPeer({receiveOffer: JSON.stringify(offer), updateVideoState: webRTC.streamOptions.video});
 					});
@@ -547,6 +571,10 @@ var webRTC	= {
 				streamHelper();
 			}
 			else {
+				if (!webRTC.localStream) {
+					addMessageToChat(getString('webRTCConnect'), authors.app, false);
+				}
+
 				navigator.getUserMedia(webRTC.streamOptions, streamHelper, webRTC.helpers.kill);
 			}
 		}
@@ -565,10 +593,18 @@ function channelSend () {
 		channel
 	;
 
-	c && c.send.apply(c, arguments);
+	if (c) {
+		c.send.apply(c, arguments);
+	}
+	else {
+		var args	= arguments;
+		setTimeout(function () { channelSend.apply(null, args) }, 500);
+	}
 }
 
 function channelClose (hasReceivedDestroySignal) {
+	webRTC.helpers.kill();
+
 	if (hasReceivedDestroySignal) {
 		channel.close(closeChat);
 	}
