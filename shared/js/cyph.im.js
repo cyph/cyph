@@ -538,6 +538,7 @@ var webRTC	= {
 
 				if (!opt_offer) {
 					webRTC.peer.createOffer(function (offer) {
+						/* http://www.kapejod.org/en/2014/05/28/ */
 						offer.sdp	= offer.sdp.
 							split('\n').
 							filter(function (line) {
