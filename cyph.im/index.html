@@ -54,12 +54,39 @@
 		<md-toolbar id='mobile-toolbar' class='mobile-only'>
 			<div class='md-toolbar-tools'>
 				<a class='logo' ng-href='{{isOnion ? "/" : "https://www.cyph.com"}}'>
-					<img deferred-src='/img/betalogo.mobile.png' />
+					<img src='/img/betalogo.mobile.png' />
 				</a>
+
 				<span flex></span>
-				<md-button translate aria-label='Menu' ng-show='state == states.chat' ng-click='openMobileMenu()'>
-					<img deferred-src='/img/icons/menu.png' />
-				</md-button>
+
+				<span ng-show='state == states.chat'>
+					<md-button
+						translate
+						class='video-call-button'
+						ng-disabled='!isWebRTCEnabled'
+						ng-click='videoButton()'
+						ng-attr-aria-label='{{!isVideoCall ? "Video Call" : !isCameraOn ? "Enable Camera" : "Disable Camera"}}'
+					>
+						<img ng-show='!isVideoCall || !isCameraOn' src='/img/icons/video.on.png' />
+						<img ng-show='isVideoCall && isCameraOn' src='/img/icons/video.off.png' />
+					</md-button>
+					<md-button
+						translate
+						class='voice-call-button'
+						aria-label='Voice Call'
+						ng-disabled='!isWebRTCEnabled'
+						ng-click='voiceButton()'
+						ng-attr-aria-label='{{!isVideoCall ? "Voice Call" : !isMicOn ? "Enable Mic" : "Disable Mic"}}'
+					>
+						<img ng-show='!isVideoCall' src='/img/icons/voice.on.png' />
+						<img ng-show='isVideoCall && !isMicOn' src='/img/icons/mic.on.png' />
+						<img ng-show='isVideoCall && isMicOn' src='/img/icons/mic.off.png' />
+					</md-button>
+
+					<md-button translate aria-label='Menu' ng-click='openMobileMenu()'>
+						<img src='/img/icons/menu.png' />
+					</md-button>
+				</span>
 			</div>
 		</md-toolbar>
 
@@ -85,7 +112,7 @@
 
 		<div id='desktop-sidebar' class='desktop-only'>
 			<a class='logo' ng-href='{{isOnion ? "/" : "https://www.cyph.com"}}'>
-				<img deferred-src='/img/betalogo.png' />
+				<img src='/img/betalogo.png' />
 			</a>
 			<section ng-show='state == states.chat'>
 				<md-button translate aria-label='Verify Identity' ng-click='twoFactor()' ng-hide='true'>Verify Identity</md-button>
@@ -93,23 +120,35 @@
 				<md-button translate aria-label='Formatting Help' ng-click='formattingHelp()'>Formatting Help</md-button>
 				<md-button translate aria-label='Disconnect' ng-click='disconnect()'>Disconnect</md-button>
 
-				<md-button
-					translate
-					class='md-fab video-call-start'
-					aria-label='Video Call'
-					ng-disabled='!webRTC'
-					ng-click='startVideoCall()'
+				<span
+					ng-attr-title='{{
+						isConnected && !isWebRTCEnabled ?
+							"One of your browsers may lack support for video calling. Try again with the latest Chrome or Firefox." :
+							""
+					}}'
 				>
-					<img deferred-src='/img/icons/video.on.png' />
-				</md-button>
-				<md-button
-					translate
-					class='md-fab voice-call-start'
-					aria-label='Voice Call'
-					ng-disabled='!webRTC'
-				>
-					<img deferred-src='/img/icons/voice.on.png' />
-				</md-button>
+					<md-button
+						translate
+						class='md-fab video-call-button'
+						ng-disabled='!isWebRTCEnabled'
+						ng-click='videoButton()'
+						ng-attr-aria-label='{{!isVideoCall ? "Video Call" : !isCameraOn ? "Enable Camera" : "Disable Camera"}}'
+					>
+						<img ng-show='!isVideoCall || !isCameraOn' src='/img/icons/video.on.png' />
+						<img ng-show='isVideoCall && isCameraOn' src='/img/icons/video.off.png' />
+					</md-button>
+					<md-button
+						translate
+						class='md-fab voice-call-button'
+						ng-disabled='!isWebRTCEnabled'
+						ng-click='voiceButton()'
+						ng-attr-aria-label='{{!isVideoCall ? "Voice Call" : !isMicOn ? "Enable Mic" : "Disable Mic"}}'
+					>
+						<img ng-show='!isVideoCall' src='/img/icons/voice.on.png' />
+						<img ng-show='isVideoCall && !isMicOn' src='/img/icons/mic.on.png' />
+						<img ng-show='isVideoCall && isMicOn' src='/img/icons/mic.off.png' />
+					</md-button>
+				</span>
 			</section>
 		</div>
 
@@ -140,7 +179,7 @@
 						class='md-fab'
 						aria-label='SMS'
 					>
-						<img deferred-src='/img/icons/sms.png' />
+						<img src='/img/icons/sms.png' />
 						<a target='_self' ng-href='sms:?body={{copyUrlEncoded}}'></a>
 					</md-button>
 
@@ -151,7 +190,7 @@
 						class='md-fab'
 						aria-label='Email'
 					>
-						<img deferred-src='/img/icons/email.png' />
+						<img src='/img/icons/email.png' />
 						<a target='_self' ng-href='mailto:?body={{copyUrlEncoded}}'></a>
 					</md-button>
 				</div>
@@ -255,6 +294,15 @@
 				<source src='/video/background.webm' type='video/webm' />
 			</video>
 			<video class='me' autoplay></video>
+
+			<md-button
+				translate
+				aria-label='End Call'
+				class='md-fab md-theme-grey close-button'
+				ng-click='stopVideoCall()'
+			>
+				<strong>&times;</strong>
+			</md-button>
 		</div>
 
 		<div id='message-list' ng-view flex class='nano' ng-class='{active: state == states.chat, "is-connected": isConnected}'>
@@ -342,7 +390,7 @@
 					class='mobile-only'
 					aria-label='Send'
 				>
-					<img deferred-src='/img/icons/send.png' />
+					<img src='/img/icons/send.png' />
 				</md-button>
 
 				<md-button
@@ -352,7 +400,7 @@
 					class='mobile-only'
 					aria-label='Insert Photo'
 				>
-					<img deferred-src='/img/icons/insertphoto.grey.png' />
+					<img src='/img/icons/insertphoto.grey.png' />
 					<input accept='image/*' type='file' on-change='insertPhoto($this[0])' />
 				</md-button>
 
@@ -363,7 +411,7 @@
 					class='md-fab desktop-only'
 					aria-label='Insert Photo'
 				>
-					<img deferred-src='/img/icons/insertphoto.png' />
+					<img src='/img/icons/insertphoto.png' />
 					<input accept='image/*' type='file' on-change='insertPhoto($this[0])' />
 				</md-button>
 
@@ -419,9 +467,8 @@
 			</md-content>
 			<md-button
 				translate
-				id='cyphertext-close'
 				aria-label='Close Cyphertext'
-				class='md-fab md-theme-grey'
+				class='md-fab md-theme-grey close-button'
 				ng-click='closeCyphertext()'
 			>
 				<strong>&times;</strong>

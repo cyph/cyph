@@ -374,7 +374,7 @@ html.mobile {
 }
 
 
-html:not(.mobile) .video-call-start {
+html:not(.mobile) .video-call-button {
 	margin-left: 33px;
 	margin-right: 10px;
 	margin-top: 10px;
@@ -390,10 +390,23 @@ html.video {
 		background: black;
 		overflow: hidden !important;
 
+		.friend {
+			height: 100%;
+		}
+
 		.me {
 			position: absolute;
 			bottom: 0px;
 			right: 0px;
+		}
+
+		.close-button {
+			position: absolute;
+			top: 10px;
+			right: 10px;
+			width: 44px;
+			height: 44px;
+			font-size: 25px;
 		}
 	}
 }
@@ -401,8 +414,6 @@ html.video {
 	#video-call {
 		.friend {
 			width: 100%;
-			margin-top: 50%;
-			@include transform(translateY(-100%));
 		}
 
 		.me {
@@ -413,14 +424,13 @@ html.video {
 @media all and (orientation: portrait) {
 	#video-call {
 		.friend {
-			height: 100%;
 			margin-left: 50%;
 			@include transform(translateX(-50%));
 		}
 
 		.me {
 			max-height: 25vh;
-			width: 50vw;
+			width: 40vw;
 		}
 	}
 }
@@ -431,10 +441,10 @@ html.video:not(.mobile) {
 
 	#message-list {
 		max-height: 100px;
-	}
 
-	#setting-up-crypto {
-		display: none;
+		&.is-connected #setting-up-crypto {
+			display: none;
+		}
 	}
 }
 html.video.mobile {
@@ -642,25 +652,25 @@ html:not(.mobile) #error {
 		padding-left: 12.5%;
 	}
 
-	.message-item {
-		margin-left: 0px;
-	}
-
-	#cyphertext-close {
-		position: fixed;
+	.close-button {
+		position: absolute;
 		top: 30px;
 		right: 5%;
-		color: #3bfc34 !important;
-		font-size: 30px;
 	}
 
-	.md-button {
-		background-color: #202020 !important;
-		box-shadow: rgba(25, 130, 25, 0.137255) 0px 0px 4px 0px, rgba(25, 130, 25, 0.278431) 0px 4px 8px 0px;
+	.message-item {
+		margin-left: 0px;
 	}
 }
 #cyphertext:not(.nano) {
 	overflow-y: scroll;
+}
+.close-button {
+	color: #3bfc34 !important;
+	background-color: #202020 !important;
+	box-shadow: rgba(25, 130, 25, 0.137255) 0px 0px 4px 0px, rgba(25, 130, 25, 0.278431) 0px 4px 8px 0px !important;
+	font-family: 'Ubuntu Mono', monospace !important;
+	font-size: 30px;
 }
 
 
