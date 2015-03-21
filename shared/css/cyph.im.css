@@ -281,7 +281,7 @@ html.mobile .message-item.author-app {
   -moz-animation: inkRippleCheckbox 0.35s linear 0s 1 normal;
   animation: inkRippleCheckbox 0.35s linear 0s 1 normal; }
 
-html:not(.mobile) .video-call-start {
+html:not(.mobile) .video-call-button {
   margin-left: 33px;
   margin-right: 10px;
   margin-top: 10px; }
@@ -294,25 +294,27 @@ html.video #video-call {
   width: 100%;
   background: black;
   overflow: hidden !important; }
+  html.video #video-call .friend {
+    height: 100%; }
   html.video #video-call .me {
     position: absolute;
     bottom: 0px;
     right: 0px; }
+  html.video #video-call .close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 44px;
+    height: 44px;
+    font-size: 25px; }
 
 @media all and (orientation: landscape) {
   #video-call .friend {
-    width: 100%;
-    margin-top: 50%;
-    -webkit-transform: translateY(-100%);
-    -moz-transform: translateY(-100%);
-    -ms-transform: translateY(-100%);
-    -o-transform: translateY(-100%);
-    transform: translateY(-100%); }
+    width: 100%; }
   #video-call .me {
     width: 20vw; } }
 @media all and (orientation: portrait) {
   #video-call .friend {
-    height: 100%;
     margin-left: 50%;
     -webkit-transform: translateX(-50%);
     -moz-transform: translateX(-50%);
@@ -321,13 +323,13 @@ html.video #video-call {
     transform: translateX(-50%); }
   #video-call .me {
     max-height: 25vh;
-    width: 50vw; } }
+    width: 40vw; } }
 html.video:not(.mobile) #video-call {
   height: calc(100% - 210px); }
 html.video:not(.mobile) #message-list {
   max-height: 100px; }
-html.video:not(.mobile) #setting-up-crypto {
-  display: none; }
+  html.video:not(.mobile) #message-list.is-connected #setting-up-crypto {
+    display: none; }
 
 html.video.mobile #message-list, html.video.mobile #message-wrapper {
   display: none; }
@@ -470,20 +472,22 @@ html:not(.mobile) #error {
   #cyphertext md-content {
     padding-top: 20px;
     padding-left: 12.5%; }
+  #cyphertext .close-button {
+    position: absolute;
+    top: 30px;
+    right: 5%; }
   #cyphertext .message-item {
     margin-left: 0px; }
-  #cyphertext #cyphertext-close {
-    position: fixed;
-    top: 30px;
-    right: 5%;
-    color: #3bfc34 !important;
-    font-size: 30px; }
-  #cyphertext .md-button {
-    background-color: #202020 !important;
-    box-shadow: rgba(25, 130, 25, 0.13725) 0px 0px 4px 0px, rgba(25, 130, 25, 0.27843) 0px 4px 8px 0px; }
 
 #cyphertext:not(.nano) {
   overflow-y: scroll; }
+
+.close-button {
+  color: #3bfc34 !important;
+  background-color: #202020 !important;
+  box-shadow: rgba(25, 130, 25, 0.13725) 0px 0px 4px 0px, rgba(25, 130, 25, 0.27843) 0px 4px 8px 0px !important;
+  font-family: 'Ubuntu Mono', monospace !important;
+  font-size: 30px; }
 
 #chat-begin-message {
   font-family: 'Ubuntu', sans-serif;

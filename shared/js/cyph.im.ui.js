@@ -84,6 +84,8 @@ angular.
 		$scope.isOnion			= isOnion;
 		$scope.isWebRTCEnabled	= false;
 		$scope.isVideoCall		= false;
+		$scope.isCameraOn		= false;
+		$scope.isMicOn			= false;
 
 		$scope.webSignHashes	= encodeURIComponent(
 			'Hello Ryan and Josh,\n\n\n\n\n\n---\n\n' +
@@ -117,6 +119,7 @@ angular.
 				$scope.$apply(fn);
 			}
 		}
+		window.$scope = $scope; window.$apply = apply;
 
 
 
@@ -638,11 +641,6 @@ angular.
 		};
 
 
-		$scope.startVideoCall	= function () {
-			setUpWebRTC();
-		};
-
-
 		$scope.twoFactor	= function () {
 			$scope.baseButtonClick(function () {
 				alert(
@@ -650,6 +648,20 @@ angular.
 					'freeze the chat until both users have verified their ' +
 					'identities via two-factor authentication.'
 				);
+			});
+		};
+
+
+		$scope.videoButton	= function () {
+			$scope.baseButtonClick(function () {
+				setUpWebRTC();
+			});
+		};
+
+
+		$scope.voiceButton	= function () {
+			$scope.baseButtonClick(function () {
+				setUpWebRTC();
 			});
 		};
 
