@@ -300,7 +300,6 @@ var webRTC	= {
 	isSupported: !!PeerConnection,
 
 	streamOptions: {},
-	currentStreamOptions: '',
 
 	commands: {
 		addIceCandidate: function (candidate) {
@@ -358,6 +357,14 @@ var webRTC	= {
 
 		receiveOffer: function (offer) {
 			webRTC.helpers.setUpStream(null, offer);
+		},
+
+		updateVideoState: function (remoteSupportsVideo) {
+			$('#video-call .friend:not(.stream)').toggle(!remoteSupportsVideo);
+			$('#video-call .friend.stream').
+				attr('src', URL.createObjectURL(webRTC.remoteStream)).
+				toggle(remoteSupportsVideo)
+			;
 		}
 	},
 
@@ -392,13 +399,16 @@ var webRTC	= {
 
 					webRTC.remoteStream	= e.stream;
 
-					var remoteSupportsVideo	= webRTC.remoteStream.getVideoTracks().length > 0;
+					var videoTracks		= webRTC.remoteStream.getVideoTracks();
 
-					$('#video-call .friend:not(.stream)').toggle(!remoteSupportsVideo);
-					$('#video-call .friend.stream').
-						attr('src', URL.createObjectURL(webRTC.remoteStream)).
-						toggle(remoteSupportsVideo)
+					var remoteSupportsVideo	=
+						videoTracks.length > 0 &&
+						videoTracks.
+							map(function (track) { return track.enabled }).
+							reduce(function (a, b) { return a || b })
 					;
+
+					webRTC.commands.updateVideoState(remoteSupportsVideo);
 				};
 			}
 		},
@@ -460,11 +470,13 @@ var webRTC	= {
 					o[callType]	= true;
 					sendWebRTCDataToPeer(o);
 
-					alertDialog({
-						title: getString('videoCallingTitle'),
-						content: getString('webRTCRequestConfirmation'),
-						ok: getString('ok')
-					});
+					setTimeout(function () {
+						alertDialog({
+							title: getString('videoCallingTitle'),
+							content: getString('webRTCRequestConfirmation'),
+							ok: getString('ok')
+						});
+					}, 250);
 				}
 			});
 		},
@@ -490,8 +502,20 @@ var webRTC	= {
 
 			function streamHelper (stream) {
 				if (stream) {
+					if (webRTC.localStream) {
+						webRTC.localStream.stop();
+					}
+
 					webRTC.localStream	= stream;
 				}
+
+				webRTC.localStream.getVideoTracks().forEach(function (track) {
+					track.enabled	= webRTC.streamOptions.video;
+				});
+
+				webRTC.localStream.getAudioTracks().forEach(function (track) {
+					track.enabled	= webRTC.streamOptions.audio;
+				});
 
 				$('#video-call .me').attr('src', URL.createObjectURL(webRTC.localStream));
 				webRTC.peer.addStream(webRTC.localStream);
@@ -501,7 +525,7 @@ var webRTC	= {
 				if (!opt_offer) {
 					webRTC.peer.createOffer(function (offer) {
 						webRTC.peer.setLocalDescription(offer);
-						sendWebRTCDataToPeer({receiveOffer: JSON.stringify(offer)});
+						sendWebRTCDataToPeer({receiveOffer: JSON.stringify(offer), updateVideoState: webRTC.streamOptions.video});
 					});
 				}
 				else {
@@ -509,24 +533,20 @@ var webRTC	= {
 
 					webRTC.peer.createAnswer(function (answer) {
 						webRTC.peer.setLocalDescription(answer);
-						sendWebRTCDataToPeer({receiveAnswer: JSON.stringify(answer)});
+						sendWebRTCDataToPeer({receiveAnswer: JSON.stringify(answer), updateVideoState: webRTC.streamOptions.video});
 
 						webRTC.isAvailable	= true;
 					});
 				}
 			}
 
-			if (webRTC.localStream && webRTC.currentStreamOptions == newStreamOptions) {
+			if (
+				webRTC.localStream &&
+				(!webRTC.streamOptions.video || webRTC.localStream.getVideoTracks().length > 0)
+			) {
 				streamHelper();
 			}
 			else {
-				webRTC.currentStreamOptions	= newStreamOptions;
-
-				if (webRTC.localStream) {
-					webRTC.localStream.stop();
-					delete webRTC.localStream;
-				}
-
 				navigator.getUserMedia(webRTC.streamOptions, streamHelper, webRTC.helpers.kill);
 			}
 		}
@@ -613,9 +633,10 @@ function receiveChannelDataHandler (o) {
 
 			if (webRTCDataString) {
 				var webRTCData	= JSON.parse(o.Misc.split(WEBRTC_DATA_PREFIX)[1]);
-				var key			= Object.keys(webRTCData)[0];
 
-				webRTC.helpers.receiveCommand(key, webRTCData[key]);
+				Object.keys(webRTCData).forEach(function (key) {
+					webRTC.helpers.receiveCommand(key, webRTCData[key]);
+				});
 			}
 			else if (webRTC.isSupported) {
 				enableWebRTC();
