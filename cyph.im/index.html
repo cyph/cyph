@@ -13,12 +13,30 @@
 		<meta translate name='description' content='Cyph is a next-generation messenger app that makes privacy the new status quo.' />
 		<meta translate name='newMessageNotification' content='New message!' />
 		<meta translate name='connectedNotification' content='Connected!' />
+		<meta translate name='disconnectTitle' content='Disconnect' />
 		<meta translate name='disconnectedNotification' content='This cyph has been disconnected.' />
 		<meta translate name='disconnectWarning' content='After closing Cyph, your messages will no longer be retrievable.' />
+		<meta translate name='disconnectConfirm' content='Are you sure you wish to disconnect?' />
 		<meta translate name='introductoryMessage' content='You may now speak.' />
 		<meta translate name='cypherToast1' content='Prepare to witness the amazing nuts and bolts of Cyph.' />
 		<meta translate name='cypherToast2' content='This cyphertext is what outsiders spying on your traffic will see (nothing of value).' />
 		<meta translate name='cypherToast3' content='Thou art amazed.' />
+		<meta translate name='videoCallingTitle' content='Cyph Call' />
+		<meta translate name='videoCall' content='video call' />
+		<meta translate name='voiceCall' content='call' />
+		<meta translate name='webRTCInit' content='You are about to initiate an encrypted' />
+		<meta translate name='webRTCRequest' content='Your friend has requested an encrypted' />
+		<meta translate name='webRTCRequestConfirmation' content='Your request has been sent.' />
+		<meta translate name='webRTCDeny' content='Your "friend" has rejected your call.' />
+		<meta translate name='webRTCDisconnect' content='This call has been disconnected.' />
+		<meta translate name='webRTCWarning' content='
+			This will involve sharing your IP address with your friend, which could potentially be
+			used to geolocate your current position. Continue?
+		' />
+		<meta translate name='ok' content='ok' />
+		<meta translate name='continue' content='continue' />
+		<meta translate name='cancel' content='cancel' />
+		<meta translate name='decline' content='decline' />
 
 		<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
 
@@ -64,23 +82,23 @@
 						translate
 						class='video-call-button'
 						ng-disabled='!isWebRTCEnabled'
-						ng-click='videoButton()'
-						ng-attr-aria-label='{{!isVideoCall ? "Video Call" : !isCameraOn ? "Enable Camera" : "Disable Camera"}}'
+						ng-click='videoCallButton()'
+						ng-attr-aria-label='{{!isVideoCall ? "Video Call" : !streamOptions.video ? "Enable Camera" : "Disable Camera"}}'
 					>
-						<img ng-show='!isVideoCall || !isCameraOn' src='/img/icons/video.on.png' />
-						<img ng-show='isVideoCall && isCameraOn' src='/img/icons/video.off.png' />
+						<img ng-show='!isVideoCall || !streamOptions.video' src='/img/icons/video.on.png' />
+						<img ng-show='isVideoCall && streamOptions.video' src='/img/icons/video.off.png' />
 					</md-button>
 					<md-button
 						translate
 						class='voice-call-button'
 						aria-label='Voice Call'
 						ng-disabled='!isWebRTCEnabled'
-						ng-click='voiceButton()'
-						ng-attr-aria-label='{{!isVideoCall ? "Voice Call" : !isMicOn ? "Enable Mic" : "Disable Mic"}}'
+						ng-click='voiceCallButton()'
+						ng-attr-aria-label='{{!isVideoCall ? "Voice Call" : !streamOptions.audio ? "Enable Mic" : "Disable Mic"}}'
 					>
 						<img ng-show='!isVideoCall' src='/img/icons/voice.on.png' />
-						<img ng-show='isVideoCall && !isMicOn' src='/img/icons/mic.on.png' />
-						<img ng-show='isVideoCall && isMicOn' src='/img/icons/mic.off.png' />
+						<img ng-show='isVideoCall && !streamOptions.audio' src='/img/icons/mic.on.png' />
+						<img ng-show='isVideoCall && streamOptions.audio' src='/img/icons/mic.off.png' />
 					</md-button>
 
 					<md-button translate aria-label='Menu' ng-click='openMobileMenu()'>
@@ -123,7 +141,7 @@
 				<span
 					ng-attr-title='{{
 						isConnected && !isWebRTCEnabled ?
-							"One of your browsers may lack support for video calling. Try again with the latest Chrome or Firefox." :
+							"Your or your friend&#39;s browser may lack support for video calling. Try again with the latest Chrome or Firefox." :
 							""
 					}}'
 				>
@@ -131,22 +149,22 @@
 						translate
 						class='md-fab video-call-button'
 						ng-disabled='!isWebRTCEnabled'
-						ng-click='videoButton()'
-						ng-attr-aria-label='{{!isVideoCall ? "Video Call" : !isCameraOn ? "Enable Camera" : "Disable Camera"}}'
+						ng-click='videoCallButton()'
+						ng-attr-aria-label='{{!isVideoCall ? "Video Call" : !streamOptions.video ? "Enable Camera" : "Disable Camera"}}'
 					>
-						<img ng-show='!isVideoCall || !isCameraOn' src='/img/icons/video.on.png' />
-						<img ng-show='isVideoCall && isCameraOn' src='/img/icons/video.off.png' />
+						<img ng-show='!isVideoCall || !streamOptions.video' src='/img/icons/video.on.png' />
+						<img ng-show='isVideoCall && streamOptions.video' src='/img/icons/video.off.png' />
 					</md-button>
 					<md-button
 						translate
 						class='md-fab voice-call-button'
 						ng-disabled='!isWebRTCEnabled'
-						ng-click='voiceButton()'
-						ng-attr-aria-label='{{!isVideoCall ? "Voice Call" : !isMicOn ? "Enable Mic" : "Disable Mic"}}'
+						ng-click='voiceCallButton()'
+						ng-attr-aria-label='{{!isVideoCall ? "Voice Call" : !streamOptions.audio ? "Enable Mic" : "Disable Mic"}}'
 					>
 						<img ng-show='!isVideoCall' src='/img/icons/voice.on.png' />
-						<img ng-show='isVideoCall && !isMicOn' src='/img/icons/mic.on.png' />
-						<img ng-show='isVideoCall && isMicOn' src='/img/icons/mic.off.png' />
+						<img ng-show='isVideoCall && !streamOptions.audio' src='/img/icons/mic.on.png' />
+						<img ng-show='isVideoCall && streamOptions.audio' src='/img/icons/mic.off.png' />
 					</md-button>
 				</span>
 			</section>
@@ -290,16 +308,18 @@
 		</div>
 
 		<div id='video-call' ng-view flex ng-class='{active: state == states.chat}'>
-			<video class='friend' autoplay loop>
+			<video class='friend stream' autoplay></video>
+			<video class='friend' autoplay loop muted>
 				<source src='/video/background.webm' type='video/webm' />
 			</video>
-			<video class='me' autoplay></video>
+
+			<video class='me' autoplay muted></video>
 
 			<md-button
 				translate
 				aria-label='End Call'
 				class='md-fab md-theme-grey close-button'
-				ng-click='stopVideoCall()'
+				ng-click='videoCallClose()'
 			>
 				<strong>&times;</strong>
 			</md-button>
