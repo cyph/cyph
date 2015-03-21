@@ -1,10 +1,12 @@
 var
 	abortSetup,
 	addMessageToChat,
+	alertDialog,
 	beginChatUi,
 	beginWaiting,
 	changeState,
 	closeChat,
+	confirmDialog,
 	enableWebRTC,
 	friendIsTyping,
 	warnWebSignObsolete,
@@ -18,7 +20,8 @@ var
 	sendMessage,
 	state,
 	states,
-	statusNotFound
+	statusNotFound,
+	toggleVideoCall
 ;
 
 
@@ -84,8 +87,7 @@ angular.
 		$scope.isOnion			= isOnion;
 		$scope.isWebRTCEnabled	= false;
 		$scope.isVideoCall		= false;
-		$scope.isCameraOn		= false;
-		$scope.isMicOn			= false;
+		$scope.streamOptions	= webRTC.streamOptions;
 
 		$scope.webSignHashes	= encodeURIComponent(
 			'Hello Ryan and Josh,\n\n\n\n\n\n---\n\n' +
@@ -126,7 +128,6 @@ angular.
 			$window.off('beforeunload');
 			changeState($scope.states.aborted);
 			channelClose();
-			$scope.disconnect();
 		};
 
 
@@ -175,6 +176,11 @@ angular.
 					scrolling.update();
 				}
 			}
+		};
+
+
+		alertDialog = $scope.alertDialog = function (o, callback) {
+			$mdDialog.show($mdDialog.alert(o)).then(callback);
 		};
 
 
@@ -320,6 +326,11 @@ angular.
 					abortSetup();
 				}
 			}
+		};
+
+
+		confirmDialog = $scope.confirmDialog = function (o, callback) {
+			$mdDialog.show($mdDialog.confirm(o)).then(callback).catch(callback);
 		};
 
 
@@ -501,6 +512,13 @@ angular.
 		}
 
 
+		toggleVideoCall = $scope.toggleVideoCall = function (isVideoCall) {
+			apply(function () {
+				$scope.isVideoCall	= isVideoCall;
+			});
+		};
+
+
 
 		var isButtonClickLocked;
 
@@ -513,7 +531,7 @@ angular.
 						$mdSidenav('menu').close();
 					}
 
-					callback && callback();
+					apply(callback);
 
 					setTimeout(function () {
 						isButtonClickLocked	= false;
@@ -524,7 +542,18 @@ angular.
 
 
 		$scope.disconnect	= function () {
-			$scope.baseButtonClick(channelClose);
+			$scope.baseButtonClick(function () {
+				confirmDialog({
+					title: getString('disconnectTitle'),
+					content: getString('disconnectConfirm'),
+					ok: getString('continue'),
+					cancel: getString('cancel')
+				}, function (ok) {
+					if (ok) {
+						channelClose();
+					}
+				});
+			});
 		};
 
 
@@ -651,16 +680,33 @@ angular.
 		};
 
 
-		$scope.videoButton	= function () {
+		$scope.videoCallButton	= function () {
 			$scope.baseButtonClick(function () {
-				setUpWebRTC();
+				if (!$scope.isVideoCall) {
+					webRTC.helpers.requestCall(true);
+				}
+				else {
+					webRTC.helpers.setUpStream({video: !webRTC.streamOptions.video});
+				}
 			});
 		};
 
 
-		$scope.voiceButton	= function () {
+		$scope.videoCallClose	= function () {
 			$scope.baseButtonClick(function () {
-				setUpWebRTC();
+				webRTC.helpers.kill();
+			});
+		};
+
+
+		$scope.voiceCallButton	= function () {
+			$scope.baseButtonClick(function () {
+				if (!$scope.isVideoCall) {
+					webRTC.helpers.requestCall(false);
+				}
+				else {
+					webRTC.helpers.setUpStream({audio: !webRTC.streamOptions.audio});
+				}
 			});
 		};
 

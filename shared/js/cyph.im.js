@@ -291,86 +291,250 @@ navigator.getUserMedia	= navigator.getUserMedia || navigator.mozGetUserMedia || 
 var webRTC	= {
 	peer: null,
 
+	localStream: null,
+	remoteStream: null,
+
+	isAccepted: false,
 	isAvailable: false,
 
 	isSupported: !!PeerConnection,
 
-	addIceCandidate: function (candidate) {
-		if (webRTC.isAvailable) {
-			webRTC.peer.addIceCandidate(new IceCandidate(JSON.parse(candidate)));
-		}
-		else {
+	streamOptions: {},
+	currentStreamOptions: '',
+
+	commands: {
+		addIceCandidate: function (candidate) {
+			if (webRTC.isAvailable) {
+				webRTC.peer.addIceCandidate(new IceCandidate(JSON.parse(candidate)));
+			}
+			else {
+				setTimeout(function () {
+					webRTC.commands.addIceCandidate(candidate);
+				}, 500);
+			}
+		},
+
+		decline: function (answer) {
+			webRTC.isAccepted	= false;
+
+			alertDialog({
+				title: getString('videoCallingTitle'),
+				content: getString('webRTCDeny'),
+				ok: getString('ok')
+			});
+		},
+
+		kill: function () {
+			webRTC.isAccepted	= false;
+
+			toggleVideoCall(false);
+
 			setTimeout(function () {
-				webRTC.addIceCandidate(candidate);
+				delete webRTC.streamOptions.video;
+				delete webRTC.streamOptions.audio;
+
+				if (webRTC.localStream) {
+					webRTC.localStream.stop();
+					delete webRTC.localStream;
+				}
+
+				if (webRTC.remoteStream) {
+					webRTC.remoteStream.stop();
+					delete webRTC.remoteStream;
+				}
+
+				alertDialog({
+					title: getString('videoCallingTitle'),
+					content: getString('webRTCDisconnect'),
+					ok: getString('ok')
+				});
 			}, 500);
+		},
+
+		receiveAnswer: function (answer) {
+			webRTC.peer.setRemoteDescription(new SessionDescription(JSON.parse(answer)));
+			webRTC.isAvailable	= true;
+		},
+
+		receiveOffer: function (offer) {
+			webRTC.helpers.setUpStream(null, offer);
 		}
 	},
 
-	receiveAnswer: function (answer) {
-		webRTC.peer.setRemoteDescription(new SessionDescription(JSON.parse(answer)));
-		webRTC.isAvailable	= true;
-	},
+	helpers: {
+		init: function () {
+			if (!webRTC.peer) {
+				/* TODO: Set up Cyph STUN and TURN servers */
+				webRTC.peer	= new PeerConnection({
+					iceServers: [
+						{url: 'stun:23.21.150.121'},
+						{url: 'stun:stun.l.google.com:19302'},
+						{url: 'turn:numb.viagenie.ca', credential: 'webrtcdemo', username: 'louis%40mozilla.com'}
+					]
+				}, {
+					optional: [
+						{DtlsSrtpKeyAgreement: true},
+						{RtpDataChannels: true}
+					]
+				});
 
-	receiveOffer: function (offer) {
-		setUpWebRTC(offer);
+				webRTC.peer.onicecandidate	= function (e) {
+					if (e.candidate) {
+						delete webRTC.peer.onicecandidate;
+						sendWebRTCDataToPeer({addIceCandidate: JSON.stringify(e.candidate)});
+					}
+				};
+
+				webRTC.peer.onaddstream	= function (e) {
+					if (webRTC.remoteStream) {
+						webRTC.remoteStream.stop();
+					}
+
+					webRTC.remoteStream	= e.stream;
+
+					var remoteSupportsVideo	= webRTC.remoteStream.getVideoTracks().length > 0;
+
+					$('#video-call .friend:not(.stream)').toggle(!remoteSupportsVideo);
+					$('#video-call .friend.stream').
+						attr('src', URL.createObjectURL(webRTC.remoteStream)).
+						toggle(remoteSupportsVideo)
+					;
+				};
+			}
+		},
+
+		kill: function () {
+			sendWebRTCDataToPeer({kill: true});
+			webRTC.commands.kill();
+		},
+
+		receiveCommand: function (command, data) {
+			if (!webRTC.isSupported) {
+				return;
+			}
+
+			if (webRTC.isAccepted && typeof webRTC.commands[command] == 'function') {
+				webRTC.commands[command](data);
+			}
+			else if (command == 'voice' || command == 'video') {
+				confirmDialog({
+					title: getString('videoCallingTitle'),
+					content:
+						getString('webRTCRequest') + ' ' +
+						getString(command + 'Call') + '. ' +
+						getString('webRTCWarning')
+					,
+					ok: getString('continue'),
+					cancel: getString('decline')
+				}, function (ok) {
+					if (ok) {
+						webRTC.isAccepted	= true;
+						webRTC.helpers.setUpStream({video: command == 'video', audio: true});
+					}
+					else {
+						sendWebRTCDataToPeer({decline: true});
+					}
+				});
+			}
+		},
+
+		requestCall: function (isVideo) {
+			var callType	= isVideo ? 'video' : 'voice';
+
+			confirmDialog({
+				title: getString('videoCallingTitle'),
+				content:
+					getString('webRTCInit') + ' ' +
+					getString(callType + 'Call') + '. ' +
+					getString('webRTCWarning')
+				,
+				ok: getString('continue'),
+				cancel: getString('cancel')
+			}, function (ok) {
+				if (ok) {
+					webRTC.isAccepted			= true;
+					webRTC.streamOptions.video	= isVideo;
+					webRTC.streamOptions.audio	= true;
+
+					var o		= {};
+					o[callType]	= true;
+					sendWebRTCDataToPeer(o);
+
+					alertDialog({
+						title: getString('videoCallingTitle'),
+						content: getString('webRTCRequestConfirmation'),
+						ok: getString('ok')
+					});
+				}
+			});
+		},
+
+		setUpStream: function (opt_streamOptions, opt_offer) {
+			webRTC.helpers.init();
+
+			if (opt_streamOptions) {
+				if (opt_streamOptions.video !== undefined) {
+					webRTC.streamOptions.video	= opt_streamOptions.video;
+				}
+
+				/* Need at least one of audio and video */
+				if (!webRTC.streamOptions.video) {
+					webRTC.streamOptions.audio	= true;
+				}
+				else if (opt_streamOptions.audio !== undefined) {
+					webRTC.streamOptions.audio	= opt_streamOptions.audio;
+				}
+			}
+
+			var newStreamOptions	= JSON.stringify(webRTC.streamOptions);
+
+			function streamHelper (stream) {
+				if (stream) {
+					webRTC.localStream	= stream;
+				}
+
+				$('#video-call .me').attr('src', URL.createObjectURL(webRTC.localStream));
+				webRTC.peer.addStream(webRTC.localStream);
+
+				toggleVideoCall(true);
+
+				if (!opt_offer) {
+					webRTC.peer.createOffer(function (offer) {
+						webRTC.peer.setLocalDescription(offer);
+						sendWebRTCDataToPeer({receiveOffer: JSON.stringify(offer)});
+					});
+				}
+				else {
+					webRTC.peer.setRemoteDescription(new SessionDescription(JSON.parse(opt_offer)));
+
+					webRTC.peer.createAnswer(function (answer) {
+						webRTC.peer.setLocalDescription(answer);
+						sendWebRTCDataToPeer({receiveAnswer: JSON.stringify(answer)});
+
+						webRTC.isAvailable	= true;
+					});
+				}
+			}
+
+			if (webRTC.localStream && webRTC.currentStreamOptions == newStreamOptions) {
+				streamHelper();
+			}
+			else {
+				webRTC.currentStreamOptions	= newStreamOptions;
+
+				if (webRTC.localStream) {
+					webRTC.localStream.stop();
+					delete webRTC.localStream;
+				}
+
+				navigator.getUserMedia(webRTC.streamOptions, streamHelper, webRTC.helpers.kill);
+			}
+		}
 	}
 };
 
 function sendWebRTCDataToPeer (o) {
 	sendChannelData({Misc: WEBRTC_DATA_PREFIX + (o ? JSON.stringify(o) : '')});
-}
-
-function setUpWebRTC (opt_offer) {
-	if (!webRTC.isSupported) {
-		return;
-	}
-
-	/* TODO: Set up Cyph STUN and TURN servers */
-	webRTC.peer	= new PeerConnection({
-		iceServers: [
-			{url: 'stun:23.21.150.121'},
-			{url: 'stun:stun.l.google.com:19302'},
-			{url: 'turn:numb.viagenie.ca', credential: 'webrtcdemo', username: 'louis%40mozilla.com'}
-		]
-	}, {
-		optional: [
-			{DtlsSrtpKeyAgreement: true},
-			{RtpDataChannels: true}
-		]
-	});
-
-	webRTC.peer.onicecandidate	= function (e) {
-		if (e.candidate) {
-			delete webRTC.peer.onicecandidate;
-			sendWebRTCDataToPeer({addIceCandidate: JSON.stringify(e.candidate)});
-		}
-	};
-
-	webRTC.peer.onaddstream	= function (e) {
-		$('#video-call .friend')[0].src	= URL.createObjectURL(e.stream);
-	};
-
-	navigator.getUserMedia({video: true, audio: true}, function (stream) {
-		$('#video-call .me')[0].src	= URL.createObjectURL(stream);
-		webRTC.peer.addStream(stream);
-
-		if (!opt_offer) {
-			webRTC.peer.createOffer(function (offer) {
-				webRTC.peer.setLocalDescription(offer);
-				sendWebRTCDataToPeer({receiveOffer: JSON.stringify(offer)});
-			});
-		}
-		else {
-			webRTC.peer.setRemoteDescription(new SessionDescription(JSON.parse(opt_offer)));
-
-			webRTC.peer.createAnswer(function (answer) {
-				webRTC.peer.setLocalDescription(answer);
-				sendWebRTCDataToPeer({receiveAnswer: JSON.stringify(answer)});
-
-				webRTC.isAvailable	= true;
-			});
-		}
-	}, function () {});
 }
 
 
@@ -451,9 +615,7 @@ function receiveChannelDataHandler (o) {
 				var webRTCData	= JSON.parse(o.Misc.split(WEBRTC_DATA_PREFIX)[1]);
 				var key			= Object.keys(webRTCData)[0];
 
-				if (webRTC[key]) {
-					webRTC[key](webRTCData[key]);
-				}
+				webRTC.helpers.receiveCommand(key, webRTCData[key]);
 			}
 			else if (webRTC.isSupported) {
 				enableWebRTC();
