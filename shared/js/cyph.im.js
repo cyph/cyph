@@ -347,10 +347,11 @@ function setUpWebRTC (opt_offer) {
 	};
 
 	webRTC.peer.onaddstream	= function (e) {
-		$('#video-call')[0].src	= URL.createObjectURL(e.stream);
+		$('#video-call .friend')[0].src	= URL.createObjectURL(e.stream);
 	};
 
 	navigator.getUserMedia({video: true, audio: true}, function (stream) {
+		$('#video-call .me')[0].src	= URL.createObjectURL(stream);
 		webRTC.peer.addStream(stream);
 
 		if (!opt_offer) {
