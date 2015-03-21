@@ -99,7 +99,7 @@ window.webSignError	= errorLog('SOMEONE JUST GOT THE WEBSIGN ERROR SCREEN LADS',
 
 
 function getString (name) {
-	return $('meta[name="' + name + '"]').attr('content');
+	return $('meta[name="' + name + '"]').attr('content').replace(/\s+/g, ' ').trim();
 }
 
 
