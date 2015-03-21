@@ -119,7 +119,6 @@ angular.
 				$scope.$apply(fn);
 			}
 		}
-		window.$scope = $scope; window.$apply = apply;
 
 
 
