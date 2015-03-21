@@ -286,7 +286,50 @@ html:not(.mobile) .video-call-start {
   margin-right: 10px;
   margin-top: 10px; }
 
-#video-call:not([src]) {
+html:not(.video) #video-call {
+  display: none; }
+
+html.video #video-call {
+  height: 100%;
+  width: 100%;
+  background: black;
+  overflow: hidden !important; }
+  html.video #video-call .me {
+    position: absolute;
+    bottom: 0px;
+    right: 0px; }
+
+@media all and (orientation: landscape) {
+  #video-call .friend {
+    width: 100%;
+    margin-top: 50%;
+    -webkit-transform: translateY(-100%);
+    -moz-transform: translateY(-100%);
+    -ms-transform: translateY(-100%);
+    -o-transform: translateY(-100%);
+    transform: translateY(-100%); }
+  #video-call .me {
+    width: 20vw; } }
+@media all and (orientation: portrait) {
+  #video-call .friend {
+    height: 100%;
+    margin-left: 50%;
+    -webkit-transform: translateX(-50%);
+    -moz-transform: translateX(-50%);
+    -ms-transform: translateX(-50%);
+    -o-transform: translateX(-50%);
+    transform: translateX(-50%); }
+  #video-call .me {
+    max-height: 25vh;
+    width: 50vw; } }
+html.video:not(.mobile) #video-call {
+  height: calc(100% - 210px); }
+html.video:not(.mobile) #message-list {
+  max-height: 100px; }
+html.video:not(.mobile) #setting-up-crypto {
+  display: none; }
+
+html.video.mobile #message-list, html.video.mobile #message-wrapper {
   display: none; }
 
 #desktop-sidebar {
