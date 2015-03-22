@@ -535,7 +535,8 @@ html.mobile .formatting-help {
   text-align: center !important;
   max-width: 620px;
   margin-left: auto;
-  margin-right: auto; }
+  margin-right: auto;
+  padding: 0 5vw; }
   .beta-signup-form div {
     line-height: 200%; }
   .beta-signup-form md-input-container {
