@@ -42,7 +42,7 @@ function SQS (config) {
 			function wrapperHelper () {
 				wrapper.innerSqs[methodName](o, !shouldRetryUntilSuccessful ? f : function (err) {
 					if (err) {
-						setTimeout(wrapperHelper, 50);
+						setTimeout(wrapperHelper, 500);
 					}
 					else if (f) {
 						f.apply(this, arguments);
@@ -86,6 +86,8 @@ function Queue (queueName, handlers, config) {
 		}
 
 		if (handlers.onmessage) {
+			var lastReceiveTime	= 0;
+
 			function onmessageHelper () {
 				self.receive(handlers.onmessage, function (err, data) {
 					if (err && err.code == NON_EXISTENT_QUEUE) {
@@ -93,7 +95,16 @@ function Queue (queueName, handlers, config) {
 						handlers.onclose && handlers.onclose.apply(self, arguments);
 					}
 					else if (self.isAlive) {
-						setTimeout(onmessageHelper, 50);
+						var delay	= 50;
+						var now		= Date.now();
+						var isEmpty	= !(data && data.Messages && data.Messages.length > 0);
+
+						if (isEmpty && (now - lastReceiveTime) < 10000) {
+							delay	= 2500;
+						}
+
+						lastReceiveTime	= now;
+						setTimeout(onmessageHelper, delay);
 					}
 				});
 			}
