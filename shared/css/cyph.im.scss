@@ -379,6 +379,9 @@ html:not(.mobile) .video-call-button {
 	margin-right: 10px;
 	margin-top: 10px;
 }
+html.mobile button[disabled] {
+	opacity: 0.25;
+}
 
 html:not(.video) #video-call {
 	display: none;

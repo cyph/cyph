@@ -94,10 +94,11 @@ if [ $test ] ; then
 
 	# ls */*.yaml | xargs -I% sed -i.bak 's/version: prod/version: staging/g' %
 
-	for yaml in `ls */cyph*.yaml` ; do
-		cat $yaml | perl -pe 's/(- url: .*)/\1\n  login: admin/g' > $yaml.new
-		mv $yaml.new $yaml
-	done
+	# Disabling admin restriction on test environments for now
+	# for yaml in `ls */cyph*.yaml` ; do
+	# 	cat $yaml | perl -pe 's/(- url: .*)/\1\n  login: admin/g' > $yaml.new
+	# 	mv $yaml.new $yaml
+	# done
 else
 	ls */*.yaml | xargs -I% sed -i.bak 's/version: staging/version: prod/g' %
 
