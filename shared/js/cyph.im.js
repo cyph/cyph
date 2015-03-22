@@ -302,7 +302,7 @@ var webRTC	= {
 	streamOptions: {},
 	currentStreamOptions: null,
 
-	iceServer: 'ice.cyph.com',
+	iceServer: 'ice.cyph.com:3478',
 
 	commands: {
 		addIceCandidate: function (candidate) {
