@@ -302,6 +302,10 @@ var webRTC	= {
 	streamOptions: {},
 	currentStreamOptions: null,
 
+	$friendPlaceholder: $('#video-call .friend:not(.stream)'),
+	$friendStream: $('#video-call .friend.stream'),
+	$meStream: $('#video-call .me'),
+
 	iceServer: 'ice.cyph.com',
 
 	commands: {
@@ -333,6 +337,8 @@ var webRTC	= {
 			toggleVideoCall(false);
 
 			setTimeout(function () {
+				webRTC.$friendPlaceholder[0].pause();
+
 				delete webRTC.streamOptions.video;
 				delete webRTC.streamOptions.audio;
 				delete webRTC.currentStreamOptions;
@@ -371,11 +377,16 @@ var webRTC	= {
 		},
 
 		updateVideoState: function (remoteSupportsVideo) {
-			$('#video-call .friend:not(.stream)').toggle(!remoteSupportsVideo);
-			$('#video-call .friend.stream').
-				attr('src', URL.createObjectURL(webRTC.remoteStream)).
-				toggle(remoteSupportsVideo)
-			;
+			if (remoteSupportsVideo) {
+				webRTC.$friendStream.attr('src', URL.createObjectURL(webRTC.remoteStream)).show();
+				webRTC.$friendPlaceholder.hide();
+				webRTC.$friendPlaceholder[0].pause();
+			}
+			else {
+				webRTC.$friendPlaceholder[0].play();
+				webRTC.$friendPlaceholder.show();
+				webRTC.$friendStream.hide();
+			}
 		}
 	},
 
@@ -544,7 +555,7 @@ var webRTC	= {
 					track.enabled	= webRTC.streamOptions.audio;
 				});
 
-				$('#video-call .me').attr('src', URL.createObjectURL(webRTC.localStream));
+				webRTC.$meStream.attr('src', URL.createObjectURL(webRTC.localStream));
 				webRTC.peer.addStream(webRTC.localStream);
 
 				toggleVideoCall(true);
