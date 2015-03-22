@@ -83,7 +83,7 @@
 						<md-button
 							translate
 							class='video-call-button'
-							ng-disabled='!isWebRTCEnabled || !isAlive'
+							ng-disabled='!isWebRTCEnabled || !isConnected || !isAlive'
 							ng-click='videoCallButton()'
 							ng-attr-aria-label='{{!isVideoCall ? "Video Call" : !streamOptions.video ? "Enable Camera" : "Disable Camera"}}'
 						>
@@ -94,7 +94,7 @@
 							translate
 							class='voice-call-button'
 							aria-label='Voice Call'
-							ng-disabled='!isWebRTCEnabled || !isAlive'
+							ng-disabled='!isWebRTCEnabled || !isConnected || !isAlive'
 							ng-click='voiceCallButton()'
 							ng-attr-aria-label='{{!isVideoCall ? "Voice Call" : !streamOptions.audio ? "Enable Mic" : "Disable Mic"}}'
 						>
@@ -153,7 +153,7 @@
 					<md-button
 						translate
 						class='md-fab video-call-button'
-						ng-disabled='!isWebRTCEnabled || !isAlive'
+						ng-disabled='!isWebRTCEnabled || !isConnected || !isAlive'
 						ng-click='videoCallButton()'
 						ng-attr-aria-label='{{!isVideoCall ? "Video Call" : !streamOptions.video ? "Enable Camera" : "Disable Camera"}}'
 					>
@@ -163,7 +163,7 @@
 					<md-button
 						translate
 						class='md-fab voice-call-button'
-						ng-disabled='!isWebRTCEnabled || !isAlive'
+						ng-disabled='!isWebRTCEnabled || !isConnected || !isAlive'
 						ng-click='voiceCallButton()'
 						ng-attr-aria-label='{{!isVideoCall ? "Voice Call" : !streamOptions.audio ? "Enable Mic" : "Disable Mic"}}'
 					>
