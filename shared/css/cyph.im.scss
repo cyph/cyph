@@ -733,6 +733,32 @@ html.mobile .formatting-help {
 }
 
 
+.beta-signup-form {
+	text-align: center !important;
+	max-width: 620px;
+	margin-left: auto;
+	margin-right: auto;
+
+	div {
+		line-height: 200%;
+	}
+
+	md-input-container {
+		padding: 0 10vw;
+	}
+
+	.md-button {
+		@include transform(scale(0.75) !important);
+		width: 200px !important;
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+		background-color: #7d4fd3 !important;
+		margin-bottom: 50px;
+	}
+}
+
+
 /*** SpinKit animation: http://tobiasahlin.com/spinkit/ ***/
 
 .ellipsis-spinner {

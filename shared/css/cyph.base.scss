@@ -137,6 +137,7 @@ pre {
 }
 
 
+
 /* Mobile and desktop classes */
 
 html:not(.mobile) {
@@ -154,6 +155,77 @@ html.mobile {
 		display: none !important;
 	}
 }
+
+
+
+/* Moved beta signup stuff from cyph.com CSS */
+
+.beta-signup-form {
+	opacity: 0;
+	color: #f1f1f1;
+
+	*, md-input-container.md-default-theme * {
+		color: #f1f1f1;
+		border-color: #f1f1f1;
+		width: 100%;
+	}
+	*:not(p):not(p *) {
+		display: block;
+	}
+
+	md-input-container.md-input-focused * {
+		color: #c9adff !important;
+		border-color: #c9adff !important;
+	}
+
+	md-input-container.md-default-theme label {
+		font-size: 0.75em;
+	}
+
+	.md-button {
+		margin: 25px auto;
+		width: calc(100% - 100px);
+		min-width: 200px;
+	}
+}
+
+.beta-signup-form .md-button, #new-cyph-footer {
+	font-family: 'Ubuntu' !important;
+	line-height: 50px !important;
+	font-size: 18px !important;
+	box-shadow: 0px 4px 10px -1px rgba(0, 0, 0, 0.25) !important;
+}
+#new-cyph-footer {
+	width: 200px;
+	@include transform(scale(0.75) !important);
+}
+
+.beta-signup-form + div {
+	opacity: 0;
+	pointer-events: none;
+	position: fixed;
+	z-index: 99;
+	top: 0px;
+	left: 0px;
+	width: 101%;
+	height: 101%;
+	font-size: 5vw;
+	padding: 15vh 15vw;
+	background-color: rgba(97, 51, 163, 0.75);
+	font-family: 'Ubuntu' !important;
+}
+
+.beta-signup-form.complete + div, .beta-signup-form.visible {
+	opacity: 1;
+	@include transition(opacity 500ms 1s linear);
+}
+
+.hidden-submit-button {
+	visibility: hidden;
+	position: absolute;
+	pointer-events: none;
+}
+
 
 
 /* Lightbox */
@@ -178,6 +250,7 @@ html.mobile {
 html.mobile .mfp-content {
 	pointer-events: none !important;
 }
+
 
 
 /*** Angular Material patches (from 0.4 to 0.6 upgrade) ***/
