@@ -701,8 +701,8 @@
 		<script src='/js/cyph.im.ui.js'></script>
 
 		<script>
-			/* No more scripts, now that application code has been loaded
-				$('head').append("<meta http-equiv='Content-Security-Policy' content=\"script-src 'unsafe-eval'\" />"); */
+			/* No more scripts, now that application code has been loaded (added 'self' for Worker hack on shitty browsers) */
+			$('head').append("<meta http-equiv='Content-Security-Policy' content=\"script-src 'self' 'unsafe-eval'\" />");
 		</script>
 
 	</body>
