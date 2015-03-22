@@ -273,7 +273,7 @@ function eventLoop () {
 		/*** else ***/
 
 		else {
-			delay	= 50;
+			delay	= 100;
 		}
 	}
 	finally {
