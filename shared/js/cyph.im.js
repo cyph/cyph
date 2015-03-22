@@ -378,14 +378,18 @@ var webRTC	= {
 
 		updateVideoState: function (remoteSupportsVideo) {
 			if (remoteSupportsVideo) {
-				webRTC.$friendStream.attr('src', URL.createObjectURL(webRTC.remoteStream)).show();
+				webRTC.$friendStream.show();
 				webRTC.$friendPlaceholder.hide();
 				webRTC.$friendPlaceholder[0].pause();
+
+				setTimeout(function () {
+					webRTC.$friendStream.attr('src', URL.createObjectURL(webRTC.remoteStream));
+				}, isMobile ? 250 : 0);
 			}
 			else {
-				webRTC.$friendPlaceholder[0].play();
 				webRTC.$friendPlaceholder.show();
 				webRTC.$friendStream.hide();
+				setTimeout(function () { webRTC.$friendPlaceholder[0].play() }, isMobile ? 250 : 0);
 			}
 		}
 	},
