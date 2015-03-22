@@ -127,15 +127,15 @@ function otrWorkerOnMessageHandler (e) {
 			while (preConnectMessageSendQueue.length) {
 				otr.sendMsg(preConnectMessageSendQueue.shift());
 			}
+
+			if (webRTC.isSupported) {
+				sendWebRTCDataToPeer();
+			}
 			break;
 
 		case 'authenticated':
 			markAllAsSent();
 			pingPong();
-
-			if (webRTC.isSupported) {
-				sendWebRTCDataToPeer();
-			}
 
 			/* Ratchet channels every 10 - 20 minutes */
 			if (e.data.message) {
@@ -300,6 +300,7 @@ var webRTC	= {
 	isSupported: !!PeerConnection,
 
 	streamOptions: {},
+	currentStreamOptions: null,
 
 	commands: {
 		addIceCandidate: function (candidate) {
@@ -332,6 +333,7 @@ var webRTC	= {
 			setTimeout(function () {
 				delete webRTC.streamOptions.video;
 				delete webRTC.streamOptions.audio;
+				delete webRTC.currentStreamOptions;
 
 				if (webRTC.localStream) {
 					webRTC.localStream.stop();
@@ -447,6 +449,14 @@ var webRTC	= {
 					if (ok) {
 						webRTC.isAccepted	= true;
 						webRTC.helpers.setUpStream({video: command == 'video', audio: true});
+
+						anal.send({
+							hitType: 'event',
+							eventCategory: 'call',
+							eventAction: 'start',
+							eventLabel: command,
+							eventValue: 1
+						});
 					}
 					else {
 						sendWebRTCDataToPeer({decline: true});
@@ -519,6 +529,9 @@ var webRTC	= {
 					if (webRTC.localStream) {
 						webRTC.localStream.stop();
 					}
+					else {
+						addMessageToChat(getString('webRTCConnect'), authors.app, false);
+					}
 
 					webRTC.localStream	= stream;
 				}
@@ -565,16 +578,11 @@ var webRTC	= {
 				}
 			}
 
-			if (
-				webRTC.localStream &&
-				(!webRTC.streamOptions.video || webRTC.localStream.getVideoTracks().length > 0)
-			) {
+			if (webRTC.localStream && newStreamOptions == webRTC.currentStreamOptions) {
 				streamHelper();
 			}
 			else {
-				if (!webRTC.localStream) {
-					addMessageToChat(getString('webRTCConnect'), authors.app, false);
-				}
+				webRTC.currentStreamOptions	= newStreamOptions;
 
 				navigator.getUserMedia(webRTC.streamOptions, streamHelper, webRTC.helpers.kill);
 			}
