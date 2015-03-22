@@ -76,6 +76,7 @@ angular.
 
 		$scope.language			= language;
 		$scope.isConnected		= false;
+		$scope.isDisconnected	= false;
 		$scope.isFriendTyping	= false;
 		$scope.cyphertext		= [];
 		$scope.messages			= [];
@@ -320,6 +321,7 @@ angular.
 
 					apply(function () {
 						isAlive = $scope.isAlive = false;
+						$scope.isDisconnected	= true;
 					});
 				}
 				else if (!isWebSignObsolete) {
@@ -933,6 +935,78 @@ angular.
 			characterData: false,
 			subtree: true
 		});
+
+
+
+
+
+		/***** Temporarily copypasta'd beta signup stuff from cyph.com.ui.js, pending refactor *****/
+
+		var $betaSignupForm		= $('.beta-signup-form');
+
+		$scope.betaSignupState	= 0;
+
+		$scope.betaSignup		= {
+			Language: language
+		};
+
+		$scope.submitBetaSignup	= function () {
+			apply(function () {
+				++$scope.betaSignupState;
+			});
+
+			if ($scope.betaSignupState == 2) {
+				setTimeout(function () {
+					apply(function () {
+						++$scope.betaSignupState;
+					});
+				}, 1500);
+			}
+
+			setTimeout(function () {
+				/* Temporary workaround */
+				var $input	= $betaSignupForm.find('input:visible');
+				if ($input.length == 1) {
+					$input.focus();
+				}
+			}, 100);
+
+			var retries	= 0;
+			function dothemove () {
+				$.ajax({
+					type: 'PUT',
+					url: BASE_URL + 'betasignups',
+					data: $scope.betaSignup,
+					error: function () {
+						if (++retries < 5) {
+							dothemove();
+						}
+						else {
+							retries	= 0;
+						}
+					},
+					success: function (isNew) {
+						if (isNew == 'true') {
+							anal.send({
+								hitType: 'event',
+								eventCategory: 'signup',
+								eventAction: 'new',
+								eventValue: 1
+							});
+						}
+					}
+				});
+			}
+
+			dothemove();
+		};
+
+		setTimeout(function () {
+			$betaSignupForm.addClass('visible');
+		}, 500);
+
+
+
 
 		
 		/* Do the move lad */

@@ -528,6 +528,28 @@ html:not(.mobile) .formatting-help td {
 html.mobile .formatting-help {
   font-size: 75%; }
 
+.beta-signup-form {
+  text-align: center !important;
+  max-width: 620px;
+  margin-left: auto;
+  margin-right: auto; }
+  .beta-signup-form div {
+    line-height: 200%; }
+  .beta-signup-form md-input-container {
+    padding: 0 10vw; }
+  .beta-signup-form .md-button {
+    -webkit-transform: scale(0.75) !important;
+    -moz-transform: scale(0.75) !important;
+    -ms-transform: scale(0.75) !important;
+    -o-transform: scale(0.75) !important;
+    transform: scale(0.75) !important;
+    width: 200px !important;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #7d4fd3 !important;
+    margin-bottom: 50px; }
+
 /*** SpinKit animation: http://tobiasahlin.com/spinkit/ ***/
 .ellipsis-spinner {
   margin: 100px auto 0;
