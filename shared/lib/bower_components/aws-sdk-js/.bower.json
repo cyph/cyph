@@ -12,20 +12,21 @@
     "Gemfile*",
     "configuration*",
     "Rakefile",
-    "*.json",
+    "package.json",
+    "testem.json",
     ".*"
   ],
   "main": "dist/aws-sdk.js",
   "homepage": "https://github.com/aws/aws-sdk-js",
-  "version": "2.1.17",
-  "_release": "2.1.17",
+  "version": "2.1.18",
+  "_release": "2.1.18",
   "_resolution": {
     "type": "version",
-    "tag": "v2.1.17",
-    "commit": "47416560efb743b4242b6c9a65f6561e2ae815eb"
+    "tag": "v2.1.18",
+    "commit": "69f05c427f503caea6845dabaf9183a0bb181846"
   },
   "_source": "git://github.com/aws/aws-sdk-js.git",
-  "_target": "~2.1.17",
+  "_target": "~2.1.18",
   "_originalSource": "aws-sdk-js",
   "_direct": true
 }
