@@ -302,6 +302,8 @@ var webRTC	= {
 	streamOptions: {},
 	currentStreamOptions: null,
 
+	iceServer: 'ice.cyph.com',
+
 	commands: {
 		addIceCandidate: function (candidate) {
 			if (webRTC.isAvailable) {
@@ -380,12 +382,10 @@ var webRTC	= {
 	helpers: {
 		init: function () {
 			if (!webRTC.peer) {
-				/* TODO: Set up Cyph STUN and TURN servers */
 				webRTC.peer	= new PeerConnection({
 					iceServers: [
-						{url: 'stun:23.21.150.121'},
-						{url: 'stun:stun.l.google.com:19302'},
-						{url: 'turn:numb.viagenie.ca', credential: 'webrtcdemo', username: 'louis%40mozilla.com'}
+						{url: 'stun:' + webRTC.iceServer},
+						{url: 'turn:' + webRTC.iceServer}
 					]
 				}, {
 					optional: [
