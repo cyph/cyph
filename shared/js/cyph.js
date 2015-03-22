@@ -310,31 +310,33 @@ function onTick (f) {
 
 		function processTickEventLoop (interval) {
 			processTicks();
-			setTimeout(processTickEventLoop, interval);
+			setTimeout(function () { processTickEventLoop(interval) }, interval);
 		}
 
 		function processTickWorker (interval) {
 			worker	= makeWorker(function () {
 				var vars	= this.vars;
 
-				setInterval(function () {
-					postMessage({eventName: 'tick'});
-				}, vars.interval);
+				onmessage	= function () {
+					setTimeout(function () {
+						postMessage();
+					}, vars.interval);
+				};
 			}, {
 				interval: interval
 			});
 
-			worker.onmessage	= processTicks;
+			worker.onmessage	= function () {
+				processTicks();
+				worker.postMessage();
+			};
+
+			worker.onmessage();
 		}
 
 
-		if (isMobile) {
-			processTickEventLoop(25);
-			setTimeout(function () { processTickWorker(500) }, 500);
-		}
-		else {
-			processTickWorker(50);
-		}
+		processTickEventLoop(100);
+		setTimeout(function () { processTickWorker(300) }, 500);
 	}
 
 	return tickFunctions.length - 1;
