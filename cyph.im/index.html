@@ -380,6 +380,49 @@
 							<div class='bounce3'></div>
 						</span>
 					</md-item>
+
+
+					<form class='beta-signup-form' ng-submit='submitBetaSignup()' ng-show='isDisconnected'>
+						<div ng-show='betaSignupState == 0'>
+							<div translate>
+								Enjoying the service? Join our waitlist for Cyph v2!
+							</div>
+							<div translate>
+								More details are on the way, but the next version of Cyph will include
+								group messaging, user accounts, and encrypted chat history.
+							</div>
+							<md-input-container>
+								<label translate>email</label>
+								<input type='email' ng-model='betaSignup.Email' />
+							</md-input-container>
+						</div>
+
+						<div ng-show='betaSignupState == 1'>
+							<div translate>
+								Thanks so much for signing up!
+							</div>
+							<div translate>
+								Feel free to add your name as well. :)
+							</div>
+							<md-input-container>
+								<label translate>name (optional)</label>
+								<input ng-model='betaSignup.Name' />
+							</md-input-container>
+						</div>
+
+						<div ng-show='betaSignupState == 2'>
+							You rock.
+						</div>
+
+						<md-button
+							translate
+							type='submit'
+							aria-label='Sign up for beta'
+							ng-hide='betaSignupState > 1'
+						>
+							Sign up for beta
+						</md-button>
+					</form>
 				</md-list>
 			</md-content>
 
@@ -658,8 +701,8 @@
 		<script src='/js/cyph.im.ui.js'></script>
 
 		<script>
-			/* No more scripts, now that application code has been loaded */
-			$('head').append("<meta http-equiv='Content-Security-Policy' content=\"script-src 'unsafe-eval'\" />");
+			/* No more scripts, now that application code has been loaded
+				$('head').append("<meta http-equiv='Content-Security-Policy' content=\"script-src 'unsafe-eval'\" />"); */
 		</script>
 
 	</body>
