@@ -604,16 +604,30 @@ angular.
 		};
 
 
-		$scope.scrollDown	= function (shouldScrollCyphertext) {
-			(shouldScrollCyphertext ?
-				$cyphertext :
-				$messageList
-			).each(function () {
-				var $this	= $(this);
-				$this.animate({scrollTop: $this[0].scrollHeight}, 350);
-			});
+		var scrollDownLock	= 0;
 
-			scrolling.update();
+		$scope.scrollDown	= function (shouldScrollCyphertext) {
+			if (scrollDownLock < 1) {
+				try {
+					++scrollDownLock;
+
+					(shouldScrollCyphertext ?
+						$cyphertext :
+						$messageList
+					).each(function () {
+						++scrollDownLock;
+
+						$(this).animate({scrollTop: this.scrollHeight}, 350, function () {
+							--scrollDownLock;
+						});
+					});
+
+					scrolling.update();
+				}
+				finally {
+					--scrollDownLock;
+				}
+			}
 		};
 
 
