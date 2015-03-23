@@ -10,20 +10,21 @@ var AWS_REGIONS	= [
 	'sa-east-1'
 ];
 
-AWS.config	= new AWS.Config({
-	region: 'us-east-1',
-	accessKeyId: 'AKIAIN2DSULSB77U4S2A',
-	secretAccessKey: '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',
-	apiVersions: {
-		ses: '2010-12-01',
-		sqs: '2012-11-05'
-	},
 
-	/* Workaround for TorBrowser issues */
-	signatureVersion: 'v2'
-});
+function awsInit () {
+	AWS.config	= new AWS.Config({
+		region: 'us-east-1',
+		accessKeyId: 'AKIAIN2DSULSB77U4S2A',
+		secretAccessKey: '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',
+		apiVersions: {
+			ses: '2010-12-01',
+			sqs: '2012-11-05'
+		},
 
-
+		/* Workaround for TorBrowser issues */
+		signatureVersion: 'v2'
+	});
+}
 
 function makeAwsRequest (o, callback) {
 	var config	= {
@@ -122,3 +123,6 @@ function makeAwsRequest (o, callback) {
 		callback();
 	}
 }
+
+
+awsInit();
