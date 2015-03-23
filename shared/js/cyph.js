@@ -115,7 +115,13 @@ function getTimestamp () {
 }
 
 
-function getUrlState () {
+function getUrlState (fragmentOnly) {
+	var fragment	= document.location.hash.split('#')[1];
+
+	if (fragmentOnly || fragment) {
+		return fragment;
+	}
+
 	var split	= document.location.pathname.split('/');
 
 	var a	= split.slice(-1)[0];

@@ -29,29 +29,16 @@ var
 	isOtrReady,
 	lastIncomingMessageTimestamp,
 	lastOutgoingMessageTimestamp,
+	cyphId,
 	sharedSecret,
+	shouldStartNewCyph,
 	shouldSendQueryMessage
 ;
 
 
-/* Init crypto */
+/* Init cyph */
 
 var otrWorker		= makeWorker(cryptoWebWorker);
-
-var urlFragment		= document.location.hash.split('#')[1];
-
-if (urlFragment && urlFragment.length == (SECRET_LENGTH * 2)) {
-	sharedSecret	= urlFragment.substr(SECRET_LENGTH);
-	urlFragment		= urlFragment.substr(0, SECRET_LENGTH);
-}
-
-if (urlFragment) {
-	history.pushState({}, '', '/' + urlFragment);
-}
-
-if (!sharedSecret || sharedSecret.length != SECRET_LENGTH) {
-	sharedSecret	= generateGuid(SECRET_LENGTH);
-}
 
 otrWorker.onmessage	= function (e) { otrWorkerOnMessageQueue.push(e) };
 
@@ -184,16 +171,71 @@ if (
 }
 
 // else {
+$(function () {
+	var urlFragment	= getUrlState();
 
-otrWorker.postMessage({method: 0, message: {
-	cryptoCodes: localStorage.cryptoCodes,
-	randomSeed: randomSeed,
-	sharedSecret: sharedSecret
-}});
+	if (!urlFragment || urlFragment == 'new' || urlFragment.length > (SECRET_LENGTH * 2)) {
+		shouldStartNewCyph	= true;
+	}
 
+	if (urlFragment && urlFragment.length > SECRET_LENGTH) {
+		cyphId			= urlFragment.substr(0, SECRET_LENGTH);
+		sharedSecret	= urlFragment.substr(SECRET_LENGTH);
+	}
+
+	if (!sharedSecret) {
+		sharedSecret	= generateGuid(SECRET_LENGTH);
+	}
+
+	otrWorker.postMessage({method: 0, message: {
+		cryptoCodes: localStorage.cryptoCodes,
+		randomSeed: randomSeed,
+		sharedSecret: sharedSecret
+	}});
+
+
+	function startOrJoinCyph (isFirstAttempt) {
+		if (cyphId && !isFirstAttempt) {
+			pushNotFound();
+			return;
+		}
+
+		var id	= cyphId || generateGuid(SECRET_LENGTH);
+		var o	= shouldStartNewCyph ? {channelDescriptor: getChannelDescriptor()} : null;
+
+		$.ajax({
+			type: 'POST',
+			url: BASE_URL + 'channels/' + id,
+			data: o,
+			success: function (channelDescriptor) {
+				if (cyphId || !o || channelDescriptor == o.channelDescriptor) {
+					cyphId	= id;
+					setUpChannel(channelDescriptor);
+				}
+				else {
+					startOrJoinCyph();
+				}
+			},
+			error: function () {
+				startOrJoinCyph();
+			}
+		});
+	}
+
+	if (shouldStartNewCyph || cyphId) {
+		if (!cyphId) {
+			changeState(states.spinningUp);
+		}
+
+		history.pushState({}, '', document.location.pathname);
+		startOrJoinCyph(true);
+	}
+	else {
+		processUrlState();
+	}
+});
 // }
-
-/* End crypto init */
+/* End cyph init */
 
 
 var connectedNotification	= getString('connectedNotification');
@@ -232,52 +274,16 @@ function processUrlState () {
 
 	var urlState	= getUrlState();
 
-	/* New chat room */
-	if (urlState == 'new' || !urlState) {
-		changeState(states.spinningUp);
-
-		function startNewCyph () {
-			var id					= generateGuid(SECRET_LENGTH);
-			var channelDescriptor	= getChannelDescriptor();
-
-			pushState('/' + id, true, true);
-
-			$.ajax({
-				type: 'POST',
-				url: BASE_URL + 'channels/' + id,
-				data: {channelDescriptor: channelDescriptor},
-				success: function (data) {
-					if (data == channelDescriptor) {
-						setUpChannel(channelDescriptor);
-					}
-					else {
-						startNewCyph();
-					}
-				},
-				error: startNewCyph
-			});
-		}
-
-		startNewCyph();
-	}
-	/* Join existing chat room */
-	else if (urlState.length == SECRET_LENGTH) {
-		$.ajax({
-			type: 'POST',
-			url: BASE_URL + 'channels/' + urlState,
-			success: function (channelDescriptor) {
-				setUpChannel(channelDescriptor);
-			},
-			error: pushNotFound
-		});
-	}
 	/* 404 */
-	else if (urlState == '404') {
+	if (urlState == '404') {
 		changeState(states.error);
 	}
 	else {
 		pushNotFound();
+		return;
 	}
+
+	history.replaceState({}, '', '/' + getUrlState());
 }
 
 
