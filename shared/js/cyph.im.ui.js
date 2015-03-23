@@ -241,7 +241,7 @@ angular.
 			var copyUrl		=
 				((!isOnion && document.location.origin) || 'https://www.cyph.im') +
 				'/#' +
-				document.location.pathname.substr(1) +
+				cyphId +
 				sharedSecret
 			;
 
@@ -1028,11 +1028,6 @@ angular.
 		tabIndent.renderAll();
 
 		scrolling.update();
-
-		if (isHistoryAvailable && history.replaceState) {
-			history.replaceState({}, '', '/' + getUrlState());
-		}
-		processUrlState();
 
 		if (window.Notification) {
 			Notification.requestPermission();
