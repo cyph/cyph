@@ -307,6 +307,7 @@ var webRTC	= {
 	$meStream: $('#video-call .me'),
 
 	iceServer: 'ice.cyph.com',
+	friendPlaceholderSrc: '/video/background.webm',
 
 	commands: {
 		addIceCandidate: function (candidate) {
@@ -337,7 +338,7 @@ var webRTC	= {
 			toggleVideoCall(false);
 
 			setTimeout(function () {
-				webRTC.$friendPlaceholder[0].pause();
+				webRTC.$friendPlaceholder.attr('src', '');
 
 				delete webRTC.streamOptions.video;
 				delete webRTC.streamOptions.audio;
@@ -377,20 +378,10 @@ var webRTC	= {
 		},
 
 		updateVideoState: function (remoteSupportsVideo) {
-			if (remoteSupportsVideo) {
-				webRTC.$friendStream.show();
-				webRTC.$friendPlaceholder.hide();
-				webRTC.$friendPlaceholder[0].pause();
-
-				setTimeout(function () {
-					webRTC.$friendStream.attr('src', URL.createObjectURL(webRTC.remoteStream));
-				}, isMobile ? 250 : 0);
-			}
-			else {
-				webRTC.$friendPlaceholder.show();
-				webRTC.$friendStream.hide();
-				setTimeout(function () { webRTC.$friendPlaceholder[0].play() }, isMobile ? 250 : 0);
-			}
+			webRTC.$friendPlaceholder.toggle(!remoteSupportsVideo);
+			webRTC.$friendStream.toggle(remoteSupportsVideo);
+			webRTC.$friendPlaceholder.attr('src', remoteSupportsVideo ? '' : webRTC.friendPlaceholderSrc);
+			webRTC.$friendStream.attr('src', URL.createObjectURL(webRTC.remoteStream));
 		}
 	},
 
@@ -604,6 +595,11 @@ var webRTC	= {
 		}
 	}
 };
+
+/* Mobile workaround */
+$(function () {
+	$(window).one('click', function () { webRTC.$friendPlaceholder[0].play() });
+});
 
 function sendWebRTCDataToPeer (o) {
 	sendChannelData({Misc: WEBRTC_DATA_PREFIX + (o ? JSON.stringify(o) : '')});
