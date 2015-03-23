@@ -515,23 +515,18 @@ var webRTC	= {
 			webRTC.helpers.init();
 
 			if (opt_streamOptions) {
-				if (opt_streamOptions.video !== undefined) {
+				if (opt_streamOptions.video === true || opt_streamOptions.video == false) {
 					webRTC.streamOptions.video	= opt_streamOptions.video;
 				}
-
-				/* Need at least one of audio and video */
-				if (!webRTC.streamOptions.video) {
-					webRTC.streamOptions.audio	= true;
-				}
-				else if (opt_streamOptions.audio !== undefined) {
+				if (opt_streamOptions.audio == true || opt_streamOptions.audio == false) {
 					webRTC.streamOptions.audio	= opt_streamOptions.audio;
 				}
 			}
 
-			var newStreamOptions	= JSON.stringify(webRTC.streamOptions);
+			var streamHelper, streamFallback, streamSetup;
 
-			function streamHelper (stream) {
-				if (stream) {
+			streamHelper	= function (stream) {
+				if (stream || stream === false) {
 					if (webRTC.localStream) {
 						webRTC.localStream.stop();
 					}
@@ -542,16 +537,10 @@ var webRTC	= {
 					webRTC.localStream	= stream;
 				}
 
-				webRTC.localStream.getVideoTracks().forEach(function (track) {
-					track.enabled	= webRTC.streamOptions.video;
-				});
-
-				webRTC.localStream.getAudioTracks().forEach(function (track) {
-					track.enabled	= webRTC.streamOptions.audio;
-				});
-
-				webRTC.$meStream.attr('src', URL.createObjectURL(webRTC.localStream));
-				webRTC.peer.addStream(webRTC.localStream);
+				if (webRTC.localStream) {
+					webRTC.$meStream.attr('src', URL.createObjectURL(webRTC.localStream));
+					webRTC.peer.addStream(webRTC.localStream);
+				}
 
 				toggleVideoCall(true);
 
@@ -582,15 +571,35 @@ var webRTC	= {
 						webRTC.isAvailable	= true;
 					});
 				}
-			}
+			};
 
-			if (webRTC.localStream && newStreamOptions == webRTC.currentStreamOptions) {
+			streamFallback	= function () {
+				if (webRTC.streamOptions.video) {
+					webRTC.streamOptions.video	= false;
+				}
+				else if (webRTC.streamOptions.audio) {
+					webRTC.streamOptions.audio	= false;
+				}
+
+				streamSetup();
+			};
+
+			streamSetup	= function () {
+				webRTC.currentStreamOptions	= JSON.stringify(webRTC.streamOptions);
+
+				if (webRTC.streamOptions.video || webRTC.streamOptions.audio) {
+					navigator.getUserMedia(webRTC.streamOptions, streamHelper, streamFallback);
+				}
+				else {
+					streamHelper(false);
+				}
+			};
+
+			if (webRTC.localStream && JSON.stringify(webRTC.streamOptions) == webRTC.currentStreamOptions) {
 				streamHelper();
 			}
 			else {
-				webRTC.currentStreamOptions	= newStreamOptions;
-
-				navigator.getUserMedia(webRTC.streamOptions, streamHelper, webRTC.helpers.kill);
+				streamSetup();
 			}
 		}
 	}
