@@ -42,6 +42,7 @@ function SQS (config) {
 			function wrapperHelper () {
 				wrapper.innerSqs[methodName](o, !shouldRetryUntilSuccessful ? f : function (err) {
 					if (err) {
+						awsInit();
 						setTimeout(wrapperHelper, 500);
 					}
 					else if (f) {
