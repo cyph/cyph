@@ -10,10 +10,13 @@ import (
 )
 
 func init() {
-	handleFunc("/", root)
 	handleFuncs("/betasignups", Handlers{methods.PUT: betaSignup})
 	handleFuncs("/channels/{id}", Handlers{methods.POST: channelSetup})
 	handleFuncs("/continent", Handlers{methods.GET: getContinent})
+
+	handleFunc("/", func(h HandlerArgs) (interface{}, int) {
+		return "Welcome to Cyph, lad", http.StatusOK
+	})
 }
 
 /*** Public API ***/
@@ -96,8 +99,4 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 func getContinent(h HandlerArgs) (interface{}, int) {
 	_, continent := geolocate(h)
 	return continent, http.StatusOK
-}
-
-func root(h HandlerArgs) (interface{}, int) {
-	return "Welcome to Cyph, lad", http.StatusOK
 }
