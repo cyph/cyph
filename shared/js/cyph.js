@@ -36,21 +36,15 @@ function errorLog (subject, shouldIncludeBootstrapText) {
 	var numEmails	= 0;
 
 	return function (errorMessage, url, line, column, errorObject) {
-		var exception;
+		var exception	= !errorMessage ? '' : (
+			errorMessage + '\n\n' +
+			'URL: ' + url + '\n' +
+			'Line: ' + line + '\n' +
+			'Column: ' + column + '\n\n' +
+			(errorObject && errorObject.stack)
+		);
 
-		if (errorObject && errorObject.stack) {
-			exception	= errorObject.stack;
-		}
-		else if (errorMessage) {
-			exception	=
-				errorMessage + '\n\n' +
-				'URL: ' + url + '\n' +
-				'Line: ' + line + '\n' +
-				'Column: ' + column
-			;
-		}
-
-		var message		= (exception || '') +
+		var message		= exception +
 			'\n\n' + navigator.userAgent +
 			'\n\n' + navigator.language +
 			'\n\n' + (typeof language == 'undefined' ? '' : language) +
@@ -319,7 +313,7 @@ function onTick (f) {
 
 				onmessage	= function () {
 					setTimeout(function () {
-						postMessage();
+						postMessage({});
 					}, vars.interval);
 				};
 			}, {
@@ -328,7 +322,7 @@ function onTick (f) {
 
 			worker.onmessage	= function () {
 				processTicks();
-				worker.postMessage();
+				worker.postMessage({});
 			};
 
 			worker.onmessage();

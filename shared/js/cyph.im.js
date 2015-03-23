@@ -307,12 +307,12 @@ var webRTC	= {
 	$meStream: $('#video-call .me'),
 
 	iceServer: 'ice.cyph.com',
-	friendPlaceholderSrc: '/video/background.webm',
+	friendPlaceholderSrc: '/video/background.mp4',
 
 	commands: {
 		addIceCandidate: function (candidate) {
 			if (webRTC.isAvailable) {
-				webRTC.peer.addIceCandidate(new IceCandidate(JSON.parse(candidate)));
+				webRTC.peer.addIceCandidate(new IceCandidate(JSON.parse(candidate)), function () {}, function () {});
 			}
 			else {
 				setTimeout(function () {
@@ -350,7 +350,7 @@ var webRTC	= {
 				}
 
 				if (webRTC.remoteStream) {
-					webRTC.remoteStream.stop();
+					webRTC.remoteStream.stop && webRTC.remoteStream.stop();
 					delete webRTC.remoteStream;
 				}
 
@@ -369,7 +369,7 @@ var webRTC	= {
 		},
 
 		receiveAnswer: function (answer) {
-			webRTC.peer.setRemoteDescription(new SessionDescription(JSON.parse(answer)));
+			webRTC.peer.setRemoteDescription(new SessionDescription(JSON.parse(answer)), function () {}, function () {});
 			webRTC.isAvailable	= true;
 		},
 
@@ -381,51 +381,46 @@ var webRTC	= {
 			webRTC.$friendPlaceholder.toggle(!remoteSupportsVideo);
 			webRTC.$friendStream.toggle(remoteSupportsVideo);
 			webRTC.$friendPlaceholder.attr('src', remoteSupportsVideo ? '' : webRTC.friendPlaceholderSrc);
-			webRTC.$friendStream.attr('src', URL.createObjectURL(webRTC.remoteStream));
 		}
 	},
 
 	helpers: {
 		init: function () {
-			if (!webRTC.peer) {
-				webRTC.peer	= new PeerConnection({
-					iceServers: [
-						{url: 'stun:' + webRTC.iceServer},
-						{url: 'turn:' + webRTC.iceServer}
-					]
-				}, {
-					optional: [
-						{DtlsSrtpKeyAgreement: true},
-						{RtpDataChannels: true}
-					]
-				});
-
-				webRTC.peer.onicecandidate	= function (e) {
-					if (e.candidate) {
-						delete webRTC.peer.onicecandidate;
-						sendWebRTCDataToPeer({addIceCandidate: JSON.stringify(e.candidate)});
-					}
-				};
-
-				webRTC.peer.onaddstream	= function (e) {
-					if (webRTC.remoteStream) {
-						webRTC.remoteStream.stop();
-					}
-
-					webRTC.remoteStream	= e.stream;
-
-					var videoTracks		= webRTC.remoteStream.getVideoTracks();
-
-					var remoteSupportsVideo	=
-						videoTracks.length > 0 &&
-						videoTracks.
-							map(function (track) { return track.enabled }).
-							reduce(function (a, b) { return a || b })
-					;
-
-					webRTC.commands.updateVideoState(remoteSupportsVideo);
-				};
+			if (webRTC.peer) {
+				webRTC.isAvailable	= false;
+				delete webRTC.peer.onaddstream;
+				delete webRTC.remoteStream;
+				webRTC.peer.close();
+				delete webRTC.peer;
 			}
+
+			webRTC.peer	= new PeerConnection({
+				iceServers: [
+					{url: 'stun:' + webRTC.iceServer, credential: 'cyph', username: 'cyph'},
+					{url: 'turn:' + webRTC.iceServer, credential: 'cyph', username: 'cyph'}
+				]
+			}, {
+				optional: [
+					{DtlsSrtpKeyAgreement: true},
+					{RtpDataChannels: true}
+				]
+			});
+
+			webRTC.peer.onicecandidate	= function (e) {
+				if (e.candidate) {
+					delete webRTC.peer.onicecandidate;
+					sendWebRTCDataToPeer({addIceCandidate: JSON.stringify(e.candidate)});
+				}
+			};
+
+			webRTC.peer.onaddstream	= function (e) {
+				if (webRTC.remoteStream) {
+					webRTC.remoteStream.stop();
+				}
+
+				webRTC.remoteStream	= e.stream;
+				webRTC.$friendStream.attr('src', webRTC.remoteStream ? URL.createObjectURL(webRTC.remoteStream) : '');
+			};
 		},
 
 		kill: function () {
@@ -515,10 +510,10 @@ var webRTC	= {
 			webRTC.helpers.init();
 
 			if (opt_streamOptions) {
-				if (opt_streamOptions.video === true || opt_streamOptions.video == false) {
+				if (opt_streamOptions.video === true || opt_streamOptions.video === false) {
 					webRTC.streamOptions.video	= opt_streamOptions.video;
 				}
-				if (opt_streamOptions.audio == true || opt_streamOptions.audio == false) {
+				if (opt_streamOptions.audio === true || opt_streamOptions.audio === false) {
 					webRTC.streamOptions.audio	= opt_streamOptions.audio;
 				}
 			}
@@ -557,19 +552,19 @@ var webRTC	= {
 							join('\n')
 						;
 
-						webRTC.peer.setLocalDescription(offer);
+						webRTC.peer.setLocalDescription(offer, function () {}, function () {});
 						sendWebRTCDataToPeer({receiveOffer: JSON.stringify(offer), updateVideoState: webRTC.streamOptions.video});
-					});
+					}, webRTC.helpers.kill, {offerToReceiveAudio: true, offerToReceiveVideo: true});
 				}
 				else {
-					webRTC.peer.setRemoteDescription(new SessionDescription(JSON.parse(opt_offer)));
+					webRTC.peer.setRemoteDescription(new SessionDescription(JSON.parse(opt_offer)), function () {
+						webRTC.peer.createAnswer(function (answer) {
+							webRTC.peer.setLocalDescription(answer, function () {}, function () {});
+							sendWebRTCDataToPeer({receiveAnswer: JSON.stringify(answer), updateVideoState: webRTC.streamOptions.video});
 
-					webRTC.peer.createAnswer(function (answer) {
-						webRTC.peer.setLocalDescription(answer);
-						sendWebRTCDataToPeer({receiveAnswer: JSON.stringify(answer), updateVideoState: webRTC.streamOptions.video});
-
-						webRTC.isAvailable	= true;
-					});
+							webRTC.isAvailable	= true;
+						}, webRTC.helpers.kill);
+					}, webRTC.helpers.kill);
 				}
 			};
 
@@ -634,11 +629,18 @@ function channelSend () {
 function channelClose (hasReceivedDestroySignal) {
 	webRTC.helpers.kill();
 
-	if (hasReceivedDestroySignal) {
-		channel.close(closeChat);
+	var c	= channel || oldChannel;
+
+	if (c) {
+		if (hasReceivedDestroySignal) {
+			c.close(closeChat);
+		}
+		else if (isAlive) {
+			channelSend({Destroy: true}, closeChat, true);
+		}
 	}
-	else if (isAlive) {
-		channelSend({Destroy: true}, closeChat, true);
+	else {
+		closeChat();
 	}
 }
 
