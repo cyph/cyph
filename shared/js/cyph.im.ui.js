@@ -900,21 +900,23 @@ angular.
 						$elem.removeClass('unread');
 					}
 
-					if (isHidden || !$elem.is(':appeared')) {
-						apply(function () { $scope.unreadMessages += 1 });
+					setTimeout(function () {
+						if ((isHidden || !$elem.is(':appeared')) && !$elem.find('*').add($elem.parentsUntil().addBack()).is('.app-message')) {
+							apply(function () { $scope.unreadMessages += 1 });
 
-						var intervalId	= setInterval(function () {
-							if (!Visibility.hidden() && ($elem.is(':appeared') || $elem.nextAll('.message-item:not(.unread)').length > 0)) {
-								clearInterval(intervalId);
-								$elem.removeClass('unread');
-								apply(function () { $scope.unreadMessages -= 1 });
+							var intervalId	= setInterval(function () {
+								if (!Visibility.hidden() && ($elem.is(':appeared') || $elem.nextAll('.message-item:not(.unread)').length > 0)) {
+									clearInterval(intervalId);
+									$elem.removeClass('unread');
+									apply(function () { $scope.unreadMessages -= 1 });
 
-								if ($elem.nextAll().length == 0) {
-									$scope.scrollDown();
+									if ($elem.nextAll().length == 0) {
+										$scope.scrollDown();
+									}
 								}
-							}
-						}, 100);
-					}
+							}, 100);
+						}
+					}, 250);
 				}
 
 				/* Process image lightboxes */
