@@ -356,9 +356,10 @@ var webRTC	= {
 				}
 
 				if (webRTC.remoteStream) {
-					webRTC.remoteStream.stop && webRTC.remoteStream.stop();
 					delete webRTC.remoteStream;
 				}
+
+				webRTC.peer.close();
 
 				if (wasAccepted) {
 					var webRTCDisconnect	= getString('webRTCDisconnect');
@@ -393,14 +394,10 @@ var webRTC	= {
 	helpers: {
 		init: function () {
 			if (webRTC.peer) {
-				webRTC.isAvailable	= false;
-				delete webRTC.peer.onaddstream;
-				delete webRTC.remoteStream;
-				webRTC.peer.close();
-				delete webRTC.peer;
+				return;
 			}
 
-			webRTC.peer	= new PeerConnection({
+			var pc	= new PeerConnection({
 				iceServers: [
 					{url: 'stun:' + webRTC.iceServer, credential: 'cyph', username: 'cyph'},
 					{url: 'turn:' + webRTC.iceServer, credential: 'cyph', username: 'cyph'}
@@ -412,21 +409,38 @@ var webRTC	= {
 				]
 			});
 
-			webRTC.peer.onicecandidate	= function (e) {
+			pc.onicecandidate	= function (e) {
 				if (e.candidate) {
-					delete webRTC.peer.onicecandidate;
+					delete pc.onicecandidate;
 					sendWebRTCDataToPeer({addIceCandidate: JSON.stringify(e.candidate)});
 				}
 			};
 
-			webRTC.peer.onaddstream	= function (e) {
-				if (webRTC.remoteStream) {
-					webRTC.remoteStream.stop();
-				}
-
+			pc.onaddstream	= function (e) {
 				webRTC.remoteStream	= e.stream;
 				webRTC.$friendStream.attr('src', webRTC.remoteStream ? URL.createObjectURL(webRTC.remoteStream) : '');
 			};
+
+			pc.onsignalingstatechange	= function (forceKill) {
+				forceKill	= forceKill === true;
+
+				if (webRTC.peer == pc && (forceKill || pc.signalingState == 'closed')) {
+					webRTC.isAvailable	= false;
+
+					delete pc.onaddstream;
+					delete webRTC.remoteStream;
+					delete webRTC.peer;
+
+					if (forceKill) {
+						pc.close();
+					}
+
+					webRTC.helpers.init();
+				}
+			};
+
+
+			webRTC.peer	= pc;
 		},
 
 		kill: function () {
@@ -527,30 +541,34 @@ var webRTC	= {
 			var streamHelper, streamFallback, streamSetup;
 
 			streamHelper	= function (stream) {
-				if (stream || stream === false) {
-					if (webRTC.localStream) {
-						webRTC.localStream.stop();
-					}
-					else {
-						addMessageToChat(getString('webRTCConnect'), authors.app, false);
+				if (webRTC.localStream) {
+					webRTC.localStream.stop();
+					delete webRTC.localStream;
+				}
+				else {
+					addMessageToChat(getString('webRTCConnect'), authors.app, false);
+				}
+
+				if (stream) {
+					if (webRTC.peer.getLocalStreams().length > 0) {
+						webRTC.peer.onsignalingstatechange(true);
 					}
 
 					webRTC.localStream	= stream;
-				}
-
-				if (webRTC.localStream) {
-					[{k: 'audio', f: 'getAudioTracks'}, {k: 'video', f: 'getVideoTracks'}].forEach(function (o) {
-						webRTC.streamOptions[o.k]	= webRTC.localStream[o.f]().
-							map(function (track) { return track.enabled }).
-							reduce(function (a, b) { return a || b }, false)
-						;
-					});
-
-					webRTC.$meStream.attr('src', URL.createObjectURL(webRTC.localStream));
 					webRTC.peer.addStream(webRTC.localStream);
+					webRTC.$meStream.attr('src', URL.createObjectURL(webRTC.localStream));
 				}
 
-				toggleVideoCall(true);
+				[
+					{k: 'audio', f: 'getAudioTracks'},
+					{k: 'video', f: 'getVideoTracks'}
+				].forEach(function (o) {
+					webRTC.streamOptions[o.k]	= webRTC.localStream && webRTC.localStream[o.f]().
+						map(function (track) { return track.enabled }).
+						reduce(function (a, b) { return a || b }, false)
+					;
+				});
+
 
 				if (!opt_offer) {
 					webRTC.peer.createOffer(function (offer) {
@@ -579,6 +597,8 @@ var webRTC	= {
 						}, webRTC.helpers.kill);
 					}, webRTC.helpers.kill);
 				}
+
+				toggleVideoCall(true);
 			};
 
 			streamFallback	= function () {
@@ -599,16 +619,11 @@ var webRTC	= {
 					navigator.getUserMedia(webRTC.streamOptions, streamHelper, streamFallback);
 				}
 				else {
-					streamHelper(false);
+					streamHelper();
 				}
 			};
 
-			if (webRTC.localStream && JSON.stringify(webRTC.streamOptions) == webRTC.currentStreamOptions) {
-				streamHelper();
-			}
-			else {
-				streamSetup();
-			}
+			streamSetup();
 		}
 	}
 };
