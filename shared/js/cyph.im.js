@@ -539,6 +539,13 @@ var webRTC	= {
 				}
 
 				if (webRTC.localStream) {
+					[{k: 'audio', f: 'getAudioTracks'}, {k: 'video', f: 'getVideoTracks'}].forEach(function (o) {
+						webRTC.streamOptions[o.k]	= webRTC.localStream[o.f]().
+							map(function (track) { return track.enabled }).
+							reduce(function (a, b) { return a || b }, false)
+						;
+					});
+
 					webRTC.$meStream.attr('src', URL.createObjectURL(webRTC.localStream));
 					webRTC.peer.addStream(webRTC.localStream);
 				}
@@ -735,12 +742,16 @@ function receiveChannelDataHandler (o) {
 }
 
 function setUpChannel (channelDescriptor) {
+	var isNotCreator;
+
 	channel	= new Channel(channelDescriptor, {
 		onopen: function (isCreator) {
 			if (isCreator) {
 				beginWaiting();
 			}
 			else {
+				isNotCreator	= true;
+
 				beginChat();
 				sendChannelDataBase({Misc: channelDataMisc.connect});
 				otr.sendQueryMsg();
@@ -757,7 +768,20 @@ function setUpChannel (channelDescriptor) {
 				channelClose();
 			});
 		},
-		onmessage: receiveChannelData
+		onmessage: receiveChannelData,
+		onlag: function (lag, region) {
+			if (isNotCreator && isConnected) {
+				ratchetChannels();
+			}
+
+			anal.send({
+				hitType: 'event',
+				eventCategory: 'lag',
+				eventAction: 'detected',
+				eventLabel: region,
+				eventValue: lag
+			});
+		}
 	});
 }
 
@@ -770,7 +794,20 @@ function setUpChannel (channelDescriptor) {
 	Bob: deprecation old channel
 */
 
+var lastChannelRatchet	= 0;
+
 function ratchetChannels (channelDescriptor) {
+	/* Block ratchet from being initiated more than once within a three-minute period */
+	if (!channelDescriptor) {
+		var last			= lastChannelRatchet;
+		lastChannelRatchet	= Date.now();
+
+		if (lastChannelRatchet - last < 180000) {
+			return;
+		}
+	}
+
+
 	if (shouldUseOldChannel) {
 		shouldUseOldChannel	= false;
 
