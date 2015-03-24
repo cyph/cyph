@@ -107,6 +107,12 @@ function Queue (queueName, handlers, config) {
 						lastReceiveTime	= now;
 						setTimeout(onmessageHelper, delay);
 					}
+				}, null, null, handlers.onlag && function (lag) {
+					if (handlers.onlag) {
+						var f	= handlers.onlag;
+						delete handlers.onlag;
+						setTimeout(function () { f(lag, self.sqs.innerSqs.config.region) }, 0);
+					}
 				});
 			}
 
@@ -147,12 +153,13 @@ Queue.prototype.close	= function (callback) {
 	}
 };
 
-Queue.prototype.receive	= function (messageHandler, onComplete, maxNumberOfMessages, waitTimeSeconds) {
+Queue.prototype.receive	= function (messageHandler, onComplete, maxNumberOfMessages, waitTimeSeconds, onLag) {
 	var self	= this;
 
 	if (self.isAlive) {
 		self.sqs.receiveMessage({
 			QueueUrl: self.queueUrl,
+			AttributeNames: ['SentTimestamp'],
 			MaxNumberOfMessages: maxNumberOfMessages || 10,
 			WaitTimeSeconds: waitTimeSeconds || 20
 		}, function (err, data) {
@@ -174,6 +181,14 @@ Queue.prototype.receive	= function (messageHandler, onComplete, maxNumberOfMessa
 							catch (e) {}
 
 							messageHandler(messageBody);
+
+							if (onLag) {
+								var lag	= Date.now() - parseInt(message.Attributes.SentTimestamp, 10);
+
+								if (lag > 3000) {
+									onLag(lag);
+								}
+							}
 						}
 					}
 				}
@@ -277,6 +292,7 @@ function Channel (channelName, handlers, config) {
 
 		self.inQueue	= new Queue(channelName + CHANNEL_IDS[isCreator], {
 			onmessage: handlers.onmessage,
+			onlag: handlers.onlag,
 			onclose: onclose,
 			onopen: function () {
 				self.outQueue	= new Queue(channelName + CHANNEL_IDS[!isCreator], {
