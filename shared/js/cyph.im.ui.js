@@ -578,6 +578,13 @@ angular.
 				$mdDialog.show({
 					template: $('#templates > .formatting-help')[0].outerHTML
 				});
+
+				anal.send({
+					hitType: 'event',
+					eventCategory: 'formatting-help',
+					eventAction: 'show',
+					eventValue: 1
+				});
 			});
 		};
 
@@ -693,6 +700,13 @@ angular.
 
 					setTimeout(function () {
 						$everything.addClass(curtainClass);
+
+						anal.send({
+							hitType: 'event',
+							eventCategory: 'cyphertext',
+							eventAction: 'show',
+							eventValue: 1
+						});
 					}, 3500);
 				}, 2500);
 			});
