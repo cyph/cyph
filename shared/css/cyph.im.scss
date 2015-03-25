@@ -438,12 +438,14 @@ html.video {
 	}
 }
 html.video:not(.mobile) {
+	/* Message list is 15%; video UI is 100% - message list height - footer height */
+
 	#video-call {
-		height: calc(100% - 210px);
+		height: calc(85% - 110px);
 	}
 
 	#message-list {
-		max-height: 100px;
+		max-height: 15%;
 
 		&.is-connected #setting-up-crypto {
 			display: none;
