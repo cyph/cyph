@@ -102,7 +102,8 @@ angular.
 			spinningUp: 1,
 			waitingForFriend: 2,
 			chatBeginMessage: 3,
-			blank: 4,
+			keyExchange: 4,
+			blank: 100,
 			chat: 200,
 			aborted: 400,
 			error: 404,
@@ -190,48 +191,66 @@ angular.
 				return;
 			}
 
-			notify(connectedNotification);
-			changeState($scope.states.chatBeginMessage);
+			function dothemove () {
+				notify(connectedNotification);
+				changeState($scope.states.chatBeginMessage);
+
+				/* Stop mobile browsers from keeping this selected */
+				$copyUrlInput.remove();
+
+				setTimeout(function () {
+					if ($scope.state == $scope.states.aborted) {
+						return;
+					}
+
+					callback && callback();
+
+					changeState($scope.states.chat);
+
+					/* Adjust font size for translations */
+					if (!isMobile) {
+						setTimeout(function () {
+							$buttons.each(function () {
+								var $this		= $(this);
+								var $clone		= $this
+									.clone()
+									.css({display: 'inline', width: 'auto', visibility: 'hidden', position: 'fixed'})
+									.appendTo('body')
+								;
+								var $both		= $this.add($clone);
+
+								var fontSize	= parseInt($this.css('font-size'), 10);
+
+								for (var i = 0 ; i < 20 && $clone.width() > $this.width() ; ++i) {
+									fontSize	-= 1;
+									$both.css('font-size', fontSize + 'px');
+								}
+
+								$clone.remove();
+							});
+						}, 500);
+					}
+
+					addMessageToChat(getString('introductoryMessage'), authors.app, false);
+				}, 3000);
+			}
+
+
 			$timer && $timer[0].stop();
 
-			/* Stop mobile browsers from keeping this selected */
-			$copyUrlInput.remove();
+			if (hasKeyExchangeBegun) {
+				dothemove();
+			}
+			else {
+				changeState($scope.states.keyExchange);
 
-			setTimeout(function () {
-				if ($scope.state == $scope.states.aborted) {
-					return;
-				}
-
-				callback && callback();
-
-				changeState($scope.states.chat);
-
-				/* Adjust font size for translations */
-				if (!isMobile) {
-					setTimeout(function () {
-						$buttons.each(function () {
-							var $this		= $(this);
-							var $clone		= $this
-								.clone()
-								.css({display: 'inline', width: 'auto', visibility: 'hidden', position: 'fixed'})
-								.appendTo('body')
-							;
-							var $both		= $this.add($clone);
-
-							var fontSize	= parseInt($this.css('font-size'), 10);
-
-							for (var i = 0 ; i < 20 && $clone.width() > $this.width() ; ++i) {
-								fontSize	-= 1;
-								$both.css('font-size', fontSize + 'px');
-							}
-
-							$clone.remove();
-						});
-					}, 500);
-				}
-
-				addMessageToChat(getString('introductoryMessage'), authors.app, false);
-			}, 3000);
+				var intervalId	= setInterval(function () {
+					if (hasKeyExchangeBegun) {
+						clearInterval(intervalId);
+						dothemove();
+					}
+				}, 250);
+			}
 		};
 
 
