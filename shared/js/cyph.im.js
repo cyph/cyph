@@ -790,17 +790,19 @@ function setUpChannel (channelDescriptor) {
 		},
 		onmessage: receiveChannelData,
 		onlag: function (lag, region) {
-			if (isNotCreator && isConnected) {
-				ratchetChannels();
-			}
+			if (isConnected) {
+				if (isNotCreator) {
+					ratchetChannels();
+				}
 
-			anal.send({
-				hitType: 'event',
-				eventCategory: 'lag',
-				eventAction: 'detected',
-				eventLabel: region,
-				eventValue: lag
-			});
+				anal.send({
+					hitType: 'event',
+					eventCategory: 'lag',
+					eventAction: 'detected',
+					eventLabel: region,
+					eventValue: lag
+				});
+			}
 		}
 	});
 }
