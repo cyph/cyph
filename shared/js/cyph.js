@@ -244,7 +244,9 @@ $(function () {
 
 		/* Using mouseup instead of click because of Angular Material weirdness */
 		$button.on('mouseup', function () {
-			$this[0].click();
+			setTimeout(function () {
+				$this[0].click();
+			}, 500);
 		});
 	});
 });
