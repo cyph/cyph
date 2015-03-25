@@ -364,7 +364,9 @@ var webRTC	= {
 					delete webRTC.remoteStream;
 				}
 
-				webRTC.peer.close();
+				if (webRTC.peer) {
+					webRTC.peer.close();
+				}
 
 				if (wasAccepted) {
 					var webRTCDisconnect	= getString('webRTCDisconnect');
