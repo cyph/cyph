@@ -165,6 +165,14 @@ Queue.prototype.receive	= function (messageHandler, onComplete, maxNumberOfMessa
 		}, function (err, data) {
 			try {
 				if (data && data.Messages && data.Messages.length > 0) {
+					if (onLag) {
+						var lag	= Date.now() - parseInt(data.Messages[0].Attributes.SentTimestamp, 10);
+
+						if (lag > 3000) {
+							onLag(lag);
+						}
+					}
+
 					self.sqs.deleteMessageBatch({
 						QueueUrl: self.queueUrl,
 						Entries: data.Messages
@@ -181,14 +189,6 @@ Queue.prototype.receive	= function (messageHandler, onComplete, maxNumberOfMessa
 							catch (e) {}
 
 							messageHandler(messageBody);
-
-							if (onLag) {
-								var lag	= Date.now() - parseInt(message.Attributes.SentTimestamp, 10);
-
-								if (lag > 3000) {
-									onLag(lag);
-								}
-							}
 						}
 					}
 				}
