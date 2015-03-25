@@ -27,6 +27,7 @@ var
 	isWebSignObsolete,
 	isConnected,
 	isOtrReady,
+	hasKeyExchangeBegun,
 	lastIncomingMessageTimestamp,
 	lastOutgoingMessageTimestamp,
 	cyphId,
@@ -101,6 +102,10 @@ function otrWorkerOnMessageHandler (e) {
 				otr.receiveMsg(preConnectMessageReceiveQueue.shift());
 			}
 
+			break;
+
+		case 'firstmessage':
+			hasKeyExchangeBegun	= true;
 			break;
 
 		case 'abort':
