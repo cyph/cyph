@@ -182,6 +182,13 @@
 			<div flex></div>
 		</div>
 
+		<div ng-view class='loading' layout='column' layout-fill flex ng-class='{active: state == states.keyExchange}'>
+			<div flex></div>
+			<div class='logo-animation'><img src='/img/logo.animated.gif' /></div>
+			<div translate>Initiating key exchange...</div>
+			<div flex></div>
+		</div>
+
 		<div ng-view class='loading' layout='column' layout-fill flex ng-class='{active: state == states.waitingForFriend}'>
 			<div flex></div>
 			<div class='logo-animation'><img src='/img/logo.animated.gif' /></div>

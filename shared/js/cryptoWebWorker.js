@@ -267,6 +267,10 @@ function eventLoop () {
 			otr.recv(incomingMessages[incomingMessageId]);
 			delete incomingMessages[incomingMessageId];
 			++incomingMessageId;
+
+			if (incomingMessageId == 1) {
+				postMessage({eventName: 'firstmessage'});
+			}
 		}
 
 
