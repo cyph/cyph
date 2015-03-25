@@ -327,12 +327,14 @@ html.video #video-call {
   #video-call .me {
     max-height: 25vh;
     width: 40vw; } }
-html.video:not(.mobile) #video-call {
-  height: calc(100% - 210px); }
-html.video:not(.mobile) #message-list {
-  max-height: 100px; }
-  html.video:not(.mobile) #message-list.is-connected #setting-up-crypto {
-    display: none; }
+html.video:not(.mobile) {
+  /* Message list is 15%; video UI is 100% - message list height - footer height */ }
+  html.video:not(.mobile) #video-call {
+    height: calc(85% - 110px); }
+  html.video:not(.mobile) #message-list {
+    max-height: 15%; }
+    html.video:not(.mobile) #message-list.is-connected #setting-up-crypto {
+      display: none; }
 
 html.video.mobile #message-list, html.video.mobile #message-wrapper {
   display: none; }
