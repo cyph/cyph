@@ -305,8 +305,13 @@ var webRTC	= {
 
 	localStream: null,
 	remoteStream: null,
-	incomingFile: null,
-	incomingFileName: null,
+
+	incomingFile: {
+		data: null,
+		name: null,
+		size: null,
+		percentComplete: null
+	},
 
 	isAccepted: false,
 	isAvailable: false,
@@ -321,7 +326,7 @@ var webRTC	= {
 	$meStream: $('#video-call .me'),
 
 	iceServer: 'ice.cyph.com',
-	chunkSize: 1000,
+	chunkSize: 10000,
 	maxFileSize: 110000000,
 	fileIsComplete: '☁',
 
@@ -348,8 +353,9 @@ var webRTC	= {
 		},
 
 		kill: function () {
-			var wasAccepted		= webRTC.isAccepted;
-			webRTC.isAccepted	= false;
+			var wasAccepted				= webRTC.isAccepted;
+			webRTC.isAccepted			= false;
+			webRTC.hasSessionStarted	= false;
 
 			toggleVideoCall(false);
 
@@ -414,6 +420,10 @@ var webRTC	= {
 			if (webRTC.peer) {
 				return;
 			}
+			else if (!webRTC.hasSessionStarted) {
+				webRTC.hasSessionStarted	= true;
+				addMessageToChat(getString('webRTCConnect'), authors.app, false);
+			}
 
 			var dc;
 			var pc	= new PeerConnection({
@@ -422,10 +432,7 @@ var webRTC	= {
 					{url: 'turn:' + webRTC.iceServer, credential: 'cyph', username: 'cyph'}
 				]
 			}, {
-				optional: [
-					{DtlsSrtpKeyAgreement: true},
-					{RtpDataChannels: true}
-				]
+				optional: [{DtlsSrtpKeyAgreement: true}]
 			});
 
 			pc.onaddstream	= function (e) {
@@ -512,7 +519,7 @@ var webRTC	= {
 			}
 		},
 
-		receiveIncomingFile: function (file, name) {
+		receiveIncomingFile: function (data, name) {
 			var title	= getString('incomingFile') + ' ' + name;
 
 			confirmDialog({
@@ -522,16 +529,17 @@ var webRTC	= {
 				cancel: getString('reject')
 			}, function (ok) {
 				if (ok) {
-					var save		= document.createElement('a');
-					save.href		= file.join('');
-					save.target		= '_blank';
-					save.download	= name;
+					var a			= document.createElement('a');
+					a.href			= URL.createObjectURL(new Blob(data));
+					a.download		= name;
+					a.target		= '_blank';
+					a.style.display	= 'none';
 
-					var e	= document.createEvent('Event');
-					e.initEvent('click', true, true);
-					save.dispatchEvent(e);
+					document.body.appendChild(a);
+					a.click();
+					document.body.removeChild(a);
 
-					(window.URL || window.webkitURL).revokeObjectURL(save.href);
+					URL.revokeObjectURL(a.href);
 				}
 				else {
 					alertDialog({
@@ -598,6 +606,7 @@ var webRTC	= {
 				$(this).val('');
 			});
 
+
 			if (file) {
 				if (file.size > webRTC.maxFileSize) {
 					alertDialog({
@@ -626,29 +635,30 @@ var webRTC	= {
 				addMessageToChat(getString('fileTransferInitMe') + ' ' + file.name, authors.app, false);
 
 				webRTC.channel.send('');
-				webRTC.channel.send(file.name);
-
-				function sendFileHelper (text) {
-					setTimeout(function () {
-						try {
-							webRTC.channel.send(text.slice(0, webRTC.chunkSize) || webRTC.fileIsComplete);
-
-							if (text) {
-								sendFileHelper(text.slice(webRTC.chunkSize));
-							}
-						}
-						catch (e) {
-							setTimeout(function () {
-								sendFileHelper(text);
-							}, 250);
-						}
-					}, 50);
-				};
+				webRTC.channel.send(file.name + '\n' + file.size);
 
 				var reader		= new FileReader();
-				reader.onload	= function (e) { sendFileHelper(e.target.result) };
 
-				reader.readAsDataURL(file);
+				reader.onloadend	= function (e) {
+					var buf	= e.target.result;
+
+					var tickId	= onTick(function () {
+						try {
+							var slice	= buf.slice(0, webRTC.chunkSize);
+							webRTC.channel.send(slice.byteLength > 0 ? slice : webRTC.fileIsComplete);
+
+							if (buf.byteLength > 0) {
+								buf	= buf.slice(webRTC.chunkSize)
+							}
+							else {
+								tickOff(tickId);
+							}
+						}
+						catch (e) {}
+					});
+				};
+
+				reader.readAsArrayBuffer(file);
 			}
 		},
 
@@ -665,28 +675,49 @@ var webRTC	= {
 
 			webRTC.channel.onmessage	= function (e) {
 				if (!e.data) {
-					webRTC.incomingFile	= null;
+					delete webRTC.incomingFile.data;
+					delete webRTC.incomingFile.name;
+					delete webRTC.incomingFile.size;
+					delete webRTC.incomingFile.percentComplete;
 				}
-				else if (!webRTC.incomingFile) {
-					webRTC.incomingFile		= [];
-					webRTC.incomingFileName	= e.data;
+				else if (!webRTC.incomingFile.data) {
+					var data	= e.data.split('\n');
+
+					webRTC.incomingFile.data	= [];
+					webRTC.incomingFile.name	= data[0];
+					webRTC.incomingFile.size	= parseInt(data[1], 10);
 
 					addMessageToChat(
-						getString('fileTransferInitFriend') + ' ' + webRTC.incomingFileName,
+						getString('fileTransferInitFriend') + ' ' + webRTC.incomingFile.name,
 						authors.app
 					);
 				}
 				else if (e.data == webRTC.fileIsComplete) {
-					var incomingFile		= webRTC.incomingFile;
-					var incomingFileName	= webRTC.incomingFileName;
+					var data	= webRTC.incomingFile.data;
+					var name	= webRTC.incomingFile.name;
 
-					delete webRTC.incomingFile;
-					delete webRTC.incomingFileName;
+					delete webRTC.incomingFile.data;
+					delete webRTC.incomingFile.name;
+					delete webRTC.incomingFile.size;
+					delete webRTC.incomingFile.percentComplete;
 
-					webRTC.helpers.receiveIncomingFile(incomingFile, incomingFileName);
+					webRTC.helpers.receiveIncomingFile(data, name);
 				}
 				else {
-					webRTC.incomingFile.push(e.data);
+					webRTC.incomingFile.data.push(e.data);
+
+					updateUI(function () {
+						webRTC.incomingFile.percentComplete	=
+							webRTC.incomingFile.data.length *
+								webRTC.chunkSize /
+								webRTC.incomingFile.size *
+								100
+						;
+
+						if (webRTC.incomingFile.percentComplete > 100) {
+							webRTC.incomingFile.percentComplete	= 100;
+						}
+					});
 				}
 			};
 
@@ -711,9 +742,6 @@ var webRTC	= {
 				if (webRTC.localStream) {
 					webRTC.localStream.stop();
 					delete webRTC.localStream;
-				}
-				else {
-					addMessageToChat(getString('webRTCConnect'), authors.app, false);
 				}
 
 				if (stream) {

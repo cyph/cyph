@@ -1085,6 +1085,8 @@ angular.
 			Notification.requestPermission();
 		}
 
+		window.onhashchange = function () { document.location.reload() };
+
 
 		/* Temporary warning for desktop IE */
 
