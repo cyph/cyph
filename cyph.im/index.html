@@ -24,6 +24,7 @@
 		<meta translate name='videoCallingTitle' content='Cyph Call' />
 		<meta translate name='videoCall' content='video call' />
 		<meta translate name='voiceCall' content='call' />
+		<meta translate name='fileCall' content='file transfer' />
 		<meta translate name='webRTCInit' content='You are about to initiate an encrypted' />
 		<meta translate name='webRTCRequest' content='Your friend has requested an encrypted' />
 		<meta translate name='webRTCRequestConfirmation' content='Your request has been sent.' />
@@ -34,10 +35,24 @@
 			This will involve sharing your IP address with your friend (which isn&#39;t a problem unless
 			you&#39;re actively hiding your current location from them). Continue?
 		' />
+		<meta translate name='incomingFile' content='Incoming File:' />
+		<meta translate name='incomingFileReject' content='File rejected.' />
+		<meta translate name='incomingFileWarning' content='
+			Your friend is attempting to send you a file. It has not been scanned for malware, and thus
+			you may choose to accept it AT YOUR OWN RISK. Save this file?
+		' />
+		<meta translate name='fileTooLarge' content='
+			The file that you are trying to send exceeds the 100 MB attachment limit.
+		' />
+		<meta translate name='fileTransferInitMe' content='You have initiated a transfer of the file:' />
+		<meta translate name='fileTransferInitFriend' content='Your friend has initiated a transfer of the file:' />
+		<meta translate name='oopsTitle' content='Oops!' />
 		<meta translate name='ok' content='ok' />
 		<meta translate name='continue' content='continue' />
+		<meta translate name='save' content='save' />
 		<meta translate name='cancel' content='cancel' />
 		<meta translate name='decline' content='decline' />
+		<meta translate name='reject' content='reject' />
 
 		<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
 
@@ -101,6 +116,16 @@
 							<img ng-show='!isVideoCall' src='/img/icons/voice.on.png' />
 							<img ng-show='isVideoCall && !streamOptions.audio' src='/img/icons/mic.on.png' />
 							<img ng-show='isVideoCall && streamOptions.audio' src='/img/icons/mic.off.png' />
+						</md-button>
+						<md-button
+							translate
+							class='send-file-button'
+							ng-disabled='!isWebRTCEnabled || !isConnected || !isAlive'
+							on-change='sendFileButton()'
+							aria-label='Send File'
+						>
+							<img src='/img/icons/file.png' />
+							<input type='file' />
 						</md-button>
 					</span>
 
@@ -170,6 +195,16 @@
 						<img ng-show='!isVideoCall' src='/img/icons/voice.on.png' />
 						<img ng-show='isVideoCall && !streamOptions.audio' src='/img/icons/mic.on.png' />
 						<img ng-show='isVideoCall && streamOptions.audio' src='/img/icons/mic.off.png' />
+					</md-button>
+					<md-button
+						translate
+						class='md-fab send-file-button'
+						ng-disabled='!isWebRTCEnabled || !isConnected || !isAlive'
+						on-change='sendFileButton()'
+						aria-label='Send File'
+					>
+						<img src='/img/icons/file.png' />
+						<input type='file' />
 					</md-button>
 				</span>
 			</section>
@@ -319,10 +354,31 @@
 			<div flex></div>
 		</div>
 
-		<div id='video-call' ng-view flex ng-class='{active: state == states.chat}'>
-			<video class='friend stream' autoplay></video>
-			<video class='friend' autoplay loop muted></video>
-			<video class='me' ng-show='streamOptions.video' autoplay muted></video>
+		<div
+			id='video-call'
+			ng-view
+			flex
+			ng-class='{active: state == states.chat, playing: streamOptions.video || incomingStream.video || incomingStream.audio}'
+		>
+			<video
+				class='friend stream'
+				ng-show='incomingStream.video'
+				autoplay
+			></video>
+			<video
+				class='friend'
+				ng-hide='incomingStream.video'
+				ng-src='{{incomingStream.video ? "" : "/video/background.mp4"}}'
+				autoplay
+				loop
+				muted
+			></video>
+			<video
+				class='me'
+				ng-show='streamOptions.video'
+				autoplay
+				muted
+			></video>
 
 			<md-button
 				translate
