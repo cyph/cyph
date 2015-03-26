@@ -403,8 +403,8 @@ var webRTC	= {
 			o	= JSON.parse(o);
 
 			updateUI(function () {
-				webRTC.incomingStream.video	= o.video == true;
-				webRTC.incomingStream.voice	= o.voice == true;
+				webRTC.incomingStream.video	= o.video === true;
+				webRTC.incomingStream.voice	= o.voice === true;
 			});
 		}
 	},
