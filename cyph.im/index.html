@@ -120,7 +120,7 @@
 						<md-button
 							translate
 							class='send-file-button'
-							ng-disabled='!isWebRTCEnabled || !isConnected || !isAlive'
+							ng-disabled='outgoingFile.name || !isWebRTCEnabled || !isConnected || !isAlive'
 							on-change='sendFileButton()'
 							aria-label='Send File'
 						>
@@ -199,7 +199,7 @@
 					<md-button
 						translate
 						class='md-fab send-file-button'
-						ng-disabled='!isWebRTCEnabled || !isConnected || !isAlive'
+						ng-disabled='outgoingFile.name || !isWebRTCEnabled || !isConnected || !isAlive'
 						on-change='sendFileButton()'
 						aria-label='Send File'
 					>
@@ -379,6 +379,18 @@
 				autoplay
 				muted
 			></video>
+
+			<div class='progress' ng-show='outgoingFile.name'>
+				<span translate>Sending</span>
+				<span>{{outgoingFile.name}}:</span>
+				<md-progress-linear md-mode='determinate' value='{{outgoingFile.percentComplete}}'></md-progress-linear>
+			</div>
+
+			<div class='progress' ng-show='incomingFile.name'>
+				<span translate>Receiving</span>
+				<span>{{incomingFile.name}}:</span>
+				<md-progress-linear md-mode='determinate' value='{{incomingFile.percentComplete}}'></md-progress-linear>
+			</div>
 
 			<md-button
 				translate

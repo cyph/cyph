@@ -205,6 +205,14 @@ html.mobile #friend-is-typing {
 	}
 }
 
+#message-list.active ~ footer #footer {
+	margin-left: 0px;
+	@include transition(margin-left 1s cubic-bezier(1, 0, 0, 1));
+}
+#footer {
+	margin-left: -180px;
+}
+
 
 .message-item {
 	.message {
@@ -421,15 +429,34 @@ html.video {
 
 
 		&:not(.playing) {
-			max-height: 64px !important;
+			max-height: 100px !important;
 			background-color: transparent !important;
 
 			& ~ #message-list {
-				max-height: calc(100% - 174px) !important;
+				max-height: calc(100% - 200px) !important;
 			}
 
 			video {
 				display: none !important;
+			}
+		}
+
+
+		> .progress {
+			padding-top: 10px;
+
+			md-progress-linear {
+				margin-left: 25px;
+				padding-right: 100px;
+				padding-bottom: 20px;
+
+				.md-container {
+					background-color: rgba(197, 202, 233, 0.4);
+
+					.md-bar {
+						background-color: #f1f1f1;
+					}
+				}
 			}
 		}
 	}
