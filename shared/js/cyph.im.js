@@ -542,9 +542,11 @@ var webRTC	= {
 
 					document.body.appendChild(a);
 					a.click();
-					document.body.removeChild(a);
 
-					URL.revokeObjectURL(a.href);
+					setTimeout(function () {
+						document.body.removeChild(a);
+						URL.revokeObjectURL(a.href);
+					}, 5000);
 				}
 				else {
 					alertDialog({
