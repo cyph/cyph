@@ -312,6 +312,11 @@ var webRTC	= {
 		size: null,
 		percentComplete: null
 	},
+	outgoingFile: {
+		name: null,
+		size: null,
+		percentComplete: null
+	},
 
 	isAccepted: false,
 	isAvailable: false,
@@ -590,7 +595,7 @@ var webRTC	= {
 		},
 
 		sendFile: function () {
-			if (!webRTC.channel || webRTC.channel.readyState != 'open') {
+			if (webRTC.outgoingFile.name || !webRTC.channel || webRTC.channel.readyState != 'open') {
 				return;
 			}
 
@@ -637,10 +642,16 @@ var webRTC	= {
 				webRTC.channel.send('');
 				webRTC.channel.send(file.name + '\n' + file.size);
 
+				updateUI(function () {
+					webRTC.outgoingFile.name	= file.name;
+					webRTC.outgoingFile.size	= file.size;
+				});
+
 				var reader	= new FileReader();
 
 				reader.onloadend	= function (e) {
-					var buf	= e.target.result;
+					var buf		= e.target.result;
+					var count	= 0;
 
 					var tickId	= onTick(function () {
 						try {
@@ -648,10 +659,25 @@ var webRTC	= {
 							webRTC.channel.send(slice.byteLength > 0 ? slice : webRTC.fileIsComplete);
 
 							if (buf.byteLength > 0) {
-								buf	= buf.slice(webRTC.chunkSize)
+								buf	= buf.slice(webRTC.chunkSize);
+
+								updateUI(function () {
+									webRTC.outgoingFile.percentComplete	=
+										++count *
+											webRTC.chunkSize /
+											webRTC.outgoingFile.size *
+											100
+									;
+								});
 							}
 							else {
 								tickOff(tickId);
+
+								updateUI(function () {
+									delete webRTC.outgoingFile.name;
+									delete webRTC.outgoingFile.size;
+									delete webRTC.outgoingFile.percentComplete;
+								});
 							}
 						}
 						catch (e) {}
@@ -683,9 +709,11 @@ var webRTC	= {
 				else if (!webRTC.incomingFile.data) {
 					var data	= e.data.split('\n');
 
-					webRTC.incomingFile.data	= [];
-					webRTC.incomingFile.name	= data[0];
-					webRTC.incomingFile.size	= parseInt(data[1], 10);
+					updateUI(function () {
+						webRTC.incomingFile.data	= [];
+						webRTC.incomingFile.name	= data[0];
+						webRTC.incomingFile.size	= parseInt(data[1], 10);
+					});
 
 					addMessageToChat(
 						getString('fileTransferInitFriend') + ' ' + webRTC.incomingFile.name,
@@ -696,10 +724,12 @@ var webRTC	= {
 					var data	= webRTC.incomingFile.data;
 					var name	= webRTC.incomingFile.name;
 
-					delete webRTC.incomingFile.data;
-					delete webRTC.incomingFile.name;
-					delete webRTC.incomingFile.size;
-					delete webRTC.incomingFile.percentComplete;
+					updateUI(function () {
+						delete webRTC.incomingFile.data;
+						delete webRTC.incomingFile.name;
+						delete webRTC.incomingFile.size;
+						delete webRTC.incomingFile.percentComplete;
+					});
 
 					webRTC.helpers.receiveIncomingFile(data, name);
 				}
@@ -713,10 +743,6 @@ var webRTC	= {
 								webRTC.incomingFile.size *
 								100
 						;
-
-						if (webRTC.incomingFile.percentComplete > 100) {
-							webRTC.incomingFile.percentComplete	= 100;
-						}
 					});
 				}
 			};

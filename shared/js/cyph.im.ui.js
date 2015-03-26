@@ -92,6 +92,8 @@ angular.
 		$scope.isVideoCall		= false;
 		$scope.streamOptions	= webRTC.streamOptions;
 		$scope.incomingStream	= webRTC.incomingStream;
+		$scope.incomingFile		= webRTC.incomingFile;
+		$scope.outgoingFile		= webRTC.outgoingFile;
 
 		$scope.webSignHashes	= encodeURIComponent(
 			'Hello Ryan and Josh,\n\n\n\n\n\n---\n\n' +
