@@ -153,6 +153,15 @@ html.mobile #friend-is-typing {
   -moz-transition: opacity 1s ease-in-out;
   transition: opacity 1s ease-in-out; }
 
+#message-list.active ~ footer #footer {
+  margin-left: 0px;
+  -webkit-transition: margin-left 1s cubic-bezier(1, 0, 0, 1);
+  -moz-transition: margin-left 1s cubic-bezier(1, 0, 0, 1);
+  transition: margin-left 1s cubic-bezier(1, 0, 0, 1); }
+
+#footer {
+  margin-left: -180px; }
+
 .message-item .message {
   word-wrap: break-word;
   -webkit-hyphens: auto;
@@ -314,12 +323,22 @@ html.video #video-call {
     height: 44px;
     font-size: 25px; }
   html.video #video-call:not(.playing) {
-    max-height: 64px !important;
+    max-height: 100px !important;
     background-color: transparent !important; }
     html.video #video-call:not(.playing) ~ #message-list {
-      max-height: calc(100% - 174px) !important; }
+      max-height: calc(100% - 200px) !important; }
     html.video #video-call:not(.playing) video {
       display: none !important; }
+  html.video #video-call > .progress {
+    padding-top: 10px; }
+    html.video #video-call > .progress md-progress-linear {
+      margin-left: 25px;
+      padding-right: 100px;
+      padding-bottom: 20px; }
+      html.video #video-call > .progress md-progress-linear .md-container {
+        background-color: rgba(197, 202, 233, 0.4); }
+        html.video #video-call > .progress md-progress-linear .md-container .md-bar {
+          background-color: #f1f1f1; }
 
 @media all and (orientation: landscape) {
   #video-call .friend {
