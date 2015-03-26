@@ -374,10 +374,17 @@ html.mobile {
 }
 
 
-html:not(.mobile) .video-call-button {
-	margin-left: 33px;
-	margin-right: 10px;
-	margin-top: 10px;
+html:not(.mobile) {
+	.video-call-button {
+		margin-left: 30px;
+		margin-right: 10px;
+		margin-top: 10px;
+	}
+
+	.send-file-button {
+		margin-left: 58px;
+		margin-top: 5px;
+	}
 }
 html.mobile button[disabled] {
 	opacity: 0.25;
@@ -390,7 +397,7 @@ html.video {
 	#video-call {
 		height: 100%;
 		width: 100%;
-		background: black;
+		background-color: black;
 		overflow: hidden !important;
 
 		.friend {
@@ -410,6 +417,20 @@ html.video {
 			width: 44px;
 			height: 44px;
 			font-size: 25px;
+		}
+
+
+		&:not(.playing) {
+			max-height: 64px !important;
+			background-color: transparent !important;
+
+			& ~ #message-list {
+				max-height: calc(100% - 174px) !important;
+			}
+
+			video {
+				display: none !important;
+			}
 		}
 	}
 }
@@ -453,10 +474,6 @@ html.video:not(.mobile) {
 	}
 }
 html.video.mobile {
-	#video-call {
-
-	}
-
 	#message-list, #message-wrapper {
 		display: none;
 	}

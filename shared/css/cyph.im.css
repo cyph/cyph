@@ -282,9 +282,12 @@ html.mobile .message-item.author-app {
   animation: inkRippleCheckbox 0.35s linear 0s 1 normal; }
 
 html:not(.mobile) .video-call-button {
-  margin-left: 33px;
+  margin-left: 30px;
   margin-right: 10px;
   margin-top: 10px; }
+html:not(.mobile) .send-file-button {
+  margin-left: 58px;
+  margin-top: 5px; }
 
 html.mobile button[disabled] {
   opacity: 0.25; }
@@ -295,7 +298,7 @@ html:not(.video) #video-call {
 html.video #video-call {
   height: 100%;
   width: 100%;
-  background: black;
+  background-color: black;
   overflow: hidden !important; }
   html.video #video-call .friend {
     height: 100%; }
@@ -310,6 +313,13 @@ html.video #video-call {
     width: 44px;
     height: 44px;
     font-size: 25px; }
+  html.video #video-call:not(.playing) {
+    max-height: 64px !important;
+    background-color: transparent !important; }
+    html.video #video-call:not(.playing) ~ #message-list {
+      max-height: calc(100% - 174px) !important; }
+    html.video #video-call:not(.playing) video {
+      display: none !important; }
 
 @media all and (orientation: landscape) {
   #video-call .friend {

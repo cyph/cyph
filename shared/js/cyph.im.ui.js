@@ -17,11 +17,13 @@ var
 	notify,
 	platformString,
 	scrolling,
+	sendFileButton,
 	sendMessage,
 	state,
 	states,
 	statusNotFound,
-	toggleVideoCall
+	toggleVideoCall,
+	updateUI
 ;
 
 
@@ -89,6 +91,7 @@ angular.
 		$scope.isWebRTCEnabled	= false;
 		$scope.isVideoCall		= false;
 		$scope.streamOptions	= webRTC.streamOptions;
+		$scope.incomingStream	= webRTC.incomingStream;
 
 		$scope.webSignHashes	= encodeURIComponent(
 			'Hello Ryan and Josh,\n\n\n\n\n\n---\n\n' +
@@ -113,7 +116,7 @@ angular.
 
 
 		/* https://coderwall.com/p/ngisma */
-		function apply (fn) {
+		updateUI	= function (fn) {
 			var phase = $scope['$root']['$$phase'];
 
 			if (phase == '$apply' || phase == '$digest') {
@@ -122,7 +125,7 @@ angular.
 			else {
 				$scope.$apply(fn);
 			}
-		}
+		};
 
 
 
@@ -153,7 +156,7 @@ angular.
 					}
 				}
 
-				apply(function () {
+				updateUI(function () {
 					$scope.messages.push({
 						author: author,
 						authorClass: 'author-' + (
@@ -266,7 +269,7 @@ angular.
 
 			function setCopyUrl () {
 				if ($scope.copyUrl != copyUrl) {
-					apply(function () {
+					updateUI(function () {
 						$scope.copyUrl			= copyUrl;
 						$scope.copyUrlEncoded	= encodeURIComponent(copyUrl);
 					});
@@ -319,7 +322,7 @@ angular.
 				return;
 			}
 
-			apply(function () {
+			updateUI(function () {
 				state = $scope.state = s;
 			});
 		};
@@ -338,7 +341,7 @@ angular.
 				if ($scope.isConnected) {
 					addMessageToChat(disconnectedNotification, authors.app);
 
-					apply(function () {
+					updateUI(function () {
 						isAlive = $scope.isAlive = false;
 						$scope.isDisconnected	= true;
 					});
@@ -370,15 +373,29 @@ angular.
 
 
 		enableWebRTC = $scope.enableWebRTC = function () {
-			apply(function () {
+			updateUI(function () {
 				$scope.isWebRTCEnabled	= true;
 			});
 		};
 
 
 		friendIsTyping = $scope.friendIsTyping = function (isFriendTyping) {
-			apply(function () {
+			updateUI(function () {
 				$scope.isFriendTyping	= isFriendTyping;
+			});
+		};
+
+
+		sendFileButton = $scope.sendFileButton = function () {
+			$scope.baseButtonClick(function () {
+				if ($scope.isWebRTCEnabled) {
+					if (!$scope.isVideoCall) {
+						webRTC.helpers.requestCall('file');
+					}
+					else {
+						webRTC.helpers.sendFile();
+					}
+				}
 			});
 		};
 
@@ -480,7 +497,7 @@ angular.
 
 		logCyphertext = $scope.logCyphertext = function (text, author) {
 			if (text) {
-				apply(function () {
+				updateUI(function () {
 					if (isMobile && $scope.cyphertext.length > 5) {
 						$scope.cyphertext.shift();
 					}
@@ -492,7 +509,7 @@ angular.
 
 
 		markAllAsSent = $scope.markAllAsSent = function () {
-			apply(function () {
+			updateUI(function () {
 				/*
 				for (var i = 0 ; i < $scope.messages.length ; ++i) {
 					var message	= $scope.messages[i];
@@ -512,7 +529,7 @@ angular.
 			if (!message) {
 				message	= $scope.message;
 
-				apply(function () {
+				updateUI(function () {
 					$scope.message	= '';
 				});
 
@@ -548,7 +565,7 @@ angular.
 
 
 		toggleVideoCall = $scope.toggleVideoCall = function (isVideoCall) {
-			apply(function () {
+			updateUI(function () {
 				$scope.isVideoCall	= isVideoCall;
 			});
 		};
@@ -566,7 +583,7 @@ angular.
 						$mdSidenav('menu').close();
 					}
 
-					apply(callback);
+					updateUI(callback);
 
 					setTimeout(function () {
 						isButtonClickLocked	= false;
@@ -747,7 +764,7 @@ angular.
 			$scope.baseButtonClick(function () {
 				if ($scope.isWebRTCEnabled) {
 					if (!$scope.isVideoCall) {
-						webRTC.helpers.requestCall(true);
+						webRTC.helpers.requestCall('video');
 					}
 					else {
 						webRTC.helpers.setUpStream({video: !webRTC.streamOptions.video});
@@ -768,7 +785,7 @@ angular.
 			$scope.baseButtonClick(function () {
 				if ($scope.isWebRTCEnabled) {
 					if (!$scope.isVideoCall) {
-						webRTC.helpers.requestCall(false);
+						webRTC.helpers.requestCall('voice');
 					}
 					else {
 						webRTC.helpers.setUpStream({audio: !webRTC.streamOptions.audio});
@@ -935,13 +952,13 @@ angular.
 
 					setTimeout(function () {
 						if ((isHidden || !$elem.is(':appeared')) && !$elem.find('*').add($elem.parentsUntil().addBack()).is('.app-message')) {
-							apply(function () { $scope.unreadMessages += 1 });
+							updateUI(function () { $scope.unreadMessages += 1 });
 
 							var intervalId	= setInterval(function () {
 								if (!Visibility.hidden() && ($elem.is(':appeared') || $elem.nextAll('.message-item:not(.unread)').length > 0)) {
 									clearInterval(intervalId);
 									$elem.removeClass('unread');
-									apply(function () { $scope.unreadMessages -= 1 });
+									updateUI(function () { $scope.unreadMessages -= 1 });
 
 									if ($elem.nextAll().length == 0) {
 										$scope.scrollDown();
@@ -1000,13 +1017,13 @@ angular.
 		};
 
 		$scope.submitBetaSignup	= function () {
-			apply(function () {
+			updateUI(function () {
 				++$scope.betaSignupState;
 			});
 
 			if ($scope.betaSignupState == 2) {
 				setTimeout(function () {
-					apply(function () {
+					updateUI(function () {
 						++$scope.betaSignupState;
 					});
 				}, 1500);
