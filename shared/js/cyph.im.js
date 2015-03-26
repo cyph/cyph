@@ -637,7 +637,7 @@ var webRTC	= {
 				webRTC.channel.send('');
 				webRTC.channel.send(file.name + '\n' + file.size);
 
-				var reader		= new FileReader();
+				var reader	= new FileReader();
 
 				reader.onloadend	= function (e) {
 					var buf	= e.target.result;
