@@ -163,6 +163,16 @@ function pushState (path, shouldReplace, shouldNotProcess) {
 }
 
 
+function retryUntilSuccessful (f) {
+	var retry;
+
+	var dothemove	= function () { f(retry) };
+	retry			= function () { setTimeout(dothemove, 500) };
+
+	dothemove();
+}
+
+
 
 
 var userAgent	= navigator.userAgent.toLowerCase();
