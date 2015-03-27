@@ -394,6 +394,9 @@ var webRTC	= {
 					catch (e) {}
 				}
 
+				delete webRTC.lockState.owner;
+				webRTC.lockState.requesters.length	= 0;
+
 				if (wasAccepted) {
 					var webRTCDisconnect	= getString('webRTCDisconnect');
 
@@ -418,9 +421,7 @@ var webRTC	= {
 		},
 
 		releaseLock: function () {
-			while (webRTC.lockState.owner != authors.friend) {
-				webRTC.lockState.owner	= webRTC.lockState.requesters.shift();
-			}
+			webRTC.lockState.owner	= webRTC.lockState.requesters.shift();
 		},
 
 		requestLock: function () {
@@ -629,28 +630,34 @@ var webRTC	= {
 				cancel: getString('cancel')
 			}, function (ok) {
 				if (ok) {
-					webRTC.isAccepted			= true;
-					webRTC.streamOptions.video	= callType == 'video';
-					webRTC.streamOptions.audio	= callType != 'file';
+					webRTC.helpers.lock(function (wasFirst) {
+						if (wasFirst) {
+							webRTC.isAccepted			= true;
+							webRTC.streamOptions.video	= callType == 'video';
+							webRTC.streamOptions.audio	= callType != 'file';
 
-					var o		= {};
-					o[callType]	= true;
-					sendWebRTCDataToPeer(o);
+							var o		= {};
+							o[callType]	= true;
+							sendWebRTCDataToPeer(o);
 
-					setTimeout(function () {
-						alertDialog({
-							title: getString('videoCallingTitle'),
-							content: getString('webRTCRequestConfirmation'),
-							ok: getString('ok')
-						});
-					}, 250);
+							setTimeout(function () {
+								alertDialog({
+									title: getString('videoCallingTitle'),
+									content: getString('webRTCRequestConfirmation'),
+									ok: getString('ok')
+								});
+							}, 250);
 
-					/* Time out if request hasn't been accepted within 10 minutes */
-					setTimeout(function () {
-						if (!webRTC.isAvailable) {
-							webRTC.isAccepted	= false;
+							/* Time out if request hasn't been accepted within 10 minutes */
+							setTimeout(function () {
+								if (!webRTC.isAvailable) {
+									webRTC.isAccepted	= false;
+								}
+							}, 600000);
 						}
-					}, 600000);
+
+						webRTC.helpers.unlock();
+					});
 				}
 				else {
 					$(webRTC.filesSelector).each(function () {
@@ -815,102 +822,106 @@ var webRTC	= {
 		},
 
 		setUpStream: function (opt_streamOptions, opt_offer) {
-			webRTC.helpers.init();
+			webRTC.helpers.lock(function () {
+				webRTC.helpers.init();
 
-			if (opt_streamOptions) {
-				if (opt_streamOptions.video === true || opt_streamOptions.video === false) {
-					webRTC.streamOptions.video	= opt_streamOptions.video;
-				}
-				if (opt_streamOptions.audio === true || opt_streamOptions.audio === false) {
-					webRTC.streamOptions.audio	= opt_streamOptions.audio;
-				}
-			}
-
-			var streamHelper, streamFallback, streamSetup;
-
-			streamHelper	= function (stream) {
-				if (webRTC.localStream) {
-					webRTC.localStream.stop();
-					delete webRTC.localStream;
+				if (opt_streamOptions) {
+					if (opt_streamOptions.video === true || opt_streamOptions.video === false) {
+						webRTC.streamOptions.video	= opt_streamOptions.video;
+					}
+					if (opt_streamOptions.audio === true || opt_streamOptions.audio === false) {
+						webRTC.streamOptions.audio	= opt_streamOptions.audio;
+					}
 				}
 
-				if (stream) {
-					if (webRTC.peer.getLocalStreams().length > 0) {
-						webRTC.peer.onsignalingstatechange(true);
+				var streamHelper, streamFallback, streamSetup;
+
+				streamHelper	= function (stream) {
+					if (webRTC.localStream) {
+						webRTC.localStream.stop();
+						delete webRTC.localStream;
 					}
 
-					webRTC.localStream	= stream;
-					webRTC.peer.addStream(webRTC.localStream);
-					webRTC.$meStream.attr('src', URL.createObjectURL(webRTC.localStream));
-				}
+					if (stream) {
+						if (webRTC.peer.getLocalStreams().length > 0) {
+							webRTC.peer.onsignalingstatechange(true);
+						}
 
-				[
-					{k: 'audio', f: 'getAudioTracks'},
-					{k: 'video', f: 'getVideoTracks'}
-				].forEach(function (o) {
-					webRTC.streamOptions[o.k]	= webRTC.localStream && webRTC.localStream[o.f]().
-						map(function (track) { return track.enabled }).
-						reduce(function (a, b) { return a || b }, false)
-					;
-				});
+						webRTC.localStream	= stream;
+						webRTC.peer.addStream(webRTC.localStream);
+						webRTC.$meStream.attr('src', URL.createObjectURL(webRTC.localStream));
+					}
 
-
-				var outgoingStream	= JSON.stringify(webRTC.streamOptions);
-
-				if (!opt_offer) {
-					webRTC.helpers.setUpChannel(true);
-
-					webRTC.peer.createOffer(function (offer) {
-						/* http://www.kapejod.org/en/2014/05/28/ */
-						offer.sdp	= offer.sdp.
-							split('\n').
-							filter(function (line) {
-								return line.indexOf('urn:ietf:params:rtp-hdrext:ssrc-audio-level') < 0 &&
-									line.indexOf('b=AS:') < 0
-								;
-							}).
-							join('\n')
+					[
+						{k: 'audio', f: 'getAudioTracks'},
+						{k: 'video', f: 'getVideoTracks'}
+					].forEach(function (o) {
+						webRTC.streamOptions[o.k]	= webRTC.localStream && webRTC.localStream[o.f]().
+							map(function (track) { return track.enabled }).
+							reduce(function (a, b) { return a || b }, false)
 						;
+					});
 
-						webRTC.peer.setLocalDescription(offer, function () {}, function () {});
-						sendWebRTCDataToPeer({receiveOffer: JSON.stringify(offer), streamOptions: outgoingStream});
-					}, webRTC.helpers.kill, {offerToReceiveAudio: true, offerToReceiveVideo: true});
-				}
-				else {
-					webRTC.peer.setRemoteDescription(new SessionDescription(JSON.parse(opt_offer)), function () {
-						webRTC.peer.createAnswer(function (answer) {
-							webRTC.peer.setLocalDescription(answer, function () {}, function () {});
-							sendWebRTCDataToPeer({receiveAnswer: JSON.stringify(answer), streamOptions: outgoingStream});
 
-							webRTC.isAvailable	= true;
+					var outgoingStream	= JSON.stringify(webRTC.streamOptions);
+
+					if (!opt_offer) {
+						webRTC.helpers.setUpChannel(true);
+
+						webRTC.peer.createOffer(function (offer) {
+							/* http://www.kapejod.org/en/2014/05/28/ */
+							offer.sdp	= offer.sdp.
+								split('\n').
+								filter(function (line) {
+									return line.indexOf('urn:ietf:params:rtp-hdrext:ssrc-audio-level') < 0 &&
+										line.indexOf('b=AS:') < 0
+									;
+								}).
+								join('\n')
+							;
+
+							webRTC.peer.setLocalDescription(offer, function () {}, function () {});
+							sendWebRTCDataToPeer({receiveOffer: JSON.stringify(offer), streamOptions: outgoingStream});
+							webRTC.helpers.unlock();
+						}, webRTC.helpers.kill, {offerToReceiveAudio: true, offerToReceiveVideo: true});
+					}
+					else {
+						webRTC.peer.setRemoteDescription(new SessionDescription(JSON.parse(opt_offer)), function () {
+							webRTC.peer.createAnswer(function (answer) {
+								webRTC.peer.setLocalDescription(answer, function () {}, function () {});
+								sendWebRTCDataToPeer({receiveAnswer: JSON.stringify(answer), streamOptions: outgoingStream});
+								webRTC.helpers.unlock();
+
+								webRTC.isAvailable	= true;
+							}, webRTC.helpers.kill);
 						}, webRTC.helpers.kill);
-					}, webRTC.helpers.kill);
-				}
+					}
 
-				toggleVideoCall(true);
-			};
+					toggleVideoCall(true);
+				};
 
-			streamFallback	= function () {
-				if (webRTC.streamOptions.video) {
-					webRTC.streamOptions.video	= false;
-				}
-				else if (webRTC.streamOptions.audio) {
-					webRTC.streamOptions.audio	= false;
-				}
+				streamFallback	= function () {
+					if (webRTC.streamOptions.video) {
+						webRTC.streamOptions.video	= false;
+					}
+					else if (webRTC.streamOptions.audio) {
+						webRTC.streamOptions.audio	= false;
+					}
+
+					streamSetup();
+				};
+
+				streamSetup	= function () {
+					if (webRTC.streamOptions.video || webRTC.streamOptions.audio) {
+						navigator.getUserMedia(webRTC.streamOptions, streamHelper, streamFallback);
+					}
+					else {
+						streamHelper();
+					}
+				};
 
 				streamSetup();
-			};
-
-			streamSetup	= function () {
-				if (webRTC.streamOptions.video || webRTC.streamOptions.audio) {
-					navigator.getUserMedia(webRTC.streamOptions, streamHelper, streamFallback);
-				}
-				else {
-					streamHelper();
-				}
-			};
-
-			streamSetup();
+			});
 		},
 
 		unlock: function () {
