@@ -883,11 +883,16 @@ function channelSend () {
 function channelClose (hasReceivedDestroySignal) {
 	webRTC.helpers.kill();
 
-	var c	= channel || oldChannel;
-
-	if (c) {
+	if (channel || oldChannel) {
 		if (hasReceivedDestroySignal) {
-			c.close(closeChat);
+			try {
+				channel.close(closeChat);
+			}
+			catch (e) {}
+			try {
+				oldChannel.close(closeChat);
+			}
+			catch (e) {}
 		}
 		else if (isAlive) {
 			channelSend({Destroy: true}, closeChat, true);
