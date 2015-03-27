@@ -26,6 +26,7 @@ var
 	oldChannel,
 	isWebSignObsolete,
 	isConnected,
+	isCreator,
 	isOtrReady,
 	hasKeyExchangeBegun,
 	lastIncomingMessageTimestamp,
@@ -326,6 +327,11 @@ var webRTC	= {
 	streamOptions: {},
 	incomingStream: {},
 
+	lockState: {
+		owner: null,
+		requesters: []
+	},
+
 	$friendPlaceholder: $('#video-call .friend:not(.stream)'),
 	$friendStream: $('#video-call .friend.stream'),
 	$meStream: $('#video-call .me'),
@@ -411,6 +417,20 @@ var webRTC	= {
 			webRTC.helpers.setUpStream(null, offer);
 		},
 
+		releaseLock: function () {
+			while (webRTC.lockState.owner != authors.friend) {
+				webRTC.lockState.owner	= webRTC.lockState.requesters.shift();
+			}
+		},
+
+		requestLock: function () {
+			webRTC.lockState.requesters.push(authors.friend)
+
+			if (webRTC.lockState.owner != authors.me) {
+				webRTC.helpers.unlock();
+			}
+		},
+
 		streamOptions: function (o) {
 			o	= JSON.parse(o);
 
@@ -488,6 +508,37 @@ var webRTC	= {
 		kill: function () {
 			sendWebRTCDataToPeer({kill: true});
 			webRTC.commands.kill();
+		},
+
+		lock: function (f) {
+			if (webRTC.lockState.owner != authors.me) {
+				if (!webRTC.lockState.owner && isCreator) {
+					webRTC.lockState.owner	= authors.me;
+				}
+				else {
+					webRTC.lockState.requesters.push(authors.me);
+				}
+
+				sendWebRTCDataToPeer({requestLock: true});
+			}
+
+			if (f) {
+				var intervalId;
+				var runIfOwner	= function () {
+					var isOwner	= webRTC.lockState.owner == authors.me;
+
+					if (isOwner) {
+						clearInterval(intervalId);
+						f();
+					}
+
+					return isOwner;
+				};
+
+				if (!runIfOwner()) {
+					intervalId	= setInterval(runIfOwner, 250);
+				}
+			}
 		},
 
 		receiveCommand: function (command, data) {
@@ -856,6 +907,14 @@ var webRTC	= {
 			};
 
 			streamSetup();
+		},
+
+		unlock: function () {
+			while (webRTC.lockState.owner == authors.me) {
+				webRTC.lockState.owner	= webRTC.lockState.requesters.shift();
+			}
+
+			sendWebRTCDataToPeer({releaseLock: true});
 		}
 	}
 };
@@ -994,16 +1053,14 @@ function receiveChannelDataHandler (o) {
 }
 
 function setUpChannel (channelDescriptor) {
-	var isNotCreator;
-
 	channel	= new Channel(channelDescriptor, {
-		onopen: function (isCreator) {
+		onopen: function (b) {
+			isCreator	= b;
+
 			if (isCreator) {
 				beginWaiting();
 			}
 			else {
-				isNotCreator	= true;
-
 				beginChat();
 				sendChannelDataBase({Misc: channelDataMisc.connect});
 				otr.sendQueryMsg();
@@ -1023,7 +1080,7 @@ function setUpChannel (channelDescriptor) {
 		onmessage: receiveChannelData,
 		onlag: function (lag, region) {
 			if (isConnected) {
-				if (isNotCreator) {
+				if (isCreator) {
 					ratchetChannels();
 				}
 
