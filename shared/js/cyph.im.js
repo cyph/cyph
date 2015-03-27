@@ -329,6 +329,7 @@ var webRTC	= {
 	$friendPlaceholder: $('#video-call .friend:not(.stream)'),
 	$friendStream: $('#video-call .friend.stream'),
 	$meStream: $('#video-call .me'),
+	filesSelector: '.send-file-button input[type="file"]',
 
 	iceServer: 'ice.cyph.com',
 	chunkSize: 5000,
@@ -466,6 +467,7 @@ var webRTC	= {
 
 					delete pc.onaddstream;
 					delete webRTC.remoteStream;
+					delete webRTC.channel;
 					delete webRTC.peer;
 
 					if (forceKill) {
@@ -595,6 +597,11 @@ var webRTC	= {
 						}
 					}, 600000);
 				}
+				else {
+					$(webRTC.filesSelector).each(function () {
+						$(this).val('');
+					});
+				}
 			});
 		},
 
@@ -603,15 +610,14 @@ var webRTC	= {
 				return;
 			}
 
-			var $elem	= $('.send-file-button input[type="file"]');
-
-			var file	= $elem.
+			var $files	= $(webRTC.filesSelector);
+			var file	= $files.
 				map(function () { return this.files }).
 				toArray().
 				reduce(function (a, b) { return (a && a[0]) || (b && b[0]) }, null)
 			;
 
-			$elem.each(function () {
+			$files.each(function () {
 				$(this).val('');
 			});
 
@@ -699,7 +705,7 @@ var webRTC	= {
 					webRTC.channel	= webRTC.peer.createDataChannel('subspace', {});
 				}
 				catch (e) {
-					setTimeout(function () { setUpChannel(true) }, 500);
+					setTimeout(function () { webRTC.helpers.setUpChannel(true) }, 500);
 					return;
 				}
 			}
