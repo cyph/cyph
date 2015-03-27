@@ -331,8 +331,9 @@ var webRTC	= {
 	$meStream: $('#video-call .me'),
 
 	iceServer: 'ice.cyph.com',
-	chunkSize: 10000,
-	maxFileSize: 110000000,
+	chunkSize: 5000,
+	maxFileSize: 1100000000,
+	fileTransferComplete: 'done',
 
 	commands: {
 		addIceCandidate: function (candidate) {
@@ -472,7 +473,9 @@ var webRTC	= {
 						pc.close();
 					}
 
-					webRTC.helpers.init();
+					if (webRTC.hasSessionStarted) {
+						webRTC.helpers.init();
+					}
 				}
 			};
 
@@ -545,7 +548,7 @@ var webRTC	= {
 					setTimeout(function () {
 						document.body.removeChild(a);
 						URL.revokeObjectURL(a.href);
-					}, 5000);
+					}, 120000);
 				}
 				else {
 					alertDialog({
@@ -640,47 +643,49 @@ var webRTC	= {
 
 				addMessageToChat(getString('fileTransferInitMe') + ' ' + file.name, authors.app, false);
 
-				webRTC.channel.send('');
-				webRTC.channel.send(file.name + '\n' + file.size);
+				webRTC.channel.send(webRTC.fileTransferComplete);
 
-				updateUI(function () {
-					webRTC.outgoingFile.name	= file.name;
-					webRTC.outgoingFile.size	= file.size;
-				});
-
-				var reader	= new FileReader();
+				var reader	= new FileReader;
 
 				reader.onloadend	= function (e) {
 					var buf		= e.target.result;
-					var count	= 0;
+					var pos		= 0;
+					var rate	= Math.max(Math.min(10000000000 / buf.byteLength, 100), 10);
+
+					updateUI(function () {
+						webRTC.outgoingFile.name	= file.name;
+						webRTC.outgoingFile.size	= buf.byteLength;
+					});
+					webRTC.channel.send(webRTC.outgoingFile.name + '\n' + webRTC.outgoingFile.size);
 
 					var tickId	= onTick(function () {
 						try {
-							webRTC.channel.send(buf.slice(0, webRTC.chunkSize));
-
-							if (buf.byteLength > 0) {
-								buf	= buf.slice(webRTC.chunkSize);
-
-								updateUI(function () {
-									webRTC.outgoingFile.percentComplete	=
-										++count *
-											webRTC.chunkSize /
-											webRTC.outgoingFile.size *
-											100
-									;
-								});
-							}
-							else {
-								tickOff(tickId);
-
-								updateUI(function () {
-									delete webRTC.outgoingFile.name;
-									delete webRTC.outgoingFile.size;
-									delete webRTC.outgoingFile.percentComplete;
-								});
+							for (var i = 0 ; i < rate ; ++i) {
+								var old	= pos;
+								pos += webRTC.chunkSize;
+								webRTC.channel.send(buf.slice(old, pos));
 							}
 						}
-						catch (e) {}
+						catch (e) {
+							pos -= webRTC.chunkSize;
+						}
+
+						if (buf.byteLength > pos) {
+							updateUI(function () {
+								webRTC.outgoingFile.percentComplete	= pos / buf.byteLength * 100;
+							});
+						}
+						else {
+							tickOff(tickId);
+
+							webRTC.channel.send(webRTC.fileTransferComplete);
+
+							updateUI(function () {
+								delete webRTC.outgoingFile.name;
+								delete webRTC.outgoingFile.size;
+								delete webRTC.outgoingFile.percentComplete;
+							});
+						}
 					});
 				};
 
@@ -701,7 +706,22 @@ var webRTC	= {
 
 			webRTC.channel.onmessage	= function (e) {
 				if (typeof e.data == 'string') {
-					if (e.data) {
+					if (e.data == webRTC.fileTransferComplete) {
+						var data	= webRTC.incomingFile.data;
+						var name	= webRTC.incomingFile.name;
+
+						updateUI(function () {
+							delete webRTC.incomingFile.data;
+							delete webRTC.incomingFile.name;
+							delete webRTC.incomingFile.size;
+							delete webRTC.incomingFile.percentComplete;
+						});
+
+						if (data) {
+							webRTC.helpers.receiveIncomingFile(data, name);
+						}
+					}
+					else {
 						var data	= e.data.split('\n');
 
 						updateUI(function () {
@@ -715,39 +735,18 @@ var webRTC	= {
 							authors.app
 						);
 					}
-					else {
-						delete webRTC.incomingFile.data;
-						delete webRTC.incomingFile.name;
-						delete webRTC.incomingFile.size;
-						delete webRTC.incomingFile.percentComplete;
-					}
 				}
-				else {
-					if (e.data.byteLength > 0 && webRTC.incomingFile.data) {
-						webRTC.incomingFile.data.push(e.data);
+				else if (webRTC.incomingFile.data) {
+					webRTC.incomingFile.data.push(e.data);
 
-						updateUI(function () {
-							webRTC.incomingFile.percentComplete	=
-								webRTC.incomingFile.data.length *
-									webRTC.chunkSize /
-									webRTC.incomingFile.size *
-									100
-							;
-						});
-					}
-					else {
-						var data	= webRTC.incomingFile.data;
-						var name	= webRTC.incomingFile.name;
-
-						updateUI(function () {
-							delete webRTC.incomingFile.data;
-							delete webRTC.incomingFile.name;
-							delete webRTC.incomingFile.size;
-							delete webRTC.incomingFile.percentComplete;
-						});
-
-						webRTC.helpers.receiveIncomingFile(data, name);
-					}
+					updateUI(function () {
+						webRTC.incomingFile.percentComplete	=
+							webRTC.incomingFile.data.length *
+								webRTC.chunkSize /
+								webRTC.incomingFile.size *
+								100
+						;
+					});
 				}
 			};
 
