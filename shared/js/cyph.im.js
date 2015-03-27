@@ -523,13 +523,17 @@ var webRTC	= {
 			}
 
 			if (f) {
-				var intervalId;
+				var intervalId, friendHadLockFirst;
+
 				var runIfOwner	= function () {
 					var isOwner	= webRTC.lockState.owner == authors.me;
 
 					if (isOwner) {
 						clearInterval(intervalId);
-						f();
+						f(!friendHadLockFirst);
+					}
+					else {
+						friendHadLockFirst	= true;
 					}
 
 					return isOwner;
