@@ -27,6 +27,7 @@ var
 	oldChannel,
 	isWebSignObsolete,
 	isConnected,
+	connectedTimestamp,
 	isCreator,
 	isOtrReady,
 	hasKeyExchangeBegun,
@@ -116,7 +117,8 @@ function otrWorkerOnMessageHandler (e) {
 			break;
 
 		case 'connected':
-			isConnected	= true;
+			isConnected			= true;
+			connectedTimestamp	= Date.now();
 
 			while (preConnectMessageSendQueue.length) {
 				otr.sendMsg(preConnectMessageSendQueue.shift());
@@ -1227,8 +1229,8 @@ function setUpChannel (channelDescriptor) {
 		},
 		onmessage: receiveChannelData,
 		onlag: function (lag, region) {
-			if (isConnected) {
-				if (isCreator) {
+			if (isConnected && (Date.now() - connectedTimestamp > 60000)) {
+				if (!isCreator) {
 					ratchetChannels();
 				}
 
