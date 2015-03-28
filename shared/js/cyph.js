@@ -355,7 +355,9 @@ function onTick (f) {
 }
 
 function tickOff (id) {
-	delete tickFunctions[id];
+	if (id != undefined) {
+		delete tickFunctions[id];
+	}
 }
 
 
