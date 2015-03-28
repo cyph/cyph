@@ -502,19 +502,17 @@ var webRTC	= {
 		},
 
 		receiveAnswer: function (answer) {
-			mutex.lock(function () {
-				retryUntilSuccessful(function (retry) {
-					if (webRTC.isAccepted) {
-						webRTC.peer.setRemoteDescription(
-							new SessionDescription(JSON.parse(answer)),
-							function () {
-								webRTC.isAvailable			= true;
-								webRTC.localStreamSetUpLock	= false;
-								mutex.unlock();
-							},
-							retry
-						);
-					}
+			webRTC.helpers.lock(function () {
+				webRTC.helpers.retry(function (retry) {
+					webRTC.peer.setRemoteDescription(
+						new SessionDescription(JSON.parse(answer)),
+						function () {
+							webRTC.isAvailable			= true;
+							webRTC.localStreamSetUpLock	= false;
+							mutex.unlock();
+						},
+						retry
+					);
 				});
 			});
 		},
@@ -602,6 +600,14 @@ var webRTC	= {
 			webRTC.commands.kill();
 		},
 
+		lock: function (f, opt_comment) {
+			mutex.lock(f && function () {
+				if (webRTC.isAccepted) {
+					f.apply(null, arguments);
+				}
+			}, opt_comment);
+		},
+
 		receiveCommand: function (command, data) {
 			if (!webRTC.isSupported) {
 				return;
@@ -686,7 +692,7 @@ var webRTC	= {
 				cancel: getString('cancel')
 			}, function (ok) {
 				if (ok) {
-					mutex.lock(function (wasFirst, wasFirstOfType) {
+					webRTC.helpers.lock(function (wasFirst, wasFirstOfType) {
 						try {
 							if (wasFirstOfType) {
 								webRTC.isAccepted			= true;
@@ -724,6 +730,10 @@ var webRTC	= {
 					});
 				}
 			});
+		},
+
+		retry: function (f) {
+			retryUntilSuccessful(f, function () { return webRTC.isAccepted });
 		},
 
 		sendFile: function () {
@@ -897,7 +907,7 @@ var webRTC	= {
 				webRTC.localStreamSetUpLock	= true;
 			}
 
-			mutex.lock(function (wasFirst, wasFirstOfType) {
+			webRTC.helpers.lock(function (wasFirst, wasFirstOfType) {
 				if (wasFirstOfType && webRTC.isAccepted) {
 					webRTC.helpers.init();
 
@@ -944,7 +954,7 @@ var webRTC	= {
 						if (!opt_offer) {
 							webRTC.helpers.setUpChannel(true);
 
-							retryUntilSuccessful(function (retry) {
+							webRTC.helpers.retry(function (retry) {
 								webRTC.peer.createOffer(function (offer) {
 									/* http://www.kapejod.org/en/2014/05/28/ */
 									offer.sdp	= offer.sdp.
@@ -957,7 +967,7 @@ var webRTC	= {
 										join('\n')
 									;
 
-									retryUntilSuccessful(function (retry) {
+									webRTC.helpers.retry(function (retry) {
 										webRTC.peer.setLocalDescription(offer, function () {
 											sendWebRTCDataToPeer({
 												receiveOffer: JSON.stringify(offer),
@@ -974,13 +984,13 @@ var webRTC	= {
 							});
 						}
 						else {
-							retryUntilSuccessful(function (retry) {
+							webRTC.helpers.retry(function (retry) {
 								webRTC.peer.setRemoteDescription(
 									new SessionDescription(JSON.parse(opt_offer)),
 									function () {
-										retryUntilSuccessful(function (retry) {
+										webRTC.helpers.retry(function (retry) {
 											webRTC.peer.createAnswer(function (answer) {
-												retryUntilSuccessful(function (retry) {
+												webRTC.helpers.retry(function (retry) {
 													webRTC.peer.setLocalDescription(answer, function () {
 														sendWebRTCDataToPeer({
 															receiveAnswer: JSON.stringify(answer),
