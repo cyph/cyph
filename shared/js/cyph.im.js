@@ -777,7 +777,6 @@ var webRTC	= {
 				reader.onloadend	= function (e) {
 					var buf		= e.target.result;
 					var pos		= 0;
-					var rate	= Math.max(Math.min(10000000000 / buf.byteLength, 100), 10);
 
 					updateUI(function () {
 						webRTC.outgoingFile.name	= file.name;
@@ -787,11 +786,9 @@ var webRTC	= {
 
 					var tickId	= onTick(function () {
 						try {
-							for (var i = 0 ; i < rate ; ++i) {
-								var old	= pos;
-								pos += webRTC.chunkSize;
-								webRTC.channel.send(buf.slice(old, pos));
-							}
+							var old	= pos;
+							pos += webRTC.chunkSize;
+							webRTC.channel.send(buf.slice(old, pos));
 						}
 						catch (e) {
 							pos -= webRTC.chunkSize;
