@@ -786,9 +786,11 @@ var webRTC	= {
 
 					var tickId	= onTick(function () {
 						try {
-							var old	= pos;
-							pos += webRTC.chunkSize;
-							webRTC.channel.send(buf.slice(old, pos));
+							for (var i = 0 ; i < 10 ; ++i) {
+								var old	= pos;
+								pos += webRTC.chunkSize;
+								webRTC.channel.send(buf.slice(old, pos));
+							}
 						}
 						catch (e) {
 							pos -= webRTC.chunkSize;
