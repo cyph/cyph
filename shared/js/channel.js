@@ -308,7 +308,7 @@ function Channel (channelName, handlers, config) {
 								tickOff(tickId);
 							}
 							else if (now - lastTouched > 600000) {
-								lastTouched		= now;
+								lastTouched	= now;
 
 								self.sqs.setQueueAttributes({
 									QueueUrl: self.inQueue.queueUrl,
