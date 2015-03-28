@@ -297,22 +297,23 @@ function processUrlState () {
 var mutex	= {
 	owner: null,
 	comment: null,
-	requesters: [],
+	requester: null,
 
 	commands: {
 		release: function () {
 			if (mutex.owner != authors.me) {
-				do {
-					mutex.shiftRequester();
-				} while (mutex.owner == authors.friend);
+				mutex.shiftRequester();
 			}
 		},
 
 		request: function (comment) {
-			mutex.requesters.push({author: authors.friend, comment: comment});
-
 			if (mutex.owner != authors.me) {
-				mutex.unlock();
+				mutex.owner		= authors.friend;
+				mutex.comment	= comment;
+				mutex.sendCommand({release: true});
+			}
+			else {
+				mutex.requester	= {author: authors.friend, comment: comment};
 			}
 		},
 	},
@@ -320,23 +321,25 @@ var mutex	= {
 	lock: function (f, opt_comment) {
 		if (mutex.owner != authors.me) {
 			if (!mutex.owner && isCreator) {
-				mutex.owner	= authors.me;
+				mutex.owner		= authors.me;
+				mutex.comment	= opt_comment;
 			}
 			else {
-				mutex.requesters.push({author: authors.me, comment: opt_comment});
+				mutex.requester	= {author: authors.me, comment: opt_comment};
 			}
 
-			mutex.sendCommand({request: (opt_comment || true)});
+			mutex.sendCommand({request: (opt_comment || '')});
 		}
 
 		if (f) {
-			var intervalId, friendHadLockFirst, friendLockComment;
+			var tickId, friendHadLockFirst, friendLockComment;
 
 			var runIfOwner	= function () {
 				var isOwner	= mutex.owner == authors.me;
 
 				if (isOwner) {
-					clearInterval(intervalId);
+					tickOff(tickId);
+
 					f(
 						!friendHadLockFirst,
 						!friendLockComment || friendLockComment != opt_comment,
@@ -352,7 +355,7 @@ var mutex	= {
 			};
 
 			if (!runIfOwner()) {
-				intervalId	= setInterval(runIfOwner, 250);
+				tickId	= onTick(runIfOwner);
 			}
 		}
 	},
@@ -362,20 +365,22 @@ var mutex	= {
 	},
 
 	shiftRequester: function () {
-		var requester	= mutex.requesters.shift() || {};
+		delete mutex.owner;
+		delete mutex.comment;
 
-		mutex.owner		= requester.author;
-		mutex.comment	= requester.comment;
+		if (mutex.requester) {
+			mutex.owner		= mutex.requester.author;
+			mutex.comment	= mutex.requester.comment;
+
+			delete mutex.requester;
+		}
 	},
 
 	unlock: function () {
-		if (mutex.owner != authors.friend) {
-			do {
-				mutex.shiftRequester();
-			} while (mutex.owner == authors.me);
+		if (mutex.owner == authors.me) {
+			mutex.shiftRequester();
+			mutex.sendCommand({release: true});
 		}
-
-		mutex.sendCommand({release: true});
 	}
 };
 
@@ -408,6 +413,8 @@ var webRTC	= {
 
 	isAccepted: false,
 	isAvailable: false,
+
+	localStreamSetUpLock: false,
 
 	isSupported: !!PeerConnection,
 
@@ -477,7 +484,8 @@ var webRTC	= {
 				}
 
 				delete mutex.owner;
-				mutex.requesters.length	= 0;
+				delete mutex.comment;
+				delete mutex.requester;
 
 				if (wasAccepted) {
 					var webRTCDisconnect	= getString('webRTCDisconnect');
@@ -499,7 +507,8 @@ var webRTC	= {
 					webRTC.peer.setRemoteDescription(
 						new SessionDescription(JSON.parse(answer)),
 						function () {
-							webRTC.isAvailable	= true;
+							webRTC.isAvailable			= true;
+							webRTC.localStreamSetUpLock	= false;
 							mutex.unlock();
 						},
 						retry
@@ -676,32 +685,35 @@ var webRTC	= {
 			}, function (ok) {
 				if (ok) {
 					mutex.lock(function (wasFirst, wasFirstOfType) {
-						if (wasFirstOfType) {
-							webRTC.isAccepted			= true;
-							webRTC.streamOptions.video	= callType == 'video';
-							webRTC.streamOptions.audio	= callType != 'file';
+						try {
+							if (wasFirstOfType) {
+								webRTC.isAccepted			= true;
+								webRTC.streamOptions.video	= callType == 'video';
+								webRTC.streamOptions.audio	= callType != 'file';
 
-							var o		= {};
-							o[callType]	= true;
-							sendWebRTCDataToPeer(o);
+								var o		= {};
+								o[callType]	= true;
+								sendWebRTCDataToPeer(o);
 
-							setTimeout(function () {
-								alertDialog({
-									title: getString('videoCallingTitle'),
-									content: getString('webRTCRequestConfirmation'),
-									ok: getString('ok')
-								});
-							}, 250);
+								setTimeout(function () {
+									alertDialog({
+										title: getString('videoCallingTitle'),
+										content: getString('webRTCRequestConfirmation'),
+										ok: getString('ok')
+									});
+								}, 250);
 
-							/* Time out if request hasn't been accepted within 10 minutes */
-							setTimeout(function () {
-								if (!webRTC.isAvailable) {
-									webRTC.isAccepted	= false;
-								}
-							}, 600000);
+								/* Time out if request hasn't been accepted within 10 minutes */
+								setTimeout(function () {
+									if (!webRTC.isAvailable) {
+										webRTC.isAccepted	= false;
+									}
+								}, 600000);
+							}
 						}
-
-						mutex.unlock();
+						finally {
+							mutex.unlock();
+						}
 					}, 'requestCall');
 				}
 				else {
@@ -867,8 +879,23 @@ var webRTC	= {
 		},
 
 		setUpStream: function (opt_streamOptions, opt_offer) {
+			var retry	= function () {
+				setTimeout(function () {
+					webRTC.helpers.setUpStream(opt_streamOptions);
+				}, 100);
+			};
+
+			if (!opt_offer) {
+				if (webRTC.localStreamSetUpLock) {
+					retry();
+					return;
+				}
+
+				webRTC.localStreamSetUpLock	= true;
+			}
+
 			mutex.lock(function (wasFirst, wasFirstOfType) {
-				if (wasFirstOfType || opt_offer) {
+				if (wasFirstOfType) {
 					webRTC.helpers.init();
 
 					if (opt_streamOptions) {
@@ -957,9 +984,9 @@ var webRTC	= {
 															streamOptions: outgoingStream
 														});
 
-														mutex.unlock();
-
 														webRTC.isAvailable	= true;
+
+														mutex.unlock();
 													}, retry);
 												});
 											}, retry);
@@ -989,16 +1016,28 @@ var webRTC	= {
 							navigator.getUserMedia(webRTC.streamOptions, streamHelper, streamFallback);
 						}
 						else {
-							streamHelper();
+							navigator.getUserMedia({audio: true}, function (stream) {
+								stream.getTracks().forEach(function (track) {
+									track.enabled	= false;
+								});
+
+								streamHelper(stream);
+							}, streamFallback);
 						}
 					};
 
 					streamSetup();
 				}
 				else {
-					mutex.unlock();
+					if (opt_offer) {
+						mutex.unlock();
+					}
+					else {
+						webRTC.localStreamSetUpLock	= false;
+						retry();
+					}
 				}
-			}, 'setUpStream');
+			}, 'setUpStream' + (opt_offer ? '' : 'Init'));
 		}
 	}
 };
