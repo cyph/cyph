@@ -167,7 +167,7 @@ function retryUntilSuccessful (f) {
 	var retry;
 
 	var dothemove	= function () { f(retry) };
-	retry			= function () { setTimeout(dothemove, 500) };
+	retry			= function () { setTimeout(dothemove, 250) };
 
 	dothemove();
 }
