@@ -163,11 +163,15 @@ function pushState (path, shouldReplace, shouldNotProcess) {
 }
 
 
-function retryUntilSuccessful (f) {
+function retryUntilSuccessful (f, opt_retryIf) {
 	var retry;
 
 	var dothemove	= function () { f(retry) };
-	retry			= function () { setTimeout(dothemove, 250) };
+	retry			= function () {
+		if (!opt_retryIf || opt_retryIf()) {
+			setTimeout(dothemove, 250);
+		}
+	};
 
 	dothemove();
 }
