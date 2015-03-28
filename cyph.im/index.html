@@ -121,11 +121,10 @@
 							translate
 							class='send-file-button'
 							ng-disabled='outgoingFile.name || !isWebRTCEnabled || !isConnected || !isAlive'
-							on-change='sendFileButton()'
 							aria-label='Send File'
 						>
 							<img src='/img/icons/file.png' />
-							<input type='file' />
+							<input type='file' on-change='sendFileButton()' />
 						</md-button>
 					</span>
 
@@ -200,11 +199,10 @@
 						translate
 						class='md-fab send-file-button'
 						ng-disabled='outgoingFile.name || !isWebRTCEnabled || !isConnected || !isAlive'
-						on-change='sendFileButton()'
 						aria-label='Send File'
 					>
 						<img src='/img/icons/file.png' />
-						<input type='file' />
+						<input type='file' on-change='sendFileButton()' />
 					</md-button>
 				</span>
 			</section>
