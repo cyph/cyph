@@ -824,6 +824,10 @@ var webRTC	= {
 		},
 
 		setUpChannel: function (shouldCreate) {
+			if (!webRTC.isAccepted) {
+				return;
+			}
+
 			if (shouldCreate) {
 				try {
 					webRTC.channel	= webRTC.peer.createDataChannel('subspace', {});
@@ -917,6 +921,10 @@ var webRTC	= {
 					var streamHelper, streamFallback, streamSetup;
 
 					streamHelper	= function (stream) {
+						if (!webRTC.isAccepted) {
+							return;
+						}
+
 						if (webRTC.localStream) {
 							webRTC.localStream.stop();
 							delete webRTC.localStream;
@@ -1078,8 +1086,10 @@ function channelSend () {
 		c.send.apply(c, arguments);
 	}
 	catch (e) {
-		var args	= arguments;
-		setTimeout(function () { channelSend.apply(null, args) }, 500);
+		if (isAlive) {
+			var args	= arguments;
+			setTimeout(function () { channelSend.apply(null, args) }, 500);
+		}
 	}
 }
 
@@ -1096,6 +1106,9 @@ function channelClose (hasReceivedDestroySignal) {
 				oldChannel.close(closeChat);
 			}
 			catch (e) {}
+
+			channel		= null;
+			oldChannel	= null;
 		}
 		else if (isAlive) {
 			channelSend({Destroy: true}, closeChat, true);
