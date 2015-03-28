@@ -365,8 +365,12 @@ html.video:not(.mobile) {
     html.video:not(.mobile) #message-list.is-connected #setting-up-crypto {
       display: none; }
 
-html.video.mobile #message-list, html.video.mobile #message-wrapper {
+html.video.mobile #video-call.playing ~ #message-list, html.video.mobile #video-call.playing ~ footer #message-wrapper {
   display: none; }
+html.video.mobile #video-call:not(.playing) {
+  padding-left: 10px; }
+  html.video.mobile #video-call:not(.playing) ~ #message-list {
+    max-height: calc(100% - 100px) !important; }
 
 #desktop-sidebar {
   position: absolute;

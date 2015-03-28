@@ -473,8 +473,13 @@ angular.
 						e.initEvent('click', true, false);
 						elem.dispatchEvent(e);
 
-						setTimeout(function () {
-							isClicked	= false;
+						var intervalId	= setInterval(function () {
+							if (elem.files.length > 0) {
+								clearInterval(intervalId);
+								setTimeout(function () {
+									isClicked	= false;
+								}, 500);
+							}
 						}, 500);
 					}
 				});

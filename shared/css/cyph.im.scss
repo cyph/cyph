@@ -501,8 +501,18 @@ html.video:not(.mobile) {
 	}
 }
 html.video.mobile {
-	#message-list, #message-wrapper {
-		display: none;
+	#video-call.playing {
+		& ~ #message-list, & ~ footer #message-wrapper {
+			display: none;
+		}
+	}
+
+	#video-call:not(.playing) {
+		padding-left: 10px;
+
+		& ~ #message-list {
+			max-height: calc(100% - 100px) !important;
+		}
 	}
 }
 
