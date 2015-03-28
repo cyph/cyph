@@ -504,15 +504,17 @@ var webRTC	= {
 		receiveAnswer: function (answer) {
 			mutex.lock(function () {
 				retryUntilSuccessful(function (retry) {
-					webRTC.peer.setRemoteDescription(
-						new SessionDescription(JSON.parse(answer)),
-						function () {
-							webRTC.isAvailable			= true;
-							webRTC.localStreamSetUpLock	= false;
-							mutex.unlock();
-						},
-						retry
-					);
+					if (webRTC.isAccepted) {
+						webRTC.peer.setRemoteDescription(
+							new SessionDescription(JSON.parse(answer)),
+							function () {
+								webRTC.isAvailable			= true;
+								webRTC.localStreamSetUpLock	= false;
+								mutex.unlock();
+							},
+							retry
+						);
+					}
 				});
 			});
 		},
@@ -733,7 +735,7 @@ var webRTC	= {
 			var file	= $files.
 				map(function () { return this.files }).
 				toArray().
-				reduce(function (a, b) { return (a && a[0]) || (b && b[0]) }, null)
+				reduce(function (a, b) { return (a && a[0]) ? a : b }, [])[0]
 			;
 
 			$files.each(function () {
@@ -880,9 +882,11 @@ var webRTC	= {
 
 		setUpStream: function (opt_streamOptions, opt_offer) {
 			var retry	= function () {
-				setTimeout(function () {
-					webRTC.helpers.setUpStream(opt_streamOptions);
-				}, 100);
+				if (webRTC.isAccepted) {
+					setTimeout(function () {
+						webRTC.helpers.setUpStream(opt_streamOptions);
+					}, 100);
+				}
 			};
 
 			if (!opt_offer) {
@@ -895,7 +899,7 @@ var webRTC	= {
 			}
 
 			mutex.lock(function (wasFirst, wasFirstOfType) {
-				if (wasFirstOfType) {
+				if (wasFirstOfType && webRTC.isAccepted) {
 					webRTC.helpers.init();
 
 					if (opt_streamOptions) {
@@ -1015,14 +1019,22 @@ var webRTC	= {
 						if (webRTC.streamOptions.video || webRTC.streamOptions.audio) {
 							navigator.getUserMedia(webRTC.streamOptions, streamHelper, streamFallback);
 						}
-						else {
-							navigator.getUserMedia({audio: true}, function (stream) {
-								stream.getTracks().forEach(function (track) {
-									track.enabled	= false;
-								});
+						else if (webRTC.incomingStream.video || webRTC.incomingStream.audio) {
+							try {
+								streamHelper(new (window.webkitMediaStream || window.MediaStream));
+							}
+							catch (e) {
+								navigator.getUserMedia({audio: true}, function (stream) {
+									stream.getTracks().forEach(function (track) {
+										track.enabled	= false;
+									});
 
-								streamHelper(stream);
-							}, streamFallback);
+									streamHelper(stream);
+								}, streamFallback);
+							}
+						}
+						else {
+							streamHelper();
 						}
 					};
 
