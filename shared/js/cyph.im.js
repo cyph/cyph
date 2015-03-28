@@ -502,7 +502,7 @@ var webRTC	= {
 		},
 
 		receiveAnswer: function (answer) {
-			webRTC.helpers.lock(function () {
+			mutex.lock(function () {
 				webRTC.helpers.retry(function (retry) {
 					webRTC.peer.setRemoteDescription(
 						new SessionDescription(JSON.parse(answer)),
@@ -600,14 +600,6 @@ var webRTC	= {
 			webRTC.commands.kill();
 		},
 
-		lock: function (f, opt_comment) {
-			mutex.lock(f && function () {
-				if (webRTC.isAccepted) {
-					f.apply(null, arguments);
-				}
-			}, opt_comment);
-		},
-
 		receiveCommand: function (command, data) {
 			if (!webRTC.isSupported) {
 				return;
@@ -692,7 +684,7 @@ var webRTC	= {
 				cancel: getString('cancel')
 			}, function (ok) {
 				if (ok) {
-					webRTC.helpers.lock(function (wasFirst, wasFirstOfType) {
+					mutex.lock(function (wasFirst, wasFirstOfType) {
 						try {
 							if (wasFirstOfType) {
 								webRTC.isAccepted			= true;
@@ -907,7 +899,7 @@ var webRTC	= {
 				webRTC.localStreamSetUpLock	= true;
 			}
 
-			webRTC.helpers.lock(function (wasFirst, wasFirstOfType) {
+			mutex.lock(function (wasFirst, wasFirstOfType) {
 				if (wasFirstOfType && webRTC.isAccepted) {
 					webRTC.helpers.init();
 
