@@ -49,7 +49,7 @@ otrWorker.onmessage	= function (e) { otrWorkerOnMessageQueue.push(e) };
 var otr	= {
 	sendQueryMsg: function () {
 		if (isOtrReady) {
-			otrWorker.postMessage({method: 1});
+			otrWorker && otrWorker.postMessage({method: 1});
 		}
 		else {
 			shouldSendQueryMessage	= true;
@@ -57,7 +57,7 @@ var otr	= {
 	},
 	sendMsg: function (message) {
 		if (isConnected) {
-			otrWorker.postMessage({method: 2, message: message});
+			otrWorker && otrWorker.postMessage({method: 2, message: message});
 		}
 		else {
 			preConnectMessageSendQueue.push(message);
@@ -65,7 +65,7 @@ var otr	= {
 	},
 	receiveMsg: function (message) {
 		if (isOtrReady) {
-			otrWorker.postMessage({method: 3, message: message});
+			otrWorker && otrWorker.postMessage({method: 3, message: message});
 		}
 		else {
 			preConnectMessageReceiveQueue.push(message);
@@ -485,9 +485,9 @@ var webRTC	= {
 					catch (e) {}
 				}
 
-				delete mutex.owner;
-				delete mutex.comment;
-				delete mutex.requester;
+				mutex.lock(function () {
+					setTimeout(mutex.unlock, 5000);
+				});
 
 				if (wasAccepted) {
 					var webRTCDisconnect	= getString('webRTCDisconnect');
@@ -789,6 +789,11 @@ var webRTC	= {
 					webRTC.channel.send(webRTC.outgoingFile.name + '\n' + webRTC.outgoingFile.size);
 
 					var tickId	= onTick(function () {
+						if (!webRTC.isAccepted) {
+							tickOff(tickId);
+							return;
+						}
+
 						try {
 							for (var i = 0 ; i < 10 ; ++i) {
 								var old	= pos;
@@ -1106,12 +1111,26 @@ function channelClose (hasReceivedDestroySignal) {
 				oldChannel.close(closeChat);
 			}
 			catch (e) {}
+			try {
+				otrWorker.terminate();
+			}
+			catch (e) {}
+			try {
+				tickWorker.terminate();
+			}
+			catch (e) {}
 
-			channel		= null;
-			oldChannel	= null;
+			channel					= null;
+			oldChannel				= null;
+			otrWorker				= null;
+			tickWorker				= null;
+			tickFunctions.length	= 0;
+			tickIntervalHalt		= true;
+			mutex.owner				= authors.me;
 		}
 		else if (isAlive) {
 			channelSend({Destroy: true}, closeChat, true);
+			setTimeout(function () { channelClose(true) }, 10000);
 		}
 	}
 	else {

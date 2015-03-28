@@ -267,7 +267,9 @@ $(function () {
 
 
 /* Trigger event loops from Web Worker instead of setTimeout (http://stackoverflow.com/a/12522580/459881) */
-var tickFunctions	= [];
+
+var tickWorker, tickIntervalHalt;
+var tickFunctions		= [];
 
 function makeWorker (f, vars) {
 	var s	= f.toString();
@@ -304,7 +306,7 @@ function onTick (f) {
 	tickFunctions.push(f);
 
 	if (tickFunctions.length == 1) {
-		var worker, processTicksLock;
+		var processTicksLock;
 
 		function processTicks () {
 			if (!processTicksLock) {
@@ -326,11 +328,14 @@ function onTick (f) {
 
 		function processTickEventLoop (interval) {
 			processTicks();
-			setTimeout(function () { processTickEventLoop(interval) }, interval);
+
+			if (!tickIntervalHalt) {
+				setTimeout(function () { processTickEventLoop(interval) }, interval);
+			}
 		}
 
 		function processTickWorker (interval) {
-			worker	= makeWorker(function () {
+			tickWorker	= makeWorker(function () {
 				var vars	= this.vars;
 
 				onmessage	= function () {
@@ -342,17 +347,17 @@ function onTick (f) {
 				interval: interval
 			});
 
-			worker.onmessage	= function () {
+			tickWorker.onmessage	= function () {
 				processTicks();
-				worker.postMessage({});
+				tickWorker.postMessage({});
 			};
 
-			worker.onmessage();
+			tickWorker.onmessage();
 		}
 
 
 		processTickEventLoop(100);
-		setTimeout(function () { processTickWorker(300) }, 500);
+		setTimeout(function () { processTickWorker(isMobile ? 1000 : 300) }, 500);
 	}
 
 	return tickFunctions.length - 1;
