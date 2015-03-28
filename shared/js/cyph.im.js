@@ -9,6 +9,7 @@ var shouldUseOldChannel	= false;
 var CHANNEL_DATA_PREFIX		= 'CHANNEL DATA: ';
 var CHANNEL_RATCHET_PREFIX	= 'CHANNEL RATCHET: ';
 var WEBRTC_DATA_PREFIX		= 'WEBRTC: ';
+var MUTEX_PREFIX			= 'MUTEX: ';
 
 var SECRET_LENGTH		= 7;
 var LONG_SECRET_LENGTH	= 52;
@@ -293,6 +294,92 @@ function processUrlState () {
 }
 
 
+var mutex	= {
+	owner: null,
+	comment: null,
+	requesters: [],
+
+	commands: {
+		release: function () {
+			if (mutex.owner != authors.me) {
+				do {
+					mutex.shiftRequester();
+				} while (mutex.owner == authors.friend);
+			}
+		},
+
+		request: function (comment) {
+			mutex.requesters.push({author: authors.friend, comment: comment});
+
+			if (mutex.owner != authors.me) {
+				mutex.unlock();
+			}
+		},
+	},
+
+	lock: function (f, opt_comment) {
+		if (mutex.owner != authors.me) {
+			if (!mutex.owner && isCreator) {
+				mutex.owner	= authors.me;
+			}
+			else {
+				mutex.requesters.push({author: authors.me, comment: opt_comment});
+			}
+
+			mutex.sendCommand({request: (opt_comment || true)});
+		}
+
+		if (f) {
+			var intervalId, friendHadLockFirst, friendLockComment;
+
+			var runIfOwner	= function () {
+				var isOwner	= mutex.owner == authors.me;
+
+				if (isOwner) {
+					clearInterval(intervalId);
+					f(
+						!friendHadLockFirst,
+						!friendLockComment || friendLockComment != opt_comment,
+						friendLockComment
+					);
+				}
+				else if (mutex.owner == authors.friend) {
+					friendHadLockFirst	= true;
+					friendLockComment	= mutex.comment;
+				}
+
+				return isOwner;
+			};
+
+			if (!runIfOwner()) {
+				intervalId	= setInterval(runIfOwner, 250);
+			}
+		}
+	},
+
+	sendCommand: function (o) {
+		sendChannelData({Misc: MUTEX_PREFIX + (o ? JSON.stringify(o) : '')});
+	},
+
+	shiftRequester: function () {
+		var requester	= mutex.requesters.shift() || {};
+
+		mutex.owner		= requester.author;
+		mutex.comment	= requester.comment;
+	},
+
+	unlock: function () {
+		if (mutex.owner != authors.friend) {
+			do {
+				mutex.shiftRequester();
+			} while (mutex.owner == authors.me);
+		}
+
+		mutex.sendCommand({release: true});
+	}
+};
+
+
 /* Logic for handling WebRTC connections (used for file transfers and voice/video chat) */
 
 var PeerConnection		= window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
@@ -326,11 +413,6 @@ var webRTC	= {
 
 	streamOptions: {},
 	incomingStream: {},
-
-	lockState: {
-		owner: null,
-		requesters: []
-	},
 
 	$friendPlaceholder: $('#video-call .friend:not(.stream)'),
 	$friendStream: $('#video-call .friend.stream'),
@@ -394,8 +476,8 @@ var webRTC	= {
 					catch (e) {}
 				}
 
-				delete webRTC.lockState.owner;
-				webRTC.lockState.requesters.length	= 0;
+				delete mutex.owner;
+				mutex.requesters.length	= 0;
 
 				if (wasAccepted) {
 					var webRTCDisconnect	= getString('webRTCDisconnect');
@@ -412,13 +494,13 @@ var webRTC	= {
 		},
 
 		receiveAnswer: function (answer) {
-			webRTC.helpers.lock(function () {
+			mutex.lock(function () {
 				retryUntilSuccessful(function (retry) {
 					webRTC.peer.setRemoteDescription(
 						new SessionDescription(JSON.parse(answer)),
 						function () {
 							webRTC.isAvailable	= true;
-							webRTC.helpers.unlock();
+							mutex.unlock();
 						},
 						retry
 					);
@@ -428,22 +510,6 @@ var webRTC	= {
 
 		receiveOffer: function (offer) {
 			webRTC.helpers.setUpStream(null, offer);
-		},
-
-		releaseLock: function () {
-			if (webRTC.lockState.owner != authors.me) {
-				do {
-					webRTC.lockState.owner	= webRTC.lockState.requesters.shift();
-				} while (webRTC.lockState.owner == authors.friend);
-			}
-		},
-
-		requestLock: function () {
-			webRTC.lockState.requesters.push(authors.friend)
-
-			if (webRTC.lockState.owner != authors.me) {
-				webRTC.helpers.unlock();
-			}
 		},
 
 		streamOptions: function (o) {
@@ -523,41 +589,6 @@ var webRTC	= {
 		kill: function () {
 			sendWebRTCDataToPeer({kill: true});
 			webRTC.commands.kill();
-		},
-
-		lock: function (f) {
-			if (webRTC.lockState.owner != authors.me) {
-				if (!webRTC.lockState.owner && isCreator) {
-					webRTC.lockState.owner	= authors.me;
-				}
-				else {
-					webRTC.lockState.requesters.push(authors.me);
-				}
-
-				sendWebRTCDataToPeer({requestLock: true});
-			}
-
-			if (f) {
-				var intervalId, friendHadLockFirst;
-
-				var runIfOwner	= function () {
-					var isOwner	= webRTC.lockState.owner == authors.me;
-
-					if (isOwner) {
-						clearInterval(intervalId);
-						f(!friendHadLockFirst);
-					}
-					else {
-						friendHadLockFirst	= true;
-					}
-
-					return isOwner;
-				};
-
-				if (!runIfOwner()) {
-					intervalId	= setInterval(runIfOwner, 250);
-				}
-			}
 		},
 
 		receiveCommand: function (command, data) {
@@ -644,8 +675,8 @@ var webRTC	= {
 				cancel: getString('cancel')
 			}, function (ok) {
 				if (ok) {
-					webRTC.helpers.lock(function (wasFirst) {
-						if (wasFirst) {
+					mutex.lock(function (wasFirst, wasFirstOfType) {
+						if (wasFirstOfType) {
 							webRTC.isAccepted			= true;
 							webRTC.streamOptions.video	= callType == 'video';
 							webRTC.streamOptions.audio	= callType != 'file';
@@ -670,8 +701,8 @@ var webRTC	= {
 							}, 600000);
 						}
 
-						webRTC.helpers.unlock();
-					});
+						mutex.unlock();
+					}, 'requestCall');
 				}
 				else {
 					$(webRTC.filesSelector).each(function () {
@@ -836,8 +867,8 @@ var webRTC	= {
 		},
 
 		setUpStream: function (opt_streamOptions, opt_offer) {
-			webRTC.helpers.lock(function (wasFirst) {
-				if (wasFirst) {
+			mutex.lock(function (wasFirst, wasFirstOfType) {
+				if (wasFirstOfType || opt_offer) {
 					webRTC.helpers.init();
 
 					if (opt_streamOptions) {
@@ -871,7 +902,7 @@ var webRTC	= {
 							{k: 'audio', f: 'getAudioTracks'},
 							{k: 'video', f: 'getVideoTracks'}
 						].forEach(function (o) {
-							webRTC.streamOptions[o.k]	= webRTC.localStream && webRTC.localStream[o.f]().
+							webRTC.streamOptions[o.k]	= !!webRTC.localStream && webRTC.localStream[o.f]().
 								map(function (track) { return track.enabled }).
 								reduce(function (a, b) { return a || b }, false)
 							;
@@ -903,7 +934,7 @@ var webRTC	= {
 												streamOptions: outgoingStream
 											});
 
-											webRTC.helpers.unlock();
+											mutex.unlock();
 										}, retry);
 									});
 								}, retry, {
@@ -926,7 +957,7 @@ var webRTC	= {
 															streamOptions: outgoingStream
 														});
 
-														webRTC.helpers.unlock();
+														mutex.unlock();
 
 														webRTC.isAvailable	= true;
 													}, retry);
@@ -965,19 +996,9 @@ var webRTC	= {
 					streamSetup();
 				}
 				else {
-					webRTC.helpers.unlock();
+					mutex.unlock();
 				}
-			});
-		},
-
-		unlock: function () {
-			if (webRTC.lockState.owner != authors.friend) {
-				do {
-					webRTC.lockState.owner	= webRTC.lockState.requesters.shift();
-				} while (webRTC.lockState.owner == authors.me);
-			}
-
-			sendWebRTCDataToPeer({releaseLock: true});
+			}, 'setUpStream');
 		}
 	}
 };
@@ -1086,7 +1107,7 @@ function receiveChannelDataHandler (o) {
 			var webRTCDataString	= o.Misc.split(WEBRTC_DATA_PREFIX)[1];
 
 			if (webRTCDataString) {
-				var webRTCData	= JSON.parse(o.Misc.split(WEBRTC_DATA_PREFIX)[1]);
+				var webRTCData	= JSON.parse(webRTCDataString);
 
 				Object.keys(webRTCData).forEach(function (key) {
 					webRTC.helpers.receiveCommand(key, webRTCData[key]);
@@ -1094,6 +1115,18 @@ function receiveChannelDataHandler (o) {
 			}
 			else if (webRTC.isSupported) {
 				enableWebRTC();
+			}
+		}
+		else if (o.Misc && o.Misc.indexOf(MUTEX_PREFIX) == 0) {
+			var mutexString	= o.Misc.split(MUTEX_PREFIX)[1];
+
+			if (mutexString) {
+				var mutexData	= JSON.parse(mutexString);
+
+				Object.keys(mutexData).forEach(function (key) {
+					var command	= mutex.commands[key];
+					command && command(mutexData[key]);
+				});
 			}
 		}
 		else if (o.Misc && o.Misc.indexOf(CHANNEL_RATCHET_PREFIX) == 0) {
