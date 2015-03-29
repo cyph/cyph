@@ -529,6 +529,13 @@ var webRTC	= {
 			updateUI(function () {
 				webRTC.incomingStream.video	= o.video === true;
 				webRTC.incomingStream.voice	= o.voice === true;
+
+				if (webRTC.streamOptions.video && !webRTC.incomingStream.video) {
+					webRTC.$friendPlaceholder[0].play();
+				}
+				else {
+					webRTC.$friendPlaceholder[0].pause();
+				}
 			});
 		}
 	},
@@ -1072,7 +1079,10 @@ var webRTC	= {
 
 /* Mobile workaround */
 $(function () {
-	$(window).one('click', function () { webRTC.$friendPlaceholder[0].play() });
+	$(window).one('click', function () {
+		webRTC.$friendPlaceholder[0].play();
+		setTimeout(function () { webRTC.$friendPlaceholder[0].pause() }, 3000);
+	});
 });
 
 function sendWebRTCDataToPeer (o) {
