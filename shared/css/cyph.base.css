@@ -48,7 +48,7 @@ ng-markdown :not(p:only-child), [ng-markdown] :not(p:only-child) {
 html:not(.mobile) ng-markdown :not(p:only-child), html:not(.mobile) [ng-markdown] :not(p:only-child) {
   margin-left: 25px; }
 
-:not(textarea):not(md-input-container):not(input):not(blockquote) {
+:not(textarea):not(md-input-container):not(input):not(blockquote):not(md-progress-circular *) {
   border: 0px !important; }
 
 blockquote {

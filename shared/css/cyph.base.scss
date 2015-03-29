@@ -72,7 +72,7 @@ html:not(.mobile) {
 	}
 }
 
-:not(textarea):not(md-input-container):not(input):not(blockquote) {
+:not(textarea):not(md-input-container):not(input):not(blockquote):not(md-progress-circular *) {
 	border: 0px !important;
 }
 blockquote {

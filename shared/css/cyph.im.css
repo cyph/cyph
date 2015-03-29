@@ -322,12 +322,22 @@ html.video #video-call {
     width: 44px;
     height: 44px;
     font-size: 25px; }
+  html.video #video-call md-progress-circular {
+    position: absolute;
+    top: calc(50% - 25px);
+    left: calc(50% - 25px); }
+    html.video #video-call md-progress-circular .md-left .md-half-circle {
+      border-top-color: #f1f1f1;
+      border-left-color: #f1f1f1; }
+    html.video #video-call md-progress-circular .md-right .md-half-circle {
+      border-top-color: #f1f1f1;
+      border-right-color: #f1f1f1; }
   html.video #video-call:not(.playing) {
     max-height: 100px !important;
     background-color: transparent !important; }
     html.video #video-call:not(.playing) ~ #message-list {
       max-height: calc(100% - 200px) !important; }
-    html.video #video-call:not(.playing) video {
+    html.video #video-call:not(.playing) video, html.video #video-call:not(.playing) md-progress-circular {
       display: none !important; }
   html.video #video-call > .progress {
     padding-top: 10px; }
