@@ -365,7 +365,7 @@
 			></video>
 			<video
 				class='friend'
-				ng-hide='incomingStream.video'
+				ng-hide='incomingStream.video || incomingStream.loading'
 				src='/video/background.mp4'
 				autoplay
 				loop
@@ -377,6 +377,8 @@
 				autoplay
 				muted
 			></video>
+
+			<md-progress-circular ng-show='incomingStream.loading' md-mode='indeterminate'></md-progress-circular>
 
 			<div class='progress' ng-show='outgoingFile.name'>
 				<span translate>Sending</span>
