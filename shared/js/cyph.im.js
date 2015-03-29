@@ -901,7 +901,16 @@ var webRTC	= {
 				}
 			};
 
-			var dothemove	= function (wasFirst, wasFirstOfType) {
+			if (!opt_offer) {
+				if (webRTC.localStreamSetUpLock) {
+					retry();
+					return;
+				}
+
+				webRTC.localStreamSetUpLock	= true;
+			}
+
+			mutex.lock(function (wasFirst, wasFirstOfType) {
 				if (wasFirstOfType && webRTC.isAccepted) {
 					webRTC.helpers.init();
 
@@ -1056,18 +1065,7 @@ var webRTC	= {
 						retry();
 					}
 				}
-			};
-
-			if (opt_offer) {
-				dothemove();
-			}
-			else if (webRTC.localStreamSetUpLock) {
-				retry();
-			}
-			else {
-				webRTC.localStreamSetUpLock	= true;
-				mutex.lock(dothemove, 'setUpStream');
-			}
+			}, 'setUpStream' + (opt_offer ? '' : 'Init'));
 		}
 	}
 };
