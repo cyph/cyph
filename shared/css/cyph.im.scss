@@ -427,6 +427,21 @@ html.video {
 			font-size: 25px;
 		}
 
+		md-progress-circular {
+			position: absolute;
+			top: calc(50% - 25px);
+			left: calc(50% - 25px);
+
+			.md-left .md-half-circle {
+				border-top-color: #f1f1f1;
+				border-left-color: #f1f1f1;
+			}
+			.md-right .md-half-circle {
+				border-top-color: #f1f1f1;
+				border-right-color: #f1f1f1;
+			}
+		}
+
 
 		&:not(.playing) {
 			max-height: 100px !important;
@@ -436,7 +451,7 @@ html.video {
 				max-height: calc(100% - 200px) !important;
 			}
 
-			video {
+			video, md-progress-circular {
 				display: none !important;
 			}
 		}

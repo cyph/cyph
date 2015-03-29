@@ -527,7 +527,11 @@ var webRTC	= {
 
 			updateUI(function () {
 				webRTC.incomingStream.video	= o.video === true;
-				webRTC.incomingStream.voice	= o.voice === true;
+				webRTC.incomingStream.audio	= o.audio === true;
+
+				if (!webRTC.incomingStream.video && !webRTC.incomingStream.audio) {
+					delete webRTC.incomingStream.loading;
+				}
 
 				if (webRTC.streamOptions.video && !webRTC.incomingStream.video) {
 					webRTC.$friendPlaceholder[0].play();
@@ -560,8 +564,22 @@ var webRTC	= {
 			});
 
 			pc.onaddstream	= function (e) {
-				webRTC.remoteStream	= e.stream;
-				webRTC.$friendStream.attr('src', webRTC.remoteStream ? URL.createObjectURL(webRTC.remoteStream) : '');
+				if (e.stream && (!webRTC.remoteStream || webRTC.remoteStream.id != e.stream.id)) {
+					var src	= webRTC.$friendStream.attr('src');
+					if (src) {
+						URL.revokeObjectURL(src);
+					}
+
+					webRTC.remoteStream	= e.stream;
+
+					webRTC.$friendStream.attr('src', URL.createObjectURL(webRTC.remoteStream));
+
+					setTimeout(function () {
+						updateUI(function () {
+							delete webRTC.incomingStream.loading;
+						});
+					}, 1500);
+				}
 			};
 
 			pc.ondatachannel	= function (e) {
@@ -916,6 +934,8 @@ var webRTC	= {
 				webRTC.localStreamSetUpLock	= true;
 			}
 
+			webRTC.incomingStream.loading	= true;
+
 			if (opt_streamOptions) {
 				if (opt_streamOptions.video === true || opt_streamOptions.video === false) {
 					webRTC.streamOptions.video	= opt_streamOptions.video;
@@ -939,6 +959,11 @@ var webRTC	= {
 						if (webRTC.localStream) {
 							webRTC.localStream.stop();
 							delete webRTC.localStream;
+
+							var src	= webRTC.$meStream.attr('src');
+							if (src) {
+								URL.revokeObjectURL(src);
+							}
 						}
 
 						if (stream) {
