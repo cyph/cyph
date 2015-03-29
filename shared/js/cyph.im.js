@@ -916,18 +916,18 @@ var webRTC	= {
 				webRTC.localStreamSetUpLock	= true;
 			}
 
+			if (opt_streamOptions) {
+				if (opt_streamOptions.video === true || opt_streamOptions.video === false) {
+					webRTC.streamOptions.video	= opt_streamOptions.video;
+				}
+				if (opt_streamOptions.audio === true || opt_streamOptions.audio === false) {
+					webRTC.streamOptions.audio	= opt_streamOptions.audio;
+				}
+			}
+
 			mutex.lock(function (wasFirst, wasFirstOfType) {
 				if (wasFirstOfType && webRTC.isAccepted) {
 					webRTC.helpers.init();
-
-					if (opt_streamOptions) {
-						if (opt_streamOptions.video === true || opt_streamOptions.video === false) {
-							webRTC.streamOptions.video	= opt_streamOptions.video;
-						}
-						if (opt_streamOptions.audio === true || opt_streamOptions.audio === false) {
-							webRTC.streamOptions.audio	= opt_streamOptions.audio;
-						}
-					}
 
 					var streamHelper, streamFallback, streamSetup;
 
@@ -1108,37 +1108,35 @@ function channelSend () {
 function channelClose (hasReceivedDestroySignal) {
 	webRTC.helpers.kill();
 
-	if (channel || newChannel) {
-		if (hasReceivedDestroySignal) {
-			try {
-				newChannel.close(closeChat);
-			}
-			catch (e) {}
-			try {
-				channel.close(closeChat);
-			}
-			catch (e) {}
-			try {
-				otrWorker.terminate();
-			}
-			catch (e) {}
-			try {
-				tickWorker.terminate();
-			}
-			catch (e) {}
+	if (hasReceivedDestroySignal) {
+		try {
+			newChannel.close(closeChat);
+		}
+		catch (e) {}
+		try {
+			channel.close(closeChat);
+		}
+		catch (e) {}
+		try {
+			otrWorker.terminate();
+		}
+		catch (e) {}
+		try {
+			tickWorker.terminate();
+		}
+		catch (e) {}
 
-			channel					= null;
-			newChannel				= null;
-			otrWorker				= null;
-			tickWorker				= null;
-			tickFunctions.length	= 0;
-			tickIntervalHalt		= true;
-			mutex.owner				= authors.me;
-		}
-		else if (isAlive) {
-			channelSend({Destroy: true}, closeChat, true);
-			setTimeout(function () { channelClose(true) }, 10000);
-		}
+		channel					= null;
+		newChannel				= null;
+		otrWorker				= null;
+		tickWorker				= null;
+		tickFunctions.length	= 0;
+		tickIntervalHalt		= true;
+		mutex.owner				= authors.me;
+	}
+	else if (isAlive) {
+		channelSend({Destroy: true}, closeChat, true);
+		setTimeout(function () { channelClose(true) }, 10000);
 	}
 	else {
 		closeChat();
