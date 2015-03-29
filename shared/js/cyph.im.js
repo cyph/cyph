@@ -4,7 +4,6 @@ var preConnectMessageSendQueue		= [];
 var otrWorkerOnMessageQueue			= [];
 
 var isAlive				= false;
-var shouldUseOldChannel	= false;
 
 var CHANNEL_DATA_PREFIX		= 'CHANNEL DATA: ';
 var CHANNEL_RATCHET_PREFIX	= 'CHANNEL RATCHET: ';
@@ -24,7 +23,7 @@ var channelDataMisc	= {
 
 var
 	channel,
-	oldChannel,
+	newChannel,
 	isWebSignObsolete,
 	isConnected,
 	connectedTimestamp,
@@ -1079,6 +1078,8 @@ var webRTC	= {
 
 /* Mobile workaround */
 $(function () {
+	webRTC.$friendPlaceholder[0].pause();
+
 	$(window).one('click', function () {
 		webRTC.$friendPlaceholder[0].play();
 		setTimeout(function () { webRTC.$friendPlaceholder[0].pause() }, 3000);
@@ -1092,17 +1093,13 @@ function sendWebRTCDataToPeer (o) {
 
 
 function channelSend () {
-	try {
-		var c	= (shouldUseOldChannel && oldChannel && oldChannel.isAlive()) ?
-			oldChannel :
-			channel
-		;
+	var args	= arguments;
 
-		c.send.apply(c, arguments);
+	try {
+		channel.send.apply(channel, args);
 	}
 	catch (e) {
 		if (isAlive) {
-			var args	= arguments;
 			setTimeout(function () { channelSend.apply(null, args) }, 500);
 		}
 	}
@@ -1111,14 +1108,14 @@ function channelSend () {
 function channelClose (hasReceivedDestroySignal) {
 	webRTC.helpers.kill();
 
-	if (channel || oldChannel) {
+	if (channel || newChannel) {
 		if (hasReceivedDestroySignal) {
 			try {
-				channel.close(closeChat);
+				newChannel.close(closeChat);
 			}
 			catch (e) {}
 			try {
-				oldChannel.close(closeChat);
+				channel.close(closeChat);
 			}
 			catch (e) {}
 			try {
@@ -1131,7 +1128,7 @@ function channelClose (hasReceivedDestroySignal) {
 			catch (e) {}
 
 			channel					= null;
-			oldChannel				= null;
+			newChannel				= null;
 			otrWorker				= null;
 			tickWorker				= null;
 			tickFunctions.length	= 0;
@@ -1291,42 +1288,52 @@ function setUpChannel (channelDescriptor) {
 
 
 /*
-	Alice: create new channel, send descriptor over old channel, destroy old-old channel
-	Bob: join new channel, ack descriptor over old channel, destroy old-old channel
-	Alice: deprecate old channel, inform of deprecation over new channel
-	Bob: deprecation old channel
+	Alice: create new channel, send descriptor over current channel
+	Bob: join new channel, ack descriptor over current channel, deprecate current channel
+	Alice: deprecate current channel
+	Both: wait a bit, then destroy old channel
 */
 
 var lastChannelRatchet	= 0;
 
+function destroyCurrentChannel () {
+	if (newChannel) {
+		var oldChannel	= channel;
+		channel			= newChannel;
+		newChannel		= null;
+
+		setTimeout(function () {
+			oldChannel && oldChannel.close();
+		}, 150000);
+	}
+}
+
 function ratchetChannels (channelDescriptor) {
-	/* Block ratchet from being initiated more than once within a three-minute period */
-	if (!channelDescriptor) {
+	var init	= !channelDescriptor;
+
+	/* Block ratchet from being initiated more than once within a five-minute period */
+	if (init) {
 		var last			= lastChannelRatchet;
 		lastChannelRatchet	= Date.now();
 
-		if (lastChannelRatchet - last < 180000) {
+		if (lastChannelRatchet - last < 300000) {
 			return;
 		}
 	}
 
 
-	if (shouldUseOldChannel) {
-		shouldUseOldChannel	= false;
-
-		if (channelDescriptor) {
-			sendChannelData({Misc: CHANNEL_RATCHET_PREFIX});
-		}
+	if (newChannel) {
+		destroyCurrentChannel();
 	}
 	else {
-		oldChannel && oldChannel.close();
-		oldChannel			= channel;
-		shouldUseOldChannel	= true;
-
 		channelDescriptor	= channelDescriptor || getChannelDescriptor();
-		channel				= new Channel(channelDescriptor, {
+		newChannel			= new Channel(channelDescriptor, {
 			onopen: function () {
 				sendChannelData({Misc: CHANNEL_RATCHET_PREFIX + channelDescriptor});
+
+				if (!init) {
+					setTimeout(destroyCurrentChannel, 10000);
+				}
 			},
 			onmessage: receiveChannelData
 		});
