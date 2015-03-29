@@ -349,7 +349,7 @@ function onTick (f) {
 
 			tickWorker.onmessage	= function () {
 				processTicks();
-				tickWorker.postMessage({});
+				tickWorker && tickWorker.postMessage({});
 			};
 
 			tickWorker.onmessage();
