@@ -286,13 +286,44 @@ $(function () {
 			}, 500);
 		});
 	});
+
+	/* Polyfill for weird browsers */
+	if (!HTMLElement.prototype.click) {
+		HTMLElement.prototype.click	= function () {
+			var e	= document.createEvent('MouseEvents');
+			e.initEvent('click', true, true);
+			this.dispatchEvent(e);
+		}
+	}
+
+	/* Workaround for Angular Material bug */
+	if (isMobile) {
+		var tapLock;
+
+		$(window).click(function (e) {
+			if (tapLock) {
+				e.preventDefault();
+				e.stopPropagation();
+			}
+			else {
+				try {
+					tapLock	= true;
+				}
+				finally {
+					setTimeout(function () {
+						tapLock = false;
+					}, 800);
+				}
+			}
+		});
+	}
 });
 
 
 /* Trigger event loops from Web Worker instead of setTimeout (http://stackoverflow.com/a/12522580/459881) */
 
 var tickWorker, tickIntervalHalt;
-var tickFunctions		= [];
+var tickFunctions	= [];
 
 function makeWorker (f, vars) {
 	var s	= f.toString();

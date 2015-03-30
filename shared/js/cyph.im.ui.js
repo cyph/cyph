@@ -469,18 +469,27 @@ angular.
 				}).parent().click(function () {
 					if (!isClicked) {
 						isClicked	= true;
+
 						var e	= document.createEvent('MouseEvents');
 						e.initEvent('click', true, false);
 						elem.dispatchEvent(e);
 
-						var intervalId	= setInterval(function () {
+						var finish, intervalId;
+
+						finish	= function () {
+							clearInterval(intervalId);
+							setTimeout(function () {
+								isClicked	= false;
+							}, 500);
+						};
+
+						intervalId	= setInterval(function () {
 							if (elem.files.length > 0) {
-								clearInterval(intervalId);
-								setTimeout(function () {
-									isClicked	= false;
-								}, 500);
+								finish();
 							}
 						}, 500);
+
+						setTimeout(finish, 5000);
 					}
 				});
 			});
@@ -1006,7 +1015,6 @@ angular.
 					var asin		= (originalUrl.match(/.*amazon.com\/.*\/([A-Za-z0-9]{10}).*/) || [])[1];
 
 					if (asin) {
-						e.stopPropagation();
 						e.preventDefault();
 
 						var affiliateUrl	= 'https://www.amazon.com/dp/' + asin + '?tag=cyph-20';
@@ -1035,7 +1043,25 @@ angular.
 											});
 										}
 									};
-								}]
+								}],
+
+								/* Temporary hack for Angular Material bug */
+								onComplete: function () {
+									if (isMobile) {
+										$('.amazon-link:visible md-checkbox').click(function () {
+											var $this	= $(this);
+
+											try {
+												$this.css('pointer-events', 'none');
+											}
+											finally {
+												setTimeout(function () {
+													$this.css('pointer-events', '');
+												}, 500);
+											}
+										});
+									}
+								}
 							});
 						}
 						else {
