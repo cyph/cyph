@@ -18,10 +18,7 @@ section#main {
 #main section {
 	position: relative;
 }
-html:not(.mobile) #main section {
-	padding: 50px;
-}
-html.mobile #main section {
+#main section {
 	padding: 20px;
 }
 
@@ -79,20 +76,15 @@ html.mobile #new-cyph-section {
 	width: 100%;
 	text-align: center;
 	position: absolute;
-	top: 100px;
+	top: 80px;
 	font-size: 36px;
 	font-weight: 300;
+	margin-left: -20px;
 
 	.subtitle {
 		font-size: 50%;
 		margin: 10px -25px;
 	}
-}
-html:not(.mobile) .hero-text {
-	margin-left: -50px;
-}
-html.mobile .hero-text {
-	margin-left: -20px;
 }
 
 .feature-list-container {
