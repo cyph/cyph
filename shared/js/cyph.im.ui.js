@@ -1025,6 +1025,15 @@ angular.
 
 										$mdDialog.hide();
 										openAmazonUrl(ok);
+
+										if (ok) {
+											anal.send({
+												hitType: 'event',
+												eventCategory: 'affiliate',
+												eventAction: 'approve',
+												eventValue: 1
+											});
+										}
 									};
 								}]
 							});
