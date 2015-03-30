@@ -178,7 +178,40 @@ angular.
 		var previousAspectRatio;
 		var previousHeight			= window.innerHeight;
 
+		var pullInterval;
+
 		function adjustVideoMargins () {
+			if (!isMobile || isTablet) {
+				$featureListItems.css('height', '');
+				$featureListItems.find('[class*="pull"]').css('left', '');
+
+				setTimeout(function () {
+					[[0, 3], [1, 4], [2, 5]].forEach(function (pair) {
+						var $a	= $featureListItems.eq(pair[0]);
+						var $b	= $featureListItems.eq(pair[1]);
+
+						$a.add($b).height(Math.max($a.height(), $b.height()));
+					});
+
+					clearInterval(pullInterval);
+					var pullInterval	= setInterval(function () {
+						var $pulledElements	= $featureListItems.filter('.animated').find('[class*="pull"]');
+
+						setTimeout(function () {
+							$pulledElements.each(function () {
+								var $this	= $(this);
+								var offset	= $this.offset();
+
+								if (offset.left < 0) {
+									$this.css('left', '0px');
+								}
+							});
+						}, 2000);
+					}, 250);
+				}, 250);
+			}
+
+
 			var heightDelta			= window.innerHeight - previousHeight;
 			var isAddressBarHidden	= heightDelta > 0 && heightDelta < 75;
 			previousHeight			= window.innerHeight;
@@ -294,14 +327,6 @@ angular.
 
 		$(function () {
 			$('html').addClass('load-complete');
-
-			if (!isMobile || isTablet) {
-				$featureListItems.height($featureListItems.map(function () {
-					return $(this).height();
-				}).toArray().reduce(function (a, b) {
-					return Math.max(a, b);
-				}));
-			}
 
 			var wowDelay			= 'data-wow-delay';
 			var platformWowDelay	= platformString + '-' + wowDelay;
