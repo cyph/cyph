@@ -21,13 +21,6 @@
 		<meta translate name='cypherToast1' content='Prepare to witness the amazing nuts and bolts of Cyph.' />
 		<meta translate name='cypherToast2' content='This cyphertext is what outsiders spying on your traffic will see (nothing of value).' />
 		<meta translate name='cypherToast3' content='Thou art amazed.' />
-		<meta translate name='amazonLinkTitle' content='Amazon Link' />
-		<meta translate name='amazonLink' content='
-			You have the option to add Cyph&#39;s Amazon affiliate code to this link,
-			which, if you make a purchase, will give us a small commission to help keep
-			the service running. However, it will also allow us to track the click.
-			Add the code?
-		' />
 		<meta translate name='videoCallingTitle' content='Cyph P2P' />
 		<meta translate name='videoCall' content='video call' />
 		<meta translate name='voiceCall' content='call' />
@@ -631,7 +624,7 @@
 
 
 
-		<div id='templates'>
+		<div id='templates' ng-non-bindable>
 			<md-dialog class='formatting-help'>
 				<md-content>
 					<h2 translate>
@@ -726,6 +719,33 @@
 						</tbody>
 					</table>
 				</md-content>
+			</md-dialog>
+			<md-dialog class='amazon-link'>
+				<md-content>
+					<h2 translate>
+						Amazon Link
+					</h2>
+					<p translate>
+						You have the option to add Cyph's Amazon affiliate code to this link.
+					</p>
+					<p translate>
+						If you make a purchase, this code will give us a small commission to help keep
+						the service running. However, it will also allow us to track your click.
+					</p>
+					<p translate>
+						Add the code?
+					</p>
+				</md-content>
+				<div class='md-actions'>
+					<md-checkbox translate ng-model='remember' aria-label='Remember my preference'>
+						Remember my preference
+					</md-checkbox>
+
+					<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+
+					<md-button translate aria-label='No' ng-click='close(false)'>No</md-button>
+					<md-button translate aria-label='Sure, go ahead' ng-click='close(true)'>Sure, go ahead</md-button>
+				</div>
 			</md-dialog>
 		</div>
 

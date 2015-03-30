@@ -33,6 +33,7 @@ var
 	lastIncomingMessageTimestamp,
 	lastOutgoingMessageTimestamp,
 	cyphId,
+	shouldAddAffiliateCode,
 	sharedSecret,
 	shouldStartNewCyph,
 	shouldSendQueryMessage

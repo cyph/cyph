@@ -69,7 +69,7 @@ angular.
 		var $messageBox			= $('#message-box');
 		var $messageList		= $('#message-list, #message-list > md-content');
 		var $timer				= $('#timer');
-		var $buttons			= $('.md-button');
+		var $buttons			= $('.md-button:not(#templates *)');
 		var $copyUrlInput		= $('#copy-url-input input');
 		var $copyUrlLink		= $('#copy-url-link');
 		var $cyphertext			= $('#cyphertext.curtain, #cyphertext.curtain > md-content');
@@ -1010,15 +1010,28 @@ angular.
 						e.preventDefault();
 
 						var affiliateUrl	= 'https://www.amazon.com/dp/' + asin + '?tag=cyph-20';
+						var openAmazonUrl	= function (ok) { openUrl(ok ? affiliateUrl : originalUrl) };
 
-						confirmDialog({
-							title: getString('amazonLinkTitle'),
-							content: getString('amazonLink'),
-							ok: getString('suregoahead'),
-							cancel: getString('no')
-						}, function (ok) {
-							openUrl(ok ? affiliateUrl : originalUrl);
-						});
+						if (shouldAddAffiliateCode === undefined) {
+							$mdDialog.show({
+								template: $('#templates > .amazon-link')[0].outerHTML,
+								controller: ['$scope', '$mdDialog', function ($scope, $mdDialog) {
+									$scope.remember	= false;
+
+									$scope.close	= function (ok) {
+										if ($scope.remember) {
+											shouldAddAffiliateCode	= ok;
+										}
+
+										$mdDialog.hide();
+										openAmazonUrl(ok);
+									};
+								}]
+							});
+						}
+						else {
+							openAmazonUrl(shouldAddAffiliateCode);
+						}
 					}
 				});
 			});
