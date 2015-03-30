@@ -186,6 +186,26 @@ function pushState (path, shouldReplace, shouldNotProcess) {
 }
 
 
+function readableByteLength (b) {
+	var gb	= b / 1.074e+9;
+	var mb	= b / 1.049e+6;
+	var kb	= b / 1024;
+
+	if (gb >= 1) {
+		return gb.toFixed(2) + ' GB';
+	}
+	else if (mb >= 1) {
+		return mb.toFixed(2) + ' MB';
+	}
+	else if (kb >= 1) {
+		return kb.toFixed(2) + ' KB';
+	}
+	else {
+		return b + ' B';
+	}
+}
+
+
 function retryUntilSuccessful (f, opt_retryIf) {
 	var retry;
 

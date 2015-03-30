@@ -384,13 +384,13 @@
 
 			<div class='progress' ng-show='outgoingFile.name'>
 				<span translate>Sending</span>
-				<span>{{outgoingFile.name}}:</span>
+				<span>{{outgoingFile.name}} ({{outgoingFile.readableSize}}):</span>
 				<md-progress-linear md-mode='determinate' value='{{outgoingFile.percentComplete}}'></md-progress-linear>
 			</div>
 
 			<div class='progress' ng-show='incomingFile.name'>
 				<span translate>Receiving</span>
-				<span>{{incomingFile.name}}:</span>
+				<span>{{incomingFile.name}} ({{incomingFile.readableSize}}):</span>
 				<md-progress-linear md-mode='determinate' value='{{incomingFile.percentComplete}}'></md-progress-linear>
 			</div>
 
