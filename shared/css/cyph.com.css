@@ -67,7 +67,10 @@ html.mobile #new-cyph-section {
   position: absolute;
   top: 100px;
   font-size: 36px;
-  padding: 0px 10vw; }
+  font-weight: 300; }
+  .hero-text .subtitle {
+    font-size: 50%;
+    margin: 10px -25px; }
 
 html:not(.mobile) .hero-text {
   margin-left: -50px; }
@@ -76,54 +79,42 @@ html.mobile .hero-text {
   margin-left: -20px; }
 
 .feature-list-container {
-  margin-top: 240px; }
+  margin-top: 200px; }
   .feature-list-container .screenshot {
     margin-top: -50px;
     padding: 0px 30px; }
   .feature-list-container .feature-list-item {
     margin-bottom: 50px; }
-    .feature-list-container .feature-list-item p {
-      margin-top: 25px;
-      line-height: 1.3; }
-    .feature-list-container .feature-list-item p:first-child {
-      margin-top: 0px;
-      font-size: 110%; }
-    .feature-list-container .feature-list-item p:not(:first-child) {
-      font-size: 90%; }
+    .feature-list-container .feature-list-item p.title {
+      font-size: 120%;
+      font-family: 'Ubuntu'; }
+    .feature-list-container .feature-list-item p:not(.title) {
+      font-size: 95%;
+      line-height: 150%; }
     .feature-list-container .feature-list-item img {
       box-shadow: 0px 4px 10px -1px rgba(0, 0, 0, 0.25);
       border-radius: 1000% !important;
       padding: 0px;
       width: calc(33% - 20px);
       margin: 0px 10px; }
-
-#coming-soon > * > * {
-  opacity: 0.25;
-  -webkit-transition: opacity 0.25s ease-in-out;
-  -moz-transition: opacity 0.25s ease-in-out;
-  transition: opacity 0.25s ease-in-out; }
-#coming-soon #coming-soon-title {
-  text-align: center;
-  margin-bottom: 50px;
-  font-size: 125%; }
-
-html.mobile #coming-soon > * > *, #coming-soon:hover #coming-soon-title > *, #coming-soon:hover > :hover > * {
-  opacity: 0.75; }
+    .feature-list-container .feature-list-item .oneline {
+      display: block;
+      width: 100%;
+      margin: 3px 10%; }
 
 /* Targeting screens smaller than what Unsemantic considers a "tablet" */
 @media (max-width: 767px) {
   .hero-text {
-    font-size: 28px; }
+    font-size: 32px; }
 
   .feature-list-container .screenshot {
     padding: 0px;
     margin: 0px;
     margin-bottom: 50px; }
-  .feature-list-container .feature-list-item p:first-child {
-    margin-top: -50px; }
-  .feature-list-container .feature-list-item p:nth-child(2) {
-    margin-top: 40px; }
-  .feature-list-container .feature-list-item .mobile-push p:not(:first-child) {
+  .feature-list-container .feature-list-item p.title {
+    margin-top: -50px;
+    margin-bottom: 40px; }
+  .feature-list-container .feature-list-item .mobile-push p:not(.title) {
     margin-left: -33%; }
   .feature-list-container .feature-list-item img {
     min-width: 50px; } }
@@ -220,7 +211,7 @@ html.mobile #coming-soon > * > *, #coming-soon:hover #coming-soon-title > *, #co
 .section-content-container {
   width: 100%;
   max-width: 620px;
-  margin-top: 175px;
+  margin-top: 150px;
   margin-left: auto;
   margin-right: auto; }
   .section-content-container > p {
@@ -243,10 +234,10 @@ html.mobile .founder-photos {
   width: calc(100% + 40px); }
   html.mobile .founder-photos img {
     width: 100%; }
-  html.mobile .founder-photos strong {
+  html.mobile .founder-photos .name {
     margin-top: calc(16.5vw - 20px); }
-  html.mobile .founder-photos strong.mobile-pull-33 {
-    text-align: right; }
+    html.mobile .founder-photos .name.mobile-pull-33 {
+      text-align: right; }
 
 html:not(.mobile) .founder-photos {
   padding: 20px; }
@@ -258,6 +249,9 @@ html:not(.mobile) .founder-photos {
     margin-left: auto;
     margin-right: auto;
     text-align: center; }
+  html:not(.mobile) .founder-photos > * .name {
+    width: 200%;
+    margin-left: -50%; }
 html:not(.mobile) .founder-photos:after {
   clear: both;
   content: '';
@@ -280,8 +274,11 @@ html:not(.mobile) .founder-photos:after {
   min-height: 0px !important;
   height: auto !important; }
 
-#hero-section, #about, #home-beta-signup {
-  background-color: rgba(0, 0, 0, 0.15); }
+#hero-section, #about, #laptop-screenshot-section {
+  background-color: rgba(78, 52, 126, 0.75); }
+
+#why-cyph-section, #home-beta-signup {
+  background-color: rgba(130, 75, 236, 0.25); }
 
 #home-beta-signup {
   text-align: center !important; }

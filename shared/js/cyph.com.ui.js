@@ -11,8 +11,6 @@ angular.
 		var $betaSignupForm		= $('.beta-signup-form');
 		var $podcastLogo		= $('.podcast-logo');
 		var $heroText			= $('#hero-section .hero-text');
-		var $comingSoon			= $('#coming-soon');
-		var $comingSoonChildren	= $comingSoon.children();
 		var $featureListItems	= $('.feature-list-item');
 		var $newCyph			= $('#new-cyph');
 		var $newCyphParent		= $newCyph.parent();
@@ -298,8 +296,6 @@ angular.
 			$('html').addClass('load-complete');
 
 			if (!isMobile || isTablet) {
-				$comingSoon.css('margin-top', $comingSoonChildren.eq(0).position().top - $comingSoonChildren.eq(1).position().top);
-
 				$featureListItems.height($featureListItems.map(function () {
 					return $(this).height();
 				}).toArray().reduce(function (a, b) {
