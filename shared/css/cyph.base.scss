@@ -128,6 +128,25 @@ pre {
 
 
 
+@include keyframes(breathe) {
+	0%, 100% {
+		@include filter(brightness(1.0));
+	}
+
+	50% {
+		@include filter(brightness(1.25));
+	}
+}
+
+.breathe {
+	@include animation-name(breathe);
+	@include animation-duration(3s);
+	@include animation-timing-function(ease-in-out);
+	@include animation-iteration-count(infinite);
+}
+
+
+
 /* nanoScroller styling */
 
 .nano {
