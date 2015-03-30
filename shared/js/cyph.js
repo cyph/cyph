@@ -136,6 +136,29 @@ function getUrlState (fragmentOnly) {
 }
 
 
+function openUrl (url, downloadName, isObjectURL) {
+	var a			= document.createElement('a');
+	a.href			= url;
+	a.target		= '_blank';
+	a.style.display	= 'none';
+
+	if (downloadName) {
+		a.download	= downloadName;
+	}
+
+	document.body.appendChild(a);
+	a.click();
+
+	setTimeout(function () {
+		document.body.removeChild(a);
+
+		if (isObjectURL) {
+			URL.revokeObjectURL(a.href);
+		}
+	}, 120000);
+}
+
+
 function pushNotFound () {
 	pushState('/404');
 }
