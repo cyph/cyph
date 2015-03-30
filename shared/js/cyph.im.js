@@ -405,11 +405,13 @@ var webRTC	= {
 		data: null,
 		name: null,
 		size: null,
+		readableSize: null,
 		percentComplete: null
 	},
 	outgoingFile: {
 		name: null,
 		size: null,
+		readableSize: null,
 		percentComplete: null
 	},
 
@@ -796,8 +798,9 @@ var webRTC	= {
 					var pos		= 0;
 
 					updateUI(function () {
-						webRTC.outgoingFile.name	= file.name;
-						webRTC.outgoingFile.size	= buf.byteLength;
+						webRTC.outgoingFile.name			= file.name;
+						webRTC.outgoingFile.size			= buf.byteLength;
+						webRTC.outgoingFile.readableSize	= readableByteLength(webRTC.outgoingFile.size);
 					});
 					webRTC.channel.send(webRTC.outgoingFile.name + '\n' + webRTC.outgoingFile.size);
 
@@ -831,6 +834,7 @@ var webRTC	= {
 							updateUI(function () {
 								delete webRTC.outgoingFile.name;
 								delete webRTC.outgoingFile.size;
+								delete webRTC.outgoingFile.readableSize;
 								delete webRTC.outgoingFile.percentComplete;
 							});
 						}
@@ -866,6 +870,7 @@ var webRTC	= {
 							delete webRTC.incomingFile.data;
 							delete webRTC.incomingFile.name;
 							delete webRTC.incomingFile.size;
+							delete webRTC.incomingFile.readableSize;
 							delete webRTC.incomingFile.percentComplete;
 						});
 
@@ -877,9 +882,10 @@ var webRTC	= {
 						var data	= e.data.split('\n');
 
 						updateUI(function () {
-							webRTC.incomingFile.data	= [];
-							webRTC.incomingFile.name	= data[0];
-							webRTC.incomingFile.size	= parseInt(data[1], 10);
+							webRTC.incomingFile.data			= [];
+							webRTC.incomingFile.name			= data[0];
+							webRTC.incomingFile.size			= parseInt(data[1], 10);
+							webRTC.incomingFile.readableSize	= readableByteLength(webRTC.incomingFile.size);
 						});
 
 						addMessageToChat(
