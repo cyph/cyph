@@ -578,6 +578,9 @@ html.mobile .formatting-help {
 
 .amazon-link {
   max-width: 600px; }
+  .amazon-link md-checkbox {
+    text-align: right;
+    margin-bottom: 0px; }
 
 .beta-signup-form {
   text-align: center !important;
