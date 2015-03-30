@@ -674,19 +674,7 @@ var webRTC	= {
 				cancel: getString('reject')
 			}, function (ok) {
 				if (ok) {
-					var a			= document.createElement('a');
-					a.href			= URL.createObjectURL(new Blob(data));
-					a.download		= name;
-					a.target		= '_blank';
-					a.style.display	= 'none';
-
-					document.body.appendChild(a);
-					a.click();
-
-					setTimeout(function () {
-						document.body.removeChild(a);
-						URL.revokeObjectURL(a.href);
-					}, 120000);
+					openUrl(URL.createObjectURL(new Blob(data)), name, true);
 				}
 				else {
 					alertDialog({
