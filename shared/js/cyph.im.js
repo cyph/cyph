@@ -1373,13 +1373,13 @@ onTick(function (now) {
 		isAlive &&
 		sendChannelDataQueue.length &&
 		(
-			sendChannelDataQueue.length >= 8 ||
+			sendChannelDataQueue.length >= 4 ||
 			!lastOutgoingMessageTimestamp ||
 			(now - lastOutgoingMessageTimestamp) > 500
 		)
 	) {
-		var sendChannelDataQueueSlice	= sendChannelDataQueue.slice(0, 8);
-		sendChannelDataQueue			= sendChannelDataQueue.slice(8);
+		var sendChannelDataQueueSlice	= sendChannelDataQueue.slice(0, 4);
+		sendChannelDataQueue			= sendChannelDataQueue.slice(4);
 
 		sendChannelDataHandler(sendChannelDataQueueSlice);
 	}
