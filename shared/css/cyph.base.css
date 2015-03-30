@@ -104,6 +104,33 @@ pre {
   -moz-transition: opacity 0.75s linear;
   transition: opacity 0.75s linear; }
 
+@-webkit-keyframes breathe {
+  0%, 100% {
+    -webkit-filter: brightness(1); }
+  50% {
+    -webkit-filter: brightness(1.25); } }
+@-moz-keyframes breathe {}
+@keyframes breathe {
+  0%, 100% {
+    -webkit-filter: brightness(1);
+    filter: brightness(1); }
+  50% {
+    -webkit-filter: brightness(1.25);
+    filter: brightness(1.25); } }
+.breathe {
+  -webkit-animation-name: breathe;
+  -moz-animation-name: breathe;
+  animation-name: breathe;
+  -webkit-animation-duration: 3s;
+  -moz-animation-duration: 3s;
+  animation-duration: 3s;
+  -webkit-animation-timing-function: ease-in-out;
+  -moz-animation-timing-function: ease-in-out;
+  animation-timing-function: ease-in-out;
+  -webkit-animation-iteration-count: infinite;
+  -moz-animation-iteration-count: infinite;
+  animation-iteration-count: infinite; }
+
 /* nanoScroller styling */
 .nano .nano-pane {
   background-color: transparent; }
