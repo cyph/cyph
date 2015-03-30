@@ -252,6 +252,12 @@ md-dialog {
     font-family: Ubuntu;
     font-weight: normal; }
 
+md-checkbox .md-icon {
+  background: none !important;
+  border-color: #f1f1f1 !important; }
+md-checkbox .md-label {
+  border: 0px !important; }
+
 #templates {
   display: none; }
 

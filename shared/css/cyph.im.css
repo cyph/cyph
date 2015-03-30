@@ -576,6 +576,9 @@ html:not(.mobile) .formatting-help td {
 html.mobile .formatting-help {
   font-size: 75%; }
 
+.amazon-link {
+  max-width: 600px; }
+
 .beta-signup-form {
   text-align: center !important;
   max-width: 620px;

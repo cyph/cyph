@@ -315,6 +315,17 @@ md-dialog {
 	}
 }
 
+md-checkbox {
+	.md-icon {
+		background: none !important;
+		border-color: #f1f1f1 !important;
+	}
+
+	.md-label {
+		border: 0px !important;
+	}
+}
+
 #templates {
 	display: none;
 }
