@@ -30,6 +30,8 @@ bower install --save \
 wget https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/default.min.css -O highlight.js.min.css
 wget https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js -O highlight.min.js
 
+tsd query $(ls bower_components) --resolve --overwrite --save --action install
+
 cd ../cryptolib
 
 bower install --save \
