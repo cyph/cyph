@@ -1165,29 +1165,6 @@ angular.
 		window.onhashchange = function () { document.location.reload() };
 
 
-		/* Workaround for Angular Material bug */
-		if (isMobile) {
-			var tapLock;
-
-			$(window).click(function (e) {
-				if (tapLock) {
-					e.preventDefault();
-					e.stopPropagation();
-				}
-				else {
-					try {
-						tapLock	= true;
-					}
-					finally {
-						setTimeout(function () {
-							tapLock = false;
-						}, 800);
-					}
-				}
-			});
-		}
-
-
 		/* Temporary warning for desktop IE */
 
 		if (!isMobile && isIE) {

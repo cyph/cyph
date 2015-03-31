@@ -307,6 +307,34 @@ $(function () {
 		});
 	});
 
+	/* Workaround for Angular Material bug */
+	if (isMobile) {
+		var previousCoordinates	= {};
+
+		$(window).click(function (e) {
+			var coordinates	= Math.floor(e.pageX || 0) + ',' + Math.floor(e.pageY || 0);
+
+			if (coordinates == '0,0') {
+				return;
+			}
+
+			if (previousCoordinates[coordinates]) {
+				e.preventDefault();
+				e.stopPropagation();
+			}
+			else {
+				try {
+					previousCoordinates[coordinates]	= true;
+				}
+				finally {
+					setTimeout(function () {
+						delete previousCoordinates[coordinates];
+					}, 2000);
+				}
+			}
+		});
+	}
+
 	/* Polyfill for weird browsers */
 	if (!HTMLElement.prototype.click) {
 		HTMLElement.prototype.click	= function () {
