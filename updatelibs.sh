@@ -1,7 +1,7 @@
 #!/bin/bash
 
 dir="$(pwd)"
-scriptdir="$(cd "$(dirname "$0")"; pwd)" # $(dirname `readlink -f "${0}" || realpath "${0}"`)
+scriptdir="$(cd "$(dirname "$0")"; pwd)"
 cd "${scriptdir}"
 
 rm -rf shared/lib shared/cryptolib
@@ -35,11 +35,7 @@ cd ../cryptolib
 bower install --save \
 	mnaamani/otr4-em \
 	rubycon/isaac.js
-	# openpgp
 
 wget http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/hmac-sha256.js
-
-cd ../..
-./sassupdate.sh
 
 cd "${dir}"
