@@ -1012,7 +1012,12 @@ angular.
 				/* Amazon affiliate links */
 				$elem.find('a').click(function (e) {
 					var originalUrl	= $(this).attr('href') || '';
-					var asin		= (originalUrl.match(/.*amazon.com\/.*\/([A-Za-z0-9]{10}).*/) || [])[1];
+
+					if (originalUrl.substring(0, 5) == 'data:') {
+						return;
+					}
+
+					var asin	= (originalUrl.match(/.*amazon.com\/.*\/([A-Za-z0-9]{10}).*/) || [])[1];
 
 					if (asin) {
 						e.preventDefault();
