@@ -20,6 +20,7 @@
         "translate.ts",
         "unsupportedbrowsers.ts",
         "visibilityPolyfill.ts",
-        "webSignHashes.ts"
+        "webSignHashes.ts",
+        "../lib/typings/tsd.d.ts"
     ]
 }
