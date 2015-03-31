@@ -51,15 +51,17 @@ for d in cyph.im cyph.com ; do
 	cd $d
 
 	sass css/*.scss
-	tsc js/*.ts
+	tsc --sourceMap js/*.ts
 
 	../translate.py
 
 	if [ "${branch}" == 'staging' ] ; then
 		# Minify
 		echo "JS Minify ${d}"
+		rm js/*.ts js/*.map
 		ls js/*.js | xargs -I% uglifyjs '%' -o '%' -m
 		echo "CSS Minify ${d}"
+		rm css/*.scss css/*.map
 		ls css/*.css | xargs -I% cleancss -o '%' '%'
 		echo "HTML Minify ${d}"
 		ls index.html | xargs -I% html-minifier --minify-js --minify-css --remove-comments --collapse-whitespace '%' -o '%'
