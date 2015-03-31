@@ -46,9 +46,12 @@ fi
 ls */*.yaml | xargs -I% sed -i.bak "s/version: master/version: ${branch}/g" %
 
 
-# Translate + minify
+# Compile + translate + minify
 for d in cyph.im cyph.com ; do
 	cd $d
+
+	sass shared/css/*.scss
+	tsc shared/js/*.ts
 
 	../translate.py
 
