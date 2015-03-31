@@ -26,7 +26,6 @@ var
 	newChannel,
 	isWebSignObsolete,
 	isConnected,
-	connectedTimestamp,
 	isCreator,
 	isOtrReady,
 	hasKeyExchangeBegun,
@@ -117,8 +116,7 @@ function otrWorkerOnMessageHandler (e) {
 			break;
 
 		case 'connected':
-			isConnected			= true;
-			connectedTimestamp	= Date.now();
+			isConnected	= true;
 
 			while (preConnectMessageSendQueue.length) {
 				otr.sendMsg(preConnectMessageSendQueue.shift());
@@ -1284,22 +1282,7 @@ function setUpChannel (channelDescriptor) {
 				channelClose();
 			});
 		},
-		onmessage: receiveChannelData,
-		onlag: function (lag, region) {
-			if (isConnected && (Date.now() - connectedTimestamp > 60000)) {
-				if (!isCreator) {
-					ratchetChannels();
-				}
-
-				anal.send({
-					hitType: 'event',
-					eventCategory: 'lag',
-					eventAction: 'detected',
-					eventLabel: region,
-					eventValue: lag
-				});
-			}
-		}
+		onmessage: receiveChannelData
 	});
 }
 
@@ -1353,7 +1336,20 @@ function ratchetChannels (channelDescriptor) {
 					setTimeout(destroyCurrentChannel, 10000);
 				}
 			},
-			onmessage: receiveChannelData
+			onmessage: receiveChannelData,
+			onlag: function (lag, region) {
+				if (!isCreator) {
+					ratchetChannels();
+				}
+
+				anal.send({
+					hitType: 'event',
+					eventCategory: 'lag',
+					eventAction: 'detected',
+					eventLabel: region,
+					eventValue: lag
+				});
+			}
 		});
 	}
 }
