@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {},
+    "filesGlob": [
+        "*.ts"
+    ],
+    "files": [
+        "addressSpace.ts",
+        "analytics.ts",
+        "aws.ts",
+        "channel.ts",
+        "cryptoInit.ts",
+        "cryptoWebWorker.ts",
+        "cyph.com.ts",
+        "cyph.com.ui.ts",
+        "cyph.im.translations.ts",
+        "cyph.im.ts",
+        "cyph.im.ui.ts",
+        "cyph.ts",
+        "translate.ts",
+        "unsupportedbrowsers.ts",
+        "visibilityPolyfill.ts",
+        "webSignHashes.ts"
+    ]
+}
