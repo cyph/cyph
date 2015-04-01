@@ -312,7 +312,7 @@ $(function () {
 		var previousCoordinates	= {};
 
 		$(window).click(function (e) {
-			var coordinates	= Math.floor(e.pageX || 0) + ',' + Math.floor(e.pageY || 0);
+			var coordinates	= Math.floor(e.clientX || 0) + ',' + Math.floor(e.clientY || 0);
 
 			if (coordinates == '0,0') {
 				return;
