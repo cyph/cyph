@@ -50,7 +50,7 @@ ls */*.yaml | xargs -I% sed -i.bak "s/version: master/version: ${branch}/g" %
 for d in cyph.im cyph.com ; do
 	cd $d
 
-	sass css/*.scss
+	ls css/*.scss | sed 's/\.scss//g' | xargs -I% scss %.scss %.css
 	tsc --sourceMap js/*.ts
 
 	../translate.py
