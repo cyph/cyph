@@ -1098,14 +1098,16 @@ var webRTC	= {
 };
 
 /* Mobile workaround */
-$(function () {
-	webRTC.$friendPlaceholder[0].pause();
+if (!isIOS) {
+	$(function () {
+		webRTC.$friendPlaceholder[0].pause();
 
-	$(window).one('click', function () {
-		webRTC.$friendPlaceholder[0].play();
-		setTimeout(function () { webRTC.$friendPlaceholder[0].pause() }, 3000);
+		$(window).one('click', function () {
+			webRTC.$friendPlaceholder[0].play();
+			setTimeout(function () { webRTC.$friendPlaceholder[0].pause() }, 3000);
+		});
 	});
-});
+}
 
 function sendWebRTCDataToPeer (o) {
 	sendChannelData({Misc: WEBRTC_DATA_PREFIX + (o ? JSON.stringify(o) : '')});
