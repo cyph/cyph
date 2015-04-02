@@ -87,7 +87,10 @@ function Queue (queueName, handlers, config) {
 		}
 
 		if (handlers.onmessage) {
+			var onlag;
 			var lastReceiveTime	= 0;
+
+			setTimeout(function () { onlag = handlers.onlag }, 60000);
 
 			function onmessageHelper () {
 				self.receive(handlers.onmessage, function (err, data) {
@@ -107,10 +110,10 @@ function Queue (queueName, handlers, config) {
 						lastReceiveTime	= now;
 						setTimeout(onmessageHelper, delay);
 					}
-				}, null, null, handlers.onlag && function (lag) {
-					if (handlers.onlag) {
-						var f	= handlers.onlag;
-						delete handlers.onlag;
+				}, null, null, onlag && function (lag) {
+					if (onlag) {
+						var f	= onlag;
+						onlag	= null;
 						setTimeout(function () { f(lag, self.sqs.innerSqs.config.region) }, 0);
 					}
 				});
@@ -168,7 +171,7 @@ Queue.prototype.receive	= function (messageHandler, onComplete, maxNumberOfMessa
 					if (onLag) {
 						var lag	= Date.now() - parseInt(data.Messages[0].Attributes.SentTimestamp, 10);
 
-						if (lag > 3000) {
+						if (lag > 5000) {
 							onLag(lag);
 						}
 					}
