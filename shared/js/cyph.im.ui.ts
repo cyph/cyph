@@ -95,6 +95,8 @@ angular.
 		$scope.incomingFile		= webRTC.incomingFile;
 		$scope.outgoingFile		= webRTC.outgoingFile;
 
+		$scope.smsRecipient		= isIOS ? '+1' : '';
+
 		$scope.webSignHashes	= encodeURIComponent(
 			'Hello Ryan and Josh,\n\n\n\n\n\n---\n\n' +
 				(typeof webSign == 'undefined' ? '' : webSign.toString())
