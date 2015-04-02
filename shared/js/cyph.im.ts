@@ -534,7 +534,10 @@ var webRTC	= {
 					delete webRTC.incomingStream.loading;
 				}
 
-				if (webRTC.streamOptions.video && !webRTC.incomingStream.video) {
+				if (
+					(webRTC.streamOptions.video || webRTC.incomingStream.audio) &&
+					!webRTC.incomingStream.video
+				) {
 					webRTC.$friendPlaceholder[0].play();
 				}
 				else {
