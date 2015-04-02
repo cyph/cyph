@@ -162,14 +162,17 @@ Queue.prototype.receive	= function (messageHandler, onComplete, maxNumberOfMessa
 	if (self.isAlive) {
 		self.sqs.receiveMessage({
 			QueueUrl: self.queueUrl,
-			AttributeNames: ['SentTimestamp'],
+			AttributeNames: ['ApproximateFirstReceiveTimestamp', 'SentTimestamp'],
 			MaxNumberOfMessages: maxNumberOfMessages || 10,
 			WaitTimeSeconds: waitTimeSeconds || 20
 		}, function (err, data) {
 			try {
 				if (data && data.Messages && data.Messages.length > 0) {
 					if (onLag) {
-						var lag	= Date.now() - parseInt(data.Messages[0].Attributes.SentTimestamp, 10);
+						var lag	=
+							parseInt(data.Messages[0].Attributes.ApproximateFirstReceiveTimestamp, 10) -
+							parseInt(data.Messages[0].Attributes.SentTimestamp, 10)
+						;
 
 						if (lag > 5000) {
 							onLag(lag);
