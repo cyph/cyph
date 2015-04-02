@@ -1347,7 +1347,7 @@ function ratchetChannels (channelDescriptor) {
 
 				anal.send({
 					hitType: 'event',
-					eventCategory: 'latency',
+					eventCategory: 'sqslatency',
 					eventAction: 'detected',
 					eventLabel: region,
 					eventValue: lag
