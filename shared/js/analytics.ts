@@ -2,16 +2,16 @@ var anal	= (function () {
 	var analFrame;
 
 	/* No analytics for Tor users, but supporting it here just in case */
-	if (!isOnion) {
+	if (!env.isOnion) {
 		analFrame				= document.createElement('iframe');
-		var analFrameOrigin		= isOnion ? ONION_URL : BASE_URL.slice(0, -1);
+		var analFrameOrigin		= env.isOnion ? config.onionUrl : env.baseUrl.slice(0, -1);
 		var analFrameIsReady	= false;
 
 		analFrame.style.display	= 'none';
 
 		analFrame.src			=
 			analFrameOrigin +
-			(isOnion ? BASE_URL : '/') +
+			(env.isOnion ? env.baseUrl : '/') +
 			'anal/' +
 			location.host.replace('www.', '') + location.pathname + location.search +
 			(
