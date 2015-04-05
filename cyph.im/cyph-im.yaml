@@ -14,8 +14,7 @@ handlers:
   upload: index.html
   secure: always
   http_headers:
-    Cache-Control: no-store
-    # Enable at same time as Walken error: Cache-Control: public, max-age=0
+    Cache-Control: public, max-age=0
     X-Frame-Options: deny
     Strict-Transport-Security: max-age=31536000; includeSubdomains;
     Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval'
@@ -23,36 +22,6 @@ handlers:
 - url: /unsupportedbrowser
   static_files: unsupportedbrowser.html
   upload: unsupportedbrowser.html
-  http_headers:
-    Cache-Control: no-store
-    X-Frame-Options: deny
-    Strict-Transport-Security: max-age=31536000; includeSubdomains;
-    Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval'
-
-- url: /new
-  static_files: index.html
-  upload: index.html
-  secure: always
-  http_headers:
-    Cache-Control: no-store
-    X-Frame-Options: deny
-    Strict-Transport-Security: max-age=31536000; includeSubdomains;
-    Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval'
-
-- url: /[A-Za-z0-9]{7}
-  static_files: index.html
-  upload: index.html
-  secure: always
-  http_headers:
-    Cache-Control: no-store
-    X-Frame-Options: deny
-    Strict-Transport-Security: max-age=31536000; includeSubdomains;
-    Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval'
-
-- url: /404
-  static_files: index.html
-  upload: index.html
-  secure: always
   http_headers:
     Cache-Control: no-store
     X-Frame-Options: deny

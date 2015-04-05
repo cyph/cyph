@@ -18,7 +18,7 @@ function getChannelDescriptor () {
 function SQS (config) {
 	config	= config || {};
 
-	if (isLocalhost) {
+	if (env.isLocalhost) {
 		config.endpoint	= 'http://localhost:4568';
 	}
 
