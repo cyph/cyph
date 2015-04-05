@@ -41,6 +41,18 @@ function processUrlState () {
 
 
 
+/* Redirect to Onion site when on Tor */
+
+if (!isLocalhost && !isOnion) {
+	$.get(ONION_URL + '/ping', function (data) {
+		if (data == 'pong') {
+			document.location.href	= ONION_URL + document.location.toString().split(document.location.host)[1];
+		}
+	});
+}
+
+
+
 /* Set Analytics information */
 
 anal.set({
