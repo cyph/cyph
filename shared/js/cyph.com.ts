@@ -1,7 +1,7 @@
 /* TODO: Replace all these one-off functions with a changeState implementation */
 
 function processUrlState () {
-	var state	= getUrlState();
+	var state	= util.getUrlState();
 
 	var isPodcast	= $('[ng-show*="podcast =="]').
 		map(function () { return $(this).attr('ng-show').split('"')[1] }).
@@ -19,7 +19,7 @@ function processUrlState () {
 		openPodcast(state);
 	}
 	else if (state == 'about') {
-		pushState('/404');
+		util.pushNotFound();
 		// openAbout(true);
 	}
 	else if (state == 'faq') {
@@ -35,7 +35,7 @@ function processUrlState () {
 		openError(true);
 	}
 	else if (state != '') {
-		pushState('/404');
+		util.pushNotFound();
 	}
 }
 
@@ -43,10 +43,10 @@ function processUrlState () {
 
 /* Redirect to Onion site when on Tor */
 
-if (!isLocalhost && !isOnion) {
-	$.get(ONION_URL + '/ping', function (data) {
+if (!env.isLocalhost && !env.isOnion) {
+	$.get(config.onionUrl + '/ping', function (data) {
 		if (data == 'pong') {
-			document.location.href	= ONION_URL + document.location.toString().split(document.location.host)[1];
+			document.location.href	= config.onionUrl + document.location.toString().split(document.location.host)[1];
 		}
 	});
 }
