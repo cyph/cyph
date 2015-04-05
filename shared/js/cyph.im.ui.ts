@@ -25,41 +25,8 @@ var
 ;
 
 
-/* Stuff for ng-markdown directive */
-
-var markdown	= new markdownit({
-	html: false,
-	linkify: true,
-	typographer: true,
-	quotes: (language == 'ru' ? '«»' : language == 'de' ? '„“' : '“”') + '‘’',
-	highlight: function (str, lang) {
-		if (lang && hljs.getLanguage(lang)) {
-			try {
-				return hljs.highlight(lang, str).value;
-			}
-			catch (__) {}
-		}
-
-		try {
-			return hljs.highlightAuto(str).value;
-		}
-		catch (__) {}
-
-		return '';
-	}
-}).
-	disable('image').
-	use(markdownitSup).
-	use(markdownitEmoji)
-;
-
-markdown.renderer.rules.emoji	= function(token, idx) {
-	return twemoji.parse(token[idx].content, {base: '/lib/bower_components/twemoji/'});
-};
-
-
 angular.
-	module('Cyph', ['ngMaterial', 'timer']).
+	module('Cyph', ['ngMaterial', 'timer', 'ngMarkdown']).
 	controller('CyphController', ['$scope', '$mdSidenav', '$mdToast', '$mdDialog', function ($scope, $mdSidenav, $mdToast, $mdDialog) {
 		$scope.language			= language;
 		$scope.isConnected		= false;
@@ -1040,31 +1007,5 @@ angular.
 	}]).
 	config(['$compileProvider', function ($compileProvider) {
 		$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|sms):/);
-	}]).
-	directive('ngMarkdown', function () {
-		return {
-			restrict: 'A',
-			replace: true,
-			link: function (scope, element, attrs) {
-				function set(val) {
-					val	= markdown.render(val);
-
-					/* TODO: Get markdown-it team to implement these features natively */
-
-					/* Merge blockquotes like reddit */
-					val	= val.replace(/\<\/blockquote\>\n\<blockquote\>\n/g, '');
-
-					/* Images */
-					val	= val.replace(/!\<a href="(data:image\/(png|jpeg|gif)\;.*?)"><\/a>/g, function (match, value) {
-						return '<img src="' + value + '" />';
-					});
-
-					element.html(val);
-				}
-
-				set(scope.ngMarkdown || '');
-				scope.$watch(attrs.ngMarkdown, set);
-			}
-		};
-	});
+	}]);
 ;
