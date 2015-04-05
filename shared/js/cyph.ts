@@ -7,31 +7,6 @@ var isHistoryAvailable	= typeof history != 'undefined';
 
 
 
-/* Redirect to Onion site when on Tor */
-
-if (!isLocalhost && !isOnion) {
-	var theRest	= document.location.toString().split(document.location.host)[1];
-
-	$.get(ONION_URL + '/ping', function (data) {
-		if (data == 'pong') {
-			var path	= '';
-			switch (document.location.hostname) {
-				case 'www.cyph.im':
-					path	= '/im';
-					break;
-
-				case 'www.cyph.me':
-					path	= '/me';
-					break;
-			}
-
-			document.location.href	= ONION_URL + path + theRest;
-		}
-	});
-}
-
-
-
 function errorLog (subject, shouldIncludeBootstrapText) {
 	var numEmails	= 0;
 
