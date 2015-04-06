@@ -39,7 +39,7 @@ angular.
 		$scope.authors			= authors;
 		$scope.copyUrl			= '';
 		$scope.copyUrlEncoded	= '';
-		$scope.isOnion			= env.isOnion;
+		$scope.isOnion			= Env.isOnion;
 		$scope.isWebRTCEnabled	= false;
 		$scope.isVideoCall		= false;
 		$scope.streamOptions	= webRTC.streamOptions;
@@ -94,7 +94,7 @@ angular.
 				if (shouldNotify !== false) {
 					switch (author) {
 						case authors.friend:
-							notify(strings.newMessageNotification);
+							notify(Strings.newMessageNotification);
 							break;
 
 						case authors.app:
@@ -114,7 +114,7 @@ angular.
 						isFromFriend: author == authors.friend,
 						isFromMe: author == authors.me,
 						text: text,
-						timestamp: util.getTimestamp()
+						timestamp: Util.getTimestamp()
 					});
 				});
 
@@ -141,7 +141,7 @@ angular.
 			}
 
 			function dothemove () {
-				notify(strings.connectedNotification);
+				notify(Strings.connectedNotification);
 				changeState($scope.states.chatBeginMessage);
 
 				/* Stop mobile browsers from keeping this selected */
@@ -157,7 +157,7 @@ angular.
 					changeState($scope.states.chat);
 
 					/* Adjust font size for translations */
-					if (!env.isMobile) {
+					if (!Env.isMobile) {
 						setTimeout(function () {
 							ui.elements.buttons.each(function () {
 								var $this		= $(this);
@@ -180,7 +180,7 @@ angular.
 						}, 500);
 					}
 
-					addMessageToChat(strings.introductoryMessage, authors.app, false);
+					addMessageToChat(Strings.introductoryMessage, authors.app, false);
 				}, 3000);
 			}
 
@@ -207,7 +207,7 @@ angular.
 			changeState($scope.states.waitingForFriend);
 
 			var copyUrl		=
-				((!env.isOnion && document.location.origin) || 'https://www.cyph.im') +
+				((!Env.isOnion && document.location.origin) || 'https://www.cyph.im') +
 				'/#' +
 				cyphId +
 				sharedSecret
@@ -226,7 +226,7 @@ angular.
 				ui.elements.copyUrlInput[0].setSelectionRange(0, copyUrl.length);
 			}
 
-			if (env.isMobile) {
+			if (Env.isMobile) {
 				setCopyUrl();
 
 				/* Only allow right-clicking (for copying the link) */
@@ -247,7 +247,7 @@ angular.
 				}, 250);
 			}
 
-			if (env.isIE) {
+			if (Env.isIE) {
 				var expireTime	= new Date(Date.now() + 600000)
 					.toLocaleTimeString()
 					.toLowerCase()
@@ -264,7 +264,7 @@ angular.
 
 
 		changeState = $scope.changeState = function (s) {
-			if (env.isWebSignObsolete) {
+			if (Env.isWebSignObsolete) {
 				return;
 			}
 
@@ -283,14 +283,14 @@ angular.
 				friendIsTyping(false);
 
 				if ($scope.isConnected) {
-					addMessageToChat(strings.disconnectedNotification, authors.app);
+					addMessageToChat(Strings.disconnectedNotification, authors.app);
 
 					updateUI(function () {
 						isAlive = $scope.isAlive = false;
 						$scope.isDisconnected	= true;
 					});
 				}
-				else if (!env.isWebSignObsolete) {
+				else if (!Env.isWebSignObsolete) {
 					abortSetup();
 				}
 			}
@@ -349,10 +349,10 @@ angular.
 			channelClose();
 			changeState($scope.states.webSignObsolete);
 
-			env.isWebSignObsolete	= true;
+			Env.isWebSignObsolete	= true;
 			isAlive				= false;
 
-			errors.logWebSign();
+			Errors.logWebSign();
 		};
 
 
@@ -456,7 +456,7 @@ angular.
 		logCyphertext = $scope.logCyphertext = function (text, author) {
 			if (text) {
 				updateUI(function () {
-					if (env.isMobile && $scope.cyphertext.length > 5) {
+					if (Env.isMobile && $scope.cyphertext.length > 5) {
 						$scope.cyphertext.shift();
 					}
 
@@ -492,7 +492,7 @@ angular.
 		};
 
 		/* Crazy fix to prevent jankiness upon message send on mobile */
-		if (env.isMobile) {
+		if (Env.isMobile) {
 			var mobileButtons	= [ui.elements.sendButton, ui.elements.insertPhotoMobile];
 
 			ui.elements.messageBox.click(function (e) {
@@ -527,7 +527,7 @@ angular.
 				isButtonClickLocked	= true;
 
 				setTimeout(function () {
-					if (env.isMobile) {
+					if (Env.isMobile) {
 						$mdSidenav('menu').close();
 					}
 
@@ -544,10 +544,10 @@ angular.
 		$scope.disconnect	= function () {
 			$scope.baseButtonClick(function () {
 				confirmDialog({
-					title: strings.disconnectTitle,
-					content: strings.disconnectConfirm,
-					ok: strings.continueDialogAction,
-					cancel: strings.cancel
+					title: Strings.disconnectTitle,
+					content: Strings.disconnectConfirm,
+					ok: Strings.continueDialogAction,
+					cancel: Strings.cancel
 				}, function (ok) {
 					if (ok) {
 						channelClose();
@@ -635,7 +635,7 @@ angular.
 
 			setTimeout(function () {
 				$mdToast.show({
-					template: '<md-toast>' + strings.cypherToast3 + '</md-toast>',
+					template: '<md-toast>' + Strings.cypherToast3 + '</md-toast>',
 					hideDelay: 1000,
 					position: cypherToastPosition,
 					detachSwipe: function () {}
@@ -665,7 +665,7 @@ angular.
 				showCyphertextLock	= true;
 
 				$mdToast.show({
-					template: '<md-toast>' + strings.cypherToast1 + '</md-toast>',
+					template: '<md-toast>' + Strings.cypherToast1 + '</md-toast>',
 					hideDelay: 2000,
 					position: cypherToastPosition,
 					detachSwipe: function () {}
@@ -673,7 +673,7 @@ angular.
 
 				setTimeout(function () {
 					$mdToast.show({
-						template: '<md-toast>' + strings.cypherToast2 + '</md-toast>',
+						template: '<md-toast>' + Strings.cypherToast2 + '</md-toast>',
 						hideDelay: 3000,
 						position: cypherToastPosition,
 						detachSwipe: function () {}
@@ -734,9 +734,9 @@ angular.
 
 			if (message) {
 				alertDialog({
-					title: strings.videoCallingTitle,
+					title: Strings.videoCallingTitle,
 					content: message,
-					ok: strings.ok
+					ok: Strings.ok
 				});
 			}
 		};
@@ -744,7 +744,7 @@ angular.
 
 		/* Visibility */
 
-		if (!env.isMobile) {
+		if (!Env.isMobile) {
 			window.Visibility	= new FocusVisibility;
 		}
 
@@ -793,7 +793,7 @@ angular.
 
 		var setUpFullScreenEvent;
 
-		if (env.isMobile) {
+		if (Env.isMobile) {
 			ui.elements.html.addClass('mobile');
 
 			ui.elements.messageBox.focus(function () {
@@ -811,7 +811,7 @@ angular.
 		/* OS X-style scrollbars */
 
 		scrolling	= {
-			isNanoScroller: !env.isMobile && env.userAgent.indexOf('mac os x') < 0,
+			isNanoScroller: !Env.isMobile && Env.userAgent.indexOf('mac os x') < 0,
 			update: function () {
 				if (this.isNanoScroller) {
 					$('.nano').nanoScroller();
@@ -899,7 +899,7 @@ angular.
 				}
 
 				/* Amazon affiliate links */
-				affiliate.process($elem, $mdDialog);
+				Affiliate.process($elem, $mdDialog);
 			});
 		});
 
@@ -949,7 +949,7 @@ angular.
 			function dothemove () {
 				$.ajax({
 					type: 'PUT',
-					url: env.baseUrl + 'betasignups',
+					url: Env.baseUrl + 'betasignups',
 					data: $scope.betaSignup,
 					error: function () {
 						if (++retries < 5) {
@@ -998,7 +998,7 @@ angular.
 
 		/* Temporary warning for desktop IE */
 
-		if (!env.isMobile && env.isIE) {
+		if (!Env.isMobile && Env.isIE) {
 			alert(
 				"We won't stop you from using Internet Explorer, but it is a *very* poor life choice.\n\n" +
 				"IE doesn't work very well with Cyph (or in general).\n\nYou have been warned."

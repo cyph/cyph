@@ -29,7 +29,7 @@ angular.
 		$scope.isPrivacyPolicy	= false;
 		$scope.isTos			= false;
 		$scope.podcast			= '';
-		$scope.isOnion			= env.isOnion;
+		$scope.isOnion			= Env.isOnion;
 
 
 
@@ -115,11 +115,11 @@ angular.
 
 
 
-		if (env.isMobile) {
+		if (Env.isMobile) {
 			$html.addClass('mobile');
 		}
 
-		if (env.isMobile || env.isOnion) {
+		if (Env.isMobile || Env.isOnion) {
 			var $mobilePoster	= $('<img />');
 			$mobilePoster.attr('src', $video.attr('mobile-poster'));
 			$video.replaceWith($mobilePoster);
@@ -130,7 +130,7 @@ angular.
 
 		/* Header / new cyph button animation */
 
-		if (env.isMobile) {
+		if (Env.isMobile) {
 			$fixedHeaderStuff.addClass(fixedHeaderClass);
 		}
 		else {
@@ -181,7 +181,7 @@ angular.
 		var pullInterval;
 
 		function adjustVideoMargins () {
-			if (!env.isMobile || env.isTablet) {
+			if (!Env.isMobile || Env.isTablet) {
 				$featureListItems.css('height', '');
 				$featureListItems.find('[class*="pull"]').css('left', '');
 
@@ -286,7 +286,7 @@ angular.
 			function dothemove () {
 				$.ajax({
 					type: 'PUT',
-					url: env.baseUrl + 'betasignups',
+					url: Env.baseUrl + 'betasignups',
 					data: $scope.betaSignup,
 					error: function () {
 						if (++retries < 5) {
@@ -321,7 +321,7 @@ angular.
 		/* Do the move lad */
 
 		if (typeof history != 'undefined' && history.replaceState) {
-			history.replaceState({}, '', '/' + util.getUrlState());
+			history.replaceState({}, '', '/' + Util.getUrlState());
 		}
 		processUrlState();
 
@@ -329,19 +329,19 @@ angular.
 			$('html').addClass('load-complete');
 
 			var wowDelay			= 'data-wow-delay';
-			var platformWowDelay	= env.platformString + '-' + wowDelay;
+			var platformWowDelay	= Env.platformString + '-' + wowDelay;
 			$('[' + platformWowDelay + ']').each(function () {
 				var $this	= $(this);
 				$this.attr(wowDelay, $this.attr(platformWowDelay));
 			});
 
-			var platformClass	= env.platformString + '-class-';
+			var platformClass	= Env.platformString + '-class-';
 			$('[class*="' + platformClass + '"]').each(function () {
 				var $this	= $(this);
 				$this.attr('class', $this.attr('class').replace(new RegExp(platformClass, 'g'), ''));
 			});
 
-			if (!env.isMobile) {
+			if (!Env.isMobile) {
 				new WOW({live: false}).init();
 			}
 		});

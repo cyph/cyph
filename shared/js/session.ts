@@ -63,7 +63,7 @@ function otrWorkerOnMessageHandler (e) {
 			break;
 
 		case 'abort':
-			errors.logSmp();
+			Errors.logSmp();
 			abortSetup();
 			break;
 
@@ -106,19 +106,19 @@ crypto.getRandomValues(randomSeed);
 
 
 $(function () {
-	var urlFragment	= util.getUrlState();
+	var urlFragment	= Util.getUrlState();
 
-	if (!urlFragment || urlFragment == 'new' || urlFragment.length > (config.secretLength * 2)) {
+	if (!urlFragment || urlFragment == 'new' || urlFragment.length > (Config.secretLength * 2)) {
 		shouldStartNewCyph	= true;
 	}
 
-	if (urlFragment && urlFragment.length > config.secretLength) {
-		cyphId			= urlFragment.substr(0, config.secretLength);
-		sharedSecret	= urlFragment.substr(config.secretLength);
+	if (urlFragment && urlFragment.length > Config.secretLength) {
+		cyphId			= urlFragment.substr(0, Config.secretLength);
+		sharedSecret	= urlFragment.substr(Config.secretLength);
 	}
 
 	if (!sharedSecret) {
-		sharedSecret	= generateGuid(config.secretLength);
+		sharedSecret	= generateGuid(Config.secretLength);
 	}
 
 	otrWorker.postMessage({method: 0, message: {
@@ -129,16 +129,16 @@ $(function () {
 
 	function startOrJoinCyph (isFirstAttempt) {
 		if (cyphId && !isFirstAttempt) {
-			util.pushNotFound();
+			Util.pushNotFound();
 			return;
 		}
 
-		var id	= cyphId || generateGuid(config.secretLength);
+		var id	= cyphId || generateGuid(Config.secretLength);
 		var o	= shouldStartNewCyph ? {channelDescriptor: getChannelDescriptor()} : null;
 
 		$.ajax({
 			type: 'POST',
-			url: env.baseUrl + 'channels/' + id,
+			url: Env.baseUrl + 'channels/' + id,
 			data: o,
 			success: function (channelDescriptor) {
 				if (cyphId || !o || channelDescriptor == o.channelDescriptor) {
@@ -175,7 +175,7 @@ $(function () {
 function beginChat () {
 	beginChatUi(function () {
 		$(window).on('beforeunload', function () {
-			return strings.disconnectWarning;
+			return Strings.disconnectWarning;
 		});
 	});
 }
