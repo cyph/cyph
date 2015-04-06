@@ -1,44 +1,41 @@
-var CHANNEL_DATA_PREFIX		= 'CHANNEL DATA: ';
-var CHANNEL_RATCHET_PREFIX	= 'CHANNEL RATCHET: ';
-var WEBRTC_DATA_PREFIX		= 'WEBRTC: ';
-var MUTEX_PREFIX			= 'MUTEX: ';
-
-var channelDataMisc	= {
-	connect: '1',
-	ping: '2',
-	pong: '3',
-	imtypingyo: '4',
-	donetyping: '5'
-};
-
-var shouldStartNewCyph;
+/// <reference path="cyph.im.init.ts" />
+/// <reference path="../lib/typings/angularjs/angular.d.ts" />
+/// <reference path="../lib/typings/jquery/jquery.d.ts" />
 
 
-if (
-	typeof webSign != 'undefined' &&
-	webSign.detectChange &&
-	webSign.detectChange() &&
-	!WEBSIGN_HASHES[localStorage.webSignBootHash]
-) {
-	function warnWebSignObsoleteWrapper () {
-		if (typeof warnWebSignObsolete == 'undefined') {
-			setTimeout(warnWebSignObsoleteWrapper, 1000);
+angular.
+	module('Cyph', [
+		'ngMarkdown',
+		'ngMaterial',
+		'timer'
+	]).
+	controller('CyphController', [
+		'$scope',
+		'$mdSidenav',
+		'$mdToast',
+		'$mdDialog',
+
+		($scope, $mdSidenav, $mdToast, $mdDialog) => {
+			Controller	= $scope;
+
+			Controller.$mdSidenav	= $mdSidenav;
+			Controller.$mdToast		= $mdToast;
+			Controller.$mdDialog	= $mdDialog;
+
+			Controller.update		= Controller.apply;
+
+
+			/* TODO: Bind Controller to classes */
+
+
+			$(Init);
 		}
-		else {
-			warnWebSignObsolete();
+	]).
+	config([
+		'$compileProvider',
+
+		$compileProvider => {
+			$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|sms):/);
 		}
-	}
-
-	warnWebSignObsoleteWrapper();
-}
-else {
-	/* TODO: Init session */
-}
-
-
-/* Set Analytics information */
-
-anal.set({
-	appName: 'cyph.im',
-	appVersion: 'Web'
-});
+	]);
+;

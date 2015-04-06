@@ -1,6 +1,6 @@
 /* TODO: Replace all these one-off functions with a changeState implementation */
 
-function processUrlState () {
+processUrlState	= () => {
 	var state	= util.getUrlState();
 
 	var isPodcast	= $('[ng-show*="podcast =="]').
@@ -37,7 +37,7 @@ function processUrlState () {
 	else if (state != '') {
 		util.pushNotFound();
 	}
-}
+};
 
 
 

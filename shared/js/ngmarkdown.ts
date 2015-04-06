@@ -1,6 +1,8 @@
+/// <reference path="globals.ts" />
 /// <reference path="../lib/typings/angularjs/angular.d.ts" />
 
-(function () {
+
+(() => {
 	var title		= 'ngMarkdown';
 
 
@@ -15,18 +17,18 @@
 		linkify: true,
 		typographer: true,
 		quotes: (language == 'ru' ? '«»' : language == 'de' ? '„“' : '“”') + '‘’',
-		highlight: function (str, lang) {
+		highlight: (str, lang) => {
 			if (lang && hljs.getLanguage(lang)) {
 				try {
 					return hljs.highlight(lang, str).value;
 				}
-				catch (__) {}
+				catch (_) {}
 			}
 
 			try {
 				return hljs.highlightAuto(str).value;
 			}
-			catch (__) {}
+			catch (_) {}
 
 			return '';
 		}
@@ -36,24 +38,24 @@
 		use(markdownitEmoji)
 	;
 
-	markdown.renderer.rules.emoji	= function(token, idx) {
+	markdown.renderer.rules.emoji	= (token, idx) => {
 		return twemoji.parse(token[idx].content, {base: '/lib/bower_components/twemoji/'});
 	};
 
 
-	angular.module(title).directive(title, function () {
+	angular.module(title).directive(title, () => {
 		return {
 			restrict: 'A',
 			replace: true,
-			link: function (scope, element, attrs) {
-				function set(val) {
+			link: (scope, element, attrs) => {
+				function set (val: string) : void {
 					val	= markdown.render(val);
 
 					/* Merge blockquotes like reddit */
 					val	= val.replace(/\<\/blockquote\>\n\<blockquote\>\n/g, '');
 
 					/* Images */
-					val	= val.replace(/!\<a href="(data:image\/(png|jpeg|gif)\;.*?)"><\/a>/g, function (match, value) {
+					val	= val.replace(/!\<a href="(data:image\/(png|jpeg|gif)\;.*?)"><\/a>/g, (match, value: string) => {
 						return '<img src="' + value + '" />';
 					});
 
@@ -65,4 +67,4 @@
 			}
 		};
 	});
-}());
+})();

@@ -11,7 +11,6 @@
         "aws.ts",
         "base.ts",
         "channel.ts",
-        "cofig.ts",
         "config.ts",
         "constants.ts",
         "cryptoInit.ts",
@@ -25,6 +24,7 @@
         "cyph.im.ui.ts",
         "env.ts",
         "errors.ts",
+        "globals.ts",
         "mutex.ts",
         "ngmarkdown.ts",
         "otr.ts",
@@ -37,7 +37,7 @@
         "unsupportedbrowsers.ts",
         "util.ts",
         "visibilityPolyfill.ts",
-        "webSignHashes.ts",
+        "websign.d.ts",
         "../lib/typings/tsd.d.ts"
     ]
 }
