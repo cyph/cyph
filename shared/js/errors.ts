@@ -1,9 +1,14 @@
-var errors	= {
-	_base: function (subject, shouldIncludeBootstrapText) {
-		var numEmails	= 0;
+/// <reference path="globals.ts" />
+/// <reference path="anal.ts" />
+/// <reference path="../lib/typings/jquery/jquery.d.ts" />
 
-		return function (errorMessage, url, line, column, errorObject) {
-			var exception	= !errorMessage ? '' : (
+
+class Errors {
+	private static baseErrorLog (subject: string, shouldIncludeBootstrapText?: boolean) : Function {
+		var numEmails: number	= 0;
+
+		return (errorMessage?: string, url?: string, line?: number, column?: number, errorObject?: any) : void => {
+			var exception: string	= !errorMessage ? '' : (
 				errorMessage + '\n\n' +
 				'URL: ' + url + '\n' +
 				'Line: ' + line + '\n' +
@@ -11,7 +16,7 @@ var errors	= {
 				(errorObject && errorObject.stack)
 			);
 
-			var message		= exception +
+			var message: string		= exception +
 				'\n\n' + navigator.userAgent +
 				'\n\n' + navigator.language +
 				'\n\n' + (typeof language == 'undefined' ? '' : language) +
@@ -50,12 +55,12 @@ var errors	= {
 			anal.send('exception', {
 				exDescription: exception
 			});
-		}
-	},
+		};
+	}
 
-	log: errors._base('WARNING WARNING WARNING SOMETHING IS SRSLY FUCKED UP LADS'),
-	logSmp: errors._base('SMP JUST FAILED FOR SOMEONE LADS'),
-	logWebSign: errors._base('SOMEONE JUST GOT THE WEBSIGN ERROR SCREEN LADS', true)
-};
+	public static log			= Errors.baseErrorLog('WARNING WARNING WARNING SOMETHING IS SRSLY FUCKED UP LADS');
+	public static logSmp		= Errors.baseErrorLog('SMP JUST FAILED FOR SOMEONE LADS');
+	public static logWebSign	= Errors.baseErrorLog('SOMEONE JUST GOT THE WEBSIGN ERROR SCREEN LADS', true);
+}
 
-window.onerror	= errors.log;
+window.onerror	= <ErrorEventHandler> Errors.log;

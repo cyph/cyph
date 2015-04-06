@@ -1,10 +1,17 @@
+/// <reference path="globals.ts" />
+/// <reference path="../lib/typings/jquery/jquery.d.ts" />
+
+
 /* Get element bounds */
-$.fn.bounds	= function () {
-	var $this	= $(this);
-	var bounds	= $this.offset();
 
-	bounds.bottom	= bounds.top + $this.outerHeight();
-	bounds.right	= bounds.left + $this.outerWidth();
+$.fn.bounds	= (e) : {[direction: string] : number} => {
+	var $this: JQuery				= $(e.currentTarget);
+	var bounds: JQueryCoordinates	= $this.offset();
 
-	return bounds;
+	return {
+		top: bounds.top,
+		left: bounds.left,
+		bottom: bounds.top + $this.outerHeight(),
+		right: bounds.left + $this.outerWidth()
+	};
 };

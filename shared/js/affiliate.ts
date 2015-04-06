@@ -1,31 +1,43 @@
-var affiliate	= {
-	shouldAdd: null,
+/// <reference path="globals.ts" />
+/// <reference path="anal.ts" />
+/// <reference path="env.ts" />
+/// <reference path="util.ts" />
+/// <reference path="../lib/typings/jquery/jquery.d.ts" />
+/// <reference path="../lib/typings/angular-material/angular-material.d.ts" />
 
-	process: function ($elem, $mdDialog) {
-		$elem.find('a').click(function (e) {
-			var originalUrl	= $(this).attr('href') || '';
+
+class Affiliate {
+	public static shouldAdd: boolean	= null;
+
+	public static process ($elem: JQuery, $mdDialog: angular.material.MDDialogService) : void {
+		$elem.find('a').click(e => {
+			var originalUrl: string	= $(e.currentTarget).attr('href') || '';
 
 			if (originalUrl.substring(0, 5) == 'data:') {
 				return;
 			}
 
-			var asin	= (originalUrl.match(/.*amazon.com\/.*\/([A-Za-z0-9]{10}).*/) || [])[1];
+			var asin: string	= (originalUrl.match(/.*amazon.com\/.*\/([A-Za-z0-9]{10}).*/) || [])[1] || '';
 
 			if (asin) {
 				e.preventDefault();
 
-				var affiliateUrl	= 'https://www.amazon.com/dp/' + asin + '?tag=cyph-20';
-				var openAmazonUrl	= function (ok) { util.openUrl(ok ? affiliateUrl : originalUrl) };
+				var affiliateUrl: string	= 'https://www.amazon.com/dp/' + asin + '?tag=cyph-20';
 
-				if (affiliate.shouldAdd === null) {
+				function openAmazonUrl (ok: boolean) : void {
+					Util.openUrl(ok ? affiliateUrl : originalUrl);
+				}
+
+
+				if (Affiliate.shouldAdd === null) {
 					$mdDialog.show({
 						template: $('#templates > .amazon-link')[0].outerHTML,
-						controller: ['$scope', '$mdDialog', function ($scope, $mdDialog) {
+						controller: ['$scope', '$mdDialog', ($scope, $mdDialog) => {
 							$scope.remember	= false;
 
-							$scope.close	= function (ok) {
+							$scope.close	= (ok: boolean) => {
 								if ($scope.remember) {
-									affiliate.shouldAdd	= ok;
+									Affiliate.shouldAdd	= ok;
 								}
 
 								$mdDialog.hide();
@@ -43,16 +55,16 @@ var affiliate	= {
 						}],
 
 						/* Temporary hack for Angular Material bug */
-						onComplete: function () {
-							if (env.isMobile) {
-								$('.amazon-link:visible md-checkbox').click(function () {
-									var $this	= $(this);
+						onComplete: () => {
+							if (Env.isMobile) {
+								$('.amazon-link:visible md-checkbox').click(e => {
+									var $this: JQuery	= $(e.currentTarget);
 
 									try {
 										$this.css('pointer-events', 'none');
 									}
 									finally {
-										setTimeout(function () {
+										setTimeout(() => {
 											$this.css('pointer-events', '');
 										}, 500);
 									}
@@ -62,9 +74,9 @@ var affiliate	= {
 					});
 				}
 				else {
-					openAmazonUrl(affiliate.shouldAdd);
+					openAmazonUrl(Affiliate.shouldAdd);
 				}
 			}
 		});
 	}
-};
+}

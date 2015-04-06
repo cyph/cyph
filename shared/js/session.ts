@@ -198,26 +198,6 @@ function pingPong () {
 }
 
 
-function processUrlState () {
-	if (env.isWebSignObsolete) {
-		return;
-	}
-
-	var urlState	= util.getUrlState();
-
-	/* 404 */
-	if (urlState == '404') {
-		changeState(states.error);
-	}
-	else {
-		util.pushNotFound();
-		return;
-	}
-
-	history.replaceState({}, '', '/' + util.getUrlState());
-}
-
-
 function channelSend () {
 	var args	= arguments;
 
