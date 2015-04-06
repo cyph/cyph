@@ -1,110 +1,84 @@
-var anal	= (function () {
-	var analFrame;
+/// <reference path="globals.ts" />
+/// <reference path="env.ts" />
+/// <reference path="../lib/typings/jquery/jquery.d.ts" />
 
-	/* No analytics for Tor users, but supporting it here just in case */
-	if (!Env.isOnion) {
-		analFrame				= document.createElement('iframe');
-		var analFrameOrigin		= Env.isOnion ? Config.onionUrl : Env.baseUrl.slice(0, -1);
-		var analFrameIsReady	= false;
 
-		analFrame.style.display	= 'none';
+class Analytics {
+	private analFrame: HTMLIFrameElement;
+	private analFrameIsReady: boolean;
 
-		analFrame.src			=
-			analFrameOrigin +
-			(Env.isOnion ? Env.baseUrl : '/') +
-			'anal/' +
-			location.host.replace('www.', '') + location.pathname + location.search +
-			(
-				document.referrer && !/https:\/\/www.cyph.[a-z]+\//.test(document.referrer) ?
-				('?ref=' + encodeURIComponent(document.referrer)) :
-				''
-			)
-		;
+	private baseEventSubmitHelper (method: string, args: any[]) : void {
+		if (this.analFrameIsReady) {
+			args.unshift(method);
 
-		document.body.appendChild(analFrame);
-
-		function analFramePostMessage (message) {
-			analFrame.contentWindow.postMessage(message, '*');
+			this.analFrame.contentWindow.postMessage(
+				{args: JSON.stringify(args)},
+				'*'
+			);
 		}
 
-		$(function () {
-			$(analFrame).load(function () {
-				setTimeout(function () {
-					analFrameIsReady	= true;
-				}, 250);
-			});
-		});
+		/* Do nothing if explicitly set to false */
+		else if (this.analFrameIsReady !== false) {
+			setTimeout(() =>
+				this.baseEventSubmitHelper(method, args)
+			, 50);
+		}
+	}
+
+	private baseEventSubmit (method: string, ...args: any[]) : void {
+		this.baseEventSubmitHelper(method, args);
 	}
 
 
-	/*
-		Disabling callback logic until we actually need it
-
-
-		var callbacks			= {};
-		var callbackCount		= 0;
-		var receiveMessageQueue	= [];
-
-		function callback (f) {
-			if (!f) {
-				return null;
-			}
-
-			var callbackId			= ++callbackCount;
-			callbacks[callbackId]	= f;
-			return {callbackId: callbackId};
+	public constructor (appName: string = Env.host, appVersion: string = 'Web') {
+		if (Env.isOnion) {
+			this.analFrameIsReady	= false;
 		}
+		else {
+			this.analFrame	= document.createElement('iframe');
 
-		window.addEventListener('message', function (e) {
-			if (e.origin == analFrameOrigin) {
-				receiveMessageQueue.push(e);
-			}
-		});
+			this.analFrame.src	=
+				Env.baseUrl +
+				'anal/' +
+				appName +
+				location.pathname +
+				location.search +
+				(
+					document.referrer &&
+					!/https:\/\/www.cyph.[a-z]+\//.test(document.referrer) ?
+						(
+							(location.search ? '&' : '?') +
+							'ref=' +
+							encodeURIComponent(document.referrer)
+						) :
+						''
+				)
+			;
 
-		onTick(function () {
-			if (receiveMessageQueue.length) {
-				var e	= receiveMessageQueue.shift();
-				var f	= callbacks[e.data.callbackId];
+			this.analFrame.style.display	= 'none';
 
-				if (f) {
-					f.apply(null, JSON.parse(e.data.args));
-				}
+			document.body.appendChild(this.analFrame);
 
-				return true;
-			}
+			$(() =>
+				$(this.analFrame).load(() =>
+					setTimeout(() => {
+						this.analFrameIsReady	= true;
+						this.set({appName, appVersion});
+					}, 250)
+				)
+			);
+		}
+	}
 
-			return false;
-		});
-	*/
+
+	public send (...args: any[]) : void {
+		this.baseEventSubmit('send', args);
+	}
+
+	public set (...args: any[]) : void {
+		this.baseEventSubmit('set', args);
+	}
+}
 
 
-	var wrapper	= {};
-
-	/* Add methods that take an arbitrary list of args;
-		they all do nothing if analytics is flagged off */
-	[
-		'send',
-		'set'
-	].forEach(function (methodName) {
-		wrapper[methodName]	= analFrame ?
-			function () {
-				var args	= Array.prototype.slice.apply(arguments);
-				args.unshift(methodName);
-
-				function wrapperHelper () {
-					if (analFrameIsReady) {
-						analFramePostMessage({args: JSON.stringify(args)});
-					}
-					else {
-						setTimeout(wrapperHelper, 50);
-					}
-				}
-
-				wrapperHelper();
-			} :
-			function () {}
-		;
-	});
-
-	return wrapper;
-}());
+var anal: Analytics	= new Analytics;

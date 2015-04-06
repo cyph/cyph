@@ -5,7 +5,6 @@
         "../lib/typings/tsd.d.ts"
     ],
     "files": [
-        "addressSpace.ts",
         "affiliate.ts",
         "analytics.ts",
         "aws.ts",
@@ -17,6 +16,7 @@
         "cryptoWebWorker.ts",
         "cyph.com.ts",
         "cyph.com.ui.ts",
+        "cyph.im.init.ts",
         "cyph.im.strings.ts",
         "cyph.im.translations.ts",
         "cyph.im.ts",
@@ -31,6 +31,7 @@
         "p2p.ts",
         "plugins.jquery.ts",
         "session.ts",
+        "storage.d.ts",
         "thread.ts",
         "timer.ts",
         "translate.ts",

@@ -9,5 +9,5 @@ if (
 	!window.history.replaceState ||
 	!window.localStorage
 ) {
-	document.location.pathname	= '/unsupportedbrowser';
+	location.pathname	= '/unsupportedbrowser';
 }

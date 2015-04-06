@@ -55,12 +55,4 @@ function Init () {
 	else {
 		/* TODO: Init session */
 	}
-
-
-	/* Set Analytics information */
-
-	anal.set({
-		appName: 'cyph.im',
-		appVersion: 'Web'
-	});
 }

@@ -46,16 +46,7 @@ processUrlState	= () => {
 if (!Env.isLocalhost && !Env.isOnion) {
 	$.get(Config.onionUrl + '/ping', function (data) {
 		if (data == 'pong') {
-			document.location.href	= Config.onionUrl + document.location.toString().split(document.location.host)[1];
+			location.href	= Config.onionUrl + location.toString().split(location.host)[1];
 		}
 	});
 }
-
-
-
-/* Set Analytics information */
-
-anal.set({
-	appName: 'cyph.com',
-	appVersion: 'Web'
-});

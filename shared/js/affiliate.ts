@@ -1,5 +1,5 @@
 /// <reference path="globals.ts" />
-/// <reference path="anal.ts" />
+/// <reference path="analytics.ts" />
 /// <reference path="env.ts" />
 /// <reference path="util.ts" />
 /// <reference path="../lib/typings/jquery/jquery.d.ts" />
@@ -64,9 +64,9 @@ class Affiliate {
 										$this.css('pointer-events', 'none');
 									}
 									finally {
-										setTimeout(() => {
-											$this.css('pointer-events', '');
-										}, 500);
+										setTimeout(() =>
+											$this.css('pointer-events', '')
+										, 500);
 									}
 								});
 							}

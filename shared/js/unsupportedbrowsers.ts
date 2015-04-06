@@ -8,7 +8,7 @@ var isOldIOS		= /ipad|iphone|ipod/.test(userAgent) && (parseInt((userAgent.match
 var isStockAndroid	= userAgent.match('android') && userAgent.match(/version\/\d\.\d/);
 
 if (isFirefoxOS || isOldIOS || isStockAndroid) {
-	document.location.pathname	= '/unsupportedbrowser';
+	location.pathname	= '/unsupportedbrowser';
 }
 
 
