@@ -12,9 +12,9 @@ if (typeof strings != 'undefined') {
 
 $(
 	'.' +
-	env.platformString +
+	Env.platformString +
 	'-only [deferred-src], [deferred-src].' +
-	env.platformString +
+	Env.platformString +
 	'-only'
 ).each(function () {
 	var $this	= $(this);
@@ -29,7 +29,7 @@ $('[on-enterpress]').each(function () {
 	var $this			= $(this);
 	var enterpressOnly	= $this.attr('enterpress-only');
 
-	if (!enterpressOnly || enterpressOnly == env.platformString) {
+	if (!enterpressOnly || enterpressOnly == Env.platformString) {
 		var onenterpress	= $this.attr('on-enterpress');
 
 		$this.keypress(function (e) {
@@ -77,7 +77,7 @@ $('button > a').each(function () {
 
 /* Temporary workaround for Angular Material bug */
 
-if (env.isMobile) {
+if (Env.isMobile) {
 	var previousCoordinates	= {};
 
 	$(window).click(function (e) {

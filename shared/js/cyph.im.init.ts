@@ -16,22 +16,22 @@ function Init () {
 
 
 	processUrlState	= () => {
-		if (env.isWebSignObsolete) {
+		if (Env.isWebSignObsolete) {
 			return;
 		}
 
-		var urlState	= util.getUrlState();
+		var urlState	= Util.getUrlState();
 
 		/* 404 */
 		if (urlState == '404') {
 			changeState(states.error);
 		}
 		else {
-			util.pushNotFound();
+			Util.pushNotFound();
 			return;
 		}
 
-		history.replaceState({}, '', '/' + util.getUrlState());
+		history.replaceState({}, '', '/' + Util.getUrlState());
 	};
 
 
@@ -39,7 +39,7 @@ function Init () {
 		typeof webSign != 'undefined' &&
 		webSign.detectChange &&
 		webSign.detectChange() &&
-		!config.validWebSignHashes[localStorage.webSignBootHash]
+		!Config.validWebSignHashes[localStorage.webSignBootHash]
 	) {
 		function warnWebSignObsoleteWrapper () {
 			if (typeof warnWebSignObsolete == 'undefined') {

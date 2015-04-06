@@ -62,9 +62,9 @@ var webRTC	= {
 			webRTC.isAccepted	= false;
 
 			alertDialog({
-				title: strings.videoCallingTitle,
-				content: strings.webRTCDeny,
-				ok: strings.ok
+				title: Strings.videoCallingTitle,
+				content: Strings.webRTCDeny,
+				ok: Strings.ok
 			});
 		},
 
@@ -104,12 +104,12 @@ var webRTC	= {
 
 				if (wasAccepted) {
 					alertDialog({
-						title: strings.videoCallingTitle,
-						content: strings.webRTCDisconnect,
-						ok: strings.ok
+						title: Strings.videoCallingTitle,
+						content: Strings.webRTCDisconnect,
+						ok: Strings.ok
 					});
 
-					addMessageToChat(strings.webRTCDisconnect, authors.app, false);
+					addMessageToChat(Strings.webRTCDisconnect, authors.app, false);
 				}
 			}, 500);
 		},
@@ -165,7 +165,7 @@ var webRTC	= {
 			}
 			else if (!webRTC.hasSessionStarted) {
 				webRTC.hasSessionStarted	= true;
-				addMessageToChat(strings.webRTCConnect, authors.app, false);
+				addMessageToChat(Strings.webRTCConnect, authors.app, false);
 			}
 
 			var dc;
@@ -251,14 +251,14 @@ var webRTC	= {
 			}
 			else if (command == 'video' || command == 'voice' || command == 'file') {
 				confirmDialog({
-					title: strings.videoCallingTitle,
+					title: Strings.videoCallingTitle,
 					content:
-						strings.webRTCRequest + ' ' +
+						Strings.webRTCRequest + ' ' +
 						strings[command + 'Call'] + '. ' +
-						strings.webRTCWarning
+						Strings.webRTCWarning
 					,
-					ok: strings.continueDialogAction,
-					cancel: strings.decline
+					ok: Strings.continueDialogAction,
+					cancel: Strings.decline
 				}, function (ok) {
 					if (ok) {
 						webRTC.isAccepted	= true;
@@ -280,22 +280,22 @@ var webRTC	= {
 		},
 
 		receiveIncomingFile: function (data, name) {
-			var title	= strings.incomingFile + ' ' + name;
+			var title	= Strings.incomingFile + ' ' + name;
 
 			confirmDialog({
 				title: title,
-				content: strings.incomingFileWarning,
-				ok: strings.save,
-				cancel: strings.reject
+				content: Strings.incomingFileWarning,
+				ok: Strings.save,
+				cancel: Strings.reject
 			}, function (ok) {
 				if (ok) {
-					util.openUrl(URL.createObjectURL(new Blob(data)), name, true);
+					Util.openUrl(URL.createObjectURL(new Blob(data)), name, true);
 				}
 				else {
 					alertDialog({
 						title: title,
-						content: strings.incomingFileReject,
-						ok: strings.ok
+						content: Strings.incomingFileReject,
+						ok: Strings.ok
 					});
 				}
 			});
@@ -303,14 +303,14 @@ var webRTC	= {
 
 		requestCall: function (callType) {
 			confirmDialog({
-				title: strings.videoCallingTitle,
+				title: Strings.videoCallingTitle,
 				content:
-					strings.webRTCInit + ' ' +
+					Strings.webRTCInit + ' ' +
 					strings[callType + 'Call'] + '. ' +
-					strings.webRTCWarning
+					Strings.webRTCWarning
 				,
-				ok: strings.continueDialogAction,
-				cancel: strings.cancel
+				ok: Strings.continueDialogAction,
+				cancel: Strings.cancel
 			}, function (ok) {
 				if (ok) {
 					mutex.lock(function (wasFirst, wasFirstOfType) {
@@ -326,9 +326,9 @@ var webRTC	= {
 
 								setTimeout(function () {
 									alertDialog({
-										title: strings.videoCallingTitle,
-										content: strings.webRTCRequestConfirmation,
-										ok: strings.ok
+										title: Strings.videoCallingTitle,
+										content: Strings.webRTCRequestConfirmation,
+										ok: Strings.ok
 									});
 								}, 250);
 
@@ -354,7 +354,7 @@ var webRTC	= {
 		},
 
 		retry: function (f) {
-			util.retryUntilSuccessful(f, function () { return webRTC.isAccepted });
+			Util.retryUntilSuccessful(f, function () { return webRTC.isAccepted });
 		},
 
 		sendFile: function () {
@@ -377,9 +377,9 @@ var webRTC	= {
 			if (file) {
 				if (file.size > webRTC.maxFileSize) {
 					alertDialog({
-						title: strings.oopsTitle,
-						content: strings.fileTooLarge,
-						ok: strings.ok
+						title: Strings.oopsTitle,
+						content: Strings.fileTooLarge,
+						ok: Strings.ok
 					});
 
 					anal.send({
@@ -399,7 +399,7 @@ var webRTC	= {
 					eventValue: 1
 				});
 
-				addMessageToChat(strings.fileTransferInitMe + ' ' + file.name, authors.app, false);
+				addMessageToChat(Strings.fileTransferInitMe + ' ' + file.name, authors.app, false);
 
 				webRTC.channel.send(webRTC.fileTransferComplete);
 
@@ -412,7 +412,7 @@ var webRTC	= {
 					updateUI(function () {
 						webRTC.outgoingFile.name			= file.name;
 						webRTC.outgoingFile.size			= buf.byteLength;
-						webRTC.outgoingFile.readableSize	= util.readableByteLength(webRTC.outgoingFile.size);
+						webRTC.outgoingFile.readableSize	= Util.readableByteLength(webRTC.outgoingFile.size);
 					});
 					webRTC.channel.send(webRTC.outgoingFile.name + '\n' + webRTC.outgoingFile.size);
 
@@ -497,11 +497,11 @@ var webRTC	= {
 							webRTC.incomingFile.data			= [];
 							webRTC.incomingFile.name			= data[0];
 							webRTC.incomingFile.size			= parseInt(data[1], 10);
-							webRTC.incomingFile.readableSize	= util.readableByteLength(webRTC.incomingFile.size);
+							webRTC.incomingFile.readableSize	= Util.readableByteLength(webRTC.incomingFile.size);
 						});
 
 						addMessageToChat(
-							strings.fileTransferInitFriend + ' ' + webRTC.incomingFile.name,
+							Strings.fileTransferInitFriend + ' ' + webRTC.incomingFile.name,
 							authors.app
 						);
 					}
@@ -709,7 +709,7 @@ var webRTC	= {
 };
 
 /* Mobile workaround */
-if (env.isMobile && !env.isIOS) {
+if (Env.isMobile && !Env.isIOS) {
 	$(function () {
 		webRTC.$friendPlaceholder[0].pause();
 
