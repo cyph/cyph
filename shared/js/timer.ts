@@ -57,7 +57,7 @@ function onTick (f) {
 		}
 
 
-		if (env.isMobile) {
+		if (Env.isMobile) {
 			processTickEventLoop(50);
 			setTimeout(function () { processTickWorker(1000) }, 3000);
 		}
