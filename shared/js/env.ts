@@ -1,52 +1,55 @@
-var env	= {
-	isLocalhost: document.location.hostname == 'localhost',
-	isOnion: document.location.host.split('.').slice(-1)[0] == 'onion',
+/// <reference path="globals.ts" />
+/// <reference path="config.ts" />
 
-	baseUrl:
-		env.isLocalhost ?
+
+class Env {
+	public static isLocalhost: boolean	= document.location.hostname == 'localhost';
+	public static isOnion: boolean		= document.location.host.split('.').slice(-1)[0] == 'onion';
+
+	public static baseUrl: string	=
+		Env.isLocalhost ?
 			'http://localhost:8080/' :
-			env.isOnion ?
+			Env.isOnion ?
 				'/api/' :
-				config.prodBaseUrl
-	,
+				Config.prodBaseUrl
+	;
 
 
-	userAgent: navigator.userAgent.toLowerCase(),
+	public static userAgent: string		= navigator.userAgent.toLowerCase();
 
-	isIE: /msie |trident\//.test(env.userAgent),
+	public static isIE: boolean			= /msie |trident\//.test(Env.userAgent);
+	public static isAndroid: boolean	= /android/.test(Env.userAgent);
+	public static isIOS: boolean		= /ipad|iphone|ipod/.test(Env.userAgent);
+	public static isWP: boolean			= /iemobile/.test(Env.userAgent);
+	public static isWebOS: boolean		= /webos/.test(Env.userAgent);
+	public static isBB: boolean			= /blackberry/.test(Env.userAgent);
+	public static isOperaMini: boolean	= /opera mini/.test(Env.userAgent);
 
-	isAndroid: /android/.test(env.userAgent),
-	isIOS: /ipad|iphone|ipod/.test(env.userAgent),
-	isWP: /iemobile/.test(env.userAgent),
-	isWebOS: /webos/.test(env.userAgent),
-	isBB: /blackberry/.test(env.userAgent),
-	isOperaMini: /opera mini/.test(env.userAgent),
-
-	isFFMobile: 
-		/fennec/.test(env.userAgent) ||
+	public static isFFMobile: boolean	=
+		/fennec/.test(Env.userAgent) ||
 		(
-			/firefox/.test(env.userAgent) &&
+			/firefox/.test(Env.userAgent) &&
 			(
-				env.isAndroid ||
-				/mobile/.test(env.userAgent) ||
-				/tablet/.test(env.userAgent)
+				Env.isAndroid ||
+				/mobile/.test(Env.userAgent) ||
+				/tablet/.test(Env.userAgent)
 			)
 		)
-	,
+	;
 
-	isMobile:
-		env.isAndroid ||
-		env.isIOS ||
-		env.isWP ||
-		env.isWebOS ||
-		env.isBB ||
-		env.isOperaMini ||
-		env.isFFMobile
-	,
+	public static isMobile: boolean	=
+		Env.isAndroid ||
+		Env.isIOS ||
+		Env.isWP ||
+		Env.isWebOS ||
+		Env.isBB ||
+		Env.isOperaMini ||
+		Env.isFFMobile
+	;
 
-	isTablet: env.isMobile && window.outerWidth > 767,
+	public static isTablet: boolean	= Env.isMobile && window.outerWidth > 767;
 
-	isTouch: (function () {
+	public static isTouch: boolean	= (() => {
 		try {
 			document.createEvent('TouchEvent');
 			return true;
@@ -54,17 +57,16 @@ var env	= {
 		catch (e) {
 			return false;
 		}
-	}()),
+	})();
 
-	platformString: env.isMobile ? 'mobile' : 'desktop',
-
-
-	isWebSignObsolete: false,
-	webSignHashes: encodeURIComponent(
-		'Hello Ryan and Josh,\n\n\n\n\n\n---\n\n' +
-			(typeof webSign == 'undefined' ? '' : webSign.toString())
-	),
+	public static platformString: string	= Env.isMobile ? 'mobile' : 'desktop';
 
 
-	smsRecipient: env.isIOS ? '+1' : ''
-};
+	public static isWebSignObsolete: boolean	= false;
+	public static webSignHashes: string			= encodeURIComponent(
+		'Hello Ryan and Josh,\n\n\n\n\n\n---\n\n' + (webSign ? webSign.toString() : '')
+	);
+
+
+	public static smsRecipient: string	= Env.isIOS ? '+1' : '';
+}

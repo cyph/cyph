@@ -1,9 +1,12 @@
-var util	= {
-	getTimestamp: function () {
-		var date	= new Date();
-		var hour	= date.getHours();
-		var ampm	= 'am';
-		var minute	= ('0' + date.getMinutes()).slice(-2);
+/// <reference path="globals.ts" />
+
+
+class Util {
+	public static getTimestamp () : string {
+		var date: Date		= new Date;
+		var hour: number	= date.getHours();
+		var ampm: string	= 'am';
+		var minute: string	= ('0' + date.getMinutes()).slice(-2);
 
 		if (hour >= 12) {
 			hour	-= 12;
@@ -14,30 +17,30 @@ var util	= {
 		}
 
 		return hour + ':' + minute + ampm;
-	},
+	}
 
-	getUrlState: function (fragmentOnly) {
-		var fragment	= document.location.hash.split('#')[1];
+	public static getUrlState (fragmentOnly?: boolean) : string {
+		var fragment: string	= document.location.hash.split('#')[1] || '';
 
 		if (fragmentOnly || fragment) {
 			return fragment;
 		}
 
-		var split	= document.location.pathname.split('/');
 
-		var a	= split.slice(-1)[0];
-		var b	= split.slice(-2)[0];
+		var split: string[]	= document.location.pathname.split('/');
+
+		var a: string	= split.slice(-1)[0] || '';
+		var b: string	= split.slice(-2)[0] || '';
 
 		if (!a && b) {
 			return b;
 		}
-		else {
-			return a;
-		}
-	},
 
-	openUrl: function (url, downloadName, isObjectURL) {
-		var a			= document.createElement('a');
+		return a;
+	}
+
+	public static openUrl (url: string, downloadName?: string) : void {
+		var a: any		= document.createElement('a');
 		a.href			= url;
 		a.target		= '_blank';
 		a.style.display	= 'none';
@@ -49,46 +52,47 @@ var util	= {
 		document.body.appendChild(a);
 		a.click();
 
-		setTimeout(function () {
+		setTimeout(() => {
 			document.body.removeChild(a);
 
-			if (isObjectURL) {
+			try {
 				URL.revokeObjectURL(a.href);
 			}
+			catch (_) {}
 		}, 120000);
-	},
+	}
 
-	pushNotFound: function () {
-		util.pushState('/404', false, false);
-	},
+	public static pushNotFound () : void {
+		Util.pushState('/404');
+	}
 
-	pushState: function (path, shouldReplace, shouldNotProcess) {
-		if (typeof history != 'undefined') {
+	public static pushState (path: string, shouldReplace?: boolean, shouldNotProcess?: boolean) : void {
+		var history;
+
+		if (history) {
 			if (shouldReplace) {
 				history.replaceState({}, '', path);
 			}
 			else {
 				history.pushState({}, '', path);
 			}
+
+			if (!shouldNotProcess && processUrlState) {
+				processUrlState();
+			}
 		}
 		else if (shouldReplace) {
 			document.location.replace(path);
-			return;
 		}
 		else {
 			document.location.pathname	= path;
-			return;
 		}
+	}
 
-		if (!shouldNotProcess) {
-			processUrlState();
-		}
-	},
-
-	readableByteLength: function (b) {
-		var gb	= b / 1.074e+9;
-		var mb	= b / 1.049e+6;
-		var kb	= b / 1024;
+	public static readableByteLength (b: number) : string {
+		var gb: number	= b / 1.074e+9;
+		var mb: number	= b / 1.049e+6;
+		var kb: number	= b / 1024;
 
 		var o	=
 			gb >= 1 ?
@@ -101,18 +105,19 @@ var util	= {
 		;
 
 		return o.n.toFixed(2) + ' ' + o.s + 'B';
-	},
+	}
 
-	retryUntilSuccessful: function (f, opt_retryIf) {
-		var retry;
+	public static retryUntilSuccessful (f: Function, retryIf?: Function) : void {
+		function dothemove () : void {
+			f(retry);
+		}
 
-		var dothemove	= function () { f(retry) };
-		retry			= function () {
-			if (!opt_retryIf || opt_retryIf()) {
+		function retry () : void {
+			if (!retryIf || retryIf()) {
 				setTimeout(dothemove, 250);
 			}
-		};
+		}
 
 		dothemove();
 	}
-};
+}
