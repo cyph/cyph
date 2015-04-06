@@ -1,30 +1,76 @@
-function makeWorker (f, vars) {
-	var s	= f.toString();
-	s		= s.slice(s.indexOf('{') + 1, s.lastIndexOf('}'));
+/// <reference path="globals.ts" />
 
-	if (vars) {
-		s	= s.replace(new RegExp('this.vars', 'g'), JSON.stringify(vars));
+
+class Thread {
+	private static BlobBuilder: any	=
+		window['BlobBuilder'] ||
+		window['WebKitBlobBuilder'] ||
+		window['MozBlobBuilder']
+	;
+
+
+	private worker: Worker;
+
+	public constructor (f: Function, vars?: {[name: string] : any}, onMessage?: (ev: MessageEvent) => any) {
+		var s	= f.toString();
+		s		=
+			(vars ? 'var vars = ' + JSON.stringify(vars) + ';\n' : '') +
+			s.slice(s.indexOf('{') + 1, s.lastIndexOf('}'))
+		;
+
+		try {
+			var blob, blobUrl;
+
+			try {
+				blob	= new Blob([s], {type: 'application/javascript'});
+			}
+			catch (e) {
+				var blobBuilder	= new Thread.BlobBuilder();
+				blobBuilder.append(s);
+
+				blob	= blobBuilder.getBlob();
+			}
+
+			try {
+				blobUrl		= URL.createObjectURL(blob);
+				this.worker	= new Worker(blobUrl);
+			}
+			finally {
+				try {
+					URL.revokeObjectURL(blobUrl);
+					this.worker.terminate();
+				}
+				catch (_) {}
+			}
+		}
+		catch (_) {
+			this.worker	= new Worker('/websign/js/workerHelper.js');
+			this.worker.postMessage(s);
+		}
+
+		if (onMessage) {
+			this.onMessage(onMessage);
+		}
 	}
 
-	var blob, worker;
-
-	try {
-		blob	= new Blob([s], {type: 'application/javascript'});
-	}
-	catch (e) {
-		window.BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder;
-		blob	= new BlobBuilder();
-		blob.append(s);
-		blob	= blob.getBlob();
+	public isAlive () : boolean {
+		return !!this.worker;
 	}
 
-	try {
-		worker	= new Worker(URL.createObjectURL(blob));
-	}
-	catch (e) {
-		worker	= new Worker('/websign/js/workerHelper.js');
-		worker.postMessage(s);
+	public onMessage (f: (ev: MessageEvent) => any) : void {
+		if (this.worker) {
+			this.worker.onmessage	= f;
+		}
 	}
 
-	return worker;
+	public postMessage (o : any) : void {
+		if (this.worker) {
+			this.worker.postMessage(o);
+		}
+	}
+
+	public stop () : void {
+		this.worker.terminate();
+		this.worker	= null;
+	}
 }

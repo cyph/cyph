@@ -1,76 +1,105 @@
-/* Trigger event loops from Web Worker instead of setTimeout (http://stackoverflow.com/a/12522580/459881) */
+/// <reference path="globals.ts" />
+/// <reference path="env.ts" />
+/// <reference path="thread.ts" />
 
-var tickWorker, tickIntervalHalt;
-var tickFunctions	= [];
 
-function onTick (f) {
-	tickFunctions.push(f);
+class Timer {
+	private static thread: Thread;
+	private static timerLock: boolean;
 
-	if (tickFunctions.length == 1) {
-		var processTicksLock;
+	private static timers: Function[]	= [];
 
-		function processTicks () {
-			if (!processTicksLock) {
-				processTicksLock	= true;
+	private static processTimers () : boolean {
+		if (!Timer.timerLock) {
+			Timer.timerLock	= true;
+
+			try {
+				var exception: any;
 
 				var now	= Date.now();
 
-				try {
-					for (var i = 0 ; i < tickFunctions.length ; ++i) {
-						var f	= tickFunctions[i];
-						f && f(now);
+				for (var i = 0 ; i < Timer.timers.length ; ++i) {
+					var f	= Timer.timers[i];
+
+					if (f) {
+						try {
+							f(now);
+						}
+						catch (e) {
+							exception	= e;
+						}
 					}
 				}
-				finally {
-					processTicksLock	= false;
+
+				if (exception) {
+					throw exception;
 				}
 			}
-		}
-
-		function processTickEventLoop (interval) {
-			processTicks();
-
-			if (!tickIntervalHalt) {
-				setTimeout(function () { processTickEventLoop(interval) }, interval);
+			finally {
+				Timer.timerLock	= false;
 			}
 		}
 
-		function processTickWorker (interval) {
-			tickWorker	= makeWorker(function () {
-				var vars	= this.vars;
+		return Timer.timers.length > 0;
+	}
 
-				onmessage	= function () {
-					setTimeout(function () {
-						postMessage({});
-					}, vars.interval);
-				};
-			}, {
+	private static runWithThread (interval: number) : void {
+		function threadHelper () : void {
+			if (Timer.processTimers()) {
+				Timer.thread.postMessage({});
+			}
+			else {
+				Timer.thread.stop();
+			}
+		}
+
+
+		Timer.thread	= new Thread(
+			(vars, postMessage) =>
+				onmessage	= () =>
+					setTimeout(() =>
+						postMessage({})
+					, vars.interval)
+			,
+			{
 				interval: interval
-			});
+			},
+			threadHelper
+		);
 
-			tickWorker.onmessage	= function () {
-				processTicks();
-				tickWorker && tickWorker.postMessage({});
-			};
+		threadHelper();
+	}
 
-			tickWorker.onmessage();
-		}
-
-
-		if (Env.isMobile) {
-			processTickEventLoop(50);
-			setTimeout(function () { processTickWorker(1000) }, 3000);
-		}
-		else {
-			processTickWorker(50);
+	private static runWithTimeoutLoop (interval: number) : void {
+		if (Timer.processTimers()) {
+			setTimeout(() =>
+				Timer.runWithTimeoutLoop(interval)
+			, interval);
 		}
 	}
 
-	return tickFunctions.length - 1;
-}
+	public static stopAll () : void {
+		Timer.timers.length	= 0;
+	}
 
-function tickOff (id) {
-	if (id != undefined) {
-		delete tickFunctions[id];
+
+	private id: number;
+
+	public constructor (f: Function) {
+		this.id	= Timer.timers.push(f) - 1;
+
+		if (this.id < 1) {
+			if (Env.isMobile) {
+				Timer.runWithTimeoutLoop(50);
+				setTimeout(() => Timer.runWithThread(1000), 3000);
+			}
+			else {
+				Timer.runWithThread(50);
+			}
+		}
+	}
+
+	public stop () : void {
+		delete Timer.timers[this.id];
 	}
 }
