@@ -3,7 +3,7 @@
 
 
 (() => {
-	var title		= 'ngMarkdown';
+	var title: string	= 'ngMarkdown';
 
 
 	var markdownit: any;

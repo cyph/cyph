@@ -7,7 +7,7 @@
 
 
 class Affiliate {
-	public static shouldAdd: boolean	= null;
+	public static shouldAdd: boolean;
 
 	public static process ($elem: JQuery, $mdDialog: angular.material.MDDialogService) : void {
 		$elem.find('a').click(e => {
@@ -29,7 +29,10 @@ class Affiliate {
 				}
 
 
-				if (Affiliate.shouldAdd === null) {
+				if (Affiliate.shouldAdd === true || Affiliate.shouldAdd === false) {
+					openAmazonUrl(Affiliate.shouldAdd);
+				}
+				else {
 					$mdDialog.show({
 						template: $('#templates > .amazon-link')[0].outerHTML,
 						controller: ['$scope', '$mdDialog', ($scope, $mdDialog) => {
@@ -72,9 +75,6 @@ class Affiliate {
 							}
 						}
 					});
-				}
-				else {
-					openAmazonUrl(Affiliate.shouldAdd);
 				}
 			}
 		});

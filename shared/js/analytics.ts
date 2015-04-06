@@ -29,7 +29,6 @@ class Analytics {
 		this.baseEventSubmitHelper(method, args);
 	}
 
-
 	public constructor (appName: string = Env.host, appVersion: string = 'Web') {
 		if (Env.isOnion) {
 			this.analFrameIsReady	= false;
@@ -69,7 +68,6 @@ class Analytics {
 			);
 		}
 	}
-
 
 	public send (...args: any[]) : void {
 		this.baseEventSubmit('send', args);
