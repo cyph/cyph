@@ -38,33 +38,31 @@
 		use(markdownitEmoji)
 	;
 
-	markdown.renderer.rules.emoji	= (token, idx) => {
-		return twemoji.parse(token[idx].content, {base: '/lib/bower_components/twemoji/'});
-	};
+	markdown.renderer.rules.emoji	= (token, idx) =>
+		twemoji.parse(token[idx].content, {base: '/lib/bower_components/twemoji/'})
+	;
 
 
-	angular.module(title).directive(title, () => {
-		return {
-			restrict: 'A',
-			replace: true,
-			link: (scope, element, attrs) => {
-				function set (val: string) : void {
-					val	= markdown.render(val);
+	angular.module(title).directive(title, () => ({
+		restrict: 'A',
+		replace: true,
+		link: (scope, element, attrs) => {
+			function set (val: string) : void {
+				val	= markdown.render(val);
 
-					/* Merge blockquotes like reddit */
-					val	= val.replace(/\<\/blockquote\>\n\<blockquote\>\n/g, '');
+				/* Merge blockquotes like reddit */
+				val	= val.replace(/\<\/blockquote\>\n\<blockquote\>\n/g, '');
 
-					/* Images */
-					val	= val.replace(/!\<a href="(data:image\/(png|jpeg|gif)\;.*?)"><\/a>/g, (match, value: string) => {
-						return '<img src="' + value + '" />';
-					});
+				/* Images */
+				val	= val.replace(/!\<a href="(data:image\/(png|jpeg|gif)\;.*?)"><\/a>/g, (match, value: string) =>
+					'<img src="' + value + '" />'
+				);
 
-					element.html(val);
-				}
-
-				set(scope[title] || '');
-				scope.$watch(attrs[title], set);
+				element.html(val);
 			}
-		};
-	});
+
+			set(scope[title] || '');
+			scope.$watch(attrs[title], set);
+		}
+	}));
 })();

@@ -9,6 +9,16 @@ class Config {
 	public static secretLength: number		= 7;
 	public static longSecretLength: number	= 52;
 
+	public static guidAddressSpace: string[]	= [
+		'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+		'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
+		'k', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u',
+		'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E',
+		'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
+		'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
+	];
+
+
 	public static validWebSignHashes: {[hash: string] : boolean}	= {
 		'2bc65ee1082f94261c9127ad765d4b670d24ca321222e638cf4409e325218828c5732f7c8e76d2f229ebdab6c95a30510cd2d73425699ef860d527a06c5e69ae': true,
 		'85477981ccd7f019eb52a8bb8f9be2668cf4cd0e19ec6450b3d00916bad1d752eedb0e9488160aae4e90df129b109d56ac49c34795b9b4994f071f484028abf0': true,

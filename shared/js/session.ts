@@ -160,7 +160,7 @@ $(function () {
 			changeState(states.spinningUp);
 		}
 
-		history.pushState({}, '', document.location.pathname);
+		history.pushState({}, '', location.pathname);
 		startOrJoinCyph(true);
 	}
 	else {

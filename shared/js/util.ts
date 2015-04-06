@@ -1,7 +1,16 @@
 /// <reference path="globals.ts" />
+/// <reference path="config.ts" />
 
 
 class Util {
+	public static generateGuid (length: number) : string {
+		return Array.prototype.slice.call(
+			crypto.getRandomValues(new Uint8Array(length))
+		).map(n =>
+			Config.guidAddressSpace[n % Config.guidAddressSpace.length]
+		).join('');
+	}
+
 	public static getTimestamp () : string {
 		var date: Date		= new Date;
 		var hour: number	= date.getHours();
@@ -20,14 +29,14 @@ class Util {
 	}
 
 	public static getUrlState (fragmentOnly?: boolean) : string {
-		var fragment: string	= document.location.hash.split('#')[1] || '';
+		var fragment: string	= location.hash.split('#')[1] || '';
 
 		if (fragmentOnly || fragment) {
 			return fragment;
 		}
 
 
-		var split: string[]	= document.location.pathname.split('/');
+		var split: string[]	= location.pathname.split('/');
 
 		var a: string	= split.slice(-1)[0] || '';
 		var b: string	= split.slice(-2)[0] || '';
@@ -82,10 +91,10 @@ class Util {
 			}
 		}
 		else if (shouldReplace) {
-			document.location.replace(path);
+			location.replace(path);
 		}
 		else {
-			document.location.pathname	= path;
+			location.pathname	= path;
 		}
 	}
 
