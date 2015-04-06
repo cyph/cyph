@@ -207,7 +207,7 @@ angular.
 			changeState($scope.states.waitingForFriend);
 
 			var copyUrl		=
-				((!Env.isOnion && document.location.origin) || 'https://www.cyph.im') +
+				((!Env.isOnion && location.origin) || 'https://www.cyph.im') +
 				'/#' +
 				cyphId +
 				sharedSecret
@@ -993,7 +993,7 @@ angular.
 			Notification.requestPermission();
 		}
 
-		window.onhashchange = function () { document.location.reload() };
+		window.onhashchange = function () { location.reload() };
 
 
 		/* Temporary warning for desktop IE */

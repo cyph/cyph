@@ -1,5 +1,5 @@
 /// <reference path="globals.ts" />
-/// <reference path="anal.ts" />
+/// <reference path="analytics.ts" />
 /// <reference path="../lib/typings/jquery/jquery.d.ts" />
 
 
@@ -20,7 +20,7 @@ class Errors {
 				'\n\n' + navigator.userAgent +
 				'\n\n' + navigator.language +
 				'\n\n' + (typeof language == 'undefined' ? '' : language) +
-				'\n\n' + document.location.toString() +
+				'\n\n' + location.toString() +
 				'\n\n' + (
 					typeof webSign == 'undefined' ?
 						'' :
@@ -62,5 +62,6 @@ class Errors {
 	public static logSmp		= Errors.baseErrorLog('SMP JUST FAILED FOR SOMEONE LADS');
 	public static logWebSign	= Errors.baseErrorLog('SOMEONE JUST GOT THE WEBSIGN ERROR SCREEN LADS', true);
 }
+
 
 window.onerror	= <ErrorEventHandler> Errors.log;
