@@ -1,357 +1,280 @@
-var NON_EXISTENT_QUEUE	= 'AWS.SimpleQueueService.NonExistentQueue';
-var QUEUE_PREFIX		= 'channels-';
-var CHANNEL_IDS			= {true: '0', false: '1'};
-var PERIOD_VALUES		= {true: '1800', false: '1801'};
-
-
-
-function getChannelDescriptor () {
-	return JSON.stringify({
-		name: generateGuid(LONG_SECRET_LENGTH),
-		region: AWS_REGIONS[
-			crypto.getRandomValues(new Uint8Array(1))[0] %
-			AWS_REGIONS.length
-		]
-	});
-}
-
-function SQS (config) {
-	config	= config || {};
-
-	if (Env.isLocalhost) {
-		config.endpoint	= 'http://localhost:4568';
-	}
-
-	var wrapper	= {
-		innerSqs: new AWS.SQS(config)
-	};
-
-	/* Add methods that take an object and an optional callback */
-	[
-		'createQueue',
-		'deleteMessage',
-		'deleteMessageBatch',
-		'deleteQueue',
-		'getQueueUrl',
-		'receiveMessage',
-		'sendMessage',
-		'sendMessageBatch',
-		'setQueueAttributes'
-	].forEach(function (methodName) {
-		wrapper[methodName]	= function (o, f, shouldRetryUntilSuccessful) {
-			function wrapperHelper () {
-				wrapper.innerSqs[methodName](o, !shouldRetryUntilSuccessful ? f : function (err) {
-					if (err) {
-						awsInit();
-						setTimeout(wrapperHelper, 500);
-					}
-					else if (f) {
-						f.apply(this, arguments);
-					}
-				});
-			}
-
-			wrapperHelper();
-		};
-	});
-
-	return wrapper;
-}
-
+/// <reference path="globals.ts" />
+/// <reference path="config.ts" />
+/// <reference path="env.ts" />
+/// <reference path="util.ts" />
+/// <reference path="aws.ts" />
+/// <reference path="../lib/typings/aws-sdk/aws-sdk.d.ts" />
+/// <reference path="../lib/typings/jquery/jquery.d.ts" />
 
 
 /* Unidirectional queue */
 
-function Queue (queueName, handlers, config) {
-	var self	= this;
-	handlers	= handlers || {};
-	config		= config || {};
+class Queue {
+	public static nonExistentQueue: string	= 'AWS.SimpleQueueService.NonExistentQueue';
+	public static queuePrefix: string		= 'channels-';
 
-	self.sqs	= SQS(config);
+	public static periodValues (b?: boolean) : string {
+		return b ? '1800' : '1801';
+	}
 
-	self.isAlive	= true;
+	public static sqsWrapper (config: any) : any {
+		config	= config || {};
 
-	self.sqs.createQueue({
-		QueueName: QUEUE_PREFIX + queueName,
-		Attributes: {
-			MessageRetentionPeriod: PERIOD_VALUES[true],
-			ReceiveMessageWaitTimeSeconds: '20'
-		}
-	}, function (err, data) {
-		if (data) {
-			self.queueUrl	= data.QueueUrl;
+		if (Env.isLocalhost) {
+			config.endpoint	= 'http://localhost:4568';
 		}
 
-		if (handlers.onopen) {
-			handlers.onopen();
-		}
+		var wrapper	= {
+			innerSqs: new Aws.base.SQS(config)
+		};
 
-		if (handlers.onmessage) {
-			var onlag;
-			var lastReceiveTime	= 0;
+		/* Add methods that take an object and an optional callback */
+		[
+			'createQueue',
+			'deleteMessage',
+			'deleteMessageBatch',
+			'deleteQueue',
+			'getQueueUrl',
+			'receiveMessage',
+			'sendMessage',
+			'sendMessageBatch',
+			'setQueueAttributes'
+		].forEach(method =>
+			wrapper[method]	= (o: any, f: Function, shouldRetryUntilSuccessful?: boolean) => {
+				var wrapperHelper	= () => {
+					wrapper.innerSqs[method](o, !shouldRetryUntilSuccessful ? f : (...args: any[]) => {
+						var err: any	= args[0];
 
-			setTimeout(function () { onlag = handlers.onlag }, 60000);
-
-			function onmessageHelper () {
-				self.receive(handlers.onmessage, function (err, data) {
-					if (err && err.code == NON_EXISTENT_QUEUE) {
-						self.isAlive	= false;
-						handlers.onclose && handlers.onclose.apply(self, arguments);
-					}
-					else if (self.isAlive) {
-						var delay	= 50;
-						var now		= Date.now();
-						var isEmpty	= !(data && data.Messages && data.Messages.length > 0);
-
-						if (isEmpty && (now - lastReceiveTime) < 10000) {
-							delay	= 2500;
+						if (err) {
+							setTimeout(wrapperHelper, 500);
 						}
+						else if (f) {
+							f.apply(this, args);
+						}
+					});
+				};
 
-						lastReceiveTime	= now;
-						setTimeout(onmessageHelper, delay);
-					}
-				}, null, null, onlag && function (lag) {
-					if (onlag) {
-						var f	= onlag;
-						onlag	= null;
-						setTimeout(function () { f(lag, self.sqs.innerSqs.config.region) }, 0);
-					}
-				});
+				wrapperHelper();
+			}
+		);
+
+		return wrapper;
+	}
+
+
+	public isAlive: boolean;
+	public queueUrl: string;
+	public sqs: any;
+
+	public constructor (queueName: string, handlers?: any, config?: any) {
+		handlers	= handlers || {};
+		config		= config || {};
+
+		this.sqs		= Queue.sqsWrapper(config);
+		this.isAlive	= true;
+
+		this.sqs.createQueue({
+			QueueName: Queue.queuePrefix + queueName,
+			Attributes: {
+				MessageRetentionPeriod: Queue.periodValues(true),
+				ReceiveMessageWaitTimeSeconds: '20'
+			}
+		}, (err, data) => {
+			if (data) {
+				this.queueUrl	= data.QueueUrl;
 			}
 
-			onmessageHelper();
-		}
-		else if (handlers.onclose) {
-			function oncloseHelper () {
-				self.sqs.getQueueUrl({
-					QueueName: QUEUE_PREFIX + queueName
-				}, function (err, data) {
-					if (err && err.code == NON_EXISTENT_QUEUE) {
-						self.isAlive	= false;
-						handlers.onclose.apply(self, arguments);
-					}
-					else if (self.isAlive) {
-						setTimeout(oncloseHelper, 30000);
-					}
-				});
+			if (handlers.onopen) {
+				handlers.onopen();
 			}
 
-			oncloseHelper();
-		}
-	}, true);
-}
+			if (handlers.onmessage) {
+				var onlag: Function;
+				var lastReceiveTime: number	= 0;
 
-Queue.prototype.close	= function (callback) {
-	var self	= this;
+				setTimeout(() => onlag = handlers.onlag, 60000);
 
-	if (self.isAlive) {
-		self.isAlive	= false;
+				var onmessageHelper	= () =>
+					this.receive(handlers.onmessage, (...args: any[]) => {
+						var err: any	= args[0];
+						var data: any	= args[1];
 
-		self.sqs.deleteQueue({QueueUrl: self.queueUrl}, function () {
-			callback && callback.apply(self, arguments);
-		});
-	}
-	else if (callback) {
-		callback();
-	}
-};
-
-Queue.prototype.receive	= function (messageHandler, onComplete, maxNumberOfMessages, waitTimeSeconds, onLag) {
-	var self	= this;
-
-	if (self.isAlive) {
-		self.sqs.receiveMessage({
-			QueueUrl: self.queueUrl,
-			AttributeNames: ['ApproximateFirstReceiveTimestamp', 'SentTimestamp'],
-			MaxNumberOfMessages: maxNumberOfMessages || 10,
-			WaitTimeSeconds: waitTimeSeconds || 20
-		}, function (err, data) {
-			try {
-				if (data && data.Messages && data.Messages.length > 0) {
-					if (onLag) {
-						var lag	=
-							parseInt(data.Messages[0].Attributes.ApproximateFirstReceiveTimestamp, 10) -
-							parseInt(data.Messages[0].Attributes.SentTimestamp, 10)
-						;
-
-						if (lag > 5000) {
-							onLag(lag);
+						if (err && err.code == Queue.nonExistentQueue) {
+							this.isAlive	= false;
+							handlers.onclose && handlers.onclose.apply(this, args);
 						}
-					}
+						else if (this.isAlive) {
+							var delay: number		= 50;
+							var now: number			= Date.now();
+							var isEmpty: boolean	= !(data && data.Messages && data.Messages.length > 0);
 
-					self.sqs.deleteMessageBatch({
-						QueueUrl: self.queueUrl,
-						Entries: data.Messages
-					}, function () {});
-
-					if (messageHandler) {
-						for (var i = 0 ; i < data.Messages.length ; ++i) {
-							var message	= data.Messages[i];
-							var messageBody	= message.Body;
-
-							try {
-								messageBody	= JSON.parse(messageBody).message;
+							if (isEmpty && (now - lastReceiveTime) < 10000) {
+								delay	= 2500;
 							}
-							catch (e) {}
 
-							messageHandler(messageBody);
+							lastReceiveTime	= now;
+							setTimeout(onmessageHelper, delay);
+						}
+					}, null, null, onlag && (lag => {
+						if (onlag) {
+							var f	= onlag;
+							onlag	= null;
+							setTimeout(() => f(lag, this.sqs.innerSqs.config.region), 0);
+						}
+					}))
+				;
+
+				onmessageHelper();
+			}
+			else if (handlers.onclose) {
+				var oncloseHelper	= () =>
+					this.sqs.getQueueUrl({
+						QueueName: Queue.queuePrefix + queueName
+					}, (...args: any[]) => {
+						var err: any	= args[0];
+						var data: any	= args[1];
+
+						if (err && err.code == Queue.nonExistentQueue) {
+							this.isAlive	= false;
+							handlers.onclose.apply(this, args);
+						}
+						else if (this.isAlive) {
+							setTimeout(oncloseHelper, 30000);
+						}
+					})
+				;
+
+				oncloseHelper();
+			}
+		}, true);
+	}
+
+	public close (callback?: Function) : void {
+		if (this.isAlive) {
+			this.isAlive	= false;
+
+			this.sqs.deleteQueue(
+				{QueueUrl: this.queueUrl},
+				(...args: any[]) => callback && callback.apply(this, args)
+			);
+		}
+		else if (callback) {
+			callback();
+		}
+	}
+
+	public receive (
+		messageHandler?: Function,
+		onComplete?: Function,
+		maxNumberOfMessages?: number,
+		waitTimeSeconds?: number,
+		onLag?: Function
+	) : void {
+		if (this.isAlive) {
+			this.sqs.receiveMessage({
+				QueueUrl: this.queueUrl,
+				AttributeNames: ['ApproximateFirstReceiveTimestamp', 'SentTimestamp'],
+				MaxNumberOfMessages: maxNumberOfMessages || 10,
+				WaitTimeSeconds: waitTimeSeconds || 20
+			}, (...args: any[]) => {
+				var err: any	= args[0];
+				var data: any	= args[1];
+
+				try {
+					if (data && data.Messages && data.Messages.length > 0) {
+						if (onLag) {
+							var lag: number	=
+								parseInt(data.Messages[0].Attributes.ApproximateFirstReceiveTimestamp, 10) -
+								parseInt(data.Messages[0].Attributes.SentTimestamp, 10)
+							;
+
+							if (lag > 5000) {
+								onLag(lag);
+							}
+						}
+
+						this.sqs.deleteMessageBatch({
+							QueueUrl: this.queueUrl,
+							Entries: data.Messages
+						}, () => {});
+
+						if (messageHandler) {
+							for (var i = 0 ; i < data.Messages.length ; ++i) {
+								var message: any		= data.Messages[i];
+								var messageBody: string	= message.Body;
+
+								try {
+									messageBody	= JSON.parse(messageBody).message;
+								}
+								catch (e) {}
+
+								messageHandler(messageBody);
+							}
 						}
 					}
 				}
-			}
-			finally {
-				onComplete && onComplete.apply(self, arguments);
-			}
-		});
+				finally {
+					onComplete && onComplete.apply(this, args);
+				}
+			});
+		}
 	}
-};
 
-Queue.prototype.send	= function (message, callback, isSynchronous) {
-	var self	= this;
+	public send (message: any, callback?: Function, isSynchronous?: boolean) : void {
+		if (this.isAlive) {
+			if (typeof message == 'string' || !message.length) {
+				var messageBody	= JSON.stringify({message: message});
 
-	if (self.isAlive) {
-		if (typeof message == 'string' || !message.length) {
-			var messageBody	= JSON.stringify({message: message});
-
-			if (isSynchronous) {
-				makeAwsRequest({
-					action: 'SendMessage',
-					url: self.queueUrl,
-					service: 'sqs',
-					region: self.sqs.innerSqs.config.region,
-					isSynchronous: true,
-					params: {
+				if (isSynchronous) {
+					Aws.request({
+						action: 'SendMessage',
+						url: this.queueUrl,
+						service: 'sqs',
+						region: this.sqs.innerSqs.config.region,
+						isSynchronous: true,
+						params: {
+							MessageBody: messageBody
+						}
+					}, callback);
+				}
+				else {
+					this.sqs.sendMessage({
+						QueueUrl: this.queueUrl,
 						MessageBody: messageBody
-					}
-				}, callback);
+					}, callback, true);
+				}
+			}
+			else if (isSynchronous) {
+				for (var i = 0 ; i < message.length ; +i) {
+					this.send(
+						message[i],
+						callback && callback.length ?
+							callback[i] :
+							(i == message.length - 1) && callback,
+						true
+					);
+				}
 			}
 			else {
-				self.sqs.sendMessage({
-					QueueUrl: self.queueUrl,
-					MessageBody: messageBody
-				}, callback, true);
-			}
-		}
-		else if (isSynchronous) {
-			for (var i = 0 ; i < message.length ; +i) {
-				self.send(
-					message[i],
-					callback && callback.length ?
-						callback[i] :
-						(i == message.length - 1) && callback,
-					true
-				);
-			}
-		}
-		else {
-			self.sqs.sendMessageBatch({
-				QueueUrl: self.queueUrl,
-				Entries: message.map(function (s, i) {
-					return {
+				this.sqs.sendMessageBatch({
+					QueueUrl: this.queueUrl,
+					Entries: message.map((s, i) => ({
 						Id: (i + 1).toString(),
 						MessageBody: JSON.stringify({message: s})
-					};
-				})
-			}, callback && (!callback.length ? callback : function () {
-				for (var i = 0 ; i < callback.length ; ++i) {
-					var thisCallback	= callback[i];
+					}))
+				}, callback && (!callback.length ? callback : (...args: any[]) => {
+					for (var i = 0 ; i < callback.length ; ++i) {
+						var thisCallback	= callback[i];
 
-					if (thisCallback) {
-						try {
-							thisCallback.apply(this, arguments);
+						if (thisCallback) {
+							try {
+								thisCallback.apply(this, args);
+							}
+							catch (e) {}
 						}
-						catch (e) {}
 					}
-				}
-			}), true);
+				}), true);
+			}
 		}
 	}
-};
-
-
-
-/* Bidirectional channel, comprised of two queues */
-
-function Channel (channelName, handlers, config) {
-	var self	= this;
-	handlers	= handlers || {};
-	config		= config || {};
-
-	try {
-		var channelDescriptor	= JSON.parse(channelName);
-		self.descriptor			= channelName;
-		channelName				= channelDescriptor.name;
-		config.region			= channelDescriptor.region;
-	}
-	catch (e) {}
-
-	self.sqs	= SQS(config);
-
-	function onclose () {
-		self.close(handlers.onclose);
-	}
-	
-	self.sqs.getQueueUrl({
-		QueueName: QUEUE_PREFIX + channelName + CHANNEL_IDS[true]
-	}, function (err, data) {
-		var isCreator	= !!err;
-
-		self.inQueue	= new Queue(channelName + CHANNEL_IDS[isCreator], {
-			onmessage: handlers.onmessage,
-			onlag: handlers.onlag,
-			onclose: onclose,
-			onopen: function () {
-				self.outQueue	= new Queue(channelName + CHANNEL_IDS[!isCreator], {
-					onclose: onclose,
-					onopen: function () {
-						/* Keep this channel alive by touching it every 10 minutes */
-
-						var lastTouched		= Date.now();
-						var periodToggle	= false;
-
-						var tickId	= onTick(function (now) {
-							if (!self.inQueue.isAlive) {
-								tickOff(tickId);
-							}
-							else if (now - lastTouched > 600000) {
-								lastTouched	= now;
-
-								self.sqs.setQueueAttributes({
-									QueueUrl: self.inQueue.queueUrl,
-									Attributes: {
-										MessageRetentionPeriod: PERIOD_VALUES[periodToggle]
-									}
-								}, function () {
-									periodToggle	= !periodToggle;
-								});
-							}
-						});
-
-
-						handlers.onopen && handlers.onopen(isCreator);
-					}
-				}, config);
-			}
-		}, config);
-	});
 }
-
-Channel.prototype.close	= function (callback) {
-	var self	= this;
-
-	self.inQueue.close(function () {
-		self.outQueue.close(callback);
-	});
-};
-
-Channel.prototype.isAlive	= function () {
-	return this.inQueue.isAlive && this.outQueue.isAlive;
-};
-
-Channel.prototype.receive	= function () {
-	this.inQueue.receive.apply(this.inQueue, arguments);
-};
-
-Channel.prototype.send	= function () {
-	this.outQueue.send.apply(this.outQueue, arguments);
-};

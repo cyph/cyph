@@ -1,128 +1,116 @@
-var AWS_REGIONS	= [
-	'us-east-1',
-	'us-west-1',
-	'us-west-2',
-	'eu-west-1',
-	// 'eu-central-1',
-	'ap-southeast-1',
-	'ap-northeast-1',
-	'ap-southeast-2',
-	'sa-east-1'
-];
+/// <reference path="globals.ts" />
+/// <reference path="config.ts" />
+/// <reference path="../lib/typings/aws-sdk/aws-sdk.d.ts" />
+/// <reference path="../lib/typings/cryptojs/cryptojs.d.ts" />
+/// <reference path="../lib/typings/jquery/jquery.d.ts" />
 
 
-function awsInit () {
-	AWS.config	= new AWS.Config({
-		region: 'us-east-1',
-		accessKeyId: 'AKIAIN2DSULSB77U4S2A',
-		secretAccessKey: '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',
-		apiVersions: {
-			ses: '2010-12-01',
-			sqs: '2012-11-05'
-		},
+class Aws {
+	public static base: any	= (() => {
+		var AWS: any;
+		AWS.config	= new AWS.Config(Config.awsConfig);
+		return AWS;
+	})();
 
-		/* Workaround for TorBrowser issues */
-		signatureVersion: 'v2'
-	});
-}
+	public static request (o: any, callback?: any) : void {
+		var config	= {
+			url: o.url,
+			action: o.action,
+			isSynchronous: !!o.isSynchronous,
+			service: o.service,
+			region: o.region || Config.awsConfig.region,
+			apiVersion: o.apiVersion || Config.awsConfig.apiVersions[o.service],
+			accessKeyId: o.accessKeyId || Config.awsConfig.accessKeyId,
+			secretAccessKey: o.secretAccessKey || Config.awsConfig.secretAccessKey,
+			params: o.params || {}
+		};
 
-function makeAwsRequest (o, callback) {
-	var config	= {
-		url: o.url,
-		action: o.action,
-		isSynchronous: o.isSynchronous,
-		service: o.service,
-		region: o.region || AWS.config.region,
-		apiVersion: o.apiVersion || AWS.config.apiVersions[o.service],
-		accessKeyId: o.accessKeyId || AWS.config.credentials.accessKeyId,
-		secretAccessKey: o.secretAccessKey || AWS.config.credentials.secretAccessKey,
-		params: o.params || {}
-	};
+		var date: Date				= new Date;
+		var timestamp: string		= date.toISOString();
+		var dateString: string		= timestamp.split('T')[0].replace(/-/g, '');
 
-	var date		= new Date;
-	var timestamp	= date.toISOString();
-	var dateString	= timestamp.split('T')[0].replace(/-/g, '');
+		var requestMethod: string	= 'GET';
+		var algorithm: string		= 'AWS4-HMAC-SHA256';
+		var hostHeader: string		= 'host';
+		var terminator: string		= 'aws4_request';
+		var host: string			= config.url.split('/')[2];
+		var uri: string				= config.url.split(host)[1] || '/';
 
-	var requestMethod	= 'GET';
-	var algorithm		= 'AWS4-HMAC-SHA256';
-	var hostHeader		= 'host';
-	var terminator		= 'aws4_request';
-	var host			= config.url.split('/')[2];
-	var uri				= config.url.split(host)[1] || '/';
+		var credential: string		=
+			dateString + '/' +
+			config.region + '/' +
+			config.service + '/' +
+			terminator
+		;
 
-	var credential		=
-		dateString + '/' +
-		config.region + '/' +
-		config.service + '/' +
-		terminator
-	;
+		var params: {[k: string] : string}	= {};
 
-	var params	= {};
+		params['Action']	= config.action;
 
-	params.Action	= config.action;
+		Object.keys(config.params).forEach(k =>
+			params[k]	= config.params[k]
+		);
 
-	Object.keys(config.params).forEach(function (k) {
-		params[k]	= config.params[k];
-	});
+		params['Timestamp']				= timestamp;
+		params['Version']				= config.apiVersion;
+		params['X-Amz-Algorithm']		= algorithm;
+		params['X-Amz-Credential']		= config.accessKeyId + '/' + credential;
+		params['X-Amz-Date']			= timestamp;
+		params['X-Amz-SignedHeaders']	= hostHeader;
 
-	params.Timestamp				= timestamp;
-	params.Version					= config.apiVersion;
-	params['X-Amz-Algorithm']		= algorithm;
-	params['X-Amz-Credential']		= config.accessKeyId + '/' + credential;
-	params['X-Amz-Date']			= timestamp;
-	params['X-Amz-SignedHeaders']	= hostHeader;
+		var query: string	= $.param(params).
+			replace(/\+/g, '%20').
+			replace(/\(/g, '%28').
+			replace(/\)/g, '%29')
+		;
 
-	var query	= $.param(params).replace(/\+/g, '%20').replace(/\(/g, '%28').replace(/\)/g, '%29');
+		var canonicalRequest: string	=
+			requestMethod + '\n' +
+			uri + '\n' +
+			query + '\n' +
+			hostHeader + ':' + host + '\n\n' +
+			hostHeader + '\n' +
+			CryptoJS.SHA256('').toString()
+		;
 
-	var canonicalRequest	=
-		requestMethod + '\n' +
-		uri + '\n' +
-		query + '\n' +
-		hostHeader + ':' + host + '\n\n' +
-		hostHeader + '\n' +
-		CryptoJS.SHA256('').toString()
-	;
-
-	var stringToSign	=
-		algorithm + '\n' +
-		timestamp.split('.')[0].match(/[0-9A-Za-z]/g).join('') + 'Z\n' +
-		credential + '\n' +
-		CryptoJS.SHA256(canonicalRequest).toString()
-	;
+		var stringToSign: string	=
+			algorithm + '\n' +
+			timestamp.split('.')[0].match(/[0-9A-Za-z]/g).join('') + 'Z\n' +
+			credential + '\n' +
+			CryptoJS.SHA256(canonicalRequest).toString()
+		;
 
 
-	var signature	= CryptoJS.HmacSHA256(
-		stringToSign,
-		CryptoJS.HmacSHA256(
-			terminator,
+		var signature: string	= CryptoJS.HmacSHA256(
+			stringToSign,
 			CryptoJS.HmacSHA256(
-				config.service,
+				terminator,
 				CryptoJS.HmacSHA256(
-					config.region,
+					config.service,
 					CryptoJS.HmacSHA256(
-						dateString,
-						'AWS4' + config.secretAccessKey
+						config.region,
+						CryptoJS.HmacSHA256(
+							dateString,
+							'AWS4' + config.secretAccessKey
+						)
 					)
 				)
 			)
-		)
-	).toString();
+		).toString();
 
 
-	$.ajax({
-		async: !config.isSynchronous,
-		timeout: 30000,
-		type: requestMethod,
-		url: config.url,
-		data: query + '&X-Amz-Signature=' + signature,
-		success: config.isSynchronous && callback,
-		error: config.isSynchronous && callback
-	});
+		$.ajax({
+			async: !config.isSynchronous,
+			timeout: 30000,
+			type: requestMethod,
+			url: config.url,
+			data: query + '&X-Amz-Signature=' + signature,
+			success: config.isSynchronous ? null : callback,
+			error: config.isSynchronous ? null : callback
+		});
 
-	if (!config.isSynchronous && callback) {
-		callback();
+		if (config.isSynchronous && callback) {
+			callback();
+		}
 	}
 }
-
-
-awsInit();

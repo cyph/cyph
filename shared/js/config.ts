@@ -19,6 +19,30 @@ class Config {
 	];
 
 
+	public static awsConfig	= {
+		region: 'us-east-1',
+		accessKeyId: 'AKIAIN2DSULSB77U4S2A',
+		secretAccessKey: '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',
+		apiVersions: {
+			sqs: '2012-11-05'
+		},
+
+		/* Workaround for TorBrowser "features" */
+		signatureVersion: 'v2'
+	};
+
+	public static awsRegions: string[]	= [
+		'us-east-1',
+		'us-west-1',
+		'us-west-2',
+		'eu-west-1',
+		'ap-southeast-1',
+		'ap-northeast-1',
+		'ap-southeast-2',
+		'sa-east-1'
+	];
+
+
 	public static validWebSignHashes: {[hash: string] : boolean}	= {
 		'2bc65ee1082f94261c9127ad765d4b670d24ca321222e638cf4409e325218828c5732f7c8e76d2f229ebdab6c95a30510cd2d73425699ef860d527a06c5e69ae': true,
 		'85477981ccd7f019eb52a8bb8f9be2668cf4cd0e19ec6450b3d00916bad1d752eedb0e9488160aae4e90df129b109d56ac49c34795b9b4994f071f484028abf0': true,
