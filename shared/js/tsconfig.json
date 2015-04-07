@@ -30,6 +30,7 @@
         "otr.ts",
         "p2p.ts",
         "plugins.jquery.ts",
+        "queue.ts",
         "session.ts",
         "storage.d.ts",
         "thread.ts",
