@@ -6,16 +6,25 @@
   "bundle": "typings/tsd.d.ts",
   "installed": {
     "angular-material/angular-material.d.ts": {
-      "commit": "016a970de58cc46310c75bd8f0c10642c4f44609"
+      "commit": "65ea56c919fd95dcd0ca3c59c9aa5eaa99c86885"
+    },
+    "highlightjs/highlightjs.d.ts": {
+      "commit": "65ea56c919fd95dcd0ca3c59c9aa5eaa99c86885"
     },
     "angularjs/angular.d.ts": {
-      "commit": "016a970de58cc46310c75bd8f0c10642c4f44609"
+      "commit": "65ea56c919fd95dcd0ca3c59c9aa5eaa99c86885"
     },
     "jquery/jquery.d.ts": {
-      "commit": "016a970de58cc46310c75bd8f0c10642c4f44609"
+      "commit": "65ea56c919fd95dcd0ca3c59c9aa5eaa99c86885"
     },
-    "angularjs/angular-animate.d.ts": {
-      "commit": "016a970de58cc46310c75bd8f0c10642c4f44609"
+    "aws-sdk/aws-sdk.d.ts": {
+      "commit": "65ea56c919fd95dcd0ca3c59c9aa5eaa99c86885"
+    },
+    "node/node.d.ts": {
+      "commit": "65ea56c919fd95dcd0ca3c59c9aa5eaa99c86885"
+    },
+    "cryptojs/cryptojs.d.ts": {
+      "commit": "65ea56c919fd95dcd0ca3c59c9aa5eaa99c86885"
     }
   }
 }
