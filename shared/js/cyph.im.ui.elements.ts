@@ -1,16 +1,20 @@
-var ui	= ui || {};
+/// <reference path="globals.ts" />
+/// <reference path="../lib/typings/jquery/jquery.d.ts" />
 
-ui.elements	= {
-	window: $(window),
-	html: $('html'),
-	everything: $('*'),
-	messageBox: $('#message-box'),
-	messageList: $('#message-list, #message-list > md-content'),
-	timer: $('#timer'),
-	buttons: $('.md-button:not(#templates *)'),
-	copyUrlInput: $('#copy-url-input input'),
-	copyUrlLink: $('#copy-url-link'),
-	cyphertext: $('#cyphertext.curtain, #cyphertext.curtain > md-content'),
-	sendButton: $('#send-button'),
-	insertPhotoMobile: $('#insert-photo-mobile')
-};
+
+module UI {
+	class Elements {
+		public static window: JQuery			= $(window);
+		public static html: JQuery				= $('html');
+		public static everything: JQuery		= $('*');
+		public static messageBox: JQuery		= $('#message-box');
+		public static messageList: JQuery		= $('#message-list, #message-list > md-content');
+		public static timer: JQuery				= $('#timer');
+		public static buttons: JQuery			= $('.md-button:not(#templates *)');
+		public static copyUrlInput: JQuery		= $('#copy-url-input input');
+		public static copyUrlLink: JQuery		= $('#copy-url-link');
+		public static cyphertext: JQuery		= $('#cyphertext.curtain, #cyphertext.curtain > md-content');
+		public static sendButton: JQuery		= $('#send-button');
+		public static insertPhotoMobile: JQuery	= $('#insert-photo-mobile');
+	}
+}
