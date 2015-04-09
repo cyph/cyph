@@ -67,7 +67,7 @@ class RatchetedChannel implements IConnection {
 						setTimeout(this.destroyCurrentChannel, 10000);
 					}
 				},
-				onmessage: this.session.receiveBase,
+				onmessage: this.session.receive,
 				onlag: (lag: number, region: string) => {
 					if (!this.isCreator) {
 						this.ratchetChannels();
