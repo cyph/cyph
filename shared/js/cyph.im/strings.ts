@@ -1,4 +1,4 @@
-/// <reference path="globals.ts" />
+/// <reference path="../globals.ts" />
 
 
 let Strings	= {
