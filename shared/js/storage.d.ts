@@ -5,4 +5,5 @@ interface Storage {
 	webSignHashTimestamp: string;
 	webSignBootHash: string;
 	webSignBootHashOld: string;
+	webSignManualUpgrades: string;
 }
