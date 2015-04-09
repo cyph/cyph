@@ -1,5 +1,5 @@
-/// <reference path="globals.ts" />
 /// <reference path="config.ts" />
+/// <reference path="globals.ts" />
 
 
 class Util {

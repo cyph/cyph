@@ -1,5 +1,5 @@
-/// <reference path="globals.ts" />
 /// <reference path="config.ts" />
+/// <reference path="globals.ts" />
 /// <reference path="../lib/typings/aws-sdk/aws-sdk.d.ts" />
 /// <reference path="../lib/typings/cryptojs/cryptojs.d.ts" />
 /// <reference path="../lib/typings/jquery/jquery.d.ts" />
