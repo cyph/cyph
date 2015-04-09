@@ -85,15 +85,15 @@ module Session {
 				try {
 					this.channel.close(closeChat);
 				}
-				catch (e) {}
+				catch (_) {}
 				try {
 					otrWorker.terminate();
 				}
-				catch (e) {}
+				catch (_) {}
 				try {
 					Timer.stopAll();
 				}
-				catch (e) {}
+				catch (_) {}
 
 				this.channel	= null;
 				otrWorker		= null;
