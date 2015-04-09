@@ -58,7 +58,7 @@ class RatchetedChannel implements IConnection {
 				onopen: () => {
 					this.session.send(
 						new Session.Message(
-							Session.Message.events.channelRatchet,
+							Session.Events.channelRatchet,
 							channelDescriptor
 						)
 					);
@@ -88,7 +88,7 @@ class RatchetedChannel implements IConnection {
 	public constructor (session: Session.Session, channelName: string, handlers: any = {}, config: any = {}) {
 		this.session	= session;
 
-		this.session.on(Session.Message.events.channelRatchet, this.ratchetChannels);
+		this.session.on(Session.Events.channelRatchet, this.ratchetChannels);
 
 
 		var onopen: Function	= handlers.onopen;

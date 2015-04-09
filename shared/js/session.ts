@@ -11,7 +11,18 @@
 
 
 module Session {
-	export enum authors { me, friend, app }
+	export enum Authors { me, friend, app }
+
+	export class Events {
+		public static beginChat: string			= 'beginChat';
+		public static channelRatchet: string	= 'channelRatchet';
+		public static closeChat: string			= 'closeChat';
+		public static destroy: string			= 'destroy';
+		public static mutex: string				= 'mutex';
+		public static text: string				= 'text';
+		public static typing: string			= 'typing';
+		public static p2p: string				= 'p2p';
+	}
 
 	export class Command {
 		public method: string;
@@ -24,17 +35,6 @@ module Session {
 	}
 
 	export class Message {
-		public static destroy: string	= 'destroy';
-
-		public static events	= {
-			channelRatchet: 'channelRatchet',
-			mutex: 'mutex',
-			text: 'text',
-			typing: 'typing',
-			p2p: 'p2p'
-		};
-
-
 		public id: string;
 		public event: string;
 		public data: any;
@@ -72,13 +72,11 @@ module Session {
 		public cyphId: string;
 		public sharedSecret: string;
 
-		private beginChat () : void {
-			beginChatUi(() =>
-				$(window).on('beforeunload', () => Strings.disconnectWarning)
-			);
-		}
-
 		private close (hasReceivedDestroySignal?: boolean) : void {
+			var closeChat: Function	= () =>
+				this.trigger(Events.closeChat)
+			;
+
 			webRTC.helpers.kill();
 
 			if (hasReceivedDestroySignal) {
@@ -97,10 +95,10 @@ module Session {
 
 				this.channel	= null;
 				otrWorker		= null;
-				mutex.owner		= authors.me;
+				mutex.owner		= Authors.me;
 			}
 			else if (this.isAlive) {
-				this.channel.send(Message.destroy, closeChat, true);
+				this.channel.send(Events.destroy, closeChat, true);
 				setTimeout(() => this.close(true), 30000);
 			}
 			else {
@@ -128,11 +126,7 @@ module Session {
 			if (!this.receivedMessages[message.id]) {
 				this.lastIncomingMessageTimestamp	= Date.now();
 				this.receivedMessages[message.id]	= true;
-
-				var eventListeners	= this.eventListeners[message.event];
-				for (var i = 0 ; eventListeners && i < eventListeners.length ; ++i) {
-					eventListeners[i](message.data);
-				}
+				this.trigger(message.event, message.data);
 			}
 		}
 
@@ -178,12 +172,17 @@ module Session {
 							eventValue: 1
 						});
 					}
-
-					$(window).unload(() => this.close());
 				},
-				onconnect: this.beginChat,
+				onconnect: () => this.trigger(Events.beginChat),
 				onmessage: this.receive
 			});
+		}
+
+		private trigger (event: string, data?: any) : void {
+			var eventListeners	= this.eventListeners[event];
+			for (var i = 0 ; eventListeners && i < eventListeners.length ; ++i) {
+				eventListeners[i](data);
+			}
 		}
 
 		public constructor (descriptor?: string) {
@@ -269,7 +268,7 @@ module Session {
 
 						case 'io':
 							this.sendQueue.push(e.data.message);
-							logCyphertext(e.data.message, authors.me);
+							logCyphertext(e.data.message, Authors.me);
 							break;
 
 						case 'ready':
@@ -302,7 +301,7 @@ module Session {
 							}
 
 							if (webRTC.isSupported) {
-								this.send(new Message(Message.events.p2p, new Command()));
+								this.send(new Message(Events.p2p, new Command()));
 							}
 							break;
 
@@ -318,10 +317,10 @@ module Session {
 
 			/* Receive event listeners -- temporarily placing here */
 
-			this.on(Message.events.text, (text: string) => addMessageToChat(text, authors.friend));
-			this.on(Message.events.mutex, (command: Command) => mutex.commands[command.method](command.argument));
-			this.on(Message.events.typing, friendIsTyping);
-			this.on(Message.events.p2p, (command: Command) => {
+			this.on(Events.text, (text: string) => addMessageToChat(text, Authors.friend));
+			this.on(Events.mutex, (command: Command) => mutex.commands[command.method](command.argument));
+			this.on(Events.typing, friendIsTyping);
+			this.on(Events.p2p, (command: Command) => {
 				if (command.method) {
 					webRTC.commands[command.method](command.argument);
 				}
@@ -329,6 +328,13 @@ module Session {
 					enableWebRTC();
 				}
 			});
+			this.on(Events.beginChat, () =>
+				beginChatUi(() => {
+					$(window).unload(() => this.close());
+					$(window).on('beforeunload', () => Strings.disconnectWarning)
+				})
+			);
+			this.on(Events.closeChat, closeChat);
 		}
 
 		public on (event: string, f: Function) : void {
@@ -337,14 +343,14 @@ module Session {
 		}
 
 		public receive (data: string) : void {
-			if (data == Message.destroy) {
+			if (data == Events.destroy) {
 				this.close(true);
 			}
 			else {
 				otr.receiveMsg(data);
 			}
 
-			logCyphertext(data, authors.friend);
+			logCyphertext(data, Authors.friend);
 		}
 
 		public send (...messages: Message[]) : void {
