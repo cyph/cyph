@@ -72,6 +72,6 @@ for language in languages:
 		if phrase in translation:
 			translations[language][phrase]	= translation[phrase]
 
-f	= open('js/' + os.path.split(os.getcwd())[1] + '.translations.js', 'w')
+f	= open('js/' + os.path.split(os.getcwd())[1] + '/translations.js', 'w')
 f.write('var translations = ' + json.dumps(translations) + ';')
 f.close()
