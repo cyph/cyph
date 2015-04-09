@@ -12,8 +12,6 @@ function Init () {
 		donetyping: '5'
 	};
 
-	var shouldStartNewCyph;
-
 
 	processUrlState	= () => {
 		if (Env.isWebSignObsolete) {
@@ -54,5 +52,7 @@ function Init () {
 	}
 	else {
 		/* TODO: Init session */
+		var session	= new Session(Util.getUrlState());
+		history.pushState({}, '', location.pathname);
 	}
 }

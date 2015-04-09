@@ -6,7 +6,7 @@ class Config {
 	public static onionUrl: string		= 'https://cyphdbyhiddenbhs.onion/';
 
 
-	public static secretLength: number		= 7;
+	public static secretLength: number		= 14;
 	public static longSecretLength: number	= 52;
 
 	public static guidAddressSpace: string[]	= [

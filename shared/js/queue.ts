@@ -3,13 +3,14 @@
 /// <reference path="env.ts" />
 /// <reference path="util.ts" />
 /// <reference path="aws.ts" />
+/// <reference path="iconnection.ts" />
 /// <reference path="../lib/typings/aws-sdk/aws-sdk.d.ts" />
 /// <reference path="../lib/typings/jquery/jquery.d.ts" />
 
 
 /* Unidirectional queue */
 
-class Queue {
+class Queue implements IConnection {
 	public static nonExistentQueue: string	= 'AWS.SimpleQueueService.NonExistentQueue';
 	public static queuePrefix: string		= 'channels-';
 
@@ -17,9 +18,7 @@ class Queue {
 		return b ? '1800' : '1801';
 	}
 
-	public static sqsWrapper (config: any) : any {
-		config	= config || {};
-
+	public static sqsWrapper (config: any = {}) : any {
 		if (Env.isLocalhost) {
 			config.endpoint	= 'http://localhost:4568';
 		}
@@ -40,21 +39,19 @@ class Queue {
 			'sendMessageBatch',
 			'setQueueAttributes'
 		].forEach(method =>
-			wrapper[method]	= (o: any, f: Function, shouldRetryUntilSuccessful?: boolean) => {
-				var wrapperHelper	= () => {
-					wrapper.innerSqs[method](o, !shouldRetryUntilSuccessful ? f : (...args: any[]) => {
+			wrapper[method]	= (o: any, f: Function, shouldretryUntilComplete?: boolean) => {
+				Util.retryUntilComplete(retry =>
+					wrapper.innerSqs[method](o, (...args: any[]) => {
 						var err: any	= args[0];
 
-						if (err) {
-							setTimeout(wrapperHelper, 500);
+						if (shouldretryUntilComplete && err) {
+							retry();
 						}
 						else if (f) {
 							f.apply(this, args);
 						}
-					});
-				};
-
-				wrapperHelper();
+					})
+				);
 			}
 		);
 
@@ -62,16 +59,14 @@ class Queue {
 	}
 
 
-	public isAlive: boolean;
+	private isQueueAlive: boolean;
+
 	public queueUrl: string;
 	public sqs: any;
 
-	public constructor (queueName: string, handlers?: any, config?: any) {
-		handlers	= handlers || {};
-		config		= config || {};
-
-		this.sqs		= Queue.sqsWrapper(config);
-		this.isAlive	= true;
+	public constructor (queueName: string, handlers: any = {}, config: any = {}) {
+		this.sqs			= Queue.sqsWrapper(config);
+		this.isQueueAlive	= true;
 
 		this.sqs.createQueue({
 			QueueName: Queue.queuePrefix + queueName,
@@ -94,16 +89,16 @@ class Queue {
 
 				setTimeout(() => onlag = handlers.onlag, 60000);
 
-				var onmessageHelper	= () =>
+				Util.retryUntilComplete(retry =>
 					this.receive(handlers.onmessage, (...args: any[]) => {
 						var err: any	= args[0];
 						var data: any	= args[1];
 
 						if (err && err.code == Queue.nonExistentQueue) {
-							this.isAlive	= false;
+							this.isQueueAlive	= false;
 							handlers.onclose && handlers.onclose.apply(this, args);
 						}
-						else if (this.isAlive) {
+						else if (this.isQueueAlive) {
 							var delay: number		= 50;
 							var now: number			= Date.now();
 							var isEmpty: boolean	= !(data && data.Messages && data.Messages.length > 0);
@@ -113,7 +108,7 @@ class Queue {
 							}
 
 							lastReceiveTime	= now;
-							setTimeout(onmessageHelper, delay);
+							retry(delay);
 						}
 					}, null, null, onlag && (lag => {
 						if (onlag) {
@@ -122,12 +117,10 @@ class Queue {
 							setTimeout(() => f(lag, this.sqs.innerSqs.config.region), 0);
 						}
 					}))
-				;
-
-				onmessageHelper();
+				);
 			}
 			else if (handlers.onclose) {
-				var oncloseHelper	= () =>
+				Util.retryUntilComplete(retry =>
 					this.sqs.getQueueUrl({
 						QueueName: Queue.queuePrefix + queueName
 					}, (...args: any[]) => {
@@ -135,23 +128,21 @@ class Queue {
 						var data: any	= args[1];
 
 						if (err && err.code == Queue.nonExistentQueue) {
-							this.isAlive	= false;
+							this.isQueueAlive	= false;
 							handlers.onclose.apply(this, args);
 						}
-						else if (this.isAlive) {
-							setTimeout(oncloseHelper, 30000);
+						else if (this.isQueueAlive) {
+							retry(30000);
 						}
 					})
-				;
-
-				oncloseHelper();
+				);
 			}
 		}, true);
 	}
 
 	public close (callback?: Function) : void {
-		if (this.isAlive) {
-			this.isAlive	= false;
+		if (this.isQueueAlive) {
+			this.isQueueAlive	= false;
 
 			this.sqs.deleteQueue(
 				{QueueUrl: this.queueUrl},
@@ -163,19 +154,23 @@ class Queue {
 		}
 	}
 
+	public isAlive () : boolean {
+		return this.isQueueAlive;
+	}
+
 	public receive (
 		messageHandler?: Function,
 		onComplete?: Function,
-		maxNumberOfMessages?: number,
-		waitTimeSeconds?: number,
+		maxNumberOfMessages: number = 10,
+		waitTimeSeconds: number = 20,
 		onLag?: Function
 	) : void {
-		if (this.isAlive) {
+		if (this.isQueueAlive) {
 			this.sqs.receiveMessage({
 				QueueUrl: this.queueUrl,
 				AttributeNames: ['ApproximateFirstReceiveTimestamp', 'SentTimestamp'],
-				MaxNumberOfMessages: maxNumberOfMessages || 10,
-				WaitTimeSeconds: waitTimeSeconds || 20
+				MaxNumberOfMessages: maxNumberOfMessages,
+				WaitTimeSeconds: waitTimeSeconds
 			}, (...args: any[]) => {
 				var err: any	= args[0];
 				var data: any	= args[1];
@@ -206,7 +201,7 @@ class Queue {
 								try {
 									messageBody	= JSON.parse(messageBody).message;
 								}
-								catch (e) {}
+								catch (_) {}
 
 								messageHandler(messageBody);
 							}
@@ -220,9 +215,9 @@ class Queue {
 		}
 	}
 
-	public send (message: any, callback?: Function, isSynchronous?: boolean) : void {
-		if (this.isAlive) {
-			if (typeof message == 'string' || !message.length) {
+	public send (message: string|string[], callback?: Function|Function[], isSynchronous?: boolean) : void {
+		if (this.isQueueAlive) {
+			if (typeof message === 'string' || !message.length) {
 				var messageBody	= JSON.stringify({message: message});
 
 				if (isSynchronous) {
@@ -270,7 +265,7 @@ class Queue {
 							try {
 								thisCallback.apply(this, args);
 							}
-							catch (e) {}
+							catch (_) {}
 						}
 					}
 				}), true);

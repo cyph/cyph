@@ -116,16 +116,14 @@ class Util {
 		return o.n.toFixed(2) + ' ' + o.s + 'B';
 	}
 
-	public static retryUntilSuccessful (f: Function, retryIf?: Function) : void {
-		function dothemove () : void {
-			f(retry);
-		}
-
-		function retry () : void {
-			if (!retryIf || retryIf()) {
-				setTimeout(dothemove, 250);
-			}
-		}
+	public static retryUntilComplete (f: Function, retryIf?: Function) : void {
+		var dothemove	= () : void =>
+			f((delay: number = 250) : void => {
+				if (!retryIf || retryIf()) {
+					setTimeout(dothemove, delay);
+				}
+			})
+		;
 
 		dothemove();
 	}
