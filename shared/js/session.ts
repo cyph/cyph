@@ -136,16 +136,16 @@ module Session {
 			}
 		}
 
-		private sendHandler (items) {
+		private sendHandler (messages: string[]) : void {
 			this.lastOutgoingMessageTimestamp	= Date.now();
 
-			this.channel.send(items);
+			this.channel.send(messages);
 
 			anal.send({
 				hitType: 'event',
 				eventCategory: 'message',
 				eventAction: 'sent',
-				eventValue: items.length
+				eventValue: messages.length
 			});
 		}
 
