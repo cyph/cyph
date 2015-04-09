@@ -2,6 +2,8 @@
 /// <reference path="storage.d.ts" />
 
 
+var IS_WEB	= typeof window === 'object';
+
 var window: Window		= window || this;
 var document: Document	= document || this;
 
