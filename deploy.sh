@@ -51,7 +51,7 @@ for d in cyph.im cyph.com ; do
 	cd $d
 
 	ls css/*.scss | perl -pe 's/(.*)\.scss/\1/g' | xargs -I% sass "%.scss" "%.css"
-	ls js/*.ts | perl -pe 's/(.*)\.ts/\1/g' | xargs -I% tsc --sourceMap --out %.js %.ts
+	ls js/*.ts js/*/*.ts | perl -pe 's/(.*)\.ts/\1/g' | xargs -I% tsc --sourceMap --out %.js %.ts
 
 	../translate.py
 

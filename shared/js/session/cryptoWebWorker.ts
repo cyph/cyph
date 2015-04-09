@@ -136,7 +136,8 @@ function eventLoop () {
 									}
 
 									return array;
-								}
+								},
+								subtle: null
 							};
 						}
 					}
