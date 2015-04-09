@@ -1,6 +1,6 @@
-/// <reference path="cyph.im.init.ts" />
-/// <reference path="../lib/typings/angularjs/angular.d.ts" />
-/// <reference path="../lib/typings/jquery/jquery.d.ts" />
+/// <reference path="init.ts" />
+/// <reference path="../../lib/typings/angularjs/angular.d.ts" />
+/// <reference path="../../lib/typings/jquery/jquery.d.ts" />
 
 
 angular.
