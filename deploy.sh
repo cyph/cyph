@@ -106,31 +106,35 @@ if [ $test ] ; then
 	done
 else
 	ls */*.yaml | xargs -I% sed -i.bak 's/version: staging/version: prod/g' %
+fi
 
-	### WebSign-related stuff
-	for d in cyph.im ; do
-		cd $d
 
-		echo 'WebSign'
+### WebSign-related stuff
+for d in cyph.im ; do
+	cd $d
 
-		# Merge in base64'd images and audio, BUT NOT fonts (they add 7mb)
-		find img audio -type f -print0 | while read -d $'\0' f ; do
-			for g in index.html js/*.js css/*.css ; do
-				if ( grep -o "$f" $g ) ; then
-					dataURI="data:$(echo -n "$(file --mime-type "$f")" | perl -pe 's/.*\s+(.*?)$/\1/g');base64,$(base64 "$f")"
+	echo 'WebSign'
 
-					echo "s|/$f|$dataURI|g" > $g.tmp
-					sed -i.bak -f $g.tmp $g
-					rm $g.tmp $g.bak
-				fi
-			done
+	# Merge in base64'd images and audio, BUT NOT fonts (they add 7mb)
+	find img audio -type f -print0 | while read -d $'\0' f ; do
+		for g in index.html js/*.js css/*.css ; do
+			if ( grep -o "$f" $g ) ; then
+				dataURI="data:$(echo -n "$(file --mime-type "$f")" | perl -pe 's/.*\s+(.*?)$/\1/g');base64,$(base64 "$f")"
+
+				echo "s|/$f|$dataURI|g" > $g.tmp
+				sed -i.bak -f $g.tmp $g
+				rm $g.tmp $g.bak
+			fi
 		done
+	done
 
-		# Merge imported libraries into Worker
-		../websignworkerpackager.js js/cryptoWebWorker.js
+	# Merge imported libraries into Worker
+	../websignworkerpackager.js js/cryptoWebWorker.js
 
-		../websignpackager.py
-		mv index.html $d.pkg
+	if [ $test ] ; then
+		../websignpackager.py index.html pkg.html
+	else
+		../websignpackager.py index.html $d.pkg
 		mv websign.html index.html
 
 		currentDir="$(pwd)"
@@ -145,11 +149,11 @@ else
 
 		HASH_TTL=3944620 # 1.5 months
 		echo "\
-	{
-		\"hash\": \"$(shasum -p -a 512 websign/$d.pkg | perl -pe 's/(.*) .*/\1/')\",
-		\"timestamp\": $(date +%s)000,
-		\"expires\": $(($(date +%s)+${HASH_TTL}))000
-	}" | gpg --clearsign > websign/$d.hash
+{
+	\"hash\": \"$(shasum -p -a 512 websign/$d.pkg | perl -pe 's/(.*) .*/\1/')\",
+	\"timestamp\": $(date +%s)000,
+	\"expires\": $(($(date +%s)+${HASH_TTL}))000
+}" | gpg --clearsign > websign/$d.hash
 
 		# Temporary measure, in preparation for requiring two signatures on each release
 		cat websign/$d.hash | gpg --clearsign -u 'Alternate Key' > websign/$d.hash2
@@ -159,10 +163,10 @@ else
 		git commit -a -m 'package update'
 		git push
 		cd $currentDir
+	fi
 
-		cd ..
-	done
-fi
+	cd ..
+done
 
 
 find . -name '*.bak' | xargs rm
