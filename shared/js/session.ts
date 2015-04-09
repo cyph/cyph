@@ -182,7 +182,7 @@ module Session {
 					$(window).unload(() => this.close());
 				},
 				onconnect: this.beginChat,
-				onmessage: this.receiveBase
+				onmessage: this.receive
 			});
 		}
 
@@ -261,12 +261,14 @@ module Session {
 					switch (e.data.eventName) {
 						case 'ui':
 							if (e.data.message) {
-								this.receive(JSON.parse(e.data.message));
+								JSON.parse(e.data.message).forEach((message: Message) =>
+									this.receiveQueue.push(message)
+								);
 							}
 							break;
 
 						case 'io':
-							this.sendBase(e.data.message);
+							this.sendQueue.push(e.data.message);
 							logCyphertext(e.data.message, authors.me);
 							break;
 
@@ -334,11 +336,7 @@ module Session {
 			this.eventListeners[event].push(f);
 		}
 
-		public receive (messages: Message[]) : void {
-			messages.forEach(message => this.receiveQueue.push(message));
-		}
-
-		public receiveBase (data: string) : void {
+		public receive (data: string) : void {
 			if (data == Message.destroy) {
 				this.close(true);
 			}
@@ -351,10 +349,6 @@ module Session {
 
 		public send (...messages: Message[]) : void {
 			otr.sendMsg(JSON.stringify(messages));
-		}
-
-		public sendBase (data: string) {
-			this.sendQueue.push(data);
 		}
 	}
 }
