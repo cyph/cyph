@@ -1,6 +1,6 @@
 let defaultLanguage			= 'en';
 
-let language				= (
+language					= (
 	navigator.language ||
 	navigator.userLanguage ||
 	navigator.browserLanguage ||
