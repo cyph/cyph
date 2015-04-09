@@ -1,13 +1,14 @@
 /// <reference path="globals.ts" />
 /// <reference path="timer.ts" />
 /// <reference path="queue.ts" />
+/// <reference path="iconnection.ts" />
 /// <reference path="../lib/typings/aws-sdk/aws-sdk.d.ts" />
 
 
 /* Bidirectional channel, comprised of two queues */
 
-class Channel {
-	public static channelIds (b?: boolean) : string {
+class Channel implements IConnection {
+	private static channelIds (b?: boolean) : string {
 		return b ? '0' : '1';
 	}
 
@@ -24,35 +25,47 @@ class Channel {
 
 	private inQueue: Queue;
 	private outQueue: Queue;
+	private sqs: any;
 
-	public descriptor: string;
-	public sqs: any;
-
-	public constructor (channelName: string, handlers?: any, config?: any) {
-		handlers	= handlers || {};
-		config		= config || {};
-
+	public constructor (channelName: string, handlers: any = {}, config: any = {}) {
 		try {
-			var channelDescriptor: any	= JSON.parse(channelName);
-			this.descriptor				= channelName;
-			channelName					= channelDescriptor.name;
-			config.region				= channelDescriptor.region;
+			var descriptor: any	= JSON.parse(channelName);
+			channelName			= descriptor.name;
+			config.region		= descriptor.region;
 		}
-		catch (e) {}
+		catch (_) {}
 
 		this.sqs	= Queue.sqsWrapper(config);
 
 		var onclose	= () =>
 			this.close(handlers.onclose)
 		;
-		
+
+		var onconnect	= () : boolean => {
+			if (handlers.onconnect) {
+				var f: Function	= handlers.onconnect;
+				delete handlers.onconnect;
+
+				f();
+
+				return true;
+			}
+
+			return false;
+		};
+
+
 		this.sqs.getQueueUrl({
 			QueueName: Queue.queuePrefix + channelName + Channel.channelIds(true)
 		}, (err, data) => {
 			var isCreator: boolean	= !!err;
 
 			this.inQueue	= new Queue(channelName + Channel.channelIds(isCreator), {
-				onmessage: handlers.onmessage,
+				onmessage: (message: string) => {
+					if (!onconnect() && handlers.onmessage) {
+						handlers.onmessage();
+					}
+				},
 				onlag: handlers.onlag,
 				onclose: onclose,
 				onopen: () => {
@@ -64,7 +77,7 @@ class Channel {
 							var lastTouched: number		= Date.now();
 							var periodToggle: boolean	= false;
 
-							var timer: Timer	= new Timer((now) => {
+							var timer: Timer	= new Timer((now: number) => {
 								if (!this.inQueue.isAlive) {
 									timer.stop();
 								}
@@ -84,6 +97,11 @@ class Channel {
 
 
 							handlers.onopen && handlers.onopen(isCreator);
+
+							if (!isCreator) {
+								this.send('');
+								onconnect();
+							}
 						}
 					}, config);
 				}
@@ -91,14 +109,14 @@ class Channel {
 		});
 	}
 
-	public close (callback: Function) : void {
+	public close (callback?: Function) : void {
 		this.inQueue.close(() =>
 			this.outQueue.close(callback)
 		);
 	}
 
 	public isAlive () : boolean {
-		return this.inQueue.isAlive && this.outQueue.isAlive;
+		return this.inQueue.isAlive() && this.outQueue.isAlive();
 	}
 
 	public receive (
@@ -117,7 +135,7 @@ class Channel {
 		);
 	}
 
-	public send (message: any, callback?: Function, isSynchronous?: boolean) : void {
+	public send (message: string|string[], callback?: Function|Function[], isSynchronous?: boolean) : void {
 		this.outQueue.send(message, callback, isSynchronous);
 	}
 }
