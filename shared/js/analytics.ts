@@ -1,5 +1,5 @@
-/// <reference path="globals.ts" />
 /// <reference path="env.ts" />
+/// <reference path="globals.ts" />
 /// <reference path="../lib/typings/jquery/jquery.d.ts" />
 
 

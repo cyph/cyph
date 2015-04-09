@@ -1,51 +1,19 @@
-/// <reference path="globals.ts" />
-/// <reference path="timer.ts" />
-/// <reference path="iconnection.ts" />
-/// <reference path="ratchetedchannel.ts" />
-/// <reference path="util.ts" />
+/// <reference path="command.ts" />
+/// <reference path="enums.ts" />
+/// <reference path="message.ts" />
 /// <reference path="mutex.ts" />
 /// <reference path="otr.ts" />
 /// <reference path="p2p.ts" />
-/// <reference path="cyph.im.ui.ts" />
-/// <reference path="../lib/typings/jquery/jquery.d.ts" />
+/// <reference path="../globals.ts" />
+/// <reference path="../timer.ts" />
+/// <reference path="../util.ts" />
+/// <reference path="../connection/iconnection.ts" />
+/// <reference path="../connection/ratchetedchannel.ts" />
+/// <reference path="../cyph.im/ui.ts" />
+/// <reference path="../../lib/typings/jquery/jquery.d.ts" />
 
 
 module Session {
-	export enum Authors { me, friend, app }
-
-	export class Events {
-		public static beginChat: string			= 'beginChat';
-		public static channelRatchet: string	= 'channelRatchet';
-		public static closeChat: string			= 'closeChat';
-		public static destroy: string			= 'destroy';
-		public static mutex: string				= 'mutex';
-		public static text: string				= 'text';
-		public static typing: string			= 'typing';
-		public static p2p: string				= 'p2p';
-	}
-
-	export class Command {
-		public method: string;
-		public argument: any;
-
-		public constructor (method: string = '', argument?: any) {
-			this.method		= method;
-			this.argument	= argument;
-		}
-	}
-
-	export class Message {
-		public id: string;
-		public event: string;
-		public data: any;
-
-		public constructor (event: string = '', data?: any) {
-			this.id		= Date.now() + '-' + crypto.getRandomValues(new Uint32Array(1))[0];
-			this.event	= event;
-			this.data	= data;
-		}
-	}
-
 	export class Session {
 		private preConnectMessageReceiveQueue: string[]			= [];
 		private preConnectMessageSendQueue: string[]			= [];
@@ -61,7 +29,7 @@ module Session {
 		public cyphertext: string[]	= [];
 		public messages: string[]	= [];
 
-		public channel: IConnection;
+		public channel: Connection.IConnection;
 		public isAlive: boolean;
 		public isConnected: boolean;
 		public isCreator: boolean;
@@ -116,8 +84,13 @@ module Session {
 					this.close();
 				}
 				else if (now > nextPing) {
-					nextPing	= now + (30000 + crypto.getRandomValues(new Uint8Array(1))[0] * 250);
-					this.send(new Message());
+					this.send(new Message);
+
+					nextPing	=
+						now +
+						30000 +
+						crypto.getRandomValues(new Uint8Array(1))[0] * 250
+					;
 				}
 			});
 		}
@@ -155,7 +128,7 @@ module Session {
 		}
 
 		private setUpChannel (channelDescriptor: string) : void {
-			this.channel	= new RatchetedChannel(this, channelDescriptor, {
+			this.channel	= new Connection.RatchetedChannel(this, channelDescriptor, {
 				onopen: (isCreator: boolean) : void => {
 					this.isCreator	= isCreator;
 
@@ -208,7 +181,11 @@ module Session {
 			}
 
 			Util.retryUntilComplete(retry => {
-				let channelDescriptor: string	= this.isStartingNewCyph === false ? '' : Channel.getChannelDescriptor();
+				let channelDescriptor: string	=
+					this.isStartingNewCyph === false ?
+						'' :
+						Connection.Channel.newDescriptor()
+				;
 
 				$.ajax({
 					type: 'POST',
@@ -301,7 +278,7 @@ module Session {
 							}
 
 							if (webRTC.isSupported) {
-								this.send(new Message(Events.p2p, new Command()));
+								this.send(new Message(Events.p2p, new Command));
 							}
 							break;
 

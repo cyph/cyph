@@ -1,9 +1,9 @@
-/// <reference path="globals.ts" />
 /// <reference path="analytics.ts" />
 /// <reference path="env.ts" />
+/// <reference path="globals.ts" />
 /// <reference path="util.ts" />
-/// <reference path="../lib/typings/jquery/jquery.d.ts" />
 /// <reference path="../lib/typings/angular-material/angular-material.d.ts" />
+/// <reference path="../lib/typings/jquery/jquery.d.ts" />
 
 
 class Affiliate {
