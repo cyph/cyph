@@ -234,17 +234,27 @@
 
 									return false;
 								}).
-								reduce(function (a, b) { return a || b })
+								reduce(function (a, b) { return a || b }, false)
 							;
 
 							if (isValid) {
+								if (localStorage.webSignManualUpgrades) {
+									if (confirm('Update to package with hash ' + hashText + '?')) {
+										alert('Applying update.');
+									}
+									else {
+										alert('Update rejected.');
+										throw true;
+									}
+								}
+
 								localStorage.webSignHash			= hashText;
 								localStorage.webSignHashTimestamp	= hashTimestamp;
 								localStorage.webSignHashExpires		= hashExpires;
 							}
 						}
 					}
-					catch (e) {}
+					catch (_) {}
 
 					/* Get latest package and compare hashes before executing;
 						if hashes differ, try falling back to last known good package,
