@@ -329,6 +329,11 @@ module Session {
 			});
 		}
 
+		public on (event: string, f: Function) : void {
+			this.eventListeners[event]	= this.eventListeners[event] || [];
+			this.eventListeners[event].push(f);
+		}
+
 		public receive (messages: Message[]) : void {
 			messages.forEach(message => this.receiveQueue.push(message));
 		}
@@ -350,11 +355,6 @@ module Session {
 
 		public sendBase (data: string) {
 			this.sendQueue.push(data);
-		}
-
-		public on (event: string, f: Function) : void {
-			this.eventListeners[event]	= this.eventListeners[event] || [];
-			this.eventListeners[event].push(f);
 		}
 	}
 }
