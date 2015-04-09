@@ -354,7 +354,7 @@ var webRTC	= {
 		},
 
 		retry: function (f) {
-			Util.retryUntilSuccessful(f, function () { return webRTC.isAccepted });
+			Util.retryUntilComplete(f, function () { return webRTC.isAccepted });
 		},
 
 		sendFile: function () {

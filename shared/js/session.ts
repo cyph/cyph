@@ -1,482 +1,360 @@
-var authors							= {me: 1, friend: 2, app: 3};
-var preConnectMessageReceiveQueue	= [];
-var preConnectMessageSendQueue		= [];
-
-var cyphertext	= [];
-var messages	= [];
-
-var isAlive	= false;
-
-var
-	channel,
-	newChannel,
-	isConnected,
-	isCreator,
-	isOtrReady,
-	hasKeyExchangeBegun,
-	lastIncomingMessageTimestamp,
-	lastOutgoingMessageTimestamp,
-	cyphId,
-	sharedSecret,
-	shouldSendQueryMessage
-;
+/// <reference path="globals.ts" />
+/// <reference path="timer.ts" />
+/// <reference path="iconnection.ts" />
+/// <reference path="ratchetedchannel.ts" />
+/// <reference path="util.ts" />
+/// <reference path="mutex.ts" />
+/// <reference path="otr.ts" />
+/// <reference path="p2p.ts" />
+/// <reference path="cyph.im.ui.ts" />
+/// <reference path="../lib/typings/jquery/jquery.d.ts" />
 
 
+module Session {
+	export enum authors { me, friend, app }
 
-/* Init Session */
+	export class Command {
+		public method: string;
+		public argument: any;
 
-function otrWorkerOnMessageHandler (e) {
-	switch (e.data.eventName) {
-		case 'ui':
-			if (e.data.message) {
-				var channelDataSplit	= e.data.message.split(CHANNEL_DATA_PREFIX);
+		public constructor (method: string = '', argument?: any) {
+			this.method		= method;
+			this.argument	= argument;
+		}
+	}
 
-				if (!channelDataSplit[0] && channelDataSplit[1]) {
-					receiveChannelData(JSON.parse(channelDataSplit[1]));
+	export class Message {
+		public static destroy: string	= 'destroy';
+
+		public static events	= {
+			channelRatchet: 'channelRatchet',
+			mutex: 'mutex',
+			text: 'text',
+			typing: 'typing',
+			p2p: 'p2p'
+		};
+
+
+		public id: string;
+		public event: string;
+		public data: any;
+
+		public constructor (event: string = '', data?: any) {
+			this.id		= Date.now() + '-' + crypto.getRandomValues(new Uint32Array(1))[0];
+			this.event	= event;
+			this.data	= data;
+		}
+	}
+
+	export class Session {
+		private preConnectMessageReceiveQueue: string[]			= [];
+		private preConnectMessageSendQueue: string[]			= [];
+		private eventListeners: {[event: string] : Function[]}	= {};
+		private sendQueue: string[]								= [];
+		private receiveQueue: Message[]							= [];
+		private receivedMessages: {[id: string] : boolean}		= {};
+
+		private lastIncomingMessageTimestamp: number;
+		private lastOutgoingMessageTimestamp: number;
+		private messageTimer: Timer;
+
+		public cyphertext: string[]	= [];
+		public messages: string[]	= [];
+
+		public channel: IConnection;
+		public isAlive: boolean;
+		public isConnected: boolean;
+		public isCreator: boolean;
+		public isOtrReady: boolean;
+		public hasKeyExchangeBegun: boolean;
+		public isStartingNewCyph: boolean;
+		public shouldSendQueryMessage: boolean;
+		public cyphId: string;
+		public sharedSecret: string;
+
+		private beginChat () : void {
+			beginChatUi(() =>
+				$(window).on('beforeunload', () => Strings.disconnectWarning)
+			);
+		}
+
+		private close (hasReceivedDestroySignal?: boolean) : void {
+			webRTC.helpers.kill();
+
+			if (hasReceivedDestroySignal) {
+				try {
+					this.channel.close(closeChat);
 				}
-				else {
-					addMessageToChat(e.data.message, authors.friend);
+				catch (e) {}
+				try {
+					otrWorker.terminate();
 				}
-			}
-			break;
-
-		case 'io':
-			sendChannelDataBase({Message: e.data.message});
-			logCyphertext(e.data.message, authors.me);
-			break;
-
-		case 'ready':
-			isOtrReady	= true;
-
-			if (shouldSendQueryMessage) {
-				otr.sendQueryMsg();
-			}
-
-			while (preConnectMessageReceiveQueue.length) {
-				otr.receiveMsg(preConnectMessageReceiveQueue.shift());
-			}
-
-			break;
-
-		case 'firstmessage':
-			hasKeyExchangeBegun	= true;
-			break;
-
-		case 'abort':
-			Errors.logSmp();
-			abortSetup();
-			break;
-
-		case 'connected':
-			isConnected	= true;
-
-			while (preConnectMessageSendQueue.length) {
-				otr.sendMsg(preConnectMessageSendQueue.shift());
-			}
-
-			if (webRTC.isSupported) {
-				sendWebRTCDataToPeer();
-			}
-			break;
-
-		case 'authenticated':
-			markAllAsSent();
-			pingPong();
-
-			/* Ratchet channels every 10 - 20 minutes */
-			if (e.data.message) {
-				function ratchetLoop () {
-					setTimeout(
-						ratchetLoop,
-						600000 + crypto.getRandomValues(new Uint8Array(1))[0] * 2350
-					);
-
-					ratchetChannels();
+				catch (e) {}
+				try {
+					Timer.stopAll();
 				}
+				catch (e) {}
 
-				ratchetLoop();
+				this.channel	= null;
+				otrWorker		= null;
+				mutex.owner		= authors.me;
 			}
-			break;
-	}
-}
-
-
-var randomSeed	= new Uint8Array(50000);
-crypto.getRandomValues(randomSeed);
-
-
-$(function () {
-	var urlFragment	= Util.getUrlState();
-
-	if (!urlFragment || urlFragment == 'new' || urlFragment.length > (Config.secretLength * 2)) {
-		shouldStartNewCyph	= true;
-	}
-
-	if (urlFragment && urlFragment.length > Config.secretLength) {
-		cyphId			= urlFragment.substr(0, Config.secretLength);
-		sharedSecret	= urlFragment.substr(Config.secretLength);
-	}
-
-	if (!sharedSecret) {
-		sharedSecret	= generateGuid(Config.secretLength);
-	}
-
-	otrWorker.postMessage({method: 0, message: {
-		randomSeed: randomSeed,
-		sharedSecret: sharedSecret
-	}});
-
-
-	function startOrJoinCyph (isFirstAttempt) {
-		if (cyphId && !isFirstAttempt) {
-			Util.pushNotFound();
-			return;
-		}
-
-		var id	= cyphId || generateGuid(Config.secretLength);
-		var o	= shouldStartNewCyph ? {channelDescriptor: getChannelDescriptor()} : null;
-
-		$.ajax({
-			type: 'POST',
-			url: Env.baseUrl + 'channels/' + id,
-			data: o,
-			success: function (channelDescriptor) {
-				if (cyphId || !o || channelDescriptor == o.channelDescriptor) {
-					cyphId	= id;
-					setUpChannel(channelDescriptor);
-				}
-				else {
-					startOrJoinCyph();
-				}
-			},
-			error: function () {
-				startOrJoinCyph();
-			}
-		});
-	}
-
-	if (shouldStartNewCyph || cyphId) {
-		if (!cyphId) {
-			changeState(states.spinningUp);
-		}
-
-		history.pushState({}, '', location.pathname);
-		startOrJoinCyph(true);
-	}
-	else {
-		processUrlState();
-	}
-});
-
-/* End Init Session */
-
-
-
-function beginChat () {
-	beginChatUi(function () {
-		$(window).on('beforeunload', function () {
-			return Strings.disconnectWarning;
-		});
-	});
-}
-
-
-/* Intermittent check to verify chat is still alive + send fake encrypted chatter */
-
-function pingPong () {
-	var nextPing	= 0;
-
-	onTick(function (now) {
-		if (now - lastIncomingMessageTimestamp > 180000) {
-			channelClose();
-		}
-		else if (now > nextPing) {
-			nextPing	= now + (30000 + crypto.getRandomValues(new Uint8Array(1))[0] * 250);
-			sendChannelData({Misc: channelDataMisc.ping});
-		}
-	});
-}
-
-
-function channelSend () {
-	var args	= arguments;
-
-	try {
-		channel.send.apply(channel, args);
-	}
-	catch (e) {
-		if (isAlive) {
-			setTimeout(function () { channelSend.apply(null, args) }, 500);
-		}
-	}
-}
-
-function channelClose (hasReceivedDestroySignal) {
-	webRTC.helpers.kill();
-
-	if (hasReceivedDestroySignal) {
-		try {
-			newChannel.close(closeChat);
-		}
-		catch (e) {}
-		try {
-			channel.close(closeChat);
-		}
-		catch (e) {}
-		try {
-			otrWorker.terminate();
-		}
-		catch (e) {}
-		try {
-			tickWorker.terminate();
-		}
-		catch (e) {}
-
-		channel					= null;
-		newChannel				= null;
-		otrWorker				= null;
-		tickWorker				= null;
-		tickFunctions.length	= 0;
-		tickIntervalHalt		= true;
-		mutex.owner				= authors.me;
-	}
-	else if (isAlive) {
-		channelSend({Destroy: true}, closeChat, true);
-		setTimeout(function () { channelClose(true) }, 10000);
-	}
-	else {
-		closeChat();
-	}
-}
-
-
-
-var sendChannelDataQueue	= [];
-
-var receiveChannelDataQueue	= [];
-var receivedMessages		= {};
-
-function sendChannelData (data) {
-	otr.sendMsg(CHANNEL_DATA_PREFIX + JSON.stringify(data));
-}
-
-function sendChannelDataBase (data, callback) {
-	sendChannelDataQueue.push({data: data, callback: callback});
-}
-
-function sendChannelDataHandler (items) {
-	lastOutgoingMessageTimestamp	= Date.now();
-
-	channelSend(
-		items.map(function (item) {
-			item.data.Id	= Date.now() + '-' + crypto.getRandomValues(new Uint32Array(1))[0];
-			return item.data;
-		}),
-		items.map(function (item) { return item.callback })
-	);
-
-	anal.send({
-		hitType: 'event',
-		eventCategory: 'message',
-		eventAction: 'sent',
-		eventValue: items.length
-	});
-}
-
-function receiveChannelData (data) {
-	receiveChannelDataQueue.push(data);
-}
-
-function receiveChannelDataHandler (o) {
-	if (!o.Id || !receivedMessages[o.Id]) {
-		lastIncomingMessageTimestamp	= Date.now();
-
-		if (o.Misc == channelDataMisc.connect) {
-			beginChat();
-		}
-		else if (o.Misc == channelDataMisc.imtypingyo) {
-			friendIsTyping(true);
-		}
-		else if (o.Misc == channelDataMisc.donetyping) {
-			friendIsTyping(false);
-		}
-		else if (o.Misc && o.Misc.indexOf(WEBRTC_DATA_PREFIX) == 0) {
-			var webRTCDataString	= o.Misc.split(WEBRTC_DATA_PREFIX)[1];
-
-			if (webRTCDataString) {
-				var webRTCData	= JSON.parse(webRTCDataString);
-
-				Object.keys(webRTCData).forEach(function (key) {
-					webRTC.helpers.receiveCommand(key, webRTCData[key]);
-				});
-			}
-			else if (webRTC.isSupported) {
-				enableWebRTC();
-			}
-		}
-		else if (o.Misc && o.Misc.indexOf(MUTEX_PREFIX) == 0) {
-			var mutexString	= o.Misc.split(MUTEX_PREFIX)[1];
-
-			if (mutexString) {
-				var mutexData	= JSON.parse(mutexString);
-
-				Object.keys(mutexData).forEach(function (key) {
-					var command	= mutex.commands[key];
-					command && command(mutexData[key]);
-				});
-			}
-		}
-		else if (o.Misc && o.Misc.indexOf(CHANNEL_RATCHET_PREFIX) == 0) {
-			ratchetChannels(o.Misc.split(CHANNEL_RATCHET_PREFIX)[1]);
-		}
-
-		if (o.Message) {
-			otr.receiveMsg(o.Message);
-			logCyphertext(o.Message, authors.friend);
-		}
-
-		if (o.Destroy) {
-			channelClose(true);
-		}
-
-		if (o.Id) {
-			receivedMessages[o.Id]	= true;
-		}
-	}
-}
-
-function setUpChannel (channelDescriptor) {
-	channel	= new Channel(channelDescriptor, {
-		onopen: function (b) {
-			isCreator	= b;
-
-			if (isCreator) {
-				beginWaiting();
+			else if (this.isAlive) {
+				this.channel.send(Message.destroy, closeChat, true);
+				setTimeout(() => this.close(true), 30000);
 			}
 			else {
-				beginChat();
-				sendChannelDataBase({Misc: channelDataMisc.connect});
-				otr.sendQueryMsg();
+				closeChat();
+			}
+		}
 
-				anal.send({
-					hitType: 'event',
-					eventCategory: 'cyph',
-					eventAction: 'started',
-					eventValue: 1
-				});
+		/* Intermittent check to verify chat is still alive
+			and send fake encrypted chatter */
+		private pingPong () : void {
+			var nextPing: number	= 0;
+
+			new Timer((now: number) => {
+				if (now - this.lastIncomingMessageTimestamp > 180000) {
+					this.close();
+				}
+				else if (now > nextPing) {
+					nextPing	= now + (30000 + crypto.getRandomValues(new Uint8Array(1))[0] * 250);
+					this.send(new Message());
+				}
+			});
+		}
+
+		private receiveHandler (message: Message) : void {
+			if (!this.receivedMessages[message.id]) {
+				this.lastIncomingMessageTimestamp	= Date.now();
+				this.receivedMessages[message.id]	= true;
+
+				var eventListeners	= this.eventListeners[message.event];
+				for (var i = 0 ; eventListeners && i < eventListeners.length ; ++i) {
+					eventListeners[i](message.data);
+				}
+			}
+		}
+
+		private sendHandler (items) {
+			this.lastOutgoingMessageTimestamp	= Date.now();
+
+			this.channel.send(items);
+
+			anal.send({
+				hitType: 'event',
+				eventCategory: 'message',
+				eventAction: 'sent',
+				eventValue: items.length
+			});
+		}
+
+		private setDescriptor (descriptor?: string) : void {
+			if (!descriptor || descriptor.length < Config.secretLength) {
+				descriptor	= Util.generateGuid(Config.secretLength);
 			}
 
-			$(window).unload(function () {
-				channelClose();
+			var middle: number	= Math.ceil(descriptor.length / 2);
+
+			this.cyphId			= descriptor.substr(0, middle);
+			this.sharedSecret	= this.sharedSecret || descriptor.substr(middle);
+		}
+
+		private setUpChannel (channelDescriptor: string) : void {
+			this.channel	= new RatchetedChannel(this, channelDescriptor, {
+				onopen: (isCreator: boolean) : void => {
+					this.isCreator	= isCreator;
+
+					if (this.isCreator) {
+						beginWaiting();
+					}
+					else {
+						otr.sendQueryMsg();
+
+						anal.send({
+							hitType: 'event',
+							eventCategory: 'cyph',
+							eventAction: 'started',
+							eventValue: 1
+						});
+					}
+
+					$(window).unload(() => this.close());
+				},
+				onconnect: this.beginChat,
+				onmessage: this.receiveBase
 			});
-		},
-		onmessage: receiveChannelData
-	});
-}
+		}
+
+		public constructor (descriptor?: string) {
+			/* true = yes; false = no; null = maybe */
+			this.isStartingNewCyph	=
+				!descriptor ?
+					true :
+					descriptor.length > Config.secretLength ?
+						null :
+						false
+			;
+
+			this.setDescriptor(descriptor);
+
+			otrWorker.postMessage({method: 0, message: {
+				randomSeed: crypto.getRandomValues(new Uint8Array(50000)),
+				sharedSecret: this.sharedSecret
+			}});
+
+
+			if (this.isStartingNewCyph !== false) {
+				changeState(states.spinningUp);
+			}
+
+			Util.retryUntilComplete(retry => {
+				var channelDescriptor: string	= this.isStartingNewCyph === false ? '' : Channel.getChannelDescriptor();
+
+				$.ajax({
+					type: 'POST',
+					url: Env.baseUrl + 'channels/' + this.cyphId,
+					data: {channelDescriptor},
+					success: (data: string) => {
+						if (this.isStartingNewCyph === true && channelDescriptor != data) {
+							retry();
+						}
+						else {
+							this.setUpChannel(data);
+						}
+					},
+					error: () => {
+						if (this.isStartingNewCyph === false) {
+							Util.pushNotFound();
+						}
+						else {
+							retry();
+						}
+					}
+				});
+			});
+
+
+			this.messageTimer	= new Timer((now: number) => {
+				/*** send ***/
+				if (
+					this.isAlive &&
+					this.sendQueue.length &&
+					(
+						this.sendQueue.length >= 4 ||
+						!this.lastOutgoingMessageTimestamp ||
+						(now - this.lastOutgoingMessageTimestamp) > 500
+					)
+				) {
+					this.sendHandler(this.sendQueue.splice(0, 4));
+				}
+
+				/*** receive ***/
+				else if (this.receiveQueue.length) {
+					this.receiveHandler(this.receiveQueue.shift());
+				}
+
+				/*** otrWorker onmessage ***/
+				else if (otrWorkerOnMessageQueue.length) {
+					var e	= otrWorkerOnMessageQueue.shift();
+
+					switch (e.data.eventName) {
+						case 'ui':
+							if (e.data.message) {
+								this.receive(JSON.parse(e.data.message));
+							}
+							break;
+
+						case 'io':
+							this.sendBase(e.data.message);
+							logCyphertext(e.data.message, authors.me);
+							break;
+
+						case 'ready':
+							this.isOtrReady	= true;
+
+							if (this.shouldSendQueryMessage) {
+								otr.sendQueryMsg();
+							}
+
+							while (this.preConnectMessageReceiveQueue.length) {
+								otr.receiveMsg(this.preConnectMessageReceiveQueue.shift());
+							}
+
+							break;
+
+						case 'firstmessage':
+							this.hasKeyExchangeBegun	= true;
+							break;
+
+						case 'abort':
+							Errors.logSmp();
+							abortSetup();
+							break;
+
+						case 'connected':
+							this.isConnected	= true;
+
+							while (this.preConnectMessageSendQueue.length) {
+								otr.sendMsg(this.preConnectMessageSendQueue.shift());
+							}
+
+							if (webRTC.isSupported) {
+								this.send(new Message(Message.events.p2p, new Command()));
+							}
+							break;
+
+						case 'authenticated':
+							markAllAsSent();
+							this.pingPong();
+							break;
+					}
+				}
+			});
 
 
 
-/*
-	Alice: create new channel, send descriptor over current channel
-	Bob: join new channel, ack descriptor over current channel, deprecate current channel
-	Alice: deprecate current channel
-	Both: wait a bit, then destroy old channel
-*/
+			/* Receive event listeners -- temporarily placing here */
 
-var lastChannelRatchet	= 0;
+			this.on(Message.events.text, (text: string) => addMessageToChat(text, authors.friend));
+			this.on(Message.events.mutex, (command: Command) => mutex.commands[command.method](command.argument));
+			this.on(Message.events.typing, friendIsTyping);
+			this.on(Message.events.p2p, (command: Command) => {
+				if (command.method) {
+					webRTC.commands[command.method](command.argument);
+				}
+				else if (webRTC.isSupported) {
+					enableWebRTC();
+				}
+			});
+		}
 
-function destroyCurrentChannel () {
-	if (newChannel) {
-		var oldChannel	= channel;
-		channel			= newChannel;
-		newChannel		= null;
+		public receive (messages: Message[]) : void {
+			messages.forEach(message => this.receiveQueue.push(message));
+		}
 
-		setTimeout(function () {
-			oldChannel && oldChannel.close();
-		}, 150000);
-	}
-}
+		public receiveBase (data: string) : void {
+			if (data == Message.destroy) {
+				this.close(true);
+			}
+			else {
+				otr.receiveMsg(data);
+			}
 
-function ratchetChannels (channelDescriptor) {
-	var init	= !channelDescriptor;
+			logCyphertext(data, authors.friend);
+		}
 
-	/* Block ratchet from being initiated more than once within a five-minute period */
-	if (init) {
-		var last			= lastChannelRatchet;
-		lastChannelRatchet	= Date.now();
+		public send (...messages: Message[]) : void {
+			otr.sendMsg(JSON.stringify(messages));
+		}
 
-		if (lastChannelRatchet - last < 300000) {
-			return;
+		public sendBase (data: string) {
+			this.sendQueue.push(data);
+		}
+
+		public on (event: string, f: Function) : void {
+			this.eventListeners[event]	= this.eventListeners[event] || [];
+			this.eventListeners[event].push(f);
 		}
 	}
-
-
-	if (newChannel) {
-		destroyCurrentChannel();
-	}
-	else {
-		channelDescriptor	= channelDescriptor || getChannelDescriptor();
-		newChannel			= new Channel(channelDescriptor, {
-			onopen: function () {
-				sendChannelData({Misc: CHANNEL_RATCHET_PREFIX + channelDescriptor});
-
-				if (!init) {
-					setTimeout(destroyCurrentChannel, 10000);
-				}
-			},
-			onmessage: receiveChannelData,
-			onlag: function (lag, region) {
-				if (!isCreator) {
-					ratchetChannels();
-				}
-
-				anal.send({
-					hitType: 'event',
-					eventCategory: 'sqslag',
-					eventAction: 'detected',
-					eventLabel: region,
-					eventValue: lag
-				});
-			}
-		});
-	}
 }
-
-
-
-/* Event loop for processing incoming messages */
-
-onTick(function (now) {
-	/*** send ***/
-	if (
-		isAlive &&
-		sendChannelDataQueue.length &&
-		(
-			sendChannelDataQueue.length >= 4 ||
-			!lastOutgoingMessageTimestamp ||
-			(now - lastOutgoingMessageTimestamp) > 500
-		)
-	) {
-		var sendChannelDataQueueSlice	= sendChannelDataQueue.slice(0, 4);
-		sendChannelDataQueue			= sendChannelDataQueue.slice(4);
-
-		sendChannelDataHandler(sendChannelDataQueueSlice);
-	}
-
-	/*** receive ***/
-	else if (receiveChannelDataQueue.length) {
-		receiveChannelDataHandler(receiveChannelDataQueue.shift());
-	}
-
-	/*** otrWorker onmessage ***/
-	else if (otrWorkerOnMessageQueue.length) {
-		otrWorkerOnMessageHandler(otrWorkerOnMessageQueue.shift());
-	}
-
-	/*** else ***/
-	else {
-		return false;
-	}
-
-	return true;
-});

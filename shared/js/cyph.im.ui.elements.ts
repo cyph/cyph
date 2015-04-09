@@ -3,7 +3,7 @@
 
 
 module UI {
-	class Elements {
+	export class Elements {
 		public static window: JQuery			= $(window);
 		public static html: JQuery				= $('html');
 		public static everything: JQuery		= $('*');

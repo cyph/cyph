@@ -1,7 +1,7 @@
 /// <reference path="globals.ts" />
 
 
-var Strings: {[name: string] : string}	= {
+var Strings	= {
 	description: '',
 	newMessageNotification: '',
 	connectedNotification: '',
