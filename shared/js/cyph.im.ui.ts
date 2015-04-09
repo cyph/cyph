@@ -66,7 +66,7 @@ angular.
 
 		/* https://coderwall.com/p/ngisma */
 		updateUI	= function (fn) {
-			var phase = $scope['$root']['$$phase'];
+			let phase = $scope['$root']['$$phase'];
 
 			if (phase == '$apply' || phase == '$digest') {
 				fn && (typeof(fn) === 'function') && fn();
@@ -160,17 +160,17 @@ angular.
 					if (!Env.isMobile) {
 						setTimeout(function () {
 							ui.elements.buttons.each(function () {
-								var $this		= $(this);
-								var $clone		= $this
+								let $this		= $(this);
+								let $clone		= $this
 									.clone()
 									.css({display: 'inline', width: 'auto', visibility: 'hidden', position: 'fixed'})
 									.appendTo('body')
 								;
-								var $both		= $this.add($clone);
+								let $both		= $this.add($clone);
 
-								var fontSize	= parseInt($this.css('font-size'), 10);
+								let fontSize	= parseInt($this.css('font-size'), 10);
 
-								for (var i = 0 ; i < 20 && $clone.width() > $this.width() ; ++i) {
+								for (let i = 0 ; i < 20 && $clone.width() > $this.width() ; ++i) {
 									fontSize	-= 1;
 									$both.css('font-size', fontSize + 'px');
 								}
@@ -193,7 +193,7 @@ angular.
 			else {
 				changeState($scope.states.keyExchange);
 
-				var intervalId	= setInterval(function () {
+				let intervalId	= setInterval(function () {
 					if (hasKeyExchangeBegun) {
 						clearInterval(intervalId);
 						dothemove();
@@ -206,7 +206,7 @@ angular.
 		beginWaiting = $scope.beginWaiting = function () {
 			changeState($scope.states.waitingForFriend);
 
-			var copyUrl		=
+			let copyUrl		=
 				((!Env.isOnion && location.origin) || 'https://www.cyph.im') +
 				'/#' +
 				cyphId +
@@ -235,7 +235,7 @@ angular.
 				});
 			}
 			else {
-				var copyUrlInterval	= setInterval(function () {
+				let copyUrlInterval	= setInterval(function () {
 					if ($scope.state == $scope.states.waitingForFriend) {
 						setCopyUrl();
 						ui.elements.copyUrlInput.focus();
@@ -248,7 +248,7 @@ angular.
 			}
 
 			if (Env.isIE) {
-				var expireTime	= new Date(Date.now() + 600000)
+				let expireTime	= new Date(Date.now() + 600000)
 					.toLocaleTimeString()
 					.toLowerCase()
 					.replace(/(.*:.*):.*? /, '$1')
@@ -298,9 +298,9 @@ angular.
 
 
 		confirmDialog = $scope.confirmDialog = function (o, callback, opt_timeout) {
-			var promise	= $mdDialog.show($mdDialog.confirm(o));
+			let promise	= $mdDialog.show($mdDialog.confirm(o));
 
-			var timeoutId;
+			let timeoutId;
 			if (opt_timeout) {
 				timeoutId	= setTimeout(function () {
 					$mdDialog.cancel(promise);
@@ -356,12 +356,12 @@ angular.
 		};
 
 
-		var imageFile;
-		var photoMax	= 1920;
-		var canvas		= document.createElement('canvas');
-		var ctx			= canvas.getContext('2d');
-		var img			= new Image;
-		var reader		= new FileReader;
+		let imageFile;
+		let photoMax	= 1920;
+		let canvas		= document.createElement('canvas');
+		let ctx			= canvas.getContext('2d');
+		let img			= new Image;
+		let reader		= new FileReader;
 
 		function sendImage (result) {
 			sendMessage('![](' + result + ')');
@@ -372,23 +372,23 @@ angular.
 		};
 
 		img.onload	= function () {
-			var widthFactor		= photoMax / img.width;
+			let widthFactor		= photoMax / img.width;
 			widthFactor			= widthFactor > 1 ? 1 : widthFactor;
-			var heightFactor	= photoMax / img.height;
+			let heightFactor	= photoMax / img.height;
 			heightFactor		= heightFactor > 1 ? 1 : heightFactor;
-			var factor			= Math.min(widthFactor, heightFactor);
+			let factor			= Math.min(widthFactor, heightFactor);
 
 			canvas.width		= img.width * factor;
 			canvas.height		= img.height * factor;
 
 			ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-			var hasTransparency	=
+			let hasTransparency	=
 				imageFile.type != 'image/jpeg' &&
 				ctx.getImageData(0, 0, img.width, img.height).data[3] != 255
 			;
 
-			var result	= hasTransparency ? canvas.toDataURL() : canvas.toDataURL(
+			let result	= hasTransparency ? canvas.toDataURL() : canvas.toDataURL(
 				'image/jpeg',
 				Math.min(960 / Math.max(canvas.width, canvas.height), 1)
 			);
@@ -401,9 +401,9 @@ angular.
 		/* More reliable hack to handle these buttons */
 		$(function () {
 			ui.elements.buttons.find('input[type="file"]').each(function () {
-				var elem	= this;
+				let elem	= this;
 
-				var isClicked;
+				let isClicked;
 
 				$(this).click(function (e) {
 					e.stopPropagation();
@@ -412,11 +412,11 @@ angular.
 					if (!isClicked) {
 						isClicked	= true;
 
-						var e	= document.createEvent('MouseEvents');
+						let e	= document.createEvent('MouseEvents');
 						e.initEvent('click', true, false);
 						elem.dispatchEvent(e);
 
-						var finish, intervalId;
+						let finish, intervalId;
 
 						finish	= function () {
 							clearInterval(intervalId);
@@ -493,12 +493,12 @@ angular.
 
 		/* Crazy fix to prevent jankiness upon message send on mobile */
 		if (Env.isMobile) {
-			var mobileButtons	= [ui.elements.sendButton, ui.elements.insertPhotoMobile];
+			let mobileButtons	= [ui.elements.sendButton, ui.elements.insertPhotoMobile];
 
 			ui.elements.messageBox.click(function (e) {
-				for (var i = 0 ; i < mobileButtons.length ; ++i) {
-					var $button	= mobileButtons[i];
-					var bounds	= $button.bounds();
+				for (let i = 0 ; i < mobileButtons.length ; ++i) {
+					let $button	= mobileButtons[i];
+					let bounds	= $button.bounds();
 
 					if (
 						(e.pageY > bounds.top && e.pageY < bounds.bottom) &&
@@ -520,7 +520,7 @@ angular.
 
 
 
-		var isButtonClickLocked;
+		let isButtonClickLocked;
 
 		$scope.baseButtonClick	= function (callback) {
 			if (!isButtonClickLocked) {
@@ -573,10 +573,10 @@ angular.
 		};
 
 
-		var imtypingyo, previousMessage;
+		let imtypingyo, previousMessage;
 
 		$scope.onMessageChange	= function () {
-			var newImtypingYo	= $scope.message != '' && $scope.message != previousMessage;
+			let newImtypingYo	= $scope.message != '' && $scope.message != previousMessage;
 			previousMessage		= $scope.message;
 
 			if (imtypingyo != newImtypingYo) {
@@ -595,7 +595,7 @@ angular.
 		};
 
 
-		var scrollDownLock	= 0;
+		let scrollDownLock	= 0;
 
 		$scope.scrollDown	= function (shouldScrollCyphertext) {
 			if (scrollDownLock < 1) {
@@ -622,9 +622,9 @@ angular.
 		};
 
 
-		var showCyphertextLock	= false;
-		var curtainClass		= 'curtain';
-		var cypherToastPosition	= 'top right';
+		let showCyphertextLock	= false;
+		let curtainClass		= 'curtain';
+		let cypherToastPosition	= 'top right';
 
 		$scope.closeCyphertext	= function () {
 			if ($('.' + curtainClass).length < 1) {
@@ -730,7 +730,7 @@ angular.
 
 
 		$scope.webRTCDisabledAlert	= function () {
-			var message	= $('#webrtc-disabled-message').attr('title');
+			let message	= $('#webrtc-disabled-message').attr('title');
 
 			if (message) {
 				alertDialog({
@@ -751,16 +751,16 @@ angular.
 
 		/* Notifications */
 
-		var notifyTitle			= 'Cyph';
-		var notifyIcon			= '/img/favicon/apple-touch-icon-180x180.png';
-		var notifyAudio			= new Audio('/audio/beep.mp3');
-		var disableNotify		= false;
-		var openNotifications	= [];
+		let notifyTitle			= 'Cyph';
+		let notifyIcon			= '/img/favicon/apple-touch-icon-180x180.png';
+		let notifyAudio			= new Audio('/audio/beep.mp3');
+		let disableNotify		= false;
+		let openNotifications	= [];
 
 		notify	= function (message) {
 			if (!disableNotify && Visibility.hidden()) {
 				if (window.Notification) {
-					var notification	= new Notification(notifyTitle, {body: message, icon: notifyIcon});
+					let notification	= new Notification(notifyTitle, {body: message, icon: notifyIcon});
 
 					openNotifications.push(notification);
 
@@ -791,7 +791,7 @@ angular.
 
 		/* Init */
 
-		var setUpFullScreenEvent;
+		let setUpFullScreenEvent;
 
 		if (Env.isMobile) {
 			ui.elements.html.addClass('mobile');
@@ -801,7 +801,7 @@ angular.
 			});
 		}
 		else {
-			var messageBoxLineHeight	= parseInt(ui.elements.messageBox.css('line-height'), 10);
+			let messageBoxLineHeight	= parseInt(ui.elements.messageBox.css('line-height'), 10);
 			ui.elements.messageBox.on('keyup', function () {
 				ui.elements.messageBox.height(messageBoxLineHeight * ui.elements.messageBox.val().split('\n').length);
 			});
@@ -838,14 +838,14 @@ angular.
 			}
 		});
 
-		var observer	= new MutationObserver(function (mutations) {
+		let observer	= new MutationObserver(function (mutations) {
 			mutations.forEach(function (mutation) {
-				var $elem		= $(mutation.addedNodes.length > 0 ? mutation.addedNodes[0] : mutation.target);
+				let $elem		= $(mutation.addedNodes.length > 0 ? mutation.addedNodes[0] : mutation.target);
 
 				/* Process read-ness and scrolling */
 				if ($elem.is('.message-item.unread')) {
-					var isHidden	= Visibility.hidden();
-					var currentScrollPosition	=
+					let isHidden	= Visibility.hidden();
+					let currentScrollPosition	=
 						ui.elements.messageList[0].scrollHeight -
 						(ui.elements.messageList[0].scrollTop + ui.elements.messageList[0].clientHeight)
 					;
@@ -859,7 +859,7 @@ angular.
 						if ((isHidden || !$elem.is(':appeared')) && !$elem.find('*').add($elem.parentsUntil().addBack()).is('.app-message')) {
 							updateUI(function () { $scope.unreadMessages += 1 });
 
-							var intervalId	= setInterval(function () {
+							let intervalId	= setInterval(function () {
 								if (!Visibility.hidden() && ($elem.is(':appeared') || $elem.nextAll('.message-item:not(.unread)').length > 0)) {
 									clearInterval(intervalId);
 									$elem.removeClass('unread');
@@ -876,13 +876,13 @@ angular.
 
 				/* Process image lightboxes */
 				else if ($elem.is('p:not(.processed)')) {
-					var $html	= $($elem[0].outerHTML);
+					let $html	= $($elem[0].outerHTML);
 
 					$html.find('img:not(.emoji)').each(function () {
-						var $this	= $(this);
+						let $this	= $(this);
 
 						if ($this.parent().prop('tagName').toLowerCase() != 'a') {
-							var $a	= $('<a></a>')
+							let $a	= $('<a></a>')
 							$a.attr('href', $this.attr('src'));
 
 							$this.before($a);
@@ -916,7 +916,7 @@ angular.
 
 		/***** Temporarily copypasta'd beta signup stuff from cyph.com.ui.js, pending refactor *****/
 
-		var $betaSignupForm		= $('.beta-signup-form');
+		let $betaSignupForm		= $('.beta-signup-form');
 
 		$scope.betaSignupState	= 0;
 
@@ -939,13 +939,13 @@ angular.
 
 			setTimeout(function () {
 				/* Temporary workaround */
-				var $input	= $betaSignupForm.find('input:visible');
+				let $input	= $betaSignupForm.find('input:visible');
 				if ($input.length == 1) {
 					$input.focus();
 				}
 			}, 100);
 
-			var retries	= 0;
+			let retries	= 0;
 			function dothemove () {
 				$.ajax({
 					type: 'PUT',

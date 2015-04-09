@@ -12,10 +12,10 @@ class Util {
 	}
 
 	public static getTimestamp () : string {
-		var date: Date		= new Date;
-		var hour: number	= date.getHours();
-		var ampm: string	= 'am';
-		var minute: string	= ('0' + date.getMinutes()).slice(-2);
+		let date: Date		= new Date;
+		let hour: number	= date.getHours();
+		let ampm: string	= 'am';
+		let minute: string	= ('0' + date.getMinutes()).slice(-2);
 
 		if (hour >= 12) {
 			hour	-= 12;
@@ -29,17 +29,17 @@ class Util {
 	}
 
 	public static getUrlState (fragmentOnly?: boolean) : string {
-		var fragment: string	= location.hash.split('#')[1] || '';
+		let fragment: string	= location.hash.split('#')[1] || '';
 
 		if (fragmentOnly || fragment) {
 			return fragment;
 		}
 
 
-		var split: string[]	= location.pathname.split('/');
+		let split: string[]	= location.pathname.split('/');
 
-		var a: string	= split.slice(-1)[0] || '';
-		var b: string	= split.slice(-2)[0] || '';
+		let a: string	= split.slice(-1)[0] || '';
+		let b: string	= split.slice(-2)[0] || '';
 
 		if (!a && b) {
 			return b;
@@ -49,7 +49,7 @@ class Util {
 	}
 
 	public static openUrl (url: string, downloadName?: string) : void {
-		var a: any		= document.createElement('a');
+		let a: any		= document.createElement('a');
 		a.href			= url;
 		a.target		= '_blank';
 		a.style.display	= 'none';
@@ -76,7 +76,7 @@ class Util {
 	}
 
 	public static pushState (path: string, shouldReplace?: boolean, shouldNotProcess?: boolean) : void {
-		var history;
+		let history;
 
 		if (history) {
 			if (shouldReplace) {
@@ -99,11 +99,11 @@ class Util {
 	}
 
 	public static readableByteLength (b: number) : string {
-		var gb: number	= b / 1.074e+9;
-		var mb: number	= b / 1.049e+6;
-		var kb: number	= b / 1024;
+		let gb: number	= b / 1.074e+9;
+		let mb: number	= b / 1.049e+6;
+		let kb: number	= b / 1024;
 
-		var o	=
+		let o	=
 			gb >= 1 ?
 				{n: gb, s: 'G'} :
 				mb >= 1 ?
@@ -117,7 +117,7 @@ class Util {
 	}
 
 	public static retryUntilComplete (f: Function, retryIf?: Function) : void {
-		var dothemove	= () : void =>
+		let dothemove	= () : void =>
 			f((delay: number = 250) : void => {
 				if (!retryIf || retryIf()) {
 					setTimeout(dothemove, delay);

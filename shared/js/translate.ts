@@ -1,6 +1,6 @@
-var defaultLanguage			= 'en';
+let defaultLanguage			= 'en';
 
-var language				= (
+let language				= (
 	navigator.language ||
 	navigator.userLanguage ||
 	navigator.browserLanguage ||
@@ -8,9 +8,9 @@ var language				= (
 	defaultLanguage
 ).toLowerCase();
 
-var languagePair			= language.split('-');
+let languagePair			= language.split('-');
 
-var translatedAttributes	= ['content', 'placeholder', 'aria-label', 'label'];
+let translatedAttributes	= ['content', 'placeholder', 'aria-label', 'label'];
 
 function htmlDecode (value) {
 	return $('<div />').html(value).text();
@@ -34,8 +34,8 @@ if (typeof translations != 'undefined') {
 
 
 	if (language != defaultLanguage) {
-		var o			= {};
-		var translation	= translations[language];
+		let o			= {};
+		let translation	= translations[language];
 
 		if (translation) {
 			Object.keys(translation).forEach(function (k) {
@@ -49,16 +49,16 @@ if (typeof translations != 'undefined') {
 
 		$(function () {
 			$('[translate]').each(function () {
-				var $this	= $(this);
-				var ngBind	= $this.attr('ng-bind');
-				var html	= $this.html().trim();
+				let $this	= $(this);
+				let ngBind	= $this.attr('ng-bind');
+				let html	= $this.html().trim();
 
-				for (var i = 0 ; i < translatedAttributes.length ; ++i) {
-					var attr	= translatedAttributes[i];
-					var value	= $this.attr(attr);
+				for (let i = 0 ; i < translatedAttributes.length ; ++i) {
+					let attr	= translatedAttributes[i];
+					let value	= $this.attr(attr);
 
 					if (value) {
-						var valueTranslation	= translation[value];
+						let valueTranslation	= translation[value];
 
 						if (valueTranslation) {
 							$this.attr(attr, valueTranslation);
@@ -68,7 +68,7 @@ if (typeof translations != 'undefined') {
 
 				if (ngBind) {
 					$this.attr('ng-bind', ngBind.replace(/"([^"]*)"/g, function (match, value) {
-						var valueTranslation	= translation[value];
+						let valueTranslation	= translation[value];
 
 						if (valueTranslation) {
 							return '"' + valueTranslation + '"';
@@ -81,7 +81,7 @@ if (typeof translations != 'undefined') {
 
 				if (html) {
 					$this.html(html.replace(/(.*?)(\{\{.*?\}\}|$)/g, function (match, value, binding) {
-						var valueTranslation	= translation[value];
+						let valueTranslation	= translation[value];
 
 						if (valueTranslation) {
 							return valueTranslation + binding;

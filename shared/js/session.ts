@@ -73,7 +73,7 @@ module Session {
 		public sharedSecret: string;
 
 		private close (hasReceivedDestroySignal?: boolean) : void {
-			var closeChat: Function	= () =>
+			let closeChat: Function	= () =>
 				this.trigger(Events.closeChat)
 			;
 
@@ -109,7 +109,7 @@ module Session {
 		/* Intermittent check to verify chat is still alive
 			and send fake encrypted chatter */
 		private pingPong () : void {
-			var nextPing: number	= 0;
+			let nextPing: number	= 0;
 
 			new Timer((now: number) => {
 				if (now - this.lastIncomingMessageTimestamp > 180000) {
@@ -148,7 +148,7 @@ module Session {
 				descriptor	= Util.generateGuid(Config.secretLength);
 			}
 
-			var middle: number	= Math.ceil(descriptor.length / 2);
+			let middle: number	= Math.ceil(descriptor.length / 2);
 
 			this.cyphId			= descriptor.substr(0, middle);
 			this.sharedSecret	= this.sharedSecret || descriptor.substr(middle);
@@ -179,8 +179,8 @@ module Session {
 		}
 
 		private trigger (event: string, data?: any) : void {
-			var eventListeners	= this.eventListeners[event];
-			for (var i = 0 ; eventListeners && i < eventListeners.length ; ++i) {
+			let eventListeners	= this.eventListeners[event];
+			for (let i = 0 ; eventListeners && i < eventListeners.length ; ++i) {
 				eventListeners[i](data);
 			}
 		}
@@ -208,7 +208,7 @@ module Session {
 			}
 
 			Util.retryUntilComplete(retry => {
-				var channelDescriptor: string	= this.isStartingNewCyph === false ? '' : Channel.getChannelDescriptor();
+				let channelDescriptor: string	= this.isStartingNewCyph === false ? '' : Channel.getChannelDescriptor();
 
 				$.ajax({
 					type: 'POST',
@@ -255,7 +255,7 @@ module Session {
 
 				/*** otrWorker onmessage ***/
 				else if (otrWorkerOnMessageQueue.length) {
-					var e	= otrWorkerOnMessageQueue.shift();
+					let e	= otrWorkerOnMessageQueue.shift();
 
 					switch (e.data.eventName) {
 						case 'ui':

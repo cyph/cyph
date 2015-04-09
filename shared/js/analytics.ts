@@ -79,4 +79,4 @@ class Analytics {
 }
 
 
-var anal: Analytics	= new Analytics;
+let anal: Analytics	= new Analytics;

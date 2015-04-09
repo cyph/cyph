@@ -1,7 +1,7 @@
 /* An almost-compatible replacement for visibilityjs that actually works */
 
 function FocusVisibility () {
-	var self	= this;
+	let self	= this;
 
 	self._callbacks	= [];
 	self._hidden	= false;
@@ -13,10 +13,10 @@ function FocusVisibility () {
 			if (self._hidden != isHidden) {
 				self._hidden	= isHidden;
 
-				var state	= isHidden ? 'hidden' : 'visible';
+				let state	= isHidden ? 'hidden' : 'visible';
 
-				for (var i = 0 ; i < self._callbacks.length ; ++i) {
-					var callback	= self._callbacks[i];
+				for (let i = 0 ; i < self._callbacks.length ; ++i) {
+					let callback	= self._callbacks[i];
 					callback && callback(e, state);
 				}
 			}

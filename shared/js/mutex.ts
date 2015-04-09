@@ -1,4 +1,4 @@
-var mutex	= {
+let mutex	= {
 	owner: null,
 	comment: null,
 	requester: null,
@@ -36,10 +36,10 @@ var mutex	= {
 		}
 
 		if (f) {
-			var tickId, friendHadLockFirst, friendLockComment;
+			let tickId, friendHadLockFirst, friendLockComment;
 
-			var runIfOwner	= function () {
-				var isOwner	= mutex.owner == authors.me;
+			let runIfOwner	= function () {
+				let isOwner	= mutex.owner == authors.me;
 
 				if (isOwner) {
 					tickOff(tickId);

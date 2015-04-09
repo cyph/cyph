@@ -12,20 +12,20 @@ class Thread {
 	private worker: Worker;
 
 	public constructor (f: Function, vars?: {[name: string] : any}, onMessage?: (ev: MessageEvent) => any) {
-		var s	= f.toString();
+		let s	= f.toString();
 		s		=
-			(vars ? 'var vars = ' + JSON.stringify(vars) + ';\n' : '') +
+			(vars ? 'let vars = ' + JSON.stringify(vars) + ';\n' : '') +
 			s.slice(s.indexOf('{') + 1, s.lastIndexOf('}'))
 		;
 
 		try {
-			var blob, blobUrl;
+			let blob, blobUrl;
 
 			try {
 				blob	= new Blob([s], {type: 'application/javascript'});
 			}
 			catch (e) {
-				var blobBuilder	= new Thread.BlobBuilder();
+				let blobBuilder	= new Thread.BlobBuilder();
 				blobBuilder.append(s);
 
 				blob	= blobBuilder.getBlob();

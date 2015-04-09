@@ -14,12 +14,12 @@ class Timer {
 			Timer.timerLock	= true;
 
 			try {
-				var exception: any;
+				let exception: any;
 
-				var now	= Date.now();
+				let now	= Date.now();
 
-				for (var i = 0 ; i < Timer.timers.length ; ++i) {
-					var f	= Timer.timers[i];
+				for (let i = 0 ; i < Timer.timers.length ; ++i) {
+					let f	= Timer.timers[i];
 
 					if (f) {
 						try {

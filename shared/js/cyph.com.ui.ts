@@ -1,26 +1,26 @@
-var openPodcast, openAbout, openFaq, openTos, openPrivacyPolicy, openError;
+let openPodcast, openAbout, openFaq, openTos, openPrivacyPolicy, openError;
 
 
 angular.
 	module('Cyph', ['ngMaterial']).
 	controller('CyphController', ['$scope', '$mdSidenav', '$mdToast', function ($scope, $mdSidenav, $mdToast) {
-		var $window				= $(window);
-		var $html				= $('html');
-		var $body				= $html.add($('body'));
-		var $betaSignup			= $('.beta-signup');
-		var $betaSignupForm		= $('.beta-signup-form');
-		var $podcastLogo		= $('.podcast-logo');
-		var $heroText			= $('#hero-section .hero-text');
-		var $featureListItems	= $('.feature-list-item');
-		var $newCyph			= $('#new-cyph');
-		var $newCyphParent		= $newCyph.parent();
-		var $bouncingDownArrow	= $('#bouncing-down-arrow');
-		var $video				= $('#background-video > :first-child');
-		var $founderPhotos		= $('.founder-photos');
-		var $ryanPhoto			= $founderPhotos.children(':nth-child(1)');
-		var $joshPhoto			= $founderPhotos.children(':nth-child(2)');
-		var $fixedHeaderStuff	= $newCyph.add('#main-toolbar').add($bouncingDownArrow);
-		var fixedHeaderClass	= 'fixed-header';
+		let $window				= $(window);
+		let $html				= $('html');
+		let $body				= $html.add($('body'));
+		let $betaSignup			= $('.beta-signup');
+		let $betaSignupForm		= $('.beta-signup-form');
+		let $podcastLogo		= $('.podcast-logo');
+		let $heroText			= $('#hero-section .hero-text');
+		let $featureListItems	= $('.feature-list-item');
+		let $newCyph			= $('#new-cyph');
+		let $newCyphParent		= $newCyph.parent();
+		let $bouncingDownArrow	= $('#bouncing-down-arrow');
+		let $video				= $('#background-video > :first-child');
+		let $founderPhotos		= $('.founder-photos');
+		let $ryanPhoto			= $founderPhotos.children(':nth-child(1)');
+		let $joshPhoto			= $founderPhotos.children(':nth-child(2)');
+		let $fixedHeaderStuff	= $newCyph.add('#main-toolbar').add($bouncingDownArrow);
+		let fixedHeaderClass	= 'fixed-header';
 
 
 		$scope.isAbout			= false;
@@ -35,7 +35,7 @@ angular.
 
 		/* https://coderwall.com/p/ngisma */
 		function apply (fn) {
-			var phase = $scope['$root']['$$phase'];
+			let phase = $scope['$root']['$$phase'];
 
 			if (phase == '$apply' || phase == '$digest') {
 				fn && (typeof(fn) === 'function') && fn();
@@ -120,7 +120,7 @@ angular.
 		}
 
 		if (Env.isMobile || Env.isOnion) {
-			var $mobilePoster	= $('<img />');
+			let $mobilePoster	= $('<img />');
 			$mobilePoster.attr('src', $video.attr('mobile-poster'));
 			$video.replaceWith($mobilePoster);
 			$video				= $mobilePoster;
@@ -135,8 +135,8 @@ angular.
 		}
 		else {
 			$window.scroll(function () {
-				var viewportHeight	= Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-				var scrollTop		= window.pageYOffset;
+				let viewportHeight	= Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+				let scrollTop		= window.pageYOffset;
 
 				if (scrollTop == 0) {
 					$newCyph.css({transform: '', top: ''});
@@ -148,7 +148,7 @@ angular.
 				else {
 					$fixedHeaderStuff.removeClass(fixedHeaderClass);
 
-					var ratio	= (viewportHeight - scrollTop) / viewportHeight;
+					let ratio	= (viewportHeight - scrollTop) / viewportHeight;
 
 					if (ratio > 0.62) {
 						$newCyph.css('transform', 'scale(' + ratio + ')');
@@ -169,16 +169,16 @@ angular.
 
 		/* Background video dimensions */
 
-		var addressBarHeight		= 60;
-		var videoAspectRatio		= 16 / 9;
+		let addressBarHeight		= 60;
+		let videoAspectRatio		= 16 / 9;
 
-		var logoHidePaddingWidth	= 150;
-		var logoHidePaddingHeight	= (logoHidePaddingWidth / videoAspectRatio);
+		let logoHidePaddingWidth	= 150;
+		let logoHidePaddingHeight	= (logoHidePaddingWidth / videoAspectRatio);
 
-		var previousAspectRatio;
-		var previousHeight			= window.innerHeight;
+		let previousAspectRatio;
+		let previousHeight			= window.innerHeight;
 
-		var pullInterval;
+		let pullInterval;
 
 		function adjustVideoMargins () {
 			if (!Env.isMobile || Env.isTablet) {
@@ -187,20 +187,20 @@ angular.
 
 				setTimeout(function () {
 					[[0, 3], [1, 4], [2, 5]].forEach(function (pair) {
-						var $a	= $featureListItems.eq(pair[0]);
-						var $b	= $featureListItems.eq(pair[1]);
+						let $a	= $featureListItems.eq(pair[0]);
+						let $b	= $featureListItems.eq(pair[1]);
 
 						$a.add($b).height(Math.max($a.height(), $b.height()));
 					});
 
 					clearInterval(pullInterval);
-					var pullInterval	= setInterval(function () {
-						var $pulledElements	= $featureListItems.filter('.animated').find('[class*="pull"]');
+					let pullInterval	= setInterval(function () {
+						let $pulledElements	= $featureListItems.filter('.animated').find('[class*="pull"]');
 
 						setTimeout(function () {
 							$pulledElements.each(function () {
-								var $this	= $(this);
-								var offset	= $this.offset();
+								let $this	= $(this);
+								let offset	= $this.offset();
 
 								if (offset.left < 0) {
 									$this.css('left', '0px');
@@ -212,12 +212,12 @@ angular.
 			}
 
 
-			var heightDelta			= window.innerHeight - previousHeight;
-			var isAddressBarHidden	= heightDelta > 0 && heightDelta < 75;
+			let heightDelta			= window.innerHeight - previousHeight;
+			let isAddressBarHidden	= heightDelta > 0 && heightDelta < 75;
 			previousHeight			= window.innerHeight;
 
-			var windowAspectRatio	= window.innerWidth / window.innerHeight;
-			var aspectRatio			= windowAspectRatio > videoAspectRatio;
+			let windowAspectRatio	= window.innerWidth / window.innerHeight;
+			let aspectRatio			= windowAspectRatio > videoAspectRatio;
 
 			if (aspectRatio == previousAspectRatio && isAddressBarHidden) {
 				return;
@@ -226,7 +226,7 @@ angular.
 			previousAspectRatio		= aspectRatio;
 
 			if (aspectRatio) {
-				var height	= window.innerWidth / videoAspectRatio;
+				let height	= window.innerWidth / videoAspectRatio;
 
 				$video.css({
 					'height': height,
@@ -236,8 +236,8 @@ angular.
 				});
 			}
 			else {
-				var height	= window.innerHeight + addressBarHeight;
-				var width	= videoAspectRatio * height;
+				let height	= window.innerHeight + addressBarHeight;
+				let width	= videoAspectRatio * height;
 
 				$video.css({
 					'height': height,
@@ -276,13 +276,13 @@ angular.
 
 			setTimeout(function () {
 				/* Temporary workaround */
-				var $input	= $betaSignupForm.find('input:visible');
+				let $input	= $betaSignupForm.find('input:visible');
 				if ($input.length == 1) {
 					$input.focus();
 				}
 			}, 100);
 
-			var retries	= 0;
+			let retries	= 0;
 			function dothemove () {
 				$.ajax({
 					type: 'PUT',
@@ -328,16 +328,16 @@ angular.
 		$(function () {
 			$('html').addClass('load-complete');
 
-			var wowDelay			= 'data-wow-delay';
-			var platformWowDelay	= Env.platformString + '-' + wowDelay;
+			let wowDelay			= 'data-wow-delay';
+			let platformWowDelay	= Env.platformString + '-' + wowDelay;
 			$('[' + platformWowDelay + ']').each(function () {
-				var $this	= $(this);
+				let $this	= $(this);
 				$this.attr(wowDelay, $this.attr(platformWowDelay));
 			});
 
-			var platformClass	= Env.platformString + '-class-';
+			let platformClass	= Env.platformString + '-class-';
 			$('[class*="' + platformClass + '"]').each(function () {
-				var $this	= $(this);
+				let $this	= $(this);
 				$this.attr('class', $this.attr('class').replace(new RegExp(platformClass, 'g'), ''));
 			});
 

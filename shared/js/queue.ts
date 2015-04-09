@@ -23,7 +23,7 @@ class Queue implements IConnection {
 			config.endpoint	= 'http://localhost:4568';
 		}
 
-		var wrapper	= {
+		let wrapper	= {
 			innerSqs: new Aws.base.SQS(config)
 		};
 
@@ -42,7 +42,7 @@ class Queue implements IConnection {
 			wrapper[method]	= (o: any, f: Function, shouldretryUntilComplete?: boolean) => {
 				Util.retryUntilComplete(retry =>
 					wrapper.innerSqs[method](o, (...args: any[]) => {
-						var err: any	= args[0];
+						let err: any	= args[0];
 
 						if (shouldretryUntilComplete && err) {
 							retry();
@@ -84,24 +84,24 @@ class Queue implements IConnection {
 			}
 
 			if (handlers.onmessage) {
-				var onlag: Function;
-				var lastReceiveTime: number	= 0;
+				let onlag: Function;
+				let lastReceiveTime: number	= 0;
 
 				setTimeout(() => onlag = handlers.onlag, 60000);
 
 				Util.retryUntilComplete(retry =>
 					this.receive(handlers.onmessage, (...args: any[]) => {
-						var err: any	= args[0];
-						var data: any	= args[1];
+						let err: any	= args[0];
+						let data: any	= args[1];
 
 						if (err && err.code == Queue.nonExistentQueue) {
 							this.isQueueAlive	= false;
 							handlers.onclose && handlers.onclose.apply(this, args);
 						}
 						else if (this.isQueueAlive) {
-							var delay: number		= 50;
-							var now: number			= Date.now();
-							var isEmpty: boolean	= !(data && data.Messages && data.Messages.length > 0);
+							let delay: number		= 50;
+							let now: number			= Date.now();
+							let isEmpty: boolean	= !(data && data.Messages && data.Messages.length > 0);
 
 							if (isEmpty && (now - lastReceiveTime) < 10000) {
 								delay	= 2500;
@@ -112,7 +112,7 @@ class Queue implements IConnection {
 						}
 					}, null, null, onlag && (lag => {
 						if (onlag) {
-							var f	= onlag;
+							let f	= onlag;
 							onlag	= null;
 							setTimeout(() => f(lag, this.sqs.innerSqs.config.region), 0);
 						}
@@ -124,8 +124,8 @@ class Queue implements IConnection {
 					this.sqs.getQueueUrl({
 						QueueName: Queue.queuePrefix + queueName
 					}, (...args: any[]) => {
-						var err: any	= args[0];
-						var data: any	= args[1];
+						let err: any	= args[0];
+						let data: any	= args[1];
 
 						if (err && err.code == Queue.nonExistentQueue) {
 							this.isQueueAlive	= false;
@@ -172,13 +172,13 @@ class Queue implements IConnection {
 				MaxNumberOfMessages: maxNumberOfMessages,
 				WaitTimeSeconds: waitTimeSeconds
 			}, (...args: any[]) => {
-				var err: any	= args[0];
-				var data: any	= args[1];
+				let err: any	= args[0];
+				let data: any	= args[1];
 
 				try {
 					if (data && data.Messages && data.Messages.length > 0) {
 						if (onLag) {
-							var lag: number	=
+							let lag: number	=
 								parseInt(data.Messages[0].Attributes.ApproximateFirstReceiveTimestamp, 10) -
 								parseInt(data.Messages[0].Attributes.SentTimestamp, 10)
 							;
@@ -194,9 +194,9 @@ class Queue implements IConnection {
 						}, () => {});
 
 						if (messageHandler) {
-							for (var i = 0 ; i < data.Messages.length ; ++i) {
-								var message: any		= data.Messages[i];
-								var messageBody: string	= message.Body;
+							for (let i = 0 ; i < data.Messages.length ; ++i) {
+								let message: any		= data.Messages[i];
+								let messageBody: string	= message.Body;
 
 								try {
 									messageBody	= JSON.parse(messageBody).message;
@@ -218,7 +218,7 @@ class Queue implements IConnection {
 	public send (message: string|string[], callback?: Function|Function[], isSynchronous?: boolean) : void {
 		if (this.isQueueAlive) {
 			if (typeof message === 'string' || !message.length) {
-				var messageBody	= JSON.stringify({message: message});
+				let messageBody	= JSON.stringify({message: message});
 
 				if (isSynchronous) {
 					Aws.request({
@@ -240,7 +240,7 @@ class Queue implements IConnection {
 				}
 			}
 			else if (isSynchronous) {
-				for (var i = 0 ; i < message.length ; +i) {
+				for (let i = 0 ; i < message.length ; +i) {
 					this.send(
 						message[i],
 						callback && callback.length ?
@@ -258,8 +258,8 @@ class Queue implements IConnection {
 						MessageBody: JSON.stringify({message: s})
 					}))
 				}, callback && (!callback.length ? callback : (...args: any[]) => {
-					for (var i = 0 ; i < callback.length ; ++i) {
-						var thisCallback	= callback[i];
+					for (let i = 0 ; i < callback.length ; ++i) {
+						let thisCallback	= callback[i];
 
 						if (thisCallback) {
 							try {
