@@ -1,11 +1,11 @@
 /* Logic for handling WebRTC connections (used for file transfers and voice/video chat) */
 
-var PeerConnection		= window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
-var IceCandidate		= window.mozRTCIceCandidate || window.RTCIceCandidate;
-var SessionDescription	= window.mozRTCSessionDescription || window.RTCSessionDescription;
+let PeerConnection		= window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
+let IceCandidate		= window.mozRTCIceCandidate || window.RTCIceCandidate;
+let SessionDescription	= window.mozRTCSessionDescription || window.RTCSessionDescription;
 navigator.getUserMedia	= navigator.getUserMedia || navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
 
-var webRTC	= {
+let webRTC	= {
 	peer: null,
 	channel: null,
 
@@ -69,7 +69,7 @@ var webRTC	= {
 		},
 
 		kill: function () {
-			var wasAccepted				= webRTC.isAccepted;
+			let wasAccepted				= webRTC.isAccepted;
 			webRTC.isAccepted			= false;
 			webRTC.hasSessionStarted	= false;
 
@@ -168,8 +168,8 @@ var webRTC	= {
 				addMessageToChat(Strings.webRTCConnect, authors.app, false);
 			}
 
-			var dc;
-			var pc	= new PeerConnection({
+			let dc;
+			let pc	= new PeerConnection({
 				iceServers: [
 					{url: 'stun:' + webRTC.iceServer, credential: 'cyph', username: 'cyph'},
 					{url: 'turn:' + webRTC.iceServer, credential: 'cyph', username: 'cyph'}
@@ -180,7 +180,7 @@ var webRTC	= {
 
 			pc.onaddstream	= function (e) {
 				if (e.stream && (!webRTC.remoteStream || webRTC.remoteStream.id != e.stream.id)) {
-					var src	= webRTC.$friendStream.attr('src');
+					let src	= webRTC.$friendStream.attr('src');
 					if (src) {
 						URL.revokeObjectURL(src);
 					}
@@ -280,7 +280,7 @@ var webRTC	= {
 		},
 
 		receiveIncomingFile: function (data, name) {
-			var title	= Strings.incomingFile + ' ' + name;
+			let title	= Strings.incomingFile + ' ' + name;
 
 			confirmDialog({
 				title: title,
@@ -320,7 +320,7 @@ var webRTC	= {
 								webRTC.streamOptions.video	= callType == 'video';
 								webRTC.streamOptions.audio	= callType != 'file';
 
-								var o		= {};
+								let o		= {};
 								o[callType]	= true;
 								sendWebRTCDataToPeer(o);
 
@@ -362,8 +362,8 @@ var webRTC	= {
 				return;
 			}
 
-			var $files	= $(webRTC.filesSelector);
-			var file	= $files.
+			let $files	= $(webRTC.filesSelector);
+			let file	= $files.
 				map(function () { return this.files }).
 				toArray().
 				reduce(function (a, b) { return (a && a[0]) ? a : b }, [])[0]
@@ -403,11 +403,11 @@ var webRTC	= {
 
 				webRTC.channel.send(webRTC.fileTransferComplete);
 
-				var reader	= new FileReader;
+				let reader	= new FileReader;
 
 				reader.onloadend	= function (e) {
-					var buf		= e.target.result;
-					var pos		= 0;
+					let buf		= e.target.result;
+					let pos		= 0;
 
 					updateUI(function () {
 						webRTC.outgoingFile.name			= file.name;
@@ -416,15 +416,15 @@ var webRTC	= {
 					});
 					webRTC.channel.send(webRTC.outgoingFile.name + '\n' + webRTC.outgoingFile.size);
 
-					var tickId	= onTick(function () {
+					let tickId	= onTick(function () {
 						if (!webRTC.isAccepted) {
 							tickOff(tickId);
 							return;
 						}
 
 						try {
-							for (var i = 0 ; i < 10 ; ++i) {
-								var old	= pos;
+							for (let i = 0 ; i < 10 ; ++i) {
+								let old	= pos;
 								pos += webRTC.chunkSize;
 								webRTC.channel.send(buf.slice(old, pos));
 							}
@@ -475,8 +475,8 @@ var webRTC	= {
 			webRTC.channel.onmessage	= function (e) {
 				if (typeof e.data == 'string') {
 					if (e.data == webRTC.fileTransferComplete) {
-						var data	= webRTC.incomingFile.data;
-						var name	= webRTC.incomingFile.name;
+						let data	= webRTC.incomingFile.data;
+						let name	= webRTC.incomingFile.name;
 
 						updateUI(function () {
 							delete webRTC.incomingFile.data;
@@ -491,7 +491,7 @@ var webRTC	= {
 						}
 					}
 					else {
-						var data	= e.data.split('\n');
+						let data	= e.data.split('\n');
 
 						updateUI(function () {
 							webRTC.incomingFile.data			= [];
@@ -524,7 +524,7 @@ var webRTC	= {
 		},
 
 		setUpStream: function (opt_streamOptions, opt_offer) {
-			var retry	= function () {
+			let retry	= function () {
 				if (webRTC.isAccepted) {
 					setTimeout(function () {
 						webRTC.helpers.setUpStream(opt_streamOptions);
@@ -556,7 +556,7 @@ var webRTC	= {
 				if (wasFirstOfType && webRTC.isAccepted) {
 					webRTC.helpers.init();
 
-					var streamHelper, streamFallback, streamSetup;
+					let streamHelper, streamFallback, streamSetup;
 
 					streamHelper	= function (stream) {
 						if (!webRTC.isAccepted) {
@@ -567,7 +567,7 @@ var webRTC	= {
 							webRTC.localStream.stop();
 							delete webRTC.localStream;
 
-							var src	= webRTC.$meStream.attr('src');
+							let src	= webRTC.$meStream.attr('src');
 							if (src) {
 								URL.revokeObjectURL(src);
 							}
@@ -594,7 +594,7 @@ var webRTC	= {
 						});
 
 
-						var outgoingStream	= JSON.stringify(webRTC.streamOptions);
+						let outgoingStream	= JSON.stringify(webRTC.streamOptions);
 
 						if (!opt_offer) {
 							webRTC.helpers.setUpChannel(true);

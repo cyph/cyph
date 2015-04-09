@@ -1,9 +1,9 @@
 /* TODO: Replace all these one-off functions with a changeState implementation */
 
 processUrlState	= () => {
-	var state	= Util.getUrlState();
+	let state	= Util.getUrlState();
 
-	var isPodcast	= $('[ng-show*="podcast =="]').
+	let isPodcast	= $('[ng-show*="podcast =="]').
 		map(function () { return $(this).attr('ng-show').split('"')[1] }).
 		toArray().
 		indexOf(state) > -1

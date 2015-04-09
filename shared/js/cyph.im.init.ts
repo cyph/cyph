@@ -1,10 +1,10 @@
 function Init () {
-	var CHANNEL_DATA_PREFIX		= 'CHANNEL DATA: ';
-	var CHANNEL_RATCHET_PREFIX	= 'CHANNEL RATCHET: ';
-	var WEBRTC_DATA_PREFIX		= 'WEBRTC: ';
-	var MUTEX_PREFIX			= 'MUTEX: ';
+	let CHANNEL_DATA_PREFIX		= 'CHANNEL DATA: ';
+	let CHANNEL_RATCHET_PREFIX	= 'CHANNEL RATCHET: ';
+	let WEBRTC_DATA_PREFIX		= 'WEBRTC: ';
+	let MUTEX_PREFIX			= 'MUTEX: ';
 
-	var channelDataMisc	= {
+	let channelDataMisc	= {
 		connect: '1',
 		ping: '2',
 		pong: '3',
@@ -18,7 +18,7 @@ function Init () {
 			return;
 		}
 
-		var urlState	= Util.getUrlState();
+		let urlState	= Util.getUrlState();
 
 		/* 404 */
 		if (urlState == '404') {
@@ -52,7 +52,7 @@ function Init () {
 	}
 	else {
 		/* TODO: Init session */
-		var session	= new Session(Util.getUrlState());
+		let session	= new Session(Util.getUrlState());
 		history.pushState({}, '', location.pathname);
 	}
 }

@@ -17,7 +17,7 @@ $(
 	Env.platformString +
 	'-only'
 ).each(function () {
-	var $this	= $(this);
+	let $this	= $(this);
 	$this.attr('src', $this.attr('deferred-src'));
 });
 
@@ -26,11 +26,11 @@ $(
 /* Custom event handlers */
 
 $('[on-enterpress]').each(function () {
-	var $this			= $(this);
-	var enterpressOnly	= $this.attr('enterpress-only');
+	let $this			= $(this);
+	let enterpressOnly	= $this.attr('enterpress-only');
 
 	if (!enterpressOnly || enterpressOnly == Env.platformString) {
-		var onenterpress	= $this.attr('on-enterpress');
+		let onenterpress	= $this.attr('on-enterpress');
 
 		$this.keypress(function (e) {
 			if (e.keyCode == 13 && !e.shiftKey) {
@@ -44,10 +44,10 @@ $('[on-enterpress]').each(function () {
 });
 
 ['click', 'change'].forEach(function (eventName) {
-	var attribute	= 'on-' + eventName;
+	let attribute	= 'on-' + eventName;
 
 	$('[' + attribute + ']').each(function () {
-		var $this	= $(this);
+		let $this	= $(this);
 
 		$this.on(eventName, function () {
 			eval($this.attr(attribute));
@@ -60,8 +60,8 @@ $('[on-enterpress]').each(function () {
 /* Support button-links */
 
 $('button > a').each(function () {
-	var $this	= $(this);
-	var $button	= $this.parent();
+	let $this	= $(this);
+	let $button	= $this.parent();
 
 	$this.css('pointer-events', 'none');
 
@@ -78,10 +78,10 @@ $('button > a').each(function () {
 /* Temporary workaround for Angular Material bug */
 
 if (Env.isMobile) {
-	var previousCoordinates	= {};
+	let previousCoordinates	= {};
 
 	$(window).click(function (e) {
-		var coordinates	= Math.floor(e.clientX || 0) + ',' + Math.floor(e.clientY || 0);
+		let coordinates	= Math.floor(e.clientX || 0) + ',' + Math.floor(e.clientY || 0);
 
 		if (coordinates == '0,0') {
 			return;
@@ -110,7 +110,7 @@ if (Env.isMobile) {
 
 if (!HTMLElement.prototype.click) {
 	HTMLElement.prototype.click	= function () {
-		var e	= document.createEvent('MouseEvents');
+		let e	= document.createEvent('MouseEvents');
 		e.initEvent('click', true, true);
 		this.dispatchEvent(e);
 	}

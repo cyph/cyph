@@ -7,13 +7,13 @@
 
 class Aws {
 	public static base: any	= (() => {
-		var AWS: any;
+		let AWS: any;
 		AWS.config	= new AWS.Config(Config.awsConfig);
 		return AWS;
 	})();
 
 	public static request (o: any, callback?: any) : void {
-		var config	= {
+		let config	= {
 			url: o.url,
 			action: o.action,
 			isSynchronous: !!o.isSynchronous,
@@ -25,25 +25,25 @@ class Aws {
 			params: o.params || {}
 		};
 
-		var date: Date				= new Date;
-		var timestamp: string		= date.toISOString();
-		var dateString: string		= timestamp.split('T')[0].replace(/-/g, '');
+		let date: Date				= new Date;
+		let timestamp: string		= date.toISOString();
+		let dateString: string		= timestamp.split('T')[0].replace(/-/g, '');
 
-		var requestMethod: string	= 'GET';
-		var algorithm: string		= 'AWS4-HMAC-SHA256';
-		var hostHeader: string		= 'host';
-		var terminator: string		= 'aws4_request';
-		var host: string			= config.url.split('/')[2];
-		var uri: string				= config.url.split(host)[1] || '/';
+		let requestMethod: string	= 'GET';
+		let algorithm: string		= 'AWS4-HMAC-SHA256';
+		let hostHeader: string		= 'host';
+		let terminator: string		= 'aws4_request';
+		let host: string			= config.url.split('/')[2];
+		let uri: string				= config.url.split(host)[1] || '/';
 
-		var credential: string		=
+		let credential: string		=
 			dateString + '/' +
 			config.region + '/' +
 			config.service + '/' +
 			terminator
 		;
 
-		var params: {[k: string] : string}	= {};
+		let params: {[k: string] : string}	= {};
 
 		params['Action']	= config.action;
 
@@ -58,13 +58,13 @@ class Aws {
 		params['X-Amz-Date']			= timestamp;
 		params['X-Amz-SignedHeaders']	= hostHeader;
 
-		var query: string	= $.param(params).
+		let query: string	= $.param(params).
 			replace(/\+/g, '%20').
 			replace(/\(/g, '%28').
 			replace(/\)/g, '%29')
 		;
 
-		var canonicalRequest: string	=
+		let canonicalRequest: string	=
 			requestMethod + '\n' +
 			uri + '\n' +
 			query + '\n' +
@@ -73,7 +73,7 @@ class Aws {
 			CryptoJS.SHA256('').toString()
 		;
 
-		var stringToSign: string	=
+		let stringToSign: string	=
 			algorithm + '\n' +
 			timestamp.split('.')[0].match(/[0-9A-Za-z]/g).join('') + 'Z\n' +
 			credential + '\n' +
@@ -81,7 +81,7 @@ class Aws {
 		;
 
 
-		var signature: string	= CryptoJS.HmacSHA256(
+		let signature: string	= CryptoJS.HmacSHA256(
 			stringToSign,
 			CryptoJS.HmacSHA256(
 				terminator,

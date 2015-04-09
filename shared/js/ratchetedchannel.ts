@@ -25,7 +25,7 @@ class RatchetedChannel implements IConnection {
 
 	private destroyCurrentChannel () : void {
 		if (this.newChannel) {
-			var oldChannel: Channel	= this.channel;
+			let oldChannel: Channel	= this.channel;
 			this.channel			= this.newChannel;
 			this.newChannel			= null;
 
@@ -36,11 +36,11 @@ class RatchetedChannel implements IConnection {
 	}
 
 	private ratchetChannels (channelDescriptor?: string) : void {
-		var init: boolean	= !channelDescriptor;
+		let init: boolean	= !channelDescriptor;
 
 		/* Block ratchet from being initiated more than once within a five-minute period */
 		if (init) {
-			var last: number		= this.lastChannelRatchet;
+			let last: number		= this.lastChannelRatchet;
 			this.lastChannelRatchet	= Date.now();
 
 			if (this.lastChannelRatchet - last < 300000) {
@@ -91,7 +91,7 @@ class RatchetedChannel implements IConnection {
 		this.session.on(Session.Events.channelRatchet, this.ratchetChannels);
 
 
-		var onopen: Function	= handlers.onopen;
+		let onopen: Function	= handlers.onopen;
 
 		handlers.onopen		= (isCreator: boolean) : void => {
 			this.isCreator	= isCreator;

@@ -5,10 +5,10 @@
 
 class Errors {
 	private static baseErrorLog (subject: string, shouldIncludeBootstrapText?: boolean) : Function {
-		var numEmails: number	= 0;
+		let numEmails: number	= 0;
 
 		return (errorMessage?: string, url?: string, line?: number, column?: number, errorObject?: any) : void => {
-			var exception: string	= !errorMessage ? '' : (
+			let exception: string	= !errorMessage ? '' : (
 				errorMessage + '\n\n' +
 				'URL: ' + url + '\n' +
 				'Line: ' + line + '\n' +
@@ -16,7 +16,7 @@ class Errors {
 				(errorObject && errorObject.stack)
 			);
 
-			var message: string		= exception +
+			let message: string		= exception +
 				'\n\n' + navigator.userAgent +
 				'\n\n' + navigator.language +
 				'\n\n' + (typeof language == 'undefined' ? '' : language) +

@@ -5,8 +5,8 @@
 /* Get element bounds */
 
 $.fn.bounds	= (e) : {[direction: string] : number} => {
-	var $this: JQuery				= $(e.currentTarget);
-	var bounds: JQueryCoordinates	= $this.offset();
+	let $this: JQuery				= $(e.currentTarget);
+	let bounds: JQueryCoordinates	= $this.offset();
 
 	return {
 		top: bounds.top,
