@@ -11,18 +11,18 @@ class Affiliate {
 
 	public static process ($elem: JQuery, $mdDialog: angular.material.MDDialogService) : void {
 		$elem.find('a').click(e => {
-			var originalUrl: string	= $(e.currentTarget).attr('href') || '';
+			let originalUrl: string	= $(e.currentTarget).attr('href') || '';
 
 			if (originalUrl.substring(0, 5) == 'data:') {
 				return;
 			}
 
-			var asin: string	= (originalUrl.match(/.*amazon.com\/.*\/([A-Za-z0-9]{10}).*/) || [])[1] || '';
+			let asin: string	= (originalUrl.match(/.*amazon.com\/.*\/([A-Za-z0-9]{10}).*/) || [])[1] || '';
 
 			if (asin) {
 				e.preventDefault();
 
-				var affiliateUrl: string	= 'https://www.amazon.com/dp/' + asin + '?tag=cyph-20';
+				let affiliateUrl: string	= 'https://www.amazon.com/dp/' + asin + '?tag=cyph-20';
 
 				function openAmazonUrl (ok: boolean) : void {
 					Util.openUrl(ok ? affiliateUrl : originalUrl);
@@ -61,7 +61,7 @@ class Affiliate {
 						onComplete: () => {
 							if (Env.isMobile) {
 								$('.amazon-link:visible md-checkbox').click(e => {
-									var $this: JQuery	= $(e.currentTarget);
+									let $this: JQuery	= $(e.currentTarget);
 
 									try {
 										$this.css('pointer-events', 'none');

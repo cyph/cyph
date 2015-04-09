@@ -1,1 +1,1 @@
-var translations	= undefined;
+let translations	= undefined;

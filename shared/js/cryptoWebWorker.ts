@@ -4,17 +4,17 @@ function cryptoWebWorker () {
 
 window	= this;
 
-var onmessageQueue		= [];
-var incomingMessages	= {};
-var outgoingMessages	= [];
-var receivedMessages	= {};
-var currentMessageId	= 0;
-var incomingMessageId	= 0;
-var incomingMessagesMax	= 0;
-var otr, isInitiator, sharedSecret, processIncomingMessagesTimeoutID;
+let onmessageQueue		= [];
+let incomingMessages	= {};
+let outgoingMessages	= [];
+let receivedMessages	= {};
+let currentMessageId	= 0;
+let incomingMessageId	= 0;
+let incomingMessagesMax	= 0;
+let otr, isInitiator, sharedSecret, processIncomingMessagesTimeoutID;
 
 function chunkString (s, n) {
-	var arr	= [];
+	let arr	= [];
 
 	while (s.length) {
 		arr.push(s.substr(0, n));
@@ -30,7 +30,7 @@ function getPadding () {
 	).join('');
 }
 
-var paddingDelimiter	= '☁☁☁ PRAISE BE TO CYPH ☀☀☀';
+let paddingDelimiter	= '☁☁☁ PRAISE BE TO CYPH ☀☀☀';
 
 function padMessage (message) {
 	return btoa(unescape(encodeURIComponent(getPadding() + paddingDelimiter + message + paddingDelimiter + getPadding())));
@@ -41,12 +41,12 @@ function padMessageRemove (message) {
 }
 
 window.importScriptsAndRetry	= function () {
-	var origin	= location.origin && location.origin != 'null' ?
+	let origin	= location.origin && location.origin != 'null' ?
 		location.origin :
 		'http://localhost:8082'
 	;
 
-	for (var i = 0 ; i < arguments.length ; ++i) {
+	for (let i = 0 ; i < arguments.length ; ++i) {
 		try {
 			importScripts(origin + arguments[i]);
 		}
@@ -65,13 +65,13 @@ window.importScriptsAndRetry	= function () {
 onmessage	= function (e) { onmessageQueue.push(e) };
 
 function eventLoop () {
-	var delay	= 10;
+	let delay	= 10;
 
 	try {
 		/*** Original onmessage logic ****/
 
 		if (onmessageQueue.length) {
-			var e	= onmessageQueue.shift();
+			let e	= onmessageQueue.shift();
 
 			switch (e.data.method) {
 				/* Init */
@@ -79,8 +79,8 @@ function eventLoop () {
 					sharedSecret	= e.data.message.sharedSecret;
 
 					/* Safely disable console */
-					var noop	= function () {};
-					var methods	= [
+					let noop	= function () {};
+					let methods	= [
 						'assert',
 						'clear',
 						'count',
@@ -109,7 +109,7 @@ function eventLoop () {
 						'warn'
 					];
 					console	= {};
-					for (var i = 0 ; i < methods.length ; ++i) {
+					for (let i = 0 ; i < methods.length ; ++i) {
 						console[methods[i]]	= noop;
 					}
 					delete noop;
@@ -129,9 +129,9 @@ function eventLoop () {
 							isaac.seed(e.data.message.randomSeed);
 							crypto	= {
 								getRandomValues: function (array) {
-									var max	= Math.pow(2, (array.BYTES_PER_ELEMENT || 4) * 8) - 1;
+									let max	= Math.pow(2, (array.BYTES_PER_ELEMENT || 4) * 8) - 1;
 
-									for (var i = 0 ; i < array.length ; ++i) {
+									for (let i = 0 ; i < array.length ; ++i) {
 										array[i]	= Math.floor(isaac.random() * max);
 									}
 
@@ -143,7 +143,7 @@ function eventLoop () {
 
 					window.importScriptsAndRetry('/cryptolib/bower_components/otr4-em/build/otr-web.js');
 
-					var user	= new OTR.User().account('me', 'cyph');
+					let user	= new OTR.User().account('me', 'cyph');
 
 					user.generateInstag(function () {
 						user.generateKey(function () {
@@ -171,7 +171,7 @@ function eventLoop () {
 
 							otr.on('message', function (message, wasEncrypted) {
 								if (wasEncrypted) {
-									var o	= JSON.parse(message);
+									let o	= JSON.parse(message);
 
 									if (!receivedMessages[o.id]) {
 										receivedMessages[o.id]	= {
@@ -200,7 +200,7 @@ function eventLoop () {
 								})});
 							});
 
-							var isConnected;
+							let isConnected;
 							otr.on('gone_secure', function () {
 								if (!isConnected) {
 									isConnected	= true;
@@ -228,10 +228,10 @@ function eventLoop () {
 
 				/* Send message */
 				case 2:
-					var id			= crypto.getRandomValues(new Uint32Array(1))[0];
-					var messages	= chunkString(e.data.message, 5120);
+					let id			= crypto.getRandomValues(new Uint32Array(1))[0];
+					let messages	= chunkString(e.data.message, 5120);
 
-					for (var i = 0 ; i < messages.length ; ++i) {
+					for (let i = 0 ; i < messages.length ; ++i) {
 						outgoingMessages.push(JSON.stringify({
 							id: id,
 							index: i,
@@ -243,7 +243,7 @@ function eventLoop () {
 
 				/* Receive message */
 				case 3:
-					var o	= JSON.parse(e.data.message);
+					let o	= JSON.parse(e.data.message);
 
 					if (o.id >= incomingMessageId) {
 						incomingMessages[o.id]	= o.message;

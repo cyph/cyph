@@ -3,16 +3,16 @@
 
 
 (() => {
-	var title: string	= 'ngMarkdown';
+	let title: string	= 'ngMarkdown';
 
 
-	var markdownit: any;
-	var markdownitSup: any;
-	var markdownitEmoji: any;
-	var hljs: any;
-	var twemoji: any;
+	let markdownit: any;
+	let markdownitSup: any;
+	let markdownitEmoji: any;
+	let hljs: any;
+	let twemoji: any;
 
-	var markdown	= new markdownit({
+	let markdown	= new markdownit({
 		html: false,
 		linkify: true,
 		typographer: true,

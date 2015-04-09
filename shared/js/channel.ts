@@ -29,7 +29,7 @@ class Channel implements IConnection {
 
 	public constructor (channelName: string, handlers: any = {}, config: any = {}) {
 		try {
-			var descriptor: any	= JSON.parse(channelName);
+			let descriptor: any	= JSON.parse(channelName);
 			channelName			= descriptor.name;
 			config.region		= descriptor.region;
 		}
@@ -37,13 +37,13 @@ class Channel implements IConnection {
 
 		this.sqs	= Queue.sqsWrapper(config);
 
-		var onclose	= () =>
+		let onclose	= () =>
 			this.close(handlers.onclose)
 		;
 
-		var onconnect	= () : boolean => {
+		let onconnect	= () : boolean => {
 			if (handlers.onconnect) {
-				var f: Function	= handlers.onconnect;
+				let f: Function	= handlers.onconnect;
 				delete handlers.onconnect;
 
 				f();
@@ -58,7 +58,7 @@ class Channel implements IConnection {
 		this.sqs.getQueueUrl({
 			QueueName: Queue.queuePrefix + channelName + Channel.channelIds(true)
 		}, (err, data) => {
-			var isCreator: boolean	= !!err;
+			let isCreator: boolean	= !!err;
 
 			this.inQueue	= new Queue(channelName + Channel.channelIds(isCreator), {
 				onmessage: (message: string) => {
@@ -74,10 +74,10 @@ class Channel implements IConnection {
 						onopen: () => {
 							/* Keep this channel alive by touching it every 10 minutes */
 
-							var lastTouched: number		= Date.now();
-							var periodToggle: boolean	= false;
+							let lastTouched: number		= Date.now();
+							let periodToggle: boolean	= false;
 
-							var timer: Timer	= new Timer((now: number) => {
+							let timer: Timer	= new Timer((now: number) => {
 								if (!this.inQueue.isAlive) {
 									timer.stop();
 								}

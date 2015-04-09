@@ -1,10 +1,10 @@
-var otrWorkerOnMessageQueue			= [];
+let otrWorkerOnMessageQueue			= [];
 
-var otrWorker		= makeWorker(cryptoWebWorker);
+let otrWorker		= makeWorker(cryptoWebWorker);
 
 otrWorker.onmessage	= function (e) { otrWorkerOnMessageQueue.push(e) };
 
-var otr	= {
+let otr	= {
 	sendQueryMsg: function () {
 		if (isOtrReady) {
 			otrWorker && otrWorker.postMessage({method: 1});
