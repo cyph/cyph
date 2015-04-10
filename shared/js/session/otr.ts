@@ -21,7 +21,7 @@ module Session {
 
 		public constructor (session: Session) {
 			this.session	= session;
-			let user		= (new OTR.libotr.User).account('me', 'cyph');
+			let user: any	= (new OTR.libotr.User).account('me', 'cyph');
 
 			user.generateInstag(() =>
 				user.generateKey(() => {
