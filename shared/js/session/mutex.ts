@@ -23,7 +23,7 @@ module Session {
 					this.owner		= Authors.friend;
 					this.purpose	= purpose;
 
-					this.session.send(new Message(Events.mutex, new Command('release', true)));
+					this.session.send(new Message(Events.mutex, new Command('release')));
 				}
 				else {
 					this.requester	= {author: Authors.friend, purpose};
@@ -88,7 +88,7 @@ module Session {
 		public unlock () : void {
 			if (this.owner == Authors.me) {
 				this.shiftRequester();
-				this.session.send(new Message(Events.mutex, new Command('release', true)));
+				this.session.send(new Message(Events.mutex, new Command('release')));
 			}
 		}
 	}
