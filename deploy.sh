@@ -129,7 +129,7 @@ for d in cyph.im ; do
 	done
 
 	# Merge imported libraries into Worker
-	../websignworkerpackager.js js/cryptoWebWorker.js
+	ls js/*.js js/*/*.js | xargs -I% ../websignworkerpackager.js %
 
 	if [ $test ] ; then
 		../websignpackager.py index.html pkg.html
