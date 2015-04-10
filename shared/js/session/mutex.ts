@@ -1,89 +1,95 @@
-let mutex	= {
-	owner: null,
-	comment: null,
-	requester: null,
+/// <reference path="session.ts" />
+/// <reference path="../globals.ts" />
+/// <reference path="../util.ts" />
+/// <reference path="../session/session.ts" />
 
-	commands: {
-		release: function () {
-			if (mutex.owner != authors.me) {
-				mutex.shiftRequester();
-			}
-		},
 
-		request: function (comment) {
-			if (mutex.owner != authors.me) {
-				mutex.owner		= authors.friend;
-				mutex.comment	= comment;
-				mutex.sendCommand({release: true});
-			}
-			else {
-				mutex.requester	= {author: authors.friend, comment: comment};
-			}
-		},
-	},
+module Session {
+	export class Mutex {
+		private owner: Authors;
+		private purpose: string;
+		private requester: { author: Authors; purpose: string; };
+		private session: Session;
 
-	lock: function (f, opt_comment) {
-		if (mutex.owner != authors.me) {
-			if (!mutex.owner && isCreator) {
-				mutex.owner		= authors.me;
-				mutex.comment	= opt_comment;
-			}
-			else {
-				mutex.requester	= {author: authors.me, comment: opt_comment};
-			}
+		private commands: {[command: string] : Function}	= {
+			'release': () => {
+				if (this.owner != Authors.me) {
+					this.shiftRequester();
+				}
+			},
 
-			mutex.sendCommand({request: (opt_comment || '')});
+			'request': (purpose: string) => {
+				if (this.owner != Authors.me) {
+					this.owner		= Authors.friend;
+					this.purpose	= purpose;
+
+					this.session.send(new Message(Events.mutex, new Command('release', true)));
+				}
+				else {
+					this.requester	= {author: Authors.friend, purpose};
+				}
+			}
+		};
+
+		private shiftRequester () : void {
+			this.owner		= null;
+			this.purpose	= null;
+
+			if (this.requester) {
+				this.owner		= this.requester.author;
+				this.purpose	= this.requester.purpose;
+				this.requester	= null;
+			}
 		}
 
-		if (f) {
-			let tickId, friendHadLockFirst, friendLockComment;
+		public constructor (session: Session) {
+			this.session	= session;
 
-			let runIfOwner	= function () {
-				let isOwner	= mutex.owner == authors.me;
+			this.session.on(Events.mutex, (command: Command) => this.commands[command.method](command.argument));
+			this.session.on(Events.closeChat, () => this.owner = Authors.me);
+		}
 
-				if (isOwner) {
-					tickOff(tickId);
+		public lock (f: Function, purpose: string = '') : void {
+			if (this.owner != Authors.me) {
+				if (!this.owner && this.session.isCreator) {
+					this.owner		= Authors.me;
+					this.purpose	= purpose;
+				}
+				else {
+					this.requester	= {author: Authors.me, purpose};
+				}
 
+				this.session.send(new Message(Events.mutex, new Command('request', purpose)));
+			}
+
+			
+			let friendHadLockFirst: boolean	= false;
+			let friendLockpurpose: string	= '';
+
+			Util.retryUntilComplete((retry: Function) => {
+				if (this.owner == Authors.me) {
 					f(
 						!friendHadLockFirst,
-						!friendLockComment || friendLockComment != opt_comment,
-						friendLockComment
+						!friendLockpurpose || friendLockpurpose != purpose,
+						friendLockpurpose
 					);
 				}
-				else if (mutex.owner == authors.friend) {
-					friendHadLockFirst	= true;
-					friendLockComment	= mutex.comment;
+				else {
+					if (this.owner == Authors.friend) {
+						friendHadLockFirst	= true;
+						friendLockpurpose	= this.purpose;
+					}
+
+					retry();
 				}
+			});
+		}
 
-				return isOwner;
-			};
-
-			if (!runIfOwner()) {
-				tickId	= onTick(runIfOwner);
+		public unlock () : void {
+			if (this.owner == Authors.me) {
+				this.shiftRequester();
+				this.session.send(new Message(Events.mutex, new Command('release', true)));
 			}
 		}
-	},
-
-	sendCommand: function (o) {
-		sendChannelData({Misc: MUTEX_PREFIX + (o ? JSON.stringify(o) : '')});
-	},
-
-	shiftRequester: function () {
-		delete mutex.owner;
-		delete mutex.comment;
-
-		if (mutex.requester) {
-			mutex.owner		= mutex.requester.author;
-			mutex.comment	= mutex.requester.comment;
-
-			delete mutex.requester;
-		}
-	},
-
-	unlock: function () {
-		if (mutex.owner == authors.me) {
-			mutex.shiftRequester();
-			mutex.sendCommand({release: true});
-		}
 	}
-};
+}
