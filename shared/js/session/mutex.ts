@@ -12,13 +12,13 @@ module Session {
 		private session: Session;
 
 		private commands: {[command: string] : Function}	= {
-			'release': () => {
+			'release': () : void => {
 				if (this.owner != Authors.me) {
 					this.shiftRequester();
 				}
 			},
 
-			'request': (purpose: string) => {
+			'request': (purpose: string) : void => {
 				if (this.owner != Authors.me) {
 					this.owner		= Authors.friend;
 					this.purpose	= purpose;
