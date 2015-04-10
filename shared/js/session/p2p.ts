@@ -1,6 +1,9 @@
 /// <reference path="session.ts" />
+/// <reference path="p2pfile.ts" />
 /// <reference path="../globals.ts" />
 /// <reference path="../util.ts" />
+/// <reference path="../cyph.im/strings.ts" />
+/// <reference path="../cyph.im/ui.elements.ts" />
 /// <reference path="../../lib/typings/jquery/jquery.d.ts" />
 /// <reference path="../../lib/typings/webrtc/MediaStream.d.ts" />
 /// <reference path="../../lib/typings/webrtc/RTCPeerConnection.d.ts" />
@@ -62,13 +65,8 @@ module Session {
 		private streamOptions	= {audio: false, video: false, loading: false};
 		private incomingStream	= {audio: false, video: false, loading: false};
 
-		private $friendPlaceholder: JQuery	= $('#video-call .friend:not(.stream)');
-		private $friendStream: JQuery		= $('#video-call .friend.stream');
-		private $meStream: JQuery			= $('#video-call .me');
-		private filesSelector: string		= '.send-file-button input[type="file"]';
-
-		private commands: {[command: string] : Function}	= {
-			'addIceCandidate': (candidate) => {
+		private commands	= {
+			addIceCandidate: (candidate) => {
 				if (this.isAvailable) {
 					this.peer.addIceCandidate(new P2P.IceCandidate(JSON.parse(candidate)), () => {}, () => {});
 				}
@@ -79,17 +77,17 @@ module Session {
 				}
 			},
 
-			'decline': (answer) => {
+			decline: (answer) => {
 				this.isAccepted	= false;
 
 				alertDialog({
-					title: Strings.videoCallingTitle,
-					content: Strings.webRTCDeny,
-					ok: Strings.ok
+					title: Cyph.im.Strings.videoCallingTitle,
+					content: Cyph.im.Strings.webRTCDeny,
+					ok: Cyph.im.Strings.ok
 				});
 			},
 
-			'kill': () => {
+			kill: () => {
 				let wasAccepted			= this.isAccepted;
 				this.isAccepted			= false;
 				this.hasSessionStarted	= false;
@@ -125,17 +123,17 @@ module Session {
 
 					if (wasAccepted) {
 						alertDialog({
-							title: Strings.videoCallingTitle,
-							content: Strings.webRTCDisconnect,
-							ok: Strings.ok
+							title: Cyph.im.Strings.videoCallingTitle,
+							content: Cyph.im.Strings.webRTCDisconnect,
+							ok: Cyph.im.Strings.ok
 						});
 
-						addMessageToChat(Strings.webRTCDisconnect, Authors.app, false);
+						addMessageToChat(Cyph.im.Strings.webRTCDisconnect, Authors.app, false);
 					}
 				}, 500);
 			},
 
-			'receiveAnswer': (answer) => {
+			receiveAnswer: (answer) => {
 				this.mutex.lock(() => {
 					this.retry((retry) => {
 						this.peer.setRemoteDescription(
@@ -151,11 +149,11 @@ module Session {
 				});
 			},
 
-			'receiveOffer': (offer) => {
+			receiveOffer: (offer) => {
 				this.setUpStream(null, offer);
 			},
 
-			'streamOptions': (o) => {
+			streamOptions: (o) => {
 				o	= JSON.parse(o);
 
 				updateUI(() => {
@@ -170,10 +168,10 @@ module Session {
 						(this.streamOptions.video || this.incomingStream.audio) &&
 						!this.incomingStream.video
 					) {
-						this.$friendPlaceholder[0]['play']();
+						Cyph.im.UI.Elements.p2pFriendPlaceholder[0]['play']();
 					}
 					else {
-						this.$friendPlaceholder[0]['pause']();
+						Cyph.im.UI.Elements.p2pFriendPlaceholder[0]['pause']();
 					}
 				});
 			}
@@ -185,7 +183,7 @@ module Session {
 			}
 			else if (!this.hasSessionStarted) {
 				this.hasSessionStarted	= true;
-				addMessageToChat(Strings.webRTCConnect, Authors.app, false);
+				addMessageToChat(Cyph.im.Strings.webRTCConnect, Authors.app, false);
 			}
 
 			let dc;
@@ -201,14 +199,14 @@ module Session {
 
 			pc.onaddstream	= (e) => {
 				if (e.stream && (!this.remoteStream || this.remoteStream.id != e.stream.id)) {
-					let src	= this.$friendStream.attr('src');
+					let src	= Cyph.im.UI.Elements.p2pFriendStream.attr('src');
 					if (src) {
 						URL.revokeObjectURL(src);
 					}
 
 					this.remoteStream	= e.stream;
 
-					this.$friendStream.attr('src', URL.createObjectURL(this.remoteStream));
+					Cyph.im.UI.Elements.p2pFriendStream.attr('src', URL.createObjectURL(this.remoteStream));
 
 					setTimeout(() => {
 						updateUI(() => {
@@ -275,14 +273,14 @@ module Session {
 			}
 			else if (command == 'video' || command == 'voice' || command == 'file') {
 				confirmDialog({
-					title: Strings.videoCallingTitle,
+					title: Cyph.im.Strings.videoCallingTitle,
 					content:
-						Strings.webRTCRequest + ' ' +
-						Strings[command + 'Call'] + '. ' +
-						Strings.webRTCWarning
+						Cyph.im.Strings.webRTCRequest + ' ' +
+						Cyph.im.Strings[command + 'Call'] + '. ' +
+						Cyph.im.Strings.webRTCWarning
 					,
-					ok: Strings.continueDialogAction,
-					cancel: Strings.decline
+					ok: Cyph.im.Strings.continueDialogAction,
+					cancel: Cyph.im.Strings.decline
 				}, (ok) => {
 					if (ok) {
 						this.isAccepted	= true;
@@ -304,13 +302,13 @@ module Session {
 		}
 
 		private receiveIncomingFile (data, name) {
-			let title	= Strings.incomingFile + ' ' + name;
+			let title	= Cyph.im.Strings.incomingFile + ' ' + name;
 
 			confirmDialog({
 				title: title,
-				content: Strings.incomingFileWarning,
-				ok: Strings.save,
-				cancel: Strings.reject
+				content: Cyph.im.Strings.incomingFileWarning,
+				ok: Cyph.im.Strings.save,
+				cancel: Cyph.im.Strings.reject
 			}, (ok) => {
 				if (ok) {
 					Util.openUrl(URL.createObjectURL(new Blob(data)), name);
@@ -318,8 +316,8 @@ module Session {
 				else {
 					alertDialog({
 						title: title,
-						content: Strings.incomingFileReject,
-						ok: Strings.ok
+						content: Cyph.im.Strings.incomingFileReject,
+						ok: Cyph.im.Strings.ok
 					});
 				}
 			});
@@ -327,14 +325,14 @@ module Session {
 
 		private requestCall (callType) {
 			confirmDialog({
-				title: Strings.videoCallingTitle,
+				title: Cyph.im.Strings.videoCallingTitle,
 				content:
-					Strings.webRTCInit + ' ' +
-					Strings[callType + 'Call'] + '. ' +
-					Strings.webRTCWarning
+					Cyph.im.Strings.webRTCInit + ' ' +
+					Cyph.im.Strings[callType + 'Call'] + '. ' +
+					Cyph.im.Strings.webRTCWarning
 				,
-				ok: Strings.continueDialogAction,
-				cancel: Strings.cancel
+				ok: Cyph.im.Strings.continueDialogAction,
+				cancel: Cyph.im.Strings.cancel
 			}, (ok) => {
 				if (ok) {
 					this.mutex.lock((wasFirst, wasFirstOfType) => {
@@ -348,9 +346,9 @@ module Session {
 
 								setTimeout(() => {
 									alertDialog({
-										title: Strings.videoCallingTitle,
-										content: Strings.webRTCRequestConfirmation,
-										ok: Strings.ok
+										title: Cyph.im.Strings.videoCallingTitle,
+										content: Cyph.im.Strings.webRTCRequestConfirmation,
+										ok: Cyph.im.Strings.ok
 									});
 								}, 250);
 
@@ -368,7 +366,7 @@ module Session {
 					}, 'requestCall');
 				}
 				else {
-					$(this.filesSelector).each(() => {
+					Cyph.im.UI.Elements.p2pFiles.each(() => {
 						$(this).val('');
 					});
 				}
@@ -384,14 +382,13 @@ module Session {
 				return;
 			}
 
-			let $files: JQuery	= $(this.filesSelector);
-			let file			= $files.
-				map((i, $elem) => $elem['files']).
+			let file			= Cyph.im.UI.Elements.p2pFiles.
 				toArray().
+				map(($elem) => $elem['files']).
 				reduce((a, b) => { return (a && a[0]) ? a : b }, [])[0]
 			;
 
-			$files.each(() => {
+			Cyph.im.UI.Elements.p2pFiles.each(() => {
 				$(this).val('');
 			});
 
@@ -399,9 +396,9 @@ module Session {
 			if (file) {
 				if (file.size > Config.p2pConfig.maxFileSize) {
 					alertDialog({
-						title: Strings.oopsTitle,
-						content: Strings.fileTooLarge,
-						ok: Strings.ok
+						title: Cyph.im.Strings.oopsTitle,
+						content: Cyph.im.Strings.fileTooLarge,
+						ok: Cyph.im.Strings.ok
 					});
 
 					anal.send({
@@ -421,7 +418,7 @@ module Session {
 					eventValue: 1
 				});
 
-				addMessageToChat(Strings.fileTransferInitMe + ' ' + file.name, Authors.app, false);
+				addMessageToChat(Cyph.im.Strings.fileTransferInitMe + ' ' + file.name, Authors.app, false);
 
 				this.channel.send(P2P.events.fileTransferComplete);
 
@@ -523,7 +520,7 @@ module Session {
 						});
 
 						addMessageToChat(
-							Strings.fileTransferInitFriend + ' ' + this.incomingFile.name,
+							Cyph.im.Strings.fileTransferInitFriend + ' ' + this.incomingFile.name,
 							Authors.app
 						);
 					}
@@ -589,7 +586,7 @@ module Session {
 							this.localStream['stop']();
 							delete this.localStream;
 
-							let src	= this.$meStream.attr('src');
+							let src	= Cyph.im.UI.Elements.p2pMeStream.attr('src');
 							if (src) {
 								URL.revokeObjectURL(src);
 							}
@@ -602,7 +599,7 @@ module Session {
 
 							this.localStream	= stream;
 							this.peer.addStream(this.localStream);
-							this.$meStream.attr('src', URL.createObjectURL(this.localStream));
+							Cyph.im.UI.Elements.p2pMeStream.attr('src', URL.createObjectURL(this.localStream));
 						}
 
 						[

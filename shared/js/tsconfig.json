@@ -45,6 +45,7 @@
         "session/mutex.ts",
         "session/otr.ts",
         "session/p2p.ts",
+        "session/p2pfile.ts",
         "session/session.ts",
         "../lib/typings/tsd.d.ts"
     ]

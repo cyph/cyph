@@ -89,7 +89,10 @@ class Timer {
 		this.id	= Timer.timers.push(f) - 1;
 
 		if (this.id < 1) {
-			if (Env.isMobile) {
+			if (!Env.isMainThread) {
+				Timer.runWithTimeoutLoop(50);
+			}
+			else if (Env.isMobile) {
 				Timer.runWithTimeoutLoop(50);
 				setTimeout(() => Timer.runWithThread(1000), 3000);
 			}

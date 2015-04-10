@@ -27,7 +27,7 @@ class Config {
 			sqs: '2012-11-05'
 		},
 
-		/* Workaround for TorBrowser "features" */
+		/* Workaround for TorBrowser "feature" */
 		signatureVersion: 'v2'
 	};
 

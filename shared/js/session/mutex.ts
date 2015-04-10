@@ -10,14 +10,14 @@ module Session {
 		private requester: { author: Authors; purpose: string; };
 		private session: Session;
 
-		private commands: {[command: string] : Function}	= {
-			'release': () : void => {
+		private commands	= {
+			release: () : void => {
 				if (this.owner != Authors.me) {
 					this.shiftRequester();
 				}
 			},
 
-			'request': (purpose: string) : void => {
+			request: (purpose: string) : void => {
 				if (this.owner != Authors.me) {
 					this.owner		= Authors.friend;
 					this.purpose	= purpose;
