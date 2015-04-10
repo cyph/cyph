@@ -128,7 +128,7 @@ for d in cyph.im ; do
 		done
 	done
 
-	# Merge imported libraries into Worker
+	# Merge imported libraries into threads
 	ls js/*.js js/*/*.js | xargs -I% ../websignworkerpackager.js %
 
 	if [ $test ] ; then
