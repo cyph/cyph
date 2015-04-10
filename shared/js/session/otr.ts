@@ -5,6 +5,9 @@
 
 module Session {
 	export class OTR {
+		private static libotr: any	= window['OTR'];
+
+
 		private currentMessageId: number	= 0;
 		private incomingMessageId: number	= 0;
 		private incomingMessagesMax: number	= 0;
@@ -18,12 +21,13 @@ module Session {
 
 		public constructor (session: Session) {
 			this.session	= session;
-			let user		= new window['OTR'].User().account('me', 'cyph');
+
+			let user		= (new OTR.libotr.User).account('me', 'cyph');
 
 			user.generateInstag(() =>
 				user.generateKey(() => {
 					this.otr	= user.contact('friend').openSession({
-						policy: window['OTR'].POLICY.ALLOW_V3,
+						policy: OTR.libotr.POLICY.ALLOW_V3,
 						MTU: 15872
 					});
 

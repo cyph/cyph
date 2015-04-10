@@ -5,7 +5,7 @@
 /// <reference path="../lib/typings/jquery/jquery.d.ts" />
 
 
-class Aws {
+class AWSWrapper {
 	public static base: any	= (() => {
 		let AWS: any;
 		AWS.config	= new AWS.Config(Config.awsConfig);
