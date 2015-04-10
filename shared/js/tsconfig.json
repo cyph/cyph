@@ -8,7 +8,7 @@
     "files": [
         "affiliate.ts",
         "analytics.ts",
-        "aws.ts",
+        "awswrapper.ts",
         "base.ts",
         "config.ts",
         "constants.ts",
