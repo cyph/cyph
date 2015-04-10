@@ -14,4 +14,4 @@ fake_sqs &
 dev_appserver.py default/app.yaml cyph.com/cyph-com.yaml cyph.im/cyph-im.yaml cyph.me/cyph-me.yaml &
 
 cat # infinite sleep
-trap 'kill $(jobs -p)' EXIT
+trap 'jobs -p | xargs kill' EXIT
