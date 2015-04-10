@@ -77,7 +77,7 @@ module Session {
 					break;
 
 				case OTREvents.send:
-					this.sendQueue.push(e.data.message);
+					this.sendQueue.push(e.data);
 					break;
 			}
 		}
