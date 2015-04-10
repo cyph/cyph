@@ -51,7 +51,7 @@ module Session {
 			}
 		}
 
-		private otrHandler (e: { event: OTREvents; data?: any; }) {
+		private otrHandler (e: { event: OTREvents; data?: string; }) {
 			switch (e.event) {
 				case OTREvents.abort:
 					Errors.logSmp();
@@ -77,7 +77,9 @@ module Session {
 					break;
 
 				case OTREvents.send:
-					this.sendQueue.push(e.data);
+					if (e.data) {
+						this.sendQueue.push(e.data);
+					}
 					break;
 			}
 		}
