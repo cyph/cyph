@@ -14,7 +14,7 @@ class Thread {
 	public constructor (f: Function, vars?: {[name: string] : any}, onMessage?: (ev: MessageEvent) => any) {
 		let s	= f.toString();
 		s		=
-			(vars ? 'let vars = ' + JSON.stringify(vars) + ';\n' : '') +
+			(vars ? 'var vars = ' + JSON.stringify(vars) + ';\n' : '') +
 			s.slice(s.indexOf('{') + 1, s.lastIndexOf('}'))
 		;
 
