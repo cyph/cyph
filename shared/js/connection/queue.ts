@@ -1,5 +1,5 @@
 /// <reference path="iconnection.ts" />
-/// <reference path="../aws.ts" />
+/// <reference path="../awswrapper.ts" />
 /// <reference path="../config.ts" />
 /// <reference path="../env.ts" />
 /// <reference path="../globals.ts" />
@@ -25,7 +25,7 @@ module Connection {
 			}
 
 			let wrapper	= {
-				innerSqs: new Aws.base.SQS(config)
+				base: new AWSWrapper.base.SQS(config)
 			};
 
 			/* Add methods that take an object and an optional callback */
@@ -42,7 +42,7 @@ module Connection {
 			].forEach(method =>
 				wrapper[method]	= (o: any, f: Function, shouldretryUntilComplete?: boolean) => {
 					Util.retryUntilComplete(retry =>
-						wrapper.innerSqs[method](o, (...args: any[]) => {
+						wrapper.base[method](o, (...args: any[]) => {
 							let err: any	= args[0];
 
 							if (shouldretryUntilComplete && err) {
@@ -115,7 +115,7 @@ module Connection {
 							if (onlag) {
 								let f	= onlag;
 								onlag	= null;
-								setTimeout(() => f(lag, this.sqs.innerSqs.config.region), 0);
+								setTimeout(() => f(lag, this.sqs.base.config.region), 0);
 							}
 						}))
 					);
@@ -222,11 +222,11 @@ module Connection {
 					let messageBody	= JSON.stringify({message: message});
 
 					if (isSynchronous) {
-						Aws.request({
+						AWSWrapper.request({
 							action: 'SendMessage',
 							url: this.queueUrl,
 							service: 'sqs',
-							region: this.sqs.innerSqs.config.region,
+							region: this.sqs.base.config.region,
 							isSynchronous: true,
 							params: {
 								MessageBody: messageBody
