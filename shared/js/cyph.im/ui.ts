@@ -279,6 +279,8 @@ angular.
 				return;
 			}
 
+			Timer.stopAll();
+
 			if ($scope.isAlive) {
 				friendIsTyping(false);
 

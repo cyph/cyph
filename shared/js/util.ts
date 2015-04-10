@@ -3,12 +3,27 @@
 
 
 class Util {
-	public static generateGuid (length: number) : string {
-		return Array.prototype.slice.call(
-			crypto.getRandomValues(new Uint8Array(length))
-		).map(n =>
-			Config.guidAddressSpace[n % Config.guidAddressSpace.length]
-		).join('');
+	public static chunkString (s: string, length: number) {
+		let array: string[]	= [];
+
+		while (s.length) {
+			array.push(s.substr(0, length));
+			s	= s.substr(length);
+		}
+
+		return array;
+	}
+
+	public static generateGuid (length: number = 0) : string {
+		if (length > 0) {
+			return Array.prototype.slice.call(
+				crypto.getRandomValues(new Uint8Array(length))
+			).map(n =>
+				Config.guidAddressSpace[n % Config.guidAddressSpace.length]
+			).join('');
+		}
+
+		return Date.now() + '-' + crypto.getRandomValues(new Uint32Array(1))[0];
 	}
 
 	public static getTimestamp () : string {
