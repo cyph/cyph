@@ -39,7 +39,6 @@
         "cyph.im/ui.elements.ts",
         "cyph.im/ui.ts",
         "session/command.ts",
-        "session/cryptoWebWorker.ts",
         "session/enums.ts",
         "session/message.ts",
         "session/mutex.ts",
