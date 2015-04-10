@@ -1,3 +1,5 @@
+/// <reference path="enums.ts" />
+/// <reference path="otrmessage.ts" />
 /// <reference path="session.ts" />
 /// <reference path="../globals.ts" />
 /// <reference path="../util.ts" />
