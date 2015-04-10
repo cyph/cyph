@@ -63,7 +63,6 @@ module Session {
 
 				this.channel	= null;
 				otrWorker		= null;
-				mutex.owner		= Authors.me;
 			}
 			else if (this.isAlive) {
 				this.channel.send(Events.destroy, closeChat, true);
@@ -295,7 +294,6 @@ module Session {
 			/* Receive event listeners -- temporarily placing here */
 
 			this.on(Events.text, (text: string) => addMessageToChat(text, Authors.friend));
-			this.on(Events.mutex, (command: Command) => mutex.commands[command.method](command.argument));
 			this.on(Events.typing, friendIsTyping);
 			this.on(Events.p2p, (command: Command) => {
 				if (command.method) {
