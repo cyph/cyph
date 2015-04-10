@@ -9,6 +9,7 @@
 /// <reference path="../util.ts" />
 /// <reference path="../connection/iconnection.ts" />
 /// <reference path="../connection/ratchetedchannel.ts" />
+/// <reference path="../cyph.im/strings.ts" />
 /// <reference path="../cyph.im/ui.ts" />
 /// <reference path="../../lib/typings/jquery/jquery.d.ts" />
 
@@ -296,7 +297,7 @@ module Session {
 			this.on(Events.beginChat, () =>
 				beginChatUi(() => {
 					$(window).unload(() => this.close());
-					$(window).on('beforeunload', () => Strings.disconnectWarning)
+					$(window).on('beforeunload', () => Cyph.im.Strings.disconnectWarning)
 				})
 			);
 			this.on(Events.closeChat, closeChat);
