@@ -71,7 +71,7 @@ module Session {
 					});
 
 
-					this.otr.on('inject_message', (cyphertext) => {
+					this.otr.on('inject_message', (cyphertext: string) => {
 						if (cyphertext && cyphertext.indexOf('this.otr.cypherpunks.ca') > -1) {
 							cyphertext	= '?OTRv3?';
 						}
@@ -84,7 +84,10 @@ module Session {
 							))
 						});
 
-						this.session.trigger(Events.cyphertext, {cyphertext, author: Authors.me});
+						this.session.trigger(Events.cyphertext, {
+							cyphertext,
+							author: Authors.me
+						});
 					});
 
 
@@ -105,11 +108,11 @@ module Session {
 					});
 
 
-					setTimeout(() => {
-						if (!this.session.isCreator) {
-							this.otr.start();
-						}
+					if (!this.session.isCreator) {
+						this.otr.start();
+					}
 
+					setTimeout(() => {
 						while (this.receiveQueue.length) {
 							this.otr.receive(this.receiveQueue.shift());
 						}
