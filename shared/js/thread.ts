@@ -82,7 +82,7 @@ class Thread {
 
 	private worker: Worker;
 
-	public constructor (f: Function, vars: {[name: string] : any} = {}, onMessage?: (ev: MessageEvent) => any) {
+	public constructor (f: Function, vars: {[name: string] : any} = {}, onMessage?: (e: MessageEvent) => any) {
 		vars['threadRandomSeed']	= crypto.getRandomValues(new Uint8Array(50000));
 
 		let s	=
