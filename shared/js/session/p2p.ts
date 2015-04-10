@@ -1,268 +1,292 @@
-/* Logic for handling WebRTC connections (used for file transfers and voice/video chat) */
+/// <reference path="session.ts" />
+/// <reference path="../globals.ts" />
+/// <reference path="../util.ts" />
+/// <reference path="../../lib/typings/jquery/jquery.d.ts" />
+/// <reference path="../../lib/typings/webrtc/MediaStream.d.ts" />
+/// <reference path="../../lib/typings/webrtc/RTCPeerConnection.d.ts" />
 
-let PeerConnection		= window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
-let IceCandidate		= window.mozRTCIceCandidate || window.RTCIceCandidate;
-let SessionDescription	= window.mozRTCSessionDescription || window.RTCSessionDescription;
-navigator.getUserMedia	= navigator.getUserMedia || navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
 
-let webRTC	= {
-	peer: null,
-	channel: null,
+module Session {
+	export class P2P {
+		private static getUserMedia	=
+			navigator.getUserMedia ||
+			navigator['mozGetUserMedia'] ||
+			navigator['webkitGetUserMedia']
+		;
 
-	localStream: null,
-	remoteStream: null,
+		private static IceCandidate: any	=
+			window.RTCIceCandidate ||
+			window['mozRTCIceCandidate']
+		;
 
-	incomingFile: {
-		data: null,
-		name: null,
-		size: null,
-		readableSize: null,
-		percentComplete: null
-	},
-	outgoingFile: {
-		name: null,
-		size: null,
-		readableSize: null,
-		percentComplete: null
-	},
+		private static MediaStream: any	=
+			window['MediaStream'] ||
+			window['webkitMediaStream']
+		;
 
-	isAccepted: false,
-	isAvailable: false,
+		private static PeerConnection: any	=
+			window.RTCPeerConnection ||
+			window['mozRTCPeerConnection'] ||
+			window['webkitRTCPeerConnection']
+		;
 
-	localStreamSetUpLock: false,
+		private static SessionDescription: any	=
+			window.RTCSessionDescription ||
+			window['mozRTCSessionDescription']
+		;
 
-	isSupported: !!PeerConnection,
+		public static isSupported: boolean	= !!P2P.PeerConnection;
 
-	streamOptions: {},
-	incomingStream: {},
+		public static events	= {
+			fileTransferComplete: 'done'
+		};
 
-	$friendPlaceholder: $('#video-call .friend:not(.stream)'),
-	$friendStream: $('#video-call .friend.stream'),
-	$meStream: $('#video-call .me'),
-	filesSelector: '.send-file-button input[type="file"]',
 
-	iceServer: 'ice.cyph.com',
-	chunkSize: 5000,
-	maxFileSize: 1100000000,
-	fileTransferComplete: 'done',
+		private mutex: Mutex;
+		private session: Session;
 
-	commands: {
-		addIceCandidate: function (candidate) {
-			if (webRTC.isAvailable) {
-				webRTC.peer.addIceCandidate(new IceCandidate(JSON.parse(candidate)), function () {}, function () {});
-			}
-			else {
-				setTimeout(function () {
-					webRTC.commands.addIceCandidate(candidate);
-				}, 500);
-			}
-		},
+		private peer: RTCPeerConnection;
+		private channel: any;
 
-		decline: function (answer) {
-			webRTC.isAccepted	= false;
+		private localStream: MediaStream;
+		private remoteStream: MediaStream;
 
-			alertDialog({
-				title: Strings.videoCallingTitle,
-				content: Strings.webRTCDeny,
-				ok: Strings.ok
-			});
-		},
+		private isAccepted: boolean;
+		private isAvailable: boolean;
+		private hasSessionStarted: boolean;
+		private localStreamSetUpLock: boolean;
 
-		kill: function () {
-			let wasAccepted				= webRTC.isAccepted;
-			webRTC.isAccepted			= false;
-			webRTC.hasSessionStarted	= false;
+		private incomingFile: P2PFile	= new P2PFile;
+		private outgoingFile: P2PFile	= new P2PFile;
 
-			toggleVideoCall(false);
+		private streamOptions	= {audio: false, video: false, loading: false};
+		private incomingStream	= {audio: false, video: false, loading: false};
 
-			setTimeout(function () {
-				delete webRTC.streamOptions.video;
-				delete webRTC.streamOptions.audio;
+		private $friendPlaceholder: JQuery	= $('#video-call .friend:not(.stream)');
+		private $friendStream: JQuery		= $('#video-call .friend.stream');
+		private $meStream: JQuery			= $('#video-call .me');
+		private filesSelector: string		= '.send-file-button input[type="file"]';
 
-				delete webRTC.incomingStream.video;
-				delete webRTC.incomingStream.audio;
-
-				if (webRTC.localStream) {
-					webRTC.localStream.stop();
-					delete webRTC.localStream;
-				}
-
-				if (webRTC.remoteStream) {
-					delete webRTC.remoteStream;
-				}
-
-				if (webRTC.peer) {
-					try {
-						webRTC.peer.close();
-					}
-					catch (e) {}
-				}
-
-				mutex.lock(function () {
-					setTimeout(mutex.unlock, 5000);
-				});
-
-				if (wasAccepted) {
-					alertDialog({
-						title: Strings.videoCallingTitle,
-						content: Strings.webRTCDisconnect,
-						ok: Strings.ok
-					});
-
-					addMessageToChat(Strings.webRTCDisconnect, authors.app, false);
-				}
-			}, 500);
-		},
-
-		receiveAnswer: function (answer) {
-			mutex.lock(function () {
-				webRTC.helpers.retry(function (retry) {
-					webRTC.peer.setRemoteDescription(
-						new SessionDescription(JSON.parse(answer)),
-						function () {
-							webRTC.isAvailable			= true;
-							webRTC.localStreamSetUpLock	= false;
-							mutex.unlock();
-						},
-						retry
-					);
-				});
-			});
-		},
-
-		receiveOffer: function (offer) {
-			webRTC.helpers.setUpStream(null, offer);
-		},
-
-		streamOptions: function (o) {
-			o	= JSON.parse(o);
-
-			updateUI(function () {
-				webRTC.incomingStream.video	= o.video === true;
-				webRTC.incomingStream.audio	= o.audio === true;
-
-				if (!webRTC.incomingStream.video && !webRTC.incomingStream.audio) {
-					delete webRTC.incomingStream.loading;
-				}
-
-				if (
-					(webRTC.streamOptions.video || webRTC.incomingStream.audio) &&
-					!webRTC.incomingStream.video
-				) {
-					webRTC.$friendPlaceholder[0].play();
+		private commands: {[command: string] : Function}	= {
+			'addIceCandidate': (candidate) => {
+				if (this.isAvailable) {
+					this.peer.addIceCandidate(new P2P.IceCandidate(JSON.parse(candidate)), () => {}, () => {});
 				}
 				else {
-					webRTC.$friendPlaceholder[0].pause();
+					setTimeout(() => {
+						this.commands['addIceCandidate'](candidate);
+					}, 500);
 				}
-			});
-		}
-	},
+			},
 
-	helpers: {
-		init: function () {
-			if (webRTC.peer) {
+			'decline': (answer) => {
+				this.isAccepted	= false;
+
+				alertDialog({
+					title: Strings.videoCallingTitle,
+					content: Strings.webRTCDeny,
+					ok: Strings.ok
+				});
+			},
+
+			'kill': () => {
+				let wasAccepted			= this.isAccepted;
+				this.isAccepted			= false;
+				this.hasSessionStarted	= false;
+
+				toggleVideoCall(false);
+
+				setTimeout(() => {
+					delete this.streamOptions.video;
+					delete this.streamOptions.audio;
+
+					delete this.incomingStream.video;
+					delete this.incomingStream.audio;
+
+					if (this.localStream) {
+						this.localStream['stop']();
+						delete this.localStream;
+					}
+
+					if (this.remoteStream) {
+						delete this.remoteStream;
+					}
+
+					if (this.peer) {
+						try {
+							this.peer.close();
+						}
+						catch (e) {}
+					}
+
+					this.mutex.lock(() => {
+						setTimeout(this.mutex.unlock, 5000);
+					});
+
+					if (wasAccepted) {
+						alertDialog({
+							title: Strings.videoCallingTitle,
+							content: Strings.webRTCDisconnect,
+							ok: Strings.ok
+						});
+
+						addMessageToChat(Strings.webRTCDisconnect, Authors.app, false);
+					}
+				}, 500);
+			},
+
+			'receiveAnswer': (answer) => {
+				this.mutex.lock(() => {
+					this.retry((retry) => {
+						this.peer.setRemoteDescription(
+							new P2P.SessionDescription(JSON.parse(answer)),
+							() => {
+								this.isAvailable			= true;
+								this.localStreamSetUpLock	= false;
+								this.mutex.unlock();
+							},
+							retry
+						);
+					});
+				});
+			},
+
+			'receiveOffer': (offer) => {
+				this.setUpStream(null, offer);
+			},
+
+			'streamOptions': (o) => {
+				o	= JSON.parse(o);
+
+				updateUI(() => {
+					this.incomingStream.video	= o.video === true;
+					this.incomingStream.audio	= o.audio === true;
+
+					if (!this.incomingStream.video && !this.incomingStream.audio) {
+						delete this.incomingStream.loading;
+					}
+
+					if (
+						(this.streamOptions.video || this.incomingStream.audio) &&
+						!this.incomingStream.video
+					) {
+						this.$friendPlaceholder[0]['play']();
+					}
+					else {
+						this.$friendPlaceholder[0]['pause']();
+					}
+				});
+			}
+		};
+
+		private init () {
+			if (this.peer) {
 				return;
 			}
-			else if (!webRTC.hasSessionStarted) {
-				webRTC.hasSessionStarted	= true;
-				addMessageToChat(Strings.webRTCConnect, authors.app, false);
+			else if (!this.hasSessionStarted) {
+				this.hasSessionStarted	= true;
+				addMessageToChat(Strings.webRTCConnect, Authors.app, false);
 			}
 
 			let dc;
-			let pc	= new PeerConnection({
-				iceServers: [
-					{url: 'stun:' + webRTC.iceServer, credential: 'cyph', username: 'cyph'},
-					{url: 'turn:' + webRTC.iceServer, credential: 'cyph', username: 'cyph'}
-				]
+			let pc	= new P2P.PeerConnection({
+				iceServers: ['stun', 'turn'].map((s: string) => ({
+					url: s + ':' + Config.p2pConfig.iceServer,
+					credential: Config.p2pConfig.iceCredential,
+					username: Config.p2pConfig.iceCredential
+				}))
 			}, {
 				optional: [{DtlsSrtpKeyAgreement: true}]
 			});
 
-			pc.onaddstream	= function (e) {
-				if (e.stream && (!webRTC.remoteStream || webRTC.remoteStream.id != e.stream.id)) {
-					let src	= webRTC.$friendStream.attr('src');
+			pc.onaddstream	= (e) => {
+				if (e.stream && (!this.remoteStream || this.remoteStream.id != e.stream.id)) {
+					let src	= this.$friendStream.attr('src');
 					if (src) {
 						URL.revokeObjectURL(src);
 					}
 
-					webRTC.remoteStream	= e.stream;
+					this.remoteStream	= e.stream;
 
-					webRTC.$friendStream.attr('src', URL.createObjectURL(webRTC.remoteStream));
+					this.$friendStream.attr('src', URL.createObjectURL(this.remoteStream));
 
-					setTimeout(function () {
-						updateUI(function () {
-							delete webRTC.incomingStream.loading;
+					setTimeout(() => {
+						updateUI(() => {
+							delete this.incomingStream.loading;
 						});
 					}, 1500);
 				}
 			};
 
-			pc.ondatachannel	= function (e) {
+			pc.ondatachannel	= (e) => {
 				dc	= e.channel;
-				webRTC.channel	= dc;
-				webRTC.helpers.setUpChannel();
+				this.channel	= dc;
+				this.setUpChannel();
 			};
 
-			pc.onicecandidate	= function (e) {
+			pc.onIceCandidate	= (e) => {
 				if (e.candidate) {
-					delete pc.onicecandidate;
-					sendWebRTCDataToPeer({addIceCandidate: JSON.stringify(e.candidate)});
+					delete pc.onIceCandidate;
+					this.session.send(new Message(Events.p2p, new Command(
+						'addIceCandidate',
+						JSON.stringify(e.candidate)
+					)));
 				}
 			};
 
-			pc.onsignalingstatechange	= function (forceKill) {
-				forceKill	= forceKill === true;
+			pc.onsignalingstatechange	= (forceKill) => {
+				forceKill	= forceKill === null;
 
-				if (webRTC.peer == pc && (forceKill || pc.signalingState == 'closed')) {
-					webRTC.isAvailable	= false;
+				if (this.peer == pc && (forceKill || pc.signalingState == 'closed')) {
+					this.isAvailable	= false;
 
 					delete pc.onaddstream;
-					delete webRTC.remoteStream;
-					delete webRTC.channel;
-					delete webRTC.peer;
+					delete this.remoteStream;
+					delete this.channel;
+					delete this.peer;
 
 					if (forceKill) {
 						dc && dc.close();
 						pc.close();
 					}
 
-					if (webRTC.hasSessionStarted) {
-						webRTC.helpers.init();
+					if (this.hasSessionStarted) {
+						this.init();
 					}
 				}
 			};
 
 
-			webRTC.peer	= pc;
-		},
+			this.peer	= pc;
+		}
 
-		kill: function () {
-			sendWebRTCDataToPeer({kill: true});
-			webRTC.commands.kill();
-		},
+		private kill () {
+			this.session.send(new Message(Events.p2p, new Command('kill')));
+			this.commands['kill']();
+		}
 
-		receiveCommand: function (command, data) {
-			if (!webRTC.isSupported) {
+		private receiveCommand (command, data) {
+			if (!P2P.isSupported) {
 				return;
 			}
 
-			if (webRTC.isAccepted && typeof webRTC.commands[command] == 'function') {
-				webRTC.commands[command](data);
+			if (this.isAccepted && typeof this.commands[command] == 'function') {
+				this.commands[command](data);
 			}
 			else if (command == 'video' || command == 'voice' || command == 'file') {
 				confirmDialog({
 					title: Strings.videoCallingTitle,
 					content:
 						Strings.webRTCRequest + ' ' +
-						strings[command + 'Call'] + '. ' +
+						Strings[command + 'Call'] + '. ' +
 						Strings.webRTCWarning
 					,
 					ok: Strings.continueDialogAction,
 					cancel: Strings.decline
-				}, function (ok) {
+				}, (ok) => {
 					if (ok) {
-						webRTC.isAccepted	= true;
-						webRTC.helpers.setUpStream({video: command == 'video', audio: command != 'file'});
+						this.isAccepted	= true;
+						this.setUpStream({video: command == 'video', audio: command != 'file'});
 
 						anal.send({
 							hitType: 'event',
@@ -273,13 +297,13 @@ let webRTC	= {
 						});
 					}
 					else {
-						sendWebRTCDataToPeer({decline: true});
+						this.session.send(new Message(Events.p2p, new Command('decline')));
 					}
 				}, 500000);
 			}
-		},
+		}
 
-		receiveIncomingFile: function (data, name) {
+		private receiveIncomingFile (data, name) {
 			let title	= Strings.incomingFile + ' ' + name;
 
 			confirmDialog({
@@ -287,9 +311,9 @@ let webRTC	= {
 				content: Strings.incomingFileWarning,
 				ok: Strings.save,
 				cancel: Strings.reject
-			}, function (ok) {
+			}, (ok) => {
 				if (ok) {
-					Util.openUrl(URL.createObjectURL(new Blob(data)), name, true);
+					Util.openUrl(URL.createObjectURL(new Blob(data)), name);
 				}
 				else {
 					alertDialog({
@@ -299,32 +323,30 @@ let webRTC	= {
 					});
 				}
 			});
-		},
+		}
 
-		requestCall: function (callType) {
+		private requestCall (callType) {
 			confirmDialog({
 				title: Strings.videoCallingTitle,
 				content:
 					Strings.webRTCInit + ' ' +
-					strings[callType + 'Call'] + '. ' +
+					Strings[callType + 'Call'] + '. ' +
 					Strings.webRTCWarning
 				,
 				ok: Strings.continueDialogAction,
 				cancel: Strings.cancel
-			}, function (ok) {
+			}, (ok) => {
 				if (ok) {
-					mutex.lock(function (wasFirst, wasFirstOfType) {
+					this.mutex.lock((wasFirst, wasFirstOfType) => {
 						try {
 							if (wasFirstOfType) {
-								webRTC.isAccepted			= true;
-								webRTC.streamOptions.video	= callType == 'video';
-								webRTC.streamOptions.audio	= callType != 'file';
+								this.isAccepted				= true;
+								this.streamOptions.video	= callType == 'video';
+								this.streamOptions.audio	= callType != 'file';
 
-								let o		= {};
-								o[callType]	= true;
-								sendWebRTCDataToPeer(o);
+								this.session.send(new Message(Events.p2p, new Command(callType)));
 
-								setTimeout(function () {
+								setTimeout(() => {
 									alertDialog({
 										title: Strings.videoCallingTitle,
 										content: Strings.webRTCRequestConfirmation,
@@ -333,49 +355,49 @@ let webRTC	= {
 								}, 250);
 
 								/* Time out if request hasn't been accepted within 10 minutes */
-								setTimeout(function () {
-									if (!webRTC.isAvailable) {
-										webRTC.isAccepted	= false;
+								setTimeout(() => {
+									if (!this.isAvailable) {
+										this.isAccepted	= false;
 									}
 								}, 600000);
 							}
 						}
 						finally {
-							mutex.unlock();
+							this.mutex.unlock();
 						}
 					}, 'requestCall');
 				}
 				else {
-					$(webRTC.filesSelector).each(function () {
+					$(this.filesSelector).each(() => {
 						$(this).val('');
 					});
 				}
 			});
-		},
+		}
 
-		retry: function (f) {
-			Util.retryUntilComplete(f, function () { return webRTC.isAccepted });
-		},
+		private retry (f) {
+			Util.retryUntilComplete(f, () => { return this.isAccepted });
+		}
 
-		sendFile: function () {
-			if (webRTC.outgoingFile.name || !webRTC.channel || webRTC.channel.readyState != 'open') {
+		private sendFile () {
+			if (this.outgoingFile.name || !this.channel || this.channel.readyState != 'open') {
 				return;
 			}
 
-			let $files	= $(webRTC.filesSelector);
-			let file	= $files.
-				map(function () { return this.files }).
+			let $files: JQuery	= $(this.filesSelector);
+			let file			= $files.
+				map((i, $elem) => $elem['files']).
 				toArray().
-				reduce(function (a, b) { return (a && a[0]) ? a : b }, [])[0]
+				reduce((a, b) => { return (a && a[0]) ? a : b }, [])[0]
 			;
 
-			$files.each(function () {
+			$files.each(() => {
 				$(this).val('');
 			});
 
 
 			if (file) {
-				if (file.size > webRTC.maxFileSize) {
+				if (file.size > Config.p2pConfig.maxFileSize) {
 					alertDialog({
 						title: Strings.oopsTitle,
 						content: Strings.fileTooLarge,
@@ -399,55 +421,55 @@ let webRTC	= {
 					eventValue: 1
 				});
 
-				addMessageToChat(Strings.fileTransferInitMe + ' ' + file.name, authors.app, false);
+				addMessageToChat(Strings.fileTransferInitMe + ' ' + file.name, Authors.app, false);
 
-				webRTC.channel.send(webRTC.fileTransferComplete);
+				this.channel.send(P2P.events.fileTransferComplete);
 
 				let reader	= new FileReader;
 
-				reader.onloadend	= function (e) {
-					let buf		= e.target.result;
+				reader.onloadend	= (e) => {
+					let buf		= e.target['result'];
 					let pos		= 0;
 
-					updateUI(function () {
-						webRTC.outgoingFile.name			= file.name;
-						webRTC.outgoingFile.size			= buf.byteLength;
-						webRTC.outgoingFile.readableSize	= Util.readableByteLength(webRTC.outgoingFile.size);
+					updateUI(() => {
+						this.outgoingFile.name			= file.name;
+						this.outgoingFile.size			= buf.byteLength;
+						this.outgoingFile.readableSize	= Util.readableByteLength(this.outgoingFile.size);
 					});
-					webRTC.channel.send(webRTC.outgoingFile.name + '\n' + webRTC.outgoingFile.size);
+					this.channel.send(this.outgoingFile.name + '\n' + this.outgoingFile.size);
 
-					let tickId	= onTick(function () {
-						if (!webRTC.isAccepted) {
-							tickOff(tickId);
+					let timer: Timer	= new Timer(() => {
+						if (!this.isAccepted) {
+							timer.stop();
 							return;
 						}
 
 						try {
 							for (let i = 0 ; i < 10 ; ++i) {
 								let old	= pos;
-								pos += webRTC.chunkSize;
-								webRTC.channel.send(buf.slice(old, pos));
+								pos += Config.p2pConfig.fileChunkSize;
+								this.channel.send(buf.slice(old, pos));
 							}
 						}
 						catch (e) {
-							pos -= webRTC.chunkSize;
+							pos -= Config.p2pConfig.fileChunkSize;
 						}
 
 						if (buf.byteLength > pos) {
-							updateUI(function () {
-								webRTC.outgoingFile.percentComplete	= pos / buf.byteLength * 100;
+							updateUI(() => {
+								this.outgoingFile.percentComplete	= pos / buf.byteLength * 100;
 							});
 						}
 						else {
-							tickOff(tickId);
+							timer.stop();
 
-							webRTC.channel.send(webRTC.fileTransferComplete);
+							this.channel.send(P2P.events.fileTransferComplete);
 
-							updateUI(function () {
-								delete webRTC.outgoingFile.name;
-								delete webRTC.outgoingFile.size;
-								delete webRTC.outgoingFile.readableSize;
-								delete webRTC.outgoingFile.percentComplete;
+							updateUI(() => {
+								delete this.outgoingFile.name;
+								delete this.outgoingFile.size;
+								delete this.outgoingFile.readableSize;
+								delete this.outgoingFile.percentComplete;
 							});
 						}
 					});
@@ -455,156 +477,156 @@ let webRTC	= {
 
 				reader.readAsArrayBuffer(file);
 			}
-		},
+		}
 
-		setUpChannel: function (shouldCreate) {
-			if (!webRTC.isAccepted) {
+		private setUpChannel (shouldCreate?) {
+			if (!this.isAccepted) {
 				return;
 			}
 
 			if (shouldCreate) {
 				try {
-					webRTC.channel	= webRTC.peer.createDataChannel('subspace', {});
+					this.channel	= this.peer.createDataChannel('subspace', {});
 				}
 				catch (e) {
-					setTimeout(function () { webRTC.helpers.setUpChannel(true) }, 500);
+					setTimeout(() => { this.setUpChannel(true) }, 500);
 					return;
 				}
 			}
 
-			webRTC.channel.onmessage	= function (e) {
+			this.channel.onmessage	= (e) => {
 				if (typeof e.data == 'string') {
-					if (e.data == webRTC.fileTransferComplete) {
-						let data	= webRTC.incomingFile.data;
-						let name	= webRTC.incomingFile.name;
+					if (e.data == P2P.events.fileTransferComplete) {
+						let data	= this.incomingFile.data;
+						let name	= this.incomingFile.name;
 
-						updateUI(function () {
-							delete webRTC.incomingFile.data;
-							delete webRTC.incomingFile.name;
-							delete webRTC.incomingFile.size;
-							delete webRTC.incomingFile.readableSize;
-							delete webRTC.incomingFile.percentComplete;
+						updateUI(() => {
+							delete this.incomingFile.data;
+							delete this.incomingFile.name;
+							delete this.incomingFile.size;
+							delete this.incomingFile.readableSize;
+							delete this.incomingFile.percentComplete;
 						});
 
 						if (data) {
-							webRTC.helpers.receiveIncomingFile(data, name);
+							this.receiveIncomingFile(data, name);
 						}
 					}
 					else {
 						let data	= e.data.split('\n');
 
-						updateUI(function () {
-							webRTC.incomingFile.data			= [];
-							webRTC.incomingFile.name			= data[0];
-							webRTC.incomingFile.size			= parseInt(data[1], 10);
-							webRTC.incomingFile.readableSize	= Util.readableByteLength(webRTC.incomingFile.size);
+						updateUI(() => {
+							this.incomingFile.data			= [];
+							this.incomingFile.name			= data[0];
+							this.incomingFile.size			= parseInt(data[1], 10);
+							this.incomingFile.readableSize	= Util.readableByteLength(this.incomingFile.size);
 						});
 
 						addMessageToChat(
-							Strings.fileTransferInitFriend + ' ' + webRTC.incomingFile.name,
-							authors.app
+							Strings.fileTransferInitFriend + ' ' + this.incomingFile.name,
+							Authors.app
 						);
 					}
 				}
-				else if (webRTC.incomingFile.data) {
-					webRTC.incomingFile.data.push(e.data);
+				else if (this.incomingFile.data) {
+					this.incomingFile.data.push(e.data);
 
-					updateUI(function () {
-						webRTC.incomingFile.percentComplete	=
-							webRTC.incomingFile.data.length *
-								webRTC.chunkSize /
-								webRTC.incomingFile.size *
+					updateUI(() => {
+						this.incomingFile.percentComplete	=
+							this.incomingFile.data.length *
+								Config.p2pConfig.fileChunkSize /
+								this.incomingFile.size *
 								100
 						;
 					});
 				}
 			};
 
-			webRTC.channel.onopen	= webRTC.helpers.sendFile;
-		},
+			this.channel.onopen	= this.sendFile;
+		}
 
-		setUpStream: function (opt_streamOptions, opt_offer) {
-			let retry	= function () {
-				if (webRTC.isAccepted) {
-					setTimeout(function () {
-						webRTC.helpers.setUpStream(opt_streamOptions);
+		private setUpStream (streamOptions?, offer?) {
+			let retry	= () => {
+				if (this.isAccepted) {
+					setTimeout(() => {
+						this.setUpStream(streamOptions);
 					}, 100);
 				}
 			};
 
-			if (!opt_offer) {
-				if (webRTC.localStreamSetUpLock) {
+			if (!offer) {
+				if (this.localStreamSetUpLock) {
 					retry();
 					return;
 				}
 
-				webRTC.localStreamSetUpLock	= true;
+				this.localStreamSetUpLock	= true;
 			}
 
-			webRTC.incomingStream.loading	= true;
+			this.incomingStream.loading	= true;
 
-			if (opt_streamOptions) {
-				if (opt_streamOptions.video === true || opt_streamOptions.video === false) {
-					webRTC.streamOptions.video	= opt_streamOptions.video;
+			if (streamOptions) {
+				if (streamOptions.video === true || streamOptions.video === false) {
+					this.streamOptions.video	= streamOptions.video;
 				}
-				if (opt_streamOptions.audio === true || opt_streamOptions.audio === false) {
-					webRTC.streamOptions.audio	= opt_streamOptions.audio;
+				if (streamOptions.audio === true || streamOptions.audio === false) {
+					this.streamOptions.audio	= streamOptions.audio;
 				}
 			}
 
-			mutex.lock(function (wasFirst, wasFirstOfType) {
-				if (wasFirstOfType && webRTC.isAccepted) {
-					webRTC.helpers.init();
+			this.mutex.lock((wasFirst, wasFirstOfType) => {
+				if (wasFirstOfType && this.isAccepted) {
+					this.init();
 
 					let streamHelper, streamFallback, streamSetup;
 
-					streamHelper	= function (stream) {
-						if (!webRTC.isAccepted) {
+					streamHelper	= (stream) => {
+						if (!this.isAccepted) {
 							return;
 						}
 
-						if (webRTC.localStream) {
-							webRTC.localStream.stop();
-							delete webRTC.localStream;
+						if (this.localStream) {
+							this.localStream['stop']();
+							delete this.localStream;
 
-							let src	= webRTC.$meStream.attr('src');
+							let src	= this.$meStream.attr('src');
 							if (src) {
 								URL.revokeObjectURL(src);
 							}
 						}
 
 						if (stream) {
-							if (webRTC.peer.getLocalStreams().length > 0) {
-								webRTC.peer.onsignalingstatechange(true);
+							if (this.peer.getLocalStreams().length > 0) {
+								this.peer.onsignalingstatechange(null);
 							}
 
-							webRTC.localStream	= stream;
-							webRTC.peer.addStream(webRTC.localStream);
-							webRTC.$meStream.attr('src', URL.createObjectURL(webRTC.localStream));
+							this.localStream	= stream;
+							this.peer.addStream(this.localStream);
+							this.$meStream.attr('src', URL.createObjectURL(this.localStream));
 						}
 
 						[
 							{k: 'audio', f: 'getAudioTracks'},
 							{k: 'video', f: 'getVideoTracks'}
-						].forEach(function (o) {
-							webRTC.streamOptions[o.k]	= !!webRTC.localStream && webRTC.localStream[o.f]().
-								map(function (track) { return track.enabled }).
-								reduce(function (a, b) { return a || b }, false)
+						].forEach((o) => {
+							this.streamOptions[o.k]	= !!this.localStream && this.localStream[o.f]().
+								map((track) => { return track.enabled }).
+								reduce((a, b) => { return a || b }, false)
 							;
 						});
 
 
-						let outgoingStream	= JSON.stringify(webRTC.streamOptions);
+						let outgoingStream	= JSON.stringify(this.streamOptions);
 
-						if (!opt_offer) {
-							webRTC.helpers.setUpChannel(true);
+						if (!offer) {
+							this.setUpChannel(true);
 
-							webRTC.helpers.retry(function (retry) {
-								webRTC.peer.createOffer(function (offer) {
+							this.retry((retry) => {
+								this.peer.createOffer((offer) => {
 									/* http://www.kapejod.org/en/2014/05/28/ */
 									offer.sdp	= offer.sdp.
 										split('\n').
-										filter(function (line) {
+										filter((line) => {
 											return line.indexOf('urn:ietf:params:rtp-hdrext:ssrc-audio-level') < 0 &&
 												line.indexOf('b=AS:') < 0
 											;
@@ -612,14 +634,26 @@ let webRTC	= {
 										join('\n')
 									;
 
-									webRTC.helpers.retry(function (retry) {
-										webRTC.peer.setLocalDescription(offer, function () {
-											sendWebRTCDataToPeer({
-												receiveOffer: JSON.stringify(offer),
-												streamOptions: outgoingStream
-											});
+									this.retry((retry) => {
+										this.peer.setLocalDescription(offer, () => {
+											this.session.send(
+												new Message(
+													Events.p2p,
+													new Command(
+														'receiveOffer',
+														JSON.stringify(offer)
+													)
+												),
+												new Message(
+													Events.p2p,
+													new Command(
+														'streamOptions',
+														outgoingStream
+													)
+												)
+											);
 
-											mutex.unlock();
+											this.mutex.unlock();
 										}, retry);
 									});
 								}, retry, {
@@ -629,22 +663,34 @@ let webRTC	= {
 							});
 						}
 						else {
-							webRTC.helpers.retry(function (retry) {
-								webRTC.peer.setRemoteDescription(
-									new SessionDescription(JSON.parse(opt_offer)),
-									function () {
-										webRTC.helpers.retry(function (retry) {
-											webRTC.peer.createAnswer(function (answer) {
-												webRTC.helpers.retry(function (retry) {
-													webRTC.peer.setLocalDescription(answer, function () {
-														sendWebRTCDataToPeer({
-															receiveAnswer: JSON.stringify(answer),
-															streamOptions: outgoingStream
-														});
+							this.retry((retry) => {
+								this.peer.setRemoteDescription(
+									new P2P.SessionDescription(JSON.parse(offer)),
+									() => {
+										this.retry((retry) => {
+											this.peer.createAnswer((answer) => {
+												this.retry((retry) => {
+													this.peer.setLocalDescription(answer, () => {
+														this.session.send(
+															new Message(
+																Events.p2p,
+																new Command(
+																	'receiveAnswer',
+																	JSON.stringify(answer)
+																)
+															),
+															new Message(
+																Events.p2p,
+																new Command(
+																	'streamOptions',
+																	outgoingStream
+																)
+															)
+														);
 
-														webRTC.isAvailable	= true;
+														this.isAvailable	= true;
 
-														mutex.unlock();
+														this.mutex.unlock();
 													}, retry);
 												});
 											}, retry);
@@ -658,28 +704,28 @@ let webRTC	= {
 						toggleVideoCall(true);
 					};
 
-					streamFallback	= function () {
-						if (webRTC.streamOptions.video) {
-							webRTC.streamOptions.video	= false;
+					streamFallback	= () => {
+						if (this.streamOptions.video) {
+							this.streamOptions.video	= false;
 						}
-						else if (webRTC.streamOptions.audio) {
-							webRTC.streamOptions.audio	= false;
+						else if (this.streamOptions.audio) {
+							this.streamOptions.audio	= false;
 						}
 
 						streamSetup();
 					};
 
-					streamSetup	= function () {
-						if (webRTC.streamOptions.video || webRTC.streamOptions.audio) {
-							navigator.getUserMedia(webRTC.streamOptions, streamHelper, streamFallback);
+					streamSetup	= () => {
+						if (this.streamOptions.video || this.streamOptions.audio) {
+							P2P.getUserMedia(this.streamOptions, streamHelper, streamFallback);
 						}
-						else if (webRTC.incomingStream.video || webRTC.incomingStream.audio) {
+						else if (this.incomingStream.video || this.incomingStream.audio) {
 							try {
-								streamHelper(new (window.webkitMediaStream || window.MediaStream));
+								streamHelper(new P2P.MediaStream);
 							}
-							catch (e) {
-								navigator.getUserMedia({audio: true}, function (stream) {
-									stream.getTracks().forEach(function (track) {
+							catch (_) {
+								P2P.getUserMedia({audio: true, video: false}, (stream) => {
+									stream.getTracks().forEach((track) => {
 										track.enabled	= false;
 									});
 
@@ -695,31 +741,30 @@ let webRTC	= {
 					streamSetup();
 				}
 				else {
-					if (opt_offer) {
-						mutex.unlock();
+					if (offer) {
+						this.mutex.unlock();
 					}
 					else {
-						webRTC.localStreamSetUpLock	= false;
+						this.localStreamSetUpLock	= false;
 						retry();
 					}
 				}
-			}, 'setUpStream' + (opt_offer ? '' : 'Init'));
+			}, 'setUpStream' + (offer ? '' : 'Init'));
+		}
+
+		public constructor (session: Session) {
+			this.session	= session;
+			this.mutex		= new Mutex(this.session);
+
+			this.session.on(Events.p2p, (command: Command) => {
+				if (command.method) {
+					this.commands[command.method](command.argument);
+				}
+				else if (P2P.isSupported) {
+					enableWebRTC();
+				}
+			});
+			this.session.on(Events.closeChat, this.kill);
 		}
 	}
-};
-
-/* Mobile workaround */
-if (Env.isMobile && !Env.isIOS) {
-	$(function () {
-		webRTC.$friendPlaceholder[0].pause();
-
-		$(window).one('click', function () {
-			webRTC.$friendPlaceholder[0].play();
-			setTimeout(function () { webRTC.$friendPlaceholder[0].pause() }, 3000);
-		});
-	});
-}
-
-function sendWebRTCDataToPeer (o) {
-	sendChannelData({Misc: WEBRTC_DATA_PREFIX + (o ? JSON.stringify(o) : '')});
 }

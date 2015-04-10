@@ -1,7 +1,6 @@
 /// <reference path="session.ts" />
 /// <reference path="../globals.ts" />
 /// <reference path="../util.ts" />
-/// <reference path="../session/session.ts" />
 
 
 module Session {

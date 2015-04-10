@@ -45,8 +45,6 @@ module Session {
 				this.trigger(Events.closeChat)
 			;
 
-			webRTC.helpers.kill();
-
 			if (hasReceivedDestroySignal) {
 				try {
 					this.channel.close(closeChat);
@@ -276,7 +274,7 @@ module Session {
 								otr.sendMsg(this.preConnectMessageSendQueue.shift());
 							}
 
-							if (webRTC.isSupported) {
+							if (P2P.isSupported) {
 								this.send(new Message(Events.p2p, new Command));
 							}
 							break;
@@ -295,14 +293,6 @@ module Session {
 
 			this.on(Events.text, (text: string) => addMessageToChat(text, Authors.friend));
 			this.on(Events.typing, friendIsTyping);
-			this.on(Events.p2p, (command: Command) => {
-				if (command.method) {
-					webRTC.commands[command.method](command.argument);
-				}
-				else if (webRTC.isSupported) {
-					enableWebRTC();
-				}
-			});
 			this.on(Events.beginChat, () =>
 				beginChatUi(() => {
 					$(window).unload(() => this.close());
