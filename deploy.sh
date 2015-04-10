@@ -6,14 +6,9 @@ cd $(cd "$(dirname "$0")"; pwd) # $(dirname `readlink -f "${0}" || realpath "${0
 # TODO: Find a more robust way of handling arguments
 
 all=''
-nobackend=''
 test=true
 if [ "${1}" == '--prod' ] ; then
 	test=''
-	shift
-elif [ "${1}" == '--prodnobackend' ] ; then
-	test=''
-	nobackend=true
 	shift
 elif [ "${1}" == '--all' ] ; then
 	all=true
@@ -46,6 +41,21 @@ fi
 ls */*.yaml | xargs -I% sed -i.bak "s/version: master/version: ${branch}/g" %
 
 
+ls */*.yaml | xargs -I% sed -i.bak 's/max-age=0/max-age=31536000/g' %
+
+if [ $test ] ; then
+	sed -i.bak "s/staging/${branch}/g" default/config.go
+	ls */js/config.ts | xargs -I% sed -i.bak "s/api.cyph.com/${branch}-dot-cyphme.appspot.com/g" %
+
+	for yaml in `ls */cyph*.yaml` ; do
+		cat $yaml | perl -pe 's/(- url: .*)/\1\n  login: admin/g' > $yaml.new
+		mv $yaml.new $yaml
+	done
+else
+	ls */*.yaml | xargs -I% sed -i.bak 's/version: staging/version: prod/g' %
+fi
+
+
 # Compile + translate + minify
 for d in cyph.im cyph.com ; do
 	cd $d
@@ -56,10 +66,9 @@ for d in cyph.im cyph.com ; do
 	../translate.py
 
 	if [ "${branch}" == 'staging' ] ; then
-		# Minify
 		echo "JS Minify ${d}"
-		rm js/*.ts js/*.map
-		ls js/*.js | xargs -I% uglifyjs '%' -o '%' -m
+		rm js/*.ts js/*/*.ts js/*.map js/*/*.map
+		ls js/*.js js/*/*.js | xargs -I% uglifyjs '%' -o '%' -m
 		echo "CSS Minify ${d}"
 		rm css/*.scss css/*.map
 		ls css/*.css | xargs -I% cleancss -o '%' '%'
@@ -91,24 +100,6 @@ find shared ! -wholename '*fonts/*' ! -wholename '*twemoji*' ! -wholename '*webs
 done
 
 
-ls */*.yaml | xargs -I% sed -i.bak 's/max-age=0/max-age=31536000/g' %
-
-if [ $test ] ; then
-	sed -i.bak "s/staging/${branch}/g" default/config.go
-	ls cyph.im/js/*.js | xargs -I% sed -i.bak "s/api.cyph.com/${branch}-dot-cyphme.appspot.com/g" %
-
-	# ls */*.yaml | xargs -I% sed -i.bak 's/version: prod/version: staging/g' %
-
-	# Disabling admin restriction on test environments for now
-	for yaml in `ls */cyph*.yaml` ; do
-		cat $yaml | perl -pe 's/(- url: .*)/\1\n  login: admin/g' > $yaml.new
-		mv $yaml.new $yaml
-	done
-else
-	ls */*.yaml | xargs -I% sed -i.bak 's/version: staging/version: prod/g' %
-fi
-
-
 ### WebSign-related stuff
 for d in cyph.im ; do
 	cd $d
@@ -117,7 +108,7 @@ for d in cyph.im ; do
 
 	# Merge in base64'd images and audio, BUT NOT fonts (they add 7mb)
 	find img audio -type f -print0 | while read -d $'\0' f ; do
-		for g in index.html js/*.js css/*.css ; do
+		for g in index.html js/*.js js/*/*.js css/*.css ; do
 			if ( grep -o "$f" $g ) ; then
 				dataURI="data:$(echo -n "$(file --mime-type "$f")" | perl -pe 's/.*\s+(.*?)$/\1/g');base64,$(base64 "$f")"
 
@@ -172,19 +163,13 @@ done
 find . -name '*.bak' | xargs rm
 
 
-if [ "${nobackend}" == '' ] ; then
-	# AWS credentials
-	cat ~/.config/cyph-jobs.vars >> jobs/jobs.yaml
-
-	goapp deploy default/app.yaml jobs/jobs.yaml
-fi
+# AWS credentials
+cat ~/.config/cyph-jobs.vars >> jobs/jobs.yaml
 
 if [ $site ] ; then
 	goapp deploy $site/*.yaml
 else
-	# ls */*.yaml | xargs -I% appcfg.py rollback %
-	goapp deploy cyph.com/cyph-com.yaml cyph.im/cyph-im.yaml cyph.me/cyph-me.yaml
-	# goapp deploy default/app.yaml `ls !(default)/*.yaml | tr '\n' ' '`
+	goapp deploy default/app.yaml jobs/jobs.yaml cyph.com/cyph-com.yaml cyph.im/cyph-im.yaml cyph.me/cyph-me.yaml
 fi
 
 appcfg.py update_dispatch .
