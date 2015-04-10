@@ -16,59 +16,69 @@
 
 module Session {
 	export class Session {
-		private preConnectMessageReceiveQueue: string[]			= [];
-		private preConnectMessageSendQueue: string[]			= [];
 		private eventListeners: {[event: string] : Function[]}	= {};
 		private sendQueue: string[]								= [];
-		private receiveQueue: Message[]							= [];
 		private receivedMessages: {[id: string] : boolean}		= {};
 
+		private channel: Connection.IConnection;
+		private otr: OTR;
 		private lastIncomingMessageTimestamp: number;
 		private lastOutgoingMessageTimestamp: number;
-		private messageTimer: Timer;
 
-		public cyphertext: string[]	= [];
-		public messages: string[]	= [];
+		public cyphId: string				= '';
+		public sharedSecret: string			= '';
+		public hasKeyExchangeBegun: boolean	= false;
+		public isAlive: boolean				= true;
+		public isCreator: boolean			= false;
+		public isStartingNewCyph: boolean	= false;
+		public cyphertext: string[]			= [];
+		public messages: string[]			= [];
 
-		public channel: Connection.IConnection;
-		public isAlive: boolean;
-		public isConnected: boolean;
-		public isCreator: boolean;
-		public isOtrReady: boolean;
-		public hasKeyExchangeBegun: boolean;
-		public isStartingNewCyph: boolean;
-		public shouldSendQueryMessage: boolean;
-		public cyphId: string;
-		public sharedSecret: string;
+		private close (shouldSendEvent: boolean = true) : void {
+			this.isAlive	= false;
 
-		private close (hasReceivedDestroySignal?: boolean) : void {
 			let closeChat: Function	= () =>
-				this.trigger(Events.closeChat)
+				this.channel.close(() =>
+					this.trigger(Events.closeChat)
+				)
 			;
 
-			if (hasReceivedDestroySignal) {
-				try {
-					this.channel.close(closeChat);
-				}
-				catch (_) {}
-				try {
-					otrWorker.terminate();
-				}
-				catch (_) {}
-				try {
-					Timer.stopAll();
-				}
-				catch (_) {}
-
-				this.channel	= null;
-				otrWorker		= null;
-			}
-			else if (this.isAlive) {
+			if (shouldSendEvent) {
 				this.channel.send(Events.destroy, closeChat, true);
-				setTimeout(() => this.close(true), 30000);
 			}
 			else {
 				closeChat();
+			}
+		}
+
+		private otrHandler (e: { event: OTREvents; data?: any; }) {
+			switch (e.event) {
+				case OTREvents.abort:
+					Errors.logSmp();
+					abortSetup();
+					break;
+
+				case OTREvents.authenticated:
+					markAllAsSent();
+					this.pingPong();
+					break;
+
+				case OTREvents.begin:
+					this.hasKeyExchangeBegun	= true;
+					this.send(new Message(Events.p2p, new Command));
+					break;
+
+				case OTREvents.receive:
+					if (e.data) {
+						JSON.parse(e.data).forEach((message: Message) =>
+							this.receiveHandler(message)
+						);
+					}
+					break;
+
+				case OTREvents.send:
+					this.sendQueue.push(e.data.message);
+					break;
 			}
 		}
 
@@ -134,8 +144,6 @@ module Session {
 						beginWaiting();
 					}
 					else {
-						otr.sendQueryMsg();
-
 						anal.send({
 							hitType: 'event',
 							eventCategory: 'cyph',
@@ -143,17 +151,27 @@ module Session {
 							eventValue: 1
 						});
 					}
+
+					this.otr	= new OTR(this);
+
+					let sendTimer: Timer	= new Timer((now: number) => {
+						if (!this.isAlive) {
+							sendTimer.stop();
+						}
+						else if (
+							this.sendQueue.length &&
+							(
+								this.sendQueue.length >= 4 ||
+								(now - this.lastOutgoingMessageTimestamp) > 500
+							)
+						) {
+							this.sendHandler(this.sendQueue.splice(0, 4));
+						}
+					});
 				},
 				onconnect: () => this.trigger(Events.beginChat),
 				onmessage: this.receive
 			});
-		}
-
-		private trigger (event: string, data?: any) : void {
-			let eventListeners	= this.eventListeners[event];
-			for (let i = 0 ; eventListeners && i < eventListeners.length ; ++i) {
-				eventListeners[i](data);
-			}
 		}
 
 		public constructor (descriptor?: string) {
@@ -167,11 +185,6 @@ module Session {
 			;
 
 			this.setDescriptor(descriptor);
-
-			otrWorker.postMessage({method: 0, message: {
-				randomSeed: crypto.getRandomValues(new Uint8Array(50000)),
-				sharedSecret: this.sharedSecret
-			}});
 
 
 			if (this.isStartingNewCyph !== false) {
@@ -209,89 +222,12 @@ module Session {
 			});
 
 
-			this.messageTimer	= new Timer((now: number) => {
-				/*** send ***/
-				if (
-					this.isAlive &&
-					this.sendQueue.length &&
-					(
-						this.sendQueue.length >= 4 ||
-						!this.lastOutgoingMessageTimestamp ||
-						(now - this.lastOutgoingMessageTimestamp) > 500
-					)
-				) {
-					this.sendHandler(this.sendQueue.splice(0, 4));
-				}
-
-				/*** receive ***/
-				else if (this.receiveQueue.length) {
-					this.receiveHandler(this.receiveQueue.shift());
-				}
-
-				/*** otrWorker onmessage ***/
-				else if (otrWorkerOnMessageQueue.length) {
-					let e	= otrWorkerOnMessageQueue.shift();
-
-					switch (e.data.eventName) {
-						case 'ui':
-							if (e.data.message) {
-								JSON.parse(e.data.message).forEach((message: Message) =>
-									this.receiveQueue.push(message)
-								);
-							}
-							break;
-
-						case 'io':
-							this.sendQueue.push(e.data.message);
-							logCyphertext(e.data.message, Authors.me);
-							break;
-
-						case 'ready':
-							this.isOtrReady	= true;
-
-							if (this.shouldSendQueryMessage) {
-								otr.sendQueryMsg();
-							}
-
-							while (this.preConnectMessageReceiveQueue.length) {
-								otr.receiveMsg(this.preConnectMessageReceiveQueue.shift());
-							}
-
-							break;
-
-						case 'firstmessage':
-							this.hasKeyExchangeBegun	= true;
-							break;
-
-						case 'abort':
-							Errors.logSmp();
-							abortSetup();
-							break;
-
-						case 'connected':
-							this.isConnected	= true;
-
-							while (this.preConnectMessageSendQueue.length) {
-								otr.sendMsg(this.preConnectMessageSendQueue.shift());
-							}
-
-							if (P2P.isSupported) {
-								this.send(new Message(Events.p2p, new Command));
-							}
-							break;
-
-						case 'authenticated':
-							markAllAsSent();
-							this.pingPong();
-							break;
-					}
-				}
-			});
-
-
-
 			/* Receive event listeners -- temporarily placing here */
 
+			this.on(Events.otr, this.otrHandler);
+			this.on(Events.cyphertext, (o: { cyphertext: string; author: Authors; }) =>
+				logCyphertext(o.cyphertext, o.author)
+			);
 			this.on(Events.text, (text: string) => addMessageToChat(text, Authors.friend));
 			this.on(Events.typing, friendIsTyping);
 			this.on(Events.beginChat, () =>
@@ -303,6 +239,16 @@ module Session {
 			this.on(Events.closeChat, closeChat);
 		}
 
+		public off (event: string, f: Function) : void {
+			var events: Function[]	= this.eventListeners[event];
+
+			for (let i = 0 ; events && i < events.length ; ++i) {
+				if (events[i] == f) {
+					delete events[i];
+				}
+			}
+		}
+
 		public on (event: string, f: Function) : void {
 			this.eventListeners[event]	= this.eventListeners[event] || [];
 			this.eventListeners[event].push(f);
@@ -310,17 +256,22 @@ module Session {
 
 		public receive (data: string) : void {
 			if (data == Events.destroy) {
-				this.close(true);
+				this.close(false);
 			}
 			else {
-				otr.receiveMsg(data);
+				this.otr.receive(data);
 			}
-
-			logCyphertext(data, Authors.friend);
 		}
 
 		public send (...messages: Message[]) : void {
-			otr.sendMsg(JSON.stringify(messages));
+			this.otr.send(JSON.stringify(messages));
+		}
+
+		public trigger (event: string, data?: any) : void {
+			let eventListeners	= this.eventListeners[event];
+			for (let i = 0 ; eventListeners && i < eventListeners.length ; ++i) {
+				eventListeners[i](data);
+			}
 		}
 	}
 }

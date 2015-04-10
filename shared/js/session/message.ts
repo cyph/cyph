@@ -1,4 +1,5 @@
 /// <reference path="../globals.ts" />
+/// <reference path="../util.ts" />
 
 
 module Session {
@@ -8,7 +9,7 @@ module Session {
 		public data: any;
 
 		public constructor (event: string = '', data?: any) {
-			this.id		= Date.now() + '-' + crypto.getRandomValues(new Uint32Array(1))[0];
+			this.id		= Util.generateGuid();
 			this.event	= event;
 			this.data	= data;
 		}
