@@ -19,8 +19,8 @@ class Thread {
 		;
 
 		try {
-			let blob;
-			let blobUrl;
+			let blob: Blob;
+			let blobUrl: string;
 
 			try {
 				blob	= new Blob([s], {type: 'application/javascript'});
