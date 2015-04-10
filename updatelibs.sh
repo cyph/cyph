@@ -37,7 +37,9 @@ tsd query --resolve --overwrite --save --action install \
 	angular-animate \
 	aws-sdk \
 	cryptojs \
-	highlightjs
+	highlightjs \
+	MediaStream \
+	RTCPeerConnection
 
 cd ../cryptolib
 

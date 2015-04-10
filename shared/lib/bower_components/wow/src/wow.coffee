@@ -1,7 +1,7 @@
 #
 # Name    : wow
 # Author  : Matthieu Aussaguel, http://mynameismatthieu.com/, @mattaussaguel
-# Version : 1.1.0
+# Version : 1.1.2
 # Repo    : https://github.com/matthieua/WOW
 # Website : http://mynameismatthieu.com/wow
 #
@@ -30,10 +30,10 @@ class Util
   emitEvent: (elem, event) ->
     if elem.dispatchEvent? # W3C DOM
       elem.dispatchEvent(event)
-    else if event of elem? 
-      elem[event]();
+    else if event of elem?
+      elem[event]()
     else if "on#{event}" of elem?
-      elem["on#{event}"]();
+      elem["on#{event}"]()
 
   addEvent: (elem, event, fn) ->
     if elem.addEventListener? # W3C DOM
@@ -201,10 +201,10 @@ class @WOW
   resetStyle: ->
     box.style.visibility = 'visible' for box in @boxes
 
-  resetAnimation: (event) ->
-  	if event.type.toLowerCase().indexOf('animationend') >= 0
-  		target = event.target || event.srcElement
-  		target.className = target.className.replace(config.animateClass, '').trim()
+  resetAnimation: (event) =>
+    if event.type.toLowerCase().indexOf('animationend') >= 0
+      target = event.target || event.srcElement
+      target.className = target.className.replace(@config.animateClass, '').trim()
 
   customStyle: (box, hidden, duration, delay, iteration) ->
     @cacheAnimationName(box) if hidden
