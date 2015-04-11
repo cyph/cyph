@@ -1,4 +1,4 @@
-/// <reference path="iconnection.ts" />
+/// <reference path="ichannel.ts" />
 /// <reference path="queue.ts" />
 /// <reference path="../globals.ts" />
 /// <reference path="../timer.ts" />
@@ -7,8 +7,8 @@
 
 /* Bidirectional channel, comprised of two queues */
 
-module Connection {
-	export class Channel implements IConnection {
+module Channel {
+	export class Channel implements IChannel {
 		private static channelIds (b?: boolean) : string {
 			return b ? '0' : '1';
 		}

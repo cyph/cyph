@@ -1,4 +1,4 @@
-/// <reference path="iconnection.ts" />
+/// <reference path="ichannel.ts" />
 /// <reference path="../awswrapper.ts" />
 /// <reference path="../config.ts" />
 /// <reference path="../env.ts" />
@@ -10,8 +10,8 @@
 
 /* Unidirectional queue */
 
-module Connection {
-	export class Queue implements IConnection {
+module Channel {
+	export class Queue implements IChannel {
 		public static nonExistentQueue: string	= 'AWS.SimpleQueueService.NonExistentQueue';
 		public static queuePrefix: string		= 'channels-';
 
