@@ -1,8 +1,8 @@
 /// <reference path="../globals.ts" />
 
 
-module Connection {
-	export interface IConnection {
+module Channel {
+	export interface IChannel {
 		close (callback?: Function) : void;
 
 		isAlive () : boolean;

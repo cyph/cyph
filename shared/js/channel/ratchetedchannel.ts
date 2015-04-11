@@ -1,5 +1,5 @@
 /// <reference path="channel.ts" />
-/// <reference path="iconnection.ts" />
+/// <reference path="ichannel.ts" />
 /// <reference path="../globals.ts" />
 /// <reference path="../util.ts" />
 /// <reference path="../session/isession.ts" />
@@ -15,8 +15,8 @@
 		Both: wait a bit, then destroy old channel
 */
 
-module Connection {
-	export class RatchetedChannel implements IConnection {
+module Channel {
+	export class RatchetedChannel implements IChannel {
 		private lastChannelRatchet: number	= 0;
 
 		private isCreator: boolean;
