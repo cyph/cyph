@@ -1,10 +1,11 @@
+/// <reference path="imutex.ts" />
 /// <reference path="isession.ts" />
 /// <reference path="../globals.ts" />
 /// <reference path="../util.ts" />
 
 
 module Session {
-	export class Mutex {
+	export class Mutex implements IMutex {
 		private owner: Authors;
 		private purpose: string;
 		private requester: { author: Authors; purpose: string; };
