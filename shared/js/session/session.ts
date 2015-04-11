@@ -8,6 +8,7 @@
 /// <reference path="../analytics.ts" />
 /// <reference path="../globals.ts" />
 /// <reference path="../errors.ts" />
+/// <reference path="../eventmanager.ts" />
 /// <reference path="../timer.ts" />
 /// <reference path="../util.ts" />
 /// <reference path="../channel/ichannel.ts" />
@@ -27,12 +28,12 @@ module Session {
 		};
 
 
-		private eventListeners: {[event: string] : Function[]}	= {};
 		private receivedMessages: {[id: string] : boolean}		= {};
 		private sendQueue: string[]								= [];
 		private lastIncomingMessageTimestamp: number			= 0;
 		private lastOutgoingMessageTimestamp: number			= 0;
 
+		private id: string;
 		private channel: Channel.IChannel;
 		private otr: IOTR;
 
@@ -179,7 +180,9 @@ module Session {
 			});
 		}
 
-		public constructor (descriptor?: string, p2p?: IP2P) {
+		public constructor (descriptor?: string, p2p?: IP2P, id: string = Util.generateGuid()) {
+			this.id	= id;
+
 			/* true = yes; false = no; null = maybe */
 			this.updateState(Session.state.isStartingNewCyph,
 				!descriptor ?
@@ -254,18 +257,11 @@ module Session {
 		}
 
 		public off (event: string, f: Function) : void {
-			var events: Function[]	= this.eventListeners[event];
-
-			for (let i = 0 ; events && i < events.length ; ++i) {
-				if (events[i] == f) {
-					delete events[i];
-				}
-			}
+			EventManager.off(event + this.id, f);
 		}
 
 		public on (event: string, f: Function) : void {
-			this.eventListeners[event]	= this.eventListeners[event] || [];
-			this.eventListeners[event].push(f);
+			EventManager.on(event + this.id, f);
 		}
 
 		public receive (data: string) : void {
@@ -289,10 +285,7 @@ module Session {
 		}
 
 		public trigger (event: string, data?: any) : void {
-			let eventListeners	= this.eventListeners[event];
-			for (let i = 0 ; eventListeners && i < eventListeners.length ; ++i) {
-				eventListeners[i](data);
-			}
+			EventManager.trigger(event + this.id, data);
 		}
 
 		public updateState (key: string, value: any) : void {
