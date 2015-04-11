@@ -98,7 +98,7 @@ class Thread {
 			try {
 				blob	= new Blob([s], {type: 'application/javascript'});
 			}
-			catch (e) {
+			catch (_) {
 				let blobBuilder	= new Thread.BlobBuilder();
 				blobBuilder.append(s);
 
