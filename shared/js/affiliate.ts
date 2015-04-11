@@ -1,4 +1,3 @@
-/// <reference path="analytics.ts" />
 /// <reference path="env.ts" />
 /// <reference path="globals.ts" />
 /// <reference path="util.ts" />
@@ -45,15 +44,6 @@ class Affiliate {
 
 								$mdDialog.hide();
 								openAmazonUrl(ok);
-
-								if (ok) {
-									anal.send({
-										hitType: 'event',
-										eventCategory: 'affiliate',
-										eventAction: 'approve',
-										eventValue: 1
-									});
-								}
 							};
 						}],
 
