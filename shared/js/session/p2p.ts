@@ -1,4 +1,6 @@
 /// <reference path="enums.ts" />
+/// <reference path="imutex.ts" />
+/// <reference path="ip2p.ts" />
 /// <reference path="isession.ts" />
 /// <reference path="mutex.ts" />
 /// <reference path="p2pfile.ts" />
@@ -11,7 +13,7 @@
 
 
 module Session {
-	export class P2P {
+	export class P2P implements IP2P {
 		private static constants	= {
 			addIceCandidate: 'addIceCandidate',
 			audio: 'audio',
@@ -35,7 +37,7 @@ module Session {
 		};
 
 
-		private mutex: Mutex;
+		private mutex: IMutex;
 		private session: ISession;
 
 		private channel: RTCDataChannel;
@@ -51,9 +53,6 @@ module Session {
 
 		private incomingFile: P2PFile	= new P2PFile;
 		private outgoingFile: P2PFile	= new P2PFile;
-
-		private streamOptions	= {audio: false, video: false, loading: false};
-		private incomingStream	= {audio: false, video: false, loading: false};
 
 		private commands	= {
 			addIceCandidate: (candidate: string) : void => {
@@ -171,7 +170,10 @@ module Session {
 			}
 		};
 
-		private init () : void {
+		public incomingStream	= {audio: false, video: false, loading: false};
+		public streamOptions	= {audio: false, video: false, loading: false};
+
+		private initPeer () : void {
 			if (this.peer) {
 				return;
 			}
@@ -269,7 +271,7 @@ module Session {
 					}
 
 					if (this.hasSessionStarted) {
-						this.init();
+						this.initPeer();
 					}
 				}
 			};
@@ -635,7 +637,7 @@ module Session {
 
 				this.mutex.lock((wasFirst: boolean, wasFirstOfType: boolean) => {
 					if (wasFirstOfType && this.isAccepted) {
-						this.init();
+						this.initPeer();
 
 						let streamHelper;
 						let streamFallback;
@@ -840,27 +842,31 @@ module Session {
 			this.session.trigger(Events.p2pUi, {category, event, args});
 		}
 
-		public constructor (session: ISession) {
-			this.session	= session;
-			this.mutex		= new Mutex(this.session);
+		public constructor () {}
 
-			this.session.on(Events.beginChat, () =>
-				this.session.send(new Message(Events.p2p, new Command))
-			);
+		public init (session: ISession) : void {
+			if (!this.session) {
+				this.session	= session;
+				this.mutex		= new Mutex(this.session);
 
-			this.session.on(Events.closeChat, this.kill);
+				this.session.on(Events.beginChat, () =>
+					this.session.send(new Message(Events.p2p, new Command))
+				);
 
-			this.session.on(Events.p2p, (command: Command) => {
-				if (command.method) {
-					this.commands[command.method](command.argument);
-				}
-				else if (WebRTC.isSupported) {
-					this.triggerUiEvent(
-						P2PUIEvents.Categories.base,
-						P2PUIEvents.Events.enable
-					);
-				}
-			});
+				this.session.on(Events.closeChat, this.kill);
+
+				this.session.on(Events.p2p, (command: Command) => {
+					if (command.method) {
+						this.commands[command.method](command.argument);
+					}
+					else if (WebRTC.isSupported) {
+						this.triggerUiEvent(
+							P2PUIEvents.Categories.base,
+							P2PUIEvents.Events.enable
+						);
+					}
+				});
+			}
 		}
 	}
 }
