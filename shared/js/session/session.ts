@@ -10,8 +10,8 @@
 /// <reference path="../errors.ts" />
 /// <reference path="../timer.ts" />
 /// <reference path="../util.ts" />
-/// <reference path="../connection/iconnection.ts" />
-/// <reference path="../connection/ratchetedchannel.ts" />
+/// <reference path="../channel/ichannel.ts" />
+/// <reference path="../channel/ratchetedchannel.ts" />
 /// <reference path="../../lib/typings/jquery/jquery.d.ts" />
 
 
@@ -33,8 +33,8 @@ module Session {
 		private lastIncomingMessageTimestamp: number			= 0;
 		private lastOutgoingMessageTimestamp: number			= 0;
 
+		private channel: Channel.IChannel;
 		private otr: IOTR;
-		private channel: Connection.IConnection;
 
 		public state	= {
 			cyphId: <string> '',
@@ -141,7 +141,7 @@ module Session {
 		}
 
 		private setUpChannel (channelDescriptor: string) : void {
-			this.channel	= new Connection.RatchetedChannel(this, channelDescriptor, {
+			this.channel	= new Channel.RatchetedChannel(this, channelDescriptor, {
 				onopen: (isCreator: boolean) : void => {
 					this.updateState(Session.state.isCreator, isCreator);
 
@@ -200,7 +200,7 @@ module Session {
 				let channelDescriptor: string	=
 					this.state.isStartingNewCyph === false ?
 						'' :
-						Connection.Channel.newDescriptor()
+						Channel.Channel.newDescriptor()
 				;
 
 				$.ajax({
