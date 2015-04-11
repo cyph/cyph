@@ -134,7 +134,7 @@ module Session {
 					this.updateState('isCreator', isCreator);
 
 					if (this.state.isCreator) {
-						this.trigger(Events.beginWaiting)
+						this.trigger(Events.beginWaiting);
 					}
 					else {
 						anal.send({
