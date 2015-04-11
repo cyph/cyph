@@ -50,7 +50,7 @@ module Session {
 
 		public lock (f: Function, purpose: string = '') : void {
 			if (this.owner != Authors.me) {
-				if (!this.owner && this.session.isCreator) {
+				if (!this.owner && this.session.state.isCreator) {
 					this.owner		= Authors.me;
 					this.purpose	= purpose;
 				}
