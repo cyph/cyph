@@ -1,4 +1,4 @@
-/// <reference path="session.ts" />
+/// <reference path="isession.ts" />
 /// <reference path="../globals.ts" />
 /// <reference path="../util.ts" />
 
@@ -8,7 +8,7 @@ module Session {
 		private owner: Authors;
 		private purpose: string;
 		private requester: { author: Authors; purpose: string; };
-		private session: Session;
+		private session: ISession;
 
 		private commands	= {
 			release: () : void => {
@@ -41,7 +41,7 @@ module Session {
 			}
 		}
 
-		public constructor (session: Session) {
+		public constructor (session: ISession) {
 			this.session	= session;
 
 			this.session.on(Events.mutex, (command: Command) => this.commands[command.method](command.argument));
