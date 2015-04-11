@@ -52,7 +52,7 @@ function Init () {
 	}
 	else {
 		/* TODO: Init session */
-		let session	= new Session(Util.getUrlState());
+		let session	= new Session.Session(Util.getUrlState());
 		history.pushState({}, '', location.pathname);
 	}
 }

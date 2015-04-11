@@ -17,4 +17,6 @@ var processUrlState: Function;
 var webSign: WebSign;
 var localStorage: Storage;
 
-var Controller: any;
+var Controller: any	= {
+	update: () => {}
+};
