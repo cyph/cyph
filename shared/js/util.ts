@@ -29,8 +29,8 @@ class Util {
 
 	public static getStrings (strings: any) {
 		Object.keys(strings).forEach((k: string) =>
-			strings[k]	= $('meta[name="' + k + '"]')
-				.attr('content').
+			strings[k]	=
+				($('meta[name="' + k + '"]').attr('content') || '').
 				replace(/\s+/g, ' ').
 				trim()
 		);
