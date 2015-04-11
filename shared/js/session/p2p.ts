@@ -1,7 +1,7 @@
 /// <reference path="enums.ts" />
+/// <reference path="isession.ts" />
 /// <reference path="mutex.ts" />
 /// <reference path="p2pfile.ts" />
-/// <reference path="session.ts" />
 /// <reference path="../globals.ts" />
 /// <reference path="../util.ts" />
 /// <reference path="../webrtc.ts" />
@@ -36,7 +36,7 @@ module Session {
 
 
 		private mutex: Mutex;
-		private session: Session;
+		private session: ISession;
 
 		private channel: RTCDataChannel;
 		private peer: RTCPeerConnection;
@@ -840,7 +840,7 @@ module Session {
 			this.session.trigger(Events.p2pUi, {category, event, args});
 		}
 
-		public constructor (session: Session) {
+		public constructor (session: ISession) {
 			this.session	= session;
 			this.mutex		= new Mutex(this.session);
 

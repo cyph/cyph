@@ -3,14 +3,14 @@
 /// <reference path="ui.elements.ts" />
 /// <reference path="../globals.ts" />
 /// <reference path="../session/enums.ts" />
+/// <reference path="../session/isession.ts" />
 /// <reference path="../session/p2p.ts" />
-/// <reference path="../session/session.ts" />
 /// <reference path="../../lib/typings/jquery/jquery.d.ts" />
 
 
 module Cyph.im {
 	export module UI {
-		export let events	= (session: Session.Session) : void => {
+		export let events	= (session: Session.ISession) : void => {
 			/* Main session events */
 
 			session.on(Session.Events.beginChat, () =>
