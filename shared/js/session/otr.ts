@@ -36,7 +36,7 @@ module Session {
 					this.otr.on('smp', (e: string) => {
 						switch (e) {
 							case 'request':
-								this.otr.smpRespond(this.session.sharedSecret);
+								this.otr.smpRespond(this.session.state.sharedSecret);
 								break;
 
 							case 'complete':
@@ -106,14 +106,14 @@ module Session {
 								this.otr.send(this.sendQueue.shift());
 							}
 
-							if (this.session.isCreator) {
-								this.otr.smpStart(this.session.sharedSecret);
+							if (this.session.state.isCreator) {
+								this.otr.smpStart(this.session.state.sharedSecret);
 							}
 						}
 					});
 
 
-					if (!this.session.isCreator) {
+					if (!this.session.state.isCreator) {
 						this.otr.start();
 					}
 
