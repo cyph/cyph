@@ -24,17 +24,19 @@ module Session {
 		private lastIncomingMessageTimestamp: number;
 		private lastOutgoingMessageTimestamp: number;
 
-		public cyphId: string				= '';
-		public sharedSecret: string			= '';
-		public hasKeyExchangeBegun: boolean	= false;
-		public isAlive: boolean				= true;
-		public isCreator: boolean			= false;
-		public isStartingNewCyph: boolean	= false;
+		public state	= {
+			cyphId: <string> '',
+			sharedSecret: <string> '',
+			hasKeyExchangeBegun: <boolean> false,
+			isAlive: <boolean> true,
+			isCreator: <boolean> false,
+			isStartingNewCyph: <boolean> false
+		};
 
 		public p2p: P2P;
 
 		private close (shouldSendEvent: boolean = true) : void {
-			this.isAlive	= false;
+			this.changeState('isAlive', false);
 
 			let closeChat: Function	= () =>
 				this.channel.close(() =>
@@ -63,7 +65,7 @@ module Session {
 					break;
 
 				case OTREvents.begin:
-					this.hasKeyExchangeBegun	= true;
+					this.changeState('hasKeyExchangeBegun', true);
 					break;
 
 				case OTREvents.receive:
@@ -131,16 +133,19 @@ module Session {
 
 			let middle: number	= Math.ceil(descriptor.length / 2);
 
-			this.cyphId			= descriptor.substr(0, middle);
-			this.sharedSecret	= this.sharedSecret || descriptor.substr(middle);
+			this.changeState('cyphId', descriptor.substr(0, middle));
+			this.changeState('sharedSecret',
+				this.state.sharedSecret ||
+				descriptor.substr(middle)
+			);
 		}
 
 		private setUpChannel (channelDescriptor: string) : void {
 			this.channel	= new Connection.RatchetedChannel(this, channelDescriptor, {
 				onopen: (isCreator: boolean) : void => {
-					this.isCreator	= isCreator;
+					this.changeState('isCreator', isCreator);
 
-					if (this.isCreator) {
+					if (this.state.isCreator) {
 						beginWaiting();
 					}
 					else {
@@ -155,7 +160,7 @@ module Session {
 					this.otr	= new OTR(this);
 
 					let sendTimer: Timer	= new Timer((now: number) => {
-						if (!this.isAlive) {
+						if (!this.state.isAlive) {
 							sendTimer.stop();
 						}
 						else if (
@@ -176,34 +181,37 @@ module Session {
 
 		public constructor (descriptor?: string, shouldSetUpP2P: boolean = true) {
 			/* true = yes; false = no; null = maybe */
-			this.isStartingNewCyph	=
+			this.changeState('isStartingNewCyph',
 				!descriptor ?
 					true :
 					descriptor.length > Config.secretLength ?
 						null :
 						false
-			;
+			);
 
 			this.setDescriptor(descriptor);
 
 
-			if (this.isStartingNewCyph !== false) {
+			if (this.state.isStartingNewCyph !== false) {
 				changeState(states.spinningUp);
 			}
 
 			Util.retryUntilComplete(retry => {
 				let channelDescriptor: string	=
-					this.isStartingNewCyph === false ?
+					this.state.isStartingNewCyph === false ?
 						'' :
 						Connection.Channel.newDescriptor()
 				;
 
 				$.ajax({
 					type: 'POST',
-					url: Env.baseUrl + 'channels/' + this.cyphId,
+					url: Env.baseUrl + 'channels/' + this.state.cyphId,
 					data: {channelDescriptor},
 					success: (data: string) => {
-						if (this.isStartingNewCyph === true && channelDescriptor != data) {
+						if (
+							this.state.isStartingNewCyph === true &&
+							channelDescriptor != data
+						) {
 							retry();
 						}
 						else {
@@ -211,7 +219,7 @@ module Session {
 						}
 					},
 					error: () => {
-						if (this.isStartingNewCyph === false) {
+						if (this.state.isStartingNewCyph === false) {
 							Util.pushNotFound();
 						}
 						else {
@@ -242,6 +250,10 @@ module Session {
 				})
 			);
 			this.on(Events.closeChat, closeChat);
+		}
+
+		public changeState (key: string, value: any) {
+			this.state[key]	= value;
 		}
 
 		public off (event: string, f: Function) : void {
