@@ -1,13 +1,3 @@
-/* Get strings */
-
-if (typeof strings != 'undefined') {
-	Object.keys(strings).forEach(function (k) {
-		strings[k]	= $('meta[name="' + k + '"]').attr('content').replace(/\s+/g, ' ').trim();
-	});
-}
-
-
-
 /* Load assets only for the current platform */
 
 $(
