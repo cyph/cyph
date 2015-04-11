@@ -1,5 +1,6 @@
 /// <reference path="config.ts" />
 /// <reference path="globals.ts" />
+/// <reference path="../lib/typings/jquery/jquery.d.ts" />
 
 
 class Util {
@@ -24,6 +25,16 @@ class Util {
 		}
 
 		return Date.now() + '-' + crypto.getRandomValues(new Uint32Array(1))[0];
+	}
+
+	public static getStrings (strings: any) {
+		Object.keys(strings).forEach(function (k) {
+			strings[k]	= $('meta[name="' + k + '"]')
+				.attr('content').
+				replace(/\s+/g, ' ').
+				trim()
+			;
+		});
 	}
 
 	public static getTimestamp () : string {
