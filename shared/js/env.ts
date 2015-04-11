@@ -61,7 +61,7 @@ class Env {
 			document.createEvent('TouchEvent');
 			return true;
 		}
-		catch (e) {
+		catch (_) {
 			return false;
 		}
 	})();
