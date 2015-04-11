@@ -17,6 +17,7 @@ module Session {
 		public static mutex: string				= 'mutex';
 		public static otr: string				= 'otr';
 		public static p2p: string				= 'p2p';
+		public static p2pUi: string				= 'p2pUi';
 		public static text: string				= 'text';
 		public static typing: string			= 'typing';
 	}
@@ -29,7 +30,38 @@ module Session {
 		send
 	}
 
-	export enum P2PEvents {
+	export module P2PUIEvents {
+		export enum Categories {
+			base,
+			file,
+			request,
+			stream
+		}
 
+		export enum Events {
+			/* base */
+			connected,
+			enable,
+			videoToggle,
+
+			/* file */
+			clear,
+			confirm,
+			get,
+			rejected,
+			tooLarge,
+			transferStarted,
+
+			/* request */
+			acceptConfirm,
+			acceptConfirmation,
+			requestConfirm,
+			requestConfirmation,
+			requestRejection,
+
+			/* stream */
+			play,
+			set
+		}
 	}
 }
