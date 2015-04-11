@@ -1,4 +1,5 @@
 /// <reference path="enums.ts" />
+/// <reference path="iotr.ts" />
 /// <reference path="isession.ts" />
 /// <reference path="otrmessage.ts" />
 /// <reference path="../globals.ts" />
@@ -6,7 +7,7 @@
 
 
 module Session {
-	export class OTR {
+	export class OTR implements IOTR {
 		private static libotr: any	= window['OTR'];
 
 
@@ -21,9 +22,16 @@ module Session {
 		private otr: any;
 		private session: ISession
 
-		public constructor (session: ISession) {
+		public constructor (
+			session: ISession,
+			handler?: (e: { event: OTREvents; data?: string; }) => void
+		) {
 			this.session	= session;
 			let user: any	= (new OTR.libotr.User).account('me', 'cyph');
+
+			if (handler) {
+				this.session.on(Events.otr, handler);
+			}
 
 			user.generateInstag(() =>
 				user.generateKey(() => {

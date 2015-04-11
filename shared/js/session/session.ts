@@ -1,8 +1,10 @@
 /// <reference path="command.ts" />
 /// <reference path="enums.ts" />
+/// <reference path="iotr.ts" />
+/// <reference path="ip2p.ts" />
+/// <reference path="isession.ts" />
 /// <reference path="message.ts" />
 /// <reference path="otr.ts" />
-/// <reference path="p2p.ts" />
 /// <reference path="../analytics.ts" />
 /// <reference path="../globals.ts" />
 /// <reference path="../errors.ts" />
@@ -14,7 +16,7 @@
 
 
 module Session {
-	export class Session {
+	export class Session implements ISession {
 		public static state	= {
 			cyphId: 'cyphId',
 			sharedSecret: 'sharedSecret',
@@ -31,7 +33,7 @@ module Session {
 		private lastIncomingMessageTimestamp: number			= 0;
 		private lastOutgoingMessageTimestamp: number			= 0;
 
-		private otr: OTR;
+		private otr: IOTR;
 		private channel: Connection.IConnection;
 
 		public state	= {
@@ -43,9 +45,9 @@ module Session {
 			isStartingNewCyph: <boolean> false
 		};
 
-		public p2p: P2P;
+		public p2p: IP2P;
 
-		private otrHandler (e: { event: OTREvents; data?: string; }) {
+		private otrHandler (e: { event: OTREvents; data?: string; }) : void {
 			switch (e.event) {
 				case OTREvents.abort:
 					Errors.logSmp();
@@ -155,7 +157,7 @@ module Session {
 						});
 					}
 
-					this.otr	= new OTR(this);
+					this.otr	= new OTR(this, this.otrHandler);
 
 					let sendTimer: Timer	= new Timer((now: number) => {
 						if (!this.state.isAlive) {
@@ -177,7 +179,7 @@ module Session {
 			});
 		}
 
-		public constructor (descriptor?: string, shouldSetUpP2P: boolean = true) {
+		public constructor (descriptor?: string, p2p?: IP2P) {
 			/* true = yes; false = no; null = maybe */
 			this.updateState(Session.state.isStartingNewCyph,
 				!descriptor ?
@@ -228,12 +230,10 @@ module Session {
 			});
 
 
-			if (shouldSetUpP2P) {
-				this.p2p	= new P2P(this);
+			if (p2p) {
+				this.p2p	= p2p;
+				this.p2p.init(this);
 			}
-
-
-			this.on(Events.otr, this.otrHandler);
 		}
 
 		public close (shouldSendEvent: boolean = true) : void {
@@ -295,7 +295,7 @@ module Session {
 			}
 		}
 
-		public updateState (key: string, value: any) {
+		public updateState (key: string, value: any) : void {
 			this.state[key]	= value;
 			Controller.update();
 		}
