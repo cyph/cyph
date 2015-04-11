@@ -2,7 +2,7 @@
 /// <reference path="iconnection.ts" />
 /// <reference path="../globals.ts" />
 /// <reference path="../util.ts" />
-/// <reference path="../session/session.ts" />
+/// <reference path="../session/isession.ts" />
 
 
 /*
@@ -22,7 +22,7 @@ module Connection {
 		private isCreator: boolean;
 		private channel: Channel;
 		private newChannel: Channel;
-		private session: Session.Session;
+		private session: Session.ISession;
 
 		private destroyCurrentChannel () : void {
 			if (this.newChannel) {
@@ -86,7 +86,7 @@ module Connection {
 			}
 		}
 
-		public constructor (session: Session.Session, channelName: string, handlers: any = {}, config: any = {}) {
+		public constructor (session: Session.ISession, channelName: string, handlers: any = {}, config: any = {}) {
 			this.session	= session;
 
 			this.session.on(Session.Events.channelRatchet, this.ratchetChannels);

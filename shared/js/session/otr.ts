@@ -1,6 +1,6 @@
 /// <reference path="enums.ts" />
+/// <reference path="isession.ts" />
 /// <reference path="otrmessage.ts" />
-/// <reference path="session.ts" />
 /// <reference path="../globals.ts" />
 /// <reference path="../util.ts" />
 
@@ -19,9 +19,9 @@ module Session {
 		private sendQueue: string[]		= [];
 
 		private otr: any;
-		private session: Session
+		private session: ISession
 
-		public constructor (session: Session) {
+		public constructor (session: ISession) {
 			this.session	= session;
 			let user: any	= (new OTR.libotr.User).account('me', 'cyph');
 
