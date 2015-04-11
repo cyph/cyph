@@ -1,7 +1,6 @@
 /// <reference path="command.ts" />
 /// <reference path="enums.ts" />
 /// <reference path="message.ts" />
-/// <reference path="mutex.ts" />
 /// <reference path="otr.ts" />
 /// <reference path="p2p.ts" />
 /// <reference path="../globals.ts" />
@@ -17,11 +16,11 @@
 module Session {
 	export class Session {
 		private eventListeners: {[event: string] : Function[]}	= {};
-		private sendQueue: string[]								= [];
 		private receivedMessages: {[id: string] : boolean}		= {};
+		private sendQueue: string[]								= [];
 
-		private channel: Connection.IConnection;
 		private otr: OTR;
+		private channel: Connection.IConnection;
 		private lastIncomingMessageTimestamp: number;
 		private lastOutgoingMessageTimestamp: number;
 
@@ -31,8 +30,6 @@ module Session {
 		public isAlive: boolean				= true;
 		public isCreator: boolean			= false;
 		public isStartingNewCyph: boolean	= false;
-		public cyphertext: string[]			= [];
-		public messages: string[]			= [];
 
 		public p2p: P2P;
 
@@ -67,7 +64,6 @@ module Session {
 
 				case OTREvents.begin:
 					this.hasKeyExchangeBegun	= true;
-					this.send(new Message(Events.p2p, new Command));
 					break;
 
 				case OTREvents.receive:
