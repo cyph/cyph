@@ -34,6 +34,8 @@ module Session {
 		public cyphertext: string[]			= [];
 		public messages: string[]			= [];
 
+		public p2p: P2P;
+
 		private close (shouldSendEvent: boolean = true) : void {
 			this.isAlive	= false;
 
@@ -176,7 +178,7 @@ module Session {
 			});
 		}
 
-		public constructor (descriptor?: string) {
+		public constructor (descriptor?: string, shouldSetUpP2P: boolean = true) {
 			/* true = yes; false = no; null = maybe */
 			this.isStartingNewCyph	=
 				!descriptor ?
@@ -222,6 +224,11 @@ module Session {
 					}
 				});
 			});
+
+
+			if (shouldSetUpP2P) {
+				this.p2p	= new P2P(this);
+			}
 
 
 			/* Receive event listeners -- temporarily placing here */

@@ -25,6 +25,7 @@
         "unsupportedbrowsers.ts",
         "util.ts",
         "visibilityPolyfill.ts",
+        "webrtc.ts",
         "websign.d.ts",
         "connection/channel.ts",
         "connection/iconnection.ts",

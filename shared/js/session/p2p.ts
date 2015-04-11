@@ -3,6 +3,7 @@
 /// <reference path="session.ts" />
 /// <reference path="../globals.ts" />
 /// <reference path="../util.ts" />
+/// <reference path="../webrtc.ts" />
 /// <reference path="../cyph.im/strings.ts" />
 /// <reference path="../cyph.im/ui.elements.ts" />
 /// <reference path="../../lib/typings/jquery/jquery.d.ts" />
@@ -12,45 +13,34 @@
 
 module Session {
 	export class P2P {
-		private static getUserMedia	=
-			navigator.getUserMedia ||
-			navigator['mozGetUserMedia'] ||
-			navigator['webkitGetUserMedia']
-		;
-
-		private static IceCandidate: any	=
-			window.RTCIceCandidate ||
-			window['mozRTCIceCandidate']
-		;
-
-		private static MediaStream: any	=
-			window['MediaStream'] ||
-			window['webkitMediaStream']
-		;
-
-		private static PeerConnection: any	=
-			window.RTCPeerConnection ||
-			window['mozRTCPeerConnection'] ||
-			window['webkitRTCPeerConnection']
-		;
-
-		private static SessionDescription: any	=
-			window.RTCSessionDescription ||
-			window['mozRTCSessionDescription']
-		;
-
-		public static isSupported: boolean	= !!P2P.PeerConnection;
-
-		public static events	= {
-			fileTransferComplete: 'done'
+		private static constants	= {
+			addIceCandidate: 'addIceCandidate',
+			audio: 'audio',
+			closed: 'closed',
+			decline: 'decline',
+			file: 'file',
+			fileTransferComplete: 'fileTransferComplete',
+			kill: 'kill',
+			open: 'open',
+			receiveAnswer: 'receiveAnswer',
+			receiveOffer: 'receiveOffer',
+			requestCall: 'requestCall',
+			setUpStream: 'setUpStream',
+			setUpStreamInit: 'setUpStreamInit',
+			streamOptions: 'streamOptions',
+			stun: 'stun',
+			subspace: 'subspace',
+			turn: 'turn',
+			video: 'video',
+			voice: 'voice'
 		};
 
 
 		private mutex: Mutex;
 		private session: Session;
 
+		private channel: RTCDataChannel;
 		private peer: RTCPeerConnection;
-		private channel: any;
 
 		private localStream: MediaStream;
 		private remoteStream: MediaStream;
@@ -67,18 +57,22 @@ module Session {
 		private incomingStream	= {audio: false, video: false, loading: false};
 
 		private commands	= {
-			addIceCandidate: (candidate) => {
+			addIceCandidate: (candidate: string) : void => {
 				if (this.isAvailable) {
-					this.peer.addIceCandidate(new P2P.IceCandidate(JSON.parse(candidate)), () => {}, () => {});
+					this.peer.addIceCandidate(
+						new WebRTC.IceCandidate(JSON.parse(candidate)),
+						() => {},
+						() => {}
+					);
 				}
 				else {
-					setTimeout(() => {
-						this.commands['addIceCandidate'](candidate);
-					}, 500);
+					setTimeout(() =>
+						this.commands.addIceCandidate(candidate)
+					, 500);
 				}
 			},
 
-			decline: (answer) => {
+			decline: () : void => {
 				this.isAccepted	= false;
 
 				this.triggerUiEvent(
@@ -87,10 +81,10 @@ module Session {
 				);
 			},
 
-			kill: () => {
-				let wasAccepted			= this.isAccepted;
-				this.isAccepted			= false;
-				this.hasSessionStarted	= false;
+			kill: () : void => {
+				let wasAccepted: boolean	= this.isAccepted;
+				this.isAccepted				= false;
+				this.hasSessionStarted		= false;
 
 				this.triggerUiEvent(
 					P2PUIEvents.Categories.base,
@@ -99,31 +93,27 @@ module Session {
 				);
 
 				setTimeout(() => {
-					delete this.streamOptions.video;
-					delete this.streamOptions.audio;
+					[this.streamOptions, this.incomingStream].forEach(o =>
+						Object.keys(o).forEach(k =>
+							o[k]	= false
+						)
+					);
 
-					delete this.incomingStream.video;
-					delete this.incomingStream.audio;
-
-					if (this.localStream) {
+					try {
 						this.localStream['stop']();
-						delete this.localStream;
 					}
-
-					if (this.remoteStream) {
-						delete this.remoteStream;
+					catch (_) {}
+					try {
+						this.peer.close();
 					}
+					catch (_) {}
 
-					if (this.peer) {
-						try {
-							this.peer.close();
-						}
-						catch (e) {}
-					}
+					this.localStream	= null;
+					this.remoteStream	= null;
 
-					this.mutex.lock(() => {
-						setTimeout(this.mutex.unlock, 5000);
-					});
+					this.mutex.lock(() =>
+						setTimeout(this.mutex.unlock, 5000)
+					);
 
 					if (wasAccepted) {
 						this.triggerUiEvent(
@@ -135,11 +125,11 @@ module Session {
 				}, 500);
 			},
 
-			receiveAnswer: (answer) => {
+			receiveAnswer: (answer: string) : void => {
 				this.mutex.lock(() => {
-					this.retry((retry) => {
+					this.retryUntilSuccessful(retry => {
 						this.peer.setRemoteDescription(
-							new P2P.SessionDescription(JSON.parse(answer)),
+							new WebRTC.SessionDescription(JSON.parse(answer)),
 							() => {
 								this.isAvailable			= true;
 								this.localStreamSetUpLock	= false;
@@ -151,19 +141,19 @@ module Session {
 				});
 			},
 
-			receiveOffer: (offer) => {
+			receiveOffer: (offer: string) : void => {
 				this.setUpStream(null, offer);
 			},
 
-			streamOptions: (o) => {
-				o	= JSON.parse(o);
+			streamOptions: (options: string) : void => {
+				let o: any	= JSON.parse(options);
 
 				updateUI(() => {
 					this.incomingStream.video	= o.video === true;
 					this.incomingStream.audio	= o.audio === true;
 
 					if (!this.incomingStream.video && !this.incomingStream.audio) {
-						delete this.incomingStream.loading;
+						this.incomingStream.loading	= false;
 					}
 
 					this.triggerUiEvent(
@@ -171,7 +161,10 @@ module Session {
 						P2PUIEvents.Events.play,
 						Authors.app,
 						(
-							(this.streamOptions.video || this.incomingStream.audio) &&
+							(
+								this.streamOptions.video ||
+								this.incomingStream.audio
+							) &&
 							!this.incomingStream.video
 						)
 					);
@@ -179,7 +172,7 @@ module Session {
 			}
 		};
 
-		private init () {
+		private init () : void {
 			if (this.peer) {
 				return;
 			}
@@ -193,10 +186,13 @@ module Session {
 				);
 			}
 
-			let dc;
-			let pc	= new P2P.PeerConnection({
-				iceServers: ['stun', 'turn'].map((s: string) => ({
-					url: s + ':' + Config.p2pConfig.iceServer,
+			let dc: RTCDataChannel;
+			let pc: RTCPeerConnection	= new WebRTC.PeerConnection({
+				iceServers: [
+					P2P.constants.stun,
+					P2P.constants.turn
+				].map((protocol: string) => ({
+					url: protocol + ':' + Config.p2pConfig.iceServer,
 					credential: Config.p2pConfig.iceCredential,
 					username: Config.p2pConfig.iceCredential
 				}))
@@ -204,8 +200,14 @@ module Session {
 				optional: [{DtlsSrtpKeyAgreement: true}]
 			});
 
-			pc.onaddstream	= (e) => {
-				if (e.stream && (!this.remoteStream || this.remoteStream.id != e.stream.id)) {
+			pc.onaddstream	= e => {
+				if (
+					e.stream &&
+					(
+						!this.remoteStream ||
+						this.remoteStream.id != e.stream.id
+					)
+				) {
 					this.remoteStream	= e.stream;
 
 					this.triggerUiEvent(
@@ -217,38 +219,51 @@ module Session {
 
 					setTimeout(() => {
 						updateUI(() => {
-							delete this.incomingStream.loading;
+							this.incomingStream.loading	= false;
 						});
 					}, 1500);
 				}
 			};
 
-			pc.ondatachannel	= (e) => {
-				dc	= e.channel;
+			pc.ondatachannel	= e => {
+				dc				= e['channel'];
 				this.channel	= dc;
+
 				this.setUpChannel();
 			};
 
-			pc.onIceCandidate	= (e) => {
+			pc['onIceCandidate']	= e => {
 				if (e.candidate) {
-					delete pc.onIceCandidate;
-					this.session.send(new Message(Events.p2p, new Command(
-						'addIceCandidate',
-						JSON.stringify(e.candidate)
-					)));
+					delete pc['onIceCandidate'];
+
+					this.session.send(
+						new Message(
+							Events.p2p,
+							new Command(
+								P2P.constants.addIceCandidate,
+								JSON.stringify(e.candidate)
+							)
+						)
+					);
 				}
 			};
 
-			pc.onsignalingstatechange	= (forceKill) => {
-				forceKill	= forceKill === null;
+			pc.onsignalingstatechange	= e => {
+				let forceKill: boolean	= e === null;
 
-				if (this.peer == pc && (forceKill || pc.signalingState == 'closed')) {
-					this.isAvailable	= false;
-
+				if (
+					this.peer == pc &&
+					(
+						forceKill ||
+						pc.signalingState == P2P.constants.closed
+					)
+				) {
 					delete pc.onaddstream;
-					delete this.remoteStream;
-					delete this.channel;
-					delete this.peer;
+
+					this.isAvailable	= false;
+					this.remoteStream	= null;
+					this.channel		= null;
+					this.peer			= null;
 
 					if (forceKill) {
 						dc && dc.close();
@@ -265,20 +280,30 @@ module Session {
 			this.peer	= pc;
 		}
 
-		private kill () {
-			this.session.send(new Message(Events.p2p, new Command('kill')));
-			this.commands['kill']();
+		private kill () : void {
+			this.session.send(
+				new Message(
+					Events.p2p,
+					new Command(P2P.constants.kill)
+				)
+			);
+
+			this.commands.kill();
 		}
 
-		private receiveCommand (command, data) {
-			if (!P2P.isSupported) {
+		private receiveCommand (command: string, data?: any) : void {
+			if (!WebRTC.isSupported) {
 				return;
 			}
 
-			if (this.isAccepted && typeof this.commands[command] == 'function') {
+			if (this.isAccepted && typeof this.commands[command] === 'function') {
 				this.commands[command](data);
 			}
-			else if (command == 'video' || command == 'voice' || command == 'file') {
+			else if (
+				command == P2P.constants.video ||
+				command == P2P.constants.voice ||
+				command == P2P.constants.file
+			) {
 				this.triggerUiEvent(
 					P2PUIEvents.Categories.request,
 					P2PUIEvents.Events.acceptConfirm,
@@ -287,7 +312,10 @@ module Session {
 					(ok: boolean) => {
 						if (ok) {
 							this.isAccepted	= true;
-							this.setUpStream({video: command == 'video', audio: command != 'file'});
+							this.setUpStream({
+								video: command == P2P.constants.video,
+								audio: command != P2P.constants.file
+							});
 
 							anal.send({
 								hitType: 'event',
@@ -298,21 +326,29 @@ module Session {
 							});
 						}
 						else {
-							this.session.send(new Message(Events.p2p, new Command('decline')));
+							this.session.send(
+								new Message(
+									Events.p2p,
+									new Command(P2P.constants.decline)
+								)
+							);
 						}
 					}
 				);
 			}
 		}
 
-		private receiveIncomingFile (data, name) {
+		private receiveIncomingFile (data: ArrayBuffer[], name: string) : void {
 			this.triggerUiEvent(
 				P2PUIEvents.Categories.file,
 				P2PUIEvents.Events.confirm,
 				name,
 				(ok: boolean, title: string) => {
 					if (ok) {
-						Util.openUrl(URL.createObjectURL(new Blob(data)), name);
+						Util.openUrl(
+							URL.createObjectURL(new Blob(data)),
+							name
+						);
 					}
 					else {
 						this.triggerUiEvent(
@@ -325,30 +361,36 @@ module Session {
 			);
 		}
 
-		private requestCall (callType) {
+		private requestCall (callType: string) : void {
 			this.triggerUiEvent(
 				P2PUIEvents.Categories.request,
 				P2PUIEvents.Events.requestConfirm,
 				callType,
-				(ok) => {
+				(ok: boolean) => {
 					if (ok) {
-						this.mutex.lock((wasFirst, wasFirstOfType) => {
+						this.mutex.lock((wasFirst: boolean, wasFirstOfType: boolean) => {
 							try {
 								if (wasFirstOfType) {
 									this.isAccepted				= true;
-									this.streamOptions.video	= callType == 'video';
-									this.streamOptions.audio	= callType != 'file';
+									this.streamOptions.video	= callType == P2P.constants.video;
+									this.streamOptions.audio	= callType != P2P.constants.file;
 
-									this.session.send(new Message(Events.p2p, new Command(callType)));
+									this.session.send(
+										new Message(
+											Events.p2p,
+											new Command(callType)
+										)
+									);
 
-									setTimeout(() => {
+									setTimeout(() =>
 										this.triggerUiEvent(
 											P2PUIEvents.Categories.request,
 											P2PUIEvents.Events.requestConfirmation
-										);
-									}, 250);
+										)
+									, 250);
 
-									/* Time out if request hasn't been accepted within 10 minutes */
+									/* Time out if request hasn't been
+										accepted within 10 minutes */
 									setTimeout(() => {
 										if (!this.isAvailable) {
 											this.isAccepted	= false;
@@ -359,7 +401,7 @@ module Session {
 							finally {
 								this.mutex.unlock();
 							}
-						}, 'requestCall');
+						}, P2P.constants.requestCall);
 					}
 					else {
 						this.triggerUiEvent(
@@ -371,12 +413,16 @@ module Session {
 			);
 		}
 
-		private retry (f) {
-			Util.retryUntilComplete(f, () => { return this.isAccepted });
+		private retryUntilSuccessful (f: Function) : void {
+			Util.retryUntilComplete(f, () => this.isAccepted);
 		}
 
-		private sendFile () {
-			if (this.outgoingFile.name || !this.channel || this.channel.readyState != 'open') {
+		private sendFile () : void {
+			if (
+				this.outgoingFile.name ||
+				!this.channel ||
+				this.channel.readyState != P2P.constants.open
+			) {
 				return;
 			}
 
@@ -399,7 +445,7 @@ module Session {
 
 							anal.send({
 								hitType: 'event',
-								eventCategory: 'file',
+								eventCategory: P2P.constants.file,
 								eventAction: 'toolarge',
 								eventValue: 1
 							});
@@ -409,7 +455,7 @@ module Session {
 
 						anal.send({
 							hitType: 'event',
-							eventCategory: 'file',
+							eventCategory: P2P.constants.file,
 							eventAction: 'send',
 							eventValue: 1
 						});
@@ -421,20 +467,30 @@ module Session {
 							file.name
 						);
 
-						this.channel.send(P2P.events.fileTransferComplete);
+						this.channel.send(P2P.constants.fileTransferComplete);
 
-						let reader	= new FileReader;
+						let reader: FileReader	= new FileReader;
 
-						reader.onloadend	= (e) => {
-							let buf		= e.target['result'];
-							let pos		= 0;
+						reader.onloadend	= e => {
+							let buf: ArrayBuffer	= e.target['result'];
+							let pos: number			= 0;
 
 							updateUI(() => {
-								this.outgoingFile.name			= file.name;
-								this.outgoingFile.size			= buf.byteLength;
-								this.outgoingFile.readableSize	= Util.readableByteLength(this.outgoingFile.size);
+								this.outgoingFile.name	= file.name;
+								this.outgoingFile.size	= buf.byteLength;
+
+								this.outgoingFile.readableSize	=
+									Util.readableByteLength(
+										this.outgoingFile.size
+									)
+								;
 							});
-							this.channel.send(this.outgoingFile.name + '\n' + this.outgoingFile.size);
+
+							this.channel.send(
+								this.outgoingFile.name +
+								'\n' +
+								this.outgoingFile.size
+							);
 
 							let timer: Timer	= new Timer(() => {
 								if (!this.isAccepted) {
@@ -444,30 +500,32 @@ module Session {
 
 								try {
 									for (let i = 0 ; i < 10 ; ++i) {
-										let old	= pos;
+										let old: number	= pos;
 										pos += Config.p2pConfig.fileChunkSize;
 										this.channel.send(buf.slice(old, pos));
 									}
 								}
-								catch (e) {
+								catch (_) {
 									pos -= Config.p2pConfig.fileChunkSize;
 								}
 
 								if (buf.byteLength > pos) {
 									updateUI(() => {
-										this.outgoingFile.percentComplete	= pos / buf.byteLength * 100;
+										this.outgoingFile.percentComplete	=
+											pos / buf.byteLength * 100
+										;
 									});
 								}
 								else {
 									timer.stop();
 
-									this.channel.send(P2P.events.fileTransferComplete);
+									this.channel.send(P2P.constants.fileTransferComplete);
 
 									updateUI(() => {
-										delete this.outgoingFile.name;
-										delete this.outgoingFile.size;
-										delete this.outgoingFile.readableSize;
-										delete this.outgoingFile.percentComplete;
+										this.outgoingFile.name				= '';
+										this.outgoingFile.size				= 0;
+										this.outgoingFile.readableSize		= '';
+										this.outgoingFile.percentComplete	= 0;
 									});
 								}
 							});
@@ -479,33 +537,36 @@ module Session {
 			);
 		}
 
-		private setUpChannel (shouldCreate?) {
+		private setUpChannel (shouldCreate?: boolean) : void {
 			if (!this.isAccepted) {
 				return;
 			}
 
 			if (shouldCreate) {
 				try {
-					this.channel	= this.peer.createDataChannel('subspace', {});
+					this.channel	= this.peer.createDataChannel(
+						P2P.constants.subspace,
+						{}
+					);
 				}
 				catch (_) {
-					setTimeout(() => { this.setUpChannel(true) }, 500);
+					setTimeout(() => this.setUpChannel(true), 500);
 					return;
 				}
 			}
 
-			this.channel.onmessage	= (e) => {
-				if (typeof e.data == 'string') {
-					if (e.data == P2P.events.fileTransferComplete) {
-						let data	= this.incomingFile.data;
-						let name	= this.incomingFile.name;
+			this.channel.onmessage	= e => {
+				if (typeof e.data === 'string') {
+					if (e.data == P2P.constants.fileTransferComplete) {
+						let data: ArrayBuffer[]	= this.incomingFile.data;
+						let name: string		= this.incomingFile.name;
 
 						updateUI(() => {
-							delete this.incomingFile.data;
-							delete this.incomingFile.name;
-							delete this.incomingFile.size;
-							delete this.incomingFile.readableSize;
-							delete this.incomingFile.percentComplete;
+							this.incomingFile.data				= null;
+							this.incomingFile.name				= '';
+							this.incomingFile.size				= 0;
+							this.incomingFile.readableSize		= '';
+							this.incomingFile.percentComplete	= 0;
 						});
 
 						if (data) {
@@ -513,13 +574,18 @@ module Session {
 						}
 					}
 					else {
-						let data	= e.data.split('\n');
+						let data: string[]	= e.data.split('\n');
 
 						updateUI(() => {
-							this.incomingFile.data			= [];
-							this.incomingFile.name			= data[0];
-							this.incomingFile.size			= parseInt(data[1], 10);
-							this.incomingFile.readableSize	= Util.readableByteLength(this.incomingFile.size);
+							this.incomingFile.data	= [];
+							this.incomingFile.name	= data[0];
+							this.incomingFile.size	= parseInt(data[1], 10);
+
+							this.incomingFile.readableSize	=
+								Util.readableByteLength(
+									this.incomingFile.size
+								)
+							;
 						});
 
 						this.triggerUiEvent(
@@ -547,224 +613,232 @@ module Session {
 			this.channel.onopen	= this.sendFile;
 		}
 
-		private setUpStream (streamOptions?, offer?) {
-			let retry	= () => {
-				if (this.isAccepted) {
-					setTimeout(() => {
-						this.setUpStream(streamOptions);
-					}, 100);
-				}
-			};
+		private setUpStream (streamOptions?: any, offer?: string) : void {
+			this.retryUntilSuccessful(retry => {
+				if (!offer) {
+					if (this.localStreamSetUpLock) {
+						retry();
+						return;
+					}
 
-			if (!offer) {
-				if (this.localStreamSetUpLock) {
-					retry();
-					return;
+					this.localStreamSetUpLock	= true;
 				}
 
-				this.localStreamSetUpLock	= true;
-			}
+				this.incomingStream.loading	= true;
 
-			this.incomingStream.loading	= true;
-
-			if (streamOptions) {
-				if (streamOptions.video === true || streamOptions.video === false) {
-					this.streamOptions.video	= streamOptions.video;
+				if (streamOptions) {
+					if (streamOptions.video === true || streamOptions.video === false) {
+						this.streamOptions.video	= streamOptions.video;
+					}
+					if (streamOptions.audio === true || streamOptions.audio === false) {
+						this.streamOptions.audio	= streamOptions.audio;
+					}
 				}
-				if (streamOptions.audio === true || streamOptions.audio === false) {
-					this.streamOptions.audio	= streamOptions.audio;
-				}
-			}
 
-			this.mutex.lock((wasFirst, wasFirstOfType) => {
-				if (wasFirstOfType && this.isAccepted) {
-					this.init();
+				this.mutex.lock((wasFirst: boolean, wasFirstOfType: boolean) => {
+					if (wasFirstOfType && this.isAccepted) {
+						this.init();
 
-					let streamHelper, streamFallback, streamSetup;
+						let streamHelper;
+						let streamFallback;
+						let streamSetup;
 
-					streamHelper	= (stream) => {
-						if (!this.isAccepted) {
-							return;
-						}
-
-						if (this.localStream) {
-							this.localStream['stop']();
-							delete this.localStream;
-						}
-
-						if (stream) {
-							if (this.peer.getLocalStreams().length > 0) {
-								this.peer.onsignalingstatechange(null);
+						streamHelper	= (stream: MediaStream) => {
+							if (!this.isAccepted) {
+								return;
 							}
 
-							this.localStream	= stream;
-							this.peer.addStream(this.localStream);
-						}
+							if (this.localStream) {
+								this.localStream['stop']();
+								this.localStream	= null;
+							}
 
-						this.triggerUiEvent(
-							P2PUIEvents.Categories.stream,
-							P2PUIEvents.Events.set,
-							Authors.me,
-							stream ? URL.createObjectURL(this.localStream) : ''
-						);
+							if (stream) {
+								if (this.peer.getLocalStreams().length > 0) {
+									this.peer.onsignalingstatechange(null);
+								}
+
+								this.localStream	= stream;
+								this.peer.addStream(this.localStream);
+							}
+
+							this.triggerUiEvent(
+								P2PUIEvents.Categories.stream,
+								P2PUIEvents.Events.set,
+								Authors.me,
+								stream ? URL.createObjectURL(this.localStream) : ''
+							);
 
 
-						[
-							{k: 'audio', f: 'getAudioTracks'},
-							{k: 'video', f: 'getVideoTracks'}
-						].forEach((o) => {
-							this.streamOptions[o.k]	= !!this.localStream && this.localStream[o.f]().
-								map((track) => { return track.enabled }).
-								reduce((a, b) => { return a || b }, false)
+							[
+								{k: P2P.constants.audio, f: 'getAudioTracks'},
+								{k: P2P.constants.video, f: 'getVideoTracks'}
+							].forEach(o =>
+								this.streamOptions[o.k]	=
+									!!this.localStream &&
+									this.localStream[o.f]().
+										map(track => track.enabled).
+										reduce((a, b) => a || b, false)
+							);
+
+
+							let outgoingStream: string	=
+								JSON.stringify(this.streamOptions)
 							;
-						});
 
+							if (!offer) {
+								this.setUpChannel(true);
 
-						let outgoingStream	= JSON.stringify(this.streamOptions);
+								this.retryUntilSuccessful(retry =>
+									this.peer.createOffer(offer => {
+										/* http://www.kapejod.org/en/2014/05/28/ */
+										offer.sdp	= offer.sdp.
+											split('\n').
+											filter((line) =>
+												line.indexOf('b=AS:') < 0 &&
+												line.indexOf(
+													'urn:ietf:params:rtp-hdrext:ssrc-audio-level'
+												) < 0
+											).
+											join('\n')
+										;
 
-						if (!offer) {
-							this.setUpChannel(true);
-
-							this.retry((retry) => {
-								this.peer.createOffer((offer) => {
-									/* http://www.kapejod.org/en/2014/05/28/ */
-									offer.sdp	= offer.sdp.
-										split('\n').
-										filter((line) => {
-											return line.indexOf('urn:ietf:params:rtp-hdrext:ssrc-audio-level') < 0 &&
-												line.indexOf('b=AS:') < 0
-											;
-										}).
-										join('\n')
-									;
-
-									this.retry((retry) => {
-										this.peer.setLocalDescription(offer, () => {
-											this.session.send(
-												new Message(
-													Events.p2p,
-													new Command(
-														'receiveOffer',
-														JSON.stringify(offer)
+										this.retryUntilSuccessful(retry =>
+											this.peer.setLocalDescription(offer, () => {
+												this.session.send(
+													new Message(
+														Events.p2p,
+														new Command(
+															P2P.constants.receiveOffer,
+															JSON.stringify(offer)
+														)
+													),
+													new Message(
+														Events.p2p,
+														new Command(
+															P2P.constants.streamOptions,
+															outgoingStream
+														)
 													)
-												),
-												new Message(
-													Events.p2p,
-													new Command(
-														'streamOptions',
-														outgoingStream
+												);
+
+												this.mutex.unlock();
+											}, retry)
+										);
+									}, retry, {
+										offerToReceiveAudio: true,
+										offerToReceiveVideo: true
+									})
+								);
+							}
+							else {
+								this.retryUntilSuccessful(retry =>
+									this.peer.setRemoteDescription(
+										new WebRTC.SessionDescription(JSON.parse(offer)),
+										() =>
+											this.retryUntilSuccessful(retry =>
+												this.peer.createAnswer(answer =>
+													this.retryUntilSuccessful(retry =>
+														this.peer.setLocalDescription(answer, () => {
+															this.session.send(
+																new Message(
+																	Events.p2p,
+																	new Command(
+																		P2P.constants.receiveAnswer,
+																		JSON.stringify(answer)
+																	)
+																),
+																new Message(
+																	Events.p2p,
+																	new Command(
+																		P2P.constants.streamOptions,
+																		outgoingStream
+																	)
+																)
+															);
+
+															this.isAvailable	= true;
+
+															this.mutex.unlock();
+														}, retry)
 													)
-												)
+												, retry)
+											)
+										,
+										retry
+									)
+								);
+							}
+
+							this.triggerUiEvent(
+								P2PUIEvents.Categories.base,
+								P2PUIEvents.Events.videoToggle,
+								true
+							);
+						};
+
+						streamFallback	= () => {
+							if (this.streamOptions.video) {
+								this.streamOptions.video	= false;
+							}
+							else if (this.streamOptions.audio) {
+								this.streamOptions.audio	= false;
+							}
+
+							streamSetup();
+						};
+
+						streamSetup	= () => {
+							if (this.streamOptions.video || this.streamOptions.audio) {
+								WebRTC.getUserMedia(
+									this.streamOptions,
+									streamHelper,
+									streamFallback
+								);
+							}
+							else if (this.incomingStream.video || this.incomingStream.audio) {
+								try {
+									streamHelper(new WebRTC.MediaStream);
+								}
+								catch (_) {
+									WebRTC.getUserMedia(
+										{audio: true, video: false},
+										stream => {
+											stream.getTracks().forEach(track =>
+												track.enabled	= false
 											);
 
-											this.mutex.unlock();
-										}, retry);
-									});
-								}, retry, {
-									offerToReceiveAudio: true,
-									offerToReceiveVideo: true
-								});
-							});
-						}
-						else {
-							this.retry((retry) => {
-								this.peer.setRemoteDescription(
-									new P2P.SessionDescription(JSON.parse(offer)),
-									() => {
-										this.retry((retry) => {
-											this.peer.createAnswer((answer) => {
-												this.retry((retry) => {
-													this.peer.setLocalDescription(answer, () => {
-														this.session.send(
-															new Message(
-																Events.p2p,
-																new Command(
-																	'receiveAnswer',
-																	JSON.stringify(answer)
-																)
-															),
-															new Message(
-																Events.p2p,
-																new Command(
-																	'streamOptions',
-																	outgoingStream
-																)
-															)
-														);
-
-														this.isAvailable	= true;
-
-														this.mutex.unlock();
-													}, retry);
-												});
-											}, retry);
-										});
-									},
-									retry
-								);
-							});
-						}
-
-						this.triggerUiEvent(
-							P2PUIEvents.Categories.base,
-							P2PUIEvents.Events.videoToggle,
-							true
-						);
-					};
-
-					streamFallback	= () => {
-						if (this.streamOptions.video) {
-							this.streamOptions.video	= false;
-						}
-						else if (this.streamOptions.audio) {
-							this.streamOptions.audio	= false;
-						}
+											streamHelper(stream);
+										},
+										streamFallback
+									);
+								}
+							}
+							else {
+								streamHelper();
+							}
+						};
 
 						streamSetup();
-					};
-
-					streamSetup	= () => {
-						if (this.streamOptions.video || this.streamOptions.audio) {
-							P2P.getUserMedia(this.streamOptions, streamHelper, streamFallback);
-						}
-						else if (this.incomingStream.video || this.incomingStream.audio) {
-							try {
-								streamHelper(new P2P.MediaStream);
-							}
-							catch (_) {
-								P2P.getUserMedia({audio: true, video: false}, (stream) => {
-									stream.getTracks().forEach((track) => {
-										track.enabled	= false;
-									});
-
-									streamHelper(stream);
-								}, streamFallback);
-							}
-						}
-						else {
-							streamHelper();
-						}
-					};
-
-					streamSetup();
-				}
-				else {
-					if (offer) {
-						this.mutex.unlock();
 					}
 					else {
-						this.localStreamSetUpLock	= false;
-						retry();
+						if (offer) {
+							this.mutex.unlock();
+						}
+						else {
+							this.localStreamSetUpLock	= false;
+							retry();
+						}
 					}
-				}
-			}, 'setUpStream' + (offer ? '' : 'Init'));
+				}, offer ? P2P.constants.setUpStream : P2P.constants.setUpStreamInit);
+			});
 		}
 
 		private triggerUiEvent(
 			category: P2PUIEvents.Categories,
 			event: P2PUIEvents.Events,
 			...args: any[]
-		) {
+		) : void {
 			this.session.trigger(Events.p2pUi, {category, event, args});
 		}
 
@@ -777,8 +851,11 @@ module Session {
 				if (command.method) {
 					this.commands[command.method](command.argument);
 				}
-				else if (P2P.isSupported) {
-					this.triggerUiEvent(P2PUIEvents.Categories.base, P2PUIEvents.Events.enable);
+				else if (WebRTC.isSupported) {
+					this.triggerUiEvent(
+						P2PUIEvents.Categories.base,
+						P2PUIEvents.Events.enable
+					);
 				}
 			});
 
@@ -860,7 +937,7 @@ module Session {
 									var file: File	= Cyph.im.UI.Elements.p2pFiles.
 										toArray().
 										map(($elem) => $elem['files']).
-										reduce((a, b) => { return (a && a[0]) ? a : b }, [])[0]
+										reduce((a, b) => (a && a[0]) ? a : b, [])[0]
 									;
 
 									callback(file);
