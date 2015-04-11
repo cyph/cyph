@@ -28,13 +28,12 @@ class Util {
 	}
 
 	public static getStrings (strings: any) {
-		Object.keys(strings).forEach(function (k) {
+		Object.keys(strings).forEach((k: string) =>
 			strings[k]	= $('meta[name="' + k + '"]')
 				.attr('content').
 				replace(/\s+/g, ' ').
 				trim()
-			;
-		});
+		);
 	}
 
 	public static getTimestamp () : string {
