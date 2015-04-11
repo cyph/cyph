@@ -445,7 +445,7 @@ module Session {
 
 							anal.send({
 								hitType: 'event',
-								eventCategory: P2P.constants.file,
+								eventCategory: 'file',
 								eventAction: 'toolarge',
 								eventValue: 1
 							});
@@ -455,7 +455,7 @@ module Session {
 
 						anal.send({
 							hitType: 'event',
-							eventCategory: P2P.constants.file,
+							eventCategory: 'file',
 							eventAction: 'send',
 							eventValue: 1
 						});
@@ -846,7 +846,12 @@ module Session {
 			this.session	= session;
 			this.mutex		= new Mutex(this.session);
 
+			this.session.on(Events.beginChat, () =>
+				this.session.send(new Message(Events.p2p, new Command))
+			);
+
 			this.session.on(Events.closeChat, this.kill);
+
 			this.session.on(Events.p2p, (command: Command) => {
 				if (command.method) {
 					this.commands[command.method](command.argument);
