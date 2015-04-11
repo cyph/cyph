@@ -1,4 +1,5 @@
 /// <reference path="../globals.ts" />
+/// <reference path="../util.ts" />
 
 
 module Cyph.im {
@@ -42,3 +43,6 @@ module Cyph.im {
 		no: ''
 	};
 }
+
+
+Util.getStrings(Cyph.im.Strings);
