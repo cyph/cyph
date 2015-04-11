@@ -36,7 +36,7 @@ module Session {
 		public p2p: P2P;
 
 		private close (shouldSendEvent: boolean = true) : void {
-			this.changeState('isAlive', false);
+			this.updateState('isAlive', false);
 
 			let closeChat: Function	= () =>
 				this.channel.close(() =>
@@ -65,7 +65,7 @@ module Session {
 					break;
 
 				case OTREvents.begin:
-					this.changeState('hasKeyExchangeBegun', true);
+					this.updateState('hasKeyExchangeBegun', true);
 					break;
 
 				case OTREvents.receive:
@@ -133,8 +133,8 @@ module Session {
 
 			let middle: number	= Math.ceil(descriptor.length / 2);
 
-			this.changeState('cyphId', descriptor.substr(0, middle));
-			this.changeState('sharedSecret',
+			this.updateState('cyphId', descriptor.substr(0, middle));
+			this.updateState('sharedSecret',
 				this.state.sharedSecret ||
 				descriptor.substr(middle)
 			);
@@ -143,7 +143,7 @@ module Session {
 		private setUpChannel (channelDescriptor: string) : void {
 			this.channel	= new Connection.RatchetedChannel(this, channelDescriptor, {
 				onopen: (isCreator: boolean) : void => {
-					this.changeState('isCreator', isCreator);
+					this.updateState('isCreator', isCreator);
 
 					if (this.state.isCreator) {
 						beginWaiting();
@@ -181,7 +181,7 @@ module Session {
 
 		public constructor (descriptor?: string, shouldSetUpP2P: boolean = true) {
 			/* true = yes; false = no; null = maybe */
-			this.changeState('isStartingNewCyph',
+			this.updateState('isStartingNewCyph',
 				!descriptor ?
 					true :
 					descriptor.length > Config.secretLength ?
@@ -252,10 +252,6 @@ module Session {
 			this.on(Events.closeChat, closeChat);
 		}
 
-		public changeState (key: string, value: any) {
-			this.state[key]	= value;
-		}
-
 		public off (event: string, f: Function) : void {
 			var events: Function[]	= this.eventListeners[event];
 
@@ -289,6 +285,10 @@ module Session {
 			for (let i = 0 ; eventListeners && i < eventListeners.length ; ++i) {
 				eventListeners[i](data);
 			}
+		}
+
+		public updateState (key: string, value: any) {
+			this.state[key]	= value;
 		}
 	}
 }
