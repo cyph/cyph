@@ -3,13 +3,13 @@
 /// <reference path="message.ts" />
 /// <reference path="otr.ts" />
 /// <reference path="p2p.ts" />
+/// <reference path="../analytics.ts" />
 /// <reference path="../globals.ts" />
+/// <reference path="../errors.ts" />
 /// <reference path="../timer.ts" />
 /// <reference path="../util.ts" />
 /// <reference path="../connection/iconnection.ts" />
 /// <reference path="../connection/ratchetedchannel.ts" />
-/// <reference path="../cyph.im/strings.ts" />
-/// <reference path="../cyph.im/ui.ts" />
 /// <reference path="../../lib/typings/jquery/jquery.d.ts" />
 
 
@@ -35,32 +35,15 @@ module Session {
 
 		public p2p: P2P;
 
-		private close (shouldSendEvent: boolean = true) : void {
-			this.updateState('isAlive', false);
-
-			let closeChat: Function	= () =>
-				this.channel.close(() =>
-					this.trigger(Events.closeChat)
-				)
-			;
-
-			if (shouldSendEvent) {
-				this.channel.send(Events.destroy, closeChat, true);
-			}
-			else {
-				closeChat();
-			}
-		}
-
 		private otrHandler (e: { event: OTREvents; data?: string; }) {
 			switch (e.event) {
 				case OTREvents.abort:
 					Errors.logSmp();
-					abortSetup();
+					this.trigger(Events.smp, false);
 					break;
 
 				case OTREvents.authenticated:
-					markAllAsSent();
+					this.trigger(Events.smp, true);
 					this.pingPong();
 					break;
 
@@ -109,7 +92,12 @@ module Session {
 			if (!this.receivedMessages[message.id]) {
 				this.lastIncomingMessageTimestamp	= Date.now();
 				this.receivedMessages[message.id]	= true;
-				this.trigger(message.event, message.data);
+
+				this.trigger(message.event,
+					message.event == Events.text ?
+						{text: message.data, author: Authors.friend} :
+						message.data
+				);
 			}
 		}
 
@@ -146,7 +134,7 @@ module Session {
 					this.updateState('isCreator', isCreator);
 
 					if (this.state.isCreator) {
-						beginWaiting();
+						this.trigger(Events.beginWaiting)
 					}
 					else {
 						anal.send({
@@ -193,7 +181,7 @@ module Session {
 
 
 			if (this.state.isStartingNewCyph !== false) {
-				changeState(states.spinningUp);
+				this.trigger(Events.newCyph);
 			}
 
 			Util.retryUntilComplete(retry => {
@@ -235,21 +223,24 @@ module Session {
 			}
 
 
-			/* Receive event listeners -- temporarily placing here */
-
 			this.on(Events.otr, this.otrHandler);
-			this.on(Events.cyphertext, (o: { cyphertext: string; author: Authors; }) =>
-				logCyphertext(o.cyphertext, o.author)
-			);
-			this.on(Events.text, (text: string) => addMessageToChat(text, Authors.friend));
-			this.on(Events.typing, friendIsTyping);
-			this.on(Events.beginChat, () =>
-				beginChatUi(() => {
-					$(window).unload(() => this.close());
-					$(window).on('beforeunload', () => Cyph.im.Strings.disconnectWarning)
-				})
-			);
-			this.on(Events.closeChat, closeChat);
+		}
+
+		public close (shouldSendEvent: boolean = true) : void {
+			this.updateState('isAlive', false);
+
+			let closeChat: Function	= () =>
+				this.channel.close(() =>
+					this.trigger(Events.closeChat)
+				)
+			;
+
+			if (shouldSendEvent) {
+				this.channel.send(Events.destroy, closeChat, true);
+			}
+			else {
+				closeChat();
+			}
 		}
 
 		public off (event: string, f: Function) : void {
@@ -277,6 +268,13 @@ module Session {
 		}
 
 		public send (...messages: Message[]) : void {
+			messages.filter(o => o.event == Events.text).forEach(o =>
+				this.trigger(Events.text, {
+					text: o.data,
+					author: Authors.me
+				})
+			);
+
 			this.otr.send(JSON.stringify(messages));
 		}
 
@@ -289,6 +287,7 @@ module Session {
 
 		public updateState (key: string, value: any) {
 			this.state[key]	= value;
+			Controller.update();
 		}
 	}
 }

@@ -1,11 +1,10 @@
 /// <reference path="enums.ts" />
+/// <reference path="mutex.ts" />
 /// <reference path="p2pfile.ts" />
 /// <reference path="session.ts" />
 /// <reference path="../globals.ts" />
 /// <reference path="../util.ts" />
 /// <reference path="../webrtc.ts" />
-/// <reference path="../cyph.im/strings.ts" />
-/// <reference path="../cyph.im/ui.elements.ts" />
 /// <reference path="../../lib/typings/jquery/jquery.d.ts" />
 /// <reference path="../../lib/typings/webrtc/MediaStream.d.ts" />
 /// <reference path="../../lib/typings/webrtc/RTCPeerConnection.d.ts" />
@@ -148,27 +147,27 @@ module Session {
 			streamOptions: (options: string) : void => {
 				let o: any	= JSON.parse(options);
 
-				updateUI(() => {
-					this.incomingStream.video	= o.video === true;
-					this.incomingStream.audio	= o.audio === true;
+				this.incomingStream.video	= o.video === true;
+				this.incomingStream.audio	= o.audio === true;
 
-					if (!this.incomingStream.video && !this.incomingStream.audio) {
-						this.incomingStream.loading	= false;
-					}
+				if (!this.incomingStream.video && !this.incomingStream.audio) {
+					this.incomingStream.loading	= false;
+				}
 
-					this.triggerUiEvent(
-						P2PUIEvents.Categories.stream,
-						P2PUIEvents.Events.play,
-						Authors.app,
+				Controller.update();
+
+				this.triggerUiEvent(
+					P2PUIEvents.Categories.stream,
+					P2PUIEvents.Events.play,
+					Authors.app,
+					(
 						(
-							(
-								this.streamOptions.video ||
-								this.incomingStream.audio
-							) &&
-							!this.incomingStream.video
-						)
-					);
-				});
+							this.streamOptions.video ||
+							this.incomingStream.audio
+						) &&
+						!this.incomingStream.video
+					)
+				);
 			}
 		};
 
@@ -218,9 +217,8 @@ module Session {
 					);
 
 					setTimeout(() => {
-						updateUI(() => {
-							this.incomingStream.loading	= false;
-						});
+						this.incomingStream.loading	= false;
+						Controller.update();
 					}, 1500);
 				}
 			};
@@ -475,16 +473,16 @@ module Session {
 							let buf: ArrayBuffer	= e.target['result'];
 							let pos: number			= 0;
 
-							updateUI(() => {
-								this.outgoingFile.name	= file.name;
-								this.outgoingFile.size	= buf.byteLength;
+							this.outgoingFile.name	= file.name;
+							this.outgoingFile.size	= buf.byteLength;
 
-								this.outgoingFile.readableSize	=
-									Util.readableByteLength(
-										this.outgoingFile.size
-									)
-								;
-							});
+							this.outgoingFile.readableSize	=
+								Util.readableByteLength(
+									this.outgoingFile.size
+								)
+							;
+
+							Controller.update();
 
 							this.channel.send(
 								this.outgoingFile.name +
@@ -510,23 +508,23 @@ module Session {
 								}
 
 								if (buf.byteLength > pos) {
-									updateUI(() => {
-										this.outgoingFile.percentComplete	=
-											pos / buf.byteLength * 100
-										;
-									});
+									this.outgoingFile.percentComplete	=
+										pos / buf.byteLength * 100
+									;
+
+									Controller.update();
 								}
 								else {
 									timer.stop();
 
 									this.channel.send(P2P.constants.fileTransferComplete);
 
-									updateUI(() => {
-										this.outgoingFile.name				= '';
-										this.outgoingFile.size				= 0;
-										this.outgoingFile.readableSize		= '';
-										this.outgoingFile.percentComplete	= 0;
-									});
+									this.outgoingFile.name				= '';
+									this.outgoingFile.size				= 0;
+									this.outgoingFile.readableSize		= '';
+									this.outgoingFile.percentComplete	= 0;
+
+									Controller.update();
 								}
 							});
 						};
@@ -561,13 +559,13 @@ module Session {
 						let data: ArrayBuffer[]	= this.incomingFile.data;
 						let name: string		= this.incomingFile.name;
 
-						updateUI(() => {
-							this.incomingFile.data				= null;
-							this.incomingFile.name				= '';
-							this.incomingFile.size				= 0;
-							this.incomingFile.readableSize		= '';
-							this.incomingFile.percentComplete	= 0;
-						});
+						this.incomingFile.data				= null;
+						this.incomingFile.name				= '';
+						this.incomingFile.size				= 0;
+						this.incomingFile.readableSize		= '';
+						this.incomingFile.percentComplete	= 0;
+
+						Controller.update();
 
 						if (data) {
 							this.receiveIncomingFile(data, name);
@@ -576,17 +574,17 @@ module Session {
 					else {
 						let data: string[]	= e.data.split('\n');
 
-						updateUI(() => {
-							this.incomingFile.data	= [];
-							this.incomingFile.name	= data[0];
-							this.incomingFile.size	= parseInt(data[1], 10);
+						this.incomingFile.data	= [];
+						this.incomingFile.name	= data[0];
+						this.incomingFile.size	= parseInt(data[1], 10);
 
-							this.incomingFile.readableSize	=
-								Util.readableByteLength(
-									this.incomingFile.size
-								)
-							;
-						});
+						this.incomingFile.readableSize	=
+							Util.readableByteLength(
+								this.incomingFile.size
+							)
+						;
+
+						Controller.update();
 
 						this.triggerUiEvent(
 							P2PUIEvents.Categories.file,
@@ -599,14 +597,14 @@ module Session {
 				else if (this.incomingFile.data) {
 					this.incomingFile.data.push(e.data);
 
-					updateUI(() => {
-						this.incomingFile.percentComplete	=
-							this.incomingFile.data.length *
-								Config.p2pConfig.fileChunkSize /
-								this.incomingFile.size *
-								100
-						;
-					});
+					this.incomingFile.percentComplete	=
+						this.incomingFile.data.length *
+							Config.p2pConfig.fileChunkSize /
+							this.incomingFile.size *
+							100
+					;
+
+					Controller.update();
 				}
 			};
 
@@ -863,210 +861,6 @@ module Session {
 					);
 				}
 			});
-
-
-			/* Temporarily leaving UI events here */
-
-			this.session.on(
-				Events.p2pUi,
-				(e: {
-					category: P2PUIEvents.Categories;
-					event: P2PUIEvents.Events;
-					args: any[];
-				}) => {
-					switch (e.category) {
-						case P2PUIEvents.Categories.base:
-							switch (e.event) {
-								case P2PUIEvents.Events.connected:
-									var isConnected: boolean	= e.args[0];
-
-									if (isConnected) {
-										addMessageToChat(
-											Cyph.im.Strings.webRTCConnect,
-											Authors.app,
-											false
-										);
-									}
-									else {
-										alertDialog({
-											title: Cyph.im.Strings.videoCallingTitle,
-											content: Cyph.im.Strings.webRTCDisconnect,
-											ok: Cyph.im.Strings.ok
-										});
-
-										addMessageToChat(
-											Cyph.im.Strings.webRTCDisconnect,
-											Authors.app,
-											false
-										);
-									}
-									break;
-
-								case P2PUIEvents.Events.enable:
-									enableWebRTC();
-									break;
-
-								case P2PUIEvents.Events.videoToggle:
-									var isVideoCall: boolean	= e.args[0];
-
-									toggleVideoCall(isVideoCall);
-									break;
-							}
-							break;
-
-						case P2PUIEvents.Categories.file:
-							switch (e.event) {
-								case P2PUIEvents.Events.clear:
-									Cyph.im.UI.Elements.p2pFiles.each((i, elem) =>
-										$(elem).val('')
-									);
-									break;
-
-								case P2PUIEvents.Events.confirm:
-									var name: string		= e.args[0];
-									var callback: Function	= e.args[1];
-
-									var title	= Cyph.im.Strings.incomingFile + ' ' + name;
-
-									confirmDialog({
-										title: title,
-										content: Cyph.im.Strings.incomingFileWarning,
-										ok: Cyph.im.Strings.save,
-										cancel: Cyph.im.Strings.reject
-									}, (ok: boolean) => callback(ok, title));
-									break;
-
-								case P2PUIEvents.Events.get:
-									var callback: Function	= e.args[0];
-
-									var file: File	= Cyph.im.UI.Elements.p2pFiles.
-										toArray().
-										map(($elem) => $elem['files']).
-										reduce((a, b) => (a && a[0]) ? a : b, [])[0]
-									;
-
-									callback(file);
-									break;
-
-								case P2PUIEvents.Events.rejected:
-									var title: string	= e.args[0];
-
-									alertDialog({
-										title: title,
-										content: Cyph.im.Strings.incomingFileReject,
-										ok: Cyph.im.Strings.ok
-									});
-									break;
-
-								case P2PUIEvents.Events.tooLarge:
-									alertDialog({
-										title: Cyph.im.Strings.oopsTitle,
-										content: Cyph.im.Strings.fileTooLarge,
-										ok: Cyph.im.Strings.ok
-									});
-									break;
-
-								case P2PUIEvents.Events.transferStarted:
-									var author: Authors		= e.args[0];
-									var fileName: string	= e.args[1];
-
-									var isFromMe: boolean	= author == Authors.me;
-									var message: string		= isFromMe ?
-											Cyph.im.Strings.fileTransferInitMe :
-											Cyph.im.Strings.fileTransferInitFriend
-									;
-
-									addMessageToChat(message + ' ' + fileName, Authors.app, !isFromMe);
-									break;
-							}
-							break;
-
-						case P2PUIEvents.Categories.request:
-							switch (e.event) {
-								case P2PUIEvents.Events.acceptConfirm:
-									var callType: string	= e.args[0];
-									var timeout: number		= e.args[1];
-									var callback: Function	= e.args[2];
-
-									confirmDialog({
-										title: Cyph.im.Strings.videoCallingTitle,
-										content:
-											Cyph.im.Strings.webRTCRequest + ' ' +
-											Cyph.im.Strings[callType + 'Call'] + '. ' +
-											Cyph.im.Strings.webRTCWarning
-										,
-										ok: Cyph.im.Strings.continueDialogAction,
-										cancel: Cyph.im.Strings.decline
-									}, callback, timeout);
-									break;
-
-								case P2PUIEvents.Events.requestConfirm:
-									var callType: string	= e.args[0];
-									var callback: Function	= e.args[1];
-
-									confirmDialog({
-										title: Cyph.im.Strings.videoCallingTitle,
-										content:
-											Cyph.im.Strings.webRTCInit + ' ' +
-											Cyph.im.Strings[callType + 'Call'] + '. ' +
-											Cyph.im.Strings.webRTCWarning
-										,
-										ok: Cyph.im.Strings.continueDialogAction,
-										cancel: Cyph.im.Strings.cancel
-									}, callback);
-									break;
-
-								case P2PUIEvents.Events.requestConfirmation:
-									alertDialog({
-										title: Cyph.im.Strings.videoCallingTitle,
-										content: Cyph.im.Strings.webRTCRequestConfirmation,
-										ok: Cyph.im.Strings.ok
-									});
-									break;
-
-								case P2PUIEvents.Events.requestRejection:
-									alertDialog({
-										title: Cyph.im.Strings.videoCallingTitle,
-										content: Cyph.im.Strings.webRTCDeny,
-										ok: Cyph.im.Strings.ok
-									});
-									break;
-							}
-							break;
-
-						case P2PUIEvents.Categories.stream:
-							var author: Authors	= e.args[0];
-
-							var $stream: JQuery	=
-								author == Authors.me ?
-									Cyph.im.UI.Elements.p2pMeStream :
-									author == Authors.friend ?
-										Cyph.im.UI.Elements.p2pFriendStream :
-										Cyph.im.UI.Elements.p2pFriendPlaceholder
-							;
-
-							switch (e.event) {
-								case P2PUIEvents.Events.play:
-									var shouldPlay: boolean	= e.args[1];
-
-									$stream[0][shouldPlay ? 'play' : 'pause']();
-									break;
-
-								case P2PUIEvents.Events.set:
-									var url: string	= e.args[1];
-
-									try {
-										URL.revokeObjectURL($stream.attr('src'));
-									}
-									catch (_) {}
-
-									$stream.attr('src', url);
-									break;
-							}
-							break;
-					}
-				}
-			);
 		}
 	}
 }
