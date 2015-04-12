@@ -44,19 +44,19 @@ class Timer {
 	}
 
 	private static runWithThread (interval: number) : void {
-		function threadHelper () : void {
+		let threadHelper	= () => {
 			if (Timer.processTimers()) {
 				Timer.thread.postMessage({});
 			}
 			else {
 				Timer.thread.stop();
 			}
-		}
+		};
 
 
 		Timer.thread	= new Thread(
 			(vars, postMessage) =>
-				onmessage	= () =>
+				Thread.onmessage	= () =>
 					setTimeout(() =>
 						postMessage({})
 					, vars.interval)

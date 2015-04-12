@@ -7,15 +7,15 @@ var IS_WEB	= typeof window === 'object';
 var window: Window		= window || this;
 var document: Document	= document || this;
 
+var crypto: Crypto;
 var history: History;
 var location: Location;
 var navigator: Navigator;
-var crypto: Crypto;
 
 var language: string;
+var localStorage: Storage;
 var processUrlState: Function;
 var webSign: WebSign;
-var localStorage: Storage;
 
 var Controller: any	= {
 	update: () => {}
