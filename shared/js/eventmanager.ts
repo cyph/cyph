@@ -6,6 +6,7 @@
 class EventManager {
 	private static handlers: {[event: string] : Function[]}	= {};
 
+	public static mainThreadEvents: string	= 'mainThreadEvents';
 	public static untriggeredEvents: string	= 'untriggeredEvents';
 
 	public static off (event: string, handler: Function) : void {
@@ -36,7 +37,12 @@ class EventManager {
 }
 
 
-if (!Env.isMainThread) {
+if (Env.isMainThread) {
+	EventManager.on(EventManager.mainThreadEvents, (o: { method: string; args: any[]; }) =>
+		Thread.callMainThread(o.method, o.args)
+	);
+}
+else {
 	onmessage	= e => {
 		if (e.data && e.data.isThreadEvent) {
 			EventManager.trigger(e.data.event, e.data.data, true);
