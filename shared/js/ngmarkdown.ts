@@ -47,7 +47,7 @@
 		restrict: 'A',
 		replace: true,
 		link: (scope, element, attrs) => {
-			function set (val: string) : void {
+			let set	= (val: string) : void => {
 				val	= markdown.render(val);
 
 				/* Merge blockquotes like reddit */
@@ -59,7 +59,7 @@
 				);
 
 				element.html(val);
-			}
+			};
 
 			set(scope[title] || '');
 			scope.$watch(attrs[title], set);
