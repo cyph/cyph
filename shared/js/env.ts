@@ -17,9 +17,13 @@ class Env {
 	public static host: string	= location.host.replace('www.', '');
 
 
-	public static isNode: boolean		= typeof process === 'object' && typeof require === 'function';
 	public static isWeb: boolean		= IS_WEB;
 	public static isMainThread: boolean	= typeof importScripts !== 'function';
+
+	public static isNode: boolean		=
+		typeof window['process'] === 'object' &&
+		typeof window['require'] === 'function'
+	;
 
 
 	public static userAgent: string		= navigator.userAgent.toLowerCase();

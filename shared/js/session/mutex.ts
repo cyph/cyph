@@ -1,5 +1,8 @@
+/// <reference path="command.ts" />
+/// <reference path="enums.ts" />
 /// <reference path="imutex.ts" />
 /// <reference path="isession.ts" />
+/// <reference path="message.ts" />
 /// <reference path="../globals.ts" />
 /// <reference path="../util.ts" />
 

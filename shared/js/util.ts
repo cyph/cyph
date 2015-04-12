@@ -1,5 +1,7 @@
 /// <reference path="config.ts" />
+/// <reference path="env.ts" />
 /// <reference path="globals.ts" />
+/// <reference path="thread.ts" />
 /// <reference path="../lib/typings/jquery/jquery.d.ts" />
 
 
@@ -29,10 +31,10 @@ class Util {
 
 	public static getStrings (strings: any) {
 		Object.keys(strings).forEach((k: string) =>
-			strings[k]	=
+			strings[k]	= !Env.isMainThread ? '' :
 				($('meta[name="' + k + '"]').attr('content') || '').
-				replace(/\s+/g, ' ').
-				trim()
+					replace(/\s+/g, ' ').
+					trim()
 		);
 	}
 

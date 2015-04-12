@@ -1,3 +1,7 @@
+/// <reference path="env.ts" />
+/// <reference path="../lib/typings/jquery/jquery.d.ts" />
+
+
 /* Load assets only for the current platform */
 
 $(
