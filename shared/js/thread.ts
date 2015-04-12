@@ -84,6 +84,12 @@ class Thread {
 		if (!onmessage) {
 			onmessage	= Thread.onmessage;
 		}
+
+		if (Controller) {
+			Controller.update	= () =>
+				postMessage({isUpdateEvent: true}, null)
+			;
+		}
 	}
 
 	public static threads: Thread[]	= [];
@@ -139,10 +145,16 @@ class Thread {
 
 
 		this.worker.onmessage	= (e: MessageEvent) => {
-			if (e.data && e.data.isThreadEvent) {
-				EventManager.trigger(e.data.event, e.data.data);
+			if (e.data) {
+				if (e.data.isThreadEvent) {
+					EventManager.trigger(e.data.event, e.data.data);
+				}
+				else if (e.data.isUpdateEvent) {
+					Controller.update();
+				}
 			}
-			else if (onmessage) {
+
+			if (onmessage) {
 				onmessage(e);
 			}
 		};
