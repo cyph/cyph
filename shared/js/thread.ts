@@ -49,12 +49,12 @@ class Thread {
 			warn: () => {}
 		};
 
-		if (typeof atob == 'undefined' || typeof btoa == 'undefined') {
+		if (typeof atob === 'undefined' || typeof btoa === 'undefined') {
 			importScripts('/lib/bower_components/base64/base64.min.js');
 		}
 
-		if (typeof crypto == 'undefined') {
-			if (typeof msCrypto != 'undefined') {
+		if (typeof crypto === 'undefined') {
+			if (typeof msCrypto !== 'undefined') {
 				crypto	= msCrypto;
 			}
 			else {
@@ -97,7 +97,11 @@ class Thread {
 
 	public static callMainThread (method: string, args: any[] = []) : void {
 		if (Env.isMainThread) {
-			eval(method).apply(null, args);
+			method.
+				split('.').
+				reduce((a: any, b: string) => a[b], self).
+				apply(null, args)
+			;
 		}
 		else {
 			EventManager.trigger(EventManager.mainThreadEvents, {method, args});
