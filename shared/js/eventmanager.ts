@@ -43,7 +43,7 @@ if (Env.isMainThread) {
 	);
 }
 else {
-	onmessage	= e => {
+	self.onmessage	= (e: MessageEvent) => {
 		if (e.data && e.data.isThreadEvent) {
 			EventManager.trigger(e.data.event, e.data.data, true);
 		}
