@@ -1,13 +1,10 @@
 /// <reference path="env.ts" />
-/// <reference path="eventmanager.ts" />
 /// <reference path="globals.ts" />
+/// <reference path="thread.ts" />
 /// <reference path="../lib/typings/jquery/jquery.d.ts" />
 
 
 class Analytics {
-	public static event: string	= 'analEvent';
-
-
 	private analFrame: HTMLIFrameElement;
 	private analFrameIsReady: boolean;
 
@@ -57,8 +54,9 @@ class Analytics {
 
 	public baseEventSubmitHelper (method: string, args: any[]) : void {
 		if (!Env.isMainThread) {
-			EventManager.trigger(Analytics.event, {method, args});
+			Thread.callMainThread('anal.baseEventSubmitHelper', [method, args]);
 		}
+
 		else if (this.analFrameIsReady) {
 			args.unshift(method);
 
@@ -87,6 +85,3 @@ class Analytics {
 
 
 let anal: Analytics	= new Analytics;
-EventManager.on(Analytics.event, (o: { method: string; args: any[]; }) =>
-	anal.baseEventSubmitHelper(o.method, o.args)
-);

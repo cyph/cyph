@@ -87,7 +87,7 @@ class Thread {
 
 		if (Controller) {
 			Controller.update	= () =>
-				postMessage({isUpdateEvent: true}, null)
+				Thread.callMainThread('Controller.update')
 			;
 		}
 	}
@@ -95,6 +95,15 @@ class Thread {
 	public static threads: Thread[]	= [];
 
 	public static onmessage: (e: MessageEvent) => any;
+
+	public static callMainThread (method: string, args: any[] = []) : void {
+		if (Env.isMainThread) {
+			eval(method).apply(null, args);
+		}
+		else {
+			EventManager.trigger(EventManager.mainThreadEvents, {method, args});
+		}
+	}
 
 
 	private worker: Worker;
@@ -145,16 +154,10 @@ class Thread {
 
 
 		this.worker.onmessage	= (e: MessageEvent) => {
-			if (e.data) {
-				if (e.data.isThreadEvent) {
-					EventManager.trigger(e.data.event, e.data.data);
-				}
-				else if (e.data.isUpdateEvent) {
-					Controller.update();
-				}
+			if (e.data && e.data.isThreadEvent) {
+				EventManager.trigger(e.data.event, e.data.data);
 			}
-
-			if (onmessage) {
+			else if (onmessage) {
 				onmessage(e);
 			}
 		};
