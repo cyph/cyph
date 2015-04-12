@@ -64,4 +64,4 @@ class Errors {
 }
 
 
-window.onerror	= <ErrorEventHandler> Errors.log;
+self.onerror	= <ErrorEventHandler> Errors.log;

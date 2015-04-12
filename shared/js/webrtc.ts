@@ -9,24 +9,24 @@ class WebRTC {
 	;
 
 	public static IceCandidate: any	=
-		window['RTCIceCandidate'] ||
-		window['mozRTCIceCandidate']
+		self['RTCIceCandidate'] ||
+		self['mozRTCIceCandidate']
 	;
 
 	public static MediaStream: any	=
-		window['MediaStream'] ||
-		window['webkitMediaStream']
+		self['MediaStream'] ||
+		self['webkitMediaStream']
 	;
 
 	public static PeerConnection: any	=
-		window['RTCPeerConnection'] ||
-		window['mozRTCPeerConnection'] ||
-		window['webkitRTCPeerConnection']
+		self['RTCPeerConnection'] ||
+		self['mozRTCPeerConnection'] ||
+		self['webkitRTCPeerConnection']
 	;
 
 	public static SessionDescription: any	=
-		window['RTCSessionDescription'] ||
-		window['mozRTCSessionDescription']
+		self['RTCSessionDescription'] ||
+		self['mozRTCSessionDescription']
 	;
 
 	public static isSupported: boolean	= !!WebRTC.PeerConnection;

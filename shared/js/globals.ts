@@ -6,6 +6,7 @@ var IS_WEB	= typeof window === 'object';
 
 var window: Window		= window || this;
 var document: Document	= document || this;
+var self: Window		= self || this;
 
 var crypto: Crypto;
 var history: History;

@@ -4,9 +4,9 @@
 
 class Thread {
 	private static BlobBuilder: any	=
-		window['BlobBuilder'] ||
-		window['WebKitBlobBuilder'] ||
-		window['MozBlobBuilder']
+		self['BlobBuilder'] ||
+		self['WebKitBlobBuilder'] ||
+		self['MozBlobBuilder']
 	;
 
 	private static stringifyFunction (f: Function) : string {
