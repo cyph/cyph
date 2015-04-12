@@ -6,7 +6,7 @@
 
 
 class Util {
-	public static chunkString (s: string, length: number) {
+	public static chunkString (s: string, length: number) : string[] {
 		let array: string[]	= [];
 
 		while (s.length) {
@@ -29,7 +29,7 @@ class Util {
 		return Date.now() + '-' + crypto.getRandomValues(new Uint32Array(1))[0];
 	}
 
-	public static getStrings (strings: any) {
+	public static getStrings (strings: any) : void {
 		Object.keys(strings).forEach((k: string) =>
 			strings[k]	= !Env.isMainThread ? '' :
 				($('meta[name="' + k + '"]').attr('content') || '').
