@@ -121,10 +121,13 @@ class Thread {
 				blobUrl		= URL.createObjectURL(blob);
 				this.worker	= new Worker(blobUrl);
 			}
+			catch (e) {
+				this.worker.terminate();
+				throw e;
+			}
 			finally {
 				try {
 					URL.revokeObjectURL(blobUrl);
-					this.worker.terminate();
 				}
 				catch (_) {}
 			}
