@@ -1,39 +1,21 @@
 /// <reference path="env.ts" />
+/// <reference path="eventmanager.ts" />
 /// <reference path="globals.ts" />
 /// <reference path="../lib/typings/jquery/jquery.d.ts" />
 
 
 class Analytics {
+	public static event: string	= 'analEvent';
+
+
 	private analFrame: HTMLIFrameElement;
 	private analFrameIsReady: boolean;
-
-	private baseEventSubmitHelper (method: string, args: any[]) : void {
-		if (this.analFrameIsReady) {
-			args.unshift(method);
-
-			this.analFrame.contentWindow.postMessage(
-				{args: JSON.stringify(args)},
-				'*'
-			);
-		}
-
-		/* Do nothing if explicitly set to false */
-		else if (this.analFrameIsReady !== false) {
-			setTimeout(() =>
-				this.baseEventSubmitHelper(method, args)
-			, 50);
-		}
-	}
-
-	private baseEventSubmit (method: string, ...args: any[]) : void {
-		this.baseEventSubmitHelper(method, args);
-	}
 
 	public constructor (appName: string = Env.host, appVersion: string = 'Web') {
 		if (Env.isOnion) {
 			this.analFrameIsReady	= false;
 		}
-		else {
+		else if (Env.isMainThread) {
 			this.analFrame	= document.createElement('iframe');
 
 			this.analFrame.src	=
@@ -69,6 +51,31 @@ class Analytics {
 		}
 	}
 
+	public baseEventSubmit (method: string, ...args: any[]) : void {
+		this.baseEventSubmitHelper(method, args);
+	}
+
+	public baseEventSubmitHelper (method: string, args: any[]) : void {
+		if (!Env.isMainThread) {
+			EventManager.trigger(Analytics.event, {method, args});
+		}
+		else if (this.analFrameIsReady) {
+			args.unshift(method);
+
+			this.analFrame.contentWindow.postMessage(
+				{args: JSON.stringify(args)},
+				'*'
+			);
+		}
+
+		/* Do nothing if explicitly set to false */
+		else if (this.analFrameIsReady !== false) {
+			setTimeout(() =>
+				this.baseEventSubmitHelper(method, args)
+			, 50);
+		}
+	}
+
 	public send (...args: any[]) : void {
 		this.baseEventSubmit('send', args);
 	}
@@ -80,3 +87,6 @@ class Analytics {
 
 
 let anal: Analytics	= new Analytics;
+EventManager.on(Analytics.event, (o: { method: string; args: any[]; }) =>
+	anal.baseEventSubmitHelper(o.method, o.args)
+);

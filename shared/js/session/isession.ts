@@ -27,6 +27,8 @@ module Session {
 
 		send (...messages: Message[]) : void;
 
+		sendBase (messages: Message[]) : void;
+
 		trigger (event: string, data?: any) : void;
 
 		updateState (key: string, value: any) : void;

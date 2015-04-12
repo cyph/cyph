@@ -54,6 +54,7 @@
         "session/p2p.ts",
         "session/p2pfile.ts",
         "session/session.ts",
+        "session/threadedsession.ts",
         "../lib/typings/tsd.d.ts"
     ]
 }
