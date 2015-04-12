@@ -1,7 +1,9 @@
 /// <reference path="channel.ts" />
 /// <reference path="ichannel.ts" />
+/// <reference path="../analytics.ts" />
 /// <reference path="../globals.ts" />
 /// <reference path="../util.ts" />
+/// <reference path="../session/enums.ts" />
 /// <reference path="../session/isession.ts" />
 
 
