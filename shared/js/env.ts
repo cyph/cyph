@@ -21,8 +21,8 @@ class Env {
 	public static isMainThread: boolean	= typeof importScripts !== 'function';
 
 	public static isNode: boolean		=
-		typeof window['process'] === 'object' &&
-		typeof window['require'] === 'function'
+		typeof self['process'] === 'object' &&
+		typeof self['require'] === 'function'
 	;
 
 
@@ -58,7 +58,7 @@ class Env {
 		Env.isFFMobile
 	;
 
-	public static isTablet: boolean	= Env.isMobile && window.outerWidth > 767;
+	public static isTablet: boolean	= Env.isMobile && self.outerWidth > 767;
 
 	public static isTouch: boolean	= (() => {
 		try {
