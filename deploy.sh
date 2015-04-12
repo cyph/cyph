@@ -61,14 +61,15 @@ for d in cyph.im cyph.com ; do
 	cd $d
 
 	ls css/*.scss | perl -pe 's/(.*)\.scss/\1/g' | xargs -I% sass "%.scss" "%.css"
-	ls js/*.ts js/*/*.ts | perl -pe 's/(.*)\.ts/\1/g' | xargs -I% tsc --sourceMap --out %.js %.ts
+	find shared/js -name '*.ts' | perl -pe 's/(.*)\.ts/\1/g' | xargs -I% tsc --sourceMap --out %.js %.ts
 
 	../translate.py
 
 	if [ "${branch}" == 'staging' ] ; then
 		echo "JS Minify ${d}"
-		rm js/*.ts js/*/*.ts js/*.map js/*/*.map
-		ls js/*.js js/*/*.js | xargs -I% uglifyjs '%' -o '%' -m
+		find shared/js -name '*.ts' | xargs -I% rm %
+		find shared/js -name '*.map' | xargs -I% rm %
+		find shared/js -name '*.js' | xargs -I% uglifyjs '%' -o '%' -m
 		echo "CSS Minify ${d}"
 		rm css/*.scss css/*.map
 		ls css/*.css | xargs -I% cleancss -o '%' '%'
