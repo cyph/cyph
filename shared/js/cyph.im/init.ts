@@ -52,7 +52,7 @@ function Init () {
 	}
 	else {
 		/* TODO: Init session */
-		let session	= new Session.Session(Util.getUrlState());
+		let session: Session.ISession	= new Session.ThreadedSession(Util.getUrlState(), new Session.P2P);
 		history.pushState({}, '', location.pathname);
 	}
 }
