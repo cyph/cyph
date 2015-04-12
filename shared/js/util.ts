@@ -114,8 +114,6 @@ class Util {
 
 	public static pushState (path: string, shouldReplace?: boolean, shouldNotProcess?: boolean) : void {
 		if (Env.isMainThread) {
-			let history;
-
 			if (history) {
 				if (shouldReplace) {
 					history.replaceState({}, '', path);
