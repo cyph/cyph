@@ -42,9 +42,9 @@ module Cyph {
 
 				this.thread	= new Thread((vars: any, importScripts: Function, Session: any) => {
 					importScripts('/cryptolib/bower_components/otr4-em/build/otr-web.js');
-					importScripts('/js/session/session.js');
+					importScripts('/js/cyph/session/session.js');
 
-					let session: ISession	= new Session.Session(vars.descriptor, null, null, vars.id);
+					let session: ISession	= new Cyph.Session.Session(vars.descriptor, null, null, vars.id);
 
 					session.on(vars.events.close, (e: { shouldSendEvent: boolean; }) =>
 						session.close(e.shouldSendEvent)
