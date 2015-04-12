@@ -19,13 +19,9 @@ class Errors {
 			let message: string		= exception +
 				'\n\n' + navigator.userAgent +
 				'\n\n' + navigator.language +
-				'\n\n' + (typeof language == 'undefined' ? '' : language) +
+				'\n\n' + (language || '') +
 				'\n\n' + location.toString() +
-				'\n\n' + (
-					typeof webSign == 'undefined' ?
-						'' :
-						webSign.toString(shouldIncludeBootstrapText)
-				)
+				'\n\n' + (webSign ? webSign.toString(shouldIncludeBootstrapText) : '')
 			;
 
 			/* Strip URL fragment where applicable */
