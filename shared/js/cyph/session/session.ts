@@ -123,7 +123,7 @@ module Cyph {
 
 				this.channel.send(messages);
 
-				anal.send({
+				Analytics.main.send({
 					hitType: 'event',
 					eventCategory: 'message',
 					eventAction: 'sent',
@@ -154,7 +154,7 @@ module Cyph {
 							this.trigger(Events.beginWaiting);
 						}
 						else {
-							anal.send({
+							Analytics.main.send({
 								hitType: 'event',
 								eventCategory: 'cyph',
 								eventAction: 'started',

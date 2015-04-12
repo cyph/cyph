@@ -105,7 +105,7 @@ module Cyph {
 				}, 120000);
 			}
 			else {
-				Thread.callMainThread('Util.openUrl', [url, downloadName]);
+				Thread.callMainThread('Cyph.Util.openUrl', [url, downloadName]);
 			}
 		}
 
@@ -135,7 +135,7 @@ module Cyph {
 				}
 			}
 			else {
-				Thread.callMainThread('Util.pushState', [path, shouldReplace, shouldNotProcess]);
+				Thread.callMainThread('Cyph.Util.pushState', [path, shouldReplace, shouldNotProcess]);
 			}
 		}
 

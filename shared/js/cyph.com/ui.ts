@@ -298,7 +298,7 @@ angular.
 					},
 					success: function (isNew) {
 						if (isNew == 'true') {
-							anal.send({
+							Analytics.main.send({
 								hitType: 'event',
 								eventCategory: 'signup',
 								eventAction: 'new',

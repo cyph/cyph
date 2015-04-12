@@ -320,7 +320,7 @@ module Cyph {
 									audio: command != P2P.constants.file
 								});
 
-								anal.send({
+								Analytics.main.send({
 									hitType: 'event',
 									eventCategory: 'call',
 									eventAction: 'start',
@@ -446,7 +446,7 @@ module Cyph {
 									P2PUIEvents.Events.tooLarge
 								);
 
-								anal.send({
+								Analytics.main.send({
 									hitType: 'event',
 									eventCategory: 'file',
 									eventAction: 'toolarge',
@@ -456,7 +456,7 @@ module Cyph {
 								return;
 							}
 
-							anal.send({
+							Analytics.main.send({
 								hitType: 'event',
 								eventCategory: 'file',
 								eventAction: 'send',

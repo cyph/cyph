@@ -77,7 +77,7 @@ module Cyph {
 								this.ratchetChannels();
 							}
 
-							anal.send({
+							Analytics.main.send({
 								hitType: 'event',
 								eventCategory: 'sqslag',
 								eventAction: 'detected',
