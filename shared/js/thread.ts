@@ -14,7 +14,7 @@ class Thread {
 		return s.slice(s.indexOf('{') + 1, s.lastIndexOf('}'));
 	}
 
-	private static threadEnvSetup (vars: any, importScripts: Function) {
+	private static threadEnvSetup (vars: any, importScripts: Function) : void {
 		let window: any		= this;
 		let document: any	= this;
 
@@ -59,13 +59,12 @@ class Thread {
 			}
 			else {
 				let isaac: any;
-
 				importScripts('/cryptolib/bower_components/isaac.js/isaac.js');
 				isaac.seed(vars.threadRandomSeed);
 
 				crypto	= {
 					getRandomValues: array => {
-						let max	= Math.pow(2, (array['BYTES_PER_ELEMENT'] || 4) * 8) - 1;
+						let max: number	= Math.pow(2, (array['BYTES_PER_ELEMENT'] || 4) * 8) - 1;
 
 						for (let i = 0 ; i < array['length'] ; ++i) {
 							array[i]	= Math.floor(isaac.random() * max);
@@ -80,9 +79,9 @@ class Thread {
 		}
 	}
 
-	private static threadPostSetup (onmessage: (e: MessageEvent) => any) {
-		if (!onmessage) {
-			onmessage	= Thread.onmessage;
+	private static threadPostSetup () : void {
+		if (!self.onmessage) {
+			self.onmessage	= Thread.onmessage;
 		}
 
 		if (Controller) {
