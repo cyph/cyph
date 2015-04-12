@@ -8,7 +8,7 @@
 
 module Session {
 	export class OTR implements IOTR {
-		private static libotr: any	= window['OTR'];
+		private static libotr: any	= self['OTR'];
 
 
 		private currentMessageId: number	= 0;
