@@ -300,7 +300,7 @@ module Session {
 				Controller.update();
 			}
 			else {
-				this.trigger(ThreadedSession.methods.updateStateThread, {key, value});
+				this.trigger(ThreadedSession.events.updateStateThread, {key, value});
 			}
 		}
 	}
