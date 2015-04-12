@@ -1,13 +1,16 @@
+/// <reference path="command.ts" />
 /// <reference path="enums.ts" />
 /// <reference path="imutex.ts" />
 /// <reference path="ip2p.ts" />
 /// <reference path="isession.ts" />
+/// <reference path="message.ts" />
 /// <reference path="mutex.ts" />
 /// <reference path="p2pfile.ts" />
+/// <reference path="../analytics.ts" />
 /// <reference path="../globals.ts" />
+/// <reference path="../timer.ts" />
 /// <reference path="../util.ts" />
 /// <reference path="../webrtc.ts" />
-/// <reference path="../../lib/typings/jquery/jquery.d.ts" />
 /// <reference path="../../lib/typings/webrtc/MediaStream.d.ts" />
 /// <reference path="../../lib/typings/webrtc/RTCPeerConnection.d.ts" />
 

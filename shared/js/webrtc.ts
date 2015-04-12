@@ -3,13 +3,13 @@
 
 class WebRTC {
 	public static getUserMedia	=
-		navigator.getUserMedia ||
+		navigator['getUserMedia'] ||
 		navigator['mozGetUserMedia'] ||
 		navigator['webkitGetUserMedia']
 	;
 
 	public static IceCandidate: any	=
-		window.RTCIceCandidate ||
+		window['RTCIceCandidate'] ||
 		window['mozRTCIceCandidate']
 	;
 
@@ -19,13 +19,13 @@ class WebRTC {
 	;
 
 	public static PeerConnection: any	=
-		window.RTCPeerConnection ||
+		window['RTCPeerConnection'] ||
 		window['mozRTCPeerConnection'] ||
 		window['webkitRTCPeerConnection']
 	;
 
 	public static SessionDescription: any	=
-		window.RTCSessionDescription ||
+		window['RTCSessionDescription'] ||
 		window['mozRTCSessionDescription']
 	;
 
