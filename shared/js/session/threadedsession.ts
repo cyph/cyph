@@ -9,11 +9,11 @@
 module Session {
 	export class ThreadedSession implements ISession {
 		public static events	= {
-			close: 'close ThreadedSession',
-			receive: 'receive ThreadedSession',
-			send: 'send ThreadedSession',
-			updateState: 'updateState ThreadedSession',
-			updateStateThread: 'updateStateThread ThreadedSession'
+			close: 'ThreadedSessionClose',
+			receive: 'ThreadedSessionReceive',
+			send: 'ThreadedSessionSend',
+			updateState: 'ThreadedSessionUpdateState',
+			updateStateThread: 'ThreadedSessionUpdateStateThread'
 		};
 
 
