@@ -256,12 +256,12 @@ module Session {
 			}
 		}
 
-		public off (event: string, f: Function) : void {
-			EventManager.off(event + this.id, f);
+		public off (event: string, handler: Function) : void {
+			EventManager.off(event + this.id, handler);
 		}
 
-		public on (event: string, f: Function) : void {
-			EventManager.on(event + this.id, f);
+		public on (event: string, handler: Function) : void {
+			EventManager.on(event + this.id, handler);
 		}
 
 		public receive (data: string) : void {
