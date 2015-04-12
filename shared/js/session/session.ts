@@ -5,6 +5,7 @@
 /// <reference path="isession.ts" />
 /// <reference path="message.ts" />
 /// <reference path="otr.ts" />
+/// <reference path="threadedsession.ts" />
 /// <reference path="../analytics.ts" />
 /// <reference path="../globals.ts" />
 /// <reference path="../errors.ts" />
@@ -274,6 +275,10 @@ module Session {
 		}
 
 		public send (...messages: Message[]) : void {
+			this.sendBase(messages);
+		}
+
+		public sendBase (messages: Message[]) : void {
 			messages.filter(o => o.event == Events.text).forEach(o =>
 				this.trigger(Events.text, {
 					text: o.data,
@@ -290,7 +295,13 @@ module Session {
 
 		public updateState (key: string, value: any) : void {
 			this.state[key]	= value;
-			Controller.update();
+
+			if (Env.isMainThread) {
+				Controller.update();
+			}
+			else {
+				this.trigger(ThreadedSession.methods.updateStateThread, {key, value});
+			}
 		}
 	}
 }
