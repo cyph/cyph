@@ -1,3 +1,4 @@
+/// <reference path="eventmanager.ts" />
 /// <reference path="globals.ts" />
 
 
@@ -13,7 +14,7 @@ class Thread {
 		return s.slice(s.indexOf('{') + 1, s.lastIndexOf('}'));
 	}
 
-	private static threadEnvSetup (vars: {[name: string] : any}, importScripts: Function) {
+	private static threadEnvSetup (vars: any, importScripts: Function) {
 		let window: any		= this;
 		let document: any	= this;
 
@@ -60,7 +61,7 @@ class Thread {
 				let isaac: any;
 
 				importScripts('/cryptolib/bower_components/isaac.js/isaac.js');
-				isaac.seed(vars['threadRandomSeed']);
+				isaac.seed(vars.threadRandomSeed);
 
 				crypto	= {
 					getRandomValues: array => {
@@ -79,11 +80,15 @@ class Thread {
 		}
 	}
 
+	public static threads: Thread[]	= [];
+
+	public static onmessage: (e: MessageEvent) => any;
+
 
 	private worker: Worker;
 
-	public constructor (f: Function, vars: {[name: string] : any} = {}, onMessage?: (e: MessageEvent) => any) {
-		vars['threadRandomSeed']	= crypto.getRandomValues(new Uint8Array(50000));
+	public constructor (f: Function, vars: any = {}, onmessage?: (e: MessageEvent) => any) {
+		vars.threadRandomSeed	= crypto.getRandomValues(new Uint8Array(50000));
 
 		let s	=
 			(vars ? 'var vars = ' + JSON.stringify(vars) + ';\n' : '') +
@@ -122,22 +127,24 @@ class Thread {
 			this.worker.postMessage(s);
 		}
 
-		if (onMessage) {
-			this.onMessage(onMessage);
-		}
+
+		this.worker.onmessage	= (e: MessageEvent) => {
+			if (e.data && e.data.isThreadEvent) {
+				EventManager.trigger(e.data.event, e.data.data);
+			}
+			else if (onmessage) {
+				onmessage(e);
+			}
+		};
+
+		Thread.threads.push(this);
 	}
 
 	public isAlive () : boolean {
 		return !!this.worker;
 	}
 
-	public onMessage (f: (ev: MessageEvent) => any) : void {
-		if (this.worker) {
-			this.worker.onmessage	= f;
-		}
-	}
-
-	public postMessage (o : any) : void {
+	public postMessage (o: any) : void {
 		if (this.worker) {
 			this.worker.postMessage(o);
 		}
@@ -146,5 +153,7 @@ class Thread {
 	public stop () : void {
 		this.worker.terminate();
 		this.worker	= null;
+
+		Thread.threads	= Thread.threads.filter(t => t != this);
 	}
 }
