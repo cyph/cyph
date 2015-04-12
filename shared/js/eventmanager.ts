@@ -1,35 +1,52 @@
+/// <reference path="env.ts" />
 /// <reference path="globals.ts" />
+/// <reference path="thread.ts" />
 
 
 class EventManager {
 	private static handlers: {[event: string] : Function[]}	= {};
 
-	public static allEvents: string	= 'allEvents';
+	public static untriggeredEvents: string	= 'untriggeredEvents';
 
-	public static off (event: string, f: Function) : void {
-		let handlers: Function[]	= EventManager.handlers[event];
+	public static off (event: string, handler: Function) : void {
+		EventManager.handlers[event]	=
+			(EventManager.handlers[event] || []).filter(f => f != handler)
+		;
+	}
 
-		for (let i = 0 ; handlers && i < handlers.length ; ++i) {
-			if (handlers[i] == f) {
-				delete handlers[i];
+	public static on (event: string, handler: Function) : void {
+		EventManager.handlers[event]	= EventManager.handlers[event] || [];
+		EventManager.handlers[event].push(handler);
+	}
+
+	public static trigger (event: string, data?: any, shouldTrigger: boolean = Env.isMainThread) : void {
+		if (!shouldTrigger) {
+			EventManager.trigger(EventManager.untriggeredEvents, {event, data}, true);
+		}
+		else {
+			(EventManager.handlers[event] || []).forEach(handler => handler(data));
+
+			if (Env.isMainThread) {
+				Thread.threads.forEach((thread: Thread) =>
+					thread.postMessage({event, data, isThreadEvent: true})
+				);
 			}
 		}
 	}
+}
 
-	public static on (event: string, f: Function) : void {
-		EventManager.handlers[event]	= EventManager.handlers[event] || [];
-		EventManager.handlers[event].push(f);
-	}
 
-	public static trigger (event: string, data?: any) : void {
-		let handlers: Function[]	= EventManager.handlers[event];
-
-		for (let i = 0 ; handlers && i < handlers.length ; ++i) {
-			handlers[i](data);
+if (!Env.isMainThread) {
+	onmessage	= e => {
+		if (e.data && e.data.isThreadEvent) {
+			EventManager.trigger(e.data.event, e.data.data, true);
 		}
-
-		if (event != EventManager.allEvents) {
-			EventManager.trigger(EventManager.allEvents, {event, data});
+		else if (Thread.onmessage) {
+			Thread.onmessage(e);
 		}
-	}
+	};
+
+	EventManager.on(EventManager.untriggeredEvents, (o: { event: string; data: any; }) =>
+		postMessage({event: o.event, data: o.data, isThreadEvent: true}, null)
+	);
 }
