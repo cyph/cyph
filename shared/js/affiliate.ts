@@ -23,9 +23,9 @@ class Affiliate {
 
 				let affiliateUrl: string	= 'https://www.amazon.com/dp/' + asin + '?tag=cyph-20';
 
-				function openAmazonUrl (ok: boolean) : void {
+				let openAmazonUrl	= (ok: boolean) : void => {
 					Util.openUrl(ok ? affiliateUrl : originalUrl);
-				}
+				};
 
 
 				if (Affiliate.shouldAdd === true || Affiliate.shouldAdd === false) {
