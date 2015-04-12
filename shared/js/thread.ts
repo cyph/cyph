@@ -80,6 +80,12 @@ class Thread {
 		}
 	}
 
+	private static threadPostSetup (onmessage: (e: MessageEvent) => any) {
+		if (!onmessage) {
+			onmessage	= Thread.onmessage;
+		}
+	}
+
 	public static threads: Thread[]	= [];
 
 	public static onmessage: (e: MessageEvent) => any;
@@ -93,7 +99,8 @@ class Thread {
 		let s	=
 			(vars ? 'var vars = ' + JSON.stringify(vars) + ';\n' : '') +
 			Thread.stringifyFunction(Thread.threadEnvSetup) +
-			Thread.stringifyFunction(f)
+			Thread.stringifyFunction(f) +
+			Thread.stringifyFunction(Thread.threadPostSetup)
 		;
 
 		try {
