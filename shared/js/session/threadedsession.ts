@@ -8,7 +8,7 @@
 
 module Session {
 	export class ThreadedSession implements ISession {
-		public static methods	= {
+		public static events	= {
 			close: 'close ThreadedSession',
 			receive: 'receive ThreadedSession',
 			send: 'send ThreadedSession',
@@ -41,29 +41,29 @@ module Session {
 
 				let session: ISession	= new Session.Session(vars.descriptor, null, vars.id);
 
-				session.on(vars.methods.close, (e: { shouldSendEvent: boolean; }) =>
+				session.on(vars.events.close, (e: { shouldSendEvent: boolean; }) =>
 					session.close(e.shouldSendEvent)
 				);
 
-				session.on(vars.methods.receive, (e: { data: string; }) =>
+				session.on(vars.events.receive, (e: { data: string; }) =>
 					session.receive(e.data)
 				);
 
-				session.on(vars.methods.send, (e: { messages: Message[]; }) =>
+				session.on(vars.events.send, (e: { messages: Message[]; }) =>
 					session.sendBase(e.messages)
 				);
 
-				session.on(vars.methods.updateState, (e: { key: string; value: any; }) =>
+				session.on(vars.events.updateState, (e: { key: string; value: any; }) =>
 					session.updateState(e.key, e.value)
 				);
 			}, {
 				descriptor,
 				id: this.id,
-				methods: ThreadedSession.methods
+				events: ThreadedSession.events
 			});
 
 			this.on(
-				ThreadedSession.methods.updateStateThread,
+				ThreadedSession.events.updateStateThread,
 				(e: { key: string; value: any; }) => {
 					this.state[e.key]	= e.value;
 					Controller.update();
@@ -78,7 +78,7 @@ module Session {
 		}
 
 		public close (shouldSendEvent: boolean = true) : void {
-			this.trigger(ThreadedSession.methods.close, {shouldSendEvent});
+			this.trigger(ThreadedSession.events.close, {shouldSendEvent});
 			setTimeout(this.thread.stop, 120000);
 		}
 
@@ -91,7 +91,7 @@ module Session {
 		}
 
 		public receive (data: string) : void {
-			this.trigger(ThreadedSession.methods.receive, {data});
+			this.trigger(ThreadedSession.events.receive, {data});
 		}
 
 		public send (...messages: Message[]) : void {
@@ -99,7 +99,7 @@ module Session {
 		}
 
 		public sendBase (messages: Message[]) : void {
-			this.trigger(ThreadedSession.methods.send, {messages});
+			this.trigger(ThreadedSession.events.send, {messages});
 		}
 
 		public trigger (event: string, data?: any) : void {
@@ -107,7 +107,7 @@ module Session {
 		}
 
 		public updateState (key: string, value: any) : void {
-			this.trigger(ThreadedSession.methods.updateState, {key, value});
+			this.trigger(ThreadedSession.events.updateState, {key, value});
 		}
 	}
 }
