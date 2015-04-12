@@ -8,6 +8,7 @@
 /// <reference path="p2pfile.ts" />
 /// <reference path="../analytics.ts" />
 /// <reference path="../globals.ts" />
+/// <reference path="../icontroller.ts" />
 /// <reference path="../timer.ts" />
 /// <reference path="../util.ts" />
 /// <reference path="../webrtc.ts" />
@@ -40,15 +41,13 @@ module Session {
 		};
 
 
+		private controller: IController;
 		private mutex: IMutex;
 		private session: ISession;
-
 		private channel: RTCDataChannel;
 		private peer: RTCPeerConnection;
-
 		private localStream: MediaStream;
 		private remoteStream: MediaStream;
-
 		private isAccepted: boolean;
 		private isAvailable: boolean;
 		private hasSessionStarted: boolean;
@@ -156,7 +155,7 @@ module Session {
 					this.incomingStream.loading	= false;
 				}
 
-				Controller.update();
+				this.controller.update();
 
 				this.triggerUiEvent(
 					P2PUIEvents.Categories.stream,
@@ -223,7 +222,7 @@ module Session {
 
 					setTimeout(() => {
 						this.incomingStream.loading	= false;
-						Controller.update();
+						this.controller.update();
 					}, 1500);
 				}
 			};
@@ -487,7 +486,7 @@ module Session {
 								)
 							;
 
-							Controller.update();
+							this.controller.update();
 
 							this.channel.send(
 								this.outgoingFile.name +
@@ -517,7 +516,7 @@ module Session {
 										pos / buf.byteLength * 100
 									;
 
-									Controller.update();
+									this.controller.update();
 								}
 								else {
 									timer.stop();
@@ -529,7 +528,7 @@ module Session {
 									this.outgoingFile.readableSize		= '';
 									this.outgoingFile.percentComplete	= 0;
 
-									Controller.update();
+									this.controller.update();
 								}
 							});
 						};
@@ -570,7 +569,7 @@ module Session {
 						this.incomingFile.readableSize		= '';
 						this.incomingFile.percentComplete	= 0;
 
-						Controller.update();
+						this.controller.update();
 
 						if (data) {
 							this.receiveIncomingFile(data, name);
@@ -589,7 +588,7 @@ module Session {
 							)
 						;
 
-						Controller.update();
+						this.controller.update();
 
 						this.triggerUiEvent(
 							P2PUIEvents.Categories.file,
@@ -609,7 +608,7 @@ module Session {
 							100
 					;
 
-					Controller.update();
+					this.controller.update();
 				}
 			};
 
@@ -845,7 +844,9 @@ module Session {
 			this.session.trigger(Events.p2pUi, {category, event, args});
 		}
 
-		public constructor () {}
+		public constructor (controller: IController) {
+			this.controller	= controller;
+		}
 
 		public init (session: ISession) : void {
 			if (!this.session) {

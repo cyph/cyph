@@ -83,12 +83,6 @@ class Thread {
 		if (!self.onmessage) {
 			self.onmessage	= Thread.onmessage;
 		}
-
-		if (Controller) {
-			Controller.update	= () =>
-				Thread.callMainThread('Controller.update')
-			;
-		}
 	}
 
 	public static threads: Thread[]	= [];
