@@ -54,46 +54,56 @@ class Util {
 	}
 
 	public static getUrlState (fragmentOnly?: boolean) : string {
-		let fragment: string	= location.hash.split('#')[1] || '';
+		try {
+			let fragment: string	= location.hash.split('#')[1] || '';
 
-		if (fragmentOnly || fragment) {
-			return fragment;
+			if (fragmentOnly || fragment) {
+				return fragment;
+			}
+
+
+			let split: string[]	= location.pathname.split('/');
+
+			let a: string	= split.slice(-1)[0] || '';
+			let b: string	= split.slice(-2)[0] || '';
+
+			if (!a && b) {
+				return b;
+			}
+
+			return a;
 		}
-
-
-		let split: string[]	= location.pathname.split('/');
-
-		let a: string	= split.slice(-1)[0] || '';
-		let b: string	= split.slice(-2)[0] || '';
-
-		if (!a && b) {
-			return b;
+		catch (_) {
+			return '';
 		}
-
-		return a;
 	}
 
 	public static openUrl (url: string, downloadName?: string) : void {
-		let a: any		= document.createElement('a');
-		a.href			= url;
-		a.target		= '_blank';
-		a.style.display	= 'none';
+		if (Env.isMainThread) {
+			let a: any		= document.createElement('a');
+			a.href			= url;
+			a.target		= '_blank';
+			a.style.display	= 'none';
 
-		if (downloadName) {
-			a.download	= downloadName;
-		}
-
-		document.body.appendChild(a);
-		a.click();
-
-		setTimeout(() => {
-			document.body.removeChild(a);
-
-			try {
-				URL.revokeObjectURL(a.href);
+			if (downloadName) {
+				a.download	= downloadName;
 			}
-			catch (_) {}
-		}, 120000);
+
+			document.body.appendChild(a);
+			a.click();
+
+			setTimeout(() => {
+				document.body.removeChild(a);
+
+				try {
+					URL.revokeObjectURL(a.href);
+				}
+				catch (_) {}
+			}, 120000);
+		}
+		else {
+			Thread.callMainThread('Util.openUrl', [url, downloadName]);
+		}
 	}
 
 	public static pushNotFound () : void {
@@ -101,25 +111,30 @@ class Util {
 	}
 
 	public static pushState (path: string, shouldReplace?: boolean, shouldNotProcess?: boolean) : void {
-		let history;
+		if (Env.isMainThread) {
+			let history;
 
-		if (history) {
-			if (shouldReplace) {
-				history.replaceState({}, '', path);
+			if (history) {
+				if (shouldReplace) {
+					history.replaceState({}, '', path);
+				}
+				else {
+					history.pushState({}, '', path);
+				}
+
+				if (!shouldNotProcess && processUrlState) {
+					processUrlState();
+				}
+			}
+			else if (shouldReplace) {
+				location.replace(path);
 			}
 			else {
-				history.pushState({}, '', path);
+				location.pathname	= path;
 			}
-
-			if (!shouldNotProcess && processUrlState) {
-				processUrlState();
-			}
-		}
-		else if (shouldReplace) {
-			location.replace(path);
 		}
 		else {
-			location.pathname	= path;
+			Thread.callMainThread('Util.pushState', [path, shouldReplace, shouldNotProcess]);
 		}
 	}
 
