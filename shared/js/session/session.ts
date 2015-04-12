@@ -7,9 +7,10 @@
 /// <reference path="otr.ts" />
 /// <reference path="threadedsession.ts" />
 /// <reference path="../analytics.ts" />
-/// <reference path="../globals.ts" />
 /// <reference path="../errors.ts" />
 /// <reference path="../eventmanager.ts" />
+/// <reference path="../globals.ts" />
+/// <reference path="../icontroller.ts" />
 /// <reference path="../timer.ts" />
 /// <reference path="../util.ts" />
 /// <reference path="../channel/ichannel.ts" />
@@ -36,6 +37,7 @@ module Session {
 
 		private id: string;
 		private channel: Channel.IChannel;
+		private controller: IController;
 		private otr: IOTR;
 
 		public state	= {
@@ -181,8 +183,11 @@ module Session {
 			});
 		}
 
-		public constructor (descriptor?: string, p2p?: IP2P, id: string = Util.generateGuid()) {
-			this.id	= id;
+		public constructor (descriptor?: string, controller?: IController, p2p?: IP2P, id: string = Util.generateGuid()) {
+			this.controller	= controller;
+			this.p2p		= p2p;
+			this.id			= id;
+
 
 			/* true = yes; false = no; null = maybe */
 			this.updateState(Session.state.isStartingNewCyph,
@@ -234,8 +239,7 @@ module Session {
 			});
 
 
-			if (p2p) {
-				this.p2p	= p2p;
+			if (this.p2p) {
 				this.p2p.init(this);
 			}
 		}
@@ -296,8 +300,8 @@ module Session {
 		public updateState (key: string, value: any) : void {
 			this.state[key]	= value;
 
-			if (Env.isMainThread) {
-				Controller.update();
+			if (this.controller) {
+				this.controller.update();
 			}
 			else {
 				this.trigger(ThreadedSession.events.updateStateThread, {key, value});
