@@ -565,7 +565,7 @@ angular.
 					template: $('#templates > .formatting-help')[0].outerHTML
 				});
 
-				anal.send({
+				Analytics.main.send({
 					hitType: 'event',
 					eventCategory: 'formatting-help',
 					eventAction: 'show',
@@ -684,7 +684,7 @@ angular.
 					setTimeout(function () {
 						ui.elements.everything.addClass(curtainClass);
 
-						anal.send({
+						Analytics.main.send({
 							hitType: 'event',
 							eventCategory: 'cyphertext',
 							eventAction: 'show',
@@ -963,7 +963,7 @@ angular.
 					},
 					success: function (isNew) {
 						if (isNew == 'true') {
-							anal.send({
+							Analytics.main.send({
 								hitType: 'event',
 								eventCategory: 'signup',
 								eventAction: 'new',

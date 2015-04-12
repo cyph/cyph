@@ -49,7 +49,7 @@ module Cyph {
 					});
 				}
 
-				anal.send('exception', {
+				Analytics.main.send('exception', {
 					exDescription: exception
 				});
 			};

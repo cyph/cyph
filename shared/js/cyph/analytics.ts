@@ -6,6 +6,9 @@
 
 module Cyph {
 	export class Analytics {
+		public static main	= new Analytics;
+
+
 		private analFrame: HTMLIFrameElement;
 		private analFrameIsReady: boolean;
 
@@ -55,7 +58,7 @@ module Cyph {
 
 		public baseEventSubmitHelper (method: string, args: any[]) : void {
 			if (!Env.isMainThread) {
-				Thread.callMainThread('anal.baseEventSubmitHelper', [method, args]);
+				Thread.callMainThread('Cyph.Analytics.main.baseEventSubmitHelper', [method, args]);
 			}
 
 			else if (this.analFrameIsReady) {
@@ -84,6 +87,3 @@ module Cyph {
 		}
 	}
 }
-
-
-let anal: Cyph.Analytics	= new Cyph.Analytics;
