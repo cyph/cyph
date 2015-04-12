@@ -16,6 +16,7 @@
         "errors.ts",
         "eventmanager.ts",
         "globals.ts",
+        "icontroller.ts",
         "ngmarkdown.ts",
         "plugins.jquery.ts",
         "storage.d.ts",

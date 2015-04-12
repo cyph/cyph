@@ -1,5 +1,5 @@
-/// <reference path="websign.d.ts" />
 /// <reference path="storage.d.ts" />
+/// <reference path="websign.d.ts" />
 
 
 var IS_WEB	= typeof window === 'object';
@@ -17,7 +17,3 @@ var language: string;
 var localStorage: Storage;
 var processUrlState: Function;
 var webSign: WebSign;
-
-var Controller: any	= {
-	update: () => {}
-};

@@ -1,7 +1,8 @@
 /// <reference path="ip2p.ts" />
 /// <reference path="isession.ts" />
-/// <reference path="../globals.ts" />
 /// <reference path="../eventmanager.ts" />
+/// <reference path="../globals.ts" />
+/// <reference path="../icontroller.ts" />
 /// <reference path="../thread.ts" />
 /// <reference path="../util.ts" />
 
@@ -18,6 +19,7 @@ module Session {
 
 
 		private id: string;
+		private controller: IController;
 		private thread: Thread;
 
 		public state	= {
@@ -31,15 +33,17 @@ module Session {
 
 		public p2p: IP2P;
 
-		public constructor (descriptor?: string, p2p?: IP2P, id: string = Util.generateGuid()) {
-			this.id	= id;
+		public constructor (descriptor?: string, controller?: IController, p2p?: IP2P, id: string = Util.generateGuid()) {
+			this.controller	= controller;
+			this.p2p		= p2p;
+			this.id			= id;
 
 
 			this.thread	= new Thread((vars: any, importScripts: Function, Session: any) => {
 				importScripts('/cryptolib/bower_components/otr4-em/build/otr-web.js');
 				importScripts('/js/session/session.js');
 
-				let session: ISession	= new Session.Session(vars.descriptor, null, vars.id);
+				let session: ISession	= new Session.Session(vars.descriptor, null, null, vars.id);
 
 				session.on(vars.events.close, (e: { shouldSendEvent: boolean; }) =>
 					session.close(e.shouldSendEvent)
@@ -66,13 +70,12 @@ module Session {
 				ThreadedSession.events.updateStateThread,
 				(e: { key: string; value: any; }) => {
 					this.state[e.key]	= e.value;
-					Controller.update();
+					this.controller.update();
 				}
 			);
 
 
-			if (p2p) {
-				this.p2p	= p2p;
+			if (this.p2p) {
 				this.p2p.init(this);
 			}
 		}
