@@ -19,11 +19,11 @@ module Cyph {
 				action: o.action,
 				isSynchronous: !!o.isSynchronous,
 				service: o.service,
-				region: o.region || Config.awsConfig.region,
-				apiVersion: o.apiVersion || Config.awsConfig.apiVersions[o.service],
-				accessKeyId: o.accessKeyId || Config.awsConfig.accessKeyId,
-				secretAccessKey: o.secretAccessKey || Config.awsConfig.secretAccessKey,
-				params: o.params || {}
+				region: Util.getValue(o, 'region', Config.awsConfig.region),
+				apiVersion: Util.getValue(o, 'apiVersion', Config.awsConfig.apiVersions[o.service]),
+				accessKeyId: Util.getValue(o, 'accessKeyId', Config.awsConfig.accessKeyId),
+				secretAccessKey: Util.getValue(o, 'secretAccessKey', Config.awsConfig.secretAccessKey),
+				params: Util.getValue(o, 'params', {})
 			};
 
 			let date: Date				= new Date;
