@@ -110,7 +110,7 @@ module Cyph {
 					this.receivedMessages[message.id]	= true;
 
 					this.trigger(message.event,
-						message.event == Events.text ?
+						message.event === Events.text ?
 							{text: message.data, author: Authors.friend} :
 							message.data
 					);
@@ -219,7 +219,7 @@ module Cyph {
 						success: (data: string) => {
 							if (
 								this.state.isStartingNewCyph === true &&
-								channelDescriptor != data
+								channelDescriptor !== data
 							) {
 								retry();
 							}
@@ -270,7 +270,7 @@ module Cyph {
 			}
 
 			public receive (data: string) : void {
-				if (data == Events.destroy) {
+				if (data === Events.destroy) {
 					this.close(false);
 				}
 				else {
@@ -283,7 +283,7 @@ module Cyph {
 			}
 
 			public sendBase (messages: Message[]) : void {
-				messages.filter(o => o.event == Events.text).forEach(o =>
+				messages.filter(o => o.event === Events.text).forEach(o =>
 					this.trigger(Events.text, {
 						text: o.data,
 						author: Authors.me

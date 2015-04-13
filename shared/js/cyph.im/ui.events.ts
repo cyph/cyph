@@ -45,7 +45,7 @@ module Cyph.im {
 
 			session.on(Session.Events.text,
 				(o: { text: string; author: Session.Authors; }) =>
-					addMessageToChat(o.text, o.author, o.author != Session.Authors.me)
+					addMessageToChat(o.text, o.author, o.author !== Session.Authors.me)
 			);
 
 			session.on(Session.Events.typing, friendIsTyping);
@@ -156,7 +156,7 @@ module Cyph.im {
 									var author: Session.Authors	= e.args[0];
 									var fileName: string		= e.args[1];
 
-									var isFromMe: boolean	= author == Session.Authors.me;
+									var isFromMe: boolean	= author === Session.Authors.me;
 									var message: string		= isFromMe ?
 											Cyph.im.Strings.fileTransferInitMe :
 											Cyph.im.Strings.fileTransferInitFriend
@@ -228,9 +228,9 @@ module Cyph.im {
 							var author: Session.Authors	= e.args[0];
 
 							var $stream: JQuery	=
-								author == Session.Authors.me ?
+								author === Session.Authors.me ?
 									Cyph.im.UI.Elements.p2pMeStream :
-									author == Session.Authors.friend ?
+									author === Session.Authors.friend ?
 										Cyph.im.UI.Elements.p2pFriendStream :
 										Cyph.im.UI.Elements.p2pFriendPlaceholder
 							;

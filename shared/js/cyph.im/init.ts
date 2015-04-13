@@ -21,7 +21,7 @@ function Init () {
 		let urlState	= Util.getUrlState();
 
 		/* 404 */
-		if (urlState == '404') {
+		if (urlState === '404') {
 			changeState(states.error);
 		}
 		else {
@@ -34,13 +34,13 @@ function Init () {
 
 
 	if (
-		typeof webSign != 'undefined' &&
+		typeof webSign !== 'undefined' &&
 		webSign.detectChange &&
 		webSign.detectChange() &&
 		!Config.validWebSignHashes[localStorage.webSignBootHash]
 	) {
 		function warnWebSignObsoleteWrapper () {
-			if (typeof warnWebSignObsolete == 'undefined') {
+			if (typeof warnWebSignObsolete === 'undefined') {
 				setTimeout(warnWebSignObsoleteWrapper, 1000);
 			}
 			else {

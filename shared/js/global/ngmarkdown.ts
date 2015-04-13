@@ -16,7 +16,7 @@
 		html: false,
 		linkify: true,
 		typographer: true,
-		quotes: (language == 'ru' ? '«»' : language == 'de' ? '„“' : '“”') + '‘’',
+		quotes: (language === 'ru' ? '«»' : language === 'de' ? '„“' : '“”') + '‘’',
 		highlight: (str, lang) => {
 			if (lang && hljs.getLanguage(lang)) {
 				try {

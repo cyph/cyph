@@ -23,11 +23,11 @@ $('[on-enterpress]').each(function () {
 	let $this			= $(this);
 	let enterpressOnly	= $this.attr('enterpress-only');
 
-	if (!enterpressOnly || enterpressOnly == Cyph.Env.platformString) {
+	if (!enterpressOnly || enterpressOnly === Cyph.Env.platformString) {
 		let onenterpress	= $this.attr('on-enterpress');
 
 		$this.keypress(function (e) {
-			if (e.keyCode == 13 && !e.shiftKey) {
+			if (e.keyCode === 13 && !e.shiftKey) {
 				if (onenterpress) {
 					eval(onenterpress);
 					e.preventDefault();
@@ -77,7 +77,7 @@ if (Cyph.Env.isMobile) {
 	$(window).click(function (e) {
 		let coordinates	= Math.floor(e.clientX || 0) + ',' + Math.floor(e.clientY || 0);
 
-		if (coordinates == '0,0') {
+		if (coordinates === '0,0') {
 			return;
 		}
 
