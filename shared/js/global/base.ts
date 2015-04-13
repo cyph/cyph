@@ -2,6 +2,10 @@
 /// <reference path="../typings/websign.d.ts" />
 
 
+'use strict';
+'use strong';
+
+
 var IS_WEB	= typeof window === 'object';
 
 var window: Window		= window || this;
