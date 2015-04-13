@@ -1,19 +1,18 @@
-/// <reference path="strings.ts" />
-/// <reference path="ui.ts" />
-/// <reference path="ui.elements.ts" />
-/// <reference path="../globals.ts" />
-/// <reference path="../session/enums.ts" />
-/// <reference path="../session/isession.ts" />
-/// <reference path="../session/p2p.ts" />
-/// <reference path="../../lib/typings/jquery/jquery.d.ts" />
+/// <reference path="elements.ts" />
+/// <reference path="../strings.ts" />
+/// <reference path="../../cyph/session/enums.ts" />
+/// <reference path="../../cyph/session/isession.ts" />
+/// <reference path="../../cyph/session/p2p.ts" />
+/// <reference path="../../global/base.ts" />
+/// <reference path="../../../lib/typings/jquery/jquery.d.ts" />
 
 
 module Cyph.im {
 	export module UI {
-		export let events	= (session: Session.ISession) : void => {
+		export let events	= (session: Cyph.Session.ISession) : void => {
 			/* Main session events */
 
-			session.on(Session.Events.beginChat, () =>
+			session.on(Cyph.Session.Events.beginChat, () =>
 				beginChatUi(() =>
 					UI.Elements.window.
 						unload(() => session.close()).
@@ -23,18 +22,18 @@ module Cyph.im {
 				)
 			);
 
-			session.on(Session.Events.beginWaiting, beginWaiting);
+			session.on(Cyph.Session.Events.beginWaiting, beginWaiting);
 
-			session.on(Session.Events.closeChat, closeChat);
+			session.on(Cyph.Session.Events.closeChat, closeChat);
 
-			session.on(Session.Events.cyphertext,
-				(o: { cyphertext: string; author: Session.Authors; }) =>
+			session.on(Cyph.Session.Events.cyphertext,
+				(o: { cyphertext: string; author: Cyph.Session.Authors; }) =>
 					logCyphertext(o.cyphertext, o.author)
 			);
 
-			session.on(Session.Events.newCyph, () => changeState(states.spinningUp));
+			session.on(Cyph.Session.Events.newCyph, () => changeState(states.spinningUp));
 
-			session.on(Session.Events.smp, (wasSuccessful: boolean) => {
+			session.on(Cyph.Session.Events.smp, (wasSuccessful: boolean) => {
 				if (wasSuccessful) {
 					markAllAsSent();
 				}
@@ -43,33 +42,33 @@ module Cyph.im {
 				}
 			});
 
-			session.on(Session.Events.text,
-				(o: { text: string; author: Session.Authors; }) =>
-					addMessageToChat(o.text, o.author, o.author !== Session.Authors.me)
+			session.on(Cyph.Session.Events.text,
+				(o: { text: string; author: Cyph.Session.Authors; }) =>
+					addMessageToChat(o.text, o.author, o.author !== Cyph.Session.Authors.me)
 			);
 
-			session.on(Session.Events.typing, friendIsTyping);
+			session.on(Cyph.Session.Events.typing, friendIsTyping);
 
 
 			/* P2P events */
 
 			session.on(
-				Session.Events.p2pUi,
+				Cyph.Session.Events.p2pUi,
 				(e: {
-					category: Session.P2PUIEvents.Categories;
-					event: Session.P2PUIEvents.Events;
+					category: Cyph.Session.P2PUIEvents.Categories;
+					event: Cyph.Session.P2PUIEvents.Events;
 					args: any[];
 				}) => {
 					switch (e.category) {
-						case Session.P2PUIEvents.Categories.base:
+						case Cyph.Session.P2PUIEvents.Categories.base:
 							switch (e.event) {
-								case Session.P2PUIEvents.Events.connected:
+								case Cyph.Session.P2PUIEvents.Events.connected:
 									var isConnected: boolean	= e.args[0];
 
 									if (isConnected) {
 										addMessageToChat(
 											Cyph.im.Strings.webRTCConnect,
-											Session.Authors.app,
+											Cyph.Session.Authors.app,
 											false
 										);
 									}
@@ -82,17 +81,17 @@ module Cyph.im {
 
 										addMessageToChat(
 											Cyph.im.Strings.webRTCDisconnect,
-											Session.Authors.app,
+											Cyph.Session.Authors.app,
 											false
 										);
 									}
 									break;
 
-								case Session.P2PUIEvents.Events.enable:
+								case Cyph.Session.P2PUIEvents.Events.enable:
 									enableWebRTC();
 									break;
 
-								case Session.P2PUIEvents.Events.videoToggle:
+								case Cyph.Session.P2PUIEvents.Events.videoToggle:
 									var isVideoCall: boolean	= e.args[0];
 
 									toggleVideoCall(isVideoCall);
@@ -100,15 +99,15 @@ module Cyph.im {
 							}
 							break;
 
-						case Session.P2PUIEvents.Categories.file:
+						case Cyph.Session.P2PUIEvents.Categories.file:
 							switch (e.event) {
-								case Session.P2PUIEvents.Events.clear:
-									Cyph.im.UI.Elements.p2pFiles.each((i, elem) =>
+								case Cyph.Session.P2PUIEvents.Events.clear:
+									Elements.p2pFiles.each((i, elem) =>
 										$(elem).val('')
 									);
 									break;
 
-								case Session.P2PUIEvents.Events.confirm:
+								case Cyph.Session.P2PUIEvents.Events.confirm:
 									var name: string		= e.args[0];
 									var callback: Function	= e.args[1];
 
@@ -122,10 +121,10 @@ module Cyph.im {
 									}, (ok: boolean) => callback(ok, title));
 									break;
 
-								case Session.P2PUIEvents.Events.get:
+								case Cyph.Session.P2PUIEvents.Events.get:
 									var callback: Function	= e.args[0];
 
-									var file: File	= Cyph.im.UI.Elements.p2pFiles.
+									var file: File	= Elements.p2pFiles.
 										toArray().
 										map(($elem) => $elem['files']).
 										reduce((a, b) => (a && a[0]) ? a : b, [])[0]
@@ -134,7 +133,7 @@ module Cyph.im {
 									callback(file);
 									break;
 
-								case Session.P2PUIEvents.Events.rejected:
+								case Cyph.Session.P2PUIEvents.Events.rejected:
 									var title: string	= e.args[0];
 
 									alertDialog({
@@ -144,7 +143,7 @@ module Cyph.im {
 									});
 									break;
 
-								case Session.P2PUIEvents.Events.tooLarge:
+								case Cyph.Session.P2PUIEvents.Events.tooLarge:
 									alertDialog({
 										title: Cyph.im.Strings.oopsTitle,
 										content: Cyph.im.Strings.fileTooLarge,
@@ -152,11 +151,11 @@ module Cyph.im {
 									});
 									break;
 
-								case Session.P2PUIEvents.Events.transferStarted:
-									var author: Session.Authors	= e.args[0];
+								case Cyph.Session.P2PUIEvents.Events.transferStarted:
+									var author: Cyph.Session.Authors	= e.args[0];
 									var fileName: string		= e.args[1];
 
-									var isFromMe: boolean	= author === Session.Authors.me;
+									var isFromMe: boolean	= author === Cyph.Session.Authors.me;
 									var message: string		= isFromMe ?
 											Cyph.im.Strings.fileTransferInitMe :
 											Cyph.im.Strings.fileTransferInitFriend
@@ -164,16 +163,16 @@ module Cyph.im {
 
 									addMessageToChat(
 										message + ' ' + fileName,
-										Session.Authors.app,
+										Cyph.Session.Authors.app,
 										!isFromMe
 									);
 									break;
 							}
 							break;
 
-						case Session.P2PUIEvents.Categories.request:
+						case Cyph.Session.P2PUIEvents.Categories.request:
 							switch (e.event) {
-								case Session.P2PUIEvents.Events.acceptConfirm:
+								case Cyph.Session.P2PUIEvents.Events.acceptConfirm:
 									var callType: string	= e.args[0];
 									var timeout: number		= e.args[1];
 									var callback: Function	= e.args[2];
@@ -190,7 +189,7 @@ module Cyph.im {
 									}, callback, timeout);
 									break;
 
-								case Session.P2PUIEvents.Events.requestConfirm:
+								case Cyph.Session.P2PUIEvents.Events.requestConfirm:
 									var callType: string	= e.args[0];
 									var callback: Function	= e.args[1];
 
@@ -206,7 +205,7 @@ module Cyph.im {
 									}, callback);
 									break;
 
-								case Session.P2PUIEvents.Events.requestConfirmation:
+								case Cyph.Session.P2PUIEvents.Events.requestConfirmation:
 									alertDialog({
 										title: Cyph.im.Strings.videoCallingTitle,
 										content: Cyph.im.Strings.webRTCRequestConfirmation,
@@ -214,7 +213,7 @@ module Cyph.im {
 									});
 									break;
 
-								case Session.P2PUIEvents.Events.requestRejection:
+								case Cyph.Session.P2PUIEvents.Events.requestRejection:
 									alertDialog({
 										title: Cyph.im.Strings.videoCallingTitle,
 										content: Cyph.im.Strings.webRTCDeny,
@@ -224,25 +223,25 @@ module Cyph.im {
 							}
 							break;
 
-						case Session.P2PUIEvents.Categories.stream:
-							var author: Session.Authors	= e.args[0];
+						case Cyph.Session.P2PUIEvents.Categories.stream:
+							var author: Cyph.Session.Authors	= e.args[0];
 
 							var $stream: JQuery	=
-								author === Session.Authors.me ?
-									Cyph.im.UI.Elements.p2pMeStream :
-									author === Session.Authors.friend ?
-										Cyph.im.UI.Elements.p2pFriendStream :
-										Cyph.im.UI.Elements.p2pFriendPlaceholder
+								author === Cyph.Session.Authors.me ?
+									Elements.p2pMeStream :
+									author === Cyph.Session.Authors.friend ?
+										Elements.p2pFriendStream :
+										Elements.p2pFriendPlaceholder
 							;
 
 							switch (e.event) {
-								case Session.P2PUIEvents.Events.play:
+								case Cyph.Session.P2PUIEvents.Events.play:
 									var shouldPlay: boolean	= e.args[1];
 
 									$stream[0][shouldPlay ? 'play' : 'pause']();
 									break;
 
-								case Session.P2PUIEvents.Events.set:
+								case Cyph.Session.P2PUIEvents.Events.set:
 									var url: string	= e.args[1];
 
 									try {

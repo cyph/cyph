@@ -1,5 +1,5 @@
-/// <reference path="../globals.ts" />
-/// <reference path="../../lib/typings/jquery/jquery.d.ts" />
+/// <reference path="../../global/base.ts" />
+/// <reference path="../../../lib/typings/jquery/jquery.d.ts" />
 
 
 module Cyph.im {
