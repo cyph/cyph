@@ -17,13 +17,13 @@ module Cyph {
 
 			private commands	= {
 				release: () : void => {
-					if (this.owner != Authors.me) {
+					if (this.owner !== Authors.me) {
 						this.shiftRequester();
 					}
 				},
 
 				request: (purpose: string) : void => {
-					if (this.owner != Authors.me) {
+					if (this.owner !== Authors.me) {
 						this.owner		= Authors.friend;
 						this.purpose	= purpose;
 
@@ -54,7 +54,7 @@ module Cyph {
 			}
 
 			public lock (f: Function, purpose: string = '') : void {
-				if (this.owner != Authors.me) {
+				if (this.owner !== Authors.me) {
 					if (!this.owner && this.session.state.isCreator) {
 						this.owner		= Authors.me;
 						this.purpose	= purpose;
@@ -71,15 +71,15 @@ module Cyph {
 				let friendLockpurpose: string	= '';
 
 				Util.retryUntilComplete((retry: Function) => {
-					if (this.owner == Authors.me) {
+					if (this.owner === Authors.me) {
 						f(
 							!friendHadLockFirst,
-							!friendLockpurpose || friendLockpurpose != purpose,
+							!friendLockpurpose || friendLockpurpose !== purpose,
 							friendLockpurpose
 						);
 					}
 					else {
-						if (this.owner == Authors.friend) {
+						if (this.owner === Authors.friend) {
 							friendHadLockFirst	= true;
 							friendLockpurpose	= this.purpose;
 						}
@@ -90,7 +90,7 @@ module Cyph {
 			}
 
 			public unlock () : void {
-				if (this.owner == Authors.me) {
+				if (this.owner === Authors.me) {
 					this.shiftRequester();
 					this.session.send(new Message(Events.mutex, new Command('release')));
 				}

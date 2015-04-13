@@ -12,7 +12,7 @@ module Cyph {
 
 		public static off (event: string, handler: Function) : void {
 			EventManager.handlers[event]	=
-				(EventManager.handlers[event] || []).filter(f => f != handler)
+				(EventManager.handlers[event] || []).filter(f => f !== handler)
 			;
 		}
 

@@ -73,7 +73,7 @@ module Cyph {
 
 								this.receivedMessages[o.id].chunks[o.index]	= o.toString();
 
-								if (++this.receivedMessages[o.id].total == o.total) {
+								if (++this.receivedMessages[o.id].total === o.total) {
 									this.session.trigger(Events.otr, {
 										event: OTREvents.receive,
 										data: this.receivedMessages[o.id].chunks.join('')
@@ -158,7 +158,7 @@ module Cyph {
 						delete this.incomingMessages[this.incomingMessageId];
 						++this.incomingMessageId;
 
-						if (this.incomingMessageId == 1) {
+						if (this.incomingMessageId === 1) {
 							this.session.trigger(Events.otr, {event: OTREvents.begin});
 						}
 					}

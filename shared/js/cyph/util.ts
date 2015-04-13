@@ -49,7 +49,7 @@ module Cyph {
 				hour	-= 12;
 				ampm	= 'pm';
 			}
-			if (hour == 0) {
+			if (hour === 0) {
 				hour	= 12;
 			}
 
@@ -174,7 +174,7 @@ module Cyph {
 			let timeout: number		= o.timeout || 0;
 			let url: string			= o.url;
 
-			if (method == 'GET') {
+			if (method === 'GET') {
 				url		+= '?' + (
 					typeof data === 'object' ?
 						Util.toQueryString(data) :
@@ -191,7 +191,7 @@ module Cyph {
 			let request: XMLHttpRequest	= new XMLHttpRequest;
 
 			let callback: Function		= () => (
-				request.status == 200 ?
+				request.status === 200 ?
 					success :
 					error
 			)(
@@ -200,7 +200,7 @@ module Cyph {
 
 			if (async) {
 				request.onreadystatechange = () => {
-					if (request.readyState == 4) {
+					if (request.readyState === 4) {
 						callback();
 					}
 				};

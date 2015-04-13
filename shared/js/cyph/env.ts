@@ -4,8 +4,8 @@
 
 module Cyph {
 	export class Env {
-		public static isLocalhost: boolean	= location.hostname == 'localhost';
-		public static isOnion: boolean		= location.host.split('.').slice(-1)[0] == 'onion';
+		public static isLocalhost: boolean	= location.hostname === 'localhost';
+		public static isOnion: boolean		= location.host.split('.').slice(-1)[0] === 'onion';
 
 		public static baseUrl: string	=
 			Env.isLocalhost ?

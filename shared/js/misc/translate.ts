@@ -17,23 +17,23 @@ function htmlDecode (value) {
 }
 
 
-if (typeof translations != 'undefined') {
+if (typeof translations !== 'undefined') {
 	if (localStorage && localStorage.forceLanguage) {
 		language	= localStorage.forceLanguage.toLowerCase();
 	}
 
-	if (language == 'nb') {
+	if (language === 'nb') {
 		language	= 'no';
 	}
-	if (language == 'zh-cn') {
+	if (language === 'zh-cn') {
 		language	= 'zh-chs';
 	}
-	if (language == 'zh-tw') {
+	if (language === 'zh-tw') {
 		language	= 'zh-cht';
 	}
 
 
-	if (language != defaultLanguage) {
+	if (language !== defaultLanguage) {
 		let o			= {};
 		let translation	= translations[language];
 
