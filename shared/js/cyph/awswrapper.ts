@@ -1,8 +1,8 @@
 /// <reference path="config.ts" />
+/// <reference path="util.ts" />
 /// <reference path="../global/base.ts" />
 /// <reference path="../../lib/typings/aws-sdk/aws-sdk.d.ts" />
 /// <reference path="../../lib/typings/cryptojs/cryptojs.d.ts" />
-/// <reference path="../../lib/typings/jquery/jquery.d.ts" />
 
 
 module Cyph {
@@ -59,7 +59,7 @@ module Cyph {
 			params['X-Amz-Date']			= timestamp;
 			params['X-Amz-SignedHeaders']	= hostHeader;
 
-			let query: string	= $.param(params).
+			let query: string	= Util.toQueryString(params).
 				replace(/\+/g, '%20').
 				replace(/\(/g, '%28').
 				replace(/\)/g, '%29')
@@ -100,19 +100,15 @@ module Cyph {
 			).toString();
 
 
-			$.ajax({
+			Util.request({
 				async: !config.isSynchronous,
 				timeout: 30000,
-				type: requestMethod,
+				method: requestMethod,
 				url: config.url,
 				data: query + '&X-Amz-Signature=' + signature,
-				success: config.isSynchronous ? null : callback,
-				error: config.isSynchronous ? null : callback
+				success: callback,
+				error: callback
 			});
-
-			if (config.isSynchronous && callback) {
-				callback();
-			}
 		}
 	}
 }
