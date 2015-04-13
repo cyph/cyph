@@ -96,7 +96,7 @@ module Cyph {
 								let err: any	= args[0];
 								let data: any	= args[1];
 
-								if (err && err.code == Queue.nonExistentQueue) {
+								if (err && err.code === Queue.nonExistentQueue) {
 									this.isQueueAlive	= false;
 									handlers.onclose && handlers.onclose.apply(this, args);
 								}
@@ -129,7 +129,7 @@ module Cyph {
 								let err: any	= args[0];
 								let data: any	= args[1];
 
-								if (err && err.code == Queue.nonExistentQueue) {
+								if (err && err.code === Queue.nonExistentQueue) {
 									this.isQueueAlive	= false;
 									handlers.onclose.apply(this, args);
 								}
@@ -247,7 +247,7 @@ module Cyph {
 								message[i],
 								callback && callback.length ?
 									callback[i] :
-									(i == message.length - 1) && callback,
+									(i === message.length - 1) && callback,
 								true
 							);
 						}

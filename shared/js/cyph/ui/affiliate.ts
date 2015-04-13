@@ -14,7 +14,7 @@ module Cyph {
 				$elem.find('a').click(e => {
 					let originalUrl: string	= $(e.currentTarget).attr('href') || '';
 
-					if (originalUrl.substring(0, 5) == 'data:') {
+					if (originalUrl.substring(0, 5) === 'data:') {
 						return;
 					}
 

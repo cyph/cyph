@@ -209,7 +209,7 @@ module Cyph {
 						e.stream &&
 						(
 							!this.remoteStream ||
-							this.remoteStream.id != e.stream.id
+							this.remoteStream.id !== e.stream.id
 						)
 					) {
 						this.remoteStream	= e.stream;
@@ -255,10 +255,10 @@ module Cyph {
 					let forceKill: boolean	= e === null;
 
 					if (
-						this.peer == pc &&
+						this.peer === pc &&
 						(
 							forceKill ||
-							pc.signalingState == P2P.constants.closed
+							pc.signalingState === P2P.constants.closed
 						)
 					) {
 						delete pc.onaddstream;
@@ -303,9 +303,9 @@ module Cyph {
 					this.commands[command](data);
 				}
 				else if (
-					command == P2P.constants.video ||
-					command == P2P.constants.voice ||
-					command == P2P.constants.file
+					command === P2P.constants.video ||
+					command === P2P.constants.voice ||
+					command === P2P.constants.file
 				) {
 					this.triggerUiEvent(
 						P2PUIEvents.Categories.request,
@@ -316,8 +316,8 @@ module Cyph {
 							if (ok) {
 								this.isAccepted	= true;
 								this.setUpStream({
-									video: command == P2P.constants.video,
-									audio: command != P2P.constants.file
+									video: command === P2P.constants.video,
+									audio: command !== P2P.constants.file
 								});
 
 								Analytics.main.send({
@@ -375,8 +375,8 @@ module Cyph {
 								try {
 									if (wasFirstOfType) {
 										this.isAccepted				= true;
-										this.streamOptions.video	= callType == P2P.constants.video;
-										this.streamOptions.audio	= callType != P2P.constants.file;
+										this.streamOptions.video	= callType === P2P.constants.video;
+										this.streamOptions.audio	= callType !== P2P.constants.file;
 
 										this.session.send(
 											new Message(
@@ -424,7 +424,7 @@ module Cyph {
 				if (
 					this.outgoingFile.name ||
 					!this.channel ||
-					this.channel.readyState != P2P.constants.open
+					this.channel.readyState !== P2P.constants.open
 				) {
 					return;
 				}
@@ -560,7 +560,7 @@ module Cyph {
 
 				this.channel.onmessage	= e => {
 					if (typeof e.data === 'string') {
-						if (e.data == P2P.constants.fileTransferComplete) {
+						if (e.data === P2P.constants.fileTransferComplete) {
 							let data: ArrayBuffer[]	= this.incomingFile.data;
 							let name: string		= this.incomingFile.name;
 

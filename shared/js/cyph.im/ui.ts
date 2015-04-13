@@ -68,7 +68,7 @@ angular.
 		updateUI	= function (fn) {
 			let phase = $scope['$root']['$$phase'];
 
-			if (phase == '$apply' || phase == '$digest') {
+			if (phase === '$apply' || phase === '$digest') {
 				fn && (typeof(fn) === 'function') && fn();
 			}
 			else {
@@ -86,7 +86,7 @@ angular.
 
 
 		addMessageToChat = $scope.addMessageToChat = function (text, author, shouldNotify) {
-			if ($scope.state == $scope.states.aborted) {
+			if ($scope.state === $scope.states.aborted) {
 				return;
 			}
 
@@ -107,12 +107,12 @@ angular.
 					$scope.messages.push({
 						author: author,
 						authorClass: 'author-' + (
-							author == authors.me ? 'me' :
-								author == authors.friend ? 'friend' : 'app'
+							author === authors.me ? 'me' :
+								author === authors.friend ? 'friend' : 'app'
 						),
-						isFromApp: author == authors.app,
-						isFromFriend: author == authors.friend,
-						isFromMe: author == authors.me,
+						isFromApp: author === authors.app,
+						isFromFriend: author === authors.friend,
+						isFromMe: author === authors.me,
 						text: text,
 						timestamp: Util.getTimestamp()
 					});
@@ -120,7 +120,7 @@ angular.
 
 				$scope.scrollDown(true);
 
-				if (author == authors.me) {
+				if (author === authors.me) {
 					$scope.scrollDown();
 				}
 				else {
@@ -136,7 +136,7 @@ angular.
 
 
 		beginChatUi = $scope.beginChatUi = function (callback) {
-			if ($scope.state == $scope.states.aborted) {
+			if ($scope.state === $scope.states.aborted) {
 				return;
 			}
 
@@ -148,7 +148,7 @@ angular.
 				ui.elements.copyUrlInput.remove();
 
 				setTimeout(function () {
-					if ($scope.state == $scope.states.aborted) {
+					if ($scope.state === $scope.states.aborted) {
 						return;
 					}
 
@@ -214,7 +214,7 @@ angular.
 			;
 
 			function setCopyUrl () {
-				if ($scope.copyUrl != copyUrl) {
+				if ($scope.copyUrl !== copyUrl) {
 					updateUI(function () {
 						$scope.copyUrl			= copyUrl;
 						$scope.copyUrlEncoded	= encodeURIComponent(copyUrl);
@@ -236,7 +236,7 @@ angular.
 			}
 			else {
 				let copyUrlInterval	= setInterval(function () {
-					if ($scope.state == $scope.states.waitingForFriend) {
+					if ($scope.state === $scope.states.waitingForFriend) {
 						setCopyUrl();
 						ui.elements.copyUrlInput.focus();
 						selectCopyUrl();
@@ -275,7 +275,7 @@ angular.
 
 
 		closeChat = $scope.closeChat = function () {
-			if ($scope.state == $scope.states.aborted) {
+			if ($scope.state === $scope.states.aborted) {
 				return;
 			}
 
@@ -386,8 +386,8 @@ angular.
 			ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
 			let hasTransparency	=
-				imageFile.type != 'image/jpeg' &&
-				ctx.getImageData(0, 0, img.width, img.height).data[3] != 255
+				imageFile.type !== 'image/jpeg' &&
+				ctx.getImageData(0, 0, img.width, img.height).data[3] !== 255
 			;
 
 			let result	= hasTransparency ? canvas.toDataURL() : canvas.toDataURL(
@@ -443,7 +443,7 @@ angular.
 			if (elem.files && elem.files.length > 0) {
 				imageFile	= elem.files[0];
 
-				if (imageFile.type == 'image/gif') {
+				if (imageFile.type === 'image/gif') {
 					reader.readAsDataURL(imageFile);
 				}
 				else {
@@ -578,10 +578,10 @@ angular.
 		let imtypingyo, previousMessage;
 
 		$scope.onMessageChange	= function () {
-			let newImtypingYo	= $scope.message != '' && $scope.message != previousMessage;
+			let newImtypingYo	= $scope.message !== '' && $scope.message !== previousMessage;
 			previousMessage		= $scope.message;
 
-			if (imtypingyo != newImtypingYo) {
+			if (imtypingyo !== newImtypingYo) {
 				imtypingyo	= newImtypingYo;
 				sendChannelData({Misc: imtypingyo ? channelDataMisc.imtypingyo : channelDataMisc.donetyping});
 			}
@@ -653,7 +653,7 @@ angular.
 
 		/* Close cyphertext on esc */
 		$(document).keyup(function (e) {
-			if (e.keyCode == 27) {
+			if (e.keyCode === 27) {
 				$scope.closeCyphertext();
 			}
 		});
@@ -829,7 +829,7 @@ angular.
 		/* For notify and mobile fullscreen */
 
 		Visibility.change(function (e, state) {
-			if (state != 'hidden') {
+			if (state !== 'hidden') {
 				disableNotify	= false;
 				while (openNotifications.length > 0) {
 					openNotifications.pop().close();
@@ -867,7 +867,7 @@ angular.
 									$elem.removeClass('unread');
 									updateUI(function () { $scope.unreadMessages -= 1 });
 
-									if ($elem.nextAll().length == 0) {
+									if ($elem.nextAll().length === 0) {
 										$scope.scrollDown();
 									}
 								}
@@ -883,7 +883,7 @@ angular.
 					$html.find('img:not(.emoji)').each(function () {
 						let $this	= $(this);
 
-						if ($this.parent().prop('tagName').toLowerCase() != 'a') {
+						if ($this.parent().prop('tagName').toLowerCase() !== 'a') {
 							let $a	= $('<a></a>')
 							$a.attr('href', $this.attr('src'));
 
@@ -931,7 +931,7 @@ angular.
 				++$scope.betaSignupState;
 			});
 
-			if ($scope.betaSignupState == 2) {
+			if ($scope.betaSignupState === 2) {
 				setTimeout(function () {
 					updateUI(function () {
 						++$scope.betaSignupState;
@@ -942,7 +942,7 @@ angular.
 			setTimeout(function () {
 				/* Temporary workaround */
 				let $input	= $betaSignupForm.find('input:visible');
-				if ($input.length == 1) {
+				if ($input.length === 1) {
 					$input.focus();
 				}
 			}, 100);
@@ -962,7 +962,7 @@ angular.
 						}
 					},
 					success: function (isNew) {
-						if (isNew == 'true') {
+						if (isNew === 'true') {
 							Analytics.main.send({
 								hitType: 'event',
 								eventCategory: 'signup',

@@ -177,7 +177,7 @@ module Cyph {
 			this.worker.terminate();
 			this.worker	= null;
 
-			Thread.threads	= Thread.threads.filter(t => t != this);
+			Thread.threads	= Thread.threads.filter(t => t !== this);
 		}
 	}
 }

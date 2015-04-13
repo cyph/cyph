@@ -37,7 +37,7 @@ angular.
 		function apply (fn) {
 			let phase = $scope['$root']['$$phase'];
 
-			if (phase == '$apply' || phase == '$digest') {
+			if (phase === '$apply' || phase === '$digest') {
 				fn && (typeof(fn) === 'function') && fn();
 			}
 			else {
@@ -138,7 +138,7 @@ angular.
 				let viewportHeight	= Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
 				let scrollTop		= window.pageYOffset;
 
-				if (scrollTop == 0) {
+				if (scrollTop === 0) {
 					$newCyph.css({transform: '', top: ''});
 					$fixedHeaderStuff.removeClass(fixedHeaderClass);
 				}
@@ -219,7 +219,7 @@ angular.
 			let windowAspectRatio	= window.innerWidth / window.innerHeight;
 			let aspectRatio			= windowAspectRatio > videoAspectRatio;
 
-			if (aspectRatio == previousAspectRatio && isAddressBarHidden) {
+			if (aspectRatio === previousAspectRatio && isAddressBarHidden) {
 				return;
 			}
 
@@ -266,7 +266,7 @@ angular.
 				++$scope.betaSignupState;
 			});
 
-			if ($scope.betaSignupState == 2) {
+			if ($scope.betaSignupState === 2) {
 				setTimeout(function () {
 					apply(function () {
 						++$scope.betaSignupState;
@@ -277,7 +277,7 @@ angular.
 			setTimeout(function () {
 				/* Temporary workaround */
 				let $input	= $betaSignupForm.find('input:visible');
-				if ($input.length == 1) {
+				if ($input.length === 1) {
 					$input.focus();
 				}
 			}, 100);
@@ -297,7 +297,7 @@ angular.
 						}
 					},
 					success: function (isNew) {
-						if (isNew == 'true') {
+						if (isNew === 'true') {
 							Analytics.main.send({
 								hitType: 'event',
 								eventCategory: 'signup',
@@ -320,7 +320,7 @@ angular.
 
 		/* Do the move lad */
 
-		if (typeof history != 'undefined' && history.replaceState) {
+		if (typeof history !== 'undefined' && history.replaceState) {
 			history.replaceState({}, '', '/' + Util.getUrlState());
 		}
 		processUrlState();

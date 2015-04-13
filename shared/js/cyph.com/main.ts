@@ -18,23 +18,23 @@ processUrlState	= () => {
 	if (isPodcast) {
 		openPodcast(state);
 	}
-	else if (state == 'about') {
+	else if (state === 'about') {
 		Util.pushNotFound();
 		// openAbout(true);
 	}
-	else if (state == 'faq') {
+	else if (state === 'faq') {
 		openFaq(true);
 	}
-	else if (state == 'termsofservice') {
+	else if (state === 'termsofservice') {
 		openTos(true);
 	}
-	else if (state == 'privacypolicy') {
+	else if (state === 'privacypolicy') {
 		openPrivacyPolicy(true);
 	}
-	else if (state == '404') {
+	else if (state === '404') {
 		openError(true);
 	}
-	else if (state != '') {
+	else if (state !== '') {
 		Util.pushNotFound();
 	}
 };
@@ -47,7 +47,7 @@ if (!Env.isLocalhost && !Env.isOnion) {
 	Util.request({
 		url: Config.onionUrl + 'ping',
 		success: function (data) {
-			if (data == 'pong') {
+			if (data === 'pong') {
 				location.href	= Config.onionUrl + location.toString().split(location.host + '/')[1];
 			}
 		}
