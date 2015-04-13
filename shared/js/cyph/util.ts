@@ -81,6 +81,26 @@ module Cyph {
 			}
 		}
 
+		public static getValue<T> (o: any, keysToTry: string|string[], defaultValue: T = null) : T {
+			let keys: string[]	=
+				typeof keysToTry === 'string' ?
+					[keysToTry] :
+					keysToTry
+			;
+
+			return (
+				keys.length > 0 ?
+					keys.reduce((value: T, key: string) =>
+						value !== null ?
+							value :
+							key in o ?
+								o[key] :
+								null
+					, null) :
+					null
+			) || defaultValue;
+		}
+
 		public static openUrl (url: string, downloadName?: string) : void {
 			if (Env.isMainThread) {
 				let a: any		= document.createElement('a');
@@ -166,12 +186,12 @@ module Cyph {
 			timeout?: number;
 			url: string;
 		}) : void {
-			let async: boolean		= o.async !== false;
-			let data: any			= o.data || '';
-			let error: Function		= o.error || (() => {});
-			let method: string		= o.method || 'GET';
-			let success: Function	= o.success || (() => {});
-			let timeout: number		= o.timeout || 0;
+			let async: boolean		= Util.getValue(o, 'async', true) !== false;
+			let data: any			= Util.getValue<any>(o, 'data', '');
+			let error: Function		= Util.getValue(o, 'error', () => {});
+			let method: string		= Util.getValue(o, 'method', 'GET');
+			let success: Function	= Util.getValue(o, 'success', () => {});
+			let timeout: number		= Util.getValue(o, 'timeout', 0);
 			let url: string			= o.url;
 
 			if (method === 'GET') {

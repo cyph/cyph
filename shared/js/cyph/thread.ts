@@ -1,14 +1,15 @@
 /// <reference path="eventmanager.ts" />
+/// <reference path="util.ts" />
 /// <reference path="../global/base.ts" />
 
 
 module Cyph {
 	export class Thread {
-		private static BlobBuilder: any	=
-			self['BlobBuilder'] ||
-			self['WebKitBlobBuilder'] ||
-			self['MozBlobBuilder']
-		;
+		private static BlobBuilder: any	= Util.getValue(self, [
+			'BlobBuilder',
+			'WebKitBlobBuilder',
+			'MozBlobBuilder'
+		]);
 
 		private static stringifyFunction (f: Function) : string {
 			let s	= f.toString();
@@ -64,7 +65,13 @@ module Cyph {
 
 					crypto	= {
 						getRandomValues: array => {
-							let max: number	= Math.pow(2, (array['BYTES_PER_ELEMENT'] || 4) * 8) - 1;
+							let bytes: number	=
+								'BYTES_PER_ELEMENT' in array ?
+									array['BYTES_PER_ELEMENT'] :
+									4
+							;
+
+							let max: number	= Math.pow(2, bytes * 8) - 1;
 
 							for (let i = 0 ; i < array['length'] ; ++i) {
 								array[i]	= Math.floor(isaac.random() * max);
