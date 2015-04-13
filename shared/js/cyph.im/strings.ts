@@ -1,5 +1,5 @@
-/// <reference path="../globals.ts" />
-/// <reference path="../util.ts" />
+/// <reference path="../cyph/util.ts" />
+/// <reference path="../global/base.ts" />
 
 
 module Cyph.im {
@@ -45,4 +45,4 @@ module Cyph.im {
 }
 
 
-Util.getStrings(Cyph.im.Strings);
+Cyph.Util.getStrings(Cyph.im.Strings);
