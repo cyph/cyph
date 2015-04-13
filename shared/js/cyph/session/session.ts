@@ -15,7 +15,6 @@
 /// <reference path="../channel/ichannel.ts" />
 /// <reference path="../channel/ratchetedchannel.ts" />
 /// <reference path="../../global/base.ts" />
-/// <reference path="../../../lib/typings/jquery/jquery.d.ts" />
 
 
 module Cyph {
@@ -213,8 +212,8 @@ module Cyph {
 							Channel.Channel.newDescriptor()
 					;
 
-					$.ajax({
-						type: 'POST',
+					Util.request({
+						method: 'POST',
 						url: Env.baseUrl + 'channels/' + this.state.cyphId,
 						data: {channelDescriptor},
 						success: (data: string) => {
