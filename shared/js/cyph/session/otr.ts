@@ -79,7 +79,7 @@ module Cyph {
 										data: this.receivedMessages[o.id].chunks.join('')
 									});
 
-									delete this.receivedMessages[o.id];
+									this.receivedMessages[o.id]	= null;
 								}
 							}
 						});
@@ -155,7 +155,7 @@ module Cyph {
 					) {
 						this.otr.recv(this.incomingMessages[this.incomingMessageId]);
 
-						delete this.incomingMessages[this.incomingMessageId];
+						this.incomingMessages[this.incomingMessageId]	= null;
 						++this.incomingMessageId;
 
 						if (this.incomingMessageId === 1) {

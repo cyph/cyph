@@ -104,7 +104,7 @@ module Cyph {
 		}
 
 		public stop () : void {
-			delete Timer.timers[this.id];
+			Timer.timers[this.id]	= null;
 		}
 	}
 }
