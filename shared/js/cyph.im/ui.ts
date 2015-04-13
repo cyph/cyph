@@ -254,8 +254,8 @@ angular.
 					.replace(/(.*:.*):.*? /, '$1')
 				;
 
-				ui.elements.timer.parent().text('Link expires at ' + expireTime)
-				delete ui.elements.timer;
+				ui.elements.timer.parent().text('Link expires at ' + expireTime);
+				ui.elements.timer	= null;
 			}
 			else {
 				ui.elements.timer[0].start();

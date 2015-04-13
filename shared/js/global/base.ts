@@ -3,7 +3,6 @@
 
 
 'use strict';
-'use strong';
 
 
 var IS_WEB	= typeof window === 'object';
