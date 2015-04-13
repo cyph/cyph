@@ -88,17 +88,18 @@ module Cyph {
 					keysToTry
 			;
 
-			return (
-				keys.length > 0 ?
-					keys.reduce((value: T, key: string) =>
-						value !== null ?
-							value :
-							key in o ?
-								o[key] :
-								null
-					, null) :
-					null
-			) || defaultValue;
+			let value: T	= keys.length > 0 ?
+				keys.reduce((value: T, key: string) =>
+					value !== null ?
+						value :
+						key in o ?
+							o[key] :
+							null
+				, null) :
+				null
+			;
+
+			return value !== null ? value : defaultValue;
 		}
 
 		public static openUrl (url: string, downloadName?: string) : void {
