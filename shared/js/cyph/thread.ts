@@ -16,8 +16,7 @@ module Cyph {
 		}
 
 		private static threadEnvSetup (vars: any, importScripts: Function) : void {
-			let window: any		= this;
-			let document: any	= this;
+			importScripts('/js/global/base.js');
 
 			console	= {
 				assert: () => {},
