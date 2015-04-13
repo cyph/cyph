@@ -44,18 +44,19 @@ module Cyph {
 
 						this.otr.on('smp', (e: string) => {
 							switch (e) {
-								case 'request':
+								case 'request': {
 									this.otr.smpRespond(this.session.state.sharedSecret);
 									break;
-
-								case 'complete':
+								}
+								case 'complete': {
 									this.session.trigger(Events.otr, {event: OTREvents.authenticated});
 									break;
-
+								}
 								case 'failed':
-								case 'aborted':
+								case 'aborted': {
 									this.session.trigger(Events.otr, {event: OTREvents.abort});
 									break;
+								}
 							}
 						});
 
