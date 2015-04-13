@@ -949,8 +949,8 @@ angular.
 
 			let retries	= 0;
 			function dothemove () {
-				$.ajax({
-					type: 'PUT',
+				Util.request({
+					method: 'PUT',
 					url: Env.baseUrl + 'betasignups',
 					data: $scope.betaSignup,
 					error: function () {

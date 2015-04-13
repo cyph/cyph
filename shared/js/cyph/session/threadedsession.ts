@@ -40,7 +40,7 @@ module Cyph {
 				this.id			= id;
 
 
-				this.thread	= new Thread((vars: any, importScripts: Function, Session: any) => {
+				this.thread	= new Thread((vars: any, importScripts: Function, Cyph: any) => {
 					importScripts('/cryptolib/bower_components/otr4-em/build/otr-web.js');
 					importScripts('/js/cyph/session/session.js');
 

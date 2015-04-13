@@ -44,9 +44,12 @@ processUrlState	= () => {
 /* Redirect to Onion site when on Tor */
 
 if (!Env.isLocalhost && !Env.isOnion) {
-	$.get(Config.onionUrl + 'ping', function (data) {
-		if (data == 'pong') {
-			location.href	= Config.onionUrl + location.toString().split(location.host + '/')[1];
+	Util.request({
+		url: Config.onionUrl + 'ping',
+		success: function (data) {
+			if (data == 'pong') {
+				location.href	= Config.onionUrl + location.toString().split(location.host + '/')[1];
+			}
 		}
 	});
 }

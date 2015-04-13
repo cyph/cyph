@@ -1,6 +1,6 @@
 /// <reference path="analytics.ts" />
+/// <reference path="util.ts" />
 /// <reference path="../global/base.ts" />
-/// <reference path="../../lib/typings/jquery/jquery.d.ts" />
 
 
 module Cyph {
@@ -30,8 +30,8 @@ module Cyph {
 				message		= message.replace(/#.*/g, '');
 
 				if (numEmails++ < 50) {
-					$.ajax({
-						type: 'POST',
+					Util.request({
+						method: 'POST',
 						url: 'https://mandrillapp.com/api/1.0/messages/send.json',
 						data: {
 							key: 'HNz4JExN1MtpKz8uP2RD1Q',

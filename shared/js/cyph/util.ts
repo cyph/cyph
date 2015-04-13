@@ -157,6 +157,65 @@ module Cyph {
 			return o.n.toFixed(2) + ' ' + o.s + 'B';
 		}
 
+		public static request (o: {
+			async?: boolean;
+			data?: any;
+			error?: Function;
+			method?: string;
+			success?: Function;
+			timeout?: number;
+			url: string;
+		}) : void {
+			let async: boolean		= o.async !== false;
+			let data: any			= o.data || '';
+			let error: Function		= o.error || (() => {});
+			let method: string		= o.method || 'GET';
+			let success: Function	= o.success || (() => {});
+			let timeout: number		= o.timeout || 0;
+			let url: string			= o.url;
+
+			if (method == 'GET') {
+				url		+= '?' + (
+					typeof data === 'object' ?
+						Util.toQueryString(data) :
+						data.toString()
+				);
+
+				data	= null;
+			}
+			else if (typeof data === 'object') {
+				data	= JSON.stringify(data);
+			}
+
+
+			let request: XMLHttpRequest	= new XMLHttpRequest;
+
+			let callback: Function		= () => (
+				request.status == 200 ?
+					success :
+					error
+			)(
+				request.responseText
+			);
+
+			if (async) {
+				request.onreadystatechange = () => {
+					if (request.readyState == 4) {
+						callback();
+					}
+				};
+			}
+
+			request.timeout	= timeout;
+
+			request.open(method, url, async);
+			request.send(data);
+
+			if (!async) {
+				callback();
+			}
+		}
+
 		public static retryUntilComplete (f: Function, retryIf?: Function) : void {
 			let dothemove	= () : void =>
 				f((delay: number = 250) : void => {
@@ -167,6 +226,24 @@ module Cyph {
 			;
 
 			dothemove();
+		}
+
+		public static toQueryString (o: any, parent?: string) : string {
+			return Object.keys(o).
+				map((k: string) => {
+					let key: string	= parent ? (parent + '[' + k + ']') : k;
+
+					return typeof o[k] === 'object' ?
+						Util.toQueryString(o[k], key) :
+						(
+							encodeURIComponent(key) +
+							'=' +
+							encodeURIComponent(o[k])
+						)
+				}).
+				join('&').
+				replace(/%20/g, '+')
+			;
 		}
 	}
 }
