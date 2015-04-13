@@ -53,33 +53,34 @@ module Cyph {
 
 			private otrHandler (e: { event: OTREvents; data?: string; }) : void {
 				switch (e.event) {
-					case OTREvents.abort:
+					case OTREvents.abort: {
 						Errors.logSmp();
 						this.trigger(Events.smp, false);
 						break;
-
-					case OTREvents.authenticated:
+					}
+					case OTREvents.authenticated: {
 						this.trigger(Events.smp, true);
 						this.pingPong();
 						break;
-
-					case OTREvents.begin:
+					}
+					case OTREvents.begin: {
 						this.updateState(Session.state.hasKeyExchangeBegun, true);
 						break;
-
-					case OTREvents.receive:
+					}
+					case OTREvents.receive: {
 						if (e.data) {
 							JSON.parse(e.data).forEach((message: Message) =>
 								this.receiveHandler(message)
 							);
 						}
 						break;
-
-					case OTREvents.send:
+					}
+					case OTREvents.send: {
 						if (e.data) {
 							this.sendQueue.push(e.data);
 						}
 						break;
+					}
 				}
 			}
 
