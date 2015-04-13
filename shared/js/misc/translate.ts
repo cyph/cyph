@@ -34,17 +34,14 @@ if (typeof translations !== 'undefined') {
 
 
 	if (language !== defaultLanguage) {
-		let o			= {};
-		let translation	= translations[language];
+		let translation	= {};
+		let o			= translations[language];
 
-		if (translation) {
-			Object.keys(translation).forEach(function (k) {
-				o[k]	= htmlDecode(translation[k]);
+		if (o) {
+			Object.keys(o).forEach(function (k) {
+				translation[k]	= htmlDecode(o[k]);
 			});
 		}
-
-		translation	= o;
-		delete o;
 
 
 		$(function () {

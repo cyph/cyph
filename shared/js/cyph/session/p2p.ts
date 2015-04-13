@@ -237,7 +237,7 @@ module Cyph {
 
 				pc['onIceCandidate']	= e => {
 					if (e.candidate) {
-						delete pc['onIceCandidate'];
+						pc['onIceCandidate']	= null;
 
 						this.session.send(
 							new Message(
@@ -261,7 +261,7 @@ module Cyph {
 							pc.signalingState === P2P.constants.closed
 						)
 					) {
-						delete pc.onaddstream;
+						pc.onaddstream	= null;
 
 						this.isAvailable	= false;
 						this.remoteStream	= null;

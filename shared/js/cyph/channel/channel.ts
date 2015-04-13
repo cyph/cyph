@@ -45,8 +45,8 @@ module Cyph {
 
 				let onconnect	= () : boolean => {
 					if (handlers.onconnect) {
-						let f: Function	= handlers.onconnect;
-						delete handlers.onconnect;
+						let f: Function		= handlers.onconnect;
+						handlers.onconnect	= null;
 
 						f();
 

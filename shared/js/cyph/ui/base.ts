@@ -91,7 +91,7 @@ if (Cyph.Env.isMobile) {
 			}
 			finally {
 				setTimeout(function () {
-					delete previousCoordinates[coordinates];
+					previousCoordinates[coordinates]	= null;
 				}, 2000);
 			}
 		}
