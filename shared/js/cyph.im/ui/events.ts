@@ -96,7 +96,7 @@ module Cyph.im {
 									let isVideoCall: boolean	= e.args[0];
 
 									toggleVideoCall(isVideoCall);
-								 	break;
+									break;
 								}
 							}
 							break;
