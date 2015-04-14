@@ -57,7 +57,10 @@ module Cyph {
 
 						this.otr.on('message', (message: string, wasEncrypted: boolean) => {
 							if (wasEncrypted) {
-								let o: OTRMessageInner	= JSON.parse(message);
+								let o: OTRMessageInner	= Util.deserializeObject(
+									OTRMessageInner,
+									message
+								);
 
 								if (!this.receivedMessages[o.id]) {
 									this.receivedMessages[o.id]	= {
@@ -132,7 +135,7 @@ module Cyph {
 
 			public receive (message: string) : void {
 				if (this.otr) {
-					let o: OTRMessageOuter	= JSON.parse(message);
+					let o: OTRMessageOuter = Util.deserializeObject(OTRMessageOuter, message);
 
 					if (o.id >= this.incomingMessageId) {
 						this.incomingMessages[o.id]	= o.cyphertext;
