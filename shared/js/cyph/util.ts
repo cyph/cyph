@@ -18,6 +18,15 @@ module Cyph {
 			return array;
 		}
 
+		public static deserializeObject (classObject: any, json: string) : any {
+			var o			= JSON.parse(json)
+			var newObject	= Object.create(classObject.prototype);
+
+			Object.keys(o).forEach(k => newObject[k] = o[k]);
+
+			return newObject;
+		}
+
 		public static generateGuid (length: number = 0) : string {
 			if (length > 0) {
 				return Array.prototype.slice.call(
