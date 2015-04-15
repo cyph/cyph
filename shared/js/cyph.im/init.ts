@@ -52,7 +52,8 @@ function Init () {
 	}
 	else {
 		/* TODO: Init session */
-		let session: Session.ISession	= new Session.ThreadedSession(Util.getUrlState(), new Session.P2P);
+		let session: Session.ISession	= new Session.ThreadedSession(Util.getUrlState());
+		let p2p: P2P.IP2P				= new new P2P.P2P(session);
 		history.pushState({}, '', location.pathname);
 	}
 }

@@ -1,23 +1,23 @@
-/// <reference path="command.ts" />
 /// <reference path="enums.ts" />
-/// <reference path="imutex.ts" />
+/// <reference path="filetransfer.ts" />
 /// <reference path="ip2p.ts" />
-/// <reference path="isession.ts" />
-/// <reference path="message.ts" />
-/// <reference path="mutex.ts" />
-/// <reference path="p2pfile.ts" />
 /// <reference path="../analytics.ts" />
 /// <reference path="../icontroller.ts" />
 /// <reference path="../timer.ts" />
 /// <reference path="../util.ts" />
 /// <reference path="../webrtc.ts" />
+/// <reference path="../session/command.ts" />
+/// <reference path="../session/imutex.ts" />
+/// <reference path="../session/isession.ts" />
+/// <reference path="../session/message.ts" />
+/// <reference path="../session/mutex.ts" />
 /// <reference path="../../global/base.ts" />
 /// <reference path="../../../lib/typings/webrtc/MediaStream.d.ts" />
 /// <reference path="../../../lib/typings/webrtc/RTCPeerConnection.d.ts" />
 
 
 module Cyph {
-	export module Session {
+	export module P2P {
 		export class P2P implements IP2P {
 			private static constants	= {
 				addIceCandidate: 'addIceCandidate',
@@ -43,8 +43,8 @@ module Cyph {
 
 
 			private controller: IController;
-			private mutex: IMutex;
-			private session: ISession;
+			private mutex: Session.IMutex;
+			private session: Session.ISession;
 			private channel: RTCDataChannel;
 			private peer: RTCPeerConnection;
 			private localStream: MediaStream;
@@ -54,8 +54,8 @@ module Cyph {
 			private hasSessionStarted: boolean;
 			private localStreamSetUpLock: boolean;
 
-			private incomingFile: P2PFile	= new P2PFile;
-			private outgoingFile: P2PFile	= new P2PFile;
+			private incomingFile: FileTransfer	= new FileTransfer;
+			private outgoingFile: FileTransfer	= new FileTransfer;
 
 			private commands	= {
 				addIceCandidate: (candidate: string) : void => {
@@ -77,8 +77,8 @@ module Cyph {
 					this.isAccepted	= false;
 
 					this.triggerUiEvent(
-						P2PUIEvents.Categories.request,
-						P2PUIEvents.Events.requestRejection
+						UIEvents.Categories.request,
+						UIEvents.Events.requestRejection
 					);
 				},
 
@@ -88,8 +88,8 @@ module Cyph {
 					this.hasSessionStarted		= false;
 
 					this.triggerUiEvent(
-						P2PUIEvents.Categories.base,
-						P2PUIEvents.Events.videoToggle,
+						UIEvents.Categories.base,
+						UIEvents.Events.videoToggle,
 						false
 					);
 
@@ -118,8 +118,8 @@ module Cyph {
 
 						if (wasAccepted) {
 							this.triggerUiEvent(
-								P2PUIEvents.Categories.base,
-								P2PUIEvents.Events.connected,
+								UIEvents.Categories.base,
+								UIEvents.Events.connected,
 								false
 							);
 						}
@@ -159,9 +159,9 @@ module Cyph {
 					this.controller.update();
 
 					this.triggerUiEvent(
-						P2PUIEvents.Categories.stream,
-						P2PUIEvents.Events.play,
-						Authors.app,
+						UIEvents.Categories.stream,
+						UIEvents.Events.play,
+						Session.Authors.app,
 						(
 							(
 								this.streamOptions.video ||
@@ -184,8 +184,8 @@ module Cyph {
 					this.hasSessionStarted	= true;
 
 					this.triggerUiEvent(
-						P2PUIEvents.Categories.base,
-						P2PUIEvents.Events.connected,
+						UIEvents.Categories.base,
+						UIEvents.Events.connected,
 						true
 					);
 				}
@@ -215,9 +215,9 @@ module Cyph {
 						this.remoteStream	= e.stream;
 
 						this.triggerUiEvent(
-							P2PUIEvents.Categories.stream,
-							P2PUIEvents.Events.set,
-							Authors.friend,
+							UIEvents.Categories.stream,
+							UIEvents.Events.set,
+							Session.Authors.friend,
 							URL.createObjectURL(this.remoteStream)
 						);
 
@@ -240,9 +240,9 @@ module Cyph {
 						pc['onIceCandidate']	= null;
 
 						this.session.send(
-							new Message(
-								Events.p2p,
-								new Command(
+							new Session.Message(
+								Session.Events.p2p,
+								new Session.Command(
 									P2P.constants.addIceCandidate,
 									JSON.stringify(e.candidate)
 								)
@@ -285,9 +285,9 @@ module Cyph {
 
 			private kill () : void {
 				this.session.send(
-					new Message(
-						Events.p2p,
-						new Command(P2P.constants.kill)
+					new Session.Message(
+						Session.Events.p2p,
+						new Session.Command(P2P.constants.kill)
 					)
 				);
 
@@ -308,8 +308,8 @@ module Cyph {
 					command === P2P.constants.file
 				) {
 					this.triggerUiEvent(
-						P2PUIEvents.Categories.request,
-						P2PUIEvents.Events.acceptConfirm,
+						UIEvents.Categories.request,
+						UIEvents.Events.acceptConfirm,
 						command,
 						500000,
 						(ok: boolean) => {
@@ -330,9 +330,9 @@ module Cyph {
 							}
 							else {
 								this.session.send(
-									new Message(
-										Events.p2p,
-										new Command(P2P.constants.decline)
+									new Session.Message(
+										Session.Events.p2p,
+										new Session.Command(P2P.constants.decline)
 									)
 								);
 							}
@@ -343,8 +343,8 @@ module Cyph {
 
 			private receiveIncomingFile (data: ArrayBuffer[], name: string) : void {
 				this.triggerUiEvent(
-					P2PUIEvents.Categories.file,
-					P2PUIEvents.Events.confirm,
+					UIEvents.Categories.file,
+					UIEvents.Events.confirm,
 					name,
 					(ok: boolean, title: string) => {
 						if (ok) {
@@ -355,8 +355,8 @@ module Cyph {
 						}
 						else {
 							this.triggerUiEvent(
-								P2PUIEvents.Categories.file,
-								P2PUIEvents.Events.rejected,
+								UIEvents.Categories.file,
+								UIEvents.Events.rejected,
 								title
 							);
 						}
@@ -366,8 +366,8 @@ module Cyph {
 
 			private requestCall (callType: string) : void {
 				this.triggerUiEvent(
-					P2PUIEvents.Categories.request,
-					P2PUIEvents.Events.requestConfirm,
+					UIEvents.Categories.request,
+					UIEvents.Events.requestConfirm,
 					callType,
 					(ok: boolean) => {
 						if (ok) {
@@ -379,16 +379,16 @@ module Cyph {
 										this.streamOptions.audio	= callType !== P2P.constants.file;
 
 										this.session.send(
-											new Message(
-												Events.p2p,
-												new Command(callType)
+											new Session.Message(
+												Session.Events.p2p,
+												new Session.Command(callType)
 											)
 										);
 
 										setTimeout(() =>
 											this.triggerUiEvent(
-												P2PUIEvents.Categories.request,
-												P2PUIEvents.Events.requestConfirmation
+												UIEvents.Categories.request,
+												UIEvents.Events.requestConfirmation
 											)
 										, 250);
 
@@ -408,8 +408,8 @@ module Cyph {
 						}
 						else {
 							this.triggerUiEvent(
-								P2PUIEvents.Categories.file,
-								P2PUIEvents.Events.clear
+								UIEvents.Categories.file,
+								UIEvents.Events.clear
 							);
 						}
 					}
@@ -430,20 +430,20 @@ module Cyph {
 				}
 
 				this.triggerUiEvent(
-					P2PUIEvents.Categories.file,
-					P2PUIEvents.Events.get,
+					UIEvents.Categories.file,
+					UIEvents.Events.get,
 					(file: File) => {
 						this.triggerUiEvent(
-							P2PUIEvents.Categories.file,
-							P2PUIEvents.Events.clear
+							UIEvents.Categories.file,
+							UIEvents.Events.clear
 						);
 
 
 						if (file) {
 							if (file.size > Config.p2pConfig.maxFileSize) {
 								this.triggerUiEvent(
-									P2PUIEvents.Categories.file,
-									P2PUIEvents.Events.tooLarge
+									UIEvents.Categories.file,
+									UIEvents.Events.tooLarge
 								);
 
 								Analytics.main.send({
@@ -464,9 +464,9 @@ module Cyph {
 							});
 
 							this.triggerUiEvent(
-								P2PUIEvents.Categories.file,
-								P2PUIEvents.Events.transferStarted,
-								Authors.me,
+								UIEvents.Categories.file,
+								UIEvents.Events.transferStarted,
+								Session.Authors.me,
 								file.name
 							);
 
@@ -592,9 +592,9 @@ module Cyph {
 							this.controller.update();
 
 							this.triggerUiEvent(
-								P2PUIEvents.Categories.file,
-								P2PUIEvents.Events.transferStarted,
-								Authors.friend,
+								UIEvents.Categories.file,
+								UIEvents.Events.transferStarted,
+								Session.Authors.friend,
 								this.incomingFile.name
 							);
 						}
@@ -666,9 +666,9 @@ module Cyph {
 								}
 
 								this.triggerUiEvent(
-									P2PUIEvents.Categories.stream,
-									P2PUIEvents.Events.set,
-									Authors.me,
+									UIEvents.Categories.stream,
+									UIEvents.Events.set,
+									Session.Authors.me,
 									stream ? URL.createObjectURL(this.localStream) : ''
 								);
 
@@ -709,16 +709,16 @@ module Cyph {
 											this.retryUntilSuccessful(retry =>
 												this.peer.setLocalDescription(offer, () => {
 													this.session.send(
-														new Message(
-															Events.p2p,
-															new Command(
+														new Session.Message(
+															Session.Events.p2p,
+															new Session.Command(
 																P2P.constants.receiveOffer,
 																JSON.stringify(offer)
 															)
 														),
-														new Message(
-															Events.p2p,
-															new Command(
+														new Session.Message(
+															Session.Events.p2p,
+															new Session.Command(
 																P2P.constants.streamOptions,
 																outgoingStream
 															)
@@ -744,16 +744,16 @@ module Cyph {
 														this.retryUntilSuccessful(retry =>
 															this.peer.setLocalDescription(answer, () => {
 																this.session.send(
-																	new Message(
-																		Events.p2p,
-																		new Command(
+																	new Session.Message(
+																		Session.Events.p2p,
+																		new Session.Command(
 																			P2P.constants.receiveAnswer,
 																			JSON.stringify(answer)
 																		)
 																	),
-																	new Message(
-																		Events.p2p,
-																		new Command(
+																	new Session.Message(
+																		Session.Events.p2p,
+																		new Session.Command(
 																			P2P.constants.streamOptions,
 																			outgoingStream
 																		)
@@ -774,8 +774,8 @@ module Cyph {
 								}
 
 								this.triggerUiEvent(
-									P2PUIEvents.Categories.base,
-									P2PUIEvents.Events.videoToggle,
+									UIEvents.Categories.base,
+									UIEvents.Events.videoToggle,
 									true
 								);
 							};
@@ -838,36 +838,41 @@ module Cyph {
 			}
 
 			private triggerUiEvent(
-				category: P2PUIEvents.Categories,
-				event: P2PUIEvents.Events,
+				category: UIEvents.Categories,
+				event: UIEvents.Events,
 				...args: any[]
 			) : void {
-				this.session.trigger(Events.p2pUi, {category, event, args});
+				this.session.trigger(Session.Events.p2pUi, {category, event, args});
 			}
 
 			public constructor (controller: IController) {
 				this.controller	= controller;
 			}
 
-			public init (session: ISession) : void {
+			public init (session: Session.ISession) : void {
 				if (!this.session) {
 					this.session	= session;
-					this.mutex		= new Mutex(this.session);
+					this.mutex		= new Session.Mutex(this.session);
 
-					this.session.on(Events.beginChat, () =>
-						this.session.send(new Message(Events.p2p, new Command))
+					this.session.on(Session.Events.beginChat, () =>
+						this.session.send(
+							new Session.Message(
+								Session.Events.p2p,
+								new Session.Command
+							)
+						)
 					);
 
-					this.session.on(Events.closeChat, this.kill);
+					this.session.on(Session.Events.closeChat, this.kill);
 
-					this.session.on(Events.p2p, (command: Command) => {
+					this.session.on(Session.Events.p2p, (command: Session.Command) => {
 						if (command.method) {
 							this.commands[command.method](command.argument);
 						}
 						else if (WebRTC.isSupported) {
 							this.triggerUiEvent(
-								P2PUIEvents.Categories.base,
-								P2PUIEvents.Events.enable
+								UIEvents.Categories.base,
+								UIEvents.Events.enable
 							);
 						}
 					});

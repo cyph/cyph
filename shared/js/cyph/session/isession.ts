@@ -1,5 +1,4 @@
 /// <reference path="message.ts" />
-/// <reference path="ip2p.ts" />
 /// <reference path="../../global/base.ts" />
 
 
@@ -14,8 +13,6 @@ module Cyph {
 				isCreator: boolean;
 				isStartingNewCyph: boolean;
 			};
-
-			p2p: IP2P;
 
 
 			close (shouldSendEvent?: boolean) : void;

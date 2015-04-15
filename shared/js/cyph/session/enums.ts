@@ -33,40 +33,5 @@ module Cyph {
 			receive,
 			send
 		}
-
-		export module P2PUIEvents {
-			export enum Categories {
-				base,
-				file,
-				request,
-				stream
-			}
-
-			export enum Events {
-				/* base */
-				connected,
-				enable,
-				videoToggle,
-
-				/* file */
-				clear,
-				confirm,
-				get,
-				rejected,
-				tooLarge,
-				transferStarted,
-
-				/* request */
-				acceptConfirm,
-				acceptConfirmation,
-				requestConfirm,
-				requestConfirmation,
-				requestRejection,
-
-				/* stream */
-				play,
-				set
-			}
-		}
 	}
 }
