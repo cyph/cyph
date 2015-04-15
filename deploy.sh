@@ -149,6 +149,7 @@ for d in cyph.im ; do
 
 		# Temporary measure, in preparation for requiring two signatures on each release
 		cat websign/$d.hash | gpg --clearsign -u 'Alternate Key' > websign/$d.hash2
+		cp -f websign/$d.hash2 websign/$d.hash
 
 		git add .
 		chmod -R 777 .
