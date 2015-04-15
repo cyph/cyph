@@ -51,154 +51,142 @@
 		<script> openpgp.initWorker('/websign/lib/openpgp/openpgp.worker.min.js') </script>
 
 		<script>(function () {
-			window.webSign	= {};
 
 
+		window.WebSign	= {
+			bootstrapText: '',
 
-			/* Detect if WebSign bootstrap has changed */
+			cdnUrl: '',
 
-			var WEBSIGN_FILES	= [
-				'/',
-				'/websign/css/loading.css',
-				'/websign/js/cryptoInit.js',
-				'/websign/js/webSignPublicKeys.js',
-				'/websign/js/workerHelper.js',
-				'/websign/lib/sha512.js',
-				'/websign/lib/openpgp/openpgp.min.js',
-				'/websign/lib/openpgp/openpgp.worker.min.js',
-				'/websign/cyph.appcache'
-			];
+			continent: '',
 
-			webSign.getBootstrapText	= function () {
-				var bootstrapText	= '';
+			isOnion: document.location.host.split('.').slice(-1)[0] === 'onion',
 
-				for (var i = 0 ; i < WEBSIGN_FILES.length ; ++i) {
-					var file	= WEBSIGN_FILES[i];
+			config: {
+				abortUrl: 'https://www.cyph.com',
+				cdnUrlBase: '.cdn.cyph.com/websign/',
+				continentUrl: 'https://api.cyph.com/continent',
+				defaultContinent: 'eu',
+				hashPath: 'cyph.im.hash',
+				packagePath: 'cyph.im.pkg',
+				urlProtocol: 'https://',
 
-					var req	= new XMLHttpRequest();
-					req.open('get', file, false);
-					req.send();
+				files: [
+					'/',
+					'/websign/css/loading.css',
+					'/websign/js/cryptoInit.js',
+					'/websign/js/webSignPublicKeys.js',
+					'/websign/js/workerHelper.js',
+					'/websign/lib/sha512.js',
+					'/websign/lib/openpgp/openpgp.min.js',
+					'/websign/lib/openpgp/openpgp.worker.min.js',
+					'/websign/cyph.appcache'
+				],
 
-					bootstrapText	+= file + ':\n\n' + req.responseText + '\n\n\n\n\n\n';
+				publicKeys: PUBLIC_KEYS
+			},
+
+			detectChange: function () {
+				if (!('webSignBootHash' in localStorage)) {
+					return false;
 				}
 
-				return bootstrapText;
-			};
+				localStorage.webSignBootHashOld	= localStorage.webSignBootHash;
+				localStorage.webSignBootHash	= CryptoJS.SHA512(WebSign.bootstrapText).toString();
 
-			webSign.toString	= function (shouldIncludeBootstrapText) {
-				return '' +
-					'\n\ncontinent: ' + webSign.continent +
+				return localStorage.webSignBootHashOld !== localStorage.webSignBootHash;
+			},
+
+			loadBootstrapText: function (callback, bootstrapText, i) {
+				bootstrapText	= bootstrapText || '';
+				i				= i || 0;
+
+				var file	= WebSign.config.files[i];
+
+				request({
+					url: file,
+					success: function (data) {
+						bootstrapText	+= file + ':\n\n' + data + '\n\n\n\n\n\n';
+
+						++i;
+
+						if (i >= WebSign.config.files.length) {
+							WebSign.bootstrapText	= bootstrapText;
+							callback();
+						}
+						else {
+							WebSign.loadBootstrapText(callback, bootstrapText, i);
+						}
+					}
+				});
+			},
+
+			shouldRetry: function () {
+				return !(
+					WebSign.isOnion ||
+					WebSign.continent === WebSign.config.defaultContinent
+				);
+			},
+
+			toString: function (shouldIncludeBootstrapText) {
+				return (
+					'\n\ncontinent: ' + WebSign.continent +
 					'\n\ncurrent bootstrap hash: ' + localStorage.webSignBootHash +
 					'\n\nprevious bootstrap hash: ' + localStorage.webSignBootHashOld +
 					'\n\npackage hash: ' + localStorage.webSignHash +
-					(shouldIncludeBootstrapText ? ('\n\n\n\n' + webSign.getBootstrapText()) : '')
-				;
-			};
-
-			/* Call this in application code */
-			webSign.detectChange	= function () {
-				localStorage.webSignBootHashOld	= localStorage.webSignBootHash;
-				localStorage.webSignBootHash	= CryptoJS.SHA512(webSign.getBootstrapText()).toString();
-
-				return localStorage.webSignBootHashOld != 'undefined' &&
-					localStorage.webSignBootHashOld != localStorage.webSignBootHash
-				;
+					(
+						shouldIncludeBootstrapText ?
+							('\n\n\n\n' + WebSign.bootstrapText) :
+							''
+					)
+				);
 			}
+		};
+
+
+		if (WebSign.isOnion) {
+			WebSign.config.abortUrl			= '/404';
+			WebSign.config.cdnUrlBase		= '/cdn/websign/';
+			WebSign.config.continentUrl		= '';
+			WebSign.config.defaultContinent	= '';
+			WebSign.config.urlProtocol		= '';
+		}
 
 
 
-			/*** Configuration ***/
+		/*** Main ***/
 
-			var isOnion				= document.location.host.split('.').slice(-1)[0] == 'onion';
-
-			var CONTINENT_URL		= isOnion ? '' : 'https://api.cyph.com/continent';
-
-			var URL_PROTOCOL		= isOnion ? '' : 'https://'
-			var DEFAULT_CONTINENT	= isOnion ? '' : 'eu';
-			var CDN_URL_BASE		= isOnion ? '/cdn/websign/' : '.cdn.cyph.com/websign/';
-			var HASH_PATH			= 'cyph.im.hash2?';
-			var PACKAGE_PATH		= 'cyph.im.pkg?';
-
-
-
-			/*** Helpers ***/
-
-			function abort () {
-				document.location.href	= (isOnion ? '' : 'https://www.cyph.com') + '/404';
+		WebSign.loadBootstrapText(function () {
+			if (WebSign.isOnion) {
+				main();
 			}
+			else {
+				/* Get user's current location to choose optimal CDN node */
+				request({
+					url: WebSign.config.continentUrl,
+					success: main
+				});
+			}
+		});
 
-			function request (url, callback, errorHandler, retries) {
-				var req		= new XMLHttpRequest();
-				req.open('get', url, true);
 
-				req.onreadystatechange = function () {
-					if (req.readyState == 4) {
-						if (req.status == 200) {
-							callback(req.responseText);
-						}
-						else {
-							retries	= retries || 0;
+		function main (continent) {
+			setCdnContinent(continent);
 
-							if (retries > 3) {
-								if (errorHandler) {
-									errorHandler(req.statusText);
-								}
-								else {
-									callback(null);
-								}
-							}
-							else {
-								request(url, callback, errorHandler, retries + 1);
-							}
-						}
+			/* Get latest signed hash */
+			var requestArgs	= {
+				url: WebSign.cdnUrl + WebSign.config.hashPath,
+				data: Date.now(),
+				error: function () {
+					if (WebSign.shouldRetry()) {
+						setCdnContinent();
+						request(requestArgs);
 					}
-				};
-
-				req.send();
-			}
-
-
-			function getPackage (cdnUrl, errorHandler) {
-				if (!errorHandler) {
-					errorHandler	= function () {
-						/* Package failed to download */
+					else {
 						abort();
-					};
-				}
-
-				if (localStorage.webSignHash && parseInt(localStorage.webSignHashExpires, 10) > Date.now()) {
-					request(cdnUrl + PACKAGE_PATH + localStorage.webSignHash, function (payload) {
-						if (CryptoJS.SHA512(payload).toString() == localStorage.webSignHash) {
-							document.open('text/html');
-							document.write(payload);
-							document.close();
-						}
-						else {
-							errorHandler();
-						}
-					}, errorHandler);
-				}
-				/* Hash is bad or outdated */
-				else {
-					errorHandler();
-				}
-			}
-
-			function makeCdnUrl (continent) {
-				webSign.continent	= continent || DEFAULT_CONTINENT;
-				return URL_PROTOCOL + webSign.continent + CDN_URL_BASE;
-			}
-
-
-
-			/*** Main ***/
-
-			/* Get user's current location to choose optimal CDN node */
-			function main (continent) {
-				var cdnUrl	= makeCdnUrl(continent);
-
-				/* Get latest signed hash */
-				request(cdnUrl + HASH_PATH + Date.now(), function (signedHashText) {
+					}
+				},
+				success: function (signedHashText) {
 					var previousHash			= localStorage.webSignHash;
 					var previousHashTimestamp	= parseInt(localStorage.webSignHashTimestamp, 10);
 					var previousHashExpires		= parseInt(localStorage.webSignHashExpires, 10);
@@ -217,25 +205,31 @@
 						/* If not expired and more recent than previous known good hash,
 							validate signatures before accepting it */
 						if (
-							(!previousHashTimestamp || hashTimestamp > previousHashTimestamp) &&
-							hashExpires > Date.now()
+							hashExpires > Date.now() &&
+							(
+								!previousHashTimestamp ||
+								hashTimestamp > previousHashTimestamp
+							)
 						) {
-							var isValid	= signedHashes
-								.map(function (signedHash) {
-									for (var i = 0 ; i < PUBLIC_KEYS.length ; ++i) {
-										if (
-											signedHash.verify(
-												openpgp.key.readArmored(PUBLIC_KEYS[i]).keys
-											)[0].valid
-										) {
-											return true;
-										}
-									}
+							var validKeys	= {};
 
-									return false;
-								}).
-								reduce(function (a, b) { return a || b }, false)
-							;
+							signedHashes.forEach(function (signedHash) {
+								for (var i = 0 ; i < WebSign.config.publicKeys.length ; ++i) {
+									var publicKey	= WebSign.config.publicKeys[i];
+
+									if (
+										signedHash.verify(
+											openpgp.key.readArmored(publicKey).keys
+										)[0].valid
+									) {
+										validKeys[publicKey]	= true;
+										return;
+									}
+								}
+							});
+
+							var isValid	= Object.keys(validKeys).length === signedHashes.length;
+
 
 							if (isValid) {
 								if (localStorage.webSignManualUpgrades) {
@@ -260,32 +254,105 @@
 						if hashes differ, try falling back to last known good package,
 						then if that fails retry everything with default fallback CDN node,
 						then finally abort if that still fails */
-					getPackage(cdnUrl, function () {
+					loadPackage(function () {
 						if (previousHash && previousHashTimestamp && previousHashExpires) {
 							localStorage.webSignHash			= previousHash;
 							localStorage.webSignHashTimestamp	= previousHashTimestamp;
 							localStorage.webSignHashExpires		= previousHashExpires;
 						}
 
-						getPackage(cdnUrl, function () {
-							if (continent) {
-								main();
-							}
-							else {
-								/* Package is bad */
-								abort();
-							}
-						});
+						loadPackage(WebSign.shouldRetry() ? main : abort);
 					});
-				});
+				}
+			};
+
+			request(requestArgs);
+		}
+
+
+
+		/*** Helpers ***/
+
+		function abort () {
+			document.location.href	= WebSign.config.abortUrl;
+		}
+
+		function getValue (o, k, defaultValue) {
+			return k in o ? o[k] : defaultValue;
+		}
+
+		function request (o) {
+			var data	= getValue(o, 'data', '');
+			var error	= getValue(o, 'error', abort);
+			var retries	= getValue(o, 'retries', 3);
+			var success	= getValue(o, 'success', function() {});
+			var url		= o.url;
+
+			if (data) {
+				url	+= '?' + data;
 			}
 
-			if (isOnion) {
-				main();
+			var xhr	= new XMLHttpRequest;
+
+			xhr.onreadystatechange = function() {
+				if (xhr.readyState === 4) {
+					if (xhr.status === 200) {
+						success(xhr.responseText);
+					}
+					else if (retries > 0) {
+						o.retries	= retries - 1;
+						xhr(o);
+					}
+					else {
+						error(xhr.responseText);
+					}
+				}
+			};
+
+			xhr.open('GET', url, true);
+			xhr.send();
+		}
+
+
+		function loadPackage (errorHandler) {
+			errorHandler	= errorHandler || abort;
+
+			var hashExists		= 'webSignHash' in localStorage;
+			var hashExpireDate	= parseInt(localStorage.webSignHashExpires, 10);
+
+			if (hashExists && hashExpireDate > Date.now()) {
+				request({
+					url: WebSign.cdnUrl + WebSign.config.packagePath,
+					data: localStorage.webSignHash,
+					error: errorHandler,
+					success: function (payload) {
+						if (CryptoJS.SHA512(payload).toString() === localStorage.webSignHash) {
+							document.open('text/html');
+							document.write(payload);
+							document.close();
+						}
+						else {
+							errorHandler();
+						}
+					}
+				});
 			}
+			/* Hash is bad or outdated */
 			else {
-				request(CONTINENT_URL, main);
+				errorHandler();
 			}
+		}
+
+		function setCdnContinent (continent) {
+			WebSign.continent	= continent || WebSign.config.defaultContinent;
+
+			WebSign.cdnUrl		=
+				WebSign.config.urlProtocol +
+				WebSign.continent +
+				WebSign.config.cdnUrlBase
+			;
+		}
+
 
 		}());</script>
 	</body>

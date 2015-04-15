@@ -218,28 +218,28 @@ module Cyph {
 			}
 
 
-			let request: XMLHttpRequest	= new XMLHttpRequest;
+			let xhr: XMLHttpRequest	= new XMLHttpRequest;
 
 			let callback: Function		= () => (
-				request.status === 200 ?
+				xhr.status === 200 ?
 					success :
 					error
 			)(
-				request.responseText
+				xhr.responseText
 			);
 
 			if (async) {
-				request.onreadystatechange = () => {
-					if (request.readyState === 4) {
+				xhr.onreadystatechange = () => {
+					if (xhr.readyState === 4) {
 						callback();
 					}
 				};
 			}
 
-			request.timeout	= timeout;
+			xhr.timeout	= timeout;
 
-			request.open(method, url, async);
-			request.send(data);
+			xhr.open(method, url, async);
+			xhr.send(data);
 
 			if (!async) {
 				callback();
