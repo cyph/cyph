@@ -2,8 +2,8 @@
 
 
 module Cyph {
-	export module Session {
-		export class P2PFile {
+	export module P2P {
+		export class FileTransfer {
 			public data: ArrayBuffer[]		= null;
 			public name: string				= '';
 			public readableSize: string		= '';
