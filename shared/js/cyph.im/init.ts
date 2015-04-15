@@ -34,9 +34,9 @@ function Init () {
 
 
 	if (
-		typeof webSign !== 'undefined' &&
-		webSign.detectChange &&
-		webSign.detectChange() &&
+		typeof WebSign !== 'undefined' &&
+		WebSign.detectChange &&
+		WebSign.detectChange() &&
 		!Config.validWebSignHashes[localStorage.webSignBootHash]
 	) {
 		function warnWebSignObsoleteWrapper () {
