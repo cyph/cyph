@@ -1,7 +1,6 @@
 /// <reference path="command.ts" />
 /// <reference path="enums.ts" />
 /// <reference path="iotr.ts" />
-/// <reference path="ip2p.ts" />
 /// <reference path="isession.ts" />
 /// <reference path="message.ts" />
 /// <reference path="otr.ts" />
@@ -48,8 +47,6 @@ module Cyph {
 				isCreator: <boolean> false,
 				isStartingNewCyph: <boolean> false
 			};
-
-			public p2p: IP2P;
 
 			private otrHandler (e: { event: OTREvents; data?: string; }) : void {
 				switch (e.event) {
@@ -184,9 +181,8 @@ module Cyph {
 				});
 			}
 
-			public constructor (descriptor?: string, controller?: IController, p2p?: IP2P, id: string = Util.generateGuid()) {
+			public constructor (descriptor?: string, controller?: IController, id: string = Util.generateGuid()) {
 				this.controller	= controller;
-				this.p2p		= p2p;
 				this.id			= id;
 
 
@@ -238,11 +234,6 @@ module Cyph {
 						}
 					});
 				});
-
-
-				if (this.p2p) {
-					this.p2p.init(this);
-				}
 			}
 
 			public close (shouldSendEvent: boolean = true) : void {
