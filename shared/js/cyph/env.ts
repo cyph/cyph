@@ -75,7 +75,7 @@ module Cyph {
 
 
 		public static webSignHashes: string			= encodeURIComponent(
-			'Hello Ryan and Josh,\n\n\n\n\n\n---\n\n' + (webSign ? webSign.toString() : '')
+			'Hello Ryan and Josh,\n\n\n\n\n\n---\n\n' + (WebSign ? WebSign.toString() : '')
 		);
 
 
