@@ -29,10 +29,10 @@ module Cyph.im {
 				this.changeState(States.waitingForFriend);
 
 				let copyUrl: string	=
-					((!Cyph.Env.isOnion && location.origin) || 'https://www.cyph.im') +
+					((!Cyph.Env.isOnion && location['origin']) || 'https://www.cyph.im') +
 					'/#' +
-					cyphId +
-					sharedSecret
+					this.chat.session.cyphId +
+					this.chat.session.sharedSecret
 				;
 
 				this.copyUrlEncoded	= encodeURIComponent(copyUrl);
@@ -40,14 +40,17 @@ module Cyph.im {
 
 				let setCopyUrl: Function	= () => {
 					if (this.copyUrl !== copyUrl) {
-						this.controller.update(() => {
-							this.copyUrl		= copyUrl;
-						});
+						this.copyUrl	= copyUrl;
+						this.controller.update();
 					}
 				};
 
 				let selectCopyUrl: Function	= () =>
-					Elements.copyUrlInput[0].setSelectionRange(0, copyUrl.length)
+					Cyph.Util.getValue<Function>(
+						Elements.copyUrlInput[0],
+						'setSelectionRange',
+						() => {}
+					)(0, copyUrl.length)
 				;
 
 				if (Cyph.Env.isMobile) {
@@ -82,7 +85,7 @@ module Cyph.im {
 					Elements.timer	= null;
 				}
 				else {
-					Elements.timer[0].start();
+					Elements.timer[0]['start']();
 				}
 			}
 
@@ -113,7 +116,7 @@ module Cyph.im {
 					WebSign.detectChange() &&
 					!Cyph.Config.validWebSignHashes[localStorage.webSignBootHash]
 				) {
-					changeState(States.webSignObsolete);
+					this.changeState(States.webSignObsolete);
 					Errors.logWebSign();
 				}
 				else {
