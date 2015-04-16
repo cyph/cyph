@@ -1,4 +1,9 @@
-/// <reference path="init.ts" />
+/// <reference path="ui/ui.ts" />
+/// <reference path="../cyph/icontroller.ts" />
+/// <reference path="../cyph/ui/idialogmanager.ts" />
+/// <reference path="../cyph/ui/inotifier.ts" />
+/// <reference path="../cyph/ui/isidebar.ts" />
+/// <reference path="../global/ngmarkdown.ts" />
 /// <reference path="../../lib/typings/angularjs/angular.d.ts" />
 /// <reference path="../../lib/typings/jquery/jquery.d.ts" />
 
@@ -16,19 +21,32 @@ angular.
 		'$mdDialog',
 
 		($scope, $mdSidenav, $mdToast, $mdDialog) => {
-			Controller	= $scope;
+			$(() => {
+				let controller: Cyph.IController	= {
+					update: () : void => {
+						let phase: string	= $scope.$root.$$phase;
 
-			Controller.$mdSidenav	= $mdSidenav;
-			Controller.$mdToast		= $mdToast;
-			Controller.$mdDialog	= $mdDialog;
+						if (phase !== '$apply' && phase !== '$digest') {
+							$scope.$apply();
+						}
+					}
+				};
 
-			Controller.update		= Controller.apply;
+				let dialogManager: Cyph.UI.IDialogManager	= new Cyph.UI.DialogManager($mdDialog, $mdToast);
+				let mobileMenu: Cyph.UI.ISidebar			= $mdSidenav('menu');
+				let notifier: Cyph.UI.INotifier				= new Cyph.UI.Notifier;
 
 
-			/* TODO: Bind Controller to classes */
+				$scope.Cyph			= Cyph;
+				$scope.Cyph.UI		= Cyph.UI;
+				$scope.Cyph.im		= Cyph.im;
+				$scope.Cyph.im.UI	= Cyph.im.UI;
+				$scope.ui			= new Cyph.im.UI.UI(controller, dialogManager, mobileMenu, notifier);
 
 
-			$(Init);
+				history.pushState({}, '', location.pathname);
+				self.onhashchange = () => { location.reload() };
+			});
 		}
 	]).
 	config([
