@@ -87,14 +87,12 @@
 			},
 
 			detectChange: function () {
-				if (!('webSignBootHash' in localStorage)) {
-					return false;
-				}
+				var bootHashExists	= 'webSignBootHash' in localStorage;
 
 				localStorage.webSignBootHashOld	= localStorage.webSignBootHash;
 				localStorage.webSignBootHash	= CryptoJS.SHA512(WebSign.bootstrapText).toString();
 
-				return localStorage.webSignBootHashOld !== localStorage.webSignBootHash;
+				return bootHashExists && localStorage.webSignBootHash !== localStorage.webSignBootHashOld;
 			},
 
 			loadBootstrapText: function (callback, bootstrapText, i) {
@@ -285,7 +283,7 @@
 			var data	= getValue(o, 'data', '');
 			var error	= getValue(o, 'error', abort);
 			var retries	= getValue(o, 'retries', 3);
-			var success	= getValue(o, 'success', function() {});
+			var success	= getValue(o, 'success', function () {});
 			var url		= o.url;
 
 			if (data) {
@@ -294,7 +292,7 @@
 
 			var xhr	= new XMLHttpRequest;
 
-			xhr.onreadystatechange = function() {
+			xhr.onreadystatechange	= function () {
 				if (xhr.readyState === 4) {
 					if (xhr.status === 200) {
 						success(xhr.responseText);

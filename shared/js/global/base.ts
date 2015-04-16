@@ -19,4 +19,4 @@ var navigator: Navigator;
 var language: string;
 var localStorage: Storage;
 var processUrlState: Function;
-var webSign: WebSign;
+var WebSign: WebSign;

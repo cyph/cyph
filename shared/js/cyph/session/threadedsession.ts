@@ -31,7 +31,7 @@ module Cyph {
 				isStartingNewCyph: <boolean> false
 			};
 
-			public constructor (descriptor?: string, controller?: IController, id: string = Util.generateGuid()) {
+			public constructor (descriptor?: string, controller: IController, id: string = Util.generateGuid()) {
 				this.controller	= controller;
 				this.id			= id;
 
