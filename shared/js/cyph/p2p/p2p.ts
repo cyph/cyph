@@ -845,38 +845,34 @@ module Cyph {
 				this.session.trigger(Session.Events.p2pUi, {category, event, args});
 			}
 
-			public constructor (controller: IController) {
+			public constructor (session: Session.ISession, controller: IController) {
+				this.session	= session;
 				this.controller	= controller;
-			}
 
-			public init (session: Session.ISession) : void {
-				if (!this.session) {
-					this.session	= session;
-					this.mutex		= new Session.Mutex(this.session);
+				this.mutex		= new Session.Mutex(this.session);
 
-					this.session.on(Session.Events.beginChat, () =>
-						this.session.send(
-							new Session.Message(
-								Session.Events.p2p,
-								new Session.Command
-							)
+				this.session.on(Session.Events.beginChat, () =>
+					this.session.send(
+						new Session.Message(
+							Session.Events.p2p,
+							new Session.Command
 						)
-					);
+					)
+				);
 
-					this.session.on(Session.Events.closeChat, this.kill);
+				this.session.on(Session.Events.closeChat, this.kill);
 
-					this.session.on(Session.Events.p2p, (command: Session.Command) => {
-						if (command.method) {
-							this.commands[command.method](command.argument);
-						}
-						else if (WebRTC.isSupported) {
-							this.triggerUiEvent(
-								UIEvents.Categories.base,
-								UIEvents.Events.enable
-							);
-						}
-					});
-				}
+				this.session.on(Session.Events.p2p, (command: Session.Command) => {
+					if (command.method) {
+						this.commands[command.method](command.argument);
+					}
+					else if (WebRTC.isSupported) {
+						this.triggerUiEvent(
+							UIEvents.Categories.base,
+							UIEvents.Events.enable
+						);
+					}
+				});
 			}
 		}
 	}
