@@ -1,9 +1,9 @@
-/// <reference path="elements.ts" />
 /// <reference path="ui.ts" />
 /// <reference path="../strings.ts" />
 /// <reference path="../../cyph/p2p/p2p.ts" />
 /// <reference path="../../cyph/session/enums.ts" />
 /// <reference path="../../cyph/session/isession.ts" />
+/// <reference path="../../cyph/ui/elements.ts" />
 /// <reference path="../../global/base.ts" />
 /// <reference path="../../../lib/typings/jquery/jquery.d.ts" />
 
@@ -15,7 +15,7 @@ module Cyph.im {
 
 			session.on(Cyph.Session.Events.beginChat, () =>
 				beginChatUi(() =>
-					UI.Elements.window.
+					Cyph.UI.Elements.window.
 						unload(() => session.close()).
 						on('beforeunload', () => Strings.disconnectWarning)
 				)
@@ -102,7 +102,7 @@ module Cyph.im {
 						case Cyph.P2P.UIEvents.Categories.file: {
 							switch (e.event) {
 								case Cyph.P2P.UIEvents.Events.clear: {
-									Elements.p2pFiles.each((i, elem) =>
+									Cyph.UI.Elements.p2pFiles.each((i, elem) =>
 										$(elem).val('')
 									);
 									break;
@@ -124,7 +124,7 @@ module Cyph.im {
 								case Cyph.P2P.UIEvents.Events.get: {
 									let callback: Function	= e.args[0];
 
-									let file: File	= Elements.p2pFiles.
+									let file: File	= Cyph.UI.Elements.p2pFiles.
 										toArray().
 										map(($elem) => $elem['files']).
 										reduce((a, b) => (a && a[0]) ? a : b, [])[0]
@@ -230,10 +230,10 @@ module Cyph.im {
 
 							let $stream: JQuery	=
 								author === Cyph.Session.Authors.me ?
-									Elements.p2pMeStream :
+									Cyph.UI.Elements.p2pMeStream :
 									author === Cyph.Session.Authors.friend ?
-										Elements.p2pFriendStream :
-										Elements.p2pFriendPlaceholder
+										Cyph.UI.Elements.p2pFriendStream :
+										Cyph.UI.Elements.p2pFriendPlaceholder
 							;
 
 							switch (e.event) {

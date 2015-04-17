@@ -15,7 +15,9 @@ module Cyph {
 					Config.prodBaseUrl
 		;
 
-		public static host: string	= location.host.replace('www.', '');
+		public static host: string		= location.host.replace('www.', '');
+
+		public static language: string	= language;
 
 
 		public static isWeb: boolean		= IS_WEB;

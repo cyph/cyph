@@ -43,12 +43,21 @@ module Cyph {
 			'sa-east-1'
 		];
 
+		public static amazonAffiliateCode: string	= 'cyph-20';
+
 
 		public static p2pConfig	= {
 			iceServer: 'ice.cyph.com',
 			iceCredential: 'cyph',
 			fileChunkSize: 5000,
 			maxFileSize: 1100000000
+		};
+
+
+		public static notifierConfig	= {
+			title: 'Cyph',
+			icon: '/img/favicon/apple-touch-icon-180x180.png',
+			audio: '/audio/beep.mp3'
 		};
 
 
