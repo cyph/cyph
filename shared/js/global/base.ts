@@ -15,6 +15,7 @@ var crypto: Crypto;
 var history: History;
 var location: Location;
 var navigator: Navigator;
+var Notification: any;
 
 var language: string;
 var localStorage: Storage;

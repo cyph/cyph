@@ -1,19 +1,38 @@
-			protected static buttonLock: boolean		= false;
+/// <reference path="isidebar.ts" />
+/// <reference path="../icontroller.ts" />
+/// <reference path="../../global/base.ts" />
 
-			public baseButtonClick (callback) {
-				if (!this.buttonLock) {
-					this.buttonLock	= true;
+
+module Cyph {
+	export module UI {
+		export class BaseButtonManager {
+			protected static buttonLock: boolean;
+
+
+			private controller: IController;
+			private mobileMenu: ISidebar;
+
+			protected baseButtonClick (callback: Function) : void {
+				if (!BaseButtonManager.buttonLock) {
+					BaseButtonManager.buttonLock	= true;
 
 					setTimeout(() => {
-						if (Cyph.Env.isMobile) {
-							$mdSidenav('menu').close();
+						try {
+							this.mobileMenu.close();
+							callback();
 						}
-
-						this.controller.update(callback);
-
-						setTimeout(() => {
-							this.buttonLock	= false;
-						});
+						finally {
+							BaseButtonManager.buttonLock	= false;
+							this.controller.update();
+						}
 					}, 250);
 				}
 			}
+
+			public constructor (controller: IController, mobileMenu: ISidebar) {
+				this.controller	= controller;
+				this.mobileMenu	= mobileMenu;
+			}
+		}
+	}
+}

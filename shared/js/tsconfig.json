@@ -69,11 +69,12 @@
         "cyph/ui/isignupform.ts",
         "cyph/ui/notifier.ts",
         "cyph/ui/signupform.ts",
+        "cyph/ui/visibilitywatcher.ts",
         "cyph/ui/chat/chat.ts",
         "cyph/ui/chat/cyphertext.ts",
         "cyph/ui/chat/enums.ts",
         "cyph/ui/chat/ichat.ts",
-        "cyph/ui/chat/imagemanager.ts",
+        "cyph/ui/chat/photomanager.ts",
         "cyph/ui/chat/scrollmanager.ts",
         "../lib/typings/tsd.d.ts"
     ]

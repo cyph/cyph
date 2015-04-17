@@ -4,29 +4,25 @@
 
 module Cyph.im {
 	export module UI {
-		export let Elements = {
-			window: $(window),
-			html: $('html'),
-			everything: $('*'),
-			messageBox: $('#message-box'),
-			messageList: $('#message-list, #message-list > md-content'),
-			timer: $('#timer'),
-			buttons: $('.md-button:not(#templates *)'),
-			copyUrlInput: $('#copy-url-input input'),
-			copyUrlLink: $('#copy-url-link'),
-			cyphertext: $('#cyphertext.curtain, #cyphertext.curtain > md-content'),
-			sendButton: $('#send-button'),
-			insertPhotoMobile: $('#insert-photo-mobile'),
-			p2pFriendPlaceholder: $('#video-call .friend:not(.stream)'),
-			p2pFriendStream: $('#video-call .friend.stream'),
-			p2pMeStream: $('#video-call .me'),
-			p2pFiles: $('.send-file-button input[type="file"]')
-		};
+		export class Elements extends Cyph.UI.Elements {
+			public static buttons: JQuery				= $('.md-button:not(#templates *)');
+			public static copyUrlInput: JQuery			= $('#copy-url-input input');
+			public static copyUrlLink: JQuery			= $('#copy-url-link');
+			public static cyphertext: JQuery			= $('#cyphertext.curtain, #cyphertext.curtain > md-content');
+			public static insertPhotoMobile: JQuery		= $('#insert-photo-mobile');
+			public static messageBox: JQuery			= $('#message-box');
+			public static messageList: JQuery			= $('#message-list, #message-list > md-content');
+			public static p2pFriendPlaceholder: JQuery	= $('#video-call .friend:not(.stream)');
+			public static p2pFriendStream: JQuery		= $('#video-call .friend.stream');
+			public static p2pMeStream: JQuery			= $('#video-call .me');
+			public static p2pFiles: JQuery				= $('.send-file-button input[type="file"]');
+			public static sendButton: JQuery			= $('#send-button');
+			public static timer: JQuery					= $('#timer');
 
-		export let reloadElements: () => void	= () => {
-			Object.keys(Elements).forEach((k: string) =>
-				Elements[k]	= $(Elements[k].selector)
-			);
-		};
+			public static load () : void {
+				super.load();
+				super.loadHelper(Elements);
+			}
+		}
 	}
 }
