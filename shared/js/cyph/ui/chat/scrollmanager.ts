@@ -81,8 +81,8 @@ module Cyph {
 				else if ($elem.is('p:not(.processed)')) {
 					let $html: JQuery	= $($elem[0].outerHTML);
 
-					$html.find('img:not(.emoji)').each(e => {
-						let $this: JQuery	= $(e);
+					$html.find('img:not(.emoji)').each((i: number, elem: HTMLElement) => {
+						let $this: JQuery	= $(elem);
 
 						if ($this.parent().prop('tagName').toLowerCase() !== 'a') {
 							let $a: JQuery	= $('<a></a>');
@@ -115,7 +115,7 @@ module Cyph {
 							shouldScrollCyphertext ?
 								Elements.cyphertext :
 								Elements.messageList
-						).each((i, elem) => {
+						).each((i: number, elem: HTMLElement) => {
 							++this.scrollDownLock;
 
 							$(elem).animate(

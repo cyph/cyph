@@ -27,6 +27,8 @@ module Cyph {
 
 			sendBase (messages: Message[]) : void;
 
+			sendText (text: string) : void;
+
 			trigger (event: string, data?: any) : void;
 
 			updateState (key: string, value: any) : void;
