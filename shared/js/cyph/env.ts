@@ -32,6 +32,7 @@ module Cyph {
 		public static userAgent: string		= navigator.userAgent.toLowerCase();
 
 		public static isIE: boolean			= /msie |trident\//.test(Env.userAgent);
+		public static isOSX: boolean		= /mac os x/.test(Env.userAgent);
 		public static isAndroid: boolean	= /android/.test(Env.userAgent);
 		public static isIOS: boolean		= /ipad|iphone|ipod/.test(Env.userAgent);
 		public static isWP: boolean			= /iemobile/.test(Env.userAgent);

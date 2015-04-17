@@ -2,8 +2,6 @@
 /// <reference path="../../lib/typings/jquery/jquery.d.ts" />
 
 
-/* Get element bounds */
-
 $.fn.bounds	= (e) : {[direction: string] : number} => {
 	let $this: JQuery				= $(e.currentTarget);
 	let bounds: JQueryCoordinates	= $this.offset();
@@ -14,4 +12,13 @@ $.fn.bounds	= (e) : {[direction: string] : number} => {
 		bottom: bounds.top + $this.outerHeight(),
 		right: bounds.left + $this.outerWidth()
 	};
+};
+
+
+$.fn.scrollPosition	= (e) : number => {
+	return e.currentTarget.scrollHeight -
+	(
+		e.currentTarget.scrollTop +
+		e.currentTarget.clientHeight
+	);
 };

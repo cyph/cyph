@@ -69,6 +69,11 @@ $('button > a').each(function () {
 
 
 
+if (Cyph.Env.isMobile) {
+	Cyph.UI.Elements.html.addClass('mobile');
+}
+
+
 /* Temporary workaround for Angular Material bug */
 
 if (Cyph.Env.isMobile) {
