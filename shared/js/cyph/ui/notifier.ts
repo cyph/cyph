@@ -1,41 +1,55 @@
-			let notifyTitle			= 'Cyph';
-			let notifyIcon			= '/img/favicon/apple-touch-icon-180x180.png';
-			let notifyAudio			= new Audio('/audio/beep.mp3');
-			let disableNotify		= false;
-			let openNotifications	= [];
+/// <reference path="visibilitywatcher.ts" />
+/// <reference path="../../global/base.ts" />
 
-			notify	= (message) => {
-				if (!disableNotify && Visibility.hidden()) {
-					if (window.Notification) {
-						let notification	= new Notification(notifyTitle, {body: message, icon: notifyIcon});
 
-						openNotifications.push(notification);
+module Cyph {
+	export module UI {
+		export class Notifier {
+			public static notifyTitle: string	= 'Cyph';
+			public static notifyIcon: string	= '/img/favicon/apple-touch-icon-180x180.png';
+			public static notifyAudio			= new Audio('/audio/beep.mp3');
+
+
+			public disableNotify: boolean	= false;
+			public openNotifications: any[]	= [];
+
+			public notify (message: string) : void {
+				if (!this.disableNotify && !VisibilityWatcher.isVisible) {
+					if (Notification) {
+						let notification	= new Notification(
+							Notifier.notifyTitle,
+							{body: message, icon: Notifier.notifyIcon}
+						);
+
+						this.openNotifications.push(notification);
 
 						notification.onclose	= () => {
-							while (openNotifications.length > 0) {
-								openNotifications.pop().close();
+							while (this.openNotifications.length > 0) {
+								this.openNotifications.pop().close();
 							}
 
-							if (Visibility.hidden()) {
-								disableNotify	= true;
+							if (!VisibilityWatcher.isVisible) {
+								this.disableNotify	= true;
 							}
 						};
 
 						notification.onclick	= () => {
-							window.focus();
+							self.focus();
 							notification.onclose();
 						};
 					}
 
-					notifyAudio.play();
+					Notifier.notifyAudio.play();
 
-					if (navigator.vibrate) {
-						navigator.vibrate(200);
-					}
+					Util.getValue<any>(navigator, 'vibrate', () => {})(200);
 				}
-			};
-
-
-			if (window.Notification) {
-				Notification.requestPermission();
 			}
+
+			public constructor () {
+				if (Notification) {
+					Notification.requestPermission();
+				}
+			}
+		}
+	}
+}

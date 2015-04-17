@@ -22,6 +22,9 @@ angular.
 
 		($scope, $mdSidenav, $mdToast, $mdDialog) => {
 			$(() => {
+				Cyph.im.UI.loadElements();
+
+
 				let controller: Cyph.IController	= {
 					update: () : void => {
 						let phase: string	= $scope.$root.$$phase;
@@ -32,8 +35,15 @@ angular.
 					}
 				};
 
+				let mobileMenu: Cyph.UI.ISidebar	= Cyph.Env.isMobile ?
+					$mdSidenav('menu') :
+					{
+						close: () => {},
+						open: () => {}
+					}
+				;
+
 				let dialogManager: Cyph.UI.IDialogManager	= new Cyph.UI.DialogManager($mdDialog, $mdToast);
-				let mobileMenu: Cyph.UI.ISidebar			= $mdSidenav('menu');
 				let notifier: Cyph.UI.INotifier				= new Cyph.UI.Notifier;
 
 
