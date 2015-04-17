@@ -1,5 +1,6 @@
 /// <reference path="ui/ui.ts" />
 /// <reference path="../cyph/icontroller.ts" />
+/// <reference path="../cyph/ui/elements.ts" />
 /// <reference path="../cyph/ui/idialogmanager.ts" />
 /// <reference path="../cyph/ui/inotifier.ts" />
 /// <reference path="../cyph/ui/isidebar.ts" />
@@ -22,7 +23,7 @@ angular.
 
 		($scope, $mdSidenav, $mdToast, $mdDialog) => {
 			$(() => {
-				Cyph.im.UI.loadElements();
+				Cyph.UI.Elements.load();
 
 
 				let controller: Cyph.IController	= {

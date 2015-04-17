@@ -10,7 +10,7 @@ module Cyph {
 					content: string;
 					ok: string;
 				},
-				callback?: (promiseValue: any) => {}
+				callback?: (promiseValue: any) => void
 			) : void;
 
 			baseDialog (
@@ -19,7 +19,7 @@ module Cyph {
 					vars?: any;
 					oncomplete?: Function;
 				},
-				callback?: (ok: boolean, vars: any) => {}
+				callback?: (ok: boolean, vars: any) => void
 			) : void;
 
 			confirm (
@@ -30,7 +30,7 @@ module Cyph {
 					cancel: string;
 					timeout?: number;
 				},
-				callback?: (ok: boolean) => {}
+				callback?: (ok: boolean) => void
 			) : void;
 
 			toast (o: {
