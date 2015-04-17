@@ -1,6 +1,6 @@
-/// <reference path="elements.ts" />
 /// <reference path="enums.ts" />
 /// <reference path="../../cyph/icontroller.ts" />
+/// <reference path="../../cyph/ui/elements.ts" />
 /// <reference path="../../cyph/ui/idialogmanager.ts" />
 /// <reference path="../../cyph/ui/inotifier.ts" />
 /// <reference path="../../cyph/ui/isidebar.ts" />
@@ -47,7 +47,7 @@ module Cyph.im {
 
 				let selectCopyUrl: Function	= () =>
 					Cyph.Util.getValue<Function>(
-						Elements.copyUrlInput[0],
+						Cyph.UI.Elements.copyUrlInput[0],
 						'setSelectionRange',
 						() => {}
 					)(0, copyUrl.length)
@@ -57,7 +57,7 @@ module Cyph.im {
 					setCopyUrl();
 
 					/* Only allow right-clicking (for copying the link) */
-					Elements.copyUrlLink.click(e =>
+					Cyph.UI.Elements.copyUrlLink.click(e =>
 						e.preventDefault()
 					);
 				}
@@ -65,7 +65,7 @@ module Cyph.im {
 					let copyUrlInterval: number	= setInterval(() => {
 						if (this.state === States.waitingForFriend) {
 							setCopyUrl();
-							Elements.copyUrlInput.focus();
+							Cyph.UI.Elements.copyUrlInput.focus();
 							selectCopyUrl();
 						}
 						else {
@@ -81,11 +81,11 @@ module Cyph.im {
 						.replace(/(.*:.*):.*? /, '$1')
 					;
 
-					Elements.timer.parent().text('Link expires at ' + expireTime);
-					Elements.timer	= null;
+					Cyph.UI.Elements.timer.parent().text('Link expires at ' + expireTime);
+					Cyph.UI.Elements.timer	= null;
 				}
 				else {
-					Elements.timer[0]['start']();
+					Cyph.UI.Elements.timer[0]['start']();
 				}
 			}
 

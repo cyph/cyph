@@ -1,48 +1,53 @@
+/// <reference path="elements.ts" />
+/// <reference path="../analytics.ts" />
+/// <reference path="../env.ts" />
+/// <reference path="../icontroller.ts" />
+/// <reference path="../util.ts" />
+/// <reference path="../../global/base.ts" />
+/// <reference path="../../../lib/typings/jquery/jquery.d.ts" />
 
-			let $betaSignupForm		= $('.beta-signup-form');
 
-			this.betaSignupState	= 0;
+module Cyph {
+	export module UI {
+		export class SignupForm {
+			private state: number	= 0;
 
-			this.betaSignup		= {
-				Language: language
+			private data	= {
+				Comment: <string> '',
+				Email: <string> '',
+				Language: <string> Env.language,
+				Name: <string> ''
 			};
 
-			public submitBetaSignup () {
-				this.controller.update(() => {
-					++this.betaSignupState;
-				});
+			private controller: IController;
 
-				if (this.betaSignupState === 2) {
+			public submit () : void {
+				++this.state;
+				this.controller.update();
+
+				if (this.state === 2) {
 					setTimeout(() => {
-						this.controller.update(() => {
-							++this.betaSignupState;
-						});
+						++this.state;
+						this.controller.update();
 					}, 1500);
 				}
 
 				setTimeout(() => {
-					/* Temporary workaround */
-					let $input	= $betaSignupForm.find('input:visible');
+					let $input: JQuery	= Elements.signupForm.find('input:visible');
+
 					if ($input.length === 1) {
 						$input.focus();
 					}
 				}, 100);
 
-				let retries	= 0;
-				let dothemove: Function	= () {
+
+				Util.retryUntilComplete(retry =>
 					Util.request({
 						method: 'PUT',
-						url: Cyph.Env.baseUrl + 'betasignups',
-						data: this.betaSignup,
-						error: () => {
-							if (++retries < 5) {
-								dothemove();
-							}
-							else {
-								retries	= 0;
-							}
-						},
-						success: (isNew) => {
+						url: Env.baseUrl + 'betasignups',
+						data: this.data,
+						error: retry,
+						success: (isNew: string) => {
 							if (isNew === 'true') {
 								Analytics.main.send({
 									hitType: 'event',
@@ -52,12 +57,17 @@
 								});
 							}
 						}
-					});
-				};
+					})
+				);
+			}
 
-				dothemove();
-			};
+			public constructor (controller: IController) {
+				this.controller	= controller;
 
-			setTimeout(() => {
-				$betaSignupForm.addClass('visible');
-			}, 500);
+				setTimeout(() =>
+					Elements.signupForm.addClass('visible')
+				, 500);
+			}
+		}
+	}
+}

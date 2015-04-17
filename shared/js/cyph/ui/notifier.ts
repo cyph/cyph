@@ -1,13 +1,12 @@
 /// <reference path="visibilitywatcher.ts" />
+/// <reference path="../config.ts" />
 /// <reference path="../../global/base.ts" />
 
 
 module Cyph {
 	export module UI {
 		export class Notifier {
-			public static notifyTitle: string	= 'Cyph';
-			public static notifyIcon: string	= '/img/favicon/apple-touch-icon-180x180.png';
-			public static notifyAudio			= new Audio('/audio/beep.mp3');
+			public static audio	= new Audio(Config.notifierConfig.audio);
 
 
 			public disableNotify: boolean	= false;
@@ -17,8 +16,11 @@ module Cyph {
 				if (!this.disableNotify && !VisibilityWatcher.isVisible) {
 					if (Notification) {
 						let notification	= new Notification(
-							Notifier.notifyTitle,
-							{body: message, icon: Notifier.notifyIcon}
+							Config.notifierConfig.title,
+							{
+								body: message, 
+								icon: Config.notifierConfig.icon
+							}
 						);
 
 						this.openNotifications.push(notification);
@@ -39,7 +41,7 @@ module Cyph {
 						};
 					}
 
-					Notifier.notifyAudio.play();
+					Notifier.audio.play();
 
 					Util.getValue<any>(navigator, 'vibrate', () => {})(200);
 				}
