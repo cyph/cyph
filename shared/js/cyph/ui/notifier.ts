@@ -51,6 +51,16 @@ module Cyph {
 				if (Notification) {
 					Notification.requestPermission();
 				}
+
+				VisibilityWatcher.onchange((isVisible: boolean) => {
+					if (isVisible) {
+						this.openNotifications.forEach(notification => notification.close());
+						this.openNotifications.length	= 0;
+					}
+					else {
+						this.disableNotify	= false;
+					}
+				});
 			}
 		}
 	}

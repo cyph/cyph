@@ -66,6 +66,7 @@
         "cyph/ui/inotifier.ts",
         "cyph/ui/isidebar.ts",
         "cyph/ui/isignupform.ts",
+        "cyph/ui/nanoscroller.ts",
         "cyph/ui/notifier.ts",
         "cyph/ui/signupform.ts",
         "cyph/ui/visibilitywatcher.ts",
