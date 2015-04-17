@@ -16,6 +16,8 @@ module Cyph {
 			public static insertPhotoMobile: JQuery		= $('#insert-photo-mobile');
 			public static messageBox: JQuery			= $('#message-box');
 			public static messageList: JQuery			= $('#message-list, #message-list > md-content');
+			public static messageListInner: JQuery		= $('#message-list md-list');
+			public static nanoScroller: JQuery			= $('.nano');
 			public static p2pFriendPlaceholder: JQuery	= $('#video-call .friend:not(.stream)');
 			public static p2pFriendStream: JQuery		= $('#video-call .friend.stream');
 			public static p2pMeStream: JQuery			= $('#video-call .me');
