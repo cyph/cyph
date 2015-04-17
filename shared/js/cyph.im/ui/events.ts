@@ -102,7 +102,7 @@ module Cyph.im {
 						case Cyph.P2P.UIEvents.Categories.file: {
 							switch (e.event) {
 								case Cyph.P2P.UIEvents.Events.clear: {
-									Cyph.UI.Elements.p2pFiles.each((i, elem) =>
+									Cyph.UI.Elements.p2pFiles.each((i: number, elem: HTMLElement) =>
 										$(elem).val('')
 									);
 									break;

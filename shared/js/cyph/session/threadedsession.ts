@@ -13,6 +13,7 @@ module Cyph {
 				close: 'ThreadedSessionClose',
 				receive: 'ThreadedSessionReceive',
 				send: 'ThreadedSessionSend',
+				sendText: 'ThreadedSessionSendText',
 				updateState: 'ThreadedSessionUpdateState',
 				updateStateThread: 'ThreadedSessionUpdateStateThread'
 			};
@@ -52,6 +53,10 @@ module Cyph {
 
 					session.on(vars.events.send, (e: { messages: Message[]; }) =>
 						session.sendBase(e.messages)
+					);
+
+					session.on(vars.events.sendText, (e: { text: string; }) =>
+						session.sendText(e.text);
 					);
 
 					session.on(vars.events.updateState, (e: { key: string; value: any; }) =>
@@ -95,6 +100,10 @@ module Cyph {
 
 			public sendBase (messages: Message[]) : void {
 				this.trigger(ThreadedSession.events.send, {messages});
+			}
+
+			public sendText (text: string) : void {
+				this.trigger(ThreadedSession.events.sendText, {text});
 			}
 
 			public trigger (event: string, data?: any) : void {

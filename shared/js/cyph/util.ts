@@ -275,5 +275,11 @@ module Cyph {
 				replace(/%20/g, '+')
 			;
 		}
+
+		public static triggerClick (elem: HTMLElement) {
+			let e: Event	= document.createEvent('MouseEvents');
+			e.initEvent('click', true, true);
+			elem.dispatchEvent(e);
+		}
 	}
 }

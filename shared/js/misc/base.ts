@@ -109,8 +109,6 @@ if (Cyph.Env.isMobile) {
 
 if (!HTMLElement.prototype.click) {
 	HTMLElement.prototype.click	= function () {
-		let e	= document.createEvent('MouseEvents');
-		e.initEvent('click', true, true);
-		this.dispatchEvent(e);
+		Cyph.Util.triggerClick(this);
 	}
 }

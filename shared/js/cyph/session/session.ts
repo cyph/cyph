@@ -285,6 +285,10 @@ module Cyph {
 				this.otr.send(JSON.stringify(messages));
 			}
 
+			public sendText (text: string) : void {
+				this.sendBase(new Message(Events.text, text));
+			}
+
 			public trigger (event: string, data?: any) : void {
 				EventManager.trigger(event + this.id, data);
 			}
