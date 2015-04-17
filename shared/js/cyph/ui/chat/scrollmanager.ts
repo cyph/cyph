@@ -20,7 +20,7 @@ module Cyph {
 			private affiliate: Affiliate;
 			private controller: IController;
 
-			private mutationObserverHandler (mutation: any) : void {
+			private mutationObserverHandler (mutation: MutationRecord) : void {
 				let $elem: JQuery	= $(
 					mutation.addedNodes.length > 0 ?
 						mutation.addedNodes[0] :
