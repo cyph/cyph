@@ -9,6 +9,7 @@
 /// <reference path="../idialogmanager.ts" />
 /// <reference path="../inotifier.ts" />
 /// <reference path="../isidebar.ts" />
+/// <reference path="../nanoscroller.ts" />
 /// <reference path="../../analytics.ts" />
 /// <reference path="../../icontroller.ts" />
 /// <reference path="../../strings.ts" />
@@ -24,8 +25,11 @@ module Cyph {
 	export module UI {
 		export module Chat {
 			export class Chat extends BaseButtonManager implements IChat {
+				private isMessageChanged: boolean;
+				private previousMessage: string;
 				private dialogManager: IDialogManager;
 				private notifier: INotifier;
+				private scrollManager: ScrollManager;
 
 				public isConnected: boolean		= false;
 				public isDisconnected: boolean	= false;
@@ -46,7 +50,11 @@ module Cyph {
 					this.session.close();
 				}
 
-				public addMessage (text, author, shouldNotify) {
+				public addMessage (
+					text: string,
+					author: Session.Authors,
+					shouldNotify: boolean = true
+				) : void {
 					if (this.state === States.aborted) {
 						return;
 					}
@@ -55,11 +63,11 @@ module Cyph {
 						if (shouldNotify !== false) {
 							switch (author) {
 								case Session.Authors.friend:
-									notify(Strings.newMessageNotification);
+									this.notifier.notify(Strings.newMessageNotification);
 									break;
 
 								case Session.Authors.app:
-									notify(text);
+									this.notifier.notify(text);
 									break;
 							}
 						}
@@ -79,13 +87,13 @@ module Cyph {
 
 						this.controller.update();
 
-						this.scrollDown(true);
+						this.scrollManager.scrollDown(true);
 
 						if (author === Session.Authors.me) {
-							this.scrollDown();
+							this.scrollManager.scrollDown();
 						}
 						else {
-							scrolling.update();
+							NanoScroller.update();
 						}
 					}
 				}
@@ -95,14 +103,14 @@ module Cyph {
 					this.controller.update();
 				}
 
-				public beginChatUi (callback) {
+				public begin (callback: Function = () => {}) : void {
 					if (this.state === States.aborted) {
 						return;
 					}
 
-					let dothemove: Function	= () {
-						notify(Strings.connectedNotification);
-						changeState(States.chatBeginMessage);
+					let dothemove: Function	= () => {
+						this.notifier.notify(Strings.connectedNotification);
+						this.changeState(States.chatBeginMessage);
 
 						/* Stop mobile browsers from keeping this selected */
 						Elements.copyUrlInput.remove();
@@ -112,9 +120,9 @@ module Cyph {
 								return;
 							}
 
-							callback && callback();
+							callback();
 
-							changeState(States.chat);
+							this.changeState(States.chat);
 
 							/* Adjust font size for translations */
 							if (!Env.isMobile) {
@@ -140,21 +148,21 @@ module Cyph {
 								}, 500);
 							}
 
-							addMessageToChat(Strings.introductoryMessage, Session.Authors.app, false);
+							this.addMessage(Strings.introductoryMessage, Session.Authors.app, false);
 						}, 3000);
 					};
 
 
-					Elements.timer && Elements.timer[0].stop();
+					Util.getValue(Elements.timer[0] || {}, 'stop', () => {})();
 
-					if (hasKeyExchangeBegun) {
+					if (this.session.state.hasKeyExchangeBegun) {
 						dothemove();
 					}
 					else {
-						changeState(States.keyExchange);
+						this.changeState(States.keyExchange);
 
 						let intervalId	= setInterval(() => {
-							if (hasKeyExchangeBegun) {
+							if (this.session.state.hasKeyExchangeBegun) {
 								clearInterval(intervalId);
 								dothemove();
 							}
@@ -162,48 +170,46 @@ module Cyph {
 					}
 				}
 
-				public closeChat () {
+				public close () : void {
 					if (this.state === States.aborted) {
 						return;
 					}
 
 					Timer.stopAll();
 
-					if (this.isAlive) {
-						friendIsTyping(false);
+					if (this.session.state.isAlive) {
+						this.setFriendTyping(false);
 
 						if (this.isConnected) {
-							addMessageToChat(Strings.disconnectedNotification, Session.Authors.app);
+							this.addMessage(Strings.disconnectedNotification, Session.Authors.app);
 
-							this.controller.update(() => {
-								isAlive = this.isAlive = false;
-								this.isDisconnected	= true;
-							});
+							this.isDisconnected	= true;
+							this.session.updateState(Session.State.isAlive, true);
 						}
 						else {
-							abortSetup();
+							this.abortSetup();
 						}
 					}
 				}
 
-				public disconnect () {
+				public disconnectButton () : void {
 					this.baseButtonClick(() => {
-						confirmDialog({
+						this.dialogManager.confirm({
 							title: Strings.disconnectTitle,
 							content: Strings.disconnectConfirm,
 							ok: Strings.continueDialogAction,
 							cancel: Strings.cancel
 						}, (ok) => {
 							if (ok) {
-								channelClose();
+								this.close();
 							}
 						});
 					});
 				}
 
-				public formattingHelp () {
+				public formattingHelpButton () : void {
 					this.baseButtonClick(() => {
-						$mdDialog.show({
+						this.dialogManager.baseDialog({
 							template: $('#templates > .formatting-help')[0].outerHTML
 						});
 
@@ -216,44 +222,49 @@ module Cyph {
 					});
 				}
 
-				public friendIsTyping (isFriendTyping) {
-					this.controller.update(() => {
-						this.isFriendTyping	= isFriendTyping;
-					});
-				}
+				public messageChange () : void {
+					let isMessageChanged	=
+						this.currentMessage !== '' &&
+						this.currentMessage !== this.previousMessage
+					;
 
-				public markAllAsSent () {
-					this.controller.update(() => {
-						this.isConnected	= true;
-					});
-				}
+					this.previousMessage	= this.currentMessage;
 
-				public messageChange () {
-					let newImtypingYo	= this.message !== '' && this.message !== previousMessage;
-					previousMessage		= this.message;
-
-					if (imtypingyo !== newImtypingYo) {
-						imtypingyo	= newImtypingYo;
-						sendChannelData({Misc: imtypingyo ? channelDataMisc.imtypingyo : channelDataMisc.donetyping});
+					if (this.isMessageChanged !== isMessageChanged) {
+						this.isMessageChanged	= isMessageChanged;
+						this.session.send(
+							new Session.Message(
+								Session.Events.typing,
+								this.isMessageChanged
+							)
+						);
 					}
 				}
 
-				public sendMessage (message) {
+				public send (message?: string) : void {
 					if (!message) {
-						message	= this.message;
+						message	= this.currentMessage;
 
-						this.controller.update(() => {
-							this.message	= '';
-						});
+						this.currentMessage	= '';
+						this.controller.update();
 
-						this.onMessageChange();
+						this.messageChange();
 					}
 
 					if (message) {
-						addMessageToChat(message, Session.Authors.me);
-						this.scrollDown();
-						otr.sendMsg(message);
+						this.scrollManager.scrollDown();
+						this.session.sendText(message);
 					}
+				}
+
+				public setConnected () : void {
+					this.isConnected	= true;
+					this.controller.update();
+				}
+
+				public setFriendTyping (isFriendTyping: boolean) : void {
+					this.isFriendTyping	= isFriendTyping;
+					this.controller.update();
 				}
 
 				public constructor (
@@ -267,7 +278,8 @@ module Cyph {
 					this.dialogManager	= dialogManager;
 					this.notifier		= notifier;
 
-					this.session	= new Session.ThreadedSession(Util.getUrlState(), controller);
+					this.scrollManager	= new ScrollManager(this.controller, this.dialogManager);
+					this.session		= new Session.ThreadedSession(Util.getUrlState(), controller);
 
 
 					if (Env.isMobile) {
@@ -276,7 +288,7 @@ module Cyph {
 						let mobileButtons: JQuery[]	= [Elements.sendButton, Elements.insertPhotoMobile];
 
 						Elements.messageBox.click((e) => {
-							for (let $button: JQuery of mobileButtons) {
+							for (let $button of mobileButtons) {
 								let bounds	= $button['bounds']();
 
 								if (
