@@ -12,8 +12,8 @@ module Cyph {
 			private session: Session.ISession;
 
 			private processImage (image: HTMLImageElement, file: File) : void {
-				let canvas	= document.createElement('canvas');
-				let ctx		= canvas.getContext('2d');
+				let canvas: HTMLCanvasElement			= document.createElement('canvas');
+				let context: CanvasRenderingContext2D	= canvas.getContext('2d');
 
 				let widthFactor: number		= Config.photoConfig.maxWidth / image.width;
 				widthFactor					= widthFactor > 1 ? 1 : widthFactor;
@@ -26,11 +26,11 @@ module Cyph {
 				canvas.width	= image.width * factor;
 				canvas.height	= image.height * factor;
 
-				ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+				context.drawImage(image, 0, 0, canvas.width, canvas.height);
 
 				let hasTransparency: boolean	=
 					file.type !== 'image/jpeg' &&
-					ctx.getImageData(0, 0, image.width, image.height).data[3] !== 255
+					context.getImageData(0, 0, image.width, image.height).data[3] !== 255
 				;
 
 				let encodedImage: string	=
