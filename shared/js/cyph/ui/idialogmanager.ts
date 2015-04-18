@@ -33,11 +33,14 @@ module Cyph {
 				callback?: (ok: boolean) => void
 			) : void;
 
-			toast (o: {
-				content: string;
-				position: string;
-				delay: number;
-			}) : void;
+			toast (
+				o: {
+					content: string;
+					position: string;
+					delay: number;
+				},
+				callback?: () => void
+			) : void;
 		}
 	}
 }

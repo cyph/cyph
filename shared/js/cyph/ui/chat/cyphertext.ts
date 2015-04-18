@@ -1,86 +1,98 @@
-
-			public cyphertext: string[]		= [];
-
-			public log (text, author) {
-				if (text) {
-					this.controller.update(() => {
-						if (Cyph.Env.isMobile && this.cyphertext.length > 5) {
-							this.cyphertext.shift();
-						}
-
-						this.cyphertext.push({author: author, text: JSON.parse(text).message});
-					});
-				}
-			}
+/// <reference path="../basebuttonmanager.ts" />
+/// <reference path="../elements.ts" />
+/// <reference path="../idialogmanager.ts" />
+/// <reference path="../../analytics.ts" />
+/// <reference path="../../icontroller.ts" />
+/// <reference path="../../strings.ts" />
+/// <reference path="../../session/enums.ts" />
+/// <reference path="../../../global/base.ts" />
+/// <reference path="../../../../lib/typings/jquery/jquery.d.ts" />
 
 
-			let showCyphertextLock	= false;
-			let curtainClass		= 'curtain';
-			let cypherToastPosition	= 'top right';
+module Cyph {
+	export module UI {
+		export class Cyphertext extends BaseButtonManager {
+			private showLock: boolean		= false;
+			private curtainClass: string	= 'curtain';
+			private toastPosition: string	= 'top right';
 
-			public hide () {
-				if ($('.' + curtainClass).length < 1) {
-					return;
-				}
+			private dialogManager: IDialogManager;
 
-				UI.Elements.everything.removeClass(curtainClass);
+			public messages: {author: Session.Authors; text: string;}[]	= [];
 
-				setTimeout(() => {
-					$mdToast.show({
-						template: '<md-toast>' + Strings.cypherToast3 + '</md-toast>',
-						hideDelay: 1000,
-						position: cypherToastPosition,
-						detachSwipe: () => {}
-					});
-
-					/* Workaround for Angular Material bug */
-					setTimeout(() => {
-						$('md-toast:visible').remove();
-						showCyphertextLock	= false;
-					}, 2000);
-				}, 2000);
-			}
-
-			/* Close cyphertext on esc */
-			$(document).keyup((e) => {
-				if (e.keyCode === 27) {
-					this.closeCyphertext();
-				}
-			});
-
-			public show () {
-				this.baseButtonClick(() => {
-					if (showCyphertextLock) {
-						return;
-					}
-
-					showCyphertextLock	= true;
-
-					$mdToast.show({
-						template: '<md-toast>' + Strings.cypherToast1 + '</md-toast>',
-						hideDelay: 2000,
-						position: cypherToastPosition,
-						detachSwipe: () => {}
-					});
+			public hide () : void {
+				if ($('.' + this.curtainClass).length > 0) {
+					Elements.everything.removeClass(this.curtainClass);
 
 					setTimeout(() => {
-						$mdToast.show({
-							template: '<md-toast>' + Strings.cypherToast2 + '</md-toast>',
-							hideDelay: 3000,
-							position: cypherToastPosition,
-							detachSwipe: () => {}
+						this.dialogManager.toast({
+							content: Strings.cypherToast3,
+							position: this.toastPosition,
+							delay: 1000
 						});
 
+						/* Workaround for Angular Material bug */
 						setTimeout(() => {
-							UI.Elements.everything.addClass(curtainClass);
+							$('md-toast:visible').remove();
+							this.showLock	= false;
+						}, 2000);
+					}, 2000);
+				}
+			}
 
-							Analytics.main.send({
-								hitType: 'event',
-								eventCategory: 'cyphertext',
-								eventAction: 'show',
-								eventValue: 1
+			public log (text: string, author: Session.Authors) : void {
+				if (text) {
+					/* Mobile performance optimisation */
+					if (Env.isMobile && this.messages.length > 5) {
+						this.messages.shift();
+					}
+
+					this.messages.push({author: author, text: JSON.parse(text).message});
+					this.controller.update();
+				}
+			}
+
+			public show () : void {
+				this.baseButtonClick(() => {
+					if (!this.showLock) {
+						this.showLock	= true;
+
+						this.dialogManager.toast({
+							content: Strings.cypherToast1,
+							position: this.toastPosition,
+							delay: 2000
+						}, () => {
+							this.dialogManager.toast({
+								content: Strings.cypherToast2,
+								position: this.toastPosition,
+								delay: 3000
+							}, () => {
+								Elements.everything.addClass(this.curtainClass);
+
+								Analytics.main.send({
+									hitType: 'event',
+									eventCategory: 'cyphertext',
+									eventAction: 'show',
+									eventValue: 1
+								});
 							});
-						}, 3500);
-					}, 2500);
+						});
+					}
 				});
 			}
+
+			public constructor (controller: IController, mobileMenu: ISidebar, dialogManager: IDialogManager) {
+				super(controller, mobileMenu);
+
+				this.dialogManager	= dialogManager;
+
+				/* Close cyphertext on esc */
+				Elements.document.keyup(e => {
+					if (e.keyCode === 27) {
+						this.hide();
+					}
+				});
+			}
+		}
+	}
+}

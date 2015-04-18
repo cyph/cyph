@@ -6,6 +6,7 @@ module Cyph {
 	export module UI {
 		export class Elements {
 			public static window: JQuery				= $(window);
+			public static document: JQuery				= $(document);
 			public static html: JQuery					= $('html');
 			public static everything: JQuery			= $('*');
 			public static affiliateCheckbox: JQuery		= $('.amazon-link:visible md-checkbox');

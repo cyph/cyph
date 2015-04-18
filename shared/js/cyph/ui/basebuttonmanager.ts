@@ -9,8 +9,8 @@ module Cyph {
 			protected static buttonLock: boolean;
 
 
-			private controller: IController;
-			private mobileMenu: ISidebar;
+			protected controller: IController;
+			protected mobileMenu: ISidebar;
 
 			protected baseButtonClick (callback: Function) : void {
 				if (!BaseButtonManager.buttonLock) {
