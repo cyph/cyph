@@ -1,3 +1,4 @@
+/// <reference path="elements.ts" />
 /// <reference path="idialogmanager.ts" />
 /// <reference path="../env.ts" />
 /// <reference path="../util.ts" />
