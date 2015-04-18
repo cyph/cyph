@@ -23,6 +23,7 @@ module Cyph {
 		webRTCRequest: '',
 		webRTCRequestConfirmation: '',
 		webRTCDeny: '',
+		webRTCDisabled: '',
 		webRTCDisconnect: '',
 		webRTCConnect: '',
 		webRTCWarning: '',
