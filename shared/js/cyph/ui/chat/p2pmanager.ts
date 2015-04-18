@@ -1,5 +1,4 @@
 /// <reference path="../basebuttonmanager.ts" />
-/// <reference path="../elements.ts" />
 /// <reference path="../idialogmanager.ts" />
 /// <reference path="../isidebar.ts" />
 /// <reference path="../../icontroller.ts" />
@@ -17,19 +16,29 @@ module Cyph {
 			export class P2PManager extends BaseButtonManager {
 				private dialogManager: IDialogManager;
 
-				public isVideoCall: boolean		= false;
-				public isWebRTCEnabled: boolean	= false;
+				public isEnabled: boolean	= false;
+				public isVideoCall: boolean	= false;
 
 				public p2p: P2P.IP2P;
 
-				public enableWebRTC () {
-					this.isWebRTCEnabled	= true;
+				public disabledAlert () : void {
+					/* TODO: let message: string = $('#webrtc-disabled-message').attr('title') */
+
+					this.dialogManager.alert({
+						title: Strings.videoCallingTitle,
+						content: Strings.webRTCDisabled,
+						ok: Strings.ok
+					});
+				}
+
+				public enable () : void {
+					this.isEnabled	= true;
 					this.controller.update();
 				}
 
-				public sendFileButton () {
+				public sendFileButton () : void {
 					this.baseButtonClick(() => {
-						if (this.isWebRTCEnabled) {
+						if (this.isEnabled) {
 							if (!this.isVideoCall) {
 								this.p2p.requestCall('file');
 							}
@@ -40,14 +49,14 @@ module Cyph {
 					});
 				}
 
-				public toggleVideoCall (isVideoCall) {
+				public toggleVideoCall (isVideoCall: boolean) : void {
 					this.isVideoCall	= isVideoCall;
 					this.controller.update();
 				}
 
-				public videoCallButton () {
+				public videoCallButton () : void {
 					this.baseButtonClick(() => {
-						if (this.isWebRTCEnabled) {
+						if (this.isEnabled) {
 							if (!this.isVideoCall) {
 								this.p2p.requestCall('video');
 							}
@@ -58,15 +67,13 @@ module Cyph {
 					});
 				}
 
-				public videoCallClose () {
-					this.baseButtonClick(() => {
-						this.p2p.kill();
-					});
+				public videoCallClose () : void {
+					this.baseButtonClick(() => this.p2p.kill());
 				}
 
-				public voiceCallButton () {
+				public voiceCallButton () : void {
 					this.baseButtonClick(() => {
-						if (this.isWebRTCEnabled) {
+						if (this.isEnabled) {
 							if (!this.isVideoCall) {
 								this.p2p.requestCall('voice');
 							}
@@ -74,16 +81,6 @@ module Cyph {
 								this.p2p.setUpStream({audio: !this.p2p.streamOptions.audio});
 							}
 						}
-					});
-				}
-
-				public webRTCDisabledAlert () {
-					/* TODO: let message: string = $('#webrtc-disabled-message').attr('title') */
-
-					this.dialogManager.alert({
-						title: Strings.videoCallingTitle,
-						content: Strings.webRTCDisabled,
-						ok: Strings.ok
 					});
 				}
 

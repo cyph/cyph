@@ -142,7 +142,23 @@ module Cyph.im {
 					);
 
 					this.signupForm	= new Cyph.UI.SignupForm(this.controller);
+
+
+					this.chat.session.on(Cyph.Session.Events.abort, () =>
+						Cyph.UI.Elements.window.off('beforeunload')
+					);
+
+					this.chat.session.on(Cyph.Session.Events.beginChatComplete, () =>
+						Cyph.UI.Elements.window.
+							unload(() => this.chat.session.close()).
+							on('beforeunload', () => Cyph.Strings.disconnectWarning)
+					);
+
+					this.chat.session.on(Cyph.Session.Events.beginWaiting, this.beginWaiting);
+
+					this.chat.session.on(Cyph.Session.Events.newCyph, () => this.changeState(States.spinningUp));
 				}
+
 
 				if (!Cyph.Env.isMobile && Cyph.Env.isIE) {
 					this.dialogManager.alert({
