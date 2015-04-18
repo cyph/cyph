@@ -283,17 +283,6 @@ module Cyph {
 				this.peer	= pc;
 			}
 
-			private kill () : void {
-				this.session.send(
-					new Session.Message(
-						Session.Events.p2p,
-						new Session.Command(P2P.constants.kill)
-					)
-				);
-
-				this.commands.kill();
-			}
-
 			private receiveCommand (command: string, data?: any) : void {
 				if (!WebRTC.isSupported) {
 					return;
@@ -364,7 +353,136 @@ module Cyph {
 				);
 			}
 
-			private requestCall (callType: string) : void {
+			private retryUntilSuccessful (f: Function) : void {
+				Util.retryUntilComplete(f, () => this.isAccepted);
+			}
+
+			private setUpChannel (shouldCreate?: boolean) : void {
+				if (!this.isAccepted) {
+					return;
+				}
+
+				if (shouldCreate) {
+					try {
+						this.channel	= this.peer.createDataChannel(
+							P2P.constants.subspace,
+							{}
+						);
+					}
+					catch (_) {
+						setTimeout(() => this.setUpChannel(true), 500);
+						return;
+					}
+				}
+
+				this.channel.onmessage	= e => {
+					if (typeof e.data === 'string') {
+						if (e.data === P2P.constants.fileTransferComplete) {
+							let data: ArrayBuffer[]	= this.incomingFile.data;
+							let name: string		= this.incomingFile.name;
+
+							this.incomingFile.data				= null;
+							this.incomingFile.name				= '';
+							this.incomingFile.size				= 0;
+							this.incomingFile.readableSize		= '';
+							this.incomingFile.percentComplete	= 0;
+
+							this.controller.update();
+
+							if (data) {
+								this.receiveIncomingFile(data, name);
+							}
+						}
+						else {
+							let data: string[]	= e.data.split('\n');
+
+							this.incomingFile.data	= [];
+							this.incomingFile.name	= data[0];
+							this.incomingFile.size	= parseInt(data[1], 10);
+
+							this.incomingFile.readableSize	=
+								Util.readableByteLength(
+									this.incomingFile.size
+								)
+							;
+
+							this.controller.update();
+
+							this.triggerUiEvent(
+								UIEvents.Categories.file,
+								UIEvents.Events.transferStarted,
+								Session.Authors.friend,
+								this.incomingFile.name
+							);
+						}
+					}
+					else if (this.incomingFile.data) {
+						this.incomingFile.data.push(e.data);
+
+						this.incomingFile.percentComplete	=
+							this.incomingFile.data.length *
+								Config.p2pConfig.fileChunkSize /
+								this.incomingFile.size *
+								100
+						;
+
+						this.controller.update();
+					}
+				};
+
+				this.channel.onopen	= this.sendFile;
+			}
+
+			private triggerUiEvent(
+				category: UIEvents.Categories,
+				event: UIEvents.Events,
+				...args: any[]
+			) : void {
+				this.session.trigger(Session.Events.p2pUi, {category, event, args});
+			}
+
+			public constructor (session: Session.ISession, controller: IController) {
+				this.session	= session;
+				this.controller	= controller;
+
+				this.mutex		= new Session.Mutex(this.session);
+
+				this.session.on(Session.Events.beginChat, () =>
+					this.session.send(
+						new Session.Message(
+							Session.Events.p2p,
+							new Session.Command
+						)
+					)
+				);
+
+				this.session.on(Session.Events.closeChat, this.kill);
+
+				this.session.on(Session.Events.p2p, (command: Session.Command) => {
+					if (command.method) {
+						this.commands[command.method](command.argument);
+					}
+					else if (WebRTC.isSupported) {
+						this.triggerUiEvent(
+							UIEvents.Categories.base,
+							UIEvents.Events.enable
+						);
+					}
+				});
+			}
+
+			public kill () : void {
+				this.session.send(
+					new Session.Message(
+						Session.Events.p2p,
+						new Session.Command(P2P.constants.kill)
+					)
+				);
+
+				this.commands.kill();
+			}
+
+			public requestCall (callType: string) : void {
 				this.triggerUiEvent(
 					UIEvents.Categories.request,
 					UIEvents.Events.requestConfirm,
@@ -416,11 +534,7 @@ module Cyph {
 				);
 			}
 
-			private retryUntilSuccessful (f: Function) : void {
-				Util.retryUntilComplete(f, () => this.isAccepted);
-			}
-
-			private sendFile () : void {
+			public sendFile () : void {
 				if (
 					this.outgoingFile.name ||
 					!this.channel ||
@@ -540,83 +654,7 @@ module Cyph {
 				);
 			}
 
-			private setUpChannel (shouldCreate?: boolean) : void {
-				if (!this.isAccepted) {
-					return;
-				}
-
-				if (shouldCreate) {
-					try {
-						this.channel	= this.peer.createDataChannel(
-							P2P.constants.subspace,
-							{}
-						);
-					}
-					catch (_) {
-						setTimeout(() => this.setUpChannel(true), 500);
-						return;
-					}
-				}
-
-				this.channel.onmessage	= e => {
-					if (typeof e.data === 'string') {
-						if (e.data === P2P.constants.fileTransferComplete) {
-							let data: ArrayBuffer[]	= this.incomingFile.data;
-							let name: string		= this.incomingFile.name;
-
-							this.incomingFile.data				= null;
-							this.incomingFile.name				= '';
-							this.incomingFile.size				= 0;
-							this.incomingFile.readableSize		= '';
-							this.incomingFile.percentComplete	= 0;
-
-							this.controller.update();
-
-							if (data) {
-								this.receiveIncomingFile(data, name);
-							}
-						}
-						else {
-							let data: string[]	= e.data.split('\n');
-
-							this.incomingFile.data	= [];
-							this.incomingFile.name	= data[0];
-							this.incomingFile.size	= parseInt(data[1], 10);
-
-							this.incomingFile.readableSize	=
-								Util.readableByteLength(
-									this.incomingFile.size
-								)
-							;
-
-							this.controller.update();
-
-							this.triggerUiEvent(
-								UIEvents.Categories.file,
-								UIEvents.Events.transferStarted,
-								Session.Authors.friend,
-								this.incomingFile.name
-							);
-						}
-					}
-					else if (this.incomingFile.data) {
-						this.incomingFile.data.push(e.data);
-
-						this.incomingFile.percentComplete	=
-							this.incomingFile.data.length *
-								Config.p2pConfig.fileChunkSize /
-								this.incomingFile.size *
-								100
-						;
-
-						this.controller.update();
-					}
-				};
-
-				this.channel.onopen	= this.sendFile;
-			}
-
-			private setUpStream (streamOptions?: any, offer?: string) : void {
+			public setUpStream (streamOptions?: any, offer?: string) : void {
 				this.retryUntilSuccessful(retry => {
 					if (!offer) {
 						if (this.localStreamSetUpLock) {
@@ -834,44 +872,6 @@ module Cyph {
 							}
 						}
 					}, offer ? P2P.constants.setUpStream : P2P.constants.setUpStreamInit);
-				});
-			}
-
-			private triggerUiEvent(
-				category: UIEvents.Categories,
-				event: UIEvents.Events,
-				...args: any[]
-			) : void {
-				this.session.trigger(Session.Events.p2pUi, {category, event, args});
-			}
-
-			public constructor (session: Session.ISession, controller: IController) {
-				this.session	= session;
-				this.controller	= controller;
-
-				this.mutex		= new Session.Mutex(this.session);
-
-				this.session.on(Session.Events.beginChat, () =>
-					this.session.send(
-						new Session.Message(
-							Session.Events.p2p,
-							new Session.Command
-						)
-					)
-				);
-
-				this.session.on(Session.Events.closeChat, this.kill);
-
-				this.session.on(Session.Events.p2p, (command: Session.Command) => {
-					if (command.method) {
-						this.commands[command.method](command.argument);
-					}
-					else if (WebRTC.isSupported) {
-						this.triggerUiEvent(
-							UIEvents.Categories.base,
-							UIEvents.Events.enable
-						);
-					}
 				});
 			}
 		}
