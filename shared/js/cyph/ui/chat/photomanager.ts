@@ -8,110 +8,112 @@
 
 module Cyph {
 	export module UI {
-		export class PhotoManager {
-			private session: Session.ISession;
+		export module Chat {
+			export class PhotoManager {
+				private session: Session.ISession;
 
-			private processImage (image: HTMLImageElement, file: File) : void {
-				let canvas: HTMLCanvasElement			= document.createElement('canvas');
-				let context: CanvasRenderingContext2D	= canvas.getContext('2d');
+				private processImage (image: HTMLImageElement, file: File) : void {
+					let canvas: HTMLCanvasElement			= document.createElement('canvas');
+					let context: CanvasRenderingContext2D	= canvas.getContext('2d');
 
-				let widthFactor: number		= Config.photoConfig.maxWidth / image.width;
-				widthFactor					= widthFactor > 1 ? 1 : widthFactor;
+					let widthFactor: number		= Config.photoConfig.maxWidth / image.width;
+					widthFactor					= widthFactor > 1 ? 1 : widthFactor;
 
-				let heightFactor: number	= Config.photoConfig.maxWidth / image.height;
-				heightFactor				= heightFactor > 1 ? 1 : heightFactor;
+					let heightFactor: number	= Config.photoConfig.maxWidth / image.height;
+					heightFactor				= heightFactor > 1 ? 1 : heightFactor;
 
-				let factor: number	= Math.min(widthFactor, heightFactor);
+					let factor: number	= Math.min(widthFactor, heightFactor);
 
-				canvas.width	= image.width * factor;
-				canvas.height	= image.height * factor;
+					canvas.width	= image.width * factor;
+					canvas.height	= image.height * factor;
 
-				context.drawImage(image, 0, 0, canvas.width, canvas.height);
+					context.drawImage(image, 0, 0, canvas.width, canvas.height);
 
-				let hasTransparency: boolean	=
-					file.type !== 'image/jpeg' &&
-					context.getImageData(0, 0, image.width, image.height).data[3] !== 255
-				;
+					let hasTransparency: boolean	=
+						file.type !== 'image/jpeg' &&
+						context.getImageData(0, 0, image.width, image.height).data[3] !== 255
+					;
 
-				let encodedImage: string	=
-					hasTransparency ?
-						canvas.toDataURL() :
-						canvas.toDataURL(
-							'image/jpeg',
-							Math.min(960 / Math.max(canvas.width, canvas.height), 1)
-						)
-				;
+					let encodedImage: string	=
+						hasTransparency ?
+							canvas.toDataURL() :
+							canvas.toDataURL(
+								'image/jpeg',
+								Math.min(960 / Math.max(canvas.width, canvas.height), 1)
+							)
+					;
 
-				URL.revokeObjectURL(image.src);
+					URL.revokeObjectURL(image.src);
 
-				this.send(encodedImage);
-			}
-
-			private send (encodedImage: string) : void {
-				this.session.sendText('![](' + encodedImage + ')');
-			}
-
-			public insert (elem: HTMLElement) : void {
-				let files: File[]	= Util.getValue(elem, 'files', []);
-
-				if (files.length > 0) {
-					let file: File	= files[0];
-
-					if (file.type === 'image/gif') {
-						let reader: FileReader	= new FileReader;
-						reader.onload			= () => this.send(reader.result);
-						reader.readAsDataURL(file);
-					}
-					else {
-						let image: HTMLImageElement	= new Image;
-						image.onload				= () => this.processImage(image, file);
-						image.src					= URL.createObjectURL(file);
-					}
-
-					$(elem).val('');
+					this.send(encodedImage);
 				}
-			}
 
-			public constructor (session: Session.ISession) {
-				this.session	= session;
+				private send (encodedImage: string) : void {
+					this.session.sendText('![](' + encodedImage + ')');
+				}
 
-				Elements.buttons.
-					find('input[type="file"]').
-					each((i: number, elem: HTMLElement) => {
-						let isClicked: boolean;
+				public insert (elem: HTMLElement) : void {
+					let files: File[]	= Util.getValue(elem, 'files', []);
 
-						$(elem).
-							click(e => {
-								e.stopPropagation();
-								e.preventDefault();
-							}).
-							parent().click(() => {
-								if (!isClicked) {
-									isClicked	= true;
+					if (files.length > 0) {
+						let file: File	= files[0];
 
-									Util.triggerClick(elem);
+						if (file.type === 'image/gif') {
+							let reader: FileReader	= new FileReader;
+							reader.onload			= () => this.send(reader.result);
+							reader.readAsDataURL(file);
+						}
+						else {
+							let image: HTMLImageElement	= new Image;
+							image.onload				= () => this.processImage(image, file);
+							image.src					= URL.createObjectURL(file);
+						}
 
-									let finish: Function;
+						$(elem).val('');
+					}
+				}
 
-									let intervalId: number	= setInterval(() => {
-										if (Util.getValue(elem, 'files', []).length > 0) {
-											finish();
-										}
-									}, 500);
+				public constructor (session: Session.ISession) {
+					this.session	= session;
 
-									finish	= () => {
-										clearInterval(intervalId);
-										setTimeout(() =>
-											isClicked	= false
-										, 500);
-									};
+					Elements.buttons.
+						find('input[type="file"]').
+						each((i: number, elem: HTMLElement) => {
+							let isClicked: boolean;
 
-									setTimeout(finish, 5000);
-								}
-							})
-						;
-					})
-				;
+							$(elem).
+								click(e => {
+									e.stopPropagation();
+									e.preventDefault();
+								}).
+								parent().click(() => {
+									if (!isClicked) {
+										isClicked	= true;
+
+										Util.triggerClick(elem);
+
+										let finish: Function;
+
+										let intervalId: number	= setInterval(() => {
+											if (Util.getValue(elem, 'files', []).length > 0) {
+												finish();
+											}
+										}, 500);
+
+										finish	= () => {
+											clearInterval(intervalId);
+											setTimeout(() =>
+												isClicked	= false
+											, 500);
+										};
+
+										setTimeout(finish, 5000);
+									}
+								})
+							;
+						})
+					;
+				}
 			}
 		}
 	}
