@@ -1,6 +1,7 @@
 /// <reference path="../basebuttonmanager.ts" />
 /// <reference path="../elements.ts" />
 /// <reference path="../idialogmanager.ts" />
+/// <reference path="../isidebar.ts" />
 /// <reference path="../../analytics.ts" />
 /// <reference path="../../icontroller.ts" />
 /// <reference path="../../strings.ts" />

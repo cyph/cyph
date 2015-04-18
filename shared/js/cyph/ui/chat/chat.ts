@@ -7,6 +7,7 @@
 /// <reference path="../elements.ts" />
 /// <reference path="../idialogmanager.ts" />
 /// <reference path="../inotifier.ts" />
+/// <reference path="../isidebar.ts" />
 /// <reference path="../../analytics.ts" />
 /// <reference path="../../icontroller.ts" />
 /// <reference path="../../strings.ts" />
@@ -25,8 +26,6 @@ module Cyph {
 				public isConnected: boolean		= false;
 				public isDisconnected: boolean	= false;
 				public isFriendTyping: boolean	= false;
-				public isVideoCall: boolean		= false;
-				public isWebRTCEnabled: boolean	= false;
 				public unreadMessages: number	= 0;
 				public currentMessage: string	= '';
 				public state: States			= States.none;
@@ -34,7 +33,7 @@ module Cyph {
 
 				public cyphertext: Cyphertext;
 				public photoManager: PhotoManager;
-				public p2p: P2P.IP2P;
+				public p2pManager: P2PManager;
 				public session: Session.ISession;
 
 				public changeState (state: States) : void {
@@ -223,12 +222,6 @@ module Cyph {
 				});
 			}
 
-			public enableWebRTC () {
-				this.controller.update(() => {
-					this.isWebRTCEnabled	= true;
-				});
-			}
-
 			public formattingHelp () {
 				this.baseButtonClick(() => {
 					$mdDialog.show({
@@ -290,69 +283,6 @@ module Cyph {
 
 			setInterval(this.onMessageChange, 5000);
 
-			public sendFileButton () {
-				this.baseButtonClick(() => {
-					if (this.isWebRTCEnabled) {
-						if (!this.isVideoCall) {
-							webRTC.helpers.requestCall('file');
-						}
-						else {
-							webRTC.helpers.sendFile();
-						}
-					}
-				});
-			}
-
-			public toggleVideoCall (isVideoCall) {
-				this.controller.update(() => {
-					this.isVideoCall	= isVideoCall;
-				});
-			}
-
-			public videoCallButton () {
-				this.baseButtonClick(() => {
-					if (this.isWebRTCEnabled) {
-						if (!this.isVideoCall) {
-							webRTC.helpers.requestCall('video');
-						}
-						else {
-							webRTC.helpers.setUpStream({video: !webRTC.streamOptions.video});
-						}
-					}
-				});
-			}
-
-			public videoCallClose () {
-				this.baseButtonClick(() => {
-					webRTC.helpers.kill();
-				});
-			}
-
-			public voiceCallButton () {
-				this.baseButtonClick(() => {
-					if (this.isWebRTCEnabled) {
-						if (!this.isVideoCall) {
-							webRTC.helpers.requestCall('voice');
-						}
-						else {
-							webRTC.helpers.setUpStream({audio: !webRTC.streamOptions.audio});
-						}
-					}
-				});
-			}
-
-			public webRTCDisabledAlert () {
-				let message	= $('#webrtc-disabled-message').attr('title');
-
-				if (message) {
-					alertDialog({
-						title: Strings.videoCallingTitle,
-						content: message,
-						ok: Strings.ok
-					});
-				}
-			}
-
 
 
 
@@ -386,4 +316,3 @@ module Cyph {
 
 
 			let session: Session.ISession	= new Session.ThreadedSession(Util.getUrlState(), controller);
-			let p2p: P2P.IP2P				= new new P2P.P2P(session, controller);
