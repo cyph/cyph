@@ -74,6 +74,7 @@
         "cyph/ui/chat/cyphertext.ts",
         "cyph/ui/chat/enums.ts",
         "cyph/ui/chat/ichat.ts",
+        "cyph/ui/chat/p2pmanager.ts",
         "cyph/ui/chat/photomanager.ts",
         "cyph/ui/chat/scrollmanager.ts",
         "../lib/typings/tsd.d.ts"
