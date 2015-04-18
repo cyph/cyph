@@ -1,15 +1,8 @@
-/// <reference path="../affiliate.ts" />
 /// <reference path="../elements.ts" />
-/// <reference path="../idialogmanager.ts" />
-/// <reference path="../nanoscroller.ts" />
-/// <reference path="../visibilitywatcher.ts" />
 /// <reference path="../../config.ts" />
-/// <reference path="../../env.ts" />
-/// <reference path="../../icontroller.ts" />
 /// <reference path="../../util.ts" />
 /// <reference path="../../session/isession.ts" />
 /// <reference path="../../../global/base.ts" />
-/// <reference path="../../../global/plugins.jquery.ts" />
 /// <reference path="../../../../lib/typings/jquery/jquery.d.ts" />
 
 
@@ -18,14 +11,14 @@ module Cyph {
 		export class PhotoManager {
 			private session: Session.ISession;
 
-			private processImage (image: Image) : void {
+			private processImage (image: HTMLImageElement, file: File) : void {
 				let canvas	= document.createElement('canvas');
 				let ctx		= canvas.getContext('2d');
 
-				let widthFactor: number		= Config.photoConfig.maxWidth / img.width;
+				let widthFactor: number		= Config.photoConfig.maxWidth / image.width;
 				widthFactor					= widthFactor > 1 ? 1 : widthFactor;
 
-				let heightFactor: number	= Config.photoConfig.maxWidth / img.height;
+				let heightFactor: number	= Config.photoConfig.maxWidth / image.height;
 				heightFactor				= heightFactor > 1 ? 1 : heightFactor;
 
 				let factor: number	= Math.min(widthFactor, heightFactor);
@@ -33,11 +26,11 @@ module Cyph {
 				canvas.width	= image.width * factor;
 				canvas.height	= image.height * factor;
 
-				ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+				ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
 
 				let hasTransparency: boolean	=
-					imageFile.type !== 'image/jpeg' &&
-					ctx.getImageData(0, 0, img.width, img.height).data[3] !== 255
+					file.type !== 'image/jpeg' &&
+					ctx.getImageData(0, 0, image.width, image.height).data[3] !== 255
 				;
 
 				let encodedImage: string	=
@@ -51,7 +44,7 @@ module Cyph {
 
 				URL.revokeObjectURL(image.src);
 
-				sendImage(encodedImage);
+				this.send(encodedImage);
 			}
 
 			private send (encodedImage: string) : void {
@@ -66,13 +59,13 @@ module Cyph {
 
 					if (file.type === 'image/gif') {
 						let reader: FileReader	= new FileReader;
-						reader.onload			= () => sendImage(reader.result);
+						reader.onload			= () => this.send(reader.result);
 						reader.readAsDataURL(file);
 					}
 					else {
-						let image: Image	= new Image;
-						image.onload		= () => this.processImage(image);
-						image.src			= URL.createObjectURL(file);
+						let image: HTMLImageElement	= new Image;
+						image.onload				= () => this.processImage(image, file);
+						image.src					= URL.createObjectURL(file);
 					}
 
 					$(elem).val('');
@@ -99,7 +92,12 @@ module Cyph {
 									Util.triggerClick(elem);
 
 									let finish: Function;
-									let intervalId: number;
+
+									let intervalId	= setInterval(() => {
+										if (Util.getValue(elem, 'files', []).length > 0) {
+											finish();
+										}
+									}, 500);
 
 									finish	= () => {
 										clearInterval(intervalId);
@@ -107,12 +105,6 @@ module Cyph {
 											isClicked	= false
 										, 500);
 									};
-
-									intervalId	= setInterval(() => {
-										if (Util.getValue(elem, 'files', []).length > 0) {
-											finish();
-										}
-									}, 500);
 
 									setTimeout(finish, 5000);
 								}
