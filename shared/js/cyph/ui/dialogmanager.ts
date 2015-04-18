@@ -85,16 +85,21 @@ module Cyph {
 				promise.then(f).catch(f);
 			}
 
-			public toast (o: {
-				content: string;
-				position: string;
-				delay: number;
-			}) : void {
+			public toast (
+				o: {
+					content: string;
+					position: string;
+					delay: number;
+				},
+				callback?: () => void
+			) : void {
 				this.$mdToast.show({
 					template: '<md-toast>' + o.content + '</md-toast>',
 					hideDelay: o.delay,
 					position: o.position
 				});
+
+				setTimeout(callback, o.delay + 500);
 			}
 
 			public constructor (

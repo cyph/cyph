@@ -2,7 +2,7 @@
 /// <reference path="../global/base.ts" />
 
 
-module Cyph.im {
+module Cyph {
 	export let Strings	= {
 		description: '',
 		newMessageNotification: '',

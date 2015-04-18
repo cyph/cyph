@@ -1,5 +1,5 @@
 /// <reference path="ui.ts" />
-/// <reference path="../strings.ts" />
+/// <reference path="../../cyph/strings.ts" />
 /// <reference path="../../cyph/p2p/p2p.ts" />
 /// <reference path="../../cyph/session/enums.ts" />
 /// <reference path="../../cyph/session/isession.ts" />
@@ -17,7 +17,7 @@ module Cyph.im {
 				beginChatUi(() =>
 					Cyph.UI.Elements.window.
 						unload(() => session.close()).
-						on('beforeunload', () => Strings.disconnectWarning)
+						on('beforeunload', () => Cyph.Strings.disconnectWarning)
 				)
 			);
 
@@ -66,20 +66,20 @@ module Cyph.im {
 
 									if (isConnected) {
 										addMessageToChat(
-											Strings.webRTCConnect,
+											Cyph.Strings.webRTCConnect,
 											Cyph.Session.Authors.app,
 											false
 										);
 									}
 									else {
 										alertDialog({
-											title: Strings.videoCallingTitle,
-											content: Strings.webRTCDisconnect,
-											ok: Strings.ok
+											title: Cyph.Strings.videoCallingTitle,
+											content: Cyph.Strings.webRTCDisconnect,
+											ok: Cyph.Strings.ok
 										});
 
 										addMessageToChat(
-											Strings.webRTCDisconnect,
+											Cyph.Strings.webRTCDisconnect,
 											Cyph.Session.Authors.app,
 											false
 										);
@@ -111,13 +111,13 @@ module Cyph.im {
 									let name: string		= e.args[0];
 									let callback: Function	= e.args[1];
 
-									let title: string	= Strings.incomingFile + ' ' + name;
+									let title: string	= Cyph.Strings.incomingFile + ' ' + name;
 
 									confirmDialog({
 										title: title,
-										content: Strings.incomingFileWarning,
-										ok: Strings.save,
-										cancel: Strings.reject
+										content: Cyph.Strings.incomingFileWarning,
+										ok: Cyph.Strings.save,
+										cancel: Cyph.Strings.reject
 									}, (ok: boolean) => callback(ok, title));
 									break;
 								}
@@ -138,16 +138,16 @@ module Cyph.im {
 
 									alertDialog({
 										title: title,
-										content: Strings.incomingFileReject,
-										ok: Strings.ok
+										content: Cyph.Strings.incomingFileReject,
+										ok: Cyph.Strings.ok
 									});
 									break;
 								}
 								case Cyph.P2P.UIEvents.Events.tooLarge: {
 									alertDialog({
-										title: Strings.oopsTitle,
-										content: Strings.fileTooLarge,
-										ok: Strings.ok
+										title: Cyph.Strings.oopsTitle,
+										content: Cyph.Strings.fileTooLarge,
+										ok: Cyph.Strings.ok
 									});
 									break;
 								}
@@ -157,8 +157,8 @@ module Cyph.im {
 
 									let isFromMe: boolean	= author === Cyph.Session.Authors.me;
 									let message: string		= isFromMe ?
-											Strings.fileTransferInitMe :
-											Strings.fileTransferInitFriend
+											Cyph.Strings.fileTransferInitMe :
+											Cyph.Strings.fileTransferInitFriend
 									;
 
 									addMessageToChat(
@@ -179,14 +179,14 @@ module Cyph.im {
 									let callback: Function	= e.args[2];
 
 									confirmDialog({
-										title: Strings.videoCallingTitle,
+										title: Cyph.Strings.videoCallingTitle,
 										content:
-											Strings.webRTCRequest + ' ' +
+											Cyph.Strings.webRTCRequest + ' ' +
 											Strings[callType + 'Call'] + '. ' +
-											Strings.webRTCWarning
+											Cyph.Strings.webRTCWarning
 										,
-										ok: Strings.continueDialogAction,
-										cancel: Strings.decline
+										ok: Cyph.Strings.continueDialogAction,
+										cancel: Cyph.Strings.decline
 									}, callback, timeout);
 									break;
 								}
@@ -195,30 +195,30 @@ module Cyph.im {
 									let callback: Function	= e.args[1];
 
 									confirmDialog({
-										title: Strings.videoCallingTitle,
+										title: Cyph.Strings.videoCallingTitle,
 										content:
-											Strings.webRTCInit + ' ' +
+											Cyph.Strings.webRTCInit + ' ' +
 											Strings[callType + 'Call'] + '. ' +
-											Strings.webRTCWarning
+											Cyph.Strings.webRTCWarning
 										,
-										ok: Strings.continueDialogAction,
-										cancel: Strings.cancel
+										ok: Cyph.Strings.continueDialogAction,
+										cancel: Cyph.Strings.cancel
 									}, callback);
 									break;
 								}
 								case Cyph.P2P.UIEvents.Events.requestConfirmation: {
 									alertDialog({
-										title: Strings.videoCallingTitle,
-										content: Strings.webRTCRequestConfirmation,
-										ok: Strings.ok
+										title: Cyph.Strings.videoCallingTitle,
+										content: Cyph.Strings.webRTCRequestConfirmation,
+										ok: Cyph.Strings.ok
 									});
 									break;
 								}
 								case Cyph.P2P.UIEvents.Events.requestRejection: {
 									alertDialog({
-										title: Strings.videoCallingTitle,
-										content: Strings.webRTCDeny,
-										ok: Strings.ok
+										title: Cyph.Strings.videoCallingTitle,
+										content: Cyph.Strings.webRTCDeny,
+										ok: Cyph.Strings.ok
 									});
 									break;
 								}
