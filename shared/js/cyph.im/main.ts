@@ -56,7 +56,7 @@ angular.
 
 
 				history.pushState({}, '', location.pathname);
-				self.onhashchange = () => { location.reload() };
+				self.onhashchange = () => location.reload();
 			});
 		}
 	]).
