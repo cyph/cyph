@@ -32,7 +32,7 @@ module Cyph {
 				isStartingNewCyph: <boolean> false
 			};
 
-			public constructor (descriptor?: string, controller: IController, id: string = Util.generateGuid()) {
+			public constructor (descriptor?: string, controller?: IController, id: string = Util.generateGuid()) {
 				this.controller	= controller;
 				this.id			= id;
 
@@ -56,7 +56,7 @@ module Cyph {
 					);
 
 					session.on(vars.events.sendText, (e: { text: string; }) =>
-						session.sendText(e.text);
+						session.sendText(e.text)
 					);
 
 					session.on(vars.events.updateState, (e: { key: string; value: any; }) =>
@@ -72,7 +72,10 @@ module Cyph {
 					ThreadedSession.events.updateStateThread,
 					(e: { key: string; value: any; }) => {
 						this.state[e.key]	= e.value;
-						this.controller.update();
+
+						if (this.controller) {
+							this.controller.update();
+						}
 					}
 				);
 			}

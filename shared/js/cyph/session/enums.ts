@@ -10,6 +10,7 @@ module Cyph {
 		}
 
 		export class Events {
+			public static abort: string				= 'abort';
 			public static beginChat: string			= 'beginChat';
 			public static beginWaiting: string		= 'beginWaiting';
 			public static channelRatchet: string	= 'channelRatchet';

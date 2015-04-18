@@ -22,7 +22,7 @@ module Cyph {
 					'\n\n' + navigator.language +
 					'\n\n' + (language || '') +
 					'\n\n' + location.toString() +
-					'\n\n' + (webSign ? webSign.toString(shouldIncludeBootstrapText) : '')
+					'\n\n' + (WebSign ? WebSign.toString(shouldIncludeBootstrapText) : '')
 				;
 
 				/* Strip URL fragment where applicable */

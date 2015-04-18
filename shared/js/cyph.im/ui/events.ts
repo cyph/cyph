@@ -13,6 +13,10 @@ module Cyph.im {
 		export let events	= (session: Cyph.Session.ISession) : void => {
 			/* Main session events */
 
+			session.on(Cyph.Session.Events.abort, () =>
+				Cyph.UI.Elements.window.off('beforeunload')
+			);
+
 			session.on(Cyph.Session.Events.beginChat, () =>
 				beginChatUi(() =>
 					Cyph.UI.Elements.window.

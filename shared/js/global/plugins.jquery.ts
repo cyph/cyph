@@ -2,7 +2,7 @@
 /// <reference path="../../lib/typings/jquery/jquery.d.ts" />
 
 
-$.fn.bounds	= (e) : {[direction: string] : number} => {
+$.fn.bounds	= e => {
 	let $this: JQuery				= $(e.currentTarget);
 	let bounds: JQueryCoordinates	= $this.offset();
 
