@@ -1,4 +1,4 @@
-/// <reference path="../../global/base.ts" />
+/// <reference path="../../../global/base.ts" />
 
 
 module Cyph {
