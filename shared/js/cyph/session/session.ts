@@ -286,7 +286,7 @@ module Cyph {
 			}
 
 			public sendText (text: string) : void {
-				this.sendBase(new Message(Events.text, text));
+				this.send(new Message(Events.text, text));
 			}
 
 			public trigger (event: string, data?: any) : void {
