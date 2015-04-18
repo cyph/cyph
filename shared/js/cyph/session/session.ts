@@ -19,20 +19,10 @@
 module Cyph {
 	export module Session {
 		export class Session implements ISession {
-			public static state	= {
-				cyphId: 'cyphId',
-				sharedSecret: 'sharedSecret',
-				hasKeyExchangeBegun: 'hasKeyExchangeBegun',
-				isAlive: 'isAlive',
-				isCreator: 'isCreator',
-				isStartingNewCyph: 'isStartingNewCyph'
-			};
-
-
-			private receivedMessages: {[id: string] : boolean}		= {};
-			private sendQueue: string[]								= [];
-			private lastIncomingMessageTimestamp: number			= 0;
-			private lastOutgoingMessageTimestamp: number			= 0;
+			private receivedMessages: {[id: string] : boolean}	= {};
+			private sendQueue: string[]							= [];
+			private lastIncomingMessageTimestamp: number		= 0;
+			private lastOutgoingMessageTimestamp: number		= 0;
 
 			private id: string;
 			private channel: Channel.IChannel;
@@ -61,7 +51,7 @@ module Cyph {
 						break;
 					}
 					case OTREvents.begin: {
-						this.updateState(Session.state.hasKeyExchangeBegun, true);
+						this.updateState(State.hasKeyExchangeBegun, true);
 						break;
 					}
 					case OTREvents.receive: {
@@ -135,8 +125,8 @@ module Cyph {
 
 				let middle: number	= Math.ceil(descriptor.length / 2);
 
-				this.updateState(Session.state.cyphId, descriptor.substr(0, middle));
-				this.updateState(Session.state.sharedSecret,
+				this.updateState(State.cyphId, descriptor.substr(0, middle));
+				this.updateState(State.sharedSecret,
 					this.state.sharedSecret ||
 					descriptor.substr(middle)
 				);
@@ -145,7 +135,7 @@ module Cyph {
 			private setUpChannel (channelDescriptor: string) : void {
 				this.channel	= new Channel.RatchetedChannel(this, channelDescriptor, {
 					onopen: (isCreator: boolean) : void => {
-						this.updateState(Session.state.isCreator, isCreator);
+						this.updateState(State.isCreator, isCreator);
 
 						if (this.state.isCreator) {
 							this.trigger(Events.beginWaiting);
@@ -187,7 +177,7 @@ module Cyph {
 
 
 				/* true = yes; false = no; null = maybe */
-				this.updateState(Session.state.isStartingNewCyph,
+				this.updateState(State.isStartingNewCyph,
 					!descriptor ?
 						true :
 						descriptor.length > Config.secretLength ?
@@ -237,7 +227,7 @@ module Cyph {
 			}
 
 			public close (shouldSendEvent: boolean = true) : void {
-				this.updateState(Session.state.isAlive, false);
+				this.updateState(State.isAlive, false);
 
 				let closeChat: Function	= () =>
 					this.channel.close(() =>
