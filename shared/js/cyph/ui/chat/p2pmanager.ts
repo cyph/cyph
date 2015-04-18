@@ -4,6 +4,9 @@
 /// <reference path="../isidebar.ts" />
 /// <reference path="../../icontroller.ts" />
 /// <reference path="../../strings.ts" />
+/// <reference path="../../session/isession.ts" />
+/// <reference path="../../p2p/ip2p.ts" />
+/// <reference path="../../p2p/p2p.ts" />
 /// <reference path="../../../global/base.ts" />
 /// <reference path="../../../../lib/typings/jquery/jquery.d.ts" />
 

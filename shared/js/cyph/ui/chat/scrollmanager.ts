@@ -30,11 +30,7 @@ module Cyph {
 
 					/* Process read-ness and scrolling */
 					if ($elem.is('.message-item.unread')) {
-						let currentScrollPosition: number	= Util.getValue(
-							Elements.messageList,
-							'scrollPosition',
-							() => 0
-						)();
+						let currentScrollPosition: number	= Elements.messageList['scrollPosition']();
 
 						if (
 							VisibilityWatcher.isVisible &&
