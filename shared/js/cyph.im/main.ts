@@ -63,8 +63,6 @@ angular.
 	config([
 		'$compileProvider',
 
-		$compileProvider => {
-			$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|sms):/);
-		}
+		$compileProvider => $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|sms):/)
 	]);
 ;
