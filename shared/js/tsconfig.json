@@ -37,7 +37,6 @@
         "typings/storage.d.ts",
         "typings/websign.d.ts",
         "cyph.im/ui/enums.ts",
-        "cyph.im/ui/events.ts",
         "cyph.im/ui/ui.ts",
         "cyph/channel/channel.ts",
         "cyph/channel/ichannel.ts",
