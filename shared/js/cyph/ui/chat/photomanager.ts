@@ -51,7 +51,7 @@ module Cyph {
 				this.session.sendText('![](' + encodedImage + ')');
 			}
 
-			public insertPhoto (elem: HTMLElement) : void {
+			public insert (elem: HTMLElement) : void {
 				let files: File[]	= Util.getValue(elem, 'files', []);
 
 				if (files.length > 0) {
