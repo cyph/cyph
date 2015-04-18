@@ -93,7 +93,7 @@ module Cyph {
 
 									let finish: Function;
 
-									let intervalId	= setInterval(() => {
+									let intervalId: number	= setInterval(() => {
 										if (Util.getValue(elem, 'files', []).length > 0) {
 											finish();
 										}
