@@ -81,7 +81,7 @@ module Cyph {
 						let isClicked: boolean;
 
 						$(elem).
-							click((e: Event) => {
+							click(e => {
 								e.stopPropagation();
 								e.preventDefault();
 							}).
