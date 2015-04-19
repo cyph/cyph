@@ -1,10 +1,13 @@
 /// <reference path="enums.ts" />
+/// <reference path="../../cyph/errors.ts" />
 /// <reference path="../../cyph/icontroller.ts" />
 /// <reference path="../../cyph/ui/elements.ts" />
 /// <reference path="../../cyph/ui/idialogmanager.ts" />
 /// <reference path="../../cyph/ui/inotifier.ts" />
 /// <reference path="../../cyph/ui/isidebar.ts" />
 /// <reference path="../../cyph/ui/isignupform.ts" />
+/// <reference path="../../cyph/ui/signupform.ts" />
+/// <reference path="../../cyph/ui/chat/chat.ts" />
 /// <reference path="../../cyph/ui/chat/ichat.ts" />
 /// <reference path="../../global/base.ts" />
 /// <reference path="../../../lib/typings/jquery/jquery.d.ts" />
@@ -31,8 +34,8 @@ module Cyph.im {
 				let copyUrl: string	=
 					((!Cyph.Env.isOnion && location['origin']) || 'https://www.cyph.im') +
 					'/#' +
-					this.chat.session.cyphId +
-					this.chat.session.sharedSecret
+					this.chat.session.state.cyphId +
+					this.chat.session.state.sharedSecret
 				;
 
 				this.copyUrlEncoded	= encodeURIComponent(copyUrl);
@@ -117,7 +120,7 @@ module Cyph.im {
 					!Cyph.Config.validWebSignHashes[localStorage.webSignBootHash]
 				) {
 					this.changeState(States.webSignObsolete);
-					Errors.logWebSign();
+					Cyph.Errors.logWebSign();
 				}
 				else {
 					processUrlState	= () : void => {
