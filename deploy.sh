@@ -58,12 +58,23 @@ fi
 
 # Compile + translate + minify
 for d in cyph.im cyph.com ; do
-	cd $d
+	cd translations
+
+	echo "var Translations = { \
+		$(echo "$( \
+			ls | \
+			sed 's/\.json//' | \
+			xargs -I% bash -c 'echo -n "\"%\": $(cat %.json | tr "\n" " "),"')" | \
+			rev | \
+			cut -c 2- | \
+			rev \
+		) \
+	};" > ../$d/js/preload/translations.ts
+
+	cd ../$d
 
 	ls css/*.scss | perl -pe 's/(.*)\.scss/\1/g' | xargs -I% sass "%.scss" "%.css"
 	find shared/js -name '*.ts' | perl -pe 's/(.*)\.ts/\1/g' | xargs -I% tsc --sourceMap --out %.js %.ts
-
-	../translate.py
 
 	if [ "${branch}" == 'staging' ] ; then
 		echo "JS Minify ${d}"

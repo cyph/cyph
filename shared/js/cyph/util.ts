@@ -39,15 +39,6 @@ module Cyph {
 			return Date.now() + '-' + crypto.getRandomValues(new Uint32Array(1))[0];
 		}
 
-		public static getStrings (strings: any) : void {
-			Object.keys(strings).forEach((k: string) =>
-				strings[k]	= !Env.isMainThread ? '' :
-					($('meta[name="' + k + '"]').attr('content') || '').
-						replace(/\s+/g, ' ').
-						trim()
-			);
-		}
-
 		public static getTimestamp () : string {
 			let date: Date		= new Date;
 			let hour: number	= date.getHours();
@@ -274,6 +265,95 @@ module Cyph {
 				join('&').
 				replace(/%20/g, '+')
 			;
+		}
+
+		public static translate (
+			text: string,
+			ignoreWhitespace?: boolean,
+			htmlDecode?: boolean,
+			defaultValue: string = text
+		) : string {
+			if (!Env.isMainThread) {
+				if (!htmlDecode) {
+					return defaultValue;
+				}
+				else {
+					throw new Error('Can only HTML decode translations in main thread.');
+				}
+			}
+
+			if (ignoreWhitespace) {
+				text	= text.replace(/\s+/g, ' ').trim();
+			}
+
+			/* Special cases for our language codes */
+			let language: string	=
+				Env.language === 'nb' ?
+					'no' :
+					Env.language === 'zh-cn'?
+						'zh-chs' :
+						Env.language === 'zh-tw' ?
+							'zh-cht' :
+							Env.language
+			;
+
+			let translation: string	= Util.getValue(
+				Util.getValue(Translations || {}, language, {}),
+				text,
+				defaultValue
+			);
+
+			return htmlDecode ?
+				$('<div />').html(translation).text() :
+				translation
+			;
+		}
+
+		public static translateHtml (html: string|HTMLElement) : string {
+			if (!Env.isMainThread) {
+				if (typeof html === 'string') {
+					return html;
+				}
+				else {
+					throw new Error('Can only translate DOM elements in main thread.');
+				}
+			}
+
+			let $this: JQuery		= $(html);
+			let ngBind: string		= $this.attr('ng-bind');
+			let innerHtml: string	= $this.html().trim();
+
+			['content', 'placeholder', 'aria-label', 'label'].forEach((attr: string) => {
+				let value: string	= $this.attr(attr);
+
+				if (value) {
+					$this.attr(attr, Util.translate(value, true, true));
+				}
+			});
+
+			if (ngBind) {
+				$this.attr('ng-bind', ngBind.replace(/"([^"]*)"/g, (match, value) => {
+					let translation: string	= Util.translate(value, true, true, '');
+
+					return translation ?
+						'"' + translation + '"' :
+						match
+					;
+				}));
+			}
+
+			if (innerHtml) {
+				$this.html(innerHtml.replace(/(.*?)(\{\{.*?\}\}|$)/g, (match, value, binding) => {
+					let translation: string	= Util.translate(value, true, true, '');
+
+					return translation ?
+						translation + binding :
+						match
+					;
+				}));
+			}
+
+			return $this.prop('outerHTML');
 		}
 
 		public static triggerClick (elem: HTMLElement) {
