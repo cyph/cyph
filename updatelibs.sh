@@ -21,7 +21,6 @@ bower install --save \
 	magnific-popup \
 	nanoscroller \
 	unsemantic \
-	visibilityjs \
 	wow \
 	morr/jquery.appear \
 	julianlam/tabIndent.js \
