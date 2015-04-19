@@ -1,4 +1,5 @@
 /// <reference path="config.ts" />
+/// <reference path="util.ts" />
 /// <reference path="../global/base.ts" />
 
 
@@ -17,7 +18,16 @@ module Cyph {
 
 		public static host: string		= location.host.replace('www.', '');
 
-		public static language: string	= language;
+		public static language: string	= Util.getValue(
+			navigator,
+			[
+				'language',
+				'userLanguage',
+				'browserLanguage',
+				'systemLanguage'
+			],
+			Config.defaultLanguage
+		).toLowerCase();
 
 
 		public static isWeb: boolean		= IS_WEB;

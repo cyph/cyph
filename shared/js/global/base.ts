@@ -21,3 +21,4 @@ var language: string;
 var localStorage: Storage;
 var processUrlState: Function;
 var WebSign: WebSign;
+var Translations: {[language: string] : {[text: string] : string}};
