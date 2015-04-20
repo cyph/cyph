@@ -48,11 +48,10 @@ angular.
 			let dialogManager: Cyph.UI.IDialogManager	= new Cyph.UI.DialogManager($mdDialog, $mdToast);
 			let notifier: Cyph.UI.INotifier				= new Cyph.UI.Notifier;
 
-			self.ui	= new Cyph.im.UI.UI(controller, dialogManager, mobileMenu, notifier);
-
-
 			$scope.Cyph	= Cyph;
-			$scope.ui	= self.ui;
+			$scope.ui	= new Cyph.im.UI.UI(controller, dialogManager, mobileMenu, notifier);
+
+			self['ui']	= $scope.ui;
 
 
 			history.pushState({}, '', location.pathname);

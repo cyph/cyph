@@ -1,4 +1,5 @@
 /// <reference path="analytics.ts" />
+/// <reference path="env.ts" />
 /// <reference path="util.ts" />
 /// <reference path="../global/base.ts" />
 
@@ -18,10 +19,9 @@ module Cyph {
 				);
 
 				let message: string		= exception +
-					'\n\n' + navigator.userAgent +
-					'\n\n' + navigator.language +
-					'\n\n' + (language || '') +
-					'\n\n' + location.toString() +
+					'\n\n' + Env.userAgent +
+					'\n\n' + Env.language +
+					'\n\n' + (location ? location.toString() : '') +
 					'\n\n' + (WebSign ? WebSign.toString(shouldIncludeBootstrapText) : '')
 				;
 
