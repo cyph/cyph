@@ -89,7 +89,7 @@ module Cyph {
 			;
 
 			let value: T	= keys.length > 0 ?
-				keys.reduce((value: T, key: string) =>
+				keys.reduce((value: T, key: string) : T =>
 					value !== null ?
 						value :
 						key in o ?
@@ -180,6 +180,7 @@ module Cyph {
 
 		public static request (o: {
 			async?: boolean;
+			contentType?: string;
 			data?: any;
 			error?: Function;
 			method?: string;
@@ -188,12 +189,17 @@ module Cyph {
 			url: string;
 		}) : void {
 			let async: boolean		= Util.getValue(o, 'async', true) !== false;
+			let contentType: string	= Util.getValue(o, 'contentType', 'application/x-www-form-urlencoded');
 			let data: any			= Util.getValue<any>(o, 'data', '');
 			let error: Function		= Util.getValue(o, 'error', () => {});
 			let method: string		= Util.getValue(o, 'method', 'GET');
 			let success: Function	= Util.getValue(o, 'success', () => {});
 			let timeout: number		= Util.getValue(o, 'timeout', 0);
 			let url: string			= o.url;
+
+			if (url.slice('-5') === '.json') {
+				contentType	= 'application/json';
+			}
 
 			if (method === 'GET') {
 				url		+= '?' + (
@@ -205,13 +211,16 @@ module Cyph {
 				data	= null;
 			}
 			else if (typeof data === 'object') {
-				data	= JSON.stringify(data);
+				data	= contentType === 'application/json' ?
+					JSON.stringify(data) :
+					Util.toQueryString(data)
+				;
 			}
 
 
 			let xhr: XMLHttpRequest	= new XMLHttpRequest;
 
-			let callback: Function		= () => (
+			let callback: Function	= () => (
 				xhr.status === 200 ?
 					success :
 					error
@@ -230,6 +239,7 @@ module Cyph {
 			xhr.timeout	= timeout;
 
 			xhr.open(method, url, async);
+			xhr.setRequestHeader('Content-Type', contentType);
 			xhr.send(data);
 
 			if (!async) {
@@ -238,15 +248,14 @@ module Cyph {
 		}
 
 		public static retryUntilComplete (f: Function, retryIf?: Function) : void {
-			let go	= () : void =>
-				f((delay: number = 250) : void => {
-					if (!retryIf || retryIf()) {
-						setTimeout(go, delay);
-					}
-				})
-			;
-
-			go();
+			f((delay: number = 250) : void => {
+				if (!retryIf || retryIf()) {
+					setTimeout(
+						() => Util.retryUntilComplete(f, retryIf),
+						delay
+					);
+				}
+			});
 		}
 
 		public static toQueryString (o: any, parent?: string) : string {

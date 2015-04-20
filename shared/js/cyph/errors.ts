@@ -33,7 +33,7 @@ module Cyph {
 					Util.request({
 						method: 'POST',
 						url: 'https://mandrillapp.com/api/1.0/messages/send.json',
-						data: {
+						data: JSON.stringify({
 							key: 'HNz4JExN1MtpKz8uP2RD1Q',
 							message: {
 								from_email: 'test@mandrillapp.com',
@@ -45,7 +45,7 @@ module Cyph {
 								subject: 'CYPH: ' + subject,
 								text: message
 							}
-						}
+						})
 					});
 				}
 
