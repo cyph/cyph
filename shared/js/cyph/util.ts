@@ -197,7 +197,7 @@ module Cyph {
 			let timeout: number		= Util.getValue(o, 'timeout', 0);
 			let url: string			= o.url;
 
-			if (url.slice('-5') === '.json') {
+			if (url.slice(-5) === '.json') {
 				contentType	= 'application/json';
 			}
 
