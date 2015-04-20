@@ -197,7 +197,7 @@ module Cyph {
 
 
 		private static _	= requireModules(
-			() => !!Util,
+			() => Util,
 			() => {
 				Thread.BlobBuilder	= Util.getValue(self, [
 					'BlobBuilder',

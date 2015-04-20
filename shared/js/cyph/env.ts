@@ -90,7 +90,7 @@ module Cyph {
 
 
 		private static _	= requireModules(
-			() => !!Util,
+			() => Util,
 			() => {
 				Env.language	= Util.getValue(
 					navigator,

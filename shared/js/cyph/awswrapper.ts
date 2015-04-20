@@ -111,7 +111,7 @@ module Cyph {
 
 
 		private static _	= requireModules(
-			() => !!Config,
+			() => Config,
 			() => {
 				AWS.config	= new AWS.Config(Config.awsConfig);
 			}
