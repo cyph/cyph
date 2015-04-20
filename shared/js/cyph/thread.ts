@@ -13,12 +13,19 @@ module Cyph {
 		}
 
 		private static threadEnvSetup (vars: any, importScripts: Function) : void {
+			location	= vars.location;
+
+			/* Wrapper to make importScripts work in local dev environments;
+				not used in prod because of WebSign packing */
 			let oldImportScripts	= importScripts;
 			importScripts			= (script: string) => {
-				oldImportScripts('http://localhost:8082' + script);
+				oldImportScripts(
+					(location['origin'] || 'http://localhost:8082') +
+					script
+				);
 			};
 
-			importScripts('/js/global/base.js');
+			importScripts('/js/cyph/thread.js');
 
 			console	= {
 				assert: () => {},
@@ -114,6 +121,7 @@ module Cyph {
 		private worker: Worker;
 
 		public constructor (f: Function, vars: any = {}, onmessage?: (e: MessageEvent) => any) {
+			vars.location			= location;
 			vars.threadRandomSeed	= crypto.getRandomValues(new Uint8Array(50000));
 
 			let s	=

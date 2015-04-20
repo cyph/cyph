@@ -329,7 +329,7 @@ module Cyph {
 						);
 					}
 
-					setInterval(this.messageChange, 5000);
+					setInterval(() => this.messageChange(), 5000);
 
 					tabIndent.renderAll();
 
