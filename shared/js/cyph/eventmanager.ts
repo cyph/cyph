@@ -36,30 +36,33 @@ module Cyph {
 			}
 		}
 
-		private static staticConstructor	= (() => {
-			if (Env.isMainThread) {
-				EventManager.on(
-					EventManager.mainThreadEvents,
-					(o: { method: string; args: any[]; }) =>
-						Thread.callMainThread(o.method, o.args)
-				);
-			}
-			else {
-				self.onmessage	= (e: MessageEvent) => {
-					if (e.data && e.data.isThreadEvent) {
-						EventManager.trigger(e.data.event, e.data.data, true);
-					}
-					else if (Cyph.Thread.onmessage) {
-						Thread.onmessage(e);
-					}
-				};
+		private static _	= requireModules(
+			() => Env && Thread,
+			() => {
+				if (Env.isMainThread) {
+					EventManager.on(
+						EventManager.mainThreadEvents,
+						(o: { method: string; args: any[]; }) =>
+							Thread.callMainThread(o.method, o.args)
+					);
+				}
+				else {
+					self.onmessage	= (e: MessageEvent) => {
+						if (e.data && e.data.isThreadEvent) {
+							EventManager.trigger(e.data.event, e.data.data, true);
+						}
+						else if (Cyph.Thread.onmessage) {
+							Thread.onmessage(e);
+						}
+					};
 
-				EventManager.on(
-					EventManager.untriggeredEvents,
-					(o: { event: string; data: any; }) =>
-						postMessage({event: o.event, data: o.data, isThreadEvent: true}, null)
-				);
+					EventManager.on(
+						EventManager.untriggeredEvents,
+						(o: { event: string; data: any; }) =>
+							postMessage({event: o.event, data: o.data, isThreadEvent: true}, null)
+					);
+				}
 			}
-		})();
+		);
 	}
 }

@@ -59,7 +59,7 @@ module Cyph {
 		public static logSmp		= Errors.baseErrorLog('SMP JUST FAILED FOR SOMEONE LADS');
 		public static logWebSign	= Errors.baseErrorLog('SOMEONE JUST GOT THE WEBSIGN ERROR SCREEN LADS', true);
 
-		private static staticConstructor	= (() => {
+		private static _	= (() => {
 			self.onerror	= <ErrorEventHandler> Errors.log;
 		})();
 	}
