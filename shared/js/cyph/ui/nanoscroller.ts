@@ -14,9 +14,10 @@ module Cyph {
 					Util.getValue(Elements.nanoScroller, 'nanoScroller', () => {})();
 				}
 			}
+
+			private static staticConstructor	= (() => {
+				$(NanoScroller.update);
+			})();
 		}
 	}
 }
-
-
-$(Cyph.UI.NanoScroller.update);

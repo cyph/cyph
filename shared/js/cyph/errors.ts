@@ -58,8 +58,9 @@ module Cyph {
 		public static log			= Errors.baseErrorLog('WARNING WARNING WARNING SOMETHING IS SRSLY FUCKED UP LADS');
 		public static logSmp		= Errors.baseErrorLog('SMP JUST FAILED FOR SOMEONE LADS');
 		public static logWebSign	= Errors.baseErrorLog('SOMEONE JUST GOT THE WEBSIGN ERROR SCREEN LADS', true);
+
+		private static staticConstructor	= (() => {
+			self.onerror	= <ErrorEventHandler> Errors.log;
+		})();
 	}
 }
-
-
-self.onerror	= <ErrorEventHandler> Cyph.Errors.log;
