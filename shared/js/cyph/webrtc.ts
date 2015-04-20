@@ -18,7 +18,7 @@ module Cyph {
 
 
 		private static _	= requireModules(
-			() => !!Util,
+			() => Util,
 			() => {
 				WebRTC.getUserMedia			= Util.getValue(navigator, [
 					'getUserMedia',
