@@ -55,7 +55,7 @@ module Cyph {
 			`unless you're actively hiding your current location from them). Continue?`
 	};
 
-	export let stringsStaticConstructor	= (() => {
+	export let _	= (() => {
 		Object.keys(Strings).forEach((k: string) =>
 			Strings[k]	= Util.translate(Strings[k])
 		);

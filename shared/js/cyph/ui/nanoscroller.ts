@@ -15,7 +15,7 @@ module Cyph {
 				}
 			}
 
-			private static staticConstructor	= (() => {
+			private static _	= (() => {
 				$(NanoScroller.update);
 			})();
 		}
