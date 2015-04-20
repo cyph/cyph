@@ -125,7 +125,7 @@ module Cyph {
 
 				receiveAnswer: (answer: string) : void => {
 					this.mutex.lock(() => {
-						this.retryUntilSuccessful(retry => {
+						this.retryUntilComplete(retry => {
 							this.peer.setRemoteDescription(
 								new WebRTC.SessionDescription(JSON.parse(answer)),
 								() => {
@@ -352,7 +352,7 @@ module Cyph {
 				);
 			}
 
-			private retryUntilSuccessful (f: Function) : void {
+			private retryUntilComplete (f: Function) : void {
 				Util.retryUntilComplete(f, () => this.isAccepted);
 			}
 
@@ -654,7 +654,7 @@ module Cyph {
 			}
 
 			public setUpStream (streamOptions?: any, offer?: string) : void {
-				this.retryUntilSuccessful(retry => {
+				this.retryUntilComplete(retry => {
 					if (!offer) {
 						if (this.localStreamSetUpLock) {
 							retry();
@@ -729,7 +729,7 @@ module Cyph {
 								if (!offer) {
 									this.setUpChannel(true);
 
-									this.retryUntilSuccessful(retry =>
+									this.retryUntilComplete(retry =>
 										this.peer.createOffer(offer => {
 											/* http://www.kapejod.org/en/2014/05/28/ */
 											offer.sdp	= offer.sdp.
@@ -743,7 +743,7 @@ module Cyph {
 												join('\n')
 											;
 
-											this.retryUntilSuccessful(retry =>
+											this.retryUntilComplete(retry =>
 												this.peer.setLocalDescription(offer, () => {
 													this.session.send(
 														new Session.Message(
@@ -772,13 +772,13 @@ module Cyph {
 									);
 								}
 								else {
-									this.retryUntilSuccessful(retry =>
+									this.retryUntilComplete(retry =>
 										this.peer.setRemoteDescription(
 											new WebRTC.SessionDescription(JSON.parse(offer)),
 											() =>
-												this.retryUntilSuccessful(retry =>
+												this.retryUntilComplete(retry =>
 													this.peer.createAnswer(answer =>
-														this.retryUntilSuccessful(retry =>
+														this.retryUntilComplete(retry =>
 															this.peer.setLocalDescription(answer, () => {
 																this.session.send(
 																	new Session.Message(
