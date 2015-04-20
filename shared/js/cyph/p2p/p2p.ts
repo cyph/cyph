@@ -54,9 +54,6 @@ module Cyph {
 			private hasSessionStarted: boolean;
 			private localStreamSetUpLock: boolean;
 
-			private incomingFile: FileTransfer	= new FileTransfer;
-			private outgoingFile: FileTransfer	= new FileTransfer;
-
 			private commands	= {
 				addIceCandidate: (candidate: string) : void => {
 					if (this.isAvailable) {
@@ -173,8 +170,10 @@ module Cyph {
 				}
 			};
 
-			public incomingStream	= {audio: false, video: false, loading: false};
-			public streamOptions	= {audio: false, video: false, loading: false};
+			public incomingStream				= {audio: false, video: false, loading: false};
+			public streamOptions				= {audio: false, video: false, loading: false};
+			public incomingFile: FileTransfer	= new FileTransfer;
+			public outgoingFile: FileTransfer	= new FileTransfer;
 
 			private initPeer () : void {
 				if (this.peer) {
