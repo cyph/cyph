@@ -110,7 +110,7 @@ module Cyph {
 						this.remoteStream	= null;
 
 						this.mutex.lock(() =>
-							setTimeout(this.mutex.unlock, 5000)
+							setTimeout(() => this.mutex.unlock(), 5000)
 						);
 
 						if (wasAccepted) {
