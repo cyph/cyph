@@ -1,3 +1,4 @@
+/// <reference path="filetransfer.ts" />
 /// <reference path="../../global/base.ts" />
 
 
