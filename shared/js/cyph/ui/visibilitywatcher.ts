@@ -19,12 +19,13 @@ module Cyph {
 				this.isVisible	= isVisible;
 				EventManager.trigger(VisibilityWatcher.visibilityChangeEvent, this.isVisible);
 			}
+
+			private static staticConstructor	= (() => {
+				Elements.window.
+					focus(() => VisibilityWatcher.trigger(true)).
+					blur(() => VisibilityWatcher.trigger(false))
+				;
+			})();
 		}
 	}
 }
-
-
-Cyph.UI.Elements.window.
-	focus(() => Cyph.UI.VisibilityWatcher.trigger(true)).
-	blur(() => Cyph.UI.VisibilityWatcher.trigger(false))
-;
