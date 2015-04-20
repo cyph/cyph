@@ -738,7 +738,7 @@
 			/* No more scripts, now that application code has been loaded
 				(but added 'self' for Worker hack on shitty browsers) */
 			Cyph.UI.Elements.head.append(
-				'<meta http-equiv=\'Content-Security-Policy\' content=\'script-src "self" "unsafe-eval"\' />'
+				"<meta http-equiv='Content-Security-Policy' content=\"script-src 'self' 'unsafe-eval'\" />"
 			);
 		</script>
 
