@@ -41,7 +41,7 @@ module Cyph {
 					'sendMessageBatch',
 					'setQueueAttributes'
 				].forEach(method =>
-					wrapper[method]	= (o: any, f: Function, shouldretryUntilComplete?: boolean) => {
+					wrapper[method]	= (o: any, callback: Function, shouldretryUntilComplete?: boolean) => {
 						Util.retryUntilComplete(retry =>
 							wrapper.base[method](o, (...args: any[]) => {
 								let err: any	= args[0];
@@ -49,8 +49,8 @@ module Cyph {
 								if (shouldretryUntilComplete && err) {
 									retry();
 								}
-								else if (f) {
-									f.apply(this, args);
+								else if (callback) {
+									callback.apply(this, args);
 								}
 							})
 						);

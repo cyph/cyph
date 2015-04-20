@@ -82,6 +82,10 @@ module Cyph {
 		}
 
 		public static getValue<T> (o: any, keysToTry: string|string[], defaultValue: T = null) : T {
+			if (!o) {
+				return defaultValue;
+			}
+
 			let keys: string[]	=
 				typeof keysToTry === 'string' ?
 					[keysToTry] :
@@ -307,7 +311,7 @@ module Cyph {
 			;
 
 			let translation: string	= Util.getValue(
-				Util.getValue(Translations || {}, language, {}),
+				Util.getValue(Translations, language, {}),
 				text,
 				defaultValue
 			);

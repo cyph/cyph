@@ -1,32 +1,27 @@
 /// <reference path="base.ts" />
+/// <reference path="../cyph/env.ts" />
 /// <reference path="../../lib/typings/angularjs/angular.d.ts" />
-
-let markdownit: any;
-let markdownitSup: any;
-let markdownitEmoji: any;
-let hljs: any;
-let twemoji: any;
 
 
 (() => {
 	let title: string	= 'ngMarkdown';
 
 
-	let markdown	= new markdownit({
+	let markdown	= new self['markdownit']({
 		html: false,
 		linkify: true,
 		typographer: true,
-		quotes: (language === 'ru' ? '«»' : language === 'de' ? '„“' : '“”') + '‘’',
+		quotes: (Cyph.Env.language === 'ru' ? '«»' : Cyph.Env.language === 'de' ? '„“' : '“”') + '‘’',
 		highlight: (str, lang) => {
-			if (lang && hljs.getLanguage(lang)) {
+			if (lang && self['hljs'].getLanguage(lang)) {
 				try {
-					return hljs.highlight(lang, str).value;
+					return self['hljs'].highlight(lang, str).value;
 				}
 				catch (_) {}
 			}
 
 			try {
-				return hljs.highlightAuto(str).value;
+				return self['hljs'].highlightAuto(str).value;
 			}
 			catch (_) {}
 
@@ -34,12 +29,12 @@ let twemoji: any;
 		}
 	}).
 		disable('image').
-		use(markdownitSup).
-		use(markdownitEmoji)
+		use(self['markdownitSup']).
+		use(self['markdownitEmoji'])
 	;
 
 	markdown.renderer.rules.emoji	= (token, idx) =>
-		twemoji.parse(token[idx].content, {base: '/lib/bower_components/twemoji/'})
+		self['twemoji'].parse(token[idx].content, {base: '/lib/bower_components/twemoji/'})
 	;
 
 

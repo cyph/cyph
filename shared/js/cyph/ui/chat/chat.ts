@@ -20,8 +20,6 @@
 /// <reference path="../../../global/plugins.jquery.ts" />
 /// <reference path="../../../../lib/typings/jquery/jquery.d.ts" />
 
-let tabIndent: any;
-
 
 module Cyph {
 	export module UI {
@@ -165,7 +163,7 @@ module Cyph {
 					};
 
 
-					Util.getValue(Elements.timer[0] || {}, 'stop', () => {})();
+					Util.getValue(Elements.timer[0], 'stop', () => {})();
 
 					if (this.session.state.hasKeyExchangeBegun) {
 						go();
@@ -331,7 +329,7 @@ module Cyph {
 
 					setInterval(() => this.messageChange(), 5000);
 
-					tabIndent.renderAll();
+					self['tabIndent'].renderAll();
 
 
 
