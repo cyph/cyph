@@ -13,14 +13,15 @@ module Cyph {
 		}
 
 		private static threadEnvSetup (vars: any, importScripts: Function) : void {
-			location	= vars.location;
+			self.location	= vars.location;
+			self.navigator	= vars.navigator;
 
 			/* Wrapper to make importScripts work in local dev environments;
 				not used in prod because of WebSign packing */
 			let oldImportScripts	= importScripts;
 			importScripts			= (script: string) => {
 				oldImportScripts(
-					(location['origin'] || 'http://localhost:8082') +
+					((location && location['origin']) || 'http://localhost:8082') +
 					script
 				);
 			};
@@ -67,9 +68,8 @@ module Cyph {
 					crypto	= msCrypto;
 				}
 				else {
-					let isaac: any;
 					importScripts('/cryptolib/bower_components/isaac.js/isaac.js');
-					isaac.seed(vars.threadRandomSeed);
+					self['isaac'].seed(vars.threadRandomSeed);
 
 					crypto	= {
 						getRandomValues: array => {
@@ -82,7 +82,7 @@ module Cyph {
 							let max: number	= Math.pow(2, bytes * 8) - 1;
 
 							for (let i = 0 ; i < array['length'] ; ++i) {
-								array[i]	= Math.floor(isaac.random() * max);
+								array[i]	= Math.floor(self['isaac'].random() * max);
 							}
 
 							return array;
@@ -121,7 +121,9 @@ module Cyph {
 		private worker: Worker;
 
 		public constructor (f: Function, vars: any = {}, onmessage?: (e: MessageEvent) => any) {
-			vars.location			= location;
+			vars.location	= location;
+			vars.navigator	= {language: Env.language, userAgent: Env.userAgent};
+
 			vars.threadRandomSeed	= crypto.getRandomValues(new Uint8Array(50000));
 
 			let s	=

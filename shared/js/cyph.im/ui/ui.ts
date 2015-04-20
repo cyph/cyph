@@ -48,13 +48,14 @@ module Cyph.im {
 					}
 				};
 
-				let selectCopyUrl: Function	= () =>
-					Cyph.Util.getValue<Function>(
-						Cyph.UI.Elements.copyUrlInput[0],
-						'setSelectionRange',
-						() => {}
-					)(0, copyUrl.length)
-				;
+				let selectCopyUrl: Function	= () => {
+					if ('setSelectionRange' in Cyph.UI.Elements.copyUrlInput[0]) {
+						Cyph.UI.Elements.copyUrlInput[0]['setSelectionRange'](
+							0,
+							copyUrl.length
+						);
+					}
+				};
 
 				if (Cyph.Env.isMobile) {
 					setCopyUrl();
@@ -157,7 +158,7 @@ module Cyph.im {
 							on('beforeunload', () => Cyph.Strings.disconnectWarning)
 					);
 
-					this.chat.session.on(Cyph.Session.Events.beginWaiting, this.beginWaiting);
+					this.chat.session.on(Cyph.Session.Events.beginWaiting, () => this.beginWaiting());
 
 					this.chat.session.on(Cyph.Session.Events.newCyph, () => this.changeState(States.spinningUp));
 				}

@@ -5,8 +5,8 @@
 
 module Cyph {
 	export class Env {
-		public static isLocalhost: boolean	= location.hostname === 'localhost';
-		public static isOnion: boolean		= location.host.split('.').slice(-1)[0] === 'onion';
+		public static isLocalhost: boolean	= !!location && location.hostname === 'localhost';
+		public static isOnion: boolean		= !!location && location.host.split('.').slice(-1)[0] === 'onion';
 
 		public static homeUrl: string		= Env.isOnion ? '/' : 'https://www.cyph.com/';
 		public static newCyphUrl: string	= Env.isOnion ? '/im/#new' : 'https://www.cyph.im/';
@@ -19,7 +19,7 @@ module Cyph {
 					Config.prodBaseUrl
 		;
 
-		public static host: string		= location.host.replace('www.', '');
+		public static host: string		= !!location && location.host.replace('www.', '');
 
 		public static language: string;
 
@@ -33,7 +33,7 @@ module Cyph {
 		;
 
 
-		public static userAgent: string		= navigator.userAgent.toLowerCase();
+		public static userAgent: string		= navigator ? navigator.userAgent.toLowerCase() : '';
 
 		public static isIE: boolean			= /msie |trident\//.test(Env.userAgent);
 		public static isOSX: boolean		= /mac os x/.test(Env.userAgent);

@@ -4,12 +4,10 @@
 /// <reference path="../../lib/typings/aws-sdk/aws-sdk.d.ts" />
 /// <reference path="../../lib/typings/cryptojs/cryptojs.d.ts" />
 
-let AWS: any;
-
 
 module Cyph {
 	export class AWSWrapper {
-		public static base	= AWS;
+		public static base	= self['AWS'];
 
 		public static request (o: any, callback?: any) : void {
 			let config	= {
@@ -113,7 +111,7 @@ module Cyph {
 		private static _	= requireModules(
 			() => Config,
 			() => {
-				AWS.config	= new AWS.Config(Config.awsConfig);
+				self['AWS'].config	= new self['AWS'].Config(Config.awsConfig);
 			}
 		);
 	}
