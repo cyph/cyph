@@ -20,6 +20,8 @@
 /// <reference path="../../../global/plugins.jquery.ts" />
 /// <reference path="../../../../lib/typings/jquery/jquery.d.ts" />
 
+let tabIndent: any;
+
 
 module Cyph {
 	export module UI {
@@ -329,7 +331,6 @@ module Cyph {
 
 					setInterval(this.messageChange, 5000);
 
-					let tabIndent: any;
 					tabIndent.renderAll();
 
 

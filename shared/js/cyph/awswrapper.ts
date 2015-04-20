@@ -4,15 +4,11 @@
 /// <reference path="../../lib/typings/aws-sdk/aws-sdk.d.ts" />
 /// <reference path="../../lib/typings/cryptojs/cryptojs.d.ts" />
 
+let AWS: any;
+
 
 module Cyph {
 	export class AWSWrapper {
-		public static base: any	= (() => {
-			let AWS: any;
-			AWS.config	= new AWS.Config(Config.awsConfig);
-			return AWS;
-		})();
-
 		public static request (o: any, callback?: any) : void {
 			let config	= {
 				url: o.url,
@@ -110,5 +106,13 @@ module Cyph {
 				error: callback
 			});
 		}
+
+
+		private static _	= requireModules(
+			() => !!Config,
+			() => {
+				AWS.config	= new AWS.Config(Config.awsConfig);
+			}
+		);
 	}
 }

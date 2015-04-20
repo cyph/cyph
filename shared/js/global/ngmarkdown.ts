@@ -1,16 +1,16 @@
 /// <reference path="base.ts" />
 /// <reference path="../../lib/typings/angularjs/angular.d.ts" />
 
+let markdownit: any;
+let markdownitSup: any;
+let markdownitEmoji: any;
+let hljs: any;
+let twemoji: any;
+
 
 (() => {
 	let title: string	= 'ngMarkdown';
 
-
-	let markdownit: any;
-	let markdownitSup: any;
-	let markdownitEmoji: any;
-	let hljs: any;
-	let twemoji: any;
 
 	let markdown	= new markdownit({
 		html: false,
@@ -43,7 +43,7 @@
 	;
 
 
-	angular.module(title).directive(title, () => ({
+	angular.module(title, []).directive(title, () => ({
 		restrict: 'A',
 		replace: true,
 		link: (scope, element, attrs) => {

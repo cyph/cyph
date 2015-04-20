@@ -5,11 +5,7 @@
 
 module Cyph {
 	export class Thread {
-		private static BlobBuilder: any	= Util.getValue(self, [
-			'BlobBuilder',
-			'WebKitBlobBuilder',
-			'MozBlobBuilder'
-		]);
+		private static BlobBuilder: any;
 
 		private static stringifyFunction (f: Function) : string {
 			let s	= f.toString();
@@ -17,6 +13,11 @@ module Cyph {
 		}
 
 		private static threadEnvSetup (vars: any, importScripts: Function) : void {
+			let oldImportScripts	= importScripts;
+			importScripts			= (script: string) => {
+				oldImportScripts('http://localhost:8082' + script);
+			};
+
 			importScripts('/js/global/base.js');
 
 			console	= {
@@ -185,5 +186,17 @@ module Cyph {
 
 			Thread.threads	= Thread.threads.filter(t => t !== this);
 		}
+
+
+		private static _	= requireModules(
+			() => !!Util,
+			() => {
+				Thread.BlobBuilder	= Util.getValue(self, [
+					'BlobBuilder',
+					'WebKitBlobBuilder',
+					'MozBlobBuilder'
+				]);
+			}
+		);
 	}
 }
