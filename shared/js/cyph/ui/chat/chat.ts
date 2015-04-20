@@ -117,7 +117,7 @@ module Cyph {
 						return;
 					}
 
-					let dothemove: Function	= () => {
+					let go: Function	= () => {
 						this.notifier.notify(Strings.connectedNotification);
 						this.changeState(States.chatBeginMessage);
 
@@ -166,7 +166,7 @@ module Cyph {
 					Util.getValue(Elements.timer[0] || {}, 'stop', () => {})();
 
 					if (this.session.state.hasKeyExchangeBegun) {
-						dothemove();
+						go();
 					}
 					else {
 						this.changeState(States.keyExchange);
@@ -174,7 +174,7 @@ module Cyph {
 						let intervalId	= setInterval(() => {
 							if (this.session.state.hasKeyExchangeBegun) {
 								clearInterval(intervalId);
-								dothemove();
+								go();
 							}
 						}, 250);
 					}

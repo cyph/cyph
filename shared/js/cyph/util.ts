@@ -238,15 +238,15 @@ module Cyph {
 		}
 
 		public static retryUntilComplete (f: Function, retryIf?: Function) : void {
-			let dothemove	= () : void =>
+			let go	= () : void =>
 				f((delay: number = 250) : void => {
 					if (!retryIf || retryIf()) {
-						setTimeout(dothemove, delay);
+						setTimeout(go, delay);
 					}
 				})
 			;
 
-			dothemove();
+			go();
 		}
 
 		public static toQueryString (o: any, parent?: string) : string {

@@ -32,3 +32,18 @@ var localStorage: Storage;
 var processUrlState: Function;
 var WebSign: WebSign;
 var Translations: {[language: string] : {[text: string] : string}};
+
+
+var requireModules	= (dependencies: () => any, f: Function) => {
+	if (dependencies()) {
+		f();
+	}
+	else {
+		let intervalId	= setInterval(() => {
+			if (dependencies()) {
+				clearInterval(intervalId);
+				f();
+			}
+		}, 25);
+	}
+};
