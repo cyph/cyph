@@ -9,6 +9,8 @@ let AWS: any;
 
 module Cyph {
 	export class AWSWrapper {
+		public static base	= AWS;
+
 		public static request (o: any, callback?: any) : void {
 			let config	= {
 				url: o.url,

@@ -39,6 +39,7 @@ module Cyph {
 
 				this.thread	= new Thread((vars: any, importScripts: Function, Cyph: any) => {
 					importScripts('/cryptolib/bower_components/otr4-em/build/otr-web.js');
+					importScripts('/lib/bower_components/aws-sdk-js/dist/aws-sdk.min.js');
 					importScripts('/js/cyph/session/session.js');
 
 					let session: ISession	= new Cyph.Session.Session(vars.descriptor, null, null, vars.id);
@@ -82,7 +83,7 @@ module Cyph {
 
 			public close (shouldSendEvent: boolean = true) : void {
 				this.trigger(ThreadedSession.events.close, {shouldSendEvent});
-				setTimeout(this.thread.stop, 120000);
+				setTimeout(() => this.thread.stop(), 120000);
 			}
 
 			public off (event: string, handler: Function) : void {

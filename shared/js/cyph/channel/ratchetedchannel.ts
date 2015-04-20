@@ -68,7 +68,7 @@ module Cyph {
 							);
 
 							if (!init) {
-								setTimeout(this.destroyCurrentChannel, 10000);
+								setTimeout(() => this.destroyCurrentChannel(), 10000);
 							}
 						},
 						onmessage: this.session.receive,
