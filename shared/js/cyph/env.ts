@@ -9,7 +9,7 @@ module Cyph {
 		public static isOnion: boolean		= location.host.split('.').slice(-1)[0] === 'onion';
 
 		public static homeUrl: string		= Env.isOnion ? '/' : 'https://www.cyph.com/';
-		public static newCyphUrl: string	= Env.isOnion ? '/im/#new' : '/';
+		public static newCyphUrl: string	= Env.isOnion ? '/im/#new' : 'https://www.cyph.im/';
 
 		public static baseUrl: string	=
 			Env.isLocalhost ?
@@ -21,16 +21,7 @@ module Cyph {
 
 		public static host: string		= location.host.replace('www.', '');
 
-		public static language: string	= Util.getValue(
-			navigator,
-			[
-				'language',
-				'userLanguage',
-				'browserLanguage',
-				'systemLanguage'
-			],
-			Config.defaultLanguage
-		).toLowerCase();
+		public static language: string;
 
 
 		public static isWeb: boolean		= IS_WEB;
@@ -96,5 +87,22 @@ module Cyph {
 
 
 		public static smsRecipient: string	= Env.isIOS ? '+1' : '';
+
+
+		private static _	= requireModules(
+			() => !!Util,
+			() => {
+				Env.language	= Util.getValue(
+					navigator,
+					[
+						'language',
+						'userLanguage',
+						'browserLanguage',
+						'systemLanguage'
+					],
+					Config.defaultLanguage
+				).toLowerCase();
+			}
+		);
 	}
 }
