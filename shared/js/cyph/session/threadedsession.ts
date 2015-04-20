@@ -42,7 +42,7 @@ module Cyph {
 					importScripts('/lib/bower_components/aws-sdk-js/dist/aws-sdk.min.js');
 					importScripts('/js/cyph/session/session.js');
 
-					let session: ISession	= new Cyph.Session.Session(vars.descriptor, null, null, vars.id);
+					let session: ISession	= new Cyph.Session.Session(vars.descriptor, null, vars.id);
 
 					session.on(vars.events.close, (e: { shouldSendEvent: boolean; }) =>
 						session.close(e.shouldSendEvent)
