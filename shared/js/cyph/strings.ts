@@ -54,9 +54,10 @@ module Cyph {
 			`This will involve sharing your IP address with your friend (which isn't a problem ` +
 			`unless you're actively hiding your current location from them). Continue?`
 	};
+
+	export let stringsStaticConstructor	= (() => {
+		Object.keys(Strings).forEach((k: string) =>
+			Strings[k]	= Util.translate(Strings[k])
+		);
+	})();
 }
-
-
-Object.keys(Cyph.Strings).forEach((k: string) =>
-	Cyph.Strings[k]	= Cyph.Util.translate(Cyph.Strings[k])
-);
