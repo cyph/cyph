@@ -2,6 +2,7 @@
 /// <reference path="enums.ts" />
 /// <reference path="p2pmanager.ts" />
 /// <reference path="photomanager.ts" />
+/// <reference path="scrollmanager.ts" />
 /// <reference path="../../icontroller.ts" />
 /// <reference path="../../session/enums.ts" />
 /// <reference path="../../session/isession.ts" />
@@ -24,13 +25,23 @@ module Cyph {
 
 				state: States;
 
-				messages: {author: Session.Authors; text: string;}[];
+				messages: {
+					author: Session.Authors;
+					authorClass: string;
+					isFromApp: boolean;
+					isFromFriend: boolean;
+					isFromMe: boolean;
+					text: string,
+					timestamp: string;
+				}[];
 
 				cyphertext: Cyphertext;
 
 				photoManager: PhotoManager;
 
 				p2pManager: P2PManager;
+
+				scrollManager: ScrollManager;
 
 				session: Session.ISession;
 

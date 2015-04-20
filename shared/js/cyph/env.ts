@@ -8,6 +8,9 @@ module Cyph {
 		public static isLocalhost: boolean	= location.hostname === 'localhost';
 		public static isOnion: boolean		= location.host.split('.').slice(-1)[0] === 'onion';
 
+		public static homeUrl: string		= Env.isOnion ? '/' : 'https://www.cyph.com/';
+		public static newCyphUrl: string	= Env.isOnion ? '/im/#new' : '/';
+
 		public static baseUrl: string	=
 			Env.isLocalhost ?
 				'http://localhost:8080/' :

@@ -8,6 +8,10 @@ module Cyph {
 
 			streamOptions: {audio: boolean; video: boolean; loading: boolean;};
 
+			incomingFile: FileTransfer;
+
+			outgoingFile: FileTransfer;
+
 			kill () : void;
 
 			requestCall (callType: string) : void;
