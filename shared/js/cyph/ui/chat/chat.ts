@@ -29,7 +29,6 @@ module Cyph {
 				private previousMessage: string;
 				private dialogManager: IDialogManager;
 				private notifier: INotifier;
-				private scrollManager: ScrollManager;
 
 				public isConnected: boolean		= false;
 				public isDisconnected: boolean	= false;
@@ -37,11 +36,21 @@ module Cyph {
 				public unreadMessages: number	= 0;
 				public currentMessage: string	= '';
 				public state: States			= States.none;
-				public messages: {author: Session.Authors; text: string;}[]	= [];
+
+				public messages: {
+					author: Session.Authors;
+					authorClass: string;
+					isFromApp: boolean;
+					isFromFriend: boolean;
+					isFromMe: boolean;
+					text: string,
+					timestamp: string;
+				}[]	= [];
 
 				public cyphertext: Cyphertext;
 				public photoManager: PhotoManager;
 				public p2pManager: P2PManager;
+				public scrollManager: ScrollManager;
 				public session: Session.ISession;
 
 				public abortSetup () : void {

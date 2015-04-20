@@ -10,16 +10,16 @@
 module Cyph {
 	export module UI {
 		export class SignupForm {
-			private state: number	= 0;
+			private controller: IController;
 
-			private data	= {
+			public state: number	= 0;
+
+			public data	= {
 				Comment: <string> '',
 				Email: <string> '',
 				Language: <string> Env.language,
 				Name: <string> ''
 			};
-
-			private controller: IController;
 
 			public submit () : void {
 				++this.state;
