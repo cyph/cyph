@@ -10,6 +10,8 @@ module Cyph {
 		public static mainThreadEvents: string	= 'mainThreadEvents';
 		public static untriggeredEvents: string	= 'untriggeredEvents';
 
+		public static isReady: boolean;
+
 		public static off (event: string, handler: Function) : void {
 			EventManager.handlers[event]	=
 				(EventManager.handlers[event] || []).filter(f => f !== handler)
@@ -62,6 +64,8 @@ module Cyph {
 							postMessage({event: o.event, data: o.data, isThreadEvent: true}, undefined)
 					);
 				}
+
+				EventManager.isReady	= true;
 			}
 		);
 	}
