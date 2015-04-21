@@ -56,9 +56,9 @@ module Cyph {
 					}
 					case OTREvents.receive: {
 						if (e.data) {
-							JSON.parse(e.data).forEach((message: Message) =>
-								this.receiveHandler(message)
-							);
+							for (let message of JSON.parse(e.data)) {
+								this.receiveHandler(message);
+							}
 						}
 						break;
 					}
@@ -266,12 +266,14 @@ module Cyph {
 			}
 
 			public sendBase (messages: Message[]) : void {
-				messages.filter(o => o.event === Events.text).forEach(o =>
-					this.trigger(Events.text, {
-						text: o.data,
-						author: Authors.me
-					})
-				);
+				for (let message of messages) {
+					if (message.event === Events.text) {
+						this.trigger(Events.text, {
+							text: message.data,
+							author: Authors.me
+						});
+					}
+				}
 
 				this.otr.send(JSON.stringify(messages));
 			}

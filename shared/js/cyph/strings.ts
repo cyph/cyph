@@ -61,9 +61,9 @@ module Cyph {
 			`unless you're actively hiding your current location from them). Continue?`
 	};
 
-	export let _	= (() => {
-		Object.keys(Strings).forEach((k: string) =>
-			Strings[k]	= Util.translate(Strings[k])
-		);
+	(() => {
+		for (let k of Object.keys(Strings)) {
+			Strings[k]	= Util.translate(Strings[k]);
+		}
 	})();
 }
