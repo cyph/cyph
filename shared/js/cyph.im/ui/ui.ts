@@ -152,6 +152,8 @@ module Cyph.im {
 						Cyph.UI.Elements.window.off('beforeunload')
 					);
 
+					this.chat.session.on(Cyph.Session.Events.beginChat, () => this.changeState(States.chat));
+
 					this.chat.session.on(Cyph.Session.Events.beginChatComplete, () =>
 						Cyph.UI.Elements.window.
 							unload(() => this.chat.session.close()).
