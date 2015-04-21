@@ -12,8 +12,9 @@ bower install --save \
 	angular-material \
 	markdown-it \
 	markdown-it-sup \
-	twemoji \
+	twemoji#1.3.2 \
 	markdown-it-emoji \
+	isagalaev/highlight.js \
 	angular-timer#1.2.1 \
 	animate.css \
 	base64 \
@@ -26,8 +27,9 @@ bower install --save \
 	julianlam/tabIndent.js \
 	aws-sdk-js
 
-wget https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/default.min.css -O highlight.js.min.css
-wget https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js -O highlight.min.js
+cd bower_components/highlight.js
+python tools/build.py default
+cd ../..
 
 mkdir aws-xml
 cd aws-xml
