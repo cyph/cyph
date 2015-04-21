@@ -51,8 +51,8 @@ module Cyph {
 						if (e.data && e.data.isThreadEvent) {
 							EventManager.trigger(e.data.event, e.data.data, true);
 						}
-						else if (Cyph.Thread.onmessage) {
-							Thread.onmessage(e);
+						else if (onthreadmessage) {
+							onthreadmessage(e);
 						}
 					};
 

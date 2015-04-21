@@ -32,6 +32,7 @@ var localStorage: Storage;
 var processUrlState: Function;
 var WebSign: WebSign;
 var Translations: {[language: string] : {[text: string] : string}};
+var onthreadmessage: (e: MessageEvent) => any;
 
 
 var requireModules	= (dependencies: () => any, f: Function) => {
