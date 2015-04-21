@@ -168,7 +168,7 @@ module Cyph {
 						});
 					},
 					onconnect: () => this.trigger(Events.beginChat),
-					onmessage: this.receive
+					onmessage: message => this.receive(message)
 				});
 			}
 

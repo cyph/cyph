@@ -39,7 +39,11 @@ module Cyph {
 
 				this.thread	= new Thread((vars: any, importScripts: Function, Cyph: any) => {
 					importScripts('/cryptolib/bower_components/otr4-em/build/otr-web.js');
+
 					importScripts('/lib/bower_components/aws-sdk-js/dist/aws-sdk.min.js');
+					importScripts('/lib/aws-xml.js');
+					self['AWS'].XML.Parser	= self['AWS_XML'];
+
 					importScripts('/js/cyph/session/session.js');
 
 					let session: ISession	= new Cyph.Session.Session(vars.descriptor, null, vars.id);
