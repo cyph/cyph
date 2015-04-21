@@ -2,8 +2,8 @@
 /// <reference path="../../lib/typings/jquery/jquery.d.ts" />
 
 
-$.fn.bounds	= e => {
-	let $this: JQuery				= $(e.currentTarget);
+$.fn.bounds	= function () {
+	let $this: JQuery				= $(this);
 	let bounds: JQueryCoordinates	= $this.offset();
 
 	return {
@@ -15,10 +15,10 @@ $.fn.bounds	= e => {
 };
 
 
-$.fn.scrollPosition	= (e) : number => {
-	return e.currentTarget.scrollHeight -
+$.fn.scrollPosition	= function () {
+	return this.scrollHeight -
 	(
-		e.currentTarget.scrollTop +
-		e.currentTarget.clientHeight
+		this.scrollTop +
+		this.clientHeight
 	);
 };
