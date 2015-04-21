@@ -65,6 +65,7 @@ module Cyph {
 
 			if (typeof DOMParser === 'undefined') {
 				importScripts('/lib/xmljs/xml.js');
+
 				self['DOMParser']	= self['DOMImplementation'];
 				self['DOMParser'].prototype.parseFromString	=
 					self['DOMParser'].prototype.loadXML
@@ -114,11 +115,15 @@ module Cyph {
 
 		public static callMainThread (method: string, args: any[] = []) : void {
 			if (Env.isMainThread) {
-				method.
-					split('.').
-					reduce((a: any, b: string) => a[b], self).
-					apply(null, args)
+				let methodSplit: string[]	= method.split('.');
+				let methodName: string		= methodSplit.slice(-1)[0];
+
+				let methodObject: any	= methodSplit.
+					slice(0, -1).
+					reduce((o: any, k: string) => o[k], self)
 				;
+
+				methodObject[methodName].apply(methodObject, args);
 			}
 			else {
 				EventManager.trigger(EventManager.mainThreadEvents, {method, args});

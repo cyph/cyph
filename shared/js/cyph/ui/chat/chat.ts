@@ -137,16 +137,23 @@ module Cyph {
 							/* Adjust font size for translations */
 							if (!Env.isMobile) {
 								setTimeout(() => {
-									Elements.buttons.each(() => {
-										let $this		= $(this);
-										let $clone		= $this
+									Elements.buttons.each((i: number, elem: HTMLElement) => {
+										let $this: JQuery	= $(elem);
+
+										let $clone: JQuery	= $this
 											.clone()
-											.css({display: 'inline', width: 'auto', visibility: 'hidden', position: 'fixed'})
+											.css({
+												display: 'inline',
+												width: 'auto',
+												visibility: 'hidden',
+												position: 'fixed'
+											})
 											.appendTo('body')
 										;
-										let $both		= $this.add($clone);
 
-										let fontSize	= parseInt($this.css('font-size'), 10);
+										let $both: JQuery	= $this.add($clone);
+
+										let fontSize: number	= parseInt($this.css('font-size'), 10);
 
 										for (let i = 0 ; i < 20 && $clone.width() > $this.width() ; ++i) {
 											fontSize	-= 1;
@@ -184,8 +191,6 @@ module Cyph {
 					if (this.state === States.aborted) {
 						return;
 					}
-
-					Timer.stopAll();
 
 					if (this.session.state.isAlive) {
 						this.setFriendTyping(false);
@@ -233,7 +238,7 @@ module Cyph {
 				}
 
 				public messageChange () : void {
-					let isMessageChanged	=
+					let isMessageChanged: boolean	=
 						this.currentMessage !== '' &&
 						this.currentMessage !== this.previousMessage
 					;
@@ -288,8 +293,11 @@ module Cyph {
 					this.dialogManager	= dialogManager;
 					this.notifier		= notifier;
 
-					this.scrollManager	= new ScrollManager(this.controller, this.dialogManager);
 					this.session		= new Session.ThreadedSession(Util.getUrlState(), controller);
+					this.cyphertext		= new Cyphertext(this.controller, this.mobileMenu, this.dialogManager);
+					this.p2pManager		= new P2PManager(this.session, this.controller, this.mobileMenu, this.dialogManager);
+					this.photoManager	= new PhotoManager(this.session);
+					this.scrollManager	= new ScrollManager(this.controller, this.dialogManager);
 
 
 					if (Env.isMobile) {
@@ -333,11 +341,11 @@ module Cyph {
 
 
 
-					/* Main this.session events */
+					/* Main session events */
 
-					this.session.on(Session.Events.beginChat, this.begin);
+					this.session.on(Session.Events.beginChat, () => this.begin());
 
-					this.session.on(Session.Events.closeChat, this.close);
+					this.session.on(Session.Events.closeChat, () => this.close());
 
 					this.session.on(Session.Events.cyphertext,
 						(o: { cyphertext: string; author: Session.Authors; }) =>
@@ -414,7 +422,7 @@ module Cyph {
 								case P2P.UIEvents.Categories.file: {
 									switch (e.event) {
 										case P2P.UIEvents.Events.clear: {
-											UI.Elements.p2pFiles.each((i: number, elem: HTMLElement) =>
+											Elements.p2pFiles.each((i: number, elem: HTMLElement) =>
 												$(elem).val('')
 											);
 											break;
@@ -436,7 +444,7 @@ module Cyph {
 										case P2P.UIEvents.Events.get: {
 											let callback: Function	= e.args[0];
 
-											let file: File	= UI.Elements.p2pFiles.
+											let file: File	= Elements.p2pFiles.
 												toArray().
 												map(($elem) => $elem['files']).
 												reduce((a, b) => (a && a[0]) ? a : b, [])[0]
@@ -543,10 +551,10 @@ module Cyph {
 
 									let $stream: JQuery	=
 										author === Session.Authors.me ?
-											UI.Elements.p2pMeStream :
+											Elements.p2pMeStream :
 											author === Session.Authors.friend ?
-												UI.Elements.p2pFriendStream :
-												UI.Elements.p2pFriendPlaceholder
+												Elements.p2pFriendStream :
+												Elements.p2pFriendPlaceholder
 									;
 
 									switch (e.event) {

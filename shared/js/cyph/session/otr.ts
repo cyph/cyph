@@ -84,7 +84,7 @@ module Cyph {
 
 
 						this.otr.on('inject_message', (cyphertext: string) => {
-							if (cyphertext && cyphertext.indexOf('this.otr.cypherpunks.ca') > -1) {
+							if (cyphertext && cyphertext.indexOf('otr.cypherpunks.ca') > -1) {
 								cyphertext	= '?OTRv3?';
 							}
 

@@ -49,7 +49,7 @@ module Cyph {
 							this.messages.shift();
 						}
 
-						this.messages.push({author: author, text: JSON.parse(text).message});
+						this.messages.push({author, text});
 						this.controller.update();
 					}
 				}
