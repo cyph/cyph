@@ -32,7 +32,7 @@ wget https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js -O
 mkdir aws-xml
 cd aws-xml
 npm install --save xml2js aws-sdk
-browserify node_modules/aws-sdk/lib/xml/node_parser.js -s AWS_XML -o ../aws-xml.js
+browserify node_modules/aws-sdk/lib/xml/node_parser.js -s AWS_XML | uglifyjs -o ../aws-xml.js
 cd ..
 rm -rf aws-xml
 
