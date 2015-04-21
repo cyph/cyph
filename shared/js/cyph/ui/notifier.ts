@@ -13,43 +13,55 @@ module Cyph {
 			public openNotifications: any[]	= [];
 
 			public notify (message: string) : void {
-				if (!this.disableNotify && !VisibilityWatcher.isVisible) {
-					if (Notification) {
-						let notification	= new Notification(
-							Config.notifierConfig.title,
-							{
-								body: message, 
-								icon: Config.notifierConfig.icon
-							}
-						);
+				try {
+					if (!this.disableNotify && !VisibilityWatcher.isVisible) {
+						if (Notification) {
+							let notification	= new Notification(
+								Config.notifierConfig.title,
+								{
+									body: message, 
+									icon: Config.notifierConfig.icon
+								}
+							);
 
-						this.openNotifications.push(notification);
+							this.openNotifications.push(notification);
 
-						notification.onclose	= () => {
-							while (this.openNotifications.length > 0) {
-								this.openNotifications.pop().close();
-							}
+							notification.onclose	= () => {
+								while (this.openNotifications.length > 0) {
+									this.openNotifications.pop().close();
+								}
 
-							if (!VisibilityWatcher.isVisible) {
-								this.disableNotify	= true;
-							}
-						};
+								if (!VisibilityWatcher.isVisible) {
+									this.disableNotify	= true;
+								}
+							};
 
-						notification.onclick	= () => {
-							self.focus();
-							notification.onclose();
-						};
+							notification.onclick	= () => {
+								self.focus();
+								notification.onclose();
+							};
+						}
+
+						Notifier.audio.play();
+
+						Util.getValue(navigator, 'vibrate', () => {}).call(navigator, 200);
 					}
-
-					Notifier.audio.play();
-
-					Util.getValue(navigator, 'vibrate', () => {}).call(navigator, 200);
+				}
+				catch (e) {
+					/* Still want to trigger this error email, but a failed
+						notification isn't fatal to the rest of the code */
+					setTimeout(() => throw e, 0);
 				}
 			}
 
 			public constructor () {
 				if (Notification) {
-					Notification.requestPermission();
+					try {
+						Notification.requestPermission();
+					}
+					catch (e) {
+						setTimeout(() => throw e, 0);
+					}
 				}
 
 				VisibilityWatcher.onchange((isVisible: boolean) => {
