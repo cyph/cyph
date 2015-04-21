@@ -55,27 +55,27 @@ module Cyph {
 			}
 
 			public constructor () {
-				if (Notification) {
-					try {
+				try {
+					if (Notification) {
 						Notification.requestPermission();
 					}
-					catch (e) {
-						setTimeout(() => throw e, 0);
-					}
-				}
 
-				VisibilityWatcher.onchange((isVisible: boolean) => {
-					if (isVisible) {
-						for (let notification of this.openNotifications) {
-							notification.close();
+					VisibilityWatcher.onchange((isVisible: boolean) => {
+						if (isVisible) {
+							for (let notification of this.openNotifications) {
+								notification.close();
+							}
+
+							this.openNotifications.length	= 0;
 						}
-
-						this.openNotifications.length	= 0;
-					}
-					else {
-						this.disableNotify	= false;
-					}
-				});
+						else {
+							this.disableNotify	= false;
+						}
+					});
+				}
+				catch (e) {
+					setTimeout(() => throw e, 0);
+				}
 			}
 		}
 	}
