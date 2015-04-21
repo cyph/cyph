@@ -366,7 +366,9 @@ module Cyph {
 							this.addMessage(o.text, o.author, o.author !== Session.Authors.me)
 					);
 
-					this.session.on(Session.Events.typing, this.setFriendTyping);
+					this.session.on(Session.Events.typing, (isFriendTyping: boolean) =>
+						this.setFriendTyping(isFriendTyping)
+					);
 
 
 					/* P2P events */
