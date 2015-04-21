@@ -473,7 +473,7 @@ module Cyph {
 										}
 										case P2P.UIEvents.Events.transferStarted: {
 											let author: Session.Authors	= e.args[0];
-											let fileName: string				= e.args[1];
+											let fileName: string		= e.args[1];
 
 											let isFromMe: boolean	= author === Session.Authors.me;
 											let message: string		= isFromMe ?
