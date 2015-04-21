@@ -1,3 +1,6 @@
+/// <reference path="../preload/base.ts" />
+
+
 /* TODO: Replace all these one-off functions with a changeState implementation */
 
 processUrlState	= () => {

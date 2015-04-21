@@ -1,3 +1,8 @@
+/// <reference path="../preload/cryptoInit.ts" />
+/// <reference path="../preload/unsupportedbrowsers.ts" />
+/// <reference path="../preload/translations.ts" />
+/// <reference path="../preload/base.ts" />
+
 /// <reference path="ui/ui.ts" />
 /// <reference path="../cyph/icontroller.ts" />
 /// <reference path="../cyph/ui/dialogmanager.ts" />
