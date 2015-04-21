@@ -63,6 +63,14 @@ module Cyph {
 				importScripts('/lib/bower_components/base64/base64.min.js');
 			}
 
+			if (typeof DOMParser === 'undefined') {
+				importScripts('/lib/xmljs/xml.js');
+				self['DOMParser']	= self['DOMImplementation'];
+				self['DOMParser'].prototype.parseFromString	=
+					self['DOMParser'].prototype.loadXML
+				;
+			}
+
 			if (typeof crypto === 'undefined') {
 				if (typeof msCrypto !== 'undefined') {
 					crypto	= msCrypto;
