@@ -138,9 +138,11 @@ module Cyph {
 						Elements.messageBox.focus(this.scrollDown);
 					}
 
-					new MutationObserver(mutations =>
-						mutations.forEach(this.mutationObserverHandler)
-					).observe(Elements.messageListInner[0], {
+					new MutationObserver(mutations => {
+						for (let mutationRecord of mutations) {
+							this.mutationObserverHandler(mutationRecord);
+						}
+					}).observe(Elements.messageListInner[0], {
 						childList: true,
 						attributes: false,
 						characterData: false,

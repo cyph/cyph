@@ -44,9 +44,9 @@ module Cyph {
 
 			params['Action']	= config.action;
 
-			Object.keys(config.params).forEach(k =>
-				params[k]	= config.params[k]
-			);
+			for (let k of Object.keys(config.params)) {
+				params[k]	= config.params[k];
+			}
 
 			params['Timestamp']				= timestamp;
 			params['Version']				= config.apiVersion;

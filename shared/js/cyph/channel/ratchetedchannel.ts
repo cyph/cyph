@@ -122,12 +122,12 @@ module Cyph {
 			}
 
 			public close (callback?: Function) : void {
-				[this.channel, this.newChannel].forEach(channel => {
+				for (let channel of [this.channel, this.newChannel]) {
 					try {
 						channel.close(callback);
 					}
 					catch (_) {}
-				});
+				}
 
 				this.channel	= null;
 				this.newChannel	= null;

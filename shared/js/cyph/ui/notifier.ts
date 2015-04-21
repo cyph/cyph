@@ -54,7 +54,10 @@ module Cyph {
 
 				VisibilityWatcher.onchange((isVisible: boolean) => {
 					if (isVisible) {
-						this.openNotifications.forEach(notification => notification.close());
+						for (let notification of this.openNotifications) {
+							notification.close();
+						}
+
 						this.openNotifications.length	= 0;
 					}
 					else {
