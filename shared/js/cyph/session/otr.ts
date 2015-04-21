@@ -127,6 +127,10 @@ module Cyph {
 			}
 
 			public receive (message: string) : void {
+				if (!message) {
+					return;
+				}
+
 				if (this.otr) {
 					let o: OTRMessageOuter = Util.deserializeObject(OTRMessageOuter, message);
 

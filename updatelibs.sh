@@ -29,14 +29,12 @@ bower install --save \
 wget https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/default.min.css -O highlight.js.min.css
 wget https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js -O highlight.min.js
 
-mkdir xmljs
-cd xmljs
-wget 'http://downloads.sourceforge.net/project/xmljs/XML%20for%20SCRIPT%20-%203.1%20-%20NoArch/XML%20for%20SCRIPT%203.1/xml_for_script-3.1.tar.gz'
-tar xzf xml_for_script-3.1.tar.gz
-cat xml_for_script-3.1/jsXMLParser/compressed/tinyxmlsax.js >> xml.js
-cat xml_for_script-3.1/jsXMLParser/compressed/tinyxmlw3cdom.js >> xml.js
-rm -rf xml_for_script-3.1 xml_for_script-3.1.tar.gz
+mkdir aws-xml
+cd aws-xml
+npm install --save xml2js aws-sdk
+browserify node_modules/aws-sdk/lib/xml/node_parser.js -s AWS_XML -o ../aws-xml.js
 cd ..
+rm -rf aws-xml
 
 tsd query --resolve --overwrite --save --action install \
 	jquery \
