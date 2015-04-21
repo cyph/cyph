@@ -65,7 +65,7 @@ module Cyph {
 					this.inQueue	= new Queue(channelName + Channel.channelIds(isCreator), {
 						onmessage: (message: string) => {
 							if (!onconnect() && handlers.onmessage) {
-								handlers.onmessage();
+								handlers.onmessage(message);
 							}
 						},
 						onlag: handlers.onlag,
