@@ -39,7 +39,7 @@ module Cyph {
 				this.$mdDialog.show({
 					template: o.template,
 					onComplete: o.oncomplete,
-					controller: ['$scope', '$mdDialog', ($scope, $mdDialog) => {
+					controller: <any> ['$scope', '$mdDialog', ($scope, $mdDialog) => {
 						$scope.vars		= o.vars;
 						$scope.close	= (ok: any) => {
 							$mdDialog.hide();
