@@ -91,11 +91,11 @@ module Cyph {
 					);
 
 					setTimeout(() => {
-						[this.streamOptions, this.incomingStream].forEach(o =>
-							Object.keys(o).forEach(k =>
-								o[k]	= false
-							)
-						);
+						for (let o of [this.streamOptions, this.incomingStream]) {
+							for (let k of Object.keys(o)) {
+								o[k]	= false;
+							}
+						}
 
 						try {
 							this.localStream['stop']();
@@ -710,16 +710,17 @@ module Cyph {
 								);
 
 
-								[
+								for (let o of [
 									{k: P2P.constants.audio, f: 'getAudioTracks'},
 									{k: P2P.constants.video, f: 'getVideoTracks'}
-								].forEach(o =>
+								]) {
 									this.streamOptions[o.k]	=
 										!!this.localStream &&
 										this.localStream[o.f]().
 											map(track => track.enabled).
 											reduce((a, b) => a || b, false)
-								);
+									;
+								}
 
 
 								let outgoingStream: string	=
@@ -844,9 +845,9 @@ module Cyph {
 										WebRTC.getUserMedia(
 											{audio: true, video: false},
 											stream => {
-												stream.getTracks().forEach(track =>
-													track.enabled	= false
-												);
+												for (let track of stream.getTracks()) {
+													track.enabled	= false;
+												}
 
 												streamHelper(stream);
 											},

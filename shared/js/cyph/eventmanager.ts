@@ -28,12 +28,25 @@ module Cyph {
 				EventManager.trigger(EventManager.untriggeredEvents, {event, data}, true);
 			}
 			else {
-				(EventManager.handlers[event] || []).forEach(handler => handler(data));
+				let exception: any;
+
+				for (let handler of (EventManager.handlers[event] || [])) {
+					try {
+						handler(data);
+					}
+					catch (e) {
+						exception	= e;
+					}
+				}
 
 				if (Env.isMainThread) {
-					Thread.threads.forEach((thread: Thread) =>
-						thread.postMessage({event, data, isThreadEvent: true})
-					);
+					for (let thread of Thread.threads) {
+						thread.postMessage({event, data, isThreadEvent: true});
+					}
+				}
+
+				if (exception) {
+					throw exception;
 				}
 			}
 		}

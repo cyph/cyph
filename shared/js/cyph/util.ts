@@ -22,7 +22,9 @@ module Cyph {
 			var o			= JSON.parse(json)
 			var newObject	= Object.create(classObject.prototype);
 
-			Object.keys(o).forEach(k => newObject[k] = o[k]);
+			for (let k of Object.keys(o)) {
+				newObject[k] = o[k];
+			}
 
 			return newObject;
 		}
@@ -336,13 +338,13 @@ module Cyph {
 			let ngBind: string		= $this.attr('ng-bind');
 			let innerHtml: string	= $this.html().trim();
 
-			['content', 'placeholder', 'aria-label', 'label'].forEach((attr: string) => {
+			for (let attr of ['content', 'placeholder', 'aria-label', 'label']) {
 				let value: string	= $this.attr(attr);
 
 				if (value) {
 					$this.attr(attr, Util.translate(value, true, true));
 				}
-			});
+			}
 
 			if (ngBind) {
 				$this.attr('ng-bind', ngBind.replace(/"([^"]*)"/g, (match, value) => {
