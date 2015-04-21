@@ -57,7 +57,7 @@ module Cyph {
 
 			Timer.thread	= new Thread(
 				(vars, postMessage) =>
-					Thread.onmessage	= () =>
+					onthreadmessage	= () =>
 						setTimeout(() =>
 							postMessage({})
 						, vars.interval)

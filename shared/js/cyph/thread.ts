@@ -26,7 +26,7 @@ module Cyph {
 				);
 			};
 
-			importScripts('/js/cyph/thread.js');
+			importScripts('/js/global/base.js');
 
 			console	= {
 				assert: () => {},
@@ -96,13 +96,11 @@ module Cyph {
 
 		private static threadPostSetup () : void {
 			if (!self.onmessage) {
-				self.onmessage	= Thread.onmessage;
+				self.onmessage	= onthreadmessage;
 			}
 		}
 
 		public static threads: Thread[]	= [];
-
-		public static onmessage: (e: MessageEvent) => any;
 
 		public static callMainThread (method: string, args: any[] = []) : void {
 			if (Env.isMainThread) {

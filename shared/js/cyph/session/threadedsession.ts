@@ -37,6 +37,18 @@ module Cyph {
 				this.id			= id;
 
 
+				this.on(
+					ThreadedSession.events.updateStateThread,
+					(e: { key: string; value: any; }) => {
+						this.state[e.key]	= e.value;
+
+						if (this.controller) {
+							console.log('fuck maine: ' + JSON.stringify(e));
+							this.controller.update();
+						}
+					}
+				);
+
 				this.thread	= new Thread((vars: any, importScripts: Function, Cyph: any) => {
 					importScripts('/cryptolib/bower_components/otr4-em/build/otr-web.js');
 
@@ -72,17 +84,6 @@ module Cyph {
 					id: this.id,
 					events: ThreadedSession.events
 				});
-
-				this.on(
-					ThreadedSession.events.updateStateThread,
-					(e: { key: string; value: any; }) => {
-						this.state[e.key]	= e.value;
-
-						if (this.controller) {
-							this.controller.update();
-						}
-					}
-				);
 			}
 
 			public close (shouldSendEvent: boolean = true) : void {
