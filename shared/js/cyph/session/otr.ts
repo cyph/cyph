@@ -23,16 +23,9 @@ module Cyph {
 			private otr: any;
 			private session: ISession
 
-			public constructor (
-				session: ISession,
-				handler?: (e: { event: OTREvents; data?: string; }) => void
-			) {
+			public constructor (session: ISession) {
 				this.session	= session;
 				let user: any	= (new OTR.libotr.User).account('me', 'cyph');
-
-				if (handler) {
-					this.session.on(Events.otr, handler);
-				}
 
 				user.generateInstag(() =>
 					user.generateKey(() => {
