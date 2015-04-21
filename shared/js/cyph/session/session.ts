@@ -149,7 +149,8 @@ module Cyph {
 							});
 						}
 
-						this.otr	= new OTR(this, this.otrHandler);
+						this.on(Events.otr, e => this.otrHandler(e));
+						this.otr	= new OTR(this);
 
 						let sendTimer: Timer	= new Timer((now: number) => {
 							if (!this.state.isAlive) {
