@@ -81,7 +81,7 @@ module Cyph {
 		public static platformString: string	= Env.isMobile ? 'mobile' : 'desktop';
 
 
-		public static webSignHashes: string			= encodeURIComponent(
+		public static webSignHashes: string		= encodeURIComponent(
 			'Hello Ryan and Josh,\n\n\n\n\n\n---\n\n' + (WebSign ? WebSign.toString() : '')
 		);
 
