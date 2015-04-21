@@ -455,7 +455,7 @@ module Cyph {
 					)
 				);
 
-				this.session.on(Session.Events.closeChat, this.kill);
+				this.session.on(Session.Events.closeChat, () => this.kill());
 
 				this.session.on(Session.Events.p2p, (command: Session.Command) => {
 					if (command.method) {
