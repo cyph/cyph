@@ -168,10 +168,9 @@ module Cyph.im {
 
 				if (!Cyph.Env.isMobile && Cyph.Env.isIE) {
 					this.dialogManager.alert({
-						title: 'Warning',
-						ok: 'ok',
-						content: "We won't stop you from using Internet Explorer, but it is a *very* poor life choice.\n\n" +
-						"IE doesn't work very well with Cyph (or in general).\n\nYou have been warned."
+						title: Cyph.Strings.warningTitle,
+						ok: Cyph.Strings.ok,
+						content: Cyph.Strings.IEWarning
 					});
 				}
 			}

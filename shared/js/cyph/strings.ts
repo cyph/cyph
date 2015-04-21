@@ -40,6 +40,12 @@ module Cyph {
 		webRTCDisconnect: `P2P session has been disconnected.`,
 		webRTCConnect: `P2P session has started.`,
 
+		IEWarning:
+			`We won't stop you from using Internet Explorer, but it is a *very* poor life choice.\n\n` +
+			`IE doesn't work very well with Cyph (or in general).\n\n` +
+			`You have been warned.`
+		,
+
 		incomingFileWarning:
 			`Your friend has sent you a file. It has not been scanned for malware; ` +
 			`you may choose to accept it AT YOUR OWN RISK. Save this file?`
