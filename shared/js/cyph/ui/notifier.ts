@@ -43,7 +43,7 @@ module Cyph {
 
 					Notifier.audio.play();
 
-					Util.getValue<any>(navigator, 'vibrate', () => {})(200);
+					Util.getValue(navigator, 'vibrate', () => {}).call(navigator, 200);
 				}
 			}
 
