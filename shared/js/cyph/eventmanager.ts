@@ -44,7 +44,7 @@ module Cyph {
 			}
 		}
 
-		private static _	= () => {
+		private static _	= (() => {
 			if (Env.isMainThread) {
 				EventManager.on(
 					EventManager.mainThreadEvents,
@@ -68,6 +68,6 @@ module Cyph {
 						postMessage({event: o.event, data: o.data, isThreadEvent: true}, undefined)
 				);
 			}
-		};
+		})();
 	}
 }
