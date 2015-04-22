@@ -4,7 +4,6 @@ module Cyph {
 			state: {
 				cyphId: string;
 				sharedSecret: string;
-				hasKeyExchangeBegun: boolean;
 				isAlive: boolean;
 				isCreator: boolean;
 				isStartingNewCyph: boolean;

@@ -34,7 +34,10 @@ module Cyph {
 
 				if (Env.isMainThread) {
 					for (let thread of Thread.threads) {
-						thread.postMessage({event, data, isThreadEvent: true});
+						try {
+							thread.postMessage({event, data, isThreadEvent: true});
+						}
+						catch (_) {}
 					}
 				}
 

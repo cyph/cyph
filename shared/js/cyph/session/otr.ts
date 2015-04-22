@@ -92,14 +92,13 @@ module Cyph {
 						});
 
 
-						let isConnected: boolean	= false;
-
 						this.otr.on('gone_secure', () => {
-							if (!isConnected) {
-								isConnected	= true;
+							if (this.sendQueue) {
+								let sendQueue: string[]	= this.sendQueue;
+								this.sendQueue			= null;
 
-								while (this.sendQueue.length) {
-									this.otr.send(this.sendQueue.shift());
+								for (let message of sendQueue) {
+									this.send(message);
 								}
 
 								if (this.session.state.isCreator) {
@@ -114,8 +113,11 @@ module Cyph {
 						}
 
 						setTimeout(() => {
-							while (this.receiveQueue.length) {
-								this.otr.receive(this.receiveQueue.shift());
+							let receiveQueue: string[]	= this.receiveQueue;
+							this.receiveQueue			= null;
+
+							for (let message of receiveQueue) {
+								this.receive(message);
 							}
 						}, 500);
 					})
@@ -127,7 +129,10 @@ module Cyph {
 					return;
 				}
 
-				if (this.otr) {
+				if (this.receiveQueue) {
+					this.receiveQueue.push(message);
+				}
+				else {
 					let o: OTRMessageOuter = Util.deserializeObject(OTRMessageOuter, message);
 
 					if (o.id >= this.incomingMessageId) {
@@ -154,13 +159,13 @@ module Cyph {
 						}
 					}
 				}
-				else {
-					this.receiveQueue.push(message);
-				}
 			}
 
 			public send (message: string) : void {
-				if (this.otr) {
+				if (this.sendQueue) {
+					this.sendQueue.push(message);
+				}
+				else {
 					let id		= Util.generateGuid();
 					let chunks	= Util.chunkString(message, 5120);
 
@@ -172,9 +177,6 @@ module Cyph {
 							chunks[i]
 						)));
 					}
-				}
-				else {
-					this.sendQueue.push(message);
 				}
 			}
 		}

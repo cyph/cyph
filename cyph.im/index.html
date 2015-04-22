@@ -6,7 +6,7 @@
 
 		<title
 			translate
-			ng-bind='(ui.chat.unreadMessages > 0 ? ("(" + ui.chat.unreadMessages + ") ") : "") + "Cyph – Encrypted Messenger"'
+			ng-bind='(ui.chat.scrollManager.unreadMessages > 0 ? ("(" + ui.chat.scrollManager.unreadMessages + ") ") : "") + "Cyph – Encrypted Messenger"'
 		>
 			Cyph &ndash; Encrypted Messenger
 		</title>
@@ -121,10 +121,10 @@
 
 				<span
 					id='webrtc-disabled-message'
-					ng-click='ui.chat.p2pManager.disabledAlert()'
+					ng-click='ui.chat.p2pManager.disabledAlert(ui.chat.isConnected)'
 					ng-attr-title='{{
 						ui.chat.isConnected && !ui.chat.p2pManager.isEnabled ?
-							"Your or your friend&#39;s browser may lack support for video calling. Try again with the latest Chrome or Firefox." :
+							Cyph.Strings.webRTCDisabled :
 							""
 					}}'
 				>
@@ -511,7 +511,7 @@
 
 				<md-subheader
 					id='new-messages'
-					ng-show='ui.chat.unreadMessages > 0'
+					ng-show='ui.chat.scrollManager.unreadMessages > 0'
 					class='md-subheader-colored md-sticky-clone'
 					sticky-state='active'
 					ng-click='ui.chat.scrollManager.scrollDown()'
@@ -519,7 +519,7 @@
 					<strong>&#8595;&nbsp;&nbsp;</strong>
 					<span
 						translate
-						ng-bind='ui.chat.unreadMessages + " " + "new" + " " + (ui.chat.unreadMessages > 1 ? "messages" : "message")'
+						ng-bind='ui.chat.scrollManager.unreadMessages + " " + "new" + " " + (ui.chat.scrollManager.unreadMessages > 1 ? "messages" : "message")'
 					></span>
 				</md-subheader>
 			</div>

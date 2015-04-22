@@ -8,7 +8,7 @@ module Cyph {
 
 				p2p: P2P.IP2P;
 
-				disabledAlert () : void;
+				disabledAlert (isConnected: boolean) : void;
 
 				enable () : void;
 

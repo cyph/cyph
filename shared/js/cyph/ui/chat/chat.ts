@@ -28,7 +28,6 @@ module Cyph {
 				public isConnected: boolean		= false;
 				public isDisconnected: boolean	= false;
 				public isFriendTyping: boolean	= false;
-				public unreadMessages: number	= 0;
 				public currentMessage: string	= '';
 				public state: States			= States.none;
 
@@ -112,74 +111,55 @@ module Cyph {
 						return;
 					}
 
-					let go: Function	= () => {
-						this.notifier.notify(Strings.connectedNotification);
-						this.changeState(States.chatBeginMessage);
+					this.notifier.notify(Strings.connectedNotification);
+					this.changeState(States.chatBeginMessage);
 
-						/* Stop mobile browsers from keeping this selected */
-						Elements.copyUrlInput.remove();
+					/* Stop mobile browsers from keeping this selected */
+					Elements.copyUrlInput.remove();
 
-						setTimeout(() => {
-							if (this.state === States.aborted) {
-								return;
-							}
+					setTimeout(() => {
+						if (this.state === States.aborted) {
+							return;
+						}
 
-							callback();
+						callback();
 
-							this.session.trigger(Session.Events.beginChatComplete);
-							this.changeState(States.chat);
+						this.session.trigger(Session.Events.beginChatComplete);
+						this.changeState(States.chat);
 
-							/* Adjust font size for translations */
-							if (!Env.isMobile) {
-								setTimeout(() => {
-									Elements.buttons.each((i: number, elem: HTMLElement) => {
-										let $this: JQuery	= $(elem);
+						/* Adjust font size for translations */
+						if (!Env.isMobile) {
+							setTimeout(() => {
+								Elements.buttons.each((i: number, elem: HTMLElement) => {
+									let $this: JQuery	= $(elem);
 
-										let $clone: JQuery	= $this
-											.clone()
-											.css({
-												display: 'inline',
-												width: 'auto',
-												visibility: 'hidden',
-												position: 'fixed'
-											})
-											.appendTo('body')
-										;
+									let $clone: JQuery	= $this
+										.clone()
+										.css({
+											display: 'inline',
+											width: 'auto',
+											visibility: 'hidden',
+											position: 'fixed'
+										})
+										.appendTo('body')
+									;
 
-										let $both: JQuery	= $this.add($clone);
+									let $both: JQuery	= $this.add($clone);
 
-										let fontSize: number	= parseInt($this.css('font-size'), 10);
+									let fontSize: number	= parseInt($this.css('font-size'), 10);
 
-										for (let i = 0 ; i < 20 && $clone.width() > $this.width() ; ++i) {
-											fontSize	-= 1;
-											$both.css('font-size', fontSize + 'px');
-										}
+									for (let i = 0 ; i < 20 && $clone.width() > $this.width() ; ++i) {
+										fontSize	-= 1;
+										$both.css('font-size', fontSize + 'px');
+									}
 
-										$clone.remove();
-									});
-								}, 500);
-							}
+									$clone.remove();
+								});
+							}, 500);
+						}
 
-							this.addMessage(Strings.introductoryMessage, Session.Authors.app, false);
-						}, 3000);
-					};
-
-
-					Util.getValue(Elements.timer[0], 'stop', () => {})();
-
-					if (this.session.state.hasKeyExchangeBegun) {
-						go();
-					}
-					else {
-						this.changeState(States.keyExchange);
-
-						let intervalId	= setInterval(() => {
-							if (this.session.state.hasKeyExchangeBegun) {
-								clearInterval(intervalId);
-								go();
-							}
-						}, 250);
-					}
+						this.addMessage(Strings.introductoryMessage, Session.Authors.app, false);
+					}, 3000);
 				}
 
 				public close () : void {
@@ -341,6 +321,11 @@ module Cyph {
 					this.session.on(Session.Events.beginChat, () => this.begin());
 
 					this.session.on(Session.Events.closeChat, () => this.close());
+
+					this.session.on(Session.Events.connect, () => {
+						this.changeState(States.keyExchange);
+						Util.getValue(Elements.timer[0], 'stop', () => {})();
+					});
 
 					this.session.on(Session.Events.cyphertext,
 						(o: { cyphertext: string; author: Session.Authors; }) =>
