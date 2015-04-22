@@ -50,7 +50,7 @@ module Cyph {
 				catch (e) {
 					/* Still want to trigger this error email, but a failed
 						notification isn't fatal to the rest of the code */
-					setTimeout(() => throw e, 0);
+					setTimeout(() => { throw e }, 0);
 				}
 			}
 
@@ -74,7 +74,7 @@ module Cyph {
 					});
 				}
 				catch (e) {
-					setTimeout(() => throw e, 0);
+					setTimeout(() => { throw e }, 0);
 				}
 			}
 		}
