@@ -14,12 +14,10 @@ for (let k in ['window', 'document', 'self']) {
 }
 
 for (let k in [
-	'crypto',
 	'history',
 	'location',
 	'localStorage',
-	'navigator',
-	'Notification'
+	'navigator'
 ]) {
 	if (!(k in this)) {
 		this[k]	= null;
