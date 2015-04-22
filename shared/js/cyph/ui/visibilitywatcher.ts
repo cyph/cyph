@@ -14,15 +14,12 @@ module Cyph {
 				EventManager.trigger(VisibilityWatcher.visibilityChangeEvent, this.isVisible);
 			}
 
-			private static _	= requireModules(
-				() => Elements,
-				() => {
-					Elements.window.
-						focus(() => VisibilityWatcher.trigger(true)).
-						blur(() => VisibilityWatcher.trigger(false))
-					;
-				}
-			);
+			private static _	= () => {
+				Elements.window.
+					focus(() => VisibilityWatcher.trigger(true)).
+					blur(() => VisibilityWatcher.trigger(false))
+				;
+			};
 		}
 	}
 }

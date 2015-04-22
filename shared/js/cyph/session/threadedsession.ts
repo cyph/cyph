@@ -45,31 +45,26 @@ module Cyph {
 
 					importScripts('/js/cyph/session/session.js');
 
-					requireModules(
-						() => Cyph.EventManager.isReady,
-						() => {
-							let session: ISession	= new Cyph.Session.Session(vars.descriptor, null, vars.id);
+					let session: ISession	= new Cyph.Session.Session(vars.descriptor, null, vars.id);
 
-							session.on(vars.events.close, (e: { shouldSendEvent: boolean; }) =>
-								session.close(e.shouldSendEvent)
-							);
+					session.on(vars.events.close, (e: { shouldSendEvent: boolean; }) =>
+						session.close(e.shouldSendEvent)
+					);
 
-							session.on(vars.events.receive, (e: { data: string; }) =>
-								session.receive(e.data)
-							);
+					session.on(vars.events.receive, (e: { data: string; }) =>
+						session.receive(e.data)
+					);
 
-							session.on(vars.events.send, (e: { messages: IMessage[]; }) =>
-								session.sendBase(e.messages)
-							);
+					session.on(vars.events.send, (e: { messages: IMessage[]; }) =>
+						session.sendBase(e.messages)
+					);
 
-							session.on(vars.events.sendText, (e: { text: string; }) =>
-								session.sendText(e.text)
-							);
+					session.on(vars.events.sendText, (e: { text: string; }) =>
+						session.sendText(e.text)
+					);
 
-							session.on(vars.events.updateState, (e: { key: string; value: any; }) =>
-								session.updateState(e.key, e.value)
-							);
-						}
+					session.on(vars.events.updateState, (e: { key: string; value: any; }) =>
+						session.updateState(e.key, e.value)
 					);
 				}, {
 					descriptor,
