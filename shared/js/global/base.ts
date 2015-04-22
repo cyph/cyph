@@ -30,13 +30,13 @@
 
 let IS_WEB: boolean	= typeof window === 'object';
 
-for (let k in ['window', 'document', 'self']) {
+for (let k of ['window', 'document', 'self']) {
 	if (!(k in this)) {
 		this[k]	= this;
 	}
 }
 
-for (let k in [
+for (let k of [
 	'history',
 	'location',
 	'localStorage',
