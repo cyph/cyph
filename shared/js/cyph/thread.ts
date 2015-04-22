@@ -62,7 +62,7 @@ module Cyph {
 
 			if (typeof crypto === 'undefined') {
 				if (typeof msCrypto !== 'undefined') {
-					this.crypto	= msCrypto;
+					this['crypto']	= msCrypto;
 				}
 				else {
 					let isaac: any;
@@ -71,7 +71,7 @@ module Cyph {
 
 					isaac.seed(vars.threadRandomSeed);
 
-					this.crypto	= {
+					this['crypto']	= {
 						getRandomValues: array => {
 							let bytes: number	=
 								'BYTES_PER_ELEMENT' in array ?
