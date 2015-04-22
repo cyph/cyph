@@ -30,7 +30,11 @@ angular.
 
 			let controller: Cyph.IController	= {
 				update: () : void => {
-					$scope.$apply();
+					let phase: string	= $scope.$root.$$phase;
+
+					if (phase !== '$apply' && phase !== '$digest') {
+						$scope.$apply();
+					}
 				}
 			};
 
