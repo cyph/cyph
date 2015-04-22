@@ -48,18 +48,16 @@ module Cyph {
 			};
 
 
-			Timer.thread	= new Thread(
-				(vars, postMessage) =>
-					onthreadmessage	= () =>
-						setTimeout(() =>
-							postMessage({})
-						, vars.interval)
-				,
-				{
-					interval: interval
-				},
-				threadHelper
-			);
+			Timer.thread	= new Thread((vars: any, postMessage: Function) => {
+				onthreadmessage	= () =>
+					setTimeout(() =>
+						postMessage({})
+					, vars.interval)
+				;
+			},
+			{
+				interval: interval
+			}, threadHelper);
 
 			threadHelper();
 		}

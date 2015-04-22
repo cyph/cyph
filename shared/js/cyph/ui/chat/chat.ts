@@ -490,7 +490,7 @@ module Cyph {
 												ok: Strings.continueDialogAction,
 												cancel: Strings.decline,
 												timeout
-											}, ok => callback());
+											}, (ok: boolean) => callback(ok));
 											break;
 										}
 										case P2P.UIEvents.Events.requestConfirm: {
@@ -506,7 +506,7 @@ module Cyph {
 												,
 												ok: Strings.continueDialogAction,
 												cancel: Strings.cancel
-											}, ok => callback);
+											}, (ok: boolean) => callback(ok));
 											break;
 										}
 										case P2P.UIEvents.Events.requestConfirmation: {
