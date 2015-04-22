@@ -1,41 +1,47 @@
+/// <reference path="../typings/iwebsign.d.ts" />
 /// <reference path="../typings/storage.d.ts" />
-/// <reference path="../typings/websign.d.ts" />
 
 
 'use strict';
 
 
-var IS_WEB	= typeof window === 'object';
+let IS_WEB	= typeof window === 'object';
 
-var window: Window;
-var document: Document;
-var self: Window;
-
-if (!window) {
-	window		= this;
-}
-if (!document) {
-	document	= this;
-}
-if (!self) {
-	self		= this;
+for (let k in ['window', 'document', 'self']) {
+	if (!(k in this)) {
+		this[k]	= this;
+	}
 }
 
-var crypto: Crypto;
-var history: History;
-var location: Location;
-var navigator: Navigator;
-var Notification: any;
+for (let k in [
+	'crypto',
+	'history',
+	'location',
+	'localStorage',
+	'navigator',
+	'Notification'
+]) {
+	if (!(k in this)) {
+		this[k]	= null;
+	}
+}
 
-var language: string;
-var localStorage: Storage;
-var processUrlState: Function;
-var WebSign: WebSign;
-var Translations: {[language: string] : {[text: string] : string}};
-var onthreadmessage: (e: MessageEvent) => any;
+
+let _crypto			= this.crypto;
+let crypto: Crypto	= _crypto;
+
+let _Notification		= this.Notification;
+let Notification: any	= _Notification;
+
+let _WebSign			= this.WebSign;
+let WebSign: IWebSign	= _WebSign;
+
+let onthreadmessage: (e: MessageEvent) => any;
+let processUrlState: () => void;
+let Translations: {[language: string] : {[text: string] : string}};
 
 
-var requireModules	= (dependencies: () => any, f: Function) => {
+let requireModules	= (dependencies: () => any, f: Function) => {
 	if (dependencies()) {
 		f();
 	}

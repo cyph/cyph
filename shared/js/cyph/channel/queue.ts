@@ -252,32 +252,28 @@ module Cyph {
 						}
 					}
 					else {
-						this.sqs.sendMessageBatch(
-							{
-								QueueUrl: this.queueUrl,
-								Entries: message.map((s, i) => ({
-									Id: (i + 1).toString(),
-									MessageBody: JSON.stringify({message: s})
-								}))
-							},
-							(
-								!callback ?
-									undefined :
-									!callback.length ?
-										callback :
-										(...args: any[]) => {
-											for (let f of callback) {
-												if (f) {
-													try {
-														f.apply(this, args);
-													}
-													catch (_) {}
-												}
-											}
+						if (callback instanceof Array) {
+							let callbacks: Function[]	= <Function[]> callback;
+
+							callback	= (...args: any[]) => {
+								for (let f of callbacks) {
+									if (f) {
+										try {
+											f.apply(this, args);
 										}
-							),
-							true
-						);
+										catch (_) {}
+									}
+								}
+							};
+						}
+
+						this.sqs.sendMessageBatch({
+							QueueUrl: this.queueUrl,
+							Entries: message.map((s, i) => ({
+								Id: (i + 1).toString(),
+								MessageBody: JSON.stringify({message: s})
+							}))
+						}, callback, true);
 					}
 				}
 			}

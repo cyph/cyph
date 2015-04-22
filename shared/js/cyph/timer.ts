@@ -19,7 +19,7 @@ module Cyph {
 
 					let now	= Date.now();
 
-					for (let timer of Timer.timers)
+					for (let timer of Timer.timers) {
 						if (timer) {
 							try {
 								timer(now);
