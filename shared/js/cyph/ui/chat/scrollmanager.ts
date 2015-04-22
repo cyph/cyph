@@ -81,7 +81,7 @@ module Cyph {
 								$this.detach();
 								$a.append($this);
 
-								Util.getValue($a, 'magnificPopup', o => {})({type: 'image'});
+								Util.getValue($a, 'magnificPopup', o => {}).call($a, {type: 'image'});
 							}
 						});
 
