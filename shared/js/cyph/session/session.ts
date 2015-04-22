@@ -253,16 +253,16 @@ module Cyph {
 			}
 
 			public sendBase (messages: IMessage[]) : void {
-				for (let message of messages) {
-					if (message.event === RPCEvents.text) {
-						this.trigger(RPCEvents.text, {
-							text: message.data,
-							author: Authors.me
-						});
-					}
-				}
-
 				if (this.otr) {
+					for (let message of messages) {
+						if (message.event === RPCEvents.text) {
+							this.trigger(RPCEvents.text, {
+								text: message.data,
+								author: Authors.me
+							});
+						}
+					}
+
 					this.otr.send(JSON.stringify(messages));
 				}
 				else {
