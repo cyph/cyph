@@ -45,7 +45,7 @@ ls */*.yaml | xargs -I% sed -i.bak 's/max-age=0/max-age=31536000/g' %
 
 if [ $test ] ; then
 	sed -i.bak "s/staging/${branch}/g" default/config.go
-	ls */js/config.ts | xargs -I% sed -i.bak "s/api.cyph.com/${branch}-dot-cyphme.appspot.com/g" %
+	ls */js/cyph/config.ts | xargs -I% sed -i.bak "s/api.cyph.com/${branch}-dot-cyphme.appspot.com/g" %
 
 	for yaml in `ls */cyph*.yaml` ; do
 		cat $yaml | perl -pe 's/(- url: .*)/\1\n  login: admin/g' > $yaml.new
@@ -100,7 +100,7 @@ find shared ! -wholename '*fonts/*' ! -wholename '*twemoji*' ! -wholename '*webs
 	for d in cyph.com ; do
 		cd $d
 
-		for g in index.html js/*.js css/*.css ; do
+		for g in index.html $(find js -name '*.js') $(find css -name '*.css') ; do
 			if ( grep -o "$safeF" $g ) ; then
 				cat $g | perl -pe "s/(\\/$safeF)/\1?`md5 "$f" | perl -pe 's/.* = //g'`/g" > $g.new
 				mv $g.new $g
@@ -120,7 +120,7 @@ for d in cyph.im ; do
 
 	# Merge in base64'd images and audio, BUT NOT fonts (they add 7mb)
 	find img audio -type f -print0 | while read -d $'\0' f ; do
-		for g in index.html js/*.js js/*/*.js css/*.css ; do
+		for g in index.html $(find js -name '*.js') $(find css -name '*.css') ; do
 			if ( grep -o "$f" $g ) ; then
 				dataURI="data:$(echo -n "$(file --mime-type "$f")" | perl -pe 's/.*\s+(.*?)$/\1/g');base64,$(base64 "$f")"
 
@@ -132,7 +132,7 @@ for d in cyph.im ; do
 	done
 
 	# Merge imported libraries into threads
-	ls js/*.js js/*/*.js | xargs -I% ../websignworkerpackager.js %
+	find js -name '*.js' | xargs -I% ../websignworkerpackager.js %
 
 	if [ $test ] ; then
 		../websignpackager.py index.html pkg.html
