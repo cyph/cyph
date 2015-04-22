@@ -2,6 +2,7 @@
 
 dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd) # $(dirname `readlink -f "${0}" || realpath "${0}"`)
+originalDir="$(pwd)"
 
 files="$( \
 	{ cat */*.html | grep "<script.*'/js/" & grep -ro "importScripts('/js/.*)" shared/js; } | \
@@ -31,7 +32,9 @@ else
 	echo -e "${output}"
 
 	if [ "${1}" == '--test' ] ; then
-		find . -name '*.js' | xargs -I% rm %
+		cd $originalDir
+		find shared/js -name '*.js' | xargs -I% rm %
+		find shared/js -name '*.map' | xargs -I% rm %
 	fi
 
 	exit ${#output}
