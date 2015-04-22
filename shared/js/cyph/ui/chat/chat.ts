@@ -175,7 +175,7 @@ module Cyph {
 					else if (!this.isDisconnected) {
 						this.isDisconnected	= true;
 						this.addMessage(Strings.disconnectedNotification, Session.Authors.app);
-						this.session.updateState(Session.State.isAlive, false);
+						this.session.close(true);
 					}
 				}
 

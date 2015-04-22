@@ -140,7 +140,7 @@ module Cyph.im {
 
 					this.chat.session.on(Cyph.Session.Events.beginChatComplete, () =>
 						Cyph.UI.Elements.window.
-							unload(() => this.chat.session.close()).
+							unload(() => this.chat.session.close(true)).
 							on('beforeunload', () => Cyph.Strings.disconnectWarning)
 					);
 
