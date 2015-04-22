@@ -11,9 +11,13 @@ module Cyph {
 			return array;
 		}
 
-		public static deserializeObject (classObject: any, json: string) : any {
-			var o			= JSON.parse(json)
-			var newObject	= Object.create(classObject.prototype);
+		public static deserializeObject (classObject: any, json: string|any) : any {
+			let o: any	= typeof json === 'string' ?
+				JSON.parse(json) :
+				json
+			;
+
+			let newObject: any	= Object.create(classObject.prototype);
 
 			for (let k of Object.keys(o)) {
 				newObject[k] = o[k];

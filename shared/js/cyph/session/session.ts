@@ -1,5 +1,6 @@
 /// <reference path="../base.ts" />
 /// <reference path="../channel/ratchetedchannel.ts" />
+/// <reference path="command.ts" />
 /// <reference path="message.ts" />
 /// <reference path="otr.ts" />
 
@@ -44,7 +45,23 @@ module Cyph {
 					}
 					case OTREvents.receive: {
 						if (e.data) {
-							for (let message of JSON.parse(e.data)) {
+							for (let messageObject of JSON.parse(e.data)) {
+								let message: Message	= Util.deserializeObject(
+									Message,
+									messageObject
+								);
+
+								if (
+									message.data &&
+									message.data.method &&
+									message.data.argument
+								) {
+									message.data	= Util.deserializeObject(
+										Command,
+										message.data
+									);
+								}
+
 								this.receiveHandler(message);
 							}
 						}
@@ -85,11 +102,13 @@ module Cyph {
 					this.lastIncomingMessageTimestamp	= Date.now();
 					this.receivedMessages[message.id]	= true;
 
-					this.trigger(message.event,
-						message.event === Events.text ?
-							{text: message.data, author: Authors.friend} :
-							message.data
-					);
+					if (message.event in RPCEvents) {
+						this.trigger(message.event,
+							message.event === RPCEvents.text ?
+								{text: message.data, author: Authors.friend} :
+								message.data
+						);
+					}
 				}
 			}
 
@@ -225,7 +244,7 @@ module Cyph {
 				;
 
 				if (shouldSendEvent) {
-					this.channel.send(Events.destroy, closeChat, true);
+					this.channel.send(RPCEvents.destroy, closeChat, true);
 				}
 				else {
 					closeChat();
@@ -241,7 +260,7 @@ module Cyph {
 			}
 
 			public receive (data: string) : void {
-				if (data === Events.destroy) {
+				if (data === RPCEvents.destroy) {
 					this.close(false);
 				}
 				else {
@@ -255,8 +274,8 @@ module Cyph {
 
 			public sendBase (messages: IMessage[]) : void {
 				for (let message of messages) {
-					if (message.event === Events.text) {
-						this.trigger(Events.text, {
+					if (message.event === RPCEvents.text) {
+						this.trigger(RPCEvents.text, {
 							text: message.data,
 							author: Authors.me
 						});
@@ -267,7 +286,7 @@ module Cyph {
 			}
 
 			public sendText (text: string) : void {
-				this.send(new Message(Events.text, text));
+				this.send(new Message(RPCEvents.text, text));
 			}
 
 			public trigger (event: string, data?: any) : void {

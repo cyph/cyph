@@ -56,7 +56,7 @@ module Cyph {
 						onopen: () => {
 							this.session.send(
 								new Session.Message(
-									Session.Events.channelRatchet,
+									Session.RPCEvents.channelRatchet,
 									channelDescriptor
 								)
 							);
@@ -86,7 +86,7 @@ module Cyph {
 			public constructor (session: Session.ISession, channelName: string, handlers: any = {}, config: any = {}) {
 				this.session	= session;
 
-				this.session.on(Session.Events.channelRatchet, () => this.ratchetChannels());
+				this.session.on(Session.RPCEvents.channelRatchet, () => this.ratchetChannels());
 
 
 				let onopen: Function	= handlers.onopen;

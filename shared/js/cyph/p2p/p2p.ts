@@ -228,7 +228,7 @@ module Cyph {
 
 						this.session.send(
 							new Session.Message(
-								Session.Events.p2p,
+								Session.RPCEvents.p2p,
 								new Session.Command(
 									P2P.constants.addIceCandidate,
 									JSON.stringify(e.candidate)
@@ -307,7 +307,7 @@ module Cyph {
 							else {
 								this.session.send(
 									new Session.Message(
-										Session.Events.p2p,
+										Session.RPCEvents.p2p,
 										new Session.Command(P2P.constants.decline)
 									)
 								);
@@ -434,18 +434,20 @@ module Cyph {
 
 				this.mutex		= new Session.Mutex(this.session);
 
-				this.session.on(Session.Events.beginChat, () =>
-					this.session.send(
-						new Session.Message(
-							Session.Events.p2p,
-							new Session.Command
-						)
-					)
-				);
+				this.session.on(Session.Events.beginChat, () => {
+					if (WebRTC.isSupported) {
+						this.session.send(
+							new Session.Message(
+								Session.RPCEvents.p2p,
+								new Session.Command
+							)
+						);
+					}
+				});
 
 				this.session.on(Session.Events.closeChat, () => this.kill());
 
-				this.session.on(Session.Events.p2p, (command: Session.Command) => {
+				this.session.on(Session.RPCEvents.p2p, (command: Session.Command) => {
 					if (command.method) {
 						this.commands[command.method](command.argument);
 					}
@@ -461,7 +463,7 @@ module Cyph {
 			public kill () : void {
 				this.session.send(
 					new Session.Message(
-						Session.Events.p2p,
+						Session.RPCEvents.p2p,
 						new Session.Command(P2P.constants.kill)
 					)
 				);
@@ -485,7 +487,7 @@ module Cyph {
 
 										this.session.send(
 											new Session.Message(
-												Session.Events.p2p,
+												Session.RPCEvents.p2p,
 												new Session.Command(callType)
 											)
 										);
@@ -736,14 +738,14 @@ module Cyph {
 												this.peer.setLocalDescription(offer, () => {
 													this.session.send(
 														new Session.Message(
-															Session.Events.p2p,
+															Session.RPCEvents.p2p,
 															new Session.Command(
 																P2P.constants.receiveOffer,
 																JSON.stringify(offer)
 															)
 														),
 														new Session.Message(
-															Session.Events.p2p,
+															Session.RPCEvents.p2p,
 															new Session.Command(
 																P2P.constants.streamOptions,
 																outgoingStream
@@ -771,14 +773,14 @@ module Cyph {
 															this.peer.setLocalDescription(answer, () => {
 																this.session.send(
 																	new Session.Message(
-																		Session.Events.p2p,
+																		Session.RPCEvents.p2p,
 																		new Session.Command(
 																			P2P.constants.receiveAnswer,
 																			JSON.stringify(answer)
 																		)
 																	),
 																	new Session.Message(
-																		Session.Events.p2p,
+																		Session.RPCEvents.p2p,
 																		new Session.Command(
 																			P2P.constants.streamOptions,
 																			outgoingStream

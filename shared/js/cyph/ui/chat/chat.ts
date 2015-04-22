@@ -244,7 +244,7 @@ module Cyph {
 						this.isMessageChanged	= isMessageChanged;
 						this.session.send(
 							new Session.Message(
-								Session.Events.typing,
+								Session.RPCEvents.typing,
 								this.isMessageChanged
 							)
 						);
@@ -356,12 +356,12 @@ module Cyph {
 						}
 					});
 
-					this.session.on(Session.Events.text,
+					this.session.on(Session.RPCEvents.text,
 						(o: { text: string; author: Session.Authors; }) =>
 							this.addMessage(o.text, o.author, o.author !== Session.Authors.me)
 					);
 
-					this.session.on(Session.Events.typing, (isFriendTyping: boolean) =>
+					this.session.on(Session.RPCEvents.typing, (isFriendTyping: boolean) =>
 						this.setFriendTyping(isFriendTyping)
 					);
 
