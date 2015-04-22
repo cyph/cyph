@@ -1,7 +1,3 @@
-/// <reference path="message.ts" />
-/// <reference path="../../global/base.ts" />
-
-
 module Cyph {
 	export module Session {
 		export interface ISession {
@@ -23,9 +19,9 @@ module Cyph {
 
 			receive (data: string) : void;
 
-			send (...messages: Message[]) : void;
+			send (...IMessages: IMessage[]) : void;
 
-			sendBase (messages: Message[]) : void;
+			sendBase (IMessages: IMessage[]) : void;
 
 			sendText (text: string) : void;
 

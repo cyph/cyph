@@ -1,8 +1,3 @@
-/// <reference path="base.ts" />
-/// <reference path="../cyph/env.ts" />
-/// <reference path="../../lib/typings/angularjs/angular.d.ts" />
-
-
 (() => {
 	let title: string	= 'ngMarkdown';
 

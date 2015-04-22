@@ -1,7 +1,3 @@
-/// <reference path="base.ts" />
-/// <reference path="../../lib/typings/jquery/jquery.d.ts" />
-
-
 $.fn.bounds	= function () {
 	let $this: JQuery				= $(this);
 	let bounds: JQueryCoordinates	= $this.offset();

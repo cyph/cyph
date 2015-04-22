@@ -1,10 +1,3 @@
-/// <reference path="config.ts" />
-/// <reference path="util.ts" />
-/// <reference path="../global/base.ts" />
-/// <reference path="../../lib/typings/aws-sdk/aws-sdk.d.ts" />
-/// <reference path="../../lib/typings/cryptojs/cryptojs.d.ts" />
-
-
 module Cyph {
 	export class AWSWrapper {
 		public static base	= self['AWS'];
@@ -111,7 +104,9 @@ module Cyph {
 		private static _	= requireModules(
 			() => Config,
 			() => {
-				self['AWS'].config	= new self['AWS'].Config(Config.awsConfig);
+				if (AWSWrapper.base) {
+					AWSWrapper.base.config	= new AWSWrapper.base.Config(Config.awsConfig);
+				}
 			}
 		);
 	}

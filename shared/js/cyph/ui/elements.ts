@@ -1,7 +1,3 @@
-/// <reference path="../../global/base.ts" />
-/// <reference path="../../../lib/typings/jquery/jquery.d.ts" />
-
-
 module Cyph {
 	export module UI {
 		export class Elements {

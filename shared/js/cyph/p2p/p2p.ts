@@ -1,19 +1,7 @@
-/// <reference path="enums.ts" />
-/// <reference path="filetransfer.ts" />
 /// <reference path="ip2p.ts" />
-/// <reference path="../analytics.ts" />
-/// <reference path="../icontroller.ts" />
-/// <reference path="../timer.ts" />
-/// <reference path="../util.ts" />
-/// <reference path="../webrtc.ts" />
+/// <reference path="filetransfer.ts" />
 /// <reference path="../session/command.ts" />
-/// <reference path="../session/imutex.ts" />
-/// <reference path="../session/isession.ts" />
-/// <reference path="../session/message.ts" />
 /// <reference path="../session/mutex.ts" />
-/// <reference path="../../global/base.ts" />
-/// <reference path="../../../lib/typings/webrtc/MediaStream.d.ts" />
-/// <reference path="../../../lib/typings/webrtc/RTCPeerConnection.d.ts" />
 
 
 module Cyph {
@@ -172,8 +160,8 @@ module Cyph {
 
 			public incomingStream				= {audio: false, video: false, loading: false};
 			public streamOptions				= {audio: false, video: false, loading: false};
-			public incomingFile: FileTransfer	= new FileTransfer;
-			public outgoingFile: FileTransfer	= new FileTransfer;
+			public incomingFile: IFileTransfer	= new FileTransfer;
+			public outgoingFile: IFileTransfer	= new FileTransfer;
 
 			private initPeer () : void {
 				if (this.peer) {

@@ -1,8 +1,3 @@
-/// <reference path="visibilitywatcher.ts" />
-/// <reference path="../config.ts" />
-/// <reference path="../../global/base.ts" />
-
-
 module Cyph {
 	export module UI {
 		export class Notifier {

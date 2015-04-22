@@ -1,9 +1,9 @@
-/// <reference path="../../global/base.ts" />
+/// <reference path="ifiletransfer.ts" />
 
 
 module Cyph {
 	export module P2P {
-		export class FileTransfer {
+		export class FileTransfer implements IFileTransfer {
 			public data: ArrayBuffer[]		= null;
 			public name: string				= '';
 			public readableSize: string		= '';

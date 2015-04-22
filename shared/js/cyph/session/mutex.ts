@@ -1,10 +1,5 @@
-/// <reference path="command.ts" />
-/// <reference path="enums.ts" />
 /// <reference path="imutex.ts" />
-/// <reference path="isession.ts" />
-/// <reference path="message.ts" />
-/// <reference path="../util.ts" />
-/// <reference path="../../global/base.ts" />
+/// <reference path="command.ts" />
 
 
 module Cyph {

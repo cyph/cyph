@@ -1,9 +1,3 @@
-/// <reference path="env.ts" />
-/// <reference path="thread.ts" />
-/// <reference path="../global/base.ts" />
-/// <reference path="../../lib/typings/jquery/jquery.d.ts" />
-
-
 module Cyph {
 	export class Analytics {
 		public static main	= new Analytics;

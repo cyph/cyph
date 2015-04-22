@@ -1,8 +1,3 @@
-/// <reference path="env.ts" />
-/// <reference path="thread.ts" />
-/// <reference path="../global/base.ts" />
-
-
 module Cyph {
 	export class Timer {
 		private static thread: Thread;

@@ -1,10 +1,3 @@
-/// <reference path="config.ts" />
-/// <reference path="env.ts" />
-/// <reference path="thread.ts" />
-/// <reference path="../global/base.ts" />
-/// <reference path="../../lib/typings/jquery/jquery.d.ts" />
-
-
 module Cyph {
 	export class Util {
 		public static chunkString (s: string, length: number) : string[] {
