@@ -12,8 +12,7 @@ module Cyph {
 		}
 
 		private static threadEnvSetup (vars: any, importScripts: Function) : void {
-			location	= vars.location;
-			navigator	= vars.navigator;
+			'use strict';
 
 			/* Wrapper to make importScripts work in local dev environments;
 				not used in prod because of WebSign packing */
@@ -24,6 +23,11 @@ module Cyph {
 					script
 				);
 			};
+
+			importScripts('/js/global/base.js');
+
+			location	= vars.location;
+			navigator	= vars.navigator;
 
 			console	= {
 				assert: () => {},
@@ -91,8 +95,6 @@ module Cyph {
 						subtle: null
 					};
 				}
-
-				importScripts('/js/global/base.js');
 			}
 		}
 
