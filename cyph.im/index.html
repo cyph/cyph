@@ -45,7 +45,7 @@
 
 		<md-toolbar id='mobile-toolbar' class='mobile-only'>
 			<div class='md-toolbar-tools'>
-				<a class='logo' ng-href='Cyph.Env.homeUrl'>
+				<a class='logo' ng-href='{{Cyph.Env.homeUrl}}'>
 					<img src='/img/betalogo.mobile.png' />
 				</a>
 
@@ -111,7 +111,7 @@
 		</md-sidenav>
 
 		<div id='desktop-sidebar' class='desktop-only'>
-			<a class='logo' ng-href='Cyph.Env.homeUrl'>
+			<a class='logo' ng-href='{{Cyph.Env.homeUrl}}'>
 				<img src='/img/betalogo.png' />
 			</a>
 			<section ng-show='ui.state === Cyph.im.UI.States.chat && ui.chat.state === Cyph.UI.Chat.States.chat'>
@@ -230,7 +230,7 @@
 				<div translate>This cyph has been aborted.</div>
 				<br />
 				<span translate>Please</span>
-				<a translate target='_self' ng-href='Cyph.Env.newCyphUrl'>try again</a>.
+				<a translate target='_self' ng-href='{{Cyph.Env.newCyphUrl}}'>try again</a>.
 			</div>
 			<div flex></div>
 		</div>
@@ -276,7 +276,7 @@
 				<div id='errorExplanation'>
 					<p>
 						<span translate>Please</span>
-						<a translate target='_self' ng-href='Cyph.Env.newCyphUrl'>try again</a>.
+						<a translate target='_self' ng-href='{{Cyph.Env.newCyphUrl}}'>try again</a>.
 					</p>
 					<p translate>Reasons why you may have landed here:</p>
 					<ul>
