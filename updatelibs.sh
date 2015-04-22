@@ -28,6 +28,7 @@ bower install --save \
 	aws-sdk-js
 
 cd bower_components/highlight.js
+rm .gitignore
 python tools/build.py default
 cd ../..
 
