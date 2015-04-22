@@ -1,8 +1,3 @@
-/// <reference path="idialogmanager.ts" />
-/// <reference path="../../global/base.ts" />
-/// <reference path="../../../lib/typings/angular-material/angular-material.d.ts" />
-
-
 module Cyph {
 	export module UI {
 		export class DialogManager implements IDialogManager {
@@ -70,7 +65,7 @@ module Cyph {
 					then(callback)
 				;
 
-				let timeoutId: number;
+				let timeoutId;
 				if ('timeout' in o) {
 					timeoutId	= setTimeout(() =>
 						this.$mdDialog.cancel(promise)

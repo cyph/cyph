@@ -1,8 +1,3 @@
-/// <reference path="eventmanager.ts" />
-/// <reference path="util.ts" />
-/// <reference path="../global/base.ts" />
-
-
 module Cyph {
 	export class Thread {
 		private static BlobBuilder: any;

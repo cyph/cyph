@@ -1,7 +1,3 @@
-/// <reference path="filetransfer.ts" />
-/// <reference path="../../global/base.ts" />
-
-
 module Cyph {
 	export module P2P {
 		export interface IP2P {
@@ -9,9 +5,9 @@ module Cyph {
 
 			streamOptions: {audio: boolean; video: boolean; loading: boolean;};
 
-			incomingFile: FileTransfer;
+			incomingFile: IFileTransfer;
 
-			outgoingFile: FileTransfer;
+			outgoingFile: IFileTransfer;
 
 			kill () : void;
 

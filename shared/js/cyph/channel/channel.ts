@@ -1,8 +1,4 @@
-/// <reference path="ichannel.ts" />
 /// <reference path="queue.ts" />
-/// <reference path="../timer.ts" />
-/// <reference path="../../global/base.ts" />
-/// <reference path="../../../lib/typings/aws-sdk/aws-sdk.d.ts" />
 
 
 /* Bidirectional channel, comprised of two queues */

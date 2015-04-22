@@ -1,9 +1,3 @@
-/// <reference path="elements.ts" />
-/// <reference path="../eventmanager.ts" />
-/// <reference path="../../global/base.ts" />
-/// <reference path="../../../lib/typings/jquery/jquery.d.ts" />
-
-
 module Cyph {
 	export module UI {
 		export class VisibilityWatcher {

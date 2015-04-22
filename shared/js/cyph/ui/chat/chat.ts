@@ -1,24 +1,19 @@
+/// <reference path="../../base.ts" />
+
+/// <reference path="../../../global/plugins.jquery.ts" />
+
+/// <reference path="../../p2p/p2p.ts" />
+/// <reference path="../../session/message.ts" />
+/// <reference path="../../session/threadedsession.ts" />
+/// <reference path="../basebuttonmanager.ts" />
+/// <reference path="../elements.ts" />
+/// <reference path="../nanoscroller.ts" />
+/// <reference path="../visibilitywatcher.ts" />
+/// <reference path="../affiliate.ts" />
 /// <reference path="cyphertext.ts" />
-/// <reference path="enums.ts" />
-/// <reference path="ichat.ts" />
 /// <reference path="p2pmanager.ts" />
 /// <reference path="photomanager.ts" />
 /// <reference path="scrollmanager.ts" />
-/// <reference path="../basebuttonmanager.ts" />
-/// <reference path="../elements.ts" />
-/// <reference path="../idialogmanager.ts" />
-/// <reference path="../inotifier.ts" />
-/// <reference path="../isidebar.ts" />
-/// <reference path="../nanoscroller.ts" />
-/// <reference path="../../analytics.ts" />
-/// <reference path="../../icontroller.ts" />
-/// <reference path="../../strings.ts" />
-/// <reference path="../../session/enums.ts" />
-/// <reference path="../../session/isession.ts" />
-/// <reference path="../../session/threadedsession.ts" />
-/// <reference path="../../../global/base.ts" />
-/// <reference path="../../../global/plugins.jquery.ts" />
-/// <reference path="../../../../lib/typings/jquery/jquery.d.ts" />
 
 
 module Cyph {
@@ -47,10 +42,10 @@ module Cyph {
 					timestamp: string;
 				}[]	= [];
 
-				public cyphertext: Cyphertext;
-				public photoManager: PhotoManager;
-				public p2pManager: P2PManager;
-				public scrollManager: ScrollManager;
+				public cyphertext: ICyphertext;
+				public photoManager: IPhotoManager;
+				public p2pManager: IP2PManager;
+				public scrollManager: IScrollManager;
 				public session: Session.ISession;
 
 				public abortSetup () : void {

@@ -1,8 +1,3 @@
-/// <reference path="isidebar.ts" />
-/// <reference path="../icontroller.ts" />
-/// <reference path="../../global/base.ts" />
-
-
 module Cyph {
 	export module UI {
 		export class BaseButtonManager {

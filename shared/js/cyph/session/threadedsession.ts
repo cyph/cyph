@@ -1,24 +1,11 @@
+/// <reference path="enums.ts" />
+/// <reference path="imessage.ts" />
 /// <reference path="isession.ts" />
-/// <reference path="../eventmanager.ts" />
-/// <reference path="../icontroller.ts" />
-/// <reference path="../thread.ts" />
-/// <reference path="../util.ts" />
-/// <reference path="../../global/base.ts" />
 
 
 module Cyph {
 	export module Session {
 		export class ThreadedSession implements ISession {
-			public static events	= {
-				close: 'ThreadedSessionClose',
-				receive: 'ThreadedSessionReceive',
-				send: 'ThreadedSessionSend',
-				sendText: 'ThreadedSessionSendText',
-				updateState: 'ThreadedSessionUpdateState',
-				updateStateThread: 'ThreadedSessionUpdateStateThread'
-			};
-
-
 			private id: string;
 			private controller: IController;
 			private thread: Thread;
@@ -38,7 +25,7 @@ module Cyph {
 
 
 				this.on(
-					ThreadedSession.events.updateStateThread,
+					ThreadedSessionEvents.updateStateThread,
 					(e: { key: string; value: any; }) => {
 						this.state[e.key]	= e.value;
 
@@ -51,6 +38,7 @@ module Cyph {
 				this.thread	= new Thread((vars: any, importScripts: Function, Cyph: any) => {
 					importScripts('/cryptolib/bower_components/otr4-em/build/otr-web.js');
 
+					importScripts('/cryptolib/hmac-sha256.js');
 					importScripts('/lib/bower_components/aws-sdk-js/dist/aws-sdk.min.js');
 					importScripts('/lib/aws-xml.js');
 					self['AWS'].XML.Parser	= self['AWS_XML'];
@@ -70,7 +58,7 @@ module Cyph {
 								session.receive(e.data)
 							);
 
-							session.on(vars.events.send, (e: { messages: Message[]; }) =>
+							session.on(vars.events.send, (e: { messages: IMessage[]; }) =>
 								session.sendBase(e.messages)
 							);
 
@@ -86,12 +74,12 @@ module Cyph {
 				}, {
 					descriptor,
 					id: this.id,
-					events: ThreadedSession.events
+					events: ThreadedSessionEvents
 				});
 			}
 
 			public close (shouldSendEvent: boolean = true) : void {
-				this.trigger(ThreadedSession.events.close, {shouldSendEvent});
+				this.trigger(ThreadedSessionEvents.close, {shouldSendEvent});
 				setTimeout(() => this.thread.stop(), 120000);
 			}
 
@@ -104,19 +92,19 @@ module Cyph {
 			}
 
 			public receive (data: string) : void {
-				this.trigger(ThreadedSession.events.receive, {data});
+				this.trigger(ThreadedSessionEvents.receive, {data});
 			}
 
-			public send (...messages: Message[]) : void {
+			public send (...messages: IMessage[]) : void {
 				this.sendBase(messages);
 			}
 
-			public sendBase (messages: Message[]) : void {
-				this.trigger(ThreadedSession.events.send, {messages});
+			public sendBase (messages: IMessage[]) : void {
+				this.trigger(ThreadedSessionEvents.send, {messages});
 			}
 
 			public sendText (text: string) : void {
-				this.trigger(ThreadedSession.events.sendText, {text});
+				this.trigger(ThreadedSessionEvents.sendText, {text});
 			}
 
 			public trigger (event: string, data?: any) : void {
@@ -124,7 +112,7 @@ module Cyph {
 			}
 
 			public updateState (key: string, value: any) : void {
-				this.trigger(ThreadedSession.events.updateState, {key, value});
+				this.trigger(ThreadedSessionEvents.updateState, {key, value});
 			}
 		}
 	}

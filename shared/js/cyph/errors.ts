@@ -1,9 +1,3 @@
-/// <reference path="analytics.ts" />
-/// <reference path="env.ts" />
-/// <reference path="util.ts" />
-/// <reference path="../global/base.ts" />
-
-
 module Cyph {
 	export class Errors {
 		private static baseErrorLog (subject: string, shouldIncludeBootstrapText?: boolean) : Function {

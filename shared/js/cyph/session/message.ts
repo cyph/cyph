@@ -1,10 +1,9 @@
-/// <reference path="../util.ts" />
-/// <reference path="../../global/base.ts" />
+/// <reference path="imessage.ts" />
 
 
 module Cyph {
 	export module Session {
-		export class Message {
+		export class Message implements IMessage {
 			public id: string;
 			public event: string;
 			public data: any;

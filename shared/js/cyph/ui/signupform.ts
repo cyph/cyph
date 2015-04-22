@@ -1,12 +1,3 @@
-/// <reference path="elements.ts" />
-/// <reference path="../analytics.ts" />
-/// <reference path="../env.ts" />
-/// <reference path="../icontroller.ts" />
-/// <reference path="../util.ts" />
-/// <reference path="../../global/base.ts" />
-/// <reference path="../../../lib/typings/jquery/jquery.d.ts" />
-
-
 module Cyph {
 	export module UI {
 		export class SignupForm {

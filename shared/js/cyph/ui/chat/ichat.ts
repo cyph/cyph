@@ -1,14 +1,3 @@
-/// <reference path="cyphertext.ts" />
-/// <reference path="enums.ts" />
-/// <reference path="p2pmanager.ts" />
-/// <reference path="photomanager.ts" />
-/// <reference path="scrollmanager.ts" />
-/// <reference path="../../icontroller.ts" />
-/// <reference path="../../session/enums.ts" />
-/// <reference path="../../session/isession.ts" />
-/// <reference path="../../../global/base.ts" />
-
-
 module Cyph {
 	export module UI {
 		export module Chat {
@@ -35,13 +24,13 @@ module Cyph {
 					timestamp: string;
 				}[];
 
-				cyphertext: Cyphertext;
+				cyphertext: ICyphertext;
 
-				photoManager: PhotoManager;
+				photoManager: IPhotoManager;
 
-				p2pManager: P2PManager;
+				p2pManager: IP2PManager;
 
-				scrollManager: ScrollManager;
+				scrollManager: IScrollManager;
 
 				session: Session.ISession;
 

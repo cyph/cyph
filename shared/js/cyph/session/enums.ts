@@ -1,6 +1,3 @@
-/// <reference path="../../global/base.ts" />
-
-
 module Cyph {
 	export module Session {
 		export enum Authors {
@@ -43,6 +40,15 @@ module Cyph {
 			public static isAlive: string				= 'isAlive';
 			public static isCreator: string				= 'isCreator';
 			public static isStartingNewCyph: string		= 'isStartingNewCyph';
+		}
+
+		export class ThreadedSessionEvents {
+			public static close: string				= 'close-ThreadedSession';
+			public static receive: string			= 'receive-ThreadedSession';
+			public static send: string				= 'send-ThreadedSession';
+			public static sendText: string			= 'sendText-ThreadedSession';
+			public static updateState: string		= 'updateState-ThreadedSession';
+			public static updateStateThread: string	= 'updateStateThread-ThreadedSession';
 		}
 	}
 }

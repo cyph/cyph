@@ -1,19 +1,7 @@
-/// <reference path="command.ts" />
-/// <reference path="enums.ts" />
-/// <reference path="iotr.ts" />
-/// <reference path="isession.ts" />
+/// <reference path="../base.ts" />
+/// <reference path="../channel/ratchetedchannel.ts" />
 /// <reference path="message.ts" />
 /// <reference path="otr.ts" />
-/// <reference path="threadedsession.ts" />
-/// <reference path="../analytics.ts" />
-/// <reference path="../errors.ts" />
-/// <reference path="../eventmanager.ts" />
-/// <reference path="../icontroller.ts" />
-/// <reference path="../timer.ts" />
-/// <reference path="../util.ts" />
-/// <reference path="../channel/ichannel.ts" />
-/// <reference path="../channel/ratchetedchannel.ts" />
-/// <reference path="../../global/base.ts" />
 
 
 module Cyph {
@@ -261,11 +249,11 @@ module Cyph {
 				}
 			}
 
-			public send (...messages: Message[]) : void {
+			public send (...messages: IMessage[]) : void {
 				this.sendBase(messages);
 			}
 
-			public sendBase (messages: Message[]) : void {
+			public sendBase (messages: IMessage[]) : void {
 				for (let message of messages) {
 					if (message.event === Events.text) {
 						this.trigger(Events.text, {
@@ -293,7 +281,7 @@ module Cyph {
 					this.controller.update();
 				}
 				else {
-					this.trigger(ThreadedSession.events.updateStateThread, {key, value});
+					this.trigger(ThreadedSessionEvents.updateStateThread, {key, value});
 				}
 			}
 		}
