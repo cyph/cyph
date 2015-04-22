@@ -10,7 +10,7 @@ module Cyph {
 				Timer.timerLock	= true;
 
 				try {
-					let now	= Date.now();
+					let now: number	= Date.now();
 
 					for (let timer of Timer.timers) {
 						if (timer) {
