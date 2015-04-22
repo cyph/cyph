@@ -11,6 +11,7 @@ module Cyph {
 			public static beginChat: string			= 'beginChat';
 			public static beginChatComplete: string	= 'beginChatComplete';
 			public static beginWaiting: string		= 'beginWaiting';
+			public static connect: string			= 'connect';
 			public static closeChat: string			= 'closeChat';
 			public static cyphertext: string		= 'cyphertext';
 			public static newCyph: string			= 'newCyph';
@@ -39,7 +40,6 @@ module Cyph {
 		export class State {
 			public static cyphId: string				= 'cyphId';
 			public static sharedSecret: string			= 'sharedSecret';
-			public static hasKeyExchangeBegun: string	= 'hasKeyExchangeBegun';
 			public static isAlive: string				= 'isAlive';
 			public static isCreator: string				= 'isCreator';
 			public static isStartingNewCyph: string		= 'isStartingNewCyph';

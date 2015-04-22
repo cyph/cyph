@@ -6,10 +6,11 @@ module Cyph {
 		export module Chat {
 			export class ScrollManager implements IScrollManager {
 				private scrollDownLock: number	= 0;
-				private unreadMessages: number	= 0;
 
 				private affiliate: Affiliate;
 				private controller: IController;
+
+				public unreadMessages: number	= 0;
 
 				private mutationObserverHandler (mutation: MutationRecord) : void {
 					let $elem: JQuery	= $(
