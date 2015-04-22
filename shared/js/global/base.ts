@@ -28,7 +28,7 @@
 'use strict';
 
 
-let IS_WEB	= typeof window === 'object';
+let IS_WEB: boolean	= typeof window === 'object';
 
 for (let k in ['window', 'document', 'self']) {
 	if (!(k in this)) {
@@ -47,7 +47,6 @@ for (let k in [
 	}
 }
 
-
 let _crypto			= this.crypto;
 let crypto: Crypto	= _crypto;
 
@@ -60,18 +59,3 @@ let WebSign: IWebSign	= _WebSign;
 let onthreadmessage: (e: MessageEvent) => any;
 let processUrlState: () => void;
 let Translations: {[language: string] : {[text: string] : string}};
-
-
-let requireModules	= (dependencies: () => any, f: Function) => {
-	if (dependencies()) {
-		f();
-	}
-	else {
-		let intervalId	= setInterval(() => {
-			if (dependencies()) {
-				clearInterval(intervalId);
-				f();
-			}
-		}, 25);
-	}
-};

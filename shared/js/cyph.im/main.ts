@@ -1,16 +1,11 @@
-/// <reference path="../global/base.ts" />
-
 /// <reference path="../preload/cryptoInit.ts" />
 /// <reference path="../preload/unsupportedbrowsers.ts" />
 /// <reference path="../preload/translations.ts" />
-
-/// <reference path="../cyph/base.ts" />
 /// <reference path="../preload/base.ts" />
 
 /// <reference path="../global/ngmarkdown.ts" />
 /// <reference path="../cyph/ui/chat/chat.ts" />
 /// <reference path="../cyph/ui/dialogmanager.ts" />
-/// <reference path="../cyph/ui/elements.ts" />
 /// <reference path="../cyph/ui/notifier.ts" />
 /// <reference path="../cyph/ui/signupform.ts" />
 /// <reference path="ui/enums.ts" />

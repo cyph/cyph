@@ -14,9 +14,18 @@ module Cyph {
 					Config.prodBaseUrl
 		;
 
-		public static host: string		= !!location && location.host.replace('www.', '');
+		public static host: string		= location ? location.host.replace('www.', '') : '';
 
-		public static language: string;
+		public static language: string	= Util.getValue(
+			navigator,
+			[
+				'language',
+				'userLanguage',
+				'browserLanguage',
+				'systemLanguage'
+			],
+			Config.defaultLanguage
+		).toLowerCase();
 
 
 		public static isWeb: boolean		= IS_WEB;
@@ -82,22 +91,5 @@ module Cyph {
 
 
 		public static smsRecipient: string	= Env.isIOS ? '+1' : '';
-
-
-		private static _	= requireModules(
-			() => Util,
-			() => {
-				Env.language	= Util.getValue(
-					navigator,
-					[
-						'language',
-						'userLanguage',
-						'browserLanguage',
-						'systemLanguage'
-					],
-					Config.defaultLanguage
-				).toLowerCase();
-			}
-		);
 	}
 }

@@ -5,8 +5,6 @@ module Cyph {
 		public static mainThreadEvents: string	= 'mainThreadEvents';
 		public static untriggeredEvents: string	= 'untriggeredEvents';
 
-		public static isReady: boolean;
-
 		public static off (event: string, handler: Function) : void {
 			EventManager.handlers[event]	=
 				(EventManager.handlers[event] || []).filter(f => f !== handler)
@@ -46,35 +44,30 @@ module Cyph {
 			}
 		}
 
-		private static _	= requireModules(
-			() => Env && Thread,
-			() => {
-				if (Env.isMainThread) {
-					EventManager.on(
-						EventManager.mainThreadEvents,
-						(o: { method: string; args: any[]; }) =>
-							Thread.callMainThread(o.method, o.args)
-					);
-				}
-				else {
-					self.onmessage	= (e: MessageEvent) => {
-						if (e.data && e.data.isThreadEvent) {
-							EventManager.trigger(e.data.event, e.data.data, true);
-						}
-						else if (onthreadmessage) {
-							onthreadmessage(e);
-						}
-					};
-
-					EventManager.on(
-						EventManager.untriggeredEvents,
-						(o: { event: string; data: any; }) =>
-							postMessage({event: o.event, data: o.data, isThreadEvent: true}, undefined)
-					);
-				}
-
-				EventManager.isReady	= true;
+		private static _	= () => {
+			if (Env.isMainThread) {
+				EventManager.on(
+					EventManager.mainThreadEvents,
+					(o: { method: string; args: any[]; }) =>
+						Thread.callMainThread(o.method, o.args)
+				);
 			}
-		);
+			else {
+				self.onmessage	= (e: MessageEvent) => {
+					if (e.data && e.data.isThreadEvent) {
+						EventManager.trigger(e.data.event, e.data.data, true);
+					}
+					else if (onthreadmessage) {
+						onthreadmessage(e);
+					}
+				};
+
+				EventManager.on(
+					EventManager.untriggeredEvents,
+					(o: { event: string; data: any; }) =>
+						postMessage({event: o.event, data: o.data, isThreadEvent: true}, undefined)
+				);
+			}
+		};
 	}
 }
