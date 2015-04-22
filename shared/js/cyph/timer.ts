@@ -10,8 +10,6 @@ module Cyph {
 				Timer.timerLock	= true;
 
 				try {
-					let exception: any;
-
 					let now	= Date.now();
 
 					for (let timer of Timer.timers) {
@@ -20,13 +18,9 @@ module Cyph {
 								timer(now);
 							}
 							catch (e) {
-								exception	= e;
+								setTimeout(() => { throw e }, 0);
 							}
 						}
-					}
-
-					if (exception) {
-						throw exception;
 					}
 				}
 				finally {
