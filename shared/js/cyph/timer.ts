@@ -19,12 +19,10 @@ module Cyph {
 
 					let now	= Date.now();
 
-					for (let i = 0 ; i < Timer.timers.length ; ++i) {
-						let f	= Timer.timers[i];
-
-						if (f) {
+					for (let timer of Timer.timers)
+						if (timer) {
 							try {
-								f(now);
+								timer(now);
 							}
 							catch (e) {
 								exception	= e;

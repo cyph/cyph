@@ -196,8 +196,7 @@ module Cyph {
 								}, () => {});
 
 								if (messageHandler) {
-									for (let i = 0 ; i < data.Messages.length ; ++i) {
-										let message: any		= data.Messages[i];
+									for (let message of data.Messages) {
 										let messageBody: string	= message.Body;
 
 										try {
@@ -253,24 +252,32 @@ module Cyph {
 						}
 					}
 					else {
-						this.sqs.sendMessageBatch({
-							QueueUrl: this.queueUrl,
-							Entries: message.map((s, i) => ({
-								Id: (i + 1).toString(),
-								MessageBody: JSON.stringify({message: s})
-							}))
-						}, callback && (!callback.length ? callback : (...args: any[]) => {
-							for (let i = 0 ; i < callback.length ; ++i) {
-								let thisCallback	= callback[i];
-
-								if (thisCallback) {
-									try {
-										thisCallback.apply(this, args);
-									}
-									catch (_) {}
-								}
-							}
-						}), true);
+						this.sqs.sendMessageBatch(
+							{
+								QueueUrl: this.queueUrl,
+								Entries: message.map((s, i) => ({
+									Id: (i + 1).toString(),
+									MessageBody: JSON.stringify({message: s})
+								}))
+							},
+							(
+								!callback ?
+									undefined :
+									!callback.length ?
+										callback :
+										(...args: any[]) => {
+											for (let f of callback) {
+												if (f) {
+													try {
+														f.apply(this, args);
+													}
+													catch (_) {}
+												}
+											}
+										}
+							),
+							true
+						);
 					}
 				}
 			}
