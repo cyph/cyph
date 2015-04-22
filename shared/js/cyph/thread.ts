@@ -192,7 +192,10 @@ module Cyph {
 		}
 
 		public stop () : void {
-			this.worker.terminate();
+			if (this.worker) {
+				this.worker.terminate();
+			}
+
 			this.worker	= null;
 
 			Thread.threads	= Thread.threads.filter(t => t !== this);
