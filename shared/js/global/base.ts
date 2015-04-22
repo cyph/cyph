@@ -29,10 +29,6 @@
 
 let IS_WEB: boolean	= typeof window === 'object';
 
-if (typeof self === 'undefined') {
-	self	= this;
-}
-
 for (let k of ['window', 'document']) {
 	if (!(k in self)) {
 		self[k]	= self;
