@@ -21,14 +21,12 @@ module Cyph {
 				EventManager.trigger(EventManager.untriggeredEvents, {event, data}, true);
 			}
 			else {
-				let exception: any;
-
 				for (let handler of (EventManager.handlers[event] || [])) {
 					try {
 						handler(data);
 					}
 					catch (e) {
-						exception	= e;
+						setTimeout(() => { throw e }, 0);
 					}
 				}
 
@@ -39,10 +37,6 @@ module Cyph {
 						}
 						catch (_) {}
 					}
-				}
-
-				if (exception) {
-					throw exception;
 				}
 			}
 		}
