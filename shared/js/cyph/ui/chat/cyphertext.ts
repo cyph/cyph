@@ -84,7 +84,7 @@ module Cyph {
 					this.dialogManager	= dialogManager;
 
 					/* Close cyphertext on esc */
-					Elements.document.keyup(e => {
+					Elements.window.keyup(e => {
 						if (e.keyCode === 27) {
 							this.hide();
 						}
