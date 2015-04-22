@@ -26,46 +26,6 @@ $(
 });
 
 
-/* Custom event handlers */
-
-['click', 'change', 'enterpress'].forEach((eventName: string) => {
-	let attribute: string	= 'on-' + eventName;
-
-	$('[' + attribute + ']').each((i: number, elem: HTMLElement) => {
-		let $this: JQuery	= $(elem);
-
-		$this.on(eventName, () => eval($this.attr(attribute)));
-	});
-});
-
-$('[on-enterpress]').each((i: number, elem: HTMLElement) => {
-	let $this: JQuery		= $(elem);
-	let platformRestriction: string	= $this.attr('enterpress-only');
-
-	if (!platformRestriction || platformRestriction === Cyph.Env.platformString) {
-		$this.keypress(e => {
-			if (e.keyCode === 13 && !e.shiftKey) {
-				e.preventDefault();
-				$this.trigger('enterpress');
-			}
-		});
-	}
-});
-
-
-/* Support button-links */
-
-$('button > a').each((i: number, elem: HTMLElement) => {
-	let $this: JQuery	= $(elem);
-	let $button: JQuery	= $this.parent();
-
-	$this.css('pointer-events', 'none');
-
-	/* Using mouseup instead of click because of Angular Material weirdness */
-	$button.on('mouseup', () => setTimeout(() => $this[0].click(), 500));
-});
-
-
 /* Mobile CSS class */
 
 if (Cyph.Env.isMobile) {
@@ -114,3 +74,46 @@ if (!HTMLElement.prototype.click) {
 		Cyph.Util.triggerClick(this);
 	};
 }
+
+
+
+$(() => {
+	/* Custom event handlers */
+
+	['click', 'change', 'enterpress'].forEach((eventName: string) => {
+		let attribute: string	= 'on-' + eventName;
+
+		$('[' + attribute + ']').each((i: number, elem: HTMLElement) => {
+			let $this: JQuery	= $(elem);
+
+			$this.on(eventName, () => eval($this.attr(attribute)));
+		});
+	});
+
+	$('[on-enterpress]').each((i: number, elem: HTMLElement) => {
+		let $this: JQuery		= $(elem);
+		let platformRestriction: string	= $this.attr('enterpress-only');
+
+		if (!platformRestriction || platformRestriction === Cyph.Env.platformString) {
+			$this.keypress(e => {
+				if (e.keyCode === 13 && !e.shiftKey) {
+					e.preventDefault();
+					$this.trigger('enterpress');
+				}
+			});
+		}
+	});
+
+
+	/* Support button-links */
+
+	$('button > a').each((i: number, elem: HTMLElement) => {
+		let $this: JQuery	= $(elem);
+		let $button: JQuery	= $this.parent();
+
+		$this.css('pointer-events', 'none');
+
+		/* Using mouseup instead of click because of Angular Material weirdness */
+		$button.on('mouseup', () => setTimeout(() => $this[0].click(), 500));
+	});
+});
