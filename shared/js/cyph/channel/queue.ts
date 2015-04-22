@@ -9,6 +9,10 @@ module Cyph {
 			public static nonExistentQueue: string	= 'AWS.SimpleQueueService.NonExistentQueue';
 			public static queuePrefix: string		= 'channels-';
 
+			private static _	= (() => {
+				self['AWS'].config	= new self['AWS'].Config(Config.awsConfig);
+			})();
+
 			public static periodValues (b?: boolean) : string {
 				return b ? '1800' : '1801';
 			}
@@ -19,7 +23,7 @@ module Cyph {
 				}
 
 				let wrapper	= {
-					base: new AWSWrapper.base.SQS(config)
+					base: new self['AWS'].SQS(config)
 				};
 
 				/* Add methods that take an object and an optional callback */
@@ -55,12 +59,22 @@ module Cyph {
 
 
 			private isQueueAlive: boolean;
+			private syncSqs: any;
 
 			public queueUrl: string;
 			public sqs: any;
 
 			public constructor (queueName: string, handlers: any = {}, config: any = {}) {
-				this.sqs			= Queue.sqsWrapper(config);
+				if (!('httpOptions' in config)) {
+					config.httpOptions	= {};
+				}
+
+				config.httpOptions.xhrAsync	= true;
+				this.sqs					= Queue.sqsWrapper(config);
+
+				config.httpOptions.xhrAsync	= false;
+				this.syncSqs				= Queue.sqsWrapper(config);
+
 				this.isQueueAlive	= true;
 
 				this.sqs.createQueue({
@@ -211,38 +225,15 @@ module Cyph {
 
 			public send (message: string|string[], callback?: Function|Function[], isSynchronous?: boolean) : void {
 				if (this.isQueueAlive) {
-					if (typeof message === 'string' || !message.length) {
-						let messageBody	= JSON.stringify({message: message});
+					let sqs: any	= isSynchronous ? this.syncSqs : this.sqs;
 
-						if (isSynchronous) {
-							AWSWrapper.request({
-								action: 'SendMessage',
-								url: this.queueUrl,
-								service: 'sqs',
-								region: this.sqs.base.config.region,
-								isSynchronous: true,
-								params: {
-									MessageBody: messageBody
-								}
-							}, callback);
-						}
-						else {
-							this.sqs.sendMessage({
-								QueueUrl: this.queueUrl,
-								MessageBody: messageBody
-							}, callback, true);
-						}
-					}
-					else if (isSynchronous) {
-						for (let i = 0 ; i < message.length ; +i) {
-							this.send(
-								message[i],
-								callback && callback.length ?
-									callback[i] :
-									(i === message.length - 1) && callback,
-								true
-							);
-						}
+					if (typeof message === 'string') {
+						let messageBody: string	= JSON.stringify({message: message});
+
+						sqs.sendMessage({
+							QueueUrl: this.queueUrl,
+							MessageBody: messageBody
+						}, callback, true);
 					}
 					else {
 						if (callback instanceof Array) {
@@ -260,7 +251,7 @@ module Cyph {
 							};
 						}
 
-						this.sqs.sendMessageBatch({
+						sqs.sendMessageBatch({
 							QueueUrl: this.queueUrl,
 							Entries: message.map((s, i) => ({
 								Id: (i + 1).toString(),

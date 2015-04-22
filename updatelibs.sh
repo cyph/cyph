@@ -56,6 +56,4 @@ bower install --save \
 	mnaamani/otr4-em \
 	rubycon/isaac.js
 
-wget http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/hmac-sha256.js
-
 cd "${dir}"

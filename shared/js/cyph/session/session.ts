@@ -221,17 +221,13 @@ module Cyph {
 			public close (shouldSendEvent: boolean = true) : void {
 				this.updateState(State.isAlive, false);
 
-				let closeChat: Function	= () =>
-					this.channel.close(() =>
-						this.trigger(Events.closeChat)
-					)
-				;
+				let closeChat: Function	= () => this.trigger(Events.closeChat);
 
 				if (shouldSendEvent) {
 					this.channel.send(RPCEvents.destroy, closeChat, true);
 				}
 				else {
-					closeChat();
+					this.channel.close(closeChat);
 				}
 			}
 
@@ -266,7 +262,12 @@ module Cyph {
 					}
 				}
 
-				this.otr.send(JSON.stringify(messages));
+				if (this.otr) {
+					this.otr.send(JSON.stringify(messages));
+				}
+				else {
+					setTimeout(() => this.sendBase(messages), 250);
+				}
 			}
 
 			public sendText (text: string) : void {
