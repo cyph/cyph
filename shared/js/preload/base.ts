@@ -1,3 +1,7 @@
+/// <reference path="../cyph/base.ts" />
+/// <reference path="../cyph/ui/elements.ts" />
+
+
 /* Translations */
 
 if (Translations && Cyph.Env.language !== Cyph.Config.defaultLanguage) {
