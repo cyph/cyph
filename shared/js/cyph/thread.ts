@@ -12,20 +12,18 @@ module Cyph {
 		}
 
 		private static threadEnvSetup (vars: any, importScripts: Function) : void {
-			self.location	= vars.location;
-			self.navigator	= vars.navigator;
+			location	= vars.location;
+			navigator	= vars.navigator;
 
 			/* Wrapper to make importScripts work in local dev environments;
 				not used in prod because of WebSign packing */
 			let oldImportScripts	= importScripts;
-			self['importScripts']	= (script: string) => {
+			importScripts			= (script: string) => {
 				oldImportScripts(
 					((location && location['origin']) || 'http://localhost:8082') +
 					script
 				);
 			};
-
-			importScripts('/js/global/base.js');
 
 			console	= {
 				assert: () => {},
@@ -64,7 +62,7 @@ module Cyph {
 
 			if (typeof crypto === 'undefined') {
 				if (typeof msCrypto !== 'undefined') {
-					self['crypto']	= msCrypto;
+					this.crypto	= msCrypto;
 				}
 				else {
 					let isaac: any;
@@ -73,7 +71,7 @@ module Cyph {
 
 					isaac.seed(vars.threadRandomSeed);
 
-					self['crypto']	= {
+					this.crypto	= {
 						getRandomValues: array => {
 							let bytes: number	=
 								'BYTES_PER_ELEMENT' in array ?
@@ -93,6 +91,8 @@ module Cyph {
 						subtle: null
 					};
 				}
+
+				importScripts('/js/global/base.js');
 			}
 		}
 
