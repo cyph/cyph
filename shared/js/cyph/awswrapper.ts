@@ -100,10 +100,10 @@ module Cyph {
 			});
 		}
 
-		private static _	= () => {
+		private static _	= (() => {
 			if (AWSWrapper.base) {
 				AWSWrapper.base.config	= new AWSWrapper.base.Config(Config.awsConfig);
 			}
-		};
+		})();
 	}
 }
