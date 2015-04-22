@@ -1,3 +1,5 @@
+/// <reference path="strict.ts" />
+
 /// <reference path="../typings/iwebsign.d.ts" />
 /// <reference path="../typings/storage.d.ts" />
 /// <reference path="../../lib/typings/tsd.d.ts" />
@@ -25,14 +27,11 @@
 /// <reference path="../cyph/ui/chat/iscrollmanager.ts" />
 
 
-'use strict';
-
-
 let IS_WEB: boolean	= typeof window === 'object';
 
-for (let k of ['window', 'document', 'self']) {
-	if (!(k in this)) {
-		this[k]	= this;
+for (let k of ['window', 'document']) {
+	if (!(k in self)) {
+		self[k]	= self;
 	}
 }
 
@@ -42,18 +41,18 @@ for (let k of [
 	'localStorage',
 	'navigator'
 ]) {
-	if (!(k in this)) {
-		this[k]	= null;
+	if (!(k in self)) {
+		self[k]	= null;
 	}
 }
 
-let _crypto			= this.crypto;
+let _crypto			= self['crypto'];
 let crypto: Crypto	= _crypto;
 
-let _Notification		= this.Notification;
+let _Notification		= self['Notification'];
 let Notification: any	= _Notification;
 
-let _WebSign			= this.WebSign;
+let _WebSign			= self['WebSign'];
 let WebSign: IWebSign	= _WebSign;
 
 let onthreadmessage: (e: MessageEvent) => any;

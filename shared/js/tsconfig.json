@@ -28,6 +28,7 @@
         "global/base.ts",
         "global/ngmarkdown.ts",
         "global/plugins.jquery.ts",
+        "global/strict.ts",
         "preload/base.ts",
         "preload/cryptoInit.ts",
         "preload/translations.ts",
