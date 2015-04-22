@@ -74,12 +74,11 @@ for d in cyph.im cyph.com ; do
 	cd ../$d
 
 	ls css/*.scss | perl -pe 's/(.*)\.scss/\1/g' | xargs -I% sass "%.scss" "%.css"
-	find shared/js -name '*.ts' | perl -pe 's/(.*)\.ts/\1/g' | xargs -I% tsc --sourceMap --out %.js %.ts
+	../build.sh || exit;
 
 	if [ "${branch}" == 'staging' ] ; then
 		echo "JS Minify ${d}"
 		find shared/js -name '*.ts' | xargs -I% rm %
-		find shared/js -name '*.map' | xargs -I% rm %
 		find shared/js -name '*.js' | xargs -I% uglifyjs '%' -o '%' -m
 		echo "CSS Minify ${d}"
 		rm css/*.scss css/*.map

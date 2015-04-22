@@ -11,12 +11,7 @@ ps ux | grep dev_appserver | grep -v grep | awk '{print $2}' | xargs kill -9
 sass --watch shared/css &
 fake_sqs &
 dev_appserver.py default/app.yaml cyph.com/cyph-com.yaml cyph.im/cyph-im.yaml cyph.me/cyph-me.yaml &
-
-{ cat */*.html | grep "<script.*'/js/" & grep -ro "importScripts('/js/.*)" shared/js; } | \
-	perl -pe "s/.*?'(\/js\/.*)\.js.*/shared\1/g" | \
-	sort | \
-	uniq | \
-	xargs -I% bash -c 'tsc --sourceMap --out %.js %.ts --watch &'
+./build.sh --watch
 
 cat # infinite sleep
 trap 'jobs -p | xargs kill' EXIT
