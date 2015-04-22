@@ -1,7 +1,3 @@
-/// <reference path="util.ts" />
-/// <reference path="../global/base.ts" />
-
-
 module Cyph {
 	export let Strings	= {
 		cancel: `cancel`,

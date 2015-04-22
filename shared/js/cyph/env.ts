@@ -1,8 +1,3 @@
-/// <reference path="config.ts" />
-/// <reference path="util.ts" />
-/// <reference path="../global/base.ts" />
-
-
 module Cyph {
 	export class Env {
 		public static isLocalhost: boolean	= !!location && location.hostname === 'localhost';

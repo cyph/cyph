@@ -1,18 +1,3 @@
-/// <reference path="enums.ts" />
-/// <reference path="../../cyph/errors.ts" />
-/// <reference path="../../cyph/icontroller.ts" />
-/// <reference path="../../cyph/ui/elements.ts" />
-/// <reference path="../../cyph/ui/idialogmanager.ts" />
-/// <reference path="../../cyph/ui/inotifier.ts" />
-/// <reference path="../../cyph/ui/isidebar.ts" />
-/// <reference path="../../cyph/ui/isignupform.ts" />
-/// <reference path="../../cyph/ui/signupform.ts" />
-/// <reference path="../../cyph/ui/chat/chat.ts" />
-/// <reference path="../../cyph/ui/chat/ichat.ts" />
-/// <reference path="../../global/base.ts" />
-/// <reference path="../../../lib/typings/jquery/jquery.d.ts" />
-
-
 module Cyph.im {
 	export module UI {
 		export class UI {
@@ -66,7 +51,7 @@ module Cyph.im {
 					);
 				}
 				else {
-					let copyUrlInterval: number	= setInterval(() => {
+					let copyUrlInterval	= setInterval(() => {
 						if (this.state === States.waitingForFriend) {
 							setCopyUrl();
 							Cyph.UI.Elements.copyUrlInput.focus();

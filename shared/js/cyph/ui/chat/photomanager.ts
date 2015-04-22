@@ -1,15 +1,10 @@
-/// <reference path="../elements.ts" />
-/// <reference path="../../config.ts" />
-/// <reference path="../../util.ts" />
-/// <reference path="../../session/isession.ts" />
-/// <reference path="../../../global/base.ts" />
-/// <reference path="../../../../lib/typings/jquery/jquery.d.ts" />
+/// <reference path="iphotomanager.ts" />
 
 
 module Cyph {
 	export module UI {
 		export module Chat {
-			export class PhotoManager {
+			export class PhotoManager implements IPhotoManager {
 				private session: Session.ISession;
 
 				private processImage (image: HTMLImageElement, file: File) : void {
@@ -94,7 +89,7 @@ module Cyph {
 
 										let finish: Function;
 
-										let intervalId: number	= setInterval(() => {
+										let intervalId	= setInterval(() => {
 											if (Util.getValue(elem, 'files', []).length > 0) {
 												finish();
 											}

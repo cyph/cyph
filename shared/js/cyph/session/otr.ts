@@ -1,9 +1,5 @@
-/// <reference path="enums.ts" />
 /// <reference path="iotr.ts" />
-/// <reference path="isession.ts" />
 /// <reference path="otrmessage.ts" />
-/// <reference path="../util.ts" />
-/// <reference path="../../global/base.ts" />
 
 
 module Cyph {

@@ -1,19 +1,20 @@
+/// <reference path="../global/base.ts" />
+
 /// <reference path="../preload/cryptoInit.ts" />
 /// <reference path="../preload/unsupportedbrowsers.ts" />
 /// <reference path="../preload/translations.ts" />
+
+/// <reference path="../cyph/base.ts" />
 /// <reference path="../preload/base.ts" />
 
-/// <reference path="ui/ui.ts" />
-/// <reference path="../cyph/icontroller.ts" />
+/// <reference path="../global/ngmarkdown.ts" />
+/// <reference path="../cyph/ui/chat/chat.ts" />
 /// <reference path="../cyph/ui/dialogmanager.ts" />
 /// <reference path="../cyph/ui/elements.ts" />
-/// <reference path="../cyph/ui/idialogmanager.ts" />
-/// <reference path="../cyph/ui/inotifier.ts" />
-/// <reference path="../cyph/ui/isidebar.ts" />
 /// <reference path="../cyph/ui/notifier.ts" />
-/// <reference path="../global/ngmarkdown.ts" />
-/// <reference path="../../lib/typings/angularjs/angular.d.ts" />
-/// <reference path="../../lib/typings/jquery/jquery.d.ts" />
+/// <reference path="../cyph/ui/signupform.ts" />
+/// <reference path="ui/enums.ts" />
+/// <reference path="ui/ui.ts" />
 
 
 angular.

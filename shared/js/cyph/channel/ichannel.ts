@@ -1,6 +1,3 @@
-/// <reference path="../../global/base.ts" />
-
-
 module Cyph {
 	export module Channel {
 		export interface IChannel {

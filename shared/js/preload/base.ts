@@ -1,10 +1,3 @@
-/// <reference path="../cyph/env.ts" />
-/// <reference path="../cyph/util.ts" />
-/// <reference path="../cyph/ui/elements.ts" />
-/// <reference path="../global/base.ts" />
-/// <reference path="../../lib/typings/jquery/jquery.d.ts" />
-
-
 /* Translations */
 
 if (Translations && Cyph.Env.language !== Cyph.Config.defaultLanguage) {

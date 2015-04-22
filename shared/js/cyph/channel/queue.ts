@@ -1,11 +1,4 @@
 /// <reference path="ichannel.ts" />
-/// <reference path="../awswrapper.ts" />
-/// <reference path="../config.ts" />
-/// <reference path="../env.ts" />
-/// <reference path="../util.ts" />
-/// <reference path="../../global/base.ts" />
-/// <reference path="../../../lib/typings/aws-sdk/aws-sdk.d.ts" />
-/// <reference path="../../../lib/typings/jquery/jquery.d.ts" />
 
 
 /* Unidirectional queue */

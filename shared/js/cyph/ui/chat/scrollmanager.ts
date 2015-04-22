@@ -1,20 +1,10 @@
-/// <reference path="../affiliate.ts" />
-/// <reference path="../elements.ts" />
-/// <reference path="../idialogmanager.ts" />
-/// <reference path="../nanoscroller.ts" />
-/// <reference path="../visibilitywatcher.ts" />
-/// <reference path="../../env.ts" />
-/// <reference path="../../icontroller.ts" />
-/// <reference path="../../util.ts" />
-/// <reference path="../../../global/base.ts" />
-/// <reference path="../../../global/plugins.jquery.ts" />
-/// <reference path="../../../../lib/typings/jquery/jquery.d.ts" />
+/// <reference path="iscrollmanager.ts" />
 
 
 module Cyph {
 	export module UI {
 		export module Chat {
-			export class ScrollManager {
+			export class ScrollManager implements IScrollManager {
 				private scrollDownLock: number	= 0;
 				private unreadMessages: number	= 0;
 
@@ -51,7 +41,7 @@ module Cyph {
 								this.unreadMessages	+= 1;
 								this.controller.update();
 
-								let intervalId: number	= setInterval(() => {
+								let intervalId	= setInterval(() => {
 									if (
 										VisibilityWatcher.isVisible &&
 										(

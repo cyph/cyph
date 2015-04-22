@@ -1,9 +1,3 @@
-/// <reference path="elements.ts" />
-/// <reference path="../env.ts" />
-/// <reference path="../util.ts" />
-/// <reference path="../../global/base.ts" />
-
-
 module Cyph {
 	export module UI {
 		export class NanoScroller {

@@ -1,6 +1,3 @@
-/// <reference path="../global/base.ts" />
-
-
 window['crypto']	= window['crypto'] || window['msCrypto'];
 
 if (

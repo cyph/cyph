@@ -1,19 +1,10 @@
-/// <reference path="../basebuttonmanager.ts" />
-/// <reference path="../elements.ts" />
-/// <reference path="../idialogmanager.ts" />
-/// <reference path="../isidebar.ts" />
-/// <reference path="../../analytics.ts" />
-/// <reference path="../../icontroller.ts" />
-/// <reference path="../../strings.ts" />
-/// <reference path="../../session/enums.ts" />
-/// <reference path="../../../global/base.ts" />
-/// <reference path="../../../../lib/typings/jquery/jquery.d.ts" />
+/// <reference path="icyphertext.ts" />
 
 
 module Cyph {
 	export module UI {
 		export module Chat {
-			export class Cyphertext extends BaseButtonManager {
+			export class Cyphertext extends BaseButtonManager implements ICyphertext {
 				private showLock: boolean		= false;
 				private curtainClass: string	= 'curtain';
 				private toastPosition: string	= 'top right';

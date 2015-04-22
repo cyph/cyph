@@ -1,6 +1,3 @@
-/// <reference path="../global/base.ts" />
-
-
 module Cyph {
 	export class Config {
 		public static prodBaseUrl: string		= 'https://api.cyph.com/';
