@@ -1,4 +1,4 @@
-interface WebSign {
+interface IWebSign {
 	bootstrapText: string;
 	cdnUrl: string;
 	continent: string;

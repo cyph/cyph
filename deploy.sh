@@ -60,7 +60,7 @@ fi
 for d in cyph.im cyph.com ; do
 	cd translations
 
-	echo "var Translations = { \
+	echo "Translations = { \
 		$(echo "$( \
 			ls | \
 			sed 's/\.json//' | \
@@ -69,7 +69,7 @@ for d in cyph.im cyph.com ; do
 			cut -c 2- | \
 			rev \
 		) \
-	};" > ../$d/js/preload/translations.ts
+	};" >> ../$d/js/preload/translations.ts
 
 	cd ../$d
 
