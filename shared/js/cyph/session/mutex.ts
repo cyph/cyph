@@ -22,7 +22,7 @@ module Cyph {
 						this.owner		= Authors.friend;
 						this.purpose	= purpose;
 
-						this.session.send(new Message(Events.mutex, new Command('release')));
+						this.session.send(new Message(RPCEvents.mutex, new Command('release')));
 					}
 					else {
 						this.requester	= {author: Authors.friend, purpose};
@@ -44,7 +44,10 @@ module Cyph {
 			public constructor (session: ISession) {
 				this.session	= session;
 
-				this.session.on(Events.mutex, (command: Command) => this.commands[command.method](command.argument));
+				this.session.on(RPCEvents.mutex, (command: Command) =>
+					this.commands[command.method](command.argument)
+				);
+
 				this.session.on(Events.closeChat, () => this.owner = Authors.me);
 			}
 
@@ -58,7 +61,7 @@ module Cyph {
 						this.requester	= {author: Authors.me, purpose};
 					}
 
-					this.session.send(new Message(Events.mutex, new Command('request', purpose)));
+					this.session.send(new Message(RPCEvents.mutex, new Command('request', purpose)));
 				}
 
 				
@@ -87,7 +90,7 @@ module Cyph {
 			public unlock () : void {
 				if (this.owner === Authors.me) {
 					this.shiftRequester();
-					this.session.send(new Message(Events.mutex, new Command('release')));
+					this.session.send(new Message(RPCEvents.mutex, new Command('release')));
 				}
 			}
 		}
