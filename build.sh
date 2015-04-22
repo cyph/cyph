@@ -30,5 +30,9 @@ else
 
 	echo -e "${output}"
 
+	if [ "${1}" == '--test' ] ; then
+		find . -name '*.js' | xargs -I% rm %
+	fi
+
 	exit ${#output}
 fi
