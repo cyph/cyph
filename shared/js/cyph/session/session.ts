@@ -10,8 +10,8 @@ module Cyph {
 		export class Session implements ISession {
 			private receivedMessages: {[id: string] : boolean}	= {};
 			private sendQueue: string[]							= [];
-			private lastIncomingMessageTimestamp: number		= 0;
-			private lastOutgoingMessageTimestamp: number		= 0;
+			private lastIncomingMessageTimestamp: number		= Date.now();
+			private lastOutgoingMessageTimestamp: number		= Date.now();
 
 			private id: string;
 			private channel: Channel.IChannel;

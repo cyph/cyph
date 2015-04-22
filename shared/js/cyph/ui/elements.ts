@@ -27,7 +27,9 @@ module Cyph {
 
 			public static load () : void {
 				Object.keys(Elements).
-					filter((k: string) => k !== 'load').
+					filter((k: string) =>
+						k !== 'load' && Elements[k].selector
+					).
 					forEach((k: string) =>
 						Elements[k]	= $(Elements[k].selector)
 					)
