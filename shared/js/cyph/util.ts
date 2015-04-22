@@ -370,7 +370,7 @@ module Cyph {
 
 		public static triggerClick (elem: HTMLElement) {
 			let e: Event	= document.createEvent('MouseEvents');
-			e.initEvent('click', true, true);
+			e.initEvent('click', true, false);
 			elem.dispatchEvent(e);
 		}
 	}
