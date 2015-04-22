@@ -18,7 +18,7 @@ module Cyph {
 			/* Wrapper to make importScripts work in local dev environments;
 				not used in prod because of WebSign packing */
 			let oldImportScripts	= importScripts;
-			self.importScripts		= (script: string) => {
+			self['importScripts']	= (script: string) => {
 				oldImportScripts(
 					((location && location['origin']) || 'http://localhost:8082') +
 					script
@@ -64,7 +64,7 @@ module Cyph {
 
 			if (typeof crypto === 'undefined') {
 				if (typeof msCrypto !== 'undefined') {
-					crypto	= msCrypto;
+					self['crypto']	= msCrypto;
 				}
 				else {
 					let isaac: any;
@@ -73,7 +73,7 @@ module Cyph {
 
 					isaac.seed(vars.threadRandomSeed);
 
-					self.crypto	= {
+					self['crypto']	= {
 						getRandomValues: array => {
 							let bytes: number	=
 								'BYTES_PER_ELEMENT' in array ?
