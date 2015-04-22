@@ -8,8 +8,6 @@ module Cyph {
 
 				isFriendTyping: boolean;
 
-				unreadMessages: number;
-
 				currentMessage: string;
 
 				state: States;

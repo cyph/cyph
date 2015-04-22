@@ -12,14 +12,14 @@ module Cyph {
 
 				public p2p: P2P.IP2P;
 
-				public disabledAlert () : void {
-					/* TODO: let message: string = $('#webrtc-disabled-message').attr('title') */
-
-					this.dialogManager.alert({
-						title: Strings.videoCallingTitle,
-						content: Strings.webRTCDisabled,
-						ok: Strings.ok
-					});
+				public disabledAlert (isConnected: boolean) : void {
+					if (isConnected && !this.isEnabled) {
+						this.dialogManager.alert({
+							title: Strings.videoCallingTitle,
+							content: Strings.webRTCDisabled,
+							ok: Strings.ok
+						});
+					}
 				}
 
 				public enable () : void {

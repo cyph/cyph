@@ -13,7 +13,6 @@ module Cyph {
 			public state	= {
 				cyphId: <string> '',
 				sharedSecret: <string> '',
-				hasKeyExchangeBegun: <boolean> false,
 				isAlive: <boolean> true,
 				isCreator: <boolean> false,
 				isStartingNewCyph: <boolean> false

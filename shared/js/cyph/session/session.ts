@@ -21,7 +21,6 @@ module Cyph {
 			public state	= {
 				cyphId: <string> '',
 				sharedSecret: <string> '',
-				hasKeyExchangeBegun: <boolean> false,
 				isAlive: <boolean> true,
 				isCreator: <boolean> false,
 				isStartingNewCyph: <boolean> false
@@ -40,28 +39,14 @@ module Cyph {
 						break;
 					}
 					case OTREvents.begin: {
-						this.updateState(State.hasKeyExchangeBegun, true);
+						this.trigger(Events.beginChat);
 						break;
 					}
 					case OTREvents.receive: {
+						this.lastIncomingMessageTimestamp	= Date.now();
+
 						if (e.data) {
-							for (let messageObject of JSON.parse(e.data)) {
-								let message: Message	= Util.deserializeObject(
-									Message,
-									messageObject
-								);
-
-								if (
-									message.data &&
-									message.data.method &&
-									message.data.argument
-								) {
-									message.data	= Util.deserializeObject(
-										Command,
-										message.data
-									);
-								}
-
+							for (let message of JSON.parse(e.data)) {
 								this.receiveHandler(message);
 							}
 						}
@@ -99,7 +84,6 @@ module Cyph {
 
 			private receiveHandler (message: Message) : void {
 				if (!this.receivedMessages[message.id]) {
-					this.lastIncomingMessageTimestamp	= Date.now();
 					this.receivedMessages[message.id]	= true;
 
 					if (message.event in RPCEvents) {
@@ -174,7 +158,7 @@ module Cyph {
 							}
 						});
 					},
-					onconnect: () => this.trigger(Events.beginChat),
+					onconnect: () => this.trigger(Events.connect),
 					onmessage: message => this.receive(message)
 				});
 			}

@@ -137,8 +137,6 @@ module Cyph.im {
 						Cyph.UI.Elements.window.off('beforeunload')
 					);
 
-					this.chat.session.on(Cyph.Session.Events.beginChat, () => this.changeState(States.chat));
-
 					this.chat.session.on(Cyph.Session.Events.beginChatComplete, () =>
 						Cyph.UI.Elements.window.
 							unload(() => this.chat.session.close()).
@@ -146,6 +144,8 @@ module Cyph.im {
 					);
 
 					this.chat.session.on(Cyph.Session.Events.beginWaiting, () => this.beginWaiting());
+
+					this.chat.session.on(Cyph.Session.Events.connect, () => this.changeState(States.chat));
 
 					this.chat.session.on(Cyph.Session.Events.newCyph, () => this.changeState(States.spinningUp));
 				}
