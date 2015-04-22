@@ -167,18 +167,15 @@ module Cyph {
 						return;
 					}
 
-					if (this.session.state.isAlive) {
-						this.setFriendTyping(false);
+					this.setFriendTyping(false);
 
-						if (this.isConnected) {
-							this.addMessage(Strings.disconnectedNotification, Session.Authors.app);
-
-							this.isDisconnected	= true;
-							this.session.updateState(Session.State.isAlive, false);
-						}
-						else {
-							this.abortSetup();
-						}
+					if (!this.isConnected) {
+						this.abortSetup();
+					}
+					else if (!this.isDisconnected) {
+						this.isDisconnected	= true;
+						this.addMessage(Strings.disconnectedNotification, Session.Authors.app);
+						this.session.updateState(Session.State.isAlive, false);
 					}
 				}
 
