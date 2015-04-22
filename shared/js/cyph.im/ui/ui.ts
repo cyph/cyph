@@ -133,9 +133,10 @@ module Cyph.im {
 					this.signupForm	= new Cyph.UI.SignupForm(this.controller);
 
 
-					this.chat.session.on(Cyph.Session.Events.abort, () =>
-						Cyph.UI.Elements.window.off('beforeunload')
-					);
+					this.chat.session.on(Cyph.Session.Events.abort, () => {
+						this.changeState(States.chat);
+						Cyph.UI.Elements.window.off('beforeunload');
+					});
 
 					this.chat.session.on(Cyph.Session.Events.beginChatComplete, () =>
 						Cyph.UI.Elements.window.
