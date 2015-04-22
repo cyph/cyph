@@ -5,6 +5,12 @@
 module Cyph {
 	export module Session {
 		export class Mutex implements IMutex {
+			private static constants	= {
+				release: 'release',
+				request: 'request'
+			};
+
+
 			private owner: Authors;
 			private purpose: string;
 			private requester: { author: Authors; purpose: string; };
@@ -22,7 +28,12 @@ module Cyph {
 						this.owner		= Authors.friend;
 						this.purpose	= purpose;
 
-						this.session.send(new Message(RPCEvents.mutex, new Command('release')));
+						this.session.send(
+							new Message(
+								RPCEvents.mutex,
+								new Command(Mutex.constants.release)
+							)
+						);
 					}
 					else {
 						this.requester	= {author: Authors.friend, purpose};
@@ -61,14 +72,22 @@ module Cyph {
 						this.requester	= {author: Authors.me, purpose};
 					}
 
-					this.session.send(new Message(RPCEvents.mutex, new Command('request', purpose)));
+					this.session.send(
+						new Message(
+							RPCEvents.mutex,
+							new Command(
+								Mutex.constants.request,
+								purpose
+							)
+						)
+					);
 				}
 
 				
 				let friendHadLockFirst: boolean	= false;
 				let friendLockpurpose: string	= '';
 
-				Util.retryUntilComplete((retry: Function) => {
+				Util.retryUntilComplete(retry => {
 					if (this.owner === Authors.me) {
 						f(
 							!friendHadLockFirst,
@@ -90,7 +109,13 @@ module Cyph {
 			public unlock () : void {
 				if (this.owner === Authors.me) {
 					this.shiftRequester();
-					this.session.send(new Message(RPCEvents.mutex, new Command('release')));
+
+					this.session.send(
+						new Message(
+							RPCEvents.mutex,
+							new Command(Mutex.constants.release)
+						)
+					);
 				}
 			}
 		}

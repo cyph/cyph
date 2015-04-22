@@ -270,37 +270,37 @@ module Cyph {
 				this.peer	= pc;
 			}
 
-			private receiveCommand (command: string, data?: any) : void {
+			private receiveCommand (command: Session.Command) : void {
 				if (!WebRTC.isSupported) {
 					return;
 				}
 
-				if (this.isAccepted && typeof this.commands[command] === 'function') {
-					this.commands[command](data);
+				if (this.isAccepted && command.method in this.commands) {
+					this.commands[command.method](command.argument);
 				}
 				else if (
-					command === P2P.constants.video ||
-					command === P2P.constants.voice ||
-					command === P2P.constants.file
+					command.method === P2P.constants.video ||
+					command.method === P2P.constants.voice ||
+					command.method === P2P.constants.file
 				) {
 					this.triggerUiEvent(
 						UIEvents.Categories.request,
 						UIEvents.Events.acceptConfirm,
-						command,
+						command.method,
 						500000,
 						(ok: boolean) => {
 							if (ok) {
 								this.isAccepted	= true;
 								this.setUpStream({
-									video: command === P2P.constants.video,
-									audio: command !== P2P.constants.file
+									video: command.method === P2P.constants.video,
+									audio: command.method !== P2P.constants.file
 								});
 
 								Analytics.main.send({
 									hitType: 'event',
 									eventCategory: 'call',
 									eventAction: 'start',
-									eventLabel: command,
+									eventLabel: command.method,
 									eventValue: 1
 								});
 							}
@@ -417,7 +417,7 @@ module Cyph {
 					}
 				};
 
-				this.channel.onopen	= this.sendFile;
+				this.channel.onopen	= () => this.sendFile();
 			}
 
 			private triggerUiEvent(
@@ -449,7 +449,7 @@ module Cyph {
 
 				this.session.on(Session.RPCEvents.p2p, (command: Session.Command) => {
 					if (command.method) {
-						this.commands[command.method](command.argument);
+						this.receiveCommand(command);
 					}
 					else if (WebRTC.isSupported) {
 						this.triggerUiEvent(
