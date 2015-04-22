@@ -9,5 +9,4 @@
 /// <reference path="strings.ts" />
 /// <reference path="timer.ts" />
 /// <reference path="analytics.ts" />
-/// <reference path="awswrapper.ts" />
 /// <reference path="webrtc.ts" />
