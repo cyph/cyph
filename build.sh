@@ -12,10 +12,14 @@ files="$( \
 
 cd $dir
 
+if [ -d shared ] ; then
+	cd shared
+fi 
+
 
 if [ "${1}" == '--watch' ] ; then
 	for file in $files ; do
-		tsc --sourceMap shared/$file.ts --out shared/$file.js --watch &
+		tsc --sourceMap $file.ts --out $file.js --watch &
 	done
 else
 	output=''
@@ -24,8 +28,7 @@ else
 		output="${output}$(tsc $file.ts --out $file.js)"
 	done
 
-	echo "${output}"
+	echo -e "${output}"
 
 	exit ${#output}
 fi
-
