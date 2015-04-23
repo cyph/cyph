@@ -7,42 +7,48 @@ module Cyph {
 				let options	= {
 					body: message,
 					icon: Config.notifierConfig.icon,
-					audio: '',
+					audio: Config.notifierConfig.audio,
 					vibrate: 200,
 					lang: Env.language,
-					tag: ''
+					tag: Util.generateGuid()
 				};
 
 				try {
-					callback(new self['Notification'](Config.notifierConfig.title, options));
-
 					try {
-						Notifier.audio.play();
+						navigator['serviceWorker'].
+							register(Cyph.Config.webSignConfig.serviceWorker).
+							then(serviceWorkerRegistration => {
+								try {
+									serviceWorkerRegistration.
+										showNotification(Config.notifierConfig.title, options).
+										then(() =>
+											serviceWorkerRegistration.
+												getNotifications(options.tag).
+												then(notifications =>
+													notifications && callback(notifications[0])
+												)
+									);
+								}
+								catch (_) {}
+							}
+						);
 					}
 					catch (_) {}
 				}
 				catch (_) {
-					options.audio	= Config.notifierConfig.audio;
-
 					try {
-						navigator['serviceWorker'].ready.then(serviceWorkerRegistration => {
-							try {
-								options.tag	= Util.generateGuid();
-
-								serviceWorkerRegistration.
-									showNotification(Config.notifierConfig.title, options).
-									then(() =>
-										serviceWorkerRegistration.
-											getNotifications(options.tag).
-											then(notifications =>
-												callback(notifications[0])
-											)
-								);
-							}
-							catch (_) {}
-						});
+						Notifier.audio.play();
 					}
 					catch (_) {}
+					try {
+						Util.getValue(navigator, 'vibrate', () => {}).call(navigator, options.vibrate);
+					}
+					catch (_) {}
+
+					options.audio	= null;
+					options.vibrate	= null;
+
+					callback(new self['Notification'](Config.notifierConfig.title, options));
 				}
 			}
 
