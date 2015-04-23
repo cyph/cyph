@@ -44,23 +44,14 @@ for (let k of [
 	}
 }
 
-let _crypto	= self['crypto'];
-let crypto: Crypto;
-if (!crypto) {
-	crypto	= _crypto;
-}
+let _crypto			= self['crypto'];
+let crypto: Crypto	= _crypto;
 
-let _Notification	= self['Notification'];
-let Notification: any;
-if (!Notification) {
-	Notification	= _Notification;
-}
+let _Notification		= self['Notification'];
+let Notification: any	= _Notification;
 
-let _WebSign	= self['WebSign'];
-let WebSign: IWebSign;
-if (!WebSign) {
-	WebSign		= _WebSign;
-}
+let _WebSign			= self['WebSign'];
+let WebSign: IWebSign	= _WebSign;
 
 let onthreadmessage: (e: MessageEvent) => any;
 let processUrlState: () => void;
