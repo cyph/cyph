@@ -1,5 +1,3 @@
-/// <reference path="../../global/strict.ts" />
-
 /// <reference path="../base.ts" />
 /// <reference path="../channel/ratchetedchannel.ts" />
 /// <reference path="command.ts" />
