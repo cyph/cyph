@@ -4,6 +4,7 @@ module Cyph {
 		private static timerLock: boolean;
 
 		private static timers: Function[]	= [];
+		private static total: number		= 0;
 
 		private static processTimers () : boolean {
 			if (!Timer.timerLock) {
@@ -72,7 +73,9 @@ module Cyph {
 		private id: number;
 
 		public constructor (f: Function) {
-			this.id	= Timer.timers.push(f) - 1;
+			this.id	= Timer.total++;
+
+			Timer.timers.push(f);
 
 			if (this.id < 1) {
 				if (!Env.isMainThread) {
@@ -90,6 +93,10 @@ module Cyph {
 
 		public stop () : void {
 			Timer.timers[this.id]	= null;
+
+			if (--Timer.total < 1) {
+				Timer.stopAll();
+			}
 		}
 	}
 }
