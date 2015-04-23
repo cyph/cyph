@@ -239,6 +239,7 @@ module Cyph {
 					}
 
 					if (message) {
+						this.addMessage(message, Session.Authors.me, false);
 						this.scrollManager.scrollDown();
 						this.session.sendText(message);
 					}
@@ -339,8 +340,11 @@ module Cyph {
 					});
 
 					this.session.on(Session.RPCEvents.text,
-						(o: { text: string; author: Session.Authors; }) =>
-							this.addMessage(o.text, o.author, o.author !== Session.Authors.me)
+						(o: { text: string; author: Session.Authors; }) => {
+							if (o.author !== Session.Authors.me) {
+								this.addMessage(o.text, o.author);
+							}
+						}
 					);
 
 					this.session.on(Session.RPCEvents.typing, (isFriendTyping: boolean) =>
