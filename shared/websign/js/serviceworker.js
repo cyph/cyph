@@ -52,15 +52,19 @@ self.addEventListener('notificationclick', function (e) {
 		e.waitUntil(clients.matchAll({
 			type: 'window'
 		}).then(function (clientList) {
-			try {
-				return clientList[0].focus();
-			}
-			catch (_) {
+			for (var i = 0 ; i < clientList.length ; ++i) {
+				var client	= clientList[i];
+
 				try {
-					return clients.openWindow('/');
+					return client.focus();
 				}
 				catch (_) {}
 			}
+
+			try {
+				return clients.openWindow('/');
+			}
+			catch (_) {}
 		}));
 	}
 	catch (_) {}
