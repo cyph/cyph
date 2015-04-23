@@ -1,5 +1,3 @@
-/// <reference path="strict.ts" />
-
 /// <reference path="../typings/iwebsign.d.ts" />
 /// <reference path="../typings/storage.d.ts" />
 /// <reference path="../../lib/typings/tsd.d.ts" />
