@@ -45,7 +45,6 @@ for (let k of [
 }
 
 let crypto: Crypto;
-let Notification: any;
 let WebSign: IWebSign;
 
 let onthreadmessage: (e: MessageEvent) => any;

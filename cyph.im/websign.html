@@ -7,23 +7,24 @@
 		<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
 		<meta name='apple-mobile-web-app-capable' content='yes' />
 		<meta name='mobile-web-app-capable' content='yes' />
+		<link rel='manifest' href='/websign/manifest.json' />
 
 		<title>Cyph &ndash; Encrypted Messenger</title>
 
-		<link rel='apple-touch-icon' sizes='57x57' href='/img/favicon/apple-touch-icon-57x57.png' />
-		<link rel='apple-touch-icon' sizes='114x114' href='/img/favicon/apple-touch-icon-114x114.png' />
-		<link rel='apple-touch-icon' sizes='72x72' href='/img/favicon/apple-touch-icon-72x72.png' />
-		<link rel='apple-touch-icon' sizes='144x144' href='/img/favicon/apple-touch-icon-144x144.png' />
-		<link rel='apple-touch-icon' sizes='60x60' href='/img/favicon/apple-touch-icon-60x60.png' />
-		<link rel='apple-touch-icon' sizes='120x120' href='/img/favicon/apple-touch-icon-120x120.png' />
-		<link rel='apple-touch-icon' sizes='76x76' href='/img/favicon/apple-touch-icon-76x76.png' />
-		<link rel='apple-touch-icon' sizes='152x152' href='/img/favicon/apple-touch-icon-152x152.png' />
-		<link rel='apple-touch-icon' sizes='180x180' href='/img/favicon/apple-touch-icon-180x180.png' />
-		<link rel='icon' type='image/png' href='/img/favicon/favicon-192x192.png' sizes='192x192' />
-		<link rel='icon' type='image/png' href='/img/favicon/favicon-160x160.png' sizes='160x160' />
-		<link rel='icon' type='image/png' href='/img/favicon/favicon-96x96.png' sizes='96x96' />
-		<link rel='icon' type='image/png' href='/img/favicon/favicon-16x16.png' sizes='16x16' />
-		<link rel='icon' type='image/png' href='/img/favicon/favicon-32x32.png' sizes='32x32' />
+		<link rel='icon' sizes='192x192' type='image/png' href='/img/favicon/favicon-192x192.png' />
+		<link rel='icon' sizes='160x160' type='image/png' href='/img/favicon/favicon-160x160.png' />
+		<link rel='icon' sizes='96x96' type='image/png' href='/img/favicon/favicon-96x96.png' />
+		<link rel='icon' sizes='32x32' type='image/png' href='/img/favicon/favicon-32x32.png' />
+		<link rel='icon' sizes='16x16' type='image/png' href='/img/favicon/favicon-16x16.png' />
+		<link rel='apple-touch-icon' sizes='180x180' type='image/png' href='/img/favicon/apple-touch-icon-180x180.png' />
+		<link rel='apple-touch-icon' sizes='152x152' type='image/png' href='/img/favicon/apple-touch-icon-152x152.png' />
+		<link rel='apple-touch-icon' sizes='144x144' type='image/png' href='/img/favicon/apple-touch-icon-144x144.png' />
+		<link rel='apple-touch-icon' sizes='120x120' type='image/png' href='/img/favicon/apple-touch-icon-120x120.png' />
+		<link rel='apple-touch-icon' sizes='114x114' type='image/png' href='/img/favicon/apple-touch-icon-114x114.png' />
+		<link rel='apple-touch-icon' sizes='76x76' type='image/png' href='/img/favicon/apple-touch-icon-76x76.png' />
+		<link rel='apple-touch-icon' sizes='72x72' type='image/png' href='/img/favicon/apple-touch-icon-72x72.png' />
+		<link rel='apple-touch-icon' sizes='60x60' type='image/png' href='/img/favicon/apple-touch-icon-60x60.png' />
+		<link rel='apple-touch-icon' sizes='57x57' type='image/png' href='/img/favicon/apple-touch-icon-57x57.png' />
 		<meta name='msapplication-TileColor' content='#8b62d9' />
 		<meta name='msapplication-TileImage' content='/img/favicon/mstile-144x144.png' />
 
@@ -43,8 +44,8 @@
 			</div>
 		</div>
 
-		<script src='/websign/js/cryptoInit.js'></script>
-		<script src='/websign/js/webSignPublicKeys.js'></script>
+		<script src='/websign/js/cryptoinit.js'></script>
+		<script src='/websign/js/publickeys.js'></script>
 
 		<script src='/websign/lib/sha512.js'></script>
 		<script src='/websign/lib/openpgp/openpgp.min.js'></script>
@@ -74,13 +75,15 @@
 				files: [
 					'/',
 					'/websign/css/loading.css',
-					'/websign/js/cryptoInit.js',
-					'/websign/js/webSignPublicKeys.js',
-					'/websign/js/workerHelper.js',
+					'/websign/js/cryptoinit.js',
+					'/websign/js/publickeys.js',
+					'/websign/js/serviceworker.js',
+					'/websign/js/workerhelper.js',
 					'/websign/lib/sha512.js',
 					'/websign/lib/openpgp/openpgp.min.js',
 					'/websign/lib/openpgp/openpgp.worker.min.js',
-					'/websign/cyph.appcache'
+					'/websign/cyph.appcache',
+					'/websign/manifest.json'
 				],
 
 				publicKeys: PUBLIC_KEYS
@@ -325,6 +328,11 @@
 					error: errorHandler,
 					success: function (payload) {
 						if (CryptoJS.SHA512(payload).toString() === localStorage.webSignHash) {
+							try {
+								openpgp.getWorker().terminate();
+							}
+							catch (_) {}
+
 							document.open('text/html');
 							document.write(payload);
 							document.close();

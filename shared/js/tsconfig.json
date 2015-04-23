@@ -29,7 +29,7 @@
         "global/ngmarkdown.ts",
         "global/plugins.jquery.ts",
         "preload/base.ts",
-        "preload/cryptoInit.ts",
+        "preload/cryptoinit.ts",
         "preload/translations.ts",
         "preload/unsupportedbrowsers.ts",
         "typings/iwebsign.d.ts",

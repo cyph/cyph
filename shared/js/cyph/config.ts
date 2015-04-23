@@ -64,8 +64,11 @@ module Cyph {
 			maxWidth: 1920
 		};
 
+		public static webSignConfig	= {
+			serviceWorker: '/websign/js/serviceworker.js',
+			workerHelper: '/websign/js/workerhelper.js',
 
-		public static validWebSignHashes: {[hash: string] : boolean}	= {
+			validHashes: {
 			'2bc65ee1082f94261c9127ad765d4b670d24ca321222e638cf4409e325218828c5732f7c8e76d2f229ebdab6c95a30510cd2d73425699ef860d527a06c5e69ae':
 				true,
 			'85477981ccd7f019eb52a8bb8f9be2668cf4cd0e19ec6450b3d00916bad1d752eedb0e9488160aae4e90df129b109d56ac49c34795b9b4994f071f484028abf0':
@@ -76,8 +79,9 @@ module Cyph {
 				true,
 			'957a0b1ceb6014320764e0fdc3b6dca69266474dbb1bbb2080f6da90d2a0d85d79a92e71c8b6151137711806c2304d5857f39e0abfbacdac298e1095fd772539':
 				true,
-			'8e0b11272782866a52989069b548ea9234d8fc927cf054b60f3b71ea2e9e06a519a8679586bd63e5ab27c470da08294e4a7441092a0b5d65f4c6f355d9421943':
+			'12218772c0250c359159a43a27aaeef99945ebfba826281eb725af690501a24c700e9ca01402f3b27b58abfe1fecd6883484aace73ab1ffdd2572b75d7e8acaa':
 				true
-		};
+			}
+		}
 	}
 }
