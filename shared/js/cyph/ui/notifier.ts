@@ -29,8 +29,8 @@ module Cyph {
 								);
 							}
 							catch (_) {}
-						}
-					);
+						})
+					;
 				}
 				catch (_) {
 					try {
