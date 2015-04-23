@@ -3,22 +3,57 @@ module Cyph {
 		export class Notifier {
 			public static audio	= new Audio(Config.notifierConfig.audio);
 
+			private static createNotification (message: string, callback: Function = () => {}) {
+				let options	= {
+					body: message,
+					icon: Config.notifierConfig.icon,
+					audio: '',
+					vibrate: 200,
+					lang: Env.language,
+					tag: ''
+				};
+
+				try {
+					callback(new self['Notification'](Config.notifierConfig.title, options));
+
+					try {
+						Notifier.audio.play();
+					}
+					catch (_) {}
+				}
+				catch (_) {
+					options.audio	= Config.notifierConfig.audio;
+
+					try {
+						navigator['serviceWorker'].ready.then(serviceWorkerRegistration => {
+							try {
+								options.tag	= Util.generateGuid();
+
+								serviceWorkerRegistration.
+									showNotification(Config.notifierConfig.title, options).
+									then(() =>
+										serviceWorkerRegistration.
+											getNotifications(options.tag).
+											then(notifications =>
+												callback(notifications[0])
+											)
+								);
+							}
+							catch (_) {}
+						});
+					}
+					catch (_) {}
+				}
+			}
+
 
 			public disableNotify: boolean	= false;
 			public openNotifications: any[]	= [];
 
 			public notify (message: string) : void {
-				try {
-					if (!this.disableNotify && !VisibilityWatcher.isVisible) {
-						if (Notification) {
-							let notification	= new Notification(
-								Config.notifierConfig.title,
-								{
-									body: message, 
-									icon: Config.notifierConfig.icon
-								}
-							);
-
+				if (!this.disableNotify && !VisibilityWatcher.isVisible) {
+					Notifier.createNotification(message, notification => {
+						try {
 							this.openNotifications.push(notification);
 
 							notification.onclose	= () => {
@@ -31,46 +66,39 @@ module Cyph {
 								}
 							};
 
+							notification.onerror	= notification.onclose;
+
 							notification.onclick	= () => {
 								self.focus();
 								notification.onclose();
 							};
 						}
-
-						Notifier.audio.play();
-
-						Util.getValue(navigator, 'vibrate', () => {}).call(navigator, 200);
-					}
-				}
-				catch (e) {
-					/* Still want to trigger this error email, but a failed
-						notification isn't fatal to the rest of the code */
-					setTimeout(() => { throw e }, 0);
+						catch (_) {}
+					});
 				}
 			}
 
 			public constructor () {
-				try {
-					if (Notification) {
-						Notification.requestPermission();
-					}
-
-					VisibilityWatcher.onchange((isVisible: boolean) => {
-						if (isVisible) {
-							for (let notification of this.openNotifications) {
+				VisibilityWatcher.onchange((isVisible: boolean) => {
+					if (isVisible) {
+						for (let notification of this.openNotifications) {
+							try {
 								notification.close();
 							}
+							catch (_) {}
+						}
 
-							this.openNotifications.length	= 0;
-						}
-						else {
-							this.disableNotify	= false;
-						}
-					});
+						this.openNotifications.length	= 0;
+					}
+					else {
+						this.disableNotify	= false;
+					}
+				});
+
+				try {
+					self['Notification'].requestPermission();
 				}
-				catch (e) {
-					setTimeout(() => { throw e }, 0);
-				}
+				catch (_) {}
 			}
 		}
 	}

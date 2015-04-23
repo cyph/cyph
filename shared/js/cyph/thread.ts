@@ -167,7 +167,7 @@ module Cyph {
 				}
 			}
 			catch (_) {
-				this.worker	= new Worker('/websign/js/workerHelper.js');
+				this.worker	= new Worker(Config.webSignConfig.workerHelper);
 				this.worker.postMessage(s);
 			}
 
