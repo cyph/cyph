@@ -103,7 +103,7 @@ module Cyph.im {
 				if (
 					WebSign &&
 					WebSign.detectChange() &&
-					!Cyph.Config.validWebSignHashes[localStorage.webSignBootHash]
+					!Cyph.Config.webSignConfig.validHashes[localStorage.webSignBootHash]
 				) {
 					this.changeState(States.webSignObsolete);
 					Cyph.Errors.logWebSign();

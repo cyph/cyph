@@ -1,4 +1,4 @@
-/// <reference path="../preload/cryptoInit.ts" />
+/// <reference path="../preload/cryptoinit.ts" />
 /// <reference path="../preload/unsupportedbrowsers.ts" />
 /// <reference path="../preload/translations.ts" />
 /// <reference path="../preload/base.ts" />
@@ -10,6 +10,12 @@
 /// <reference path="../cyph/ui/signupform.ts" />
 /// <reference path="ui/enums.ts" />
 /// <reference path="ui/ui.ts" />
+
+
+try {
+	navigator['serviceWorker'].register(Cyph.Config.webSignConfig.serviceWorker);
+}
+catch (_) {}
 
 
 angular.
