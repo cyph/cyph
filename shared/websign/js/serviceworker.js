@@ -44,3 +44,24 @@ self.addEventListener('fetch', function (e) {
 		e.respondWith(fetch(e.request));
 	}
 });
+
+self.addEventListener('notificationclick', function (e) {
+	try {
+		e.notification.close();
+
+		e.waitUntil(clients.matchAll({
+			type: 'window'
+		}).then(function (clientList) {
+			try {
+				return clientList[0].focus();
+			}
+			catch (_) {
+				try {
+					return clients.openWindow('/');
+				}
+				catch (_) {}
+			}
+		}));
+	}
+	catch (_) {}
+});

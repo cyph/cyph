@@ -5,12 +5,13 @@ module Cyph {
 
 			private static createNotification (message: string, callback: Function = () => {}) {
 				let options	= {
+					audio: null,
 					body: message,
 					icon: Config.notifierConfig.icon,
-					audio: null,
-					vibrate: null,
 					lang: Env.language,
-					tag: null
+					noscreen: false,
+					sticky: false,
+					vibrate: null
 				};
 
 				try {
@@ -31,29 +32,16 @@ module Cyph {
 				catch (_) {
 					try {
 						options.audio	= Config.notifierConfig.audio;
-						options.tag		= Util.generateGuid();
 						options.vibrate	= Config.notifierConfig.vibrator;
 
 						navigator['serviceWorker'].
 							register(Cyph.Config.webSignConfig.serviceWorker).
 							then(serviceWorkerRegistration => {
 								try {
-									serviceWorkerRegistration.
-										showNotification(Config.notifierConfig.title, options).
-										then(() => {
-											try {
-												serviceWorkerRegistration.
-													getNotifications(options.tag).
-													then(notifications => {
-														if (notifications) {
-															callback(notifications[0]);
-														}
-													})
-												;
-											}
-											catch (_) {}
-										})
-									;
+									serviceWorkerRegistration.showNotification(
+										Config.notifierConfig.title,
+										options
+									);
 								}
 								catch (_) {}
 							})
@@ -82,8 +70,6 @@ module Cyph {
 									this.disableNotify	= true;
 								}
 							};
-
-							notification.onerror	= notification.onclose;
 
 							notification.onclick	= () => {
 								self.focus();
