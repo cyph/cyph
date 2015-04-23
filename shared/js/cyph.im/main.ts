@@ -1,3 +1,5 @@
+/// <reference path="../global/strict.ts" />
+
 /// <reference path="../preload/cryptoInit.ts" />
 /// <reference path="../preload/unsupportedbrowsers.ts" />
 /// <reference path="../preload/translations.ts" />
