@@ -14,26 +14,23 @@ module Cyph {
 				};
 
 				try {
-					try {
-						navigator['serviceWorker'].
-							register(Cyph.Config.webSignConfig.serviceWorker).
-							then(serviceWorkerRegistration => {
-								try {
-									serviceWorkerRegistration.
-										showNotification(Config.notifierConfig.title, options).
-										then(() =>
-											serviceWorkerRegistration.
-												getNotifications(options.tag).
-												then(notifications =>
-													notifications && callback(notifications[0])
-												)
-									);
-								}
-								catch (_) {}
+					navigator['serviceWorker'].
+						register(Cyph.Config.webSignConfig.serviceWorker).
+						then(serviceWorkerRegistration => {
+							try {
+								serviceWorkerRegistration.
+									showNotification(Config.notifierConfig.title, options).
+									then(() =>
+										serviceWorkerRegistration.
+											getNotifications(options.tag).
+											then(notifications =>
+												notifications && callback(notifications[0])
+											)
+								);
 							}
-						);
-					}
-					catch (_) {}
+							catch (_) {}
+						}
+					);
 				}
 				catch (_) {
 					try {
@@ -48,7 +45,10 @@ module Cyph {
 					options.audio	= null;
 					options.vibrate	= null;
 
-					callback(new self['Notification'](Config.notifierConfig.title, options));
+					try {
+						callback(new self['Notification'](Config.notifierConfig.title, options));
+					}
+					catch (_) {}
 				}
 			}
 
