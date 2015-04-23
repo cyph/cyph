@@ -177,8 +177,8 @@ module Cyph {
 					);
 				}
 
-				let dc: RTCDataChannel;
-				let pc: RTCPeerConnection	= new WebRTC.PeerConnection({
+				let channel: RTCDataChannel;
+				let peer: RTCPeerConnection	= new WebRTC.PeerConnection({
 					iceServers: [
 						P2P.constants.stun,
 						P2P.constants.turn
@@ -191,7 +191,7 @@ module Cyph {
 					optional: [{DtlsSrtpKeyAgreement: true}]
 				});
 
-				pc.onaddstream	= e => {
+				peer.onaddstream	= e => {
 					if (
 						e.stream &&
 						(
@@ -215,16 +215,16 @@ module Cyph {
 					}
 				};
 
-				pc.ondatachannel	= e => {
-					dc				= e['channel'];
-					this.channel	= dc;
+				peer.ondatachannel	= e => {
+					channel			= e['channel'];
+					this.channel	= channel;
 
 					this.setUpChannel();
 				};
 
-				pc['onIceCandidate']	= e => {
+				peer.onicecandidate	= e => {
 					if (e.candidate) {
-						pc['onIceCandidate']	= null;
+						peer.onicecandidate	= null;
 
 						this.session.send(
 							new Session.Message(
@@ -238,17 +238,17 @@ module Cyph {
 					}
 				};
 
-				pc.onsignalingstatechange	= e => {
+				peer.onsignalingstatechange	= e => {
 					let forceKill: boolean	= e === null;
 
 					if (
-						this.peer === pc &&
+						this.peer === peer &&
 						(
 							forceKill ||
-							pc.signalingState === P2P.constants.closed
+							peer.signalingState === P2P.constants.closed
 						)
 					) {
-						pc.onaddstream	= null;
+						peer.onaddstream	= null;
 
 						this.isAvailable	= false;
 						this.remoteStream	= null;
@@ -256,8 +256,8 @@ module Cyph {
 						this.peer			= null;
 
 						if (forceKill) {
-							dc && dc.close();
-							pc.close();
+							channel && channel.close();
+							peer.close();
 						}
 
 						if (this.hasSessionStarted) {
@@ -267,7 +267,7 @@ module Cyph {
 				};
 
 
-				this.peer	= pc;
+				this.peer	= peer;
 			}
 
 			private receiveCommand (command: Session.Command) : void {
@@ -353,7 +353,9 @@ module Cyph {
 					try {
 						this.channel	= this.peer.createDataChannel(
 							P2P.constants.subspace,
-							{}
+							{
+								ordered: true
+							}
 						);
 					}
 					catch (_) {
