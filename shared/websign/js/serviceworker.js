@@ -49,9 +49,7 @@ self.addEventListener('notificationclick', function (e) {
 	try {
 		e.notification.close();
 
-		e.waitUntil(clients.matchAll({
-			type: 'window'
-		}).then(function (clientList) {
+		e.waitUntil(clients.matchAll().then(function (clientList) {
 			for (var i = 0 ; i < clientList.length ; ++i) {
 				var client	= clientList[i];
 
