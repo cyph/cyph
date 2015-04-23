@@ -1,13 +1,15 @@
-window['crypto']	= window['crypto'] || window['msCrypto'];
+if (!('crypto' in self) && 'msCrypto' in self) {
+	self['crypto']	= self['msCrypto'];
+}
 
-if (
-	!window['crypto'] ||
-	!window['crypto']['getRandomValues'] ||
-	!window['Worker'] ||
-	!window['history'] ||
-	!window['history']['pushState'] ||
-	!window['history']['replaceState'] ||
-	!window['localStorage']
-) {
+if (!(
+	'crypto' in self &&
+	'getRandomValues' in self['crypto'] &&
+	'Worker' in self &&
+	'history' in self &&
+	'pushState' in self['history'] &&
+	'replaceState' in self['history'] &&
+	'localStorage' in self
+)) {
 	location.pathname	= '/unsupportedbrowser';
 }
