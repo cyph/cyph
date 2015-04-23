@@ -56,7 +56,8 @@ module Cyph {
 		public static notifierConfig	= {
 			title: 'Cyph',
 			icon: '/img/favicon/apple-touch-icon-180x180.png',
-			audio: '/audio/beep.mp3'
+			audio: '/audio/beep.mp3',
+			vibrator: 200
 		};
 
 

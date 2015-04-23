@@ -41,8 +41,6 @@ fi
 ls */*.yaml | xargs -I% sed -i.bak "s/version: master/version: ${branch}/g" %
 
 
-ls */*.yaml | xargs -I% sed -i.bak 's/max-age=0/max-age=31536000/g' %
-
 if [ $test ] ; then
 	sed -i.bak "s/staging/${branch}/g" default/config.go
 	ls */js/cyph/config.ts | xargs -I% sed -i.bak "s/api.cyph.com/${branch}-dot-cyphme.appspot.com/g" %
@@ -52,6 +50,7 @@ if [ $test ] ; then
 		mv $yaml.new $yaml
 	done
 else
+	ls */*.yaml | xargs -I% sed -i.bak 's/max-age=0/max-age=31536000/g' %
 	ls */*.yaml | xargs -I% sed -i.bak 's/version: staging/version: prod/g' %
 fi
 

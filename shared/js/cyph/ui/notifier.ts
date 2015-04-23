@@ -7,46 +7,57 @@ module Cyph {
 				let options	= {
 					body: message,
 					icon: Config.notifierConfig.icon,
-					audio: Config.notifierConfig.audio,
-					vibrate: 200,
+					audio: null,
+					vibrate: null,
 					lang: Env.language,
-					tag: Util.generateGuid()
+					tag: null
 				};
 
 				try {
-					navigator['serviceWorker'].
-						register(Cyph.Config.webSignConfig.serviceWorker).
-						then(serviceWorkerRegistration => {
-							try {
-								serviceWorkerRegistration.
-									showNotification(Config.notifierConfig.title, options).
-									then(() =>
-										serviceWorkerRegistration.
-											getNotifications(options.tag).
-											then(notifications =>
-												notifications && callback(notifications[0])
-											)
-								);
-							}
-							catch (_) {}
-						})
-					;
-				}
-				catch (_) {
 					try {
 						Notifier.audio.play();
 					}
 					catch (_) {}
 					try {
-						Util.getValue(navigator, 'vibrate', () => {}).call(navigator, options.vibrate);
+						Util.getValue(navigator, 'vibrate', () => {}).call(
+							navigator,
+							Config.notifierConfig.vibrator
+						);
 					}
 					catch (_) {}
 
-					options.audio	= null;
-					options.vibrate	= null;
-
+					callback(new self['Notification'](Config.notifierConfig.title, options));
+				}
+				catch (_) {
 					try {
-						callback(new self['Notification'](Config.notifierConfig.title, options));
+						options.audio	= Config.notifierConfig.audio;
+						options.tag		= Util.generateGuid();
+						options.vibrate	= Config.notifierConfig.vibrator;
+
+						navigator['serviceWorker'].
+							register(Cyph.Config.webSignConfig.serviceWorker).
+							then(serviceWorkerRegistration => {
+								try {
+									serviceWorkerRegistration.
+										showNotification(Config.notifierConfig.title, options).
+										then(() => {
+											try {
+												serviceWorkerRegistration.
+													getNotifications(options.tag).
+													then(notifications => {
+														if (notifications) {
+															callback(notifications[0]);
+														}
+													})
+												;
+											}
+											catch (_) {}
+										})
+									;
+								}
+								catch (_) {}
+							})
+						;
 					}
 					catch (_) {}
 				}
