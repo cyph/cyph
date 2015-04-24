@@ -73,17 +73,13 @@ for d in cyph.im cyph.com ; do
 
 	cd ../$d
 
-	ls css/*.scss | perl -pe 's/(.*)\.scss/\1/g' | xargs -I% sass "%.scss" "%.css"
 	../build.sh || exit;
 
 	if [ "${branch}" == 'staging' ] ; then
 		echo "JS Minify ${d}"
-		find shared/js -name '*.ts' | xargs -I% rm %
-		find shared/js -name '*.map' | xargs -I% rm %
-		find shared/js -name '*.js' | xargs -I% uglifyjs '%' -o '%' -m
+		find js -name '*.js' | xargs -I% uglifyjs '%' -o '%' -m
 		echo "CSS Minify ${d}"
-		rm css/*.scss css/*.map
-		ls css/*.css | xargs -I% cleancss -o '%' '%'
+		find css -name '*.css' | grep -v bourbon/ | xargs -I% cleancss -o '%' '%'
 		echo "HTML Minify ${d}"
 		ls index.html | xargs -I% html-minifier --minify-js --minify-css --remove-comments --collapse-whitespace '%' -o '%'
 	fi
