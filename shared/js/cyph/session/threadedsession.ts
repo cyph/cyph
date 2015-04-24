@@ -16,6 +16,43 @@ module Cyph {
 				isStartingNewCyph: <boolean> false
 			};
 
+			public close (shouldSendEvent: boolean = true) : void {
+				this.trigger(ThreadedSessionEvents.close, {shouldSendEvent});
+				setTimeout(() => this.thread.stop(), 120000);
+			}
+
+			public off (event: string, handler: Function) : void {
+				EventManager.off(event + this.id, handler);
+			}
+
+			public on (event: string, handler: Function) : void {
+				EventManager.on(event + this.id, handler);
+			}
+
+			public receive (data: string) : void {
+				this.trigger(ThreadedSessionEvents.receive, {data});
+			}
+
+			public send (...messages: IMessage[]) : void {
+				this.sendBase(messages);
+			}
+
+			public sendBase (messages: IMessage[]) : void {
+				this.trigger(ThreadedSessionEvents.send, {messages});
+			}
+
+			public sendText (text: string) : void {
+				this.trigger(ThreadedSessionEvents.sendText, {text});
+			}
+
+			public trigger (event: string, data?: any) : void {
+				EventManager.trigger(event + this.id, data);
+			}
+
+			public updateState (key: string, value: any) : void {
+				this.trigger(ThreadedSessionEvents.updateState, {key, value});
+			}
+
 			public constructor (
 				descriptor?: string,
 				private controller?: IController,
@@ -71,43 +108,6 @@ module Cyph {
 					id: this.id,
 					events: ThreadedSessionEvents
 				});
-			}
-
-			public close (shouldSendEvent: boolean = true) : void {
-				this.trigger(ThreadedSessionEvents.close, {shouldSendEvent});
-				setTimeout(() => this.thread.stop(), 120000);
-			}
-
-			public off (event: string, handler: Function) : void {
-				EventManager.off(event + this.id, handler);
-			}
-
-			public on (event: string, handler: Function) : void {
-				EventManager.on(event + this.id, handler);
-			}
-
-			public receive (data: string) : void {
-				this.trigger(ThreadedSessionEvents.receive, {data});
-			}
-
-			public send (...messages: IMessage[]) : void {
-				this.sendBase(messages);
-			}
-
-			public sendBase (messages: IMessage[]) : void {
-				this.trigger(ThreadedSessionEvents.send, {messages});
-			}
-
-			public sendText (text: string) : void {
-				this.trigger(ThreadedSessionEvents.sendText, {text});
-			}
-
-			public trigger (event: string, data?: any) : void {
-				EventManager.trigger(event + this.id, data);
-			}
-
-			public updateState (key: string, value: any) : void {
-				this.trigger(ThreadedSessionEvents.updateState, {key, value});
 			}
 		}
 	}

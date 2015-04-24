@@ -171,61 +171,6 @@ module Cyph {
 				});
 			}
 
-			public constructor (
-				descriptor?: string,
-				private controller?: IController,
-				private id: string = Util.generateGuid()
-			) {
-				/* true = yes; false = no; null = maybe */
-				this.updateState(State.isStartingNewCyph,
-					!descriptor ?
-						true :
-						descriptor.length > Config.secretLength ?
-							null :
-							false
-				);
-
-				this.setDescriptor(descriptor);
-
-
-				if (this.state.isStartingNewCyph !== false) {
-					this.trigger(Events.newCyph);
-				}
-
-				Util.retryUntilComplete(retry => {
-					let channelDescriptor: string	=
-						this.state.isStartingNewCyph === false ?
-							'' :
-							Channel.Channel.newDescriptor()
-					;
-
-					Util.request({
-						method: 'POST',
-						url: Env.baseUrl + 'channels/' + this.state.cyphId,
-						data: {channelDescriptor},
-						success: (data: string) => {
-							if (
-								this.state.isStartingNewCyph === true &&
-								channelDescriptor !== data
-							) {
-								retry();
-							}
-							else {
-								this.setUpChannel(data);
-							}
-						},
-						error: () => {
-							if (this.state.isStartingNewCyph === false) {
-								UrlState.set(UrlState.states.notFound);
-							}
-							else {
-								retry();
-							}
-						}
-					});
-				});
-			}
-
 			public close (shouldSendEvent: boolean = true) : void {
 				this.updateState(State.isAlive, false);
 
@@ -295,6 +240,61 @@ module Cyph {
 				else {
 					this.trigger(ThreadedSessionEvents.updateStateThread, {key, value});
 				}
+			}
+
+			public constructor (
+				descriptor?: string,
+				private controller?: IController,
+				private id: string = Util.generateGuid()
+			) {
+				/* true = yes; false = no; null = maybe */
+				this.updateState(State.isStartingNewCyph,
+					!descriptor ?
+						true :
+						descriptor.length > Config.secretLength ?
+							null :
+							false
+				);
+
+				this.setDescriptor(descriptor);
+
+
+				if (this.state.isStartingNewCyph !== false) {
+					this.trigger(Events.newCyph);
+				}
+
+				Util.retryUntilComplete(retry => {
+					let channelDescriptor: string	=
+						this.state.isStartingNewCyph === false ?
+							'' :
+							Channel.Channel.newDescriptor()
+					;
+
+					Util.request({
+						method: 'POST',
+						url: Env.baseUrl + 'channels/' + this.state.cyphId,
+						data: {channelDescriptor},
+						success: (data: string) => {
+							if (
+								this.state.isStartingNewCyph === true &&
+								channelDescriptor !== data
+							) {
+								retry();
+							}
+							else {
+								this.setUpChannel(data);
+							}
+						},
+						error: () => {
+							if (this.state.isStartingNewCyph === false) {
+								UrlState.set(UrlState.states.notFound);
+							}
+							else {
+								retry();
+							}
+						}
+					});
+				});
 			}
 		}
 	}

@@ -428,38 +428,6 @@ module Cyph {
 				this.session.trigger(Session.Events.p2pUi, {category, event, args});
 			}
 
-			public constructor (
-				private session: Session.ISession,
-				private controller: IController
-			) {
-				this.mutex	= new Session.Mutex(this.session);
-
-				this.session.on(Session.Events.beginChat, () => {
-					if (WebRTC.isSupported) {
-						this.session.send(
-							new Session.Message(
-								Session.RPCEvents.p2p,
-								new Session.Command
-							)
-						);
-					}
-				});
-
-				this.session.on(Session.Events.closeChat, () => this.kill());
-
-				this.session.on(Session.RPCEvents.p2p, (command: Session.Command) => {
-					if (command.method) {
-						this.receiveCommand(command);
-					}
-					else if (WebRTC.isSupported) {
-						this.triggerUiEvent(
-							UIEvents.Categories.base,
-							UIEvents.Events.enable
-						);
-					}
-				});
-			}
-
 			public kill () : void {
 				this.session.send(
 					new Session.Message(
@@ -862,6 +830,38 @@ module Cyph {
 							}
 						}
 					}, offer ? P2P.constants.setUpStream : P2P.constants.setUpStreamInit);
+				});
+			}
+
+			public constructor (
+				private session: Session.ISession,
+				private controller: IController
+			) {
+				this.mutex	= new Session.Mutex(this.session);
+
+				this.session.on(Session.Events.beginChat, () => {
+					if (WebRTC.isSupported) {
+						this.session.send(
+							new Session.Message(
+								Session.RPCEvents.p2p,
+								new Session.Command
+							)
+						);
+					}
+				});
+
+				this.session.on(Session.Events.closeChat, () => this.kill());
+
+				this.session.on(Session.RPCEvents.p2p, (command: Session.Command) => {
+					if (command.method) {
+						this.receiveCommand(command);
+					}
+					else if (WebRTC.isSupported) {
+						this.triggerUiEvent(
+							UIEvents.Categories.base,
+							UIEvents.Events.enable
+						);
+					}
 				});
 			}
 		}

@@ -82,42 +82,6 @@ module Cyph {
 				}
 			}
 
-			public constructor (
-				private session: Session.ISession,
-				channelName: string,
-				handlers: any = {},
-				config: any = {}
-			) {
-				let onopen: Function	= handlers.onopen;
-
-				handlers.onopen		= (isCreator: boolean) : void => {
-					this.isCreator	= isCreator;
-
-					/* Ratchet channels immediately after creation,
-						then every 10 - 20 minutes thereafter */
-					if (!this.isCreator) {
-						Util.retryUntilComplete(retry => {
-							if (this.isAlive()) {
-								this.ratchetChannels();
-
-								setTimeout(
-									retry,
-									600000 + crypto.getRandomValues(new Uint8Array(1))[0] * 2350
-								);
-							}
-						});
-					};
-
-					onopen && onopen(this.isCreator);
-				};
-
-				this.channel	= new Channel(channelName, handlers, config);
-
-
-
-				this.session.on(Session.RPCEvents.channelRatchet, () => this.ratchetChannels());
-			}
-
 			public close (callback?: Function) : void {
 				for (let channel of [this.channel, this.newChannel]) {
 					try {
@@ -180,6 +144,42 @@ module Cyph {
 						}
 					}
 				});
+			}
+
+			public constructor (
+				private session: Session.ISession,
+				channelName: string,
+				handlers: any = {},
+				config: any = {}
+			) {
+				let onopen: Function	= handlers.onopen;
+
+				handlers.onopen		= (isCreator: boolean) : void => {
+					this.isCreator	= isCreator;
+
+					/* Ratchet channels immediately after creation,
+						then every 10 - 20 minutes thereafter */
+					if (!this.isCreator) {
+						Util.retryUntilComplete(retry => {
+							if (this.isAlive()) {
+								this.ratchetChannels();
+
+								setTimeout(
+									retry,
+									600000 + crypto.getRandomValues(new Uint8Array(1))[0] * 2350
+								);
+							}
+						});
+					};
+
+					onopen && onopen(this.isCreator);
+				};
+
+				this.channel	= new Channel(channelName, handlers, config);
+
+
+
+				this.session.on(Session.RPCEvents.channelRatchet, () => this.ratchetChannels());
 			}
 		}
 	}

@@ -15,6 +15,62 @@ module Cyph {
 
 			private otr: any;
 
+			public receive (message: string) : void {
+				if (!message) {
+					return;
+				}
+
+				if (this.receiveQueue) {
+					this.receiveQueue.push(message);
+				}
+				else {
+					let o: OTRMessageOuter = Util.deserializeObject(OTRMessageOuter, message);
+
+					if (o.id >= this.incomingMessageId) {
+						this.incomingMessages[o.id]	= o.cyphertext;
+						this.incomingMessagesMax	= Math.max(this.incomingMessagesMax, o.id);
+
+						this.session.trigger(Events.cyphertext, {
+							cyphertext: o.cyphertext,
+							author: Authors.friend
+						});
+					}
+
+					while (
+						this.incomingMessageId <= this.incomingMessagesMax &&
+						this.incomingMessages[this.incomingMessageId]
+					) {
+						this.otr.recv(this.incomingMessages[this.incomingMessageId]);
+
+						this.incomingMessages[this.incomingMessageId]	= null;
+						++this.incomingMessageId;
+
+						if (this.incomingMessageId === 1) {
+							this.session.trigger(Events.otr, {event: OTREvents.begin});
+						}
+					}
+				}
+			}
+
+			public send (message: string) : void {
+				if (this.sendQueue) {
+					this.sendQueue.push(message);
+				}
+				else {
+					let id		= Util.generateGuid();
+					let chunks	= Util.chunkString(message, 5120);
+
+					for (let i = 0 ; i < chunks.length ; ++i) {
+						this.otr.send(JSON.stringify(new OTRMessageInner(
+							id,
+							i,
+							chunks.length,
+							chunks[i]
+						)));
+					}
+				}
+			}
+
 			public constructor (private session: ISession) {
 				let user: any	= (new self['OTR'].User).account('me', 'cyph');
 
@@ -117,62 +173,6 @@ module Cyph {
 						}, 500);
 					})
 				);
-			}
-
-			public receive (message: string) : void {
-				if (!message) {
-					return;
-				}
-
-				if (this.receiveQueue) {
-					this.receiveQueue.push(message);
-				}
-				else {
-					let o: OTRMessageOuter = Util.deserializeObject(OTRMessageOuter, message);
-
-					if (o.id >= this.incomingMessageId) {
-						this.incomingMessages[o.id]	= o.cyphertext;
-						this.incomingMessagesMax	= Math.max(this.incomingMessagesMax, o.id);
-
-						this.session.trigger(Events.cyphertext, {
-							cyphertext: o.cyphertext,
-							author: Authors.friend
-						});
-					}
-
-					while (
-						this.incomingMessageId <= this.incomingMessagesMax &&
-						this.incomingMessages[this.incomingMessageId]
-					) {
-						this.otr.recv(this.incomingMessages[this.incomingMessageId]);
-
-						this.incomingMessages[this.incomingMessageId]	= null;
-						++this.incomingMessageId;
-
-						if (this.incomingMessageId === 1) {
-							this.session.trigger(Events.otr, {event: OTREvents.begin});
-						}
-					}
-				}
-			}
-
-			public send (message: string) : void {
-				if (this.sendQueue) {
-					this.sendQueue.push(message);
-				}
-				else {
-					let id		= Util.generateGuid();
-					let chunks	= Util.chunkString(message, 5120);
-
-					for (let i = 0 ; i < chunks.length ; ++i) {
-						this.otr.send(JSON.stringify(new OTRMessageInner(
-							id,
-							i,
-							chunks.length,
-							chunks[i]
-						)));
-					}
-				}
 			}
 		}
 	}

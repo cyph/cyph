@@ -72,6 +72,14 @@ module Cyph {
 
 		private id: number;
 
+		public stop () : void {
+			Timer.timers[this.id]	= null;
+
+			if (--Timer.total < 1) {
+				Timer.stopAll();
+			}
+		}
+
 		public constructor (f: Function) {
 			this.id	= Timer.total++;
 
@@ -88,14 +96,6 @@ module Cyph {
 				else {
 					Timer.runWithThread(50);
 				}
-			}
-		}
-
-		public stop () : void {
-			Timer.timers[this.id]	= null;
-
-			if (--Timer.total < 1) {
-				Timer.stopAll();
 			}
 		}
 	}
