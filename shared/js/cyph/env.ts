@@ -17,16 +17,19 @@ module Cyph {
 		public static host: string		= location ? location.host.replace('www.', '') : '';
 
 		public static language: string	= (() => {
-			let language: string	= Util.getValue(
-				navigator,
-				[
-					'language',
-					'userLanguage',
-					'browserLanguage',
-					'systemLanguage'
-				],
-				Config.defaultLanguage
-			).toLowerCase();
+			let language: string	=
+				Util.getValue(
+					navigator,
+					[
+						'language',
+						'userLanguage',
+						'browserLanguage',
+						'systemLanguage'
+					],
+					Config.defaultLanguage
+				).
+				toLowerCase()
+			;
 
 			/* Consistency in special cases */
 			return language === 'nb' ?
