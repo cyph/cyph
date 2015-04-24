@@ -362,7 +362,7 @@
 				<md-list layout='column'>
 					<md-item
 						class='message-item unread'
-						ng-class='message.authorClass'
+						ng-class='"author-" + message.authorString'
 						ng-repeat='message in ui.chat.messages'
 						layout='horizontal'
 					>
@@ -370,13 +370,13 @@
 							<strong
 								translate
 								class='message-author'
-								ng-hide='message.isFromApp'
+								ng-hide='message.author === Cyph.Session.Authors.app'
 								ng-bind='(message.author === Cyph.Session.Authors.me ? "me" : "friend") + ": "'
 							></strong>
 							<span
 								class='message-text'
 								ng-markdown='message.text'
-								ng-class='{"app-message": message.isFromApp}'
+								ng-class='{"app-message": message.author === Cyph.Session.Authors.app}'
 							></span>
 						</span>
 						<span flex class='message-timestamp'>

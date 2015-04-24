@@ -14,10 +14,7 @@ module Cyph {
 
 				messages: {
 					author: Session.Authors;
-					authorClass: string;
-					isFromApp: boolean;
-					isFromFriend: boolean;
-					isFromMe: boolean;
+					authorString: string;
 					text: string,
 					timestamp: string;
 				}[];
