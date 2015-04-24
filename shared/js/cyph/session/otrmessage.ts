@@ -33,6 +33,10 @@ module Cyph {
 
 			private messageChunk: string;
 
+			public toString () : string {
+				return OTRMessageInner.unpad(this.messageChunk);
+			}
+
 			public constructor (
 				public id: string,
 				public index: number,
@@ -40,10 +44,6 @@ module Cyph {
 				messageChunk: string
 			) {
 				this.messageChunk	= OTRMessageInner.pad(messageChunk);
-			}
-
-			public toString () : string {
-				return OTRMessageInner.unpad(this.messageChunk);
 			}
 		}
 

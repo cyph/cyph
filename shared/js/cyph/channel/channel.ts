@@ -25,6 +25,36 @@ module Cyph {
 			private outQueue: Queue;
 			private sqs: any;
 
+			public close (callback?: Function) : void {
+				this.inQueue.close(() =>
+					this.outQueue.close(callback)
+				);
+			}
+
+			public isAlive () : boolean {
+				return this.inQueue.isAlive() && this.outQueue.isAlive();
+			}
+
+			public receive (
+				messageHandler?: Function,
+				onComplete?: Function,
+				maxNumberOfMessages?: number,
+				waitTimeSeconds?: number,
+				onLag?: Function
+			) : void {
+				this.inQueue.receive(
+					messageHandler,
+					onComplete,
+					maxNumberOfMessages,
+					waitTimeSeconds,
+					onLag
+				);
+			}
+
+			public send (message: string|string[], callback?: Function|Function[], isSynchronous?: boolean) : void {
+				this.outQueue.send(message, callback, isSynchronous);
+			}
+
 			public constructor (channelName: string, handlers: any = {}, config: any = {}) {
 				try {
 					let descriptor: any	= JSON.parse(channelName);
@@ -105,36 +135,6 @@ module Cyph {
 						}
 					}, config);
 				});
-			}
-
-			public close (callback?: Function) : void {
-				this.inQueue.close(() =>
-					this.outQueue.close(callback)
-				);
-			}
-
-			public isAlive () : boolean {
-				return this.inQueue.isAlive() && this.outQueue.isAlive();
-			}
-
-			public receive (
-				messageHandler?: Function,
-				onComplete?: Function,
-				maxNumberOfMessages?: number,
-				waitTimeSeconds?: number,
-				onLag?: Function
-			) : void {
-				this.inQueue.receive(
-					messageHandler,
-					onComplete,
-					maxNumberOfMessages,
-					waitTimeSeconds,
-					onLag
-				);
-			}
-
-			public send (message: string|string[], callback?: Function|Function[], isSynchronous?: boolean) : void {
-				this.outQueue.send(message, callback, isSynchronous);
 			}
 		}
 	}

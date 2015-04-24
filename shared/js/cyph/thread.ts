@@ -124,6 +124,26 @@ module Cyph {
 
 		private worker: Worker;
 
+		public isAlive () : boolean {
+			return !!this.worker;
+		}
+
+		public postMessage (o: any) : void {
+			if (this.worker) {
+				this.worker.postMessage(o);
+			}
+		}
+
+		public stop () : void {
+			if (this.worker) {
+				this.worker.terminate();
+			}
+
+			this.worker	= null;
+
+			Thread.threads	= Thread.threads.filter(t => t !== this);
+		}
+
 		public constructor (f: Function, vars: any = {}, onmessage?: (e: MessageEvent) => any) {
 			vars.location	= location;
 			vars.navigator	= {language: Env.language, userAgent: Env.userAgent};
@@ -182,26 +202,6 @@ module Cyph {
 			};
 
 			Thread.threads.push(this);
-		}
-
-		public isAlive () : boolean {
-			return !!this.worker;
-		}
-
-		public postMessage (o: any) : void {
-			if (this.worker) {
-				this.worker.postMessage(o);
-			}
-		}
-
-		public stop () : void {
-			if (this.worker) {
-				this.worker.terminate();
-			}
-
-			this.worker	= null;
-
-			Thread.threads	= Thread.threads.filter(t => t !== this);
 		}
 	}
 }
