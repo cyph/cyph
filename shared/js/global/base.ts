@@ -25,7 +25,10 @@
 /// <reference path="../cyph/ui/chat/iscrollmanager.ts" />
 
 
-let IS_WEB: boolean	= typeof window === 'object';
+let IS_WEB: boolean	= 'IS_WEB' in self ?
+	self['IS_WEB'] :
+	typeof window === 'object'
+;
 
 for (let k of ['window', 'document']) {
 	if (!(k in self)) {
