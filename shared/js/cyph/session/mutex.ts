@@ -51,14 +51,6 @@ module Cyph {
 				}
 			}
 
-			public constructor (private session: ISession) {
-				this.session.on(RPCEvents.mutex, (command: Command) =>
-					this.commands[command.method](command.argument)
-				);
-
-				this.session.on(Events.closeChat, () => this.owner = Authors.me);
-			}
-
 			public lock (f: Function, purpose: string = '') : void {
 				if (this.owner !== Authors.me) {
 					if (!this.owner && this.session.state.isCreator) {
@@ -114,6 +106,14 @@ module Cyph {
 						)
 					);
 				}
+			}
+
+			public constructor (private session: ISession) {
+				this.session.on(RPCEvents.mutex, (command: Command) =>
+					this.commands[command.method](command.argument)
+				);
+
+				this.session.on(Events.closeChat, () => this.owner = Authors.me);
 			}
 		}
 	}

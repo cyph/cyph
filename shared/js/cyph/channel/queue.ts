@@ -64,91 +64,6 @@ module Cyph {
 			public queueUrl: string;
 			public sqs: any;
 
-			public constructor (queueName: string, handlers: any = {}, config: any = {}) {
-				if (!('httpOptions' in config)) {
-					config.httpOptions	= {};
-				}
-
-				config.httpOptions.xhrAsync	= true;
-				this.sqs					= Queue.sqsWrapper(config);
-
-				config.httpOptions.xhrAsync	= false;
-				this.syncSqs				= Queue.sqsWrapper(config);
-
-				this.isQueueAlive	= true;
-
-				this.sqs.createQueue({
-					QueueName: Queue.queuePrefix + queueName,
-					Attributes: {
-						MessageRetentionPeriod: Queue.periodValues(true),
-						ReceiveMessageWaitTimeSeconds: '20'
-					}
-				}, (err, data) => {
-					if (data) {
-						this.queueUrl	= data.QueueUrl;
-					}
-
-					if (handlers.onopen) {
-						handlers.onopen();
-					}
-
-					if (handlers.onmessage) {
-						let onlag: Function;
-						let lastReceiveTime: number	= 0;
-
-						setTimeout(() => onlag = handlers.onlag, 60000);
-
-						Util.retryUntilComplete(retry =>
-							this.receive(handlers.onmessage, (...args: any[]) => {
-								let err: any	= args[0];
-								let data: any	= args[1];
-
-								if (err && err.code === Queue.nonExistentQueue) {
-									this.isQueueAlive	= false;
-									handlers.onclose && handlers.onclose.apply(this, args);
-								}
-								else if (this.isQueueAlive) {
-									let delay: number		= 50;
-									let now: number			= Date.now();
-									let isEmpty: boolean	= !(data && data.Messages && data.Messages.length > 0);
-
-									if (isEmpty && (now - lastReceiveTime) < 10000) {
-										delay	= 2500;
-									}
-
-									lastReceiveTime	= now;
-									retry(delay);
-								}
-							}, null, null, onlag && (lag => {
-								if (onlag) {
-									let f	= onlag;
-									onlag	= null;
-									setTimeout(() => f(lag, this.sqs.base.config.region), 0);
-								}
-							}))
-						);
-					}
-					else if (handlers.onclose) {
-						Util.retryUntilComplete(retry =>
-							this.sqs.getQueueUrl({
-								QueueName: Queue.queuePrefix + queueName
-							}, (...args: any[]) => {
-								let err: any	= args[0];
-								let data: any	= args[1];
-
-								if (err && err.code === Queue.nonExistentQueue) {
-									this.isQueueAlive	= false;
-									handlers.onclose.apply(this, args);
-								}
-								else if (this.isQueueAlive) {
-									retry(30000);
-								}
-							})
-						);
-					}
-				}, true);
-			}
-
 			public close (callback?: Function) : void {
 				if (this.isQueueAlive) {
 					this.isQueueAlive	= false;
@@ -260,6 +175,91 @@ module Cyph {
 						}, callback, true);
 					}
 				}
+			}
+
+			public constructor (queueName: string, handlers: any = {}, config: any = {}) {
+				if (!('httpOptions' in config)) {
+					config.httpOptions	= {};
+				}
+
+				config.httpOptions.xhrAsync	= true;
+				this.sqs					= Queue.sqsWrapper(config);
+
+				config.httpOptions.xhrAsync	= false;
+				this.syncSqs				= Queue.sqsWrapper(config);
+
+				this.isQueueAlive	= true;
+
+				this.sqs.createQueue({
+					QueueName: Queue.queuePrefix + queueName,
+					Attributes: {
+						MessageRetentionPeriod: Queue.periodValues(true),
+						ReceiveMessageWaitTimeSeconds: '20'
+					}
+				}, (err, data) => {
+					if (data) {
+						this.queueUrl	= data.QueueUrl;
+					}
+
+					if (handlers.onopen) {
+						handlers.onopen();
+					}
+
+					if (handlers.onmessage) {
+						let onlag: Function;
+						let lastReceiveTime: number	= 0;
+
+						setTimeout(() => onlag = handlers.onlag, 60000);
+
+						Util.retryUntilComplete(retry =>
+							this.receive(handlers.onmessage, (...args: any[]) => {
+								let err: any	= args[0];
+								let data: any	= args[1];
+
+								if (err && err.code === Queue.nonExistentQueue) {
+									this.isQueueAlive	= false;
+									handlers.onclose && handlers.onclose.apply(this, args);
+								}
+								else if (this.isQueueAlive) {
+									let delay: number		= 50;
+									let now: number			= Date.now();
+									let isEmpty: boolean	= !(data && data.Messages && data.Messages.length > 0);
+
+									if (isEmpty && (now - lastReceiveTime) < 10000) {
+										delay	= 2500;
+									}
+
+									lastReceiveTime	= now;
+									retry(delay);
+								}
+							}, null, null, onlag && (lag => {
+								if (onlag) {
+									let f	= onlag;
+									onlag	= null;
+									setTimeout(() => f(lag, this.sqs.base.config.region), 0);
+								}
+							}))
+						);
+					}
+					else if (handlers.onclose) {
+						Util.retryUntilComplete(retry =>
+							this.sqs.getQueueUrl({
+								QueueName: Queue.queuePrefix + queueName
+							}, (...args: any[]) => {
+								let err: any	= args[0];
+								let data: any	= args[1];
+
+								if (err && err.code === Queue.nonExistentQueue) {
+									this.isQueueAlive	= false;
+									handlers.onclose.apply(this, args);
+								}
+								else if (this.isQueueAlive) {
+									retry(30000);
+								}
+							})
+						);
+					}
+				}, true);
 			}
 		}
 	}
