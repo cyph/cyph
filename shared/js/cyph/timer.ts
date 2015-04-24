@@ -89,10 +89,6 @@ module Cyph {
 				if (!Env.isMainThread) {
 					Timer.runWithTimeoutLoop(50);
 				}
-				else if (Env.isMobile) {
-					Timer.runWithTimeoutLoop(50);
-					setTimeout(() => Timer.runWithThread(1000), 3000);
-				}
 				else {
 					Timer.runWithThread(50);
 				}
