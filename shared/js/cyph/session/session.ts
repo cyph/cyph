@@ -68,9 +68,19 @@ module Cyph {
 
 				new Timer((now: number) => {
 					if (now - this.lastIncomingMessageTimestamp > 180000) {
-						this.close();
+						this.lastIncomingMessageTimestamp	= Date.now();
+
+						this.trigger(Events.pingPongTimeout);
+
+						Analytics.main.send({
+							hitType: 'event',
+							eventCategory: 'pingPongTimeout',
+							eventAction: 'detected',
+							eventValue: 1
+						});
 					}
-					else if (now > nextPing) {
+
+					if (now > nextPing) {
 						this.send(new Message);
 
 						nextPing	=

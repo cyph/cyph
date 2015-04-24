@@ -17,6 +17,7 @@ module Cyph {
 			public static newCyph: string			= 'newCyph';
 			public static otr: string				= 'otr';
 			public static p2pUi: string				= 'p2pUi';
+			public static pingPongTimeout: string	= 'pingPongTimeout';
 			public static smp: string				= 'smp';
 		}
 
