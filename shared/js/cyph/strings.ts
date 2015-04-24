@@ -47,6 +47,12 @@ module Cyph {
 			`you may choose to accept it AT YOUR OWN RISK. Save this file?`
 		,
 
+		pingPongTimeout:
+			`Unable to ping your friend... They might have gone offline, or one of you could ` +
+			`be experiencing network connectivity issues. If you weren’t expecting your ` +
+			`friend to leave the cyph, you may want to wait around a little longer.`
+		,
+
 		webRTCDisabled:
 			`Your or your friend's browser may lack support for video calling. ` +
 			`Try again with the latest Chrome or Firefox.`
