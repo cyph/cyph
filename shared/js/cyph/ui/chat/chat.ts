@@ -31,7 +31,6 @@ module Cyph {
 
 				public messages: {
 					author: Session.Authors;
-					authorString: string;
 					text: string,
 					timestamp: string;
 				}[]	= [];
@@ -72,13 +71,6 @@ module Cyph {
 
 						this.messages.push({
 							author: author,
-							authorString:
-								author === Session.Authors.me ?
-									'me' :
-									author === Session.Authors.friend ?
-										'friend' :
-										'app'
-							,
 							text: text,
 							timestamp: Util.getTimestamp()
 						});

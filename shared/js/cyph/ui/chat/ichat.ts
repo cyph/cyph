@@ -14,7 +14,6 @@ module Cyph {
 
 				messages: {
 					author: Session.Authors;
-					authorString: string;
 					text: string,
 					timestamp: string;
 				}[];
