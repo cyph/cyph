@@ -17,7 +17,7 @@ module Cyph {
 		public static host: string		= location ? location.host.replace('www.', '') : '';
 
 		public static language: string	= (() => {
-			let language	= Util.getValue(
+			let language: string	= Util.getValue(
 				navigator,
 				[
 					'language',
