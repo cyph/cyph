@@ -4,6 +4,7 @@
 
 	let markdown	= new self['markdownit']({
 		html: false,
+		breaks: true,
 		linkify: true,
 		typographer: true,
 		quotes: (Cyph.Env.language === 'ru' ? '«»' : Cyph.Env.language === 'de' ? '„“' : '“”') + '‘’',

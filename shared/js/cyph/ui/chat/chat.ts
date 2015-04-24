@@ -330,6 +330,10 @@ module Cyph {
 							this.cyphertext.log(o.cyphertext, o.author)
 					);
 
+					this.session.on(Session.Events.pingPongTimeout, () =>
+						this.addMessage(Strings.pingPongTimeout, Session.Authors.app)
+					);
+
 					this.session.on(Session.Events.smp, (wasSuccessful: boolean) => {
 						if (wasSuccessful) {
 							this.setConnected();
