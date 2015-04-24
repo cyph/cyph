@@ -285,32 +285,16 @@ module Cyph {
 			htmlDecode?: boolean,
 			defaultValue: string = text
 		) : string {
-			if (!Env.isMainThread) {
-				if (!htmlDecode) {
-					return defaultValue;
-				}
-				else {
-					throw new Error('Can only HTML decode translations in main thread.');
-				}
+			if (!Env.isMainThread && htmlDecode) {
+				throw new Error('Can only HTML decode translations in main thread.');
 			}
 
 			if (ignoreWhitespace) {
 				text	= text.replace(/\s+/g, ' ').trim();
 			}
 
-			/* Special cases for our language codes */
-			let language: string	=
-				Env.language === 'nb' ?
-					'no' :
-					Env.language === 'zh-cn'?
-						'zh-chs' :
-						Env.language === 'zh-tw' ?
-							'zh-cht' :
-							Env.language
-			;
-
 			let translation: string	= Util.getValue(
-				Util.getValue(Translations, language, {}),
+				Util.getValue(Translations, Env.language, {}),
 				text,
 				defaultValue
 			);
