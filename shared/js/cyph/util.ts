@@ -55,31 +55,6 @@ module Cyph {
 			return hour + ':' + minute + ampm;
 		}
 
-		public static getUrlState (fragmentOnly?: boolean) : string {
-			try {
-				let fragment: string	= location.hash.split('#')[1] || '';
-
-				if (fragmentOnly || fragment) {
-					return fragment;
-				}
-
-
-				let split: string[]	= location.pathname.split('/');
-
-				let a: string	= split.slice(-1)[0] || '';
-				let b: string	= split.slice(-2)[0] || '';
-
-				if (!a && b) {
-					return b;
-				}
-
-				return a;
-			}
-			catch (_) {
-				return '';
-			}
-		}
-
 		public static getValue<T> (o: any, keysToTry: string|string[], defaultValue: T = null) : T {
 			if (!o) {
 				return defaultValue;
@@ -130,36 +105,6 @@ module Cyph {
 			}
 			else {
 				Thread.callMainThread('Cyph.Util.openUrl', [url, downloadName]);
-			}
-		}
-
-		public static pushNotFound () : void {
-			Util.pushState('/404');
-		}
-
-		public static pushState (path: string, shouldReplace?: boolean, shouldNotProcess?: boolean) : void {
-			if (Env.isMainThread) {
-				if (history) {
-					if (shouldReplace) {
-						history.replaceState({}, '', path);
-					}
-					else {
-						history.pushState({}, '', path);
-					}
-
-					if (!shouldNotProcess && processUrlState) {
-						processUrlState();
-					}
-				}
-				else if (shouldReplace) {
-					location.replace(path);
-				}
-				else {
-					location.pathname	= path;
-				}
-			}
-			else {
-				Thread.callMainThread('Cyph.Util.pushState', [path, shouldReplace, shouldNotProcess]);
 			}
 		}
 

@@ -55,10 +55,6 @@ angular.
 			if (Cyph.Env.isLocalhost) {
 				self['ui']	= $scope.ui;
 			}
-
-
-			history.pushState({}, '', location.pathname);
-			self.onhashchange	= () => location.reload();
 		})
 	]).
 	config([

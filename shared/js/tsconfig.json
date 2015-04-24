@@ -24,6 +24,7 @@
         "cyph/strings.ts",
         "cyph/thread.ts",
         "cyph/timer.ts",
+        "cyph/urlstate.ts",
         "cyph/util.ts",
         "cyph/webrtc.ts",
         "global/base.ts",
