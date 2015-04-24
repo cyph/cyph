@@ -2,6 +2,7 @@
 
 /// <reference path="config.ts" />
 /// <reference path="util.ts" />
+/// <reference path="urlstate.ts" />
 /// <reference path="env.ts" />
 /// <reference path="thread.ts" />
 /// <reference path="eventmanager.ts" />

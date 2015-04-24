@@ -51,5 +51,4 @@ let crypto: Crypto;
 let WebSign: IWebSign;
 
 let onthreadmessage: (e: MessageEvent) => any;
-let processUrlState: () => void;
 let Translations: {[language: string] : {[text: string] : string}};

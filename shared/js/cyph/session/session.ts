@@ -216,7 +216,7 @@ module Cyph {
 						},
 						error: () => {
 							if (this.state.isStartingNewCyph === false) {
-								Util.pushNotFound();
+								UrlState.set(UrlState.states.notFound);
 							}
 							else {
 								retry();
