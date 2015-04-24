@@ -5,7 +5,11 @@ module Cyph {
 
 			public static update () : void {
 				if (NanoScroller.isActive) {
-					Util.getValue(Elements.nanoScroller, 'nanoScroller', () => {})();
+					Util.getValue(
+						Elements.nanoScroller,
+						'nanoScroller',
+						() => {}
+					).call(Elements.nanoScroller);
 				}
 			}
 
