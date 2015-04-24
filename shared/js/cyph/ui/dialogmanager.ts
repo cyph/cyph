@@ -1,9 +1,6 @@
 module Cyph {
 	export module UI {
 		export class DialogManager implements IDialogManager {
-			private $mdDialog: angular.material.MDDialogService;
-			private $mdToast: angular.material.MDToastService;
-
 			public alert (
 				o: {
 					title: string;
@@ -96,12 +93,9 @@ module Cyph {
 			}
 
 			public constructor (
-				$mdDialog: angular.material.MDDialogService,
-				$mdToast: angular.material.MDToastService
-			) {
-				this.$mdDialog	= $mdDialog;
-				this.$mdToast	= $mdToast;
-			}
+				private $mdDialog: angular.material.MDDialogService,
+				private $mdToast: angular.material.MDToastService
+			) {}
 		}
 	}
 }

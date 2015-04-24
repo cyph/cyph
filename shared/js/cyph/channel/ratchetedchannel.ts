@@ -19,7 +19,6 @@ module Cyph {
 			private isCreator: boolean;
 			private channel: Channel;
 			private newChannel: Channel;
-			private session: Session.ISession;
 
 			private destroyCurrentChannel () : void {
 				if (this.newChannel) {
@@ -83,12 +82,12 @@ module Cyph {
 				}
 			}
 
-			public constructor (session: Session.ISession, channelName: string, handlers: any = {}, config: any = {}) {
-				this.session	= session;
-
-				this.session.on(Session.RPCEvents.channelRatchet, () => this.ratchetChannels());
-
-
+			public constructor (
+				private session: Session.ISession,
+				channelName: string,
+				handlers: any = {},
+				config: any = {}
+			) {
 				let onopen: Function	= handlers.onopen;
 
 				handlers.onopen		= (isCreator: boolean) : void => {
@@ -113,6 +112,10 @@ module Cyph {
 				};
 
 				this.channel	= new Channel(channelName, handlers, config);
+
+
+
+				this.session.on(Session.RPCEvents.channelRatchet, () => this.ratchetChannels());
 			}
 
 			public close (callback?: Function) : void {

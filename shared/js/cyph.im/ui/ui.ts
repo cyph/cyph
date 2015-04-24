@@ -1,11 +1,6 @@
 module Cyph.im {
 	export module UI {
 		export class UI {
-			private controller: Cyph.IController;
-			private dialogManager: Cyph.UI.IDialogManager;
-			private mobileMenu: Cyph.UI.ISidebar;
-			private notifier: Cyph.UI.INotifier;
-
 			public copyUrl: string			= '';
 			public copyUrlEncoded: string	= '';
 			public state: States			= States.none;
@@ -90,16 +85,11 @@ module Cyph.im {
 			}
 
 			public constructor (
-				controller: Cyph.IController,
-				dialogManager: Cyph.UI.IDialogManager,
-				mobileMenu: Cyph.UI.ISidebar,
-				notifier: Cyph.UI.INotifier
+				private controller: Cyph.IController,
+				private dialogManager: Cyph.UI.IDialogManager,
+				private mobileMenu: Cyph.UI.ISidebar,
+				private notifier: Cyph.UI.INotifier
 			) {
-				this.controller		= controller;
-				this.dialogManager	= dialogManager;
-				this.mobileMenu		= mobileMenu;
-				this.notifier		= notifier;
-
 				if (
 					WebSign &&
 					WebSign.detectChange() &&
@@ -131,6 +121,7 @@ module Cyph.im {
 					);
 
 					this.signupForm	= new Cyph.UI.SignupForm(this.controller);
+
 
 
 					this.chat.session.on(Cyph.Session.Events.abort, () => {
