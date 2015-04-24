@@ -322,7 +322,7 @@ module Cyph {
 
 					this.session.on(Session.Events.connect, () => {
 						this.changeState(States.keyExchange);
-						Util.getValue(Elements.timer[0], 'stop', () => {})();
+						Util.getValue(Elements.timer[0], 'stop', () => {}).call(Elements.timer[0]);
 					});
 
 					this.session.on(Session.Events.cyphertext,
