@@ -269,7 +269,7 @@ module Cyph {
 					this.session		= new Session.ThreadedSession(Util.getUrlState(), controller);
 					this.cyphertext		= new Cyphertext(this.controller, this.mobileMenu, this.dialogManager);
 					this.p2pManager		= new P2PManager(this.session, this.controller, this.mobileMenu, this.dialogManager);
-					this.photoManager	= new PhotoManager(this.session);
+					this.photoManager	= new PhotoManager(this);
 					this.scrollManager	= new ScrollManager(this.controller, this.dialogManager);
 
 

@@ -5,8 +5,6 @@ module Cyph {
 	export module UI {
 		export module Chat {
 			export class PhotoManager implements IPhotoManager {
-				private session: Session.ISession;
-
 				private processImage (image: HTMLImageElement, file: File) : void {
 					let canvas: HTMLCanvasElement			= document.createElement('canvas');
 					let context: CanvasRenderingContext2D	= canvas.getContext('2d');
@@ -44,7 +42,7 @@ module Cyph {
 				}
 
 				private send (encodedImage: string) : void {
-					this.session.sendText('![](' + encodedImage + ')');
+					this.chat.send('![](' + encodedImage + ')');
 				}
 
 				public insert (elem: HTMLElement) : void {
@@ -68,9 +66,7 @@ module Cyph {
 					}
 				}
 
-				public constructor (session: Session.ISession) {
-					this.session	= session;
-
+				public constructor (private chat: IChat) {
 					Elements.buttons.
 						find('input[type="file"]').
 						each((i: number, elem: HTMLElement) => {
