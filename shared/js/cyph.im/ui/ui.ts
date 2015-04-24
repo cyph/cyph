@@ -99,19 +99,19 @@ module Cyph.im {
 					Cyph.Errors.logWebSign();
 				}
 				else {
-					processUrlState	= () : void => {
-						let urlState: string	= Cyph.Util.getUrlState();
+					Cyph.UrlState.onchange(() : void => {
+						let urlState: string	= Cyph.UrlState.get();
 
-						if (urlState === '404') {
+						if (urlState === Cyph.UrlState.states.notFound) {
 							this.changeState(States.error);
 						}
 						else {
-							Cyph.Util.pushNotFound();
+							Cyph.UrlState.set(Cyph.UrlState.states.notFound);
 							return;
 						}
 
-						history.replaceState({}, '', '/' + urlState);
-					};
+						Cyph.UrlState.set(urlState, true, true);
+					});
 
 					this.chat		= new Cyph.UI.Chat.Chat(
 						this.controller,
@@ -141,6 +141,10 @@ module Cyph.im {
 
 					this.chat.session.on(Cyph.Session.Events.newCyph, () => this.changeState(States.spinningUp));
 				}
+
+
+				Cyph.UrlState.set(location.pathname, false, true);
+				self.onhashchange	= () => location.reload();
 
 
 				if (!Cyph.Env.isMobile && Cyph.Env.isIE) {
