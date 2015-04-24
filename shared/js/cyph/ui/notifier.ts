@@ -10,29 +10,20 @@ module Cyph {
 					icon: Config.notifierConfig.icon,
 					lang: Env.language,
 					noscreen: false,
-					sticky: false,
-					vibrate: null
+					sticky: false
 				};
 
 				try {
+					callback(new self['Notification'](Config.notifierConfig.title, options));
+
 					try {
 						Notifier.audio.play();
 					}
 					catch (_) {}
-					try {
-						Util.getValue(navigator, 'vibrate', () => {}).call(
-							navigator,
-							Config.notifierConfig.vibrator
-						);
-					}
-					catch (_) {}
-
-					callback(new self['Notification'](Config.notifierConfig.title, options));
 				}
 				catch (_) {
 					try {
 						options.audio	= Config.notifierConfig.audio;
-						options.vibrate	= Config.notifierConfig.vibrator;
 
 						navigator['serviceWorker'].
 							register(Cyph.Config.webSignConfig.serviceWorker).
