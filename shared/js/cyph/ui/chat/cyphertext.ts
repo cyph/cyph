@@ -9,8 +9,6 @@ module Cyph {
 				private curtainClass: string	= 'curtain';
 				private toastPosition: string	= 'top right';
 
-				private dialogManager: IDialogManager;
-
 				public messages: {author: Session.Authors; text: string;}[]	= [];
 
 				public hide () : void {
@@ -75,13 +73,12 @@ module Cyph {
 				}
 
 				public constructor (
+					session: Session.ISession,
 					controller: IController,
 					mobileMenu: ISidebar,
-					dialogManager: IDialogManager
+					private dialogManager: IDialogManager
 				) {
 					super(controller, mobileMenu);
-
-					this.dialogManager	= dialogManager;
 
 					/* Close cyphertext on esc */
 					Elements.window.keyup(e => {
@@ -89,6 +86,13 @@ module Cyph {
 							this.hide();
 						}
 					});
+
+
+
+					session.on(Session.Events.cyphertext,
+						(o: { cyphertext: string; author: Session.Authors; }) =>
+							this.log(o.cyphertext, o.author)
+					);
 				}
 			}
 		}

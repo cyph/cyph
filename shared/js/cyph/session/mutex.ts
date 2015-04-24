@@ -14,7 +14,6 @@ module Cyph {
 			private owner: Authors;
 			private purpose: string;
 			private requester: { author: Authors; purpose: string; };
-			private session: ISession;
 
 			private commands	= {
 				release: () : void => {
@@ -52,9 +51,7 @@ module Cyph {
 				}
 			}
 
-			public constructor (session: ISession) {
-				this.session	= session;
-
+			public constructor (private session: ISession) {
 				this.session.on(RPCEvents.mutex, (command: Command) =>
 					this.commands[command.method](command.argument)
 				);

@@ -5,9 +5,6 @@
 module Cyph {
 	export module Session {
 		export class OTR implements IOTR {
-			private static libotr: any	= self['OTR'];
-
-
 			private currentMessageId: number	= 0;
 			private incomingMessageId: number	= 0;
 			private incomingMessagesMax: number	= 0;
@@ -17,16 +14,14 @@ module Cyph {
 			private sendQueue: string[]		= [];
 
 			private otr: any;
-			private session: ISession
 
-			public constructor (session: ISession) {
-				this.session	= session;
-				let user: any	= (new OTR.libotr.User).account('me', 'cyph');
+			public constructor (private session: ISession) {
+				let user: any	= (new self['OTR'].User).account('me', 'cyph');
 
 				user.generateInstag(() =>
 					user.generateKey(() => {
 						this.otr	= user.contact('friend').openSession({
-							policy: OTR.libotr.POLICY.ALLOW_V3,
+							policy: self['OTR'].POLICY.ALLOW_V3,
 							MTU: 15872
 						});
 

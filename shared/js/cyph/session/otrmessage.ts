@@ -33,14 +33,12 @@ module Cyph {
 
 			private messageChunk: string;
 
-			public id: string;
-			public index: number;
-			public total: number;
-
-			public constructor (id: string, index: number, total: number, messageChunk: string) {
-				this.id				= id;
-				this.index			= index;
-				this.total			= total;
+			public constructor (
+				public id: string,
+				public index: number,
+				public total: number,
+				messageChunk: string
+			) {
 				this.messageChunk	= OTRMessageInner.pad(messageChunk);
 			}
 
@@ -50,13 +48,10 @@ module Cyph {
 		}
 
 		export class OTRMessageOuter {
-			public id: number;
-			public cyphertext: string;
-
-			public constructor (id: number, cyphertext: string) {
-				this.id			= id;
-				this.cyphertext	= cyphertext;
-			}
+			public constructor (
+				public id: number,
+				public cyphertext: string
+			) {}
 		}
 	}
 }

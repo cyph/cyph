@@ -1,8 +1,6 @@
 module Cyph {
 	export module UI {
 		export class SignupForm {
-			private controller: IController;
-
 			public state: number	= 0;
 
 			public data	= {
@@ -52,9 +50,7 @@ module Cyph {
 				);
 			}
 
-			public constructor (controller: IController) {
-				this.controller	= controller;
-
+			public constructor (private controller: IController) {
 				setTimeout(() =>
 					Elements.signupForm.addClass('visible')
 				, 500);

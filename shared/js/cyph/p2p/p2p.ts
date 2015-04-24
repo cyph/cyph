@@ -30,9 +30,7 @@ module Cyph {
 			};
 
 
-			private controller: IController;
 			private mutex: Session.IMutex;
-			private session: Session.ISession;
 			private channel: RTCDataChannel;
 			private peer: RTCPeerConnection;
 			private localStream: MediaStream;
@@ -430,11 +428,11 @@ module Cyph {
 				this.session.trigger(Session.Events.p2pUi, {category, event, args});
 			}
 
-			public constructor (session: Session.ISession, controller: IController) {
-				this.session	= session;
-				this.controller	= controller;
-
-				this.mutex		= new Session.Mutex(this.session);
+			public constructor (
+				private session: Session.ISession,
+				private controller: IController
+			) {
+				this.mutex	= new Session.Mutex(this.session);
 
 				this.session.on(Session.Events.beginChat, () => {
 					if (WebRTC.isSupported) {

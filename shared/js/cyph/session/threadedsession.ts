@@ -6,8 +6,6 @@
 module Cyph {
 	export module Session {
 		export class ThreadedSession implements ISession {
-			private id: string;
-			private controller: IController;
 			private thread: Thread;
 
 			public state	= {
@@ -18,11 +16,11 @@ module Cyph {
 				isStartingNewCyph: <boolean> false
 			};
 
-			public constructor (descriptor?: string, controller?: IController, id: string = Util.generateGuid()) {
-				this.controller	= controller;
-				this.id			= id;
-
-
+			public constructor (
+				descriptor?: string,
+				private controller?: IController,
+				private id: string = Util.generateGuid()
+			) {
 				this.on(
 					ThreadedSessionEvents.updateStateThread,
 					(e: { key: string; value: any; }) => {

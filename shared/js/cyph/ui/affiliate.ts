@@ -6,8 +6,6 @@ module Cyph {
 
 			public shouldAdd: boolean;
 
-			private dialogManager: IDialogManager;
-
 			public process ($elem: JQuery) : void {
 				$elem.find('a').addBack().click(e => {
 					let originalUrl: string	= $(e.currentTarget).attr('href') || '';
@@ -75,9 +73,7 @@ module Cyph {
 				});
 			}
 
-			public constructor (dialogManager: IDialogManager) {
-				this.dialogManager	= dialogManager;
-			}
+			public constructor (private dialogManager: IDialogManager) {}
 		}
 	}
 }
