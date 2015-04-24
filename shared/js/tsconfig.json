@@ -16,6 +16,7 @@
         "cyph/analytics.ts",
         "cyph/base.ts",
         "cyph/config.ts",
+        "cyph/controller.ts",
         "cyph/env.ts",
         "cyph/errors.ts",
         "cyph/eventmanager.ts",
