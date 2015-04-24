@@ -46,13 +46,13 @@ module Cyph {
 			public static isStartingNewCyph: string		= 'isStartingNewCyph';
 		}
 
-		export let ThreadedSessionEvents	= {
-			close: 'close-ThreadedSession',
-			receive: 'receive-ThreadedSession',
-			send: 'send-ThreadedSession',
-			sendText: 'sendText-ThreadedSession',
-			updateState: 'updateState-ThreadedSession',
-			updateStateThread: 'updateStateThread-ThreadedSession'
-		};
+		export class ThreadedSessionEvents {
+			public static close				= 'close-ThreadedSession';
+			public static receive			= 'receive-ThreadedSession';
+			public static send				= 'send-ThreadedSession';
+			public static sendText			= 'sendText-ThreadedSession';
+			public static updateState		= 'updateState-ThreadedSession';
+			public static updateStateThread	= 'updateStateThread-ThreadedSession';
+		}
 	}
 }

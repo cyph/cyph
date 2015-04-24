@@ -362,7 +362,7 @@
 				<md-list layout='column'>
 					<md-item
 						class='message-item unread'
-						ng-class='"author-" + message.authorString'
+						ng-class='"author-" + Cyph.Session.Authors[message.author]'
 						ng-repeat='message in ui.chat.messages'
 						layout='horizontal'
 					>
