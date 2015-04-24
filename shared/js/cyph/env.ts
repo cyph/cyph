@@ -16,16 +16,28 @@ module Cyph {
 
 		public static host: string		= location ? location.host.replace('www.', '') : '';
 
-		public static language: string	= Util.getValue(
-			navigator,
-			[
-				'language',
-				'userLanguage',
-				'browserLanguage',
-				'systemLanguage'
-			],
-			Config.defaultLanguage
-		).toLowerCase();
+		public static language: string	= (() => {
+			let language	= Util.getValue(
+				navigator,
+				[
+					'language',
+					'userLanguage',
+					'browserLanguage',
+					'systemLanguage'
+				],
+				Config.defaultLanguage
+			).toLowerCase();
+
+			/* Consistency in special cases */
+			return language === 'nb' ?
+				'no' :
+				language === 'zh-cn'?
+					'zh-chs' :
+					language === 'zh-tw' ?
+						'zh-cht' :
+						language
+			;
+		})();
 
 
 		public static isWeb: boolean		= IS_WEB;
