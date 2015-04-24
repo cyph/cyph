@@ -31,10 +31,7 @@ module Cyph {
 
 				public messages: {
 					author: Session.Authors;
-					authorClass: string;
-					isFromApp: boolean;
-					isFromFriend: boolean;
-					isFromMe: boolean;
+					authorString: string;
 					text: string,
 					timestamp: string;
 				}[]	= [];
@@ -75,13 +72,13 @@ module Cyph {
 
 						this.messages.push({
 							author: author,
-							authorClass: 'author-' + (
-								author === Session.Authors.me ? 'me' :
-									author === Session.Authors.friend ? 'friend' : 'app'
-							),
-							isFromApp: author === Session.Authors.app,
-							isFromFriend: author === Session.Authors.friend,
-							isFromMe: author === Session.Authors.me,
+							authorString:
+								author === Session.Authors.me ?
+									'me' :
+									author === Session.Authors.friend ?
+										'friend' :
+										'app'
+							,
 							text: text,
 							timestamp: Util.getTimestamp()
 						});
