@@ -130,8 +130,8 @@ module Cyph {
 
 			vars.threadRandomSeed	= crypto.getRandomValues(new Uint8Array(50000));
 
-			let s	=
-				(vars ? 'var vars = ' + JSON.stringify(vars) + ';\n' : '') +
+			let s: string	=
+				'var vars = ' + JSON.stringify(vars) + ';\n' +
 				Thread.stringifyFunction(Thread.threadEnvSetup) +
 				Thread.stringifyFunction(f) +
 				Thread.stringifyFunction(Thread.threadPostSetup)

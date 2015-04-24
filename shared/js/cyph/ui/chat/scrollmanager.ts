@@ -8,7 +8,6 @@ module Cyph {
 				private scrollDownLock: number	= 0;
 
 				private affiliate: Affiliate;
-				private controller: IController;
 
 				public unreadMessages: number	= 0;
 
@@ -121,8 +120,7 @@ module Cyph {
 					}
 				}
 
-				public constructor (controller: IController, dialogManager: IDialogManager) {
-					this.controller	= controller;
+				public constructor (private controller: IController, dialogManager: IDialogManager) {
 					this.affiliate	= new Affiliate(dialogManager);
 
 					if (Cyph.Env.isMobile) {

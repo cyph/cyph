@@ -13,9 +13,7 @@ module Cyph {
 			private lastIncomingMessageTimestamp: number		= Date.now();
 			private lastOutgoingMessageTimestamp: number		= Date.now();
 
-			private id: string;
 			private channel: Channel.IChannel;
-			private controller: IController;
 			private otr: IOTR;
 
 			public state	= {
@@ -173,11 +171,11 @@ module Cyph {
 				});
 			}
 
-			public constructor (descriptor?: string, controller?: IController, id: string = Util.generateGuid()) {
-				this.controller	= controller;
-				this.id			= id;
-
-
+			public constructor (
+				descriptor?: string,
+				private controller?: IController,
+				private id: string = Util.generateGuid()
+			) {
 				/* true = yes; false = no; null = maybe */
 				this.updateState(State.isStartingNewCyph,
 					!descriptor ?
