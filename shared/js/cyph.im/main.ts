@@ -4,6 +4,7 @@
 /// <reference path="../preload/base.ts" />
 
 /// <reference path="../global/ngmarkdown.ts" />
+/// <reference path="../cyph/controller.ts" />
 /// <reference path="../cyph/ui/chat/chat.ts" />
 /// <reference path="../cyph/ui/dialogmanager.ts" />
 /// <reference path="../cyph/ui/notifier.ts" />
@@ -34,15 +35,9 @@ angular.
 			Cyph.UI.Elements.load();
 
 
-			let controller: Cyph.IController	= {
-				update: () : void => {
-					let phase: string	= $scope.$root.$$phase;
-
-					if (phase !== '$apply' && phase !== '$digest') {
-						$scope.$apply();
-					}
-				}
-			};
+			let controller: Cyph.IController			= new Cyph.Controller($scope);
+			let dialogManager: Cyph.UI.IDialogManager	= new Cyph.UI.DialogManager($mdDialog, $mdToast);
+			let notifier: Cyph.UI.INotifier				= new Cyph.UI.Notifier;
 
 			let mobileMenu: Cyph.UI.ISidebar	= Cyph.Env.isMobile ?
 				$mdSidenav('menu') :
@@ -52,13 +47,14 @@ angular.
 				}
 			;
 
-			let dialogManager: Cyph.UI.IDialogManager	= new Cyph.UI.DialogManager($mdDialog, $mdToast);
-			let notifier: Cyph.UI.INotifier				= new Cyph.UI.Notifier;
-
 			$scope.Cyph	= Cyph;
 			$scope.ui	= new Cyph.im.UI.UI(controller, dialogManager, mobileMenu, notifier);
 
-			self['ui']	= $scope.ui;
+
+			/* debugging */
+			if (Cyph.Env.isLocalhost) {
+				self['ui']	= $scope.ui;
+			}
 
 
 			history.pushState({}, '', location.pathname);
