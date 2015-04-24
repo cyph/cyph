@@ -34,7 +34,6 @@ angular.
 		($scope, $mdSidenav, $mdToast, $mdDialog) => $(() => {
 			Cyph.UI.Elements.load();
 
-
 			let controller: Cyph.IController			= new Cyph.Controller($scope);
 			let dialogManager: Cyph.UI.IDialogManager	= new Cyph.UI.DialogManager($mdDialog, $mdToast);
 			let notifier: Cyph.UI.INotifier				= new Cyph.UI.Notifier;
@@ -50,11 +49,7 @@ angular.
 			$scope.Cyph	= Cyph;
 			$scope.ui	= new Cyph.im.UI.UI(controller, dialogManager, mobileMenu, notifier);
 
-
-			/* debugging */
-			if (Cyph.Env.isLocalhost) {
-				self['ui']	= $scope.ui;
-			}
+			self['ui']	= $scope.ui;
 		})
 	]).
 	config([
