@@ -22,6 +22,7 @@ module Cyph {
 		no: `no`,
 		ok: `ok`,
 		oopsTitle: `Oops!`,
+		pingPongTimeoutTitle: `Connection timeout`,
 		reject: `reject`,
 		save: `save`,
 		suregoahead: `sure, go ahead`,
@@ -48,9 +49,9 @@ module Cyph {
 		,
 
 		pingPongTimeout:
-			`Unable to ping your friend... They might have gone offline, or one of you could ` +
-			`be experiencing network connectivity issues. If you weren’t expecting your ` +
-			`friend to leave the cyph, you may want to wait around a little longer.`
+			`Unable to ping your friend...\n\n` +
+			`They might have gone offline, or one of you could be experiencing network connectivity issues.\n\n` +
+			`If you weren’t expecting your friend to leave the cyph, you may want to wait around a little longer.`
 		,
 
 		webRTCDisabled:
