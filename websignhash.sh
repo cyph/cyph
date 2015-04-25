@@ -23,9 +23,9 @@ for path in $( \
 		file="$(echo $path | cut -c 2-)"
 	fi
 
-	echo -ne "$path:\n\n" >> .bootstrapText.tmp
+	echo -e "$path:\n" >> .bootstrapText.tmp
 	cat "$file" >> .bootstrapText.tmp
-	echo -ne '\n\n\n\n\n\n' >> .bootstrapText.tmp
+	echo -e '\n\n\n\n\n' >> .bootstrapText.tmp
 done
 
 cat .bootstrapText.tmp | shasum -p -a 512 | perl -pe 's/(.*) .*/\1/'
