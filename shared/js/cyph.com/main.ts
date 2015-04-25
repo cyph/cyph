@@ -21,7 +21,7 @@ angular.
 			let controller: Cyph.IController	= new Cyph.Controller($scope);
 
 			$scope.Cyph	= Cyph;
-			//$scope.ui	= new Cyph.com.UI.UI(controller);
+			$scope.ui	= new Cyph.com.UI.UI(controller);
 
 			self['ui']	= $scope.ui;
 		})
