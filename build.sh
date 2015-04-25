@@ -48,10 +48,10 @@ else
 		} | xargs -I% rm %
 	else
 		{ \
-			find shared/css -name '*.scss' & \
-			find shared/css -name '*.map' & \
-			find shared/js -name '*.ts' & \
-			find shared/js -name '*.map'; \
+			find css -name '*.scss' & \
+			find css -name '*.map' & \
+			find js -name '*.ts' & \
+			find js -name '*.map'; \
 		} | xargs -I% rm %
 	fi
 
