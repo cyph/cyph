@@ -90,7 +90,7 @@ module Cyph.com {
 				Elements.heroText.removeClass('bounceInDown').addClass('bounceOutRight');
 
 				setTimeout(() => {
-					this.scroll(Cyph.UI.Elements.window.height(), 1.5);
+					this.scroll(Cyph.UI.Elements.window.height(), 1.1);
 
 					setTimeout(() => {
 						Elements.heroText.removeClass('bounceOutRight').addClass('bounceInDown');
@@ -152,14 +152,17 @@ module Cyph.com {
 				$('a[href^="/"]').click(e => {
 					e.preventDefault();
 
-					let href: string	= $(e.currentTarget).attr('href');
+					let href: string		= $(e.currentTarget).attr('href');
+					let scrollDelay: number	= 500;
 
 					if (href !== location.pathname) {
+						scrollDelay	= 0;
+
 						Cyph.UrlState.set(href);
+						setTimeout(() => this.backgroundVideoManager.adjustMargins(), 250);
 					}
 
-					setTimeout(() => this.backgroundVideoManager.adjustMargins(), 250);
-					setTimeout(() => this.scroll(0), 1000);
+					setTimeout(() => this.scroll(0), scrollDelay);
 				});
 
 
