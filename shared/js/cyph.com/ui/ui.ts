@@ -96,6 +96,7 @@ module Cyph.com {
 				Cyph.UrlState.onchange(urlState => this.onUrlStateChange(urlState));
 				Cyph.UrlState.set(Cyph.UrlState.get(), true, false, false);
 
+				this.controller.update();
 				Cyph.UI.Elements.html.addClass('load-complete');
 
 
