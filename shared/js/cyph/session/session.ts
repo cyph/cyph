@@ -249,7 +249,7 @@ module Cyph {
 			) {
 				/* true = yes; false = no; null = maybe */
 				this.updateState(State.isStartingNewCyph,
-					!descriptor ?
+					!descriptor || descriptor === 'new' ?
 						true :
 						descriptor.length > Config.secretLength ?
 							null :
