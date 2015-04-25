@@ -1,21 +1,30 @@
 module Cyph.com {
 	export module UI {
 		export class Elements {
-			public static bouncingDownArrow: JQuery	= $('#bouncing-down-arrow');
-			public static backgroundVideo: JQuery	= $('#background-video > :first-child');
-			public static featureListItems: JQuery	= $('.feature-list-item');
-			public static heroText: JQuery			= $('#hero-section .hero-text');
-			public static newCyph: JQuery			= $('#new-cyph');
-			public static newCyphParent: JQuery		= Elements.newCyph.parent();
-			public static podcastLogo: JQuery		= $('.podcast-logo');
-
-			public static fixedHeaderStuff: JQuery	= Elements.newCyph.
-				add('#main-toolbar').
-				add(Elements.bouncingDownArrow)
-			;
+			public static bouncingDownArrow: JQuery;
+			public static backgroundVideo: JQuery;
+			public static featureListItems: JQuery;
+			public static fixedHeaderStuff: JQuery;
+			public static heroText: JQuery;
+			public static newCyph: JQuery;
+			public static newCyphParent: JQuery;
+			public static podcastLogo: JQuery;
 
 			public static load () : void {
-				Cyph.UI.Elements.load(Elements);
+				Cyph.UI.Elements.load();
+
+				Elements.bouncingDownArrow	= $('#bouncing-down-arrow');
+				Elements.backgroundVideo	= $('#background-video > :first-child');
+				Elements.featureListItems	= $('.feature-list-item');
+				Elements.heroText			= $('#hero-section .hero-text');
+				Elements.newCyph			= $('#new-cyph');
+				Elements.newCyphParent		= Elements.newCyph.parent();
+				Elements.podcastLogo		= $('.podcast-logo');
+
+				Elements.fixedHeaderStuff	= Elements.newCyph.
+					add('#main-toolbar').
+					add(Elements.bouncingDownArrow)
+				;
 			}
 		}
 	}
