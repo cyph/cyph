@@ -63,7 +63,7 @@ module Cyph.com {
 
 			private scroll (
 				position: number,
-				delayFactor: number = 0.5
+				delayFactor: number = 0.75
 			) : void {
 				let delay: number	= delayFactor * Math.abs(Cyph.UI.Elements.document.scrollTop() - position);
 
@@ -151,7 +151,12 @@ module Cyph.com {
 
 				$('a[href^="/"]').click(e => {
 					e.preventDefault();
-					Cyph.UrlState.set($(e.currentTarget).attr('href'));
+
+					let href: string	= $(e.currentTarget).attr('href');
+
+					if (href !== location.pathname) {
+						Cyph.UrlState.set(href);
+					}
 
 					setTimeout(() => this.backgroundVideoManager.adjustMargins(), 250);
 					setTimeout(() => this.scroll(0), 1000);
