@@ -284,8 +284,8 @@
 		</section>
 
 		<section id='podcast-section' ng-show='ui.state === Cyph.com.UI.States.podcast' class='unisection'>
-			<div class='hero-text animated' ng-class='{bounceInDown: ui.podcast !== Cyph.com.UI.Podcasts.jjgo, bounceInLeft: ui.podcast === Cyph.com.UI.Podcasts.jjgo}'>
-				<img class='podcast-logo'>
+			<div class='hero-text animated' ng-class='Cyph.com.UI.Podcasts[ui.podcast] === "jjgo" ? "bounceInLeft" : "bounceInDown"'>
+				<img class='podcast-logo' />
 			</div>
 
 			<div class='section-content-container'>

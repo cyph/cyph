@@ -149,7 +149,7 @@ module Cyph {
 				contentType	= 'application/json';
 			}
 
-			if (method === 'GET') {
+			if (data && method === 'GET') {
 				url		+= '?' + (
 					typeof data === 'object' ?
 						Util.toQueryString(data) :
