@@ -5,13 +5,13 @@ scriptdir="$(cd "$(dirname "$0")"; pwd)" # $(dirname `readlink -f "${0}" || real
 cd "${scriptdir}"
 
 git pull
-chmod -R 777 .
+chmod -R 700 .
 git add .
 git commit -a -m "${*}"
 git push
 
 find . -name '*.go' -print0 | xargs -0 -I% gofmt -w "%"
-chmod -R 777 .
+chmod -R 700 .
 git commit -a -m "gofmt: ${*}"
 git push
 

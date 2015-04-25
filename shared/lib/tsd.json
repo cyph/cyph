@@ -6,28 +6,34 @@
   "bundle": "typings/tsd.d.ts",
   "installed": {
     "angular-material/angular-material.d.ts": {
-      "commit": "65ea56c919fd95dcd0ca3c59c9aa5eaa99c86885"
-    },
-    "angularjs/angular.d.ts": {
-      "commit": "65ea56c919fd95dcd0ca3c59c9aa5eaa99c86885"
-    },
-    "angularjs/angular-animate.d.ts": {
-      "commit": "65ea56c919fd95dcd0ca3c59c9aa5eaa99c86885"
+      "commit": "6b19a967eff47c4d6eaf56c573ea4b8f0fc9c487"
     },
     "highlightjs/highlightjs.d.ts": {
-      "commit": "65ea56c919fd95dcd0ca3c59c9aa5eaa99c86885"
+      "commit": "6b19a967eff47c4d6eaf56c573ea4b8f0fc9c487"
+    },
+    "webrtc/MediaStream.d.ts": {
+      "commit": "6b19a967eff47c4d6eaf56c573ea4b8f0fc9c487"
+    },
+    "angularjs/angular-animate.d.ts": {
+      "commit": "6b19a967eff47c4d6eaf56c573ea4b8f0fc9c487"
+    },
+    "webrtc/RTCPeerConnection.d.ts": {
+      "commit": "6b19a967eff47c4d6eaf56c573ea4b8f0fc9c487"
+    },
+    "angularjs/angular.d.ts": {
+      "commit": "6b19a967eff47c4d6eaf56c573ea4b8f0fc9c487"
     },
     "jquery/jquery.d.ts": {
-      "commit": "65ea56c919fd95dcd0ca3c59c9aa5eaa99c86885"
+      "commit": "6b19a967eff47c4d6eaf56c573ea4b8f0fc9c487"
     },
     "aws-sdk/aws-sdk.d.ts": {
-      "commit": "65ea56c919fd95dcd0ca3c59c9aa5eaa99c86885"
+      "commit": "6b19a967eff47c4d6eaf56c573ea4b8f0fc9c487"
     },
     "node/node.d.ts": {
-      "commit": "65ea56c919fd95dcd0ca3c59c9aa5eaa99c86885"
+      "commit": "6b19a967eff47c4d6eaf56c573ea4b8f0fc9c487"
     },
     "cryptojs/cryptojs.d.ts": {
-      "commit": "65ea56c919fd95dcd0ca3c59c9aa5eaa99c86885"
+      "commit": "6b19a967eff47c4d6eaf56c573ea4b8f0fc9c487"
     }
   }
 }
