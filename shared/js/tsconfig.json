@@ -12,6 +12,7 @@
     "files": [
         "cyph.com/main.ts",
         "cyph.com/ui.ts",
+        "cyph.im/config.ts",
         "cyph.im/main.ts",
         "cyph/analytics.ts",
         "cyph/base.ts",
