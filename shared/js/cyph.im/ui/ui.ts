@@ -8,6 +8,18 @@ module Cyph.im {
 			public chat: Cyph.UI.Chat.IChat;
 			public signupForm: Cyph.UI.ISignupForm;
 
+			private onUrlStateChange (urlState: string) : void {
+				if (urlState === Cyph.UrlState.states.notFound) {
+					this.changeState(States.error);
+				}
+				else {
+					Cyph.UrlState.set(Cyph.UrlState.states.notFound);
+					return;
+				}
+
+				Cyph.UrlState.set(urlState, true, true);
+			}
+
 			public beginWaiting () : void {
 				this.changeState(States.waitingForFriend);
 
@@ -99,19 +111,7 @@ module Cyph.im {
 					Cyph.Errors.logWebSign();
 				}
 				else {
-					Cyph.UrlState.onchange(() : void => {
-						let urlState: string	= Cyph.UrlState.get();
-
-						if (urlState === Cyph.UrlState.states.notFound) {
-							this.changeState(States.error);
-						}
-						else {
-							Cyph.UrlState.set(Cyph.UrlState.states.notFound);
-							return;
-						}
-
-						Cyph.UrlState.set(urlState, true, true);
-					});
+					Cyph.UrlState.onchange(urlState => this.onUrlStateChange(urlState));
 
 					this.chat		= new Cyph.UI.Chat.Chat(
 						this.controller,
