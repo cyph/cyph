@@ -15,7 +15,7 @@ module Cyph.com {
 			private previousAspectRatio: boolean;
 			private pullInterval: any;
 
-			private adjustMargins () : void {
+			public adjustMargins () : void {
 				if (!Cyph.Env.isMobile || Cyph.Env.isTablet) {
 					Elements.featureListItems.css('height', '');
 					Elements.featureListItems.find('[class*="pull"]').css('left', '');

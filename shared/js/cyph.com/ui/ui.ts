@@ -41,10 +41,10 @@ module Cyph.com {
 				let state: States		= States[urlState];
 				let podcast: Podcasts	= Podcasts[urlState];
 
-				if (podcast) {
+				if (podcast !== undefined) {
 					this.openPodcastPage(podcast);
 				}
-				else if (state) {
+				else if (state !== undefined) {
 					this.changeState(state);
 				}
 				else if (urlState === '') {
@@ -61,6 +61,17 @@ module Cyph.com {
 				Cyph.UrlState.set(urlState, true, true);
 			}
 
+			private scroll (
+				position: number,
+				delayFactor: number = 0.5
+			) : void {
+				let delay: number	= delayFactor * Math.abs(Cyph.UI.Elements.document.scrollTop() - position);
+
+				Cyph.UI.Elements.html.add(Cyph.UI.Elements.body).animate({
+					scrollTop: position
+				}, delay);
+			}
+
 			public changeState (state: States) : void {
 				this.state	= state;
 				this.controller.update();
@@ -75,13 +86,11 @@ module Cyph.com {
 				setTimeout(() => Elements.heroText.show(), 1);
 			}
 
-			public scrollHeroText () {
+			public scrollHeroText () : void {
 				Elements.heroText.removeClass('bounceInDown').addClass('bounceOutRight');
 
 				setTimeout(() => {
-					Cyph.UI.Elements.html.add(Cyph.UI.Elements.body).animate({
-						scrollTop: Cyph.UI.Elements.window.height()
-					}, 1000);
+					this.scroll(Cyph.UI.Elements.window.height(), 1);
 
 					setTimeout(() => {
 						Elements.heroText.removeClass('bounceOutRight').addClass('bounceInDown');
@@ -95,9 +104,6 @@ module Cyph.com {
 
 				Cyph.UrlState.onchange(urlState => this.onUrlStateChange(urlState));
 				Cyph.UrlState.set(Cyph.UrlState.get(), true, false, false);
-
-				this.controller.update();
-				Cyph.UI.Elements.html.addClass('load-complete');
 
 
 				let wowDelay: string			= 'data-wow-delay';
@@ -139,6 +145,20 @@ module Cyph.com {
 						}, 100);
 					}, 2500);
 				}
+
+
+				/* No full page reloads */
+
+				$('a[href^="/"]').click(e => {
+					e.preventDefault();
+					Cyph.UrlState.set($(e.currentTarget).attr('href'));
+
+					setTimeout(() => this.backgroundVideoManager.adjustMargins(), 250);
+					setTimeout(() => this.scroll(0), 1000);
+				});
+
+
+				Cyph.UI.Elements.html.addClass('load-complete');
 			}
 		}
 	}

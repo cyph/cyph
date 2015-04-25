@@ -24,6 +24,8 @@ angular.
 			$scope.ui	= new Cyph.com.UI.UI(controller);
 
 			self['ui']	= $scope.ui;
+
+			controller.update();
 		})
 	])
 ;

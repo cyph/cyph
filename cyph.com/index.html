@@ -283,7 +283,7 @@
 			</div>
 		</section>
 
-		<section id='podcast-section' ng-show='podcast' class='unisection'>
+		<section id='podcast-section' ng-show='ui.state === Cyph.com.UI.States.podcast' class='unisection'>
 			<div class='hero-text animated' ng-class='{bounceInDown: ui.podcast !== Cyph.com.UI.Podcasts.jjgo, bounceInLeft: podcast === Cyph.com.UI.Podcasts.jjgo}'>
 				<img class='podcast-logo'>
 			</div>
@@ -362,8 +362,6 @@
 		</section>
 
 
-		<!-- <section id='about' ng-show='isAbout' class='unisection'> -->
-
 		<section id='about'>
 			<div class='hero-text' translate>
 				Our Team
@@ -396,7 +394,7 @@
 			</div>
 		</section>
 
-		<section id='error' ng-show='isError' class='unisection'>
+		<section id='error' ng-show='ui.state === Cyph.com.UI.States.error' class='unisection'>
 			<div>
 				<h1 translate>I'm sorry, but your cyph is in another castle...</h1>
 			</div>
@@ -417,7 +415,7 @@
 			</div>
 		</section>
 
-		<section id='faq' ng-show='isFaq' class='unisection'>
+		<section id='faq' ng-show='ui.state === Cyph.com.UI.States.faq' class='unisection'>
 			<div class='hero-text' translate>
 				Frequently Asked Questions
 			</div>
@@ -435,7 +433,7 @@
 			</div>
 		</section>
 
-		<section id='termsofservice' ng-show='isTos' class='unisection'>
+		<section id='termsofservice' ng-show='ui.state === Cyph.com.UI.States.termsofservice' class='unisection'>
 			<div class='hero-text' translate>
 				Terms of Service
 			</div>
@@ -517,7 +515,7 @@
 			</div>
 		</section>
 
-		<section id='privacypolicy' ng-show='isPrivacyPolicy' class='unisection'>
+		<section id='privacypolicy' ng-show='ui.state === Cyph.com.UI.States.privacypolicy' class='unisection'>
 			<div class='hero-text' translate>
 				Privacy Policy
 			</div>
