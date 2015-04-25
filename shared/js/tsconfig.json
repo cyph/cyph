@@ -28,8 +28,8 @@
         "cyph/util.ts",
         "cyph/webrtc.ts",
         "global/base.ts",
-        "global/ngmarkdown.ts",
         "global/plugins.jquery.ts",
+        "ngdirectives/markdown.ts",
         "preload/base.ts",
         "preload/cryptoinit.ts",
         "preload/translations.ts",
@@ -86,6 +86,7 @@
         "cyph/ui/chat/p2pmanager.ts",
         "cyph/ui/chat/photomanager.ts",
         "cyph/ui/chat/scrollmanager.ts",
+        "cyph/ui/directives/markdown.ts",
         "../lib/typings/tsd.d.ts"
     ]
 }
