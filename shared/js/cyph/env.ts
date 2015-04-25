@@ -5,6 +5,7 @@ module Cyph {
 
 		public static homeUrl: string		= Env.isOnion ? '/' : 'https://www.cyph.com/';
 		public static newCyphUrl: string	= Env.isOnion ? '/im/#new' : 'https://www.cyph.im/';
+		public static cyphMeUrl: string		= Env.isOnion ? '/me/' : 'https://www.cyph.me/';
 
 		public static baseUrl: string	=
 			Env.isLocalhost ?
