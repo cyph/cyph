@@ -90,7 +90,7 @@ module Cyph.com {
 				Elements.heroText.removeClass('bounceInDown').addClass('bounceOutRight');
 
 				setTimeout(() => {
-					this.scroll(Cyph.UI.Elements.window.height(), 1);
+					this.scroll(Cyph.UI.Elements.window.height(), 1.5);
 
 					setTimeout(() => {
 						Elements.heroText.removeClass('bounceOutRight').addClass('bounceInDown');
