@@ -25,15 +25,19 @@ module Cyph {
 			public static signupForm: JQuery			= $('.beta-signup-form');
 			public static timer: JQuery					= $('#timer');
 
-			public static load () : void {
-				Object.keys(Elements).
+			public static load (elements: any = Elements) : void {
+				Object.keys(elements).
 					filter((k: string) =>
-						k !== 'load' && Elements[k].selector
+						k !== 'load' && elements[k].selector
 					).
 					forEach((k: string) =>
-						Elements[k]	= $(Elements[k].selector)
+						elements[k]	= $(elements[k].selector)
 					)
 				;
+
+				if (elements !== Elements) {
+					Elements.load();
+				}
 			}
 		}
 	}
