@@ -1,7 +1,6 @@
 module Cyph {
 	export class Config {
-		public static prodBaseUrl: string		= 'https://api.cyph.com/';
-		public static onionUrl: string			= 'https://cyphdbyhiddenbhs.onion/';
+		public static onionUrl: string	= 'https://cyphdbyhiddenbhs.onion/';
 
 		public static defaultLanguage: string	= 'en';
 

@@ -12,7 +12,7 @@ module Cyph {
 				'http://localhost:8080/' :
 				Env.isOnion ?
 					'/api/' :
-					Config.prodBaseUrl
+					'https://api.cyph.com/'
 		;
 
 		public static host: string		= location ? location.host.replace('www.', '') : '';
