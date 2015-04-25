@@ -3,12 +3,12 @@
 /// <reference path="../preload/translations.ts" />
 /// <reference path="../preload/base.ts" />
 
-/// <reference path="../global/ngmarkdown.ts" />
 /// <reference path="../cyph/controller.ts" />
 /// <reference path="../cyph/ui/chat/chat.ts" />
 /// <reference path="../cyph/ui/dialogmanager.ts" />
 /// <reference path="../cyph/ui/notifier.ts" />
 /// <reference path="../cyph/ui/signupform.ts" />
+/// <reference path="../cyph/ui/directives/markdown.ts" />
 /// <reference path="config.ts" />
 /// <reference path="ui/enums.ts" />
 /// <reference path="ui/ui.ts" />
@@ -22,7 +22,7 @@ catch (_) {}
 
 angular.
 	module('Cyph', [
-		'ngMarkdown',
+		Cyph.UI.Directives.Markdown.title,
 		'ngMaterial',
 		'timer'
 	]).
