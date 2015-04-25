@@ -43,7 +43,7 @@ ls */*.yaml | xargs -I% sed -i.bak "s/version: master/version: ${branch}/g" %
 
 if [ $test ] ; then
 	sed -i.bak "s/staging/${branch}/g" default/config.go
-	ls */js/cyph/config.ts | xargs -I% sed -i.bak "s/api.cyph.com/${branch}-dot-cyphme.appspot.com/g" %
+	ls */js/cyph/env.ts | xargs -I% sed -i.bak "s/api.cyph.com/${branch}-dot-cyphme.appspot.com/g" %
 	ls */js/cyph/env.ts | xargs -I% sed -i.bak "s/www.cyph.com/${branch}-dot-cyph-com-dot-cyphme.appspot.com/g" %
 	ls */js/cyph/env.ts | xargs -I% sed -i.bak "s/www.cyph.im/${branch}-dot-cyph-im-dot-cyphme.appspot.com/g" %
 	ls */js/cyph/env.ts | xargs -I% sed -i.bak "s/www.cyph.me/${branch}-dot-cyph-me-dot-cyphme.appspot.com/g" %
