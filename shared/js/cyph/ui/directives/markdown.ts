@@ -10,7 +10,16 @@ module Cyph {
 						breaks: true,
 						linkify: true,
 						typographer: true,
-						quotes: (Cyph.Env.language === 'ru' ? '«»' : Cyph.Env.language === 'de' ? '„“' : '“”') + '‘’',
+						quotes:
+							(
+								Cyph.Env.language === 'ru' ?
+									'«»' :
+									Cyph.Env.language === 'de' ?
+										'„“' :
+										'“”'
+							) +
+							'‘’'
+						,
 						highlight: (str, lang) => {
 							if (lang && self['hljs'].getLanguage(lang)) {
 								try {
@@ -33,7 +42,10 @@ module Cyph {
 					;
 
 					markdown.renderer.rules.emoji	= (token, idx) =>
-						self['twemoji'].parse(token[idx].content, {base: '/lib/bower_components/twemoji/'})
+						self['twemoji'].parse(
+							token[idx].content,
+							{base: '/lib/bower_components/twemoji/'}
+						)
 					;
 
 
@@ -48,8 +60,9 @@ module Cyph {
 								val	= val.replace(/\<\/blockquote\>\n\<blockquote\>\n/g, '');
 
 								/* Images */
-								val	= val.replace(/!\<a href="(data:image\/(png|jpeg|gif)\;.*?)"><\/a>/g, (match, value: string) =>
-									'<img src="' + value + '" />'
+								val	= val.replace(
+									/!\<a href="(data:image\/(png|jpeg|gif)\;.*?)"><\/a>/g,
+									(match, value: string) => '<img src="' + value + '" />'
 								);
 
 								element.html(val);
