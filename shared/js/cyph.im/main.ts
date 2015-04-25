@@ -9,6 +9,7 @@
 /// <reference path="../cyph/ui/dialogmanager.ts" />
 /// <reference path="../cyph/ui/notifier.ts" />
 /// <reference path="../cyph/ui/signupform.ts" />
+/// <reference path="config.ts" />
 /// <reference path="ui/enums.ts" />
 /// <reference path="ui/ui.ts" />
 
