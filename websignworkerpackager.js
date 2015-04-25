@@ -6,7 +6,7 @@ var args	= process.argv.slice(2);
 var path	= args[0];
 
 var newText	= fs.readFileSync(path).toString().replace(
-	/window\.importScriptsAndRetry\(["'](.*?)["']\)/g,
+	/importScripts\(["'](.*?)["']\)/g,
 	function (match, value) {
 		if (value[0] == '/') {
 			value	= value.slice(1);

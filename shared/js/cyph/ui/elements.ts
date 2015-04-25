@@ -1,0 +1,44 @@
+module Cyph {
+	export module UI {
+		export class Elements {
+			public static window: JQuery				= $(window);
+			public static document: JQuery				= $(document);
+			public static html: JQuery					= $('html');
+			public static head: JQuery					= $('head');
+			public static body: JQuery					= $('body');
+			public static everything: JQuery			= $('*');
+			public static affiliateCheckbox: JQuery		= $('.amazon-link:visible md-checkbox');
+			public static buttons: JQuery				= $('.md-button:not(#templates *)');
+			public static copyUrlInput: JQuery			= $('#copy-url-input input');
+			public static copyUrlLink: JQuery			= $('#copy-url-link');
+			public static cyphertext: JQuery			= $('#cyphertext.curtain, #cyphertext.curtain > md-content');
+			public static insertPhotoMobile: JQuery		= $('#insert-photo-mobile');
+			public static messageBox: JQuery			= $('#message-box');
+			public static messageList: JQuery			= $('#message-list, #message-list > md-content');
+			public static messageListInner: JQuery		= $('#message-list md-list');
+			public static nanoScroller: JQuery			= $('.nano');
+			public static p2pFriendPlaceholder: JQuery	= $('#video-call .friend:not(.stream)');
+			public static p2pFriendStream: JQuery		= $('#video-call .friend.stream');
+			public static p2pMeStream: JQuery			= $('#video-call .me');
+			public static p2pFiles: JQuery				= $('.send-file-button input[type="file"]');
+			public static sendButton: JQuery			= $('#send-button');
+			public static signupForm: JQuery			= $('.beta-signup-form');
+			public static timer: JQuery					= $('#timer');
+
+			public static load (elements: any = Elements) : void {
+				Object.keys(elements).
+					filter((k: string) =>
+						k !== 'load' && elements[k].selector
+					).
+					forEach((k: string) =>
+						elements[k]	= $(elements[k].selector)
+					)
+				;
+
+				if (elements !== Elements) {
+					Elements.load();
+				}
+			}
+		}
+	}
+}
