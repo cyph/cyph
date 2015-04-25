@@ -33,7 +33,7 @@ angular.
 
 /* Redirect to Onion site when on Tor */
 
-if (!Cyph.Env.isLocalhost && !Cyph.Env.isOnion) {
+if (!Cyph.Env.isOnion) {
 	Cyph.Util.request({
 		url: Cyph.Config.onionUrl + 'ping',
 		success: (data: string) => {

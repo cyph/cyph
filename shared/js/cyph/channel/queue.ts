@@ -18,8 +18,8 @@ module Cyph {
 			}
 
 			public static sqsWrapper (config: any = {}) : any {
-				if (Env.isLocalhost) {
-					config.endpoint	= 'http://localhost:4568';
+				if (Env.awsEndpoint) {
+					config.endpoint	= Env.awsEndpoint;
 				}
 
 				let wrapper	= {

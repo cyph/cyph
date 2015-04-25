@@ -3,17 +3,12 @@ module Cyph {
 		public static isLocalhost: boolean	= !!location && location.hostname === 'localhost';
 		public static isOnion: boolean		= !!location && location.host.split('.').slice(-1)[0] === 'onion';
 
-		public static homeUrl: string		= Env.isOnion ? '/' : 'https://www.cyph.com/';
-		public static newCyphUrl: string	= Env.isOnion ? '/im/#new' : 'https://www.cyph.im/';
-		public static cyphMeUrl: string		= Env.isOnion ? '/me/' : 'https://www.cyph.me/';
+		public static baseUrl: string		= Env.isOnion ? '/api/' : 'http://localhost:8080/';
+		public static homeUrl: string		= Env.isOnion ? '/' : 'http://localhost:8081/';
+		public static newCyphUrl: string	= Env.isOnion ? '/im/' : 'http://localhost:8082/';
+		public static cyphMeUrl: string		= Env.isOnion ? '/me/' : 'http://localhost:8083/';
 
-		public static baseUrl: string	=
-			Env.isLocalhost ?
-				'http://localhost:8080/' :
-				Env.isOnion ?
-					'/api/' :
-					'https://api.cyph.com/'
-		;
+		public static awsEndpoint: string	= 'http://localhost:4568';
 
 		public static host: string		= location ? location.host.replace('www.', '') : '';
 
