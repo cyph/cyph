@@ -32,10 +32,15 @@ module Cyph {
 		}
 
 		public static onchange (handler: Function) : void {
-			EventManager.on(UrlState.urlStateChangeEvent, handler);
+			EventManager.on(UrlState.urlStateChangeEvent, () => handler(UrlState.get()));
 		}
 
-		public static set (path: string, shouldReplace?: boolean, shouldNotProcess?: boolean) : void {
+		public static set (
+			path: string,
+			shouldReplace?: boolean,
+			shouldNotTrigger?: boolean,
+			redirectFallback: boolean = true
+		) : void {
 			if (Env.isMainThread) {
 				if (path[0] !== '/') {
 					path	= '/' + path;
@@ -49,19 +54,26 @@ module Cyph {
 						history.pushState({}, '', path);
 					}
 
-					if (!shouldNotProcess) {
+					if (!shouldNotTrigger) {
 						EventManager.trigger(UrlState.urlStateChangeEvent);
 					}
 				}
-				else if (shouldReplace) {
-					location.replace(path);
-				}
-				else {
-					location.pathname	= path;
+				else if (redirectFallback) {
+					if (shouldReplace) {
+						location.replace(path);
+					}
+					else {
+						location.pathname	= path;
+					}
 				}
 			}
 			else {
-				Thread.callMainThread('Cyph.UrlState.set', [path, shouldReplace, shouldNotProcess]);
+				Thread.callMainThread('Cyph.UrlState.set', [
+					path,
+					shouldReplace,
+					shouldNotTrigger,
+					redirectFallback
+				]);
 			}
 		}
 	}

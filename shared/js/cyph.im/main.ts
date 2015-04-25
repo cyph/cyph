@@ -57,5 +57,5 @@ angular.
 		'$compileProvider',
 
 		$compileProvider => $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|sms):/)
-	]);
+	])
 ;
