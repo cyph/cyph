@@ -106,6 +106,10 @@ module Cyph {
 
 		public static callMainThread (method: string, args: any[] = []) : void {
 			if (Env.isMainThread) {
+				if (method.indexOf('eval') > -1) {
+					throw new Error('lol no: ' + method + ' ' + JSON.stringify(args));
+				}
+
 				let methodSplit: string[]	= method.split('.');
 				let methodName: string		= methodSplit.slice(-1)[0];
 

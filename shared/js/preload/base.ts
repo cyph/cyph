@@ -81,7 +81,7 @@ $(() => {
 	/*
 		Whitelist for inline event handlers +
 		allow inline event handlers without requiring 'unsafe-inline' in CSP +
-		custom event (onenterpress)
+		custom event (on-enterpress)
 	*/
 
 	['click', 'change', 'enterpress'].forEach((eventName: string) => {
@@ -93,19 +93,17 @@ $(() => {
 			$this.on(eventName, () => {
 				let handler: string	= $this.attr(attribute);
 				let split: number	= handler.indexOf('(');
-
 				let method: string	= handler.slice(0, split);
 
-				let args: any[]		= JSON.parse(
-					'[' +
-						handler.slice(split + 1, -1).replace(/this/g, '"this"') +
-					']'
-				);
+				let args: any[]	= JSON.parse('[' +
+					handler.
+						slice(split + 1, -1).
+						replace(/this/g, '"this"')
+				+ ']').
+					map(arg => arg === 'this' ? elem : arg)
+				;
 
-				Cyph.Thread.callMainThread(
-					method,
-					args.map(arg => arg === 'this' ? elem : arg)
-				);
+				Cyph.Thread.callMainThread(method, args);
 			});
 		});
 	});
