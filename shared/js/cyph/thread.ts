@@ -7,8 +7,8 @@ module Cyph {
 		]);
 
 		private static stringifyFunction (f: Function) : string {
-			let s	= f.toString();
-			return s.slice(s.indexOf('{') + 1, s.lastIndexOf('}'));
+			let s: string	= f.toString();
+			return s.slice(s.indexOf('{'));
 		}
 
 		private static threadEnvSetup (vars: any, importScripts: Function) : void {
