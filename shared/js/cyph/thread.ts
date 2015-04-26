@@ -69,7 +69,9 @@ module Cyph {
 				else {
 					let isaac: any;
 					importScripts('/cryptolib/bower_components/isaac.js/isaac.js');
-					isaac	= isaac || self['isaac'].seed(vars.threadRandomSeed);
+					isaac	= isaac || self['isaac'];
+
+					isaac.seed(vars.threadRandomSeed);
 
 					crypto	= {
 						getRandomValues: array => {
