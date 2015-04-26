@@ -4,11 +4,16 @@
 import glob
 import json
 import re
+import sys
 import time
 from bs4 import BeautifulSoup
 
 
-f		= open('index.html', 'r')
+fileIn	= sys.argv[1]
+fileOut	= sys.argv[2]
+
+
+f		= open(fileIn, 'r')
 html	= BeautifulSoup(f.read(), 'html5lib')
 f.close()
 
@@ -41,6 +46,6 @@ for elem in html.select('link[rel="stylesheet"]'):
 	elem.name	= 'style'
 
 
-f	= open('index.html', 'w')
+f	= open(fileOut, 'w')
 f.write(unicode(html).encode('utf8'))
 f.close()

@@ -1,7 +1,7 @@
 #
 # Name    : wow
 # Author  : Matthieu Aussaguel, http://mynameismatthieu.com/, @mattaussaguel
-# Version : 1.0.3
+# Version : 1.1.2
 # Repo    : https://github.com/matthieua/WOW
 # Website : http://mynameismatthieu.com/wow
 #
@@ -14,6 +14,26 @@ class Util
 
   isMobile: (agent) ->
     /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(agent)
+
+  createEvent: (event, bubble = false, cancel = false, detail = null) ->
+    if document.createEvent? # W3C DOM
+      customEvent = document.createEvent('CustomEvent')
+      customEvent.initCustomEvent(event, bubble, cancel, detail)
+    else if document.createEventObject? # IE DOM < 9
+      customEvent = document.createEventObject()
+      customEvent.eventType = event
+    else
+      customEvent.eventName = event
+
+    customEvent
+
+  emitEvent: (elem, event) ->
+    if elem.dispatchEvent? # W3C DOM
+      elem.dispatchEvent(event)
+    else if event of elem?
+      elem[event]()
+    else if "on#{event}" of elem?
+      elem["on#{event}"]()
 
   addEvent: (elem, event, fn) ->
     if elem.addEventListener? # W3C DOM
@@ -93,6 +113,7 @@ class @WOW
     @config   = @util().extend(options, @defaults)
     # Map of elements to animation names:
     @animationNameCache = new WeakMap()
+    @wowEvent = @util().createEvent(@config.boxClass)
 
   init: ->
     @element = window.document.documentElement
@@ -152,6 +173,14 @@ class @WOW
     @applyStyle(box)
     box.className = "#{box.className} #{@config.animateClass}"
     @config.callback(box) if @config.callback?
+    @util().emitEvent(box, @wowEvent)
+
+    @util().addEvent(box, 'animationend', @resetAnimation)
+    @util().addEvent(box, 'oanimationend', @resetAnimation)
+    @util().addEvent(box, 'webkitAnimationEnd', @resetAnimation)
+    @util().addEvent(box, 'MSAnimationEnd', @resetAnimation)
+
+    box
 
   applyStyle: (box, hidden) ->
     duration  = box.getAttribute('data-wow-duration')
@@ -171,6 +200,11 @@ class @WOW
 
   resetStyle: ->
     box.style.visibility = 'visible' for box in @boxes
+
+  resetAnimation: (event) =>
+    if event.type.toLowerCase().indexOf('animationend') >= 0
+      target = event.target || event.srcElement
+      target.className = target.className.replace(@config.animateClass, '').trim()
 
   customStyle: (box, hidden, duration, delay, iteration) ->
     @cacheAnimationName(box) if hidden
