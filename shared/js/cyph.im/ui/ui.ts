@@ -108,9 +108,9 @@ module Cyph.im {
 					!Config.webSignHashes[localStorage.webSignBootHash]
 				) {
 					Cyph.Errors.logWebSign();
-					this.changeState(States.webSignObsolete);
+					// this.changeState(States.webSignObsolete);
 				}
-				else {
+				// else {
 					Cyph.UrlState.onchange(urlState => this.onUrlStateChange(urlState));
 
 					this.chat		= new Cyph.UI.Chat.Chat(
@@ -154,7 +154,7 @@ module Cyph.im {
 						content: Cyph.Strings.IEWarning
 					});
 				}
-			}
+			// }
 		}
 	}
 }
