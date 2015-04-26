@@ -24,8 +24,8 @@ module Cyph.im {
 				this.changeState(States.waitingForFriend);
 
 				let copyUrl: string	=
-					((!Cyph.Env.isOnion && location['origin']) || 'https://www.cyph.im') +
-					'/#' +
+					Env.newCyphUrl +
+					'#' +
 					this.chat.session.state.cyphId +
 					this.chat.session.state.sharedSecret
 				;
@@ -77,7 +77,7 @@ module Cyph.im {
 						.replace(/(.*:.*):.*? /, '$1')
 					;
 
-					Cyph.UI.Elements.timer.parent().text('Link expires at ' + expireTime);
+					Cyph.UI.Elements.timer.parent().text(Cyph.Strings.linkExpiresAt + ' ' + expireTime);
 					Cyph.UI.Elements.timer	= null;
 				}
 				else {
@@ -107,8 +107,8 @@ module Cyph.im {
 					WebSign.detectChange() &&
 					!Config.webSignHashes[localStorage.webSignBootHash]
 				) {
-					this.changeState(States.webSignObsolete);
 					Cyph.Errors.logWebSign();
+					this.changeState(States.webSignObsolete);
 				}
 				else {
 					Cyph.UrlState.onchange(urlState => this.onUrlStateChange(urlState));

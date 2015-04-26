@@ -12,6 +12,9 @@ module Cyph {
 		}
 
 		private static threadEnvSetup (vars: any, importScripts: Function) : void {
+			location	= vars.location;
+			navigator	= vars.navigator;
+
 			/* Wrapper to make importScripts work in local dev environments;
 				not used in prod because of WebSign packing */
 			let oldImportScripts	= importScripts;
@@ -23,9 +26,6 @@ module Cyph {
 			};
 
 			importScripts('/js/global/base.js');
-
-			location	= vars.location;
-			navigator	= vars.navigator;
 
 			console	= {
 				assert: () => {},

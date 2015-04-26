@@ -18,6 +18,7 @@ module Cyph {
 		incomingFile: `Incoming File:`,
 		incomingFileReject: `File rejected.`,
 		introductoryMessage: `You may now speak.`,
+		linkExpiresAt: `Link expires at`,
 		newMessageNotification: `New message!`,
 		no: `no`,
 		ok: `ok`,

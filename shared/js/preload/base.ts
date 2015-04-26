@@ -78,7 +78,11 @@ if (!HTMLElement.prototype.click) {
 
 
 $(() => {
-	/* Custom event handlers */
+	/*
+		Whitelist for inline event handlers +
+		allow inline event handlers without requiring 'unsafe-inline' in CSP +
+		custom event (onenterpress)
+	*/
 
 	['click', 'change', 'enterpress'].forEach((eventName: string) => {
 		let attribute: string	= 'on-' + eventName;
@@ -91,7 +95,7 @@ $(() => {
 	});
 
 	$('[on-enterpress]').each((i: number, elem: HTMLElement) => {
-		let $this: JQuery		= $(elem);
+		let $this: JQuery				= $(elem);
 		let platformRestriction: string	= $this.attr('enterpress-only');
 
 		if (!platformRestriction || platformRestriction === Cyph.Env.platformString) {
