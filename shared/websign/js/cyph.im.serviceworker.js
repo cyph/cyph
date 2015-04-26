@@ -1,14 +1,14 @@
 var files	= [
 	'/',
 	'/websign/css/loading.css',
-	'/websign/js/cryptoinit.js',
+	'/websign/js/crypto.js',
 	'/websign/js/publickeys.js',
-	'/websign/js/serviceworker.js',
+	'/websign/js/cyph.im.serviceworker.js',
 	'/websign/js/workerhelper.js',
 	'/websign/lib/sha512.js',
 	'/websign/lib/openpgp/openpgp.min.js',
 	'/websign/lib/openpgp/openpgp.worker.min.js',
-	'/websign/cyph.appcache',
+	'/websign/cyph.im.appcache',
 	'/websign/manifest.json'
 ];
 
