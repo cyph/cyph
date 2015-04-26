@@ -90,7 +90,23 @@ $(() => {
 		$('[' + attribute + ']').each((i: number, elem: HTMLElement) => {
 			let $this: JQuery	= $(elem);
 
-			$this.on(eventName, () => eval($this.attr(attribute)));
+			$this.on(eventName, () => {
+				let handler: string	= $this.attr(attribute);
+				let split: number	= handler.indexOf('(');
+
+				let method: string	= handler.slice(0, split);
+
+				let args: any[]		= JSON.parse(
+					'[' +
+						handler.slice(split + 1, -1).replace(/this/g, '"this"') +
+					']'
+				);
+
+				Cyph.Thread.callMainThread(
+					method,
+					args.map(arg => arg === 'this' ? elem : arg)
+				);
+			});
 		});
 	});
 
