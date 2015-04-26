@@ -16,20 +16,20 @@
 		<meta name='apple-mobile-web-app-capable' content='yes' />
 		<meta name='mobile-web-app-capable' content='yes' />
 
-		<link rel='apple-touch-icon' sizes='57x57' href='/img/favicon/apple-touch-icon-57x57.png' />
-		<link rel='apple-touch-icon' sizes='114x114' href='/img/favicon/apple-touch-icon-114x114.png' />
-		<link rel='apple-touch-icon' sizes='72x72' href='/img/favicon/apple-touch-icon-72x72.png' />
-		<link rel='apple-touch-icon' sizes='144x144' href='/img/favicon/apple-touch-icon-144x144.png' />
-		<link rel='apple-touch-icon' sizes='60x60' href='/img/favicon/apple-touch-icon-60x60.png' />
-		<link rel='apple-touch-icon' sizes='120x120' href='/img/favicon/apple-touch-icon-120x120.png' />
-		<link rel='apple-touch-icon' sizes='76x76' href='/img/favicon/apple-touch-icon-76x76.png' />
-		<link rel='apple-touch-icon' sizes='152x152' href='/img/favicon/apple-touch-icon-152x152.png' />
-		<link rel='apple-touch-icon' sizes='180x180' href='/img/favicon/apple-touch-icon-180x180.png' />
-		<link rel='icon' type='image/png' href='/img/favicon/favicon-192x192.png' sizes='192x192' />
-		<link rel='icon' type='image/png' href='/img/favicon/favicon-160x160.png' sizes='160x160' />
-		<link rel='icon' type='image/png' href='/img/favicon/favicon-96x96.png' sizes='96x96' />
-		<link rel='icon' type='image/png' href='/img/favicon/favicon-16x16.png' sizes='16x16' />
-		<link rel='icon' type='image/png' href='/img/favicon/favicon-32x32.png' sizes='32x32' />
+		<link rel='icon' sizes='192x192' type='image/png' href='/img/favicon/favicon-192x192.png' />
+		<link rel='icon' sizes='160x160' type='image/png' href='/img/favicon/favicon-160x160.png' />
+		<link rel='icon' sizes='96x96' type='image/png' href='/img/favicon/favicon-96x96.png' />
+		<link rel='icon' sizes='32x32' type='image/png' href='/img/favicon/favicon-32x32.png' />
+		<link rel='icon' sizes='16x16' type='image/png' href='/img/favicon/favicon-16x16.png' />
+		<link rel='apple-touch-icon' sizes='180x180' type='image/png' href='/img/favicon/apple-touch-icon-180x180.png' />
+		<link rel='apple-touch-icon' sizes='152x152' type='image/png' href='/img/favicon/apple-touch-icon-152x152.png' />
+		<link rel='apple-touch-icon' sizes='144x144' type='image/png' href='/img/favicon/apple-touch-icon-144x144.png' />
+		<link rel='apple-touch-icon' sizes='120x120' type='image/png' href='/img/favicon/apple-touch-icon-120x120.png' />
+		<link rel='apple-touch-icon' sizes='114x114' type='image/png' href='/img/favicon/apple-touch-icon-114x114.png' />
+		<link rel='apple-touch-icon' sizes='76x76' type='image/png' href='/img/favicon/apple-touch-icon-76x76.png' />
+		<link rel='apple-touch-icon' sizes='72x72' type='image/png' href='/img/favicon/apple-touch-icon-72x72.png' />
+		<link rel='apple-touch-icon' sizes='60x60' type='image/png' href='/img/favicon/apple-touch-icon-60x60.png' />
+		<link rel='apple-touch-icon' sizes='57x57' type='image/png' href='/img/favicon/apple-touch-icon-57x57.png' />
 		<meta name='msapplication-TileColor' content='#8b62d9' />
 		<meta name='msapplication-TileImage' content='/img/favicon/mstile-144x144.png' />
 
@@ -45,73 +45,23 @@
 		<link rel='stylesheet' href='/css/loading.css' />
 	</head>
 	<body>
-		<section id='main' layout='column' ng-class='{"unisection-mode": podcast || isError || isAbout || isFaq || isTos || isPrivacyPolicy}'>
-
-		<!-- <md-sidenav component-id='menu' class='md-sidenav-right'>
-			<md-content class='md-content-padding'>
-				<div>
-					<md-button
-						translate
-						aria-label='About'
-						ng-click='baseButtonClick()'
-						href='https://www.reddit.com/wiki/commenting/.compact#wiki_posting'
-					>
-						About
-					</md-button>
-				</div>
-				<div>
-					<md-button
-						translate
-						aria-label='FAQ'
-						ng-click='baseButtonClick()'
-						href='https://www.reddit.com/wiki/commenting/.compact#wiki_posting'
-					>
-						FAQ
-					</md-button>
-				</div>
-				<div>
-					<md-button
-						translate
-						aria-label='Blog'
-						ng-click='baseButtonClick()'
-						href='https://www.reddit.com/wiki/commenting/.compact#wiki_posting'
-					>
-						Blog
-					</md-button>
-				</div>
-			</md-content>
-		</md-sidenav> -->
+		<section id='main' layout='column' ng-class='{"unisection-mode": ui.state !== Cyph.com.UI.States.home}'>
 
 		<a id='logo' href='/'>
 			<img src='/img/logo.white.horizontal.header.png' />
 		</a>
 
-		<img id='bouncing-down-arrow' class='animated' ng-click='scrollDown()' src='/img/icons/downarrow.png' />
+		<img id='bouncing-down-arrow' class='animated' ng-click='ui.scrollHeroText()' src='/img/icons/downarrow.png' />
 
 
 		<section id='new-cyph-section'>
 			<md-button id='new-cyph' aria-label='Start new cyph' class='breathe'>
-				<a translate ng-href='{{isOnion ? "/im/#new" : "https://www.cyph.im"}}'>Start new cyph</a>
+				<a translate ng-href='{{Cyph.Env.newCyphUrl}}'>Start new cyph</a>
 			</md-button>
 		</section>
 
 		<md-toolbar id='main-toolbar'>
-			<div class='md-toolbar-tools'>
-				<!--
-					<span flex></span>
-					<md-button
-						translate
-						aria-label='About Us'
-						href='/about'
-					>
-						About Us
-					</md-button>
-					<span flex></span>
-					<md-button translate aria-label='Menu' ng-click='openMobileMenu()'>
-						<img src='/img/icons/menu.png' />
-					</md-button>
-				-->
-			</div>
+			<div class='md-toolbar-tools'></div>
 		</md-toolbar>
 
 		<section id='hero-section'>
@@ -210,7 +160,7 @@
 								<span translate>Just</span>
 								<a target='_blank' href='https://www.torproject.org/download/download-easy.html.en' translate>install Tor Browser</a>
 								<span translate>and navigate to</span>
-								<a class='oneline' target='_blank' href='https://cyphdbyhiddenbhs.onion'>https://cyphdbyhiddenbhs.onion</a>
+								<a class='oneline' target='_blank' ng-href='{{Cyph.Config.onionUrl}}'>https://cyphdbyhiddenbhs.onion</a>
 								<i>("cyph'd by hidden backbone host server")</i>.
 							</p>
 						</div>
@@ -288,8 +238,8 @@
 				<p translate>
 					Click the button at the top of your screen to cyph right now!
 				</p>
-				<form class='beta-signup-form' ng-submit='submitBetaSignup()'>
-					<div ng-show='betaSignupState == 0'>
+				<form class='beta-signup-form' ng-submit='ui.signupForm.submit()'>
+					<div ng-show='ui.signupForm.state === 0'>
 						<p>
 							<strong translate>However</strong>,
 							<span translate>for cool features like group messaging, user accounts, and encrypted chat history, join the waitlist for Cyph v2! (Coming soon to an Internet near you.)</span>
@@ -298,11 +248,11 @@
 						<br />
 						<md-input-container>
 							<label translate>email</label>
-							<input type='email' ng-model='betaSignup.Email' />
+							<input type='email' ng-model='ui.signupForm.data.Email' />
 						</md-input-container>
 					</div>
 
-					<div ng-show='betaSignupState == 1'>
+					<div ng-show='ui.signupForm.state === 1'>
 						<div>
 							<p translate>
 								Thanks so much for signing up!
@@ -313,11 +263,11 @@
 						</div>
 						<md-input-container>
 							<label translate>name (optional)</label>
-							<input ng-model='betaSignup.Name' />
+							<input ng-model='ui.signupForm.data.Name' />
 						</md-input-container>
 					</div>
 
-					<div translate ng-show='betaSignupState > 1'>
+					<div translate ng-show='ui.signupForm.state > 1'>
 						You rock.
 					</div>
 
@@ -325,7 +275,7 @@
 						translate
 						type='submit'
 						aria-label='Sign up for beta'
-						ng-hide='betaSignupState > 1'
+						ng-hide='ui.signupForm.state > 1'
 					>
 						Sign up for beta
 					</md-button>
@@ -333,30 +283,30 @@
 			</div>
 		</section>
 
-		<section id='podcast-section' ng-show='podcast' class='unisection'>
-			<div class='hero-text animated' ng-class='{bounceInDown: podcast != "jjgo", bounceInLeft: podcast == "jjgo"}'>
-				<img class='podcast-logo'>
+		<section id='podcast-section' ng-show='ui.state === Cyph.com.UI.States.podcast' class='unisection'>
+			<div class='hero-text animated' ng-class='Cyph.com.UI.Podcasts[ui.podcast] === "jjgo" ? "bounceInLeft" : "bounceInDown"'>
+				<img class='podcast-logo' />
 			</div>
 
 			<div class='section-content-container'>
 				<div>
 					<p>
-						<form class='beta-signup-form' ng-submit='submitBetaSignup()'>
-							<div ng-show='betaSignupState == 0'>
+						<form class='beta-signup-form' ng-submit='ui.signupForm.submit()'>
+							<div ng-show='ui.signupForm.state === 0'>
 								<div>
-									<p ng-show='podcast == "betalist"'>
+									<p ng-show='ui.podcast === Cyph.com.UI.Podcasts.betalist'>
 										<span translate>Welcome</span>
 										<span>Betalisters!</span>
 									</p>
-									<p ng-hide='podcast == "betalist"'>
+									<p ng-hide='ui.podcast === Cyph.com.UI.Podcasts.betalist'>
 										<span translate>Welcome</span>
-										<i ng-show='podcast == "penn"'>Penn's Sunday School</i>
-										<i ng-show='podcast == "jjgo"'>Jordan, Jesse, Go!</i>
-										<i ng-show='podcast == "ventura"'>We The People</i>
-										<i ng-show='podcast == "sawbones"'>Sawbones</i>
-										<i ng-show='podcast == "judgejohn"'>Judge John Hodgman</i>
-										<i ng-show='podcast == "mybrother"'>My Brother, My Brother and Me</i>
-										<i ng-show='podcast == "security"'>The Security Brief</i>
+										<i ng-show='ui.podcast === Cyph.com.UI.Podcasts.penn'>Penn's Sunday School</i>
+										<i ng-show='ui.podcast === Cyph.com.UI.Podcasts.jjgo'>Jordan, Jesse, Go!</i>
+										<i ng-show='ui.podcast === Cyph.com.UI.Podcasts.ventura'>We The People</i>
+										<i ng-show='ui.podcast === Cyph.com.UI.Podcasts.sawbones'>Sawbones</i>
+										<i ng-show='ui.podcast === Cyph.com.UI.Podcasts.judgejohn'>Judge John Hodgman</i>
+										<i ng-show='ui.podcast === Cyph.com.UI.Podcasts.mybrother'>My Brother, My Brother and Me</i>
+										<i ng-show='ui.podcast === Cyph.com.UI.Podcasts.security'>The Security Brief</i>
 										<span translate>listeners!</span>
 									</p>
 									<p translate>
@@ -365,11 +315,11 @@
 								</div>
 								<md-input-container>
 									<label translate>email</label>
-									<input type='email' ng-model='betaSignup.Email' />
+									<input type='email' ng-model='ui.signupForm.data.Email' />
 								</md-input-container>
 							</div>
 
-							<div ng-show='betaSignupState == 1'>
+							<div ng-show='ui.signupForm.state === 1'>
 								<div translate>
 									Thanks so much for signing up!
 								</div>
@@ -378,11 +328,11 @@
 								</div>
 								<md-input-container>
 									<label translate>name (optional)</label>
-									<input ng-model='betaSignup.Name' />
+									<input ng-model='ui.signupForm.data.Name' />
 								</md-input-container>
 							</div>
 
-							<div translate ng-show='betaSignupState == 2'>
+							<div translate ng-show='ui.signupForm.state === 2'>
 								You rock.
 							</div>
 
@@ -411,8 +361,6 @@
 			</div>
 		</section>
 
-
-		<!-- <section id='about' ng-show='isAbout' class='unisection'> -->
 
 		<section id='about'>
 			<div class='hero-text' translate>
@@ -446,7 +394,7 @@
 			</div>
 		</section>
 
-		<section id='error' ng-show='isError' class='unisection'>
+		<section id='error' ng-show='ui.state === Cyph.com.UI.States.error' class='unisection'>
 			<div>
 				<h1 translate>I'm sorry, but your cyph is in another castle...</h1>
 			</div>
@@ -467,7 +415,7 @@
 			</div>
 		</section>
 
-		<section id='faq' ng-show='isFaq' class='unisection'>
+		<section id='faq' ng-show='ui.state === Cyph.com.UI.States.faq' class='unisection'>
 			<div class='hero-text' translate>
 				Frequently Asked Questions
 			</div>
@@ -485,7 +433,7 @@
 			</div>
 		</section>
 
-		<section id='termsofservice' ng-show='isTos' class='unisection'>
+		<section id='termsofservice' ng-show='ui.state === Cyph.com.UI.States.termsofservice' class='unisection'>
 			<div class='hero-text' translate>
 				Terms of Service
 			</div>
@@ -567,7 +515,7 @@
 			</div>
 		</section>
 
-		<section id='privacypolicy' ng-show='isPrivacyPolicy' class='unisection'>
+		<section id='privacypolicy' ng-show='ui.state === Cyph.com.UI.States.privacypolicy' class='unisection'>
 			<div class='hero-text' translate>
 				Privacy Policy
 			</div>
@@ -609,19 +557,19 @@
 		</section>
 
 		<footer id='footer'>
-			<section ng-hide='podcast || ((isError || isAbout || isFaq || isTos || isPrivacyPolicy) && betaSignupState > 2)'>
-				<form class='beta-signup-form' ng-submit='submitBetaSignup()'>
-					<div ng-show='betaSignupState == 0'>
+			<section ng-hide='ui.podcast !== Cyph.com.UI.Podcasts.none || (ui.state !== Cyph.com.UI.States.home && ui.signupForm.state > 2)'>
+				<form class='beta-signup-form' ng-submit='ui.signupForm.submit()'>
+					<div ng-show='ui.signupForm.state === 0'>
 						<div translate>
 							Join the waitlist for Cyph v2!
 						</div>
 						<md-input-container>
 							<label translate>email</label>
-							<input type='email' ng-model='betaSignup.Email' />
+							<input type='email' ng-model='ui.signupForm.data.Email' />
 						</md-input-container>
 					</div>
 
-					<div ng-show='betaSignupState == 1'>
+					<div ng-show='ui.signupForm.state === 1'>
 						<div translate>
 							Thanks so much for signing up!
 						</div>
@@ -630,11 +578,11 @@
 						</div>
 						<md-input-container>
 							<label translate>name (optional)</label>
-							<input ng-model='betaSignup.Name' />
+							<input ng-model='ui.signupForm.data.Name' />
 						</md-input-container>
 					</div>
 
-					<div translate ng-show='betaSignupState == 2'>
+					<div translate ng-show='ui.signupForm.state === 2'>
 						You rock.
 					</div>
 
@@ -642,14 +590,14 @@
 				</form>
 			</section>
 
-			<section ng-show='podcast || ((isError || isAbout || isFaq || isTos || isPrivacyPolicy) && betaSignupState > 2)'>
+			<section ng-show='ui.podcast !== Cyph.com.UI.Podcasts.none || (ui.state !== Cyph.com.UI.States.home && ui.signupForm.state > 2)'>
 				<md-button
 					id='new-cyph-footer'
 					target='_blank'
 					aria-label='Start new cyph'
 					class='breathe'
 				>
-					<a translate ng-href='{{isOnion ? "/im/#new" : "https://www.cyph.im"}}'>Start new cyph</a>
+					<a translate ng-href='{{Cyph.Env.newCyphUrl}}'>Start new cyph</a>
 				</md-button>
 			</section>
 
@@ -705,20 +653,14 @@
 		<link rel='stylesheet' href='/css/cyph.base.css' />
 		<link rel='stylesheet' href='/css/cyph.com.css' />
 
-		<script src='/js/translate.js'></script>
-
 		<script src='/lib/bower_components/jquery/dist/jquery.min.js'></script>
-
 		<script src='/lib/bower_components/angular/angular.min.js'></script>
 		<script src='/lib/bower_components/angular-aria/angular-aria.min.js'></script>
 		<script src='/lib/bower_components/angular-animate/angular-animate.min.js'></script>
 		<script src='/lib/bower_components/angular-material/angular-material.min.js'></script>
 		<script src='/lib/bower_components/wow/dist/wow.min.js'></script>
 
-		<script src='/js/cyph.js'></script>
-		<script src='/js/analytics.js'></script>
-		<script src='/js/cyph.com.js'></script>
-		<script src='/js/cyph.com.ui.js'></script>
+		<script src='/js/cyph.com/main.js'></script>
 
 	</body>
 </html>

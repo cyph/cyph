@@ -7,23 +7,24 @@
 		<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
 		<meta name='apple-mobile-web-app-capable' content='yes' />
 		<meta name='mobile-web-app-capable' content='yes' />
+		<link rel='manifest' href='/websign/manifest.json' />
 
 		<title>Cyph &ndash; Encrypted Messenger</title>
 
-		<link rel='apple-touch-icon' sizes='57x57' href='/img/favicon/apple-touch-icon-57x57.png' />
-		<link rel='apple-touch-icon' sizes='114x114' href='/img/favicon/apple-touch-icon-114x114.png' />
-		<link rel='apple-touch-icon' sizes='72x72' href='/img/favicon/apple-touch-icon-72x72.png' />
-		<link rel='apple-touch-icon' sizes='144x144' href='/img/favicon/apple-touch-icon-144x144.png' />
-		<link rel='apple-touch-icon' sizes='60x60' href='/img/favicon/apple-touch-icon-60x60.png' />
-		<link rel='apple-touch-icon' sizes='120x120' href='/img/favicon/apple-touch-icon-120x120.png' />
-		<link rel='apple-touch-icon' sizes='76x76' href='/img/favicon/apple-touch-icon-76x76.png' />
-		<link rel='apple-touch-icon' sizes='152x152' href='/img/favicon/apple-touch-icon-152x152.png' />
-		<link rel='apple-touch-icon' sizes='180x180' href='/img/favicon/apple-touch-icon-180x180.png' />
-		<link rel='icon' type='image/png' href='/img/favicon/favicon-192x192.png' sizes='192x192' />
-		<link rel='icon' type='image/png' href='/img/favicon/favicon-160x160.png' sizes='160x160' />
-		<link rel='icon' type='image/png' href='/img/favicon/favicon-96x96.png' sizes='96x96' />
-		<link rel='icon' type='image/png' href='/img/favicon/favicon-16x16.png' sizes='16x16' />
-		<link rel='icon' type='image/png' href='/img/favicon/favicon-32x32.png' sizes='32x32' />
+		<link rel='icon' sizes='192x192' type='image/png' href='/img/favicon/favicon-192x192.png' />
+		<link rel='icon' sizes='160x160' type='image/png' href='/img/favicon/favicon-160x160.png' />
+		<link rel='icon' sizes='96x96' type='image/png' href='/img/favicon/favicon-96x96.png' />
+		<link rel='icon' sizes='32x32' type='image/png' href='/img/favicon/favicon-32x32.png' />
+		<link rel='icon' sizes='16x16' type='image/png' href='/img/favicon/favicon-16x16.png' />
+		<link rel='apple-touch-icon' sizes='180x180' type='image/png' href='/img/favicon/apple-touch-icon-180x180.png' />
+		<link rel='apple-touch-icon' sizes='152x152' type='image/png' href='/img/favicon/apple-touch-icon-152x152.png' />
+		<link rel='apple-touch-icon' sizes='144x144' type='image/png' href='/img/favicon/apple-touch-icon-144x144.png' />
+		<link rel='apple-touch-icon' sizes='120x120' type='image/png' href='/img/favicon/apple-touch-icon-120x120.png' />
+		<link rel='apple-touch-icon' sizes='114x114' type='image/png' href='/img/favicon/apple-touch-icon-114x114.png' />
+		<link rel='apple-touch-icon' sizes='76x76' type='image/png' href='/img/favicon/apple-touch-icon-76x76.png' />
+		<link rel='apple-touch-icon' sizes='72x72' type='image/png' href='/img/favicon/apple-touch-icon-72x72.png' />
+		<link rel='apple-touch-icon' sizes='60x60' type='image/png' href='/img/favicon/apple-touch-icon-60x60.png' />
+		<link rel='apple-touch-icon' sizes='57x57' type='image/png' href='/img/favicon/apple-touch-icon-57x57.png' />
 		<meta name='msapplication-TileColor' content='#8b62d9' />
 		<meta name='msapplication-TileImage' content='/img/favicon/mstile-144x144.png' />
 
@@ -43,162 +44,150 @@
 			</div>
 		</div>
 
-		<script src='/websign/js/cryptoInit.js'></script>
-		<script src='/websign/js/webSignPublicKeys.js'></script>
+		<script src='/websign/js/cryptoinit.js'></script>
+		<script src='/websign/js/publickeys.js'></script>
 
 		<script src='/websign/lib/sha512.js'></script>
 		<script src='/websign/lib/openpgp/openpgp.min.js'></script>
 		<script> openpgp.initWorker('/websign/lib/openpgp/openpgp.worker.min.js') </script>
 
 		<script>(function () {
-			window.webSign	= {};
 
 
+		window.WebSign	= {
+			bootstrapText: '',
 
-			/* Detect if WebSign bootstrap has changed */
+			cdnUrl: '',
 
-			var WEBSIGN_FILES	= [
-				'/',
-				'/websign/css/loading.css',
-				'/websign/js/cryptoInit.js',
-				'/websign/js/webSignPublicKeys.js',
-				'/websign/js/workerHelper.js',
-				'/websign/lib/sha512.js',
-				'/websign/lib/openpgp/openpgp.min.js',
-				'/websign/lib/openpgp/openpgp.worker.min.js',
-				'/websign/cyph.appcache'
-			];
+			continent: '',
 
-			webSign.getBootstrapText	= function () {
-				var bootstrapText	= '';
+			isOnion: document.location.host.split('.').slice(-1)[0] === 'onion',
 
-				for (var i = 0 ; i < WEBSIGN_FILES.length ; ++i) {
-					var file	= WEBSIGN_FILES[i];
+			config: {
+				abortUrl: 'https://www.cyph.com',
+				cdnUrlBase: '.cdn.cyph.com/websign/',
+				continentUrl: 'https://api.cyph.com/continent',
+				defaultContinent: 'eu',
+				hashPath: 'cyph.im.hash',
+				packagePath: 'cyph.im.pkg',
+				urlProtocol: 'https://',
 
-					var req	= new XMLHttpRequest();
-					req.open('get', file, false);
-					req.send();
+				files: [
+					'/',
+					'/websign/css/loading.css',
+					'/websign/js/cryptoinit.js',
+					'/websign/js/publickeys.js',
+					'/websign/js/serviceworker.js',
+					'/websign/js/workerhelper.js',
+					'/websign/lib/sha512.js',
+					'/websign/lib/openpgp/openpgp.min.js',
+					'/websign/lib/openpgp/openpgp.worker.min.js',
+					'/websign/cyph.appcache',
+					'/websign/manifest.json'
+				],
 
-					bootstrapText	+= file + ':\n\n' + req.responseText + '\n\n\n\n\n\n';
-				}
+				publicKeys: PUBLIC_KEYS
+			},
 
-				return bootstrapText;
-			};
+			detectChange: function () {
+				var bootHashExists	= 'webSignBootHash' in localStorage;
 
-			webSign.toString	= function (shouldIncludeBootstrapText) {
-				return '' +
-					'\n\ncontinent: ' + webSign.continent +
+				localStorage.webSignBootHashOld	= localStorage.webSignBootHash;
+				localStorage.webSignBootHash	= CryptoJS.SHA512(WebSign.bootstrapText).toString();
+
+				return bootHashExists && localStorage.webSignBootHash !== localStorage.webSignBootHashOld;
+			},
+
+			loadBootstrapText: function (callback, bootstrapText, i) {
+				bootstrapText	= bootstrapText || '';
+				i				= i || 0;
+
+				var file	= WebSign.config.files[i];
+
+				request({
+					url: file,
+					success: function (data) {
+						bootstrapText	+= file + ':\n\n' + data + '\n\n\n\n\n\n';
+
+						++i;
+
+						if (i >= WebSign.config.files.length) {
+							WebSign.bootstrapText	= bootstrapText;
+							callback();
+						}
+						else {
+							WebSign.loadBootstrapText(callback, bootstrapText, i);
+						}
+					}
+				});
+			},
+
+			shouldRetry: function () {
+				return !(
+					WebSign.isOnion ||
+					WebSign.continent === WebSign.config.defaultContinent
+				);
+			},
+
+			toString: function (shouldIncludeBootstrapText) {
+				return (
+					'\n\ncontinent: ' + WebSign.continent +
 					'\n\ncurrent bootstrap hash: ' + localStorage.webSignBootHash +
 					'\n\nprevious bootstrap hash: ' + localStorage.webSignBootHashOld +
 					'\n\npackage hash: ' + localStorage.webSignHash +
-					(shouldIncludeBootstrapText ? ('\n\n\n\n' + webSign.getBootstrapText()) : '')
-				;
-			};
-
-			/* Call this in application code */
-			webSign.detectChange	= function () {
-				localStorage.webSignBootHashOld	= localStorage.webSignBootHash;
-				localStorage.webSignBootHash	= CryptoJS.SHA512(webSign.getBootstrapText()).toString();
-
-				return localStorage.webSignBootHashOld != 'undefined' &&
-					localStorage.webSignBootHashOld != localStorage.webSignBootHash
-				;
+					(
+						shouldIncludeBootstrapText ?
+							('\n\n\n\n' + WebSign.bootstrapText) :
+							''
+					)
+				);
 			}
+		};
+
+
+		if (WebSign.isOnion) {
+			WebSign.config.abortUrl			= '/404';
+			WebSign.config.cdnUrlBase		= '/cdn/websign/';
+			WebSign.config.continentUrl		= '';
+			WebSign.config.defaultContinent	= '';
+			WebSign.config.urlProtocol		= '';
+		}
 
 
 
-			/*** Configuration ***/
+		/*** Main ***/
 
-			var isOnion				= document.location.host.split('.').slice(-1)[0] == 'onion';
-
-			var CONTINENT_URL		= isOnion ? '' : 'https://api.cyph.com/continent';
-
-			var URL_PROTOCOL		= isOnion ? '' : 'https://'
-			var DEFAULT_CONTINENT	= isOnion ? '' : 'eu';
-			var CDN_URL_BASE		= isOnion ? '/cdn/websign/' : '.cdn.cyph.com/websign/';
-			var HASH_PATH			= 'cyph.im.hash2?';
-			var PACKAGE_PATH		= 'cyph.im.pkg?';
-
-
-
-			/*** Helpers ***/
-
-			function abort () {
-				document.location.href	= (isOnion ? '' : 'https://www.cyph.com') + '/404';
+		WebSign.loadBootstrapText(function () {
+			if (WebSign.isOnion) {
+				main();
 			}
+			else {
+				/* Get user's current location to choose optimal CDN node */
+				request({
+					url: WebSign.config.continentUrl,
+					success: main
+				});
+			}
+		});
 
-			function request (url, callback, errorHandler, retries) {
-				var req		= new XMLHttpRequest();
-				req.open('get', url, true);
 
-				req.onreadystatechange = function () {
-					if (req.readyState == 4) {
-						if (req.status == 200) {
-							callback(req.responseText);
-						}
-						else {
-							retries	= retries || 0;
+		function main (continent) {
+			setCdnContinent(continent);
 
-							if (retries > 3) {
-								if (errorHandler) {
-									errorHandler(req.statusText);
-								}
-								else {
-									callback(null);
-								}
-							}
-							else {
-								request(url, callback, errorHandler, retries + 1);
-							}
-						}
+			/* Get latest signed hash */
+			var requestArgs	= {
+				url: WebSign.cdnUrl + WebSign.config.hashPath,
+				data: Date.now(),
+				error: function () {
+					if (WebSign.shouldRetry()) {
+						setCdnContinent();
+						request(requestArgs);
 					}
-				};
-
-				req.send();
-			}
-
-
-			function getPackage (cdnUrl, errorHandler) {
-				if (!errorHandler) {
-					errorHandler	= function () {
-						/* Package failed to download */
+					else {
 						abort();
-					};
-				}
-
-				if (localStorage.webSignHash && parseInt(localStorage.webSignHashExpires, 10) > Date.now()) {
-					request(cdnUrl + PACKAGE_PATH + localStorage.webSignHash, function (payload) {
-						if (CryptoJS.SHA512(payload).toString() == localStorage.webSignHash) {
-							document.open('text/html');
-							document.write(payload);
-							document.close();
-						}
-						else {
-							errorHandler();
-						}
-					}, errorHandler);
-				}
-				/* Hash is bad or outdated */
-				else {
-					errorHandler();
-				}
-			}
-
-			function makeCdnUrl (continent) {
-				webSign.continent	= continent || DEFAULT_CONTINENT;
-				return URL_PROTOCOL + webSign.continent + CDN_URL_BASE;
-			}
-
-
-
-			/*** Main ***/
-
-			/* Get user's current location to choose optimal CDN node */
-			function main (continent) {
-				var cdnUrl	= makeCdnUrl(continent);
-
-				/* Get latest signed hash */
-				request(cdnUrl + HASH_PATH + Date.now(), function (signedHashText) {
+					}
+				},
+				success: function (signedHashText) {
 					var previousHash			= localStorage.webSignHash;
 					var previousHashTimestamp	= parseInt(localStorage.webSignHashTimestamp, 10);
 					var previousHashExpires		= parseInt(localStorage.webSignHashExpires, 10);
@@ -217,65 +206,159 @@
 						/* If not expired and more recent than previous known good hash,
 							validate signatures before accepting it */
 						if (
-							(!previousHashTimestamp || hashTimestamp > previousHashTimestamp) &&
-							hashExpires > Date.now()
+							hashExpires > Date.now() &&
+							(
+								!previousHashTimestamp ||
+								hashTimestamp > previousHashTimestamp
+							)
 						) {
-							var isValid	= signedHashes
-								.map(function (signedHash) {
-									for (var i = 0 ; i < PUBLIC_KEYS.length ; ++i) {
-										if (
-											signedHash.verify(
-												openpgp.key.readArmored(PUBLIC_KEYS[i]).keys
-											)[0].valid
-										) {
-											return true;
-										}
-									}
+							var validKeys	= {};
 
-									return false;
-								}).
-								reduce(function (a, b) { return a || b })
-							;
+							signedHashes.forEach(function (signedHash) {
+								for (var i = 0 ; i < WebSign.config.publicKeys.length ; ++i) {
+									var publicKey	= WebSign.config.publicKeys[i];
+
+									if (
+										signedHash.verify(
+											openpgp.key.readArmored(publicKey).keys
+										)[0].valid
+									) {
+										validKeys[publicKey]	= true;
+										return;
+									}
+								}
+							});
+
+							var isValid	= Object.keys(validKeys).length === signedHashes.length;
+
 
 							if (isValid) {
+								if (localStorage.webSignManualUpgrades) {
+									if (confirm('Update to package with hash ' + hashText + '?')) {
+										alert('Applying update.');
+									}
+									else {
+										alert('Update rejected.');
+										throw true;
+									}
+								}
+
 								localStorage.webSignHash			= hashText;
 								localStorage.webSignHashTimestamp	= hashTimestamp;
 								localStorage.webSignHashExpires		= hashExpires;
 							}
 						}
 					}
-					catch (e) {}
+					catch (_) {}
 
 					/* Get latest package and compare hashes before executing;
 						if hashes differ, try falling back to last known good package,
 						then if that fails retry everything with default fallback CDN node,
 						then finally abort if that still fails */
-					getPackage(cdnUrl, function () {
+					loadPackage(function () {
 						if (previousHash && previousHashTimestamp && previousHashExpires) {
 							localStorage.webSignHash			= previousHash;
 							localStorage.webSignHashTimestamp	= previousHashTimestamp;
 							localStorage.webSignHashExpires		= previousHashExpires;
 						}
 
-						getPackage(cdnUrl, function () {
-							if (continent) {
-								main();
-							}
-							else {
-								/* Package is bad */
-								abort();
-							}
-						});
+						loadPackage(WebSign.shouldRetry() ? main : abort);
 					});
-				});
+				}
+			};
+
+			request(requestArgs);
+		}
+
+
+
+		/*** Helpers ***/
+
+		function abort () {
+			document.location.href	= WebSign.config.abortUrl;
+		}
+
+		function getValue (o, k, defaultValue) {
+			return k in o ? o[k] : defaultValue;
+		}
+
+		function request (o) {
+			var data	= getValue(o, 'data', '');
+			var error	= getValue(o, 'error', abort);
+			var retries	= getValue(o, 'retries', 3);
+			var success	= getValue(o, 'success', function () {});
+			var url		= o.url;
+
+			if (data) {
+				url	+= '?' + data;
 			}
 
-			if (isOnion) {
-				main();
+			var xhr	= new XMLHttpRequest;
+
+			xhr.onreadystatechange	= function () {
+				if (xhr.readyState === 4) {
+					if (xhr.status === 200) {
+						success(xhr.responseText);
+					}
+					else if (retries > 0) {
+						o.retries	= retries - 1;
+						xhr(o);
+					}
+					else {
+						error(xhr.responseText);
+					}
+				}
+			};
+
+			xhr.open('GET', url, true);
+			xhr.send();
+		}
+
+
+		function loadPackage (errorHandler) {
+			errorHandler	= errorHandler || abort;
+
+			var hashExists		= 'webSignHash' in localStorage;
+			var hashExpireDate	= parseInt(localStorage.webSignHashExpires, 10);
+
+			if (hashExists && hashExpireDate > Date.now()) {
+				request({
+					url: WebSign.cdnUrl + WebSign.config.packagePath,
+					data: localStorage.webSignHash,
+					error: errorHandler,
+					success: function (payload) {
+						if (CryptoJS.SHA512(payload).toString() === localStorage.webSignHash) {
+							try {
+								openpgp.getWorker().terminate();
+							}
+							catch (_) {}
+
+							document.open('text/html');
+							document.write(payload);
+							document.close();
+						}
+						else {
+							errorHandler();
+						}
+					}
+				});
 			}
+			/* Hash is bad or outdated */
 			else {
-				request(CONTINENT_URL, main);
+				errorHandler();
 			}
+		}
+
+		function setCdnContinent (continent) {
+			WebSign.continent	= continent || WebSign.config.defaultContinent;
+
+			WebSign.cdnUrl		=
+				WebSign.config.urlProtocol +
+				WebSign.continent +
+				WebSign.config.cdnUrlBase
+			;
+		}
+
 
 		}());</script>
 	</body>
