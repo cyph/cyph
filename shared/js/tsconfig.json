@@ -31,7 +31,7 @@
         "global/plugins.jquery.ts",
         "ngdirectives/markdown.ts",
         "preload/base.ts",
-        "preload/cryptoinit.ts",
+        "preload/crypto.ts",
         "preload/translations.ts",
         "preload/unsupportedbrowsers.ts",
         "typings/iwebsign.d.ts",
