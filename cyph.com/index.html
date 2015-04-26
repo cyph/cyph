@@ -309,8 +309,11 @@
 										<i ng-show='ui.podcast === Cyph.com.UI.Podcasts.security'>The Security Brief</i>
 										<span translate>listeners!</span>
 									</p>
-									<p translate>
+									<p translate ng-show='ui.podcast !== Cyph.com.UI.Podcasts.penn'>
 										Sign up below, and get bumped to the front of our waitlist for Cyph v2.
+									</p>
+									<p translate ng-show='ui.podcast === Cyph.com.UI.Podcasts.penn'>
+										Sign up below, and you’ll get first access to Cyph accounts and an extra 5 invites (10 total), for being a member of the Penn’s Sunday School Congregation! Registration will be closing when we reach initial capacity.
 									</p>
 								</div>
 								<md-input-container>
@@ -339,24 +342,49 @@
 							<md-button type='submit' class='hidden-submit-button' aria-label=''></md-button>
 						</form>
 					</p>
-					<p>
-						<br />
-						<h1 translate>About Cyph</h1>
-					</p>
-					<p>
-						<span translate>Encryption is hard, but using it shouldn’t be. We believe</span>
-						<i translate>everyone</i>
-						<span translate>deserves privacy, not only security experts.</span>
-					</p>
-					<p translate>
-						Cyph is a next-generation messenger app that makes privacy the new status quo.
-					</p>
-					<p translate>
-						With Cyph, never again will you need to ask someone else to install or configure or sign up for anything, when all you need is a one-off private discussion.
-					</p>
-					<p translate>
-						One click and you’re secure.
-					</p>
+
+			<br />
+			<br />
+			<br />
+			<div class="wow bounceIn grid-100 tablet-grid-100 feature-list-item animated" desktop-data-wow-delay="300ms" data-wow-delay="300ms" style="visibility: visible; -webkit-animation-delay: 300ms; height: 162px; top:40% position:relative;">
+				<img class="grid-25 tablet-grid-25 mobile-grid-25"  src="/img/iconfinder/cyphanyone.png">
+				<div class="grid-75 tablet-grid-75 mobile-grid-75">
+					<h3 translate>Don’t be confined to your buddy list – cyph anyone!</h3>
+				</div>
+				<div class="grid-75 tablet-grid-75 mobile-grid-75">
+					<p><span translate>Unlike other messenger apps, Cyph gives you the freedom to start a secure chat or call with anyone – regardless of whether they’re already using Cyph.</span></p>
+					<p><span translate>Don’t be limited by your social network. When you want to chat, your friends who don’t use Cyph will simply receive a cyph link, and with one click a private key will be generated for them right in their browser.</span></p>
+				</div>
+				<img class="grid-25 tablet-grid-25 push-66 tablet-push-66 mobile-grid-25"  src="/img/iconfinder/videochat.png">
+				<div class="grid-75 tablet-grid-75 pull-33 tablet-pull-33 mobile-grid-75">
+					<h3 translate>Video chat with peace of mind again.</p>
+				</div>
+				<div class="grid-75 tablet-grid-75 pull-33 tablet-pull-33 mobile-grid-75">
+					<p><span translate>For optimal performance, all video, audio, and transferred files are sent directly to the person you're cyphing (without ever touching our servers).</span></p>
+					<p><span translate>Since they’re encrypted locally, however, even if intercepted, your friendly neighbourhood FBI van will only see gibberish</span></p>
+				</div>
+				
+			</div>
+			<div class="wow bounceIn mobile-class-bounceIn grid-100 tablet-grid-100 feature-list-item animated" style="visibility: visible; height: 261px;">
+				<img class="grid-25 tablet-grid-25 mobile-grid-25"  src="/img/iconfinder/crossplatform.png">
+				<div class="grid-75 tablet-grid-75 mobile-grid-75">
+					<h3 translate>Powerful encryption on all your platforms.</h3>
+				</div>
+				<div class="grid-75 tablet-grid-75 mobile-grid-75">
+					<p><span translate>Cracking a single Cyph message key would take longer than the age of the universe, even using the fastest supercomputers on Earth – and because the keys are constantly refreshed, even if one were somehow leaked, only a few messages would be compromised (rather than an entire conversation).</span></p>
+					<p><span translate>As an added layer of obfuscation, all of our encrypted traffic is randomly split between eight different datacentres around the world, with no obvious way for us to piece together the data belonging to any one chat.</span></p>
+				</div>
+				<img class="grid-25 tablet-grid-25 push-66 tablet-push-66 mobile-grid-25"  src="/img/iconfinder/bigbrother.png">
+				<div class="grid-75 tablet-grid-75 pull-33 tablet-pull-33 mobile-grid-75">
+					<h3 translate>Circumvent government censorship and blocked access with confidence.</h3>
+				</div>
+				<div class="grid-75 tablet-grid-75 pull-33 tablet-pull-33 mobile-grid-75">
+					<p><span translate>Cyph is 100% supported for use on the Tor network, which allows you to hide your location, and subvert government and company internet filters.</span></p>
+					<p><span translate>In addition to having a recognisable Tor address (cyphdbyhiddenbhs.onion), Cyph is the first hidden service on the Tor network to deploy an Extended Validation SSL certificate, the highest level of trust and authentication for a website. This helps us easily let you know if you’re ever connected to an impostor; to make sure you’re connected to the real Cyph, just look for the green lock in the upper left-hand corner of your screen that reads "Cyph, Inc.".</span></p>
+			</div>
+
+					
+
 				</div>
 			</div>
 		</section>
