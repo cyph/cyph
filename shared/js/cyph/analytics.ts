@@ -14,7 +14,6 @@ module Cyph {
 			if (!Env.isMainThread) {
 				Thread.callMainThread('Cyph.Analytics.main.baseEventSubmitHelper', [method, args]);
 			}
-
 			else if (this.analFrameIsReady) {
 				args.unshift(method);
 
@@ -23,9 +22,8 @@ module Cyph {
 					'*'
 				);
 			}
-
-			/* Do nothing if explicitly set to false */
 			else if (this.analFrameIsReady !== false) {
+				/* Do nothing if explicitly set to false */
 				setTimeout(() =>
 					this.baseEventSubmitHelper(method, args)
 				, 50);
