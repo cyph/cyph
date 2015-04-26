@@ -86,7 +86,7 @@ for d in cyph.im cyph.com ; do
 	if [ "${branch}" == 'staging' ] ; then
 		echo "JS Minify ${d}"
 		find js -name '*.js' | xargs -I% uglifyjs -r \
-			importScripts,Cyph,vars,self,onmessage,onthreadmessage,WebSign,Translations,IS_WEB,crypto \
+			importScripts,Cyph,vars,self,onmessage,postMessage,onthreadmessage,WebSign,Translations,IS_WEB,crypto \
 			'%' -o '%' -m
 
 		echo "CSS Minify ${d}"
