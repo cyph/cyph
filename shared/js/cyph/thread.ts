@@ -67,9 +67,9 @@ module Cyph {
 					crypto	= msCrypto;
 				}
 				else {
+					let isaac: any;
 					importScripts('/cryptolib/bower_components/isaac.js/isaac.js');
-
-					self['isaac'].seed(vars.threadRandomSeed);
+					isaac	= isaac || self['isaac'].seed(vars.threadRandomSeed);
 
 					crypto	= {
 						getRandomValues: array => {
@@ -82,7 +82,7 @@ module Cyph {
 							let max: number	= Math.pow(2, bytes * 8) - 1;
 
 							for (let i = 0 ; i < array['length'] ; ++i) {
-								array[i]	= Math.floor(self['isaac'].random() * max);
+								array[i]	= Math.floor(isaac.random() * max);
 							}
 
 							return array;
