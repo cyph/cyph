@@ -140,7 +140,7 @@ module Cyph.im {
 					this.chat.session.on(Cyph.Session.Events.connect, () => this.changeState(States.chat));
 
 					this.chat.session.on(Cyph.Session.Events.newCyph, () => this.changeState(States.spinningUp));
-				}
+				// }
 
 
 				Cyph.UrlState.set(location.pathname, false, true);
@@ -154,7 +154,7 @@ module Cyph.im {
 						content: Cyph.Strings.IEWarning
 					});
 				}
-			// }
+			}
 		}
 	}
 }
