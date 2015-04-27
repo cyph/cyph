@@ -1,14 +1,13 @@
 module Cyph {
 	export class Env {
-		public static isLocalhost: boolean	= !!location && location.hostname === 'localhost';
 		public static isOnion: boolean		= !!location && location.host.split('.').slice(-1)[0] === 'onion';
 
-		public static baseUrl: string		= Env.isOnion ? '/api/' : 'http://localhost:8080/';
-		public static homeUrl: string		= Env.isOnion ? '/' : 'http://localhost:8081/';
-		public static newCyphUrl: string	= Env.isOnion ? '/im/' : 'http://localhost:8082/';
-		public static cyphMeUrl: string		= Env.isOnion ? '/me/' : 'http://localhost:8083/';
+		public static baseUrl: string		= Env.isOnion ? '/api/' : `${location.protocol}//${location.hostname}:42000/`;
+		public static homeUrl: string		= Env.isOnion ? '/' : `${location.protocol}//${location.hostname}:42001/`;
+		public static newCyphUrl: string	= Env.isOnion ? '/im/' : `${location.protocol}//${location.hostname}:42002/`;
+		public static cyphMeUrl: string		= Env.isOnion ? '/me/' : `${location.protocol}//${location.hostname}:42003/`;
 
-		public static awsEndpoint: string	= 'http://localhost:4568';
+		public static awsEndpoint: string	= `${location.protocol}//${location.hostname}:43000`;
 
 		public static host: string		= location ? location.host.replace('www.', '') : '';
 
