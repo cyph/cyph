@@ -19,15 +19,19 @@ To start local environment:
 		-v /path/to/current/directory:/cyph \
 		cyph/<branch> ./serve.sh
 
-URLs for local instances:
+Host: localhost (Linux) or `$(boot2docker ip)` (OS X / Windows)
 
-* backend: http://localhost:42000 (Linux) or `http://$(boot2docker ip):42000` (OSX / Windows)
+Ports:
 
-* cyph.com: http://localhost:42001 (Linux) or `http://$(boot2docker ip):42001` (OSX / Windows)
+* backend: 42000
 
-* cyph.im: http://localhost:42002 (Linux) or `http://$(boot2docker ip):42002` (OSX / Windows)
+* cyph.com: 42001
 
-* cyph.me: http://localhost:42003 (Linux) or `http://$(boot2docker ip):42003` (OSX / Windows)
+* cyph.im: 42002
+
+* cyph.me: 42003
+
+* SQS: 43000
 
 To deploy to production, first make sure you're Ryan or Josh, then run:
 
@@ -39,19 +43,25 @@ To deploy to production, first make sure you're Ryan or Josh, then run:
 
 Other available commands:
 
-* Check whether codes compile: `docker run -v /path/to/current/directory:/cyph cyph/<branch> ./build.sh --test`
+* Check whether codes compile:  
+	docker run -v /path/to/current/directory:/cyph cyph/<branch> ./build.sh --test
 
-* Commit local changes: `docker run -v /path/to/current/directory:/cyph cyph/<branch> ./commit.sh <comment>`
+* Commit local changes:  
+	docker run -v /path/to/current/directory:/cyph cyph/<branch> ./commit.sh <comment>
 
-* Update libraries in client code: `docker run -v /path/to/current/directory:/cyph cyph/<branch> ./updatelibs.sh`
+* Update libraries in client code:  
+	docker run -v /path/to/current/directory:/cyph cyph/<branch> ./updatelibs.sh
 
-* Compute hash of current WebSign bootstrap: `docker run -v /path/to/current/directory:/cyph cyph/<branch> ./websignhash.sh cyph.im`
+* Compute hash of current WebSign bootstrap:  
+	docker run -v /path/to/current/directory:/cyph cyph/<branch> ./websignhash.sh cyph.im
 
 ---
 
 In Unix-like environments, the following alternative commands are provided for convenience:
 
 * `make`
+
+* `make clean`
 
 * `./docker.sh serve`
 
