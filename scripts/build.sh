@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source ~/.bashrc
+
 dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd)/..
 originalDir="$(pwd)"

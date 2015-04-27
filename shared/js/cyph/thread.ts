@@ -20,7 +20,7 @@ module Cyph {
 			let oldImportScripts	= importScripts;
 			importScripts			= (script: string) => {
 				oldImportScripts(
-					((location && location['origin']) || 'http://localhost:8082') +
+					`${location.protocol}//${location.host}` +
 					script
 				);
 			};

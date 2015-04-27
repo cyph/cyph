@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source ~/.bashrc
+
 dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd)
 
@@ -40,24 +42,25 @@ if [ $branch == 'prod' ] ; then
 fi
 ls */*.yaml | xargs -I% sed -i.bak "s/version: master/version: ${branch}/g" %
 
-ls */js/cyph/env.ts | xargs -I% sed -i.bak "s/http:\/\/localhost:4568//g" %
+defaultHost='\$\{location.protocol\}\/\/\$\{location.hostname\}:'
+ls */js/cyph/env.ts | xargs -I% sed -i.bak "s/${defaultHost}43000//g" %
 
 if [ $test ] ; then
 	sed -i.bak "s/staging/${branch}/g" default/config.go
-	ls */js/cyph/env.ts | xargs -I% sed -i.bak "s/http:\/\/localhost:8080/https:\/\/${branch}-dot-cyphme.appspot.com/g" %
-	ls */js/cyph/env.ts | xargs -I% sed -i.bak "s/http:\/\/localhost:8081/https:\/\/${branch}-dot-cyph-com-dot-cyphme.appspot.com/g" %
-	ls */js/cyph/env.ts | xargs -I% sed -i.bak "s/http:\/\/localhost:8082/https:\/\/${branch}-dot-cyph-im-dot-cyphme.appspot.com/g" %
-	ls */js/cyph/env.ts | xargs -I% sed -i.bak "s/http:\/\/localhost:8083/https:\/\/${branch}-dot-cyph-me-dot-cyphme.appspot.com/g" %
+	ls */js/cyph/env.ts | xargs -I% sed -i.bak "s/${defaultHost}42000/https:\/\/${branch}-dot-cyphme.appspot.com/g" %
+	ls */js/cyph/env.ts | xargs -I% sed -i.bak "s/${defaultHost}42001/https:\/\/${branch}-dot-cyph-com-dot-cyphme.appspot.com/g" %
+	ls */js/cyph/env.ts | xargs -I% sed -i.bak "s/${defaultHost}42002/https:\/\/${branch}-dot-cyph-im-dot-cyphme.appspot.com/g" %
+	ls */js/cyph/env.ts | xargs -I% sed -i.bak "s/${defaultHost}42003/https:\/\/${branch}-dot-cyph-me-dot-cyphme.appspot.com/g" %
 
 	for yaml in `ls */cyph*.yaml` ; do
 		cat $yaml | perl -pe 's/(- url: .*)/\1\n  login: admin/g' > $yaml.new
 		mv $yaml.new $yaml
 	done
 else
-	ls */js/cyph/env.ts | xargs -I% sed -i.bak "s/http:\/\/localhost:8080/https:\/\/api.cyph.com/g" %
-	ls */js/cyph/env.ts | xargs -I% sed -i.bak "s/http:\/\/localhost:8081/https:\/\/www.cyph.com/g" %
-	ls */js/cyph/env.ts | xargs -I% sed -i.bak "s/http:\/\/localhost:8082/https:\/\/www.cyph.im/g" %
-	ls */js/cyph/env.ts | xargs -I% sed -i.bak "s/http:\/\/localhost:8083/https:\/\/www.cyph.me/g" %
+	ls */js/cyph/env.ts | xargs -I% sed -i.bak "s/${defaultHost}42000/https:\/\/api.cyph.com/g" %
+	ls */js/cyph/env.ts | xargs -I% sed -i.bak "s/${defaultHost}42001/https:\/\/www.cyph.com/g" %
+	ls */js/cyph/env.ts | xargs -I% sed -i.bak "s/${defaultHost}42002/https:\/\/www.cyph.im/g" %
+	ls */js/cyph/env.ts | xargs -I% sed -i.bak "s/${defaultHost}42003/https:\/\/www.cyph.me/g" %
 
 	ls */*.yaml | xargs -I% sed -i.bak 's/max-age=0/max-age=31536000/g' %
 	ls */*.yaml | xargs -I% sed -i.bak 's/version: staging/version: prod/g' %

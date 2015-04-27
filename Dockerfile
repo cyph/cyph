@@ -7,33 +7,57 @@ LABEL Name="cyph"
 RUN apt-get update
 RUN apt-get dist-upgrade -y
 
-RUN apt-get install -y curl python python-pip perl golang-go build-essential git gnupg procps
+RUN apt-get install -y curl python python-pip perl golang-go build-essential git gnupg procps sudo
 
 RUN curl -sL https://deb.nodesource.com/setup | bash -
 RUN apt-get install -y nodejs
 
-RUN gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
+
+RUN npm -g install html-minifier clean-css uglifyjs typescript tsd bower browserstack browserify
+RUN pip install beautifulsoup4 html5lib
+
+
+RUN echo '\
+	source ~/.rvm/scripts/rvm; \
+\
+	export GOPATH=$HOME/go; \
+	export CLOUDSDK_PYTHON=python2; \
+	alias goapp="~/.config/google-cloud-sdk/platform/google_appengine/goapp"; \
+\
+	export PATH="/opt/local/bin:/opt/local/sbin:/usr/local/opt/go/libexec/bin:$GOPATH/bin:$PATH"; \
+' >> /.bashrc
+
+RUN echo 'gibson ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
+RUN useradd -ms /bin/bash gibson
+RUN mkdir -p /home/gibson
+RUN cp /.bashrc /home/gibson/
+RUN chmod 700 ~/.bashrc
+USER gibson
+ENV HOME /home/gibson
+
+
+RUN wget https://keybase.io/mpapis/key.asc -O ~/public.key
+RUN gpg --import ~/public.key
+RUN rm ~/public.key
 RUN curl -sSL https://get.rvm.io | bash -s stable --ruby
 
-
 RUN bash -c ' \
-	source /etc/profile.d/rvm.sh; \
+	source ~/.bashrc; \
 	gem install sass specific_install; \
 	gem specific_install -l https://github.com/buu700/fake_sqs; \
 '
 
-RUN go get github.com/gorilla/mux
-RUN npm -g install html-minifier clean-css uglifyjs typescript tsd bower browserstack browserify
-RUN pip install beautifulsoup4 html5lib
+RUN bash -c ' \
+	source ~/.bashrc; \
+	go get github.com/gorilla/context; \
+	go get github.com/gorilla/mux; \
+'
 
 
 VOLUME /cyph
 WORKDIR /cyph/scripts
 
-EXPOSE 8080
-EXPOSE 8081
-EXPOSE 8082
-EXPOSE 8083
+EXPOSE 8080 8081 8082 8083 4568
 
 
 CMD /bin/bash
