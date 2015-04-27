@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source ~/.bashrc
+
 cd "$(cd "$(dirname "$0")"; pwd)/../../${1}"
 
 rm .bootstrapText.tmp 2> /dev/null

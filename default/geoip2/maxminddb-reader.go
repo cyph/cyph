@@ -53,6 +53,8 @@ func MMOpen(file string) (*MMReader, error) {
 			return nil, err
 		}
 	}
+
+	return nil, nil
 }
 
 // FromBytes takes a byte slice corresponding to a MaxMind DB file and returns

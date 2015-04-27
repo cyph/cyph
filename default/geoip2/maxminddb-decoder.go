@@ -111,9 +111,9 @@ func (d *decoder) decodeFromType(dtype dataType, size uint, offset uint, result 
 		return d.unmarshalUint(size, offset, result, 64)
 	case _Uint128:
 		return d.unmarshalUint128(size, offset, result)
-	default:
-		return 0, fmt.Errorf("unknown type: %d", dtype)
 	}
+
+	return 0, fmt.Errorf("unknown type: %d", dtype)
 }
 
 func (d *decoder) unmarshalBool(size uint, offset uint, result reflect.Value) (uint, error) {
@@ -125,8 +125,6 @@ func (d *decoder) unmarshalBool(size uint, offset uint, result reflect.Value) (u
 		return 0, err
 	}
 	switch result.Kind() {
-	default:
-		return newOffset, fmt.Errorf("trying to unmarshal %v into %v", value, result.Type())
 	case reflect.Bool:
 		result.SetBool(value)
 		return newOffset, nil
@@ -134,6 +132,8 @@ func (d *decoder) unmarshalBool(size uint, offset uint, result reflect.Value) (u
 		result.Set(reflect.ValueOf(value))
 		return newOffset, nil
 	}
+
+	return newOffset, fmt.Errorf("trying to unmarshal %v into %v", value, result.Type())
 }
 
 func (d *decoder) unmarshalBytes(size uint, offset uint, result reflect.Value) (uint, error) {
@@ -143,8 +143,6 @@ func (d *decoder) unmarshalBytes(size uint, offset uint, result reflect.Value) (
 		return 0, err
 	}
 	switch result.Kind() {
-	default:
-		return newOffset, fmt.Errorf("trying to unmarshal %v into %v", value, result.Type())
 	case reflect.Slice:
 		result.SetBytes(value)
 		return newOffset, nil
@@ -152,6 +150,8 @@ func (d *decoder) unmarshalBytes(size uint, offset uint, result reflect.Value) (
 		result.Set(reflect.ValueOf(value))
 		return newOffset, nil
 	}
+
+	return newOffset, fmt.Errorf("trying to unmarshal %v into %v", value, result.Type())
 }
 
 func (d *decoder) unmarshalFloat32(size uint, offset uint, result reflect.Value) (uint, error) {
@@ -164,8 +164,6 @@ func (d *decoder) unmarshalFloat32(size uint, offset uint, result reflect.Value)
 	}
 
 	switch result.Kind() {
-	default:
-		return newOffset, fmt.Errorf("trying to unmarshal %v into %v", value, result.Type())
 	case reflect.Float32, reflect.Float64:
 		result.SetFloat(float64(value))
 		return newOffset, nil
@@ -173,6 +171,8 @@ func (d *decoder) unmarshalFloat32(size uint, offset uint, result reflect.Value)
 		result.Set(reflect.ValueOf(value))
 		return newOffset, nil
 	}
+
+	return newOffset, fmt.Errorf("trying to unmarshal %v into %v", value, result.Type())
 }
 
 func (d *decoder) unmarshalFloat64(size uint, offset uint, result reflect.Value) (uint, error) {
@@ -185,8 +185,6 @@ func (d *decoder) unmarshalFloat64(size uint, offset uint, result reflect.Value)
 		return 0, err
 	}
 	switch result.Kind() {
-	default:
-		return newOffset, fmt.Errorf("trying to unmarshal %v into %v", value, result.Type())
 	case reflect.Float32, reflect.Float64:
 		result.SetFloat(value)
 		return newOffset, nil
@@ -194,6 +192,8 @@ func (d *decoder) unmarshalFloat64(size uint, offset uint, result reflect.Value)
 		result.Set(reflect.ValueOf(value))
 		return newOffset, nil
 	}
+
+	return newOffset, fmt.Errorf("trying to unmarshal %v into %v", value, result.Type())
 }
 
 func (d *decoder) unmarshalInt32(size uint, offset uint, result reflect.Value) (uint, error) {
@@ -206,8 +206,6 @@ func (d *decoder) unmarshalInt32(size uint, offset uint, result reflect.Value) (
 	}
 
 	switch result.Kind() {
-	default:
-		return newOffset, fmt.Errorf("trying to unmarshal %v into %v", value, result.Type())
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 		result.SetInt(int64(value))
 		return newOffset, nil
@@ -215,12 +213,12 @@ func (d *decoder) unmarshalInt32(size uint, offset uint, result reflect.Value) (
 		result.Set(reflect.ValueOf(value))
 		return newOffset, nil
 	}
+
+	return newOffset, fmt.Errorf("trying to unmarshal %v into %v", value, result.Type())
 }
 
 func (d *decoder) unmarshalMap(size uint, offset uint, result reflect.Value) (uint, error) {
 	switch result.Kind() {
-	default:
-		return 0, fmt.Errorf("trying to unmarshal a map into %v", result.Type())
 	case reflect.Struct:
 		return d.decodeStruct(size, offset, result)
 	case reflect.Map:
@@ -231,6 +229,8 @@ func (d *decoder) unmarshalMap(size uint, offset uint, result reflect.Value) (ui
 		result.Set(rv)
 		return newOffset, err
 	}
+
+	return 0, fmt.Errorf("trying to unmarshal a map into %v", result.Type())
 }
 
 func (d *decoder) unmarshalPointer(size uint, offset uint, result reflect.Value) (uint, error) {
@@ -240,10 +240,7 @@ func (d *decoder) unmarshalPointer(size uint, offset uint, result reflect.Value)
 }
 
 func (d *decoder) unmarshalSlice(size uint, offset uint, result reflect.Value) (uint, error) {
-
 	switch result.Kind() {
-	default:
-		return 0, fmt.Errorf("trying to unmarshal an array into %v", result.Type())
 	case reflect.Slice:
 		return d.decodeSlice(size, offset, result)
 	case reflect.Interface:
@@ -253,18 +250,17 @@ func (d *decoder) unmarshalSlice(size uint, offset uint, result reflect.Value) (
 		result.Set(rv)
 		return newOffset, err
 	}
+
+	return 0, fmt.Errorf("trying to unmarshal an array into %v", result.Type())
 }
 
 func (d *decoder) unmarshalString(size uint, offset uint, result reflect.Value) (uint, error) {
-
 	value, newOffset, err := d.decodeString(size, offset)
 
 	if err != nil {
 		return 0, err
 	}
 	switch result.Kind() {
-	default:
-		return newOffset, fmt.Errorf("trying to unmarshal %v into %v", value, result.Type())
 	case reflect.String:
 		result.SetString(value)
 		return newOffset, nil
@@ -272,6 +268,8 @@ func (d *decoder) unmarshalString(size uint, offset uint, result reflect.Value) 
 		result.Set(reflect.ValueOf(value))
 		return newOffset, nil
 	}
+
+	return newOffset, fmt.Errorf("trying to unmarshal %v into %v", value, result.Type())
 }
 
 func (d *decoder) unmarshalUint(size uint, offset uint, result reflect.Value, uintType uint) (uint, error) {
@@ -285,8 +283,6 @@ func (d *decoder) unmarshalUint(size uint, offset uint, result reflect.Value, ui
 	}
 
 	switch result.Kind() {
-	default:
-		return newOffset, fmt.Errorf("trying to unmarshal %v into %v", value, result.Type())
 	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
 		result.SetUint(value)
 		return newOffset, nil
@@ -294,6 +290,8 @@ func (d *decoder) unmarshalUint(size uint, offset uint, result reflect.Value, ui
 		result.Set(reflect.ValueOf(value))
 		return newOffset, nil
 	}
+
+	return newOffset, fmt.Errorf("trying to unmarshal %v into %v", value, result.Type())
 }
 
 func (d *decoder) unmarshalUint128(size uint, offset uint, result reflect.Value) (uint, error) {
@@ -308,8 +306,6 @@ func (d *decoder) unmarshalUint128(size uint, offset uint, result reflect.Value)
 	// XXX - this should allow *big.Int rather than just bigInt
 	// Currently this is reported as invalid
 	switch result.Kind() {
-	default:
-		return newOffset, fmt.Errorf("trying to unmarshal %v into %v", value, result.Type())
 	case reflect.Struct:
 		result.Set(reflect.ValueOf(*value))
 		return newOffset, nil
@@ -317,6 +313,8 @@ func (d *decoder) unmarshalUint128(size uint, offset uint, result reflect.Value)
 		result.Set(reflect.ValueOf(value))
 		return newOffset, nil
 	}
+
+	return newOffset, fmt.Errorf("trying to unmarshal %v into %v", value, result.Type())
 }
 
 func (d *decoder) decodeBool(size uint, offset uint) (bool, uint, error) {
