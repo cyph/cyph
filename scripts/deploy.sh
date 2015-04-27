@@ -120,6 +120,10 @@ done
 
 
 ### WebSign-related stuff
+
+rm -rf /.gnupg
+mv /gnupg /.gnupg
+
 for d in cyph.im ; do
 	cd $d
 
@@ -184,7 +188,7 @@ find . -name '*.bak' | xargs rm
 
 
 # AWS credentials
-cat /home/.config/cyph-jobs.vars >> jobs/jobs.yaml
+cat /cyph-jobs.vars >> jobs/jobs.yaml
 
 if [ $site ] ; then
 	goapp deploy $site/*.yaml
