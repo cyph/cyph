@@ -19,7 +19,7 @@ To start local environment:
 		-v /path/to/current/directory:/cyph \
 		cyph/<branch> ./serve.sh
 
-Host: localhost (Linux) or `$(boot2docker ip)` (OS X / Windows)
+Host: localhost (Linux) or `boot2docker ip` (OS X / Windows)
 
 Ports:
 
