@@ -1,7 +1,7 @@
 #!/bin/bash
 
 dir="$(pwd)"
-cd $(cd "$(dirname "$0")"; pwd) # $(dirname `readlink -f "${0}" || realpath "${0}"`)
+cd $(cd "$(dirname "$0")"; pwd)/..
 originalDir="$(pwd)"
 
 files="$( \

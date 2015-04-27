@@ -1,9 +1,6 @@
 #!/bin/bash
 
-dir="$(pwd)"
-cd $(cd "$(dirname "$0")"; pwd) # $(dirname `readlink -f "${0}" || realpath "${0}"`)
-
-cd "${1}"
+cd "$(cd "$(dirname "$0")"; pwd)/../../${1}"
 
 rm .bootstrapText.tmp 2> /dev/null
 
