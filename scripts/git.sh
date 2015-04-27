@@ -1,8 +1,7 @@
 #!/bin/bash
 
 dir="$(pwd)"
-scriptdir="$(cd "$(dirname "$0")"; pwd)" # $(dirname `readlink -f "${0}" || realpath "${0}"`)
-cd "${scriptdir}"
+cd $(cd "$(dirname "$0")"; pwd)/..
 
 git pull
 chmod -R 700 .

@@ -1,8 +1,7 @@
 #!/bin/bash
 
 dir="$(pwd)"
-scriptdir="$(cd "$(dirname "$0")"; pwd)"
-cd "${scriptdir}"
+cd $(cd "$(dirname "$0")"; pwd)/..
 
 rm -rf shared/lib shared/cryptolib
 mkdir shared/lib shared/cryptolib

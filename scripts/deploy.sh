@@ -1,7 +1,7 @@
 #!/bin/bash
 
 dir="$(pwd)"
-cd $(cd "$(dirname "$0")"; pwd) # $(dirname `readlink -f "${0}" || realpath "${0}"`)
+cd $(cd "$(dirname "$0")"; pwd)
 
 # TODO: Find a more robust way of handling arguments
 
@@ -25,7 +25,7 @@ fi
 
 comment="${*}"
 test "${comment}" == "" && comment=deploy
-./git.sh "${comment}"
+scripts/git.sh "${comment}"
 
 rm -rf .build
 mkdir .build
@@ -81,7 +81,7 @@ for d in cyph.im cyph.com ; do
 
 	cd ../$d
 
-	../build.sh || exit;
+	../scripts/build.sh || exit;
 
 	if [ "${branch}" == 'staging' ] ; then
 		echo "JS Minify ${d}"
@@ -139,12 +139,12 @@ for d in cyph.im ; do
 	done
 
 	# Merge imported libraries into threads
-	find js -name '*.js' | xargs -I% ../websignworkerpackager.js %
+	find js -name '*.js' | xargs -I% ../scripts/websign/threadpack.js %
 
 	if [ $test ] ; then
-		../websignpackager.py index.html pkg.html
+		../scripts/websign/pack.py index.html pkg.html
 	else
-		../websignpackager.py index.html $d.pkg
+		../scripts/websign/pack.py index.html $d.pkg
 		mv websign.html index.html
 
 		currentDir="$(pwd)"
@@ -196,7 +196,7 @@ appcfg.py update_dispatch .
 appcfg.py -A cyphme update_cron .
 
 if [ $all ] ; then
-	../deploy.sh
+	../scripts/deploy.sh
 fi
 
 cd "${dir}"
