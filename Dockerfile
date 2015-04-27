@@ -47,6 +47,8 @@ RUN bash -c ' \
 	gem specific_install -l https://github.com/buu700/fake_sqs; \
 '
 
+RUN rm -rf ~/.gnupg
+
 RUN bash -c ' \
 	source ~/.bashrc; \
 	go get github.com/gorilla/context; \
@@ -55,7 +57,10 @@ RUN bash -c ' \
 
 
 VOLUME /cyph
-WORKDIR /cyph/scripts
+VOLUME ~/.gnupg
+VOLUME ~/.cyph
+
+WORKDIR /cyph/commands
 
 EXPOSE 8080 8081 8082 8083 4568
 
