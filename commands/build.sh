@@ -17,7 +17,7 @@ cd $dir
 
 if [ -d shared ] ; then
 	cd shared
-fi 
+fi
 
 
 if [ "${1}" == '--watch' ] ; then

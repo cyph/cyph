@@ -27,7 +27,7 @@ fi
 
 comment="${*}"
 test "${comment}" == "" && comment=deploy
-scripts/git.sh "${comment}"
+./commands/commit.sh "${comment}"
 
 rm -rf .build
 mkdir .build
@@ -84,7 +84,7 @@ for d in cyph.im cyph.com ; do
 
 	cd ../$d
 
-	../scripts/build.sh || exit;
+	../commands/build.sh || exit;
 
 	if [ "${branch}" == 'staging' ] ; then
 		echo "JS Minify ${d}"
@@ -146,12 +146,12 @@ for d in cyph.im ; do
 	done
 
 	# Merge imported libraries into threads
-	find js -name '*.js' | xargs -I% ../scripts/websign/threadpack.js %
+	find js -name '*.js' | xargs -I% ../commands/websign/threadpack.js %
 
 	if [ $test ] ; then
-		../scripts/websign/pack.py index.html pkg.html
+		../commands/websign/pack.py index.html pkg.html
 	else
-		../scripts/websign/pack.py index.html $d.pkg
+		../commands/websign/pack.py index.html $d.pkg
 		mv websign.html index.html
 
 		currentDir="$(pwd)"
@@ -191,7 +191,7 @@ find . -name '*.bak' | xargs rm
 
 
 # AWS credentials
-cat /cyph-jobs.vars >> jobs/jobs.yaml
+cat ~/.cyph/jobs.vars >> jobs/jobs.yaml
 
 if [ $site ] ; then
 	goapp deploy $site/*.yaml
@@ -203,7 +203,7 @@ appcfg.py update_dispatch .
 appcfg.py -A cyphme update_cron .
 
 if [ $all ] ; then
-	../scripts/deploy.sh
+	../commands/deploy.sh
 fi
 
 cd "${dir}"
