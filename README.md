@@ -43,16 +43,20 @@ To deploy to production, first make sure you're Ryan or Josh, then run:
 
 Other available commands:
 
-* Check whether codes compile:  
+* Check whether codes compile:
+
 	docker run -v /path/to/current/directory:/cyph cyph/<branch> ./build.sh --test
 
-* Commit local changes:  
+* Commit local changes:
+
 	docker run -v /path/to/current/directory:/cyph cyph/<branch> ./commit.sh <comment>
 
-* Update libraries in client code:  
+* Update libraries in client code:
+
 	docker run -v /path/to/current/directory:/cyph cyph/<branch> ./updatelibs.sh
 
-* Compute hash of current WebSign bootstrap:  
+* Compute hash of current WebSign bootstrap:
+
 	docker run -v /path/to/current/directory:/cyph cyph/<branch> ./websignhash.sh cyph.im
 
 ---
