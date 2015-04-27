@@ -184,7 +184,7 @@ find . -name '*.bak' | xargs rm
 
 
 # AWS credentials
-cat ~/.config/cyph-jobs.vars >> jobs/jobs.yaml
+cat /home/.config/cyph-jobs.vars >> jobs/jobs.yaml
 
 if [ $site ] ; then
 	goapp deploy $site/*.yaml
