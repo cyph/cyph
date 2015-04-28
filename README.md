@@ -19,7 +19,7 @@ To build for the first time (but scroll to the bottom first):
 To start local environment:
 
 	docker run -d \
-		-p 42000:8080 -p 42001:8081 -p 42002:8082 -p 42003:8083 -p 43000:4568 \
+		-p 42000:5000 -p 42001:5001 -p 42002:5002 -p 42003:5003 -p 43000:4568 \
 		-v /path/to/current/directory:/cyph \
 		cyph/<branch> ./serve.sh
 

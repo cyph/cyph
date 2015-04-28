@@ -15,7 +15,7 @@
 
 
 try {
-	navigator['serviceWorker'].register(Cyph.Config.webSignConfig.serviceWorker);
+	navigator['serviceWorker'].register(Cyph.Config.webSignConfig.serviceWorker).catch(() => {});
 }
 catch (_) {}
 

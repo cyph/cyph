@@ -1,4 +1,5 @@
 all:
+	./docker.sh kill
 	docker build -t cyph/$$(git branch | awk '/^\*/{print $$2}') .
 
 clean:

@@ -30,6 +30,8 @@ module Cyph {
 			signatureVersion: 'v2'
 		};
 
+		public static awsEndpointFake: string	= 'http://0.0.0.0:4568';
+
 		public static awsRegions: string[]	= [
 			'us-east-1',
 			'us-west-1',
