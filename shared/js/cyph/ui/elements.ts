@@ -29,7 +29,7 @@ module Cyph {
 			public static load () : void {
 				Elements.everything				= $('*');
 				Elements.affiliateCheckbox		= $('.amazon-link:visible md-checkbox');
-				Elements.buttons				= $('.md-button:not(#templates *)');
+				Elements.buttons				= $('.md-button');
 				Elements.copyUrlInput			= $('#copy-url-input input');
 				Elements.copyUrlLink			= $('#copy-url-link');
 				Elements.cyphertext				= $('#cyphertext.curtain, #cyphertext.curtain > md-content');

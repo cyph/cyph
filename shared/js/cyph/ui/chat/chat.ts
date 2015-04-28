@@ -5,6 +5,7 @@
 /// <reference path="../../p2p/p2p.ts" />
 /// <reference path="../../session/message.ts" />
 /// <reference path="../../session/threadedsession.ts" />
+/// <reference path="../templates.ts" />
 /// <reference path="../basebuttonmanager.ts" />
 /// <reference path="../elements.ts" />
 /// <reference path="../nanoscroller.ts" />
@@ -184,7 +185,7 @@ module Cyph {
 				public formattingHelpButton () : void {
 					this.baseButtonClick(() => {
 						this.dialogManager.baseDialog({
-							template: $('#templates > .formatting-help')[0].outerHTML
+							template: Templates.formattingHelp
 						});
 
 						Analytics.main.send({
