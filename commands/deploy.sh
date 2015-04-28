@@ -112,7 +112,7 @@ find shared ! -wholename '*fonts/*' ! -wholename '*twemoji*' ! -wholename '*webs
 
 		for g in index.html $(find js -name '*.js') $(find css -name '*.css') ; do
 			if ( grep -o "$safeF" $g ) ; then
-				cat $g | perl -pe "s/(\\/$safeF)/\1?`md5 "$f" | perl -pe 's/.* = //g'`/g" > $g.new
+				cat $g | perl -pe "s/(\\/$safeF)/\1?`md5 "$f" | perl -pe 's/.*([a-f0-9]{32}).*/\1/g'`/g" > $g.new
 				mv $g.new $g
 			fi
 		done
