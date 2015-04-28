@@ -5,6 +5,8 @@ source ~/.bashrc
 dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd)/..
 
+gcloud auth login
+
 # TODO: Find a more robust way of handling arguments
 
 all=''
