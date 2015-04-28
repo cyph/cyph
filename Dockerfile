@@ -55,6 +55,8 @@ RUN bash -c ' \
 	go get github.com/gorilla/mux; \
 '
 
+RUN sudo ln -s /usr/bin/md5sum /usr/bin/md5
+
 
 VOLUME /cyph
 VOLUME /home/gibson/.cyph
