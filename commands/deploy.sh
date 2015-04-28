@@ -5,6 +5,8 @@ source ~/.bashrc
 dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd)/..
 
+gcloud auth login
+
 # TODO: Find a more robust way of handling arguments
 
 all=''
@@ -124,9 +126,6 @@ done
 
 ### WebSign-related stuff
 
-rm -rf /.gnupg
-mv /gnupg /.gnupg
-
 for d in cyph.im ; do
 	cd $d
 
@@ -155,7 +154,7 @@ for d in cyph.im ; do
 		mv websign.html index.html
 
 		currentDir="$(pwd)"
-		cd ../../..
+		cd ..
 		git clone git@github.com:cyph/cyph.github.io.git github.io
 		cd github.io
 		git reset --hard
@@ -177,7 +176,6 @@ for d in cyph.im ; do
 		cp -f websign/$d.hash2 websign/$d.hash
 
 		git add .
-		chmod -R 777 .
 		git commit -a -m 'package update'
 		git push
 		cd $currentDir
