@@ -33,8 +33,8 @@ module Cyph {
 
 				public log (text: string, author: Session.Authors) : void {
 					if (text) {
-						/* Mobile performance optimisation */
-						if (Env.isMobile && this.messages.length > 5) {
+						/* Performance optimisation */
+						if (this.messages.length > (Env.isMobile ? 5 : 50)) {
 							this.messages.shift();
 						}
 
