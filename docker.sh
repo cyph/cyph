@@ -29,7 +29,12 @@ elif [ "${command}" == 'kill' ] ; then
 	exit 0
 
 elif [ "${command}" == 'deploy' ] ; then
-	args="-v $HOME/.gnupg:/home/gibson/.gnupg -v $HOME/.cyph:/home/gibson/.cyph"
+	args=" \
+		-v $HOME/.cyph:/home/gibson/.cyph \
+		-v $HOME/.gitconfig:/home/gibson/.gitconfig \
+		-v $HOME/.gnupg:/home/gibson/.gnupg \
+		-v $HOME/.ssh:/home/gibson/.ssh \
+	"
 
 	chmod -R 700 .
 
