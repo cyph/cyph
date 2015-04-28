@@ -8,6 +8,8 @@ shift
 
 args=''
 
+boot2docker start 2> /dev/null
+
 if [ "${command}" == 'serve' ] ; then
 	args='-d -p 42000:8080 -p 42001:8081 -p 42002:8082 -p 42003:8083 -p 43000:4568'
 
@@ -18,16 +20,24 @@ if [ "${command}" == 'serve' ] ; then
 	done
 
 elif [ "${command}" == 'deploy' ] ; then
-	args="-v /home/gibson/.gnupg:$HOME/.gnupg -v /home/gibson/.cyph:$HOME/.cyph"
+	args="-v $HOME/.gnupg:/home/gibson/.gnupg -v $HOME/.cyph:/home/gibson/.cyph"
+
+	chmod -R 700 .
 
 elif [ "${command}" == 'build' ] ; then
-	echo -n
+	args=''
+
 elif [ "${command}" == 'commit' ] ; then
-	echo -n
+	args="-v $HOME/.gitconfig:/home/gibson/.gitconfig -v $HOME/.ssh:/home/gibson/.ssh"
+
+	chmod -R 700 .
+
 elif [ "${command}" == 'updatelibs' ] ; then
-	echo -n
+	args=''
+
 elif [ "${command}" == 'websignhash' ] ; then
-	echo -n
+	args=''
+
 else
 	echo fak u gooby
 	exit 1
