@@ -6,7 +6,7 @@ module Cyph {
 			public data	= {
 				Comment: <string> '',
 				Email: <string> '',
-				Language: <string> Env.language,
+				Language: <string> Env.fullLanguage,
 				Name: <string> ''
 			};
 
