@@ -163,6 +163,7 @@ html.mobile #new-cyph-section {
 #new-cyph.fixed-header {
 	z-index: 12;
 	position: fixed;
+	top: -7px !important;
 	@include transform(scale(0.6) !important);
 	@include transition(transform 0.1s ease-in-out);
 }
@@ -170,14 +171,15 @@ html.mobile #new-cyph-section {
 #main-toolbar {
 	position: fixed;
 	z-index: 11;
-	height: 65px !important;
+	height: 50px !important;
+
 	background-color: rgba(97, 51, 163, 0.75);
 }
 
 #logo {
-	top: 17px;
+	top: 10px;
 	left: 2.5vw;
-	height: 35px;
+	height: 30px;
 
 	> img {
 		height: auto !important;
