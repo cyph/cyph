@@ -21,9 +21,13 @@ elif [ "${command}" == 'deploy' ] ; then
 	args="-v /home/gibson/.gnupg:$HOME/.gnupg -v /home/gibson/.cyph:$HOME/.cyph"
 
 elif [ "${command}" == 'build' ] ; then
+	echo -n
 elif [ "${command}" == 'commit' ] ; then
+	echo -n
 elif [ "${command}" == 'updatelibs' ] ; then
+	echo -n
 elif [ "${command}" == 'websignhash' ] ; then
+	echo -n
 else
 	echo fak u gooby
 	exit 1
