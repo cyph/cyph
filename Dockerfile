@@ -57,8 +57,10 @@ RUN bash -c ' \
 
 
 VOLUME /cyph
-VOLUME ~/.gnupg
-VOLUME ~/.cyph
+VOLUME /home/gibson/.cyph
+VOLUME /home/gibson/.gitconfig
+VOLUME /home/gibson/.gnupg
+VOLUME /home/gibson/.ssh
 
 WORKDIR /cyph/commands
 

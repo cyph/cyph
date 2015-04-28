@@ -7,6 +7,8 @@ Initial setup on OS X and Windows:
 	VBoxManage modifyvm "boot2docker-vm" --natpf1 "tcp-port42002,tcp,,42002,,42002"
 	VBoxManage modifyvm "boot2docker-vm" --natpf1 "tcp-port42003,tcp,,42003,,42003"
 	VBoxManage modifyvm "boot2docker-vm" --natpf1 "tcp-port43000,tcp,,43000,,43000"
+	boot2docker init
+	boot2docker start
 
 To build for the first time:
 
@@ -36,8 +38,8 @@ Ports:
 To deploy to production, first make sure you're Ryan or Josh, then run:
 
 	docker run \
-		-v /home/gibson/.gnupg:$HOME/.gnupg \
-		-v /home/gibson/.cyph:$HOME/.cyph \
+		-v $HOME/.gnupg:/home/gibson/.gnupg \
+		-v $HOME/.cyph:/home/gibson/.cyph \
 		-v /path/to/current/directory:/cyph \
 		cyph/<branch> ./deploy.sh --prod
 
@@ -48,7 +50,10 @@ Other available commands:
 	`cyph/<branch> ./build.sh --test`
 
 * Commit local changes:  
-	`docker run -v /path/to/current/directory:/cyph \`  
+	`docker run \`
+	`-v $HOME/.gitconfig:/home/gibson/.gitconfig \`
+	`-v $HOME/.ssh:/home/gibson/.ssh \`
+	`-v /path/to/current/directory:/cyph \`  
 	`cyph/<branch> ./commit.sh <comment>`
 
 * Update libraries in client code:  
