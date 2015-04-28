@@ -32,10 +32,10 @@ var config = struct {
 		"staging-dot-cyphme.appspot.com":              empty,
 		"cyph.steveho.lt":                             empty,
 		"localhost":                                   empty,
-		"localhost:8080":                              empty,
-		"localhost:8081":                              empty,
-		"localhost:8082":                              empty,
-		"localhost:8083":                              empty,
+		"localhost:42000":                             empty,
+		"localhost:42001":                             empty,
+		"localhost:42002":                             empty,
+		"localhost:42003":                             empty,
 	},
 
 	map[string]none{
