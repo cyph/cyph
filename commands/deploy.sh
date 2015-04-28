@@ -33,7 +33,7 @@ test "${comment}" == "" && comment=deploy
 
 rm -rf .build
 mkdir .build
-cp -rf --no-preserve=links * .build/
+cp -rfL * .build/
 cd .build
 
 
