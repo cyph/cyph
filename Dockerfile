@@ -16,6 +16,8 @@ RUN apt-get install -y nodejs
 RUN npm -g install html-minifier clean-css uglifyjs typescript tsd bower browserstack browserify
 RUN pip install beautifulsoup4 html5lib
 
+RUN ln -s /usr/bin/md5sum /usr/bin/md5
+
 
 RUN echo '\
 	source ~/.rvm/scripts/rvm; \
@@ -47,6 +49,8 @@ RUN bash -c ' \
 	gem specific_install -l https://github.com/buu700/fake_sqs; \
 '
 
+RUN sudo bash -c 'cat /etc/sudoers | grep -v gibson > /tmp/sudoers && mv /tmp/sudoers /etc/sudoers ; apt-get remove sudo'
+
 RUN rm -rf ~/.gnupg
 
 RUN bash -c ' \
@@ -54,8 +58,6 @@ RUN bash -c ' \
 	go get github.com/gorilla/context; \
 	go get github.com/gorilla/mux; \
 '
-
-RUN sudo ln -s /usr/bin/md5sum /usr/bin/md5
 
 
 VOLUME /cyph
