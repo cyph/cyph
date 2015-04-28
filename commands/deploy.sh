@@ -42,7 +42,7 @@ if [ $branch == 'prod' ] ; then
 fi
 ls */*.yaml | xargs -I% sed -i.bak "s/version: master/version: ${branch}/g" %
 
-defaultHost='\$\{location.protocol\}\/\/\$\{location.hostname\}:'
+defaultHost='\${location\.protocol}\/\/\${location\.hostname}:'
 ls */js/cyph/env.ts | xargs -I% sed -i.bak "s/${defaultHost}43000//g" %
 
 if [ $test ] ; then
