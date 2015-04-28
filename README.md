@@ -76,6 +76,8 @@ In Unix-like environments (including Cygwin), the following alternative commands
 
 * `./docker.sh serve`
 
+* `./docker.sh kill`
+
 * `./docker.sh deploy [--prod]`
 
 * `./docker.sh build --test`
