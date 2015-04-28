@@ -17,13 +17,13 @@ if [ "${command}" == 'serve' ] ; then
 		i=$((i+1))
 	done
 
-else if [ "${command}" == 'deploy' ] ; then
+elif [ "${command}" == 'deploy' ] ; then
 	args="-v /home/gibson/.gnupg:$HOME/.gnupg -v /home/gibson/.cyph:$HOME/.cyph"
 
-else if [ "${command}" == 'build' ] ; then
-else if [ "${command}" == 'commit' ] ; then
-else if [ "${command}" == 'updatelibs' ] ; then
-else if [ "${command}" == 'websignhash' ] ; then
+elif [ "${command}" == 'build' ] ; then
+elif [ "${command}" == 'commit' ] ; then
+elif [ "${command}" == 'updatelibs' ] ; then
+elif [ "${command}" == 'websignhash' ] ; then
 else
 	echo fak u gooby
 	exit 1
