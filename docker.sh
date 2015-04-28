@@ -32,6 +32,7 @@ elif [ "${command}" == 'kill' ] ; then
 
 elif [ "${command}" == 'deploy' ] ; then
 	args=" \
+		-i \
 		-v $HOME/.cyph:/home/gibson/.cyph \
 		-v $HOME/.gitconfig:/home/gibson/.gitconfig \
 		-v $HOME/.gnupg:/home/gibson/.gnupg \
@@ -39,8 +40,6 @@ elif [ "${command}" == 'deploy' ] ; then
 	"
 
 	chmod -R 700 .
-
-	docker run -v $(pwd):/cyph $image gcloud auth login
 
 elif [ "${command}" == 'build' ] ; then
 	args=''
