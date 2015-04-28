@@ -15,6 +15,10 @@ files="$( \
 
 cd $dir
 
+if [ -f build.sh ] ; then
+	cd ..
+fi
+
 if [ -d shared ] ; then
 	cd shared
 fi
