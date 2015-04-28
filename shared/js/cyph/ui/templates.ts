@@ -159,7 +159,7 @@ module Cyph {
 						type='submit'
 						aria-label='Sign up for beta'
 						ng-hide='$this.state > 1'
-						ng-class='{"hidden-submit-button": hide-button}'
+						ng-class='{"hidden-submit-button": hideButton}'
 					>
 						Sign up for beta
 					</md-button>
