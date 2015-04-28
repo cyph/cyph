@@ -39,7 +39,7 @@ Ports:
 
 To deploy to production, first make sure you're Ryan or Josh, then run:
 
-	docker run \
+	docker run -it \
 		-v $HOME/.cyph:/home/gibson/.cyph \
 		-v $HOME/.gitconfig:/home/gibson/.gitconfig \
 		-v $HOME/.gnupg:/home/gibson/.gnupg \
