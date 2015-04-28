@@ -37,7 +37,7 @@ module Cyph {
 						else {
 							this.dialogManager.baseDialog(
 								{
-									template: $('#templates > .amazon-link')[0].outerHTML,
+									template: Templates.amazonLink,
 									vars: {
 										remember: false
 									},

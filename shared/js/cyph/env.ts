@@ -9,22 +9,24 @@ module Cyph {
 
 		public static awsEndpoint: string	= `${location.protocol}//${location.hostname}:43000`;
 
-		public static host: string		= location ? location.host.replace('www.', '') : '';
+		public static host: string			= location ? location.host.replace('www.', '') : '';
 
-		public static language: string	= (() => {
-			let language: string	=
-				Util.getValue(
-					navigator,
-					[
-						'language',
-						'userLanguage',
-						'browserLanguage',
-						'systemLanguage'
-					],
-					Config.defaultLanguage
-				).
-				toLowerCase()
-			;
+		public static fullLanguage: string	=
+			Util.getValue(
+				navigator,
+				[
+					'language',
+					'userLanguage',
+					'browserLanguage',
+					'systemLanguage'
+				],
+				Config.defaultLanguage
+			).
+			toLowerCase()
+		;
+
+		public static language: string		= (() => {
+			let language: string	= Env.fullLanguage.split('-')[0];
 
 			/* Consistency in special cases */
 			return language === 'nb' ?
