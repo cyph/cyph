@@ -362,7 +362,7 @@
 				<md-list layout='column'>
 					<md-item
 						class='message-item unread'
-						ng-class='"author-" + Cyph.Session.Authors[message.author]'
+						ng-class='::"author-" + Cyph.Session.Authors[message.author]'
 						ng-repeat='message in ui.chat.messages'
 						layout='horizontal'
 					>
@@ -370,23 +370,23 @@
 							<strong
 								translate
 								class='message-author'
-								ng-hide='message.author === Cyph.Session.Authors.app'
-								ng-bind='(message.author === Cyph.Session.Authors.me ? "me" : "friend") + ": "'
+								ng-hide='::message.author === Cyph.Session.Authors.app'
+								ng-bind='::(message.author === Cyph.Session.Authors.me ? "me" : "friend") + ": "'
 							></strong>
 							<span
 								class='message-text'
-								ng-cyph-markdown='message.text'
-								ng-class='{"app-message": message.author === Cyph.Session.Authors.app}'
+								ng-cyph-markdown='::message.text'
+								ng-class='::{"app-message": message.author === Cyph.Session.Authors.app}'
 							></span>
 						</span>
 						<span flex class='message-timestamp'>
-							<span class='mobile-only' ng-show='message.author === Cyph.Session.Authors.me'>
+							<span class='mobile-only' ng-show='::message.author === Cyph.Session.Authors.me'>
 								<span translate>me</span> &nbsp;&mdash;&nbsp;
 							</span>
 
-							{{message.timestamp}}
+							{{::message.timestamp}}
 
-							<span class='mobile-only' ng-show='message.author === Cyph.Session.Authors.friend'>
+							<span class='mobile-only' ng-show='::message.author === Cyph.Session.Authors.friend'>
 								&nbsp;&mdash;&nbsp; <span translate>friend</span>
 							</span>
 						</span>
@@ -543,9 +543,9 @@
 						<span class='message'>
 							<strong
 								translate
-								ng-bind='(message.author === Cyph.Session.Authors.me ? "me" : "friend") + ": "'
+								ng-bind='::(message.author === Cyph.Session.Authors.me ? "me" : "friend") + ": "'
 							></strong>
-							<span flex>{{message.text}}</span>
+							<span flex>{{::message.text}}</span>
 							<br />
 							<br />
 						</span>
