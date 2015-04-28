@@ -137,7 +137,7 @@ for d in cyph.im ; do
 			if ( grep -o "$f" $g ) ; then
 				dataURI="data:$(echo -n "$(file --mime-type "$f")" | perl -pe 's/.*\s+(.*?)$/\1/g');base64,$(base64 "$f")"
 
-				echo "s|/$f|$dataURI|g" > $g.tmp
+				echo "s|/$f|$dataURI|g" | tr -d '\n' > $g.tmp
 				sed -i.bak -f $g.tmp $g
 				rm $g.tmp $g.bak
 			fi
