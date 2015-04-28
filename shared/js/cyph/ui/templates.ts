@@ -125,6 +125,45 @@ module Cyph {
 						</table>
 					</md-content>
 				</md-dialog>
+			`,
+
+			signupForm: `
+				<form class='beta-signup-form' ng-submit='$this.submit()'>
+					<div ng-show='$this.state === 0'>
+						<ng-transclude></ng-transclude>
+						<md-input-container>
+							<label translate>email</label>
+							<input type='email' ng-model='$this.data.Email' />
+						</md-input-container>
+					</div>
+
+					<div ng-show='$this.state === 1'>
+						<p translate>
+							Thanks so much for signing up!
+						</p>
+						<p translate>
+							Feel free to add your name as well. :)
+						</p>
+						<md-input-container>
+							<label translate>name (optional)</label>
+							<input ng-model='$this.data.Name' />
+						</md-input-container>
+					</div>
+
+					<div ng-show='$this.state === 2'>
+						You rock.
+					</div>
+
+					<md-button
+						translate
+						type='submit'
+						aria-label='Sign up for beta'
+						ng-hide='$this.state > 1'
+						ng-class='{"hidden-submit-button": hideButton}'
+					>
+						Sign up for beta
+					</md-button>
+				</form>
 			`
 		};
 
