@@ -32,7 +32,7 @@ elif [ "${command}" == 'kill' ] ; then
 
 elif [ "${command}" == 'deploy' ] ; then
 	args=" \
-		-i \
+		-it \
 		-v $HOME/.cyph:/home/gibson/.cyph \
 		-v $HOME/.gitconfig:/home/gibson/.gitconfig \
 		-v $HOME/.gnupg:/home/gibson/.gnupg \

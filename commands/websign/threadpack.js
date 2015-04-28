@@ -8,7 +8,7 @@ var path	= args[0];
 var newText	= fs.readFileSync(path).toString().replace(
 	/importScripts\(["'](.*?)["']\)/g,
 	function (match, value) {
-		if (value[0] == '/') {
+		if (value[0] === '/') {
 			value	= value.slice(1);
 		}
 
