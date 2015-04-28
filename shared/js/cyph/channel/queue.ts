@@ -198,7 +198,10 @@ module Cyph {
 					}
 				}, (err, data) => {
 					if (data) {
-						this.queueUrl	= data.QueueUrl;
+						this.queueUrl	= data.QueueUrl.replace(
+							Config.awsEndpointFake,
+							Env.awsEndpoint
+						);
 					}
 
 					if (handlers.onopen) {

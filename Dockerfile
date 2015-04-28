@@ -17,11 +17,6 @@ RUN npm -g install html-minifier clean-css uglifyjs typescript tsd bower browser
 RUN pip install beautifulsoup4 html5lib
 
 
-RUN cp /etc/hosts /tmp/hosts
-RUN cat /tmp/hosts | sed 's/localhost ip6/ip6/g' | sed 's/localhost/0.0.0.0/g' > /etc/hosts
-RUN rm /tmp/hosts
-
-
 RUN echo '\
 	source ~/.rvm/scripts/rvm; \
 \
