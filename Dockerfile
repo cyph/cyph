@@ -49,7 +49,10 @@ RUN bash -c ' \
 
 RUN sudo ln -s /usr/bin/md5sum /usr/bin/md5
 
-RUN sudo bash -c 'cat /etc/sudoers | grep -v gibson > /tmp/sudoers && mv /tmp/sudoers /etc/sudoers ; apt-get remove -y sudo'
+RUN sudo bash -c ' \
+	cat /etc/sudoers | grep -v gibson > /tmp/sudoers && mv /tmp/sudoers /etc/sudoers; \
+	SUDO_FORCE_REMOVE=yes apt-get remove -y sudo; \
+'
 
 RUN rm -rf ~/.gnupg
 
