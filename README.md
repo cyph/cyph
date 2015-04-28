@@ -2,7 +2,7 @@
 
 To work locally with the Cyph repository, you'll first need to install [Docker](http://www.docker.com/).
 
-Afterwards, if you're running either OS X or Windows, there's some additional setup:
+Afterwards, if you're running either OS X or Windows, there's some additional setup required:
 
 	VBoxManage modifyvm "boot2docker-vm" --natpf1 "tcp-port42000,tcp,,42000,,42000"
 	VBoxManage modifyvm "boot2docker-vm" --natpf1 "tcp-port42001,tcp,,42001,,42001"
