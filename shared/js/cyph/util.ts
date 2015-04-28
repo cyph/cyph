@@ -186,12 +186,17 @@ module Cyph {
 
 			xhr.timeout	= timeout;
 
-			xhr.open(method, url, async);
-			xhr.setRequestHeader('Content-Type', contentType);
-			xhr.send(data);
+			try {
+				xhr.open(method, url, async);
+				xhr.setRequestHeader('Content-Type', contentType);
+				xhr.send(data);
 
-			if (!async) {
-				callback();
+				if (!async) {
+					callback();
+				}
+			}
+			catch (e) {
+				error(e.message);
 			}
 		}
 
