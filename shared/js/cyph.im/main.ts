@@ -9,6 +9,7 @@
 /// <reference path="../cyph/ui/notifier.ts" />
 /// <reference path="../cyph/ui/signupform.ts" />
 /// <reference path="../cyph/ui/directives/markdown.ts" />
+/// <reference path="../cyph/ui/directives/signupform.ts" />
 /// <reference path="config.ts" />
 /// <reference path="ui/enums.ts" />
 /// <reference path="ui/ui.ts" />
@@ -23,6 +24,7 @@ catch (_) {}
 angular.
 	module('Cyph', [
 		Cyph.UI.Directives.Markdown.title,
+		Cyph.UI.Directives.SignupForm.title,
 		'ngMaterial',
 		'timer'
 	]).

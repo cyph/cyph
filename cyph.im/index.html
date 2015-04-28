@@ -400,48 +400,15 @@
 						</span>
 					</md-item>
 
-
-					<form class='beta-signup-form' ng-submit='ui.signupForm.submit()' ng-show='ui.chat.isDisconnected'>
-						<div ng-show='ui.signupForm.state === 0'>
-							<div translate>
-								Enjoying the service? Join our waitlist for Cyph v2!
-							</div>
-							<div translate>
-								More details are on the way, but the next version of Cyph will include
-								group messaging, user accounts, and encrypted chat history.
-							</div>
-							<md-input-container>
-								<label translate>email</label>
-								<input type='email' ng-model='ui.signupForm.data.Email' />
-							</md-input-container>
+					<div ng-cyph-signup-form='ui.signupForm' ng-show='ui.chat.isDisconnected'>
+						<div translate>
+							Enjoying the service? Join our waitlist for Cyph v2!
 						</div>
-
-						<div ng-show='ui.signupForm.state === 1'>
-							<div translate>
-								Thanks so much for signing up!
-							</div>
-							<div translate>
-								Feel free to add your name as well. :)
-							</div>
-							<md-input-container>
-								<label translate>name (optional)</label>
-								<input ng-model='ui.signupForm.data.Name' />
-							</md-input-container>
+						<div translate>
+							More details are on the way, but the next version of Cyph will include
+							group messaging, user accounts, and encrypted chat history.
 						</div>
-
-						<div ng-show='ui.signupForm.state === 2'>
-							You rock.
-						</div>
-
-						<md-button
-							translate
-							type='submit'
-							aria-label='Sign up for beta'
-							ng-hide='ui.signupForm.state > 1'
-						>
-							Sign up for beta
-						</md-button>
-					</form>
+					</div>
 				</md-list>
 			</md-content>
 
