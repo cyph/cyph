@@ -1,6 +1,8 @@
 # Cyph
 
-Initial setup on OS X and Windows:
+To run work locally with the Cyph repository, you'll first need to install [Docker](http://www.docker.com/).
+
+Afterwards, if you're running either OS X or Windows, there's some additional setup:
 
 	VBoxManage modifyvm "boot2docker-vm" --natpf1 "tcp-port42000,tcp,,42000,,42000"
 	VBoxManage modifyvm "boot2docker-vm" --natpf1 "tcp-port42001,tcp,,42001,,42001"
@@ -10,7 +12,7 @@ Initial setup on OS X and Windows:
 	boot2docker init
 	boot2docker start
 
-To build for the first time:
+To build for the first time (but scroll to the bottom first):
 
 	docker build -t cyph/<branch> .
 
@@ -50,9 +52,9 @@ Other available commands:
 	`cyph/<branch> ./build.sh --test`
 
 * Commit local changes:  
-	`docker run \`
-	`-v $HOME/.gitconfig:/home/gibson/.gitconfig \`
-	`-v $HOME/.ssh:/home/gibson/.ssh \`
+	`docker run \`  
+	`-v $HOME/.gitconfig:/home/gibson/.gitconfig \`  
+	`-v $HOME/.ssh:/home/gibson/.ssh \`  
 	`-v /path/to/current/directory:/cyph \`  
 	`cyph/<branch> ./commit.sh <comment>`
 
@@ -66,7 +68,7 @@ Other available commands:
 
 ---
 
-In Unix-like environments, the following alternative commands are provided for convenience:
+In Unix-like environments (including Cygwin), the following alternative commands are provided for convenience:
 
 * `make`
 
