@@ -106,10 +106,6 @@ module Cyph {
 
 		public static callMainThread (method: string, args: any[] = []) : void {
 			if (Env.isMainThread) {
-				if (method.indexOf('eval') > -1) {
-					throw new Error('lol no: ' + method + ' ' + JSON.stringify(args));
-				}
-
 				let methodSplit: string[]	= method.split('.');
 				let methodName: string		= methodSplit.slice(-1)[0];
 
@@ -118,7 +114,13 @@ module Cyph {
 					reduce((o: any, k: string) => o[k], self)
 				;
 
-				methodObject[methodName].apply(methodObject, args);
+				/* Validate command against namespace whitelist, then execute */
+				if (['Cyph', 'ui'].indexOf(methodSplit[0]) > -1) {
+					methodObject[methodName].apply(methodObject, args);
+				}
+				else {
+					throw new Error(method + ' not in whitelist. (args: ' + JSON.stringify(args) + ')');
+				}
 			}
 			else {
 				EventManager.trigger(EventManager.mainThreadEvents, {method, args});
