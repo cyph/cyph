@@ -3,6 +3,8 @@
 cd $(cd "$(dirname "$0")"; pwd)
 
 
+image=cyph/$(git branch | awk '/^\*/{print $2}')
+
 command="${1}"
 shift
 
@@ -38,6 +40,8 @@ elif [ "${command}" == 'deploy' ] ; then
 
 	chmod -R 700 .
 
+	docker run -v $(pwd):/cyph $image gcloud auth login
+
 elif [ "${command}" == 'build' ] ; then
 	args=''
 
@@ -57,4 +61,4 @@ else
 	exit 1
 fi
 
-docker run $args -v $(pwd):/cyph cyph/$(git branch | awk '/^\*/{print $2}') "./${command}.sh" $*
+docker run $args -v $(pwd):/cyph $image "./${command}.sh" $*
