@@ -1,6 +1,6 @@
 # Cyph
 
-To run work locally with the Cyph repository, you'll first need to install [Docker](http://www.docker.com/).
+To work locally with the Cyph repository, you'll first need to install [Docker](http://www.docker.com/).
 
 Afterwards, if you're running either OS X or Windows, there's some additional setup:
 
