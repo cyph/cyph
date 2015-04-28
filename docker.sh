@@ -11,13 +11,22 @@ args=''
 boot2docker start 2> /dev/null
 
 if [ "${command}" == 'serve' ] ; then
-	args='-d -p 42000:8080 -p 42001:8081 -p 42002:8082 -p 42003:8083 -p 43000:4568'
+	if [ "${1}" != '--foreground' ] ; then
+		args='-d'
+		shift
+	fi
+
+	args="${args} -p 42000:8080 -p 42001:8081 -p 42002:8082 -p 42003:8083 -p 43000:4568"
 
 	i=0
 	for project in backend cyph.com cyph.im cyph.me ; do
 		echo "${project}: http://$(boot2docker ip 2>/dev/null || echo localhost):4200${i}"
 		i=$((i+1))
 	done
+
+elif [ "${command}" == 'kill' ] ; then
+	docker ps -a | grep cyph | awk '{print $1}' | xargs -I% bash -c 'docker kill -s 9 % ; docker rm %'
+	exit 0
 
 elif [ "${command}" == 'deploy' ] ; then
 	args="-v $HOME/.gnupg:/home/gibson/.gnupg -v $HOME/.cyph:/home/gibson/.cyph"
