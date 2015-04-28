@@ -5,7 +5,7 @@ module Cyph {
 				public static title: string	= 'ngCyphMarkdown';
 
 				private static _	= (() => {
-					let markdown	= new self['markdownit']({
+					let markdown: any	= new self['markdownit']({
 						html: false,
 						breaks: true,
 						linkify: true,
