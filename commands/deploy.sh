@@ -3,7 +3,7 @@
 source ~/.bashrc
 
 dir="$(pwd)"
-cd $(cd "$(dirname "$0")"; pwd)
+cd $(cd "$(dirname "$0")"; pwd)/..
 
 # TODO: Find a more robust way of handling arguments
 
