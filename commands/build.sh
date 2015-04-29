@@ -52,7 +52,7 @@ else
 			find shared/js -name '*.js' & \
 			find shared/js -name '*.map'; \
 		} | xargs -I% rm %
-	else
+	elif [ "${1}" == '--prod' ] ; then
 		{ \
 			find css -name '*.scss' & \
 			find css -name '*.map' & \
