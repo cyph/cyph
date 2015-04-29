@@ -96,12 +96,15 @@ module Cyph {
 
 		public static platformString: string	= Env.isMobile ? 'mobile' : 'desktop';
 
-
-		public static webSignHashes: string		= encodeURIComponent(
-			'Hello Ryan and Josh,\n\n\n\n\n\n---\n\n' + (WebSign ? WebSign.toString() : '')
-		);
-
-
 		public static smsRecipient: string	= Env.isIOS ? '+1' : '';
+
+		public static webSignWarningEmail: string		=
+			'mailto:%22Ryan%20Lester%22%20%3Chacker@linux.com%3E,%20%22Baron%20Joshua%20Cyrus' +
+			'%20Boehm%22%20%3Cjosh@joshboehm.com%3E?subject=I%20RECEIVED%20THE%20WALKEN%20WARNING&body=' +
+			encodeURIComponent(
+				'Hello Ryan and Josh,\n\n\n\n\n\n---\n\n' +
+				(WebSign ? WebSign.toString() : '')
+			)
+		;
 	}
 }
