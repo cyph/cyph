@@ -78,51 +78,6 @@ if (!HTMLElement.prototype.click) {
 
 
 $(() => {
-	/*
-		Whitelist for inline event handlers +
-		allow inline event handlers without requiring 'unsafe-inline' in CSP +
-		custom event (on-enterpress)
-	*/
-
-	['click', 'change', 'enterpress'].forEach((eventName: string) => {
-		let attribute: string	= 'on-' + eventName;
-
-		$('[' + attribute + ']').each((i: number, elem: HTMLElement) => {
-			let $this: JQuery	= $(elem);
-
-			$this.on(eventName, () => {
-				let handler: string	= $this.attr(attribute);
-				let split: number	= handler.indexOf('(');
-				let method: string	= handler.slice(0, split);
-
-				let args: any[]	= JSON.parse('[' +
-					handler.
-						slice(split + 1, -1).
-						replace(/this/g, '"this"')
-				+ ']').
-					map(arg => arg === 'this' ? elem : arg)
-				;
-
-				Cyph.Thread.callMainThread(method, args);
-			});
-		});
-	});
-
-	$('[on-enterpress]').each((i: number, elem: HTMLElement) => {
-		let $this: JQuery				= $(elem);
-		let platformRestriction: string	= $this.attr('enterpress-only');
-
-		if (!platformRestriction || platformRestriction === Cyph.Env.platformString) {
-			$this.keypress(e => {
-				if (e.keyCode === 13 && !e.shiftKey) {
-					e.preventDefault();
-					$this.trigger('enterpress');
-				}
-			});
-		}
-	});
-
-
 	/* Support button-links */
 
 	$('button > a').each((i: number, elem: HTMLElement) => {

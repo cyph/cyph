@@ -5,9 +5,11 @@
 
 /// <reference path="../cyph/controller.ts" />
 /// <reference path="../cyph/ui/chat/chat.ts" />
+/// <reference path="../cyph/ui/chat/templates.ts" />
 /// <reference path="../cyph/ui/dialogmanager.ts" />
 /// <reference path="../cyph/ui/notifier.ts" />
 /// <reference path="../cyph/ui/signupform.ts" />
+/// <reference path="../cyph/ui/directives/chat.ts" />
 /// <reference path="../cyph/ui/directives/markdown.ts" />
 /// <reference path="../cyph/ui/directives/signupform.ts" />
 /// <reference path="config.ts" />
@@ -16,13 +18,17 @@
 
 
 try {
-	navigator['serviceWorker'].register(Cyph.Config.webSignConfig.serviceWorker).catch(() => {});
+	navigator['serviceWorker'].
+		register(Cyph.Config.webSignConfig.serviceWorker).
+		catch(() => {})
+	;
 }
 catch (_) {}
 
 
 angular.
 	module('Cyph', [
+		Cyph.UI.Directives.Chat.title,
 		Cyph.UI.Directives.Markdown.title,
 		Cyph.UI.Directives.SignupForm.title,
 		'ngMaterial',
