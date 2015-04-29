@@ -86,7 +86,7 @@ for d in cyph.im cyph.com ; do
 
 	cd ../$d
 
-	../commands/build.sh || exit;
+	../commands/build.sh --prod || exit;
 
 	if [ "${branch}" == 'staging' ] ; then
 		echo "JS Minify ${d}"
