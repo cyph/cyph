@@ -11,6 +11,10 @@ module Cyph {
 			};
 
 			public submit () : void {
+				if (!this.data.Email) {
+					return;
+				}
+
 				++this.state;
 				this.controller.update();
 

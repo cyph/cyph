@@ -560,6 +560,7 @@ html.mobile .chat-main.video {
 
 .chat-toolbar {
 	z-index: 6;
+	margin-top: -40px;
 
 	.logo > img {
 		height: 30px !important;
@@ -608,6 +609,10 @@ html:not(.mobile) {
 		font-size: 20px;
 		margin-left: -110px;
 	}
+
+	.chat-main .loading {
+		margin-left: 0px;
+	}
 }
 
 
@@ -654,12 +659,12 @@ html:not(.mobile) {
 
 .new-messages {
 	background-color: white !important;
-	color: #8b62d9;
+	color: #8b62d9 !important;
 	width: 100%;
 	text-align: center;
 	margin-top: -20px;
 	cursor: pointer;
-	z-index: 4;
+	z-index: 4 !important;
 }
 .new-messages:after {
 	width: 100%;

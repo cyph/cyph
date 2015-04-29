@@ -307,13 +307,15 @@ module Cyph {
 					});
 
 					this.session.on(Session.Events.pingPongTimeout, () => {
-						this.addMessage(Strings.pingPongTimeout, Session.Authors.app);
+						if (!this.isDisconnected) {
+							this.addMessage(Strings.pingPongTimeout, Session.Authors.app);
 
-						this.dialogManager.alert({
-							title: Strings.pingPongTimeoutTitle,
-							content: Strings.pingPongTimeout,
-							ok: Strings.ok
-						});
+							this.dialogManager.alert({
+								title: Strings.pingPongTimeoutTitle,
+								content: Strings.pingPongTimeout,
+								ok: Strings.ok
+							});
+						}
 					});
 
 					this.session.on(Session.Events.smp, (wasSuccessful: boolean) => {

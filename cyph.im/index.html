@@ -60,11 +60,11 @@
 		<section id='main' layout='column' layout-fill>
 			<span
 				ng-cyph-chat-toolbar='ui.chat'
-				sidenav-id='menu'
-				open='ui.openMobileMenu'
+				open='ui.openMobileMenu()'
 				show-chat='ui.state === Cyph.im.UI.States.chat'
 				class='mobile-only'
 			></span>
+
 			<span
 				ng-cyph-chat-sidebar='ui.chat'
 				show-chat='ui.state === Cyph.im.UI.States.chat'
@@ -313,7 +313,7 @@
 					id='footer'
 					class='desktop-only'
 					ng-class='{
-						center: ui.state === Cyph.im.UI.States.chat
+						center: ui.chat.state === Cyph.UI.Chat.States.chat
 					}'
 				>
 					&copy; Cyph 2015
