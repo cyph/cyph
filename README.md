@@ -10,7 +10,11 @@ Afterwards, if you're running either OS X or Windows, there's some additional se
 	VBoxManage modifyvm "boot2docker-vm" --natpf1 "tcp-port42002,tcp,,42002,,42002"
 	VBoxManage modifyvm "boot2docker-vm" --natpf1 "tcp-port42003,tcp,,42003,,42003"
 	VBoxManage modifyvm "boot2docker-vm" --natpf1 "tcp-port43000,tcp,,43000,,43000"
+	
 	boot2docker start
+	# If not using the included docker.sh, you'll need to run this on each fresh boot
+	
+	# Then set the environment variables from boot2docker's output
 
 To build for the first time (but scroll to the bottom first):
 
