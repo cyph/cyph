@@ -619,6 +619,10 @@ html:not(.mobile) {
 #websign-obsolete {
 	margin-left: 0px;
 
+	.logo-animation {
+		margin-left: -110px;
+	}
+
 	p {
 		text-align: left;
 		font-size: 85%;
