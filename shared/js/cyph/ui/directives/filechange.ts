@@ -9,7 +9,13 @@ module Cyph {
 						restrict: 'A',
 						link: (scope, element, attrs) => {
 							element.change(() => {
-								attrs[Filechange.title](element);
+								let split: string[]	= attrs[Filechange.title].split('.');
+
+								let o: any			= scope.$parent.$eval(
+									split.slice(0, -1).join('.')
+								);
+
+								o[split.slice(-1)[0].split('(')[0]](element[0]);
 							});
 						}
 					}));

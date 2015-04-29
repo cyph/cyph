@@ -11,7 +11,8 @@ module Cyph {
 				private static _	= (() => {
 					angular.module(Chat.title, [
 						Enterpress.title,
-						Filechange.title
+						Filechange.title,
+						'ngMaterial'
 					]).
 						directive(Chat.title + 'Cyphertext', () => ({
 							restrict: 'A',
@@ -51,13 +52,17 @@ module Cyph {
 							restrict: 'A',
 							scope: {
 								$this: '=' + Chat.title + 'Toolbar',
-								open: '=open',
-								showChat: '=showChat',
-								sidenavId: '=sidenavId'
+								open: '&open',
+								showChat: '=showChat'
 							},
 							link: scope => scope['Cyph'] = Cyph,
 							template: UI.Chat.Templates.toolbar
-						}))
+						})).
+						factory('chatSidenav', [
+							'$mdSidenav',
+
+							$mdSidenav => () => $mdSidenav('sidenav')
+						])
 					;
 				})();
 			}

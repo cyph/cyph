@@ -319,7 +319,7 @@ module Cyph {
 							<input
 								accept='image/*'
 								type='file'
-								ng-cyph-filechange='$this.photoManager.insert()'
+								ng-cyph-filechange='$this.photoManager.insert(this)'
 							/>
 						</md-button>
 
@@ -333,7 +333,7 @@ module Cyph {
 							<input
 								accept='image/*'
 								type='file'
-								ng-cyph-filechange='$this.photoManager.insert()'
+								ng-cyph-filechange='$this.photoManager.insert(this)'
 							/>
 						</md-button>
 
@@ -488,146 +488,148 @@ module Cyph {
 				`,
 
 				toolbar: `
-					<md-toolbar class='chat-toolbar'>
-						<div class='md-toolbar-tools'>
-							<a class='logo' ng-href='{{Cyph.Env.homeUrl}}'>
-								<img src='/img/betalogo.mobile.png' />
-							</a>
+					<div>
+						<md-toolbar class='chat-toolbar'>
+							<div class='md-toolbar-tools'>
+								<a class='logo' ng-href='{{Cyph.Env.homeUrl}}'>
+									<img src='/img/betalogo.mobile.png' />
+								</a>
 
-							<span flex></span>
+								<span flex></span>
 
-							<span ng-show='showChat && $this.state === Cyph.UI.Chat.States.chat'>
-								<span ng-click='$this.p2pManager.disabledAlert()'>
-									<md-button
-										translate
-										class='video-call-button'
-										ng-disabled='
-											!$this.p2pManager.isEnabled ||
-											!$this.isConnected ||
-											!$this.session.state.isAlive
-										'
-										ng-click='$this.p2pManager.videoCallButton()'
-										ng-attr-aria-label='{{
-											!$this.p2pManager.isVideoCall ?
-												"Video Call" :
-												!$this.p2pManager.p2p.streamOptions.video ?
-													"Enable Camera" :
-													"Disable Camera"
-										}}'
-									>
-										<img
-											ng-show='
-												!$this.p2pManager.isVideoCall ||
-												!$this.p2pManager.p2p.streamOptions.video
+								<span ng-show='showChat && $this.state === Cyph.UI.Chat.States.chat'>
+									<span ng-click='$this.p2pManager.disabledAlert()'>
+										<md-button
+											translate
+											class='video-call-button'
+											ng-disabled='
+												!$this.p2pManager.isEnabled ||
+												!$this.isConnected ||
+												!$this.session.state.isAlive
 											'
-											src='/img/icons/video.on.png'
-										/>
-										<img
-											ng-show='
-												$this.p2pManager.isVideoCall &&
-												$this.p2pManager.p2p.streamOptions.video
+											ng-click='$this.p2pManager.videoCallButton()'
+											ng-attr-aria-label='{{
+												!$this.p2pManager.isVideoCall ?
+													"Video Call" :
+													!$this.p2pManager.p2p.streamOptions.video ?
+														"Enable Camera" :
+														"Disable Camera"
+											}}'
+										>
+											<img
+												ng-show='
+													!$this.p2pManager.isVideoCall ||
+													!$this.p2pManager.p2p.streamOptions.video
+												'
+												src='/img/icons/video.on.png'
+											/>
+											<img
+												ng-show='
+													$this.p2pManager.isVideoCall &&
+													$this.p2pManager.p2p.streamOptions.video
+												'
+												src='/img/icons/video.off.png'
+											/>
+										</md-button>
+										<md-button
+											translate
+											class='voice-call-button'
+											aria-label='Voice Call'
+											ng-disabled='
+												!$this.p2pManager.isEnabled ||
+												!$this.isConnected ||
+												!$this.session.state.isAlive
 											'
-											src='/img/icons/video.off.png'
-										/>
-									</md-button>
-									<md-button
-										translate
-										class='voice-call-button'
-										aria-label='Voice Call'
-										ng-disabled='
-											!$this.p2pManager.isEnabled ||
-											!$this.isConnected ||
-											!$this.session.state.isAlive
-										'
-										ng-click='$this.p2pManager.voiceCallButton()'
-										ng-attr-aria-label='{{
-											!$this.p2pManager.isVideoCall ?
-												"Voice Call" :
-												!$this.p2pManager.p2p.streamOptions.audio ?
-													"Enable Mic" :
-													"Disable Mic"
-										}}'
-									>
-										<img
-											ng-show='!$this.p2pManager.isVideoCall'
-											src='/img/icons/voice.on.png'
-										/>
-										<img
-											ng-show='
-												$this.p2pManager.isVideoCall &&
-												!$this.p2pManager.p2p.streamOptions.audio
+											ng-click='$this.p2pManager.voiceCallButton()'
+											ng-attr-aria-label='{{
+												!$this.p2pManager.isVideoCall ?
+													"Voice Call" :
+													!$this.p2pManager.p2p.streamOptions.audio ?
+														"Enable Mic" :
+														"Disable Mic"
+											}}'
+										>
+											<img
+												ng-show='!$this.p2pManager.isVideoCall'
+												src='/img/icons/voice.on.png'
+											/>
+											<img
+												ng-show='
+													$this.p2pManager.isVideoCall &&
+													!$this.p2pManager.p2p.streamOptions.audio
+												'
+												src='/img/icons/mic.on.png'
+											/>
+											<img
+												ng-show='
+													$this.p2pManager.isVideoCall &&
+													$this.p2pManager.p2p.streamOptions.audio
+												'
+												src='/img/icons/mic.off.png'
+											/>
+										</md-button>
+										<md-button
+											translate
+											class='send-file-button'
+											ng-disabled='
+												$this.p2pManager.p2p.outgoingFile.name ||
+												!$this.p2pManager.isEnabled ||
+												!$this.isConnected ||
+												!$this.session.state.isAlive
 											'
-											src='/img/icons/mic.on.png'
-										/>
-										<img
-											ng-show='
-												$this.p2pManager.isVideoCall &&
-												$this.p2pManager.p2p.streamOptions.audio
-											'
-											src='/img/icons/mic.off.png'
-										/>
-									</md-button>
-									<md-button
-										translate
-										class='send-file-button'
-										ng-disabled='
-											$this.p2pManager.p2p.outgoingFile.name ||
-											!$this.p2pManager.isEnabled ||
-											!$this.isConnected ||
-											!$this.session.state.isAlive
-										'
-										aria-label='Send File'
-									>
-										<img src='/img/icons/file.png' />
-										<input
-											type='file'
-											ng-cyph-filechange='$this.p2pManager.sendFileButton()'
-										/>
+											aria-label='Send File'
+										>
+											<img src='/img/icons/file.png' />
+											<input
+												type='file'
+												ng-cyph-filechange='$this.p2pManager.sendFileButton()'
+											/>
+										</md-button>
+									</span>
+
+									<md-button translate aria-label='Menu' ng-click='open()'>
+										<img src='/img/icons/menu.png' />
 									</md-button>
 								</span>
-
-								<md-button translate aria-label='Menu' ng-click='open()'>
-									<img src='/img/icons/menu.png' />
-								</md-button>
-							</span>
-						</div>
-					</md-toolbar>
-
-					<md-sidenav md-component-id='{{sidenavId}}' class='md-sidenav-right'>
-						<md-toolbar>
-							<h1 translate class='md-toolbar-tools'>Settings</h1>
+							</div>
 						</md-toolbar>
-						<md-content class='md-padding'>
-							<div>
-								<md-button
-									translate
-									aria-label='Show Cyphertext'
-									ng-click='$this.cyphertext.show()'
-								>
-									Show Cyphertext
-								</md-button>
-							</div>
-							<div>
-								<md-button
-									translate
-									aria-label='Formatting Help'
-									ng-click='$this.formattingHelpButton()'
-								>
-									Formatting Help
-								</md-button>
-							</div>
-							<div>
-								<md-button
-									translate
-									aria-label='Disconnect'
-									ng-disabled='!$this.session.state.isAlive'
-									ng-click='$this.disconnectButton()'
-								>
-									Disconnect
-								</md-button>
-							</div>
-						</md-content>
-					</md-sidenav>
+
+						<md-sidenav md-component-id='sidenav' class='md-sidenav-right'>
+							<md-toolbar>
+								<h1 translate class='md-toolbar-tools'>Settings</h1>
+							</md-toolbar>
+							<md-content class='md-padding'>
+								<div>
+									<md-button
+										translate
+										aria-label='Show Cyphertext'
+										ng-click='$this.cyphertext.show()'
+									>
+										Show Cyphertext
+									</md-button>
+								</div>
+								<div>
+									<md-button
+										translate
+										aria-label='Formatting Help'
+										ng-click='$this.formattingHelpButton()'
+									>
+										Formatting Help
+									</md-button>
+								</div>
+								<div>
+									<md-button
+										translate
+										aria-label='Disconnect'
+										ng-disabled='!$this.session.state.isAlive'
+										ng-click='$this.disconnectButton()'
+									>
+										Disconnect
+									</md-button>
+								</div>
+							</md-content>
+						</md-sidenav>
+					</div>
 				`
 			};
 

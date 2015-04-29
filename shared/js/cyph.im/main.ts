@@ -28,31 +28,29 @@ catch (_) {}
 
 angular.
 	module('Cyph', [
+		'ngMaterial',
+		'timer',
 		Cyph.UI.Directives.Chat.title,
 		Cyph.UI.Directives.Markdown.title,
-		Cyph.UI.Directives.SignupForm.title,
-		'ngMaterial',
-		'timer'
+		Cyph.UI.Directives.SignupForm.title
 	]).
 	controller('CyphController', [
 		'$scope',
-		'$mdSidenav',
 		'$mdToast',
 		'$mdDialog',
+		'chatSidenav',
 
-		($scope, $mdSidenav, $mdToast, $mdDialog) => $(() => {
+		($scope, $mdToast, $mdDialog, chatSidenav) => $(() => {
 			Cyph.UI.Elements.load();
 
 			let controller: Cyph.IController			= new Cyph.Controller($scope);
 			let dialogManager: Cyph.UI.IDialogManager	= new Cyph.UI.DialogManager($mdDialog, $mdToast);
 			let notifier: Cyph.UI.INotifier				= new Cyph.UI.Notifier;
 
-			let mobileMenu: Cyph.UI.ISidebar	= Cyph.Env.isMobile ?
-				$mdSidenav('menu') :
-				{
-					close: () => {},
-					open: () => {}
-				}
+			let mobileMenu: Cyph.UI.ISidebar	=
+				Cyph.Env.isMobile ?
+					chatSidenav() :
+					{close: () => {}, open: () => {}}
 			;
 
 			$scope.Cyph	= Cyph;
