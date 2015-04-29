@@ -185,7 +185,7 @@ module Cyph {
 				public formattingHelpButton () : void {
 					this.baseButtonClick(() => {
 						this.dialogManager.baseDialog({
-							template: Templates.formattingHelp
+							template: UI.Templates.formattingHelp
 						});
 
 						Analytics.main.send({
