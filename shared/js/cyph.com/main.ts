@@ -12,13 +12,13 @@
 
 angular.
 	module('Cyph', [
-		Cyph.UI.Directives.SignupForm.title,
-		'ngMaterial'
+		'ngMaterial',
+		Cyph.UI.Directives.SignupForm.title
 	]).
 	controller('CyphController', [
 		'$scope',
 
-		($scope) => $(() => {
+		$scope => $(() => {
 			Cyph.com.UI.Elements.load();
 
 			let controller: Cyph.IController	= new Cyph.Controller($scope);

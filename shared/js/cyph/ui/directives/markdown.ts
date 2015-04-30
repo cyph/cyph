@@ -2,7 +2,7 @@ module Cyph {
 	export module UI {
 		export module Directives {
 			export class Markdown {
-				public static title: string	= 'ngCyphMarkdown';
+				public static title: string	= 'cyphMarkdown';
 
 				private static _	= (() => {
 					let markdown: any	= new self['markdownit']({

@@ -218,7 +218,7 @@ module Cyph {
 											></strong>
 											<span
 												class='message-text'
-												ng-cyph-markdown='::message.text'
+												cyph-markdown='::message.text'
 												ng-class='::{
 													"app-message":
 														message.author === Cyph.Session.Authors.app
@@ -292,7 +292,7 @@ module Cyph {
 							ng-model='$this.currentMessage'
 							ng-trim='false'
 							ng-change='$this.messageChange()'
-							ng-cyph-enterpress='$this.send()'
+							cyph-enterpress='$this.send()'
 							enterpress-only='desktop'
 							placeholder='Send a secure message...'
 						></textarea>
@@ -319,7 +319,7 @@ module Cyph {
 							<input
 								accept='image/*'
 								type='file'
-								ng-cyph-filechange='$this.photoManager.insert(this)'
+								cyph-filechange='$this.photoManager.insert(this)'
 							/>
 						</md-button>
 
@@ -333,7 +333,7 @@ module Cyph {
 							<input
 								accept='image/*'
 								type='file'
-								ng-cyph-filechange='$this.photoManager.insert(this)'
+								cyph-filechange='$this.photoManager.insert(this)'
 							/>
 						</md-button>
 
@@ -479,7 +479,7 @@ module Cyph {
 									<img src='/img/icons/file.png' />
 									<input
 										type='file'
-										ng-cyph-filechange='$this.p2pManager.sendFileButton()'
+										cyph-filechange='$this.p2pManager.sendFileButton()'
 									/>
 								</md-button>
 							</span>
@@ -582,7 +582,7 @@ module Cyph {
 											<img src='/img/icons/file.png' />
 											<input
 												type='file'
-												ng-cyph-filechange='$this.p2pManager.sendFileButton()'
+												cyph-filechange='$this.p2pManager.sendFileButton()'
 											/>
 										</md-button>
 									</span>

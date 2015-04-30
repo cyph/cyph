@@ -2,7 +2,7 @@ module Cyph {
 	export module UI {
 		export module Directives {
 			export class Enterpress {
-				public static title: string	= 'ngCyphEnterpress';
+				public static title: string	= 'cyphEnterpress';
 
 				private static _	= (() => {
 					angular.module(Enterpress.title, []).directive(Enterpress.title, () => ({

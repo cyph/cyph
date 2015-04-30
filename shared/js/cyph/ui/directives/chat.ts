@@ -6,13 +6,13 @@ module Cyph {
 	export module UI {
 		export module Directives {
 			export class Chat {
-				public static title: string	= 'ngCyphChat';
+				public static title: string	= 'cyphChat';
 
 				private static _	= (() => {
 					angular.module(Chat.title, [
+						'ngMaterial',
 						Enterpress.title,
-						Filechange.title,
-						'ngMaterial'
+						Filechange.title
 					]).
 						directive(Chat.title + 'Cyphertext', () => ({
 							restrict: 'A',

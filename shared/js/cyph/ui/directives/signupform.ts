@@ -2,7 +2,7 @@ module Cyph {
 	export module UI {
 		export module Directives {
 			export class SignupForm {
-				public static title: string	= 'ngCyphSignupForm';
+				public static title: string	= 'cyphSignupForm';
 
 				private static _	= (() => {
 					angular.module(SignupForm.title, []).directive(SignupForm.title, () => ({
