@@ -32,17 +32,17 @@ module Cyph {
 				Elements.buttons				= $('.md-button');
 				Elements.copyUrlInput			= $('#copy-url-input input');
 				Elements.copyUrlLink			= $('#copy-url-link');
-				Elements.cyphertext				= $('#cyphertext.curtain, #cyphertext.curtain > md-content');
-				Elements.insertPhotoMobile		= $('#insert-photo-mobile');
-				Elements.messageBox				= $('#message-box');
-				Elements.messageList			= $('#message-list, #message-list > md-content');
-				Elements.messageListInner		= $('#message-list md-list');
+				Elements.cyphertext				= $('.chat-cyphertext.curtain, .chat-cyphertext.curtain > md-content');
+				Elements.insertPhotoMobile		= $('.insert-photo-mobile');
+				Elements.messageBox				= $('.message-box');
+				Elements.messageList			= $('.message-list, .message-list > md-content');
+				Elements.messageListInner		= $('.message-list md-list');
 				Elements.nanoScroller			= $('.nano');
-				Elements.p2pFriendPlaceholder	= $('#video-call .friend:not(.stream)');
-				Elements.p2pFriendStream		= $('#video-call .friend.stream');
-				Elements.p2pMeStream			= $('#video-call .me');
+				Elements.p2pFriendPlaceholder	= $('.video-call .friend:not(.stream)');
+				Elements.p2pFriendStream		= $('.video-call .friend.stream');
+				Elements.p2pMeStream			= $('.video-call .me');
 				Elements.p2pFiles				= $('.send-file-button input[type="file"]');
-				Elements.sendButton				= $('#send-button');
+				Elements.sendButton				= $('.send-button');
 				Elements.signupForm				= $('.beta-signup-form');
 				Elements.timer					= $('#timer');
 			}
