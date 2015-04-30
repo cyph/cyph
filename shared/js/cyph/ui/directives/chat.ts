@@ -1,5 +1,6 @@
 /// <reference path="enterpress.ts" />
 /// <reference path="filechange.ts" />
+/// <reference path="templates.ts" />
 
 
 module Cyph {
@@ -20,7 +21,7 @@ module Cyph {
 								$this: '=' + Chat.title + 'Cyphertext'
 							},
 							link: scope => scope['Cyph'] = Cyph,
-							template: UI.Chat.Templates.cyphertext
+							template: Templates.chatCyphertext
 						})).
 						directive(Chat.title + 'Main', () => ({
 							restrict: 'A',
@@ -29,7 +30,7 @@ module Cyph {
 								$this: '=' + Chat.title + 'Main'
 							},
 							link: scope => scope['Cyph'] = Cyph,
-							template: UI.Chat.Templates.main
+							template: Templates.chatMain
 						})).
 						directive(Chat.title + 'MessageBox', () => ({
 							restrict: 'A',
@@ -37,7 +38,7 @@ module Cyph {
 								$this: '=' + Chat.title + 'MessageBox'
 							},
 							link: scope => scope['Cyph'] = Cyph,
-							template: UI.Chat.Templates.messageBox
+							template: Templates.chatMessageBox
 						})).
 						directive(Chat.title + 'Sidebar', () => ({
 							restrict: 'A',
@@ -46,7 +47,7 @@ module Cyph {
 								showChat: '=showChat'
 							},
 							link: scope => scope['Cyph'] = Cyph,
-							template: UI.Chat.Templates.sidebar
+							template: Templates.chatSidebar
 						})).
 						directive(Chat.title + 'Toolbar', () => ({
 							restrict: 'A',
@@ -56,7 +57,7 @@ module Cyph {
 								showChat: '=showChat'
 							},
 							link: scope => scope['Cyph'] = Cyph,
-							template: UI.Chat.Templates.toolbar
+							template: Templates.chatToolbar
 						})).
 						factory('chatSidenav', [
 							'$mdSidenav',

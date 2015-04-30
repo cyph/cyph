@@ -1,3 +1,6 @@
+/// <reference path="templates.ts" />
+
+
 module Cyph {
 	export module UI {
 		export module Directives {
