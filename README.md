@@ -81,24 +81,32 @@ Alternatively, in Unix-like environments, you can run:
 
 Other available commands:
 
-* Verify that codes compile: `./docker.sh build --test`  
-	(`docker run \`  
+* Verify that codes compile:  
+	`./docker.sh build --test`  
+	or:  
+	`docker run \`  
 	`-v /path/to/current/directory:/cyph \`  
-	`cyph/<branch> ./build.sh --test`)
+	`cyph/<branch> ./build.sh --test`
 
-* Commit local changes: `./docker.sh commit <comment>`  
-	(`docker run \`  
+* Commit local changes:  
+	`./docker.sh commit <comment>`  
+	or:  
+	`docker run \`  
 	`-v $HOME/.gitconfig:/home/gibson/.gitconfig \`  
 	`-v $HOME/.ssh:/home/gibson/.ssh \`  
 	`-v /path/to/current/directory:/cyph \`  
-	`cyph/<branch> ./commit.sh <comment>`)
+	`cyph/<branch> ./commit.sh <comment>`
 
-* Update libraries in client code: `./docker.sh updatelibs`  
-	(`docker run \`  
+* Update libraries in client code:  
+	`./docker.sh updatelibs`  
+	or:  
+	`docker run \`  
 	`-v /path/to/current/directory:/cyph \`  
-	`cyph/<branch> ./updatelibs.sh`)
+	`cyph/<branch> ./updatelibs.sh`
 
-* Compute hash of current WebSign bootstrap: `./docker.sh websignhash <project> # e.g. cyph.im`  
+* Compute hash of current WebSign bootstrap:  
+	`./docker.sh websignhash <project> # e.g. cyph.im`  
+	or:  
 	`docker run \`  
 	`-v /path/to/current/directory:/cyph \`  
 	`cyph/<branch> ./websignhash.sh <project>`
