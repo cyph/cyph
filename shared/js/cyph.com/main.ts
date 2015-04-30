@@ -1,7 +1,6 @@
 /// <reference path="../preload/base.ts" />
 
 /// <reference path="../cyph/controller.ts" />
-/// <reference path="../cyph/ui/templates.ts" />
 /// <reference path="../cyph/ui/signupform.ts" />
 /// <reference path="../cyph/ui/directives/signupform.ts" />
 /// <reference path="ui/enums.ts" />
