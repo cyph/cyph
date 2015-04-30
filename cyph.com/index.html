@@ -238,7 +238,7 @@
 				<p translate>
 					Click the button at the top of your screen to cyph right now!
 				</p>
-				<div ng-cyph-signup-form='ui.signupForm'>
+				<div cyph-signup-form='ui.signupForm'>
 					<p>
 						<strong translate>However</strong>,
 						<span translate>
@@ -260,7 +260,7 @@
 			<div class='section-content-container'>
 				<div>
 					<p>
-						<div ng-cyph-signup-form='ui.signupForm' hide-button='true'>
+						<div cyph-signup-form='ui.signupForm' hide-button='true'>
 							<div>
 								<p ng-show='ui.podcast === Cyph.com.UI.Podcasts.betalist'>
 									<span translate>Welcome</span>
@@ -530,7 +530,7 @@
 
 		<footer id='footer'>
 			<section ng-hide='ui.podcast !== Cyph.com.UI.Podcasts.none || (ui.state !== Cyph.com.UI.States.home && ui.signupForm.state > 2)'>
-				<div ng-cyph-signup-form='ui.signupForm' hide-button='true'>
+				<div cyph-signup-form='ui.signupForm' hide-button='true'>
 					<div translate>
 						Join the waitlist for Cyph v2!
 					</div>
