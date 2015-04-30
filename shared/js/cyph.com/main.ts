@@ -1,7 +1,6 @@
 /// <reference path="../preload/base.ts" />
 
 /// <reference path="../cyph/controller.ts" />
-/// <reference path="../cyph/ui/templates.ts" />
 /// <reference path="../cyph/ui/signupform.ts" />
 /// <reference path="../cyph/ui/directives/signupform.ts" />
 /// <reference path="ui/enums.ts" />
@@ -12,13 +11,13 @@
 
 angular.
 	module('Cyph', [
-		Cyph.UI.Directives.SignupForm.title,
-		'ngMaterial'
+		'ngMaterial',
+		Cyph.UI.Directives.SignupForm.title
 	]).
 	controller('CyphController', [
 		'$scope',
 
-		($scope) => $(() => {
+		$scope => $(() => {
 			Cyph.com.UI.Elements.load();
 
 			let controller: Cyph.IController	= new Cyph.Controller($scope);

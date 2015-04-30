@@ -74,6 +74,7 @@
         "cyph/ui/nanoscroller.ts",
         "cyph/ui/notifier.ts",
         "cyph/ui/signupform.ts",
+        "cyph/ui/templates.ts",
         "cyph/ui/visibilitywatcher.ts",
         "cyph/ui/chat/chat.ts",
         "cyph/ui/chat/cyphertext.ts",
@@ -86,7 +87,12 @@
         "cyph/ui/chat/p2pmanager.ts",
         "cyph/ui/chat/photomanager.ts",
         "cyph/ui/chat/scrollmanager.ts",
+        "cyph/ui/directives/chat.ts",
+        "cyph/ui/directives/enterpress.ts",
+        "cyph/ui/directives/filechange.ts",
         "cyph/ui/directives/markdown.ts",
+        "cyph/ui/directives/signupform.ts",
+        "cyph/ui/directives/templates.ts",
         "../lib/typings/tsd.d.ts"
     ]
 }

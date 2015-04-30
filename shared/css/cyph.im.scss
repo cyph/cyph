@@ -19,7 +19,7 @@ html:not(.mobile) {
 	}
 }
 
-html:not(.mobile) #desktop-sidebar, html:not(.mobile) #message-wrapper, #copy-url-mobile {
+html:not(.mobile) .chat-sidebar, html:not(.mobile) .chat-message-box, #copy-url-mobile {
 	.md-button:not([disabled="disabled"]) {
 		color: #444;
 		background-color: #7d4fd3 !important;
@@ -54,12 +54,12 @@ input, textarea {
 }
 
 
-#message-box {
+.message-box {
 	resize: none;
 }
 
 html:not(.mobile) {
-	#message-box {
+	.message-box {
 		@include transition(all 0.35s ease-in-out);
 		outline: none;
 		padding: 3px;
@@ -70,14 +70,14 @@ html:not(.mobile) {
 		width: calc(100% - 29px);
 	}
 
-	#message-box:focus {
+	.message-box:focus {
 		box-shadow: 0px 0px 10px #7239dd;
 		border: 1px solid #8b62d9;
 	}
 }
 
 html.mobile {
-	#message-box {
+	.message-box {
 		width: 100%;
 		height: 48px;
 		font-size: 17px;
@@ -87,16 +87,16 @@ html.mobile {
 		box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.35);
 	}
 
-	#message-box:focus ~ #new-messages {
+	.message-box:focus ~ .new-messages {
 		display: none;
 	}
 }
 
-#message-wrapper {
+.chat-message-box {
 	position: relative;
 }
 
-#insert-photo-desktop {
+.insert-photo-desktop {
 	position: absolute;
 	top: 9px;
 	right: 29px;
@@ -104,7 +104,7 @@ html.mobile {
 .md-button input[type='file'] {
 	display: none;
 }
-#send-button, #insert-photo-mobile {
+.send-button, .insert-photo-mobile {
 	position: fixed;
 	bottom: 5px;
 	right: 20px;
@@ -121,26 +121,26 @@ html.mobile {
 	/* Crazy fix to prevent jankiness upon message send on mobile */
 	pointer-events: none;
 }
-#message-wrapper {
-	.message-wrapper-hidden {
+.chat-message-box {
+	.chat-message-box-hidden {
 		@include transform(translateY(50vh) !important);
 		@include transition(transform 0.25s linear);
 	}
-	:not(.message-wrapper-hidden) {
+	:not(.chat-message-box-hidden) {
 		@include transition(transform 0.15s linear);
 	}
 }
 
 
-#message-list:not(.nano) {
+.message-list:not(.nano) {
 	overflow-y: scroll;
 }
-html:not(.mobile) #message-list > md-content {
+html:not(.mobile) .message-list > md-content {
 	padding-right: 10px;
 }
 
 
-#message-list:not(.is-connected) {
+.message-list:not(.is-connected) {
 	.message-item:not(:first-child) {
 		opacity: 0.75;
 
@@ -149,12 +149,12 @@ html:not(.mobile) #message-list > md-content {
 		}
 	}
 
-	#setting-up-crypto {
+	.setting-up-crypto {
 		opacity: 0.075;
 	}
 }
 
-#message-list {
+.message-list {
 	.message-item {
 		@include transition(opacity 1s ease-in-out);
 
@@ -163,7 +163,7 @@ html:not(.mobile) #message-list > md-content {
 		}
 	}
 
-	#setting-up-crypto {
+	.setting-up-crypto {
 		position: absolute;
 		pointer-events: none;
 		width: 100%;
@@ -176,7 +176,7 @@ html:not(.mobile) #message-list > md-content {
 		@include transition(opacity 1s ease-in-out);
 	}
 
-	#friend-is-typing {
+	.friend-is-typing {
 		margin-top: 20px;
 		width: 100%;
 
@@ -190,27 +190,28 @@ html:not(.mobile) #message-list > md-content {
 	}
 }
 
-html:not(.mobile) #friend-is-typing {
+html:not(.mobile) .friend-is-typing {
 	text-align: left;
 	padding-left: 20px;
 }
-html.mobile #friend-is-typing {
+html.mobile .friend-is-typing {
 	text-align: center;
 }
 
-#message-list.is-connected {
-	#friend-is-typing.show {
+.message-list.is-connected {
+	.friend-is-typing.show {
 		opacity: 1;
 		@include transition(opacity 1s ease-in-out);
 	}
 }
 
-#message-list.active ~ footer #footer {
-	margin-left: 0px;
-	@include transition(margin-left 1s cubic-bezier(1, 0, 0, 1));
-}
 #footer {
 	margin-left: -180px;
+
+	&.center {
+		margin-left: 0px;
+		@include transition(margin-left 1s cubic-bezier(1, 0, 0, 1));
+	}
 }
 
 
@@ -398,11 +399,11 @@ html.mobile button[disabled] {
 	opacity: 0.25;
 }
 
-html:not(.video) #video-call {
+.chat-main:not(.video) .video-call {
 	display: none;
 }
-html.video {
-	#video-call {
+.chat-main.video {
+	.video-call {
 		height: 100%;
 		width: 100%;
 		background-color: black;
@@ -447,7 +448,7 @@ html.video {
 			max-height: 100px !important;
 			background-color: transparent !important;
 
-			& ~ #message-list {
+			& ~ .message-list {
 				max-height: calc(100% - 200px) !important;
 			}
 
@@ -477,7 +478,7 @@ html.video {
 	}
 }
 @media all and (orientation: landscape) {
-	#video-call {
+	.video-call {
 		.friend {
 			width: 100%;
 		}
@@ -488,7 +489,7 @@ html.video {
 	}
 }
 @media all and (orientation: portrait) {
-	#video-call {
+	.video-call {
 		.friend {
 			margin-left: 50%;
 			@include transform(translateX(-50%));
@@ -500,39 +501,39 @@ html.video {
 		}
 	}
 }
-html.video:not(.mobile) {
+html:not(.mobile) .chat-main.video {
 	/* Message list is 15%; video UI is 100% - message list height - footer height */
 
-	#video-call {
+	.video-call {
 		height: calc(85% - 110px);
 	}
 
-	#message-list {
+	.message-list {
 		max-height: 15%;
 
-		&.is-connected #setting-up-crypto {
+		&.is-connected .setting-up-crypto {
 			display: none;
 		}
 	}
 }
-html.video.mobile {
-	#video-call.playing {
-		& ~ #message-list, & ~ footer #message-wrapper {
+html.mobile .chat-main.video {
+	.video-call.playing {
+		& ~ .message-list, & ~ footer .chat-message-box {
 			display: none;
 		}
 	}
 
-	#video-call:not(.playing) {
+	.video-call:not(.playing) {
 		padding-left: 10px;
 
-		& ~ #message-list {
+		& ~ .message-list {
 			max-height: calc(100% - 100px) !important;
 		}
 	}
 }
 
 
-#desktop-sidebar {
+.chat-sidebar {
 	position: absolute;
 	top: 0px;
 	left: 0px;
@@ -557,8 +558,9 @@ html.video.mobile {
 }
 
 
-#mobile-toolbar {
+.chat-toolbar {
 	z-index: 6;
+	margin-top: -40px;
 
 	.logo > img {
 		height: 30px !important;
@@ -607,11 +609,19 @@ html:not(.mobile) {
 		font-size: 20px;
 		margin-left: -110px;
 	}
+
+	.chat-main .setting-up-crypto {
+		margin-left: 0px;
+	}
 }
 
 
 #websign-obsolete {
 	margin-left: 0px;
+
+	.logo-animation {
+		margin-left: -110px;
+	}
 
 	p {
 		text-align: left;
@@ -651,16 +661,16 @@ html:not(.mobile) {
 }
 
 
-#new-messages {
+.new-messages {
 	background-color: white !important;
-	color: #8b62d9;
+	color: #8b62d9 !important;
 	width: 100%;
 	text-align: center;
 	margin-top: -20px;
 	cursor: pointer;
-	z-index: 4;
+	z-index: 4 !important;
 }
-#new-messages:after {
+.new-messages:after {
 	width: 100%;
 }
 
@@ -709,7 +719,7 @@ html:not(.mobile) #error {
 }
 
 
-#cyphertext {
+.chat-cyphertext {
 	z-index: 1;
 	position: fixed;
 	top: -1px;
@@ -736,7 +746,7 @@ html:not(.mobile) #error {
 		margin-left: 0px;
 	}
 }
-#cyphertext:not(.nano) {
+.chat-cyphertext:not(.nano) {
 	overflow-y: scroll;
 }
 .close-button {
@@ -748,7 +758,7 @@ html:not(.mobile) #error {
 }
 
 
-#chat-begin-message {
+.chat-begin-message {
 	font-family: 'Ubuntu', sans-serif;
 	text-align: center;
 	width: 100%;
@@ -758,7 +768,7 @@ html:not(.mobile) #error {
 		font-weight: bold;
 	}
 }
-#chat-begin-message {
+.chat-begin-message {
 	font-size: 12vw;
 }
 

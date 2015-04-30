@@ -1,7 +1,10 @@
 module Cyph {
 	export module UI {
 		export class Notifier {
-			public static audio	= new Audio(Config.notifierConfig.audio);
+			public static audio : {play: Function}	= Audio ?
+				new Audio(Config.notifierConfig.audio) :
+				{play: () => {}}
+			;
 
 			private static createNotification (message: string, callback: Function = () => {}) {
 				let options	= {

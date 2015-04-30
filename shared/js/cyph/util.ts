@@ -231,16 +231,11 @@ module Cyph {
 
 		public static translate (
 			text: string,
-			ignoreWhitespace?: boolean,
 			htmlDecode?: boolean,
 			defaultValue: string = text
 		) : string {
 			if (!Env.isMainThread && htmlDecode) {
 				throw new Error('Can only HTML decode translations in main thread.');
-			}
-
-			if (ignoreWhitespace) {
-				text	= text.replace(/\s+/g, ' ').trim();
 			}
 
 			let translation: string	= Util.getValue(
@@ -267,19 +262,19 @@ module Cyph {
 
 			let $this: JQuery		= $(html);
 			let ngBind: string		= $this.attr('ng-bind');
-			let innerHtml: string	= $this.html().trim();
+			let innerHtml: string	= $this.html().trim().replace(/\s+/g, ' ');
 
 			for (let attr of ['content', 'placeholder', 'aria-label', 'label']) {
 				let value: string	= $this.attr(attr);
 
 				if (value) {
-					$this.attr(attr, Util.translate(value, true, true));
+					$this.attr(attr, Util.translate(value, true));
 				}
 			}
 
 			if (ngBind) {
 				$this.attr('ng-bind', ngBind.replace(/"([^"]*)"/g, (match, value) => {
-					let translation: string	= Util.translate(value, true, true, '');
+					let translation: string	= Util.translate(value, true, '');
 
 					return translation ?
 						'"' + translation + '"' :
@@ -290,7 +285,7 @@ module Cyph {
 
 			if (innerHtml) {
 				$this.html(innerHtml.replace(/(.*?)(\{\{.*?\}\}|$)/g, (match, value, binding) => {
-					let translation: string	= Util.translate(value, true, true, '');
+					let translation: string	= Util.translate(value, true, '');
 
 					return translation ?
 						translation + binding :

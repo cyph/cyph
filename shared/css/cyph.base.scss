@@ -55,7 +55,7 @@ html:not(.mobile) md-toolbar {
 	top: 0px;
 }
 
-ng-cyph-markdown, [ng-cyph-markdown] {
+cyph-markdown, [cyph-markdown] {
 	> p:only-child {
 		display: inline;
 	}
@@ -65,7 +65,7 @@ ng-cyph-markdown, [ng-cyph-markdown] {
 	}
 }
 html:not(.mobile) {
-	ng-cyph-markdown, [ng-cyph-markdown] {
+	cyph-markdown, [cyph-markdown] {
 		:not(p:only-child) {
 			margin-left: 25px;
 		}
