@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class='no-js' ng-app='Cyph' ng-controller='CyphController' ng-class='{"video": ui.chat.p2pManager.isVideoCall}'>
+<html class='no-js' ng-app='Cyph' ng-controller='CyphController'>
 	<head>
 		<meta charset='utf-8' />
 		<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1' />
@@ -7,13 +7,28 @@
 
 		<title
 			translate
-			ng-bind='(ui.chat.scrollManager.unreadMessages > 0 ? ("(" + ui.chat.scrollManager.unreadMessages + ") ") : "") + "Cyph – Encrypted Messenger"'
+			ng-bind='
+				(
+					ui.chat.scrollManager.unreadMessages > 0 ?
+						("(" + ui.chat.scrollManager.unreadMessages + ") ") :
+						""
+				) +
+				"Cyph – Encrypted Messenger"
+			'
 		>
 			Cyph &ndash; Encrypted Messenger
 		</title>
-		<meta translate name='description' content='Cyph is a next-generation messenger app that makes privacy the new status quo.' />
 
-		<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
+		<meta
+			translate
+			name='description'
+			content='Cyph is a next-generation messenger app that makes privacy the new status quo.'
+		/>
+
+		<meta
+			name='viewport'
+			content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'
+		/>
 
 		<meta name='apple-mobile-web-app-capable' content='yes' />
 		<meta name='mobile-web-app-capable' content='yes' />
@@ -43,493 +58,301 @@
 	</head>
 	<body>
 		<section id='main' layout='column' layout-fill>
+			<span
+				cyph-chat-toolbar='ui.chat'
+				open='ui.openMobileMenu()'
+				show-chat='ui.state === Cyph.im.UI.States.chat'
+				class='mobile-only'
+			></span>
+			<span
+				cyph-chat-sidebar='ui.chat'
+				show-chat='ui.state === Cyph.im.UI.States.chat'
+				class='desktop-only'
+			></span>
 
-		<md-toolbar id='mobile-toolbar' class='mobile-only'>
-			<div class='md-toolbar-tools'>
-				<a class='logo' ng-href='{{Cyph.Env.homeUrl}}'>
-					<img src='/img/betalogo.mobile.png' />
-				</a>
-
-				<span flex></span>
-
-				<span ng-show='ui.state === Cyph.im.UI.States.chat && ui.chat.state === Cyph.UI.Chat.States.chat'>
-					<span ng-click='ui.chat.p2pManager.disabledAlert()'>
-						<md-button
-							translate
-							class='video-call-button'
-							ng-disabled='!ui.chat.p2pManager.isEnabled || !ui.chat.isConnected || !ui.chat.session.state.isAlive'
-							ng-click='ui.chat.p2pManager.videoCallButton()'
-							ng-attr-aria-label='{{!ui.chat.p2pManager.isVideoCall ? "Video Call" : !ui.chat.p2pManager.p2p.streamOptions.video ? "Enable Camera" : "Disable Camera"}}'
-						>
-							<img ng-show='!ui.chat.p2pManager.isVideoCall || !ui.chat.p2pManager.p2p.streamOptions.video' src='/img/icons/video.on.png' />
-							<img ng-show='ui.chat.p2pManager.isVideoCall && ui.chat.p2pManager.p2p.streamOptions.video' src='/img/icons/video.off.png' />
-						</md-button>
-						<md-button
-							translate
-							class='voice-call-button'
-							aria-label='Voice Call'
-							ng-disabled='!ui.chat.p2pManager.isEnabled || !ui.chat.isConnected || !ui.chat.session.state.isAlive'
-							ng-click='ui.chat.p2pManager.voiceCallButton()'
-							ng-attr-aria-label='{{!ui.chat.p2pManager.isVideoCall ? "Voice Call" : !ui.chat.p2pManager.p2p.streamOptions.audio ? "Enable Mic" : "Disable Mic"}}'
-						>
-							<img ng-show='!ui.chat.p2pManager.isVideoCall' src='/img/icons/voice.on.png' />
-							<img ng-show='ui.chat.p2pManager.isVideoCall && !ui.chat.p2pManager.p2p.streamOptions.audio' src='/img/icons/mic.on.png' />
-							<img ng-show='ui.chat.p2pManager.isVideoCall && ui.chat.p2pManager.p2p.streamOptions.audio' src='/img/icons/mic.off.png' />
-						</md-button>
-						<md-button
-							translate
-							class='send-file-button'
-							ng-disabled='ui.chat.p2pManager.p2p.outgoingFile.name || !ui.chat.p2pManager.isEnabled || !ui.chat.isConnected || !ui.chat.session.state.isAlive'
-							aria-label='Send File'
-						>
-							<img src='/img/icons/file.png' />
-							<input type='file' on-change='ui.chat.p2pManager.sendFileButton()' />
-						</md-button>
-					</span>
-
-					<md-button translate aria-label='Menu' ng-click='ui.openMobileMenu()'>
-						<img src='/img/icons/menu.png' />
-					</md-button>
-				</span>
-			</div>
-		</md-toolbar>
-
-		<md-sidenav md-component-id='menu' class='md-sidenav-right mobile-only'>
-			<md-toolbar>
-				<h1 translate class='md-toolbar-tools'>Settings</h1>
-			</md-toolbar>
-			<md-content class='md-padding'>
-				<div>
-					<md-button translate aria-label='Show Cyphertext' ng-click='ui.chat.cyphertext.show()'>Show Cyphertext</md-button>
-				</div>
-				<div>
-					<md-button translate aria-label='Formatting Help' ng-click='ui.chat.formattingHelpButton()'>Formatting Help</md-button>
-				</div>
-				<div>
-					<md-button translate aria-label='Disconnect' ng-disabled='!ui.chat.session.state.isAlive' ng-click='ui.chat.disconnectButton()'>Disconnect</md-button>
-				</div>
-			</md-content>
-		</md-sidenav>
-
-		<div id='desktop-sidebar' class='desktop-only'>
-			<a class='logo' ng-href='{{Cyph.Env.homeUrl}}'>
-				<img src='/img/betalogo.png' />
-			</a>
-			<section ng-show='ui.state === Cyph.im.UI.States.chat && ui.chat.state === Cyph.UI.Chat.States.chat'>
-				<md-button translate aria-label='Show Cyphertext' ng-click='ui.chat.cyphertext.show()'>Show Cyphertext</md-button>
-				<md-button translate aria-label='Formatting Help' ng-click='ui.chat.formattingHelpButton()'>Formatting Help</md-button>
-				<md-button translate aria-label='Disconnect' ng-disabled='!ui.chat.session.state.isAlive' ng-click='ui.chat.disconnectButton()'>Disconnect</md-button>
-
-				<span
-					id='webrtc-disabled-message'
-					ng-click='ui.chat.p2pManager.disabledAlert(ui.chat.isConnected)'
-					ng-attr-title='{{
-						ui.chat.isConnected && !ui.chat.p2pManager.isEnabled ?
-							Cyph.Strings.webRTCDisabled :
-							""
-					}}'
-				>
-					<md-button
-						translate
-						class='md-fab video-call-button'
-						ng-disabled='!ui.chat.p2pManager.isEnabled || !ui.chat.isConnected || !ui.chat.session.state.isAlive'
-						ng-click='ui.chat.p2pManager.videoCallButton()'
-						ng-attr-aria-label='{{!ui.chat.p2pManager.isVideoCall ? "Video Call" : !ui.chat.p2pManager.p2p.streamOptions.video ? "Enable Camera" : "Disable Camera"}}'
-					>
-						<img ng-show='!ui.chat.p2pManager.isVideoCall || !ui.chat.p2pManager.p2p.streamOptions.video' src='/img/icons/video.on.png' />
-						<img ng-show='ui.chat.p2pManager.isVideoCall && ui.chat.p2pManager.p2p.streamOptions.video' src='/img/icons/video.off.png' />
-					</md-button>
-					<md-button
-						translate
-						class='md-fab voice-call-button'
-						ng-disabled='!ui.chat.p2pManager.isEnabled || !ui.chat.isConnected || !ui.chat.session.state.isAlive'
-						ng-click='ui.chat.p2pManager.voiceCallButton()'
-						ng-attr-aria-label='{{!ui.chat.p2pManager.isVideoCall ? "Voice Call" : !ui.chat.p2pManager.p2p.streamOptions.audio ? "Enable Mic" : "Disable Mic"}}'
-					>
-						<img ng-show='!ui.chat.p2pManager.isVideoCall' src='/img/icons/voice.on.png' />
-						<img ng-show='ui.chat.p2pManager.isVideoCall && !ui.chat.p2pManager.p2p.streamOptions.audio' src='/img/icons/mic.on.png' />
-						<img ng-show='ui.chat.p2pManager.isVideoCall && ui.chat.p2pManager.p2p.streamOptions.audio' src='/img/icons/mic.off.png' />
-					</md-button>
-					<md-button
-						translate
-						class='md-fab send-file-button'
-						ng-disabled='ui.chat.p2pManager.p2p.outgoingFile.name || !ui.chat.p2pManager.isEnabled || !ui.chat.isConnected || !ui.chat.session.state.isAlive'
-						aria-label='Send File'
-					>
-						<img src='/img/icons/file.png' />
-						<input type='file' on-change='ui.chat.p2pManager.sendFileButton()' />
-					</md-button>
-				</span>
-			</section>
-		</div>
-
-		<div ng-view class='loading' layout='column' layout-fill flex ng-class='{active: ui.state === Cyph.im.UI.States.spinningUp}'>
-			<div flex></div>
-			<div class='logo-animation'><img src='/img/logo.animated.gif' /></div>
-			<div translate>Now spinning up your cyph room...</div>
-			<div flex></div>
-		</div>
-
-		<div ng-view class='loading' layout='column' layout-fill flex ng-class='{active: ui.state === Cyph.im.UI.States.chat && ui.chat.state === Cyph.UI.Chat.States.keyExchange}'>
-			<div flex></div>
-			<div class='logo-animation'><img src='/img/logo.animated.gif' /></div>
-			<div translate>Initiating key exchange...</div>
-			<div flex></div>
-		</div>
-
-		<div ng-view class='loading' layout='column' layout-fill flex ng-class='{active: ui.state === Cyph.im.UI.States.waitingForFriend}'>
-			<div flex></div>
-			<div class='logo-animation'><img src='/img/logo.animated.gif' /></div>
-			<div>
-				<div translate>Just have your friend open this link, and we're good to go!</div>
-				<br />
-
-				<md-input-container id='copy-url-input' class='desktop-only'>
-					<input ng-model='ui.copyUrl' />
-				</md-input-container>
-
-				<div id='copy-url-mobile' class='mobile-only'>
-					<a id='copy-url-link' ng-href='{{ui.copyUrl}}'>{{ui.copyUrl}}</a>
-					<br />
-
-					<md-button
-						translate
-						class='md-fab'
-						aria-label='SMS'
-					>
-						<img src='/img/icons/sms.png' />
-						<a target='_self' ng-href='sms:{{Cyph.Env.smsRecipient}}?body={{ui.copyUrlEncoded}}'></a>
-					</md-button>
-
-					<span class='divider'>&nbsp;</span>
-
-					<md-button
-						translate
-						class='md-fab'
-						aria-label='Email'
-					>
-						<img src='/img/icons/email.png' />
-						<a target='_self' ng-href='mailto:?body={{ui.copyUrlEncoded}}'></a>
-					</md-button>
-				</div>
-
-				<br />
-				<div>
-					<span translate>Link expires in</span>
-					<timer id='timer' interval='1000' countdown='600' autostart='false' finish-callback='ui.chat.abortSetup()'>
-						{{minutes}}:{{sseconds}}
-					</timer>
-				</div>
-			</div>
-			<div flex></div>
-		</div>
-
-		<div ng-view class='loading' layout='column' layout-fill flex ng-class='{active: ui.state === Cyph.im.UI.States.chat && ui.chat.state === Cyph.UI.Chat.States.aborted}'>
-			<div flex></div>
-			<div class='logo-animation'><img src='/img/walken.png' /></div>
-			<div>
-				<div translate>This cyph has been aborted.</div>
-				<br />
-				<span translate>Please</span>
-				<a translate target='_self' ng-href='{{Cyph.Env.newCyphUrl}}'>try again</a>.
-			</div>
-			<div flex></div>
-		</div>
-
-		<div id='websign-obsolete' ng-view class='loading' layout='column' layout-fill flex ng-class='{active: ui.state === Cyph.im.UI.States.webSignObsolete}'>
-			<div flex></div>
-			<div class='logo-animation'><img src='/img/walken.png' /></div>
-			<div>
-				<p>
-					<strong translate>WARNING:</strong>
-					<span translate>Your copy of Cyph is invalid.</span>
-				</p>
-				<p>
-					<span translate>It is likely that either our server has been compromised, or your personal computer is under attack.</span>
-				</p>
-				<p>
-					<span translate>Therefore,</span>
-					<strong translate>DO NOT refresh this page or otherwise continue to use Cyph.</strong>
-					<br />
-					<span translate>Doing so may expose you to malicious code written by nation-state-level hackers.</span>
-				</p>
-				<p>
-					<a href='https://twitter.com/cyph'>Tweet at us</a>
-					<span translate>and</span>
-					<a ng-href='mailto:%22Ryan%20Lester%22%20%3Chacker@linux.com%3E,%20%22Baron%20Joshua%20Cyrus%20Boehm%22%20%3Cjosh@joshboehm.com%3E?subject=I%20RECEIVED%20THE%20WALKEN%20WARNING&body={{Cyph.Env.webSignHashes}}'>email us immediately</a>;
-					<span translate>we will investigate and advise you on how to proceed.</span>
-				</p>
-				<p>
-					<span translate>(This</span>
-					<i translate>may</i>
-					<span translate>be a glitch in the Matrix, but assume otherwise until you hear back from us.)</span>
-				</p>
-			</div>
-			<div flex></div>
-		</div>
-
-		<md-content id='error' ng-view flex class='nano' ng-class='{active: ui.state === Cyph.im.UI.States.error}'>
-			<div class='nano-content'>
-				<div>
-					<h1 translate>I'm sorry, but your cyph is in another castle...</h1>
-				</div>
-				<img src='/img/404.png' />
-				<div id='errorExplanation'>
-					<p>
-						<span translate>Please</span>
-						<a translate target='_self' ng-href='{{Cyph.Env.newCyphUrl}}'>try again</a>.
-					</p>
-					<p translate>Reasons why you may have landed here:</p>
-					<ul>
-						<li translate>
-							The cyph you're looking for has expired
-						</li>
-						<li translate>
-							The cyph you're looking for has already been connected to (someone else got there first, or you clicked twice)
-						</li>
-						<li translate>
-							A glitch in the matrix
-						</li>
-						<li translate>
-							You're just guessing random URLs
-						</li>
-						<li translate>
-							We broke something
-						</li>
-					</ul>
-				</div>
-			</div>
-		</md-content>
-
-		<div id='chat-begin-message' ng-view layout='column' layout-fill flex ng-class='{active: ui.state === Cyph.im.UI.States.chat && ui.chat.state === Cyph.UI.Chat.States.chatBeginMessage}'>
-			<div flex></div>
-			<div translate>Connected!</div>
-			<div flex></div>
-		</div>
-
-		<div
-			id='video-call'
-			ng-view
-			flex
-			ng-class='{active: ui.state === Cyph.im.UI.States.chat && ui.chat.state === Cyph.UI.Chat.States.chat, playing: ui.chat.p2pManager.p2p.streamOptions.video || ui.chat.p2pManager.p2p.incomingStream.video || ui.chat.p2pManager.p2p.incomingStream.audio}'
-		>
-			<video
-				class='friend stream'
-				ng-show='ui.chat.p2pManager.p2p.incomingStream.video'
-				autoplay
-			></video>
-			<video
-				class='friend'
-				ng-hide='ui.chat.p2pManager.p2p.incomingStream.video || ui.chat.p2pManager.p2p.incomingStream.loading'
-				src='/video/background.mp4'
-				autoplay
-				loop
-				muted
-			></video>
-			<video
-				class='me'
-				ng-show='ui.chat.p2pManager.p2p.streamOptions.video'
-				autoplay
-				muted
-			></video>
-
-			<md-progress-circular ng-show='ui.chat.p2pManager.p2p.incomingStream.loading' md-mode='indeterminate'></md-progress-circular>
-
-			<div class='progress' ng-show='ui.chat.p2pManager.p2p.outgoingFile.name'>
-				<span translate>Sending</span>
-				<span>{{ui.chat.p2pManager.p2p.outgoingFile.name}} ({{ui.chat.p2pManager.p2p.outgoingFile.readableSize}}):</span>
-				<md-progress-linear md-mode='determinate' value='{{ui.chat.p2pManager.p2p.outgoingFile.percentComplete}}'></md-progress-linear>
-			</div>
-
-			<div class='progress' ng-show='ui.chat.p2pManager.p2p.incomingFile.name'>
-				<span translate>Receiving</span>
-				<span>{{ui.chat.p2pManager.p2p.incomingFile.name}} ({{ui.chat.p2pManager.p2p.incomingFile.readableSize}}):</span>
-				<md-progress-linear md-mode='determinate' value='{{ui.chat.p2pManager.p2p.incomingFile.percentComplete}}'></md-progress-linear>
-			</div>
-
-			<md-button
-				translate
-				aria-label='End Call'
-				class='md-fab md-theme-grey close-button'
-				ng-click='ui.chat.p2pManager.videoCallClose()'
+			<div
+				cyph-chat-main='ui.chat'
+				ng-show='ui.state === Cyph.im.UI.States.chat'
+				layout='column'
+				layout-fill
+				flex
 			>
-				<strong>&times;</strong>
-			</md-button>
-		</div>
-
-		<div id='message-list' ng-view flex class='nano' ng-class='{active: ui.state === Cyph.im.UI.States.chat && ui.chat.state === Cyph.UI.Chat.States.chat, "is-connected": ui.chat.isConnected}'>
-			<md-content class='nano-content'>
-				<md-list layout='column'>
-					<md-item
-						class='message-item unread'
-						ng-class='::"author-" + Cyph.Session.Authors[message.author]'
-						ng-repeat='message in ui.chat.messages'
-						layout='horizontal'
-					>
-						<span class='message'>
-							<strong
-								translate
-								class='message-author'
-								ng-hide='::message.author === Cyph.Session.Authors.app'
-								ng-bind='::(message.author === Cyph.Session.Authors.me ? "me" : "friend") + ": "'
-							></strong>
-							<span
-								class='message-text'
-								ng-cyph-markdown='::message.text'
-								ng-class='::{"app-message": message.author === Cyph.Session.Authors.app}'
-							></span>
-						</span>
-						<span flex class='message-timestamp'>
-							<span class='mobile-only' ng-show='::message.author === Cyph.Session.Authors.me'>
-								<span translate>me</span> &nbsp;&mdash;&nbsp;
-							</span>
-
-							{{::message.timestamp}}
-
-							<span class='mobile-only' ng-show='::message.author === Cyph.Session.Authors.friend'>
-								&nbsp;&mdash;&nbsp; <span translate>friend</span>
-							</span>
-						</span>
-					</md-item>
-
-					<md-item id='friend-is-typing' ng-class='{"show": ui.chat.isFriendTyping}'>
-						<span class='ellipsis-spinner'>
-							<div class='bounce1'></div>
-							<div class='bounce2'></div>
-							<div class='bounce3'></div>
-						</span>
-					</md-item>
-
-					<div ng-cyph-signup-form='ui.signupForm' ng-show='ui.chat.isDisconnected'>
-						<div translate>
-							Enjoying the service? Join our waitlist for Cyph v2!
-						</div>
-						<div translate>
-							More details are on the way, but the next version of Cyph will include
-							group messaging, user accounts, and encrypted chat history.
-						</div>
+				<div cyph-signup-form='ui.signupForm'>
+					<div translate>
+						Enjoying the service? Join our waitlist for Cyph v2!
 					</div>
-				</md-list>
+					<div translate>
+						More details are on the way, but the next version of Cyph will include
+						group messaging, user accounts, and encrypted chat history.
+					</div>
+				</div>
+			</div>
+
+			<div
+				ng-view
+				class='loading'
+				layout='column'
+				layout-fill
+				flex
+				ng-class='{active: ui.state === Cyph.im.UI.States.spinningUp}'
+			>
+				<div flex></div>
+				<div class='logo-animation'>
+					<img src='/img/logo.animated.gif' />
+				</div>
+				<div translate>Now spinning up your cyph room...</div>
+				<div flex></div>
+			</div>
+
+			<div
+				ng-view
+				class='loading'
+				layout='column'
+				layout-fill
+				flex
+				ng-class='{
+					active: ui.state === Cyph.im.UI.States.waitingForFriend
+				}'
+			>
+				<div flex></div>
+				<div class='logo-animation'>
+					<img src='/img/logo.animated.gif' />
+				</div>
+				<div>
+					<div translate>
+						Just have your friend open this link, and we're good to go!
+					</div>
+					<br />
+
+					<md-input-container id='copy-url-input' class='desktop-only'>
+						<input ng-model='ui.copyUrl' />
+					</md-input-container>
+
+					<div id='copy-url-mobile' class='mobile-only'>
+						<a id='copy-url-link' ng-href='{{ui.copyUrl}}'>
+							{{ui.copyUrl}}
+						</a>
+						<br />
+
+						<md-button
+							translate
+							class='md-fab'
+							aria-label='SMS'
+						>
+							<img src='/img/icons/sms.png' />
+							<a
+								target='_self'
+								ng-href='sms:{{Cyph.Env.smsRecipient}}?body={{ui.copyUrlEncoded}}'
+							></a>
+						</md-button>
+
+						<span class='divider'>
+							&nbsp;
+						</span>
+
+						<md-button
+							translate
+							class='md-fab'
+							aria-label='Email'
+						>
+							<img src='/img/icons/email.png' />
+							<a
+								target='_self'
+								ng-href='mailto:?body={{ui.copyUrlEncoded}}'
+							></a>
+						</md-button>
+					</div>
+
+					<br />
+					<div>
+						<span translate>
+							Link expires in
+						</span>
+						<timer
+							id='timer'
+							interval='1000'
+							countdown='600'
+							autostart='false'
+							finish-callback='ui.chat.abortSetup()'
+						>
+							{{minutes}}:{{sseconds}}
+						</timer>
+					</div>
+				</div>
+				<div flex></div>
+			</div>
+
+			<div
+				ng-view
+				id='websign-obsolete'
+				class='loading'
+				layout='column'
+				layout-fill
+				flex
+				ng-class='{
+					active: ui.state === Cyph.im.UI.States.webSignObsolete
+				}'
+			>
+				<div flex></div>
+				<div class='logo-animation'>
+					<img src='/img/walken.png' />
+				</div>
+				<div>
+					<p>
+						<strong translate>WARNING:</strong>
+						<span translate>Your copy of Cyph is invalid.</span>
+					</p>
+					<p>
+						<span translate>
+							It is likely that either our server has been compromised,
+							or your personal computer is under attack.
+						</span>
+					</p>
+					<p>
+						<span translate>Therefore,</span>
+						<strong translate>
+							DO NOT refresh this page or otherwise continue to use Cyph.
+						</strong>
+						<br />
+						<span translate>
+							Doing so may expose you to malicious code written by
+							nation-state-level hackers.
+						</span>
+					</p>
+					<p>
+						<a href='https://twitter.com/cyph'>Tweet at us</a>
+						<span translate>and</span>
+						<a ng-href='{{Cyph.Env.webSignWarningEmail}}'>
+							email us immediately
+						</a>;
+						<span translate>
+							we will investigate and advise you on how to proceed.
+						</span>
+					</p>
+					<p>
+						<span translate>(This</span>
+						<i translate>may</i>
+						<span translate>
+							be a glitch in the Matrix, but assume
+							otherwise until you hear back from us.)
+						</span>
+					</p>
+				</div>
+				<div flex></div>
+			</div>
+
+			<md-content
+				ng-view
+				id='error'
+				flex
+				class='nano'
+				ng-class='{
+					active: ui.state === Cyph.im.UI.States.error
+				}'
+			>
+				<div class='nano-content'>
+					<div>
+						<h1 translate>
+							I'm sorry, but your cyph is in another castle...
+						</h1>
+					</div>
+					<img src='/img/404.png' />
+					<div id='errorExplanation'>
+						<p>
+							<span translate>Please</span>
+							<a
+								translate
+								target='_self'
+								ng-href='{{Cyph.Env.newCyphUrl}}'
+							>
+								try again
+							</a>.
+						</p>
+						<p translate>Reasons why you may have landed here:</p>
+						<ul>
+							<li translate>
+								The cyph you're looking for has expired
+							</li>
+							<li translate>
+								The cyph you're looking for has already been connected to
+								(someone else got there first, or you clicked twice)
+							</li>
+							<li translate>
+								A glitch in the matrix
+							</li>
+							<li translate>
+								You're just guessing random URLs
+							</li>
+							<li translate>
+								We broke something
+							</li>
+						</ul>
+					</div>
+				</div>
 			</md-content>
 
-			<div id='setting-up-crypto' class='loading' layout='column' layout-fill flex>
-				<div flex></div>
-				<div class='logo-animation'><img src='/img/logo.animated.gif' /></div>
-				<div translate>Authenticating connection...</div>
-				<div flex></div>
-			</div>
-		</div>
+			<div
+				ng-view
+				id='blank'
+				flex
+				ng-class='{
+					active: ui.state === Cyph.im.UI.States.blank
+				}'
+			></div>
 
-		<div id='blank' ng-view flex ng-class='{active: ui.state === Cyph.im.UI.States.blank}'></div>
+			<footer>
+				<div
+					cyph-chat-message-box='ui.chat'
+					ng-show='ui.state === Cyph.im.UI.States.chat'
+				></div>
 
-		<footer>
-			<div id='message-wrapper' ng-show='ui.state === Cyph.im.UI.States.chat && ui.chat.state === Cyph.UI.Chat.States.chat && ui.chat.session.state.isAlive'>
-				<textarea
-					translate
-					id='message-box'
-					ng-model='ui.chat.currentMessage'
-					ng-trim='false'
-					ng-change='ui.chat.messageChange()'
-					class='tabIndent'
-					on-enterpress='ui.chat.send()'
-					enterpress-only='desktop'
-					placeholder='Send a secure message...'
-				></textarea>
-
-				<md-button
-					translate
-					id='send-button'
-					ng-class='{"message-wrapper-hidden": ui.chat.currentMessage === ""}'
-					on-click='ui.chat.send()'
-					class='mobile-only'
-					aria-label='Send'
+				<div
+					id='footer'
+					class='desktop-only'
+					ng-class='{
+						center: ui.chat.state === Cyph.UI.Chat.States.chat
+					}'
 				>
-					<img src='/img/icons/send.png' />
-				</md-button>
-
-				<md-button
-					translate
-					id='insert-photo-mobile'
-					ng-class='{"message-wrapper-hidden": ui.chat.currentMessage !== ""}'
-					class='mobile-only'
-					aria-label='Insert Photo'
-				>
-					<img src='/img/icons/insertphoto.grey.png' />
-					<input accept='image/*' type='file' on-change='ui.chat.photoManager.insert(this)' />
-				</md-button>
-
-				<md-button
-					translate
-					id='insert-photo-desktop'
-					ng-class='{"message-wrapper-hidden": ui.chat.currentMessage !== ""}'
-					class='md-fab desktop-only'
-					aria-label='Insert Photo'
-				>
-					<img src='/img/icons/insertphoto.png' />
-					<input accept='image/*' type='file' on-change='ui.chat.photoManager.insert(this)' />
-				</md-button>
-
-				<md-subheader
-					id='new-messages'
-					ng-show='ui.chat.scrollManager.unreadMessages > 0'
-					class='md-subheader-colored md-sticky-clone'
-					sticky-state='active'
-					ng-click='ui.chat.scrollManager.scrollDown()'
-				>
-					<strong>&#8595;&nbsp;&nbsp;</strong>
-					<span
-						translate
-						ng-bind='ui.chat.scrollManager.unreadMessages + " " + "new" + " " + (ui.chat.scrollManager.unreadMessages > 1 ? "messages" : "message")'
-					></span>
-				</md-subheader>
-			</div>
-
-			<div id='footer' class='desktop-only'>
-				&copy; Cyph 2015
+					&copy; Cyph 2015
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<a href='https://twitter.com/cyph'>@cyph</a>
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<a href='mailto:hello@cyph.com'>hello@cyph.com</a>
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<a target='_self' href='tel:+19312974462' title='+1(931) 297 4462'>+1(931) CYPH INC</a>
-				<!-- <a target='_self' href='tel:+18447472974' title='+1 THIS IS CYPH'>+1 THIS IS CYPH</a> -->
 
+					<a href='https://twitter.com/cyph'>
+						@cyph
+					</a>
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<a target='_self' href='bitcoin:1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd'>1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd</a>
-			</div>
-		</footer>
 
+					<a href='mailto:hello@cyph.com'>
+						hello@cyph.com
+					</a>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+					<a
+						target='_self'
+						href='tel:+19312974462'
+						title='+1(931) 297 4462'
+					>
+						+1(931) CYPH INC
+					</a>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+					<a
+						target='_self'
+						href='bitcoin:1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd'
+					>
+						1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd
+					</a>
+				</div>
+			</footer>
 		</section>
 
+		<div cyph-chat-cyphertext='ui.chat'></div>
 
-
-		<div id='cyphertext' class='nano'>
-			<md-content class='nano-content'>
-				<md-list layout='column'>
-					<md-item class='message-item unread' ng-repeat='message in ui.chat.cyphertext.messages' layout='horizontal'>
-						<span class='message'>
-							<strong
-								translate
-								ng-bind='::(message.author === Cyph.Session.Authors.me ? "me" : "friend") + ": "'
-							></strong>
-							<span flex>{{::message.text}}</span>
-							<br />
-							<br />
-						</span>
-					</md-item>
-				</md-list>
-			</md-content>
-			<md-button
-				translate
-				aria-label='Close Cyphertext'
-				class='md-fab md-theme-grey close-button'
-				ng-click='ui.chat.cyphertext.hide()'
-			>
-				<strong>&times;</strong>
-			</md-button>
-		</div>
-
-		<div id='pre-load' ng-class='{"load-complete": ui.state !== Cyph.im.UI.States.none}'>
+		<div
+			id='pre-load'
+			ng-class='{
+				"load-complete": ui.state !== Cyph.im.UI.States.none
+			}'
+		>
 			<div class='double-bounce1'></div>
 			<div class='double-bounce2'></div>
 		</div>
