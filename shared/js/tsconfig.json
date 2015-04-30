@@ -87,12 +87,12 @@
         "cyph/ui/chat/p2pmanager.ts",
         "cyph/ui/chat/photomanager.ts",
         "cyph/ui/chat/scrollmanager.ts",
-        "cyph/ui/chat/templates.ts",
         "cyph/ui/directives/chat.ts",
         "cyph/ui/directives/enterpress.ts",
         "cyph/ui/directives/filechange.ts",
         "cyph/ui/directives/markdown.ts",
         "cyph/ui/directives/signupform.ts",
+        "cyph/ui/directives/templates.ts",
         "../lib/typings/tsd.d.ts"
     ]
 }
