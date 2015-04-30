@@ -36,11 +36,11 @@ angular.
 	]).
 	controller('CyphController', [
 		'$scope',
-		'$mdToast',
 		'$mdDialog',
+		'$mdToast',
 		'chatSidenav',
 
-		($scope, $mdToast, $mdDialog, chatSidenav) => $(() => {
+		($scope, $mdDialog, $mdToast, chatSidenav) => $(() => {
 			Cyph.UI.Elements.load();
 
 			let controller: Cyph.IController			= new Cyph.Controller($scope);

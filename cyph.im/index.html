@@ -59,25 +59,25 @@
 	<body>
 		<section id='main' layout='column' layout-fill>
 			<span
-				ng-cyph-chat-toolbar='ui.chat'
+				cyph-chat-toolbar='ui.chat'
 				open='ui.openMobileMenu()'
 				show-chat='ui.state === Cyph.im.UI.States.chat'
 				class='mobile-only'
 			></span>
 			<span
-				ng-cyph-chat-sidebar='ui.chat'
+				cyph-chat-sidebar='ui.chat'
 				show-chat='ui.state === Cyph.im.UI.States.chat'
 				class='desktop-only'
 			></span>
 
 			<div
-				ng-cyph-chat-main='ui.chat'
+				cyph-chat-main='ui.chat'
 				ng-show='ui.state === Cyph.im.UI.States.chat'
 				layout='column'
 				layout-fill
 				flex
 			>
-				<div ng-cyph-signup-form='ui.signupForm'>
+				<div cyph-signup-form='ui.signupForm'>
 					<div translate>
 						Enjoying the service? Join our waitlist for Cyph v2!
 					</div>
@@ -302,7 +302,7 @@
 
 			<footer>
 				<div
-					ng-cyph-chat-message-box='ui.chat'
+					cyph-chat-message-box='ui.chat'
 					ng-show='ui.state === Cyph.im.UI.States.chat'
 				></div>
 
@@ -345,7 +345,7 @@
 			</footer>
 		</section>
 
-		<div ng-cyph-chat-cyphertext='ui.chat'></div>
+		<div cyph-chat-cyphertext='ui.chat'></div>
 
 		<div
 			id='pre-load'

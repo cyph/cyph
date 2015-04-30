@@ -2,7 +2,7 @@ module Cyph {
 	export module UI {
 		export module Directives {
 			export class Filechange {
-				public static title: string	= 'ngCyphFilechange';
+				public static title: string	= 'cyphFilechange';
 
 				private static _	= (() => {
 					angular.module(Filechange.title, []).directive(Filechange.title, () => ({
