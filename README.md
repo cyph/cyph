@@ -32,7 +32,7 @@ To blow out all Cyph-related images/containers/processes when you're done:
 
 ---
 
-To start local environment:
+To start a local environment:
 
 	docker run -d \
 		-p 42000:5000 -p 42001:5001 -p 42002:5002 -p 42003:5003 -p 43000:4568 \
