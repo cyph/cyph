@@ -76,5 +76,9 @@ module Cyph {
 				]);
 			}
 		}
+
+		public static _	= (() => {
+			self.onpopstate	= () => EventManager.trigger(UrlState.urlStateChangeEvent);
+		})();
 	}
 }
