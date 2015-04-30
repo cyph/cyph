@@ -16,9 +16,21 @@ Afterwards, if you're running either OS X or Windows, there's some additional se
 	
 	# Then set the environment variables from boot2docker's output
 
-To build for the first time (but scroll to the bottom first):
+---
+
+To build for the first time:
 
 	docker build -t cyph/<branch> .
+
+Alternatively, in Unix-like environments, you can run:
+
+	make
+
+To blow out all Cyph-related images/containers/processes when you're done:
+
+	make clean
+
+---
 
 To start local environment:
 
@@ -27,7 +39,15 @@ To start local environment:
 		-v /path/to/current/directory:/cyph \
 		cyph/<branch> ./serve.sh
 
-Host: localhost (Linux) or `boot2docker ip` (OS X / Windows)
+Alternatively, in Unix-like environments, you can run:
+
+	./docker.sh serve
+
+To kill it:
+
+	./docker.sh kill
+
+Server host: localhost (Linux) or `boot2docker ip` (OS X / Windows)
 
 Ports:
 
@@ -41,6 +61,8 @@ Ports:
 
 * SQS: 43000
 
+---
+
 To deploy to production, first make sure you're Ryan or Josh, then run:
 
 	docker run -it \
@@ -51,51 +73,35 @@ To deploy to production, first make sure you're Ryan or Josh, then run:
 		-v /path/to/current/directory:/cyph \
 		cyph/<branch> ./deploy.sh --prod
 
-Other available commands:
+Alternatively, in Unix-like environments, you can run:
 
-* Verify that codes compile:  
-	`docker run \`  
-	`-v /path/to/current/directory:/cyph \`  
-	`cyph/<branch> ./build.sh --test`
-
-* Commit local changes:  
-	`docker run \`  
-	`-v $HOME/.gitconfig:/home/gibson/.gitconfig \`  
-	`-v $HOME/.ssh:/home/gibson/.ssh \`  
-	`-v /path/to/current/directory:/cyph \`  
-	`cyph/<branch> ./commit.sh <comment>`
-
-* Update libraries in client code:  
-	`docker run \`  
-	`-v /path/to/current/directory:/cyph \`  
-	`cyph/<branch> ./updatelibs.sh`
-
-* Compute hash of current WebSign bootstrap:  
-	`docker run \`  
-	`-v /path/to/current/directory:/cyph \`  
-	`cyph/<branch> ./websignhash.sh cyph.im`
+	./docker.sh deploy --prod
 
 ---
 
-In Unix-like environments (including Cygwin), the following alternative commands are provided for convenience:
+Other available commands:
 
-* `make`
+* Verify that codes compile: `./docker.sh build --test`  
+	(`docker run \`  
+	`-v /path/to/current/directory:/cyph \`  
+	`cyph/<branch> ./build.sh --test`)
 
-* `make clean`
+* Commit local changes: `./docker.sh commit <comment>`  
+	(`docker run \`  
+	`-v $HOME/.gitconfig:/home/gibson/.gitconfig \`  
+	`-v $HOME/.ssh:/home/gibson/.ssh \`  
+	`-v /path/to/current/directory:/cyph \`  
+	`cyph/<branch> ./commit.sh <comment>`)
 
-* `./docker.sh serve`
+* Update libraries in client code: `./docker.sh updatelibs`  
+	(`docker run \`  
+	`-v /path/to/current/directory:/cyph \`  
+	`cyph/<branch> ./updatelibs.sh`)
 
-* `./docker.sh kill`
-
-* `./docker.sh deploy [--prod]`
-
-* `./docker.sh build --test`
-
-* `./docker.sh commit <comment>`
-
-* `./docker.sh updatelibs`
-
-* `./docker.sh websignhash <project>`
+* Compute hash of current WebSign bootstrap: `./docker.sh websignhash <project> # e.g. cyph.im`  
+	`docker run \`  
+	`-v /path/to/current/directory:/cyph \`  
+	`cyph/<branch> ./websignhash.sh <project>`
 
 ---
 
