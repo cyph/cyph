@@ -25,8 +25,8 @@ module Cyph {
 					try {
 						handler(data);
 					}
-					catch (e) {
-						setTimeout(() => { throw e }, 0);
+					catch (err) {
+						setTimeout(() => { throw err }, 0);
 					}
 				}
 

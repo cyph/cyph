@@ -195,8 +195,8 @@ module Cyph {
 					callback();
 				}
 			}
-			catch (e) {
-				error(e.message);
+			catch (err) {
+				error(err.message);
 			}
 		}
 
