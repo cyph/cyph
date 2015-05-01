@@ -18,8 +18,8 @@ module Cyph {
 							try {
 								timer(now);
 							}
-							catch (e) {
-								setTimeout(() => { throw e }, 0);
+							catch (err) {
+								setTimeout(() => { throw err }, 0);
 							}
 						}
 					}
