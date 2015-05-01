@@ -181,9 +181,9 @@ module Cyph {
 					blobUrl		= URL.createObjectURL(blob);
 					this.worker	= new Worker(blobUrl);
 				}
-				catch (e) {
+				catch (err) {
 					this.worker.terminate();
-					throw e;
+					throw err;
 				}
 				finally {
 					try {
