@@ -51,11 +51,19 @@ module Cyph {
 				);
 			}
 
-			public send (message: string|string[], callback?: Function|Function[], isSynchronous?: boolean) : void {
+			public send (
+				message: string|string[],
+				callback?: Function|Function[],
+				isSynchronous?: boolean
+			) : void {
 				this.outQueue.send(message, callback, isSynchronous);
 			}
 
-			public constructor (channelName: string, handlers: any = {}, config: any = {}) {
+			public constructor (
+				channelName: string,
+				handlers: any = {},
+				config: any = {}
+			) {
 				try {
 					let descriptor: any	= JSON.parse(channelName);
 					channelName			= descriptor.name;
@@ -124,7 +132,9 @@ module Cyph {
 									});
 
 
-									handlers.onopen && handlers.onopen(isCreator);
+									if (handlers.onopen) {
+										handlers.onopen(isCreator);
+									}
 
 									if (!isCreator) {
 										this.send('');

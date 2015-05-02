@@ -40,14 +40,17 @@ module Cyph.im {
 					}
 				};
 
-				let selectCopyUrl: Function	= () => {
-					if ('setSelectionRange' in Cyph.UI.Elements.copyUrlInput[0]) {
-						Cyph.UI.Elements.copyUrlInput[0]['setSelectionRange'](
-							0,
-							copyUrl.length
-						);
-					}
-				};
+				let selectCopyUrl: Function	= () =>
+					Util.getValue(
+						Cyph.UI.Elements.copyUrlInput[0],
+						'setSelectionRange',
+						() => {}
+					).call(
+						Cyph.UI.Elements.copyUrlInput[0],
+						0,
+						copyUrl.length
+					);
+				;
 
 				if (Cyph.Env.isMobile) {
 					setCopyUrl();
@@ -77,8 +80,11 @@ module Cyph.im {
 						.replace(/(.*:.*):.*? /, '$1')
 					;
 
-					Cyph.UI.Elements.timer.parent().text(Cyph.Strings.linkExpiresAt + ' ' + expireTime);
-					Cyph.UI.Elements.timer	= null;
+					Cyph.UI.Elements.timer.parent().text(
+						Cyph.Strings.linkExpiresAt +
+						' ' +
+						expireTime
+					);
 				}
 				else {
 					Cyph.UI.Elements.timer[0]['start']();
@@ -91,9 +97,9 @@ module Cyph.im {
 			}
 
 			public openMobileMenu () : void {
-				setTimeout(() => {
-					this.mobileMenu.open();
-				}, 250);
+				setTimeout(() =>
+					this.mobileMenu.open()
+				, 250);
 			}
 
 			public constructor (
@@ -113,7 +119,7 @@ module Cyph.im {
 				else {
 					Cyph.UrlState.onchange(urlState => this.onUrlStateChange(urlState));
 
-					this.chat		= new Cyph.UI.Chat.Chat(
+					this.chat	= new Cyph.UI.Chat.Chat(
 						this.controller,
 						this.dialogManager,
 						this.mobileMenu,
@@ -135,11 +141,17 @@ module Cyph.im {
 							on('beforeunload', () => Cyph.Strings.disconnectWarning)
 					);
 
-					this.chat.session.on(Cyph.Session.Events.beginWaiting, () => this.beginWaiting());
+					this.chat.session.on(Cyph.Session.Events.beginWaiting, () =>
+						this.beginWaiting()
+					);
 
-					this.chat.session.on(Cyph.Session.Events.connect, () => this.changeState(States.chat));
+					this.chat.session.on(Cyph.Session.Events.connect, () =>
+						this.changeState(States.chat)
+					);
 
-					this.chat.session.on(Cyph.Session.Events.newCyph, () => this.changeState(States.spinningUp));
+					this.chat.session.on(Cyph.Session.Events.newCyph, () =>
+						this.changeState(States.spinningUp)
+					);
 				}
 
 

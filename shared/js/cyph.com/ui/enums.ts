@@ -2,7 +2,6 @@ module Cyph.com {
 	export module UI {
 		export enum States {
 			home,
-			// about,
 			error,
 			faq,
 			podcast,

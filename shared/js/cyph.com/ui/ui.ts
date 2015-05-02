@@ -65,7 +65,10 @@ module Cyph.com {
 				position: number,
 				delayFactor: number = 0.75
 			) : void {
-				let delay: number	= delayFactor * Math.abs(Cyph.UI.Elements.document.scrollTop() - position);
+				let delay: number	=
+					delayFactor *
+					Math.abs(Cyph.UI.Elements.document.scrollTop() - position)
+				;
 
 				Cyph.UI.Elements.html.add(Cyph.UI.Elements.body).animate({
 					scrollTop: position
@@ -159,7 +162,7 @@ module Cyph.com {
 						scrollDelay	= 0;
 
 						Cyph.UrlState.set(href);
-						setTimeout(() => this.backgroundVideoManager.adjustMargins(), 250);
+						setTimeout(() => this.backgroundVideoManager.adjustMargins(), 500);
 					}
 
 					setTimeout(() => this.scroll(0), scrollDelay);
