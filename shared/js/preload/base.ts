@@ -87,6 +87,6 @@ $(() => {
 		$this.css('pointer-events', 'none');
 
 		/* Using mouseup instead of click because of Angular Material weirdness */
-		$button.on('mouseup', () => setTimeout(() => $this[0].click(), 500));
+		$button.on('mouseup', () => setTimeout(() => elem.click(), 500));
 	});
 });

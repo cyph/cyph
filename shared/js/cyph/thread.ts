@@ -150,13 +150,13 @@ module Cyph {
 			Thread.threads	= Thread.threads.filter(t => t !== this);
 		}
 
-		public constructor (f: Function, vars: any = {}, onmessage?: (e: MessageEvent) => any) {
+		public constructor (f: Function, vars: any = {}, onmessage: (e: MessageEvent) => any = e => {}) {
 			vars.location	= location;
 			vars.navigator	= {language: Env.language, userAgent: Env.userAgent};
 
 			vars.threadRandomSeed	= crypto.getRandomValues(new Uint8Array(50000));
 
-			let s: string	=
+			let threadBody: string	=
 				'var vars = ' + JSON.stringify(vars) + ';\n' +
 				Thread.stringifyFunction(Thread.threadEnvSetup) +
 				Thread.stringifyFunction(f) +
@@ -168,11 +168,11 @@ module Cyph {
 				let blobUrl: string;
 
 				try {
-					blob	= new Blob([s], {type: 'application/javascript'});
+					blob	= new Blob([threadBody], {type: 'application/javascript'});
 				}
 				catch (_) {
 					let blobBuilder	= new Thread.BlobBuilder();
-					blobBuilder.append(s);
+					blobBuilder.append(threadBody);
 
 					blob	= blobBuilder.getBlob();
 				}
@@ -194,15 +194,15 @@ module Cyph {
 			}
 			catch (_) {
 				this.worker	= new Worker(Config.webSignConfig.workerHelper);
-				this.worker.postMessage(s);
+				this.worker.postMessage(threadBody);
 			}
 
 
 			this.worker.onmessage	= (e: MessageEvent) => {
-				if (e.data && e.data.isThreadEvent) {
+				if (Util.getValue(e.data, 'isThreadEvent')) {
 					EventManager.trigger(e.data.event, e.data.data);
 				}
-				else if (onmessage) {
+				else {
 					onmessage(e);
 				}
 			};
