@@ -34,7 +34,7 @@ module Cyph {
 				public log (text: string, author: Session.Authors) : void {
 					if (text) {
 						/* Performance optimisation */
-						if (this.messages.length > (Env.isMobile ? 5 : 50)) {
+						if (this.messages.length > (this.isMobile ? 5 : 50)) {
 							this.messages.shift();
 						}
 
@@ -76,7 +76,8 @@ module Cyph {
 					session: Session.ISession,
 					controller: IController,
 					mobileMenu: ISidebar,
-					private dialogManager: IDialogManager
+					private dialogManager: IDialogManager,
+					private isMobile: boolean
 				) {
 					super(controller, mobileMenu);
 
