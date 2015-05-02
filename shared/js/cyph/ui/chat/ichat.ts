@@ -8,6 +8,8 @@ module Cyph {
 
 				isFriendTyping: boolean;
 
+				isMobile: boolean;
+
 				currentMessage: string;
 
 				state: States;

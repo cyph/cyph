@@ -13,7 +13,11 @@ module Cyph {
 				onLag?: Function
 			) : void;
 
-			send (message: string|string[], callback?: Function|Function[], isSynchronous?: boolean) : void;
+			send (
+				message: string|string[],
+				callback?: Function|Function[],
+				isSynchronous?: boolean
+			) : void;
 		}
 	}
 }
