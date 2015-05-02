@@ -57,4 +57,7 @@ bower install --save \
 	mnaamani/otr4-em \
 	rubycon/isaac.js
 
+cd ..
+chmod -R 700 .
+
 cd "${dir}"
