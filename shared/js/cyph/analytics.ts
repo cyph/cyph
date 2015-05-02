@@ -43,38 +43,43 @@ module Cyph {
 				this.analFrameIsReady	= false;
 			}
 			else if (Env.isMainThread) {
-				this.analFrame	= document.createElement('iframe');
+				try {
+					this.analFrame	= document.createElement('iframe');
 
-				this.analFrame.src	=
-					Env.baseUrl +
-					'anal/' +
-					appName +
-					location.pathname +
-					location.search +
-					(
-						document.referrer &&
-						!/https:\/\/www.cyph.[a-z]+\//.test(document.referrer) ?
-							(
-								(location.search ? '&' : '?') +
-								'ref=' +
-								encodeURIComponent(document.referrer)
-							) :
-							''
-					)
-				;
+					this.analFrame.src	=
+						Env.baseUrl +
+						'anal/' +
+						appName +
+						location.pathname +
+						location.search +
+						(
+							document.referrer &&
+							!/https:\/\/www.cyph.[a-z]+\//.test(document.referrer) ?
+								(
+									(location.search ? '&' : '?') +
+									'ref=' +
+									encodeURIComponent(document.referrer)
+								) :
+								''
+						)
+					;
 
-				this.analFrame.style.display	= 'none';
+					this.analFrame.style.display	= 'none';
 
-				document.body.appendChild(this.analFrame);
+					document.body.appendChild(this.analFrame);
 
-				$(() =>
-					$(this.analFrame).load(() =>
-						setTimeout(() => {
-							this.analFrameIsReady	= true;
-							this.set({appName, appVersion});
-						}, 250)
-					)
-				);
+					$(() =>
+						$(this.analFrame).load(() =>
+							setTimeout(() => {
+								this.analFrameIsReady	= true;
+								this.set({appName, appVersion});
+							}, 250)
+						)
+					);
+				}
+				catch (_) {
+					this.analFrameIsReady	= false;
+				}
 			}
 		}
 	}

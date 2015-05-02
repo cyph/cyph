@@ -17,28 +17,41 @@ module Cyph {
 				return b ? '1800' : '1801';
 			}
 
-			public static sqsWrapper (config: any = {}) : any {
+			public static sqsWrapper (config: any = {}) : ({
+				base: any;
+				createQueue: (o: any, callback: Function, shouldretryUntilComplete?: boolean) => void;
+				deleteMessage: (o: any, callback: Function, shouldretryUntilComplete?: boolean) => void;
+				deleteMessageBatch: (o: any, callback: Function, shouldretryUntilComplete?: boolean) => void;
+				deleteQueue: (o: any, callback: Function, shouldretryUntilComplete?: boolean) => void;
+				getQueueUrl: (o: any, callback: Function, shouldretryUntilComplete?: boolean) => void;
+				receiveMessage: (o: any, callback: Function, shouldretryUntilComplete?: boolean) => void;
+				sendMessage: (o: any, callback: Function, shouldretryUntilComplete?: boolean) => void;
+				sendMessageBatch: (o: any, callback: Function, shouldretryUntilComplete?: boolean) => void;
+				setQueueAttributes: (o: any, callback: Function, shouldretryUntilComplete?: boolean) => void;
+			}) {
 				if (Env.awsEndpoint) {
 					config.endpoint	= Env.awsEndpoint;
 				}
 
 				let wrapper	= {
-					base: new self['AWS'].SQS(config)
+					base: new self['AWS'].SQS(config),
+					createQueue: null,
+					deleteMessage: null,
+					deleteMessageBatch: null,
+					deleteQueue: null,
+					getQueueUrl: null,
+					receiveMessage: null,
+					sendMessage: null,
+					sendMessageBatch: null,
+					setQueueAttributes: null
 				};
 
-				/* Add methods that take an object and an optional callback */
-				[
-					'createQueue',
-					'deleteMessage',
-					'deleteMessageBatch',
-					'deleteQueue',
-					'getQueueUrl',
-					'receiveMessage',
-					'sendMessage',
-					'sendMessageBatch',
-					'setQueueAttributes'
-				].forEach(method =>
-					wrapper[method]	= (o: any, callback: Function, shouldretryUntilComplete?: boolean) => {
+				Object.keys(wrapper).filter(k => k !== 'base').forEach((method: string) =>
+					wrapper[method]	= (
+						o: any,
+						callback: Function,
+						shouldretryUntilComplete?: boolean
+					) => {
 						Util.retryUntilComplete(retry =>
 							wrapper.base[method](o, (...args: any[]) => {
 								let err: any	= args[0];
@@ -64,16 +77,16 @@ module Cyph {
 			public queueUrl: string;
 			public sqs: any;
 
-			public close (callback?: Function) : void {
+			public close (callback: Function = () => {}) : void {
 				if (this.isQueueAlive) {
 					this.isQueueAlive	= false;
 
 					this.sqs.deleteQueue(
 						{QueueUrl: this.queueUrl},
-						(...args: any[]) => callback && callback.apply(this, args)
+						(...args: any[]) => callback.apply(this, args)
 					);
 				}
-				else if (callback) {
+				else {
 					callback();
 				}
 			}
@@ -83,8 +96,8 @@ module Cyph {
 			}
 
 			public receive (
-				messageHandler?: Function,
-				onComplete?: Function,
+				messageHandler: Function = () => {},
+				onComplete: Function = () => {},
 				maxNumberOfMessages: number = 10,
 				waitTimeSeconds: number = 20,
 				onLag?: Function
@@ -95,16 +108,14 @@ module Cyph {
 						AttributeNames: ['ApproximateFirstReceiveTimestamp', 'SentTimestamp'],
 						MaxNumberOfMessages: maxNumberOfMessages,
 						WaitTimeSeconds: waitTimeSeconds
-					}, (...args: any[]) => {
-						let err: any	= args[0];
-						let data: any	= args[1];
-
+					}, (err, data) => {
 						try {
-							if (data && data.Messages && data.Messages.length > 0) {
+							if (Util.getValue(data, 'Messages', []).length > 0) {
 								if (onLag) {
-									let lag: number	=
-										parseInt(data.Messages[0].Attributes.ApproximateFirstReceiveTimestamp, 10) -
-										parseInt(data.Messages[0].Attributes.SentTimestamp, 10)
+									let attributes: any	= data.Messages[0].Attributes;
+									let lag: number		=
+										parseInt(attributes.ApproximateFirstReceiveTimestamp, 10) -
+										parseInt(attributes.SentTimestamp, 10)
 									;
 
 									if (lag > 5000) {
@@ -132,13 +143,17 @@ module Cyph {
 							}
 						}
 						finally {
-							onComplete && onComplete.apply(this, args);
+							onComplete(err, data);
 						}
 					});
 				}
 			}
 
-			public send (message: string|string[], callback?: Function|Function[], isSynchronous?: boolean) : void {
+			public send (
+				message: string|string[],
+				callback?: Function|Function[],
+				isSynchronous?: boolean
+			) : void {
 				if (this.isQueueAlive) {
 					let sqs: any	= isSynchronous ? this.syncSqs : this.sqs;
 
@@ -160,19 +175,25 @@ module Cyph {
 										try {
 											f.apply(this, args);
 										}
-										catch (_) {}
+										catch (err) {
+											setTimeout(() => { throw err }, 0);
+										}
 									}
 								}
 							};
 						}
 
-						sqs.sendMessageBatch({
-							QueueUrl: this.queueUrl,
-							Entries: message.map((s, i) => ({
-								Id: (i + 1).toString(),
-								MessageBody: JSON.stringify({message: s})
-							}))
-						}, callback, true);
+						sqs.sendMessageBatch(
+							{
+								QueueUrl: this.queueUrl,
+								Entries: message.map((s: string, i: number) => ({
+									Id: (i + 1).toString(),
+									MessageBody: JSON.stringify({message: s})
+								}))
+							},
+							callback,
+							true
+						);
 					}
 				}
 			}
@@ -215,18 +236,18 @@ module Cyph {
 						setTimeout(() => onlag = handlers.onlag, 60000);
 
 						Util.retryUntilComplete(retry =>
-							this.receive(handlers.onmessage, (...args: any[]) => {
-								let err: any	= args[0];
-								let data: any	= args[1];
-
+							this.receive(handlers.onmessage, (err, data) => {
 								if (err && err.code === Queue.nonExistentQueue) {
 									this.isQueueAlive	= false;
-									handlers.onclose && handlers.onclose.apply(this, args);
+
+									if (handlers.onclose) {
+										handlers.onclose(err, data);
+									}
 								}
 								else if (this.isQueueAlive) {
 									let delay: number		= 50;
 									let now: number			= Date.now();
-									let isEmpty: boolean	= !(data && data.Messages && data.Messages.length > 0);
+									let isEmpty: boolean	= Util.getValue(data, 'Messages', []).length < 1;
 
 									if (isEmpty && (now - lastReceiveTime) < 10000) {
 										delay	= 2500;
@@ -248,13 +269,10 @@ module Cyph {
 						Util.retryUntilComplete(retry =>
 							this.sqs.getQueueUrl({
 								QueueName: Queue.queuePrefix + queueName
-							}, (...args: any[]) => {
-								let err: any	= args[0];
-								let data: any	= args[1];
-
+							}, (err, data) => {
 								if (err && err.code === Queue.nonExistentQueue) {
 									this.isQueueAlive	= false;
-									handlers.onclose.apply(this, args);
+									handlers.onclose(err, data);
 								}
 								else if (this.isQueueAlive) {
 									retry(30000);
