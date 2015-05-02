@@ -40,8 +40,11 @@ module Cyph {
 
 				chatMain: `
 					<div
-						class='chat-main'
-						ng-class='{video: $this.p2pManager.isVideoCall}'
+						class='chat-main platform-container'
+						ng-class='{
+							video: $this.p2pManager.isVideoCall,
+							mobile: $this.isMobile
+						}'
 						layout='column'
 						layout-fill
 						flex
@@ -280,7 +283,8 @@ module Cyph {
 
 				chatMessageBox: `
 					<div
-						class='chat-message-box'
+						class='chat-message-box platform-container'
+						ng-class='{mobile: $this.isMobile}'
 						ng-show='
 							$this.state === Cyph.UI.Chat.States.chat &&
 							$this.session.state.isAlive

@@ -14,17 +14,7 @@ module Cyph {
 					return fragment;
 				}
 
-
-				let split: string[]	= location.pathname.split('/');
-
-				let a: string	= split.slice(-1)[0] || '';
-				let b: string	= split.slice(-2)[0] || '';
-
-				if (!a && b) {
-					return b;
-				}
-
-				return a;
+				return location.pathname.split('/').filter(s => s !== '').slice(-1)[0] || '';
 			}
 			catch (_) {
 				return '';
