@@ -28,11 +28,15 @@ module Cyph {
 
 		public static generateGuid (length: number = 0) : string {
 			if (length > 0) {
-				return Array.prototype.slice.call(
-					crypto.getRandomValues(new Uint8Array(length))
-				).map(n =>
-					Config.guidAddressSpace[n % Config.guidAddressSpace.length]
-				).join('');
+				return Array.prototype.slice.
+					call(
+						crypto.getRandomValues(new Uint8Array(length))
+					).
+					map((n: number) =>
+						Config.guidAddressSpace[n % Config.guidAddressSpace.length]
+					).
+					join('')
+				;
 			}
 
 			return Date.now() + '-' + crypto.getRandomValues(new Uint32Array(1))[0];
@@ -66,29 +70,31 @@ module Cyph {
 					keysToTry
 			;
 
-			let value: T	= keys.length > 0 ?
-				keys.reduce((value: T, key: string) : T =>
-					value !== null ?
-						value :
-						key in o ?
-							o[key] :
-							null
-				, null) :
-				null
+			let value: T	=
+				keys.length < 1 ?
+					null :
+					keys.reduce((value: T, key: string) : T =>
+						value !== null ?
+							value :
+							key in o ?
+								o[key] :
+								null
+					, null)
 			;
 
-			return value !== null ? value : defaultValue;
+			return value === null ? defaultValue : value;
 		}
 
 		public static openUrl (url: string, downloadName?: string) : void {
 			if (Env.isMainThread) {
-				let a: any		= document.createElement('a');
+				let a: HTMLAnchorElement	= document.createElement('a');
+
 				a.href			= url;
 				a.target		= '_blank';
 				a.style.display	= 'none';
 
 				if (downloadName) {
-					a.download	= downloadName;
+					a['download']	= downloadName;
 				}
 
 				document.body.appendChild(a);
@@ -195,8 +201,8 @@ module Cyph {
 					callback();
 				}
 			}
-			catch (e) {
-				error(e.message);
+			catch (err) {
+				error(err.message);
 			}
 		}
 
