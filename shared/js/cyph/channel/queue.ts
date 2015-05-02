@@ -49,20 +49,21 @@ module Cyph {
 				Object.keys(wrapper).filter(k => k !== 'base').forEach((method: string) =>
 					wrapper[method]	= (
 						o: any,
-						callback: Function,
+						callback: Function = () => {},
 						shouldretryUntilComplete?: boolean
 					) => {
 						Util.retryUntilComplete(retry =>
-							wrapper.base[method](o, (...args: any[]) => {
-								let err: any	= args[0];
-
-								if (shouldretryUntilComplete && err) {
-									retry();
+							wrapper.base[method](
+								o,
+								(err, data) => {
+									if (shouldretryUntilComplete && err) {
+										retry();
+									}
+									else {
+										callback(err, data);
+									}
 								}
-								else if (callback) {
-									callback.apply(this, args);
-								}
-							})
+							)
 						);
 					}
 				);
@@ -83,7 +84,7 @@ module Cyph {
 
 					this.sqs.deleteQueue(
 						{QueueUrl: this.queueUrl},
-						(...args: any[]) => callback.apply(this, args)
+						(err, data) => callback(err, data)
 					);
 				}
 				else {
@@ -169,11 +170,11 @@ module Cyph {
 						if (callback instanceof Array) {
 							let callbacks: Function[]	= <Function[]> callback;
 
-							callback	= (...args: any[]) => {
-								for (let f of callbacks) {
-									if (f) {
+							callback	= (err, data) => {
+								for (let callback of callbacks) {
+									if (callback) {
 										try {
-											f.apply(this, args);
+											callback(err, data);
 										}
 										catch (err) {
 											setTimeout(() => { throw err }, 0);

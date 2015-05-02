@@ -157,6 +157,7 @@ module Cyph.im {
 
 				Cyph.UrlState.set(location.pathname, false, true);
 				self.onhashchange	= () => location.reload();
+				self.onpopstate		= null;
 
 
 				if (!Cyph.Env.isMobile && Cyph.Env.isIE) {

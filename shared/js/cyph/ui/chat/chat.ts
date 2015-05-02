@@ -116,7 +116,7 @@ module Cyph {
 						this.changeState(States.chat);
 
 						/* Adjust font size for translations */
-						if (!Env.isMobile) {
+						if (!this.isMobile) {
 							setTimeout(() => {
 								Elements.buttons.each((i: number, elem: HTMLElement) => {
 									let $this: JQuery	= $(elem);
@@ -247,18 +247,41 @@ module Cyph {
 					controller: IController,
 					private dialogManager: IDialogManager,
 					mobileMenu: ISidebar,
-					private notifier: INotifier
+					private notifier: INotifier,
+					public isMobile: boolean = Cyph.Env.isMobile
 				) {
 					super(controller, mobileMenu);
 
-					this.session		= new Session.ThreadedSession(UrlState.get(true), controller);
-					this.cyphertext		= new Cyphertext(this.session, this.controller, this.mobileMenu, this.dialogManager);
-					this.p2pManager		= new P2PManager(this, this.controller, this.mobileMenu, this.dialogManager);
+					this.session		= new Session.ThreadedSession(
+						UrlState.get(true),
+						controller
+					);
+
+					this.cyphertext		= new Cyphertext(
+						this.session,
+						this.controller,
+						this.mobileMenu,
+						this.dialogManager,
+						this.isMobile
+					);
+
+					this.p2pManager		= new P2PManager(
+						this,
+						this.controller,
+						this.mobileMenu,
+						this.dialogManager
+					);
+
 					this.photoManager	= new PhotoManager(this);
-					this.scrollManager	= new ScrollManager(this.controller, this.dialogManager);
+
+					this.scrollManager	= new ScrollManager(
+						this.controller,
+						this.dialogManager,
+						this.isMobile
+					);
 
 
-					if (Env.isMobile) {
+					if (this.isMobile) {
 						/* Prevent jankiness upon message send on mobile */
 
 						Elements.messageBox.click(e => {
