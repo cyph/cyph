@@ -120,10 +120,14 @@ module Cyph {
 					}
 				}
 
-				public constructor (private controller: IController, dialogManager: IDialogManager) {
+				public constructor (
+					private controller: IController,
+					dialogManager: IDialogManager,
+					private isMobile: boolean
+				) {
 					this.affiliate	= new Affiliate(dialogManager);
 
-					if (Cyph.Env.isMobile) {
+					if (this.isMobile) {
 						Elements.messageBox.focus(this.scrollDown);
 					}
 

@@ -5,9 +5,9 @@
 	Channel with built-in ratcheting of ID and region
 
 	Ratcheting steps:
-		Alice: create new channel, send descriptor over current channel
-		Bob: join new channel, ack descriptor over current channel, deprecate current channel
-		Alice: deprecate current channel
+		Alice: create new channel, send descriptor over current (old) channel
+		Bob: join new channel, ack descriptor over old channel, deprecate old channel
+		Alice: deprecate old channel
 		Both: wait a bit, then destroy old channel
 */
 
@@ -133,7 +133,11 @@ module Cyph {
 				});
 			}
 
-			public send (message: string|string[], callback?: Function|Function[], isSynchronous?: boolean) : void {
+			public send (
+				message: string|string[],
+				callback?: Function|Function[],
+				isSynchronous?: boolean
+			) : void {
 				Util.retryUntilComplete(retry => {
 					try {
 						this.channel.send(message, callback, isSynchronous);
@@ -152,7 +156,7 @@ module Cyph {
 				handlers: any = {},
 				config: any = {}
 			) {
-				let onopen: Function	= handlers.onopen;
+				let onopen: Function	= Util.getValue(handlers, 'onopen', () => {});
 
 				handlers.onopen		= (isCreator: boolean) : void => {
 					this.isCreator	= isCreator;
@@ -172,7 +176,7 @@ module Cyph {
 						});
 					};
 
-					onopen && onopen(this.isCreator);
+					onopen(this.isCreator);
 				};
 
 				this.channel	= new Channel(channelName, handlers, config);

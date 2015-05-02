@@ -254,7 +254,10 @@ module Cyph {
 						this.peer			= null;
 
 						if (forceKill) {
-							channel && channel.close();
+							if (channel) {
+								channel.close();
+							}
+
 							peer.close();
 						}
 

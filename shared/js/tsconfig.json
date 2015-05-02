@@ -29,7 +29,6 @@
         "cyph/webrtc.ts",
         "global/base.ts",
         "global/plugins.jquery.ts",
-        "ngdirectives/markdown.ts",
         "preload/base.ts",
         "preload/crypto.ts",
         "preload/translations.ts",
