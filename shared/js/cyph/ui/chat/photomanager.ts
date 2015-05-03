@@ -7,7 +7,9 @@ module Cyph {
 			export class PhotoManager implements IPhotoManager {
 				private processImage (image: HTMLImageElement, file: File) : void {
 					let canvas: HTMLCanvasElement			= document.createElement('canvas');
-					let context: CanvasRenderingContext2D	= canvas.getContext('2d');
+					let context: CanvasRenderingContext2D	=
+						<CanvasRenderingContext2D> canvas.getContext('2d')
+					;
 
 					let widthFactor: number		= Config.photoConfig.maxWidth / image.width;
 					let heightFactor: number	= Config.photoConfig.maxWidth / image.height;
