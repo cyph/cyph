@@ -13,8 +13,8 @@ module Cyph {
 				public disabledAlert (isConnected: boolean) : void {
 					if (isConnected && !this.isEnabled) {
 						this.dialogManager.alert({
-							title: Strings.videoCallingTitle,
-							content: Strings.webRTCDisabled,
+							title: Strings.p2pTitle,
+							content: Strings.p2pDisabled,
 							ok: Strings.ok
 						});
 					}
@@ -50,7 +50,7 @@ module Cyph {
 								this.p2p.requestCall('video');
 							}
 							else {
-								this.p2p.setUpStream({video: !this.p2p.streamOptions.video});
+								this.p2p.setUpStream({video: !this.p2p.outgoingStream.video});
 							}
 						}
 					});
@@ -67,7 +67,7 @@ module Cyph {
 								this.p2p.requestCall('voice');
 							}
 							else {
-								this.p2p.setUpStream({audio: !this.p2p.streamOptions.audio});
+								this.p2p.setUpStream({audio: !this.p2p.outgoingStream.audio});
 							}
 						}
 					});
@@ -100,20 +100,20 @@ module Cyph {
 
 											if (isConnected) {
 												chat.addMessage(
-													Strings.webRTCConnect,
+													Strings.p2pConnect,
 													Session.Authors.app,
 													false
 												);
 											}
 											else {
 												this.dialogManager.alert({
-													title: Strings.videoCallingTitle,
-													content: Strings.webRTCDisconnect,
+													title: Strings.p2pTitle,
+													content: Strings.p2pDisconnect,
 													ok: Strings.ok
 												});
 
 												chat.addMessage(
-													Strings.webRTCDisconnect,
+													Strings.p2pDisconnect,
 													Session.Authors.app,
 													false
 												);
@@ -213,11 +213,11 @@ module Cyph {
 											let callback: Function	= e.args[2];
 
 											this.dialogManager.confirm({
-												title: Strings.videoCallingTitle,
+												title: Strings.p2pTitle,
 												content:
-													Strings.webRTCRequest + ' ' +
+													Strings.p2pRequest + ' ' +
 													Strings[callType + 'Call'] + '. ' +
-													Strings.webRTCWarning
+													Strings.p2pWarning
 												,
 												ok: Strings.continueDialogAction,
 												cancel: Strings.decline,
@@ -230,11 +230,11 @@ module Cyph {
 											let callback: Function	= e.args[1];
 
 											this.dialogManager.confirm({
-												title: Strings.videoCallingTitle,
+												title: Strings.p2pTitle,
 												content:
-													Strings.webRTCInit + ' ' +
+													Strings.p2pInit + ' ' +
 													Strings[callType + 'Call'] + '. ' +
-													Strings.webRTCWarning
+													Strings.p2pWarning
 												,
 												ok: Strings.continueDialogAction,
 												cancel: Strings.cancel
@@ -243,16 +243,16 @@ module Cyph {
 										}
 										case P2P.UIEvents.Events.requestConfirmation: {
 											this.dialogManager.alert({
-												title: Strings.videoCallingTitle,
-												content: Strings.webRTCRequestConfirmation,
+												title: Strings.p2pTitle,
+												content: Strings.p2pRequestConfirmation,
 												ok: Strings.ok
 											});
 											break;
 										}
 										case P2P.UIEvents.Events.requestRejection: {
 											this.dialogManager.alert({
-												title: Strings.videoCallingTitle,
-												content: Strings.webRTCDeny,
+												title: Strings.p2pTitle,
+												content: Strings.p2pDeny,
 												ok: Strings.ok
 											});
 											break;

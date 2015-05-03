@@ -63,8 +63,8 @@ module Cyph {
 			}
 
 			if (typeof crypto === 'undefined') {
-				if (typeof msCrypto !== 'undefined') {
-					crypto	= msCrypto;
+				if (typeof self['msCrypto'] !== 'undefined') {
+					crypto	= self['msCrypto'];
 				}
 				else {
 					let isaac: any;

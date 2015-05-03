@@ -114,7 +114,7 @@ module Cyph.im {
 					!Config.webSignHashes[localStorage.webSignBootHash]
 				) {
 					Cyph.Errors.logWebSign();
-					this.changeState(States.webSignObsolete);
+					this.changeState(States.webSignChanged);
 				}
 				else {
 					Cyph.UrlState.onchange(urlState => this.onUrlStateChange(urlState));

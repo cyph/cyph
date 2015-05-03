@@ -67,7 +67,7 @@ module Cyph {
 			}
 		}
 
-		public static _	= (() => {
+		private static _	= (() => {
 			self.onpopstate	= () => EventManager.trigger(UrlState.urlStateChangeEvent);
 		})();
 	}

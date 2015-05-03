@@ -7,7 +7,7 @@ module Cyph.im {
 			error,
 			spinningUp,
 			waitingForFriend,
-			webSignObsolete
+			webSignChanged
 		}
 	}
 }
