@@ -21,9 +21,10 @@ module Cyph {
 			}
 
 
-			private inQueue: Queue;
-			private outQueue: Queue;
 			private sqs: any;
+
+			public inQueue: Queue;
+			public outQueue: Queue;
 
 			public close (callback?: Function) : void {
 				this.inQueue.close(() =>
