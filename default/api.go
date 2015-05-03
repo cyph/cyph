@@ -19,8 +19,6 @@ func init() {
 	})
 }
 
-/*** Public API ***/
-
 func betaSignup(h HandlerArgs) (interface{}, int) {
 	isNewSignup := false
 

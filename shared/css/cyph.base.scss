@@ -263,6 +263,10 @@ html:not(.mobile) .platform-container.mobile .mobile-only
 			padding: 0px !important;
 		}
 	}
+
+	button.mfp-close {
+		right: 7px;
+	}
 }
 .mfp-figure:after {
 	background: none !important;
