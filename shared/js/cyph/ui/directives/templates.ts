@@ -42,7 +42,7 @@ module Cyph {
 					<div
 						class='chat-main platform-container'
 						ng-class='{
-							video: $this.p2pManager.isVideoCall,
+							video: $this.p2pManager.isActive,
 							mobile: $this.isMobile
 						}'
 						layout='column'
@@ -117,10 +117,7 @@ module Cyph {
 							flex
 							ng-class='{
 								active: $this.state === Cyph.UI.Chat.States.chat,
-								playing:
-									$this.p2pManager.p2p.outgoingStream.video ||
-									$this.p2pManager.p2p.incomingStream.video ||
-									$this.p2pManager.p2p.incomingStream.audio
+								playing: $this.p2pManager.isPlaying()
 							}'
 						>
 							<video
@@ -287,7 +284,11 @@ module Cyph {
 						ng-class='{mobile: $this.isMobile}'
 						ng-show='
 							$this.state === Cyph.UI.Chat.States.chat &&
-							$this.session.state.isAlive
+							$this.session.state.isAlive &&
+							!(
+								$this.isMobile &&
+								$this.p2pManager.isPlaying()
+							)
 						'
 					>
 						<textarea
@@ -411,7 +412,7 @@ module Cyph {
 									'
 									ng-click='$this.p2pManager.videoCallButton()'
 									ng-attr-aria-label='{{
-										!$this.p2pManager.isVideoCall ?
+										!$this.p2pManager.isActive ?
 											"Video Call" :
 											!$this.p2pManager.p2p.outgoingStream.video ?
 												"Enable Camera" :
@@ -420,14 +421,14 @@ module Cyph {
 								>
 									<img
 										ng-show='
-											!$this.p2pManager.isVideoCall ||
+											!$this.p2pManager.isActive ||
 											!$this.p2pManager.p2p.outgoingStream.video
 										'
 										src='/img/icons/video.on.png'
 									/>
 									<img
 										ng-show='
-											$this.p2pManager.isVideoCall &&
+											$this.p2pManager.isActive &&
 											$this.p2pManager.p2p.outgoingStream.video
 										'
 										src='/img/icons/video.off.png'
@@ -443,7 +444,7 @@ module Cyph {
 									'
 									ng-click='$this.p2pManager.voiceCallButton()'
 									ng-attr-aria-label='{{
-										!$this.p2pManager.isVideoCall ?
+										!$this.p2pManager.isActive ?
 											"Voice Call" :
 											!$this.p2pManager.p2p.outgoingStream.audio ?
 												"Enable Mic" :
@@ -451,19 +452,19 @@ module Cyph {
 									}}'
 								>
 									<img
-										ng-show='!$this.p2pManager.isVideoCall'
+										ng-show='!$this.p2pManager.isActive'
 										src='/img/icons/voice.on.png'
 									/>
 									<img
 										ng-show='
-											$this.p2pManager.isVideoCall &&
+											$this.p2pManager.isActive &&
 											!$this.p2pManager.p2p.outgoingStream.audio
 										'
 										src='/img/icons/mic.on.png'
 									/>
 									<img
 										ng-show='
-											$this.p2pManager.isVideoCall &&
+											$this.p2pManager.isActive &&
 											$this.p2pManager.p2p.outgoingStream.audio
 										'
 										src='/img/icons/mic.off.png'
@@ -513,7 +514,7 @@ module Cyph {
 											'
 											ng-click='$this.p2pManager.videoCallButton()'
 											ng-attr-aria-label='{{
-												!$this.p2pManager.isVideoCall ?
+												!$this.p2pManager.isActive ?
 													"Video Call" :
 													!$this.p2pManager.p2p.outgoingStream.video ?
 														"Enable Camera" :
@@ -522,14 +523,14 @@ module Cyph {
 										>
 											<img
 												ng-show='
-													!$this.p2pManager.isVideoCall ||
+													!$this.p2pManager.isActive ||
 													!$this.p2pManager.p2p.outgoingStream.video
 												'
 												src='/img/icons/video.on.png'
 											/>
 											<img
 												ng-show='
-													$this.p2pManager.isVideoCall &&
+													$this.p2pManager.isActive &&
 													$this.p2pManager.p2p.outgoingStream.video
 												'
 												src='/img/icons/video.off.png'
@@ -546,7 +547,7 @@ module Cyph {
 											'
 											ng-click='$this.p2pManager.voiceCallButton()'
 											ng-attr-aria-label='{{
-												!$this.p2pManager.isVideoCall ?
+												!$this.p2pManager.isActive ?
 													"Voice Call" :
 													!$this.p2pManager.p2p.outgoingStream.audio ?
 														"Enable Mic" :
@@ -554,19 +555,19 @@ module Cyph {
 											}}'
 										>
 											<img
-												ng-show='!$this.p2pManager.isVideoCall'
+												ng-show='!$this.p2pManager.isActive'
 												src='/img/icons/voice.on.png'
 											/>
 											<img
 												ng-show='
-													$this.p2pManager.isVideoCall &&
+													$this.p2pManager.isActive &&
 													!$this.p2pManager.p2p.outgoingStream.audio
 												'
 												src='/img/icons/mic.on.png'
 											/>
 											<img
 												ng-show='
-													$this.p2pManager.isVideoCall &&
+													$this.p2pManager.isActive &&
 													$this.p2pManager.p2p.outgoingStream.audio
 												'
 												src='/img/icons/mic.off.png'

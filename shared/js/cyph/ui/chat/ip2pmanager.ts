@@ -2,9 +2,9 @@ module Cyph {
 	export module UI {
 		export module Chat {
 			export interface IP2PManager {
-				isEnabled: boolean;
+				isActive: boolean;
 
-				isVideoCall: boolean;
+				isEnabled: boolean;
 
 				p2p: P2P.IP2P;
 
@@ -12,9 +12,9 @@ module Cyph {
 
 				enable () : void;
 
-				sendFileButton () : void;
+				isPlaying () : boolean;
 
-				toggleVideoCall (isVideoCall: boolean) : void;
+				sendFileButton () : void;
 
 				videoCallButton () : void;
 
