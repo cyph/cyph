@@ -33,11 +33,21 @@ if (Cyph.Env.isMobile) {
 }
 
 
-/* Polyfill for weird browsers */
+/* Polyfills */
 
 if (!HTMLElement.prototype.click) {
 	HTMLElement.prototype.click	= function () {
 		Cyph.Util.triggerClick(this);
+	};
+}
+
+if (!Object.keys) {
+	Object.keys	= o => {
+		let keys: any[]	= [];
+		for (let k in o) {
+			keys.push(k);
+		}
+		return keys;
 	};
 }
 
