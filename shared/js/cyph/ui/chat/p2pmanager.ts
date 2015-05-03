@@ -5,10 +5,15 @@ module Cyph {
 	export module UI {
 		export module Chat {
 			export class P2PManager extends BaseButtonManager implements IP2PManager {
+				public isActive: boolean	= false;
 				public isEnabled: boolean	= false;
-				public isVideoCall: boolean	= false;
 
 				public p2p: P2P.IP2P;
+
+				private toggle (isActive: boolean) : void {
+					this.isActive	= isActive;
+					this.controller.update();
+				}
 
 				public disabledAlert (isConnected: boolean) : void {
 					if (isConnected && !this.isEnabled) {
@@ -25,10 +30,19 @@ module Cyph {
 					this.controller.update();
 				}
 
+				public isPlaying () : boolean {
+					return this.isActive &&
+					(
+						this.p2p.outgoingStream.video ||
+						this.p2p.incomingStream.video ||
+						this.p2p.incomingStream.audio
+					);
+				}
+
 				public sendFileButton () : void {
 					this.baseButtonClick(() => {
 						if (this.isEnabled) {
-							if (!this.isVideoCall) {
+							if (!this.isActive) {
 								this.p2p.requestCall('file');
 							}
 							else {
@@ -38,15 +52,10 @@ module Cyph {
 					});
 				}
 
-				public toggleVideoCall (isVideoCall: boolean) : void {
-					this.isVideoCall	= isVideoCall;
-					this.controller.update();
-				}
-
 				public videoCallButton () : void {
 					this.baseButtonClick(() => {
 						if (this.isEnabled) {
-							if (!this.isVideoCall) {
+							if (!this.isActive) {
 								this.p2p.requestCall('video');
 							}
 							else {
@@ -63,7 +72,7 @@ module Cyph {
 				public voiceCallButton () : void {
 					this.baseButtonClick(() => {
 						if (this.isEnabled) {
-							if (!this.isVideoCall) {
+							if (!this.isActive) {
 								this.p2p.requestCall('voice');
 							}
 							else {
@@ -125,9 +134,9 @@ module Cyph {
 											break;
 										}
 										case P2P.UIEvents.Events.videoToggle: {
-											let isVideoCall: boolean	= e.args[0];
+											let isActive: boolean	= e.args[0];
 
-											this.toggleVideoCall(isVideoCall);
+											this.toggle(isActive);
 											break;
 										}
 									}
