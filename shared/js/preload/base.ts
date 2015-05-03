@@ -33,40 +33,6 @@ if (Cyph.Env.isMobile) {
 }
 
 
-/* Temporary workaround for Angular Material bug */
-
-if (Cyph.Env.isMobile) {
-	let previousCoordinates: {[coordinates: string] : boolean}	= {};
-
-	Cyph.UI.Elements.window.click(e => {
-		let coordinates: string	=
-			Math.floor(Cyph.Util.getValue(e, 'clientX', 0)) +
-			',' +
-			Math.floor(Cyph.Util.getValue(e, 'clientY', 0))
-		;
-
-		if (coordinates === '0,0') {
-			return;
-		}
-
-		if (previousCoordinates[coordinates]) {
-			e.preventDefault();
-			e.stopPropagation();
-		}
-		else {
-			try {
-				previousCoordinates[coordinates]	= true;
-			}
-			finally {
-				setTimeout(() =>
-					previousCoordinates[coordinates]	= null
-				, 2000);
-			}
-		}
-	});
-}
-
-
 /* Polyfill for weird browsers */
 
 if (!HTMLElement.prototype.click) {
@@ -89,4 +55,37 @@ $(() => {
 		/* Using mouseup instead of click because of Angular Material weirdness */
 		$button.on('mouseup', () => setTimeout(() => elem.click(), 500));
 	});
+
+	/* Temporary workaround for Angular Material bug */
+
+	if (Cyph.Env.isMobile) {
+		let previousCoordinates: {[coordinates: string] : boolean}	= {};
+
+		Cyph.UI.Elements.window.click(e => {
+			let coordinates: string	=
+				Math.floor(Cyph.Util.getValue(e, 'clientX', 0)) +
+				',' +
+				Math.floor(Cyph.Util.getValue(e, 'clientY', 0))
+			;
+
+			if (coordinates === '0,0') {
+				return;
+			}
+
+			if (previousCoordinates[coordinates]) {
+				e.preventDefault();
+				e.stopPropagation();
+			}
+			else {
+				try {
+					previousCoordinates[coordinates]	= true;
+				}
+				finally {
+					setTimeout(() =>
+						previousCoordinates[coordinates]	= null
+					, 2000);
+				}
+			}
+		});
+	}
 });

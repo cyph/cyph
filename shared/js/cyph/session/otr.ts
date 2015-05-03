@@ -5,9 +5,13 @@
 module Cyph {
 	export module Session {
 		export class OTR implements IOTR {
+			private static overflowRolloverId: number	= 2;
+
+
 			private currentMessageId: number	= 0;
 			private incomingMessageId: number	= 0;
 			private incomingMessagesMax: number	= 0;
+			private isConnected: boolean		= false;
 			private incomingMessages: {[id: string] : string}	= {};
 			private receivedMessages: {[id: string] : { chunks: string[]; total: number; }}	= {};
 			private receiveQueue: string[]	= [];
@@ -15,15 +19,8 @@ module Cyph {
 
 			private otr: any;
 
-			public receive (message: string) : void {
-				if (!message) {
-					return;
-				}
-
-				if (this.receiveQueue) {
-					this.receiveQueue.push(message);
-				}
-				else {
+			private receiveHandler (message?: string) : void {
+				if (message) {
 					let o: OTRMessageOuter = Util.deserializeObject(OTRMessageOuter, message);
 
 					if (o.id >= this.incomingMessageId) {
@@ -35,30 +32,30 @@ module Cyph {
 							author: Authors.friend
 						});
 					}
+				}
 
-					while (
-						this.incomingMessageId <= this.incomingMessagesMax &&
-						this.incomingMessages[this.incomingMessageId]
-					) {
-						this.otr.recv(this.incomingMessages[this.incomingMessageId]);
+				if (
+					this.incomingMessageId <= this.incomingMessagesMax &&
+					this.incomingMessages[this.incomingMessageId]
+				) {
+					this.otr.recv(this.incomingMessages[this.incomingMessageId]);
 
-						this.incomingMessages[this.incomingMessageId]	= null;
-						++this.incomingMessageId;
+					this.incomingMessages[this.incomingMessageId]	= null;
+					++this.incomingMessageId;
 
-						if (this.incomingMessageId === 1) {
-							this.session.trigger(Events.otr, {event: OTREvents.begin});
-						}
+					if (this.incomingMessageId === 1) {
+						this.session.trigger(Events.otr, {event: OTREvents.begin});
+					}
+					else if (this.incomingMessageId === Config.maxInt) {
+						this.incomingMessageId	= OTR.overflowRolloverId;
 					}
 				}
 			}
 
-			public send (message: string) : void {
-				if (this.sendQueue) {
-					this.sendQueue.push(message);
-				}
-				else {
-					let id		= Util.generateGuid();
-					let chunks	= Util.chunkString(message, 5120);
+			private sendHandler (message?: string) : void {
+				if (message) {
+					let id: string			= Util.generateGuid();
+					let chunks: string[]	= Util.chunkString(message, 5120);
 
 					for (let i = 0 ; i < chunks.length ; ++i) {
 						this.otr.send(JSON.stringify(new OTRMessageInner(
@@ -69,6 +66,14 @@ module Cyph {
 						)));
 					}
 				}
+			}
+
+			public receive (message: string) : void {
+				this.receiveQueue.push(message);
+			}
+
+			public send (message: string) : void {
+				this.sendQueue.push(message);
 			}
 
 			public constructor (private session: ISession) {
@@ -136,6 +141,10 @@ module Cyph {
 								))
 							});
 
+							if (this.currentMessageId === Config.maxInt) {
+								this.currentMessageId	= OTR.overflowRolloverId;
+							}
+
 							this.session.trigger(Events.cyphertext, {
 								cyphertext,
 								author: Authors.me
@@ -144,13 +153,8 @@ module Cyph {
 
 
 						this.otr.on('gone_secure', () => {
-							if (this.sendQueue) {
-								let sendQueue: string[]	= this.sendQueue;
-								this.sendQueue			= null;
-
-								for (let message of sendQueue) {
-									this.send(message);
-								}
+							if (!this.isConnected) {
+								this.isConnected	= true;
 
 								if (this.session.state.isCreator) {
 									this.otr.smpStart(this.session.state.sharedSecret);
@@ -163,14 +167,19 @@ module Cyph {
 							this.otr.start();
 						}
 
-						setTimeout(() => {
-							let receiveQueue: string[]	= this.receiveQueue;
-							this.receiveQueue			= null;
 
-							for (let message of receiveQueue) {
-								this.receive(message);
+						let timer: Timer	= new Timer(() => {
+							if (!this.session.state.isAlive) {
+								timer.stop();
 							}
-						}, 500);
+							else {
+								this.receiveHandler(this.receiveQueue.shift());
+
+								if (this.isConnected) {
+									this.sendHandler(this.sendQueue.shift());
+								}
+							}
+						});
 					})
 				);
 			}

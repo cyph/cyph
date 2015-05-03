@@ -10,10 +10,14 @@ module Cyph {
 					let context: CanvasRenderingContext2D	= canvas.getContext('2d');
 
 					let widthFactor: number		= Config.photoConfig.maxWidth / image.width;
-					widthFactor					= widthFactor > 1 ? 1 : widthFactor;
-
 					let heightFactor: number	= Config.photoConfig.maxWidth / image.height;
-					heightFactor				= heightFactor > 1 ? 1 : heightFactor;
+
+					if (widthFactor > 1) {
+						widthFactor	= 1;
+					}
+					if (heightFactor > 1) {
+						heightFactor	= 1;
+					}
 
 					let factor: number	= Math.min(widthFactor, heightFactor);
 

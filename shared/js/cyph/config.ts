@@ -70,5 +70,8 @@ module Cyph {
 			serviceWorker: '/websign/js/cyph.im.serviceworker.js',
 			workerHelper: '/websign/js/workerhelper.js'
 		};
+
+
+		public static maxInt: number	= 2147483647;
 	}
 }
