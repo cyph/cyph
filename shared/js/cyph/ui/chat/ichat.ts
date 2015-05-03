@@ -38,9 +38,9 @@ module Cyph {
 					shouldNotify?: boolean
 				) : void;
 
-				changeState (state: States) : void;
-
 				begin (callback?: Function) : void;
+
+				changeState (state: States) : void;
 
 				close () : void;
 

@@ -3,7 +3,7 @@ module Cyph {
 		export interface IP2P {
 			incomingStream: {audio: boolean; video: boolean; loading: boolean;};
 
-			streamOptions: {audio: boolean; video: boolean; loading: boolean;};
+			outgoingStream: {audio: boolean; video: boolean; loading: boolean;};
 
 			incomingFile: IFileTransfer;
 
@@ -15,7 +15,7 @@ module Cyph {
 
 			sendFile () : void;
 
-			setUpStream (streamOptions?: any, offer?: string) : void;
+			setUpStream (outgoingStream?: any, offer?: string) : void;
 		}
 	}
 }
