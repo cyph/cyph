@@ -11,9 +11,10 @@ module Cyph {
 			public static beginChat: string			= 'beginChat';
 			public static beginChatComplete: string	= 'beginChatComplete';
 			public static beginWaiting: string		= 'beginWaiting';
-			public static connect: string			= 'connect';
 			public static closeChat: string			= 'closeChat';
+			public static connect: string			= 'connect';
 			public static cyphertext: string		= 'cyphertext';
+			public static newChannel: string		= 'newChannel';
 			public static newCyph: string			= 'newCyph';
 			public static otr: string				= 'otr';
 			public static p2pUi: string				= 'p2pUi';

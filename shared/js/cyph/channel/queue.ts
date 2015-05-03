@@ -161,10 +161,14 @@ module Cyph {
 					if (typeof message === 'string') {
 						let messageBody: string	= JSON.stringify({message: message});
 
-						sqs.sendMessage({
-							QueueUrl: this.queueUrl,
-							MessageBody: messageBody
-						}, callback, true);
+						sqs.sendMessage(
+							{
+								QueueUrl: this.queueUrl,
+								MessageBody: messageBody
+							},
+							callback,
+							true
+						);
 					}
 					else {
 						if (callback instanceof Array) {
@@ -199,7 +203,7 @@ module Cyph {
 				}
 			}
 
-			public constructor (queueName: string, handlers: any = {}, config: any = {}) {
+			public constructor (public queueName: string, handlers: any = {}, config: any = {}) {
 				if (!('httpOptions' in config)) {
 					config.httpOptions	= {};
 				}

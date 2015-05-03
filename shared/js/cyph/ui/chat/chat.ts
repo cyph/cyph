@@ -3,6 +3,7 @@
 /// <reference path="../../../global/plugins.jquery.ts" />
 
 /// <reference path="../../p2p/p2p.ts" />
+/// <reference path="../../channel/queue.ts" />
 /// <reference path="../../session/message.ts" />
 /// <reference path="../../session/threadedsession.ts" />
 /// <reference path="../templates.ts" />

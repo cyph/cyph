@@ -7,6 +7,7 @@ module Cyph {
 	export module Session {
 		export class ThreadedSession implements ISession {
 			private thread: Thread;
+			private outQueue: Channel.Queue;
 
 			public state	= {
 				cyphId: <string> '',
@@ -17,6 +18,12 @@ module Cyph {
 			};
 
 			public close (shouldSendEvent: boolean = true) : void {
+				/* Synchronously destroy in main thread, because
+					onunload won't wait on cross-thread messages */
+				if (shouldSendEvent && this.outQueue) {
+					this.outQueue.send(RPCEvents.destroy, undefined, true);
+				}
+
 				this.trigger(ThreadedSessionEvents.close, {shouldSendEvent});
 				setTimeout(() => this.thread.stop(), 120000);
 			}
@@ -67,6 +74,12 @@ module Cyph {
 							this.controller.update();
 						}
 					}
+				);
+
+				this.on(
+					Events.newChannel,
+					(queueName: string) =>
+						this.outQueue	= new Channel.Queue(queueName)
 				);
 
 				this.thread	= new Thread((vars: any, importScripts: Function, Cyph: any) => {
