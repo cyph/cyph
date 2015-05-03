@@ -518,7 +518,7 @@ html.mobile button[disabled] {
 }
 .chat-main.video.mobile {
 	.video-call.playing {
-		& ~ .message-list, .chat-message-box {
+		& ~ .message-list {
 			display: none;
 		}
 	}
