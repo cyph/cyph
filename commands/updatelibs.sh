@@ -45,8 +45,6 @@ tsd query --resolve --overwrite --save --action install \
 	angularjs \
 	angular-material \
 	angular-animate \
-	aws-sdk \
-	cryptojs \
 	highlightjs \
 	MediaStream \
 	RTCPeerConnection

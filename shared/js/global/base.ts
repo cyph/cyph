@@ -37,6 +37,7 @@ for (let k of ['window', 'document']) {
 }
 
 for (let k of [
+	'crypto',
 	'history',
 	'location',
 	'localStorage',
@@ -47,7 +48,6 @@ for (let k of [
 	}
 }
 
-let crypto: Crypto;
 let WebSign: IWebSign;
 
 let onthreadmessage: (e: MessageEvent) => any;
