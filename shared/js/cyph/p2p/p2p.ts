@@ -77,7 +77,7 @@ module Cyph {
 					);
 
 					setTimeout(() => {
-						for (let o of [this.streamOptions, this.incomingStream]) {
+						for (let o of [this.outgoingStream, this.incomingStream]) {
 							for (let k of Object.keys(o)) {
 								o[k]	= false;
 							}
@@ -147,7 +147,7 @@ module Cyph {
 						Session.Authors.app,
 						(
 							(
-								this.streamOptions.video ||
+								this.outgoingStream.video ||
 								this.incomingStream.audio
 							) &&
 							!this.incomingStream.video
@@ -157,7 +157,7 @@ module Cyph {
 			};
 
 			public incomingStream				= {audio: false, video: false, loading: false};
-			public streamOptions				= {audio: false, video: false, loading: false};
+			public outgoingStream				= {audio: false, video: false, loading: false};
 			public incomingFile: IFileTransfer	= new FileTransfer;
 			public outgoingFile: IFileTransfer	= new FileTransfer;
 
@@ -453,8 +453,8 @@ module Cyph {
 								try {
 									if (wasFirstOfType) {
 										this.isAccepted				= true;
-										this.streamOptions.video	= callType === P2P.constants.video;
-										this.streamOptions.audio	= callType !== P2P.constants.file;
+										this.outgoingStream.video	= callType === P2P.constants.video;
+										this.outgoingStream.audio	= callType !== P2P.constants.file;
 
 										this.session.send(
 											new Session.Message(
@@ -614,7 +614,7 @@ module Cyph {
 				);
 			}
 
-			public setUpStream (streamOptions?: any, offer?: string) : void {
+			public setUpStream (outgoingStream?: any, offer?: string) : void {
 				this.retryUntilComplete(retry => {
 					if (!offer) {
 						if (this.localStreamSetUpLock) {
@@ -627,12 +627,12 @@ module Cyph {
 
 					this.incomingStream.loading	= true;
 
-					if (streamOptions) {
-						if (streamOptions.video === true || streamOptions.video === false) {
-							this.streamOptions.video	= streamOptions.video;
+					if (outgoingStream) {
+						if (outgoingStream.video === true || outgoingStream.video === false) {
+							this.outgoingStream.video	= outgoingStream.video;
 						}
-						if (streamOptions.audio === true || streamOptions.audio === false) {
-							this.streamOptions.audio	= streamOptions.audio;
+						if (outgoingStream.audio === true || outgoingStream.audio === false) {
+							this.outgoingStream.audio	= outgoingStream.audio;
 						}
 					}
 
@@ -675,7 +675,7 @@ module Cyph {
 									{k: P2P.constants.audio, f: 'getAudioTracks'},
 									{k: P2P.constants.video, f: 'getVideoTracks'}
 								]) {
-									this.streamOptions[o.k]	=
+									this.outgoingStream[o.k]	=
 										!!this.localStream &&
 										this.localStream[o.f]().
 											map(track => track.enabled).
@@ -685,7 +685,7 @@ module Cyph {
 
 
 								let outgoingStream: string	=
-									JSON.stringify(this.streamOptions)
+									JSON.stringify(this.outgoingStream)
 								;
 
 								if (!offer) {
@@ -780,20 +780,20 @@ module Cyph {
 							};
 
 							streamFallback	= () => {
-								if (this.streamOptions.video) {
-									this.streamOptions.video	= false;
+								if (this.outgoingStream.video) {
+									this.outgoingStream.video	= false;
 								}
-								else if (this.streamOptions.audio) {
-									this.streamOptions.audio	= false;
+								else if (this.outgoingStream.audio) {
+									this.outgoingStream.audio	= false;
 								}
 
 								streamSetup();
 							};
 
 							streamSetup	= () => {
-								if (this.streamOptions.video || this.streamOptions.audio) {
+								if (this.outgoingStream.video || this.outgoingStream.audio) {
 									WebRTC.getUserMedia(
-										this.streamOptions,
+										this.outgoingStream,
 										streamHelper,
 										streamFallback
 									);

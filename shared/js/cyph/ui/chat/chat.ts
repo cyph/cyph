@@ -90,11 +90,6 @@ module Cyph {
 					}
 				}
 
-				public changeState (state: States) : void {
-					this.state	= state;
-					this.controller.update();
-				}
-
 				public begin (callback: Function = () => {}) : void {
 					if (this.state === States.aborted) {
 						return;
@@ -149,6 +144,11 @@ module Cyph {
 
 						this.addMessage(Strings.introductoryMessage, Session.Authors.app, false);
 					}, 3000);
+				}
+
+				public changeState (state: States) : void {
+					this.state	= state;
+					this.controller.update();
 				}
 
 				public close () : void {
