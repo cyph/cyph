@@ -86,12 +86,14 @@ module Cyph {
 			Timer.timers.push(f);
 
 			if (this.id < 1) {
-				if (Env.isMainThread) {
-					Timer.runWithThread(50);
-				}
-				else {
-					Timer.runWithTimeoutLoop(50);
-				}
+				setTimeout(() => {
+					if (Env.isMainThread) {
+						Timer.runWithThread(50);
+					}
+					else {
+						Timer.runWithTimeoutLoop(50);
+					}
+				}, 50);
 			}
 		}
 	}
