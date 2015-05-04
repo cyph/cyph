@@ -431,7 +431,7 @@ module Cyph {
 				this.session.trigger(Session.Events.p2pUi, {category, event, args});
 			}
 
-			public kill () : void {
+			public close () : void {
 				this.session.send(
 					new Session.Message(
 						Session.RPCEvents.p2p,
@@ -853,7 +853,7 @@ module Cyph {
 					}
 				});
 
-				this.session.on(Session.Events.closeChat, () => this.kill());
+				this.session.on(Session.Events.closeChat, () => this.close());
 
 				this.session.on(Session.RPCEvents.p2p, (command: Session.Command) => {
 					if (command.method) {

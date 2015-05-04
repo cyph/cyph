@@ -16,7 +16,7 @@ module Cyph {
 				}
 
 				public closeButton () : void {
-					this.baseButtonClick(() => this.p2p.kill());
+					this.baseButtonClick(() => this.p2p.close());
 				}
 
 				public disabledAlert () : void {
