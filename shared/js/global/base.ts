@@ -1,3 +1,9 @@
+/**
+ * @file Normalises global namespace across varying runtime environments,
+ * and pulls in all low-footprint references like enums and interfaces.
+ */
+
+
 /// <reference path="../typings/iwebsign.d.ts" />
 /// <reference path="../typings/storage.d.ts" />
 /// <reference path="../../lib/typings/tsd.d.ts" />
@@ -48,7 +54,18 @@ for (let k of [
 	}
 }
 
-let WebSign: IWebSign;
-
+/**
+ * @global Event-handler for messages to the current thread.
+ */
 let onthreadmessage: (e: MessageEvent) => any;
+
+/**
+ * @global Object containing translations for English phrases
+ * (only exists in main thread of production environments).
+ */
 let Translations: {[language: string] : {[text: string] : string}};
+
+/**
+ * @global WebSign object (only created in WebSigned environments).
+ */
+let WebSign: IWebSign;
