@@ -178,13 +178,13 @@ module Cyph {
 				let channel: RTCDataChannel;
 				let peer: RTCPeerConnection	= new WebRTC.PeerConnection({
 					iceServers: [
-						P2P.constants.stun,
-						P2P.constants.turn
-					].map((protocol: string) => ({
-						url: protocol + ':' + Config.p2pConfig.iceServer,
-						credential: Config.p2pConfig.iceCredential,
-						username: Config.p2pConfig.iceCredential
-					}))
+						{url: P2P.constants.stun + ':' + Config.p2pConfig.iceServer},
+						{
+							url: P2P.constants.turn + ':' + Config.p2pConfig.iceServer,
+							credential: Config.p2pConfig.iceCredential,
+							username: Config.p2pConfig.iceCredential
+						}
+					]
 				}, {
 					optional: [{DtlsSrtpKeyAgreement: true}]
 				});
