@@ -1,7 +1,7 @@
 module Cyph {
 	export module UI {
 		export class Affiliate {
-			private static regex: RegExp	= /.*amazon.com\/.*\/([A-Za-z0-9]{10}).*/;
+			private static regex: RegExp	= /.*[\.\/]amazon.com\/.*\/([A-Za-z0-9]{10}).*/;
 
 
 			public shouldAdd: boolean;
