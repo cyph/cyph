@@ -1,3 +1,8 @@
+/**
+ * @file Redirect browsers known not to work with Cyph.
+ */
+
+
 (() => {
 
 

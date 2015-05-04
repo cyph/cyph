@@ -1,4 +1,12 @@
-$.fn.bounds	= function () {
+/**
+ * Calculate absolute coordinates of the boundaries of this element.
+ */
+$.fn.bounds	= function () : ({
+	top: number;
+	left: number;
+	bottom: number;
+	right: number;
+}) {
 	let bounds: JQueryCoordinates	= this.offset();
 
 	return {
@@ -9,8 +17,10 @@ $.fn.bounds	= function () {
 	};
 };
 
-
-$.fn.scrollPosition	= function () {
+/**
+ * Calculate number of pixels user has scrolled relative to this element.
+ */
+$.fn.scrollPosition	= function () : number {
 	return this[0].scrollHeight -
 	(
 		this[0].scrollTop +

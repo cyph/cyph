@@ -1,3 +1,9 @@
+/**
+ * @file Miscellaneous setup tasks performed before running main
+ * routine of all Web projects.
+ */
+
+
 /// <reference path="../cyph/base.ts" />
 /// <reference path="../cyph/ui/elements.ts" />
 
