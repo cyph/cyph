@@ -25,16 +25,16 @@ module Cyph {
 			/**
 			 * Remove event listener.
 			 * @param event
-			 * @param f
+			 * @param handler
 			 */
-			off (event: string, f: Function) : void;
+			off (event: string, handler: Function) : void;
 
 			/**
 			 * Add event listener.
 			 * @param event
-			 * @param f
+			 * @param handler
 			 */
-			on (event: string, f: Function) : void;
+			on (event: string, handler: Function) : void;
 
 			/**
 			 * Receive incoming cyphertext.
