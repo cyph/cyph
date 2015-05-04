@@ -182,7 +182,7 @@ module Cyph {
 								translate
 								aria-label='End Call'
 								class='md-fab md-theme-grey close-button'
-								ng-click='$this.p2pManager.videoCallClose()'
+								ng-click='$this.p2pManager.closeButton()'
 							>
 								<strong>&times;</strong>
 							</md-button>
@@ -395,7 +395,7 @@ module Cyph {
 							</md-button>
 
 							<span
-								ng-click='$this.p2pManager.disabledAlert($this.isConnected)'
+								ng-click='$this.p2pManager.disabledAlert()'
 								ng-attr-title='{{
 									$this.isConnected && !$this.p2pManager.isEnabled ?
 										Cyph.Strings.p2pDisabled :

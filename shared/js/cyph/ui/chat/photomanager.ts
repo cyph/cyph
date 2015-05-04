@@ -51,11 +51,9 @@ module Cyph {
 					this.chat.send('![](' + encodedImage + ')');
 				}
 
-				public insert (elem: HTMLElement) : void {
-					let files: File[]	= Util.getValue(elem, 'files', []);
-
-					if (files.length > 0) {
-						let file: File	= files[0];
+				public insert (elem: HTMLInputElement) : void {
+					if (elem.files.length > 0) {
+						let file: File	= elem.files[0];
 
 						if (file.type === 'image/gif') {
 							let reader: FileReader	= new FileReader;
