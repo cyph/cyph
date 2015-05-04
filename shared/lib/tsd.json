@@ -17,10 +17,13 @@
     "angularjs/angular-animate.d.ts": {
       "commit": "f3244190e20af6901e865f4cc58127d19216baa1"
     },
+    "angularjs/angular.d.ts": {
+      "commit": "f3244190e20af6901e865f4cc58127d19216baa1"
+    },
     "webrtc/RTCPeerConnection.d.ts": {
       "commit": "f3244190e20af6901e865f4cc58127d19216baa1"
     },
-    "angularjs/angular.d.ts": {
+    "cryptojs/cryptojs.d.ts": {
       "commit": "f3244190e20af6901e865f4cc58127d19216baa1"
     },
     "jquery/jquery.d.ts": {
