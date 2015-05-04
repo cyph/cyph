@@ -12,6 +12,7 @@ module Cyph {
 			private sendQueue: string[]							= [];
 			private lastIncomingMessageTimestamp: number		= Date.now();
 			private lastOutgoingMessageTimestamp: number		= Date.now();
+			private pingPongTimeouts: number					= 0
 
 			private channel: Channel.IChannel;
 			private otr: IOTR;
@@ -66,16 +67,21 @@ module Cyph {
 
 				new Timer((now: number) => {
 					if (now - this.lastIncomingMessageTimestamp > 180000) {
-						this.lastIncomingMessageTimestamp	= Date.now();
+						if (this.pingPongTimeouts++ < 2) {
+							this.lastIncomingMessageTimestamp	= Date.now();
 
-						this.trigger(Events.pingPongTimeout);
+							this.trigger(Events.pingPongTimeout);
 
-						Analytics.main.send({
-							hitType: 'event',
-							eventCategory: 'pingPongTimeout',
-							eventAction: 'detected',
-							eventValue: 1
-						});
+							Analytics.main.send({
+								hitType: 'event',
+								eventCategory: 'pingPongTimeout',
+								eventAction: 'detected',
+								eventValue: 1
+							});
+						}
+					}
+					else {
+						this.pingPongTimeouts	= 0;
 					}
 
 					if (now > nextPing) {

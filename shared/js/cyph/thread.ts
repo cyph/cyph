@@ -62,37 +62,38 @@ module Cyph {
 				importScripts('/lib/bower_components/base64/base64.min.js');
 			}
 
-			if (typeof crypto === 'undefined') {
-				if (typeof self['msCrypto'] !== 'undefined') {
-					crypto	= self['msCrypto'];
-				}
-				else {
-					let isaac: any;
-					importScripts('/cryptolib/bower_components/isaac.js/isaac.js');
-					isaac	= isaac || self['isaac'];
+			if (!crypto && 'msCrypto' in self) {
+				crypto	= self['msCrypto'];
+			}
+			try {
+				crypto.getRandomValues(new Uint8Array(1));
+			}
+			catch (_) {
+				let isaac: any;
+				importScripts('/cryptolib/bower_components/isaac.js/isaac.js');
+				isaac	= isaac || self['isaac'];
 
-					isaac.seed(vars.threadRandomSeed);
+				isaac.seed(vars.threadRandomSeed);
 
-					crypto	= {
-						getRandomValues: array => {
-							let bytes: number	=
-								'BYTES_PER_ELEMENT' in array ?
-									array['BYTES_PER_ELEMENT'] :
-									4
-							;
+				crypto	= {
+					getRandomValues: array => {
+						let bytes: number	=
+							'BYTES_PER_ELEMENT' in array ?
+								array['BYTES_PER_ELEMENT'] :
+								4
+						;
 
-							let max: number	= Math.pow(2, bytes * 8) - 1;
+						let max: number	= Math.pow(2, bytes * 8) - 1;
 
-							for (let i = 0 ; i < array['length'] ; ++i) {
-								array[i]	= Math.floor(isaac.random() * max);
-							}
+						for (let i = 0 ; i < array['length'] ; ++i) {
+							array[i]	= Math.floor(isaac.random() * max);
+						}
 
-							return array;
-						},
+						return array;
+					},
 
-						subtle: null
-					};
-				}
+					subtle: null
+				};
 			}
 		}
 
