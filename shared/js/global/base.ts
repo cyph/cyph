@@ -43,7 +43,6 @@ for (let k of ['window', 'document']) {
 }
 
 for (let k of [
-	'crypto',
 	'history',
 	'location',
 	'localStorage',
