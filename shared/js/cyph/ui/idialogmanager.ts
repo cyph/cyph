@@ -1,6 +1,15 @@
 module Cyph {
 	export module UI {
+		/**
+		 * Represents modal/dialog functionality.
+		 * @interface
+		 */
 		export interface IDialogManager {
+			/**
+			 * Displays alert.
+			 * @param o
+			 * @param callback
+			 */
 			alert (
 				o: {
 					title: string;
@@ -10,6 +19,11 @@ module Cyph {
 				callback?: (promiseValue: any) => void
 			) : void;
 
+			/**
+			 * Generic modal implementation that takes a template / content.
+			 * @param o
+			 * @param callback
+			 */
 			baseDialog (
 				o: {
 					template: string;
@@ -19,6 +33,11 @@ module Cyph {
 				callback?: (ok: boolean, vars: any) => void
 			) : void;
 
+			/**
+			 * Displays interactive confirmation prompt.
+			 * @param o
+			 * @param callback
+			 */
 			confirm (
 				o: {
 					title: string;
@@ -30,6 +49,11 @@ module Cyph {
 				callback?: (ok: boolean) => void
 			) : void;
 
+			/**
+			 * Displays toast notification.
+			 * @param o
+			 * @param callback
+			 */
 			toast (
 				o: {
 					content: string;

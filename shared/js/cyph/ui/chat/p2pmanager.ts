@@ -15,13 +15,17 @@ module Cyph {
 					this.controller.update();
 				}
 
-				public disabledAlert (isConnected: boolean) : void {
-					if (isConnected && !this.isEnabled) {
+				public closeButton () : void {
+					this.baseButtonClick(() => this.p2p.kill());
+				}
+
+				public disabledAlert () : void {
+					if (this.chat.isConnected && !this.isEnabled) {
 						this.dialogManager.alert({
 							title: Strings.p2pTitle,
 							content: Strings.p2pDisabled,
 							ok: Strings.ok
-						});
+ 						});
 					}
 				}
 
@@ -65,10 +69,6 @@ module Cyph {
 					});
 				}
 
-				public videoCallClose () : void {
-					this.baseButtonClick(() => this.p2p.kill());
-				}
-
 				public voiceCallButton () : void {
 					this.baseButtonClick(() => {
 						if (this.isEnabled) {
@@ -83,18 +83,18 @@ module Cyph {
 				}
 
 				public constructor (
-					chat: IChat,
+					private chat: IChat,
 					controller: IController,
 					mobileMenu: ISidebar,
 					private dialogManager: IDialogManager
 				) {
 					super(controller, mobileMenu);
 
-					this.p2p	= new P2P.P2P(chat.session, this.controller);
+					this.p2p	= new P2P.P2P(this.chat.session, this.controller);
 
 
 
-					chat.session.on(
+					this.chat.session.on(
 						Session.Events.p2pUi,
 						(e: {
 							category: P2P.UIEvents.Categories;
@@ -108,7 +108,7 @@ module Cyph {
 											let isConnected: boolean	= e.args[0];
 
 											if (isConnected) {
-												chat.addMessage(
+												this.chat.addMessage(
 													Strings.p2pConnect,
 													Session.Authors.app,
 													false
@@ -121,7 +121,7 @@ module Cyph {
 													ok: Strings.ok
 												});
 
-												chat.addMessage(
+												this.chat.addMessage(
 													Strings.p2pDisconnect,
 													Session.Authors.app,
 													false
@@ -169,8 +169,8 @@ module Cyph {
 
 											let file: File	= Elements.p2pFiles.
 												toArray().
-												map(($elem) => $elem['files']).
-												reduce((a, b) => (a && a[0]) ? a : b, [])[0]
+												map((elem: HTMLInputElement) => elem.files || []).
+												reduce((a: File, b: FileList) => a || b[0], null)
 											;
 
 											callback(file);
@@ -199,12 +199,13 @@ module Cyph {
 											let fileName: string		= e.args[1];
 
 											let isFromMe: boolean	= author === Session.Authors.me;
-											let message: string		= isFromMe ?
+											let message: string		=
+												isFromMe ?
 													Strings.fileTransferInitMe :
 													Strings.fileTransferInitFriend
 											;
 
-											chat.addMessage(
+											this.chat.addMessage(
 												message + ' ' + fileName,
 												Session.Authors.app,
 												!isFromMe

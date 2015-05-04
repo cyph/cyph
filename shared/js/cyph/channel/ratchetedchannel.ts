@@ -114,7 +114,7 @@ module Cyph {
 			}
 
 			public receive (
-				messageHandler?: Function,
+				messageHandler?: (message: string) => void,
 				onComplete?: Function,
 				maxNumberOfMessages?: number,
 				waitTimeSeconds?: number,
