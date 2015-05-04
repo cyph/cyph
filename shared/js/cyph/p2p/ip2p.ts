@@ -20,7 +20,7 @@ module Cyph {
 			/**
 			 * This kills the P2P session.
 			 */
-			kill () : void;
+			close () : void;
 
 			/**
 			 * Sends a new P2P session request to the other party.
