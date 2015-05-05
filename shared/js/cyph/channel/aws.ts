@@ -16,7 +16,7 @@ module Cyph {
 					params: Util.getValue(o, 'params', {})
 				};
 
-				const date: Date			= new Date;
+				const date: Date			= new Date();
 				const timestamp: string		= date.toISOString();
 				const dateString: string	= timestamp.split('T')[0].replace(/-/g, '');
 
