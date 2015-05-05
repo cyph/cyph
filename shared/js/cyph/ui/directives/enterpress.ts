@@ -11,7 +11,7 @@ module Cyph {
 							trigger: '&' + Enterpress.title
 						},
 						link: (scope, element, attrs) => {
-							let platformRestriction: string	= attrs['enterpressOnly'];
+							const platformRestriction: string	= attrs['enterpressOnly'];
 
 							if (!platformRestriction || platformRestriction === Cyph.Env.platformString) {
 								element.keypress(e => {

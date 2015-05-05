@@ -66,21 +66,21 @@ module Cyph {
 				config: any = {}
 			) {
 				try {
-					let descriptor: any	= JSON.parse(channelName);
-					channelName			= descriptor.name;
-					config.region		= descriptor.region;
+					const descriptor: any	= JSON.parse(channelName);
+					channelName				= descriptor.name;
+					config.region			= descriptor.region;
 				}
 				catch (_) {}
 
 				this.sqs	= Queue.sqsWrapper(config);
 
-				let onclose	= () =>
+				const onclose	= () =>
 					this.close(handlers.onclose)
 				;
 
-				let onconnect	= () : boolean => {
+				const onconnect	= () : boolean => {
 					if (handlers.onconnect) {
-						let f: Function		= handlers.onconnect;
+						const f: Function		= handlers.onconnect;
 						handlers.onconnect	= null;
 
 						f();
@@ -95,7 +95,7 @@ module Cyph {
 				this.sqs.getQueueUrl({
 					QueueName: Queue.queuePrefix + channelName + Channel.channelIds(true)
 				}, (err, data) => {
-					let isCreator: boolean	= !!err;
+					const isCreator: boolean	= !!err;
 
 					this.inQueue	= new Queue(channelName + Channel.channelIds(isCreator), {
 						onmessage: (message: string) => {
@@ -114,7 +114,7 @@ module Cyph {
 									let lastTouched: number		= Date.now();
 									let periodToggle: boolean	= false;
 
-									let timer: Timer	= new Timer((now: number) => {
+									const timer: Timer	= new Timer((now: number) => {
 										if (!this.inQueue.isAlive) {
 											timer.stop();
 										}

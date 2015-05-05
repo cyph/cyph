@@ -12,12 +12,12 @@ module Cyph.com {
 			public signupForm: Cyph.UI.ISignupForm;
 
 			private onScroll () : void {
-				let viewportHeight: number	= Math.max(
+				const viewportHeight: number	= Math.max(
 					document.documentElement.clientHeight,
 					window.innerHeight || 0
 				);
 
-				let scrollTop: number	= window.pageYOffset;
+				const scrollTop: number	= window.pageYOffset;
 
 				if (scrollTop === 0) {
 					Elements.newCyph.css({transform: '', top: ''});
@@ -29,7 +29,7 @@ module Cyph.com {
 				else {
 					Elements.fixedHeaderStuff.removeClass(UI.fixedHeaderClass);
 
-					let ratio: number	= (viewportHeight - scrollTop) / viewportHeight;
+					const ratio: number	= (viewportHeight - scrollTop) / viewportHeight;
 
 					if (ratio > 0.62) {
 						Elements.newCyph.css('transform', 'scale(' + ratio + ')');
@@ -38,8 +38,8 @@ module Cyph.com {
 			}
 
 			private onUrlStateChange (urlState: string) : void {
-				let state: States		= States[urlState];
-				let podcast: Podcasts	= Podcasts[urlState];
+				const state: States		= States[urlState];
+				const podcast: Podcasts	= Podcasts[urlState];
 
 				if (podcast !== undefined) {
 					this.openPodcastPage(podcast);
@@ -65,7 +65,7 @@ module Cyph.com {
 				position: number,
 				delayFactor: number = 0.75
 			) : void {
-				let delay: number	=
+				const delay: number	=
 					delayFactor *
 					Math.abs(Cyph.UI.Elements.document.scrollTop() - position)
 				;
@@ -109,18 +109,18 @@ module Cyph.com {
 				Cyph.UrlState.set(Cyph.UrlState.get(), true, false, false);
 
 
-				let wowDelay: string			= 'data-wow-delay';
-				let platformWowDelay: string	= Cyph.Env.platformString + '-' + wowDelay;
+				const wowDelay: string			= 'data-wow-delay';
+				const platformWowDelay: string	= Cyph.Env.platformString + '-' + wowDelay;
 
 				$('[' + platformWowDelay + ']').each((i: number, elem: HTMLElement) => {
-					let $this: JQuery	= $(elem);
+					const $this: JQuery	= $(elem);
 					$this.attr(wowDelay, $this.attr(platformWowDelay));
 				});
 
-				let platformClass: string	= Cyph.Env.platformString + '-class-';
+				const platformClass: string	= Cyph.Env.platformString + '-class-';
 
 				$('[class*="' + platformClass + '"]').each((i: number, elem: HTMLElement) => {
-					let $this: JQuery	= $(elem);
+					const $this: JQuery	= $(elem);
 					$this.attr(
 						'class',
 						$this.attr('class').replace(new RegExp(platformClass, 'g'), '')
@@ -155,7 +155,7 @@ module Cyph.com {
 				$('a[href^="/"]').click(e => {
 					e.preventDefault();
 
-					let href: string		= $(e.currentTarget).attr('href');
+					const href: string		= $(e.currentTarget).attr('href');
 					let scrollDelay: number	= 500;
 
 					if (href !== location.pathname) {

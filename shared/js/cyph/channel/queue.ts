@@ -30,7 +30,7 @@ module Cyph {
 					config.endpoint	= Env.awsEndpoint;
 				}
 
-				let wrapper	= {
+				const wrapper	= {
 					base: new AWS.base.SQS(config),
 					createQueue: null,
 					deleteMessage: null,
@@ -109,8 +109,8 @@ module Cyph {
 						try {
 							if (Util.getValue(data, 'Messages', []).length > 0) {
 								if (onLag) {
-									let attributes: any	= data.Messages[0].Attributes;
-									let lag: number		=
+									const attributes: any	= data.Messages[0].Attributes;
+									const lag: number		=
 										parseInt(attributes.ApproximateFirstReceiveTimestamp, 10) -
 										parseInt(attributes.SentTimestamp, 10)
 									;
@@ -126,7 +126,7 @@ module Cyph {
 								}, () => {});
 
 								if (messageHandler) {
-									for (let message of data.Messages) {
+									for (const message of data.Messages) {
 										let messageBody: string	= message.Body;
 
 										try {
@@ -153,7 +153,7 @@ module Cyph {
 			) : void {
 				if (this.isQueueAlive) {
 					if (typeof message === 'string') {
-						let messageBody: string	= JSON.stringify({message: message});
+						const messageBody: string	= JSON.stringify({message: message});
 
 						/* Fake SQS doesn't like Cyph.Channel.AWS requests */
 						if (isSynchronous && !Env.isLocalEnv) {
@@ -198,10 +198,10 @@ module Cyph {
 					}
 					else {
 						if (callback instanceof Array) {
-							let callbacks: Function[]	= <Function[]> callback;
+							const callbacks: Function[]	= <Function[]> callback;
 
 							callback	= (err, data) => {
-								for (let callback of callbacks) {
+								for (const callback of callbacks) {
 									if (callback) {
 										try {
 											callback(err, data);
@@ -266,20 +266,21 @@ module Cyph {
 									}
 								}
 								else if (this.isQueueAlive) {
-									let delay: number		= 50;
-									let now: number			= Date.now();
-									let isEmpty: boolean	= Util.getValue(data, 'Messages', []).length < 1;
+									const now: number		= Date.now();
+									const isEmpty: boolean	= Util.getValue(data, 'Messages', []).length < 1;
 
-									if (isEmpty && (now - lastReceiveTime) < 10000) {
-										delay	= 2500;
-									}
+									const delay: number		=
+										isEmpty && (now - lastReceiveTime) < 10000 ?
+											2500 :
+											50
+									;
 
 									lastReceiveTime	= now;
 									retry(delay);
 								}
 							}, null, null, onlag && (lag => {
 								if (onlag) {
-									let f	= onlag;
+									const f	= onlag;
 									onlag	= null;
 									setTimeout(() => f(lag, this.sqs.base.config.region), 0);
 								}

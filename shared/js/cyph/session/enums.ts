@@ -30,7 +30,7 @@ module Cyph {
 			send
 		}
 
-		export let RPCEvents	= {
+		export const RPCEvents	= {
 			channelRatchet: 'channelRatchet',
 			destroy: 'destroy',
 			mutex: 'mutex',
@@ -47,7 +47,7 @@ module Cyph {
 			public static isStartingNewCyph: string		= 'isStartingNewCyph';
 		}
 
-		export let ThreadedSessionEvents	= {
+		export const ThreadedSessionEvents	= {
 			close: 'close-ThreadedSession',
 			receive: 'receive-ThreadedSession',
 			send: 'send-ThreadedSession',

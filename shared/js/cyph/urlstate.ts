@@ -8,7 +8,7 @@ module Cyph {
 
 		public static get (fragmentOnly?: boolean) : string {
 			try {
-				let fragment: string	= location.hash.split('#')[1] || '';
+				const fragment: string	= location.hash.split('#')[1] || '';
 
 				if (fragmentOnly || fragment) {
 					return fragment;

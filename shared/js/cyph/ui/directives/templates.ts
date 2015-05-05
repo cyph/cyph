@@ -1,7 +1,7 @@
 module Cyph {
 	export module UI {
 		export module Directives {
-			export let Templates	= {
+			export const Templates	= {
 				chatCyphertext: `
 					<div class='chat-cyphertext nano'>
 						<md-content class='nano-content'>
@@ -679,7 +679,7 @@ module Cyph {
 			};
 
 			(() => {
-				for (let k of Object.keys(Templates)) {
+				for (const k of Object.keys(Templates)) {
 					Templates[k]	= Util.translateHtml(Templates[k]);
 				}
 			})();

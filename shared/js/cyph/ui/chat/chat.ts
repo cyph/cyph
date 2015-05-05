@@ -115,9 +115,9 @@ module Cyph {
 						if (!this.isMobile) {
 							setTimeout(() => {
 								Elements.buttons.each((i: number, elem: HTMLElement) => {
-									let $this: JQuery	= $(elem);
+									const $this: JQuery		= $(elem);
 
-									let $clone: JQuery	= $this
+									const $clone: JQuery	= $this
 										.clone()
 										.css({
 											display: 'inline',
@@ -128,7 +128,7 @@ module Cyph {
 										.appendTo('body')
 									;
 
-									let $both: JQuery	= $this.add($clone);
+									const $both: JQuery		= $this.add($clone);
 
 									let fontSize: number	= parseInt($this.css('font-size'), 10);
 
@@ -199,7 +199,7 @@ module Cyph {
 				}
 
 				public messageChange () : void {
-					let isMessageChanged: boolean	=
+					const isMessageChanged: boolean	=
 						this.currentMessage !== '' &&
 						this.currentMessage !== this.previousMessage
 					;
@@ -286,8 +286,8 @@ module Cyph {
 						/* Prevent jankiness upon message send on mobile */
 
 						Elements.messageBox.click(e => {
-							for (let $button of [Elements.sendButton, Elements.insertPhotoMobile]) {
-								let bounds	= $button['bounds']();
+							for (const $button of [Elements.sendButton, Elements.insertPhotoMobile]) {
+								const bounds	= $button['bounds']();
 
 								if (
 									(e.pageY > bounds.top && e.pageY < bounds.bottom) &&
@@ -302,7 +302,7 @@ module Cyph {
 					else {
 						/* Adapt to message box to content size on desktop */
 
-						let messageBoxLineHeight: number	= parseInt(
+						const messageBoxLineHeight: number	= parseInt(
 							Elements.messageBox.css('line-height'),
 							10
 						);

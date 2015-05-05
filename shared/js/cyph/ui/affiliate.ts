@@ -8,25 +8,25 @@ module Cyph {
 
 			public process ($elem: JQuery) : void {
 				$elem.find('a').addBack().click(e => {
-					let originalUrl: string	= $(e.currentTarget).attr('href') || '';
+					const originalUrl: string	= $(e.currentTarget).attr('href') || '';
 
 					if (originalUrl.substring(0, 5) === 'data:') {
 						return;
 					}
 
-					let asin: string	= (originalUrl.match(Affiliate.regex) || [])[1] || '';
+					const asin: string	= (originalUrl.match(Affiliate.regex) || [])[1] || '';
 
 					if (asin) {
 						e.preventDefault();
 
-						let affiliateUrl: string	=
+						const affiliateUrl: string	=
 							'https://www.amazon.com/dp/' +
 							asin +
 							'?tag=' +
 							Config.amazonAffiliateCode
 						;
 
-						let openAmazonUrl	= (ok: boolean) : void => {
+						const openAmazonUrl	= (ok: boolean) : void => {
 							Util.openUrl(ok ? affiliateUrl : originalUrl);
 						};
 

@@ -12,7 +12,7 @@ module Cyph {
 				public unreadMessages: number	= 0;
 
 				private mutationObserverHandler (mutation: MutationRecord) : void {
-					let $elem: JQuery	= $(
+					const $elem: JQuery	= $(
 						mutation.addedNodes.length > 0 ?
 							mutation.addedNodes[0] :
 							mutation.target
@@ -20,7 +20,7 @@ module Cyph {
 
 					/* Process read-ness and scrolling */
 					if ($elem.is('.message-item.unread')) {
-						let currentScrollPosition: number	= Elements.messageList['scrollPosition']();
+						const currentScrollPosition: number	= Elements.messageList['scrollPosition']();
 
 						if (
 							VisibilityWatcher.isVisible &&
@@ -41,7 +41,7 @@ module Cyph {
 								this.unreadMessages	+= 1;
 								this.controller.update();
 
-								let intervalId	= setInterval(() => {
+								const intervalId	= setInterval(() => {
 									if (
 										VisibilityWatcher.isVisible &&
 										(
@@ -66,13 +66,13 @@ module Cyph {
 
 					/* Process image lightboxes */
 					else if ($elem.is('p:not(.processed)')) {
-						let $html: JQuery	= $($elem[0].outerHTML);
+						const $html: JQuery	= $($elem[0].outerHTML);
 
 						$html.find('img:not(.emoji)').each((i: number, elem: HTMLElement) => {
-							let $this: JQuery	= $(elem);
+							const $this: JQuery	= $(elem);
 
 							if ($this.parent().prop('tagName').toLowerCase() !== 'a') {
-								let $a: JQuery	= $('<a></a>');
+								const $a: JQuery	= $('<a></a>');
 
 								$a.attr('href', $this.attr('src'));
 
@@ -132,7 +132,7 @@ module Cyph {
 					}
 
 					new MutationObserver(mutations => {
-						for (let mutationRecord of mutations) {
+						for (const mutationRecord of mutations) {
 							this.mutationObserverHandler(mutationRecord);
 						}
 					}).observe(Elements.messageListInner[0], {

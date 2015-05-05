@@ -1,7 +1,7 @@
 module Cyph {
 	export class Util {
 		public static chunkString (s: string, length: number) : string[] {
-			let array: string[]	= [];
+			const array: string[]	= [];
 
 			while (s.length) {
 				array.push(s.substr(0, length));
@@ -12,14 +12,14 @@ module Cyph {
 		}
 
 		public static deserializeObject (classObject: any, json: string|any) : any {
-			let o: any	= typeof json === 'string' ?
+			const o: any	= typeof json === 'string' ?
 				JSON.parse(json) :
 				json
 			;
 
-			let newObject: any	= Object.create(classObject.prototype);
+			const newObject: any	= Object.create(classObject.prototype);
 
-			for (let k of Object.keys(o)) {
+			for (const k of Object.keys(o)) {
 				newObject[k] = o[k];
 			}
 
@@ -43,10 +43,10 @@ module Cyph {
 		}
 
 		public static getTimestamp () : string {
-			let date: Date		= new Date;
-			let hour: number	= date.getHours();
-			let ampm: string	= 'am';
-			let minute: string	= ('0' + date.getMinutes()).slice(-2);
+			const date: Date		= new Date;
+			const minute: string	= ('0' + date.getMinutes()).slice(-2);
+			let hour: number		= date.getHours();
+			let ampm: string		= 'am';
 
 			if (hour >= 12) {
 				hour	-= 12;
@@ -64,13 +64,13 @@ module Cyph {
 				return defaultValue;
 			}
 
-			let keys: string[]	=
+			const keys: string[]	=
 				typeof keysToTry === 'string' ?
 					[keysToTry] :
 					keysToTry
 			;
 
-			let value: T	=
+			const value: T	=
 				keys.length < 1 ?
 					null :
 					keys.reduce((value: T, key: string) : T =>
@@ -87,7 +87,7 @@ module Cyph {
 
 		public static openUrl (url: string, downloadName?: string) : void {
 			if (Env.isMainThread) {
-				let a: HTMLAnchorElement	= document.createElement('a');
+				const a: HTMLAnchorElement	= document.createElement('a');
 
 				a.href			= url;
 				a.target		= '_blank';
@@ -115,11 +115,11 @@ module Cyph {
 		}
 
 		public static readableByteLength (b: number) : string {
-			let gb: number	= b / 1.074e+9;
-			let mb: number	= b / 1.049e+6;
-			let kb: number	= b / 1024;
+			const gb: number	= b / 1.074e+9;
+			const mb: number	= b / 1.049e+6;
+			const kb: number	= b / 1024;
 
-			let o	=
+			const o	=
 				gb >= 1 ?
 					{n: gb, s: 'G'} :
 					mb >= 1 ?
@@ -142,13 +142,13 @@ module Cyph {
 			timeout?: number;
 			url: string;
 		}) : void {
-			let async: boolean		= Util.getValue(o, 'async', true) !== false;
+			const async: boolean	= Util.getValue(o, 'async', true) !== false;
+			const error: Function	= Util.getValue(o, 'error', () => {});
+			const method: string	= Util.getValue(o, 'method', 'GET');
+			const success: Function	= Util.getValue(o, 'success', () => {});
+			const timeout: number	= Util.getValue(o, 'timeout', 0);
 			let contentType: string	= Util.getValue(o, 'contentType', 'application/x-www-form-urlencoded');
 			let data: any			= Util.getValue<any>(o, 'data', '');
-			let error: Function		= Util.getValue(o, 'error', () => {});
-			let method: string		= Util.getValue(o, 'method', 'GET');
-			let success: Function	= Util.getValue(o, 'success', () => {});
-			let timeout: number		= Util.getValue(o, 'timeout', 0);
 			let url: string			= o.url;
 
 			if (url.slice(-5) === '.json') {
@@ -172,9 +172,9 @@ module Cyph {
 			}
 
 
-			let xhr: XMLHttpRequest	= new XMLHttpRequest;
+			const xhr: XMLHttpRequest	= new XMLHttpRequest;
 
-			let callback: Function	= () => (
+			const callback: Function	= () => (
 				xhr.status === 200 ?
 					success :
 					error
@@ -220,7 +220,7 @@ module Cyph {
 		public static toQueryString (o: any, parent?: string) : string {
 			return Object.keys(o).
 				map((k: string) => {
-					let key: string	= parent ? (parent + '[' + k + ']') : k;
+					const key: string	= parent ? (parent + '[' + k + ']') : k;
 
 					return typeof o[k] === 'object' ?
 						Util.toQueryString(o[k], key) :
@@ -244,7 +244,7 @@ module Cyph {
 				throw new Error('Can only HTML decode translations in main thread.');
 			}
 
-			let translation: string	= Util.getValue(
+			const translation: string	= Util.getValue(
 				Util.getValue(Translations, Env.language, {}),
 				text,
 				defaultValue
@@ -266,12 +266,12 @@ module Cyph {
 				}
 			}
 
-			let $this: JQuery		= $(html);
-			let ngBind: string		= $this.attr('ng-bind');
-			let innerHtml: string	= $this.html().trim().replace(/\s+/g, ' ');
+			const $this: JQuery		= $(html);
+			const ngBind: string	= $this.attr('ng-bind');
+			const innerHtml: string	= $this.html().trim().replace(/\s+/g, ' ');
 
-			for (let attr of ['content', 'placeholder', 'aria-label', 'label']) {
-				let value: string	= $this.attr(attr);
+			for (const attr of ['content', 'placeholder', 'aria-label', 'label']) {
+				const value: string	= $this.attr(attr);
 
 				if (value) {
 					$this.attr(attr, Util.translate(value, true));
@@ -280,7 +280,7 @@ module Cyph {
 
 			if (ngBind) {
 				$this.attr('ng-bind', ngBind.replace(/"([^"]*)"/g, (match, value) => {
-					let translation: string	= Util.translate(value, true, '');
+					const translation: string	= Util.translate(value, true, '');
 
 					return translation ?
 						'"' + translation + '"' :
@@ -291,7 +291,7 @@ module Cyph {
 
 			if (innerHtml) {
 				$this.html(innerHtml.replace(/(.*?)(\{\{.*?\}\}|$)/g, (match, value, binding) => {
-					let translation: string	= Util.translate(value, true, '');
+					const translation: string	= Util.translate(value, true, '');
 
 					return translation ?
 						translation + binding :
@@ -304,7 +304,7 @@ module Cyph {
 		}
 
 		public static triggerClick (elem: HTMLElement) {
-			let e: Event	= document.createEvent('MouseEvents');
+			const e: Event	= document.createEvent('MouseEvents');
 			e.initEvent('click', true, false);
 			elem.dispatchEvent(e);
 		}

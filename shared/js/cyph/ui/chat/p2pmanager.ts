@@ -105,7 +105,7 @@ module Cyph {
 								case P2P.UIEvents.Categories.base: {
 									switch (e.event) {
 										case P2P.UIEvents.Events.connected: {
-											let isConnected: boolean	= e.args[0];
+											const isConnected: boolean	= e.args[0];
 
 											if (isConnected) {
 												this.chat.addMessage(
@@ -134,7 +134,7 @@ module Cyph {
 											break;
 										}
 										case P2P.UIEvents.Events.videoToggle: {
-											let isActive: boolean	= e.args[0];
+											const isActive: boolean	= e.args[0];
 
 											this.toggle(isActive);
 											break;
@@ -151,10 +151,10 @@ module Cyph {
 											break;
 										}
 										case P2P.UIEvents.Events.confirm: {
-											let name: string		= e.args[0];
-											let callback: Function	= e.args[1];
+											const name: string			= e.args[0];
+											const callback: Function	= e.args[1];
 
-											let title: string	= Strings.incomingFile + ' ' + name;
+											const title: string	= Strings.incomingFile + ' ' + name;
 
 											this.dialogManager.confirm({
 												title,
@@ -165,9 +165,9 @@ module Cyph {
 											break;
 										}
 										case P2P.UIEvents.Events.get: {
-											let callback: Function	= e.args[0];
+											const callback: Function	= e.args[0];
 
-											let file: File	= Elements.p2pFiles.
+											const file: File	= Elements.p2pFiles.
 												toArray().
 												map((elem: HTMLInputElement) => elem.files || []).
 												reduce((a: File, b: FileList) => a || b[0], null)
@@ -177,7 +177,7 @@ module Cyph {
 											break;
 										}
 										case P2P.UIEvents.Events.rejected: {
-											let title: string	= e.args[0];
+											const title: string	= e.args[0];
 
 											this.dialogManager.alert({
 												title,
@@ -195,11 +195,11 @@ module Cyph {
 											break;
 										}
 										case P2P.UIEvents.Events.transferStarted: {
-											let author: Session.Authors	= e.args[0];
-											let fileName: string		= e.args[1];
+											const author: Session.Authors	= e.args[0];
+											const fileName: string			= e.args[1];
 
-											let isFromMe: boolean	= author === Session.Authors.me;
-											let message: string		=
+											const isFromMe: boolean	= author === Session.Authors.me;
+											const message: string	=
 												isFromMe ?
 													Strings.fileTransferInitMe :
 													Strings.fileTransferInitFriend
@@ -218,9 +218,9 @@ module Cyph {
 								case P2P.UIEvents.Categories.request: {
 									switch (e.event) {
 										case P2P.UIEvents.Events.acceptConfirm: {
-											let callType: string	= e.args[0];
-											let timeout: number		= e.args[1];
-											let callback: Function	= e.args[2];
+											const callType: string		= e.args[0];
+											const timeout: number		= e.args[1];
+											const callback: Function	= e.args[2];
 
 											this.dialogManager.confirm({
 												title: Strings.p2pTitle,
@@ -236,8 +236,8 @@ module Cyph {
 											break;
 										}
 										case P2P.UIEvents.Events.requestConfirm: {
-											let callType: string	= e.args[0];
-											let callback: Function	= e.args[1];
+											const callType: string		= e.args[0];
+											const callback: Function	= e.args[1];
 
 											this.dialogManager.confirm({
 												title: Strings.p2pTitle,
@@ -271,9 +271,9 @@ module Cyph {
 									break;
 								}
 								case P2P.UIEvents.Categories.stream: {
-									let author: Session.Authors	= e.args[0];
+									const author: Session.Authors	= e.args[0];
 
-									let $stream: JQuery	=
+									const $stream: JQuery	=
 										author === Session.Authors.me ?
 											Elements.p2pMeStream :
 											author === Session.Authors.friend ?
@@ -283,13 +283,13 @@ module Cyph {
 
 									switch (e.event) {
 										case P2P.UIEvents.Events.play: {
-											let shouldPlay: boolean	= e.args[1];
+											const shouldPlay: boolean	= e.args[1];
 
 											$stream[0][shouldPlay ? 'play' : 'pause']();
 											break;
 										}
 										case P2P.UIEvents.Events.set: {
-											let url: string	= e.args[1];
+											const url: string	= e.args[1];
 
 											try {
 												URL.revokeObjectURL($stream.attr('src'));

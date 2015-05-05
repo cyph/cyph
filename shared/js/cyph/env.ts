@@ -28,7 +28,7 @@ module Cyph {
 		;
 
 		public static language: string		= (() => {
-			let language: string	= Env.fullLanguage.split('-')[0];
+			const language: string	= Env.fullLanguage.split('-')[0];
 
 			/* Consistency in special cases */
 			return language === 'nb' ?

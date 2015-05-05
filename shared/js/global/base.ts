@@ -31,18 +31,18 @@
 /// <reference path="../cyph/ui/chat/iscrollmanager.ts" />
 
 
-let IS_WEB: boolean	= 'IS_WEB' in self ?
+const IS_WEB: boolean	= 'IS_WEB' in self ?
 	self['IS_WEB'] :
 	typeof window === 'object'
 ;
 
-for (let k of ['window', 'document']) {
+for (const k of ['window', 'document']) {
 	if (!(k in self)) {
 		self[k]	= self;
 	}
 }
 
-for (let k of [
+for (const k of [
 	'history',
 	'location',
 	'localStorage',
