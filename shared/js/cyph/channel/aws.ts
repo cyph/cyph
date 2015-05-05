@@ -4,7 +4,7 @@ module Cyph {
 			public static base	= self['AWS'];
 
 			public static request (o: any, callback: any = () => {}) : void {
-				let config	= {
+				const config	= {
 					url: o.url,
 					action: o.action,
 					isSynchronous: !!o.isSynchronous,
@@ -16,29 +16,29 @@ module Cyph {
 					params: Util.getValue(o, 'params', {})
 				};
 
-				let date: Date				= new Date;
-				let timestamp: string		= date.toISOString();
-				let dateString: string		= timestamp.split('T')[0].replace(/-/g, '');
+				const date: Date			= new Date;
+				const timestamp: string		= date.toISOString();
+				const dateString: string	= timestamp.split('T')[0].replace(/-/g, '');
 
-				let requestMethod: string	= 'GET';
-				let algorithm: string		= 'AWS4-HMAC-SHA256';
-				let hostHeader: string		= 'host';
-				let terminator: string		= 'aws4_request';
-				let host: string			= config.url.split('/')[2];
-				let uri: string				= config.url.split(host)[1] || '/';
+				const requestMethod: string	= 'GET';
+				const algorithm: string		= 'AWS4-HMAC-SHA256';
+				const hostHeader: string	= 'host';
+				const terminator: string	= 'aws4_request';
+				const host: string			= config.url.split('/')[2];
+				const uri: string			= config.url.split(host)[1] || '/';
 
-				let credential: string		=
+				const credential: string	=
 					dateString + '/' +
 					config.region + '/' +
 					config.service + '/' +
 					terminator
 				;
 
-				let params: {[k: string] : string}	= {};
+				const params: {[k: string] : string}	= {};
 
 				params['Action']	= config.action;
 
-				for (let k of Object.keys(config.params)) {
+				for (const k of Object.keys(config.params)) {
 					params[k]	= config.params[k];
 				}
 
@@ -49,13 +49,13 @@ module Cyph {
 				params['X-Amz-Date']			= timestamp;
 				params['X-Amz-SignedHeaders']	= hostHeader;
 
-				let query: string	= Util.toQueryString(params).
+				const query: string	= Util.toQueryString(params).
 					replace(/\+/g, '%20').
 					replace(/\(/g, '%28').
 					replace(/\)/g, '%29')
 				;
 
-				let canonicalRequest: string	=
+				const canonicalRequest: string	=
 					requestMethod + '\n' +
 					uri + '\n' +
 					query + '\n' +
@@ -64,7 +64,7 @@ module Cyph {
 					CryptoJS.SHA256('').toString()
 				;
 
-				let stringToSign: string	=
+				const stringToSign: string	=
 					algorithm + '\n' +
 					timestamp.split('.')[0].match(/[0-9A-Za-z]/g).join('') + 'Z\n' +
 					credential + '\n' +
@@ -72,7 +72,7 @@ module Cyph {
 				;
 
 
-				let signature: string	= CryptoJS.HmacSHA256(
+				const signature: string	= CryptoJS.HmacSHA256(
 					stringToSign,
 					CryptoJS.HmacSHA256(
 						terminator,

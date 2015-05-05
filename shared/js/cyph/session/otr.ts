@@ -21,7 +21,7 @@ module Cyph {
 
 			private receiveHandler (message?: string) : void {
 				if (message) {
-					let o: OTRMessageOuter = Util.deserializeObject(OTRMessageOuter, message);
+					const o: OTRMessageOuter = Util.deserializeObject(OTRMessageOuter, message);
 
 					if (o.id >= this.incomingMessageId) {
 						this.incomingMessages[o.id]	= o.cyphertext;
@@ -54,8 +54,8 @@ module Cyph {
 
 			private sendHandler (message?: string) : void {
 				if (message) {
-					let id: string			= Util.generateGuid();
-					let chunks: string[]	= Util.chunkString(message, 5120);
+					const id: string		= Util.generateGuid();
+					const chunks: string[]	= Util.chunkString(message, 5120);
 
 					for (let i = 0 ; i < chunks.length ; ++i) {
 						this.otr.send(JSON.stringify(new OTRMessageInner(
@@ -77,7 +77,7 @@ module Cyph {
 			}
 
 			public constructor (private session: ISession) {
-				let user: any	= (new self['OTR'].User).account('me', 'cyph');
+				const user: any	= (new self['OTR'].User).account('me', 'cyph');
 
 				user.generateInstag(() =>
 					user.generateKey(() => {
@@ -102,7 +102,7 @@ module Cyph {
 
 						this.otr.on('message', (message: string, wasEncrypted: boolean) => {
 							if (wasEncrypted) {
-								let o: OTRMessageInner	= Util.deserializeObject(
+								const o: OTRMessageInner	= Util.deserializeObject(
 									OTRMessageInner,
 									message
 								);
@@ -168,7 +168,7 @@ module Cyph {
 						}
 
 
-						let timer: Timer	= new Timer(() => {
+						const timer: Timer	= new Timer(() => {
 							if (!this.session.state.isAlive) {
 								timer.stop();
 							}

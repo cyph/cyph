@@ -26,7 +26,7 @@ $(
 	Cyph.Env.platformString +
 	'-only'
 ).each((i: number, elem: HTMLElement) => {
-	let $this: JQuery	= $(elem);
+	const $this: JQuery	= $(elem);
 
 	$this.attr('src', $this.attr('deferred-src'));
 });
@@ -49,8 +49,8 @@ if (!HTMLElement.prototype.click) {
 
 if (!Object.keys) {
 	Object.keys	= o => {
-		let keys: any[]	= [];
-		for (let k in o) {
+		const keys: any[]	= [];
+		for (const k in o) {
 			keys.push(k);
 		}
 		return keys;
@@ -63,8 +63,8 @@ $(() => {
 	/* Support button-links */
 
 	$('button > a').each((i: number, elem: HTMLElement) => {
-		let $this: JQuery	= $(elem);
-		let $button: JQuery	= $this.parent();
+		const $this: JQuery		= $(elem);
+		const $button: JQuery	= $this.parent();
 
 		$this.css('pointer-events', 'none');
 

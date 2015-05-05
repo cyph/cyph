@@ -23,7 +23,7 @@ module Cyph.im {
 			public beginWaiting () : void {
 				this.changeState(States.waitingForFriend);
 
-				let copyUrl: string	=
+				const copyUrl: string	=
 					Env.newCyphUrl +
 					'#' +
 					this.chat.session.state.cyphId +
@@ -33,14 +33,14 @@ module Cyph.im {
 				this.copyUrlEncoded	= encodeURIComponent(copyUrl);
 
 
-				let setCopyUrl: Function	= () => {
+				const setCopyUrl: Function	= () => {
 					if (this.copyUrl !== copyUrl) {
 						this.copyUrl	= copyUrl;
 						this.controller.update();
 					}
 				};
 
-				let selectCopyUrl: Function	= () =>
+				const selectCopyUrl: Function	= () =>
 					Util.getValue(
 						Cyph.UI.Elements.copyUrlInput[0],
 						'setSelectionRange',
@@ -61,7 +61,7 @@ module Cyph.im {
 					);
 				}
 				else {
-					let copyUrlInterval	= setInterval(() => {
+					const copyUrlInterval	= setInterval(() => {
 						if (this.state === States.waitingForFriend) {
 							setCopyUrl();
 							Cyph.UI.Elements.copyUrlInput.focus();
@@ -74,7 +74,7 @@ module Cyph.im {
 				}
 
 				if (Cyph.Env.isIE) {
-					let expireTime: string	= new Date(Date.now() + 600000)
+					const expireTime: string	= new Date(Date.now() + 600000)
 						.toLocaleTimeString()
 						.toLowerCase()
 						.replace(/(.*:.*):.*? /, '$1')

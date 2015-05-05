@@ -66,7 +66,7 @@ module Cyph {
 				},
 
 				kill: () : void => {
-					let wasAccepted: boolean	= this.isAccepted;
+					const wasAccepted: boolean	= this.isAccepted;
 					this.isAccepted				= false;
 					this.hasSessionStarted		= false;
 
@@ -77,8 +77,8 @@ module Cyph {
 					);
 
 					setTimeout(() => {
-						for (let o of [this.outgoingStream, this.incomingStream]) {
-							for (let k of Object.keys(o)) {
+						for (const o of [this.outgoingStream, this.incomingStream]) {
+							for (const k of Object.keys(o)) {
 								o[k]	= false;
 							}
 						}
@@ -130,7 +130,7 @@ module Cyph {
 				},
 
 				streamOptions: (options: string) : void => {
-					let o: any	= JSON.parse(options);
+					const o: any	= JSON.parse(options);
 
 					this.incomingStream.video	= o.video === true;
 					this.incomingStream.audio	= o.audio === true;
@@ -176,7 +176,7 @@ module Cyph {
 				}
 
 				let channel: RTCDataChannel;
-				let peer: RTCPeerConnection	= new WebRTC.PeerConnection({
+				const peer: RTCPeerConnection	= new WebRTC.PeerConnection({
 					iceServers: [
 						{url: P2P.constants.stun + ':' + Config.p2pConfig.iceServer},
 						{
@@ -237,7 +237,7 @@ module Cyph {
 				};
 
 				peer.onsignalingstatechange	= e => {
-					let forceKill: boolean	= e === null;
+					const forceKill: boolean	= e === null;
 
 					if (
 						this.peer === peer &&
@@ -368,8 +368,8 @@ module Cyph {
 				this.channel.onmessage	= e => {
 					if (typeof e.data === 'string') {
 						if (e.data === P2P.constants.fileTransferComplete) {
-							let data: ArrayBuffer[]	= this.incomingFile.data;
-							let name: string		= this.incomingFile.name;
+							const data: ArrayBuffer[]	= this.incomingFile.data;
+							const name: string			= this.incomingFile.name;
 
 							this.incomingFile.data				= null;
 							this.incomingFile.name				= '';
@@ -384,7 +384,7 @@ module Cyph {
 							}
 						}
 						else {
-							let data: string[]	= e.data.split('\n');
+							const data: string[]	= e.data.split('\n');
 
 							this.incomingFile.data	= [];
 							this.incomingFile.name	= data[0];
@@ -546,10 +546,10 @@ module Cyph {
 
 							this.channel.send(P2P.constants.fileTransferComplete);
 
-							let reader: FileReader	= new FileReader;
+							const reader: FileReader	= new FileReader;
 
 							reader.onloadend	= e => {
-								let buf: ArrayBuffer	= e.target['result'];
+								const buf: ArrayBuffer	= e.target['result'];
 								let pos: number			= 0;
 
 								this.outgoingFile.name	= file.name;
@@ -569,7 +569,7 @@ module Cyph {
 									this.outgoingFile.size
 								);
 
-								let timer: Timer	= new Timer(() => {
+								const timer: Timer	= new Timer(() => {
 									if (!this.isAccepted) {
 										timer.stop();
 										return;
@@ -577,7 +577,7 @@ module Cyph {
 
 									try {
 										for (let i = 0 ; i < 10 ; ++i) {
-											let old: number	= pos;
+											const old: number	= pos;
 											pos += Config.p2pConfig.fileChunkSize;
 											this.channel.send(buf.slice(old, pos));
 										}
@@ -640,9 +640,9 @@ module Cyph {
 						if (wasFirstOfType && this.isAccepted) {
 							this.initPeer();
 
-							let streamHelper;
-							let streamFallback;
-							let streamSetup;
+							let streamHelper: Function;
+							let streamFallback: Function;
+							let streamSetup: Function;
 
 							streamHelper	= (stream: MediaStream) => {
 								if (!this.isAccepted) {
@@ -671,7 +671,7 @@ module Cyph {
 								);
 
 
-								for (let o of [
+								for (const o of [
 									{k: P2P.constants.audio, f: 'getAudioTracks'},
 									{k: P2P.constants.video, f: 'getVideoTracks'}
 								]) {
@@ -684,7 +684,7 @@ module Cyph {
 								}
 
 
-								let outgoingStream: string	=
+								const outgoingStream: string	=
 									JSON.stringify(this.outgoingStream)
 								;
 
@@ -806,7 +806,7 @@ module Cyph {
 										WebRTC.getUserMedia(
 											{audio: true, video: false},
 											stream => {
-												for (let track of stream.getTracks()) {
+												for (const track of stream.getTracks()) {
 													track.enabled	= false;
 												}
 

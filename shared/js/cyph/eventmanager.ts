@@ -21,7 +21,7 @@ module Cyph {
 				EventManager.trigger(EventManager.untriggeredEvents, {event, data}, true);
 			}
 			else {
-				for (let handler of (EventManager.handlers[event] || [])) {
+				for (const handler of (EventManager.handlers[event] || [])) {
 					try {
 						handler(data);
 					}
@@ -31,7 +31,7 @@ module Cyph {
 				}
 
 				if (Env.isMainThread) {
-					for (let thread of Thread.threads) {
+					for (const thread of Thread.threads) {
 						try {
 							thread.postMessage({event, data, isThreadEvent: true});
 						}

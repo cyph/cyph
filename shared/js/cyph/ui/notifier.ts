@@ -7,7 +7,7 @@ module Cyph {
 			;
 
 			private static createNotification (message: string, callback: Function = () => {}) {
-				let options	= {
+				const options	= {
 					audio: null,
 					body: message,
 					icon: Config.notifierConfig.icon,
@@ -78,7 +78,7 @@ module Cyph {
 			public constructor () {
 				VisibilityWatcher.onchange((isVisible: boolean) => {
 					if (isVisible) {
-						for (let notification of this.openNotifications) {
+						for (const notification of this.openNotifications) {
 							try {
 								notification.close();
 							}

@@ -9,12 +9,11 @@ module Cyph {
 						restrict: 'A',
 						link: (scope, element, attrs) => {
 							element.change(() => {
-								let split: string[]		= attrs[Filechange.title].split('.');
+								const methodSplit: string[]	= attrs[Filechange.title].split('.');
+								const methodName: string	= methodSplit.slice(-1)[0].split('(')[0];
 
-								let methodName: string	= split.slice(-1)[0].split('(')[0];
-
-								let methodObject: any	= scope.$parent.$eval(
-									split.slice(0, -1).join('.')
+								const methodObject: any		= scope.$parent.$eval(
+									methodSplit.slice(0, -1).join('.')
 								);
 
 								methodObject[methodName](element[0]);

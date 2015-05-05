@@ -11,9 +11,9 @@ module Cyph {
 				Timer.timerLock	= true;
 
 				try {
-					let now: number	= Date.now();
+					const now: number	= Date.now();
 
-					for (let timer of Timer.timers) {
+					for (const timer of Timer.timers) {
 						if (timer) {
 							try {
 								timer(now);
@@ -33,7 +33,7 @@ module Cyph {
 		}
 
 		private static runWithThread (interval: number) : void {
-			let threadHelper	= () => {
+			const threadHelper	= () => {
 				if (Timer.processTimers()) {
 					Timer.thread.postMessage({});
 				}

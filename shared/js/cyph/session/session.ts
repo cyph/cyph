@@ -45,7 +45,7 @@ module Cyph {
 						this.lastIncomingMessageTimestamp	= Date.now();
 
 						if (e.data) {
-							for (let message of JSON.parse(e.data)) {
+							for (const message of JSON.parse(e.data)) {
 								this.receiveHandler(message);
 							}
 						}
@@ -128,7 +128,7 @@ module Cyph {
 					descriptor	= Util.generateGuid(Config.secretLength);
 				}
 
-				let middle: number	= Math.ceil(descriptor.length / 2);
+				const middle: number	= Math.ceil(descriptor.length / 2);
 
 				this.updateState(State.cyphId, descriptor.substr(0, middle));
 				this.updateState(State.sharedSecret,
@@ -157,7 +157,7 @@ module Cyph {
 						this.on(Events.otr, e => this.otrHandler(e));
 						this.otr	= new OTR(this);
 
-						let sendTimer: Timer	= new Timer((now: number) => {
+						const sendTimer: Timer	= new Timer((now: number) => {
 							if (!this.state.isAlive) {
 								sendTimer.stop();
 							}
@@ -180,7 +180,7 @@ module Cyph {
 			public close (shouldSendEvent: boolean = true) : void {
 				this.updateState(State.isAlive, false);
 
-				let closeChat: Function	= () => this.trigger(Events.closeChat);
+				const closeChat: Function	= () => this.trigger(Events.closeChat);
 
 				if (shouldSendEvent) {
 					this.channel.send(RPCEvents.destroy, closeChat, true);
@@ -213,7 +213,7 @@ module Cyph {
 
 			public sendBase (messages: IMessage[]) : void {
 				if (this.otr) {
-					for (let message of messages) {
+					for (const message of messages) {
 						if (message.event === RPCEvents.text) {
 							this.trigger(RPCEvents.text, {
 								text: message.data,
@@ -270,7 +270,7 @@ module Cyph {
 				}
 
 				Util.retryUntilComplete(retry => {
-					let channelDescriptor: string	=
+					const channelDescriptor: string	=
 						this.state.isStartingNewCyph === false ?
 							'' :
 							Channel.Channel.newDescriptor()
