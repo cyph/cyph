@@ -43,7 +43,7 @@ module Cyph {
 		}
 
 		public static getTimestamp () : string {
-			const date: Date		= new Date;
+			const date: Date		= new Date();
 			const minute: string	= ('0' + date.getMinutes()).slice(-2);
 			let hour: number		= date.getHours();
 			let ampm: string		= 'am';
@@ -172,7 +172,7 @@ module Cyph {
 			}
 
 
-			const xhr: XMLHttpRequest	= new XMLHttpRequest;
+			const xhr: XMLHttpRequest	= new XMLHttpRequest();
 
 			const callback: Function	= () => (
 				xhr.status === 200 ?
