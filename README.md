@@ -115,7 +115,7 @@ Other available commands:
 
 For development, the following Sublime Text plugins are recommended:
 
-* [ArcticTypescript](https://packagecontrol.io/packages/ArcticTypescript)
+* [TypeScript](https://packagecontrol.io/packages/TypeScript)
 
 * [GoSublime](https://packagecontrol.io/packages/GoSublime)
 
