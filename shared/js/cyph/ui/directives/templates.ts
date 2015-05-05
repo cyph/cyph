@@ -394,7 +394,8 @@ module Cyph {
 								Disconnect
 							</md-button>
 
-							<span
+							<div
+								class='p2p-section'
 								ng-click='$this.p2pManager.disabledAlert()'
 								ng-attr-title='{{
 									$this.isConnected && !$this.p2pManager.isEnabled ?
@@ -487,7 +488,7 @@ module Cyph {
 										cyph-filechange='$this.p2pManager.sendFileButton()'
 									/>
 								</md-button>
-							</span>
+							</div>
 						</div>
 					</div>
 				`,
