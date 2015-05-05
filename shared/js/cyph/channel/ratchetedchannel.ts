@@ -22,9 +22,9 @@ module Cyph {
 
 			private destroyCurrentChannel () : void {
 				if (this.newChannel) {
-					let oldChannel: Channel	= this.channel;
-					this.channel			= this.newChannel;
-					this.newChannel			= null;
+					const oldChannel: Channel	= this.channel;
+					this.channel				= this.newChannel;
+					this.newChannel				= null;
 
 					if (oldChannel) {
 						setTimeout(() => oldChannel.close, 150000);
@@ -33,11 +33,11 @@ module Cyph {
 			}
 
 			private ratchetChannels (channelDescriptor?: string) : void {
-				let init: boolean	= !channelDescriptor;
+				const init: boolean	= !channelDescriptor;
 
 				/* Block ratchet from being initiated more than once within a five-minute period */
 				if (init) {
-					let last: number		= this.lastChannelRatchet;
+					const last: number		= this.lastChannelRatchet;
 					this.lastChannelRatchet	= Date.now();
 
 					if (this.lastChannelRatchet - last < 300000) {
@@ -88,7 +88,7 @@ module Cyph {
 			}
 
 			public close (callback?: Function) : void {
-				for (let channel of [this.channel, this.newChannel]) {
+				for (const channel of [this.channel, this.newChannel]) {
 					try {
 						channel.close(callback);
 					}
@@ -161,7 +161,7 @@ module Cyph {
 				handlers: any = {},
 				config: any = {}
 			) {
-				let onopen: Function	= Util.getValue(handlers, 'onopen', () => {});
+				const onopen: Function	= Util.getValue(handlers, 'onopen', () => {});
 
 				handlers.onopen		= (isCreator: boolean) : void => {
 					this.isCreator	= isCreator;

@@ -1,5 +1,5 @@
 module Cyph {
-	export let Strings	= {
+	export const Strings	= {
 		cancel: `cancel`,
 		connectedNotification: `Connected!`,
 		continueDialogAction: `continue`,
@@ -66,7 +66,7 @@ module Cyph {
 	};
 
 	(() => {
-		for (let k of Object.keys(Strings)) {
+		for (const k of Object.keys(Strings)) {
 			Strings[k]	= Util.translate(Strings[k]);
 		}
 	})();

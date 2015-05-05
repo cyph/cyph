@@ -1,6 +1,6 @@
 module Cyph {
 	export module UI {
-		export let Templates	= {
+		export const Templates	= {
 			amazonLink: `
 				<md-dialog class='amazon-link'>
 					<md-content>
@@ -129,7 +129,7 @@ module Cyph {
 		};
 
 		(() => {
-			for (let k of Object.keys(Templates)) {
+			for (const k of Object.keys(Templates)) {
 				Templates[k]	= Util.translateHtml(Templates[k]);
 			}
 		})();

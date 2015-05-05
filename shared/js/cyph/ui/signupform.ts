@@ -26,7 +26,7 @@ module Cyph {
 				}
 
 				setTimeout(() => {
-					let $input: JQuery	= Elements.signupForm.find('input:visible');
+					const $input: JQuery	= Elements.signupForm.find('input:visible');
 
 					if ($input.length === 1) {
 						$input.focus();

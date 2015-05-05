@@ -5,7 +5,7 @@ module Cyph {
 				public static title: string	= 'cyphMarkdown';
 
 				private static _	= (() => {
-					let markdown: any	= new self['markdownit']({
+					const markdown: any	= new self['markdownit']({
 						html: false,
 						breaks: true,
 						linkify: true,
@@ -53,7 +53,7 @@ module Cyph {
 						restrict: 'A',
 						replace: true,
 						link: (scope, element, attrs) => {
-							let set	= (val: string) : void => {
+							const set	= (val: string) : void => {
 								val	= markdown.render(val);
 
 								/* Merge blockquotes like reddit */

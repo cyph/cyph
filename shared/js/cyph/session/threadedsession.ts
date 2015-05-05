@@ -92,7 +92,7 @@ module Cyph {
 
 					importScripts('/js/cyph/session/session.js');
 
-					let session: ISession	= new Cyph.Session.Session(
+					const session: ISession	= new Cyph.Session.Session(
 						vars.descriptor,
 						null,
 						vars.id

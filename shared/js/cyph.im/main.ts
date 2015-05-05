@@ -42,11 +42,11 @@ angular.
 		($scope, $mdDialog, $mdToast, chatSidenav) => $(() => {
 			Cyph.UI.Elements.load();
 
-			let controller: Cyph.IController			= new Cyph.Controller($scope);
-			let dialogManager: Cyph.UI.IDialogManager	= new Cyph.UI.DialogManager($mdDialog, $mdToast);
-			let notifier: Cyph.UI.INotifier				= new Cyph.UI.Notifier;
+			const controller: Cyph.IController			= new Cyph.Controller($scope);
+			const dialogManager: Cyph.UI.IDialogManager	= new Cyph.UI.DialogManager($mdDialog, $mdToast);
+			const notifier: Cyph.UI.INotifier			= new Cyph.UI.Notifier;
 
-			let mobileMenu: Cyph.UI.ISidebar	=
+			const mobileMenu: Cyph.UI.ISidebar	=
 				Cyph.Env.isMobile ?
 					chatSidenav() :
 					{close: () => {}, open: () => {}}

@@ -7,7 +7,7 @@ module Cyph {
 		]);
 
 		private static stringifyFunction (f: Function) : string {
-			let s: string	= f.toString();
+			const s: string	= f.toString();
 			return s.slice(s.indexOf('{'));
 		}
 
@@ -17,7 +17,7 @@ module Cyph {
 
 			/* Wrapper to make importScripts work in local dev environments;
 				not used in prod because of WebSign packing */
-			let oldImportScripts	= importScripts;
+			const oldImportScripts	= importScripts;
 			importScripts			= (script: string) => {
 				oldImportScripts(
 					`${location.protocol}//${location.host}` +
@@ -77,13 +77,13 @@ module Cyph {
 
 				crypto	= {
 					getRandomValues: array => {
-						let bytes: number	=
+						const bytes: number	=
 							'BYTES_PER_ELEMENT' in array ?
 								array['BYTES_PER_ELEMENT'] :
 								4
 						;
 
-						let max: number	= Math.pow(2, bytes * 8) - 1;
+						const max: number	= Math.pow(2, bytes * 8) - 1;
 
 						for (let i = 0 ; i < array['length'] ; ++i) {
 							array[i]	= Math.floor(isaac.random() * max);
@@ -107,10 +107,10 @@ module Cyph {
 
 		public static callMainThread (method: string, args: any[] = []) : void {
 			if (Env.isMainThread) {
-				let methodSplit: string[]	= method.split('.');
-				let methodName: string		= methodSplit.slice(-1)[0];
+				const methodSplit: string[]	= method.split('.');
+				const methodName: string	= methodSplit.slice(-1)[0];
 
-				let methodObject: any	= methodSplit.
+				const methodObject: any		= methodSplit.
 					slice(0, -1).
 					reduce((o: any, k: string) => o[k], self)
 				;
@@ -157,7 +157,7 @@ module Cyph {
 
 			vars.threadRandomSeed	= crypto.getRandomValues(new Uint8Array(50000));
 
-			let threadBody: string	=
+			const threadBody: string	=
 				'var vars = ' + JSON.stringify(vars) + ';\n' +
 				Thread.stringifyFunction(Thread.threadEnvSetup) +
 				Thread.stringifyFunction(f) +
@@ -172,7 +172,7 @@ module Cyph {
 					blob	= new Blob([threadBody], {type: 'application/javascript'});
 				}
 				catch (_) {
-					let blobBuilder	= new Thread.BlobBuilder();
+					const blobBuilder	= new Thread.BlobBuilder();
 					blobBuilder.append(threadBody);
 
 					blob	= blobBuilder.getBlob();

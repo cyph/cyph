@@ -7,7 +7,7 @@ $.fn.bounds	= function () : ({
 	bottom: number;
 	right: number;
 }) {
-	let bounds: JQueryCoordinates	= this.offset();
+	const bounds: JQueryCoordinates	= this.offset();
 
 	return {
 		top: bounds.top,

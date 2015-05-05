@@ -53,7 +53,7 @@ module Cyph {
 				},
 				callback?: (ok: boolean) => void
 			) : void {
-				let promise	= this.$mdDialog.show(
+				const promise	= this.$mdDialog.show(
 					this.$mdDialog.confirm().
 						title(o.title).
 						content(o.content).
@@ -68,7 +68,7 @@ module Cyph {
 					, o.timeout);
 				}
 
-				let f	= (ok: any) => {
+				const f	= (ok: any) => {
 					timeoutId && clearTimeout(timeoutId);
 					callback && callback(ok === true);
 					callback	= null;

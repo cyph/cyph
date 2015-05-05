@@ -21,9 +21,9 @@ module Cyph.com {
 					Elements.featureListItems.find('[class*="pull"]').css('left', '');
 
 					setTimeout(() => {
-						for (let pair of [[0, 3], [1, 4], [2, 5]]) {
-							let $a: JQuery	= Elements.featureListItems.eq(pair[0]);
-							let $b: JQuery	= Elements.featureListItems.eq(pair[1]);
+						for (const pair of [[0, 3], [1, 4], [2, 5]]) {
+							const $a: JQuery	= Elements.featureListItems.eq(pair[0]);
+							const $b: JQuery	= Elements.featureListItems.eq(pair[1]);
 
 							$a.add($b).height(Math.max($a.height(), $b.height()));
 						}
@@ -31,15 +31,15 @@ module Cyph.com {
 						clearInterval(this.pullInterval);
 
 						this.pullInterval	= setInterval(() => {
-							let $pulledElements: JQuery	= Elements.featureListItems.
+							const $pulledElements: JQuery	= Elements.featureListItems.
 								filter('.animated').
 								find('[class*="pull"]')
 							;
 
 							setTimeout(() => {
 								$pulledElements.each((i: number, elem: HTMLElement) => {
-									let $this: JQuery	= $(elem);
-									let offset			= $this.offset();
+									const $this: JQuery	= $(elem);
+									const offset		= $this.offset();
 
 									if (offset.left < 0) {
 										$this.css('left', '0px');
@@ -51,12 +51,12 @@ module Cyph.com {
 				}
 
 
-				let heightDelta: number			= window.innerHeight - this.previousHeight;
-				let isAddressBarHidden: boolean	= heightDelta > 0 && heightDelta < 75;
-				this.previousHeight				= window.innerHeight;
+				const heightDelta: number			= window.innerHeight - this.previousHeight;
+				const isAddressBarHidden: boolean	= heightDelta > 0 && heightDelta < 75;
+				this.previousHeight					= window.innerHeight;
 
-				let windowAspectRatio: number	= window.innerWidth / window.innerHeight;
-				let aspectRatio: boolean		= windowAspectRatio > BackgroundVideoManager.videoAspectRatio;
+				const windowAspectRatio: number	= window.innerWidth / window.innerHeight;
+				const aspectRatio: boolean		= windowAspectRatio > BackgroundVideoManager.videoAspectRatio;
 
 				if (aspectRatio === this.previousAspectRatio && isAddressBarHidden) {
 					return;
@@ -65,7 +65,7 @@ module Cyph.com {
 				this.previousAspectRatio	= aspectRatio;
 
 				if (aspectRatio) {
-					let height: number	= window.innerWidth / BackgroundVideoManager.videoAspectRatio;
+					const height: number	= window.innerWidth / BackgroundVideoManager.videoAspectRatio;
 
 					Elements.backgroundVideo.css({
 						height,
@@ -75,8 +75,8 @@ module Cyph.com {
 					});
 				}
 				else {
-					let height: number	= window.innerHeight + BackgroundVideoManager.addressBarHeight;
-					let width: number	= BackgroundVideoManager.videoAspectRatio * height;
+					const height: number	= window.innerHeight + BackgroundVideoManager.addressBarHeight;
+					const width: number		= BackgroundVideoManager.videoAspectRatio * height;
 
 					Elements.backgroundVideo.css({
 						height,
@@ -91,7 +91,7 @@ module Cyph.com {
 				/* Disable background video on mobile and Tor */
 
 				if (Cyph.Env.isMobile || Cyph.Env.isOnion) {
-					let $mobilePoster: JQuery	= $('<img />');
+					const $mobilePoster: JQuery	= $('<img />');
 					$mobilePoster.attr('src', Elements.backgroundVideo.attr('mobile-poster'));
 
 					Elements.backgroundVideo.replaceWith($mobilePoster);
