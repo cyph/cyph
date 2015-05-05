@@ -5,25 +5,25 @@
   "path": "typings",
   "bundle": "typings/tsd.d.ts",
   "installed": {
-    "angular-material/angular-material.d.ts": {
-      "commit": "f3244190e20af6901e865f4cc58127d19216baa1"
-    },
-    "highlightjs/highlightjs.d.ts": {
-      "commit": "f3244190e20af6901e865f4cc58127d19216baa1"
-    },
     "webrtc/MediaStream.d.ts": {
+      "commit": "f3244190e20af6901e865f4cc58127d19216baa1"
+    },
+    "angular-material/angular-material.d.ts": {
       "commit": "f3244190e20af6901e865f4cc58127d19216baa1"
     },
     "angularjs/angular-animate.d.ts": {
       "commit": "f3244190e20af6901e865f4cc58127d19216baa1"
     },
-    "angularjs/angular.d.ts": {
+    "highlightjs/highlightjs.d.ts": {
       "commit": "f3244190e20af6901e865f4cc58127d19216baa1"
     },
     "webrtc/RTCPeerConnection.d.ts": {
       "commit": "f3244190e20af6901e865f4cc58127d19216baa1"
     },
     "cryptojs/cryptojs.d.ts": {
+      "commit": "f3244190e20af6901e865f4cc58127d19216baa1"
+    },
+    "angularjs/angular.d.ts": {
       "commit": "f3244190e20af6901e865f4cc58127d19216baa1"
     },
     "jquery/jquery.d.ts": {
