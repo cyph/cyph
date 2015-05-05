@@ -1,4 +1,5 @@
 /// <reference path="ichannel.ts" />
+/// <reference path="aws.ts" />
 
 
 /* Unidirectional queue */
@@ -8,10 +9,6 @@ module Cyph {
 		export class Queue implements IChannel {
 			public static nonExistentQueue: string	= 'AWS.SimpleQueueService.NonExistentQueue';
 			public static queuePrefix: string		= 'channels-';
-
-			private static _	= (() => {
-				self['AWS'].config	= new self['AWS'].Config(Config.awsConfig);
-			})();
 
 			public static periodValues (b?: boolean) : string {
 				return b ? '1800' : '1801';
@@ -34,7 +31,7 @@ module Cyph {
 				}
 
 				let wrapper	= {
-					base: new self['AWS'].SQS(config),
+					base: new AWS.base.SQS(config),
 					createQueue: null,
 					deleteMessage: null,
 					deleteMessageBatch: null,
@@ -72,8 +69,7 @@ module Cyph {
 			}
 
 
-			private isQueueAlive: boolean;
-			private syncSqs: any;
+			private isQueueAlive: boolean	= true;
 
 			public queueUrl: string;
 			public sqs: any;
@@ -156,19 +152,46 @@ module Cyph {
 				isSynchronous?: boolean
 			) : void {
 				if (this.isQueueAlive) {
-					let sqs: any	= isSynchronous ? this.syncSqs : this.sqs;
-
 					if (typeof message === 'string') {
 						let messageBody: string	= JSON.stringify({message: message});
 
-						sqs.sendMessage(
-							{
-								QueueUrl: this.queueUrl,
-								MessageBody: messageBody
-							},
-							callback,
-							true
-						);
+						/* Fake SQS doesn't like Cyph.Channel.AWS requests */
+						if (isSynchronous && !Env.isLocalEnv) {
+							AWS.request({
+								action: 'SendMessage',
+								url: this.queueUrl,
+								service: 'sqs',
+								region: this.sqs.base.config.region,
+								isSynchronous: true,
+								params: {
+									MessageBody: messageBody
+								}
+							}, callback);
+						}
+						else {
+							this.sqs.sendMessage(
+								{
+									QueueUrl: this.queueUrl,
+									MessageBody: messageBody
+								},
+								callback,
+								true
+							);
+						}
+					}
+					else if (isSynchronous) {
+						for (let i = 0 ; i < message.length ; ++i) {
+							this.send(
+								message[i],
+								callback instanceof Array ?
+									callback[i] :
+									i === message.length - 1 ?
+										callback :
+										undefined
+								,
+								true
+							);
+						}
 					}
 					else {
 						if (callback instanceof Array) {
@@ -188,7 +211,7 @@ module Cyph {
 							};
 						}
 
-						sqs.sendMessageBatch(
+						this.sqs.sendMessageBatch(
 							{
 								QueueUrl: this.queueUrl,
 								Entries: message.map((s: string, i: number) => ({
@@ -204,17 +227,7 @@ module Cyph {
 			}
 
 			public constructor (public queueName: string, handlers: any = {}, config: any = {}) {
-				if (!('httpOptions' in config)) {
-					config.httpOptions	= {};
-				}
-
-				config.httpOptions.xhrAsync	= true;
-				this.sqs					= Queue.sqsWrapper(config);
-
-				config.httpOptions.xhrAsync	= false;
-				this.syncSqs				= Queue.sqsWrapper(config);
-
-				this.isQueueAlive	= true;
+				this.sqs	= Queue.sqsWrapper(config);
 
 				this.sqs.createQueue({
 					QueueName: Queue.queuePrefix + queueName,
