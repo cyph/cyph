@@ -188,9 +188,9 @@ module Cyph {
 						callback();
 					}
 				};
-			}
 
-			xhr.timeout	= timeout;
+				xhr.timeout	= timeout;
+			}
 
 			try {
 				xhr.open(method, url, async);
