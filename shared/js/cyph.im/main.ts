@@ -44,7 +44,7 @@ angular.
 
 			const controller: Cyph.IController			= new Cyph.Controller($scope);
 			const dialogManager: Cyph.UI.IDialogManager	= new Cyph.UI.DialogManager($mdDialog, $mdToast);
-			const notifier: Cyph.UI.INotifier			= new Cyph.UI.Notifier;
+			const notifier: Cyph.UI.INotifier			= new Cyph.UI.Notifier();
 
 			const mobileMenu: Cyph.UI.ISidebar	=
 				Cyph.Env.isMobile ?

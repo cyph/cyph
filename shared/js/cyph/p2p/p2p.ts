@@ -158,8 +158,8 @@ module Cyph {
 
 			public incomingStream				= {audio: false, video: false, loading: false};
 			public outgoingStream				= {audio: false, video: false, loading: false};
-			public incomingFile: IFileTransfer	= new FileTransfer;
-			public outgoingFile: IFileTransfer	= new FileTransfer;
+			public incomingFile: IFileTransfer	= new FileTransfer();
+			public outgoingFile: IFileTransfer	= new FileTransfer();
 
 			private initPeer () : void {
 				if (this.peer) {
@@ -546,7 +546,7 @@ module Cyph {
 
 							this.channel.send(P2P.constants.fileTransferComplete);
 
-							const reader: FileReader	= new FileReader;
+							const reader: FileReader	= new FileReader();
 
 							reader.onloadend	= e => {
 								const buf: ArrayBuffer	= e.target['result'];
@@ -800,7 +800,7 @@ module Cyph {
 								}
 								else if (this.incomingStream.video || this.incomingStream.audio) {
 									try {
-										streamHelper(new WebRTC.MediaStream);
+										streamHelper(new WebRTC.MediaStream());
 									}
 									catch (_) {
 										WebRTC.getUserMedia(

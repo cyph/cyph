@@ -56,12 +56,12 @@ module Cyph {
 						const file: File	= elem.files[0];
 
 						if (file.type === 'image/gif') {
-							const reader: FileReader	= new FileReader;
+							const reader: FileReader	= new FileReader();
 							reader.onload	= () => this.send(reader.result);
 							reader.readAsDataURL(file);
 						}
 						else {
-							const image: HTMLImageElement	= new Image;
+							const image: HTMLImageElement	= new Image();
 							image.onload	= () => this.processImage(image, file);
 							image.src		= URL.createObjectURL(file);
 						}

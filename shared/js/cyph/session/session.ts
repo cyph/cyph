@@ -85,7 +85,7 @@ module Cyph {
 					}
 
 					if (now > nextPing) {
-						this.send(new Message);
+						this.send(new Message());
 
 						nextPing	=
 							now +

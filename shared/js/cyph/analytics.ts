@@ -1,6 +1,6 @@
 module Cyph {
 	export class Analytics {
-		public static main	= new Analytics;
+		public static main	= new Analytics();
 
 
 		private analFrame: HTMLIFrameElement;
