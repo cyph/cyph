@@ -5,6 +5,8 @@ source ~/.bashrc
 dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd)/..
 
+rm .git/index.lock
+
 git pull
 git add .
 git commit -a -m "${*}"

@@ -81,24 +81,6 @@ module Cyph {
 								$a.append($this);
 
 								Util.getValue($a, 'magnificPopup', o => {}).call($a, {type: 'image'});
-
-								/* Temporary workaround for Angular Material bug */
-
-								if (Env.isMobile) {
-									let clickLock: number	= 0;
-
-									$a.click(e => {
-										if (clickLock < 2) {
-											++clickLock;
-											setTimeout(() => $a.click(), 100);
-											setTimeout(() => --clickLock, 1500);
-										}
-										else {
-											e.preventDefault();
-											e.stopPropagation();
-										}
-									});
-								}
 							}
 						});
 

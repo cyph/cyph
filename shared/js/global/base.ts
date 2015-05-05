@@ -53,9 +53,6 @@ for (let k of [
 	}
 }
 
-/* Temporary, pending compiler transition */
-var crypto: Crypto;
-
 /**
  * @global Event-handler for messages to the current thread.
  */

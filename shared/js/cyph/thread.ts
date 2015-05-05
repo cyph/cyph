@@ -62,7 +62,7 @@ module Cyph {
 				importScripts('/lib/bower_components/base64/base64.min.js');
 			}
 
-			if (!crypto && 'msCrypto' in self) {
+			if (typeof crypto === 'undefined' && 'msCrypto' in self) {
 				crypto	= self['msCrypto'];
 			}
 			try {
