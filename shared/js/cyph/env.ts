@@ -1,5 +1,7 @@
 module Cyph {
 	export class Env {
+		public static isLocalEnv: boolean	= true;
+
 		public static isOnion: boolean		= !!location && location.host.split('.').slice(-1)[0] === 'onion';
 
 		public static baseUrl: string		= Env.isOnion ? '/api/' : `${location.protocol}//${location.hostname}:42000/`;
