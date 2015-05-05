@@ -40,24 +40,6 @@ module Cyph {
 									template: Templates.amazonLink,
 									vars: {
 										remember: false
-									},
-
-									/* Temporary hack for Angular Material bug */
-									oncomplete: () => {
-										if (Env.isMobile) {
-											Elements.affiliateCheckbox.click(e => {
-												let $this: JQuery	= $(e.currentTarget);
-
-												try {
-													$this.css('pointer-events', 'none');
-												}
-												finally {
-													setTimeout(() =>
-														$this.css('pointer-events', '')
-													, 500);
-												}
-											});
-										}
 									}
 								},
 								(ok: boolean, vars: any) => {
