@@ -157,6 +157,9 @@ module Cyph {
 
 						/* Fake SQS doesn't like Cyph.Channel.AWS requests */
 						if (isSynchronous && !Env.isLocalEnv) {
+							/* Using handrolled implementation because the
+								code path for the AWS SDK's synchronous
+								requests is still asynchronous */
 							AWS.request({
 								action: 'SendMessage',
 								url: this.queueUrl,
