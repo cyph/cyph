@@ -28,6 +28,8 @@ if [ "${command}" == 'serve' ] ; then
 
 elif [ "${command}" == 'kill' ] ; then
 	docker ps -a | grep cyph | awk '{print $1}' | xargs -I% bash -c 'docker kill -s 9 % ; docker rm %'
+	boot2docker stop
+	boot2docker start
 	exit 0
 
 elif [ "${command}" == 'deploy' ] ; then
