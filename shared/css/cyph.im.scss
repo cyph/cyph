@@ -35,7 +35,6 @@ html:not(.mobile) .chat-sidebar, .chat-message-box:not(.mobile), #copy-url-mobil
 
 		img {
 			height: 80%;
-			vertical-align: middle;
 		}
 	}
 }
@@ -384,15 +383,18 @@ input, textarea {
 
 
 html:not(.mobile) {
-	.video-call-button {
-		margin-left: 30px;
-		margin-right: 10px;
+	.p2p-section {
 		margin-top: 10px;
-	}
 
-	.send-file-button {
-		margin-left: 58px;
-		margin-top: 5px;
+		.video-call-button {
+			margin-left: 30px;
+			margin-right: 10px;
+		}
+
+		.send-file-button {
+			margin-left: 58px;
+			margin-top: 5px;
+		}
 	}
 }
 html.mobile button[disabled] {
@@ -549,10 +551,12 @@ html.mobile button[disabled] {
 		display: block;
 	}
 
+	.md-button:not(.md-fab) {
+		margin-bottom: 10px;
+	}
 	.md-button:not(.md-fab), .md-fab[disabled="disabled"] {
 		font-size: 14px;
 		width: 100%;
-		margin-bottom: 10px;
 		box-shadow: 0px 0px 2px #7239dd;
 	}
 }
@@ -566,6 +570,9 @@ html.mobile button[disabled] {
 		height: 30px !important;
 		margin-left: -5px;
 	}
+}
+[cyph-chat-toolbar] > div {
+	overflow: visible !important;
 }
 html.mobile #main {
 	padding-top: 40px;
@@ -817,12 +824,14 @@ html.mobile .formatting-help {
 
 
 .amazon-link {
-	max-width: 600px;
-
 	md-checkbox {
-		text-align: right;
-		margin-bottom: 0px;
+		position: absolute;
+		right: 24px;
+		margin-top: -10px;
 	}
+}
+html:not(.mobile) .amazon-link {
+	max-width: 600px;
 }
 
 

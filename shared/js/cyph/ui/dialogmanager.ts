@@ -29,6 +29,8 @@ module Cyph {
 				callback?: (ok: boolean, vars: any) => void
 			) : void {
 				this.$mdDialog.show({
+					clickOutsideToClose: true,
+					escapeToClose: true,
 					template: o.template,
 					onComplete: o.oncomplete,
 					controller: <any> ['$scope', '$mdDialog', ($scope, $mdDialog) => {

@@ -354,3 +354,36 @@ md-checkbox {
 	}
 }
 
+
+/*** Angular Material patches (from 0.8 to 0.9 upgrade) ***/
+
+*, *:before, *:after {
+	box-sizing: border-box;
+}
+
+.md-button {
+	padding: 6px;
+	margin: 0px;
+	min-height: 0px;
+	min-width: 0px;
+	line-height: normal;
+
+	&[disabled] {
+		background-color: transparent !important;
+	}
+
+	&.md-fab {
+		line-height: 100% !important;
+	}
+}
+
+md-dialog {
+	.md-title {
+		font-size: 1.5em;
+		font-weight: normal;
+	}
+
+	md-content {
+		padding: 24px;
+	}
+}

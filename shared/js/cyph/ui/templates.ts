@@ -4,7 +4,7 @@ module Cyph {
 			amazonLink: `
 				<md-dialog class='amazon-link'>
 					<md-content>
-						<h2 translate>
+						<h2 class='md-title' translate>
 							Amazon Link
 						</h2>
 						<p translate>
@@ -32,7 +32,7 @@ module Cyph {
 			formattingHelp: `
 				<md-dialog class='formatting-help'>
 					<md-content>
-						<h2 translate>
+						<h2 class='md-title' translate>
 							Formatting Help
 						</h2>
 						<p>

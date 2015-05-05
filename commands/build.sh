@@ -6,7 +6,7 @@ dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd)/..
 originalDir="$(pwd)"
 
-files="$( \
+tsfiles="$( \
 	{ cat */*.html | grep "<script.*'/js/" & grep -ro "importScripts('/js/.*)" shared/js; } | \
 		perl -pe "s/.*?'\/(js\/.*)\.js.*/\1/g" | \
 		sort | \
@@ -23,21 +23,29 @@ if [ -d shared ] ; then
 	cd shared
 fi
 
+scssfiles="$(find css -name '*.scss' | grep -v bourbon/ | perl -pe 's/(.*)\.scss/\1/g')"
+
 
 if [ "${1}" == '--watch' ] ; then
-	sass --watch css &
-
-	for file in $files ; do
+	for file in $tsfiles ; do
 		tsc --sourceMap $file.ts --out $file.js --watch &
+	done
+
+	# sass --watch isn't working for some reason
+	while true ; do
+		for file in $scssfiles ; do
+			sass $file.scss $file.css
+		done
+		sleep 30
 	done
 else
 	output=''
 
-	for file in $(find css -name '*.scss' | grep -v bourbon/ | perl -pe 's/(.*)\.scss/\1/g') ; do
+	for file in $scssfiles ; do
 		output="${output}$(sass $file.scss $file.css)"
 	done
 
-	for file in $files ; do
+	for file in $tsfiles ; do
 		output="${output}$(tsc $file.ts --out $file.js)"
 	done
 
