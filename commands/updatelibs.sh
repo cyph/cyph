@@ -28,6 +28,7 @@ bower install --save \
 	julianlam/tabIndent.js \
 	aws-sdk-js
 
+mkdir -p bower_components/highlight.js
 cd bower_components/highlight.js
 rm .gitignore
 python tools/build.py default
