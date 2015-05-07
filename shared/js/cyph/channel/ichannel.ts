@@ -7,7 +7,7 @@ module Cyph {
 		export interface IChannel {
 			/**
 			 * This kills the channel.
-			 * @param callback 
+			 * @param callback
 			 */
 			close (callback?: Function) : void;
 
