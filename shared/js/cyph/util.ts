@@ -1,6 +1,6 @@
 module Cyph {
 	/**
-	 * Miscellaneous fuctions used throughout the codes.
+	 * Miscellaneous helper functions used throughout the codes.
 	 */
 	export class Util {
 		/**
