@@ -1,9 +1,18 @@
 module Cyph {
+	/**
+	 * Handles errors.
+	 */
 	export class Errors {
 		private static baseErrorLog (subject: string, shouldIncludeBootstrapText?: boolean) : Function {
 			let numEmails: number	= 0;
 
-			return (errorMessage?: string, url?: string, line?: number, column?: number, errorObject?: any) : void => {
+			return (
+				errorMessage?: string,
+				url?: string,
+				line?: number,
+				column?: number,
+				errorObject?: any
+			) : void => {
 				let exception: string	= !errorMessage ? '' : (
 					errorMessage + '\n\n' +
 					'URL: ' + url + '\n' +
@@ -49,8 +58,27 @@ module Cyph {
 			};
 		}
 
+		/**
+		 * Logs generic error (used by self.onerror).
+		 * @param errorMessage
+		 * @param url
+		 * @param line
+		 * @param column
+		 * @param errorObject
+		 * @function
+		 */
 		public static log			= Errors.baseErrorLog('WARNING WARNING WARNING SOMETHING IS SRSLY FUCKED UP LADS');
+
+		/**
+		 * Logs chat authentication failure (this happens occasionally, not sure why).
+		 * @function
+		 */
 		public static logSmp		= Errors.baseErrorLog('SMP JUST FAILED FOR SOMEONE LADS');
+
+		/**
+		 * Logs WebSign failure (this one is super serious and should never happen).
+		 * @function
+		 */
 		public static logWebSign	= Errors.baseErrorLog('SOMEONE JUST GOT THE WEBSIGN ERROR SCREEN LADS', true);
 
 		private static _	= (() => {

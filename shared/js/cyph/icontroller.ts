@@ -6,7 +6,6 @@ module Cyph {
 	export interface IController {
 		/**
 		 * Synchronise data and UI.
-		 * @param
 		 */
 		update () : void;
 	}

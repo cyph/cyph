@@ -1,15 +1,24 @@
 module Cyph {
+	/**
+	 * Handles analytics events by calling the Google Analytics SDK in a sandboxed iframe.
+	 * (https://developers.google.com/analytics/devguides/collection/analyticsjs/events)
+	 */
 	export class Analytics {
+		/** Default instance of Analytics. */
 		public static main	= new Analytics();
 
 
 		private analFrame: HTMLIFrameElement;
 		private analFrameIsReady: boolean;
 
-		public baseEventSubmit (method: string, ...args: any[]) : void {
+		private baseEventSubmit (method: string, ...args: any[]) : void {
 			this.baseEventSubmitHelper(method, args);
 		}
 
+		/**
+		 * Ignore this (used internally).
+		 * @param
+		 */
 		public baseEventSubmitHelper (method: string, args: any[]) : void {
 			if (!Env.isMainThread) {
 				Thread.callMainThread('Cyph.Analytics.main.baseEventSubmitHelper', [method, args]);
@@ -30,14 +39,26 @@ module Cyph {
 			}
 		}
 
+		/**
+		 * Send event.
+		 * @param args
+		 */
 		public send (...args: any[]) : void {
 			this.baseEventSubmit('send', args);
 		}
 
+		/**
+		 * Set event.
+		 * @param args
+		 */
 		public set (...args: any[]) : void {
 			this.baseEventSubmit('set', args);
 		}
 
+		/**
+		 * @param appName
+		 * @param appVersion
+		 */
 		public constructor (appName: string = Env.host, appVersion: string = 'Web') {
 			if (Env.isOnion) {
 				this.analFrameIsReady	= false;

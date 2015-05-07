@@ -74,7 +74,7 @@ module Cyph {
 						this.messages.push({
 							author: author,
 							text: text,
-							timestamp: Util.getTimestamp()
+							timestamp: Util.getTime()
 						});
 
 						this.controller.update();

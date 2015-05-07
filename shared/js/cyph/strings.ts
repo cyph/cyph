@@ -1,5 +1,9 @@
 module Cyph {
-	export const Strings	= {
+	/**
+	 * User-facing strings referenced throughout the codes
+	 * (translated to user's language where possible).
+	 */
+	export const Strings = {
 		cancel: `cancel`,
 		connectedNotification: `Connected!`,
 		continueDialogAction: `continue`,

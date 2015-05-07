@@ -1,4 +1,8 @@
 module Cyph {
+	/**
+	 * Generates a recurring background event and ensures that its execution
+	 * won't be frozen or slowed down when the tab or window loses focus.
+	 */
 	export class Timer {
 		private static thread: Thread;
 		private static timerLock: boolean;
@@ -65,6 +69,9 @@ module Cyph {
 			}
 		}
 
+		/**
+		 * Stops all timers on this thread.
+		 */
 		public static stopAll () : void {
 			Timer.timers.length	= 0;
 		}
@@ -72,6 +79,9 @@ module Cyph {
 
 		private id: number;
 
+		/**
+		 * Stops this timer.
+		 */
 		public stop () : void {
 			Timer.timers[this.id]	= null;
 
@@ -80,6 +90,9 @@ module Cyph {
 			}
 		}
 
+		/**
+		 * @param f The current datetime is passed in on each run.
+		 */
 		public constructor (f: Function) {
 			this.id	= Timer.total++;
 
