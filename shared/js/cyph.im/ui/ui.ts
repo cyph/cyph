@@ -1,11 +1,22 @@
 module Cyph.im {
 	export module UI {
+		/**
+		 * Controls the entire cyph.im UI.
+		 */
 		export class UI {
+			/** The link to join this cyph. */
 			public copyUrl: string			= '';
+
+			/** URL-encoded version of this.copyUrl (for sms and mailto links). */
 			public copyUrlEncoded: string	= '';
+
+			/** UI state/view. */
 			public state: States			= States.none;
 
+			/** Chat UI. */
 			public chat: Cyph.UI.Chat.IChat;
+
+			/** Signup form to be displayed at the end of a cyph. */
 			public signupForm: Cyph.UI.ISignupForm;
 
 			private onUrlStateChange (urlState: string) : void {
@@ -20,6 +31,9 @@ module Cyph.im {
 				Cyph.UrlState.set(urlState, true, true);
 			}
 
+			/**
+			 * Initiates UI for sending cyph link to friend.
+			 */
 			public beginWaiting () : void {
 				this.changeState(States.waitingForFriend);
 
@@ -91,17 +105,30 @@ module Cyph.im {
 				}
 			}
 
+			/**
+			 * Changes UI state.
+			 * @param state
+			 */
 			public changeState (state: States) : void {
 				this.state	= state;
 				this.controller.update();
 			}
 
+			/**
+			 * Opens mobile sidenav menu.
+			 */
 			public openMobileMenu () : void {
 				setTimeout(() =>
 					this.mobileMenu.open()
 				, 250);
 			}
 
+			/**
+			 * @param controller
+			 * @param dialogManager
+			 * @param mobileMenu
+			 * @param notifier
+			 */
 			public constructor (
 				private controller: Cyph.IController,
 				private dialogManager: Cyph.UI.IDialogManager,

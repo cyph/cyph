@@ -1,5 +1,8 @@
 module Cyph.com {
 	export module UI {
+		/**
+		 * Manages the video in the background of the website.
+		 */
 		export class BackgroundVideoManager {
 			private static addressBarHeight: number	= 60;
 			private static videoAspectRatio: number	= 16 / 9;
@@ -15,7 +18,7 @@ module Cyph.com {
 			private previousAspectRatio: boolean;
 			private pullInterval: any;
 
-			public adjustMargins () : void {
+			private adjustMargins () : void {
 				if (!Cyph.Env.isMobile || Cyph.Env.isTablet) {
 					Elements.featureListItems.css('height', '');
 					Elements.featureListItems.find('[class*="pull"]').css('left', '');
@@ -101,6 +104,7 @@ module Cyph.com {
 
 				this.adjustMargins();
 				Cyph.UI.Elements.window.on('resize', () => this.adjustMargins());
+				Cyph.UrlState.onchange(() => setTimeout(() => this.adjustMargins(), 500));
 			}
 		}
 	}
