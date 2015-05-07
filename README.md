@@ -97,6 +97,13 @@ Other available commands:
 	`-v /path/to/current/directory:/cyph \`  
 	`cyph/<branch> ./commit.sh <comment>`
 
+* Generate documentation (served in local environment at /js/docs/index.html):  
+	`./docker.sh docs`  
+	or:  
+	`docker run \`  
+	`-v /path/to/current/directory:/cyph \`  
+	`cyph/<branch> ./docs.sh`
+
 * Update libraries in client code:  
 	`./docker.sh updatelibs`  
 	or:  

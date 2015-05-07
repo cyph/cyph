@@ -1,6 +1,7 @@
 .build
 .sass-cache
 .DS_Store
+.js.tmp
 nohup.out
 shared/lib/.oldbower
 
