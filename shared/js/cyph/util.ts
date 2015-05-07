@@ -63,7 +63,6 @@ module Cyph {
 
 		/**
 		 * Returns a human-readable representation of the time (e.g. "3:37pm").
-		 * @param
 		 */
 		public static getTime () : string {
 			const date: Date		= new Date();
