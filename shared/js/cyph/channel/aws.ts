@@ -1,8 +1,17 @@
 module Cyph {
 	export module Channel {
+		/**
+		 * Wrapper for AWS SDK.
+		 */
 		export class AWS {
+			/** Top-level namespace for AWS SDK. */
 			public static base	= self['AWS'];
 
+			/**
+			 * Signs and sends an AWS API request.
+			 * (http://docs.aws.amazon.com/general/latest/gr/sigv4_signing.html)
+			 * @param
+			 */
 			public static request (o: any, callback: any = () => {}) : void {
 				const config	= {
 					url: o.url,
