@@ -1,3 +1,8 @@
+/**
+ * @file Entry point of cyph.im.
+ */
+
+
 /// <reference path="../preload/crypto.ts" />
 /// <reference path="../preload/unsupportedbrowsers.ts" />
 /// <reference path="../preload/translations.ts" />

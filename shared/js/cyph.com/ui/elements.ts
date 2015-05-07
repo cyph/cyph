@@ -1,5 +1,8 @@
 module Cyph.com {
 	export module UI {
+		/**
+		 * cyph.com-specific UI elements.
+		 */
 		export class Elements {
 			public static bouncingDownArrow: JQuery;
 			public static backgroundVideo: JQuery;
@@ -10,6 +13,9 @@ module Cyph.com {
 			public static newCyphParent: JQuery;
 			public static podcastLogo: JQuery;
 
+			/**
+			 * Loads elements (call this after page is loaded).
+			 */
 			public static load () : void {
 				Cyph.UI.Elements.load();
 

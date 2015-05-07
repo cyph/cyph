@@ -1,3 +1,8 @@
+/**
+ * @file Entry point of cyph.com.
+ */
+
+
 /// <reference path="../preload/base.ts" />
 
 /// <reference path="../cyph/controller.ts" />
