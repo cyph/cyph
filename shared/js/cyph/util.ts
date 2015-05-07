@@ -1,16 +1,29 @@
 module Cyph {
+	/**
+	 * Miscellaneous fuctions used throughout the codes.
+	 */
 	export class Util {
-		public static chunkString (s: string, length: number) : string[] {
+		/**
+		 * Breaks up string into array of smaller chunks.
+		 * @param s
+		 * @param chunkLength
+		 */
+		public static chunkString (s: string, chunkLength: number) : string[] {
 			const array: string[]	= [];
 
 			while (s.length) {
-				array.push(s.substr(0, length));
-				s	= s.substr(length);
+				array.push(s.substr(0, chunkLength));
+				s	= s.substr(chunkLength);
 			}
 
 			return array;
 		}
 
+		/**
+		 * Convert JSON string or object into an instance of the specified class.
+		 * @param classObject
+		 * @param json
+		 */
 		public static deserializeObject (classObject: any, json: string|any) : any {
 			const o: any	= typeof json === 'string' ?
 				JSON.parse(json) :
@@ -26,6 +39,12 @@ module Cyph {
 			return newObject;
 		}
 
+		/**
+		 * Randomly generates a GUID of specifed length using Config.guidAddressSpace.
+		 * If no valid length is specified, Config.guidAddressSpace is ignored and the
+		 * GUID will instead append a random 32-bit number to the current datetime.
+		 * @param length
+		 */
 		public static generateGuid (length: number = 0) : string {
 			if (length > 0) {
 				return Array.prototype.slice.
@@ -42,7 +61,11 @@ module Cyph {
 			return Date.now() + '-' + crypto.getRandomValues(new Uint32Array(1))[0];
 		}
 
-		public static getTimestamp () : string {
+		/**
+		 * Returns a human-readable representation of the time (e.g. "3:37pm").
+		 * @param
+		 */
+		public static getTime () : string {
 			const date: Date		= new Date();
 			const minute: string	= ('0' + date.getMinutes()).slice(-2);
 			let hour: number		= date.getHours();
@@ -59,7 +82,18 @@ module Cyph {
 			return hour + ':' + minute + ampm;
 		}
 
-		public static getValue<T> (o: any, keysToTry: string|string[], defaultValue: T = null) : T {
+		/**
+		 * Safely tries to extract a value from o,
+		 * falling back to defaultValue if it doesn't exist.
+		 * @param o
+		 * @param keysToTry
+		 * @param defaultValue
+		 */
+		public static getValue<T> (
+			o: any,
+			keysToTry: string|string[],
+			defaultValue: T = null
+		) : T {
 			if (!o) {
 				return defaultValue;
 			}
@@ -85,6 +119,11 @@ module Cyph {
 			return value === null ? defaultValue : value;
 		}
 
+		/**
+		 * Opens the specified URL.
+		 * @param url
+		 * @param downloadName Default name if a file is to be downloaded.
+		 */
 		public static openUrl (url: string, downloadName?: string) : void {
 			if (Env.isMainThread) {
 				const a: HTMLAnchorElement	= document.createElement('a');
@@ -114,6 +153,11 @@ module Cyph {
 			}
 		}
 
+		/**
+		 * Converts b into a human-readable representation.
+		 * @param b Number of bytes.
+		 * @example 32483478 -> "30.97 MB".
+		 */
 		public static readableByteLength (b: number) : string {
 			const gb: number	= b / 1.074e+9;
 			const mb: number	= b / 1.049e+6;
@@ -132,6 +176,12 @@ module Cyph {
 			return o.n.toFixed(2) + ' ' + o.s + 'B';
 		}
 
+		/**
+		 * Performs HTTP requests (drop-in replacement for a subset of jQuery.ajax
+		 * without the DOM dependency). Any changes to this method should maintain
+		 * strict jQuery.ajax compatibility (http://api.jquery.com/jquery.ajax/).
+		 * @param o
+		 */
 		public static request (o: {
 			async?: boolean;
 			contentType?: string;
@@ -206,6 +256,11 @@ module Cyph {
 			}
 		}
 
+		/**
+		 * Runs f and passes in a function to retry itself.
+		 * @param f
+		 * @param retryIf If this is specified and returns false, f will not be retried.
+		 */
 		public static retryUntilComplete (f: Function, retryIf?: Function) : void {
 			f((delay: number = 250) : void => {
 				if (!retryIf || retryIf()) {
@@ -217,6 +272,11 @@ module Cyph {
 			});
 		}
 
+		/**
+		 * Serialises o to a query string (cf. jQuery.param).
+		 * @param o
+		 * @param parent Ignore this (internal use).
+		 */
 		public static toQueryString (o: any, parent?: string) : string {
 			return Object.keys(o).
 				map((k: string) => {
@@ -235,13 +295,19 @@ module Cyph {
 			;
 		}
 
+		/**
+		 * Attempts to translate text into the user's language.
+		 * @param text
+		 * @param htmlDecode If true, HTML-decodes the return value.
+		 * @param defaultValue Falls back to this if no translation exists.
+		 */
 		public static translate (
 			text: string,
 			htmlDecode?: boolean,
 			defaultValue: string = text
 		) : string {
 			if (!Env.isMainThread && htmlDecode) {
-				throw new Error('Can only HTML decode translations in main thread.');
+				throw new Error('Can only HTML-decode translations in main thread.');
 			}
 
 			const translation: string	= Util.getValue(
@@ -256,6 +322,12 @@ module Cyph {
 			;
 		}
 
+		/**
+		 * Attempts to translate a string of HTML or DOM element into
+		 * the user's local language. If translating a DOM element,
+		 * translation will both be made in-place and returned as HTML.
+		 * @param html
+		 */
 		public static translateHtml (html: string|HTMLElement) : string {
 			if (!Env.isMainThread) {
 				if (typeof html === 'string') {
@@ -303,6 +375,10 @@ module Cyph {
 			return $this.prop('outerHTML');
 		}
 
+		/**
+		 * Simulates a click on elem.
+		 * @param elem
+		 */
 		public static triggerClick (elem: HTMLElement) {
 			const e: Event	= document.createEvent('MouseEvents');
 			e.initEvent('click', true, false);

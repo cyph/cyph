@@ -1,22 +1,47 @@
 module Cyph {
+	/**
+	 * Global cross-thread event-manager.
+	 */
 	export class EventManager {
 		private static handlers: {[event: string] : Function[]}	= {};
+		private static untriggeredEvents: string	= 'untriggeredEvents';
 
+		/** Ignore this (used by EventManager and Thread for cross-thread event stuff). */
 		public static mainThreadEvents: string	= 'mainThreadEvents';
-		public static untriggeredEvents: string	= 'untriggeredEvents';
 
+		/**
+		 * Removes handler from event.
+		 * @param event
+		 * @param handler
+		 */
 		public static off (event: string, handler: Function) : void {
 			EventManager.handlers[event]	=
 				(EventManager.handlers[event] || []).filter(f => f !== handler)
 			;
 		}
 
+		/**
+		 * Attaches handler to event.
+		 * @param event
+		 * @param handler
+		 */
 		public static on (event: string, handler: Function) : void {
 			EventManager.handlers[event]	= EventManager.handlers[event] || [];
 			EventManager.handlers[event].push(handler);
 		}
 
-		public static trigger (event: string, data?: any, shouldTrigger: boolean = Env.isMainThread) : void {
+		/**
+		 * Triggers event.
+		 * @param event
+		 * @param data Note: If this contains a callback function, the event will not cross
+		 * threads. (Adding this functionality would be trivial; it just hasn't been needed.)
+		 * @param shouldTrigger Ignore this (used internally for cross-thread events).
+		 */
+		public static trigger (
+			event: string,
+			data?: any,
+			shouldTrigger: boolean = Env.isMainThread
+		) : void {
 			if (!shouldTrigger) {
 				EventManager.trigger(EventManager.untriggeredEvents, {event, data}, true);
 			}
