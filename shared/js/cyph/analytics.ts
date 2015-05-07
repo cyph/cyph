@@ -17,7 +17,8 @@ module Cyph {
 
 		/**
 		 * Ignore this (used internally).
-		 * @param
+		 * @param method
+		 * @param args
 		 */
 		public baseEventSubmitHelper (method: string, args: any[]) : void {
 			if (!Env.isMainThread) {
