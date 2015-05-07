@@ -1,7 +1,12 @@
 module Cyph {
 	export module UI {
 		export module Directives {
+			/**
+			 * Angular directive for handling changes to the
+			 * selected file of an input element.
+			 */
 			export class Filechange {
+				/** Module/directive title. */
 				public static title: string	= 'cyphFilechange';
 
 				private static _	= (() => {
