@@ -68,6 +68,8 @@ module Cyph {
 				try {
 					this.analFrame	= document.createElement('iframe');
 
+					this.analFrame.sandbox	= <any> 'allow-scripts allow-same-origin';
+
 					this.analFrame.src	=
 						Env.baseUrl +
 						'anal/' +
