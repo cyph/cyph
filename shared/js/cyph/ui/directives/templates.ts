@@ -173,7 +173,7 @@ module Cyph {
 									({{$this.p2pManager.p2p.incomingFile.readableSize}}):
 								</span>
 								<md-progress-linear
-									md-mode='determinate' 
+									md-mode='determinate'
 									value='{{$this.p2pManager.p2p.incomingFile.percentComplete}}'
 								></md-progress-linear>
 							</div>
