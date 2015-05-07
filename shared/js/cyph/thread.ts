@@ -111,7 +111,7 @@ module Cyph {
 
 		/**
 		 * Sends command to the main thread.
-		 * @param method Fully-qualified method name (e.g. "Cyph.Thread.callMainThread").
+		 * @param method Fully qualified method name (e.g. "Cyph.Thread.callMainThread").
 		 * @param args
 		 */
 		public static callMainThread (method: string, args: any[] = []) : void {
