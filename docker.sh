@@ -51,6 +51,9 @@ elif [ "${command}" == 'commit' ] ; then
 
 	chmod -R 700 .
 
+elif [ "${command}" == 'docs' ] ; then
+	args=''
+
 elif [ "${command}" == 'updatelibs' ] ; then
 	args=''
 

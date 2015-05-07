@@ -13,7 +13,7 @@ RUN curl -sL https://deb.nodesource.com/setup | bash -
 RUN apt-get install -y nodejs
 
 
-RUN npm -g install html-minifier clean-css uglifyjs typescript tsd bower browserstack browserify
+RUN npm -g install html-minifier clean-css uglifyjs typescript tsd typedoc bower browserstack browserify
 RUN pip install beautifulsoup4 html5lib
 
 
