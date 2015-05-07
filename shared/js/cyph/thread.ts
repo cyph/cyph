@@ -119,13 +119,13 @@ module Cyph {
 				const methodSplit: string[]	= method.split('.');
 				const methodName: string	= methodSplit.slice(-1)[0];
 
-				const methodObject: any		= methodSplit.
-					slice(0, -1).
-					reduce((o: any, k: string) => o[k], self)
-				;
-
 				/* Validate command against namespace whitelist, then execute */
 				if (['Cyph', 'ui'].indexOf(methodSplit[0]) > -1) {
+					const methodObject: any	= methodSplit.
+						slice(0, -1).
+						reduce((o: any, k: string) : any => o[k], self)
+					;
+
 					methodObject[methodName].apply(methodObject, args);
 				}
 				else {
