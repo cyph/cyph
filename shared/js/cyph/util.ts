@@ -20,7 +20,7 @@ module Cyph {
 		}
 
 		/**
-		 * Convert JSON string or object into an instance of the specified class.
+		 * Converts JSON string or object into an instance of the specified class.
 		 * @param classObject
 		 * @param json
 		 */
