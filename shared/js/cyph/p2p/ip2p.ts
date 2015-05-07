@@ -6,10 +6,10 @@ module Cyph {
 		 */
 		export interface IP2P {
 			/** Description of incoming data. */
-			incomingStream: {audio: boolean; video: boolean; loading: boolean;};
+			incomingStream: { audio: boolean; video: boolean; loading: boolean; };
 
 			/** Description of outgoing data (passed directly into navigator.getUserMedia). */
-			outgoingStream: {audio: boolean; video: boolean; loading: boolean;};
+			outgoingStream: { audio: boolean; video: boolean; loading: boolean; };
 
 			/** Incoming file transfer. */
 			incomingFile: IFileTransfer;

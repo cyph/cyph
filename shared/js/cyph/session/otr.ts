@@ -29,7 +29,7 @@ module Cyph {
 
 						this.session.trigger(Events.cyphertext, {
 							cyphertext: o.cyphertext,
-							author: Authors.friend
+							author: Users.friend
 						});
 					}
 				}
@@ -147,7 +147,7 @@ module Cyph {
 
 							this.session.trigger(Events.cyphertext, {
 								cyphertext,
-								author: Authors.me
+								author: Users.me
 							});
 						});
 

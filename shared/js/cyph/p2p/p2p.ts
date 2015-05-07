@@ -144,7 +144,7 @@ module Cyph {
 					this.triggerUiEvent(
 						UIEvents.Categories.stream,
 						UIEvents.Events.play,
-						Session.Authors.app,
+						Session.Users.app,
 						(
 							(
 								this.outgoingStream.video ||
@@ -202,7 +202,7 @@ module Cyph {
 						this.triggerUiEvent(
 							UIEvents.Categories.stream,
 							UIEvents.Events.set,
-							Session.Authors.friend,
+							Session.Users.friend,
 							URL.createObjectURL(this.remoteStream)
 						);
 
@@ -401,7 +401,7 @@ module Cyph {
 							this.triggerUiEvent(
 								UIEvents.Categories.file,
 								UIEvents.Events.transferStarted,
-								Session.Authors.friend,
+								Session.Users.friend,
 								this.incomingFile.name
 							);
 						}
@@ -540,7 +540,7 @@ module Cyph {
 							this.triggerUiEvent(
 								UIEvents.Categories.file,
 								UIEvents.Events.transferStarted,
-								Session.Authors.me,
+								Session.Users.me,
 								file.name
 							);
 
@@ -666,7 +666,7 @@ module Cyph {
 								this.triggerUiEvent(
 									UIEvents.Categories.stream,
 									UIEvents.Events.set,
-									Session.Authors.me,
+									Session.Users.me,
 									stream ? URL.createObjectURL(this.localStream) : ''
 								);
 
