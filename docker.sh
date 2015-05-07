@@ -20,11 +20,15 @@ if [ "${command}" == 'serve' ] ; then
 
 	args="${args} -p 42000:5000 -p 42001:5001 -p 42002:5002 -p 42003:5003 -p 43000:4568"
 
+	base="http://$(boot2docker ip 2>/dev/null || echo localhost)"
+
 	i=0
 	for project in backend cyph.com cyph.im cyph.me ; do
-		echo "${project}: http://$(boot2docker ip 2>/dev/null || echo localhost):4200${i}"
+		echo "${project}: ${base}:4200${i}"
 		i=$((i+1))
 	done
+
+	echo "docs: ${base}:42001/js/docs/index.html"
 
 elif [ "${command}" == 'kill' ] ; then
 	docker ps -a | grep cyph | awk '{print $1}' | xargs -I% bash -c 'docker kill -s 9 % ; docker rm %'

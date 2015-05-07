@@ -19,6 +19,8 @@ if [ -f build.sh ] ; then
 	cd ..
 fi
 
+./commands/docs.sh
+
 if [ -d shared ] ; then
 	cd shared
 fi
@@ -67,6 +69,8 @@ else
 			find js -name '*.ts' & \
 			find js -name '*.map'; \
 		} | xargs -I% rm %
+
+		rm -rf js/docs
 	fi
 
 	exit ${#output}
