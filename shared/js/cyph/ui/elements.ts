@@ -29,6 +29,9 @@ module Cyph {
 			public static signupForm: JQuery;
 			public static timer: JQuery;
 
+			/**
+			 * Loads elements (call this after page is loaded).
+			 */
 			public static load () : void {
 				Elements.everything				= $('*');
 				Elements.affiliateCheckbox		= $('.amazon-link:visible md-checkbox');

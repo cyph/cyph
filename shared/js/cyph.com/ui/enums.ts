@@ -1,5 +1,8 @@
 module Cyph.com {
 	export module UI {
+		/**
+		 * Possible states of cyph.com UI.
+		 */
 		export enum States {
 			home,
 			error,
@@ -9,6 +12,9 @@ module Cyph.com {
 			termsofservice
 		}
 
+		/**
+		 * Possible states of podcast promo page.
+		 */
 		export enum Podcasts {
 			none,
 			betalist,

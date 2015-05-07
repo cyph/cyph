@@ -1,4 +1,7 @@
 module Cyph.im {
+	/**
+	 * Static/constant configuration values.
+	 */
 	export class Config {
 		public static webSignHashes	= {
 			'2bc65ee1082f94261c9127ad765d4b670d24ca321222e638cf4409e325218828c5732f7c8e76d2f229ebdab6c95a30510cd2d73425699ef860d527a06c5e69ae':

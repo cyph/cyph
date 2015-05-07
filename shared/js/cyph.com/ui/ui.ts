@@ -1,14 +1,21 @@
 module Cyph.com {
 	export module UI {
+		/**
+		 * Controls the entire cyph.com UI.
+		 */
 		export class UI {
 			private static fixedHeaderClass: string	= 'fixed-header';
 
 
 			private backgroundVideoManager: BackgroundVideoManager;
 
+			/** UI state/view. */
 			public state: States		= States.home;
+
+			/** Podcast promo page state/view. */
 			public podcast: Podcasts	= Podcasts.none;
 
+			/** Signup form to be displayed throughout the site. */
 			public signupForm: Cyph.UI.ISignupForm;
 
 			private onScroll () : void {
@@ -75,11 +82,19 @@ module Cyph.com {
 				}, delay);
 			}
 
+			/**
+			 * Changes UI state.
+			 * @param state
+			 */
 			public changeState (state: States) : void {
 				this.state	= state;
 				this.controller.update();
 			}
 
+			/**
+			 * Opens the podcast promo page with the indicated state.
+			 * @param podcast
+			 */
 			public openPodcastPage (podcast: Podcasts) : void {
 				this.podcast	= podcast;
 				this.changeState(States.podcast);
@@ -89,6 +104,9 @@ module Cyph.com {
 				setTimeout(() => Elements.heroText.show(), 1);
 			}
 
+			/**
+			 * Scrolls down and bounces in hero text.
+			 */
 			public scrollHeroText () : void {
 				Elements.heroText.removeClass('bounceInDown').addClass('bounceOutRight');
 
@@ -101,6 +119,9 @@ module Cyph.com {
 				}, 250);
 			}
 
+			/**
+			 * @param controller
+			 */
 			public constructor (private controller: Cyph.IController) {
 				this.backgroundVideoManager	= new BackgroundVideoManager();
 				this.signupForm				= new Cyph.UI.SignupForm(this.controller);
@@ -150,7 +171,7 @@ module Cyph.com {
 				}
 
 
-				/* No full page reloads */
+				/* Avoid full page reloads */
 
 				$('a[href^="/"]').click(e => {
 					e.preventDefault();
@@ -162,7 +183,6 @@ module Cyph.com {
 						scrollDelay	= 0;
 
 						Cyph.UrlState.set(href);
-						setTimeout(() => this.backgroundVideoManager.adjustMargins(), 500);
 					}
 
 					setTimeout(() => this.scroll(0), scrollDelay);
