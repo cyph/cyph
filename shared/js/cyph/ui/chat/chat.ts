@@ -33,7 +33,7 @@ module Cyph {
 
 				public messages: {
 					author: Session.Authors;
-					text: string,
+					text: string;
 					timestamp: string;
 				}[]	= [];
 
