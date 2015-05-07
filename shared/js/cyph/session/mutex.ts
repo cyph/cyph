@@ -11,20 +11,20 @@ module Cyph {
 			};
 
 
-			private owner: Authors;
+			private owner: Users;
 			private purpose: string;
-			private requester: { author: Authors; purpose: string; };
+			private requester: { user: Users; purpose: string; };
 
 			private commands	= {
 				release: () : void => {
-					if (this.owner !== Authors.me) {
+					if (this.owner !== Users.me) {
 						this.shiftRequester();
 					}
 				},
 
 				request: (purpose: string) : void => {
-					if (this.owner !== Authors.me) {
-						this.owner		= Authors.friend;
+					if (this.owner !== Users.me) {
+						this.owner		= Users.friend;
 						this.purpose	= purpose;
 
 						this.session.send(
@@ -35,7 +35,7 @@ module Cyph {
 						);
 					}
 					else {
-						this.requester	= {author: Authors.friend, purpose};
+						this.requester	= {user: Users.friend, purpose};
 					}
 				}
 			};
@@ -45,20 +45,20 @@ module Cyph {
 				this.purpose	= null;
 
 				if (this.requester) {
-					this.owner		= this.requester.author;
+					this.owner		= this.requester.user;
 					this.purpose	= this.requester.purpose;
 					this.requester	= null;
 				}
 			}
 
 			public lock (f: Function, purpose: string = '') : void {
-				if (this.owner !== Authors.me) {
+				if (this.owner !== Users.me) {
 					if (!this.owner && this.session.state.isCreator) {
-						this.owner		= Authors.me;
+						this.owner		= Users.me;
 						this.purpose	= purpose;
 					}
 					else {
-						this.requester	= {author: Authors.me, purpose};
+						this.requester	= {user: Users.me, purpose};
 					}
 
 					this.session.send(
@@ -77,7 +77,7 @@ module Cyph {
 				let friendLockpurpose: string	= '';
 
 				Util.retryUntilComplete(retry => {
-					if (this.owner === Authors.me) {
+					if (this.owner === Users.me) {
 						f(
 							!friendHadLockFirst,
 							!friendLockpurpose || friendLockpurpose !== purpose,
@@ -85,7 +85,7 @@ module Cyph {
 						);
 					}
 					else {
-						if (this.owner === Authors.friend) {
+						if (this.owner === Users.friend) {
 							friendHadLockFirst	= true;
 							friendLockpurpose	= this.purpose;
 						}
@@ -96,7 +96,7 @@ module Cyph {
 			}
 
 			public unlock () : void {
-				if (this.owner === Authors.me) {
+				if (this.owner === Users.me) {
 					this.shiftRequester();
 
 					this.session.send(
@@ -113,7 +113,7 @@ module Cyph {
 					this.commands[command.method](command.argument)
 				);
 
-				this.session.on(Events.closeChat, () => this.owner = Authors.me);
+				this.session.on(Events.closeChat, () => this.owner = Users.me);
 			}
 		}
 	}

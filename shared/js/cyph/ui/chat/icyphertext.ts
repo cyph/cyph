@@ -7,7 +7,7 @@ module Cyph {
 			 */
 			export interface ICyphertext {
 				/** Cyphertext message list. */
-				messages: {author: Session.Authors; text: string;}[];
+				messages: { author: Session.Users; text: string; }[];
 
 				/**
 				 * Hides cyphertext UI.
@@ -19,7 +19,7 @@ module Cyph {
 				 * @param text
 				 * @param author
 				 */
-				log (text: string, author: Session.Authors) : void;
+				log (text: string, author: Session.Users) : void;
 
 				/**
 				 * Shows cyphertext UI.

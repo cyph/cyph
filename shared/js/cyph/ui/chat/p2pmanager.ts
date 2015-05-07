@@ -110,7 +110,7 @@ module Cyph {
 											if (isConnected) {
 												this.chat.addMessage(
 													Strings.p2pConnect,
-													Session.Authors.app,
+													Session.Users.app,
 													false
 												);
 											}
@@ -123,7 +123,7 @@ module Cyph {
 
 												this.chat.addMessage(
 													Strings.p2pDisconnect,
-													Session.Authors.app,
+													Session.Users.app,
 													false
 												);
 											}
@@ -195,10 +195,10 @@ module Cyph {
 											break;
 										}
 										case P2P.UIEvents.Events.transferStarted: {
-											const author: Session.Authors	= e.args[0];
-											const fileName: string			= e.args[1];
+											const user: Session.Users	= e.args[0];
+											const fileName: string		= e.args[1];
 
-											const isFromMe: boolean	= author === Session.Authors.me;
+											const isFromMe: boolean	= user === Session.Users.me;
 											const message: string	=
 												isFromMe ?
 													Strings.fileTransferInitMe :
@@ -207,7 +207,7 @@ module Cyph {
 
 											this.chat.addMessage(
 												message + ' ' + fileName,
-												Session.Authors.app,
+												Session.Users.app,
 												!isFromMe
 											);
 											break;
@@ -271,12 +271,12 @@ module Cyph {
 									break;
 								}
 								case P2P.UIEvents.Categories.stream: {
-									const author: Session.Authors	= e.args[0];
+									const user: Session.Users	= e.args[0];
 
 									const $stream: JQuery	=
-										author === Session.Authors.me ?
+										user === Session.Users.me ?
 											Elements.p2pMeStream :
-											author === Session.Authors.friend ?
+											user === Session.Users.friend ?
 												Elements.p2pFriendStream :
 												Elements.p2pFriendPlaceholder
 									;

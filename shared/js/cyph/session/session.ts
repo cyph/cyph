@@ -103,7 +103,7 @@ module Cyph {
 					if (message.event in RPCEvents) {
 						this.trigger(message.event,
 							message.event === RPCEvents.text ?
-								{text: message.data, author: Authors.friend} :
+								{text: message.data, author: Users.friend} :
 								message.data
 						);
 					}
@@ -217,7 +217,7 @@ module Cyph {
 						if (message.event === RPCEvents.text) {
 							this.trigger(RPCEvents.text, {
 								text: message.data,
-								author: Authors.me
+								author: Users.me
 							});
 						}
 					}

@@ -18,7 +18,7 @@ module Cyph {
 										<strong
 											translate
 											ng-bind='::(
-												message.author === Cyph.Session.Authors.me ?
+												message.author === Cyph.Session.Users.me ?
 													"me" :
 													"friend"
 											) + ": "'
@@ -204,7 +204,7 @@ module Cyph {
 								<md-list layout='column'>
 									<md-item
 										class='message-item unread'
-										ng-class='::"author-" + Cyph.Session.Authors[message.author]'
+										ng-class='::"author-" + Cyph.Session.Users[message.author]'
 										ng-repeat='message in $this.messages'
 										layout='horizontal'
 									>
@@ -212,9 +212,9 @@ module Cyph {
 											<strong
 												translate
 												class='message-author'
-												ng-hide='::message.author === Cyph.Session.Authors.app'
+												ng-hide='::message.author === Cyph.Session.Users.app'
 												ng-bind='::(
-													message.author === Cyph.Session.Authors.me ?
+													message.author === Cyph.Session.Users.me ?
 														"me" :
 														"friend"
 												) + ": "'
@@ -224,14 +224,14 @@ module Cyph {
 												cyph-markdown='::message.text'
 												ng-class='::{
 													"app-message":
-														message.author === Cyph.Session.Authors.app
+														message.author === Cyph.Session.Users.app
 												}'
 											></span>
 										</span>
 										<span flex class='message-timestamp'>
 											<span
 												class='mobile-only'
-												ng-show='::message.author === Cyph.Session.Authors.me'
+												ng-show='::message.author === Cyph.Session.Users.me'
 											>
 												<span translate>me</span> &nbsp;&mdash;&nbsp;
 											</span>
@@ -240,7 +240,7 @@ module Cyph {
 
 											<span
 												class='mobile-only'
-												ng-show='::message.author === Cyph.Session.Authors.friend'
+												ng-show='::message.author === Cyph.Session.Users.friend'
 											>
 												&nbsp;&mdash;&nbsp; <span translate>friend</span>
 											</span>
