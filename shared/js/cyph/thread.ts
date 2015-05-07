@@ -1,6 +1,6 @@
 module Cyph {
 	/**
-	 * Represents a thread.
+	 * Creates and controls a thread.
 	 */
 	export class Thread {
 		private static BlobBuilder: any	= Util.getValue(self, [
