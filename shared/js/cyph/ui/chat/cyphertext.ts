@@ -9,7 +9,7 @@ module Cyph {
 				private curtainClass: string	= 'curtain';
 				private toastPosition: string	= 'top right';
 
-				public messages: {author: Session.Authors; text: string;}[]	= [];
+				public messages: { author: Session.Users; text: string; }[]	= [];
 
 				public hide () : void {
 					if ($('.' + this.curtainClass).length > 0) {
@@ -31,7 +31,7 @@ module Cyph {
 					}
 				}
 
-				public log (text: string, author: Session.Authors) : void {
+				public log (text: string, author: Session.Users) : void {
 					if (text) {
 						/* Performance optimisation */
 						if (this.messages.length > (this.isMobile ? 5 : 50)) {
@@ -91,7 +91,7 @@ module Cyph {
 
 
 					session.on(Session.Events.cyphertext,
-						(o: { cyphertext: string; author: Session.Authors; }) =>
+						(o: { cyphertext: string; author: Session.Users; }) =>
 							this.log(o.cyphertext, o.author)
 					);
 				}

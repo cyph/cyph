@@ -1,15 +1,6 @@
 module Cyph {
 	export module Session {
 		/**
-		 * Representations of users in a session.
-		 */
-		export enum Authors {
-			me,
-			friend,
-			app
-		}
-
-		/**
 		 * Session-related events that may be handled throughout the codes.
 		 */
 		export class Events {
@@ -73,5 +64,14 @@ module Cyph {
 			updateState: 'updateState-ThreadedSession',
 			updateStateThread: 'updateStateThread-ThreadedSession'
 		};
+
+		/**
+		 * Representations of users in a session.
+		 */
+		export enum Users {
+			me,
+			friend,
+			app
+		}
 	}
 }

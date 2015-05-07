@@ -32,7 +32,7 @@ module Cyph {
 				public state: States			= States.none;
 
 				public messages: {
-					author: Session.Authors;
+					author: Session.Users;
 					text: string;
 					timestamp: string;
 				}[]	= [];
@@ -51,7 +51,7 @@ module Cyph {
 
 				public addMessage (
 					text: string,
-					author: Session.Authors,
+					author: Session.Users,
 					shouldNotify: boolean = true
 				) : void {
 					if (this.state === States.aborted) {
@@ -61,11 +61,11 @@ module Cyph {
 					if (text) {
 						if (shouldNotify !== false) {
 							switch (author) {
-								case Session.Authors.friend:
+								case Session.Users.friend:
 									this.notifier.notify(Strings.newMessageNotification);
 									break;
 
-								case Session.Authors.app:
+								case Session.Users.app:
 									this.notifier.notify(text);
 									break;
 							}
@@ -81,7 +81,7 @@ module Cyph {
 
 						this.scrollManager.scrollDown(true);
 
-						if (author === Session.Authors.me) {
+						if (author === Session.Users.me) {
 							this.scrollManager.scrollDown();
 						}
 						else {
@@ -142,7 +142,7 @@ module Cyph {
 							}, 500);
 						}
 
-						this.addMessage(Strings.introductoryMessage, Session.Authors.app, false);
+						this.addMessage(Strings.introductoryMessage, Session.Users.app, false);
 					}, 3000);
 				}
 
@@ -163,7 +163,7 @@ module Cyph {
 					}
 					else if (!this.isDisconnected) {
 						this.isDisconnected	= true;
-						this.addMessage(Strings.disconnectedNotification, Session.Authors.app);
+						this.addMessage(Strings.disconnectedNotification, Session.Users.app);
 						this.session.close(true);
 					}
 				}
@@ -228,7 +228,7 @@ module Cyph {
 					}
 
 					if (message) {
-						this.addMessage(message, Session.Authors.me, false);
+						this.addMessage(message, Session.Users.me, false);
 						this.scrollManager.scrollDown();
 						this.session.sendText(message);
 					}
@@ -332,7 +332,7 @@ module Cyph {
 
 					this.session.on(Session.Events.pingPongTimeout, () => {
 						if (!this.isDisconnected) {
-							this.addMessage(Strings.pingPongTimeout, Session.Authors.app);
+							this.addMessage(Strings.pingPongTimeout, Session.Users.app);
 
 							this.dialogManager.alert({
 								title: Strings.pingPongTimeoutTitle,
@@ -352,8 +352,8 @@ module Cyph {
 					});
 
 					this.session.on(Session.RPCEvents.text,
-						(o: { text: string; author: Session.Authors; }) => {
-							if (o.author !== Session.Authors.me) {
+						(o: { text: string; author: Session.Users; }) => {
+							if (o.author !== Session.Users.me) {
 								this.addMessage(o.text, o.author);
 							}
 						}

@@ -27,7 +27,7 @@ module Cyph {
 
 				/** Message list. */
 				messages: {
-					author: Session.Authors;
+					author: Session.Users;
 					text: string;
 					timestamp: string;
 				}[];
@@ -60,7 +60,7 @@ module Cyph {
 				 */
 				addMessage (
 					text: string,
-					author: Session.Authors,
+					author: Session.Users,
 					shouldNotify?: boolean
 				) : void;
 
