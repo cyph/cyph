@@ -4,7 +4,11 @@
 module Cyph {
 	export module UI {
 		export module Directives {
+			/**
+			 * Angular directive for signup form component.
+			 */
 			export class SignupForm {
+				/** Module/directive title. */
 				public static title: string	= 'cyphSignupForm';
 
 				private static _	= (() => {

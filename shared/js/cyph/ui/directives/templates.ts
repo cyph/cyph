@@ -1,6 +1,9 @@
 module Cyph {
 	export module UI {
 		export module Directives {
+			/**
+			 * Reusable HTML view templates for component directives.
+			 */
 			export const Templates	= {
 				chatCyphertext: `
 					<div class='chat-cyphertext nano'>

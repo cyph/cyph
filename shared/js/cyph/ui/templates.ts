@@ -1,5 +1,8 @@
 module Cyph {
 	export module UI {
+		/**
+		 * Reusable HTML view templates.
+		 */
 		export const Templates	= {
 			amazonLink: `
 				<md-dialog class='amazon-link'>

@@ -1,7 +1,11 @@
 module Cyph {
 	export module UI {
 		export module Directives {
+			/**
+			 * Angular directive for handling enter-presses.
+			 */
 			export class Enterpress {
+				/** Module/directive title. */
 				public static title: string	= 'cyphEnterpress';
 
 				private static _	= (() => {

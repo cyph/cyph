@@ -1,5 +1,8 @@
 module Cyph {
 	export module UI {
+		/**
+		 * Base class for components that handle buttons.
+		 */
 		export class BaseButtonManager {
 			protected static buttonLock: boolean;
 
@@ -21,6 +24,10 @@ module Cyph {
 				}
 			}
 
+			/**
+			 * @param controller
+			 * @param mobileMenu
+			 */
 			public constructor (
 				protected controller: IController,
 				protected mobileMenu: ISidebar

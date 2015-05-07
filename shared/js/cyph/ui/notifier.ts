@@ -1,7 +1,7 @@
 module Cyph {
 	export module UI {
-		export class Notifier {
-			public static audio : {play: Function}	= Audio ?
+		export class Notifier implements INotifier {
+			private static audio : {play: Function}	= Audio ?
 				new Audio(Config.notifierConfig.audio) :
 				{play: () => {}}
 			;
@@ -46,8 +46,8 @@ module Cyph {
 			}
 
 
-			public disableNotify: boolean	= false;
-			public openNotifications: any[]	= [];
+			private disableNotify: boolean		= false;
+			private openNotifications: any[]	= [];
 
 			public notify (message: string) : void {
 				if (!this.disableNotify && !VisibilityWatcher.isVisible) {

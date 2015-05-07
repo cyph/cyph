@@ -1,7 +1,11 @@
 module Cyph {
 	export module UI {
 		export module Directives {
+			/**
+			 * Angular directive for rendering Markdown.
+			 */
 			export class Markdown {
+				/** Module/directive title. */
 				public static title: string	= 'cyphMarkdown';
 
 				private static _	= (() => {

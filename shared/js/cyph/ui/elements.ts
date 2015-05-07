@@ -1,5 +1,8 @@
 module Cyph {
 	export module UI {
+		/**
+		 * Non-project-specific UI elements.
+		 */
 		export class Elements {
 			public static window: JQuery	= $(window);
 			public static document: JQuery	= $(document);

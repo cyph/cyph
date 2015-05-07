@@ -46,7 +46,8 @@ for (const k of [
 	'history',
 	'location',
 	'localStorage',
-	'navigator'
+	'navigator',
+	'Audio'
 ]) {
 	if (!(k in self)) {
 		self[k]	= null;

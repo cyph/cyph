@@ -1,5 +1,13 @@
 module Cyph {
 	export module Session {
+		/**
+		 * Message body to be encrypted within OTR cyphertext.
+		 * Contains metadata to ensure that large messages split across
+		 * multiple cyphertext blocks are correctly pieced together.
+		 *
+		 * Also transparently adds padding to ensure that the same message
+		 * sent between key ratchets won't yield the same cyphertext.
+		 */
 		export class OTRMessageInner {
 			private static paddingDelimiter: string	= '☁☁☁ PRAISE BE TO CYPH ☀☀☀';
 
@@ -33,10 +41,19 @@ module Cyph {
 
 			private messageChunk: string;
 
+			/**
+			 * Retuns the original message / message chunk.
+			 */
 			public toString () : string {
 				return OTRMessageInner.unpad(this.messageChunk);
 			}
 
+			/**
+			 * @param id
+			 * @param index
+			 * @param total
+			 * @param messageChunk
+			 */
 			public constructor (
 				public id: string,
 				public index: number,
@@ -47,7 +64,15 @@ module Cyph {
 			}
 		}
 
+		/**
+		 * Wrapper around OTR cyphertext to be sent over the network;
+		 * used to ensure that messages are processed only once and in order.
+		 */
 		export class OTRMessageOuter {
+			/**
+			 * @param id
+			 * @param cyphertext
+			 */
 			public constructor (
 				public id: number,
 				public cyphertext: string

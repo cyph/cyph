@@ -6,7 +6,11 @@
 module Cyph {
 	export module UI {
 		export module Directives {
+			/**
+			 * Angular module with directives for chat UI components.
+			 */
 			export class Chat {
+				/** Module title + namespace for included directives. */
 				public static title: string	= 'cyphChat';
 
 				private static _	= (() => {
