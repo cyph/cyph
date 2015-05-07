@@ -1,4 +1,7 @@
 module Cyph {
+	/**
+	 * Represents a thread.
+	 */
 	export class Thread {
 		private static BlobBuilder: any	= Util.getValue(self, [
 			'BlobBuilder',
@@ -103,8 +106,14 @@ module Cyph {
 			}
 		}
 
+		/** List of all active threads created. */
 		public static threads: Thread[]	= [];
 
+		/**
+		 * Sends command to the main thread.
+		 * @param method Fully-qualified method name (e.g. Cyph.Thread.callMainThread).
+		 * @param args
+		 */
 		public static callMainThread (method: string, args: any[] = []) : void {
 			if (Env.isMainThread) {
 				const methodSplit: string[]	= method.split('.');
@@ -120,7 +129,12 @@ module Cyph {
 					methodObject[methodName].apply(methodObject, args);
 				}
 				else {
-					throw new Error(method + ' not in whitelist. (args: ' + JSON.stringify(args) + ')');
+					throw new Error(
+						method +
+						' not in whitelist. (args: ' +
+						JSON.stringify(args) +
+						')'
+					);
 				}
 			}
 			else {
@@ -131,16 +145,25 @@ module Cyph {
 
 		private worker: Worker;
 
+		/**
+		 * Indicates whether this thread is active.
+		 */
 		public isAlive () : boolean {
 			return !!this.worker;
 		}
 
+		/**
+		 * Sends a message to this thread.
+		 */
 		public postMessage (o: any) : void {
 			if (this.worker) {
 				this.worker.postMessage(o);
 			}
 		}
 
+		/**
+		 * This kills the thread.
+		 */
 		public stop () : void {
 			if (this.worker) {
 				this.worker.terminate();
@@ -151,7 +174,16 @@ module Cyph {
 			Thread.threads	= Thread.threads.filter(t => t !== this);
 		}
 
-		public constructor (f: Function, vars: any = {}, onmessage: (e: MessageEvent) => any = e => {}) {
+		/**
+		 * @param f Function to run in the new thread.
+		 * @param vars Local data to pass in to the new thread.
+		 * @param onmessage Handler for messages from the thread.
+		 */
+		public constructor (
+			f: Function,
+			vars: any = {},
+			onmessage: (e: MessageEvent) => any = e => {}
+		) {
 			vars.location	= location;
 			vars.navigator	= {language: Env.language, userAgent: Env.userAgent};
 
