@@ -2,10 +2,12 @@
 /// <reference path="aws.ts" />
 
 
-/* Unidirectional queue */
-
 module Cyph {
 	export module Channel {
+		/**
+		 * Most basic IChannel implementation; this is a
+		 * unidirectional queue.
+		 */
 		export class Queue implements IChannel {
 			public static nonExistentQueue: string	= 'AWS.SimpleQueueService.NonExistentQueue';
 			public static queuePrefix: string		= 'channels-';

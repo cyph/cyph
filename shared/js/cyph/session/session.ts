@@ -7,6 +7,10 @@
 
 module Cyph {
 	export module Session {
+		/**
+		 * Standard ISession implementation with the properties
+		 * that one would expect.
+		 */
 		export class Session implements ISession {
 			private receivedMessages: {[id: string] : boolean}	= {};
 			private sendQueue: string[]							= [];
