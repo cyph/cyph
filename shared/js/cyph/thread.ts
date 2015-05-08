@@ -185,7 +185,7 @@ module Cyph {
 			onmessage: (e: MessageEvent) => any = e => {}
 		) {
 			vars.location	= location;
-			vars.navigator	= {language: Env.language, userAgent: Env.userAgent};
+			vars.navigator	= {language: Env.fullLanguage, userAgent: Env.userAgent};
 
 			vars.threadRandomSeed	= crypto.getRandomValues(new Uint8Array(50000));
 

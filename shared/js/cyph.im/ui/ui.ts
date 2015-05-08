@@ -105,7 +105,11 @@ module Cyph.im {
 				}
 
 				setTimeout(
-					() => this.chat.abortSetup(),
+					() => {
+						if (this.state === States.waitingForFriend) {
+							this.chat.abortSetup();
+						}
+					},
 					Config.newCyphCountdown * 1000
 				);
 			}
