@@ -103,6 +103,8 @@ module Cyph.im {
 				else {
 					Cyph.UI.Elements.timer[0]['start']();
 				}
+
+				setTimeout(() => this.chat.abortSetup(), 600000);
 			}
 
 			/**
