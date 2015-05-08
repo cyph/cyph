@@ -1,18 +1,18 @@
 /// <reference path="channel.ts" />
 
 
-/*
-	Channel with built-in ratcheting of ID and region
-
-	Ratcheting steps:
-		Alice: create new channel, send descriptor over current (old) channel
-		Bob: join new channel, ack descriptor over old channel, deprecate old channel
-		Alice: deprecate old channel
-		Both: wait a bit, then destroy old channel
-*/
-
 module Cyph {
 	export module Channel {
+		/**
+		 * Identical functional behaviour to Channel, except
+		 * it automatically ratchets SQS IDs and regions.
+		 *
+		 * Ratcheting steps:
+		 * * Alice: create new Channel; send descriptor over current (old) Channel
+		 * * Bob: join new Channel; ack descriptor over old Channel; deprecate old Channel
+		 * * Alice: deprecate old Channel
+		 * * Both: wait a bit, then destroy old Channel
+		 */
 		export class RatchetedChannel implements IChannel {
 			private lastChannelRatchet: number	= 0;
 
