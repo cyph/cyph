@@ -72,6 +72,13 @@ module Cyph {
 					});
 				}
 
+				/**
+				 * @param session
+				 * @param controller
+				 * @param mobileMenu
+				 * @param dialogManager
+				 * @param isMobile
+				 */
 				public constructor (
 					session: Session.ISession,
 					controller: IController,

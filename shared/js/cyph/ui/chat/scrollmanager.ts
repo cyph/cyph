@@ -120,6 +120,11 @@ module Cyph {
 					}
 				}
 
+				/**
+				 * @param controller
+				 * @param dialogManager
+				 * @param isMobile
+				 */
 				public constructor (
 					private controller: IController,
 					dialogManager: IDialogManager,

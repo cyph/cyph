@@ -94,7 +94,11 @@ module Cyph {
 				setTimeout(callback, o.delay + 500);
 			}
 
-			public constructor (
+			/**
+			 * @param $mdDialog
+			 * @param $mdToast
+			 */
+			public constructor(
 				private $mdDialog: angular.material.MDDialogService,
 				private $mdToast: angular.material.MDToastService
 			) {}

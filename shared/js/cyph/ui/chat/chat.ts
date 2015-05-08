@@ -244,6 +244,13 @@ module Cyph {
 					this.controller.update();
 				}
 
+				/**
+				 * @param controller
+				 * @param dialogManager
+				 * @param mobileMenu
+				 * @param notifier
+				 * @param isMobile
+				 */
 				public constructor (
 					controller: IController,
 					private dialogManager: IDialogManager,

@@ -836,6 +836,10 @@ module Cyph {
 				});
 			}
 
+			/**
+			 * @param session
+			 * @param controller
+			 */
 			public constructor (
 				private session: Session.ISession,
 				private controller: IController

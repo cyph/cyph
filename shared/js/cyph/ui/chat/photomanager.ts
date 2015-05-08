@@ -70,6 +70,9 @@ module Cyph {
 					}
 				}
 
+				/**
+				 * @param chat
+				 */
 				public constructor (private chat: IChat) {
 					Elements.buttons.
 						find('input[type="file"]').
