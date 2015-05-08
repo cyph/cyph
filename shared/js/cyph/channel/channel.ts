@@ -13,6 +13,10 @@ module Cyph {
 				return b ? '0' : '1';
 			}
 
+			/**
+			 * Automatically generates a new channel descriptor
+			 * containing a GUID and a randomly selected AWS region.
+			 */
 			public static newDescriptor () : string {
 				return JSON.stringify({
 					name: Util.generateGuid(Config.longSecretLength),
@@ -107,7 +111,7 @@ module Cyph {
 
 
 				this.sqs.getQueueUrl({
-					QueueName: Queue.queuePrefix + channelName + Channel.channelIds(true)
+					QueueName: Queue.queueNamespace + channelName + Channel.channelIds(true)
 				}, (err, data) => {
 					const isCreator: boolean	= !!err;
 
@@ -138,7 +142,7 @@ module Cyph {
 											this.sqs.setQueueAttributes({
 												QueueUrl: this.inQueue.queueUrl,
 												Attributes: {
-													MessageRetentionPeriod: Queue.periodValues(periodToggle)
+													MessageRetentionPeriod: Queue.retentionPeriodValues(periodToggle)
 												}
 											}, () =>
 												periodToggle	= !periodToggle
