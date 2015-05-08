@@ -9,13 +9,26 @@ module Cyph {
 		 * unidirectional queue.
 		 */
 		export class Queue implements IChannel {
-			public static nonExistentQueue: string	= 'AWS.SimpleQueueService.NonExistentQueue';
-			public static queuePrefix: string		= 'channels-';
+			private static nonExistentQueueError: string = 'AWS.SimpleQueueService.NonExistentQueue';
 
-			public static periodValues (b?: boolean) : string {
+			/** Used to prefix queue names in SQS. */
+			public static queueNamespace: string	= 'channels-';
+
+			/**
+			 * Used for toggling the message retention period
+			 * between half an hour and half an hour + 1 second,
+			 * as a method of "touching" active SQS queues to
+			 * indicate that they're still in use.
+			 * @param b
+			 */
+			public static retentionPeriodValues (b?: boolean) : string {
 				return b ? '1800' : '1801';
 			}
 
+			/**
+			 * Creates SQS object and wraps it with retry logic.
+			 * @param config SQS configuration.
+			 */
 			public static sqsWrapper (config: any = {}) : ({
 				base: any;
 				createQueue: (o: any, callback: Function, shouldretryUntilComplete?: boolean) => void;
@@ -249,9 +262,9 @@ module Cyph {
 				this.sqs	= Queue.sqsWrapper(config);
 
 				this.sqs.createQueue({
-					QueueName: Queue.queuePrefix + queueName,
+					QueueName: Queue.queueNamespace + queueName,
 					Attributes: {
-						MessageRetentionPeriod: Queue.periodValues(true),
+						MessageRetentionPeriod: Queue.retentionPeriodValues(true),
 						ReceiveMessageWaitTimeSeconds: '20'
 					}
 				}, (err, data) => {
@@ -274,7 +287,7 @@ module Cyph {
 
 						Util.retryUntilComplete(retry =>
 							this.receive(handlers.onmessage, (err, data) => {
-								if (err && err.code === Queue.nonExistentQueue) {
+								if (err && err.code === Queue.nonExistentQueueError) {
 									this.isQueueAlive	= false;
 
 									if (handlers.onclose) {
@@ -306,9 +319,9 @@ module Cyph {
 					else if (handlers.onclose) {
 						Util.retryUntilComplete(retry =>
 							this.sqs.getQueueUrl({
-								QueueName: Queue.queuePrefix + queueName
+								QueueName: Queue.queueNamespace + queueName
 							}, (err, data) => {
-								if (err && err.code === Queue.nonExistentQueue) {
+								if (err && err.code === Queue.nonExistentQueueError) {
 									this.isQueueAlive	= false;
 									handlers.onclose(err, data);
 								}
