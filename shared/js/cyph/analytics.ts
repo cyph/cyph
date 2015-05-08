@@ -11,18 +11,14 @@ module Cyph {
 		private analFrame: HTMLIFrameElement;
 		private analFrameIsReady: boolean;
 
-		private baseEventSubmit (method: string, ...args: any[]) : void {
-			this.baseEventSubmitHelper(method, args);
-		}
-
 		/**
 		 * Ignore this (used internally).
 		 * @param method
 		 * @param args
 		 */
-		public baseEventSubmitHelper (method: string, args: any[]) : void {
+		public baseEventSubmit (method: string, args: any[]) : void {
 			if (!Env.isMainThread) {
-				Thread.callMainThread('Cyph.Analytics.main.baseEventSubmitHelper', [method, args]);
+				Thread.callMainThread('Cyph.Analytics.main.baseEventSubmit', [method, args]);
 			}
 			else if (this.analFrameIsReady) {
 				args.unshift(method);
@@ -35,7 +31,7 @@ module Cyph {
 			else if (this.analFrameIsReady !== false) {
 				/* Do nothing if explicitly set to false */
 				setTimeout(() =>
-					this.baseEventSubmitHelper(method, args)
+					this.baseEventSubmit(method, args)
 				, 50);
 			}
 		}
