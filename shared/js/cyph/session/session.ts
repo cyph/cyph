@@ -141,9 +141,15 @@ module Cyph {
 				);
 			}
 
-			private setUpChannel (channelDescriptor: string) : void {
-				this.channel	= new Channel.RatchetedChannel(this, channelDescriptor, {
+			private setUpChannel(channelDescriptor: string): void {
+				// this.channel	= new Channel.RatchetedChannel(this, channelDescriptor, {
+				this.channel	= new Channel.Channel(channelDescriptor, {
 					onopen: (isCreator: boolean) : void => {
+						this.trigger(
+							Events.newChannel,
+							(<Channel.Channel> this.channel).outQueue.queueName
+						);
+
 						this.updateState(State.isCreator, isCreator);
 
 						if (this.state.isCreator) {
