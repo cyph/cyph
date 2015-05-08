@@ -229,7 +229,21 @@ module Cyph {
 				}
 			}
 
-			public constructor (public queueName: string, handlers: any = {}, config: any = {}) {
+			/**
+			 * @param queueName Name used to identify this queue with SQS.
+			 * @param handlers Event handlers for this channel.
+			 * @param config SQS configuration.
+			 */
+			public constructor (
+				public queueName: string,
+				handlers: ({
+					onclose?: (err: any, data: any) => void;
+					onlag?: (lag: number, region: string) => void;
+					onmessage?: (message: string) => void;
+					onopen?: () => void;
+				}) = {},
+				config: any = {}
+			) {
 				this.sqs	= Queue.sqsWrapper(config);
 
 				this.sqs.createQueue({

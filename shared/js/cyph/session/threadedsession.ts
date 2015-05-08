@@ -60,6 +60,11 @@ module Cyph {
 				this.trigger(ThreadedSessionEvents.updateState, {key, value});
 			}
 
+			/**
+			 * @param descriptor Descriptor used for brokering the session.
+			 * @param controller
+			 * @param id
+			 */
 			public constructor (
 				descriptor?: string,
 				private controller?: IController,

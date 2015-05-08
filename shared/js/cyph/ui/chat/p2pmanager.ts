@@ -82,6 +82,12 @@ module Cyph {
 					});
 				}
 
+				/**
+				 * @param chat
+				 * @param controller
+				 * @param mobileMenu
+				 * @param dialogManager
+				 */
 				public constructor (
 					private chat: IChat,
 					controller: IController,

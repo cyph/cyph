@@ -49,10 +49,11 @@ module Cyph {
 			}
 
 			/**
-			 * @param id
-			 * @param index
-			 * @param total
-			 * @param messageChunk
+			 * @param id Random unique ID.
+			 * @param index Number designating the contained message chunk's position
+			 * within the sequence of chunks associated with this message.
+			 * @param total Total number of chunks associated with this message.
+			 * @param messageChunk Block of plaintext data.
 			 */
 			public constructor (
 				public id: string,
@@ -70,8 +71,8 @@ module Cyph {
 		 */
 		export class OTRMessageOuter {
 			/**
-			 * @param id
-			 * @param cyphertext
+			 * @param id Number designating order in sequence of messages.
+			 * @param cyphertext Block of encrypted data.
 			 */
 			public constructor (
 				public id: number,
