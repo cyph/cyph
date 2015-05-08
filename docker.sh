@@ -3,7 +3,7 @@
 cd $(cd "$(dirname "$0")"; pwd)
 
 
-image=cyph/$(git branch | awk '/^\*/{print $2}')
+image="cyph/$(git branch | awk '/^\*/{print $2}')"
 
 command="${1}"
 shift
@@ -56,6 +56,11 @@ elif [ "${command}" == 'commit' ] ; then
 
 elif [ "${command}" == 'docs' ] ; then
 	args=''
+
+elif [ "${command}" == 'restart' ] ; then
+	./docker.sh kill
+	boot2docker start
+	exit 0
 
 elif [ "${command}" == 'updatelibs' ] ; then
 	args=''
