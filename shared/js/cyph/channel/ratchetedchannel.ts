@@ -60,11 +60,6 @@ module Cyph {
 								)
 							);
 
-							this.session.trigger(
-								Session.Events.newChannel,
-								this.newChannel.outQueue.queueName
-							);
-
 							if (!init) {
 								setTimeout(() => this.destroyCurrentChannel(), 10000);
 							}
@@ -196,7 +191,7 @@ module Cyph {
 					onopen(this.isCreator);
 				};
 
-				this.channel	= new Channel(channelName, handlers, config);
+				this.channel	= new Channel(channelName, handlers, config, this.session);
 
 
 
