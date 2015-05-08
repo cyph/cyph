@@ -64,7 +64,7 @@ module Cyph {
 								setTimeout(() => this.destroyCurrentChannel(), 10000);
 							}
 						},
-						onmessage: this.session.receive,
+						onmessage: this.handlers.onmessage,
 						onlag: (lag: number, region: string) => {
 							if (!this.isCreator) {
 								this.ratchetChannels();
@@ -159,7 +159,7 @@ module Cyph {
 			public constructor (
 				private session: Session.ISession,
 				channelName: string,
-				handlers: ({
+				private handlers: ({
 					onclose?: (err: any, data: any) => void;
 					onconnect?: () => void;
 					onlag?: (lag: number, region: string) => void;
