@@ -1,10 +1,13 @@
 /// <reference path="queue.ts" />
 
 
-/* Bidirectional channel, comprised of two queues */
-
 module Cyph {
 	export module Channel {
+		/**
+		 * Standard IChannel implementation with the properties
+		 * that one would expect: bidirectional, comprised of
+		 * two Queues.
+		 */
 		export class Channel implements IChannel {
 			private static channelIds (b?: boolean) : string {
 				return b ? '0' : '1';

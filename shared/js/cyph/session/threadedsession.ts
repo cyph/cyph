@@ -5,6 +5,9 @@
 
 module Cyph {
 	export module Session {
+		/**
+		 * Wrapper around Session that spawns it in a new thread.
+		 */
 		export class ThreadedSession implements ISession {
 			private thread: Thread;
 			private outQueue: Channel.Queue;
