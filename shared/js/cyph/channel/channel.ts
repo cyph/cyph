@@ -60,9 +60,20 @@ module Cyph {
 				this.outQueue.send(message, callback, isSynchronous);
 			}
 
+			/**
+			 * @param channelName Name of this channel.
+			 * @param handlers Event handlers for this channel.
+			 * @param config SQS configuration.
+			 */
 			public constructor (
 				channelName: string,
-				handlers: any = {},
+				handlers: ({
+					onclose?: (err: any, data: any) => void;
+					onconnect?: () => void;
+					onlag?: (lag: number, region: string) => void;
+					onmessage?: (message: string) => void;
+					onopen?: (isCreator: boolean) => void;
+				}) = {},
 				config: any = {}
 			) {
 				try {

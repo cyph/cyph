@@ -248,7 +248,12 @@ module Cyph {
 				}
 			}
 
-			public constructor (
+			/**
+			 * @param descriptor Descriptor used for brokering the session.
+			 * @param controller
+			 * @param id
+			 */
+			public constructor(
 				descriptor?: string,
 				private controller?: IController,
 				private id: string = Util.generateGuid()

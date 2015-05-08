@@ -108,6 +108,9 @@ module Cyph {
 				}
 			}
 
+			/**
+			 * @param session
+			 */
 			public constructor (private session: ISession) {
 				this.session.on(RPCEvents.mutex, (command: Command) =>
 					this.commands[command.method](command.argument)

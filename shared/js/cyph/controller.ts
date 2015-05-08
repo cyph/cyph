@@ -8,6 +8,9 @@ module Cyph {
 			}
 		}
 
+		/**
+		 * @param $scope Angular scope.
+		 */
 		public constructor (private $scope: any) {}
 	}
 }
