@@ -71,6 +71,7 @@ module Cyph {
 			 * @param channelName Name of this channel.
 			 * @param handlers Event handlers for this channel.
 			 * @param config SQS configuration.
+			 * @param session Optionally pass in to trigger newChannel event.
 			 */
 			public constructor (
 				channelName: string,
@@ -81,7 +82,8 @@ module Cyph {
 					onmessage?: (message: string) => void;
 					onopen?: (isCreator: boolean) => void;
 				}) = {},
-				config: any = {}
+				config: any = {},
+				session?: Session.ISession
 			) {
 				try {
 					const descriptor: any	= JSON.parse(channelName);
@@ -142,13 +144,22 @@ module Cyph {
 											this.sqs.setQueueAttributes({
 												QueueUrl: this.inQueue.queueUrl,
 												Attributes: {
-													MessageRetentionPeriod: Queue.retentionPeriodValues(periodToggle)
+													MessageRetentionPeriod:
+														Queue.retentionPeriodValues(periodToggle)
 												}
 											}, () =>
 												periodToggle	= !periodToggle
 											);
 										}
 									});
+
+
+									if (session) {
+										session.trigger(
+											Session.Events.newChannel,
+											this.outQueue.queueName
+										);
+									}
 
 
 									if (handlers.onopen) {
