@@ -104,7 +104,10 @@ module Cyph.im {
 					Cyph.UI.Elements.timer[0]['start']();
 				}
 
-				setTimeout(() => this.chat.abortSetup(), 600000);
+				setTimeout(
+					() => this.chat.abortSetup(),
+					Config.newCyphCountdown * 1000
+				);
 			}
 
 			/**
