@@ -141,7 +141,7 @@ module Cyph {
 				);
 			}
 
-			private setUpChannel(channelDescriptor: string): void {
+			private setUpChannel (channelDescriptor: string) : void {
 				// this.channel	= new Channel.RatchetedChannel(this, channelDescriptor, {
 				this.channel	= new Channel.Channel(channelDescriptor, {
 					onopen: (isCreator: boolean) : void => {
