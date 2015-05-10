@@ -144,7 +144,7 @@
 							<img src='/img/icons/sms.png' />
 							<a
 								target='_self'
-								ng-href='sms:{{Cyph.Env.smsRecipient}}?body={{ui.cyphLinkEncoded}}'
+								ng-href='{{Cyph.Env.smsUriBase}}{{ui.cyphLinkEncoded}}'
 							></a>
 						</md-button>
 
