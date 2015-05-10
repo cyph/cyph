@@ -5,10 +5,10 @@ module Cyph.im {
 		 */
 		export class UI {
 			/** The link to join this cyph. */
-			public copyUrl: string			= '';
+			public cyphLink: string			= '';
 
-			/** URL-encoded version of this.copyUrl (for sms and mailto links). */
-			public copyUrlEncoded: string	= '';
+			/** URL-encoded version of this.cyphLink (for sms and mailto links). */
+			public cyphLinkEncoded: string	= '';
 
 			/** UI state/view. */
 			public state: States			= States.none;
@@ -37,32 +37,32 @@ module Cyph.im {
 			public beginWaiting () : void {
 				this.changeState(States.waitingForFriend);
 
-				const copyUrl: string	=
+				const cyphLink: string	=
 					Env.newCyphUrl +
 					'#' +
 					this.chat.session.state.cyphId +
 					this.chat.session.state.sharedSecret
 				;
 
-				this.copyUrlEncoded	= encodeURIComponent(copyUrl);
+				this.cyphLinkEncoded	= encodeURIComponent(cyphLink);
 
 
 				const setCopyUrl: Function	= () => {
-					if (this.copyUrl !== copyUrl) {
-						this.copyUrl	= copyUrl;
+					if (this.cyphLink !== cyphLink) {
+						this.cyphLink	= cyphLink;
 						this.controller.update();
 					}
 				};
 
 				const selectCopyUrl: Function	= () =>
 					Util.getValue(
-						Cyph.UI.Elements.copyUrlInput[0],
+						Cyph.UI.Elements.cyphLinkInput[0],
 						'setSelectionRange',
 						() => {}
 					).call(
-						Cyph.UI.Elements.copyUrlInput[0],
+						Cyph.UI.Elements.cyphLinkInput[0],
 						0,
-						copyUrl.length
+						cyphLink.length
 					);
 				;
 
@@ -70,19 +70,19 @@ module Cyph.im {
 					setCopyUrl();
 
 					/* Only allow right-clicking (for copying the link) */
-					Cyph.UI.Elements.copyUrlLink.click(e =>
+					Cyph.UI.Elements.cyphLinkLink.click(e =>
 						e.preventDefault()
 					);
 				}
 				else {
-					const copyUrlInterval	= setInterval(() => {
+					const cyphLinkInterval	= setInterval(() => {
 						if (this.state === States.waitingForFriend) {
 							setCopyUrl();
-							Cyph.UI.Elements.copyUrlInput.focus();
+							Cyph.UI.Elements.cyphLinkInput.focus();
 							selectCopyUrl();
 						}
 						else {
-							clearInterval(copyUrlInterval);
+							clearInterval(cyphLinkInterval);
 						}
 					}, 250);
 				}

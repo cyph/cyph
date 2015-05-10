@@ -99,7 +99,7 @@ module Cyph {
 					this.changeState(States.chatBeginMessage);
 
 					/* Stop mobile browsers from keeping this selected */
-					Elements.copyUrlInput.remove();
+					Elements.cyphLinkInput.remove();
 
 					setTimeout(() => {
 						if (this.state === States.aborted) {
