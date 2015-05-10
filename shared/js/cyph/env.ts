@@ -66,6 +66,9 @@ module Cyph {
 		/** Indicates whether this is iOS. */
 		public static isIOS: boolean		= /ipad|iphone|ipod/.test(Env.userAgent);
 
+		/** Indicates whether this is iOS 8. */
+		public static isIOS8: boolean		= Env.isIOS && / os 8_/.test(Env.userAgent);
+
 		/** Indicates whether this is Windows Phone. */
 		public static isWP: boolean			= /iemobile/.test(Env.userAgent);
 
@@ -119,9 +122,12 @@ module Cyph {
 		/** Either "mobile" or "desktop", depending on Env.isMobile. */
 		public static platformString: string	= Env.isMobile ? 'mobile' : 'desktop';
 
-		/** Default recipient for sms: URIs (empty except on iOS,
-			as a workaround for a Messages bug). */
-		public static smsRecipient: string	= Env.isIOS ? '+10000000000' : '';
+		/** Base URI for sending an SMS. */
+		public static smsUriBase: string	=
+			'sms:' +
+			(Env.isIOS8 ? '&' : Env.isIOS ? ';' : '?') +
+			'body='
+		;
 
 		/** Default body text for mailto: link on WebSign warning screen. */
 		public static webSignWarningEmail: string		=
