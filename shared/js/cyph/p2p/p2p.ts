@@ -178,7 +178,9 @@ module Cyph {
 				let channel: RTCDataChannel;
 				const peer: RTCPeerConnection	= new WebRTC.PeerConnection({
 					iceServers: [
-						{url: P2P.constants.stun + ':' + Config.p2pConfig.iceServer},
+						{
+							url: P2P.constants.stun + ':' + Config.p2pConfig.iceServer
+						},
 						{
 							url: P2P.constants.turn + ':' + Config.p2pConfig.iceServer,
 							credential: Config.p2pConfig.iceCredential,
@@ -186,7 +188,11 @@ module Cyph {
 						}
 					]
 				}, {
-					optional: [{DtlsSrtpKeyAgreement: true}]
+					optional: [
+						{
+							DtlsSrtpKeyAgreement: true
+						}
+					]
 				});
 
 				peer.onaddstream	= e => {
@@ -222,8 +228,6 @@ module Cyph {
 
 				peer.onicecandidate	= e => {
 					if (e.candidate) {
-						peer.onicecandidate	= null;
-
 						this.session.send(
 							new Session.Message(
 								Session.RPCEvents.p2p,
