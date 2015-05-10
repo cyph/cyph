@@ -54,6 +54,21 @@ for (const k of [
 	}
 }
 
+
+/* Fix non-compliant crypto implementations */
+
+if (
+	typeof crypto !== 'undefined' &&
+	typeof crypto.getRandomValues(new Uint32Array(1)) === 'undefined'
+) {
+	const getRandomValues	= crypto.getRandomValues;
+	crypto.getRandomValues	= array => {
+		getRandomValues.call(crypto, array);
+		return array;
+	};
+}
+
+
 /**
  * @global Event-handler for messages to the current thread.
  */
