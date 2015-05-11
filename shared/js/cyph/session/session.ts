@@ -176,7 +176,7 @@ module Cyph {
 					},
 					onconnect: () => this.trigger(Events.connect),
 					onmessage: message => this.receive(message)
-				}, this);
+				}, undefined, this);
 			}
 
 			public close (shouldSendEvent: boolean = true) : void {
