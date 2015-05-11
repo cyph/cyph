@@ -6,6 +6,8 @@ dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd)/..
 originalDir="$(pwd)"
 
+./commands/docs.sh
+
 tsfiles="$( \
 	{ cat */*.html | grep "<script.*'/js/" & grep -ro "importScripts('/js/.*)" shared/js; } | \
 		perl -pe "s/.*?'\/(js\/.*)\.js.*/\1/g" | \
@@ -18,8 +20,6 @@ cd $dir
 if [ -f build.sh ] ; then
 	cd ..
 fi
-
-./commands/docs.sh
 
 if [ -d shared ] ; then
 	cd shared
