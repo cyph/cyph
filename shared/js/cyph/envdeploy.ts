@@ -26,13 +26,13 @@ module Cyph {
 
 		/** URL for starting a new cyph ("https://www.cyph.im/" or equivalent). */
 		public static newCyphUrl: string	= EnvDeploy.isOnion ?
-			'/im/' :
+			`${Config.onionUrl}im/` :
 			`${location.protocol}//${location.hostname}:42002/`
 		;
 
 		/** URL for Cyph account application ("https://www.cyph.me/" or equivalent). */
 		public static cyphMeUrl: string		= EnvDeploy.isOnion ?
-			'/me/' :
+			`${Config.onionUrl}me/` :
 			`${location.protocol}//${location.hostname}:42003/`
 		;
 
