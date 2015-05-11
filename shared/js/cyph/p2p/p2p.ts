@@ -797,7 +797,10 @@ module Cyph {
 							streamSetup	= () => {
 								if (this.outgoingStream.video || this.outgoingStream.audio) {
 									WebRTC.getUserMedia(
-										this.outgoingStream,
+										{
+											audio: this.outgoingStream.audio,
+											video: this.outgoingStream.video
+										},
 										streamHelper,
 										streamFallback
 									);
