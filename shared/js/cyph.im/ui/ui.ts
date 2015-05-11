@@ -38,7 +38,7 @@ module Cyph.im {
 				this.changeState(States.waitingForFriend);
 
 				const cyphLink: string	=
-					Env.newCyphUrl +
+					Env.newCyphBaseUrl +
 					'#' +
 					this.chat.session.state.cyphId +
 					this.chat.session.state.sharedSecret
