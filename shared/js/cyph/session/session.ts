@@ -84,9 +84,6 @@ module Cyph {
 							});
 						}
 					}
-					else {
-						this.pingPongTimeouts	= 0;
-					}
 
 					if (now > nextPing) {
 						this.send(new Message());
