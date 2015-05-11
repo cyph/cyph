@@ -137,7 +137,10 @@ module Cyph {
 
 								this.sqs.deleteMessageBatch({
 									QueueUrl: this.queueUrl,
-									Entries: data.Messages
+									Entries: data.Messages.map(message => ({
+										Id: message.MessageId,
+										ReceiptHandle: message.ReceiptHandle
+									}))
 								}, () => {});
 
 								if (messageHandler) {
