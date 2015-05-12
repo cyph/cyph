@@ -272,7 +272,7 @@ module Cyph {
 				this.sqs	= Queue.sqsWrapper(config);
 
 				this.sqs.createQueue({
-					QueueName: Queue.queueNamespace + queueName,
+					QueueName: Queue.queueNamespace + this.queueName,
 					Attributes: {
 						MessageRetentionPeriod: Queue.retentionPeriodValues(true),
 						ReceiveMessageWaitTimeSeconds: '20'
@@ -329,7 +329,7 @@ module Cyph {
 					else if (handlers.onclose) {
 						Util.retryUntilComplete(retry =>
 							this.sqs.getQueueUrl({
-								QueueName: Queue.queueNamespace + queueName
+								QueueName: Queue.queueNamespace + this.queueName
 							}, (err, data) => {
 								if (err && err.code === Queue.nonExistentQueueError) {
 									this.isQueueAlive	= false;

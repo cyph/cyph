@@ -155,10 +155,10 @@ module Cyph {
 
 
 									if (session) {
-										session.trigger(
-											Session.Events.newChannel,
-											this.outQueue.queueName
-										);
+										session.trigger(Session.Events.newChannel, {
+											queueName: this.outQueue.queueName,
+											region: config.region
+										});
 									}
 
 

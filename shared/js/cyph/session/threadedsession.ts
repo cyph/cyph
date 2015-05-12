@@ -86,8 +86,12 @@ module Cyph {
 
 				this.on(
 					Events.newChannel,
-					(queueName: string) =>
-						this.outQueue	= new Channel.Queue(queueName)
+					(e: { queueName: string; region: string; }) =>
+						this.outQueue	= new Channel.Queue(
+							e.queueName,
+							undefined,
+							{region: e.region}
+						)
 				);
 
 				this.thread	= new Thread((vars: any, importScripts: Function, Cyph: any) => {
