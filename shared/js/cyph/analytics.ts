@@ -23,10 +23,13 @@ module Cyph {
 			else if (this.analFrameIsReady) {
 				args.unshift(method);
 
-				this.analFrame.contentWindow.postMessage(
-					{args: JSON.stringify(args)},
-					'*'
-				);
+				try {
+					this.analFrame.contentWindow.postMessage(
+						{args: JSON.stringify(args)},
+						'*'
+					);
+				}
+				catch (_) {}
 			}
 			else if (this.analFrameIsReady !== false) {
 				/* Do nothing if explicitly set to false */
