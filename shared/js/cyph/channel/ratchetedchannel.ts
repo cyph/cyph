@@ -27,15 +27,14 @@ module Cyph {
 					this.newChannel				= null;
 
 					if (oldChannel) {
-						setTimeout(() => oldChannel.close, 150000);
+						setTimeout(() => oldChannel.close(), 150000);
 					}
 				}
 			}
 
-			private ratchetChannels (channelDescriptor?: string) : void {
-				const init: boolean	= !channelDescriptor;
-
-				/* Block ratchet from being initiated more than once within a five-minute period */
+			private ratchetChannels (init: boolean, channelDescriptor: string = Channel.newDescriptor()) : void {
+				/* Block ratchet from being initiated more
+					than once within a five-minute period */
 				if (init) {
 					const last: number		= this.lastChannelRatchet;
 					this.lastChannelRatchet	= Date.now();
@@ -50,7 +49,6 @@ module Cyph {
 					this.destroyCurrentChannel();
 				}
 				else {
-					channelDescriptor	= channelDescriptor || Channel.newDescriptor();
 					this.newChannel		= new Channel(channelDescriptor, {
 						onopen: () => {
 							this.session.send(
@@ -67,7 +65,7 @@ module Cyph {
 						onmessage: this.handlers.onmessage,
 						onlag: (lag: number, region: string) => {
 							if (!this.isCreator) {
-								this.ratchetChannels();
+								this.ratchetChannels(true);
 							}
 
 							Analytics.main.send({
@@ -78,7 +76,7 @@ module Cyph {
 								eventValue: lag
 							});
 						}
-					});
+					}, undefined, this.session);
 				}
 			}
 
@@ -178,7 +176,7 @@ module Cyph {
 					if (!this.isCreator) {
 						Util.retryUntilComplete(retry => {
 							if (this.isAlive()) {
-								this.ratchetChannels();
+								this.ratchetChannels(true);
 
 								setTimeout(
 									retry,
@@ -195,7 +193,9 @@ module Cyph {
 
 
 
-				this.session.on(Session.RPCEvents.channelRatchet, () => this.ratchetChannels());
+				this.session.on(Session.RPCEvents.channelRatchet,
+					(channelDescriptor: string) => this.ratchetChannels(false, channelDescriptor)
+				);
 			}
 		}
 	}

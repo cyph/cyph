@@ -139,8 +139,7 @@ module Cyph {
 			}
 
 			private setUpChannel (channelDescriptor: string) : void {
-				// this.channel	= new Channel.RatchetedChannel(this, channelDescriptor, {
-				this.channel	= new Channel.Channel(channelDescriptor, {
+				this.channel	= new Channel.RatchetedChannel(this, channelDescriptor, {
 					onopen: (isCreator: boolean) : void => {
 						this.updateState(State.isCreator, isCreator);
 
@@ -176,7 +175,7 @@ module Cyph {
 					},
 					onconnect: () => this.trigger(Events.connect),
 					onmessage: message => this.receive(message)
-				}, undefined, this);
+				});
 			}
 
 			public close (shouldSendEvent: boolean = true) : void {

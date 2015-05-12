@@ -122,9 +122,11 @@ module Cyph {
 						WaitTimeSeconds: waitTimeSeconds
 					}, (err, data) => {
 						try {
-							if (Util.getValue(data, 'Messages', []).length > 0) {
+							const messages: any[]	= Util.getValue(data, 'Messages', []);
+
+							if (messages.length > 0) {
 								if (onLag) {
-									const attributes: any	= data.Messages[0].Attributes;
+									const attributes: any	= messages[0].Attributes;
 									const lag: number		=
 										parseInt(attributes.ApproximateFirstReceiveTimestamp, 10) -
 										parseInt(attributes.SentTimestamp, 10)
@@ -137,14 +139,14 @@ module Cyph {
 
 								this.sqs.deleteMessageBatch({
 									QueueUrl: this.queueUrl,
-									Entries: data.Messages.map(message => ({
+									Entries: messages.map(message => ({
 										Id: message.MessageId,
 										ReceiptHandle: message.ReceiptHandle
 									}))
 								}, () => {});
 
 								if (messageHandler) {
-									for (const message of data.Messages) {
+									for (const message of messages) {
 										let messageBody: string	= message.Body;
 
 										try {
