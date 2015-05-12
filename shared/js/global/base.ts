@@ -31,6 +31,7 @@
 /// <reference path="../cyph/ui/chat/iscrollmanager.ts" />
 
 
+/** @ignore */
 const IS_WEB: boolean	= 'IS_WEB' in self ?
 	self['IS_WEB'] :
 	typeof window === 'object'
