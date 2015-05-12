@@ -126,7 +126,12 @@ module Cyph {
 
 							if (messages.length > 0) {
 								if (onLag) {
-									const attributes: any	= messages[0].Attributes;
+									const attributes: any	= Util.getValue(
+										messages[0],
+										'Attributes',
+										{}
+									);
+
 									const lag: number		=
 										parseInt(attributes.ApproximateFirstReceiveTimestamp, 10) -
 										parseInt(attributes.SentTimestamp, 10)
