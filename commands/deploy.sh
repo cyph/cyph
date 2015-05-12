@@ -46,7 +46,7 @@ ls */*.yaml | xargs -I% sed -i.bak "s/version: master/version: ${branch}/g" %
 
 defaultHost='\${location\.protocol}\/\/\${location\.hostname}:'
 ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}43000//g" %
-ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak 's/isLocalEnv: boolean	= true/isLocalEnv: boolean	= false/g' %
+ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak 's/isLocalEnv: boolean		= true/isLocalEnv: boolean		= false/g' %
 
 if [ $test ] ; then
 	sed -i.bak "s/staging/${branch}/g" default/config.go
