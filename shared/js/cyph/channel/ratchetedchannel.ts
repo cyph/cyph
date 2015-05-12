@@ -8,10 +8,9 @@ module Cyph {
 		 * it automatically ratchets SQS IDs and regions.
 		 *
 		 * Ratcheting steps:
-		 * * Alice: create new Channel; send descriptor over current (old) Channel
-		 * * Bob: join new Channel; ack descriptor over old Channel; deprecate old Channel
-		 * * Alice: deprecate old Channel
-		 * * Both: wait a bit, then destroy old Channel
+		 * * Alice: create new Channel; send descriptor over current Channel.
+		 * * Bob: join new Channel.
+		 * * Both (on newChannel onconnect): deprecate old Channel; wait a bit; destroy old Channel.
 		 */
 		export class RatchetedChannel implements IChannel {
 			private lastChannelRatchet: number	= 0;
@@ -33,51 +32,45 @@ module Cyph {
 			}
 
 			private ratchetChannels (init: boolean, channelDescriptor: string = Channel.newDescriptor()) : void {
+				if (this.newChannel) {
+					return;
+				}
+
 				/* Block ratchet from being initiated more
 					than once within a five-minute period */
-				if (init) {
-					const last: number		= this.lastChannelRatchet;
-					this.lastChannelRatchet	= Date.now();
+				const last: number		= this.lastChannelRatchet;
+				this.lastChannelRatchet	= Date.now();
 
-					if (this.lastChannelRatchet - last < 300000) {
-						return;
-					}
+				if (init && this.lastChannelRatchet - last < 300000) {
+					return;
 				}
 
-
-				if (this.newChannel) {
-					this.destroyCurrentChannel();
-				}
-				else {
-					this.newChannel		= new Channel(channelDescriptor, {
-						onopen: () => {
-							this.session.send(
-								new Session.Message(
-									Session.RPCEvents.channelRatchet,
-									channelDescriptor
-								)
-							);
-
-							if (!init) {
-								setTimeout(() => this.destroyCurrentChannel(), 10000);
-							}
-						},
-						onmessage: this.handlers.onmessage,
-						onlag: (lag: number, region: string) => {
-							if (!this.isCreator) {
-								this.ratchetChannels(true);
-							}
-
-							Analytics.main.send({
-								hitType: 'event',
-								eventCategory: 'sqslag',
-								eventAction: 'detected',
-								eventLabel: region,
-								eventValue: lag
-							});
+				this.newChannel		= new Channel(channelDescriptor, {
+					onopen: init ?
+						() => this.session.send(
+							new Session.Message(
+								Session.RPCEvents.channelRatchet,
+								channelDescriptor
+							)
+						) :
+						() => {}
+					,
+					onconnect: () => this.destroyCurrentChannel(),
+					onmessage: this.handlers.onmessage,
+					onlag: (lag: number, region: string) => {
+						if (!this.isCreator) {
+							this.ratchetChannels(true);
 						}
-					}, undefined, this.session);
-				}
+
+						Analytics.main.send({
+							hitType: 'event',
+							eventCategory: 'sqslag',
+							eventAction: 'detected',
+							eventLabel: region,
+							eventValue: lag
+						});
+					}
+				}, undefined, this.session);
 			}
 
 			public close (callback?: Function) : void {

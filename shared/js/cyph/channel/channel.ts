@@ -100,7 +100,7 @@ module Cyph {
 
 				const onconnect	= () : boolean => {
 					if (handlers.onconnect) {
-						const f: Function		= handlers.onconnect;
+						const f: Function	= handlers.onconnect;
 						handlers.onconnect	= null;
 
 						f();
