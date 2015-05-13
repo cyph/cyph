@@ -1,0 +1,36 @@
+cyphbuild () {
+	~/cyph/$(git branch | awk '/^\*/{print $2}')/docker.sh build --test
+}
+cyphdeploy () {
+	~/cyph/$(git branch | awk '/^\*/{print $2}')/docker.sh deploy $*
+}
+cyphgit () {
+	~/cyph/$(git branch | awk '/^\*/{print $2}')/docker.sh commit $*
+}
+cyphkill () {
+	~/cyph/$(git branch | awk '/^\*/{print $2}')/docker.sh kill
+}
+cyphserve () {
+	~/cyph/$(git branch | awk '/^\*/{print $2}')/docker.sh serve
+}
+
+cyphcd () {
+	cd ~/cyph/master
+}
+
+cyphproddeploy () {
+	cyphcd
+	cd ../prod
+	git pull
+	git merge origin/master
+	git commit -a -m merge
+	git push
+	cd ../master
+	git pull
+	git merge origin/prod
+	git commit -a -m merge
+	git push
+	cd ../prod
+	git pull
+	cyphdeploy --prod
+}
