@@ -6,10 +6,10 @@ cd $(cd "$(dirname "$0")"; pwd)
 start () {
 	if boot2docker > /dev/null 2>&1 ; then
 		boot2docker start > /dev/null 2>&1
-	elif pgrep docker > /dev/null 2>&1 ; then
+	elif ! pgrep docker > /dev/null 2>&1 ; then
 		sudo echo
-		nohup bash -c 'sudo docker -d &' > /dev/null 2>&1
-		sleep 30
+		nohup sudo docker -d & > /dev/null 2>&1
+		sleep 10
 	fi
 }
 
