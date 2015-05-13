@@ -8,7 +8,7 @@ start () {
 		boot2docker start > /dev/null 2>&1
 	elif [ "$(ps ux | grep 'docker -d' | grep -v grep)" == '' ] ; then
 		sudo echo
-		nohup bash -c 'sudo docker -d &' > /dev/null 2>&1
+		nohup sudo bash -c 'docker -d &' > /dev/null 2>&1
 		sleep 10
 	fi
 }
