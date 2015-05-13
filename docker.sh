@@ -9,7 +9,7 @@ start () {
 	elif [ "$(ps aux | grep 'docker -d' | grep -v grep)" == '' ] ; then
 		sudo echo
 		nohup sudo bash -c 'docker -d &' > /dev/null 2>&1
-		sleep 10
+		sleep 30
 	fi
 }
 
