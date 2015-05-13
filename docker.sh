@@ -3,19 +3,22 @@
 cd $(cd "$(dirname "$0")"; pwd)
 
 
-getroot () {
-	boot2docker > /dev/null 2>&1 || sudo echo
-}
-
 start () {
-	getroot
-	bash -c 'boot2docker start || nohup sudo docker -d &' > /dev/null 2>&1
-	boot2docker > /dev/null 2>&1 || sleep 30
+	if boot2docker > /dev/null 2>&1 ; then
+		boot2docker start > /dev/null 2>&1
+	elif pgrep docker > /dev/null 2>&1 ; then
+		sudo echo
+		nohup sudo docker -d &
+		sleep 30
+	fi
 }
 
 stop () {
-	getroot
-	bash -c 'boot2docker stop || sudo killall docker' > /dev/null 2>&1
+	if boot2docker > /dev/null 2>&1 ; then
+		boot2docker stop > /dev/null 2>&1
+	else
+		sudo killall docker
+	fi
 }
 
 
