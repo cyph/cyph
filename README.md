@@ -2,7 +2,13 @@
 
 To work locally with the Cyph repository, you'll first need to install [Docker](http://www.docker.com/).
 
-Afterwards, if you're running either [OS X](https://docs.docker.com/installation/mac/) or [Windows](https://docs.docker.com/installation/windows/), there's some additional setup required:
+---
+
+If you're running either [OS X](https://docs.docker.com/installation/mac/) or [Windows](https://docs.docker.com/installation/windows/), there's some additional setup required after installing Docker.
+
+First, on Windows, disable Hyper-V.
+
+Next, run the following commands:
 
 	boot2docker init
 	VBoxManage modifyvm "boot2docker-vm" --natpf1 "tcp-port42000,tcp,,42000,,42000"
@@ -14,11 +20,11 @@ Afterwards, if you're running either [OS X](https://docs.docker.com/installation
 	boot2docker start
 	# If not using the included docker.sh, you'll need to run this on each fresh boot
 	
-	# Then set the environment variables from boot2docker's output
+You'll then need to set the environment variables from `boot2docker start`'s output (and probably add them to your bashrc or equivalent).
 
 ---
 
-To build for the first time:
+To build for the first time, run the following command inside your local Cyph repository:
 
 	docker build -t cyph/<branch> .
 
