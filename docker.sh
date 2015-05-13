@@ -10,6 +10,7 @@ getroot () {
 start () {
 	getroot
 	bash -c 'boot2docker start || nohup sudo docker -d &' > /dev/null 2>&1
+	boot2docker > /dev/null 2>&1 || sleep 10
 }
 
 stop () {
