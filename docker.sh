@@ -8,7 +8,7 @@ start () {
 		boot2docker start > /dev/null 2>&1
 	elif pgrep docker > /dev/null 2>&1 ; then
 		sudo echo
-		nohup sudo docker -d &
+		nohup bash -c 'sudo docker -d &' > /dev/null 2>&1
 		sleep 30
 	fi
 }
