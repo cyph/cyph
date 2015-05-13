@@ -16,6 +16,7 @@ sudo su -c 'echo wl >> /etc/modules'
 sudo su -c 'echo enabled=0 > /etc/default/apport'
 
 sudo su -c 'wget -qO- https://get.docker.com/ | sh'
+sudo usermod -aG docker anonymous
 
 sudo gem install sass
 
