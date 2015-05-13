@@ -7,9 +7,9 @@ start () {
 	if boot2docker > /dev/null 2>&1 ; then
 		boot2docker start > /dev/null 2>&1
 	elif [ "$(ps aux | grep 'docker -d' | grep -v grep)" == '' ] ; then
-		sudo echo balls
+		sudo echo
 		nohup sudo bash -c 'docker -d &' > /dev/null 2>&1
-		sleep 30
+		sleep 10
 	fi
 }
 
@@ -18,6 +18,7 @@ stop () {
 		boot2docker stop > /dev/null 2>&1
 	else
 		sudo killall docker > /dev/null 2>&1
+		sleep 10
 	fi
 }
 
