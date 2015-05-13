@@ -9,7 +9,8 @@ sudo apt-get install -y \
 	curl wget build-essential git gnupg \
 	golang ruby nodejs npm \
 	linux-firmware-nonfree firmware-b43-installer b43-fwcutter bcmwl-kernel-source broadcom-sta-common broadcom-sta-source \
-	gimp chromium-browser yakuake
+	gimp chromium-browser yakuake \
+	apparmor lxc cgroup-lite
 
 sudo su -c 'echo wl >> /etc/modules'
 sudo su -c 'echo enabled=0 > /etc/default/apport'
