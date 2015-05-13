@@ -22,6 +22,8 @@ Next, run the following commands:
 	
 You'll then need to set the environment variables from `boot2docker start`'s output (and probably add them to your bashrc or equivalent).
 
+(**Note:** Docker's error messages suck. For troubleshooting, run boot2docker with `-v` and read VirtualBox's error log; VT-x issues in particular can cause silent breakage.)
+
 ---
 
 To build for the first time, run the following command inside your local Cyph repository:
