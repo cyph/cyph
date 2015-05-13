@@ -17,7 +17,7 @@ stop () {
 	if boot2docker > /dev/null 2>&1 ; then
 		boot2docker stop > /dev/null 2>&1
 	else
-		sudo killall docker
+		sudo killall docker > /dev/null 2>&1
 	fi
 }
 
