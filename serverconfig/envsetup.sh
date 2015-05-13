@@ -5,7 +5,11 @@ export DEBIAN_FRONTEND=noninteractive
 sudo apt-get update
 sudo apt-get dist-upgrade -y
 
-sudo apt-get install -y curl wget build-essential git gnupg golang ruby nodejs npm linux-firmware-nonfree gimp chromium-browser
+sudo apt-get install -y \
+	curl wget build-essential git gnupg \
+	golang ruby nodejs npm \
+	linux-firmware-nonfree firmware-b43-installer b43-fwcutter \
+	gimp chromium-browser
 
 sudo su -c 'wget -qO- https://get.docker.com/ | sh'
 
