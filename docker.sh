@@ -3,6 +3,21 @@
 cd $(cd "$(dirname "$0")"; pwd)
 
 
+getroot () {
+	boot2docker > /dev/null 2>&1 || sudo echo
+}
+
+start () {
+	getroot
+	bash -c 'boot2docker start || nohup sudo docker -d &' > /dev/null 2>&1
+}
+
+stop () {
+	getroot
+	bash -c 'boot2docker stop || sudo killall docker' > /dev/null 2>&1
+}
+
+
 image="cyph/$(git branch | awk '/^\*/{print $2}')"
 
 command="${1}"
@@ -10,7 +25,8 @@ shift
 
 args=''
 
-boot2docker start 2> /dev/null
+start
+
 
 if [ "${command}" == 'serve' ] ; then
 	if [ "${1}" != '--foreground' ] ; then
@@ -32,7 +48,7 @@ if [ "${command}" == 'serve' ] ; then
 
 elif [ "${command}" == 'kill' ] ; then
 	docker ps -a | grep cyph | awk '{print $1}' | xargs -I% bash -c 'docker kill -s 9 % ; docker rm %'
-	boot2docker stop
+	stop
 	exit 0
 
 elif [ "${command}" == 'deploy' ] ; then
@@ -59,7 +75,7 @@ elif [ "${command}" == 'docs' ] ; then
 
 elif [ "${command}" == 'restart' ] ; then
 	./docker.sh kill
-	boot2docker start
+	start
 	exit 0
 
 elif [ "${command}" == 'updatelibs' ] ; then
