@@ -95,4 +95,4 @@ else
 	exit 1
 fi
 
-$(echo "docker run $args -v $(pwd):/cyph $image ./${command}.sh $*" | tr -d '\r')
+docker run $args -v $(pwd):/cyph $image "./${command}.sh" $*
