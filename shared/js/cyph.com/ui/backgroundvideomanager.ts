@@ -91,13 +91,13 @@ module Cyph.com {
 			}
 
 			public constructor () {
-				/* Disable background video on mobile and Tor */
+				/* Disable background video on mobile */
 
-				if (Cyph.Env.isMobile || Cyph.Env.isOnion) {
+				if (Cyph.Env.isMobile) {
 					const $mobilePoster: JQuery	= $('<img />');
 					$mobilePoster.attr('src', Elements.backgroundVideo.attr('mobile-poster'));
 
-					Elements.backgroundVideo.replaceWith($mobilePoster);
+					Elements.backgroundVideo.replaceWith($mobilePoster).remove();
 					Elements.backgroundVideo	= $mobilePoster;
 				}
 
