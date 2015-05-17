@@ -111,7 +111,6 @@ module Cyph {
 
 					session.on(vars.events.close, (e: { shouldSendEvent: boolean; }) => {
 						session.close(e.shouldSendEvent);
-						setTimeout(() => self.close(), 120000);
 					});
 
 					session.on(vars.events.receive, (e: { data: string; }) =>
