@@ -15,11 +15,15 @@ module Cyph {
 		}
 
 		private static threadEnvSetup (vars: any, importScripts: Function) : void {
+			/* Inherit these from main thread */
+
 			location	= vars.location;
 			navigator	= vars.navigator;
 
-			/* Wrapper to make importScripts work in local dev environments;
-				not used in prod because of WebSign packing */
+
+			/* Wrapper to make importScripts work in local dev environments
+				(not used in prod because of WebSign packing) */
+
 			const oldImportScripts	= importScripts;
 			importScripts			= (script: string) => {
 				oldImportScripts(
@@ -28,7 +32,20 @@ module Cyph {
 				);
 			};
 
+
+			/* Normalisation to increase compatibility with Web libraries */
+
 			importScripts('/js/global/base.js');
+
+
+			/* Allow destroying the Thread object from within the thread */
+
+			self.close	= () => {
+				self.postMessage('close', undefined);
+			};
+
+
+			/* Polyfills */
 
 			console	= {
 				assert: () => {},
@@ -232,7 +249,10 @@ module Cyph {
 
 
 			this.worker.onmessage	= (e: MessageEvent) => {
-				if (Util.getValue(e.data, 'isThreadEvent')) {
+				if (e.data === 'close') {
+					this.stop();
+				}
+				else if (Util.getValue(e.data, 'isThreadEvent')) {
 					EventManager.trigger(e.data.event, e.data.data);
 				}
 				else {
