@@ -29,6 +29,9 @@ image="cyph/$(git branch | awk '/^\*/{print $2}')"
 command="${1}"
 shift
 
+root=''
+uname -a | grep -i cygwin && root='//c/cygwin/'
+
 args=''
 
 start
@@ -95,4 +98,4 @@ else
 	exit 1
 fi
 
-docker run $args -v $(pwd):/cyph $image "./${command}.sh" $*
+docker run $args -v "${root}$(pwd)://cyph" "${image}" "//cyph/commands/${command}.sh" $*
