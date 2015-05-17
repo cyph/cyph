@@ -189,6 +189,10 @@ module Cyph {
 				else {
 					this.channel.close(closeChat);
 				}
+
+				if (!Env.isMainThread) {
+					setTimeout(() => self.close(), 120000);
+				}
 			}
 
 			public off (event: string, handler: Function) : void {
