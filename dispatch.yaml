@@ -12,6 +12,3 @@ dispatch:
 
 - url: "www.cyph.me/*"
   module: cyph-me
-
-- url: "www.cyph.io/*"
-  module: cyph-io
