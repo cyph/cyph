@@ -26,6 +26,9 @@ stop () {
 
 image="cyph/$(git branch | awk '/^\*/{print $2}')"
 
+# Foreground by default
+processType='--rm=true'
+
 command="${1}"
 shift
 
@@ -36,7 +39,7 @@ start
 
 if [ "${command}" == 'serve' ] ; then
 	if [ "${1}" != '--foreground' ] ; then
-		args='-d'
+		processType='-d'
 		shift
 	fi
 
@@ -95,4 +98,4 @@ else
 	exit 1
 fi
 
-docker run --rm=true $args -v "$(echo "${root}$(pwd)://cyph" | sed 's/\/cygdrive/\//g')" "${image}" "//cyph/commands/${command}.sh" $*
+docker run $processType $args -v "$(echo "${root}$(pwd)://cyph" | sed 's/\/cygdrive/\//g')" "${image}" "//cyph/commands/${command}.sh" $*
