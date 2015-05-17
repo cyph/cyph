@@ -134,10 +134,10 @@ module Cyph {
 									$this.p2pManager.p2p.incomingStream.video ||
 									$this.p2pManager.p2p.incomingStream.loading
 								'
-								ng-src='{{
+								ng-attr-src='{{
 									$this.p2pManager.isPlaying() ?
 										Cyph.Config.p2pConfig.voiceCallVideo :
-										""
+										" "
 								}}'
 								autoplay
 								loop
