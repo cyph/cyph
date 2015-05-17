@@ -98,4 +98,4 @@ else
 	exit 1
 fi
 
-docker run $args -v "${root}$(pwd)://cyph" "${image}" "//cyph/commands/${command}.sh" $*
+docker run --rm=true $args -v "${root}$(pwd)://cyph" "${image}" "//cyph/commands/${command}.sh" $*
