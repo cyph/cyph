@@ -28,7 +28,6 @@ module Cyph {
 				}
 
 				this.trigger(ThreadedSessionEvents.close, {shouldSendEvent});
-				setTimeout(() => this.thread.stop(), 120000);
 			}
 
 			public off (event: string, handler: Function) : void {
@@ -110,9 +109,10 @@ module Cyph {
 						vars.id
 					);
 
-					session.on(vars.events.close, (e: { shouldSendEvent: boolean; }) =>
-						session.close(e.shouldSendEvent)
-					);
+					session.on(vars.events.close, (e: { shouldSendEvent: boolean; }) => {
+						session.close(e.shouldSendEvent);
+						setTimeout(() => self.close(), 120000);
+					});
 
 					session.on(vars.events.receive, (e: { data: string; }) =>
 						session.receive(e.data)
