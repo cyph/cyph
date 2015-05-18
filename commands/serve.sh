@@ -5,6 +5,12 @@ source ~/.bashrc
 dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd)/..
 
+# Handle symlinks on Windows
+for symlink in $(git ls-files -s | awk '/120000/{print $4}') ; do
+	rm $symlink
+	ln -s ../shared$(echo $symlink | grep -o '/.*') $symlink
+done
+
 ln -s $(pwd)/default/geoip2 $GOPATH/src/geoip2
 go install geoip2
 
