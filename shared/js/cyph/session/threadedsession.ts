@@ -96,7 +96,6 @@ module Cyph {
 				this.thread	= new Thread((vars: any, importScripts: Function, Cyph: any) => {
 					importScripts('/cryptolib/bower_components/otr4-em/build/otr-web.js');
 
-					importScripts('/cryptolib/hmac-sha256.js');
 					importScripts('/lib/bower_components/aws-sdk-js/dist/aws-sdk.min.js');
 					importScripts('/lib/aws-xml.js');
 					self['AWS'].XML.Parser	= self['AWS_XML'];
