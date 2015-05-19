@@ -59,7 +59,10 @@ module Cyph {
 		 * @param appName
 		 * @param appVersion
 		 */
-		public constructor (appName: string = Env.host, appVersion: string = 'Web') {
+		public constructor (
+			appName: string = Env.host,
+			appVersion: string = Env.isWeb ? 'Web' : 'Native'
+		) {
 			if (Env.isOnion) {
 				this.analFrameIsReady	= false;
 			}
