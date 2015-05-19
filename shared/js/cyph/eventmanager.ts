@@ -87,7 +87,7 @@ module Cyph {
 				EventManager.on(
 					EventManager.untriggeredEvents,
 					(o: { event: string; data: any; }) =>
-						postMessage({event: o.event, data: o.data, isThreadEvent: true}, undefined)
+						self.postMessage({event: o.event, data: o.data, isThreadEvent: true}, undefined)
 				);
 			}
 		})();

@@ -36,7 +36,7 @@ module Cyph {
 			 * Sends at least one message through this channel.
 			 * @param message
 			 * @param callback
-			 * @param isSynchronous
+			 * @param isSynchronous Ignored when not on the main thread.
 			 */
 			send (
 				message: string|string[],

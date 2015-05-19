@@ -307,7 +307,7 @@ module Cyph {
 						});
 					}
 					else {
-						/* Adapt to message box to content size on desktop */
+						/* Adapt message box to content size on desktop */
 
 						const messageBoxLineHeight: number	= parseInt(
 							Elements.messageBox.css('line-height'),

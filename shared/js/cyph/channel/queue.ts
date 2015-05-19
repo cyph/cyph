@@ -181,7 +181,7 @@ module Cyph {
 						const messageBody: string	= JSON.stringify({message: message});
 
 						/* Fake SQS doesn't like Cyph.Channel.AWS requests */
-						if (isSynchronous && !Env.isLocalEnv) {
+						if (isSynchronous && Env.isMainThread && !Env.isLocalEnv) {
 							/* Using handrolled implementation because the
 								code path for the AWS SDK's synchronous
 								requests is still asynchronous */

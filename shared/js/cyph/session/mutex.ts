@@ -113,7 +113,7 @@ module Cyph {
 			 */
 			public constructor (private session: ISession) {
 				this.session.on(RPCEvents.mutex, (command: Command) =>
-					this.commands[command.method](command.argument)
+					Util.getValue(this.commands, command.method, o => {})(command.argument)
 				);
 
 				this.session.on(Events.closeChat, () => this.owner = Users.me);

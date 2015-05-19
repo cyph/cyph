@@ -77,7 +77,7 @@ module Cyph {
 			}
 
 			public constructor (private session: ISession) {
-				const user: any	= (new self['OTR'].User()).account('me', 'cyph');
+				const user: any	= new self['OTR'].User().account('me', 'cyph');
 
 				user.generateInstag(() =>
 					user.generateKey(() => {
