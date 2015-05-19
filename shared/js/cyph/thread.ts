@@ -40,9 +40,7 @@ module Cyph {
 
 			/* Allow destroying the Thread object from within the thread */
 
-			self.close	= () => {
-				self.postMessage('close', undefined);
-			};
+			self.close	= () => self.postMessage('close', undefined);
 
 
 			/* Polyfills */
@@ -123,7 +121,7 @@ module Cyph {
 			}
 		}
 
-		/** List of all active threads created. */
+		/** List of all active threads. */
 		public static threads: Thread[]	= [];
 
 		/**
