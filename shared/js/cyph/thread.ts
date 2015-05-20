@@ -199,7 +199,18 @@ module Cyph {
 			vars: any = {},
 			onmessage: (e: MessageEvent) => any = e => {}
 		) {
-			vars.location	= location;
+			vars.location	= {
+				hash: location.hash,
+				host: location.host,
+				hostname: location.hostname,
+				href: location.href,
+				origin: location.origin,
+				pathname: location.pathname,
+				port: location.port,
+				protocol: location.protocol,
+				search: location.search
+			};
+
 			vars.navigator	= {language: Env.fullLanguage, userAgent: Env.userAgent};
 
 			vars.threadRandomSeed	= crypto.getRandomValues(new Uint8Array(50000));
