@@ -246,7 +246,7 @@ module Cyph {
 				}
 				finally {
 					try {
-						URL.revokeObjectURL(blobUrl);
+						setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
 					}
 					catch (_) {}
 				}
