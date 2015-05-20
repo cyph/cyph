@@ -204,7 +204,6 @@ module Cyph {
 				host: location.host,
 				hostname: location.hostname,
 				href: location.href,
-				origin: location.origin,
 				pathname: location.pathname,
 				port: location.port,
 				protocol: location.protocol,
@@ -245,10 +244,12 @@ module Cyph {
 					throw err;
 				}
 				finally {
-					try {
-						setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
-					}
-					catch (_) {}
+					setTimeout(() => {
+						try {
+							URL.revokeObjectURL(blobUrl);
+						}
+						catch (_) {}
+					}, 60000);
 				}
 			}
 			catch (_) {
