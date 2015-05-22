@@ -14,11 +14,12 @@ module Cyph {
 				public static title: string	= 'cyphChat';
 
 				private static _	= (() => {
-					angular.module(Chat.title, [
-						'ngMaterial',
-						Enterpress.title,
-						Filechange.title
-					]).
+					angular.
+						module(Chat.title, [
+							'ngMaterial',
+							Enterpress.title,
+							Filechange.title
+						]).
 						directive(Chat.title + 'Cyphertext', () => ({
 							restrict: 'A',
 							scope: {
