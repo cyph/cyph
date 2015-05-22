@@ -858,7 +858,7 @@ module Cyph {
 						this.session.send(
 							new Session.Message(
 								Session.RPCEvents.p2p,
-								new Session.Command
+								new Session.Command()
 							)
 						);
 					}
