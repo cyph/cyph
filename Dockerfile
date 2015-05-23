@@ -13,7 +13,7 @@ RUN curl -sL https://deb.nodesource.com/setup | bash -
 RUN apt-get install -y nodejs
 
 
-RUN npm -g install html-minifier clean-css uglifyjs typescript tsd typedoc bower browserstack browserify
+RUN npm -g install html-minifier clean-css uglifyjs typescript tsd typedoc bower browserstack browserify libsodium-wrappers
 RUN pip install beautifulsoup4 html5lib
 
 
@@ -60,6 +60,7 @@ RUN bash -c ' \
 	source ~/.bashrc; \
 	go get github.com/gorilla/context; \
 	go get github.com/gorilla/mux; \
+	cd && npm install libsodium-wrappers; \
 '
 
 
