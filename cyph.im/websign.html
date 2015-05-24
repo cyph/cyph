@@ -196,7 +196,7 @@
 						try {
 							innerSignature	= sodium.from_hex(
 								sodium.crypto_sign_open(
-									sodium.from_hex(outerSignature),
+									sodium.from_hex(outerSignature.trim()),
 									publicKey,
 									'text'
 								)
@@ -305,14 +305,14 @@
 			xhr.onreadystatechange	= function () {
 				if (xhr.readyState === 4) {
 					if (xhr.status === 200) {
-						success(xhr.responseText.trim());
+						success(xhr.responseText);
 					}
 					else if (retries > 0) {
 						o.retries	= retries - 1;
 						xhr(o);
 					}
 					else {
-						error(xhr.responseText.trim());
+						error(xhr.responseText);
 					}
 				}
 			};
