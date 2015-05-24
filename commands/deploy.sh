@@ -179,8 +179,7 @@ for d in cyph.im ; do
 		cat websign/$d.hash | gpg --clearsign -u 'Alternate Key' > websign/$d.hash2
 		cp -f websign/$d.hash2 websign/$d.hash
 
-		$currentDir/../commands/websign/sign.js \ 
-			"{\"hash\": \"$sha256hash\", \"timestamp\": $timestamp, \"expires\": $expires}" > websign/$d.sig
+		$currentDir/../commands/websign/sign.js "{\"hash\": \"$sha256hash\", \"timestamp\": $timestamp, \"expires\": $expires}" > websign/$d.sig
 
 		git add .
 		git commit -a -m 'package update'
