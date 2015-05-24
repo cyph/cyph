@@ -181,10 +181,12 @@
 						abort();
 					}
 				},
-				success: function (outerSignature) {
+				success: function (outerSignatureHex) {
 					var previousHash			= localStorage.webSignHash;
 					var previousHashTimestamp	= parseInt(localStorage.webSignHashTimestamp, 10);
 					var previousHashExpires		= parseInt(localStorage.webSignHashExpires, 10);
+
+					var outerSignature	= sodium.from_hex(outerSignatureHex.trim());
 
 					var outerSignatureKey;
 					var innerSignature;
@@ -196,7 +198,7 @@
 						try {
 							innerSignature	= sodium.from_hex(
 								sodium.crypto_sign_open(
-									sodium.from_hex(outerSignature.trim()),
+									outerSignature,
 									publicKey,
 									'text'
 								)
