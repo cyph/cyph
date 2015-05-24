@@ -189,15 +189,16 @@
 					var signaturePayloadSplit	= signaturePayload.split('\n');
 					var signatureTimestamp		= parseInt(signaturePayloadSplit[3], 10);
 
-					/* Ignore unless more recent than previous known good hash */
+					var outerSignatureKey	= WebSign.config.publicKeys[parseInt(signaturePayloadSplit[1], 10)];
+					var innerSignatureKey	= WebSign.config.publicKeys[parseInt(signaturePayloadSplit[2], 10)];
+
+					/* Ignore unless more recent than previous known good hash and
+						signing keys are different */
 					if (
-						!previousHashTimestamp ||
-						signatureTimestamp > previousHashTimestamp
+						(!previousHashTimestamp || signatureTimestamp > previousHashTimestamp) &&
+						(outerSignatureKey && innerSignatureKey && outerSignatureKey !== innerSignatureKey)
 					) {
 						try {
-							var outerSignatureKey	= WebSign.config.publicKeys[parseInt(signaturePayloadSplit[1], 10)];
-							var innerSignatureKey	= WebSign.config.publicKeys[parseInt(signaturePayloadSplit[2], 10)];
-
 							var outerSignature	= sodium.from_hex(signaturePayloadSplit[0]);
 
 							var innerSignature	= sodium.from_hex(
