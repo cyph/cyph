@@ -345,4 +345,2462 @@ function H(a){void 0!==a?(d.print(a),d.V(a),a=JSON.stringify(a)):a="";I=!0;var b
 
     return Module;
 });
-!function(e,t){if("object"==typeof process&&"undefined"==typeof process.stdout&&(process.stderr=process.stdout={write:function(){}}),"function"==typeof define&&define.amd)define(["exports","libsodium"],t);else if("undefined"!=typeof exports)t(exports,require("libsodium"));else{var r=e.sodium&&e.sodium.onload;t(e.sodium={},e.libsodium),"function"==typeof r&&r(e.sodium)}}(this,function(e,t){"use strict";function r(){return Object.keys(e).sort()}function n(e){if(!e instanceof Uint8Array)throw new TypeError("Only Uint8Array instances can be wiped");for(var t=0,r=e.length;r>t;t++)e[t]=0}function a(e,t){if(!(e instanceof Uint8Array&&t instanceof Uint8Array))throw new TypeError("Only Uint8Array instances can be compared");if(e.length!==t.length)throw new TypeError("Only instances of identical length can be compared");for(var r=0,n=0,a=e.length;a>n;n++)r|=e[n]^t[n];return 0===r}function s(e){if("function"==typeof TextEncoder)return new TextEncoder("utf-8").encode(e);e=unescape(encodeURIComponent(e));for(var t=new Uint8Array(e.length),r=0;r<e.length;r++)t[r]=e.charCodeAt(r);return t}function _(e){if(!h(e))throw new TypeError("The provided string doesn't look like hex data");for(var t=new Uint8Array(e.length/2),r=0;r<e.length;r+=2)t[r>>>1]=parseInt(e.substr(r,2),16);return t}function o(e){for(var t,r,n,a="",s=0;s<e.length;s++)r=15&e[s],t=e[s]>>>4,n=87+r+(r-10>>8&-39)<<8|87+t+(t-10>>8&-39),a+=String.fromCharCode(255&n)+String.fromCharCode(n>>>8);return a}function h(e){return"string"==typeof e&&/^[0-9a-f]+$/i.test(e)&&e.length%2===0}function c(e,t){function r(e){return e>64&&91>e?e-65:e>96&&123>e?e-71:e>47&&58>e?e+4:43===e?62:47===e?63:0}for(var n,a,s=e.replace(/[^A-Za-z0-9\+\/]/g,""),_=s.length,o=t?Math.ceil((3*_+1>>2)/t)*t:3*_+1>>2,h=new Uint8Array(o),c=0,p=0,i=0;_>i;i++)if(a=3&i,c|=r(s.charCodeAt(i))<<18-6*a,3===a||_-i===1){for(n=0;3>n&&o>p;n++,p++)h[p]=c>>>(16>>>n&24)&255;c=0}return h}function p(e,t){function r(e){return 26>e?e+65:52>e?e+71:62>e?e-4:62===e?43:63===e?47:65}if("string"==typeof e)throw new Exception("input has to be an array");for(var n=2,a="",s=e.length,_=0,o=0;s>o;o++)n=o%3,o>0&&4*o/3%76===0&&!t&&(a+="\r\n"),_|=e[o]<<(16>>>n&24),(2===n||e.length-o===1)&&(a+=String.fromCharCode(r(_>>>18&63),r(_>>>12&63),r(_>>>6&63),r(63&_)),_=0);return a.substr(0,a.length-2+n)+(2===n?"":1===n?"=":"==")}function i(){return["uint8array","text","hex","base64"]}function y(e,r){var n=r||xe;if(!u(n))throw new Error(n+" output format is not available");if(e instanceof v){if("uint8array"===n)return e.to_Uint8Array();if("text"===n)return t.Pointer_stringify(e.address,e.length);if("hex"===n)return o(e.to_Uint8Array());if("base64"===n)return p(e.to_Uint8Array());throw new Error('What is output format "'+n+'"?')}if("object"==typeof e){for(var a=Object.keys(e),s={},_=0;_<a.length;_++)s[a[_]]=y(e[a[_]],n);return s}if("string"==typeof e)return e;throw new TypeError("Cannot format output")}function u(e){for(var t=i(),r=0;r<t.length;r++)if(t[r]===e)return!0;return!1}function l(e){if(e){if("string"!=typeof e)throw new TypeError("When defined, the output format must be a string");if(!u(e))throw new Error(e+" is not a supported output format")}}function v(e){this.length=e,this.address=g(e)}function d(e){var r=g(e.length);return t.HEAPU8.set(e,r),r}function g(e){var r=t._malloc(e);if(0===r)throw{message:"_malloc() failed",length:e};return r}function b(e){t._free(e)}function f(e){for(var t=0;t<e.length;t++)b(e[t])}function m(e,t){throw f(e),new Error(t)}function k(e,t){throw f(e),new TypeError(t)}function w(e,t,r){void 0==t&&k(e,r+" cannot be null or undefined")}function x(e,t,r){return w(e,t,r),t instanceof Uint8Array?t:"string"==typeof t?s(t):void k(e,"unsupported input type for "+r)}function E(e,r,n,a,s,_){var o=[];l(_);var h=null,c=0;void 0!=e&&(e=x(o,e,"secret_nonce"),h=d(e),c=e.length,o.push(h)),r=x(o,r,"ciphertext");var p=d(r),i=r.length;o.push(p);var u=null,g=0;void 0!=n&&(n=x(o,n,"additional_data"),u=d(n),g=n.length,o.push(u)),a=x(o,a,"public_nonce");var b,w=0|t._crypto_aead_chacha20poly1305_npubbytes();a.length!==w&&k(o,"invalid public_nonce length"),b=d(a),o.push(b),s=x(o,s,"key");var E,T=0|t._crypto_aead_chacha20poly1305_keybytes();s.length!==T&&k(o,"invalid key length"),E=d(s),o.push(E);var S=i-t._crypto_aead_chacha20poly1305_abytes()|0,K=new v(S),Y=K.address;if(o.push(Y),0===t._crypto_aead_chacha20poly1305_decrypt(Y,null,h,p,i,0,u,g,0,b,E)){var B=y(K,_);return f(o),B}m(o)}function T(e,r,n,a,s,_){var o=[];l(_),e=x(o,e,"message");var h=d(e),c=e.length;o.push(h);var p=null,i=0;void 0!=r&&(r=x(o,r,"additional_data"),p=d(r),i=r.length,o.push(p));var u=null,g=0;void 0!=n&&(n=x(o,n,"secret_nonce"),u=d(n),g=n.length,o.push(u)),a=x(o,a,"public_nonce");var b,w=0|t._crypto_aead_chacha20poly1305_npubbytes();a.length!==w&&k(o,"invalid public_nonce length"),b=d(a),o.push(b),s=x(o,s,"key");var E,T=0|t._crypto_aead_chacha20poly1305_keybytes();s.length!==T&&k(o,"invalid key length"),E=d(s),o.push(E);var S=c+t._crypto_aead_chacha20poly1305_abytes()|0,K=new v(S),Y=K.address;if(o.push(Y),0===t._crypto_aead_chacha20poly1305_encrypt(Y,null,h,c,0,p,i,0,u,b,E)){var B=y(K,_);return f(o),B}m(o)}function S(e,r,n,a,s,_){var o=[];l(_);var h=null,c=0;void 0!=e&&(e=x(o,e,"secret_nonce"),h=d(e),c=e.length,o.push(h)),r=x(o,r,"ciphertext");var p=d(r),i=r.length;o.push(p);var u=null,g=0;void 0!=n&&(n=x(o,n,"additional_data"),u=d(n),g=n.length,o.push(u)),a=x(o,a,"public_nonce");var b,w=0|t._crypto_aead_chacha20poly1305_ietf_npubbytes();a.length!==w&&k(o,"invalid public_nonce length"),b=d(a),o.push(b),s=x(o,s,"key");var E,T=0|t._crypto_aead_chacha20poly1305_keybytes();s.length!==T&&k(o,"invalid key length"),E=d(s),o.push(E);var S=i-t._crypto_aead_chacha20poly1305_abytes()|0,K=new v(S),Y=K.address;if(o.push(Y),0===t._crypto_aead_chacha20poly1305_ietf_decrypt(Y,null,h,p,i,0,u,g,0,b,E)){var B=y(K,_);return f(o),B}m(o)}function K(e,r,n,a,s,_){var o=[];l(_),e=x(o,e,"message");var h=d(e),c=e.length;o.push(h);var p=null,i=0;void 0!=r&&(r=x(o,r,"additional_data"),p=d(r),i=r.length,o.push(p));var u=null,g=0;void 0!=n&&(n=x(o,n,"secret_nonce"),u=d(n),g=n.length,o.push(u)),a=x(o,a,"public_nonce");var b,w=0|t._crypto_aead_chacha20poly1305_ietf_npubbytes();a.length!==w&&k(o,"invalid public_nonce length"),b=d(a),o.push(b),s=x(o,s,"key");var E,T=0|t._crypto_aead_chacha20poly1305_keybytes();s.length!==T&&k(o,"invalid key length"),E=d(s),o.push(E);var S=c+t._crypto_aead_chacha20poly1305_abytes()|0,K=new v(S),Y=K.address;if(o.push(Y),0===t._crypto_aead_chacha20poly1305_ietf_encrypt(Y,null,h,c,0,p,i,0,u,b,E)){var B=y(K,_);return f(o),B}m(o)}function Y(e,r,n){var a=[];l(n),e=x(a,e,"message");var s=d(e),_=e.length;a.push(s),r=x(a,r,"key");var o,h=0|t._crypto_auth_keybytes();r.length!==h&&k(a,"invalid key length"),o=d(r),a.push(o);var c=0|t._crypto_auth_bytes(),p=new v(c),i=p.address;if(a.push(i),0===(0|t._crypto_auth(i,s,_,0,o))){var u=y(p,n);return f(a),u}m(a)}function B(e,r,n){var a=[];l(n),e=x(a,e,"message");var s=d(e),_=e.length;a.push(s),r=x(a,r,"key");var o,h=0|t._crypto_auth_hmacsha256_keybytes();r.length!==h&&k(a,"invalid key length"),o=d(r),a.push(o);var c=0|t._crypto_auth_hmacsha256_bytes(),p=new v(c),i=p.address;if(a.push(i),0===(0|t._crypto_auth_hmacsha256(i,s,_,0,o))){var u=y(p,n);return f(a),u}m(a)}function I(e,r,n){var a=[];e=x(a,e,"tag");var s,_=0|t._crypto_auth_hmacsha256_bytes();e.length!==_&&k(a,"invalid tag length"),s=d(e),a.push(s),r=x(a,r,"message");var o=d(r),h=r.length;a.push(o),n=x(a,n,"key");var c,p=0|t._crypto_auth_hmacsha256_keybytes();n.length!==p&&k(a,"invalid key length"),c=d(n),a.push(c);var i=0|t._crypto_auth_hmacsha256_verify(s,o,h,0,c),y=0===i;return f(a),y}function A(e,r,n){var a=[];l(n),e=x(a,e,"message");var s=d(e),_=e.length;a.push(s),r=x(a,r,"key");var o,h=0|t._crypto_auth_hmacsha512_keybytes();r.length!==h&&k(a,"invalid key length"),o=d(r),a.push(o);var c=0|t._crypto_auth_hmacsha512_bytes(),p=new v(c),i=p.address;if(a.push(i),0===(0|t._crypto_auth_hmacsha512(i,s,_,0,o))){var u=y(p,n);return f(a),u}m(a)}function I(e,r,n){var a=[];e=x(a,e,"tag");var s,_=0|t._crypto_auth_hmacsha512_bytes();e.length!==_&&k(a,"invalid tag length"),s=d(e),a.push(s),r=x(a,r,"message");var o=d(r),h=r.length;a.push(o),n=x(a,n,"key");var c,p=0|t._crypto_auth_hmacsha512_keybytes();n.length!==p&&k(a,"invalid key length"),c=d(n),a.push(c);var i=0|t._crypto_auth_hmacsha512_verify(s,o,h,0,c),y=0===i;return f(a),y}function I(e,r,n){var a=[];e=x(a,e,"tag");var s,_=0|t._crypto_auth_bytes();e.length!==_&&k(a,"invalid tag length"),s=d(e),a.push(s),r=x(a,r,"message");var o=d(r),h=r.length;a.push(o),n=x(a,n,"key");var c,p=0|t._crypto_auth_keybytes();n.length!==p&&k(a,"invalid key length"),c=d(n),a.push(c);var i=0|t._crypto_auth_verify(s,o,h,0,c),y=0===i;return f(a),y}function L(e,r,n,a,s){var _=[];l(s),e=x(_,e,"message");var o=d(e),h=e.length;_.push(o),r=x(_,r,"nonce");var c,p=0|t._crypto_box_noncebytes();r.length!==p&&k(_,"invalid nonce length"),c=d(r),_.push(c),n=x(_,n,"publicKey");var i,u=0|t._crypto_box_publickeybytes();n.length!==u&&k(_,"invalid publicKey length"),i=d(n),_.push(i),a=x(_,a,"secretKey");var g,b=0|t._crypto_box_secretkeybytes();a.length!==b&&k(_,"invalid secretKey length"),g=d(a),_.push(g);var w=0|h,E=new v(w),T=E.address;_.push(T);var S=0|t._crypto_box_macbytes(),K=new v(S),Y=K.address;if(_.push(Y),0===(0|t._crypto_box_detached(T,Y,o,h,0,c,i,g))){var B=y({ciphertext:E,mac:K},s);return f(_),B}m(_)}function C(e,r,n,a,s){var _=[];l(s),e=x(_,e,"message");var o=d(e),h=e.length;_.push(o),r=x(_,r,"nonce");var c,p=0|t._crypto_box_noncebytes();r.length!==p&&k(_,"invalid nonce length"),c=d(r),_.push(c),n=x(_,n,"publicKey");var i,u=0|t._crypto_box_publickeybytes();n.length!==u&&k(_,"invalid publicKey length"),i=d(n),_.push(i),a=x(_,a,"secretKey");var g,b=0|t._crypto_box_secretkeybytes();a.length!==b&&k(_,"invalid secretKey length"),g=d(a),_.push(g);var w=h+t._crypto_box_macbytes()|0,E=new v(w),T=E.address;if(_.push(T),0===(0|t._crypto_box_easy(T,o,h,0,c,i,g))){var S=y(E,s);return f(_),S}m(_)}function U(e){var r=[];l(e);var n=0|t._crypto_box_publickeybytes(),a=new v(n),s=a.address;r.push(s);var _=0|t._crypto_box_secretkeybytes(),o=new v(_),h=o.address;if(r.push(h),0===(0|t._crypto_box_keypair(s,h))){var c=y({publicKey:a,privateKey:o,keyType:"curve25519"},e);return f(r),c}m(r)}function M(e,r,n,a,s,_){var o=[];l(_),e=x(o,e,"ciphertext");var h=d(e),c=e.length;o.push(h),r=x(o,r,"mac");var p,i=0|t._crypto_box_macbytes();r.length!==i&&k(o,"invalid mac length"),p=d(r),o.push(p),n=x(o,n,"nonce");var u,g=0|t._crypto_box_noncebytes();n.length!==g&&k(o,"invalid nonce length"),u=d(n),o.push(u),a=x(o,a,"publicKey");var b,w=0|t._crypto_box_publickeybytes();a.length!==w&&k(o,"invalid publicKey length"),b=d(a),o.push(b),s=x(o,s,"secretKey");var E,T=0|t._crypto_box_secretkeybytes();s.length!==T&&k(o,"invalid secretKey length"),E=d(s),o.push(E);var S=0|c,K=new v(S),Y=K.address;if(o.push(Y),0===(0|t._crypto_box_open_detached(Y,h,p,c,0,u,b,E))){var B=y(K,_);return f(o),B}m(o)}function R(e,r,n,a,s){var _=[];l(s),e=x(_,e,"ciphertext");var o=d(e),h=e.length;_.push(o),r=x(_,r,"nonce");var c,p=0|t._crypto_box_noncebytes();r.length!==p&&k(_,"invalid nonce length"),c=d(r),_.push(c),n=x(_,n,"publicKey");var i,u=0|t._crypto_box_publickeybytes();n.length!==u&&k(_,"invalid publicKey length"),i=d(n),_.push(i),a=x(_,a,"secretKey");var g,b=0|t._crypto_box_secretkeybytes();a.length!==b&&k(_,"invalid secretKey length"),g=d(a),_.push(g);var w=h-t._crypto_box_macbytes()|0,E=new v(w),T=E.address;if(_.push(T),0===(0|t._crypto_box_open_easy(T,o,h,0,c,i,g))){var S=y(E,s);return f(_),S}m(_)}function N(e,r,n){var a=[];l(n),e=x(a,e,"message");var s=d(e),_=e.length;a.push(s),r=x(a,r,"publicKey");var o,h=0|t._crypto_box_publickeybytes();r.length!==h&&k(a,"invalid publicKey length"),o=d(r),a.push(o);var c=_+t._crypto_box_sealbytes()|0,p=new v(c),i=p.address;if(a.push(i),0===(0|t._crypto_box_seal(i,s,_,0,o))){var u=y(p,n);return f(a),u}m(a)}function O(e,r,n,a){var s=[];l(a),e=x(s,e,"ciphertext");var _=d(e),o=e.length;s.push(_),r=x(s,r,"publicKey");var h,c=0|t._crypto_box_publickeybytes();r.length!==c&&k(s,"invalid publicKey length"),h=d(r),s.push(h),n=x(s,n,"secretKey");var p,i=0|t._crypto_box_secretkeybytes();n.length!==i&&k(s,"invalid secretKey length"),p=d(n),s.push(p);var u=o-t._crypto_box_sealbytes()|0,g=new v(u),b=g.address;if(s.push(b),0===(0|t._crypto_box_seal_open(b,_,o,0,h,p))){var w=y(g,a);return f(s),w}m(s)}function P(e,r){var n=[];l(r),e=x(n,e,"seed");var a,s=0|t._crypto_box_seedbytes();e.length!==s&&k(n,"invalid seed length"),a=d(e),n.push(a);var _=0|t._crypto_box_publickeybytes(),o=new v(_),h=o.address;n.push(h);var c=0|t._crypto_box_secretkeybytes(),p=new v(c),i=p.address;if(n.push(i),0===(0|t._crypto_box_seed_keypair(h,i,a))){var u=y({publicKey:o,privateKey:p},r);return f(n),u}m(n)}function V(e,r,n,a){var s=[];l(a),w(s,e,"hash_length"),("number"!=typeof e||(0|e)!==e)&&(0|e)>0&&k(s,"hash_length must be an unsigned integer"),r=x(s,r,"message");var _=d(r),o=r.length;s.push(_);var h=null,c=0;void 0!=n&&(n=x(s,n,"key"),h=d(n),c=n.length,s.push(h));var e=0|e,p=new v(e),i=p.address;if(s.push(i),0===(0|t._crypto_generichash(i,e,_,o,0,h,c))){var u=y(p,a);return f(s),u}m(s)}function j(e,r,n){var a=[];l(n),w(a,e,"state_address"),w(a,r,"hash_length"),("number"!=typeof r||(0|r)!==r)&&(0|r)>0&&k(a,"hash_length must be an unsigned integer");var r=0|r,s=new v(r),_=s.address;if(a.push(_),0===(0|t._crypto_generichash_final(e,_,r))){var o=(t._free(e),y(s,n));return f(a),o}m(a)}function D(e,r,n){var a=[];l(n);var s=null,_=0;void 0!=e&&(e=x(a,e,"key"),s=d(e),_=e.length,a.push(s)),w(a,r,"hash_length"),("number"!=typeof r||(0|r)!==r)&&(0|r)>0&&k(a,"hash_length must be an unsigned integer");var o=new v(357).address;if(0===(0|t._crypto_generichash_init(o,s,_,r))){var h=o;return f(a),h}m(a)}function F(e,r,n){var a=[];l(n),w(a,e,"state_address"),r=x(a,r,"message_chunk");var s=d(r),_=r.length;return a.push(s),0===(0|t._crypto_generichash_update(e,s,_,0))?void f(a):void m(a)}function X(e,r){var n=[];l(r),e=x(n,e,"message");var a=d(e),s=e.length;n.push(a);var _=0|t._crypto_hash_bytes(),o=new v(_),h=o.address;if(n.push(h),0===(0|t._crypto_hash(h,a,s,0))){var c=y(o,r);return f(n),c}m(n)}function z(e,r){var n=[];l(r),e=x(n,e,"message");var a=d(e),s=e.length;n.push(a);var _=0|t._crypto_hash_sha256_bytes(),o=new v(_),h=o.address;if(n.push(h),0===(0|t._crypto_hash_sha256(h,a,s,0))){var c=y(o,r);return f(n),c}m(n)}function H(e,r){var n=[];l(r),e=x(n,e,"message");var a=d(e),s=e.length;n.push(a);var _=0|t._crypto_hash_sha512_bytes(),o=new v(_),h=o.address;if(n.push(h),0===(0|t._crypto_hash_sha512(h,a,s,0))){var c=y(o,r);return f(n),c}m(n)}function W(e,r,n){var a=[];l(n),e=x(a,e,"message");var s=d(e),_=e.length;a.push(s),r=x(a,r,"key");var o,h=0|t._crypto_onetimeauth_keybytes();r.length!==h&&k(a,"invalid key length"),o=d(r),a.push(o);var c=0|t._crypto_onetimeauth_bytes(),p=new v(c),i=p.address;if(a.push(i),0===(0|t._crypto_onetimeauth(i,s,_,0,o))){var u=y(p,n);return f(a),u}m(a)}function q(e,r,n){var a=[];e=x(a,e,"hash");var s,_=0|t._crypto_onetimeauth_bytes();e.length!==_&&k(a,"invalid hash length"),s=d(e),a.push(s),r=x(a,r,"message");var o=d(r),h=r.length;a.push(o),n=x(a,n,"key");var c,p=0|t._crypto_onetimeauth_keybytes();n.length!==p&&k(a,"invalid key length"),c=d(n),a.push(c);var i=0|t._crypto_onetimeauth_verify(s,o,h,0,c),y=0===i;return f(a),y}function G(e,r,n,a,s,_){var o=[];l(_),e=x(o,e,"password");var h=d(e),c=e.length;o.push(h),r=x(o,r,"salt");var p,i=0|t._crypto_pwhash_scryptsalsa208sha256_saltbytes();r.length!==i&&k(o,"invalid salt length"),p=d(r),o.push(p),w(o,n,"opsLimit"),("number"!=typeof n||(0|n)!==n)&&(0|n)>0&&k(o,"opsLimit must be an unsigned integer"),w(o,a,"memLimit"),("number"!=typeof a||(0|a)!==a)&&(0|a)>0&&k(o,"memLimit must be an unsigned integer"),w(o,s,"keyLength"),("number"!=typeof s||(0|s)!==s)&&(0|s)>0&&k(o,"keyLength must be an unsigned integer");var u=0|s,g=new v(u),b=g.address;if(o.push(b),0===(0|t._crypto_pwhash_scryptsalsa208sha256(b,s,0,h,c,0,p,n,0,a))){var E=y(g,_);return f(o),E}m(o)}function J(e,r,n,a,s,_,o){var h=[];l(o),e=x(h,e,"password");var c=d(e),p=e.length;h.push(c),r=x(h,r,"salt");var i=d(r),u=r.length;h.push(i),w(h,n,"opsLimit"),("number"!=typeof n||(0|n)!==n)&&(0|n)>0&&k(h,"opsLimit must be an unsigned integer"),w(h,a,"r"),("number"!=typeof a||(0|a)!==a)&&(0|a)>0&&k(h,"r must be an unsigned integer"),w(h,s,"p"),("number"!=typeof s||(0|s)!==s)&&(0|s)>0&&k(h,"p must be an unsigned integer"),w(h,_,"keyLength"),("number"!=typeof _||(0|_)!==_)&&(0|_)>0&&k(h,"keyLength must be an unsigned integer");var g=0|_,b=new v(g),E=b.address;if(h.push(E),0===(0|t._crypto_pwhash_scryptsalsa208sha256_ll(c,p,i,u,n,0,a,s,E,_))){var T=y(b,o);return f(h),T}m(h)}function Z(e,r,n,a){var s=[];l(a),e=x(s,e,"password");var _=d(e),o=e.length;s.push(_),w(s,r,"opsLimit"),("number"!=typeof r||(0|r)!==r)&&(0|r)>0&&k(s,"opsLimit must be an unsigned integer"),w(s,n,"memLimit"),("number"!=typeof n||(0|n)!==n)&&(0|n)>0&&k(s,"memLimit must be an unsigned integer");var h=0|t._crypto_pwhash_scryptsalsa208sha256_strbytes(),c=new v(h),p=c.address;if(s.push(p),0===(0|t._crypto_pwhash_scryptsalsa208sha256_str(p,_,o,0,r,0,n))){var i=t.Pointer_stringify(p);return f(s),i}m(s)}function $(e,r,n){var a=[];l(n),e=s(e+"\x00");var _=d(e);e.length-1;a.push(_),r=x(a,r,"password");var o=d(r),h=r.length;a.push(o);var c=0|t._crypto_pwhash_scryptsalsa208sha256_str_verify(_,o,h,0),p=0===c;return f(a),p}function Q(e,r,n){var a=[];l(n),e=x(a,e,"privateKey");var s,_=0|t._crypto_scalarmult_scalarbytes();e.length!==_&&k(a,"invalid privateKey length"),s=d(e),a.push(s),r=x(a,r,"publicKey");var o,h=0|t._crypto_scalarmult_scalarbytes();r.length!==h&&k(a,"invalid publicKey length"),o=d(r),a.push(o);var c=0|t._crypto_scalarmult_bytes(),p=new v(c),i=p.address;if(a.push(i),0===(0|t._crypto_scalarmult(i,s,o))){var u=y(p,n);return f(a),u}m(a)}function ee(e,r){var n=[];l(r),e=x(n,e,"privateKey");var a,s=0|t._crypto_scalarmult_scalarbytes();e.length!==s&&k(n,"invalid privateKey length"),a=d(e),n.push(a);var _=0|t._crypto_scalarmult_scalarbytes(),o=new v(_),h=o.address;if(n.push(h),0===(0|t._crypto_scalarmult_base(h,a))){var c=y(o,r);return f(n),c}m(n)}function te(e,r,n,a){var s=[];l(a),e=x(s,e,"message");var _=d(e),o=e.length;s.push(_),r=x(s,r,"nonce");var h,c=0|t._crypto_secretbox_noncebytes();r.length!==c&&k(s,"invalid nonce length"),h=d(r),s.push(h),n=x(s,n,"key");var p,i=0|t._crypto_secretbox_keybytes();n.length!==i&&k(s,"invalid key length"),p=d(n),s.push(p);var u=0|o,g=new v(u),b=g.address;s.push(b);var w=0|t._crypto_secretbox_macbytes(),E=new v(w),T=E.address;if(s.push(T),0===(0|t._crypto_secretbox_detached(b,T,_,o,0,h,p))){var S=y({mac:E,cipher:g},a);return f(s),S}m(s)}function re(e,r,n,a){var s=[];l(a),e=x(s,e,"message");var _=d(e),o=e.length;s.push(_),r=x(s,r,"nonce");var h,c=0|t._crypto_secretbox_noncebytes();r.length!==c&&k(s,"invalid nonce length"),h=d(r),s.push(h),n=x(s,n,"key");var p,i=0|t._crypto_secretbox_keybytes();n.length!==i&&k(s,"invalid key length"),p=d(n),s.push(p);var u=o+t._crypto_secretbox_macbytes()|0,g=new v(u),b=g.address;if(s.push(b),0===(0|t._crypto_secretbox_easy(b,_,o,0,h,p))){var w=y(g,a);return f(s),w}m(s)}function ne(e,r,n,a,s){var _=[];l(s),e=x(_,e,"ciphertext");var o=d(e),h=e.length;_.push(o),r=x(_,r,"mac");var c,p=0|t._crypto_secretbox_macbytes();r.length!==p&&k(_,"invalid mac length"),c=d(r),_.push(c),n=x(_,n,"nonce");var i,u=0|t._crypto_secretbox_noncebytes();n.length!==u&&k(_,"invalid nonce length"),i=d(n),_.push(i),a=x(_,a,"key");var g,b=0|t._crypto_secretbox_keybytes();a.length!==b&&k(_,"invalid key length"),g=d(a),_.push(g);var w=0|h,E=new v(w),T=E.address;if(_.push(T),0===(0|t._crypto_secretbox_open_detached(T,o,c,h,0,i,g))){var S=y(E,s);return f(_),S}m(_)}function ae(e,r,n,a){var s=[];l(a),e=x(s,e,"ciphertext");var _=d(e),o=e.length;s.push(_),r=x(s,r,"nonce");var h,c=0|t._crypto_secretbox_noncebytes();r.length!==c&&k(s,"invalid nonce length"),h=d(r),s.push(h),n=x(s,n,"key");var p,i=0|t._crypto_secretbox_keybytes();n.length!==i&&k(s,"invalid key length"),p=d(n),s.push(p);var u=o-t._crypto_secretbox_macbytes()|0,g=new v(u),b=g.address;if(s.push(b),0===(0|t._crypto_secretbox_open_easy(b,_,o,0,h,p))){var w=y(g,a);return f(s),w}m(s)}function se(e,r,n){var a=[];l(n),e=x(a,e,"message");var s=d(e),_=e.length;a.push(s),r=x(a,r,"key");var o,h=0|t._crypto_shorthash_keybytes();r.length!==h&&k(a,"invalid key length"),o=d(r),a.push(o);var c=0|t._crypto_shorthash_bytes(),p=new v(c),i=p.address;if(a.push(i),0===(0|t._crypto_shorthash(i,s,_,0,o))){var u=y(p,n);return f(a),u}m(a)}function _e(e,r,n){var a=[];l(n),e=x(a,e,"message");var s=d(e),_=e.length;a.push(s),r=x(a,r,"privateKey");var o,h=0|t._crypto_sign_secretkeybytes();r.length!==h&&k(a,"invalid privateKey length"),o=d(r),a.push(o);var c=e.length+t._crypto_sign_bytes()|0,p=new v(c),i=p.address;if(a.push(i),0===(0|t._crypto_sign(i,null,s,_,0,o))){var u=y(p,n);return f(a),u}m(a)}function oe(e,r,n){var a=[];l(n),e=x(a,e,"message");var s=d(e),_=e.length;a.push(s),r=x(a,r,"privateKey");var o,h=0|t._crypto_sign_secretkeybytes();r.length!==h&&k(a,"invalid privateKey length"),o=d(r),a.push(o);var c=0|t._crypto_sign_bytes(),p=new v(c),i=p.address;if(a.push(i),0===(0|t._crypto_sign_detached(i,null,s,_,0,o))){var u=y(p,n);return f(a),u}m(a)}function he(e,r){var n=[];l(r),e=x(n,e,"edPk");var a,s=0|t._crypto_sign_publickeybytes();e.length!==s&&k(n,"invalid edPk length"),a=d(e),n.push(a);var _=0|t._crypto_scalarmult_scalarbytes(),o=new v(_),h=o.address;if(n.push(h),0===(0|t._crypto_sign_ed25519_pk_to_curve25519(h,a))){var c=y(o,r);return f(n),c}m(n)}function ce(e,r){var n=[];l(r),e=x(n,e,"edSk");var a,s=0|t._crypto_sign_secretkeybytes();e.length!==s&&k(n,"invalid edSk length"),a=d(e),n.push(a);var _=0|t._crypto_scalarmult_scalarbytes(),o=new v(_),h=o.address;if(n.push(h),0===(0|t._crypto_sign_ed25519_sk_to_curve25519(h,a))){var c=y(o,r);return f(n),c}m(n)}function pe(e,r){var n=[];l(r),e=x(n,e,"privateKey");var a,s=0|t._crypto_sign_secretkeybytes();e.length!==s&&k(n,"invalid privateKey length"),a=d(e),n.push(a);var _=0|t._crypto_sign_publickeybytes(),o=new v(_),h=o.address;if(n.push(h),0===(0|t._crypto_sign_ed25519_sk_to_pk(h,a))){var c=y(o,r);return f(n),c}m(n)}function ie(e,r){var n=[];l(r),e=x(n,e,"privateKey");var a,s=0|t._crypto_sign_secretkeybytes();e.length!==s&&k(n,"invalid privateKey length"),a=d(e),n.push(a);var _=0|t._crypto_sign_seedbytes(),o=new v(_),h=o.address;if(n.push(h),0===(0|t._crypto_sign_ed25519_sk_to_seed(h,a))){var c=y(o,r);return f(n),c}m(n)}function ye(e){var r=[];l(e);var n=0|t._crypto_sign_publickeybytes(),a=new v(n),s=a.address;r.push(s);var _=0|t._crypto_sign_secretkeybytes(),o=new v(_),h=o.address;if(r.push(h),0===(0|t._crypto_sign_keypair(s,h))){var c=y({publicKey:a,privateKey:o,keyType:"ed25519"},e);return f(r),c}m(r)}function ue(e,r,n){var a=[];l(n),e=x(a,e,"signedMessage");var s=d(e),_=e.length;a.push(s),r=x(a,r,"publicKey");var o,h=0|t._crypto_sign_publickeybytes();r.length!==h&&k(a,"invalid publicKey length"),o=d(r),a.push(o);var c=_-t._crypto_sign_bytes()|0,p=new v(c),i=p.address;if(a.push(i),0===(0|t._crypto_sign_open(i,null,s,_,0,o))){var u=y(p,n);return f(a),u}m(a)}function le(e,r){var n=[];l(r),e=x(n,e,"seed");var a,s=0|t._crypto_sign_seedbytes();e.length!==s&&k(n,"invalid seed length"),a=d(e),n.push(a);var _=0|t._crypto_sign_publickeybytes(),o=new v(_),h=o.address;n.push(h);var c=0|t._crypto_sign_secretkeybytes(),p=new v(c),i=p.address;if(n.push(i),0===(0|t._crypto_sign_seed_keypair(h,i,a))){var u=y({publicKey:o,privateKey:p,keyType:"ed25519"},r);return f(n),u}m(n)}function ve(e,r,n){var a=[];e=x(a,e,"signature");var s,_=0|t._crypto_sign_bytes();e.length!==_&&k(a,"invalid signature length"),s=d(e),a.push(s),r=x(a,r,"message");var o=d(r),h=r.length;a.push(o),n=x(a,n,"publicKey");var c,p=0|t._crypto_sign_publickeybytes();n.length!==p&&k(a,"invalid publicKey length"),c=d(n),a.push(c);var i=0|t._crypto_sign_verify_detached(s,o,h,0,c),y=0===i;return f(a),y}function de(e,r){var n=[];l(r),w(n,e,"length"),("number"!=typeof e||(0|e)!==e)&&(0|e)>0&&k(n,"length must be an unsigned integer");var a=0|e,s=new v(a),_=s.address;n.push(_),t._randombytes_buf(_,e);var o=y(s,r);return f(n),o}function ge(e){l(e),t._randombytes_close()}function be(e){var r=[];l(e);var n=t._randombytes_random()>>>0,a=n;return f(r),a}function fe(e,r){var n=[];l(r);for(var a=t._malloc(24),s=0;6>s;s++)t.setValue(a+4*s,t.Runtime.addFunction(e[["implementation_name","random","stir","uniform","buf","close"][s]]),"i32");return 0===(0|t._randombytes_set_implementation(a))?void f(n):void m(n)}function me(e){l(e),t._randombytes_stir()}function ke(e,r){var n=[];l(r),w(n,e,"upper_bound"),("number"!=typeof e||(0|e)!==e)&&(0|e)>0&&k(n,"upper_bound must be an unsigned integer");var a=t._randombytes_uniform(e)>>>0,s=a;return f(n),s}function we(){var e=[],r=t._sodium_version_string(),n=t.Pointer_stringify(r);return f(e),n}Object.defineProperty(e,"__esModule",{value:!0});var xe="uint8array";t._sodium_init(),v.prototype.to_Uint8Array=function(){var e=new Uint8Array(this.length);return e.set(t.HEAPU8.subarray(this.address,this.address+this.length)),e},e.from_base64=c,e.from_hex=_,e.from_string=s,e.libsodium=t,e.memcmp=a,e.memzero=n,e.output_formats=i,e.symbols=r,e.to_base64=p,e.to_hex=o;for(var Ee=["crypto_aead_chacha20poly1305_decrypt","crypto_aead_chacha20poly1305_encrypt","crypto_aead_chacha20poly1305_ietf_decrypt","crypto_aead_chacha20poly1305_ietf_encrypt","crypto_auth","crypto_auth_hmacsha256","crypto_auth_hmacsha512","crypto_auth_verify","crypto_auth_verify","crypto_auth_verify","crypto_box_detached","crypto_box_easy","crypto_box_keypair","crypto_box_open_detached","crypto_box_open_easy","crypto_box_seal","crypto_box_seal_open","crypto_box_seed_keypair","crypto_generichash","crypto_generichash_final","crypto_generichash_init","crypto_generichash_update","crypto_hash","crypto_hash_sha256","crypto_hash_sha512","crypto_onetimeauth","crypto_onetimeauth_verify","crypto_pwhash_scryptsalsa208sha256","crypto_pwhash_scryptsalsa208sha256_ll","crypto_pwhash_scryptsalsa208sha256_str","crypto_pwhash_scryptsalsa208sha256_str_verify","crypto_scalarmult","crypto_scalarmult_base","crypto_secretbox_detached","crypto_secretbox_easy","crypto_secretbox_open_detached","crypto_secretbox_open_easy","crypto_shorthash","crypto_sign","crypto_sign_detached","crypto_sign_ed25519_pk_to_curve25519","crypto_sign_ed25519_sk_to_curve25519","crypto_sign_ed25519_sk_to_pk","crypto_sign_ed25519_sk_to_seed","crypto_sign_keypair","crypto_sign_open","crypto_sign_seed_keypair","crypto_sign_verify_detached","randombytes_buf","randombytes_close","randombytes_random","randombytes_set_implementation","randombytes_stir","randombytes_uniform","sodium_version_string"],Te=[E,T,S,K,Y,B,A,I,I,I,L,C,U,M,R,N,O,P,V,j,D,F,X,z,H,W,q,G,J,Z,$,Q,ee,te,re,ne,ae,se,_e,oe,he,ce,pe,ie,ye,ue,le,ve,de,ge,be,fe,me,ke,we],Se=0;Se<Te.length;Se++)"function"==typeof t["_"+Ee[Se]]&&(e[Ee[Se]]=Te[Se]);for(var Ke=["SODIUM_LIBRARY_VERSION_MAJOR","SODIUM_LIBRARY_VERSION_MINOR","crypto_aead_chacha20poly1305_ABYTES","crypto_aead_chacha20poly1305_KEYBYTES","crypto_aead_chacha20poly1305_NPUBBYTES","crypto_aead_chacha20poly1305_NSECBYTES","crypto_aead_chacha20poly1305_ietf_NPUBBYTES","crypto_auth_BYTES","crypto_auth_KEYBYTES","crypto_box_BEFORENMBYTES","crypto_box_MACBYTES","crypto_box_NONCEBYTES","crypto_box_PUBLICKEYBYTES","crypto_box_SEALBYTES","crypto_box_SECRETKEYBYTES","crypto_box_SEEDBYTES","crypto_generichash_BYTES","crypto_generichash_BYTES_MAX","crypto_generichash_BYTES_MIN","crypto_generichash_KEYBYTES","crypto_generichash_KEYBYTES_MAX","crypto_generichash_KEYBYTES_MIN","crypto_hash_BYTES","crypto_pwhash_scryptsalsa208sha256_MEMLIMIT_INTERACTIVE","crypto_pwhash_scryptsalsa208sha256_MEMLIMIT_SENSITIVE","crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_INTERACTIVE","crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_SENSITIVE","crypto_pwhash_scryptsalsa208sha256_SALTBYTES","crypto_pwhash_scryptsalsa208sha256_STRBYTES","crypto_pwhash_scryptsalsa208sha256_STR_VERIFY","crypto_scalarmult_BYTES","crypto_scalarmult_SCALARBYTES","crypto_secretbox_KEYBYTES","crypto_secretbox_MACBYTES","crypto_secretbox_NONCEBYTES","crypto_shorthash_BYTES","crypto_shorthash_KEYBYTES","crypto_sign_BYTES","crypto_sign_PUBLICKEYBYTES","crypto_sign_SECRETKEYBYTES","crypto_sign_SEEDBYTES"],Se=0;Se<Ke.length;Se++){var Ye=t["_"+Ke[Se].toLowerCase()];"function"==typeof Ye&&(e[Ke[Se]]=0|Ye())}for(var Be=["SODIUM_VERSION_STRING","crypto_pwhash_scryptsalsa208sha256_STRPREFIX"],Se=0;Se<Be.length;Se++){var Ye=t["_"+Be[Se].toLowerCase()];"function"==typeof Ye&&(e[Be[Se]]=t.Pointer_stringify(Ye()))}return e});
+(function (root, factory) {
+	if (typeof process === "object" && typeof process.stdout === "undefined") {
+		process.stderr = process.stdout = { write: function() { } };
+	}
+	if (typeof define === "function" && define.amd) {
+		define(["exports", "libsodium"], factory);
+	} else if (typeof exports !== "undefined") {
+		factory(exports, require("libsodium"));
+	} else {
+		var cb = root.sodium && root.sodium.onload;
+		factory((root.sodium = {}), root.libsodium);
+		if (typeof cb === "function") {
+			cb(root.sodium);
+		}
+	}
+}(this, function (exports, libsodium) {
+	"use strict";
+	Object.defineProperty(exports, '__esModule', { value: true });
+
+	var output_format = "uint8array";
+
+	libsodium._sodium_init();
+
+	// List of functions and constants defined in the wrapped libsodium
+	function symbols() {
+		return Object.keys(exports).sort();
+	}
+
+	function memzero(bytes) {
+		if (! bytes instanceof Uint8Array) {
+			throw new TypeError("Only Uint8Array instances can be wiped");
+		}
+		for (var i = 0 | 0, j = bytes.length; i < j; i++) {
+			bytes[i] = 0;
+		}
+	}
+
+	function memcmp(b1, b2) {
+		if (!(b1 instanceof Uint8Array && b2 instanceof Uint8Array)) {
+			throw new TypeError("Only Uint8Array instances can be compared");
+		}
+		if (b1.length !== b2.length) {
+			throw new TypeError("Only instances of identical length can be compared");
+		}
+		for (var d = 0 | 0, i = 0 | 0, j = b1.length; i < j; i++) {
+			d |= b1[i] ^ b2[i];
+		}
+		return d === 0;
+	}
+
+	//---------------------------------------------------------------------------
+	// Codecs
+
+	function from_string(str) {
+		if (typeof TextEncoder === "function") {
+			return new TextEncoder("utf-8").encode(str);
+		}
+		str = unescape(encodeURIComponent(str));
+		var bytes = new Uint8Array(str.length);
+		for (var i = 0; i < str.length; i++) {
+			bytes[i] = str.charCodeAt(i);
+		}
+		return bytes;
+	}
+
+	function from_hex(str) {
+		if (!is_hex(str)) throw new TypeError("The provided string doesn't look like hex data");
+		var result = new Uint8Array(str.length / 2);
+		for (var i = 0; i < str.length; i += 2) {
+			result[i >>> 1] = parseInt(str.substr(i, 2), 16);
+		}
+		return result;
+	}
+
+	function to_hex(bytes) {
+		var str = "", b, c, x;
+		for (var i = 0; i < bytes.length; i++) {
+			c = bytes[i] & 0xf;
+			b = bytes[i] >>> 4;
+			x = (87 + c + (((c - 10) >> 8) & ~38)) << 8 |
+			    (87 + b + (((b - 10) >> 8) & ~38));
+			str += String.fromCharCode(x & 0xff) + String.fromCharCode(x >>> 8);
+		}
+		return str;
+	}
+
+	function is_hex(str) {
+		return (typeof str === "string" && /^[0-9a-f]+$/i.test(str) && str.length % 2 === 0);
+	}
+
+	function from_base64(sBase64, nBlocksSize) {
+		function _b64ToUint6(nChr) {
+			return nChr > 64 && nChr < 91 ?
+				nChr - 65 : nChr > 96 && nChr < 123 ?
+				nChr - 71 : nChr > 47 && nChr < 58 ?
+				nChr + 4 : nChr === 43 ?
+				62 : nChr === 47 ?
+				63 :
+				0;
+		}
+		var
+			sB64Enc = sBase64.replace(/[^A-Za-z0-9\+\/]/g, ""),
+			nInLen = sB64Enc.length,
+			nOutLen = nBlocksSize ? Math.ceil((nInLen * 3 + 1 >> 2) / nBlocksSize) * nBlocksSize : nInLen * 3 + 1 >> 2,
+			taBytes = new Uint8Array(nOutLen);
+		for (var nMod3, nMod4, nUint24 = 0, nOutIdx = 0, nInIdx = 0; nInIdx < nInLen; nInIdx++) {
+			nMod4 = nInIdx & 3;
+			nUint24 |= _b64ToUint6(sB64Enc.charCodeAt(nInIdx)) << 18 - 6 * nMod4;
+			if (nMod4 === 3 || nInLen - nInIdx === 1) {
+				for (nMod3 = 0; nMod3 < 3 && nOutIdx < nOutLen; nMod3++, nOutIdx++) {
+					taBytes[nOutIdx] = nUint24 >>> (16 >>> nMod3 & 24) & 255;
+				}
+				nUint24 = 0;
+			}
+		}
+		return taBytes;
+	}
+
+	function to_base64(aBytes, noNewLine) {
+		function _uint6ToB64(nUint6) {
+			return nUint6 < 26 ?
+				nUint6 + 65 : nUint6 < 52 ?
+				nUint6 + 71 : nUint6 < 62 ?
+				nUint6 - 4 : nUint6 === 62 ?
+				43 : nUint6 === 63 ?
+				47 :
+				65;
+		}
+		if (typeof aBytes === "string") {
+			throw new Exception("input has to be an array");
+		}
+		var nMod3 = 2,
+			sB64Enc = "";
+		for (var nLen = aBytes.length, nUint24 = 0, nIdx = 0; nIdx < nLen; nIdx++) {
+			nMod3 = nIdx % 3;
+			if (nIdx > 0 && (nIdx * 4 / 3) % 76 === 0 && !noNewLine) {
+				sB64Enc += "\r\n";
+			}
+			nUint24 |= aBytes[nIdx] << (16 >>> nMod3 & 24);
+			if (nMod3 === 2 || aBytes.length - nIdx === 1) {
+				sB64Enc += String.fromCharCode(_uint6ToB64(nUint24 >>> 18 & 63), _uint6ToB64(nUint24 >>> 12 & 63), _uint6ToB64(nUint24 >>> 6 & 63), _uint6ToB64(nUint24 & 63));
+				nUint24 = 0;
+			}
+		}
+		return sB64Enc.substr(0, sB64Enc.length - 2 + nMod3) + (nMod3 === 2 ? "" : nMod3 === 1 ? "=" : "==");
+	}
+
+	function output_formats() {
+		return ["uint8array", "text", "hex", "base64"];
+	}
+
+	function _format_output(output, optionalOutputFormat) {
+		var selectedOutputFormat = optionalOutputFormat || output_format;
+		if (!_is_output_format(selectedOutputFormat)) throw new Error(selectedOutputFormat + " output format is not available");
+		if (output instanceof AllocatedBuf) {
+			if (selectedOutputFormat === "uint8array") return output.to_Uint8Array();
+			else if (selectedOutputFormat === "text") return libsodium.Pointer_stringify(output.address, output.length);
+			else if (selectedOutputFormat === "hex") return to_hex(output.to_Uint8Array());
+			else if (selectedOutputFormat === "base64") return to_base64(output.to_Uint8Array());
+			else throw new Error("What is output format \"" + selectedOutputFormat + "\"?");
+		} else if (typeof output === "object") { //Composed output. Example : key pairs
+			var props = Object.keys(output);
+			var formattedOutput = {};
+			for (var i = 0; i < props.length; i++) {
+				formattedOutput[props[i]] = _format_output(output[props[i]], selectedOutputFormat);
+			}
+			return formattedOutput;
+		} else if (typeof output === "string") {
+			return output;
+		} else {
+			throw new TypeError("Cannot format output");
+		}
+	}
+
+	function _is_output_format(format) {
+		var formats = output_formats();
+		for (var i = 0; i < formats.length; i++) {
+			if (formats[i] === format) return true;
+		}
+		return false;
+	}
+
+	function _check_output_format(format) {
+		if (!format) {
+			return;
+		} else if (typeof format !== "string") {
+			throw new TypeError("When defined, the output format must be a string");
+		} else if (!_is_output_format(format)) {
+			throw new Error(format + " is not a supported output format");
+		}
+	}
+
+	//---------------------------------------------------------------------------
+	// Memory management
+
+	// AllocatedBuf: address allocated using _malloc() + length
+	function AllocatedBuf(length) {
+		this.length = length;
+		this.address = _malloc(length);
+	}
+
+	// Copy the content of a AllocatedBuf (_malloc()'d memory) into a Uint8Array
+	AllocatedBuf.prototype.to_Uint8Array = function () {
+		var result = new Uint8Array(this.length);
+		result.set(libsodium.HEAPU8.subarray(this.address, this.address + this.length));
+		return result;
+	};
+
+	// _malloc() a region and initialize it with the content of a Uint8Array
+	function _to_allocated_buf_address(bytes) {
+		var address = _malloc(bytes.length);
+		libsodium.HEAPU8.set(bytes, address);
+		return address;
+	}
+
+	function _malloc(length) {
+		var result = libsodium._malloc(length);
+		if (result === 0) {
+			throw {
+				message: "_malloc() failed",
+				length: length
+			};
+		}
+		return result;
+	}
+
+	function _free(address) {
+		libsodium._free(address);
+	}
+
+	function _free_all(addresses) {
+		for (var i = 0; i < addresses.length; i++) {
+			_free(addresses[i]);
+		}
+	}
+
+	function _free_and_throw_error(address_pool, err) {
+		_free_all(address_pool);
+		throw new Error(err);
+	}
+
+	function _free_and_throw_type_error(address_pool, err) {
+		_free_all(address_pool);
+		throw new TypeError(err);
+	}
+
+	function _require_defined(address_pool, varValue, varName) {
+		if (varValue == undefined) {
+			_free_and_throw_type_error(address_pool, varName + " cannot be null or undefined");
+		}
+	}
+
+	function _any_to_Uint8Array(address_pool, varValue, varName) {
+		_require_defined(address_pool, varValue, varName);
+		if (varValue instanceof Uint8Array) {
+			return varValue;
+		} else if (typeof varValue === "string") {
+			return from_string(varValue);
+		}
+		_free_and_throw_type_error(address_pool, "unsupported input type for " + varName);
+	}
+
+	
+	function crypto_aead_chacha20poly1305_decrypt(secret_nonce, ciphertext, additional_data, public_nonce, key, outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- input: secret_nonce (unsized_buf_optional)
+		
+		var secret_nonce_address = null, secret_nonce_length = 0;
+		if (secret_nonce != undefined) {
+			secret_nonce = _any_to_Uint8Array(address_pool, secret_nonce, "secret_nonce");
+			secret_nonce_address = _to_allocated_buf_address(secret_nonce);
+			secret_nonce_length = secret_nonce.length;
+			address_pool.push(secret_nonce_address);
+		}
+		
+		// ---------- input: ciphertext (unsized_buf)
+		
+		ciphertext = _any_to_Uint8Array(address_pool, ciphertext, "ciphertext");
+		var ciphertext_address = _to_allocated_buf_address(ciphertext),
+		    ciphertext_length = ciphertext.length;
+		address_pool.push(ciphertext_address);
+		
+		// ---------- input: additional_data (unsized_buf_optional)
+		
+		var additional_data_address = null, additional_data_length = 0;
+		if (additional_data != undefined) {
+			additional_data = _any_to_Uint8Array(address_pool, additional_data, "additional_data");
+			additional_data_address = _to_allocated_buf_address(additional_data);
+			additional_data_length = additional_data.length;
+			address_pool.push(additional_data_address);
+		}
+		
+		// ---------- input: public_nonce (buf)
+		
+		public_nonce = _any_to_Uint8Array(address_pool, public_nonce, "public_nonce");
+		var public_nonce_address, public_nonce_length = (libsodium._crypto_aead_chacha20poly1305_npubbytes()) | 0;
+		if (public_nonce.length !== public_nonce_length) {
+			_free_and_throw_type_error(address_pool, "invalid public_nonce length");
+		}
+		public_nonce_address = _to_allocated_buf_address(public_nonce);
+		address_pool.push(public_nonce_address);
+		
+		// ---------- input: key (buf)
+		
+		key = _any_to_Uint8Array(address_pool, key, "key");
+		var key_address, key_length = (libsodium._crypto_aead_chacha20poly1305_keybytes()) | 0;
+		if (key.length !== key_length) {
+			_free_and_throw_type_error(address_pool, "invalid key length");
+		}
+		key_address = _to_allocated_buf_address(key);
+		address_pool.push(key_address);
+		
+		// ---------- output message (buf)
+		
+		var message_length = (ciphertext_length - libsodium._crypto_aead_chacha20poly1305_abytes()) | 0,
+		    message = new AllocatedBuf(message_length),
+		    message_address = message.address;
+		
+		address_pool.push(message_address);
+		
+		if ((libsodium._crypto_aead_chacha20poly1305_decrypt(message_address, null, secret_nonce_address, ciphertext_address, ciphertext_length, 0, additional_data_address, additional_data_length, 0, public_nonce_address, key_address)) === 0) {
+			var ret = _format_output(message, outputFormat);
+			_free_all(address_pool);
+			return ret;
+		}
+		_free_and_throw_error(address_pool);
+		
+	}
+
+	function crypto_aead_chacha20poly1305_encrypt(message, additional_data, secret_nonce, public_nonce, key, outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- input: message (unsized_buf)
+		
+		message = _any_to_Uint8Array(address_pool, message, "message");
+		var message_address = _to_allocated_buf_address(message),
+		    message_length = message.length;
+		address_pool.push(message_address);
+		
+		// ---------- input: additional_data (unsized_buf_optional)
+		
+		var additional_data_address = null, additional_data_length = 0;
+		if (additional_data != undefined) {
+			additional_data = _any_to_Uint8Array(address_pool, additional_data, "additional_data");
+			additional_data_address = _to_allocated_buf_address(additional_data);
+			additional_data_length = additional_data.length;
+			address_pool.push(additional_data_address);
+		}
+		
+		// ---------- input: secret_nonce (unsized_buf_optional)
+		
+		var secret_nonce_address = null, secret_nonce_length = 0;
+		if (secret_nonce != undefined) {
+			secret_nonce = _any_to_Uint8Array(address_pool, secret_nonce, "secret_nonce");
+			secret_nonce_address = _to_allocated_buf_address(secret_nonce);
+			secret_nonce_length = secret_nonce.length;
+			address_pool.push(secret_nonce_address);
+		}
+		
+		// ---------- input: public_nonce (buf)
+		
+		public_nonce = _any_to_Uint8Array(address_pool, public_nonce, "public_nonce");
+		var public_nonce_address, public_nonce_length = (libsodium._crypto_aead_chacha20poly1305_npubbytes()) | 0;
+		if (public_nonce.length !== public_nonce_length) {
+			_free_and_throw_type_error(address_pool, "invalid public_nonce length");
+		}
+		public_nonce_address = _to_allocated_buf_address(public_nonce);
+		address_pool.push(public_nonce_address);
+		
+		// ---------- input: key (buf)
+		
+		key = _any_to_Uint8Array(address_pool, key, "key");
+		var key_address, key_length = (libsodium._crypto_aead_chacha20poly1305_keybytes()) | 0;
+		if (key.length !== key_length) {
+			_free_and_throw_type_error(address_pool, "invalid key length");
+		}
+		key_address = _to_allocated_buf_address(key);
+		address_pool.push(key_address);
+		
+		// ---------- output ciphertext (buf)
+		
+		var ciphertext_length = (message_length + libsodium._crypto_aead_chacha20poly1305_abytes()) | 0,
+		    ciphertext = new AllocatedBuf(ciphertext_length),
+		    ciphertext_address = ciphertext.address;
+		
+		address_pool.push(ciphertext_address);
+		
+		if ((libsodium._crypto_aead_chacha20poly1305_encrypt(ciphertext_address, null, message_address, message_length, 0, additional_data_address, additional_data_length, 0, secret_nonce_address, public_nonce_address, key_address)) === 0) {
+			var ret = _format_output(ciphertext, outputFormat);
+			_free_all(address_pool);
+			return ret;
+		}
+		_free_and_throw_error(address_pool);
+		
+	}
+
+	function crypto_aead_chacha20poly1305_ietf_decrypt(secret_nonce, ciphertext, additional_data, public_nonce, key, outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- input: secret_nonce (unsized_buf_optional)
+		
+		var secret_nonce_address = null, secret_nonce_length = 0;
+		if (secret_nonce != undefined) {
+			secret_nonce = _any_to_Uint8Array(address_pool, secret_nonce, "secret_nonce");
+			secret_nonce_address = _to_allocated_buf_address(secret_nonce);
+			secret_nonce_length = secret_nonce.length;
+			address_pool.push(secret_nonce_address);
+		}
+		
+		// ---------- input: ciphertext (unsized_buf)
+		
+		ciphertext = _any_to_Uint8Array(address_pool, ciphertext, "ciphertext");
+		var ciphertext_address = _to_allocated_buf_address(ciphertext),
+		    ciphertext_length = ciphertext.length;
+		address_pool.push(ciphertext_address);
+		
+		// ---------- input: additional_data (unsized_buf_optional)
+		
+		var additional_data_address = null, additional_data_length = 0;
+		if (additional_data != undefined) {
+			additional_data = _any_to_Uint8Array(address_pool, additional_data, "additional_data");
+			additional_data_address = _to_allocated_buf_address(additional_data);
+			additional_data_length = additional_data.length;
+			address_pool.push(additional_data_address);
+		}
+		
+		// ---------- input: public_nonce (buf)
+		
+		public_nonce = _any_to_Uint8Array(address_pool, public_nonce, "public_nonce");
+		var public_nonce_address, public_nonce_length = (libsodium._crypto_aead_chacha20poly1305_ietf_npubbytes()) | 0;
+		if (public_nonce.length !== public_nonce_length) {
+			_free_and_throw_type_error(address_pool, "invalid public_nonce length");
+		}
+		public_nonce_address = _to_allocated_buf_address(public_nonce);
+		address_pool.push(public_nonce_address);
+		
+		// ---------- input: key (buf)
+		
+		key = _any_to_Uint8Array(address_pool, key, "key");
+		var key_address, key_length = (libsodium._crypto_aead_chacha20poly1305_keybytes()) | 0;
+		if (key.length !== key_length) {
+			_free_and_throw_type_error(address_pool, "invalid key length");
+		}
+		key_address = _to_allocated_buf_address(key);
+		address_pool.push(key_address);
+		
+		// ---------- output message (buf)
+		
+		var message_length = (ciphertext_length - libsodium._crypto_aead_chacha20poly1305_abytes()) | 0,
+		    message = new AllocatedBuf(message_length),
+		    message_address = message.address;
+		
+		address_pool.push(message_address);
+		
+		if ((libsodium._crypto_aead_chacha20poly1305_ietf_decrypt(message_address, null, secret_nonce_address, ciphertext_address, ciphertext_length, 0, additional_data_address, additional_data_length, 0, public_nonce_address, key_address)) === 0) {
+			var ret = _format_output(message, outputFormat);
+			_free_all(address_pool);
+			return ret;
+		}
+		_free_and_throw_error(address_pool);
+		
+	}
+
+	function crypto_aead_chacha20poly1305_ietf_encrypt(message, additional_data, secret_nonce, public_nonce, key, outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- input: message (unsized_buf)
+		
+		message = _any_to_Uint8Array(address_pool, message, "message");
+		var message_address = _to_allocated_buf_address(message),
+		    message_length = message.length;
+		address_pool.push(message_address);
+		
+		// ---------- input: additional_data (unsized_buf_optional)
+		
+		var additional_data_address = null, additional_data_length = 0;
+		if (additional_data != undefined) {
+			additional_data = _any_to_Uint8Array(address_pool, additional_data, "additional_data");
+			additional_data_address = _to_allocated_buf_address(additional_data);
+			additional_data_length = additional_data.length;
+			address_pool.push(additional_data_address);
+		}
+		
+		// ---------- input: secret_nonce (unsized_buf_optional)
+		
+		var secret_nonce_address = null, secret_nonce_length = 0;
+		if (secret_nonce != undefined) {
+			secret_nonce = _any_to_Uint8Array(address_pool, secret_nonce, "secret_nonce");
+			secret_nonce_address = _to_allocated_buf_address(secret_nonce);
+			secret_nonce_length = secret_nonce.length;
+			address_pool.push(secret_nonce_address);
+		}
+		
+		// ---------- input: public_nonce (buf)
+		
+		public_nonce = _any_to_Uint8Array(address_pool, public_nonce, "public_nonce");
+		var public_nonce_address, public_nonce_length = (libsodium._crypto_aead_chacha20poly1305_ietf_npubbytes()) | 0;
+		if (public_nonce.length !== public_nonce_length) {
+			_free_and_throw_type_error(address_pool, "invalid public_nonce length");
+		}
+		public_nonce_address = _to_allocated_buf_address(public_nonce);
+		address_pool.push(public_nonce_address);
+		
+		// ---------- input: key (buf)
+		
+		key = _any_to_Uint8Array(address_pool, key, "key");
+		var key_address, key_length = (libsodium._crypto_aead_chacha20poly1305_keybytes()) | 0;
+		if (key.length !== key_length) {
+			_free_and_throw_type_error(address_pool, "invalid key length");
+		}
+		key_address = _to_allocated_buf_address(key);
+		address_pool.push(key_address);
+		
+		// ---------- output ciphertext (buf)
+		
+		var ciphertext_length = (message_length + libsodium._crypto_aead_chacha20poly1305_abytes()) | 0,
+		    ciphertext = new AllocatedBuf(ciphertext_length),
+		    ciphertext_address = ciphertext.address;
+		
+		address_pool.push(ciphertext_address);
+		
+		if ((libsodium._crypto_aead_chacha20poly1305_ietf_encrypt(ciphertext_address, null, message_address, message_length, 0, additional_data_address, additional_data_length, 0, secret_nonce_address, public_nonce_address, key_address)) === 0) {
+			var ret = _format_output(ciphertext, outputFormat);
+			_free_all(address_pool);
+			return ret;
+		}
+		_free_and_throw_error(address_pool);
+		
+	}
+
+	function crypto_auth(message, key, outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- input: message (unsized_buf)
+		
+		message = _any_to_Uint8Array(address_pool, message, "message");
+		var message_address = _to_allocated_buf_address(message),
+		    message_length = message.length;
+		address_pool.push(message_address);
+		
+		// ---------- input: key (buf)
+		
+		key = _any_to_Uint8Array(address_pool, key, "key");
+		var key_address, key_length = (libsodium._crypto_auth_keybytes()) | 0;
+		if (key.length !== key_length) {
+			_free_and_throw_type_error(address_pool, "invalid key length");
+		}
+		key_address = _to_allocated_buf_address(key);
+		address_pool.push(key_address);
+		
+		// ---------- output tag (buf)
+		
+		var tag_length = (libsodium._crypto_auth_bytes()) | 0,
+		    tag = new AllocatedBuf(tag_length),
+		    tag_address = tag.address;
+		
+		address_pool.push(tag_address);
+		
+		if ((libsodium._crypto_auth(tag_address, message_address, message_length, 0, key_address) | 0) === 0) {
+			var ret = _format_output(tag, outputFormat);
+			_free_all(address_pool);
+			return ret;
+		}
+		_free_and_throw_error(address_pool);
+		
+	}
+
+	function crypto_auth_hmacsha256(message, key, outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- input: message (unsized_buf)
+		
+		message = _any_to_Uint8Array(address_pool, message, "message");
+		var message_address = _to_allocated_buf_address(message),
+		    message_length = message.length;
+		address_pool.push(message_address);
+		
+		// ---------- input: key (buf)
+		
+		key = _any_to_Uint8Array(address_pool, key, "key");
+		var key_address, key_length = (libsodium._crypto_auth_hmacsha256_keybytes()) | 0;
+		if (key.length !== key_length) {
+			_free_and_throw_type_error(address_pool, "invalid key length");
+		}
+		key_address = _to_allocated_buf_address(key);
+		address_pool.push(key_address);
+		
+		// ---------- output hash (buf)
+		
+		var hash_length = (libsodium._crypto_auth_hmacsha256_bytes()) | 0,
+		    hash = new AllocatedBuf(hash_length),
+		    hash_address = hash.address;
+		
+		address_pool.push(hash_address);
+		
+		if ((libsodium._crypto_auth_hmacsha256(hash_address, message_address, message_length, 0, key_address) | 0) === 0) {
+			var ret = _format_output(hash, outputFormat);
+			_free_all(address_pool);
+			return ret;
+		}
+		_free_and_throw_error(address_pool);
+		
+	}
+
+	function crypto_auth_verify(tag, message, key) {
+		var address_pool = [];
+
+		// ---------- input: tag (buf)
+		
+		tag = _any_to_Uint8Array(address_pool, tag, "tag");
+		var tag_address, tag_length = (libsodium._crypto_auth_hmacsha256_bytes()) | 0;
+		if (tag.length !== tag_length) {
+			_free_and_throw_type_error(address_pool, "invalid tag length");
+		}
+		tag_address = _to_allocated_buf_address(tag);
+		address_pool.push(tag_address);
+		
+		// ---------- input: message (unsized_buf)
+		
+		message = _any_to_Uint8Array(address_pool, message, "message");
+		var message_address = _to_allocated_buf_address(message),
+		    message_length = message.length;
+		address_pool.push(message_address);
+		
+		// ---------- input: key (buf)
+		
+		key = _any_to_Uint8Array(address_pool, key, "key");
+		var key_address, key_length = (libsodium._crypto_auth_hmacsha256_keybytes()) | 0;
+		if (key.length !== key_length) {
+			_free_and_throw_type_error(address_pool, "invalid key length");
+		}
+		key_address = _to_allocated_buf_address(key);
+		address_pool.push(key_address);
+		
+		var result = libsodium._crypto_auth_hmacsha256_verify(tag_address, message_address, message_length, 0, key_address) | 0;
+		var ret = (result === 0);
+		_free_all(address_pool);
+		return ret;
+		
+	}
+
+	function crypto_auth_hmacsha512(message, key, outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- input: message (unsized_buf)
+		
+		message = _any_to_Uint8Array(address_pool, message, "message");
+		var message_address = _to_allocated_buf_address(message),
+		    message_length = message.length;
+		address_pool.push(message_address);
+		
+		// ---------- input: key (buf)
+		
+		key = _any_to_Uint8Array(address_pool, key, "key");
+		var key_address, key_length = (libsodium._crypto_auth_hmacsha512_keybytes()) | 0;
+		if (key.length !== key_length) {
+			_free_and_throw_type_error(address_pool, "invalid key length");
+		}
+		key_address = _to_allocated_buf_address(key);
+		address_pool.push(key_address);
+		
+		// ---------- output hash (buf)
+		
+		var hash_length = (libsodium._crypto_auth_hmacsha512_bytes()) | 0,
+		    hash = new AllocatedBuf(hash_length),
+		    hash_address = hash.address;
+		
+		address_pool.push(hash_address);
+		
+		if ((libsodium._crypto_auth_hmacsha512(hash_address, message_address, message_length, 0, key_address) | 0) === 0) {
+			var ret = _format_output(hash, outputFormat);
+			_free_all(address_pool);
+			return ret;
+		}
+		_free_and_throw_error(address_pool);
+		
+	}
+
+	function crypto_auth_verify(tag, message, key) {
+		var address_pool = [];
+
+		// ---------- input: tag (buf)
+		
+		tag = _any_to_Uint8Array(address_pool, tag, "tag");
+		var tag_address, tag_length = (libsodium._crypto_auth_hmacsha512_bytes()) | 0;
+		if (tag.length !== tag_length) {
+			_free_and_throw_type_error(address_pool, "invalid tag length");
+		}
+		tag_address = _to_allocated_buf_address(tag);
+		address_pool.push(tag_address);
+		
+		// ---------- input: message (unsized_buf)
+		
+		message = _any_to_Uint8Array(address_pool, message, "message");
+		var message_address = _to_allocated_buf_address(message),
+		    message_length = message.length;
+		address_pool.push(message_address);
+		
+		// ---------- input: key (buf)
+		
+		key = _any_to_Uint8Array(address_pool, key, "key");
+		var key_address, key_length = (libsodium._crypto_auth_hmacsha512_keybytes()) | 0;
+		if (key.length !== key_length) {
+			_free_and_throw_type_error(address_pool, "invalid key length");
+		}
+		key_address = _to_allocated_buf_address(key);
+		address_pool.push(key_address);
+		
+		var result = libsodium._crypto_auth_hmacsha512_verify(tag_address, message_address, message_length, 0, key_address) | 0;
+		var ret = (result === 0);
+		_free_all(address_pool);
+		return ret;
+		
+	}
+
+	function crypto_auth_verify(tag, message, key) {
+		var address_pool = [];
+
+		// ---------- input: tag (buf)
+		
+		tag = _any_to_Uint8Array(address_pool, tag, "tag");
+		var tag_address, tag_length = (libsodium._crypto_auth_bytes()) | 0;
+		if (tag.length !== tag_length) {
+			_free_and_throw_type_error(address_pool, "invalid tag length");
+		}
+		tag_address = _to_allocated_buf_address(tag);
+		address_pool.push(tag_address);
+		
+		// ---------- input: message (unsized_buf)
+		
+		message = _any_to_Uint8Array(address_pool, message, "message");
+		var message_address = _to_allocated_buf_address(message),
+		    message_length = message.length;
+		address_pool.push(message_address);
+		
+		// ---------- input: key (buf)
+		
+		key = _any_to_Uint8Array(address_pool, key, "key");
+		var key_address, key_length = (libsodium._crypto_auth_keybytes()) | 0;
+		if (key.length !== key_length) {
+			_free_and_throw_type_error(address_pool, "invalid key length");
+		}
+		key_address = _to_allocated_buf_address(key);
+		address_pool.push(key_address);
+		
+		var result = libsodium._crypto_auth_verify(tag_address, message_address, message_length, 0, key_address) | 0;
+		var ret = (result === 0);
+		_free_all(address_pool);
+		return ret;
+		
+	}
+
+	function crypto_box_detached(message, nonce, publicKey, secretKey, outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- input: message (unsized_buf)
+		
+		message = _any_to_Uint8Array(address_pool, message, "message");
+		var message_address = _to_allocated_buf_address(message),
+		    message_length = message.length;
+		address_pool.push(message_address);
+		
+		// ---------- input: nonce (buf)
+		
+		nonce = _any_to_Uint8Array(address_pool, nonce, "nonce");
+		var nonce_address, nonce_length = (libsodium._crypto_box_noncebytes()) | 0;
+		if (nonce.length !== nonce_length) {
+			_free_and_throw_type_error(address_pool, "invalid nonce length");
+		}
+		nonce_address = _to_allocated_buf_address(nonce);
+		address_pool.push(nonce_address);
+		
+		// ---------- input: publicKey (buf)
+		
+		publicKey = _any_to_Uint8Array(address_pool, publicKey, "publicKey");
+		var publicKey_address, publicKey_length = (libsodium._crypto_box_publickeybytes()) | 0;
+		if (publicKey.length !== publicKey_length) {
+			_free_and_throw_type_error(address_pool, "invalid publicKey length");
+		}
+		publicKey_address = _to_allocated_buf_address(publicKey);
+		address_pool.push(publicKey_address);
+		
+		// ---------- input: secretKey (buf)
+		
+		secretKey = _any_to_Uint8Array(address_pool, secretKey, "secretKey");
+		var secretKey_address, secretKey_length = (libsodium._crypto_box_secretkeybytes()) | 0;
+		if (secretKey.length !== secretKey_length) {
+			_free_and_throw_type_error(address_pool, "invalid secretKey length");
+		}
+		secretKey_address = _to_allocated_buf_address(secretKey);
+		address_pool.push(secretKey_address);
+		
+		// ---------- output ciphertext (buf)
+		
+		var ciphertext_length = (message_length) | 0,
+		    ciphertext = new AllocatedBuf(ciphertext_length),
+		    ciphertext_address = ciphertext.address;
+		
+		address_pool.push(ciphertext_address);
+		
+		// ---------- output mac (buf)
+		
+		var mac_length = (libsodium._crypto_box_macbytes()) | 0,
+		    mac = new AllocatedBuf(mac_length),
+		    mac_address = mac.address;
+		
+		address_pool.push(mac_address);
+		
+		if ((libsodium._crypto_box_detached(ciphertext_address, mac_address, message_address, message_length, 0, nonce_address, publicKey_address, secretKey_address) | 0) === 0) {
+			var ret = _format_output({ciphertext: ciphertext, mac: mac}, outputFormat);
+			_free_all(address_pool);
+			return ret;
+		}
+		_free_and_throw_error(address_pool);
+		
+	}
+
+	function crypto_box_easy(message, nonce, publicKey, secretKey, outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- input: message (unsized_buf)
+		
+		message = _any_to_Uint8Array(address_pool, message, "message");
+		var message_address = _to_allocated_buf_address(message),
+		    message_length = message.length;
+		address_pool.push(message_address);
+		
+		// ---------- input: nonce (buf)
+		
+		nonce = _any_to_Uint8Array(address_pool, nonce, "nonce");
+		var nonce_address, nonce_length = (libsodium._crypto_box_noncebytes()) | 0;
+		if (nonce.length !== nonce_length) {
+			_free_and_throw_type_error(address_pool, "invalid nonce length");
+		}
+		nonce_address = _to_allocated_buf_address(nonce);
+		address_pool.push(nonce_address);
+		
+		// ---------- input: publicKey (buf)
+		
+		publicKey = _any_to_Uint8Array(address_pool, publicKey, "publicKey");
+		var publicKey_address, publicKey_length = (libsodium._crypto_box_publickeybytes()) | 0;
+		if (publicKey.length !== publicKey_length) {
+			_free_and_throw_type_error(address_pool, "invalid publicKey length");
+		}
+		publicKey_address = _to_allocated_buf_address(publicKey);
+		address_pool.push(publicKey_address);
+		
+		// ---------- input: secretKey (buf)
+		
+		secretKey = _any_to_Uint8Array(address_pool, secretKey, "secretKey");
+		var secretKey_address, secretKey_length = (libsodium._crypto_box_secretkeybytes()) | 0;
+		if (secretKey.length !== secretKey_length) {
+			_free_and_throw_type_error(address_pool, "invalid secretKey length");
+		}
+		secretKey_address = _to_allocated_buf_address(secretKey);
+		address_pool.push(secretKey_address);
+		
+		// ---------- output ciphertext (buf)
+		
+		var ciphertext_length = (message_length + libsodium._crypto_box_macbytes()) | 0,
+		    ciphertext = new AllocatedBuf(ciphertext_length),
+		    ciphertext_address = ciphertext.address;
+		
+		address_pool.push(ciphertext_address);
+		
+		if ((libsodium._crypto_box_easy(ciphertext_address, message_address, message_length, 0, nonce_address, publicKey_address, secretKey_address) | 0) === 0) {
+			var ret = _format_output(ciphertext, outputFormat);
+			_free_all(address_pool);
+			return ret;
+		}
+		_free_and_throw_error(address_pool);
+		
+	}
+
+	function crypto_box_keypair(outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- output publicKey (buf)
+		
+		var publicKey_length = (libsodium._crypto_box_publickeybytes()) | 0,
+		    publicKey = new AllocatedBuf(publicKey_length),
+		    publicKey_address = publicKey.address;
+		
+		address_pool.push(publicKey_address);
+		
+		// ---------- output secretKey (buf)
+		
+		var secretKey_length = (libsodium._crypto_box_secretkeybytes()) | 0,
+		    secretKey = new AllocatedBuf(secretKey_length),
+		    secretKey_address = secretKey.address;
+		
+		address_pool.push(secretKey_address);
+		
+		if ((libsodium._crypto_box_keypair(publicKey_address, secretKey_address) | 0) === 0) {
+			var ret = _format_output({publicKey: publicKey, privateKey: secretKey, keyType: "curve25519"}, outputFormat);
+			_free_all(address_pool);
+			return ret;
+		}
+		_free_and_throw_error(address_pool);
+		
+	}
+
+	function crypto_box_open_detached(ciphertext, mac, nonce, publicKey, secretKey, outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- input: ciphertext (unsized_buf)
+		
+		ciphertext = _any_to_Uint8Array(address_pool, ciphertext, "ciphertext");
+		var ciphertext_address = _to_allocated_buf_address(ciphertext),
+		    ciphertext_length = ciphertext.length;
+		address_pool.push(ciphertext_address);
+		
+		// ---------- input: mac (buf)
+		
+		mac = _any_to_Uint8Array(address_pool, mac, "mac");
+		var mac_address, mac_length = (libsodium._crypto_box_macbytes()) | 0;
+		if (mac.length !== mac_length) {
+			_free_and_throw_type_error(address_pool, "invalid mac length");
+		}
+		mac_address = _to_allocated_buf_address(mac);
+		address_pool.push(mac_address);
+		
+		// ---------- input: nonce (buf)
+		
+		nonce = _any_to_Uint8Array(address_pool, nonce, "nonce");
+		var nonce_address, nonce_length = (libsodium._crypto_box_noncebytes()) | 0;
+		if (nonce.length !== nonce_length) {
+			_free_and_throw_type_error(address_pool, "invalid nonce length");
+		}
+		nonce_address = _to_allocated_buf_address(nonce);
+		address_pool.push(nonce_address);
+		
+		// ---------- input: publicKey (buf)
+		
+		publicKey = _any_to_Uint8Array(address_pool, publicKey, "publicKey");
+		var publicKey_address, publicKey_length = (libsodium._crypto_box_publickeybytes()) | 0;
+		if (publicKey.length !== publicKey_length) {
+			_free_and_throw_type_error(address_pool, "invalid publicKey length");
+		}
+		publicKey_address = _to_allocated_buf_address(publicKey);
+		address_pool.push(publicKey_address);
+		
+		// ---------- input: secretKey (buf)
+		
+		secretKey = _any_to_Uint8Array(address_pool, secretKey, "secretKey");
+		var secretKey_address, secretKey_length = (libsodium._crypto_box_secretkeybytes()) | 0;
+		if (secretKey.length !== secretKey_length) {
+			_free_and_throw_type_error(address_pool, "invalid secretKey length");
+		}
+		secretKey_address = _to_allocated_buf_address(secretKey);
+		address_pool.push(secretKey_address);
+		
+		// ---------- output plaintext (buf)
+		
+		var plaintext_length = (ciphertext_length) | 0,
+		    plaintext = new AllocatedBuf(plaintext_length),
+		    plaintext_address = plaintext.address;
+		
+		address_pool.push(plaintext_address);
+		
+		if ((libsodium._crypto_box_open_detached(plaintext_address, ciphertext_address, mac_address, ciphertext_length, 0, nonce_address, publicKey_address, secretKey_address) | 0) === 0) {
+			var ret = _format_output(plaintext, outputFormat);
+			_free_all(address_pool);
+			return ret;
+		}
+		_free_and_throw_error(address_pool);
+		
+	}
+
+	function crypto_box_open_easy(ciphertext, nonce, publicKey, secretKey, outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- input: ciphertext (unsized_buf)
+		
+		ciphertext = _any_to_Uint8Array(address_pool, ciphertext, "ciphertext");
+		var ciphertext_address = _to_allocated_buf_address(ciphertext),
+		    ciphertext_length = ciphertext.length;
+		address_pool.push(ciphertext_address);
+		
+		// ---------- input: nonce (buf)
+		
+		nonce = _any_to_Uint8Array(address_pool, nonce, "nonce");
+		var nonce_address, nonce_length = (libsodium._crypto_box_noncebytes()) | 0;
+		if (nonce.length !== nonce_length) {
+			_free_and_throw_type_error(address_pool, "invalid nonce length");
+		}
+		nonce_address = _to_allocated_buf_address(nonce);
+		address_pool.push(nonce_address);
+		
+		// ---------- input: publicKey (buf)
+		
+		publicKey = _any_to_Uint8Array(address_pool, publicKey, "publicKey");
+		var publicKey_address, publicKey_length = (libsodium._crypto_box_publickeybytes()) | 0;
+		if (publicKey.length !== publicKey_length) {
+			_free_and_throw_type_error(address_pool, "invalid publicKey length");
+		}
+		publicKey_address = _to_allocated_buf_address(publicKey);
+		address_pool.push(publicKey_address);
+		
+		// ---------- input: secretKey (buf)
+		
+		secretKey = _any_to_Uint8Array(address_pool, secretKey, "secretKey");
+		var secretKey_address, secretKey_length = (libsodium._crypto_box_secretkeybytes()) | 0;
+		if (secretKey.length !== secretKey_length) {
+			_free_and_throw_type_error(address_pool, "invalid secretKey length");
+		}
+		secretKey_address = _to_allocated_buf_address(secretKey);
+		address_pool.push(secretKey_address);
+		
+		// ---------- output plaintext (buf)
+		
+		var plaintext_length = (ciphertext_length - libsodium._crypto_box_macbytes()) | 0,
+		    plaintext = new AllocatedBuf(plaintext_length),
+		    plaintext_address = plaintext.address;
+		
+		address_pool.push(plaintext_address);
+		
+		if ((libsodium._crypto_box_open_easy(plaintext_address, ciphertext_address, ciphertext_length, 0, nonce_address, publicKey_address, secretKey_address) | 0) === 0) {
+			var ret = _format_output(plaintext, outputFormat);
+			_free_all(address_pool);
+			return ret;
+		}
+		_free_and_throw_error(address_pool);
+		
+	}
+
+	function crypto_box_seal(message, publicKey, outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- input: message (unsized_buf)
+		
+		message = _any_to_Uint8Array(address_pool, message, "message");
+		var message_address = _to_allocated_buf_address(message),
+		    message_length = message.length;
+		address_pool.push(message_address);
+		
+		// ---------- input: publicKey (buf)
+		
+		publicKey = _any_to_Uint8Array(address_pool, publicKey, "publicKey");
+		var publicKey_address, publicKey_length = (libsodium._crypto_box_publickeybytes()) | 0;
+		if (publicKey.length !== publicKey_length) {
+			_free_and_throw_type_error(address_pool, "invalid publicKey length");
+		}
+		publicKey_address = _to_allocated_buf_address(publicKey);
+		address_pool.push(publicKey_address);
+		
+		// ---------- output ciphertext (buf)
+		
+		var ciphertext_length = (message_length + libsodium._crypto_box_sealbytes()) | 0,
+		    ciphertext = new AllocatedBuf(ciphertext_length),
+		    ciphertext_address = ciphertext.address;
+		
+		address_pool.push(ciphertext_address);
+		
+		if ((libsodium._crypto_box_seal(ciphertext_address, message_address, message_length, 0, publicKey_address) | 0) === 0) {
+			var ret = _format_output(ciphertext, outputFormat);
+			_free_all(address_pool);
+			return ret;
+		}
+		_free_and_throw_error(address_pool);
+		
+	}
+
+	function crypto_box_seal_open(ciphertext, publicKey, secretKey, outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- input: ciphertext (unsized_buf)
+		
+		ciphertext = _any_to_Uint8Array(address_pool, ciphertext, "ciphertext");
+		var ciphertext_address = _to_allocated_buf_address(ciphertext),
+		    ciphertext_length = ciphertext.length;
+		address_pool.push(ciphertext_address);
+		
+		// ---------- input: publicKey (buf)
+		
+		publicKey = _any_to_Uint8Array(address_pool, publicKey, "publicKey");
+		var publicKey_address, publicKey_length = (libsodium._crypto_box_publickeybytes()) | 0;
+		if (publicKey.length !== publicKey_length) {
+			_free_and_throw_type_error(address_pool, "invalid publicKey length");
+		}
+		publicKey_address = _to_allocated_buf_address(publicKey);
+		address_pool.push(publicKey_address);
+		
+		// ---------- input: secretKey (buf)
+		
+		secretKey = _any_to_Uint8Array(address_pool, secretKey, "secretKey");
+		var secretKey_address, secretKey_length = (libsodium._crypto_box_secretkeybytes()) | 0;
+		if (secretKey.length !== secretKey_length) {
+			_free_and_throw_type_error(address_pool, "invalid secretKey length");
+		}
+		secretKey_address = _to_allocated_buf_address(secretKey);
+		address_pool.push(secretKey_address);
+		
+		// ---------- output plaintext (buf)
+		
+		var plaintext_length = (ciphertext_length - libsodium._crypto_box_sealbytes()) | 0,
+		    plaintext = new AllocatedBuf(plaintext_length),
+		    plaintext_address = plaintext.address;
+		
+		address_pool.push(plaintext_address);
+		
+		if ((libsodium._crypto_box_seal_open(plaintext_address, ciphertext_address, ciphertext_length, 0, publicKey_address, secretKey_address) | 0) === 0) {
+			var ret = _format_output(plaintext, outputFormat);
+			_free_all(address_pool);
+			return ret;
+		}
+		_free_and_throw_error(address_pool);
+		
+	}
+
+	function crypto_box_seed_keypair(seed, outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- input: seed (buf)
+		
+		seed = _any_to_Uint8Array(address_pool, seed, "seed");
+		var seed_address, seed_length = (libsodium._crypto_box_seedbytes()) | 0;
+		if (seed.length !== seed_length) {
+			_free_and_throw_type_error(address_pool, "invalid seed length");
+		}
+		seed_address = _to_allocated_buf_address(seed);
+		address_pool.push(seed_address);
+		
+		// ---------- output publicKey (buf)
+		
+		var publicKey_length = (libsodium._crypto_box_publickeybytes()) | 0,
+		    publicKey = new AllocatedBuf(publicKey_length),
+		    publicKey_address = publicKey.address;
+		
+		address_pool.push(publicKey_address);
+		
+		// ---------- output privateKey (buf)
+		
+		var privateKey_length = (libsodium._crypto_box_secretkeybytes()) | 0,
+		    privateKey = new AllocatedBuf(privateKey_length),
+		    privateKey_address = privateKey.address;
+		
+		address_pool.push(privateKey_address);
+		
+		if ((libsodium._crypto_box_seed_keypair(publicKey_address, privateKey_address, seed_address) | 0) === 0) {
+			var ret = _format_output({publicKey: publicKey, privateKey: privateKey}, outputFormat);
+			_free_all(address_pool);
+			return ret;
+		}
+		_free_and_throw_error(address_pool);
+		
+	}
+
+	function crypto_generichash(hash_length, message, key, outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- input: hash_length (uint)
+		
+		_require_defined(address_pool, hash_length, "hash_length");
+		
+		if (!(typeof hash_length === "number" && (hash_length | 0) === hash_length) && (hash_length | 0) > 0) {
+			_free_and_throw_type_error(address_pool, "hash_length must be an unsigned integer");
+		}
+		
+		// ---------- input: message (unsized_buf)
+		
+		message = _any_to_Uint8Array(address_pool, message, "message");
+		var message_address = _to_allocated_buf_address(message),
+		    message_length = message.length;
+		address_pool.push(message_address);
+		
+		// ---------- input: key (unsized_buf_optional)
+		
+		var key_address = null, key_length = 0;
+		if (key != undefined) {
+			key = _any_to_Uint8Array(address_pool, key, "key");
+			key_address = _to_allocated_buf_address(key);
+			key_length = key.length;
+			address_pool.push(key_address);
+		}
+		
+		// ---------- output hash (buf)
+		
+		var hash_length = (hash_length) | 0,
+		    hash = new AllocatedBuf(hash_length),
+		    hash_address = hash.address;
+		
+		address_pool.push(hash_address);
+		
+		if ((libsodium._crypto_generichash(hash_address, hash_length, message_address, message_length, 0, key_address, key_length) | 0) === 0) {
+			var ret = _format_output(hash, outputFormat);
+			_free_all(address_pool);
+			return ret;
+		}
+		_free_and_throw_error(address_pool);
+		
+	}
+
+	function crypto_generichash_final(state_address, hash_length, outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- input: state_address (generichash_state_address)
+		
+		_require_defined(address_pool, state_address, "state_address");
+		
+		// ---------- input: hash_length (uint)
+		
+		_require_defined(address_pool, hash_length, "hash_length");
+		
+		if (!(typeof hash_length === "number" && (hash_length | 0) === hash_length) && (hash_length | 0) > 0) {
+			_free_and_throw_type_error(address_pool, "hash_length must be an unsigned integer");
+		}
+		
+		// ---------- output hash (buf)
+		
+		var hash_length = (hash_length) | 0,
+		    hash = new AllocatedBuf(hash_length),
+		    hash_address = hash.address;
+		
+		address_pool.push(hash_address);
+		
+		if ((libsodium._crypto_generichash_final(state_address, hash_address, hash_length) | 0) === 0) {
+			var ret = (libsodium._free(state_address), _format_output(hash, outputFormat));
+			_free_all(address_pool);
+			return ret;
+		}
+		_free_and_throw_error(address_pool);
+		
+	}
+
+	function crypto_generichash_init(key, hash_length, outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- input: key (unsized_buf_optional)
+		
+		var key_address = null, key_length = 0;
+		if (key != undefined) {
+			key = _any_to_Uint8Array(address_pool, key, "key");
+			key_address = _to_allocated_buf_address(key);
+			key_length = key.length;
+			address_pool.push(key_address);
+		}
+		
+		// ---------- input: hash_length (uint)
+		
+		_require_defined(address_pool, hash_length, "hash_length");
+		
+		if (!(typeof hash_length === "number" && (hash_length | 0) === hash_length) && (hash_length | 0) > 0) {
+			_free_and_throw_type_error(address_pool, "hash_length must be an unsigned integer");
+		}
+		
+		// ---------- output state (generichash_state)
+		
+		var state_address = new AllocatedBuf(357).address;
+		
+		if ((libsodium._crypto_generichash_init(state_address, key_address, key_length, hash_length) | 0) === 0) {
+			var ret = state_address;
+			_free_all(address_pool);
+			return ret;
+		}
+		_free_and_throw_error(address_pool);
+		
+	}
+
+	function crypto_generichash_update(state_address, message_chunk, outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- input: state_address (generichash_state_address)
+		
+		_require_defined(address_pool, state_address, "state_address");
+		
+		// ---------- input: message_chunk (unsized_buf)
+		
+		message_chunk = _any_to_Uint8Array(address_pool, message_chunk, "message_chunk");
+		var message_chunk_address = _to_allocated_buf_address(message_chunk),
+		    message_chunk_length = message_chunk.length;
+		address_pool.push(message_chunk_address);
+		
+		if ((libsodium._crypto_generichash_update(state_address, message_chunk_address, message_chunk_length, 0) | 0) === 0) {
+			_free_all(address_pool);
+			return;
+		}
+		_free_and_throw_error(address_pool);
+		
+	}
+
+	function crypto_hash(message, outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- input: message (unsized_buf)
+		
+		message = _any_to_Uint8Array(address_pool, message, "message");
+		var message_address = _to_allocated_buf_address(message),
+		    message_length = message.length;
+		address_pool.push(message_address);
+		
+		// ---------- output hash (buf)
+		
+		var hash_length = (libsodium._crypto_hash_bytes()) | 0,
+		    hash = new AllocatedBuf(hash_length),
+		    hash_address = hash.address;
+		
+		address_pool.push(hash_address);
+		
+		if ((libsodium._crypto_hash(hash_address, message_address, message_length, 0) | 0) === 0) {
+			var ret = _format_output(hash, outputFormat);
+			_free_all(address_pool);
+			return ret;
+		}
+		_free_and_throw_error(address_pool);
+		
+	}
+
+	function crypto_hash_sha256(message, outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- input: message (unsized_buf)
+		
+		message = _any_to_Uint8Array(address_pool, message, "message");
+		var message_address = _to_allocated_buf_address(message),
+		    message_length = message.length;
+		address_pool.push(message_address);
+		
+		// ---------- output hash (buf)
+		
+		var hash_length = (libsodium._crypto_hash_sha256_bytes()) | 0,
+		    hash = new AllocatedBuf(hash_length),
+		    hash_address = hash.address;
+		
+		address_pool.push(hash_address);
+		
+		if ((libsodium._crypto_hash_sha256(hash_address, message_address, message_length, 0) | 0) === 0) {
+			var ret = _format_output(hash, outputFormat);
+			_free_all(address_pool);
+			return ret;
+		}
+		_free_and_throw_error(address_pool);
+		
+	}
+
+	function crypto_hash_sha512(message, outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- input: message (unsized_buf)
+		
+		message = _any_to_Uint8Array(address_pool, message, "message");
+		var message_address = _to_allocated_buf_address(message),
+		    message_length = message.length;
+		address_pool.push(message_address);
+		
+		// ---------- output hash (buf)
+		
+		var hash_length = (libsodium._crypto_hash_sha512_bytes()) | 0,
+		    hash = new AllocatedBuf(hash_length),
+		    hash_address = hash.address;
+		
+		address_pool.push(hash_address);
+		
+		if ((libsodium._crypto_hash_sha512(hash_address, message_address, message_length, 0) | 0) === 0) {
+			var ret = _format_output(hash, outputFormat);
+			_free_all(address_pool);
+			return ret;
+		}
+		_free_and_throw_error(address_pool);
+		
+	}
+
+	function crypto_onetimeauth(message, key, outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- input: message (unsized_buf)
+		
+		message = _any_to_Uint8Array(address_pool, message, "message");
+		var message_address = _to_allocated_buf_address(message),
+		    message_length = message.length;
+		address_pool.push(message_address);
+		
+		// ---------- input: key (buf)
+		
+		key = _any_to_Uint8Array(address_pool, key, "key");
+		var key_address, key_length = (libsodium._crypto_onetimeauth_keybytes()) | 0;
+		if (key.length !== key_length) {
+			_free_and_throw_type_error(address_pool, "invalid key length");
+		}
+		key_address = _to_allocated_buf_address(key);
+		address_pool.push(key_address);
+		
+		// ---------- output hash (buf)
+		
+		var hash_length = (libsodium._crypto_onetimeauth_bytes()) | 0,
+		    hash = new AllocatedBuf(hash_length),
+		    hash_address = hash.address;
+		
+		address_pool.push(hash_address);
+		
+		if ((libsodium._crypto_onetimeauth(hash_address, message_address, message_length, 0, key_address) | 0) === 0) {
+			var ret = _format_output(hash, outputFormat);
+			_free_all(address_pool);
+			return ret;
+		}
+		_free_and_throw_error(address_pool);
+		
+	}
+
+	function crypto_onetimeauth_verify(hash, message, key) {
+		var address_pool = [];
+
+		// ---------- input: hash (buf)
+		
+		hash = _any_to_Uint8Array(address_pool, hash, "hash");
+		var hash_address, hash_length = (libsodium._crypto_onetimeauth_bytes()) | 0;
+		if (hash.length !== hash_length) {
+			_free_and_throw_type_error(address_pool, "invalid hash length");
+		}
+		hash_address = _to_allocated_buf_address(hash);
+		address_pool.push(hash_address);
+		
+		// ---------- input: message (unsized_buf)
+		
+		message = _any_to_Uint8Array(address_pool, message, "message");
+		var message_address = _to_allocated_buf_address(message),
+		    message_length = message.length;
+		address_pool.push(message_address);
+		
+		// ---------- input: key (buf)
+		
+		key = _any_to_Uint8Array(address_pool, key, "key");
+		var key_address, key_length = (libsodium._crypto_onetimeauth_keybytes()) | 0;
+		if (key.length !== key_length) {
+			_free_and_throw_type_error(address_pool, "invalid key length");
+		}
+		key_address = _to_allocated_buf_address(key);
+		address_pool.push(key_address);
+		
+		var result = libsodium._crypto_onetimeauth_verify(hash_address, message_address, message_length, 0, key_address) | 0;
+		var ret = (result === 0);
+		_free_all(address_pool);
+		return ret;
+		
+	}
+
+	function crypto_pwhash_scryptsalsa208sha256(password, salt, opsLimit, memLimit, keyLength, outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- input: password (unsized_buf)
+		
+		password = _any_to_Uint8Array(address_pool, password, "password");
+		var password_address = _to_allocated_buf_address(password),
+		    password_length = password.length;
+		address_pool.push(password_address);
+		
+		// ---------- input: salt (buf)
+		
+		salt = _any_to_Uint8Array(address_pool, salt, "salt");
+		var salt_address, salt_length = (libsodium._crypto_pwhash_scryptsalsa208sha256_saltbytes()) | 0;
+		if (salt.length !== salt_length) {
+			_free_and_throw_type_error(address_pool, "invalid salt length");
+		}
+		salt_address = _to_allocated_buf_address(salt);
+		address_pool.push(salt_address);
+		
+		// ---------- input: opsLimit (uint)
+		
+		_require_defined(address_pool, opsLimit, "opsLimit");
+		
+		if (!(typeof opsLimit === "number" && (opsLimit | 0) === opsLimit) && (opsLimit | 0) > 0) {
+			_free_and_throw_type_error(address_pool, "opsLimit must be an unsigned integer");
+		}
+		
+		// ---------- input: memLimit (uint)
+		
+		_require_defined(address_pool, memLimit, "memLimit");
+		
+		if (!(typeof memLimit === "number" && (memLimit | 0) === memLimit) && (memLimit | 0) > 0) {
+			_free_and_throw_type_error(address_pool, "memLimit must be an unsigned integer");
+		}
+		
+		// ---------- input: keyLength (uint)
+		
+		_require_defined(address_pool, keyLength, "keyLength");
+		
+		if (!(typeof keyLength === "number" && (keyLength | 0) === keyLength) && (keyLength | 0) > 0) {
+			_free_and_throw_type_error(address_pool, "keyLength must be an unsigned integer");
+		}
+		
+		// ---------- output derivedKey (buf)
+		
+		var derivedKey_length = (keyLength) | 0,
+		    derivedKey = new AllocatedBuf(derivedKey_length),
+		    derivedKey_address = derivedKey.address;
+		
+		address_pool.push(derivedKey_address);
+		
+		if ((libsodium._crypto_pwhash_scryptsalsa208sha256(derivedKey_address, keyLength, 0, password_address, password_length, 0, salt_address, opsLimit, 0, memLimit) | 0) === 0) {
+			var ret = _format_output(derivedKey, outputFormat);
+			_free_all(address_pool);
+			return ret;
+		}
+		_free_and_throw_error(address_pool);
+		
+	}
+
+	function crypto_pwhash_scryptsalsa208sha256_ll(password, salt, opsLimit, r, p, keyLength, outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- input: password (unsized_buf)
+		
+		password = _any_to_Uint8Array(address_pool, password, "password");
+		var password_address = _to_allocated_buf_address(password),
+		    password_length = password.length;
+		address_pool.push(password_address);
+		
+		// ---------- input: salt (unsized_buf)
+		
+		salt = _any_to_Uint8Array(address_pool, salt, "salt");
+		var salt_address = _to_allocated_buf_address(salt),
+		    salt_length = salt.length;
+		address_pool.push(salt_address);
+		
+		// ---------- input: opsLimit (uint)
+		
+		_require_defined(address_pool, opsLimit, "opsLimit");
+		
+		if (!(typeof opsLimit === "number" && (opsLimit | 0) === opsLimit) && (opsLimit | 0) > 0) {
+			_free_and_throw_type_error(address_pool, "opsLimit must be an unsigned integer");
+		}
+		
+		// ---------- input: r (uint)
+		
+		_require_defined(address_pool, r, "r");
+		
+		if (!(typeof r === "number" && (r | 0) === r) && (r | 0) > 0) {
+			_free_and_throw_type_error(address_pool, "r must be an unsigned integer");
+		}
+		
+		// ---------- input: p (uint)
+		
+		_require_defined(address_pool, p, "p");
+		
+		if (!(typeof p === "number" && (p | 0) === p) && (p | 0) > 0) {
+			_free_and_throw_type_error(address_pool, "p must be an unsigned integer");
+		}
+		
+		// ---------- input: keyLength (uint)
+		
+		_require_defined(address_pool, keyLength, "keyLength");
+		
+		if (!(typeof keyLength === "number" && (keyLength | 0) === keyLength) && (keyLength | 0) > 0) {
+			_free_and_throw_type_error(address_pool, "keyLength must be an unsigned integer");
+		}
+		
+		// ---------- output derivedKey (buf)
+		
+		var derivedKey_length = (keyLength) | 0,
+		    derivedKey = new AllocatedBuf(derivedKey_length),
+		    derivedKey_address = derivedKey.address;
+		
+		address_pool.push(derivedKey_address);
+		
+		if ((libsodium._crypto_pwhash_scryptsalsa208sha256_ll(password_address, password_length, salt_address, salt_length, opsLimit, 0, r, p, derivedKey_address, keyLength) | 0) === 0) {
+			var ret = _format_output(derivedKey, outputFormat);
+			_free_all(address_pool);
+			return ret;
+		}
+		_free_and_throw_error(address_pool);
+		
+	}
+
+	function crypto_pwhash_scryptsalsa208sha256_str(password, opsLimit, memLimit, outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- input: password (unsized_buf)
+		
+		password = _any_to_Uint8Array(address_pool, password, "password");
+		var password_address = _to_allocated_buf_address(password),
+		    password_length = password.length;
+		address_pool.push(password_address);
+		
+		// ---------- input: opsLimit (uint)
+		
+		_require_defined(address_pool, opsLimit, "opsLimit");
+		
+		if (!(typeof opsLimit === "number" && (opsLimit | 0) === opsLimit) && (opsLimit | 0) > 0) {
+			_free_and_throw_type_error(address_pool, "opsLimit must be an unsigned integer");
+		}
+		
+		// ---------- input: memLimit (uint)
+		
+		_require_defined(address_pool, memLimit, "memLimit");
+		
+		if (!(typeof memLimit === "number" && (memLimit | 0) === memLimit) && (memLimit | 0) > 0) {
+			_free_and_throw_type_error(address_pool, "memLimit must be an unsigned integer");
+		}
+		
+		// ---------- output hashed_password (buf)
+		
+		var hashed_password_length = (libsodium._crypto_pwhash_scryptsalsa208sha256_strbytes()) | 0,
+		    hashed_password = new AllocatedBuf(hashed_password_length),
+		    hashed_password_address = hashed_password.address;
+		
+		address_pool.push(hashed_password_address);
+		
+		if ((libsodium._crypto_pwhash_scryptsalsa208sha256_str(hashed_password_address, password_address, password_length, 0, opsLimit, 0, memLimit) | 0) === 0) {
+			var ret = libsodium.Pointer_stringify(hashed_password_address);
+			_free_all(address_pool);
+			return ret;
+		}
+		_free_and_throw_error(address_pool);
+		
+	}
+
+	function crypto_pwhash_scryptsalsa208sha256_str_verify(hashed_password, password, outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- input: hashed_password (string)
+		
+		hashed_password = from_string(hashed_password + "\0");
+		var hashed_password_address = _to_allocated_buf_address(hashed_password),
+		    hashed_password_length = hashed_password.length - 1;
+		address_pool.push(hashed_password_address);
+		
+		// ---------- input: password (unsized_buf)
+		
+		password = _any_to_Uint8Array(address_pool, password, "password");
+		var password_address = _to_allocated_buf_address(password),
+		    password_length = password.length;
+		address_pool.push(password_address);
+		
+		var result = libsodium._crypto_pwhash_scryptsalsa208sha256_str_verify(hashed_password_address, password_address, password_length, 0) | 0;
+		var ret = (result === 0);
+		_free_all(address_pool);
+		return ret;
+		
+	}
+
+	function crypto_scalarmult(privateKey, publicKey, outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- input: privateKey (buf)
+		
+		privateKey = _any_to_Uint8Array(address_pool, privateKey, "privateKey");
+		var privateKey_address, privateKey_length = (libsodium._crypto_scalarmult_scalarbytes()) | 0;
+		if (privateKey.length !== privateKey_length) {
+			_free_and_throw_type_error(address_pool, "invalid privateKey length");
+		}
+		privateKey_address = _to_allocated_buf_address(privateKey);
+		address_pool.push(privateKey_address);
+		
+		// ---------- input: publicKey (buf)
+		
+		publicKey = _any_to_Uint8Array(address_pool, publicKey, "publicKey");
+		var publicKey_address, publicKey_length = (libsodium._crypto_scalarmult_scalarbytes()) | 0;
+		if (publicKey.length !== publicKey_length) {
+			_free_and_throw_type_error(address_pool, "invalid publicKey length");
+		}
+		publicKey_address = _to_allocated_buf_address(publicKey);
+		address_pool.push(publicKey_address);
+		
+		// ---------- output sharedSecret (buf)
+		
+		var sharedSecret_length = (libsodium._crypto_scalarmult_bytes()) | 0,
+		    sharedSecret = new AllocatedBuf(sharedSecret_length),
+		    sharedSecret_address = sharedSecret.address;
+		
+		address_pool.push(sharedSecret_address);
+		
+		if ((libsodium._crypto_scalarmult(sharedSecret_address, privateKey_address, publicKey_address) | 0) === 0) {
+			var ret = _format_output(sharedSecret, outputFormat);
+			_free_all(address_pool);
+			return ret;
+		}
+		_free_and_throw_error(address_pool);
+		
+	}
+
+	function crypto_scalarmult_base(privateKey, outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- input: privateKey (buf)
+		
+		privateKey = _any_to_Uint8Array(address_pool, privateKey, "privateKey");
+		var privateKey_address, privateKey_length = (libsodium._crypto_scalarmult_scalarbytes()) | 0;
+		if (privateKey.length !== privateKey_length) {
+			_free_and_throw_type_error(address_pool, "invalid privateKey length");
+		}
+		privateKey_address = _to_allocated_buf_address(privateKey);
+		address_pool.push(privateKey_address);
+		
+		// ---------- output publicKey (buf)
+		
+		var publicKey_length = (libsodium._crypto_scalarmult_scalarbytes()) | 0,
+		    publicKey = new AllocatedBuf(publicKey_length),
+		    publicKey_address = publicKey.address;
+		
+		address_pool.push(publicKey_address);
+		
+		if ((libsodium._crypto_scalarmult_base(publicKey_address, privateKey_address) | 0) === 0) {
+			var ret = _format_output(publicKey, outputFormat);
+			_free_all(address_pool);
+			return ret;
+		}
+		_free_and_throw_error(address_pool);
+		
+	}
+
+	function crypto_secretbox_detached(message, nonce, key, outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- input: message (unsized_buf)
+		
+		message = _any_to_Uint8Array(address_pool, message, "message");
+		var message_address = _to_allocated_buf_address(message),
+		    message_length = message.length;
+		address_pool.push(message_address);
+		
+		// ---------- input: nonce (buf)
+		
+		nonce = _any_to_Uint8Array(address_pool, nonce, "nonce");
+		var nonce_address, nonce_length = (libsodium._crypto_secretbox_noncebytes()) | 0;
+		if (nonce.length !== nonce_length) {
+			_free_and_throw_type_error(address_pool, "invalid nonce length");
+		}
+		nonce_address = _to_allocated_buf_address(nonce);
+		address_pool.push(nonce_address);
+		
+		// ---------- input: key (buf)
+		
+		key = _any_to_Uint8Array(address_pool, key, "key");
+		var key_address, key_length = (libsodium._crypto_secretbox_keybytes()) | 0;
+		if (key.length !== key_length) {
+			_free_and_throw_type_error(address_pool, "invalid key length");
+		}
+		key_address = _to_allocated_buf_address(key);
+		address_pool.push(key_address);
+		
+		// ---------- output cipher (buf)
+		
+		var cipher_length = (message_length) | 0,
+		    cipher = new AllocatedBuf(cipher_length),
+		    cipher_address = cipher.address;
+		
+		address_pool.push(cipher_address);
+		
+		// ---------- output mac (buf)
+		
+		var mac_length = (libsodium._crypto_secretbox_macbytes()) | 0,
+		    mac = new AllocatedBuf(mac_length),
+		    mac_address = mac.address;
+		
+		address_pool.push(mac_address);
+		
+		if ((libsodium._crypto_secretbox_detached(cipher_address, mac_address, message_address, message_length, 0, nonce_address, key_address) | 0) === 0) {
+			var ret = _format_output({mac: mac, cipher: cipher}, outputFormat);
+			_free_all(address_pool);
+			return ret;
+		}
+		_free_and_throw_error(address_pool);
+		
+	}
+
+	function crypto_secretbox_easy(message, nonce, key, outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- input: message (unsized_buf)
+		
+		message = _any_to_Uint8Array(address_pool, message, "message");
+		var message_address = _to_allocated_buf_address(message),
+		    message_length = message.length;
+		address_pool.push(message_address);
+		
+		// ---------- input: nonce (buf)
+		
+		nonce = _any_to_Uint8Array(address_pool, nonce, "nonce");
+		var nonce_address, nonce_length = (libsodium._crypto_secretbox_noncebytes()) | 0;
+		if (nonce.length !== nonce_length) {
+			_free_and_throw_type_error(address_pool, "invalid nonce length");
+		}
+		nonce_address = _to_allocated_buf_address(nonce);
+		address_pool.push(nonce_address);
+		
+		// ---------- input: key (buf)
+		
+		key = _any_to_Uint8Array(address_pool, key, "key");
+		var key_address, key_length = (libsodium._crypto_secretbox_keybytes()) | 0;
+		if (key.length !== key_length) {
+			_free_and_throw_type_error(address_pool, "invalid key length");
+		}
+		key_address = _to_allocated_buf_address(key);
+		address_pool.push(key_address);
+		
+		// ---------- output cipher (buf)
+		
+		var cipher_length = (message_length + libsodium._crypto_secretbox_macbytes()) | 0,
+		    cipher = new AllocatedBuf(cipher_length),
+		    cipher_address = cipher.address;
+		
+		address_pool.push(cipher_address);
+		
+		if ((libsodium._crypto_secretbox_easy(cipher_address, message_address, message_length, 0, nonce_address, key_address) | 0) === 0) {
+			var ret = _format_output(cipher, outputFormat);
+			_free_all(address_pool);
+			return ret;
+		}
+		_free_and_throw_error(address_pool);
+		
+	}
+
+	function crypto_secretbox_open_detached(ciphertext, mac, nonce, key, outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- input: ciphertext (unsized_buf)
+		
+		ciphertext = _any_to_Uint8Array(address_pool, ciphertext, "ciphertext");
+		var ciphertext_address = _to_allocated_buf_address(ciphertext),
+		    ciphertext_length = ciphertext.length;
+		address_pool.push(ciphertext_address);
+		
+		// ---------- input: mac (buf)
+		
+		mac = _any_to_Uint8Array(address_pool, mac, "mac");
+		var mac_address, mac_length = (libsodium._crypto_secretbox_macbytes()) | 0;
+		if (mac.length !== mac_length) {
+			_free_and_throw_type_error(address_pool, "invalid mac length");
+		}
+		mac_address = _to_allocated_buf_address(mac);
+		address_pool.push(mac_address);
+		
+		// ---------- input: nonce (buf)
+		
+		nonce = _any_to_Uint8Array(address_pool, nonce, "nonce");
+		var nonce_address, nonce_length = (libsodium._crypto_secretbox_noncebytes()) | 0;
+		if (nonce.length !== nonce_length) {
+			_free_and_throw_type_error(address_pool, "invalid nonce length");
+		}
+		nonce_address = _to_allocated_buf_address(nonce);
+		address_pool.push(nonce_address);
+		
+		// ---------- input: key (buf)
+		
+		key = _any_to_Uint8Array(address_pool, key, "key");
+		var key_address, key_length = (libsodium._crypto_secretbox_keybytes()) | 0;
+		if (key.length !== key_length) {
+			_free_and_throw_type_error(address_pool, "invalid key length");
+		}
+		key_address = _to_allocated_buf_address(key);
+		address_pool.push(key_address);
+		
+		// ---------- output message (buf)
+		
+		var message_length = (ciphertext_length) | 0,
+		    message = new AllocatedBuf(message_length),
+		    message_address = message.address;
+		
+		address_pool.push(message_address);
+		
+		if ((libsodium._crypto_secretbox_open_detached(message_address, ciphertext_address, mac_address, ciphertext_length, 0, nonce_address, key_address) | 0) === 0) {
+			var ret = _format_output(message, outputFormat);
+			_free_all(address_pool);
+			return ret;
+		}
+		_free_and_throw_error(address_pool);
+		
+	}
+
+	function crypto_secretbox_open_easy(ciphertext, nonce, key, outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- input: ciphertext (unsized_buf)
+		
+		ciphertext = _any_to_Uint8Array(address_pool, ciphertext, "ciphertext");
+		var ciphertext_address = _to_allocated_buf_address(ciphertext),
+		    ciphertext_length = ciphertext.length;
+		address_pool.push(ciphertext_address);
+		
+		// ---------- input: nonce (buf)
+		
+		nonce = _any_to_Uint8Array(address_pool, nonce, "nonce");
+		var nonce_address, nonce_length = (libsodium._crypto_secretbox_noncebytes()) | 0;
+		if (nonce.length !== nonce_length) {
+			_free_and_throw_type_error(address_pool, "invalid nonce length");
+		}
+		nonce_address = _to_allocated_buf_address(nonce);
+		address_pool.push(nonce_address);
+		
+		// ---------- input: key (buf)
+		
+		key = _any_to_Uint8Array(address_pool, key, "key");
+		var key_address, key_length = (libsodium._crypto_secretbox_keybytes()) | 0;
+		if (key.length !== key_length) {
+			_free_and_throw_type_error(address_pool, "invalid key length");
+		}
+		key_address = _to_allocated_buf_address(key);
+		address_pool.push(key_address);
+		
+		// ---------- output message (buf)
+		
+		var message_length = (ciphertext_length - libsodium._crypto_secretbox_macbytes()) | 0,
+		    message = new AllocatedBuf(message_length),
+		    message_address = message.address;
+		
+		address_pool.push(message_address);
+		
+		if ((libsodium._crypto_secretbox_open_easy(message_address, ciphertext_address, ciphertext_length, 0, nonce_address, key_address) | 0) === 0) {
+			var ret = _format_output(message, outputFormat);
+			_free_all(address_pool);
+			return ret;
+		}
+		_free_and_throw_error(address_pool);
+		
+	}
+
+	function crypto_shorthash(message, key, outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- input: message (unsized_buf)
+		
+		message = _any_to_Uint8Array(address_pool, message, "message");
+		var message_address = _to_allocated_buf_address(message),
+		    message_length = message.length;
+		address_pool.push(message_address);
+		
+		// ---------- input: key (buf)
+		
+		key = _any_to_Uint8Array(address_pool, key, "key");
+		var key_address, key_length = (libsodium._crypto_shorthash_keybytes()) | 0;
+		if (key.length !== key_length) {
+			_free_and_throw_type_error(address_pool, "invalid key length");
+		}
+		key_address = _to_allocated_buf_address(key);
+		address_pool.push(key_address);
+		
+		// ---------- output hash (buf)
+		
+		var hash_length = (libsodium._crypto_shorthash_bytes()) | 0,
+		    hash = new AllocatedBuf(hash_length),
+		    hash_address = hash.address;
+		
+		address_pool.push(hash_address);
+		
+		if ((libsodium._crypto_shorthash(hash_address, message_address, message_length, 0, key_address) | 0) === 0) {
+			var ret = _format_output(hash, outputFormat);
+			_free_all(address_pool);
+			return ret;
+		}
+		_free_and_throw_error(address_pool);
+		
+	}
+
+	function crypto_sign(message, privateKey, outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- input: message (unsized_buf)
+		
+		message = _any_to_Uint8Array(address_pool, message, "message");
+		var message_address = _to_allocated_buf_address(message),
+		    message_length = message.length;
+		address_pool.push(message_address);
+		
+		// ---------- input: privateKey (buf)
+		
+		privateKey = _any_to_Uint8Array(address_pool, privateKey, "privateKey");
+		var privateKey_address, privateKey_length = (libsodium._crypto_sign_secretkeybytes()) | 0;
+		if (privateKey.length !== privateKey_length) {
+			_free_and_throw_type_error(address_pool, "invalid privateKey length");
+		}
+		privateKey_address = _to_allocated_buf_address(privateKey);
+		address_pool.push(privateKey_address);
+		
+		// ---------- output signature (buf)
+		
+		var signature_length = (message.length + libsodium._crypto_sign_bytes()) | 0,
+		    signature = new AllocatedBuf(signature_length),
+		    signature_address = signature.address;
+		
+		address_pool.push(signature_address);
+		
+		if ((libsodium._crypto_sign(signature_address, null, message_address, message_length, 0, privateKey_address) | 0) === 0) {
+			var ret = _format_output(signature, outputFormat);
+			_free_all(address_pool);
+			return ret;
+		}
+		_free_and_throw_error(address_pool);
+		
+	}
+
+	function crypto_sign_detached(message, privateKey, outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- input: message (unsized_buf)
+		
+		message = _any_to_Uint8Array(address_pool, message, "message");
+		var message_address = _to_allocated_buf_address(message),
+		    message_length = message.length;
+		address_pool.push(message_address);
+		
+		// ---------- input: privateKey (buf)
+		
+		privateKey = _any_to_Uint8Array(address_pool, privateKey, "privateKey");
+		var privateKey_address, privateKey_length = (libsodium._crypto_sign_secretkeybytes()) | 0;
+		if (privateKey.length !== privateKey_length) {
+			_free_and_throw_type_error(address_pool, "invalid privateKey length");
+		}
+		privateKey_address = _to_allocated_buf_address(privateKey);
+		address_pool.push(privateKey_address);
+		
+		// ---------- output signature (buf)
+		
+		var signature_length = (libsodium._crypto_sign_bytes()) | 0,
+		    signature = new AllocatedBuf(signature_length),
+		    signature_address = signature.address;
+		
+		address_pool.push(signature_address);
+		
+		if ((libsodium._crypto_sign_detached(signature_address, null, message_address, message_length, 0, privateKey_address) | 0) === 0) {
+			var ret = _format_output(signature, outputFormat);
+			_free_all(address_pool);
+			return ret;
+		}
+		_free_and_throw_error(address_pool);
+		
+	}
+
+	function crypto_sign_ed25519_pk_to_curve25519(edPk, outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- input: edPk (buf)
+		
+		edPk = _any_to_Uint8Array(address_pool, edPk, "edPk");
+		var edPk_address, edPk_length = (libsodium._crypto_sign_publickeybytes()) | 0;
+		if (edPk.length !== edPk_length) {
+			_free_and_throw_type_error(address_pool, "invalid edPk length");
+		}
+		edPk_address = _to_allocated_buf_address(edPk);
+		address_pool.push(edPk_address);
+		
+		// ---------- output cPk (buf)
+		
+		var cPk_length = (libsodium._crypto_scalarmult_scalarbytes()) | 0,
+		    cPk = new AllocatedBuf(cPk_length),
+		    cPk_address = cPk.address;
+		
+		address_pool.push(cPk_address);
+		
+		if ((libsodium._crypto_sign_ed25519_pk_to_curve25519(cPk_address, edPk_address) | 0) === 0) {
+			var ret = _format_output(cPk, outputFormat);
+			_free_all(address_pool);
+			return ret;
+		}
+		_free_and_throw_error(address_pool);
+		
+	}
+
+	function crypto_sign_ed25519_sk_to_curve25519(edSk, outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- input: edSk (buf)
+		
+		edSk = _any_to_Uint8Array(address_pool, edSk, "edSk");
+		var edSk_address, edSk_length = (libsodium._crypto_sign_secretkeybytes()) | 0;
+		if (edSk.length !== edSk_length) {
+			_free_and_throw_type_error(address_pool, "invalid edSk length");
+		}
+		edSk_address = _to_allocated_buf_address(edSk);
+		address_pool.push(edSk_address);
+		
+		// ---------- output cSk (buf)
+		
+		var cSk_length = (libsodium._crypto_scalarmult_scalarbytes()) | 0,
+		    cSk = new AllocatedBuf(cSk_length),
+		    cSk_address = cSk.address;
+		
+		address_pool.push(cSk_address);
+		
+		if ((libsodium._crypto_sign_ed25519_sk_to_curve25519(cSk_address, edSk_address) | 0) === 0) {
+			var ret = _format_output(cSk, outputFormat);
+			_free_all(address_pool);
+			return ret;
+		}
+		_free_and_throw_error(address_pool);
+		
+	}
+
+	function crypto_sign_ed25519_sk_to_pk(privateKey, outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- input: privateKey (buf)
+		
+		privateKey = _any_to_Uint8Array(address_pool, privateKey, "privateKey");
+		var privateKey_address, privateKey_length = (libsodium._crypto_sign_secretkeybytes()) | 0;
+		if (privateKey.length !== privateKey_length) {
+			_free_and_throw_type_error(address_pool, "invalid privateKey length");
+		}
+		privateKey_address = _to_allocated_buf_address(privateKey);
+		address_pool.push(privateKey_address);
+		
+		// ---------- output publicKey (buf)
+		
+		var publicKey_length = (libsodium._crypto_sign_publickeybytes()) | 0,
+		    publicKey = new AllocatedBuf(publicKey_length),
+		    publicKey_address = publicKey.address;
+		
+		address_pool.push(publicKey_address);
+		
+		if ((libsodium._crypto_sign_ed25519_sk_to_pk(publicKey_address, privateKey_address) | 0) === 0) {
+			var ret = _format_output(publicKey, outputFormat);
+			_free_all(address_pool);
+			return ret;
+		}
+		_free_and_throw_error(address_pool);
+		
+	}
+
+	function crypto_sign_ed25519_sk_to_seed(privateKey, outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- input: privateKey (buf)
+		
+		privateKey = _any_to_Uint8Array(address_pool, privateKey, "privateKey");
+		var privateKey_address, privateKey_length = (libsodium._crypto_sign_secretkeybytes()) | 0;
+		if (privateKey.length !== privateKey_length) {
+			_free_and_throw_type_error(address_pool, "invalid privateKey length");
+		}
+		privateKey_address = _to_allocated_buf_address(privateKey);
+		address_pool.push(privateKey_address);
+		
+		// ---------- output seed (buf)
+		
+		var seed_length = (libsodium._crypto_sign_seedbytes()) | 0,
+		    seed = new AllocatedBuf(seed_length),
+		    seed_address = seed.address;
+		
+		address_pool.push(seed_address);
+		
+		if ((libsodium._crypto_sign_ed25519_sk_to_seed(seed_address, privateKey_address) | 0) === 0) {
+			var ret = _format_output(seed, outputFormat);
+			_free_all(address_pool);
+			return ret;
+		}
+		_free_and_throw_error(address_pool);
+		
+	}
+
+	function crypto_sign_keypair(outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- output publicKey (buf)
+		
+		var publicKey_length = (libsodium._crypto_sign_publickeybytes()) | 0,
+		    publicKey = new AllocatedBuf(publicKey_length),
+		    publicKey_address = publicKey.address;
+		
+		address_pool.push(publicKey_address);
+		
+		// ---------- output privateKey (buf)
+		
+		var privateKey_length = (libsodium._crypto_sign_secretkeybytes()) | 0,
+		    privateKey = new AllocatedBuf(privateKey_length),
+		    privateKey_address = privateKey.address;
+		
+		address_pool.push(privateKey_address);
+		
+		if ((libsodium._crypto_sign_keypair(publicKey_address, privateKey_address) | 0) === 0) {
+			var ret = _format_output({publicKey: publicKey, privateKey: privateKey, keyType: 'ed25519'}, outputFormat);
+			_free_all(address_pool);
+			return ret;
+		}
+		_free_and_throw_error(address_pool);
+		
+	}
+
+	function crypto_sign_open(signedMessage, publicKey, outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- input: signedMessage (unsized_buf)
+		
+		signedMessage = _any_to_Uint8Array(address_pool, signedMessage, "signedMessage");
+		var signedMessage_address = _to_allocated_buf_address(signedMessage),
+		    signedMessage_length = signedMessage.length;
+		address_pool.push(signedMessage_address);
+		
+		// ---------- input: publicKey (buf)
+		
+		publicKey = _any_to_Uint8Array(address_pool, publicKey, "publicKey");
+		var publicKey_address, publicKey_length = (libsodium._crypto_sign_publickeybytes()) | 0;
+		if (publicKey.length !== publicKey_length) {
+			_free_and_throw_type_error(address_pool, "invalid publicKey length");
+		}
+		publicKey_address = _to_allocated_buf_address(publicKey);
+		address_pool.push(publicKey_address);
+		
+		// ---------- output message (buf)
+		
+		var message_length = (signedMessage_length - libsodium._crypto_sign_bytes()) | 0,
+		    message = new AllocatedBuf(message_length),
+		    message_address = message.address;
+		
+		address_pool.push(message_address);
+		
+		if ((libsodium._crypto_sign_open(message_address, null, signedMessage_address, signedMessage_length, 0, publicKey_address) | 0) === 0) {
+			var ret = _format_output(message, outputFormat);
+			_free_all(address_pool);
+			return ret;
+		}
+		_free_and_throw_error(address_pool);
+		
+	}
+
+	function crypto_sign_seed_keypair(seed, outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- input: seed (buf)
+		
+		seed = _any_to_Uint8Array(address_pool, seed, "seed");
+		var seed_address, seed_length = (libsodium._crypto_sign_seedbytes()) | 0;
+		if (seed.length !== seed_length) {
+			_free_and_throw_type_error(address_pool, "invalid seed length");
+		}
+		seed_address = _to_allocated_buf_address(seed);
+		address_pool.push(seed_address);
+		
+		// ---------- output publicKey (buf)
+		
+		var publicKey_length = (libsodium._crypto_sign_publickeybytes()) | 0,
+		    publicKey = new AllocatedBuf(publicKey_length),
+		    publicKey_address = publicKey.address;
+		
+		address_pool.push(publicKey_address);
+		
+		// ---------- output privateKey (buf)
+		
+		var privateKey_length = (libsodium._crypto_sign_secretkeybytes()) | 0,
+		    privateKey = new AllocatedBuf(privateKey_length),
+		    privateKey_address = privateKey.address;
+		
+		address_pool.push(privateKey_address);
+		
+		if ((libsodium._crypto_sign_seed_keypair(publicKey_address, privateKey_address, seed_address) | 0) === 0) {
+			var ret = _format_output({publicKey: publicKey, privateKey: privateKey, keyType: "ed25519"}, outputFormat);
+			_free_all(address_pool);
+			return ret;
+		}
+		_free_and_throw_error(address_pool);
+		
+	}
+
+	function crypto_sign_verify_detached(signature, message, publicKey) {
+		var address_pool = [];
+
+		// ---------- input: signature (buf)
+		
+		signature = _any_to_Uint8Array(address_pool, signature, "signature");
+		var signature_address, signature_length = (libsodium._crypto_sign_bytes()) | 0;
+		if (signature.length !== signature_length) {
+			_free_and_throw_type_error(address_pool, "invalid signature length");
+		}
+		signature_address = _to_allocated_buf_address(signature);
+		address_pool.push(signature_address);
+		
+		// ---------- input: message (unsized_buf)
+		
+		message = _any_to_Uint8Array(address_pool, message, "message");
+		var message_address = _to_allocated_buf_address(message),
+		    message_length = message.length;
+		address_pool.push(message_address);
+		
+		// ---------- input: publicKey (buf)
+		
+		publicKey = _any_to_Uint8Array(address_pool, publicKey, "publicKey");
+		var publicKey_address, publicKey_length = (libsodium._crypto_sign_publickeybytes()) | 0;
+		if (publicKey.length !== publicKey_length) {
+			_free_and_throw_type_error(address_pool, "invalid publicKey length");
+		}
+		publicKey_address = _to_allocated_buf_address(publicKey);
+		address_pool.push(publicKey_address);
+		
+		var verificationResult = libsodium._crypto_sign_verify_detached(signature_address, message_address, message_length, 0, publicKey_address) | 0;
+		var ret = (verificationResult === 0);
+		_free_all(address_pool);
+		return ret;
+		
+	}
+
+	function randombytes_buf(length, outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- input: length (uint)
+		
+		_require_defined(address_pool, length, "length");
+		
+		if (!(typeof length === "number" && (length | 0) === length) && (length | 0) > 0) {
+			_free_and_throw_type_error(address_pool, "length must be an unsigned integer");
+		}
+		
+		// ---------- output output (buf)
+		
+		var output_length = (length) | 0,
+		    output = new AllocatedBuf(output_length),
+		    output_address = output.address;
+		
+		address_pool.push(output_address);
+		
+		libsodium._randombytes_buf(output_address, length);
+		var ret = (_format_output(output, outputFormat));
+		_free_all(address_pool);
+		return ret;
+		
+	}
+
+	function randombytes_close(outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		libsodium._randombytes_close();
+		
+	}
+
+	function randombytes_random(outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		var random_value = libsodium._randombytes_random() >>> 0;
+		var ret = (random_value);
+		_free_all(address_pool);
+		return ret;
+		
+	}
+
+	function randombytes_set_implementation(implementation, outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- input: implementation (randombytes_implementation)
+		
+		var implementation_address = libsodium._malloc(6 * 4);
+		for (var i = 0; i < 6; i++) {
+			libsodium.setValue(implementation_address + i * 4,
+			    libsodium.Runtime.addFunction(implementation
+			    [["implementation_name", "random", "stir", "uniform", "buf", "close"][i]]),
+			    "i32");
+		}
+		
+		if ((libsodium._randombytes_set_implementation(implementation_address) | 0) === 0) {
+			_free_all(address_pool);
+			return;
+		}
+		_free_and_throw_error(address_pool);
+		
+	}
+
+	function randombytes_stir(outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		libsodium._randombytes_stir();
+		
+	}
+
+	function randombytes_uniform(upper_bound, outputFormat) {
+		var address_pool = [];
+		_check_output_format(outputFormat);
+
+		// ---------- input: upper_bound (uint)
+		
+		_require_defined(address_pool, upper_bound, "upper_bound");
+		
+		if (!(typeof upper_bound === "number" && (upper_bound | 0) === upper_bound) && (upper_bound | 0) > 0) {
+			_free_and_throw_type_error(address_pool, "upper_bound must be an unsigned integer");
+		}
+		
+		var random_value = libsodium._randombytes_uniform(upper_bound) >>> 0;
+		var ret = (random_value);
+		_free_all(address_pool);
+		return ret;
+		
+	}
+
+	function sodium_version_string() {
+		var address_pool = [];
+
+		var version = libsodium._sodium_version_string();
+		var ret = (libsodium.Pointer_stringify(version));
+		_free_all(address_pool);
+		return ret;
+		
+	}
+
+
+	exports.from_base64 = from_base64;
+	exports.from_hex = from_hex;
+	exports.from_string = from_string;
+	exports.libsodium = libsodium;
+	exports.memcmp = memcmp;
+	exports.memzero = memzero;
+	exports.output_formats = output_formats;
+	exports.symbols = symbols;
+	exports.to_base64 = to_base64;
+	exports.to_hex = to_hex;
+
+	
+	var exported_functions = ["crypto_aead_chacha20poly1305_decrypt", "crypto_aead_chacha20poly1305_encrypt", "crypto_aead_chacha20poly1305_ietf_decrypt", "crypto_aead_chacha20poly1305_ietf_encrypt", "crypto_auth", "crypto_auth_hmacsha256", "crypto_auth_hmacsha512", "crypto_auth_verify", "crypto_auth_verify", "crypto_auth_verify", "crypto_box_detached", "crypto_box_easy", "crypto_box_keypair", "crypto_box_open_detached", "crypto_box_open_easy", "crypto_box_seal", "crypto_box_seal_open", "crypto_box_seed_keypair", "crypto_generichash", "crypto_generichash_final", "crypto_generichash_init", "crypto_generichash_update", "crypto_hash", "crypto_hash_sha256", "crypto_hash_sha512", "crypto_onetimeauth", "crypto_onetimeauth_verify", "crypto_pwhash_scryptsalsa208sha256", "crypto_pwhash_scryptsalsa208sha256_ll", "crypto_pwhash_scryptsalsa208sha256_str", "crypto_pwhash_scryptsalsa208sha256_str_verify", "crypto_scalarmult", "crypto_scalarmult_base", "crypto_secretbox_detached", "crypto_secretbox_easy", "crypto_secretbox_open_detached", "crypto_secretbox_open_easy", "crypto_shorthash", "crypto_sign", "crypto_sign_detached", "crypto_sign_ed25519_pk_to_curve25519", "crypto_sign_ed25519_sk_to_curve25519", "crypto_sign_ed25519_sk_to_pk", "crypto_sign_ed25519_sk_to_seed", "crypto_sign_keypair", "crypto_sign_open", "crypto_sign_seed_keypair", "crypto_sign_verify_detached", "randombytes_buf", "randombytes_close", "randombytes_random", "randombytes_set_implementation", "randombytes_stir", "randombytes_uniform", "sodium_version_string"],
+		functions = [crypto_aead_chacha20poly1305_decrypt, crypto_aead_chacha20poly1305_encrypt, crypto_aead_chacha20poly1305_ietf_decrypt, crypto_aead_chacha20poly1305_ietf_encrypt, crypto_auth, crypto_auth_hmacsha256, crypto_auth_hmacsha512, crypto_auth_verify, crypto_auth_verify, crypto_auth_verify, crypto_box_detached, crypto_box_easy, crypto_box_keypair, crypto_box_open_detached, crypto_box_open_easy, crypto_box_seal, crypto_box_seal_open, crypto_box_seed_keypair, crypto_generichash, crypto_generichash_final, crypto_generichash_init, crypto_generichash_update, crypto_hash, crypto_hash_sha256, crypto_hash_sha512, crypto_onetimeauth, crypto_onetimeauth_verify, crypto_pwhash_scryptsalsa208sha256, crypto_pwhash_scryptsalsa208sha256_ll, crypto_pwhash_scryptsalsa208sha256_str, crypto_pwhash_scryptsalsa208sha256_str_verify, crypto_scalarmult, crypto_scalarmult_base, crypto_secretbox_detached, crypto_secretbox_easy, crypto_secretbox_open_detached, crypto_secretbox_open_easy, crypto_shorthash, crypto_sign, crypto_sign_detached, crypto_sign_ed25519_pk_to_curve25519, crypto_sign_ed25519_sk_to_curve25519, crypto_sign_ed25519_sk_to_pk, crypto_sign_ed25519_sk_to_seed, crypto_sign_keypair, crypto_sign_open, crypto_sign_seed_keypair, crypto_sign_verify_detached, randombytes_buf, randombytes_close, randombytes_random, randombytes_set_implementation, randombytes_stir, randombytes_uniform, sodium_version_string];
+	for (var i = 0; i < functions.length; i++) {
+		if (typeof libsodium["_" + exported_functions[i]] === "function") {
+			exports[exported_functions[i]] = functions[i];
+		}
+	}
+	var constants = ["SODIUM_LIBRARY_VERSION_MAJOR", "SODIUM_LIBRARY_VERSION_MINOR", "crypto_aead_chacha20poly1305_ABYTES", "crypto_aead_chacha20poly1305_KEYBYTES", "crypto_aead_chacha20poly1305_NPUBBYTES", "crypto_aead_chacha20poly1305_NSECBYTES", "crypto_aead_chacha20poly1305_ietf_NPUBBYTES", "crypto_auth_BYTES", "crypto_auth_KEYBYTES", "crypto_box_BEFORENMBYTES", "crypto_box_MACBYTES", "crypto_box_NONCEBYTES", "crypto_box_PUBLICKEYBYTES", "crypto_box_SEALBYTES", "crypto_box_SECRETKEYBYTES", "crypto_box_SEEDBYTES", "crypto_generichash_BYTES", "crypto_generichash_BYTES_MAX", "crypto_generichash_BYTES_MIN", "crypto_generichash_KEYBYTES", "crypto_generichash_KEYBYTES_MAX", "crypto_generichash_KEYBYTES_MIN", "crypto_hash_BYTES", "crypto_pwhash_scryptsalsa208sha256_MEMLIMIT_INTERACTIVE", "crypto_pwhash_scryptsalsa208sha256_MEMLIMIT_SENSITIVE", "crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_INTERACTIVE", "crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_SENSITIVE", "crypto_pwhash_scryptsalsa208sha256_SALTBYTES", "crypto_pwhash_scryptsalsa208sha256_STRBYTES", "crypto_pwhash_scryptsalsa208sha256_STR_VERIFY", "crypto_scalarmult_BYTES", "crypto_scalarmult_SCALARBYTES", "crypto_secretbox_KEYBYTES", "crypto_secretbox_MACBYTES", "crypto_secretbox_NONCEBYTES", "crypto_shorthash_BYTES", "crypto_shorthash_KEYBYTES", "crypto_sign_BYTES", "crypto_sign_PUBLICKEYBYTES", "crypto_sign_SECRETKEYBYTES", "crypto_sign_SEEDBYTES"];
+	for (var i = 0; i < constants.length; i++) {
+		var raw = libsodium["_" + constants[i].toLowerCase()];
+		if (typeof raw === "function") exports[constants[i]] = raw()|0;
+	}
+	var constants_str = ["SODIUM_VERSION_STRING", "crypto_pwhash_scryptsalsa208sha256_STRPREFIX"];
+	for (var i = 0; i < constants_str.length; i++) {
+		var raw = libsodium["_" + constants_str[i].toLowerCase()];
+		if (typeof raw === "function") exports[constants_str[i]] = libsodium.Pointer_stringify(raw());
+	}
+
+	return exports;
+}));
