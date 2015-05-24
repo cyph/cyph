@@ -187,88 +187,61 @@
 					var previousHashExpires		= parseInt(localStorage.webSignHashExpires, 10);
 
 					var signaturePayloadSplit	= signaturePayload.split('\n');
-					var signatureTimestamp		= parseInt(signaturePayloadSplit[1], 10);
+					var signatureTimestamp		= parseInt(signaturePayloadSplit[3], 10);
 
 					/* Ignore unless more recent than previous known good hash */
 					if (
 						!previousHashTimestamp ||
 						signatureTimestamp > previousHashTimestamp
 					) {
-						var outerSignature	= sodium.from_hex(signaturePayloadSplit[0]);
+						try {
+							var outerSignatureKey	= WebSign.config.publicKeys[parseInt(signaturePayloadSplit[1], 10)];
+							var innerSignatureKey	= WebSign.config.publicKeys[parseInt(signaturePayloadSplit[2], 10)];
 
-						var outerSignatureKey;
-						var innerSignature;
-						var hashObject;
+							var outerSignature	= sodium.from_hex(signaturePayloadSplit[0]);
 
-						for (var i = 0 ; i < WebSign.config.publicKeys.length ; ++i) {
-							var publicKey	= WebSign.config.publicKeys[i];
+							var innerSignature	= sodium.from_hex(
+								sodium.crypto_sign_open(
+									outerSignature,
+									outerSignatureKey,
+									'text'
+								)
+							);
 
-							try {
-								innerSignature	= sodium.from_hex(
-									sodium.crypto_sign_open(
-										outerSignature,
-										publicKey,
-										'text'
-									)
-								);
+							var hashObject	= JSON.parse(
+								sodium.crypto_sign_open(
+									innerSignature,
+									innerSignatureKey,
+									'text'
+								)
+							);
 
-								outerSignatureKey	= publicKey;
+							/* Accept if valid signature, not expired, and
+								detached timestamp was accurate */
+							if (
+								hashObject.expires > Date.now() &&
+								hashObject.timestamp === signatureTimestamp
+							) {
+								var applyUpdate	= true;
 
-								break;
-							}
-							catch (_) {
-								/* Not signed with this key */
-							}
-						}
-
-						if (innerSignature) {
-							for (var i = 0 ; i < WebSign.config.publicKeys.length ; ++i) {
-								var publicKey	= WebSign.config.publicKeys[i];
-
-								if (publicKey !== outerSignatureKey) {
-									try {
-										hashObject	= JSON.parse(
-											sodium.crypto_sign_open(
-												innerSignature,
-												publicKey,
-												'text'
-											)
-										);
-
-										break;
+								if (localStorage.webSignManualUpgrades) {
+									if (confirm('Update to package with hash ' + hashObject.hash + '?')) {
+										alert('Applying update.');
 									}
-									catch (_) {
-										/* Not signed with this key */
+									else {
+										alert('Update rejected.');
+										applyUpdate	= false;
 									}
 								}
-							}
-						}
 
-						/* Accept if valid signature, not expired, and
-							detached timestamp was accurate */
-						if (
-							hashObject &&
-							hashObject.expires > Date.now() &&
-							hashObject.timestamp === signatureTimestamp
-						) {
-							var applyUpdate	= true;
-
-							if (localStorage.webSignManualUpgrades) {
-								if (confirm('Update to package with hash ' + hashObject.hash + '?')) {
-									alert('Applying update.');
-								}
-								else {
-									alert('Update rejected.');
-									applyUpdate	= false;
+								if (applyUpdate) {
+									localStorage.webSignHash			= hashObject.hash;
+									localStorage.webSignHashTimestamp	= hashObject.timestamp;
+									localStorage.webSignHashExpires		= hashObject.expires;
 								}
 							}
-
-							if (applyUpdate) {
-								localStorage.webSignHash			= hashObject.hash;
-								localStorage.webSignHashTimestamp	= hashObject.timestamp;
-								localStorage.webSignHashExpires		= hashObject.expires;
-							}
 						}
+						catch (_) {}
 					}
 
 					/* Get latest package and compare hashes before executing;
