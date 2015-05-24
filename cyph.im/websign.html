@@ -296,7 +296,7 @@
 					}
 					else if (retries > 0) {
 						o.retries	= retries - 1;
-						xhr(o);
+						request(o);
 					}
 					else {
 						error(xhr.responseText);
