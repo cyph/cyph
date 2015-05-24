@@ -149,9 +149,9 @@ module Cyph.im {
 					!Config.webSignHashes[localStorage.webSignBootHash]
 				) {
 					Cyph.Errors.logWebSign();
-					this.changeState(States.webSignChanged);
-				}
-				else {
+					// this.changeState(States.webSignChanged);
+				// }
+				// else {
 					Cyph.UrlState.onchange(urlState => this.onUrlStateChange(urlState));
 
 					this.chat	= new Cyph.UI.Chat.Chat(
@@ -187,7 +187,7 @@ module Cyph.im {
 					this.chat.session.on(Cyph.Session.Events.newCyph, () =>
 						this.changeState(States.spinningUp)
 					);
-				}
+				// }
 
 
 				Cyph.UrlState.set(location.pathname, false, true);
