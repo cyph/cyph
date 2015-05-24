@@ -8,6 +8,9 @@ var args		= process.argv.slice(2);
 
 var data	= args[0];
 
+/* Set PUBLIC_KEYS */
+eval(fs.readFileSync('../../shared/websign/js/keys.js').toString().trim());
+
 
 glob(process.env['HOME'] + '/.cyph/*.key', function (err, paths) {
 	if (paths.length < 1) {
@@ -20,9 +23,9 @@ glob(process.env['HOME'] + '/.cyph/*.key', function (err, paths) {
 
 	var keys	= paths.map(function (path) { return fs.readFileSync(path).toString().trim() });
 
-	sign(data, keys, 'Password: ', function (innerSignature, innerKey) {
-		sign(innerSignature, keys, 'Password: ', function (outerSignature) {
-			console.log(outerSignature);
+	sign(data, keys, 'Password: ', function (innerSignature, innerKey, innerKeyIndex) {
+		sign(innerSignature, keys, 'Password: ', function (outerSignature, outerKey, outerKeyIndex) {
+			console.log(outerSignature + '\n' + outerKeyIndex + '\n' + innerKeyIndex);
 		}, innerKey);
 	});
 });
@@ -33,8 +36,14 @@ function sign (data, keys, prompt, callback, blacklistedKey) {
 			try {
 				if (keys[i] !== blacklistedKey) {
 					var key	= decryptKey(keys[i], password);
-					callback(sodium.crypto_sign(data, key, 'hex'), keys[i]);
-					return;
+					var publicKeyString	= JSON.stringify(Array.prototype.slice.apply(key).slice(-32));
+
+					for (var j = 0 ; j < PUBLIC_KEYS.length ; ++j) {
+						if (publicKeyString === JSON.stringify(PUBLIC_KEYS[j])) {
+							callback(sodium.crypto_sign(data, key, 'hex'), keys[i], j);
+							return;
+						}
+					}
 				}
 			}
 			catch (_) {}
