@@ -7,8 +7,6 @@ cd $(cd "$(dirname "$0")"; pwd)/..
 
 gcloud auth login
 
-# TODO: Find a more robust way of handling arguments
-
 all=''
 test=true
 if [ "${1}" == '--prod' ] ; then
@@ -165,16 +163,24 @@ for d in cyph.im ; do
 		cp -f $currentDir/$d.pkg websign/
 
 		HASH_TTL=3944620 # 1.5 months
+
+		sha512hash="$(shasum -p -a 512 websign/$d.pkg | perl -pe 's/(.*) .*/\1/')"
+		sha256hash="$(shasum -p -a 256 websign/$d.pkg | perl -pe 's/(.*) .*/\1/')"
+		timestamp="$(date +%s)000"
+		expires="$(($(date +%s)+${HASH_TTL}))000"
+
+		# Leaving old-style signing for continued compatibility with old WebSign instances
 		echo "\
 {
-	\"hash\": \"$(shasum -p -a 512 websign/$d.pkg | perl -pe 's/(.*) .*/\1/')\",
-	\"timestamp\": $(date +%s)000,
-	\"expires\": $(($(date +%s)+${HASH_TTL}))000
+	\"hash\": \"$sha512hash\",
+	\"timestamp\": $timestamp,
+	\"expires\": $expires
 }" | gpg --clearsign > websign/$d.hash
-
-		# Temporary measure, in preparation for requiring two signatures on each release
 		cat websign/$d.hash | gpg --clearsign -u 'Alternate Key' > websign/$d.hash2
 		cp -f websign/$d.hash2 websign/$d.hash
+
+		$currentDir/../commands/websign/sign.js \ 
+			"{\"hash\": \"$sha256hash\", \"timestamp\": $timestamp, \"expires\": $expires}" > websign/$d.sig
 
 		git add .
 		git commit -a -m 'package update'
