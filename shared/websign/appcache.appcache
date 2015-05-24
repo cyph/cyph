@@ -1,0 +1,16 @@
+CACHE MANIFEST
+
+CACHE:
+/
+/websign/css/loading.css
+/websign/js/crypto.js
+/websign/js/keys.js
+/websign/js/sha256.js
+/websign/js/serviceworker.js
+/websign/js/workerhelper.js
+/websign/lib/sodium.min.js
+/websign/appcache.appcache
+/websign/manifest.json
+
+NETWORK:
+*
