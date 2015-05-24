@@ -150,7 +150,7 @@ module Cyph.im {
 				) {
 					Cyph.Errors.logWebSign();
 					// this.changeState(States.webSignChanged);
-				// }
+				}
 				// else {
 					Cyph.UrlState.onchange(urlState => this.onUrlStateChange(urlState));
 
