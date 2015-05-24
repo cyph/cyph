@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html manifest='/websign/cyph.im.appcache'>
+<html manifest='/websign/appcache.appcache'>
 	<head>
 		<meta charset='utf-8' />
 		<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1' />
@@ -45,11 +45,9 @@
 		</div>
 
 		<script src='/websign/js/crypto.js'></script>
-		<script src='/websign/js/publickeys.js'></script>
-
-		<script src='/websign/lib/sha512.js'></script>
-		<script src='/websign/lib/openpgp/openpgp.min.js'></script>
-		<script> openpgp.initWorker('/websign/lib/openpgp/openpgp.worker.min.js') </script>
+		<script src='/websign/js/keys.js'></script>
+		<script src='/websign/lib/sodium.js'></script>
+		<script src='/websign/js/sha256.js'></script>
 
 		<script>(function () {
 
@@ -68,7 +66,7 @@
 				cdnUrlBase: '.cdn.cyph.com/websign/',
 				continentUrl: 'https://api.cyph.com/continent',
 				defaultContinent: 'eu',
-				hashPath: 'cyph.im.hash',
+				hashPath: 'cyph.im.sig',
 				packagePath: 'cyph.im.pkg',
 				urlProtocol: 'https://',
 
@@ -76,26 +74,16 @@
 					'/',
 					'/websign/css/loading.css',
 					'/websign/js/crypto.js',
-					'/websign/js/publickeys.js',
-					'/websign/js/cyph.im.serviceworker.js',
+					'/websign/js/keys.js',
+					'/websign/js/sha256.js',
+					'/websign/js/serviceworker.js',
 					'/websign/js/workerhelper.js',
-					'/websign/lib/sha512.js',
-					'/websign/lib/openpgp/openpgp.min.js',
-					'/websign/lib/openpgp/openpgp.worker.min.js',
-					'/websign/cyph.im.appcache',
+					'/websign/lib/sodium.min.js',
+					'/websign/appcache.appcache',
 					'/websign/manifest.json'
 				],
 
-				publicKeys: PUBLIC_KEYS
-			},
-
-			detectChange: function () {
-				var bootHashExists	= 'webSignBootHash' in localStorage;
-
-				localStorage.webSignBootHashOld	= localStorage.webSignBootHash;
-				localStorage.webSignBootHash	= CryptoJS.SHA512(WebSign.bootstrapText).toString();
-
-				return bootHashExists && localStorage.webSignBootHash !== localStorage.webSignBootHashOld;
+				publicKeys: PUBLIC_KEYS.map(function (k) { return new Uint8Array(k) })
 			},
 
 			loadBootstrapText: function (callback, bootstrapText, i) {
@@ -113,7 +101,13 @@
 
 						if (i >= WebSign.config.files.length) {
 							WebSign.bootstrapText	= bootstrapText;
-							callback();
+
+							Sha256(WebSign.bootstrapText, function (hash) {
+								localStorage.webSignBootHashOld	= localStorage.webSignBootHash;
+								localStorage.webSignBootHash	= hash;
+
+								callback();
+							});
 						}
 						else {
 							WebSign.loadBootstrapText(callback, bootstrapText, i);
@@ -187,69 +181,88 @@
 						abort();
 					}
 				},
-				success: function (signedHashText) {
+				success: function (outerSignature) {
 					var previousHash			= localStorage.webSignHash;
 					var previousHashTimestamp	= parseInt(localStorage.webSignHashTimestamp, 10);
 					var previousHashExpires		= parseInt(localStorage.webSignHashExpires, 10);
 
-					try {
-						var signedHashes	= [];
+					var outerSignatureKey;
+					var innerSignature;
+					var hashObject;
 
-						signedHashes.push(openpgp.cleartext.readArmored(signedHashText));
-						signedHashes.push(openpgp.cleartext.readArmored(signedHashes[0].getText()));
+					for (var i = 0 ; i < WebSign.config.publicKeys.length ; ++i) {
+						var publicKey	= WebSign.config.publicKeys[i];
 
-						var o				= JSON.parse(signedHashes[1].getText());
-						var hashText		= o.hash;
-						var hashTimestamp	= o.timestamp;
-						var hashExpires		= o.expires;
+						try {
+							innerSignature	= sodium.from_hex(
+								atob(
+									sodium.to_base64(
+										sodium.crypto_sign_open(
+											sodium.from_hex(outerSignature),
+											publicKey
+										)
+									)
+								)
+							);
 
-						/* If not expired and more recent than previous known good hash,
-							validate signatures before accepting it */
-						if (
-							hashExpires > Date.now() &&
-							(
-								!previousHashTimestamp ||
-								hashTimestamp > previousHashTimestamp
-							)
-						) {
-							var validKeys	= {};
+							outerSignatureKey	= publicKey;
+						}
+						catch (_) {
+							/* Not signed with this key */
+						}
+					}
 
-							signedHashes.forEach(function (signedHash) {
-								for (var i = 0 ; i < WebSign.config.publicKeys.length ; ++i) {
-									var publicKey	= WebSign.config.publicKeys[i];
+					if (innerSignature) {
+						for (var i = 0 ; i < WebSign.config.publicKeys.length ; ++i) {
+							var publicKey	= WebSign.config.publicKeys[i];
 
-									if (
-										signedHash.verify(
-											openpgp.key.readArmored(publicKey).keys
-										)[0].valid
-									) {
-										validKeys[publicKey]	= true;
-										return;
-									}
+							if (publicKey !== outerSignatureKey) {
+								try {
+									hashObject	= JSON.parse(
+										atob(
+											sodium.to_base64(
+												sodium.crypto_sign_open(
+													innerSignature,
+													publicKey
+												)
+											)
+										)
+									);
 								}
-							});
-
-							var isValid	= Object.keys(validKeys).length === signedHashes.length;
-
-
-							if (isValid) {
-								if (localStorage.webSignManualUpgrades) {
-									if (confirm('Update to package with hash ' + hashText + '?')) {
-										alert('Applying update.');
-									}
-									else {
-										alert('Update rejected.');
-										throw true;
-									}
+								catch (_) {
+									/* Not signed with this key */
 								}
-
-								localStorage.webSignHash			= hashText;
-								localStorage.webSignHashTimestamp	= hashTimestamp;
-								localStorage.webSignHashExpires		= hashExpires;
 							}
 						}
 					}
-					catch (_) {}
+
+					/* Accept if valid signature, not expired, and
+						more recent than previous known good hash */
+					if (
+						hashObject &&
+						hashObject.expires > Date.now() && (
+							!previousHashTimestamp ||
+							hashObject.expires > previousHashTimestamp
+						)
+					) {
+						var applyUpdate	= true;
+
+						if (localStorage.webSignManualUpgrades) {
+							if (confirm('Update to package with hash ' + hashObject.hash + '?')) {
+								alert('Applying update.');
+							}
+							else {
+								alert('Update rejected.');
+								applyUpdate	= false;
+							}
+						}
+
+						if (applyUpdate) {
+							localStorage.webSignHash			= hashObject.hash;
+							localStorage.webSignHashTimestamp	= hashObject.timestamp;
+							localStorage.webSignHashExpires		= hashObject.expires;
+						}
+					}
 
 					/* Get latest package and compare hashes before executing;
 						if hashes differ, try falling back to last known good package,
@@ -293,7 +306,7 @@
 				url	+= '?' + data;
 			}
 
-			var xhr	= new XMLHttpRequest;
+			var xhr	= new XMLHttpRequest();
 
 			xhr.onreadystatechange	= function () {
 				if (xhr.readyState === 4) {
@@ -327,19 +340,16 @@
 					data: localStorage.webSignHash,
 					error: errorHandler,
 					success: function (payload) {
-						if (CryptoJS.SHA512(payload).toString() === localStorage.webSignHash) {
-							try {
-								openpgp.getWorker().terminate();
+						Sha256(payload, function (hash) {
+							if (hash === localStorage.webSignHash) {
+								document.open('text/html');
+								document.write(payload);
+								document.close();
 							}
-							catch (_) {}
-
-							document.open('text/html');
-							document.write(payload);
-							document.close();
-						}
-						else {
-							errorHandler();
-						}
+							else {
+								errorHandler();
+							}
+						});
 					}
 				});
 			}
