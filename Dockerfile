@@ -60,7 +60,7 @@ RUN bash -c ' \
 	source ~/.bashrc; \
 	go get github.com/gorilla/context; \
 	go get github.com/gorilla/mux; \
-	cd && npm install libsodium-wrappers; \
+	cd && npm install libsodium-wrappers glob read; \
 '
 
 

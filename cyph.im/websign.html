@@ -195,11 +195,10 @@
 
 						try {
 							innerSignature	= sodium.from_hex(
-								sodium.to_string(
-									sodium.crypto_sign_open(
-										sodium.from_hex(outerSignature),
-										publicKey
-									)
+								sodium.crypto_sign_open(
+									sodium.from_hex(outerSignature),
+									publicKey,
+									'text'
 								)
 							);
 
@@ -217,11 +216,10 @@
 							if (publicKey !== outerSignatureKey) {
 								try {
 									hashObject	= JSON.parse(
-										sodium.to_string(
-											sodium.crypto_sign_open(
-												innerSignature,
-												publicKey
-											)
+										sodium.crypto_sign_open(
+											innerSignature,
+											publicKey,
+											'text'
 										)
 									);
 								}
