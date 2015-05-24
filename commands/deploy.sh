@@ -180,6 +180,7 @@ for d in cyph.im ; do
 		cp -f websign/$d.hash2 websign/$d.hash
 
 		$currentDir/../commands/websign/sign.js "{\"hash\": \"$sha256hash\", \"timestamp\": $timestamp, \"expires\": $expires}" > websign/$d.sig
+		echo $timestamp >> websign/$d.sig
 
 		git add .
 		git commit -a -m 'package update'
