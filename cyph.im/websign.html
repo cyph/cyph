@@ -181,86 +181,93 @@
 						abort();
 					}
 				},
-				success: function (outerSignatureHex) {
+				success: function (signaturePayload) {
 					var previousHash			= localStorage.webSignHash;
 					var previousHashTimestamp	= parseInt(localStorage.webSignHashTimestamp, 10);
 					var previousHashExpires		= parseInt(localStorage.webSignHashExpires, 10);
 
-					var outerSignature	= sodium.from_hex(outerSignatureHex.trim());
+					var signaturePayloadSplit	= signaturePayload.split('\n');
+					var signatureTimestamp		= parseInt(signaturePayloadSplit[1], 10);
 
-					var outerSignatureKey;
-					var innerSignature;
-					var hashObject;
+					/* Ignore unless more recent than previous known good hash */
+					if (
+						!previousHashTimestamp ||
+						signatureTimestamp > previousHashTimestamp
+					) {
+						var outerSignature	= sodium.from_hex(signaturePayloadSplit[0]);
 
-					for (var i = 0 ; i < WebSign.config.publicKeys.length ; ++i) {
-						var publicKey	= WebSign.config.publicKeys[i];
+						var outerSignatureKey;
+						var innerSignature;
+						var hashObject;
 
-						try {
-							innerSignature	= sodium.from_hex(
-								sodium.crypto_sign_open(
-									outerSignature,
-									publicKey,
-									'text'
-								)
-							);
-
-							outerSignatureKey	= publicKey;
-
-							break;
-						}
-						catch (_) {
-							/* Not signed with this key */
-						}
-					}
-
-					if (innerSignature) {
 						for (var i = 0 ; i < WebSign.config.publicKeys.length ; ++i) {
 							var publicKey	= WebSign.config.publicKeys[i];
 
-							if (publicKey !== outerSignatureKey) {
-								try {
-									hashObject	= JSON.parse(
-										sodium.crypto_sign_open(
-											innerSignature,
-											publicKey,
-											'text'
-										)
-									);
+							try {
+								innerSignature	= sodium.from_hex(
+									sodium.crypto_sign_open(
+										outerSignature,
+										publicKey,
+										'text'
+									)
+								);
 
-									break;
-								}
-								catch (_) {
-									/* Not signed with this key */
-								}
+								outerSignatureKey	= publicKey;
+
+								break;
 							}
-						}
-					}
-
-					/* Accept if valid signature, not expired, and
-						more recent than previous known good hash */
-					if (
-						hashObject &&
-						hashObject.expires > Date.now() && (
-							!previousHashTimestamp ||
-							hashObject.timestamp > previousHashTimestamp
-						)
-					) {
-						var applyUpdate	= true;
-
-						if (localStorage.webSignManualUpgrades) {
-							if (confirm('Update to package with hash ' + hashObject.hash + '?')) {
-								alert('Applying update.');
-							}
-							else {
-								alert('Update rejected.');
-								applyUpdate	= false;
+							catch (_) {
+								/* Not signed with this key */
 							}
 						}
 
-						if (applyUpdate) {
-							localStorage.webSignHash			= hashObject.hash;
-							localStorage.webSignHashTimestamp	= hashObject.timestamp;
-							localStorage.webSignHashExpires		= hashObject.expires;
+						if (innerSignature) {
+							for (var i = 0 ; i < WebSign.config.publicKeys.length ; ++i) {
+								var publicKey	= WebSign.config.publicKeys[i];
+
+								if (publicKey !== outerSignatureKey) {
+									try {
+										hashObject	= JSON.parse(
+											sodium.crypto_sign_open(
+												innerSignature,
+												publicKey,
+												'text'
+											)
+										);
+
+										break;
+									}
+									catch (_) {
+										/* Not signed with this key */
+									}
+								}
+							}
+						}
+
+						/* Accept if valid signature, not expired, and
+							detached timestamp was accurate */
+						if (
+							hashObject &&
+							hashObject.expires > Date.now() &&
+							hashObject.timestamp === signatureTimestamp
+						) {
+							var applyUpdate	= true;
+
+							if (localStorage.webSignManualUpgrades) {
+								if (confirm('Update to package with hash ' + hashObject.hash + '?')) {
+									alert('Applying update.');
+								}
+								else {
+									alert('Update rejected.');
+									applyUpdate	= false;
+								}
+							}
+
+							if (applyUpdate) {
+								localStorage.webSignHash			= hashObject.hash;
+								localStorage.webSignHashTimestamp	= hashObject.timestamp;
+								localStorage.webSignHashExpires		= hashObject.expires;
+							}
 						}
 					}
 
