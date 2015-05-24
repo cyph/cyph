@@ -28,14 +28,6 @@ interface IWebSign {
 		publicKeys: string[];
 	};
 
-
-	/**
-	 * Indicates whether the bootstrap payload has changed.
-	 *
-	 * NOTE: This MUST be called and handled by any WebSigned project.
-	 */
-	detectChange () : boolean;
-
 	/**
 	 * Asynchronously get and set the bootstapText property, then run callback.
 	 * @param callback
