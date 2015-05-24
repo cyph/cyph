@@ -18,7 +18,10 @@ self.addEventListener('install', function (e) {
 			for (var i = 0 ; i < files.length ; ++i) {
 				try {
 					var file	= files[i];
-					cache.put(file, fetch(new Request(file)));
+
+					fetch(new Request(file)).then(function (response) {
+						cache.put(file, response);
+					});
 				}
 				catch (_) {}
 			}
