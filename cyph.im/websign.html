@@ -305,14 +305,14 @@
 			xhr.onreadystatechange	= function () {
 				if (xhr.readyState === 4) {
 					if (xhr.status === 200) {
-						success(xhr.responseText);
+						success(xhr.responseText.trim());
 					}
 					else if (retries > 0) {
 						o.retries	= retries - 1;
 						xhr(o);
 					}
 					else {
-						error(xhr.responseText);
+						error(xhr.responseText.trim());
 					}
 				}
 			};
