@@ -203,6 +203,8 @@
 							);
 
 							outerSignatureKey	= publicKey;
+
+							break;
 						}
 						catch (_) {
 							/* Not signed with this key */
@@ -222,6 +224,8 @@
 											'text'
 										)
 									);
+
+									break;
 								}
 								catch (_) {
 									/* Not signed with this key */
@@ -236,7 +240,7 @@
 						hashObject &&
 						hashObject.expires > Date.now() && (
 							!previousHashTimestamp ||
-							hashObject.expires > previousHashTimestamp
+							hashObject.timestamp > previousHashTimestamp
 						)
 					) {
 						var applyUpdate	= true;
