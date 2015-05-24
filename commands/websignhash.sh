@@ -27,6 +27,6 @@ for path in $( \
 	echo -e '\n\n\n\n\n' >> .bootstrapText.tmp
 done
 
-cat .bootstrapText.tmp | shasum -p -a 512 | perl -pe 's/(.*) .*/\1/'
+cat .bootstrapText.tmp | shasum -p -a 256 | perl -pe 's/(.*) .*/\1/'
 
 rm .bootstrapText.tmp
