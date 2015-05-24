@@ -6,7 +6,7 @@ var files	= [
 	'/websign/js/sha256.js',
 	'/websign/js/serviceworker.js',
 	'/websign/js/workerhelper.js',
-	'/websign/lib/sodium.min.js',
+	'/websign/lib/sodium.js',
 	'/websign/appcache.appcache',
 	'/websign/manifest.json'
 ];
