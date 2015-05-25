@@ -188,19 +188,19 @@
 					var previousHashTimestamp	= parseInt(localStorage.webSignHashTimestamp, 10);
 					var previousHashExpires		= parseInt(localStorage.webSignHashExpires, 10);
 
-					var signaturePayloadSplit	= signaturePayload.split('\n');
-					var signatureTimestamp		= parseInt(signaturePayloadSplit[3], 10);
+					try {
+						var signaturePayloadSplit	= signaturePayload.split('\n');
+						var signatureTimestamp		= parseInt(signaturePayloadSplit[3], 10);
 
-					var outerSignatureKey	= WebSign.config.publicKeys[parseInt(signaturePayloadSplit[1], 10)];
-					var innerSignatureKey	= WebSign.config.publicKeys[parseInt(signaturePayloadSplit[2], 10)];
+						var outerSignatureKey	= WebSign.config.publicKeys[parseInt(signaturePayloadSplit[1], 10)];
+						var innerSignatureKey	= WebSign.config.publicKeys[parseInt(signaturePayloadSplit[2], 10)];
 
-					/* Ignore unless more recent than previous known good hash and
-						signing keys are different */
-					if (
-						(!previousHashTimestamp || signatureTimestamp > previousHashTimestamp) &&
-						(outerSignatureKey && innerSignatureKey && outerSignatureKey !== innerSignatureKey)
-					) {
-						try {
+						/* Ignore unless more recent than previous known good hash and
+							signing keys are different */
+						if (
+							(!previousHashTimestamp || signatureTimestamp > previousHashTimestamp) &&
+							(outerSignatureKey && innerSignatureKey && outerSignatureKey !== innerSignatureKey)
+						) {
 							var outerSignature	= nacl.util.decodeHex(signaturePayloadSplit[0]);
 
 							var innerSignature	= nacl.util.decodeHex(
@@ -246,8 +246,8 @@
 								}
 							}
 						}
-						catch (_) {}
 					}
+					catch (_) {}
 
 					/* Get latest package and compare hashes before executing;
 						if hashes differ, try falling back to last known good package,
