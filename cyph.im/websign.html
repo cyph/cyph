@@ -46,7 +46,7 @@
 
 		<script src='/websign/js/crypto.js'></script>
 		<script src='/websign/js/keys.js'></script>
-		<script src='/websign/lib/sodium.js'></script>
+		<script src='/websign/lib/nacl.js'></script>
 		<script src='/websign/js/sha256.js'></script>
 
 		<script>(function () {
@@ -78,7 +78,7 @@
 					'/websign/js/sha256.js',
 					'/websign/js/serviceworker.js',
 					'/websign/js/workerhelper.js',
-					'/websign/lib/sodium.js',
+					'/websign/lib/nacl.js',
 					'/websign/appcache.appcache',
 					'/websign/manifest.json'
 				],
@@ -199,21 +199,23 @@
 						(outerSignatureKey && innerSignatureKey && outerSignatureKey !== innerSignatureKey)
 					) {
 						try {
-							var outerSignature	= sodium.from_hex(signaturePayloadSplit[0]);
+							var outerSignature	= nacl.util.decodeHex(signaturePayloadSplit[0]);
 
-							var innerSignature	= sodium.from_hex(
-								sodium.crypto_sign_open(
-									outerSignature,
-									outerSignatureKey,
-									'text'
+							var innerSignature	= nacl.util.decodeHex(
+								nacl.util.encodeUTF8(
+									nacl.sign.open(
+										outerSignature,
+										outerSignatureKey
+									)
 								)
 							);
 
 							var hashObject	= JSON.parse(
-								sodium.crypto_sign_open(
-									innerSignature,
-									innerSignatureKey,
-									'text'
+								nacl.util.encodeUTF8(
+									nacl.sign.open(
+										innerSignature,
+										innerSignatureKey
+									)
 								)
 							);
 
