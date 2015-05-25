@@ -85,7 +85,7 @@
 					'/websign/manifest.json'
 				],
 
-				publicKeys: PUBLIC_KEYS.map(function (k) { return new Uint8Array(k) })
+				publicKeys: PUBLIC_KEYS
 			},
 
 			loadBootstrapText: function (callback, bootstrapText, i) {
@@ -140,7 +140,6 @@
 			}
 		};
 
-
 		if (WebSign.isOnion) {
 			WebSign.config.abortUrl			= '/404';
 			WebSign.config.cdnUrlBase		= '/cdn/websign/';
@@ -148,7 +147,6 @@
 			WebSign.config.defaultContinent	= '';
 			WebSign.config.urlProtocol		= '';
 		}
-
 
 
 		/*** Main ***/
@@ -166,7 +164,6 @@
 			}
 		});
 
-
 		function main (continent) {
 			setCdnContinent(continent);
 
@@ -183,31 +180,31 @@
 						abort();
 					}
 				},
-				success: function (signaturePayload) {
+				success: function (signature) {
 					var previousHash			= localStorage.webSignHash;
 					var previousHashTimestamp	= parseInt(localStorage.webSignHashTimestamp, 10);
 					var previousHashExpires		= parseInt(localStorage.webSignHashExpires, 10);
 
 					try {
-						var signaturePayloadSplit	= signaturePayload.split('\n');
-						var signatureTimestamp		= parseInt(signaturePayloadSplit[3], 10);
+						var signatureLines		= signature.split('\n');
+						var signatureTimestamp	= parseInt(signatureLines[3], 10);
 
-						var outerSignatureKey	= WebSign.config.publicKeys[parseInt(signaturePayloadSplit[1], 10)];
-						var innerSignatureKey	= WebSign.config.publicKeys[parseInt(signaturePayloadSplit[2], 10)];
+						var outerKey	= new Uint8Array(WebSign.config.publicKeys[parseInt(signatureLines[1], 10)]);
+						var innerKey	= new Uint8Array(WebSign.config.publicKeys[parseInt(signatureLines[2], 10)]);
 
-						/* Ignore unless more recent than previous known good hash and
-							signing keys are different */
+						/* Ignore unless more recent than previous known good
+							hash and signed with two different keys */
 						if (
 							(!previousHashTimestamp || signatureTimestamp > previousHashTimestamp) &&
-							(outerSignatureKey && innerSignatureKey && outerSignatureKey !== innerSignatureKey)
+							(outerKey && innerKey && outerKey !== innerKey)
 						) {
-							var outerSignature	= nacl.util.decodeHex(signaturePayloadSplit[0]);
+							var outerSignature	= nacl.util.decodeHex(signatureLines[0]);
 
 							var innerSignature	= nacl.util.decodeHex(
 								nacl.util.encodeUTF8(
 									nacl.sign.open(
 										outerSignature,
-										outerSignatureKey
+										outerKey
 									)
 								)
 							);
@@ -216,7 +213,7 @@
 								nacl.util.encodeUTF8(
 									nacl.sign.open(
 										innerSignature,
-										innerSignatureKey
+										innerKey
 									)
 								)
 							);
@@ -269,7 +266,6 @@
 		}
 
 
-
 		/*** Helpers ***/
 
 		function abort () {
@@ -311,7 +307,6 @@
 			xhr.open('GET', url, true);
 			xhr.send();
 		}
-
 
 		function loadPackage (errorHandler) {
 			errorHandler	= errorHandler || abort;
