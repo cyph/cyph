@@ -189,8 +189,8 @@
 						var signatureLines		= signature.split('\n');
 						var signatureTimestamp	= parseInt(signatureLines[3], 10);
 
-						var outerKey	= new Uint8Array(WebSign.config.publicKeys[parseInt(signatureLines[1], 10)]);
-						var innerKey	= new Uint8Array(WebSign.config.publicKeys[parseInt(signatureLines[2], 10)]);
+						var outerKey	= WebSign.config.publicKeys[parseInt(signatureLines[1], 10)];
+						var innerKey	= WebSign.config.publicKeys[parseInt(signatureLines[2], 10)];
 
 						/* Ignore unless more recent than previous known good
 							hash and signed with two different keys */
@@ -204,7 +204,7 @@
 								nacl.util.encodeUTF8(
 									nacl.sign.open(
 										outerSignature,
-										outerKey
+										new Uint8Array(outerKey)
 									)
 								)
 							);
@@ -213,7 +213,7 @@
 								nacl.util.encodeUTF8(
 									nacl.sign.open(
 										innerSignature,
-										innerKey
+										new Uint8Array(innerKey)
 									)
 								)
 							);
