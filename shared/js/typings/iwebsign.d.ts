@@ -15,6 +15,9 @@ interface IWebSign {
 	/** Indicates whether this is Tor hidden service. */
 	isOnion: boolean;
 
+	/** Indicates whether this is the current version of WebSign (Ed25519/SHA256). */
+	v2: boolean;
+
 	/** Configuration. */
 	config: {
 		abortUrl: string;
