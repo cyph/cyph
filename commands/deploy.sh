@@ -150,7 +150,8 @@ for d in cyph.im ; do
 		../commands/websign/pack.py index.html pkg.html
 	else
 		../commands/websign/pack.py index.html $d.pkg
-		mv websign.html index.html
+		cat websign/index.html | sed "s/\\\$PROJECT/$d/g" > index.html
+		rm websign/index.html
 
 		currentDir="$(pwd)"
 		cd ..

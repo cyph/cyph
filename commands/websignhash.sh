@@ -7,7 +7,7 @@ cd "$(cd "$(dirname "$0")"; pwd)/../${1}"
 rm .bootstrapText.tmp 2> /dev/null
 
 for path in $( \
-	cat websign.html | \
+	cat websign/index.html | \
 	tr '\n' ' ' | \
 	perl -pe 's/\s+//g' | \
 	perl -pe 's/.*?\[('"'"'\/'"'"',.*?)\].*/\1,/g' | \
@@ -16,14 +16,16 @@ for path in $( \
 "); do
 	file=''
 
+	echo -e "$path:\n" >> .bootstrapText.tmp
+
 	if [ "$path" == '/' ] ; then
-		file='websign.html'
+		file='websign/index.html'
+		cat "$file" | sed "s/\\\$PROJECT/$1/g" >> .bootstrapText.tmp
 	else
 		file="$(echo $path | cut -c 2-)"
+		cat "$file" >> .bootstrapText.tmp
 	fi
 
-	echo -e "$path:\n" >> .bootstrapText.tmp
-	cat "$file" >> .bootstrapText.tmp
 	echo -e '\n\n\n\n\n' >> .bootstrapText.tmp
 done
 
