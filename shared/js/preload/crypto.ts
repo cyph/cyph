@@ -19,3 +19,7 @@ if (!(
 )) {
 	location.pathname	= '/unsupportedbrowser';
 }
+
+if (!('subtle' in crypto) && 'webkitSubtle' in crypto) {
+	crypto.subtle	= crypto['webkitSubtle'];
+}
