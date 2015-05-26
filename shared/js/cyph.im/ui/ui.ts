@@ -146,7 +146,7 @@ module Cyph.im {
 			) {
 				if (
 					WebSign &&
-					WebSign.v2 &&
+					WebSign.v3 &&
 					!Config.webSignHashes[localStorage.webSignBootHash]
 				) {
 					Cyph.Errors.logWebSign();
