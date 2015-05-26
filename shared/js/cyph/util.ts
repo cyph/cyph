@@ -228,7 +228,7 @@ module Cyph {
 					success :
 					error
 			)(
-				xhr.responseText.trim()
+				xhr.responseText
 			);
 
 			if (async) {
