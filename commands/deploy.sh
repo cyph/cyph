@@ -195,6 +195,11 @@ done
 
 find . -name '*.bak' | xargs rm
 
+# Doesn't hurt, legally
+if [ ! $test ] ; then
+	find . -type d -name cryptolib | xargs rm -rf
+fi
+
 
 # AWS credentials
 cat ~/.cyph/jobs.vars >> jobs/jobs.yaml
