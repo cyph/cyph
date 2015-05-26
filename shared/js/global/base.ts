@@ -71,7 +71,7 @@ if (
 
 
 /**
- * @global Event-handler for messages to the current thread.
+ * @global Event handler for messages to the current thread.
  */
 let onthreadmessage: (e: MessageEvent) => any;
 
