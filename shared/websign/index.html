@@ -64,7 +64,7 @@
 			v2: true,
 
 			config: {
-				abortUrl: 'https://www.cyph.com',
+				abortText: 'Loading Cyph failed. Please try again later.',
 				cdnUrlBase: '.cdn.cyph.com/websign/',
 				continentUrl: 'https://api.cyph.com/continent',
 				defaultContinent: 'eu',
@@ -141,7 +141,6 @@
 		};
 
 		if (WebSign.isOnion) {
-			WebSign.config.abortUrl			= '/404';
 			WebSign.config.cdnUrlBase		= '/cdn/websign/';
 			WebSign.config.continentUrl		= '';
 			WebSign.config.defaultContinent	= '';
@@ -269,7 +268,13 @@
 		/*** Helpers ***/
 
 		function abort () {
-			document.location.href	= WebSign.config.abortUrl;
+			var preLoad	= document.getElementById('pre-load');
+
+			for (var i = 0 ; i < 2 ; ++i) {
+				preLoad.removeChild(preLoad.children[0]);
+			}
+
+			preLoad.children[0].innerText	= WebSign.config.abortText;
 		}
 
 		function getValue (o, k, defaultValue) {

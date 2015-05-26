@@ -20,7 +20,7 @@ interface IWebSign {
 
 	/** Configuration. */
 	config: {
-		abortUrl: string;
+		abortText: string;
 		cdnUrlBase: string;
 		continentUrl: string;
 		defaultContinent: string;
