@@ -16,7 +16,7 @@ interface IWebSign {
 	isOnion: boolean;
 
 	/** Indicates whether this is the current version of WebSign (Ed25519/SHA256). */
-	v2: boolean;
+	v3: boolean;
 
 	/** Configuration. */
 	config: {
