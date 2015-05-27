@@ -568,7 +568,7 @@ html.mobile button[disabled] {
 
 	.logo > img {
 		height: 30px !important;
-		margin-left: -5px;
+		margin-left: -8px;
 	}
 }
 [cyph-chat-toolbar] > div {
@@ -858,6 +858,99 @@ html:not(.mobile) .amazon-link {
 		margin-right: auto;
 		background-color: #7d4fd3 !important;
 		margin-bottom: 50px;
+	}
+}
+
+
+/*** New fullscreen video UI ***/
+
+.chat-main.video .video-call.active.playing {
+	position: fixed;
+	z-index: 10000;
+	top: -50%;
+	left: -50%;
+	height: 200%;
+	width: 200%;
+
+	@include transition(all 0.5s ease-in-out);
+
+	* {
+		z-index: 1;
+	}
+
+	.logo {
+		position: fixed;
+		top: 10px;
+		left: 15px;
+		height: 35px;
+		opacity: 0.5;
+	}
+
+	.friend {
+		position: absolute;
+		z-index: 0;
+		top: 0px;
+		left: 0px;
+		bottom: 0px;
+		right: 0px;
+		height: auto !important;
+		width: auto !important;
+		min-height: 50%;
+		min-width: 50%;
+		margin: auto;
+	}
+
+	.me {
+		position: fixed
+	}
+
+	.menu {
+		position: fixed;
+		top: 10px;
+		right: 15px;
+		height: 35px;
+		padding: 0px;
+		opacity: 0.5;
+		outline: white solid 1px !important;
+
+		img {
+			height: 100%;
+		}
+	}
+
+	.buttons {
+		position: fixed;
+		z-index: 2;
+		bottom: 25px;
+		left: calc(50vw - 134px);
+
+		.close-button {
+			position: static;
+			top: auto;
+			right: auto;
+		}
+
+		.md-button.md-fab {
+			background-color: transparent !important;
+			color: white !important;
+			opacity: 0.5 !important;
+			box-shadow: white 0px 0px 4px 0px, white 0px 4px 8px 0px !important;
+			height: 44px !important;
+			width: 44px !important;
+			margin: 10px !important;
+
+			img {
+				height: 25px !important;
+				width: auto !important;
+				vertical-align: middle !important;
+			}
+		}
+	}
+}
+
+.chat-main.video .video-call:not(.playing) {
+	.menu, .buttons :not(.close-button) {
+		display: none;
 	}
 }
 
