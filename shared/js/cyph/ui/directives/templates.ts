@@ -123,6 +123,7 @@ module Cyph {
 								playing: $this.p2pManager.isPlaying()
 							}'
 						>
+							<img class='logo' src='/img/logo.white.horizontal.header.png' />
 							<video
 								class='friend stream'
 								ng-show='$this.p2pManager.p2p.incomingStream.video'
@@ -185,14 +186,86 @@ module Cyph {
 								></md-progress-linear>
 							</div>
 
-							<md-button
-								translate
-								aria-label='End Call'
-								class='md-fab md-theme-grey close-button'
-								ng-click='$this.p2pManager.closeButton()'
-							>
-								<strong>&times;</strong>
+							<md-button translate class='menu' aria-label='Menu'>
+								<img src='/img/icons/menu.png' />
 							</md-button>
+
+							<div class='buttons'>
+								<md-button
+									translate
+									class='md-fab video-call-button'
+									ng-click='$this.p2pManager.videoCallButton()'
+									ng-attr-aria-label='{{
+										!$this.p2pManager.p2p.outgoingStream.video ?
+											"Enable Camera" :
+											"Disable Camera"
+									}}'
+								>
+									<img
+										ng-show='
+											!$this.p2pManager.isActive ||
+											!$this.p2pManager.p2p.outgoingStream.video
+										'
+										src='/img/icons/video.on.png'
+									/>
+									<img
+										ng-show='
+											$this.p2pManager.isActive &&
+											$this.p2pManager.p2p.outgoingStream.video
+										'
+										src='/img/icons/video.off.png'
+									/>
+								</md-button>
+								<md-button
+									translate
+									class='md-fab voice-call-button'
+									ng-click='$this.p2pManager.voiceCallButton()'
+									ng-attr-aria-label='{{
+										!$this.p2pManager.p2p.outgoingStream.audio ?
+											"Enable Mic" :
+											"Disable Mic"
+									}}'
+								>
+									<img
+										ng-show='!$this.p2pManager.isActive'
+										src='/img/icons/voice.on.png'
+									/>
+									<img
+										ng-show='
+											$this.p2pManager.isActive &&
+											!$this.p2pManager.p2p.outgoingStream.audio
+										'
+										src='/img/icons/mic.on.png'
+									/>
+									<img
+										ng-show='
+											$this.p2pManager.isActive &&
+											$this.p2pManager.p2p.outgoingStream.audio
+										'
+										src='/img/icons/mic.off.png'
+									/>
+								</md-button>
+								<md-button
+									translate
+									class='md-fab send-file-button'
+									ng-disabled='$this.p2pManager.p2p.outgoingFile.name'
+									aria-label='Send File'
+								>
+									<img src='/img/icons/file.png' />
+									<input
+										type='file'
+										cyph-filechange='$this.p2pManager.sendFileButton()'
+									/>
+								</md-button>
+								<md-button
+									translate
+									aria-label='End Call'
+									class='md-fab md-theme-grey close-button'
+									ng-click='$this.p2pManager.closeButton()'
+								>
+									<strong>&times;</strong>
+								</md-button>
+							</div>
 						</div>
 
 						<div
