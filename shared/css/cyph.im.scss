@@ -247,26 +247,24 @@ input, textarea {
 	background-color: #7d53cb;
 	box-shadow: 0px 0px 5px #7d53cb;
 }
-.chat-main:not(.mobile) {
-	.message-item {
-		padding: 7.5px 10px 5px 10px;
-		margin: 2.5px;
+.message-item {
+	padding: 7.5px 10px 5px 10px;
+	margin: 2.5px;
 
-		.message {
-			max-width: 75%;
-			padding-bottom: 5px;
-		}
+	.message {
+		max-width: 85%;
+		padding-bottom: 5px;
+	}
 
-		img:not(.emoji) {
-			margin-left: 10vw;
-		}
+	img:not(.emoji) {
+		margin-left: 10vw;
+	}
 
-		.message-timestamp {
-			text-align: right;
-		}
+	.message-timestamp {
+		text-align: right;
 	}
 }
-.chat-main.mobile {
+.chat-main.mobile, .chat-main.video .video-call.active.playing ~ .message-list {
 	.message-item {
 		position: relative;
 		max-width: 80%;
@@ -282,6 +280,8 @@ input, textarea {
 
 		.message {
 			width: 100%;
+			max-width: 100%;
+			padding-bottom: 0px;
 		}
 
 		img:not(.emoji) {
@@ -293,6 +293,7 @@ input, textarea {
 			bottom: 5px;
 			font-size: 10px;
 			color: #dddddd;
+			text-align: initial;
 		}
 
 		.message-author {
@@ -305,7 +306,6 @@ input, textarea {
 
 		.message {
 			text-align: left;
-			/* text-align: right; */
 		}
 
 		.message-timestamp {
@@ -984,6 +984,7 @@ html:not(.mobile) .amazon-link {
 		}
 
 		> md-content {
+			padding-right: 0px;
 			padding-bottom: 50px;
 		}
 	}
@@ -1004,12 +1005,8 @@ html:not(.mobile) .amazon-link {
 }
 
 .chat-main:not(.mobile).video .video-call.active.playing {
-	~ .message-list > md-content {
-		padding-left: 10px;
-	}
-
-	~ .video-call-message-box {
-		bottom: 10px;
+	~ .message-list .message-item .mobile-only {
+		display: initial;
 	}
 
 	&.sidebar-open .logo {

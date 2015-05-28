@@ -43,7 +43,7 @@ module Cyph {
 				/**
 				 * Toggles visibility of sidebar containing chat UI.
 				 */
-				toggleSidebar (): void;
+				toggleSidebar () : void;
 
 				/**
 				 * Attempts to toggle outgoing video stream,
