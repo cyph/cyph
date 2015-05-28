@@ -21,6 +21,7 @@ module Cyph {
 			public static messageList: JQuery;
 			public static messageListInner: JQuery;
 			public static nanoScroller: JQuery;
+			public static p2pContainer: JQuery;
 			public static p2pFriendPlaceholder: JQuery;
 			public static p2pFriendStream: JQuery;
 			public static p2pMeStream: JQuery;
@@ -44,6 +45,7 @@ module Cyph {
 				Elements.messageList			= $('.message-list, .message-list > md-content');
 				Elements.messageListInner		= $('.message-list md-list');
 				Elements.nanoScroller			= $('.nano');
+				Elements.p2pContainer			= $('.video-call');
 				Elements.p2pFriendPlaceholder	= $('.video-call .friend:not(.stream)');
 				Elements.p2pFriendStream		= $('.video-call .friend.stream');
 				Elements.p2pMeStream			= $('.video-call .me');

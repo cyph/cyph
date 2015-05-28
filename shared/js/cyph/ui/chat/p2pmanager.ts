@@ -56,6 +56,12 @@ module Cyph {
 					});
 				}
 
+				public toggleSidebar () : void {
+					this.baseButtonClick(() =>
+						Elements.p2pContainer.toggleClass('sidebar-open')
+					);
+				}
+
 				public videoCallButton () : void {
 					this.baseButtonClick(() => {
 						if (this.isEnabled) {

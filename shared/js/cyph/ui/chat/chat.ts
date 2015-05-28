@@ -293,7 +293,8 @@ module Cyph {
 						/* Prevent jankiness upon message send on mobile */
 
 						Elements.messageBox.click(e => {
-							for (const $button of [Elements.sendButton, Elements.insertPhotoMobile]) {
+							Elements.sendButton.add(Elements.insertPhotoMobile).each((i, elem) => {
+								const $button	= $(elem);
 								const bounds	= $button['bounds']();
 
 								if (

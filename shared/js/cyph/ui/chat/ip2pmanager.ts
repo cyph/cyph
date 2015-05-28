@@ -41,6 +41,11 @@ module Cyph {
 				sendFileButton () : void;
 
 				/**
+				 * Toggles visibility of sidebar containing chat UI.
+				 */
+				toggleSidebar (): void;
+
+				/**
 				 * Attempts to toggle outgoing video stream,
 				 * requesting new P2P session if necessary.
 				 */

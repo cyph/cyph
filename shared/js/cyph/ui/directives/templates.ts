@@ -123,7 +123,9 @@ module Cyph {
 								playing: $this.p2pManager.isPlaying()
 							}'
 						>
-							<img class='logo' src='/img/logo.white.horizontal.header.png' />
+							<a class='logo' ng-href='{{Cyph.Env.homeUrl}}'>
+								<img src='/img/betalogo.mobile.png' />
+							</a>
 							<video
 								class='friend stream'
 								ng-show='$this.p2pManager.p2p.incomingStream.video'
@@ -186,7 +188,12 @@ module Cyph {
 								></md-progress-linear>
 							</div>
 
-							<md-button translate class='menu' aria-label='Menu'>
+							<md-button
+								translate
+								class='sidebar'
+								aria-label='Sidebar'
+								ng-click='$this.p2pManager.toggleSidebar()'
+							>
 								<img src='/img/icons/menu.png' />
 							</md-button>
 
@@ -267,6 +274,11 @@ module Cyph {
 								</md-button>
 							</div>
 						</div>
+
+						<div
+							class='video-call-message-box'
+							cyph-chat-message-box='$this'
+						></div>
 
 						<div
 							ng-view
@@ -364,11 +376,7 @@ module Cyph {
 						ng-class='{mobile: $this.isMobile}'
 						ng-show='
 							$this.state === Cyph.UI.Chat.States.chat &&
-							$this.session.state.isAlive &&
-							!(
-								$this.isMobile &&
-								$this.p2pManager.isPlaying()
-							)
+							$this.session.state.isAlive
 						'
 					>
 						<textarea
