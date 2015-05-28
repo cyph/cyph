@@ -104,7 +104,7 @@ input, textarea {
 	display: none;
 }
 .send-button, .insert-photo-mobile {
-	position: fixed;
+	position: absolute;
 	bottom: 5px;
 	right: 20px;
 	opacity: 0.75;
@@ -253,7 +253,7 @@ input, textarea {
 		margin: 2.5px;
 
 		.message {
-			max-width: 85%;
+			max-width: 75%;
 			padding-bottom: 5px;
 		}
 
@@ -481,24 +481,15 @@ html.mobile button[disabled] {
 }
 @media all and (orientation: landscape) {
 	.video-call {
-		.friend {
-			width: 100%;
-		}
-
 		.me {
+			min-width: 100px;
 			width: 20vw;
 		}
 	}
 }
 @media all and (orientation: portrait) {
 	.video-call {
-		.friend {
-			margin-left: 50%;
-			@include transform(translateX(-50%));
-		}
-
 		.me {
-			max-height: 25vh;
 			width: 40vw;
 		}
 	}
@@ -872,10 +863,12 @@ html:not(.mobile) .amazon-link {
 	height: 200%;
 	width: 200%;
 
-	@include transition(all 0.5s ease-in-out);
-
 	* {
 		z-index: 1;
+	}
+
+	*, ~ * {
+		@include transition(transform 0.5s ease-in-out !important);
 	}
 
 	.logo {
@@ -884,6 +877,10 @@ html:not(.mobile) .amazon-link {
 		left: 15px;
 		height: 35px;
 		opacity: 0.5;
+
+		img {
+			height: 100%;
+		}
 	}
 
 	.friend {
@@ -901,10 +898,10 @@ html:not(.mobile) .amazon-link {
 	}
 
 	.me {
-		position: fixed
+		position: fixed;
 	}
 
-	.menu {
+	.sidebar {
 		position: fixed;
 		top: 10px;
 		right: 15px;
@@ -946,10 +943,98 @@ html:not(.mobile) .amazon-link {
 			}
 		}
 	}
+
+	~ .message-list {
+		display: block;
+		position: fixed;
+		left: 100%;
+		top: 0px;
+		height: 100% !important;
+		max-height: 100% !important;
+		z-index: 10001;
+		width: 300px;
+		background-color: rgba(255, 255, 255, 0.5);
+
+		.message-item {
+			box-shadow: none;
+
+			&.author-friend {
+				background-color: rgba(125, 83, 203, 0.4);
+
+				&:before {
+					display: none;
+				}
+
+				&:after {
+					border-color: transparent rgba(125, 83, 203, 0.4);
+				}
+			}
+
+			&.author-me {
+				background-color: rgba(134, 82, 228, 0.4);
+
+				&:before {
+					display: none;
+				}
+
+				&:after {
+					border-color: transparent rgba(134, 82, 228, 0.4);
+				}
+			}
+		}
+
+		> md-content {
+			padding-bottom: 50px;
+		}
+	}
+
+	~ .video-call-message-box {
+		position: fixed;
+		z-index: 10002;
+		bottom: 0px;
+		right: -310px;
+		width: 310px;
+	}
+
+	&.sidebar-open {
+		.logo, .me, .buttons, .sidebar, ~ .message-list, ~ .video-call-message-box {
+			@include transform(translateX(-300px));
+		}
+	}
 }
 
-.chat-main.video .video-call:not(.playing) {
-	.menu, .buttons :not(.close-button) {
+.chat-main:not(.mobile).video .video-call.active.playing {
+	~ .message-list > md-content {
+		padding-left: 10px;
+	}
+
+	~ .video-call-message-box {
+		bottom: 10px;
+	}
+
+	&.sidebar-open .logo {
+		@include transform(translateX(0px) !important);
+	}
+}
+.chat-main.mobile.video .video-call.active.playing {
+	~ .message-list {
+		width: calc(100vw - 65px);
+	}
+
+	~ .video-call-message-box {
+		right: calc(65px - 100vw);
+		width: calc(100vw - 65px);
+	}
+
+	&.sidebar-open {
+		.logo, .me, .buttons, .sidebar, ~ .message-list, ~ .video-call-message-box {
+			@include transform(translateX(calc(65px - 100vw)));
+		}
+	}
+}
+
+.chat-main .video-call:not(.playing) {
+	.logo, .sidebar, .buttons > :not(.close-button), ~ .video-call-message-box {
 		display: none;
 	}
 }
