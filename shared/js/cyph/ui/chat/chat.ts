@@ -304,7 +304,7 @@ module Cyph {
 									$button.click();
 									return;
 								}
-							}
+							});
 						});
 					}
 					else {
