@@ -944,6 +944,10 @@ html:not(.mobile) .amazon-link {
 		}
 	}
 
+	.md-button:hover {
+		@include transform(scale(1.1));
+	}
+
 	~ .message-list {
 		display: block;
 		position: fixed;
@@ -957,6 +961,10 @@ html:not(.mobile) .amazon-link {
 
 		.message-item {
 			box-shadow: none;
+
+			&.author-app {
+				background-color: rgba(0, 0, 0, 0.3);
+			}
 
 			&.author-friend {
 				background-color: rgba(125, 83, 203, 0.4);
@@ -1000,6 +1008,25 @@ html:not(.mobile) .amazon-link {
 	&.sidebar-open {
 		.logo, .me, .buttons, .sidebar, ~ .message-list, ~ .video-call-message-box {
 			@include transform(translateX(-300px));
+		}
+	}
+}
+
+@media (min-width: 1200px) {
+	.chat-main:not(.mobile).video .video-call.active.playing {
+		~ .message-list {
+			width: 25vw;
+		}
+
+		~ .video-call-message-box {
+			right: calc(-25vw - 10px);
+			width: calc(25vw + 10px);
+		}
+
+		&.sidebar-open {
+			.logo, .me, .buttons, .sidebar, ~ .message-list, ~ .video-call-message-box {
+				@include transform(translateX(-25vw));
+			}
 		}
 	}
 }

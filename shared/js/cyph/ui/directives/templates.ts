@@ -194,7 +194,7 @@ module Cyph {
 								aria-label='Sidebar'
 								ng-click='$this.p2pManager.toggleSidebar()'
 							>
-								<img src='/img/icons/menu.png' />
+								<img src='/img/icons/chat.png' />
 							</md-button>
 
 							<div class='buttons'>
