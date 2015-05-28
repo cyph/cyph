@@ -1009,6 +1009,10 @@ html:not(.mobile) .amazon-link {
 		display: initial;
 	}
 
+	~ .video-call-message-box {
+		bottom: 10px;
+	}
+
 	&.sidebar-open .logo {
 		@include transform(translateX(0px) !important);
 	}
