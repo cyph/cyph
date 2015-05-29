@@ -1035,8 +1035,12 @@ html:not(.mobile) .amazon-link {
 }
 
 .chat-main:not(.mobile).video .video-call.active.playing {
-	~ .message-list .message-item .mobile-only {
-		display: initial;
+	~ .message-list .message-item {
+		font-size: initial;
+
+		.mobile-only {
+			display: initial;
+		}
 	}
 
 	~ .video-call-message-box {
