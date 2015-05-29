@@ -264,11 +264,11 @@ module Cyph {
 											break;
 										}
 										case P2P.UIEvents.Events.requestConfirmation: {
-											this.dialogManager.alert({
-												title: Strings.p2pTitle,
-												content: Strings.p2pRequestConfirmation,
-												ok: Strings.ok
-											});
+											this.chat.addMessage(
+												Strings.p2pRequestConfirmation,
+												Session.Users.app,
+												false
+											);
 											break;
 										}
 										case P2P.UIEvents.Events.requestRejection: {
