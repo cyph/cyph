@@ -915,6 +915,10 @@ html:not(.mobile) .amazon-link {
 		}
 	}
 
+	.md-button {
+		background-color: rgba(0, 0, 0, 0.2) !important;
+	}
+
 	.buttons {
 		position: fixed;
 		z-index: 2;
@@ -928,7 +932,6 @@ html:not(.mobile) .amazon-link {
 		}
 
 		.md-button.md-fab {
-			background-color: transparent !important;
 			color: white !important;
 			opacity: 0.5 !important;
 			box-shadow: white 0px 0px 4px 0px, white 0px 4px 8px 0px !important;
