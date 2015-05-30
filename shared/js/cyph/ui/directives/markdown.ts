@@ -59,7 +59,7 @@ module Cyph {
 						link: (scope, element, attrs) => {
 							const set	= (val: string) =>
 								element.html(
-									self['DOMPurify'].sanitize(
+									DOMPurify.sanitize(
 										markdown.render(val).
 
 											/* Merge blockquotes like reddit */

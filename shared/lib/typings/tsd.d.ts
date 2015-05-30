@@ -6,3 +6,4 @@
 /// <reference path="jquery/jquery.d.ts" />
 /// <reference path="webrtc/MediaStream.d.ts" />
 /// <reference path="webrtc/RTCPeerConnection.d.ts" />
+/// <reference path="dompurify/dompurify.d.ts" />

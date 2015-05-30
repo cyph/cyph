@@ -50,7 +50,8 @@ tsd query --resolve --overwrite --save --action install \
 	highlightjs \
 	MediaStream \
 	RTCPeerConnection \
-	cryptojs
+	cryptojs \
+	dompurify
 
 cd ../cryptolib
 
