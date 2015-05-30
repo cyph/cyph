@@ -73,7 +73,7 @@ module Cyph {
 									}
 								);
 
-								element.html(val);
+								element.html(self['DOMPurify'].sanitize(val));
 							};
 
 							set(scope[Markdown.title] || '');
