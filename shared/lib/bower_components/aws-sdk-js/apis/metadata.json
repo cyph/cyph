@@ -50,15 +50,22 @@
   "directconnect": {
     "name": "DirectConnect"
   },
+  "directoryservice": {
+    "prefix": "ds",
+    "name": "DirectoryService"
+  },
   "dynamodb": {
     "name": "DynamoDB"
   },
   "ec2": {
     "name": "EC2",
-    "versions": ["2013-06-15*", "2013-10-15*", "2014-02-01*", "2014-05-01*", "2014-06-15*", "2014-09-01*", "2014-10-01*"]
+    "versions": ["2013-06-15*", "2013-10-15*", "2014-02-01*", "2014-05-01*", "2014-06-15*", "2014-09-01*", "2014-10-01*", "2015-03-01*"]
   },
   "ecs": {
     "name": "ECS"
+  },
+  "efs": {
+    "name": "EFS"
   },
   "elasticache": {
     "name": "ElastiCache",

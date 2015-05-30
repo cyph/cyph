@@ -38,22 +38,22 @@ Copyright (c) 2015 Daniel Eden
 
 @-webkit-keyframes bounce {
   0%, 20%, 53%, 80%, 100% {
-    -webkit-transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
-    transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+    -webkit-animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+    animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
     -webkit-transform: translate3d(0,0,0);
     transform: translate3d(0,0,0);
   }
 
   40%, 43% {
-    -webkit-transition-timing-function: cubic-bezier(0.755, 0.050, 0.855, 0.060);
-    transition-timing-function: cubic-bezier(0.755, 0.050, 0.855, 0.060);
+    -webkit-animation-timing-function: cubic-bezier(0.755, 0.050, 0.855, 0.060);
+    animation-timing-function: cubic-bezier(0.755, 0.050, 0.855, 0.060);
     -webkit-transform: translate3d(0, -30px, 0);
     transform: translate3d(0, -30px, 0);
   }
 
   70% {
-    -webkit-transition-timing-function: cubic-bezier(0.755, 0.050, 0.855, 0.060);
-    transition-timing-function: cubic-bezier(0.755, 0.050, 0.855, 0.060);
+    -webkit-animation-timing-function: cubic-bezier(0.755, 0.050, 0.855, 0.060);
+    animation-timing-function: cubic-bezier(0.755, 0.050, 0.855, 0.060);
     -webkit-transform: translate3d(0, -15px, 0);
     transform: translate3d(0, -15px, 0);
   }
@@ -66,22 +66,22 @@ Copyright (c) 2015 Daniel Eden
 
 @keyframes bounce {
   0%, 20%, 53%, 80%, 100% {
-    -webkit-transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
-    transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+    -webkit-animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+    animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
     -webkit-transform: translate3d(0,0,0);
     transform: translate3d(0,0,0);
   }
 
   40%, 43% {
-    -webkit-transition-timing-function: cubic-bezier(0.755, 0.050, 0.855, 0.060);
-    transition-timing-function: cubic-bezier(0.755, 0.050, 0.855, 0.060);
+    -webkit-animation-timing-function: cubic-bezier(0.755, 0.050, 0.855, 0.060);
+    animation-timing-function: cubic-bezier(0.755, 0.050, 0.855, 0.060);
     -webkit-transform: translate3d(0, -30px, 0);
     transform: translate3d(0, -30px, 0);
   }
 
   70% {
-    -webkit-transition-timing-function: cubic-bezier(0.755, 0.050, 0.855, 0.060);
-    transition-timing-function: cubic-bezier(0.755, 0.050, 0.855, 0.060);
+    -webkit-animation-timing-function: cubic-bezier(0.755, 0.050, 0.855, 0.060);
+    animation-timing-function: cubic-bezier(0.755, 0.050, 0.855, 0.060);
     -webkit-transform: translate3d(0, -15px, 0);
     transform: translate3d(0, -15px, 0);
   }
@@ -484,10 +484,101 @@ Copyright (c) 2015 Daniel Eden
   animation-name: wobble;
 }
 
+@-webkit-keyframes jello {
+  11.1% {
+    -webkit-transform: none;
+            transform: none
+  }
+
+  22.2% {
+    -webkit-transform: skewX(-12.5deg) skewY(-12.5deg);
+            transform: skewX(-12.5deg) skewY(-12.5deg)
+  }
+  33.3% {
+    -webkit-transform: skewX(6.25deg) skewY(6.25deg);
+            transform: skewX(6.25deg) skewY(6.25deg)
+  }
+  44.4% {
+    -webkit-transform: skewX(-3.125deg) skewY(-3.125deg);
+            transform: skewX(-3.125deg) skewY(-3.125deg)
+  }
+  55.5% {
+    -webkit-transform: skewX(1.5625deg) skewY(1.5625deg);
+            transform: skewX(1.5625deg) skewY(1.5625deg)
+  }
+  66.6% {
+    -webkit-transform: skewX(-0.78125deg) skewY(-0.78125deg);
+            transform: skewX(-0.78125deg) skewY(-0.78125deg)
+  }
+  77.7% {
+    -webkit-transform: skewX(0.390625deg) skewY(0.390625deg);
+            transform: skewX(0.390625deg) skewY(0.390625deg)
+  }
+  88.8% {
+    -webkit-transform: skewX(-0.1953125deg) skewY(-0.1953125deg);
+            transform: skewX(-0.1953125deg) skewY(-0.1953125deg)
+  }
+  100% {
+    -webkit-transform: none;
+            transform: none
+  }
+}
+
+@keyframes jello {
+  11.1% {
+    -webkit-transform: none;
+            transform: none
+  }
+
+  22.2% {
+
+    -webkit-transform: skewX(-12.5deg) skewY(-12.5deg);
+            transform: skewX(-12.5deg) skewY(-12.5deg)
+  }
+  33.3% {
+    -webkit-transform: skewX(6.25deg) skewY(6.25deg);
+            transform: skewX(6.25deg) skewY(6.25deg)
+  }
+  44.4% {
+    -webkit-transform: skewX(-3.125deg) skewY(-3.125deg);
+            transform: skewX(-3.125deg) skewY(-3.125deg)
+  }
+  55.5% {
+    -webkit-transform: skewX(1.5625deg) skewY(1.5625deg);
+            transform: skewX(1.5625deg) skewY(1.5625deg)
+  }
+  66.6% {
+    -webkit-transform: skewX(-0.78125deg) skewY(-0.78125deg);
+            transform: skewX(-0.78125deg) skewY(-0.78125deg)
+  }
+  77.7% {
+    -webkit-transform: skewX(0.390625deg) skewY(0.390625deg);
+            transform: skewX(0.390625deg) skewY(0.390625deg)
+  }
+  88.8% {
+    -webkit-transform: skewX(-0.1953125deg) skewY(-0.1953125deg);
+            transform: skewX(-0.1953125deg) skewY(-0.1953125deg)
+  }
+  100% {
+    -webkit-transform: none;
+            transform: none
+  }
+}
+
+
+
+.jello{
+    -webkit-animation-name:jello;
+            animation-name:jello;
+    -webkit-transform-origin: center;
+
+            transform-origin: center
+}
+
 @-webkit-keyframes bounceIn {
   0%, 20%, 40%, 60%, 80%, 100% {
-    -webkit-transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
-    transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+    -webkit-animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+    animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
   }
 
   0% {
@@ -526,8 +617,8 @@ Copyright (c) 2015 Daniel Eden
 
 @keyframes bounceIn {
   0%, 20%, 40%, 60%, 80%, 100% {
-    -webkit-transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
-    transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+    -webkit-animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+    animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
   }
 
   0% {
@@ -571,8 +662,8 @@ Copyright (c) 2015 Daniel Eden
 
 @-webkit-keyframes bounceInDown {
   0%, 60%, 75%, 90%, 100% {
-    -webkit-transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
-    transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+    -webkit-animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+    animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
   }
 
   0% {
@@ -605,8 +696,8 @@ Copyright (c) 2015 Daniel Eden
 
 @keyframes bounceInDown {
   0%, 60%, 75%, 90%, 100% {
-    -webkit-transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
-    transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+    -webkit-animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+    animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
   }
 
   0% {
@@ -644,8 +735,8 @@ Copyright (c) 2015 Daniel Eden
 
 @-webkit-keyframes bounceInLeft {
   0%, 60%, 75%, 90%, 100% {
-    -webkit-transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
-    transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+    -webkit-animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+    animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
   }
 
   0% {
@@ -678,8 +769,8 @@ Copyright (c) 2015 Daniel Eden
 
 @keyframes bounceInLeft {
   0%, 60%, 75%, 90%, 100% {
-    -webkit-transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
-    transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+    -webkit-animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+    animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
   }
 
   0% {
@@ -717,8 +808,8 @@ Copyright (c) 2015 Daniel Eden
 
 @-webkit-keyframes bounceInRight {
   0%, 60%, 75%, 90%, 100% {
-    -webkit-transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
-    transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+    -webkit-animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+    animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
   }
 
   0% {
@@ -751,8 +842,8 @@ Copyright (c) 2015 Daniel Eden
 
 @keyframes bounceInRight {
   0%, 60%, 75%, 90%, 100% {
-    -webkit-transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
-    transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+    -webkit-animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+    animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
   }
 
   0% {
@@ -790,8 +881,8 @@ Copyright (c) 2015 Daniel Eden
 
 @-webkit-keyframes bounceInUp {
   0%, 60%, 75%, 90%, 100% {
-    -webkit-transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
-    transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+    -webkit-animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+    animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
   }
 
   0% {
@@ -824,8 +915,8 @@ Copyright (c) 2015 Daniel Eden
 
 @keyframes bounceInUp {
   0%, 60%, 75%, 90%, 100% {
-    -webkit-transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
-    transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+    -webkit-animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+    animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
   }
 
   0% {
@@ -1687,16 +1778,16 @@ Copyright (c) 2015 Daniel Eden
   0% {
     -webkit-transform: perspective(400px) rotate3d(1, 0, 0, 90deg);
     transform: perspective(400px) rotate3d(1, 0, 0, 90deg);
-    -webkit-transition-timing-function: ease-in;
-    transition-timing-function: ease-in;
+    -webkit-animation-timing-function: ease-in;
+    animation-timing-function: ease-in;
     opacity: 0;
   }
 
   40% {
     -webkit-transform: perspective(400px) rotate3d(1, 0, 0, -20deg);
     transform: perspective(400px) rotate3d(1, 0, 0, -20deg);
-    -webkit-transition-timing-function: ease-in;
-    transition-timing-function: ease-in;
+    -webkit-animation-timing-function: ease-in;
+    animation-timing-function: ease-in;
   }
 
   60% {
@@ -1720,16 +1811,16 @@ Copyright (c) 2015 Daniel Eden
   0% {
     -webkit-transform: perspective(400px) rotate3d(1, 0, 0, 90deg);
     transform: perspective(400px) rotate3d(1, 0, 0, 90deg);
-    -webkit-transition-timing-function: ease-in;
-    transition-timing-function: ease-in;
+    -webkit-animation-timing-function: ease-in;
+    animation-timing-function: ease-in;
     opacity: 0;
   }
 
   40% {
     -webkit-transform: perspective(400px) rotate3d(1, 0, 0, -20deg);
     transform: perspective(400px) rotate3d(1, 0, 0, -20deg);
-    -webkit-transition-timing-function: ease-in;
-    transition-timing-function: ease-in;
+    -webkit-animation-timing-function: ease-in;
+    animation-timing-function: ease-in;
   }
 
   60% {
@@ -1760,16 +1851,16 @@ Copyright (c) 2015 Daniel Eden
   0% {
     -webkit-transform: perspective(400px) rotate3d(0, 1, 0, 90deg);
     transform: perspective(400px) rotate3d(0, 1, 0, 90deg);
-    -webkit-transition-timing-function: ease-in;
-    transition-timing-function: ease-in;
+    -webkit-animation-timing-function: ease-in;
+    animation-timing-function: ease-in;
     opacity: 0;
   }
 
   40% {
     -webkit-transform: perspective(400px) rotate3d(0, 1, 0, -20deg);
     transform: perspective(400px) rotate3d(0, 1, 0, -20deg);
-    -webkit-transition-timing-function: ease-in;
-    transition-timing-function: ease-in;
+    -webkit-animation-timing-function: ease-in;
+    animation-timing-function: ease-in;
   }
 
   60% {
@@ -1793,16 +1884,16 @@ Copyright (c) 2015 Daniel Eden
   0% {
     -webkit-transform: perspective(400px) rotate3d(0, 1, 0, 90deg);
     transform: perspective(400px) rotate3d(0, 1, 0, 90deg);
-    -webkit-transition-timing-function: ease-in;
-    transition-timing-function: ease-in;
+    -webkit-animation-timing-function: ease-in;
+    animation-timing-function: ease-in;
     opacity: 0;
   }
 
   40% {
     -webkit-transform: perspective(400px) rotate3d(0, 1, 0, -20deg);
     transform: perspective(400px) rotate3d(0, 1, 0, -20deg);
-    -webkit-transition-timing-function: ease-in;
-    transition-timing-function: ease-in;
+    -webkit-animation-timing-function: ease-in;
+    animation-timing-function: ease-in;
   }
 
   60% {

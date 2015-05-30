@@ -2,13 +2,11 @@
  * Angular Material Design
  * https://github.com/angular/material
  * @license MIT
- * v0.9.0
+ * v0.9.6
  */
 goog.provide('ng.material.core');
 
 
-(function() {
-'use strict';
 
 /**
  * Initialization function that validates environment
@@ -61,11 +59,6 @@ function rAFDecorator( $delegate ) {
   };
   return $delegate;
 }
-
-})();
-
-(function() {
-'use strict';
 
 angular.module('material.core')
 .factory('$mdConstant', MdConstantFactory);
@@ -125,10 +118,6 @@ function MdConstantFactory($$rAF, $sniffer) {
 }
 MdConstantFactory.$inject = ["$$rAF", "$sniffer"];
 
-})();
-
-(function(){
-
   angular
     .module('material.core')
     .config( ["$provide", function($provide){
@@ -137,7 +126,7 @@ MdConstantFactory.$inject = ["$$rAF", "$sniffer"];
             * Inject the iterator facade to easily support iteration and accessors
             * @see iterator below
             */
-           $delegate.iterator = Iterator;
+           $delegate.iterator = MdIterator;
 
            return $delegate;
          }
@@ -150,7 +139,7 @@ MdConstantFactory.$inject = ["$$rAF", "$sniffer"];
    * @param items Array list which this iterator will enumerate
    * @param reloop Boolean enables iterator to consider the list as an endless reloop
    */
-  function Iterator(items, reloop) {
+  function MdIterator(items, reloop) {
     var trueFn = function() { return true; };
 
     if (items && !angular.isArray(items)) {
@@ -356,9 +345,6 @@ MdConstantFactory.$inject = ["$$rAF", "$sniffer"];
     }
   }
 
-})();
-
-(function(){
 
 angular.module('material.core')
 .factory('$mdMedia', mdMediaFactory);
@@ -488,12 +474,6 @@ function mdMediaFactory($mdConstant, $rootScope, $window) {
 }
 mdMediaFactory.$inject = ["$mdConstant", "$rootScope", "$window"];
 
-
-})();
-
-(function() {
-'use strict';
-
 /*
  * This var has to be outside the angular factory, otherwise when
  * there are multiple material apps on the same page, each app
@@ -535,133 +515,103 @@ angular.module('material.core')
     offsetRect: function(element, offsetParent) {
       return Util.clientRect(element, offsetParent, true);
     },
+    // Disables scroll around the passed element. Goes up the DOM to find a
+    // disableTarget (a md-content that is scrolling, or the body as a fallback)
+    // and uses CSS/JS to prevent it from scrolling
     disableScrollAround: function(element) {
-      var parentContent = element instanceof angular.element ? element[0] : element;
-      var lastParent;
-      var disableTarget, scrollEl, useDocElement;
-      while (parentContent = this.getClosest(parentContent, 'MD-CONTENT', true)) {
-        if (isScrolling(parentContent)) {
-          disableTarget = angular.element(parentContent);
-        } else {
-          lastParent = parentContent;
+      element = element instanceof angular.element ? element[0] : element;
+      var parentEl = element;
+      var disableTarget;
+
+      // Find the highest level scrolling md-content
+      while (parentEl = this.getClosest(parentEl, 'MD-CONTENT', true)) {
+        if (isScrolling(parentEl)) {
+          disableTarget = angular.element(parentEl)[0];
         }
       }
+
+      // Default to the body if no scrolling md-content
       if (!disableTarget) {
-        if (!lastParent ||
-          $document[0].body.scrollTop || $document[0].documentElement.scrollTop ) {
-          disableTarget = angular.element($document[0].body);
-        } else {
-          disableTarget = angular.element(lastParent);
-        }
+        disableTarget = $document[0].body;
+        if (!isScrolling(disableTarget)) return angular.noop;
       }
 
-      if (disableTarget[0].nodeName == 'BODY' && $document[0].documentElement.scrollTop) {
-        scrollEl = $document[0].documentElement;
-        useDocElement = true;
+      if (disableTarget.nodeName == 'BODY') {
+        return disableBodyScroll();
       } else {
-        scrollEl = disableTarget[0];
+        return disableElementScroll();
       }
 
-      var heightOffset = scrollEl.scrollTop;
-      var originalWidth = scrollEl.clientWidth;
-
-      var restoreStyle = disableTarget.attr('style');
-      var disableStyle = $window.getComputedStyle(disableTarget[0]);
-      var wrapperEl = angular.element('<div class="md-virtual-scroll-container"><div class="md-virtual-scroller"></div></div>');
-      var virtualScroller = wrapperEl.children().eq(0);
-      virtualScroller.append(disableTarget[0].childNodes);
-      disableTarget.append(wrapperEl);
-      var originalScrollBarShow = originalWidth < scrollEl.clientWidth;
-
-      computeScrollbars(disableStyle);
-
-      virtualScroller.attr('layout-margin', disableTarget.attr('layout-margin'));
-      virtualScroller.css({
-        display: disableStyle.display,
-        '-webkit-flex-direction': disableStyle.webkitFlexDirection,
-        '-ms-flex-direction': disableStyle.msFlexDirection,
-        'flex-direction': disableStyle.flexDirection,
-        '-webkit-align-items': disableStyle.webkitAlignItems,
-        '-ms-flex-align': disableStyle.msFlexAlign,
-        'align-items': disableStyle.alignItems,
-        '-webkit-justify-content': disableStyle.webkitJustifyContent,
-        '-ms-flex-pack': disableStyle.msFlexPack,
-        'justify-content': disableStyle.justifyContent,
-        '-webkit-flex': disableStyle.webkitFlex,
-        '-ms-flex': disableStyle.msFlex,
-        flex: disableStyle.flex
-      });
-      if (/flex$/.test(disableStyle.display)) {
-        virtualScroller.css('height', '100%');
-      }
-
-      computeSize();
-
-      angular.element($window).on('resize', computeSize);
-
-      function computeSize() {
-        if (restoreStyle) {
-          disableTarget.attr('style', restoreStyle);
-        } else {
-          disableTarget[0].removeAttribute('style');
-        }
-        virtualScroller.css('position', 'static');
-        var computedStyle = $window.getComputedStyle(disableTarget[0]);
-        computeScrollbars(computedStyle);
-        var innerWidth = disableTarget[0].clientWidth;
-        if (computedStyle.boxSizing == 'border-box') {
-          innerWidth -= parseFloat(computedStyle.paddingLeft, 10);
-          innerWidth -= parseFloat(computedStyle.paddingRight, 10);
-        }
-        wrapperEl.css({
-          'max-width': innerWidth + 'px'
+      // Creates a virtual scrolling mask to absorb touchmove, keyboard, scrollbar clicking, and wheel events
+      function disableElementScroll() {
+        var scrollMask = angular.element('<div class="md-scroll-mask"><div class="md-scroll-mask-bar"></div></div>');
+        var computedStyle = $window.getComputedStyle(disableTarget);
+        var disableRect = disableTarget.getBoundingClientRect();
+        var scrollWidth = disableRect.width - disableTarget.clientWidth;
+        applyStyles(scrollMask[0], {
+          zIndex: computedStyle.zIndex == 'auto' ? 2 : computedStyle.zIndex + 1,
+          width: disableRect.width + 'px',
+          height: disableRect.height + 'px',
+          top: disableRect.top + 'px',
+          left: disableRect.left + 'px'
         });
-        disableTarget.css('position', 'relative');
-        virtualScroller.css('position', 'absolute');
+        scrollMask[0].firstElementChild.style.width = scrollWidth + 'px';
+        $document[0].body.appendChild(scrollMask[0]);
+
+        scrollMask.on('wheel', preventDefault);
+        scrollMask.on('touchmove', preventDefault);
+        $document.on('keydown', disableKeyNav);
+
+        return function restoreScroll() {
+          scrollMask.off('wheel');
+          scrollMask.off('touchmove');
+          scrollMask[0].parentNode.removeChild(scrollMask[0]);
+          $document.off('keydown', disableKeyNav);
+        };
+
+        // Prevent keypresses from elements inside the disableTarget
+        // used to stop the keypresses that could cause the page to scroll
+        // (arrow keys, spacebar, tab, etc).
+        function disableKeyNav(e) {
+          if (disableTarget.contains(e.target)) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+          }
+        }
+
+        function preventDefault(e) {
+          e.preventDefault();
+        }
       }
 
-      function computeScrollbars(computedStyle) {
-        var scrollBarsShowing = !Util.floatingScrollbars()
-            && computedStyle.overflowY != 'hidden'
-            && (
-              virtualScroller[0].clientHeight > scrollEl.clientHeight
-              || originalScrollBarShow
-            );
+      // Converts the disableTarget (body) to a position fixed block and translate it to the propper scroll position
+      function disableBodyScroll() {
+        var restoreStyle = disableTarget.getAttribute('style') || '';
+        var scrollOffset = disableTarget.scrollTop;
 
-        var scrollerOffset = -1 * (heightOffset - parseFloat(disableStyle.paddingTop, 10));
-        disableTarget.css('padding-top', '0px');
+        applyStyles(disableTarget, {
+          position: 'fixed',
+          width: '100%',
+          overflowY: 'scroll',
+          top: -scrollOffset + 'px'
+        });
 
-        if (scrollBarsShowing) {
-          disableTarget.css('overflow-y', 'scroll');
+        return function restoreScroll() {
+          disableTarget.setAttribute('style', restoreStyle);
+          disableTarget.scrollTop = scrollOffset;
+        };
+      }
+
+      function applyStyles (el, styles) {
+        for (var key in styles) {
+          el.style[key] = styles[key];
         }
-        virtualScroller.css('top', scrollerOffset + 'px');
-
-        var innerHeight = parseFloat(computedStyle.height, 10);
-        if (computedStyle.boxSizing == 'border-box') {
-          innerHeight -= parseFloat(computedStyle.paddingTop, 10);
-          innerHeight -= parseFloat(computedStyle.paddingBottom, 10);
-        }
-
-        wrapperEl.css('height', innerHeight + 'px');
-        return scrollBarsShowing;
       }
 
       function isScrolling(el) {
         if (el instanceof angular.element) el = el[0];
         return el.scrollHeight > el.offsetHeight;
       }
-
-      return function restoreScroll() {
-        disableTarget.append(virtualScroller[0].childNodes);
-        wrapperEl.remove();
-        angular.element($window).off('resize', computeSize);
-        disableTarget.attr('style', restoreStyle || false);
-        if (useDocElement) {
-          $document[0].documentElement.scrollTop = heightOffset;
-        } else {
-          disableTarget[0].scrollTop = heightOffset;
-        }
-      };
     },
 
     floatingScrollbars: function() {
@@ -791,7 +741,7 @@ angular.module('material.core')
       var index = nextUniqueId.length;
       var digit;
 
-      while(index) {
+      while (index) {
         index--;
         digit = nextUniqueId[index].charCodeAt(0);
         if (digit == 57 /*'9'*/) {
@@ -888,13 +838,13 @@ angular.module('material.core')
     /**
      * Give optional properties with no value a boolean true by default
      */
-    initOptionalProperties : function (scope, attr, defaults ) {
+    initOptionalProperties: function (scope, attr, defaults ) {
        defaults = defaults || { };
        angular.forEach(scope.$$isolateBindings, function (binding, key) {
          if (binding.optional && angular.isUndefined(scope[key])) {
            var hasKey = attr.hasOwnProperty(attr.$normalize(binding.attrName));
 
-           scope[key] =  angular.isDefined(defaults[key]) ? defaults[key] : hasKey;
+           scope[key] = angular.isDefined(defaults[key]) ? defaults[key] : hasKey;
          }
        });
     }
@@ -923,98 +873,6 @@ angular.element.prototype.blur = angular.element.prototype.blur || function() {
   }
   return this;
 };
-
-})();
-
-(function() {
-'use strict';
-
-angular.module('material.core')
-  .service('$mdAria', AriaService);
-
-/*
- * @ngInject
- */
-function AriaService($$rAF, $log, $window) {
-
-  return {
-    expect: expect,
-    expectAsync: expectAsync,
-    expectWithText: expectWithText
-  };
-
-  /**
-   * Check if expected attribute has been specified on the target element or child
-   * @param element
-   * @param attrName
-   * @param {optional} defaultValue What to set the attr to if no value is found
-   */
-  function expect(element, attrName, defaultValue) {
-    var node = element[0] || element;
-
-    // if node exists and neither it nor its children have the attribute
-    if (node &&
-       ((!node.hasAttribute(attrName) ||
-        node.getAttribute(attrName).length === 0) &&
-        !childHasAttribute(node, attrName))) {
-
-      defaultValue = angular.isString(defaultValue) ? defaultValue.trim() : '';
-      if (defaultValue.length) {
-        element.attr(attrName, defaultValue);
-      } else {
-        $log.warn('ARIA: Attribute "', attrName, '", required for accessibility, is missing on node:', node);
-      }
-
-    }
-  }
-
-  function expectAsync(element, attrName, defaultValueGetter) {
-    // Problem: when retrieving the element's contents synchronously to find the label,
-    // the text may not be defined yet in the case of a binding.
-    // There is a higher chance that a binding will be defined if we wait one frame.
-    $$rAF(function() {
-      expect(element, attrName, defaultValueGetter());
-    });
-  }
-
-  function expectWithText(element, attrName) {
-    expectAsync(element, attrName, function() {
-      return getText(element);
-    });
-  }
-
-  function getText(element) {
-    return element.text().trim();
-  }
-
-  function childHasAttribute(node, attrName) {
-    var hasChildren = node.hasChildNodes(),
-        hasAttr = false;
-
-    function isHidden(el) {
-      var style = el.currentStyle ? el.currentStyle : $window.getComputedStyle(el);
-      return (style.display === 'none');
-    }
-
-    if(hasChildren) {
-      var children = node.childNodes;
-      for(var i=0; i<children.length; i++){
-        var child = children[i];
-        if(child.nodeType === 1 && child.hasAttribute(attrName)) {
-          if(!isHidden(child)){
-            hasAttr = true;
-          }
-        }
-      }
-    }
-    return hasAttr;
-  }
-}
-AriaService.$inject = ["$$rAF", "$log", "$window"];
-})();
-
-(function() {
-'use strict';
 
 angular.module('material.core')
   .service('$mdCompiler', mdCompilerService);
@@ -1151,10 +1009,90 @@ function mdCompilerService($q, $http, $injector, $compile, $controller, $templat
   };
 }
 mdCompilerService.$inject = ["$q", "$http", "$injector", "$compile", "$controller", "$templateCache"];
-})();
 
-(function (jQuery) {
-  'use strict';
+
+angular.module('material.core')
+  .service('$mdAria', AriaService);
+
+/*
+ * @ngInject
+ */
+function AriaService($$rAF, $log, $window) {
+
+  return {
+    expect: expect,
+    expectAsync: expectAsync,
+    expectWithText: expectWithText
+  };
+
+  /**
+   * Check if expected attribute has been specified on the target element or child
+   * @param element
+   * @param attrName
+   * @param {optional} defaultValue What to set the attr to if no value is found
+   */
+  function expect(element, attrName, defaultValue) {
+    var node = element[0] || element;
+
+    // if node exists and neither it nor its children have the attribute
+    if (node &&
+       ((!node.hasAttribute(attrName) ||
+        node.getAttribute(attrName).length === 0) &&
+        !childHasAttribute(node, attrName))) {
+
+      defaultValue = angular.isString(defaultValue) ? defaultValue.trim() : '';
+      if (defaultValue.length) {
+        element.attr(attrName, defaultValue);
+      } else {
+        $log.warn('ARIA: Attribute "', attrName, '", required for accessibility, is missing on node:', node);
+      }
+
+    }
+  }
+
+  function expectAsync(element, attrName, defaultValueGetter) {
+    // Problem: when retrieving the element's contents synchronously to find the label,
+    // the text may not be defined yet in the case of a binding.
+    // There is a higher chance that a binding will be defined if we wait one frame.
+    $$rAF(function() {
+      expect(element, attrName, defaultValueGetter());
+    });
+  }
+
+  function expectWithText(element, attrName) {
+    expectAsync(element, attrName, function() {
+      return getText(element);
+    });
+  }
+
+  function getText(element) {
+    return element.text().trim();
+  }
+
+  function childHasAttribute(node, attrName) {
+    var hasChildren = node.hasChildNodes(),
+        hasAttr = false;
+
+    function isHidden(el) {
+      var style = el.currentStyle ? el.currentStyle : $window.getComputedStyle(el);
+      return (style.display === 'none');
+    }
+
+    if(hasChildren) {
+      var children = node.childNodes;
+      for(var i=0; i<children.length; i++){
+        var child = children[i];
+        if(child.nodeType === 1 && child.hasAttribute(attrName)) {
+          if(!isHidden(child)){
+            hasAttr = true;
+          }
+        }
+      }
+    }
+    return hasAttr;
+  }
+}
+AriaService.$inject = ["$$rAF", "$log", "$window"];
 
   var HANDLERS = {};
   /* The state of the current 'pointer'
@@ -1203,9 +1141,12 @@ mdCompilerService.$inject = ["$q", "$http", "$injector", "$compile", "$controlle
     skipClickHijack: function() {
       return forceSkipClickHijack = true;
     },
-    
-    // $get is used to build an instance of $mdGesture 
-    $get : ['$$MdGestureHandler', '$$rAF', '$timeout', function($$MdGestureHandler, $$rAF, $timeout) {
+
+    /**
+     * $get is used to build an instance of $mdGesture
+     * @ngInject
+     */
+    $get : ["$$MdGestureHandler", "$$rAF", "$timeout", function($$MdGestureHandler, $$rAF, $timeout) {
          return new MdGesture($$MdGestureHandler, $$rAF, $timeout);
     }]
   };
@@ -1214,17 +1155,19 @@ mdCompilerService.$inject = ["$q", "$http", "$injector", "$compile", "$controlle
 
   /**
    * MdGesture factory construction function
+   * @ngInject
    */
   function MdGesture($$MdGestureHandler, $$rAF, $timeout) {
     var userAgent = navigator.userAgent || navigator.vendor || window.opera;
     var isIos = userAgent.match(/ipad|iphone|ipod/i);
     var isAndroid = userAgent.match(/android/i);
+    var hasJQuery =  (typeof window.jQuery !== 'undefined') && (angular.element === window.jQuery);
 
     var self = {
       handler: addHandler,
       register: register,
       // On mobile w/out jQuery, we normally intercept clicks. Should we skip that?
-      isHijackingClicks: (isIos || isAndroid) && !jQuery && !forceSkipClickHijack
+      isHijackingClicks: (isIos || isAndroid) && !hasJQuery && !forceSkipClickHijack
     };
 
     if (self.isHijackingClicks) {
@@ -1417,6 +1360,7 @@ mdCompilerService.$inject = ["$q", "$http", "$injector", "$compile", "$controlle
       });
 
   }
+  MdGesture.$inject = ["$$MdGestureHandler", "$$rAF", "$timeout"];
 
   /**
    * MdGestureHandler
@@ -1434,8 +1378,8 @@ mdCompilerService.$inject = ["$q", "$http", "$injector", "$compile", "$controlle
     this.state = {};
   }
 
-  function MdGestureHandler($$rAF) {
-    var hasJQuery =  typeof jQuery !== 'undefined' && angular.element === jQuery;
+  function MdGestureHandler() {
+    var hasJQuery =  (typeof window.jQuery !== 'undefined') && (angular.element === window.jQuery);
 
     GestureHandler.prototype = {
       options: {},
@@ -1574,10 +1518,10 @@ mdCompilerService.$inject = ["$q", "$http", "$injector", "$compile", "$controlle
     }
 
   }
-  MdGestureHandler.$inject = ["$$rAF"];
 
   /**
    * Attach Gestures: hook document and check shouldHijack clicks
+   * @ngInject
    */
   function attachToDocument( $mdGesture, $$MdGestureHandler ) {
 
@@ -1595,12 +1539,13 @@ mdCompilerService.$inject = ["$q", "$http", "$injector", "$compile", "$controlle
        * The only way to know if this click is real is to prevent any normal
        * click events, and add a flag to events sent by material so we know not to prevent those.
        * 
-       * One exception to click events that should be prevented is click events sent by the
-       * keyboard (eg form submit). 
+       * Two exceptions to click events that should be prevented are:
+       *  - click events sent by the keyboard (eg form submit)
+       *  - events that originate from an Ionic app
        */
       document.addEventListener('click', function clickHijacker(ev) {
         var isKeyClick = ev.clientX === 0 && ev.clientY === 0;
-        if (!isKeyClick && !ev.$material) {
+        if (!isKeyClick && !ev.$material && !ev.isIonicTap) {
           ev.preventDefault();
           ev.stopPropagation();
         }
@@ -1756,11 +1701,6 @@ mdCompilerService.$inject = ["$q", "$http", "$injector", "$compile", "$controlle
       (ev.changedTouches && ev.changedTouches[0]) ||
       ev;
   }
-
-})(window.jQuery);
-
-(function() {
-'use strict';
 
 angular.module('material.core')
   .provider('$$interimElement', InterimElementProvider);
@@ -2193,11 +2133,6 @@ function InterimElementProvider() {
 
 }
 
-})();
-
-(function() {
-  'use strict';
-
   /**
    * @ngdoc module
    * @name material.core.componentRegistry
@@ -2319,11 +2254,123 @@ function InterimElementProvider() {
   }
   ComponentRegistry.$inject = ["$log", "$q"];
 
+(function() {
+  'use strict';
 
+  /**
+   * @ngdoc service
+   * @name $mdButtonInkRipple
+   * @module material.core
+   *
+   * @description
+   * Provides ripple effects for md-button.  See $mdInkRipple service for all possible configuration options.
+   *
+   * @param {object=} scope Scope within the current context
+   * @param {object=} element The element the ripple effect should be applied to
+   * @param {object=} options (Optional) Configuration options to override the defaultripple configuration
+   */
+
+  angular.module('material.core')
+    .factory('$mdButtonInkRipple', MdButtonInkRipple);
+
+  function MdButtonInkRipple($mdInkRipple) {
+    return {
+      attach: attach
+    };
+
+    function attach(scope, element, options) {
+      var elementOptions = optionsForElement(element);
+      return $mdInkRipple.attach(scope, element, angular.extend(elementOptions, options));
+    };
+
+    function optionsForElement(element) {
+      if (element.hasClass('md-icon-button')) {
+        return {
+          isMenuItem: element.hasClass('md-menu-item'),
+          fitRipple: true,
+          center: true
+        };
+      } else {
+        return {
+          isMenuItem: element.hasClass('md-menu-item'),
+          dimBackground: true
+        }
+      }
+    };
+  }
+  MdButtonInkRipple.$inject = ["$mdInkRipple"];;
 })();
 
 (function() {
-'use strict';
+  'use strict';
+
+    /**
+   * @ngdoc service
+   * @name $mdCheckboxInkRipple
+   * @module material.core
+   *
+   * @description
+   * Provides ripple effects for md-checkbox.  See $mdInkRipple service for all possible configuration options.
+   *
+   * @param {object=} scope Scope within the current context
+   * @param {object=} element The element the ripple effect should be applied to
+   * @param {object=} options (Optional) Configuration options to override the defaultripple configuration
+   */
+
+  angular.module('material.core')
+    .factory('$mdCheckboxInkRipple', MdCheckboxInkRipple);
+
+  function MdCheckboxInkRipple($mdInkRipple) {
+    return {
+      attach: attach
+    };
+
+    function attach(scope, element, options) {
+      return $mdInkRipple.attach(scope, element, angular.extend({
+        center: true,
+        dimBackground: false,
+        fitRipple: true
+      }, options));
+    };
+  }
+  MdCheckboxInkRipple.$inject = ["$mdInkRipple"];;
+})();
+
+(function() {
+  'use strict';
+
+  /**
+   * @ngdoc service
+   * @name $mdListInkRipple
+   * @module material.core
+   *
+   * @description
+   * Provides ripple effects for md-list.  See $mdInkRipple service for all possible configuration options.
+   *
+   * @param {object=} scope Scope within the current context
+   * @param {object=} element The element the ripple effect should be applied to
+   * @param {object=} options (Optional) Configuration options to override the defaultripple configuration
+   */
+
+  angular.module('material.core')
+    .factory('$mdListInkRipple', MdListInkRipple);
+
+  function MdListInkRipple($mdInkRipple) {
+    return {
+      attach: attach
+    };
+
+    function attach(scope, element, options) {
+      return $mdInkRipple.attach(scope, element, angular.extend({
+        center: false,
+        dimBackground: true,
+        outline: false,
+        rippleSize: 'full'
+      }, options));
+    };
+  }
+  MdListInkRipple.$inject = ["$mdInkRipple"];;
+})();
 
 angular.module('material.core')
   .factory('$mdInkRipple', InkRippleService)
@@ -2332,64 +2379,25 @@ angular.module('material.core')
   .directive('mdNoBar', attrNoDirective())
   .directive('mdNoStretch', attrNoDirective());
 
-function InkRippleDirective($mdInkRipple) {
+function InkRippleDirective($mdButtonInkRipple, $mdCheckboxInkRipple) {
   return {
     controller: angular.noop,
     link: function (scope, element, attr) {
       if (attr.hasOwnProperty('mdInkRippleCheckbox')) {
-        $mdInkRipple.attachCheckboxBehavior(scope, element);
+        $mdCheckboxInkRipple.attach(scope, element);
       } else {
-        $mdInkRipple.attachButtonBehavior(scope, element);
+        $mdButtonInkRipple.attach(scope, element);
       }
     }
   };
 }
-InkRippleDirective.$inject = ["$mdInkRipple"];
+InkRippleDirective.$inject = ["$mdButtonInkRipple", "$mdCheckboxInkRipple"];
 
 function InkRippleService($window, $timeout) {
 
   return {
-    attachButtonBehavior: attachButtonBehavior,
-    attachCheckboxBehavior: attachCheckboxBehavior,
-    attachTabBehavior: attachTabBehavior,
-    attachListControlBehavior: attachListControlBehavior,
     attach: attach
   };
-
-  function attachButtonBehavior(scope, element, options) {
-    return attach(scope, element, angular.extend({
-      fullRipple: true,
-      isMenuItem: element.hasClass('md-menu-item'),
-      center: false,
-      dimBackground: true
-    }, options));
-  }
-
-  function attachCheckboxBehavior(scope, element, options) {
-    return attach(scope, element, angular.extend({
-      center: true,
-      dimBackground: false,
-      fitRipple: true
-    }, options));
-  }
-
-  function attachTabBehavior(scope, element, options) {
-    return attach(scope, element, angular.extend({
-      center: false,
-      dimBackground: true,
-      outline: false,
-      rippleSize: 'full'
-    }, options));
-  }
-
-  function attachListControlBehavior(scope, element, options) {
-    return attach(scope, element, angular.extend({
-      center: false,
-      dimBackground: true,
-      outline: false,
-      rippleSize: 'full'
-    }, options));
-  }
 
   function attach(scope, element, options) {
     if (element.controller('mdNoInk')) return angular.noop;
@@ -2748,10 +2756,42 @@ function attrNoDirective() {
     };
   };
 }
-})();
 
 (function() {
-'use strict';
+  'use strict';
+
+    /**
+   * @ngdoc service
+   * @name $mdTabInkRipple
+   * @module material.core
+   *
+   * @description
+   * Provides ripple effects for md-tabs.  See $mdInkRipple service for all possible configuration options.
+   *
+   * @param {object=} scope Scope within the current context
+   * @param {object=} element The element the ripple effect should be applied to
+   * @param {object=} options (Optional) Configuration options to override the defaultripple configuration
+   */
+
+  angular.module('material.core')
+    .factory('$mdTabInkRipple', MdTabInkRipple);
+
+  function MdTabInkRipple($mdInkRipple) {
+    return {
+      attach: attach
+    };
+
+    function attach(scope, element, options) {
+      return $mdInkRipple.attach(scope, element, angular.extend({
+        center: false,
+        dimBackground: true,
+        outline: false,
+        rippleSize: 'full'
+      }, options));
+    };
+  }
+  MdTabInkRipple.$inject = ["$mdInkRipple"];;
+})();
 
 angular.module('material.core.theming.palette', [])
 .constant('$mdColorPalette', {
@@ -3075,7 +3115,6 @@ angular.module('material.core.theming.palette', [])
     'contrastStrongLightColors': '300 400'
   },
   'grey': {
-    '0': '#ffffff',
     '50': '#fafafa',
     '100': '#f5f5f5',
     '200': '#eeeeee',
@@ -3114,10 +3153,6 @@ angular.module('material.core.theming.palette', [])
     'contrastStrongLightColors': '400 500'
   }
 });
-})();
-
-(function() {
-'use strict';
 
 angular.module('material.core.theming', ['material.core.theming.palette'])
   .directive('mdTheme', ThemingDirective)
@@ -3169,10 +3204,12 @@ angular.module('material.core.theming', ['material.core.theming.palette'])
  *
  */
 
+// In memory generated CSS rules; registered by theme.name
+var GENERATED = { };
+
 // In memory storage of defined themes and color palettes (both loaded by CSS, and user specified)
 var PALETTES;
 var THEMES;
-var GENERATED;
 
 var DARK_FOREGROUND = {
   name: 'dark',
@@ -3243,7 +3280,6 @@ var VALID_HUE_VALUES = [
 function ThemingProvider($mdColorPalette) {
   PALETTES = { };
   THEMES = { };
-  GENERATED = { };
 
   var themingProvider;
   var defaultTheme = 'default';
@@ -3563,15 +3599,15 @@ function parseRules(theme, colorType, rules) {
 // Generate our themes at run time given the state of THEMES and PALETTES
 function generateThemes($injector) {
 
-  // Insert our newly minted styles into the DOM
   var head = document.getElementsByTagName('head')[0];
-  if (!head) return;
-  var firstChild = head.firstElementChild;
-  if (!firstChild) return;
+  var firstChild = head ? head.firstElementChild : null;
   var themeCss = $injector.has('$MD_THEME_CSS') ? $injector.get('$MD_THEME_CSS') : '';
 
-    // Expose contrast colors for palettes to ensure that text is always readable
-    angular.forEach(PALETTES, sanitizePalette);
+  if ( !firstChild ) return;
+  if (themeCss.length === 0) return; // no rules, so no point in running this expensive task
+
+  // Expose contrast colors for palettes to ensure that text is always readable
+  angular.forEach(PALETTES, sanitizePalette);
 
   // MD_THEME_CSS is a string generated by the build process that includes all the themable
   // components as templates
@@ -3739,6 +3775,8 @@ function colorToRgbaArray(clr) {
 }
 
 function rgba(rgbArray, opacity) {
+  if ( !rgbArray ) return "rgb('0,0,0')";
+
   if (rgbArray.length == 4) {
     rgbArray = angular.copy(rgbArray);
     opacity ? rgbArray.pop() : opacity = rgbArray.pop();
@@ -3748,6 +3786,5 @@ function rgba(rgbArray, opacity) {
     'rgb(' + rgbArray.join(',') + ')';
 }
 
-})();
 
 ng.material.core = angular.module("material.core");

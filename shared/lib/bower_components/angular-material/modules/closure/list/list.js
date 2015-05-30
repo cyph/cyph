@@ -2,7 +2,7 @@
  * Angular Material Design
  * https://github.com/angular/material
  * @license MIT
- * v0.9.0
+ * v0.9.6
  */
 goog.provide('ng.material.components.list');
 goog.require('ng.material.core');
@@ -95,7 +95,7 @@ function mdListItemDirective($mdAria, $mdConstant, $timeout) {
         }
         if (hasProxiedElement) {
           wrapIn('div');
-        } else {
+        } else if (!tEl[0].querySelector('md-button')) {
           tEl.addClass('md-no-proxy');
         }
       } else {
@@ -119,7 +119,6 @@ function mdListItemDirective($mdAria, $mdConstant, $timeout) {
         }
       }
 
-
       function wrapIn(type) {
         var container;
         if (type == 'div') {
@@ -128,8 +127,13 @@ function mdListItemDirective($mdAria, $mdConstant, $timeout) {
           tEl.addClass('md-proxy-focus');
         } else {
           container = angular.element('<md-button class="md-no-style"><div class="md-list-item-inner"></div></md-button>');
-          container[0].setAttribute('ng-click', tEl[0].getAttribute('ng-click'));
-          tEl[0].removeAttribute('ng-click');
+          var copiedAttrs = ['ng-click', 'aria-label', 'ng-disabled'];
+          angular.forEach(copiedAttrs, function(attr) {
+            if (tEl[0].hasAttribute(attr)) {
+              container[0].setAttribute(attr, tEl[0].getAttribute(attr));
+              tEl[0].removeAttribute(attr);
+            }
+          });
           container.children().eq(0).append(tEl.contents());
         }
 
@@ -252,15 +256,15 @@ mdListItemDirective.$inject = ["$mdAria", "$mdConstant", "$timeout"];
  * @module material.components.list
  *
  */
-function MdListController($scope, $element, $mdInkRipple) {
+function MdListController($scope, $element, $mdListInkRipple) {
   var ctrl = this;
   ctrl.attachRipple = attachRipple;
 
   function attachRipple (scope, element) {
     var options = {};
-    $mdInkRipple.attachListControlBehavior(scope, element, options);
+    $mdListInkRipple.attach(scope, element, options);
   }
 }
-MdListController.$inject = ["$scope", "$element", "$mdInkRipple"];
+MdListController.$inject = ["$scope", "$element", "$mdListInkRipple"];
 
 ng.material.components.list = angular.module("material.components.list");
