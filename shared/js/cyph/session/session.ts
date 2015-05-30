@@ -78,7 +78,7 @@ module Cyph {
 
 							Analytics.main.send({
 								hitType: 'event',
-								eventCategory: 'pingPongTimeout',
+								eventCategory: 'ping-pong-timeout',
 								eventAction: 'detected',
 								eventValue: 1
 							});
