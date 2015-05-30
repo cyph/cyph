@@ -69,8 +69,8 @@ module Cyph {
 											replace(
 												/!\<a href="(data:image\/(png|jpeg|gif)\;.*?)"><\/a>/g,
 												(match, value: string) => {
-													const img: HTMLImageElement = document.createElement('img');
-													img.src = value;
+													const img: HTMLImageElement	= document.createElement('img');
+													img.src	= value;
 													return img.outerHTML;
 												}
 											)
