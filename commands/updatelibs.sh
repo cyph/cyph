@@ -11,6 +11,7 @@ cd shared/lib
 
 bower install --save \
 	angular-material \
+	dompurify \
 	markdown-it \
 	markdown-it-sup \
 	twemoji#1.3.2 \
