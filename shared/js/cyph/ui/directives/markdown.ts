@@ -57,24 +57,26 @@ module Cyph {
 						restrict: 'A',
 						replace: true,
 						link: (scope, element, attrs) => {
-							const set	= (val: string) : void => {
-								val	= markdown.render(val);
+							const set	= (val: string) =>
+								element.html(
+									self['DOMPurify'].sanitize(
+										markdown.render(val).
 
-								/* Merge blockquotes like reddit */
-								val	= val.replace(/\<\/blockquote\>\n\<blockquote\>\n/g, '');
+											/* Merge blockquotes like reddit */
+											replace(/\<\/blockquote\>\n\<blockquote\>\n/g, '').
 
-								/* Images */
-								val	= val.replace(
-									/!\<a href="(data:image\/(png|jpeg|gif)\;.*?)"><\/a>/g,
-									(match, value: string) => {
-										const img: HTMLImageElement	= document.createElement('img');
-										img.src	= value;
-										return img.outerHTML;
-									}
-								);
-
-								element.html(self['DOMPurify'].sanitize(val));
-							};
+											/* Images */
+											replace(
+												/!\<a href="(data:image\/(png|jpeg|gif)\;.*?)"><\/a>/g,
+												(match, value: string) => {
+													const img: HTMLImageElement = document.createElement('img');
+													img.src = value;
+													return img.outerHTML;
+												}
+											)
+									)
+								)
+							;
 
 							set(scope[Markdown.title] || '');
 							scope.$watch(attrs[Markdown.title], set);
