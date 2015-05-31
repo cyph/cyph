@@ -36,7 +36,7 @@ cd .build
 
 
 # Branch config setup
-branch="$(git branch | awk '/^\*/{print $2}')"
+branch="$(git describe --tags --exact-match 2> /dev/null || git branch | awk '/^\*/{print $2}')"
 if [ $branch == 'prod' ] ; then
 	branch='staging'
 fi

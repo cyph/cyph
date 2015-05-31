@@ -6,7 +6,7 @@ dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd)/..
 
 # Handle symlinks on Windows
-branch="$(git branch | awk '/^\*/{print $2}')"
+branch="$(git describe --tags --exact-match 2> /dev/null || git branch | awk '/^\*/{print $2}')"
 for symlink in $(git ls-files -s | awk '/120000/{print $4}') ; do
 	rm $symlink
 	ln -s $(git cat-file blob $branch:$symlink) $symlink

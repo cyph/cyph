@@ -24,7 +24,7 @@ stop () {
 }
 
 
-image="cyph/$(git branch | awk '/^\*/{print $2}')"
+image="cyph/$(git describe --tags --exact-match 2> /dev/null || git branch | awk '/^\*/{print $2}')"
 
 # Foreground by default
 processType='--rm=true'
