@@ -18,7 +18,7 @@ var channelDataMisc	= {
 	donetyping: '5'
 };
 
-var channel, isBanned, isConnected, isOtrReady, pongReceived, sharedSecret, shouldSendQueryMessage, socket;
+var channel, isWebSignObsolete, isConnected, isOtrReady, pongReceived, sharedSecret, shouldSendQueryMessage, socket;
 
 
 /* Init crypto */
@@ -131,30 +131,26 @@ crypto.getRandomValues(randomSeed);
 
 var isInitiator	= getUrlState() == 'new';
 
-function dothemove () {
-	$.ajax({
-		error: function () {
-			setTimeout(dothemove, 100);
-		},
-		success: function (banned) {
-			if (banned.toString() == 'true') {
-				iAmBanned();
-			}
-			else {
-				otrWorker.postMessage({method: 0, message: {
-					cryptoCodes: localStorage.cryptoCodes,
-					randomSeed: randomSeed,
-					sharedSecret: sharedSecret,
-					isInitiator: isInitiator
-				}});
-			}
-		},
-		type: 'GET',
-		url: BASE_URL + 'amibanned'
-	});
-}
+if (window.webSignObsolete) {
+	function warnWebSignObsoleteWrapper () {
+		if (typeof warnWebSignObsolete == 'undefined') {
+			setTimeout(warnWebSignObsoleteWrapper, 1000);
+		}
+		else {
+			warnWebSignObsolete();
+		}
+	}
 
-dothemove();
+	warnWebSignObsoleteWrapper();
+}
+else {
+	otrWorker.postMessage({method: 0, message: {
+		cryptoCodes: localStorage.cryptoCodes,
+		randomSeed: randomSeed,
+		sharedSecret: sharedSecret,
+		isInitiator: isInitiator
+	}});
+}
 
 /* End crypto init */
 
@@ -199,7 +195,7 @@ function pingPong () {
 
 
 function processUrlState () {
-	if (isBanned) {
+	if (isWebSignObsolete) {
 		return;
 	}
 
@@ -207,7 +203,7 @@ function processUrlState () {
 
 	/* Root */
 	if (!state) {
-		document.location.replace('https://www.cyph.com/');
+		document.location.replace(isOnion ? '/' : 'https://www.cyph.com/');
 	}
 	/* New chat room */
 	else if (state == 'new') {

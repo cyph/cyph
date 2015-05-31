@@ -1,5 +1,45 @@
 var BASE_URL			= 'https://api.cyph.com/';
+var ONION_URL			= 'http://cyphdbyhiddenbhs.onion';
 var isHistoryAvailable	= typeof history != 'undefined';
+var isOnion				= document.location.host.split('.').slice(-1)[0] == 'onion';
+
+if (isOnion) {
+	var BASE_URL	= '/api/';
+}
+else {
+	$.get(ONION_URL + '/ping', function (data) {
+		if (data == 'pong') {
+			var path	= '';
+			switch (document.location.hostname) {
+				case 'www.cyph.im':
+					path	= '/im';
+					break;
+
+				case 'www.cyph.me':
+					path	= '/me';
+					break;
+			}
+
+			document.location.href	= ONION_URL + path + document.location.toString().split(document.location.host)[1];
+		}
+	});
+}
+
+
+/* Log all JS exceptions */
+function errorLog (apiMethod) {
+	return function () {
+		$.post(BASE_URL + apiMethod, {
+			error: JSON.stringify(arguments) +
+				'\n\n' + navigator.userAgent +
+				'\n\n' + navigator.language +
+				'\n\n' + (typeof language == 'undefined' ? '' : language) +
+				'\n\n' + document.location.toString()
+		});
+	};
+}
+window.onerror	= errorLog('errors');
+
 
 
 function getString (name) {

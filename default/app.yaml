@@ -12,23 +12,31 @@ handlers:
   upload: analytics.html
   http_headers:
     Cache-Control: public, max-age=0
+    Strict-Transport-Security: max-age=31536000; includeSubdomains;
 
 - url: /channelframe
   static_files: channel.html
   upload: channel.html
   http_headers:
     Cache-Control: public, max-age=0
+    Strict-Transport-Security: max-age=31536000; includeSubdomains;
 
 - url: /stats[/]?
   login: admin
   script: _go_app
   secure: always
+  http_headers:
+    Strict-Transport-Security: max-age=31536000; includeSubdomains;
 
 - url: /tasks/.*
   login: admin
   script: _go_app
   secure: always
+  http_headers:
+    Strict-Transport-Security: max-age=31536000; includeSubdomains;
 
 - url: .*
   script: _go_app
   secure: always
+  http_headers:
+    Strict-Transport-Security: max-age=31536000; includeSubdomains;
