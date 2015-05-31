@@ -10,10 +10,6 @@ git add .
 git commit -a -m "${*}"
 git push
 
-cd cyph.im/lib
-wget https://api.cyph.com/_ah/channel/jsapi -O goog.appengine.Channel.js.new
-mv goog.appengine.Channel.js.new goog.appengine.Channel.js
-cd ../..
 find . -name '*.go' -print0 | xargs -0 -I% gofmt -w "%"
 ./sassupdate.sh
 # for d in $(find . -type d -name bower_components | perl -pe 's/(.*)bower_components/\1/g') ; do
