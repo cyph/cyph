@@ -1,6 +1,6 @@
 all:
 	./docker.sh restart
-	docker build -t cyph/$$(git branch | awk '/^\*/{print $$2}') .
+	docker build -t cyph/$$(git describe --tags --exact-match 2> /dev/null || git branch | awk '/^\*/{print $$2}') .
 
 clean:
 	./docker.sh restart
