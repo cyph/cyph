@@ -6,7 +6,7 @@
 
 		<title
 			translate
-			ng-bind='(unreadMessages > 0 ? ("(" + unreadMessages + ") ") : "") + "Cyph &ndash; Privacy starts here."'
+			ng-bind='(unreadMessages > 0 ? ("(" + unreadMessages + ") ") : "") + "Cyph – Privacy starts here."'
 		>
 			Cyph &ndash; Privacy starts here.
 		</title>
@@ -24,6 +24,8 @@
 
 		<meta name='apple-mobile-web-app-capable' content='yes' />
 		<meta name='mobile-web-app-capable' content='yes' />
+
+		<meta name='google' content='notranslate' />
 
 		<link rel='apple-touch-icon' sizes='57x57' href='/img/favicon/apple-touch-icon-57x57.png' />
 		<link rel='apple-touch-icon' sizes='114x114' href='/img/favicon/apple-touch-icon-114x114.png' />
@@ -51,7 +53,7 @@
 
 		<md-toolbar id='mobile-toolbar' class='mobile-only'>
 			<div class='md-toolbar-tools'>
-				<a class='logo' href='https://www.cyph.com'>
+				<a class='logo' ng-href='{{isOnion ? "/" : "https://www.cyph.com"}}'>
 					<img deferred-src='/img/logo.white.horizontal.header.png' />
 				</a>
 				<span flex></span>
@@ -87,7 +89,7 @@
 		</md-sidenav>
 
 		<div id='desktop-sidebar' class='desktop-only'>
-			<a class='logo' href='https://www.cyph.com'>
+			<a class='logo' ng-href='{{isOnion ? "/" : "https://www.cyph.com"}}'>
 				<img deferred-src='/img/logo.white.vertical.png' />
 			</a>
 			<section ng-show='state == states.chat'>
@@ -135,24 +137,36 @@
 				<div translate>This cyph has been aborted.</div>
 				<br />
 				<span translate>Please</span>
-				<a translate target='_self' href='/new'>try again</a>.
+				<a translate target='_self' ng-href='{{isOnion ? "/im/#new" : "/#new"}}'>try again</a>.
 			</div>
 			<div flex></div>
 		</div>
 
-		<div id='banned-view' ng-view class='loading' layout='column' layout-fill flex ng-class='{active: state == states.banned}'>
+		<div id='websign-obsolete' ng-view class='loading' layout='column' layout-fill flex ng-class='{active: state == states.webSignObsolete}'>
 			<div flex></div>
-			<div class='logo-animation'><img src='/img/logo.white.icon.png' /></div>
+			<div class='logo-animation'><img src='/img/walken.png' /></div>
 			<div>
 				<p>
-					<span translate>Really sorry about the trouble, but due to</span>
-					<a href='http://en.wikipedia.org/wiki/Export_of_cryptography_from_the_United_States' translate>restrictions on the export of cryptography from the United States</a>,
-					<span translate>we are required to block Cyph in Iran, Cuba, Sudan, Syria, and the Democratic People's Republic of Korea.</span>
+					<strong translate>WARNING:</strong>
+					<span translate>Our server is attempting to send you application code without a valid cryptographic signature.</span>
 				</p>
 				<p>
-					<span translate>We have a few potential solutions to this problem in the works, but until then you'll have to either leave your country or deceive us with</span>
-					<a href='https://www.torproject.org/'>Tor</a>,
-					<span translate>a VPN, or a proxy.</span>
+					<span translate>This indicates a strong possibility that either you are personally under attack, or our server has been compromised.</span>
+				</p>
+				<p>
+					<span translate>Therefore,</span>
+					<strong translate>DO NOT refresh this page or otherwise continue to use Cyph.</strong>
+					<span translate>Doing so may expose you to malicious code written by hackers and/or nation-states.</span>
+				</p>
+				<p>
+					<span translate>Hold tight and</span>
+					<a href='mailto:%22Ryan%20Lester%22%20%3Chacker@linux.com%3E,%20%22Baron%20Joshua%20Cyrus%20Boehm%22%20%3Cjosh@joshboehm.com%3E?subject=WEBSIGN%20REMOTE%20WIPE'>shoot us an email right away</a>;
+					<span translate>we will investigate this and let you know when Cyph is safe to use again.</span>
+				</p>
+				<p>
+					<span translate>(Note that this</span>
+					<i translate>may</i>
+					<span translate>be a mistake or a glitch in the Matrix, but assume otherwise until you hear back from us.)</span>
 				</p>
 			</div>
 			<div flex></div>
@@ -374,16 +388,15 @@
 		<link rel='stylesheet' href='/lib/bower_components/magnific-popup/dist/magnific-popup.css' />
 		<link rel='stylesheet' href='/lib/highlight.js.min.css' />
 
+		<link rel='stylesheet' href='/css/fonts.css' />
 		<link rel='stylesheet' href='/css/cyph.base.css' />
 		<link rel='stylesheet' href='/css/cyph.im.css' />
 
 
-		<script src='/js/cryptoPolyfill.js'></script>
-		<script src='/js/translate.js'></script>
-
 		<script src='/lib/bower_components/jquery/dist/jquery.min.js'></script>
 
-		<script src='/js/errorlog.js'></script>
+		<script src='/js/translations.js'></script>
+		<script src='/js/translate.js'></script>
 
 		<script src='/lib/bower_components/jquery.appear/jquery.appear.js'></script>
 		<script src='/lib/bower_components/nanoscroller/bin/javascripts/jquery.nanoscroller.min.js'></script>
@@ -409,10 +422,11 @@
 		<script src='/js/addressSpace.js'></script>
 		<script src='/js/cyph.js'></script>
 		<script src='/js/channel.js'></script>
+		<script src='/js/cryptoWebWorker.js'></script>
 		<script src='/js/cyph.im.js'></script>
 		<script src='/js/ui.js'></script>
 
-		<script src='//api.cyph.com/analytics.js'></script>
+		<script src='/js/analytics.js'></script>
 
 	</body>
 </html>

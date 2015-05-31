@@ -12,6 +12,7 @@ handlers:
   secure: always
   http_headers:
     X-Frame-Options: deny
+    Strict-Transport-Security: max-age=31536000; includeSubdomains;
 
 - url: /(.*)
   static_files: \1
@@ -19,3 +20,4 @@ handlers:
   secure: always
   http_headers:
     X-Frame-Options: deny
+    Strict-Transport-Security: max-age=31536000; includeSubdomains;
