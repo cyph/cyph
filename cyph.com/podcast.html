@@ -73,40 +73,96 @@
 			<img src='/img/logo.white.horizontal.header.png' />
 		</a>
 
-		<img id='bouncing-down-arrow' class='animated' ng-click='scrollDown()' src='/img/icons/downarrow.png' />
-
+		<!--
+			<img id='bouncing-down-arrow' class='animated' ng-click='scrollDown()' src='/img/icons/downarrow.png' />
+		-->
 
 		<section>
-			<md-button id='new-cyph' translate href='//cyph.im/new' aria-label='Start new cyph'>Start new cyph</md-button>
-		</section>
+			<div id='hero-text' class='animated bounceInDown'>
+				<img src='/img/penn.png'>
+			</div>
 
-		<md-toolbar id='main-toolbar'>
-			<div class='md-toolbar-tools'></div>
-		</md-toolbar>
+			<form class='beta-signup-form' ng-submit='submitBetaSignup()' ng-class='{complete: betaSignupState > 0}'>
+				<md-text-float label='email' ng-model='betaSignup.Email'></md-text-float>
+				<md-text-float label='name (optional)' ng-model='betaSignup.Name'></md-text-float>
+				<md-button type='submit' aria-label='Sign up for beta'>Sign up for beta</md-button>
+			</form>
+			<div>
+				Thanks a ton for signing up! You'll hear from one of us shortly. :)
+			</div>
 
-		<section id='hero-section'>
-			<div id='hero-text' class='animated' translate>Privacy starts here.</div>
-			<div style='padding: 10%; padding-top: 200px;'>
+			<div class='penn-text'>
 				<p>
-					End-to-end encryption is hard, but it shouldn’t be. We believe that everyone deserves privacy, not only security experts.
+					Welcome Penn's Sunday School listeners!
+				</p>
+				<p>
+					Sign up on the left, and get bumped to the front of our waitlist for Cyph v2.
+				</p>
+				<p>
+					<br />
+					<h1>What is Cyph?</h1>
+				</p>
+				<p>
+					Encryption is hard, but it shouldn’t be. We believe that <i>everyone</i> deserves privacy, not only security experts.
 				</p>
 				<p>
 					Cyph is a next-generation messenger app that delivers cryptography to the masses, making privacy the new status quo.
 				</p>
 				<p>
-					It was founded by two former SpaceX engineers and childhood friends to meet their own high standards of what chat should be: completely secure and delightfully dope.
+					It was founded by two former SpaceX engineers and childhood friends to meet their own high standards of what chat should be: completely private and delightfully dope.
 				</p>
 				<p>
-					With Cyph, never again will you need to ask someone else to install or configure or sign up for anything, when all you need is a one-off private discussion. Just one click and you’re secure.
+					With Cyph, never again will you need to ask someone else to install or configure or sign up for anything, when all you need is a one-off private discussion.
 				</p>
 				<p>
-					Officially launching on November 24.
+					Just one click and you’re secure.
 				</p>
 			</div>
 		</section>
 
+		<md-toolbar id='main-toolbar'>
+			<div class='md-toolbar-tools'>
+				<!--
+				<span flex></span>
+				<md-button
+					translate
+					aria-label='About'
+					ng-click='baseButtonClick()'
+					href='//www.reddit.com/wiki/commenting/.compact#wiki_posting'
+				>
+					About
+				</md-button>
+				<md-button
+					translate
+					aria-label='FAQ'
+					ng-click='baseButtonClick()'
+					href='//www.reddit.com/wiki/commenting/.compact#wiki_posting'
+				>
+					FAQ
+				</md-button>
+				<md-button
+					translate
+					aria-label='Blog'
+					ng-click='baseButtonClick()'
+					href='//www.reddit.com/wiki/commenting/.compact#wiki_posting'
+				>
+					Blog
+				</md-button>
+				-->
+
+				<!--
+					<span flex></span>
+					<md-button translate aria-label='Menu' ng-click='openMobileMenu()'>
+						<img src='/img/icons/menu.png' />
+					</md-button>
+				-->
+			</div>
+		</md-toolbar>
+
 		<footer id='footer'>
-			<section></section>
+			<section>
+				
+			</section>
 			<div class='footer-info'>
 				&copy; Cyph 2014
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -134,7 +190,7 @@
 				<source src='/video/background.ogv' type='video/ogg' />
 			</video>
 
-			<img src='/video/background.gif' class='mobile-only' />
+			<img deferred-src='/video/background.gif' class='mobile-only' />
 		</div>
 
 		<!--
@@ -151,7 +207,7 @@
 		<link rel='stylesheet' href='/lib/bower_components/animate.css/animate.min.css' />
 
 		<link rel='stylesheet' href='/css/cyph.base.css' />
-		<link rel='stylesheet' href='/css/cyph.com.css' />
+		<link rel='stylesheet' href='/css/podcast.css' />
 
 
 		<script src='/lib/bower_components/jquery/dist/jquery.min.js'></script>
@@ -165,7 +221,7 @@
 		<script src='/lib/bower_components/hammerjs/hammer.js'></script>
 		<script src='/lib/bower_components/angular-material/angular-material.js'></script>
 
-		<script src='/js/ui.js'></script>
+		<script src='/js/podcast.js'></script>
 
 		<script>
 			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

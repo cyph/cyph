@@ -71,7 +71,7 @@ if [ $staging ] ; then
 fi
 
 # ls */*.yaml | xargs -I% appcfg.py rollback %
-goapp deploy default/app.yaml cyph.com/cyph-com.yaml cyph.im/cyph-im.yaml cyph.me/cyph-me.yaml cyph.io/cyph-io.yaml
+goapp deploy default/app.yaml cyph.com/cyph-com.yaml cyph.im/cyph-im.yaml cyph.me/cyph-me.yaml
 # goapp deploy default/app.yaml `ls !(default)/*.yaml | tr '\n' ' '`
 
 appcfg.py update_dispatch .
