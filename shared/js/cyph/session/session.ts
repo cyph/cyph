@@ -49,7 +49,16 @@ module Cyph {
 						this.lastIncomingMessageTimestamp	= Date.now();
 
 						if (e.data) {
-							for (const message of JSON.parse(e.data)) {
+							const data: Message[]	= (() => {
+								try {
+									return JSON.parse(e.data);
+								}
+								catch (_) {
+									return [];
+								}
+							})();
+
+							for (const message of data) {
 								this.receiveHandler(message);
 							}
 						}
