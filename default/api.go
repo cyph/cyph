@@ -217,11 +217,6 @@ func channelCloseHelper(c appengine.Context, idBase string) {
 }
 
 func sendChannelMessage(c appengine.Context, channelId string, imData ImData) int {
-	if imData.Message != "" {
-		memcache.Increment(c, "totalMessages", 1, 0)
-	}
-
-	imData.Id = channelId + noncsGuid(52)
 	key := "messageAck-" + imData.Id
 
 	memcache.Increment(c, key, 1, 0)
@@ -232,7 +227,12 @@ func sendChannelMessage(c appengine.Context, channelId string, imData ImData) in
 
 		for j := 0; j < 20; j++ {
 			time.Sleep(50 * time.Millisecond)
+
 			if _, err := memcache.Get(c, key); err == memcache.ErrCacheMiss {
+				if imData.Message != "" {
+					memcache.Increment(c, "totalMessages", 1, 0)
+				}
+
 				return http.StatusOK
 			}
 		}

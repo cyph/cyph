@@ -6,8 +6,6 @@ var otrWorkerOnMessageQueue			= [];
 var CHANNEL_DATA_PREFIX	= 'CHANNEL DATA: ';
 var WEBRTC_DATA_PREFIX	= 'webrtc: ';
 
-var SECRET_LENGTH	= 7;
-
 var channelDataMisc	= {
 	connect: '1',
 	ping: '2',
@@ -16,40 +14,18 @@ var channelDataMisc	= {
 	donetyping: '5'
 };
 
-var channel, isBanned, isConnected, isOtrReady, pongReceived, sharedSecret, shouldSendQueryMessage, socket;
+var channel, isBanned, isConnected, isKill, isOtrReady, pongReceived, shouldSendQueryMessage, socket;
 
 
 /* Init crypto */
 
-/* Convert the function into a string and directly make it a Worker */
-var cryptoWebWorkerString	= cryptoWebWorker.toString();
-cryptoWebWorkerString		= cryptoWebWorkerString.slice(
-	cryptoWebWorkerString.indexOf('{') + 1,
-	cryptoWebWorkerString.lastIndexOf('}')
-);
+var otrWorker	= new Worker('/js/cryptoWebWorker.js');
 
-var otrWorker	= new Worker(
-	window.URL.createObjectURL(
-		new Blob(
-			[cryptoWebWorkerString],
-			{ type: 'text/javascript'}
-		)
-	)
-);
+var sharedSecret		= document.location.hash.split('#')[1];
+var sharedSecretLength	= 7;
 
-var urlFragment		= document.location.hash.split('#')[1];
-
-if (urlFragment && urlFragment.length == (SECRET_LENGTH * 2)) {
-	sharedSecret	= urlFragment.substr(SECRET_LENGTH);
-	urlFragment		= urlFragment.substr(0, SECRET_LENGTH);
-}
-
-if (urlFragment) {
-	history.pushState({}, '', '/' + urlFragment);
-}
-
-if (!sharedSecret || sharedSecret.length != SECRET_LENGTH) {
-	var a	= new Uint8Array(SECRET_LENGTH);
+if (!sharedSecret || sharedSecret.length != sharedSecretLength) {
+	var a	= new Uint8Array(sharedSecretLength);
 	crypto.getRandomValues(a);
 
 	sharedSecret	= Array.prototype.slice.call(a).
@@ -93,12 +69,30 @@ crypto.getRandomValues(randomSeed);
 
 var isInitiator	= getUrlState() == 'new';
 
-otrWorker.postMessage({method: 0, message: {
-	cryptoCodes: localStorage.cryptoCodes,
-	randomSeed: randomSeed,
-	sharedSecret: sharedSecret,
-	isInitiator: isInitiator
-}});
+function dothemove () {
+	$.ajax({
+		error: function () {
+			setTimeout(dothemove, 100);
+		},
+		success: function (banned) {
+			if (banned.toString() == 'true') {
+				iAmBanned();
+			}
+			else {
+				otrWorker.postMessage({method: 0, message: {
+					cryptoCodes: localStorage.cryptoCodes,
+					randomSeed: randomSeed,
+					sharedSecret: sharedSecret,
+					isInitiator: isInitiator
+				}});
+			}
+		},
+		type: 'GET',
+		url: BASE_URL + 'amibanned'
+	});
+}
+
+dothemove();
 
 /* End crypto init */
 
@@ -136,7 +130,7 @@ function pingPong () {
 	setTimeout(function () {
 		sendChannelData({Misc: channelDataMisc.ping});
 		setTimeout(pingPong, 60000);
-	}, crypto.getRandomValues(new Uint8Array(1))[0] * 250);
+	}, 30000 + crypto.getRandomValues(new Uint8Array(1))[0] * 250);
 }
 
 
@@ -148,7 +142,7 @@ function processUrlState () {
 	var state	= getUrlState();
 
 	/* Root */
-	if (!state) {
+	if (state.length == 2 || ['', 'zh-CHS', 'zh-CHT'].indexOf(state) > -1) {
 		document.location.replace('https://www.cyph.com/');
 	}
 	/* New chat room */
@@ -160,7 +154,7 @@ function processUrlState () {
 		});
 	}
 	/* Join existing chat room */
-	else if (state.length == SECRET_LENGTH) {
+	else if (state.length == 7) {
 		$.ajax({
 			dataType: 'json',
 			error: pushNotFound,
@@ -273,6 +267,7 @@ function setUpWebRTC (isInitiator) {
 function socketClose () {
 	closeChat(function () {
 		socket.close();
+		isKill	= true;
 	});
 }
 
@@ -383,10 +378,12 @@ function eventLoop () {
 
 		/*** send ***/
 
-		else if (sendChannelDataQueue.length && pendingChannelMessages < 2) {
+		else if (!isKill && sendChannelDataQueue.length && pendingChannelMessages < 1) {
 			var item	= sendChannelDataQueue.shift();
 			var data	= item.data;
 			var opts	= item.opts;
+
+			data.Id		= Date.now() + '-' + crypto.getRandomValues(new Uint32Array(1))[0];
 
 			++pendingChannelMessages;
 
@@ -415,15 +412,7 @@ function eventLoop () {
 
 			pongReceived	= true;
 
-			if (o.Id) {
-				$.ajax({type: 'PUT', url: BASE_URL + 'messages/' + o.Id});
-			}
-
 			if (!o.Id || !receivedMessages[o.Id]) {
-				if (o.Id) {
-					receivedMessages[o.Id]	= true;
-				}
-
 				if (o.Misc == channelDataMisc.ping) {
 					sendChannelData({Misc: channelDataMisc.pong});
 				}
@@ -453,6 +442,14 @@ function eventLoop () {
 				if (o.Destroy) {
 					socketClose();
 				}
+
+				if (o.Id) {
+					receivedMessages[o.Id]	= true;
+				}
+			}
+
+			if (o.Id) {
+				$.ajax({type: 'PUT', url: BASE_URL + 'messages/' + o.Id});
 			}
 		}
 
