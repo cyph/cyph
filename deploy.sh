@@ -50,6 +50,7 @@ for d in cyph.im cyph.com ; do
 	cd $d
 
 	# Cache bust
+	echo 'Cache bust'
 	find . -type f -print0 | while read -d $'\0' f ; do
 		safeF=$(echo "$f" | sed 's/\.\///g' | sed 's/\//\\\//g' | sed 's/ /\\ /g' | sed 's/\_/\\_/g')
 
@@ -62,15 +63,17 @@ for d in cyph.im cyph.com ; do
 	done
 
 	../translate.py
+
+	# Minify
+	echo 'JS Minify'
+	ls js/*.js | xargs -I% uglifyjs '%' -o '%'
+	echo 'CSS Minify'
+	ls css/*.css | xargs -I% cleancss -o '%' '%'
+	echo 'HTML Minify'
+	ls index.html | xargs -I% html-minifier --minify-js --minify-css --remove-comments --collapse-whitespace '%' -o '%'
+
 	cd ..
 done
-
-echo 'JS Minify'
-find . -name '*.js' | grep -v '\.oldbower' | grep -v cryptolib | grep -v '\.min\.js' | xargs -I% uglifyjs '%' -o '%'
-echo 'CSS Minify'
-find . -name '*.css' | xargs -I% cleancss -o '%' '%'
-echo 'HTML Minify'
-find . -name '*.html' | xargs -I% html-minifier --minify-js --minify-css --remove-comments --collapse-whitespace '%' -o '%'
 
 
 ls */*.yaml | xargs -I% sed -i.bak 's/max-age=0/max-age=604800/g' %
@@ -92,6 +95,8 @@ fi
 ### WebSign-related stuff
 for d in cyph.im ; do
 	cd $d
+
+	echo 'WebSign'
 
 	# Merge imported libraries into Worker
 	../websignworkerpackager.js js/cryptoWebWorker.js
