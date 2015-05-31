@@ -1,0 +1,14 @@
+{
+  "name": "tabIndent.js",
+  "homepage": "https://github.com/julianlam/tabIndent.js",
+  "_release": "75af5fad38",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "75af5fad3823720612adfb93eaa9db7c665e0224"
+  },
+  "_source": "git://github.com/julianlam/tabIndent.js.git",
+  "_target": "*",
+  "_originalSource": "julianlam/tabIndent.js",
+  "_direct": true
+}

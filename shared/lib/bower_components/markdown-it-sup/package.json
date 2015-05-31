@@ -1,0 +1,38 @@
+{
+  "name": "markdown-it-sup",
+  "version": "0.1.0",
+  "description": "<sup> tag for markdown-it markdown parser.",
+  "keywords": [
+    "markdown-it-plugin",
+    "markdown-it",
+    "markdown",
+    "superscript",
+    "sup"
+  ],
+  "homepage": "https://github.com/markdown-it/markdown-it-sup",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/markdown-it/markdown-it-sup.git"
+  },
+  "bugs": {
+    "url": "https://github.com/markdown-it/markdown-it-sup/issues"
+  },
+  "license": "MIT",
+  "main": "index.js",
+  "scripts": {
+    "test": "make test"
+  },
+  "devDependencies": {
+    "browserify": "*",
+    "coveralls": "^2.11.2",
+    "eslint": "0.10.2",
+    "eslint-plugin-nodeca": "^1.0.0",
+    "istanbul": "*",
+    "lodash": "*",
+    "markdown-it": "~3.0.0",
+    "markdown-it-testgen": "~0.1.0",
+    "mocha": "*",
+    "request": "*",
+    "uglify-js": "*"
+  }
+}
