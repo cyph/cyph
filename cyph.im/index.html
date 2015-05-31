@@ -6,7 +6,7 @@
 
 		<title
 			translate
-			ng-bind='(unreadMessages > 0 ? ("(" + unreadMessages + ") ") : "") + "Cyph – Privacy starts here."'
+			ng-bind='(unreadMessages > 0 ? ("(" + unreadMessages + ") ") : "") + "Cyph &ndash; Privacy starts here."'
 		>
 			Cyph &ndash; Privacy starts here.
 		</title>
@@ -24,8 +24,6 @@
 
 		<meta name='apple-mobile-web-app-capable' content='yes' />
 		<meta name='mobile-web-app-capable' content='yes' />
-
-		<meta name='google' content='notranslate' />
 
 		<link rel='apple-touch-icon' sizes='57x57' href='/img/favicon/apple-touch-icon-57x57.png' />
 		<link rel='apple-touch-icon' sizes='114x114' href='/img/favicon/apple-touch-icon-114x114.png' />
@@ -137,7 +135,7 @@
 				<div translate>This cyph has been aborted.</div>
 				<br />
 				<span translate>Please</span>
-				<a translate target='_self' href='/#new'>try again</a>.
+				<a translate target='_self' href='/new'>try again</a>.
 			</div>
 			<div flex></div>
 		</div>
@@ -378,12 +376,11 @@
 
 
 		<script src='/js/cryptoPolyfill.js'></script>
+		<script src='/js/translate.js'></script>
 
 		<script src='/lib/bower_components/jquery/dist/jquery.min.js'></script>
 
 		<script src='/js/errorlog.js'></script>
-		<script src='/js/translations.js'></script>
-		<script src='/js/translate.js'></script>
 
 		<script src='/lib/bower_components/jquery.appear/jquery.appear.js'></script>
 		<script src='/lib/bower_components/nanoscroller/bin/javascripts/jquery.nanoscroller.min.js'></script>
@@ -401,12 +398,11 @@
 		<script src='/lib/bower_components/visibilityjs/lib/visibility.timers.js'></script>
 		<script src='/lib/bower_components/visibilityjs/lib/visibility.fallback.js'></script>
 		<script src='/lib/bower_components/visibilityjs/lib/visibility.js'></script>
-		<script src='/lib/goog.appengine.Channel.js'></script>
 
 		<script src='/js/visibilityPolyfill.js'></script>
 		<script src='/js/addressSpace.js'></script>
 		<script src='/js/cyph.js'></script>
-		<script src='/js/cryptoWebWorker.js'></script>
+		<script src='/js/channel.js'></script>
 		<script src='/js/cyph.im.js'></script>
 		<script src='/js/ui.js'></script>
 
