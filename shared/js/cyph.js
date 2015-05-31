@@ -40,20 +40,6 @@ function getUrlState () {
 }
 
 
-/*
-	Note: not using the previous exhaustive/correct valid URL pattern because
-	it spikes the CPU to 100% with the string 'aoeuidhtns-aoeuhtns-aoeuidhtns-aoeuidhtns-'
-*/
-
-var urlInvalidStarts	= {'!': true, '[': true};
-var urlProtocolPattern	= /^(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?$/;
-var urlExtensionPattern	= /.*(\.co|\.im|\.me|\.org|\.net|\.io|\.ly|\.edu|\.gov|\.de|\.mil|\.in|\.fm|\.am|\.xxx).*/;
-
-function isValidUrl(s) {
-	return s.length < 5000 && !urlInvalidStarts[s[0]] && (urlProtocolPattern.test(s) || urlExtensionPattern.test(s));
-}
-
-
 function pushNotFound () {
 	pushState('/404');
 }

@@ -13,6 +13,17 @@ var incomingMessageId	= 0;
 var incomingMessagesMax	= 0;
 var otr, addressSpace, isInitiator, sharedSecret, processIncomingMessagesTimeoutID;
 
+function chunkString (s, n) {
+	var arr	= [];
+
+	while (s.length) {
+		arr.push(s.substr(0, n));
+		s	= s.substr(n);
+	}
+
+	return arr;
+}
+
 function getPadding () {
 	return Array.prototype.slice.call(
 		crypto.getRandomValues(new Uint8Array(crypto.getRandomValues(new Uint8Array(1))[0] + 100))
@@ -209,7 +220,7 @@ function eventLoop () {
 				/* Send message */
 				case 2:
 					var id			= crypto.getRandomValues(new Uint32Array(1))[0];
-					var messages	= e.data.message.match(/.{1,10240}/g);
+					var messages	= chunkString(e.data.message, 10240);
 
 					for (var i = 0 ; i < messages.length ; ++i) {
 						outgoingMessages.push(JSON.stringify({

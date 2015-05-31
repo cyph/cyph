@@ -52,27 +52,26 @@ html:not(.mobile) md-toolbar {
 	top: 0px;
 }
 
-btf-markdown, [btf-markdown] {
-	> :first-child {
+ng-markdown, [ng-markdown] {
+	> p:only-child {
 		display: inline;
 	}
 
-	> :not(:first-child) {
-		margin: 0px;
+	:not(p:only-child) {
+		margin: 10px;
+	}
+
+	blockquote {
+		border-left: 2px solid #f1f1f1 !important;
+		padding-left: 10px;
 	}
 }
 html:not(.mobile) {
-	btf-markdown, [btf-markdown] {
-		> :not(:first-child) {
+	ng-markdown, [ng-markdown] {
+		:not(p:only-child) {
 			margin-left: 25px;
 		}
 	}
-}
-
-blockquote {
-	border-left: 2px solid !important;
-	padding-left: 10px;
-	display: block;
 }
 
 :not(textarea):not(md-text-float):not(md-input-group):not(input) {
@@ -88,6 +87,10 @@ a {
 
 textarea {
 	background-color: #f1f1f1;
+}
+
+.tabIndent-rendered {
+	background-image: none !important;
 }
 
 
