@@ -1,6 +1,6 @@
 /** @module otr */
 (function () {
-    "user strict";
+    "use strict";
     /*
      *  Off-the-Record Messaging bindings for node/javascript
      *  Copyright (C) 2012  Mokhtar Naamani,
@@ -758,7 +758,7 @@
                      * @param {string} message - message fragment to be sent.
                      */
                     if (!session.listeners(o.EVENT).length) {
-                        console.error("no listeners for inject_message event");
+                        if(parameters && parameters.debug) console.error("no listeners for inject_message event");
                     }
                     session.emit(o.EVENT, o.message);
                     return;
@@ -832,14 +832,14 @@
                      * @event module:otr.Session#create_privkey
                      */
                     if (!session.listeners(o.EVENT).length) {
-                        console.error("no listeners for create_privkey event");
+                        if(parameters && parameters.debug) console.error("no listeners for create_privkey event");
                     }
                     session.emit(o.EVENT, o.accountname, o.protocol);
                     return;
 
                 case "create_instag":
                     if (!session.listeners(o.EVENT).length) {
-                        console.error("no listeners for create_instag event");
+                        if(parameters && parameters.debug) console.error("no listeners for create_instag event");
                     }
                     /** "create_instag" Session event will be raised if an OTR conversation was attempted an the account does not have an instance tag.
                      * It is a good practice to make sure an instance tag is generated before starting a session.
@@ -1156,4 +1156,4 @@
         };
     }
 
-}).call();
+}).call(this);

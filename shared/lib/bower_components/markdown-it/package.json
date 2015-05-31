@@ -1,0 +1,56 @@
+{
+  "name": "markdown-it",
+  "version": "3.0.4",
+  "description": "Markdown-it - modern pluggable markdown parser.",
+  "keywords": [
+    "markdown",
+    "parser",
+    "commonmark",
+    "markdown-it",
+    "markdown-it-plugin"
+  ],
+  "homepage": "https://github.com/markdown-it/markdown-it",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/markdown-it/markdown-it.git"
+  },
+  "bugs": {
+    "url": "https://github.com/markdown-it/markdown-it/issues"
+  },
+  "license": "MIT",
+  "main": "index.js",
+  "scripts": {
+    "test": "make test"
+  },
+  "dependencies": {
+    "argparse": "~ 0.1.16",
+    "autolinker": "~ 0.15.2"
+  },
+  "devDependencies": {
+    "ansi": "~0.3.0",
+    "autoprefixer-stylus": "~0.4.0",
+    "benchmark": "~1.0.0",
+    "browserify": "*",
+    "chai": "~1.10.0",
+    "commonmark": "~ 0.15.0",
+    "coveralls": "~2.11.2",
+    "eslint": "0.11.0",
+    "eslint-plugin-nodeca": "^1.0.0",
+    "istanbul": "*",
+    "jade": "~1.8.2",
+    "markdown-it-abbr": "~ 0.1.0",
+    "markdown-it-deflist": "~ 0.1.0",
+    "markdown-it-emoji": "~ 0.1.3",
+    "markdown-it-footnote": "~ 0.1.0",
+    "markdown-it-for-inline": "~ 0.1.0",
+    "markdown-it-ins": "~ 0.1.0",
+    "markdown-it-mark": "~ 0.1.0",
+    "markdown-it-sub": "~ 0.1.0",
+    "markdown-it-sup": "~ 0.1.0",
+    "markdown-it-testgen": "~ 0.1.3",
+    "marked": "0.3.2",
+    "stylus": "~0.49.3",
+    "mocha": "*",
+    "uglify-js": "*"
+  }
+}

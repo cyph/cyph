@@ -113,8 +113,8 @@
         prop = 'styleFloat';
       }
       if (getComputedStyleRX.test(prop)) {
-        prop.replace(getComputedStyleRX, function(_, char) {
-          return char.toUpperCase();
+        prop.replace(getComputedStyleRX, function(_, _char) {
+          return _char.toUpperCase();
         });
       }
       return ((_ref = el.currentStyle) != null ? _ref[prop] : void 0) || null;
@@ -130,7 +130,8 @@
       animateClass: 'animated',
       offset: 0,
       mobile: true,
-      live: true
+      live: true,
+      callback: null
     };
 
     function WOW(options) {
@@ -188,10 +189,12 @@
             box = _ref[_i];
             this.applyStyle(box, true);
           }
-          this.util().addEvent(window, 'scroll', this.scrollHandler);
-          this.util().addEvent(window, 'resize', this.scrollHandler);
-          this.interval = setInterval(this.scrollCallback, 50);
         }
+      }
+      if (!this.disabled()) {
+        this.util().addEvent(window, 'scroll', this.scrollHandler);
+        this.util().addEvent(window, 'resize', this.scrollHandler);
+        this.interval = setInterval(this.scrollCallback, 50);
       }
       if (this.config.live) {
         return new MutationObserver((function(_this) {
@@ -266,7 +269,10 @@
 
     WOW.prototype.show = function(box) {
       this.applyStyle(box);
-      return box.className = "" + box.className + " " + this.config.animateClass;
+      box.className = "" + box.className + " " + this.config.animateClass;
+      if (this.config.callback != null) {
+        return this.config.callback(box);
+      }
     };
 
     WOW.prototype.applyStyle = function(box, hidden) {
