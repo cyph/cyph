@@ -14,7 +14,7 @@ module Cyph {
 			private receivedMessages: {[id: string] : { chunks: string[]; total: number; }}	= {};
 			private sendQueue: string[]		= [];
 
-			private castle: CastleCore;
+			private core: CastleCore;
 
 			public receive (message?: string) : void {
 				if (message) {
@@ -35,7 +35,7 @@ module Cyph {
 					this.incomingMessageId <= this.incomingMessagesMax &&
 					this.incomingMessages[this.incomingMessageId]
 				) {
-					this.castle.receive(this.incomingMessages[this.incomingMessageId]);
+					this.core.receive(this.incomingMessages[this.incomingMessageId]);
 
 					this.incomingMessages[this.incomingMessageId]	= null;
 					++this.incomingMessageId;
@@ -55,7 +55,7 @@ module Cyph {
 					const chunks: string[]	= Util.chunkString(message, 5120);
 
 					for (let i = 0 ; i < chunks.length ; ++i) {
-						this.castle.send(JSON.stringify(new CastleMessageInner(
+						this.core.send(JSON.stringify(new CastleMessageInner(
 							id,
 							i,
 							chunks.length,
@@ -66,7 +66,7 @@ module Cyph {
 			}
 
 			public constructor (private session: Session.ISession) {
-				this.castle	= new CastleCore(this.session.state.sharedSecret, {
+				this.core	= new CastleCore(this.session.state.sharedSecret, {
 					abort: () =>
 						this.session.trigger(Session.Events.castle, {event: Session.CastleEvents.abort})
 					,
