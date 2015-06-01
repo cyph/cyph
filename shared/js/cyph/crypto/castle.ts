@@ -16,11 +16,11 @@ module Cyph {
 			);
 
 
-			private keyPairs: { publicKey: Uint8Array; privateKey: Uint8Array; }[]	= [];
-			private friendKeys: Uint8Array[]	= [];
 			private isAborted: boolean			= false;
 			private isConnected: boolean		= false;
 			private shouldRatchetKeys: boolean	= true;
+			private friendKeys: Uint8Array[]	= [];
+			private keyPairs: { publicKey: Uint8Array; privateKey: Uint8Array; }[]	= [];
 
 			private abort () : void {
 				this.isAborted		= true;
@@ -72,13 +72,13 @@ module Cyph {
 						this.send('');
 					}
 					catch (_) {
-						this.handlers.send('');
 						this.abort();
+						this.handlers.send('');
 					}
 				}
 				else {
 					try {
-						const cyphertextData: { nonce: string, cyphertext: string }	=
+						const cyphertextData: { nonce: string; cyphertext: string; }	=
 							JSON.parse(message)
 						;
 
@@ -129,7 +129,7 @@ module Cyph {
 
 						if (!this.isConnected) {
 							this.isConnected = true;
-							this.handlers.connected();
+							this.handlers.connect();
 						}
 					}
 					catch (_) {
@@ -172,9 +172,9 @@ module Cyph {
 				private sharedSecret: string,
 				private handlers: {
 					abort: Function;
-					connected: Function;
-					receive: Function;
-					send: Function;
+					connect: Function;
+					receive: (message: string) => void;
+					send: (message: string) => void;
 				}
 			) {
 				this.handlers.send(

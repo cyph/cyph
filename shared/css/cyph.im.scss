@@ -252,7 +252,6 @@ input, textarea {
 	margin: 2.5px;
 
 	.message {
-		max-width: 85%;
 		padding-bottom: 5px;
 	}
 
@@ -263,6 +262,9 @@ input, textarea {
 	.message-timestamp {
 		text-align: right;
 	}
+}
+.chat-main .message-item .message {
+	max-width: 85%;
 }
 .chat-main.mobile, .chat-main.video .video-call.active.playing ~ .message-list {
 	.message-item {
