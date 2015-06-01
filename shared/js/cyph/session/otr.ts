@@ -50,7 +50,7 @@ module Cyph {
 				}
 				else {
 					const id: string		= Util.generateGuid();
-					const chunks: string[]	= Util.chunkString(message, 16384);
+					const chunks: string[]	= Util.chunkString(message, 5120);
 
 					for (let i = 0 ; i < chunks.length ; ++i) {
 						this.castle.send(JSON.stringify(new OTRMessageInner(
