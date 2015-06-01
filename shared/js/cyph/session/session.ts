@@ -1,5 +1,6 @@
 /// <reference path="../base.ts" />
 /// <reference path="../channel/ratchetedchannel.ts" />
+/// <reference path="../crypto/castle.ts" />
 /// <reference path="command.ts" />
 /// <reference path="message.ts" />
 /// <reference path="otr.ts" />
@@ -33,16 +34,12 @@ module Cyph {
 				switch (e.event) {
 					case OTREvents.abort: {
 						Errors.logSmp();
-						this.trigger(Events.smp, false);
+						this.trigger(Events.connectFailure);
 						break;
 					}
-					case OTREvents.authenticated: {
-						this.trigger(Events.smp, true);
-						this.pingPong();
-						break;
-					}
-					case OTREvents.begin: {
+					case OTREvents.connect: {
 						this.trigger(Events.beginChat);
+						this.pingPong();
 						break;
 					}
 					case OTREvents.receive: {

@@ -5,23 +5,18 @@
 module Cyph {
 	export module Session {
 		export class OTR implements IOTR {
-			private static overflowRolloverId: number	= 2;
-
-
 			private currentMessageId: number	= 0;
 			private incomingMessageId: number	= 0;
 			private incomingMessagesMax: number	= 0;
-			private isConnected: boolean		= false;
 			private incomingMessages: {[id: string] : string}	= {};
 			private receivedMessages: {[id: string] : { chunks: string[]; total: number; }}	= {};
-			private receiveQueue: string[]	= [];
 			private sendQueue: string[]		= [];
 
-			private otr: any;
+			private castle: Crypto.Castle;
 
-			private receiveHandler (message?: string) : void {
+			public receive (message?: string) : void {
 				if (message) {
-					const o: OTRMessageOuter = Util.deserializeObject(OTRMessageOuter, message);
+					const o: OTRMessageOuter	= Util.deserializeObject(OTRMessageOuter, message);
 
 					if (o.id >= this.incomingMessageId) {
 						this.incomingMessages[o.id]	= o.cyphertext;
@@ -38,27 +33,27 @@ module Cyph {
 					this.incomingMessageId <= this.incomingMessagesMax &&
 					this.incomingMessages[this.incomingMessageId]
 				) {
-					this.otr.recv(this.incomingMessages[this.incomingMessageId]);
+					this.castle.receive(this.incomingMessages[this.incomingMessageId]);
 
 					this.incomingMessages[this.incomingMessageId]	= null;
 					++this.incomingMessageId;
 
-					if (this.incomingMessageId === 1) {
-						this.session.trigger(Events.otr, {event: OTREvents.begin});
-					}
-					else if (this.incomingMessageId === Config.maxInt) {
-						this.incomingMessageId	= OTR.overflowRolloverId;
+					if (this.incomingMessageId === Config.maxInt) {
+						this.incomingMessageId	= 1;
 					}
 				}
 			}
 
-			private sendHandler (message?: string) : void {
-				if (message) {
+			public send (message: string) : void {
+				if (this.sendQueue) {
+					this.sendQueue.push(message);
+				}
+				else {
 					const id: string		= Util.generateGuid();
-					const chunks: string[]	= Util.chunkString(message, 5120);
+					const chunks: string[]	= Util.chunkString(message, 16384);
 
 					for (let i = 0 ; i < chunks.length ; ++i) {
-						this.otr.send(JSON.stringify(new OTRMessageInner(
+						this.castle.send(JSON.stringify(new OTRMessageInner(
 							id,
 							i,
 							chunks.length,
@@ -68,120 +63,64 @@ module Cyph {
 				}
 			}
 
-			public receive (message: string) : void {
-				this.receiveQueue.push(message);
-			}
-
-			public send (message: string) : void {
-				this.sendQueue.push(message);
-			}
-
 			public constructor (private session: ISession) {
-				const user: any	= new self['OTR'].User().account('me', 'cyph');
+				this.castle	= new Crypto.Castle(this.session.state.sharedSecret, {
+					abort: () =>
+						this.session.trigger(Events.otr, {event: OTREvents.abort})
+					,
+					connect: () => {
+						const sendQueue	= this.sendQueue;
+						this.sendQueue	= null;
 
-				user.generateInstag(() =>
-					user.generateKey(() => {
-						this.otr	= user.contact('friend').openSession({
-							policy: self['OTR'].POLICY.ALLOW_V3,
-							MTU: 15872
-						});
-
-
-						this.otr.on('smp', (e: string) => {
-							if (e === 'request') {
-								this.otr.smpRespond(this.session.state.sharedSecret);
-							}
-							else if (e === 'complete') {
-								this.session.trigger(Events.otr, {event: OTREvents.authenticated});
-							}
-							else if (e === 'failed' || e === 'aborted') {
-								this.session.trigger(Events.otr, {event: OTREvents.abort});
-							}
-						});
-
-
-						this.otr.on('message', (message: string, wasEncrypted: boolean) => {
-							if (wasEncrypted) {
-								const o: OTRMessageInner	= Util.deserializeObject(
-									OTRMessageInner,
-									message
-								);
-
-								if (!this.receivedMessages[o.id]) {
-									this.receivedMessages[o.id]	= {
-										chunks: [],
-										total: 0
-									}
-								}
-
-								this.receivedMessages[o.id].chunks[o.index]	= o.toString();
-
-								if (++this.receivedMessages[o.id].total === o.total) {
-									this.session.trigger(Events.otr, {
-										event: OTREvents.receive,
-										data: this.receivedMessages[o.id].chunks.join('')
-									});
-
-									this.receivedMessages[o.id]	= null;
-								}
-							}
-						});
-
-
-						this.otr.on('inject_message', (cyphertext: string) => {
-							if (cyphertext && cyphertext.indexOf('otr.cypherpunks.ca') > -1) {
-								cyphertext	= '?OTRv3?';
-							}
-
-							this.session.trigger(Events.otr, {
-								event: OTREvents.send,
-								data: JSON.stringify(new OTRMessageOuter(
-									this.currentMessageId++,
-									cyphertext
-								))
-							});
-
-							if (this.currentMessageId === Config.maxInt) {
-								this.currentMessageId	= OTR.overflowRolloverId;
-							}
-
-							this.session.trigger(Events.cyphertext, {
-								cyphertext,
-								author: Users.me
-							});
-						});
-
-
-						this.otr.on('gone_secure', () => {
-							if (!this.isConnected) {
-								this.isConnected	= true;
-
-								if (this.session.state.isCreator) {
-									this.otr.smpStart(this.session.state.sharedSecret);
-								}
-							}
-						});
-
-
-						if (!this.session.state.isCreator) {
-							this.otr.start();
+						for (const message of sendQueue) {
+							this.send(message);
 						}
 
+						this.session.trigger(Events.otr, {event: OTREvents.connect});
+					},
+					receive: (message: string) => {
+						const o: OTRMessageInner	= Util.deserializeObject(
+							OTRMessageInner,
+							message
+						);
 
-						const timer: Timer	= new Timer(() => {
-							if (!this.session.state.isAlive) {
-								timer.stop();
-							}
-							else {
-								this.receiveHandler(this.receiveQueue.shift());
+						if (!this.receivedMessages[o.id]) {
+							this.receivedMessages[o.id]	= {
+								chunks: [],
+								total: 0
+							};
+						}
 
-								if (this.isConnected) {
-									this.sendHandler(this.sendQueue.shift());
-								}
-							}
+						this.receivedMessages[o.id].chunks[o.index]	= o.toString();
+
+						if (++this.receivedMessages[o.id].total === o.total) {
+							this.session.trigger(Events.otr, {
+								event: OTREvents.receive,
+								data: this.receivedMessages[o.id].chunks.join('')
+							});
+
+							this.receivedMessages[o.id]	= null;
+						}
+					},
+					send: (cyphertext: string) => {
+						this.session.trigger(Events.otr, {
+							event: OTREvents.send,
+							data: JSON.stringify(new OTRMessageOuter(
+								this.currentMessageId++,
+								cyphertext
+							))
 						});
-					})
-				);
+
+						if (this.currentMessageId === Config.maxInt) {
+							this.currentMessageId	= 1;
+						}
+
+						this.session.trigger(Events.cyphertext, {
+							cyphertext,
+							author: Users.me
+						});
+					}
+				});
 			}
 		}
 	}

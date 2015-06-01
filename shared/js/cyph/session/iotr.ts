@@ -1,7 +1,7 @@
 module Cyph {
 	export module Session {
 		/**
-		 * Represents OTR encryption instance.
+		 * Represents OTR (or OTR-like) encryption instance.
 		 * @interface
 		 */
 		export interface IOTR {
@@ -9,7 +9,7 @@ module Cyph {
 			 * Receive incoming cyphertext.
 			 * @param message Data to be decrypted.
 			 */
-			receive (message: string) : void;
+			receive (message?: string) : void;
 
 			/**
 			 * Send outgoing text.
