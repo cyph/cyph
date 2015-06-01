@@ -64,8 +64,9 @@ module Cyph {
 						this.abort();
 						this.handlers.send('');
 					}
-
-					CastleCore.sodium.memzero(this.sharedSecret);
+					finally {
+						CastleCore.sodium.memzero(this.sharedSecret);
+					}
 				}
 				else {
 					try {
