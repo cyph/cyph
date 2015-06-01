@@ -1,10 +1,10 @@
 module Cyph {
-	export module Session {
+	export module Crypto {
 		/**
-		 * Represents OTR (or OTR-like) encryption instance.
+		 * Represents a Castle encryption instance.
 		 * @interface
 		 */
-		export interface IOTR {
+		export interface ICastle {
 			/**
 			 * Receive incoming cyphertext.
 			 * @param message Data to be decrypted.

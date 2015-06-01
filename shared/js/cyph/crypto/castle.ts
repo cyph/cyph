@@ -1,217 +1,130 @@
+/// <reference path="icastle.ts" />
+/// <reference path="castlemessage.ts" />
+/// <reference path="castlecore.ts" />
+
+
 module Cyph {
 	export module Crypto {
-		/**
-		 * The Castle encryption protocol. This version includes an OTR-like
-		 * feature set, with group/async/persistence coming later.
-		 */
-		export class Castle {
-			private static sodium: any	= self['sodium'];
+		export class Castle implements ICastle {
+			private currentMessageId: number	= 0;
+			private incomingMessageId: number	= 0;
+			private incomingMessagesMax: number	= 0;
+			private incomingMessages: {[id: string] : string}	= {};
+			private receivedMessages: {[id: string] : { chunks: string[]; total: number; }}	= {};
+			private sendQueue: string[]		= [];
 
-			private static emptyNonce: Uint8Array	= new Uint8Array(
-				Castle.sodium.crypto_secretbox_NONCEBYTES
-			);
+			private castle: CastleCore;
 
-			private static emptySalt: Uint8Array	= new Uint8Array(
-				Castle.sodium.crypto_pwhash_scryptsalsa208sha256_SALTBYTES
-			);
+			public receive (message?: string) : void {
+				if (message) {
+					const o: CastleMessageOuter	= Util.deserializeObject(CastleMessageOuter, message);
 
+					if (o.id >= this.incomingMessageId) {
+						this.incomingMessages[o.id]	= o.cyphertext;
+						this.incomingMessagesMax	= Math.max(this.incomingMessagesMax, o.id);
 
-			private isAborted: boolean			= false;
-			private isConnected: boolean		= false;
-			private shouldRatchetKeys: boolean	= true;
-			private currentFriendKey: string	= '';
-			private currentKey: string			= '';
-
-			private friendKeys: Uint8Array[]	= [];
-			private keyPairs: { publicKey: Uint8Array; privateKey: Uint8Array; }[]	= [];
-
-			private abort () : void {
-				this.isAborted		= true;
-				this.isConnected	= false;
-
-				this.handlers.abort();
-			}
-
-			private generateKeyPair () : Uint8Array {
-				this.keyPairs.unshift(Castle.sodium.crypto_box_keypair());
-
-				if (this.keyPairs.length > 2) {
-					const oldKeyPair	= this.keyPairs.pop();
-
-					Castle.sodium.memzero(oldKeyPair.privateKey);
-					Castle.sodium.memzero(oldKeyPair.publicKey);
+						this.session.trigger(Session.Events.cyphertext, {
+							cyphertext: o.cyphertext,
+							author: Session.Users.friend
+						});
+					}
 				}
 
-				const publicKey: Uint8Array	= this.keyPairs[0].publicKey;
-				this.currentKey				= Castle.sodium.to_hex(publicKey);
+				if (
+					this.incomingMessageId <= this.incomingMessagesMax &&
+					this.incomingMessages[this.incomingMessageId]
+				) {
+					this.castle.receive(this.incomingMessages[this.incomingMessageId]);
 
-				return publicKey;
+					this.incomingMessages[this.incomingMessageId]	= null;
+					++this.incomingMessageId;
+
+					if (this.incomingMessageId === Config.maxInt) {
+						this.incomingMessageId	= 1;
+					}
+				}
 			}
 
-			/**
-			 * Receive incoming cyphertext.
-			 * @param message Data to be decrypted.
-			 */
-			public receive (message: string) : void {
-				if (this.isAborted) {
-					return;
-				}
-
-				if (this.friendKeys.length < 1) {
-					try {
-						this.friendKeys.unshift(
-							Castle.sodium.crypto_secretbox_open_easy(
-								Castle.sodium.from_hex(message),
-								Castle.emptyNonce,
-								Castle.sodium.crypto_pwhash_scryptsalsa208sha256(
-									this.sharedSecret,
-									Castle.emptySalt,
-									0,
-									0,
-									Castle.sodium.crypto_secretbox_KEYBYTES
-								)
-							)
-						);
-
-						this.send('');
-					}
-					catch (_) {
-						this.abort();
-						this.handlers.send('');
-					}
-
-					this.sharedSecret	= '';
+			public send (message: string) : void {
+				if (this.sendQueue) {
+					this.sendQueue.push(message);
 				}
 				else {
-					try {
-						const cyphertextData: { nonce: string; cyphertext: string; }	=
-							JSON.parse(message)
-						;
+					const id: string		= Util.generateGuid();
+					const chunks: string[]	= Util.chunkString(message, 5120);
 
-						const nonce: Uint8Array			= Castle.sodium.from_hex(
-							cyphertextData.nonce
-						);
-
-						const cyphertext: Uint8Array	= Castle.sodium.from_hex(
-							cyphertextData.cyphertext
-						);
-
-						const data: {
-							message: string;
-							friendKey: string;
-							newKey: string;
-						}	= (() => {
-							for (const friendKey of this.friendKeys) {
-								for (const keyPair of this.keyPairs) {
-									try {
-										return JSON.parse(
-											Castle.sodium.crypto_box_open_easy(
-												cyphertext,
-												nonce,
-												friendKey,
-												keyPair.privateKey,
-												'text'
-											)
-										);
-									}
-									catch (_) {}
-								}
-							}
-
-							return {};
-						})();
-
-						if (data.newKey) {
-							this.currentFriendKey	= data.newKey;
-
-							this.friendKeys.unshift(Castle.sodium.from_hex(this.currentFriendKey));
-
-							if (this.friendKeys.length > 2) {
-								const oldKey	= this.friendKeys.pop();
-								Castle.sodium.memzero(oldKey);
-							}
-						}
-
-						if (data.friendKey === this.currentKey) {
-							this.shouldRatchetKeys	= true;
-						}
-
-						if (data.message) {
-							this.handlers.receive(data.message);
-						}
-
-						if (!this.isConnected) {
-							this.isConnected	= true;
-							this.handlers.connect();
-						}
-					}
-					catch (_) {
-						if (!this.isConnected) {
-							this.abort();
-						}
+					for (let i = 0 ; i < chunks.length ; ++i) {
+						this.castle.send(JSON.stringify(new CastleMessageInner(
+							id,
+							i,
+							chunks.length,
+							chunks[i]
+						)));
 					}
 				}
 			}
 
-			/**
-			 * Send outgoing text.
-			 * @param message Data to be encrypted.
-			 */
-			public send (message: string) : void {
-				const privateKey: Uint8Array	= this.keyPairs[0].privateKey;
+			public constructor (private session: Session.ISession) {
+				this.castle	= new CastleCore(this.session.state.sharedSecret, {
+					abort: () =>
+						this.session.trigger(Session.Events.castle, {event: Session.CastleEvents.abort})
+					,
+					connect: () => {
+						const sendQueue	= this.sendQueue;
+						this.sendQueue	= null;
 
-				const nonce: Uint8Array			= Castle.sodium.randombytes_buf(
-					Castle.sodium.crypto_secretbox_NONCEBYTES
-				);
+						for (const message of sendQueue) {
+							this.send(message);
+						}
 
-				const data	= {
-					message,
-					friendKey: this.currentFriendKey,
-					newKey: undefined
-				};
+						this.session.trigger(Session.Events.castle, {event: Session.CastleEvents.connect});
+					},
+					receive: (message: string) => {
+						const o: CastleMessageInner	= Util.deserializeObject(
+							CastleMessageInner,
+							message
+						);
 
-				if (this.shouldRatchetKeys) {
-					this.shouldRatchetKeys	= false;
+						if (!this.receivedMessages[o.id]) {
+							this.receivedMessages[o.id]	= {
+								chunks: [],
+								total: 0
+							};
+						}
 
-					this.generateKeyPair();
-					data.newKey	= this.currentKey;
-				}
+						this.receivedMessages[o.id].chunks[o.index]	= o.toString();
 
-				this.handlers.send(JSON.stringify({
-					nonce: Castle.sodium.to_hex(nonce),
-					cyphertext: Castle.sodium.crypto_box_easy(
-						JSON.stringify(data),
-						nonce,
-						this.friendKeys[0],
-						privateKey,
-						'hex'
-					)
-				}));
-			}
+						if (++this.receivedMessages[o.id].total === o.total) {
+							this.session.trigger(Session.Events.castle, {
+								event: Session.CastleEvents.receive,
+								data: this.receivedMessages[o.id].chunks.join('')
+							});
 
-			public constructor (
-				private sharedSecret: string,
-				private handlers: {
-					abort: Function;
-					connect: Function;
-					receive: (message: string) => void;
-					send: (message: string) => void;
-				}
-			) {
-				this.handlers.send(
-					Castle.sodium.crypto_secretbox_easy(
-						this.generateKeyPair(),
-						Castle.emptyNonce,
-						Castle.sodium.crypto_pwhash_scryptsalsa208sha256(
-							this.sharedSecret,
-							Castle.emptySalt,
-							0,
-							0,
-							Castle.sodium.crypto_secretbox_KEYBYTES
-						),
-						'hex'
-					)
-				);
+							this.receivedMessages[o.id]	= null;
+						}
+					},
+					send: (cyphertext: string) => {
+						this.session.trigger(Session.Events.castle, {
+							event: Session.CastleEvents.send,
+							data: JSON.stringify(new CastleMessageOuter(
+								this.currentMessageId++,
+								cyphertext
+							))
+						});
+
+						if (this.currentMessageId === Config.maxInt) {
+							this.currentMessageId	= 1;
+						}
+
+						this.session.trigger(Session.Events.cyphertext, {
+							cyphertext,
+							author: Session.Users.me
+						});
+					}
+				});
+
+				/* Wipe shared secret when finished with it */
+				this.session.updateState(Session.State.sharedSecret, '');
 			}
 		}
 	}

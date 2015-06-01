@@ -1,14 +1,14 @@
 module Cyph {
-	export module Session {
+	export module Crypto {
 		/**
-		 * Message body to be encrypted within OTR cyphertext.
+		 * Message body to be encrypted within Castle cyphertext.
 		 * Contains metadata to ensure that large messages split across
 		 * multiple cyphertext blocks are correctly pieced together.
 		 *
 		 * Also transparently adds padding to ensure that the same message
 		 * sent between key ratchets won't yield the same cyphertext.
 		 */
-		export class OTRMessageInner {
+		export class CastleMessageInner {
 			private static paddingDelimiter: string	= '☁☁☁ PRAISE BE TO CYPH ☀☀☀';
 
 			private static getPadding () : string {
@@ -25,17 +25,17 @@ module Cyph {
 			private static pad (s: string) : string {
 				return btoa(
 					encodeURIComponent(
-						OTRMessageInner.getPadding() +
-						OTRMessageInner.paddingDelimiter +
+						CastleMessageInner.getPadding() +
+						CastleMessageInner.paddingDelimiter +
 						s +
-						OTRMessageInner.paddingDelimiter +
-						OTRMessageInner.getPadding()
+						CastleMessageInner.paddingDelimiter +
+						CastleMessageInner.getPadding()
 					)
 				);
 			}
 
 			private static unpad (s: string) : string {
-				return decodeURIComponent(atob(s)).split(OTRMessageInner.paddingDelimiter)[1];
+				return decodeURIComponent(atob(s)).split(CastleMessageInner.paddingDelimiter)[1];
 			}
 
 
@@ -45,7 +45,7 @@ module Cyph {
 			 * Retuns the original message / message chunk.
 			 */
 			public toString () : string {
-				return OTRMessageInner.unpad(this.messageChunk);
+				return CastleMessageInner.unpad(this.messageChunk);
 			}
 
 			/**
@@ -61,15 +61,15 @@ module Cyph {
 				public total: number,
 				messageChunk: string
 			) {
-				this.messageChunk	= OTRMessageInner.pad(messageChunk);
+				this.messageChunk	= CastleMessageInner.pad(messageChunk);
 			}
 		}
 
 		/**
-		 * Wrapper around OTR cyphertext to be sent over the network;
+		 * Wrapper around Castle cyphertext to be sent over the network;
 		 * used to ensure that messages are processed only once and in order.
 		 */
-		export class OTRMessageOuter {
+		export class CastleMessageOuter {
 			/**
 			 * @param id Number designating order in sequence of messages.
 			 * @param cyphertext Block of encrypted data.

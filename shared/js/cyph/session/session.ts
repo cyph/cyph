@@ -3,7 +3,6 @@
 /// <reference path="../crypto/castle.ts" />
 /// <reference path="command.ts" />
 /// <reference path="message.ts" />
-/// <reference path="otr.ts" />
 
 
 module Cyph {
@@ -20,7 +19,7 @@ module Cyph {
 			private pingPongTimeouts: number					= 0
 
 			private channel: Channel.IChannel;
-			private otr: IOTR;
+			private castle: Crypto.ICastle;
 
 			public state	= {
 				cyphId: <string> '',
@@ -30,19 +29,19 @@ module Cyph {
 				isStartingNewCyph: <boolean> false
 			};
 
-			private otrHandler (e: { event: OTREvents; data?: string; }) : void {
+			private castleHandler (e: { event: CastleEvents; data?: string; }) : void {
 				switch (e.event) {
-					case OTREvents.abort: {
+					case CastleEvents.abort: {
 						Errors.logSmp();
 						this.trigger(Events.connectFailure);
 						break;
 					}
-					case OTREvents.connect: {
+					case CastleEvents.connect: {
 						this.trigger(Events.beginChat);
 						this.pingPong();
 						break;
 					}
-					case OTREvents.receive: {
+					case CastleEvents.receive: {
 						this.lastIncomingMessageTimestamp	= Date.now();
 
 						if (e.data) {
@@ -61,7 +60,7 @@ module Cyph {
 						}
 						break;
 					}
-					case OTREvents.send: {
+					case CastleEvents.send: {
 						if (e.data) {
 							this.sendQueue.push(e.data);
 						}
@@ -160,8 +159,8 @@ module Cyph {
 							});
 						}
 
-						this.on(Events.otr, e => this.otrHandler(e));
-						this.otr	= new OTR(this);
+						this.on(Events.castle, e => this.castleHandler(e));
+						this.castle	= new Crypto.Castle(this);
 
 						const sendTimer: Timer	= new Timer((now: number) => {
 							if (!this.state.isAlive) {
@@ -213,7 +212,7 @@ module Cyph {
 					this.close(false);
 				}
 				else {
-					this.otr.receive(data);
+					this.castle.receive(data);
 				}
 			}
 
@@ -222,7 +221,7 @@ module Cyph {
 			}
 
 			public sendBase (messages: IMessage[]) : void {
-				if (this.otr) {
+				if (this.castle) {
 					for (const message of messages) {
 						if (message.event === RPCEvents.text) {
 							this.trigger(RPCEvents.text, {
@@ -232,7 +231,7 @@ module Cyph {
 						}
 					}
 
-					this.otr.send(JSON.stringify(messages));
+					this.castle.send(JSON.stringify(messages));
 				}
 				else {
 					setTimeout(() => this.sendBase(messages), 250);
