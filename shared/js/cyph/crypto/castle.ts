@@ -19,6 +19,7 @@ module Cyph {
 			private isAborted: boolean			= false;
 			private isConnected: boolean		= false;
 			private shouldRatchetKeys: boolean	= true;
+			private currentKeyHex: string		= '';
 			private friendKeys: Uint8Array[]	= [];
 			private keyPairs: { publicKey: Uint8Array; privateKey: Uint8Array; }[]	= [];
 
@@ -39,7 +40,10 @@ module Cyph {
 					Castle.sodium.memzero(oldKeyPair.publicKey);
 				}
 
-				return this.keyPairs[0].publicKey;
+				const publicKey: Uint8Array = this.keyPairs[0].publicKey;
+				this.currentKeyHex			= Castle.sodium.to_hex(publicKey);
+
+				return publicKey;
 			}
 
 			/**
@@ -50,8 +54,6 @@ module Cyph {
 				if (this.isAborted) {
 					return;
 				}
-
-				this.shouldRatchetKeys	= true;
 
 				if (this.friendKeys.length < 1) {
 					try {
@@ -92,7 +94,8 @@ module Cyph {
 
 						const data: {
 							message: string;
-							key: string
+							friendKey: string;
+							newKey: string;
 						}	= (() => {
 							for (const friendKey of this.friendKeys) {
 								for (const keyPair of this.keyPairs) {
@@ -114,8 +117,8 @@ module Cyph {
 							return {};
 						})();
 
-						if (data.key) {
-							this.friendKeys.unshift(Castle.sodium.from_hex(data.key));
+						if (data.newKey) {
+							this.friendKeys.unshift(Castle.sodium.from_hex(data.newKey));
 
 							if (this.friendKeys.length > 2) {
 								const oldKey	= this.friendKeys.pop();
@@ -123,12 +126,16 @@ module Cyph {
 							}
 						}
 
+						if (data.friendKey === this.currentKeyHex) {
+							this.shouldRatchetKeys	= true;
+						}
+
 						if (data.message) {
 							this.handlers.receive(data.message);
 						}
 
 						if (!this.isConnected) {
-							this.isConnected = true;
+							this.isConnected	= true;
 							this.handlers.connect();
 						}
 					}
@@ -145,24 +152,32 @@ module Cyph {
 			 * @param message Data to be encrypted.
 			 */
 			public send (message: string) : void {
-				const data	= {message, key: undefined};
+				const friendKey: Uint8Array		= this.friendKeys[0];
+
+				const privateKey: Uint8Array	= this.keyPairs[0].privateKey;
+
+				const nonce: Uint8Array			= Castle.sodium.randombytes_buf(
+					Castle.sodium.crypto_secretbox_NONCEBYTES
+				);
+
+				const data	= {
+					message,
+					friendKey: Castle.sodium.to_hex(friendKey),
+					newKey: undefined
+				};
 
 				if (this.shouldRatchetKeys) {
 					this.shouldRatchetKeys	= false;
-					data.key				= Castle.sodium.to_hex(this.generateKeyPair());
+					data.newKey				= Castle.sodium.to_hex(this.generateKeyPair());
 				}
-
-				const nonce: Uint8Array	= Castle.sodium.randombytes_buf(
-					Castle.sodium.crypto_secretbox_NONCEBYTES
-				);
 
 				this.handlers.send(JSON.stringify({
 					nonce: Castle.sodium.to_hex(nonce),
 					cyphertext: Castle.sodium.crypto_box_easy(
 						JSON.stringify(data),
 						nonce,
-						this.friendKeys[0],
-						this.keyPairs[0].privateKey,
+						friendKey,
+						privateKey,
 						'hex'
 					)
 				}));
