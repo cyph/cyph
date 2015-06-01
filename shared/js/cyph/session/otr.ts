@@ -121,6 +121,9 @@ module Cyph {
 						});
 					}
 				});
+
+				/* Wipe shared secret when finished with it */
+				this.session.updateState(State.sharedSecret, '');
 			}
 		}
 	}
