@@ -285,8 +285,7 @@ module Cyph {
 							class='message-list nano'
 							flex
 							ng-class='{
-								active: $this.state === Cyph.UI.Chat.States.chat,
-								"is-connected": $this.isConnected
+								active: $this.state === Cyph.UI.Chat.States.chat
 							}'
 						>
 							<md-content class='nano-content'>
@@ -352,20 +351,6 @@ module Cyph {
 									</div>
 								</md-list>
 							</md-content>
-
-							<div
-								class='setting-up-crypto loading'
-								layout='column'
-								layout-fill
-								flex
-							>
-								<div flex></div>
-								<div class='logo-animation'>
-									<img src='/img/logo.animated.gif' />
-								</div>
-								<div translate>Authenticating connection...</div>
-								<div flex></div>
-							</div>
 						</div>
 					</div>
 				`,
