@@ -77,6 +77,8 @@ module Cyph {
 						this.abort();
 						this.handlers.send('');
 					}
+
+					this.sharedSecret	= '';
 				}
 				else {
 					try {
