@@ -1,5 +1,6 @@
 /// <reference path="icastle.ts" />
-/// <reference path="castlemessage.ts" />
+/// <reference path="castlemessageinner.ts" />
+/// <reference path="castlemessageouter.ts" />
 /// <reference path="castlecore.ts" />
 
 
