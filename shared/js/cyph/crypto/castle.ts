@@ -19,7 +19,9 @@ module Cyph {
 			private isAborted: boolean			= false;
 			private isConnected: boolean		= false;
 			private shouldRatchetKeys: boolean	= true;
-			private currentKeyHex: string		= '';
+			private currentFriendKey: string	= '';
+			private currentKey: string			= '';
+
 			private friendKeys: Uint8Array[]	= [];
 			private keyPairs: { publicKey: Uint8Array; privateKey: Uint8Array; }[]	= [];
 
@@ -40,8 +42,8 @@ module Cyph {
 					Castle.sodium.memzero(oldKeyPair.publicKey);
 				}
 
-				const publicKey: Uint8Array = this.keyPairs[0].publicKey;
-				this.currentKeyHex			= Castle.sodium.to_hex(publicKey);
+				const publicKey: Uint8Array	= this.keyPairs[0].publicKey;
+				this.currentKey				= Castle.sodium.to_hex(publicKey);
 
 				return publicKey;
 			}
@@ -120,7 +122,9 @@ module Cyph {
 						})();
 
 						if (data.newKey) {
-							this.friendKeys.unshift(Castle.sodium.from_hex(data.newKey));
+							this.currentFriendKey	= data.newKey;
+
+							this.friendKeys.unshift(Castle.sodium.from_hex(this.currentFriendKey));
 
 							if (this.friendKeys.length > 2) {
 								const oldKey	= this.friendKeys.pop();
@@ -128,7 +132,7 @@ module Cyph {
 							}
 						}
 
-						if (data.friendKey === this.currentKeyHex) {
+						if (data.friendKey === this.currentKey) {
 							this.shouldRatchetKeys	= true;
 						}
 
@@ -154,8 +158,6 @@ module Cyph {
 			 * @param message Data to be encrypted.
 			 */
 			public send (message: string) : void {
-				const friendKey: Uint8Array		= this.friendKeys[0];
-
 				const privateKey: Uint8Array	= this.keyPairs[0].privateKey;
 
 				const nonce: Uint8Array			= Castle.sodium.randombytes_buf(
@@ -164,13 +166,15 @@ module Cyph {
 
 				const data	= {
 					message,
-					friendKey: Castle.sodium.to_hex(friendKey),
+					friendKey: this.currentFriendKey,
 					newKey: undefined
 				};
 
 				if (this.shouldRatchetKeys) {
 					this.shouldRatchetKeys	= false;
-					data.newKey				= Castle.sodium.to_hex(this.generateKeyPair());
+
+					this.generateKeyPair();
+					data.newKey	= this.currentKey;
 				}
 
 				this.handlers.send(JSON.stringify({
@@ -178,7 +182,7 @@ module Cyph {
 					cyphertext: Castle.sodium.crypto_box_easy(
 						JSON.stringify(data),
 						nonce,
-						friendKey,
+						this.friendKeys[0],
 						privateKey,
 						'hex'
 					)
