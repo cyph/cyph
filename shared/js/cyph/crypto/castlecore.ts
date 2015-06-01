@@ -23,6 +23,8 @@ module Cyph {
 			private friendKeys: Uint8Array[]	= [];
 			private keyPairs: { publicKey: Uint8Array; privateKey: Uint8Array; }[]	= [];
 
+			private sharedSecret: Uint8Array;
+
 			private abort () : void {
 				this.isAborted		= true;
 				this.isConnected	= false;
@@ -58,13 +60,7 @@ module Cyph {
 							CastleCore.sodium.crypto_secretbox_open_easy(
 								CastleCore.sodium.from_hex(message),
 								CastleCore.emptyNonce,
-								CastleCore.sodium.crypto_pwhash_scryptsalsa208sha256(
-									this.sharedSecret,
-									CastleCore.emptySalt,
-									0,
-									0,
-									CastleCore.sodium.crypto_secretbox_KEYBYTES
-								)
+								this.sharedSecret
 							)
 						);
 
@@ -75,7 +71,7 @@ module Cyph {
 						this.handlers.send('');
 					}
 
-					this.sharedSecret	= '';
+					CastleCore.sodium.memzero(this.sharedSecret);
 				}
 				else {
 					try {
@@ -187,7 +183,7 @@ module Cyph {
 			}
 
 			public constructor (
-				private sharedSecret: string,
+				sharedSecret: string,
 				private handlers: {
 					abort: Function;
 					connect: Function;
@@ -195,17 +191,21 @@ module Cyph {
 					send: (message: string) => void;
 				}
 			) {
+				this.sharedSecret	= CastleCore.sodium.crypto_pwhash_scryptsalsa208sha256(
+					sharedSecret,
+					new Uint8Array(
+						CastleCore.sodium.crypto_pwhash_scryptsalsa208sha256_SALTBYTES
+					),
+					0,
+					0,
+					CastleCore.sodium.crypto_secretbox_KEYBYTES
+				);
+
 				this.handlers.send(
 					CastleCore.sodium.crypto_secretbox_easy(
 						this.generateKeyPair(),
 						CastleCore.emptyNonce,
-						CastleCore.sodium.crypto_pwhash_scryptsalsa208sha256(
-							this.sharedSecret,
-							CastleCore.emptySalt,
-							0,
-							0,
-							CastleCore.sodium.crypto_secretbox_KEYBYTES
-						),
+						this.sharedSecret,
 						'hex'
 					)
 				);
