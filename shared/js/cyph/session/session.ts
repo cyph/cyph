@@ -139,7 +139,8 @@ module Cyph {
 
 				this.updateState(State.cyphId, descriptor.substr(0, middle));
 				this.updateState(State.sharedSecret,
-					this.state.sharedSecret || descriptor
+					this.state.sharedSecret ||
+					descriptor.substr(middle)
 				);
 			}
 
