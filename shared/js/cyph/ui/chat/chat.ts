@@ -139,7 +139,7 @@ module Cyph {
 
 									$clone.remove();
 								});
-							}, 3000);
+							}, 5000);
 						}
 
 						this.addMessage(Strings.introductoryMessage, Session.Users.app, false);
