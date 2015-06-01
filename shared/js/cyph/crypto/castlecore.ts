@@ -7,14 +7,6 @@ module Cyph {
 		export class CastleCore {
 			private static sodium: any	= self['sodium'];
 
-			private static emptyNonce: Uint8Array	= new Uint8Array(
-				CastleCore.sodium.crypto_secretbox_NONCEBYTES
-			);
-
-			private static emptySalt: Uint8Array	= new Uint8Array(
-				CastleCore.sodium.crypto_pwhash_scryptsalsa208sha256_SALTBYTES
-			);
-
 
 			private isAborted: boolean			= false;
 			private isConnected: boolean		= false;
@@ -59,7 +51,9 @@ module Cyph {
 						this.friendKeys.unshift(
 							CastleCore.sodium.crypto_secretbox_open_easy(
 								CastleCore.sodium.from_hex(message),
-								CastleCore.emptyNonce,
+								new Uint8Array(
+									CastleCore.sodium.crypto_secretbox_NONCEBYTES
+								),
 								this.sharedSecret
 							)
 						);
@@ -204,7 +198,9 @@ module Cyph {
 				this.handlers.send(
 					CastleCore.sodium.crypto_secretbox_easy(
 						this.generateKeyPair(),
-						CastleCore.emptyNonce,
+						new Uint8Array(
+							CastleCore.sodium.crypto_secretbox_NONCEBYTES
+						),
 						this.sharedSecret,
 						'hex'
 					)
