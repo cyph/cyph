@@ -1,6 +1,16 @@
 module Cyph {
 	export module Session {
 		/**
+		 * Castle-specific events (handled within Session).
+		 */
+		export enum CastleEvents {
+			abort,
+			connect,
+			receive,
+			send
+		}
+
+		/**
 		 * Session-related events that may be handled throughout the codes.
 		 */
 		export class Events {
@@ -17,16 +27,6 @@ module Cyph {
 			public static newCyph: string			= 'newCyph';
 			public static p2pUi: string				= 'p2pUi';
 			public static pingPongTimeout: string	= 'pingPongTimeout';
-		}
-
-		/**
-		 * Castle-specific events (handled within Session).
-		 */
-		export enum CastleEvents {
-			abort,
-			connect,
-			receive,
-			send
 		}
 
 		/**
