@@ -19,8 +19,6 @@ module Cyph {
 			private isAborted: boolean			= false;
 			private isConnected: boolean		= false;
 			private shouldRatchetKeys: boolean	= true;
-			private currentFriendKey: string	= '';
-			private currentKey: string			= '';
 
 			private friendKeys: Uint8Array[]	= [];
 			private keyPairs: { publicKey: Uint8Array; privateKey: Uint8Array; }[]	= [];
@@ -42,10 +40,7 @@ module Cyph {
 					CastleCore.sodium.memzero(oldKeyPair.publicKey);
 				}
 
-				const publicKey: Uint8Array	= this.keyPairs[0].publicKey;
-				this.currentKey				= CastleCore.sodium.to_hex(publicKey);
-
-				return publicKey;
+				return this.keyPairs[0].publicKey;
 			}
 
 			/**
@@ -96,6 +91,9 @@ module Cyph {
 							cyphertextData.cyphertext
 						);
 
+
+						let keyPairUsed: { publicKey: Uint8Array; privateKey: Uint8Array; };
+
 						const data: {
 							message: string;
 							friendKey: string;
@@ -104,7 +102,7 @@ module Cyph {
 							for (const friendKey of this.friendKeys) {
 								for (const keyPair of this.keyPairs) {
 									try {
-										return JSON.parse(
+										const data	= JSON.parse(
 											CastleCore.sodium.crypto_box_open_easy(
 												cyphertext,
 												nonce,
@@ -113,6 +111,10 @@ module Cyph {
 												'text'
 											)
 										);
+
+										keyPairUsed	= keyPair;
+
+										return data;
 									}
 									catch (_) {}
 								}
@@ -122,9 +124,7 @@ module Cyph {
 						})();
 
 						if (data.newKey) {
-							this.currentFriendKey	= data.newKey;
-
-							this.friendKeys.unshift(CastleCore.sodium.from_hex(this.currentFriendKey));
+							this.friendKeys.unshift(CastleCore.sodium.from_hex(data.newKey));
 
 							if (this.friendKeys.length > 2) {
 								const oldKey	= this.friendKeys.pop();
@@ -132,7 +132,7 @@ module Cyph {
 							}
 						}
 
-						if (data.friendKey === this.currentKey) {
+						if (keyPairUsed === this.keyPairs[0]) {
 							this.shouldRatchetKeys	= true;
 						}
 
@@ -166,15 +166,12 @@ module Cyph {
 
 				const data	= {
 					message,
-					friendKey: this.currentFriendKey,
 					newKey: undefined
 				};
 
 				if (this.shouldRatchetKeys) {
 					this.shouldRatchetKeys	= false;
-
-					this.generateKeyPair();
-					data.newKey	= this.currentKey;
+					data.newKey	= CastleCore.sodium.to_hex(this.generateKeyPair());
 				}
 
 				this.handlers.send(JSON.stringify({
