@@ -31,7 +31,7 @@ module Cyph {
 					}
 				}
 
-				if (
+				while (
 					this.incomingMessageId <= this.incomingMessagesMax &&
 					this.incomingMessages[this.incomingMessageId]
 				) {
