@@ -169,7 +169,7 @@ input, textarea {
 .chat-main.mobile .friend-is-typing {
 	text-align: center;
 }
-.message-list.is-connected {
+.message-list {
 	.friend-is-typing.show {
 		opacity: 1;
 		@include transition(opacity 1s ease-in-out);
