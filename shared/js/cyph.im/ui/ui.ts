@@ -40,7 +40,6 @@ module Cyph.im {
 				const cyphLink: string	=
 					Env.newCyphBaseUrl +
 					'#' +
-					this.chat.session.state.cyphId +
 					this.chat.session.state.sharedSecret
 				;
 
