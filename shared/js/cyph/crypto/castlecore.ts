@@ -110,9 +110,11 @@ module Cyph {
 									catch (_) {}
 								}
 							}
-
-							return {};
 						})();
+
+						if (!data) {
+							throw data;
+						}
 
 						if (keyPairUsed === this.keyPairs[0]) {
 							this.shouldRatchetKeys	= true;
