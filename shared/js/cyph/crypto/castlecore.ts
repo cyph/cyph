@@ -114,17 +114,16 @@ module Cyph {
 							return {};
 						})();
 
+						if (keyPairUsed === this.keyPairs[0]) {
+							this.shouldRatchetKeys	= true;
+						}
+
 						if (data.newKey) {
 							this.friendKeys.unshift(CastleCore.sodium.from_hex(data.newKey));
 
 							if (this.friendKeys.length > 2) {
-								const oldKey	= this.friendKeys.pop();
-								CastleCore.sodium.memzero(oldKey);
+								CastleCore.sodium.memzero(this.friendKeys.pop());
 							}
-						}
-
-						if (keyPairUsed === this.keyPairs[0]) {
-							this.shouldRatchetKeys	= true;
 						}
 
 						if (data.message) {
