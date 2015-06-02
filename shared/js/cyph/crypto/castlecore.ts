@@ -21,6 +21,7 @@ module Cyph {
 				this.isAborted		= true;
 				this.isConnected	= false;
 
+				this.handlers.send('');
 				this.handlers.abort();
 			}
 
@@ -62,7 +63,6 @@ module Cyph {
 					}
 					catch (_) {
 						this.abort();
-						this.handlers.send('');
 					}
 					finally {
 						CastleCore.sodium.memzero(this.sharedSecret);
