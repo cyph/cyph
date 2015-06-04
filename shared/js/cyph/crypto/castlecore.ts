@@ -33,10 +33,11 @@ module Cyph {
 				this.handlers.abort();
 			}
 
-			private decrypt (
-				cyphertext: Uint8Array,
-				ntru: Uint8Array,
+			private decrypt(
 				nonce: Uint8Array,
+				asymmetricNonce: Uint8Array,
+				ntruCyphertext: Uint8Array,
+				sodiumCyphertext: Uint8Array,
 				friendKeySet: {
 					sodium: Uint8Array;
 					ntru: Uint8Array;
@@ -46,22 +47,16 @@ module Cyph {
 					ntru: { publicKey: Uint8Array; privateKey: Uint8Array; };
 				}
 			) : string {
-				const shortNonce: Uint8Array	= new Uint8Array(
-					nonce.buffer,
-					0,
-					CastleCore.sodium.crypto_box_NONCEBYTES
-				);
-
 				return CastleCore.sodium.crypto_box_open_easy(
 					CastleCore.sodium.crypto_secretbox_open_easy(
-						cyphertext,
+						sodiumCyphertext,
 						nonce,
 						CastleCore.ntru.decrypt(
-							ntru,
+							ntruCyphertext,
 							keySet.ntru.privateKey
 						)
 					),
-					shortNonce,
+					asymmetricNonce,
 					friendKeySet.sodium,
 					keySet.sodium.privateKey,
 					'text'
@@ -77,40 +72,50 @@ module Cyph {
 			) : string {
 				const friendKeySet	= this.friendKeySets[0];
 
-				const symmetricKey: Uint8Array	= CastleCore.sodium.randombytes_buf(
-					CastleCore.sodium.crypto_secretbox_KEYBYTES
-				);
-
-				const nonce: Uint8Array			= CastleCore.sodium.randombytes_buf(
+				const nonce: Uint8Array				= CastleCore.sodium.randombytes_buf(
 					CastleCore.sodium.crypto_secretbox_NONCEBYTES
 				);
 
-				const shortNonce: Uint8Array	= new Uint8Array(
+				const asymmetricNonce: Uint8Array	= new Uint8Array(
 					nonce.buffer,
 					0,
 					CastleCore.sodium.crypto_box_NONCEBYTES
 				);
 
-				return JSON.stringify({
-					nonce: CastleCore.sodium.to_hex(nonce),
-					ntru: CastleCore.sodium.to_hex(
-						CastleCore.ntru.encrypt(
-							symmetricKey,
-							friendKeySet.ntru
-						)
+				const symmetricKey: Uint8Array		= CastleCore.sodium.randombytes_buf(
+					CastleCore.sodium.crypto_secretbox_KEYBYTES
+				);
+
+				const ntruCyphertext: Uint8Array	= CastleCore.ntru.encrypt(
+					symmetricKey,
+					friendKeySet.ntru
+				);
+
+				const sodiumCyphertext: Uint8Array	= CastleCore.sodium.crypto_secretbox_easy(
+					CastleCore.sodium.crypto_box_easy(
+						CastleCore.sodium.from_string(data),
+						asymmetricNonce,
+						friendKeySet.sodium,
+						keySet.sodium.privateKey
 					),
-					cyphertext: CastleCore.sodium.crypto_secretbox_easy(
-						CastleCore.sodium.crypto_box_easy(
-							data,
-							shortNonce,
-							friendKeySet.sodium,
-							keySet.sodium.privateKey
-						),
-						nonce,
-						symmetricKey,
-						'hex'
-					)
-				});
+					nonce,
+					symmetricKey
+				);
+
+				const cyphertext: Uint8Array	= new Uint8Array(
+					nonce.length +
+					ntruCyphertext.length +
+					sodiumCyphertext.length
+				);
+
+				cyphertext.set(nonce);
+				cyphertext.set(ntruCyphertext, nonce.length);
+				cyphertext.set(
+					sodiumCyphertext,
+					nonce.length + ntruCyphertext.length
+				);
+
+				return CastleCore.sodium.to_hex(cyphertext);
 			}
 
 			private generateKeySet () : Uint8Array {
@@ -131,7 +136,11 @@ module Cyph {
 				const sodiumKey	= this.keySets[0].sodium.publicKey;
 				const ntruKey	= this.keySets[0].ntru.publicKey;
 
-				const bytes: Uint8Array	= new Uint8Array(sodiumKey.length + ntruKey.length);
+				const bytes: Uint8Array	= new Uint8Array(
+					sodiumKey.length +
+					ntruKey.length
+				);
+
 				bytes.set(sodiumKey);
 				bytes.set(ntruKey, sodiumKey.length);
 
@@ -191,22 +200,30 @@ module Cyph {
 				}
 				else {
 					try {
-						const cyphertextData: {
-							nonce: string;
-							ntru: string;
-							cyphertext: string;
-						}	= JSON.parse(message);
+						const cyphertext: Uint8Array		= CastleCore.sodium.from_hex(message);
 
-						const nonce: Uint8Array			= CastleCore.sodium.from_hex(
-							cyphertextData.nonce
+						const nonce: Uint8Array				= new Uint8Array(
+							cyphertext.buffer,
+							0,
+							CastleCore.sodium.crypto_secretbox_NONCEBYTES
 						);
 
-						const ntru: Uint8Array			= CastleCore.sodium.from_hex(
-							cyphertextData.ntru
+						const asymmetricNonce: Uint8Array	= new Uint8Array(
+							cyphertext.buffer,
+							0,
+							CastleCore.sodium.crypto_box_NONCEBYTES
 						);
 
-						const cyphertext: Uint8Array	= CastleCore.sodium.from_hex(
-							cyphertextData.cyphertext
+						const ntruCyphertext: Uint8Array	= new Uint8Array(
+							cyphertext.buffer,
+							CastleCore.sodium.crypto_secretbox_NONCEBYTES,
+							CastleCore.ntru.encryptedDataLength
+						);
+
+						const sodiumCyphertext: Uint8Array	= new Uint8Array(
+							cyphertext.buffer,
+							CastleCore.sodium.crypto_secretbox_NONCEBYTES +
+								CastleCore.ntru.encryptedDataLength
 						);
 
 
@@ -221,9 +238,10 @@ module Cyph {
 									try {
 										const data	= JSON.parse(
 											this.decrypt(
-												cyphertext,
-												ntru,
 												nonce,
+												asymmetricNonce,
+												ntruCyphertext,
+												sodiumCyphertext,
 												friendKeySet,
 												keySet
 											)
