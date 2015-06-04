@@ -113,6 +113,31 @@ module Cyph {
 				});
 			}
 
+			private generateKeySet () : Uint8Array {
+				this.keySets.unshift({
+					sodium: CastleCore.sodium.crypto_box_keypair(),
+					ntru: CastleCore.ntru.keyPair()
+				});
+
+				if (this.keySets.length > 2) {
+					const oldKeySet	= this.keySets.pop();
+
+					CastleCore.sodium.memzero(oldKeySet.sodium.privateKey);
+					CastleCore.sodium.memzero(oldKeySet.ntru.privateKey);
+					CastleCore.sodium.memzero(oldKeySet.sodium.publicKey);
+					CastleCore.sodium.memzero(oldKeySet.ntru.publicKey);
+				}
+
+				const sodiumKey	= this.keySets[0].sodium.publicKey;
+				const ntruKey	= this.keySets[0].ntru.publicKey;
+
+				const bytes: Uint8Array	= new Uint8Array(sodiumKey.length + ntruKey.length);
+				bytes.set(sodiumKey);
+				bytes.set(ntruKey, sodiumKey.length);
+
+				return bytes;
+			}
+
 			private importFriendKeySet (friendKeySet: Uint8Array) : void {
 				this.friendKeySets.unshift({
 					sodium: new Uint8Array(
@@ -132,31 +157,6 @@ module Cyph {
 					CastleCore.sodium.memzero(oldKeySet.sodium);
 					CastleCore.sodium.memzero(oldKeySet.ntru);
 				}
-			}
-
-			private generateKeySet () : Uint8Array {
-				this.keySets.unshift({
-					sodium: CastleCore.sodium.crypto_box_keypair(),
-					ntru: CastleCore.ntru.keyPair()
-				});
-
-				if (this.keySets.length > 2) {
-					const oldKeySet	= this.keySets.pop();
-
-					CastleCore.sodium.memzero(oldKeySet.sodium.privateKey);
-					CastleCore.sodium.memzero(oldKeySet.sodium.publicKey);
-					CastleCore.sodium.memzero(oldKeySet.ntru.privateKey);
-					CastleCore.sodium.memzero(oldKeySet.ntru.publicKey);
-				}
-
-				const sodiumKey	= this.keySets[0].sodium.publicKey;
-				const ntruKey	= this.keySets[0].ntru.publicKey;
-
-				const bytes: Uint8Array	= new Uint8Array(sodiumKey.length + ntruKey.length);
-				bytes.set(sodiumKey);
-				bytes.set(ntruKey, sodiumKey.length);
-
-				return bytes;
 			}
 
 			/**
