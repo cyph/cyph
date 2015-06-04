@@ -14,15 +14,13 @@ module Cyph {
 			private shouldRatchetKeys: boolean	= true;
 
 			private friendKeySets: {
-				innerEcc: Uint8Array;
+				sodium: Uint8Array;
 				ntru: Uint8Array;
-				outerEcc: Uint8Array;
 			}[]	= [];
 
 			private keySets: {
-				innerEcc: { publicKey: Uint8Array; privateKey: Uint8Array; };
+				sodium: { publicKey: Uint8Array; privateKey: Uint8Array; };
 				ntru: { publicKey: Uint8Array; privateKey: Uint8Array; };
-				outerEcc: { publicKey: Uint8Array; privateKey: Uint8Array; };
 			}[]	= [];
 
 			private sharedSecret: Uint8Array;
@@ -37,16 +35,15 @@ module Cyph {
 
 			private decrypt (
 				cyphertext: Uint8Array,
+				ntru: Uint8Array,
 				nonce: Uint8Array,
 				friendKeySet: {
-					innerEcc: Uint8Array;
+					sodium: Uint8Array;
 					ntru: Uint8Array;
-					outerEcc: Uint8Array;
 				},
 				keySet: {
-					innerEcc: { publicKey: Uint8Array; privateKey: Uint8Array; };
+					sodium: { publicKey: Uint8Array; privateKey: Uint8Array; };
 					ntru: { publicKey: Uint8Array; privateKey: Uint8Array; };
-					outerEcc: { publicKey: Uint8Array; privateKey: Uint8Array; };
 				}
 			) : string {
 				const shortNonce: Uint8Array	= new Uint8Array(
@@ -55,32 +52,18 @@ module Cyph {
 					CastleCore.sodium.crypto_box_NONCEBYTES
 				);
 
-				const ntruData: { secretBox: string; ntru: string; }	= JSON.parse(
-					CastleCore.sodium.crypto_box_open_easy(
-						cyphertext,
-						shortNonce,
-						friendKeySet.outerEcc,
-						keySet.outerEcc.privateKey,
-						'text'
-					)
-				);
-
 				return CastleCore.sodium.crypto_box_open_easy(
 					CastleCore.sodium.crypto_secretbox_open_easy(
-						CastleCore.sodium.from_hex(
-							ntruData.secretBox
-						),
+						cyphertext,
 						nonce,
 						CastleCore.ntru.decrypt(
-							CastleCore.sodium.from_hex(
-								ntruData.ntru
-							),
+							ntru,
 							keySet.ntru.privateKey
 						)
 					),
 					shortNonce,
-					friendKeySet.innerEcc,
-					keySet.innerEcc.privateKey,
+					friendKeySet.sodium,
+					keySet.sodium.privateKey,
 					'text'
 				);
 			}
@@ -88,9 +71,8 @@ module Cyph {
 			private encrypt (
 				data: string,
 				keySet: {
-					innerEcc: { publicKey: Uint8Array; privateKey: Uint8Array; };
+					sodium: { publicKey: Uint8Array; privateKey: Uint8Array; };
 					ntru: { publicKey: Uint8Array; privateKey: Uint8Array; };
-					outerEcc: { publicKey: Uint8Array; privateKey: Uint8Array; };
 				}
 			) : string {
 				const friendKeySet	= this.friendKeySets[0];
@@ -111,79 +93,70 @@ module Cyph {
 
 				return JSON.stringify({
 					nonce: CastleCore.sodium.to_hex(nonce),
-					cyphertext: CastleCore.sodium.crypto_box_easy(
-						JSON.stringify({
-							secretBox: CastleCore.sodium.crypto_secretbox_easy(
-								CastleCore.sodium.crypto_box_easy(
-									data,
-									shortNonce,
-									friendKeySet.innerEcc,
-									keySet.innerEcc.privateKey
-								),
-								nonce,
-								symmetricKey,
-								'hex'
-							),
-							ntru: CastleCore.sodium.to_hex(
-								CastleCore.ntru.encrypt(
-									symmetricKey,
-									friendKeySet.ntru
-								)
-							)
-						}),
-						shortNonce,
-						friendKeySet.outerEcc,
-						keySet.outerEcc.privateKey,
+					ntru: CastleCore.sodium.to_hex(
+						CastleCore.ntru.encrypt(
+							symmetricKey,
+							friendKeySet.ntru
+						)
+					),
+					cyphertext: CastleCore.sodium.crypto_secretbox_easy(
+						CastleCore.sodium.crypto_box_easy(
+							data,
+							shortNonce,
+							friendKeySet.sodium,
+							keySet.sodium.privateKey
+						),
+						nonce,
+						symmetricKey,
 						'hex'
 					)
 				});
 			}
 
-			private importFriendKeySet (keySetString: string) : void {
-				const friendKeySet: {
-					innerEcc: string;
-					ntru: string;
-					outerEcc: string;
-				}	= JSON.parse(keySetString);
-
+			private importFriendKeySet (friendKeySet: Uint8Array) : void {
 				this.friendKeySets.unshift({
-					innerEcc: CastleCore.sodium.from_hex(friendKeySet.innerEcc),
-					ntru: CastleCore.sodium.from_hex(friendKeySet.ntru),
-					outerEcc: CastleCore.sodium.from_hex(friendKeySet.outerEcc)
+					sodium: new Uint8Array(
+						friendKeySet.buffer,
+						0,
+						CastleCore.sodium.crypto_box_PUBLICKEYBYTES
+					),
+					ntru: new Uint8Array(
+						friendKeySet.buffer,
+						CastleCore.sodium.crypto_box_PUBLICKEYBYTES
+					)
 				});
 
 				if (this.friendKeySets.length > 2) {
 					const oldKeySet	= this.friendKeySets.pop();
 
-					CastleCore.sodium.memzero(oldKeySet.innerEcc);
+					CastleCore.sodium.memzero(oldKeySet.sodium);
 					CastleCore.sodium.memzero(oldKeySet.ntru);
-					CastleCore.sodium.memzero(oldKeySet.outerEcc);
 				}
 			}
 
-			private generateKeySet () : string {
+			private generateKeySet () : Uint8Array {
 				this.keySets.unshift({
-					innerEcc: CastleCore.sodium.crypto_box_keypair(),
-					ntru: CastleCore.ntru.keyPair(),
-					outerEcc: CastleCore.sodium.crypto_box_keypair()
+					sodium: CastleCore.sodium.crypto_box_keypair(),
+					ntru: CastleCore.ntru.keyPair()
 				});
 
 				if (this.keySets.length > 2) {
 					const oldKeySet	= this.keySets.pop();
 
-					CastleCore.sodium.memzero(oldKeySet.innerEcc.privateKey);
-					CastleCore.sodium.memzero(oldKeySet.innerEcc.publicKey);
+					CastleCore.sodium.memzero(oldKeySet.sodium.privateKey);
+					CastleCore.sodium.memzero(oldKeySet.sodium.publicKey);
 					CastleCore.sodium.memzero(oldKeySet.ntru.privateKey);
 					CastleCore.sodium.memzero(oldKeySet.ntru.publicKey);
-					CastleCore.sodium.memzero(oldKeySet.outerEcc.privateKey);
-					CastleCore.sodium.memzero(oldKeySet.outerEcc.publicKey);
 				}
 
-				return JSON.stringify({
-					innerEcc: CastleCore.sodium.to_hex(this.keySets[0].innerEcc.publicKey),
-					ntru: CastleCore.sodium.to_hex(this.keySets[0].ntru.publicKey),
-					outerEcc: CastleCore.sodium.to_hex(this.keySets[0].outerEcc.publicKey)
-				});
+				const sodiumKey	= this.keySets[0].sodium.publicKey;
+				const ntruKey	= this.keySets[0].ntru.publicKey;
+
+				const bytes: Uint8Array	= new Uint8Array(sodiumKey.length + ntruKey.length);
+				bytes.set(sodiumKey);
+				bytes.set(ntruKey, sodiumKey.length);
+
+				return bytes;
 			}
 
 			/**
@@ -203,8 +176,7 @@ module Cyph {
 								new Uint8Array(
 									CastleCore.sodium.crypto_secretbox_NONCEBYTES
 								),
-								this.sharedSecret,
-								'text'
+								this.sharedSecret
 							)
 						);
 
@@ -219,12 +191,18 @@ module Cyph {
 				}
 				else {
 					try {
-						const cyphertextData: { nonce: string; cyphertext: string; }	=
-							JSON.parse(message)
-						;
+						const cyphertextData: {
+							nonce: string;
+							ntru: string;
+							cyphertext: string;
+						}	= JSON.parse(message);
 
 						const nonce: Uint8Array			= CastleCore.sodium.from_hex(
 							cyphertextData.nonce
+						);
+
+						const ntru: Uint8Array			= CastleCore.sodium.from_hex(
+							cyphertextData.ntru
 						);
 
 						const cyphertext: Uint8Array	= CastleCore.sodium.from_hex(
@@ -244,6 +222,7 @@ module Cyph {
 										const data	= JSON.parse(
 											this.decrypt(
 												cyphertext,
+												ntru,
 												nonce,
 												friendKeySet,
 												keySet
@@ -268,7 +247,11 @@ module Cyph {
 						}
 
 						if (data.newKey) {
-							this.importFriendKeySet(data.newKey);
+							this.importFriendKeySet(
+								CastleCore.sodium.from_hex(
+									data.newKey
+								)
+							);
 						}
 
 						if (data.message) {
@@ -302,7 +285,7 @@ module Cyph {
 
 				if (this.shouldRatchetKeys) {
 					this.shouldRatchetKeys	= false;
-					data.newKey				= this.generateKeySet();
+					data.newKey				= CastleCore.sodium.to_hex(this.generateKeySet());
 				}
 
 				this.handlers.send(
@@ -334,9 +317,7 @@ module Cyph {
 
 				this.handlers.send(
 					CastleCore.sodium.crypto_secretbox_easy(
-						CastleCore.sodium.from_string(
-							this.generateKeySet()
-						),
+						this.generateKeySet(),
 						new Uint8Array(
 							CastleCore.sodium.crypto_secretbox_NONCEBYTES
 						),
