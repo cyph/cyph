@@ -6,7 +6,7 @@ The [NTRU](https://github.com/NTRUOpenSourceProject/ntru-crypto) post-quantum as
 cipher compiled to pure JavaScript using [Emscripten](https://github.com/kripken/emscripten).
 A simple wrapper is provided to make NTRU easy to use in Web applications.
 
-The default parameter set is EES743EP1 (the highest possible security level, as per
+The default parameter set is EES439EP1 (roughly equivalent to 256-bit ECC, as per
 [NTRU's documentation](https://github.com/NTRUOpenSourceProject/ntru-crypto/blob/master/reference-code/C/Encrypt/doc/UserNotes-NTRUEncrypt.pdf)).
 To change this, modify line 6 of Makefile and rebuild with `make`.
 
