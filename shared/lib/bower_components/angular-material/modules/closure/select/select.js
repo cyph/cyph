@@ -2,7 +2,7 @@
  * Angular Material Design
  * https://github.com/angular/material
  * @license MIT
- * v0.9.6
+ * v0.9.7
  */
 goog.provide('ng.material.components.select');
 goog.require('ng.material.components.backdrop');
@@ -689,7 +689,7 @@ function SelectProvider($$interimElementProvider) {
       options: selectDefaultOptions
     });
 
-  /* @ngInject */
+  /* ngInject */
   function selectDefaultOptions($mdSelect, $mdConstant, $$rAF, $mdUtil, $mdTheming, $timeout, $window ) {
     return {
       parent: 'body',
