@@ -116,3 +116,5 @@ var ntru	= {
 return ntru;
 
 }());
+
+self.ntru	= ntru;
