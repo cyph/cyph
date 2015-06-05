@@ -166,7 +166,7 @@ module Cyph {
 				);
 
 				cyphertext.set(nonce);
-				cyphertext.set(ntruCyphertext, nonce.length);
+				cyphertext.set(ntruCyphertext, CastleCore.sodium.crypto_secretbox_NONCEBYTES);
 				cyphertext.set(ntruMac, CastleCore.ntruMacIndex);
 				cyphertext.set(sodiumCyphertext, CastleCore.sodiumCyphertextIndex);
 
@@ -196,7 +196,7 @@ module Cyph {
 				);
 
 				publicKeySet.set(sodiumKey);
-				publicKeySet.set(ntruKey, sodiumKey.length);
+				publicKeySet.set(ntruKey, CastleCore.sodium.crypto_box_PUBLICKEYBYTES);
 
 				return publicKeySet;
 			}
