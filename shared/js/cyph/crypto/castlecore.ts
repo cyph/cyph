@@ -8,12 +8,12 @@ module Cyph {
 			private static sodium: any	= self['sodium'];
 			private static ntru: any	= self['ntru'];
 
-			private static publicKeySetLength: number	=
+			private static publicKeySetLength: number		=
 				CastleCore.sodium.crypto_box_PUBLICKEYBYTES +
 				CastleCore.ntru.publicKeyLength
 			;
 
-			private static ntruMacIndex: number	=
+			private static ntruMacIndex: number				=
 				CastleCore.sodium.crypto_secretbox_NONCEBYTES +
 				CastleCore.ntru.encryptedDataLength
 			;
