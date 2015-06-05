@@ -139,10 +139,11 @@ module Cyph {
 
 									$clone.remove();
 								});
-							}, 500);
+							}, 10000);
 						}
 
 						this.addMessage(Strings.introductoryMessage, Session.Users.app, false);
+						this.setConnected();
 					}, 3000);
 				}
 
@@ -338,6 +339,8 @@ module Cyph {
 						Util.getValue(Elements.timer[0], 'stop', () => {}).call(Elements.timer[0]);
 					});
 
+					this.session.on(Session.Events.connectFailure, () => this.abortSetup());
+
 					this.session.on(Session.Events.pingPongTimeout, () => {
 						if (!this.isDisconnected) {
 							this.addMessage(Strings.pingPongTimeout, Session.Users.app);
@@ -347,15 +350,6 @@ module Cyph {
 								content: Strings.pingPongTimeout,
 								ok: Strings.ok
 							});
-						}
-					});
-
-					this.session.on(Session.Events.smp, (wasSuccessful: boolean) => {
-						if (wasSuccessful) {
-							this.setConnected();
-						}
-						else {
-							this.abortSetup();
 						}
 					});
 

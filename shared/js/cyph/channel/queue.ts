@@ -207,7 +207,11 @@ module Cyph {
 							);
 						}
 					}
-					else if (isSynchronous) {
+					else if (
+						isSynchronous ||
+						/* SQS limit */
+						message.join('').length > 60000
+					) {
 						for (let i = 0 ; i < message.length ; ++i) {
 							this.send(
 								message[i],
@@ -217,7 +221,7 @@ module Cyph {
 										callback :
 										undefined
 								,
-								true
+								isSynchronous
 							);
 						}
 					}

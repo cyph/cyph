@@ -2,7 +2,7 @@
  * Angular Material Design
  * https://github.com/angular/material
  * @license MIT
- * v0.9.6
+ * v0.9.7
  */
 goog.provide('ng.material.components.tooltip');
 goog.require('ng.material.core');
@@ -88,14 +88,14 @@ function MdTooltipDirective($timeout, $window, $$rAF, $document, $mdUtil, $mdThe
     }
 
     function configureWatchers () {
-      scope.$watch('visible', function (isVisible) {
-        if (isVisible) showTooltip();
-        else hideTooltip();
-      });
       scope.$on('$destroy', function() {
         scope.visible = false;
         element.remove();
         angular.element($window).off('resize', debouncedOnResize);
+      });
+      scope.$watch('visible', function (isVisible) {
+        if (isVisible) showTooltip();
+        else hideTooltip();
       });
     }
 
@@ -112,7 +112,7 @@ function MdTooltipDirective($timeout, $window, $$rAF, $document, $mdUtil, $mdThe
 
     function getParentWithPointerEvents () {
       var parent = element.parent();
-      while ($window.getComputedStyle(parent[0])['pointer-events'] == 'none') {
+      while (parent && $window.getComputedStyle(parent[0])['pointer-events'] == 'none') {
         parent = parent.parent();
       }
       return parent;
@@ -128,10 +128,33 @@ function MdTooltipDirective($timeout, $window, $$rAF, $document, $mdUtil, $mdThe
       return current;
     }
 
+    function hasComputedStyleValue(key, value) {
+        // Check if we should show it or not...
+        var computedStyles = $window.getComputedStyle(element[0]);
+        return angular.isDefined(computedStyles[key]) && (computedStyles[key] == value);
+    }
+
     function bindEvents () {
-      var autohide = scope.hasOwnProperty('autohide') ? scope.autohide : attr.hasOwnProperty('mdAutohide');
-      parent.on('focus mouseenter touchstart', function() { setVisible(true); });
-      parent.on('blur mouseleave touchend touchcancel', function() { if ($document[0].activeElement !== parent[0] || autohide) setVisible(false); });
+      var mouseActive = false;
+      var enterHandler = function() {
+        if (!hasComputedStyleValue('pointer-events','none')) {
+          setVisible(true);
+        }
+      };
+      var leaveHandler = function () {
+        var autohide = scope.hasOwnProperty('autohide') ? scope.autohide : attr.hasOwnProperty('mdAutohide');
+        if (autohide || mouseActive || ($document[0].activeElement !== parent[0]) ) {
+          setVisible(false);
+        }
+        mouseActive = false;
+      };
+
+      // to avoid `synthetic clicks` we listen to mousedown instead of `click`
+      parent.on('mousedown', function() { mouseActive = true; });
+      parent.on('focus mouseenter touchstart', enterHandler );
+      parent.on('blur mouseleave touchend touchcancel', leaveHandler );
+
+
       angular.element($window).on('resize', debouncedOnResize);
     }
 
@@ -157,8 +180,8 @@ function MdTooltipDirective($timeout, $window, $$rAF, $document, $mdUtil, $mdThe
 
       // Check if we should display it or not.
       // This handles hide-* and show-* along with any user defined css
-      var computedStyles = $window.getComputedStyle(element[0]);
-      if (angular.isDefined(computedStyles.display) && computedStyles.display == 'none') {
+      if ( hasComputedStyleValue('display','none') ) {
+        scope.visible = false;
         element.detach();
         return;
       }

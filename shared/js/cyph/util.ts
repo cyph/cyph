@@ -238,7 +238,10 @@ module Cyph {
 					}
 				};
 
-				xhr.timeout	= timeout;
+				try {
+					xhr.timeout = timeout;
+				}
+				catch (_) {}
 			}
 
 			try {

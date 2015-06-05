@@ -56,10 +56,11 @@ tsd query --resolve --overwrite --save --action install \
 cd ../cryptolib
 
 bower install --save \
-	mnaamani/otr4-em \
-	rubycon/isaac.js
+	libsodium.js \
+	rubycon/isaac.js \
+	cyph/ntru.js
 
-wget http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/hmac-sha256.js
+wget https://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/hmac-sha256.js
 
 cd ..
 chmod -R 700 .

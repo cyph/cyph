@@ -2,7 +2,7 @@
  * Angular Material Design
  * https://github.com/angular/material
  * @license MIT
- * v0.9.6
+ * v0.9.7
  */
 (function( window, angular, undefined ){
 "use strict";
@@ -56,7 +56,7 @@ function getDirective(name) {
     DirectiveFactory.$inject = ["$parse"];
   return DirectiveFactory;
 
-  /* @ngInject */
+  /* ngInject */
   function DirectiveFactory($parse) {
       return { restrict: 'A', link: postLink };
       function postLink(scope, element, attr) {
