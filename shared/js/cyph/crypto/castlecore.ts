@@ -136,7 +136,7 @@ module Cyph {
 				);
 
 				ntruPayload.set(symmetricKey);
-				ntruPayload.set(ntruAuthKey, CastleCore.sodium.crypto_onetimeauth_KEYBYTES);
+				ntruPayload.set(ntruAuthKey, CastleCore.sodium.crypto_secretbox_KEYBYTES);
 
 
 				const ntruCyphertext: Uint8Array	= CastleCore.ntru.encrypt(
