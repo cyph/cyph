@@ -13,6 +13,11 @@ module Cyph {
 				CastleCore.ntru.publicKeyLength
 			;
 
+			private static ntruPayloadLength: number		=
+				CastleCore.sodium.crypto_secretbox_KEYBYTES +
+				CastleCore.sodium.crypto_onetimeauth_KEYBYTES
+			;
+
 			private static ntruMacIndex: number				=
 				CastleCore.sodium.crypto_secretbox_NONCEBYTES +
 				CastleCore.ntru.encryptedDataLength
@@ -127,8 +132,7 @@ module Cyph {
 				);
 
 				const ntruPayload: Uint8Array		= new Uint8Array(
-					CastleCore.sodium.crypto_secretbox_KEYBYTES +
-					CastleCore.sodium.crypto_onetimeauth_KEYBYTES
+					CastleCore.ntruPayloadLength
 				);
 
 				ntruPayload.set(symmetricKey);
