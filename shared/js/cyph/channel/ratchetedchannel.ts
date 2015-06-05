@@ -15,6 +15,7 @@ module Cyph {
 		export class RatchetedChannel implements IChannel {
 			private lastChannelRatchet: number	= 0;
 
+			private isConnected: boolean;
 			private isCreator: boolean;
 			private channel: Channel;
 			private newChannel: Channel;
@@ -129,6 +130,11 @@ module Cyph {
 				callback?: Function|Function[],
 				isSynchronous?: boolean
 			) : void {
+				if (!this.isConnected) {
+					setTimeout(() => this.send(message, callback, isSynchronous), 250);
+					return;
+				}
+
 				Util.retryUntilComplete(retry => {
 					try {
 						this.channel.send(message, callback, isSynchronous);
@@ -159,7 +165,8 @@ module Cyph {
 				}) = {},
 				config: any = {}
 			) {
-				const onopen: Function	= Util.getValue(handlers, 'onopen', () => {});
+				const onopen: Function		= Util.getValue(handlers, 'onopen', () => {});
+				const onconnect: Function	= Util.getValue(handlers, 'onconnect', () => { });
 
 				handlers.onopen		= (isCreator: boolean) : void => {
 					this.isCreator	= isCreator;
@@ -181,6 +188,14 @@ module Cyph {
 
 					onopen(this.isCreator);
 				};
+
+				handlers.onconnect	= () => setTimeout(
+					() => {
+						this.isConnected	= true;
+						onconnect();
+					},
+					Env.isLocalEnv ? 2500 : 250
+				);
 
 				this.channel	= new Channel(channelName, handlers, config, this.session);
 

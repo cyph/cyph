@@ -14,11 +14,11 @@
 
 /// <reference path="../cyph/icontroller.ts" />
 /// <reference path="../cyph/channel/ichannel.ts" />
+/// <reference path="../cyph/crypto/icastle.ts" />
 /// <reference path="../cyph/p2p/ifiletransfer.ts" />
 /// <reference path="../cyph/p2p/ip2p.ts" />
 /// <reference path="../cyph/session/imessage.ts" />
 /// <reference path="../cyph/session/imutex.ts" />
-/// <reference path="../cyph/session/iotr.ts" />
 /// <reference path="../cyph/session/isession.ts" />
 /// <reference path="../cyph/ui/idialogmanager.ts" />
 /// <reference path="../cyph/ui/inotifier.ts" />
