@@ -13,9 +13,14 @@ module Cyph {
 				CastleCore.ntru.publicKeyLength
 			;
 
-			private static sodiumCyphertextIndex: number	=
+			private static ntruMacIndex: number	=
 				CastleCore.sodium.crypto_secretbox_NONCEBYTES +
 				CastleCore.ntru.encryptedDataLength
+			;
+
+			private static sodiumCyphertextIndex: number	=
+				CastleCore.ntruMacIndex +
+				CastleCore.sodium.crypto_onetimeauth_BYTES
 			;
 
 
@@ -43,10 +48,11 @@ module Cyph {
 				this.handlers.send('');
 			}
 
-			private decrypt(
+			private decrypt (
 				nonce: Uint8Array,
 				asymmetricNonce: Uint8Array,
 				ntruCyphertext: Uint8Array,
+				ntruMac: Uint8Array,
 				sodiumCyphertext: Uint8Array,
 				friendKeySet: {
 					sodium: Uint8Array;
@@ -57,14 +63,35 @@ module Cyph {
 					ntru: { publicKey: Uint8Array; privateKey: Uint8Array; };
 				}
 			) : Uint8Array {
+				const ntruPayload: Uint8Array	= CastleCore.ntru.decrypt(
+					ntruCyphertext,
+					keySet.ntru.privateKey
+				);
+
+				const symmetricKey: Uint8Array	= new Uint8Array(
+					ntruPayload.buffer,
+					0,
+					CastleCore.sodium.crypto_secretbox_KEYBYTES
+				);
+
+				const ntruAuthKey: Uint8Array	= new Uint8Array(
+					ntruPayload.buffer,
+					CastleCore.sodium.crypto_secretbox_KEYBYTES
+				);
+
+				if (!CastleCore.sodium.crypto_onetimeauth_verify(
+					ntruMac,
+					ntruCyphertext,
+					ntruAuthKey
+				)) {
+					throw new Error('Invalid NTRU cyphertext.');
+				}
+
 				return CastleCore.sodium.crypto_box_open_easy(
 					CastleCore.sodium.crypto_secretbox_open_easy(
 						sodiumCyphertext,
 						nonce,
-						CastleCore.ntru.decrypt(
-							ntruCyphertext,
-							keySet.ntru.privateKey
-						)
+						symmetricKey
 					),
 					asymmetricNonce,
 					friendKeySet.sodium,
@@ -95,9 +122,27 @@ module Cyph {
 					CastleCore.sodium.crypto_secretbox_KEYBYTES
 				);
 
+				const ntruAuthKey: Uint8Array		= CastleCore.sodium.randombytes_buf(
+					CastleCore.sodium.crypto_onetimeauth_KEYBYTES
+				);
+
+				const ntruPayload: Uint8Array		= new Uint8Array(
+					CastleCore.sodium.crypto_secretbox_KEYBYTES +
+					CastleCore.sodium.crypto_onetimeauth_KEYBYTES
+				);
+
+				ntruPayload.set(symmetricKey);
+				ntruPayload.set(ntruAuthKey, CastleCore.sodium.crypto_onetimeauth_KEYBYTES);
+
+
 				const ntruCyphertext: Uint8Array	= CastleCore.ntru.encrypt(
-					symmetricKey,
+					ntruPayload,
 					friendKeySet.ntru
+				);
+
+				const ntruMac: Uint8Array			= CastleCore.sodium.crypto_onetimeauth(
+					ntruCyphertext,
+					ntruAuthKey
 				);
 
 				const sodiumCyphertext: Uint8Array	= CastleCore.sodium.crypto_secretbox_easy(
@@ -118,6 +163,7 @@ module Cyph {
 
 				cyphertext.set(nonce);
 				cyphertext.set(ntruCyphertext, nonce.length);
+				cyphertext.set(ntruMac, CastleCore.ntruMacIndex);
 				cyphertext.set(sodiumCyphertext, CastleCore.sodiumCyphertextIndex);
 
 				return CastleCore.sodium.to_hex(cyphertext);
@@ -151,16 +197,16 @@ module Cyph {
 				return publicKeySet;
 			}
 
-			private importFriendKeySet (friendKeySet: Uint8Array, start: number = 0) : void {
+			private importFriendKeySet (data: Uint8Array, startIndex: number = 0) : void {
 				this.friendKeySets.unshift({
 					sodium: new Uint8Array(
-						friendKeySet.buffer,
-						start,
+						data.buffer,
+						startIndex,
 						CastleCore.sodium.crypto_box_PUBLICKEYBYTES
 					),
 					ntru: new Uint8Array(
-						friendKeySet.buffer,
-						CastleCore.sodium.crypto_box_PUBLICKEYBYTES + start,
+						data.buffer,
+						CastleCore.sodium.crypto_box_PUBLICKEYBYTES + startIndex,
 						CastleCore.ntru.publicKeyLength
 					)
 				});
@@ -225,6 +271,12 @@ module Cyph {
 							CastleCore.ntru.encryptedDataLength
 						);
 
+						const ntruMac: Uint8Array			= new Uint8Array(
+							cyphertext.buffer,
+							CastleCore.ntruMacIndex,
+							CastleCore.sodium.crypto_onetimeauth_BYTES
+						);
+
 						const sodiumCyphertext: Uint8Array	= new Uint8Array(
 							cyphertext.buffer,
 							CastleCore.sodiumCyphertextIndex
@@ -241,6 +293,7 @@ module Cyph {
 											nonce,
 											asymmetricNonce,
 											ntruCyphertext,
+											ntruMac,
 											sodiumCyphertext,
 											friendKeySet,
 											keySet
