@@ -93,21 +93,16 @@ var ntru	= {
 		dataResult(enc);
 		dataResult(priv);
 
-		var result	= dataReturn(returnValue, dataResult(dec));
-
-		var end;
-		for (var i = 0 ; i < result.length ; ++i) {
-			if (result[i] === 0) {
-				if (!end) {
-					end	= i;
-				}
-			}
-			else {
-				end	= undefined;
-			}
+		if (returnValue > 0) {
+			return new Uint8Array(
+				dataResult(dec).buffer,
+				0,
+				returnValue
+			);
 		}
-
-		return new Uint8Array(result.buffer, 0, end);
+		else {
+			dataReturn(-returnValue);
+		}
 	}
 };
 

@@ -114,12 +114,21 @@ int encrypt (uint8_t* msg, int msg_len, uint8_t* pub, int pub_len, uint8_t* enc)
 }
 
 int decrypt (uint8_t* enc, int enc_len, uint8_t* priv, int priv_len, uint8_t* dec) {
-	return ntru_crypto_ntru_decrypt(
+	uint16_t dec_len;
+
+	int rc	= ntru_crypto_ntru_decrypt(
 		priv_len,
 		priv,
 		enc_len,
 		enc,
-		&plaintext_len,
+		&dec_len,
 		dec
 	);
+
+	if (rc == NTRU_OK) {
+		return dec_len;
+	}
+	else {
+		return -rc;
+	}
 }
