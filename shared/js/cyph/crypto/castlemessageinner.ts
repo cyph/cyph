@@ -23,19 +23,17 @@ module Cyph {
 			}
 
 			private static pad (s: string) : string {
-				return btoa(
-					encodeURIComponent(
-						CastleMessageInner.getPadding() +
-						CastleMessageInner.paddingDelimiter +
-						s +
-						CastleMessageInner.paddingDelimiter +
-						CastleMessageInner.getPadding()
-					)
+				return (
+					CastleMessageInner.getPadding() +
+					CastleMessageInner.paddingDelimiter +
+					s +
+					CastleMessageInner.paddingDelimiter +
+					CastleMessageInner.getPadding()
 				);
 			}
 
 			private static unpad (s: string) : string {
-				return decodeURIComponent(atob(s)).split(CastleMessageInner.paddingDelimiter)[1];
+				return s.split(CastleMessageInner.paddingDelimiter)[1];
 			}
 
 
