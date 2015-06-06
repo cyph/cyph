@@ -9,7 +9,7 @@ module Cyph {
 			 * Receive incoming cyphertext.
 			 * @param message Data to be decrypted.
 			 */
-			receive (message?: string) : void;
+			receive (message: string) : void;
 
 			/**
 			 * Send outgoing text.
