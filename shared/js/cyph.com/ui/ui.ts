@@ -30,7 +30,7 @@ module Cyph.com {
 					Elements.newCyph.css({transform: '', top: ''});
 					Elements.fixedHeaderStuff.removeClass(UI.fixedHeaderClass);
 				}
-				else if (scrollTop >= (Elements.newCyphParent.height() / 2 + 16)) {
+				else if (scrollTop >= ((Elements.newCyphParent.height() / 2) + 16)) {
 					Elements.fixedHeaderStuff.addClass(UI.fixedHeaderClass);
 				}
 				else {
