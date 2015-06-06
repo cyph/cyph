@@ -1,7 +1,7 @@
 module Cyph {
 	export module Crypto {
 		/**
-		 * The Castle encryption protocol. This version includes an OTR-like
+		 * The Castle encryption protocol. This version supports an OTR-like
 		 * feature set, with group/async/persistence coming later.
 		 */
 		export class CastleCore {
@@ -220,15 +220,15 @@ module Cyph {
 					CastleCore.sodium.memzero(oldKeySet.ntru.publicKey);
 				}
 
-				const sodiumKey: Uint8Array		= this.keySets[0].sodium.publicKey;
-				const ntruKey: Uint8Array		= this.keySets[0].ntru.publicKey;
-
 				const publicKeySet: Uint8Array	= new Uint8Array(
 					CastleCore.publicKeySetLength
 				);
 
-				publicKeySet.set(sodiumKey);
-				publicKeySet.set(ntruKey, CastleCore.sodium.crypto_box_PUBLICKEYBYTES);
+				publicKeySet.set(this.keySets[0].sodium.publicKey);
+				publicKeySet.set(
+					this.keySets[0].ntru.publicKey,
+					CastleCore.sodium.crypto_box_PUBLICKEYBYTES
+				);
 
 				return publicKeySet;
 			}
@@ -431,6 +431,10 @@ module Cyph {
 				finally {
 					CastleCore.sodium.memzero(messageBytes);
 					CastleCore.sodium.memzero(data);
+
+					if (publicKeySet) {
+						CastleCore.sodium.memzero(publicKeySet);
+					}
 				}
 			}
 
@@ -453,16 +457,23 @@ module Cyph {
 					CastleCore.sodium.crypto_secretbox_KEYBYTES
 				);
 
-				this.handlers.send(
-					CastleCore.sodium.crypto_secretbox_easy(
-						this.generateKeySet(),
-						new Uint8Array(
-							CastleCore.sodium.crypto_secretbox_NONCEBYTES
-						),
-						this.sharedSecret,
-						'base64'
-					)
-				);
+				const publicKeySet: Uint8Array	= this.generateKeySet();
+
+				try {
+					this.handlers.send(
+						CastleCore.sodium.crypto_secretbox_easy(
+							publicKeySet,
+							new Uint8Array(
+								CastleCore.sodium.crypto_secretbox_NONCEBYTES
+							),
+							this.sharedSecret,
+							'base64'
+						)
+					);
+				}
+				finally {
+					CastleCore.sodium.memzero(publicKeySet);
+				}
 			}
 		}
 	}
