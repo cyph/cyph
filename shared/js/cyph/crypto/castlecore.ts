@@ -118,8 +118,6 @@ module Cyph {
 				}
 				finally {
 					CastleCore.sodium.memzero(ntruPlaintext);
-					CastleCore.sodium.memzero(ntruAuthKey);
-					CastleCore.sodium.memzero(symmetricKey);
 				}
 			}
 
@@ -194,7 +192,6 @@ module Cyph {
 				}
 				finally {
 					CastleCore.sodium.memzero(nonce);
-					CastleCore.sodium.memzero(asymmetricNonce);
 					CastleCore.sodium.memzero(symmetricKey);
 					CastleCore.sodium.memzero(ntruAuthKey);
 					CastleCore.sodium.memzero(ntruPlaintext);
@@ -348,11 +345,6 @@ module Cyph {
 						})();
 
 						CastleCore.sodium.memzero(cyphertext);
-						CastleCore.sodium.memzero(nonce);
-						CastleCore.sodium.memzero(asymmetricNonce);
-						CastleCore.sodium.memzero(ntruCyphertext);
-						CastleCore.sodium.memzero(ntruMac);
-						CastleCore.sodium.memzero(sodiumCyphertext);
 
 						if (!data) {
 							throw CastleCore.errors.decryptionFailure;
