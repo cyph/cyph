@@ -13,7 +13,7 @@ module Cyph {
 				CastleCore.ntru.publicKeyLength
 			;
 
-			private static ntruPayloadLength: number		=
+			private static ntruPlaintextLength: number		=
 				CastleCore.sodium.crypto_secretbox_KEYBYTES +
 				CastleCore.sodium.crypto_onetimeauth_KEYBYTES
 			;
@@ -73,19 +73,19 @@ module Cyph {
 					ntru: { publicKey: Uint8Array; privateKey: Uint8Array; };
 				}
 			) : Uint8Array {
-				const ntruPayload: Uint8Array	= CastleCore.ntru.decrypt(
+				const ntruPlaintext: Uint8Array	= CastleCore.ntru.decrypt(
 					ntruCyphertext,
 					keySet.ntru.privateKey
 				);
 
 				const symmetricKey: Uint8Array	= new Uint8Array(
-					ntruPayload.buffer,
+					ntruPlaintext.buffer,
 					0,
 					CastleCore.sodium.crypto_secretbox_KEYBYTES
 				);
 
 				const ntruAuthKey: Uint8Array	= new Uint8Array(
-					ntruPayload.buffer,
+					ntruPlaintext.buffer,
 					CastleCore.sodium.crypto_secretbox_KEYBYTES,
 					CastleCore.sodium.crypto_onetimeauth_KEYBYTES
 				);
@@ -137,16 +137,16 @@ module Cyph {
 					CastleCore.sodium.crypto_onetimeauth_KEYBYTES
 				);
 
-				const ntruPayload: Uint8Array		= new Uint8Array(
-					CastleCore.ntruPayloadLength
+				const ntruPlaintext: Uint8Array		= new Uint8Array(
+					CastleCore.ntruPlaintextLength
 				);
 
-				ntruPayload.set(symmetricKey);
-				ntruPayload.set(ntruAuthKey, CastleCore.sodium.crypto_secretbox_KEYBYTES);
+				ntruPlaintext.set(symmetricKey);
+				ntruPlaintext.set(ntruAuthKey, CastleCore.sodium.crypto_secretbox_KEYBYTES);
 
 
 				const ntruCyphertext: Uint8Array	= CastleCore.ntru.encrypt(
-					ntruPayload,
+					ntruPlaintext,
 					friendKeySet.ntru
 				);
 
