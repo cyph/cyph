@@ -28,6 +28,11 @@ module Cyph {
 				CastleCore.sodium.crypto_onetimeauth_BYTES
 			;
 
+			private static errors	= {
+				ntruAuthFailure: new Error('Invalid NTRU cyphertext.'),
+				decryptionFailure: new Error('Data could not be decrypted.')
+			};
+
 
 			private isAborted: boolean			= false;
 			private isConnected: boolean		= false;
@@ -90,7 +95,7 @@ module Cyph {
 					ntruCyphertext,
 					ntruAuthKey
 				)) {
-					throw new Error('Invalid NTRU cyphertext.');
+					throw CastleCore.errors.ntruAuthFailure;
 				}
 
 				return CastleCore.sodium.crypto_box_open_easy(
@@ -314,7 +319,7 @@ module Cyph {
 						})();
 
 						if (!data) {
-							throw new Error('Data could not be decrypted.');
+							throw CastleCore.errors.decryptionFailure;
 						}
 
 						if (keySetUsed === this.keySets[0]) {
