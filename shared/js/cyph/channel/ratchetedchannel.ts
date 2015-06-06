@@ -166,7 +166,7 @@ module Cyph {
 				config: any = {}
 			) {
 				const onopen: Function		= Util.getValue(handlers, 'onopen', () => {});
-				const onconnect: Function	= Util.getValue(handlers, 'onconnect', () => { });
+				const onconnect: Function	= Util.getValue(handlers, 'onconnect', () => {});
 
 				handlers.onopen		= (isCreator: boolean) : void => {
 					this.isCreator	= isCreator;

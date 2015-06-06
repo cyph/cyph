@@ -81,7 +81,8 @@ module Cyph {
 
 				const ntruAuthKey: Uint8Array	= new Uint8Array(
 					ntruPayload.buffer,
-					CastleCore.sodium.crypto_secretbox_KEYBYTES
+					CastleCore.sodium.crypto_secretbox_KEYBYTES,
+					CastleCore.sodium.crypto_onetimeauth_KEYBYTES
 				);
 
 				if (!CastleCore.sodium.crypto_onetimeauth_verify(
@@ -170,7 +171,7 @@ module Cyph {
 				cyphertext.set(ntruMac, CastleCore.ntruMacIndex);
 				cyphertext.set(sodiumCyphertext, CastleCore.sodiumCyphertextIndex);
 
-				return CastleCore.sodium.to_hex(cyphertext);
+				return CastleCore.sodium.to_base64(cyphertext);
 			}
 
 			private generateKeySet () : Uint8Array {
@@ -236,7 +237,7 @@ module Cyph {
 					try {
 						this.importFriendKeySet(
 							CastleCore.sodium.crypto_secretbox_open_easy(
-								CastleCore.sodium.from_hex(message),
+								CastleCore.sodium.from_base64(message),
 								new Uint8Array(
 									CastleCore.sodium.crypto_secretbox_NONCEBYTES
 								),
@@ -255,7 +256,7 @@ module Cyph {
 				}
 				else {
 					try {
-						const cyphertext: Uint8Array		= CastleCore.sodium.from_hex(message);
+						const cyphertext: Uint8Array		= CastleCore.sodium.from_base64(message);
 
 						const nonce: Uint8Array				= new Uint8Array(
 							cyphertext.buffer,
@@ -412,7 +413,7 @@ module Cyph {
 							CastleCore.sodium.crypto_secretbox_NONCEBYTES
 						),
 						this.sharedSecret,
-						'hex'
+						'base64'
 					)
 				);
 			}
