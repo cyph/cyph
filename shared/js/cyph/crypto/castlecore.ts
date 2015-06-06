@@ -54,8 +54,14 @@ module Cyph {
 				this.isAborted		= true;
 				this.isConnected	= false;
 
-				this.handlers.abort();
-				this.handlers.send('');
+				try {
+					/* Send invalid cyphertext to trigger
+						friend's abortion logic */
+					this.handlers.send('');
+				}
+				finally {
+					this.handlers.abort();
+				}
 			}
 
 			private decrypt (
@@ -90,24 +96,31 @@ module Cyph {
 					CastleCore.sodium.crypto_onetimeauth_KEYBYTES
 				);
 
-				if (!CastleCore.sodium.crypto_onetimeauth_verify(
-					ntruMac,
-					ntruCyphertext,
-					ntruAuthKey
-				)) {
-					throw CastleCore.errors.ntruAuthFailure;
-				}
+				try {
+					if (!CastleCore.sodium.crypto_onetimeauth_verify(
+						ntruMac,
+						ntruCyphertext,
+						ntruAuthKey
+					)) {
+						throw CastleCore.errors.ntruAuthFailure;
+					}
 
-				return CastleCore.sodium.crypto_box_open_easy(
-					CastleCore.sodium.crypto_secretbox_open_easy(
-						sodiumCyphertext,
-						nonce,
-						symmetricKey
-					),
-					asymmetricNonce,
-					friendKeySet.sodium,
-					keySet.sodium.privateKey
-				);
+					return CastleCore.sodium.crypto_box_open_easy(
+						CastleCore.sodium.crypto_secretbox_open_easy(
+							sodiumCyphertext,
+							nonce,
+							symmetricKey
+						),
+						asymmetricNonce,
+						friendKeySet.sodium,
+						keySet.sodium.privateKey
+					);
+				}
+				finally {
+					CastleCore.sodium.memzero(ntruPlaintext);
+					CastleCore.sodium.memzero(ntruAuthKey);
+					CastleCore.sodium.memzero(symmetricKey);
+				}
 			}
 
 			private encrypt (
@@ -166,7 +179,7 @@ module Cyph {
 					symmetricKey
 				);
 
-				const cyphertext: Uint8Array	= new Uint8Array(
+				const cyphertext: Uint8Array		= new Uint8Array(
 					CastleCore.sodiumCyphertextIndex +
 					sodiumCyphertext.length
 				);
@@ -176,7 +189,20 @@ module Cyph {
 				cyphertext.set(ntruMac, CastleCore.ntruMacIndex);
 				cyphertext.set(sodiumCyphertext, CastleCore.sodiumCyphertextIndex);
 
-				return CastleCore.sodium.to_base64(cyphertext);
+				try {
+					return CastleCore.sodium.to_base64(cyphertext);
+				}
+				finally {
+					CastleCore.sodium.memzero(nonce);
+					CastleCore.sodium.memzero(asymmetricNonce);
+					CastleCore.sodium.memzero(symmetricKey);
+					CastleCore.sodium.memzero(ntruAuthKey);
+					CastleCore.sodium.memzero(ntruPlaintext);
+					CastleCore.sodium.memzero(ntruCyphertext);
+					CastleCore.sodium.memzero(ntruMac);
+					CastleCore.sodium.memzero(sodiumCyphertext);
+					CastleCore.sodium.memzero(cyphertext);
+				}
 			}
 
 			private generateKeySet () : Uint8Array {
@@ -238,11 +264,13 @@ module Cyph {
 					return;
 				}
 
+				const cyphertext: Uint8Array	= CastleCore.sodium.from_base64(message);
+
 				if (this.friendKeySets.length < 1) {
 					try {
 						this.importFriendKeySet(
 							CastleCore.sodium.crypto_secretbox_open_easy(
-								CastleCore.sodium.from_base64(message),
+								cyphertext,
 								new Uint8Array(
 									CastleCore.sodium.crypto_secretbox_NONCEBYTES
 								),
@@ -250,6 +278,8 @@ module Cyph {
 							)
 						);
 
+						/* Trigger friend's connection acknowledgement logic
+							by sending this user's first encrypted message */
 						this.send('');
 					}
 					catch (_) {
@@ -257,12 +287,11 @@ module Cyph {
 					}
 					finally {
 						CastleCore.sodium.memzero(this.sharedSecret);
+						CastleCore.sodium.memzero(cyphertext);
 					}
 				}
 				else {
 					try {
-						const cyphertext: Uint8Array		= CastleCore.sodium.from_base64(message);
-
 						const nonce: Uint8Array				= new Uint8Array(
 							cyphertext.buffer,
 							0,
@@ -317,6 +346,13 @@ module Cyph {
 								}
 							}
 						})();
+
+						CastleCore.sodium.memzero(cyphertext);
+						CastleCore.sodium.memzero(nonce);
+						CastleCore.sodium.memzero(asymmetricNonce);
+						CastleCore.sodium.memzero(ntruCyphertext);
+						CastleCore.sodium.memzero(ntruMac);
+						CastleCore.sodium.memzero(sodiumCyphertext);
 
 						if (!data) {
 							throw CastleCore.errors.decryptionFailure;
@@ -389,7 +425,13 @@ module Cyph {
 
 				data.set(messageBytes, messageIndex);
 
-				this.handlers.send(this.encrypt(data, keySet));
+				try {
+					this.handlers.send(this.encrypt(data, keySet));
+				}
+				finally {
+					CastleCore.sodium.memzero(messageBytes);
+					CastleCore.sodium.memzero(data);
+				}
 			}
 
 			public constructor (
