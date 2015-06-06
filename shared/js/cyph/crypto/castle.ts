@@ -10,32 +10,59 @@ module Cyph {
 			private currentMessageId: number	= 0;
 			private incomingMessageId: number	= 0;
 			private incomingMessagesMax: number	= 0;
-			private incomingMessages: {[id: string] : string}	= {};
-			private receivedMessages: {[id: string] : { chunks: string[]; total: number; }}	= {};
-			private sendQueue: string[]		= [];
+			private sendQueue: string[]			= [];
+
+			private incomingMessages: {
+				[id: string] : string[]
+			}	= {};
+
+			private receivedMessages: {
+				[id: string] : { chunks: string[]; total: number; }
+			}	= {};
 
 			private core: CastleCore;
 
 			public receive (message?: string) : void {
-				if (message) {
-					const o: CastleMessageOuter	= Util.deserializeObject(CastleMessageOuter, message);
+				try {
+					if (message) {
+						const o: CastleMessageOuter	= Util.deserializeObject(
+							CastleMessageOuter,
+							message
+						);
 
-					if (o.id >= this.incomingMessageId) {
-						this.incomingMessages[o.id]	= o.cyphertext;
-						this.incomingMessagesMax	= Math.max(this.incomingMessagesMax, o.id);
+						if (o.id >= this.incomingMessageId) {
+							this.incomingMessagesMax	= Math.max(
+								this.incomingMessagesMax,
+								o.id
+							);
 
-						this.session.trigger(Session.Events.cyphertext, {
-							cyphertext: o.cyphertext,
-							author: Session.Users.friend
-						});
+							if (!this.incomingMessages[o.id]) {
+								this.incomingMessages[o.id]	= [];
+							}
+
+							this.incomingMessages[o.id].push(o.cyphertext);
+						}
 					}
 				}
+				catch (_) {}
 
 				while (
 					this.incomingMessageId <= this.incomingMessagesMax &&
 					this.incomingMessages[this.incomingMessageId]
 				) {
-					this.core.receive(this.incomingMessages[this.incomingMessageId]);
+					for (
+						const cyphertext of
+						this.incomingMessages[this.incomingMessageId]
+					) {
+						if (this.core.receive(cyphertext)) {
+							this.session.trigger(Session.Events.cyphertext, {
+								cyphertext,
+								author: Session.Users.friend
+							});
+
+							break;
+						}
+					}
 
 					this.incomingMessages[this.incomingMessageId]	= null;
 					++this.incomingMessageId;
@@ -68,7 +95,10 @@ module Cyph {
 			public constructor (private session: Session.ISession) {
 				this.core	= new CastleCore(this.session.state.sharedSecret, {
 					abort: () =>
-						this.session.trigger(Session.Events.castle, {event: Session.CastleEvents.abort})
+						this.session.trigger(
+							Session.Events.castle,
+							{event: Session.CastleEvents.abort}
+						)
 					,
 					connect: () => {
 						const sendQueue	= this.sendQueue;
@@ -78,7 +108,10 @@ module Cyph {
 							this.send(message);
 						}
 
-						this.session.trigger(Session.Events.castle, {event: Session.CastleEvents.connect});
+						this.session.trigger(
+							Session.Events.castle,
+							{event: Session.CastleEvents.connect}
+						);
 					},
 					receive: (message: string) => {
 						const o: CastleMessageInner	= Util.deserializeObject(

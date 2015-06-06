@@ -255,10 +255,11 @@ module Cyph {
 			/**
 			 * Receive incoming cyphertext.
 			 * @param message Data to be decrypted.
+			 * @returns Whether message was successfully decrypted.
 			 */
-			public receive (message: string) : void {
+			public receive (message: string) : boolean {
 				if (this.isAborted) {
-					return;
+					return false;
 				}
 
 				const cyphertext: Uint8Array	= CastleCore.sodium.from_base64(message);
@@ -278,6 +279,8 @@ module Cyph {
 						/* Trigger friend's connection acknowledgement logic
 							by sending this user's first encrypted message */
 						this.send('');
+
+						return true;
 					}
 					catch (_) {
 						this.abort();
@@ -384,6 +387,8 @@ module Cyph {
 							this.isConnected	= true;
 							this.handlers.connect();
 						}
+
+						return true;
 					}
 					catch (_) {
 						if (!this.isConnected) {
@@ -391,6 +396,8 @@ module Cyph {
 						}
 					}
 				}
+
+				return false;
 			}
 
 			/**
