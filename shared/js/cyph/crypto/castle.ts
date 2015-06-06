@@ -95,10 +95,9 @@ module Cyph {
 			public constructor (private session: Session.ISession) {
 				this.core	= new CastleCore(this.session.state.sharedSecret, {
 					abort: () =>
-						this.session.trigger(
-							Session.Events.castle,
-							{event: Session.CastleEvents.abort}
-						)
+						this.session.trigger(Session.Events.castle, {
+							event: Session.CastleEvents.abort
+						})
 					,
 					connect: () => {
 						const sendQueue	= this.sendQueue;
@@ -108,10 +107,9 @@ module Cyph {
 							this.send(message);
 						}
 
-						this.session.trigger(
-							Session.Events.castle,
-							{event: Session.CastleEvents.connect}
-						);
+						this.session.trigger(Session.Events.castle, {
+							event: Session.CastleEvents.connect
+						});
 					},
 					receive: (message: string) => {
 						const o: CastleMessageInner	= Util.deserializeObject(
