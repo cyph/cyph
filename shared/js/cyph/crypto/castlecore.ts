@@ -370,15 +370,22 @@ module Cyph {
 							messageIndex += CastleCore.publicKeySetLength;
 						}
 
-						if (data.length > messageIndex) {
-							this.handlers.receive(
-								CastleCore.sodium.to_string(
-									new Uint8Array(
-										data.buffer,
-										messageIndex
+						const message: Uint8Array	= new Uint8Array(
+							data.buffer,
+							messageIndex
+						);
+
+						try {
+							if (data.length > messageIndex) {
+								this.handlers.receive(
+									CastleCore.sodium.to_string(
+										message
 									)
-								)
-							);
+								);
+							}
+						}
+						finally {
+							CastleCore.sodium.memzero(message);
 						}
 
 						if (!this.isConnected) {
