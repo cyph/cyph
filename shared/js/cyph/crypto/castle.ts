@@ -22,26 +22,24 @@ module Cyph {
 
 			private core: CastleCore;
 
-			public receive (message?: string) : void {
+			public receive (message: string) : void {
 				try {
-					if (message) {
-						const o: CastleMessageOuter	= Util.deserializeObject(
-							CastleMessageOuter,
-							message
+					const o: CastleMessageOuter	= Util.deserializeObject(
+						CastleMessageOuter,
+						message
+					);
+
+					if (o.id >= this.incomingMessageId) {
+						this.incomingMessagesMax	= Math.max(
+							this.incomingMessagesMax,
+							o.id
 						);
 
-						if (o.id >= this.incomingMessageId) {
-							this.incomingMessagesMax	= Math.max(
-								this.incomingMessagesMax,
-								o.id
-							);
-
-							if (!this.incomingMessages[o.id]) {
-								this.incomingMessages[o.id]	= [];
-							}
-
-							this.incomingMessages[o.id].push(o.cyphertext);
+						if (!this.incomingMessages[o.id]) {
+							this.incomingMessages[o.id]	= [];
 						}
+
+						this.incomingMessages[o.id].push(o.cyphertext);
 					}
 				}
 				catch (_) {}
