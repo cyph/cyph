@@ -50,6 +50,8 @@ module Cyph {
 					this.incomingMessageId <= this.incomingMessagesMax &&
 					this.incomingMessages[this.incomingMessageId]
 				) {
+					let wasSuccessful: boolean;
+
 					for (
 						const cyphertext of
 						this.incomingMessages[this.incomingMessageId]
@@ -60,11 +62,18 @@ module Cyph {
 								author: Session.Users.friend
 							});
 
+							wasSuccessful	= true;
+
 							break;
 						}
 					}
 
 					this.incomingMessages[this.incomingMessageId]	= null;
+
+					if (!wasSuccessful) {
+						break;
+					}
+
 					++this.incomingMessageId;
 
 					if (this.incomingMessageId === Config.maxInt) {
