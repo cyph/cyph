@@ -12,16 +12,57 @@ import (
 )
 
 func init() {
-	handleFuncs("/betasignups", Handlers{methods.PUT: betaSignup})
 	handleFuncs("/channels/{id}", Handlers{methods.POST: channelSetup})
 	handleFuncs("/continent", Handlers{methods.GET: getContinent})
+	handleFuncs("/signups", Handlers{methods.PUT: signup})
 
 	handleFunc("/", func(h HandlerArgs) (interface{}, int) {
 		return "Welcome to Cyph, lad", http.StatusOK
 	})
 }
 
-func betaSignup(h HandlerArgs) (interface{}, int) {
+func channelSetup(h HandlerArgs) (interface{}, int) {
+	id := h.Vars["id"]
+	channelDescriptor := ""
+	status := http.StatusOK
+
+	if len(id) == config.AllowedCyphIdLength && config.AllowedCyphIds.MatchString(id) {
+		if item, err := memcache.Get(h.Context, id); err != memcache.ErrCacheMiss {
+			oldValue := item.Value
+			item.Value = []byte{}
+
+			if err := memcache.CompareAndSwap(h.Context, item); err != memcache.ErrCASConflict {
+				valueLines := strings.Split(string(oldValue), "\n")
+				timestamp, _ := strconv.ParseInt(valueLines[1], 10, 64)
+
+				if time.Now().Unix()-timestamp > config.NewCyphTimeout {
+					channelDescriptor = ""
+				} else {
+					channelDescriptor = valueLines[0]
+				}
+			}
+		} else if channelDescriptor = h.Request.FormValue("channelDescriptor"); channelDescriptor != "" {
+			memcache.Set(h.Context, &memcache.Item{
+				Key:        id,
+				Value:      []byte(channelDescriptor + "\n" + strconv.FormatInt(time.Now().Unix(), 10)),
+				Expiration: config.MemcacheExpiration,
+			})
+		}
+	}
+
+	if channelDescriptor == "" {
+		status = http.StatusNotFound
+	}
+
+	return channelDescriptor, status
+}
+
+func getContinent(h HandlerArgs) (interface{}, int) {
+	_, continent := geolocate(h)
+	return continent, http.StatusOK
+}
+
+func signup(h HandlerArgs) (interface{}, int) {
 	isNewSignup := false
 
 	betaSignup := getBetaSignupFromRequest(h)
@@ -67,45 +108,4 @@ func betaSignup(h HandlerArgs) (interface{}, int) {
 	}
 
 	return isNewSignup, http.StatusOK
-}
-
-func channelSetup(h HandlerArgs) (interface{}, int) {
-	id := h.Vars["id"]
-	channelDescriptor := ""
-	status := http.StatusOK
-
-	if len(id) == config.AllowedCyphIdLength && config.AllowedCyphIds.MatchString(id) {
-		if item, err := memcache.Get(h.Context, id); err != memcache.ErrCacheMiss {
-			oldValue := item.Value
-			item.Value = []byte{}
-
-			if err := memcache.CompareAndSwap(h.Context, item); err != memcache.ErrCASConflict {
-				valueLines := strings.Split(string(oldValue), "\n")
-				timestamp, _ := strconv.ParseInt(valueLines[1], 10, 64)
-
-				if time.Now().Unix()-timestamp > config.NewCyphTimeout {
-					channelDescriptor = ""
-				} else {
-					channelDescriptor = valueLines[0]
-				}
-			}
-		} else if channelDescriptor = h.Request.FormValue("channelDescriptor"); channelDescriptor != "" {
-			memcache.Set(h.Context, &memcache.Item{
-				Key:        id,
-				Value:      []byte(channelDescriptor + "\n" + strconv.FormatInt(time.Now().Unix(), 10)),
-				Expiration: config.MemcacheExpiration,
-			})
-		}
-	}
-
-	if channelDescriptor == "" {
-		status = http.StatusNotFound
-	}
-
-	return channelDescriptor, status
-}
-
-func getContinent(h HandlerArgs) (interface{}, int) {
-	_, continent := geolocate(h)
-	return continent, http.StatusOK
 }
