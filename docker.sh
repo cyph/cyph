@@ -99,3 +99,4 @@ else
 fi
 
 docker run $processType $args -v "$(echo "$(pwd)://cyph" | sed 's/\/cygdrive/\//g')" "${image}" "/cyph/commands/${command}.sh" $*
+sleep 2

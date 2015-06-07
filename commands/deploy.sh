@@ -42,14 +42,15 @@ if [ $branch == 'prod' ] ; then
 fi
 ls */*.yaml | xargs -I% sed -i.bak "s/version: master/version: ${branch}/g" %
 
-defaultCSP='default-src \*'
+defaultCSP='referrer no-referrer'
 cyphComCSP="$( \
 	cat shared/websign/csp | \
 	grep -v img-src | \
 	sed "s/ data://g" | \
-	tr '\n' ' ' \
+	tr '\n' ' ' | \
+	xargs \
 )"
-webSignCSP="$(cat shared/websign/csp | tr '\n' ' ')"
+webSignCSP="$(cat shared/websign/csp | tr '\n' ' ' | xargs)"
 ls cyph.com/*.yaml | xargs -I% sed -i.bak "s|${defaultCSP}|${cyphComCSP}|g" %
 ls */*.yaml */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s|${defaultCSP}|${webSignCSP}|g" %
 

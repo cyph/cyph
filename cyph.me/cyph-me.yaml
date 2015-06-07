@@ -13,7 +13,7 @@ handlers:
   http_headers:
     X-Frame-Options: deny
     Strict-Transport-Security: max-age=31536000; includeSubdomains;
-    Content-Security-Policy: default-src *
+    Content-Security-Policy: referrer no-referrer
 
 - url: /(.*)
   static_files: \1
@@ -22,4 +22,4 @@ handlers:
   http_headers:
     X-Frame-Options: deny
     Strict-Transport-Security: max-age=31536000; includeSubdomains;
-    Content-Security-Policy: default-src *
+    Content-Security-Policy: referrer no-referrer

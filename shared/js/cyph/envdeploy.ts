@@ -44,6 +44,6 @@ module Cyph {
 		public static awsEndpoint: string		= `${location.protocol}//${location.hostname}:43000`;
 
 		/** Content Security Policy defined by WebSign in shared/websign/csp. */
-		public static webSignCSP: string		= "default-src *";
+		public static webSignCSP: string		= "referrer no-referrer";
 	}
 }
