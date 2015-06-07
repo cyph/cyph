@@ -32,7 +32,7 @@ module Cyph {
 			private castleHandler (e: { event: CastleEvents; data?: string; }) : void {
 				switch (e.event) {
 					case CastleEvents.abort: {
-						Errors.logSmp();
+						Errors.logAuthFail();
 						this.trigger(Events.connectFailure);
 						break;
 					}
