@@ -1,0 +1,9 @@
+default-src 'self';
+connect-src 'self' https://api.cyph.com https://*.amazonaws.com https://www.google-analytics.com;
+form-action https://api.cyph.com;
+frame-src https://api.cyph.com;
+img-src data:;
+media-src 'self' data:;
+object-src 'none';
+script-src 'self' 'unsafe-eval' 'unsafe-inline';
+style-src 'self' 'unsafe-inline';

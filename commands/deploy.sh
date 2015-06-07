@@ -42,6 +42,19 @@ if [ $branch == 'prod' ] ; then
 fi
 ls */*.yaml | xargs -I% sed -i.bak "s/version: master/version: ${branch}/g" %
 
+defaultCSP='default-src *'
+cyphComCSP="$( \
+	cat shared/websign/csp | \
+	grep -v img-src | \
+	sed "s/ data://g" | \
+	sed "s/ 'unsafe-inline'//g" | \
+	sed "s/ 'unsafe-eval'//g" | \
+	tr '\n' ' ' \
+)"
+webSignCSP="$(cat shared/websign/csp | tr '\n' ' ')"
+ls cyph.com/*.yaml | xargs -I% sed -i.bak "s/${defaultCSP}/${cyphComCSP}/g" %
+ls */*.yaml */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultCSP}/${webSignCSP}/g" %
+
 defaultHost='\${location\.protocol}\/\/\${location\.hostname}:'
 ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}43000//g" %
 ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak 's/isLocalEnv: boolean		= true/isLocalEnv: boolean		= false/g' %
@@ -90,7 +103,7 @@ for d in cyph.im cyph.com ; do
 	if [ "${branch}" == 'staging' ] ; then
 		echo "JS Minify ${d}"
 		find js -name '*.js' | xargs -I% uglifyjs -r \
-			importScripts,Cyph,vars,self,isaac,onmessage,postMessage,onthreadmessage,WebSign,Translations,IS_WEB,crypto \
+			importScripts,Cyph,ui,session,vars,self,isaac,onmessage,postMessage,onthreadmessage,WebSign,Translations,IS_WEB,crypto \
 			'%' -o '%' -m
 
 		echo "CSS Minify ${d}"
