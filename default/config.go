@@ -6,14 +6,17 @@ import (
 )
 
 var config = struct {
-	AllowedCyphIds     *regexp.Regexp
-	AllowedMethods     string
-	AllowedOrigins     map[string]none
-	Continents         map[string]none
-	DefaultContinent   string
-	MemcacheExpiration time.Duration
+	AllowedCyphIds      *regexp.Regexp
+	AllowedCyphIdLength int
+	AllowedMethods      string
+	AllowedOrigins      map[string]none
+	Continents          map[string]none
+	DefaultContinent    string
+	MemcacheExpiration  time.Duration
 }{
 	regexp.MustCompile("[A-Za-z0-9]{7}"),
+
+	7,
 
 	"GET,HEAD,POST,PUT,DELETE,OPTIONS",
 
