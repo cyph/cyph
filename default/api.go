@@ -6,7 +6,9 @@ import (
 	"appengine/memcache"
 	"encoding/json"
 	"net/http"
+	"strconv"
 	"strings"
+	"time"
 )
 
 func init() {
@@ -78,12 +80,19 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 			item.Value = []byte{}
 
 			if err := memcache.CompareAndSwap(h.Context, item); err != memcache.ErrCASConflict {
-				channelDescriptor = string(oldValue)
+				valueLines := strings.Split(string(oldValue), "\n")
+				timestamp, _ := strconv.ParseInt(valueLines[1], 10, 64)
+
+				if time.Now().Unix()-timestamp > config.NewCyphTimeout {
+					channelDescriptor = ""
+				} else {
+					channelDescriptor = valueLines[0]
+				}
 			}
 		} else if channelDescriptor = h.Request.FormValue("channelDescriptor"); channelDescriptor != "" {
 			memcache.Set(h.Context, &memcache.Item{
 				Key:        id,
-				Value:      []byte(channelDescriptor),
+				Value:      []byte(channelDescriptor + "\n" + strconv.FormatInt(time.Now().Unix(), 10)),
 				Expiration: config.MemcacheExpiration,
 			})
 		}

@@ -13,6 +13,7 @@ var config = struct {
 	Continents          map[string]none
 	DefaultContinent    string
 	MemcacheExpiration  time.Duration
+	NewCyphTimeout      int64
 }{
 	regexp.MustCompile("[A-Za-z0-9]{7}"),
 
@@ -55,4 +56,6 @@ var config = struct {
 	"eu",
 
 	(48 * time.Hour),
+
+	600,
 }
