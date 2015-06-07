@@ -61,6 +61,7 @@ ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak 's/isLocalEnv: boolean		= true/
 
 if [ $test ] ; then
 	sed -i.bak "s/staging/${branch}/g" default/config.go
+	ls */*.yaml | xargs -I% sed -i.bak "s/api.cyph.com/${branch}-dot-cyphme.appspot.com/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42000/https:\/\/${branch}-dot-cyphme.appspot.com/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42001/https:\/\/${branch}-dot-cyph-com-dot-cyphme.appspot.com/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42002/https:\/\/${branch}-dot-cyph-im-dot-cyphme.appspot.com/g" %
