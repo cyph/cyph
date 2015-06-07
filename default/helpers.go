@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"geoip2"
 	"github.com/gorilla/mux"
+	"github.com/microcosm-cc/bluemonday"
 	"net"
 	"net/http"
 	"strings"
@@ -58,6 +59,8 @@ var empty = struct{}{}
 var router = mux.NewRouter()
 var isRouterActive = false
 
+var sanitizer = bluemonday.StrictPolicy()
+
 var geoipdb, _ = geoip2.Open("GeoIP2-Country.mmdb")
 
 func geolocate(h HandlerArgs) (string, string) {
@@ -84,12 +87,12 @@ func getBetaSignupFromRequest(h HandlerArgs) BetaSignup {
 	country, _ := geolocate(h)
 
 	return BetaSignup{
-		Comment:  h.Request.PostFormValue("Comment"),
+		Comment:  sanitizer.Sanitize(h.Request.PostFormValue("Comment")),
 		Country:  country,
-		Email:    strings.ToLower(h.Request.PostFormValue("Email")),
-		Language: strings.ToLower(h.Request.PostFormValue("Language")),
-		Name:     h.Request.PostFormValue("Name"),
-		Referer:  h.Request.Referer(),
+		Email:    sanitizer.Sanitize(strings.ToLower(h.Request.PostFormValue("Email"))),
+		Language: sanitizer.Sanitize(strings.ToLower(h.Request.PostFormValue("Language"))),
+		Name:     sanitizer.Sanitize(h.Request.PostFormValue("Name")),
+		Referer:  sanitizer.Sanitize(h.Request.Referer()),
 		Time:     time.Now().Unix(),
 	}
 }
