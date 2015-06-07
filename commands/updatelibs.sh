@@ -76,7 +76,10 @@ mkdir microcosm-cc
 cd microcosm-cc
 git clone git://github.com/microcosm-cc/bluemonday.git
 
-cd ../../..
+cd ..
+rm -rf */*/.git
+
+cd ../..
 chmod -R 700 .
 
 cd "${dir}"
