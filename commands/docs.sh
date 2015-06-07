@@ -22,3 +22,5 @@ typedoc -t ES6 --out ../js/docs --name Cyph --mode file --includeDeclarations --
 
 cd ..
 rm -rf .js.tmp
+
+sleep 2
