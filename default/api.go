@@ -72,7 +72,7 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 	channelDescriptor := ""
 	status := http.StatusOK
 
-	if len(id) == 7 && config.AllowedCyphIds.MatchString(id) {
+	if len(id) == config.AllowedCyphIdLength && config.AllowedCyphIds.MatchString(id) {
 		if item, err := memcache.Get(h.Context, id); err != memcache.ErrCacheMiss {
 			oldValue := item.Value
 			item.Value = []byte{}
