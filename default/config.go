@@ -6,6 +6,7 @@ import (
 
 var config = struct {
 	AllowedOrigins     map[string]none
+	AllowedMethods     string
 	Continents         map[string]none
 	DefaultContinent   string
 	MemcacheExpiration time.Duration
@@ -31,6 +32,8 @@ var config = struct {
 		"staging-dot-cyph-me-dot-cyphme.appspot.com":  empty,
 		"staging-dot-cyphme.appspot.com":              empty,
 	},
+
+	"GET,HEAD,POST,PUT,DELETE,OPTIONS",
 
 	map[string]none{
 		"af": empty,
