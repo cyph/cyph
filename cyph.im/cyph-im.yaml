@@ -17,7 +17,7 @@ handlers:
     Cache-Control: public, max-age=0
     X-Frame-Options: deny
     Strict-Transport-Security: max-age=31536000; includeSubdomains;
-    Content-Security-Policy: default-src *
+    Content-Security-Policy: referrer no-referrer
 
 - url: /unsupportedbrowser
   static_files: unsupportedbrowser.html
@@ -27,7 +27,7 @@ handlers:
     Cache-Control: no-store
     X-Frame-Options: deny
     Strict-Transport-Security: max-age=31536000; includeSubdomains;
-    Content-Security-Policy: default-src *
+    Content-Security-Policy: referrer no-referrer
 
 
 # Else
@@ -40,4 +40,4 @@ handlers:
     Cache-Control: public, max-age=0
     X-Frame-Options: deny
     Strict-Transport-Security: max-age=31536000; includeSubdomains;
-    Content-Security-Policy: default-src *
+    Content-Security-Policy: referrer no-referrer
