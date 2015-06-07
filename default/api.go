@@ -72,19 +72,21 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 	channelDescriptor := ""
 	status := http.StatusOK
 
-	if item, err := memcache.Get(h.Context, id); err != memcache.ErrCacheMiss {
-		oldValue := item.Value
-		item.Value = []byte{}
+	if len(id) == 7 && config.AllowedCyphIds.MatchString(id) {
+		if item, err := memcache.Get(h.Context, id); err != memcache.ErrCacheMiss {
+			oldValue := item.Value
+			item.Value = []byte{}
 
-		if err := memcache.CompareAndSwap(h.Context, item); err != memcache.ErrCASConflict {
-			channelDescriptor = string(oldValue)
+			if err := memcache.CompareAndSwap(h.Context, item); err != memcache.ErrCASConflict {
+				channelDescriptor = string(oldValue)
+			}
+		} else if channelDescriptor = h.Request.FormValue("channelDescriptor"); channelDescriptor != "" {
+			memcache.Set(h.Context, &memcache.Item{
+				Key:        id,
+				Value:      []byte(channelDescriptor),
+				Expiration: config.MemcacheExpiration,
+			})
 		}
-	} else if channelDescriptor = h.Request.FormValue("channelDescriptor"); channelDescriptor != "" {
-		memcache.Set(h.Context, &memcache.Item{
-			Key:        id,
-			Value:      []byte(channelDescriptor),
-			Expiration: config.MemcacheExpiration,
-		})
 	}
 
 	if channelDescriptor == "" {
