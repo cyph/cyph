@@ -42,8 +42,6 @@ module Cyph {
 							)
 					;
 
-					URL.revokeObjectURL(image.src);
-
 					this.send(encodedImage);
 				}
 
