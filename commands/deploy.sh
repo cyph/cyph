@@ -52,8 +52,8 @@ cyphComCSP="$( \
 	tr '\n' ' ' \
 )"
 webSignCSP="$(cat shared/websign/csp | tr '\n' ' ')"
-ls cyph.com/*.yaml | xargs -I% sed -i.bak "s/${defaultCSP}/${cyphComCSP}/g" %
-ls */*.yaml */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultCSP}/${webSignCSP}/g" %
+ls cyph.com/*.yaml | xargs -I% sed -i.bak "s|${defaultCSP}|${cyphComCSP}|g" %
+ls */*.yaml */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s|${defaultCSP}|${webSignCSP}|g" %
 
 defaultHost='\${location\.protocol}\/\/\${location\.hostname}:'
 ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}43000//g" %
