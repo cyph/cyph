@@ -24,7 +24,7 @@ RUN bash -c ' \
 	cd golang-1.3.3; \
 	debuild -us -uc; \
 	cd ..; \
-	dpkg -i *.deb; \
+	dpkg -i golang-go_*_amd64.deb golang-src_*_amd64.deb golang-go-linux-amd64_*_amd64.deb; \
 	cd /; \
 	rm -rf /golang; \
 '
