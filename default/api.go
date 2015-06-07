@@ -33,16 +33,16 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 
 			if err := memcache.CompareAndSwap(h.Context, item); err != memcache.ErrCASConflict {
 				valueLines := strings.Split(string(oldValue), "\n")
-				timestamp, _ := strconv.ParseInt(valueLines[1], 10, 64)
+				timestamp, _ := strconv.ParseInt(valueLines[0], 10, 64)
 
 				if time.Now().Unix()-timestamp < config.NewCyphTimeout {
-					channelDescriptor = valueLines[0]
+					channelDescriptor = valueLines[1]
 				}
 			}
 		} else if channelDescriptor = h.Request.FormValue("channelDescriptor"); channelDescriptor != "" {
 			memcache.Set(h.Context, &memcache.Item{
 				Key:        id,
-				Value:      []byte(channelDescriptor + "\n" + strconv.FormatInt(time.Now().Unix(), 10)),
+				Value:      []byte(strconv.FormatInt(time.Now().Unix(), 10) + "\n" + channelDescriptor),
 				Expiration: config.MemcacheExpiration,
 			})
 		}
