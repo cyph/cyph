@@ -130,13 +130,28 @@ module Cyph {
 			}
 
 			private setDescriptor (descriptor?: string) : void {
-				if (!descriptor || descriptor.length < Config.secretLength) {
+				if (
+					/* Empty/null string */
+					!descriptor ||
+
+					/* Too short */
+					descriptor.length < Config.secretLength ||
+
+					/* Contains invalid character(s) */
+					!descriptor.split('').reduce(
+						(isValid: boolean, c: string) : boolean =>
+							isValid && Cyph.Config.guidAddressSpace.indexOf(c) > -1
+						,
+						true
+					)
+				) {
 					descriptor	= Util.generateGuid(Config.secretLength);
 				}
 
-				const middle: number	= Math.ceil(descriptor.length / 2);
+				this.updateState(State.cyphId,
+					descriptor.substr(0, Config.cyphIdLength)
+				);
 
-				this.updateState(State.cyphId, descriptor.substr(0, middle));
 				this.updateState(State.sharedSecret,
 					this.state.sharedSecret || descriptor
 				);

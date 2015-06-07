@@ -1,16 +1,22 @@
 package api
 
 import (
+	"regexp"
 	"time"
 )
 
 var config = struct {
-	AllowedOrigins     map[string]none
+	AllowedCyphIds     *regexp.Regexp
 	AllowedMethods     string
+	AllowedOrigins     map[string]none
 	Continents         map[string]none
 	DefaultContinent   string
 	MemcacheExpiration time.Duration
 }{
+	regexp.MustCompile("[A-Za-z0-9]{7}"),
+
+	"GET,HEAD,POST,PUT,DELETE,OPTIONS",
+
 	map[string]none{
 		"cyph.com":                                    empty,
 		"www.cyph.com":                                empty,
@@ -32,8 +38,6 @@ var config = struct {
 		"staging-dot-cyph-me-dot-cyphme.appspot.com":  empty,
 		"staging-dot-cyphme.appspot.com":              empty,
 	},
-
-	"GET,HEAD,POST,PUT,DELETE,OPTIONS",
 
 	map[string]none{
 		"af": empty,

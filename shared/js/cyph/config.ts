@@ -9,6 +9,9 @@ module Cyph {
 		/** Indicates the original language of any content to be translated. */
 		public static defaultLanguage: string		= 'en';
 
+		/** Length of server ID for a cyph. */
+		public static cyphIdLength: number			= 7;
+
 		/** Length of random IDs in cyph links. */
 		public static secretLength: number			= 14;
 
