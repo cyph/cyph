@@ -204,6 +204,13 @@ module Cyph {
 
 				if (shouldSendEvent) {
 					this.channel.send(RPCEvents.destroy, closeChat, true);
+
+					/* If aborting before the cyph begins,
+						block friend from trying to join */
+					Util.request({
+						method: 'POST',
+						url: Env.baseUrl + 'channels/' + this.state.cyphId
+					});
 				}
 				else {
 					this.channel.close(closeChat);
