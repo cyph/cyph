@@ -398,7 +398,7 @@
 
 			Cyph.UI.Elements.head.append(
 				'<meta http-equiv="Content-Security-Policy" content="' +
-					Cyph.Env.webSignCSP.replace(/(script-src) 'unsafe-inline'/g, '$1') +
+					Cyph.Env.webSignCSP.replace(/(script-src.*?) 'unsafe-inline'/g, '$1') +
 				'" />'
 			);
 		</script>
