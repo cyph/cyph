@@ -16,6 +16,7 @@ RUN bash -c ' \
 	mkdir /golang; \
 	cd /golang; \
 	apt-get build-dep -y golang; \
+	apt-get install -y bison ed; \
 	wget http://ftp.de.debian.org/debian/pool/main/g/golang/golang_1.3.3-1.dsc; \
 	wget http://ftp.de.debian.org/debian/pool/main/g/golang/golang_1.3.3.orig.tar.gz; \
 	wget http://ftp.de.debian.org/debian/pool/main/g/golang/golang_1.3.3-1.debian.tar.xz; \
