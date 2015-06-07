@@ -65,7 +65,7 @@ module Cyph {
 			}
 
 			private decrypt (cyphertext: Uint8Array) : {
-				message: Uint8Array;
+				data: Uint8Array;
 				keySet: {
 					sodium: { publicKey: Uint8Array; privateKey: Uint8Array; };
 					ntru: { publicKey: Uint8Array; privateKey: Uint8Array; };
@@ -131,7 +131,7 @@ module Cyph {
 						}
 
 						return {
-							message: CastleCore.sodium.crypto_box_open_easy(
+							data: CastleCore.sodium.crypto_box_open_easy(
 								CastleCore.sodium.crypto_secretbox_open_easy(
 									sodiumCyphertext,
 									nonce,
@@ -325,26 +325,26 @@ module Cyph {
 				}
 				else {
 					try {
-						const data	= this.decrypt(cyphertext);
+						const decrypted	= this.decrypt(cyphertext);
 
-						if (data.keySet === this.keySets[0]) {
+						if (decrypted.keySet === this.keySets[0]) {
 							this.shouldRatchetKeys	= true;
 						}
 
 						let messageIndex: number	= 1;
 
 						/* Flag for new key set */
-						if (data.message[0] === 1) {
-							this.importFriendKeySet(data.message, 1);
+						if (decrypted.data[0] === 1) {
+							this.importFriendKeySet(decrypted.data, 1);
 							messageIndex += CastleCore.publicKeySetLength;
 						}
 
 						try {
-							if (data.message.length > messageIndex) {
+							if (decrypted.data.length > messageIndex) {
 								this.handlers.receive(
 									CastleCore.sodium.to_string(
 										new Uint8Array(
-											data.message.buffer,
+											decrypted.data.buffer,
 											messageIndex
 										)
 									)
@@ -352,7 +352,7 @@ module Cyph {
 							}
 						}
 						finally {
-							CastleCore.sodium.memzero(data.message);
+							CastleCore.sodium.memzero(decrypted.data);
 						}
 
 						if (!this.isConnected) {
