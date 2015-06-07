@@ -7,16 +7,25 @@ LABEL Name="cyph"
 RUN apt-get update
 RUN apt-get dist-upgrade -y
 
-RUN apt-get install -y curl python python-pip perl build-essential git gnupg procps sudo
+RUN apt-get install -y curl python python-pip perl devscripts build-essential git gnupg procps sudo
 
 RUN curl -sL https://deb.nodesource.com/setup | bash -
 RUN apt-get install -y nodejs
 
 RUN bash -c ' \
+	mkdir /golang; \
+	cd /golang; \
 	apt-get build-dep -y golang-go; \
-	wget http://ftp.de.debian.org/debian/pool/main/g/golang/golang_1.4.2-3_all.deb -O golang.deb; \
-	dpkg -i golang.deb; \
-	rm golang.deb; \
+	wget http://ftp.de.debian.org/debian/pool/main/g/golang/golang_1.4.2-3.dsc; \
+	wget http://ftp.de.debian.org/debian/pool/main/g/golang/golang_1.4.2.orig.tar.gz; \
+	wget http://ftp.de.debian.org/debian/pool/main/g/golang/golang_1.4.2-3.debian.tar.xz; \
+	dpkg-source -x golang_1.4.2-3.dsc; \
+	cd golang-1.4.2; \
+	debuild -us -uc; \
+	cd ..; \
+	dpkg -i *.deb; \
+	cd /; \
+	rm -rf /golang; \
 '
 
 RUN npm -g install html-minifier clean-css uglifyjs typescript tsd typedoc bower browserstack browserify libsodium-wrappers glob read
