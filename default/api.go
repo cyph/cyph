@@ -35,9 +35,7 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 				valueLines := strings.Split(string(oldValue), "\n")
 				timestamp, _ := strconv.ParseInt(valueLines[1], 10, 64)
 
-				if time.Now().Unix()-timestamp > config.NewCyphTimeout {
-					channelDescriptor = ""
-				} else {
+				if time.Now().Unix()-timestamp < config.NewCyphTimeout {
 					channelDescriptor = valueLines[0]
 				}
 			}
