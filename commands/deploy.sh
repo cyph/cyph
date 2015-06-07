@@ -47,8 +47,7 @@ cyphComCSP="$( \
 	cat shared/websign/csp | \
 	grep -v img-src | \
 	sed "s/ data://g" | \
-	sed "s/ 'unsafe-inline'//g" | \
-	sed "s/ 'unsafe-eval'//g" | \
+	sed "s/ 'unsafe-inline' 'unsafe-eval'//g" | \
 	tr '\n' ' ' \
 )"
 webSignCSP="$(cat shared/websign/csp | tr '\n' ' ')"
