@@ -64,57 +64,99 @@ module Cyph {
 				}
 			}
 
-			private decrypt (
-				nonce: Uint8Array,
-				asymmetricNonce: Uint8Array,
-				ntruCyphertext: Uint8Array,
-				ntruMac: Uint8Array,
-				sodiumCyphertext: Uint8Array,
+			private decrypt (cyphertext: Uint8Array) : {
+				message: Uint8Array;
 				keySet: {
 					sodium: { publicKey: Uint8Array; privateKey: Uint8Array; };
 					ntru: { publicKey: Uint8Array; privateKey: Uint8Array; };
-				}
-			) : Uint8Array {
-				const ntruPlaintext: Uint8Array	= CastleCore.ntru.decrypt(
-					ntruCyphertext,
-					keySet.ntru.privateKey
-				);
-
-				const symmetricKey: Uint8Array	= new Uint8Array(
-					ntruPlaintext.buffer,
+				};
+			} {
+				const nonce: Uint8Array				= new Uint8Array(
+					cyphertext.buffer,
 					0,
-					CastleCore.sodium.crypto_secretbox_KEYBYTES
+					CastleCore.sodium.crypto_secretbox_NONCEBYTES
 				);
 
-				const ntruAuthKey: Uint8Array	= new Uint8Array(
-					ntruPlaintext.buffer,
-					CastleCore.sodium.crypto_secretbox_KEYBYTES,
-					CastleCore.sodium.crypto_onetimeauth_KEYBYTES
+				const asymmetricNonce: Uint8Array	= new Uint8Array(
+					cyphertext.buffer,
+					0,
+					CastleCore.sodium.crypto_box_NONCEBYTES
 				);
 
-				try {
-					if (!CastleCore.sodium.crypto_onetimeauth_verify(
-						ntruMac,
-						ntruCyphertext,
-						ntruAuthKey
-					)) {
-						throw CastleCore.errors.ntruAuthFailure;
+				const ntruCyphertext: Uint8Array	= new Uint8Array(
+					cyphertext.buffer,
+					CastleCore.sodium.crypto_secretbox_NONCEBYTES,
+					CastleCore.ntru.encryptedDataLength
+				);
+
+				const ntruMac: Uint8Array			= new Uint8Array(
+					cyphertext.buffer,
+					CastleCore.ntruMacIndex,
+					CastleCore.sodium.crypto_onetimeauth_BYTES
+				);
+
+				const sodiumCyphertext: Uint8Array	= new Uint8Array(
+					cyphertext.buffer,
+					CastleCore.sodiumCyphertextIndex
+				);
+
+
+				for (const keySet of this.keySets) {
+					let ntruPlaintext: Uint8Array;
+
+					try {
+						ntruPlaintext	= CastleCore.ntru.decrypt(
+							ntruCyphertext,
+							keySet.ntru.privateKey
+						);
+
+						const symmetricKey: Uint8Array	= new Uint8Array(
+							ntruPlaintext.buffer,
+							0,
+							CastleCore.sodium.crypto_secretbox_KEYBYTES
+						);
+
+						const ntruAuthKey: Uint8Array	= new Uint8Array(
+							ntruPlaintext.buffer,
+							CastleCore.sodium.crypto_secretbox_KEYBYTES,
+							CastleCore.sodium.crypto_onetimeauth_KEYBYTES
+						);
+
+						if (!CastleCore.sodium.crypto_onetimeauth_verify(
+							ntruMac,
+							ntruCyphertext,
+							ntruAuthKey
+						)) {
+							throw CastleCore.errors.ntruAuthFailure;
+						}
+
+						return {
+							message: CastleCore.sodium.crypto_box_open_easy(
+								CastleCore.sodium.crypto_secretbox_open_easy(
+									sodiumCyphertext,
+									nonce,
+									symmetricKey
+								),
+								asymmetricNonce,
+								this.friendKeySet.sodium,
+								keySet.sodium.privateKey
+							),
+							keySet
+						};
 					}
+					catch (e) {
+						if (e === CastleCore.errors.ntruAuthFailure) {
+							throw e;
+						}
+					}
+					finally {
+						if (ntruPlaintext) {
+							CastleCore.sodium.memzero(ntruPlaintext);
+						}
+					}
+				}
 
-					return CastleCore.sodium.crypto_box_open_easy(
-						CastleCore.sodium.crypto_secretbox_open_easy(
-							sodiumCyphertext,
-							nonce,
-							symmetricKey
-						),
-						asymmetricNonce,
-						this.friendKeySet.sodium,
-						keySet.sodium.privateKey
-					);
-				}
-				finally {
-					CastleCore.sodium.memzero(ntruPlaintext);
-				}
+				throw CastleCore.errors.decryptionFailure;
 			}
 
 			private encrypt (
@@ -283,82 +325,27 @@ module Cyph {
 				}
 				else {
 					try {
-						const nonce: Uint8Array				= new Uint8Array(
-							cyphertext.buffer,
-							0,
-							CastleCore.sodium.crypto_secretbox_NONCEBYTES
-						);
-
-						const asymmetricNonce: Uint8Array	= new Uint8Array(
-							cyphertext.buffer,
-							0,
-							CastleCore.sodium.crypto_box_NONCEBYTES
-						);
-
-						const ntruCyphertext: Uint8Array	= new Uint8Array(
-							cyphertext.buffer,
-							CastleCore.sodium.crypto_secretbox_NONCEBYTES,
-							CastleCore.ntru.encryptedDataLength
-						);
-
-						const ntruMac: Uint8Array			= new Uint8Array(
-							cyphertext.buffer,
-							CastleCore.ntruMacIndex,
-							CastleCore.sodium.crypto_onetimeauth_BYTES
-						);
-
-						const sodiumCyphertext: Uint8Array	= new Uint8Array(
-							cyphertext.buffer,
-							CastleCore.sodiumCyphertextIndex
-						);
-
-
-						let keySetUsed;
-
-						const data: Uint8Array	= (() => {
-							for (const keySet of this.keySets) {
-								try {
-									const data	= this.decrypt(
-										nonce,
-										asymmetricNonce,
-										ntruCyphertext,
-										ntruMac,
-										sodiumCyphertext,
-										keySet
-									);
-
-									keySetUsed	= keySet;
-
-									return data;
-								}
-								catch (_) {}
-							}
-						})();
-
+						const data	= this.decrypt(cyphertext);
 						CastleCore.sodium.memzero(cyphertext);
 
-						if (!data) {
-							throw CastleCore.errors.decryptionFailure;
-						}
-
-						if (keySetUsed === this.keySets[0]) {
+						if (data.keySet === this.keySets[0]) {
 							this.shouldRatchetKeys	= true;
 						}
 
 						let messageIndex: number	= 1;
 
 						/* Flag for new key set */
-						if (data[0] === 1) {
-							this.importFriendKeySet(data, 1);
+						if (data.message[0] === 1) {
+							this.importFriendKeySet(data.message, 1);
 							messageIndex += CastleCore.publicKeySetLength;
 						}
 
 						try {
-							if (data.length > messageIndex) {
+							if (data.message.length > messageIndex) {
 								this.handlers.receive(
 									CastleCore.sodium.to_string(
 										new Uint8Array(
-											data.buffer,
+											data.message.buffer,
 											messageIndex
 										)
 									)
@@ -366,7 +353,7 @@ module Cyph {
 							}
 						}
 						finally {
-							CastleCore.sodium.memzero(data);
+							CastleCore.sodium.memzero(data.message);
 						}
 
 						if (!this.isConnected) {
