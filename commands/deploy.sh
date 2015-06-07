@@ -42,7 +42,7 @@ if [ $branch == 'prod' ] ; then
 fi
 ls */*.yaml | xargs -I% sed -i.bak "s/version: master/version: ${branch}/g" %
 
-defaultCSP='default-src *'
+defaultCSP='default-src \*'
 cyphComCSP="$( \
 	cat shared/websign/csp | \
 	grep -v img-src | \
