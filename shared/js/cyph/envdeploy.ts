@@ -42,5 +42,8 @@ module Cyph {
 		/** Correct endpoint for Fake SQS in local environments
 			(replaces Config.awsEndpointFake). */
 		public static awsEndpoint: string		= `${location.protocol}//${location.hostname}:43000`;
+
+		/** Content Security Policy defined by WebSign in shared/websign/csp. */
+		public static webSignCSP: string		= 'default-src *';
 	}
 }
