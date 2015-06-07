@@ -326,7 +326,6 @@ module Cyph {
 				else {
 					try {
 						const data	= this.decrypt(cyphertext);
-						CastleCore.sodium.memzero(cyphertext);
 
 						if (data.keySet === this.keySets[0]) {
 							this.shouldRatchetKeys	= true;
@@ -367,6 +366,9 @@ module Cyph {
 						if (!this.isConnected) {
 							this.abort();
 						}
+					}
+					finally {
+						CastleCore.sodium.memzero(cyphertext);
 					}
 				}
 
