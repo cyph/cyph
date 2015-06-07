@@ -5,6 +5,6 @@ frame-src https://api.cyph.com;
 img-src data:;
 media-src 'self' data:;
 object-src 'none';
-script-src 'self' 'unsafe-eval' 'unsafe-inline';
+script-src 'unsafe-inline' 'self' 'unsafe-eval';
 style-src 'self' 'unsafe-inline';
 upgrade-insecure-requests;
