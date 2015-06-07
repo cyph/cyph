@@ -2,7 +2,7 @@ default-src 'self';
 connect-src 'self' https://api.cyph.com https://cyphdbyhiddenbhs.onion https://*.amazonaws.com https://mandrillapp.com;
 form-action https://api.cyph.com;
 frame-src https://api.cyph.com;
-img-src 'unsafe-eval' data:;
+img-src 'self' 'unsafe-eval' data:;
 media-src 'self' 'unsafe-eval' data:;
 object-src 'none';
 script-src 'self' 'unsafe-eval' 'unsafe-inline';
