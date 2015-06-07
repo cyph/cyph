@@ -62,7 +62,21 @@ bower install --save \
 
 wget https://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/hmac-sha256.js
 
+cd ../../default
+
+rm -rf github.com 2> /dev/null
+mkdir github.com
+cd github.com
+
+mkdir gorilla
+cd gorilla
+git clone git://github.com/gorilla/mux.git
 cd ..
+mkdir microcosm-cc
+cd microcosm-cc
+git clone git://github.com/microcosm-cc/bluemonday.git
+
+cd ../../..
 chmod -R 700 .
 
 cd "${dir}"
