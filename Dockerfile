@@ -15,12 +15,12 @@ RUN apt-get install -y nodejs
 RUN bash -c ' \
 	mkdir /golang; \
 	cd /golang; \
-	apt-get build-dep -y golang-go; \
-	wget http://ftp.de.debian.org/debian/pool/main/g/golang/golang_1.4.2-3.dsc; \
-	wget http://ftp.de.debian.org/debian/pool/main/g/golang/golang_1.4.2.orig.tar.gz; \
-	wget http://ftp.de.debian.org/debian/pool/main/g/golang/golang_1.4.2-3.debian.tar.xz; \
-	dpkg-source -x golang_1.4.2-3.dsc; \
-	cd golang-1.4.2; \
+	apt-get build-dep -y golang; \
+	wget http://ftp.de.debian.org/debian/pool/main/g/golang/golang_1.3.3-1.dsc; \
+	wget http://ftp.de.debian.org/debian/pool/main/g/golang/golang_1.3.3.orig.tar.gz; \
+	wget http://ftp.de.debian.org/debian/pool/main/g/golang/golang_1.3.3-1.debian.tar.xz; \
+	dpkg-source -x golang_1.3.3-1.dsc; \
+	cd golang-1.3.3; \
 	debuild -us -uc; \
 	cd ..; \
 	dpkg -i *.deb; \
