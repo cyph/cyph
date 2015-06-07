@@ -87,6 +87,10 @@ module Cyph {
 				crypto.getRandomValues(new Uint8Array(1));
 			}
 			catch (_) {
+				/* Firefox only exposes crypto in the main thread;
+					as a workaround, the main thread's crypto instance
+					is used to seed a different CSPRNG here */
+
 				let isaac: any;
 				importScripts('/cryptolib/bower_components/isaac.js/isaac.js');
 				isaac	= isaac || self['isaac'];
