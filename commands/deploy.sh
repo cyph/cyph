@@ -50,7 +50,7 @@ ls */*.yaml | xargs -I% sed -ri.bak "s/  ${defaultHeadersString}(.*)/\
 		headers=\"\$(echo \"\$headers\" | grep -v \$header:)\" ; \
 	done ; \
 	echo \"\$headers\" \
-/gep" %
+/ge" %
 
 defaultCSPString='DEFAULT_CSP'
 cyphComCSP="$( \
