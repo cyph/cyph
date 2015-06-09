@@ -81,8 +81,8 @@ module Cyph {
 
 		/** WebSign-related config. */
 		public static webSignConfig	= {
-			serviceWorker: '/websign/js/serviceworker.js',
-			workerHelper: '/websign/js/workerhelper.js'
+			serviceWorker: 'js/serviceworker.js',
+			workerHelper: 'js/workerhelper.js'
 		};
 
 		/** Max signed 32-bit integer. */
