@@ -81,7 +81,7 @@ module Cyph {
 
 		/** WebSign-related config. */
 		public static webSignConfig	= {
-			serviceWorker: 'websign/js/serviceworker.js',
+			serviceWorker: 'websign/serviceworker.js',
 			workerHelper: 'websign/js/workerhelper.js'
 		};
 

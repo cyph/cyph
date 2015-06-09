@@ -10,7 +10,7 @@ for path in $( \
 	cat websign/index.html | \
 	tr '\n' ' ' | \
 	perl -pe 's/\s+//g' | \
-	perl -pe 's/.*?\[('"'"'..\/'"'"',.*?)\].*/\1,/g' | \
+	perl -pe 's/.*?\[('"'"'.\/'"'"',.*?)\].*/\1,/g' | \
 	tr ',' '\n' | \
 	sed "s/'//g \
 "); do
@@ -18,12 +18,10 @@ for path in $( \
 
 	echo -e "$path:\n" >> .bootstrapText.tmp
 
-	if [ "$path" == '../' ] ; then
-		file='websign/index.html'
-		cat "$file" | sed "s/\\\$PROJECT/$1/g" >> .bootstrapText.tmp
+	if [ "$path" == './' ] ; then
+		cat websign/index.html | sed "s/\\\$PROJECT/$1/g" >> .bootstrapText.tmp
 	else
-		file="websign/${path}"
-		cat "$file" >> .bootstrapText.tmp
+		cat "$path" >> .bootstrapText.tmp
 	fi
 
 	echo -e '\n\n\n\n\n' >> .bootstrapText.tmp
