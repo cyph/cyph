@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html manifest='/websign/appcache.appcache'>
+<html manifest='websign/appcache.appcache'>
 	<head>
 		<meta charset='utf-8' />
 		<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1' />
@@ -7,7 +7,7 @@
 		<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
 		<meta name='apple-mobile-web-app-capable' content='yes' />
 		<meta name='mobile-web-app-capable' content='yes' />
-		<link rel='manifest' href='/websign/manifest.json' />
+		<link rel='manifest' href='manifest.json' />
 
 		<title>Cyph &ndash; Encrypted Messenger</title>
 
@@ -28,7 +28,7 @@
 		<meta name='msapplication-TileColor' content='#8b62d9' />
 		<meta name='msapplication-TileImage' content='/img/favicon/mstile-144x144.png' />
 
-		<link rel='stylesheet' href='/websign/css/loading.css' />
+		<link rel='stylesheet' href='css/loading.css' />
 	</head>
 	<body>
 		<div id='pre-load'>
@@ -92,10 +92,10 @@
 			</div>
 		</div>
 
-		<script src='/websign/js/crypto.js'></script>
-		<script src='/websign/js/keys.js'></script>
-		<script src='/websign/lib/nacl.js'></script>
-		<script src='/websign/js/sha256.js'></script>
+		<script src='js/crypto.js'></script>
+		<script src='js/keys.js'></script>
+		<script src='lib/nacl.js'></script>
+		<script src='js/sha256.js'></script>
 
 		<script>(function () {
 
@@ -119,16 +119,16 @@
 				urlProtocol: 'https://',
 
 				files: [
-					'index.html',
-					'/websign/css/loading.css',
-					'/websign/js/crypto.js',
-					'/websign/js/keys.js',
-					'/websign/js/sha256.js',
-					'/websign/js/serviceworker.js',
-					'/websign/js/workerhelper.js',
-					'/websign/lib/nacl.js',
-					'/websign/appcache.appcache',
-					'/websign/manifest.json'
+					'../',
+					'css/loading.css',
+					'js/crypto.js',
+					'js/keys.js',
+					'js/sha256.js',
+					'js/serviceworker.js',
+					'js/workerhelper.js',
+					'lib/nacl.js',
+					'appcache.appcache',
+					'manifest.json'
 				],
 
 				publicKeys: PUBLIC_KEYS
@@ -143,12 +143,7 @@
 				request({
 					url: file,
 					success: function (data) {
-						bootstrapText	+=
-							(file === 'index.html' ? '/' : file) +
-							':\n\n' +
-							data +
-							'\n\n\n\n\n\n'
-						;
+						bootstrapText	+= file + ':\n\n' + data + '\n\n\n\n\n\n';
 
 						++i;
 
@@ -203,7 +198,7 @@
 
 		try {
 			navigator.serviceWorker.
-				register('/websign/js/serviceworker.js').
+				register('js/serviceworker.js').
 				catch(function () {})
 			;
 		}

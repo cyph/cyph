@@ -1,14 +1,14 @@
 var files	= [
-	'index.html',
-	'/websign/css/loading.css',
-	'/websign/js/crypto.js',
-	'/websign/js/keys.js',
-	'/websign/js/sha256.js',
-	'/websign/js/serviceworker.js',
-	'/websign/js/workerhelper.js',
-	'/websign/lib/nacl.js',
-	'/websign/appcache.appcache',
-	'/websign/manifest.json'
+	'../',
+	'css/loading.css',
+	'js/crypto.js',
+	'js/keys.js',
+	'js/sha256.js',
+	'js/serviceworker.js',
+	'js/workerhelper.js',
+	'lib/nacl.js',
+	'appcache.appcache',
+	'manifest.json'
 ];
 
 
