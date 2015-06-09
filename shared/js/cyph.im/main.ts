@@ -21,15 +21,6 @@
 /// <reference path="ui/ui.ts" />
 
 
-try {
-	navigator['serviceWorker'].
-		register(Cyph.Config.webSignConfig.serviceWorker).
-		catch(() => {})
-	;
-}
-catch (_) {}
-
-
 angular.
 	module('Cyph', [
 		'ngMaterial',

@@ -38,7 +38,8 @@ module Cyph {
 									);
 								}
 								catch (_) {}
-							})
+							}).
+							catch(() => {})
 						;
 					}
 					catch (_) {}
