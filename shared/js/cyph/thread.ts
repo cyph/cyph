@@ -45,36 +45,38 @@ module Cyph {
 
 			/* Polyfills */
 
-			console	= {
-				assert: () => {},
-				clear: () => {},
-				count: () => {},
-				debug: () => {},
-				dir: () => {},
-				dirxml: () => {},
-				error: () => {},
-				exception: () => {},
-				group: () => {},
-				groupCollapsed: () => {},
-				groupEnd: () => {},
-				info: () => {},
-				log: () => {},
-				markTimeline: () => {},
-				msIsIndependentlyComposed: () => false,
-				profile: () => {},
-				profiles: () => {},
-				profileEnd: () => {},
-				select: () => {},
-				show: () => {},
-				table: () => {},
-				time: () => {},
-				timeEnd: () => {},
-				timeline: () => {},
-				timelineEnd: () => {},
-				timeStamp: () => {},
-				trace: () => {},
-				warn: () => {}
-			};
+			if (!vars.isLocalEnv || typeof console === 'undefined') {
+				console	= {
+					assert: () => {},
+					clear: () => {},
+					count: () => {},
+					debug: () => {},
+					dir: () => {},
+					dirxml: () => {},
+					error: () => {},
+					exception: () => {},
+					group: () => {},
+					groupCollapsed: () => {},
+					groupEnd: () => {},
+					info: () => {},
+					log: () => {},
+					markTimeline: () => {},
+					msIsIndependentlyComposed: () => false,
+					profile: () => {},
+					profiles: () => {},
+					profileEnd: () => {},
+					select: () => {},
+					show: () => {},
+					table: () => {},
+					time: () => {},
+					timeEnd: () => {},
+					timeline: () => {},
+					timelineEnd: () => {},
+					timeStamp: () => {},
+					trace: () => {},
+					warn: () => {}
+				};
+			}
 
 			if (typeof atob === 'undefined' || typeof btoa === 'undefined') {
 				importScripts('/lib/bower_components/base64/base64.min.js');
@@ -214,7 +216,12 @@ module Cyph {
 				search: location.search
 			};
 
-			vars.navigator	= {language: Env.fullLanguage, userAgent: Env.userAgent};
+			vars.navigator	= {
+				language: Env.fullLanguage,
+				userAgent: Env.userAgent
+			};
+
+			vars.isLocalEnv	= Env.isLocalEnv;
 
 			vars.threadRandomSeed	= crypto.getRandomValues(new Uint8Array(50000));
 
