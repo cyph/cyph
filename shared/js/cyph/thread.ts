@@ -17,8 +17,8 @@ module Cyph {
 		private static threadEnvSetup (vars: any, importScripts: Function) : void {
 			/* Inherit these from main thread */
 
-			location	= vars.location;
-			navigator	= vars.navigator;
+			location	= vars._location;
+			navigator	= vars._navigator;
 
 
 			/* Wrapper to make importScripts work in local dev environments
@@ -45,7 +45,7 @@ module Cyph {
 
 			/* Polyfills */
 
-			if (!vars.isLocalEnv || typeof console === 'undefined') {
+			if (!vars._isLocalEnv || typeof console === 'undefined') {
 				console	= {
 					assert: () => {},
 					clear: () => {},
@@ -97,9 +97,9 @@ module Cyph {
 				importScripts('/cryptolib/bower_components/isaac.js/isaac.js');
 				isaac	= isaac || self['isaac'];
 
-				isaac.seed(vars.threadRandomSeed);
-				for (let i = 0 ; i < vars.threadRandomSeed.length ; ++i) {
-					vars.threadRandomSeed[i]	= 0;
+				isaac.seed(vars._threadRandomSeed);
+				for (let i = 0 ; i < vars._threadRandomSeed.length ; ++i) {
+					vars._threadRandomSeed[i]	= 0;
 				}
 
 				crypto	= {
@@ -123,7 +123,10 @@ module Cyph {
 				};
 			}
 
-			vars.threadRandomSeed	= null;
+			vars._location			= null;
+			vars._navigator			= null;
+			vars._isLocalEnv		= null;
+			vars._threadRandomSeed	= null;
 		}
 
 		private static threadPostSetup () : void {
@@ -210,7 +213,7 @@ module Cyph {
 			vars: any = {},
 			onmessage: (e: MessageEvent) => any = e => {}
 		) {
-			vars.location	= {
+			vars._location				= {
 				hash: location.hash,
 				host: location.host,
 				hostname: location.hostname,
@@ -221,14 +224,14 @@ module Cyph {
 				search: location.search
 			};
 
-			vars.navigator	= {
+			vars._navigator				= {
 				language: Env.fullLanguage,
 				userAgent: Env.userAgent
 			};
 
-			vars.isLocalEnv	= Env.isLocalEnv;
+			vars._isLocalEnv			= Env.isLocalEnv;
 
-			vars.threadRandomSeed	= crypto.getRandomValues(new Uint8Array(50000));
+			vars._threadRandomSeed		= crypto.getRandomValues(new Uint8Array(50000));
 
 			const threadBody: string	=
 				'var vars = ' + JSON.stringify(vars) + ';\n' +
@@ -237,8 +240,8 @@ module Cyph {
 				Thread.stringifyFunction(Thread.threadPostSetup)
 			;
 
-			for (let i = 0 ; i < vars.threadRandomSeed.length ; ++i) {
-				vars.threadRandomSeed[i]	= 0;
+			for (let i = 0 ; i < vars._threadRandomSeed.length ; ++i) {
+				vars._threadRandomSeed[i]	= 0;
 			}
 
 			try {
