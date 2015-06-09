@@ -181,7 +181,7 @@ for d in cyph.im ; do
 		sha256hash="$(shasum -p -a 256 websign/$d.pkg | perl -pe 's/(.*) .*/\1/')"
 		timestamp="$(date +%s)000"
 		expires="$(($(date +%s)+${HASH_TTL}))000"
-		websignhashes="$(cat $d/websignhashes.json)"
+		websignhashes="$(cat $currentDir/websignhashes.json)"
 
 		# Leaving old-style signing for continued compatibility with old WebSign instances
 		echo "\
