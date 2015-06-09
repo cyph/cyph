@@ -122,6 +122,8 @@ module Cyph {
 					subtle: null
 				};
 			}
+
+			vars.threadRandomSeed	= null;
 		}
 
 		private static threadPostSetup () : void {
