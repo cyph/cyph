@@ -1,0 +1,6 @@
+  http_headers:
+    Cache-Control: public, max-age=31536000
+    Content-Security-Policy: DEFAULT_CSP
+    Expires: Thu, 31 Dec 2037 23:55:55 GMT
+    Strict-Transport-Security: max-age=31536000; includeSubdomains;
+    X-Frame-Options: deny

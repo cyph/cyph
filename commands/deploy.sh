@@ -42,7 +42,17 @@ if [ $branch == 'prod' ] ; then
 fi
 ls */*.yaml | xargs -I% sed -i.bak "s/version: master/version: ${branch}/g" %
 
-defaultCSP='referrer no-referrer'
+defaultHeadersString='# default_headers'
+defaultHeaders="$(cat headers.yaml)"
+ls */*.yaml | xargs -I% sed -ri.bak "s/  ${defaultHeadersString}(.*)/\
+	headers=\"\$(cat headers.yaml)\" ; \
+	for header in \1 ; do \
+		headers=\"\$(echo \"\$headers\" | grep -v \$header:)\" ; \
+	done ; \
+	echo \"\$headers\" \
+/gep" %
+
+defaultCSPString='DEFAULT_CSP'
 cyphComCSP="$( \
 	cat shared/websign/csp | \
 	grep -v img-src | \
@@ -50,8 +60,8 @@ cyphComCSP="$( \
 	tr '\n' ' ' \
 )"
 webSignCSP="$(cat shared/websign/csp | tr '\n' ' ')"
-ls cyph.com/*.yaml | xargs -I% sed -i.bak "s|${defaultCSP}|${cyphComCSP}|g" %
-ls */*.yaml */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s|${defaultCSP}|${webSignCSP}|g" %
+ls cyph.com/*.yaml | xargs -I% sed -i.bak "s|${defaultCSPString}|${cyphComCSP}|g" %
+ls */*.yaml */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s|${defaultCSPString}|${webSignCSP}|g" %
 
 defaultHost='\${location\.protocol}\/\/\${location\.hostname}:'
 ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}43000//g" %

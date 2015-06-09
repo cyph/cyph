@@ -7,9 +7,7 @@ handlers:
 - url: /anal/.*
   static_files: anal.html
   upload: anal.html
-  http_headers:
-    Cache-Control: public, max-age=0
-    Strict-Transport-Security: max-age=31536000; includeSubdomains;
+  # default_headers Content-Security-Policy X-Frame-Options
 
 - url: .*
   script: _go_app
