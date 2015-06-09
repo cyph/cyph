@@ -328,16 +328,5 @@
 		<script src='/cryptolib/hmac-sha256.js'></script>
 
 		<script src='/js/cyph.im/main.js'></script>
-
-		<script>
-			/* No more inline scripts, now that application code has been loaded */
-
-			Cyph.UI.Elements.head.append(
-				'<meta http-equiv="Content-Security-Policy" content="' +
-					Cyph.Env.webSignCSP.replace(/(script-src.*?) 'unsafe-inline'/g, '$1') +
-				'" />'
-			);
-		</script>
-
 	</body>
 </html>

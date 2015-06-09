@@ -13,51 +13,31 @@ handlers:
   static_files: index.html
   upload: index.html
   secure: always
-  http_headers:
-    Cache-Control: no-store
-    X-Frame-Options: deny
-    Strict-Transport-Security: max-age=31536000; includeSubdomains;
-    Content-Security-Policy: referrer no-referrer
+  # default_headers Cache-Control Expires
 
 - url: /about[/]?
   static_files: index.html
   upload: index.html
   secure: always
-  http_headers:
-    Cache-Control: no-store
-    X-Frame-Options: deny
-    Strict-Transport-Security: max-age=31536000; includeSubdomains;
-    Content-Security-Policy: referrer no-referrer
+  # default_headers Cache-Control Expires
 
 - url: /faq[/]?
   static_files: index.html
   upload: index.html
   secure: always
-  http_headers:
-    Cache-Control: no-store
-    X-Frame-Options: deny
-    Strict-Transport-Security: max-age=31536000; includeSubdomains;
-    Content-Security-Policy: referrer no-referrer
+  # default_headers Cache-Control Expires
 
 - url: /termsofservice[/]?
   static_files: index.html
   upload: index.html
   secure: always
-  http_headers:
-    Cache-Control: no-store
-    X-Frame-Options: deny
-    Strict-Transport-Security: max-age=31536000; includeSubdomains;
-    Content-Security-Policy: referrer no-referrer
+  # default_headers Cache-Control Expires
 
 - url: /privacypolicy[/]?
   static_files: index.html
   upload: index.html
   secure: always
-  http_headers:
-    Cache-Control: no-store
-    X-Frame-Options: deny
-    Strict-Transport-Security: max-age=31536000; includeSubdomains;
-    Content-Security-Policy: referrer no-referrer
+  # default_headers Cache-Control Expires
 
 
 # Podcasts
@@ -66,71 +46,43 @@ handlers:
   static_files: index.html
   upload: index.html
   secure: always
-  http_headers:
-    Cache-Control: no-store
-    X-Frame-Options: deny
-    Strict-Transport-Security: max-age=31536000; includeSubdomains;
-    Content-Security-Policy: referrer no-referrer
+  # default_headers Cache-Control Expires
 
 - url: /jjgo[/]?
   static_files: index.html
   upload: index.html
   secure: always
-  http_headers:
-    Cache-Control: no-store
-    X-Frame-Options: deny
-    Strict-Transport-Security: max-age=31536000; includeSubdomains;
-    Content-Security-Policy: referrer no-referrer
+  # default_headers Cache-Control Expires
 
 - url: /ventura[/]?
   static_files: index.html
   upload: index.html
   secure: always
-  http_headers:
-    Cache-Control: no-store
-    X-Frame-Options: deny
-    Strict-Transport-Security: max-age=31536000; includeSubdomains;
-    Content-Security-Policy: referrer no-referrer
+  # default_headers Cache-Control Expires
 
 - url: /sawbones[/]?
   static_files: index.html
   upload: index.html
   secure: always
-  http_headers:
-    Cache-Control: no-store
-    X-Frame-Options: deny
-    Strict-Transport-Security: max-age=31536000; includeSubdomains;
-    Content-Security-Policy: referrer no-referrer
+  # default_headers Cache-Control Expires
 
 - url: /judgejohn[/]?
   static_files: index.html
   upload: index.html
   secure: always
-  http_headers:
-    Cache-Control: no-store
-    X-Frame-Options: deny
-    Strict-Transport-Security: max-age=31536000; includeSubdomains;
-    Content-Security-Policy: referrer no-referrer
+  # default_headers Cache-Control Expires
 
 - url: /mybrother[/]?
   static_files: index.html
   upload: index.html
   secure: always
-  http_headers:
-    Cache-Control: no-store
-    X-Frame-Options: deny
-    Strict-Transport-Security: max-age=31536000; includeSubdomains;
-    Content-Security-Policy: referrer no-referrer
+  # default_headers Cache-Control Expires
 
 - url: /security[/]?
   static_files: index.html
   upload: index.html
   secure: always
-  http_headers:
-    Cache-Control: no-store
-    X-Frame-Options: deny
-    Strict-Transport-Security: max-age=31536000; includeSubdomains;
-    Content-Security-Policy: referrer no-referrer
+  # default_headers Cache-Control Expires
 
 
 # Else
@@ -139,11 +91,7 @@ handlers:
   static_files: \1
   upload: .*
   secure: always
-  http_headers:
-    Cache-Control: public, max-age=0
-    X-Frame-Options: deny
-    Strict-Transport-Security: max-age=31536000; includeSubdomains;
-    Content-Security-Policy: referrer no-referrer
+  # default_headers
 
 
 # 404
@@ -152,8 +100,4 @@ handlers:
   static_files: index.html
   upload: index.html
   secure: always
-  http_headers:
-    Cache-Control: no-store
-    X-Frame-Options: deny
-    Strict-Transport-Security: max-age=31536000; includeSubdomains;
-    Content-Security-Policy: referrer no-referrer
+  # default_headers Cache-Control Expires

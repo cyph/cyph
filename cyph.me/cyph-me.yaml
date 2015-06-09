@@ -10,16 +10,10 @@ handlers:
   static_files: index.html
   upload: index.html
   secure: always
-  http_headers:
-    X-Frame-Options: deny
-    Strict-Transport-Security: max-age=31536000; includeSubdomains;
-    Content-Security-Policy: referrer no-referrer
+  # default_headers Cache-Control Expires
 
 - url: /(.*)
   static_files: \1
   upload: .*
   secure: always
-  http_headers:
-    X-Frame-Options: deny
-    Strict-Transport-Security: max-age=31536000; includeSubdomains;
-    Content-Security-Policy: referrer no-referrer
+  # default_headers Cache-Control Expires
