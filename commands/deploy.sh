@@ -171,32 +171,39 @@ for d in cyph.im ; do
 	# Merge imported libraries into threads
 	find js -name '*.js' | xargs -I% ../commands/websign/threadpack.js %
 
+	originalD="${d}"
 	if [ $test ] ; then
-		../commands/websign/pack.py index.html pkg.html
-	else
-		../commands/websign/pack.py index.html $d.pkg
-		cat websign/index.html | sed "s/\\\$PROJECT/$d/g" > index.html
-		rm websign/index.html
+		d="${branch}.${d}"
+	fi
 
-		currentDir="$(pwd)"
-		cd ..
-		git clone git@github.com:cyph/cyph.github.io.git github.io
-		cd github.io
-		git reset --hard
-		git clean -f
-		git pull
+	../commands/websign/pack.py index.html $d.pkg
+	cat websign/index.html | sed "s/\\\$PROJECT/$d/g" > index.html
+	rm websign/index.html
 
-		cp -f $currentDir/$d.pkg websign/
+	currentDir="$(pwd)"
+	cd ..
+	git clone git@github.com:cyph/cyph.github.io.git github.io
+	cd github.io
+	git reset --hard
+	git clean -f
+	git pull
 
-		HASH_TTL=3944620 # 1.5 months
+	cp -f $currentDir/$d.pkg websign/
 
-		sha512hash="$(shasum -p -a 512 websign/$d.pkg | perl -pe 's/(.*) .*/\1/')"
-		sha256hash="$(shasum -p -a 256 websign/$d.pkg | perl -pe 's/(.*) .*/\1/')"
-		timestamp="$(date +%s)000"
-		expires="$(($(date +%s)+${HASH_TTL}))000"
-		websignhashes="$(cat $currentDir/websignhashes.json)"
+	HASH_TTL=3944620 # 1.5 months
 
-		# Leaving old-style signing for continued compatibility with old WebSign instances
+	sha512hash="$(shasum -p -a 512 websign/$d.pkg | perl -pe 's/(.*) .*/\1/')"
+	sha256hash="$(shasum -p -a 256 websign/$d.pkg | perl -pe 's/(.*) .*/\1/')"
+	timestamp="$(date +%s)000"
+	expires="$(($(date +%s)+${HASH_TTL}))000"
+	websignhashes="$(cat $currentDir/websignhashes.json)"
+
+	if [ $test ] ; then
+		websignhashes="{\"$(../commands/websignhash.sh "${originalD}" "${branch}")\": true}"
+	fi
+
+	# Leaving old-style signing for continued compatibility with old WebSign instances
+	if [ ! $test ] ; then
 		echo "\
 {
 	\"hash\": \"$sha512hash\",
@@ -205,20 +212,20 @@ for d in cyph.im ; do
 }" | gpg --clearsign > websign/$d.hash
 		cat websign/$d.hash | gpg --clearsign -u 'Alternate Key' > websign/$d.hash2
 		cp -f websign/$d.hash2 websign/$d.hash
-
-		$currentDir/../commands/websign/sign.js "{
-			\"hash\": \"$sha256hash\",
-			\"timestamp\": $timestamp,
-			\"expires\": $expires,
-			\"webSignHashes\": $websignhashes
-		}" > websign/$d.sig
-		echo $timestamp >> websign/$d.sig
-
-		git add .
-		git commit -a -m 'package update'
-		git push
-		cd $currentDir
 	fi
+
+	$currentDir/../commands/websign/sign.js "{
+		\"hash\": \"$sha256hash\",
+		\"timestamp\": $timestamp,
+		\"expires\": $expires,
+		\"webSignHashes\": $websignhashes
+	}" > websign/$d.sig
+	echo $timestamp >> websign/$d.sig
+
+	git add .
+	git commit -a -m 'package update'
+	git push
+	cd $currentDir
 
 	cd ..
 done

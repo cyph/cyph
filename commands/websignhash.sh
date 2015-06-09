@@ -2,7 +2,14 @@
 
 source ~/.bashrc
 
-cd "$(cd "$(dirname "$0")"; pwd)/../${1}"
+project="${1}"
+branch="${2}"
+
+cd "$(cd "$(dirname "$0")"; pwd)/../${project}"
+
+if [ "${branch}" ] ; then
+	project="${branch}.${project}"
+fi
 
 rm .bootstrapText.tmp 2> /dev/null
 
@@ -20,7 +27,7 @@ for path in $( \
 
 	if [ "$path" == '/' ] ; then
 		file='websign/index.html'
-		cat "$file" | sed "s/\\\$PROJECT/$1/g" >> .bootstrapText.tmp
+		cat "$file" | sed "s/\\\$PROJECT/${project}/g" >> .bootstrapText.tmp
 	else
 		file="$(echo $path | cut -c 2-)"
 		cat "$file" >> .bootstrapText.tmp
