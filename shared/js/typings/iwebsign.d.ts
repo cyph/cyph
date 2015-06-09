@@ -15,9 +15,6 @@ interface IWebSign {
 	/** Indicates whether this is Tor hidden service. */
 	isOnion: boolean;
 
-	/** Indicates whether this is the current version of WebSign (Ed25519/SHA256). */
-	v3: boolean;
-
 	/** Configuration. */
 	config: {
 		abortText: string;
@@ -46,5 +43,5 @@ interface IWebSign {
 	 * Includes bootstrap hashes, package hash, continent, and optionally bootstrap text.
 	 * @param shouldIncludeBootstrapText
 	 */
-	toString (shouldIncludeBootstrapText?: boolean) : string;
+	stringify (shouldIncludeBootstrapText?: boolean) : string;
 }

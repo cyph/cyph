@@ -25,7 +25,7 @@ module Cyph {
 					'\n\n' + Env.userAgent +
 					'\n\n' + Env.language +
 					'\n\n' + (location ? location.toString() : '') +
-					'\n\n' + (WebSign ? WebSign.toString(shouldIncludeBootstrapText) : '')
+					'\n\n' + (WebSign ? WebSign.stringify(shouldIncludeBootstrapText) : '')
 				;
 
 				/* Strip URL fragment where applicable */
@@ -70,16 +70,10 @@ module Cyph {
 		public static log			= Errors.baseErrorLog('WARNING WARNING WARNING SOMETHING IS SRSLY FUCKED UP LADS');
 
 		/**
-		 * Logs chat authentication failure (usually means that someone mistyped a cyph link by hand).
+		 * Logs chat authentication failure (this happens occasionally, not sure why).
 		 * @function
 		 */
 		public static logAuthFail	= Errors.baseErrorLog('AUTHENTICATION JUST FAILED FOR SOMEONE LADS');
-
-		/**
-		 * Logs WebSign failure (this one is super serious).
-		 * @function
-		 */
-		public static logWebSign	= Errors.baseErrorLog('SOMEONE JUST GOT THE WEBSIGN ERROR SCREEN LADS', true);
 
 		private static _	= (() => {
 			self.onerror	= <ErrorEventHandler> Errors.log;

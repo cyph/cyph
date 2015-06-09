@@ -9,8 +9,7 @@ module Cyph.im {
 			chat,
 			error,
 			spinningUp,
-			waitingForFriend,
-			webSignChanged
+			waitingForFriend
 		}
 	}
 }
