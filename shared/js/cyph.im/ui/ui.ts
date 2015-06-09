@@ -143,51 +143,41 @@ module Cyph.im {
 				private mobileMenu: Cyph.UI.ISidebar,
 				private notifier: Cyph.UI.INotifier
 			) {
-				if (
-					WebSign &&
-					WebSign.v3 &&
-					!Config.webSignHashes[localStorage.webSignBootHash]
-				) {
-					Cyph.Errors.logWebSign();
-					this.changeState(States.webSignChanged);
-				}
-				else {
-					Cyph.UrlState.onchange(urlState => this.onUrlStateChange(urlState));
+				this.chat		= new Cyph.UI.Chat.Chat(
+					this.controller,
+					this.dialogManager,
+					this.mobileMenu,
+					this.notifier
+				);
 
-					this.chat	= new Cyph.UI.Chat.Chat(
-						this.controller,
-						this.dialogManager,
-						this.mobileMenu,
-						this.notifier
-					);
-
-					this.signupForm	= new Cyph.UI.SignupForm(this.controller);
+				this.signupForm	= new Cyph.UI.SignupForm(this.controller);
 
 
 
-					this.chat.session.on(Cyph.Session.Events.abort, () => {
-						this.changeState(States.chat);
-						Cyph.UI.Elements.window.off('beforeunload');
-					});
+				Cyph.UrlState.onchange(urlState => this.onUrlStateChange(urlState));
 
-					this.chat.session.on(Cyph.Session.Events.beginChatComplete, () =>
-						Cyph.UI.Elements.window.
-							unload(() => this.chat.session.close(true)).
-							on('beforeunload', () => Cyph.Strings.disconnectWarning)
-					);
+				this.chat.session.on(Cyph.Session.Events.abort, () => {
+					this.changeState(States.chat);
+					Cyph.UI.Elements.window.off('beforeunload');
+				});
 
-					this.chat.session.on(Cyph.Session.Events.beginWaiting, () =>
-						this.beginWaiting()
-					);
+				this.chat.session.on(Cyph.Session.Events.beginChatComplete, () =>
+					Cyph.UI.Elements.window.
+						unload(() => this.chat.session.close(true)).
+						on('beforeunload', () => Cyph.Strings.disconnectWarning)
+				);
 
-					this.chat.session.on(Cyph.Session.Events.connect, () =>
-						this.changeState(States.chat)
-					);
+				this.chat.session.on(Cyph.Session.Events.beginWaiting, () =>
+					this.beginWaiting()
+				);
 
-					this.chat.session.on(Cyph.Session.Events.newCyph, () =>
-						this.changeState(States.spinningUp)
-					);
-				}
+				this.chat.session.on(Cyph.Session.Events.connect, () =>
+					this.changeState(States.chat)
+				);
+
+				this.chat.session.on(Cyph.Session.Events.newCyph, () =>
+					this.changeState(States.spinningUp)
+				);
 
 
 				Cyph.UrlState.set(location.pathname, false, true);

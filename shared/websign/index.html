@@ -34,12 +34,60 @@
 		<div id='pre-load'>
 			<div class='double-bounce1'></div>
 			<div class='double-bounce2'></div>
-			<div class='message'>
+
+			<div id='pre-load-message' class='message'>
 				<p>
 					Validating cryptographic signature...
 				</p>
 				<p>
 					Please wait; this may take a few seconds.
+				</p>
+			</div>
+
+			<div id='panic-message' class='message' style='display: none; top: 50%; transform: translateY(-50%);'>
+				<p>
+					<strong>WARNING:</strong>
+					<span>Your copy of Cyph is invalid.</span>
+				</p>
+				<p>
+					<span>
+						It is likely that either our server has been compromised,
+						or your personal computer is under attack.
+					</span>
+					<br />
+					<span>
+						(The most likely culprit is malware on your computer
+						intercepting this connection.)
+					</span>
+				</p>
+				<p>
+					<span>Therefore,</span>
+					<strong>
+						DO NOT refresh this page or otherwise continue to use Cyph.
+					</strong>
+					<br />
+					<span>
+						Doing so may expose you to malicious code written by
+						nation-state-level hackers.
+					</span>
+				</p>
+				<p>
+					<a href='https://twitter.com/cyph'>Tweet at us</a>
+					<span>and</span>
+					<a href='mailto:%22Ryan%20Lester%22%20%3Chacker@linux.com%3E,%20%22Baron%20Joshua%20Cyrus%20Boehm%22%20%3Cjosh@joshboehm.com%3E?subject=I%20RECEIVED%20THE%20WEBSIGN%20WARNING&body=Hello%20Ryan%20and%20Josh%2C%0A%0A'>
+						email us immediately
+					</a>;
+					<span>
+						we will investigate and advise you on how to proceed.
+					</span>
+				</p>
+				<p>
+					<span>(This</span>
+					<i>may</i>
+					<span>
+						be a glitch in the Matrix, but assume
+						otherwise until you hear back from us.)
+					</span>
 				</p>
 			</div>
 		</div>
@@ -60,8 +108,6 @@
 			continent: '',
 
 			isOnion: document.location.host.split('.').slice(-1)[0] === 'onion',
-
-			v3: true,
 
 			config: {
 				abortText: 'Loading Cyph failed. Please try again later.',
@@ -125,7 +171,7 @@
 				);
 			},
 
-			toString: function (shouldIncludeBootstrapText) {
+			stringify: function (shouldIncludeBootstrapText) {
 				return (
 					'\n\ncontinent: ' + WebSign.continent +
 					'\n\ncurrent bootstrap hash: ' + localStorage.webSignBootHash +
@@ -149,6 +195,14 @@
 
 
 		/*** Main ***/
+
+		try {
+			navigator.serviceWorker.
+				register('/websign/js/serviceworker.js').
+				catch(function () {})
+			;
+		}
+		catch (_) {}
 
 		WebSign.loadBootstrapText(function () {
 			if (WebSign.isOnion) {
@@ -217,9 +271,14 @@
 								)
 							);
 
+							/* Show big scary warning if WebSign has been compromised */
+							if (!hashObject.webSignHashes[localStorage.webSignBootHash]) {
+								panic();
+								return;
+							}
 							/* Accept if valid signature, not expired, and
 								detached timestamp was accurate */
-							if (
+							else if (
 								hashObject.expires > Date.now() &&
 								hashObject.timestamp === signatureTimestamp
 							) {
@@ -268,27 +327,79 @@
 		/*** Helpers ***/
 
 		function abort () {
-			var preLoad	= document.getElementById('pre-load');
+			var preLoad			= document.getElementById('pre-load');
+			var preLoadMessage	= document.getElementById('pre-load-message');
 
-			for (var i = 0 ; i < 2 ; ++i) {
-				preLoad.removeChild(preLoad.children[0]);
+			while (true) {
+				var child	= preLoad.children[0];
+
+				if (child === preLoadMessage) {
+					break;
+				}
+				else {
+					preLoad.removeChild(child);
+				}
 			}
 
-			preLoad.children[0].innerText	= WebSign.config.abortText;
+			preLoadMessage.innerText	= WebSign.config.abortText;
 		}
 
 		function getValue (o, k, defaultValue) {
 			return k in o ? o[k] : defaultValue;
 		}
 
-		function request (o) {
-			var data	= getValue(o, 'data', '');
-			var error	= getValue(o, 'error', abort);
-			var retries	= getValue(o, 'retries', 3);
-			var success	= getValue(o, 'success', function () {});
-			var url		= o.url;
+		function panic () {
+			var preLoad			= document.getElementById('pre-load');
+			var panicMessage	= document.getElementById('panic-message');
 
-			if (data) {
+			while (true) {
+				var child	= preLoad.children[0];
+
+				if (child === panicMessage) {
+					break;
+				}
+				else {
+					preLoad.removeChild(child);
+				}
+			}
+
+			panicMessage.style.display	= 'block';
+
+			/* Also try to warn us, though in a serious attack this may be blocked */
+			request({
+				method: 'POST',
+				url: 'https://mandrillapp.com/api/1.0/messages/send.json',
+				contentType: 'application/json',
+				data: JSON.stringify({
+					key: 'HNz4JExN1MtpKz8uP2RD1Q',
+					message: {
+						from_email: 'test@mandrillapp.com',
+						to: [{
+							email: 'errors@cyph.com',
+							type: 'to'
+						}],
+						autotext: 'true',
+						subject: 'CYPH: SOMEONE JUST GOT THE WEBSIGN ERROR SCREEN LADS',
+						text:
+							navigator.language + '\n\n' +
+							navigator.userAgent + '\n\n' +
+							location.toString() + '\n\n' +
+							WebSign.stringify(true)
+					}
+				})
+			});
+		}
+
+		function request (o) {
+			var contentType	= getValue(o, 'contentType', 'application/x-www-form-urlencoded');
+			var data		= getValue(o, 'data', '');
+			var error		= getValue(o, 'error', abort);
+			var method		= getValue(o, 'method', 'GET');
+			var retries		= getValue(o, 'retries', 3);
+			var success		= getValue(o, 'success', function () {});
+			var url			= o.url;
+
+			if (data && method === 'GET') {
 				url	+= '?' + data;
 			}
 
@@ -309,8 +420,15 @@
 				}
 			};
 
-			xhr.open('GET', url, true);
-			xhr.send();
+			xhr.open(method, url, true);
+			xhr.setRequestHeader('Content-Type', contentType);
+
+			if (!data || method === 'GET') {
+				xhr.send();
+			}
+			else {
+				xhr.send(data);
+			}
 		}
 
 		function loadPackage (errorHandler) {

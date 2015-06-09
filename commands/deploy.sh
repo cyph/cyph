@@ -75,7 +75,7 @@ else
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42002/https:\/\/www.cyph.im/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42003/https:\/\/www.cyph.me/g" %
 
-	ls */*.yaml | xargs -I% sed -i.bak 's/max-age=0/max-age=31536000/g' %
+	ls */*.yaml | xargs -I% sed -i.bak 's/max-age=0/max-age=31536000\n    Expires: Thu, 31 Dec 2037 23:55:55 GMT/g' %
 	ls */*.yaml | xargs -I% sed -i.bak 's/version: staging/version: prod/g' %
 fi
 
@@ -181,6 +181,7 @@ for d in cyph.im ; do
 		sha256hash="$(shasum -p -a 256 websign/$d.pkg | perl -pe 's/(.*) .*/\1/')"
 		timestamp="$(date +%s)000"
 		expires="$(($(date +%s)+${HASH_TTL}))000"
+		websignhashes="$(cat $d/websignhashes.json)"
 
 		# Leaving old-style signing for continued compatibility with old WebSign instances
 		echo "\
@@ -192,7 +193,12 @@ for d in cyph.im ; do
 		cat websign/$d.hash | gpg --clearsign -u 'Alternate Key' > websign/$d.hash2
 		cp -f websign/$d.hash2 websign/$d.hash
 
-		$currentDir/../commands/websign/sign.js "{\"hash\": \"$sha256hash\", \"timestamp\": $timestamp, \"expires\": $expires}" > websign/$d.sig
+		$currentDir/../commands/websign/sign.js "{
+			\"hash\": \"$sha256hash\",
+			\"timestamp\": $timestamp,
+			\"expires\": $expires,
+			\"webSignHashes\": $websignhashes
+		}" > websign/$d.sig
 		echo $timestamp >> websign/$d.sig
 
 		git add .
