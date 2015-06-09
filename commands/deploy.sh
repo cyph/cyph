@@ -75,6 +75,8 @@ if [ $test ] ; then
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42002/https:\/\/${branch}-dot-cyph-im-dot-cyphme.appspot.com/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42003/https:\/\/${branch}-dot-cyph-me-dot-cyphme.appspot.com/g" %
 
+	ls */*.yaml | xargs -I% sed -i.bak 's/max-age=31536000/max-age=0/g' %
+
 	# for yaml in `ls */cyph*.yaml` ; do
 	# 	cat $yaml | perl -pe 's/(- url: .*)/\1\n  login: admin/g' > $yaml.new
 	# 	mv $yaml.new $yaml
@@ -85,7 +87,6 @@ else
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42002/https:\/\/www.cyph.im/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42003/https:\/\/www.cyph.me/g" %
 
-	ls */*.yaml | xargs -I% sed -i.bak 's/max-age=0/max-age=31536000\n    Expires: Thu, 31 Dec 2037 23:55:55 GMT/g' %
 	ls */*.yaml | xargs -I% sed -i.bak 's/version: staging/version: prod/g' %
 fi
 

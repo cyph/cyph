@@ -7,4 +7,4 @@ media-src 'self' data:;
 object-src 'none';
 script-src 'self' 'unsafe-eval' 'unsafe-inline';
 style-src 'self' 'unsafe-inline';
-upgrade-insecure-requests;
+upgrade-insecure-requests
