@@ -28,7 +28,7 @@
 		<meta name='msapplication-TileColor' content='#8b62d9' />
 		<meta name='msapplication-TileImage' content='/img/favicon/mstile-144x144.png' />
 
-		<link rel='stylesheet' href='css/loading.css' />
+		<link rel='stylesheet' href='css/websign.css' />
 	</head>
 	<body>
 		<div id='pre-load'>
@@ -44,7 +44,7 @@
 				</p>
 			</div>
 
-			<div id='panic-message' class='message' style='display: none; top: 50%; transform: translateY(-50%);'>
+			<div id='panic-message' class='message' style='display: none'>
 				<p>
 					<strong>WARNING:</strong>
 					<span>Your copy of Cyph is invalid.</span>
@@ -92,10 +92,10 @@
 			</div>
 		</div>
 
-		<script src='js/crypto.js'></script>
-		<script src='js/keys.js'></script>
-		<script src='lib/nacl.js'></script>
-		<script src='js/sha256.js'></script>
+		<script src='websign/js/crypto.js'></script>
+		<script src='websign/js/keys.js'></script>
+		<script src='websign/lib/nacl.js'></script>
+		<script src='websign/js/sha256.js'></script>
 
 		<script>(function () {
 
@@ -119,16 +119,16 @@
 				urlProtocol: 'https://',
 
 				files: [
-					'../',
-					'css/loading.css',
-					'js/crypto.js',
-					'js/keys.js',
-					'js/sha256.js',
-					'js/serviceworker.js',
-					'js/workerhelper.js',
-					'lib/nacl.js',
-					'appcache.appcache',
-					'manifest.json'
+					'./',
+					'websign/css/websign.css',
+					'websign/js/crypto.js',
+					'websign/js/keys.js',
+					'websign/js/sha256.js',
+					'websign/js/workerhelper.js',
+					'websign/lib/nacl.js',
+					'websign/appcache.appcache',
+					'websign/manifest.json',
+					'websign/serviceworker.js'
 				],
 
 				publicKeys: PUBLIC_KEYS
@@ -198,7 +198,7 @@
 
 		try {
 			navigator.serviceWorker.
-				register('js/serviceworker.js').
+				register('websign/serviceworker.js').
 				catch(function () {})
 			;
 		}
