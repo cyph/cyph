@@ -25,7 +25,7 @@ module Cyph {
 					'\n\n' + Env.userAgent +
 					'\n\n' + Env.language +
 					'\n\n' + (location ? location.toString() : '') +
-					'\n\n' + (WebSign ? WebSign.toString(shouldIncludeBootstrapText) : '')
+					'\n\n' + (WebSign ? WebSign.stringify(shouldIncludeBootstrapText) : '')
 				;
 
 				/* Strip URL fragment where applicable */
@@ -74,12 +74,6 @@ module Cyph {
 		 * @function
 		 */
 		public static logSmp		= Errors.baseErrorLog('SMP JUST FAILED FOR SOMEONE LADS');
-
-		/**
-		 * Logs WebSign failure (this one is super serious and should never happen).
-		 * @function
-		 */
-		public static logWebSign	= Errors.baseErrorLog('SOMEONE JUST GOT THE WEBSIGN ERROR SCREEN LADS', true);
 
 		private static _	= (() => {
 			self.onerror	= <ErrorEventHandler> Errors.log;
