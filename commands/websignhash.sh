@@ -10,11 +10,15 @@ for path in $( \
 	cat websign/index.html | \
 	tr '\n' ' ' | \
 	perl -pe 's/\s+//g' | \
-	perl -pe 's/.*?\[('"'"'\/'"'"',.*?)\].*/\1,/g' | \
+	perl -pe 's/.*?\[('"'"'index.html'"'"',.*?)\].*/\1,/g' | \
 	tr ',' '\n' | \
 	sed "s/'//g \
 "); do
 	file=''
+
+	if [ "$path" == 'index.html' ] ; then
+		path='/'
+	fi
 
 	echo -e "$path:\n" >> .bootstrapText.tmp
 

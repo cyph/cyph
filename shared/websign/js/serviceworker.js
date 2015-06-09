@@ -1,5 +1,5 @@
 var files	= [
-	'/',
+	'index.html',
 	'/websign/css/loading.css',
 	'/websign/js/crypto.js',
 	'/websign/js/keys.js',

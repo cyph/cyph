@@ -119,7 +119,7 @@
 				urlProtocol: 'https://',
 
 				files: [
-					'/',
+					'index.html',
 					'/websign/css/loading.css',
 					'/websign/js/crypto.js',
 					'/websign/js/keys.js',
@@ -143,7 +143,12 @@
 				request({
 					url: file,
 					success: function (data) {
-						bootstrapText	+= file + ':\n\n' + data + '\n\n\n\n\n\n';
+						bootstrapText	+=
+							(file === 'index.html' ? '/' : file) +
+							':\n\n' +
+							data +
+							'\n\n\n\n\n\n'
+						;
 
 						++i;
 
