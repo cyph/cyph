@@ -75,6 +75,8 @@ if [ $test ] ; then
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42002/https:\/\/${branch}-dot-cyph-im-dot-cyphme.appspot.com/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42003/https:\/\/${branch}-dot-cyph-me-dot-cyphme.appspot.com/g" %
 
+	# Disable caching and HPKP in test environments
+	ls */*.yaml | xargs -I% sed -i.bak 's/Public-Key-Pins: .*/Pragma: no-cache/g' %
 	ls */*.yaml | xargs -I% sed -i.bak 's/max-age=31536000/max-age=0/g' %
 
 	# for yaml in `ls */cyph*.yaml` ; do
