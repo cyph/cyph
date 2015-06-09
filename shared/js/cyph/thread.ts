@@ -98,6 +98,9 @@ module Cyph {
 				isaac	= isaac || self['isaac'];
 
 				isaac.seed(vars.threadRandomSeed);
+				for (let i = 0 ; i < vars.threadRandomSeed.length ; ++i) {
+					vars.threadRandomSeed[i]	= 0;
+				}
 
 				crypto	= {
 					getRandomValues: array => {
@@ -231,6 +234,10 @@ module Cyph {
 				Thread.stringifyFunction(f) +
 				Thread.stringifyFunction(Thread.threadPostSetup)
 			;
+
+			for (let i = 0 ; i < vars.threadRandomSeed.length ; ++i) {
+				vars.threadRandomSeed[i]	= 0;
+			}
 
 			try {
 				let blob: Blob;
