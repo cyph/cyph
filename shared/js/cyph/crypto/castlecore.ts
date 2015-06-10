@@ -34,10 +34,6 @@ module Cyph {
 			};
 
 
-			private isAborted: boolean			= false;
-			private isConnected: boolean		= false;
-			private shouldRatchetKeys: boolean	= true;
-
 			private keySets: {
 				sodium: { publicKey: Uint8Array; privateKey: Uint8Array; };
 				ntru: { publicKey: Uint8Array; privateKey: Uint8Array; };
@@ -48,6 +44,9 @@ module Cyph {
 				ntru: Uint8Array;
 			};
 
+			private isAborted: boolean;
+			private isConnected: boolean;
+			private shouldRatchetKeys: boolean;
 			private sharedSecret: Uint8Array;
 
 			private abort () : void {
