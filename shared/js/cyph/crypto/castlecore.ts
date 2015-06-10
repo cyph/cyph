@@ -380,8 +380,9 @@ module Cyph {
 			 * @param message Data to be encrypted.
 			 */
 			public send (message: string) : void {
-				let publicKeySet;
-				const keySet				= this.keySets[0];
+				const keySet	= this.keySets[0];
+
+				let publicKeySet: Uint8Array;
 				let messageIndex: number	= 1;
 
 				if (this.shouldRatchetKeys) {
