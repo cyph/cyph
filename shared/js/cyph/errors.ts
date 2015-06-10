@@ -70,7 +70,7 @@ module Cyph {
 		public static log			= Errors.baseErrorLog('WARNING WARNING WARNING SOMETHING IS SRSLY FUCKED UP LADS');
 
 		/**
-		 * Logs chat authentication failure (this happens occasionally, not sure why).
+		 * Logs chat authentication failure (attempted mitm and/or mistyped shared secret).
 		 * @function
 		 */
 		public static logAuthFail	= Errors.baseErrorLog('AUTHENTICATION JUST FAILED FOR SOMEONE LADS');

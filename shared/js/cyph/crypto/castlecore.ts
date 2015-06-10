@@ -144,9 +144,9 @@ module Cyph {
 							keySet
 						};
 					}
-					catch (e) {
-						if (e === CastleCore.errors.ntruAuthFailure) {
-							throw e;
+					catch (err) {
+						if (err === CastleCore.errors.ntruAuthFailure) {
+							throw err;
 						}
 					}
 					finally {
@@ -290,24 +290,32 @@ module Cyph {
 					return false;
 				}
 
-				const cyphertext: Uint8Array	= CastleCore.sodium.from_base64(message);
+				let cyphertext: Uint8Array;
 
-				if (!this.friendKeySet) {
-					this.friendKeySet	= {
-						sodium: new Uint8Array(CastleCore.sodium.crypto_box_PUBLICKEYBYTES),
-						ntru: new Uint8Array(CastleCore.ntru.publicKeyLength)
-					};
+				try {
+					cyphertext	= CastleCore.sodium.from_base64(message);
 
-					try {
-						this.importFriendKeySet(
-							CastleCore.sodium.crypto_secretbox_open_easy(
-								cyphertext,
-								new Uint8Array(
-									CastleCore.sodium.crypto_secretbox_NONCEBYTES
-								),
-								this.sharedSecret
-							)
-						);
+					/* Initial key exchange */
+					if (!this.friendKeySet) {
+						this.friendKeySet	= {
+							sodium: new Uint8Array(CastleCore.sodium.crypto_box_PUBLICKEYBYTES),
+							ntru: new Uint8Array(CastleCore.ntru.publicKeyLength)
+						};
+
+						try {
+							this.importFriendKeySet(
+								CastleCore.sodium.crypto_secretbox_open_easy(
+									cyphertext,
+									new Uint8Array(
+										CastleCore.sodium.crypto_secretbox_NONCEBYTES
+									),
+									this.sharedSecret
+								)
+							);
+						}
+						finally {
+							CastleCore.sodium.memzero(this.sharedSecret);
+						}
 
 						/* Trigger friend's connection acknowledgement logic
 							by sending this user's first encrypted message */
@@ -315,16 +323,9 @@ module Cyph {
 
 						return true;
 					}
-					catch (_) {
-						this.abort();
-					}
-					finally {
-						CastleCore.sodium.memzero(this.sharedSecret);
-						CastleCore.sodium.memzero(cyphertext);
-					}
-				}
-				else {
-					try {
+
+					/* Standard incoming message */
+					else {
 						const decrypted	= this.decrypt(cyphertext);
 
 						if (decrypted.keySet === this.keySets[0]) {
@@ -362,12 +363,14 @@ module Cyph {
 
 						return true;
 					}
-					catch (_) {
-						if (!this.isConnected) {
-							this.abort();
-						}
+				}
+				catch (_) {
+					if (!this.isConnected) {
+						this.abort();
 					}
-					finally {
+				}
+				finally {
+					if (cyphertext) {
 						CastleCore.sodium.memzero(cyphertext);
 					}
 				}
