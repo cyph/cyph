@@ -51,8 +51,7 @@ module Cyph {
 			private sharedSecret: Uint8Array;
 
 			private abort () : void {
-				this.isAborted		= true;
-				this.isConnected	= false;
+				this.isAborted	= true;
 
 				try {
 					/* Send invalid cyphertext to trigger
