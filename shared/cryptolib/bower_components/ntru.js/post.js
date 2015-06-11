@@ -93,7 +93,7 @@ var ntru	= {
 		dataResult(enc);
 		dataResult(priv);
 
-		if (returnValue > 0) {
+		if (returnValue >= 0) {
 			return new Uint8Array(
 				dataResult(dec).buffer,
 				0,
