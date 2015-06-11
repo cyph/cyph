@@ -271,14 +271,13 @@
 								)
 							);
 
-							/* Show big scary warning if WebSign has been compromised */
-							if (!hashObject.webSignHashes[localStorage.webSignBootHash]) {
-								panic();
-								return;
-							}
+							localStorage.webSignBootHashWhitelist	=
+								JSON.stringify(hashObject.webSignHashes)
+							;
+
 							/* Accept if valid signature, not expired, and
 								detached timestamp was accurate */
-							else if (
+							if (
 								hashObject.expires > Date.now() &&
 								hashObject.timestamp === signatureTimestamp
 							) {
@@ -300,6 +299,17 @@
 									localStorage.webSignHashExpires		= hashObject.expires;
 								}
 							}
+						}
+					}
+					catch (_) {}
+
+					/* Show big scary warning if WebSign has been compromised */
+					try {
+						var webSignHashes	= JSON.parse(localStorage.webSignBootHashWhitelist);
+
+						if (!webSignHashes[localStorage.webSignBootHash]) {
+							panic();
+							return;
 						}
 					}
 					catch (_) {}
