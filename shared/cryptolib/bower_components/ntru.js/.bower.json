@@ -1,11 +1,11 @@
 {
   "name": "ntru.js",
   "homepage": "https://github.com/cyph/ntru.js",
-  "_release": "1e8b268a60",
+  "_release": "2e4b2a3000",
   "_resolution": {
     "type": "branch",
     "branch": "master",
-    "commit": "1e8b268a60599769e0f069863efbd5616664f6b1"
+    "commit": "2e4b2a3000bc37dbd37c596cf1baf73fdde946bc"
   },
   "_source": "git://github.com/cyph/ntru.js.git",
   "_target": "*",

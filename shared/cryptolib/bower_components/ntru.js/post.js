@@ -28,7 +28,7 @@ function dataResult (o) {
 }
 
 
-var seedlength	= 50000;
+var seedlength	= 512;
 var seed		= dataAllocate(crypto.getRandomValues(new Uint8Array(seedlength)));
 Module.ccall('init', 'number', ['number', 'number'], [dataArgument(seed), seedlength]);
 dataResult(seed);

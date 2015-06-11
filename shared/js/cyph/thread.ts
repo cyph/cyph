@@ -231,7 +231,7 @@ module Cyph {
 
 			vars._isLocalEnv			= Env.isLocalEnv;
 
-			vars._threadRandomSeed		= crypto.getRandomValues(new Uint8Array(50000));
+			vars._threadRandomSeed		= crypto.getRandomValues(new Uint8Array(512));
 
 			const threadBody: string	=
 				'var vars = ' + JSON.stringify(vars) + ';\n' +
