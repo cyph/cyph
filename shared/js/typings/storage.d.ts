@@ -9,6 +9,9 @@ interface Storage {
 	/** Hash of previous bootstrap payload. */
 	webSignBootHashOld: string;
 
+	/** List of valid bootstrap payload hashes. */
+	webSignBootHashWhitelist: string;
+
 	/** Hash of current package. */
 	webSignHash: string;
 
