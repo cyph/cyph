@@ -271,10 +271,6 @@
 								)
 							);
 
-							localStorage.webSignBootHashWhitelist	=
-								JSON.stringify(hashObject.webSignHashes)
-							;
-
 							/* Accept if valid signature, not expired, and
 								detached timestamp was accurate */
 							if (
@@ -297,6 +293,10 @@
 									localStorage.webSignHash			= hashObject.hash;
 									localStorage.webSignHashTimestamp	= hashObject.timestamp;
 									localStorage.webSignHashExpires		= hashObject.expires;
+
+									localStorage.webSignBootHashWhitelist	=
+										JSON.stringify(hashObject.webSignHashes)
+									;
 								}
 							}
 						}
