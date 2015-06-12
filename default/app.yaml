@@ -7,7 +7,7 @@ handlers:
 - url: /anal/.*
   static_files: anal.html
   upload: anal.html
-  # default_headers Content-Security-Policy X-Frame-Options
+  # default_headers X-Frame-Options Content-Security-Policy X-Content-Security-Policy X-WebKit-CSP
 
 - url: .*
   script: _go_app
