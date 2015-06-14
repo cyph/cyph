@@ -62,8 +62,8 @@ function decryptKey (key, password) {
 				sodium.crypto_pwhash_scryptsalsa208sha256(
 					password,
 					new Uint8Array(sodium.crypto_pwhash_scryptsalsa208sha256_SALTBYTES),
-					0,
-					0,
+					sodium.crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_SENSITIVE,
+					sodium.crypto_pwhash_scryptsalsa208sha256_MEMLIMIT_INTERACTIVE,
 					sodium.crypto_secretbox_KEYBYTES
 				),
 				'text'
