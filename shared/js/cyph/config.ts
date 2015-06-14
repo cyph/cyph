@@ -13,7 +13,7 @@ module Cyph {
 		public static cyphIdLength: number			= 7;
 
 		/** Length of random IDs in cyph links. */
-		public static secretLength: number			= 14;
+		public static secretLength: number			= 25;
 
 		/** Length of random SQS queue IDs. */
 		public static longSecretLength: number		= 52;
