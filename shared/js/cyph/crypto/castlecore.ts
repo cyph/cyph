@@ -435,7 +435,7 @@ module Cyph {
 					new Uint8Array(
 						CastleCore.sodium.crypto_pwhash_scryptsalsa208sha256_SALTBYTES
 					),
-					CastleCore.sodium.crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_SENSITIVE,
+					CastleCore.sodium.crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_INTERACTIVE,
 					CastleCore.sodium.crypto_pwhash_scryptsalsa208sha256_MEMLIMIT_INTERACTIVE,
 					CastleCore.sodium.crypto_secretbox_KEYBYTES
 				);
