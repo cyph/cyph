@@ -54,20 +54,15 @@ function sign (data, keys, prompt, callback, blacklistedKey) {
 }
 
 function decryptKey (key, password) {
-	return new Uint8Array(
-		JSON.parse(
-			sodium.crypto_secretbox_open_easy(
-				sodium.from_hex(key),
-				new Uint8Array(sodium.crypto_secretbox_NONCEBYTES),
-				sodium.crypto_pwhash_scryptsalsa208sha256(
-					password,
-					new Uint8Array(sodium.crypto_pwhash_scryptsalsa208sha256_SALTBYTES),
-					sodium.crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_SENSITIVE,
-					sodium.crypto_pwhash_scryptsalsa208sha256_MEMLIMIT_INTERACTIVE,
-					sodium.crypto_secretbox_KEYBYTES
-				),
-				'text'
-			)
+	return new sodium.crypto_secretbox_open_easy(
+		sodium.from_hex(key),
+		new Uint8Array(sodium.crypto_secretbox_NONCEBYTES),
+		sodium.crypto_pwhash_scryptsalsa208sha256(
+			password,
+			new Uint8Array(sodium.crypto_pwhash_scryptsalsa208sha256_SALTBYTES),
+			sodium.crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_SENSITIVE,
+			sodium.crypto_pwhash_scryptsalsa208sha256_MEMLIMIT_INTERACTIVE,
+			sodium.crypto_secretbox_KEYBYTES
 		)
 	);
 }
