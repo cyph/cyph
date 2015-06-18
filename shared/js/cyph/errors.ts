@@ -24,7 +24,7 @@ module Cyph {
 				let message: string		= exception +
 					'\n\n' + Env.userAgent +
 					'\n\n' + Env.language +
-					'\n\n' + (location ? location.toString() : '') +
+					'\n\n' + locationData.href +
 					'\n\n' + (WebSign ? WebSign.stringify(shouldIncludeBootstrapText) : '')
 				;
 

@@ -179,7 +179,7 @@ module Cyph.com {
 					const href: string		= $(e.currentTarget).attr('href');
 					let scrollDelay: number	= 500;
 
-					if (href !== location.pathname) {
+					if (href !== locationData.pathname) {
 						scrollDelay	= 0;
 
 						Cyph.UrlState.set(href);

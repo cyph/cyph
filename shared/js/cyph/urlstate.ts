@@ -16,13 +16,13 @@ module Cyph {
 		 */
 		public static get (fragmentOnly?: boolean) : string {
 			try {
-				const fragment: string	= location.hash.split('#')[1] || '';
+				const fragment: string	= locationData.hash.split('#')[1] || '';
 
 				if (fragmentOnly || fragment) {
 					return fragment;
 				}
 
-				return location.pathname.split('/').filter(s => s !== '').slice(-1)[0] || '';
+				return locationData.pathname.split('/').filter(s => s !== '').slice(-1)[0] || '';
 			}
 			catch (_) {
 				return '';
