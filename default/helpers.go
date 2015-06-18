@@ -87,12 +87,12 @@ func getBetaSignupFromRequest(h HandlerArgs) BetaSignup {
 	country, _ := geolocate(h)
 
 	return BetaSignup{
-		Comment:  sanitizer.Sanitize(h.Request.PostFormValue("Comment")),
+		Comment:  sanitizer.Sanitize(h.Request.PostFormValue("Comment"))[0:config.MaxSignupValueLength],
 		Country:  country,
-		Email:    sanitizer.Sanitize(strings.ToLower(h.Request.PostFormValue("Email"))),
-		Language: sanitizer.Sanitize(strings.ToLower(h.Request.PostFormValue("Language"))),
-		Name:     sanitizer.Sanitize(h.Request.PostFormValue("Name")),
-		Referer:  sanitizer.Sanitize(h.Request.Referer()),
+		Email:    sanitizer.Sanitize(strings.ToLower(h.Request.PostFormValue("Email")))[0:config.MaxSignupValueLength],
+		Language: sanitizer.Sanitize(strings.ToLower(h.Request.PostFormValue("Language")))[0:config.MaxSignupValueLength],
+		Name:     sanitizer.Sanitize(h.Request.PostFormValue("Name"))[0:config.MaxSignupValueLength],
+		Referer:  sanitizer.Sanitize(h.Request.Referer())[0:config.MaxSignupValueLength],
 		Time:     time.Now().Unix(),
 	}
 }
