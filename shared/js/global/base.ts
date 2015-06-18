@@ -85,3 +85,14 @@ let Translations: {[language: string] : {[text: string] : string}};
  * @global WebSign object (only created in WebSigned environments).
  */
 let WebSign: IWebSign;
+
+
+/**
+ * @global NTRU library.
+ */
+let ntru: any;
+
+/**
+ * @global Sodium library.
+ */
+let sodium: any;
