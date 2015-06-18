@@ -63,7 +63,7 @@ webSignCSP="$(cat shared/websign/csp | tr '\n' ' ')"
 ls cyph.com/*.yaml | xargs -I% sed -i.bak "s|${defaultCSPString}|${cyphComCSP}|g" %
 ls */*.yaml */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s|${defaultCSPString}|${webSignCSP}|g" %
 
-defaultHost='\${location\.protocol}\/\/\${location\.hostname}:'
+defaultHost='\${locationData\.protocol}\/\/\${locationData\.hostname}:'
 ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}43000//g" %
 ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak 's/isLocalEnv: boolean		= true/isLocalEnv: boolean		= false/g' %
 

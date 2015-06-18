@@ -17,8 +17,8 @@ module Cyph {
 		private static threadEnvSetup (vars: any, importScripts: Function) : void {
 			/* Inherit these from main thread */
 
-			location	= vars._location;
-			navigator	= vars._navigator;
+			self['locationData']	= vars._locationData;
+			self['navigatorData']	= vars._navigatorData;
 
 
 			/* Wrapper to make importScripts work in local dev environments
@@ -27,7 +27,7 @@ module Cyph {
 			const oldImportScripts	= importScripts;
 			importScripts			= (script: string) => {
 				oldImportScripts(
-					`${location.protocol}//${location.host}` +
+					`${self['locationData'].protocol}//${self['locationData'].host}` +
 					script
 				);
 			};
@@ -123,8 +123,8 @@ module Cyph {
 				};
 			}
 
-			vars._location			= null;
-			vars._navigator			= null;
+			vars._locationData			= null;
+			vars._navigatorData			= null;
 			vars._isLocalEnv		= null;
 			vars._threadRandomSeed	= null;
 		}
@@ -213,18 +213,18 @@ module Cyph {
 			vars: any = {},
 			onmessage: (e: MessageEvent) => any = e => {}
 		) {
-			vars._location				= {
-				hash: location.hash,
-				host: location.host,
-				hostname: location.hostname,
-				href: location.href,
-				pathname: location.pathname,
-				port: location.port,
-				protocol: location.protocol,
-				search: location.search
+			vars._locationData			= {
+				hash: locationData.hash,
+				host: locationData.host,
+				hostname: locationData.hostname,
+				href: locationData.href,
+				pathname: locationData.pathname,
+				port: locationData.port,
+				protocol: locationData.protocol,
+				search: locationData.search
 			};
 
-			vars._navigator				= {
+			vars._navigatorData			= {
 				language: Env.fullLanguage,
 				userAgent: Env.userAgent
 			};

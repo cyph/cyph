@@ -180,7 +180,7 @@ module Cyph.im {
 				);
 
 
-				Cyph.UrlState.set(location.pathname, false, true);
+				Cyph.UrlState.set(locationData.pathname, false, true);
 				self.onhashchange	= () => location.reload();
 				self.onpopstate		= null;
 
