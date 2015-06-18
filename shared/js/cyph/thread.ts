@@ -45,7 +45,7 @@ module Cyph {
 
 			/* Polyfills */
 
-			if (!vars._isLocalEnv || typeof console === 'undefined') {
+			if (typeof console === 'undefined') {
 				console	= {
 					assert: () => {},
 					clear: () => {},
@@ -123,9 +123,8 @@ module Cyph {
 				};
 			}
 
-			vars._locationData			= null;
-			vars._navigatorData			= null;
-			vars._isLocalEnv		= null;
+			vars._locationData		= null;
+			vars._navigatorData		= null;
 			vars._threadRandomSeed	= null;
 		}
 
@@ -228,8 +227,6 @@ module Cyph {
 				language: Env.fullLanguage,
 				userAgent: Env.userAgent
 			};
-
-			vars._isLocalEnv			= Env.isLocalEnv;
 
 			vars._threadRandomSeed		= crypto.getRandomValues(new Uint8Array(512));
 
