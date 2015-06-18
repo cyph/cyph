@@ -330,13 +330,15 @@ module Cyph {
 							this.shouldRatchetKeys	= true;
 						}
 
-						let messageIndex: number	= 1;
+						let paddingIndex: number	= 1;
 
 						/* Flag for new key set */
 						if (decrypted.data[0] === 1) {
 							this.importFriendKeySet(decrypted.data, 1);
-							messageIndex += CastleCore.publicKeySetLength;
+							paddingIndex += CastleCore.publicKeySetLength;
 						}
+
+						const messageIndex: number	= paddingIndex + 1 + decrypted.data[paddingIndex];
 
 						try {
 							if (decrypted.data.length > messageIndex) {
@@ -384,13 +386,18 @@ module Cyph {
 				const keySet	= this.keySets[0];
 
 				let publicKeySet: Uint8Array;
-				let messageIndex: number	= 1;
+				let paddingIndex: number	= 1;
 
 				if (this.shouldRatchetKeys) {
 					this.shouldRatchetKeys	= false;
 					publicKeySet			= this.generateKeySet();
-					messageIndex += CastleCore.publicKeySetLength;
+					paddingIndex += CastleCore.publicKeySetLength;
 				}
+
+				const paddingLength: Uint8Array	= CastleCore.sodium.randombytes_buf(1);
+				const padding: Uint8Array		= CastleCore.sodium.randombytes_buf(paddingLength[0]);
+
+				const messageIndex: number		= paddingIndex + 1 + padding.length;
 
 				const messageBytes: Uint8Array	=
 					CastleCore.sodium.from_string(message)
@@ -406,6 +413,8 @@ module Cyph {
 					data.set(publicKeySet, 1);
 				}
 
+				data.set(paddingLength, paddingIndex);
+				data.set(padding, paddingIndex + 1);
 				data.set(messageBytes, messageIndex);
 
 				try {

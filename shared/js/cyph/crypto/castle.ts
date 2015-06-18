@@ -131,7 +131,7 @@ module Cyph {
 							};
 						}
 
-						this.receivedMessages[o.id].chunks[o.index]	= o.toString();
+						this.receivedMessages[o.id].chunks[o.index]	= o.messageChunk;
 
 						if (++this.receivedMessages[o.id].total === o.total) {
 							this.session.trigger(Session.Events.castle, {
