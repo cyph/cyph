@@ -17,7 +17,7 @@ module Cyph {
 			/** Human-readable file size (e.g. 3.14 MB). */
 			readableSize: string;
 
-			/** Number of file chunks being asynchronously handled. */
+			/** Number of file chunks being asynchronously processed. */
 			pendingChunks: number;
 
 			/** Percentage completion of transfer. */
