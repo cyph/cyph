@@ -39,12 +39,20 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 					channelDescriptor = valueLines[1]
 				}
 			}
-		} else if channelDescriptor = h.Request.FormValue("channelDescriptor"); channelDescriptor != "" {
-			memcache.Set(h.Context, &memcache.Item{
-				Key:        id,
-				Value:      []byte(strconv.FormatInt(time.Now().Unix(), 10) + "\n" + channelDescriptor),
-				Expiration: config.MemcacheExpiration,
-			})
+		} else {
+			channelDescriptor = h.Request.FormValue("channelDescriptor")
+
+			if len(channelDescriptor) > config.MaxChannelDescriptorLength {
+				channelDescriptor = ""
+			}
+
+			if channelDescriptor != "" {
+				memcache.Set(h.Context, &memcache.Item{
+					Key:        id,
+					Value:      []byte(strconv.FormatInt(time.Now().Unix(), 10) + "\n" + channelDescriptor),
+					Expiration: config.MemcacheExpiration,
+				})
+			}
 		}
 	}
 

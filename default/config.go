@@ -6,14 +6,16 @@ import (
 )
 
 var config = struct {
-	AllowedCyphIds      *regexp.Regexp
-	AllowedCyphIdLength int
-	AllowedMethods      string
-	AllowedOrigins      map[string]none
-	Continents          map[string]none
-	DefaultContinent    string
-	MemcacheExpiration  time.Duration
-	NewCyphTimeout      int64
+	AllowedCyphIds             *regexp.Regexp
+	AllowedCyphIdLength        int
+	AllowedMethods             string
+	AllowedOrigins             map[string]none
+	Continents                 map[string]none
+	DefaultContinent           string
+	MaxChannelDescriptorLength int
+	MaxSignupValueLength       int
+	MemcacheExpiration         time.Duration
+	NewCyphTimeout             int64
 }{
 	regexp.MustCompile("[A-Za-z0-9]{7}"),
 
@@ -54,6 +56,14 @@ var config = struct {
 	},
 
 	"eu",
+
+	/* With the current list of AWS regions,
+	no descriptor will exceed this length */
+	90,
+
+	/* Max length of a valid email address, but also happened
+	to seem like a sane limit for the other values */
+	256,
 
 	(48 * time.Hour),
 
