@@ -47,15 +47,13 @@ module Cyph {
 		 */
 		public static generateGuid (length: number = 0) : string {
 			if (length > 0) {
-				return Array.prototype.slice.
-					call(
-						crypto.getRandomValues(new Uint8Array(length))
-					).
-					map((n: number) =>
-						Config.guidAddressSpace[n % Config.guidAddressSpace.length]
-					).
-					join('')
-				;
+				let guid: string	= '';
+
+				for (let i = 0 ; i < length ; ++i) {
+					guid += Config.guidAddressSpace[Util.random(Config.guidAddressSpace.length)];
+				}
+
+				return guid;
 			}
 
 			return Date.now() + '-' + crypto.getRandomValues(new Uint32Array(1))[0];
@@ -149,6 +147,33 @@ module Cyph {
 			}
 			else {
 				Thread.callMainThread('Cyph.Util.openUrl', [url, downloadName]);
+			}
+		}
+
+		/**
+		 * Cryptographically secure replacement for Math.random.
+		 * @param max Upper bound.
+		 * @param min Lower bound (0 by default).
+		 * @returns If max is specified, returns integer in range [min, max);
+		 * otherwise, returns float in range [0, 1) (like Math.random).
+		 */
+		public static random (max?: number, min: number = 0) : number {
+			const randomFloat: number	= crypto.getRandomValues(new Uint32Array(1))[0] / Config.maxUint;
+
+			if (typeof max === 'undefined') {
+				return randomFloat;
+			}
+			else if (max <= 0) {
+				throw new Error('Upper bound must be a positive non-zero number.');
+			}
+			else if (min < 0) {
+				throw new Error('Lower bound must be a positive number or zero.');
+			}
+			else if (min >= max) {
+				throw new Error('Upper bound must be greater than lower bound.');
+			}
+			else {
+				return Math.floor((randomFloat * (max - min)) + min);
 			}
 		}
 

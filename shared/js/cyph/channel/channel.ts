@@ -20,10 +20,7 @@ module Cyph {
 			public static newDescriptor () : string {
 				return JSON.stringify({
 					name: Util.generateGuid(Config.longSecretLength),
-					region: Config.awsRegions[
-						crypto.getRandomValues(new Uint8Array(1))[0] %
-						Config.awsRegions.length
-					]
+					region: Config.awsRegions[Util.random(Config.awsRegions.length)]
 				});
 			}
 
