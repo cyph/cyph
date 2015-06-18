@@ -90,5 +90,8 @@ module Cyph {
 
 		/** Max signed 32-bit integer. */
 		public static maxInt: number	= 2147483647;
+
+		/** Max unsigned 32-bit integer. */
+		public static maxUint: number	= 4294967296;
 	}
 }

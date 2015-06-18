@@ -177,11 +177,7 @@ module Cyph {
 						Util.retryUntilComplete(retry => {
 							if (this.isAlive()) {
 								this.ratchetChannels(true);
-
-								setTimeout(
-									retry,
-									600000 + crypto.getRandomValues(new Uint8Array(1))[0] * 2350
-								);
+								setTimeout(retry, Util.random(1200000, 600000));
 							}
 						});
 					};

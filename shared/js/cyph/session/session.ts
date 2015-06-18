@@ -93,11 +93,7 @@ module Cyph {
 					if (now > nextPing) {
 						this.send(new Message());
 
-						nextPing	=
-							now +
-							30000 +
-							crypto.getRandomValues(new Uint8Array(1))[0] * 250
-						;
+						nextPing	= now + Util.random(90000, 30000);
 					}
 				});
 			}
