@@ -300,19 +300,30 @@ module Cyph {
 							ntru: new Uint8Array(CastleCore.ntru.publicKeyLength)
 						};
 
+						const nonce: Uint8Array			= new Uint8Array(
+							cyphertext.buffer,
+							0,
+							CastleCore.sodium.crypto_secretbox_NONCEBYTES
+						);
+
+						const encryptedKeys: Uint8Array	= new Uint8Array(
+							cyphertext.buffer,
+							CastleCore.sodium.crypto_secretbox_NONCEBYTES
+						);
+
 						try {
 							this.importFriendKeySet(
 								CastleCore.sodium.crypto_secretbox_open_easy(
-									cyphertext,
-									new Uint8Array(
-										CastleCore.sodium.crypto_secretbox_NONCEBYTES
-									),
+									encryptedKeys,
+									nonce,
 									this.sharedSecret
 								)
 							);
 						}
 						finally {
 							CastleCore.sodium.memzero(this.sharedSecret);
+							CastleCore.sodium.memzero(nonce);
+							CastleCore.sodium.memzero(encryptedKeys);
 						}
 
 						/* Trigger friend's connection acknowledgement logic
@@ -451,20 +462,32 @@ module Cyph {
 
 				const publicKeySet: Uint8Array	= this.generateKeySet();
 
+				const nonce: Uint8Array			= CastleCore.sodium.randombytes_buf(
+					CastleCore.sodium.crypto_secretbox_NONCEBYTES
+				);
+
+				const encryptedKeys: Uint8Array	= CastleCore.sodium.crypto_secretbox_easy(
+					publicKeySet,
+					nonce,
+					this.sharedSecret
+				);
+
+				const cyphertext: Uint8Array	= new Uint8Array(
+					CastleCore.sodium.crypto_secretbox_NONCEBYTES +
+					encryptedKeys.length
+				);
+
+				cyphertext.set(nonce);
+				cyphertext.set(encryptedKeys, CastleCore.sodium.crypto_secretbox_NONCEBYTES);
+
 				try {
-					this.handlers.send(
-						CastleCore.sodium.crypto_secretbox_easy(
-							publicKeySet,
-							new Uint8Array(
-								CastleCore.sodium.crypto_secretbox_NONCEBYTES
-							),
-							this.sharedSecret,
-							'base64'
-						)
-					);
+					this.handlers.send(CastleCore.sodium.to_base64(cyphertext));
 				}
 				finally {
 					CastleCore.sodium.memzero(publicKeySet);
+					CastleCore.sodium.memzero(nonce);
+					CastleCore.sodium.memzero(encryptedKeys);
+					CastleCore.sodium.memzero(cyphertext);
 				}
 			}
 		}
