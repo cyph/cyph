@@ -31,8 +31,12 @@ test "${comment}" == "" && comment=deploy
 
 rm -rf .build
 mkdir .build
-cp -rfL * .build/
+cp -rf * .build/
 cd .build
+
+for project in cyph.com cyph.im cyph.me ; do
+	cp -rf shared/* $project/
+done
 
 
 # Branch config setup
