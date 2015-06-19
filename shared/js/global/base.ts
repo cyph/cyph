@@ -60,6 +60,7 @@ for (const k of [
 
 if (
 	typeof crypto !== 'undefined' &&
+	crypto.getRandomValues &&
 	typeof crypto.getRandomValues(new Uint32Array(1)) === 'undefined'
 ) {
 	const getRandomValues	= crypto.getRandomValues;
