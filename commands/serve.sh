@@ -5,11 +5,11 @@ source ~/.bashrc
 dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd)/..
 
-# Handle symlinks on Windows
-branch="$(git describe --tags --exact-match 2> /dev/null || git branch | awk '/^\*/{print $2}')"
-for symlink in $(git ls-files -s | awk '/120000/{print $4}') ; do
-	rm $symlink
-	ln -s $(git cat-file blob $branch:$symlink) $symlink
+for project in cyph.com cyph.im cyph.me ; do
+	for d in $(find shared -mindepth 1 -maxdepth 1 -type d | sed 's/shared\///g') ; do
+		mkdir $project/$d 2> /dev/null
+		sudo mount -o bind shared/$d $project/$d
+	done
 done
 
 ln -s $(pwd)/default/geoip2 $GOPATH/src/geoip2
