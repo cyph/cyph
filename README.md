@@ -42,7 +42,7 @@ To blow out all Cyph-related images/containers/processes when you're done:
 
 To start a local environment:
 
-	docker run -d \
+	docker run --privileged=true -d \
 		-p 42000:5000 -p 42001:5001 -p 42002:5002 -p 42003:5003 -p 43000:4568 \
 		-v /path/to/current/directory:/cyph \
 		cyph/<branch> ./serve.sh
