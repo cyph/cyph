@@ -21,6 +21,7 @@ bower install --save \
 	animate.css \
 	base64 \
 	jquery \
+	jquery-legacy=jquery#^1 \
 	magnific-popup \
 	nanoscroller \
 	unsemantic \
