@@ -160,13 +160,13 @@ module Cyph {
 		public static random (max?: number, min: number = 0) : number {
 			const randomFloat: number	= crypto.getRandomValues(new Uint32Array(1))[0] / Config.maxUint;
 
-			if (typeof max === 'undefined') {
+			if (max === undefined) {
 				return randomFloat;
 			}
-			else if (max <= 0) {
+			else if (isNaN(max) || max <= 0) {
 				throw new Error('Upper bound must be a positive non-zero number.');
 			}
-			else if (min < 0) {
+			else if (isNaN(min) || min < 0) {
 				throw new Error('Lower bound must be a positive number or zero.');
 			}
 			else if (min >= max) {
