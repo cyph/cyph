@@ -188,8 +188,8 @@ module Cyph {
 						});
 					},
 					onconnect: () => {
-						this.castle	= new Crypto.Castle(this);
 						this.trigger(Events.connect);
+						this.castle	= new Crypto.Castle(this);
 					},
 					onmessage: message => this.receive(message)
 				});
