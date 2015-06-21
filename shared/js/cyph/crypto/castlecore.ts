@@ -5,6 +5,8 @@ module Cyph {
 		 * feature set, with group/async/persistence coming later.
 		 */
 		export class CastleCore {
+			private static handshakeTimeout: number			= 45000;
+
 			private static publicKeySetLength: number		=
 				sodium.crypto_box_PUBLICKEYBYTES +
 				ntru.publicKeyLength
@@ -449,9 +451,7 @@ module Cyph {
 			) {
 				this.sharedSecret	= sodium.crypto_pwhash_scryptsalsa208sha256(
 					sharedSecret,
-					new Uint8Array(
-						sodium.crypto_pwhash_scryptsalsa208sha256_SALTBYTES
-					),
+					new Uint8Array(sodium.crypto_pwhash_scryptsalsa208sha256_SALTBYTES),
 					sodium.crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_INTERACTIVE,
 					sodium.crypto_pwhash_scryptsalsa208sha256_MEMLIMIT_INTERACTIVE,
 					sodium.crypto_secretbox_KEYBYTES
@@ -485,6 +485,12 @@ module Cyph {
 					sodium.memzero(nonce);
 					sodium.memzero(encryptedKeys);
 					sodium.memzero(cyphertext);
+
+					setTimeout(() => {
+						if (!this.isConnected) {
+							this.abort();
+						}
+					}, CastleCore.handshakeTimeout);
 				}
 			}
 		}

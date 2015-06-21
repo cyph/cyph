@@ -171,7 +171,6 @@ module Cyph {
 						}
 
 						this.on(Events.castle, e => this.castleHandler(e));
-						this.castle	= new Crypto.Castle(this);
 
 						const sendTimer: Timer	= new Timer((now: number) => {
 							if (!this.state.isAlive) {
@@ -188,7 +187,10 @@ module Cyph {
 							}
 						});
 					},
-					onconnect: () => this.trigger(Events.connect),
+					onconnect: () => {
+						this.castle	= new Crypto.Castle(this);
+						this.trigger(Events.connect);
+					},
 					onmessage: message => this.receive(message)
 				});
 			}
