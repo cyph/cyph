@@ -29,8 +29,8 @@ module Cyph {
 				;
 
 				/* Strip URL fragment where applicable */
-				exception	= exception.replace(/#.*/g, '');
-				message		= message.replace(/#.*/g, '');
+				exception	= exception.replace(/\/#.*/g, '');
+				message		= message.replace(/\/#.*/g, '');
 
 				if (numEmails++ < 50) {
 					Util.request({
