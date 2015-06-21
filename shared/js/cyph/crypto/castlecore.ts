@@ -449,6 +449,12 @@ module Cyph {
 					send: (message: string) => void;
 				}
 			) {
+				setTimeout(() => {
+					if (!this.isConnected) {
+						this.abort();
+					}
+				}, CastleCore.handshakeTimeout);
+
 				this.sharedSecret	= sodium.crypto_pwhash_scryptsalsa208sha256(
 					sharedSecret,
 					new Uint8Array(sodium.crypto_pwhash_scryptsalsa208sha256_SALTBYTES),
@@ -485,12 +491,6 @@ module Cyph {
 					sodium.memzero(nonce);
 					sodium.memzero(encryptedKeys);
 					sodium.memzero(cyphertext);
-
-					setTimeout(() => {
-						if (!this.isConnected) {
-							this.abort();
-						}
-					}, CastleCore.handshakeTimeout);
 				}
 			}
 		}
