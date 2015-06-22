@@ -5,16 +5,15 @@ module Cyph {
 		 * feature set, with group/async/persistence coming later.
 		 */
 		export class CastleCore {
-			private static flagIndex: number				= 4;
+			private static handshakeTimeout: number			= 45000;
+			private static messageIdEndIndex: number		= 4;
 
 			private static flagDataIndex: number			=
-				CastleCore.flagIndex + 1
+				CastleCore.messageIdEndIndex + 1
 			;
 
-			private static handshakeTimeout: number			= 45000;
-
 			private static nonceEndIndex: number			=
-				CastleCore.flagIndex +
+				CastleCore.messageIdEndIndex +
 				sodium.crypto_secretbox_NONCEBYTES
 			;
 
@@ -86,7 +85,7 @@ module Cyph {
 
 				const nonce: Uint8Array				= new Uint8Array(
 					cyphertext.buffer,
-					CastleCore.flagIndex,
+					CastleCore.messageIdEndIndex,
 					sodium.crypto_secretbox_NONCEBYTES
 				);
 
@@ -226,7 +225,7 @@ module Cyph {
 				);
 
 				cyphertext.set(new Uint8Array(this.outgoingMessageId.buffer));
-				cyphertext.set(nonce, CastleCore.flagIndex);
+				cyphertext.set(nonce, CastleCore.messageIdEndIndex);
 				cyphertext.set(ntruCyphertext, CastleCore.nonceEndIndex);
 				cyphertext.set(ntruMac, CastleCore.ntruMacIndex);
 				cyphertext.set(sodiumCyphertext, CastleCore.sodiumCyphertextIndex);
@@ -308,7 +307,7 @@ module Cyph {
 
 						const nonce: Uint8Array			= new Uint8Array(
 							message.buffer,
-							CastleCore.flagIndex,
+							CastleCore.messageIdEndIndex,
 							sodium.crypto_secretbox_NONCEBYTES
 						);
 
@@ -347,7 +346,7 @@ module Cyph {
 
 						let paddingLengthIndex: number	= CastleCore.flagDataIndex;
 
-						if (decrypted.data[CastleCore.flagIndex] === 1) {
+						if (decrypted.data[CastleCore.messageIdEndIndex] === 1) {
 							this.importFriendKeySet(decrypted.data, CastleCore.flagDataIndex);
 							paddingLengthIndex += CastleCore.publicKeySetLength;
 						}
@@ -414,7 +413,7 @@ module Cyph {
 				data.set(new Uint8Array(this.outgoingMessageId.buffer));
 
 				if (publicKeySet) {
-					data[CastleCore.flagIndex]	= 1;
+					data[CastleCore.messageIdEndIndex]	= 1;
 					data.set(publicKeySet, CastleCore.flagDataIndex);
 				}
 
@@ -476,7 +475,7 @@ module Cyph {
 					encryptedKeys.length
 				);
 
-				cyphertext.set(nonce, CastleCore.flagIndex);
+				cyphertext.set(nonce, CastleCore.messageIdEndIndex);
 				cyphertext.set(encryptedKeys, CastleCore.nonceEndIndex);
 
 				try {
