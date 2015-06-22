@@ -1,8 +1,5 @@
 module Cyph {
 	export module UI {
-		/**
-		 * Controls the entire cyph.im UI.
-		 */
 		export class LinkConnection implements ILinkConnection {
 			private countdown: number;
 			private linkConstant: string;
