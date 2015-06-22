@@ -98,9 +98,6 @@ module Cyph {
 					this.notifier.notify(Strings.connectedNotification);
 					this.changeState(States.chatBeginMessage);
 
-					/* Stop mobile browsers from keeping this selected */
-					Elements.cyphLinkInput.remove();
-
 					setTimeout(() => {
 						if (this.state === States.aborted) {
 							return;
