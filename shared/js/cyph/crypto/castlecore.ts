@@ -82,11 +82,7 @@ module Cyph {
 					ntru: { publicKey: Uint8Array; privateKey: Uint8Array; };
 				};
 			} {
-				const id: number	= new Uint32Array(
-					cyphertext.buffer,
-					0,
-					1
-				)[0];
+				const id: number	= new Uint32Array(cyphertext.buffer, 0, 1)[0];
 
 				const nonce: Uint8Array				= new Uint8Array(
 					cyphertext.buffer,

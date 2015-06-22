@@ -26,11 +26,7 @@ module Cyph {
 				try {
 					const cyphertext: Uint8Array	= sodium.from_base64(message);
 
-					const id: number	= new Uint32Array(
-						cyphertext.buffer,
-						0,
-						1
-					)[0];
+					const id: number	= new Uint32Array(cyphertext.buffer, 0, 1)[0];
 
 					if (id >= this.incomingMessageId) {
 						this.incomingMessagesMax	= Math.max(
