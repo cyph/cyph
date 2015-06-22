@@ -5,11 +5,22 @@ module Cyph {
 		 * feature set, with group/async/persistence coming later.
 		 */
 		export class CastleCore {
+			private static flagIndex: number				= 4;
+
+			private static flagDataIndex: number			=
+				CastleCore.flagIndex + 1
+			;
+
 			private static handshakeTimeout: number			= 45000;
 
-			private static publicKeySetLength: number		=
-				sodium.crypto_box_PUBLICKEYBYTES +
-				ntru.publicKeyLength
+			private static nonceEndIndex: number			=
+				CastleCore.flagIndex +
+				sodium.crypto_secretbox_NONCEBYTES
+			;
+
+			private static ntruMacIndex: number				=
+				CastleCore.nonceEndIndex +
+				ntru.encryptedDataLength
 			;
 
 			private static ntruPlaintextLength: number		=
@@ -17,9 +28,9 @@ module Cyph {
 				sodium.crypto_onetimeauth_KEYBYTES
 			;
 
-			private static ntruMacIndex: number				=
-				sodium.crypto_secretbox_NONCEBYTES +
-				ntru.encryptedDataLength
+			private static publicKeySetLength: number		=
+				sodium.crypto_box_PUBLICKEYBYTES +
+				ntru.publicKeyLength
 			;
 
 			private static sodiumCyphertextIndex: number	=
@@ -28,8 +39,9 @@ module Cyph {
 			;
 
 			private static errors	= {
-				ntruAuthFailure: new Error('Invalid NTRU cyphertext.'),
-				decryptionFailure: new Error('Data could not be decrypted.')
+				decryptionFailure: new Error('Data could not be decrypted.'),
+				invalidMessageId: new Error('Indicated message ID is invalid'),
+				ntruAuthFailure: new Error('Invalid NTRU cyphertext.')
 			};
 
 
@@ -47,6 +59,8 @@ module Cyph {
 			private isConnected: boolean;
 			private shouldRatchetKeys: boolean;
 			private sharedSecret: Uint8Array;
+
+			public outgoingMessageId: Uint32Array	= new Uint32Array([1]);
 
 			private abort () : void {
 				this.isAborted	= true;
@@ -68,21 +82,21 @@ module Cyph {
 					ntru: { publicKey: Uint8Array; privateKey: Uint8Array; };
 				};
 			} {
+				const id: number	= new Uint32Array(
+					cyphertext.buffer,
+					0,
+					1
+				)[0];
+
 				const nonce: Uint8Array				= new Uint8Array(
 					cyphertext.buffer,
-					0,
+					CastleCore.flagIndex,
 					sodium.crypto_secretbox_NONCEBYTES
-				);
-
-				const asymmetricNonce: Uint8Array	= new Uint8Array(
-					cyphertext.buffer,
-					0,
-					sodium.crypto_box_NONCEBYTES
 				);
 
 				const ntruCyphertext: Uint8Array	= new Uint8Array(
 					cyphertext.buffer,
-					sodium.crypto_secretbox_NONCEBYTES,
+					CastleCore.nonceEndIndex,
 					ntru.encryptedDataLength
 				);
 
@@ -127,22 +141,28 @@ module Cyph {
 							throw CastleCore.errors.ntruAuthFailure;
 						}
 
-						return {
-							data: sodium.crypto_box_open_easy(
-								sodium.crypto_secretbox_open_easy(
-									sodiumCyphertext,
-									nonce,
-									symmetricKey
-								),
-								asymmetricNonce,
-								this.friendKeySet.sodium,
-								keySet.sodium.privateKey
+						const data: Uint8Array	= sodium.crypto_box_open_easy(
+							sodium.crypto_secretbox_open_easy(
+								sodiumCyphertext,
+								nonce,
+								symmetricKey
 							),
-							keySet
-						};
+							nonce,
+							this.friendKeySet.sodium,
+							keySet.sodium.privateKey
+						);
+
+						if (id !== new Uint32Array(data.buffer, 0, 1)[0]) {
+							throw CastleCore.errors.invalidMessageId;
+						}
+
+						return {data, keySet};
 					}
 					catch (err) {
-						if (err === CastleCore.errors.ntruAuthFailure) {
+						if (
+							err === CastleCore.errors.ntruAuthFailure ||
+							err === CastleCore.errors.invalidMessageId
+						) {
 							throw err;
 						}
 					}
@@ -165,12 +185,6 @@ module Cyph {
 			) : string {
 				const nonce: Uint8Array				= sodium.randombytes_buf(
 					sodium.crypto_secretbox_NONCEBYTES
-				);
-
-				const asymmetricNonce: Uint8Array	= new Uint8Array(
-					nonce.buffer,
-					0,
-					sodium.crypto_box_NONCEBYTES
 				);
 
 				const symmetricKey: Uint8Array		= sodium.randombytes_buf(
@@ -202,7 +216,7 @@ module Cyph {
 				const sodiumCyphertext: Uint8Array	= sodium.crypto_secretbox_easy(
 					sodium.crypto_box_easy(
 						data,
-						asymmetricNonce,
+						nonce,
 						this.friendKeySet.sodium,
 						keySet.sodium.privateKey
 					),
@@ -215,8 +229,9 @@ module Cyph {
 					sodiumCyphertext.length
 				);
 
-				cyphertext.set(nonce);
-				cyphertext.set(ntruCyphertext, sodium.crypto_secretbox_NONCEBYTES);
+				cyphertext.set(new Uint8Array(this.outgoingMessageId.buffer));
+				cyphertext.set(nonce, CastleCore.flagIndex);
+				cyphertext.set(ntruCyphertext, CastleCore.nonceEndIndex);
 				cyphertext.set(ntruMac, CastleCore.ntruMacIndex);
 				cyphertext.set(sodiumCyphertext, CastleCore.sodiumCyphertextIndex);
 
@@ -282,16 +297,12 @@ module Cyph {
 			 * @param message Data to be decrypted.
 			 * @returns Whether message was successfully decrypted.
 			 */
-			public receive (message: string) : boolean {
+			public receive (message: Uint8Array) : boolean {
 				if (this.isAborted) {
 					return false;
 				}
 
-				let cyphertext: Uint8Array;
-
 				try {
-					cyphertext	= sodium.from_base64(message);
-
 					/* Initial key exchange */
 					if (!this.friendKeySet) {
 						this.friendKeySet	= {
@@ -300,14 +311,14 @@ module Cyph {
 						};
 
 						const nonce: Uint8Array			= new Uint8Array(
-							cyphertext.buffer,
-							0,
+							message.buffer,
+							CastleCore.flagIndex,
 							sodium.crypto_secretbox_NONCEBYTES
 						);
 
 						const encryptedKeys: Uint8Array	= new Uint8Array(
-							cyphertext.buffer,
-							sodium.crypto_secretbox_NONCEBYTES
+							message.buffer,
+							CastleCore.nonceEndIndex
 						);
 
 						try {
@@ -321,49 +332,38 @@ module Cyph {
 						}
 						finally {
 							sodium.memzero(this.sharedSecret);
-							sodium.memzero(nonce);
-							sodium.memzero(encryptedKeys);
 						}
 
 						/* Trigger friend's connection acknowledgement logic
 							by sending this user's first encrypted message */
-						this.send('');
+						this.send(new Uint8Array(0));
 
 						return true;
 					}
 
 					/* Standard incoming message */
 					else {
-						const decrypted	= this.decrypt(cyphertext);
+						const decrypted	= this.decrypt(message);
 
 						if (decrypted.keySet === this.keySets[0]) {
 							this.shouldRatchetKeys	= true;
 						}
 
-						let paddingIndex: number	= 1;
+						let paddingLengthIndex: number	= CastleCore.flagDataIndex;
 
-						/* Flag for new key set */
-						if (decrypted.data[0] === 1) {
-							this.importFriendKeySet(decrypted.data, 1);
-							paddingIndex += CastleCore.publicKeySetLength;
+						if (decrypted.data[CastleCore.flagIndex] === 1) {
+							this.importFriendKeySet(decrypted.data, CastleCore.flagDataIndex);
+							paddingLengthIndex += CastleCore.publicKeySetLength;
 						}
 
-						const messageIndex: number	= paddingIndex + 1 + decrypted.data[paddingIndex];
+						const paddingIndex: number	= paddingLengthIndex + 1;
 
-						try {
-							if (decrypted.data.length > messageIndex) {
-								this.handlers.receive(
-									sodium.to_string(
-										new Uint8Array(
-											decrypted.data.buffer,
-											messageIndex
-										)
-									)
-								);
-							}
-						}
-						finally {
-							sodium.memzero(decrypted.data);
+						const messageIndex: number	=
+							paddingIndex + decrypted.data[paddingLengthIndex]
+						;
+
+						if (decrypted.data.length > messageIndex) {
+							this.handlers.receive(decrypted.data, messageIndex);
 						}
 
 						if (!this.isConnected) {
@@ -379,11 +379,6 @@ module Cyph {
 						this.abort();
 					}
 				}
-				finally {
-					if (cyphertext) {
-						sodium.memzero(cyphertext);
-					}
-				}
 
 				return false;
 			}
@@ -392,46 +387,51 @@ module Cyph {
 			 * Send outgoing text.
 			 * @param message Data to be encrypted.
 			 */
-			public send (message: string) : void {
+			public send (message: Uint8Array) : void {
 				const keySet	= this.keySets[0];
 
 				let publicKeySet: Uint8Array;
-				let paddingIndex: number	= 1;
 
 				if (this.shouldRatchetKeys) {
 					this.shouldRatchetKeys	= false;
 					publicKeySet			= this.generateKeySet();
-					paddingIndex += CastleCore.publicKeySetLength;
+
 				}
+
+				const paddingLengthIndex: number		=
+					CastleCore.flagDataIndex +
+					(publicKeySet ? CastleCore.publicKeySetLength : 0)
+				;
+
+				const paddingIndex: number		= paddingLengthIndex + 1;
 
 				const paddingLength: Uint8Array	= sodium.randombytes_buf(1);
 				const padding: Uint8Array		= sodium.randombytes_buf(paddingLength[0]);
 
-				const messageIndex: number		= paddingIndex + 1 + padding.length;
+				const messageIndex: number		= paddingIndex + padding.length;
 
-				const messageBytes: Uint8Array	=
-					sodium.from_string(message)
-				;
-
-				const data: Uint8Array	= new Uint8Array(
-					messageBytes.length +
+				const data: Uint8Array			= new Uint8Array(
+					message.length +
 					messageIndex
 				);
 
+				data.set(new Uint8Array(this.outgoingMessageId.buffer));
+
 				if (publicKeySet) {
-					data[0]	= 1;
-					data.set(publicKeySet, 1);
+					data[CastleCore.flagIndex]	= 1;
+					data.set(publicKeySet, CastleCore.flagDataIndex);
 				}
 
-				data.set(paddingLength, paddingIndex);
-				data.set(padding, paddingIndex + 1);
-				data.set(messageBytes, messageIndex);
+				data.set(paddingLength, paddingLengthIndex);
+				data.set(padding, paddingIndex);
+				data.set(message, messageIndex);
 
 				try {
 					this.handlers.send(this.encrypt(data, keySet));
 				}
 				finally {
-					sodium.memzero(messageBytes);
+					++this.outgoingMessageId[0];
+
 					sodium.memzero(data);
 
 					if (publicKeySet) {
@@ -445,7 +445,7 @@ module Cyph {
 				private handlers: {
 					abort: Function;
 					connect: Function;
-					receive: (message: string) => void;
+					receive: (data: Uint8Array, startIndex: number) => void;
 					send: (message: string) => void;
 				}
 			) {
@@ -476,12 +476,12 @@ module Cyph {
 				);
 
 				const cyphertext: Uint8Array	= new Uint8Array(
-					sodium.crypto_secretbox_NONCEBYTES +
+					CastleCore.nonceEndIndex +
 					encryptedKeys.length
 				);
 
-				cyphertext.set(nonce);
-				cyphertext.set(encryptedKeys, sodium.crypto_secretbox_NONCEBYTES);
+				cyphertext.set(nonce, CastleCore.flagIndex);
+				cyphertext.set(encryptedKeys, CastleCore.nonceEndIndex);
 
 				try {
 					this.handlers.send(sodium.to_base64(cyphertext));

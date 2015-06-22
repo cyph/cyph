@@ -4,42 +4,6 @@ module Cyph {
 	 */
 	export class Util {
 		/**
-		 * Breaks up string into array of smaller chunks.
-		 * @param s
-		 * @param chunkLength
-		 */
-		public static chunkString (s: string, chunkLength: number) : string[] {
-			const array: string[]	= [];
-
-			while (s.length) {
-				array.push(s.substr(0, chunkLength));
-				s	= s.substr(chunkLength);
-			}
-
-			return array;
-		}
-
-		/**
-		 * Converts JSON string or object into an instance of the specified class.
-		 * @param classObject
-		 * @param json
-		 */
-		public static deserializeObject (classObject: any, json: string|any) : any {
-			const o: any	= typeof json === 'string' ?
-				JSON.parse(json) :
-				json
-			;
-
-			const newObject: any	= Object.create(classObject.prototype);
-
-			for (const k of Object.keys(o)) {
-				newObject[k] = o[k];
-			}
-
-			return newObject;
-		}
-
-		/**
 		 * Randomly generates a GUID of specifed length using Config.guidAddressSpace.
 		 * If no valid length is specified, Config.guidAddressSpace is ignored and the
 		 * GUID will instead append a random 32-bit number to the current datetime.
@@ -158,7 +122,7 @@ module Cyph {
 		 * otherwise, returns float in range [0, 1) (like Math.random).
 		 */
 		public static random (max?: number, min: number = 0) : number {
-			const randomFloat: number	= crypto.getRandomValues(new Uint32Array(1))[0] / Config.maxUint;
+			const randomFloat: number	= crypto.getRandomValues(new Uint32Array(1))[0] / Config.maxUint32;
 
 			if (max === undefined) {
 				return randomFloat;

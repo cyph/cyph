@@ -88,10 +88,7 @@ module Cyph {
 			workerHelper: 'websign/js/workerhelper.js'
 		};
 
-		/** Max signed 32-bit integer. */
-		public static maxInt: number	= 2147483647;
-
 		/** Max unsigned 32-bit integer. */
-		public static maxUint: number	= 4294967296;
+		public static maxUint32: number	= 4294967296;
 	}
 }
