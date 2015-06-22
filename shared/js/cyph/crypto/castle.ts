@@ -1,45 +1,48 @@
 /// <reference path="icastle.ts" />
-/// <reference path="castlemessageinner.ts" />
-/// <reference path="castlemessageouter.ts" />
 /// <reference path="castlecore.ts" />
 
 
 module Cyph {
 	export module Crypto {
 		export class Castle implements ICastle {
-			private currentMessageId: number	= 0;
+			private static chunkLength: number	= 40000;
+
+
 			private incomingMessageId: number	= 0;
 			private incomingMessagesMax: number	= 0;
 			private sendQueue: string[]			= [];
 
 			private incomingMessages: {
-				[id: string] : string[]
+				[id: number] : Uint8Array[]
 			}	= {};
 
 			private receivedMessages: {
-				[id: string] : { chunks: string[]; total: number; }
+				[id: number] : { data: Uint8Array; totalChunks: number; }
 			}	= {};
 
 			private core: CastleCore;
 
 			public receive (message: string) : void {
 				try {
-					const o: CastleMessageOuter	= Util.deserializeObject(
-						CastleMessageOuter,
-						message
-					);
+					const cyphertext: Uint8Array	= sodium.from_base64(message);
 
-					if (o.id >= this.incomingMessageId) {
+					const id: number	= new Uint32Array(
+						cyphertext.buffer,
+						0,
+						1
+					)[0];
+
+					if (id >= this.incomingMessageId) {
 						this.incomingMessagesMax	= Math.max(
 							this.incomingMessagesMax,
-							o.id
+							id
 						);
 
-						if (!this.incomingMessages[o.id]) {
-							this.incomingMessages[o.id]	= [];
+						if (!this.incomingMessages[id]) {
+							this.incomingMessages[id]	= [];
 						}
 
-						this.incomingMessages[o.id].push(o.cyphertext);
+						this.incomingMessages[id].push(cyphertext);
 					}
 				}
 				catch (_) {}
@@ -54,16 +57,16 @@ module Cyph {
 						const cyphertext of
 						this.incomingMessages[this.incomingMessageId]
 					) {
-						if (this.core.receive(cyphertext)) {
+						if (!wasSuccessful && this.core.receive(cyphertext)) {
 							this.session.trigger(Session.Events.cyphertext, {
-								cyphertext,
+								cyphertext: sodium.to_base64(cyphertext),
 								author: Session.Users.friend
 							});
 
 							wasSuccessful	= true;
-
-							break;
 						}
+
+						sodium.memzero(cyphertext);
 					}
 
 					this.incomingMessages[this.incomingMessageId]	= null;
@@ -73,10 +76,6 @@ module Cyph {
 					}
 
 					++this.incomingMessageId;
-
-					if (this.incomingMessageId === Config.maxInt) {
-						this.incomingMessageId	= 1;
-					}
 				}
 			}
 
@@ -85,17 +84,59 @@ module Cyph {
 					this.sendQueue.push(message);
 				}
 				else {
-					const id: string		= Util.generateGuid();
-					const chunks: string[]	= Util.chunkString(message, 40000);
+					const messageBytes: Uint8Array	= sodium.from_string(message);
 
-					for (let i = 0 ; i < chunks.length ; ++i) {
-						this.core.send(JSON.stringify(new CastleMessageInner(
-							id,
-							i,
-							chunks.length,
-							chunks[i]
-						)));
+					const numBytes: Uint8Array	= new Uint8Array(
+						new Uint32Array([
+							messageBytes.length
+						]).buffer
+					);
+
+					const chunkLength: number	= Math.min(
+						Castle.chunkLength,
+						messageBytes.length
+					);
+
+					const numChunks: Uint8Array	= new Uint8Array(
+						new Uint32Array([
+							Math.ceil(messageBytes.length / chunkLength)
+						]).buffer
+					);
+
+					const id: Uint8Array	= new Uint8Array(4);
+					crypto.getRandomValues(id);
+
+					for (
+						const i = new Uint32Array(1) ;
+						i[0] < messageBytes.length ;
+						i[0] += chunkLength
+					) {
+						const chunk: Uint8Array	= new Uint8Array(
+							messageBytes.buffer,
+							i[0],
+							Math.min(
+								chunkLength,
+								messageBytes.length - i[0]
+							)
+						);
+
+						const data: Uint8Array	= new Uint8Array(chunk.length + 16);
+
+						data.set(id);
+						data.set(new Uint8Array(i.buffer), 4);
+						data.set(numBytes, 8);
+						data.set(numChunks, 12);
+						data.set(chunk, 16);
+
+						try {
+							this.core.send(data);
+						}
+						finally {
+							sodium.memzero(data);
+						}
 					}
+
+					sodium.memzero(messageBytes);
 				}
 			}
 
@@ -118,42 +159,71 @@ module Cyph {
 							event: Session.CastleEvents.connect
 						});
 					},
-					receive: (message: string) => {
-						const o: CastleMessageInner	= Util.deserializeObject(
-							CastleMessageInner,
-							message
+					receive: (data: Uint8Array, startIndex: number) => {
+						const id: number		= new Uint32Array(
+							new Uint8Array(
+								new Uint8Array(
+									data.buffer, startIndex, 4
+								)
+							).buffer
+						)[0];
+
+						const index: number		= new Uint32Array(
+							new Uint8Array(
+								new Uint8Array(
+									data.buffer, startIndex + 4, 4
+								)
+							).buffer
+						)[0];
+
+						const numBytes: number	= new Uint32Array(
+							new Uint8Array(
+								new Uint8Array(
+									data.buffer, startIndex + 8, 4
+								)
+							).buffer
+						)[0];
+
+						const numChunks: number = new Uint32Array(
+							new Uint8Array(
+								new Uint8Array(
+									data.buffer, startIndex + 12, 4
+								)
+							).buffer
+						)[0];
+
+						const chunk: Uint8Array	= new Uint8Array(
+							data.buffer,
+							startIndex + 16
 						);
 
-						if (!this.receivedMessages[o.id]) {
-							this.receivedMessages[o.id]	= {
-								chunks: [],
-								total: 0
+						if (!this.receivedMessages[id]) {
+							this.receivedMessages[id]	= {
+								data: new Uint8Array(numBytes),
+								totalChunks: 0
 							};
 						}
 
-						this.receivedMessages[o.id].chunks[o.index]	= o.messageChunk;
+						this.receivedMessages[id].data.set(chunk, index);
 
-						if (++this.receivedMessages[o.id].total === o.total) {
+						sodium.memzero(data);
+
+						if (++this.receivedMessages[id].totalChunks === numChunks) {
 							this.session.trigger(Session.Events.castle, {
 								event: Session.CastleEvents.receive,
-								data: this.receivedMessages[o.id].chunks.join('')
+								data: sodium.to_string(this.receivedMessages[id].data)
 							});
 
-							this.receivedMessages[o.id]	= null;
+							sodium.memzero(this.receivedMessages[id].data);
+
+							this.receivedMessages[id]	= null;
 						}
 					},
 					send: (cyphertext: string) => {
 						this.session.trigger(Session.Events.castle, {
 							event: Session.CastleEvents.send,
-							data: JSON.stringify(new CastleMessageOuter(
-								this.currentMessageId++,
-								cyphertext
-							))
+							data: cyphertext
 						});
-
-						if (this.currentMessageId === Config.maxInt) {
-							this.currentMessageId	= 1;
-						}
 
 						this.session.trigger(Session.Events.cyphertext, {
 							cyphertext,
