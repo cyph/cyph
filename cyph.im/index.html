@@ -127,12 +127,12 @@
 					<br />
 
 					<md-input-container id='copy-url-input' class='desktop-only'>
-						<input ng-model='ui.cyphLink' aria-label='Cyph link' />
+						<input ng-model='ui.cyphConnection.link' aria-label='Cyph link' />
 					</md-input-container>
 
 					<div id='copy-url-mobile' class='mobile-only'>
-						<a id='copy-url-link' ng-href='{{ui.cyphLink}}'>
-							{{ui.cyphLink}}
+						<a id='copy-url-link' ng-href='{{ui.cyphConnection.link}}'>
+							{{ui.cyphConnection.link}}
 						</a>
 						<br />
 
@@ -144,7 +144,7 @@
 							<img src='/img/icons/sms.png' />
 							<a
 								target='_self'
-								ng-href='{{Cyph.Env.smsUriBase}}{{ui.cyphLinkEncoded}}'
+								ng-href='{{Cyph.Env.smsUriBase}}{{ui.cyphConnection.linkEncoded}}'
 							></a>
 						</md-button>
 
@@ -160,7 +160,7 @@
 							<img src='/img/icons/email.png' />
 							<a
 								target='_self'
-								ng-href='mailto:?body={{ui.cyphLinkEncoded}}'
+								ng-href='mailto:?body={{ui.cyphConnection.linkEncoded}}'
 							></a>
 						</md-button>
 					</div>

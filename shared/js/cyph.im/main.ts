@@ -11,6 +11,7 @@
 /// <reference path="../cyph/controller.ts" />
 /// <reference path="../cyph/ui/chat/chat.ts" />
 /// <reference path="../cyph/ui/dialogmanager.ts" />
+/// <reference path="../cyph/ui/linkconnection.ts" />
 /// <reference path="../cyph/ui/notifier.ts" />
 /// <reference path="../cyph/ui/signupform.ts" />
 /// <reference path="../cyph/ui/directives/chat.ts" />
