@@ -95,7 +95,7 @@ module Cyph {
 			public constructor (
 				baseUrl: string,
 				secret: string,
-				public isPassive,
+				public isPassive: boolean,
 				public countdown: number,
 				private controller: IController,
 				private abort: Function
