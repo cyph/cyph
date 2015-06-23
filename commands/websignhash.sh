@@ -5,7 +5,7 @@ source ~/.bashrc
 project="${1}"
 branch="${2}"
 
-cd "$(cd "$(dirname "$0")"; pwd)/../${project}"
+cd "$(cd "$(dirname "$0")"; pwd)/../shared"
 
 if [ "${branch}" ] ; then
 	project="${branch}.${project}"
