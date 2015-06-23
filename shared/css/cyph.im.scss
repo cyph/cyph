@@ -19,7 +19,9 @@ html:not(.mobile) {
 	}
 }
 
-html:not(.mobile) .chat-sidebar, .chat-message-box:not(.mobile), #copy-url-mobile {
+html:not(.mobile) .chat-sidebar,
+.chat-message-box:not(.mobile),
+.link-connection .connect-link-mobile {
 	.md-button:not([disabled="disabled"]) {
 		color: #444;
 		background-color: #7d4fd3 !important;
@@ -540,7 +542,7 @@ html.mobile #main {
 }
 
 
-#timer {
+.link-connection .timer {
 	font-family: 'Ubuntu Mono', monospace;
 	padding-left: 10px;
 }
@@ -580,11 +582,10 @@ html:not(.mobile) {
 }
 
 
-#copy-url-input input {
+.link-connection .connect-link-input input {
 	text-align: center;
 	margin-left: auto;
 	margin-right: auto;
-	outline: none;
 	background-color: #f1f1f1;
 	box-shadow: 0px 0px 10px #7239dd;
 	padding: 5px;
@@ -592,13 +593,13 @@ html:not(.mobile) {
 	width: 50%;
 }
 
-#copy-url-link {
+.link-connection .connect-link-link {
 	display: block;
 	font-size: 130%;
 	word-wrap: break-word;
 }
 
-#copy-url-mobile .divider {
+.link-connection .connect-link-mobile .divider {
 	width: 21px;
 	display: inline-block;
 }

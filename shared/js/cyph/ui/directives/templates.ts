@@ -711,6 +711,81 @@ module Cyph {
 					</div>
 				`,
 
+				linkConnection: `
+					<div
+						class='link-connection loading'
+						layout='column'
+						layout-fill
+						flex
+					>
+						<div flex></div>
+						<div class='logo-animation'>
+							<img src='/img/logo.animated.gif' />
+						</div>
+						<div>
+							<div translate>
+								Just have your friend open this link, and we're good to go!
+							</div>
+							<br />
+
+							<md-input-container class='connect-link-input desktop-only'>
+								<input ng-model='$this.link' aria-label='Cyph link' />
+							</md-input-container>
+
+							<div class='connect-link-mobile mobile-only'>
+								<a class='connect-link-link' ng-href='{{$this.link}}'>
+									{{$this.link}}
+								</a>
+								<br />
+
+								<md-button
+									translate
+									class='md-fab'
+									aria-label='SMS'
+								>
+									<img src='/img/icons/sms.png' />
+									<a
+										target='_self'
+										ng-href='{{Cyph.Env.smsUriBase}}{{$this.linkEncoded}}'
+									></a>
+								</md-button>
+
+								<span class='divider'>
+									&nbsp;
+								</span>
+
+								<md-button
+									translate
+									class='md-fab'
+									aria-label='Email'
+								>
+									<img src='/img/icons/email.png' />
+									<a
+										target='_self'
+										ng-href='mailto:?body={{$this.linkEncoded}}'
+									></a>
+								</md-button>
+							</div>
+
+							<br />
+							<div>
+								<span translate>
+									Link expires in
+								</span>
+								<timer
+									class='timer'
+									interval='1000'
+									countdown='$this.countdown'
+									autostart='false'
+								>
+									{{minutes}}:{{sseconds}}
+								</timer>
+							</div>
+						</div>
+						<div flex></div>
+					</div>
+				`,
+
 				signupForm: `
 					<form class='beta-signup-form' ng-submit='$this.submit()'>
 						<div ng-show='$this.state === 0'>

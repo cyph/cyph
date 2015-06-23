@@ -15,6 +15,7 @@
 /// <reference path="../cyph/ui/notifier.ts" />
 /// <reference path="../cyph/ui/signupform.ts" />
 /// <reference path="../cyph/ui/directives/chat.ts" />
+/// <reference path="../cyph/ui/directives/linkconnection.ts" />
 /// <reference path="../cyph/ui/directives/markdown.ts" />
 /// <reference path="../cyph/ui/directives/signupform.ts" />
 /// <reference path="config.ts" />
@@ -27,6 +28,7 @@ angular.
 		'ngMaterial',
 		'timer',
 		Cyph.UI.Directives.Chat.title,
+		Cyph.UI.Directives.LinkConnection.title,
 		Cyph.UI.Directives.Markdown.title,
 		Cyph.UI.Directives.SignupForm.title
 	]).
