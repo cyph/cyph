@@ -9,6 +9,12 @@ module Cyph {
 			/** Total amount of time for which this link will remain active. */
 			countdown: number;
 
+			/**
+			 * Indicates whether this link connection was initiated passively
+			 * via API integration.
+			 */
+			isPassive: boolean;
+
 			/** The link to join this connection. */
 			link: string;
 
