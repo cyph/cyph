@@ -34,7 +34,7 @@ mkdir .build
 cp -rf * .build/
 cd .build
 
-for project in cyph.com cyph.im cyph.me ; do
+for project in cyph.com cyph.im cyph.me cyph.video ; do
 	cp -rf shared/* $project/
 done
 
@@ -78,6 +78,7 @@ if [ $test ] ; then
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42001/https:\/\/${branch}-dot-cyph-com-dot-cyphme.appspot.com/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42002/https:\/\/${branch}-dot-cyph-im-dot-cyphme.appspot.com/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42003/https:\/\/${branch}-dot-cyph-me-dot-cyphme.appspot.com/g" %
+	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42004/https:\/\/${branch}-dot-cyph-video-dot-cyphme.appspot.com/g" %
 
 	# Disable caching and HPKP in test environments
 	ls */*.yaml | xargs -I% sed -i.bak 's/Public-Key-Pins: .*/Pragma: no-cache/g' %
@@ -92,13 +93,14 @@ else
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42001/https:\/\/www.cyph.com/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42002/https:\/\/www.cyph.im/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42003/https:\/\/www.cyph.me/g" %
+	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42004/https:\/\/www.cyph.video/g" %
 
 	ls */*.yaml | xargs -I% sed -i.bak 's/version: staging/version: prod/g' %
 fi
 
 
 # Compile + translate + minify
-for d in cyph.im cyph.com ; do
+for d in cyph.com cyph.im cyph.video ; do
 	cd translations
 
 	echo "Translations = { \
@@ -154,7 +156,7 @@ done
 
 ### WebSign-related stuff
 
-for d in cyph.im ; do
+for d in cyph.im cyph.video ; do
 	cd $d
 
 	echo 'WebSign'
@@ -247,7 +249,7 @@ cat ~/.cyph/jobs.vars >> jobs/jobs.yaml
 if [ $site ] ; then
 	goapp deploy $site/*.yaml
 else
-	goapp deploy default/app.yaml jobs/jobs.yaml cyph.com/cyph-com.yaml cyph.im/cyph-im.yaml cyph.me/cyph-me.yaml
+	ls */*.yaml | xargs -I% goapp deploy %
 fi
 
 appcfg.py update_dispatch .

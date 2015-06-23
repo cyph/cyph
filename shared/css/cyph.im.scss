@@ -19,7 +19,9 @@ html:not(.mobile) {
 	}
 }
 
-html:not(.mobile) .chat-sidebar, .chat-message-box:not(.mobile), #copy-url-mobile {
+html:not(.mobile) .chat-sidebar,
+.chat-message-box:not(.mobile),
+.link-connection .connect-link-mobile {
 	.md-button:not([disabled="disabled"]) {
 		color: #444;
 		background-color: #7d4fd3 !important;
@@ -176,15 +178,13 @@ input, textarea {
 	}
 }
 
-#footer {
+.footer {
 	margin-left: -180px;
-
-	&.center {
-		margin-left: 0px;
-		@include transition(margin-left 1s cubic-bezier(1, 0, 0, 1));
-	}
 }
-
+[cyph-static-footer].center .footer {
+	margin-left: 0px;
+	@include transition(margin-left 1s cubic-bezier(1, 0, 0, 1));
+}
 
 .message-item {
 	.message {
@@ -540,7 +540,7 @@ html.mobile #main {
 }
 
 
-#timer {
+.link-connection .timer {
 	font-family: 'Ubuntu Mono', monospace;
 	padding-left: 10px;
 }
@@ -580,11 +580,10 @@ html:not(.mobile) {
 }
 
 
-#copy-url-input input {
+.link-connection .connect-link-input input {
 	text-align: center;
 	margin-left: auto;
 	margin-right: auto;
-	outline: none;
 	background-color: #f1f1f1;
 	box-shadow: 0px 0px 10px #7239dd;
 	padding: 5px;
@@ -592,13 +591,13 @@ html:not(.mobile) {
 	width: 50%;
 }
 
-#copy-url-link {
+.link-connection .connect-link-link {
 	display: block;
 	font-size: 130%;
 	word-wrap: break-word;
 }
 
-#copy-url-mobile .divider {
+.link-connection .connect-link-mobile .divider {
 	width: 21px;
 	display: inline-block;
 }
@@ -618,7 +617,7 @@ html:not(.mobile) {
 }
 
 
-#error {
+.cyph-not-found {
 	h1 {
 		text-align: center;
 		font-family: 'Ubuntu', sans-serif;
@@ -634,7 +633,7 @@ html:not(.mobile) {
 		margin-bottom: 15px;
 	}
 }
-html.mobile #error {
+html.mobile .cyph-not-found {
 	padding: 5px;
 
 	h1 {
@@ -645,12 +644,12 @@ html.mobile #error {
 		width: 100%;
 	}
 }
-html:not(.mobile) #error {
+html:not(.mobile) .cyph-not-found {
 	padding: 5% 10%;
 	margin-left: -38px;
 	margin-right: auto;
 
-	#errorExplanation {
+	.explanation {
 		margin-left: auto;
 		margin-right: auto;
 		width: 75%;

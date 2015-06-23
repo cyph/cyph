@@ -7,7 +7,6 @@ module Cyph {
 			export class Cyphertext extends BaseButtonManager implements ICyphertext {
 				private showLock: boolean		= false;
 				private curtainClass: string	= 'curtain';
-				private toastPosition: string	= 'top right';
 
 				public messages: { author: Session.Users; text: string; }[]	= [];
 
@@ -18,7 +17,6 @@ module Cyph {
 						setTimeout(() => {
 							this.dialogManager.toast({
 								content: Strings.cypherToast3,
-								position: this.toastPosition,
 								delay: 1000
 							});
 
@@ -50,12 +48,10 @@ module Cyph {
 
 							this.dialogManager.toast({
 								content: Strings.cypherToast1,
-								position: this.toastPosition,
 								delay: 2000
 							}, () => {
 								this.dialogManager.toast({
 									content: Strings.cypherToast2,
-									position: this.toastPosition,
 									delay: 3000
 								}, () => {
 									Elements.everything.addClass(this.curtainClass);
