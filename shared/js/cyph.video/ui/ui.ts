@@ -75,6 +75,20 @@ module Cyph.video {
 				private mobileMenu: Cyph.UI.ISidebar,
 				private notifier: Cyph.UI.INotifier
 			) {
+				if (!Cyph.WebRTC.isSupported) {
+					/* If unsupported, warn and then close window */
+
+					this.dialogManager.alert({
+						title: Cyph.Strings.p2pTitle,
+						content: Cyph.Strings.p2pDisabledLocal,
+						ok: Cyph.Strings.ok
+					}, ok =>
+						self.close()
+					);
+
+					return;
+				}
+
 				this.chat		= new Cyph.UI.Chat.Chat(
 					this.controller,
 					this.dialogManager,
@@ -83,6 +97,8 @@ module Cyph.video {
 				);
 
 				this.signupForm	= new Cyph.UI.SignupForm(this.controller);
+
+				this.chat.p2pManager.preemptivelyInitiate();
 
 
 
@@ -93,11 +109,16 @@ module Cyph.video {
 					Cyph.UI.Elements.window.off('beforeunload');
 				});
 
-				this.chat.session.on(Cyph.Session.Events.beginChatComplete, () =>
+				this.chat.session.on(Cyph.Session.Events.beginChatComplete, () => {
 					Cyph.UI.Elements.window.
 						unload(() => this.chat.session.close(true)).
 						on('beforeunload', () => Cyph.Strings.disconnectWarning)
-				);
+					;
+
+					if (this.chat.session.state.isCreator) {
+						this.chat.p2pManager.p2p.requestCall('video');
+					}
+				});
 
 				this.chat.session.on(Cyph.Session.Events.beginWaiting, () =>
 					this.beginWaiting()
@@ -109,6 +130,11 @@ module Cyph.video {
 					if (this.cyphConnection) {
 						this.cyphConnection.stop();
 					}
+
+					this.dialogManager.toast({
+						content: Cyph.Strings.p2pWarningPassive,
+						delay: 5000
+					});
 				});
 
 				this.chat.session.on(Cyph.Session.Events.newCyph, () =>
@@ -119,15 +145,6 @@ module Cyph.video {
 				Cyph.UrlState.set(locationData.pathname, false, true);
 				self.onhashchange	= () => location.reload();
 				self.onpopstate		= null;
-
-
-				if (!Cyph.Env.isMobile && Cyph.Env.isIE) {
-					this.dialogManager.alert({
-						title: Cyph.Strings.warningTitle,
-						ok: Cyph.Strings.ok,
-						content: Cyph.Strings.IEWarning
-					});
-				}
 			}
 		}
 	}

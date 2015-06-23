@@ -58,9 +58,19 @@ module Cyph {
 			`Try again with the latest Chrome or Firefox.`
 		,
 
+		p2pDisabledLocal:
+			`Your browser does not support video calling. ` +
+			`Try again with the latest Chrome or Firefox.`
+		,
+
 		p2pWarning:
 			`This will involve sharing your IP address with your friend (which isn't a problem ` +
 			`unless you're actively hiding your current location from them). Continue?`
+		,
+
+		p2pWarningPassive:
+			`This will establish a P2P connection. If you have a reason ` +
+			`to conceal your IP address from your friend, close this window now.`
 		,
 
 		pingPongTimeout:
