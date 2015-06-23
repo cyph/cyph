@@ -4,7 +4,6 @@ module Cyph {
 			private linkConstant: string;
 			private isWaiting: boolean;
 
-			public countdown: number;
 			public link: string;
 			public linkEncoded: string;
 
@@ -96,14 +95,13 @@ module Cyph {
 			public constructor (
 				baseUrl: string,
 				secret: string,
-				countdown: number,
+				public countdown: number,
 				private controller: IController,
 				private abort: Function
 			) {
 				this.linkConstant	= baseUrl + '#' + secret;
 				this.linkEncoded	= encodeURIComponent(this.linkConstant);
 				this.link			= this.linkConstant;
-				this.countdown		= countdown;
 			}
 		}
 	}
