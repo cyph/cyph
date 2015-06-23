@@ -80,7 +80,7 @@ module Cyph.video {
 
 					this.dialogManager.alert({
 						title: Cyph.Strings.p2pTitle,
-						content: Cyph.Strings.p2pDisabledLocal,
+						content: Cyph.Strings.videoDisabledLocal,
 						ok: Cyph.Strings.ok
 					}, ok =>
 						self.close()
