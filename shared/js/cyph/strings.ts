@@ -67,6 +67,15 @@ module Cyph {
 			`Unable to ping your friend...\n\n` +
 			`They might have gone offline, or one of you could be experiencing network connectivity issues.\n\n` +
 			`If you weren’t expecting your friend to leave the cyph, you may want to wait around a little longer.`
+		,
+
+		signupMessage1:
+			`Enjoying the service? Join our waitlist for Cyph v2!`
+		,
+
+		signupMessage2:
+			`More details are on the way, but the next version of Cyph will include ` +
+			`group messaging, user accounts, and encrypted chat history.`
 	};
 
 	(() => {

@@ -823,6 +823,104 @@ module Cyph {
 							Sign up for beta
 						</md-button>
 					</form>
+				`,
+
+				staticCyphNotFound: `
+					<md-content
+						class='cyph-not-found nano'
+						layout='column'
+						layout-fill
+						flex
+					>
+						<div class='nano-content'>
+							<div>
+								<h1 translate>
+									I'm sorry, but your cyph is in another castle...
+								</h1>
+							</div>
+							<img src='/img/404.png' />
+							<div class='explanation'>
+								<p>
+									<span translate>Please</span>
+									<a
+										translate
+										target='_self'
+										ng-href='{{Cyph.Env.newCyphUrl}}'
+									>
+										try again
+									</a>.
+								</p>
+								<p translate>Reasons why you may have landed here:</p>
+								<ul>
+									<li translate>
+										The cyph you're looking for has expired
+									</li>
+									<li translate>
+										The cyph you're looking for has already been connected to
+										(someone else got there first, or you clicked twice)
+									</li>
+									<li translate>
+										A glitch in the matrix
+									</li>
+									<li translate>
+										You're just guessing random URLs
+									</li>
+									<li translate>
+										We broke something
+									</li>
+								</ul>
+							</div>
+						</div>
+					</md-content>
+				`,
+
+				staticCyphSpinningUp: `
+					<div
+						class='cyph-spinning-up loading'
+						layout='column'
+						layout-fill
+						flex
+					>
+						<div flex></div>
+						<div class='logo-animation'>
+							<img src='/img/logo.animated.gif' />
+						</div>
+						<div translate>Now spinning up your cyph room...</div>
+						<div flex></div>
+					</div>
+				`,
+
+				staticFooter: `
+					<div class='footer desktop-only'>
+						&copy; Cyph 2015
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+						<a href='https://twitter.com/cyph'>
+							@cyph
+						</a>
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+						<a href='mailto:hello@cyph.com'>
+							hello@cyph.com
+						</a>
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+						<a
+							target='_self'
+							href='tel:+19312974462'
+							title='+1(931) 297 4462'
+						>
+							+1(931) CYPH INC
+						</a>
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+						<a
+							target='_self'
+							href='bitcoin:1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd'
+						>
+							1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd
+						</a>
+					</div>
 				`
 			};
 
