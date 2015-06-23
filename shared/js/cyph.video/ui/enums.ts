@@ -1,7 +1,7 @@
-module Cyph.im {
+module Cyph.video {
 	export module UI {
 		/**
-		 * Possible states of cyph.im UI.
+		 * Possible states of cyph.video UI.
 		 */
 		export enum States {
 			none,

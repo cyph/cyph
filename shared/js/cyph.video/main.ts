@@ -1,5 +1,5 @@
 /**
- * @file Entry point of cyph.im.
+ * @file Entry point of cyph.video.
  */
 
 
@@ -54,7 +54,7 @@ angular.
 			;
 
 			$scope.Cyph	= Cyph;
-			$scope.ui	= new Cyph.im.UI.UI(controller, dialogManager, mobileMenu, notifier);
+			$scope.ui	= new Cyph.video.UI.UI(controller, dialogManager, mobileMenu, notifier);
 
 			self['ui']	= $scope.ui;
 		})

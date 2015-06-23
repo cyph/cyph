@@ -1,7 +1,7 @@
-module Cyph.im {
+module Cyph.video {
 	export module UI {
 		/**
-		 * Controls the entire cyph.im UI.
+		 * Controls the entire cyph.video UI.
 		 */
 		export class UI {
 			/** UI state/view. */
@@ -33,7 +33,7 @@ module Cyph.im {
 			 */
 			public beginWaiting () : void {
 				this.cyphConnection	= new Cyph.UI.LinkConnection(
-					Cyph.Env.newCyphBaseUrl,
+					Cyph.Env.cyphVideoBaseUrl,
 					this.chat.session.state.sharedSecret,
 					Config.newCyphCountdown,
 					this.controller,

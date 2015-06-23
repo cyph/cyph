@@ -39,6 +39,15 @@ module Cyph {
 			`${locationData.protocol}//${locationData.hostname}:42003/`
 		;
 
+		/** Base URL for a new video cyph link ("https://www.cyph.video/" or equivalent). */
+		public static cyphVideoBaseUrl: string	= `${locationData.protocol}//${locationData.hostname}:42004/`;
+
+		/** URL for starting a new video cyph (same as cyphVideoBaseUrl except on Onion site). */
+		public static cyphVideoUrl: string		= EnvDeploy.isOnion ?
+			`${Config.onionUrl}vid/#new` :
+			EnvDeploy.cyphVideoBaseUrl
+		;
+
 		/** Correct endpoint for Fake SQS in local environments
 			(replaces Config.awsEndpointFake). */
 		public static awsEndpoint: string		= `${locationData.protocol}//${locationData.hostname}:43000`;
