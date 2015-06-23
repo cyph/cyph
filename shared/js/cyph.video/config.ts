@@ -1,4 +1,4 @@
-module Cyph.im {
+module Cyph.video {
 	/**
 	 * Static/constant configuration values.
 	 */

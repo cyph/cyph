@@ -1,5 +1,5 @@
 application: cyphme
-module: cyph-im
+module: cyph-video
 version: master
 runtime: python27
 api_version: 1

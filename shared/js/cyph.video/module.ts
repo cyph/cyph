@@ -1,4 +1,4 @@
 /**
- * Logic for the cyph.im project.
+ * Logic for the cyph.video project.
  */
-module Cyph.im {}
+module Cyph.video {}

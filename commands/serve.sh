@@ -5,7 +5,7 @@ source ~/.bashrc
 dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd)/..
 
-for project in cyph.com cyph.im cyph.me ; do
+for project in cyph.com cyph.im cyph.me cyph.video ; do
 	for d in $(find shared -mindepth 1 -maxdepth 1 -type d | sed 's/shared\///g') ; do
 		mkdir $project/$d 2> /dev/null
 		sudo mount -o bind shared/$d $project/$d
@@ -28,6 +28,9 @@ dev_appserver.py --port 5002 --admin_port 6002 --host 0.0.0.0 --storage_path /tm
 
 mkdir /tmp/cyph3
 dev_appserver.py --port 5003 --admin_port 6003 --host 0.0.0.0 --storage_path /tmp/cyph3 cyph.me/cyph-me.yaml &
+
+mkdir /tmp/cyph4
+dev_appserver.py --port 5004 --admin_port 6004 --host 0.0.0.0 --storage_path /tmp/cyph4 cyph.video/cyph-video.yaml &
 
 ./commands/build.sh --watch
 

@@ -1,4 +1,4 @@
 /**
- * Classes and interfaces containing UI logic for cyph.im.
+ * Classes and interfaces containing UI logic for cyph.video.
  */
-module Cyph.im.UI {}
+module Cyph.video.UI {}
