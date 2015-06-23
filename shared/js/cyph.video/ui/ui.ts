@@ -35,6 +35,7 @@ module Cyph.video {
 				this.cyphConnection	= new Cyph.UI.LinkConnection(
 					Cyph.Env.cyphVideoBaseUrl,
 					this.chat.session.state.sharedSecret,
+					this.chat.session.state.isStartingNewCyph === null,
 					Config.newCyphCountdown,
 					this.controller,
 					() => this.chat.abortSetup()

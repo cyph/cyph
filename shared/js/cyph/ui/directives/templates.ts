@@ -723,48 +723,53 @@ module Cyph {
 							<img src='/img/logo.animated.gif' />
 						</div>
 						<div>
-							<div translate>
-								Just have your friend open this link, and we're good to go!
+							<div ng-show='$this.isPassive' translate>
+								Waiting for friend to join...
 							</div>
-							<br />
-
-							<md-input-container class='connect-link-input desktop-only'>
-								<input ng-model='$this.link' aria-label='Cyph link' />
-							</md-input-container>
-
-							<div class='connect-link-mobile mobile-only'>
-								<a class='connect-link-link' ng-href='{{$this.link}}'>
-									{{$this.link}}
-								</a>
+							<div ng-hide='$this.isPassive'>
+								<div translate>
+									Just have your friend open this link, and we're good to go!
+								</div>
 								<br />
 
-								<md-button
-									translate
-									class='md-fab'
-									aria-label='SMS'
-								>
-									<img src='/img/icons/sms.png' />
-									<a
-										target='_self'
-										ng-href='{{Cyph.Env.smsUriBase}}{{$this.linkEncoded}}'
-									></a>
-								</md-button>
+								<md-input-container class='connect-link-input desktop-only'>
+									<input ng-model='$this.link' aria-label='Cyph link' />
+								</md-input-container>
 
-								<span class='divider'>
-									&nbsp;
-								</span>
+								<div class='connect-link-mobile mobile-only'>
+									<a class='connect-link-link' ng-href='{{$this.link}}'>
+										{{$this.link}}
+									</a>
+									<br />
 
-								<md-button
-									translate
-									class='md-fab'
-									aria-label='Email'
-								>
-									<img src='/img/icons/email.png' />
-									<a
-										target='_self'
-										ng-href='mailto:?body={{$this.linkEncoded}}'
-									></a>
-								</md-button>
+									<md-button
+										translate
+										class='md-fab'
+										aria-label='SMS'
+									>
+										<img src='/img/icons/sms.png' />
+										<a
+											target='_self'
+											ng-href='{{Cyph.Env.smsUriBase}}{{$this.linkEncoded}}'
+										></a>
+									</md-button>
+
+									<span class='divider'>
+										&nbsp;
+									</span>
+
+									<md-button
+										translate
+										class='md-fab'
+										aria-label='Email'
+									>
+										<img src='/img/icons/email.png' />
+										<a
+											target='_self'
+											ng-href='mailto:?body={{$this.linkEncoded}}'
+										></a>
+									</md-button>
+								</div>
 							</div>
 
 							<br />

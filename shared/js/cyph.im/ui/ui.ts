@@ -35,6 +35,7 @@ module Cyph.im {
 				this.cyphConnection	= new Cyph.UI.LinkConnection(
 					Cyph.Env.newCyphBaseUrl,
 					this.chat.session.state.sharedSecret,
+					this.chat.session.state.isStartingNewCyph === null,
 					Config.newCyphCountdown,
 					this.controller,
 					() => this.chat.abortSetup()
