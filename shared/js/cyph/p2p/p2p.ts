@@ -293,6 +293,7 @@ module Cyph {
 						UIEvents.Events.acceptConfirm,
 						command.method,
 						500000,
+						this.isAccepted,
 						(ok: boolean) => {
 							if (ok) {
 								this.isAccepted	= true;
@@ -494,11 +495,16 @@ module Cyph {
 				this.commands.kill();
 			}
 
+			public preemptivelyAccept () {
+				this.isAccepted	= true;
+			}
+
 			public requestCall (callType: string) : void {
 				this.triggerUiEvent(
 					UIEvents.Categories.request,
 					UIEvents.Events.requestConfirm,
 					callType,
+					this.isAccepted,
 					(ok: boolean) => {
 						if (ok) {
 							this.mutex.lock((wasFirst: boolean, wasFirstOfType: boolean) => {

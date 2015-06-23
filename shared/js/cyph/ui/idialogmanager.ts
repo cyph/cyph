@@ -57,8 +57,8 @@ module Cyph {
 			toast (
 				o: {
 					content: string;
-					position: string;
 					delay: number;
+					position?: string;
 				},
 				callback?: () => void
 			) : void;
