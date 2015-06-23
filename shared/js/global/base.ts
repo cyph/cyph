@@ -22,6 +22,7 @@
 /// <reference path="../cyph/session/imutex.ts" />
 /// <reference path="../cyph/session/isession.ts" />
 /// <reference path="../cyph/ui/idialogmanager.ts" />
+/// <reference path="../cyph/ui/ilinkconnection.ts" />
 /// <reference path="../cyph/ui/inotifier.ts" />
 /// <reference path="../cyph/ui/isidebar.ts" />
 /// <reference path="../cyph/ui/isignupform.ts" />

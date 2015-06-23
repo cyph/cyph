@@ -61,18 +61,18 @@
 			<span
 				cyph-chat-toolbar='ui.chat'
 				open='ui.openMobileMenu()'
-				show-chat='ui.state === Cyph.im.UI.States.chat'
+				show-chat='ui.state === Cyph.video.UI.States.chat'
 				class='mobile-only'
 			></span>
 			<span
 				cyph-chat-sidebar='ui.chat'
-				show-chat='ui.state === Cyph.im.UI.States.chat'
+				show-chat='ui.state === Cyph.video.UI.States.chat'
 				class='desktop-only'
 			></span>
 
 			<div
 				cyph-chat-main='ui.chat'
-				ng-show='ui.state === Cyph.im.UI.States.chat'
+				ng-show='ui.state === Cyph.video.UI.States.chat'
 				layout='column'
 				layout-fill
 				flex
@@ -94,7 +94,7 @@
 				layout-fill
 				flex
 				ng-class='{
-					active: ui.state === Cyph.im.UI.States.spinningUp
+					active: ui.state === Cyph.video.UI.States.spinningUp
 				}'
 			></div>
 
@@ -105,7 +105,7 @@
 				layout-fill
 				flex
 				ng-class='{
-					active: ui.state === Cyph.im.UI.States.waitingForFriend
+					active: ui.state === Cyph.video.UI.States.waitingForFriend
 				}'
 			></div>
 
@@ -116,7 +116,7 @@
 				layout-fill
 				flex
 				ng-class='{
-					active: ui.state === Cyph.im.UI.States.error
+					active: ui.state === Cyph.video.UI.States.error
 				}'
 			></div>
 
@@ -125,14 +125,14 @@
 				id='blank'
 				flex
 				ng-class='{
-					active: ui.state === Cyph.im.UI.States.blank
+					active: ui.state === Cyph.video.UI.States.blank
 				}'
 			></div>
 
 			<footer>
 				<div
 					cyph-chat-message-box='ui.chat'
-					ng-show='ui.state === Cyph.im.UI.States.chat'
+					ng-show='ui.state === Cyph.video.UI.States.chat'
 				></div>
 
 				<div
@@ -161,7 +161,7 @@
 		<link rel='stylesheet' href='/lib/bower_components/magnific-popup/dist/magnific-popup.css' />
 		<link rel='stylesheet' href='/lib/bower_components/highlight.js/src/styles/default.css' />
 
-		<link rel='stylesheet' href='/css/cyph.im.css' />
+		<link rel='stylesheet' href='/css/cyph.video.css' />
 
 		<script src='/lib/bower_components/jquery/dist/jquery.min.js'></script>
 		<script src='/lib/bower_components/jquery_appear/jquery.appear.js'></script>
@@ -183,6 +183,6 @@
 		<script src='/cryptolib/bower_components/libsodium.js/dist/browsers/combined/sodium.min.js'></script>
 		<script src='/cryptolib/hmac-sha256.js'></script>
 
-		<script src='/js/cyph.im/main.js'></script>
+		<script src='/js/cyph.video/main.js'></script>
 	</body>
 </html>

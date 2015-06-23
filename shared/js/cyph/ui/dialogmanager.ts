@@ -85,15 +85,15 @@ module Cyph {
 			public toast (
 				o: {
 					content: string;
-					position: string;
 					delay: number;
+					position?: string;
 				},
 				callback?: () => void
 			) : void {
 				this.$mdToast.show({
 					template: '<md-toast>' + o.content + '</md-toast>',
 					hideDelay: o.delay,
-					position: o.position
+					position: o.position || 'top right'
 				});
 
 				setTimeout(callback, o.delay + 500);
