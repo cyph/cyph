@@ -1,10 +1,10 @@
 module Cyph {
 	export module UI {
 		export class LinkConnection implements ILinkConnection {
-			private countdown: number;
 			private linkConstant: string;
 			private isWaiting: boolean;
 
+			public countdown: number;
 			public link: string;
 			public linkEncoded: string;
 
@@ -54,7 +54,7 @@ module Cyph {
 				}
 
 				if (Env.isIE) {
-					const expireTime: string	= new Date(Date.now() + this.countdown)
+					const expireTime: string	= new Date(Date.now() + this.countdown * 1000)
 						.toLocaleTimeString()
 						.toLowerCase()
 						.replace(/(.*:.*):.*? /, '$1')
@@ -72,7 +72,7 @@ module Cyph {
 							this.abort();
 						}
 					},
-					this.countdown
+					this.countdown * 1000
 				);
 			}
 
@@ -103,7 +103,7 @@ module Cyph {
 				this.linkConstant	= baseUrl + '#' + secret;
 				this.linkEncoded	= encodeURIComponent(this.linkConstant);
 				this.link			= this.linkConstant;
-				this.countdown		= countdown * 1000;
+				this.countdown		= countdown;
 			}
 		}
 	}

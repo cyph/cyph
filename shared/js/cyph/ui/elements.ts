@@ -37,8 +37,8 @@ module Cyph {
 				Elements.everything				= $('*');
 				Elements.affiliateCheckbox		= $('.amazon-link:visible md-checkbox');
 				Elements.buttons				= $('.md-button');
-				Elements.connectLinkInput		= $('#copy-url-input input');
-				Elements.connectLinkLink		= $('#copy-url-link');
+				Elements.connectLinkInput		= $('.connect-link-input input');
+				Elements.connectLinkLink		= $('.connect-link-link');
 				Elements.cyphertext				= $('.chat-cyphertext.curtain, .chat-cyphertext.curtain > md-content');
 				Elements.insertPhotoMobile		= $('.insert-photo-mobile');
 				Elements.messageBox				= $('.message-box');
@@ -52,7 +52,7 @@ module Cyph {
 				Elements.p2pFiles				= $('.send-file-button input[type="file"]');
 				Elements.sendButton				= $('.send-button');
 				Elements.signupForm				= $('.beta-signup-form');
-				Elements.timer					= $('#timer');
+				Elements.timer					= $('.timer');
 			}
 		}
 	}

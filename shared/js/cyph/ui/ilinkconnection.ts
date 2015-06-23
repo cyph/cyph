@@ -6,6 +6,9 @@ module Cyph {
 		 * @interface
 		 */
 		export interface ILinkConnection {
+			/** Total amount of time for which this link will remain active. */
+			countdown: number;
+
 			/** The link to join this connection. */
 			link: string;
 
