@@ -10,6 +10,12 @@ html.modest {
 			&:hover {
 				background-color: #b7bccb !important;
 			}
+
+			&[disabled], &[disabled]:hover {
+				box-shadow: none !important;
+				border: solid 1px #5F5F5F !important;
+				background-color: transparent !important;
+			}
 		}
 	}
 
@@ -29,7 +35,7 @@ html.modest {
 		box-shadow: none;
 	}
 
-	.abort-screen .logo-animation {
+	.abort-screen .logo-animation, .beta-signup-form, .footer {
 		display: none;
 	}
 }
