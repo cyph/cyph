@@ -4,7 +4,7 @@ html.modest {
 	}
 
 	#main {
-		.chat-sidebar .md-button, .chat-message-box .md-button, .video-call:not(.playing) .close-button {
+		.chat-sidebar .md-button, .chat-message-box:not(.mobile) .md-button, .video-call:not(.playing) .close-button {
 			background-color: #7a7c8b !important;
 
 			&:hover {
