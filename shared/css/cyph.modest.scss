@@ -39,11 +39,7 @@ html.modest {
 		display: none;
 	}
 
-	.chat-sidebar .logo {
+	.chat-sidebar:not(.show-chat) .logo {
 		display: none;
-
-		& + div {
-			margin-top: calc(50vh - 100%);
-		}
 	}
 }

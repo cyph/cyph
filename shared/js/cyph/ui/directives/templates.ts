@@ -439,7 +439,12 @@ module Cyph {
 				`,
 
 				chatSidebar: `
-					<div class='chat-sidebar'>
+					<div
+						class='chat-sidebar'
+						ng-class='{
+							"show-chat": showChat && $this.state === Cyph.UI.Chat.States.chat
+						}'
+					>
 						<a class='logo' ng-href='{{Cyph.Env.homeUrl}}'>
 							<img src='/img/betalogo.png' />
 						</a>
