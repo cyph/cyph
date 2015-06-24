@@ -262,7 +262,11 @@ module Cyph {
 
 					/* Modest branding API flag */
 					if (urlState[0] === '&') {
-						urlState	= urlState.substring(1);
+						urlState	=
+							urlState.substring(1) +
+							(urlState.length > 1 ? 'a' : '')
+						;
+
 						Cyph.UI.Elements.html.addClass('modest');
 					}
 
