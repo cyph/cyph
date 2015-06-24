@@ -29,6 +29,13 @@ module Cyph {
 				voice: 'voice'
 			};
 
+			private static nonceIndex: number			= 4;
+
+			private static encryptedDataIndex: number	=
+				P2P.nonceIndex +
+				sodium.crypto_secretbox_NONCEBYTES
+			;
+
 
 			private mutex: Session.IMutex;
 			private channel: RTCDataChannel;
@@ -432,13 +439,13 @@ module Cyph {
 
 							const nonce: Uint8Array			= new Uint8Array(
 								e.data,
-								4,
+								P2P.nonceIndex,
 								sodium.crypto_secretbox_NONCEBYTES
 							);
 
 							const encryptedData: Uint8Array	= new Uint8Array(
 								e.data,
-								4 + sodium.crypto_secretbox_NONCEBYTES
+								P2P.encryptedDataIndex
 							);
 
 							this.incomingFile.data[index]	=
@@ -660,14 +667,13 @@ module Cyph {
 										);
 
 										const cyphertext: Uint8Array	= new Uint8Array(
-											4 +
-											sodium.crypto_secretbox_NONCEBYTES +
+											P2P.encryptedDataIndex +
 											encryptedData.length
 										);
 
 										cyphertext.set(index);
-										cyphertext.set(nonce, 4);
-										cyphertext.set(encryptedData, 4 + sodium.crypto_secretbox_NONCEBYTES);
+										cyphertext.set(nonce, P2P.nonceIndex);
+										cyphertext.set(encryptedData, P2P.encryptedDataIndex);
 
 										this.channel.send(cyphertext.buffer);
 									}
