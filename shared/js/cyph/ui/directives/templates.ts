@@ -72,7 +72,7 @@ module Cyph {
 
 						<div
 							ng-view
-							class='loading'
+							class='abort-screen loading'
 							layout='column'
 							layout-fill
 							flex
