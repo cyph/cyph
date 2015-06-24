@@ -258,8 +258,16 @@ module Cyph {
 				) {
 					super(controller, mobileMenu);
 
+					let urlState: string	= UrlState.get(true);
+
+					/* Modest branding API flag */
+					if (urlState[0] === '&') {
+						urlState	= urlState.substring(1);
+						Cyph.UI.Elements.html.addClass('modest');
+					}
+
 					this.session		= new Session.ThreadedSession(
-						UrlState.get(true),
+						urlState,
 						controller
 					);
 
