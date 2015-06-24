@@ -55,8 +55,8 @@ module Cyph {
 					path	= '/' + path;
 				}
 
-				if (history) {
-					if (shouldReplace) {
+				if (history && history.pushState) {
+					if (shouldReplace && history.replaceState) {
 						history.replaceState({}, '', path);
 					}
 					else {
