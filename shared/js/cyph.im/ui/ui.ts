@@ -41,9 +41,9 @@ module Cyph.im {
 					() => this.chat.abortSetup()
 				);
 
-				this.changeState(States.waitingForFriend);
-
 				this.cyphConnection.beginWaiting();
+
+				this.changeState(States.waitingForFriend);
 			}
 
 			/**
