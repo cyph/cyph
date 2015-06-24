@@ -47,7 +47,10 @@ if (!HTMLElement.prototype.click) {
 	};
 }
 
-if (!Object.keys) {
+try {
+	Object.keys({});
+}
+catch (_) {
 	Object.keys	= o => {
 		const keys: any[]	= [];
 		for (const k in o) {
