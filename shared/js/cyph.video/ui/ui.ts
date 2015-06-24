@@ -87,6 +87,8 @@ module Cyph.video {
 						self.close()
 					);
 
+					this.changeState(States.blank);
+
 					return;
 				}
 
