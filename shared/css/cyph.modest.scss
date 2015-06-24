@@ -40,7 +40,10 @@ html.modest {
 	}
 
 	.chat-sidebar .logo {
-		visibility: hidden;
-		pointer-events: none;
+		display: none;
+
+		& + div {
+			margin-top: calc(50vh - 100%);
+		}
 	}
 }
