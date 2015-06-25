@@ -110,9 +110,9 @@ let WebSign: IWebSign;
 /**
  * @global NTRU library.
  */
-let ntru: any;
+let ntru: any	= self['ntru'];
 
 /**
  * @global Sodium library.
  */
-let sodium: any;
+let sodium: any	= self['sodium'];
