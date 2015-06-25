@@ -33,7 +33,7 @@ module Cyph.video {
 			 */
 			public beginWaiting () : void {
 				this.cyphConnection.beginWaiting(
-					Cyph.Env.newCyphBaseUrl,
+					Cyph.Env.cyphVideoBaseUrl,
 					this.chat.session.state.sharedSecret,
 					this.chat.session.state.wasInitiatedByAPI
 				);
