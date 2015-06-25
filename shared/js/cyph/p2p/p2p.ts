@@ -189,9 +189,9 @@ module Cyph {
 							url: P2P.constants.stun + ':' + Config.p2pConfig.iceServer
 						},
 						{
-							url: P2P.constants.turn + ':' + Config.p2pConfig.iceServer // ,
-							// credential: Config.p2pConfig.iceCredential,
-							// username: Config.p2pConfig.iceCredential
+							url: P2P.constants.turn + ':' + Config.p2pConfig.iceServer,
+							credential: Config.p2pConfig.iceCredential,
+							username: Config.p2pConfig.iceCredential
 						}
 					]
 				}, {
