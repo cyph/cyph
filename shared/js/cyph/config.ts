@@ -61,7 +61,7 @@ module Cyph {
 		/** Affiliate code for Amazon links in chat (used by UI.Affiliate). */
 		public static amazonAffiliateCode: string	= 'cyph-20';
 
-		/** P2P-related config (used by P2P.P2P) */
+		/** P2P-related config (used by P2P.P2P). */
 		public static p2pConfig	= {
 			iceServer: 'ice.cyph.com',
 			iceCredential: 'cyph',
