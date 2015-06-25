@@ -23,8 +23,11 @@ module Cyph {
 
 			/**
 			 * Initiates UI for sending this link to friend.
+			 * @param baseUrl Base URL before the hash.
+			 * @param secret Secret being sent via URL fragment.
+			 * @param isPassive
 			 */
-			beginWaiting () : void;
+			beginWaiting (baseUrl: string, secret: string, isPassive: boolean) : void;
 
 			/**
 			 * Stops waiting and tears down this link connection instance.

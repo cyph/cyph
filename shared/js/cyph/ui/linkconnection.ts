@@ -1,9 +1,10 @@
 module Cyph {
 	export module UI {
 		export class LinkConnection implements ILinkConnection {
-			private linkConstant: string;
 			private isWaiting: boolean;
+			private linkConstant: string;
 
+			public isPassive: boolean;
 			public link: string;
 			public linkEncoded: string;
 
@@ -26,12 +27,12 @@ module Cyph {
 				}
 			}
 
-			public beginWaiting () : void {
-				if (this.isWaiting === false) {
-					throw new Error('This link connection has been destroyed.');
-				}
-
-				this.isWaiting	= true;
+			public beginWaiting (baseUrl: string, secret: string, isPassive: boolean) : void {
+				this.isWaiting		= true;
+				this.linkConstant	= baseUrl + '#' + secret;
+				this.linkEncoded	= encodeURIComponent(this.linkConstant);
+				this.link			= this.linkConstant;
+				this.isPassive		= isPassive;
 
 				if (Env.isMobile) {
 					this.setLink();
@@ -82,28 +83,19 @@ module Cyph {
 				this.linkEncoded	= '';
 
 				/* Stop mobile browsers from keeping this selected */
-				Elements.connectLinkInput.remove();
+				Elements.connectLinkInput.blur();
 			}
 
 			/**
-			 * @param baseUrl
-			 * @param secret
 			 * @param countdown
 			 * @param controller
 			 * @param abort
 			 */
 			public constructor (
-				baseUrl: string,
-				secret: string,
-				public isPassive: boolean,
 				public countdown: number,
 				private controller: IController,
 				private abort: Function
-			) {
-				this.linkConstant	= baseUrl + '#' + secret;
-				this.linkEncoded	= encodeURIComponent(this.linkConstant);
-				this.link			= this.linkConstant;
-			}
+			) {}
 		}
 	}
 }
