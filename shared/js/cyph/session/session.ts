@@ -26,7 +26,8 @@ module Cyph {
 				sharedSecret: <string> '',
 				isAlive: <boolean> true,
 				isCreator: <boolean> false,
-				isStartingNewCyph: <boolean> false
+				isStartingNewCyph: <boolean> false,
+				wasInitiatedByAPI: <boolean> false
 			};
 
 			private castleHandler (e: { event: CastleEvents; data?: string; }) : void {
@@ -288,12 +289,18 @@ module Cyph {
 				private id: string = Util.generateGuid()
 			) {
 				/* true = yes; false = no; null = maybe */
-				this.updateState(State.isStartingNewCyph,
+				this.updateState(
+					State.isStartingNewCyph,
 					!descriptor || descriptor === 'new' ?
 						true :
 						descriptor.length > Config.secretLength ?
 							null :
 							false
+				);
+
+				this.updateState(
+					State.wasInitiatedByAPI,
+					this.state.isStartingNewCyph === null
 				);
 
 				this.setDescriptor(descriptor);

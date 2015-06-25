@@ -17,7 +17,8 @@ module Cyph {
 				sharedSecret: <string> '',
 				isAlive: <boolean> true,
 				isCreator: <boolean> false,
-				isStartingNewCyph: <boolean> false
+				isStartingNewCyph: <boolean> false,
+				wasInitiatedByAPI: <boolean> false
 			};
 
 			public close (shouldSendEvent: boolean = true) : void {

@@ -45,11 +45,12 @@ module Cyph {
 		 * Session state value keys.
 		 */
 		export class State {
-			public static cyphId: string				= 'cyphId';
-			public static sharedSecret: string			= 'sharedSecret';
-			public static isAlive: string				= 'isAlive';
-			public static isCreator: string				= 'isCreator';
-			public static isStartingNewCyph: string		= 'isStartingNewCyph';
+			public static cyphId: string			= 'cyphId';
+			public static sharedSecret: string		= 'sharedSecret';
+			public static isAlive: string			= 'isAlive';
+			public static isCreator: string			= 'isCreator';
+			public static isStartingNewCyph: string	= 'isStartingNewCyph';
+			public static wasInitiatedByAPI: string	= 'wasInitiatedByAPI';
 		}
 
 		/**

@@ -32,16 +32,11 @@ module Cyph.video {
 			 * Initiates UI for sending cyph link to friend.
 			 */
 			public beginWaiting () : void {
-				this.cyphConnection	= new Cyph.UI.LinkConnection(
-					Cyph.Env.cyphVideoBaseUrl,
+				this.cyphConnection.beginWaiting(
+					Cyph.Env.newCyphBaseUrl,
 					this.chat.session.state.sharedSecret,
-					this.chat.session.state.isStartingNewCyph === null,
-					Config.newCyphCountdown,
-					this.controller,
-					() => this.chat.abortSetup()
+					this.chat.session.state.wasInitiatedByAPI
 				);
-
-				this.cyphConnection.beginWaiting();
 
 				this.changeState(States.waitingForFriend);
 			}
@@ -92,14 +87,20 @@ module Cyph.video {
 					return;
 				}
 
-				this.chat		= new Cyph.UI.Chat.Chat(
+				this.chat			= new Cyph.UI.Chat.Chat(
 					this.controller,
 					this.dialogManager,
 					this.mobileMenu,
 					this.notifier
 				);
 
-				this.signupForm	= new Cyph.UI.SignupForm(this.controller);
+				this.cyphConnection	= new Cyph.UI.LinkConnection(
+					Config.newCyphCountdown,
+					this.controller,
+					() => this.chat.abortSetup()
+				);
+
+				this.signupForm		= new Cyph.UI.SignupForm(this.controller);
 
 				this.chat.p2pManager.preemptivelyInitiate();
 
