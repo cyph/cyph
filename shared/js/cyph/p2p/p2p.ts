@@ -33,7 +33,7 @@ module Cyph {
 
 			private static encryptedDataIndex: number	=
 				P2P.nonceIndex +
-				sodium.crypto_secretbox_NONCEBYTES
+				Sodium.crypto_secretbox_NONCEBYTES
 			;
 
 
@@ -385,7 +385,7 @@ module Cyph {
 								const name: string			= this.incomingFile.name;
 
 								if (this.incomingFile.key) {
-									sodium.memzero(this.incomingFile.key);
+									Sodium.memzero(this.incomingFile.key);
 								}
 
 								this.incomingFile.data				= null;
@@ -411,7 +411,7 @@ module Cyph {
 							this.incomingFile.data	= [];
 							this.incomingFile.name	= data[0];
 							this.incomingFile.size	= parseInt(data[1], 10);
-							this.incomingFile.key	= sodium.from_base64(data[2]);
+							this.incomingFile.key	= Sodium.from_base64(data[2]);
 
 							this.incomingFile.readableSize	=
 								Util.readableByteLength(
@@ -440,7 +440,7 @@ module Cyph {
 							const nonce: Uint8Array			= new Uint8Array(
 								e.data,
 								P2P.nonceIndex,
-								sodium.crypto_secretbox_NONCEBYTES
+								Sodium.crypto_secretbox_NONCEBYTES
 							);
 
 							const encryptedData: Uint8Array	= new Uint8Array(
@@ -449,7 +449,7 @@ module Cyph {
 							);
 
 							this.incomingFile.data[index]	=
-								sodium.crypto_secretbox_open_easy(
+								Sodium.crypto_secretbox_open_easy(
 									encryptedData,
 									nonce,
 									this.incomingFile.key
@@ -620,8 +620,8 @@ module Cyph {
 								this.outgoingFile.name	= file.name;
 								this.outgoingFile.size	= buf.byteLength;
 
-								this.outgoingFile.key	= sodium.randombytes_buf(
-									sodium.crypto_secretbox_KEYBYTES
+								this.outgoingFile.key	= Sodium.randombytes_buf(
+									Sodium.crypto_secretbox_KEYBYTES
 								);
 
 								this.outgoingFile.readableSize	=
@@ -637,7 +637,7 @@ module Cyph {
 									'\n' +
 									this.outgoingFile.size +
 									'\n' +
-									sodium.to_base64(this.outgoingFile.key)
+									Sodium.to_base64(this.outgoingFile.key)
 								);
 
 								const timer: Timer	= new Timer(() => {
@@ -656,11 +656,11 @@ module Cyph {
 											]).buffer
 										);
 
-										const nonce: Uint8Array			= sodium.randombytes_buf(
-											sodium.crypto_secretbox_NONCEBYTES
+										const nonce: Uint8Array			= Sodium.randombytes_buf(
+											Sodium.crypto_secretbox_NONCEBYTES
 										);
 
-										const encryptedData: Uint8Array	= sodium.crypto_secretbox_easy(
+										const encryptedData: Uint8Array	= Sodium.crypto_secretbox_easy(
 											new Uint8Array(buf.slice(old, pos)),
 											nonce,
 											this.outgoingFile.key
@@ -692,7 +692,7 @@ module Cyph {
 										timer.stop();
 
 										if (this.outgoingFile.key) {
-											sodium.memzero(this.outgoingFile.key);
+											Sodium.memzero(this.outgoingFile.key);
 										}
 
 										this.channel.send(P2P.constants.fileTransferComplete);

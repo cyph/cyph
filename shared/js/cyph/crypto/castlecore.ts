@@ -14,27 +14,27 @@ module Cyph {
 
 			private static nonceEndIndex: number			=
 				CastleCore.messageIdEndIndex +
-				sodium.crypto_secretbox_NONCEBYTES
+				Sodium.crypto_secretbox_NONCEBYTES
 			;
 
 			private static ntruMacIndex: number				=
 				CastleCore.nonceEndIndex +
-				ntru.encryptedDataLength
+				Ntru.encryptedDataLength
 			;
 
 			private static ntruPlaintextLength: number		=
-				sodium.crypto_secretbox_KEYBYTES +
-				sodium.crypto_onetimeauth_KEYBYTES
+				Sodium.crypto_secretbox_KEYBYTES +
+				Sodium.crypto_onetimeauth_KEYBYTES
 			;
 
 			private static publicKeySetLength: number		=
-				sodium.crypto_box_PUBLICKEYBYTES +
-				ntru.publicKeyLength
+				Sodium.crypto_box_PUBLICKEYBYTES +
+				Ntru.publicKeyLength
 			;
 
 			private static sodiumCyphertextIndex: number	=
 				CastleCore.ntruMacIndex +
-				sodium.crypto_onetimeauth_BYTES
+				Sodium.crypto_onetimeauth_BYTES
 			;
 
 			private static errors	= {
@@ -86,19 +86,19 @@ module Cyph {
 				const nonce: Uint8Array				= new Uint8Array(
 					cyphertext.buffer,
 					CastleCore.messageIdEndIndex,
-					sodium.crypto_secretbox_NONCEBYTES
+					Sodium.crypto_secretbox_NONCEBYTES
 				);
 
 				const ntruCyphertext: Uint8Array	= new Uint8Array(
 					cyphertext.buffer,
 					CastleCore.nonceEndIndex,
-					ntru.encryptedDataLength
+					Ntru.encryptedDataLength
 				);
 
 				const ntruMac: Uint8Array			= new Uint8Array(
 					cyphertext.buffer,
 					CastleCore.ntruMacIndex,
-					sodium.crypto_onetimeauth_BYTES
+					Sodium.crypto_onetimeauth_BYTES
 				);
 
 				const sodiumCyphertext: Uint8Array	= new Uint8Array(
@@ -111,7 +111,7 @@ module Cyph {
 					let ntruPlaintext: Uint8Array;
 
 					try {
-						ntruPlaintext	= ntru.decrypt(
+						ntruPlaintext	= Ntru.decrypt(
 							ntruCyphertext,
 							keySet.ntru.privateKey
 						);
@@ -119,16 +119,16 @@ module Cyph {
 						const symmetricKey: Uint8Array	= new Uint8Array(
 							ntruPlaintext.buffer,
 							0,
-							sodium.crypto_secretbox_KEYBYTES
+							Sodium.crypto_secretbox_KEYBYTES
 						);
 
 						const ntruAuthKey: Uint8Array	= new Uint8Array(
 							ntruPlaintext.buffer,
-							sodium.crypto_secretbox_KEYBYTES,
-							sodium.crypto_onetimeauth_KEYBYTES
+							Sodium.crypto_secretbox_KEYBYTES,
+							Sodium.crypto_onetimeauth_KEYBYTES
 						);
 
-						if (!sodium.crypto_onetimeauth_verify(
+						if (!Sodium.crypto_onetimeauth_verify(
 							ntruMac,
 							ntruCyphertext,
 							ntruAuthKey
@@ -136,8 +136,8 @@ module Cyph {
 							throw CastleCore.errors.ntruAuthFailure;
 						}
 
-						const data: Uint8Array	= sodium.crypto_box_open_easy(
-							sodium.crypto_secretbox_open_easy(
+						const data: Uint8Array	= Sodium.crypto_box_open_easy(
+							Sodium.crypto_secretbox_open_easy(
 								sodiumCyphertext,
 								nonce,
 								symmetricKey
@@ -163,7 +163,7 @@ module Cyph {
 					}
 					finally {
 						if (ntruPlaintext) {
-							sodium.memzero(ntruPlaintext);
+							Sodium.memzero(ntruPlaintext);
 						}
 					}
 				}
@@ -178,16 +178,16 @@ module Cyph {
 					ntru: { publicKey: Uint8Array; privateKey: Uint8Array; };
 				}
 			) : string {
-				const nonce: Uint8Array				= sodium.randombytes_buf(
-					sodium.crypto_secretbox_NONCEBYTES
+				const nonce: Uint8Array				= Sodium.randombytes_buf(
+					Sodium.crypto_secretbox_NONCEBYTES
 				);
 
-				const symmetricKey: Uint8Array		= sodium.randombytes_buf(
-					sodium.crypto_secretbox_KEYBYTES
+				const symmetricKey: Uint8Array		= Sodium.randombytes_buf(
+					Sodium.crypto_secretbox_KEYBYTES
 				);
 
-				const ntruAuthKey: Uint8Array		= sodium.randombytes_buf(
-					sodium.crypto_onetimeauth_KEYBYTES
+				const ntruAuthKey: Uint8Array		= Sodium.randombytes_buf(
+					Sodium.crypto_onetimeauth_KEYBYTES
 				);
 
 				const ntruPlaintext: Uint8Array		= new Uint8Array(
@@ -195,21 +195,21 @@ module Cyph {
 				);
 
 				ntruPlaintext.set(symmetricKey);
-				ntruPlaintext.set(ntruAuthKey, sodium.crypto_secretbox_KEYBYTES);
+				ntruPlaintext.set(ntruAuthKey, Sodium.crypto_secretbox_KEYBYTES);
 
 
-				const ntruCyphertext: Uint8Array	= ntru.encrypt(
+				const ntruCyphertext: Uint8Array	= Ntru.encrypt(
 					ntruPlaintext,
 					this.friendKeySet.ntru
 				);
 
-				const ntruMac: Uint8Array			= sodium.crypto_onetimeauth(
+				const ntruMac: Uint8Array			= Sodium.crypto_onetimeauth(
 					ntruCyphertext,
 					ntruAuthKey
 				);
 
-				const sodiumCyphertext: Uint8Array	= sodium.crypto_secretbox_easy(
-					sodium.crypto_box_easy(
+				const sodiumCyphertext: Uint8Array	= Sodium.crypto_secretbox_easy(
+					Sodium.crypto_box_easy(
 						data,
 						nonce,
 						this.friendKeySet.sodium,
@@ -231,33 +231,33 @@ module Cyph {
 				cyphertext.set(sodiumCyphertext, CastleCore.sodiumCyphertextIndex);
 
 				try {
-					return sodium.to_base64(cyphertext);
+					return Sodium.to_base64(cyphertext);
 				}
 				finally {
-					sodium.memzero(nonce);
-					sodium.memzero(symmetricKey);
-					sodium.memzero(ntruAuthKey);
-					sodium.memzero(ntruPlaintext);
-					sodium.memzero(ntruCyphertext);
-					sodium.memzero(ntruMac);
-					sodium.memzero(sodiumCyphertext);
-					sodium.memzero(cyphertext);
+					Sodium.memzero(nonce);
+					Sodium.memzero(symmetricKey);
+					Sodium.memzero(ntruAuthKey);
+					Sodium.memzero(ntruPlaintext);
+					Sodium.memzero(ntruCyphertext);
+					Sodium.memzero(ntruMac);
+					Sodium.memzero(sodiumCyphertext);
+					Sodium.memzero(cyphertext);
 				}
 			}
 
 			private generateKeySet () : Uint8Array {
 				this.keySets.unshift({
-					sodium: sodium.crypto_box_keypair(),
-					ntru: ntru.keyPair()
+					sodium: Sodium.crypto_box_keypair(),
+					ntru: Ntru.keyPair()
 				});
 
 				if (this.keySets.length > 2) {
 					const oldKeySet	= this.keySets.pop();
 
-					sodium.memzero(oldKeySet.sodium.privateKey);
-					sodium.memzero(oldKeySet.ntru.privateKey);
-					sodium.memzero(oldKeySet.sodium.publicKey);
-					sodium.memzero(oldKeySet.ntru.publicKey);
+					Sodium.memzero(oldKeySet.sodium.privateKey);
+					Sodium.memzero(oldKeySet.ntru.privateKey);
+					Sodium.memzero(oldKeySet.sodium.publicKey);
+					Sodium.memzero(oldKeySet.ntru.publicKey);
 				}
 
 				const publicKeySet: Uint8Array	= new Uint8Array(
@@ -267,7 +267,7 @@ module Cyph {
 				publicKeySet.set(this.keySets[0].sodium.publicKey);
 				publicKeySet.set(
 					this.keySets[0].ntru.publicKey,
-					sodium.crypto_box_PUBLICKEYBYTES
+					Sodium.crypto_box_PUBLICKEYBYTES
 				);
 
 				return publicKeySet;
@@ -277,13 +277,13 @@ module Cyph {
 				this.friendKeySet.sodium.set(new Uint8Array(
 					data.buffer,
 					startIndex,
-					sodium.crypto_box_PUBLICKEYBYTES
+					Sodium.crypto_box_PUBLICKEYBYTES
 				));
 
 				this.friendKeySet.ntru.set(new Uint8Array(
 					data.buffer,
-					sodium.crypto_box_PUBLICKEYBYTES + startIndex,
-					ntru.publicKeyLength
+					Sodium.crypto_box_PUBLICKEYBYTES + startIndex,
+					Ntru.publicKeyLength
 				));
 			}
 
@@ -301,14 +301,14 @@ module Cyph {
 					/* Initial key exchange */
 					if (!this.friendKeySet) {
 						this.friendKeySet	= {
-							sodium: new Uint8Array(sodium.crypto_box_PUBLICKEYBYTES),
-							ntru: new Uint8Array(ntru.publicKeyLength)
+							sodium: new Uint8Array(Sodium.crypto_box_PUBLICKEYBYTES),
+							ntru: new Uint8Array(Ntru.publicKeyLength)
 						};
 
 						const nonce: Uint8Array			= new Uint8Array(
 							message.buffer,
 							CastleCore.messageIdEndIndex,
-							sodium.crypto_secretbox_NONCEBYTES
+							Sodium.crypto_secretbox_NONCEBYTES
 						);
 
 						const encryptedKeys: Uint8Array	= new Uint8Array(
@@ -318,7 +318,7 @@ module Cyph {
 
 						try {
 							this.importFriendKeySet(
-								sodium.crypto_secretbox_open_easy(
+								Sodium.crypto_secretbox_open_easy(
 									encryptedKeys,
 									nonce,
 									this.sharedSecret
@@ -326,7 +326,7 @@ module Cyph {
 							);
 						}
 						finally {
-							sodium.memzero(this.sharedSecret);
+							Sodium.memzero(this.sharedSecret);
 						}
 
 						/* Trigger friend's connection acknowledgement logic
@@ -400,8 +400,8 @@ module Cyph {
 
 				const paddingIndex: number		= paddingLengthIndex + 1;
 
-				const paddingLength: Uint8Array	= sodium.randombytes_buf(1);
-				const padding: Uint8Array		= sodium.randombytes_buf(paddingLength[0]);
+				const paddingLength: Uint8Array	= Sodium.randombytes_buf(1);
+				const padding: Uint8Array		= Sodium.randombytes_buf(paddingLength[0]);
 
 				const messageIndex: number		= paddingIndex + padding.length;
 
@@ -427,10 +427,10 @@ module Cyph {
 				finally {
 					++this.outgoingMessageId[0];
 
-					sodium.memzero(data);
+					Sodium.memzero(data);
 
 					if (publicKeySet) {
-						sodium.memzero(publicKeySet);
+						Sodium.memzero(publicKeySet);
 					}
 				}
 			}
@@ -450,21 +450,21 @@ module Cyph {
 					}
 				}, CastleCore.handshakeTimeout);
 
-				this.sharedSecret	= sodium.crypto_pwhash_scryptsalsa208sha256(
+				this.sharedSecret	= Sodium.crypto_pwhash_scryptsalsa208sha256(
 					sharedSecret,
-					new Uint8Array(sodium.crypto_pwhash_scryptsalsa208sha256_SALTBYTES),
-					sodium.crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_INTERACTIVE,
-					sodium.crypto_pwhash_scryptsalsa208sha256_MEMLIMIT_INTERACTIVE,
-					sodium.crypto_secretbox_KEYBYTES
+					new Uint8Array(Sodium.crypto_pwhash_scryptsalsa208sha256_SALTBYTES),
+					Sodium.crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_INTERACTIVE,
+					Sodium.crypto_pwhash_scryptsalsa208sha256_MEMLIMIT_INTERACTIVE,
+					Sodium.crypto_secretbox_KEYBYTES
 				);
 
 				const publicKeySet: Uint8Array	= this.generateKeySet();
 
-				const nonce: Uint8Array			= sodium.randombytes_buf(
-					sodium.crypto_secretbox_NONCEBYTES
+				const nonce: Uint8Array			= Sodium.randombytes_buf(
+					Sodium.crypto_secretbox_NONCEBYTES
 				);
 
-				const encryptedKeys: Uint8Array	= sodium.crypto_secretbox_easy(
+				const encryptedKeys: Uint8Array	= Sodium.crypto_secretbox_easy(
 					publicKeySet,
 					nonce,
 					this.sharedSecret
@@ -479,13 +479,13 @@ module Cyph {
 				cyphertext.set(encryptedKeys, CastleCore.nonceEndIndex);
 
 				try {
-					this.handlers.send(sodium.to_base64(cyphertext));
+					this.handlers.send(Sodium.to_base64(cyphertext));
 				}
 				finally {
-					sodium.memzero(publicKeySet);
-					sodium.memzero(nonce);
-					sodium.memzero(encryptedKeys);
-					sodium.memzero(cyphertext);
+					Sodium.memzero(publicKeySet);
+					Sodium.memzero(nonce);
+					Sodium.memzero(encryptedKeys);
+					Sodium.memzero(cyphertext);
 				}
 			}
 		}
