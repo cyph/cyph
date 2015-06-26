@@ -24,7 +24,7 @@ module Cyph {
 
 			public receive (message: string) : void {
 				try {
-					const cyphertext: Uint8Array	= sodium.from_base64(message);
+					const cyphertext: Uint8Array	= Sodium.from_base64(message);
 
 					const id: number	= new Uint32Array(cyphertext.buffer, 0, 1)[0];
 
@@ -55,14 +55,14 @@ module Cyph {
 					) {
 						if (!wasSuccessful && this.core.receive(cyphertext)) {
 							this.session.trigger(Session.Events.cyphertext, {
-								cyphertext: sodium.to_base64(cyphertext),
+								cyphertext: Sodium.to_base64(cyphertext),
 								author: Session.Users.friend
 							});
 
 							wasSuccessful	= true;
 						}
 
-						sodium.memzero(cyphertext);
+						Sodium.memzero(cyphertext);
 					}
 
 					this.incomingMessages[this.incomingMessageId]	= null;
@@ -80,7 +80,7 @@ module Cyph {
 					this.sendQueue.push(message);
 				}
 				else {
-					const messageBytes: Uint8Array	= sodium.from_string(message);
+					const messageBytes: Uint8Array	= Sodium.from_string(message);
 
 					const numBytes: Uint8Array	= new Uint8Array(
 						new Uint32Array([
@@ -123,11 +123,11 @@ module Cyph {
 							this.core.send(data);
 						}
 						finally {
-							sodium.memzero(data);
+							Sodium.memzero(data);
 						}
 					}
 
-					sodium.memzero(messageBytes);
+					Sodium.memzero(messageBytes);
 				}
 			}
 
@@ -167,15 +167,15 @@ module Cyph {
 
 						this.receivedMessages[id].data.set(chunk, index);
 
-						sodium.memzero(data);
+						Sodium.memzero(data);
 
 						if (++this.receivedMessages[id].totalChunks === numChunks) {
 							this.session.trigger(Session.Events.castle, {
 								event: Session.CastleEvents.receive,
-								data: sodium.to_string(this.receivedMessages[id].data)
+								data: Sodium.to_string(this.receivedMessages[id].data)
 							});
 
-							sodium.memzero(this.receivedMessages[id].data);
+							Sodium.memzero(this.receivedMessages[id].data);
 
 							this.receivedMessages[id]	= null;
 						}

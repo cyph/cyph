@@ -107,18 +107,12 @@ let Translations: {[language: string] : {[text: string] : string}};
 let WebSign: IWebSign;
 
 
-/** @ignore */
-const _ntru: any	= self['ntru'];
-
 /**
  * @global NTRU library.
  */
-const ntru: any		= _ntru;
-
-/** @ignore */
-const _sodium: any	= self['sodium'];
+const Ntru: any		= self['ntru'];
 
 /**
  * @global Sodium library.
  */
-const sodium: any	= _sodium;
+const Sodium: any	= self['sodium'];
