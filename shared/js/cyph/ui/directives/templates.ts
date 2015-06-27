@@ -819,7 +819,7 @@ module Cyph {
 							</md-input-container>
 						</div>
 
-						<div ng-show='$this.state === 2'>
+						<div translate ng-show='$this.state === 2'>
 							You rock.
 						</div>
 
