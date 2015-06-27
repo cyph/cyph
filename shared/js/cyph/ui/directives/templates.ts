@@ -738,7 +738,7 @@ module Cyph {
 								<br />
 
 								<md-input-container class='connect-link-input desktop-only'>
-									<input ng-model='$this.link' aria-label='Cyph link' />
+									<input translate ng-model='$this.link' aria-label='Cyph link' />
 								</md-input-container>
 
 								<div class='connect-link-mobile mobile-only'>
