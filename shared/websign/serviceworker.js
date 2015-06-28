@@ -27,15 +27,19 @@ self.addEventListener('install', function (e) {
 
 self.addEventListener('fetch', function (e) {
 	try {
-		e.respondWith(
-			caches.match(e.request).then(function (response) {
+		caches.match(e.request).
+			then(function (response) {
 				if (response) {
-					return response;
+					e.respondWith(response);
 				}
-
-				return fetch(e.request);
+				else {
+					e.respondWith(fetch(e.request));
+				}
+			}).
+			catch(function () {
+				e.respondWith(fetch(e.request));
 			})
-		);
+		;
 	}
 	catch (_) {
 		e.respondWith(fetch(e.request));
