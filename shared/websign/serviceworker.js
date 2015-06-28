@@ -26,24 +26,14 @@ self.addEventListener('install', function (e) {
 });
 
 self.addEventListener('fetch', function (e) {
-	try {
-		caches.match(e.request).
-			then(function (response) {
-				if (response) {
-					e.respondWith(response);
-				}
-				else {
-					e.respondWith(fetch(e.request));
-				}
-			}).
-			catch(function () {
-				e.respondWith(fetch(e.request));
-			})
-		;
-	}
-	catch (_) {
-		e.respondWith(fetch(e.request));
-	}
+	caches.match(e.request).then(function (response) {
+		if (response) {
+			e.respondWith(response);
+		}
+		else {
+			e.respondWith(fetch(e.request));
+		}
+	});
 });
 
 self.addEventListener('notificationclick', function (e) {
