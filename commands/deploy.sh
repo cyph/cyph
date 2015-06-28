@@ -161,6 +161,8 @@ for d in cyph.im cyph.video ; do
 
 	echo 'WebSign'
 
+	mv websign/serviceworker.js ./
+
 	# Merge in base64'd images and audio, BUT NOT fonts (they add 7mb)
 	find img audio -type f -print0 | while read -d $'\0' f ; do
 		for g in index.html $(find js -name '*.js') $(find css -name '*.css') ; do
@@ -185,6 +187,7 @@ for d in cyph.im cyph.video ; do
 
 	../commands/websign/pack.py index.html $d.pkg
 	cat websign/index.html | sed "s/\\\$PROJECT/$d/g" > index.html
+	../commands/websign/pack.py index.html index.html
 	rm websign/index.html
 
 	currentDir="$(pwd)"
@@ -222,7 +225,8 @@ for d in cyph.im cyph.video ; do
 		\"hash\": \"$sha256hash\",
 		\"timestamp\": $timestamp,
 		\"expires\": $expires,
-		\"webSignHashes\": $websignhashes
+		\"webSignHashes\": null,
+		\"webSignBootHashWhitelist\": $websignhashes
 	}" > websign/$d.sig
 	echo $timestamp >> websign/$d.sig
 

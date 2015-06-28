@@ -26,7 +26,12 @@ for path in $( \
 	echo -e "$path:\n" >> .bootstrapText.tmp
 
 	if [ "$path" == './' ] ; then
-		cat websign/index.html | sed "s/\\\$PROJECT/${project}/g" >> .bootstrapText.tmp
+		cat websign/index.html | sed "s/\\\$PROJECT/${project}/g" > .index.html.tmp
+		../commands/websign/pack.py .index.html.tmp .index.html.tmp
+		cat .index.html.tmp >> .bootstrapText.tmp
+		rm .index.html.tmp
+	elif [ "$path" == 'serviceworker.js' ] ; then
+		cat websign/serviceworker.js >> .bootstrapText.tmp
 	else
 		cat "$path" >> .bootstrapText.tmp
 	fi

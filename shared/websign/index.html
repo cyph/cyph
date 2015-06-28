@@ -120,15 +120,10 @@
 
 				files: [
 					'./',
-					'websign/css/websign.css',
-					'websign/js/crypto.js',
-					'websign/js/keys.js',
-					'websign/js/sha256.js',
 					'websign/js/workerhelper.js',
-					'websign/lib/nacl.js',
 					'websign/appcache.appcache',
 					'websign/manifest.json',
-					'websign/serviceworker.js'
+					'serviceworker.js'
 				],
 
 				publicKeys: PUBLIC_KEYS
@@ -198,7 +193,7 @@
 
 		try {
 			navigator.serviceWorker.
-				register('websign/serviceworker.js').
+				register('serviceworker.js').
 				catch(function () {})
 			;
 		}
@@ -295,7 +290,7 @@
 									localStorage.webSignHashExpires		= hashObject.expires;
 
 									localStorage.webSignBootHashWhitelist	=
-										JSON.stringify(hashObject.webSignHashes)
+										JSON.stringify(hashObject.webSignBootHashWhitelist)
 									;
 								}
 							}
@@ -305,9 +300,9 @@
 
 					/* Show big scary warning if WebSign has been compromised */
 					try {
-						var webSignHashes	= JSON.parse(localStorage.webSignBootHashWhitelist);
+						var webSignBootHashWhitelist	= JSON.parse(localStorage.webSignBootHashWhitelist);
 
-						if (!webSignHashes[localStorage.webSignBootHash]) {
+						if (!webSignBootHashWhitelist[localStorage.webSignBootHash]) {
 							panic();
 							return;
 						}

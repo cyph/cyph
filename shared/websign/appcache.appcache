@@ -2,15 +2,10 @@ CACHE MANIFEST
 
 CACHE:
 ../
-css/websign.css
-js/crypto.js
-js/keys.js
-js/sha256.js
 js/workerhelper.js
-lib/nacl.js
 appcache.appcache
 manifest.json
-serviceworker.js
+../serviceworker.js
 
 NETWORK:
 *
