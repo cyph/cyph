@@ -30,8 +30,7 @@ self.addEventListener('install', function (e) {
 self.addEventListener('fetch', function (e) {
 	for (var i = 0 ; i < files.length ; ++i) {
 		if (e.request.url === files[0].url) {
-			e.respondWith(caches.match(e.request));
-			return;
+			return caches.match(e.request);
 		}
 	}
 });
