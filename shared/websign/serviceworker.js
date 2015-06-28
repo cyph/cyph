@@ -4,7 +4,9 @@ var files	= [
 	'websign/appcache.appcache',
 	'websign/manifest.json',
 	'serviceworker.js'
-];
+].map(function (file) {
+	return new Request(file);
+});
 
 
 self.addEventListener('install', function (e) {
@@ -14,7 +16,7 @@ self.addEventListener('install', function (e) {
 				try {
 					var file	= files[i];
 
-					fetch(new Request(file)).then(function (response) {
+					fetch(file).then(function (response) {
 						cache.put(file, response);
 					});
 				}
@@ -26,14 +28,12 @@ self.addEventListener('install', function (e) {
 });
 
 self.addEventListener('fetch', function (e) {
-	caches.match(e.request).then(function (response) {
-		if (response) {
-			e.respondWith(response);
+	for (var i = 0 ; i < files.length ; ++i) {
+		if (e.request.url === files[0].url) {
+			e.respondWith(caches.match(e.request));
+			return;
 		}
-		else {
-			e.respondWith(fetch(e.request));
-		}
-	});
+	}
 });
 
 self.addEventListener('notificationclick', function (e) {
