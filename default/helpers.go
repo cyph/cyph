@@ -142,7 +142,6 @@ func handleFuncs(pattern string, handlers Handlers) {
 
 func initHandler(w http.ResponseWriter, r *http.Request) {
 	if _, ok := config.AllowedOrigins[r.Host]; ok || appengine.IsDevAppServer() {
-		w.Header().Add("Access-Control-Allow-Headers", "*")
 		w.Header().Add("Access-Control-Allow-Origin", "*")
 		w.Header().Add("Access-Control-Allow-Methods", config.AllowedMethods)
 	}
