@@ -61,9 +61,9 @@ cyphComCSP="$( \
 	cat shared/websign/csp | \
 	grep -v img-src | \
 	sed "s/ data://g" | \
-	tr '\n' ' ' \
+	tr -d '\n' \
 )"
-webSignCSP="$(cat shared/websign/csp | tr '\n' ' ')"
+webSignCSP="$(cat shared/websign/csp | tr -d '\n')"
 ls cyph.com/*.yaml | xargs -I% sed -i.bak "s|${defaultCSPString}|${cyphComCSP}|g" %
 ls */*.yaml */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s|${defaultCSPString}|${webSignCSP}|g" %
 
