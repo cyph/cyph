@@ -29,7 +29,7 @@ self.addEventListener('install', function (e) {
 
 self.addEventListener('fetch', function (e) {
 	for (var i = 0 ; i < files.length ; ++i) {
-		if (e.request.url === files[0].url) {
+		if (e.request.url === files[i].url) {
 			return caches.match(e.request);
 		}
 	}
