@@ -16,16 +16,11 @@ function openCache (callback) {
 self.addEventListener('install', function (e) {
 	try {
 		openCache(function (cache) {
-			for (var i = 0 ; i < files.length ; ++i) {
-				try {
-					var file	= files[i];
-
-					fetch(file).then(function (response) {
-						cache.put(file, response);
-					});
-				}
-				catch (_) {}
-			}
+			files.forEach(function (file) {
+				fetch(file).then(function (response) {
+					cache.put(file, response);
+				});
+			});
 		});
 	}
 	catch (_) {}
