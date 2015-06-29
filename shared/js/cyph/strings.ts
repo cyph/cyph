@@ -63,9 +63,9 @@ module Cyph {
 			`unless you're actively hiding your current location from them). Continue?`
 		,
 
-		p2pWarningPassive:
-			`This will establish a P2P connection. If you have a reason ` +
-			`to conceal your IP address from your friend, close this window now.`
+		p2pWarningVideoPassive:
+			`Starting video call and P2P connection. If you don't want to be seen on camera, or ` +
+			`have a reason to conceal your IP address from your friend, close this window now.`
 		,
 
 		pingPongTimeout:

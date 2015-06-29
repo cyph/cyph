@@ -136,7 +136,7 @@ module Cyph.video {
 					}
 
 					this.dialogManager.toast({
-						content: Cyph.Strings.p2pWarningPassive,
+						content: Cyph.Strings.p2pWarningVideoPassive,
 						delay: 5000
 					});
 				});
