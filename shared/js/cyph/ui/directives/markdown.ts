@@ -78,7 +78,7 @@ module Cyph {
 											/* Block window.opener in new window */
 											replace(
 												/\<a href=/g,
-												(match, value: string) => '<a rel="noreferrer" href='
+												'<a rel="noreferrer" href='
 											)
 									)
 								)
