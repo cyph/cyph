@@ -8,10 +8,14 @@ var files	= [
 	return new Request(file);
 });
 
+function openCache (callback) {
+	caches.open('cache').then(callback);
+}
+
 
 self.addEventListener('install', function (e) {
 	try {
-		caches.open('cache').then(function (cache) {
+		openCache(function (cache) {
 			for (var i = 0 ; i < files.length ; ++i) {
 				try {
 					var file	= files[i];
@@ -30,7 +34,24 @@ self.addEventListener('install', function (e) {
 self.addEventListener('fetch', function (e) {
 	for (var i = 0 ; i < files.length ; ++i) {
 		if (e.request.url === files[i].url) {
-			return caches.match(e.request);
+			return e.respondWith(
+				caches.match(e.request).then(function (response) {
+					if (response) {
+						return response;
+					}
+					else {
+						return fetch(e.request.clone()).then(function (response) {
+							var responseToCache	= response.clone();
+
+							openCache(function (cache) {
+								cache.put(e.request, responseToCache);
+							});
+
+							return response;
+						});
+					}
+				})
+			);
 		}
 	}
 });
