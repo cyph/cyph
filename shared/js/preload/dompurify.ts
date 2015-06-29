@@ -1,6 +1,14 @@
+/**
+ * @file DOMPurify href URI scheme whitelist hook, copied from
+ * https://github.com/cure53/DOMPurify/blob/master/demos/hooks-scheme-whitelist.html.
+ */
+
+
 /// <reference path="../../lib/typings/tsd.d.ts" />
 
-/* Copied from https://github.com/cure53/DOMPurify/blob/master/demos/hooks-scheme-whitelist.html */
+
+(() => {
+
 
 // allowed URI schemes
 const whitelist: string[]	= ['http', 'https', 'ftp'];
@@ -40,3 +48,6 @@ DOMPurify.addHook('afterSanitizeAttributes', (node: HTMLElement) => {
 
 	return node;
 });
+
+
+})();
