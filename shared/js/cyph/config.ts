@@ -67,7 +67,7 @@ module Cyph {
 			iceCredential: 'cyph',
 			fileChunkSize: 1024,
 			maxFileSize: 1100000000,
-			voiceCallVideo: '/video/background.mp4?v=1.2'
+			voiceCallVideo: '/video/voicecall.mp4'
 		};
 
 		/** Notifier-related config (used by UI.Notifier). */
