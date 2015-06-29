@@ -98,4 +98,3 @@ module Cyph {
 		}
 	}
 }
-
