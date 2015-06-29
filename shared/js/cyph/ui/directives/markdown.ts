@@ -59,7 +59,7 @@ module Cyph {
 						link: (scope, element, attrs) => {
 							const set	= (val: string) =>
 								element.html(
-									DOMPurify.sanitize(
+									self['DOMPurify'].sanitize(
 										markdown.render(val).
 
 											/* Merge blockquotes like reddit */
@@ -80,6 +80,11 @@ module Cyph {
 												/\<a href=/g,
 												'<a rel="noreferrer" href='
 											)
+										,
+										{
+											FORBID_TAGS: ['style'],
+											SAFE_FOR_JQUERY: true
+										}
 									)
 								)
 							;
@@ -93,3 +98,4 @@ module Cyph {
 		}
 	}
 }
+
