@@ -123,7 +123,7 @@ module Cyph {
 								playing: $this.p2pManager.isPlaying()
 							}'
 						>
-							<a class='logo' ng-href='{{Cyph.Env.homeUrl}}'>
+							<a class='logo' rel='noreferrer' ng-href='{{Cyph.Env.homeUrl}}'>
 								<img src='/img/betalogo.mobile.png' />
 							</a>
 							<video
@@ -445,7 +445,7 @@ module Cyph {
 							"show-chat": showChat && $this.state === Cyph.UI.Chat.States.chat
 						}'
 					>
-						<a class='logo' ng-href='{{Cyph.Env.homeUrl}}'>
+						<a class='logo' rel='noreferrer' ng-href='{{Cyph.Env.homeUrl}}'>
 							<img src='/img/betalogo.png' />
 						</a>
 						<div ng-show='showChat && $this.state === Cyph.UI.Chat.States.chat'>
@@ -575,7 +575,7 @@ module Cyph {
 					<div>
 						<md-toolbar class='chat-toolbar'>
 							<div class='md-toolbar-tools'>
-								<a class='logo' ng-href='{{Cyph.Env.homeUrl}}'>
+								<a class='logo' rel='noreferrer' ng-href='{{Cyph.Env.homeUrl}}'>
 									<img src='/img/betalogo.mobile.png' />
 								</a>
 
@@ -905,7 +905,7 @@ module Cyph {
 						&copy; Cyph 2015
 						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-						<a href='https://twitter.com/cyph'>
+						<a rel='noreferrer' href='https://twitter.com/cyph'>
 							@cyph
 						</a>
 						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

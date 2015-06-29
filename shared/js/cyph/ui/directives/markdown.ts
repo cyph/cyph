@@ -63,7 +63,7 @@ module Cyph {
 										markdown.render(val).
 
 											/* Merge blockquotes like reddit */
-											replace(/\<\/blockquote\>\n\<blockquote\>\n/g, '').
+											replace(/\<\/blockquote>\n\<blockquote>\n/g, '').
 
 											/* Images */
 											replace(
@@ -73,6 +73,12 @@ module Cyph {
 													img.src	= value;
 													return img.outerHTML;
 												}
+											).
+
+											/* Block window.opener in new window */
+											replace(
+												/\<a (href=".*?")/g,
+												(match, value: string) => '<a rel="noreferrer" ' + value
 											)
 									)
 								)
