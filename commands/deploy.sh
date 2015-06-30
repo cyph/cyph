@@ -55,6 +55,7 @@ ls */*.yaml | xargs -I% sed -ri.bak "s/  ${defaultHeadersString}(.*)/\
 	done ; \
 	echo \"\$headers\" \
 /ge" %
+ls */*.yaml | xargs -I% sed -i.bak 's|###| |g' %
 
 # Temporary workaround for Google header length cap
 if [ $test ] ; then
