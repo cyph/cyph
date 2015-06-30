@@ -61,7 +61,8 @@ if [ $test ] ; then
 	cat shared/websign/csp | \
 		grep -v referrer | \
 		grep -v object-src | \
-		grep -v upgrade-insecure-requests \
+		grep -v upgrade-insecure-requests | \
+		sed 's|https://cyphdbyhiddenbhs.onion ||g' \
 	> .tmpcsp
 	mv .tmpcsp shared/websign/csp
 fi
