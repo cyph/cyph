@@ -14,7 +14,7 @@ if (FontsCSS) {
 	Cyph.UI.Elements.body.append(
 		$('<style></style>').html(
 			FontsCSS.replace(
-				/url(\//g,
+				/url\(\//g,
 				'url(' + Cyph.Env.homeUrl
 			)
 		)
