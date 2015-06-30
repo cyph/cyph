@@ -56,6 +56,16 @@ ls */*.yaml | xargs -I% sed -ri.bak "s/  ${defaultHeadersString}(.*)/\
 	echo \"\$headers\" \
 /ge" %
 
+# Temporary workaround for Google header length cap
+if [ $test ] ; then
+	cat shared/websign/csp | \
+		grep -v referrer | \
+		grep -v object-src | \
+		grep -v upgrade-insecure-requests \
+	> .tmpcsp
+	mv .tmpcsp shared/websign/csp
+fi
+
 defaultCSPString='DEFAULT_CSP'
 cyphComCSP="$( \
 	cat shared/websign/csp | \
