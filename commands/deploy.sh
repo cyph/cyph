@@ -63,7 +63,8 @@ if [ $test ] ; then
 		grep -v object-src | \
 		grep -v upgrade-insecure-requests | \
 		sed 's|https://cyphdbyhiddenbhs.onion ||g' | \
-		perl -pe 's/https:\/\/.*?.appspot.com/https:\/\/\*.appspot.com/g'
+		sed 's|api.cyph.com|*.appspot.com|g' | \
+		sed 's|www.cyph.com|*.appspot.com|g' \
 	> .tmpcsp
 	mv .tmpcsp shared/websign/csp
 fi
