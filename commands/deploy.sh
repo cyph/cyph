@@ -116,6 +116,8 @@ for d in cyph.com cyph.im cyph.video ; do
 
 	cd ../$d
 
+	echo "FontsCSS = \`$(scss css/fonts.scss)\`;" >> js/preload/fonts.ts
+
 	../commands/build.sh --prod || exit;
 
 	if [ "${branch}" == 'staging' ] ; then

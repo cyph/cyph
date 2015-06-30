@@ -119,6 +119,9 @@ module Cyph {
 			}
 		})();
 
+		/** Full URL for voice call video. */
+		public static p2pVoiceCallVideo: string	= Env.homeUrl + Config.p2pConfig.voiceCallVideo;
+
 		/** Either "mobile" or "desktop", depending on Env.isMobile. */
 		public static platformString: string	= Env.isMobile ? 'mobile' : 'desktop';
 

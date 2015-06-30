@@ -48,7 +48,7 @@ module Cyph {
 					markdown.renderer.rules.emoji	= (token, idx) =>
 						self['twemoji'].parse(
 							token[idx].content,
-							{base: '/lib/bower_components/twemoji/'}
+							{base: Env.homeUrl + 'lib/bower_components/twemoji/'}
 						)
 					;
 

@@ -8,6 +8,20 @@
 /// <reference path="../cyph/ui/elements.ts" />
 
 
+/* In WebSigned environments, can't load fonts from current origin */
+
+if (FontsCSS) {
+	Cyph.UI.Elements.body.append(
+		$('<style></style>').html(
+			FontsCSS.replace(
+				/url(\//g,
+				'url(' + Cyph.Env.homeUrl
+			)
+		)
+	);
+}
+
+
 /* Translations */
 
 if (Translations && Cyph.Env.language !== Cyph.Config.defaultLanguage) {
