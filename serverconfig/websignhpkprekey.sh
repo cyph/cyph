@@ -16,8 +16,8 @@ function delete {
 }
 
 
-mkdir -p /tmp/websignhpkprekey
-cd /tmp/websignhpkprekey
+mkdir -p /etc/nginx/ssl/tmp
+cd /etc/nginx/ssl/tmp
 
 openssl dhparam -out dhparams.pem 2048
 openssl genrsa -out backup.pem 2048
