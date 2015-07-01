@@ -18,7 +18,10 @@ apt-get -y --force-yes install aptitude nginx openssl nodejs
 
 mkdir /etc/nginx/ssl
 chmod 600 /etc/nginx/ssl
+echo 'tmpfs /etc/nginx/ssl tmpfs rw,size=50M 0 0' >> /etc/fstab
+mount --all
 
+umask 077
 echo "${rekeyscript}" | base64 --decode > /rekey.sh
 chmod 700 /rekey.sh
 /rekey.sh
