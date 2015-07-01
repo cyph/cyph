@@ -6,6 +6,7 @@
 /// <reference path="../preload/crypto.ts" />
 /// <reference path="../preload/unsupportedbrowsers.ts" />
 /// <reference path="../preload/dompurify.ts" />
+/// <reference path="../preload/fonts.ts" />
 /// <reference path="../preload/translations.ts" />
 /// <reference path="../preload/base.ts" />
 

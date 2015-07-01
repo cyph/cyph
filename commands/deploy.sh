@@ -55,6 +55,20 @@ ls */*.yaml | xargs -I% sed -ri.bak "s/  ${defaultHeadersString}(.*)/\
 	done ; \
 	echo \"\$headers\" \
 /ge" %
+ls */*.yaml | xargs -I% sed -i.bak 's|###| |g' %
+
+# Temporary workaround for Google header length cap
+if [ $test ] ; then
+	cat shared/websign/csp | \
+		grep -v referrer | \
+		grep -v object-src | \
+		grep -v upgrade-insecure-requests | \
+		sed 's|https://cyphdbyhiddenbhs.onion ||g' | \
+		sed 's|api.cyph.com|*.appspot.com|g' | \
+		sed 's|www.cyph.com|*.appspot.com|g' \
+	> .tmpcsp
+	mv .tmpcsp shared/websign/csp
+fi
 
 defaultCSPString='DEFAULT_CSP'
 cyphComCSP="$( \
@@ -74,6 +88,7 @@ ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak 's/isLocalEnv: boolean		= true/
 if [ $test ] ; then
 	sed -i.bak "s/staging/${branch}/g" default/config.go
 	ls */*.yaml */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/api.cyph.com/${branch}-dot-cyphme.appspot.com/g" %
+	ls */*.yaml */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/www.cyph.com/${branch}-dot-cyph-com-dot-cyphme.appspot.com/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42000/https:\/\/${branch}-dot-cyphme.appspot.com/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42001/https:\/\/${branch}-dot-cyph-com-dot-cyphme.appspot.com/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42002/https:\/\/${branch}-dot-cyph-im-dot-cyphme.appspot.com/g" %
@@ -115,6 +130,8 @@ for d in cyph.com cyph.im cyph.video ; do
 	};" >> ../$d/js/preload/translations.ts
 
 	cd ../$d
+
+	echo "FontsCSS = \`$(scss css/fonts.scss)\`;" >> js/preload/fonts.ts
 
 	../commands/build.sh --prod || exit;
 
