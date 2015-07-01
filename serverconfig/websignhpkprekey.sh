@@ -67,7 +67,7 @@ if [ "${certHash}" == "${keyHash}" ] ; then
 	echo "${conf}" | \
 		base64 --decode | \
 		sed "s|worker_connections 768;|worker_connections $(ulimit -n);|g" | \
-		sed "s|SSL_CONFIG|${sslconf}|g" | \
+		sed "s/SSL_CONFIG/$(echo "${sslconf}" | base64 --decode | perl -pe 's/\//\\\//g' | perl -pe 's/\n/\\n/g')/g" | \
 		sed "s|KEY_HASH|${keyHash}|g" | \
 		sed "s|BACKUP_HASH|${backupHash}|g" \
 	> /etc/nginx/nginx.conf
