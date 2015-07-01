@@ -139,7 +139,7 @@ module Cyph {
 								'
 								ng-attr-src='{{
 									$this.p2pManager.isPlaying() ?
-										Cyph.Config.p2pConfig.voiceCallVideo :
+										Cyph.Env.p2pVoiceCallVideo :
 										" "
 								}}'
 								autoplay

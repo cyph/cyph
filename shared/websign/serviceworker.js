@@ -8,6 +8,8 @@ var files	= [
 	return new Request(file);
 });
 
+var root	= files[0].url.replace(/(.*)\/$/, '$1');
+
 function openCache (callback) {
 	caches.open('cache').then(callback);
 }
@@ -48,6 +50,11 @@ self.addEventListener('fetch', function (e) {
 				})
 			);
 		}
+	}
+
+	/* Block non-whitelisted paths in this origin */
+	if (e.request.url.indexOf(root) === 0) {
+		return e.respondWith(new Response('', {status: 404}));
 	}
 });
 
