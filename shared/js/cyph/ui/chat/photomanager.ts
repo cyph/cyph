@@ -42,8 +42,6 @@ module Cyph {
 							)
 					;
 
-					URL.revokeObjectURL(image.src);
-
 					this.send(encodedImage);
 				}
 
@@ -53,19 +51,21 @@ module Cyph {
 
 				public insert (elem: HTMLInputElement) : void {
 					if (elem.files.length > 0) {
-						const file: File	= elem.files[0];
+						const file: File			= elem.files[0];
+						const reader: FileReader	= new FileReader();
 
-						if (file.type === 'image/gif') {
-							const reader: FileReader	= new FileReader();
-							reader.onload	= () => this.send(reader.result);
-							reader.readAsDataURL(file);
-						}
-						else {
-							const image: HTMLImageElement	= new Image();
-							image.onload	= () => this.processImage(image, file);
-							image.src		= URL.createObjectURL(file);
-						}
+						reader.onload	= () => {
+							if (file.type === 'image/gif') {
+								this.send(reader.result);
+							}
+							else {
+								const image: HTMLImageElement	= new Image();
+								image.onload	= () => this.processImage(image, file);
+								image.src		= reader.result;
+							}
+						};
 
+						reader.readAsDataURL(file);
 						$(elem).val('');
 					}
 				}

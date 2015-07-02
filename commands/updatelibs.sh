@@ -57,12 +57,30 @@ tsd query --resolve --overwrite --save --action install \
 cd ../cryptolib
 
 bower install --save \
-	mnaamani/otr4-em \
-	rubycon/isaac.js
+	libsodium.js \
+	rubycon/isaac.js \
+	cyph/ntru.js
 
-wget http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/hmac-sha256.js
+wget https://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/hmac-sha256.js
+
+cd ../../default
+
+rm -rf github.com 2> /dev/null
+mkdir github.com
+cd github.com
+
+mkdir gorilla
+cd gorilla
+git clone git://github.com/gorilla/mux.git
+cd ..
+mkdir microcosm-cc
+cd microcosm-cc
+git clone git://github.com/microcosm-cc/bluemonday.git
 
 cd ..
+rm -rf */*/.git
+
+cd ../..
 chmod -R 700 .
 
 cd "${dir}"

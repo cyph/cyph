@@ -8,11 +8,17 @@ module Cyph {
 			/** Accumulated binary data of file. */
 			data: ArrayBuffer[];
 
+			/** Symmetric key used for encrypting file over the wire. */
+			key: Uint8Array;
+
 			/** File name. */
 			name: string;
 
 			/** Human-readable file size (e.g. 3.14 MB). */
 			readableSize: string;
+
+			/** Number of file chunks being asynchronously processed. */
+			pendingChunks: number;
 
 			/** Percentage completion of transfer. */
 			percentComplete: number;

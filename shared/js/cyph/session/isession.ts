@@ -13,6 +13,7 @@ module Cyph {
 				isAlive: boolean;
 				isCreator: boolean;
 				isStartingNewCyph: boolean;
+				wasInitiatedByAPI: boolean;
 			};
 
 			/**

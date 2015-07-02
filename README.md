@@ -15,6 +15,7 @@ Next, run the following commands:
 	VBoxManage modifyvm "boot2docker-vm" --natpf1 "tcp-port42001,tcp,,42001,,42001"
 	VBoxManage modifyvm "boot2docker-vm" --natpf1 "tcp-port42002,tcp,,42002,,42002"
 	VBoxManage modifyvm "boot2docker-vm" --natpf1 "tcp-port42003,tcp,,42003,,42003"
+	VBoxManage modifyvm "boot2docker-vm" --natpf1 "tcp-port42004,tcp,,42004,,42004"
 	VBoxManage modifyvm "boot2docker-vm" --natpf1 "tcp-port43000,tcp,,43000,,43000"
 	
 	boot2docker start
@@ -42,8 +43,8 @@ To blow out all Cyph-related images/containers/processes when you're done:
 
 To start a local environment:
 
-	docker run -d \
-		-p 42000:5000 -p 42001:5001 -p 42002:5002 -p 42003:5003 -p 43000:4568 \
+	docker run --privileged=true -d \
+		-p 42000:5000 -p 42001:5001 -p 42002:5002 -p 42003:5003 -p 42004:5004 -p 43000:4568 \
 		-v /path/to/current/directory:/cyph \
 		cyph/<branch> ./serve.sh
 
@@ -66,6 +67,8 @@ Ports:
 * cyph.im: 42002
 
 * cyph.me: 42003
+
+* cyph.video: 42004
 
 * SQS: 43000
 

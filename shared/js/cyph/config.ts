@@ -9,8 +9,11 @@ module Cyph {
 		/** Indicates the original language of any content to be translated. */
 		public static defaultLanguage: string		= 'en';
 
+		/** Length of server ID for a cyph. */
+		public static cyphIdLength: number			= 7;
+
 		/** Length of random IDs in cyph links. */
-		public static secretLength: number			= 14;
+		public static secretLength: number			= 25;
 
 		/** Length of random SQS queue IDs. */
 		public static longSecretLength: number		= 52;
@@ -58,13 +61,13 @@ module Cyph {
 		/** Affiliate code for Amazon links in chat (used by UI.Affiliate). */
 		public static amazonAffiliateCode: string	= 'cyph-20';
 
-		/** P2P-related config (used by P2P.P2P) */
+		/** P2P-related config (used by P2P.P2P). */
 		public static p2pConfig	= {
 			iceServer: 'ice.cyph.com',
 			iceCredential: 'cyph',
-			fileChunkSize: 5000,
+			fileChunkSize: 1024,
 			maxFileSize: 1100000000,
-			voiceCallVideo: '/video/background.mp4?v=1.2'
+			voiceCallVideo: 'video/voicecall.mp4'
 		};
 
 		/** Notifier-related config (used by UI.Notifier). */
@@ -81,11 +84,11 @@ module Cyph {
 
 		/** WebSign-related config. */
 		public static webSignConfig	= {
-			serviceWorker: 'websign/serviceworker.js',
+			serviceWorker: 'serviceworker.js',
 			workerHelper: 'websign/js/workerhelper.js'
 		};
 
-		/** Max signed 32-bit integer. */
-		public static maxInt: number	= 2147483647;
+		/** Max unsigned 32-bit integer. */
+		public static maxUint32: number	= 4294967296;
 	}
 }

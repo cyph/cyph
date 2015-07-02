@@ -26,7 +26,7 @@ module Cyph {
 					vars?: any;
 					oncomplete?: Function;
 				},
-				callback?: (ok: boolean, vars: any) => void
+				callback: (ok: boolean, vars: any) => void = (ok, vars) => {}
 			) : void {
 				this.$mdDialog.show({
 					clickOutsideToClose: true,
@@ -37,7 +37,7 @@ module Cyph {
 						$scope.vars		= o.vars;
 						$scope.close	= (ok: any) => {
 							$mdDialog.hide();
-							callback && callback(ok === true, o.vars);
+							callback(ok === true, o.vars);
 						};
 					}]
 				});
@@ -69,9 +69,14 @@ module Cyph {
 				}
 
 				const f	= (ok: any) => {
-					timeoutId && clearTimeout(timeoutId);
-					callback && callback(ok === true);
-					callback	= null;
+					if (timeoutId) {
+						clearTimeout(timeoutId);
+					}
+
+					if (callback) {
+						callback(ok === true);
+						callback	= null;
+					}
 				};
 
 				promise.then(f).catch(f);
@@ -80,15 +85,15 @@ module Cyph {
 			public toast (
 				o: {
 					content: string;
-					position: string;
 					delay: number;
+					position?: string;
 				},
 				callback?: () => void
 			) : void {
 				this.$mdToast.show({
 					template: '<md-toast>' + o.content + '</md-toast>',
 					hideDelay: o.delay,
-					position: o.position
+					position: o.position || 'top right'
 				});
 
 				setTimeout(callback, o.delay + 500);

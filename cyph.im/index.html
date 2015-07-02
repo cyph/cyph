@@ -55,6 +55,7 @@
 		<link rel='stylesheet' href='/css/loading.css' />
 
 		<base target='_blank' />
+		<meta name='referrer' content='no-referrer' />
 	</head>
 	<body>
 		<section id='main' layout='column' layout-fill>
@@ -78,160 +79,47 @@
 				flex
 			>
 				<div cyph-signup-form='ui.signupForm'>
-					<div translate>
-						Enjoying the service? Join our waitlist for Cyph v2!
+					<div>
+						{{Cyph.Strings.signupMessage1}}
 					</div>
-					<div translate>
-						More details are on the way, but the next version of Cyph will include
-						group messaging, user accounts, and encrypted chat history.
+					<div>
+						{{Cyph.Strings.signupMessage2}}
 					</div>
 				</div>
 			</div>
 
 			<div
 				ng-view
-				class='loading'
+				cyph-static-cyph-spinning-up
 				layout='column'
 				layout-fill
 				flex
 				ng-class='{
 					active: ui.state === Cyph.im.UI.States.spinningUp
 				}'
-			>
-				<div flex></div>
-				<div class='logo-animation'>
-					<img src='/img/logo.animated.gif' />
-				</div>
-				<div translate>Now spinning up your cyph room...</div>
-				<div flex></div>
-			</div>
+			></div>
 
 			<div
 				ng-view
-				class='loading'
+				cyph-link-connection='ui.cyphConnection'
 				layout='column'
 				layout-fill
 				flex
 				ng-class='{
 					active: ui.state === Cyph.im.UI.States.waitingForFriend
 				}'
-			>
-				<div flex></div>
-				<div class='logo-animation'>
-					<img src='/img/logo.animated.gif' />
-				</div>
-				<div>
-					<div translate>
-						Just have your friend open this link, and we're good to go!
-					</div>
-					<br />
+			></div>
 
-					<md-input-container id='copy-url-input' class='desktop-only'>
-						<input ng-model='ui.cyphLink' aria-label='Cyph link' />
-					</md-input-container>
-
-					<div id='copy-url-mobile' class='mobile-only'>
-						<a id='copy-url-link' ng-href='{{ui.cyphLink}}'>
-							{{ui.cyphLink}}
-						</a>
-						<br />
-
-						<md-button
-							translate
-							class='md-fab'
-							aria-label='SMS'
-						>
-							<img src='/img/icons/sms.png' />
-							<a
-								target='_self'
-								ng-href='{{Cyph.Env.smsUriBase}}{{ui.cyphLinkEncoded}}'
-							></a>
-						</md-button>
-
-						<span class='divider'>
-							&nbsp;
-						</span>
-
-						<md-button
-							translate
-							class='md-fab'
-							aria-label='Email'
-						>
-							<img src='/img/icons/email.png' />
-							<a
-								target='_self'
-								ng-href='mailto:?body={{ui.cyphLinkEncoded}}'
-							></a>
-						</md-button>
-					</div>
-
-					<br />
-					<div>
-						<span translate>
-							Link expires in
-						</span>
-						<timer
-							id='timer'
-							interval='1000'
-							countdown='Cyph.im.Config.newCyphCountdown'
-							autostart='false'
-						>
-							{{minutes}}:{{sseconds}}
-						</timer>
-					</div>
-				</div>
-				<div flex></div>
-			</div>
-
-			<md-content
+			<div
 				ng-view
-				id='error'
+				cyph-static-cyph-not-found
+				layout='column'
+				layout-fill
 				flex
-				class='nano'
 				ng-class='{
 					active: ui.state === Cyph.im.UI.States.error
 				}'
-			>
-				<div class='nano-content'>
-					<div>
-						<h1 translate>
-							I'm sorry, but your cyph is in another castle...
-						</h1>
-					</div>
-					<img src='/img/404.png' />
-					<div id='errorExplanation'>
-						<p>
-							<span translate>Please</span>
-							<a
-								translate
-								target='_self'
-								ng-href='{{Cyph.Env.newCyphUrl}}'
-							>
-								try again
-							</a>.
-						</p>
-						<p translate>Reasons why you may have landed here:</p>
-						<ul>
-							<li translate>
-								The cyph you're looking for has expired
-							</li>
-							<li translate>
-								The cyph you're looking for has already been connected to
-								(someone else got there first, or you clicked twice)
-							</li>
-							<li translate>
-								A glitch in the matrix
-							</li>
-							<li translate>
-								You're just guessing random URLs
-							</li>
-							<li translate>
-								We broke something
-							</li>
-						</ul>
-					</div>
-				</div>
-			</md-content>
+			></div>
 
 			<div
 				ng-view
@@ -249,41 +137,11 @@
 				></div>
 
 				<div
-					id='footer'
-					class='desktop-only'
+					cyph-static-footer
 					ng-class='{
 						center: ui.chat.state === Cyph.UI.Chat.States.chat
 					}'
-				>
-					&copy; Cyph 2015
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
-					<a href='https://twitter.com/cyph'>
-						@cyph
-					</a>
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
-					<a href='mailto:hello@cyph.com'>
-						hello@cyph.com
-					</a>
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
-					<a
-						target='_self'
-						href='tel:+19312974462'
-						title='+1(931) 297 4462'
-					>
-						+1(931) CYPH INC
-					</a>
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
-					<a
-						target='_self'
-						href='bitcoin:1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd'
-					>
-						1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd
-					</a>
-				</div>
+				></div>
 			</footer>
 		</section>
 
@@ -291,9 +149,7 @@
 
 		<div
 			id='pre-load'
-			ng-class='{
-				"load-complete": ui.state !== Cyph.im.UI.States.none
-			}'
+			ng-class='{"load-complete": ui.state}'
 		>
 			<div class='double-bounce1'></div>
 			<div class='double-bounce2'></div>
@@ -325,17 +181,9 @@
 		<script src='/lib/bower_components/angular-timer/dist/angular-timer.min.js'></script>
 		<script src='/lib/bower_components/tabIndent.js/js/tabIndent.js'></script>
 		<script src='/lib/bower_components/aws-sdk-js/dist/aws-sdk.min.js'></script>
+		<script src='/cryptolib/bower_components/libsodium.js/dist/browsers/combined/sodium.min.js'></script>
 		<script src='/cryptolib/hmac-sha256.js'></script>
 
 		<script src='/js/cyph.im/main.js'></script>
-
-		<script>
-			/* No more inline scripts, now that application code has been loaded */
-
-			Cyph.UI.Elements.head.append(
-				"<meta http-equiv='Content-Security-Policy' content=\"script-src 'self' 'unsafe-eval'\" />"
-			);
-		</script>
-
 	</body>
 </html>

@@ -43,6 +43,12 @@ module Cyph {
 					);
 				}
 
+				public preemptivelyInitiate () : void {
+					this.isActive	= true;
+					this.isEnabled	= true;
+					this.p2p.preemptivelyAccept();
+				}
+
 				public sendFileButton () : void {
 					this.baseButtonClick(() => {
 						if (this.isEnabled) {
@@ -232,35 +238,49 @@ module Cyph {
 										case P2P.UIEvents.Events.acceptConfirm: {
 											const callType: string		= e.args[0];
 											const timeout: number		= e.args[1];
-											const callback: Function	= e.args[2];
+											const isAccepted: boolean	= e.args[2];
+											const callback: Function	= e.args[3];
 
-											this.dialogManager.confirm({
-												title: Strings.p2pTitle,
-												content:
-													Strings.p2pRequest + ' ' +
-													Strings[callType + 'Call'] + '. ' +
-													Strings.p2pWarning
-												,
-												ok: Strings.continueDialogAction,
-												cancel: Strings.decline,
-												timeout
-											}, (ok: boolean) => callback(ok));
+											if (isAccepted) {
+												callback(true);
+											}
+											else {
+												this.dialogManager.confirm({
+													title: Strings.p2pTitle,
+													content:
+														Strings.p2pRequest + ' ' +
+														Strings[callType + 'Call'] + '. ' +
+														Strings.p2pWarning
+													,
+													ok: Strings.continueDialogAction,
+													cancel: Strings.decline,
+													timeout
+												}, (ok: boolean) => callback(ok));
+											}
+
 											break;
 										}
 										case P2P.UIEvents.Events.requestConfirm: {
 											const callType: string		= e.args[0];
-											const callback: Function	= e.args[1];
+											const isAccepted: boolean	= e.args[1];
+											const callback: Function	= e.args[2];
 
-											this.dialogManager.confirm({
-												title: Strings.p2pTitle,
-												content:
-													Strings.p2pInit + ' ' +
-													Strings[callType + 'Call'] + '. ' +
-													Strings.p2pWarning
-												,
-												ok: Strings.continueDialogAction,
-												cancel: Strings.cancel
-											}, (ok: boolean) => callback(ok));
+											if (isAccepted) {
+												callback(true);
+											}
+											else {
+												this.dialogManager.confirm({
+													title: Strings.p2pTitle,
+													content:
+														Strings.p2pInit + ' ' +
+														Strings[callType + 'Call'] + '. ' +
+														Strings.p2pWarning
+													,
+													ok: Strings.continueDialogAction,
+													cancel: Strings.cancel
+												}, (ok: boolean) => callback(ok));
+											}
+
 											break;
 										}
 										case P2P.UIEvents.Events.requestConfirmation: {

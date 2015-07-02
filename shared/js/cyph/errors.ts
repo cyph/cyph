@@ -24,7 +24,7 @@ module Cyph {
 				let message: string		= exception +
 					'\n\n' + Env.userAgent +
 					'\n\n' + Env.language +
-					'\n\n' + (location ? location.toString() : '') +
+					'\n\n' + locationData.href +
 					'\n\n' + (WebSign ? WebSign.stringify(shouldIncludeBootstrapText) : '')
 				;
 
@@ -70,10 +70,10 @@ module Cyph {
 		public static log			= Errors.baseErrorLog('WARNING WARNING WARNING SOMETHING IS SRSLY FUCKED UP LADS');
 
 		/**
-		 * Logs chat authentication failure (this happens occasionally, not sure why).
+		 * Logs chat authentication failure (attempted mitm and/or mistyped shared secret).
 		 * @function
 		 */
-		public static logSmp		= Errors.baseErrorLog('SMP JUST FAILED FOR SOMEONE LADS');
+		public static logAuthFail	= Errors.baseErrorLog('AUTHENTICATION JUST FAILED FOR SOMEONE LADS');
 
 		private static _	= (() => {
 			self.onerror	= <ErrorEventHandler> Errors.log;

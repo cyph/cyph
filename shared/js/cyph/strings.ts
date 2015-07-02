@@ -63,10 +63,29 @@ module Cyph {
 			`unless you're actively hiding your current location from them). Continue?`
 		,
 
+		p2pWarningVideoPassive:
+			`Starting video call and P2P connection. If you don't want to be seen on camera, or ` +
+			`have a reason to conceal your IP address from your friend, close this window now.`
+		,
+
 		pingPongTimeout:
 			`Unable to ping your friend...\n\n` +
 			`They might have gone offline, or one of you could be experiencing network connectivity issues.\n\n` +
 			`If you weren’t expecting your friend to leave the cyph, you may want to wait around a little longer.`
+		,
+
+		signupMessage1:
+			`Enjoying the service? Join our waitlist for Cyph v2!`
+		,
+
+		signupMessage2:
+			`More details are on the way, but the next version of Cyph will include ` +
+			`group messaging, user accounts, and encrypted chat history.`
+		,
+
+		videoDisabledLocal:
+			`Your browser does not support video calling. ` +
+			`Try again with the latest Chrome or Firefox.`
 	};
 
 	(() => {

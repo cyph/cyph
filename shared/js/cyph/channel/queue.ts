@@ -177,6 +177,8 @@ module Cyph {
 				isSynchronous?: boolean
 			) : void {
 				if (this.isQueueAlive) {
+					const delay: number	= Util.random(250);
+
 					if (typeof message === 'string') {
 						const messageBody: string	= JSON.stringify({message: message});
 
@@ -197,17 +199,19 @@ module Cyph {
 							}, callback);
 						}
 						else {
-							this.sqs.sendMessage(
-								{
+							setTimeout(() =>
+								this.sqs.sendMessage({
 									QueueUrl: this.queueUrl,
 									MessageBody: messageBody
-								},
-								callback,
-								true
-							);
+								}, callback, true)
+							, delay);
 						}
 					}
-					else if (isSynchronous) {
+					else if (
+						isSynchronous ||
+						/* SQS limit */
+						message.join('').length > 60000
+					) {
 						for (let i = 0 ; i < message.length ; ++i) {
 							this.send(
 								message[i],
@@ -217,7 +221,7 @@ module Cyph {
 										callback :
 										undefined
 								,
-								true
+								isSynchronous
 							);
 						}
 					}
@@ -239,17 +243,15 @@ module Cyph {
 							};
 						}
 
-						this.sqs.sendMessageBatch(
-							{
+						setTimeout(() =>
+							this.sqs.sendMessageBatch({
 								QueueUrl: this.queueUrl,
 								Entries: message.map((s: string, i: number) => ({
 									Id: (i + 1).toString(),
 									MessageBody: JSON.stringify({message: s})
 								}))
-							},
-							callback,
-							true
-						);
+							}, callback, true)
+						, delay);
 					}
 				}
 			}

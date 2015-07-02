@@ -13,8 +13,8 @@ module Cyph {
 			public static everything: JQuery;
 			public static affiliateCheckbox: JQuery;
 			public static buttons: JQuery;
-			public static cyphLinkInput: JQuery;
-			public static cyphLinkLink: JQuery;
+			public static connectLinkInput: JQuery;
+			public static connectLinkLink: JQuery;
 			public static cyphertext: JQuery;
 			public static insertPhotoMobile: JQuery;
 			public static messageBox: JQuery;
@@ -37,8 +37,8 @@ module Cyph {
 				Elements.everything				= $('*');
 				Elements.affiliateCheckbox		= $('.amazon-link:visible md-checkbox');
 				Elements.buttons				= $('.md-button');
-				Elements.cyphLinkInput			= $('#copy-url-input input');
-				Elements.cyphLinkLink			= $('#copy-url-link');
+				Elements.connectLinkInput		= $('.link-connection .connect-link-input input');
+				Elements.connectLinkLink		= $('.link-connection .connect-link-link');
 				Elements.cyphertext				= $('.chat-cyphertext.curtain, .chat-cyphertext.curtain > md-content');
 				Elements.insertPhotoMobile		= $('.insert-photo-mobile');
 				Elements.messageBox				= $('.message-box');
@@ -52,7 +52,7 @@ module Cyph {
 				Elements.p2pFiles				= $('.send-file-button input[type="file"]');
 				Elements.sendButton				= $('.send-button');
 				Elements.signupForm				= $('.beta-signup-form');
-				Elements.timer					= $('#timer');
+				Elements.timer					= $('.link-connection .timer');
 			}
 		}
 	}

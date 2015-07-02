@@ -1,8 +1,8 @@
 /// <reference path="../base.ts" />
 /// <reference path="../channel/ratchetedchannel.ts" />
+/// <reference path="../crypto/castle.ts" />
 /// <reference path="command.ts" />
 /// <reference path="message.ts" />
-/// <reference path="otr.ts" />
 
 
 module Cyph {
@@ -19,43 +19,49 @@ module Cyph {
 			private pingPongTimeouts: number					= 0
 
 			private channel: Channel.IChannel;
-			private otr: IOTR;
+			private castle: Crypto.ICastle;
 
 			public state	= {
 				cyphId: <string> '',
 				sharedSecret: <string> '',
 				isAlive: <boolean> true,
 				isCreator: <boolean> false,
-				isStartingNewCyph: <boolean> false
+				isStartingNewCyph: <boolean> false,
+				wasInitiatedByAPI: <boolean> false
 			};
 
-			private otrHandler (e: { event: OTREvents; data?: string; }) : void {
+			private castleHandler (e: { event: CastleEvents; data?: string; }) : void {
 				switch (e.event) {
-					case OTREvents.abort: {
-						Errors.logSmp();
-						this.trigger(Events.smp, false);
+					case CastleEvents.abort: {
+						Errors.logAuthFail();
+						this.trigger(Events.connectFailure);
 						break;
 					}
-					case OTREvents.authenticated: {
-						this.trigger(Events.smp, true);
+					case CastleEvents.connect: {
+						this.trigger(Events.beginChat);
 						this.pingPong();
 						break;
 					}
-					case OTREvents.begin: {
-						this.trigger(Events.beginChat);
-						break;
-					}
-					case OTREvents.receive: {
+					case CastleEvents.receive: {
 						this.lastIncomingMessageTimestamp	= Date.now();
 
 						if (e.data) {
-							for (const message of JSON.parse(e.data)) {
+							const data: Message[]	= (() => {
+								try {
+									return JSON.parse(e.data);
+								}
+								catch (_) {
+									return [];
+								}
+							})();
+
+							for (const message of data) {
 								this.receiveHandler(message);
 							}
 						}
 						break;
 					}
-					case OTREvents.send: {
+					case CastleEvents.send: {
 						if (e.data) {
 							this.sendQueue.push(e.data);
 						}
@@ -88,11 +94,7 @@ module Cyph {
 					if (now > nextPing) {
 						this.send(new Message());
 
-						nextPing	=
-							now +
-							30000 +
-							crypto.getRandomValues(new Uint8Array(1))[0] * 250
-						;
+						nextPing	= now + Util.random(90000, 30000);
 					}
 				});
 			}
@@ -125,16 +127,30 @@ module Cyph {
 			}
 
 			private setDescriptor (descriptor?: string) : void {
-				if (!descriptor || descriptor.length < Config.secretLength) {
+				if (
+					/* Empty/null string */
+					!descriptor ||
+
+					/* Too short */
+					descriptor.length < Config.secretLength ||
+
+					/* Contains invalid character(s) */
+					!descriptor.split('').reduce(
+						(isValid: boolean, c: string) : boolean =>
+							isValid && Cyph.Config.guidAddressSpace.indexOf(c) > -1
+						,
+						true
+					)
+				) {
 					descriptor	= Util.generateGuid(Config.secretLength);
 				}
 
-				const middle: number	= Math.ceil(descriptor.length / 2);
+				this.updateState(State.cyphId,
+					descriptor.substr(0, Config.cyphIdLength)
+				);
 
-				this.updateState(State.cyphId, descriptor.substr(0, middle));
 				this.updateState(State.sharedSecret,
-					this.state.sharedSecret ||
-					descriptor.substr(middle)
+					this.state.sharedSecret || descriptor
 				);
 			}
 
@@ -155,8 +171,7 @@ module Cyph {
 							});
 						}
 
-						this.on(Events.otr, e => this.otrHandler(e));
-						this.otr	= new OTR(this);
+						this.on(Events.castle, e => this.castleHandler(e));
 
 						const sendTimer: Timer	= new Timer((now: number) => {
 							if (!this.state.isAlive) {
@@ -173,7 +188,10 @@ module Cyph {
 							}
 						});
 					},
-					onconnect: () => this.trigger(Events.connect),
+					onconnect: () => {
+						this.trigger(Events.connect);
+						this.castle	= new Crypto.Castle(this);
+					},
 					onmessage: message => this.receive(message)
 				});
 			}
@@ -185,6 +203,13 @@ module Cyph {
 
 				if (shouldSendEvent) {
 					this.channel.send(RPCEvents.destroy, closeChat, true);
+
+					/* If aborting before the cyph begins,
+						block friend from trying to join */
+					Util.request({
+						method: 'POST',
+						url: Env.baseUrl + 'channels/' + this.state.cyphId
+					});
 				}
 				else {
 					this.channel.close(closeChat);
@@ -208,7 +233,7 @@ module Cyph {
 					this.close(false);
 				}
 				else {
-					this.otr.receive(data);
+					this.castle.receive(data);
 				}
 			}
 
@@ -217,7 +242,7 @@ module Cyph {
 			}
 
 			public sendBase (messages: IMessage[]) : void {
-				if (this.otr) {
+				if (this.castle) {
 					for (const message of messages) {
 						if (message.event === RPCEvents.text) {
 							this.trigger(RPCEvents.text, {
@@ -227,7 +252,7 @@ module Cyph {
 						}
 					}
 
-					this.otr.send(JSON.stringify(messages));
+					this.castle.send(JSON.stringify(messages));
 				}
 				else {
 					setTimeout(() => this.sendBase(messages), 250);
@@ -264,12 +289,18 @@ module Cyph {
 				private id: string = Util.generateGuid()
 			) {
 				/* true = yes; false = no; null = maybe */
-				this.updateState(State.isStartingNewCyph,
+				this.updateState(
+					State.isStartingNewCyph,
 					!descriptor || descriptor === 'new' ?
 						true :
 						descriptor.length > Config.secretLength ?
 							null :
 							false
+				);
+
+				this.updateState(
+					State.wasInitiatedByAPI,
+					this.state.isStartingNewCyph === null
 				);
 
 				this.setDescriptor(descriptor);

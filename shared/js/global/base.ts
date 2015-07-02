@@ -4,6 +4,7 @@
  */
 
 
+/// <reference path="../typings/dataview.d.ts" />
 /// <reference path="../typings/iwebsign.d.ts" />
 /// <reference path="../typings/storage.d.ts" />
 /// <reference path="../../lib/typings/tsd.d.ts" />
@@ -14,13 +15,14 @@
 
 /// <reference path="../cyph/icontroller.ts" />
 /// <reference path="../cyph/channel/ichannel.ts" />
+/// <reference path="../cyph/crypto/icastle.ts" />
 /// <reference path="../cyph/p2p/ifiletransfer.ts" />
 /// <reference path="../cyph/p2p/ip2p.ts" />
 /// <reference path="../cyph/session/imessage.ts" />
 /// <reference path="../cyph/session/imutex.ts" />
-/// <reference path="../cyph/session/iotr.ts" />
 /// <reference path="../cyph/session/isession.ts" />
 /// <reference path="../cyph/ui/idialogmanager.ts" />
+/// <reference path="../cyph/ui/ilinkconnection.ts" />
 /// <reference path="../cyph/ui/inotifier.ts" />
 /// <reference path="../cyph/ui/isidebar.ts" />
 /// <reference path="../cyph/ui/isignupform.ts" />
@@ -32,7 +34,7 @@
 
 
 /** @ignore */
-const IS_WEB: boolean	= 'IS_WEB' in self ?
+const IS_WEB: boolean	= typeof self['IS_WEB'] !== 'undefined' ?
 	self['IS_WEB'] :
 	typeof window === 'object'
 ;
@@ -72,9 +74,32 @@ if (
 
 
 /**
+ * @global Cross-browser container of values in self.location.
+ */
+const locationData: Location	= typeof self['locationData'] !== 'undefined' ?
+	self['locationData'] :
+	location
+;
+
+/**
+ * @global Cross-browser container of values in self.navigator.
+ */
+const navigatorData: Navigator	= typeof self['navigatorData'] !== 'undefined' ?
+	self['navigatorData'] :
+	navigator
+;
+
+
+ /**
  * @global Event handler for messages to the current thread.
  */
 let onthreadmessage: (e: MessageEvent) => any;
+
+/**
+ * @global String containing compiled contents of fonts.scss
+ * (only exists in main thread of production environments).
+ */
+let FontsCSS: string;
 
 /**
  * @global Object containing translations for English phrases
@@ -86,3 +111,14 @@ let Translations: {[language: string] : {[text: string] : string}};
  * @global WebSign object (only created in WebSigned environments).
  */
 let WebSign: IWebSign;
+
+
+/**
+ * @global NTRU library.
+ */
+const Ntru: any		= self['ntru'];
+
+/**
+ * @global Sodium library.
+ */
+const Sodium: any	= self['sodium'];

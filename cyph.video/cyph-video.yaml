@@ -1,0 +1,31 @@
+application: cyphme
+module: cyph-video
+version: master
+runtime: python27
+api_version: 1
+threadsafe: true
+
+handlers:
+
+# Main
+
+- url: /
+  static_files: index.html
+  upload: index.html
+  secure: always
+  # default_headers
+
+- url: /unsupportedbrowser
+  static_files: unsupportedbrowser.html
+  upload: unsupportedbrowser.html
+  secure: always
+  # default_headers Cache-Control Expires
+
+
+# Else
+
+- url: /(.*)
+  static_files: \1
+  upload: .*
+  secure: always
+  # default_headers

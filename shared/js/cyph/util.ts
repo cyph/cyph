@@ -4,42 +4,6 @@ module Cyph {
 	 */
 	export class Util {
 		/**
-		 * Breaks up string into array of smaller chunks.
-		 * @param s
-		 * @param chunkLength
-		 */
-		public static chunkString (s: string, chunkLength: number) : string[] {
-			const array: string[]	= [];
-
-			while (s.length) {
-				array.push(s.substr(0, chunkLength));
-				s	= s.substr(chunkLength);
-			}
-
-			return array;
-		}
-
-		/**
-		 * Converts JSON string or object into an instance of the specified class.
-		 * @param classObject
-		 * @param json
-		 */
-		public static deserializeObject (classObject: any, json: string|any) : any {
-			const o: any	= typeof json === 'string' ?
-				JSON.parse(json) :
-				json
-			;
-
-			const newObject: any	= Object.create(classObject.prototype);
-
-			for (const k of Object.keys(o)) {
-				newObject[k] = o[k];
-			}
-
-			return newObject;
-		}
-
-		/**
 		 * Randomly generates a GUID of specifed length using Config.guidAddressSpace.
 		 * If no valid length is specified, Config.guidAddressSpace is ignored and the
 		 * GUID will instead append a random 32-bit number to the current datetime.
@@ -47,15 +11,13 @@ module Cyph {
 		 */
 		public static generateGuid (length: number = 0) : string {
 			if (length > 0) {
-				return Array.prototype.slice.
-					call(
-						crypto.getRandomValues(new Uint8Array(length))
-					).
-					map((n: number) =>
-						Config.guidAddressSpace[n % Config.guidAddressSpace.length]
-					).
-					join('')
-				;
+				let guid: string	= '';
+
+				for (let i = 0 ; i < length ; ++i) {
+					guid += Config.guidAddressSpace[Util.random(Config.guidAddressSpace.length)];
+				}
+
+				return guid;
 			}
 
 			return Date.now() + '-' + crypto.getRandomValues(new Uint32Array(1))[0];
@@ -153,6 +115,33 @@ module Cyph {
 		}
 
 		/**
+		 * Cryptographically secure replacement for Math.random.
+		 * @param max Upper bound.
+		 * @param min Lower bound (0 by default).
+		 * @returns If max is specified, returns integer in range [min, max);
+		 * otherwise, returns float in range [0, 1) (like Math.random).
+		 */
+		public static random (max?: number, min: number = 0) : number {
+			const randomFloat: number	= crypto.getRandomValues(new Uint32Array(1))[0] / Config.maxUint32;
+
+			if (max === undefined) {
+				return randomFloat;
+			}
+			else if (isNaN(max) || max <= 0) {
+				throw new Error('Upper bound must be a positive non-zero number.');
+			}
+			else if (isNaN(min) || min < 0) {
+				throw new Error('Lower bound must be a positive number or zero.');
+			}
+			else if (min >= max) {
+				throw new Error('Upper bound must be greater than lower bound.');
+			}
+			else {
+				return Math.floor((randomFloat * (max - min)) + min);
+			}
+		}
+
+		/**
 		 * Converts b into a human-readable representation.
 		 * @param b Number of bytes.
 		 * @example 32483478 -> "30.97 MB".
@@ -238,7 +227,10 @@ module Cyph {
 					}
 				};
 
-				xhr.timeout	= timeout;
+				try {
+					xhr.timeout = timeout;
+				}
+				catch (_) {}
 			}
 
 			try {

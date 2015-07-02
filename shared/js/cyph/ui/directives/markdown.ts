@@ -48,7 +48,7 @@ module Cyph {
 					markdown.renderer.rules.emoji	= (token, idx) =>
 						self['twemoji'].parse(
 							token[idx].content,
-							{base: '/lib/bower_components/twemoji/'}
+							{base: Env.homeUrl + 'lib/bower_components/twemoji/'}
 						)
 					;
 
@@ -59,11 +59,11 @@ module Cyph {
 						link: (scope, element, attrs) => {
 							const set	= (val: string) =>
 								element.html(
-									DOMPurify.sanitize(
+									self['DOMPurify'].sanitize(
 										markdown.render(val).
 
 											/* Merge blockquotes like reddit */
-											replace(/\<\/blockquote\>\n\<blockquote\>\n/g, '').
+											replace(/\<\/blockquote>\n\<blockquote>\n/g, '').
 
 											/* Images */
 											replace(
@@ -73,7 +73,18 @@ module Cyph {
 													img.src	= value;
 													return img.outerHTML;
 												}
+											).
+
+											/* Block window.opener in new window */
+											replace(
+												/\<a href=/g,
+												'<a rel="noreferrer" href='
 											)
+										,
+										{
+											FORBID_TAGS: ['style'],
+											SAFE_FOR_JQUERY: true
+										}
 									)
 								)
 							;

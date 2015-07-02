@@ -36,6 +36,11 @@ module Cyph {
 				isPlaying () : boolean;
 
 				/**
+				 * Preemptively initiates call, bypassing any prerequisite dialogs and button clicks.
+				 */
+				preemptivelyInitiate () : void;
+
+				/**
 				 * Attempts to send file, requesting new P2P session if necessary.
 				 */
 				sendFileButton () : void;

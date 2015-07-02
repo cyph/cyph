@@ -23,6 +23,11 @@ module Cyph {
 			close () : void;
 
 			/**
+			 * Preemptively accepts future call requests, disabling the confirmation dialog.
+			 */
+			preemptivelyAccept () : void;
+
+			/**
 			 * Sends a new P2P session request to the other party.
 			 * @param callType Requested session type ("video", "audio", or "file").
 			 */
