@@ -17,8 +17,8 @@ module Cyph {
 		private static threadEnvSetup (vars: any, importScripts: Function) : void {
 			/* Inherit these from main thread */
 
-			location	= vars.location;
-			navigator	= vars.navigator;
+			self['locationData']	= vars._locationData;
+			self['navigatorData']	= vars._navigatorData;
 
 
 			/* Wrapper to make importScripts work in local dev environments
@@ -27,7 +27,7 @@ module Cyph {
 			const oldImportScripts	= importScripts;
 			importScripts			= (script: string) => {
 				oldImportScripts(
-					`${location.protocol}//${location.host}` +
+					`${self['locationData'].protocol}//${self['locationData'].host}` +
 					script
 				);
 			};
@@ -45,36 +45,38 @@ module Cyph {
 
 			/* Polyfills */
 
-			console	= {
-				assert: () => {},
-				clear: () => {},
-				count: () => {},
-				debug: () => {},
-				dir: () => {},
-				dirxml: () => {},
-				error: () => {},
-				exception: () => {},
-				group: () => {},
-				groupCollapsed: () => {},
-				groupEnd: () => {},
-				info: () => {},
-				log: () => {},
-				markTimeline: () => {},
-				msIsIndependentlyComposed: () => false,
-				profile: () => {},
-				profiles: () => {},
-				profileEnd: () => {},
-				select: () => {},
-				show: () => {},
-				table: () => {},
-				time: () => {},
-				timeEnd: () => {},
-				timeline: () => {},
-				timelineEnd: () => {},
-				timeStamp: () => {},
-				trace: () => {},
-				warn: () => {}
-			};
+			if (typeof console === 'undefined') {
+				console	= {
+					assert: () => {},
+					clear: () => {},
+					count: () => {},
+					debug: () => {},
+					dir: () => {},
+					dirxml: () => {},
+					error: () => {},
+					exception: () => {},
+					group: () => {},
+					groupCollapsed: () => {},
+					groupEnd: () => {},
+					info: () => {},
+					log: () => {},
+					markTimeline: () => {},
+					msIsIndependentlyComposed: () => false,
+					profile: () => {},
+					profiles: () => {},
+					profileEnd: () => {},
+					select: () => {},
+					show: () => {},
+					table: () => {},
+					time: () => {},
+					timeEnd: () => {},
+					timeline: () => {},
+					timelineEnd: () => {},
+					timeStamp: () => {},
+					trace: () => {},
+					warn: () => {}
+				};
+			}
 
 			if (typeof atob === 'undefined' || typeof btoa === 'undefined') {
 				importScripts('/lib/bower_components/base64/base64.min.js');
@@ -87,11 +89,18 @@ module Cyph {
 				crypto.getRandomValues(new Uint8Array(1));
 			}
 			catch (_) {
+				/* Firefox only exposes crypto in the main thread;
+					as a workaround, the main thread's crypto instance
+					is used to seed a different CSPRNG here */
+
 				let isaac: any;
 				importScripts('/cryptolib/bower_components/isaac.js/isaac.js');
 				isaac	= isaac || self['isaac'];
 
-				isaac.seed(vars.threadRandomSeed);
+				isaac.seed(vars._threadRandomSeed);
+				for (let i = 0 ; i < vars._threadRandomSeed.length ; ++i) {
+					vars._threadRandomSeed[i]	= 0;
+				}
 
 				crypto	= {
 					getRandomValues: array => {
@@ -113,6 +122,10 @@ module Cyph {
 					subtle: null
 				};
 			}
+
+			vars._locationData		= null;
+			vars._navigatorData		= null;
+			vars._threadRandomSeed	= null;
 		}
 
 		private static threadPostSetup () : void {
@@ -199,20 +212,23 @@ module Cyph {
 			vars: any = {},
 			onmessage: (e: MessageEvent) => any = e => {}
 		) {
-			vars.location	= {
-				hash: location.hash,
-				host: location.host,
-				hostname: location.hostname,
-				href: location.href,
-				pathname: location.pathname,
-				port: location.port,
-				protocol: location.protocol,
-				search: location.search
+			vars._locationData			= {
+				hash: locationData.hash,
+				host: locationData.host,
+				hostname: locationData.hostname,
+				href: locationData.href,
+				pathname: locationData.pathname,
+				port: locationData.port,
+				protocol: locationData.protocol,
+				search: locationData.search
 			};
 
-			vars.navigator	= {language: Env.fullLanguage, userAgent: Env.userAgent};
+			vars._navigatorData			= {
+				language: Env.fullLanguage,
+				userAgent: Env.userAgent
+			};
 
-			vars.threadRandomSeed	= crypto.getRandomValues(new Uint8Array(50000));
+			vars._threadRandomSeed		= crypto.getRandomValues(new Uint8Array(512));
 
 			const threadBody: string	=
 				'var vars = ' + JSON.stringify(vars) + ';\n' +
@@ -220,6 +236,10 @@ module Cyph {
 				Thread.stringifyFunction(f) +
 				Thread.stringifyFunction(Thread.threadPostSetup)
 			;
+
+			for (let i = 0 ; i < vars._threadRandomSeed.length ; ++i) {
+				vars._threadRandomSeed[i]	= 0;
+			}
 
 			try {
 				let blob: Blob;

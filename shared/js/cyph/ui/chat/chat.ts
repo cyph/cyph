@@ -98,9 +98,6 @@ module Cyph {
 					this.notifier.notify(Strings.connectedNotification);
 					this.changeState(States.chatBeginMessage);
 
-					/* Stop mobile browsers from keeping this selected */
-					Elements.cyphLinkInput.remove();
-
 					setTimeout(() => {
 						if (this.state === States.aborted) {
 							return;
@@ -139,10 +136,11 @@ module Cyph {
 
 									$clone.remove();
 								});
-							}, 500);
+							}, 10000);
 						}
 
 						this.addMessage(Strings.introductoryMessage, Session.Users.app, false);
+						this.setConnected();
 					}, 3000);
 				}
 
@@ -260,8 +258,20 @@ module Cyph {
 				) {
 					super(controller, mobileMenu);
 
+					let urlState: string	= UrlState.get(true);
+
+					/* Modest branding API flag */
+					if (urlState[0] === '&') {
+						urlState	=
+							urlState.substring(1) +
+							(urlState.length > 1 ? 'a' : '')
+						;
+
+						Cyph.UI.Elements.html.addClass('modest');
+					}
+
 					this.session		= new Session.ThreadedSession(
-						UrlState.get(true),
+						urlState,
 						controller
 					);
 
@@ -338,6 +348,8 @@ module Cyph {
 						Util.getValue(Elements.timer[0], 'stop', () => {}).call(Elements.timer[0]);
 					});
 
+					this.session.on(Session.Events.connectFailure, () => this.abortSetup());
+
 					this.session.on(Session.Events.pingPongTimeout, () => {
 						if (!this.isDisconnected) {
 							this.addMessage(Strings.pingPongTimeout, Session.Users.app);
@@ -347,15 +359,6 @@ module Cyph {
 								content: Strings.pingPongTimeout,
 								ok: Strings.ok
 							});
-						}
-					});
-
-					this.session.on(Session.Events.smp, (wasSuccessful: boolean) => {
-						if (wasSuccessful) {
-							this.setConnected();
-						}
-						else {
-							this.abortSetup();
 						}
 					});
 

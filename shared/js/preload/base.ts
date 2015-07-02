@@ -8,6 +8,20 @@
 /// <reference path="../cyph/ui/elements.ts" />
 
 
+/* In WebSigned environments, can't load fonts from current origin */
+
+if (FontsCSS) {
+	Cyph.UI.Elements.body.append(
+		$('<style></style>').html(
+			FontsCSS.replace(
+				/url\(\//g,
+				'url(' + Cyph.Env.homeUrl
+			)
+		)
+	);
+}
+
+
 /* Translations */
 
 if (Translations && Cyph.Env.language !== Cyph.Config.defaultLanguage) {
@@ -74,4 +88,15 @@ $(() => {
 		/* Using mouseup instead of click because of Angular Material weirdness */
 		$button.on('mouseup', () => setTimeout(() => elem.click(), 500));
 	});
+
+	/* In WebSigned environments, remove no-longer-necessary
+		'unsafe-inline' from CSP after application loads */
+
+	if (WebSign) {
+		setTimeout(() => Cyph.UI.Elements.head.append(
+			'<meta http-equiv="Content-Security-Policy" content="' +
+				Cyph.Env.webSignCSP.replace(/(script-src.*?) 'unsafe-inline'/g, '$1') +
+			'" />'
+		), 10000);
+	}
 });

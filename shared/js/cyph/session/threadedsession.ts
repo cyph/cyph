@@ -17,7 +17,8 @@ module Cyph {
 				sharedSecret: <string> '',
 				isAlive: <boolean> true,
 				isCreator: <boolean> false,
-				isStartingNewCyph: <boolean> false
+				isStartingNewCyph: <boolean> false,
+				wasInitiatedByAPI: <boolean> false
 			};
 
 			public close (shouldSendEvent: boolean = true) : void {
@@ -94,7 +95,8 @@ module Cyph {
 				);
 
 				this.thread	= new Thread((vars: any, importScripts: Function, Cyph: any) => {
-					importScripts('/cryptolib/bower_components/otr4-em/build/otr-web.js');
+					importScripts('/cryptolib/bower_components/libsodium.js/dist/browsers/combined/sodium.min.js');
+					importScripts('/cryptolib/bower_components/ntru.js/dist/ntru.js');
 
 					importScripts('/lib/bower_components/aws-sdk-js/dist/aws-sdk.min.js');
 					importScripts('/lib/aws-xml.js');

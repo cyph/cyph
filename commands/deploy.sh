@@ -31,45 +31,91 @@ test "${comment}" == "" && comment=deploy
 
 rm -rf .build
 mkdir .build
-cp -rfL * .build/
+cp -rf * .build/
 cd .build
+
+for project in cyph.com cyph.im cyph.me cyph.video ; do
+	cp -rf shared/* $project/
+done
 
 
 # Branch config setup
-branch="$(git branch | awk '/^\*/{print $2}')"
+branch="$(git describe --tags --exact-match 2> /dev/null || git branch | awk '/^\*/{print $2}')"
 if [ $branch == 'prod' ] ; then
 	branch='staging'
 fi
 ls */*.yaml | xargs -I% sed -i.bak "s/version: master/version: ${branch}/g" %
 
-defaultHost='\${location\.protocol}\/\/\${location\.hostname}:'
+defaultHeadersString='# default_headers'
+defaultHeaders="$(cat headers.yaml)"
+ls */*.yaml | xargs -I% sed -ri.bak "s/  ${defaultHeadersString}(.*)/\
+	headers=\"\$(cat headers.yaml)\" ; \
+	for header in \1 ; do \
+		headers=\"\$(echo \"\$headers\" | grep -v \$header:)\" ; \
+	done ; \
+	echo \"\$headers\" \
+/ge" %
+ls */*.yaml | xargs -I% sed -i.bak 's|###| |g' %
+
+# Temporary workaround for Google header length cap
+if [ $test ] ; then
+	cat shared/websign/csp | \
+		grep -v referrer | \
+		grep -v object-src | \
+		grep -v upgrade-insecure-requests | \
+		sed 's|https://cyphdbyhiddenbhs.onion ||g' | \
+		sed 's|api.cyph.com|*.appspot.com|g' | \
+		sed 's|www.cyph.com|*.appspot.com|g' \
+	> .tmpcsp
+	mv .tmpcsp shared/websign/csp
+fi
+
+defaultCSPString='DEFAULT_CSP'
+cyphComCSP="$( \
+	cat shared/websign/csp | \
+	grep -v img-src | \
+	sed "s/ data://g" | \
+	tr -d '\n' \
+)"
+webSignCSP="$(cat shared/websign/csp | tr -d '\n')"
+ls cyph.com/*.yaml | xargs -I% sed -i.bak "s|${defaultCSPString}|${cyphComCSP}|g" %
+ls */*.yaml */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s|${defaultCSPString}|${webSignCSP}|g" %
+
+defaultHost='\${locationData\.protocol}\/\/\${locationData\.hostname}:'
 ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}43000//g" %
 ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak 's/isLocalEnv: boolean		= true/isLocalEnv: boolean		= false/g' %
 
 if [ $test ] ; then
 	sed -i.bak "s/staging/${branch}/g" default/config.go
+	ls */*.yaml */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/api.cyph.com/${branch}-dot-cyphme.appspot.com/g" %
+	ls */*.yaml */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/www.cyph.com/${branch}-dot-cyph-com-dot-cyphme.appspot.com/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42000/https:\/\/${branch}-dot-cyphme.appspot.com/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42001/https:\/\/${branch}-dot-cyph-com-dot-cyphme.appspot.com/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42002/https:\/\/${branch}-dot-cyph-im-dot-cyphme.appspot.com/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42003/https:\/\/${branch}-dot-cyph-me-dot-cyphme.appspot.com/g" %
+	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42004/https:\/\/${branch}-dot-cyph-video-dot-cyphme.appspot.com/g" %
 
-	for yaml in `ls */cyph*.yaml` ; do
-		cat $yaml | perl -pe 's/(- url: .*)/\1\n  login: admin/g' > $yaml.new
-		mv $yaml.new $yaml
-	done
+	# Disable caching and HPKP in test environments
+	ls */*.yaml | xargs -I% sed -i.bak 's/Public-Key-Pins: .*/Pragma: no-cache/g' %
+	ls */*.yaml | xargs -I% sed -i.bak 's/max-age=31536000/max-age=0/g' %
+
+	# for yaml in `ls */cyph*.yaml` ; do
+	# 	cat $yaml | perl -pe 's/(- url: .*)/\1\n  login: admin/g' > $yaml.new
+	# 	mv $yaml.new $yaml
+	# done
 else
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42000/https:\/\/api.cyph.com/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42001/https:\/\/www.cyph.com/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42002/https:\/\/www.cyph.im/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42003/https:\/\/www.cyph.me/g" %
+	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42004/https:\/\/www.cyph.video/g" %
 
-	ls */*.yaml | xargs -I% sed -i.bak 's/max-age=0/max-age=31536000\n    Expires: Thu, 31 Dec 2037 23:55:55 GMT/g' %
 	ls */*.yaml | xargs -I% sed -i.bak 's/version: staging/version: prod/g' %
 fi
 
 
 # Compile + translate + minify
-for d in cyph.im cyph.com ; do
+for d in cyph.com cyph.im cyph.video ; do
 	cd translations
 
 	echo "Translations = { \
@@ -85,12 +131,14 @@ for d in cyph.im cyph.com ; do
 
 	cd ../$d
 
+	echo "FontsCSS = \`$(scss css/fonts.scss)\`;" >> js/preload/fonts.ts
+
 	../commands/build.sh --prod || exit;
 
 	if [ "${branch}" == 'staging' ] ; then
 		echo "JS Minify ${d}"
 		find js -name '*.js' | xargs -I% uglifyjs -r \
-			importScripts,Cyph,vars,self,isaac,onmessage,postMessage,onthreadmessage,WebSign,Translations,IS_WEB,crypto \
+			importScripts,Cyph,ui,session,vars,self,isaac,onmessage,postMessage,onthreadmessage,WebSign,Translations,IS_WEB,crypto \
 			'%' -o '%' -m
 
 		echo "CSS Minify ${d}"
@@ -125,10 +173,12 @@ done
 
 ### WebSign-related stuff
 
-for d in cyph.im ; do
+for d in cyph.im cyph.video ; do
 	cd $d
 
 	echo 'WebSign'
+
+	mv websign/serviceworker.js ./
 
 	# Merge in base64'd images and audio, BUT NOT fonts (they add 7mb)
 	find img audio -type f -print0 | while read -d $'\0' f ; do
@@ -146,29 +196,35 @@ for d in cyph.im ; do
 	# Merge imported libraries into threads
 	find js -name '*.js' | xargs -I% ../commands/websign/threadpack.js %
 
+	websignhashes=''
 	if [ $test ] ; then
-		../commands/websign/pack.py index.html pkg.html
-	else
-		../commands/websign/pack.py index.html $d.pkg
-		cat websign/index.html | sed "s/\\\$PROJECT/$d/g" > index.html
-		rm websign/index.html
+		websignhashes="{\"$(../commands/websignhash.sh "${d}" "${branch}")\": true}"
+		d="${branch}.${d}"
+	fi
 
-		currentDir="$(pwd)"
-		cd ..
-		git clone git@github.com:cyph/cyph.github.io.git github.io
-		cd github.io
-		git reset --hard
-		git clean -f
-		git pull
+	../commands/websign/pack.py index.html $d.pkg
+	cat websign/index.html | sed "s/\\\$PROJECT/$d/g" > index.html
+	../commands/websign/pack.py index.html index.html
+	rm websign/index.html
 
-		cp -f $currentDir/$d.pkg websign/
+	currentDir="$(pwd)"
+	cd ..
+	git clone git@github.com:cyph/cyph.github.io.git github.io
+	cd github.io
+	git reset --hard
+	git clean -f
+	git pull
 
-		HASH_TTL=3944620 # 1.5 months
+	cp -f $currentDir/$d.pkg websign/
 
-		sha512hash="$(shasum -p -a 512 websign/$d.pkg | perl -pe 's/(.*) .*/\1/')"
-		sha256hash="$(shasum -p -a 256 websign/$d.pkg | perl -pe 's/(.*) .*/\1/')"
-		timestamp="$(date +%s)000"
-		expires="$(($(date +%s)+${HASH_TTL}))000"
+	HASH_TTL=3944620 # 1.5 months
+
+	sha512hash="$(shasum -p -a 512 websign/$d.pkg | perl -pe 's/(.*) .*/\1/')"
+	sha256hash="$(shasum -p -a 256 websign/$d.pkg | perl -pe 's/(.*) .*/\1/')"
+	timestamp="$(date +%s)000"
+	expires="$(($(date +%s)+${HASH_TTL}))000"
+
+	if [ ! $test ] ; then
 		websignhashes="$(cat $currentDir/websignhashes.json)"
 
 		# Leaving old-style signing for continued compatibility with old WebSign instances
@@ -180,20 +236,21 @@ for d in cyph.im ; do
 }" | gpg --clearsign > websign/$d.hash
 		cat websign/$d.hash | gpg --clearsign -u 'Alternate Key' > websign/$d.hash2
 		cp -f websign/$d.hash2 websign/$d.hash
-
-		$currentDir/../commands/websign/sign.js "{
-			\"hash\": \"$sha256hash\",
-			\"timestamp\": $timestamp,
-			\"expires\": $expires,
-			\"webSignHashes\": $websignhashes
-		}" > websign/$d.sig
-		echo $timestamp >> websign/$d.sig
-
-		git add .
-		git commit -a -m 'package update'
-		git push
-		cd $currentDir
 	fi
+
+	$currentDir/../commands/websign/sign.js "{
+		\"hash\": \"$sha256hash\",
+		\"timestamp\": $timestamp,
+		\"expires\": $expires,
+		\"webSignHashes\": null,
+		\"webSignBootHashWhitelist\": $websignhashes
+	}" > websign/$d.sig
+	echo $timestamp >> websign/$d.sig
+
+	git add .
+	git commit -a -m 'package update'
+	git push
+	cd $currentDir
 
 	cd ..
 done
@@ -213,7 +270,7 @@ cat ~/.cyph/jobs.vars >> jobs/jobs.yaml
 if [ $site ] ; then
 	goapp deploy $site/*.yaml
 else
-	goapp deploy default/app.yaml jobs/jobs.yaml cyph.com/cyph-com.yaml cyph.im/cyph-im.yaml cyph.me/cyph-me.yaml
+	ls */*.yaml | xargs -I% goapp deploy %
 fi
 
 appcfg.py update_dispatch .

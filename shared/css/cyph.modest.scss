@@ -1,0 +1,45 @@
+html.modest {
+	&, body, #main, md-sidenav, md-dialog, .chat-begin-message, md-toolbar, md-toolbar.md-default-theme {
+		background-color: #7a7c8b !important;
+	}
+
+	#main {
+		.chat-sidebar .md-button, .chat-message-box:not(.mobile) .md-button, .video-call:not(.playing) .close-button {
+			background-color: #7a7c8b !important;
+
+			&:hover {
+				background-color: #b7bccb !important;
+			}
+
+			&[disabled], &[disabled]:hover {
+				box-shadow: none !important;
+				border: solid 1px #5F5F5F !important;
+				background-color: transparent !important;
+			}
+		}
+	}
+
+	#main .chat-sidebar .md-button:not(.md-fab) {
+		border: solid 1px rgba(255, 255, 255, 0.5);
+		border-radius: 0px;
+		box-shadow: none;
+	}
+
+	#main .video-call:not(.playing) .close-button {
+		color: white !important;
+		box-shadow: none !important;
+	}
+
+	.message-item {
+		background-color: transparent;
+		box-shadow: none;
+	}
+
+	.abort-screen .logo-animation, .beta-signup-form, .footer {
+		display: none;
+	}
+
+	.chat-sidebar:not(.show-chat) .logo {
+		display: none;
+	}
+}

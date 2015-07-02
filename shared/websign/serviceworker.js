@@ -1,49 +1,60 @@
 var files	= [
-	'../',
-	'css/websign.css',
-	'js/crypto.js',
-	'js/keys.js',
-	'js/sha256.js',
-	'js/workerhelper.js',
-	'lib/nacl.js',
-	'appcache.appcache',
-	'manifest.json',
+	'./',
+	'websign/js/workerhelper.js',
+	'websign/appcache.appcache',
+	'websign/manifest.json',
 	'serviceworker.js'
-];
+].map(function (file) {
+	return new Request(file);
+});
+
+var root	= files[0].url.replace(/(.*)\/$/, '$1');
+
+function openCache (callback) {
+	caches.open('cache').then(callback);
+}
 
 
 self.addEventListener('install', function (e) {
 	try {
-		caches.open('cache').then(function (cache) {
-			for (var i = 0 ; i < files.length ; ++i) {
-				try {
-					var file	= files[i];
-
-					fetch(new Request(file)).then(function (response) {
-						cache.put(file, response);
-					});
-				}
-				catch (_) {}
-			}
+		openCache(function (cache) {
+			files.forEach(function (file) {
+				fetch(file).then(function (response) {
+					cache.put(file, response);
+				});
+			});
 		});
 	}
 	catch (_) {}
 });
 
 self.addEventListener('fetch', function (e) {
-	try {
-		e.respondWith(
-			caches.match(e.request).then(function (response) {
-				if (response) {
-					return response;
-				}
+	for (var i = 0 ; i < files.length ; ++i) {
+		if (e.request.url === files[i].url) {
+			return e.respondWith(
+				caches.match(e.request).then(function (response) {
+					if (response) {
+						return response;
+					}
+					else {
+						return fetch(e.request.clone()).then(function (response) {
+							var responseToCache	= response.clone();
 
-				return fetch(e.request);
-			})
-		);
+							openCache(function (cache) {
+								cache.put(e.request, responseToCache);
+							});
+
+							return response;
+						});
+					}
+				})
+			);
+		}
 	}
-	catch (_) {
-		e.respondWith(fetch(e.request));
+
+	/* Block non-whitelisted paths in this origin */
+	if (e.request.url.indexOf(root) === 0) {
+		return e.respondWith(new Response('', {status: 404}));
 	}
 });
 

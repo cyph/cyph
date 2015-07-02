@@ -37,7 +37,7 @@ module Cyph {
 				Util.retryUntilComplete(retry =>
 					Util.request({
 						method: 'PUT',
-						url: Env.baseUrl + 'betasignups',
+						url: Env.baseUrl + 'signups',
 						data: this.data,
 						error: retry,
 						success: (isNew: string) => {

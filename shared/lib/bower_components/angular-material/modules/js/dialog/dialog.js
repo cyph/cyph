@@ -2,7 +2,7 @@
  * Angular Material Design
  * https://github.com/angular/material
  * @license MIT
- * v0.9.6
+ * v0.9.7
  */
 (function( window, angular, undefined ){
 "use strict";
@@ -399,7 +399,7 @@ function MdDialogProvider($$interimElementProvider) {
       options: advancedDialogOptions
     });
 
-  /* @ngInject */
+  /* ngInject */
   function advancedDialogOptions($mdDialog, $mdTheming) {
     return {
       template: [
@@ -433,7 +433,7 @@ function MdDialogProvider($$interimElementProvider) {
     };
   }
 
-  /* @ngInject */
+  /* ngInject */
   function dialogDefaultOptions($mdAria, $document, $mdUtil, $mdConstant, $mdTheming, $mdDialog, $timeout, $rootElement, $animate, $$rAF, $q) {
     return {
       hasBackdrop: true,

@@ -29,6 +29,13 @@ module Cyph {
 				voice: 'voice'
 			};
 
+			private static nonceIndex: number			= 4;
+
+			private static encryptedDataIndex: number	=
+				P2P.nonceIndex +
+				Sodium.crypto_secretbox_NONCEBYTES
+			;
+
 
 			private mutex: Session.IMutex;
 			private channel: RTCDataChannel;
@@ -293,6 +300,7 @@ module Cyph {
 						UIEvents.Events.acceptConfirm,
 						command.method,
 						500000,
+						this.isAccepted,
 						(ok: boolean) => {
 							if (ok) {
 								this.isAccepted	= true;
@@ -372,19 +380,29 @@ module Cyph {
 				this.channel.onmessage	= e => {
 					if (typeof e.data === 'string') {
 						if (e.data === P2P.constants.fileTransferComplete) {
-							const data: ArrayBuffer[]	= this.incomingFile.data;
-							const name: string			= this.incomingFile.name;
+							if (this.incomingFile.pendingChunks === 0) {
+								const data: ArrayBuffer[]	= this.incomingFile.data;
+								const name: string			= this.incomingFile.name;
 
-							this.incomingFile.data				= null;
-							this.incomingFile.name				= '';
-							this.incomingFile.size				= 0;
-							this.incomingFile.readableSize		= '';
-							this.incomingFile.percentComplete	= 0;
+								if (this.incomingFile.key) {
+									Sodium.memzero(this.incomingFile.key);
+								}
 
-							this.controller.update();
+								this.incomingFile.data				= null;
+								this.incomingFile.key				= null;
+								this.incomingFile.name				= '';
+								this.incomingFile.size				= 0;
+								this.incomingFile.readableSize		= '';
+								this.incomingFile.percentComplete	= 0;
 
-							if (data) {
-								this.receiveIncomingFile(data, name);
+								this.controller.update();
+
+								if (data) {
+									this.receiveIncomingFile(data, name);
+								}
+							}
+							else {
+								setTimeout(() => this.channel.onmessage(e), 250);
 							}
 						}
 						else {
@@ -393,6 +411,7 @@ module Cyph {
 							this.incomingFile.data	= [];
 							this.incomingFile.name	= data[0];
 							this.incomingFile.size	= parseInt(data[1], 10);
+							this.incomingFile.key	= Sodium.from_base64(data[2]);
 
 							this.incomingFile.readableSize	=
 								Util.readableByteLength(
@@ -411,16 +430,53 @@ module Cyph {
 						}
 					}
 					else if (this.incomingFile.data) {
-						this.incomingFile.data.push(e.data);
+						if (e.data instanceof ArrayBuffer) {
+							const index: number				= new Uint32Array(
+								e.data,
+								0,
+								1
+							)[0];
 
-						this.incomingFile.percentComplete	=
-							this.incomingFile.data.length *
-								Config.p2pConfig.fileChunkSize /
-								this.incomingFile.size *
-								100
-						;
+							const nonce: Uint8Array			= new Uint8Array(
+								e.data,
+								P2P.nonceIndex,
+								Sodium.crypto_secretbox_NONCEBYTES
+							);
 
-						this.controller.update();
+							const encryptedData: Uint8Array	= new Uint8Array(
+								e.data,
+								P2P.encryptedDataIndex
+							);
+
+							this.incomingFile.data[index]	=
+								Sodium.crypto_secretbox_open_easy(
+									encryptedData,
+									nonce,
+									this.incomingFile.key
+								).buffer
+							;
+
+							this.incomingFile.percentComplete	=
+								this.incomingFile.data.length *
+									Config.p2pConfig.fileChunkSize /
+									this.incomingFile.size *
+									100
+							;
+
+							this.controller.update();
+						}
+						else {
+							++this.incomingFile.pendingChunks;
+
+							const reader: FileReader	= new FileReader();
+
+							reader.onloadend	= readerEvent => {
+								this.channel.onmessage({data: readerEvent.target['result']});
+								--this.incomingFile.pendingChunks;
+							};
+
+							reader.readAsArrayBuffer(e.data);
+						}
 					}
 				};
 
@@ -446,11 +502,16 @@ module Cyph {
 				this.commands.kill();
 			}
 
+			public preemptivelyAccept () {
+				this.isAccepted	= true;
+			}
+
 			public requestCall (callType: string) : void {
 				this.triggerUiEvent(
 					UIEvents.Categories.request,
 					UIEvents.Events.requestConfirm,
 					callType,
+					this.isAccepted,
 					(ok: boolean) => {
 						if (ok) {
 							this.mutex.lock((wasFirst: boolean, wasFirstOfType: boolean) => {
@@ -559,6 +620,10 @@ module Cyph {
 								this.outgoingFile.name	= file.name;
 								this.outgoingFile.size	= buf.byteLength;
 
+								this.outgoingFile.key	= Sodium.randombytes_buf(
+									Sodium.crypto_secretbox_KEYBYTES
+								);
+
 								this.outgoingFile.readableSize	=
 									Util.readableByteLength(
 										this.outgoingFile.size
@@ -570,7 +635,9 @@ module Cyph {
 								this.channel.send(
 									this.outgoingFile.name +
 									'\n' +
-									this.outgoingFile.size
+									this.outgoingFile.size +
+									'\n' +
+									Sodium.to_base64(this.outgoingFile.key)
 								);
 
 								const timer: Timer	= new Timer(() => {
@@ -580,11 +647,35 @@ module Cyph {
 									}
 
 									try {
-										for (let i = 0 ; i < 10 ; ++i) {
-											const old: number	= pos;
-											pos += Config.p2pConfig.fileChunkSize;
-											this.channel.send(buf.slice(old, pos));
-										}
+										const old: number	= pos;
+										pos += Config.p2pConfig.fileChunkSize;
+
+										const index: Uint8Array			= new Uint8Array(
+											new Uint32Array([
+												old / Config.p2pConfig.fileChunkSize
+											]).buffer
+										);
+
+										const nonce: Uint8Array			= Sodium.randombytes_buf(
+											Sodium.crypto_secretbox_NONCEBYTES
+										);
+
+										const encryptedData: Uint8Array	= Sodium.crypto_secretbox_easy(
+											new Uint8Array(buf.slice(old, pos)),
+											nonce,
+											this.outgoingFile.key
+										);
+
+										const cyphertext: Uint8Array	= new Uint8Array(
+											P2P.encryptedDataIndex +
+											encryptedData.length
+										);
+
+										cyphertext.set(index);
+										cyphertext.set(nonce, P2P.nonceIndex);
+										cyphertext.set(encryptedData, P2P.encryptedDataIndex);
+
+										this.channel.send(cyphertext.buffer);
 									}
 									catch (_) {
 										pos -= Config.p2pConfig.fileChunkSize;
@@ -600,8 +691,13 @@ module Cyph {
 									else {
 										timer.stop();
 
+										if (this.outgoingFile.key) {
+											Sodium.memzero(this.outgoingFile.key);
+										}
+
 										this.channel.send(P2P.constants.fileTransferComplete);
 
+										this.outgoingFile.key				= null;
 										this.outgoingFile.name				= '';
 										this.outgoingFile.size				= 0;
 										this.outgoingFile.readableSize		= '';

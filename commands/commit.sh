@@ -12,7 +12,7 @@ git add .
 git commit -a -m "${*}"
 git push
 
-find . -name '*.go' -print0 | xargs -0 -I% gofmt -w "%"
+find . -name '*.go' | grep -v github.com | xargs -I% gofmt -w "%"
 git commit -a -m "gofmt: ${*}"
 git push
 

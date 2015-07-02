@@ -13,56 +13,31 @@ handlers:
   static_files: index.html
   upload: index.html
   secure: always
-  http_headers:
-    Cache-Control: no-store
-    X-Frame-Options: deny
-    Public-Key-Pins: max-age=31536000; includeSubdomains; pin-sha256="8jdS3zcG5kUApHWDrLH5Q8wEygqGbGEhYApjSDtufBU="; pin-sha256="AMRT67hN1KPI+u7Aw9JpZlzyRaKeO+6u2H+jtOmWVy8="
-    Strict-Transport-Security: max-age=31536000; includeSubdomains
-    Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval'
+  # default_headers Cache-Control Expires
 
 - url: /about[/]?
   static_files: index.html
   upload: index.html
   secure: always
-  http_headers:
-    Cache-Control: no-store
-    X-Frame-Options: deny
-    Public-Key-Pins: max-age=31536000; includeSubdomains; pin-sha256="8jdS3zcG5kUApHWDrLH5Q8wEygqGbGEhYApjSDtufBU="; pin-sha256="AMRT67hN1KPI+u7Aw9JpZlzyRaKeO+6u2H+jtOmWVy8="
-    Strict-Transport-Security: max-age=31536000; includeSubdomains
-    Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval'
+  # default_headers Cache-Control Expires
 
 - url: /faq[/]?
   static_files: index.html
   upload: index.html
   secure: always
-  http_headers:
-    Cache-Control: no-store
-    X-Frame-Options: deny
-    Public-Key-Pins: max-age=31536000; includeSubdomains; pin-sha256="8jdS3zcG5kUApHWDrLH5Q8wEygqGbGEhYApjSDtufBU="; pin-sha256="AMRT67hN1KPI+u7Aw9JpZlzyRaKeO+6u2H+jtOmWVy8="
-    Strict-Transport-Security: max-age=31536000; includeSubdomains
-    Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval'
+  # default_headers Cache-Control Expires
 
 - url: /termsofservice[/]?
   static_files: index.html
   upload: index.html
   secure: always
-  http_headers:
-    Cache-Control: no-store
-    X-Frame-Options: deny
-    Public-Key-Pins: max-age=31536000; includeSubdomains; pin-sha256="8jdS3zcG5kUApHWDrLH5Q8wEygqGbGEhYApjSDtufBU="; pin-sha256="AMRT67hN1KPI+u7Aw9JpZlzyRaKeO+6u2H+jtOmWVy8="
-    Strict-Transport-Security: max-age=31536000; includeSubdomains
-    Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval'
+  # default_headers Cache-Control Expires
 
 - url: /privacypolicy[/]?
   static_files: index.html
   upload: index.html
   secure: always
-  http_headers:
-    Cache-Control: no-store
-    X-Frame-Options: deny
-    Public-Key-Pins: max-age=31536000; includeSubdomains; pin-sha256="8jdS3zcG5kUApHWDrLH5Q8wEygqGbGEhYApjSDtufBU="; pin-sha256="AMRT67hN1KPI+u7Aw9JpZlzyRaKeO+6u2H+jtOmWVy8="
-    Strict-Transport-Security: max-age=31536000; includeSubdomains
-    Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval'
+  # default_headers Cache-Control Expires
 
 
 # Podcasts
@@ -71,78 +46,43 @@ handlers:
   static_files: index.html
   upload: index.html
   secure: always
-  http_headers:
-    Cache-Control: no-store
-    X-Frame-Options: deny
-    Public-Key-Pins: max-age=31536000; includeSubdomains; pin-sha256="8jdS3zcG5kUApHWDrLH5Q8wEygqGbGEhYApjSDtufBU="; pin-sha256="AMRT67hN1KPI+u7Aw9JpZlzyRaKeO+6u2H+jtOmWVy8="
-    Strict-Transport-Security: max-age=31536000; includeSubdomains
-    Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval'
+  # default_headers Cache-Control Expires
 
 - url: /jjgo[/]?
   static_files: index.html
   upload: index.html
   secure: always
-  http_headers:
-    Cache-Control: no-store
-    X-Frame-Options: deny
-    Public-Key-Pins: max-age=31536000; includeSubdomains; pin-sha256="8jdS3zcG5kUApHWDrLH5Q8wEygqGbGEhYApjSDtufBU="; pin-sha256="AMRT67hN1KPI+u7Aw9JpZlzyRaKeO+6u2H+jtOmWVy8="
-    Strict-Transport-Security: max-age=31536000; includeSubdomains
-    Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval'
+  # default_headers Cache-Control Expires
 
 - url: /ventura[/]?
   static_files: index.html
   upload: index.html
   secure: always
-  http_headers:
-    Cache-Control: no-store
-    X-Frame-Options: deny
-    Public-Key-Pins: max-age=31536000; includeSubdomains; pin-sha256="8jdS3zcG5kUApHWDrLH5Q8wEygqGbGEhYApjSDtufBU="; pin-sha256="AMRT67hN1KPI+u7Aw9JpZlzyRaKeO+6u2H+jtOmWVy8="
-    Strict-Transport-Security: max-age=31536000; includeSubdomains
-    Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval'
+  # default_headers Cache-Control Expires
 
 - url: /sawbones[/]?
   static_files: index.html
   upload: index.html
   secure: always
-  http_headers:
-    Cache-Control: no-store
-    X-Frame-Options: deny
-    Public-Key-Pins: max-age=31536000; includeSubdomains; pin-sha256="8jdS3zcG5kUApHWDrLH5Q8wEygqGbGEhYApjSDtufBU="; pin-sha256="AMRT67hN1KPI+u7Aw9JpZlzyRaKeO+6u2H+jtOmWVy8="
-    Strict-Transport-Security: max-age=31536000; includeSubdomains
-    Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval'
+  # default_headers Cache-Control Expires
 
 - url: /judgejohn[/]?
   static_files: index.html
   upload: index.html
   secure: always
-  http_headers:
-    Cache-Control: no-store
-    X-Frame-Options: deny
-    Public-Key-Pins: max-age=31536000; includeSubdomains; pin-sha256="8jdS3zcG5kUApHWDrLH5Q8wEygqGbGEhYApjSDtufBU="; pin-sha256="AMRT67hN1KPI+u7Aw9JpZlzyRaKeO+6u2H+jtOmWVy8="
-    Strict-Transport-Security: max-age=31536000; includeSubdomains
-    Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval'
+  # default_headers Cache-Control Expires
 
 - url: /mybrother[/]?
   static_files: index.html
   upload: index.html
   secure: always
-  http_headers:
-    Cache-Control: no-store
-    X-Frame-Options: deny
-    Public-Key-Pins: max-age=31536000; includeSubdomains; pin-sha256="8jdS3zcG5kUApHWDrLH5Q8wEygqGbGEhYApjSDtufBU="; pin-sha256="AMRT67hN1KPI+u7Aw9JpZlzyRaKeO+6u2H+jtOmWVy8="
-    Strict-Transport-Security: max-age=31536000; includeSubdomains
-    Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval'
+  # default_headers Cache-Control Expires
 
 - url: /security[/]?
   static_files: index.html
   upload: index.html
   secure: always
-  http_headers:
-    Cache-Control: no-store
-    X-Frame-Options: deny
-    Public-Key-Pins: max-age=31536000; includeSubdomains; pin-sha256="8jdS3zcG5kUApHWDrLH5Q8wEygqGbGEhYApjSDtufBU="; pin-sha256="AMRT67hN1KPI+u7Aw9JpZlzyRaKeO+6u2H+jtOmWVy8="
-    Strict-Transport-Security: max-age=31536000; includeSubdomains
-    Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval'
+  # default_headers Cache-Control Expires
 
 
 # Else
@@ -151,12 +91,9 @@ handlers:
   static_files: \1
   upload: .*
   secure: always
-  http_headers:
-    Cache-Control: public, max-age=0
-    X-Frame-Options: deny
-    Public-Key-Pins: max-age=31536000; includeSubdomains; pin-sha256="8jdS3zcG5kUApHWDrLH5Q8wEygqGbGEhYApjSDtufBU="; pin-sha256="AMRT67hN1KPI+u7Aw9JpZlzyRaKeO+6u2H+jtOmWVy8="
-    Strict-Transport-Security: max-age=31536000; includeSubdomains
-    Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval'
+  # default_headers
+  ### Access-Control-Allow-Origin: "*"
+  ### Access-Control-Allow-Methods: GET, OPTIONS
 
 
 # 404
@@ -165,9 +102,4 @@ handlers:
   static_files: index.html
   upload: index.html
   secure: always
-  http_headers:
-    Cache-Control: no-store
-    X-Frame-Options: deny
-    Public-Key-Pins: max-age=31536000; includeSubdomains; pin-sha256="8jdS3zcG5kUApHWDrLH5Q8wEygqGbGEhYApjSDtufBU="; pin-sha256="AMRT67hN1KPI+u7Aw9JpZlzyRaKeO+6u2H+jtOmWVy8="
-    Strict-Transport-Security: max-age=31536000; includeSubdomains
-    Content-Security-Policy: script-src 'self' 'unsafe-inline' 'unsafe-eval'
+  # default_headers Cache-Control Expires

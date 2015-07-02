@@ -7,12 +7,12 @@ module Cyph {
 	 */
 	export class Env extends EnvDeploy {
 		/** Current URL host (with www subdomain removed). */
-		public static host: string	= location ? location.host.replace('www.', '') : '';
+		public static host: string	= locationData.host.replace('www.', '');
 
 		/** Complete (lowercase) language code, e.g. "en-us". */
 		public static fullLanguage: string	=
 			Util.getValue(
-				navigator,
+				navigatorData,
 				[
 					'language',
 					'userLanguage',
@@ -52,7 +52,7 @@ module Cyph {
 		;
 
 		/** Current user agent (lowercase). */
-		public static userAgent: string		= navigator ? navigator.userAgent.toLowerCase() : '';
+		public static userAgent: string		= navigatorData.userAgent.toLowerCase();
 
 		/** Indicates whether this is Internet Explorer. */
 		public static isIE: boolean			= /msie |trident\//.test(Env.userAgent);
@@ -118,6 +118,9 @@ module Cyph {
 				return false;
 			}
 		})();
+
+		/** Full URL for voice call video. */
+		public static p2pVoiceCallVideo: string	= Env.homeUrl + Config.p2pConfig.voiceCallVideo;
 
 		/** Either "mobile" or "desktop", depending on Env.isMobile. */
 		public static platformString: string	= Env.isMobile ? 'mobile' : 'desktop';

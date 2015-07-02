@@ -10,7 +10,8 @@ module Cyph {
 			/**
 			 * Signs and sends an AWS API request.
 			 * (http://docs.aws.amazon.com/general/latest/gr/sigv4_signing.html)
-			 * @param
+			 * @param o
+			 * @param callback
 			 */
 			public static request (o: any, callback: any = () => {}) : void {
 				const config	= {

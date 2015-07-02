@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"geoip2"
 	"github.com/gorilla/mux"
+	"github.com/microcosm-cc/bluemonday"
 	"net"
 	"net/http"
 	"strings"
@@ -58,6 +59,8 @@ var empty = struct{}{}
 var router = mux.NewRouter()
 var isRouterActive = false
 
+var sanitizer = bluemonday.StrictPolicy()
+
 var geoipdb, _ = geoip2.Open("GeoIP2-Country.mmdb")
 
 func geolocate(h HandlerArgs) (string, string) {
@@ -84,12 +87,12 @@ func getBetaSignupFromRequest(h HandlerArgs) BetaSignup {
 	country, _ := geolocate(h)
 
 	return BetaSignup{
-		Comment:  h.Request.PostFormValue("Comment"),
+		Comment:  sanitize(h.Request.PostFormValue("Comment"), config.MaxSignupValueLength),
 		Country:  country,
-		Email:    strings.ToLower(h.Request.PostFormValue("Email")),
-		Language: strings.ToLower(h.Request.PostFormValue("Language")),
-		Name:     h.Request.PostFormValue("Name"),
-		Referer:  h.Request.Referer(),
+		Email:    sanitize(strings.ToLower(h.Request.PostFormValue("Email")), config.MaxSignupValueLength),
+		Language: sanitize(strings.ToLower(h.Request.PostFormValue("Language")), config.MaxSignupValueLength),
+		Name:     sanitize(h.Request.PostFormValue("Name"), config.MaxSignupValueLength),
+		Referer:  sanitize(h.Request.Referer(), config.MaxSignupValueLength),
 		Time:     time.Now().Unix(),
 	}
 }
@@ -139,12 +142,21 @@ func handleFuncs(pattern string, handlers Handlers) {
 
 func initHandler(w http.ResponseWriter, r *http.Request) {
 	if _, ok := config.AllowedOrigins[r.Host]; ok || appengine.IsDevAppServer() {
-		w.Header().Add("Access-Control-Allow-Headers", "*")
 		w.Header().Add("Access-Control-Allow-Origin", "*")
-		w.Header().Add("Access-Control-Allow-Methods", "GET,HEAD,POST,PUT,DELETE,TRACE,OPTIONS,CONNECT")
+		w.Header().Add("Access-Control-Allow-Methods", config.AllowedMethods)
 	}
 }
 
 func nullHandler(h HandlerArgs) (interface{}, int) {
 	return nil, http.StatusOK
+}
+
+func sanitize(s string, maxLength int) string {
+	sanitized := sanitizer.Sanitize(s)
+
+	if len(sanitized) > maxLength {
+		return sanitized[:maxLength]
+	} else {
+		return sanitized
+	}
 }

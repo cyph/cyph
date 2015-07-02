@@ -45,9 +45,9 @@ if (!Cyph.Env.isOnion) {
 		url: Cyph.Config.onionUrl + 'ping',
 		success: (data: string) => {
 			if (data === 'pong') {
-				location.href	=
+				locationData.href	=
 					Cyph.Config.onionUrl +
-					location.toString().split(location.host + '/')[1]
+					locationData.href.split(locationData.host + '/')[1]
 				;
 			}
 		}

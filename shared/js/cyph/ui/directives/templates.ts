@@ -72,7 +72,7 @@ module Cyph {
 
 						<div
 							ng-view
-							class='loading'
+							class='abort-screen loading'
 							layout='column'
 							layout-fill
 							flex
@@ -123,7 +123,7 @@ module Cyph {
 								playing: $this.p2pManager.isPlaying()
 							}'
 						>
-							<a class='logo' ng-href='{{Cyph.Env.homeUrl}}'>
+							<a class='logo' rel='noreferrer' ng-href='{{Cyph.Env.homeUrl}}'>
 								<img src='/img/betalogo.mobile.png' />
 							</a>
 							<video
@@ -139,7 +139,7 @@ module Cyph {
 								'
 								ng-attr-src='{{
 									$this.p2pManager.isPlaying() ?
-										Cyph.Config.p2pConfig.voiceCallVideo :
+										Cyph.Env.p2pVoiceCallVideo :
 										" "
 								}}'
 								autoplay
@@ -285,8 +285,7 @@ module Cyph {
 							class='message-list nano'
 							flex
 							ng-class='{
-								active: $this.state === Cyph.UI.Chat.States.chat,
-								"is-connected": $this.isConnected
+								active: $this.state === Cyph.UI.Chat.States.chat
 							}'
 						>
 							<md-content class='nano-content'>
@@ -352,20 +351,6 @@ module Cyph {
 									</div>
 								</md-list>
 							</md-content>
-
-							<div
-								class='setting-up-crypto loading'
-								layout='column'
-								layout-fill
-								flex
-							>
-								<div flex></div>
-								<div class='logo-animation'>
-									<img src='/img/logo.animated.gif' />
-								</div>
-								<div translate>Authenticating connection...</div>
-								<div flex></div>
-							</div>
 						</div>
 					</div>
 				`,
@@ -454,8 +439,13 @@ module Cyph {
 				`,
 
 				chatSidebar: `
-					<div class='chat-sidebar'>
-						<a class='logo' ng-href='{{Cyph.Env.homeUrl}}'>
+					<div
+						class='chat-sidebar'
+						ng-class='{
+							"show-chat": showChat && $this.state === Cyph.UI.Chat.States.chat
+						}'
+					>
+						<a class='logo' rel='noreferrer' ng-href='{{Cyph.Env.homeUrl}}'>
 							<img src='/img/betalogo.png' />
 						</a>
 						<div ng-show='showChat && $this.state === Cyph.UI.Chat.States.chat'>
@@ -585,7 +575,7 @@ module Cyph {
 					<div>
 						<md-toolbar class='chat-toolbar'>
 							<div class='md-toolbar-tools'>
-								<a class='logo' ng-href='{{Cyph.Env.homeUrl}}'>
+								<a class='logo' rel='noreferrer' ng-href='{{Cyph.Env.homeUrl}}'>
 									<img src='/img/betalogo.mobile.png' />
 								</a>
 
@@ -726,6 +716,86 @@ module Cyph {
 					</div>
 				`,
 
+				linkConnection: `
+					<div
+						class='link-connection loading'
+						layout='column'
+						layout-fill
+						flex
+					>
+						<div flex></div>
+						<div class='logo-animation'>
+							<img src='/img/logo.animated.gif' />
+						</div>
+						<div>
+							<div ng-show='$this.isPassive' translate>
+								Waiting for friend to join...
+							</div>
+							<div ng-hide='$this.isPassive'>
+								<div translate>
+									Just have your friend open this link, and we're good to go!
+								</div>
+								<br />
+
+								<md-input-container class='connect-link-input desktop-only'>
+									<input translate ng-model='$this.link' aria-label='Cyph link' />
+								</md-input-container>
+
+								<div class='connect-link-mobile mobile-only'>
+									<a class='connect-link-link' ng-href='{{$this.link}}'>
+										{{$this.link}}
+									</a>
+									<br />
+
+									<md-button
+										translate
+										class='md-fab'
+										aria-label='SMS'
+									>
+										<img src='/img/icons/sms.png' />
+										<a
+											target='_self'
+											ng-href='{{Cyph.Env.smsUriBase}}{{$this.linkEncoded}}'
+										></a>
+									</md-button>
+
+									<span class='divider'>
+										&nbsp;
+									</span>
+
+									<md-button
+										translate
+										class='md-fab'
+										aria-label='Email'
+									>
+										<img src='/img/icons/email.png' />
+										<a
+											target='_self'
+											ng-href='mailto:?body={{$this.linkEncoded}}'
+										></a>
+									</md-button>
+								</div>
+							</div>
+
+							<br />
+							<div>
+								<span translate>
+									Link expires in
+								</span>
+								<timer
+									class='timer'
+									interval='1000'
+									countdown='$this.countdown'
+									autostart='false'
+								>
+									{{minutes}}:{{sseconds}}
+								</timer>
+							</div>
+						</div>
+						<div flex></div>
+					</div>
+				`,
+
 				signupForm: `
 					<form class='beta-signup-form' ng-submit='$this.submit()'>
 						<div ng-show='$this.state === 0'>
@@ -749,7 +819,7 @@ module Cyph {
 							</md-input-container>
 						</div>
 
-						<div ng-show='$this.state === 2'>
+						<div translate ng-show='$this.state === 2'>
 							You rock.
 						</div>
 
@@ -763,6 +833,104 @@ module Cyph {
 							Sign up for beta
 						</md-button>
 					</form>
+				`,
+
+				staticCyphNotFound: `
+					<md-content
+						class='cyph-not-found nano'
+						layout='column'
+						layout-fill
+						flex
+					>
+						<div class='nano-content'>
+							<div>
+								<h1 translate>
+									I'm sorry, but your cyph is in another castle...
+								</h1>
+							</div>
+							<img src='/img/404.png' />
+							<div class='explanation'>
+								<p>
+									<span translate>Please</span>
+									<a
+										translate
+										target='_self'
+										ng-href='{{Cyph.Env.newCyphUrl}}'
+									>
+										try again
+									</a>.
+								</p>
+								<p translate>Reasons why you may have landed here:</p>
+								<ul>
+									<li translate>
+										The cyph you're looking for has expired
+									</li>
+									<li translate>
+										The cyph you're looking for has already been connected to
+										(someone else got there first, or you clicked twice)
+									</li>
+									<li translate>
+										A glitch in the matrix
+									</li>
+									<li translate>
+										You're just guessing random URLs
+									</li>
+									<li translate>
+										We broke something
+									</li>
+								</ul>
+							</div>
+						</div>
+					</md-content>
+				`,
+
+				staticCyphSpinningUp: `
+					<div
+						class='cyph-spinning-up loading'
+						layout='column'
+						layout-fill
+						flex
+					>
+						<div flex></div>
+						<div class='logo-animation'>
+							<img src='/img/logo.animated.gif' />
+						</div>
+						<div translate>Now spinning up your cyph room...</div>
+						<div flex></div>
+					</div>
+				`,
+
+				staticFooter: `
+					<div class='footer desktop-only'>
+						&copy; Cyph 2015
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+						<a rel='noreferrer' href='https://twitter.com/cyph'>
+							@cyph
+						</a>
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+						<a href='mailto:hello@cyph.com'>
+							hello@cyph.com
+						</a>
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+						<a
+							target='_self'
+							href='tel:+19312974462'
+							title='+1(931) 297 4462'
+						>
+							+1(931) CYPH INC
+						</a>
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+						<a
+							target='_self'
+							href='bitcoin:1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd'
+						>
+							1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd
+						</a>
+					</div>
 				`
 			};
 

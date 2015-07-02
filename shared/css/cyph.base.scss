@@ -1,5 +1,4 @@
 @import 'bourbon/bourbon';
-@import 'fonts';
 
 
 * {
@@ -28,7 +27,7 @@ md-sidenav .md-button {
 }
 
 
-#footer {
+#footer, .footer {
 	margin-top: 10px;
 	position: relative;
 	text-align: center;
@@ -84,8 +83,10 @@ blockquote {
 a {
 	color: inherit;
 }
-#footer a:not(:hover) {
-	text-decoration: none;
+#footer, .footer {
+	a:not(:hover) {
+		text-decoration: none;
+	}
 }
 
 textarea {

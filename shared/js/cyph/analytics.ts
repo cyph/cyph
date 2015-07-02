@@ -76,13 +76,13 @@ module Cyph {
 						Env.baseUrl +
 						'anal/' +
 						appName +
-						location.pathname +
-						location.search +
+						locationData.pathname +
+						locationData.search +
 						(
 							document.referrer &&
 							!/https:\/\/www.cyph.[a-z]+\//.test(document.referrer) ?
 								(
-									(location.search ? '&' : '?') +
+									(locationData.search ? '&' : '?') +
 									'ref=' +
 									encodeURIComponent(document.referrer)
 								) :

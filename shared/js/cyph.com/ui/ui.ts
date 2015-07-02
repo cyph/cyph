@@ -30,7 +30,7 @@ module Cyph.com {
 					Elements.newCyph.css({transform: '', top: ''});
 					Elements.fixedHeaderStuff.removeClass(UI.fixedHeaderClass);
 				}
-				else if (scrollTop >= (Elements.newCyphParent.height() / 2 + 16)) {
+				else if (scrollTop >= ((Elements.newCyphParent.height() / 2) + 16)) {
 					Elements.fixedHeaderStuff.addClass(UI.fixedHeaderClass);
 				}
 				else {
@@ -179,7 +179,7 @@ module Cyph.com {
 					const href: string		= $(e.currentTarget).attr('href');
 					let scrollDelay: number	= 500;
 
-					if (href !== location.pathname) {
+					if (href !== locationData.pathname) {
 						scrollDelay	= 0;
 
 						Cyph.UrlState.set(href);
