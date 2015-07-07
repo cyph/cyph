@@ -169,6 +169,15 @@ module Cyph {
 								eventAction: 'started',
 								eventValue: 1
 							});
+
+							if (this.state.wasInitiatedByAPI) {
+								Analytics.main.send({
+									hitType: 'event',
+									eventCategory: 'api-initiated-cyph',
+									eventAction: 'started',
+									eventValue: 1
+								});
+							}
 						}
 
 						this.on(Events.castle, e => this.castleHandler(e));

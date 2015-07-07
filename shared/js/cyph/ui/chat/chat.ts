@@ -268,6 +268,13 @@ module Cyph {
 						;
 
 						Cyph.UI.Elements.html.addClass('modest');
+
+						Analytics.main.send({
+							hitType: 'event',
+							eventCategory: 'modest-branding',
+							eventAction: 'used',
+							eventValue: 1
+						});
 					}
 
 					this.session		= new Session.ThreadedSession(
