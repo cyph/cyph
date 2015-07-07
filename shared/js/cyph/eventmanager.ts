@@ -58,7 +58,11 @@ module Cyph {
 				if (Env.isMainThread) {
 					for (const thread of Thread.threads) {
 						try {
-							thread.postMessage({event, data, isThreadEvent: true});
+							thread.postMessage(
+								JSON.stringify(
+									{event, data, isThreadEvent: true}
+								)
+							);
 						}
 						catch (_) {}
 					}
@@ -76,8 +80,17 @@ module Cyph {
 			}
 			else {
 				self.onmessage	= (e: MessageEvent) => {
-					if (Util.getValue(e.data, 'isThreadEvent')) {
-						EventManager.trigger(e.data.event, e.data.data, true);
+					let data: any;
+
+					try {
+						data	= JSON.parse(e.data);
+					}
+					catch (_) {
+						data	= {};
+					}
+
+					if (data.isThreadEvent) {
+						EventManager.trigger(data.event, data.data, true);
 					}
 					else if (onthreadmessage) {
 						onthreadmessage(e);
