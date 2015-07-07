@@ -9,5 +9,6 @@
   },
   "_source": "git://github.com/cyph/ntru.js.git",
   "_target": "*",
-  "_originalSource": "cyph/ntru.js"
+  "_originalSource": "cyph/ntru.js",
+  "_direct": true
 }
