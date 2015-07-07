@@ -70,7 +70,7 @@ if [ $test ] ; then
 	mv .tmpcsp shared/websign/csp
 else
 	cat shared/websign/csp | \
-		sed 's|https://*.cyph.com https://api.cyph.com|https://*.cyph.com|g' \
+		sed 's|https://\*.cyph.com https://api.cyph.com|https://*.cyph.com|g' \
 	> .tmpcsp
 	mv .tmpcsp shared/websign/csp
 fi
