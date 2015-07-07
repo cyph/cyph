@@ -67,6 +67,11 @@ module Cyph {
 								<img src='/img/logo.animated.gif' />
 							</div>
 							<div translate>Initiating key exchange...</div>
+							<md-progress-linear
+								class='md-accent key-exchange-progress'
+								md-mode='determinate'
+								ng-value='$this.keyExchangeProgress'
+							></md-progress-linear>
 							<div flex></div>
 						</div>
 

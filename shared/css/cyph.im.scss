@@ -496,6 +496,26 @@ html.mobile button[disabled] {
 	}
 }
 
+.chat-main .key-exchange-progress {
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 30px;
+
+	.md-container {
+		background-color: rgba(0, 0, 0, 0.15);
+
+		.md-bar2 {
+			background-color: white;
+		}
+	}
+}
+.chat-main:not(.mobile) .key-exchange-progress {
+	width: 50%;
+}
+.chat-main.mobile .key-exchange-progress {
+	width: 75%;
+}
+
 
 .chat-sidebar {
 	position: absolute;
