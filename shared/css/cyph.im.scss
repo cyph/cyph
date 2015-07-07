@@ -352,7 +352,7 @@ input, textarea {
 	}
 }
 
-.message-item:not(.unread) {
+.chat-main:not(.mobile) .message-item:not(.unread) {
 	@include animation(inkRippleCheckbox 0.35s linear 0s 1 normal);
 }
 
