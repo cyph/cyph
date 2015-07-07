@@ -68,6 +68,11 @@ if [ $test ] ; then
 		sed 's|www.cyph.com|*.appspot.com|g' \
 	> .tmpcsp
 	mv .tmpcsp shared/websign/csp
+else
+	cat shared/websign/csp | \
+		sed 's|https://*.cyph.com https://api.cyph.com|https://*.cyph.com|g' \
+	> .tmpcsp
+	mv .tmpcsp shared/websign/csp
 fi
 
 defaultCSPString='DEFAULT_CSP'
