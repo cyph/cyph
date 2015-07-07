@@ -22,6 +22,10 @@ module Cyph {
 				/** The current message being composed. */
 				currentMessage: string;
 
+				/** Percentage complete with initial handshake
+					(approximate / faked out). */
+				keyExchangeProgress: number;
+
 				/** Chat UI state/view. */
 				state: States;
 

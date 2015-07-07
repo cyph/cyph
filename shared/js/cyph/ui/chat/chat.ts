@@ -22,14 +22,18 @@ module Cyph {
 	export module UI {
 		export module Chat {
 			export class Chat extends BaseButtonManager implements IChat {
+				private static approximateKeyExchangeTime: number	= 7000;
+
+
 				private isMessageChanged: boolean;
 				private previousMessage: string;
 
-				public isConnected: boolean		= false;
-				public isDisconnected: boolean	= false;
-				public isFriendTyping: boolean	= false;
-				public currentMessage: string	= '';
-				public state: States			= States.none;
+				public isConnected: boolean			= false;
+				public isDisconnected: boolean		= false;
+				public isFriendTyping: boolean		= false;
+				public currentMessage: string		= '';
+				public keyExchangeProgress: number	= 0;
+				public state: States				= States.none;
 
 				public messages: {
 					author: Session.Users;
@@ -353,6 +357,19 @@ module Cyph {
 					this.session.on(Session.Events.connect, () => {
 						this.changeState(States.keyExchange);
 						Util.getValue(Elements.timer[0], 'stop', () => {}).call(Elements.timer[0]);
+
+						const start: number	= Date.now();
+						const timer: Timer	= new Timer((now: number) => {
+							const progress: number	= (now - start) / Chat.approximateKeyExchangeTime;
+
+							if (progress > 1) {
+								timer.stop();
+							}
+							else {
+								this.keyExchangeProgress	= progress * 100;
+								this.controller.update();
+							}
+						});
 					});
 
 					this.session.on(Session.Events.connectFailure, () => this.abortSetup());
