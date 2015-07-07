@@ -9,11 +9,21 @@ if (!(
 	'history' in self &&
 	'pushState' in self['history'] &&
 	'replaceState' in self['history'] &&
-	'localStorage' in self
+	'MutationObserver' in self
 )) {
 	location.pathname	= '/unsupportedbrowser';
 }
 
 if (!('subtle' in crypto) && 'webkitSubtle' in crypto) {
 	crypto.subtle	= crypto['webkitSubtle'];
+}
+
+var LocalStorage;
+
+try {
+	localStorage.isPersistent	= 'true';
+	LocalStorage	= localStorage;
+}
+catch (_) {
+	LocalStorage	= LocalStorage || {};
 }
