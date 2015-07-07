@@ -359,17 +359,19 @@ module Cyph {
 						Util.getValue(Elements.timer[0], 'stop', () => {}).call(Elements.timer[0]);
 
 						const start: number	= Date.now();
-						const timer: Timer	= new Timer((now: number) => {
-							const progress: number	= (now - start) / Chat.approximateKeyExchangeTime;
+						const intervalId	= setInterval(() => {
+							const progress: number	=
+								(Date.now() - start) / Chat.approximateKeyExchangeTime
+							;
 
 							if (progress > 1) {
-								timer.stop();
+								clearInterval(intervalId);
 							}
 							else {
 								this.keyExchangeProgress	= progress * 100;
 								this.controller.update();
 							}
-						});
+						}, 50);
 					});
 
 					this.session.on(Session.Events.connectFailure, () => this.abortSetup());
