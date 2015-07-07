@@ -48,7 +48,6 @@ for (const k of ['window', 'document']) {
 for (const k of [
 	'history',
 	'location',
-	'localStorage',
 	'navigator',
 	'Audio'
 ]) {

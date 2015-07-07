@@ -3,6 +3,10 @@
  * @interface
  */
 interface Storage {
+	/** Indicates whether this Storage instance
+		data is stored persistently. */
+	isPersistent: string;
+
 	/** Hash of current bootstrap payload. */
 	webSignBootHash: string;
 

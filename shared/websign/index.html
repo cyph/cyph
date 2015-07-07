@@ -148,8 +148,8 @@
 							WebSign.bootstrapText	= bootstrapText;
 
 							Sha256(WebSign.bootstrapText, function (hash) {
-								localStorage.webSignBootHashOld	= localStorage.webSignBootHash;
-								localStorage.webSignBootHash	= hash;
+								LocalStorage.webSignBootHashOld	= LocalStorage.webSignBootHash;
+								LocalStorage.webSignBootHash	= hash;
 
 								callback();
 							});
@@ -171,9 +171,9 @@
 			stringify: function (shouldIncludeBootstrapText) {
 				return (
 					'\n\ncontinent: ' + WebSign.continent +
-					'\n\ncurrent bootstrap hash: ' + localStorage.webSignBootHash +
-					'\n\nprevious bootstrap hash: ' + localStorage.webSignBootHashOld +
-					'\n\npackage hash: ' + localStorage.webSignHash +
+					'\n\ncurrent bootstrap hash: ' + LocalStorage.webSignBootHash +
+					'\n\nprevious bootstrap hash: ' + LocalStorage.webSignBootHashOld +
+					'\n\npackage hash: ' + LocalStorage.webSignHash +
 					(
 						shouldIncludeBootstrapText ?
 							('\n\n\n\n' + WebSign.bootstrapText) :
@@ -231,9 +231,9 @@
 					}
 				},
 				success: function (signature) {
-					var previousHash			= localStorage.webSignHash;
-					var previousHashTimestamp	= parseInt(localStorage.webSignHashTimestamp, 10);
-					var previousHashExpires		= parseInt(localStorage.webSignHashExpires, 10);
+					var previousHash			= LocalStorage.webSignHash;
+					var previousHashTimestamp	= parseInt(LocalStorage.webSignHashTimestamp, 10);
+					var previousHashExpires		= parseInt(LocalStorage.webSignHashExpires, 10);
 
 					try {
 						var signatureLines		= signature.split('\n');
@@ -276,7 +276,7 @@
 							) {
 								var applyUpdate	= true;
 
-								if (localStorage.webSignManualUpgrades) {
+								if (LocalStorage.webSignManualUpgrades) {
 									if (confirm('Update to package with hash ' + hashObject.hash + '?')) {
 										alert('Applying update.');
 									}
@@ -287,11 +287,11 @@
 								}
 
 								if (applyUpdate) {
-									localStorage.webSignHash			= hashObject.hash;
-									localStorage.webSignHashTimestamp	= hashObject.timestamp;
-									localStorage.webSignHashExpires		= hashObject.expires;
+									LocalStorage.webSignHash			= hashObject.hash;
+									LocalStorage.webSignHashTimestamp	= hashObject.timestamp;
+									LocalStorage.webSignHashExpires		= hashObject.expires;
 
-									localStorage.webSignBootHashWhitelist	=
+									LocalStorage.webSignBootHashWhitelist	=
 										JSON.stringify(hashObject.webSignBootHashWhitelist)
 									;
 								}
@@ -302,9 +302,9 @@
 
 					/* Show big scary warning if WebSign has been compromised */
 					try {
-						var webSignBootHashWhitelist	= JSON.parse(localStorage.webSignBootHashWhitelist);
+						var webSignBootHashWhitelist	= JSON.parse(LocalStorage.webSignBootHashWhitelist);
 
-						if (!webSignBootHashWhitelist[localStorage.webSignBootHash]) {
+						if (!webSignBootHashWhitelist[LocalStorage.webSignBootHash]) {
 							panic();
 							return;
 						}
@@ -317,9 +317,9 @@
 						then finally abort if that still fails */
 					loadPackage(function () {
 						if (previousHash && previousHashTimestamp && previousHashExpires) {
-							localStorage.webSignHash			= previousHash;
-							localStorage.webSignHashTimestamp	= previousHashTimestamp;
-							localStorage.webSignHashExpires		= previousHashExpires;
+							LocalStorage.webSignHash			= previousHash;
+							LocalStorage.webSignHashTimestamp	= previousHashTimestamp;
+							LocalStorage.webSignHashExpires		= previousHashExpires;
 						}
 
 						loadPackage(WebSign.shouldRetry() ? main : abort);
@@ -441,17 +441,17 @@
 		function loadPackage (errorHandler) {
 			errorHandler	= errorHandler || abort;
 
-			var hashExists		= 'webSignHash' in localStorage;
-			var hashExpireDate	= parseInt(localStorage.webSignHashExpires, 10);
+			var hashExists		= 'webSignHash' in LocalStorage;
+			var hashExpireDate	= parseInt(LocalStorage.webSignHashExpires, 10);
 
 			if (hashExists && hashExpireDate > Date.now()) {
 				request({
 					url: WebSign.cdnUrl + WebSign.config.packagePath,
-					data: localStorage.webSignHash,
+					data: LocalStorage.webSignHash,
 					error: errorHandler,
 					success: function (payload) {
 						Sha256(payload, function (hash) {
-							if (hash === localStorage.webSignHash) {
+							if (hash === LocalStorage.webSignHash) {
 								document.open('text/html');
 								document.write(payload);
 								document.close();
