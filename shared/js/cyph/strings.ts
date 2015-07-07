@@ -64,8 +64,8 @@ module Cyph {
 		,
 
 		p2pWarningVideoPassive:
-			`Starting video call and P2P connection. If you don't want to be seen on camera, or ` +
-			`have a reason to conceal your IP address from your friend, close this window now.`
+			`Starting video call and P2P connection. ` +
+			`If you don't want to be seen on camera, close this window now.`
 		,
 
 		pingPongTimeout:
