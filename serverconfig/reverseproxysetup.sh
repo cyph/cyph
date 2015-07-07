@@ -24,10 +24,9 @@ mount --all
 umask 077
 echo "${rekeyscript}" | base64 --decode > /rekey.sh
 chmod 700 /rekey.sh
-/rekey.sh
 
 crontab -l > /tmp/cyph.cron
-echo '0 0 * * * /rekey.sh' >> /tmp/cyph.cron
+echo '@reboot /rekey.sh' >> /tmp/cyph.cron
 crontab /tmp/cyph.cron
 rm /tmp/cyph.cron
 

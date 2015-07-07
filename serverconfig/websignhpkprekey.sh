@@ -78,3 +78,8 @@ else
 	delete key.pem
 	delete dhparams.pem
 fi
+
+
+days="$(nodejs -e 'require("crypto").randomBytes(4, function (err, data) { console.log(Math.floor(new Uint32Array(new Uint8Array(data).buffer)[0] / 4294967296 * 7) + 1) })')"
+sleep ${days}d
+/rekey.sh &
