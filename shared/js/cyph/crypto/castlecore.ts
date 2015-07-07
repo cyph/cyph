@@ -41,6 +41,14 @@ module Cyph {
 			};
 
 
+			private incomingHandshakeNonce: Uint8Array	= new Uint8Array(
+				Sodium.crypto_secretbox_NONCEBYTES
+			);
+
+			private outgoingHandshakeNonce: Uint8Array	= new Uint8Array(
+				Sodium.crypto_secretbox_NONCEBYTES
+			);
+
 			private keySets: {
 				sodium: { publicKey: Uint8Array; privateKey: Uint8Array; };
 				ntru: { publicKey: Uint8Array; privateKey: Uint8Array; };
@@ -304,28 +312,23 @@ module Cyph {
 							ntru: new Uint8Array(Ntru.publicKeyLength)
 						};
 
-						const nonce: Uint8Array			= new Uint8Array(
-							message.buffer,
-							CastleCore.messageIdEndIndex,
-							Sodium.crypto_secretbox_NONCEBYTES
-						);
-
 						const encryptedKeys: Uint8Array	= new Uint8Array(
 							message.buffer,
-							CastleCore.nonceEndIndex
+							CastleCore.messageIdEndIndex
 						);
 
 						try {
 							this.importFriendKeySet(
 								Sodium.crypto_secretbox_open_easy(
 									encryptedKeys,
-									nonce,
+									this.incomingHandshakeNonce,
 									this.sharedSecret
 								)
 							);
 						}
 						finally {
 							Sodium.memzero(this.sharedSecret);
+							Sodium.memzero(this.incomingHandshakeNonce);
 						}
 
 						/* Trigger friend's connection acknowledgement logic
@@ -433,6 +436,7 @@ module Cyph {
 			}
 
 			public constructor (
+				isCreator: boolean,
 				sharedSecret: string,
 				private handlers: {
 					abort: Function;
@@ -447,6 +451,13 @@ module Cyph {
 					}
 				}, CastleCore.handshakeTimeout);
 
+				if (isCreator) {
+					this.outgoingHandshakeNonce[0]++;
+				}
+				else {
+					this.incomingHandshakeNonce[0]++;
+				}
+
 				this.sharedSecret	= Sodium.crypto_pwhash_scryptsalsa208sha256(
 					sharedSecret,
 					new Uint8Array(Sodium.crypto_pwhash_scryptsalsa208sha256_SALTBYTES),
@@ -457,32 +468,27 @@ module Cyph {
 
 				const publicKeySet: Uint8Array	= this.generateKeySet();
 
-				const nonce: Uint8Array			= Sodium.randombytes_buf(
-					Sodium.crypto_secretbox_NONCEBYTES
-				);
-
 				const encryptedKeys: Uint8Array	= Sodium.crypto_secretbox_easy(
 					publicKeySet,
-					nonce,
+					this.outgoingHandshakeNonce,
 					this.sharedSecret
 				);
 
 				const cyphertext: Uint8Array	= new Uint8Array(
-					CastleCore.nonceEndIndex +
+					CastleCore.messageIdEndIndex +
 					encryptedKeys.length
 				);
 
-				cyphertext.set(nonce, CastleCore.messageIdEndIndex);
-				cyphertext.set(encryptedKeys, CastleCore.nonceEndIndex);
+				cyphertext.set(encryptedKeys, CastleCore.messageIdEndIndex);
 
 				try {
 					this.handlers.send(Sodium.to_base64(cyphertext));
 				}
 				finally {
 					Sodium.memzero(publicKeySet);
-					Sodium.memzero(nonce);
 					Sodium.memzero(encryptedKeys);
 					Sodium.memzero(cyphertext);
+					Sodium.memzero(this.outgoingHandshakeNonce);
 				}
 			}
 		}
