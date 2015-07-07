@@ -22,7 +22,7 @@ module Cyph {
 	export module UI {
 		export module Chat {
 			export class Chat extends BaseButtonManager implements IChat {
-				private static approximateKeyExchangeTime: number	= 7000;
+				private static approximateKeyExchangeTime: number	= 10000;
 
 
 				private isMessageChanged: boolean;
