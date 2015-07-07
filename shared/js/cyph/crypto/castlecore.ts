@@ -5,10 +5,16 @@ module Cyph {
 		 * feature set, with group/async/persistence coming later.
 		 */
 		export class CastleCore {
-			private static flagIndex: number				= 0;
-			private static flagDataIndex: number			= 1;
 			private static handshakeTimeout: number			= 90000;
 			private static messageIdEndIndex: number		= 4;
+
+			private static flagIndex: number				=
+				Sodium.crypto_onetimeauth_KEYBYTES
+			;
+
+			private static flagDataIndex: number			=
+				CastleCore.flagIndex + 1
+			;
 
 			private static nonceEndIndex: number			=
 				CastleCore.messageIdEndIndex +
@@ -25,18 +31,24 @@ module Cyph {
 				Sodium.crypto_onetimeauth_KEYBYTES
 			;
 
+			private static metadataMacIndex: number			=
+				CastleCore.ntruMacIndex +
+				Sodium.crypto_onetimeauth_BYTES
+			;
+
+			private static sodiumCyphertextIndex: number	=
+				CastleCore.metadataMacIndex +
+				Sodium.crypto_onetimeauth_BYTES
+			;
+
 			private static publicKeySetLength: number		=
 				Sodium.crypto_box_PUBLICKEYBYTES +
 				Ntru.publicKeyLength
 			;
 
-			private static sodiumCyphertextIndex: number	=
-				CastleCore.ntruMacIndex +
-				Sodium.crypto_onetimeauth_BYTES
-			;
-
 			private static errors	= {
 				decryptionFailure: new Error('Data could not be decrypted.'),
+				metadataAuthFailure: new Error('Invalid metadata (message ID, nonce).'),
 				ntruAuthFailure: new Error('Invalid NTRU cyphertext.')
 			};
 
@@ -86,10 +98,10 @@ module Cyph {
 					ntru: { publicKey: Uint8Array; privateKey: Uint8Array; };
 				};
 			} {
-				const authenticatedData: Uint8Array	= new Uint8Array(
+				const metadata: Uint8Array			= new Uint8Array(
 					cyphertext.buffer,
 					0,
-					CastleCore.ntruMacIndex
+					CastleCore.nonceEndIndex
 				);
 
 				const nonce: Uint8Array				= new Uint8Array(
@@ -107,6 +119,12 @@ module Cyph {
 				const ntruMac: Uint8Array			= new Uint8Array(
 					cyphertext.buffer,
 					CastleCore.ntruMacIndex,
+					Sodium.crypto_onetimeauth_BYTES
+				);
+
+				const metadataMac: Uint8Array		= new Uint8Array(
+					cyphertext.buffer,
+					CastleCore.metadataMacIndex,
 					Sodium.crypto_onetimeauth_BYTES
 				);
 
@@ -139,7 +157,7 @@ module Cyph {
 
 						if (!Sodium.crypto_onetimeauth_verify(
 							ntruMac,
-							authenticatedData,
+							ntruCyphertext,
 							ntruAuthKey
 						)) {
 							throw CastleCore.errors.ntruAuthFailure;
@@ -156,10 +174,27 @@ module Cyph {
 							keySet.sodium.privateKey
 						);
 
+						const metadataAuthKey: Uint8Array	= new Uint8Array(
+							data.buffer,
+							0,
+							Sodium.crypto_onetimeauth_KEYBYTES
+						);
+
+						if (!Sodium.crypto_onetimeauth_verify(
+							metadataMac,
+							metadata,
+							metadataAuthKey
+						)) {
+							throw CastleCore.errors.metadataAuthFailure;
+						}
+
 						return {data, keySet};
 					}
 					catch (err) {
-						if (err === CastleCore.errors.ntruAuthFailure) {
+						if (
+							err === CastleCore.errors.metadataAuthFailure ||
+							err === CastleCore.errors.ntruAuthFailure
+						) {
 							throw err;
 						}
 					}
@@ -180,10 +215,6 @@ module Cyph {
 					ntru: { publicKey: Uint8Array; privateKey: Uint8Array; };
 				}
 			) : string {
-				const nonce: Uint8Array				= Sodium.randombytes_buf(
-					Sodium.crypto_secretbox_NONCEBYTES
-				);
-
 				const symmetricKey: Uint8Array		= Sodium.randombytes_buf(
 					Sodium.crypto_secretbox_KEYBYTES
 				);
@@ -199,11 +230,38 @@ module Cyph {
 				ntruPlaintext.set(symmetricKey);
 				ntruPlaintext.set(ntruAuthKey, Sodium.crypto_secretbox_KEYBYTES);
 
-
 				const ntruCyphertext: Uint8Array	= Ntru.encrypt(
 					ntruPlaintext,
 					this.friendKeySet.ntru
 				);
+
+				const ntruMac: Uint8Array			= Sodium.crypto_onetimeauth(
+					ntruCyphertext,
+					ntruAuthKey
+				);
+
+
+				const nonce: Uint8Array				= Sodium.randombytes_buf(
+					Sodium.crypto_secretbox_NONCEBYTES
+				);
+
+				const metadataAuthKey: Uint8Array	= Sodium.randombytes_buf(
+					Sodium.crypto_onetimeauth_KEYBYTES
+				);
+
+				const metadata: Uint8Array			= new Uint8Array(
+					CastleCore.nonceEndIndex
+				);
+
+				data.set(metadataAuthKey);
+				metadata.set(new Uint8Array(this.outgoingMessageId.buffer));
+				metadata.set(nonce, CastleCore.messageIdEndIndex);
+
+				const metadataMac: Uint8Array		= Sodium.crypto_onetimeauth(
+					metadata,
+					metadataAuthKey
+				);
+
 
 				const sodiumCyphertext: Uint8Array	= Sodium.crypto_secretbox_easy(
 					Sodium.crypto_box_easy(
@@ -221,32 +279,25 @@ module Cyph {
 					sodiumCyphertext.length
 				);
 
-				cyphertext.set(new Uint8Array(this.outgoingMessageId.buffer));
-				cyphertext.set(nonce, CastleCore.messageIdEndIndex);
+				cyphertext.set(metadata);
 				cyphertext.set(ntruCyphertext, CastleCore.nonceEndIndex);
-
-				const ntruMac: Uint8Array			= Sodium.crypto_onetimeauth(
-					new Uint8Array(
-						cyphertext.buffer,
-						0,
-						CastleCore.ntruMacIndex
-					),
-					ntruAuthKey
-				);
-
 				cyphertext.set(ntruMac, CastleCore.ntruMacIndex);
+				cyphertext.set(metadataMac, CastleCore.metadataMacIndex);
 				cyphertext.set(sodiumCyphertext, CastleCore.sodiumCyphertextIndex);
 
 				try {
 					return Sodium.to_base64(cyphertext);
 				}
 				finally {
-					Sodium.memzero(nonce);
 					Sodium.memzero(symmetricKey);
 					Sodium.memzero(ntruAuthKey);
 					Sodium.memzero(ntruPlaintext);
 					Sodium.memzero(ntruCyphertext);
 					Sodium.memzero(ntruMac);
+					Sodium.memzero(nonce);
+					Sodium.memzero(metadata);
+					Sodium.memzero(metadataAuthKey);
+					Sodium.memzero(metadataMac);
 					Sodium.memzero(sodiumCyphertext);
 					Sodium.memzero(cyphertext);
 				}
