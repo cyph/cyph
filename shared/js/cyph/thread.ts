@@ -82,15 +82,8 @@ module Cyph {
 				importScripts('/lib/bower_components/base64/base64.min.js');
 			}
 
-			if (
-				(
-					typeof crypto === 'undefined' ||
-					typeof crypto.getRandomValues !== 'function'
-				) &&
-				'msCrypto' in self
-			) {
-				self['crypto']	= self['msCrypto'];
-				crypto			= self['crypto'];
+			if (typeof crypto === 'undefined' && 'msCrypto' in self) {
+				crypto	= self['msCrypto'];
 			}
 			try {
 				crypto.getRandomValues(new Uint8Array(1));
@@ -109,7 +102,7 @@ module Cyph {
 					vars._threadRandomSeed[i]	= 0;
 				}
 
-				self['crypto']	= {
+				crypto	= {
 					getRandomValues: array => {
 						const bytes: number	=
 							'BYTES_PER_ELEMENT' in array ?
@@ -128,8 +121,9 @@ module Cyph {
 
 					subtle: null
 				};
-				crypto	= self['crypto'];
 			}
+
+			self['crypto']	= crypto;
 
 			vars._locationData		= null;
 			vars._navigatorData		= null;
