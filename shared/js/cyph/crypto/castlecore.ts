@@ -7,7 +7,7 @@ module Cyph {
 		export class CastleCore {
 			private static flagIndex: number				= 0;
 			private static flagDataIndex: number			= 1;
-			private static handshakeTimeout: number			= 45000;
+			private static handshakeTimeout: number			= 90000;
 			private static messageIdEndIndex: number		= 4;
 
 			private static nonceEndIndex: number			=
