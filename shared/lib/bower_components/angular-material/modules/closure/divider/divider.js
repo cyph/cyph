@@ -2,7 +2,7 @@
  * Angular Material Design
  * https://github.com/angular/material
  * @license MIT
- * v0.9.7
+ * v0.10.0
  */
 goog.provide('ng.material.components.divider');
 goog.require('ng.material.core');

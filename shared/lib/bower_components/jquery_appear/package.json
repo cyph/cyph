@@ -7,12 +7,13 @@
     "appear",
     "disappear"
   ],
-  "version": "0.3.4",
+  "version": "0.3.5",
   "author": {
     "name": "Andrey Sidorov",
     "email" : "takandar@gmail.com",
     "url": "https://github.com/morr/jquery.appear/blob/master/AUTHORS.txt"
   },
+  "main": "jquery.appear.js",
   "maintainers": [
     {
       "name": "Andrey Sidorov",

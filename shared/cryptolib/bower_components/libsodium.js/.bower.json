@@ -1,6 +1,6 @@
 {
   "name": "libsodium.js",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "homepage": "https://github.com/jedisct1/libsodium.js",
   "authors": [
     "Ahmad Ben Mrad (@BatikhSouri)",
@@ -44,14 +44,14 @@
     "test",
     "wrapper"
   ],
-  "_release": "0.2.8",
+  "_release": "0.2.9",
   "_resolution": {
     "type": "version",
-    "tag": "0.2.8",
-    "commit": "0791f576a0a014438b5e8e8fe81642af5a649118"
+    "tag": "0.2.9",
+    "commit": "71febfbe7d0176706dd4979f40aae4a8e8b9d40a"
   },
   "_source": "git://github.com/jedisct1/libsodium.js.git",
-  "_target": "~0.2.8",
+  "_target": "~0.2.9",
   "_originalSource": "libsodium.js",
   "_direct": true
 }

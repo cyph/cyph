@@ -92,7 +92,7 @@ func UGCPolicy() *Policy {
 	// be blank or the value "open".
 	p.AllowAttrs(
 		"open",
-	).Matching(regexp.MustCompile(`(?i)^|open$`)).OnElements("details")
+	).Matching(regexp.MustCompile(`(?i)^(|open)$`)).OnElements("details")
 
 	// "fieldset" is not permitted as we are not allowing forms to be created.
 
@@ -150,7 +150,7 @@ func UGCPolicy() *Policy {
 	p.AllowAttrs("href").OnElements("area")
 	p.AllowAttrs("rel").Matching(SpaceSeparatedTokens).OnElements("area")
 	p.AllowAttrs("shape").Matching(
-		regexp.MustCompile(`(?i)^default|circle|rect|poly$`),
+		regexp.MustCompile(`(?i)^(default|circle|rect|poly)$`),
 	).OnElements("area")
 
 	// "link" is not permitted
