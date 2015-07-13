@@ -1,0 +1,59 @@
+module Cyph.com {
+	export module UI {
+		/**
+		 * Controls the Cyph chat demo.
+		 */
+		export class CyphDemo {
+			private static messages: { text: string; isMobile: boolean; }[]	= [
+				{text: 'hallo :beer:', isMobile: false},
+				{text: 'u wanna cheat on ur wife with me', isMobile: false},
+				{text: 'sry, cant', isMobile: true},
+				{text: 'ok', isMobile: false},
+				{text: 'hows the kids', isMobile: true},
+				{text: 'kids is kill', isMobile: false},
+				{text: 'no', isMobile: true},
+				{text: 'sry', isMobile: false},
+				{text: 'when funeral', isMobile: true},
+				{text: 'yesterday', isMobile: false},
+				{text: 'oh', isMobile: true}
+			];
+
+
+			/** Desktop chat UI. */
+			public desktop: DummyChat;
+
+			/** Mobile chat UI. */
+			public mobile: DummyChat;
+
+			/**
+			 * Opens mobile sidenav menu.
+			 */
+			public openMobileMenu() : void {
+				setTimeout(() =>
+					this.mobileMenu.open()
+				, 250);
+			}
+
+			/**
+			 * @param controller
+			 */
+			public constructor(
+				controller: Cyph.IController,
+				dialogManager: Cyph.UI.IDialogManager,
+				private mobileMenu: Cyph.UI.ISidebar
+			) {
+				if (Cyph.Env.isMobile) {
+					return;
+				}
+
+				this.desktop	= new DummyChat(controller, dialogManager, false);
+				this.mobile		= new DummyChat(controller, dialogManager, true);
+
+				this.desktop.connectChat(this.mobile);
+				this.mobile.connectChat(this.desktop);
+
+				/* TODO: Run through animation logic */
+			}
+		}
+	}
+}

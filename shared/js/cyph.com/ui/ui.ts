@@ -15,6 +15,9 @@ module Cyph.com {
 			/** Podcast promo page state/view. */
 			public podcast: Podcasts	= Podcasts.none;
 
+			/** Cyph demo animation. */
+			public cyphDemo: CyphDemo;
+
 			/** Signup form to be displayed throughout the site. */
 			public signupForm: Cyph.UI.ISignupForm;
 
@@ -122,9 +125,14 @@ module Cyph.com {
 			/**
 			 * @param controller
 			 */
-			public constructor (private controller: Cyph.IController) {
+			public constructor (
+				private controller: Cyph.IController,
+				dialogManager: Cyph.UI.IDialogManager,
+				mobileMenu: Cyph.UI.ISidebar
+			) {
 				this.backgroundVideoManager	= new BackgroundVideoManager();
 				this.signupForm				= new Cyph.UI.SignupForm(this.controller);
+				this.cyphDemo				= new CyphDemo(this.controller, dialogManager, mobileMenu);
 
 				Cyph.UrlState.onchange(urlState => this.onUrlStateChange(urlState));
 				Cyph.UrlState.set(Cyph.UrlState.get(), true, false, false);
