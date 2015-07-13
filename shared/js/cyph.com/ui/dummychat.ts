@@ -1,27 +1,17 @@
-/// <reference path="../../base.ts" />
-
-/// <reference path="../../../global/plugins.jquery.ts" />
-
-/// <reference path="../../p2p/p2p.ts" />
-/// <reference path="../../channel/queue.ts" />
-/// <reference path="../../session/message.ts" />
-/// <reference path="../../session/threadedsession.ts" />
-/// <reference path="../templates.ts" />
-/// <reference path="../basebuttonmanager.ts" />
-/// <reference path="../elements.ts" />
-/// <reference path="../nanoscroller.ts" />
-/// <reference path="../visibilitywatcher.ts" />
-/// <reference path="../affiliate.ts" />
-/// <reference path="cyphertext.ts" />
-/// <reference path="p2pmanager.ts" />
-/// <reference path="photomanager.ts" />
-/// <reference path="scrollmanager.ts" />
+/// <reference path="../../cyph/ui/templates.ts" />
+/// <reference path="../../cyph/ui/basebuttonmanager.ts" />
+/// <reference path="../../cyph/ui/elements.ts" />
+/// <reference path="../../cyph/ui/nanoscroller.ts" />
+/// <reference path="../../cyph/ui/visibilitywatcher.ts" />
+/// <reference path="../../cyph/ui/affiliate.ts" />
+/// <reference path="../../cyph/ui/chat/cyphertext.ts" />
+/// <reference path="../../cyph/ui/chat/photomanager.ts" />
+/// <reference path="../../cyph/ui/chat/scrollmanager.ts" />
 
 
 module Cyph.com {
 	export module UI {
-			export class DummyChat extends BaseButtonManager implements IChat {
-
+		export class DummyChat extends Cyph.UI.BaseButtonManager implements Cyph.UI.Chat.IChat {
 			private isMessageChanged: boolean;
 			private previousMessage: string;
 			private other: DummyChat;
@@ -31,7 +21,7 @@ module Cyph.com {
 			public isFriendTyping: boolean		= false;
 			public currentMessage: string		= '';
 			public keyExchangeProgress: number	= 0;
-			public state: States				= States.none;
+			public state: Cyph.UI.Chat.States	= Cyph.UI.Chat.States.none;
 
 			public messages: {
 				author: Session.Users;
@@ -39,14 +29,13 @@ module Cyph.com {
 				timestamp: string;
 			}[]	= [];
 
-			public cyphertext: ICyphertext;
-			public photoManager: IPhotoManager;
-			public p2pManager: IP2PManager;
-			public scrollManager: IScrollManager;
+			public cyphertext: Cyph.UI.Chat.ICyphertext;
+			public photoManager: Cyph.UI.Chat.IPhotoManager;
+			public p2pManager: Cyph.UI.Chat.IP2PManager;
+			public scrollManager: Cyph.UI.Chat.IScrollManager;
 			public session: Session.ISession;
 
-			public abortSetup () : void {
-			}
+			public abortSetup () : void {}
 
 			public addMessage (
 				text: string,
@@ -69,31 +58,32 @@ module Cyph.com {
 						this.scrollManager.scrollDown();
 					}
 					else {
-						NanoScroller.update();
+						Cyph.UI.NanoScroller.update();
 					}
 				}
 			}
 
 			public begin (callback: Function = () => {}) : void {
-				if (this.state === States.aborted) {
+				if (this.state === Cyph.UI.Chat.States.aborted) {
 					return;
 				}
-				this.changeState(States.chatBeginMessage);
+
+				this.changeState(Cyph.UI.Chat.States.chatBeginMessage);
 
 				setTimeout(() => {
-					if (this.state === States.aborted) {
+					if (this.state === Cyph.UI.Chat.States.aborted) {
 						return;
 					}
 
 					callback();
 
 					this.session.trigger(Session.Events.beginChatComplete);
-					this.changeState(States.chat);
+					this.changeState(Cyph.UI.Chat.States.chat);
 
 					/* Adjust font size for translations */
 					if (!this.isMobile) {
 						setTimeout(() => {
-							Elements.buttons.each((i: number, elem: HTMLElement) => {
+							Cyph.UI.Elements.buttons.each((i: number, elem: HTMLElement) => {
 								const $this: JQuery		= $(elem);
 
 								const $clone: JQuery	= $this
@@ -121,22 +111,22 @@ module Cyph.com {
 						}, 10000);
 					}
 
-					this.addMessage(Strings.introductryMessage, Session.Users.app, false);
+					this.addMessage(Cyph.Strings.introductoryMessage, Session.Users.app, false);
 					this.setConnected();
 				}, 3000);
 			}
 
-			public changeState (state: States) : void {
+			public changeState (state: Cyph.UI.Chat.States) : void {
 				this.state	= state;
 				this.controller.update();
 			}
 
 			public close () : void {
-				if (this.state === States.aborted) {
+				if (this.state === Cyph.UI.Chat.States.aborted) {
 					return;
 				}
 
-				this.setFriendTyipng(false);
+				this.setFriendTyping(false);
 
 				if (!this.isConnected) {
 					this.abortSetup();
@@ -153,7 +143,7 @@ module Cyph.com {
 			}
 
 			public disconnectButton () : void {
-				his.baseButtonClick(() => {
+				this.baseButtonClick(() => {
 					this.dialogManager.confirm({
 						title: Strings.disconnectTitle,
 						content: Strings.disconnectConfirm,
@@ -170,7 +160,7 @@ module Cyph.com {
 			public formattingHelpButton () : void {
 				this.baseButtonClick(() => {
 					this.dialogManager.baseDialog({
-						template: Templates.formattingHelp
+						template: Cyph.UI.Templates.formattingHelp
 					});
 
 					Analytics.main.send({
@@ -209,12 +199,11 @@ module Cyph.com {
 				if (message) {
 					this.addMessage(message, Session.Users.me);
 					this.scrollManager.scrollDown();
-					setTimeout(() => this.other.addmessage(message, Session.Users.friend), 250);
+					setTimeout(() => this.other.addMessage(message, Session.Users.friend), 250);
 				}
 			}
 
-			public setConnected () : void {
-			}
+			public setConnected () : void {}
 
 			public setFriendTyping (isFriendTyping: boolean) : void {
 				this.isFriendTyping	= isFriendTyping;
@@ -230,9 +219,8 @@ module Cyph.com {
 			 */
 			public constructor (
 				controller: IController,
-				private dialogManager: IDialogManager,
-				mobileMenu: ISidebar,
-				private notifier: INotifier,
+				private dialogManager: Cyph.UI.IDialogManager,
+				mobileMenu: Cyph.UI.ISidebar,
 				public isMobile: boolean = Cyph.Env.isMobile
 			) {
 				super(controller, mobileMenu);
@@ -256,17 +244,17 @@ module Cyph.com {
 					});
 				}
 
-				this.cyphertext		= new Cyphertext(
-					this.session,
+				this.cyphertext		= new Cyph.UI.Chat.Cyphertext(
+					<any> {on: () => {}},
 					this.controller,
 					this.mobileMenu,
 					this.dialogManager,
 					this.isMobile
 				);
 
-				this.photoManager	= new PhotoManager(this);
+				this.photoManager	= new Cyph.UI.Chat.PhotoManager(this);
 
-				this.scrollManager	= new ScrollManager(
+				this.scrollManager	= new Cyph.UI.Chat.ScrollManager(
 					this.controller,
 					this.dialogManager,
 					this.isMobile
@@ -276,8 +264,8 @@ module Cyph.com {
 				if (this.isMobile) {
 					/* Prevent jankiness upon message send on mobile */
 
-					Elements.messageBox.click(e => {
-						Elements.sendButton.add(Elements.insertPhotoMobile).each((i, elem) => {
+					Cyph.UI.Elements.messageBox.click(e => {
+						Cyph.UI.Elements.sendButton.add(Cyph.UI.Elements.insertPhotoMobile).each((i, elem) => {
 							const $button	= $(elem);
 							const bounds	= $button['bounds']();
 
@@ -295,14 +283,14 @@ module Cyph.com {
 					/* Adapt message box to content size on desktop */
 
 					const messageBoxLineHeight: number	= parseInt(
-						Elements.messageBox.css('line-height'),
+						Cyph.UI.Elements.messageBox.css('line-height'),
 						10
 					);
 
-					Elements.messageBox.on('keyup', () =>
-						Elements.messageBox.height(
+					Cyph.UI.Elements.messageBox.on('keyup', () =>
+						Cyph.UI.Elements.messageBox.height(
 							messageBoxLineHeight *
-							Elements.messageBox.val().split('\n').length
+							Cyph.UI.Elements.messageBox.val().split('\n').length
 						)
 					);
 				}
@@ -310,9 +298,7 @@ module Cyph.com {
 				setInterval(() => this.messageChange(), 5000);
 
 				self['tabIndent'].renderAll();
-
 			}
-			
 		}
 	}
 }
