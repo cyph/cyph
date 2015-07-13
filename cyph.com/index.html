@@ -249,8 +249,36 @@
 		</section>
 
 		<section id='laptop-screenshot-section'>
-			<div class='grid-container'>
-				<img class='grid-100 tablet-grid-100 mobile-grid-100 screenshot' src='/img/laptop-screenshot.png' />
+			<div class='desktop-only'>
+				<span
+					cyph-chat-toolbar='ui.cyphDemo.mobile'
+					open='ui.cyphDemo.openMobileMenu()'
+				></span>
+				<div
+					cyph-chat-main='ui.cyphDemo.mobile'
+					layout='column'
+					layout-fill
+					flex
+				></div>
+				<div
+					cyph-chat-message-box='ui.cyphDemo.mobile'
+				></div>
+
+				<span
+					cyph-chat-sidebar='ui.cyphDemo.desktop'
+				></span>
+				<div
+					cyph-chat-main='ui.cyphDemo.desktop'
+					layout='column'
+					layout-fill
+					flex
+				></div>
+				<div
+					cyph-chat-message-box='ui.cyphDemo.desktop'
+				></div>
+			</div>
+			<div class='mobile-only'>
+				<img class='grid-100 tablet-grid-100 mobile-grid-100 screenshot' src='/img/phone-screenshot.png' />
 			</div>
 		</section>
 
