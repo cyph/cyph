@@ -51,8 +51,32 @@ module Cyph.com {
 
 				this.desktop.connectChat(this.mobile);
 				this.mobile.connectChat(this.desktop);
+				let totalDelay: number = 0;
+				for (let i=0; i<this.messages.length; ++i) { 
+					const message=this.messages[i];
+				    totalDelay += i * 1500;
+				    setTimeout(() => {
+				    	if (message.isMobile) { 
+				    		this.desktop.setFriendTyping(true);
+				  		}
+				  		else { 
+							this.mobile.setFriendTyping(true); 
+						}
+					}, totalDelay);
 
-				/* TODO: Run through animation logic */
+				    totalDelay += message.text.length * 50;
+				    setTimeout(() => { 
+				    	if (message.isMobile) { 
+				    		this.mobile.setFriendTyping(false);
+							this.mobile.send(message.text); 
+						} 
+						else { 
+							this.desktop.setFriendTyping(false);
+							this.desktop.send(message.text); 
+						}	
+					}, totalDelay);
+
+				}
 			}
 		}
 	}
