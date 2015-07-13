@@ -11,24 +11,32 @@
 /// <reference path="ui/enums.ts" />
 /// <reference path="ui/elements.ts" />
 /// <reference path="ui/backgroundvideomanager.ts" />
+/// <reference path="ui/cyphdemo.ts" />
 /// <reference path="ui/ui.ts" />
 
 
 angular.
 	module('Cyph', [
 		'ngMaterial',
+		Cyph.UI.Directives.Chat.title,
+		Cyph.UI.Directives.Markdown.title,
 		Cyph.UI.Directives.SignupForm.title
 	]).
 	controller('CyphController', [
 		'$scope',
+		'$mdDialog',
+		'$mdToast',
+		'chatSidenav',
 
-		$scope => $(() => {
+		($scope, $mdDialog, $mdToast, chatSidenav) => $(() => {
 			Cyph.com.UI.Elements.load();
 
-			const controller: Cyph.IController	= new Cyph.Controller($scope);
+			const controller: Cyph.IController			= new Cyph.Controller($scope);
+			const dialogManager: Cyph.UI.IDialogManager	= new Cyph.UI.DialogManager($mdDialog, $mdToast);
+			const mobileMenu: Cyph.UI.ISidebar			= chatSidenav();
 
 			$scope.Cyph	= Cyph;
-			$scope.ui	= new Cyph.com.UI.UI(controller);
+			$scope.ui	= new Cyph.com.UI.UI(controller, dialogManager, mobileMenu);
 
 			self['ui']	= $scope.ui;
 
