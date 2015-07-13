@@ -88,15 +88,20 @@
 						</div>
 						<div class='grid-66 tablet-grid-66 pull-33 tablet-pull-33 mobile-grid-100'>
 							<p>
-								<span translate>Encrypted and authenticated via</span>
-								<a target='_blank' rel='noreferrer' href='https://en.wikipedia.org/wiki/Off-the-Record_Messaging' translate>OTR</a>
-								<span translate>and the</span>
-								<a target='_blank' rel='noreferrer' href='http://twistedoakstudios.com/blog/Post3724_explain-it-like-im-five-the-socialist-millionaire-problem-and-secure-multi-party-computation' translate>Socialist Millionaire Protocol</a>.
+								<span translate>Encrypted and authenticated via the post-quantum</span>
+								<a
+									target='_blank'
+									rel='noreferrer'
+									href='https://docs.google.com/document/d/1XVh4ALXhbfxi70QSUY-xHclauob8O635bSySy6f1Ysk'
+								>
+									Castle messaging protocol</a>.
 							</p>
 						</div>
 						<div class='grid-100 tablet-grid-100 mobile-grid-100'>
 							<p>
-								<span translate>To crack a single Cyph message would take longer than the age of the universe &mdash; even using the fastest supercomputer on Earth.</span>
+								<span translate>To crack a single Cyph message would require</span>
+								<span>10</span><sup>38</sup>
+								<span translate>Tianhe-2 supercomputers running for the lifetime of the universe.</span>
 							</p>
 						</div>
 					</div>
@@ -150,7 +155,11 @@
 						<div class='grid-66 tablet-grid-66 mobile-pull-5 mobile-grid-85'>
 							<p class='title'>
 								<span translate>Anonymity through</span>
-								<a target='_blank' rel='noreferrer' href='https://en.wikipedia.org/wiki/Tor_%28anonymity_network%29' translate>Tor</a>
+								<a
+									target='_blank'
+									rel='noreferrer'
+									href='https://en.wikipedia.org/wiki/Tor_%28anonymity_network%29'
+								>Tor</a>
 							</p>
 						</div>
 						<div class='grid-66 tablet-grid-66 mobile-grid-100'>
@@ -161,7 +170,12 @@
 						<div class='grid-100 tablet-grid-100 mobile-grid-100'>
 							<p>
 								<span translate>Just</span>
-								<a target='_blank' rel='noreferrer' href='https://www.torproject.org/download/download-easy.html.en' translate>install Tor Browser</a>
+								<a
+									target='_blank'
+									rel='noreferrer'
+									href='https://www.torproject.org/download/download-easy.html.en'
+									translate
+								>install Tor Browser</a>
 								<span translate>and navigate to</span>
 								<a class='oneline' target='_blank' ng-href='{{Cyph.Config.onionUrl}}'>https://cyphdbyhiddenbhs.onion</a>
 								<i>("cyph'd by hidden backbone host server")</i>.
@@ -181,8 +195,15 @@
 						<div class='grid-66 tablet-grid-66 mobile-grid-100'>
 							<p>
 								<span translate>
-									Application packages are verified at run-time against our personal public keys &mdash;
-									so even if our servers get pwned, you won't.
+									Application packages are verified at run-time against our personal public keys via
+								</span>
+								<a
+									target='_blank'
+									rel='noreferrer'
+									href='https://docs.google.com/document/d/1j5KnpVyDdIXVwEDCQpHGxbs0i_-KxqBDQw5h_TVtv0s'
+								>WebSign</a>
+								<span translate>
+									&mdash; so even if our servers get pwned, you won't.
 								</span>
 							</p>
 						</div>
@@ -213,23 +234,51 @@
 			</div>
 			<div class='section-content-container'>
 				<p translate>
-					The mission of Cyph is to free the world from mass surveillance and data-collection.
+					Cyph is a revolutionary new secure messenger, created to defend the world from mass surveillance.
 				</p>
 				<p translate>
-					We make it ridiculously fast, easy, and fun for anyone to have a completely private conversation online.
+					Cyph lets you talk in absolute confidence. Carefully designed using high-end cryptography, Cyph protects your conversations against anything from nosy neighbors to agencies armed with theoretical quantum attacks.
 				</p>
 				<p translate>
-					Cyph is the only technology of its kind to make this possible in one click, with zero installation or registration or configuration, for anyone, on any device.
+					Yet, Cyph remains simple for anybody to use, and works on every device in one click &mdash; no installation or registration required.
 				</p>
 				<p translate>
-					Before Cyph, any sane security professional would have told you that building a secure application on the Web was impossible. Thanks to a handful of cool innovations, we've turned that impossibility into reality &mdash; and finally made it not suck to stay secure.
+					Cyph your friends. Reclaim your privacy.
 				</p>
 			</div>
 		</section>
 
 		<section id='laptop-screenshot-section'>
-			<div class='grid-container'>
-				<img class='grid-100 tablet-grid-100 mobile-grid-100 screenshot' src='/img/laptop-screenshot.png' />
+			<div class='desktop-only'>
+				<span
+					cyph-chat-toolbar='ui.cyphDemo.mobile'
+					open='ui.cyphDemo.openMobileMenu()'
+				></span>
+				<div
+					cyph-chat-main='ui.cyphDemo.mobile'
+					layout='column'
+					layout-fill
+					flex
+				></div>
+				<div
+					cyph-chat-message-box='ui.cyphDemo.mobile'
+				></div>
+
+				<span
+					cyph-chat-sidebar='ui.cyphDemo.desktop'
+				></span>
+				<div
+					cyph-chat-main='ui.cyphDemo.desktop'
+					layout='column'
+					layout-fill
+					flex
+				></div>
+				<div
+					cyph-chat-message-box='ui.cyphDemo.desktop'
+				></div>
+			</div>
+			<div class='mobile-only'>
+				<img class='grid-100 tablet-grid-100 mobile-grid-100 screenshot' src='/img/phone-screenshot.png' />
 			</div>
 		</section>
 
@@ -358,7 +407,7 @@
 					</div>
 				</p>
 				<p translate>
-					We've been friends since we first met 17 years ago, and we've since spent a lot of time working together over the years &mdash; most recently for Elon Musk at the aforementioned rocket factory.
+					We've been friends for nearly two decades, and have spent a lot of time working together over the years &mdash; most recently for Elon Musk at the aforementioned rocket factory.
 				</p>
 				<p translate>
 					While the two of us are very strong supporters of Internet freedom and privacy, communicating online securely with our non-engineer friends has always been such a hassle that it really wasn't an option.
