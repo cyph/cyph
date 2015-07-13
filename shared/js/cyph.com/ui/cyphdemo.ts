@@ -28,7 +28,7 @@ module Cyph.com {
 			/**
 			 * Opens mobile sidenav menu.
 			 */
-			public openMobileMenu() : void {
+			public openMobileMenu () : void {
 				setTimeout(() =>
 					this.mobileMenu.open()
 				, 250);
