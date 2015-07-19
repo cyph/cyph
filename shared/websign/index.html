@@ -390,7 +390,7 @@
 						text:
 							navigator.language + '\n\n' +
 							navigator.userAgent + '\n\n' +
-							location.toString() + '\n\n' +
+							location.toString().replace(/\/#.*/g, '') + '\n\n' +
 							WebSign.stringify(true)
 					}
 				})
