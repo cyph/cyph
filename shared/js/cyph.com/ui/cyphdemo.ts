@@ -62,22 +62,26 @@ module Cyph.com {
 
 				this.desktop.connectChat(this.mobile);
 				this.mobile.connectChat(this.desktop);
-				let totalDelay: number = 0;
+
+				let totalDelay: number	= 0;
+
 				CyphDemo.messages.forEach((message, i: number) => {
-				    totalDelay += i * 1500;
-				    setTimeout(() => {
-				    	if (message.isMobile) {
-				    		this.desktop.setFriendTyping(true);
-				  		}
-				  		else {
+					totalDelay += i * 1500;
+
+					setTimeout(() => {
+						if (message.isMobile) {
+							this.desktop.setFriendTyping(true);
+						}
+						else {
 							this.mobile.setFriendTyping(true);
 						}
 					}, totalDelay);
 
-				    totalDelay += message.text.length * 50;
-				    setTimeout(() => {
-				    	if (message.isMobile) {
-				    		this.mobile.setFriendTyping(false);
+					totalDelay += message.text.length * 50;
+
+					setTimeout(() => {
+						if (message.isMobile) {
+							this.mobile.setFriendTyping(false);
 							this.mobile.send(message.text);
 						}
 						else {
