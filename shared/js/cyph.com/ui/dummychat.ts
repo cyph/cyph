@@ -43,7 +43,6 @@ module Cyph.com {
 				shouldNotify?: boolean
 			) : void {
 				if (text) {
-
 					this.messages.push({
 						author: author,
 						text: text,
@@ -138,7 +137,7 @@ module Cyph.com {
 				}
 			}
 
-			public connectChat(other){
+			public connectChat (other: DummyChat) {
 				this.other	= other;
 			}
 
