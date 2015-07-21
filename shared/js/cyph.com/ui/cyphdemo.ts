@@ -46,13 +46,50 @@ module Cyph.com {
 					return;
 				}
 
-				this.desktop	= new DummyChat(controller, dialogManager, false);
-				this.mobile		= new DummyChat(controller, dialogManager, true);
+				this.desktop	= new DummyChat(
+					controller,
+					dialogManager,
+					{open: () => {}, close: () => {}},
+					false
+				);
+
+				this.mobile		= new DummyChat(
+					controller,
+					dialogManager,
+					mobileMenu,
+					true
+				);
 
 				this.desktop.connectChat(this.mobile);
 				this.mobile.connectChat(this.desktop);
 
-				/* TODO: Run through animation logic */
+				let totalDelay: number	= 0;
+
+				CyphDemo.messages.forEach((message, i: number) => {
+					totalDelay += i * 1500;
+
+					setTimeout(() => {
+						if (message.isMobile) {
+							this.desktop.setFriendTyping(true);
+						}
+						else {
+							this.mobile.setFriendTyping(true);
+						}
+					}, totalDelay);
+
+					totalDelay += message.text.length * 50;
+
+					setTimeout(() => {
+						if (message.isMobile) {
+							this.mobile.setFriendTyping(false);
+							this.mobile.send(message.text);
+						}
+						else {
+							this.desktop.setFriendTyping(false);
+							this.desktop.send(message.text);
+						}	
+					}, totalDelay);
+				});
 			}
 		}
 	}
