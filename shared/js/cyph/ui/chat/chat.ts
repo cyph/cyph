@@ -270,7 +270,6 @@ module Cyph {
 						buttons: this.rootElement.find(Elements.buttons.selector),
 						cyphertext: this.rootElement.find(Elements.cyphertext.selector),
 						everything: this.rootElement.find(Elements.everything.selector),
-						html: this.rootElement,
 						insertPhotoMobile: this.rootElement.find(Elements.insertPhotoMobile.selector),
 						messageBox: this.rootElement.find(Elements.messageBox.selector),
 						messageList: this.rootElement.find(Elements.messageList.selector),
