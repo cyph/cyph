@@ -18,7 +18,7 @@ if (!('crypto' in self)) {
 
 			const max: number	= Math.pow(2, bytes * 8) - 1;
 
-			for (let i = 0; i < array['length']; ++i) {
+			for (let i = 0 ; i < array['length'] ; ++i) {
 				array[i]	= Math.floor(Math.random() * max);
 			}
 
@@ -39,4 +39,12 @@ if (!('Uint8Array' in self)) {
 	self['Uint8ClampedArray']	= Array;
 	self['Float32Array']		= Array;
 	self['Float64Array']		= Array;
+}
+
+if (!('ntru' in self)) {
+	self['ntru']	= {};
+}
+
+if (!('sodium' in self)) {
+	self['sodium']	= {};
 }

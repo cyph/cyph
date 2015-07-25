@@ -2,6 +2,7 @@
 /// <reference path="../channel/localchannel.ts" />
 /// <reference path="../channel/ratchetedchannel.ts" />
 /// <reference path="../crypto/castle.ts" />
+/// <reference path="../crypto/fakecastle.ts" />
 /// <reference path="command.ts" />
 /// <reference path="message.ts" />
 
@@ -218,7 +219,13 @@ module Cyph {
 					},
 					onconnect: () => {
 						this.trigger(Events.connect);
-						this.castle	= new Crypto.Castle(this);
+
+						if (this.isLocalSession) {
+							this.castle	= new Crypto.FakeCastle(this);
+						}
+						else {
+							this.castle	= new Crypto.Castle(this);
+						}
 					},
 					onmessage: message => this.receive(message)
 				};
