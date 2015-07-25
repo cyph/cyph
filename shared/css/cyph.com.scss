@@ -237,7 +237,7 @@ html.mobile #new-cyph-section {
 
 .demo-root {
 	> * {
-		height: 500px;
+		height: calc(100vh - 100px);
 		padding: 0px;
 		overflow: hidden;
 	}
