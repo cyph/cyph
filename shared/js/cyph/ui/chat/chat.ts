@@ -252,39 +252,46 @@ module Cyph {
 				 * @param mobileMenu
 				 * @param notifier
 				 * @param isMobile
+				 * @param session If not specified, one will be created.
 				 */
 				public constructor (
 					controller: IController,
 					private dialogManager: IDialogManager,
 					mobileMenu: ISidebar,
 					private notifier: INotifier,
-					public isMobile: boolean = Cyph.Env.isMobile
+					public isMobile: boolean = Cyph.Env.isMobile,
+					session?: Session.ISession
 				) {
 					super(controller, mobileMenu);
 
-					let urlState: string	= UrlState.get(true);
-
-					/* Modest branding API flag */
-					if (urlState[0] === '&') {
-						urlState	=
-							urlState.substring(1) +
-							(urlState.length > 1 ? 'a' : '')
-						;
-
-						Cyph.UI.Elements.html.addClass('modest');
-
-						Analytics.main.send({
-							hitType: 'event',
-							eventCategory: 'modest-branding',
-							eventAction: 'used',
-							eventValue: 1
-						});
+					if (session) {
+						this.session	= session;
 					}
+					else {
+						let urlState: string	= UrlState.get(true);
 
-					this.session		= new Session.ThreadedSession(
-						urlState,
-						controller
-					);
+						/* Modest branding API flag */
+						if (urlState[0] === '&') {
+							urlState	=
+								urlState.substring(1) +
+								(urlState.length > 1 ? 'a' : '')
+							;
+
+							Cyph.UI.Elements.html.addClass('modest');
+
+							Analytics.main.send({
+								hitType: 'event',
+								eventCategory: 'modest-branding',
+								eventAction: 'used',
+								eventValue: 1
+							});
+						}
+
+						this.session	= new Session.ThreadedSession(
+							urlState,
+							controller
+						);
+					}
 
 					this.cyphertext		= new Cyphertext(
 						this.session,
