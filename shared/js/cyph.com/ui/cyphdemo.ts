@@ -72,7 +72,8 @@ module Cyph.com {
 					{open: () => {}, close: () => {}},
 					{notify: (message: string) => {}},
 					false,
-					desktopSession
+					desktopSession,
+					Elements.demoRootDesktop
 				);
 
 				this.mobile		= new Cyph.UI.Chat.Chat(
@@ -81,7 +82,8 @@ module Cyph.com {
 					this.mobileMenu,
 					{notify: (message: string) => {}},
 					true,
-					mobileSession
+					mobileSession,
+					Elements.demoRootMobile
 				);
 
 				let totalDelay: number	= 0;

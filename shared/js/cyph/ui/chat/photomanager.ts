@@ -15,7 +15,7 @@ module Cyph {
 					let heightFactor: number	= Config.photoConfig.maxWidth / image.height;
 
 					if (widthFactor > 1) {
-						widthFactor	= 1;
+						widthFactor		= 1;
 					}
 					if (heightFactor > 1) {
 						heightFactor	= 1;
@@ -73,8 +73,8 @@ module Cyph {
 				/**
 				 * @param chat
 				 */
-				public constructor (private chat: IChat) {
-					Elements.buttons.
+				public constructor (private chat: IChat, private elements: IElements) {
+					this.elements.buttons.
 						find('input[type="file"]').
 						each((i: number, elem: HTMLElement) => {
 							let isClicked: boolean;

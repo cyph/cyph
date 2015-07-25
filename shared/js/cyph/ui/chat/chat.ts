@@ -25,6 +25,7 @@ module Cyph {
 				private static approximateKeyExchangeTime: number	= 10000;
 
 
+				private elements: IElements;
 				private isMessageChanged: boolean;
 				private previousMessage: string;
 
@@ -115,7 +116,7 @@ module Cyph {
 						/* Adjust font size for translations */
 						if (!this.isMobile) {
 							setTimeout(() => {
-								Elements.buttons.each((i: number, elem: HTMLElement) => {
+								this.elements.buttons.each((i: number, elem: HTMLElement) => {
 									const $this: JQuery		= $(elem);
 
 									const $clone: JQuery	= $this
@@ -260,9 +261,28 @@ module Cyph {
 					mobileMenu: ISidebar,
 					private notifier: INotifier,
 					public isMobile: boolean = Cyph.Env.isMobile,
-					session?: Session.ISession
+					session?: Session.ISession,
+					private rootElement: JQuery = Elements.html
 				) {
 					super(controller, mobileMenu);
+
+					this.elements	= {
+						buttons: this.rootElement.find(Elements.buttons.selector),
+						cyphertext: this.rootElement.find(Elements.cyphertext.selector),
+						everything: this.rootElement.find(Elements.everything.selector),
+						html: this.rootElement,
+						insertPhotoMobile: this.rootElement.find(Elements.insertPhotoMobile.selector),
+						messageBox: this.rootElement.find(Elements.messageBox.selector),
+						messageList: this.rootElement.find(Elements.messageList.selector),
+						messageListInner: this.rootElement.find(Elements.messageListInner.selector),
+						p2pContainer: this.rootElement.find(Elements.p2pContainer.selector),
+						p2pFiles: this.rootElement.find(Elements.p2pFiles.selector),
+						p2pFriendPlaceholder: this.rootElement.find(Elements.p2pFriendPlaceholder.selector),
+						p2pFriendStream: this.rootElement.find(Elements.p2pFriendStream.selector),
+						p2pMeStream: this.rootElement.find(Elements.p2pMeStream.selector),
+						sendButton: this.rootElement.find(Elements.sendButton.selector),
+						timer: this.rootElement.find(Elements.timer.selector)
+					};
 
 					if (session) {
 						this.session	= session;
@@ -277,7 +297,7 @@ module Cyph {
 								(urlState.length > 1 ? 'a' : '')
 							;
 
-							Cyph.UI.Elements.html.addClass('modest');
+							this.rootElement.addClass('modest');
 
 							Analytics.main.send({
 								hitType: 'event',
@@ -298,30 +318,36 @@ module Cyph {
 						this.controller,
 						this.mobileMenu,
 						this.dialogManager,
-						this.isMobile
+						this.isMobile,
+						this.elements
 					);
 
 					this.p2pManager		= new P2PManager(
 						this,
 						this.controller,
 						this.mobileMenu,
-						this.dialogManager
+						this.dialogManager,
+						this.elements
 					);
 
-					this.photoManager	= new PhotoManager(this);
+					this.photoManager	= new PhotoManager(
+						this,
+						this.elements
+					);
 
 					this.scrollManager	= new ScrollManager(
 						this.controller,
 						this.dialogManager,
-						this.isMobile
+						this.isMobile,
+						this.elements
 					);
 
 
 					if (this.isMobile) {
 						/* Prevent jankiness upon message send on mobile */
 
-						Elements.messageBox.click(e => {
-							Elements.sendButton.add(Elements.insertPhotoMobile).each((i, elem) => {
+						this.elements.messageBox.click(e => {
+							this.elements.sendButton.add(this.elements.insertPhotoMobile).each((i, elem) => {
 								const $button	= $(elem);
 								const bounds	= $button['bounds']();
 
@@ -339,14 +365,14 @@ module Cyph {
 						/* Adapt message box to content size on desktop */
 
 						const messageBoxLineHeight: number	= parseInt(
-							Elements.messageBox.css('line-height'),
+							this.elements.messageBox.css('line-height'),
 							10
 						);
 
-						Elements.messageBox.on('keyup', () =>
-							Elements.messageBox.height(
+						this.elements.messageBox.on('keyup', () =>
+							this.elements.messageBox.height(
 								messageBoxLineHeight *
-								Elements.messageBox.val().split('\n').length
+								this.elements.messageBox.val().split('\n').length
 							)
 						);
 					}
@@ -363,7 +389,7 @@ module Cyph {
 
 					this.session.on(Session.Events.connect, () => {
 						this.changeState(States.keyExchange);
-						Util.getValue(Elements.timer[0], 'stop', () => {}).call(Elements.timer[0]);
+						Util.getValue(this.elements.timer[0], 'stop', () => {}).call(this.elements.timer[0]);
 
 						const start: number	= Date.now();
 						const intervalId	= setInterval(() => {

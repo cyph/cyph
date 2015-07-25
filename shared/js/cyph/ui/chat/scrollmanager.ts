@@ -20,7 +20,7 @@ module Cyph {
 
 					/* Process read-ness and scrolling */
 					if ($elem.is('.message-item.unread')) {
-						const currentScrollPosition: number	= Elements.messageList['scrollPosition']();
+						const currentScrollPosition: number	= this.elements.messageList['scrollPosition']();
 
 						if (
 							VisibilityWatcher.isVisible &&
@@ -100,8 +100,8 @@ module Cyph {
 
 							(
 								shouldScrollCyphertext ?
-									Elements.cyphertext :
-									Elements.messageList
+									this.elements.cyphertext :
+									this.elements.messageList
 							).each((i: number, elem: HTMLElement) => {
 								++this.scrollDownLock;
 
@@ -128,19 +128,20 @@ module Cyph {
 				public constructor (
 					private controller: IController,
 					dialogManager: IDialogManager,
-					private isMobile: boolean
+					private isMobile: boolean,
+					private elements: IElements
 				) {
 					this.affiliate	= new Affiliate(dialogManager);
 
 					if (this.isMobile) {
-						Elements.messageBox.focus(this.scrollDown);
+						this.elements.messageBox.focus(this.scrollDown);
 					}
 
 					new MutationObserver(mutations => {
 						for (const mutationRecord of mutations) {
 							this.mutationObserverHandler(mutationRecord);
 						}
-					}).observe(Elements.messageListInner[0], {
+					}).observe(this.elements.messageListInner[0], {
 						childList: true,
 						attributes: false,
 						characterData: false,

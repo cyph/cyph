@@ -28,6 +28,7 @@
 /// <reference path="../cyph/ui/isignupform.ts" />
 /// <reference path="../cyph/ui/chat/ichat.ts" />
 /// <reference path="../cyph/ui/chat/icyphertext.ts" />
+/// <reference path="../cyph/ui/chat/ielements.ts" />
 /// <reference path="../cyph/ui/chat/ip2pmanager.ts" />
 /// <reference path="../cyph/ui/chat/iphotomanager.ts" />
 /// <reference path="../cyph/ui/chat/iscrollmanager.ts" />

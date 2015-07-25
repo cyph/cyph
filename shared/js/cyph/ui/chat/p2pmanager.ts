@@ -64,7 +64,7 @@ module Cyph {
 
 				public toggleSidebar () : void {
 					this.baseButtonClick(() =>
-						Elements.p2pContainer.toggleClass('sidebar-open')
+						this.elements.p2pContainer.toggleClass('sidebar-open')
 					);
 				}
 
@@ -104,7 +104,8 @@ module Cyph {
 					private chat: IChat,
 					controller: IController,
 					mobileMenu: ISidebar,
-					private dialogManager: IDialogManager
+					private dialogManager: IDialogManager,
+					private elements: IElements
 				) {
 					super(controller, mobileMenu);
 
@@ -163,7 +164,7 @@ module Cyph {
 								case P2P.UIEvents.Categories.file: {
 									switch (e.event) {
 										case P2P.UIEvents.Events.clear: {
-											Elements.p2pFiles.each((i: number, elem: HTMLElement) =>
+											this.elements.p2pFiles.each((i: number, elem: HTMLElement) =>
 												$(elem).val('')
 											);
 											break;
@@ -185,7 +186,7 @@ module Cyph {
 										case P2P.UIEvents.Events.get: {
 											const callback: Function	= e.args[0];
 
-											const file: File	= Elements.p2pFiles.
+											const file: File	= this.elements.p2pFiles.
 												toArray().
 												map((elem: HTMLInputElement) => elem.files || []).
 												reduce((a: File, b: FileList) => a || b[0], null)
@@ -307,10 +308,10 @@ module Cyph {
 
 									const $stream: JQuery	=
 										user === Session.Users.me ?
-											Elements.p2pMeStream :
+											this.elements.p2pMeStream :
 											user === Session.Users.friend ?
-												Elements.p2pFriendStream :
-												Elements.p2pFriendPlaceholder
+												this.elements.p2pFriendStream :
+												this.elements.p2pFriendPlaceholder
 									;
 
 									switch (e.event) {
