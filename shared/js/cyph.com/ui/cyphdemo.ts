@@ -4,6 +4,8 @@ module Cyph.com {
 		 * Controls the Cyph chat demo.
 		 */
 		export class CyphDemo {
+			private static sessionDescriptor: string	= 'o1R2MMytZZe3YXdyuRyCPcAyK9';
+
 			private static messages: { text: string; isMobile: boolean; }[]	= [
 				{text: 'hallo :beer:', isMobile: false},
 				{text: 'u wanna cheat on ur wife with me', isMobile: false},
@@ -20,10 +22,10 @@ module Cyph.com {
 
 
 			/** Desktop chat UI. */
-			public desktop: DummyChat;
+			public desktop: Cyph.UI.Chat.IChat;
 
 			/** Mobile chat UI. */
-			public mobile: DummyChat;
+			public mobile: Cyph.UI.Chat.IChat;
 
 			/**
 			 * Opens mobile sidenav menu.
@@ -46,22 +48,41 @@ module Cyph.com {
 					return;
 				}
 
-				this.desktop	= new DummyChat(
+				let mobileSession: Cyph.Session.ISession;
+				const desktopSession: Cyph.Session.ISession	= new Cyph.Session.Session(
+					CyphDemo.sessionDescriptor,
+					controller,
+					undefined,
+					(desktopChannel: Cyph.Channel.LocalChannel) => {
+						mobileSession	= new Cyph.Session.Session(
+							CyphDemo.sessionDescriptor,
+							controller,
+							undefined,
+							(mobileChannel: Cyph.Channel.LocalChannel) => {
+								desktopChannel.connect(mobileChannel);
+
+							}
+						);
+					}
+				);
+
+				this.desktop	= new Cyph.UI.Chat.Chat(
 					controller,
 					dialogManager,
 					{open: () => {}, close: () => {}},
-					false
+					{notify: (message: string) => {}},
+					false,
+					desktopSession
 				);
 
-				this.mobile		= new DummyChat(
+				this.mobile		= new Cyph.UI.Chat.Chat(
 					controller,
 					dialogManager,
-					mobileMenu,
-					true
+					this.mobileMenu,
+					{notify: (message: string) => {}},
+					true,
+					mobileSession
 				);
-
-				this.desktop.connectChat(this.mobile);
-				this.mobile.connectChat(this.desktop);
 
 				let totalDelay: number	= 0;
 

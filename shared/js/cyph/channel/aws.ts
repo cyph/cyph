@@ -111,7 +111,9 @@ module Cyph {
 			}
 
 			private static _	= (() => {
-				AWS.base.config	= new AWS.base.Config(Config.awsConfig);
+				if (AWS.base) {
+					AWS.base.config	= new AWS.base.Config(Config.awsConfig);
+				}
 			})();
 		}
 	}

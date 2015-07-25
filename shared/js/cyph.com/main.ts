@@ -6,6 +6,8 @@
 /// <reference path="../preload/base.ts" />
 
 /// <reference path="../cyph/controller.ts" />
+/// <reference path="../cyph/session/session.ts" />
+/// <reference path="../cyph/ui/chat/chat.ts" />
 /// <reference path="../cyph/ui/dialogmanager.ts" />
 /// <reference path="../cyph/ui/signupform.ts" />
 /// <reference path="../cyph/ui/directives/chat.ts" />
@@ -14,7 +16,6 @@
 /// <reference path="ui/enums.ts" />
 /// <reference path="ui/elements.ts" />
 /// <reference path="ui/backgroundvideomanager.ts" />
-/// <reference path="ui/dummychat.ts" />
 /// <reference path="ui/cyphdemo.ts" />
 /// <reference path="ui/ui.ts" />
 

@@ -1,4 +1,5 @@
 /// <reference path="../base.ts" />
+/// <reference path="../channel/localchannel.ts" />
 /// <reference path="../channel/ratchetedchannel.ts" />
 /// <reference path="../crypto/castle.ts" />
 /// <reference path="command.ts" />
@@ -16,7 +17,8 @@ module Cyph {
 			private sendQueue: string[]							= [];
 			private lastIncomingMessageTimestamp: number		= Date.now();
 			private lastOutgoingMessageTimestamp: number		= Date.now();
-			private pingPongTimeouts: number					= 0
+			private pingPongTimeouts: number					= 0;
+			private isLocalSession: boolean						= false;
 
 			private channel: Channel.IChannel;
 			private castle: Crypto.ICastle;
@@ -39,7 +41,10 @@ module Cyph {
 					}
 					case CastleEvents.connect: {
 						this.trigger(Events.beginChat);
-						this.pingPong();
+
+						if (!this.isLocalSession) {
+							this.pingPong();
+						}
 						break;
 					}
 					case CastleEvents.receive: {
@@ -63,7 +68,12 @@ module Cyph {
 					}
 					case CastleEvents.send: {
 						if (e.data) {
-							this.sendQueue.push(e.data);
+							if (this.isLocalSession) {
+								this.sendHandler([e.data]);
+							}
+							else {
+								this.sendQueue.push(e.data);
+							}
 						}
 						break;
 					}
@@ -154,15 +164,22 @@ module Cyph {
 				);
 			}
 
-			private setUpChannel (channelDescriptor: string) : void {
-				this.channel	= new Channel.RatchetedChannel(this, channelDescriptor, {
+			private setUpChannel (
+				channelDescriptor: string,
+				localChannelCallback?: (localChannel: Channel.LocalChannel) => void
+			) : void {
+				if (localChannelCallback) {
+					this.isLocalSession	= true;
+				}
+
+				const handlers	= {
 					onopen: (isCreator: boolean) : void => {
 						this.updateState(State.isCreator, isCreator);
 
 						if (this.state.isCreator) {
 							this.trigger(Events.beginWaiting);
 						}
-						else {
+						else if (!this.isLocalSession) {
 							Analytics.main.send({
 								hitType: 'event',
 								eventCategory: 'cyph',
@@ -182,27 +199,37 @@ module Cyph {
 
 						this.on(Events.castle, e => this.castleHandler(e));
 
-						const sendTimer: Timer	= new Timer((now: number) => {
-							if (!this.state.isAlive) {
-								sendTimer.stop();
-							}
-							else if (
-								this.sendQueue.length &&
-								(
-									this.sendQueue.length >= 4 ||
-									(now - this.lastOutgoingMessageTimestamp) > 500
-								)
-							) {
-								this.sendHandler(this.sendQueue.splice(0, 4));
-							}
-						});
+						if (!this.isLocalSession) {
+							const sendTimer: Timer	= new Timer((now: number) => {
+								if (!this.state.isAlive) {
+									sendTimer.stop();
+								}
+								else if (
+									this.sendQueue.length &&
+									(
+										this.sendQueue.length >= 4 ||
+										(now - this.lastOutgoingMessageTimestamp) > 500
+									)
+								) {
+									this.sendHandler(this.sendQueue.splice(0, 4));
+								}
+							});
+						}
 					},
 					onconnect: () => {
 						this.trigger(Events.connect);
 						this.castle	= new Crypto.Castle(this);
 					},
 					onmessage: message => this.receive(message)
-				});
+				};
+
+				if (localChannelCallback) {
+					this.channel	= new Channel.LocalChannel(handlers);
+					localChannelCallback(<Channel.LocalChannel> this.channel);
+				}
+				else {
+					this.channel	= new Channel.RatchetedChannel(this, channelDescriptor, handlers);
+				}
 			}
 
 			public close (shouldSendEvent: boolean = true) : void {
@@ -213,12 +240,14 @@ module Cyph {
 				if (shouldSendEvent) {
 					this.channel.send(RPCEvents.destroy, closeChat, true);
 
-					/* If aborting before the cyph begins,
-						block friend from trying to join */
-					Util.request({
-						method: 'POST',
-						url: Env.baseUrl + 'channels/' + this.state.cyphId
-					});
+					if (!this.isLocalSession) {
+						/* If aborting before the cyph begins,
+							block friend from trying to join */
+						Util.request({
+							method: 'POST',
+							url: Env.baseUrl + 'channels/' + this.state.cyphId
+						});
+					}
 				}
 				else {
 					this.channel.close(closeChat);
@@ -241,8 +270,11 @@ module Cyph {
 				if (data === RPCEvents.destroy) {
 					this.close(false);
 				}
-				else {
+				else if (this.castle) {
 					this.castle.receive(data);
+				}
+				else {
+					setTimeout(() => this.receive(data), 1000);
 				}
 			}
 
@@ -291,11 +323,15 @@ module Cyph {
 			 * @param descriptor Descriptor used for brokering the session.
 			 * @param controller
 			 * @param id
+			 * @param localChannelCallback If set, will assume that this is a local
+			 * session and initiate a LocalChannel instance, passing it in to this
+			 * callback to be connected to a second local session's instance.
 			 */
 			public constructor(
 				descriptor?: string,
 				private controller?: IController,
-				private id: string = Util.generateGuid()
+				private id: string = Util.generateGuid(),
+				localChannelCallback?: (localChannel: Channel.LocalChannel) => void
 			) {
 				/* true = yes; false = no; null = maybe */
 				this.updateState(
@@ -319,38 +355,43 @@ module Cyph {
 					this.trigger(Events.newCyph);
 				}
 
-				Util.retryUntilComplete(retry => {
-					const channelDescriptor: string	=
-						this.state.isStartingNewCyph === false ?
-							'' :
-							Channel.Channel.newDescriptor()
-					;
+				if (localChannelCallback) {
+					this.setUpChannel(null, localChannelCallback);
+				}
+				else {
+					Util.retryUntilComplete(retry => {
+						const channelDescriptor: string	=
+							this.state.isStartingNewCyph === false ?
+								'' :
+								Channel.Channel.newDescriptor()
+						;
 
-					Util.request({
-						method: 'POST',
-						url: Env.baseUrl + 'channels/' + this.state.cyphId,
-						data: {channelDescriptor},
-						success: (data: string) => {
-							if (
-								this.state.isStartingNewCyph === true &&
-								channelDescriptor !== data
-							) {
-								retry();
+						Util.request({
+							method: 'POST',
+							url: Env.baseUrl + 'channels/' + this.state.cyphId,
+							data: {channelDescriptor},
+							success: (data: string) => {
+								if (
+									this.state.isStartingNewCyph === true &&
+									channelDescriptor !== data
+								) {
+									retry();
+								}
+								else {
+									this.setUpChannel(data);
+								}
+							},
+							error: () => {
+								if (this.state.isStartingNewCyph === false) {
+									UrlState.set(UrlState.states.notFound);
+								}
+								else {
+									retry();
+								}
 							}
-							else {
-								this.setUpChannel(data);
-							}
-						},
-						error: () => {
-							if (this.state.isStartingNewCyph === false) {
-								UrlState.set(UrlState.states.notFound);
-							}
-							else {
-								retry();
-							}
-						}
+						});
 					});
-				});
+				}
 			}
 		}
 	}
