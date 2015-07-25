@@ -1,0 +1,22 @@
+html:not(.mobile) .chat-sidebar,
+.chat-message-box:not(.mobile),
+.link-connection .connect-link-mobile {
+	.md-button:not([disabled="disabled"]) {
+		color: #444;
+		background-color: #7d4fd3 !important;
+
+		&.focus, &:hover {
+			background-color: #7239dd !important;
+		}
+	}
+
+	.md-fab {
+		height: 42px;
+		width: 42px;
+
+		img {
+			height: 80%;
+		}
+	}
+}
+

@@ -86,7 +86,7 @@ module Cyph.com {
 					Elements.demoRootMobile
 				);
 
-				let totalDelay: number	= 0;
+				let totalDelay: number	= 10000;
 
 				CyphDemo.messages.forEach((message, i: number) => {
 					totalDelay += i * 1500;

@@ -2,6 +2,19 @@
 @import 'cyph.base';
 
 
+html, body, #main {
+	max-width: initial !important;
+	max-height: initial !important;
+	overflow: initial;
+}
+
+html:not(.mobile) #main {
+	padding-bottom: initial;
+	padding-left: initial;
+	padding-right: initial;
+}
+
+
 html:not(.load-complete) {
 	#main > section, footer, #bouncing-down-arrow {
 		display: none;
@@ -218,6 +231,16 @@ html.mobile #new-cyph-section {
 	pointer-events: all;
 	@include transition(opacity 0.5s ease-in-out);
 }
+
+
+
+.demo-root {
+	> * {
+		height: 500px;
+		overflow: hidden;
+	}
+}
+
 
 
 #footer {

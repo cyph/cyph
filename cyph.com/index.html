@@ -249,8 +249,23 @@
 		</section>
 
 		<section id='laptop-screenshot-section'>
-			<div class='desktop-only'>
-				<div id='demo-root-desktop'>
+			<div class='demo-root desktop-only'>
+				<span class='desktop grid-66'>
+					<span
+						cyph-chat-sidebar='ui.cyphDemo.desktop'
+					></span>
+					<div
+						cyph-chat-main='ui.cyphDemo.desktop'
+						layout='column'
+						layout-fill
+						flex
+					></div>
+					<div
+						cyph-chat-message-box='ui.cyphDemo.desktop'
+					></div>
+				</span>
+
+				<span class='mobile grid-33'>
 					<span
 						cyph-chat-toolbar='ui.cyphDemo.mobile'
 						open='ui.cyphDemo.openMobileMenu()'
@@ -264,22 +279,7 @@
 					<div
 						cyph-chat-message-box='ui.cyphDemo.mobile'
 					></div>
-				</div>
-
-				<div id='demo-root-mobile'>
-					<span
-						cyph-chat-sidebar='ui.cyphDemo.desktop'
-					></span>
-					<div
-						cyph-chat-main='ui.cyphDemo.desktop'
-						layout='column'
-						layout-fill
-						flex
-					></div>
-					<div
-						cyph-chat-message-box='ui.cyphDemo.desktop'
-					></div>
-				</div>
+				</span>
 			</div>
 			<div class='mobile-only'>
 				<img class='grid-100 tablet-grid-100 mobile-grid-100 screenshot' src='/img/phone-screenshot.png' />
@@ -654,6 +654,7 @@
 		<link rel='stylesheet' href='/lib/bower_components/unsemantic/assets/stylesheets/unsemantic-grid-responsive-tablet-no-ie7.css' />
 		<link rel='stylesheet' href='/lib/bower_components/animate.css/animate.min.css' />
 
+		<link rel='stylesheet' href='/css/cyph.im.css' />
 		<link rel='stylesheet' href='/css/cyph.com.css' />
 
 		<script src='/js/preload/fakecrypto.js'></script>
