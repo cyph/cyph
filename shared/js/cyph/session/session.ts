@@ -241,8 +241,11 @@ module Cyph {
 				if (data === RPCEvents.destroy) {
 					this.close(false);
 				}
-				else {
+				else if (this.castle) {
 					this.castle.receive(data);
+				}
+				else {
+					setTimeout(() => this.receive(data), 1000);
 				}
 			}
 
