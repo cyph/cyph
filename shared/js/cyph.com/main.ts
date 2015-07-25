@@ -3,6 +3,7 @@
  */
 
 
+/// <reference path="../preload/fakecrypto.ts" />
 /// <reference path="../preload/base.ts" />
 
 /// <reference path="../cyph/controller.ts" />
