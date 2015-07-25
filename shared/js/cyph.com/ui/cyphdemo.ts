@@ -89,7 +89,7 @@ module Cyph.com {
 				let totalDelay: number	= 10000;
 
 				CyphDemo.messages.forEach((message, i: number) => {
-					totalDelay += i * 1500;
+					totalDelay += i * 1000;
 
 					setTimeout(() => {
 						if (message.isMobile) {
@@ -100,7 +100,7 @@ module Cyph.com {
 						}
 					}, totalDelay);
 
-					totalDelay += message.text.length * 50;
+					totalDelay += message.text.length * 10;
 
 					setTimeout(() => {
 						if (message.isMobile) {

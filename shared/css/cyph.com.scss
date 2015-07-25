@@ -51,16 +51,17 @@ section#main {
 	}
 }
 
-:not(.md-toolbar-tools) > .md-button {
+.md-button.new-cyph-button {
 	font-size: 14px;
 	width: auto;
 	margin-bottom: 6px;
 	box-shadow: 0px 0px 2px #7239dd;
 	color: #444;
 	background-color: #7d4fd3 !important;
-}
-.md-button.focus, .md-button:hover {
-	background-color: #7239dd !important;
+
+	&.focus, &:hover {
+		background-color: #7239dd !important;
+	}
 }
 
 #new-cyph {
@@ -237,8 +238,30 @@ html.mobile #new-cyph-section {
 .demo-root {
 	> * {
 		height: 500px;
+		padding: 0px;
 		overflow: hidden;
 	}
+
+	> .desktop {
+		[cyph-chat-main], [cyph-chat-message-box] {
+			margin-left: 170px;
+			width: calc(100% - 170px);
+		}
+		[cyph-chat-main] {
+			height: calc(100% - 60px);
+		}
+	}
+
+	> .mobile {
+		.chat-toolbar {
+			margin-top: 0px;
+		}
+		[cyph-chat-main] {
+			height: calc(100% - 88px);
+		}
+	}
+
+	
 }
 
 
