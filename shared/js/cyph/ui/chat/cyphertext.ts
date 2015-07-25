@@ -12,7 +12,7 @@ module Cyph {
 
 				public hide () : void {
 					if ($('.' + this.curtainClass).length > 0) {
-						Elements.everything.removeClass(this.curtainClass);
+						this.elements.everything.removeClass(this.curtainClass);
 
 						setTimeout(() => {
 							this.dialogManager.toast({
@@ -54,7 +54,7 @@ module Cyph {
 									content: Strings.cypherToast2,
 									delay: 3000
 								}, () => {
-									Elements.everything.addClass(this.curtainClass);
+									this.elements.everything.addClass(this.curtainClass);
 
 									Analytics.main.send({
 										hitType: 'event',
@@ -80,7 +80,8 @@ module Cyph {
 					controller: IController,
 					mobileMenu: ISidebar,
 					private dialogManager: IDialogManager,
-					private isMobile: boolean
+					private isMobile: boolean,
+					private elements: IElements
 				) {
 					super(controller, mobileMenu);
 
