@@ -1,5 +1,5 @@
 @import 'fonts';
-@import 'cyph.base';
+@import 'cyph.im';
 
 
 html, body, #main {
@@ -260,8 +260,10 @@ html.mobile #new-cyph-section {
 			height: calc(100% - 88px);
 		}
 	}
+}
 
-	
+.beta-signup-form {
+	padding: initial;
 }
 
 
