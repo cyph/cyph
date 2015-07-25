@@ -58,7 +58,7 @@
 
 
 		<section id='new-cyph-section'>
-			<md-button id='new-cyph' aria-label='Start new cyph' class='breathe'>
+			<md-button id='new-cyph' aria-label='Start new cyph' class='new-cyph-button breathe'>
 				<a translate ng-href='{{Cyph.Env.newCyphUrl}}'>Start new cyph</a>
 			</md-button>
 		</section>
@@ -249,10 +249,11 @@
 		</section>
 
 		<section id='laptop-screenshot-section'>
-			<div class='demo-root desktop-only'>
-				<span class='desktop grid-66'>
+			<div class='demo-root desktop-only grid-container'>
+				<span class='desktop grid-65'>
 					<span
 						cyph-chat-sidebar='ui.cyphDemo.desktop'
+						show-chat='true'
 					></span>
 					<div
 						cyph-chat-main='ui.cyphDemo.desktop'
@@ -260,15 +261,15 @@
 						layout-fill
 						flex
 					></div>
-					<div
-						cyph-chat-message-box='ui.cyphDemo.desktop'
-					></div>
+					<div cyph-chat-message-box='ui.cyphDemo.desktop'></div>
+					<!-- <div cyph-chat-cyphertext='ui.cyphDemo.desktop'></div> -->
 				</span>
 
-				<span class='mobile grid-33'>
+				<span class='mobile grid-30 push-5'>
 					<span
 						cyph-chat-toolbar='ui.cyphDemo.mobile'
 						open='ui.cyphDemo.openMobileMenu()'
+						show-chat='true'
 					></span>
 					<div
 						cyph-chat-main='ui.cyphDemo.mobile'
@@ -276,13 +277,15 @@
 						layout-fill
 						flex
 					></div>
-					<div
-						cyph-chat-message-box='ui.cyphDemo.mobile'
-					></div>
+					<div cyph-chat-message-box='ui.cyphDemo.mobile'></div>
+					<!-- <div cyph-chat-cyphertext='ui.cyphDemo.desktop'></div> -->
 				</span>
 			</div>
-			<div class='mobile-only'>
-				<img class='grid-100 tablet-grid-100 mobile-grid-100 screenshot' src='/img/phone-screenshot.png' />
+			<div class='mobile-only grid-container'>
+				<img
+					class='grid-100 tablet-grid-100 mobile-grid-100 screenshot'
+					src='/img/phone-screenshot.png'
+				/>
 			</div>
 		</section>
 
@@ -598,7 +601,7 @@
 					id='new-cyph-footer'
 					target='_blank'
 					aria-label='Start new cyph'
-					class='breathe'
+					class='new-cyph-button breathe'
 				>
 					<a translate ng-href='{{Cyph.Env.newCyphUrl}}'>Start new cyph</a>
 				</md-button>
