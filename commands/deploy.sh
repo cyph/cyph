@@ -76,15 +76,9 @@ else
 fi
 
 defaultCSPString='DEFAULT_CSP'
-cyphComCSP="$( \
-	cat shared/websign/csp | \
-	grep -v img-src | \
-	sed "s/ data://g" | \
-	tr -d '\n' \
-)"
-webSignCSP="$(cat shared/websign/csp | tr -d '\n')"
-ls cyph.com/*.yaml | xargs -I% sed -i.bak "s|${defaultCSPString}|${cyphComCSP}|g" %
-ls */*.yaml */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s|${defaultCSPString}|${webSignCSP}|g" %
+CSP="$(cat shared/websign/csp | tr -d '\n')"
+ls cyph.com/*.yaml | xargs -I% sed -i.bak "s|${defaultCSPString}|${CSP}|g" %
+ls */*.yaml */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s|${defaultCSPString}|${CSP}|g" %
 
 defaultHost='\${locationData\.protocol}\/\/\${locationData\.hostname}:'
 ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}43000//g" %
