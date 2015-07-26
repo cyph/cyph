@@ -56,10 +56,8 @@ module Cyph.com {
 							null,
 							controller,
 							undefined,
-							(mobileChannel: Cyph.Channel.LocalChannel) => {
-								desktopChannel.connect(mobileChannel);
-
-							}
+							(mobileChannel: Cyph.Channel.LocalChannel) =>
+								desktopChannel.connect(mobileChannel)
 						);
 					}
 				);
