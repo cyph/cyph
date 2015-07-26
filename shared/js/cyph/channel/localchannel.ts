@@ -1,4 +1,4 @@
-/// <reference path="channel.ts" />
+/// <reference path="ichannel.ts" />
 
 
 module Cyph {
