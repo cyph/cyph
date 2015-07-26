@@ -240,6 +240,11 @@ html.mobile #new-cyph-section {
 		height: calc(100vh - 100px);
 		padding: 0px;
 		overflow: hidden;
+		position: relative;
+
+		> .cyph-foreground:not(.curtain) {
+			height: 100%;
+		}
 	}
 
 	> .desktop {
@@ -250,6 +255,9 @@ html.mobile #new-cyph-section {
 		[cyph-chat-main] {
 			height: calc(100% - 60px);
 		}
+		[cyph-chat-message-box] {
+			margin-top: -5px;
+		}
 	}
 
 	> .mobile {
@@ -259,6 +267,16 @@ html.mobile #new-cyph-section {
 		[cyph-chat-main] {
 			height: calc(100% - 88px);
 		}
+	}
+
+	.chat-cyphertext {
+		position: absolute;
+	}
+
+	.chat-sidebar {
+		margin-left: -13px;
+		margin-top: -50px;
+		@include transform(scale(0.8));
 	}
 }
 
