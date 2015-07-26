@@ -31,6 +31,8 @@ if (!('crypto' in self)) {
 }
 
 if (!('Uint8Array' in self)) {
+	self['Float32Array']		= Array;
+	self['Float64Array']		= Array;
 	self['Int8Array']			= Array;
 	self['Int16Array']			= Array;
 	self['Int32Array']			= Array;
@@ -38,8 +40,6 @@ if (!('Uint8Array' in self)) {
 	self['Uint16Array']			= Array;
 	self['Uint32Array']			= Array;
 	self['Uint8ClampedArray']	= Array;
-	self['Float32Array']		= Array;
-	self['Float64Array']		= Array;
 }
 
 if (!('ntru' in self)) {
