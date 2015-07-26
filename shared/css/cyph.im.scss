@@ -693,6 +693,7 @@ html:not(.mobile) .cyph-not-found {
 	}
 
 	.close-button {
+		color: inherit !important;
 		position: absolute;
 		top: 30px;
 		right: 5%;
@@ -705,8 +706,7 @@ html:not(.mobile) .cyph-not-found {
 .chat-cyphertext:not(.nano) {
 	overflow-y: scroll;
 }
-.md-button.close-button {
-	color: #3bfc34 !important;
+.close-button {
 	background-color: #202020 !important;
 	box-shadow: rgba(25, 130, 25, 0.137255) 0px 0px 4px 0px, rgba(25, 130, 25, 0.278431) 0px 4px 8px 0px !important;
 	font-family: 'Ubuntu Mono', monospace !important;
