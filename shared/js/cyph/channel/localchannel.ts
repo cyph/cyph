@@ -27,6 +27,11 @@ module Cyph {
 				}
 			}
 
+			/**
+			 * Initiates bidirectional connection between this and
+			 * another LocalChannel instance.
+			 * @param other
+			 */
 			public connect (other: LocalChannel) : void {
 				if (!this.other) {
 					this.other	= other;
