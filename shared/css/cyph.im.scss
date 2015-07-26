@@ -187,31 +187,6 @@ input, textarea {
 	@include transition(margin-left 1s cubic-bezier(1, 0, 0, 1));
 }
 
-.message-item {
-	.message {
-		word-wrap: break-word;
-		@include hyphens(auto);
-
-		> * {
-			padding-top: 5px;
-		}
-	}
-
-	img:not(.emoji) {
-		max-width: 25%;
-		margin-top: 10px;
-		margin-bottom: 10px;
-		margin-right: auto;
-		display: block;
-		box-shadow: 0px 4px 10px -1px rgba(0, 0, 0, 0.4);
-	}
-
-	.emoji {
-		height: 1.2em;
-		margin-bottom: -.2em;
-		margin-left: .2em;
-	}
-}
 .message-item.author-me {
 	background-color: #8652e4;
 	box-shadow: 0px 0px 5px #8652e4;
@@ -225,15 +200,34 @@ input, textarea {
 	margin: 2.5px;
 
 	.message {
+		max-width: 100%;
 		padding-bottom: 5px;
-	}
+		word-wrap: break-word;
+		@include hyphens(auto);
 
-	img:not(.emoji) {
-		margin-left: 10vw;
+		> * {
+			padding-top: 5px;
+		}
 	}
 
 	.message-timestamp {
 		text-align: right;
+	}
+
+	img:not(.emoji) {
+		max-width: 25%;
+		margin-top: 10px;
+		margin-bottom: 10px;
+		margin-left: 10vw;
+		margin-right: auto;
+		display: block;
+		box-shadow: 0px 4px 10px -1px rgba(0, 0, 0, 0.4);
+	}
+
+	.emoji {
+		height: 1.2em;
+		margin-bottom: -.2em;
+		margin-left: .2em;
 	}
 }
 .chat-main .message-item .message {
@@ -711,7 +705,7 @@ html:not(.mobile) .cyph-not-found {
 .chat-cyphertext:not(.nano) {
 	overflow-y: scroll;
 }
-.close-button {
+.md-button.close-button {
 	color: #3bfc34 !important;
 	background-color: #202020 !important;
 	box-shadow: rgba(25, 130, 25, 0.137255) 0px 0px 4px 0px, rgba(25, 130, 25, 0.278431) 0px 4px 8px 0px !important;
@@ -722,6 +716,7 @@ html:not(.mobile) .cyph-not-found {
 
 .chat-begin-message {
 	font-family: 'Ubuntu', sans-serif;
+	font-size: 4vw;
 	text-align: center;
 	width: 100%;
 	background-color: #8b62d9 !important;
@@ -729,9 +724,6 @@ html:not(.mobile) .cyph-not-found {
 	* {
 		font-weight: bold;
 	}
-}
-.chat-begin-message {
-	font-size: 12vw;
 }
 
 

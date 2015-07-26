@@ -250,35 +250,39 @@
 
 		<section id='laptop-screenshot-section'>
 			<div class='demo-root desktop-only grid-container'>
-				<span class='desktop grid-65'>
-					<span
-						cyph-chat-sidebar='ui.cyphDemo.desktop'
-						show-chat='true'
-					></span>
-					<div
-						cyph-chat-main='ui.cyphDemo.desktop'
-						layout='column'
-						layout-fill
-						flex
-					></div>
-					<div cyph-chat-message-box='ui.cyphDemo.desktop'></div>
-					<!-- <div cyph-chat-cyphertext='ui.cyphDemo.desktop'></div> -->
+				<span class='desktop grid-65 tablet-grid-65'>
+					<div class='cyph-foreground'>
+						<span
+							cyph-chat-sidebar='ui.cyphDemo.desktop'
+							show-chat='true'
+						></span>
+						<div
+							cyph-chat-main='ui.cyphDemo.desktop'
+							layout='column'
+							layout-fill
+							flex
+						></div>
+						<div cyph-chat-message-box='ui.cyphDemo.desktop'></div>
+					</div>
+					<div cyph-chat-cyphertext='ui.cyphDemo.desktop'></div>
 				</span>
 
-				<span class='mobile grid-30 push-5'>
-					<span
-						cyph-chat-toolbar='ui.cyphDemo.mobile'
-						open='ui.cyphDemo.openMobileMenu()'
-						show-chat='true'
-					></span>
-					<div
-						cyph-chat-main='ui.cyphDemo.mobile'
-						layout='column'
-						layout-fill
-						flex
-					></div>
-					<div cyph-chat-message-box='ui.cyphDemo.mobile'></div>
-					<!-- <div cyph-chat-cyphertext='ui.cyphDemo.desktop'></div> -->
+				<span class='mobile grid-30 tablet-grid-30 push-5 tablet-push-5'>
+					<div class='cyph-foreground'>
+						<span
+							cyph-chat-toolbar='ui.cyphDemo.mobile'
+							open='ui.cyphDemo.openMobileMenu()'
+							show-chat='true'
+						></span>
+						<div
+							cyph-chat-main='ui.cyphDemo.mobile'
+							layout='column'
+							layout-fill
+							flex
+						></div>
+						<div cyph-chat-message-box='ui.cyphDemo.mobile'></div>
+					</div>
+					<div cyph-chat-cyphertext='ui.cyphDemo.mobile'></div>
 				</span>
 			</div>
 			<div class='mobile-only grid-container'>

@@ -7,11 +7,11 @@
 	text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.004) !important;
 }
 
-html, body, #main, md-sidenav {
+html, body, #main, .cyph-foreground, md-sidenav {
 	background-color: #8b62d9 !important;
 }
 
-#main, .md-button {
+#main, .cyph-foreground, .md-button {
 	color: #f1f1f1 !important;
 }
 
@@ -24,6 +24,11 @@ md-sidenav .md-button {
 	width: 100%;
 	text-align: left;
 	height: 35px;
+}
+
+
+md-toast {
+	position: fixed;
 }
 
 
@@ -103,15 +108,18 @@ pre {
 }
 
 
-#main.curtain {
+.cyph-foreground.curtain {
 	height: 10%;
 	@include transform(translateY(-90%));
 	@include transition(transform 2s cubic-bezier(1, 0, 0, 1), height 2s cubic-bezier(1, 0, 0, 1));
 }
-#main:not(.curtain) {
+.cyph-foreground:not(.curtain) {
 	@include transition(transform 2s cubic-bezier(1, 0, 0, 1), height 2s cubic-bezier(1, 0, 0, 1));
 }
-#main {
+.cyph-foreground {
+	overflow-y: hidden;
+}
+#main, .cyph-foreground {
 	position: relative;
 	z-index: 2;
 }
