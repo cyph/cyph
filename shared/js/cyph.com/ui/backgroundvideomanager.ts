@@ -19,41 +19,6 @@ module Cyph.com {
 			private pullInterval: any;
 
 			private adjustMargins () : void {
-				if (!Cyph.Env.isMobile || Cyph.Env.isTablet) {
-					Elements.featureListItems.css('height', '');
-					Elements.featureListItems.find('[class*="pull"]').css('left', '');
-
-					setTimeout(() => {
-						for (const pair of [[0, 3], [1, 4], [2, 5]]) {
-							const $a: JQuery	= Elements.featureListItems.eq(pair[0]);
-							const $b: JQuery	= Elements.featureListItems.eq(pair[1]);
-
-							$a.add($b).height(Math.max($a.height(), $b.height()));
-						}
-
-						clearInterval(this.pullInterval);
-
-						this.pullInterval	= setInterval(() => {
-							const $pulledElements: JQuery	= Elements.featureListItems.
-								filter('.animated').
-								find('[class*="pull"]')
-							;
-
-							setTimeout(() => {
-								$pulledElements.each((i: number, elem: HTMLElement) => {
-									const $this: JQuery	= $(elem);
-									const offset		= $this.offset();
-
-									if (offset.left < 0) {
-										$this.css('left', '0px');
-									}
-								});
-							}, 2500);
-						}, 2500);
-					}, 250);
-				}
-
-
 				const heightDelta: number			= window.innerHeight - this.previousHeight;
 				const isAddressBarHidden: boolean	= heightDelta > 0 && heightDelta < 75;
 				this.previousHeight					= window.innerHeight;

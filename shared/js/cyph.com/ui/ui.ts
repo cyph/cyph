@@ -4,9 +4,6 @@ module Cyph.com {
 		 * Controls the entire cyph.com UI.
 		 */
 		export class UI {
-			private static fixedHeaderClass: string	= 'fixed-header';
-
-
 			private backgroundVideoManager: BackgroundVideoManager;
 
 			/** UI state/view. */
@@ -20,32 +17,6 @@ module Cyph.com {
 
 			/** Signup form to be displayed throughout the site. */
 			public signupForm: Cyph.UI.ISignupForm;
-
-			private onScroll () : void {
-				const viewportHeight: number	= Math.max(
-					document.documentElement.clientHeight,
-					window.innerHeight || 0
-				);
-
-				const scrollTop: number	= window.pageYOffset;
-
-				if (scrollTop === 0) {
-					Elements.newCyph.css({transform: '', top: ''});
-					Elements.fixedHeaderStuff.removeClass(UI.fixedHeaderClass);
-				}
-				else if (scrollTop >= ((Elements.newCyphParent.height() / 2) + 16)) {
-					Elements.fixedHeaderStuff.addClass(UI.fixedHeaderClass);
-				}
-				else {
-					Elements.fixedHeaderStuff.removeClass(UI.fixedHeaderClass);
-
-					const ratio: number	= (viewportHeight - scrollTop) / viewportHeight;
-
-					if (ratio > 0.62) {
-						Elements.newCyph.css('transform', 'scale(' + ratio + ')');
-					}
-				}
-			}
 
 			private onUrlStateChange (urlState: string) : void {
 				const state: States		= States[urlState];
@@ -163,12 +134,7 @@ module Cyph.com {
 
 				/* Header / new cyph button animation */
 
-				if (Cyph.Env.isMobile) {
-					Elements.fixedHeaderStuff.addClass(UI.fixedHeaderClass);
-				}
-				else {
-					Cyph.UI.Elements.window.scroll(() => this.onScroll());
-
+				if (!Cyph.Env.isMobile) {
 					setInterval(() => {
 						Elements.bouncingDownArrow.removeClass('bounce');
 
