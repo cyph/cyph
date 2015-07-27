@@ -87,12 +87,11 @@ html.mobile #new-cyph-section {
 }
 
 .hero-text {
-	font-family: 'Ubuntu';
 	width: 100%;
 	text-align: center;
 	position: absolute;
 	top: 80px;
-	font-size: 36px;
+	font-size: 26px;
 	font-weight: 300;
 	margin-left: -20px;
 
@@ -103,18 +102,18 @@ html.mobile #new-cyph-section {
 }
 
 .feature-list-container {
-	margin-top: 200px;
+	margin-top: 150px;
 
-	.screenshot {
-		margin-top: -50px;
-		padding: 0px 30px;
+	> .grid-parent.right {
+		text-align: right;
 	}
 
 	.feature-list-item {
 		margin-bottom: 50px;
 
 		p.title {
-			font-size: 120%;
+			line-height: 2.8vw;
+			font-size: 15px;
 			font-family: 'Ubuntu';
 		}
 
@@ -124,17 +123,31 @@ html.mobile #new-cyph-section {
 		}
 
 		img {
-			box-shadow: 0px 4px 10px -1px rgba(0, 0, 0, 0.25);
-			border-radius: 1000% !important;
+			/* box-shadow: 0px 4px 10px -1px rgba(0, 0, 0, 0.25); */
+			border-radius: 100% !important;
 			padding: 0px;
-			width: calc(33% - 20px);
-			margin: 0px 10px;
 		}
 
 		.oneline {
 			display: block;
 			width: 100%;
 			margin: 3px 10%;
+		}
+	}
+
+	.screenshot {
+		margin-left: auto;
+		margin-right: auto;
+		display: block;
+
+		&.laptop {
+			width: 100%;
+			margin-top: calc((50px + 5.525vw) * 0.5);
+		}
+
+		&.phone {
+			height: calc((50px + 5.525vw) * 3);
+			margin-top: -25px;
 		}
 	}
 }
@@ -171,23 +184,21 @@ html.mobile #new-cyph-section {
 }
 
 
-#main-toolbar, #new-cyph.fixed-header {
+#main-toolbar, #new-cyph {
 	top: 0px !important;
 }
 
-#new-cyph.fixed-header {
+#new-cyph {
 	z-index: 12;
 	position: fixed;
 	top: -7px !important;
 	@include transform(scale(0.6) !important);
-	@include transition(transform 0.1s ease-in-out);
 }
 
 #main-toolbar {
 	position: fixed;
 	z-index: 11;
 	height: 50px !important;
-
 	background-color: rgba(97, 51, 163, 0.75);
 }
 
@@ -219,18 +230,6 @@ html.mobile #new-cyph-section {
 		width: auto;
 		height: 100%;
 	}
-}
-
-
-#main-toolbar, #bouncing-down-arrow.fixed-header {
-	opacity: 0;
-	pointer-events: none;
-	@include transition(opacity 0.5s ease-in-out);
-}
-#bouncing-down-arrow:not(.fixed-header), #main-toolbar.fixed-header {
-	opacity: 1;
-	pointer-events: all;
-	@include transition(opacity 0.5s ease-in-out);
 }
 
 

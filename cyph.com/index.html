@@ -54,14 +54,12 @@
 			<img src='/img/logo.white.horizontal.header.png' />
 		</a>
 
+		<md-button id='new-cyph' aria-label='Start new cyph' class='new-cyph-button breathe'>
+			<a translate ng-href='{{Cyph.Env.newCyphUrl}}'>Start new cyph</a>
+		</md-button>
+
 		<img id='bouncing-down-arrow' class='animated' ng-click='ui.scrollHeroText()' src='/img/icons/downarrow.png' />
 
-
-		<section id='new-cyph-section'>
-			<md-button id='new-cyph' aria-label='Start new cyph' class='new-cyph-button breathe'>
-				<a translate ng-href='{{Cyph.Env.newCyphUrl}}'>Start new cyph</a>
-			</md-button>
-		</section>
 
 		<md-toolbar id='main-toolbar'>
 			<div class='md-toolbar-tools'></div>
@@ -69,182 +67,96 @@
 
 		<section id='hero-section'>
 			<div class='hero-text animated'>
-				<div translate>Talk Without Barriers</div>
-				<div class='subtitle'>
+				<div translate>
 					A beautiful, surveillance-free chat experience.
 				</div>
 			</div>
 			<div class='feature-list-container grid-container'>
-				<div class='grid-33 tablet-grid-33 grid-parent'>
-					<div class='wow desktop-class-bounceInLeft mobile-class-bounceInRight grid-100 tablet-grid-100 feature-list-item'>
+				<div
+					class='wow desktop-class-bounceInLeft grid-25 tablet-grid-25 mobile-grid-100'
+					data-wow-delay='2000ms'
+				>
+					<img class='phone screenshot' src='/img/phone-screenshot.png' />
+				</div>
+
+				<div class='grid-25 tablet-grid-25 grid-parent left'>
+					<div class='grid-100 tablet-grid-100 feature-list-item'>
 						<img
-							class='grid-33 tablet-grid-33 push-66 tablet-push-66 mobile-pull-10 mobile-grid-25'
+							class='grid-25 tablet-grid-25 push-75 tablet-push-75 mobile-pull-10 mobile-grid-25'
 							src='/img/iconfinder/encryption.png'
 						/>
-						<div class='grid-66 tablet-grid-66 pull-33 tablet-pull-33 mobile-push mobile-push-25 mobile-grid-85'>
+						<div class='grid-75 tablet-grid-75 pull-25 tablet-pull-25 mobile-push mobile-push-25 mobile-grid-85'>
 							<p class='title' translate>
-								End-to-end encryption
-							</p>
-						</div>
-						<div class='grid-66 tablet-grid-66 pull-33 tablet-pull-33 mobile-grid-100'>
-							<p>
-								<span translate>Encrypted and authenticated via the post-quantum</span>
-								<a
-									target='_blank'
-									rel='noreferrer'
-									href='https://docs.google.com/document/d/1XVh4ALXhbfxi70QSUY-xHclauob8O635bSySy6f1Ysk'
-								>
-									Castle messaging protocol</a>.
-							</p>
-						</div>
-						<div class='grid-100 tablet-grid-100 mobile-grid-100'>
-							<p>
-								<span translate>To crack a single Cyph message would require</span>
-								<span>10</span><sup>38</sup>
-								<span translate>Tianhe-2 supercomputers running for the lifetime of the universe.</span>
+								Quantum-safe encryption
 							</p>
 						</div>
 					</div>
-					<div class='wow bounceInLeft grid-100 tablet-grid-100 feature-list-item' desktop-data-wow-delay='150ms'>
+					<div class='grid-100 tablet-grid-100 feature-list-item'>
 						<img
-							class='grid-33 tablet-grid-33 push-66 tablet-push-66 mobile-push-75 mobile-grid-25'
+							class='grid-25 tablet-grid-25 push-75 tablet-push-75 mobile-push-75 mobile-grid-25'
 							src='/img/iconfinder/video.png'
 						/>
-						<div class='grid-66 tablet-grid-66 pull-33 tablet-pull-33 mobile-pull-5 mobile-grid-85'>
+						<div class='grid-75 tablet-grid-75 pull-25 tablet-pull-25 mobile-pull-5 mobile-grid-85'>
 							<p class='title' translate>
 								Voice and video calling
 							</p>
 						</div>
-						<div class='grid-66 tablet-grid-66 pull-33 tablet-pull-33 mobile-grid-100'>
-							<p>
-								<span translate>Encrypted and authenticated via</span>
-								<a target='_blank' rel='noreferrer' href='http://en.wikipedia.org/wiki/WebRTC' translate>WebRTC</a>
-								<span translate>and</span>
-								<a target='_blank' rel='noreferrer' href='http://tools.ietf.org/html/rfc5764' translate>DTLS-SRTP</a>.
-							</p>
-						</div>
 					</div>
-					<div class='wow bounceInLeft grid-100 tablet-grid-100 feature-list-item' desktop-data-wow-delay='300ms'>
+					<div class='grid-100 tablet-grid-100 feature-list-item'>
 						<img
-							class='grid-33 tablet-grid-33 push-66 tablet-push-66 mobile-pull-10 mobile-grid-25'
+							class='grid-25 tablet-grid-25 push-75 tablet-push-75 mobile-pull-10 mobile-grid-25'
 							src='/img/iconfinder/photos.png'
 						/>
-						<div class='grid-66 tablet-grid-66 pull-33 tablet-pull-33 mobile-push mobile-push-25 mobile-grid-85'>
+						<div class='grid-75 tablet-grid-75 pull-25 tablet-pull-25 mobile-push mobile-push-25 mobile-grid-85'>
 							<p class='title' translate>
 								Send files and images
 							</p>
 						</div>
-						<div class='grid-66 tablet-grid-66 pull-33 tablet-pull-33 mobile-grid-100'>
-							<p>
-								<span translate>
-									Your photos are safe, and that's a great feeling. You won't have to worry about "The Cyphoning".
-								</span>
-							</p>
-						</div>
 					</div>
 				</div>
 
-				<img class='grid-33 tablet-grid-33 mobile-grid-100 screenshot' src='/img/phone-screenshot.png' />
-
-				<div class='grid-33 tablet-grid-33 grid-parent'>
-					<div class='wow desktop-class-bounceInRight mobile-class-bounceInLeft grid-100 tablet-grid-100 feature-list-item'>
+				<div class='grid-25 tablet-grid-25 grid-parent right'>
+					<div class='grid-100 tablet-grid-100 feature-list-item'>
 						<img
-							class='grid-33 tablet-grid-33 mobile-pull-10 mobile-push-75 mobile-grid-25'
+							class='grid-25 tablet-grid-25 mobile-pull-10 mobile-push-75 mobile-grid-25'
 							src='/img/iconfinder/anonymous.png'
 						/>
-						<div class='grid-66 tablet-grid-66 mobile-pull-5 mobile-grid-85'>
-							<p class='title'>
-								<span translate>Anonymity through</span>
-								<a
-									target='_blank'
-									rel='noreferrer'
-									href='https://en.wikipedia.org/wiki/Tor_%28anonymity_network%29'
-								>Tor</a>
-							</p>
-						</div>
-						<div class='grid-66 tablet-grid-66 mobile-grid-100'>
-							<p>
-								<span translate>Want to hide that you're cyphing at all?</span>
-							</p>
-						</div>
-						<div class='grid-100 tablet-grid-100 mobile-grid-100'>
-							<p>
-								<span translate>Just</span>
-								<a
-									target='_blank'
-									rel='noreferrer'
-									href='https://www.torproject.org/download/download-easy.html.en'
-									translate
-								>install Tor Browser</a>
-								<span translate>and navigate to</span>
-								<a class='oneline' target='_blank' ng-href='{{Cyph.Config.onionUrl}}'>https://cyphdbyhiddenbhs.onion</a>
-								<i>("cyph'd by hidden backbone host server")</i>.
+						<div class='grid-75 tablet-grid-75 mobile-pull-5 mobile-grid-85'>
+							<p class='title' translate>
+								Anonymity through Tor
 							</p>
 						</div>
 					</div>
-					<div class='wow bounceInRight grid-100 tablet-grid-100 feature-list-item' desktop-data-wow-delay='150ms'>
+					<div class='grid-100 tablet-grid-100 feature-list-item'>
 						<img
-							class='grid-33 tablet-grid-33 mobile-pull-10 mobile-grid-25'
+							class='grid-25 tablet-grid-25 mobile-pull-10 mobile-grid-25'
 							src='/img/iconfinder/signing.png'
 						/>
-						<div class='grid-66 tablet-grid-66 mobile-push mobile-push-25 mobile-grid-85'>
+						<div class='grid-75 tablet-grid-75 mobile-push mobile-push-25 mobile-grid-85'>
 							<p class='title' translate>
 								Cryptographically signed
 							</p>
 						</div>
-						<div class='grid-66 tablet-grid-66 mobile-grid-100'>
-							<p>
-								<span translate>
-									Application packages are verified at run-time against our personal public keys via
-								</span>
-								<a
-									target='_blank'
-									rel='noreferrer'
-									href='https://docs.google.com/document/d/1j5KnpVyDdIXVwEDCQpHGxbs0i_-KxqBDQw5h_TVtv0s'
-								>WebSign</a>
-								<span translate>
-									&mdash; so even if our servers get pwned, you won't.
-								</span>
-							</p>
-						</div>
 					</div>
-					<div class='wow bounceInRight grid-100 tablet-grid-100 feature-list-item' desktop-data-wow-delay='300ms'>
+					<div class='grid-100 tablet-grid-100 feature-list-item'>
 						<img
-							class='grid-33 tablet-grid-33 mobile-pull-10 mobile-push-75 mobile-grid-25'
+							class='grid-25 tablet-grid-25 mobile-pull-10 mobile-push-75 mobile-grid-25'
 							src='/img/iconfinder/crossplatform.png'
 						/>
-						<div class='grid-66 tablet-grid-66 mobile-pull-5 mobile-grid-85'>
+						<div class='grid-75 tablet-grid-75 mobile-pull-5 mobile-grid-85'>
 							<p class='title' translate>
-								Works anywhere
-							</p>
-						</div>
-						<div class='grid-66 tablet-grid-66 mobile-grid-100'>
-							<p>
-								<span translate>Cyph from your desktop, laptop, phone, or tablet!</span>
+								Works on any device
 							</p>
 						</div>
 					</div>
 				</div>
-			</div>
-		</section>
 
-		<section id='why-cyph-section'>
-			<div class='hero-text' translate>
-				About Cyph
-			</div>
-			<div class='section-content-container'>
-				<p translate>
-					Cyph is a revolutionary new secure messenger, created to defend the world from mass surveillance.
-				</p>
-				<p translate>
-					Cyph lets you talk in absolute confidence. Carefully designed using high-end cryptography, Cyph protects your conversations against anything from nosy neighbors to agencies armed with theoretical quantum attacks.
-				</p>
-				<p translate>
-					Yet, Cyph remains simple for anybody to use, and works on every device in one click &mdash; no installation or registration required.
-				</p>
-				<p translate>
-					Cyph your friends. Reclaim your privacy.
-				</p>
+				<div
+					class='wow desktop-class-bounceInRight grid-25 tablet-grid-25 mobile-grid-100'
+					data-wow-delay='2000ms'
+				>
+					<img class='laptop screenshot' src='/img/laptop-screenshot.png' />
+				</div>
 			</div>
 		</section>
 
@@ -290,6 +202,26 @@
 					class='grid-100 tablet-grid-100 mobile-grid-100 screenshot'
 					src='/img/phone-screenshot.png'
 				/>
+			</div>
+		</section>
+
+		<section id='why-cyph-section'>
+			<div class='hero-text' translate>
+				About Cyph
+			</div>
+			<div class='section-content-container'>
+				<p translate>
+					Cyph is a revolutionary new secure messenger, created to defend the world from mass surveillance.
+				</p>
+				<p translate>
+					Cyph lets you talk in absolute confidence. Carefully designed using high-end cryptography, Cyph protects your conversations against anything from nosy neighbors to agencies armed with theoretical quantum attacks.
+				</p>
+				<p translate>
+					Yet, Cyph remains simple for anybody to use, and works on every device in one click &mdash; no installation or registration required.
+				</p>
+				<p translate>
+					Cyph your friends. Reclaim your privacy.
+				</p>
 			</div>
 		</section>
 
