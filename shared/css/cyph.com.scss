@@ -22,7 +22,7 @@ html:not(.load-complete) {
 }
 
 section#main {
-	background-color: rgba(139, 98, 217, 0.75) !important;
+	/* background-color: rgba(139, 98, 217, 0.75) !important; */
 	overflow-x: hidden;
 }
 
@@ -136,18 +136,16 @@ html.mobile #new-cyph-section {
 	}
 
 	.screenshot {
-		margin-left: auto;
-		margin-right: auto;
 		display: block;
+		height: calc((50px + 5.525vw) * 3 - 50px);
 
 		&.laptop {
-			width: 100%;
-			margin-top: calc((50px + 5.525vw) * 0.5);
+			margin-left: calc(((50px + 5.525vw) * 3 - 50px) * -0.885);
 		}
 
 		&.phone {
-			height: calc((50px + 5.525vw) * 3);
-			margin-top: -25px;
+			margin-left: auto;
+			margin-right: auto;
 		}
 	}
 }
@@ -458,12 +456,7 @@ html.mobile {
 #hero-section, #podcast-section {
 	min-height: 0px !important;
 	height: auto !important;
-}
-#hero-section, #about, #laptop-screenshot-section {
-	background-color: rgba(78, 52, 126, 0.75);
-}
-#why-cyph-section, #home-beta-signup {
-	background-color: rgba(130, 75, 236, 0.25);
+	background-color: rgba(57, 40, 89, 0.85);
 }
 
 #home-beta-signup {
