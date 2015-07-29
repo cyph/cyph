@@ -82,32 +82,34 @@ module Cyph.com {
 					Elements.demoRootMobile
 				);
 
-				let totalDelay: number	= 10000;
+				Elements.demoRoot['appear']().one('appear', () => {
+					let totalDelay: number	= 10000;
 
-				CyphDemo.messages.forEach((message, i: number) => {
-					totalDelay += i * 1000;
+					CyphDemo.messages.forEach((message, i: number) => {
+						totalDelay += i * 1000;
 
-					setTimeout(() => {
-						if (message.isMobile) {
-							this.desktop.setFriendTyping(true);
-						}
-						else {
-							this.mobile.setFriendTyping(true);
-						}
-					}, totalDelay);
+						setTimeout(() => {
+							if (message.isMobile) {
+								this.desktop.setFriendTyping(true);
+							}
+							else {
+								this.mobile.setFriendTyping(true);
+							}
+						}, totalDelay);
 
-					totalDelay += message.text.length * 10;
+						totalDelay += message.text.length * 10;
 
-					setTimeout(() => {
-						if (message.isMobile) {
-							this.mobile.setFriendTyping(false);
-							this.mobile.send(message.text);
-						}
-						else {
-							this.desktop.setFriendTyping(false);
-							this.desktop.send(message.text);
-						}	
-					}, totalDelay);
+						setTimeout(() => {
+							if (message.isMobile) {
+								this.mobile.setFriendTyping(false);
+								this.mobile.send(message.text);
+							}
+							else {
+								this.desktop.setFriendTyping(false);
+								this.desktop.send(message.text);
+							}	
+						}, totalDelay);
+					});
 				});
 			}
 		}

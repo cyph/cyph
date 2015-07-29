@@ -6,6 +6,7 @@ module Cyph.com {
 		export class Elements {
 			public static bouncingDownArrow: JQuery;
 			public static backgroundVideo: JQuery;
+			public static demoRoot: JQuery;
 			public static demoRootDesktop: JQuery;
 			public static demoRootMobile: JQuery;
 			public static featureListItems: JQuery;
@@ -14,6 +15,8 @@ module Cyph.com {
 			public static newCyph: JQuery;
 			public static newCyphParent: JQuery;
 			public static podcastLogo: JQuery;
+			public static testimonialLogos: JQuery;
+			public static testimonialQuotes: JQuery;
 
 			/**
 			 * Loads elements (call this after page is loaded).
@@ -23,6 +26,7 @@ module Cyph.com {
 
 				Elements.bouncingDownArrow	= $('#bouncing-down-arrow');
 				Elements.backgroundVideo	= $('#background-video > :first-child');
+				Elements.demoRoot			= $('.demo-root');
 				Elements.demoRootDesktop	= $('.demo-root > .desktop');
 				Elements.demoRootMobile		= $('.demo-root > .mobile');
 				Elements.featureListItems	= $('.feature-list-item');
@@ -30,6 +34,8 @@ module Cyph.com {
 				Elements.newCyph			= $('#new-cyph');
 				Elements.newCyphParent		= Elements.newCyph.parent();
 				Elements.podcastLogo		= $('.podcast-logo');
+				Elements.testimonialLogos	= $('#testimonials-section .logo');
+				Elements.testimonialQuotes	= $('#testimonials-section .quote');
 
 				Elements.fixedHeaderStuff	= Elements.newCyph.
 					add('#main-toolbar').

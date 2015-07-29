@@ -4,7 +4,10 @@ module Cyph.com {
 		 * Controls the entire cyph.com UI.
 		 */
 		export class UI {
-			private backgroundVideoManager: BackgroundVideoManager;
+			private static testimonialActiveClass: string	= 'active';
+
+
+			private testimonialNumber: number	= 0;
 
 			/** UI state/view. */
 			public state: States		= States.home;
@@ -17,6 +20,22 @@ module Cyph.com {
 
 			/** Signup form to be displayed throughout the site. */
 			public signupForm: Cyph.UI.ISignupForm;
+
+			private incrementTestimonial () : void {
+				Elements.testimonialLogos.
+					add(Elements.testimonialQuotes).
+					removeClass(UI.testimonialActiveClass)
+				;
+
+				Elements.testimonialLogos.eq(this.testimonialNumber).
+					add(Elements.testimonialQuotes.eq(this.testimonialNumber)).
+					addClass(UI.testimonialActiveClass)
+				;
+
+				if (++this.testimonialNumber >= Elements.testimonialLogos.length) {
+					this.testimonialNumber	= 0;
+				}
+			}
 
 			private onUrlStateChange (urlState: string) : void {
 				const state: States		= States[urlState];
@@ -101,9 +120,8 @@ module Cyph.com {
 				dialogManager: Cyph.UI.IDialogManager,
 				mobileMenu: Cyph.UI.ISidebar
 			) {
-				this.backgroundVideoManager	= new BackgroundVideoManager();
-				this.signupForm				= new Cyph.UI.SignupForm(this.controller);
-				this.cyphDemo				= new CyphDemo(this.controller, dialogManager, mobileMenu);
+				this.signupForm	= new Cyph.UI.SignupForm(this.controller);
+				this.cyphDemo	= new CyphDemo(this.controller, dialogManager, mobileMenu);
 
 				Cyph.UrlState.onchange(urlState => this.onUrlStateChange(urlState));
 				Cyph.UrlState.set(Cyph.UrlState.get(), true, false, false);
@@ -130,6 +148,29 @@ module Cyph.com {
 				if (!Cyph.Env.isMobile) {
 					new self['WOW']({live: false}).init();
 				}
+
+
+				/* Disable background video on mobile */
+
+				if (Cyph.Env.isMobile) {
+					const $mobilePoster: JQuery	= $('<img />');
+					$mobilePoster.attr('src', Elements.backgroundVideo.attr('mobile-poster'));
+
+					Elements.backgroundVideo.replaceWith($mobilePoster).remove();
+					Elements.backgroundVideo	= $mobilePoster;
+				}
+				else {
+					Elements.backgroundVideo['appear']().
+						on('appear', () => Elements.backgroundVideo[0]['play']()).
+						on('disappear', () => Elements.backgroundVideo[0]['pause']())
+					;
+				}
+
+				
+				/* Testimonial slideshow */
+
+				this.incrementTestimonial();
+				setInterval(() => this.incrementTestimonial(), 10000);
 
 
 				/* Header / new cyph button animation */
