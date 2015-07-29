@@ -173,11 +173,10 @@ module Cyph.com {
 
 				if (!Cyph.Env.isMobile) {
 					setInterval(() => {
-						Elements.bouncingDownArrow.removeClass('bounce');
-
-						setTimeout(() => {
-							Elements.bouncingDownArrow.addClass('bounce');
-						}, 100);
+						if (!Elements.demoRoot.is(':appeared')) {
+							Elements.bouncingDownArrow.removeClass('bounce');
+							setTimeout(() => Elements.bouncingDownArrow.addClass('bounce'), 100);
+						}
 					}, 5000);
 				}
 
