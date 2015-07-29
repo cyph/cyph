@@ -58,12 +58,10 @@
 			<a translate ng-href='{{Cyph.Env.newCyphUrl}}'>Start new cyph</a>
 		</md-button>
 
-		<img id='bouncing-down-arrow' class='animated' ng-click='ui.scrollHeroText()' src='/img/icons/downarrow.png' />
-
-
 		<md-toolbar id='main-toolbar'>
 			<div class='md-toolbar-tools'></div>
 		</md-toolbar>
+
 
 		<section id='hero-section'>
 			<div class='hero-foreground'>
@@ -159,6 +157,11 @@
 						<img class='phone screenshot' src='/img/phone-screenshot.png' />
 					</div>
 				</div>
+
+				<img
+					class='bouncing-down-arrow animated'
+					ng-click='ui.scrollHeroText()'
+					src='/img/icons/downarrow.png' />
 			</div>
 
 			<div class='hero-background'>
@@ -172,31 +175,45 @@
 		<section id='testimonials-section'>
 			<div class='grid-container'>
 				<div class='grid-25 tablet-grid-25'>
-					<img class='logo' src='/img/testimonials/cure53.png' />
+					<a class='logo' href='https://cure53.de' target='_blank'>
+						<img src='/img/testimonials/cure53.png' />
+					</a>
 				</div>
+
 				<div class='grid-50 tablet-grid-50'>
 					<div class='quote'>
-						<div class='text'>
+						<div class='text' translate>
 							Cyph ... provide[s] security from a broad range of cryptographic attacks ... and very strong client-side crypto. ... The general conclusion of the test is that no major issues in regards to application security or cryptographic implementations could be spotted in spite of a thorough audit.
 						</div>
-						<div class='author'>
-							<a href='https://cure53.de'>Cure53</a>
-							<span translate>(full audit report</span>
-							<a href='https://www.youtube.com/watch?v=oHg5SJYRHA0' translate>here</a>)
+						<div class='extra'>
+							<span translate>
+								Full audit report
+							</span>
+							<a href='https://www.youtube.com/watch?v=oHg5SJYRHA0' target='_blank' translate>
+								here
+							</a>
 						</div>
 					</div>
 					<div class='quote'>
-						<div class='text'>
+						<div class='text' translate>
 							I like the simple, nonintrusive interface and the single-minded emphasis on doing one thing really well. We will definitely continue using Cyph for these types of conversations.
 						</div>
-						<div class='author'>
-							<span>Mark Jacobsen,</span>
-							<a href='https://www.indiegogo.com/projects/the-syria-airlift-project'>Syria Airlift Project</a>
+						<div class='extra'>
+							<span translate>
+								On the
+							</span>
+							<a href='https://www.indiegogo.com/projects/the-syria-airlift-project' target='_blank'>
+								Syria Airlift Project
+							</a>
 						</div>
 					</div>
+					&nbsp;
 				</div>
+
 				<div class='logos grid-25 tablet-grid-25'>
-					<img class='logo' src='/img/testimonials/markjacobsen.png' />
+					<a class='logo' href='http://uplift.aero' target='_blank'>
+						<img src='/img/testimonials/upliftaero.png' />
+					</a>
 				</div>
 			</div>
 		</section>

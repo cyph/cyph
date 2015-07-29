@@ -16,7 +16,7 @@ html:not(.mobile) #main {
 
 
 html:not(.load-complete) {
-	#main > section, footer, #bouncing-down-arrow {
+	#main > section, footer, .bouncing-down-arrow {
 		display: none;
 	}
 }
@@ -228,16 +228,18 @@ html.mobile #new-cyph-section {
 		max-width: 25vw;
 	}
 }
-#bouncing-down-arrow {
+.bouncing-down-arrow {
+	display: block;
+	position: relative;
 	width: auto;
 	height: 40px;
-	top: calc(100% - 100px);
-	left: calc(50% - 20px);
+	margin-left: auto;
+	margin-right: auto;
 	border-radius: 100%;
 	border: 1px solid rgba(255, 255, 255, 0.5) !important;
 	cursor: pointer;
 }
-#logo, #bouncing-down-arrow {
+#logo {
 	position: fixed;
 	z-index: 13;
 
@@ -250,6 +252,16 @@ html.mobile #new-cyph-section {
 
 
 #testimonials-section {
+	background-color: rgb(97, 51, 163);
+	margin-top: -2px;
+	height: calc(10vw + 35vh);
+
+	> .grid-container {
+		top: 45%;
+		transform: translateY(-125%);
+		position: relative;
+	}
+
 	* {
 		@include transition(opacity 0.75s linear);
 	}
@@ -261,15 +273,50 @@ html.mobile #new-cyph-section {
 		display: block;
 
 		&:not(.active) {
-			opacity: 0.5;
+			opacity: 0.2;
+		}
+
+		> img {
+			display: block;
+			position: relative;
+			top: 50%;
+			@include transform(translateY(-100%));
+			margin: auto;
+			max-height: 100%;
+			max-width: 80%;
 		}
 	}
 
 	.quote {
+		position: absolute;
+		width: calc(50% - 50px);
+		margin-left: 25px;
+
 		&:not(.active) {
 			opacity: 0;
-			position: absolute;
 			pointer-events: none;
+		}
+
+		&:before {
+			content: '\201c';
+			position: absolute;
+			font-family: Georgia, serif;
+			font-size: 100px;
+			margin-top: -35px;
+			margin-left: -50px;
+		}
+
+		.text {
+			font-size: 16px;
+			line-height: 150%;
+		}
+
+		.extra {
+			opacity: 0.5;
+			margin-top: 15px;
+			margin-left: -25px;
+			width: 100%;
+			text-align: center;
 		}
 	}
 }
@@ -384,7 +431,7 @@ html.mobile #new-cyph-section {
 .section-content-container {
 	width: 100%;
 	max-width: 620px;
-	margin-top: 150px;
+	margin-top: 25px;
 	margin-left: auto;
 	margin-right: auto;
 
@@ -490,7 +537,7 @@ html.mobile {
 }
 
 #main.unisection-mode {
-	> section:not(.unisection), #bouncing-down-arrow {
+	> section:not(.unisection), .bouncing-down-arrow {
 		display: none;
 	}
 }

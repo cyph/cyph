@@ -11,6 +11,7 @@ module Cyph.com {
 			public static demoRootMobile: JQuery;
 			public static featureListItems: JQuery;
 			public static fixedHeaderStuff: JQuery;
+			public static heroSection: JQuery;
 			public static heroText: JQuery;
 			public static newCyph: JQuery;
 			public static newCyphParent: JQuery;
@@ -24,12 +25,13 @@ module Cyph.com {
 			public static load () : void {
 				Cyph.UI.Elements.load();
 
-				Elements.bouncingDownArrow	= $('#bouncing-down-arrow');
-				Elements.backgroundVideo	= $('#background-video > :first-child');
+				Elements.bouncingDownArrow	= $('.bouncing-down-arrow');
+				Elements.backgroundVideo	= $('.hero-background > :first-child');
 				Elements.demoRoot			= $('.demo-root');
 				Elements.demoRootDesktop	= $('.demo-root > .desktop');
 				Elements.demoRootMobile		= $('.demo-root > .mobile');
 				Elements.featureListItems	= $('.feature-list-item');
+				Elements.heroSection		= $('#hero-section');
 				Elements.heroText			= $('#hero-section .hero-text');
 				Elements.newCyph			= $('#new-cyph');
 				Elements.newCyphParent		= Elements.newCyph.parent();
