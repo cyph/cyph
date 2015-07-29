@@ -16,7 +16,6 @@
 /// <reference path="../cyph/ui/directives/signupform.ts" />
 /// <reference path="ui/enums.ts" />
 /// <reference path="ui/elements.ts" />
-/// <reference path="ui/backgroundvideomanager.ts" />
 /// <reference path="ui/cyphdemo.ts" />
 /// <reference path="ui/ui.ts" />
 
