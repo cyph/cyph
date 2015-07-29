@@ -27,14 +27,19 @@ module Cyph.com {
 					removeClass(UI.testimonialActiveClass)
 				;
 
-				Elements.testimonialLogos.eq(this.testimonialNumber).
+				setTimeout(() => Elements.testimonialLogos.eq(this.testimonialNumber).
 					add(Elements.testimonialQuotes.eq(this.testimonialNumber)).
 					addClass(UI.testimonialActiveClass)
-				;
+				, 1250);
 
 				if (++this.testimonialNumber >= Elements.testimonialLogos.length) {
 					this.testimonialNumber	= 0;
 				}
+
+				setTimeout(
+					() => this.incrementTestimonial(),
+					Elements.testimonialQuotes.eq(this.testimonialNumber).text().length * 35
+				);
 			}
 
 			private onUrlStateChange (urlState: string) : void {
@@ -101,15 +106,7 @@ module Cyph.com {
 			 * Scrolls down and bounces in hero text.
 			 */
 			public scrollHeroText () : void {
-				Elements.heroText.removeClass('bounceInDown').addClass('bounceOutRight');
-
-				setTimeout(() => {
-					this.scroll(Cyph.UI.Elements.window.height(), 1.1);
-
-					setTimeout(() => {
-						Elements.heroText.removeClass('bounceOutRight').addClass('bounceInDown');
-					}, 250);
-				}, 250);
+				setTimeout(() => this.scroll(Elements.heroSection.height() * 0.75, 1.1), 250);
 			}
 
 			/**
@@ -170,7 +167,6 @@ module Cyph.com {
 				/* Testimonial slideshow */
 
 				this.incrementTestimonial();
-				setInterval(() => this.incrementTestimonial(), 10000);
 
 
 				/* Header / new cyph button animation */
@@ -182,7 +178,7 @@ module Cyph.com {
 						setTimeout(() => {
 							Elements.bouncingDownArrow.addClass('bounce');
 						}, 100);
-					}, 2500);
+					}, 5000);
 				}
 
 
