@@ -37,18 +37,31 @@ section#main {
 }
 
 
+#hero-section {
+	overflow: hidden;
+}
+
 .hero-background {
 	z-index: 1;
 	position: absolute;
-	left: 0px;
-	bottom: -1px;
-	min-height: 100%;
-	min-width: 100%;
+	bottom: -50%;
+	left: -50%;
+	height: 200%;
+	width: 200%;
 	background-color: transparent;
 
 	> * {
-		min-height: 100%;
-		min-width: 100%;
+		position: absolute;
+		z-index: 0;
+		top: 0px;
+		left: 0px;
+		bottom: 0px;
+		right: 0px;
+		height: auto !important;
+		width: auto !important;
+		min-height: 50%;
+		min-width: 50%;
+		margin: auto;
 	}
 
 	&:after {
