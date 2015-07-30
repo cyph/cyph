@@ -88,10 +88,10 @@ handlers:
 # Blog
 
 - url: /blog[/]?
-  static_files: /blog/index.html
-  upload: /blog/index.html
+  static_files: blog/index.html
+  upload: blog/index.html
   secure: always
-  # default_headers Cache-Control Expires
+  # default_headers Cache-Control Expires Content-Security-Policy X-Content-Security-Policy X-WebKit-CSP
 
 
 # Else
