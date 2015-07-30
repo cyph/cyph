@@ -62,6 +62,8 @@ RUN curl -sSL https://get.rvm.io | bash -s stable --ruby
 RUN bash -c ' \
 	source ~/.bashrc; \
 	gem install sass specific_install; \
+	gem install jekyll -v 1.5.1; \
+	gem install jekyll-assets maruku rake uglifier github-pages; \
 	gem specific_install -l https://github.com/buu700/fake_sqs; \
 '
 
