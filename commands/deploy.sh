@@ -113,6 +113,16 @@ else
 fi
 
 
+# Blog
+cd cyph.com
+mv blog blag
+mkdir blag/theme/_posts 2> /dev/null
+mv blag/*.md blag/theme/_posts/
+jekyll build --source blag/theme --destination blog
+rm -rf blag
+cd ..
+
+
 # Compile + translate + minify
 for d in cyph.com cyph.im cyph.video ; do
 	cd translations
