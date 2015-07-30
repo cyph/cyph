@@ -73,7 +73,6 @@ excerpt_separator: "<!-- more -->"
 safe:        false
 host:        0.0.0.0
 port:        4000
-baseurl:     /
 lsi:         false
 
 maruku:
