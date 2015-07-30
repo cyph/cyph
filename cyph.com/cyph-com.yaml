@@ -85,6 +85,15 @@ handlers:
   # default_headers Cache-Control Expires
 
 
+# Blog
+
+- url: /blog[/]?
+  static_files: /blog/index.html
+  upload: /blog/index.html
+  secure: always
+  # default_headers Cache-Control Expires
+
+
 # Else
 
 - url: /(.*\..*)
