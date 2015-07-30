@@ -22,6 +22,13 @@ module Cyph.com {
 			public signupForm: Cyph.UI.ISignupForm;
 
 			private incrementTestimonial () : void {
+				Elements.testimonialQuotes.parent().height(
+					Elements.testimonialQuotes.
+						map((i, elem: HTMLElement) => $(elem).height()).
+						toArray().
+						reduce((a: number, b: number) => Math.max(a, b))
+				);
+
 				Elements.testimonialLogos.
 					add(Elements.testimonialQuotes).
 					removeClass(UI.testimonialActiveClass)
@@ -166,7 +173,7 @@ module Cyph.com {
 				
 				/* Testimonial slideshow */
 
-				this.incrementTestimonial();
+				setTimeout(() => this.incrementTestimonial(), 1000);
 
 
 				/* Header / new cyph button animation */

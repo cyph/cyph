@@ -122,8 +122,9 @@ html.mobile #new-cyph-section {
 	width: 100%;
 	text-align: center;
 	margin-top: 80px;
-	font-size: 26px;
-	font-weight: 300;
+	font-size: 38px;
+	font-weight: 100;
+	line-height: 12px;
 
 	.subtitle {
 		font-size: 50%;
@@ -267,12 +268,10 @@ html.mobile #new-cyph-section {
 #testimonials-section {
 	background-color: rgb(97, 51, 163);
 	margin-top: -2px;
-	height: calc(10vw + 35vh);
 
 	> .grid-container {
-		top: 45%;
-		transform: translateY(-125%);
 		position: relative;
+		padding: 25px 0px;
 	}
 
 	* {
@@ -300,36 +299,40 @@ html.mobile #new-cyph-section {
 		}
 	}
 
-	.quote {
-		position: absolute;
-		width: calc(50% - 50px);
-		margin-left: 25px;
+	.quote-container {
+		min-height: 1px;
 
-		&:not(.active) {
-			opacity: 0;
-			pointer-events: none;
-		}
-
-		&:before {
-			content: '\201c';
+		.quote {
 			position: absolute;
-			font-family: Georgia, serif;
-			font-size: 100px;
-			margin-top: -35px;
-			margin-left: -50px;
-		}
+			width: calc(50% - 50px);
+			margin-left: 25px;
 
-		.text {
-			font-size: 16px;
-			line-height: 150%;
-		}
+			&:not(.active) {
+				opacity: 0;
+				pointer-events: none;
+			}
 
-		.extra {
-			opacity: 0.5;
-			margin-top: 15px;
-			margin-left: -25px;
-			width: 100%;
-			text-align: center;
+			&:before {
+				content: '\201c';
+				position: absolute;
+				font-family: Georgia, serif;
+				font-size: 100px;
+				margin-top: -35px;
+				margin-left: -50px;
+			}
+
+			.text {
+				font-size: 16px;
+				line-height: 150%;
+			}
+
+			.extra {
+				opacity: 0.5;
+				margin-top: 15px;
+				margin-left: -25px;
+				width: 100%;
+				text-align: center;
+			}
 		}
 	}
 }
