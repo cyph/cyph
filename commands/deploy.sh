@@ -118,7 +118,9 @@ cd cyph.com
 mv blog blag
 mkdir blag/theme/_posts 2> /dev/null
 mv blag/*.md blag/theme/_posts/
-jekyll build --source blag/theme --destination blog
+cd blag/theme
+jekyll build --destination ../../blog
+cd ../..
 rm -rf blag
 cd ..
 
