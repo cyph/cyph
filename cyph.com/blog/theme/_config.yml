@@ -6,15 +6,15 @@ inc:
   logo:         logo.png
   
   # Company information
-  company:      Incorporated
-  url:          http://sendtoinc.com/
-  facebook:     sendtoinc
-  twitter:      sendtoinc
-  gplus:        '101183822199340201470'
-  about_link:   https://sendtoinc.com/about/
+  company:      Cyph
+  url:          https://www.cyph.com/
+  facebook:     pages/Cyph/299270843606014
+  twitter:      cyph
+  gplus:        '115480892967656365943'
+  about_link:   https://www.cyph.com/about/
   
   # Product Information
-  product_link: http://incorporated.sendtoinc.com/
+  product_link: https://www.cyph.com/
   tagline:      "Get a modern blog for your company"
   
   # Comments
@@ -24,10 +24,10 @@ inc:
   
   # Sharing settings
   sharing:
-    twitter:    false
+    twitter:    true
     facebook:   false
     gplus:      false
-    hn:         false
+    hn:         true
     
   
  # Analytics     
@@ -41,7 +41,7 @@ inc:
   
   # Setup your fonts, colors etc at _assets/stylesheets/main.scss
 
-url:         http://incorporated.sendtoinc.com
+url:         https://www.cyph.com/blog
 baseurl:     /blog
 source:      .
 destination: ./_site
