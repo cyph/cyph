@@ -6,26 +6,28 @@ cd $(cd "$(dirname "$0")"; pwd)
 start () {
 	if boot2docker > /dev/null 2>&1 ; then
 		boot2docker start > /dev/null 2>&1
-		sleep 5
+		sleep 10
 		$(boot2docker shellinit 2> /dev/null)
 	elif [ "$(ps aux | grep 'docker -d' | grep -v grep)" == '' ] ; then
 		sudo echo
 		nohup sudo bash -c 'docker -d &' > /dev/null 2>&1
-		sleep 5
+		sleep 10
 	fi
 }
 
 stop () {
 	if boot2docker > /dev/null 2>&1 ; then
-		$(boot2docker shellinit)
-		sleep 5
+		$(boot2docker shellinit 2> /dev/null)
+		sleep 10
 		boot2docker stop > /dev/null 2>&1
 	else
 		sudo killall docker > /dev/null 2>&1
-		sleep 5
+		sleep 10
 	fi
 }
 
+
+$(boot2docker shellinit 2> /dev/null)
 
 image="cyph/$(git describe --tags --exact-match 2> /dev/null || git branch | awk '/^\*/{print $2}')"
 
