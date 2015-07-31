@@ -88,16 +88,22 @@ handlers:
 # Blog
 
 - url: /blog[/]?
-  static_files: blog/index.html
-  upload: blog/index.html
+  static_files: blog/build/index.html
+  upload: blog/build/index.html
   secure: always
   # default_headers Cache-Control Expires Content-Security-Policy X-Content-Security-Policy X-WebKit-CSP
 
-- url: /(blog/\d+/\d+/\d+/[A-Za-z0-9]+)[/]?
-  static_files: \1/index.html
-  upload: blog/.*
+- url: /blog/(\d+/\d+/\d+/[A-Za-z0-9]+)[/]?
+  static_files: blog/build/\1/index.html
+  upload: blog/build/.*
   secure: always
   # default_headers Cache-Control Expires Content-Security-Policy X-Content-Security-Policy X-WebKit-CSP
+
+- url: /blog/(.*\..*)
+  static_files: blog/build/\1
+  upload: blog/build/.*
+  secure: always
+  # default_headers
 
 
 # Else

@@ -115,9 +115,10 @@ fi
 
 # Blog
 cd cyph.com
+sed -i.bak 's|blog/build|blog|g' cyph-com.yaml
 mv blog blag
-mkdir blag/theme/_posts 2> /dev/null
-mv blag/*.md blag/theme/_posts/
+rm -rf blag/theme/_posts 2> /dev/null
+mv blag/posts blag/theme/_posts
 cd blag/theme
 jekyll build --destination ../../blog
 cd ../..
