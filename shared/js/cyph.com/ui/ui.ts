@@ -9,6 +9,8 @@ module Cyph.com {
 
 			private testimonialNumber: number	= 0;
 
+			private testimonialTimeout: any;
+
 			/** UI state/view. */
 			public state: States		= States.home;
 
@@ -20,34 +22,6 @@ module Cyph.com {
 
 			/** Signup form to be displayed throughout the site. */
 			public signupForm: Cyph.UI.ISignupForm;
-
-			private incrementTestimonial () : void {
-				Elements.testimonialQuotes.parent().height(
-					Elements.testimonialQuotes.
-						map((i, elem: HTMLElement) => $(elem).height()).
-						toArray().
-						reduce((a: number, b: number) => Math.max(a, b))
-				);
-
-				Elements.testimonialLogos.
-					add(Elements.testimonialQuotes).
-					removeClass(UI.testimonialActiveClass)
-				;
-
-				setTimeout(() => Elements.testimonialLogos.eq(this.testimonialNumber).
-					add(Elements.testimonialQuotes.eq(this.testimonialNumber)).
-					addClass(UI.testimonialActiveClass)
-				, 1250);
-
-				if (++this.testimonialNumber >= Elements.testimonialLogos.length) {
-					this.testimonialNumber	= 0;
-				}
-
-				setTimeout(
-					() => this.incrementTestimonial(),
-					Elements.testimonialQuotes.eq(this.testimonialNumber).text().length * 35
-				);
-			}
 
 			private onUrlStateChange (urlState: string) : void {
 				const state: States		= States[urlState];
@@ -117,6 +91,41 @@ module Cyph.com {
 			}
 
 			/**
+			 * Sets the active testimonial to be displayed in the testimonial section.
+			 * @param testimonialNumber
+			 */
+			public setTestimonial (testimonialNumber: number = this.testimonialNumber) : void {
+				clearTimeout(this.testimonialTimeout);
+
+				Elements.testimonialQuotes.parent().height(
+					Elements.testimonialQuotes.
+						map((i, elem: HTMLElement) => $(elem).height()).
+						toArray().
+						reduce((a: number, b: number) => Math.max(a, b))
+				);
+
+				Elements.testimonialLogos.
+					add(Elements.testimonialQuotes).
+					removeClass(UI.testimonialActiveClass)
+				;
+
+				setTimeout(() => Elements.testimonialLogos.eq(testimonialNumber).
+					add(Elements.testimonialQuotes.eq(testimonialNumber)).
+					addClass(UI.testimonialActiveClass)
+				, 1250);
+
+				this.testimonialNumber	= testimonialNumber + 1;
+				if (this.testimonialNumber >= Elements.testimonialLogos.length) {
+					this.testimonialNumber	= 0;
+				}
+
+				this.testimonialTimeout	= setTimeout(
+					() => this.setTestimonial(),
+					Elements.testimonialQuotes.eq(testimonialNumber).text().length * 35
+				);
+			}
+
+			/**
 			 * @param controller
 			 */
 			public constructor (
@@ -173,7 +182,7 @@ module Cyph.com {
 				
 				/* Testimonial slideshow */
 
-				setTimeout(() => this.incrementTestimonial(), 1000);
+				setTimeout(() => this.setTestimonial(), 1000);
 
 
 				/* Header / new cyph button animation */

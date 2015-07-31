@@ -173,7 +173,7 @@
 		<section id='testimonials-section'>
 			<div class='grid-container'>
 				<div class='grid-25 tablet-grid-25'>
-					<a class='logo' href='https://cure53.de' target='_blank'>
+					<a class='logo' ng-click='ui.setTestimonial(0)' target='_blank'>
 						<img src='/img/testimonials/cure53.png' />
 					</a>
 				</div>
@@ -181,15 +181,13 @@
 				<div class='quote-container grid-50 tablet-grid-50'>
 					<div class='quote'>
 						<div class='text' translate>
-							Cyph ... provide[s] security from a broad range of cryptographic attacks ... and very strong client-side crypto. ... The general conclusion of the test is that no major issues in regards to application security or cryptographic implementations could be spotted in spite of a thorough audit.
+							Cyph provides security from a broad range of cryptographic attacks and very strong client-side crypto. The general conclusion of the test is that no major issues in regards to application security or cryptographic implementations could be spotted in spite of a thorough audit.
 						</div>
 						<div class='extra'>
-							<span translate>
-								Full audit report
-							</span>
-							<a href='https://www.youtube.com/watch?v=oHg5SJYRHA0' target='_blank' translate>
-								here
-							</a>
+							<span translate>Conclusion of the</span>
+							<a href='https://www.youtube.com/watch?v=oHg5SJYRHA0' target='_blank' translate>independent security audit</a>
+							<span translate>conducted by</span>
+							<a href='https://cure53.de' target='_blank'>Cure53</a>
 						</div>
 					</div>
 					<div class='quote'>
@@ -197,19 +195,16 @@
 							I like the simple, nonintrusive interface and the single-minded emphasis on doing one thing really well. We will definitely continue using Cyph for these types of conversations.
 						</div>
 						<div class='extra'>
-							<span translate>
-								On the
-							</span>
-							<a href='https://www.indiegogo.com/projects/the-syria-airlift-project' target='_blank'>
-								Syria Airlift Project
-							</a>
+							<a href='http://uplift.aero' target='_blank'>Uplift Aeronautics</a>
+							<span translate>CEO Mark Jacobsen, on the</span>
+							<a href='https://www.indiegogo.com/projects/the-syria-airlift-project' target='_blank'>Syria Airlift Project</a>
 						</div>
 					</div>
 					&nbsp;
 				</div>
 
 				<div class='logos grid-25 tablet-grid-25'>
-					<a class='logo' href='http://uplift.aero' target='_blank'>
+					<a class='logo' ng-click='ui.setTestimonial(1)' target='_blank'>
 						<img src='/img/testimonials/upliftaero.png' />
 					</a>
 				</div>
