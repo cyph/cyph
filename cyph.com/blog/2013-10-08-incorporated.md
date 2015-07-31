@@ -44,7 +44,7 @@ draft: false
 
 #### Configurable & Code Snipped Highlighting
 
-/assets/stylesheets/main.scss:
+/blog/assets/stylesheets/main.scss:
 {% highlight scss %}
 
 /* Bodytext font */
