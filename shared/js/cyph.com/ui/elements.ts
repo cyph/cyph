@@ -16,6 +16,8 @@ module Cyph.com {
 			public static newCyph: JQuery;
 			public static newCyphParent: JQuery;
 			public static podcastLogo: JQuery;
+			public static screenshotLaptop: JQuery;
+			public static screenshotPhone: JQuery;
 			public static testimonialLogos: JQuery;
 			public static testimonialQuotes: JQuery;
 
@@ -36,6 +38,8 @@ module Cyph.com {
 				Elements.newCyph			= $('#new-cyph');
 				Elements.newCyphParent		= Elements.newCyph.parent();
 				Elements.podcastLogo		= $('.podcast-logo');
+				Elements.screenshotLaptop	= $('#hero-section .laptop.screenshot');
+				Elements.screenshotPhone	= $('#hero-section .phone.screenshot');
 				Elements.testimonialLogos	= $('#testimonials-section .logo');
 				Elements.testimonialQuotes	= $('#testimonials-section .quote');
 

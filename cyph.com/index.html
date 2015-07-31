@@ -74,6 +74,7 @@
 						data-wow-delay='2000ms'
 					>
 						<img class='laptop screenshot' src='/img/laptop-screenshot.png' />
+						&nbsp;
 					</div>
 
 					<div class='grid-25 tablet-grid-25 grid-parent left'>
@@ -153,6 +154,7 @@
 						data-wow-delay='2000ms'
 					>
 						<img class='phone screenshot' src='/img/phone-screenshot.png' />
+						&nbsp;
 					</div>
 				</div>
 
@@ -162,11 +164,13 @@
 					src='/img/icons/downarrow.png' />
 			</div>
 
-			<div class='hero-background'>
-				<video autoplay loop mobile-poster='/video/background.png'>
-					<source src='/video/background.mp4' type='video/mp4' />
-					<source src='/video/background.ogv' type='video/ogg' />
-				</video>
+			<div class='hero-background-wrapper'>
+				<div class='hero-background'>
+					<video autoplay loop mobile-poster='/video/background.png'>
+						<source src='/video/background.mp4' type='video/mp4' />
+						<source src='/video/background.ogv' type='video/ogg' />
+					</video>
+				</div>
 			</div>
 		</section>
 
@@ -211,9 +215,9 @@
 			</div>
 		</section>
 
-		<section id='laptop-screenshot-section'>
+		<section>
 			<div class='demo-root desktop-only grid-container'>
-				<span class='desktop grid-65 tablet-grid-65'>
+				<span class='desktop grid-55 tablet-grid-55 push-10 tablet-push-10'>
 					<div class='cyph-foreground'>
 						<span
 							cyph-chat-sidebar='ui.cyphDemo.desktop'
@@ -230,7 +234,7 @@
 					<div cyph-chat-cyphertext='ui.cyphDemo.desktop'></div>
 				</span>
 
-				<span class='mobile grid-30 tablet-grid-30 push-5 tablet-push-5'>
+				<span class='mobile grid-30 tablet-grid-30 push-15 tablet-push-15'>
 					<div class='cyph-foreground'>
 						<span
 							cyph-chat-toolbar='ui.cyphDemo.mobile'
