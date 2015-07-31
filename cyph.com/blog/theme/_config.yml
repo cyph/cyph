@@ -113,7 +113,7 @@ redcloth:
 assets:
 
   dirname: assets
-  baseurl: /assets/
+  baseurl: /blog/assets/
   sources:
     - _assets/javascripts
     - _assets/stylesheets
