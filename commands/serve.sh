@@ -12,10 +12,19 @@ for project in cyph.com cyph.im cyph.me cyph.video ; do
 	done
 done
 
+rm -rf cyph.com/blog/theme/_posts 2> /dev/null
+mkdir cyph.com/blog/theme/_posts
+sudo mount -o bind cyph.com/blog/posts cyph.com/blog/theme/_posts
+
 ln -s $(pwd)/default/geoip2 $GOPATH/src/geoip2
 go install geoip2
 
 fake_sqs &
+
+cd cyph.com/blog/theme
+rm -rf ../build
+jekyll build --watch --destination ../build &
+cd ../../..
 
 mkdir /tmp/cyph0
 dev_appserver.py --port 5000 --admin_port 6000 --host 0.0.0.0 --storage_path /tmp/cyph0 default/app.yaml &

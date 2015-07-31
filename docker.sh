@@ -3,31 +3,39 @@
 cd $(cd "$(dirname "$0")"; pwd)
 
 
+defaultsleep () {
+	sleep 10
+}
+
+shellinit () {
+	defaultsleep
+	$(boot2docker shellinit 2> /dev/null | perl -pe 's/([A-Za-z])\:\\/\/cygdrive\/\L\1\//g' | sed 's|\\|/|g' 2> /dev/null)
+	defaultsleep
+}
+
 start () {
 	if boot2docker > /dev/null 2>&1 ; then
 		boot2docker start > /dev/null 2>&1
-		sleep 10
-		$(boot2docker shellinit 2> /dev/null)
+		shellinit
 	elif [ "$(ps aux | grep 'docker -d' | grep -v grep)" == '' ] ; then
 		sudo echo
 		nohup sudo bash -c 'docker -d &' > /dev/null 2>&1
-		sleep 10
+		defaultsleep
 	fi
 }
 
 stop () {
 	if boot2docker > /dev/null 2>&1 ; then
-		$(boot2docker shellinit 2> /dev/null)
-		sleep 10
+		shellinit
 		boot2docker stop > /dev/null 2>&1
 	else
 		sudo killall docker > /dev/null 2>&1
-		sleep 10
+		defaultsleep
 	fi
 }
 
 
-$(boot2docker shellinit 2> /dev/null)
+shellinit
 
 image="cyph/$(git describe --tags --exact-match 2> /dev/null || git branch | awk '/^\*/{print $2}')"
 
