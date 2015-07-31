@@ -93,6 +93,12 @@ handlers:
   secure: always
   # default_headers Cache-Control Expires Content-Security-Policy X-Content-Security-Policy X-WebKit-CSP
 
+- url: /(blog/\d+/\d+/\d+/[A-Za-z0-9]+)[/]?
+  static_files: \1/index.html
+  upload: blog/.*
+  secure: always
+  # default_headers Cache-Control Expires Content-Security-Policy X-Content-Security-Policy X-WebKit-CSP
+
 
 # Else
 

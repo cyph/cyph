@@ -8,7 +8,7 @@
     {% stylesheet main %}
     <link rel="shortcut icon" href="{{ site.baseurl }}/favicon.ico" type="image/x-icon" />
     <link rel="apple-touch-icon" href="{{ site.baseurl }}/images/{{ site.inc.logo }}"/>
-    <link href="{{ site_url }}/feed.xml" rel="alternate" type="application/rss+xml" title="{{ site.inc.title }}" />
+    <link href="{{ site.url }}/feed.xml" rel="alternate" type="application/rss+xml" title="{{ site.inc.title }}" />
     <meta name="title" content="{% if page.title %}{{ page.title }} {% else %}{{ site.inc.title }}{% endif %}">
     <link rel="canonical" href="{{ site.url }}{{ page.url }}">
     {% if page.site.gplus %}<link rel="publisher" href="https://plus.google.com/{{ site.inc.gplus }}">{% endif %} 
