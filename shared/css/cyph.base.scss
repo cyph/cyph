@@ -122,6 +122,7 @@ pre {
 	@include transition(transform 2s cubic-bezier(1, 0, 0, 1), height 2s cubic-bezier(1, 0, 0, 1));
 }
 .cyph-foreground {
+	width: calc(100% + 1px);
 	overflow-y: hidden;
 }
 #main, .cyph-foreground {

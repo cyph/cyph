@@ -83,6 +83,11 @@ module Cyph.com {
 				);
 
 				Elements.demoRoot['appear']().one('appear', () => {
+					Elements.screenshotLaptop.
+						add(Elements.screenshotPhone).
+						toggleClass('demo')
+					;
+
 					let totalDelay: number	= 10000;
 
 					CyphDemo.messages.forEach((message, i: number) => {
