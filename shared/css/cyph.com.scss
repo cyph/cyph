@@ -248,6 +248,14 @@ html.mobile #new-cyph-section {
 		a:not(#logo) {
 			margin: 10px;
 		}
+
+		.social-media {
+			margin-left: 20px;
+
+			a:not(#logo) {
+				margin: 0px;
+			}
+		}
 	}
 }
 
