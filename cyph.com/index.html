@@ -60,15 +60,26 @@
 					<img src='/img/logo.white.horizontal.header.png' />
 				</a>
 
-				<md-button translate href='/testimonials' class='desktop-only'>Testimonials</md-button>
-				<md-button translate href='/demo' class='desktop-only'>Demo</md-button>
+				<md-button translate href='/intro' class='desktop-only'>Intro</md-button>
+				<md-button translate href='/features' class='desktop-only'>Features</md-button>
 				<md-button translate href='/about' class='desktop-only'>About</md-button>
+				<md-button translate href='/contact' class='desktop-only'>Contact</md-button>
 
 				<span flex class='desktop-only'></span>
 
 				<md-button translate href='/blog' class='desktop-only'>Blog</md-button>
+				<md-button translate href='/faq' class='desktop-only'>FAQ</md-button>
 				<md-button translate href='/enterprise' class='desktop-only'>Enterprise</md-button>
-				<md-button translate href='/developers' class='desktop-only'>Developers</md-button>
+				<md-button translate href='/signup' class='desktop-only'>Sign Up</md-button>
+
+				<span class='social-media desktop-only'>
+					<md-button href='https://github.com/cyph' target='_blank' class='desktop-only'>
+						<img src='/img/iconfinder/github.png' />
+					</md-button>
+					<md-button href='https://twitter.com/cyph' target='_blank' class='desktop-only'>
+						<img src='/img/iconfinder/twitter.png' />
+					</md-button>
+				</span>
 
 				<span flex class='mobile-only'></span>
 				<md-button translate aria-label='Menu' ng-click='ui.openMobileMenu()' class='mobile-only'>
@@ -80,13 +91,13 @@
 		<md-sidenav md-component-id='main-toolbar-sidenav' class='md-sidenav-right'>
 			<md-content class='md-padding'>
 				<div>
-					<md-button translate href='/testimonials' ng-click='ui.baseButtonClick()'>
-						Testimonials
+					<md-button translate href='/intro' ng-click='ui.baseButtonClick()'>
+						Intro
 					</md-button>
 				</div>
 				<div>
-					<md-button translate href='/demo' ng-click='ui.baseButtonClick()'>
-						Demo
+					<md-button translate href='/features' ng-click='ui.baseButtonClick()'>
+						Features
 					</md-button>
 				</div>
 				<div>
@@ -95,8 +106,18 @@
 					</md-button>
 				</div>
 				<div>
+					<md-button translate href='/contact' ng-click='ui.baseButtonClick()'>
+						Contact
+					</md-button>
+				</div>
+				<div>
 					<md-button translate href='/blog' ng-click='ui.baseButtonClick()'>
 						Blog
+					</md-button>
+				</div>
+				<div>
+					<md-button translate href='/faq' ng-click='ui.baseButtonClick()'>
+						FAQ
 					</md-button>
 				</div>
 				<div>
@@ -105,8 +126,20 @@
 					</md-button>
 				</div>
 				<div>
-					<md-button translate href='/developers' ng-click='ui.baseButtonClick()'>
-						Developers
+					<md-button translate href='/signup' ng-click='ui.baseButtonClick()'>
+						Sign Up
+					</md-button>
+				</div>
+				<div>
+					<md-button href='https://github.com/cyph' target='_blank' ng-click='ui.baseButtonClick()'>
+						<img src='/img/iconfinder/github.png' />
+						<span>GitHub (@cyph)</span>
+					</md-button>
+				</div>
+				<div>
+					<md-button href='https://twitter.com/cyph' target='_blank' ng-click='ui.baseButtonClick()'>
+						<img src='/img/iconfinder/twitter.png' />
+						<span>Twitter (@cyph)</span>
 					</md-button>
 				</div>
 			</md-content>
@@ -654,8 +687,6 @@
 				<a target='_self' href='bitcoin:1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd'>1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd</a>
 			</div>
 			<div class='footer-bullshit'>
-				<a href='/faq'>FAQ</a>
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				<a href='/termsofservice'>Terms of Service</a>
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				<a href='/privacypolicy'>Privacy Policy</a>
