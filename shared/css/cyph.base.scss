@@ -31,13 +31,14 @@ md-sidenav .md-button {
 	line-height: 25px;
 
 	.image {
-		width: 35px;
+		width: 40px;
 		display: inline-block;
 
 		img {
 			height: 20px !important;
-			padding-right: 10px;
 			vertical-align: middle;
+			margin-left: 50%;
+			transform: translateX(-50%);
 		}
 	}
 }
