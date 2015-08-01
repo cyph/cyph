@@ -3,7 +3,7 @@ module Cyph.im {
 		/**
 		 * Controls the entire cyph.im UI.
 		 */
-		export class UI {
+		export class UI extends Cyph.UI.BaseButtonManager {
 			/** UI state/view. */
 			public state: States	= States.none;
 
@@ -51,26 +51,19 @@ module Cyph.im {
 			}
 
 			/**
-			 * Opens mobile sidenav menu.
-			 */
-			public openMobileMenu () : void {
-				setTimeout(() =>
-					this.mobileMenu.open()
-				, 250);
-			}
-
-			/**
 			 * @param controller
 			 * @param dialogManager
 			 * @param mobileMenu
 			 * @param notifier
 			 */
 			public constructor (
-				private controller: Cyph.IController,
+				controller: Cyph.IController,
 				private dialogManager: Cyph.UI.IDialogManager,
-				private mobileMenu: Cyph.UI.ISidebar,
+				mobileMenu: Cyph.UI.ISidebar,
 				private notifier: Cyph.UI.INotifier
 			) {
+				super(controller, mobileMenu);
+
 				this.chat			= new Cyph.UI.Chat.Chat(
 					this.controller,
 					this.dialogManager,

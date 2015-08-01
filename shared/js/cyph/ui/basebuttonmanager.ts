@@ -7,14 +7,20 @@ module Cyph {
 			protected static buttonLock: boolean;
 
 
-			protected baseButtonClick (callback: Function) : void {
+			/**
+			 * Base logic shared by every button click (e.g. close sidenav).
+			 */
+			public baseButtonClick (callback?: Function) : void {
 				if (!BaseButtonManager.buttonLock) {
 					BaseButtonManager.buttonLock	= true;
 
 					setTimeout(() => {
 						try {
 							this.mobileMenu.close();
-							callback();
+
+							if (callback) {
+								callback();
+							}
 						}
 						finally {
 							BaseButtonManager.buttonLock	= false;
@@ -22,6 +28,13 @@ module Cyph {
 						}
 					}, 250);
 				}
+			}
+
+			/**
+			 * Opens mobile sidenav menu.
+			 */
+			public openMobileMenu () : void {
+				setTimeout(() => this.mobileMenu.open(), 250);
 			}
 
 			/**

@@ -3,7 +3,7 @@ module Cyph.video {
 		/**
 		 * Controls the entire cyph.video UI.
 		 */
-		export class UI {
+		export class UI extends Cyph.UI.BaseButtonManager {
 			/** UI state/view. */
 			public state: States	= States.none;
 
@@ -51,26 +51,19 @@ module Cyph.video {
 			}
 
 			/**
-			 * Opens mobile sidenav menu.
-			 */
-			public openMobileMenu () : void {
-				setTimeout(() =>
-					this.mobileMenu.open()
-				, 250);
-			}
-
-			/**
 			 * @param controller
 			 * @param dialogManager
 			 * @param mobileMenu
 			 * @param notifier
 			 */
 			public constructor (
-				private controller: Cyph.IController,
+				controller: Cyph.IController,
 				private dialogManager: Cyph.UI.IDialogManager,
-				private mobileMenu: Cyph.UI.ISidebar,
+				mobileMenu: Cyph.UI.ISidebar,
 				private notifier: Cyph.UI.INotifier
 			) {
+				super(controller, mobileMenu);
+
 				if (!Cyph.WebRTC.isSupported) {
 					/* If unsupported, warn and then close window */
 

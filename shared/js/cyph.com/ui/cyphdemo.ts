@@ -3,7 +3,7 @@ module Cyph.com {
 		/**
 		 * Controls the Cyph chat demo.
 		 */
-		export class CyphDemo {
+		export class CyphDemo extends Cyph.UI.BaseButtonManager {
 			private static demoClass: string	= 'demo';
 
 			private static messages: { text: string; isMobile: boolean; }[]	= [
@@ -81,22 +81,15 @@ module Cyph.com {
 			}
 
 			/**
-			 * Opens mobile sidenav menu.
-			 */
-			public openMobileMenu () : void {
-				setTimeout(() =>
-					this.mobileMenu.open()
-				, 250);
-			}
-
-			/**
 			 * @param controller
 			 */
 			public constructor(
 				controller: Cyph.IController,
 				dialogManager: Cyph.UI.IDialogManager,
-				private mobileMenu: Cyph.UI.ISidebar
+				mobileMenu: Cyph.UI.ISidebar
 			) {
+				super(controller, mobileMenu);
+
 				Elements.demoRoot['appear']().one('appear', () => {
 					setTimeout(() => {
 						this.resizeDesktop();
