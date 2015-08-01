@@ -70,14 +70,17 @@
 				<md-button translate href='/blog' class='desktop-only'>Blog</md-button>
 				<md-button translate href='/faq' class='desktop-only'>FAQ</md-button>
 				<md-button translate href='/enterprise' class='desktop-only'>Enterprise</md-button>
-				<md-button translate href='/signup' class='desktop-only'>Sign Up</md-button>
+				<md-button translate href='/login' class='desktop-only'>Login/Register</md-button>
 
 				<span class='social-media desktop-only'>
-					<md-button aria-label='GitHub (@cyph)' href='https://github.com/cyph' target='_blank'>
+					<md-button aria-label='GitHub' href='https://github.com/cyph' target='_blank'>
 						<img src='/img/iconfinder/github.png' />
 					</md-button>
-					<md-button aria-label='Twitter (@cyph)' href='https://twitter.com/cyph' target='_blank'>
+					<md-button aria-label='Twitter' href='https://twitter.com/cyph' target='_blank'>
 						<img src='/img/iconfinder/twitter.png' />
+					</md-button>
+					<md-button aria-label='Facebook' href='https://www.facebook.com/pages/Cyph/299270843606014' target='_blank'>
+						<img src='/img/iconfinder/facebook.png' />
 					</md-button>
 				</span>
 
@@ -126,20 +129,38 @@
 					</md-button>
 				</div>
 				<div>
-					<md-button translate href='/signup' ng-click='ui.baseButtonClick()'>
-						Sign Up
+					<md-button translate href='/login' ng-click='ui.baseButtonClick()'>
+						Login/Register
 					</md-button>
 				</div>
 				<div>
-					<md-button href='https://github.com/cyph' target='_blank' ng-click='ui.baseButtonClick()'>
+					<md-button
+						href='https://github.com/cyph'
+						target='_blank'
+						ng-click='ui.baseButtonClick()'
+					>
 						<img src='/img/iconfinder/github.png' />
-						<span>GitHub (@cyph)</span>
+						<span>GitHub</span>
 					</md-button>
 				</div>
 				<div>
-					<md-button href='https://twitter.com/cyph' target='_blank' ng-click='ui.baseButtonClick()'>
+					<md-button
+						href='https://twitter.com/cyph'
+						target='_blank'
+						ng-click='ui.baseButtonClick()'
+					>
 						<img src='/img/iconfinder/twitter.png' />
-						<span>Twitter (@cyph)</span>
+						<span>Twitter</span>
+					</md-button>
+				</div>
+				<div>
+					<md-button
+						href='https://www.facebook.com/pages/Cyph/299270843606014'
+						target='_blank'
+						ng-click='ui.baseButtonClick()'
+					>
+						<img src='/img/iconfinder/facebook.png' />
+						<span>Facebook</span>
 					</md-button>
 				</div>
 			</md-content>
