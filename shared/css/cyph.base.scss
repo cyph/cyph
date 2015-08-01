@@ -30,10 +30,15 @@ md-sidenav .md-button {
 	text-align: left;
 	line-height: 25px;
 
-	img {
-		height: 20px !important;
-		padding-right: 10px;
-		vertical-align: middle;
+	.image {
+		width: 35px;
+		display: inline-block;
+
+		img {
+			height: 20px !important;
+			padding-right: 10px;
+			vertical-align: middle;
+		}
 	}
 }
 
