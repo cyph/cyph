@@ -6,7 +6,7 @@ html, body, #main {
 	max-width: initial !important;
 	max-height: initial !important;
 	overflow: initial;
-	padding-top: 0px;
+	padding-top: 0px !important;
 }
 
 html:not(.mobile) #main {
@@ -241,17 +241,26 @@ html.mobile #new-cyph-section {
 	z-index: 11;
 	height: 50px !important;
 	background-color: rgba(97, 51, 163, 0.75);
+
+	.md-toolbar-tools {
+		margin-top: 5px;
+
+		a:not(#logo) {
+			margin: 10px;
+		}
+	}
+}
+
+[md-component-id='main-toolbar-sidenav'] {
+	position: fixed;
 }
 
 #logo {
-	top: 10px;
-	left: 15px;
 	height: 30px;
+	margin-right: 20px;
 
 	> img {
-		height: auto !important;
-		max-height: 100%;
-		max-width: 25vw;
+		height: 100% !important;
 	}
 }
 .bouncing-down-arrow {
@@ -264,15 +273,6 @@ html.mobile #new-cyph-section {
 	border-radius: 100%;
 	border: 1px solid rgba(255, 255, 255, 0.5) !important;
 	cursor: pointer;
-}
-#logo {
-	position: fixed;
-	z-index: 13;
-
-	> img {
-		width: auto;
-		height: 100%;
-	}
 }
 
 

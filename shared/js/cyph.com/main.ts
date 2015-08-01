@@ -31,17 +31,19 @@ angular.
 		'$scope',
 		'$mdDialog',
 		'$mdToast',
+		'$mdSidenav',
 		'chatSidenav',
 
-		($scope, $mdDialog, $mdToast, chatSidenav) => $(() => {
+		($scope, $mdDialog, $mdToast, $mdSidenav, chatSidenav) => $(() => {
 			Cyph.com.UI.Elements.load();
 
-			const controller: Cyph.IController			= new Cyph.Controller($scope);
-			const dialogManager: Cyph.UI.IDialogManager	= new Cyph.UI.DialogManager($mdDialog, $mdToast);
-			const mobileMenu: Cyph.UI.ISidebar			= chatSidenav();
+			const controller: Cyph.IController				= new Cyph.Controller($scope);
+			const mobileMenu: Cyph.UI.ISidebar				= $mdSidenav('main-toolbar-sidenav');
+			const demoDialogManager: Cyph.UI.IDialogManager	= new Cyph.UI.DialogManager($mdDialog, $mdToast);
+			const demoMobileMenu: Cyph.UI.ISidebar			= chatSidenav();
 
 			$scope.Cyph	= Cyph;
-			$scope.ui	= new Cyph.com.UI.UI(controller, dialogManager, mobileMenu);
+			$scope.ui	= new Cyph.com.UI.UI(controller, mobileMenu, demoDialogManager, demoMobileMenu);
 
 			self['ui']	= $scope.ui;
 

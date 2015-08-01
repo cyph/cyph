@@ -3,7 +3,7 @@ module Cyph.com {
 		/**
 		 * Controls the entire cyph.com UI.
 		 */
-		export class UI {
+		export class UI extends Cyph.UI.BaseButtonManager {
 			private static testimonialActiveClass: string	= 'active';
 
 
@@ -129,12 +129,15 @@ module Cyph.com {
 			 * @param controller
 			 */
 			public constructor (
-				private controller: Cyph.IController,
-				dialogManager: Cyph.UI.IDialogManager,
-				mobileMenu: Cyph.UI.ISidebar
+				controller: Cyph.IController,
+				mobileMenu: Cyph.UI.ISidebar,
+				demoDialogManager: Cyph.UI.IDialogManager,
+				demoMobileMenu: Cyph.UI.ISidebar
 			) {
+				super(controller, mobileMenu);
+
 				this.signupForm	= new Cyph.UI.SignupForm(this.controller);
-				this.cyphDemo	= new CyphDemo(this.controller, dialogManager, mobileMenu);
+				this.cyphDemo	= new CyphDemo(this.controller, demoDialogManager, demoMobileMenu);
 
 				Cyph.UrlState.onchange(urlState => this.onUrlStateChange(urlState));
 				Cyph.UrlState.set(Cyph.UrlState.get(), true, false, false);
@@ -199,7 +202,7 @@ module Cyph.com {
 
 				/* Avoid full page reloads */
 
-				$('a[href^="/"]').click(e => {
+				$('a[href^="/"]:not(a[href^="/blog"])').click(e => {
 					e.preventDefault();
 
 					const href: string		= $(e.currentTarget).attr('href');
