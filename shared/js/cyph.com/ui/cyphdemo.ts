@@ -105,12 +105,15 @@ module Cyph.com {
 							this.resizeMobile();
 
 							let intervalId;
-							Cyph.UI.Elements.window.on('resize', () => {
+							const resize: Function	= () => {
 								clearInterval(intervalId);
 								intervalId	= setInterval(() => this.resize(), 2000);
 								setTimeout(() => clearInterval(intervalId), 60000);
 								this.resize();
-							});
+							};
+
+							setTimeout(() => resize(), 2000);
+							Cyph.UI.Elements.window.on('resize', () => resize());
 
 							let mobileSession: Cyph.Session.ISession;
 							const desktopSession: Cyph.Session.ISession	= new Cyph.Session.Session(
