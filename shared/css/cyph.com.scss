@@ -253,6 +253,8 @@ html.mobile #new-cyph-section {
 
 [md-component-id='main-toolbar-sidenav'] {
 	position: fixed;
+	height: 100%;
+	overflow-y: scroll;
 }
 
 #logo {
