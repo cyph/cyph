@@ -40,6 +40,10 @@ md-sidenav .md-button {
 			margin-left: 50%;
 			@include transform(translateX(calc(-50% - 5px)));
 		}
+
+		& + span {
+			vertical-align: middle;
+		}
 	}
 }
 
