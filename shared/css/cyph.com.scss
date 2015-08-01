@@ -259,6 +259,29 @@ html.mobile #new-cyph-section {
 	}
 }
 
+@media (min-width: 1076px) {
+	#main-toolbar {
+		.desktop-only {
+			display: initial;
+		}
+
+		.mobile-only {
+			display: none;
+		}
+	}
+}
+@media (max-width: 1075px) {
+	#main-toolbar {
+		.desktop-only {
+			display: none;
+		}
+
+		.mobile-only {
+			display: initial;
+		}
+	}
+}
+
 [md-component-id='main-toolbar-sidenav'] {
 	position: fixed;
 	height: 100%;
