@@ -6,6 +6,7 @@ html, body, #main {
 	max-width: initial !important;
 	max-height: initial !important;
 	overflow: initial;
+	padding-top: 0px;
 }
 
 html:not(.mobile) #main {
@@ -177,23 +178,11 @@ html.mobile #new-cyph-section {
 
 		&.laptop {
 			margin-left: calc(((50px + 5.525vw) * 3 - 50px) * -0.885);
-
-			&.demo {
-				margin-top: 653px;
-				margin-left: -5px;
-				width: 860px;
-			}
 		}
 
 		&.phone {
 			margin-left: auto;
 			margin-right: auto;
-
-			&.demo {
-				margin-top: 642px;
-				margin-left: -21px;
-				width: 250px;
-			}
 		}
 
 		&.demo {
@@ -363,9 +352,11 @@ html.mobile #new-cyph-section {
 
 
 
-.demo-root {
-	padding-top: 50px;
+#demo-section {
+	background-color: #262638;
+}
 
+.demo-root {
 	> * {
 		height: calc(100vh - 100px);
 		padding: 0px;
@@ -379,11 +370,12 @@ html.mobile #new-cyph-section {
 	}
 
 	> .desktop {
-		height: 364px;
+		height: calc((100vw - 60px) * 0.55 * 0.565);
+		margin-top: 64px;
 
 		[cyph-chat-main], [cyph-chat-message-box] {
-			margin-left: 170px;
-			width: calc(100% - 170px);
+			margin-left: 120px;
+			width: calc(100% - 120px);
 		}
 		[cyph-chat-main] {
 			height: calc(100% - 60px);
@@ -395,11 +387,16 @@ html.mobile #new-cyph-section {
 
 	> .mobile {
 		@include transform(scale(0.625));
-		height: 625px;
-		margin-top: -130px;
+		height: calc((100vw - 60px) * 0.3 * 1.78);
+		margin-top: -80px;
 
 		.chat-toolbar {
 			margin-top: 0px;
+
+			.md-toolbar-tools > span {
+				overflow: hidden;
+				max-height: 100%;
+			}
 		}
 		[cyph-chat-main] {
 			height: calc(100% - 88px);
@@ -415,9 +412,9 @@ html.mobile #new-cyph-section {
 	}
 
 	.chat-sidebar {
-		margin-left: -13px;
-		margin-top: -50px;
-		@include transform(scale(0.8));
+		margin-left: -40px;
+		margin-top: -60px;
+		@include transform(scale(0.625));
 	}
 }
 

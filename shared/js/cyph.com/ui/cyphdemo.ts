@@ -4,6 +4,8 @@ module Cyph.com {
 		 * Controls the Cyph chat demo.
 		 */
 		export class CyphDemo {
+			private static demoClass: string	= 'demo';
+
 			private static messages: { text: string; isMobile: boolean; }[]	= [
 				{text: 'hallo :beer:', isMobile: false},
 				{text: 'u wanna cheat on ur wife with me', isMobile: false},
@@ -25,6 +27,59 @@ module Cyph.com {
 			/** Mobile chat UI. */
 			public mobile: Cyph.UI.Chat.IChat;
 
+			private resize () : void {
+				this.resizeDesktop();
+				this.resizeMobile();
+			}
+
+			private resizeDesktop () : void {
+				const width: number		= Math.floor(
+					(Cyph.UI.Elements.window.width() - 60) * 0.55 / 0.75
+				);
+
+				const height: number	= width * 0.563;
+
+				Elements.screenshotLaptop.addClass(CyphDemo.demoClass).css({
+					width,
+					'margin-top': Math.ceil(
+						Elements.demoRootDesktop.offset().top -
+						Elements.screenshotLaptop.offset().top -
+						height * 0.104 +
+						parseFloat(Elements.screenshotLaptop.css('margin-top'))
+					),
+					'margin-left': Math.ceil(
+						Elements.demoRootDesktop.offset().left -
+						Elements.screenshotLaptop.offset().left -
+						width * 0.13 +
+						parseFloat(Elements.screenshotLaptop.css('margin-left'))
+					)
+				});
+			}
+
+			private resizeMobile () : void {
+				const width: number		= Math.floor(
+					(Cyph.UI.Elements.window.width() - 60) * 0.3 / 1.404
+				);
+
+				const height: number	= width * 2.033;
+
+				Elements.screenshotPhone.addClass(CyphDemo.demoClass).css({
+					width,
+					'margin-top': Math.ceil(
+						Elements.demoRootMobile.offset().top -
+						Elements.screenshotPhone.offset().top -
+						height * 0.098 +
+						parseFloat(Elements.screenshotPhone.css('margin-top'))
+					),
+					'margin-left': Math.ceil(
+						Elements.demoRootMobile.offset().left -
+						Elements.screenshotPhone.offset().left -
+						width * 0.073 +
+						parseFloat(Elements.screenshotPhone.css('margin-left'))
+					)
+				});
+			}
+
 			/**
 			 * Opens mobile sidenav menu.
 			 */
@@ -42,79 +97,85 @@ module Cyph.com {
 				dialogManager: Cyph.UI.IDialogManager,
 				private mobileMenu: Cyph.UI.ISidebar
 			) {
-				if (Cyph.Env.isMobile) {
-					return;
-				}
-
-				let mobileSession: Cyph.Session.ISession;
-				const desktopSession: Cyph.Session.ISession	= new Cyph.Session.Session(
-					null,
-					controller,
-					undefined,
-					(desktopChannel: Cyph.Channel.LocalChannel) => {
-						mobileSession	= new Cyph.Session.Session(
-							null,
-							controller,
-							undefined,
-							(mobileChannel: Cyph.Channel.LocalChannel) =>
-								desktopChannel.connect(mobileChannel)
-						);
-					}
-				);
-
-				this.desktop	= new Cyph.UI.Chat.Chat(
-					controller,
-					dialogManager,
-					{open: () => {}, close: () => {}},
-					{notify: (message: string) => {}},
-					false,
-					desktopSession,
-					Elements.demoRootDesktop
-				);
-
-				this.mobile		= new Cyph.UI.Chat.Chat(
-					controller,
-					dialogManager,
-					this.mobileMenu,
-					{notify: (message: string) => {}},
-					true,
-					mobileSession,
-					Elements.demoRootMobile
-				);
-
 				Elements.demoRoot['appear']().one('appear', () => {
-					Elements.screenshotLaptop.
-						add(Elements.screenshotPhone).
-						toggleClass('demo')
-					;
-
-					let totalDelay: number	= 10000;
-
-					CyphDemo.messages.forEach((message, i: number) => {
-						totalDelay += i * 1000;
+					setTimeout(() => {
+						this.resizeDesktop();
 
 						setTimeout(() => {
-							if (message.isMobile) {
-								this.desktop.setFriendTyping(true);
-							}
-							else {
-								this.mobile.setFriendTyping(true);
-							}
-						}, totalDelay);
+							this.resizeMobile();
 
-						totalDelay += message.text.length * 10;
+							let intervalId;
+							Cyph.UI.Elements.window.on('resize', () => {
+								clearInterval(intervalId);
+								intervalId	= setInterval(() => this.resize(), 2000);
+								setTimeout(() => clearInterval(intervalId), 60000);
+								this.resize();
+							});
 
-						setTimeout(() => {
-							if (message.isMobile) {
-								this.mobile.setFriendTyping(false);
-								this.mobile.send(message.text);
-							}
-							else {
-								this.desktop.setFriendTyping(false);
-								this.desktop.send(message.text);
-							}	
-						}, totalDelay);
-					});
+							let mobileSession: Cyph.Session.ISession;
+							const desktopSession: Cyph.Session.ISession	= new Cyph.Session.Session(
+								null,
+								controller,
+								undefined,
+								(desktopChannel: Cyph.Channel.LocalChannel) => {
+									mobileSession	= new Cyph.Session.Session(
+										null,
+										controller,
+										undefined,
+										(mobileChannel: Cyph.Channel.LocalChannel) =>
+											desktopChannel.connect(mobileChannel)
+									);
+								}
+							);
+
+							this.desktop	= new Cyph.UI.Chat.Chat(
+								controller,
+								dialogManager,
+								{open: () => {}, close: () => {}},
+								{notify: (message: string) => {}},
+								false,
+								desktopSession,
+								Elements.demoRootDesktop
+							);
+
+							this.mobile		= new Cyph.UI.Chat.Chat(
+								controller,
+								dialogManager,
+								this.mobileMenu,
+								{notify: (message: string) => {}},
+								true,
+								mobileSession,
+								Elements.demoRootMobile
+							);
+
+							setTimeout(() => {
+								let totalDelay: number	= 5000;
+
+								CyphDemo.messages.forEach((message, i: number) => {
+									totalDelay += i * Util.random(1000, 250);
+
+									const chat: Cyph.UI.Chat.IChat	=
+										message.isMobile ?
+											this.mobile :
+											this.desktop
+									;
+
+									message.text.split('').forEach((c: string) => {
+										setTimeout(() => {
+											chat.currentMessage += c;
+											controller.update();
+										}, totalDelay);
+
+										totalDelay += Util.random(250, 25);
+									});
+
+									totalDelay += Util.random(500, 250);
+
+									setTimeout(() => chat.send(), totalDelay);
+								});
+							}, 750);
+						}, 750);
+					}, 750);
 				});
 			}
 		}
