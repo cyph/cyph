@@ -50,7 +50,7 @@
 	<body>
 		<section id='main' layout='column' ng-class='{"unisection-mode": ui.state !== Cyph.com.UI.States.home}'>
 
-		<md-toolbar id='main-toolbar' class='wow animated fadeIn fadeInSlow' data-wow-delay='2500ms'>
+		<md-toolbar id='main-toolbar' class='wow animated fadeIn fadeInSlow' data-wow-delay='4500ms'>
 			<div class='md-toolbar-tools'>
 				<a id='logo' href='/'>
 					<img src='/img/logo.white.horizontal.header.png' />
@@ -202,10 +202,13 @@
 				<h1 class='hero-text wow animated fadeIn' translate>
 					Completely Private Voice &amp; Video Chat
 				</h1>
-				<div class='feature-list-container grid-container'>
+				<div
+					class='feature-list-container grid-container wow animated fadeIn fadeInSlow'
+					data-wow-delay='2000ms'
+				>
 					<div
 						class='wow desktop-class-bounceInLeft grid-25 tablet-grid-25 mobile-grid-100'
-						data-wow-delay='1500ms'
+						data-wow-delay='3250ms'
 					>
 						<img class='laptop screenshot' src='/img/laptop-screenshot.png' />
 						&nbsp;
@@ -241,7 +244,7 @@
 							/>
 							<div class='grid-75 tablet-grid-75 pull-25 tablet-pull-25 mobile-push mobile-push-25 mobile-grid-85'>
 								<p class='title'>
-									<a href='/features' translate>No login or downloads required</a>
+									<a href='/features' translate>No signup or downloads required</a>
 								</p>
 							</div>
 						</div>
@@ -285,17 +288,20 @@
 
 					<div
 						class='wow desktop-class-bounceInRight grid-25 tablet-grid-25 mobile-grid-100'
-						data-wow-delay='1500ms'
+						data-wow-delay='2750ms'
 					>
 						<img class='phone screenshot' src='/img/phone-screenshot.png' />
 						&nbsp;
 					</div>
 				</div>
 
-				<img
-					class='bouncing-down-arrow animated'
-					ng-click='ui.scrollHeroText()'
-					src='/img/icons/downarrow.png' />
+				<div class='wow animated fadeIn fadeInSlow' data-wow-delay='4500ms'>
+					<img
+						class='bouncing-down-arrow'
+						ng-click='ui.scrollHeroText()'
+						src='/img/icons/downarrow.png'
+					/>
+				</div>
 			</div>
 
 			<div class='hero-background-wrapper'>
