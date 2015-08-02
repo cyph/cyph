@@ -397,8 +397,12 @@ html.mobile #new-cyph-section {
 		position: relative;
 		z-index: 3;
 
-		> .cyph-foreground:not(.curtain) {
-			height: 100%;
+		> .cyph-foreground {
+			overflow: hidden;
+
+			&:not(.curtain) {
+				height: 100%;
+			}
 		}
 	}
 
@@ -410,11 +414,30 @@ html.mobile #new-cyph-section {
 			margin-left: 120px;
 			width: calc(100% - 120px);
 		}
-		[cyph-chat-main] {
-			height: calc(100% - 60px);
-		}
+
 		[cyph-chat-message-box] {
 			margin-top: -5px;
+		}
+
+		[cyph-chat-main] {
+			height: calc(100% - 60px);
+
+			.chat-main.video .video-call.active.playing {
+				~ .message-list {
+					width: 20vw;
+				}
+
+				~ .video-call-message-box {
+					right: calc(-20vw - 10px);
+					width: calc(20vw + 10px);
+				}
+
+				&.sidebar-open {
+					.logo, .me, .buttons, .sidebar, ~ .message-list, ~ .video-call-message-box {
+						@include transform(translateX(-20vw));
+					}
+				}
+			}
 		}
 	}
 
@@ -431,8 +454,26 @@ html.mobile #new-cyph-section {
 				max-height: 100%;
 			}
 		}
+
 		[cyph-chat-main] {
 			height: calc(100% - 88px);
+
+			.chat-main.video .video-call.active.playing {
+				~ .message-list {
+					width: calc(30vw - 65px);
+				}
+
+				~ .video-call-message-box {
+					right: calc(65px - 30vw);
+					width: calc(30vw - 65px);
+				}
+
+				&.sidebar-open {
+					.logo, .me, .buttons, .sidebar, ~ .message-list, ~ .video-call-message-box {
+						@include transform(translateX(calc(65px - 30vw)));
+					}
+				}
+			}
 		}
 	}
 
@@ -448,6 +489,35 @@ html.mobile #new-cyph-section {
 		margin-left: -40px;
 		margin-top: -60px;
 		@include transform(scale(0.625));
+	}
+
+	[cyph-chat-main] .chat-main.video {
+		.video-call.active.playing {
+			&, .logo, .me, .sidebar, .buttons, ~ .message-list, ~ .video-call-message-box {
+				position: absolute;
+			}
+
+			.logo {
+				top: calc(25% + 10px);
+				left: calc(25% + 15px);
+			}
+
+			.me {
+				bottom: 25%;
+				right: 25%;
+				width: 15%;
+			}
+
+			.sidebar {
+				top: calc(25% + 10px);
+				right: calc(25% + 15px);
+			}
+
+			.buttons {
+				left: calc(50% - 134px);
+				bottom: calc(25% + 25px);
+			}
+		}
 	}
 }
 
