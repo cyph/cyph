@@ -397,7 +397,7 @@ html.mobile #new-cyph-section {
 
 
 
-#demo-section {
+#intro-section {
 	background-color: #262638;
 }
 
@@ -700,19 +700,5 @@ html.mobile {
 #main.unisection-mode {
 	> section:not(.unisection), .bouncing-down-arrow {
 		display: none;
-	}
-}
-
-
-
-#home-beta-signup {
-	text-align: center !important;
-
-	.md-button {
-		@include transform(scale(0.75) !important);
-		width: 200px !important;
-		display: block;
-		margin-left: auto;
-		margin-right: auto;
 	}
 }

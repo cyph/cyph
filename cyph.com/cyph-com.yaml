@@ -21,19 +21,49 @@ handlers:
   secure: always
   # default_headers Cache-Control Expires
 
+- url: /contact[/]?
+  static_files: index.html
+  upload: index.html
+  secure: always
+  # default_headers Cache-Control Expires
+
+- url: /features[/]?
+  static_files: index.html
+  upload: index.html
+  secure: always
+  # default_headers Cache-Control Expires
+
+- url: /intro[/]?
+  static_files: index.html
+  upload: index.html
+  secure: always
+  # default_headers Cache-Control Expires
+
+- url: /login[/]?
+  static_files: index.html
+  upload: index.html
+  secure: always
+  # default_headers Cache-Control Expires
+
+- url: /enterprise[/]?
+  static_files: index.html
+  upload: index.html
+  secure: always
+  # default_headers Cache-Control Expires
+
 - url: /faq[/]?
   static_files: index.html
   upload: index.html
   secure: always
   # default_headers Cache-Control Expires
 
-- url: /termsofservice[/]?
+- url: /privacypolicy[/]?
   static_files: index.html
   upload: index.html
   secure: always
   # default_headers Cache-Control Expires
 
-- url: /privacypolicy[/]?
+- url: /termsofservice[/]?
   static_files: index.html
   upload: index.html
   secure: always
