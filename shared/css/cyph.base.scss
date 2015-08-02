@@ -281,6 +281,12 @@ html:not(.mobile) .platform-container.mobile .mobile-only
 
 
 
+.fadeInSlow {
+	@include animation-duration(1s);
+}
+
+
+
 /* Lightbox */
 
 .mfp-wrap, .mfp-wrap * {
