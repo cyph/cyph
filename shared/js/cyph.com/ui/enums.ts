@@ -5,11 +5,23 @@ module Cyph.com {
 		 */
 		export enum States {
 			home,
+			podcast,
+			enterprise,
 			error,
 			faq,
-			podcast,
 			privacypolicy,
 			termsofservice
+		}
+
+		/**
+		 * Possible states of home page.
+		 */
+		export enum HomeSections {
+			about,
+			contact,
+			features,
+			intro,
+			login
 		}
 
 		/**

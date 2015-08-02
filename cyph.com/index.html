@@ -355,7 +355,7 @@
 			</div>
 		</section>
 
-		<section id='demo-section'>
+		<section id='intro-section'>
 			<div class='demo-root desktop-only grid-container'>
 				<span class='desktop grid-55 tablet-grid-55 push-10 tablet-push-10'>
 					<div class='cyph-foreground'>
@@ -400,27 +400,72 @@
 			</div>
 		</section>
 
-		<section id='home-beta-signup' style='display: none'>
+		<section id='features-section'>
 			<h1 class='hero-text' translate>
-				No Signup Required
+				Features
 			</h1>
 			<div class='section-content-container'>
 				<p translate>
-					Click the button at the top of your screen to cyph right now!
+					Yep, we have features.
 				</p>
-				<div cyph-signup-form='ui.signupForm'>
-					<p>
-						<strong translate>However</strong>,
-						<span translate>
-							for cool features like group messaging, user accounts,
-							and encrypted chat history, join the waitlist for Cyph v2!
-							(Coming soon to an Internet near you.)
-						</span>
-					</p>
-					<br /><br />
-				</div>
 			</div>
 		</section>
+
+		<section id='about-section'>
+			<h1 class='hero-text' translate>
+				About Cyph
+			</h1>
+			<div class='section-content-container'>
+				<p translate>
+					Cyph is a revolutionary new secure messenger, created to defend the world from mass surveillance.
+				</p>
+				<p translate>
+					Cyph lets you talk in absolute confidence. Carefully designed using high-end cryptography, Cyph protects your conversations against anything from nosy neighbors to agencies armed with theoretical quantum attacks.
+				</p>
+				<p translate>
+					Yet, Cyph remains simple for anybody to use, and works on every device in one click &mdash; no installation or registration required.
+				</p>
+				<p translate>
+					Cyph your friends. Reclaim your privacy.
+				</p>
+				<p translate>
+					Cyph was founded by two former SpaceX engineers, to create a future where everyone could have the privacy they deserve.
+				</p>
+				<p translate>
+					<div class='founder-photos grid-container'>
+						<div class='wow desktop-class-bounceInLeft mobile-class-bounceInRight grid-40 suffix-20 tablet-grid-40 tablet-suffix-20 mobile-grid-100'>
+							<span class='mobile-grid-33'><img src='/img/ryan.png' /></span>
+							<div class='mobile-grid-66 name'>Ryan Lester</div>
+						</div>
+						<div class='wow desktop-class-bounceInRight mobile-class-bounceInLeft grid-40 tablet-grid-40 mobile-grid-100'>
+							<span class='mobile-grid-33 mobile-push-66'><img src='/img/josh.png' /></span>
+							<div class='mobile-grid-66 mobile-pull-33 name'>Baron Joshua Cyrus Boehm</div>
+						</div>
+					</div>
+				</p>
+				<p translate>
+					We've been friends for nearly two decades, and have spent a lot of time working together over the years &mdash; most recently for Elon Musk at the aforementioned rocket factory.
+				</p>
+				<p translate>
+					While the two of us are very strong supporters of Internet freedom and privacy, communicating online securely with our non-engineer friends has always been such a hassle that it really wasn't an option.
+				</p>
+				<p translate>
+					We knew there had to be a better way, so we created Cyph.
+				</p>
+			</div>
+		</section>
+
+		<section id='contact-section'>
+			<h1 class='hero-text' translate>
+				How to Contact Us
+			</h1>
+			<div class='section-content-container'>
+				<p translate>
+					Please don't.
+				</p>
+			</div>
+		</section>
+
 
 		<section id='podcast-section' ng-show='ui.state === Cyph.com.UI.States.podcast' class='unisection'>
 			<h1 class='hero-text animated' ng-class='Cyph.com.UI.Podcasts[ui.podcast] === "jjgo" ? "bounceInLeft" : "bounceInDown"'>
@@ -503,47 +548,13 @@
 			</div>
 		</section>
 
-
-		<section id='about'>
+		<section id='enterprise' ng-show='ui.state === Cyph.com.UI.States.enterprise' class='unisection'>
 			<h1 class='hero-text' translate>
-				About Cyph
+				The Enterprise
 			</h1>
 			<div class='section-content-container'>
 				<p translate>
-					Cyph is a revolutionary new secure messenger, created to defend the world from mass surveillance.
-				</p>
-				<p translate>
-					Cyph lets you talk in absolute confidence. Carefully designed using high-end cryptography, Cyph protects your conversations against anything from nosy neighbors to agencies armed with theoretical quantum attacks.
-				</p>
-				<p translate>
-					Yet, Cyph remains simple for anybody to use, and works on every device in one click &mdash; no installation or registration required.
-				</p>
-				<p translate>
-					Cyph your friends. Reclaim your privacy.
-				</p>
-				<p translate>
-					Cyph was founded by two former SpaceX engineers, to create a future where everyone could have the privacy they deserve.
-				</p>
-				<p translate>
-					<div class='founder-photos grid-container'>
-						<div class='wow desktop-class-bounceInLeft mobile-class-bounceInRight grid-40 suffix-20 tablet-grid-40 tablet-suffix-20 mobile-grid-100'>
-							<span class='mobile-grid-33'><img src='/img/ryan.png' /></span>
-							<div class='mobile-grid-66 name'>Ryan Lester</div>
-						</div>
-						<div class='wow desktop-class-bounceInRight mobile-class-bounceInLeft grid-40 tablet-grid-40 mobile-grid-100'>
-							<span class='mobile-grid-33 mobile-push-66'><img src='/img/josh.png' /></span>
-							<div class='mobile-grid-66 mobile-pull-33 name'>Baron Joshua Cyrus Boehm</div>
-						</div>
-					</div>
-				</p>
-				<p translate>
-					We've been friends for nearly two decades, and have spent a lot of time working together over the years &mdash; most recently for Elon Musk at the aforementioned rocket factory.
-				</p>
-				<p translate>
-					While the two of us are very strong supporters of Internet freedom and privacy, communicating online securely with our non-engineer friends has always been such a hassle that it really wasn't an option.
-				</p>
-				<p translate>
-					We knew there had to be a better way, so we created Cyph.
+					Make it so.
 				</p>
 			</div>
 		</section>
@@ -575,11 +586,11 @@
 			</h1>
 			<div class='section-content-container'>
 				<ul>
-					<li translate>
+					<li>
 						<p>
-							<strong>Dear Cyph, what's coming soon?</strong>
+							<strong translate>Dear Cyph, what's coming soon?</strong>
 						</p>
-						<p>
+						<p translate>
 							Threat model, design specs / how it works, and a FAQ page with more than one question. Stay tuned!
 						</p>
 					</li>

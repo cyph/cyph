@@ -17,6 +17,9 @@ module Cyph.com {
 			/** Podcast promo page state/view. */
 			public podcast: Podcasts	= Podcasts.none;
 
+			/** Home page state/view. */
+			public homeSection: HomeSections;
+
 			/** Cyph demo animation. */
 			public cyphDemo: CyphDemo;
 
@@ -27,8 +30,22 @@ module Cyph.com {
 				const state: States		= States[urlState];
 				const podcast: Podcasts	= Podcasts[urlState];
 
+				this.homeSection	= HomeSections[urlState];
+
 				if (podcast !== undefined) {
 					this.openPodcastPage(podcast);
+				}
+				else if (this.homeSection !== undefined) {
+					this.changeState(States.home);
+
+					setTimeout(() => {
+						if (this.homeSection === HomeSections.login) {
+							this.dialogManager.baseDialog({template: Cyph.UI.Templates.login});
+						}
+						else {
+							this.scroll($('#' + urlState + '-section').offset().top);
+						}
+					}, 250);
 				}
 				else if (state !== undefined) {
 					this.changeState(state);
@@ -131,16 +148,21 @@ module Cyph.com {
 			public constructor (
 				controller: Cyph.IController,
 				mobileMenu: Cyph.UI.ISidebar,
-				demoDialogManager: Cyph.UI.IDialogManager,
+				public dialogManager: Cyph.UI.IDialogManager,
 				demoMobileMenu: Cyph.UI.ISidebar
 			) {
 				super(controller, mobileMenu);
 
 				this.signupForm	= new Cyph.UI.SignupForm(this.controller);
-				this.cyphDemo	= new CyphDemo(this.controller, demoDialogManager, demoMobileMenu);
+				this.cyphDemo	= new CyphDemo(this.controller, this.dialogManager, demoMobileMenu);
 
 				Cyph.UrlState.onchange(urlState => this.onUrlStateChange(urlState));
-				Cyph.UrlState.set(Cyph.UrlState.get(), true, false, false);
+
+				const urlState: string	= Cyph.UrlState.get();
+				setTimeout(
+					() => Cyph.UrlState.set(urlState, true, false, false),
+					HomeSections[urlState] === undefined ? 0 : 5500
+				);
 
 
 				const wowDelay: string			= 'data-wow-delay';
@@ -216,7 +238,9 @@ module Cyph.com {
 						Cyph.UrlState.set(href);
 					}
 
-					setTimeout(() => this.scroll(0), scrollDelay);
+					if (this.homeSection === undefined) {
+						setTimeout(() => this.scroll(0), scrollDelay);
+					}
 				});
 
 
