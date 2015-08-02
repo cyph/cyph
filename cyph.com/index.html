@@ -722,25 +722,6 @@
 		</section>
 
 		<footer id='footer'>
-			<section ng-hide='ui.podcast !== Cyph.com.UI.Podcasts.none || (ui.state !== Cyph.com.UI.States.home && ui.signupForm.state > 2)'>
-				<div cyph-signup-form='ui.signupForm' hide-button='true'>
-					<div translate>
-						Join the waitlist for Cyph v2!
-					</div>
-				</div>
-			</section>
-
-			<section ng-show='ui.podcast !== Cyph.com.UI.Podcasts.none || (ui.state !== Cyph.com.UI.States.home && ui.signupForm.state > 2)'>
-				<md-button
-					id='new-cyph-footer'
-					target='_blank'
-					aria-label='Start new cyph'
-					class='new-cyph-button breathe'
-				>
-					<a translate ng-href='{{Cyph.Env.newCyphUrl}}'>Start new cyph</a>
-				</md-button>
-			</section>
-
 			<div class='footer-info'>
 				&copy; Cyph 2015
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

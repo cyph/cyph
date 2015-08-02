@@ -40,7 +40,13 @@ module Cyph.com {
 
 					setTimeout(() => {
 						if (this.homeSection === HomeSections.login) {
-							this.dialogManager.baseDialog({template: Cyph.UI.Templates.login});
+							this.dialogManager.baseDialog({
+								template: Cyph.UI.Templates.login,
+								vars: {
+									signupForm: this.signupForm
+								},
+								oncomplete: () => Cyph.UrlState.set('')
+							});
 						}
 						else {
 							this.scroll($('#' + urlState + '-section').offset().top);
@@ -66,7 +72,8 @@ module Cyph.com {
 
 			private scroll (
 				position: number,
-				delayFactor: number = 0.75
+				delayFactor: number = 0.75,
+				oncomplete?: Function
 			) : void {
 				const delay: number	=
 					delayFactor *
@@ -76,6 +83,8 @@ module Cyph.com {
 				Cyph.UI.Elements.html.add(Cyph.UI.Elements.body).animate({
 					scrollTop: position
 				}, delay);
+
+				setTimeout(oncomplete, delay + 50);
 			}
 
 			/**
@@ -104,7 +113,7 @@ module Cyph.com {
 			 * Scrolls down and bounces in hero text.
 			 */
 			public scrollHeroText () : void {
-				setTimeout(() => this.scroll(Elements.heroSection.height() * 0.75, 1.1), 250);
+				setTimeout(() => this.scroll(Elements.heroSection.height() - 100, 1.1), 250);
 			}
 
 			/**

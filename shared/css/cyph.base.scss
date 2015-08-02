@@ -214,7 +214,6 @@ html:not(.mobile) .platform-container.mobile .mobile-only
 /* Moved beta signup stuff from cyph.com CSS */
 
 .beta-signup-form {
-	opacity: 0;
 	color: #f1f1f1;
 
 	*, md-input-container.md-default-theme * {
@@ -236,9 +235,12 @@ html:not(.mobile) .platform-container.mobile .mobile-only
 	}
 
 	.md-button {
+		@include transform(scale(0.75) !important);
+		background-color: #7d4fd3 !important;
 		margin: 25px auto;
 		width: calc(100% - 100px);
 		min-width: 200px;
+		display: block;
 	}
 }
 
