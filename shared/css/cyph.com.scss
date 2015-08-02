@@ -245,6 +245,16 @@ html.mobile #new-cyph-section {
 	.md-toolbar-tools {
 		margin-top: 5px;
 
+		.link-wrapper-outer {
+			width: calc(50% - 191px);
+			text-align: center;
+
+			.link-wrapper-inner {
+				margin-left: auto;
+				margin-right: auto;
+			}
+		}
+
 		a:not(#logo) {
 			margin: 10px;
 		}
@@ -254,12 +264,18 @@ html.mobile #new-cyph-section {
 
 			a:not(#logo) {
 				margin: 0px;
+
+				img {
+					height: 15px !important;
+					vertical-align: middle;
+					display: block;
+				}
 			}
 		}
 	}
 }
 
-@media (min-width: 1200px) {
+@media (min-width: 1215px) {
 	#main-toolbar {
 		.desktop-only {
 			display: initial;
@@ -270,7 +286,7 @@ html.mobile #new-cyph-section {
 		}
 	}
 }
-@media (max-width: 1199px) {
+@media (max-width: 1214px) {
 	#main-toolbar {
 		.desktop-only {
 			display: none;
