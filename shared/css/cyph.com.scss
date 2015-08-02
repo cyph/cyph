@@ -533,10 +533,6 @@ html.mobile #new-cyph-section {
 	}
 }
 
-.beta-signup-form {
-	padding: initial;
-}
-
 
 
 #footer {
@@ -556,13 +552,6 @@ html.mobile #new-cyph-section {
 	.footer-links {
 		margin-top: 30px;
 		font-size: 75%;
-	}
-
-	.beta-signup-form {
-		width: 100%;
-		max-width: 300px;
-		margin-left: auto;
-		margin-right: auto;
 	}
 }
 
@@ -669,10 +658,6 @@ html:not(.mobile) {
 		content: '';
 		display: block;
 	}
-}
-
-#main:not(.unisection-mode) #footer .beta-signup-form {
-	display: none;
 }
 
 #podcast-section {

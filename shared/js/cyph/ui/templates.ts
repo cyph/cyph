@@ -141,7 +141,7 @@ module Cyph {
 							the top of your screen to cyph right now!
 						</p>
 						<p>
-							<div cyph-signup-form='ui.signupForm'>
+							<div cyph-signup-form='vars.signupForm'>
 								<p>
 									<strong translate>However</strong>,
 									<span translate>

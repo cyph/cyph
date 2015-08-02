@@ -783,7 +783,7 @@ html:not(.mobile) .amazon-link {
 }
 
 
-.beta-signup-form {
+.chat-main .beta-signup-form {
 	text-align: center !important;
 	max-width: 620px;
 	margin-left: auto;
@@ -799,12 +799,7 @@ html:not(.mobile) .amazon-link {
 	}
 
 	.md-button {
-		@include transform(scale(0.75) !important);
 		width: 200px !important;
-		display: block;
-		margin-left: auto;
-		margin-right: auto;
-		background-color: #7d4fd3 !important;
 		margin-bottom: 50px;
 	}
 }
