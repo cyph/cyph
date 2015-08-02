@@ -50,15 +50,15 @@
 	<body>
 		<section id='main' layout='column' ng-class='{"unisection-mode": ui.state !== Cyph.com.UI.States.home}'>
 
-		<md-button id='new-cyph' aria-label='Start new cyph' class='new-cyph-button breathe'>
-			<a translate ng-href='{{Cyph.Env.newCyphUrl}}'>Start new cyph</a>
-		</md-button>
-
-		<md-toolbar id='main-toolbar'>
+		<md-toolbar id='main-toolbar' class='wow animated fadeIn fadeInSlow' data-wow-delay='2500ms'>
 			<div class='md-toolbar-tools'>
 				<a id='logo' href='/'>
 					<img src='/img/logo.white.horizontal.header.png' />
 				</a>
+
+				<md-button id='new-cyph' aria-label='Start new cyph' class='new-cyph-button breathe'>
+					<a translate ng-href='{{Cyph.Env.newCyphUrl}}'>Start new cyph</a>
+				</md-button>
 
 				<span class='link-wrapper-outer desktop-only'>
 					<span class='link-wrapper-inner'>
@@ -79,13 +79,28 @@
 				</span>
 
 				<span class='social-media desktop-only'>
-					<md-button aria-label='GitHub' href='https://github.com/cyph' target='_blank'>
+					<md-button
+						aria-label='GitHub'
+						rel='noreferrer'
+						href='https://github.com/cyph'
+						target='_blank'
+					>
 						<img src='/img/iconfinder/github.png' />
 					</md-button>
-					<md-button aria-label='Twitter' href='https://twitter.com/cyph' target='_blank'>
+					<md-button
+						aria-label='Twitter'
+						rel='noreferrer'
+						href='https://twitter.com/cyph'
+						target='_blank'
+					>
 						<img src='/img/iconfinder/twitter.png' />
 					</md-button>
-					<md-button aria-label='Facebook' href='https://www.facebook.com/pages/Cyph/299270843606014' target='_blank'>
+					<md-button
+						aria-label='Facebook'
+						rel='noreferrer'
+						href='https://www.facebook.com/pages/Cyph/299270843606014'
+						target='_blank'
+					>
 						<img src='/img/iconfinder/facebook.png' />
 					</md-button>
 				</span>
@@ -141,6 +156,7 @@
 				</div>
 				<div>
 					<md-button
+						rel='noreferrer'
 						href='https://github.com/cyph'
 						target='_blank'
 						ng-click='ui.baseButtonClick()'
@@ -153,6 +169,7 @@
 				</div>
 				<div>
 					<md-button
+						rel='noreferrer'
 						href='https://twitter.com/cyph'
 						target='_blank'
 						ng-click='ui.baseButtonClick()'
@@ -165,6 +182,7 @@
 				</div>
 				<div>
 					<md-button
+						rel='noreferrer'
 						href='https://www.facebook.com/pages/Cyph/299270843606014'
 						target='_blank'
 						ng-click='ui.baseButtonClick()'
@@ -181,8 +199,8 @@
 
 		<section id='hero-section'>
 			<div class='hero-foreground'>
-				<h1 class='hero-text' translate>
-					Simply Secure Voice &amp; Video Chat
+				<h1 class='hero-text wow animated fadeIn' translate>
+					Completely Private Voice &amp; Video Chat
 				</h1>
 				<div class='feature-list-container grid-container'>
 					<div
@@ -200,8 +218,8 @@
 								src='/img/iconfinder/encryption.png'
 							/>
 							<div class='grid-75 tablet-grid-75 pull-25 tablet-pull-25 mobile-push mobile-push-25 mobile-grid-85'>
-								<p class='title' translate>
-									Quantum-safe encryption
+								<p class='title'>
+									<a href='/features' translate>Quantum-safe encryption</a>
 								</p>
 							</div>
 						</div>
@@ -211,8 +229,8 @@
 								src='/img/iconfinder/video.png'
 							/>
 							<div class='grid-75 tablet-grid-75 pull-25 tablet-pull-25 mobile-pull-5 mobile-grid-85'>
-								<p class='title' translate>
-									Video calls and file transfers
+								<p class='title'>
+									<a href='/features' translate>Video calls and file transfers</a>
 								</p>
 							</div>
 						</div>
@@ -222,8 +240,8 @@
 								src='/img/iconfinder/nologin.png'
 							/>
 							<div class='grid-75 tablet-grid-75 pull-25 tablet-pull-25 mobile-push mobile-push-25 mobile-grid-85'>
-								<p class='title' translate>
-									No login or downloads required
+								<p class='title'>
+									<a href='/features' translate>No login or downloads required</a>
 								</p>
 							</div>
 						</div>
@@ -236,8 +254,8 @@
 								src='/img/iconfinder/anonymous.png'
 							/>
 							<div class='grid-75 tablet-grid-75 mobile-pull-5 mobile-grid-85'>
-								<p class='title' translate>
-									Anonymity through Tor
+								<p class='title'>
+									<a href='/features' translate>Anonymity through Tor</a>
 								</p>
 							</div>
 						</div>
@@ -247,8 +265,8 @@
 								src='/img/iconfinder/signing.png'
 							/>
 							<div class='grid-75 tablet-grid-75 mobile-push mobile-push-25 mobile-grid-85'>
-								<p class='title' translate>
-									Cryptographically signed
+								<p class='title'>
+									<a href='/features' translate>Cryptographically signed</a>
 								</p>
 							</div>
 						</div>
@@ -258,8 +276,8 @@
 								src='/img/iconfinder/crossplatform.png'
 							/>
 							<div class='grid-75 tablet-grid-75 mobile-pull-5 mobile-grid-85'>
-								<p class='title' translate>
-									Works on any device
+								<p class='title'>
+									<a href='/features' translate>Works on any device</a>
 								</p>
 							</div>
 						</div>
@@ -305,9 +323,9 @@
 						</div>
 						<div class='extra'>
 							<span translate>Conclusion of the</span>
-							<a href='https://www.youtube.com/watch?v=oHg5SJYRHA0' target='_blank' translate>independent security audit</a>
+							<a rel='noreferrer' href='https://www.youtube.com/watch?v=oHg5SJYRHA0' target='_blank' translate>independent security audit</a>
 							<span translate>conducted by</span>
-							<a href='https://cure53.de' target='_blank'>Cure53</a>
+							<a rel='noreferrer' href='https://cure53.de' target='_blank'>Cure53</a>
 						</div>
 					</div>
 					<div class='quote'>
@@ -315,9 +333,9 @@
 							I like the simple, nonintrusive interface and the single-minded emphasis on doing one thing really well. We will definitely continue using Cyph for these types of conversations.
 						</div>
 						<div class='extra'>
-							<a href='http://uplift.aero' target='_blank'>Uplift Aeronautics</a>
+							<a rel='noreferrer' href='http://uplift.aero' target='_blank'>Uplift Aeronautics</a>
 							<span translate>CEO Mark Jacobsen, on the</span>
-							<a href='https://www.indiegogo.com/projects/the-syria-airlift-project' target='_blank'>Syria Airlift Project</a>
+							<a rel='noreferrer' href='https://www.indiegogo.com/projects/the-syria-airlift-project' target='_blank'>Syria Airlift Project</a>
 						</div>
 					</div>
 					&nbsp;
@@ -709,17 +727,13 @@
 			<div class='footer-info'>
 				&copy; Cyph 2015
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<a target='_blank' rel='noreferrer' href='https://twitter.com/cyph'>@cyph</a>
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				<a href='mailto:hello@cyph.com'>hello@cyph.com</a>
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				<a href='tel:+19312974462' title='+1(931) 297 4462'>+1(931) CYPH INC</a>
-				<!-- <a target='_self' href='tel:+18447472974' title='+1 THIS IS CYPH'>+1 THIS IS CYPH</a> -->
-
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				<a target='_self' href='bitcoin:1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd'>1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd</a>
 			</div>
-			<div class='footer-bullshit'>
+			<div class='footer-links'>
 				<a href='/termsofservice'>Terms of Service</a>
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				<a href='/privacypolicy'>Privacy Policy</a>
