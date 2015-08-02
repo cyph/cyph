@@ -148,7 +148,7 @@ module Cyph.com {
 			public constructor (
 				controller: Cyph.IController,
 				mobileMenu: Cyph.UI.ISidebar,
-				public dialogManager: Cyph.UI.IDialogManager,
+				private dialogManager: Cyph.UI.IDialogManager,
 				demoMobileMenu: Cyph.UI.ISidebar
 			) {
 				super(controller, mobileMenu);
