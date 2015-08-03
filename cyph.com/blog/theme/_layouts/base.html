@@ -77,14 +77,14 @@
         </nav>
         
         <nav class="social">
+            {% if site.inc.github %}
+            <a href="https://github.com/{{ site.inc.github }}" title="Star on GitHub" target="_blank"><i class="icon icon-github black"></i></a>
+            {% endif %}
             {% if site.inc.twitter %}
             <a href="https://twitter.com/{{ site.inc.twitter }}" title="Follow on Twitter" target="_blank"><i class="icon icon-twitter black"></i></a>
             {% endif %}
             {% if site.inc.facebook %}
             <a href="https://facebook.com/{{ site.inc.facebook }}" title="Follow on Facebook" target="_blank"><i class="icon icon-facebook black"></i></a>
-            {% endif %}
-            {% if site.inc.facebook %}
-            <a href="https://github.com/{{ site.inc.github }}" title="Star on GitHub" target="_blank"><i class="icon icon-github black"></i></a>
             {% endif %}
         </nav>
     </div>
