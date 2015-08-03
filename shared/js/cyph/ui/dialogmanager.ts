@@ -29,6 +29,12 @@ module Cyph {
 				},
 				callback: (ok: boolean, vars: any) => void = (ok, vars) => {}
 			) : void {
+				const f	= (ok: boolean) => {
+					if (o.onclose) {
+						o.onclose(ok);
+					}
+				};
+
 				this.$mdDialog.show({
 					clickOutsideToClose: true,
 					escapeToClose: true,
@@ -41,7 +47,7 @@ module Cyph {
 							callback(ok === true, o.vars);
 						};
 					}]
-				}).then(o.onclose).catch(o.onclose);
+				}).then(f).catch(f);
 			}
 
 			public confirm (
