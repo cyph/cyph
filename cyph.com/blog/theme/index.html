@@ -12,11 +12,11 @@ layout: base
             <a href="https://twitter.com/{{ site.inc.twitter }}" title="Follow on Twitter" target="_blank"><i class="icon icon-twitter"></i></a>
             {% endif %}
             {% if site.inc.facebook %}
-            <a href="http://facebook.com/{{ site.inc.facebook }}" title="Like on Facebook" target="_blank"><i class="icon icon-facebook"></i></a>
+            <a href="https://facebook.com/{{ site.inc.facebook }}" title="Like on Facebook" target="_blank"><i class="icon icon-facebook"></i></a>
             {% endif %}
-            <a href="{{ site.baseurl }}/feed.xml" title="RSS Feed">
-                <i class="icon icon-rss"></i>
-            </a>
+            {% if site.inc.github %}
+            <a href="https://github.com/{{ site.inc.github }}" title="Star on GitHub" target="_blank"><i class="icon icon-github"></i></a>
+            {% endif %}
         </div>
     </section>
 </div>
