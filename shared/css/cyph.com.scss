@@ -171,6 +171,7 @@ html.mobile #new-cyph-section {
 		display: block;
 		height: calc((50px + 5.525vw) * 3 - 50px);
 		margin-top: 25px;
+		@include transition(all 0.75s cubic-bezier(1, 0, 0, 1));
 
 		&.laptop {
 			margin-left: calc(((50px + 5.525vw) * 3 - 50px) * -0.885);
@@ -182,7 +183,6 @@ html.mobile #new-cyph-section {
 		}
 
 		&.demo {
-			@include transition(all 0.75s cubic-bezier(1, 0, 0, 1));
 			position: absolute;
 			height: auto;
 		}
@@ -402,12 +402,15 @@ html.mobile #new-cyph-section {
 }
 
 .demo-root {
+	&, > * {
+		position: relative;
+		z-index: 3;
+	}
+
 	> * {
 		height: calc(100vh - 100px);
 		padding: 0px;
 		overflow: hidden;
-		position: relative;
-		z-index: 3;
 
 		> .cyph-foreground {
 			font-size: 14px;

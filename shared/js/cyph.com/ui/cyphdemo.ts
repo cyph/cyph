@@ -28,8 +28,23 @@ module Cyph.com {
 			public mobile: Cyph.UI.Chat.IChat;
 
 			private resize () : void {
-				this.resizeDesktop();
-				this.resizeMobile();
+				if (Elements.heroText.is(':appeared')) {
+					const screenshots: JQuery	= Elements.screenshotLaptop.
+						add(Elements.screenshotPhone)
+					;
+
+					screenshots.css({
+						'width': '',
+						'margin-top': '',
+						'margin-left': ''
+					});
+
+					setTimeout(() => screenshots.removeClass(CyphDemo.demoClass), 500);
+				}
+				else {
+					this.resizeDesktop();
+					this.resizeMobile();
+				}
 			}
 
 			private resizeDesktop () : void {
@@ -107,6 +122,7 @@ module Cyph.com {
 
 							setTimeout(() => resize(), 2000);
 							Cyph.UI.Elements.window.on('resize', () => resize());
+							Elements.heroText['appear']().on('appear', () => resize());
 
 							let mobileSession: Cyph.Session.ISession;
 							const desktopSession: Cyph.Session.ISession	= new Cyph.Session.Session(
