@@ -209,10 +209,12 @@ module Cyph.com {
 					Elements.backgroundVideo	= $mobilePoster;
 				}
 				else {
-					Elements.backgroundVideo['appear']().
+					Elements.backgroundVideo[0]['currentTime']	= 1.25;
+
+					setTimeout(() => Elements.backgroundVideo['appear']().
 						on('appear', () => Elements.backgroundVideo[0]['play']()).
 						on('disappear', () => Elements.backgroundVideo[0]['pause']())
-					;
+					, 2000);
 				}
 
 				
@@ -255,7 +257,7 @@ module Cyph.com {
 				});
 
 
-				Cyph.UI.Elements.html.addClass('load-complete');
+				setTimeout(() => Cyph.UI.Elements.html.addClass('load-complete'), 100);
 			}
 		}
 	}

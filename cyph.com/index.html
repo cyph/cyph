@@ -50,7 +50,7 @@
 	<body>
 		<section id='main' layout='column' ng-class='{"unisection-mode": ui.state !== Cyph.com.UI.States.home}'>
 
-		<md-toolbar id='main-toolbar' class='wow animated fadeIn fadeInSlow' data-wow-delay='4500ms'>
+		<md-toolbar id='main-toolbar' class='wow animated fadeInSlow' data-wow-delay='750ms'>
 			<div class='md-toolbar-tools'>
 				<a id='logo' href='/'>
 					<img src='/img/logo.white.horizontal.header.png' />
@@ -199,16 +199,16 @@
 
 		<section id='hero-section'>
 			<div class='hero-foreground'>
-				<h1 class='hero-text wow animated fadeIn' translate>
+				<h1 class='hero-text wow animated fadeInSlow' data-wow-delay='1200ms' translate>
 					Completely Private Voice &amp; Video Chat
 				</h1>
 				<div
-					class='feature-list-container grid-container wow animated fadeIn fadeInSlow'
+					class='feature-list-container grid-container wow animated fadeInSlow'
 					data-wow-delay='2000ms'
 				>
 					<div
 						class='wow desktop-class-bounceInLeft grid-25 tablet-grid-25 mobile-grid-100'
-						data-wow-delay='3250ms'
+						data-wow-delay='2250ms'
 					>
 						<img class='laptop screenshot' src='/img/laptop-screenshot.png' />
 						&nbsp;
@@ -288,14 +288,14 @@
 
 					<div
 						class='wow desktop-class-bounceInRight grid-25 tablet-grid-25 mobile-grid-100'
-						data-wow-delay='2750ms'
+						data-wow-delay='2250ms'
 					>
 						<img class='phone screenshot' src='/img/phone-screenshot.png' />
 						&nbsp;
 					</div>
 				</div>
 
-				<div class='wow animated fadeIn fadeInSlow' data-wow-delay='4500ms'>
+				<div class='wow animated fadeInSlow' data-wow-delay='3000ms'>
 					<img
 						class='bouncing-down-arrow'
 						ng-click='ui.scrollHeroText()'
@@ -315,7 +315,7 @@
 		</section>
 
 		<section id='testimonials-section'>
-			<div class='grid-container'>
+			<div class='grid-container wow animated fadeIn' data-wow-delay='3500ms'>
 				<div class='grid-25 tablet-grid-25'>
 					<a class='logo' ng-click='ui.setTestimonial(0)' target='_blank'>
 						<img src='/img/testimonials/cure53.png' />
@@ -356,7 +356,7 @@
 		</section>
 
 		<section id='intro-section'>
-			<div class='demo-root desktop-only grid-container'>
+			<div class='demo-root desktop-only grid-container wow animated fadeIn' data-wow-delay='3500ms'>
 				<span class='desktop grid-55 tablet-grid-55 push-10 tablet-push-10'>
 					<div class='cyph-foreground'>
 						<span
