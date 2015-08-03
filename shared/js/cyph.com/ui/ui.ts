@@ -40,13 +40,15 @@ module Cyph.com {
 
 					setTimeout(() => {
 						if (this.homeSection === HomeSections.login) {
-							this.dialogManager.baseDialog({
-								template: Cyph.UI.Templates.login,
-								vars: {
-									signupForm: this.signupForm
+							this.dialogManager.baseDialog(
+								{
+									template: Cyph.UI.Templates.login,
+									vars: {
+										signupForm: this.signupForm
+									}
 								},
-								oncomplete: () => Cyph.UrlState.set('')
-							});
+								() => Cyph.UrlState.set('')
+							);
 						}
 						else {
 							this.scroll($('#' + urlState + '-section').offset().top);
@@ -241,7 +243,7 @@ module Cyph.com {
 					const href: string		= $(e.currentTarget).attr('href');
 					let scrollDelay: number	= 500;
 
-					if (href !== locationData.pathname) {
+					if (href !== locationData.pathname || this.homeSection !== undefined) {
 						scrollDelay	= 0;
 
 						Cyph.UrlState.set(href);
