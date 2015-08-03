@@ -1,7 +1,7 @@
 inc:
   # Blog Information
   title:        "Cyph"
-  subtitle:     "Encrypted Messenger"
+  subtitle:     "News from the most powerful encrypted messenger"
   cover_image:  blog-cover.png
   logo:         logo.png
   
@@ -15,7 +15,7 @@ inc:
   
   # Product Information
   product_link: https://www.cyph.com/
-  tagline:      "Completely Private Voice &amp; Video Chat"
+  tagline:      "Completely private voice &amp; video chat"
   
   # Comments
   disqus:

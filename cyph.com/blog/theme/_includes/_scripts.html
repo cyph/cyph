@@ -9,13 +9,10 @@
   js.src = '/lib/blog/facebook/all.js';
   fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));</script>{% endif %}
-{% if site.inc.sharing.gplus %}<script type='text/javascript'>
-  (function() {
-    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-    po.src = '/lib/blog/google/plusone.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-  })();
-</script>{% endif %}
+{% if site.inc.sharing.gplus %}
+<script type='text/javascript' src='/lib/blog/google/plusone.js'></script>
+<script type='text/javascript' src='/lib/blog/google/plusone.helper.js'></script>
+{% endif %}
 {% if site.inc.sharing.hn %}<script>
     (function(d, t) {
         var g = d.createElement(t),
