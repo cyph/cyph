@@ -1,3 +1,6 @@
+/// <reference path="base.ts" />
+
+
 module Cyph {
 	/**
 	 * Handles analytics events by calling the Google Analytics SDK in a sandboxed iframe.
@@ -33,9 +36,7 @@ module Cyph {
 			}
 			else if (this.analFrameIsReady !== false) {
 				/* Do nothing if explicitly set to false */
-				setTimeout(() =>
-					this.baseEventSubmit(method, args)
-				, 50);
+				setTimeout(() => this.baseEventSubmit(method, args), 50);
 			}
 		}
 
