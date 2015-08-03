@@ -25,6 +25,7 @@ module Cyph {
 					template: string;
 					vars?: any;
 					oncomplete?: Function;
+					onclose?: Function;
 				},
 				callback: (ok: boolean, vars: any) => void = (ok, vars) => {}
 			) : void {
@@ -40,7 +41,7 @@ module Cyph {
 							callback(ok === true, o.vars);
 						};
 					}]
-				});
+				}).then(o.onclose).catch(o.onclose);
 			}
 
 			public confirm (

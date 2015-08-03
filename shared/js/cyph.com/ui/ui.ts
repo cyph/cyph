@@ -40,15 +40,13 @@ module Cyph.com {
 
 					setTimeout(() => {
 						if (this.homeSection === HomeSections.login) {
-							this.dialogManager.baseDialog(
-								{
-									template: Cyph.UI.Templates.login,
-									vars: {
-										signupForm: this.signupForm
-									}
+							this.dialogManager.baseDialog({
+								template: Cyph.UI.Templates.login,
+								vars: {
+									signupForm: this.signupForm
 								},
-								() => Cyph.UrlState.set('')
-							);
+								onclose: () => Cyph.UrlState.set('')
+							});
 						}
 						else {
 							this.scroll($('#' + urlState + '-section').offset().top);
