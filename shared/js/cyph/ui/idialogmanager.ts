@@ -29,6 +29,7 @@ module Cyph {
 					template: string;
 					vars?: any;
 					oncomplete?: Function;
+					onclose?: Function;
 				},
 				callback?: (ok: boolean, vars: any) => void
 			) : void;
