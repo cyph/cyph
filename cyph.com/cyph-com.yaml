@@ -121,13 +121,13 @@ handlers:
   static_files: blog/build/index.html
   upload: blog/build/index.html
   secure: always
-  # default_headers Cache-Control Expires Content-Security-Policy X-Content-Security-Policy X-WebKit-CSP
+  # default_headers Cache-Control Expires
 
 - url: /blog/(\d+/\d+/\d+/[A-Za-z0-9]+)[/]?
   static_files: blog/build/\1/index.html
   upload: blog/build/.*
   secure: always
-  # default_headers Cache-Control Expires Content-Security-Policy X-Content-Security-Policy X-WebKit-CSP
+  # default_headers Cache-Control Expires
 
 - url: /blog/(.*\..*)
   static_files: blog/build/\1

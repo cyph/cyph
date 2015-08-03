@@ -9,7 +9,7 @@ originalDir="$(pwd)"
 ./commands/docs.sh
 
 tsfiles="$( \
-	{ cat */*.html | grep "<script.*'/js/" & grep -ro "importScripts('/js/.*)" shared/js; } | \
+	{ cat */*.html $(find cyph.com/blog -name '*.html') | grep "<script.*'/js/" & grep -ro "importScripts('/js/.*)" shared/js; } | \
 		perl -pe "s/.*?'\/(js\/.*)\.js.*/\1/g" | \
 		sort | \
 		uniq \

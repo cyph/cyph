@@ -54,6 +54,15 @@ tsd query --resolve --overwrite --save --action install \
 	cryptojs \
 	dompurify
 
+mkdir blog
+cd blog
+mkdir hnbutton ; wget https://hnbutton.appspot.com/static/hn.min.js -O hnbutton/hn.min.js
+mkdir twitter ; wget https://platform.twitter.com/widgets.js -O twitter/widgets.js
+mkdir google ; wget https://apis.google.com/js/plusone.js -O google/plusone.js
+mkdir facebook ; wget https://connect.facebook.net/en_US/all.js -O facebook/all.js
+mkdir disqus ; wget https://cyph.disqus.com/embed.js -O disqus/embed.js
+cd ..
+
 cd ../cryptolib
 
 bower install --save \

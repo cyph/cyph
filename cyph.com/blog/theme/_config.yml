@@ -20,19 +20,19 @@ inc:
   # Comments
   disqus:
     # Eg. "exampleblog" Set to false to disable comments
-    shortname:  false
+    shortname:  cyph
   
   # Sharing settings
   sharing:
     twitter:    true
-    facebook:   false
-    gplus:      false
+    facebook:   true
+    gplus:      true
     hn:         true
     
   
  # Analytics     
   analytics:
-    google: false # Add tracking code in _includes/_google-analytics.html
+    google: true
       
       
   # Google Fonts
