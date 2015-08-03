@@ -284,7 +284,9 @@ html:not(.mobile) .platform-container.mobile .mobile-only
 
 
 .fadeInSlow {
+	@include animation-name(fadeIn);
 	@include animation-duration(1s);
+	@include animation-timing-function(cubic-bezier(1, 0, 0, 1));
 }
 
 
