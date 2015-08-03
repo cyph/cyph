@@ -3,11 +3,27 @@
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name='referrer' content='no-referrer' />
     <title>{% if page.title %}{{ page.title }} &mdash; {{ site.inc.title }}{% else %}{{ site.inc.title }} &mdash; {{ site.inc.subtitle }}{% endif %}</title>
-    {% if site.inc.google_font %}<link href="/css/fonts.css" rel="stylesheet" type="text/css">{% endif %}
+    {% if site.inc.google_font %}<link href="/fonts/proximanova.css" rel="stylesheet" type="text/css">{% endif %}
     {% stylesheet main %}
-    <link rel="shortcut icon" href="{{ site.baseurl }}/favicon.ico" type="image/x-icon" />
-    <link rel="apple-touch-icon" href="{{ site.baseurl }}/images/{{ site.inc.logo }}"/>
+    <link rel='icon' sizes='192x192' type='image/png' href='/img/favicon/favicon-192x192.png' />
+    <link rel='icon' sizes='160x160' type='image/png' href='/img/favicon/favicon-160x160.png' />
+    <link rel='icon' sizes='96x96' type='image/png' href='/img/favicon/favicon-96x96.png' />
+    <link rel='icon' sizes='32x32' type='image/png' href='/img/favicon/favicon-32x32.png' />
+    <link rel='icon' sizes='16x16' type='image/png' href='/img/favicon/favicon-16x16.png' />
+    <link rel='apple-touch-icon' sizes='180x180' type='image/png' href='/img/favicon/apple-touch-icon-180x180.png' />
+    <link rel='apple-touch-icon' sizes='152x152' type='image/png' href='/img/favicon/apple-touch-icon-152x152.png' />
+    <link rel='apple-touch-icon' sizes='144x144' type='image/png' href='/img/favicon/apple-touch-icon-144x144.png' />
+    <link rel='apple-touch-icon' sizes='120x120' type='image/png' href='/img/favicon/apple-touch-icon-120x120.png' />
+    <link rel='apple-touch-icon' sizes='114x114' type='image/png' href='/img/favicon/apple-touch-icon-114x114.png' />
+    <link rel='apple-touch-icon' sizes='76x76' type='image/png' href='/img/favicon/apple-touch-icon-76x76.png' />
+    <link rel='apple-touch-icon' sizes='72x72' type='image/png' href='/img/favicon/apple-touch-icon-72x72.png' />
+    <link rel='apple-touch-icon' sizes='60x60' type='image/png' href='/img/favicon/apple-touch-icon-60x60.png' />
+    <link rel='apple-touch-icon' sizes='57x57' type='image/png' href='/img/favicon/apple-touch-icon-57x57.png' />
+    <meta name='msapplication-TileImage' content='/img/favicon/mstile-144x144.png' />
+    <meta name='msapplication-TileColor' content='#8b62d9' />
+    <meta name='theme-color' content='#8b62d9' />
     <link href="{{ site.url }}/feed.xml" rel="alternate" type="application/rss+xml" title="{{ site.inc.title }}" />
     <meta name="title" content="{% if page.title %}{{ page.title }} {% else %}{{ site.inc.title }}{% endif %}">
     <link rel="canonical" href="{{ site.url }}{{ page.url }}">
