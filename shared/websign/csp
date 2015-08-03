@@ -1,6 +1,6 @@
 default-src 'self';
 connect-src 'self' https://*.cyph.com https://api.cyph.com https://cyphdbyhiddenbhs.onion https://*.amazonaws.com https://mandrillapp.com;
-font-src 'self' https://www.cyph.com;
+font-src 'self' https://www.cyph.com data:;
 form-action https://api.cyph.com;
 frame-src https://api.cyph.com;
 img-src 'self' https://www.cyph.com data:;
