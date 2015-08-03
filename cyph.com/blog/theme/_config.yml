@@ -10,7 +10,8 @@ inc:
   url:          https://www.cyph.com/
   facebook:     pages/Cyph/299270843606014
   twitter:      cyph
-  gplus:        115480892967656365943
+  github:       cyph
+  gplus:        '115480892967656365943'
   about_link:   https://www.cyph.com/about/
   
   # Product Information
@@ -37,7 +38,7 @@ inc:
       
   # Google Fonts
   # eg. 'Droid+Sans:400,700|Droid+Serif:400,700'
-  google_font: 'Droid+Sans:400,700'
+  google_font: true
   
   # Setup your fonts, colors etc at _assets/stylesheets/main.scss
 
