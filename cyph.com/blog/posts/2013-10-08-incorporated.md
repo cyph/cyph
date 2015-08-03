@@ -1,7 +1,7 @@
 ---
 layout: post
 
-title: Jekyll Incorporated Features
+title: test post please ignore
 subtitle: "What's in the box"
 cover_image: blog-cover.jpg
 
@@ -22,7 +22,7 @@ You can set customize post covers, and other things directly in the post front m
 {% highlight yaml %}
 layout: post
 
-title: Jekyll Incorporated Features
+title: test post please ignore
 subtitle: "What's in the box"
 
 # Setup post cover image in /images/

@@ -1,8 +1,8 @@
 inc:
   # Blog Information
-  title:        "Jekyll Incorporated"
-  subtitle:     "Modern Jekyll based blog for companies"
-  cover_image:  blog-cover.jpg
+  title:        "Cyph"
+  subtitle:     "Encrypted Messenger"
+  cover_image:  blog-cover.png
   logo:         logo.png
   
   # Company information
@@ -10,12 +10,12 @@ inc:
   url:          https://www.cyph.com/
   facebook:     pages/Cyph/299270843606014
   twitter:      cyph
-  gplus:        '115480892967656365943'
+  gplus:        115480892967656365943
   about_link:   https://www.cyph.com/about/
   
   # Product Information
   product_link: https://www.cyph.com/
-  tagline:      "Get a modern blog for your company"
+  tagline:      "Completely Private Voice &amp; Video Chat"
   
   # Comments
   disqus:
