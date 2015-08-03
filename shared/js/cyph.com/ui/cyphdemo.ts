@@ -39,7 +39,7 @@ module Cyph.com {
 						'margin-left': ''
 					});
 
-					setTimeout(() => screenshots.removeClass(CyphDemo.demoClass), 500);
+					setTimeout(() => screenshots.removeClass(CyphDemo.demoClass), 800);
 				}
 				else {
 					this.resizeDesktop();
