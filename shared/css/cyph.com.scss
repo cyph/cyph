@@ -164,20 +164,35 @@ section#main {
 		display: block;
 		height: calc((50px + 5.525vw) * 3 - 50px);
 		margin-top: 25px;
+		position: relative;
 		@include transition(all 0.75s ease);
 
 		&.laptop {
 			margin-left: calc(((50px + 5.525vw) * 3 - 50px) * -0.885);
+
+			&:not(.demo):hover {
+				margin-left: 0px;
+			}
 		}
 
 		&.phone {
 			margin-left: auto;
 			margin-right: auto;
+
+			&:not(.demo):hover {
+				@include transition(all 0.25s ease);
+			}
 		}
 
 		&.demo {
 			position: absolute;
 			height: auto;
+		}
+
+		&:not(.demo):hover {
+			height: calc((50px + 5.525vw) * 3 - 25px);
+			margin-top: 0px;
+			z-index: 3;
 		}
 	}
 }
@@ -390,7 +405,25 @@ section#main {
 	background-color: #262638;
 }
 
+.back-arrow {
+	position: absolute;
+	z-index: 10;
+	left: 20px;
+	top: 50px;
+	height: 40px;
+	width: auto;
+	opacity: 0.15;
+
+	> img {
+		height: 100%;
+		width: auto;
+	}
+}
+
 .demo-root {
+	opacity: 0;
+	@include transition(opacity 0.75s 0.5s ease);
+
 	&, > * {
 		position: relative;
 		z-index: 3;

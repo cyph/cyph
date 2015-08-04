@@ -50,7 +50,7 @@
 	<body>
 		<section id='main' layout='column' ng-class='{"unisection-mode": ui.state !== Cyph.com.UI.States.home}'>
 
-		<md-toolbar id='main-toolbar' class='wow animated fadeInSlow' data-wow-delay='750ms'>
+		<md-toolbar id='main-toolbar' class='wow animated fadeInDownBig'>
 			<div class='md-toolbar-tools'>
 				<span class='padding'></span>
 
@@ -203,22 +203,21 @@
 
 		<section id='hero-section'>
 			<div class='hero-foreground'>
-				<h1 class='hero-text wow animated fadeInSlow' data-wow-delay='1200ms' translate>
+				<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' translate>
 					Completely Private Voice &amp; Video Chat
 				</h1>
-				<div
-					class='feature-list-container grid-container wow animated fadeInSlow'
-					data-wow-delay='2000ms'
-				>
+				<div class='feature-list-container grid-container'>
 					<div
 						class='wow desktop-class-bounceInLeft grid-25 tablet-grid-25 mobile-grid-100'
-						data-wow-delay='2250ms'
+						data-wow-delay='1200ms'
 					>
-						<img class='laptop screenshot' src='/img/laptop-screenshot.png' />
+						<a href='/intro'>
+							<img class='laptop screenshot' src='/img/laptop-screenshot.png' />
+						</a>
 						&nbsp;
 					</div>
 
-					<div class='grid-25 tablet-grid-25 grid-parent left'>
+					<div class='grid-25 tablet-grid-25 grid-parent left wow animated fadeIn' data-wow-delay='1450ms'>
 						<div class='grid-100 tablet-grid-100 feature-list-item'>
 							<img
 								class='grid-25 tablet-grid-25 push-75 tablet-push-75 mobile-pull-10 mobile-grid-25'
@@ -254,7 +253,7 @@
 						</div>
 					</div>
 
-					<div class='grid-25 tablet-grid-25 grid-parent right'>
+					<div class='grid-25 tablet-grid-25 grid-parent right wow animated fadeIn' data-wow-delay='1450ms'>
 						<div class='grid-100 tablet-grid-100 feature-list-item'>
 							<img
 								class='grid-25 tablet-grid-25 mobile-pull-10 mobile-push-75 mobile-grid-25'
@@ -292,14 +291,16 @@
 
 					<div
 						class='wow desktop-class-bounceInRight grid-25 tablet-grid-25 mobile-grid-100'
-						data-wow-delay='2250ms'
+						data-wow-delay='1200ms'
 					>
-						<img class='phone screenshot' src='/img/phone-screenshot.png' />
+						<a href='/intro'>
+							<img class='phone screenshot' src='/img/phone-screenshot.png' />
+						</a>
 						&nbsp;
 					</div>
 				</div>
 
-				<div class='wow animated fadeInSlow' data-wow-delay='3000ms'>
+				<div class='wow animated fadeInSlow' data-wow-delay='1650ms'>
 					<img
 						class='bouncing-down-arrow'
 						ng-click='ui.scrollHeroText()'
@@ -319,7 +320,7 @@
 		</section>
 
 		<section id='testimonials-section'>
-			<div class='grid-container wow animated fadeIn' data-wow-delay='3500ms'>
+			<div class='grid-container wow animated fadeIn' data-wow-delay='1700ms'>
 				<div class='grid-25 tablet-grid-25'>
 					<a class='logo' ng-click='ui.setTestimonial(0)' target='_blank'>
 						<img src='/img/testimonials/cure53.png' />
@@ -360,7 +361,11 @@
 		</section>
 
 		<section id='intro-section'>
-			<div class='demo-root desktop-only grid-container wow animated fadeIn' data-wow-delay='3500ms'>
+			<a class='back-arrow' href='/'>
+				<img src='/img/icons/leftarrow.png' />
+			</a>
+
+			<div class='demo-root desktop-only grid-container'>
 				<span class='desktop grid-55 tablet-grid-55 push-10 tablet-push-10'>
 					<div class='cyph-foreground'>
 						<span
