@@ -87,7 +87,7 @@ ls */*.yaml */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s|${defaultCSPString}
 # blogCSPSources="$(cat cyph.com/blog/csp | perl -pe 's/^(.*)$/https:\/\/\1 https:\/\/*.\1/g' | tr '\n' ' ')"
 blogCSPSources='*'
 
-cat .build/cyph.com/cyph-com.yaml | \
+cat cyph.com/cyph-com.yaml | \
 	tr '\n' '☁' | \
 	perl -pe 's/(\/blog.*?connect-src '"'"'self'"'"' )(.*?frame-src )(.*?connect-src '"'"'self'"'"' )(.*?frame-src )(.*?connect-src '"'"'self'"'"' )(.*?frame-src )/\1☼ \2☼ \3☼ \4☼ \5☼ \6☼ /g' | \
 	sed "s|☼|${blogCSPSources}|g" | \
