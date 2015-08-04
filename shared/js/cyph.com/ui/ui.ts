@@ -170,7 +170,7 @@ module Cyph.com {
 				const urlState: string	= Cyph.UrlState.get();
 				setTimeout(
 					() => Cyph.UrlState.set(urlState, true, false, false),
-					HomeSections[urlState] === undefined ? 0 : 5500
+					HomeSections[urlState] === undefined ? 0 : 2500
 				);
 
 

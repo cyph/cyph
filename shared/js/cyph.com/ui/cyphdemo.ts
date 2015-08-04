@@ -105,12 +105,17 @@ module Cyph.com {
 			) {
 				super(controller, mobileMenu);
 
+				Elements.demoRoot['appear']();
+				Elements.heroText['appear']();
+
 				const begin	= (e: Event) => {
 					setTimeout(() => {
 						this.resizeDesktop();
 
 						setTimeout(() => {
 							this.resizeMobile();
+
+							Elements.demoRoot.css('opacity', 1);
 
 							let intervalId;
 							const resize: Function	= () => {
@@ -200,8 +205,6 @@ module Cyph.com {
 						}, 750);
 					}, 750);
 				};
-
-				Elements.demoRoot['appear']();
 
 				setTimeout(() => {
 					const intervalId	= setInterval(() => {
