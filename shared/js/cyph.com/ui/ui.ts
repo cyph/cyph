@@ -138,7 +138,7 @@ module Cyph.com {
 				setTimeout(() => Elements.testimonialLogos.eq(testimonialNumber).
 					add(Elements.testimonialQuotes.eq(testimonialNumber)).
 					addClass(UI.testimonialActiveClass)
-				, 1250);
+				, 600);
 
 				this.testimonialNumber	= testimonialNumber + 1;
 				if (this.testimonialNumber >= Elements.testimonialLogos.length) {

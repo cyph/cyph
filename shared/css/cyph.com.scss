@@ -27,14 +27,13 @@ section#main {
 	overflow-x: hidden;
 }
 
-#main, #new-cyph-section {
+#main {
 	min-height: 100vh;
-}
-#main section {
-	position: relative;
-}
-#main section {
-	padding: 20px;
+
+	section {
+		position: relative;
+		padding: 20px;
+	}
 }
 
 
@@ -89,39 +88,22 @@ section#main {
 }
 
 
-.md-button.new-cyph-button {
-	font-size: 14px;
-	width: auto;
-	margin-bottom: 6px;
-	box-shadow: 0px 0px 2px #7239dd;
-	color: #444;
+#new-cyph {
+	font-family: 'Ubuntu';
+	font-size: 11px;
+	position: absolute;
+	top: 5px;
+	left: calc(50% - 60px);
+	height: 38px;
+	width: 120px;
+	padding: 0px;
+	border-radius: 1px;
+	box-shadow: 0px 4px 10px -1px rgba(0, 0, 0, 0.25);
 	background-color: #7d4fd3 !important;
 
 	&.focus, &:hover {
 		background-color: #7239dd !important;
 	}
-}
-
-#new-cyph {
-	font-family: 'Ubuntu';
-	line-height: 50px;
-	font-size: 18px;
-	box-shadow: 0px 4px 10px -1px rgba(0, 0, 0, 0.25);
-
-	position: absolute;
-	top: calc(50% - 31px);
-	left: calc(50% - 100px);
-	margin-left: auto;
-	margin-right: auto;
-	width: 200px;
-
-	@include transition(transform 0s);
-}
-
-html.mobile #new-cyph-section {
-	height: 0px;
-	min-height: 0px;
-	padding: 0px !important;
 }
 
 .hero-text {
@@ -143,18 +125,29 @@ html.mobile #new-cyph-section {
 
 	> .grid-parent.right {
 		text-align: right;
+
+		.feature-list-item h3.title {
+			padding-left: 5px;
+		}
+	}
+
+	> .grid-parent.left .feature-list-item h3.title {
+		padding-right: 5px;
 	}
 
 	.feature-list-item {
 		position: relative;
 		height: 115px;
 
-		p.title {
+		h3.title {
 			font-size: 16px;
 			font-family: 'Ubuntu';
+			font-weight: 300;
+			line-height: 135%;
 		}
 
 		img {
+			width: 68px;
 			border-radius: 100% !important;
 			padding: 0px;
 		}
@@ -171,7 +164,7 @@ html.mobile #new-cyph-section {
 		display: block;
 		height: calc((50px + 5.525vw) * 3 - 50px);
 		margin-top: 25px;
-		@include transition(all 0.75s cubic-bezier(1, 0, 0, 1));
+		@include transition(all 0.75s ease);
 
 		&.laptop {
 			margin-left: calc(((50px + 5.525vw) * 3 - 50px) * -0.885);
@@ -204,12 +197,12 @@ html.mobile #new-cyph-section {
 		}
 
 		.feature-list-item {
-			p.title {
+			h3.title {
 				margin-top: -50px;
 				margin-bottom: 40px;
 			}
 
-			.mobile-push p:not(.title) {
+			.mobile-push h3:not(.title) {
 				margin-left: -33%;
 			}
 
@@ -221,25 +214,23 @@ html.mobile #new-cyph-section {
 }
 
 
-#main-toolbar, #new-cyph {
-	top: 0px !important;
-}
-
-#new-cyph {
-	z-index: 12;
-	position: fixed;
-	top: -7px !important;
-	@include transform(scale(0.6) !important);
-}
-
 #main-toolbar {
 	position: fixed;
 	z-index: 11;
+	top: 0px;
+	left: 0px;
 	height: 50px !important;
 	background-color: rgba(97, 51, 163, 0.75);
 
 	.md-toolbar-tools {
 		margin-top: 5px;
+		padding: 0px;
+
+		.padding {
+			display: inline-block;
+			width: 1vw;
+			max-width: 16px;
+		}
 
 		.link-wrapper-outer {
 			width: calc(50% - 191px);
@@ -332,7 +323,7 @@ html.mobile #new-cyph-section {
 	}
 
 	* {
-		@include transition(opacity 0.75s linear);
+		@include transition(opacity 0.35s linear);
 	}
 
 	.logo {
@@ -349,8 +340,6 @@ html.mobile #new-cyph-section {
 		> img {
 			display: block;
 			position: relative;
-			top: 50%;
-			@include transform(translateY(-100%));
 			margin: auto;
 			max-height: 100%;
 			max-width: 80%;
