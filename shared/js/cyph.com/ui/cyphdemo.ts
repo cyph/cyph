@@ -105,7 +105,7 @@ module Cyph.com {
 			) {
 				super(controller, mobileMenu);
 
-				Elements.demoRoot['appear']().one('appear', () => {
+				const begin	= (e: Event) => {
 					setTimeout(() => {
 						this.resizeDesktop();
 
@@ -122,17 +122,17 @@ module Cyph.com {
 
 							setTimeout(() => resize(), 2000);
 							Cyph.UI.Elements.window.on('resize', () => resize());
-							Elements.heroText['appear']().on('appear', () => resize());
+							Elements.heroText.on('appear', () => resize());
 
 							let mobileSession: Cyph.Session.ISession;
 							const desktopSession: Cyph.Session.ISession	= new Cyph.Session.Session(
 								null,
-								controller,
+								this.controller,
 								undefined,
 								(desktopChannel: Cyph.Channel.LocalChannel) => {
 									mobileSession	= new Cyph.Session.Session(
 										null,
-										controller,
+										this.controller,
 										undefined,
 										(mobileChannel: Cyph.Channel.LocalChannel) =>
 											desktopChannel.connect(mobileChannel)
@@ -141,7 +141,7 @@ module Cyph.com {
 							);
 
 							this.desktop	= new Cyph.UI.Chat.Chat(
-								controller,
+								this.controller,
 								dialogManager,
 								{open: () => {}, close: () => {}},
 								{notify: (message: string) => {}},
@@ -151,7 +151,7 @@ module Cyph.com {
 							);
 
 							this.mobile		= new Cyph.UI.Chat.Chat(
-								controller,
+								this.controller,
 								dialogManager,
 								this.mobileMenu,
 								{notify: (message: string) => {}},
@@ -175,7 +175,7 @@ module Cyph.com {
 									message.text.split('').forEach((c: string) => {
 										setTimeout(() => {
 											chat.currentMessage += c;
-											controller.update();
+											this.controller.update();
 										}, totalDelay);
 
 										totalDelay += Util.random(250, 25);
@@ -183,12 +183,34 @@ module Cyph.com {
 
 									totalDelay += Util.random(500, 250);
 
-									setTimeout(() => chat.send(), totalDelay);
+									setTimeout(() => {
+										chat.currentMessage	= '';
+										chat.send(message.text);
+									}, totalDelay);
 								});
+
+								totalDelay += 1000;
+
+								setTimeout(() => {
+									this.desktop.currentMessage	= '';
+									this.mobile.currentMessage	= '';
+									this.controller.update();
+								}, totalDelay);
 							}, 750);
 						}, 750);
 					}, 750);
-				});
+				};
+
+				Elements.demoRoot['appear']();
+
+				setTimeout(() => {
+					const intervalId	= setInterval(() => {
+						if (!Elements.heroText.is(':appeared')) {
+							clearInterval(intervalId);
+							Elements.demoRoot.one('appear', begin);
+						}
+					}, 250);
+				}, 1000);
 			}
 		}
 	}
