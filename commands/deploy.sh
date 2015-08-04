@@ -80,16 +80,21 @@ CSP="$(cat shared/websign/csp | tr -d '\n')"
 ls cyph.com/*.yaml | xargs -I% sed -i.bak "s|${defaultCSPString}|${CSP}|g" %
 ls */*.yaml */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s|${defaultCSPString}|${CSP}|g" %
 
-# Expand connect-src and frame-src on blog to support social media widgets and stuff (commented pending header length fix from Google)
-#
+
+# Expand connect-src and frame-src on blog to support social media widgets and stuff
+
+# Temporary workaround, pending header length fix from Google
 # blogCSPSources="$(cat cyph.com/blog/csp | perl -pe 's/^(.*)$/https:\/\/\1 https:\/\/*.\1/g' | tr '\n' ' ')"
-# cat .build/cyph.com/cyph-com.yaml | \
-# 	tr '\n' '☁' | \
-# 	perl -pe 's/(\/blog.*?connect-src '"'"'self'"'"' )(.*?frame-src )(.*?connect-src '"'"'self'"'"' )(.*?frame-src )(.*?connect-src '"'"'self'"'"' )(.*?frame-src )/\1☼ \2☼ \3☼ \4☼ \5☼ \6☼ /g' | \
-# 	sed "s|☼|${blogCSPSources}|g" | \
-# 	tr '☁' '\n' \
-# > cyph.com/new.yaml
-# mv cyph.com/new.yaml cyph.com/cyph-com.yaml
+blogCSPSources='*'
+
+cat .build/cyph.com/cyph-com.yaml | \
+	tr '\n' '☁' | \
+	perl -pe 's/(\/blog.*?connect-src '"'"'self'"'"' )(.*?frame-src )(.*?connect-src '"'"'self'"'"' )(.*?frame-src )(.*?connect-src '"'"'self'"'"' )(.*?frame-src )/\1☼ \2☼ \3☼ \4☼ \5☼ \6☼ /g' | \
+	sed "s|☼|${blogCSPSources}|g" | \
+	tr '☁' '\n' \
+> cyph.com/new.yaml
+mv cyph.com/new.yaml cyph.com/cyph-com.yaml
+
 
 defaultHost='\${locationData\.protocol}\/\/\${locationData\.hostname}:'
 ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}43000//g" %
