@@ -136,6 +136,7 @@ section#main {
 	}
 
 	.feature-list-item {
+		display: block;
 		position: relative;
 		height: 115px;
 
@@ -144,6 +145,7 @@ section#main {
 			font-family: 'Ubuntu';
 			font-weight: 300;
 			line-height: 135%;
+			text-decoration: none;
 		}
 
 		img {
@@ -157,6 +159,10 @@ section#main {
 			position: relative;
 			top: 50%;
 			@include transform(translateY(-50%));
+		}
+
+		&:hover h3.title {
+			text-decoration: underline;
 		}
 	}
 
