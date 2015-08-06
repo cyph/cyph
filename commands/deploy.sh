@@ -77,7 +77,8 @@ fi
 
 defaultCSPString='DEFAULT_CSP'
 CSP="$(cat shared/websign/csp | tr -d '\n')"
-ls cyph.com/*.yaml | xargs -I% sed -i.bak "s|${defaultCSPString}|${CSP}|g" %
+cyphComCSP="$(cat shared/websign/csp | tr -d '\n' | sed 's|frame-src|frame-src https://*.facebook.com|g')"
+ls cyph.com/*.yaml | xargs -I% sed -i.bak "s|${defaultCSPString}|${cyphComCSP}|g" %
 ls */*.yaml */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s|${defaultCSPString}|${CSP}|g" %
 
 

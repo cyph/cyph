@@ -525,6 +525,25 @@ section#main {
 		}
 	}
 
+	.facebook-pic {
+		width: 140px !important;
+		height: 140px !important;
+		max-width: 140px !important;
+		pointer-events: none;
+	}
+
+	.facebook-pic.real {
+		position: absolute;
+		z-index: 5;
+		top: -200px;
+
+		> iframe {
+			margin-top: -55px;
+			margin-left: 272px;
+			@include transform(scale(3));
+		}
+	}
+
 	.chat-begin-message {
 		font-size: 4vw;
 	}

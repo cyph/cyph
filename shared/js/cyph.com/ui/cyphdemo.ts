@@ -4,21 +4,49 @@ module Cyph.com {
 		 * Controls the Cyph chat demo.
 		 */
 		export class CyphDemo extends Cyph.UI.BaseButtonManager {
-			private static demoClass: string	= 'demo';
+			private static demoClass: string			= 'demo';
+
+			private static facebookPicUrl: string		=
+				'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs='
+			;
+			private static facebookPicMessage: string	=
+				'![](' + CyphDemo.facebookPicUrl + ')'
+			;
+
+			private static facebookPicFrame: string	= `
+				<div class='facebook-pic image-frame real'>
+					<iframe src='https://www.facebook.com/plugins/comments.php?api_key=113869198637480'></iframe>
+				</div>
+			`;
+
+			private static facebookPicPlaceholder: string	= `
+				<div class='facebook-pic image-frame'>&nbsp;</div>
+			`;
 
 			private static messages: { text: string; isMobile: boolean; }[]	= [
-				{text: 'hallo :beer:', isMobile: false},
-				{text: 'u wanna cheat on ur wife with me', isMobile: false},
-				{text: 'sry, cant', isMobile: true},
-				{text: 'ok', isMobile: false},
-				{text: 'hows the kids', isMobile: true},
-				{text: 'kids is kill', isMobile: false},
-				{text: 'no', isMobile: true},
-				{text: 'sry', isMobile: false},
-				{text: 'when funeral', isMobile: true},
-				{text: 'yesterday', isMobile: false},
-				{text: 'oh', isMobile: true}
+				{text: 'oh wow, that was fast!', isMobile: true},
+				{text: 'but what’s the problem? why did we have to switch from Facebook?', isMobile: true},
+				{text: 'haven’t you watched the news lately? all the email leaks, hacking, and government spying...?', isMobile: false},
+				{text: 'unlike Facebook, Cyph is end-to-end encrypted, so no one but us can read this', isMobile: false},
+				{text: 'oh yeah, I guess.. but I don’t know what interest anyone would have in me', isMobile: true},
+				{text: 'well I have to be extra careful; a lot of people are looking for me', isMobile: false},
+				{text: 'government people...', isMobile: false},
+				{text: 'I don\'t believe you :expressionless:', isMobile: true},
+				{text: 'okay fine, it just really creeps me out that *someone* might have been reading our conversation', isMobile: false},
+				{text: 'I actually only wanted to ask, is this pic approriate for LinkedIn?', isMobile: false},
+				{text: CyphDemo.facebookPicMessage, isMobile: false},
+				{text: 'lol yeah, looks great ;)', isMobile: true}
 			];
+
+			private static getOffset (elem: JQuery, ancestor: JQuery) : { left: number; top: number; } {
+				const elemOffset		= elem.offset();
+				const ancestorOffset	= ancestor.offset();
+
+				return {
+					left: Math.ceil(elemOffset.left - ancestorOffset.left),
+					top: Math.ceil(elemOffset.top - ancestorOffset.top)
+				};
+			}
 
 
 			/** Desktop chat UI. */
@@ -117,6 +145,12 @@ module Cyph.com {
 
 							Elements.demoRoot.css('opacity', 1);
 
+							const $desktopFacebookPic: JQuery	= $(CyphDemo.facebookPicFrame);
+							const $mobileFacebookPic: JQuery	= $(CyphDemo.facebookPicFrame);
+
+							Elements.demoListDesktop.append($desktopFacebookPic);
+							Elements.demoListMobile.append($mobileFacebookPic);
+
 							let intervalId;
 							const resize: Function	= () => {
 								clearInterval(intervalId);
@@ -169,7 +203,7 @@ module Cyph.com {
 								let totalDelay: number	= 5000;
 
 								CyphDemo.messages.forEach((message, i: number) => {
-									totalDelay += i * Util.random(1000, 250);
+									totalDelay += i * Util.random(500, 100);
 
 									const chat: Cyph.UI.Chat.IChat	=
 										message.isMobile ?
@@ -177,20 +211,75 @@ module Cyph.com {
 											this.desktop
 									;
 
-									message.text.split('').forEach((c: string) => {
-										setTimeout(() => {
-											chat.currentMessage += c;
-											this.controller.update();
-										}, totalDelay);
+									if (message.text !== CyphDemo.facebookPicMessage) {
+										message.text.split('').forEach((c: string) => {
+											setTimeout(() => {
+												chat.currentMessage += c;
+												this.controller.update();
+											}, totalDelay);
 
-										totalDelay += Util.random(250, 25);
-									});
+											totalDelay += Util.random(100, 25);
+										});
+									}
 
-									totalDelay += Util.random(500, 250);
+									totalDelay += Util.random(500, 100);
 
 									setTimeout(() => {
 										chat.currentMessage	= '';
 										chat.send(message.text);
+
+										if (message.text === CyphDemo.facebookPicMessage) {
+											const innerTimeout: number	= 500;
+											const outerTimeout: number	= 250;
+
+											totalDelay += (innerTimeout + outerTimeout) * 1.5;
+
+											setTimeout(() =>
+												Elements.demoRoot.find(
+													'.message-text > p > a > img:visible[src="' +
+														CyphDemo.facebookPicUrl +
+													'"]'
+												).each((i: number, elem: HTMLElement) => {
+													const $this: JQuery			= $(elem);
+
+													const isDesktop: boolean =
+														$this.
+															parentsUntil().
+															index(Elements.demoListDesktop[0])
+														> -1
+													;
+
+													const $facebookPic: JQuery	=
+														isDesktop ?
+															$desktopFacebookPic :
+															$mobileFacebookPic
+													;
+
+													const $placeholder: JQuery	= $(CyphDemo.facebookPicPlaceholder);
+
+													$this.parent().replaceWith($placeholder);
+
+													setTimeout(() => {
+														const offset	= CyphDemo.getOffset(
+															$placeholder,
+															isDesktop ?
+																Elements.demoListDesktop :
+																Elements.demoListMobile
+														);
+
+														if (!isDesktop) {
+															offset.left += 13;
+															offset.top += 413;
+														}
+
+														$facebookPic.css({
+															left: offset.left,
+															top: offset.top
+														});
+													}, innerTimeout);
+												})
+											, outerTimeout);
+										}
 									}, totalDelay);
 								});
 
