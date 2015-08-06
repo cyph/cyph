@@ -218,7 +218,7 @@ input, textarea {
 		text-align: right;
 	}
 
-	img:not(.emoji) {
+	img:not(.emoji), .image-frame {
 		max-width: 25%;
 		margin-top: 10px;
 		margin-bottom: 10px;
@@ -226,6 +226,7 @@ input, textarea {
 		margin-right: auto;
 		display: block;
 		box-shadow: 0px 4px 10px -1px rgba(0, 0, 0, 0.4);
+		position: relative;
 	}
 
 	.emoji {
@@ -233,6 +234,9 @@ input, textarea {
 		margin-bottom: -.2em;
 		margin-left: .2em;
 	}
+}
+.image-frame {
+	overflow: hidden;
 }
 .chat-main .message-item .message {
 	max-width: 85%;
@@ -257,7 +261,7 @@ input, textarea {
 			padding-bottom: 0px;
 		}
 
-		img:not(.emoji) {
+		img:not(.emoji), .image-frame {
 			margin-left: auto;
 		}
 
