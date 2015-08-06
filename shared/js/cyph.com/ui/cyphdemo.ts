@@ -77,10 +77,10 @@ module Cyph.com {
 
 			private resizeDesktop () : void {
 				const width: number		= Math.floor(
-					(Cyph.UI.Elements.window.width() - 60) * 0.55 / 0.75
+					(Cyph.UI.Elements.window.width() - 60) * 0.55 / 0.75 + 2
 				);
 
-				const height: number	= width * 0.563;
+				const height: number	= width * 0.563 + 2;
 
 				Elements.screenshotLaptop.addClass(CyphDemo.demoClass).css({
 					width,
@@ -88,23 +88,25 @@ module Cyph.com {
 						Elements.demoRootDesktop.offset().top -
 						Elements.screenshotLaptop.offset().top -
 						height * 0.104 +
-						parseFloat(Elements.screenshotLaptop.css('margin-top'))
+						parseFloat(Elements.screenshotLaptop.css('margin-top')) -
+						1
 					),
 					'margin-left': Math.ceil(
 						Elements.demoRootDesktop.offset().left -
 						Elements.screenshotLaptop.offset().left -
 						width * 0.13 +
-						parseFloat(Elements.screenshotLaptop.css('margin-left'))
+						parseFloat(Elements.screenshotLaptop.css('margin-left')) -
+						1
 					)
 				});
 			}
 
 			private resizeMobile () : void {
 				const width: number		= Math.floor(
-					(Cyph.UI.Elements.window.width() - 60) * 0.3 / 1.404
+					(Cyph.UI.Elements.window.width() - 60) * 0.3 / 1.404 + 2
 				);
 
-				const height: number	= width * 2.033;
+				const height: number	= width * 2.033 + 2;
 
 				Elements.screenshotPhone.addClass(CyphDemo.demoClass).css({
 					width,
@@ -112,13 +114,15 @@ module Cyph.com {
 						Elements.demoRootMobile.offset().top -
 						Elements.screenshotPhone.offset().top -
 						height * 0.098 +
-						parseFloat(Elements.screenshotPhone.css('margin-top'))
+						parseFloat(Elements.screenshotPhone.css('margin-top')) -
+						1
 					),
 					'margin-left': Math.ceil(
 						Elements.demoRootMobile.offset().left -
 						Elements.screenshotPhone.offset().left -
 						width * 0.073 +
-						parseFloat(Elements.screenshotPhone.css('margin-left'))
+						parseFloat(Elements.screenshotPhone.css('margin-left')) -
+						1
 					)
 				});
 			}
@@ -203,7 +207,7 @@ module Cyph.com {
 								let totalDelay: number	= 5000;
 
 								CyphDemo.messages.forEach((message, i: number) => {
-									totalDelay += i * Util.random(500, 100);
+									totalDelay += i * Util.random(250, 50);
 
 									const chat: Cyph.UI.Chat.IChat	=
 										message.isMobile ?
@@ -218,18 +222,18 @@ module Cyph.com {
 												this.controller.update();
 											}, totalDelay);
 
-											totalDelay += Util.random(100, 25);
+											totalDelay += Util.random(50, 10);
 										});
 									}
 
-									totalDelay += Util.random(500, 100);
+									totalDelay += Util.random(250, 50);
 
 									setTimeout(() => {
 										chat.currentMessage	= '';
 										chat.send(message.text);
 
 										if (message.text === CyphDemo.facebookPicMessage) {
-											const innerTimeout: number	= 500;
+											const innerTimeout: number	= 250;
 											const outerTimeout: number	= 250;
 
 											totalDelay += (innerTimeout + outerTimeout) * 1.5;
@@ -242,7 +246,7 @@ module Cyph.com {
 												).each((i: number, elem: HTMLElement) => {
 													const $this: JQuery			= $(elem);
 
-													const isDesktop: boolean =
+													const isDesktop: boolean	=
 														$this.
 															parentsUntil().
 															index(Elements.demoListDesktop[0])
@@ -268,14 +272,13 @@ module Cyph.com {
 														);
 
 														if (!isDesktop) {
-															offset.left += 13;
-															offset.top += 413;
+															const ratio: number	= 0.625;
+
+															offset.left	= Math.ceil(offset.left / ratio);
+															offset.top	= Math.ceil(offset.top / ratio);
 														}
 
-														$facebookPic.css({
-															left: offset.left,
-															top: offset.top
-														});
+														$facebookPic.css(offset);
 													}, innerTimeout);
 												})
 											, outerTimeout);
