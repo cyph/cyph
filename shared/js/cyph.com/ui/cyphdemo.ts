@@ -4,16 +4,16 @@ module Cyph.com {
 		 * Controls the Cyph chat demo.
 		 */
 		export class CyphDemo extends Cyph.UI.BaseButtonManager {
-			private static demoClass: string			= 'demo';
+			private static demoClass: string	= 'demo';
 
-			private static facebookPicUrl: string		=
+			private static facebookPicUrl: string			=
 				'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs='
 			;
-			private static facebookPicMessage: string	=
+			private static facebookPicMessage: string		=
 				'![](' + CyphDemo.facebookPicUrl + ')'
 			;
 
-			private static facebookPicFrame: string	= `
+			private static facebookPicFrame: string			= `
 				<div class='facebook-pic image-frame real'>
 					<iframe src='https://www.facebook.com/plugins/comments.php?api_key=113869198637480'></iframe>
 				</div>
@@ -22,6 +22,8 @@ module Cyph.com {
 			private static facebookPicPlaceholder: string	= `
 				<div class='facebook-pic image-frame'>&nbsp;</div>
 			`;
+
+			private static mobileUIScale: number	= 0.625;
 
 			private static messages: { text: string; isMobile: boolean; }[]	= [
 				{text: 'oh wow, that was fast!', isMobile: true},
@@ -77,10 +79,10 @@ module Cyph.com {
 
 			private resizeDesktop () : void {
 				const width: number		= Math.floor(
-					(Cyph.UI.Elements.window.width() - 60) * 0.55 / 0.75 + 2
+					(Cyph.UI.Elements.window.width() - 70) * 0.55 / 0.75
 				);
 
-				const height: number	= width * 0.563 + 2;
+				const height: number	= width * 0.563;
 
 				Elements.screenshotLaptop.addClass(CyphDemo.demoClass).css({
 					width,
@@ -88,25 +90,23 @@ module Cyph.com {
 						Elements.demoRootDesktop.offset().top -
 						Elements.screenshotLaptop.offset().top -
 						height * 0.104 +
-						parseFloat(Elements.screenshotLaptop.css('margin-top')) -
-						1
+						parseFloat(Elements.screenshotLaptop.css('margin-top'))
 					),
 					'margin-left': Math.ceil(
 						Elements.demoRootDesktop.offset().left -
 						Elements.screenshotLaptop.offset().left -
 						width * 0.13 +
-						parseFloat(Elements.screenshotLaptop.css('margin-left')) -
-						1
+						parseFloat(Elements.screenshotLaptop.css('margin-left'))
 					)
 				});
 			}
 
 			private resizeMobile () : void {
 				const width: number		= Math.floor(
-					(Cyph.UI.Elements.window.width() - 60) * 0.3 / 1.404 + 2
+					(Cyph.UI.Elements.window.width() - 70) * 0.3 / 1.404
 				);
 
-				const height: number	= width * 2.033 + 2;
+				const height: number	= width * 2.033;
 
 				Elements.screenshotPhone.addClass(CyphDemo.demoClass).css({
 					width,
@@ -114,15 +114,13 @@ module Cyph.com {
 						Elements.demoRootMobile.offset().top -
 						Elements.screenshotPhone.offset().top -
 						height * 0.098 +
-						parseFloat(Elements.screenshotPhone.css('margin-top')) -
-						1
+						parseFloat(Elements.screenshotPhone.css('margin-top'))
 					),
 					'margin-left': Math.ceil(
 						Elements.demoRootMobile.offset().left -
 						Elements.screenshotPhone.offset().left -
 						width * 0.073 +
-						parseFloat(Elements.screenshotPhone.css('margin-left')) -
-						1
+						parseFloat(Elements.screenshotPhone.css('margin-left'))
 					)
 				});
 			}
@@ -204,10 +202,10 @@ module Cyph.com {
 							);
 
 							setTimeout(() => {
-								let totalDelay: number	= 5000;
+								let totalDelay: number	= 6000;
 
 								CyphDemo.messages.forEach((message, i: number) => {
-									totalDelay += i * Util.random(250, 50);
+									totalDelay += i * Util.random(500, 100);
 
 									const chat: Cyph.UI.Chat.IChat	=
 										message.isMobile ?
@@ -222,11 +220,11 @@ module Cyph.com {
 												this.controller.update();
 											}, totalDelay);
 
-											totalDelay += Util.random(50, 10);
+											totalDelay += Util.random(75, 25);
 										});
 									}
 
-									totalDelay += Util.random(250, 50);
+									totalDelay += Util.random(500, 100);
 
 									setTimeout(() => {
 										chat.currentMessage	= '';
@@ -259,7 +257,9 @@ module Cyph.com {
 															$mobileFacebookPic
 													;
 
-													const $placeholder: JQuery	= $(CyphDemo.facebookPicPlaceholder);
+													const $placeholder: JQuery	= $(
+														CyphDemo.facebookPicPlaceholder
+													);
 
 													$this.parent().replaceWith($placeholder);
 
@@ -272,10 +272,13 @@ module Cyph.com {
 														);
 
 														if (!isDesktop) {
-															const ratio: number	= 0.625;
+															offset.left	= Math.ceil(
+																offset.left / CyphDemo.mobileUIScale
+															);
 
-															offset.left	= Math.ceil(offset.left / ratio);
-															offset.top	= Math.ceil(offset.top / ratio);
+															offset.top	= Math.ceil(
+																offset.top / CyphDemo.mobileUIScale
+															);
 														}
 
 														$facebookPic.css(offset);
