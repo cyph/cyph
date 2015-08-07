@@ -491,6 +491,7 @@ section#main {
 
 	> .mobile {
 		@include transform(scale(0.625));
+		@include filter(blur(0px));
 		height: calc((100vw - 60px) * 0.3 * 1.78);
 		margin-top: -80px;
 
@@ -526,9 +527,9 @@ section#main {
 	}
 
 	.facebook-pic {
-		width: 140px !important;
-		height: 140px !important;
-		max-width: 140px !important;
+		width: 106px !important;
+		height: 106px !important;
+		max-width: 106px !important;
 		pointer-events: none;
 	}
 
@@ -537,9 +538,9 @@ section#main {
 		top: -200px;
 
 		> iframe {
-			margin-top: -55px;
-			margin-left: 272px;
-			@include transform(scale(3));
+			margin-top: -60px;
+			margin-left: 167px;
+			@include transform(scale(2.25));
 		}
 	}
 
