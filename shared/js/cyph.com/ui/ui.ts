@@ -105,7 +105,7 @@ module Cyph.com {
 				this.changeState(States.podcast);
 
 				Elements.heroText.hide();
-				Elements.podcastLogo.attr('src', '/img/' + Podcasts[this.podcast] + '.png');
+				Elements.podcastLogo.attr('src', '/img/thirdparty/' + Podcasts[this.podcast] + '.png');
 				setTimeout(() => Elements.heroText.show(), 1);
 			}
 
