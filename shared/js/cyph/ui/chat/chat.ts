@@ -345,6 +345,8 @@ module Cyph {
 					if (this.isMobile) {
 						/* Prevent jankiness upon message send on mobile */
 
+						let lastClick: number	= 0;
+
 						this.elements.messageBox.click(e => {
 							this.elements.sendButton.add(this.elements.insertPhotoMobile).each((i, elem) => {
 								const $button	= $(elem);
@@ -354,7 +356,13 @@ module Cyph {
 									(e.pageY > bounds.top && e.pageY < bounds.bottom) &&
 									(e.pageX > bounds.left && e.pageX < bounds.right)
 								) {
-									$button.click();
+									const now: number	= Date.now();
+
+									if (now - lastClick > 500) {
+										lastClick	= now;
+										$button.click();
+									}
+
 									return;
 								}
 							});
