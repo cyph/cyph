@@ -1,6 +1,8 @@
 # DOMPurify [![NPM version](http://img.shields.io/npm/v/dompurify.svg)](https://www.npmjs.org/package/dompurify)
 
-DOMPurify is a DOM-only, super-fast, uber-tolerant XSS sanitizer for HTML, MathML and SVG. It's written in JavaScript and works in all modern browsers (Safari, Opera (15+), Internet Explorer (10+), Spartan, Firefox and Chrome - as well as almost anything else using Blink or WebKit). It doesn't break on IE6 or other legacy browsers. It simply does nothing there.
+DOMPurify is a DOM-only, super-fast, uber-tolerant XSS sanitizer for HTML, MathML and SVG.
+
+It's written in JavaScript and works in all modern browsers (Safari, Opera (15+), Internet Explorer (10+), Spartan, Firefox and Chrome - as well as almost anything else using Blink or WebKit). It doesn't break on IE6 or other legacy browsers. It simply does nothing there.
 
 DOMPurify is written by security people who have vast background in web attacks and XSS. Fear not. For more details please also read about our [Security Goals & Threat Model](https://github.com/cure53/DOMPurify/wiki/Security-Goals-&-Threat-Model)
 
@@ -32,8 +34,7 @@ require(['dompurify'], function(DOMPurify) {
 });
 ```
 
-You can also grab the files straight from NPM:  
-_(Note: DOMPurify [doesn't work in Node.js yet](https://github.com/cure53/DOMPurify/issues/29), but runs fine with [Browserify](http://browserify.org/).)_
+You can also grab the files straight from npm (requires either [io.js](https://iojs.org) or [Browserify](http://browserify.org/), **Node.js 0.x is not supported**):  
 
 ```bash
 npm install dompurify
@@ -67,7 +68,6 @@ DOMPurify.sanitize('<TABLE><tr><td>HELLO</tr></TABL>'); // becomes <table><tbody
 DOMPurify.sanitize('<UL><li><A HREF=//google.com>click</UL>'); // becomes <ul><li><a href="//google.com">click</a></li></ul>
 ```
 
-
 ## What is supported?
 
 DOMPurify currently supports HTML5, SVG and MathML. DOMPurify per default allows CSS, HTML custom data attributes. DOMPurify also supports the Shadow DOM - and sanitizes DOM templates recursively. DOMPurify also allows you to sanitize HTML for being used with the jQuery `$()` and `elm.html()` methods.
@@ -99,8 +99,18 @@ var clean = DOMPurify.sanitize(dirty, {ADD_ATTR: ['my-attr']});
 // prohibit HTML5 data attributes (default is true)
 var clean = DOMPurify.sanitize(dirty, {ALLOW_DATA_ATTR: false});
 
-// return a DOM instead of an HTML string (default is false)
+// return a DOM HTMLBodyElement instead of an HTML string (default is false)
 var clean = DOMPurify.sanitize(dirty, {RETURN_DOM: true});
+
+// return a DOM DocumentFragment instead of an HTML string (default is false)
+var clean = DOMPurify.sanitize(dirty, {RETURN_DOM_FRAGMENT: true});
+
+// return a DOM DocumentFragment instead of an HTML string (default is false)
+// also import it into the current document (default is false).
+// RETURN_DOM_IMPORT must be set if you would like to append
+// the returned node to the current document
+var clean = DOMPurify.sanitize(dirty, {RETURN_DOM_FRAGMENT: true, RETURN_DOM_IMPORT: true});
+document.body.appendChild(clean);
 
 // return entire document including <html> tags (default is false)
 var clean = DOMPurify.sanitize(dirty, {WHOLE_DOCUMENT: true});
@@ -114,7 +124,7 @@ var clean = DOMPurify.sanitize(dirty, {SANITIZE_DOM: false});
 // discard an element's content when the element is removed (default is true)
 var clean = DOMPurify.sanitize(dirty, {KEEP_CONTENT: false});
 ```
-
+There is even [more examples here](https://github.com/cure53/DOMPurify/tree/master/demos#what-it-this), showing how you can run, customize and configure DOMPurify to fit your needs.
 
 ## Hooks
 

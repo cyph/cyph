@@ -3,6 +3,7 @@
 /// <reference path="angularjs/angular.d.ts" />
 /// <reference path="cryptojs/cryptojs.d.ts" />
 /// <reference path="dompurify/dompurify.d.ts" />
+/// <reference path="es6-promise/es6-promise.d.ts" />
 /// <reference path="highlightjs/highlightjs.d.ts" />
 /// <reference path="jquery/jquery.d.ts" />
 /// <reference path="webrtc/MediaStream.d.ts" />
