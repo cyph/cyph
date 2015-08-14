@@ -67,7 +67,7 @@ cd ..
 cd ../cryptolib
 
 bower install --save \
-	libsodium.js \
+	libsodium.js#master \
 	rubycon/isaac.js \
 	cyph/ntru.js
 
