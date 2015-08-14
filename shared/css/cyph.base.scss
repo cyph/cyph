@@ -436,3 +436,10 @@ md-dialog {
 		padding: 24px;
 	}
 }
+
+
+/*** Angular Material patches (from 0.9 to 0.10 upgrade) ***/
+
+md-content {
+	color: inherit;
+}

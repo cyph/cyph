@@ -2,7 +2,7 @@
  * Angular Material Design
  * https://github.com/angular/material
  * @license MIT
- * v0.10.0
+ * v0.10.1
  */
 goog.provide('ng.material.components.menu');
 goog.require('ng.material.components.backdrop');
@@ -31,8 +31,9 @@ angular.module('material.components.menu', [
  *
  * Every `md-menu` must specify exactly two child elements. The first element is what is
  * left in the DOM and is used to open the menu. This element is called the trigger element.
- * The trigger element's scope has access to `$mdOpenMenu()`
- * which it may call to open the menu.
+ * The trigger element's scope has access to `$mdOpenMenu($event)`
+ * which it may call to open the menu. By passing $event as argument, the
+ * corresponding event is stopped from propagating up the DOM-tree.
  *
  * The second element is the `md-menu-content` element which represents the
  * contents of the menu when it is open. Typically this will contain `md-menu-item`s,
@@ -41,7 +42,7 @@ angular.module('material.components.menu', [
  * <hljs lang="html">
  * <md-menu>
  *  <!-- Trigger element is a md-button with an icon -->
- *  <md-button ng-click="$mdOpenMenu()" class="md-icon-button" aria-label="Open sample menu">
+ *  <md-button ng-click="$mdOpenMenu($event)" class="md-icon-button" aria-label="Open sample menu">
  *    <md-icon md-svg-icon="call:phone"></md-icon>
  *  </md-button>
  *  <md-menu-content>
@@ -83,7 +84,7 @@ angular.module('material.components.menu', [
  *
  * <hljs lang="html">
  * <md-menu>
- *  <md-button ng-click="$mdOpenMenu()" class="md-icon-button" aria-label="Open some menu">
+ *  <md-button ng-click="$mdOpenMenu($event)" class="md-icon-button" aria-label="Open some menu">
  *    <md-icon md-menu-origin md-svg-icon="call:phone"></md-icon>
  *  </md-button>
  *  <md-menu-content>
@@ -126,7 +127,7 @@ angular.module('material.components.menu', [
  * @usage
  * <hljs lang="html">
  * <md-menu>
- *  <md-button ng-click="$mdOpenMenu()" class="md-icon-button">
+ *  <md-button ng-click="$mdOpenMenu($event)" class="md-icon-button">
  *    <md-icon md-svg-icon="call:phone"></md-icon>
  *  </md-button>
  *  <md-menu-content>
@@ -166,7 +167,6 @@ function MenuDirective($mdMenu) {
   }
 
   function link(scope, element, attrs, mdMenuCtrl) {
-
     // Move everything into a md-menu-container and pass it to the controller
     var menuContainer = angular.element(
       '<div class="md-open-menu-container md-whiteframe-z2"></div>'
@@ -176,10 +176,8 @@ function MenuDirective($mdMenu) {
     mdMenuCtrl.init(menuContainer);
 
     scope.$on('$destroy', function() {
-      if (mdMenuCtrl.isOpen) {
-        menuContainer.remove();
-        mdMenuCtrl.close();
-      }
+      menuContainer.remove();
+      mdMenuCtrl.close();
     });
 
   }
@@ -200,10 +198,13 @@ function MenuController($mdMenu, $attrs, $element, $scope) {
   };
 
   // Uses the $mdMenu interim element service to open the menu contents
-  this.open = function openMenu() {
+  this.open = function openMenu(ev) {
+    ev && ev.stopPropagation();
+
     ctrl.isOpen = true;
     triggerElement.setAttribute('aria-expanded', 'true');
     $mdMenu.show({
+      scope: $scope,
       mdMenuCtrl: ctrl,
       element: menuContainer,
       target: $element[0]
@@ -214,6 +215,8 @@ function MenuController($mdMenu, $attrs, $element, $scope) {
 
   // Use the $mdMenu interim element service to close the menu contents
   this.close = function closeMenu(skipFocus) {
+    if ( !ctrl.isOpen ) return;
+
     ctrl.isOpen = false;
     triggerElement.setAttribute('aria-expanded', 'false');
     $mdMenu.hide();
@@ -277,7 +280,7 @@ angular.module('material.components.menu')
 function MenuProvider($$interimElementProvider) {
   var MENU_EDGE_MARGIN = 8;
 
-  menuDefaultOptions.$inject = ["$$rAF", "$window", "$mdUtil", "$mdTheming", "$timeout", "$mdConstant", "$document"];
+  menuDefaultOptions.$inject = ["$$rAF", "$window", "$mdUtil", "$mdTheming", "$mdConstant", "$document"];
   return $$interimElementProvider('$mdMenu')
     .setDefaults({
       methods: ['target'],
@@ -285,7 +288,9 @@ function MenuProvider($$interimElementProvider) {
     });
 
   /* ngInject */
-  function menuDefaultOptions($$rAF, $window, $mdUtil, $mdTheming, $timeout, $mdConstant, $document) {
+  function menuDefaultOptions($$rAF, $window, $mdUtil, $mdTheming, $mdConstant, $document) {
+    var animator = $mdUtil.dom.animator;
+
     return {
       parent: 'body',
       onShow: onShow,
@@ -293,6 +298,7 @@ function MenuProvider($$interimElementProvider) {
       hasBackdrop: true,
       disableParentScroll: true,
       skipCompile: true,
+      preserveScope: true,
       themable: true
     };
 
@@ -317,10 +323,6 @@ function MenuProvider($$interimElementProvider) {
         opts.restoreScroll = $mdUtil.disableScrollAround(opts.element);
       }
 
-      // Only activate click listeners after a short time to stop accidental double taps/clicks
-      // from clicking the wrong item
-      $timeout(activateInteraction, 75, false);
-
       if (opts.backdrop) {
         $mdTheming.inherit(opts.backdrop, opts.parent);
         opts.parent.append(opts.backdrop);
@@ -328,7 +330,12 @@ function MenuProvider($$interimElementProvider) {
       showMenu();
 
       // Return the promise for when our menu is done animating in
-      return $mdUtil.transitionEndPromise(element, {timeout: 350});
+      return animator
+          .waitTransitionEnd(element, {timeout: 370})
+          .finally( function(response) {
+            opts.cleanupInteraction = activateInteraction();
+            return response;
+          });
 
       /** Check for valid opts and set some sane defaults */
       function buildOpts() {
@@ -343,7 +350,7 @@ function MenuProvider($$interimElementProvider) {
           target: angular.element(opts.target), //make sure it's not a naked dom node
           parent: angular.element(opts.parent),
           menuContentEl: angular.element(element[0].querySelector('md-menu-content')),
-          backdrop: opts.hasBackdrop && angular.element('<md-backdrop class="md-menu-backdrop md-click-catcher">')
+          backdrop: opts.hasBackdrop && $mdUtil.createBackdrop(scope, "md-menu-backdrop md-click-catcher")
         });
       }
 
@@ -391,7 +398,9 @@ function MenuProvider($$interimElementProvider) {
         opts.backdrop && opts.backdrop.on('click', function(e) {
           e.preventDefault();
           e.stopPropagation();
-          opts.mdMenuCtrl.close(true);
+          scope.$apply(function() {
+            opts.mdMenuCtrl.close(true);
+          });
         });
 
         // Wire up keyboard listeners.
@@ -407,30 +416,52 @@ function MenuProvider($$interimElementProvider) {
         });
 
         // Close menu on menu item click, if said menu-item is not disabled
-        opts.menuContentEl.on('click', function(e) {
+        var captureClickListener = function(e) {
           var target = e.target;
           // Traverse up the event until we get to the menuContentEl to see if
           // there is an ng-click and that the ng-click is not disabled
           do {
-            if (target && target.hasAttribute('ng-click')) {
+            if (target == opts.menuContentEl[0]) return;
+            if (hasAnyAttribute(target, ['ng-click', 'ng-href', 'ui-sref'])) {
               if (!target.hasAttribute('disabled')) {
                 close();
               }
               break;
             }
-          } while ((target = target.parentNode) && target != opts.menuContentEl)
+          } while (target = target.parentNode)
 
           function close() {
             scope.$apply(function() {
               opts.mdMenuCtrl.close();
             });
           }
-        });
+
+          function hasAnyAttribute(target, attrs) {
+            if (!target) return false;
+            for (var i = 0, attr; attr = attrs[i]; ++i) {
+              var altForms = [attr, 'data-' + attr, 'x-' + attr];
+              for (var j = 0, rawAttr; rawAttr = altForms[j]; ++j) {
+                if (target.hasAttribute(rawAttr)) {
+                  return true;
+                }
+              }
+            }
+            return false;
+          }
+        };
+        opts.menuContentEl[0].addEventListener('click', captureClickListener, true);
 
         // kick off initial focus in the menu on the first element
         var focusTarget = opts.menuContentEl[0].querySelector('[md-menu-focus-target]');
         if (!focusTarget) focusTarget = opts.menuContentEl[0].firstElementChild.firstElementChild;
         focusTarget.focus();
+
+        return function cleanupInteraction() {
+          element.removeClass('md-clickable');
+          opts.backdrop.off('click');
+          opts.menuContentEl.off('keydown');
+          opts.menuContentEl[0].removeEventListener('click', captureClickListener, true);
+        };
       }
     }
 
@@ -483,8 +514,9 @@ function MenuProvider($$interimElementProvider) {
      */
     function onRemove(scope, element, opts) {
       opts.isRemoved = true;
-      element.addClass('md-leave')
-        .removeClass('md-clickable');
+      element.addClass('md-leave');
+
+      opts.cleanupInteraction();
 
       // Disable resizing handlers
       angular.element($window).off('resize', opts.resizeFn);
@@ -492,14 +524,17 @@ function MenuProvider($$interimElementProvider) {
       opts.resizeFn = undefined;
 
       // Wait for animate out, then remove from the DOM
-      return $mdUtil.transitionEndPromise(element, { timeout: 350 }).then(function() {
-        element.removeClass('md-active');
-        opts.backdrop && opts.backdrop.remove();
-        if (element[0].parentNode === opts.parent[0]) {
-          opts.parent[0].removeChild(element[0]);
-        }
-        opts.restoreScroll && opts.restoreScroll();
-      });
+      return animator
+        .waitTransitionEnd(element, { timeout: 370 })
+        .finally(function() {
+          element.removeClass('md-active');
+
+          opts.backdrop && opts.backdrop.remove();
+          if (element[0].parentNode === opts.parent[0]) {
+            opts.parent[0].removeChild(element[0]);
+          }
+          opts.restoreScroll && opts.restoreScroll();
+        });
     }
 
     /**
@@ -522,8 +557,8 @@ function MenuProvider($$interimElementProvider) {
 
       var bounds = {
         left: boundryNodeRect.left + MENU_EDGE_MARGIN,
-        top: boundryNodeRect.top + MENU_EDGE_MARGIN,
-        bottom: boundryNodeRect.bottom - MENU_EDGE_MARGIN,
+        top: Math.max(boundryNodeRect.top, 0) + MENU_EDGE_MARGIN,
+        bottom: Math.max(boundryNodeRect.bottom, Math.max(boundryNodeRect.top, 0) + boundryNodeRect.height) - MENU_EDGE_MARGIN,
         right: boundryNodeRect.right - MENU_EDGE_MARGIN
       };
 
@@ -533,7 +568,12 @@ function MenuProvider($$interimElementProvider) {
 
       if (positionMode.top == 'target' || positionMode.left == 'target' || positionMode.left == 'target-right') {
         // TODO: Allow centering on an arbitrary node, for now center on first menu-item's child
-        alignTarget = openMenuNode.firstElementChild.firstElementChild || openMenuNode.firstElementChild;
+        alignTarget = firstVisibleChild();
+        if (!alignTarget) {
+          throw Error('Error positioning menu. No visible children.');
+        }
+
+        alignTarget = alignTarget.firstElementChild || alignTarget;
         alignTarget = alignTarget.querySelector('[md-menu-align-target]') || alignTarget;
         alignTargetRect = alignTarget.getBoundingClientRect();
 
@@ -611,6 +651,18 @@ function MenuProvider($$interimElementProvider) {
       function clamp(pos) {
         pos.top = Math.max(Math.min(pos.top, bounds.bottom - containerNode.offsetHeight), bounds.top);
         pos.left = Math.max(Math.min(pos.left, bounds.right - containerNode.offsetWidth), bounds.left);
+      }
+
+      /**
+        * Gets the first visible child in the openMenuNode
+        * Necessary incase menu nodes are being dynamically hidden
+        */
+      function firstVisibleChild() {
+        for (var i = 0; i < openMenuNode.children.length; ++i) {
+          if (window.getComputedStyle(openMenuNode.children[i]).display != 'none') {
+            return openMenuNode.children[i];
+          }
+        }
       }
     }
   }

@@ -79,6 +79,7 @@ module Cyph {
 			public outgoingMessageId: Uint32Array	= new Uint32Array([1]);
 
 			private abort () : void {
+				debugger;
 				this.isAborted	= true;
 
 				try {

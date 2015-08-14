@@ -2,7 +2,7 @@
  * Angular Material Design
  * https://github.com/angular/material
  * @license MIT
- * v0.10.0
+ * v0.10.1
  */
 goog.provide('ng.material.components.select');
 goog.require('ng.material.components.backdrop');
@@ -50,57 +50,51 @@ angular.module('material.components.select', [
  * @description Displays a select box, bound to an ng-model.
  *
  * @param {expression} ng-model The model!
- * @param {expression=} md-on-close expression to be evaluated when the select is closed
  * @param {boolean=} multiple Whether it's multiple.
+ * @param {expression=} md-on-close expression to be evaluated when the select is closed
  * @param {string=} placeholder Placeholder hint text.
  * @param {string=} aria-label Optional label for accessibility. Only necessary if no placeholder or
+ * @param {string=} md-container-class class list to get applied to the .md-select-menu-container element (for custom styling)
  * explicit label is present.
  *
  * @usage
  * With a placeholder (label and aria-label are added dynamically)
  * <hljs lang="html">
- *   <md-select
- *     ng-model="someModel"
- *     placeholder="Select a state">
- *     <md-option ng-value="opt" ng-repeat="opt in neighborhoods2">{{ opt }}</md-option>
- *   </md-select>
+ *   <md-input-container>
+ *     <md-select
+ *       ng-model="someModel"
+ *       placeholder="Select a state">
+ *       <md-option ng-value="opt" ng-repeat="opt in neighborhoods2">{{ opt }}</md-option>
+ *     </md-select>
+ *   </md-input-container>
  * </hljs>
  *
  * With an explicit label
  * <hljs lang="html">
- *   <md-select
- *     ng-model="someModel">
- *     <md-select-label>Select a state</md-select-label>
- *     <md-option ng-value="opt" ng-repeat="opt in neighborhoods2">{{ opt }}</md-option>
- *   </md-select>
+ *   <md-input-container>
+ *     <label>State</label>
+ *     <md-select
+ *       ng-model="someModel">
+ *       <md-option ng-value="opt" ng-repeat="opt in neighborhoods2">{{ opt }}</md-option>
+ *     </md-select>
+ *   </md-input-container>
  * </hljs>
  */
 function SelectDirective($mdSelect, $mdUtil, $mdTheming, $mdAria, $interpolate, $compile, $parse) {
   return {
     restrict: 'E',
-    require: ['mdSelect', 'ngModel', '?^form'],
+    require: ['^?mdInputContainer', 'mdSelect', 'ngModel', '?^form'],
     compile: compile,
     controller: function() { } // empty placeholder controller to be initialized in link
   };
 
   function compile(element, attr) {
-    // The user is allowed to provide a label for the select as md-select-label child
-    var labelEl = element.find('md-select-label').remove();
-
-    // If not provided, we automatically make one
-    if (!labelEl.length) {
-      labelEl = angular.element('<md-select-label><span></span></md-select-label>');
-    } else {
-      if (!labelEl[0].firstElementChild) {
-        var spanWrapper = angular.element('<span>');
-        spanWrapper.append(labelEl.contents());
-        labelEl.append(spanWrapper);
-      }
-    }
-    labelEl.append('<span class="md-select-icon" aria-hidden="true"></span>');
-    labelEl.addClass('md-select-label');
-    if (!labelEl[0].hasAttribute('id')) {
-      labelEl.attr('id', 'select_label_' + $mdUtil.nextUid());
+    // add the select value that will hold our placeholder or selected option value
+    var valueEl = angular.element('<md-select-value><span></span></md-select-value>');
+    valueEl.append('<span class="md-select-icon" aria-hidden="true"></span>');
+    valueEl.addClass('md-select-value');
+    if (!valueEl[0].hasAttribute('id')) {
+      valueEl.attr('id', 'select_value_label_' + $mdUtil.nextUid());
     }
 
     // There's got to be an md-content inside. If there's not one, let's add it.
@@ -145,7 +139,7 @@ function SelectDirective($mdSelect, $mdUtil, $mdTheming, $mdAria, $interpolate, 
           element.html() +
         '</md-select-menu></div>';
 
-    element.empty().append(labelEl);
+    element.empty().append(valueEl);
 
     attr.tabindex = attr.tabindex || '0';
 
@@ -153,12 +147,30 @@ function SelectDirective($mdSelect, $mdUtil, $mdTheming, $mdAria, $interpolate, 
       var isOpen;
       var isDisabled;
 
-      var mdSelectCtrl = ctrls[0];
-      var ngModel = ctrls[1];
-      var formCtrl = ctrls[2];
+      var containerCtrl = ctrls[0];
+      var mdSelectCtrl = ctrls[1];
+      var ngModelCtrl = ctrls[2];
+      var formCtrl = ctrls[3];
+      // grab a reference to the select menu value label
+      var valueEl = element.find('md-select-value');
+      var isReadonly = angular.isDefined(attr.readonly);
 
-      var labelEl = element.find('md-select-label');
-      var customLabel = labelEl.text().length !== 0;
+      if (containerCtrl) {
+        if (containerCtrl.input) {
+          throw new Error("<md-input-container> can only have *one* child <input>, <textarea> or <select> element!");
+        }
+        containerCtrl.input = element;
+        if (!containerCtrl.label) {
+          $mdAria.expect(element, 'aria-label', element.attr('placeholder'));
+        }
+
+        var isErrorGetter = containerCtrl && containerCtrl.isErrorGetter || function() {
+          return ngModelCtrl.$invalid && ngModelCtrl.$touched;
+        };
+        scope.$watch(isErrorGetter, containerCtrl.setInvalid);
+      }
+
+
       var selectContainer, selectScope, selectMenuCtrl;
       createSelect();
 
@@ -166,26 +178,57 @@ function SelectDirective($mdSelect, $mdUtil, $mdTheming, $mdAria, $interpolate, 
 
       if (attr.name && formCtrl) {
         var selectEl = element.parent()[0].querySelector('select[name=".' + attr.name + '"]');
-        formCtrl.$removeControl(angular.element(selectEl).controller());
+        var controller = angular.element(selectEl).controller();
+        if (controller) {
+          formCtrl.$removeControl(controller);
+        }
       }
 
-      var originalRender = ngModel.$render;
-      ngModel.$render = function() {
+
+      var originalRender = ngModelCtrl.$render;
+      ngModelCtrl.$render = function() {
         originalRender();
         syncLabelText();
+        inputCheckValue();
       };
 
       mdSelectCtrl.setLabelText = function(text) {
-        if (customLabel) return; // Assume that user is handling it on their own
         mdSelectCtrl.setIsPlaceholder(!text);
-        text = text || attr.placeholder || '';
-        var target = customLabel ? labelEl : labelEl.children().eq(0);
+        // Use placeholder attribute, otherwise fallback to the md-input-container label
+        var tmpPlaceholder = attr.placeholder || (containerCtrl && containerCtrl.label ? containerCtrl.label.text() : '');
+        text = text || tmpPlaceholder || '';
+        var target = valueEl.children().eq(0);
         target.text(text);
       };
 
-      mdSelectCtrl.setIsPlaceholder = function(val) {
-        val ? labelEl.addClass('md-placeholder') : labelEl.removeClass('md-placeholder');
+      mdSelectCtrl.setIsPlaceholder = function(isPlaceholder) {
+        if (isPlaceholder) {
+          valueEl.addClass('md-select-placeholder');
+          if (containerCtrl && containerCtrl.label) {
+            containerCtrl.label.addClass('md-placeholder md-static');
+          }
+        } else {
+          valueEl.removeClass('md-select-placeholder');
+          if (containerCtrl && containerCtrl.label) {
+            containerCtrl.label.removeClass('md-placeholder');
+          }
+        }
       };
+
+      if (!isReadonly) {
+        element
+          .on('focus', function(ev) {
+            // only set focus on if we don't currently have a selected value. This avoids the "bounce"
+            // on the label transition because the focus will immediately switch to the open menu.
+            if (containerCtrl && containerCtrl.element.hasClass('md-input-has-value')) {
+              containerCtrl.setFocused(true);
+            }
+          })
+          .on('blur', function(ev) {
+            containerCtrl && containerCtrl.setFocused(false);
+            inputCheckValue();
+          });
+      }
 
       mdSelectCtrl.triggerClose = function() {
         $parse(attr.mdOnClose)(scope);
@@ -198,8 +241,8 @@ function SelectDirective($mdSelect, $mdUtil, $mdTheming, $mdAria, $interpolate, 
 
       function setAriaLabel() {
         var labelText = element.attr('placeholder');
-        if (!labelText) {
-          labelText = element.find('md-select-label').text();
+        if (!labelText && containerCtrl && containerCtrl.label) {
+          labelText = containerCtrl.label.text();
         }
         $mdAria.expect(element, 'aria-label', labelText);
       }
@@ -224,13 +267,13 @@ function SelectDirective($mdSelect, $mdUtil, $mdTheming, $mdAria, $interpolate, 
           }
           if (selectContainer) {
             selectMenuCtrl.setMultiple(multiple);
-            originalRender = ngModel.$render;
-            ngModel.$render = function() {
+            originalRender = ngModelCtrl.$render;
+            ngModelCtrl.$render = function() {
               originalRender();
               syncLabelText();
             };
             selectMenuCtrl.refreshViewValue();
-            ngModel.$render();
+            ngModelCtrl.$render();
           }
         });
       });
@@ -272,22 +315,34 @@ function SelectDirective($mdSelect, $mdUtil, $mdTheming, $mdAria, $interpolate, 
 
       scope.$on('$destroy', function() {
         if (isOpen) {
-          $mdSelect.cancel().then(function() {
+          $mdSelect.hide().finally(function() {
             selectContainer.remove();
           });
         } else {
           selectContainer.remove();
         }
+        if (containerCtrl) {
+          containerCtrl.setFocused(false);
+          containerCtrl.setHasValue(false);
+          containerCtrl.input = null;
+        }
       });
 
+      function inputCheckValue() {
+        // The select counts as having a value if one or more options are selected,
+        // or if the input's validity state says it has bad input (eg string in a number input)
+        containerCtrl && containerCtrl.setHasValue(selectMenuCtrl.selectedLabels().length > 0 || (element[0].validity || {}).badInput);
+      }
 
       // Create a fake select to find out the label value
       function createSelect() {
         selectContainer = angular.element(selectTemplate);
         var selectEl = selectContainer.find('md-select-menu');
-        selectEl.data('$ngModelController', ngModel);
+        selectEl.data('$ngModelController', ngModelCtrl);
         selectEl.data('$mdSelectController', mdSelectCtrl);
         selectScope = scope.$new();
+        $mdTheming.inherit(selectContainer, element);
+        selectContainer[0].setAttribute('class', selectContainer[0].getAttribute('class') + ' ' + element.attr('md-container-class'));
         selectContainer = $compile(selectContainer)(selectScope);
         selectMenuCtrl = selectContainer.find('md-select-menu').controller('mdSelectMenu');
       }
@@ -309,25 +364,24 @@ function SelectDirective($mdSelect, $mdUtil, $mdTheming, $mdAria, $interpolate, 
             }
             selectMenuCtrl.select(optionCtrl.hashKey, optionCtrl.value);
             selectMenuCtrl.refreshViewValue();
-            ngModel.$render();
+            ngModelCtrl.$render();
           }
         }
       }
 
       function openSelect() {
-        scope.$evalAsync(function() {
-          isOpen = true;
-          $mdSelect.show({
-            scope: selectScope,
-            preserveScope: true,
-            skipCompile: true,
-            element: selectContainer,
-            target: element[0],
-            hasBackdrop: true,
-            loadingAsync: attr.mdOnOpen ? scope.$eval(attr.mdOnOpen) || true : false,
-          }).then(function(selectedText) {
-            isOpen = false;
-          });
+        scope.$apply('isOpen = true');
+
+        $mdSelect.show({
+          scope: selectScope,
+          preserveScope: true,
+          skipCompile: true,
+          element: selectContainer,
+          target: element[0],
+          hasBackdrop: true,
+          loadingAsync: attr.mdOnOpen ? scope.$eval(attr.mdOnOpen) || true : false
+        }).then(function() {
+          isOpen = false;
         });
       }
     };
@@ -375,6 +429,10 @@ function SelectMenuDirective($parse, $mdUtil, $mdTheming) {
       var option = $mdUtil.getClosest(ev.target, 'md-option');
       var optionCtrl = option && angular.element(option).data('$mdOptionController');
       if (!option || !optionCtrl) return;
+      if (option.hasAttribute('disabled')) {
+        ev.stopImmediatePropagation();
+        return false;
+      }
 
       var optionHashKey = selectCtrl.hashGetter(optionCtrl.value);
       var isSelected = angular.isDefined(selectCtrl.selected[optionHashKey]);
@@ -606,9 +664,18 @@ function OptionDirective($mdButtonInkRipple, $mdUtil) {
       scope.$watch(function() { return element.text(); }, setOptionValue);
     }
 
+    attr.$observe('disabled', function(disabled) {
+      if (disabled) {
+        element.attr('tabindex', '-1');
+      } else {
+        element.attr('tabindex', '0');
+      }
+    });
+
     scope.$$postDigest(function() {
       attr.$observe('selected', function(selected) {
         if (!angular.isDefined(selected)) return;
+        if (typeof selected == 'string') selected = true;
         if (selected) {
           if (!selectCtrl.isMultiple) {
             selectCtrl.deselect( Object.keys(selectCtrl.selected)[0] );
@@ -688,7 +755,7 @@ function OptgroupDirective() {
 }
 
 function SelectProvider($$interimElementProvider) {
-  selectDefaultOptions.$inject = ["$mdSelect", "$mdConstant", "$$rAF", "$mdUtil", "$mdTheming", "$timeout", "$window"];
+  selectDefaultOptions.$inject = ["$mdSelect", "$mdConstant", "$$rAF", "$mdUtil", "$mdTheming", "$window", "$q", "$compile"];
   return $$interimElementProvider('$mdSelect')
     .setDefaults({
       methods: ['target'],
@@ -696,7 +763,9 @@ function SelectProvider($$interimElementProvider) {
     });
 
   /* ngInject */
-  function selectDefaultOptions($mdSelect, $mdConstant, $$rAF, $mdUtil, $mdTheming, $timeout, $window ) {
+  function selectDefaultOptions($mdSelect, $mdConstant, $$rAF, $mdUtil, $mdTheming, $window, $q, $compile ) {
+    var animator = $mdUtil.dom.animator;
+
     return {
       parent: 'body',
       onShow: onShow,
@@ -707,6 +776,8 @@ function SelectProvider($$interimElementProvider) {
     };
 
     function onShow(scope, element, opts) {
+
+
       if (!opts.target) {
         throw new Error('$mdSelect.show() expected a target element in options.target but got ' +
                         '"' + opts.target + '"!');
@@ -718,7 +789,7 @@ function SelectProvider($$interimElementProvider) {
         parent: angular.element(opts.parent),
         selectEl: element.find('md-select-menu'),
         contentEl: element.find('md-content'),
-        backdrop: opts.hasBackdrop && angular.element('<md-backdrop class="md-select-backdrop md-click-catcher">')
+        backdrop: opts.hasBackdrop && $mdUtil.createBackdrop(scope, "md-select-backdrop md-click-catcher")
       });
 
       opts.resizeFn = function() {
@@ -760,12 +831,8 @@ function SelectProvider($$interimElementProvider) {
       } else {
         opts.disableParentScroll = false;
       }
-      // Only activate click listeners after a short time to stop accidental double taps/clicks
-      // from clicking the wrong item
-      $timeout(activateInteraction, 75, false);
-
       if (opts.backdrop) {
-        $mdTheming.inherit(opts.backdrop, opts.parent);
+        $mdTheming.inherit(opts.backdrop, opts.target);
         opts.parent.append(opts.backdrop);
       }
       opts.parent.append(element);
@@ -779,7 +846,11 @@ function SelectProvider($$interimElementProvider) {
         });
       });
 
-      return $mdUtil.transitionEndPromise(opts.selectEl, {timeout: 350});
+      return opts.isRemoved ? $q.reject(true) : animator
+        .waitTransitionEnd(opts.selectEl, {timeout: 470})
+        .finally(function() {
+          activateInteraction();
+        });
 
       function configureAria() {
         opts.target.attr('aria-expanded', 'true');
@@ -794,7 +865,7 @@ function SelectProvider($$interimElementProvider) {
           e.preventDefault();
           e.stopPropagation();
           opts.restoreFocus = false;
-          scope.$apply($mdSelect.cancel);
+          $mdUtil.nextTick($mdSelect.hide,true);
         });
 
         // Escape to close
@@ -815,7 +886,7 @@ function SelectProvider($$interimElementProvider) {
             case $mdConstant.KEY_CODE.ESCAPE:
               ev.preventDefault();
               opts.restoreFocus = true;
-              scope.$apply($mdSelect.cancel);
+              $mdUtil.nextTick($mdSelect.hide,true);
           }
         });
 
@@ -827,6 +898,7 @@ function SelectProvider($$interimElementProvider) {
             default:
               if (ev.keyCode >= 31 && ev.keyCode <= 90) {
                 var optNode = opts.selectEl.controller('mdSelectMenu').optNodeForKeyboardSearch(ev);
+                opts.focusedNode = optNode || opts.focusedNode;
                 optNode && optNode.focus();
               }
           }
@@ -834,18 +906,27 @@ function SelectProvider($$interimElementProvider) {
 
 
         function focusOption(direction) {
+          optionNodes = opts.selectEl[0].getElementsByTagName('md-option');
+
           var optionsArray = $mdUtil.nodesToArray(optionNodes);
           var index = optionsArray.indexOf(opts.focusedNode);
-          if (index === -1) {
-            // We lost the previously focused element, reset to first option
-            index = 0;
-          } else if (direction === 'next' && index < optionsArray.length - 1) {
-            index++;
-          } else if (direction === 'prev' && index > 0) {
-            index--;
-          }
-          var newOption = opts.focusedNode = optionsArray[index];
+
+          var newOption;
+
+          do {
+            if (index === -1) {
+              // We lost the previously focused element, reset to first option
+              index = 0;
+            } else if (direction === 'next' && index < optionsArray.length - 1) {
+              index++;
+            } else if (direction === 'prev' && index > 0) {
+              index--;
+            }
+            newOption = optionsArray[index];
+            if (newOption.hasAttribute('disabled')) newOption = undefined;
+          } while (!newOption && index < optionsArray.length - 1 && index > 0)
           newOption && newOption.focus();
+          opts.focusedNode = newOption;
         }
         function focusNextOption() {
           focusOption('next');
@@ -864,9 +945,10 @@ function SelectProvider($$interimElementProvider) {
         function checkCloseMenu() {
           if (!selectCtrl.isMultiple) {
             opts.restoreFocus = true;
-            scope.$evalAsync(function() {
+
+            $mdUtil.nextTick(function() {
               $mdSelect.hide(selectCtrl.ngModel.$viewValue);
-            });
+            },true);
           }
         }
       }
@@ -875,37 +957,47 @@ function SelectProvider($$interimElementProvider) {
 
     function onRemove(scope, element, opts) {
       opts.isRemoved = true;
-      element.addClass('md-leave')
-        .removeClass('md-clickable');
-      opts.target.attr('aria-expanded', 'false');
 
+      opts.target.attr('aria-expanded', 'false');
+      opts.selectEl.off('keydown');
 
       angular.element($window).off('resize', opts.resizeFn);
       angular.element($window).off('orientationchange', opts.resizefn);
       opts.resizeFn = undefined;
 
+      element
+        .addClass('md-leave')
+        .removeClass('md-clickable');
+
       var mdSelect = opts.selectEl.controller('mdSelect');
       if (mdSelect) {
-        mdSelect.setLabelText(opts.selectEl.controller('mdSelectMenu').selectedLabels());
+        mdSelect.setLabelText(opts.selectEl
+          .controller('mdSelectMenu')
+          .selectedLabels()
+        );
       }
 
-      return $mdUtil.transitionEndPromise(element, { timeout: 350 }).then(function() {
-        element.removeClass('md-active');
-        opts.backdrop && opts.backdrop.remove();
-        if (element[0].parentNode === opts.parent[0]) {
-          opts.parent[0].removeChild(element[0]); // use browser to avoid $destroy event
-        }
-        if (opts.disableParentScroll) {
-          opts.restoreScroll();
-        }
-        if (opts.restoreFocus) opts.target.focus();
-        mdSelect && mdSelect.triggerClose();
-      });
+      opts.backdrop && opts.backdrop.remove();
+
+      return animator
+        .waitTransitionEnd(element, { timeout: 370 })
+        .finally(function() {
+          mdSelect && mdSelect.triggerClose();
+
+          element.removeClass('md-active');
+          if (element[0].parentNode === opts.parent[0]) {
+            opts.parent[0].removeChild(element[0]); // use browser to avoid $destroy event
+          }
+          if (opts.disableParentScroll) {
+            opts.restoreScroll();
+          }
+          if (opts.restoreFocus) opts.target.focus();
+        });
     }
 
     function animateSelect(scope, element, opts) {
       var containerNode = element[0],
-          targetNode = opts.target[0].firstElementChild.firstElementChild, // target the first span, functioning as the label
+          targetNode = opts.target[0].firstElementChild, // target the label
           parentNode = opts.parent[0],
           selectNode = opts.selectEl[0],
           contentNode = opts.contentEl[0],
@@ -958,9 +1050,16 @@ function SelectProvider($$interimElementProvider) {
         selectNode.classList.add('md-overflow');
       }
 
+      var focusedNode = centeredNode;
+      if ((focusedNode.tagName || '').toUpperCase() === 'MD-OPTGROUP') {
+        focusedNode = optionNodes[0] || contentNode.firstElementChild || contentNode;
+        centeredNode = focusedNode;
+      }
+
       // Get the selectMenuRect *after* max-width is possibly set above
       var selectMenuRect = selectNode.getBoundingClientRect();
       var centeredRect = getOffsetRect(centeredNode);
+
 
       if (centeredNode) {
         var centeredStyle = $window.getComputedStyle(centeredNode);
@@ -968,10 +1067,6 @@ function SelectProvider($$interimElementProvider) {
         centeredRect.paddingRight = parseInt(centeredStyle.paddingRight, 10) || 0;
       }
 
-      var focusedNode = centeredNode;
-      if ((focusedNode.tagName || '').toUpperCase() === 'MD-OPTGROUP') {
-        focusedNode = optionNodes[0] || contentNode.firstElementChild || contentNode;
-      }
 
       if (isScrollable) {
         var scrollBuffer = contentNode.offsetHeight / 2;
@@ -1000,9 +1095,9 @@ function SelectProvider($$interimElementProvider) {
           transformOrigin = '50% 100%';
         }
       } else {
-        left = targetRect.left + centeredRect.left - centeredRect.paddingLeft;
+        left = (targetRect.left + centeredRect.left - centeredRect.paddingLeft) + 2;
         top = Math.floor(targetRect.top + targetRect.height / 2 - centeredRect.height / 2 -
-          centeredRect.top + contentNode.scrollTop);
+          centeredRect.top + contentNode.scrollTop) + 2;
 
 
         transformOrigin = (centeredRect.left + targetRect.width / 2) + 'px ' +
@@ -1027,7 +1122,7 @@ function SelectProvider($$interimElementProvider) {
       $$rAF(function() {
         element.addClass('md-active');
         selectNode.style[$mdConstant.CSS.TRANSFORM] = '';
-        if (focusedNode) {
+        if (focusedNode && !focusedNode.hasAttribute('disabled')) {
           opts.focusedNode = focusedNode;
           focusedNode.focus();
         }

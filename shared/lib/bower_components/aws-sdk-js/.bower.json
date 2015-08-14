@@ -1,6 +1,7 @@
 {
   "name": "aws-sdk",
   "ignore": [
+    "apis",
     "doc-src",
     "dist-tools",
     "eslint-rules",
@@ -14,19 +15,20 @@
     "Rakefile",
     "package.json",
     "testem.json",
-    ".*"
+    ".*",
+    "index.js"
   ],
   "main": "dist/aws-sdk.js",
   "homepage": "https://github.com/aws/aws-sdk-js",
-  "version": "2.1.36",
-  "_release": "2.1.36",
+  "version": "2.1.45",
+  "_release": "2.1.45",
   "_resolution": {
     "type": "version",
-    "tag": "v2.1.36",
-    "commit": "99c0e1240bd1a8278c6258b8bac3ca6f44336ca4"
+    "tag": "v2.1.45",
+    "commit": "320ee0c4e88769bfcb662f15dc1eb7e07bbb2e17"
   },
   "_source": "git://github.com/aws/aws-sdk-js.git",
-  "_target": "~2.1.36",
+  "_target": "~2.1.45",
   "_originalSource": "aws-sdk-js",
   "_direct": true
 }
