@@ -33,6 +33,27 @@ section#main {
 	section {
 		position: relative;
 		padding: 20px;
+
+		> img.background {
+			display: block;
+			position: absolute;
+			pointer-events: none;
+			z-index: 0;
+			max-width: 75%;
+			top: calc(50% + 60px);
+			left: 50%;
+			@include transform(translateY(-50%) translateX(-50%));
+
+			&.full {
+				min-width: 100%;
+				max-height: 100%;
+			}
+		}
+
+		> .section-content-container, > .hero-text {
+			position: relative;
+			z-index: 1;
+		}
 	}
 }
 
@@ -591,7 +612,7 @@ section#main {
 
 
 #footer {
-	padding-bottom: 50px;
+	padding: 40px;
 	background-color: rgba(97, 51, 163, 0.75);
 
 	> section {
@@ -605,7 +626,7 @@ section#main {
 	}
 
 	.footer-links {
-		margin-top: 30px;
+		margin-top: 20px;
 		font-size: 75%;
 	}
 }
@@ -735,5 +756,10 @@ html.mobile {
 #main.unisection-mode {
 	> section:not(.unisection), .bouncing-down-arrow {
 		display: none;
+	}
+
+	> section.unisection {
+		padding-top: 50px;
+		min-height: calc(100vh - 170px);
 	}
 }
