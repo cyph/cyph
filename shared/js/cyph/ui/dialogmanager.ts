@@ -111,8 +111,8 @@ module Cyph {
 			 * @param $mdToast
 			 */
 			public constructor(
-				private $mdDialog: angular.material.MDDialogService,
-				private $mdToast: angular.material.MDToastService
+				private $mdDialog: angular.material.IDialogService,
+				private $mdToast: angular.material.IToastService
 			) {}
 		}
 	}

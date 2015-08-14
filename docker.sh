@@ -4,12 +4,12 @@ cd $(cd "$(dirname "$0")"; pwd)
 
 
 defaultsleep () {
-	sleep 10
+	sleep 2
 }
 
 shellinit () {
 	defaultsleep
-	$(boot2docker shellinit | perl -pe 's/([A-Za-z])\:\\/\/cygdrive\/\L\1\//g' | sed 's|\\|/|g')
+	$(boot2docker shellinit 2> /dev/null | perl -pe 's/([A-Za-z])\:\\/\/cygdrive\/\L\1\//g' | sed 's|\\|/|g')
 	defaultsleep
 }
 
@@ -25,6 +25,8 @@ start () {
 }
 
 stop () {
+	docker ps -a | grep cyph | awk '{print $1}' | xargs -I% bash -c 'docker kill -s 9 % ; docker rm %'
+
 	if boot2docker > /dev/null 2>&1 ; then
 		shellinit
 		boot2docker stop > /dev/null 2>&1
@@ -69,7 +71,6 @@ if [ "${command}" == 'serve' ] ; then
 	echo "docs: ${base}:42001/js/docs/index.html"
 
 elif [ "${command}" == 'kill' ] ; then
-	docker ps -a | grep cyph | awk '{print $1}' | xargs -I% bash -c 'docker kill -s 9 % ; docker rm %'
 	stop
 	exit 0
 
@@ -96,7 +97,7 @@ elif [ "${command}" == 'docs' ] ; then
 	args=''
 
 elif [ "${command}" == 'restart' ] ; then
-	./docker.sh kill
+	stop
 	start
 	exit 0
 
@@ -105,6 +106,19 @@ elif [ "${command}" == 'updatelibs' ] ; then
 
 elif [ "${command}" == 'websignhash' ] ; then
 	args=''
+
+elif [ "${command}" == 'make' ] ; then
+	stop
+	start
+	docker build -t "${image}" .
+	exit 0
+
+elif [ "${command}" == 'makeclean' ] ; then
+	stop
+	start
+	docker images | grep cyph | awk '{print $3}' | xargs -I% docker rmi -f %
+	docker images --filter dangling=true --quiet | xargs -I% docker rmi -f %
+	exit 0
 
 else
 	echo fak u gooby
