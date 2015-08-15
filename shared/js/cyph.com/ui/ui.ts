@@ -207,7 +207,10 @@ module Cyph.com {
 					Elements.backgroundVideo	= $mobilePoster;
 				}
 				else {
-					Elements.backgroundVideo[0]['currentTime']	= 1.25;
+					try {
+						Elements.backgroundVideo[0]['currentTime']	= 1.25;
+					}
+					catch (_) {}
 
 					setTimeout(() => Elements.backgroundVideo['appear']().
 						on('appear', () => Elements.backgroundVideo[0]['play']()).
