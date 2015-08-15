@@ -6,6 +6,7 @@ js/workerhelper.js
 appcache.appcache
 manifest.json
 ../serviceworker.js
+../unsupportedbrowser
 
 NETWORK:
 *
