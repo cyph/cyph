@@ -308,7 +308,7 @@ section#main {
 	}
 }
 
-@media (min-width: 1215px) {
+@media (min-width: 1230px) {
 	#main-toolbar {
 		.desktop-only {
 			display: initial;
@@ -319,7 +319,7 @@ section#main {
 		}
 	}
 }
-@media (max-width: 1214px) {
+@media (max-width: 1229px) {
 	#main-toolbar {
 		.desktop-only {
 			display: none;
@@ -434,6 +434,10 @@ section#main {
 
 #intro-section {
 	background-color: #262638;
+
+	.hero-text {
+		padding-bottom: 25px;
+	}
 }
 
 .back-arrow {
@@ -610,6 +614,11 @@ section#main {
 }
 
 
+#gettingstarted-section {
+	height: calc(100vh - 120px);
+}
+
+
 
 #footer {
 	padding: 40px;
@@ -760,6 +769,6 @@ html.mobile {
 
 	> section.unisection {
 		padding-top: 50px;
-		min-height: calc(100vh - 170px);
+		min-height: calc(100vh - 120px);
 	}
 }
