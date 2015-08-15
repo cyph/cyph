@@ -3,7 +3,8 @@ var files	= [
 	'websign/js/workerhelper.js',
 	'websign/appcache.appcache',
 	'websign/manifest.json',
-	'serviceworker.js'
+	'serviceworker.js',
+	'unsupportedbrowser'
 ].map(function (file) {
 	return new Request(file);
 });

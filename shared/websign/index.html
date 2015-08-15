@@ -125,7 +125,8 @@
 					'websign/js/workerhelper.js',
 					'websign/appcache.appcache',
 					'websign/manifest.json',
-					'serviceworker.js'
+					'serviceworker.js',
+					'unsupportedbrowser'
 				],
 
 				publicKeys: PUBLIC_KEYS
@@ -390,7 +391,7 @@
 						text:
 							navigator.language + '\n\n' +
 							navigator.userAgent + '\n\n' +
-							location.toString() + '\n\n' +
+							location.toString().replace(/\/#.*/g, '') + '\n\n' +
 							WebSign.stringify(true)
 					}
 				})
