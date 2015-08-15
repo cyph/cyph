@@ -6,6 +6,8 @@ module Cyph.com {
 		export enum States {
 			home,
 			podcast,
+			contact,
+			donate,
 			enterprise,
 			error,
 			faq,
@@ -18,8 +20,8 @@ module Cyph.com {
 		 */
 		export enum HomeSections {
 			about,
-			contact,
 			features,
+			gettingstarted,
 			intro,
 			login
 		}
