@@ -32,6 +32,8 @@ for path in $( \
 		rm .index.html.tmp
 	elif [ "$path" == 'serviceworker.js' ] ; then
 		cat websign/serviceworker.js >> .bootstrapText.tmp
+	elif [ "$path" == 'unsupportedbrowser' ] ; then
+		cat unsupportedbrowser.html >> .bootstrapText.tmp
 	else
 		cat "$path" >> .bootstrapText.tmp
 	fi
