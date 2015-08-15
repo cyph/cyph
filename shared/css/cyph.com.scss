@@ -54,6 +54,10 @@ section#main {
 			position: relative;
 			z-index: 1;
 		}
+
+		> .section-content-container:not(.full) {
+			max-width: 75%;
+		}
 	}
 }
 
@@ -770,5 +774,9 @@ html.mobile {
 	> section.unisection {
 		padding-top: 50px;
 		min-height: calc(100vh - 120px);
+
+		> .section-content-container {
+			margin-top: 40px;
+		}
 	}
 }
