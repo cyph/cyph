@@ -49,7 +49,14 @@ module Cyph.com {
 							});
 						}
 						else {
-							this.scroll($('#' + urlState + '-section').offset().top);
+							this.scroll(
+								$('#' + urlState + '-section').offset().top -
+								(
+									this.homeSection === HomeSections.gettingstarted ?
+										0 :
+										Elements.mainToolbar.height()
+								)
+							);
 						}
 					}, 250);
 				}
