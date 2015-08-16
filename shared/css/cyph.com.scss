@@ -112,7 +112,8 @@ section#main {
 #new-cyph {
 	font-family: 'Ubuntu';
 	font-size: 11px;
-	position: absolute;
+	font-weight: 300;
+	position: fixed;
 	top: 5px;
 	left: calc(50% - 60px);
 	height: 38px;
@@ -121,9 +122,19 @@ section#main {
 	border-radius: 1px;
 	box-shadow: 0px 4px 10px -1px rgba(0, 0, 0, 0.25);
 	background-color: #7d4fd3 !important;
+	@include transition(all 0.5s ease);
 
 	&.focus, &:hover {
 		background-color: #7239dd !important;
+	}
+
+	&.active {
+		font-size: 22px;
+		top: calc(50vh - 98px);
+		left: calc(50% - 120px);
+		height: 76px;
+		width: 240px;
+		border-radius: 3px;
 	}
 }
 
@@ -618,6 +629,19 @@ section#main {
 
 #gettingstarted-section {
 	height: calc(100vh - 120px);
+
+	> .hero-text, > .section-content-container {
+		position: absolute;
+	}
+
+	> .hero-text {
+		top: calc(50% - 133px);
+		left: 0px;
+	}
+
+	> .section-content-container {
+		top: calc(50% + 38px);
+	}
 }
 
 
