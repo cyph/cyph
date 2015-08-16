@@ -631,7 +631,7 @@ section#main {
 	height: calc(100vh - 120px);
 
 	> .hero-text, > .section-content-container {
-		position: absolute;
+		position: absolute !important;
 	}
 
 	> .hero-text {
