@@ -15,6 +15,7 @@ module Cyph.com {
 			public static fixedHeaderStuff: JQuery;
 			public static heroSection: JQuery;
 			public static heroText: JQuery;
+			public static mainToolbar: JQuery;
 			public static newCyph: JQuery;
 			public static newCyphParent: JQuery;
 			public static podcastLogo: JQuery;
@@ -39,6 +40,7 @@ module Cyph.com {
 				Elements.featureListItems	= $('.feature-list-item');
 				Elements.heroSection		= $('#hero-section');
 				Elements.heroText			= $('#hero-section .hero-text');
+				Elements.mainToolbar		= $('#main-toolbar');
 				Elements.newCyph			= $('#new-cyph');
 				Elements.newCyphParent		= Elements.newCyph.parent();
 				Elements.podcastLogo		= $('.podcast-logo');
