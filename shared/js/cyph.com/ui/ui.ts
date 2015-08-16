@@ -53,7 +53,7 @@ module Cyph.com {
 								$('#' + urlState + '-section').offset().top -
 								(
 									this.homeSection === HomeSections.gettingstarted ?
-										0 :
+										-1 :
 										Elements.mainToolbar.height()
 								)
 							);
@@ -243,6 +243,11 @@ module Cyph.com {
 						}
 					}, 5000);
 				}
+
+				setInterval(() => Elements.newCyph.toggleClass('active',
+					this.state === States.home &&
+					Cyph.UI.Elements.body['scrollPosition']() === 0
+				), 500);
 
 
 				/* Avoid full page reloads */
