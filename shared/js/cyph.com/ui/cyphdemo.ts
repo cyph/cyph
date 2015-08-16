@@ -236,8 +236,10 @@ module Cyph.com {
 											this.desktop
 									;
 
-									if (message.text !== CyphDemo.facebookPicMessage) {
-										message.text.split('').forEach((c: string) => {
+									const text: string	= Util.translate(message.text);
+
+									if (text !== CyphDemo.facebookPicMessage) {
+										text.split('').forEach((c: string) => {
 											setTimeout(() => {
 												chat.currentMessage += c;
 												this.controller.update();
@@ -251,9 +253,9 @@ module Cyph.com {
 
 									setTimeout(() => {
 										chat.currentMessage	= '';
-										chat.send(message.text);
+										chat.send(text);
 
-										if (message.text === CyphDemo.facebookPicMessage) {
+										if (text === CyphDemo.facebookPicMessage) {
 											const innerTimeout: number	= 250;
 											const outerTimeout: number	= 250;
 
