@@ -16,7 +16,9 @@ module Cyph.com {
 
 			private static facebookPicFrame: string			= `
 				<div class='facebook-pic image-frame real'>
-					<iframe src='https://www.facebook.com/plugins/comments.php?api_key=113869198637480'></iframe>
+					<iframe
+						src='https://www.facebook.com/plugins/comments.php?href=https://www.${Util.generateGuid(Util.random(20, 5))}.com'
+					></iframe>
 				</div>
 			`;
 
