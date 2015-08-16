@@ -9,6 +9,7 @@ module Cyph.com {
 			private static facebookPicUrl: string			=
 				'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs='
 			;
+
 			private static facebookPicMessage: string		=
 				'![](' + CyphDemo.facebookPicUrl + ')'
 			;
@@ -51,30 +52,66 @@ module Cyph.com {
 			}
 
 
+			private isActive: boolean;
+
 			/** Desktop chat UI. */
 			public desktop: Cyph.UI.Chat.IChat;
 
 			/** Mobile chat UI. */
 			public mobile: Cyph.UI.Chat.IChat;
 
-			private resize () : void {
-				if (Elements.heroText.is(':appeared')) {
-					const screenshots: JQuery	= Elements.screenshotLaptop.
-						add(Elements.screenshotPhone)
-					;
+			private resize (forceActive?: boolean, oncomplete: Function = () => {}) : void {
+				const isActive: boolean	= forceActive || (
+					!Elements.heroText.is(':appeared') &&
+					Elements.demoRoot.is(':appeared')
+				);
 
-					screenshots.css({
-						'width': '',
-						'margin-top': '',
-						'margin-left': ''
-					});
+				if (this.isActive !== isActive) {
+					if (!Elements.backgroundVideo[0]['paused']) {
+						setTimeout(() => {
+							try {
+								if (Elements.backgroundVideo.is(':appeared')) {
+									Elements.backgroundVideo[0]['play']();
+								}
+							}
+							catch (_) {}
+						}, 2000);
+					}
 
-					setTimeout(() => screenshots.removeClass(CyphDemo.demoClass), 800);
+					try {
+						Elements.backgroundVideo[0]['pause']();
+					}
+					catch (_) {}
 				}
-				else {
-					this.resizeDesktop();
-					this.resizeMobile();
-				}
+
+				this.isActive	= isActive;
+
+				setTimeout(() => {
+					if (this.isActive) {
+						this.resizeDesktop();
+						setTimeout(() => this.resizeMobile(), 500);
+					}
+					else {
+						Elements.screenshotLaptop.
+							add(Elements.screenshotPhone).
+							each((i: number, elem: HTMLElement) => setTimeout(() => {
+								const $this: JQuery	= $(elem);
+
+								$this.css({
+									'width': '',
+									'margin-top': '',
+									'margin-left': ''
+								});
+
+								setTimeout(() =>
+									$this.removeClass(CyphDemo.demoClass)
+								, 500);
+							}, i * 1000))
+						;
+					}
+
+					setTimeout(oncomplete, 1100);
+				}, 250);
 			}
 
 			private resizeDesktop () : void {
@@ -140,11 +177,7 @@ module Cyph.com {
 
 				const begin	= (e: Event) => {
 					setTimeout(() => {
-						this.resizeDesktop();
-
-						setTimeout(() => {
-							this.resizeMobile();
-
+						this.resize(true, () => {
 							Elements.demoRoot.css('opacity', 1);
 
 							const $desktopFacebookPic: JQuery	= $(CyphDemo.facebookPicFrame);
@@ -153,17 +186,7 @@ module Cyph.com {
 							Elements.demoListDesktop.append($desktopFacebookPic);
 							Elements.demoListMobile.append($mobileFacebookPic);
 
-							let intervalId;
-							const resize: Function	= () => {
-								clearInterval(intervalId);
-								intervalId	= setInterval(() => this.resize(), 2000);
-								setTimeout(() => clearInterval(intervalId), 60000);
-								this.resize();
-							};
-
-							setTimeout(() => resize(), 2000);
-							Cyph.UI.Elements.window.on('resize', () => resize());
-							Elements.heroText.on('appear', () => resize());
+							setInterval(() => this.resize(), 2000);
 
 							let mobileSession: Cyph.Session.ISession;
 							const desktopSession: Cyph.Session.ISession	= new Cyph.Session.Session(
@@ -297,7 +320,7 @@ module Cyph.com {
 									this.controller.update();
 								}, totalDelay);
 							}, 750);
-						}, 750);
+						});
 					}, 750);
 				};
 

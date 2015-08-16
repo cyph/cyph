@@ -167,7 +167,6 @@ section#main {
 
 		h3.title {
 			font-size: 16px;
-			font-family: 'Ubuntu';
 			font-weight: 300;
 			line-height: 135%;
 			text-decoration: none;
@@ -196,23 +195,20 @@ section#main {
 		height: calc((50px + 5.525vw) * 3 - 50px);
 		margin-top: 25px;
 		position: relative;
-		@include transition(all 0.75s ease);
+		@include transition(all 0.25s ease);
 
 		&.laptop {
 			margin-left: calc(((50px + 5.525vw) * 3 - 50px) * -0.885);
 
 			&:not(.demo):hover {
 				margin-left: 0px;
+				@include transition(all 0.75s ease);
 			}
 		}
 
 		&.phone {
 			margin-left: auto;
 			margin-right: auto;
-
-			&:not(.demo):hover {
-				@include transition(all 0.25s ease);
-			}
 		}
 
 		&.demo {
@@ -380,7 +376,12 @@ section#main {
 		display: block;
 
 		&:not(.active) {
-			opacity: 0.2;
+			opacity: 0.15;
+
+			&:hover {
+				opacity: 0.4;
+				@include transition(opacity 0.1s linear);
+			}
 		}
 
 		> img {
