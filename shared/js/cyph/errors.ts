@@ -13,6 +13,11 @@ module Cyph {
 				column?: number,
 				errorObject?: any
 			) : void => {
+				/* Annoying useless iframe-related spam */
+				if (errorMessage === 'Script error.') {
+					return;
+				}
+
 				let exception: string	= !errorMessage ? '' : (
 					errorMessage + '\n\n' +
 					'URL: ' + url + '\n' +
