@@ -576,9 +576,10 @@ section#main {
 		top: -200px;
 
 		> iframe {
-			margin-top: -60px;
-			margin-left: 167px;
-			@include transform(scale(2.25));
+			width: 200px;
+			margin-top: -135px;
+			margin-left: 205px;
+			@include transform(scale(3.4));
 		}
 	}
 
