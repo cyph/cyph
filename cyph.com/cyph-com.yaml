@@ -123,7 +123,7 @@ handlers:
   secure: always
   # default_headers Cache-Control Expires
 
-- url: /blog/(\d+/\d+/\d+/[A-Za-z0-9]+)[/]?
+- url: /blog/(\d+/\d+/\d+/.*?)[/]?
   static_files: blog/build/\1/index.html
   upload: blog/build/.*
   secure: always
