@@ -6,6 +6,7 @@ module Cyph.com {
 		export class Elements {
 			public static bouncingDownArrow: JQuery;
 			public static backgroundVideo: JQuery;
+			public static contentContainers: JQuery;
 			public static demoRoot: JQuery;
 			public static demoListDesktop: JQuery;
 			public static demoRootDesktop: JQuery;
@@ -32,6 +33,7 @@ module Cyph.com {
 
 				Elements.bouncingDownArrow	= $('.bouncing-down-arrow');
 				Elements.backgroundVideo	= $('.hero-background > :first-child');
+				Elements.contentContainers	= $('.section-content-container');
 				Elements.demoRoot			= $('.demo-root');
 				Elements.demoListDesktop	= $('.demo-root > .desktop .message-list md-list');
 				Elements.demoRootDesktop	= $('.demo-root > .desktop');
