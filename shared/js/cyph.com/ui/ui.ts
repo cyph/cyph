@@ -250,6 +250,26 @@ module Cyph.com {
 				), 500);
 
 
+				/* Section sizing */
+
+				if (!Cyph.Env.isMobile) {
+					setInterval(() =>
+						Elements.contentContainers.each((i: number, elem: HTMLElement) => {
+							const $this: JQuery	= $(elem);
+
+							$this.width(
+								$this.text().
+									split('\n').
+									map((s: string) => (s.match(/[A-Za-z0-9]/g) || []).length).
+									reduce((a: number, b: number) => Math.max(a, b))
+								*
+								parseInt($this.css('font-size'), 10) / 1.6
+							);
+						})
+					, 2000);
+				}
+
+
 				/* Avoid full page reloads */
 
 				$('a[href^="/"]:not(a[href^="/blog"])').click(e => {

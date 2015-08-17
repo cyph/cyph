@@ -692,7 +692,8 @@ section#main {
 
 .section-content-container {
 	width: 100%;
-	margin-top: 25px;
+	max-width: 100%;
+	margin-top: 30px;
 	margin-left: 50%;
 	@include transform(translateX(-50%));
 
@@ -703,12 +704,10 @@ section#main {
 	li {
 		margin-bottom: 15px;
 	}
+}
 
-	&:not(.full) {
-		width: auto;
-		max-width: 75%;
-		display: inline-block;
-	}
+html:not(.mobile) .section-content-container:not(.full) {
+	max-width: 80%;
 }
 
 .founder-photos {
