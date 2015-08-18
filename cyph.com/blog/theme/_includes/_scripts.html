@@ -3,10 +3,18 @@
 {% if site.inc.sharing.twitter %}<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src='/lib/blog/twitter/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>{% endif %}
 {% if site.inc.sharing.facebook %}<div id='fb-root'></div>
 <script>(function(d, s, id) {
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '873979796022229',
+      xfbml      : true,
+      version    : 'v2.4'
+    });
+  };
+
   var js, fjs = d.getElementsByTagName(s)[0];
   if (d.getElementById(id)) return;
   js = d.createElement(s); js.id = id;
-  js.src = '/lib/blog/facebook/all.js';
+  js.src = '/lib/blog/facebook/sdk.js';
   fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));</script>{% endif %}
 {% if site.inc.sharing.gplus %}
