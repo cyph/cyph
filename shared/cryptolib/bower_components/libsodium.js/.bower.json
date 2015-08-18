@@ -43,11 +43,11 @@
     "test",
     "wrapper"
   ],
-  "_release": "60cb8a52e6",
+  "_release": "2bd105cf46",
   "_resolution": {
     "type": "branch",
     "branch": "master",
-    "commit": "60cb8a52e6608d6f0eb355b8aad37c8a2717f0bd"
+    "commit": "2bd105cf468534b67c2f843ea3f5fa9b6593288a"
   },
   "_source": "git://github.com/jedisct1/libsodium.js.git",
   "_target": "master",
