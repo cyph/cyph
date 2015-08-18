@@ -10,6 +10,7 @@
 /// <reference path="../basebuttonmanager.ts" />
 /// <reference path="../elements.ts" />
 /// <reference path="../nanoscroller.ts" />
+/// <reference path="../virtualkeyboardwatcher.ts" />
 /// <reference path="../visibilitywatcher.ts" />
 /// <reference path="../affiliate.ts" />
 /// <reference path="cyphertext.ts" />
