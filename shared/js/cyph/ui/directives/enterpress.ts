@@ -15,16 +15,23 @@ module Cyph {
 							trigger: '&' + Enterpress.title
 						},
 						link: (scope, element, attrs) => {
-							const platformRestriction: string	= attrs['enterpressOnly'];
+							element.keypress(e => {
+								const platformRestriction: string	= attrs['enterpressOnly'];
 
-							if (!platformRestriction || platformRestriction === Cyph.Env.platformString) {
-								element.keypress(e => {
-									if (e.keyCode === 13 && !e.shiftKey) {
-										e.preventDefault();
-										scope['trigger']();
-									}
-								});
-							}
+								/* Allow enter press on external keyboards for mobile */
+								const platform: string	= Cyph.Env.isMobile && !VirtualKeyboardWatcher.isOpen ?
+									'desktop' :
+									Cyph.Env.platformString
+								;
+
+								if (
+									(!platformRestriction || platformRestriction === platform) &&
+									(e.keyCode === 13 && !e.shiftKey)
+								) {
+									e.preventDefault();
+									scope['trigger']();
+								}
+							});
 						}
 					}));
 				})();

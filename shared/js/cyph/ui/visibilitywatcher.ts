@@ -10,8 +10,8 @@ module Cyph {
 			public static isVisible: boolean	= true;
 
 			private static trigger (isVisible: boolean) : void {
-				this.isVisible	= isVisible;
-				EventManager.trigger(VisibilityWatcher.visibilityChangeEvent, this.isVisible);
+				VisibilityWatcher.isVisible	= isVisible;
+				EventManager.trigger(VisibilityWatcher.visibilityChangeEvent, VisibilityWatcher.isVisible);
 			}
 
 			/**
