@@ -29,18 +29,18 @@ module Cyph.com {
 			private static mobileUIScale: number	= 0.625;
 
 			private static messages: { text: string; isMobile: boolean; }[]	= [
-				{text: 'oh wow, that was fast!', isMobile: true},
-				{text: 'but what’s the problem? why did we have to switch from Facebook?', isMobile: true},
-				{text: 'haven’t you watched the news lately? all the email leaks, hacking, and government spying...?', isMobile: false},
-				{text: 'unlike Facebook, Cyph is end-to-end encrypted, so no one but us can read this', isMobile: false},
-				{text: 'oh yeah, I guess.. but I don’t know what interest anyone would have in me', isMobile: true},
-				{text: 'well I have to be extra careful; a lot of people are looking for me', isMobile: false},
-				{text: 'government people...', isMobile: false},
-				{text: 'I don\'t believe you :expressionless:', isMobile: true},
-				{text: 'okay fine, it just really creeps me out that *someone* might have been reading our conversation', isMobile: false},
-				{text: 'I actually only wanted to ask, is this pic approriate for LinkedIn?', isMobile: false},
+				{text: `oh wow, that was fast!`, isMobile: true},
+				{text: `but what's the problem? why did we have to switch from Facebook?`, isMobile: true},
+				{text: `haven't you watched the news lately? all the email leaks, hacking, and government spying...?`, isMobile: false},
+				{text: `unlike Facebook, Cyph is end-to-end encrypted, so no one but us can read this`, isMobile: false},
+				{text: `oh yeah, I guess.. but I don't know what interest anyone would have in me`, isMobile: true},
+				{text: `well I have to be extra careful; a lot of people are looking for me`, isMobile: false},
+				{text: `government people...`, isMobile: false},
+				{text: `I don't believe you :expressionless:`, isMobile: true},
+				{text: `okay fine, it just really creeps me out that *someone* might have been reading our conversation`, isMobile: false},
+				{text: `I actually only wanted to ask, is this pic approriate for LinkedIn?`, isMobile: false},
 				{text: CyphDemo.facebookPicMessage, isMobile: false},
-				{text: 'lol yeah, looks great ;)', isMobile: true}
+				{text: `lol yeah, looks great ;)`, isMobile: true}
 			];
 
 			private static getOffset (elem: JQuery, ancestor: JQuery) : { left: number; top: number; } {
