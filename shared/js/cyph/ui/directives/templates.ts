@@ -64,7 +64,7 @@ module Cyph {
 						>
 							<div flex></div>
 							<div class='logo-animation'>
-								<img src='/img/logo.animated.gif' />
+								<img src='/img/logo.animated.gif' alt='Animated Cyph logo' />
 							</div>
 							<div translate>Initiating key exchange...</div>
 							<md-progress-linear
@@ -87,7 +87,7 @@ module Cyph {
 						>
 							<div flex></div>
 							<div class='logo-animation'>
-								<img src='/img/walken.png' />
+								<img src='/img/walken.png' alt='Definitely not Christopher Walken' />
 							</div>
 							<div>
 								<div translate>This cyph has been aborted.</div>
@@ -129,7 +129,7 @@ module Cyph {
 							}'
 						>
 							<a class='logo' rel='noreferrer' ng-href='{{Cyph.Env.homeUrl}}'>
-								<img src='/img/betalogo.mobile.png' />
+								<img src='/img/betalogo.mobile.png' alt='Beta logo' />
 							</a>
 							<video
 								class='friend stream'
@@ -199,7 +199,7 @@ module Cyph {
 								aria-label='Sidebar'
 								ng-click='$this.p2pManager.toggleSidebar()'
 							>
-								<img src='/img/icons/chat.png' />
+								<img src='/img/icons/chat.png' alt='Chat' />
 							</md-button>
 
 							<div class='buttons'>
@@ -219,6 +219,7 @@ module Cyph {
 											!$this.p2pManager.p2p.outgoingStream.video
 										'
 										src='/img/icons/video.on.png'
+										alt='Video on'
 									/>
 									<img
 										ng-show='
@@ -226,6 +227,7 @@ module Cyph {
 											$this.p2pManager.p2p.outgoingStream.video
 										'
 										src='/img/icons/video.off.png'
+										alt='Video off'
 									/>
 								</md-button>
 								<md-button
@@ -241,6 +243,7 @@ module Cyph {
 									<img
 										ng-show='!$this.p2pManager.isActive'
 										src='/img/icons/voice.on.png'
+										alt='Voice on'
 									/>
 									<img
 										ng-show='
@@ -248,6 +251,7 @@ module Cyph {
 											!$this.p2pManager.p2p.outgoingStream.audio
 										'
 										src='/img/icons/mic.on.png'
+										alt='Mic on'
 									/>
 									<img
 										ng-show='
@@ -255,6 +259,7 @@ module Cyph {
 											$this.p2pManager.p2p.outgoingStream.audio
 										'
 										src='/img/icons/mic.off.png'
+										alt='Mic off'
 									/>
 								</md-button>
 								<md-button
@@ -263,7 +268,7 @@ module Cyph {
 									ng-disabled='$this.p2pManager.p2p.outgoingFile.name'
 									aria-label='Send File'
 								>
-									<img src='/img/icons/file.png' />
+									<img src='/img/icons/file.png' alt='File' />
 									<input
 										type='file'
 										cyph-filechange='$this.p2pManager.sendFileButton()'
@@ -389,7 +394,7 @@ module Cyph {
 							ng-click='$this.send()'
 							aria-label='Send'
 						>
-							<img src='/img/icons/send.png' />
+							<img src='/img/icons/send.png' alt='Send' />
 						</md-button>
 
 						<md-button
@@ -398,7 +403,7 @@ module Cyph {
 							ng-class='{"chat-message-box-hidden": $this.currentMessage !== ""}'
 							aria-label='Insert Photo'
 						>
-							<img src='/img/icons/insertphoto.grey.png' />
+							<img src='/img/icons/insertphoto.grey.png' alt='Insert photo grey' />
 							<input
 								accept='image/*'
 								type='file'
@@ -412,7 +417,7 @@ module Cyph {
 							ng-class='{"chat-message-box-hidden": $this.currentMessage !== ""}'
 							aria-label='Insert Photo'
 						>
-							<img src='/img/icons/insertphoto.png' />
+							<img src='/img/icons/insertphoto.png' alt='Insert photo' />
 							<input
 								accept='image/*'
 								type='file'
@@ -451,7 +456,7 @@ module Cyph {
 						}'
 					>
 						<a class='logo' rel='noreferrer' ng-href='{{Cyph.Env.homeUrl}}'>
-							<img src='/img/betalogo.png' />
+							<img src='/img/betalogo.png' alt='Beta logo' />
 						</a>
 						<div ng-show='showChat && $this.state === Cyph.UI.Chat.States.chat'>
 							<md-button
@@ -509,6 +514,7 @@ module Cyph {
 											!$this.p2pManager.p2p.outgoingStream.video
 										'
 										src='/img/icons/video.on.png'
+										alt='Video on'
 									/>
 									<img
 										ng-show='
@@ -516,6 +522,7 @@ module Cyph {
 											$this.p2pManager.p2p.outgoingStream.video
 										'
 										src='/img/icons/video.off.png'
+										alt='Video off'
 									/>
 								</md-button>
 								<md-button
@@ -538,6 +545,7 @@ module Cyph {
 									<img
 										ng-show='!$this.p2pManager.isActive'
 										src='/img/icons/voice.on.png'
+										alt='Voice on'
 									/>
 									<img
 										ng-show='
@@ -545,6 +553,7 @@ module Cyph {
 											!$this.p2pManager.p2p.outgoingStream.audio
 										'
 										src='/img/icons/mic.on.png'
+										alt='Mic on'
 									/>
 									<img
 										ng-show='
@@ -552,6 +561,7 @@ module Cyph {
 											$this.p2pManager.p2p.outgoingStream.audio
 										'
 										src='/img/icons/mic.off.png'
+										alt='Mic off'
 									/>
 								</md-button>
 								<md-button
@@ -565,7 +575,7 @@ module Cyph {
 									'
 									aria-label='Send File'
 								>
-									<img src='/img/icons/file.png' />
+									<img src='/img/icons/file.png' alt='File' />
 									<input
 										type='file'
 										cyph-filechange='$this.p2pManager.sendFileButton()'
@@ -581,7 +591,7 @@ module Cyph {
 						<md-toolbar class='chat-toolbar'>
 							<div class='md-toolbar-tools'>
 								<a class='logo' rel='noreferrer' ng-href='{{Cyph.Env.homeUrl}}'>
-									<img src='/img/betalogo.mobile.png' />
+									<img src='/img/betalogo.mobile.png' alt='Beta logo' />
 								</a>
 
 								<span flex></span>
@@ -611,6 +621,7 @@ module Cyph {
 													!$this.p2pManager.p2p.outgoingStream.video
 												'
 												src='/img/icons/video.on.png'
+												alt='Video on'
 											/>
 											<img
 												ng-show='
@@ -618,6 +629,7 @@ module Cyph {
 													$this.p2pManager.p2p.outgoingStream.video
 												'
 												src='/img/icons/video.off.png'
+												alt='Video off'
 											/>
 										</md-button>
 										<md-button
@@ -641,6 +653,7 @@ module Cyph {
 											<img
 												ng-show='!$this.p2pManager.isActive'
 												src='/img/icons/voice.on.png'
+												alt='Voice on'
 											/>
 											<img
 												ng-show='
@@ -648,6 +661,7 @@ module Cyph {
 													!$this.p2pManager.p2p.outgoingStream.audio
 												'
 												src='/img/icons/mic.on.png'
+												alt='Mic on'
 											/>
 											<img
 												ng-show='
@@ -655,6 +669,7 @@ module Cyph {
 													$this.p2pManager.p2p.outgoingStream.audio
 												'
 												src='/img/icons/mic.off.png'
+												alt='Mic off'
 											/>
 										</md-button>
 										<md-button
@@ -668,7 +683,7 @@ module Cyph {
 											'
 											aria-label='Send File'
 										>
-											<img src='/img/icons/file.png' />
+											<img src='/img/icons/file.png' alt='File' />
 											<input
 												type='file'
 												cyph-filechange='$this.p2pManager.sendFileButton()'
@@ -677,7 +692,7 @@ module Cyph {
 									</span>
 
 									<md-button translate aria-label='Menu' ng-click='open()'>
-										<img src='/img/icons/menu.png' />
+										<img src='/img/icons/menu.png' alt='Menu' />
 									</md-button>
 								</span>
 							</div>
@@ -730,7 +745,7 @@ module Cyph {
 					>
 						<div flex></div>
 						<div class='logo-animation'>
-							<img src='/img/logo.animated.gif' />
+							<img src='/img/logo.animated.gif' alt='Animated Cyph logo' />
 						</div>
 						<div>
 							<div ng-show='$this.isPassive' translate>
@@ -757,7 +772,7 @@ module Cyph {
 										class='md-fab'
 										aria-label='SMS'
 									>
-										<img src='/img/icons/sms.png' />
+										<img src='/img/icons/sms.png' alt='SMS' />
 										<a
 											target='_self'
 											ng-href='{{Cyph.Env.smsUriBase}}{{$this.linkEncoded}}'
@@ -773,7 +788,7 @@ module Cyph {
 										class='md-fab'
 										aria-label='Email'
 									>
-										<img src='/img/icons/email.png' />
+										<img src='/img/icons/email.png' alt='Email' />
 										<a
 											target='_self'
 											ng-href='mailto:?body={{$this.linkEncoded}}'
@@ -853,7 +868,7 @@ module Cyph {
 									I'm sorry, but your cyph is in another castle...
 								</h1>
 							</div>
-							<img src='/img/404.png' />
+							<img src='/img/404.png' alt='Funny Mario reference' />
 							<div class='explanation'>
 								<p>
 									<span translate>Please</span>
@@ -898,7 +913,7 @@ module Cyph {
 					>
 						<div flex></div>
 						<div class='logo-animation'>
-							<img src='/img/logo.animated.gif' />
+							<img src='/img/logo.animated.gif' alt='Animated Cyph logo' />
 						</div>
 						<div translate>Now spinning up your cyph room...</div>
 						<div flex></div>
