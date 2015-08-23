@@ -9,6 +9,7 @@
 /// <reference path="../cyph/controller.ts" />
 /// <reference path="../cyph/session/session.ts" />
 /// <reference path="../cyph/ui/chat/chat.ts" />
+/// <reference path="../cyph/ui/carousel.ts" />
 /// <reference path="../cyph/ui/dialogmanager.ts" />
 /// <reference path="../cyph/ui/signupform.ts" />
 /// <reference path="../cyph/ui/directives/chat.ts" />

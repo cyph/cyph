@@ -4,13 +4,6 @@ module Cyph.com {
 		 * Controls the entire cyph.com UI.
 		 */
 		export class UI extends Cyph.UI.BaseButtonManager {
-			private static testimonialActiveClass: string	= 'active';
-
-
-			private testimonialNumber: number	= 0;
-
-			private testimonialTimeout: any;
-
 			/** UI state/view. */
 			public state: States		= States.home;
 
@@ -25,6 +18,12 @@ module Cyph.com {
 
 			/** Signup form to be displayed throughout the site. */
 			public signupForm: Cyph.UI.ISignupForm;
+
+			/** Carousel of features. */
+			public featureCarousel: Cyph.UI.Carousel;
+
+			/** Carousel of testimonials. */
+			public testimonialCarousel: Cyph.UI.Carousel;
 
 			private onUrlStateChange (urlState: string) : void {
 				const state: States		= States[urlState];
@@ -120,42 +119,7 @@ module Cyph.com {
 			 * Scrolls down and bounces in hero text.
 			 */
 			public scrollHeroText () : void {
-				setTimeout(() => this.scroll(Elements.heroSection.height() - 100, 1.1), 250);
-			}
-
-			/**
-			 * Sets the active testimonial to be displayed in the testimonial section.
-			 * @param testimonialNumber
-			 */
-			public setTestimonial (testimonialNumber: number = this.testimonialNumber) : void {
-				clearTimeout(this.testimonialTimeout);
-
-				Elements.testimonialQuotes.parent().height(
-					Elements.testimonialQuotes.
-						map((i, elem: HTMLElement) => $(elem).height()).
-						toArray().
-						reduce((a: number, b: number) => Math.max(a, b))
-				);
-
-				Elements.testimonialLogos.
-					add(Elements.testimonialQuotes).
-					removeClass(UI.testimonialActiveClass)
-				;
-
-				setTimeout(() => Elements.testimonialLogos.eq(testimonialNumber).
-					add(Elements.testimonialQuotes.eq(testimonialNumber)).
-					addClass(UI.testimonialActiveClass)
-				, 600);
-
-				this.testimonialNumber	= testimonialNumber + 1;
-				if (this.testimonialNumber >= Elements.testimonialLogos.length) {
-					this.testimonialNumber	= 0;
-				}
-
-				this.testimonialTimeout	= setTimeout(
-					() => this.setTestimonial(),
-					Elements.testimonialQuotes.eq(testimonialNumber).text().length * 35
-				);
+				Cyph.UrlState.set('/testimonials');
 			}
 
 			/**
@@ -226,9 +190,10 @@ module Cyph.com {
 				}
 
 				
-				/* Testimonial slideshow */
+				/* Carousels */
 
-				setTimeout(() => this.setTestimonial(), 1000);
+				this.featureCarousel		= new Cyph.UI.Carousel(Elements.featuresSection);
+				this.testimonialCarousel	= new Cyph.UI.Carousel(Elements.testimonialsSection);
 
 
 				/* Header / new cyph button animation */
