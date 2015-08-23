@@ -12,7 +12,7 @@ module Cyph.com {
 			public static demoRootDesktop: JQuery;
 			public static demoRootMobile: JQuery;
 			public static demoListMobile: JQuery;
-			public static featureListItems: JQuery;
+			public static featuresSection: JQuery;
 			public static fixedHeaderStuff: JQuery;
 			public static heroSection: JQuery;
 			public static heroText: JQuery;
@@ -22,8 +22,7 @@ module Cyph.com {
 			public static podcastLogo: JQuery;
 			public static screenshotLaptop: JQuery;
 			public static screenshotPhone: JQuery;
-			public static testimonialLogos: JQuery;
-			public static testimonialQuotes: JQuery;
+			public static testimonialsSection: JQuery;
 
 			/**
 			 * Loads elements (call this after page is loaded).
@@ -31,25 +30,24 @@ module Cyph.com {
 			public static load () : void {
 				Cyph.UI.Elements.load();
 
-				Elements.bouncingDownArrow	= $('.bouncing-down-arrow');
-				Elements.backgroundVideo	= $('.hero-background > :first-child');
-				Elements.contentContainers	= $('.section-content-container');
-				Elements.demoRoot			= $('.demo-root');
-				Elements.demoListDesktop	= $('.demo-root > .desktop .message-list md-list');
-				Elements.demoRootDesktop	= $('.demo-root > .desktop');
-				Elements.demoListMobile		= $('.demo-root > .mobile .message-list md-list');
-				Elements.demoRootMobile		= $('.demo-root > .mobile');
-				Elements.featureListItems	= $('.feature-list-item');
-				Elements.heroSection		= $('#hero-section');
-				Elements.heroText			= $('#hero-section .hero-text');
-				Elements.mainToolbar		= $('#main-toolbar');
-				Elements.newCyph			= $('#new-cyph');
-				Elements.newCyphParent		= Elements.newCyph.parent();
-				Elements.podcastLogo		= $('.podcast-logo');
-				Elements.screenshotLaptop	= $('#hero-section .laptop.screenshot');
-				Elements.screenshotPhone	= $('#hero-section .phone.screenshot');
-				Elements.testimonialLogos	= $('#testimonials-section .logo');
-				Elements.testimonialQuotes	= $('#testimonials-section .quote');
+				Elements.bouncingDownArrow		= $('.bouncing-down-arrow');
+				Elements.backgroundVideo		= $('.hero-background > :first-child');
+				Elements.contentContainers		= $('.section-content-container');
+				Elements.demoRoot				= $('.demo-root');
+				Elements.demoListDesktop		= $('.demo-root > .desktop .message-list md-list');
+				Elements.demoRootDesktop		= $('.demo-root > .desktop');
+				Elements.demoListMobile			= $('.demo-root > .mobile .message-list md-list');
+				Elements.demoRootMobile			= $('.demo-root > .mobile');
+				Elements.featuresSection		= $('#features-section');
+				Elements.heroSection			= $('#hero-section');
+				Elements.heroText				= $('#hero-section .hero-text');
+				Elements.mainToolbar			= $('#main-toolbar');
+				Elements.newCyph				= $('#new-cyph');
+				Elements.newCyphParent			= Elements.newCyph.parent();
+				Elements.podcastLogo			= $('.podcast-logo');
+				Elements.screenshotLaptop		= $('#hero-section .laptop.screenshot');
+				Elements.screenshotPhone		= $('#hero-section .phone.screenshot');
+				Elements.testimonialsSection	= $('#testimonials-section');
 
 				Elements.fixedHeaderStuff	= Elements.newCyph.
 					add('#main-toolbar').
