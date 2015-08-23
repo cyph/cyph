@@ -23,7 +23,8 @@ module Cyph.com {
 			features,
 			gettingstarted,
 			intro,
-			login
+			login,
+			testimonials
 		}
 
 		/**
