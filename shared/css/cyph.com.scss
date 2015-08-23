@@ -400,21 +400,10 @@ section#main {
 
 		.quote {
 			position: absolute;
-			width: calc(50% - 50px);
-			margin-left: 25px;
 
 			&:not(.active) {
 				opacity: 0;
 				pointer-events: none;
-			}
-
-			&:before {
-				content: '\201c';
-				position: absolute;
-				font-family: Georgia, serif;
-				font-size: 100px;
-				margin-top: -35px;
-				margin-left: -50px;
 			}
 
 			.text {
@@ -443,15 +432,28 @@ section#main {
 	}
 }
 
+#testimonials-section .carousel.grid-container {
+	.quote-container {
+		.quote {
+			width: calc(50% - 50px);
+			margin-left: 25px;
+
+			&:before {
+				content: '\201c';
+				position: absolute;
+				font-family: Georgia, serif;
+				font-size: 100px;
+				margin-top: -35px;
+				margin-left: -50px;
+			}
+		}
+	}
+}
+
 #features-section .carousel.grid-container {
 	.quote-container {
 		.quote {
 			width: calc(33% - 50px);
-			margin-left: 0px;
-
-			&:before {
-				content: '';
-			}
 		}
 	}
 }
