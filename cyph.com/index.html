@@ -70,7 +70,7 @@
 					<a translate ng-href='{{Cyph.Env.newCyphUrl}}'>Start new cyph</a>
 				</md-button>
 
-				<span class='link-wrapper-outer desktop-only'>
+				<span class='link-wrapper-outer right desktop-only'>
 					<span class='link-wrapper-inner'>
 						<md-button translate href='/intro'>Intro</md-button>
 						<md-button translate href='/features'>Features</md-button>
@@ -79,7 +79,7 @@
 					</span>
 				</span>
 				<span flex class='desktop-only'></span>
-				<span class='link-wrapper-outer desktop-only'>
+				<span class='link-wrapper-outer left desktop-only'>
 					<span class='link-wrapper-inner'>
 						<md-button translate href='/blog'>Blog</md-button>
 						<md-button translate href='/faq'>FAQ</md-button>
@@ -247,15 +247,6 @@
 						&nbsp;
 					</div>
 				</div>
-
-				<div class='wow animated fadeInSlow' data-wow-delay='2700ms'>
-					<img
-						class='bouncing-down-arrow'
-						ng-click='ui.scrollHeroText()'
-						src='/img/icons/downarrow.png'
-						alt='Down arrow'
-					/>
-				</div>
 			</div>
 
 			<div class='hero-background-wrapper'>
@@ -310,15 +301,19 @@
 					</a>
 				</div>
 			</div>
+
+			<a class='nav-arrow' href='/intro'>
+				<img src='/img/icons/downarrow.png' alt='Down arrow' />
+			</a>
 		</section>
 
 		<section id='intro-section'>
-			<a class='back-arrow' href='/'>
+			<a class='nav-arrow' href='/'>
 				<img src='/img/icons/uparrow.png' alt='Up arrow' />
 			</a>
 
 			<div class='demo-root desktop-only grid-container'>
-				<span class='desktop grid-55 tablet-grid-55 push-10 tablet-push-10'>
+				<span class='desktop'>
 					<div class='cyph-foreground'>
 						<span
 							cyph-chat-sidebar='ui.cyphDemo.desktop'
@@ -335,7 +330,7 @@
 					<div cyph-chat-cyphertext='ui.cyphDemo.desktop'></div>
 				</span>
 
-				<span class='mobile grid-30 tablet-grid-30 push-15 tablet-push-15'>
+				<span class='mobile'>
 					<div class='cyph-foreground'>
 						<span
 							cyph-chat-toolbar='ui.cyphDemo.mobile'
@@ -360,53 +355,92 @@
 					alt='Phone displaying secure Cyph video call'
 				/>
 			</div>
-			<h1 class='hero-text' translate>
-				Cutting-Edge Encryption That Feels Familiar
-			</h1>
 		</section>
 
 		<section id='features-section'>
 			<div class='carousel grid-container'>
-				<div class='grid-parent left grid-33 tablet-grid-33'>
+				<div class='grid-parent grid-33 tablet-grid-33'>
 					<div class='grid-100 tablet-grid-100 logo logo-text' ng-click='ui.featureCarousel.setItem(0)'>
-						<div class='grid-75 tablet-grid-75'>
-							<h3 class='title' translate>
-								Quantum-Resistant Encryption
-							</h3>
-						</div>
 						<img
 							class='grid-25 tablet-grid-25'
 							src='/img/iconfinder/encryption.png'
 							alt='Secure vault'
 						/>
-					</div>
-					<div class='grid-100 tablet-grid-100 logo logo-text' ng-click='ui.featureCarousel.setItem(1)'>
 						<div class='grid-75 tablet-grid-75'>
 							<h3 class='title' translate>
-								Secure Video Calls and File Transfers
+								Quantum-Resistant Encryption
 							</h3>
 						</div>
+					</div>
+					<div class='grid-100 tablet-grid-100 logo logo-text' ng-click='ui.featureCarousel.setItem(1)'>
+						<img
+							class='grid-25 tablet-grid-25'
+							src='/img/iconfinder/anonymous.png'
+							alt='Man in disguise'
+						/>
+						<div class='grid-75 tablet-grid-75'>
+							<h3 class='title' translate>
+								True Anonymity via Tor Hidden Service
+							</h3>
+						</div>
+					</div>
+				</div>
+
+				<div class='grid-parent grid-33 tablet-grid-33'>
+					<div class='grid-100 tablet-grid-100 logo logo-text' ng-click='ui.featureCarousel.setItem(2)'>
 						<img
 							class='grid-25 tablet-grid-25'
 							src='/img/iconfinder/video.png'
 							alt='Video camera'
 						/>
-					</div>
-					<div class='grid-100 tablet-grid-100 logo logo-text' ng-click='ui.featureCarousel.setItem(2)'>
 						<div class='grid-75 tablet-grid-75'>
 							<h3 class='title' translate>
-								No Signup or Downloads Required
+								Secure Video Calls and File Transfers
 							</h3>
 						</div>
+					</div>
+					<div class='grid-100 tablet-grid-100 logo logo-text' ng-click='ui.featureCarousel.setItem(3)'>
+						<img
+							class='grid-25 tablet-grid-25'
+							src='/img/iconfinder/signing.png'
+							alt='Cryptographic signature'
+						/>
+						<div class='grid-75 tablet-grid-75'>
+							<h3 class='title' translate>
+								Tamper-Proof Code Validation
+							</h3>
+						</div>
+					</div>
+				</div>
+
+				<div class='grid-parent grid-33 tablet-grid-33'>
+					<div class='grid-100 tablet-grid-100 logo logo-text' ng-click='ui.featureCarousel.setItem(4)'>
 						<img
 							class='grid-25 tablet-grid-25'
 							src='/img/iconfinder/nologin.png'
 							alt='"No login" sign'
 						/>
+						<div class='grid-75 tablet-grid-75'>
+							<h3 class='title' translate>
+								No Signup or Downloads Required
+							</h3>
+						</div>
+					</div>
+					<div class='grid-100 tablet-grid-100 logo logo-text' ng-click='ui.featureCarousel.setItem(5)'>
+						<img
+							class='grid-25 tablet-grid-25'
+							src='/img/iconfinder/crossplatform.png'
+							alt='Desktop, tablet, and phone'
+						/>
+						<div class='grid-75 tablet-grid-75'>
+							<h3 class='title' translate>
+								Cross-Platform &ndash; Works on Any Device
+							</h3>
+						</div>
 					</div>
 				</div>
 
-				<div class='quote-container grid-33 tablet-grid-33'>
+				<div class='quote-container grid-70 tablet-grid-70 push-15 tablet-push-15'>
 					<div class='quote'>
 						<div class='text' translate>
 							Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
@@ -438,45 +472,6 @@
 						</div>
 					</div>
 					&nbsp;
-				</div>
-
-				<div class='grid-parent right grid-33 tablet-grid-33'>
-					<div class='grid-100 tablet-grid-100 logo logo-text' ng-click='ui.featureCarousel.setItem(3)'>
-						<img
-							class='grid-25 tablet-grid-25'
-							src='/img/iconfinder/anonymous.png'
-							alt='Man in disguise'
-						/>
-						<div class='grid-75 tablet-grid-75'>
-							<h3 class='title' translate>
-								True Anonymity via Tor Hidden Service
-							</h3>
-						</div>
-					</div>
-					<div class='grid-100 tablet-grid-100 logo logo-text' ng-click='ui.featureCarousel.setItem(4)'>
-						<img
-							class='grid-25 tablet-grid-25'
-							src='/img/iconfinder/signing.png'
-							alt='Cryptographic signature'
-						/>
-						<div class='grid-75 tablet-grid-75'>
-							<h3 class='title' translate>
-								Tamper-Proof Code Validation
-							</h3>
-						</div>
-					</div>
-					<div class='grid-100 tablet-grid-100 logo logo-text' ng-click='ui.featureCarousel.setItem(5)'>
-						<img
-							class='grid-25 tablet-grid-25'
-							src='/img/iconfinder/crossplatform.png'
-							alt='Desktop, tablet, and phone'
-						/>
-						<div class='grid-75 tablet-grid-75'>
-							<h3 class='title' translate>
-								Cross-Platform &ndash; Works on Any Device
-							</h3>
-						</div>
-					</div>
 				</div>
 			</div>
 		</section>
