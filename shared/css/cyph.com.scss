@@ -538,10 +538,10 @@ section#main {
 	}
 
 	> .desktop {
-		height: calc((100vw - 220px) * 0.55 * 0.565);
-		width: 47%;
+		height: calc((100vw - 60px) * 0.55 * 0.565);
+		width: 55%;
 		margin-top: 64px;
-		left: 12.5%;
+		left: 10%;
 
 		[cyph-chat-main], [cyph-chat-message-box] {
 			margin-left: 120px;
@@ -575,10 +575,10 @@ section#main {
 	}
 
 	> .mobile {
-		height: calc((100vw - 220px) * 0.3 * 1.78);
-		width: 26%;
+		height: calc((100vw - 60px) * 0.3 * 1.78);
+		width: 30%;
 		margin-top: -60px;
-		left: 22.5%;
+		left: 15%;
 		@include transform(scale(0.625));
 		@include filter(blur(0px));
 
