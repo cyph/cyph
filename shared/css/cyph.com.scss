@@ -17,7 +17,7 @@ html:not(.mobile) #main {
 
 
 html:not(.load-complete) {
-	#main > section, footer, .bouncing-down-arrow {
+	#main > section, footer {
 		display: none;
 	}
 }
@@ -165,7 +165,7 @@ section#main {
 
 		> div {
 			top: 50%;
-			transform: translateY(-50%);
+			@include transform(translateY(-50%));
 			position: relative;
 
 			> :first-child {
@@ -176,7 +176,7 @@ section#main {
 }
 
 .hero-container {
-	margin: 25px 0px;
+	margin-top: 15px;
 
 	.screenshot, .hero-description {
 		display: block;
@@ -258,6 +258,14 @@ section#main {
 				margin-left: auto;
 				margin-right: auto;
 			}
+
+			&.left {
+				text-align: left;
+			}
+
+			&.right {
+				text-align: right;
+			}
 		}
 
 		a:not(#logo) {
@@ -316,17 +324,6 @@ section#main {
 	> img {
 		height: 100% !important;
 	}
-}
-.bouncing-down-arrow {
-	display: block;
-	position: relative;
-	width: auto;
-	height: 40px;
-	margin-left: auto;
-	margin-right: auto;
-	border-radius: 100%;
-	border: 1px solid rgba(255, 255, 255, 0.5) !important;
-	cursor: pointer;
 }
 
 
@@ -436,6 +433,7 @@ section#main {
 	.quote-container {
 		.quote {
 			width: calc(50% - 50px);
+			margin-top: -10px;
 			margin-left: 25px;
 
 			&:before {
@@ -443,30 +441,30 @@ section#main {
 				position: absolute;
 				font-family: Georgia, serif;
 				font-size: 100px;
-				margin-top: -35px;
+				margin-top: -20px;
 				margin-left: -50px;
 			}
 		}
 	}
 }
 
-#features-section .carousel.grid-container {
-	.quote-container {
-		.quote {
-			width: calc(33% - 50px);
-		}
+#testimonials-section {
+	margin-top: -2px;
+
+	.nav-arrow {
+		left: calc(50% - 20px);
+		top: calc(100% - 45px);
 	}
 }
 
-#testimonials-section, #features-section {
-	background-color: rgb(97, 51, 163);
-	margin-top: -2px;
+#testimonials-section, #about-section {
+	background-color: #6133a3;
 }
 
 
 
 #intro-section {
-	background-color: #262638;
+	padding-bottom: 0px !important;
 
 	.hero-text {
 		padding-bottom: 25px;
@@ -474,7 +472,33 @@ section#main {
 	}
 }
 
-.back-arrow {
+#features-section {
+	padding-top: 0px !important;
+
+	.carousel.grid-container {
+		padding: 0px;
+		padding-left: 2.5vw;
+		margin-top: -20px;
+
+		.logo {
+			height: 85px;
+		}
+
+		.quote-container {
+			margin-top: 25px;
+
+			.quote {
+				width: calc(100% - 50px);
+			}
+		}
+	}
+}
+
+#intro-section, #features-section {
+	background-color: #262638;
+}
+
+.nav-arrow {
 	position: absolute;
 	z-index: 10;
 	left: 20px;
@@ -499,7 +523,7 @@ section#main {
 	}
 
 	> * {
-		height: calc(100vh - 100px);
+		float: left;
 		padding: 0px;
 		overflow: hidden;
 
@@ -514,8 +538,10 @@ section#main {
 	}
 
 	> .desktop {
-		height: calc((100vw - 60px) * 0.55 * 0.565);
+		height: calc((100vw - 220px) * 0.55 * 0.565);
+		width: 47%;
 		margin-top: 64px;
+		left: 12.5%;
 
 		[cyph-chat-main], [cyph-chat-message-box] {
 			margin-left: 120px;
@@ -549,10 +575,12 @@ section#main {
 	}
 
 	> .mobile {
+		height: calc((100vw - 220px) * 0.3 * 1.78);
+		width: 26%;
+		margin-top: -60px;
+		left: 22.5%;
 		@include transform(scale(0.625));
 		@include filter(blur(0px));
-		height: calc((100vw - 60px) * 0.3 * 1.78);
-		margin-top: -80px;
 
 		.chat-toolbar {
 			margin-top: 0px;
@@ -650,19 +678,28 @@ section#main {
 
 
 #gettingstarted-section {
-	height: calc(100vh - 120px);
+	height: calc(100vh - 158px);
+	background-image: url(/img/cyphphoto.png);
+	background-size: 100%;
+	background-position-y: -10vw;
 
 	> .hero-text, > .section-content-container {
 		position: absolute !important;
+		background-color: rgba(38, 38, 56, 0.6);
+		padding: 5px 10px;
+		margin: 0px;
+		text-align: center;
+		left: 50%;
+		@include transform(translateX(-50%));
 	}
 
 	> .hero-text {
-		top: calc(50% - 133px);
-		left: 0px;
+		top: calc(50% - 150px);
+		width: auto;
 	}
 
 	> .section-content-container {
-		top: calc(50% + 38px);
+		top: calc(50% + 35px);
 	}
 }
 
@@ -816,7 +853,7 @@ html.mobile {
 }
 
 #main.unisection-mode {
-	> section:not(.unisection), .bouncing-down-arrow {
+	> section:not(.unisection) {
 		display: none;
 	}
 
