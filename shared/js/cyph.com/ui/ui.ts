@@ -116,13 +116,6 @@ module Cyph.com {
 			}
 
 			/**
-			 * Scrolls down and bounces in hero text.
-			 */
-			public scrollHeroText () : void {
-				Cyph.UrlState.set('/testimonials');
-			}
-
-			/**
 			 * @param controller
 			 */
 			public constructor (
@@ -198,20 +191,9 @@ module Cyph.com {
 
 				/* Header / new cyph button animation */
 
-				if (!Cyph.Env.isMobile) {
-					setInterval(() => {
-						if (!Elements.demoRoot.is(':appeared')) {
-							Elements.bouncingDownArrow.removeClass('bounce');
-							setTimeout(() =>
-								Elements.bouncingDownArrow.addClass('bounce animated')
-							, 100);
-						}
-					}, 5000);
-				}
-
 				setInterval(() => Elements.newCyph.toggleClass('active',
 					this.state === States.home &&
-					Cyph.UI.Elements.body['scrollPosition']() === 0
+					Cyph.UI.Elements.footer.is(':appeared')
 				), 500);
 
 
