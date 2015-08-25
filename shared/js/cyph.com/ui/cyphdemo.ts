@@ -127,7 +127,7 @@ module Cyph.com {
 
 			private resizeDesktop () : void {
 				const width: number		= Math.floor(
-					(Cyph.UI.Elements.window.width() - 230) * 0.55 / 0.75
+					(Cyph.UI.Elements.window.width() - 70) * 0.55 / 0.75
 				);
 
 				const height: number	= width * 0.563;
@@ -151,7 +151,7 @@ module Cyph.com {
 
 			private resizeMobile () : void {
 				const width: number		= Math.floor(
-					(Cyph.UI.Elements.window.width() - 230) * 0.3 / 1.404
+					(Cyph.UI.Elements.window.width() - 70) * 0.3 / 1.404
 				);
 
 				const height: number	= width * 2.033;
