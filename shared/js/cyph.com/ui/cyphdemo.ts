@@ -29,27 +29,18 @@ module Cyph.com {
 			private static mobileUIScale: number	= 0.625;
 
 			private static messages: { text: string; isMobile: boolean; }[]	= [
-				{text: `wow, that was fast!`, isMobile: true},
-				{text: `yep`, isMobile: false},
-				{text: `so I just wanted to ask, is this pic approriate for LinkedIn?`, isMobile: false},
+				{text: `why did we have to switch from Facebook?`, isMobile: true},
+				{text: `haven't you watched the news lately? all the email leaks, hacking, and government surveillance...?`, isMobile: false},
+				{text: `unlike Facebook, Cyph is end-to-end encrypted, so no one but us can read this`, isMobile: false},
+				{text: `I guess.. but I don't know what interest anyone would have in spying on me`, isMobile: true},
+				{text: `well I have to be extra careful; the mafia is looking for me`, isMobile: false},
+				{text: `I don't believe you :expressionless:`, isMobile: true},
+				{text: `all right fine, it just creeps me out that *someone* might have been reading our conversation`, isMobile: false},
+				{text: `anyway, you think this pic is approriate for LinkedIn?`, isMobile: false},
 				{text: CyphDemo.facebookPicMessage, isMobile: false},
 				{text: `lol yeah, looks great ;)`, isMobile: true},
-				{text: `but what's the problem? why did we have to switch from Facebook?`, isMobile: true},
-				{text: `haven't you watched the news lately? all the email leaks, hacking, and government spying...?`, isMobile: false},
-				{text: `unlike Facebook, Cyph is end-to-end encrypted, so no one but us can read this`, isMobile: false},
-				{text: `oh yeah, I guess.. but I don't know what interest anyone would have in me`, isMobile: true},
-				{text: `well I have to be extra careful; a lot of people are looking for me`, isMobile: false},
-				{text: `government people...`, isMobile: false},
-				{text: `I don't believe you :expressionless:`, isMobile: true},
-				{text: `okay fine, it just really creeps me out that *someone* might have been reading our conversation`, isMobile: false},
-				{text: `anyway, I gotta go, but can you tell the person watching this demo that it's interactive?`, isMobile: false},
-				{text: `yeah, no problem; see you later`, isMobile: true},
-				{text: `hey, you!`, isMobile: true},
-				{text: `on the other side of the screen :wave:`, isMobile: true},
-				{text: `FYI, you can type into this demo and send messages`, isMobile: true},
-				{text: `or start a video call, click random buttons, etc.`, isMobile: true},
-				{text: `I'm leaving now too, but thought you might enjoy that`, isMobile: true},
-				{text: `have fun! :v:`, isMobile: true}
+				{text: `anyway, gotta run`, isMobile: false},
+				{text: `ttyl :v:`, isMobile: true}
 			];
 
 			private static getOffset (elem: JQuery, ancestor: JQuery) : { left: number; top: number; } {
@@ -246,8 +237,8 @@ module Cyph.com {
 									;
 
 									const text: string		= Util.translate(message.text);
-									const maxDelay: number	= text.length > 15 ? 1000 : 500;
-									const minDelay: number	= 250;
+									const maxDelay: number	= text.length > 15 ? 500 : 250;
+									const minDelay: number	= 125;
 
 									totalDelay += Util.random(maxDelay, minDelay);
 
@@ -258,7 +249,7 @@ module Cyph.com {
 												this.controller.update();
 											}, totalDelay);
 
-											totalDelay += Util.random(75, 25);
+											totalDelay += Util.random(50, 10);
 										});
 									}
 

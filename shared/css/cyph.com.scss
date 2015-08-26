@@ -457,6 +457,10 @@ section#main {
 	}
 }
 
+#about-section {
+	text-align: center;
+}
+
 #testimonials-section, #about-section {
 	background-color: #6133a3;
 }
@@ -489,6 +493,7 @@ section#main {
 
 			.quote {
 				width: calc(100% - 50px);
+				text-align: center;
 			}
 		}
 	}
@@ -554,6 +559,12 @@ section#main {
 
 		[cyph-chat-main] {
 			height: calc(100% - 60px);
+
+			.chat-main {
+				.message-list {
+					font-size: 90%;
+				}
+			}
 
 			.chat-main.video .video-call.active.playing {
 				~ .message-list {
@@ -859,7 +870,7 @@ html.mobile {
 
 	> section.unisection {
 		padding-top: 50px;
-		min-height: calc(100vh - 120px);
+		min-height: calc(100vh - 110px);
 
 		> .section-content-container {
 			margin-top: 40px;
