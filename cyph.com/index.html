@@ -221,7 +221,7 @@
 				</h1>
 				<div class='hero-container grid-container'>
 					<div
-						class='wow desktop-class-bounceInLeft grid-25 tablet-grid-25 mobile-grid-100'
+						class='wow desktop-only desktop-class-bounceInLeft grid-25 tablet-grid-25 mobile-grid-100'
 						data-wow-delay='2250ms'
 					>
 						<a href='/intro'>
@@ -243,7 +243,7 @@
 					</div>
 
 					<div
-						class='wow desktop-class-bounceInRight grid-25 tablet-grid-25 mobile-grid-100'
+						class='wow desktop-only desktop-class-bounceInRight grid-25 tablet-grid-25 mobile-grid-100'
 						data-wow-delay='2250ms'
 					>
 						<a href='/intro'>
@@ -307,18 +307,18 @@
 				</div>
 			</div>
 
-			<a class='nav-arrow' href='/intro'>
+			<a class='nav-arrow desktop-only' href='/intro'>
 				<img src='/img/icons/downarrow.png' alt='Down arrow' />
 			</a>
 		</section>
 
 		<section id='intro-section'>
-			<a class='nav-arrow' href='/'>
+			<a class='nav-arrow desktop-only' href='/'>
 				<img src='/img/icons/uparrow.png' alt='Up arrow' />
 			</a>
 
-			<div class='demo-root desktop-only grid-container'>
-				<span class='desktop'>
+			<div class='demo-root grid-container'>
+				<span class='desktop desktop-only'>
 					<div class='cyph-foreground'>
 						<span
 							cyph-chat-sidebar='ui.cyphDemo.desktop'
@@ -352,13 +352,6 @@
 					</div>
 					<div cyph-chat-cyphertext='ui.cyphDemo.mobile'></div>
 				</span>
-			</div>
-			<div class='mobile-only grid-container'>
-				<img
-					class='grid-100 tablet-grid-100 mobile-grid-100 screenshot'
-					src='/img/phone-screenshot.png'
-					alt='Phone displaying secure Cyph video call'
-				/>
 			</div>
 		</section>
 

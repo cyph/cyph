@@ -6,15 +6,16 @@ module Cyph.com {
 		export class CyphDemo extends Cyph.UI.BaseButtonManager {
 			private static demoClass: string	= 'demo';
 
-			private static facebookPicUrl: string			=
-				'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs='
+			private static facebookPicUrl: string			= Cyph.Env.isMobile ?
+				`data:image/jpeg;base64,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` :
+				`data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=`
 			;
 
 			private static facebookPicMessage: string		=
 				'![](' + CyphDemo.facebookPicUrl + ')'
 			;
 
-			private static facebookPicFrame: string			= `
+			private static facebookPicFrame: string			= Cyph.Env.isMobile ? '' : `
 				<div class='facebook-pic image-frame real'>
 					<iframe
 						src='https://www.facebook.com/plugins/comments.php?href=https://www.${Util.generateGuid(Util.random(20, 5))}.com'
@@ -39,7 +40,7 @@ module Cyph.com {
 				{text: `anyway, you think this pic is approriate for LinkedIn?`, isMobile: false},
 				{text: CyphDemo.facebookPicMessage, isMobile: false},
 				{text: `lol yeah, looks great ;)`, isMobile: true},
-				{text: `anyway, gotta run`, isMobile: false},
+				{text: `cool, gotta run`, isMobile: false},
 				{text: `ttyl :v:`, isMobile: true}
 			];
 
@@ -185,8 +186,10 @@ module Cyph.com {
 							const $desktopFacebookPic: JQuery	= $(CyphDemo.facebookPicFrame);
 							const $mobileFacebookPic: JQuery	= $(CyphDemo.facebookPicFrame);
 
-							Elements.demoListDesktop.append($desktopFacebookPic);
-							Elements.demoListMobile.append($mobileFacebookPic);
+							if (!Cyph.Env.isMobile) {
+								Elements.demoListDesktop.append($desktopFacebookPic);
+								Elements.demoListMobile.append($mobileFacebookPic);
+							}
 
 							setInterval(() => this.resize(), 2000);
 
@@ -259,7 +262,7 @@ module Cyph.com {
 										chat.currentMessage	= '';
 										chat.send(text);
 
-										if (text === CyphDemo.facebookPicMessage) {
+										if (!Cyph.Env.isMobile && text === CyphDemo.facebookPicMessage) {
 											const innerTimeout: number	= 250;
 											const outerTimeout: number	= 250;
 
