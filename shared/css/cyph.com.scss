@@ -175,6 +175,18 @@ section#main {
 	}
 }
 
+html.mobile #hero-section {
+	.hero-description {
+		height: auto;
+		font-size: 1.3em;
+
+		> div {
+			top: 50%;
+			@include transform(none);
+		}
+	}
+}
+
 .hero-container {
 	margin-top: 15px;
 
@@ -415,6 +427,45 @@ section#main {
 				width: 100%;
 				text-align: center;
 			}
+		}
+	}
+}
+
+html.mobile .carousel.grid-container {
+	.logo {
+		pointer-events: none;
+		position: absolute;
+		top: 0px;
+		left: 0px;
+		width: 100%;
+
+		&:not(.active) {
+			opacity: 0;
+		}
+
+		> img {
+			opacity: 0.2;
+
+			& + div {
+				position: absolute;
+				top: 50%;
+				left: 0px;
+				width: 100%;
+				text-align: center;
+				@include transform(translateY(-50%));
+
+				> h3.title {
+					font-weight: bold;
+				}
+			}
+		}
+	}
+
+	.quote {
+		width: calc(100% - 50px) !important;
+
+		&:before, .text {
+			padding-top: 60px;
 		}
 	}
 }
@@ -687,9 +738,21 @@ section#main {
 	}
 }
 
+html.mobile .demo-root {
+	> .mobile {
+		height: calc(100vh - 60px);
+		width: 100%;
+		top: 0px;
+		left: 0px;
+		margin: auto;
+		@include transform(scale(0.8));
+	}
+}
+
 
 #gettingstarted-section {
 	height: calc(100vh - 158px);
+	min-height: 360px;
 	background-image: url(/img/cyphphoto.png);
 	background-size: 100%;
 	background-position-y: -10vw;
@@ -712,6 +775,10 @@ section#main {
 	> .section-content-container {
 		top: calc(50% + 35px);
 	}
+}
+
+html.mobile #gettingstarted-section {
+	background-size: auto 100%;
 }
 
 
