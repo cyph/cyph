@@ -741,9 +741,9 @@ html.mobile .carousel.grid-container {
 html.mobile .demo-root {
 	> .mobile {
 		height: calc(100vh - 60px);
-		width: 100%;
+		width: calc(100% + 100px);
 		top: 0px;
-		left: 0px;
+		left: -50px;
 		margin: auto;
 		@include transform(scale(0.8));
 	}
