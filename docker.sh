@@ -9,16 +9,15 @@ defaultsleep () {
 
 shellinit () {
 	defaultsleep
-	init="$(boot2docker shellinit 2> /dev/null | perl -pe 's/([A-Za-z])\:\\/\/cygdrive\/\L\1\//g' | sed 's|\\|/|g')"
-	echo "START DEBUG"
-	echo "$init"
-	echo "END DEBUG"
-	$init
+	$(boot2docker shellinit 2> /dev/null | perl -pe 's/([A-Za-z])\:\\/\/cygdrive\/\L\1\//g' | sed 's|\\|/|g')
 	defaultsleep
 }
 
 start () {
 	if boot2docker > /dev/null 2>&1 ; then
+		echo "START DEBUG"
+		echo "$DOCKER_CERT_PATH"
+		echo "END DEBUG"
 		boot2docker start > /dev/null 2>&1
 		shellinit
 	elif [ "$(ps aux | grep 'docker -d' | grep -v grep)" == '' ] ; then
