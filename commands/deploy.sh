@@ -181,12 +181,13 @@ done
 
 # Cache bust
 echo "Cache bust"
+filesToCacheBust="$(find shared ! -wholename '*fonts/*' ! -wholename '*websign*' -type f -print0 | while read -d $'\0' f ; do echo "$f" ; done)"
 for d in cyph.com ; do
 	cd $d
 
 	filesToModify="$(find . -name '*.html') $(find js -name '*.js') $(find css -name '*.css')"
 
-	find ../shared ! -wholename '*fonts/*' ! -wholename '*websign*' -type f -print0 | while read -d $'\0' f ; do
+	for f in $filesToCacheBust ; do
 		if [ $(echo "$f" | grep -oP 'twemoji.*(?<!\.js)$') ] ; then
 			continue
 		fi
