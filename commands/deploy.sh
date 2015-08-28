@@ -181,14 +181,18 @@ done
 
 # Cache bust
 echo "Cache bust"
-find shared ! -wholename '*fonts/*' ! -wholename '*twemoji*' ! -wholename '*websign*' -type f -print0 | while read -d $'\0' f ; do
-	f="$(echo "$f" | sed 's/shared\///g')"
+find shared ! -wholename '*fonts/*' ! -wholename '*websign*' -type f -print0 | while read -d $'\0' f ; do
+	if [ $(echo "$f" | grep -oP 'twemoji.*(?<!\.js)$') ] ; then
+		continue
+	fi
+
+	f="$(echo "$f" | sed 's/shared\///g' | sed 's|.ts|.js|g' | sed 's|.scss|.css|g')"
 	safeF="$(echo "$f" | sed 's/\//\\\//g' | sed 's/ /\\ /g' | sed 's/\_/\\_/g')"
 
 	for d in cyph.com ; do
 		cd $d
 
-		for g in index.html $(find js -name '*.js') $(find css -name '*.css') ; do
+		for g in $(find . -name '*.html') $(find js -name '*.js') $(find css -name '*.css') ; do
 			if ( grep -o "$safeF" $g ) ; then
 				cat $g | perl -pe "s/(\\/$safeF)/\1?`md5 "$f" | perl -pe 's/.*([a-f0-9]{32}).*/\1/g'`/g" > $g.new
 				mv $g.new $g
