@@ -9,7 +9,11 @@ defaultsleep () {
 
 shellinit () {
 	defaultsleep
-	$(boot2docker shellinit | perl -pe 's/([A-Za-z])\:\\/\/cygdrive\/\L\1\//g' | sed 's|\\|/|g')
+	init="$(boot2docker shellinit 2> /dev/null | perl -pe 's/([A-Za-z])\:\\/\/cygdrive\/\L\1\//g' | sed 's|\\|/|g')"
+	echo "START DEBUG"
+	echo "$init"
+	echo "END DEBUG"
+	$init
 	defaultsleep
 }
 
