@@ -212,6 +212,7 @@ for d in cyph.im cyph.video ; do
 	echo 'WebSign'
 
 	mv websign/serviceworker.js ./
+	mv websign/unsupportedbrowser.html ./
 
 	# Merge in base64'd images and audio, BUT NOT fonts (they add 7mb)
 	find img audio -type f -print0 | while read -d $'\0' f ; do
