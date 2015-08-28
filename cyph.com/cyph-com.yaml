@@ -115,6 +115,14 @@ handlers:
   # default_headers Cache-Control Expires
 
 
+# Unsupported browsers
+- url: /unsupportedbrowser
+  static_files: unsupportedbrowser.html
+  upload: unsupportedbrowser.html
+  secure: always
+  # default_headers Cache-Control Expires
+
+
 # Blog
 
 - url: /blog[/]?
