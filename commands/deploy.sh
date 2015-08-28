@@ -186,7 +186,7 @@ find shared ! -wholename '*fonts/*' ! -wholename '*websign*' -type f -print0 | w
 		continue
 	fi
 
-	f="$(echo "$f" | sed 's/shared\///g' | sed 's|.ts|.js|g' | sed 's|.scss|.css|g')"
+	f="$(echo "$f" | sed 's/shared\///g' | sed 's/\.ts$/\.js/g' | sed 's/\.scss$/\.css/g')"
 	safeF="$(echo "$f" | sed 's/\//\\\//g' | sed 's/ /\\ /g' | sed 's/\_/\\_/g')"
 
 	for d in cyph.com ; do
