@@ -9,7 +9,7 @@ defaultsleep () {
 
 shellinit () {
 	defaultsleep
-	$(boot2docker shellinit 2> /dev/null | perl -pe 's/([A-Za-z])\:\\/\/cygdrive\/\L\1\//g' | sed 's/\\/\//g')
+	$(boot2docker shellinit | perl -pe 's/([A-Za-z])\:\\/\/cygdrive\/\L\1\//g' | sed 's|\\|/|g')
 	defaultsleep
 }
 
