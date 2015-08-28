@@ -4,7 +4,7 @@ cd $(cd "$(dirname "$0")"; pwd)
 
 
 defaultsleep () {
-	sleep 2
+	sleep 5
 }
 
 shellinit () {
