@@ -9,7 +9,7 @@ defaultsleep () {
 
 shellinit () {
 	defaultsleep
-	$(boot2docker shellinit 2> /dev/null)
+	$(boot2docker shellinit 2> /dev/null | sed "s|'||g")
 	defaultsleep
 }
 
