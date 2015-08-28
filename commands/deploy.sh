@@ -57,11 +57,9 @@ ls */*.yaml | xargs -I% sed -ri.bak "s/  ${defaultHeadersString}(.*)/\
 /ge" %
 ls */*.yaml | xargs -I% sed -i.bak 's|###| |g' %
 
-# Temporary workaround for Google header length cap
+# Temporary workaround for Google header length cap (https://code.google.com/p/googleappengine/issues/detail?id=12286)
 if [ $test ] ; then
 	cat shared/websign/csp | \
-		grep -v referrer | \
-		grep -v object-src | \
 		grep -v upgrade-insecure-requests | \
 		sed 's|https://cyphdbyhiddenbhs.onion ||g' | \
 		sed 's|api.cyph.com|*.appspot.com|g' | \
@@ -70,6 +68,8 @@ if [ $test ] ; then
 	mv .tmpcsp shared/websign/csp
 else
 	cat shared/websign/csp | \
+		grep -v referrer | \
+		grep -v object-src | \
 		sed 's|https://\*.cyph.com https://api.cyph.com|https://*.cyph.com|g' \
 	> .tmpcsp
 	mv .tmpcsp shared/websign/csp
