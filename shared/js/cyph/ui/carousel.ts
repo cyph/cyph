@@ -54,12 +54,16 @@ module Cyph {
 			 * @param controller
 			 */
 			public constructor (
-				private rootElement: JQuery
+				private rootElement: JQuery,
+				callback: Function = () => {}
 			) {
 				this.logos	= this.rootElement.find('.logo');
 				this.quotes	= this.rootElement.find('.quote');
 
-				setTimeout(() => this.setItem(0), 1000);
+				setTimeout(() => {
+					this.setItem(0);
+					callback();
+				}, 1000);
 			}
 		}
 	}

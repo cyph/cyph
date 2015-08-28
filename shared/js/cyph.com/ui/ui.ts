@@ -186,11 +186,12 @@ module Cyph.com {
 				/* Carousels */
 
 				this.featureCarousel		= new Cyph.UI.Carousel(Elements.featuresSection);
-				this.testimonialCarousel	= new Cyph.UI.Carousel(Elements.testimonialsSection);
 
-				Elements.heroSection.css(
-					'min-height',
-					`calc(100vw - ${(Elements.testimonialsSection.height() + 40)}px)`
+				this.testimonialCarousel	= new Cyph.UI.Carousel(Elements.testimonialsSection, () =>
+					Elements.heroSection.css(
+						'min-height',
+						`calc(100vh - ${(Elements.testimonialsSection.height() + 40)}px)`
+					)
 				);
 
 
