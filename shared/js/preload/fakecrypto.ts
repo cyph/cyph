@@ -47,5 +47,7 @@ if (!('ntru' in self)) {
 }
 
 if (!('sodium' in self)) {
-	self['sodium']	= {};
+	self['sodium']	= {
+		randombytes_buf: (n: number) => crypto.getRandomValues(new Uint8Array(n))
+	};
 }
