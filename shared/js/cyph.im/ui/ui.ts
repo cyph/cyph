@@ -116,7 +116,7 @@ module Cyph.im {
 				self.onpopstate		= null;
 
 
-				if (!Cyph.Env.isMobile && Cyph.Env.isIE) {
+				if (!Cyph.Env.isMobile && Cyph.Env.isIEOrEdge) {
 					this.dialogManager.alert({
 						title: Cyph.Strings.warningTitle,
 						ok: Cyph.Strings.ok,

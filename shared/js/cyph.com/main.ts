@@ -20,6 +20,15 @@
 /// <reference path="ui/cyphdemo.ts" />
 /// <reference path="ui/ui.ts" />
 
+/*
+	cyph.com works fine in every browser except IE/Edge.
+	Until Microsoft fixes their shit, it's their problem, not ours.
+*/
+
+if (Cyph.Env.isIEOrEdge) {
+	location.pathname	= '/unsupportedbrowser';
+}
+
 
 angular.
 	module('Cyph', [

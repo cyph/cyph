@@ -57,6 +57,12 @@ module Cyph {
 		/** Indicates whether this is Internet Explorer. */
 		public static isIE: boolean			= /msie |trident\//.test(Env.userAgent);
 
+		/** Indicates whether this is Edge. */
+		public static isEdge: boolean		= /Edge\/\d+/.test(Env.userAgent);
+
+		/** Indicates whether this is Internet Explorer or Edge. */
+		public static isIEOrEdge: boolean	= Env.isIE || Env.isEdge;
+
 		/** Indicates whether this is OS X. */
 		public static isOSX: boolean		= /mac os x/.test(Env.userAgent);
 
