@@ -706,6 +706,11 @@ html.mobile .carousel.grid-container {
 		margin-left: -40px;
 		margin-top: -60px;
 		@include transform(scale(0.625));
+
+		.send-file-button {
+			pointer-events: none;
+			opacity: 0.5;
+		}
 	}
 
 	[cyph-chat-main] .chat-main.video {
