@@ -49,8 +49,8 @@ module Cyph.com {
 				const ancestorOffset	= ancestor.offset();
 
 				return {
-					left: Math.ceil(elemOffset.left - ancestorOffset.left),
-					top: Math.ceil(elemOffset.top - ancestorOffset.top)
+					left: Math.floor(elemOffset.left - ancestorOffset.left),
+					top: Math.floor(elemOffset.top - ancestorOffset.top)
 				};
 			}
 
