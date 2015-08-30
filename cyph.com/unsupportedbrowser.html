@@ -29,14 +29,19 @@
 		<meta name='msapplication-TileImage' content='/img/favicon/mstile-144x144.png' />
 		<style>
 			body {
-			background-color: #8b62d9;
-	   		color: white;
-	   		font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif;
+				background-color: #8b62d9;
+				color: white;
+				font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif;
 			}
+
+			a {
+				color: white;
+			}
+
 			.content {
 				position: absolute;
-	    			top: 0;
-	   			bottom: 0;
+				top: 0;
+				bottom: 0;
 				width: 750px;
 				left: 0;
 				height: 750px;
@@ -45,15 +50,24 @@
 				text-align: center;
 				font-size: 22px;
 			}
-			a {
-	    			color: white;
+			.content > img {
+				width: 35%;
+				margin-top: 25px;
+				margin-bottom: 25px;
+			}
+
+			.footer {
+				position: fixed;
+				bottom: 10px;
+				width: 100%;
+				text-align: center;
 			}
 		</style>
 		
 	</head>
 	<body>
 		<div class='content'>
-			<img src='/img/logo.white.vertical.png' style='width:35%;margin-top:25px;margin-bottom:25px;' alt='Horizontal white Cyph logo with transparent background' />
+			<img src='/img/logo.white.vertical.png' alt='Horizontal white Cyph logo with transparent background' />
 			<p>
 				Internet Explorer / Edge is not supported for viewing this website.
 			</p>
@@ -66,7 +80,7 @@
 				which mostly works in the latest IE.
 			</p>
 		</div>
-		<div style='position:fixed;bottom:10px;width:100%;text-align:center;'>
+		<div class='footer'>
 			&copy; Cyph 2015
 				&nbsp;&bull;&nbsp;
 			<a href='https://twitter.com/cyph' target='_blank'>@cyph</a>
