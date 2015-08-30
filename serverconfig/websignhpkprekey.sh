@@ -31,7 +31,7 @@ curl -s -u "${apikey}" -X POST \
 
 delete csr.pem
 
-sleep 5m
+sleep 1m
 
 nodejs -e "
 	var o = JSON.parse(
