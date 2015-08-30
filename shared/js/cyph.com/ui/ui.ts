@@ -211,7 +211,7 @@ module Cyph.com {
 							const $this: JQuery	= $(elem);
 
 							$this.width(
-								$this[0].innerText.
+								($this[0].innerText || $this.text()).
 									split('\n').
 									map((s: string) => (s.match(/[A-Za-z0-9]/g) || []).length).
 									reduce((a: number, b: number) => Math.max(a, b))
