@@ -263,16 +263,6 @@ for d in cyph.im cyph.video ; do
 
 	if [ ! $test ] ; then
 		websignhashes="$(cat $currentDir/websignhashes.json)"
-
-		# Leaving old-style signing for continued compatibility with old WebSign instances
-		echo "\
-{
-	\"hash\": \"$sha512hash\",
-	\"timestamp\": $timestamp,
-	\"expires\": $expires
-}" | gpg --clearsign > websign/$d.hash
-		cat websign/$d.hash | gpg --clearsign -u 'Alternate Key' > websign/$d.hash2
-		cp -f websign/$d.hash2 websign/$d.hash
 	fi
 
 	$currentDir/../commands/websign/sign.js "{
