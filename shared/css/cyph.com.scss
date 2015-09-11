@@ -444,8 +444,6 @@ html.mobile .carousel.grid-container {
 		}
 
 		> img {
-			opacity: 0.2;
-
 			& + div {
 				position: absolute;
 				top: 50%;
@@ -508,6 +506,10 @@ html.mobile .carousel.grid-container {
 	}
 }
 
+html.mobile #testimonials-section .carousel.grid-container .logo.active {
+	padding-bottom: 20px;
+}
+
 #about-section {
 	text-align: center;
 }
@@ -548,6 +550,10 @@ html.mobile .carousel.grid-container {
 			}
 		}
 	}
+}
+
+html.mobile #features-section .carousel.grid-container .logo.active > img {
+	opacity: 0.2;
 }
 
 #intro-section, #features-section {
