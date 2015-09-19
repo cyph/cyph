@@ -63,14 +63,16 @@ if [ $test ] ; then
 		grep -v upgrade-insecure-requests | \
 		sed 's|https://cyphdbyhiddenbhs.onion ||g' | \
 		sed 's|api.cyph.com|*.appspot.com|g' | \
-		sed 's|www.cyph.com|*.appspot.com|g' \
+		sed 's|www.cyph.com|*.appspot.com|g' | \
+		perl -pe 's/-src.*?blob:.*?;/-src *;/g' \
 	> .tmpcsp
 	mv .tmpcsp shared/websign/csp
 else
 	cat shared/websign/csp | \
 		grep -v referrer | \
 		grep -v object-src | \
-		sed 's|https://\*.cyph.com https://api.cyph.com|https://*.cyph.com|g' \
+		sed 's|https://\*.cyph.com https://api.cyph.com|https://*.cyph.com|g' | \
+		perl -pe 's/-src.*?blob:.*?;/-src *;/g' \
 	> .tmpcsp
 	mv .tmpcsp shared/websign/csp
 fi
