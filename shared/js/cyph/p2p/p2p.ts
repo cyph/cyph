@@ -827,7 +827,7 @@ module Cyph {
 													this.mutex.unlock();
 												}, retry)
 											);
-										}, retry, {
+										}, retry, <any> {
 											offerToReceiveAudio: true,
 											offerToReceiveVideo: true
 										})
