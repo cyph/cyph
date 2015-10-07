@@ -9,14 +9,12 @@
 
 		ga('create', 'UA-56220601-1', 'auto');
 
-		var location	= 'https://' + location.pathname.split('/')[2];
 		var referrer	= decodeURIComponent(((location.search || '').split('ref=')[1] || '').split('&')[0] || '');
 
 		if (referrer) {
 			ga('set', 'referrer', referrer);
 		}
 
-		ga('set', 'location', location);
 		ga('set', 'anonymizeIp', true);
 		ga('send', 'pageview');
 
