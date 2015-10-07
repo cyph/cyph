@@ -4,7 +4,7 @@ runtime: go
 api_version: go1
 
 handlers:
-- url: /anal/.*
+- url: /analframe/.*
   static_files: anal.html
   upload: anal.html
   # default_headers X-Frame-Options Content-Security-Policy X-Content-Security-Policy X-WebKit-CSP
