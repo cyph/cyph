@@ -7,7 +7,7 @@ cd $(cd "$(dirname "$0")"; pwd)/..
 
 
 appserver () {
-	sudo bash -c "yes | /google-cloud-sdk/bin/dev_appserver.py ${*}"
+	sudo /google-cloud-sdk/bin/dev_appserver.py $*
 }
 
 
@@ -31,6 +31,8 @@ cd cyph.com/blog/theme
 rm -rf ../build
 jekyll build --watch --destination ../build &
 cd ../../..
+
+sudo bash -c 'yes | /google-cloud-sdk/bin/gcloud components update'
 
 mkdir /tmp/cyph0
 appserver --port 5000 --admin_port 6000 --host 0.0.0.0 --storage_path /tmp/cyph0 default/app.yaml &
