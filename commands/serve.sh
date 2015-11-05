@@ -33,7 +33,7 @@ jekyll build --watch --destination ../build &
 cd ../../..
 
 sudo bash -c 'yes | /google-cloud-sdk/bin/gcloud components update'
-sudo bash -c 'yes | /google-cloud-sdk/bin/dev_appserver.py'
+sudo bash -c 'yes | /google-cloud-sdk/bin/dev_appserver.py --help'
 
 mkdir /tmp/cyph0
 appserver --port 5000 --admin_port 6000 --host 0.0.0.0 --storage_path /tmp/cyph0 default/app.yaml &
