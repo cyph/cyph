@@ -32,6 +32,7 @@ rm -rf ../build
 jekyll build --watch --destination ../build &
 cd ../../..
 
+sudo bash -c 'yes | /google-cloud-sdk/bin/gcloud components update'
 sudo bash -c 'yes | /google-cloud-sdk/bin/dev_appserver.py'
 
 mkdir /tmp/cyph0

@@ -46,6 +46,7 @@ RUN echo '\
 ' >> /.bashrc
 
 RUN yes | /google-cloud-sdk/bin/gcloud components update
+RUN yes | /google-cloud-sdk/bin/dev_appserver.py
 
 RUN echo 'gibson ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
 RUN useradd -ms /bin/bash gibson
