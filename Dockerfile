@@ -45,12 +45,13 @@ RUN echo '\
 	export PATH="/opt/local/bin:/opt/local/sbin:/usr/local/opt/go/libexec/bin:$GOPATH/bin:$PATH"; \
 ' >> /.bashrc
 
+RUN yes | /google-cloud-sdk/bin/gcloud components update
+
 RUN echo 'gibson ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
 RUN useradd -ms /bin/bash gibson
 RUN mkdir -p /home/gibson
 RUN cp /.bashrc /home/gibson/
 RUN chmod 700 ~/.bashrc
-RUN chmod 777 -R /google-cloud-sdk
 USER gibson
 ENV HOME /home/gibson
 
