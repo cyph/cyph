@@ -7,7 +7,7 @@ cd $(cd "$(dirname "$0")"; pwd)/..
 
 
 appserver () {
-	sudo /google-cloud-sdk/bin/dev_appserver.py $*
+	sudo bash -c "yes | /google-cloud-sdk/bin/dev_appserver.py ${*}"
 }
 
 
