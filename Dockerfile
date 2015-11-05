@@ -50,6 +50,7 @@ RUN useradd -ms /bin/bash gibson
 RUN mkdir -p /home/gibson
 RUN cp /.bashrc /home/gibson/
 RUN chmod 700 ~/.bashrc
+RUN chmod 777 -R /google-cloud-sdk
 USER gibson
 ENV HOME /home/gibson
 
