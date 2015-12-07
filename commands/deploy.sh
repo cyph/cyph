@@ -57,31 +57,11 @@ ls */*.yaml | xargs -I% sed -ri.bak "s/  ${defaultHeadersString}(.*)/\
 /ge" %
 ls */*.yaml | xargs -I% sed -i.bak 's|###| |g' %
 
-# Temporary workaround for Google header length cap (https://code.google.com/p/googleappengine/issues/detail?id=12286)
-if [ $test ] ; then
-	cat shared/websign/csp | \
-		grep -v upgrade-insecure-requests | \
-		sed 's|https://cyphdbyhiddenbhs.onion ||g' | \
-		sed 's|api.cyph.com|*.appspot.com|g' | \
-		sed 's|www.cyph.com|*.appspot.com|g' | \
-		perl -pe 's/-src.*?blob:.*?;/-src *;/g' \
-	> .tmpcsp
-	mv .tmpcsp shared/websign/csp
-else
-	cat shared/websign/csp | \
-		grep -v referrer | \
-		grep -v object-src | \
-		sed 's|https://\*.cyph.com https://api.cyph.com|https://*.cyph.com|g' | \
-		perl -pe 's/-src.*?blob:.*?;/-src *;/g' \
-	> .tmpcsp
-	mv .tmpcsp shared/websign/csp
-fi
-
 defaultCSPString='DEFAULT_CSP'
 CSP="$(cat shared/websign/csp | tr -d '\n')"
 cyphComCSP="$(cat shared/websign/csp | tr -d '\n' | sed 's|frame-src|frame-src https://*.facebook.com|g')"
-ls cyph.com/*.yaml | xargs -I% sed -i.bak "s|${defaultCSPString}|${cyphComCSP}|g" %
-ls */*.yaml */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s|${defaultCSPString}|${CSP}|g" %
+ls cyph.com/*.yaml | xargs -I% sed -i.bak "s|${defaultCSPString}|\"${cyphComCSP}\"|g" %
+ls */*.yaml */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s|${defaultCSPString}|\"${CSP}\"|g" %
 
 
 # Expand connect-src and frame-src on blog to support social media widgets and stuff
