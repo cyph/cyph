@@ -7,29 +7,10 @@ LABEL Name="cyph"
 RUN apt-get update
 RUN apt-get dist-upgrade -y
 
-RUN apt-get install -y curl python python-pip perl devscripts build-essential git gnupg procps sudo
+RUN apt-get install -y curl golang-go python python-pip perl devscripts build-essential git gnupg procps sudo
 
 RUN curl -sL https://deb.nodesource.com/setup | bash -
 RUN apt-get install -y nodejs
-
-RUN bash -c ' \
-	mkdir /golang; \
-	cd /golang; \
-	apt-get build-dep -y golang; \
-	apt-get install -y bison ed; \
-	gopackage="$(curl -s http://ftp.de.debian.org/debian/pool/main/g/golang/ | grep -oP "golang_1\\.\\d+\\.\\d+-\\d+" | tail -n1)"; \
-	goversion="$(echo "$gopackage" | grep -oP "1\\.\\d+\\.\\d+")"; \
-	wget http://ftp.de.debian.org/debian/pool/main/g/golang/$gopackage.dsc; \
-	wget http://ftp.de.debian.org/debian/pool/main/g/golang/golang_$goversion.orig.tar.gz; \
-	wget http://ftp.de.debian.org/debian/pool/main/g/golang/$gopackage.debian.tar.xz; \
-	dpkg-source -x $gopackage.dsc; \
-	cd golang-$goversion; \
-	debuild -us -uc; \
-	cd ..; \
-	dpkg -i golang-go_*_amd64.deb golang-src_*_amd64.deb golang-go-linux-amd64_*_amd64.deb; \
-	cd /; \
-	rm -rf /golang; \
-'
 
 RUN npm -g install html-minifier clean-css uglifyjs typescript tsd typedoc bower browserstack browserify libsodium-wrappers glob read
 RUN pip install beautifulsoup4 html5lib
