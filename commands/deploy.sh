@@ -282,11 +282,11 @@ deploy () {
 if [ $site ] ; then
 	deploy $site/*.yaml
 else
-	ls */*.yaml | xargs -I% deploy %
+	for f in */*.yaml ; do deploy $f ; done
 fi
 
-appcfg.py update_dispatch .
-appcfg.py -A cyphme update_cron .
+appcfg.py update_dispatch --noauth_local_webserver .
+appcfg.py -A cyphme update_cron --noauth_local_webserver .
 
 if [ $all ] ; then
 	../commands/deploy.sh
