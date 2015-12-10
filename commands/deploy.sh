@@ -44,7 +44,7 @@ branch="$(git describe --tags --exact-match 2> /dev/null || git branch | awk '/^
 if [ $branch == 'prod' ] ; then
 	branch='staging'
 fi
-ls */*.yaml | xargs -I% sed -i.bak "s/version: master/version: ${branch}/g" %
+version="$branch"
 
 defaultHeadersString='# default_headers'
 defaultHeaders="$(cat headers.yaml)"
@@ -67,9 +67,7 @@ ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s|${defaultCSPString}|${CSP}|g
 
 # Expand connect-src and frame-src on blog to support social media widgets and stuff
 
-# Temporary workaround, pending header length fix from Google
-# blogCSPSources="$(cat cyph.com/blog/csp | perl -pe 's/^(.*)$/https:\/\/\1 https:\/\/*.\1/g' | tr '\n' ' ')"
-blogCSPSources='*'
+blogCSPSources="$(cat cyph.com/blog/csp | perl -pe 's/^(.*)$/https:\/\/\1 https:\/\/*.\1/g' | tr '\n' ' ')"
 
 cat cyph.com/cyph-com.yaml | \
 	tr '\n' '☁' | \
@@ -109,7 +107,7 @@ else
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42003/https:\/\/www.cyph.me/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42004/https:\/\/www.cyph.video/g" %
 
-	ls */*.yaml | xargs -I% sed -i.bak 's/version: staging/version: prod/g' %
+	version=prod
 fi
 
 
@@ -277,10 +275,14 @@ fi
 # AWS credentials
 cat ~/.cyph/jobs.vars >> jobs/jobs.yaml
 
+deploy () {
+	gcloud preview app deploy --quiet --no-promote --project cyphme --version $version $1
+}
+
 if [ $site ] ; then
-	goapp deploy $site/*.yaml
+	deploy $site/*.yaml
 else
-	ls */*.yaml | xargs -I% goapp deploy %
+	ls */*.yaml | xargs -I% deploy %
 fi
 
 appcfg.py update_dispatch .

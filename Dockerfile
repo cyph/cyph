@@ -17,11 +17,13 @@ RUN bash -c ' \
 	cd /golang; \
 	apt-get build-dep -y golang; \
 	apt-get install -y bison ed; \
-	wget http://ftp.de.debian.org/debian/pool/main/g/golang/golang_1.3.3-1.dsc; \
-	wget http://ftp.de.debian.org/debian/pool/main/g/golang/golang_1.3.3.orig.tar.gz; \
-	wget http://ftp.de.debian.org/debian/pool/main/g/golang/golang_1.3.3-1.debian.tar.xz; \
-	dpkg-source -x golang_1.3.3-1.dsc; \
-	cd golang-1.3.3; \
+	gopackage="$(curl -s http://ftp.de.debian.org/debian/pool/main/g/golang/ | grep -oP "golang_1\\.\\d+\\.\\d+-\\d+" | tail -n1)"; \
+	goversion="$(echo "$gopackage" | grep -oP "1\\.\\d+\\.\\d+")"; \
+	wget http://ftp.de.debian.org/debian/pool/main/g/golang/$gopackage.dsc; \
+	wget http://ftp.de.debian.org/debian/pool/main/g/golang/golang_$goversion.orig.tar.gz; \
+	wget http://ftp.de.debian.org/debian/pool/main/g/golang/$gopackage.debian.tar.xz; \
+	dpkg-source -x $gopackage.dsc; \
+	cd golang-$goversion; \
 	debuild -us -uc; \
 	cd ..; \
 	dpkg -i golang-go_*_amd64.deb golang-src_*_amd64.deb golang-go-linux-amd64_*_amd64.deb; \
@@ -40,9 +42,9 @@ RUN echo '\
 \
 	export GOPATH=$HOME/go; \
 	export CLOUDSDK_PYTHON=python2; \
-	alias goapp="~/.config/google-cloud-sdk/platform/google_appengine/goapp"; \
+	export CLOUD_PATHS="/google-cloud-sdk/bin:/google-cloud-sdk/platform/google_appengine:/google-cloud-sdk/platform/google_appengine/google/appengine/tools"; \
 \
-	export PATH="/opt/local/bin:/opt/local/sbin:/usr/local/opt/go/libexec/bin:$GOPATH/bin:$PATH"; \
+	export PATH="/opt/local/bin:/opt/local/sbin:/usr/local/opt/go/libexec/bin:$CLOUD_PATHS:$GOPATH/bin:$PATH"; \
 ' >> /.bashrc
 
 RUN echo 'gibson ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers

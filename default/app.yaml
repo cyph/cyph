@@ -1,5 +1,3 @@
-application: cyphme
-version: master
 runtime: go
 api_version: go1
 
