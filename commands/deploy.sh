@@ -276,7 +276,7 @@ fi
 cat ~/.cyph/jobs.vars >> jobs/jobs.yaml
 
 deploy () {
-	gcloud preview app deploy --quiet --no-promote --project cyphme --version $version $1
+	gcloud preview app deploy --quiet --no-promote --project cyphme --version $version $*
 }
 
 if [ $site ] ; then
