@@ -37,11 +37,15 @@ module Cyph.com {
 				{text: `well I have to be extra careful; the mafia is looking for me`, isMobile: false},
 				{text: `I don't believe you :expressionless:`, isMobile: true},
 				{text: `all right fine, it just creeps me out that *someone* might have been reading our conversation`, isMobile: false},
-				{text: `anyway, you think this pic is approriate for LinkedIn?`, isMobile: false},
-				{text: CyphDemo.facebookPicMessage, isMobile: false},
-				{text: `lol yeah, looks great ;)`, isMobile: true},
-				{text: `cool, gotta run`, isMobile: false},
-				{text: `ttyl :v:`, isMobile: true}
+				/*
+					{text: `anyway, you think this pic is approriate for LinkedIn?`, isMobile: false},
+					{text: CyphDemo.facebookPicMessage, isMobile: false},
+					{text: `lol yeah, looks great ;)`, isMobile: true},
+					{text: `cool, gotta run`, isMobile: false},
+					{text: `ttyl :v:`, isMobile: true}
+				*/
+				{text: `anyway, gotta run`, isMobile: false},
+				{text: `cool, ttyl :v:`, isMobile: true}
 			];
 
 			private static getOffset (elem: JQuery, ancestor: JQuery) : { left: number; top: number; } {

@@ -7,27 +7,10 @@ LABEL Name="cyph"
 RUN apt-get update
 RUN apt-get dist-upgrade -y
 
-RUN apt-get install -y curl python python-pip perl devscripts build-essential git gnupg procps sudo
+RUN apt-get install -y curl golang-go python python-pip perl devscripts build-essential git gnupg procps sudo
 
 RUN curl -sL https://deb.nodesource.com/setup | bash -
 RUN apt-get install -y nodejs
-
-RUN bash -c ' \
-	mkdir /golang; \
-	cd /golang; \
-	apt-get build-dep -y golang; \
-	apt-get install -y bison ed; \
-	wget http://ftp.de.debian.org/debian/pool/main/g/golang/golang_1.3.3-1.dsc; \
-	wget http://ftp.de.debian.org/debian/pool/main/g/golang/golang_1.3.3.orig.tar.gz; \
-	wget http://ftp.de.debian.org/debian/pool/main/g/golang/golang_1.3.3-1.debian.tar.xz; \
-	dpkg-source -x golang_1.3.3-1.dsc; \
-	cd golang-1.3.3; \
-	debuild -us -uc; \
-	cd ..; \
-	dpkg -i golang-go_*_amd64.deb golang-src_*_amd64.deb golang-go-linux-amd64_*_amd64.deb; \
-	cd /; \
-	rm -rf /golang; \
-'
 
 RUN npm -g install html-minifier clean-css uglifyjs typescript tsd typedoc bower browserstack browserify libsodium-wrappers glob read
 RUN pip install beautifulsoup4 html5lib
@@ -40,9 +23,9 @@ RUN echo '\
 \
 	export GOPATH=$HOME/go; \
 	export CLOUDSDK_PYTHON=python2; \
-	alias goapp="~/.config/google-cloud-sdk/platform/google_appengine/goapp"; \
+	export CLOUD_PATHS="/google-cloud-sdk/bin:/google-cloud-sdk/platform/google_appengine:/google-cloud-sdk/platform/google_appengine/google/appengine/tools"; \
 \
-	export PATH="/opt/local/bin:/opt/local/sbin:/usr/local/opt/go/libexec/bin:$GOPATH/bin:$PATH"; \
+	export PATH="/opt/local/bin:/opt/local/sbin:/usr/local/opt/go/libexec/bin:$CLOUD_PATHS:$GOPATH/bin:$PATH"; \
 ' >> /.bashrc
 
 RUN yes | /google-cloud-sdk/bin/gcloud components update
