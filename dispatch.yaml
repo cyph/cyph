@@ -1,5 +1,3 @@
-application: cyphme
-
 dispatch:
 - url: "api.cyph.com/*"
   module: default

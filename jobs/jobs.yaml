@@ -1,6 +1,4 @@
-application: cyphme
 module: jobs
-version: master
 runtime: python27
 api_version: 1
 threadsafe: true

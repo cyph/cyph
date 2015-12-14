@@ -75,7 +75,7 @@ module Cyph {
 
 					this.analFrame.src	=
 						Env.baseUrl +
-						'anal/' +
+						'analsandbox/' +
 						appName +
 						locationData.pathname +
 						locationData.search +

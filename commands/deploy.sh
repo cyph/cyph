@@ -44,7 +44,7 @@ branch="$(git describe --tags --exact-match 2> /dev/null || git branch | awk '/^
 if [ $branch == 'prod' ] ; then
 	branch='staging'
 fi
-ls */*.yaml | xargs -I% sed -i.bak "s/version: master/version: ${branch}/g" %
+version="$branch"
 
 defaultHeadersString='# default_headers'
 defaultHeaders="$(cat headers.yaml)"
@@ -57,38 +57,17 @@ ls */*.yaml | xargs -I% sed -ri.bak "s/  ${defaultHeadersString}(.*)/\
 /ge" %
 ls */*.yaml | xargs -I% sed -i.bak 's|###| |g' %
 
-# Temporary workaround for Google header length cap (https://code.google.com/p/googleappengine/issues/detail?id=12286)
-if [ $test ] ; then
-	cat shared/websign/csp | \
-		grep -v upgrade-insecure-requests | \
-		sed 's|https://cyphdbyhiddenbhs.onion ||g' | \
-		sed 's|api.cyph.com|*.appspot.com|g' | \
-		sed 's|www.cyph.com|*.appspot.com|g' | \
-		perl -pe 's/-src.*?blob:.*?;/-src *;/g' \
-	> .tmpcsp
-	mv .tmpcsp shared/websign/csp
-else
-	cat shared/websign/csp | \
-		grep -v referrer | \
-		grep -v object-src | \
-		sed 's|https://\*.cyph.com https://api.cyph.com|https://*.cyph.com|g' | \
-		perl -pe 's/-src.*?blob:.*?;/-src *;/g' \
-	> .tmpcsp
-	mv .tmpcsp shared/websign/csp
-fi
-
 defaultCSPString='DEFAULT_CSP'
 CSP="$(cat shared/websign/csp | tr -d '\n')"
 cyphComCSP="$(cat shared/websign/csp | tr -d '\n' | sed 's|frame-src|frame-src https://*.facebook.com|g')"
-ls cyph.com/*.yaml | xargs -I% sed -i.bak "s|${defaultCSPString}|${cyphComCSP}|g" %
-ls */*.yaml */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s|${defaultCSPString}|${CSP}|g" %
+ls cyph.com/*.yaml | xargs -I% sed -i.bak "s|${defaultCSPString}|\"${cyphComCSP}\"|g" %
+ls */*.yaml | xargs -I% sed -i.bak "s|${defaultCSPString}|\"${CSP}\"|g" %
+ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s|${defaultCSPString}|${CSP}|g" %
 
 
 # Expand connect-src and frame-src on blog to support social media widgets and stuff
 
-# Temporary workaround, pending header length fix from Google
-# blogCSPSources="$(cat cyph.com/blog/csp | perl -pe 's/^(.*)$/https:\/\/\1 https:\/\/*.\1/g' | tr '\n' ' ')"
-blogCSPSources='*'
+blogCSPSources="$(cat cyph.com/blog/csp | perl -pe 's/^(.*)$/https:\/\/\1 https:\/\/*.\1/g' | tr '\n' ' ')"
 
 cat cyph.com/cyph-com.yaml | \
 	tr '\n' '☁' | \
@@ -128,7 +107,7 @@ else
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42003/https:\/\/www.cyph.me/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42004/https:\/\/www.cyph.video/g" %
 
-	ls */*.yaml | xargs -I% sed -i.bak 's/version: staging/version: prod/g' %
+	version=prod
 fi
 
 
@@ -296,14 +275,17 @@ fi
 # AWS credentials
 cat ~/.cyph/jobs.vars >> jobs/jobs.yaml
 
+deploy () {
+	gcloud preview app deploy --quiet --no-promote --project cyphme --version $version $*
+}
+
 if [ $site ] ; then
-	goapp deploy $site/*.yaml
+	deploy $site/*.yaml
 else
-	ls */*.yaml | xargs -I% goapp deploy %
+	deploy */*.yaml
 fi
 
-appcfg.py update_dispatch .
-appcfg.py -A cyphme update_cron .
+deploy dispatch.yaml cron.yaml
 
 if [ $all ] ; then
 	../commands/deploy.sh

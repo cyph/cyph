@@ -1,6 +1,4 @@
-application: cyphme
 module: cyph-com
-version: master
 runtime: python27
 api_version: 1
 threadsafe: true
