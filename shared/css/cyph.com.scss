@@ -959,7 +959,7 @@ html.mobile {
 div.donation {
 	position: relative;
 	float: right;
-	top: -55px;
+	margin-top: -55px;
 	font-family: Ubuntu;
 }
 div.donation span {
@@ -968,6 +968,11 @@ div.donation span {
 	left: 10px;
 	top: -1px;
 	position: relative;
+}
+.donate-button {
+	display: block;
+	width: 100%;
+	margin-top: -15px;
 }
 md-slider.donation {
 	width: 91%;
