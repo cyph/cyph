@@ -103,9 +103,9 @@ if [ $test ] ; then
 else
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42000/https:\/\/api.cyph.com/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42001/https:\/\/www.cyph.com/g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42002/https:\/\/www.cyph.im/g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42003/https:\/\/www.cyph.me/g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42004/https:\/\/www.cyph.video/g" %
+	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42002/https:\/\/cyph.im/g" %
+	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42003/https:\/\/cyph.me/g" %
+	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42004/https:\/\/cyph.video/g" %
 
 	version=prod
 fi
