@@ -955,3 +955,80 @@ html.mobile {
 		}
 	}
 }
+
+div.donation {
+	position: relative;
+	float: right;
+	margin-top: -55px;
+	font-family: Ubuntu;
+}
+div.donation span {
+	color: black;
+	font-family: Ubuntu;
+	left: 10px;
+	top: -1px;
+	position: relative;
+}
+.donate-button {
+	display: block;
+	width: 100%;
+	margin-top: -15px;
+}
+md-slider.donation {
+	width: 91%;
+}
+md-slider .md-sign:after {
+	border-top-color: rgb(107, 63, 176);
+}
+md-slider .md-thumb:after {
+	border-color: rgb(107, 63, 176);
+	background-color: rgb(107, 63, 176);
+}
+span.md-thumb-text:before {
+	content: '$';
+}
+md-slider.md-min .md-thumb:after {
+	background-color: rgb(255,255,255);
+}
+md-slider .md-track.md-track-fill {
+	background-color: rgb(255,255,255);
+}
+md-slider .md-sign {
+	background-color: rgb(107, 63, 176);
+}
+md-slider .md-sign {
+	left: -20px !important;
+	top: -25px !important;
+	width: 42px !important;
+	height: 42px !important;
+}
+md-slider .md-focus-thumb {
+	position: absolute;
+	left: -24px;
+	top: 0px;
+	width: 48px;
+	height: 48px;
+	border-radius: 48px;
+	display: none;
+	opacity: 0;
+	background-color: silver;
+	@include animation(sliderFocusThumb .4s linear);
+}
+md-slider .md-sign .md-thumb-text {
+	z-index: 1;
+	font-size: 13px;
+	font-weight: 900;
+}
+input.donation {
+	text-align: center;
+	border: 0px;
+}
+input.donation:before {
+	content: '$';
+}
+.paypal-button button.large {
+	width: 194px;
+	float: right;
+	margin-right: 103px;
+	top: -37px;
+}
