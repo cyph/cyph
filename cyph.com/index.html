@@ -758,7 +758,7 @@
 						step='1'
 						min='1'
 						max='1337'
-						aria-label='Donate'
+						aria-label='Donation Amount'
 					></md-slider>
 					<div flex='20' class='donation' layout layout-align='center center'>
 						 <span>$</span>
@@ -771,18 +771,11 @@
 							maxlength='4'
 						 />
 					</div>
-					<script  
-						data-tax='0'
-						data-shipping='0'
-						data-currency='USD'
-						data-amount='{{ui.donationAmount}}'
-						data-quantity='1'
-						data-name='Cyph Donation'
-						data-button='donate'
-						src='https://www.paypalobjects.com/js/external/paypal-button.min.js?merchant=paypal@cyph.com'
-						async='async'
-					>
-					</script>
+					<md-button class='donate-button' aria-label='Submit Donation'>
+						<a translate ng-href='https://www.paypal.me/cyph/{{ui.donationAmount}}'>
+							Donate
+						</a>
+					</md-button>
 				</p>
 				<p translate>
 					All donations will go directly toward the development of native mobile apps and
