@@ -5,11 +5,11 @@ dispatch:
 - url: "www.cyph.com/*"
   module: cyph-com
 
-- url: "www.cyph.im/*"
+- url: "cyph.im/*"
   module: cyph-im
 
-- url: "www.cyph.me/*"
+- url: "cyph.me/*"
   module: cyph-me
 
-- url: "www.cyph.video/*"
+- url: "cyph.video/*"
   module: cyph-video

@@ -24,7 +24,7 @@ module Cyph {
 			`${locationData.protocol}//${locationData.hostname}:42001/`
 		;
 
-		/** Base URL for a new cyph link ("https://www.cyph.im/" or equivalent). */
+		/** Base URL for a new cyph link ("https://cyph.im/" or equivalent). */
 		public static newCyphBaseUrl: string	= `${locationData.protocol}//${locationData.hostname}:42002/`;
 
 		/** URL for starting a new cyph (same as newCyphBaseUrl except on Onion site). */
@@ -33,13 +33,13 @@ module Cyph {
 			EnvDeploy.newCyphBaseUrl
 		;
 
-		/** URL for Cyph account application ("https://www.cyph.me/" or equivalent). */
+		/** URL for Cyph account application ("https://cyph.me/" or equivalent). */
 		public static cyphMeUrl: string			= EnvDeploy.isOnion ?
 			`${Config.onionUrl}me/` :
 			`${locationData.protocol}//${locationData.hostname}:42003/`
 		;
 
-		/** Base URL for a new video cyph link ("https://www.cyph.video/" or equivalent). */
+		/** Base URL for a new video cyph link ("https://cyph.video/" or equivalent). */
 		public static cyphVideoBaseUrl: string	= `${locationData.protocol}//${locationData.hostname}:42004/`;
 
 		/** URL for starting a new video cyph (same as cyphVideoBaseUrl except on Onion site). */
