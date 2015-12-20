@@ -58,11 +58,12 @@ ls */*.yaml | xargs -I% sed -ri.bak "s/  ${defaultHeadersString}(.*)/\
 ls */*.yaml | xargs -I% sed -i.bak 's|###| |g' %
 
 defaultCSPString='DEFAULT_CSP'
-CSP="$(cat shared/websign/csp | tr -d '\n')"
+fullCSP="$(cat shared/websign/csp | tr -d '\n')"
+coreCSP="$(cat shared/websign/csp | grep -P 'referrer|script-src|style-src' | tr -d '\n')"
 cyphComCSP="$(cat shared/websign/csp | tr -d '\n' | sed 's|frame-src|frame-src https://*.facebook.com|g')"
 ls cyph.com/*.yaml | xargs -I% sed -i.bak "s|${defaultCSPString}|\"${cyphComCSP}\"|g" %
-ls */*.yaml | xargs -I% sed -i.bak "s|${defaultCSPString}|\"${CSP}\"|g" %
-ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s|${defaultCSPString}|${CSP}|g" %
+ls */*.yaml | xargs -I% sed -i.bak "s|${defaultCSPString}|\"${coreCSP}\"|g" %
+ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s|${defaultCSPString}|${fullCSP}|g" %
 
 
 # Expand connect-src and frame-src on blog to support social media widgets and stuff
