@@ -5,13 +5,13 @@ module Cyph.com {
 		 */
 		export class UI extends Cyph.UI.BaseButtonManager {
 			/** UI state/view. */
-			public state: States		= States.home;
+			public state: States			= States.home;
 
 			/** Podcast promo page state/view. */
-			public podcast: Podcasts	= Podcasts.none;
+			public podcast: Podcasts		= Podcasts.none;
 
 			/** Donation amount in dollars (default). */
-			public donationAmount	= 10;
+			public donationAmount: number	= 10;
 			
 			/** Home page state/view. */
 			public homeSection: HomeSections;
