@@ -225,6 +225,7 @@
 				error: function () {
 					if (WebSign.shouldRetry()) {
 						setCdnContinent();
+						requestArgs.url	= WebSign.cdnUrl + WebSign.config.hashPath;
 						request(requestArgs);
 					}
 					else {
