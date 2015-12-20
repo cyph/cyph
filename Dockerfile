@@ -28,6 +28,9 @@ RUN echo '\
 	export PATH="/opt/local/bin:/opt/local/sbin:/usr/local/opt/go/libexec/bin:$CLOUD_PATHS:$GOPATH/bin:$PATH"; \
 ' >> /.bashrc
 
+#RUN yes | /google-cloud-sdk/bin/gcloud components update
+#RUN yes | /google-cloud-sdk/bin/dev_appserver.py --help
+
 RUN echo 'gibson ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
 RUN useradd -ms /bin/bash gibson
 RUN mkdir -p /home/gibson
