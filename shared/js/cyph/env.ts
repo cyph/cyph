@@ -73,7 +73,10 @@ module Cyph {
 		public static isIOS: boolean		= /ipad|iphone|ipod/.test(Env.userAgent);
 
 		/** Indicates whether this is iOS 8 or greater. */
-		public static isIOS8Plus: boolean	= Env.isIOS && / os [89]_/.test(Env.userAgent);
+		public static isIOS8Plus: boolean	=
+			Env.isIOS &&
+			parseInt((Env.userAgent.match(/ os (\d+)_/) || [])[1], 10) >= 8
+		;
 
 		/** Indicates whether this is Windows Phone. */
 		public static isWP: boolean			= /iemobile/.test(Env.userAgent);
