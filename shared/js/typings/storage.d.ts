@@ -28,4 +28,8 @@ interface Storage {
 	/** If true, user will be prompted by WebSign
 		before each package upgrade. */
 	webSignManualUpgrades: string;
+
+	/** Indicates whether the www subdomain's
+		AppCache has been pinned. */
+	webSignWWWPinned: string;
 }
