@@ -59,7 +59,7 @@ ls */*.yaml | xargs -I% sed -i.bak 's|###| |g' %
 
 defaultCSPString='DEFAULT_CSP'
 fullCSP="$(cat shared/websign/csp | tr -d '\n')"
-coreCSP="$(cat shared/websign/csp | grep -P 'referrer|script-src|style-src' | tr -d '\n')"
+coreCSP="$(cat shared/websign/csp | grep -P 'referrer|script-src|style-src|upgrade-insecure-requests' | tr -d '\n')"
 cyphComCSP="$(cat shared/websign/csp | tr -d '\n' | sed 's|frame-src|frame-src https://*.facebook.com|g')"
 ls cyph.com/*.yaml | xargs -I% sed -i.bak "s|${defaultCSPString}|\"${cyphComCSP}\"|g" %
 ls */*.yaml | xargs -I% sed -i.bak "s|${defaultCSPString}|\"${coreCSP}\"|g" %
