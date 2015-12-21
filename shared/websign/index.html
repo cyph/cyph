@@ -102,6 +102,15 @@
 		<script>(function () {
 
 
+		if (location.host.indexOf('www.') === 0) {
+			location.host	= location.host.replace('www.', '');
+		}
+		else if (LocalStorage.isPersistent && !LocalStorage.webSignWWWPinned) {
+			LocalStorage.webSignWWWPinned	= true;
+			location.host					= 'www.' + location.host;
+		}
+
+
 		window.WebSign	= {
 			bootstrapText: '',
 
