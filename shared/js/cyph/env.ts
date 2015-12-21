@@ -72,8 +72,8 @@ module Cyph {
 		/** Indicates whether this is iOS. */
 		public static isIOS: boolean		= /ipad|iphone|ipod/.test(Env.userAgent);
 
-		/** Indicates whether this is iOS 8. */
-		public static isIOS8: boolean		= Env.isIOS && / os 8_/.test(Env.userAgent);
+		/** Indicates whether this is iOS 8 or greater. */
+		public static isIOS8Plus: boolean	= Env.isIOS && / os [89]_/.test(Env.userAgent);
 
 		/** Indicates whether this is Windows Phone. */
 		public static isWP: boolean			= /iemobile/.test(Env.userAgent);
@@ -134,7 +134,7 @@ module Cyph {
 		/** Base URI for sending an SMS. */
 		public static smsUriBase: string	=
 			'sms:' +
-			(Env.isIOS8 ? '&' : Env.isIOS ? ';' : '?') +
+			(Env.isIOS8Plus ? '&' : Env.isIOS ? ';' : '?') +
 			'body='
 		;
 	}
