@@ -2,6 +2,9 @@ dispatch:
 - url: "api.cyph.com/*"
   module: default
 
+- url: "cyph.com/*"
+  module: nakedredirect
+
 - url: "www.cyph.com/*"
   module: cyph-com
 

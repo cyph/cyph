@@ -144,6 +144,8 @@ func initHandler(w http.ResponseWriter, r *http.Request) {
 	if _, ok := config.AllowedOrigins[r.Host]; ok || appengine.IsDevAppServer() {
 		w.Header().Add("Access-Control-Allow-Origin", "*")
 		w.Header().Add("Access-Control-Allow-Methods", config.AllowedMethods)
+		w.Header().Set("Public-Key-Pins", config.HPKPHeader)
+		w.Header().Set("Strict-Transport-Security", config.HSTSHeader)
 	}
 }
 
