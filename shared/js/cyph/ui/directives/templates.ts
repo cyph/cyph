@@ -97,9 +97,7 @@ module Cyph {
 									translate
 									target='_self'
 									ng-href='{{Cyph.Env.newCyphUrl}}'
-								>
-									try again
-								</a>.
+								>try again</a>.
 							</div>
 							<div flex></div>
 						</div>
@@ -762,9 +760,10 @@ module Cyph {
 								</md-input-container>
 
 								<div class='connect-link-mobile mobile-only'>
-									<a class='connect-link-link' ng-href='{{$this.link}}'>
-										{{$this.link}}
-									</a>
+									<a
+										class='connect-link-link'
+										ng-href='{{$this.link}}'
+									>{{$this.link}}</a>
 									<br />
 
 									<md-button
@@ -876,9 +875,7 @@ module Cyph {
 										translate
 										target='_self'
 										ng-href='{{Cyph.Env.newCyphUrl}}'
-									>
-										try again
-									</a>.
+									>try again</a>.
 								</p>
 								<p translate>Reasons why you may have landed here:</p>
 								<ul>
@@ -925,31 +922,23 @@ module Cyph {
 						&copy; Cyph 2015
 						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-						<a rel='noreferrer' href='https://twitter.com/cyph'>
-							@cyph
-						</a>
+						<a rel='noreferrer' href='https://twitter.com/cyph'>@cyph</a>
 						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-						<a href='mailto:hello@cyph.com'>
-							hello@cyph.com
-						</a>
+						<a href='mailto:hello@cyph.com'>hello@cyph.com</a>
 						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
 						<a
 							target='_self'
 							href='tel:+19312974462'
 							title='+1(931) 297 4462'
-						>
-							+1(931) CYPH INC
-						</a>
+						>+1(931) CYPH INC</a>
 						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
 						<a
 							target='_self'
 							href='bitcoin:1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd'
-						>
-							1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd
-						</a>
+						>1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd</a>
 					</div>
 				`
 			};
