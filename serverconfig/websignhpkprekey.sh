@@ -19,9 +19,9 @@ function delete {
 mkdir -p /etc/nginx/ssl/tmp
 cd /etc/nginx/ssl/tmp
 
-openssl dhparam -out dhparams.pem 2048
-openssl genrsa -out backup.pem 2048
-openssl req -new -newkey rsa:2048 -nodes -out csr.pem -keyout key.pem -subj '/C=US/ST=Delaware/L=Dover/O=Cyph, Inc./CN=cyph.im'
+openssl dhparam -out dhparams.pem 4096
+openssl genrsa -out backup.pem 4096
+openssl req -new -newkey rsa:4096 -nodes -out csr.pem -keyout key.pem -subj '/C=US/ST=Delaware/L=Dover/O=Cyph, Inc./CN=cyph.im'
 
 curl -s -u "${apikey}" -X POST \
 	-H 'X-HTTP-Method-Override: REISSUE' \
