@@ -33,11 +33,14 @@
 	transition: opacity .25s linear;
 }
 #pre-load strong, #pre-load a {
-	color: #c50404;
+	color: #8b62d9;
+	background-color: black;
+	padding-left: 3px;
+	padding-right: 3px;
 }
 
 #panic-message {
-	top: 50%;
+	top: 50% !important;
 	transform: translateY(-50%);
 }
 
