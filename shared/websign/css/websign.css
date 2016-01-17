@@ -17,9 +17,9 @@
 #pre-load > div.message {
 	position: fixed;
 	top: calc(50% + 60px);
-	left: 0px;
+	left: 25px;
 	z-index: 999;
-	width: 100%;
+	width: calc(100% - 50px);
 	text-align: center;
 	color: #f1f1f1;
 	opacity: 0.75;
@@ -42,6 +42,21 @@
 #panic-message {
 	top: 50% !important;
 	transform: translateY(-50%);
+}
+#panic-message > div {
+	max-width: 40em;
+	margin: 0px auto;
+}
+#panic-message .left {
+	text-align: left;
+}
+#panic-message li {
+	margin-bottom: 16px;
+}
+@media only screen and (max-device-width: 430px) {
+	#panic-message {
+		text-align: left !important;
+	}
 }
 
 
