@@ -33,10 +33,10 @@
 	transition: opacity .25s linear;
 }
 #pre-load strong, #pre-load a {
+	display: inline-block;
 	color: #8b62d9;
 	background-color: black;
 	padding: 0px 3px;
-	display: inline-block;
 	margin: 0px -3px;
 
 	/*Breathing*/
