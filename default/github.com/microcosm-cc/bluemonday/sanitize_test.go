@@ -858,7 +858,7 @@ echo('IPT>alert("XSS")</SCRIPT>'); ?>`,
 		test{
 			in: `<XML ID="xss"><I><B><IMG SRC="javas<!-- -->cript:alert('XSS')"></B></I></XML>
 <SPAN DATASRC="#xss" DATAFLD="B" DATAFORMATAS="HTML"></SPAN>`,
-			expected: `<i><b></i>
+			expected: `<i><b></b></i>
 <span></span>`,
 		},
 		test{
@@ -1093,7 +1093,7 @@ echo('IPT>alert("XSS")</SCRIPT>'); ?>`,
 		},
 		test{
 			in:       `<IMG """><SCRIPT>alert("XSS")</SCRIPT>">`,
-			expected: ``,
+			expected: `&#34;&gt;`,
 		},
 		test{
 			in:       "<IMG SRC=`javascript:alert(\"RSnake says, 'XSS'\")`>",
@@ -1274,6 +1274,144 @@ func TestIssue9(t *testing.T) {
 			tt.in,
 			out,
 			tt.expected,
+		)
+	}
+}
+
+func TestIssue18(t *testing.T) {
+	p := UGCPolicy()
+
+	p.AllowAttrs("color").OnElements("font")
+	p.AllowElements("font")
+
+	tt := test{
+		in:       `<font face="Arial">No link here. <a href="http://link.com">link here</a>.</font> Should not be linked here.`,
+		expected: `No link here. <a href="http://link.com" rel="nofollow">link here</a>. Should not be linked here.`,
+	}
+	out := p.Sanitize(tt.in)
+	if out != tt.expected {
+		t.Errorf(
+			"test failed;\ninput   : %s\noutput  : %s\nexpected: %s",
+			tt.in,
+			out,
+			tt.expected)
+	}
+}
+
+func TestIssue23(t *testing.T) {
+	p := NewPolicy()
+	p.SkipElementsContent("tag1", "tag2")
+	input := `<tag1>cut<tag2></tag2>harm</tag1><tag1>123</tag1><tag2>234</tag2>`
+	out := p.Sanitize(input)
+	expected := ""
+	if out != expected {
+		t.Errorf(
+			"test failed;\ninput   : %s\noutput  : %s\nexpected: %s",
+			input,
+			out,
+			expected)
+	}
+
+	p = NewPolicy()
+	p.SkipElementsContent("tag")
+	p.AllowElements("p")
+	input = `<tag>234<p>asd</p></tag>`
+	out = p.Sanitize(input)
+	expected = ""
+	if out != expected {
+		t.Errorf(
+			"test failed;\ninput   : %s\noutput  : %s\nexpected: %s",
+			input,
+			out,
+			expected)
+	}
+
+	p = NewPolicy()
+	p.SkipElementsContent("tag")
+	p.AllowElements("p", "br")
+	input = `<tag>234<p>as<br/>d</p></tag>`
+	out = p.Sanitize(input)
+	expected = ""
+	if out != expected {
+		t.Errorf(
+			"test failed;\ninput   : %s\noutput  : %s\nexpected: %s",
+			input,
+			out,
+			expected)
+	}
+}
+
+func TestAllowNoAttrs(t *testing.T) {
+	input := "<tag>test</tag>"
+	outputFail := "test"
+	outputOk := input
+
+	p := NewPolicy()
+	p.AllowElements("tag")
+
+	if output := p.Sanitize(input); output != outputFail {
+		t.Errorf(
+			"test failed;\ninput   : %s\noutput  : %s\nexpected: %s",
+			input,
+			output,
+			outputFail,
+		)
+	}
+
+	p.AllowNoAttrs().OnElements("tag")
+
+	if output := p.Sanitize(input); output != outputOk {
+		t.Errorf(
+			"test failed;\ninput   : %s\noutput  : %s\nexpected: %s",
+			input,
+			output,
+			outputOk,
+		)
+	}
+}
+
+func TestSkipElementsContent(t *testing.T) {
+	input := "<tag>test</tag>"
+	outputFail := "test"
+	outputOk := ""
+
+	p := NewPolicy()
+
+	if output := p.Sanitize(input); output != outputFail {
+		t.Errorf(
+			"test failed;\ninput   : %s\noutput  : %s\nexpected: %s",
+			input,
+			output,
+			outputFail,
+		)
+	}
+
+	p.SkipElementsContent("tag")
+
+	if output := p.Sanitize(input); output != outputOk {
+		t.Errorf(
+			"test failed;\ninput   : %s\noutput  : %s\nexpected: %s",
+			input,
+			output,
+			outputOk,
+		)
+	}
+}
+
+func TestTagSkipClosingTagNested(t *testing.T) {
+	input := "<tag1><tag2><tag3>text</tag3></tag2></tag1>"
+	outputOk := "<tag2>text</tag2>"
+
+	p := NewPolicy()
+	p.AllowElements("tag1", "tag3")
+	p.AllowNoAttrs().OnElements("tag2")
+
+	if output := p.Sanitize(input); output != outputOk {
+		t.Errorf(
+			"test failed;\ninput   : %s\noutput  : %s\nexpected: %s",
+			input,
+			output,
+			outputOk,
 		)
 	}
 }

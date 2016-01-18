@@ -73,6 +73,7 @@ bower install --save \
 
 wget https://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/hmac-sha256.js
 
+
 cd ../../default
 
 rm -rf github.com 2> /dev/null
@@ -81,16 +82,33 @@ cd github.com
 
 mkdir gorilla
 cd gorilla
+git clone git://github.com/gorilla/context.git
 git clone git://github.com/gorilla/mux.git
 cd ..
+
 mkdir microcosm-cc
 cd microcosm-cc
 git clone git://github.com/microcosm-cc/bluemonday.git
+cd ..
 
 cd ..
-rm -rf */*/.git
+
+rm -rf golang.org 2> /dev/null
+mkdir -p golang.org/x
+cd golang.org/x
+
+git clone git://github.com/golang/net.git
+cd net
+rm -rf !(AUTHORS|CONTRIBUTING.md|CONTRIBUTORS|LICENSE|PATENTS|README|html)
+cd ..
+
+git clone git://github.com/golang/text.git
 
 cd ../..
+
+find . -name .git -exec rm -rf {} \; 2> /dev/null
+
+cd ..
 chmod -R 700 .
 
 cd "${dir}"
