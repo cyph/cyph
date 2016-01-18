@@ -280,20 +280,17 @@ deploy () {
 	gcloud preview app deploy --quiet --no-promote --project cyphme --version $version $*
 }
 
+# Temporary workaround for cache-busting reverse proxies
+if [ ! $test ] ; then
+	for project in cyph.im cyph.video ; do
+		cat $project/*.yaml | perl -pe 's/(module: cyph.*)/\1-update/' > $project/update.yaml
+	done
+fi
+
 if [ $site ] ; then
 	deploy $site/*.yaml
 else
 	deploy */*.yaml
-fi
-
-# Temporary workaround for cache-busting reverse proxies
-if [ ! $test ] ; then
-	for project in cyph.im cyph.video ; do
-		if [ "$site" == "$project" -o "$site" == '' ] ; then
-			cat $project/*.yaml | perl -pe 's/(module: cyph.*)/\1-update/' > $project/update.yaml
-			deploy $project/update.yaml
-		fi
-	done
 fi
 
 deploy dispatch.yaml cron.yaml
