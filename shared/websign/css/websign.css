@@ -35,8 +35,26 @@
 #pre-load strong, #pre-load a {
 	color: #8b62d9;
 	background-color: black;
-	padding-left: 3px;
-	padding-right: 3px;
+	padding: 0px 3px;
+	display: inline-block;
+	margin: 0px -3px;
+
+	/*Breathing*/
+	-webkit-animation-name: breathe;
+	-moz-animation-name: breathe;
+	animation-name: breathe;
+	-webkit-animation-duration: 3s;
+	-moz-animation-duration: 3s;
+	animation-duration: 3s;
+	-webkit-animation-timing-function: ease-in-out;
+	-moz-animation-timing-function: ease-in-out;
+	animation-timing-function: ease-in-out;
+	-webkit-animation-iteration-count: infinite;
+	-moz-animation-iteration-count: infinite;
+	animation-iteration-count: infinite;
+}
+#pre-load strong a {
+	color: #f1f1f1;
 }
 
 #panic-message {
@@ -50,12 +68,20 @@
 #panic-message .left {
 	text-align: left;
 }
+#panic-message ol {
+	padding-left: 20px;
+}
 #panic-message li {
 	margin-bottom: 16px;
 }
 @media only screen and (max-device-width: 430px) {
 	#panic-message {
 		text-align: left !important;
+	}
+}
+@media only screen and (max-device-width: 350px) and (max-device-height: 640px) {
+	#panic-message {
+		line-height: 110% !important;
 	}
 }
 
@@ -86,14 +112,6 @@
 		-webkit-transform: scale(1);
 	}
 }
-@-moz-keyframes preloadbounce {
-	0%, 100% {
-		-moz-transform: scale(0);
-	}
-	50% {
-		-moz-transform: scale(1);
-	}
-}
 @keyframes preloadbounce {
 	0%, 100% {
 		-webkit-transform: scale(0);
@@ -108,5 +126,24 @@
 		-ms-transform: scale(1);
 		-o-transform: scale(1);
 		transform: scale(1);
+	}
+}
+
+@-webkit-keyframes breathe {
+	0%, 100% {
+		-webkit-filter: brightness(.9);
+	}
+	50% {
+		-webkit-filter: brightness(1.4);
+	}
+}
+@keyframes breathe {
+	0%, 100% {
+		-webkit-filter: brightness(.9);
+		filter: brightness(.9);
+	}
+	50% {
+		-webkit-filter: brightness(1.4);
+		filter: brightness(1.4);
 	}
 }
