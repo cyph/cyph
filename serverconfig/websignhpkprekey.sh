@@ -53,6 +53,7 @@ backupHash="$(openssl rsa -in backup.pem -outform der -pubout | openssl dgst -sh
 delete backup.pem
 
 if [ "${certHash}" == "${keyHash}" ] ; then
+	killall nginx
 	service nginx stop
 
 	delete /etc/nginx/ssl/cert.pem

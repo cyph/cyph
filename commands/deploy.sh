@@ -286,6 +286,16 @@ else
 	deploy */*.yaml
 fi
 
+# Temporary workaround for cache-busting reverse proxies
+if [ ! $test ] ; then
+	for project in cyph.im cyph.video ; do
+		if [ "$site" == "$project" -o "$site" == '' ] ; then
+			cat $project/*.yaml | perl -pe 's/(module: cyph.*)/\1-update/' > $project/update.yaml
+			deploy $project/update.yaml
+		fi
+	done
+fi
+
 deploy dispatch.yaml cron.yaml
 
 if [ $all ] ; then
