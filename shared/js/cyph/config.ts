@@ -4,7 +4,7 @@ module Cyph {
 	 */
 	export class Config {
 		/** URL for Cyph Tor site. */
-		public static onionUrl: string				= 'https://cyphdbyhiddenbhs.onion/';
+		public static onionRoot: string				= 'cyphdbyhiddenbhs.onion';
 
 		/** Indicates the original language of any content to be translated. */
 		public static defaultLanguage: string		= 'en';
