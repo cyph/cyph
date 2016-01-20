@@ -14,13 +14,13 @@ module Cyph {
 
 		/** URL for backend API ("https://api.cyph.com/" or equivalent). */
 		public static baseUrl: string			= EnvDeploy.isOnion ?
-			'/api/' :
+			`https://api.${Config.onionRoot}/` :
 			`${locationData.protocol}//${locationData.hostname}:42000/`
 		;
 
 		/** URL for Cyph website ("https://www.cyph.com/" or equivalent). */
 		public static homeUrl: string			= EnvDeploy.isOnion ?
-			'/' :
+			`https://www.${Config.onionRoot}/` :
 			`${locationData.protocol}//${locationData.hostname}:42001/`
 		;
 
@@ -29,13 +29,13 @@ module Cyph {
 
 		/** URL for starting a new cyph (same as newCyphBaseUrl except on Onion site). */
 		public static newCyphUrl: string		= EnvDeploy.isOnion ?
-			`${Config.onionUrl}im/#new` :
+			`https://im.${Config.onionRoot}/` :
 			EnvDeploy.newCyphBaseUrl
 		;
 
 		/** URL for Cyph account application ("https://cyph.me/" or equivalent). */
 		public static cyphMeUrl: string			= EnvDeploy.isOnion ?
-			`${Config.onionUrl}me/` :
+			`https://me.${Config.onionRoot}/` :
 			`${locationData.protocol}//${locationData.hostname}:42003/`
 		;
 
@@ -44,7 +44,7 @@ module Cyph {
 
 		/** URL for starting a new video cyph (same as cyphVideoBaseUrl except on Onion site). */
 		public static cyphVideoUrl: string		= EnvDeploy.isOnion ?
-			`${Config.onionUrl}vid/#new` :
+			`https://video.${Config.onionRoot}/` :
 			EnvDeploy.cyphVideoBaseUrl
 		;
 
