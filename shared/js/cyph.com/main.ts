@@ -67,11 +67,12 @@ angular.
 
 if (!Cyph.Env.isOnion) {
 	Cyph.Util.request({
-		url: Cyph.Config.onionUrl + 'ping',
+		url: `https://ping.${Cyph.Config.onionRoot}`,
 		success: (data: string) => {
 			if (data === 'pong') {
 				locationData.href	=
-					Cyph.Config.onionUrl +
+					'https://' +
+					Cyph.Config.onionRoot +
 					locationData.href.split(locationData.host + '/')[1]
 				;
 			}
