@@ -68,23 +68,23 @@ if [ "${certHash}" == "${keyHash}" ] ; then
 	mv key.pem /etc/nginx/ssl/websign/key.pem
 	mv dhparams.pem /etc/nginx/ssl/websign/dhparams.pem
 
-	sslconf="$(echo "${sslconf}" | base64 --decode | perl -pe 's/\//\\\//g' | perl -pe 's/\n/\\n/g')"
-
 	echo "${conf}" | \
 		base64 --decode | \
 		sed "s|worker_connections 768;|worker_connections $(ulimit -n);|g" | \
 		sed "s/SSL_CONFIG_WEBSIGN/$( \
-			echo "${sslconf}" | \
-			sed 's|SSL_PATH|ssl\/websign|g' | \
+			echo "${sslconf}" | base64 --decode | \
+			sed 's|SSL_PATH|ssl/websign|g' | \
 			sed "s|KEY_HASH|${keyHash}|g" | \
-			sed "s|BACKUP_HASH|${backupHash}|g" \
+			sed "s|BACKUP_HASH|${backupHash}|g" | \
+			perl -pe 's/\//\\\//g' | perl -pe 's/\n/\\n/g' \
 		)/g" | \
 		sed "s/SSL_CONFIG/$( \
-			echo "${sslconf}" | \
+			echo "${sslconf}" | base64 --decode | \
 			sed 's|SSL_PATH|ssl|g' | \
 			sed "s|KEY_HASH|${staticKeyHash}|g" | \
-			sed "s|BACKUP_HASH|${staticBackupHash}|g" \
-		)/g"
+			sed "s|BACKUP_HASH|${staticBackupHash}|g" | \
+			perl -pe 's/\//\\\//g' | perl -pe 's/\n/\\n/g' \
+		)/g" \
 	> /etc/nginx/nginx.conf
 
 	service nginx start
