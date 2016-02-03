@@ -919,7 +919,7 @@ module Cyph {
 
 				staticFooter: `
 					<div class='footer desktop-only'>
-						&copy; Cyph 2015
+						&copy; Cyph 2016
 						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
 						<a rel='noreferrer' href='https://twitter.com/cyph'>@cyph</a>
