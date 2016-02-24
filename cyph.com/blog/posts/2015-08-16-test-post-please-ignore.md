@@ -9,7 +9,7 @@ author:
   name: Ryan Lester
   twitter: TheRyanLester
   bio: Co-founder
-  image: ryan.png
+  image: ryan.jpg
 ---
 
 Trying out the new blag.
