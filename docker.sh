@@ -96,6 +96,9 @@ elif [ "${command}" == 'commit' ] ; then
 elif [ "${command}" == 'docs' ] ; then
 	args=''
 
+elif [ "${command}" == 'prodmerge' ] ; then
+	args="-v $HOME/.gitconfig:/home/gibson/.gitconfig -v $HOME/.ssh:/home/gibson/.ssh"
+
 elif [ "${command}" == 'restart' ] ; then
 	stop
 	start
