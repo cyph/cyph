@@ -93,11 +93,14 @@ elif [ "${command}" == 'commit' ] ; then
 
 	chmod -R 700 .
 
-elif [ "${command}" == 'docs' ] ; then
-	args=''
+elif [ "${command}" == 'backmerge' ] ; then
+	args="-v $HOME/.gitconfig:/home/gibson/.gitconfig -v $HOME/.ssh:/home/gibson/.ssh"
 
 elif [ "${command}" == 'prodmerge' ] ; then
 	args="-v $HOME/.gitconfig:/home/gibson/.gitconfig -v $HOME/.ssh:/home/gibson/.ssh"
+
+elif [ "${command}" == 'docs' ] ; then
+	args=''
 
 elif [ "${command}" == 'restart' ] ; then
 	stop
