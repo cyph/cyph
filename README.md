@@ -108,6 +108,24 @@ Other available commands:
 	`-v /path/to/current/directory:/cyph \`  
 	`cyph/<branch> ./commit.sh <comment>`
 
+* Back merge changes from internal/prod to internal/master to current fork/branch:  
+	`./docker.sh backmerge`  
+	or:  
+	`docker run \`  
+	`-v $HOME/.gitconfig:/home/gibson/.gitconfig \`  
+	`-v $HOME/.ssh:/home/gibson/.ssh \`  
+	`-v /path/to/current/directory:/cyph \`  
+	`cyph/<branch> ./backmerge.sh <comment>`
+
+* Merge changes from internal/master to internal/prod and cyph/cyph:  
+	`./docker.sh prodmerge`  
+	or:  
+	`docker run \`  
+	`-v $HOME/.gitconfig:/home/gibson/.gitconfig \`  
+	`-v $HOME/.ssh:/home/gibson/.ssh \`  
+	`-v /path/to/current/directory:/cyph \`  
+	`cyph/<branch> ./prodmerge.sh <comment>`
+
 * Generate documentation (served in local environment at /js/docs/index.html):  
 	`./docker.sh docs`  
 	or:  
