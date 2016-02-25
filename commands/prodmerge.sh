@@ -6,11 +6,15 @@ dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd)/..
 
 merge () {
-	git checkout $2$(if [ $3 ] ; then echo / ; fi)$3
-	git pull
-	git merge $1
+	source="$1"
+	targetA="$2$(if [ $3 ] ; then echo / ; fi)$3"
+	targetB="$(if [ $3 ] ; then echo $2 $3 ; fi)"
+
+	git checkout $targetA
+	git pull $targetB
+	git merge $source
 	git commit -a -m merge
-	git push $(if [ $3 ] ; then echo $2 $3 ; fi)
+	git push $targetB
 }
 
 branch="$(git branch | awk '/^\*/{print $2}')"
