@@ -5,7 +5,21 @@ source ~/.bashrc
 dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd)/..
 
-git checkout $target
+merge () {
+	source="$1"
+	target="$2"
+	sourceSplit="$(echo $source | tr / ' ')"
+	targetSplit="$(echo $target | tr / ' ')"
+	pushUArg="$(if [ $(echo $targetSplit | wc -w) == 2 ] ; then echo "-u" ; fi)"
+
+	git checkout $source
+	git pull $sourceSplit
+	git checkout $target
+	git pull $targetSplit
+	git merge $source
+	git commit -a -m merge
+	git push $pushUArg $targetSplit
+}
 
 branch="$(git branch | awk '/^\*/{print $2}')"
 
