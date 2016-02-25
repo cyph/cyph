@@ -8,8 +8,8 @@ cd $(cd "$(dirname "$0")"; pwd)/..
 merge () {
 	source="$1"
 	target="$2"
-	sourceSplit="$(echo $source | tr / ' ')"
-	targetSplit="$(echo $target | tr / ' ')"
+	sourceSplit="$(if ( echo $source | grep -q / ) ; then echo $source | tr / ' ' ; fi)"
+	targetSplit="$(if ( echo $target | grep -q / ) ; then echo $target | tr / ' ' ; fi)"
 
 	git checkout $source
 	git pull $sourceSplit
