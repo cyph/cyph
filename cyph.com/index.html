@@ -360,7 +360,7 @@
 						/>
 						<div class='grid-75 tablet-grid-75'>
 							<h3 class='title' translate>
-								Quantum-Resistant Encryption
+								Seriously Strong Encryption
 							</h3>
 						</div>
 					</div>
@@ -372,7 +372,7 @@
 						/>
 						<div class='grid-75 tablet-grid-75'>
 							<h3 class='title' translate>
-								True Anonymity via Tor Hidden Service
+								Anonymity via Tor Hidden Service
 							</h3>
 						</div>
 					</div>
@@ -387,7 +387,7 @@
 						/>
 						<div class='grid-75 tablet-grid-75'>
 							<h3 class='title' translate>
-								Secure Video Calls and File Transfers
+								Video Calling and File Transfers
 							</h3>
 						</div>
 					</div>
@@ -399,7 +399,7 @@
 						/>
 						<div class='grid-75 tablet-grid-75'>
 							<h3 class='title' translate>
-								Tamper-Proof Code Validation
+								Application Integrity Validation
 							</h3>
 						</div>
 					</div>
@@ -426,7 +426,7 @@
 						/>
 						<div class='grid-75 tablet-grid-75'>
 							<h3 class='title' translate>
-								Cross-Platform &ndash; Works on Any Device
+								Cross-Platform &mdash; Works on Any Device
 							</h3>
 						</div>
 					</div>
@@ -436,15 +436,40 @@
 					<div class='quote'>
 						<div class='text'>
 							<p>
-								<span translate>Encrypted and authenticated via the post-quantum</span>
+								<span translate>Cyph is end-to-end encrypted using our patent-pending</span>
 								<a
 									target='_blank'
 									rel='noreferrer'
 									href='https://docs.google.com/document/d/1XVh4ALXhbfxi70QSUY-xHclauob8O635bSySy6f1Ysk'
 								>Castle messaging protocol</a>.
+								<span translate>Castle is an encryption protocol inspired by the classic</span>
+								<a
+									target='_blank'
+									rel='noreferrer'
+									href='https://en.wikipedia.org/wiki/Off-the-Record_Messaging'
+								>Off-the-Record (OTR)</a>,
+								<span translate>
+									with a number of architectural details influenced by Open Whisper Systems'
+									TextSecure protocol &mdash; such as the use of elliptic curves (ECDH/Curve25519).
+								</span>
 							</p>
 							<p>
-								<span translate>To crack a single Cyph message would require</span>
+								<span translate>
+									The major departure Castle that takes from these other solutions is that
+									it's been designed to theoretically withstand an attack from a quantum computer
+									running Shor's algorithm (50 - 100 years from now). This is thanks to
+								</span>
+								<a
+									target='_blank'
+									href='/blog/2015/09/29/ntru'
+								>our incorporation of the post-quantum cipher NTRU</a>,
+								<span translate>
+									along with lower-level details such as a unique public key authentication
+									technique that theoretically mitigates the strengths of a quantum computer.
+								</span>
+							</p>
+							<p>
+								<span translate>Fun fact: to crack a single Castle message would require</span>
 								<span>10</span><sup>38</sup>
 								<span translate>Tianhe-2 supercomputers running for the lifetime of the universe.</span>
 							</p>
@@ -453,26 +478,52 @@
 					<div class='quote'>
 						<div class='text'>
 							<p>
-								<span translate>Just</span>
+								<span translate>Just connect to the Tor network and navigate to</span>
 								<a
+									class='oneline'
 									target='_blank'
-									rel='noreferrer'
-									href='https://www.torproject.org/download/download-easy.html.en'
-									translate
-								>install Tor Browser</a>
-								<span translate>and navigate to</span>
-								<a class='oneline' target='_blank' ng-href='{{Cyph.Config.onionUrl}}'>https://cyphdbyhiddenbhs.onion</a>
-								<i>("cyph'd by hidden backbone host server")</i>.
+									ng-href='https://{{Cyph.Config.onionRoot}}'
+								>https://cyphdbyhiddenbhs.onion</a>
+								<em>("cyph'd by hidden backbone host server")</em>.
+								<span translate>
+									While this won't totally eliminate communication metadata in the way that
+									solutions like Ricochet are designed to, it does very effectively obfuscate
+									the origin of any traffic you send to Cyph.
+								</span>
+							</p>
+							<p translate>
+								Important note: Tor Browser Bundle is not currently supported. A bug in Firefox
+								Private Browsing mode (which TBB depends on) currently causes it to misbehave when
+								confronted with our TOFU implementation, and subsequently block any access to Cyph.
 							</p>
 						</div>
 					</div>
 					<div class='quote'>
 						<div class='text'>
 							<p>
-								<span translate>Encrypted and authenticated via</span>
-								<a target='_blank' rel='noreferrer' href='http://en.wikipedia.org/wiki/WebRTC' translate>WebRTC</a>
-								<span translate>and</span>
-								<a target='_blank' rel='noreferrer' href='http://tools.ietf.org/html/rfc5764' translate>DTLS-SRTP</a>.
+								<span translate>Voice/video calling is encrypted using a direct peer-to-peer</span>
+								<a
+									target='_blank'
+									rel='noreferrer'
+									href='http://tools.ietf.org/html/rfc5764'
+								>DTLS-SRTP</a>
+								<span translate>
+									session between the clients, with public key authenticity assured
+									by means of a fingerprint exchange via WebRTC signaling within the
+									original Castle session.
+								</span>
+							</p>
+							<p translate>
+								File transfers are encrypted symmetrically using an arbitrary XSalsa20
+								key, which is distributed from the sender to any recipients through
+								Castle.
+							</p>
+							<p translate>
+								Important note: unlike file transfers and standard Cyph messages,
+								voice/video calling is in fact vulnerable to a theoretical quantum
+								computing attack, due to a property of the WebRTC specification
+								that (by design) blocks us from protecting the entire key exchange
+								within our Castle session.
 							</p>
 						</div>
 					</div>
@@ -480,30 +531,45 @@
 						<div class='text'>
 							<p>
 								<span translate>
-									Application packages are verified at run-time against our personal public keys via
+									Cyph application packages are verified at run-time using our patent-pending
+									browser-based Trust on First Use code signing framework,
 								</span>
 								<a
 									target='_blank'
 									rel='noreferrer'
 									href='https://docs.google.com/document/d/1PGS50eZB9Ud7wVKmrc0HU_FDygZkyuFjmTRrukAz3sw'
-								>WebSign</a>
+								>WebSign</a>.
 								<span translate>
-									&mdash; so even if our servers get pwned, you won't.
+									WebSign will protect you even in the event that our servers and/or your TLS
+									session are compromised.
 								</span>
 							</p>
-						</div>
-					</div>
-					<div class='quote'>
-						<div class='text'>
 							<p translate>
-								Cyph is extremely simple for anybody to use, and runs anywhere in one click &mdash; no installation or registration required.
+								Until we solved it, addressing this had long been considered an intractable
+								problem, which is why you'll commonly see advice to avoid any product claiming
+								to offer private communication or other cryptographic protection within a Web
+								browser (e.g. MEGAChat). With the sole exception of Cyph, such advice should be
+								taken very seriously.
 							</p>
 						</div>
 					</div>
 					<div class='quote'>
 						<div class='text'>
 							<p translate>
-								Cyph from your desktop, laptop, phone, or tablet!
+								Cyph is extremely simple for anybody to use, and runs anywhere in one click
+								&mdash; no installation or registration required. This makes it very easy
+								to jump right into using or to deploy to any new device, in addition to
+								completely eliminating any potential hassle for friends with whom you intend
+								to engage in encrypted communications.
+							</p>
+						</div>
+					</div>
+					<div class='quote'>
+						<div class='text'>
+							<p translate>
+								Cyph from your desktop, laptop, phone, or tablet! Native mobile and desktop
+								apps are on our roadmap, but right now you can use the Web version of Cyph
+								anywhere.
 							</p>
 						</div>
 					</div>
@@ -610,15 +676,15 @@
 			<br />
 			<br />
 			<div class="bounceIn grid-100 tablet-grid-100 feature-list-item animated" desktop-data-wow-delay="300ms" data-wow-delay="300ms" style="visibility: visible; -webkit-animation-delay: 300ms; height: 162px; top:40% position:relative;">
-				<img class="grid-25 tablet-grid-25 mobile-grid-25"  src="/img/iconfinder/cyphanyone.png">
+				<img class="grid-25 tablet-grid-25 mobile-grid-25" src="/img/iconfinder/cyphanyone.png">
 				<div class="grid-75 tablet-grid-75 mobile-grid-75">
-					<h3 translate>Don't be confined to your buddy list &ndash; cyph anyone!</h3>
+					<h3 translate>Don't be confined to your buddy list &mdash; cyph anyone!</h3>
 				</div>
 				<div class="grid-75 tablet-grid-75 mobile-grid-75">
-					<p><span translate>Unlike other messenger apps, Cyph gives you the freedom to start a secure chat or call with anyone &ndash; regardless of whether they're already using Cyph.</span></p>
+					<p><span translate>Unlike other messenger apps, Cyph gives you the freedom to start a secure chat or call with anyone &mdash; regardless of whether they're already using Cyph.</span></p>
 					<p><span translate>Don't be limited by your social network. When you want to chat, your friends who don't use Cyph will simply receive a cyph link, and with one click a private key will be generated for them right in their browser.</span></p>
 				</div>
-				<img class="grid-25 tablet-grid-25 push-50 tablet-push-50 mobile-grid-25"  src="/img/iconfinder/videochat.png">
+				<img class="grid-25 tablet-grid-25 push-50 tablet-push-50 mobile-grid-25" src="/img/iconfinder/videochat.png">
 				<div class="grid-75 tablet-grid-75 mobile-grid-75">
 					<h3 translate>Video chat with peace of mind again.</p>
 				</div>
@@ -626,18 +692,17 @@
 					<p><span translate>For optimal performance, all video, audio, and transferred files are sent directly to the person you're cyphing (without ever touching our servers).</span></p>
 					<p><span translate>Since they're encrypted locally, however, even if intercepted, your friendly neighbourhood FBI van will only see gibberish</span></p>
 				</div>
-				
 			</div>
 			<div class="wow bounceIn mobile-class-bounceIn grid-100 tablet-grid-100 feature-list-item animated" style="visibility: visible; height: 261px;">
-				<img class="grid-25 tablet-grid-25 mobile-grid-25"  src="/img/iconfinder/crossplatform.png" alt="Desktop, tablet, and phone">
+				<img class="grid-25 tablet-grid-25 mobile-grid-25" src="/img/iconfinder/crossplatform.png" alt="Desktop, tablet, and phone">
 				<div class="grid-75 tablet-grid-75 mobile-grid-75">
 					<h3 translate>Powerful encryption on all your platforms.</h3>
 				</div>
 				<div class="grid-75 tablet-grid-75 mobile-grid-75">
-					<p><span translate>Cracking a single Cyph message key would take longer than the age of the universe, even using the fastest supercomputers on Earth &ndash; and because the keys are constantly refreshed, even if one were somehow leaked, only a few messages would be compromised (rather than an entire conversation).</span></p>
+					<p><span translate>Cracking a single Cyph message key would take longer than the age of the universe, even using the fastest supercomputers on Earth &mdash; and because the keys are constantly refreshed, even if one were somehow leaked, only a few messages would be compromised (rather than an entire conversation).</span></p>
 					<p><span translate>As an added layer of obfuscation, all of our encrypted traffic is randomly split between eight different datacentres around the world, with no obvious way for us to piece together the data belonging to any one chat.</span></p>
 				</div>
-				<img class="grid-25 tablet-grid-25 push-50 tablet-push-50 mobile-grid-25"  src="/img/iconfinder/bigbrother.png">
+				<img class="grid-25 tablet-grid-25 push-50 tablet-push-50 mobile-grid-25" src="/img/iconfinder/bigbrother.png">
 				<div class="grid-75 tablet-grid-75 mobile-grid-75">
 					<h3 translate>Circumvent government censorship and blocked access with confidence.</h3>
 				</div>
@@ -645,9 +710,6 @@
 					<p><span translate>Cyph is 100% supported for use on the Tor network, which allows you to hide your location, and subvert government and company internet filters.</span></p>
 					<p><span translate>In addition to having a recognisable Tor address (cyphdbyhiddenbhs.onion), Cyph is the first hidden service on the Tor network to deploy an Extended Validation SSL certificate, the highest level of trust and authentication for a website. This helps us easily let you know if you're ever connected to an impostor; to make sure you're connected to the real Cyph, just look for the green lock in the upper left-hand corner of your screen that reads "Cyph, Inc.".</span></p>
 			</div>
-
-					
-
 				</div>
 			</div>
 		</section>
@@ -860,7 +922,7 @@
 							voice/video calls, file transfers, signups, "cyphertext" UI views, and calls
 							to our API.
 						</p>
-					</li>	
+					</li>
 					<li>
 						<p>
 							<strong translate>How much does Cyph cost?</strong>
@@ -946,8 +1008,7 @@
 							</span>
 						</p>
 					</li>
-										
-				</ul>	
+				</ul>
 			</div>
 		</section>
 
