@@ -44,7 +44,7 @@ module Cyph {
 				this.timeout	= setTimeout(
 					() => this.setItem(),
 					Math.max(
-						this.quotes.eq(itemNumber).text().length * 35,
+						this.quotes.eq(itemNumber).text().length * 50,
 						1000
 					)
 				);
