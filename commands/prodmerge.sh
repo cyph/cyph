@@ -10,7 +10,6 @@ merge () {
 	target="$2"
 	sourceSplit="$(echo $source | tr / ' ')"
 	targetSplit="$(echo $target | tr / ' ')"
-	pushUArg="$(if [ $(echo $targetSplit | wc -w) == 2 ] ; then echo "-u" ; fi)"
 
 	git checkout $source
 	git pull $sourceSplit
@@ -18,7 +17,7 @@ merge () {
 	git pull $targetSplit
 	git merge $source
 	git commit -a -m merge
-	git push $pushUArg $targetSplit
+	git push $(echo -n $targetSplit | sed 's/ / HEAD:/')
 }
 
 branch="$(git branch | awk '/^\*/{print $2}')"
