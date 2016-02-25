@@ -29,7 +29,7 @@ git pull internal prod
 merge internal/prod internal/master
 merge internal/master master
 
-if [ "$branch" -ne master -a "$branch" -ne prod ] ; then
+if [ "$branch" != "master" -a "$branch" != "prod" ] ; then
 	merge master $branch
 else
 	git checkout $branch
