@@ -26,7 +26,7 @@ git remote add internal git@github.com:cyph/internal.git
 git remote add public git@github.com:cyph/cyph.git
 git fetch --all
 merge internal/master internal/prod
-git push public master
+merge internal/prod public/master
 merge internal/prod internal/master
 
 git checkout $branch
