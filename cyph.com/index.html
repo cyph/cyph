@@ -455,7 +455,7 @@
 							</p>
 							<p>
 								<span translate>
-									The major departure Castle that takes from these other solutions is that
+									The major departure that Castle takes from these other solutions is that
 									it's been designed to theoretically withstand an attack from a quantum computer
 									running Shor's algorithm (50 - 100 years from now). This is thanks to
 								</span>
@@ -466,6 +466,8 @@
 								<span translate>
 									along with lower-level details such as a unique public key authentication
 									technique that theoretically mitigates the strengths of a quantum computer.
+									This helps ensure that your now-private conversations won't one day suddenly
+									become public after an accident of science.
 								</span>
 							</p>
 							<p>
@@ -482,8 +484,8 @@
 								<a
 									class='oneline'
 									target='_blank'
-									ng-href='https://{{Cyph.Config.onionRoot}}'
-								>https://cyphdbyhiddenbhs.onion</a>
+									ng-href='https://www.{{Cyph.Config.onionRoot}}'
+								>cyphdbyhiddenbhs.onion</a>
 								<em>("cyph'd by hidden backbone host server")</em>.
 								<span translate>
 									While this won't totally eliminate communication metadata in the way that
@@ -514,14 +516,14 @@
 								</span>
 							</p>
 							<p translate>
-								File transfers are encrypted symmetrically using an arbitrary XSalsa20
+								File transfers are encrypted symmetrically using a one-time XSalsa20
 								key, which is distributed from the sender to any recipients through
 								Castle.
 							</p>
 							<p translate>
 								Important note: unlike file transfers and standard Cyph messages,
-								voice/video calling is in fact vulnerable to a theoretical quantum
-								computing attack, due to a property of the WebRTC specification
+								voice/video calling is in fact theoretically vulnerable to quantum
+								computing attacks, due to a property of the WebRTC specification
 								that (by design) blocks us from protecting the entire key exchange
 								within our Castle session.
 							</p>
@@ -547,8 +549,8 @@
 							<p translate>
 								Until we solved it, addressing this had long been considered an intractable
 								problem, which is why you'll commonly see advice to avoid any product claiming
-								to offer private communication or other cryptographic protection within a Web
-								browser (e.g. MEGAChat). With the sole exception of Cyph, such advice should be
+								to offer private communication or other cryptographic protection from within a Web
+								app (e.g. MEGAChat). With the sole exception of Cyph, such advice should be
 								taken very seriously.
 							</p>
 						</div>
@@ -558,9 +560,9 @@
 							<p translate>
 								Cyph is extremely simple for anybody to use, and runs anywhere in one click
 								&mdash; no installation or registration required. This makes it very easy
-								to jump right into using or to deploy to any new device, in addition to
+								to jump right into using, or to deploy to any new device (in addition to
 								completely eliminating any potential hassle for friends with whom you intend
-								to engage in encrypted communications.
+								to engage in encrypted communications).
 							</p>
 						</div>
 					</div>
