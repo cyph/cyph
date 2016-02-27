@@ -5,7 +5,10 @@ module Cyph.im {
 		 */
 		export class UI extends Cyph.UI.BaseButtonManager {
 			/** UI state/view. */
-			public state: States	= States.none;
+			public state: States			= States.none;
+
+			/** Pro page state/view. */
+			public proState: ProStates		= ProStates.none;
 
 			/** Chat UI. */
 			public chat: Cyph.UI.Chat.IChat;
@@ -17,7 +20,17 @@ module Cyph.im {
 			public signupForm: Cyph.UI.ISignupForm;
 
 			private onUrlStateChange (urlState: string) : void {
-				if (urlState === Cyph.UrlState.states.notFound) {
+				if (urlState === UrlSections.root) {
+					return;
+				}
+
+				const urlStateSplit: string[]	= urlState.split('/');
+
+				if (urlStateSplit[0] === UrlSections.pro) {
+					this.proState	= ProStates[urlStateSplit[1]];
+					this.changeState(States.pro);
+				}
+				else if (urlState === Cyph.UrlState.states.notFound) {
 					this.changeState(States.error);
 				}
 				else {
@@ -64,6 +77,8 @@ module Cyph.im {
 			) {
 				super(controller, mobileMenu);
 
+				Cyph.UrlState.onchange(urlState => this.onUrlStateChange(urlState));
+
 				this.chat			= new Cyph.UI.Chat.Chat(
 					this.controller,
 					this.dialogManager,
@@ -80,8 +95,6 @@ module Cyph.im {
 				this.signupForm		= new Cyph.UI.SignupForm(this.controller);
 
 
-
-				Cyph.UrlState.onchange(urlState => this.onUrlStateChange(urlState));
 
 				this.chat.session.on(Cyph.Session.Events.abort, () => {
 					this.changeState(States.chat);
@@ -111,7 +124,6 @@ module Cyph.im {
 				);
 
 
-				Cyph.UrlState.set(locationData.pathname, false, true);
 				self.onhashchange	= () => location.reload();
 				self.onpopstate		= null;
 

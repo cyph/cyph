@@ -30,6 +30,13 @@ module Cyph {
 		}
 
 		/**
+		 * Gets URL fragment and splits with delimiter '/'.
+		 */
+		public static getSplit () : string[] {
+			return UrlState.get(true).split('/');
+		}
+
+		/**
 		 * Sets handler to run when URL changes.
 		 * @param handler
 		 */
@@ -38,7 +45,7 @@ module Cyph {
 		}
 
 		/**
-		 * Changes URL.
+		 * Changes URL. If on WebSigned page, URL state is set as fragment.
 		 * @param path
 		 * @param shouldReplace If true, previous URL is erased from history.
 		 * @param shouldNotTrigger If true, UrlState.onchange is not triggered.
@@ -51,7 +58,20 @@ module Cyph {
 			redirectFallback: boolean = true
 		) : void {
 			if (Env.isMainThread) {
-				if (path[0] !== '/') {
+				/* Force fragment-based paths in WebSigned environments */
+				if (WebSign) {
+					if (path[0] === '#') {
+						path	= '/' + path;
+					}
+					else if (path[0] === '/' && path[1] !== '#') {
+						path	= '/#' + path.slice(1);
+					}
+					else if (path[0] !== '/' || path[1] !== '#') {
+						path	= '/#' + path;
+					}
+				}
+				/* Force absolute paths */
+				else if (path[0] !== '/') {
 					path	= '/' + path;
 				}
 
