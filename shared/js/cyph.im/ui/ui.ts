@@ -44,9 +44,9 @@ module Cyph.im {
 			/**
 			 * Initiates UI for sending cyph link to friend.
 			 */
-			public beginWaiting () : void {
+			public beginWaiting (baseUrl: string) : void {
 				this.cyphConnection.beginWaiting(
-					Cyph.Env.newCyphBaseUrl,
+					baseUrl,
 					this.chat.session.state.sharedSecret,
 					this.chat.session.state.wasInitiatedByAPI
 				);
@@ -94,6 +94,35 @@ module Cyph.im {
 
 				this.signupForm		= new Cyph.UI.SignupForm(this.controller);
 
+				
+				let initialCallType: string;
+
+				let baseUrl: string			= Cyph.Env.newCyphBaseUrl;
+				const urlSection: string	= UrlState.getSplit()[0];
+
+				if (urlSection === UrlSections.video) {
+						baseUrl			= Cyph.Env.cyphVideoBaseUrl;
+						initialCallType	= urlSection;
+
+						if (!Cyph.WebRTC.isSupported) {
+							/* If unsupported, warn and then close window */
+
+							this.dialogManager.alert({
+								title: Cyph.Strings.p2pTitle,
+								content: Cyph.Strings.videoDisabledLocal,
+								ok: Cyph.Strings.ok
+							}, ok =>
+								self.close()
+							);
+
+							this.changeState(States.blank);
+
+							return;
+						}
+
+						this.chat.p2pManager.preemptivelyInitiate();
+				}
+
 
 
 				this.chat.session.on(Cyph.Session.Events.abort, () => {
@@ -101,14 +130,19 @@ module Cyph.im {
 					Cyph.UI.Elements.window.off('beforeunload');
 				});
 
-				this.chat.session.on(Cyph.Session.Events.beginChatComplete, () =>
+				this.chat.session.on(Cyph.Session.Events.beginChatComplete, () => {
 					Cyph.UI.Elements.window.
 						unload(() => this.chat.session.close(true)).
 						on('beforeunload', () => Cyph.Strings.disconnectWarning)
-				);
+					;
+
+					if (initialCallType && this.chat.session.state.isCreator) {
+						this.chat.p2pManager.p2p.requestCall(initialCallType);
+					}
+				});
 
 				this.chat.session.on(Cyph.Session.Events.beginWaiting, () =>
-					this.beginWaiting()
+					this.beginWaiting(baseUrl)
 				);
 
 				this.chat.session.on(Cyph.Session.Events.connect, () => {
@@ -116,6 +150,13 @@ module Cyph.im {
 					
 					if (this.cyphConnection) {
 						this.cyphConnection.stop();
+					}
+
+					if (initialCallType) {
+						this.dialogManager.toast({
+							content: Cyph.Strings.p2pWarningVideoPassive,
+							delay: 5000
+						});
 					}
 				});
 

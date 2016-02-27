@@ -28,7 +28,8 @@ module Cyph.im {
 		 */
 		export const UrlSections	= {
 			root: '',
-			pro: 'pro'
+			pro: 'pro',
+			video: 'video'
 		};
 	}
 }
