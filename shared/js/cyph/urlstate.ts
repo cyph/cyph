@@ -58,22 +58,19 @@ module Cyph {
 			redirectFallback: boolean = true
 		) : void {
 			if (Env.isMainThread) {
+				for (const c of ['/', '#']) {
+					if (path[0] === c) {
+						path	= path.substring(1);
+					}
+				}
+
 				/* Force fragment-based paths in WebSigned environments */
-				if (WebSign) {
-					if (path[0] === '#') {
-						path	= '/' + path;
-					}
-					else if (path[0] === '/' && path[1] !== '#') {
-						path	= '/#' + path.slice(1);
-					}
-					else if (path[0] !== '/' || path[1] !== '#') {
-						path	= '/#' + path;
-					}
+				if (WebSign && path.length > 0) {
+					path	= '#' + path;
 				}
+
 				/* Force absolute paths */
-				else if (path[0] !== '/') {
-					path	= '/' + path;
-				}
+				path	= '/' + path;
 
 				if (history && history.pushState) {
 					if (shouldReplace && history.replaceState) {
