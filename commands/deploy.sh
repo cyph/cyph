@@ -34,7 +34,7 @@ mkdir .build
 cp -rf * .build/
 cd .build
 
-for project in cyph.com cyph.im cyph.me cyph.video ; do
+for project in cyph.com cyph.im cyph.me cyph.video cyph.audio ; do
 	cp -rf shared/* $project/
 done
 
@@ -105,8 +105,6 @@ else
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42000/https:\/\/api.cyph.com/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42001/https:\/\/www.cyph.com/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42002/https:\/\/cyph.im/g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42003/https:\/\/cyph.me/g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42004/https:\/\/cyph.video/g" %
 
 	version=prod
 fi
@@ -126,7 +124,7 @@ cd ..
 
 
 # Compile + translate + minify
-for d in cyph.com cyph.im cyph.video ; do
+for d in cyph.com cyph.im ; do
 	cd translations
 
 	echo "Translations = { \
@@ -191,7 +189,7 @@ done
 
 ### WebSign-related stuff
 
-for d in cyph.im cyph.video ; do
+for d in cyph.im cyph.video cyph.audio ; do
 	cd $d
 
 	echo 'WebSign'

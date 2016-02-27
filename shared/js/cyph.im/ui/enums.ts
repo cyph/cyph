@@ -29,7 +29,8 @@ module Cyph.im {
 		export const UrlSections	= {
 			root: '',
 			pro: 'pro',
-			video: 'video'
+			video: 'video',
+			audio: 'audio'
 		};
 	}
 }

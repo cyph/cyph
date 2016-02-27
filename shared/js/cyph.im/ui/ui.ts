@@ -100,27 +100,31 @@ module Cyph.im {
 				let baseUrl: string			= Cyph.Env.newCyphBaseUrl;
 				const urlSection: string	= UrlState.getSplit()[0];
 
-				if (urlSection === UrlSections.video) {
-						baseUrl			= Cyph.Env.cyphVideoBaseUrl;
-						initialCallType	= urlSection;
+				if (urlSection === UrlSections.video || urlSection === UrlSections.audio) {
+					initialCallType	= urlSection;
 
-						if (!Cyph.WebRTC.isSupported) {
-							/* If unsupported, warn and then close window */
+					baseUrl	= urlSection === UrlSections.video ?
+						Cyph.Env.cyphVideoBaseUrl :
+						Cyph.Env.cyphAudioBaseUrl
+					;
 
-							this.dialogManager.alert({
-								title: Cyph.Strings.p2pTitle,
-								content: Cyph.Strings.videoDisabledLocal,
-								ok: Cyph.Strings.ok
-							}, ok =>
-								self.close()
-							);
+					if (!Cyph.WebRTC.isSupported) {
+						/* If unsupported, warn and then close window */
 
-							this.changeState(States.blank);
+						this.dialogManager.alert({
+							title: Cyph.Strings.p2pTitle,
+							content: Cyph.Strings.p2pDisabledLocal,
+							ok: Cyph.Strings.ok
+						}, ok =>
+							self.close()
+						);
 
-							return;
-						}
+						this.changeState(States.blank);
 
-						this.chat.p2pManager.preemptivelyInitiate();
+						return;
+					}
+
+					this.chat.p2pManager.preemptivelyInitiate();
 				}
 
 
@@ -154,7 +158,10 @@ module Cyph.im {
 
 					if (initialCallType) {
 						this.dialogManager.toast({
-							content: Cyph.Strings.p2pWarningVideoPassive,
+							content: initialCallType === UrlSections.video ?
+								Cyph.Strings.p2pWarningVideoPassive :
+								Cyph.Strings.p2pWarningAudioPassive
+							,
 							delay: 5000
 						});
 					}

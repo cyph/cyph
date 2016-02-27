@@ -16,3 +16,6 @@ dispatch:
 
 - url: "cyph.video/*"
   module: cyph-video
+
+- url: "cyph.audio/*"
+  module: cyph-audio
