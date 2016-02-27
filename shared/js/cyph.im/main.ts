@@ -34,6 +34,7 @@ angular.
 		Cyph.UI.Directives.Chat.title,
 		Cyph.UI.Directives.LinkConnection.title,
 		Cyph.UI.Directives.Markdown.title,
+		Cyph.UI.Directives.Pro.title,
 		Cyph.UI.Directives.SignupForm.title,
 		Cyph.UI.Directives.Static.title
 	]).
