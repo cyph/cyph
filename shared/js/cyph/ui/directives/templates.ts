@@ -817,7 +817,7 @@ module Cyph {
 
 				pro: `
 					<md-content
-						class='cyph-not-found nano'
+						class='nano'
 						layout='column'
 						layout-fill
 						flex

@@ -14,7 +14,6 @@ module Cyph {
 				private static _	= (() => {
 					angular.module(Pro.title, []).directive(Pro.title, () => ({
 						restrict: 'A',
-						transclude: true,
 						scope: {
 							$this: '=' + Pro.title
 						},

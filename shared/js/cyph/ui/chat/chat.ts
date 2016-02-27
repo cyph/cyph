@@ -291,7 +291,7 @@ module Cyph {
 						const urlState: string[]	= UrlState.getSplit();
 						let id: string				= urlState.slice(-1)[0];
 
-						UrlState.set(urlState.slice(0, -1).join(''));
+						UrlState.set(urlState.slice(0, -1).join(''), true, true);
 
 						/* Modest branding API flag */
 						if (id[0] === '&') {

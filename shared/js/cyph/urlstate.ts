@@ -84,7 +84,7 @@ module Cyph {
 					}
 
 					if (!shouldNotTrigger) {
-						EventManager.trigger(UrlState.urlStateChangeEvent);
+						UrlState.trigger();
 					}
 				}
 				else if (redirectFallback) {
@@ -104,6 +104,13 @@ module Cyph {
 					redirectFallback
 				]);
 			}
+		}
+
+		/**
+		 * Triggers UrlState.onchange.
+		 */
+		public static trigger () : void {
+			EventManager.trigger(UrlState.urlStateChangeEvent);
 		}
 
 		private static _	= (() => {
