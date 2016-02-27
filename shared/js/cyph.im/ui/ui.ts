@@ -45,6 +45,11 @@ module Cyph.im {
 				let baseUrl: string	= Cyph.Env.newCyphBaseUrl;
 
 				if (initialCallType) {
+					const urlState: string	= UrlState.get(true);
+					if (urlState.split('/').slice(-1)[0] === initialCallType) {
+						UrlState.set(urlState + '/', true, true);
+					}
+
 					baseUrl	= initialCallType === UrlSections.video ?
 						Cyph.Env.cyphVideoBaseUrl :
 						Cyph.Env.cyphAudioBaseUrl
