@@ -36,11 +36,11 @@ module Cyph {
 		/** URL for Cyph account application ("https://cyph.me/" or equivalent). */
 		public static cyphMeUrl: string			= EnvDeploy.isOnion ?
 			`https://me.${Config.onionRoot}/` :
-			`CYPH-ME`
+			`CYPH-ME/`
 		;
 
 		/** Base URL for a new video cyph link ("https://cyph.video/" or equivalent). */
-		public static cyphVideoBaseUrl: string	= `CYPH-VIDEO`;
+		public static cyphVideoBaseUrl: string	= `CYPH-VIDEO/`;
 
 		/** URL for starting a new video cyph (same as cyphVideoBaseUrl except on Onion site). */
 		public static cyphVideoUrl: string		= EnvDeploy.isOnion ?
@@ -49,7 +49,7 @@ module Cyph {
 		;
 
 		/** Base URL for a new audio cyph link ("https://cyph.audio/" or equivalent). */
-		public static cyphAudioBaseUrl: string	= `CYPH-AUDIO`;
+		public static cyphAudioBaseUrl: string	= `CYPH-AUDIO/`;
 
 		/** URL for starting a new audio cyph (same as cyphAudioBaseUrl except on Onion site). */
 		public static cyphAudioUrl: string		= EnvDeploy.isOnion ?
