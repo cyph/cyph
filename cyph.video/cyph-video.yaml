@@ -11,15 +11,13 @@ handlers:
   static_files: index.html
   upload: index.html
   secure: always
-  # default_headers Cache-Control Strict-Transport-Security Public-Key-Pins
-    Cache-Control: private, max-age=31536000
+  # default_headers Strict-Transport-Security Public-Key-Pins
 
 - url: /unsupportedbrowser
   static_files: unsupportedbrowser.html
   upload: unsupportedbrowser.html
   secure: always
-  # default_headers Cache-Control Strict-Transport-Security Public-Key-Pins
-    Cache-Control: private, max-age=31536000
+  # default_headers Strict-Transport-Security Public-Key-Pins
 
 
 # Else
@@ -28,5 +26,4 @@ handlers:
   static_files: \1
   upload: .*
   secure: always
-  # default_headers Cache-Control Strict-Transport-Security Public-Key-Pins
-    Cache-Control: private, max-age=31536000
+  # default_headers Strict-Transport-Security Public-Key-Pins
