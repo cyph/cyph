@@ -218,6 +218,7 @@ html:not(.mobile) .platform-container.mobile .mobile-only
 
 .beta-signup-form {
 	color: #f1f1f1;
+	min-width:600px;
 
 	*, md-input-container.md-default-theme * {
 		color: #f1f1f1;
@@ -238,14 +239,45 @@ html:not(.mobile) .platform-container.mobile .mobile-only
 	}
 
 	.md-button {
-		@include transform(scale(0.75) !important);
+		@include transform(scale(1.1) !important);
 		background-color: #7d4fd3 !important;
 		margin: 25px auto;
-		width: calc(100% - 100px);
-		min-width: 200px;
+		height: 100px;
+		width: 110px;
 		display: block;
 	}
+	h1 {
+		text-align: center;
+		position: relative;
+                top: -30px;
+	}
+	h2 {
+		text-align: center;
+		font-weight: bold;
+	}
+	.login .md-button {
+		height: auto !important;
+		width: 28% !important;
+	}
+	.back {
+		font-size:42px !important;
+		width: 7%;
+		position: absolute;
+    		float: left;
+		left: 0px;
+		top: 15px;
+		display: block;
+	}
+	.back:hover {
+		cursor: pointer;
+	}
 }
+
+.beta-signup-form .md-button md-icon {
+    	line-height: 20px !important;
+	font-size: 72px !important;
+}
+
 
 .beta-signup-form .md-button, #new-cyph-footer {
 	font-family: 'Ubuntu' !important;
@@ -253,6 +285,104 @@ html:not(.mobile) .platform-container.mobile .mobile-only
 	font-size: 18px !important;
 	box-shadow: 0px 4px 10px -1px rgba(0, 0, 0, 0.25) !important;
 }
+
+.pricing {
+	background-color: #624599 !important;
+	width: 200px;
+	height: auto;
+	margin: auto 20px auto 20px;
+	
+	md-icon {
+		font-size: 32px;
+		margin-bottom: 14px;
+		width: 32px;
+		position: relative;
+	}
+	
+	h3 {
+		text-align: center;
+		background-color: #392859 !important;
+		width: 115%;
+		left: -14px;
+		opacity: 1 !important;
+		top: -16px;
+		line-height: 3;
+		position: relative;
+	}
+
+	span {
+		text-align: center;
+		top: -20px;
+		position: relative;
+	}
+	
+	.custom {
+		width: 90%;
+		margin: 32px auto;
+		position: relative;
+		
+		h3 {
+			width: 110% !important;
+			left: -8%;
+		}
+	}
+
+	.features {
+		height: 69%;
+
+		h4 {
+			float: right;
+			display: inline;
+			left: -10px;
+			width: 73%;
+			margin: 0px auto 0px auto;
+			top: -2px;
+			position: relative;
+		}
+	
+		.summary {
+			margin: -15px 0px 35px 0px;
+			text-align: center;
+		}
+}
+
+	.price {
+		width: 90%;
+		text-align: center;
+		font-weight:400;
+		font-size: 21px;
+		margin: 100% auto auto auto;
+		margin: auto;
+		background-color: #7B56BF !important;
+		line-height: 2;
+	}
+
+	.price:hover {
+    		background-color: #B48DFF !important;
+    		transition: 0.5s;
+    		cursor: pointer;
+	}
+}
+
+.pricing.custom {
+                width: 90%;
+		margin: 32px auto;
+		position: relative;
+
+		h3 {
+			width: 104% !important;
+			left: -2%;
+	}
+}
+
+.features .icons h4 {
+    width: 68%;
+    float: left;
+    margin-left: 6px;
+    position: relative;
+    top: -28px;
+}
+
 #new-cyph-footer {
 	width: 200px;
 	@include transform(scale(0.75) !important);

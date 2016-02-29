@@ -11,19 +11,8 @@ module Cyph {
 			};
 
 			public submit () : void {
-				if (!this.data.Email) {
-					return;
-				}
 
-				++this.state;
 				this.controller.update();
-
-				if (this.state === 2) {
-					setTimeout(() => {
-						++this.state;
-						this.controller.update();
-					}, 1500);
-				}
 
 				setTimeout(() => {
 					const $input: JQuery	= Elements.signupForm.find('input:visible');
@@ -33,25 +22,6 @@ module Cyph {
 					}
 				}, 100);
 
-
-				Util.retryUntilComplete(retry =>
-					Util.request({
-						method: 'PUT',
-						url: Env.baseUrl + 'signups',
-						data: this.data,
-						error: retry,
-						success: (isNew: string) => {
-							if (isNew === 'true') {
-								Analytics.main.send({
-									hitType: 'event',
-									eventCategory: 'signup',
-									eventAction: 'new',
-									eventValue: 1
-								});
-							}
-						}
-					})
-				);
 			}
 
 			/**
