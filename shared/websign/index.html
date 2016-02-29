@@ -245,6 +245,7 @@
 			var requestArgs	= {
 				url: WebSign.cdnUrl + WebSign.config.hashPath,
 				data: Date.now(),
+				timeout: 5000,
 				error: function () {
 					if (WebSign.shouldRetry()) {
 						setCdnContinent();
@@ -429,6 +430,7 @@
 			var method		= getValue(o, 'method', 'GET');
 			var retries		= getValue(o, 'retries', 3);
 			var success		= getValue(o, 'success', function () {});
+			var timeout		= getValue(o, 'timeout', 0);
 			var url			= o.url;
 
 			if (data && method === 'GET') {
@@ -436,6 +438,8 @@
 			}
 
 			var xhr	= new XMLHttpRequest();
+
+			xhr.timeout	= timeout;
 
 			xhr.onreadystatechange	= function () {
 				if (xhr.readyState === 4) {

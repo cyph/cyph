@@ -19,6 +19,7 @@
 /// <reference path="../cyph/ui/directives/chat.ts" />
 /// <reference path="../cyph/ui/directives/linkconnection.ts" />
 /// <reference path="../cyph/ui/directives/markdown.ts" />
+/// <reference path="../cyph/ui/directives/pro.ts" />
 /// <reference path="../cyph/ui/directives/signupform.ts" />
 /// <reference path="../cyph/ui/directives/static.ts" />
 /// <reference path="config.ts" />
@@ -33,6 +34,7 @@ angular.
 		Cyph.UI.Directives.Chat.title,
 		Cyph.UI.Directives.LinkConnection.title,
 		Cyph.UI.Directives.Markdown.title,
+		Cyph.UI.Directives.Pro.title,
 		Cyph.UI.Directives.SignupForm.title,
 		Cyph.UI.Directives.Static.title
 	]).

@@ -1,0 +1,32 @@
+module: cyph-audio
+runtime: python27
+api_version: 1
+threadsafe: true
+
+handlers:
+
+# Main
+
+- url: /
+  static_files: index.html
+  upload: index.html
+  secure: always
+  # default_headers Cache-Control Strict-Transport-Security Public-Key-Pins
+    Cache-Control: private, max-age=31536000
+
+- url: /unsupportedbrowser
+  static_files: unsupportedbrowser.html
+  upload: unsupportedbrowser.html
+  secure: always
+  # default_headers Cache-Control Strict-Transport-Security Public-Key-Pins
+    Cache-Control: private, max-age=31536000
+
+
+# Else
+
+- url: /(.*)
+  static_files: \1
+  upload: .*
+  secure: always
+  # default_headers Cache-Control Strict-Transport-Security Public-Key-Pins
+    Cache-Control: private, max-age=31536000

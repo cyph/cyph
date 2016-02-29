@@ -124,6 +124,17 @@
 
 			<div
 				ng-view
+				cyph-pro='ui'
+				layout='column'
+				layout-fill
+				flex
+				ng-class='{
+					active: ui.state === Cyph.im.UI.States.pro
+				}'
+			></div>
+
+			<div
+				ng-view
 				id='blank'
 				flex
 				ng-class='{
