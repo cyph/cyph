@@ -46,13 +46,13 @@ branch="$(git describe --tags --exact-match 2> /dev/null || git branch | awk '/^
 if [ $branch == 'prod' ] ; then
 	branch='staging'
 fi
-version="$branch"
 if [ $test ] ; then
-	version="$(git config --get remote.origin.url | perl -pe 's/.*:(.*)\/.*/\1/')-${branch}"
+	branch="$(git config --get remote.origin.url | perl -pe 's/.*:(.*)\/.*/\1/')-${branch}"
 fi
 if [ $simple ] ; then
-	version="simple-${branch}"
+	branch="simple-${branch}"
 fi
+version="$branch"
 
 
 if [ ! $simple ] ; then
