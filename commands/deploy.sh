@@ -54,6 +54,7 @@ if [ $simple ] ; then
 	version="simple-${branch}"
 fi
 
+
 if [ ! $simple ] ; then
 	defaultHeadersString='# default_headers'
 	defaultHeaders="$(cat headers.yaml)"
@@ -74,7 +75,6 @@ if [ ! $simple ] ; then
 	ls */*.yaml | xargs -I% sed -i.bak "s|${defaultCSPString}|\"${coreCSP}\"|g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s|${defaultCSPString}|${fullCSP}|g" %
 
-
 	# Expand connect-src and frame-src on blog to support social media widgets and stuff
 
 	blogCSPSources="$(cat cyph.com/blog/csp | perl -pe 's/^(.*)$/https:\/\/\1 https:\/\/*.\1/g' | tr '\n' ' ')"
@@ -83,15 +83,15 @@ if [ ! $simple ] ; then
 		tr '\n' '☁' | \
 		perl -pe 's/(\/blog.*?connect-src '"'"'self'"'"' )(.*?frame-src )(.*?connect-src '"'"'self'"'"' )(.*?frame-src )(.*?connect-src '"'"'self'"'"' )(.*?frame-src )/\1☼ \2☼ \3☼ \4☼ \5☼ \6☼ /g' | \
 		sed "s|☼|${blogCSPSources}|g" | \
-		tr '☁' '\n' \
+		tr '☁' '\n' | \
+		sed "s|Cache-Control: private, max-age=31536000|Cache-Control: public, max-age=31536000|g" \
 	> cyph.com/new.yaml
 	mv cyph.com/new.yaml cyph.com/cyph-com.yaml
-
-
-	defaultHost='\${locationData\.protocol}\/\/\${locationData\.hostname}:'
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}43000//g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak 's/isLocalEnv: boolean		= true/isLocalEnv: boolean		= false/g' %
 fi
+
+defaultHost='\${locationData\.protocol}\/\/\${locationData\.hostname}:'
+ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}43000//g" %
+ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak 's/isLocalEnv: boolean		= true/isLocalEnv: boolean		= false/g' %
 
 if [ $test ] ; then
 	sed -i.bak "s/staging/${branch}/g" default/config.go
@@ -177,6 +177,7 @@ for d in cyph.com cyph.im ; do
 
 	cd ..
 done
+
 
 if [ ! $simple ] ; then
 	# Cache bust
