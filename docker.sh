@@ -58,12 +58,12 @@ if [ "${command}" == 'serve' ] ; then
 		shift
 	fi
 
-	args="--privileged=true -p 42000:5000 -p 42001:5001 -p 42002:5002 -p 42003:5003 -p 42004:5004 -p 43000:4568"
+	args="--privileged=true -p 42000:5000 -p 42001:5001 -p 42002:5002 -p 43000:4568"
 
 	base="http://$(boot2docker ip 2>/dev/null || echo localhost)"
 
 	i=0
-	for project in backend cyph.com cyph.im cyph.me cyph.video ; do
+	for project in backend cyph.com cyph.im ; do
 		echo "${project}: ${base}:4200${i}"
 		i=$((i+1))
 	done
