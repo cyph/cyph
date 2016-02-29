@@ -5,7 +5,10 @@ module Cyph.im {
 		 */
 		export class UI extends Cyph.UI.BaseButtonManager {
 			/** UI state/view. */
-			public state: States	= States.none;
+			public state: States			= States.none;
+
+			/** Pro page state/view. */
+			public proState: ProStates		= ProStates.none;
 
 			/** Chat UI. */
 			public chat: Cyph.UI.Chat.IChat;
@@ -17,7 +20,17 @@ module Cyph.im {
 			public signupForm: Cyph.UI.ISignupForm;
 
 			private onUrlStateChange (urlState: string) : void {
-				if (urlState === Cyph.UrlState.states.notFound) {
+				if (urlState === UrlSections.root) {
+					return;
+				}
+
+				const urlStateSplit: string[]	= urlState.split('/');
+
+				if (urlStateSplit[0] === UrlSections.pro) {
+					this.proState	= ProStates[urlStateSplit[1]];
+					this.changeState(States.pro);
+				}
+				else if (urlState === Cyph.UrlState.states.notFound) {
 					this.changeState(States.error);
 				}
 				else {
@@ -28,12 +41,108 @@ module Cyph.im {
 				Cyph.UrlState.set(urlState, true, true);
 			}
 
+			private startChat (initialCallType?: string) : void {
+				let baseUrl: string	= Cyph.Env.newCyphBaseUrl;
+
+				if (initialCallType) {
+					const urlState: string	= UrlState.get(true);
+					if (urlState.split('/').slice(-1)[0] === initialCallType) {
+						UrlState.set(urlState + '/', true, true);
+					}
+
+					baseUrl	= initialCallType === UrlSections.video ?
+						Cyph.Env.cyphVideoBaseUrl :
+						Cyph.Env.cyphAudioBaseUrl
+					;
+
+					if (!Cyph.WebRTC.isSupported) {
+						/* If unsupported, warn and then close window */
+
+						this.dialogManager.alert({
+							title: Cyph.Strings.p2pTitle,
+							content: Cyph.Strings.p2pDisabledLocal,
+							ok: Cyph.Strings.ok
+						}, ok =>
+							self.close()
+						);
+
+						this.changeState(States.blank);
+
+						return;
+					}
+				}
+
+
+				this.chat			= new Cyph.UI.Chat.Chat(
+					this.controller,
+					this.dialogManager,
+					this.mobileMenu,
+					this.notifier
+				);
+
+				this.cyphConnection	= new Cyph.UI.LinkConnection(
+					Config.newCyphCountdown,
+					this.controller,
+					() => this.chat.abortSetup()
+				);
+
+				this.signupForm		= new Cyph.UI.SignupForm(this.controller);
+
+
+				if (initialCallType) {
+					this.chat.p2pManager.preemptivelyInitiate();
+				}
+
+
+				this.chat.session.on(Cyph.Session.Events.abort, () => {
+					this.changeState(States.chat);
+					Cyph.UI.Elements.window.off('beforeunload');
+				});
+
+				this.chat.session.on(Cyph.Session.Events.beginChatComplete, () => {
+					Cyph.UI.Elements.window.
+						unload(() => this.chat.session.close(true)).
+						on('beforeunload', () => Cyph.Strings.disconnectWarning)
+					;
+
+					if (initialCallType && this.chat.session.state.isCreator) {
+						this.chat.p2pManager.p2p.requestCall(initialCallType);
+					}
+				});
+
+				this.chat.session.on(Cyph.Session.Events.beginWaiting, () =>
+					this.beginWaiting(baseUrl)
+				);
+
+				this.chat.session.on(Cyph.Session.Events.connect, () => {
+					this.changeState(States.chat);
+					
+					if (this.cyphConnection) {
+						this.cyphConnection.stop();
+					}
+
+					if (initialCallType) {
+						this.dialogManager.toast({
+							content: initialCallType === UrlSections.video ?
+								Cyph.Strings.p2pWarningVideoPassive :
+								Cyph.Strings.p2pWarningAudioPassive
+							,
+							delay: 5000
+						});
+					}
+				});
+
+				this.chat.session.on(Cyph.Session.Events.newCyph, () =>
+					this.changeState(States.spinningUp)
+				);
+			}
+
 			/**
 			 * Initiates UI for sending cyph link to friend.
 			 */
-			public beginWaiting () : void {
+			public beginWaiting (baseUrl: string) : void {
 				this.cyphConnection.beginWaiting(
-					Cyph.Env.newCyphBaseUrl,
+					baseUrl,
 					this.chat.session.state.sharedSecret,
 					this.chat.session.state.wasInitiatedByAPI
 				);
@@ -64,56 +173,24 @@ module Cyph.im {
 			) {
 				super(controller, mobileMenu);
 
-				this.chat			= new Cyph.UI.Chat.Chat(
-					this.controller,
-					this.dialogManager,
-					this.mobileMenu,
-					this.notifier
-				);
-
-				this.cyphConnection	= new Cyph.UI.LinkConnection(
-					Config.newCyphCountdown,
-					this.controller,
-					() => this.chat.abortSetup()
-				);
-
-				this.signupForm		= new Cyph.UI.SignupForm(this.controller);
-
-
-
 				Cyph.UrlState.onchange(urlState => this.onUrlStateChange(urlState));
 
-				this.chat.session.on(Cyph.Session.Events.abort, () => {
-					this.changeState(States.chat);
-					Cyph.UI.Elements.window.off('beforeunload');
-				});
-
-				this.chat.session.on(Cyph.Session.Events.beginChatComplete, () =>
-					Cyph.UI.Elements.window.
-						unload(() => this.chat.session.close(true)).
-						on('beforeunload', () => Cyph.Strings.disconnectWarning)
-				);
-
-				this.chat.session.on(Cyph.Session.Events.beginWaiting, () =>
-					this.beginWaiting()
-				);
-
-				this.chat.session.on(Cyph.Session.Events.connect, () => {
-					this.changeState(States.chat);
-					
-					if (this.cyphConnection) {
-						this.cyphConnection.stop();
-					}
-				});
-
-				this.chat.session.on(Cyph.Session.Events.newCyph, () =>
-					this.changeState(States.spinningUp)
-				);
-
-
-				Cyph.UrlState.set(locationData.pathname, false, true);
 				self.onhashchange	= () => location.reload();
 				self.onpopstate		= null;
+
+
+				const urlSection: string	= UrlState.getSplit()[0];
+
+				if (urlSection === UrlSections.pro) {
+					UrlState.trigger();
+				}
+				else {
+					this.startChat(
+						urlSection === UrlSections.video || urlSection === UrlSections.audio ?
+							urlSection :
+							undefined
+					);
+				}
 
 
 				if (!Cyph.Env.isMobile && Cyph.Env.isIEOrEdge) {

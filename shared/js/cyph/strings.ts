@@ -68,6 +68,16 @@ module Cyph {
 			`If you don't want to be seen on camera, close this window now.`
 		,
 
+		p2pWarningAudioPassive:
+			`Starting voice call and P2P connection. ` +
+			`If you don't want to continue with the call, close this window now.`
+		,
+
+		p2pDisabledLocal:
+			`Your browser does not support voice or video calling. ` +
+			`Try again with the latest Chrome or Firefox.`
+		,
+
 		pingPongTimeout:
 			`Unable to ping your friend...\n\n` +
 			`They might have gone offline, or one of you could be experiencing network connectivity issues.\n\n` +
@@ -81,11 +91,6 @@ module Cyph {
 		signupMessage2:
 			`More details are on the way, but the next version of Cyph will include ` +
 			`group messaging, user accounts, and encrypted chat history.`
-		,
-
-		videoDisabledLocal:
-			`Your browser does not support video calling. ` +
-			`Try again with the latest Chrome or Firefox.`
 	};
 
 	(() => {

@@ -815,6 +815,27 @@ module Cyph {
 					</div>
 				`,
 
+				pro: `
+					<md-content
+						class='nano'
+						layout='column'
+						layout-fill
+						flex
+					>
+						<div class='nano-content'>
+							<div ng-show='$this.proState === Cyph.im.UI.ProStates.login'>
+								Login screen
+							</div>
+							<div ng-show='$this.proState === Cyph.im.UI.ProStates.register'>
+								Registration screen
+							</div>
+							<div ng-show='$this.proState === Cyph.im.UI.ProStates.settings'>
+								Settings screen
+							</div>
+						</div>
+					</md-content>
+				`,
+
 				signupForm: `
 					<form class='beta-signup-form' ng-submit='$this.submit()'>
 						<div ng-show='$this.state === 0'>

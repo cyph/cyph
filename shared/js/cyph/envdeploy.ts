@@ -36,16 +36,25 @@ module Cyph {
 		/** URL for Cyph account application ("https://cyph.me/" or equivalent). */
 		public static cyphMeUrl: string			= EnvDeploy.isOnion ?
 			`https://me.${Config.onionRoot}/` :
-			`${locationData.protocol}//${locationData.hostname}:42003/`
+			`CYPH-ME/`
 		;
 
 		/** Base URL for a new video cyph link ("https://cyph.video/" or equivalent). */
-		public static cyphVideoBaseUrl: string	= `${locationData.protocol}//${locationData.hostname}:42004/`;
+		public static cyphVideoBaseUrl: string	= `CYPH-VIDEO/`;
 
 		/** URL for starting a new video cyph (same as cyphVideoBaseUrl except on Onion site). */
 		public static cyphVideoUrl: string		= EnvDeploy.isOnion ?
 			`https://video.${Config.onionRoot}/` :
 			EnvDeploy.cyphVideoBaseUrl
+		;
+
+		/** Base URL for a new audio cyph link ("https://cyph.audio/" or equivalent). */
+		public static cyphAudioBaseUrl: string	= `CYPH-AUDIO/`;
+
+		/** URL for starting a new audio cyph (same as cyphAudioBaseUrl except on Onion site). */
+		public static cyphAudioUrl: string		= EnvDeploy.isOnion ?
+			`https://audio.${Config.onionRoot}/` :
+			EnvDeploy.cyphAudioBaseUrl
 		;
 
 		/** Correct endpoint for Fake SQS in local environments

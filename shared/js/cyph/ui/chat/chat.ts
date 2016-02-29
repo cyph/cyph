@@ -288,13 +288,16 @@ module Cyph {
 						this.session	= session;
 					}
 					else {
-						let urlState: string	= UrlState.get(true);
+						const urlState: string[]	= UrlState.getSplit();
+						let id: string				= urlState.slice(-1)[0];
+
+						UrlState.set(urlState.slice(0, -1).join(''), true, true);
 
 						/* Modest branding API flag */
-						if (urlState[0] === '&') {
-							urlState	=
-								urlState.substring(1) +
-								(urlState.length > 1 ? 'a' : '')
+						if (id[0] === '&') {
+							id	=
+								id.substring(1) +
+								(id.length > 1 ? 'a' : '')
 							;
 
 							this.rootElement.addClass('modest');
@@ -308,7 +311,7 @@ module Cyph {
 						}
 
 						this.session	= new Session.ThreadedSession(
-							urlState,
+							id,
 							controller
 						);
 					}
