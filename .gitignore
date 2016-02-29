@@ -3,4 +3,4 @@
 .DS_Store
 nohup.out
 shared/lib/.oldbower
-
+*.swp
