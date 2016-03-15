@@ -45,7 +45,7 @@ module Cyph {
 					<div
 						class='chat-main platform-container'
 						ng-class='{
-							video: $this.p2pManager.isActive,
+							video: $this.p2pManager.isInUse(),
 							mobile: $this.isMobile
 						}'
 						layout='column'
