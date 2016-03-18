@@ -61,7 +61,7 @@ module Cyph {
 						if (this.rootElement.is(':appeared') && --this.counter <= 0) {
 							this.setItem();
 						}
-					}, Cyph.Env.isMobile ? 150 : 50);
+					}, 50);
 				}, 1000);
 			}
 		}

@@ -6,7 +6,7 @@ module Cyph {
 			 * @interface
 			 */
 			export interface IP2PManager {
-				/** Indicates whether a P2P session is currently active. */
+				/** Indicates whether a P2P session currently exists. */
 				isActive: boolean;
 
 				/** Indicates whether P2P is possible (i.e. both clients support WebRTC). */
@@ -29,6 +29,12 @@ module Cyph {
 				 * Sets this.isEnabled to true.
 				 */
 				enable () : void;
+
+				/**
+				 * Indicates whether a P2P session currently exists and is in active use
+				 * for any form of data transfer (file, audio, or video).
+				 */
+				isInUse () : boolean;
 
 				/**
 				 * Indicates whether the video call screen is to be displayed.
