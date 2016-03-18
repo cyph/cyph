@@ -317,7 +317,7 @@ html:not(.mobile) .platform-container.mobile .mobile-only
 	}
 	
 	.custom {
-		width: 90%;
+		width: 175px !important;
 		margin: 32px auto;
 		position: relative;
 		
@@ -326,7 +326,7 @@ html:not(.mobile) .platform-container.mobile .mobile-only
 			left: -8%;
 		}
 	}
-
+	
 	.features {
 		height: 69%;
 
@@ -340,10 +340,33 @@ html:not(.mobile) .platform-container.mobile .mobile-only
 			position: relative;
 		}
 	
-		.summary {
+		p:first-child {
 			margin: -15px 0px 35px 0px;
-			text-align: center;
 		}
+		
+		p {
+			text-align: center;
+			margin-top: -5px;
+		}
+
+		hr {
+			opacity: 0.25;
+			color: #000;
+			margin: -11px 0px 17px 0px;
+}
+		.indent {
+			margin-left: 25px !important;
+		}
+		.feature {
+			margin-left: 10px;
+		}
+}
+
+.pricing:first-child {
+	margin-left: auto !important;
+}
+.pricing:last-child { 
+	margin-right: auto !important;
 }
 
 	.price {
@@ -494,6 +517,14 @@ md-dialog {
 		font-family: Ubuntu;
 		font-weight: normal;
 	}
+}
+
+md-dialog.fullscreen {
+	height: calc( 100% - 50px );
+	max-width: 100%;
+	width: calc(75% - 50px);
+	max-height: 100%;
+	transition: 1.5s;
 }
 
 md-checkbox {
