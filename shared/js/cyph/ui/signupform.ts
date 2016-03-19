@@ -11,7 +11,6 @@ module Cyph {
 			};
 
 			public submit () : void {
-
 				this.controller.update();
 
 				setTimeout(() => {
@@ -21,11 +20,9 @@ module Cyph {
 						$input.focus();
 					}
 				}, 100);
-
 			}
 
 			public signup () : void {
-
 				if (!this.data.Email) {
 					return;
 				}
@@ -48,8 +45,7 @@ module Cyph {
 						}
 					})
 				);
-}
-
+			}
 
 			/**
 			 * @param controller

@@ -260,6 +260,10 @@ html:not(.mobile) .platform-container.mobile .mobile-only {
 		font-weight: bold;
 	}
 
+	h4 {
+		float: right;
+	}
+
 	.login .md-button {
 		height: auto !important;
 		width: 28% !important;
@@ -320,17 +324,6 @@ html:not(.mobile) .platform-container.mobile .mobile-only {
 		text-align: center;
 		top: -20px;
 		position: relative;
-	}
-
-	.custom {
-		width: 175px !important;
-		margin: 32px auto;
-		position: relative;
-
-		h3 {
-			width: 110% !important;
-			left: -8%;
-		}
 	}
 
 	.features {
@@ -404,6 +397,12 @@ html:not(.mobile) .platform-container.mobile .mobile-only {
 	h3 {
 		width: 104% !important;
 		left: -2%;
+	}
+
+	.price {
+		width: 175px !important;
+		margin: 32px auto;
+		position: relative;
 	}
 }
 

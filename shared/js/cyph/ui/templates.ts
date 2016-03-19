@@ -131,10 +131,9 @@ module Cyph {
 			`,
 
 			login: `
-				<md-dialog ng-class='{fullscreen: vars.signupForm.state === 3}'  class='login'>
+				<md-dialog ng-class='{fullscreen: vars.signupForm.state === 3}' class='login'>
 					<md-content>
-						<div cyph-signup-form='vars.signupForm'>
-						</div>
+						<div cyph-signup-form='vars.signupForm'></div>
 					</md-content>
 				</md-dialog>
 			`
