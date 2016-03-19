@@ -72,7 +72,7 @@ module Cyph {
 					);
 				}
 
-				
+
 				let friendHadLockFirst: boolean	= false;
 				let friendLockpurpose: string	= '';
 

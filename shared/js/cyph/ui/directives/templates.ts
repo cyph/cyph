@@ -852,7 +852,7 @@ module Cyph {
 									<label>Password</label>
 									<input ng-model='user.password' type='password'>
 								</md-input-container>
-								<md-input-container> 
+								<md-input-container>
 									<div layout='row' layout-sm='column' layout-margin>
 										<md-button
 											translate
@@ -888,7 +888,7 @@ module Cyph {
 							<div layout='row'>
 								<div flex>
 									<h2 style='text-align:center;'> Individual </h2>
-									<md-button 
+									<md-button
 										type='submit'
 										ng-click='$this.state = 2'
 										aria-label='Individual'
@@ -896,16 +896,16 @@ module Cyph {
 									>
 										<md-icon md-font-set='material-icons'>person</md-icon>
 									</md-button>
-								</div> 
-								
+								</div>
+
 								<div flex>
 									<h2 style='text-align:center;'> Business </h2>
-									<md-button 
+									<md-button
 										type='submit'
 										ng-click='$this.state = 3'
 										aria-label='Business'
 										ng-hide='$this.state != 1'
-									>       
+									>
 										<md-icon md-font-set='material-icons'>domain</md-icon></div>
 									</md-button>
 								</div>
@@ -929,7 +929,7 @@ module Cyph {
 							>Subscribe
 							</md-button>
 						</div>
-			
+
 						<div translate ng-show='$this.state === 3'>
 							<md-icon md-font-set='material-icons' ng-click='$this.state = 1'  class='back' >keyboard_backspace</md-icon>
 							<h1 translate> Business Pricing </h1>
@@ -961,7 +961,7 @@ module Cyph {
 												<h4 style='float: right;'>Powerful Encryption</h4>
 												<md-icon md-font-set='material-icons' class='ng-isolate-scope md-default-theme material-icons'>security</md-icon>
 											</div>
-										</div> 
+										</div>
 								<div class="price"> $99/mo </div>
 								</div>
 
@@ -1014,7 +1014,7 @@ module Cyph {
 									<div class='features' >
 										<p>
 											Integrate Cyph encryption into your app, site, or service. Everything in The Works, <i>plus</i> access to our API.
-										<p>	
+										<p>
 										<div class='feature'>
 											<h4 style='float: right;'>The Works, plus:</h4>
 											<md-icon md-font-set="material-icons" class="ng-isolate-scope md-default-theme material-icons">reply_all</md-icon>
@@ -1037,14 +1037,14 @@ module Cyph {
 											<h4 style='float: right;'>Powerful Encryption</h4>
 											<md-icon md-font-set='material-icons' class='ng-isolate-scope md-default-theme material-icons'>security</md-icon>
 										</div>
-	
+
 										<div class='price'>
 											$995/mo
 										</div>
 									</div>
 								</div>
 							</div>
-	
+
 							<div layout='column'>
 								<div layout-padding class='pricing custom' >
 									<h3> Custom </h3>
@@ -1059,7 +1059,7 @@ module Cyph {
 								</div>
 							</div>
 						</div>
-						
+
 					</form>
 				`,
 

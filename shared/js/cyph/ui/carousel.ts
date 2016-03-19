@@ -7,7 +7,7 @@ module Cyph {
 			private static activeClass: string	= 'active';
 
 
-			private counter: number	= 0; 
+			private counter: number	= 0;
 
 			private itemNumber: number;
 			private logos: JQuery;

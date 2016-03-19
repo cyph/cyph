@@ -25,7 +25,7 @@ module Cyph {
 			}
 
 			public signup () : void {
-				
+
 				if (!this.data.Email) {
 					return;
 				}
