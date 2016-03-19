@@ -7,7 +7,7 @@ module Cyph {
 			private static activeClass: string	= 'active';
 
 
-			private counter: number	= 0; 
+			private counter: number	= 0;
 
 			private itemNumber: number;
 			private logos: JQuery;
@@ -61,7 +61,7 @@ module Cyph {
 						if (this.rootElement.is(':appeared') && --this.counter <= 0) {
 							this.setItem();
 						}
-					}, Cyph.Env.isMobile ? 150 : 50);
+					}, 50);
 				}, 1000);
 			}
 		}

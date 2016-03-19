@@ -34,6 +34,15 @@ module Cyph {
 					this.controller.update();
 				}
 
+				public isInUse () : boolean {
+					return this.isPlaying() &&
+					(
+						this.p2p.outgoingStream.audio ||
+						!!this.p2p.incomingFile.name ||
+						!!this.p2p.outgoingFile.name
+					);
+				}
+
 				public isPlaying () : boolean {
 					return this.isActive &&
 					(
