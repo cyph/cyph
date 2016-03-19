@@ -108,10 +108,10 @@ if [ $test ] ; then
 	ls */*.yaml | xargs -I% sed -i.bak 's/Public-Key-Pins: .*/Pragma: no-cache/g' %
 	ls */*.yaml | xargs -I% sed -i.bak 's/max-age=31536000/max-age=0/g' %
 
-	# for yaml in `ls */cyph*.yaml` ; do
-	# 	cat $yaml | perl -pe 's/(- url: .*)/\1\n  login: admin/g' > $yaml.new
-	# 	mv $yaml.new $yaml
-	# done
+	for yaml in `ls */cyph*.yaml` ; do
+		cat $yaml | perl -pe 's/(- url: .*)/\1\n  login: admin/g' > $yaml.new
+		mv $yaml.new $yaml
+	done
 else
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42000/https:\/\/api.cyph.com/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42001/https:\/\/www.cyph.com/g" %
