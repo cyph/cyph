@@ -34,13 +34,13 @@ type BetaSignup struct {
 }
 
 type TwilioToken struct {
-	account_sid string
+	account_sid  string
 	date_created string
 	date_updated string
-	ice_servers interface{}
-	password string
-	ttl string
-	username string	
+	ice_servers  interface{}
+	password     string
+	ttl          string
+	username     string
 }
 
 type none struct{}
@@ -116,7 +116,7 @@ func getTwilioToken() TwilioToken {
 
 	req, _ := http.NewRequest(
 		"GET",
-		"https://api.twilio.com/2010-04-01/Accounts/" + twilioSID + "/Tokens.json",
+		"https://api.twilio.com/2010-04-01/Accounts/"+twilioSID+"/Tokens.json",
 		nil,
 	)
 	req.SetBasicAuth(twilioSID, twilioAuthToken)
