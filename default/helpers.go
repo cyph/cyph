@@ -2,11 +2,13 @@ package api
 
 import (
 	"appengine"
+	"appengine/urlfetch"
 	"encoding/json"
 	"fmt"
 	"geoip2"
 	"github.com/gorilla/mux"
 	"github.com/microcosm-cc/bluemonday"
+	"io/ioutil"
 	"net"
 	"net/http"
 	"os"
@@ -31,16 +33,6 @@ type BetaSignup struct {
 	Name     string
 	Referer  string
 	Time     int64
-}
-
-type TwilioToken struct {
-	account_sid  string
-	date_created string
-	date_updated string
-	ice_servers  interface{}
-	password     string
-	ttl          string
-	username     string
 }
 
 type none struct{}
@@ -111,28 +103,34 @@ func getBetaSignupFromRequest(h HandlerArgs) BetaSignup {
 	}
 }
 
-func getTwilioToken() TwilioToken {
-	client := &http.Client{}
+func getTwilioToken(h HandlerArgs) map[string]interface{} {
+	client := urlfetch.Client(h.Context)
 
 	req, _ := http.NewRequest(
-		"GET",
+		methods.POST,
 		"https://api.twilio.com/2010-04-01/Accounts/"+twilioSID+"/Tokens.json",
 		nil,
 	)
 	req.SetBasicAuth(twilioSID, twilioAuthToken)
 	resp, err := client.Do(req)
 
-	if err != nil {
-		var token TwilioToken
-		err := json.Unmarshal([]byte(resp), &token)
+	if err == nil {
+		body, err := ioutil.ReadAll(resp.Body)
 
-		if err != nil {
-			return token
+		if err == nil {
+			var token map[string]interface{}
+			err := json.Unmarshal(body, &token)
+
+			if err == nil {
+				return token
+			} else {
+				return getTwilioToken(h)
+			}
 		} else {
-			return getTwilioToken()
+			return getTwilioToken(h)
 		}
 	} else {
-		return getTwilioToken()
+		return getTwilioToken(h)
 	}
 }
 

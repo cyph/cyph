@@ -70,7 +70,7 @@ func getContinent(h HandlerArgs) (interface{}, int) {
 }
 
 func getIceServers(h HandlerArgs) (interface{}, int) {
-	return getTwilioToken().ice_servers, http.StatusOK
+	return getTwilioToken(h)["ice_servers"], http.StatusOK
 }
 
 func signup(h HandlerArgs) (interface{}, int) {
