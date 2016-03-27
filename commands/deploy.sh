@@ -291,7 +291,8 @@ if [ ! $test ] ; then
 fi
 
 
-# AWS credentials
+# Secret credentials
+cat ~/.cyph/default.vars >> default/app.yaml
 cat ~/.cyph/jobs.vars >> jobs/jobs.yaml
 
 deploy () {

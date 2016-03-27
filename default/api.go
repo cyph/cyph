@@ -14,6 +14,7 @@ import (
 func init() {
 	handleFuncs("/channels/{id}", Handlers{methods.POST: channelSetup})
 	handleFuncs("/continent", Handlers{methods.GET: getContinent})
+	handleFuncs("/iceservers", Handlers{methods.GET: getIceServers})
 	handleFuncs("/signups", Handlers{methods.PUT: signup})
 
 	handleFunc("/", func(h HandlerArgs) (interface{}, int) {
@@ -66,6 +67,10 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 func getContinent(h HandlerArgs) (interface{}, int) {
 	_, continent := geolocate(h)
 	return continent, http.StatusOK
+}
+
+func getIceServers(h HandlerArgs) (interface{}, int) {
+	return getTwilioToken().ice_servers, http.StatusOK
 }
 
 func signup(h HandlerArgs) (interface{}, int) {

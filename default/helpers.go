@@ -9,6 +9,7 @@ import (
 	"github.com/microcosm-cc/bluemonday"
 	"net"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 )
@@ -30,6 +31,16 @@ type BetaSignup struct {
 	Name     string
 	Referer  string
 	Time     int64
+}
+
+type TwilioToken struct {
+	account_sid string
+	date_created string
+	date_updated string
+	ice_servers interface{}
+	password string
+	ttl string
+	username string	
 }
 
 type none struct{}
@@ -63,6 +74,9 @@ var sanitizer = bluemonday.StrictPolicy()
 
 var geoipdb, _ = geoip2.Open("GeoIP2-Country.mmdb")
 
+var twilioSID = os.Getenv("TWILIO_SID")
+var twilioAuthToken = os.Getenv("TWILIO_AUTH_TOKEN")
+
 func geolocate(h HandlerArgs) (string, string) {
 	return geolocateIp(h.Request.RemoteAddr)
 }
@@ -94,6 +108,31 @@ func getBetaSignupFromRequest(h HandlerArgs) BetaSignup {
 		Name:     sanitize(h.Request.PostFormValue("Name"), config.MaxSignupValueLength),
 		Referer:  sanitize(h.Request.Referer(), config.MaxSignupValueLength),
 		Time:     time.Now().Unix(),
+	}
+}
+
+func getTwilioToken() TwilioToken {
+	client := &http.Client{}
+
+	req, _ := http.NewRequest(
+		"GET",
+		"https://api.twilio.com/2010-04-01/Accounts/" + twilioSID + "/Tokens.json",
+		nil
+	)
+	req.SetBasicAuth(twilioSID, twilioAuthToken)
+	resp, err := client.Do(req)
+
+	if err != nil {
+		var token TwilioToken
+		err := json.Unmarshal([]byte(resp), &token)
+
+		if err != nil {
+			return token
+		} else {
+			return getTwilioToken()
+		}
+	} else {
+		return getTwilioToken()
 	}
 }
 

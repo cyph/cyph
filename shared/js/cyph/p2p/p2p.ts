@@ -22,9 +22,7 @@ module Cyph {
 				setUpStream: 'setUpStream',
 				setUpStreamInit: 'setUpStreamInit',
 				streamOptions: 'streamOptions',
-				stun: 'stun',
 				subspace: 'subspace',
-				turn: 'turn',
 				video: 'video',
 				voice: 'voice'
 			};
@@ -182,104 +180,97 @@ module Cyph {
 					);
 				}
 
-				let channel: RTCDataChannel;
-				const peer: RTCPeerConnection	= new WebRTC.PeerConnection({
-					iceServers: [
-						{
-							url: P2P.constants.stun + ':' + Config.p2pConfig.iceServer
-						},
-						{
-							url: P2P.constants.turn + ':' + Config.p2pConfig.iceServer,
-							credential: Config.p2pConfig.iceCredential,
-							username: Config.p2pConfig.iceCredential
-						}
-					]
-				}, {
-					optional: [
-						{
-							DtlsSrtpKeyAgreement: true
-						}
-					]
-				});
+				Util.request({url: Env.baseUrl + 'iceservers', success: (iceServers: string) => {
+					let channel: RTCDataChannel;
+					const peer: RTCPeerConnection	= new WebRTC.PeerConnection({
+						iceServers: JSON.parse(iceServers)
+					}, {
+						optional: [
+							{
+								DtlsSrtpKeyAgreement: true
+							}
+						]
+					});
 
-				peer.onaddstream	= e => {
-					if (
-						e.stream &&
-						(
-							!this.remoteStream ||
-							this.remoteStream.id !== e.stream.id
-						)
-					) {
-						this.remoteStream	= e.stream;
-
-						this.triggerUiEvent(
-							UIEvents.Categories.stream,
-							UIEvents.Events.set,
-							Session.Users.friend,
-							URL.createObjectURL(this.remoteStream)
-						);
-
-						setTimeout(() => {
-							this.incomingStream.loading	= false;
-							this.controller.update();
-						}, 1500);
-					}
-				};
-
-				peer.ondatachannel	= e => {
-					channel			= e['channel'];
-					this.channel	= channel;
-
-					this.setUpChannel();
-				};
-
-				peer.onicecandidate	= e => {
-					if (e.candidate) {
-						this.session.send(
-							new Session.Message(
-								Session.RPCEvents.p2p,
-								new Session.Command(
-									P2P.constants.addIceCandidate,
-									JSON.stringify(e.candidate)
-								)
+					peer.onaddstream	= e => {
+						if (
+							e.stream &&
+							(
+								!this.remoteStream ||
+								this.remoteStream.id !== e.stream.id
 							)
-						);
-					}
-				};
+						) {
+							this.remoteStream	= e.stream;
 
-				peer.onsignalingstatechange	= e => {
-					const forceKill: boolean	= e === null;
+							this.triggerUiEvent(
+								UIEvents.Categories.stream,
+								UIEvents.Events.set,
+								Session.Users.friend,
+								URL.createObjectURL(this.remoteStream)
+							);
 
-					if (
-						this.peer === peer &&
-						(
-							forceKill ||
-							peer.signalingState === P2P.constants.closed
-						)
-					) {
-						peer.onaddstream	= null;
+							setTimeout(() => {
+								this.incomingStream.loading	= false;
+								this.controller.update();
+							}, 1500);
+						}
+					};
 
-						this.isAvailable	= false;
-						this.remoteStream	= null;
-						this.channel		= null;
-						this.peer			= null;
+					peer.ondatachannel	= e => {
+						channel			= e['channel'];
+						this.channel	= channel;
 
-						if (forceKill) {
-							if (channel) {
-								channel.close();
+						this.setUpChannel();
+					};
+
+					peer.onicecandidate	= e => {
+						if (e.candidate) {
+							this.session.send(
+								new Session.Message(
+									Session.RPCEvents.p2p,
+									new Session.Command(
+										P2P.constants.addIceCandidate,
+										JSON.stringify(e.candidate)
+									)
+								)
+							);
+						}
+					};
+
+					peer.onsignalingstatechange	= e => {
+						const forceKill: boolean	= e === null;
+
+						if (
+							this.peer === peer &&
+							(
+								forceKill ||
+								peer.signalingState === P2P.constants.closed
+							)
+						) {
+							peer.onaddstream	= null;
+
+							this.isAvailable	= false;
+							this.remoteStream	= null;
+							this.channel		= null;
+							this.peer			= null;
+
+							if (forceKill) {
+								if (channel) {
+									channel.close();
+								}
+
+								peer.close();
 							}
 
-							peer.close();
+							if (this.hasSessionStarted) {
+								this.initPeer();
+							}
 						}
-
-						if (this.hasSessionStarted) {
-							this.initPeer();
-						}
-					}
-				};
+					};
 
 
-				this.peer	= peer;
+					this.peer	= peer;
+				}});
 			}
 
 			private receiveCommand (command: Session.Command) : void {
