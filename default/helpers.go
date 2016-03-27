@@ -117,7 +117,7 @@ func getTwilioToken() TwilioToken {
 	req, _ := http.NewRequest(
 		"GET",
 		"https://api.twilio.com/2010-04-01/Accounts/" + twilioSID + "/Tokens.json",
-		nil
+		nil,
 	)
 	req.SetBasicAuth(twilioSID, twilioAuthToken)
 	resp, err := client.Do(req)
