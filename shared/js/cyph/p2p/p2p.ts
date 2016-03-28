@@ -22,9 +22,7 @@ module Cyph {
 				setUpStream: 'setUpStream',
 				setUpStreamInit: 'setUpStreamInit',
 				streamOptions: 'streamOptions',
-				stun: 'stun',
 				subspace: 'subspace',
-				turn: 'turn',
 				video: 'video',
 				voice: 'voice'
 			};
@@ -168,8 +166,9 @@ module Cyph {
 			public incomingFile: IFileTransfer	= new FileTransfer();
 			public outgoingFile: IFileTransfer	= new FileTransfer();
 
-			private initPeer () : void {
+			private initPeer (callback: Function = () => {}) : void {
 				if (this.peer) {
+					callback();
 					return;
 				}
 				else if (!this.hasSessionStarted) {
@@ -182,104 +181,102 @@ module Cyph {
 					);
 				}
 
-				let channel: RTCDataChannel;
-				const peer: RTCPeerConnection	= new WebRTC.PeerConnection({
-					iceServers: [
-						{
-							url: P2P.constants.stun + ':' + Config.p2pConfig.iceServer
-						},
-						{
-							url: P2P.constants.turn + ':' + Config.p2pConfig.iceServer,
-							credential: Config.p2pConfig.iceCredential,
-							username: Config.p2pConfig.iceCredential
-						}
-					]
-				}, {
-					optional: [
-						{
-							DtlsSrtpKeyAgreement: true
-						}
-					]
-				});
+				Util.retryUntilComplete((retry: Function) => Util.request({
+					url: Env.baseUrl + 'iceservers',
+					error: retry,
+					success: (iceServers: string) => {
+						let channel: RTCDataChannel;
+						const peer: RTCPeerConnection	= new WebRTC.PeerConnection({
+							iceServers: JSON.parse(iceServers)
+						}, {
+							optional: [
+								{
+									DtlsSrtpKeyAgreement: true
+								}
+							]
+						});
 
-				peer.onaddstream	= e => {
-					if (
-						e.stream &&
-						(
-							!this.remoteStream ||
-							this.remoteStream.id !== e.stream.id
-						)
-					) {
-						this.remoteStream	= e.stream;
-
-						this.triggerUiEvent(
-							UIEvents.Categories.stream,
-							UIEvents.Events.set,
-							Session.Users.friend,
-							URL.createObjectURL(this.remoteStream)
-						);
-
-						setTimeout(() => {
-							this.incomingStream.loading	= false;
-							this.controller.update();
-						}, 1500);
-					}
-				};
-
-				peer.ondatachannel	= e => {
-					channel			= e['channel'];
-					this.channel	= channel;
-
-					this.setUpChannel();
-				};
-
-				peer.onicecandidate	= e => {
-					if (e.candidate) {
-						this.session.send(
-							new Session.Message(
-								Session.RPCEvents.p2p,
-								new Session.Command(
-									P2P.constants.addIceCandidate,
-									JSON.stringify(e.candidate)
+						peer.onaddstream	= e => {
+							if (
+								e.stream &&
+								(
+									!this.remoteStream ||
+									this.remoteStream.id !== e.stream.id
 								)
-							)
-						);
-					}
-				};
+							) {
+								this.remoteStream	= e.stream;
 
-				peer.onsignalingstatechange	= e => {
-					const forceKill: boolean	= e === null;
+								this.triggerUiEvent(
+									UIEvents.Categories.stream,
+									UIEvents.Events.set,
+									Session.Users.friend,
+									URL.createObjectURL(this.remoteStream)
+								);
 
-					if (
-						this.peer === peer &&
-						(
-							forceKill ||
-							peer.signalingState === P2P.constants.closed
-						)
-					) {
-						peer.onaddstream	= null;
-
-						this.isAvailable	= false;
-						this.remoteStream	= null;
-						this.channel		= null;
-						this.peer			= null;
-
-						if (forceKill) {
-							if (channel) {
-								channel.close();
+								setTimeout(() => {
+									this.incomingStream.loading	= false;
+									this.controller.update();
+								}, 1500);
 							}
+						};
 
-							peer.close();
-						}
+						peer.ondatachannel	= e => {
+							channel			= e['channel'];
+							this.channel	= channel;
 
-						if (this.hasSessionStarted) {
-							this.initPeer();
-						}
+							this.setUpChannel();
+						};
+
+						peer.onicecandidate	= e => {
+							if (e.candidate) {
+								this.session.send(
+									new Session.Message(
+										Session.RPCEvents.p2p,
+										new Session.Command(
+											P2P.constants.addIceCandidate,
+											JSON.stringify(e.candidate)
+										)
+									)
+								);
+							}
+						};
+
+						peer.onsignalingstatechange	= e => {
+							const forceKill: boolean	= e === null;
+
+							if (
+								this.peer === peer &&
+								(
+									forceKill ||
+									peer.signalingState === P2P.constants.closed
+								)
+							) {
+								peer.onaddstream	= null;
+
+								this.isAvailable	= false;
+								this.remoteStream	= null;
+								this.channel		= null;
+								this.peer			= null;
+
+								if (forceKill) {
+									if (channel) {
+										channel.close();
+									}
+
+									peer.close();
+								}
+
+								if (this.hasSessionStarted) {
+									this.initPeer();
+								}
+							}
+						};
+
+
+						this.peer	= peer;
+						callback();
 					}
-				};
-
-
-				this.peer	= peer;
+				}));
 			}
 
 			private receiveCommand (command: Session.Command) : void {
@@ -738,193 +735,193 @@ module Cyph {
 
 					this.mutex.lock((wasFirst: boolean, wasFirstOfType: boolean) => {
 						if (wasFirstOfType && this.isAccepted) {
-							this.initPeer();
+							this.initPeer(() => {
+								let streamHelper: Function;
+								let streamFallback: Function;
+								let streamSetup: Function;
 
-							let streamHelper: Function;
-							let streamFallback: Function;
-							let streamSetup: Function;
-
-							streamHelper	= (stream: MediaStream) => {
-								if (!this.isAccepted) {
-									return;
-								}
-
-								if (this.localStream) {
-									this.localStream['stop']();
-									this.localStream	= null;
-								}
-
-								if (stream) {
-									if (this.peer.getLocalStreams().length > 0) {
-										this.peer.onsignalingstatechange(null);
+								streamHelper	= (stream: MediaStream) => {
+									if (!this.isAccepted) {
+										return;
 									}
 
-									this.localStream	= stream;
-									this.peer.addStream(this.localStream);
-								}
+									if (this.localStream) {
+										this.localStream['stop']();
+										this.localStream	= null;
+									}
 
-								this.triggerUiEvent(
-									UIEvents.Categories.stream,
-									UIEvents.Events.set,
-									Session.Users.me,
-									stream ? URL.createObjectURL(this.localStream) : ''
-								);
+									if (stream) {
+										if (this.peer.getLocalStreams().length > 0) {
+											this.peer.onsignalingstatechange(null);
+										}
+
+										this.localStream	= stream;
+										this.peer.addStream(this.localStream);
+									}
+
+									this.triggerUiEvent(
+										UIEvents.Categories.stream,
+										UIEvents.Events.set,
+										Session.Users.me,
+										stream ? URL.createObjectURL(this.localStream) : ''
+									);
 
 
-								for (const o of [
-									{k: P2P.constants.audio, f: 'getAudioTracks'},
-									{k: P2P.constants.video, f: 'getVideoTracks'}
-								]) {
-									this.outgoingStream[o.k]	=
-										!!this.localStream &&
-										this.localStream[o.f]().
-											map(track => track.enabled).
-											reduce((a, b) => a || b, false)
+									for (const o of [
+										{k: P2P.constants.audio, f: 'getAudioTracks'},
+										{k: P2P.constants.video, f: 'getVideoTracks'}
+									]) {
+										this.outgoingStream[o.k]	=
+											!!this.localStream &&
+											this.localStream[o.f]().
+												map(track => track.enabled).
+												reduce((a, b) => a || b, false)
+										;
+									}
+
+
+									const outgoingStream: string	=
+										JSON.stringify(this.outgoingStream)
 									;
-								}
 
+									if (!offer) {
+										this.setUpChannel(true);
 
-								const outgoingStream: string	=
-									JSON.stringify(this.outgoingStream)
-								;
+										this.retryUntilComplete(retry =>
+											this.peer.createOffer(offer => {
+												/* http://www.kapejod.org/en/2014/05/28/ */
+												offer.sdp	= offer.sdp.
+													split('\n').
+													filter((line) =>
+														line.indexOf('b=AS:') < 0 &&
+														line.indexOf(
+															'urn:ietf:params:rtp-hdrext:ssrc-audio-level'
+														) < 0
+													).
+													join('\n')
+												;
 
-								if (!offer) {
-									this.setUpChannel(true);
-
-									this.retryUntilComplete(retry =>
-										this.peer.createOffer(offer => {
-											/* http://www.kapejod.org/en/2014/05/28/ */
-											offer.sdp	= offer.sdp.
-												split('\n').
-												filter((line) =>
-													line.indexOf('b=AS:') < 0 &&
-													line.indexOf(
-														'urn:ietf:params:rtp-hdrext:ssrc-audio-level'
-													) < 0
-												).
-												join('\n')
-											;
-
-											this.retryUntilComplete(retry =>
-												this.peer.setLocalDescription(offer, () => {
-													this.session.send(
-														new Session.Message(
-															Session.RPCEvents.p2p,
-															new Session.Command(
-																P2P.constants.receiveOffer,
-																JSON.stringify(offer)
-															)
-														),
-														new Session.Message(
-															Session.RPCEvents.p2p,
-															new Session.Command(
-																P2P.constants.streamOptions,
-																outgoingStream
-															)
-														)
-													);
-
-													this.mutex.unlock();
-												}, retry)
-											);
-										}, retry, <any> {
-											offerToReceiveAudio: true,
-											offerToReceiveVideo: true
-										})
-									);
-								}
-								else {
-									this.retryUntilComplete(retry =>
-										this.peer.setRemoteDescription(
-											new WebRTC.SessionDescription(JSON.parse(offer)),
-											() =>
 												this.retryUntilComplete(retry =>
-													this.peer.createAnswer(answer =>
-														this.retryUntilComplete(retry =>
-															this.peer.setLocalDescription(answer, () => {
-																this.session.send(
-																	new Session.Message(
-																		Session.RPCEvents.p2p,
-																		new Session.Command(
-																			P2P.constants.receiveAnswer,
-																			JSON.stringify(answer)
-																		)
-																	),
-																	new Session.Message(
-																		Session.RPCEvents.p2p,
-																		new Session.Command(
-																			P2P.constants.streamOptions,
-																			outgoingStream
-																		)
-																	)
-																);
+													this.peer.setLocalDescription(offer, () => {
+														this.session.send(
+															new Session.Message(
+																Session.RPCEvents.p2p,
+																new Session.Command(
+																	P2P.constants.receiveOffer,
+																	JSON.stringify(offer)
+																)
+															),
+															new Session.Message(
+																Session.RPCEvents.p2p,
+																new Session.Command(
+																	P2P.constants.streamOptions,
+																	outgoingStream
+																)
+															)
+														);
 
-																this.isAvailable	= true;
-
-																this.mutex.unlock();
-															}, retry)
-														)
-													, retry)
-												)
-											,
-											retry
-										)
-									);
-								}
-
-								this.triggerUiEvent(
-									UIEvents.Categories.base,
-									UIEvents.Events.videoToggle,
-									true
-								);
-							};
-
-							streamFallback	= () => {
-								if (this.outgoingStream.video) {
-									this.outgoingStream.video	= false;
-								}
-								else if (this.outgoingStream.audio) {
-									this.outgoingStream.audio	= false;
-								}
-
-								streamSetup();
-							};
-
-							streamSetup	= () => {
-								if (this.outgoingStream.video || this.outgoingStream.audio) {
-									WebRTC.getUserMedia(
-										{
-											audio: this.outgoingStream.audio,
-											video: this.outgoingStream.video
-										},
-										streamHelper,
-										streamFallback
-									);
-								}
-								else if (this.incomingStream.video || this.incomingStream.audio) {
-									try {
-										streamHelper(new WebRTC.MediaStream());
+														this.mutex.unlock();
+													}, retry)
+												);
+											}, retry, <any> {
+												offerToReceiveAudio: true,
+												offerToReceiveVideo: true
+											})
+										);
 									}
-									catch (_) {
-										WebRTC.getUserMedia(
-											{audio: true, video: false},
-											stream => {
-												for (const track of stream.getTracks()) {
-													track.enabled	= false;
-												}
+									else {
+										this.retryUntilComplete(retry =>
+											this.peer.setRemoteDescription(
+												new WebRTC.SessionDescription(JSON.parse(offer)),
+												() =>
+													this.retryUntilComplete(retry =>
+														this.peer.createAnswer(answer =>
+															this.retryUntilComplete(retry =>
+																this.peer.setLocalDescription(answer, () => {
+																	this.session.send(
+																		new Session.Message(
+																			Session.RPCEvents.p2p,
+																			new Session.Command(
+																				P2P.constants.receiveAnswer,
+																				JSON.stringify(answer)
+																			)
+																		),
+																		new Session.Message(
+																			Session.RPCEvents.p2p,
+																			new Session.Command(
+																				P2P.constants.streamOptions,
+																				outgoingStream
+																			)
+																		)
+																	);
 
-												streamHelper(stream);
+																	this.isAvailable	= true;
+
+																	this.mutex.unlock();
+																}, retry)
+															)
+														, retry)
+													)
+												,
+												retry
+											)
+										);
+									}
+
+									this.triggerUiEvent(
+										UIEvents.Categories.base,
+										UIEvents.Events.videoToggle,
+										true
+									);
+								};
+
+								streamFallback	= () => {
+									if (this.outgoingStream.video) {
+										this.outgoingStream.video	= false;
+									}
+									else if (this.outgoingStream.audio) {
+										this.outgoingStream.audio	= false;
+									}
+
+									streamSetup();
+								};
+
+								streamSetup	= () => {
+									if (this.outgoingStream.video || this.outgoingStream.audio) {
+										WebRTC.getUserMedia(
+											{
+												audio: this.outgoingStream.audio,
+												video: this.outgoingStream.video
 											},
+											streamHelper,
 											streamFallback
 										);
 									}
-								}
-								else {
-									streamHelper();
-								}
-							};
+									else if (this.incomingStream.video || this.incomingStream.audio) {
+										try {
+											streamHelper(new WebRTC.MediaStream());
+										}
+										catch (_) {
+											WebRTC.getUserMedia(
+												{audio: true, video: false},
+												stream => {
+													for (const track of stream.getTracks()) {
+														track.enabled	= false;
+													}
 
-							streamSetup();
+													streamHelper(stream);
+												},
+												streamFallback
+											);
+										}
+									}
+									else {
+										streamHelper();
+									}
+								};
+
+								streamSetup();
+							});
 						}
 						else {
 							if (offer) {
