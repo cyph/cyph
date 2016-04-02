@@ -184,11 +184,15 @@ module Cyph {
 				Util.retryUntilComplete((retry: Function) => Util.request({
 					url: Env.baseUrl + 'iceservers',
 					error: retry,
-					success: (iceServers: string) => {
+					success: (data: string) => {
 						let channel: RTCDataChannel;
-						const peer: RTCPeerConnection	= new WebRTC.PeerConnection({
-							iceServers: JSON.parse(iceServers)
-						}, {
+
+						let iceServers: RTCIceServer[]	= JSON.parse(data);
+						if (this.forceTURN) {
+							iceServers	= iceServers.filter(o => o.url.indexOf('stun:') !== 0);
+						}
+
+						const peer: RTCPeerConnection	= new WebRTC.PeerConnection({iceServers}, {
 							optional: [
 								{
 									DtlsSrtpKeyAgreement: true
@@ -942,7 +946,8 @@ module Cyph {
 			 */
 			public constructor (
 				private session: Session.ISession,
-				private controller: IController
+				private controller: IController,
+				private forceTURN: boolean
 			) {
 				this.mutex	= new Session.Mutex(this.session);
 
