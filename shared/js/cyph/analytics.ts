@@ -80,8 +80,40 @@ module Cyph {
 						locationData.pathname +
 						locationData.search +
 						(
-							document.referrer &&
-							!/https:\/\/www.cyph.[a-z]+\//.test(document.referrer) ?
+							/* Set referrer except when it's a Cyph URL or an encoded form
+								of a Cyph URL, particularly to avoid leaking shared secret */
+							(
+								document.referrer &&
+								![document.referrer].
+									concat(
+										(
+											document.referrer.match(/[0-9a-fA-F]+/g) || []
+										).map((s: string) => {
+											try {
+												return Sodium.to_string(Sodium.from_hex(s));
+											}
+											catch (e) {
+												return '';
+											}
+										})
+									).concat(
+										(
+											'&' + document.referrer.substring(
+												document.referrer.indexOf('?') + 1
+											)
+										).split(/\&.*?=/g).map((s: string) => {
+											try {
+												return Sodium.to_string(Sodium.from_base64(s));
+											}
+											catch (e) {
+												return '';
+											}
+										})
+									).map((s: string) =>
+										/\/\/.*?\.?cyph\.[a-z]+\/?/.test(s)
+									).
+									reduce((a: boolean, b: boolean) => a || b)
+							) ?
 								(
 									(locationData.search ? '&' : '?') +
 									'ref=' +
