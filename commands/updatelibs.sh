@@ -33,7 +33,8 @@ bower install --save \
 mkdir -p bower_components/highlight.js
 cd bower_components/highlight.js
 rm .gitignore
-python tools/build.py default
+npm install
+node tools/build.js :common
 cd ../..
 
 mkdir aws-xml
