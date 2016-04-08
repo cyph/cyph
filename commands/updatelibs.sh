@@ -44,14 +44,14 @@ browserify node_modules/aws-sdk/lib/xml/node_parser.js -s AWS_XML | uglifyjs -o 
 cd ..
 rm -rf aws-xml
 
-tsd query --resolve --overwrite --save --action install \
+typings install --ambient --save \
 	jquery \
-	angularjs \
+	angular \
 	angular-material \
 	angular-animate \
 	highlightjs \
-	MediaStream \
-	RTCPeerConnection \
+	webrtc/mediastream \
+	webrtc/rtcpeerconnection \
 	cryptojs \
 	dompurify
 

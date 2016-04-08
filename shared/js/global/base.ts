@@ -7,7 +7,7 @@
 /// <reference path="../typings/dataview.d.ts" />
 /// <reference path="../typings/iwebsign.d.ts" />
 /// <reference path="../typings/storage.d.ts" />
-/// <reference path="../../lib/typings/tsd.d.ts" />
+/// <reference path="../../lib/typings/main.d.ts" />
 
 /// <reference path="../cyph/p2p/enums.ts" />
 /// <reference path="../cyph/session/enums.ts" />
