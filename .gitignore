@@ -5,3 +5,5 @@ nohup.out
 shared/lib/.oldbower
 *.swp
 **/*.swp
+*.orig
+**/*.orig

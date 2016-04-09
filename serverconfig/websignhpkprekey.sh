@@ -79,6 +79,7 @@ if [ "${certHash}" == "${keyHash}" ] ; then
 	> /etc/nginx/nginx.conf
 
 	service nginx start
+	service nginx restart
 else
 	delete cert.pem
 	delete key.pem

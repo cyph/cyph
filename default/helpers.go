@@ -2,13 +2,16 @@ package api
 
 import (
 	"appengine"
+	"appengine/urlfetch"
 	"encoding/json"
 	"fmt"
 	"geoip2"
 	"github.com/gorilla/mux"
 	"github.com/microcosm-cc/bluemonday"
+	"io/ioutil"
 	"net"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 )
@@ -63,6 +66,9 @@ var sanitizer = bluemonday.StrictPolicy()
 
 var geoipdb, _ = geoip2.Open("GeoIP2-Country.mmdb")
 
+var twilioSID = os.Getenv("TWILIO_SID")
+var twilioAuthToken = os.Getenv("TWILIO_AUTH_TOKEN")
+
 func geolocate(h HandlerArgs) (string, string) {
 	return geolocateIp(h.Request.RemoteAddr)
 }
@@ -94,6 +100,37 @@ func getBetaSignupFromRequest(h HandlerArgs) BetaSignup {
 		Name:     sanitize(h.Request.PostFormValue("Name"), config.MaxSignupValueLength),
 		Referer:  sanitize(h.Request.Referer(), config.MaxSignupValueLength),
 		Time:     time.Now().Unix(),
+	}
+}
+
+func getTwilioToken(h HandlerArgs) map[string]interface{} {
+	client := urlfetch.Client(h.Context)
+
+	req, _ := http.NewRequest(
+		methods.POST,
+		"https://api.twilio.com/2010-04-01/Accounts/"+twilioSID+"/Tokens.json",
+		nil,
+	)
+	req.SetBasicAuth(twilioSID, twilioAuthToken)
+	resp, err := client.Do(req)
+
+	if err == nil {
+		body, err := ioutil.ReadAll(resp.Body)
+
+		if err == nil {
+			var token map[string]interface{}
+			err := json.Unmarshal(body, &token)
+
+			if err == nil {
+				return token
+			} else {
+				return getTwilioToken(h)
+			}
+		} else {
+			return getTwilioToken(h)
+		}
+	} else {
+		return getTwilioToken(h)
 	}
 }
 

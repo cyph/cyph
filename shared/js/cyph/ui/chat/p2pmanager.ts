@@ -114,11 +114,12 @@ module Cyph {
 					controller: IController,
 					mobileMenu: ISidebar,
 					private dialogManager: IDialogManager,
-					private elements: IElements
+					private elements: IElements,
+					forceTURN?: boolean
 				) {
 					super(controller, mobileMenu);
 
-					this.p2p	= new P2P.P2P(this.chat.session, this.controller);
+					this.p2p	= new P2P.P2P(this.chat.session, this.controller, forceTURN);
 
 
 

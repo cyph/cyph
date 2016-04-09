@@ -13,7 +13,7 @@ module Cyph {
 					show(
 						this.$mdDialog.alert().
 							title(o.title).
-							content(o.content).
+							textContent(o.content).
 							ok(o.ok)
 					).
 					then(callback)
@@ -23,11 +23,11 @@ module Cyph {
 			public baseDialog (
 				o: {
 					template: string;
-					vars?: any;
+					locals?: any;
 					oncomplete?: Function;
 					onclose?: Function;
 				},
-				callback: (ok: boolean, vars: any) => void = (ok, vars) => {}
+				callback: (ok: boolean, locals: any) => void = (ok, locals) => {}
 			) : void {
 				const f	= (ok: boolean) => {
 					if (o.onclose) {
@@ -41,10 +41,10 @@ module Cyph {
 					template: o.template,
 					onComplete: o.oncomplete,
 					controller: <any> ['$scope', '$mdDialog', ($scope, $mdDialog) => {
-						$scope.vars		= o.vars;
+						$scope.locals	= o.locals;
 						$scope.close	= (ok: any) => {
 							$mdDialog.hide();
-							callback(ok === true, o.vars);
+							callback(ok === true, o.locals);
 						};
 					}]
 				}).then(f).catch(f);
@@ -63,7 +63,7 @@ module Cyph {
 				const promise	= this.$mdDialog.show(
 					this.$mdDialog.confirm().
 						title(o.title).
-						content(o.content).
+						textContent(o.content).
 						ok(o.ok).
 						cancel(o.cancel)
 				);
@@ -98,7 +98,7 @@ module Cyph {
 				callback?: () => void
 			) : void {
 				this.$mdToast.show({
-					template: '<md-toast>' + o.content + '</md-toast>',
+					template: `<md-toast><div class='md-toast-content'>${o.content}</div></md-toast>`,
 					hideDelay: o.delay,
 					position: o.position || 'top right'
 				});

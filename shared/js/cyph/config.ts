@@ -63,8 +63,6 @@ module Cyph {
 
 		/** P2P-related config (used by P2P.P2P). */
 		public static p2pConfig	= {
-			iceServer: 'ice.cyph.com',
-			iceCredential: 'cyph',
 			fileChunkSize: 1024,
 			maxFileSize: 1100000000,
 			voiceCallVideo: 'video/voicecall.mp4'

@@ -284,6 +284,8 @@ module Cyph {
 						timer: this.rootElement.find(Elements.timer.selector)
 					};
 
+					let forceTURN: boolean;
+
 					if (session) {
 						this.session	= session;
 					}
@@ -310,6 +312,23 @@ module Cyph {
 							});
 						}
 
+						/* Force TURN API flag */
+						if (id[0] === '$') {
+							id	=
+								id.substring(1) +
+								(id.length > 1 ? 'a' : '')
+							;
+
+							forceTURN	= true;
+
+							Analytics.main.send({
+								hitType: 'event',
+								eventCategory: 'force-turn',
+								eventAction: 'used',
+								eventValue: 1
+							});
+						}
+
 						this.session	= new Session.ThreadedSession(
 							id,
 							controller
@@ -330,7 +349,8 @@ module Cyph {
 						this.controller,
 						this.mobileMenu,
 						this.dialogManager,
-						this.elements
+						this.elements,
+						forceTURN
 					);
 
 					this.photoManager	= new PhotoManager(
