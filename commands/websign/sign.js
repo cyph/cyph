@@ -58,11 +58,11 @@ function decryptKey (key, password) {
 		sodium.from_hex(key),
 		new Uint8Array(sodium.crypto_secretbox_NONCEBYTES),
 		sodium.crypto_pwhash_scryptsalsa208sha256(
+			sodium.crypto_secretbox_KEYBYTES,
 			password,
 			new Uint8Array(sodium.crypto_pwhash_scryptsalsa208sha256_SALTBYTES),
 			sodium.crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_SENSITIVE,
-			sodium.crypto_pwhash_scryptsalsa208sha256_MEMLIMIT_INTERACTIVE,
-			sodium.crypto_secretbox_KEYBYTES
+			sodium.crypto_pwhash_scryptsalsa208sha256_MEMLIMIT_INTERACTIVE
 		)
 	);
 }
