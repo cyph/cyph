@@ -1,13 +1,13 @@
 {
   "name": "libsodium.js",
-  "version": "0.2.9",
+  "version": "0.3.0",
   "homepage": "https://github.com/jedisct1/libsodium.js",
   "authors": [
     "Ahmad Ben Mrad (@BatikhSouri)",
     "Frank Denis (@jedisct1)"
   ],
   "description": "The Sodium cryptographic library compiled to JavaScript",
-  "main": "dist/browsers/combined/sodium.min.js",
+  "main": "dist/browsers/combined/sodium.js",
   "moduleType": [
     "amd",
     "es6",

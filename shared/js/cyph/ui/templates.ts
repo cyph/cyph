@@ -21,7 +21,7 @@ module Cyph {
 						<p translate>
 							Add the code?
 						</p>
-						<md-checkbox translate ng-model='vars.remember' aria-label='Remember my preference'>
+						<md-checkbox translate ng-model='locals.remember' aria-label='Remember my preference'>
 							Remember my preference
 						</md-checkbox>
 					</md-content>
@@ -131,9 +131,9 @@ module Cyph {
 			`,
 
 			login: `
-				<md-dialog ng-class='{fullscreen: vars.signupForm.state === 3}' class='login'>
+				<md-dialog ng-class='{fullscreen: locals.signupForm.state === 3}' class='login'>
 					<md-content>
-						<div cyph-signup-form='vars.signupForm'></div>
+						<div cyph-signup-form='locals.signupForm'></div>
 					</md-content>
 				</md-dialog>
 			`

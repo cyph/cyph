@@ -32,8 +32,9 @@ bower install --save \
 
 mkdir -p bower_components/highlight.js
 cd bower_components/highlight.js
-rm .gitignore
-python tools/build.py default
+sed -i 's/^build$//' .gitignore
+npm install
+node tools/build.js :common
 cd ../..
 
 mkdir aws-xml
@@ -43,14 +44,16 @@ browserify node_modules/aws-sdk/lib/xml/node_parser.js -s AWS_XML | uglifyjs -o 
 cd ..
 rm -rf aws-xml
 
-tsd query --resolve --overwrite --save --action install \
+rm -rf typings typings.json
+typings install --ambient --save \
 	jquery \
-	angularjs \
+	angular \
 	angular-material \
 	angular-animate \
 	highlightjs \
-	MediaStream \
-	RTCPeerConnection \
+	es6-promise \
+	webrtc/mediastream \
+	webrtc/rtcpeerconnection \
 	cryptojs \
 	dompurify
 

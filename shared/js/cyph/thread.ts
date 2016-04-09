@@ -14,11 +14,11 @@ module Cyph {
 			return s.slice(s.indexOf('{'));
 		}
 
-		private static threadEnvSetup (vars: any, importScripts: Function) : void {
+		private static threadEnvSetup (locals: any, importScripts: Function) : void {
 			/* Inherit these from main thread */
 
-			self['locationData']	= vars._locationData;
-			self['navigatorData']	= vars._navigatorData;
+			self['locationData']	= locals._locationData;
+			self['navigatorData']	= locals._navigatorData;
 
 
 			/* Wrapper to make importScripts work in local dev environments
@@ -89,9 +89,9 @@ module Cyph {
 				importScripts('/cryptolib/bower_components/isaac.js/isaac.js');
 				isaac	= isaac || self['isaac'];
 
-				isaac.seed(vars._threadRandomSeed);
-				for (let i = 0 ; i < vars._threadRandomSeed.length ; ++i) {
-					vars._threadRandomSeed[i]	= 0;
+				isaac.seed(locals._threadRandomSeed);
+				for (let i = 0 ; i < locals._threadRandomSeed.length ; ++i) {
+					locals._threadRandomSeed[i]	= 0;
 				}
 
 				crypto	= {
@@ -117,9 +117,9 @@ module Cyph {
 
 			self['crypto']	= crypto;
 
-			vars._locationData		= null;
-			vars._navigatorData		= null;
-			vars._threadRandomSeed	= null;
+			locals._locationData		= null;
+			locals._navigatorData		= null;
+			locals._threadRandomSeed	= null;
 		}
 
 		private static threadPostSetup () : void {
@@ -198,15 +198,15 @@ module Cyph {
 
 		/**
 		 * @param f Function to run in the new thread.
-		 * @param vars Local data to pass in to the new thread.
+		 * @param locals Local data to pass in to the new thread.
 		 * @param onmessage Handler for messages from the thread.
 		 */
 		public constructor (
 			f: Function,
-			vars: any = {},
+			locals: any = {},
 			onmessage: (e: MessageEvent) => any = e => {}
 		) {
-			vars._locationData			= {
+			locals._locationData			= {
 				hash: locationData.hash,
 				host: locationData.host,
 				hostname: locationData.hostname,
@@ -217,22 +217,22 @@ module Cyph {
 				search: locationData.search
 			};
 
-			vars._navigatorData			= {
+			locals._navigatorData			= {
 				language: Env.fullLanguage,
 				userAgent: Env.userAgent
 			};
 
-			vars._threadRandomSeed		= crypto.getRandomValues(new Uint8Array(512));
+			locals._threadRandomSeed		= crypto.getRandomValues(new Uint8Array(512));
 
-			const threadBody: string	=
-				'var vars = ' + JSON.stringify(vars) + ';\n' +
+			const threadBody: string		=
+				'var locals = ' + JSON.stringify(locals) + ';\n' +
 				Thread.stringifyFunction(Thread.threadEnvSetup) +
 				Thread.stringifyFunction(f) +
 				Thread.stringifyFunction(Thread.threadPostSetup)
 			;
 
-			for (let i = 0 ; i < vars._threadRandomSeed.length ; ++i) {
-				vars._threadRandomSeed[i]	= 0;
+			for (let i = 0 ; i < locals._threadRandomSeed.length ; ++i) {
+				locals._threadRandomSeed[i]	= 0;
 			}
 
 			try {

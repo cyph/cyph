@@ -44,7 +44,7 @@ module Cyph.com {
 						if (this.homeSection === HomeSections.login) {
 							this.dialogManager.baseDialog({
 								template: Cyph.UI.Templates.login,
-								vars: {
+								locals: {
 									signupForm: this.signupForm
 								},
 								onclose: () => Cyph.UrlState.set('')

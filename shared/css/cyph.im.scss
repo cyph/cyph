@@ -629,26 +629,33 @@ html:not(.mobile) {
 	}
 }
 
-.link-connection .connect-link-input input {
-	text-align: center;
-	margin-left: auto;
-	margin-right: auto;
-	background-color: #f1f1f1;
-	box-shadow: 0px 0px 10px #7239dd;
-	padding: 5px;
-	border: 1px solid #8b62d9;
-	width: 50%;
-}
 
-.link-connection .connect-link-link {
-	display: block;
-	font-size: 130%;
-	word-wrap: break-word;
-}
+.link-connection .connect-link-input {
+	width: 100%;
 
-.link-connection .connect-link-mobile .divider {
-	width: 21px;
-	display: inline-block;
+	input {
+		text-align: center;
+		margin-left: auto;
+		margin-right: auto;
+		background-color: #f1f1f1;
+		box-shadow: 0px 0px 10px #7239dd;
+		padding: 5px;
+		border: 1px solid #8b62d9;
+		height: auto;
+		width: 50%;
+		@include transform(translateX(50%));
+	}
+
+	.connect-link-link {
+		display: block;
+		font-size: 130%;
+		word-wrap: break-word;
+	}
+
+	.connect-link-mobile .divider {
+		width: 21px;
+		display: inline-block;
+	}
 }
 
 .new-messages {

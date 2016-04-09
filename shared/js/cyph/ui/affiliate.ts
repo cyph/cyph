@@ -12,9 +12,12 @@ module Cyph {
 
 			/**
 			 * Process all potential affiliate links within $elem.
-			 * @param
+			 * @param $elem
 			 */
 			public process ($elem: JQuery) : void {
+				/* Disable this for now */
+				return;
+
 				$elem.find('a').addBack().click(e => {
 					const originalUrl: string	= $(e.currentTarget).attr('href') || '';
 
@@ -46,12 +49,12 @@ module Cyph {
 							this.dialogManager.baseDialog(
 								{
 									template: Templates.amazonLink,
-									vars: {
+									locals: {
 										remember: false
 									}
 								},
-								(ok: boolean, vars: any) => {
-									if (vars.remember) {
+								(ok: boolean, locals: any) => {
+									if (locals.remember) {
 										this.shouldAdd	= ok;
 									}
 
