@@ -12,9 +12,12 @@ module Cyph {
 
 			/**
 			 * Process all potential affiliate links within $elem.
-			 * @param
+			 * @param $elem
 			 */
 			public process ($elem: JQuery) : void {
+				/* Disable this for now */
+				return;
+
 				$elem.find('a').addBack().click(e => {
 					const originalUrl: string	= $(e.currentTarget).attr('href') || '';
 
