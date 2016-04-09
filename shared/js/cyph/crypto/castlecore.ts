@@ -510,11 +510,11 @@ module Cyph {
 				}
 
 				this.sharedSecret	= Sodium.crypto_pwhash_scryptsalsa208sha256(
+					Sodium.crypto_secretbox_KEYBYTES,
 					sharedSecret,
 					new Uint8Array(Sodium.crypto_pwhash_scryptsalsa208sha256_SALTBYTES),
 					Sodium.crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_INTERACTIVE,
-					Sodium.crypto_pwhash_scryptsalsa208sha256_MEMLIMIT_INTERACTIVE,
-					Sodium.crypto_secretbox_KEYBYTES
+					Sodium.crypto_pwhash_scryptsalsa208sha256_MEMLIMIT_INTERACTIVE
 				);
 
 				const publicKeySet: Uint8Array	= this.generateKeySet();
