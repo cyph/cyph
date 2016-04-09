@@ -1,5 +1,5 @@
 @import 'fonts';
-@import 'cyph.base';
+@import 'cyph.im';
 
 
 html, body, #main {
@@ -336,6 +336,9 @@ html.mobile #hero-section {
 	> img {
 		height: 100% !important;
 	}
+}
+html.mobile #logo {
+	margin-left: 5px;
 }
 
 

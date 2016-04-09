@@ -65,7 +65,7 @@ md-toast {
 }
 
 
-md-toolbar, md-toolbar.md-default-theme {
+md-toolbar, md-toolbar.md-default-theme:not(.md-menu-toolbar), md-toolbar:not(.md-menu-toolbar) {
 	background-color: #7d4fd3;
 	height: 40px !important;
 	min-height: 40px !important;
@@ -75,9 +75,6 @@ md-toolbar, md-toolbar.md-default-theme {
 		height: 25px !important;
 		vertical-align: middle;
 	}
-}
-html:not(.mobile) md-toolbar {
-	box-shadow: 0px 5px 5px -5px rgba(0, 0, 0, 0.75);
 }
 #mobile-toolbar {
 	position: fixed;
@@ -350,10 +347,12 @@ button.md-button.md-fab {
 	height: 100%;
 }
 
-md-toolbar .md-toolbar-tools {
-	height: 40px;
-	min-height: 40px;
-	max-height: 40px;
+md-toolbar, md-toolbar.md-default-theme:not(.md-menu-toolbar), md-toolbar:not(.md-menu-toolbar) {
+	.md-toolbar-tools {
+		height: 40px;
+		min-height: 40px;
+		max-height: 40px;
+	}
 }
 
 md-dialog {
@@ -450,6 +449,14 @@ md-content {
 
 /*** Angular Material patches (from 0.10.1 to 1.0.7 upgrade) ***/
 
+md-content {
+	background-color: inherit;
+}
+
 md-input-container {
 	margin-top: 0px;
+}
+
+md-sidenav {
+	max-width: calc(100% - 50px) !important;
 }

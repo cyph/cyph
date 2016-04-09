@@ -98,7 +98,7 @@ module Cyph {
 				callback?: () => void
 			) : void {
 				this.$mdToast.show({
-					template: '<md-toast>' + o.content + '</md-toast>',
+					template: `<md-toast><div class='md-toast-content'>${o.content}</div></md-toast>`,
 					hideDelay: o.delay,
 					position: o.position || 'top right'
 				});
