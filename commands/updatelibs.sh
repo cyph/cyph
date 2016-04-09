@@ -32,7 +32,7 @@ bower install --save \
 
 mkdir -p bower_components/highlight.js
 cd bower_components/highlight.js
-rm .gitignore
+sed -i 's/^build$//' .gitignore
 npm install
 node tools/build.js :common
 cd ../..
