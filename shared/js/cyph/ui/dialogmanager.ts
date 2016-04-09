@@ -13,7 +13,7 @@ module Cyph {
 					show(
 						this.$mdDialog.alert().
 							title(o.title).
-							content(o.content).
+							textContent(o.content).
 							ok(o.ok)
 					).
 					then(callback)
@@ -63,7 +63,7 @@ module Cyph {
 				const promise	= this.$mdDialog.show(
 					this.$mdDialog.confirm().
 						title(o.title).
-						content(o.content).
+						textContent(o.content).
 						ok(o.ok).
 						cancel(o.cancel)
 				);
