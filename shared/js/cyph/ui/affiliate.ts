@@ -15,8 +15,7 @@ module Cyph {
 			 * @param $elem
 			 */
 			public process ($elem: JQuery) : void {
-				/* Disable this for now */
-				return;
+				/* Disable this for now.
 
 				$elem.find('a').addBack().click(e => {
 					const originalUrl: string	= $(e.currentTarget).attr('href') || '';
@@ -64,6 +63,7 @@ module Cyph {
 						}
 					}
 				});
+				*/
 			}
 
 			/**
