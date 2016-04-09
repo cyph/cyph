@@ -189,7 +189,7 @@ module Cyph {
 
 						let iceServers: RTCIceServer[]	= JSON.parse(data);
 						if (this.forceTURN) {
-							iceServers	= iceServers.filter(o => o.url.indexOf('stun:') !== 0);
+							iceServers	= iceServers.filter(o => o['url'].indexOf('stun:') !== 0);
 						}
 
 						const peer: RTCPeerConnection	= new WebRTC.PeerConnection({iceServers}, {

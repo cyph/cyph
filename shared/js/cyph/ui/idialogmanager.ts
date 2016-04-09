@@ -27,11 +27,11 @@ module Cyph {
 			baseDialog (
 				o: {
 					template: string;
-					vars?: any;
+					locals?: any;
 					oncomplete?: Function;
 					onclose?: Function;
 				},
-				callback?: (ok: boolean, vars: any) => void
+				callback?: (ok: boolean, locals: any) => void
 			) : void;
 
 			/**

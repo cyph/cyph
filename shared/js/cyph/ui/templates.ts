@@ -21,7 +21,7 @@ module Cyph {
 						<p translate>
 							Add the code?
 						</p>
-						<md-checkbox translate ng-model='vars.remember' aria-label='Remember my preference'>
+						<md-checkbox translate ng-model='locals.remember' aria-label='Remember my preference'>
 							Remember my preference
 						</md-checkbox>
 					</md-content>
@@ -141,7 +141,7 @@ module Cyph {
 							the top of your screen to cyph right now!
 						</p>
 						<p>
-							<div cyph-signup-form='vars.signupForm'>
+							<div cyph-signup-form='locals.signupForm'>
 								<p>
 									<strong translate>However</strong>,
 									<span translate>

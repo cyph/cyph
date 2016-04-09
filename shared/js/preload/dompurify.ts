@@ -4,7 +4,7 @@
  */
 
 
-/// <reference path="../../lib/typings/tsd.d.ts" />
+/// <reference path="../../lib/typings/main.d.ts" />
 
 
 (() => {
