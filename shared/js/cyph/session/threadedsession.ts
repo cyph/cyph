@@ -98,7 +98,7 @@ module Cyph {
 					importScripts('/cryptolib/bower_components/libsodium.js/dist/browsers/combined/sodium.min.js');
 					importScripts('/cryptolib/bower_components/ntru.js/dist/ntru.js');
 
-					importScripts('/lib/bower_components/aws-sdk-js/dist/aws-sdk.min.js');
+					importScripts('/lib/bower_components/aws-sdk/dist/aws-sdk.min.js');
 					importScripts('/lib/aws-xml.js');
 					self['AWS'].XML.Parser	= self['AWS_XML'];
 

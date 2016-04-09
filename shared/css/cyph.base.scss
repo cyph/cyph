@@ -446,3 +446,10 @@ md-dialog {
 md-content {
 	color: inherit;
 }
+
+
+/*** Angular Material patches (from 0.10.1 to 1.0.7 upgrade) ***/
+
+md-input-container {
+	margin-top: 0px;
+}

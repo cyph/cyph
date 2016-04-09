@@ -22,8 +22,12 @@ rm -rf cyph.com/blog/theme/_posts 2> /dev/null
 mkdir cyph.com/blog/theme/_posts
 sudo mount -o bind cyph.com/blog/posts cyph.com/blog/theme/_posts
 
-ln -s $(pwd)/default/geoip2 $GOPATH/src/geoip2
-go install geoip2
+for f in $(find $(pwd)/default -type d -depth 1) ; do
+	ln -s $f $GOPATH/src/$(echo "$f" | perl -pe 's/.*\///g')
+done
+for f in $(find default -type d -mindepth 1 -maxdepth 4) ; do
+	go install $(echo "$f" | perl -pe 's/.*\///g')
+done
 
 fake_sqs &
 
