@@ -48,11 +48,11 @@ module Cyph {
 
 
 			Timer.thread	= new Thread(
-				(vars: any) => {
+				(locals: any) => {
 					onthreadmessage	= () =>
 						setTimeout(() =>
 							self.postMessage({}, undefined)
-						, vars.interval)
+						, locals.interval)
 					;
 				},
 				{interval},

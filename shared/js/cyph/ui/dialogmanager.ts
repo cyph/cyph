@@ -23,11 +23,11 @@ module Cyph {
 			public baseDialog (
 				o: {
 					template: string;
-					vars?: any;
+					locals?: any;
 					oncomplete?: Function;
 					onclose?: Function;
 				},
-				callback: (ok: boolean, vars: any) => void = (ok, vars) => {}
+				callback: (ok: boolean, locals: any) => void = (ok, locals) => {}
 			) : void {
 				const f	= (ok: boolean) => {
 					if (o.onclose) {
@@ -41,10 +41,10 @@ module Cyph {
 					template: o.template,
 					onComplete: o.oncomplete,
 					controller: <any> ['$scope', '$mdDialog', ($scope, $mdDialog) => {
-						$scope.vars		= o.vars;
+						$scope.locals	= o.locals;
 						$scope.close	= (ok: any) => {
 							$mdDialog.hide();
-							callback(ok === true, o.vars);
+							callback(ok === true, o.locals);
 						};
 					}]
 				}).then(f).catch(f);

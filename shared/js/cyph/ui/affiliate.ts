@@ -46,12 +46,12 @@ module Cyph {
 							this.dialogManager.baseDialog(
 								{
 									template: Templates.amazonLink,
-									vars: {
+									locals: {
 										remember: false
 									}
 								},
-								(ok: boolean, vars: any) => {
-									if (vars.remember) {
+								(ok: boolean, locals: any) => {
+									if (locals.remember) {
 										this.shouldAdd	= ok;
 									}
 
