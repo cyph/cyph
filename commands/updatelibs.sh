@@ -10,6 +10,8 @@ mkdir shared/lib shared/cryptolib
 cd shared/lib
 
 bower install --save \
+	angularjs \
+	angular2=angular/angular#master \
 	angular-material \
 	dompurify \
 	markdown-it \
