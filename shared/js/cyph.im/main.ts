@@ -10,6 +10,8 @@
 /// <reference path="../preload/translations.ts" />
 /// <reference path="../preload/base.ts" />
 
+import {UpgradeAdapter} from '../../lib/bower_components/angular2/modules/angular2/upgrade';
+
 /// <reference path="../cyph/controller.ts" />
 /// <reference path="../cyph/ui/chat/chat.ts" />
 /// <reference path="../cyph/ui/dialogmanager.ts" />

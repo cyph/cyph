@@ -8,6 +8,8 @@ originalDir="$(pwd)"
 
 ./commands/docs.sh
 
+tsargs='--experimentalDecorators -t ES5'
+
 tsfiles="$( \
 	{ cat */*.html $(find cyph.com/blog -name '*.html') | grep "<script.*'/js/" & grep -ro "importScripts('/js/.*)" shared/js; } | \
 		perl -pe "s/.*?'\/(js\/.*)\.js.*/\1/g" | \
@@ -30,7 +32,7 @@ scssfiles="$(find css -name '*.scss' | grep -v bourbon/ | perl -pe 's/(.*)\.scss
 
 if [ "${1}" == '--watch' ] ; then
 	for file in $tsfiles ; do
-		tsc --sourceMap $file.ts --out $file.js --watch &
+		tsc $tsargs --sourceMap $file.ts --out $file.js --watch &
 	done
 
 	# sass --watch isn't working for some reason
@@ -48,7 +50,7 @@ else
 	done
 
 	for file in $tsfiles ; do
-		output="${output}$(tsc $file.ts --out $file.js)"
+		output="${output}$(tsc $tsargs $file.ts --out $file.js)"
 	done
 
 	echo -e "${output}"
