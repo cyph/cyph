@@ -61,19 +61,6 @@ if (!HTMLElement.prototype.click) {
 	};
 }
 
-try {
-	Object.keys({});
-}
-catch (_) {
-	Object.keys	= o => {
-		const keys: any[]	= [];
-		for (const k in o) {
-			keys.push(k);
-		}
-		return keys;
-	};
-}
-
 
 
 $(() => {

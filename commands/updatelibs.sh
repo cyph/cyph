@@ -30,7 +30,9 @@ bower install --save \
 	wow \
 	morr/jquery.appear \
 	julianlam/tabIndent.js \
-	aws-sdk-js
+	aws-sdk-js \
+	es5-shim \
+	es6-shim
 
 mkdir -p bower_components/highlight.js
 cd bower_components/highlight.js
@@ -57,7 +59,8 @@ typings install --ambient --save \
 	webrtc/mediastream \
 	webrtc/rtcpeerconnection \
 	cryptojs \
-	dompurify
+	dompurify \
+	es6-shim
 
 mkdir blog
 cd blog
