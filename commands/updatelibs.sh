@@ -31,7 +31,7 @@ bower install --save \
 	morr/jquery.appear \
 	julianlam/tabIndent.js \
 	aws-sdk-js \
-	rxjs#master \
+	ReactiveX/RxJS \
 	es5-shim \
 	es6-shim
 
@@ -40,6 +40,11 @@ cd bower_components/highlight.js
 sed -i 's/^build$//' .gitignore
 npm install
 node tools/build.js :common
+cd ../..
+
+cd bower_components/RxJS
+sed -i 's/^dist\/$//' .gitignore
+npm run build_global
 cd ../..
 
 mkdir aws-xml
