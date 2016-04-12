@@ -31,7 +31,7 @@ bower install --save \
 	morr/jquery.appear \
 	julianlam/tabIndent.js \
 	aws-sdk-js \
-	rxjs \
+	rxjs#master \
 	es5-shim \
 	es6-shim
 
