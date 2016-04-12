@@ -31,7 +31,7 @@ bower install --save \
 	morr/jquery.appear \
 	julianlam/tabIndent.js \
 	aws-sdk-js \
-	ReactiveX/RxJS \
+	rxjs=ReactiveX/RxJS \
 	es5-shim \
 	es6-shim
 
@@ -42,19 +42,13 @@ npm install
 node tools/build.js :common
 cd ../..
 
-cd bower_components/RxJS
+cd bower_components/rxjs
 sed -i 's/^dist\/$//' .gitignore
 sed -i 's/.*"ghooks".*//' package.json
 npm install
 npm run build_global
-cd ..
-mv RxJS RxJS.old
-mkdir rxjs
-mv RxJS.old/dist/cjs/*.ts rxjs/
-mv RxJS.old/spec/es5.d.ts rxjs/
-mv RxJS.old/dist/global rxjs/
-rm -rf RxJS.old
-cd ..
+mv dist/cjs/*.ts ./
+cd ../..
 
 mkdir aws-xml
 cd aws-xml
