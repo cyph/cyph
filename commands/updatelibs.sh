@@ -47,7 +47,14 @@ sed -i 's/^dist\/$//' .gitignore
 sed -i 's/.*"ghooks".*//' package.json
 npm install
 npm run build_global
-cd ../..
+cd ..
+mv RxJS RxJS.old
+mkdir rxjs
+mv RxJS.old/dist/cjs/*.ts rxjs/
+mv RxJS.old/spec/es5.d.ts rxjs/
+mv RxJS.old/dist/global rxjs/
+rm -rf RxJS.old
+cd ..
 
 mkdir aws-xml
 cd aws-xml

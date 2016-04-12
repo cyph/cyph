@@ -32,7 +32,7 @@ scssfiles="$(find css -name '*.scss' | grep -v bourbon/ | perl -pe 's/(.*)\.scss
 
 if [ "${1}" == '--watch' ] ; then
 	for file in $tsfiles ; do
-		tsc $tsargs --sourceMap $file.ts --out $file.js --watch &
+		tsc $tsargs --sourceMap $file.ts --outFile $file.js --watch &
 	done
 
 	# sass --watch isn't working for some reason
@@ -50,7 +50,7 @@ else
 	done
 
 	for file in $tsfiles ; do
-		output="${output}$(tsc $tsargs $file.ts --out $file.js)"
+		output="${output}$(tsc $tsargs $file.ts --outFile $file.js)"
 	done
 
 	echo -e "${output}"
