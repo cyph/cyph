@@ -55,7 +55,6 @@ typings install --ambient --save \
 	angular-material \
 	angular-animate \
 	highlightjs \
-	es6-promise \
 	webrtc/mediastream \
 	webrtc/rtcpeerconnection \
 	cryptojs \
