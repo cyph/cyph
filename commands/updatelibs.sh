@@ -11,7 +11,7 @@ cd shared/lib
 
 bower install --save \
 	angularjs \
-	angular2=angular/angular#master \
+	angular2=angular/angular#builds-js \
 	angular-material \
 	dompurify \
 	markdown-it \
