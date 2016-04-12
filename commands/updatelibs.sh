@@ -47,7 +47,7 @@ sed -i 's/^dist\/$//' .gitignore
 sed -i 's/.*"ghooks".*//' package.json
 npm install
 npm run build_global
-mv dist/cjs/*.ts ./
+mv dist/cjs/* ./
 cd ../..
 
 mkdir aws-xml
