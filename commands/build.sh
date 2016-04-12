@@ -6,9 +6,9 @@ dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd)/..
 originalDir="$(pwd)"
 
-# ./commands/docs.sh
+./commands/docs.sh
 
-tsargs='--experimentalDecorators -t ES5 --moduleResolution classic'
+tsargs='--experimentalDecorators -t ES5'
 
 tsfiles="$( \
 	{ cat */*.html $(find cyph.com/blog -name '*.html') | grep "<script.*'/js/" & grep -ro "importScripts('/js/.*)" shared/js; } | \

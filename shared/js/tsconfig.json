@@ -2,7 +2,6 @@
 	"compileOnSave": true,
 	"compilerOptions": {
 		 "experimentalDecorators": true,
-		 "target": "es5",
-		 "moduleResolution": "classic"
+		 "target": "es5"
 	}
 }
