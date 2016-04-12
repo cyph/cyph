@@ -44,6 +44,7 @@ cd ../..
 
 cd bower_components/RxJS
 sed -i 's/^dist\/$//' .gitignore
+sed -i 's/.*"ghooks".*//' package.json
 npm install
 npm run build_global
 cd ../..
