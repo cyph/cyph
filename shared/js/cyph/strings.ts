@@ -1,4 +1,4 @@
-module Cyph {
+namespace Cyph {
 	/**
 	 * User-facing strings referenced throughout the codes
 	 * (translated to user's language where possible).

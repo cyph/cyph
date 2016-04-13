@@ -1,7 +1,7 @@
 /// <reference path="base.ts" />
 
 
-module Cyph {
+namespace Cyph {
 	/**
 	 * Handles analytics events by calling the Google Analytics SDK in a sandboxed iframe.
 	 * (https://developers.google.com/analytics/devguides/collection/analyticsjs/events)

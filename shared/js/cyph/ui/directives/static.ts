@@ -1,11 +1,11 @@
 /// <reference path="templates.ts" />
 
 
-module Cyph {
-	export module UI {
-		export module Directives {
+namespace Cyph {
+	export namespace UI {
+		export namespace Directives {
 			/**
-			 * Angular module with directives for static UI components.
+			 * Angular namespace with directives for static UI components.
 			 */
 			export class Static {
 				/** Module title + namespace for included directives. */

@@ -1,8 +1,8 @@
 /// <reference path="icastle.ts" />
 
 
-module Cyph {
-	export module Crypto {
+namespace Cyph {
+	export namespace Crypto {
 		/**
 		 * Fake ICastle implementation (NOT secure; for demo purposes only).
 		 */

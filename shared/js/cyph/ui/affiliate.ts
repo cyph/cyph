@@ -1,5 +1,5 @@
-module Cyph {
-	export module UI {
+namespace Cyph {
+	export namespace UI {
 		/**
 		 * Handles affiliate URLs for potential monetisation/pseudo-donations.
 		 */

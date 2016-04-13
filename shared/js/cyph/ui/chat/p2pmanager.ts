@@ -1,9 +1,9 @@
 /// <reference path="ip2pmanager.ts" />
 
 
-module Cyph {
-	export module UI {
-		export module Chat {
+namespace Cyph {
+	export namespace UI {
+		export namespace Chat {
 			export class P2PManager extends BaseButtonManager implements IP2PManager {
 				public isActive: boolean	= false;
 				public isEnabled: boolean	= false;

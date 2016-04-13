@@ -7,8 +7,8 @@
 /// <reference path="message.ts" />
 
 
-module Cyph {
-	export module Session {
+namespace Cyph {
+	export namespace Session {
 		/**
 		 * Standard ISession implementation with the properties
 		 * that one would expect.

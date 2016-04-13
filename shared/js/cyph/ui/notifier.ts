@@ -1,5 +1,5 @@
-module Cyph {
-	export module UI {
+namespace Cyph {
+	export namespace UI {
 		export class Notifier implements INotifier {
 			private static audio : {play: Function}	= Audio ?
 				new Audio(Config.notifierConfig.audio) :

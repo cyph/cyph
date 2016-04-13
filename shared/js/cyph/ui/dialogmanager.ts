@@ -1,5 +1,5 @@
-module Cyph {
-	export module UI {
+namespace Cyph {
+	export namespace UI {
 		export class DialogManager implements IDialogManager {
 			public alert (
 				o: {

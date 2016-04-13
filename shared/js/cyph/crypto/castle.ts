@@ -2,8 +2,8 @@
 /// <reference path="castlecore.ts" />
 
 
-module Cyph {
-	export module Crypto {
+namespace Cyph {
+	export namespace Crypto {
 		export class Castle implements ICastle {
 			private static chunkLength: number	= 40000;
 

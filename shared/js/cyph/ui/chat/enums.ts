@@ -1,6 +1,6 @@
-module Cyph {
-	export module UI {
-		export module Chat {
+namespace Cyph {
+	export namespace UI {
+		export namespace Chat {
 			/**
 			 * Possible states of chat UI.
 			 */

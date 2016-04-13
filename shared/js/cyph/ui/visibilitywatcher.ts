@@ -1,5 +1,5 @@
-module Cyph {
-	export module UI {
+namespace Cyph {
+	export namespace UI {
 		/**
 		 * Keeps track of this window's visibility to user.
 		 */

@@ -1,6 +1,6 @@
-module Cyph {
-	export module UI {
-		export module Directives {
+namespace Cyph {
+	export namespace UI {
+		export namespace Directives {
 			/**
 			 * Reusable HTML view templates for component directives.
 			 */

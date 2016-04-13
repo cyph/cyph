@@ -1,5 +1,5 @@
-module Cyph {
-	export module UI {
+namespace Cyph {
+	export namespace UI {
 		/**
 		 * Represents a form to register for cyph.me waitlist.
 		 * @interface

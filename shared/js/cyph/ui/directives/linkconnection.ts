@@ -1,9 +1,9 @@
 /// <reference path="templates.ts" />
 
 
-module Cyph {
-	export module UI {
-		export module Directives {
+namespace Cyph {
+	export namespace UI {
+		export namespace Directives {
 			/**
 			 * Angular directive for link connection component.
 			 */

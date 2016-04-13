@@ -1,5 +1,5 @@
-module Cyph {
-	export module UI {
+namespace Cyph {
+	export namespace UI {
 		/**
 		 * Non-project-specific UI elements.
 		 */

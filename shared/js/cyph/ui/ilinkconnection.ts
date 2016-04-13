@@ -1,5 +1,5 @@
-module Cyph {
-	export module UI {
+namespace Cyph {
+	export namespace UI {
 		/**
 		 * Represents a link-based initial connection screen
 		 * (e.g. for starting a new cyph).

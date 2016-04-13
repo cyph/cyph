@@ -1,8 +1,8 @@
 /// <reference path="imessage.ts" />
 
 
-module Cyph {
-	export module Session {
+namespace Cyph {
+	export namespace Session {
 		export class Message implements IMessage {
 			/**
 			 * @param event

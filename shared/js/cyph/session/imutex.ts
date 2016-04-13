@@ -1,5 +1,5 @@
-module Cyph {
-	export module Session {
+namespace Cyph {
+	export namespace Session {
 		/**
 		 * Distributed lock between session parties.
 		 * @interface

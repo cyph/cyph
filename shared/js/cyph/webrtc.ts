@@ -1,4 +1,4 @@
-module Cyph {
+namespace Cyph {
 	/**
 	 * Cross-browser container of WebRTC classes and functions.
 	 */

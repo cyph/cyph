@@ -1,4 +1,4 @@
-module Cyph {
+namespace Cyph {
 	/**
 	 * Miscellaneous helper functions used throughout the codes.
 	 */

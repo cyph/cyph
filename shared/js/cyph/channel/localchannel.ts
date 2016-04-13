@@ -1,8 +1,8 @@
 /// <reference path="ichannel.ts" />
 
 
-module Cyph {
-	export module Channel {
+namespace Cyph {
+	export namespace Channel {
 		/**
 		 * Bidirectional channel that sends and receives
 		 * locally, without hitting the network.

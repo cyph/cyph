@@ -1,5 +1,5 @@
-module Cyph.im {
-	export module UI {
+namespace Cyph.im {
+	export namespace UI {
 		/**
 		 * Controls the entire cyph.im UI.
 		 */

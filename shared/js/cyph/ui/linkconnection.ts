@@ -1,5 +1,5 @@
-module Cyph {
-	export module UI {
+namespace Cyph {
+	export namespace UI {
 		export class LinkConnection implements ILinkConnection {
 			private isWaiting: boolean;
 			private linkConstant: string;

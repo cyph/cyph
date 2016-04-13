@@ -2,8 +2,8 @@
 /// <reference path="command.ts" />
 
 
-module Cyph {
-	export module Session {
+namespace Cyph {
+	export namespace Session {
 		export class Mutex implements IMutex {
 			private static constants	= {
 				release: 'release',

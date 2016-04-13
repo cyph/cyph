@@ -1,8 +1,8 @@
 /// <reference path="ifiletransfer.ts" />
 
 
-module Cyph {
-	export module P2P {
+namespace Cyph {
+	export namespace P2P {
 		export class FileTransfer implements IFileTransfer {
 			public data: ArrayBuffer[]		= null;
 			public key: Uint8Array			= null;

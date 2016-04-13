@@ -1,9 +1,9 @@
-module Cyph {
-	export module P2P {
+namespace Cyph {
+	export namespace P2P {
 		/**
 		 * Contains enums for UI-related events.
 		 */
-		export module UIEvents {
+		export namespace UIEvents {
 			/**
 			 * P2P UI event categories.
 			 */

@@ -1,5 +1,5 @@
-module Cyph {
-	export module Session {
+namespace Cyph {
+	export namespace Session {
 		/**
 		 * Encapsulates an end-to-end encrypted communication session.
 		 * This is the entire non-UI representation of a cyph.

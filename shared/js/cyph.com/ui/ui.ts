@@ -1,5 +1,5 @@
-module Cyph.com {
-	export module UI {
+namespace Cyph.com {
+	export namespace UI {
 		/**
 		 * Controls the entire cyph.com UI.
 		 */

@@ -1,5 +1,5 @@
-module Cyph {
-	export module UI {
+namespace Cyph {
+	export namespace UI {
 		/**
 		 * Handles OS-X-style scrollbars (generally intended for use
 		 * only when the scrollbar explicitly needs to be auto-hidden).

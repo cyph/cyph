@@ -1,8 +1,8 @@
 /// <reference path="channel.ts" />
 
 
-module Cyph {
-	export module Channel {
+namespace Cyph {
+	export namespace Channel {
 		/**
 		 * Identical functional behaviour to Channel, except
 		 * it automatically ratchets SQS IDs and regions.

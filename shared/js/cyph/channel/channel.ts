@@ -1,8 +1,8 @@
 /// <reference path="queue.ts" />
 
 
-module Cyph {
-	export module Channel {
+namespace Cyph {
+	export namespace Channel {
 		/**
 		 * Standard IChannel implementation with the properties
 		 * that one would expect: bidirectional, comprised of

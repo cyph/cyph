@@ -1,5 +1,5 @@
-module Cyph {
-	export module Session {
+namespace Cyph {
+	export namespace Session {
 		/**
 		 * Message to be sent over a session, indicating some RPC event.
 		 * @interface

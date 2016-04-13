@@ -1,6 +1,6 @@
-module Cyph {
-	export module UI {
-		export module Chat {
+namespace Cyph {
+	export namespace UI {
+		export namespace Chat {
 			/**
 			 * This is the entire end-to-end representation of a cyph.
 			 * @interface

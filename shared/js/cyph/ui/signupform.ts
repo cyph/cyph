@@ -1,5 +1,5 @@
-module Cyph {
-	export module UI {
+namespace Cyph {
+	export namespace UI {
 		export class SignupForm implements ISignupForm {
 			public state: number	= 0;
 

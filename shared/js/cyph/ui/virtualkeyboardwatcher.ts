@@ -1,5 +1,5 @@
-module Cyph {
-	export module UI {
+namespace Cyph {
+	export namespace UI {
 		/**
 		 * Keeps track of whether an on-screen virtual keyboard is open.
 		 */

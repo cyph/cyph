@@ -1,5 +1,5 @@
-module Cyph {
-	export module Session {
+namespace Cyph {
+	export namespace Session {
 		/**
 		 * Contains an RPC call for a specific method.
 		 */

@@ -1,4 +1,4 @@
-module Cyph {
+namespace Cyph {
 	/**
 	 * Manages URL state.
 	 */

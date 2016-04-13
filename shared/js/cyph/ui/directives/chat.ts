@@ -3,11 +3,11 @@
 /// <reference path="templates.ts" />
 
 
-module Cyph {
-	export module UI {
-		export module Directives {
+namespace Cyph {
+	export namespace UI {
+		export namespace Directives {
 			/**
-			 * Angular module with directives for chat UI components.
+			 * Angular namespace with directives for chat UI components.
 			 */
 			export class Chat {
 				/** Module title + namespace for included directives. */

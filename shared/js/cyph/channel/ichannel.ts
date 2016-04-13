@@ -1,5 +1,5 @@
-module Cyph {
-	export module Channel {
+namespace Cyph {
+	export namespace Channel {
 		/**
 		 * Represents a logical network connection that can send and receive data.
 		 * @interface

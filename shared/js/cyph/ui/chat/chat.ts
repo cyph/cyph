@@ -19,9 +19,9 @@
 /// <reference path="scrollmanager.ts" />
 
 
-module Cyph {
-	export module UI {
-		export module Chat {
+namespace Cyph {
+	export namespace UI {
+		export namespace Chat {
 			export class Chat extends BaseButtonManager implements IChat {
 				private static approximateKeyExchangeTime: number	= 10000;
 

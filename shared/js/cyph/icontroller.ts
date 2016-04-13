@@ -1,4 +1,4 @@
-module Cyph {
+namespace Cyph {
 	/**
 	 * Responsible for keeping data and UI in sync.
 	 * @interface

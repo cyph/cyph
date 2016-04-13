@@ -1,5 +1,5 @@
-module Cyph {
-	export module Crypto {
+namespace Cyph {
+	export namespace Crypto {
 		/**
 		 * The Castle encryption protocol. This version supports an OTR-like
 		 * feature set, with group/async/persistence coming later.

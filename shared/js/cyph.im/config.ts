@@ -1,4 +1,4 @@
-module Cyph.im {
+namespace Cyph.im {
 	/**
 	 * Static/constant configuration values.
 	 */

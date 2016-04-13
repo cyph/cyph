@@ -1,5 +1,5 @@
-module Cyph {
-	export module Session {
+namespace Cyph {
+	export namespace Session {
 		/**
 		 * Castle-specific events (handled within Session).
 		 */

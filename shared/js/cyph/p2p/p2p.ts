@@ -4,8 +4,8 @@
 /// <reference path="../session/mutex.ts" />
 
 
-module Cyph {
-	export module P2P {
+namespace Cyph {
+	export namespace P2P {
 		export class P2P implements IP2P {
 			private static constants	= {
 				addIceCandidate: 'addIceCandidate',

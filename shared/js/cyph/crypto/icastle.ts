@@ -1,5 +1,5 @@
-module Cyph {
-	export module Crypto {
+namespace Cyph {
+	export namespace Crypto {
 		/**
 		 * Represents a Castle encryption instance.
 		 * @interface

@@ -1,4 +1,4 @@
-module Cyph {
+namespace Cyph {
 	/**
 	 * Creates and controls a thread.
 	 */

@@ -3,8 +3,8 @@
 /// <reference path="isession.ts" />
 
 
-module Cyph {
-	export module Session {
+namespace Cyph {
+	export namespace Session {
 		/**
 		 * Wrapper around Session that spawns it in a new thread.
 		 */

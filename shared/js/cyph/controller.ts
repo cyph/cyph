@@ -1,4 +1,4 @@
-module Cyph {
+namespace Cyph {
 	export class Controller implements IController {
 		public update () : void {
 			const phase: string	= this.$scope.$root.$$phase;

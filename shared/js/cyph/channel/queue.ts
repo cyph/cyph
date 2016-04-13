@@ -2,8 +2,8 @@
 /// <reference path="aws.ts" />
 
 
-module Cyph {
-	export module Channel {
+namespace Cyph {
+	export namespace Channel {
 		/**
 		 * Most basic IChannel implementation; this is a
 		 * unidirectional queue.

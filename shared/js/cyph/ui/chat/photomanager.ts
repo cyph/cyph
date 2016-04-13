@@ -1,9 +1,9 @@
 /// <reference path="iphotomanager.ts" />
 
 
-module Cyph {
-	export module UI {
-		export module Chat {
+namespace Cyph {
+	export namespace UI {
+		export namespace Chat {
 			export class PhotoManager implements IPhotoManager {
 				private processImage (image: HTMLImageElement, file: File) : void {
 					const canvas: HTMLCanvasElement			= document.createElement('canvas');

@@ -1,5 +1,5 @@
-module Cyph {
-	export module P2P {
+namespace Cyph {
+	export namespace P2P {
 		/**
 		 * Manages P2P sessions.
 		 * @interface

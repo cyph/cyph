@@ -1,5 +1,5 @@
-module Cyph {
-	export module P2P {
+namespace Cyph {
+	export namespace P2P {
 		/**
 		 * Represents an active file transfer over a P2P session.
 		 * @interface

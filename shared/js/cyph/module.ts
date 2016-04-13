@@ -1,5 +1,5 @@
 /**
- * The Cyph module is a general standard lib to be shared
+ * The Cyph namespace is a general standard lib to be shared
  * between all Cyph projects.
  */
-module Cyph {}
+namespace Cyph {}

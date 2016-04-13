@@ -1,9 +1,9 @@
 /// <reference path="iscrollmanager.ts" />
 
 
-module Cyph {
-	export module UI {
-		export module Chat {
+namespace Cyph {
+	export namespace UI {
+		export namespace Chat {
 			export class ScrollManager implements IScrollManager {
 				private scrollDownLock: number	= 0;
 

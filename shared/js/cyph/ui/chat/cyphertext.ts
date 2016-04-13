@@ -1,9 +1,9 @@
 /// <reference path="icyphertext.ts" />
 
 
-module Cyph {
-	export module UI {
-		export module Chat {
+namespace Cyph {
+	export namespace UI {
+		export namespace Chat {
 			export class Cyphertext extends BaseButtonManager implements ICyphertext {
 				private showLock: boolean		= false;
 				private curtainClass: string	= 'curtain';

@@ -1,6 +1,6 @@
-module Cyph {
-	export module UI {
-		export module Directives {
+namespace Cyph {
+	export namespace UI {
+		export namespace Directives {
 			/**
 			 * Angular directive for handling changes to the
 			 * selected file of an input element.

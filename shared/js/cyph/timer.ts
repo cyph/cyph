@@ -1,4 +1,4 @@
-module Cyph {
+namespace Cyph {
 	/**
 	 * Generates a recurring background event and ensures that its execution
 	 * won't be frozen or slowed down when the tab or window loses focus.

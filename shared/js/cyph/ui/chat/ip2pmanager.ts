@@ -1,6 +1,6 @@
-module Cyph {
-	export module UI {
-		export module Chat {
+namespace Cyph {
+	export namespace UI {
+		export namespace Chat {
 			/**
 			 * Represents P2P component of chat UI.
 			 * @interface

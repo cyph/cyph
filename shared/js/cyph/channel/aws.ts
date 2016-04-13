@@ -1,5 +1,5 @@
-module Cyph {
-	export module Channel {
+namespace Cyph {
+	export namespace Channel {
 		/**
 		 * Wrapper for AWS SDK.
 		 */

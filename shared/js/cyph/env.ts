@@ -1,7 +1,7 @@
 /// <reference path="envdeploy.ts" />
 
 
-module Cyph {
+namespace Cyph {
 	/**
 	 * Dynamic values calculated at run-time.
 	 */

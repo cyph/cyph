@@ -1,4 +1,4 @@
-module Cyph {
+namespace Cyph {
 	/**
 	 * Subset of Env that gets modified by find/replace statements in
 	 * the deploy script; exercise EXTREME caution when modifying this file.
