@@ -8,7 +8,6 @@
 /// <reference path="../typings/iwebsign.d.ts" />
 /// <reference path="../typings/storage.d.ts" />
 /// <reference path="../../lib/typings/main.d.ts" />
-/// <reference path="../../lib/bower_components/rxjs/spec/es5.d.ts" />
 
 /// <reference path="../cyph/p2p/enums.ts" />
 /// <reference path="../cyph/session/enums.ts" />

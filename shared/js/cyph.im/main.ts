@@ -26,11 +26,6 @@
 /// <reference path="ui/enums.ts" />
 /// <reference path="ui/ui.ts" />
 
-import * as Angular2 from 'lib/angular2';
-
-
-/* TODO: Now that this compiles, do the real work of actually migrating to Angular 2 */
-const upgradeAdapter	= new Angular2.upgrade.UpgradeAdapter();
 
 angular.
 	module('Cyph', [
