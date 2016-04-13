@@ -1,7 +1,6 @@
 @import 'fonts';
 @import 'cyph.im';
 
-
 html, body, #main {
 	max-width: initial !important;
 	max-height: initial !important;
@@ -14,7 +13,6 @@ html:not(.mobile) #main {
 	padding-left: initial;
 	padding-right: initial;
 }
-
 
 html:not(.load-complete) {
 	#main > section, footer {
@@ -42,6 +40,7 @@ section#main {
 			max-width: 75%;
 			top: calc(50% + 60px);
 			left: 50%;
+
 			@include transform(translateY(-50%) translateX(-50%));
 
 			&.full {
@@ -56,7 +55,6 @@ section#main {
 		}
 	}
 }
-
 
 .hero-background-wrapper {
 	position: absolute;
@@ -108,7 +106,6 @@ section#main {
 	position: relative;
 }
 
-
 #new-cyph {
 	font-family: 'Ubuntu';
 	font-size: 11px;
@@ -122,6 +119,7 @@ section#main {
 	border-radius: 1px;
 	box-shadow: 0px 4px 10px -1px rgba(0, 0, 0, 0.25);
 	background-color: #7d4fd3 !important;
+
 	@include transition(all 0.5s ease);
 
 	&.focus, &:hover {
@@ -165,7 +163,9 @@ section#main {
 
 		> div {
 			top: 50%;
+
 			@include transform(translateY(-50%));
+
 			position: relative;
 
 			> :first-child {
@@ -182,6 +182,7 @@ html.mobile #hero-section {
 
 		> div {
 			top: 50%;
+
 			@include transform(none);
 		}
 	}
@@ -205,6 +206,7 @@ html.mobile #hero-section {
 
 			&:not(.demo):hover {
 				margin-left: 0px;
+
 				@include transition(all 0.75s ease);
 			}
 		}
@@ -227,7 +229,6 @@ html.mobile #hero-section {
 	}
 }
 
-
 /* Targeting screens smaller than what Unsemantic considers a "tablet" */
 @media (max-width: 767px) {
 	.hero-text {
@@ -242,7 +243,6 @@ html.mobile #hero-section {
 		}
 	}
 }
-
 
 #main-toolbar {
 	position: fixed;
@@ -311,6 +311,7 @@ html.mobile #hero-section {
 		}
 	}
 }
+
 @media (max-width: 1229px) {
 	#main-toolbar {
 		.desktop-only {
@@ -341,8 +342,6 @@ html.mobile #logo {
 	margin-left: 5px;
 }
 
-
-
 .carousel.grid-container {
 	position: relative;
 	padding: 25px 0px;
@@ -363,6 +362,7 @@ html.mobile #logo {
 
 			&:hover {
 				opacity: 0.4;
+
 				@include transition(opacity 0.1s linear);
 			}
 		}
@@ -398,6 +398,7 @@ html.mobile #logo {
 				display: block;
 				position: relative;
 				top: 50%;
+
 				@include transform(translateY(-50%));
 			}
 
@@ -453,6 +454,7 @@ html.mobile .carousel.grid-container {
 				left: 0px;
 				width: 100%;
 				text-align: center;
+
 				@include transform(translateY(-50%));
 
 				> h3.title {
@@ -521,8 +523,6 @@ html.mobile #testimonials-section .carousel.grid-container .logo.active {
 	background-color: #6133a3;
 }
 
-
-
 #intro-section {
 	padding-bottom: 0px !important;
 
@@ -580,6 +580,7 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 
 .demo-root {
 	opacity: 0;
+
 	@include transition(opacity 0.75s 0.5s ease);
 
 	&, > * {
@@ -650,7 +651,9 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 		width: 26%;
 		margin-top: -60px;
 		left: 21.5%;
+
 		@include transform(scale(0.625));
+
 		@include filter(blur(0px));
 
 		.chat-toolbar {
@@ -699,6 +702,7 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 			width: 200px;
 			margin-top: -135px;
 			margin-left: 205px;
+
 			@include transform(scale(3.4));
 		}
 	}
@@ -714,6 +718,7 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 	.chat-sidebar {
 		margin-left: -40px;
 		margin-top: -60px;
+
 		@include transform(scale(0.625));
 	}
 
@@ -759,10 +764,10 @@ html.mobile .demo-root {
 		top: 0px;
 		left: -50px;
 		margin: auto;
+
 		@include transform(scale(0.8));
 	}
 }
-
 
 #gettingstarted-section {
 	height: calc(100vh - 158px);
@@ -778,6 +783,7 @@ html.mobile .demo-root {
 		margin: 0px;
 		text-align: center;
 		left: 50%;
+
 		@include transform(translateX(-50%));
 	}
 
@@ -794,8 +800,6 @@ html.mobile .demo-root {
 html.mobile #gettingstarted-section {
 	background-size: auto 100%;
 }
-
-
 
 #footer {
 	padding: 40px;
@@ -817,8 +821,6 @@ html.mobile #gettingstarted-section {
 	}
 }
 
-
-
 #error {
 	h1 {
 		text-align: center;
@@ -838,13 +840,12 @@ html.mobile #gettingstarted-section {
 	}
 }
 
-
-
 .section-content-container {
 	width: 100%;
 	max-width: 100%;
 	margin-top: 30px;
 	margin-left: 50%;
+
 	@include transform(translateX(-50%));
 
 	md-input-container {
@@ -874,6 +875,7 @@ html:not(.mobile) .section-content-container:not(.full) {
 		visibility: hidden;
 	}
 }
+
 html.mobile {
 	.founder-photos {
 		margin-left: -20px;
@@ -892,6 +894,7 @@ html.mobile {
 		}
 	}
 }
+
 html:not(.mobile) {
 	.founder-photos {
 		padding: 20px;
@@ -915,6 +918,7 @@ html:not(.mobile) {
 			}
 		}
 	}
+
 	.founder-photos:after {
 		clear: both;
 		content: '';
@@ -934,6 +938,7 @@ html:not(.mobile) {
 		}
 	}
 }
+
 html.mobile {
 	#podcast-section {
 		padding-top: 120px !important;
@@ -965,6 +970,7 @@ div.donation {
 	margin-top: -55px;
 	font-family: Ubuntu;
 }
+
 div.donation span {
 	color: black;
 	font-family: Ubuntu;
@@ -972,39 +978,49 @@ div.donation span {
 	top: -1px;
 	position: relative;
 }
+
 .donate-button {
 	display: block;
 	width: 100%;
 	margin-top: -15px;
 }
+
 md-slider.donation {
 	width: 91%;
 }
+
 md-slider .md-sign:after {
 	border-top-color: rgb(107, 63, 176);
 }
+
 md-slider .md-thumb:after {
 	border-color: rgb(107, 63, 176);
 	background-color: rgb(107, 63, 176);
 }
+
 span.md-thumb-text:before {
 	content: '$';
 }
+
 md-slider.md-min .md-thumb:after {
-	background-color: rgb(255,255,255);
+	background-color: rgb(255, 255, 255);
 }
+
 md-slider .md-track.md-track-fill {
-	background-color: rgb(255,255,255);
+	background-color: rgb(255, 255, 255);
 }
+
 md-slider .md-sign {
 	background-color: rgb(107, 63, 176);
 }
+
 md-slider .md-sign {
 	left: -20px !important;
 	top: -25px !important;
 	width: 42px !important;
 	height: 42px !important;
 }
+
 md-slider .md-focus-thumb {
 	position: absolute;
 	left: -24px;
@@ -1015,20 +1031,25 @@ md-slider .md-focus-thumb {
 	display: none;
 	opacity: 0;
 	background-color: silver;
-	@include animation(sliderFocusThumb .4s linear);
+
+	@include animation(sliderFocusThumb 0.4s linear);
 }
+
 md-slider .md-sign .md-thumb-text {
 	z-index: 1;
 	font-size: 13px;
 	font-weight: 900;
 }
+
 input.donation {
 	text-align: center;
 	border: 0px;
 }
+
 input.donation:before {
 	content: '$';
 }
+
 .paypal-button button.large {
 	width: 194px;
 	float: right;

@@ -1,6 +1,5 @@
 @import 'bourbon/bourbon';
 
-
 * {
 	-webkit-font-smoothing: antialiased !important;
 	-moz-osx-font-smoothing: grayscale !important;
@@ -28,7 +27,6 @@ html .md-button {
 	font-weight: normal;
 }
 
-
 md-sidenav .md-button {
 	width: 100%;
 	text-align: left;
@@ -42,6 +40,7 @@ md-sidenav .md-button {
 			height: 20px !important;
 			vertical-align: middle;
 			margin-left: 50%;
+
 			@include transform(translateX(calc(-50% - 5px)));
 		}
 
@@ -51,11 +50,9 @@ md-sidenav .md-button {
 	}
 }
 
-
 md-toast {
 	position: fixed;
 }
-
 
 #footer, .footer {
 	margin-top: 0px;
@@ -90,6 +87,7 @@ cyph-markdown, [cyph-markdown] {
 		margin: 10px;
 	}
 }
+
 html:not(.mobile) {
 	cyph-markdown, [cyph-markdown] {
 		:not(p:only-child) {
@@ -101,6 +99,7 @@ html:not(.mobile) {
 :not(textarea):not(md-input-container):not(input):not(blockquote):not(md-progress-circular *) {
 	border: 0px !important;
 }
+
 blockquote {
 	border-left: 2px solid #f1f1f1 !important;
 	padding-left: 10px;
@@ -109,6 +108,7 @@ blockquote {
 a {
 	color: inherit;
 }
+
 #footer, .footer {
 	a:not(:hover) {
 		text-decoration: none;
@@ -125,44 +125,47 @@ textarea {
 
 pre {
 	white-space: pre-wrap;
+
 	@include word-wrap;
 }
 
-
 .cyph-foreground.curtain {
 	height: 10%;
+
 	@include transform(translateY(-90%));
+
 	@include transition(transform 2s cubic-bezier(1, 0, 0, 1), height 2s cubic-bezier(1, 0, 0, 1));
 }
+
 .cyph-foreground:not(.curtain) {
 	@include transition(transform 2s cubic-bezier(1, 0, 0, 1), height 2s cubic-bezier(1, 0, 0, 1));
 }
+
 .cyph-foreground {
 	width: calc(100% + 1px);
 	overflow-y: hidden;
 }
+
 #main, .cyph-foreground {
 	position: relative;
 	z-index: 2;
 }
-
-
 
 [ng-view]:not(.active) {
 	opacity: 0;
 	pointer-events: none;
 	position: fixed;
 }
+
 [ng-view].active {
 	position: relative;
+
 	@include transition(opacity 0.75s linear);
 }
 
-
-
 @include keyframes(breathe) {
 	0%, 100% {
-		@include filter(brightness(1.0));
+		@include filter(brightness(1));
 	}
 
 	50% {
@@ -170,14 +173,16 @@ pre {
 	}
 }
 
+
 .breathe {
 	@include animation-name(breathe);
+
 	@include animation-duration(3s);
+
 	@include animation-timing-function(ease-in-out);
+
 	@include animation-iteration-count(infinite);
 }
-
-
 
 /* nanoScroller styling */
 
@@ -186,8 +191,6 @@ pre {
 		background-color: transparent;
 	}
 }
-
-
 
 /* Mobile and desktop classes */
 
@@ -198,29 +201,27 @@ html:not(.mobile) * {
 html.mobile .desktop-only,
 html:not(.mobile) .mobile-only,
 .platform-container.mobile .desktop-only,
-.platform-container:not(.mobile) .mobile-only
-{
+.platform-container:not(.mobile) .mobile-only {
 	display: none;
 }
 
 html.mobile .platform-container:not(.mobile) .desktop-only,
-html:not(.mobile) .platform-container.mobile .mobile-only
-{
+html:not(.mobile) .platform-container.mobile .mobile-only {
 	display: initial;
 }
-
-
 
 /* Moved beta signup stuff from cyph.com CSS */
 
 .beta-signup-form {
 	color: #f1f1f1;
+	min-width: 600px;
 
 	*, md-input-container.md-default-theme * {
 		color: #f1f1f1;
 		border-color: #f1f1f1;
 		width: 100%;
 	}
+
 	*:not(p):not(p *) {
 		display: block;
 	}
@@ -235,13 +236,53 @@ html:not(.mobile) .platform-container.mobile .mobile-only
 	}
 
 	.md-button {
-		@include transform(scale(0.75) !important);
+		@include transform(scale(1.1) !important);
+
 		background-color: #7d4fd3 !important;
 		margin: 25px auto;
-		width: calc(100% - 100px);
-		min-width: 200px;
+		height: 100px;
+		width: 110px;
 		display: block;
 	}
+
+	h1 {
+		text-align: center;
+		position: relative;
+		top: -30px;
+	}
+
+	h2 {
+		text-align: center;
+		font-weight: bold;
+	}
+
+	h4 {
+		float: right;
+	}
+
+	.login .md-button {
+		height: auto !important;
+		width: 28% !important;
+	}
+
+	.back {
+		font-size: 42px !important;
+		width: 7%;
+		position: absolute;
+		float: left;
+		left: 0px;
+		top: 15px;
+		display: block;
+	}
+
+	.back:hover {
+		cursor: pointer;
+	}
+}
+
+.beta-signup-form .md-button md-icon {
+	line-height: 20px !important;
+	font-size: 72px !important;
 }
 
 .beta-signup-form .md-button, #new-cyph-footer {
@@ -250,8 +291,128 @@ html:not(.mobile) .platform-container.mobile .mobile-only
 	font-size: 18px !important;
 	box-shadow: 0px 4px 10px -1px rgba(0, 0, 0, 0.25) !important;
 }
+
+.pricing {
+	background-color: #624599 !important;
+	width: 200px;
+	height: auto;
+	margin: auto 20px auto 20px;
+
+	md-icon {
+		font-size: 32px;
+		margin-bottom: 14px;
+		width: 32px;
+		position: relative;
+	}
+
+	h3 {
+		text-align: center;
+		background-color: #392859 !important;
+		width: 115%;
+		left: -14px;
+		opacity: 1 !important;
+		top: -16px;
+		line-height: 3;
+		position: relative;
+	}
+
+	span {
+		text-align: center;
+		top: -20px;
+		position: relative;
+	}
+
+	.features {
+		height: 69%;
+
+		h4 {
+			float: right;
+			display: inline;
+			left: -10px;
+			width: 73%;
+			margin: 0px auto 0px auto;
+			top: -2px;
+			position: relative;
+		}
+
+		p:first-child {
+			margin: -15px 0px 35px 0px;
+		}
+
+		p {
+			text-align: center;
+			margin-top: -5px;
+		}
+
+		hr {
+			opacity: 0.25;
+			color: #000;
+			margin: -11px 0px 17px 0px;
+		}
+
+		.indent {
+			margin-left: 25px !important;
+		}
+
+		.feature {
+			margin-left: 10px;
+		}
+	}
+
+	.pricing:first-child {
+		margin-left: auto !important;
+	}
+
+	.pricing:last-child {
+		margin-right: auto !important;
+	}
+
+	.price {
+		width: 90%;
+		text-align: center;
+		font-weight: 400;
+		font-size: 21px;
+		margin: 100% auto auto auto;
+		margin: auto;
+		background-color: #7B56BF !important;
+		line-height: 2;
+	}
+
+	.price:hover {
+		background-color: #B48DFF !important;
+		transition: 0.5s;
+		cursor: pointer;
+	}
+}
+
+.pricing.custom {
+	width: 90%;
+	margin: 32px auto;
+	position: relative;
+
+	h3 {
+		width: 104% !important;
+		left: -2%;
+	}
+
+	.price {
+		width: 175px !important;
+		margin: 32px auto;
+		position: relative;
+	}
+}
+
+.features .icons h4 {
+	width: 68%;
+	float: left;
+	margin-left: 6px;
+	position: relative;
+	top: -28px;
+}
+
 #new-cyph-footer {
 	width: 200px;
+
 	@include transform(scale(0.75) !important);
 }
 
@@ -272,6 +433,7 @@ html:not(.mobile) .platform-container.mobile .mobile-only
 
 .beta-signup-form.complete + div, .beta-signup-form.visible {
 	opacity: 1;
+
 	@include transition(opacity 500ms 1s linear);
 }
 
@@ -281,21 +443,20 @@ html:not(.mobile) .platform-container.mobile .mobile-only
 	pointer-events: none;
 }
 
-
-
 .fadeInSlow {
 	@include animation-name(fadeIn);
+
 	@include animation-duration(1s);
+
 	@include animation-timing-function(cubic-bezier(1, 0, 0, 1));
 }
-
-
 
 /* Lightbox */
 
 .mfp-wrap, .mfp-wrap * {
 	overflow: hidden !important;
 }
+
 .mfp-figure {
 	figure {
 		box-shadow: 0px 0px 15px black;
@@ -310,15 +471,15 @@ html:not(.mobile) .platform-container.mobile .mobile-only
 		right: 7px;
 	}
 }
+
 .mfp-figure:after {
 	background: none !important;
 	box-shadow: none !important;
 }
+
 html.mobile .mfp-content {
 	pointer-events: none !important;
 }
-
-
 
 /*** Angular Material patches (from 0.4 to 0.6 upgrade) ***/
 
@@ -365,6 +526,14 @@ md-dialog {
 	}
 }
 
+md-dialog.fullscreen {
+	height: calc( 100% - 50px );
+	max-width: 100%;
+	width: calc(75% - 50px);
+	max-height: 100%;
+	transition: 1.5s;
+}
+
 md-checkbox {
 	.md-icon {
 		background: none !important;
@@ -380,20 +549,22 @@ md-checkbox {
 	display: none;
 }
 
-
 @include keyframes(inkRippleCheckbox) {
 	0% {
 		@include transform(scale(0));
+
 		opacity: 0.4;
 	}
 
 	50% {
 		@include transform(scale(1));
+
 		opacity: 0.4;
 	}
 
 	100% {
 		@include transform(scale(1));
+
 		opacity: 0;
 	}
 }
@@ -404,7 +575,6 @@ md-checkbox {
 .grid-container {
 	max-width: initial;
 }
-
 
 /*** Angular Material patches (from 0.8 to 0.9 upgrade) ***/
 
@@ -438,7 +608,6 @@ md-dialog {
 		padding: 24px;
 	}
 }
-
 
 /*** Angular Material patches (from 0.9 to 0.10 upgrade) ***/
 

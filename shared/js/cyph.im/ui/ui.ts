@@ -116,7 +116,7 @@ module Cyph.im {
 
 				this.chat.session.on(Cyph.Session.Events.connect, () => {
 					this.changeState(States.chat);
-					
+
 					if (this.cyphConnection) {
 						this.cyphConnection.stop();
 					}

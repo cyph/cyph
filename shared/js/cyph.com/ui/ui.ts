@@ -12,7 +12,7 @@ module Cyph.com {
 
 			/** Donation amount in dollars (default). */
 			public donationAmount: number	= 10;
-			
+
 			/** Home page state/view. */
 			public homeSection: HomeSections;
 
@@ -185,7 +185,7 @@ module Cyph.com {
 					, 2000);
 				}
 
-				
+
 				/* Carousels */
 
 				this.featureCarousel		= new Cyph.UI.Carousel(Elements.featuresSection);

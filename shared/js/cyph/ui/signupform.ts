@@ -11,19 +11,7 @@ module Cyph {
 			};
 
 			public submit () : void {
-				if (!this.data.Email) {
-					return;
-				}
-
-				++this.state;
 				this.controller.update();
-
-				if (this.state === 2) {
-					setTimeout(() => {
-						++this.state;
-						this.controller.update();
-					}, 1500);
-				}
 
 				setTimeout(() => {
 					const $input: JQuery	= Elements.signupForm.find('input:visible');
@@ -32,7 +20,12 @@ module Cyph {
 						$input.focus();
 					}
 				}, 100);
+			}
 
+			public signup () : void {
+				if (!this.data.Email) {
+					return;
+				}
 
 				Util.retryUntilComplete(retry =>
 					Util.request({

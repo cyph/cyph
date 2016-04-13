@@ -838,40 +838,281 @@ module Cyph {
 
 				signupForm: `
 					<form class='beta-signup-form' ng-submit='$this.submit()'>
-						<div ng-show='$this.state === 0'>
-							<ng-transclude></ng-transclude>
-							<md-input-container>
-								<label translate>email</label>
-								<input type='email' ng-model='$this.data.Email' />
-							</md-input-container>
-						</div>
+						<md-content>
+							<div ng-show='$this.state === 0'>
+								<div class='login' flex>
+									<h2 class='md-title' translate>
+										Login or Register
+									</h2>
+									<md-input-container>
+										<label>Email</label>
+										<input ng-model='user.email'>
+									</md-input-container>
+									<md-input-container>
+										<label>Password</label>
+										<input ng-model='user.password' type='password'>
+									</md-input-container>
+									<md-input-container>
+										<div layout='row' layout-sm='column' layout-margin>
+											<md-button
+												translate
+												type='submit'
+												ng-click=''
+												aria-label='Login'
+												class='md-raised'
+											>
+												Login
+											</md-button>
+											<md-button
+												translate
+												type='submit'
+												ng-click='$this.state = 1'
+												aria-label='Register'
+												ng-class='md-raised'
+											>
+												Register
+											</md-button>
+										</div>
+									</md-input-container>
+								</div>
+								<div layout-align='center center' flex></div>
+							</div>
 
-						<div ng-show='$this.state === 1'>
-							<p translate>
-								Thanks so much for signing up!
-							</p>
-							<p translate>
-								Feel free to add your name as well. :)
-							</p>
-							<md-input-container>
-								<label translate>name (optional)</label>
-								<input ng-model='$this.data.Name' />
-							</md-input-container>
-						</div>
+							<div ng-show='$this.state === 1'>
+								<md-icon
+									md-font-set='material-icons'
+									ng-click='$this.state = 0'
+									class='back'
+								>keyboard_backspace</md-icon>
+								<h1 class='md-title' translate>
+									WHAT ARE YOU?
+								</h1>
+								<div layout='row'>
+									<div flex>
+										<h2>Individual</h2>
+										<md-button
+											type='submit'
+											ng-click='$this.state = 2'
+											aria-label='Individual'
+											ng-hide='$this.state !== 1'
+										>
+											<md-icon md-font-set='material-icons'>person</md-icon>
+										</md-button>
+									</div>
 
-						<div translate ng-show='$this.state === 2'>
-							You rock.
-						</div>
+									<div flex>
+										<h2>Business</h2>
+										<md-button
+											type='submit'
+											ng-click='$this.state = 3'
+											aria-label='Business'
+											ng-hide='$this.state !== 1'
+										>
+											<md-icon md-font-set='material-icons'>domain</md-icon>
+										</md-button>
+									</div>
+								</div>
+							</div>
 
-						<md-button
-							translate
-							type='submit'
-							aria-label='Sign up for beta'
-							ng-hide='$this.state > 1'
-							ng-class='{"hidden-submit-button": hideButton}'
-						>
-							Sign up for beta
-						</md-button>
+							<div translate ng-show='$this.state === 2'>
+								<md-icon
+									md-font-set='material-icons'
+									ng-click='$this.state = 1'
+									class='back'
+								>keyboard_backspace</md-icon>
+								<h1 translate>Registration</h1>
+								<p>
+									Registration is currently closed, however an acount is not required
+									to use Cyph. To join the waitlist for a Cyph account please enter your
+									email in the form below.
+								</p>
+								<md-input-container>
+									<label translate>email</label>
+									<input type='email' ng-model='$this.data.Email' />
+								</md-input-container>
+								<md-button
+									type='submit'
+									ng-click='this.signup()'
+									aria-label='Register'
+								>
+									Subscribe
+								</md-button>
+							</div>
+
+							<div translate ng-show='$this.state === 3'>
+								<md-icon
+									md-font-set='material-icons'
+									ng-click='$this.state = 1'
+									class='back'
+								>keyboard_backspace</md-icon>
+								<h1 translate>Business Pricing</h1>
+								<div layout='row'>
+									<div layout-padding class='pricing'>
+										<h3>The Basics</h3>
+
+										<div class='features'>
+											<p>
+												The core functionality of Cyph. Registration-optional
+												secure chat and images.
+											</p>
+
+											<div class='feature'>
+												<h4>Instant Messaging</h4>
+												<md-icon
+													md-font-set='material-icons'
+													class='ng-isolate-scope md-default-theme material-icons'
+												>chat</md-icon>
+											</div>
+											<div class='feature'>
+												<h4>Picture Messaging</h4>
+												<md-icon
+													md-font-set='material-icons'
+													class='ng-isolate-scope md-default-theme material-icons'
+												>photo_camera</md-icon>
+											</div>
+
+											<p>All Plans</p>
+											<hr>
+											<div class='feature'>
+												<h4>Unlimited Sessions</h4>
+												<md-icon
+													md-font-set='material-icons'
+													class='ng-isolate-scope md-default-theme material-icons'
+												>all_inclusive</md-icon>
+											</div>
+											<div class='feature'>
+												<h4>Powerful Encryption</h4>
+												<md-icon
+													md-font-set='material-icons'
+													class='ng-isolate-scope md-default-theme material-icons'
+												>security</md-icon>
+											</div>
+										</div>
+
+										<div class='price'>$99/mo</div>
+									</div>
+
+									<div layout-padding class='pricing'>
+										<h3>The Works</h3>
+
+										<div class='features'>
+											<p>
+												The current full functionality of Cyph. Everything in
+												The Basics, <em>plus</em> voice, video, and file transfers.
+											</p>
+
+											<div class='feature'>
+												<h4>The Basics, plus:</h4>
+												<md-icon
+													md-font-set='material-icons'
+													class='ng-isolate-scope md-default-theme material-icons'
+												>reply</md-icon>
+											</div>
+											<div class='feature indent'>
+												<h4>Video Calling</h4>
+												<md-icon
+													md-font-set='material-icons'
+													class='ng-isolate-scope md-default-theme material-icons'
+												>videocam</md-icon>
+											</div>
+											<div class='feature indent'>
+												<h4>Voice Calling</h4>
+												<md-icon
+													md-font-set='material-icons'
+													class='ng-isolate-scope md-default-theme material-icons'
+												>phone</md-icon>
+											</div>
+											<div class='feature indent'>
+												<h4>File Transfers</h4>
+												<md-icon
+													md-font-set='material-icons'
+													class='ng-isolate-scope md-default-theme material-icons'
+												>attach_file</md-icon>
+											</div>
+
+											<p>All Plans</p>
+											<hr>
+											<div class='feature'>
+												<h4>Unlimited Sessions</h4>
+												<md-icon
+													md-font-set='material-icons'
+													class='ng-isolate-scope md-default-theme material-icons'
+												>all_inclusive</md-icon>
+											</div>
+											<div class='feature'>
+												<h4>Powerful Encryption</h4>
+												<md-icon
+													md-font-set='material-icons'
+													class='ng-isolate-scope md-default-theme material-icons'
+												>security</md-icon>
+											</div>
+										</div>
+
+										<div class='price'>$495/mo</div>
+									</div>
+
+									<div layout-padding class='pricing'>
+										<h3>The Works + API</h3>
+
+										<div class='features'>
+											<p>
+												Integrate Cyph encryption into your app, site, or service.
+												Everything in The Works, <em>plus</em> access to our API.
+											<p>
+
+											<div class='feature'>
+												<h4>The Works, plus:</h4>
+												<md-icon
+													md-font-set='material-icons'
+													class='ng-isolate-scope md-default-theme material-icons'
+												>reply_all</md-icon>
+											</div>
+											<div class='feature indent'>
+												<h4>API Access</h4>
+												<md-icon
+													md-font-set='material-icons'
+													class='ng-isolate-scope md-default-theme material-icons'
+												>settings</md-icon>
+											</div>
+
+											<p>All Plans</p>
+											<hr>
+											<div class='feature'>
+												<h4>Unlimited Sessions</h4>
+												<md-icon
+													md-font-set='material-icons'
+													class='ng-isolate-scope md-default-theme material-icons'
+												>all_inclusive</md-icon>
+											</div>
+											<div class='feature'>
+												<h4>Powerful Encryption</h4>
+												<md-icon
+													md-font-set='material-icons'
+													class='ng-isolate-scope md-default-theme material-icons'
+												>security</md-icon>
+											</div>
+										</div>
+
+										<div class='price'>$995/mo</div>
+									</div>
+								</div>
+
+								<div layout='column'>
+									<div layout-padding class='pricing custom'>
+										<h3>Custom</h3>
+
+										<div class='features'>
+											<p>
+												Are you interested in using a subset of Cyph's features?
+												Have a need for a whitelabel, self-hosted, or enterprise solution?
+											</p>
+										</div>
+
+										<div class='price'>Contact Us</div>
+									</div>
+								</div>
+							</div>
+						</md-content>
 					</form>
 				`,
 
