@@ -30,7 +30,7 @@ merge internal/prod internal/master
 merge internal/master master
 
 if [ "$branch" != "master" -a "$branch" != "prod" ] ; then
-	merge master $branch
+	merge origin/master $branch
 else
 	git checkout $branch
 fi

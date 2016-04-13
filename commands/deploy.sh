@@ -47,7 +47,7 @@ if [ $branch == 'prod' ] ; then
 	branch='staging'
 fi
 if [ $test ] ; then
-	branch="$(git config --get remote.origin.url | perl -pe 's/.*:(.*)\/.*/\1/')-${branch}"
+	branch="$(git config --get remote.origin.url | perl -pe 's/.*:(.*)\/.*/\1/' | tr '[:upper:]' '[:lower:]')-${branch}"
 fi
 if [ $simple ] ; then
 	branch="simple-${branch}"
