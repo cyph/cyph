@@ -629,7 +629,6 @@ html:not(.mobile) {
 	}
 }
 
-
 .link-connection .connect-link-input {
 	width: 100%;
 
@@ -643,6 +642,7 @@ html:not(.mobile) {
 		border: 1px solid #8b62d9;
 		height: auto;
 		width: 50%;
+
 		@include transform(translateX(50%));
 	}
 
