@@ -175,7 +175,7 @@ export class Session implements ISession {
 			/* Contains invalid character(s) */
 			!descriptor.split('').reduce(
 				(isValid: boolean, c: string) : boolean =>
-					isValid && Cyph.Config.guidAddressSpace.indexOf(c) > -1
+					isValid && Config.guidAddressSpace.indexOf(c) > -1
 				,
 				true
 			)

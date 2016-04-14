@@ -1,4 +1,4 @@
-import {RPCEvents, Users} from 'enums';
+import {Events, RPCEvents, Users} from 'enums';
 import {Command} from 'command';
 import {Message} from 'message';
 import {IMutex} from 'imutex';

@@ -1,6 +1,7 @@
 import {Channel} from 'channel';
 import {IChannel} from 'ichannel';
 import {Analytics} from 'cyph/analytics';
+import {Env} from 'cyph/env';
 import {Util} from 'cyph/util';
 import {RPCEvents} from 'session/enums';
 import {ISession} from 'session/isession';

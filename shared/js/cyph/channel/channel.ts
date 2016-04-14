@@ -3,6 +3,7 @@ import {LocalChannel} from 'localchannel';
 import {Queue} from 'queue';
 import {RatchetedChannel} from 'ratchetedchannel';
 import {Config} from 'cyph/config';
+import {Timer} from 'cyph/util';
 import {Util} from 'cyph/util';
 import {Events} from 'session/enums';
 import {ISession} from 'session/isession';
@@ -165,7 +166,7 @@ export class Channel implements IChannel {
 
 
 							if (session) {
-								trigger(Events.newChannel, {
+								session.trigger(Events.newChannel, {
 									queueName: this.outQueue.queueName,
 									region: config.region
 								});
