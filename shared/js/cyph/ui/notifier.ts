@@ -33,7 +33,7 @@ export class Notifier implements INotifier {
 				options.audio	= Config.notifierConfig.audio;
 
 				navigator['serviceWorker'].
-					register(Cyph.Config.webSignConfig.serviceWorker).
+					register(Config.webSignConfig.serviceWorker).
 					then(serviceWorkerRegistration => {
 						try {
 							serviceWorkerRegistration.showNotification(

@@ -2,6 +2,7 @@ import {Elements} from 'elements';
 import {ILinkConnection} from 'ilinkconnection';
 import {Env} from 'cyph/env';
 import {IController} from 'cyph/icontroller';
+import {Strings} from 'cyph/strings';
 import {Util} from 'cyph/util';
 
 

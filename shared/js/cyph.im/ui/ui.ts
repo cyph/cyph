@@ -47,9 +47,9 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		let baseUrl: string	= Cyph.Env.newCyphBaseUrl;
 
 		if (initialCallType) {
-			const urlState: string	= UrlState.get(true);
+			const urlState: string	= Cyph.UrlState.get(true);
 			if (urlState.split('/').slice(-1)[0] === initialCallType) {
-				UrlState.set(urlState + '/', true, true);
+				Cyph.UrlState.set(urlState + '/', true, true);
 			}
 
 			baseUrl	= initialCallType === UrlSections.video ?
@@ -83,7 +83,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		);
 
 		this.cyphConnection	= new Cyph.UI.LinkConnection(
-			Config.newCyphCountdown,
+			Cyph.Config.newCyphCountdown,
 			this.controller,
 			() => this.chat.abortSetup()
 		);
@@ -181,10 +181,10 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		self.onpopstate		= null;
 
 
-		const urlSection: string	= UrlState.getSplit()[0];
+		const urlSection: string	= Cyph.UrlState.getSplit()[0];
 
 		if (urlSection === UrlSections.pro) {
-			UrlState.trigger();
+			Cyph.UrlState.trigger();
 		}
 		else {
 			this.startChat(
