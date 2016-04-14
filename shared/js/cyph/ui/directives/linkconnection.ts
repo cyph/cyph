@@ -15,7 +15,7 @@ export class LinkConnection {
 			scope: {
 				$this: '=' + LinkConnection.title
 			},
-			link: scope => scope['Cyph'] = Cyph,
+			link: scope => scope['Cyph'] = self['Cyph'],
 			template: Templates.linkConnection
 		}));
 	})();

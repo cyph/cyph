@@ -1,4 +1,3 @@
-import {Chat} from 'chat';
 import {Cyphertext} from 'cyphertext';
 import {States} from 'enums';
 import {IChat} from 'ichat';
@@ -22,6 +21,7 @@ import {NanoScroller} from 'ui/nanoscroller';
 import {Templates} from 'ui/templates';
 import {Analytics} from 'cyph/analytics';
 import {Env} from 'cyph/env';
+import {IController} from 'cyph/icontroller';
 import {Strings} from 'cyph/strings';
 import {UrlState} from 'cyph/urlstate';
 import {Util} from 'cyph/util';

@@ -16,7 +16,7 @@ export class SignupForm {
 				$this: '=' + SignupForm.title,
 				hideButton: '=hideButton'
 			},
-			link: scope => scope['Cyph'] = Cyph,
+			link: scope => scope['Cyph'] = self['Cyph'],
 			template: Templates.signupForm
 		}));
 	})();

@@ -12,17 +12,17 @@ export class Static {
 		angular.module(Static.title, []).
 			directive(Static.title + 'CyphNotFound', () => ({
 				restrict: 'A',
-				link: scope => scope['Cyph'] = Cyph,
+				link: scope => scope['Cyph'] = self['Cyph'],
 				template: Templates.staticCyphNotFound
 			})).
 			directive(Static.title + 'CyphSpinningUp', () => ({
 				restrict: 'A',
-				link: scope => scope['Cyph'] = Cyph,
+				link: scope => scope['Cyph'] = self['Cyph'],
 				template: Templates.staticCyphSpinningUp
 			})).
 			directive(Static.title + 'Footer', () => ({
 				restrict: 'A',
-				link: scope => scope['Cyph'] = Cyph,
+				link: scope => scope['Cyph'] = self['Cyph'],
 				template: Templates.staticFooter
 			}))
 		;

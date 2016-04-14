@@ -3,7 +3,7 @@ import {LocalChannel} from 'localchannel';
 import {Queue} from 'queue';
 import {RatchetedChannel} from 'ratchetedchannel';
 import {Config} from 'cyph/config';
-import {Timer} from 'cyph/util';
+import {Timer} from 'cyph/timer';
 import {Util} from 'cyph/util';
 import {Events} from 'session/enums';
 import {ISession} from 'session/isession';

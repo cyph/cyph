@@ -1,3 +1,4 @@
+import {States} from 'enums';
 import {ICyphertext} from 'icyphertext';
 import {IP2PManager} from 'ip2pmanager';
 import {IPhotoManager} from 'iphotomanager';

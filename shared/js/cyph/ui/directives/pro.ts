@@ -14,7 +14,7 @@ export class Pro {
 			scope: {
 				$this: '=' + Pro.title
 			},
-			link: scope => scope['Cyph'] = Cyph,
+			link: scope => scope['Cyph'] = self['Cyph'],
 			template: Templates.pro
 		}));
 	})();

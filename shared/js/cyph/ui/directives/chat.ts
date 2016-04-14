@@ -22,7 +22,7 @@ export class Chat {
 				scope: {
 					$this: '=' + Chat.title + 'Cyphertext'
 				},
-				link: scope => scope['Cyph'] = Cyph,
+				link: scope => scope['Cyph'] = self['Cyph'],
 				template: Templates.chatCyphertext
 			})).
 			directive(Chat.title + 'Main', () => ({
@@ -31,7 +31,7 @@ export class Chat {
 				scope: {
 					$this: '=' + Chat.title + 'Main'
 				},
-				link: scope => scope['Cyph'] = Cyph,
+				link: scope => scope['Cyph'] = self['Cyph'],
 				template: Templates.chatMain
 			})).
 			directive(Chat.title + 'MessageBox', () => ({
@@ -39,7 +39,7 @@ export class Chat {
 				scope: {
 					$this: '=' + Chat.title + 'MessageBox'
 				},
-				link: scope => scope['Cyph'] = Cyph,
+				link: scope => scope['Cyph'] = self['Cyph'],
 				template: Templates.chatMessageBox
 			})).
 			directive(Chat.title + 'Sidebar', () => ({
@@ -48,7 +48,7 @@ export class Chat {
 					$this: '=' + Chat.title + 'Sidebar',
 					showChat: '=showChat'
 				},
-				link: scope => scope['Cyph'] = Cyph,
+				link: scope => scope['Cyph'] = self['Cyph'],
 				template: Templates.chatSidebar
 			})).
 			directive(Chat.title + 'Toolbar', () => ({
@@ -58,7 +58,7 @@ export class Chat {
 					open: '&open',
 					showChat: '=showChat'
 				},
-				link: scope => scope['Cyph'] = Cyph,
+				link: scope => scope['Cyph'] = self['Cyph'],
 				template: Templates.chatToolbar
 			})).
 			factory('chatSidenav', [

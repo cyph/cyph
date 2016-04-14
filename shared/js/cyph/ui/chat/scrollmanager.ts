@@ -2,6 +2,7 @@ import {IChat} from 'ichat';
 import {IElements} from 'ielements';
 import {IScrollManager} from 'iscrollmanager';
 import {Affiliate} from 'ui/affiliate';
+import {IDialogManager} from 'ui/idialogmanager';
 import {NanoScroller} from 'ui/nanoscroller';
 import {VisibilityWatcher} from 'ui/visibilitywatcher';
 import {IController} from 'cyph/icontroller';
