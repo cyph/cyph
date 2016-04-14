@@ -1,5 +1,5 @@
 import {Env} from 'env';
-import {Thread} from 'util';
+import {Thread} from 'thread';
 import {Util} from 'util';
 
 

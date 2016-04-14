@@ -13,7 +13,7 @@ import * as Session from 'session/session';
 
 
 export {
-	FileTransfer
+	FileTransfer,
 	IFileTransfer,
 	IP2P,
 	UIEvents
