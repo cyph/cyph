@@ -1,4 +1,5 @@
 import {ProStates, States, UrlSections} from 'enums';
+import {Config} from 'cyph.im/config';
 import * as Cyph from 'cyph/cyph';
 
 
@@ -83,7 +84,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		);
 
 		this.cyphConnection	= new Cyph.UI.LinkConnection(
-			Cyph.Config.newCyphCountdown,
+			Config.newCyphCountdown,
 			this.controller,
 			() => this.chat.abortSetup()
 		);
