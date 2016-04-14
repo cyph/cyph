@@ -1,19 +1,15 @@
-namespace Cyph {
-	export namespace UI {
-		/**
-		 * Represents a slide-out menu component.
-		 * @interface
-		 */
-		export interface ISidebar {
-			/**
-			 * Opens the sidebar.
-			 */
-			open () : void;
+/**
+ * Represents a slide-out menu component.
+ * @interface
+ */
+export interface ISidebar {
+	/**
+	 * Opens the sidebar.
+	 */
+	open () : void;
 
-			/**
-			 * Closes the sidebar.
-			 */
-			close () : void;
-		}
-	}
+	/**
+	 * Closes the sidebar.
+	 */
+	close () : void;
 }

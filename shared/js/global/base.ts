@@ -4,34 +4,7 @@
  */
 
 
-/// <reference path="../typings/dataview.d.ts" />
-/// <reference path="../typings/iwebsign.d.ts" />
-/// <reference path="../typings/storage.d.ts" />
-/// <reference path="../../lib/typings/main.d.ts" />
-
-/// <reference path="../cyph/p2p/enums.ts" />
-/// <reference path="../cyph/session/enums.ts" />
-/// <reference path="../cyph/ui/chat/enums.ts" />
-
-/// <reference path="../cyph/icontroller.ts" />
-/// <reference path="../cyph/channel/ichannel.ts" />
-/// <reference path="../cyph/crypto/icastle.ts" />
-/// <reference path="../cyph/p2p/ifiletransfer.ts" />
-/// <reference path="../cyph/p2p/ip2p.ts" />
-/// <reference path="../cyph/session/imessage.ts" />
-/// <reference path="../cyph/session/imutex.ts" />
-/// <reference path="../cyph/session/isession.ts" />
-/// <reference path="../cyph/ui/idialogmanager.ts" />
-/// <reference path="../cyph/ui/ilinkconnection.ts" />
-/// <reference path="../cyph/ui/inotifier.ts" />
-/// <reference path="../cyph/ui/isidebar.ts" />
-/// <reference path="../cyph/ui/isignupform.ts" />
-/// <reference path="../cyph/ui/chat/ichat.ts" />
-/// <reference path="../cyph/ui/chat/icyphertext.ts" />
-/// <reference path="../cyph/ui/chat/ielements.ts" />
-/// <reference path="../cyph/ui/chat/ip2pmanager.ts" />
-/// <reference path="../cyph/ui/chat/iphotomanager.ts" />
-/// <reference path="../cyph/ui/chat/iscrollmanager.ts" />
+import {IWebSign} from 'typings/iwebsign';
 
 
 /** @ignore */

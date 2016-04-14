@@ -2,7 +2,7 @@
  * This represents the local storage values used by Cyph.
  * @interface
  */
-interface Storage {
+export interface Storage {
 	/** Indicates whether this Storage instance
 		data is stored persistently. */
 	isPersistent: string;

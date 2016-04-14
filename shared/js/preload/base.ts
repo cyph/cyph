@@ -3,19 +3,21 @@
  * routine of all Web projects.
  */
 
-
-/// <reference path="../cyph/base.ts" />
-/// <reference path="../cyph/ui/elements.ts" />
+import 'global/base';
+import {Config} from 'cyph/config';
+import {Env} from 'cyph/env';
+import {Util} from 'cyph/util';
+import {Elements} from 'cyph/ui/elements';
 
 
 /* In WebSigned environments, can't load fonts from current origin */
 
 if (FontsCSS) {
-	Cyph.UI.Elements.body.append(
+	Elements.body.append(
 		$('<style></style>').html(
 			FontsCSS.replace(
 				/url\(\//g,
-				'url(' + Cyph.Env.homeUrl
+				'url(' + Env.homeUrl
 			)
 		)
 	);
@@ -24,9 +26,9 @@ if (FontsCSS) {
 
 /* Translations */
 
-if (Translations && Cyph.Env.language !== Cyph.Config.defaultLanguage) {
+if (Translations && Env.language !== Config.defaultLanguage) {
 	$('[translate]').each((i: number, elem: HTMLElement) =>
-		Cyph.Util.translateHtml(elem)
+		Util.translateHtml(elem)
 	);
 }
 
@@ -35,9 +37,9 @@ if (Translations && Cyph.Env.language !== Cyph.Config.defaultLanguage) {
 
 $(
 	'.' +
-	Cyph.Env.platformString +
+	Env.platformString +
 	'-only [deferred-src], [deferred-src].' +
-	Cyph.Env.platformString +
+	Env.platformString +
 	'-only'
 ).each((i: number, elem: HTMLElement) => {
 	const $this: JQuery	= $(elem);
@@ -48,8 +50,8 @@ $(
 
 /* Mobile CSS class */
 
-if (Cyph.Env.isMobile) {
-	Cyph.UI.Elements.html.addClass('mobile');
+if (Env.isMobile) {
+	Elements.html.addClass('mobile');
 }
 
 
@@ -57,7 +59,7 @@ if (Cyph.Env.isMobile) {
 
 if (!HTMLElement.prototype.click) {
 	HTMLElement.prototype.click	= function () {
-		Cyph.Util.triggerClick(this);
+		Util.triggerClick(this);
 	};
 }
 
@@ -84,9 +86,9 @@ $(() => {
 
 		/* In WebSigned environments, remove no-longer-necessary
 			'unsafe-inline' from CSP after application loads */
-		setTimeout(() => Cyph.UI.Elements.head.append(
+		setTimeout(() => Elements.head.append(
 			'<meta http-equiv="Content-Security-Policy" content="' +
-				Cyph.Env.webSignCSP.replace(/(script-src.*?) 'unsafe-inline'/g, '$1') +
+				Env.webSignCSP.replace(/(script-src.*?) 'unsafe-inline'/g, '$1') +
 			'" />'
 		), 10000);
 	}

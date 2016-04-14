@@ -2,23 +2,12 @@
  * @file Entry point of cyph.com.
  */
 
+import 'preload/fakecrypto';
+import 'preload/base';
+import {Elements} from 'ui/elements';
+import {UI} from 'ui/ui';
+import * as Cyph from 'cyph/cyph';
 
-/// <reference path="../preload/fakecrypto.ts" />
-/// <reference path="../preload/base.ts" />
-
-/// <reference path="../cyph/controller.ts" />
-/// <reference path="../cyph/session/session.ts" />
-/// <reference path="../cyph/ui/chat/chat.ts" />
-/// <reference path="../cyph/ui/carousel.ts" />
-/// <reference path="../cyph/ui/dialogmanager.ts" />
-/// <reference path="../cyph/ui/signupform.ts" />
-/// <reference path="../cyph/ui/directives/chat.ts" />
-/// <reference path="../cyph/ui/directives/markdown.ts" />
-/// <reference path="../cyph/ui/directives/signupform.ts" />
-/// <reference path="ui/enums.ts" />
-/// <reference path="ui/elements.ts" />
-/// <reference path="ui/cyphdemo.ts" />
-/// <reference path="ui/ui.ts" />
 
 /*
 	cyph.com works fine in every browser except IE/Edge.
@@ -45,7 +34,7 @@ angular.
 		'chatSidenav',
 
 		($scope, $mdDialog, $mdToast, $mdSidenav, chatSidenav) => $(() => {
-			Cyph.com.UI.Elements.load();
+			Elements.load();
 
 			const controller: Cyph.IController				= new Cyph.Controller($scope);
 			const mobileMenu: Cyph.UI.ISidebar				= $mdSidenav('main-toolbar-sidenav');
@@ -53,7 +42,7 @@ angular.
 			const demoMobileMenu: Cyph.UI.ISidebar			= chatSidenav();
 
 			$scope.Cyph	= Cyph;
-			$scope.ui	= new Cyph.com.UI.UI(controller, mobileMenu, demoDialogManager, demoMobileMenu);
+			$scope.ui	= new UI(controller, mobileMenu, demoDialogManager, demoMobileMenu);
 
 			self['ui']	= $scope.ui;
 

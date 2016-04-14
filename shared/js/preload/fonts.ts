@@ -1,1 +1,1 @@
-/// <reference path="../global/base.ts" />
+import 'global/base';

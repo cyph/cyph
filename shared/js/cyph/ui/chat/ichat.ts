@@ -1,123 +1,124 @@
-namespace Cyph {
-	export namespace UI {
-		export namespace Chat {
-			/**
-			 * This is the entire end-to-end representation of a cyph.
-			 * @interface
-			 */
-			export interface IChat {
-				/** Indicates whether authentication has completed
-					(still true even after disconnect). */
-				isConnected: boolean;
+import {ICyphertext} from 'icyphertext';
+import {IP2PManager} from 'ip2pmanager';
+import {IPhotoManager} from 'iphotomanager';
+import {IScrollManager} from 'iscrollmanager';
+import * as Session from 'session/session';
 
-				/** Indicates whether chat has been disconnected. */
-				isDisconnected: boolean;
 
-				/** Indicates whether the other party is typing. */
-				isFriendTyping: boolean;
+/**
+ * This is the entire end-to-end representation of a cyph.
+ * @interface
+ */
+export interface IChat {
+	/** Indicates whether authentication has completed
+		(still true even after disconnect). */
+	isConnected: boolean;
 
-				/** Indicates whether the mobile chat UI is to be displayed. */
-				isMobile: boolean;
+	/** Indicates whether chat has been disconnected. */
+	isDisconnected: boolean;
 
-				/** The current message being composed. */
-				currentMessage: string;
+	/** Indicates whether the other party is typing. */
+	isFriendTyping: boolean;
 
-				/** Percentage complete with initial handshake
-					(approximate / faked out). */
-				keyExchangeProgress: number;
+	/** Indicates whether the mobile chat UI is to be displayed. */
+	isMobile: boolean;
 
-				/** Chat UI state/view. */
-				state: States;
+	/** The current message being composed. */
+	currentMessage: string;
 
-				/** Message list. */
-				messages: {
-					author: Session.Users;
-					text: string;
-					timestamp: string;
-				}[];
+	/** Percentage complete with initial handshake
+		(approximate / faked out). */
+	keyExchangeProgress: number;
 
-				/** Cyphertext instance. */
-				cyphertext: ICyphertext;
+	/** Chat UI state/view. */
+	state: States;
 
-				/** Photo manager instance. */
-				photoManager: IPhotoManager;
+	/** Message list. */
+	messages: {
+		author: Session.Users;
+		text: string;
+		timestamp: string;
+	}[];
 
-				/** P2P manager instance. */
-				p2pManager: IP2PManager;
+	/** Cyphertext instance. */
+	cyphertext: ICyphertext;
 
-				/** Scroll manager instance. */
-				scrollManager: IScrollManager;
+	/** Photo manager instance. */
+	photoManager: IPhotoManager;
 
-				/** Session instance. */
-				session: Session.ISession;
+	/** P2P manager instance. */
+	p2pManager: IP2PManager;
 
-				/**
-				 * Aborts the process of chat initialisation and authentication.
-				 */
-				abortSetup () : void;
+	/** Scroll manager instance. */
+	scrollManager: IScrollManager;
 
-				/**
-				 * Adds a message to the chat.
-				 * @param text
-				 * @param author
-				 * @param shouldNotify If true, a notification will be sent.
-				 */
-				addMessage (
-					text: string,
-					author: Session.Users,
-					shouldNotify?: boolean
-				) : void;
+	/** Session instance. */
+	session: Session.ISession;
 
-				/**
-				 * Begins chat.
-				 * @param callback
-				 */
-				begin (callback?: Function) : void;
+	/**
+	 * Aborts the process of chat initialisation and authentication.
+	 */
+	abortSetup () : void;
 
-				/**
-				 * Changes chat UI state.
-				 * @param state
-				 */
-				changeState (state: States) : void;
+	/**
+	 * Adds a message to the chat.
+	 * @param text
+	 * @param author
+	 * @param shouldNotify If true, a notification will be sent.
+	 */
+	addMessage (
+		text: string,
+		author: Session.Users,
+		shouldNotify?: boolean
+	) : void;
 
-				/**
-				 * This kills the chat.
-				 */
-				close () : void;
+	/**
+	 * Begins chat.
+	 * @param callback
+	 */
+	begin (callback?: Function) : void;
 
-				/**
-				 * After confirmation dialog, this kills the chat.
-				 */
-				disconnectButton () : void;
+	/**
+	 * Changes chat UI state.
+	 * @param state
+	 */
+	changeState (state: States) : void;
 
-				/**
-				 * Displays Markdown formatting guide in modal.
-				 */
-				formattingHelpButton () : void;
+	/**
+	 * This kills the chat.
+	 */
+	close () : void;
 
-				/**
-				 * Checks for change to current message, and sends appropriate
-				 * typing indicator signals through session.
-				 */
-				messageChange () : void;
+	/**
+	 * After confirmation dialog, this kills the chat.
+	 */
+	disconnectButton () : void;
 
-				/**
-				 * Sends a message.
-				 * @param message
-				 */
-				send (message?: string) : void;
+	/**
+	 * Displays Markdown formatting guide in modal.
+	 */
+	formattingHelpButton () : void;
 
-				/**
-				 * Sets this.isConnected to true.
-				 */
-				setConnected () : void;
+	/**
+	 * Checks for change to current message, and sends appropriate
+	 * typing indicator signals through session.
+	 */
+	messageChange () : void;
 
-				/**
-				 * Sets this.isFriendTyping to isFriendTyping.
-				 * @param isFriendTyping
-				 */
-				setFriendTyping (isFriendTyping: boolean) : void;
-			}
-		}
-	}
+	/**
+	 * Sends a message.
+	 * @param message
+	 */
+	send (message?: string) : void;
+
+	/**
+	 * Sets this.isConnected to true.
+	 */
+	setConnected () : void;
+
+	/**
+	 * Sets this.isFriendTyping to isFriendTyping.
+	 * @param isFriendTyping
+	 */
+	setFriendTyping (isFriendTyping: boolean) : void;
 }
