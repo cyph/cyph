@@ -47,7 +47,7 @@ if [ $branch == 'prod' ] ; then
 	branch='staging'
 fi
 if [ $test ] ; then
-	branch="$(git config --get remote.origin.url | perl -pe 's/.*:(.*)\/.*/\1/')-${branch}"
+	branch="$(git config --get remote.origin.url | perl -pe 's/.*:(.*)\/.*/\1/' | tr '[:upper:]' '[:lower:]')-${branch}"
 fi
 if [ $simple ] ; then
 	branch="simple-${branch}"
@@ -165,7 +165,7 @@ for d in cyph.com cyph.im ; do
 	if [ "${branch}" == 'staging' -a ! "${simple}" ] ; then
 		echo "JS Minify ${d}"
 		find js -name '*.js' | xargs -I% uglifyjs -r \
-			importScripts,Cyph,ui,session,vars,self,isaac,onmessage,postMessage,onthreadmessage,WebSign,Translations,IS_WEB,crypto \
+			importScripts,Cyph,ui,session,locals,self,isaac,onmessage,postMessage,onthreadmessage,WebSign,Translations,IS_WEB,crypto \
 			'%' -o '%' -m
 
 		echo "CSS Minify ${d}"
