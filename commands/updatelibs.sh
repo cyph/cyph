@@ -9,9 +9,9 @@ rm -rf shared/lib shared/cryptolib
 mkdir shared/lib shared/cryptolib
 cd shared/lib
 
+jspm registry config github
 jspm init -y
 jspm dl-loader -y typescript
-jspm registry config github
 
 jspm install -y \
 	angular \
