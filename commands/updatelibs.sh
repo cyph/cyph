@@ -11,6 +11,7 @@ cd shared/lib
 
 jspm init -y
 jspm dl-loader -y typescript
+jspm registry config github
 
 jspm install -y \
 	angular \
