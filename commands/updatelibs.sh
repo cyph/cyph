@@ -9,6 +9,7 @@ rm -rf shared/lib shared/cryptolib
 mkdir shared/lib shared/cryptolib
 cd shared/lib
 
+jspm init -y ./
 jspm install -y \
 	angular \
 	angular2 \
