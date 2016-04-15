@@ -1,6 +1,5 @@
 /**
- * @file Normalises global namespace across varying runtime environments,
- * and pulls in all low-footprint references like enums and interfaces.
+ * @file Normalises global namespace across varying runtime environments.
  */
 
 
@@ -69,24 +68,24 @@ const navigatorData: Navigator	= typeof self['navigatorData'] !== 'undefined' ?
  /**
  * @global Event handler for messages to the current thread.
  */
-let onthreadmessage: (e: MessageEvent) => any;
+declare let onthreadmessage: (e: MessageEvent) => any;
 
 /**
  * @global String containing compiled contents of fonts.scss
  * (only exists in main thread of production environments).
  */
-let FontsCSS: string;
+declare let FontsCSS: string;
 
 /**
  * @global Object containing translations for English phrases
  * (only exists in main thread of production environments).
  */
-let Translations: {[language: string] : {[text: string] : string}};
+declare let Translations: {[language: string] : {[text: string] : string}};
 
 /**
  * @global WebSign object (only created in WebSigned environments).
  */
-let WebSign: IWebSign;
+declare let WebSign: IWebSign;
 
 
 /**

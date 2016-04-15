@@ -12,7 +12,7 @@ RUN apt-get install -y curl golang-go python python-pip perl devscripts build-es
 RUN curl -sL https://deb.nodesource.com/setup_5.x | bash -
 RUN apt-get install -y nodejs
 
-RUN npm -g install html-minifier clean-css uglifyjs typescript typings typedoc bower browserstack browserify libsodium-wrappers glob read mkdirp
+RUN npm -g install html-minifier clean-css uglifyjs typescript typings typedoc jspm browserstack browserify libsodium-wrappers glob read mkdirp
 RUN pip install beautifulsoup4 html5lib
 
 
@@ -61,6 +61,9 @@ RUN bash -c ' \
 	go get github.com/gorilla/mux; \
 	go get github.com/microcosm-cc/bluemonday; \
 '
+
+RUN mkdir ~/.jspm
+RUN echo -e '{\n  "defaultTranspiler": "typescript",\n  "strictSSL": true\n}' > ~/.jspm/config 
 
 
 VOLUME /cyph

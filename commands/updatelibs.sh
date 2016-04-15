@@ -9,53 +9,59 @@ rm -rf shared/lib shared/cryptolib
 mkdir shared/lib shared/cryptolib
 cd shared/lib
 
-bower install --save \
-	angularjs \
-	angular2=angular/angular#builds-js \
+jspm install -y \
+	angular \
+	angular2 \
 	angular-material \
-	dompurify \
-	markdown-it \
-	markdown-it-sup \
-	twemoji#1.3.2 \
-	markdown-it-emoji \
-	isagalaev/highlight.js \
-	angular-timer#1.2.1 \
-	animate.css \
-	base64 \
+	npm:dompurify \
+	npm:markdown-it \
+	npm:markdown-it-sup \
+	npm:twemoji@1.3.2 \
+	npm:markdown-it-emoji \
+	github:isagalaev/highlight.js \
+	github:siddii/angular-timer@1.2.1 \
+	npm:animate.css \
+	npm:base64 \
 	jquery \
-	jquery-legacy=jquery#^1 \
-	magnific-popup \
-	nanoscroller \
-	unsemantic \
-	wow \
-	morr/jquery.appear \
-	julianlam/tabIndent.js \
-	aws-sdk-js \
-	rxjs=ReactiveX/RxJS \
+	jquery-legacy=jquery@^1 \
+	npm:magnific-popup \
+	npm:nanoscroller \
+	npm:unsemantic \
+	npm:wow \
+	github:morr/jquery.appear \
+	github:julianlam/tabIndent.js \
+	npm:aws-sdk \
+	npm:rxjs \
 	es5-shim \
 	es6-shim
 
-mkdir -p bower_components/highlight.js
-cd bower_components/highlight.js
+cd jspm_packages/github/isagalaev/highlight.js@*
 sed -i 's/^build$//' .gitignore
 npm install
 node tools/build.js :common
-cd ../..
+rm -rf node_modules
+cd ../../../..
 
-cd bower_components/rxjs
+cd jspm_packages/npm/rxjs@*
 sed -i 's/^dist\/$//' .gitignore
 sed -i 's/.*"ghooks": ".*//' package.json
 npm install
 npm run build_global
 mv dist/cjs/* ./
-cd ../..
+rm -rf node_modules
+cd ../../..
 
-mkdir aws-xml
-cd aws-xml
-npm install --save xml2js aws-sdk
-browserify node_modules/aws-sdk/lib/xml/node_parser.js -s AWS_XML | uglifyjs -o ../aws-xml.js
-cd ..
-rm -rf aws-xml
+cd jspm_packages/npm/twemoji@*
+npm install
+node twemoji-generator.js
+rm -rf node_modules
+cd ../../..
+
+cd jspm_packages/npm/aws-sdk@*
+npm install xml2js
+browserify lib/xml/node_parser.js -s AWS_XML | uglifyjs -o dist/aws-xml.js
+rm -rf node_modules
+cd ../../..
 
 rm -rf typings typings.json
 typings install --ambient --save \
@@ -82,10 +88,10 @@ cd ..
 
 cd ../cryptolib
 
-bower install --save \
-	libsodium.js#master \
-	rubycon/isaac.js \
-	cyph/ntru.js
+jspm install -y \
+	github:jedisct1/libsodium.js \
+	github:rubycon/isaac.js \
+	github:cyph/ntru.js
 
 wget https://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/hmac-sha256.js
 
