@@ -108,7 +108,7 @@ elif [ "${command}" == 'restart' ] ; then
 	exit 0
 
 elif [ "${command}" == 'updatelibs' ] ; then
-	args=''
+	args='-it'
 
 elif [ "${command}" == 'websignhash' ] ; then
 	args=''
