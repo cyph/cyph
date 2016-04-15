@@ -80,7 +80,7 @@
 					<span class='link-wrapper-inner'>
 						<md-button translate href='/blog'>Blog</md-button>
 						<md-button translate href='/faq'>FAQ</md-button>
-						<md-button translate href='/enterprise'>Enterprise</md-button>
+						<md-button translate href='/pricing'>Pricing</md-button>
 						<md-button translate href='/login'>Login/Register</md-button>
 					</span>
 				</span>
@@ -154,8 +154,8 @@
 					</md-button>
 				</div>
 				<div>
-					<md-button translate href='/enterprise' ng-click='ui.baseButtonClick()'>
-						Enterprise
+					<md-button translate href='/pricing' ng-click='ui.baseButtonClick()'>
+						Pricing
 					</md-button>
 				</div>
 				<div>
@@ -717,56 +717,269 @@
 			</div>
 		</section>
 
-		<section id='enterprise' ng-show='ui.state === Cyph.com.UI.States.enterprise' class='unisection'>
-			<img class='background' src='/img/enterprise.png' />
+		<section id='pricing' ng-show='ui.state === Cyph.com.UI.States.pricing' class='unisection'>
 			<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' translate>
-				Enterprise
+				Pricing
 			</h1>
-			<div class='section-content-container'>
-				<p translate>
-					We're now piloting a beta of Cyph for enterprises with a small set of
-					startups and business customers.
-				</p>
-				<p translate>
-					Our standard enterprise beta offers:
-				</p>
-				<ul>
-					<li translate>
-						SDK for third-party Cyph integration
-					</li>
-					<li translate>
-						Optional "modest branding" feature
-					</li>
-					<li translate>
-						Hands-on support from the founders of Cyph
-					</li>
-					<li translate>
-						Extra priority for feature requests
-					</li>
-				</ul>
-				<p translate>
-					Custom arrangements may include:
-				</p>
-				<ul>
-					<li translate>
-						Extended SLA
-					</li>
-					<li translate>
-						Self-branded white label distribution
-					</li>
-					<li translate>
-						Custom Cyph deployments (internally forked, self-hosted, and/or self-signed)
-					</li>
-				</ul>
-				<p>
-					<span translate>
-						If you're interested in learning more about Cyph's beta enterprise program,
-					</span>
-					<a href='/contact' translate>contact us</a>
-					<span translate>
-						now.
-					</span>
-				</p>
+			<div>
+				<div>
+					<div class='pricing-chart' ng-hide='individual||business||telehealth' layout='row'>
+						<div flex>
+							<h2>Individual</h2>
+							<md-button
+								type='submit'
+								ng-click='individual=true'
+								aria-label='Individual'
+								ng-hide=''
+							>
+								<md-icon md-font-set='material-icons'>person</md-icon>
+							</md-button>
+						</div>
+
+						<div flex>
+							<h2>Business</h2>
+							<md-button
+								type='submit'
+								ng-click='business=true'
+								aria-label='Business'
+								ng-hide=''
+							>
+								<md-icon md-font-set='material-icons'>domain</md-icon>
+							</md-button>
+						</div>
+
+						<div flex>
+							<h2>Telehealth</h2>
+							<md-button
+								type='submit'
+								ng-click='telehealth=true'
+								aria-label='Telehealth'
+								ng-hide=''
+							>
+								<md-icon md-font-set='material-icons'>video_call</md-icon>
+							</md-button>
+						</div>
+					</div>
+				</div>
+				</div>
+				
+				<div translate ng-show='individual'>
+					<md-icon
+						md-font-set='material-icons'
+						ng-click='individual = false'
+						class='back'
+					>keyboard_backspace</md-icon>
+					<p>
+						Cyph is abosolutley free for individuals to use!
+					</p>
+					<md-input-container>
+						<label translate>email</label>
+						<input type='email' ng-model='$this.data.Email' />
+					</md-input-container>
+					<md-button
+						type='submit'
+						ng-click='this.signup()'
+						aria-label='Register'
+					>
+						Subscribe
+					</md-button>
+				</div>
+
+				<div translate ng-show='telehealth'>
+					<md-icon
+						md-font-set='material-icons'
+						ng-click='telehealth = false'
+						class='back'
+					>keyboard_backspace</md-icon>
+					<p>
+						Talk to yo doctor n shit.
+					</p>
+					<md-input-container>
+						<label translate>email</label>
+						<input type='email' ng-model='$this.data.Email' />
+					</md-input-container>
+					<md-button
+						type='submit'
+						ng-click='this.signup()'
+						aria-label='Register'
+					>
+						Subscribe
+					</md-button>
+				</div>
+				
+				<div class='business' ng-show='business'>
+					<md-icon
+						md-font-set='material-icons'
+						ng-click='business = false'
+						class='back'
+					>keyboard_backspace</md-icon>
+					<div layout='row' class='pricing-chart' flex='100'>
+						<div layout-padding class='pricing'>
+							<h3>The Basics</h3>
+
+							<div class='features'>
+								<p>
+									The core functionality of Cyph. Registration-optional
+									secure chat and images.
+								</p>
+
+								<div class='feature'>
+									<h4>Instant Messaging</h4>
+									<md-icon
+										md-font-set='material-icons'
+										class='ng-isolate-scope md-default-theme material-icons'
+									>chat</md-icon>
+								</div>
+								<div class='feature'>
+									<h4>Picture Messaging</h4>
+									<md-icon
+										md-font-set='material-icons'
+										class='ng-isolate-scope md-default-theme material-icons'
+									>photo_camera</md-icon>
+								</div>
+
+								<p>All Plans</p>
+								<hr>
+								<div class='feature'>
+									<h4>Unlimited Sessions</h4>
+									<md-icon
+										md-font-set='material-icons'
+										class='ng-isolate-scope md-default-theme material-icons'
+									>all_inclusive</md-icon>
+								</div>
+								<div class='feature'>
+									<h4>Powerful Encryption</h4>
+									<md-icon
+										md-font-set='material-icons'
+										class='ng-isolate-scope md-default-theme material-icons'
+									>security</md-icon>
+								</div>
+							</div>
+
+							<div class='price'>$99/mo</div>
+						</div>
+
+						<div layout-padding class='pricing'>
+							<h3>The Works</h3>
+
+							<div class='features'>
+								<p>
+									The current full functionality of Cyph. Everything in
+									The Basics, <em>plus</em> voice, video, and file transfers.
+								</p>
+
+								<div class='feature'>
+									<h4>The Basics, plus:</h4>
+									<md-icon
+										md-font-set='material-icons'
+										class='ng-isolate-scope md-default-theme material-icons'
+									>reply</md-icon>
+								</div>
+								<div class='feature indent'>
+									<h4>Video Calling</h4>
+									<md-icon
+										md-font-set='material-icons'
+										class='ng-isolate-scope md-default-theme material-icons'
+									>videocam</md-icon>
+								</div>
+								<div class='feature indent'>
+									<h4>Voice Calling</h4>
+									<md-icon
+										md-font-set='material-icons'
+										class='ng-isolate-scope md-default-theme material-icons'
+									>phone</md-icon>
+								</div>
+								<div class='feature indent'>
+									<h4>File Transfers</h4>
+									<md-icon
+										md-font-set='material-icons'
+										class='ng-isolate-scope md-default-theme material-icons'
+									>attach_file</md-icon>
+								</div>
+
+								<p>All Plans</p>
+								<hr>
+								<div class='feature'>
+									<h4>Unlimited Sessions</h4>
+									<md-icon
+										md-font-set='material-icons'
+										class='ng-isolate-scope md-default-theme material-icons'
+									>all_inclusive</md-icon>
+								</div>
+								<div class='feature'>
+									<h4>Powerful Encryption</h4>
+									<md-icon
+										md-font-set='material-icons'
+										class='ng-isolate-scope md-default-theme material-icons'
+									>security</md-icon>
+								</div>
+							</div>
+
+							<div class='price'>$495/mo</div>
+						</div>
+
+						<div layout-padding class='pricing'>
+							<h3>The Works + API</h3>
+
+							<div class='features'>
+								<p>
+									Integrate Cyph encryption into your app, site, or service.
+									Everything in The Works, <em>plus</em> access to our API.
+								<p>
+
+								<div class='feature'>
+									<h4>The Works, plus:</h4>
+									<md-icon
+										md-font-set='material-icons'
+										class='ng-isolate-scope md-default-theme material-icons'
+									>reply_all</md-icon>
+								</div>
+								<div class='feature indent'>
+									<h4>API Access</h4>
+									<md-icon
+										md-font-set='material-icons'
+										class='ng-isolate-scope md-default-theme material-icons'
+									>settings</md-icon>
+								</div>
+
+								<p>All Plans</p>
+								<hr>
+								<div class='feature'>
+									<h4>Unlimited Sessions</h4>
+									<md-icon
+										md-font-set='material-icons'
+										class='ng-isolate-scope md-default-theme material-icons'
+									>all_inclusive</md-icon>
+								</div>
+								<div class='feature'>
+									<h4>Powerful Encryption</h4>
+									<md-icon
+										md-font-set='material-icons'
+										class='ng-isolate-scope md-default-theme material-icons'
+									>security</md-icon>
+								</div>
+							</div>
+
+							<div class='price'>$995/mo</div>
+						</div>
+						<div layout-padding class='pricing custom' flex='25'>
+							<h3>Custom</h3>
+
+							<div class='features'>
+								<p>
+									Are you interested in using a subset of Cyph's features?
+									Have a need for a whitelabel, self-hosted, or enterprise solution?
+								</p>
+							</div>
+							<div class='price'>White Label</div>
+							<div class='price'>Self-Hosted</div>
+						</div>
+					</div>
+
+					<div layout='column'>
+
+					</div>
+				</div>
 			</div>
 		</section>
 
@@ -932,7 +1145,7 @@
 								free tier, because we see online privacy as a basic right) and we are
 								currently piloting
 							</span>
-							<a href='/enterprise'>enterprise deployments of secure video and instant messaging</a>.
+							<a href='/pricing'>enterprise deployments of secure video and instant messaging</a>.
 						</p>
 					</li>
 					<li>
@@ -1187,7 +1400,6 @@
 		<script src='/lib/bower_components/markdown-it-emoji/dist/markdown-it-emoji.min.js'></script>
 		<script src='/lib/bower_components/tabIndent.js/js/tabIndent.js'></script>
 		<script src='/lib/bower_components/wow/dist/wow.min.js'></script>
-
 		<script src='/js/cyph.com/main.js'></script>
 
 	</body>

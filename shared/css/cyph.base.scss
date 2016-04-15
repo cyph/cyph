@@ -280,16 +280,54 @@ html:not(.mobile) .platform-container.mobile .mobile-only {
 	}
 }
 
-.beta-signup-form .md-button md-icon {
+.beta-signup-form .md-button md-icon, .pricing-chart .md-button .md-icon {
 	line-height: 20px !important;
 	font-size: 72px !important;
 }
 
-.beta-signup-form .md-button, #new-cyph-footer {
+.beta-signup-form .md-button, .pricing-chart .md-button, #new-cyph-footer {
 	font-family: 'Ubuntu' !important;
 	line-height: 50px !important;
 	font-size: 18px !important;
 	box-shadow: 0px 4px 10px -1px rgba(0, 0, 0, 0.25) !important;
+}
+
+.pricing-chart {
+	text-align: center;
+
+	:first-child {
+		margin-left: auto !important;
+	}
+	:last-child {
+		margin-right: auto !important;
+	}
+	.md-button {
+		width: 100px;
+		background-color: #392859;
+		height: 100px;
+	}
+}
+
+.pricing-chart button md-icon.ng-scope.material-icons {
+	color: white;
+	transform: scale(4.5);
+	position: relative;
+	top: 40px;
+}
+
+md-icon.back.material-icons {
+	transform: scale(3.5);
+	position: relative;
+	z-index: 999;
+	margin-left: 50px;
+	color: white;
+	opacity: 0.85;
+	
+}
+
+md-icon.back.material-icons:hover {
+		opacity: 1 !important;
+		cursor: pointer;
 }
 
 .pricing {
