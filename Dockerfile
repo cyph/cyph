@@ -62,9 +62,6 @@ RUN bash -c ' \
 	go get github.com/microcosm-cc/bluemonday; \
 '
 
-RUN mkdir ~/.jspm
-RUN echo -e '{\n  "defaultTranspiler": "typescript",\n  "strictSSL": true\n}' > ~/.jspm/config 
-
 
 VOLUME /cyph
 VOLUME /home/gibson/.cyph
