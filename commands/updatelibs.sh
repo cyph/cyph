@@ -20,7 +20,7 @@ jspm install -y \
 	npm:dompurify \
 	npm:markdown-it \
 	npm:markdown-it-sup \
-	npm:twemoji@1.3.2 \
+	github:twitter/twemoji@1.3.2 \
 	npm:markdown-it-emoji \
 	github:isagalaev/highlight.js \
 	github:siddii/angular-timer@1.2.1 \
@@ -47,7 +47,6 @@ rm -rf node_modules
 cd ../../../..
 
 cd jspm_packages/npm/rxjs@*
-sed -i 's/^dist\/$//' .gitignore
 sed -i 's/.*"ghooks": ".*//' package.json
 npm install
 npm run build_global
@@ -55,14 +54,8 @@ mv dist/cjs/* ./
 rm -rf node_modules
 cd ../../..
 
-cd jspm_packages/npm/twemoji@*
-npm install
-node twemoji-generator.js
-rm -rf node_modules
-cd ../../..
-
 cd jspm_packages/npm/aws-sdk@*
-npm install xml2js
+npm install --save xml2js xmlbuilder
 browserify lib/xml/node_parser.js -s AWS_XML | uglifyjs -o dist/aws-xml.js
 rm -rf node_modules
 cd ../../..
