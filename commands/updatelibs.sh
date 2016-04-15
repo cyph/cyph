@@ -9,6 +9,13 @@ rm -rf shared/lib shared/cryptolib
 mkdir shared/lib shared/cryptolib
 cd shared/lib
 
+mkdir aws-xml
+cd aws-xml
+npm install --save xml2js aws-sdk
+browserify node_modules/aws-sdk/lib/xml/node_parser.js -s AWS_XML | uglifyjs -o ../aws-xml.js
+cd ..
+rm -rf aws-xml
+
 jspm registry config github
 jspm init -y
 jspm dl-loader -y typescript
@@ -45,13 +52,6 @@ npm install
 node tools/build.js :common
 rm -rf node_modules
 cd ../../../..
-
-mkdir aws-xml
-cd aws-xml
-npm install --save xml2js aws-sdk
-browserify node_modules/aws-sdk/lib/xml/node_parser.js -s AWS_XML | uglifyjs -o ../aws-xml.js
-cd ..
-rm -rf aws-xml
 
 rm -rf typings typings.json
 typings install --ambient --save \
