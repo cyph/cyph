@@ -46,14 +46,6 @@ node tools/build.js :common
 rm -rf node_modules
 cd ../../../..
 
-cd jspm_packages/npm/rxjs@*
-sed -i 's/.*"ghooks": ".*//' package.json
-npm install
-npm run build_global
-mv dist/cjs/* ./
-rm -rf node_modules
-cd ../../..
-
 mkdir aws-xml
 cd aws-xml
 npm install --save xml2js aws-sdk
