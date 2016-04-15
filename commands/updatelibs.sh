@@ -54,11 +54,12 @@ mv dist/cjs/* ./
 rm -rf node_modules
 cd ../../..
 
-cd jspm_packages/npm/aws-sdk@*
-npm install --save xml2js xmlbuilder
-browserify lib/xml/node_parser.js -s AWS_XML | uglifyjs -o dist/aws-xml.js
-rm -rf node_modules
-cd ../../..
+mkdir aws-xml
+cd aws-xml
+npm install --save xml2js aws-sdk
+browserify node_modules/aws-sdk/lib/xml/node_parser.js -s AWS_XML | uglifyjs -o ../aws-xml.js
+cd ..
+rm -rf aws-xml
 
 rm -rf typings typings.json
 typings install --ambient --save \
