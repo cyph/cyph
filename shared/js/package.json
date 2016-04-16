@@ -1,0 +1,40 @@
+{
+  "jspm": {
+    "directories": {
+      "packages": "../lib/js"
+    },
+    "dependencies": {
+      "angular": "github:angular/bower-angular@^1.5.4",
+      "angular-material": "github:angular/bower-material@^1.0.7",
+      "angular2": "npm:angular2@^2.0.0-beta.15",
+      "animate.css": "npm:animate.css@^3.5.1",
+      "aws-sdk": "npm:aws-sdk@^2.3.3",
+      "base64": "npm:base64@^2.1.0",
+      "crypto/cryptojs": "github:sytelus/cryptojs@^3.1.2",
+      "crypto/isaac": "github:rubycon/isaac.js@master",
+      "crypto/libsodium": "github:jedisct1/libsodium.js@^0.3.0",
+      "crypto/ntru": "github:cyph/ntru.js@master",
+      "dompurify": "npm:dompurify@^0.7.4",
+      "es5-shim": "github:es-shims/es5-shim@^4.5.8",
+      "es6-shim": "github:es-shims/es6-shim@^0.35.0",
+      "isagalaev/highlight.js": "github:isagalaev/highlight.js@^9.3.0",
+      "jquery": "npm:jquery@^2.2.3",
+      "jquery-legacy": "npm:jquery@^1",
+      "julianlam/tabIndent.js": "github:julianlam/tabIndent.js@master",
+      "magnific-popup": "npm:magnific-popup@^1.1.0",
+      "markdown-it": "npm:markdown-it@^6.0.1",
+      "markdown-it-emoji": "npm:markdown-it-emoji@^1.1.1",
+      "markdown-it-sup": "npm:markdown-it-sup@^1.0.0",
+      "morr/jquery.appear": "github:morr/jquery.appear@^0.3.6",
+      "nanoscroller": "npm:nanoscroller@^0.8.7",
+      "rxjs": "npm:rxjs@^5.0.0-beta.6",
+      "siddii/angular-timer": "github:siddii/angular-timer@1.2.1",
+      "twitter/twemoji": "github:twitter/twemoji@1.3.2",
+      "unsemantic": "npm:unsemantic@^1.0.1",
+      "wow": "npm:wow@^0.0.6"
+    },
+    "devDependencies": {
+      "typescript": "npm:typescript@^1.6.2"
+    }
+  }
+}
