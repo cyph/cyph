@@ -5,9 +5,9 @@ source ~/.bashrc
 dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd)/..
 
-rm -rf shared/lib shared/cryptolib
-mkdir shared/lib shared/cryptolib
-cd shared/lib
+rm -rf shared/lib
+mkdir -p shared/lib/js
+cd shared/lib/js
 
 mkdir aws-xml
 cd aws-xml
@@ -16,9 +16,41 @@ browserify node_modules/aws-sdk/lib/xml/node_parser.js -s AWS_XML | uglifyjs -o 
 cd ..
 rm -rf aws-xml
 
-jspm registry config github
-jspm init -y
-jspm dl-loader -y typescript
+cd ../../js
+expect -c " \
+	spawn jspm registry config github; \
+	expect \"GitHub credentials\"; \
+	send \"yes\n\"; \
+	expect \"GitHub username\"; \
+	send \"$(head -n1 ~/.cyph/github.token)\n\"; \
+	expect \"GitHub password\"; \
+	send \"$(tail -n1 ~/.cyph/github.token)\n\"; \
+	expect \"test these credentials\"; \
+	send \"yes\n\"; \
+	interact; \
+"
+expect -c ' \
+	spawn jspm init; \
+	expect "Package.json file does not exist"; \
+	send "yes\n"; \
+	expect "prefix the jspm package.json"; \
+	send "yes\n"; \
+	expect "server baseURL"; \
+	send "./\n"; \
+	expect "jspm packages folder"; \
+	send "../lib/js\n"; \
+	expect "config file path"; \
+	send "./config.js\n"; \
+	expect "create it?"; \
+	send "yes\n"; \
+	expect "Enter client baseURL"; \
+	send "/js/\n"; \
+	expect "transpiler"; \
+	send "yes\n"; \
+	expect "transpiler"; \
+	send "typescript\n"; \
+	interact; \
+'
 
 jspm install -y \
 	angular \
@@ -44,14 +76,22 @@ jspm install -y \
 	npm:aws-sdk \
 	npm:rxjs \
 	es5-shim \
-	es6-shim
+	es6-shim \
+	crypto/libsodium=github:jedisct1/libsodium.js \
+	crypto/ntru=github:cyph/ntru.js \
+	crypto/isaac=github:rubycon/isaac.js \
+	crypto/cryptojs=cryptojs
 
-cd jspm_packages/github/isagalaev/highlight.js@*
+cd ../lib/js
+
+cd github/isagalaev/highlight.js@*
 sed -i 's/^build$//' .gitignore
 npm install
 node tools/build.js :common
 rm -rf node_modules
-cd ../../../..
+cd ../../..
+
+cd ..
 
 rm -rf typings typings.json
 typings install --ambient --save \
@@ -75,15 +115,6 @@ wget "https://apis.google.com$(cat google/plusone.js | grep -oP '/_/scs/.*?"' | 
 mkdir facebook ; wget https://connect.facebook.net/en_US/sdk.js -O facebook/sdk.js
 mkdir disqus ; wget https://cyph.disqus.com/embed.js -O disqus/embed.js
 cd ..
-
-cd ../cryptolib
-
-jspm install -y \
-	github:jedisct1/libsodium.js \
-	github:rubycon/isaac.js \
-	github:cyph/ntru.js
-
-wget https://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/hmac-sha256.js
 
 
 cd ../../default

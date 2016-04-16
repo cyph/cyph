@@ -285,9 +285,10 @@ fi
 
 find . -name '*.bak' | xargs rm
 
-# Doesn't hurt, legally
 if [ ! $test ] ; then
-	find . -type d -name cryptolib | xargs rm -rf
+	cd shared/lib/js
+	grep 'crypto/' ../../js/package.json | perl -pe 's/.*"(.*?):(.*?)".*/\1\/\2/g' | xargs rm -rf
+	cd ../../..
 fi
 
 
