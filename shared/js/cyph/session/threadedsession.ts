@@ -101,7 +101,7 @@ export class ThreadedSession implements ISession {
 			importScripts('/lib/js/crypto/libsodium/dist/browsers-sumo/combined/sodium.min.js');
 			importScripts('/lib/js/crypto/ntru/dist/ntru.js');
 
-			importScripts('/lib/js/aws-sdk/dist/aws-sdk.min.js');
+			importScripts('/lib/js/aws/aws-sdk-js/dist/aws-sdk.min.js');
 			importScripts('/lib/js/aws-xml.js');
 			self['AWS'].XML.Parser	= self['AWS_XML'];
 

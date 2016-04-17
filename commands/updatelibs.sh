@@ -97,7 +97,7 @@ jspm install -y \
 	github:matthieua/wow \
 	github:morr/jquery.appear \
 	github:julianlam/tabIndent.js \
-	npm:aws-sdk \
+	github:aws/aws-sdk-js \
 	npm:rxjs \
 	es5-shim \
 	es6-shim \
