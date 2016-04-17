@@ -21,13 +21,13 @@ if (Cyph.Env.isIEOrEdge) {
 
 
 angular.
-	module('Cyph', [
+	module(Cyph.Config.angularConfig.rootModule, [
 		'ngMaterial',
 		Cyph.UI.Directives.Chat.title,
 		Cyph.UI.Directives.Markdown.title,
 		Cyph.UI.Directives.SignupForm.title
 	]).
-	controller('CyphController', [
+	controller(Cyph.Config.angularConfig.rootController, [
 		'$scope',
 		'$mdDialog',
 		'$mdToast',
@@ -51,6 +51,9 @@ angular.
 		})
 	])
 ;
+
+Cyph.UI.Elements.body.attr('ng-controller', Cyph.Config.angularConfig.rootController);
+angular.bootstrap(document, [Cyph.Config.angularConfig.rootModule]);
 
 
 /* Redirect to Onion site when on Tor */

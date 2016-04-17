@@ -14,7 +14,7 @@ import * as Cyph from 'cyph/cyph';
 
 
 angular.
-	module('Cyph', [
+	module(Cyph.Config.angularConfig.rootModule, [
 		'ngMaterial',
 		'timer',
 		Cyph.UI.Directives.Chat.title,
@@ -24,7 +24,7 @@ angular.
 		Cyph.UI.Directives.SignupForm.title,
 		Cyph.UI.Directives.Static.title
 	]).
-	controller('CyphController', [
+	controller(Cyph.Config.angularConfig.rootController, [
 		'$scope',
 		'$mdDialog',
 		'$mdToast',
@@ -55,3 +55,6 @@ angular.
 		$compileProvider => $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|sms):/)
 	])
 ;
+
+Cyph.UI.Elements.body.attr('ng-controller', Cyph.Config.angularConfig.rootController);
+angular.bootstrap(document, [Cyph.Config.angularConfig.rootModule]);
