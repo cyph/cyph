@@ -28,9 +28,9 @@ System.config({
     "jquery-legacy": "npm:jquery@1.12.3",
     "julianlam/tabIndent.js": "github:julianlam/tabIndent.js@master",
     "magnific-popup": "npm:magnific-popup@1.1.0",
-    "markdown-it": "npm:markdown-it@6.0.1",
-    "markdown-it-emoji": "npm:markdown-it-emoji@1.1.1",
-    "markdown-it-sup": "npm:markdown-it-sup@1.0.0",
+    "markdown-it/markdown-it": "github:markdown-it/markdown-it@6.0.1",
+    "markdown-it/markdown-it-emoji": "github:markdown-it/markdown-it-emoji@1.1.1",
+    "markdown-it/markdown-it-sup": "github:markdown-it/markdown-it-sup@1.0.0",
     "matthieua/wow": "github:matthieua/wow@1.1.2",
     "morr/jquery.appear": "github:morr/jquery.appear@0.3.6",
     "nanoscroller": "npm:nanoscroller@0.8.7",
@@ -123,13 +123,6 @@ System.config({
       "reflect-metadata": "npm:reflect-metadata@0.1.2",
       "rxjs": "npm:rxjs@5.0.0-beta.6",
       "zone.js": "npm:zone.js@0.6.11"
-    },
-    "npm:argparse@1.0.7": {
-      "fs": "github:jspm/nodelibs-fs@0.1.2",
-      "path": "github:jspm/nodelibs-path@0.1.0",
-      "process": "github:jspm/nodelibs-process@0.1.2",
-      "sprintf-js": "npm:sprintf-js@1.0.3",
-      "util": "github:jspm/nodelibs-util@0.1.0"
     },
     "npm:asn1.js@4.5.2": {
       "assert": "github:jspm/nodelibs-assert@0.1.0",
@@ -311,9 +304,6 @@ System.config({
       "inherits": "npm:inherits@2.0.1",
       "systemjs-json": "github:systemjs/plugin-json@0.1.0"
     },
-    "npm:entities@1.1.1": {
-      "systemjs-json": "github:systemjs/plugin-json@0.1.0"
-    },
     "npm:evp_bytestokey@1.0.0": {
       "buffer": "github:jspm/nodelibs-buffer@0.1.0",
       "create-hash": "npm:create-hash@1.1.2",
@@ -334,29 +324,11 @@ System.config({
     "npm:jquery@1.12.3": {
       "process": "github:jspm/nodelibs-process@0.1.2"
     },
-    "npm:linkify-it@1.2.0": {
-      "uc.micro": "npm:uc.micro@1.0.0"
-    },
     "npm:lodash@3.5.0": {
       "process": "github:jspm/nodelibs-process@0.1.2"
     },
     "npm:magnific-popup@1.1.0": {
       "process": "github:jspm/nodelibs-process@0.1.2"
-    },
-    "npm:markdown-it-emoji@1.1.1": {
-      "systemjs-json": "github:systemjs/plugin-json@0.1.0"
-    },
-    "npm:markdown-it@6.0.1": {
-      "argparse": "npm:argparse@1.0.7",
-      "buffer": "github:jspm/nodelibs-buffer@0.1.0",
-      "entities": "npm:entities@1.1.1",
-      "fs": "github:jspm/nodelibs-fs@0.1.2",
-      "linkify-it": "npm:linkify-it@1.2.0",
-      "mdurl": "npm:mdurl@1.0.1",
-      "process": "github:jspm/nodelibs-process@0.1.2",
-      "punycode": "github:jspm/nodelibs-punycode@0.1.0",
-      "systemjs-json": "github:systemjs/plugin-json@0.1.0",
-      "uc.micro": "npm:uc.micro@1.0.0"
     },
     "npm:miller-rabin@4.0.0": {
       "bn.js": "npm:bn.js@4.11.3",
