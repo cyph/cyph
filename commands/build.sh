@@ -8,11 +8,14 @@ originalDir="$(pwd)"
 
 ./commands/docs.sh
 
-tsargs='--emitDecoratorMetadata --experimentalDecorators -t ES5 --moduleResolution classic'
+tsargs="$(node -e '
+	const compilerOptions = JSON.parse('"'$(cat shared/js/tsconfig.json | tr '\n' ' ')'"').compilerOptions;
+	console.log(Object.keys(compilerOptions).map(k => `--${k} ${compilerOptions[k]}`).join(" "));
+')"
 
 tsfiles="$( \
 	{ cat */*.html $(find cyph.com/blog -name '*.html') | grep "<script.*'/js/" & grep -ro "importScripts('/js/.*)" shared/js; } | \
-		perl -pe "s/.*?'\/(js\/.*)\.js.*/\1/g" | \
+		perl -pe "s/.*?'\/js\/(.*)\.js.*/\1/g" | \
 		sort | \
 		uniq \
 )"
@@ -31,9 +34,18 @@ scssfiles="$(find css -name '*.scss' | grep -v bourbon/ | perl -pe 's/(.*)\.scss
 
 
 if [ "${1}" == '--watch' ] ; then
-	for file in $tsfiles ; do
-		tsc $tsargs --sourceMap $file.ts --outFile $file.js --watch &
-	done
+	cd shared/js
+	tsbuild () {
+		while true ; do
+			for file in $tsfiles ; do
+				tsc $tsargs --sourceMap $file.ts --outFile $file.js
+				jspm bundle-sfx $file $file.js
+			done
+			sleep 30
+		done
+	}
+	tsbuild &
+	cd ..
 
 	# sass --watch isn't working for some reason
 	while true ; do
@@ -51,6 +63,7 @@ else
 
 	for file in $tsfiles ; do
 		output="${output}$(tsc $tsargs $file.ts --outFile $file.js)"
+		jspm bundle-sfx $file $file.js
 	done
 
 	echo -e "${output}"
