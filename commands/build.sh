@@ -29,7 +29,11 @@ tsargs="$(node -e '
 ')"
 
 tsfiles="$( \
-	{ cat */*.html $(find cyph.com/blog -name '*.html') | grep "<script.*'/js/" & grep -ro "importScripts('/js/.*)" shared/js; } | \
+	{ \
+		cat */*.html $(find cyph.com/blog -name '*.html') | \
+		grep "<script.*'/js/" & \
+		grep -ro "importScripts('/js/.*)" shared/js; \
+	} | \
 		perl -pe "s/.*?'\/js\/(.*)\.js.*/\1/g" | \
 		sort | \
 		uniq \
@@ -49,7 +53,7 @@ scssfiles="$(find css -name '*.scss' | grep -v bourbon/ | perl -pe 's/(.*)\.scss
 
 
 if [ "${1}" == '--watch' ] ; then
-	cd shared/js
+	cd js
 	tsbuild () {
 		while true ; do
 			for file in $tsfiles ; do
@@ -60,7 +64,7 @@ if [ "${1}" == '--watch' ] ; then
 		done
 	}
 	tsbuild &
-	cd ../..
+	cd ..
 
 	# sass --watch isn't working for some reason
 	while true ; do
@@ -76,12 +80,12 @@ else
 		output="${output}$(sass $file.scss $file.css)"
 	done
 
-	cd shared/js
+	cd js
 	for file in $tsfiles ; do
 		output="${output}$(tsc $tsargs $file.ts --outFile $file.js)"
 		jspm bundle-sfx $file $file.js
 	done
-	cd ../..
+	cd ..
 
 	echo -e "${output}"
 
