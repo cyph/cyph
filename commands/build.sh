@@ -9,8 +9,23 @@ originalDir="$(pwd)"
 ./commands/docs.sh
 
 tsargs="$(node -e '
-	const compilerOptions = JSON.parse('"'$(cat shared/js/tsconfig.json | tr '\n' ' ')'"').compilerOptions;
-	console.log(Object.keys(compilerOptions).map(k => `--${k} ${compilerOptions[k]}`).join(" "));
+	const compilerOptions = JSON.parse(
+		'"'$(cat shared/js/tsconfig.json | tr '\n' ' ')'"'
+	).compilerOptions;
+
+	console.log(Object.keys(compilerOptions).map(k => {
+		const v = compilerOptions[k];
+		var argValue = "";
+
+		if (v === false) {
+			return;
+		}
+		else if (v !== true) {
+			argValue = " " + v.toString();
+		}
+
+		return `--${k}${argValue}`;
+	}).join(" "));
 ')"
 
 tsfiles="$( \
@@ -45,7 +60,7 @@ if [ "${1}" == '--watch' ] ; then
 		done
 	}
 	tsbuild &
-	cd ..
+	cd ../..
 
 	# sass --watch isn't working for some reason
 	while true ; do
@@ -61,10 +76,12 @@ else
 		output="${output}$(sass $file.scss $file.css)"
 	done
 
+	cd shared/js
 	for file in $tsfiles ; do
 		output="${output}$(tsc $tsargs $file.ts --outFile $file.js)"
 		jspm bundle-sfx $file $file.js
 	done
+	cd ../..
 
 	echo -e "${output}"
 

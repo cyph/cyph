@@ -3,6 +3,8 @@
  */
 
 
+/// <reference path="../../lib/typings/main.d.ts" />
+
 import {IWebSign} from 'typings/iwebsign';
 
 
