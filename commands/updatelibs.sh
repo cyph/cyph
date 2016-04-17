@@ -81,10 +81,10 @@ jspm install -y \
 	angular-aria \
 	angular-animate \
 	npm:dompurify \
-	npm:markdown-it \
-	npm:markdown-it-sup \
+	github:markdown-it/markdown-it \
+	github:markdown-it/markdown-it-sup \
 	github:twitter/twemoji@1.3.2 \
-	npm:markdown-it-emoji \
+	github:markdown-it/markdown-it-emoji \
 	github:isagalaev/highlight.js \
 	github:siddii/angular-timer@1.2.1 \
 	npm:animate.css \
