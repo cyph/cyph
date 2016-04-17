@@ -39,6 +39,21 @@ tsfiles="$( \
 		uniq \
 )"
 
+jsbundle () {
+	# Temporary workaround for jspm bug
+	if [ "$file" == "global/base" ] ; then
+		cat $file.js | \
+			tr '\n' '☁' | \
+			perl -pe 's/.*(var IS_WEB.*?;).*execute:.*?\{(.*?)exports.*/\1\n\2/g' | \
+			tr '☁' '\n' | \
+			perl -pe 's/^ {12}//g' \
+		> $file.js.new
+		mv $file.js.new $file.js
+	else
+		jspm bundle-sfx $file $file.js
+	fi
+}
+
 cd $dir
 
 if [ -f build.sh ] ; then
@@ -58,7 +73,7 @@ if [ "${1}" == '--watch' ] ; then
 		while true ; do
 			for file in $tsfiles ; do
 				tsc $tsargs --sourceMap $file.ts --outFile $file.js
-				jspm bundle-sfx $file $file.js
+				jsbundle
 			done
 			sleep 30
 		done
@@ -83,7 +98,7 @@ else
 	cd js
 	for file in $tsfiles ; do
 		output="${output}$(tsc $tsargs $file.ts --outFile $file.js)"
-		jspm bundle-sfx $file $file.js
+		jsbundle
 	done
 	cd ..
 
