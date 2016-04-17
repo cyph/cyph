@@ -2,6 +2,7 @@ import {CastleCore} from 'castlecore';
 import {ICastle} from 'icastle';
 import {CastleEvents, Events, State, Users} from 'session/enums';
 import {ISession} from 'session/isession';
+import {Sodium} from 'global/base';
 
 
 export class Castle implements ICastle {

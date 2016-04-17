@@ -1,6 +1,7 @@
 import {Env} from 'env';
 import {EventManager} from 'eventmanager';
 import {Thread} from 'thread';
+import {locationData, WebSign} from 'global/base';
 
 
 /**

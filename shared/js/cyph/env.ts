@@ -1,6 +1,7 @@
 import {Config} from 'config';
 import {EnvDeploy} from 'envdeploy';
 import {Util} from 'util';
+import {locationData, navigatorData, IS_WEB} from 'global/base';
 
 
 /**

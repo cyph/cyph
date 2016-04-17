@@ -6,11 +6,12 @@
 import {IWebSign} from 'typings/iwebsign';
 
 
-/** @ignore */
-const IS_WEB: boolean	= typeof self['IS_WEB'] !== 'undefined' ?
+self['IS_WEB']	= typeof self['IS_WEB'] !== 'undefined' ?
 	self['IS_WEB'] :
 	typeof window === 'object'
 ;
+/** @ignore */
+const IS_WEB: boolean	= self['IS_WEB'];
 
 for (const k of ['window', 'document']) {
 	if (!(k in self)) {
@@ -28,9 +29,6 @@ for (const k of [
 		self[k]	= null;
 	}
 }
-
-/* Angular 2 */
-self['Angular2']	= self['ng'];
 
 
 /* Fix non-compliant crypto implementations */
@@ -97,3 +95,17 @@ const Ntru: any		= self['ntru'];
  * @global Sodium library.
  */
 const Sodium: any	= self['sodium'];
+
+
+export {
+	locationData,
+	navigatorData,
+	onthreadmessage,
+	FontsCSS,
+	Ntru,
+	Sodium,
+	Translations,
+	WebSign,
+	IS_WEB
+};
+

@@ -2,6 +2,7 @@ import {Config} from 'config';
 import {Env} from 'env';
 import {EventManager} from 'eventmanager';
 import {Util} from 'util';
+import {locationData, onthreadmessage} from 'global/base';
 
 
 /**

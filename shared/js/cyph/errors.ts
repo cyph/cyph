@@ -1,6 +1,7 @@
 import {Analytics} from 'analytics';
 import {Env} from 'env';
 import {Util} from 'util';
+import {locationData, WebSign} from 'global/base';
 
 
 /**

@@ -1,3 +1,6 @@
+import {Ntru, Sodium} from 'global/base';
+
+
 /**
  * The Castle encryption protocol. This version supports an OTR-like
  * feature set, with group/async/persistence coming later.

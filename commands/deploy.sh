@@ -144,7 +144,7 @@ for d in cyph.com cyph.im ; do
 	else
 		cd translations
 
-		echo "Translations = { \
+		echo "self['Translations'] = { \
 			$(echo "$( \
 				ls | \
 				sed 's/\.json//' | \
@@ -157,7 +157,7 @@ for d in cyph.com cyph.im ; do
 
 		cd ../$d
 
-		echo "FontsCSS = \`$(scss css/fonts.scss)\`;" >> js/preload/fonts.ts
+		echo "self['FontsCSS'] = \`$(scss css/fonts.scss)\`;" >> js/preload/fonts.ts
 	fi
 
 	../commands/build.sh --prod || exit;

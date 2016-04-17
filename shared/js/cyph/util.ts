@@ -1,6 +1,7 @@
 import {Config} from 'config';
 import {Env} from 'env';
 import {Thread} from 'thread';
+import {Translations} from 'global/base';
 
 
 /**

@@ -10,6 +10,7 @@ import {Timer} from 'cyph/timer';
 import {Util} from 'cyph/util';
 import {WebRTC} from 'cyph/webrtc';
 import * as Session from 'session/session';
+import {Sodium} from 'global/base';
 
 
 export {
