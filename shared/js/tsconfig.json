@@ -1,8 +1,10 @@
 {
 	"compileOnSave": true,
 	"compilerOptions": {
-		 "experimentalDecorators": true,
 		 "target": "es5",
-		 "moduleResolution": "classic"
+		 "module": "system",
+		 "moduleResolution": "classic",
+		 "emitDecoratorMetadata": true,
+		 "experimentalDecorators": true
 	}
 }

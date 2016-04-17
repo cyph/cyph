@@ -529,5 +529,22 @@ System.config({
       "buffer": "github:jspm/nodelibs-buffer@0.1.0",
       "process": "github:jspm/nodelibs-process@0.1.2"
     }
+  },
+
+  typescriptOptions: {
+    "tsconfig": true
+  },
+
+  "meta": {
+    "*.ts": {
+      "loader": "ts"
+    }
+  },
+
+  packages: {
+    "cyph.im": {
+      "main": "main",
+      "defaultExtension": "ts"
+    }
   }
 });

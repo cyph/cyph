@@ -52,6 +52,27 @@ expect -c ' \
 	interact; \
 '
 
+echo "$(cat config.js | tr '\n' '☁' | rev | cut -c 6- | rev | tr '☁' '\n')"',
+
+  typescriptOptions: {
+    "tsconfig": true
+  },
+
+  "meta": {
+    "*.ts": {
+      "loader": "ts"
+    }
+  },
+
+  packages: {
+    "cyph.im": {
+      "main": "main",
+      "defaultExtension": "ts"
+    }
+  }
+});' > config.js.new
+mv config.js.new config.js
+
 jspm install -y \
 	angular \
 	angular2 \
