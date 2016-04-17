@@ -9,15 +9,17 @@ System.config({
 
   map: {
     "angular": "github:angular/bower-angular@1.5.4",
+    "angular-animate": "github:angular/bower-angular-animate@1.5.3",
+    "angular-aria": "github:angular/bower-angular-aria@1.5.3",
     "angular-material": "github:angular/bower-material@1.0.7",
     "angular2": "npm:angular2@2.0.0-beta.15",
     "animate.css": "npm:animate.css@3.5.1",
     "aws-sdk": "npm:aws-sdk@2.3.3",
-    "base64": "npm:base64@2.1.0",
     "crypto/cryptojs": "github:sytelus/cryptojs@3.1.2",
     "crypto/isaac": "github:rubycon/isaac.js@master",
     "crypto/libsodium": "github:jedisct1/libsodium.js@0.3.0",
     "crypto/ntru": "github:cyph/ntru.js@master",
+    "davidchambers/base64.js": "github:davidchambers/base64.js@0.3.0",
     "dompurify": "npm:dompurify@0.7.4",
     "es5-shim": "github:es-shims/es5-shim@4.5.8",
     "es6-shim": "github:es-shims/es6-shim@0.35.0",
@@ -29,6 +31,7 @@ System.config({
     "markdown-it": "npm:markdown-it@6.0.1",
     "markdown-it-emoji": "npm:markdown-it-emoji@1.1.1",
     "markdown-it-sup": "npm:markdown-it-sup@1.0.0",
+    "matthieua/wow": "github:matthieua/wow@1.1.2",
     "morr/jquery.appear": "github:morr/jquery.appear@0.3.6",
     "nanoscroller": "npm:nanoscroller@0.8.7",
     "rxjs": "npm:rxjs@5.0.0-beta.6",
@@ -36,7 +39,6 @@ System.config({
     "twitter/twemoji": "github:twitter/twemoji@1.3.2",
     "typescript": "npm:typescript@1.8.10",
     "unsemantic": "npm:unsemantic@1.0.1",
-    "wow": "npm:wow@0.0.6",
     "github:angular/bower-angular-animate@1.5.3": {
       "angular": "github:angular/bower-angular@1.5.4"
     },
@@ -317,14 +319,6 @@ System.config({
       "create-hash": "npm:create-hash@1.1.2",
       "crypto": "github:jspm/nodelibs-crypto@0.1.0"
     },
-    "npm:filed@0.0.7": {
-      "crypto": "github:jspm/nodelibs-crypto@0.1.0",
-      "fs": "github:jspm/nodelibs-fs@0.1.2",
-      "path": "github:jspm/nodelibs-path@0.1.0",
-      "process": "github:jspm/nodelibs-process@0.1.2",
-      "stream": "github:jspm/nodelibs-stream@0.1.0",
-      "util": "github:jspm/nodelibs-util@0.1.0"
-    },
     "npm:hash.js@1.0.3": {
       "inherits": "npm:inherits@2.0.1"
     },
@@ -367,11 +361,6 @@ System.config({
     "npm:miller-rabin@4.0.0": {
       "bn.js": "npm:bn.js@4.11.3",
       "brorand": "npm:brorand@1.0.5"
-    },
-    "npm:mime@1.2.7": {
-      "assert": "github:jspm/nodelibs-assert@0.1.0",
-      "fs": "github:jspm/nodelibs-fs@0.1.2",
-      "path": "github:jspm/nodelibs-path@0.1.0"
     },
     "npm:nanoscroller@0.8.7": {
       "css": "npm:css@2.2.1",
@@ -501,18 +490,6 @@ System.config({
     },
     "npm:vm-browserify@0.0.4": {
       "indexof": "npm:indexof@0.0.1"
-    },
-    "npm:wow@0.0.6": {
-      "dns": "github:jspm/nodelibs-dns@0.1.0",
-      "events": "github:jspm/nodelibs-events@0.1.1",
-      "filed": "npm:filed@0.0.7",
-      "fs": "github:jspm/nodelibs-fs@0.1.2",
-      "http": "github:jspm/nodelibs-http@1.7.1",
-      "mime": "npm:mime@1.2.7",
-      "path": "github:jspm/nodelibs-path@0.1.0",
-      "process": "github:jspm/nodelibs-process@0.1.2",
-      "url": "github:jspm/nodelibs-url@0.1.0",
-      "util": "github:jspm/nodelibs-util@0.1.0"
     },
     "npm:xml2js@0.4.15": {
       "events": "github:jspm/nodelibs-events@0.1.1",
