@@ -77,7 +77,7 @@ export class Thread {
 		}
 
 		if (typeof atob === 'undefined' || typeof btoa === 'undefined') {
-			importScripts('/lib/bower_components/base64/base64.min.js');
+			importScripts('/lib/js/davidchambers/base64/base64.min.js');
 		}
 
 		if (typeof crypto === 'undefined' && 'msCrypto' in self) {
@@ -92,7 +92,7 @@ export class Thread {
 				is used to seed a different CSPRNG here */
 
 			let isaac: any;
-			importScripts('/cryptolib/bower_components/isaac.js/isaac.js');
+			importScripts('/lib/js/crypto/isaac/isaac.js');
 			isaac	= isaac || self['isaac'];
 
 			isaac.seed(locals._threadRandomSeed);

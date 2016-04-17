@@ -98,11 +98,11 @@ export class ThreadedSession implements ISession {
 		);
 
 		this.thread	= new Thread((locals: any, importScripts: Function, Cyph: any) => {
-			importScripts('/cryptolib/bower_components/libsodium.js/dist/browsers-sumo/combined/sodium.min.js');
-			importScripts('/cryptolib/bower_components/ntru.js/dist/ntru.js');
+			importScripts('/lib/js/crypto/libsodium/dist/browsers-sumo/combined/sodium.min.js');
+			importScripts('/lib/js/crypto/ntru/dist/ntru.js');
 
-			importScripts('/lib/bower_components/aws-sdk/dist/aws-sdk.min.js');
-			importScripts('/lib/aws-xml.js');
+			importScripts('/lib/js/aws-sdk/dist/aws-sdk.min.js');
+			importScripts('/lib/js/aws-xml.js');
 			self['AWS'].XML.Parser	= self['AWS_XML'];
 
 			importScripts('/js/cyph/session/session.js');

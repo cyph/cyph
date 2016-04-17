@@ -17,6 +17,7 @@ cd ..
 rm -rf aws-xml
 
 cd ../../js
+rm config.js package.json
 expect -c " \
 	spawn jspm registry config github; \
 	expect \"GitHub credentials\"; \
@@ -77,6 +78,8 @@ jspm install -y \
 	angular \
 	angular2 \
 	angular-material \
+	angular-aria \
+	angular-animate \
 	npm:dompurify \
 	npm:markdown-it \
 	npm:markdown-it-sup \
@@ -85,13 +88,13 @@ jspm install -y \
 	github:isagalaev/highlight.js \
 	github:siddii/angular-timer@1.2.1 \
 	npm:animate.css \
-	npm:base64 \
+	github:davidchambers/base64.js \
 	jquery \
 	jquery-legacy=jquery@^1 \
 	npm:magnific-popup \
 	npm:nanoscroller \
 	npm:unsemantic \
-	npm:wow \
+	github:matthieua/wow \
 	github:morr/jquery.appear \
 	github:julianlam/tabIndent.js \
 	npm:aws-sdk \
@@ -103,7 +106,41 @@ jspm install -y \
 	crypto/isaac=github:rubycon/isaac.js \
 	crypto/cryptojs=cryptojs
 
-cd ../lib/js
+cd ..
+
+bash -c "$(node -e '
+	const basePath = "lib/js/";
+	const deps = JSON.parse(
+		'"'$(cat js/package.json | tr '\n' ' ')'"'
+	).jspm.dependencies;
+
+	console.log(Object.keys(deps).map(k => {
+		const path = deps[k].replace(":", "/");
+		const pathBase = path.split("@")[0];
+		const pathSplit = path.split("/");
+		const package = pathSplit.slice(1).join("/").split("@");
+
+		const findVersionCommand =
+			`find ${basePath}${pathSplit[0]} -type d | ` +
+			`grep "${package[0]}" | ` +
+			`perl -pe "s/.*@//g" | ` +
+			`grep -P "${package[1]}" | ` +
+			`grep -v /`
+		;
+
+		const mkdirCommand = k.indexOf("/") > -1 ?
+			`mkdir -p "${basePath}${k.split("/").slice(0, -1).join("/")}" ; ` :
+			``
+		;
+
+		return mkdirCommand +
+			`ln -s "${pathBase}@$(${findVersionCommand})" "${basePath}${k}"`
+		;
+	}).join(" ; "));'
+)"
+
+
+cd lib/js
 
 cd github/isagalaev/highlight.js@*
 sed -i 's/^build$//' .gitignore
