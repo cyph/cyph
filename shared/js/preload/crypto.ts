@@ -44,3 +44,7 @@ try {
 catch (_) {
 	LocalStorage	= <Storage> {};
 }
+
+
+let noop: any;
+export {noop};

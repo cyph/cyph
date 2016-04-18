@@ -93,3 +93,7 @@ $(() => {
 		), 10000);
 	}
 });
+
+
+let noop: any;
+export {noop};

@@ -50,3 +50,7 @@ DOMPurify.addHook('afterSanitizeAttributes', (node: HTMLElement) => {
 
 
 })();
+
+
+let noop: any;
+export {noop};

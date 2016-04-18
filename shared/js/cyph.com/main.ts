@@ -2,8 +2,8 @@
  * @file Entry point of cyph.com.
  */
 
-import 'preload/fakecrypto';
-import 'preload/base';
+import * as PreloadA from 'preload/fakecrypto';
+import * as PreloadB from 'preload/base';
 import {Elements} from 'ui/elements';
 import {UI} from 'ui/ui';
 import * as Cyph from 'cyph/cyph';

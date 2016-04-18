@@ -3,12 +3,12 @@
  */
 
 
-import 'preload/crypto';
-import 'preload/unsupportedbrowsers';
-import 'preload/dompurify';
-import 'preload/fonts';
-import 'preload/translations';
-import 'preload/base';
+import * as PreloadA from 'preload/crypto';
+import * as PreloadB from 'preload/unsupportedbrowsers';
+import * as PreloadC from 'preload/dompurify';
+import * as PreloadD from 'preload/fonts';
+import * as PreloadE from 'preload/translations';
+import * as PreloadF from 'preload/base';
 import {UI} from 'ui/ui';
 import * as Cyph from 'cyph/cyph';
 

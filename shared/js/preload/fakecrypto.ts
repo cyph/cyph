@@ -51,3 +51,7 @@ if (!('sodium' in self)) {
 		randombytes_buf: (n: number) => crypto.getRandomValues(new Uint8Array(n))
 	};
 }
+
+
+let noop: any;
+export {noop};

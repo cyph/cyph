@@ -31,3 +31,7 @@ if (isFirefoxOS || isOldIOS || isStockAndroid) {
 
 
 })();
+
+
+let noop: any;
+export {noop};

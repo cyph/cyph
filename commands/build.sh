@@ -57,7 +57,7 @@ jsbundle () {
 	cp ../lib/js/require.js $file.js.new
 	echo >> $file.js.new
 	cat $file.js >> $file.js.new
-	echo -e "\n\nrequire(['${file}']);\ndefine = null;\nrequire = null;" >> $file.js.new
+	echo -e "\n\nrequire(['${file}']);\ndefine = undefined;\nrequire = undefined;" >> $file.js.new
 	mv $file.js.new $file.js
 }
 

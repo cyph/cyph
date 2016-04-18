@@ -91,12 +91,12 @@ declare let WebSign: IWebSign;
 /**
  * @global NTRU library.
  */
-const Ntru: any		= self['ntru'];
+const Ntru: any		= self['ntru'] || {};
 
 /**
  * @global Sodium library.
  */
-const Sodium: any	= self['sodium'];
+const Sodium: any	= self['sodium'] || {};
 
 
 export {

@@ -153,11 +153,15 @@ for d in cyph.com cyph.im ; do
 				cut -c 2- | \
 				rev \
 			) \
-		};" >> ../$d/js/preload/translations.ts
+		};" > ../$d/js/preload/translations.ts.new
+		cat ../$d/js/preload/translations.ts >> ../$d/js/preload/translations.ts.new
+		mv ../$d/js/preload/translations.ts.new ../$d/js/preload/translations.ts
 
 		cd ../$d
 
-		echo "self['FontsCSS'] = \`$(scss css/fonts.scss)\`;" >> js/preload/fonts.ts
+		echo "self['FontsCSS'] = \`$(scss css/fonts.scss)\`;" > js/preload/fonts.ts.new
+		cat js/preload/fonts.ts >> js/preload/fonts.ts.new
+		mv js/preload/fonts.ts.new js/preload/fonts.ts
 	fi
 
 	../commands/build.sh --prod || exit;
