@@ -25,7 +25,7 @@ export class VirtualKeyboardWatcher {
 		EventManager.on(VirtualKeyboardWatcher.keyboardChangeEvent, handler);
 	}
 
-	private static _	= (() => {
+	private static _	= (() => $(() => {
 		/* http://stackoverflow.com/a/11650231/459881 */
 
 		/* Android */
@@ -39,5 +39,5 @@ export class VirtualKeyboardWatcher {
 			VirtualKeyboardWatcher.trigger(Elements.window.scrollTop() > 0);
 			Elements.window.scrollTop(0);
 		});
-	})();
+	}))();
 }

@@ -112,9 +112,9 @@ export class AWS {
 		});
 	}
 
-	private static _	= (() => {
+	private static _	= (() => $(() => {
 		if (AWS.base) {
 			AWS.base.config	= new AWS.base.Config(Config.awsConfig);
 		}
-	})();
+	}))();
 }

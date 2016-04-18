@@ -25,7 +25,7 @@ export class VisibilityWatcher {
 		EventManager.on(VisibilityWatcher.visibilityChangeEvent, handler);
 	}
 
-	private static _	= (() => {
+	private static _	= (() => $(() => {
 		if (Env.isMobile) {
 			document.addEventListener('visibilitychange', () =>
 				VisibilityWatcher.trigger(!document.hidden)
@@ -37,5 +37,5 @@ export class VisibilityWatcher {
 				blur(() => VisibilityWatcher.trigger(false))
 			;
 		}
-	})();
+	}))();
 }
