@@ -904,7 +904,7 @@ module Cyph {
 										<h2>Business</h2>
 										<md-button
 											type='submit'
-											ng-click='$this.state = 3'
+											ng-click='/pricing#business'
 											aria-label='Business'
 											ng-hide='$this.state !== 1'
 										>
@@ -926,192 +926,40 @@ module Cyph {
 									to use Cyph. To join the waitlist for a Cyph account please enter your
 									email in the form below.
 								</p>
-								<md-input-container>
-									<label translate>email</label>
-									<input type='email' ng-model='$this.data.Email' />
-								</md-input-container>
-								<md-button
-									type='submit'
-									ng-click='this.signup()'
-									aria-label='Register'
-								>
-									Subscribe
-								</md-button>
-							</div>
-
-							<div translate ng-show='$this.state === 3'>
-								<md-icon
-									md-font-set='material-icons'
-									ng-click='$this.state = 1'
-									class='back'
-								>keyboard_backspace</md-icon>
-								<h1 translate>Business Pricing</h1>
-								<div layout='row'>
-									<div layout-padding class='pricing'>
-										<h3>The Basics</h3>
-
-										<div class='features'>
-											<p>
-												The core functionality of Cyph. Registration-optional
-												secure chat and images.
-											</p>
-
-											<div class='feature'>
-												<h4>Instant Messaging</h4>
-												<md-icon
-													md-font-set='material-icons'
-													class='ng-isolate-scope md-default-theme material-icons'
-												>chat</md-icon>
-											</div>
-											<div class='feature'>
-												<h4>Picture Messaging</h4>
-												<md-icon
-													md-font-set='material-icons'
-													class='ng-isolate-scope md-default-theme material-icons'
-												>photo_camera</md-icon>
-											</div>
-
-											<p>All Plans</p>
-											<hr>
-											<div class='feature'>
-												<h4>Unlimited Sessions</h4>
-												<md-icon
-													md-font-set='material-icons'
-													class='ng-isolate-scope md-default-theme material-icons'
-												>all_inclusive</md-icon>
-											</div>
-											<div class='feature'>
-												<h4>Powerful Encryption</h4>
-												<md-icon
-													md-font-set='material-icons'
-													class='ng-isolate-scope md-default-theme material-icons'
-												>security</md-icon>
-											</div>
-										</div>
-
-										<div class='price'>$99/mo</div>
-									</div>
-
-									<div layout-padding class='pricing'>
-										<h3>The Works</h3>
-
-										<div class='features'>
-											<p>
-												The current full functionality of Cyph. Everything in
-												The Basics, <em>plus</em> voice, video, and file transfers.
-											</p>
-
-											<div class='feature'>
-												<h4>The Basics, plus:</h4>
-												<md-icon
-													md-font-set='material-icons'
-													class='ng-isolate-scope md-default-theme material-icons'
-												>reply</md-icon>
-											</div>
-											<div class='feature indent'>
-												<h4>Video Calling</h4>
-												<md-icon
-													md-font-set='material-icons'
-													class='ng-isolate-scope md-default-theme material-icons'
-												>videocam</md-icon>
-											</div>
-											<div class='feature indent'>
-												<h4>Voice Calling</h4>
-												<md-icon
-													md-font-set='material-icons'
-													class='ng-isolate-scope md-default-theme material-icons'
-												>phone</md-icon>
-											</div>
-											<div class='feature indent'>
-												<h4>File Transfers</h4>
-												<md-icon
-													md-font-set='material-icons'
-													class='ng-isolate-scope md-default-theme material-icons'
-												>attach_file</md-icon>
-											</div>
-
-											<p>All Plans</p>
-											<hr>
-											<div class='feature'>
-												<h4>Unlimited Sessions</h4>
-												<md-icon
-													md-font-set='material-icons'
-													class='ng-isolate-scope md-default-theme material-icons'
-												>all_inclusive</md-icon>
-											</div>
-											<div class='feature'>
-												<h4>Powerful Encryption</h4>
-												<md-icon
-													md-font-set='material-icons'
-													class='ng-isolate-scope md-default-theme material-icons'
-												>security</md-icon>
-											</div>
-										</div>
-
-										<div class='price'>$495/mo</div>
-									</div>
-
-									<div layout-padding class='pricing'>
-										<h3>The Works + API</h3>
-
-										<div class='features'>
-											<p>
-												Integrate Cyph encryption into your app, site, or service.
-												Everything in The Works, <em>plus</em> access to our API.
-											<p>
-
-											<div class='feature'>
-												<h4>The Works, plus:</h4>
-												<md-icon
-													md-font-set='material-icons'
-													class='ng-isolate-scope md-default-theme material-icons'
-												>reply_all</md-icon>
-											</div>
-											<div class='feature indent'>
-												<h4>API Access</h4>
-												<md-icon
-													md-font-set='material-icons'
-													class='ng-isolate-scope md-default-theme material-icons'
-												>settings</md-icon>
-											</div>
-
-											<p>All Plans</p>
-											<hr>
-											<div class='feature'>
-												<h4>Unlimited Sessions</h4>
-												<md-icon
-													md-font-set='material-icons'
-													class='ng-isolate-scope md-default-theme material-icons'
-												>all_inclusive</md-icon>
-											</div>
-											<div class='feature'>
-												<h4>Powerful Encryption</h4>
-												<md-icon
-													md-font-set='material-icons'
-													class='ng-isolate-scope md-default-theme material-icons'
-												>security</md-icon>
-											</div>
-										</div>
-
-										<div class='price'>$995/mo</div>
-									</div>
-								</div>
-
+							<div layout='row' class='signup-form'>
 								<div layout='column'>
-									<div layout-padding class='pricing custom'>
-										<h3>Custom</h3>
-
-										<div class='features'>
-											<p>
-												Are you interested in using a subset of Cyph's features?
-												Have a need for a whitelabel, self-hosted, or enterprise solution?
-											</p>
-										</div>
-
-										<div class='price'>Contact Us</div>
-									</div>
+									<md-input-container>
+										<label translate>email</label>
+										<input type='email' ng-model='$this.data.Email' />
+									</md-input-container>
+									<md-input-container>
+										<label translate>password</label>
+										<input type='password' ng-model='$this.data.Password' ng-disabled='true'/>
+									</md-input-container>
+									<md-input-container>
+										<label translate>password confirmation</label>
+										<input type='password' ng-model='$this.data.Password' ng-disabled='true'/>
+									</md-input-container>
+								</div>
+								<div class='buttons' layout='column'>
+									<md-button
+										type='submit'
+										ng-click='this.signup()'
+										aria-label='Register'
+										ng-disabled='true'
+									>
+										Register
+									</md-button>
+									<md-button
+										type='submit'
+										ng-click='this.signup()'
+										aria-label='Waitlist Signup'
+									>
+										Waitlist Signup
+									</md-button>
 								</div>
 							</div>
+						</div>
 						</md-content>
 					</form>
 				`,

@@ -63,7 +63,7 @@
 					<img src='/img/logo.white.horizontal.header.png' alt='Horizontal white Cyph logo with transparent background' />
 				</a>
 
-				<md-button id='new-cyph' aria-label='Start new cyph' class='breathe'>
+				<md-button id='new-cyph' aria-label='Start new cyph' class='breathe' ng-class='{pricing: individual}'>
 					<a translate ng-href='{{Cyph.Env.newCyphUrl}}'>Start new cyph</a>
 				</md-button>
 
@@ -80,7 +80,7 @@
 					<span class='link-wrapper-inner'>
 						<md-button translate href='/blog'>Blog</md-button>
 						<md-button translate href='/faq'>FAQ</md-button>
-						<md-button translate href='/pricing'>Pricing</md-button>
+						<md-button translate href='/pricing' ng-click='individual = false; business = false; telehealth = false;'>Pricing</md-button>
 						<md-button translate href='/login'>Login/Register</md-button>
 					</span>
 				</span>
@@ -154,7 +154,7 @@
 					</md-button>
 				</div>
 				<div>
-					<md-button translate href='/pricing' ng-click='ui.baseButtonClick()'>
+					<md-button translate href='/pricing' ng-click='ui.baseButtonClick(); individual = false; business = false; telehealth = false;'>
 						Pricing
 					</md-button>
 				</div>
@@ -718,13 +718,14 @@
 		</section>
 
 		<section id='pricing' ng-show='ui.state === Cyph.com.UI.States.pricing' class='unisection'>
-			<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' translate>
+			<h1 class='hero-text wow animated fadeInDownBig' ng-hide='individual||business||telehealth' data-wow-delay='420ms' translate>
 				Pricing
 			</h1>
 			<div>
 				<div>
-					<div class='pricing-chart' ng-hide='individual||business||telehealth' layout='row'>
-						<div flex>
+					<div class='pricing-chart animated bounceInDown' ng-hide='individual||business||telehealth' layout='row' layout-sm='column' layout-xs='column'>
+						<div flex='35'></div>
+						<div class='animated flipInX' data-wow-delay='2250ms' flex='10'>
 							<h2>Individual</h2>
 							<md-button
 								type='submit'
@@ -736,7 +737,7 @@
 							</md-button>
 						</div>
 
-						<div flex>
+						<div class='animated flinInX' data-wow-delay='2250ms' flex='10'>
 							<h2>Business</h2>
 							<md-button
 								type='submit'
@@ -748,7 +749,7 @@
 							</md-button>
 						</div>
 
-						<div flex>
+						<div class='animated flipInX' data-wow-delay='2250ms' flex='10'>
 							<h2>Telehealth</h2>
 							<md-button
 								type='submit'
@@ -759,62 +760,280 @@
 								<md-icon md-font-set='material-icons'>video_call</md-icon>
 							</md-button>
 						</div>
+						<div flex='35'></div>
 					</div>
 				</div>
 				</div>
 				
-				<div translate ng-show='individual'>
+				<div translate ng-show='individual' id='individual'>
+					<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='25ms' translate>
+						Individual Pricing
+					</h1>
 					<md-icon
 						md-font-set='material-icons'
 						ng-click='individual = false'
 						class='back'
 					>keyboard_backspace</md-icon>
-					<p>
-						Cyph is abosolutley free for individuals to use!
-					</p>
-					<md-input-container>
-						<label translate>email</label>
-						<input type='email' ng-model='$this.data.Email' />
-					</md-input-container>
-					<md-button
-						type='submit'
-						ng-click='this.signup()'
-						aria-label='Register'
-					>
-						Subscribe
-					</md-button>
+					<div class='pricing-chart individual animated bounceInUp' layout='row' layout-sm='column' layout-xs='column'>
+						<div hide-sm hide-xs flex='45'>
+							<img src='/img/laptop-screenshot.png' class=''></img>
+						</div>
+						<div class='details' layout='column' flex='45'>
+							<h2> $0.00/month! </h2>
+							<p>
+								That's right, Cyph is abosolutley free for individuals to use! We believe that everyone has the right to basic privacy, so while we may offer some premium features for individuals in the future, Cyph will always have an unlimited free tier for individuals!
+							</p>
+							<p>
+								Of course if you really want to give us your money and support Cyph's mission, <a href='/donate'>donations</a> are appreciated!
+							</p>
+							<br />
+							<h4>To get started, just click the big button!</h4> 
+						</div>
+						<div flex='10'></div>
+						<div class='registration-form' layout='column'>
+							<h2>Cyph Account Registration</h2>
+							<div layout='row' layout-sm='column' layout-xs='column' class='signup-form'>
+								<div layout='column'>
+									<md-input-container>
+										<label translate>email</label>
+										<input type='email' ng-model='$this.data.Email' />
+									</md-input-container>
+									<md-input-container>
+										<label translate>password</label>
+										<input type='password' ng-model='$this.data.Password' ng-disabled='true'/>
+									</md-input-container>
+									<md-input-container>
+										<label translate>password confirmation</label>
+										<input type='password' ng-model='$this.data.Password' ng-disabled='true'/>
+									</md-input-container>
+								</div>
+								<div class='buttons' layout='column'>
+									<md-button
+										type='submit'
+										ng-click='this.signup()'
+										aria-label='Register'
+										ng-disabled='true'
+									>
+										Register
+									</md-button>
+									<md-button
+										type='submit'
+										ng-click='this.signup()'
+										aria-label='Waitlist Signup'
+									>
+										Waitlist Signup
+									</md-button>
+								</div>
+							</div>
+						</div>
+						<div flex='5'></div>
+					</div>
 				</div>
 
-				<div translate ng-show='telehealth'>
+				<div translate ng-show='telehealth' id='telehealth'>
+					<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='25ms' translate>
+						Telehealth Pricing
+					</h1>
 					<md-icon
 						md-font-set='material-icons'
 						ng-click='telehealth = false'
-						class='back'
+						class='back animated fadeIn'
 					>keyboard_backspace</md-icon>
-					<p>
-						Talk to yo doctor n shit.
-					</p>
-					<md-input-container>
-						<label translate>email</label>
-						<input type='email' ng-model='$this.data.Email' />
-					</md-input-container>
-					<md-button
-						type='submit'
-						ng-click='this.signup()'
-						aria-label='Register'
-					>
-						Subscribe
-					</md-button>
+					<div class='bg-image' class='animated bounceInLeft' flex='20'>
+						<img src='/img/doctor.png'></img>
+					</div>
+					<div layout='row' class='pricing-chart animated bounceInUp' flex>
+						<div flex></div>
+						<div  class='pricing' >
+							<h3>Single Practioner</h3>
+
+							<div class='features'>
+								<p>
+									Telehealth video conferencing license for an individual practitioner. 
+								</p>
+								<div layout='column'>
+									<div class='feature' layout='row'>
+										<md-icon
+											md-font-set='material-icons'
+											class='ng-isolate-scope md-default-theme material-icons'
+										>videocam</md-icon>
+										<h4>Secure Video Calls</h4>
+									</div>
+									<div class='feature' layout='row'>
+										<md-icon
+											md-font-set='material-icons'
+											class='ng-isolate-scope md-default-theme material-icons'
+										>touch_app</md-icon>
+										<h4>One Click/No Downloads</h4>
+									</div>
+									<div class='feature' layout='row'>
+										<md-icon
+											md-font-set='material-icons'
+											class='ng-isolate-scope md-default-theme material-icons'
+										>attach_file</md-icon>
+										<h4>Secure File Transfers</h4>
+									</div>
+
+									<p>All Plans</p>
+									<hr>
+									<div class='feature' layout='row'>
+										<md-icon
+											md-font-set='material-icons'
+											class='ng-isolate-scope md-default-theme material-icons'
+										>all_inclusive</md-icon>
+										<h4>Unlimited Sessions</h4>
+									</div>
+									<div class='feature' layout='row'>
+										<md-icon
+											md-font-set='material-icons'
+											class='ng-isolate-scope md-default-theme material-icons'
+										>security</md-icon>
+										<h4>Beyond HIPAA Compliant</h4>
+									</div>
+								</div>
+							</div>
+
+							<div class='price'>$399/mo</div>
+						</div>
+
+						<div  class='pricing'>
+							<h3>Small Practice</h3>
+
+							<div class='features'>
+								<p>
+									The current full functionality of Cyph. Everything in
+									The Basics, <em>plus</em> voice, video, and file transfers.
+								</p>
+								<div layout='column'>
+									<div class='feature' layout='row'>
+										<md-icon
+											md-font-set='material-icons'
+											class='ng-isolate-scope md-default-theme material-icons'
+										>reply</md-icon>
+										<h4>Up to 5 Practioners</h4>
+									</div>
+									<div class='feature indent' layout='row'>
+										<md-icon
+											md-font-set='material-icons'
+											class='ng-isolate-scope md-default-theme material-icons'
+										>videocam</md-icon>
+										<h4>Video Calling</h4>
+									</div>
+									<div class='feature indent' layout='row'>
+										<md-icon
+											md-font-set='material-icons'
+											class='ng-isolate-scope md-default-theme material-icons'
+										>phone</md-icon>
+										<h4>Voice Calling</h4>
+									</div>
+									<div class='feature indent' layout='row'>
+										<md-icon
+											md-font-set='material-icons'
+											class='ng-isolate-scope md-default-theme material-icons'
+										>attach_file</md-icon>
+										<h4>File Transfers</h4>
+									</div>
+
+									<p>All Plans</p>
+									<hr>
+									<div class='feature' layout='row'>
+										<md-icon
+											md-font-set='material-icons'
+											class='ng-isolate-scope md-default-theme material-icons'
+										>all_inclusive</md-icon>
+										<h4>Unlimited Sessions</h4>
+									</div>
+									<div class='feature' layout='row'>
+										<md-icon
+											md-font-set='material-icons'
+											class='ng-isolate-scope md-default-theme material-icons'
+										>security</md-icon>
+										<h4>Beyond HIPAA Compliant</h4>
+									</div>
+								</div>
+							</div>
+
+							<div class='price'>$995/month</div>
+						</div>
+
+						<div  class='pricing'>
+							<h3>Large Healthcare Provider</h3>
+
+							<div class='features'>
+								<p>
+									Integrate Cyph encryption into your app, site, or service.
+									Everything in The Works, <em>plus</em> access to our API.
+								<p>
+								<div layout='column'>
+									<div class='feature' layout='row'>
+										<md-icon
+											md-font-set='material-icons'
+											class='ng-isolate-scope md-default-theme material-icons'
+										>reply_all</md-icon>
+										<h4>The Works, plus:</h4>
+									</div>
+									<div class='feature indent' layout='row'>
+										<md-icon
+											md-font-set='material-icons'
+											class='ng-isolate-scope md-default-theme material-icons'
+										>schedule</md-icon>
+										<h4>Paitent Scheduling</h4>
+									</div>
+									<div class='feature indent' layout='row'>
+										<md-icon
+											md-font-set='material-icons'
+											class='ng-isolate-scope md-default-theme material-icons'
+										>credit_card</md-icon>
+										<h4>Payment Processing</h4>
+									</div>
+									<div class='feature indent' layout='row'>
+										<md-icon
+											md-font-set='material-icons'
+											class='ng-isolate-scope md-default-theme material-icons'
+										>settings</md-icon>
+										<h4>API Access</h4>
+									</div>
+									<div class='feature indent' layout='row'>
+											<md-icon
+												md-font-set='material-icons'
+												class='ng-isolate-scope md-default-theme material-icons'
+											>bookmark_border</md-icon>
+										<h4>White Label</h4>
+									</div>
+									<div class='feature indent' layout='row'>
+											<md-icon
+												md-font-set='material-icons'
+												class='ng-isolate-scope md-default-theme material-icons'
+											>edit</md-icon>
+										<h4>Custom Features</h4>
+									</div>
+									<br />
+									<hr>
+								</div>
+							</div>
+
+							<div class='price'>Contact Us</div>
+						</div>
+						<div flex></div>
+					</div>
 				</div>
+			</div>
 				
-				<div class='business' ng-show='business'>
+				<div id='business' ng-show='business'>
+					<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='25ms' translate>
+						Business Pricing
+					</h1>
 					<md-icon
 						md-font-set='material-icons'
 						ng-click='business = false'
-						class='back'
+						class='back animated fadeIn'
 					>keyboard_backspace</md-icon>
-					<div layout='row' class='pricing-chart' flex='100'>
-						<div layout-padding class='pricing'>
+					<div class='bg-image' class='animated bounceInLeft' flex='20'>
+						<img src='/img/business-man.png'></img>
+					</div>
+					<div layout='row' class='pricing-chart animated bounceInUp' flex>
+						<div flex></div>
+						<div  class='pricing'>
 							<h3>The Basics</h3>
 
 							<div class='features'>
@@ -823,43 +1042,43 @@
 									secure chat and images.
 								</p>
 
-								<div class='feature'>
-									<h4>Instant Messaging</h4>
+								<div class='feature' layout='row'>
 									<md-icon
 										md-font-set='material-icons'
 										class='ng-isolate-scope md-default-theme material-icons'
 									>chat</md-icon>
+									<h4>Instant Messaging</h4>
 								</div>
-								<div class='feature'>
-									<h4>Picture Messaging</h4>
+								<div class='feature' layout='row'>
 									<md-icon
 										md-font-set='material-icons'
 										class='ng-isolate-scope md-default-theme material-icons'
 									>photo_camera</md-icon>
+									<h4>Picture Messaging</h4>
 								</div>
 
 								<p>All Plans</p>
 								<hr>
-								<div class='feature'>
-									<h4>Unlimited Sessions</h4>
+								<div class='feature' layout='row'>
 									<md-icon
 										md-font-set='material-icons'
 										class='ng-isolate-scope md-default-theme material-icons'
 									>all_inclusive</md-icon>
+									<h4>Unlimited Sessions</h4>
 								</div>
-								<div class='feature'>
-									<h4>Powerful Encryption</h4>
+								<div class='feature' layout='row'>
 									<md-icon
 										md-font-set='material-icons'
 										class='ng-isolate-scope md-default-theme material-icons'
 									>security</md-icon>
+									<h4>Powerful Encryption</h4>
 								</div>
 							</div>
 
 							<div class='price'>$99/mo</div>
 						</div>
 
-						<div layout-padding class='pricing'>
+						<div  class='pricing'>
 							<h3>The Works</h3>
 
 							<div class='features'>
@@ -868,116 +1087,100 @@
 									The Basics, <em>plus</em> voice, video, and file transfers.
 								</p>
 
-								<div class='feature'>
-									<h4>The Basics, plus:</h4>
+								<div class='feature' layout='row'>
 									<md-icon
 										md-font-set='material-icons'
 										class='ng-isolate-scope md-default-theme material-icons'
 									>reply</md-icon>
+									<h4>The Basics, plus:</h4>
 								</div>
-								<div class='feature indent'>
-									<h4>Video Calling</h4>
+								<div class='feature indent' layout='row'>
 									<md-icon
 										md-font-set='material-icons'
 										class='ng-isolate-scope md-default-theme material-icons'
 									>videocam</md-icon>
+									<h4>Video Calling</h4>
 								</div>
-								<div class='feature indent'>
-									<h4>Voice Calling</h4>
+								<div class='feature indent' layout='row'>
 									<md-icon
 										md-font-set='material-icons'
 										class='ng-isolate-scope md-default-theme material-icons'
 									>phone</md-icon>
+									<h4>Voice Calling</h4>
 								</div>
-								<div class='feature indent'>
-									<h4>File Transfers</h4>
+								<div class='feature indent' layout='row'>
 									<md-icon
 										md-font-set='material-icons'
 										class='ng-isolate-scope md-default-theme material-icons'
 									>attach_file</md-icon>
+									<h4>File Transfers</h4>
 								</div>
 
 								<p>All Plans</p>
 								<hr>
-								<div class='feature'>
-									<h4>Unlimited Sessions</h4>
+								<div class='feature' layout='row'>
 									<md-icon
 										md-font-set='material-icons'
 										class='ng-isolate-scope md-default-theme material-icons'
 									>all_inclusive</md-icon>
+									<h4>Unlimited Sessions</h4>
 								</div>
-								<div class='feature'>
-									<h4>Powerful Encryption</h4>
+								<div class='feature' layout='row'>
 									<md-icon
 										md-font-set='material-icons'
 										class='ng-isolate-scope md-default-theme material-icons'
 									>security</md-icon>
+									<h4>Powerful Encryption</h4>
 								</div>
 							</div>
 
 							<div class='price'>$495/mo</div>
 						</div>
 
-						<div layout-padding class='pricing'>
-							<h3>The Works + API</h3>
-
-							<div class='features'>
-								<p>
-									Integrate Cyph encryption into your app, site, or service.
-									Everything in The Works, <em>plus</em> access to our API.
-								<p>
-
-								<div class='feature'>
-									<h4>The Works, plus:</h4>
-									<md-icon
-										md-font-set='material-icons'
-										class='ng-isolate-scope md-default-theme material-icons'
-									>reply_all</md-icon>
-								</div>
-								<div class='feature indent'>
-									<h4>API Access</h4>
-									<md-icon
-										md-font-set='material-icons'
-										class='ng-isolate-scope md-default-theme material-icons'
-									>settings</md-icon>
-								</div>
-
-								<p>All Plans</p>
-								<hr>
-								<div class='feature'>
-									<h4>Unlimited Sessions</h4>
-									<md-icon
-										md-font-set='material-icons'
-										class='ng-isolate-scope md-default-theme material-icons'
-									>all_inclusive</md-icon>
-								</div>
-								<div class='feature'>
-									<h4>Powerful Encryption</h4>
-									<md-icon
-										md-font-set='material-icons'
-										class='ng-isolate-scope md-default-theme material-icons'
-									>security</md-icon>
-								</div>
-							</div>
-
-							<div class='price'>$995/mo</div>
-						</div>
-						<div layout-padding class='pricing custom' flex='25'>
+						<div  class='pricing'>
 							<h3>Custom</h3>
 
 							<div class='features'>
 								<p>
-									Are you interested in using a subset of Cyph's features?
-									Have a need for a whitelabel, self-hosted, or enterprise solution?
-								</p>
+									Integrate Cyph encryption into your app, site, or service.
+									Need custom features or pricing? Mix-and-match everything in The Works, <em>plus</em> the following premium features.
+								<p>
+
+								<div class='feature' layout='row'>
+									<md-icon
+										md-font-set='material-icons'
+										class='ng-isolate-scope md-default-theme material-icons'
+									>reply_all</md-icon>
+									<h4>The Works, and/or:</h4>
+								</div>
+								<div class='feature indent' layout='row'>
+									<md-icon
+										md-font-set='material-icons'
+										class='ng-isolate-scope md-default-theme material-icons'
+									>settings</md-icon>
+									<h4>API Access</h4>
+								</div>
+								<div class='feature indent' layout='row'>
+										<md-icon
+											md-font-set='material-icons'
+											class='ng-isolate-scope md-default-theme material-icons'
+										>bookmark_border</md-icon>
+									<h4>White Label</h4>
+								</div>
+								<div class='feature indent' layout='row'>
+										<md-icon
+											md-font-set='material-icons'
+											class='ng-isolate-scope md-default-theme material-icons'
+										>edit</md-icon>
+									<h4>Custom Features</h4>
+								</div>
+								<br />
+								<hr>
 							</div>
-							<div class='price'>White Label</div>
-							<div class='price'>Self-Hosted</div>
+
+							<div class='price'>Contact Us</div>
 						</div>
-					</div>
-
-					<div layout='column'>
-
+						<div flex></div>
 					</div>
 				</div>
 			</div>
@@ -1077,150 +1280,157 @@
 			<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' translate>
 				Frequently Asked Questions
 			</h1>
-			<div class='section-content-container'>
-				<ul>
-					<li>
-						<p>
-							<strong translate>How do I use Cyph?</strong>
-						</p>
-						<p translate>
-							<span transalte>Simply go to</span>
-							<a ng-href='{{Cyph.Env.newCyphUrl}}'>cyph.im</a>
-							<span translate>
-								or click the "start new cyph" button and a cyph link will be generated
-								for you to send to a friend. Text, email, or send the link to them via
-								any other channel, and when they click it you both will enter a secure
-								chat.
-							</span>
-						</p>
-					</li>
-					<li>
-						<p>
-							<strong translate>How do I send photos?</strong>
-						</p>
-						<p translate>
-							Click the media icon in the message composition textbox (on the far right;
-							only visible when no text has been entered) and select the photo you wish
-							to share.
-						</p>
-					</li>
-					<li>
-						<p>
-							<strong translate>How do I send files?</strong>
-						</p>
-						<p translate>
-							Click the paperclip icon (on the far left on desktops and on the top
-							right on mobile) and select the file you wish to share.
-						</p>
-					</li>
-					<li>
-						<p>
-							<strong translate>How do I start a video or voice call?</strong>
-						</p>
-						<p translate>
-							Click the video (or phone) icon on the far left (desktop) / top right (mobile).
-							A warning will pop up confirming that you wish to send the call invite and
-							that connecting will expose your IP (Cyph video uses a peer-to-peer connection
-							for voice and video, so you will be connecting directly to the other party
-							instead of going through our servers).
-						</p>
-					</li>
-					<li>
-						<p>
-							<strong translate>What data do you track?</strong>
-						</p>
-						<p translate>
-							Currently, we only track numbers of: cyph sessions, messages, timeouts,
-							voice/video calls, file transfers, signups, "cyphertext" UI views, and calls
-							to our API.
-						</p>
-					</li>
-					<li>
-						<p>
-							<strong translate>How much does Cyph cost?</strong>
-						</p>
-						<p>
-							<span translate>
-								The Cyph beta is free to use for individuals (we intend to always have a
-								free tier, because we see online privacy as a basic right) and we are
-								currently piloting
-							</span>
-							<a href='/pricing'>enterprise deployments of secure video and instant messaging</a>.
-						</p>
-					</li>
-					<li>
-						<p>
-							<strong translate>Do you have an Android/iOS/TI-89 app?</strong>
-						</p>
-						<p translate>
-							Native chat applications for Android and iOS are in the works.
-							We have no plans to support any Texas Instruments machines.
-						</p>
-					</li>
-					<li>
-						<p>
-							<strong translate>
-								Why do I keep getting the "I'm sorry,
-								but your cyph is in another castle" screen?
-							</strong>
-						</p>
-						<p translate>
-							Common reasons for landing on this page are: the cyph URL has been
-							opened more than once (only the first person who clicks it is allowed
-							into the chat) or the cyph link has already expired.
-						</p>
-					</li>
-					<li>
-						<p>
-							<strong translate>Has there been a third-party security audit of Cyph?</strong>
-						</p>
-						<p>
-							<span translate>Yes,</span>
-							<a href='https://cure53.de'>Cure53</a>
-							<span translate>
-								recently completed their audit of Cyph and concluded that "No
-								major issues in regards to application security or cryptographic
-								implementations could be spotted in spite of a thorough audit."
-							</span>
-							<a
-								translate
-								href='https://cure53.de/pentest-report_cyph.pdf'
-							>[Complete Cure53 Pentest Report]</a>
-							<span translate>A postmortem analysis will be posted on our blog soon.</span>
-						</p>
-					</li>
-					<li>
-						<p>
-							<strong translate>How can I support Cyph?</strong>
-						</p>
-						<p translate>
-							<span translate>
-								One of the best ways you can support Cyph is by using it with your
-								friends and talking about us on social media. You can also
-							</span>
-							<a translate href='mailto:feedback@cyph.com'>give feedback</a>
-							<span translate>or</span>
-							<a translate href='/donate'>donate</a>
-							<span translate>
-								to the cause. All donations will go towards the development and
-								growth of Cyph.
-							</span>
-						</p>
-					</li>
-					<li>
-						<p>
-							<strong translate>What should I do if I encounter a bug?</strong>
-						</p>
-						<p>
-							<span translate>Please contact us at</span>
-							<a href='mailto:bugs@cyph.com'>bugs@cyph.com</a>;
-							<span translate>
-								our team generally has pretty fast response time. If you can,
-								please include any steps to reproduce or other relevant information.
-							</span>
-						</p>
-					</li>
-				</ul>
+			<div class='bg-image' class='animated bounceInUp' flex='75'>
+				<img src='/img/confused-man.png'></img>
+			</div>
+			<div class='section-content-container' layout='row'>
+				<div flex='20'></div>
+				<div flex='60'>
+					<ul>
+						<li>
+							<p>
+								<strong translate>How do I use Cyph?</strong>
+							</p>
+							<p translate>
+								<span transalte>Simply go to</span>
+								<a ng-href='{{Cyph.Env.newCyphUrl}}'>cyph.im</a>
+								<span translate>
+									or click the "start new cyph" button and a cyph link will be generated
+									for you to send to a friend. Text, email, or send the link to them via
+									any other channel, and when they click it you both will enter a secure
+									chat.
+								</span>
+							</p>
+						</li>
+						<li>
+							<p>
+								<strong translate>How do I send photos?</strong>
+							</p>
+							<p translate>
+								Click the media icon in the message composition textbox (on the far right;
+								only visible when no text has been entered) and select the photo you wish
+								to share.
+							</p>
+						</li>
+						<li>
+							<p>
+								<strong translate>How do I send files?</strong>
+							</p>
+							<p translate>
+								Click the paperclip icon (on the far left on desktops and on the top
+								right on mobile) and select the file you wish to share.
+							</p>
+						</li>
+						<li>
+							<p>
+								<strong translate>How do I start a video or voice call?</strong>
+							</p>
+							<p translate>
+								Click the video (or phone) icon on the far left (desktop) / top right (mobile).
+								A warning will pop up confirming that you wish to send the call invite and
+								that connecting will expose your IP (Cyph video uses a peer-to-peer connection
+								for voice and video, so you will be connecting directly to the other party
+								instead of going through our servers).
+							</p>
+						</li>
+						<li>
+							<p>
+								<strong translate>What data do you track?</strong>
+							</p>
+							<p translate>
+								Currently, we only track numbers of: cyph sessions, messages, timeouts,
+								voice/video calls, file transfers, signups, "cyphertext" UI views, and calls
+								to our API.
+							</p>
+						</li>
+						<li>
+							<p>
+								<strong translate>How much does Cyph cost?</strong>
+							</p>
+							<p>
+								<span translate>
+									The Cyph beta is free to use for individuals (we intend to always have a
+									free tier, because we see online privacy as a basic right) and we are
+									currently piloting
+								</span>
+								<a href='/pricing'>enterprise deployments of secure video and instant messaging</a>.
+							</p>
+						</li>
+						<li>
+							<p>
+								<strong translate>Do you have an Android/iOS/TI-89 app?</strong>
+							</p>
+							<p translate>
+								Native chat applications for Android and iOS are in the works.
+								We have no plans to support any Texas Instruments machines.
+							</p>
+						</li>
+						<li>
+							<p>
+								<strong translate>
+									Why do I keep getting the "I'm sorry,
+									but your cyph is in another castle" screen?
+								</strong>
+							</p>
+							<p translate>
+								Common reasons for landing on this page are: the cyph URL has been
+								opened more than once (only the first person who clicks it is allowed
+								into the chat) or the cyph link has already expired.
+							</p>
+						</li>
+						<li>
+							<p>
+								<strong translate>Has there been a third-party security audit of Cyph?</strong>
+							</p>
+							<p>
+								<span translate>Yes,</span>
+								<a href='https://cure53.de'>Cure53</a>
+								<span translate>
+									recently completed their audit of Cyph and concluded that "No
+									major issues in regards to application security or cryptographic
+									implementations could be spotted in spite of a thorough audit."
+								</span>
+								<a
+									translate
+									href='https://cure53.de/pentest-report_cyph.pdf'
+								>[Complete Cure53 Pentest Report]</a>
+								<span translate>A postmortem analysis will be posted on our blog soon.</span>
+							</p>
+						</li>
+						<li>
+							<p>
+								<strong translate>How can I support Cyph?</strong>
+							</p>
+							<p translate>
+								<span translate>
+									One of the best ways you can support Cyph is by using it with your
+									friends and talking about us on social media. You can also
+								</span>
+								<a translate href='mailto:feedback@cyph.com'>give feedback</a>
+								<span translate>or</span>
+								<a translate href='/donate'>donate</a>
+								<span translate>
+									to the cause. All donations will go towards the development and
+									growth of Cyph.
+								</span>
+							</p>
+						</li>
+						<li>
+							<p>
+								<strong translate>What should I do if I encounter a bug?</strong>
+							</p>
+							<p>
+								<span translate>Please contact us at</span>
+								<a href='mailto:bugs@cyph.com'>bugs@cyph.com</a>;
+								<span translate>
+									our team generally has pretty fast response time. If you can,
+									please include any steps to reproduce or other relevant information.
+								</span>
+							</p>
+						</li>
+					</ul>
+				</div>
+				<div flex='20'></div>
 			</div>
 		</section>
 

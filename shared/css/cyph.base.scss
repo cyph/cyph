@@ -59,6 +59,7 @@ md-toast {
 	position: relative;
 	text-align: center;
 	padding: 15px 0px 5px 0px;
+	z-index: 2;
 }
 
 
@@ -292,20 +293,92 @@ html:not(.mobile) .platform-container.mobile .mobile-only {
 	box-shadow: 0px 4px 10px -1px rgba(0, 0, 0, 0.25) !important;
 }
 
+
+#individual{
+	text-align: left;
+	.signup-form {
+		* {
+			.md-input-container{
+				margin: 0px !important;
+			}
+		}
+		input{
+			width: 220px !important;
+			margin: 1px 25px 12px -8px;
+		}
+		.md-input-container[disabled] label{
+			color: #999;
+		}
+		input[disabled]{
+			background-color: #86789F !important;
+			color: #999;
+			cursor: not-allowed;
+		}
+		.buttons{
+			margin-left: 20px;
+		}
+		// width: 250px;
+	}
+}
+
+.buttons *[disabled]{
+	cursor: not-allowed;
+	background-color: #86789F !important; 
+}
+
+.details{
+		width: 50%;
+	}
+
 .pricing-chart {
 	text-align: center;
+	margin: auto auto 35px auto;
+	.buttons{
+		margin-top: 5%;
+	}
 
-	:first-child {
+	/*:first-child {
 		margin-left: auto !important;
 	}
 	:last-child {
 		margin-right: auto !important;
-	}
+	}*/
 	.md-button {
 		width: 100px;
 		background-color: #392859;
 		height: 100px;
 	}
+	md-input-container{
+		margin: 0 !important;
+	}
+	md-input-container .md-input {
+		/* -webkit-order: 2; */
+		-ms-flex-order: 2;
+		/* order: 2; */
+		/* display: block; */
+		background-color: #BBA8DF;
+		//margin: 10px !important;
+		/* margin-top: 0; */
+		/* background: 0 0; */
+		padding: 2px 2px 1px;
+		/* border-width: 0 0 1px; */
+		line-height: 26px;
+		/* height: 30px; */
+		-ms-flex-preferred-size: 26px;
+		/* border-radius: 0; */
+		/* border-style: solid; */
+		width: 100%;
+		/* box-sizing: border-box; */
+		/* float: left; */
+	}
+}
+
+.pricing-chart.individual .md-button {
+	width: auto;
+	height: auto;
+	margin: 5px 0px 15px 0px;
+	padding: 5px 15px 5px 15px;
+	background-color: #392859;
 }
 
 .pricing-chart button md-icon.ng-scope.material-icons {
@@ -332,13 +405,14 @@ md-icon.back.material-icons:hover {
 
 .pricing {
 	background-color: #624599 !important;
-	width: 200px;
+	opacity: 0.75;
+	width: 225px;
 	height: auto;
-	margin: auto 20px auto 20px;
+	margin: auto 1% auto 1%;
 
 	md-icon {
 		font-size: 32px;
-		margin-bottom: 14px;
+		margin: 10px 15px 10px 15px;
 		width: 32px;
 		position: relative;
 	}
@@ -346,10 +420,10 @@ md-icon.back.material-icons:hover {
 	h3 {
 		text-align: center;
 		background-color: #392859 !important;
-		width: 115%;
-		left: -14px;
+		width: 108%;
+		left: -4%;
 		opacity: 1 !important;
-		top: -16px;
+		top: -5px;
 		line-height: 3;
 		position: relative;
 	}
@@ -362,39 +436,35 @@ md-icon.back.material-icons:hover {
 
 	.features {
 		height: 69%;
-
-		h4 {
-			float: right;
-			display: inline;
-			left: -10px;
-			width: 73%;
-			margin: 0px auto 0px auto;
-			top: -2px;
-			position: relative;
-		}
+		.feature {
+			h4 {
+				position: relative;
+				margin: 5px 0px 0px -9px;
+				letter-spacing: -0.25px;
+			}
+			md-icon {
+				// left: 15px;
+			}
+	}
 
 		p:first-child {
-			margin: -15px 0px 35px 0px;
+			margin: 5px 10px 15px 12px;
 		}
 
 		p {
 			text-align: center;
-			margin-top: -5px;
 		}
 
 		hr {
 			opacity: 0.25;
 			color: #000;
-			margin: -11px 0px 17px 0px;
+			margin: -11px 20px 10px 20px;
 		}
 
 		.indent {
 			margin-left: 25px !important;
 		}
 
-		.feature {
-			margin-left: 10px;
-		}
 	}
 
 	.pricing:first-child {
@@ -410,7 +480,7 @@ md-icon.back.material-icons:hover {
 		text-align: center;
 		font-weight: 400;
 		font-size: 21px;
-		margin: 100% auto auto auto;
+		margin: 5px 10px 15px 12px !important;
 		margin: auto;
 		background-color: #7B56BF !important;
 		line-height: 2;
@@ -440,12 +510,48 @@ md-icon.back.material-icons:hover {
 	}
 }
 
+.pricing-chart.individual.layout-row .layout-column {
+	text-align: right;
+}
+
+.pricing-chart.individual{
+	// width: 50%;
+}
+
+.details { 
+	h2 {
+		font-size: 26px;
+		text-align: center;
+	}
+	h4 {
+		display: inline;
+		margin: 100px 0px;
+		top: -2px;
+		position: relative;
+	}
+}
+
 .features .icons h4 {
 	width: 68%;
 	float: left;
 	margin-left: 6px;
 	position: relative;
 	top: -28px;
+}
+
+.registration-form{
+	h2{
+		text-align: center;
+		font-size: 25px;
+		margin: 5px 0px 50px 0px;
+	}
+}
+
+button.pricing{
+	top: 822% !important;
+	left: 54% !important;
+	position: absolute;
+	transform: scale(2);
 }
 
 #new-cyph-footer {
@@ -517,6 +623,50 @@ md-icon.back.material-icons:hover {
 
 html.mobile .mfp-content {
 	pointer-events: none !important;
+}
+
+/* FAQ */
+
+#faq {
+	.bg-image{
+		left: 30% !important;
+		top: 45% !important;
+		img{
+			transform: scale(2);
+		}
+	}
+	li {
+		list-style: none;
+	}
+}
+
+.corner-image-left{
+	position: absolute;
+	width: 45%;
+	z-index: 0;
+	left: -21%;
+	top: 69%;
+}
+
+#business{
+	.bg-image {
+		left: -6%;
+		top: 9%;
+	}
+}
+
+#telehealth.bgimage{
+	left: 5% !important;
+	top: 12% !important;
+}
+
+.bg-image{
+	position: absolute;
+	opacity: 0.5;
+	img{
+		position: absolute;
+		opacity: 0.35;
+	}
 }
 
 /*** Angular Material patches (from 0.4 to 0.6 upgrade) ***/
