@@ -40,19 +40,21 @@ tsfiles="$( \
 )"
 
 jsbundle () {
-	# Temporary workaround for jspm bug
-	if [ "$file" == "global/base" ] ; then
-		cat $file.js | \
-			tr '\n' '☁' | \
-			perl -pe 's/.*var .*?(var .*?;).*execute:.*?\{(.*?)exports.*/\1\n\2/g' | \
-			tr '☁' '\n' | \
-			perl -pe 's/^ {12}//g' \
-		> $file.js.new
-		mv $file.js.new $file.js
-	else
-		jspm bundle-sfx $file $file.js
-		git checkout HEAD -- config.js
-	fi
+	# # Temporary workaround for jspm bug
+	# if [ "$file" == "global/base" ] ; then
+	# 	cat $file.js | \
+	# 		tr '\n' '☁' | \
+	# 		perl -pe 's/.*var .*?(var .*?;).*execute:.*?\{(.*?)exports.*/\1\n\2/g' | \
+	# 		tr '☁' '\n' | \
+	# 		perl -pe 's/^ {12}//g' \
+	# 	> $file.js.new
+	# 	mv $file.js.new $file.js
+	# else
+	# 	jspm bundle-sfx $file $file.js
+	# 	git checkout HEAD -- config.js
+	# fi
+
+	echo -e "\n\nrequire(['${file}']);" >> $file.js
 }
 
 cd $dir

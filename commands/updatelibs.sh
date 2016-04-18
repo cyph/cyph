@@ -143,6 +143,8 @@ bash -c "$(node -e '
 
 cd lib/js
 
+echo -e '\n\nself.define = System.amdDefine;\nself.require = System.amdRequire;' >> system.js
+
 cd github/isagalaev/highlight.js@*
 sed -i 's/^build$//' .gitignore
 npm install
