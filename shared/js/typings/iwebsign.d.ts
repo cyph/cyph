@@ -2,7 +2,7 @@
  * Interaction bridge between WebSign bootstrap and the current package.
  * @interface
  */
-export interface IWebSign {
+interface IWebSign {
 	/** Text of current bootstrap payload. */
 	bootstrapText: string;
 

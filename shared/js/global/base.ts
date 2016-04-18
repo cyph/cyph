@@ -3,9 +3,7 @@
  */
 
 
-/// <reference path="../../lib/typings/main.d.ts" />
-
-import {IWebSign} from 'typings/iwebsign';
+/// <reference path="../typings/main.d.ts" />
 
 
 self['IS_WEB']	= typeof self['IS_WEB'] !== 'undefined' ?

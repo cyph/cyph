@@ -52,7 +52,7 @@ export class Timer {
 
 		Timer.thread	= new Thread(
 			(locals: any) => {
-				self['onthreadmessage']	= () =>
+				onthreadmessage	= () =>
 					setTimeout(() =>
 						self.postMessage({}, undefined)
 					, locals.interval)

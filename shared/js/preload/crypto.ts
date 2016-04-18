@@ -3,8 +3,6 @@
  * that don't support crypto (or other required features).
  */
 
-import {Storage} from 'typings/storage';
-
 
 if (!('crypto' in self) && 'msCrypto' in self) {
 	self['crypto']	= self['msCrypto'];
