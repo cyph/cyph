@@ -54,7 +54,11 @@ jsbundle () {
 	# 	git checkout HEAD -- config.js
 	# fi
 
-	echo -e "\n\nrequire(['${file}']);" >> $file.js
+	cp ../lib/js/require.js $file.js.new
+	echo >> $file.js.new
+	cat $file.js >> $file.js.new
+	echo -e "\n\nrequire(['${file}']);" >> $file.js.new
+	mv $file.js.new $file.js
 }
 
 cd $dir

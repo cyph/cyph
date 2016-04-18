@@ -143,7 +143,11 @@ bash -c "$(node -e '
 
 cd lib/js
 
-echo -e '\n\nself.define = System.amdDefine;\nself.require = System.amdRequire;' >> system.js
+wget "$(
+	curl -s 'http://requirejs.org/docs/download.html' |
+	grep -oP 'http://requirejs.org/docs/release/.*?/minified/require.js' |
+	head -n1
+)"
 
 cd github/isagalaev/highlight.js@*
 sed -i 's/^build$//' .gitignore
