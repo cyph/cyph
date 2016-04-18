@@ -4,7 +4,9 @@
 
 import * as PreloadA from 'preload/fakecrypto';
 import * as PreloadB from 'preload/base';
+import {CyphDemo} from 'ui/cyphdemo';
 import {Elements} from 'ui/elements';
+import {HomeSections, Podcasts, States} from 'ui/enums';
 import {UI} from 'ui/ui';
 import * as Cyph from 'cyph/cyph';
 import {locationData} from 'global/base';
@@ -42,10 +44,22 @@ angular.
 			const demoDialogManager: Cyph.UI.IDialogManager	= new Cyph.UI.DialogManager($mdDialog, $mdToast);
 			const demoMobileMenu: Cyph.UI.ISidebar			= chatSidenav();
 
-			$scope.Cyph	= Cyph;
-			$scope.ui	= new UI(controller, mobileMenu, demoDialogManager, demoMobileMenu);
+			$scope.Cyph		= Cyph;
+			$scope.Cyph.com	= {
+				UI: {
+					CyphDemo,
+					Elements,
+					HomeSections,
+					Podcasts,
+					States,
+					UI
+				}
+			};
 
-			self['ui']	= $scope.ui;
+			$scope.ui		= new UI(controller, mobileMenu, demoDialogManager, demoMobileMenu);
+
+			self['Cyph']	= $scope.Cyph;
+			self['ui']		= $scope.ui;
 
 			controller.update();
 		})

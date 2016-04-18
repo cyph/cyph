@@ -9,6 +9,8 @@ import * as PreloadC from 'preload/dompurify';
 import * as PreloadD from 'preload/fonts';
 import * as PreloadE from 'preload/translations';
 import * as PreloadF from 'preload/base';
+import {Config} from 'config';
+import {ProStates, States, UrlSections} from 'ui/enums';
 import {UI} from 'ui/ui';
 import * as Cyph from 'cyph/cyph';
 
@@ -43,10 +45,21 @@ angular.
 					{close: () => {}, open: () => {}}
 			;
 
-			$scope.Cyph	= Cyph;
-			$scope.ui	= new UI(controller, dialogManager, mobileMenu, notifier);
+			$scope.Cyph		= Cyph;
+			$scope.Cyph.im	= {
+				Config,
+				UI: {
+					ProStates,
+					States,
+					UI,
+					UrlSections
+				}
+			};
 
-			self['ui']	= $scope.ui;
+			$scope.ui		= new UI(controller, dialogManager, mobileMenu, notifier);
+
+			self['Cyph']	= $scope.Cyph;
+			self['ui']		= $scope.ui;
 		})
 	]).
 	config([
