@@ -98,8 +98,6 @@ export class ThreadedSession implements ISession {
 		);
 
 		this.thread	= new Thread((locals: any, importScripts: Function, Cyph: any) => {
-			importScripts('/lib/js/system.js');
-
 			importScripts('/lib/js/crypto/libsodium/dist/browsers-sumo/combined/sodium.min.js');
 			importScripts('/lib/js/crypto/ntru/dist/ntru.js');
 

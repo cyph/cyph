@@ -115,7 +115,7 @@ export class UrlState {
 		EventManager.trigger(UrlState.urlStateChangeEvent);
 	}
 
-	private static _	= (() => $(() => {
+	private static _	= (() => {
 		self.onpopstate	= () => EventManager.trigger(UrlState.urlStateChangeEvent);
-	}))();
+	})();
 }

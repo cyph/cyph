@@ -1,6 +1,5 @@
 import {Config} from 'config';
 import {EnvDeploy} from 'envdeploy';
-import {Util} from 'util';
 import {locationData, navigatorData, IS_WEB} from 'global/base';
 
 
@@ -12,19 +11,13 @@ export class Env extends EnvDeploy {
 	public static host: string	= locationData.host.replace('www.', '');
 
 	/** Complete (lowercase) language code, e.g. "en-us". */
-	public static fullLanguage: string	=
-		Util.getValue(
-			navigatorData,
-			[
-				'language',
-				'userLanguage',
-				'browserLanguage',
-				'systemLanguage'
-			],
-			Config.defaultLanguage
-		).
-		toLowerCase()
-	;
+	public static fullLanguage: string	= (
+		navigatorData['language'] ||
+		navigatorData['userLanguage'] ||
+		navigatorData['browserLanguage'] ||
+		navigatorData['systemLanguage'] ||
+		Config.defaultLanguage
+	).toLowerCase();
 
 	/** Normalised language code, used for translations. */
 	public static language: string		= (() => {
