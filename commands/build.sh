@@ -54,11 +54,13 @@ jsbundle () {
 	# 	git checkout HEAD -- config.js
 	# fi
 
-	cp ../lib/js/require.js $file.js.new
-	echo >> $file.js.new
-	cat $file.js >> $file.js.new
-	echo -e "\n\nrequire(['${file}']);\ndefine = undefined;\nrequire = undefined;" >> $file.js.new
-	mv $file.js.new $file.js
+	echo -e "\n\nSystem.import('${file}');" >> $file.js
+
+	# cp ../lib/js/require.js $file.js.new
+	# echo >> $file.js.new
+	# cat $file.js >> $file.js.new
+	# echo -e "\n\nrequire(['${file}']);\ndefine = undefined;\nrequire = undefined;" >> $file.js.new
+	# mv $file.js.new $file.js
 }
 
 cd $dir
