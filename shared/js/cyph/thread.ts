@@ -234,8 +234,10 @@ export class Thread {
 		const threadBody: string		=
 			'var locals = ' + JSON.stringify(locals) + ';\n' +
 			Thread.stringifyFunction(Thread.threadEnvSetup) +
+			"\n\nSystem.import('global/base').then(function () {" +
 			Thread.stringifyFunction(f) +
-			Thread.stringifyFunction(Thread.threadPostSetup)
+			Thread.stringifyFunction(Thread.threadPostSetup) +
+			"\n});"
 		;
 
 		for (let i = 0 ; i < locals._threadRandomSeed.length ; ++i) {

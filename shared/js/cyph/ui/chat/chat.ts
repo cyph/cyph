@@ -1,3 +1,4 @@
+import * as PreloadA from 'preload/jquery';
 import {Cyphertext} from 'cyphertext';
 import {States} from 'enums';
 import {IChat} from 'ichat';
