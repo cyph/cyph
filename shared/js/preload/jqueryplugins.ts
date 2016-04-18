@@ -1,4 +1,9 @@
 /**
+ * @file Custom jQuery plugins.
+ */
+
+
+/**
  * Calculate absolute coordinates of the boundaries of this element.
  */
 $.fn.bounds	= function () : ({
@@ -27,3 +32,7 @@ $.fn.scrollPosition	= function () : number {
 		this[0].clientHeight
 	);
 };
+
+
+let noop: any;
+export {noop};

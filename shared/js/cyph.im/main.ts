@@ -6,9 +6,10 @@
 import * as PreloadA from 'preload/crypto';
 import * as PreloadB from 'preload/unsupportedbrowsers';
 import * as PreloadC from 'preload/dompurify';
-import * as PreloadD from 'preload/fonts';
-import * as PreloadE from 'preload/translations';
-import * as PreloadF from 'preload/base';
+import * as PreloadD from 'preload/jqueryplugins';
+import * as PreloadE from 'preload/fonts';
+import * as PreloadF from 'preload/translations';
+import * as PreloadG from 'preload/base';
 import {Config} from 'config';
 import {ProStates, States, UrlSections} from 'ui/enums';
 import {UI} from 'ui/ui';

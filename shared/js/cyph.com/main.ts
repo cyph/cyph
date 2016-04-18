@@ -3,7 +3,8 @@
  */
 
 import * as PreloadA from 'preload/fakecrypto';
-import * as PreloadB from 'preload/base';
+import * as PreloadB from 'preload/jqueryplugins';
+import * as PreloadC from 'preload/base';
 import {CyphDemo} from 'ui/cyphdemo';
 import {Elements} from 'ui/elements';
 import {HomeSections, Podcasts, States} from 'ui/enums';

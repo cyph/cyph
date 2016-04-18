@@ -107,31 +107,33 @@ export class ThreadedSession implements ISession {
 
 			importScripts('/js/cyph/session/session.js');
 
-			const session: ISession	= new Cyph.Session.Session(
-				locals.descriptor,
-				null,
-				locals.id
-			);
+			System.import('cyph/session/session').then(Session => {
+				const session: ISession	= new Session.Session(
+					locals.descriptor,
+					null,
+					locals.id
+				);
 
-			session.on(locals.events.close, (e: { shouldSendEvent: boolean; }) =>
-				session.close(e.shouldSendEvent)
-			);
+				session.on(locals.events.close, (e: { shouldSendEvent: boolean; }) =>
+					session.close(e.shouldSendEvent)
+				);
 
-			session.on(locals.events.receive, (e: { data: string; }) =>
-				session.receive(e.data)
-			);
+				session.on(locals.events.receive, (e: { data: string; }) =>
+					session.receive(e.data)
+				);
 
-			session.on(locals.events.send, (e: { messages: IMessage[]; }) =>
-				session.sendBase(e.messages)
-			);
+				session.on(locals.events.send, (e: { messages: IMessage[]; }) =>
+					session.sendBase(e.messages)
+				);
 
-			session.on(locals.events.sendText, (e: { text: string; }) =>
-				session.sendText(e.text)
-			);
+				session.on(locals.events.sendText, (e: { text: string; }) =>
+					session.sendText(e.text)
+				);
 
-			session.on(locals.events.updateState, (e: { key: string; value: any; }) =>
-				session.updateState(e.key, e.value)
-			);
+				session.on(locals.events.updateState, (e: { key: string; value: any; }) =>
+					session.updateState(e.key, e.value)
+				);
+			});
 		}, {
 			descriptor,
 			id: this.id,

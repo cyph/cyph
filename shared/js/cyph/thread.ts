@@ -1,7 +1,6 @@
 import {Config} from 'config';
 import {Env} from 'env';
 import {EventManager} from 'eventmanager';
-import {Util} from 'util';
 import {locationData, onthreadmessage} from 'global/base';
 
 
@@ -9,11 +8,11 @@ import {locationData, onthreadmessage} from 'global/base';
  * Creates and controls a thread.
  */
 export class Thread {
-	private static BlobBuilder: any	= Util.getValue(self, [
-		'BlobBuilder',
-		'WebKitBlobBuilder',
-		'MozBlobBuilder'
-	]);
+	private static BlobBuilder: any	=
+		self['BlobBuilder'] ||
+		self['WebKitBlobBuilder'] ||
+		self['MozBlobBuilder']
+	;
 
 	private static stringifyFunction (f: Function) : string {
 		const s: string	= f.toString();
@@ -41,7 +40,8 @@ export class Thread {
 
 		/* Normalisation to increase compatibility with Web libraries */
 
-		importScripts('/lib/js/system.src.js');
+		importScripts('/lib/js/system.js');
+		System.baseURL	= self['locationData'].href;
 		importScripts('/js/global/base.js');
 
 
@@ -283,7 +283,7 @@ export class Thread {
 			if (e.data === 'close') {
 				this.stop();
 			}
-			else if (Util.getValue(e.data, 'isThreadEvent')) {
+			else if (e.data && e.data['isThreadEvent']) {
 				EventManager.trigger(e.data.event, e.data.data);
 			}
 			else {

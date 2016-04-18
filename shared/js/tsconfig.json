@@ -5,6 +5,7 @@
 		 "module": "system",
 		 "moduleResolution": "classic",
 		 "emitDecoratorMetadata": true,
-		 "experimentalDecorators": true
+		 "experimentalDecorators": true,
+		 "rootDir": "."
 	}
 }

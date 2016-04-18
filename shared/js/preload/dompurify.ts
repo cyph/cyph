@@ -3,8 +3,6 @@
  * https://github.com/cure53/DOMPurify/blob/master/demos/hooks-scheme-whitelist.html.
  */
 
-/// <reference path="../../lib/typings/main.d.ts" />
-
 
 (() => {
 

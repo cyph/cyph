@@ -160,6 +160,7 @@ cd ..
 
 rm -rf typings typings.json
 typings install --ambient --save \
+	systemjs \
 	jquery \
 	angular \
 	angular-material \
