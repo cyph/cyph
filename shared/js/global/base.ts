@@ -68,24 +68,24 @@ const navigatorData: Navigator	= typeof self['navigatorData'] !== 'undefined' ?
  /**
  * @global Event handler for messages to the current thread.
  */
-declare let onthreadmessage: (e: MessageEvent) => any;
+const onthreadmessage: (e: MessageEvent) => any	= self['onthreadmessage'];
 
 /**
  * @global String containing compiled contents of fonts.scss
  * (only exists in main thread of production environments).
  */
-declare let FontsCSS: string;
+const FontsCSS: string	= self['FontsCSS'];
 
 /**
  * @global Object containing translations for English phrases
  * (only exists in main thread of production environments).
  */
-declare let Translations: {[language: string] : {[text: string] : string}};
+const Translations: {[language: string] : {[text: string] : string}}	= self['Translations'];
 
 /**
  * @global WebSign object (only created in WebSigned environments).
  */
-declare let WebSign: IWebSign;
+const WebSign: IWebSign	= self['WebSign'];
 
 
 /**
