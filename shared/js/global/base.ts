@@ -24,7 +24,12 @@ for (const k of [
 	'location',
 	'navigator',
 	'Audio',
-	'onthreadmessage'
+	'onthreadmessage',
+	'FontsCSS',
+	'Translations',
+	'WebSign',
+	'Ntru',
+	'Sodium'
 ]) {
 	if (!(k in self)) {
 		self[k]	= null;
