@@ -144,7 +144,7 @@ for d in cyph.com cyph.im ; do
 	else
 		cd translations
 
-		echo "self['Translations'] = { \
+		echo "Translations = { \
 			$(echo "$( \
 				ls | \
 				sed 's/\.json//' | \
@@ -159,7 +159,7 @@ for d in cyph.com cyph.im ; do
 
 		cd ../$d
 
-		echo "self['FontsCSS'] = \`$(scss css/fonts.scss)\`;" > js/preload/fonts.ts.new
+		echo "FontsCSS = \`$(scss css/fonts.scss)\`;" > js/preload/fonts.ts.new
 		cat js/preload/fonts.ts >> js/preload/fonts.ts.new
 		mv js/preload/fonts.ts.new js/preload/fonts.ts
 	fi

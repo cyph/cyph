@@ -1,7 +1,7 @@
 import {Env} from 'env';
 import {Thread} from 'thread';
 import {Util} from 'util';
-import {locationData, Sodium} from 'global/base';
+import {locationData} from 'global/base';
 
 
 /**

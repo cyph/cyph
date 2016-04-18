@@ -64,43 +64,13 @@ const navigatorData: Navigator	= typeof self['navigatorData'] !== 'undefined' ?
 ;
 
 
-/**
- * @global String containing compiled contents of fonts.scss
- * (only exists in main thread of production environments).
- */
-const FontsCSS: string	= self['FontsCSS'];
-
-/**
- * @global Object containing translations for English phrases
- * (only exists in main thread of production environments).
- */
-const Translations: {[language: string] : {[text: string] : string}}	= self['Translations'];
-
-/**
- * @global WebSign object (only created in WebSigned environments).
- */
-const WebSign: IWebSign	= self['WebSign'];
-
-
-/**
- * @global NTRU library.
- */
-const Ntru: any		= self['ntru'] || {};
-
-/**
- * @global Sodium library.
- */
-const Sodium: any	= self['sodium'] || {};
+Ntru	= self['ntru'] || {};
+Sodium	= self['sodium'] || {};
 
 
 export {
 	locationData,
 	navigatorData,
-	FontsCSS,
-	Ntru,
-	Sodium,
-	Translations,
-	WebSign,
 	IS_WEB
 };
 

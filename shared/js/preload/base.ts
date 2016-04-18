@@ -7,7 +7,7 @@ import {Config} from 'cyph/config';
 import {Env} from 'cyph/env';
 import {Util} from 'cyph/util';
 import {Elements} from 'cyph/ui/elements';
-import {locationData, FontsCSS, Translations, WebSign} from 'global/base';
+import {locationData} from 'global/base';
 
 
 /* In WebSigned environments, can't load fonts from current origin */
