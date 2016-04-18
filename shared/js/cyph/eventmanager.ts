@@ -1,6 +1,6 @@
 import {Env} from 'env';
 import {Thread} from 'thread';
-import {onthreadmessage} from 'global/base';
+import {onthreadmessage} from 'typings/onthreadmessage';
 
 
 /**

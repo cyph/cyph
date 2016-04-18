@@ -25,7 +25,8 @@ for (const k of [
 	'history',
 	'location',
 	'navigator',
-	'Audio'
+	'Audio',
+	'onthreadmessage'
 ]) {
 	if (!(k in self)) {
 		self[k]	= null;
@@ -65,11 +66,6 @@ const navigatorData: Navigator	= typeof self['navigatorData'] !== 'undefined' ?
 ;
 
 
- /**
- * @global Event handler for messages to the current thread.
- */
-const onthreadmessage: (e: MessageEvent) => any	= self['onthreadmessage'];
-
 /**
  * @global String containing compiled contents of fonts.scss
  * (only exists in main thread of production environments).
@@ -102,7 +98,6 @@ const Sodium: any	= self['sodium'] || {};
 export {
 	locationData,
 	navigatorData,
-	onthreadmessage,
 	FontsCSS,
 	Ntru,
 	Sodium,
