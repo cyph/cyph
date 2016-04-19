@@ -90,7 +90,7 @@ jspm install -y \
 	npm:animate.css \
 	github:davidchambers/base64.js \
 	jquery \
-	jquery-legacy=github:jquery@^1 \
+	jquery-legacy=github:jquery/jquery@^1 \
 	npm:magnific-popup \
 	npm:nanoscroller \
 	npm:unsemantic \
@@ -106,6 +106,10 @@ jspm install -y \
 	crypto/ntru=github:cyph/ntru.js \
 	crypto/isaac=github:rubycon/isaac.js \
 	crypto/cryptojs=cryptojs
+
+if (( $? )); then
+	exit 1
+fi
 
 cd ..
 
@@ -143,12 +147,6 @@ bash -c "$(node -e '
 
 
 cd lib/js
-
-wget "$(
-	curl -s 'http://requirejs.org/docs/download.html' |
-	grep -oP 'http://requirejs.org/docs/release/.*?/minified/require.js' |
-	head -n1
-)"
 
 cd github/isagalaev/highlight.js@*
 sed -i 's/^build$//' .gitignore
