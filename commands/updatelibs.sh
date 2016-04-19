@@ -18,18 +18,6 @@ rm -rf aws-xml
 
 cd ../../js
 rm config.js package.json
-expect -c " \
-	spawn jspm registry config github; \
-	expect \"GitHub credentials\"; \
-	send \"yes\n\"; \
-	expect \"GitHub username\"; \
-	send \"$(head -n1 ~/.cyph/github.token)\n\"; \
-	expect \"GitHub password\"; \
-	send \"$(tail -n1 ~/.cyph/github.token)\n\"; \
-	expect \"test these credentials\"; \
-	send \"yes\n\"; \
-	interact; \
-"
 expect -c ' \
 	spawn jspm init; \
 	expect "Package.json file does not exist"; \
@@ -50,6 +38,18 @@ expect -c ' \
 	send "yes\n"; \
 	expect "transpiler"; \
 	send "typescript\n"; \
+	interact; \
+'
+expect -c ' \
+	spawn jspm registry config github; \
+	expect "GitHub credentials"; \
+	send "yes\n"; \
+	expect "GitHub username"; \
+	send "'"$(head -n1 ~/.cyph/github.token)"'\n"; \
+	expect "GitHub password"; \
+	send "'"$(tail -n1 ~/.cyph/github.token)"'\n"; \
+	expect "test these credentials"; \
+	send "yes\n"; \
 	interact; \
 '
 
