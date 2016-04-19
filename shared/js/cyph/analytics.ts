@@ -1,3 +1,5 @@
+/// <reference path="../global/base.ts" />
+
 import {Env} from 'env';
 import {Thread} from 'thread';
 import {Util} from 'util';
