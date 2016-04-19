@@ -13,7 +13,7 @@ export class SignupForm {
 			restrict: 'A',
 			transclude: true,
 			scope: {
-				$this: '=' + SignupForm.title,
+				$this: '=',
 				hideButton: '=hideButton'
 			},
 			link: scope => scope['Cyph'] = self['Cyph'],

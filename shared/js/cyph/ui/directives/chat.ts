@@ -20,7 +20,7 @@ export class Chat {
 			directive(Chat.title + 'Cyphertext', () => ({
 				restrict: 'A',
 				scope: {
-					$this: '=' + Chat.title + 'Cyphertext'
+					$this: '='
 				},
 				link: scope => scope['Cyph'] = self['Cyph'],
 				template: Templates.chatCyphertext
@@ -29,7 +29,7 @@ export class Chat {
 				restrict: 'A',
 				transclude: true,
 				scope: {
-					$this: '=' + Chat.title + 'Main'
+					$this: '='
 				},
 				link: scope => scope['Cyph'] = self['Cyph'],
 				template: Templates.chatMain
@@ -37,7 +37,7 @@ export class Chat {
 			directive(Chat.title + 'MessageBox', () => ({
 				restrict: 'A',
 				scope: {
-					$this: '=' + Chat.title + 'MessageBox'
+					$this: '='
 				},
 				link: scope => scope['Cyph'] = self['Cyph'],
 				template: Templates.chatMessageBox
@@ -45,7 +45,7 @@ export class Chat {
 			directive(Chat.title + 'Sidebar', () => ({
 				restrict: 'A',
 				scope: {
-					$this: '=' + Chat.title + 'Sidebar',
+					$this: '=',
 					showChat: '=showChat'
 				},
 				link: scope => scope['Cyph'] = self['Cyph'],
@@ -54,7 +54,7 @@ export class Chat {
 			directive(Chat.title + 'Toolbar', () => ({
 				restrict: 'A',
 				scope: {
-					$this: '=' + Chat.title + 'Toolbar',
+					$this: '=',
 					open: '&open',
 					showChat: '=showChat'
 				},
