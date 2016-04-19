@@ -20,7 +20,9 @@ module Cyph.com {
 
 			/** Number of Doctors (default) */
 			public doctors: number			= 5;
-			public pricePerDoctor: number	= 300;
+			public pricePerDoctor: number	= 350;
+			public telehealthPriceBreak: number = 5;
+			public telehealthDiscount: number 	= 0.10;
 
 			/** Home page state/view. */
 			public homeSection: HomeSections;
@@ -111,7 +113,12 @@ module Cyph.com {
 			}
 
 			public doctorPricing(){
-				return this.doctors * this.pricePerDoctor;
+				if(this.doctors >= this.telehealthPriceBreak){
+					return (this.doctors * this.pricePerDoctor) - (this.doctors * this.pricePerDoctor * this.telehealthDiscount);
+				}
+				else {
+					return this.doctors * this.pricePerDoctor;
+				}
 			}
 
 			/**
