@@ -66,11 +66,17 @@ export class Config {
 		rootController: 'CyphController'
 	};
 
+	/** Braintree-related config. */
+	public static braintreeConfig	= {
+		endpoint: 'braintree'
+	};
+
 	/** P2P-related config (used by P2P.P2P). */
 	public static p2pConfig	= {
 		fileChunkSize: 1024,
 		maxFileSize: 1100000000,
-		voiceCallVideo: 'video/voicecall.mp4'
+		voiceCallVideo: 'video/voicecall.mp4',
+		iceServersEndpoint: 'iceservers'
 	};
 
 	/** Notifier-related config (used by UI.Notifier). */

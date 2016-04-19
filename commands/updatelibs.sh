@@ -99,6 +99,7 @@ jspm install -y \
 	github:julianlam/tabIndent.js \
 	github:aws/aws-sdk-js \
 	npm:rxjs \
+	braintree=github:braintree/braintree-web \
 	es5-shim \
 	es6-shim \
 	crypto/libsodium=github:jedisct1/libsodium.js \

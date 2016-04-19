@@ -196,7 +196,7 @@ export class P2P implements IP2P {
 		}
 
 		Util.retryUntilComplete((retry: Function) => Util.request({
-			url: Env.baseUrl + 'iceservers',
+			url: Env.baseUrl + Config.p2pConfig.iceServersEndpoint,
 			error: retry,
 			success: (data: string) => {
 				let channel: RTCDataChannel;
