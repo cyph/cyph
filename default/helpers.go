@@ -108,7 +108,7 @@ func getBetaSignupFromRequest(h HandlerArgs) BetaSignup {
 	}
 }
 
-func braintreeInit(h HandlerArgs) Braintree {
+func braintreeInit(h HandlerArgs) *braintree.Braintree {
 	bt := braintree.New(
 		braintree.Sandbox,
 		braintreeMerchantID,
@@ -208,14 +208,15 @@ func nullHandler(h HandlerArgs) (interface{}, int) {
 	return nil, http.StatusOK
 }
 
-func sanitize(s string) string {
-	return sanitizer.Sanitize(s)
-}
+func sanitize(s string, params ... int) string {
+	sanitized := sanitizer.Sanitize(s)
 
-func sanitize(s string, maxLength int) string {
-	sanitized := sanitize(s)
+	maxLength := -1
+	if len(params) > 0 {
+		maxLength = params[0]
+	} 
 
-	if len(sanitized) > maxLength {
+	if maxLength > -1 && len(sanitized) > maxLength {
 		return sanitized[:maxLength]
 	} else {
 		return sanitized
