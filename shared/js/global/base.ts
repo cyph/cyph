@@ -6,12 +6,11 @@
 /// <reference path="../typings/main.d.ts" />
 
 
-self['IS_WEB']	= typeof self['IS_WEB'] !== 'undefined' ?
+/** @ignore */
+const IS_WEB: boolean	= typeof self['IS_WEB'] !== 'undefined' ?
 	self['IS_WEB'] :
 	typeof window === 'object'
 ;
-/** @ignore */
-const IS_WEB: boolean	= self['IS_WEB'];
 
 for (const k of ['window', 'document']) {
 	if (!(k in self)) {
@@ -71,11 +70,3 @@ const navigatorData: Navigator	= typeof self['navigatorData'] !== 'undefined' ?
 
 Ntru	= self['ntru'] || {};
 Sodium	= self['sodium'] || {};
-
-
-export {
-	locationData,
-	navigatorData,
-	IS_WEB
-};
-

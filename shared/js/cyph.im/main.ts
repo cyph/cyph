@@ -3,13 +3,14 @@
  */
 
 
-import * as PreloadA from 'preload/crypto';
-import * as PreloadB from 'preload/unsupportedbrowsers';
-import * as PreloadC from 'preload/dompurify';
-import * as PreloadD from 'preload/jquery';
-import * as PreloadE from 'preload/fonts';
-import * as PreloadF from 'preload/translations';
-import * as PreloadG from 'preload/base';
+/// <reference path="../preload/crypto.ts" />
+/// <reference path="../preload/unsupportedbrowsers.ts" />
+/// <reference path="../preload/dompurify.ts" />
+/// <reference path="../preload/jquery.ts" />
+/// <reference path="../preload/fonts.ts" />
+/// <reference path="../preload/translations.ts" />
+/// <reference path="../preload/base.ts" />
+
 import {Config} from 'config';
 import {ProStates, States, UrlSections} from 'ui/enums';
 import {UI} from 'ui/ui';

@@ -3,11 +3,13 @@
  * routine of all Web projects.
  */
 
+
+/// <reference path="../global/base.ts" />
+
 import {Config} from 'cyph/config';
 import {Env} from 'cyph/env';
 import {Util} from 'cyph/util';
 import {Elements} from 'cyph/ui/elements';
-import {locationData} from 'global/base';
 
 
 /* In WebSigned environments, can't load fonts from current origin */
@@ -93,7 +95,3 @@ $(() => {
 		), 10000);
 	}
 });
-
-
-let noop: any;
-export {noop};

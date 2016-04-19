@@ -1,7 +1,6 @@
 import {Config} from 'config';
 import {Env} from 'env';
 import {EventManager} from 'eventmanager';
-import {locationData} from 'global/base';
 
 
 /**
@@ -234,10 +233,8 @@ export class Thread {
 		const threadBody: string		=
 			'var locals = ' + JSON.stringify(locals) + ';\n' +
 			Thread.stringifyFunction(Thread.threadEnvSetup) +
-			"\n\nSystem.import('global/base').then(function () {" +
 			Thread.stringifyFunction(f) +
-			Thread.stringifyFunction(Thread.threadPostSetup) +
-			"\n});"
+			Thread.stringifyFunction(Thread.threadPostSetup)
 		;
 
 		for (let i = 0 ; i < locals._threadRandomSeed.length ; ++i) {

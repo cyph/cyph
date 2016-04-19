@@ -2,15 +2,15 @@
  * @file Entry point of cyph.com.
  */
 
-import * as PreloadA from 'preload/fakecrypto';
-import * as PreloadB from 'preload/jquery';
-import * as PreloadC from 'preload/base';
+/// <reference path="../preload/fakecrypto.ts" />
+/// <reference path="../preload/jquery.ts" />
+/// <reference path="../preload/base.ts" />
+
 import {CyphDemo} from 'ui/cyphdemo';
 import {Elements} from 'ui/elements';
 import {HomeSections, Podcasts, States} from 'ui/enums';
 import {UI} from 'ui/ui';
 import * as Cyph from 'cyph/cyph';
-import {locationData} from 'global/base';
 
 
 /*

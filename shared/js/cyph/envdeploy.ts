@@ -1,5 +1,4 @@
 import {Config} from 'config';
-import {locationData} from 'global/base';
 
 
 /**

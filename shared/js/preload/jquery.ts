@@ -6,7 +6,7 @@
 /**
  * Calculate absolute coordinates of the boundaries of this element.
  */
-self['$'].fn.bounds	= function () : ({
+$.fn.bounds	= function () : ({
 	top: number;
 	left: number;
 	bottom: number;
@@ -25,14 +25,10 @@ self['$'].fn.bounds	= function () : ({
 /**
  * Calculate number of pixels user has scrolled relative to this element.
  */
-self['$'].fn.scrollPosition	= function () : number {
+$.fn.scrollPosition	= function () : number {
 	return this[0].scrollHeight -
 	(
 		this[0].scrollTop +
 		this[0].clientHeight
 	);
 };
-
-
-let noop: any;
-export {noop};

@@ -1,7 +1,6 @@
 import {Env} from 'env';
 import {EventManager} from 'eventmanager';
 import {Thread} from 'thread';
-import {locationData} from 'global/base';
 
 
 /**
