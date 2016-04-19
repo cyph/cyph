@@ -18,6 +18,10 @@ module Cyph.com {
 			public business: boolean		= false;
 			public telehealth: boolean		= false;
 
+			/** Number of Doctors (default) */
+			public doctors: number			= 5;
+			public pricePerDoctor: number	= 250;
+
 			/** Home page state/view. */
 			public homeSection: HomeSections;
 
@@ -104,6 +108,10 @@ module Cyph.com {
 			public pricing () : void {
 				this.changeState(4);
 				return;
+			}
+
+			public doctorPricing(){
+				return this.doctors * this.pricePerDoctor;
 			}
 
 			/**

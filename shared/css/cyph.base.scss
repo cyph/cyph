@@ -583,6 +583,25 @@ button.pricing{
 	left: 0 !important;
 }
 
+input.doctors{
+	text-align: right;
+	color: white;
+	position: relative;
+	font-size: 26px;
+	background-color: #BBA8DF;
+	border: none;
+}
+
+.doctors {
+	margin: 10px 0px 10px 0px;
+	h5 {
+		margin: 0px 0px 0px 15px;
+		font-size: 17px;
+		font-weight: 400;
+		font-family: ubuntu;
+	}
+}
+
 #new-cyph-footer {
 	width: 200px;
 
