@@ -20,7 +20,7 @@ module Cyph.com {
 
 			/** Number of Doctors (default) */
 			public doctors: number			= 5;
-			public pricePerDoctor: number	= 250;
+			public pricePerDoctor: number	= 300;
 
 			/** Home page state/view. */
 			public homeSection: HomeSections;
