@@ -195,6 +195,15 @@ git clone git://github.com/gorilla/context.git
 git clone git://github.com/gorilla/mux.git
 cd ..
 
+mkdir lionelbarrow
+cd lionelbarrow
+git clone git://github.com/lionelbarrow/braintree-go.git
+echo '
+func (g *Braintree) SetHTTPClient(client *http.Client) {
+	g.HttpClient = client
+}' >> braintree-go/braintree.go # Temporary workaround for GAE support
+cd ..
+
 mkdir microcosm-cc
 cd microcosm-cc
 git clone git://github.com/microcosm-cc/bluemonday.git
