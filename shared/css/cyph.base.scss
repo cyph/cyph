@@ -211,6 +211,10 @@ html:not(.mobile) .platform-container.mobile .mobile-only {
 	display: initial;
 }
 
+hmtl.mobile .pricing{
+	margin: auto auto 42px auto !important;
+}
+
 /* Moved beta signup stuff from cyph.com CSS */
 
 .beta-signup-form {
@@ -296,6 +300,11 @@ html:not(.mobile) .platform-container.mobile .mobile-only {
 
 #individual{
 	text-align: left;
+	.laptop{
+		img{
+			margin: 8% 0% 0% -2%;
+		}
+	}
 	.signup-form {
 		* {
 			.md-input-container{
@@ -304,7 +313,7 @@ html:not(.mobile) .platform-container.mobile .mobile-only {
 		}
 		input{
 			width: 220px !important;
-			margin: 1px 25px 12px -8px;
+			margin: 1px 25px -5px -8px;
 		}
 		.md-input-container[disabled] label{
 			color: #999;
@@ -313,6 +322,8 @@ html:not(.mobile) .platform-container.mobile .mobile-only {
 			background-color: #86789F !important;
 			color: #999;
 			cursor: not-allowed;
+			margin-bottom: -15px;
+			margin-top: 0px;
 		}
 		.buttons{
 			margin-left: 20px;
@@ -334,7 +345,7 @@ html:not(.mobile) .platform-container.mobile .mobile-only {
 	text-align: center;
 	margin: auto auto 35px auto;
 	.buttons{
-		margin-top: 5%;
+		margin: -10px auto auto auto;
 	}
 
 	/*:first-child {
@@ -374,10 +385,10 @@ html:not(.mobile) .platform-container.mobile .mobile-only {
 }
 
 .pricing-chart.individual .md-button {
-	width: auto;
-	height: auto;
+	width: auto !important;
+	height: auto !important;
 	margin: 5px 0px 15px 0px;
-	padding: 5px 15px 5px 15px;
+	padding: 5px 15px 5px 15px !important;
 	background-color: #392859;
 }
 
@@ -518,6 +529,12 @@ md-icon.back.material-icons:hover {
 	// width: 50%;
 }
 
+.pricing-chart .md-button.back {
+	width: 75%;
+	background-color: #392859;
+	margin: 20px 0px -10px 0px;
+}
+
 .details { 
 	h2 {
 		font-size: 26px;
@@ -525,8 +542,6 @@ md-icon.back.material-icons:hover {
 	}
 	h4 {
 		display: inline;
-		margin: 100px 0px;
-		top: -2px;
 		position: relative;
 	}
 }
@@ -543,15 +558,21 @@ md-icon.back.material-icons:hover {
 	h2{
 		text-align: center;
 		font-size: 25px;
-		margin: 5px 0px 50px 0px;
+		margin: 5px 0px -10px 0px;
+	}
+	h5{
+		margin-bottom: 34px;
 	}
 }
 
 button.pricing{
-	top: 822% !important;
-	left: 54% !important;
-	position: absolute;
-	transform: scale(2);
+	// top: 822% !important;
+	// left: 54% !important;
+	// position: absolute;
+	// transform: scale(2);
+	position: relative !important;
+	transform: scale(1.25);
+	left: 0 !important;
 }
 
 #new-cyph-footer {

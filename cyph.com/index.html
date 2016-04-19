@@ -63,7 +63,7 @@
 					<img src='/img/logo.white.horizontal.header.png' alt='Horizontal white Cyph logo with transparent background' />
 				</a>
 
-				<md-button id='new-cyph' aria-label='Start new cyph' class='breathe' ng-class='{pricing: individual}'>
+				<md-button id='new-cyph' aria-label='Start new cyph' class='breathe'>
 					<a translate ng-href='{{Cyph.Env.newCyphUrl}}'>Start new cyph</a>
 				</md-button>
 
@@ -723,49 +723,53 @@
 			</h1>
 			<div>
 				<div>
-					<div class='pricing-chart animated bounceInDown' ng-hide='individual||business||telehealth' layout='row' layout-sm='column' layout-xs='column'>
-						<div flex='35'></div>
-						<div class='animated flipInX' data-wow-delay='2250ms' flex='10'>
-							<h2>Individual</h2>
-							<md-button
-								type='submit'
-								ng-click='individual=true'
-								aria-label='Individual'
-								ng-hide=''
-							>
-								<md-icon md-font-set='material-icons'>person</md-icon>
-							</md-button>
-						</div>
+					<div layout-sm='row' layout-xs='row'>
+						<div flex></div>
+						<div class='pricing-chart animated bounceInDown' ng-hide='individual||business||telehealth' layout='row' layout-sm='column' layout-xs='column'>
+							<div flex='35'></div>
+							<div class='animated flipInX' data-wow-delay='2250ms' flex='10'>
+								<h2>Individual</h2>
+								<md-button
+									type='submit'
+									ng-click='individual=true'
+									aria-label='Individual'
+									ng-hide=''
+								>
+									<md-icon md-font-set='material-icons'>person</md-icon>
+								</md-button>
+							</div>
 
-						<div class='animated flinInX' data-wow-delay='2250ms' flex='10'>
-							<h2>Business</h2>
-							<md-button
-								type='submit'
-								ng-click='business=true'
-								aria-label='Business'
-								ng-hide=''
-							>
-								<md-icon md-font-set='material-icons'>domain</md-icon>
-							</md-button>
-						</div>
+							<div class='animated flinInX' data-wow-delay='2250ms' flex='10'>
+								<h2>Business</h2>
+								<md-button
+									type='submit'
+									ng-click='business=true'
+									aria-label='Business'
+									ng-hide=''
+								>
+									<md-icon md-font-set='material-icons'>domain</md-icon>
+								</md-button>
+							</div>
 
-						<div class='animated flipInX' data-wow-delay='2250ms' flex='10'>
-							<h2>Telehealth</h2>
-							<md-button
-								type='submit'
-								ng-click='telehealth=true'
-								aria-label='Telehealth'
-								ng-hide=''
-							>
-								<md-icon md-font-set='material-icons'>video_call</md-icon>
-							</md-button>
+							<div class='animated flipInX' data-wow-delay='2250ms' flex='10'>
+								<h2>Telehealth</h2>
+								<md-button
+									type='submit'
+									ng-click='telehealth=true'
+									aria-label='Telehealth'
+									ng-hide=''
+								>
+									<md-icon md-font-set='material-icons'>video_call</md-icon>
+								</md-button>
+							</div>
+							<div flex='35'></div>
 						</div>
-						<div flex='35'></div>
+						<div flex></div>
 					</div>
 				</div>
-				</div>
+			</div>
 				
-				<div translate ng-show='individual' id='individual'>
+				<div translate ng-show='individual' id='individual' md-swipe-left='individual=false;'>
 					<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='25ms' translate>
 						Individual Pricing
 					</h1>
@@ -773,10 +777,12 @@
 						md-font-set='material-icons'
 						ng-click='individual = false'
 						class='back'
+						hide-sm
+						hide-xs
 					>keyboard_backspace</md-icon>
 					<div class='pricing-chart individual animated bounceInUp' layout='row' layout-sm='column' layout-xs='column'>
-						<div hide-sm hide-xs flex='45'>
-							<img src='/img/laptop-screenshot.png' class=''></img>
+						<div hide-sm hide-xs layout-align='center center' flex='100'>
+							<img src='/img/laptop-screenshot.png' flex='100'></img>
 						</div>
 						<div class='details' layout='column' flex='45'>
 							<h2> $0.00/month! </h2>
@@ -787,11 +793,15 @@
 								Of course if you really want to give us your money and support Cyph's mission, <a href='/donate'>donations</a> are appreciated!
 							</p>
 							<br />
+							<md-button id='new-cyph' aria-label='Start new cyph' class='breathe pricing'>
+								<a translate ng-href='{{Cyph.Env.newCyphUrl}}'>Start new cyph</a>
+							</md-button>
 							<h4>To get started, just click the big button!</h4> 
 						</div>
 						<div flex='10'></div>
 						<div class='registration-form' layout='column'>
 							<h2>Cyph Account Registration</h2>
+							<h5>Registration is currently closed, but you can sign up for the waitlist for an account.</h5>
 							<div layout='row' layout-sm='column' layout-xs='column' class='signup-form'>
 								<div layout='column'>
 									<md-input-container>
@@ -815,6 +825,9 @@
 										ng-disabled='true'
 									>
 										Register
+										<md-tooltip>
+											Registration is currently closed.
+										</md-tooltip>
 									</md-button>
 									<md-button
 										type='submit'
@@ -830,7 +843,7 @@
 					</div>
 				</div>
 
-				<div translate ng-show='telehealth' id='telehealth'>
+				<div translate ng-show='telehealth' id='telehealth' md-swipe-left='telehealth=false;'>
 					<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='25ms' translate>
 						Telehealth Pricing
 					</h1>
@@ -838,11 +851,13 @@
 						md-font-set='material-icons'
 						ng-click='telehealth = false'
 						class='back animated fadeIn'
+						hide-sm
+						hide-xs
 					>keyboard_backspace</md-icon>
 					<div class='bg-image' class='animated bounceInLeft' flex='20'>
 						<img src='/img/doctor.png'></img>
 					</div>
-					<div layout='row' class='pricing-chart animated bounceInUp' flex>
+					<div layout='row' layout-sm='columns' layout-xs='column' layout-align-sm='center center' layout-align-xs='center center' class='pricing-chart animated bounceInUp' flex>
 						<div flex></div>
 						<div  class='pricing' >
 							<h3>Single Practioner</h3>
@@ -1014,12 +1029,19 @@
 
 							<div class='price'>Contact Us</div>
 						</div>
+						<md-button 
+						class='md-raised back'
+						ng-click='telehealth=false;'
+						hide-gt-sm
+						>
+							Back
+						</md-button>
 						<div flex></div>
 					</div>
 				</div>
 			</div>
 				
-				<div id='business' ng-show='business'>
+				<div id='business' ng-show='business' md-swipe-left='business=false;'>
 					<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='25ms' translate>
 						Business Pricing
 					</h1>
@@ -1027,11 +1049,14 @@
 						md-font-set='material-icons'
 						ng-click='business = false'
 						class='back animated fadeIn'
+						hide-sm
+						hide-xs
 					>keyboard_backspace</md-icon>
 					<div class='bg-image' class='animated bounceInLeft' flex='20'>
 						<img src='/img/business-man.png'></img>
 					</div>
-					<div layout='row' class='pricing-chart animated bounceInUp' flex>
+					<div show-sm show-xs flex></div>
+					<div layout='row' layout-sm='column' layout-xs='column' layout-align-sm='center center' layout-align-xs='center center' class='pricing-chart animated bounceInUp' flex>
 						<div flex></div>
 						<div  class='pricing'>
 							<h3>The Basics</h3>
