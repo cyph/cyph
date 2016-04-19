@@ -1,4 +1,3 @@
-import * as PreloadA from 'preload/jquery';
 import {IChat} from 'ichat';
 import {IElements} from 'ielements';
 import {IScrollManager} from 'iscrollmanager';
