@@ -211,10 +211,6 @@ html:not(.mobile) .platform-container.mobile .mobile-only {
 	display: initial;
 }
 
-hmtl.mobile .pricing{
-	margin: auto auto 42px auto !important;
-}
-
 /* Moved beta signup stuff from cyph.com CSS */
 
 .beta-signup-form {
@@ -271,12 +267,10 @@ hmtl.mobile .pricing{
 	}
 
 	.back {
-		font-size: 42px !important;
-		width: 7%;
-		position: absolute;
-		float: left;
-		left: 0px;
-		top: 15px;
+		width: 0px;
+		position: fixed !important;
+		left: -15px;
+		top: 75px;
 		display: block;
 	}
 
@@ -332,13 +326,22 @@ hmtl.mobile .pricing{
 	}
 }
 
-.signup-form.layout-xs-column.layout-sm-column.layout-row {
-	margin: 0px 20% 0px 20%;
+.mobile .signup-form {
+	margin: 0%;
 }
 
 .buttons *[disabled]{
 	cursor: not-allowed;
 	background-color: #86789F !important; 
+}
+
+.mobile .pricing-chart {
+	md-input-container {
+		margin: 0% 0% 0% 5% !important;
+	}
+	.buttons {
+		margin: 5% 0% !important;
+	}
 }
 
 .pricing-chart {
@@ -414,13 +417,16 @@ md-icon.back.material-icons:hover {
 		cursor: pointer;
 }
 
+.mobile .pricing{
+	margin: 5% 1% 5% 1% !important;	
+}
+
 .pricing {
 	background-color: #624599 !important;
 	opacity: 0.75;
 	width: 225px;
 	height: auto;
-	margin: 5% 1% 5% 1%;
-	
+	margin: auto 1% auto 1%;
 	a {
 		text-decoration: none !important;
 	}
@@ -801,7 +807,8 @@ md-checkbox {
 	line-height: normal;
 
 	&[disabled] {
-		background-color: transparent !important;
+		background-color: #B48DFF !important;
+		opacity: 0.75 !important;
 	}
 
 	&.md-fab {

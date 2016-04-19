@@ -80,7 +80,7 @@
 					<span class='link-wrapper-inner'>
 						<md-button translate href='/blog'>Blog</md-button>
 						<md-button translate href='/faq'>FAQ</md-button>
-						<md-button translate href='/pricing' ng-click='individual = false; business = false; telehealth = false;'>Pricing</md-button>
+						<md-button translate href='/pricing' ng-click='ui.individual = false; ui.business = false; ui.telehealth = false;'>Pricing</md-button>
 						<md-button translate href='/login'>Login/Register</md-button>
 					</span>
 				</span>
@@ -154,7 +154,7 @@
 					</md-button>
 				</div>
 				<div>
-					<md-button translate href='/pricing' ng-click='ui.baseButtonClick(); individual = false; business = false; telehealth = false;'>
+					<md-button translate href='/pricing' ng-click='ui.baseButtonClick(); ui.individual = false; ui.business = false; ui.telehealth = false;'>
 						Pricing
 					</md-button>
 				</div>
@@ -718,20 +718,20 @@
 		</section>
 
 		<section id='pricing' ng-show='ui.state === Cyph.com.UI.States.pricing' class='unisection'>
-			<h1 class='hero-text wow animated fadeInDownBig' ng-hide='individual||business||telehealth' data-wow-delay='420ms' translate>
+			<h1 class='hero-text wow animated fadeInDownBig' ng-hide='ui.individual||ui.business||ui.telehealth' data-wow-delay='420ms' translate>
 				Pricing
 			</h1>
 			<div>
 				<div>
 					<div layout-sm='row' layout-xs='row'>
 						<div flex></div>
-						<div class='pricing-chart animated bounceInDown' ng-hide='individual||business||telehealth' layout='row' layout-sm='column' layout-xs='column'>
+						<div class='pricing-chart animated bounceInDown' ng-hide='ui.individual||ui.business||ui.telehealth' layout='row' layout-sm='column' layout-xs='column'>
 							<div flex='35'></div>
 							<div class='animated flipInX' data-wow-delay='2250ms' flex='10'>
 								<h2>Individual</h2>
 								<md-button
 									type='submit'
-									ng-click='individual=true'
+									ng-click='ui.individual=true'
 									aria-label='Individual'
 									ng-hide=''
 								>
@@ -743,7 +743,7 @@
 								<h2>Business</h2>
 								<md-button
 									type='submit'
-									ng-click='business=true'
+									ng-click='ui.business=true'
 									aria-label='Business'
 									ng-hide=''
 								>
@@ -755,7 +755,7 @@
 								<h2>Telehealth</h2>
 								<md-button
 									type='submit'
-									ng-click='telehealth=true'
+									ng-click='ui.telehealth=true'
 									aria-label='Telehealth'
 									ng-hide=''
 								>
@@ -769,13 +769,13 @@
 				</div>
 			</div>
 				
-				<div translate ng-show='individual' id='individual' md-swipe-left='individual=false;'>
+				<div translate ng-show='ui.individual' id='individual' md-swipe-left='ui.individual=false;'>
 					<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='25ms' translate>
 						Individual Pricing
 					</h1>
 					<md-icon
 						md-font-set='material-icons'
-						ng-click='individual = false'
+						ng-click='ui.individual = false'
 						class='back'
 						hide-sm
 						hide-xs
@@ -795,7 +795,7 @@
 							<h4 hide-sm hide-xs>To get started, just click the big button to the right!</h4> 
 						</div>
 						<div flex='10'></div>
-						<div class='registration-form' layout='column'>
+						<div class='registration-form' layout='column' layout-align-sm='center center' layout-align-xs='center center'>
 							<h2>Cyph Account Registration</h2>
 							<h5>Registration is currently closed, but you can sign up for the waitlist for an account.</h5>
 							<div layout='row' layout-sm='column' layout-xs='column' class='signup-form'>
@@ -841,7 +841,7 @@
 						<div flex='5'></div>
 						<md-button 
 							class='md-raised back'
-							ng-click='individual=false;'
+							ng-click='ui.individual=false;'
 							hide-gt-sm
 							>
 							Back
@@ -849,13 +849,13 @@
 					</div>
 				</div>
 
-				<div translate ng-show='telehealth' id='telehealth' md-swipe-left='telehealth=false;'>
+				<div translate ng-show='ui.telehealth' id='telehealth' md-swipe-left='ui.telehealth=false;'>
 					<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='25ms' translate>
 						Telehealth Pricing
 					</h1>
 					<md-icon
 						md-font-set='material-icons'
-						ng-click='telehealth = false'
+						ng-click='ui.telehealth = false'
 						class='back animated fadeIn'
 						hide-sm
 						hide-xs
@@ -865,6 +865,7 @@
 					</div>
 					<div layout='row' layout-sm='columns' layout-xs='column' layout-align-sm='center center' layout-align-xs='center center' class='pricing-chart animated bounceInUp' flex>
 						<div flex></div>
+						<br hide-gt-sm />
 						<div  class='pricing' >
 							<h3>Single Practioner</h3>
 
@@ -916,7 +917,7 @@
 
 							<div class='price'>$399/mo</div>
 						</div>
-
+						<br hide-gt-sm />
 						<div  class='pricing'>
 							<h3>Small Practice</h3>
 
@@ -976,7 +977,7 @@
 
 							<div class='price'>$995/month</div>
 						</div>
-
+						<br hide-gt-sm />
 						<div  class='pricing'>
 							<h3>Large Healthcare Provider</h3>
 
@@ -1037,9 +1038,10 @@
 								<div class='price'>Contact Us</div>
 							</a>
 						</div>
+						<br hide-gt-sm />
 						<md-button 
 						class='md-raised back'
-						ng-click='telehealth=false;'
+						ng-click='ui.telehealth=false;'
 						hide-gt-sm
 						>
 							Back
@@ -1049,13 +1051,13 @@
 				</div>
 			</div>
 				
-				<div id='business' ng-show='business' md-swipe-left='business=false;'>
+				<div id='business' ng-show='ui.business' md-swipe-left='ui.business=false;'>
 					<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='25ms' translate>
 						Business Pricing
 					</h1>
 					<md-icon
 						md-font-set='material-icons'
-						ng-click='business = false'
+						ng-click='ui.business = false'
 						class='back animated fadeIn'
 						hide-sm
 						hide-xs
@@ -1066,6 +1068,7 @@
 					<div show-sm show-xs flex></div>
 					<div layout='row' layout-sm='column' layout-xs='column' layout-align-sm='center center' layout-align-xs='center center' class='pricing-chart animated bounceInUp' flex>
 						<div flex></div>
+						<br hide-gt-sm />
 						<div  class='pricing'>
 							<h3>The Basics</h3>
 
@@ -1110,7 +1113,7 @@
 
 							<div class='price'>$99/mo</div>
 						</div>
-
+						<br hide-gt-sm />
 						<div  class='pricing'>
 							<h3>The Works</h3>
 
@@ -1169,7 +1172,7 @@
 
 							<div class='price'>$495/mo</div>
 						</div>
-
+						<br hide-gt-sm />
 						<div  class='pricing'>
 							<h3>Custom</h3>
 
@@ -1215,9 +1218,10 @@
 								<div class='price'>Contact Us</div>
 							</a>
 							</div>
+							<br hide-gt-sm />
 							<md-button 
 								class='md-raised back'
-								ng-click='business=false;'
+								ng-click='ui.business=false;'
 								hide-gt-sm
 								>
 								Back

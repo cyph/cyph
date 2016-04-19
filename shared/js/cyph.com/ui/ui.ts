@@ -13,6 +13,11 @@ module Cyph.com {
 			/** Donation amount in dollars (default). */
 			public donationAmount: number	= 10;
 
+			/** Pricing states */
+			public individual: boolean		= false;
+			public business: boolean		= false;
+			public telehealth: boolean		= false;
+
 			/** Home page state/view. */
 			public homeSection: HomeSections;
 
@@ -94,6 +99,11 @@ module Cyph.com {
 				}, delay);
 
 				setTimeout(oncomplete, delay + 50);
+			}
+
+			public pricing () : void {
+				this.changeState(4);
+				return;
 			}
 
 			/**

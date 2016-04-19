@@ -894,7 +894,6 @@ module Cyph {
 											type='submit'
 											ng-click='$this.state = 2'
 											aria-label='Individual'
-											ng-hide='$this.state !== 1'
 										>
 											<md-icon md-font-set='material-icons'>person</md-icon>
 										</md-button>
@@ -902,14 +901,13 @@ module Cyph {
 
 									<div flex>
 										<h2>Business</h2>
-										<md-button
-											type='submit'
-											ng-click='/pricing#business'
-											aria-label='Business'
-											ng-hide='$this.state !== 1'
-										>
-											<md-icon md-font-set='material-icons'>domain</md-icon>
-										</md-button>
+											<md-button
+												type='submit'
+												ng-click='ui.pricing()'
+												aria-label='Business'
+											>
+												<md-icon md-font-set='material-icons'>domain</md-icon>
+											</md-button>
 									</div>
 								</div>
 							</div>
