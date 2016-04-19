@@ -54,7 +54,9 @@ jsbundle () {
 	# 	git checkout HEAD -- config.js
 	# fi
 
-	echo -e "\n\nSystem.import('${file}');" >> $file.js
+	if [ "${file}" != 'global/base' -a "${file}" != 'cyph/session' ] ; then
+		echo -e "\n\nSystem.import('${file}');" >> $file.js
+	fi
 
 	# cp ../lib/js/require.js $file.js.new
 	# echo >> $file.js.new
