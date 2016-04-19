@@ -90,7 +90,7 @@ jspm install -y \
 	npm:animate.css \
 	github:davidchambers/base64.js \
 	jquery \
-	jquery-legacy=jquery@^1 \
+	jquery-legacy=github:jquery@^1 \
 	npm:magnific-popup \
 	npm:nanoscroller \
 	npm:unsemantic \
