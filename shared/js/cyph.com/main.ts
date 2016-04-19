@@ -37,7 +37,7 @@ angular.
 		'$mdSidenav',
 		'chatSidenav',
 
-		($scope, $mdDialog, $mdToast, $mdSidenav, chatSidenav) => $(() => {
+		($scope, $mdDialog, $mdToast, $mdSidenav, chatSidenav) => () => {
 			Elements.load();
 
 			const controller: Cyph.IController				= new Cyph.Controller($scope);
@@ -63,12 +63,12 @@ angular.
 			self['ui']		= $scope.ui;
 
 			controller.update();
-		})
+		}
 	])
 ;
 
 Cyph.UI.Elements.body.attr('ng-controller', Cyph.Config.angularConfig.rootController);
-angular.bootstrap(document, [Cyph.Config.angularConfig.rootModule]);
+$(() => angular.bootstrap(document, [Cyph.Config.angularConfig.rootModule]));
 
 
 /* Redirect to Onion site when on Tor */

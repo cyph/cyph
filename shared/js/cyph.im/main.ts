@@ -34,7 +34,7 @@ angular.
 		'$mdToast',
 		'chatSidenav',
 
-		($scope, $mdDialog, $mdToast, chatSidenav) => $(() => {
+		($scope, $mdDialog, $mdToast, chatSidenav) => () => {
 			Cyph.UI.Elements.load();
 
 			const controller: Cyph.IController			= new Cyph.Controller($scope);
@@ -62,7 +62,7 @@ angular.
 
 			self['Cyph']	= $scope.Cyph;
 			self['ui']		= $scope.ui;
-		})
+		}
 	]).
 	config([
 		'$compileProvider',
@@ -72,4 +72,4 @@ angular.
 ;
 
 Cyph.UI.Elements.body.attr('ng-controller', Cyph.Config.angularConfig.rootController);
-angular.bootstrap(document, [Cyph.Config.angularConfig.rootModule]);
+$(() => angular.bootstrap(document, [Cyph.Config.angularConfig.rootModule]));
