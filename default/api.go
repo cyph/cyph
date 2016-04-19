@@ -29,8 +29,8 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	amount := strconv.ParseInt(sanitize(h.Request.PostFormValue("Amount")))
 
 	tx, err := braintreeInit().Transaction().Create(&braintree.Transaction{
-		Type: "sale",
-		Amount: braintree.NewDecimal(amount, 2),
+		Type:               "sale",
+		Amount:             braintree.NewDecimal(amount, 2),
 		PaymentMethodNonce: nonce,
 	})
 
