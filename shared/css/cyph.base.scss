@@ -332,14 +332,14 @@ hmtl.mobile .pricing{
 	}
 }
 
+.signup-form.layout-xs-column.layout-sm-column.layout-row {
+	margin: 0px 20% 0px 20%;
+}
+
 .buttons *[disabled]{
 	cursor: not-allowed;
 	background-color: #86789F !important; 
 }
-
-.details{
-		width: 50%;
-	}
 
 .pricing-chart {
 	text-align: center;
@@ -419,8 +419,8 @@ md-icon.back.material-icons:hover {
 	opacity: 0.75;
 	width: 225px;
 	height: auto;
-	margin: auto 1% auto 1%;
-
+	margin: 5% 1% 5% 1%;
+	
 	a {
 		text-decoration: none !important;
 	}

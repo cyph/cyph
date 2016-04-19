@@ -784,7 +784,7 @@
 						<div hide-sm hide-xs layout-align='center center' flex='100'>
 							<img src='/img/laptop-screenshot.png' flex='100'></img>
 						</div>
-						<div class='details' layout='column' flex='45'>
+						<div class='details' layout='column' flex='100'>
 							<h2> $0.00/month! </h2>
 							<p>
 								That's right, Cyph is abosolutley free for individuals to use! We believe that everyone has the right to basic privacy, so while we may offer some premium features for individuals in the future, Cyph will always have an unlimited free tier for individuals!
@@ -792,7 +792,7 @@
 							<p>
 								Of course if you really want to give us your money and support Cyph's mission, <a href='/donate'>donations</a> are appreciated!
 							</p>
-							<h4>To get started, just click the big button to the right!</h4> 
+							<h4 hide-sm hide-xs>To get started, just click the big button to the right!</h4> 
 						</div>
 						<div flex='10'></div>
 						<div class='registration-form' layout='column'>
@@ -839,6 +839,13 @@
 							</md-button>
 						</div>
 						<div flex='5'></div>
+						<md-button 
+							class='md-raised back'
+							ng-click='individual=false;'
+							hide-gt-sm
+							>
+							Back
+						</md-button>
 					</div>
 				</div>
 
@@ -1208,6 +1215,13 @@
 								<div class='price'>Contact Us</div>
 							</a>
 							</div>
+							<md-button 
+								class='md-raised back'
+								ng-click='business=false;'
+								hide-gt-sm
+								>
+								Back
+							</md-button>
 						<div flex></div>
 					</div>
 				</div>
