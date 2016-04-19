@@ -295,6 +295,11 @@ fi
 # Secret credentials
 cat ~/.cyph/default.vars >> default/app.yaml
 cat ~/.cyph/jobs.vars >> jobs/jobs.yaml
+if [ $test ] ; then
+	cat ~/.cyph/braintree.sandbox >> default/app.yaml
+else
+	cat ~/.cyph/braintree.prod >> default/app.yaml
+fi
 
 deploy () {
 	gcloud preview app deploy --quiet --no-promote --project cyphme --version $version $*
