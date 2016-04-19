@@ -421,6 +421,10 @@ md-icon.back.material-icons:hover {
 	height: auto;
 	margin: auto 1% auto 1%;
 
+	a {
+		text-decoration: none !important;
+	}
+
 	md-icon {
 		font-size: 32px;
 		margin: 10px 15px 10px 15px;
@@ -536,12 +540,15 @@ md-icon.back.material-icons:hover {
 }
 
 .details { 
+	margin: -10px 0px;
 	h2 {
-		font-size: 26px;
+		font-size: 36px;
+		margin: 5px;
 		text-align: center;
 	}
 	h4 {
 		display: inline;
+		margin: 5px 0px;
 		position: relative;
 	}
 }
@@ -566,12 +573,7 @@ md-icon.back.material-icons:hover {
 }
 
 button.pricing{
-	// top: 822% !important;
-	// left: 54% !important;
-	// position: absolute;
-	// transform: scale(2);
 	position: relative !important;
-	transform: scale(1.25);
 	left: 0 !important;
 }
 
