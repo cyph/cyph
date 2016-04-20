@@ -59,6 +59,7 @@ md-toast {
 	position: relative;
 	text-align: center;
 	padding: 15px 0px 5px 0px;
+	z-index: 2;
 }
 
 md-toolbar, md-toolbar.md-default-theme:not(.md-menu-toolbar), md-toolbar:not(.md-menu-toolbar) {
@@ -266,12 +267,10 @@ html:not(.mobile) .platform-container.mobile .mobile-only {
 	}
 
 	.back {
-		font-size: 42px !important;
-		width: 7%;
-		position: absolute;
-		float: left;
-		left: 0px;
-		top: 15px;
+		width: 0px;
+		position: fixed !important;
+		left: -15px;
+		top: 75px;
 		display: block;
 	}
 
@@ -280,27 +279,161 @@ html:not(.mobile) .platform-container.mobile .mobile-only {
 	}
 }
 
-.beta-signup-form .md-button md-icon {
+.beta-signup-form .md-button md-icon, .pricing-chart .md-button .md-icon {
 	line-height: 20px !important;
 	font-size: 72px !important;
 }
 
-.beta-signup-form .md-button, #new-cyph-footer {
+.beta-signup-form .md-button, .pricing-chart .md-button, #new-cyph-footer {
 	font-family: 'Ubuntu' !important;
 	line-height: 50px !important;
 	font-size: 18px !important;
 	box-shadow: 0px 4px 10px -1px rgba(0, 0, 0, 0.25) !important;
 }
 
+
+#individual{
+	text-align: left;
+	.laptop{
+		img{
+			margin: 8% 0% 0% -2%;
+		}
+	}
+	.signup-form {
+		* {
+			.md-input-container{
+				margin: 0px !important;
+			}
+		}
+		input{
+			width: 220px !important;
+			margin: 1px 25px -5px -8px;
+		}
+		.md-input-container[disabled] label{
+			color: #999;
+		}
+		input[disabled]{
+			background-color: #86789F !important;
+			color: #999;
+			cursor: not-allowed;
+			margin-bottom: -15px;
+			margin-top: 0px;
+		}
+		.buttons{
+			margin-left: 20px;
+		}
+		// width: 250px;
+	}
+}
+
+.mobile .signup-form {
+	margin: 0%;
+}
+
+.buttons *[disabled]{
+	cursor: not-allowed;
+	background-color: #86789F !important; 
+}
+
+.mobile .pricing-chart {
+	md-input-container {
+		margin: 0% 0% 0% 5% !important;
+	}
+	.buttons {
+		margin: 5% 0% !important;
+	}
+}
+
+.pricing-chart {
+	text-align: center;
+	margin: auto auto 35px auto;
+	.buttons{
+		margin: -10px auto auto auto;
+	}
+
+	/*:first-child {
+		margin-left: auto !important;
+	}
+	:last-child {
+		margin-right: auto !important;
+	}*/
+	.md-button {
+		width: 100px;
+		background-color: #392859;
+		height: 100px;
+	}
+	md-input-container{
+		margin: 0 !important;
+	}
+	md-input-container .md-input {
+		/* -webkit-order: 2; */
+		-ms-flex-order: 2;
+		/* order: 2; */
+		/* display: block; */
+		background-color: #BBA8DF;
+		//margin: 10px !important;
+		/* margin-top: 0; */
+		/* background: 0 0; */
+		padding: 2px 2px 1px;
+		/* border-width: 0 0 1px; */
+		line-height: 26px;
+		/* height: 30px; */
+		-ms-flex-preferred-size: 26px;
+		/* border-radius: 0; */
+		/* border-style: solid; */
+		width: 100%;
+		/* box-sizing: border-box; */
+		/* float: left; */
+	}
+}
+
+.pricing-chart.individual .md-button {
+	width: auto !important;
+	height: auto !important;
+	margin: 5px 0px 15px 0px;
+	padding: 5px 15px 5px 15px !important;
+	background-color: #392859;
+}
+
+.pricing-chart button md-icon.ng-scope.material-icons {
+	color: white;
+	transform: scale(4.5);
+	position: relative;
+	top: 40px;
+}
+
+md-icon.back.material-icons {
+	transform: scale(3.5);
+	position: relative;
+	z-index: 999;
+	margin-left: 50px;
+	color: white;
+	opacity: 0.85;
+	
+}
+
+md-icon.back.material-icons:hover {
+		opacity: 1 !important;
+		cursor: pointer;
+}
+
+.mobile .pricing{
+	margin: 5% 1% 5% 1% !important;	
+}
+
 .pricing {
 	background-color: #624599 !important;
-	width: 200px;
+	opacity: 0.75;
+	width: 225px;
 	height: auto;
-	margin: auto 20px auto 20px;
+	margin: auto 1% auto 1%;
+	a {
+		text-decoration: none !important;
+	}
 
 	md-icon {
 		font-size: 32px;
-		margin-bottom: 14px;
+		margin: 10px 15px 10px 15px;
 		width: 32px;
 		position: relative;
 	}
@@ -308,10 +441,10 @@ html:not(.mobile) .platform-container.mobile .mobile-only {
 	h3 {
 		text-align: center;
 		background-color: #392859 !important;
-		width: 115%;
-		left: -14px;
+		width: 108%;
+		left: -4%;
 		opacity: 1 !important;
-		top: -16px;
+		top: -5px;
 		line-height: 3;
 		position: relative;
 	}
@@ -324,39 +457,35 @@ html:not(.mobile) .platform-container.mobile .mobile-only {
 
 	.features {
 		height: 69%;
-
-		h4 {
-			float: right;
-			display: inline;
-			left: -10px;
-			width: 73%;
-			margin: 0px auto 0px auto;
-			top: -2px;
-			position: relative;
-		}
+		.feature {
+			h4 {
+				position: relative;
+				margin: 5px 0px 0px -9px;
+				letter-spacing: -0.25px;
+			}
+			md-icon {
+				// left: 15px;
+			}
+	}
 
 		p:first-child {
-			margin: -15px 0px 35px 0px;
+			margin: 5px 10px 15px 12px;
 		}
 
 		p {
 			text-align: center;
-			margin-top: -5px;
 		}
 
 		hr {
 			opacity: 0.25;
 			color: #000;
-			margin: -11px 0px 17px 0px;
+			margin: -11px 20px 10px 20px;
 		}
 
 		.indent {
-			margin-left: 25px !important;
+			margin: -3.5px 0px -3.5px 22px !important;
 		}
 
-		.feature {
-			margin-left: 10px;
-		}
 	}
 
 	.pricing:first-child {
@@ -372,7 +501,7 @@ html:not(.mobile) .platform-container.mobile .mobile-only {
 		text-align: center;
 		font-weight: 400;
 		font-size: 21px;
-		margin: 100% auto auto auto;
+		margin: 5px 10px 15px 12px !important;
 		margin: auto;
 		background-color: #7B56BF !important;
 		line-height: 2;
@@ -402,12 +531,75 @@ html:not(.mobile) .platform-container.mobile .mobile-only {
 	}
 }
 
+.pricing-chart.individual.layout-row .layout-column {
+	text-align: right;
+}
+
+.pricing-chart.individual{
+	// width: 50%;
+}
+
+.pricing-chart .md-button.back {
+	width: 75%;
+	background-color: #392859;
+	margin: 20px 0px -10px 0px;
+}
+
+.details { 
+	margin: -10px 0px;
+	h2 {
+		font-size: 36px;
+		margin: 5px;
+		text-align: center;
+	}
+	h4 {
+		display: inline;
+		margin: 5px 0px;
+		position: relative;
+	}
+}
+
 .features .icons h4 {
 	width: 68%;
 	float: left;
 	margin-left: 6px;
 	position: relative;
 	top: -28px;
+}
+
+.registration-form{
+	h2{
+		text-align: center;
+		font-size: 25px;
+		margin: 5px 0px -10px 0px;
+	}
+	h5{
+		margin-bottom: 34px;
+	}
+}
+
+button.pricing{
+	position: relative !important;
+	left: 0 !important;
+}
+
+input.doctors{
+	text-align: right;
+	color: white;
+	position: relative;
+	font-size: 26px;
+	background-color: #BBA8DF;
+	border: none;
+}
+
+.doctors {
+	margin: 10px 0px 10px 0px;
+	h5 {
+		margin: 0px 0px 0px 15px;
+		font-size: 17px;
+		font-weight: 400;
+		font-family: ubuntu;
+	}
 }
 
 #new-cyph-footer {
@@ -479,6 +671,50 @@ html:not(.mobile) .platform-container.mobile .mobile-only {
 
 html.mobile .mfp-content {
 	pointer-events: none !important;
+}
+
+/* FAQ */
+
+#faq {
+	.bg-image{
+		left: 30% !important;
+		top: 45% !important;
+		img{
+			transform: scale(2);
+		}
+	}
+	li {
+		list-style: none;
+	}
+}
+
+.corner-image-left{
+	position: absolute;
+	width: 45%;
+	z-index: 0;
+	left: -21%;
+	top: 69%;
+}
+
+#business{
+	.bg-image {
+		left: -6%;
+		top: 9%;
+	}
+}
+
+#telehealth.bgimage{
+	left: 5% !important;
+	top: 12% !important;
+}
+
+.bg-image{
+	position: absolute;
+	opacity: 0.5;
+	img{
+		position: absolute;
+		opacity: 0.35;
+	}
 }
 
 /*** Angular Material patches (from 0.4 to 0.6 upgrade) ***/
@@ -590,7 +826,8 @@ md-checkbox {
 	line-height: normal;
 
 	&[disabled] {
-		background-color: transparent !important;
+		background-color: #B48DFF !important;
+		opacity: 0.75 !important;
 	}
 
 	&.md-fab {
