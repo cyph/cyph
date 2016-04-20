@@ -108,7 +108,10 @@ elif [ "${command}" == 'restart' ] ; then
 	exit 0
 
 elif [ "${command}" == 'updatelibs' ] ; then
-	args=''
+	args=" \
+		-it \
+		-v $HOME/.cyph:/home/gibson/.cyph \
+	"
 
 elif [ "${command}" == 'websignhash' ] ; then
 	args=''

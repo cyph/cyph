@@ -153,11 +153,11 @@ for d in cyph.com cyph.im ; do
 				cut -c 2- | \
 				rev \
 			) \
-		};" >> ../$d/js/preload/translations.ts
+		};" > ../$d/js/preload/translations.ts
 
 		cd ../$d
 
-		echo "FontsCSS = \`$(scss css/fonts.scss)\`;" >> js/preload/fonts.ts
+		echo "FontsCSS = \`$(scss css/fonts.scss)\`;" > js/preload/fonts.ts
 	fi
 
 	../commands/build.sh --prod || exit;
@@ -285,15 +285,21 @@ fi
 
 find . -name '*.bak' | xargs rm
 
-# Doesn't hurt, legally
 if [ ! $test ] ; then
-	find . -type d -name cryptolib | xargs rm -rf
+	cd shared/lib/js
+	grep 'crypto/' ../../js/package.json | perl -pe 's/.*"(.*?):(.*?)".*/\1\/\2/g' | xargs rm -rf
+	cd ../../..
 fi
 
 
 # Secret credentials
 cat ~/.cyph/default.vars >> default/app.yaml
 cat ~/.cyph/jobs.vars >> jobs/jobs.yaml
+if [ $test ] ; then
+	cat ~/.cyph/braintree.sandbox >> default/app.yaml
+else
+	cat ~/.cyph/braintree.prod >> default/app.yaml
+fi
 
 deploy () {
 	gcloud preview app deploy --quiet --no-promote --project cyphme --version $version $*

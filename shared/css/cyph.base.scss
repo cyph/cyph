@@ -62,7 +62,6 @@ md-toast {
 	z-index: 2;
 }
 
-
 md-toolbar, md-toolbar.md-default-theme:not(.md-menu-toolbar), md-toolbar:not(.md-menu-toolbar) {
 	background-color: #7d4fd3;
 	height: 40px !important;
@@ -74,6 +73,7 @@ md-toolbar, md-toolbar.md-default-theme:not(.md-menu-toolbar), md-toolbar:not(.m
 		vertical-align: middle;
 	}
 }
+
 #mobile-toolbar {
 	position: fixed;
 	top: 0px;
@@ -851,7 +851,6 @@ md-dialog {
 md-content {
 	color: inherit;
 }
-
 
 /*** Angular Material patches (from 0.10.1 to 1.0.7 upgrade) ***/
 
