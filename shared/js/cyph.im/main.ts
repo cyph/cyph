@@ -9,12 +9,13 @@
 /// <reference path="../preload/jquery.ts" />
 /// <reference path="../preload/fonts.ts" />
 /// <reference path="../preload/translations.ts" />
-/// <reference path="../preload/base.ts" />
+/// <reference path="../global/base.ts" />
 
 import {Config} from 'config';
 import {ProStates, States, UrlSections} from 'ui/enums';
 import {UI} from 'ui/ui';
 import * as Cyph from 'cyph/cyph';
+import {Loaded} from 'preload/base';
 
 
 angular.
@@ -73,3 +74,6 @@ angular.
 
 Cyph.UI.Elements.body.attr('ng-controller', Cyph.Config.angularConfig.rootController);
 $(() => angular.bootstrap(document, [Cyph.Config.angularConfig.rootModule]));
+
+
+export {Loaded};

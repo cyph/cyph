@@ -4,13 +4,14 @@
 
 /// <reference path="../preload/fakecrypto.ts" />
 /// <reference path="../preload/jquery.ts" />
-/// <reference path="../preload/base.ts" />
+/// <reference path="../global/base.ts" />
 
 import {CyphDemo} from 'ui/cyphdemo';
 import {Elements} from 'ui/elements';
 import {HomeSections, Podcasts, States} from 'ui/enums';
 import {UI} from 'ui/ui';
 import * as Cyph from 'cyph/cyph';
+import {Loaded} from 'preload/base';
 
 
 /*
@@ -87,3 +88,6 @@ if (!Cyph.Env.isOnion) {
 		}
 	});
 }
+
+
+export {Loaded};

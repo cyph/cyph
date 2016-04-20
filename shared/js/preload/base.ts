@@ -13,7 +13,6 @@ import {Elements} from 'cyph/ui/elements';
 
 
 /* In WebSigned environments, can't load fonts from current origin */
-
 if (FontsCSS) {
 	Elements.body.append(
 		$('<style></style>').html(
@@ -25,18 +24,14 @@ if (FontsCSS) {
 	);
 }
 
-
 /* Translations */
-
 if (Translations && Env.language !== Config.defaultLanguage) {
 	$('[translate]').each((i: number, elem: HTMLElement) =>
 		Util.translateHtml(elem)
 	);
 }
 
-
 /* Load assets only for the current platform */
-
 $(
 	'.' +
 	Env.platformString +
@@ -49,23 +44,17 @@ $(
 	$this.attr('src', $this.attr('deferred-src'));
 });
 
-
 /* Mobile CSS class */
-
 if (Env.isMobile) {
 	Elements.html.addClass('mobile');
 }
 
-
 /* Polyfills */
-
 if (!HTMLElement.prototype.click) {
 	HTMLElement.prototype.click	= function () {
 		Util.triggerClick(this);
 	};
 }
-
-
 
 $(() => {
 	/* Support button-links */
@@ -95,3 +84,7 @@ $(() => {
 		), 10000);
 	}
 });
+
+
+const Loaded: boolean	= true;
+export {Loaded};
