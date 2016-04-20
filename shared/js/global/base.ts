@@ -1,37 +1,9 @@
 /**
- * @file Normalises global namespace across varying runtime environments,
- * and pulls in all low-footprint references like enums and interfaces.
+ * @file Normalises global namespace across varying runtime environments.
  */
 
 
-/// <reference path="../typings/dataview.d.ts" />
-/// <reference path="../typings/iwebsign.d.ts" />
-/// <reference path="../typings/storage.d.ts" />
-/// <reference path="../../lib/typings/main.d.ts" />
-
-/// <reference path="../cyph/p2p/enums.ts" />
-/// <reference path="../cyph/session/enums.ts" />
-/// <reference path="../cyph/ui/chat/enums.ts" />
-
-/// <reference path="../cyph/icontroller.ts" />
-/// <reference path="../cyph/channel/ichannel.ts" />
-/// <reference path="../cyph/crypto/icastle.ts" />
-/// <reference path="../cyph/p2p/ifiletransfer.ts" />
-/// <reference path="../cyph/p2p/ip2p.ts" />
-/// <reference path="../cyph/session/imessage.ts" />
-/// <reference path="../cyph/session/imutex.ts" />
-/// <reference path="../cyph/session/isession.ts" />
-/// <reference path="../cyph/ui/idialogmanager.ts" />
-/// <reference path="../cyph/ui/ilinkconnection.ts" />
-/// <reference path="../cyph/ui/inotifier.ts" />
-/// <reference path="../cyph/ui/isidebar.ts" />
-/// <reference path="../cyph/ui/isignupform.ts" />
-/// <reference path="../cyph/ui/chat/ichat.ts" />
-/// <reference path="../cyph/ui/chat/icyphertext.ts" />
-/// <reference path="../cyph/ui/chat/ielements.ts" />
-/// <reference path="../cyph/ui/chat/ip2pmanager.ts" />
-/// <reference path="../cyph/ui/chat/iphotomanager.ts" />
-/// <reference path="../cyph/ui/chat/iscrollmanager.ts" />
+/// <reference path="../typings/main.d.ts" />
 
 
 /** @ignore */
@@ -50,7 +22,13 @@ for (const k of [
 	'history',
 	'location',
 	'navigator',
-	'Audio'
+	'Audio',
+	'onthreadmessage',
+	'FontsCSS',
+	'Translations',
+	'WebSign',
+	'Ntru',
+	'Sodium'
 ]) {
 	if (!(k in self)) {
 		self[k]	= null;
@@ -90,35 +68,5 @@ const navigatorData: Navigator	= typeof self['navigatorData'] !== 'undefined' ?
 ;
 
 
- /**
- * @global Event handler for messages to the current thread.
- */
-let onthreadmessage: (e: MessageEvent) => any;
-
-/**
- * @global String containing compiled contents of fonts.scss
- * (only exists in main thread of production environments).
- */
-let FontsCSS: string;
-
-/**
- * @global Object containing translations for English phrases
- * (only exists in main thread of production environments).
- */
-let Translations: {[language: string] : {[text: string] : string}};
-
-/**
- * @global WebSign object (only created in WebSigned environments).
- */
-let WebSign: IWebSign;
-
-
-/**
- * @global NTRU library.
- */
-const Ntru: any		= self['ntru'];
-
-/**
- * @global Sodium library.
- */
-const Sodium: any	= self['sodium'];
+Ntru	= self['ntru'] || {};
+Sodium	= self['sodium'] || {};

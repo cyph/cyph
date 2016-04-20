@@ -5,6 +5,7 @@ import (
 	"appengine/mail"
 	"appengine/memcache"
 	"encoding/json"
+	"github.com/lionelbarrow/braintree-go"
 	"net/http"
 	"strconv"
 	"strings"
@@ -12,6 +13,7 @@ import (
 )
 
 func init() {
+	handleFuncs("/braintree", Handlers{methods.GET: braintreeToken, methods.POST: braintreeCheckout})
 	handleFuncs("/channels/{id}", Handlers{methods.POST: channelSetup})
 	handleFuncs("/continent", Handlers{methods.GET: getContinent})
 	handleFuncs("/iceservers", Handlers{methods.GET: getIceServers})
@@ -20,6 +22,33 @@ func init() {
 	handleFunc("/", func(h HandlerArgs) (interface{}, int) {
 		return "Welcome to Cyph, lad", http.StatusOK
 	})
+}
+
+func braintreeCheckout(h HandlerArgs) (interface{}, int) {
+	nonce := sanitize(h.Request.PostFormValue("Nonce"))
+	amount, _ := strconv.ParseInt(sanitize(h.Request.PostFormValue("Amount")), 10, 64)
+
+	tx, err := braintreeInit(h).Transaction().Create(&braintree.Transaction{
+		Type:               "sale",
+		Amount:             braintree.NewDecimal(amount, 2),
+		PaymentMethodNonce: nonce,
+	})
+
+	if err == nil {
+		return tx, http.StatusOK
+	} else {
+		return braintreeCheckout(h)
+	}
+}
+
+func braintreeToken(h HandlerArgs) (interface{}, int) {
+	token, err := braintreeInit(h).ClientToken().Generate()
+
+	if err == nil {
+		return token, http.StatusOK
+	} else {
+		return braintreeToken(h)
+	}
 }
 
 func channelSetup(h HandlerArgs) (interface{}, int) {

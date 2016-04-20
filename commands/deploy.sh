@@ -108,10 +108,10 @@ if [ $test ] ; then
 	ls */*.yaml | xargs -I% sed -i.bak 's/Public-Key-Pins: .*/Pragma: no-cache/g' %
 	ls */*.yaml | xargs -I% sed -i.bak 's/max-age=31536000/max-age=0/g' %
 
-	# for yaml in `ls */cyph*.yaml` ; do
-	# 	cat $yaml | perl -pe 's/(- url: .*)/\1\n  login: admin/g' > $yaml.new
-	# 	mv $yaml.new $yaml
-	# done
+	for yaml in `ls */cyph*.yaml` ; do
+		cat $yaml | perl -pe 's/(- url: .*)/\1\n  login: admin/g' > $yaml.new
+		mv $yaml.new $yaml
+	done
 else
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42000/https:\/\/api.cyph.com/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42001/https:\/\/www.cyph.com/g" %
@@ -153,11 +153,11 @@ for d in cyph.com cyph.im ; do
 				cut -c 2- | \
 				rev \
 			) \
-		};" >> ../$d/js/preload/translations.ts
+		};" > ../$d/js/preload/translations.ts
 
 		cd ../$d
 
-		echo "FontsCSS = \`$(scss css/fonts.scss)\`;" >> js/preload/fonts.ts
+		echo "FontsCSS = \`$(scss css/fonts.scss)\`;" > js/preload/fonts.ts
 	fi
 
 	../commands/build.sh --prod || exit;
@@ -285,15 +285,21 @@ fi
 
 find . -name '*.bak' | xargs rm
 
-# Doesn't hurt, legally
 if [ ! $test ] ; then
-	find . -type d -name cryptolib | xargs rm -rf
+	cd shared/lib/js
+	grep 'crypto/' ../../js/package.json | perl -pe 's/.*"(.*?):(.*?)".*/\1\/\2/g' | xargs rm -rf
+	cd ../../..
 fi
 
 
 # Secret credentials
 cat ~/.cyph/default.vars >> default/app.yaml
 cat ~/.cyph/jobs.vars >> jobs/jobs.yaml
+if [ $test ] ; then
+	cat ~/.cyph/braintree.sandbox >> default/app.yaml
+else
+	cat ~/.cyph/braintree.prod >> default/app.yaml
+fi
 
 deploy () {
 	gcloud preview app deploy --quiet --no-promote --project cyphme --version $version $*

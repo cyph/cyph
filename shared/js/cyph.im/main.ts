@@ -6,29 +6,22 @@
 /// <reference path="../preload/crypto.ts" />
 /// <reference path="../preload/unsupportedbrowsers.ts" />
 /// <reference path="../preload/dompurify.ts" />
+/// <reference path="../preload/jquery.ts" />
 /// <reference path="../preload/fonts.ts" />
 /// <reference path="../preload/translations.ts" />
-/// <reference path="../preload/base.ts" />
+/// <reference path="../global/base.ts" />
 
-/// <reference path="../cyph/controller.ts" />
-/// <reference path="../cyph/ui/chat/chat.ts" />
-/// <reference path="../cyph/ui/dialogmanager.ts" />
-/// <reference path="../cyph/ui/linkconnection.ts" />
-/// <reference path="../cyph/ui/notifier.ts" />
-/// <reference path="../cyph/ui/signupform.ts" />
-/// <reference path="../cyph/ui/directives/chat.ts" />
-/// <reference path="../cyph/ui/directives/linkconnection.ts" />
-/// <reference path="../cyph/ui/directives/markdown.ts" />
-/// <reference path="../cyph/ui/directives/pro.ts" />
-/// <reference path="../cyph/ui/directives/signupform.ts" />
-/// <reference path="../cyph/ui/directives/static.ts" />
-/// <reference path="config.ts" />
-/// <reference path="ui/enums.ts" />
-/// <reference path="ui/ui.ts" />
+import {Config} from 'config';
+import {ProStates, States, UrlSections} from 'ui/enums';
+import {UI} from 'ui/ui';
+import * as Cyph from 'cyph/cyph';
+import {Loaded} from 'preload/base';
 
+
+Cyph.UI.Elements.body.attr('ng-controller', Cyph.Config.angularConfig.rootController);
 
 angular.
-	module('Cyph', [
+	module(Cyph.Config.angularConfig.rootModule, [
 		'ngMaterial',
 		'timer',
 		Cyph.UI.Directives.Chat.title,
@@ -38,34 +31,52 @@ angular.
 		Cyph.UI.Directives.SignupForm.title,
 		Cyph.UI.Directives.Static.title
 	]).
-	controller('CyphController', [
+	controller(Cyph.Config.angularConfig.rootController, [
 		'$scope',
 		'$mdDialog',
 		'$mdToast',
 		'chatSidenav',
 
-		($scope, $mdDialog, $mdToast, chatSidenav) => $(() => {
-			Cyph.UI.Elements.load();
+		($scope, $mdDialog, $mdToast, chatSidenav) => {
+			self['Cyph']	= Cyph;
+			$scope.Cyph		= Cyph;
+			$scope.Cyph.im	= {
+				Config,
+				UI: {
+					ProStates,
+					States,
+					UI,
+					UrlSections
+				}
+			};
 
-			const controller: Cyph.IController			= new Cyph.Controller($scope);
-			const dialogManager: Cyph.UI.IDialogManager	= new Cyph.UI.DialogManager($mdDialog, $mdToast);
-			const notifier: Cyph.UI.INotifier			= new Cyph.UI.Notifier();
+			$(() => {
+				Cyph.UI.Elements.load();
 
-			const mobileMenu: Cyph.UI.ISidebar	=
-				Cyph.Env.isMobile ?
-					chatSidenav() :
-					{close: () => {}, open: () => {}}
-			;
+				const controller: Cyph.IController			= new Cyph.Controller($scope);
+				const dialogManager: Cyph.UI.IDialogManager	= new Cyph.UI.DialogManager($mdDialog, $mdToast);
+				const notifier: Cyph.UI.INotifier			= new Cyph.UI.Notifier();
 
-			$scope.Cyph	= Cyph;
-			$scope.ui	= new Cyph.im.UI.UI(controller, dialogManager, mobileMenu, notifier);
+				const mobileMenu: Cyph.UI.ISidebar	=
+					Cyph.Env.isMobile ?
+						chatSidenav() :
+						{close: () => {}, open: () => {}}
+				;
 
-			self['ui']	= $scope.ui;
-		})
+				$scope.ui	= new UI(controller, dialogManager, mobileMenu, notifier);
+				self['ui']	= $scope.ui;
+
+				controller.update();
+			});
+		}
 	]).
 	config([
 		'$compileProvider',
-
 		$compileProvider => $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|sms):/)
 	])
 ;
+
+angular.bootstrap(document, [Cyph.Config.angularConfig.rootModule]);
+
+
+export {Loaded};
