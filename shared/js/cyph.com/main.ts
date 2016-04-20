@@ -24,6 +24,8 @@ if (Cyph.Env.isIEOrEdge) {
 }
 
 
+Cyph.UI.Elements.body.attr('ng-controller', Cyph.Config.angularConfig.rootController);
+
 angular.
 	module(Cyph.Config.angularConfig.rootModule, [
 		'ngMaterial',
@@ -39,13 +41,7 @@ angular.
 		'chatSidenav',
 
 		($scope, $mdDialog, $mdToast, $mdSidenav, chatSidenav) => {
-			Elements.load();
-
-			const controller: Cyph.IController				= new Cyph.Controller($scope);
-			const mobileMenu: Cyph.UI.ISidebar				= $mdSidenav('main-toolbar-sidenav');
-			const demoDialogManager: Cyph.UI.IDialogManager	= new Cyph.UI.DialogManager($mdDialog, $mdToast);
-			const demoMobileMenu: Cyph.UI.ISidebar			= chatSidenav();
-
+			self['Cyph']	= Cyph;
 			$scope.Cyph		= Cyph;
 			$scope.Cyph.com	= {
 				UI: {
@@ -58,18 +54,24 @@ angular.
 				}
 			};
 
-			$scope.ui		= new UI(controller, mobileMenu, demoDialogManager, demoMobileMenu);
+			$(() => { 
+				Elements.load();
 
-			self['Cyph']	= $scope.Cyph;
-			self['ui']		= $scope.ui;
+				const controller: Cyph.IController				= new Cyph.Controller($scope);
+				const mobileMenu: Cyph.UI.ISidebar				= $mdSidenav('main-toolbar-sidenav');
+				const demoDialogManager: Cyph.UI.IDialogManager	= new Cyph.UI.DialogManager($mdDialog, $mdToast);
+				const demoMobileMenu: Cyph.UI.ISidebar			= chatSidenav();
 
-			controller.update();
+				$scope.ui	= new UI(controller, mobileMenu, demoDialogManager, demoMobileMenu);
+				self['ui']	= $scope.ui;
+
+				controller.update();
+			});
 		}
 	])
 ;
 
-Cyph.UI.Elements.body.attr('ng-controller', Cyph.Config.angularConfig.rootController);
-$(() => angular.bootstrap(document, [Cyph.Config.angularConfig.rootModule]));
+angular.bootstrap(document, [Cyph.Config.angularConfig.rootModule]);
 
 
 /* Redirect to Onion site when on Tor */

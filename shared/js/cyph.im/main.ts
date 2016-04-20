@@ -18,6 +18,8 @@ import * as Cyph from 'cyph/cyph';
 import {Loaded} from 'preload/base';
 
 
+Cyph.UI.Elements.body.attr('ng-controller', Cyph.Config.angularConfig.rootController);
+
 angular.
 	module(Cyph.Config.angularConfig.rootModule, [
 		'ngMaterial',
@@ -36,18 +38,7 @@ angular.
 		'chatSidenav',
 
 		($scope, $mdDialog, $mdToast, chatSidenav) => {
-			Cyph.UI.Elements.load();
-
-			const controller: Cyph.IController			= new Cyph.Controller($scope);
-			const dialogManager: Cyph.UI.IDialogManager	= new Cyph.UI.DialogManager($mdDialog, $mdToast);
-			const notifier: Cyph.UI.INotifier			= new Cyph.UI.Notifier();
-
-			const mobileMenu: Cyph.UI.ISidebar	=
-				Cyph.Env.isMobile ?
-					chatSidenav() :
-					{close: () => {}, open: () => {}}
-			;
-
+			self['Cyph']	= Cyph;
 			$scope.Cyph		= Cyph;
 			$scope.Cyph.im	= {
 				Config,
@@ -59,21 +50,33 @@ angular.
 				}
 			};
 
-			$scope.ui		= new UI(controller, dialogManager, mobileMenu, notifier);
+			$(() => {
+				Cyph.UI.Elements.load();
 
-			self['Cyph']	= $scope.Cyph;
-			self['ui']		= $scope.ui;
+				const controller: Cyph.IController			= new Cyph.Controller($scope);
+				const dialogManager: Cyph.UI.IDialogManager	= new Cyph.UI.DialogManager($mdDialog, $mdToast);
+				const notifier: Cyph.UI.INotifier			= new Cyph.UI.Notifier();
+
+				const mobileMenu: Cyph.UI.ISidebar	=
+					Cyph.Env.isMobile ?
+						chatSidenav() :
+						{close: () => {}, open: () => {}}
+				;
+
+				$scope.ui	= new UI(controller, dialogManager, mobileMenu, notifier);
+				self['ui']	= $scope.ui;
+
+				controller.update();
+			});
 		}
 	]).
 	config([
 		'$compileProvider',
-
 		$compileProvider => $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|sms):/)
 	])
 ;
 
-Cyph.UI.Elements.body.attr('ng-controller', Cyph.Config.angularConfig.rootController);
-$(() => angular.bootstrap(document, [Cyph.Config.angularConfig.rootModule]));
+angular.bootstrap(document, [Cyph.Config.angularConfig.rootModule]);
 
 
 export {Loaded};
