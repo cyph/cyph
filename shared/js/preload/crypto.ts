@@ -36,9 +36,9 @@ if (!('subtle' in crypto) && 'webkitSubtle' in crypto) {
 let LocalStorage: Storage;
 
 try {
-	localStorage.isPersistent	= 'true';
-	LocalStorage	= localStorage;
+	LocalStorage	= <any> localStorage;
+	LocalStorage.isPersistent	= 'true';
 }
 catch (_) {
-	LocalStorage	= LocalStorage || <Storage> {};
+	LocalStorage	= <Storage> {};
 }

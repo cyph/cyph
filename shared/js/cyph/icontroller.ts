@@ -1,12 +1,10 @@
-module Cyph {
+/**
+ * Responsible for keeping data and UI in sync.
+ * @interface
+ */
+export interface IController {
 	/**
-	 * Responsible for keeping data and UI in sync.
-	 * @interface
+	 * Synchronise data and UI.
 	 */
-	export interface IController {
-		/**
-		 * Synchronise data and UI.
-		 */
-		update () : void;
-	}
+	update () : void;
 }

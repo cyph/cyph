@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"geoip2"
 	"github.com/gorilla/mux"
+	"github.com/lionelbarrow/braintree-go"
 	"github.com/microcosm-cc/bluemonday"
 	"io/ioutil"
 	"net"
@@ -69,6 +70,10 @@ var geoipdb, _ = geoip2.Open("GeoIP2-Country.mmdb")
 var twilioSID = os.Getenv("TWILIO_SID")
 var twilioAuthToken = os.Getenv("TWILIO_AUTH_TOKEN")
 
+var braintreeMerchantID = os.Getenv("BRAINTREE_MERCHANT_ID")
+var braintreePublicKey = os.Getenv("BRAINTREE_PUBLIC_KEY")
+var braintreePrivateKey = os.Getenv("BRAINTREE_PRIVATE_KEY")
+
 func geolocate(h HandlerArgs) (string, string) {
 	return geolocateIp(h.Request.RemoteAddr)
 }
@@ -101,6 +106,19 @@ func getBetaSignupFromRequest(h HandlerArgs) BetaSignup {
 		Referer:  sanitize(h.Request.Referer(), config.MaxSignupValueLength),
 		Time:     time.Now().Unix(),
 	}
+}
+
+func braintreeInit(h HandlerArgs) *braintree.Braintree {
+	bt := braintree.New(
+		braintree.Sandbox,
+		braintreeMerchantID,
+		braintreePublicKey,
+		braintreePrivateKey,
+	)
+
+	bt.SetHTTPClient(urlfetch.Client(h.Context))
+
+	return bt
 }
 
 func getTwilioToken(h HandlerArgs) map[string]interface{} {
@@ -190,10 +208,15 @@ func nullHandler(h HandlerArgs) (interface{}, int) {
 	return nil, http.StatusOK
 }
 
-func sanitize(s string, maxLength int) string {
+func sanitize(s string, params ...int) string {
 	sanitized := sanitizer.Sanitize(s)
 
-	if len(sanitized) > maxLength {
+	maxLength := -1
+	if len(params) > 0 {
+		maxLength = params[0]
+	}
+
+	if maxLength > -1 && len(sanitized) > maxLength {
 		return sanitized[:maxLength]
 	} else {
 		return sanitized

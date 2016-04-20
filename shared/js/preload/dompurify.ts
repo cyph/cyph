@@ -4,9 +4,6 @@
  */
 
 
-/// <reference path="../../lib/typings/main.d.ts" />
-
-
 (() => {
 
 
