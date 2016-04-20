@@ -9,24 +9,24 @@ import * as Cyph from 'cyph/cyph';
  */
 export class UI extends Cyph.UI.BaseButtonManager {
 	/** UI state/view. */
-	public state: States			= States.home;
+	public state: States				= States.home;
 
 	/** Podcast promo page state/view. */
-	public podcast: Podcasts		= Podcasts.none;
+	public podcast: Podcasts			= Podcasts.none;
 
 	/** Donation amount in dollars (default). */
-	public donationAmount: number	= 10;
+	public donationAmount: number		= 10;
 
 	/** Pricing states */
-	public individual: boolean		= false;
-	public business: boolean		= false;
-	public telehealth: boolean		= false;
+	public individual: boolean			= false;
+	public business: boolean			= false;
+	public telehealth: boolean			= false;
 
 	/** Number of Doctors (default) */
-	public doctors: number			= 5;
-	public pricePerDoctor: number	= 350;
-	public telehealthPriceBreak: number = 5;
-	public telehealthDiscount: number 	= 0.10;
+	public doctors: number				= 5;
+	public pricePerDoctor: number		= 350;
+	public telehealthPriceBreak: number	= 5;
+	public telehealthDiscount: number	= 0.10;
 
 	/** Home page state/view. */
 	public homeSection: HomeSections;

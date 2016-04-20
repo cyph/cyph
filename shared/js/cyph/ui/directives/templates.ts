@@ -924,40 +924,40 @@ export const Templates	= {
 						to use Cyph. To join the waitlist for a Cyph account please enter your
 						email in the form below.
 					</p>
-				<div layout='row' class='signup-form'>
-					<div layout='column'>
-						<md-input-container>
-							<label translate>email</label>
-							<input type='email' ng-model='$this.data.Email' />
-						</md-input-container>
-						<md-input-container>
-							<label translate>password</label>
-							<input type='password' ng-model='$this.data.Password' ng-disabled='true'/>
-						</md-input-container>
-						<md-input-container>
-							<label translate>password confirmation</label>
-							<input type='password' ng-model='$this.data.Password' ng-disabled='true'/>
-						</md-input-container>
-					</div>
-					<div class='buttons' layout='column'>
-						<md-button
-							type='submit'
-							ng-click='this.signup()'
-							aria-label='Register'
-							ng-disabled='true'
-						>
-							Register
-						</md-button>
-						<md-button
-							type='submit'
-							ng-click='this.signup()'
-							aria-label='Waitlist Signup'
-						>
-							Waitlist Signup
-						</md-button>
+					<div layout='row' class='signup-form'>
+						<div layout='column'>
+							<md-input-container>
+								<label translate>email</label>
+								<input type='email' ng-model='$this.data.Email' />
+							</md-input-container>
+							<md-input-container>
+								<label translate>password</label>
+								<input type='password' ng-model='$this.data.Password' ng-disabled='true'/>
+							</md-input-container>
+							<md-input-container>
+								<label translate>password confirmation</label>
+								<input type='password' ng-model='$this.data.Password' ng-disabled='true'/>
+							</md-input-container>
+						</div>
+						<div class='buttons' layout='column'>
+							<md-button
+								type='submit'
+								ng-click='this.signup()'
+								aria-label='Register'
+								ng-disabled='true'
+							>
+								Register
+							</md-button>
+							<md-button
+								type='submit'
+								ng-click='this.signup()'
+								aria-label='Waitlist Signup'
+							>
+								Waitlist Signup
+							</md-button>
+						</div>
 					</div>
 				</div>
-			</div>
 			</md-content>
 		</form>
 	`,
