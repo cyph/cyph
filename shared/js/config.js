@@ -8,13 +8,14 @@ System.config({
   },
 
   map: {
-    "angular": "github:angular/bower-angular@1.5.4",
-    "angular-animate": "github:angular/bower-angular-animate@1.5.3",
-    "angular-aria": "github:angular/bower-angular-aria@1.5.3",
+    "angular": "github:angular/bower-angular@1.5.5",
+    "angular-animate": "github:angular/bower-angular-animate@1.5.5",
+    "angular-aria": "github:angular/bower-angular-aria@1.5.5",
     "angular-material": "github:angular/bower-material@1.0.7",
     "angular2": "npm:angular2@2.0.0-beta.15",
     "animate.css": "npm:animate.css@3.5.1",
-    "aws/aws-sdk-js": "github:aws/aws-sdk-js@2.3.3",
+    "aws/aws-sdk-js": "github:aws/aws-sdk-js@2.3.4",
+    "braintree": "github:braintree/braintree-web@2.23.0",
     "crypto/cryptojs": "github:sytelus/cryptojs@3.1.2",
     "crypto/isaac": "github:rubycon/isaac.js@master",
     "crypto/libsodium": "github:jedisct1/libsodium.js@0.3.0",
@@ -25,7 +26,7 @@ System.config({
     "es6-shim": "github:es-shims/es6-shim@0.35.0",
     "isagalaev/highlight.js": "github:isagalaev/highlight.js@9.3.0",
     "jquery": "npm:jquery@2.2.3",
-    "jquery-legacy": "npm:jquery@1.12.3",
+    "jquery-legacy": "github:jquery/jquery@1.12.3",
     "julianlam/tabIndent.js": "github:julianlam/tabIndent.js@master",
     "magnific-popup": "npm:magnific-popup@1.1.0",
     "markdown-it/markdown-it": "github:markdown-it/markdown-it@6.0.1",
@@ -39,17 +40,17 @@ System.config({
     "twitter/twemoji": "github:twitter/twemoji@1.3.2",
     "typescript": "npm:typescript@1.8.10",
     "unsemantic": "npm:unsemantic@1.0.1",
-    "github:angular/bower-angular-animate@1.5.3": {
-      "angular": "github:angular/bower-angular@1.5.4"
+    "github:angular/bower-angular-animate@1.5.5": {
+      "angular": "github:angular/bower-angular@1.5.5"
     },
-    "github:angular/bower-angular-aria@1.5.3": {
-      "angular": "github:angular/bower-angular@1.5.4"
+    "github:angular/bower-angular-aria@1.5.5": {
+      "angular": "github:angular/bower-angular@1.5.5"
     },
     "github:angular/bower-material@1.0.7": {
-      "angular": "github:angular/bower-angular@1.5.4",
-      "angular-animate": "github:angular/bower-angular-animate@1.5.3",
-      "angular-aria": "github:angular/bower-angular-aria@1.5.3",
-      "css": "github:systemjs/plugin-css@0.1.20"
+      "angular": "github:angular/bower-angular@1.5.5",
+      "angular-animate": "github:angular/bower-angular-animate@1.5.5",
+      "angular-aria": "github:angular/bower-angular-aria@1.5.5",
+      "css": "github:systemjs/plugin-css@0.1.21"
     },
     "github:jspm/nodelibs-assert@0.1.0": {
       "assert": "npm:assert@1.3.0"
@@ -98,7 +99,7 @@ System.config({
     "npm:angular2@2.0.0-beta.15": {
       "reflect-metadata": "npm:reflect-metadata@0.1.2",
       "rxjs": "npm:rxjs@5.0.0-beta.6",
-      "zone.js": "npm:zone.js@0.6.11"
+      "zone.js": "npm:zone.js@0.6.12"
     },
     "npm:assert@1.3.0": {
       "util": "npm:util@0.10.3"
@@ -139,9 +140,6 @@ System.config({
     },
     "npm:inherits@2.0.1": {
       "util": "github:jspm/nodelibs-util@0.1.0"
-    },
-    "npm:jquery@1.12.3": {
-      "process": "github:jspm/nodelibs-process@0.1.2"
     },
     "npm:magnific-popup@1.1.0": {
       "process": "github:jspm/nodelibs-process@0.1.2"
@@ -221,7 +219,7 @@ System.config({
       "inherits": "npm:inherits@2.0.1",
       "process": "github:jspm/nodelibs-process@0.1.2"
     },
-    "npm:zone.js@0.6.11": {
+    "npm:zone.js@0.6.12": {
       "buffer": "github:jspm/nodelibs-buffer@0.1.0",
       "process": "github:jspm/nodelibs-process@0.1.2"
     }
