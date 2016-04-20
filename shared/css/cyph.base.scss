@@ -291,38 +291,45 @@ html:not(.mobile) .platform-container.mobile .mobile-only {
 	box-shadow: 0px 4px 10px -1px rgba(0, 0, 0, 0.25) !important;
 }
 
-
-#individual{
+#individual {
 	text-align: left;
-	.laptop{
-		img{
+
+	.laptop {
+		img {
 			margin: 8% 0% 0% -2%;
 		}
 	}
+
 	.signup-form {
 		* {
-			.md-input-container{
+			.md-input-container {
 				margin: 0px !important;
 			}
 		}
-		input{
+
+		input {
 			width: 220px !important;
 			margin: 1px 25px -5px -8px;
 		}
-		.md-input-container[disabled] label{
+
+		.md-input-container[disabled] label {
 			color: #999;
 		}
-		input[disabled]{
+
+		input[disabled] {
 			background-color: #86789F !important;
 			color: #999;
 			cursor: not-allowed;
 			margin-bottom: -15px;
 			margin-top: 0px;
 		}
-		.buttons{
+
+		.buttons {
 			margin-left: 20px;
 		}
+
 		// width: 250px;
+
 	}
 }
 
@@ -330,15 +337,16 @@ html:not(.mobile) .platform-container.mobile .mobile-only {
 	margin: 0%;
 }
 
-.buttons *[disabled]{
+.buttons *[disabled] {
 	cursor: not-allowed;
-	background-color: #86789F !important; 
+	background-color: #86789F !important;
 }
 
 .mobile .pricing-chart {
 	md-input-container {
 		margin: 0% 0% 0% 5% !important;
 	}
+
 	.buttons {
 		margin: 5% 0% !important;
 	}
@@ -347,7 +355,8 @@ html:not(.mobile) .platform-container.mobile .mobile-only {
 .pricing-chart {
 	text-align: center;
 	margin: auto auto 35px auto;
-	.buttons{
+
+	.buttons {
 		margin: -10px auto auto auto;
 	}
 
@@ -362,26 +371,34 @@ html:not(.mobile) .platform-container.mobile .mobile-only {
 		background-color: #392859;
 		height: 100px;
 	}
-	md-input-container{
+
+	md-input-container {
 		margin: 0 !important;
 	}
+
 	md-input-container .md-input {
 		/* -webkit-order: 2; */
 		-ms-flex-order: 2;
+
 		/* order: 2; */
 		/* display: block; */
 		background-color: #BBA8DF;
+
 		//margin: 10px !important;
 		/* margin-top: 0; */
 		/* background: 0 0; */
 		padding: 2px 2px 1px;
+
 		/* border-width: 0 0 1px; */
 		line-height: 26px;
+
 		/* height: 30px; */
 		-ms-flex-preferred-size: 26px;
+
 		/* border-radius: 0; */
 		/* border-style: solid; */
 		width: 100%;
+
 		/* box-sizing: border-box; */
 		/* float: left; */
 	}
@@ -409,16 +426,15 @@ md-icon.back.material-icons {
 	margin-left: 50px;
 	color: white;
 	opacity: 0.85;
-	
 }
 
 md-icon.back.material-icons:hover {
-		opacity: 1 !important;
-		cursor: pointer;
+	opacity: 1 !important;
+	cursor: pointer;
 }
 
-.mobile .pricing{
-	margin: 5% 1% 5% 1% !important;	
+.mobile .pricing {
+	margin: 5% 1% 5% 1% !important;
 }
 
 .pricing {
@@ -427,6 +443,7 @@ md-icon.back.material-icons:hover {
 	width: 225px;
 	height: auto;
 	margin: auto 1% auto 1%;
+
 	a {
 		text-decoration: none !important;
 	}
@@ -457,16 +474,19 @@ md-icon.back.material-icons:hover {
 
 	.features {
 		height: 69%;
+
 		.feature {
 			h4 {
 				position: relative;
 				margin: 5px 0px 0px -9px;
 				letter-spacing: -0.25px;
 			}
+
 			md-icon {
 				// left: 15px;
+		
 			}
-	}
+		}
 
 		p:first-child {
 			margin: 5px 10px 15px 12px;
@@ -485,7 +505,6 @@ md-icon.back.material-icons:hover {
 		.indent {
 			margin: -3.5px 0px -3.5px 22px !important;
 		}
-
 	}
 
 	.pricing:first-child {
@@ -535,7 +554,7 @@ md-icon.back.material-icons:hover {
 	text-align: right;
 }
 
-.pricing-chart.individual{
+.pricing-chart.individual {
 	// width: 50%;
 }
 
@@ -545,13 +564,15 @@ md-icon.back.material-icons:hover {
 	margin: 20px 0px -10px 0px;
 }
 
-.details { 
+.details {
 	margin: -10px 0px;
+
 	h2 {
 		font-size: 36px;
 		margin: 5px;
 		text-align: center;
 	}
+
 	h4 {
 		display: inline;
 		margin: 5px 0px;
@@ -567,23 +588,24 @@ md-icon.back.material-icons:hover {
 	top: -28px;
 }
 
-.registration-form{
-	h2{
+.registration-form {
+	h2 {
 		text-align: center;
 		font-size: 25px;
 		margin: 5px 0px -10px 0px;
 	}
-	h5{
+
+	h5 {
 		margin-bottom: 34px;
 	}
 }
 
-button.pricing{
+button.pricing {
 	position: relative !important;
 	left: 0 !important;
 }
 
-input.doctors{
+input.doctors {
 	text-align: right;
 	color: white;
 	position: relative;
@@ -594,6 +616,7 @@ input.doctors{
 
 .doctors {
 	margin: 10px 0px 10px 0px;
+
 	h5 {
 		margin: 0px 0px 0px 15px;
 		font-size: 17px;
@@ -676,19 +699,21 @@ html.mobile .mfp-content {
 /* FAQ */
 
 #faq {
-	.bg-image{
+	.bg-image {
 		left: 30% !important;
 		top: 45% !important;
-		img{
+
+		img {
 			transform: scale(2);
 		}
 	}
+
 	li {
 		list-style: none;
 	}
 }
 
-.corner-image-left{
+.corner-image-left {
 	position: absolute;
 	width: 45%;
 	z-index: 0;
@@ -696,22 +721,23 @@ html.mobile .mfp-content {
 	top: 69%;
 }
 
-#business{
+#business {
 	.bg-image {
 		left: -6%;
 		top: 9%;
 	}
 }
 
-#telehealth.bgimage{
+#telehealth.bgimage {
 	left: 5% !important;
 	top: 12% !important;
 }
 
-.bg-image{
+.bg-image {
 	position: absolute;
 	opacity: 0.5;
-	img{
+
+	img {
 		position: absolute;
 		opacity: 0.35;
 	}

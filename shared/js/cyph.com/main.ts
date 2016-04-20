@@ -54,7 +54,7 @@ angular.
 				}
 			};
 
-			$(() => { 
+			$(() => {
 				Elements.load();
 
 				const controller: Cyph.IController				= new Cyph.Controller($scope);
