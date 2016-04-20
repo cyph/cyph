@@ -13,7 +13,7 @@ export class LinkConnection {
 			restrict: 'A',
 			transclude: true,
 			scope: {
-				$this: '='
+				$this: '=' + LinkConnection.title
 			},
 			link: scope => scope['Cyph'] = self['Cyph'],
 			template: Templates.linkConnection

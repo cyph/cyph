@@ -11,52 +11,60 @@ export class Chat {
 	public static title: string	= 'cyphChat';
 
 	private static _	= (() => {
+		const titles	= {
+			cyphertext: Chat.title + 'Cyphertext',
+			main: Chat.title + 'Main',
+			messageBox: Chat.title + 'MessageBox',
+			sidebar: Chat.title + 'Sidebar',
+			toolbar: Chat.title + 'Toolbar'
+		};
+
 		angular.
 			module(Chat.title, [
 				'ngMaterial',
 				Enterpress.title,
 				Filechange.title
 			]).
-			directive(Chat.title + 'Cyphertext', () => ({
+			directive(titles.cyphertext, () => ({
 				restrict: 'A',
 				scope: {
-					$this: '='
+					$this: '=' + titles.cyphertext
 				},
 				link: scope => scope['Cyph'] = self['Cyph'],
 				template: Templates.chatCyphertext
 			})).
-			directive(Chat.title + 'Main', () => ({
+			directive(titles.main, () => ({
 				restrict: 'A',
 				transclude: true,
 				scope: {
-					$this: '='
+					$this: '=' + titles.main
 				},
 				link: scope => scope['Cyph'] = self['Cyph'],
 				template: Templates.chatMain
 			})).
-			directive(Chat.title + 'MessageBox', () => ({
+			directive(titles.messageBox, () => ({
 				restrict: 'A',
 				scope: {
-					$this: '='
+					$this: '=' + titles.messageBox
 				},
 				link: scope => scope['Cyph'] = self['Cyph'],
 				template: Templates.chatMessageBox
 			})).
-			directive(Chat.title + 'Sidebar', () => ({
+			directive(titles.sidebar, () => ({
 				restrict: 'A',
 				scope: {
-					$this: '=',
-					showChat: '=showChat'
+					$this: '=' + titles.sidebar,
+					showChat: '='
 				},
 				link: scope => scope['Cyph'] = self['Cyph'],
 				template: Templates.chatSidebar
 			})).
-			directive(Chat.title + 'Toolbar', () => ({
+			directive(titles.toolbar, () => ({
 				restrict: 'A',
 				scope: {
-					$this: '=',
-					open: '&open',
-					showChat: '=showChat'
+					$this: '=' + titles.toolbar,
+					open: '&',
+					showChat: '='
 				},
 				link: scope => scope['Cyph'] = self['Cyph'],
 				template: Templates.chatToolbar

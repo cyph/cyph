@@ -12,7 +12,7 @@ export class Pro {
 		angular.module(Pro.title, []).directive(Pro.title, () => ({
 			restrict: 'A',
 			scope: {
-				$this: '='
+				$this: '=' + Pro.title
 			},
 			link: scope => scope['Cyph'] = self['Cyph'],
 			template: Templates.pro

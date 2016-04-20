@@ -34,7 +34,7 @@ angular.
 		'$mdToast',
 		'chatSidenav',
 
-		($scope, $mdDialog, $mdToast, chatSidenav) => () => {
+		($scope, $mdDialog, $mdToast, chatSidenav) => {
 			Cyph.UI.Elements.load();
 
 			const controller: Cyph.IController			= new Cyph.Controller($scope);
