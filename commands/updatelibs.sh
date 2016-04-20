@@ -128,7 +128,7 @@ bash -c "$(node -e '
 
 		const findVersionCommand =
 			`find ${basePath}${pathSplit[0]} -type d | ` +
-			`grep "${package[0]}" | ` +
+			`grep "${package[0]}@" | ` +
 			`perl -pe "s/.*@//g" | ` +
 			`grep -P "${package[1]}" | ` +
 			`grep -v /`
