@@ -208,13 +208,13 @@ func nullHandler(h HandlerArgs) (interface{}, int) {
 	return nil, http.StatusOK
 }
 
-func sanitize(s string, params ... int) string {
+func sanitize(s string, params ...int) string {
 	sanitized := sanitizer.Sanitize(s)
 
 	maxLength := -1
 	if len(params) > 0 {
 		maxLength = params[0]
-	} 
+	}
 
 	if maxLength > -1 && len(sanitized) > maxLength {
 		return sanitized[:maxLength]
