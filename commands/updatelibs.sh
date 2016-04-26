@@ -104,6 +104,7 @@ jspm install -y \
 	es6-shim \
 	crypto/libsodium=github:jedisct1/libsodium.js \
 	crypto/ntru=github:cyph/ntru.js \
+	crypto/supersphincs=github:cyph/supersphincs.js \
 	crypto/isaac=github:rubycon/isaac.js \
 	crypto/cryptojs=cryptojs
 
