@@ -148,6 +148,8 @@ bash -c "$(node -e '
 
 cd lib/js
 
+sed -i 's/^\/dist$//' jquery-legacy/.gitignore
+
 cd github/isagalaev/highlight.js@*
 sed -i 's/^build$//' .gitignore
 npm install
