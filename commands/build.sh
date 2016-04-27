@@ -64,6 +64,7 @@ jsbundle () {
 	# echo -e "\n\nrequire(['${1}']);\ndefine = undefined;\nrequire = undefined;" >> $1.js.new
 	# mv $1.js.new $1.js
 }
+export -f jsbundle
 
 cd $dir
 
@@ -80,25 +81,27 @@ scssfiles="$(find css -name '*.scss' | grep -v bourbon/ | perl -pe 's/(.*)\.scss
 
 if [ "${1}" == '--watch' ] ; then
 	cd js
-	tsbuild () {
-		while true ; do
-			for file in $tsfiles ; do
+	for file in $tsfiles ; do
+		bash -c "
+			while true ; do
 				tsc $tsargs --sourceMap $file.ts --outFile $file.js
 				jsbundle $file
+				inotifywait $file
 			done
-			sleep 30
-		done
-	}
-	tsbuild &
+		" &
+	done
 	cd ..
 
-	# sass --watch isn't working for some reason
-	while true ; do
-		for file in $scssfiles ; do
-			sass $file.scss $file.css
-		done
-		sleep 30
+	for file in $scssfiles ; do
+		bash -c "
+			while true ; do
+				sass $file.scss $file.css
+				inotifywait $file
+			done
+		" &
 	done
+
+	sleep infinity
 else
 	output=''
 
