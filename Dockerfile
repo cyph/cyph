@@ -9,7 +9,7 @@ RUN apt-get dist-upgrade -y
 
 RUN apt-get install -y curl golang-go python python-pip perl devscripts build-essential git gnupg procps sudo apt-utils expect inotify-tools
 
-RUN curl -sL https://deb.nodesource.com/setup_5.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_6.x | bash -
 RUN apt-get install -y nodejs
 
 RUN npm -g install html-minifier clean-css uglifyjs typescript typings typedoc jspm browserstack browserify libsodium-wrappers glob read mkdirp
@@ -28,9 +28,6 @@ RUN echo '\
 	export PATH="/opt/local/bin:/opt/local/sbin:/usr/local/opt/go/libexec/bin:$CLOUD_PATHS:$GOPATH/bin:$PATH"; \
 ' >> /.bashrc
 
-#RUN yes | /google-cloud-sdk/bin/gcloud components update
-#RUN yes | /google-cloud-sdk/bin/dev_appserver.py --help
-
 RUN echo 'gibson ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
 RUN useradd -ms /bin/bash gibson
 RUN mkdir -p /home/gibson
@@ -39,6 +36,14 @@ RUN chmod 700 ~/.bashrc
 USER gibson
 ENV HOME /home/gibson
 
+
+RUN wget "$( \
+	curl -s https://cloud.google.com/appengine/downloads | \
+	grep -oP 'https://.*?go_appengine_sdk_linux_amd64.*?\.zip' | \
+	head -n1 \
+)" -O ~/go_appengine.zip
+RUN unzip ~/go_appengine.zip -d ~
+RUN rm ~/go_appengine.zip
 
 RUN wget https://keybase.io/mpapis/key.asc -O ~/public.key
 RUN gpg --import ~/public.key
