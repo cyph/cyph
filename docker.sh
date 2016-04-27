@@ -17,12 +17,13 @@ start () {
 
 stop () {
 	docker ps -a | grep cyph | awk '{print $1}' | xargs -I% bash -c 'docker kill -s 9 % ; docker rm %'
-	sudo killall docker > /dev/null 2>&1
-	defaultsleep
+
+	if [ "$(uname -s)" == 'Linux' ] ; then
+		sudo killall docker > /dev/null 2>&1
+		defaultsleep
+	fi
 }
 
-
-shellinit
 
 image="cyph/$(git describe --tags --exact-match 2> /dev/null || git branch | awk '/^\*/{print $2}')"
 
