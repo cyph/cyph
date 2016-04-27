@@ -41,29 +41,30 @@ tsfiles="$( \
 
 jsbundle () {
 	# # Temporary workaround for jspm bug
-	# if [ "$file" == "global/base" ] ; then
-	# 	cat $file.js | \
+	# if [ "$1" == "global/base" ] ; then
+	# 	cat $1.js | \
 	# 		tr '\n' '☁' | \
 	# 		perl -pe 's/.*var .*?(var .*?;).*execute:.*?\{(.*?)exports.*/\1\n\2/g' | \
 	# 		tr '☁' '\n' | \
 	# 		perl -pe 's/^ {12}//g' \
-	# 	> $file.js.new
-	# 	mv $file.js.new $file.js
+	# 	> $1.js.new
+	# 	mv $1.js.new $1.js
 	# else
-	# 	jspm bundle-sfx $file $file.js
+	# 	jspm bundle-sfx $1 $1.js
 	# 	git checkout HEAD -- config.js
 	# fi
 
-	if [ "${file}" != 'global/base' -a "${file}" != 'cyph/session' ] ; then
-		echo -e "\n\nSystem.import('${file}');" >> $file.js
+	if [ "${1}" != 'global/base' -a "${1}" != 'cyph/session' ] ; then
+		echo -e "\n\nSystem.import('${1}');" >> $1.js
 	fi
 
-	# cp ../lib/js/require.js $file.js.new
-	# echo >> $file.js.new
-	# cat $file.js >> $file.js.new
-	# echo -e "\n\nrequire(['${file}']);\ndefine = undefined;\nrequire = undefined;" >> $file.js.new
-	# mv $file.js.new $file.js
+	# cp ../lib/js/require.js $1.js.new
+	# echo >> $1.js.new
+	# cat $1.js >> $1.js.new
+	# echo -e "\n\nrequire(['${1}']);\ndefine = undefined;\nrequire = undefined;" >> $1.js.new
+	# mv $1.js.new $1.js
 }
+export -f jsbundle
 
 cd $dir
 
@@ -80,24 +81,25 @@ scssfiles="$(find css -name '*.scss' | grep -v bourbon/ | perl -pe 's/(.*)\.scss
 
 if [ "${1}" == '--watch' ] ; then
 	cd js
-	tsbuild () {
-		while true ; do
-			for file in $tsfiles ; do
+	for file in $tsfiles ; do
+		bash -c "
+			tsbuild () {
 				tsc $tsargs --sourceMap $file.ts --outFile $file.js
-				jsbundle
-			done
-			sleep 30
-		done
-	}
-	tsbuild &
+				jsbundle $file
+			}
+			tsbuildwatch () {
+				while inotifywait -e close_write $file ; do
+					tsbuild
+				done
+			}
+			tsbuild
+			tsbuildwatch &
+		"
+	done
 	cd ..
 
-	# sass --watch isn't working for some reason
-	while true ; do
-		for file in $scssfiles ; do
-			sass $file.scss $file.css
-		done
-		sleep 30
+	for file in $scssfiles ; do
+		sass --watch $file.scss $file.css
 	done
 else
 	output=''
@@ -109,7 +111,7 @@ else
 	cd js
 	for file in $tsfiles ; do
 		output="${output}$(tsc $tsargs $file.ts --outFile $file.js)"
-		jsbundle
+		jsbundle $file
 	done
 	cd ..
 
