@@ -4,20 +4,11 @@ cd $(cd "$(dirname "$0")"; pwd)
 
 
 defaultsleep () {
-	sleep 5
-}
-
-shellinit () {
-	defaultsleep
-	$(boot2docker shellinit 2> /dev/null | sed "s|'||g")
-	defaultsleep
+	sleep 2
 }
 
 start () {
-	if boot2docker > /dev/null 2>&1 ; then
-		boot2docker start > /dev/null 2>&1
-		shellinit
-	elif [ "$(ps aux | grep 'docker -d' | grep -v grep)" == '' ] ; then
+	if [ "$(uname -s)" == 'Linux' -a "$(ps aux | grep 'docker -d' | grep -v grep)" == '' ] ; then
 		sudo echo
 		nohup sudo bash -c 'docker -d &' > /dev/null 2>&1
 		defaultsleep
@@ -26,14 +17,8 @@ start () {
 
 stop () {
 	docker ps -a | grep cyph | awk '{print $1}' | xargs -I% bash -c 'docker kill -s 9 % ; docker rm %'
-
-	if boot2docker > /dev/null 2>&1 ; then
-		shellinit
-		boot2docker stop > /dev/null 2>&1
-	else
-		sudo killall docker > /dev/null 2>&1
-		defaultsleep
-	fi
+	sudo killall docker > /dev/null 2>&1
+	defaultsleep
 }
 
 
@@ -60,7 +45,11 @@ if [ "${command}" == 'serve' ] ; then
 
 	args="--privileged=true -p 42000:5000 -p 42001:5001 -p 42002:5002 -p 43000:4568"
 
-	base="http://$(boot2docker ip 2>/dev/null || echo localhost)"
+	if [ "$(uname -s)" == 'Linux' ] ; then
+		base='http://localhost'
+	else
+		base='http://docker.local'
+	fi
 
 	i=0
 	for project in backend cyph.com cyph.im ; do
@@ -136,4 +125,4 @@ else
 fi
 
 docker run $processType $args -v "$(echo "$(pwd)://cyph" | sed 's/\/cygdrive/\//g')" "${image}" "/cyph/commands/${command}.sh" $*
-sleep 2
+defaultsleep
