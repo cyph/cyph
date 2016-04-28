@@ -86,7 +86,7 @@ if [ "${1}" == '--watch' ] ; then
 			while true ; do
 				tsc $tsargs --sourceMap $file.ts --outFile $file.js
 				jsbundle $file
-				inotifywait $file
+				inotifywait -e close_write $file
 			done
 		" &
 	done
@@ -96,7 +96,7 @@ if [ "${1}" == '--watch' ] ; then
 		bash -c "
 			while true ; do
 				sass $file.scss $file.css
-				inotifywait $file
+				inotifywait -e close_write $file
 			done
 		" &
 	done
