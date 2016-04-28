@@ -46,11 +46,7 @@ if [ "${command}" == 'serve' ] ; then
 
 	args="--privileged=true -p 42000:5000 -p 42001:5001 -p 42002:5002 -p 43000:4568"
 
-	if [ "$(uname -s)" == 'Linux' ] ; then
-		base='http://localhost'
-	else
-		base='http://docker.local'
-	fi
+	base='http://localhost'
 
 	i=0
 	for project in backend cyph.com cyph.im ; do

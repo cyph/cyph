@@ -33,17 +33,15 @@ To kill it:
 
 	./docker.sh kill
 
-Server host: localhost (Linux) or docker.local (OS X / Windows)
+Open ports:
 
-Ports:
+* backend: http://localhost:42000
 
-* backend: 42000
+* cyph.com: http://localhost:42001
 
-* cyph.com: 42001
+* cyph.im: http://localhost:42002
 
-* cyph.im: 42002
-
-* SQS: 43000
+* SQS: http://localhost:43000
 
 ---
 
