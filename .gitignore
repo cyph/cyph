@@ -1,6 +1,8 @@
 .build
+**/.build.yaml
 .sass-cache
 .DS_Store
+**/.DS_Store
 nohup.out
 shared/lib/.oldbower
 *.swp

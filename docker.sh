@@ -44,7 +44,14 @@ if [ "${command}" == 'serve' ] ; then
 		shift
 	fi
 
-	args="--privileged=true -p 42000:5000 -p 42001:5001 -p 42002:5002 -p 43000:4568"
+	args=" \
+		-v $HOME/.cyph:/home/gibson/.cyph \
+		--privileged=true \
+		-p 42000:5000 \
+		-p 42001:5001 \
+		-p 42002:5002 \
+		-p 43000:4568 \
+	"
 
 	base='http://localhost'
 
