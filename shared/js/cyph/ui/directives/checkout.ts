@@ -23,9 +23,9 @@ export class Checkout {
 					Util.request({
 						url: Env.baseUrl + Config.braintreeConfig.endpoint,
 						success: (token: string) => {
-						const checkoutUI: JQuery	= element.find('.checkout-ui');
+							const checkoutUI: JQuery	= element.find('.checkout-ui');
 
-						checkoutUI.html('');
+							checkoutUI.html('');
 
 							self['braintree'].setup(token, 'dropin', {
 								container: checkoutUI[0],
@@ -45,9 +45,9 @@ export class Checkout {
 										}
 									});
 								}
-							})
+							});
 						}
-					})
+					});
 				};
 
 				scope.$watch(attrs[Checkout.title], set);
