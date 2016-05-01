@@ -97,6 +97,7 @@ cyph-checkout, [cyph-checkout] {
 		width: 100%;
 		text-align: center;
 		padding-top: 50%;
+
 		@include transform(translateY(-50%));
 	}
 

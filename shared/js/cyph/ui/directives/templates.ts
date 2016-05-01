@@ -743,7 +743,7 @@ export const Templates	= {
 				</md-button>
 			</div>
 			<div translate class='confirmation' ng-show='complete'>
-				Payment confirmed! Follow-up instructions will be sent via email. 
+				Payment confirmed! Follow-up instructions will be sent via email.
 			</div>
 		</form>
 	`,
