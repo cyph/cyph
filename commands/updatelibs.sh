@@ -197,6 +197,11 @@ git clone git://github.com/gorilla/context.git
 git clone git://github.com/gorilla/mux.git
 cd ..
 
+mkdir go-authboss
+cd go-authboss
+git clone git://github.com/go-authboss/authboss.git
+cd ..
+
 mkdir lionelbarrow
 cd lionelbarrow
 git clone git://github.com/lionelbarrow/braintree-go.git
