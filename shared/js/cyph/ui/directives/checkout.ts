@@ -20,7 +20,7 @@ export class Checkout {
 				const set	= (amount: string) => {
 					scope['amount']	= amount;
 
-					const checkoutUI: JQuery	= element.find('. checkout-ui');
+					const checkoutUI: JQuery	= element.find('.checkout-ui');
 
 					checkoutUI.html('');
 
