@@ -20,13 +20,13 @@ export class Checkout {
 				const set	= (amount: string) => {
 					scope['amount']	= amount;
 
-					const checkoutUI: JQuery	= element.find('.checkout-ui');
-
-					checkoutUI.html('');
-
 					Util.request({
 						url: Env.baseUrl + Config.braintreeConfig.endpoint,
-						success: (token: string) =>
+						success: (token: string) => {
+						const checkoutUI: JQuery	= element.find('.checkout-ui');
+
+						checkoutUI.html('');
+
 							self['braintree'].setup(token, 'dropin', {
 								container: checkoutUI[0],
 								onPaymentMethodReceived: data => {
@@ -47,7 +47,7 @@ export class Checkout {
 								}
 							})
 						}
-					)
+					})
 				};
 
 				scope.$watch(attrs[Checkout.title], set);
