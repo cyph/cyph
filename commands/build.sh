@@ -36,7 +36,8 @@ tsfiles="$( \
 	} | \
 		perl -pe "s/.*?'\/js\/(.*)\.js.*/\1/g" | \
 		sort | \
-		uniq \
+		uniq | \
+		tr '\n' ' ' \
 )"
 
 jsbundle () {
@@ -76,30 +77,29 @@ if [ -d shared ] ; then
 	cd shared
 fi
 
-scssfiles="$(find css -name '*.scss' | grep -v bourbon/ | perl -pe 's/(.*)\.scss/\1/g')"
+scssfiles="$(find css -name '*.scss' | grep -v bourbon/ | perl -pe 's/(.*)\.scss/\1/g' | tr '\n' ' ')"
 
 
 if [ "${1}" == '--watch' ] ; then
-	cd js
-	for file in $tsfiles ; do
-		bash -c "
-			while true ; do
-				tsc $tsargs --sourceMap $file.ts --outFile $file.js
-				jsbundle $file
-				inotifywait $file.ts
+	bash -c "
+		cd js
+		while true ; do
+			for file in $tsfiles ; do
+				tsc $tsargs --sourceMap \$file.ts --outFile \$file.js
+				jsbundle \$file
 			done
-		" &
-	done
-	cd ..
+			inotifywait -r --exclude '.*\.(js|map|html)$' .
+		done
+	" &
 
-	for file in $scssfiles ; do
-		bash -c "
-			while true ; do
-				sass $file.scss $file.css
-				inotifywait $file.scss
+	bash -c "
+		while true ; do
+			for file in $scssfiles ; do
+				sass \$file.scss \$file.css
 			done
-		" &
-	done
+			inotifywait -r --exclude '.*\.(css|map)$' css
+		done
+	" &
 
 	sleep infinity
 else
