@@ -20,11 +20,15 @@ export class Checkout {
 				const set	= (amount: string) => {
 					scope['amount']	= amount;
 
+					const checkoutUI: JQuery	= element.find('.checkout-ui');
+
+					checkoutUI.html('');
+
 					Util.request({
 						url: Env.baseUrl + Config.braintreeConfig.endpoint,
 						success: (token: string) =>
 							self['braintree'].setup(token, 'dropin', {
-								container: element.find('.checkout-ui')[0],
+								container: checkoutUI[0],
 								onPaymentMethodReceived: data => {
 									Util.request({
 										url: Env.baseUrl + Config.braintreeConfig.endpoint,
