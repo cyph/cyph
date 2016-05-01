@@ -765,7 +765,7 @@ export const Templates	= {
 				</div>
 				<div ng-hide='$this.isPassive'>
 					<div translate>
-						Just have your friend open this link, and we're good to go!
+						Send the link below to someone else and when they open it, you'll be securely connected!
 					</div>
 					<br />
 
@@ -1040,27 +1040,47 @@ export const Templates	= {
 	`,
 
 	staticFooter: `
-		<div class='footer desktop-only'>
-			&copy; Cyph 2016
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<div layout='row' flex class='footer desktop-only'>
+			<div flex></div>
 
-			<a rel='noreferrer' href='https://twitter.com/cyph'>@cyph</a>
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<p flex='nogrow' layout-padding>
+				© Cyph 2016 (Patents Pending)
+			</p>
 
-			<a href='mailto:hello@cyph.com'>hello@cyph.com</a>
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<p flex='nogrow' layout-padding>
+				<a flex href='/contact'>Contact</a>
+			</p>
 
-			<a
-				target='_self'
-				href='tel:+19312974462'
-				title='+1(931) 297 4462'
-			>+1(931) CYPH INC</a>
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<p flex='nogrow' layout-padding>
+				<a href='/donate'>
+					Donate
+				</a>
+			</p>
 
-			<a
-				target='_self'
-				href='bitcoin:1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd'
-			>1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd</a>
+			<p flex='nogrow' layout-padding>
+					<strong>
+						- Individual Use Only -
+					</strong>
+			</p>
+
+			<p flex='nogrow' layout-padding>
+				 <a href='/pricing'>
+				 	Business Pricing
+				</a>
+			</p>
+
+			<p flex='nogrow' layout-padding>
+				<a href='/privacypolicy'>
+					Privacy Policy
+				</a>
+			</p>
+
+			<p flex='nogrow' layout-padding>
+				<a href='/termsofservice'>
+					Terms of Service
+				</a>
+			</p>
+			<div flex></div>
 		</div>
 	`
 };
