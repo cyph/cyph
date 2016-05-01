@@ -734,6 +734,20 @@ export const Templates	= {
 		</div>
 	`,
 
+	checkout: `
+		<form>
+			<div ng-hide='complete'>
+				<div class='checkout-ui'></div>
+				<md-button type='submit'>
+					Confirm \${{amount}} checkout
+				</md-button>
+			</div>
+			<div translate class='confirmation' ng-show='complete'>
+				Payment confirmed! Follow-up instructions will be sent via email. 
+			</div>
+		</form>
+	`,
+
 	linkConnection: `
 		<div
 			class='link-connection loading'

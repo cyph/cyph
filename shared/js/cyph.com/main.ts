@@ -30,6 +30,7 @@ angular.
 	module(Cyph.Config.angularConfig.rootModule, [
 		'ngMaterial',
 		Cyph.UI.Directives.Chat.title,
+		Cyph.UI.Directives.Checkout.title,
 		Cyph.UI.Directives.Markdown.title,
 		Cyph.UI.Directives.SignupForm.title
 	]).

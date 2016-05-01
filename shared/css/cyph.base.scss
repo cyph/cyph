@@ -79,6 +79,36 @@ md-toolbar, md-toolbar.md-default-theme:not(.md-menu-toolbar), md-toolbar:not(.m
 	top: 0px;
 }
 
+cyph-checkout, [cyph-checkout] {
+	background-color: white;
+	min-height: 18em;
+	min-width: 40em;
+
+	* {
+		color: rgba(0, 0, 0, 0.87) !important;
+	}
+
+	.checkout-ui {
+		min-height: 14em;
+	}
+
+	.confirmation {
+		font-size: 120%;
+		width: 100%;
+		text-align: center;
+		padding-top: 50%;
+		@include transform(translateY(-50%));
+	}
+
+	button {
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+		margin-top: 5px;
+		padding: 11px 19px;
+	}
+}
+
 cyph-markdown, [cyph-markdown] {
 	> p:only-child {
 		display: inline;

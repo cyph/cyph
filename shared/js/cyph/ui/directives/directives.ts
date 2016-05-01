@@ -1,4 +1,5 @@
 import {Chat} from 'chat';
+import {Checkout} from 'checkout';
 import {Enterpress} from 'enterpress';
 import {Filechange} from 'filechange';
 import {LinkConnection} from 'linkconnection';
@@ -11,6 +12,7 @@ import {Templates} from 'templates';
 
 export {
 	Chat,
+	Checkout,
 	Enterpress,
 	Filechange,
 	LinkConnection,
