@@ -111,7 +111,7 @@ func (s GAEStorer) PutOAuth(uid, provider string, attr authboss.Attributes) erro
 }
 
 func (s GAEStorer) GetOAuth(uid, provider string) (result interface{}, err error) {
-	return s.Get(uid+provider)
+	return s.Get(uid + provider)
 }
 
 func (s GAEStorer) AddToken(key, token string) error {
