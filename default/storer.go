@@ -1,10 +1,8 @@
-package main
+package api
 
 import (
 	"appengine"
 	"appengine/datastore"
-	"appengine/mail"
-	"appengine/memcache"
 	"github.com/go-authboss/authboss"
 	"time"
 )
@@ -77,7 +75,7 @@ func (s GAEStorer) UserQuery(prop string, value interface{}) *User {
 }
 
 func NewGAEStorer(context appengine.Context) *GAEStorer {
-	return &GAEStorer{Context: context}
+	return &GAEStorer{context}
 }
 
 func (s GAEStorer) Create(key string, attr authboss.Attributes) error {
