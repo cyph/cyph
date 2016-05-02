@@ -21,7 +21,7 @@ func (m GAEMailer) Send(Email email) error {
 		Cc:       email.Cc,
 		Bcc:      email.Bcc,
 		Subject:  email.Subject,
-		HTMLBody: email.HTMLBody
+		HTMLBody: email.HTMLBody,
 	}
 
 	if len(message.HTMLBody) == 0 {
