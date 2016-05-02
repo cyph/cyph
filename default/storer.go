@@ -8,6 +8,7 @@ import (
 )
 
 type Remember struct {
+	Email  string
 	Tokens map[string]bool
 }
 
@@ -44,102 +45,105 @@ type GAEStorer struct {
 	Context appengine.Context
 }
 
-func (s GAEStorer) RememberKey(key string) *datastore.Key {
-	return datastore.NewKey(s.Context, "Remember", key, 0, nil)
-}
-
-func (s GAEStorer) UserKey(key string) *datastore.Key {
-	return datastore.NewKey(s.Context, "Users", key, 0, nil)
-}
-
-func (s GAEStorer) UserPut(key string, attr authboss.Attributes) error {
-	key = sanitize(key)
+func (s GAEStorer) UserPut(email string, attr authboss.Attributes) error {
+	email = sanitize(email)
 
 	var user User
-	var remember Remember
-
 	if err := attr.Bind(&user, true); err != nil {
 		return err
 	}
 
-	if _, err := datastore.Put(s.Context, s.RememberKey(key), &remember); err != nil {
+	completeKey, err := datastore.Put(
+		s.Context,
+		datastore.NewIncompleteKey(s.Context, "Remember", nil),
+		&Remember{email},
+	)
+	if err != nil {
 		return err
 	}
 
-	_, err := datastore.Put(s.Context, s.UserKey(key), &User{
-		sanitize(user.Name),
-		sanitize(user.Username),
-		sanitize(user.Email),
-		sanitize(user.Password),
-		sanitize(user.Oauth2Uid),
-		sanitize(user.Oauth2Provider),
-		sanitize(user.Oauth2Token),
-		sanitize(user.Oauth2Refresh),
-		user.Oauth2Expiry,
-		sanitize(user.ConfirmToken),
-		user.Confirmed,
-		user.AttemptNumber,
-		user.AttemptTime,
-		user.Locked,
-		sanitize(user.RecoverToken),
-		user.RecoverTokenExpiry,
-	})
+	_, err := datastore.Put(
+		s.Context,
+		datastore.NewKey(s.Context, "Users", nil, completeKey.IntID(), nil),
+		&User{
+			sanitize(user.Name),
+			sanitize(user.Username),
+			email,
+			sanitize(user.Password),
+			sanitize(user.Oauth2Uid),
+			sanitize(user.Oauth2Provider),
+			sanitize(user.Oauth2Token),
+			sanitize(user.Oauth2Refresh),
+			user.Oauth2Expiry,
+			sanitize(user.ConfirmToken),
+			user.Confirmed,
+			user.AttemptNumber,
+			user.AttemptTime,
+			user.Locked,
+			sanitize(user.RecoverToken),
+			user.RecoverTokenExpiry,
+		},
+	)
 	return err
 }
 
-func (s GAEStorer) UserQuery(prop string, value interface{}) *User {
+func (s GAEStorer) UserQuery(prop string, value interface{}) *datastore.Key, *User, error {
 	var user User
-	_, err := datastore.NewQuery("Users").Filter(prop+"=", value).Run(s.Context).Next(&user)
-	return &user, err
+	key, err := datastore.NewQuery("Users").Filter(prop+"=", value).Run(s.Context).Next(&user)
+	return key, &user, err
+}
+
+func (s GAEStorer) RememberQuery(prop string, value interface{}) *datastore.Key, *Remember, error {
+	var remember Remember
+	key, err := datastore.NewQuery("Remember").Filter(prop+"=", value).Run(s.Context).Next(&remember)
+	return key, &remember, err
 }
 
 func NewGAEStorer(context appengine.Context) *GAEStorer {
 	return &GAEStorer{context}
 }
 
-func (s GAEStorer) Create(key string, attr authboss.Attributes) error {
-	if _, err := s.Get(key); err != nil {
-		return s.UserPut(key, attr)
+func (s GAEStorer) Create(email string, attr authboss.Attributes) error {
+	if _, err := s.Get(email); err != nil {
+		return s.UserPut(email, attr)
 	}
 
 	return authboss.ErrUserFound
 }
 
-func (s GAEStorer) Put(key string, attr authboss.Attributes) error {
-	if _, err := s.Get(key); err != nil {
+func (s GAEStorer) Put(email string, attr authboss.Attributes) error {
+	if _, err := s.Get(email); err != nil {
 		return nil
 	}
 
-	return s.UserPut(key, attr)
+	return s.UserPut(email, attr)
 }
 
-func (s GAEStorer) Get(key string) (result interface{}, err error) {
-	key = sanitize(key)
+func (s GAEStorer) Get(email string) (result interface{}, err error) {
+	email = sanitize(email)
 
-	var user User
-
-	if err := datastore.Get(s.Context, s.UserKey(key), &user); err != nil {
+	_, user, err := s.UserQuery("Email", email)
+	if err != nil {
 		return nil, authboss.ErrUserNotFound
 	}
 
-	return &user, nil
+	return user, nil
 }
 
-func (s GAEStorer) PutOAuth(uid, provider string, attr authboss.Attributes) error {
+func (s GAEStorer) PutOAuth(uid string, provider string, attr authboss.Attributes) error {
 	return s.UserPut(uid+provider, attr)
 }
 
-func (s GAEStorer) GetOAuth(uid, provider string) (result interface{}, err error) {
+func (s GAEStorer) GetOAuth(uid string, provider string) (result interface{}, err error) {
 	return s.Get(uid + provider)
 }
 
-func (s GAEStorer) AddToken(key, token string) error {
-	key = sanitize(key)
+func (s GAEStorer) AddToken(email string, token string) error {
+	email = sanitize(email)
 	token = sanitize(token)
 
-	var remember Remember
-
-	if err := datastore.Get(s.Context, s.RememberKey(key), &remember); err != nil {
+	key, remember, err := RememberQuery("Email", email)
+	if err != nil {
 		return authboss.ErrUserNotFound
 	}
 
@@ -149,32 +153,30 @@ func (s GAEStorer) AddToken(key, token string) error {
 
 	remember.Tokens[token] = true
 
-	_, err := datastore.Put(s.Context, s.RememberKey(key), &remember)
+	_, err := datastore.Put(s.Context, key, remember)
 	return err
 }
 
-func (s GAEStorer) DelTokens(key string) error {
-	key = sanitize(key)
+func (s GAEStorer) DelTokens(email string) error {
+	email = sanitize(email)
 
-	var remember Remember
-
-	if err := datastore.Get(s.Context, s.RememberKey(key), &remember); err != nil {
+	key, remember, err := RememberQuery("Email", email)
+	if err != nil {
 		return authboss.ErrUserNotFound
 	}
 
 	remember.Tokens = nil
 
-	_, err := datastore.Put(s.Context, s.RememberKey(key), &remember)
+	_, err := datastore.Put(s.Context, key, remember)
 	return err
 }
 
-func (s GAEStorer) UseToken(key, token string) error {
-	key = sanitize(key)
+func (s GAEStorer) UseToken(email string, token string) error {
+	email = sanitize(email)
 	token = sanitize(token)
 
-	var remember Remember
-
-	if err := datastore.Get(s.Context, s.RememberKey(key), &remember); err != nil {
+	key, remember, err := RememberQuery("Email", email)
+	if err != nil {
 		return authboss.ErrUserNotFound
 	}
 
@@ -184,14 +186,14 @@ func (s GAEStorer) UseToken(key, token string) error {
 
 	remember.Tokens = delete(remember.Tokens, token)
 
-	_, err := datastore.Put(s.Context, s.RememberKey(key), &remember)
+	_, err := datastore.Put(s.Context, key, remember)
 	return err
 }
 
 func (s GAEStorer) ConfirmUser(confirmToken string) (result interface{}, err error) {
 	confirmToken = sanitize(confirmToken)
 
-	if user, err := UserQuery("ConfirmToken", confirmToken); err == nil {
+	if _, user, err := UserQuery("ConfirmToken", confirmToken); err == nil {
 		return user, nil
 	}
 
@@ -201,7 +203,7 @@ func (s GAEStorer) ConfirmUser(confirmToken string) (result interface{}, err err
 func (s GAEStorer) RecoverUser(recoverToken string) (result interface{}, err error) {
 	recoverToken = sanitize(recoverToken)
 
-	if user, err := UserQuery("RecoverToken", recoverToken); err == nil {
+	if _, user, err := UserQuery("RecoverToken", recoverToken); err == nil {
 		return user, nil
 	}
 

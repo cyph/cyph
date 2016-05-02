@@ -34,7 +34,7 @@ func (s CookieStorer) Get(key string) (string, bool) {
 	return sanitize(value), true
 }
 
-func (s CookieStorer) Put(key, value string) {
+func (s CookieStorer) Put(key string, value string) {
 	key = sanitize(key)
 	key = sanitize(value)
 
