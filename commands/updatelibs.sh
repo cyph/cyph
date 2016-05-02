@@ -195,6 +195,7 @@ mkdir gorilla
 cd gorilla
 git clone git://github.com/gorilla/context.git
 git clone git://github.com/gorilla/mux.git
+git clone git://github.com/gorilla/securecookie.git
 cd ..
 
 mkdir go-authboss
