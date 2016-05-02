@@ -11,11 +11,11 @@ System.config({
     "angular": "github:angular/bower-angular@1.5.5",
     "angular-animate": "github:angular/bower-angular-animate@1.5.5",
     "angular-aria": "github:angular/bower-angular-aria@1.5.5",
-    "angular-material": "github:angular/bower-material@1.0.7",
-    "angular2": "npm:angular2@2.0.0-beta.16",
+    "angular-material": "github:angular/bower-material@1.0.8",
+    "angular2": "npm:angular2@2.0.0-beta.17",
     "animate.css": "npm:animate.css@3.5.1",
-    "aws/aws-sdk-js": "github:aws/aws-sdk-js@2.3.5",
-    "braintree": "github:braintree/braintree-web@2.23.0",
+    "aws/aws-sdk-js": "github:aws/aws-sdk-js@2.3.7",
+    "braintree": "github:braintree/braintree-web@2.24.0",
     "crypto/cryptojs": "github:sytelus/cryptojs@3.1.2",
     "crypto/isaac": "github:rubycon/isaac.js@master",
     "crypto/libsodium": "github:jedisct1/libsodium.js@0.3.0",
@@ -36,7 +36,7 @@ System.config({
     "matthieua/wow": "github:matthieua/wow@1.1.2",
     "morr/jquery.appear": "github:morr/jquery.appear@0.3.6",
     "nanoscroller": "npm:nanoscroller@0.8.7",
-    "rxjs": "npm:rxjs@5.0.0-beta.6",
+    "rxjs": "npm:rxjs@5.0.0-beta.7",
     "siddii/angular-timer": "github:siddii/angular-timer@1.2.1",
     "twitter/twemoji": "github:twitter/twemoji@1.3.2",
     "typescript": "npm:typescript@1.8.10",
@@ -47,7 +47,7 @@ System.config({
     "github:angular/bower-angular-aria@1.5.5": {
       "angular": "github:angular/bower-angular@1.5.5"
     },
-    "github:angular/bower-material@1.0.7": {
+    "github:angular/bower-material@1.0.8": {
       "angular": "github:angular/bower-angular@1.5.5",
       "angular-animate": "github:angular/bower-angular-animate@1.5.5",
       "angular-aria": "github:angular/bower-angular-aria@1.5.5",
@@ -97,9 +97,9 @@ System.config({
       "path": "github:jspm/nodelibs-path@0.1.0",
       "process": "github:jspm/nodelibs-process@0.1.2"
     },
-    "npm:angular2@2.0.0-beta.16": {
+    "npm:angular2@2.0.0-beta.17": {
       "reflect-metadata": "npm:reflect-metadata@0.1.2",
-      "rxjs": "npm:rxjs@5.0.0-beta.6",
+      "rxjs": "npm:rxjs@5.0.0-beta.7",
       "zone.js": "npm:zone.js@0.6.12"
     },
     "npm:assert@1.3.0": {
@@ -175,9 +175,10 @@ System.config({
       "assert": "github:jspm/nodelibs-assert@0.1.0",
       "process": "github:jspm/nodelibs-process@0.1.2"
     },
-    "npm:rxjs@5.0.0-beta.6": {
+    "npm:rxjs@5.0.0-beta.7": {
       "buffer": "github:jspm/nodelibs-buffer@0.1.0",
-      "process": "github:jspm/nodelibs-process@0.1.2"
+      "process": "github:jspm/nodelibs-process@0.1.2",
+      "symbol-observable": "npm:symbol-observable@0.2.4"
     },
     "npm:source-map-resolve@0.3.1": {
       "atob": "npm:atob@1.1.3",
