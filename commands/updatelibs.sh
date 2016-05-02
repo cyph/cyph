@@ -212,6 +212,11 @@ func (g *Braintree) SetHTTPClient(client *http.Client) {
 }' >> braintree-go/braintree.go # Temporary workaround for GAE support
 cd ..
 
+mkdir justinas
+cd justinas
+git clone git://github.com/justinas/nosurf.git
+cd ..
+
 mkdir microcosm-cc
 cd microcosm-cc
 git clone git://github.com/microcosm-cc/bluemonday.git
@@ -225,9 +230,11 @@ cd golang.org/x
 
 git clone git://github.com/golang/net.git
 cd net
-rm -rf !(AUTHORS|CONTRIBUTING.md|CONTRIBUTORS|LICENSE|PATENTS|README|html)
+rm -rf !(AUTHORS|CONTRIBUTING.md|CONTRIBUTORS|LICENSE|PATENTS|README|html|context)
 cd ..
 
+git clone git://github.com/golang/crypto.git
+git clone git://github.com/golang/oauth2.git
 git clone git://github.com/golang/text.git
 
 cd ../..

@@ -6,9 +6,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"geoip2"
+	"github.com/go-authboss/authboss"
 	"github.com/gorilla/mux"
+	"github.com/justinas/nosurf"
 	"github.com/lionelbarrow/braintree-go"
 	"github.com/microcosm-cc/bluemonday"
+	"golang.org/x/net/context"
 	"io/ioutil"
 	"net"
 	"net/http"
@@ -62,6 +65,8 @@ var empty = struct{}{}
 
 var router = mux.NewRouter()
 var isRouterActive = false
+
+var auth = authboss.New()
 
 var sanitizer = bluemonday.StrictPolicy()
 
@@ -159,6 +164,9 @@ func handleFunc(pattern string, handler Handler) {
 func handleFuncs(pattern string, handlers Handlers) {
 	if !isRouterActive {
 		http.Handle("/", router)
+		setUpAuthboss()
+		router.PathPrefix("/auth").Handler(auth.NewRouter())
+
 		isRouterActive = true
 	}
 
@@ -220,5 +228,41 @@ func sanitize(s string, params ...int) string {
 		return sanitized[:maxLength]
 	} else {
 		return sanitized
+	}
+}
+
+func setUpAuthboss() {
+	auth.Storer = NewGAEStorer()
+	auth.Mailer = NewGAEMailer()
+	auth.CookieStoreMaker = NewCookieStorer
+	auth.SessionStoreMaker = NewCookieStorer
+
+	auth.ContextProvider = func(r *http.Request) context.Context {
+		return appengine.NewContext(r)
+	}
+
+	auth.XSRFName = "csrf_token"
+	auth.XSRFMaker = func(_ http.ResponseWriter, r *http.Request) string {
+		return nosurf.Token(r)
+	}
+
+	auth.MountPath = "/auth"
+
+	auth.Policies = []authboss.Validator{
+		authboss.Rules{
+			FieldName:       "email",
+			Required:        true,
+			AllowWhitespace: false,
+		},
+		authboss.Rules{
+			FieldName:       "password",
+			Required:        true,
+			MinLength:       8,
+			AllowWhitespace: true,
+		},
+	}
+
+	if err := auth.Init(); err != nil {
+		panic(err)
 	}
 }

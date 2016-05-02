@@ -13,7 +13,7 @@ type CookieStorer struct {
 	Writer  http.ResponseWriter
 }
 
-func NewCookieStorer(r *http.Request, w http.ResponseWriter) authboss.ClientStorer {
+func NewCookieStorer(w http.ResponseWriter, r *http.Request) authboss.ClientStorer {
 	return &CookieStorer{r, w}
 }
 
