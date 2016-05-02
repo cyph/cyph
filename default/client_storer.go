@@ -18,6 +18,8 @@ func NewCookieStorer(w http.ResponseWriter, r *http.Request) authboss.ClientStor
 }
 
 func (s CookieStorer) Get(key string) (string, bool) {
+	key = sanitize(key)
+
 	cookie, err := s.Request.Cookie(key)
 	if err != nil {
 		return "", false
@@ -29,10 +31,13 @@ func (s CookieStorer) Get(key string) (string, bool) {
 		return "", false
 	}
 
-	return value, true
+	return sanitize(value), true
 }
 
 func (s CookieStorer) Put(key, value string) {
+	key = sanitize(key)
+	key = sanitize(value)
+
 	encoded, _ := cookieStore.Encode(key, value)
 
 	cookie := &http.Cookie{
@@ -45,6 +50,8 @@ func (s CookieStorer) Put(key, value string) {
 }
 
 func (s CookieStorer) Del(key string) {
+	key = sanitize(key)
+
 	cookie := &http.Cookie{
 		MaxAge: -1,
 		Name:   key,

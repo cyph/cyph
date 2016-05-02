@@ -232,8 +232,8 @@ func sanitize(s string, params ...int) string {
 }
 
 func setUpAuthboss() {
-	auth.Storer = NewGAEStorer()
-	auth.Mailer = NewGAEMailer()
+	auth.StoreMaker = NewGAEStorer
+	auth.MailMaker = NewGAEMailer
 	auth.CookieStoreMaker = NewCookieStorer
 	auth.SessionStoreMaker = NewCookieStorer
 

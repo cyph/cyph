@@ -53,6 +53,8 @@ func (s GAEStorer) UserKey(key string) *datastore.Key {
 }
 
 func (s GAEStorer) UserPut(key string, attr authboss.Attributes) error {
+	key = sanitize(key)
+
 	var user User
 	var remember Remember
 
@@ -64,7 +66,24 @@ func (s GAEStorer) UserPut(key string, attr authboss.Attributes) error {
 		return err
 	}
 
-	_, err := datastore.Put(s.Context, s.UserKey(key), &user)
+	_, err := datastore.Put(s.Context, s.UserKey(key), &User{
+		sanitize(user.Name),
+		sanitize(user.Username),
+		sanitize(user.Email),
+		sanitize(user.Password),
+		sanitize(user.Oauth2Uid),
+		sanitize(user.Oauth2Provider),
+		sanitize(user.Oauth2Token),
+		sanitize(user.Oauth2Refresh),
+		user.Oauth2Expiry,
+		sanitize(user.ConfirmToken),
+		user.Confirmed,
+		user.AttemptNumber,
+		user.AttemptTime,
+		user.Locked,
+		sanitize(user.RecoverToken),
+		user.RecoverTokenExpiry,
+	})
 	return err
 }
 
@@ -95,6 +114,8 @@ func (s GAEStorer) Put(key string, attr authboss.Attributes) error {
 }
 
 func (s GAEStorer) Get(key string) (result interface{}, err error) {
+	key = sanitize(key)
+
 	var user User
 
 	if err := datastore.Get(s.Context, s.UserKey(key), &user); err != nil {
@@ -113,6 +134,9 @@ func (s GAEStorer) GetOAuth(uid, provider string) (result interface{}, err error
 }
 
 func (s GAEStorer) AddToken(key, token string) error {
+	key = sanitize(key)
+	token = sanitize(token)
+
 	var remember Remember
 
 	if err := datastore.Get(s.Context, s.RememberKey(key), &remember); err != nil {
@@ -130,6 +154,8 @@ func (s GAEStorer) AddToken(key, token string) error {
 }
 
 func (s GAEStorer) DelTokens(key string) error {
+	key = sanitize(key)
+
 	var remember Remember
 
 	if err := datastore.Get(s.Context, s.RememberKey(key), &remember); err != nil {
@@ -143,6 +169,9 @@ func (s GAEStorer) DelTokens(key string) error {
 }
 
 func (s GAEStorer) UseToken(key, token string) error {
+	key = sanitize(key)
+	token = sanitize(token)
+
 	var remember Remember
 
 	if err := datastore.Get(s.Context, s.RememberKey(key), &remember); err != nil {
@@ -160,6 +189,8 @@ func (s GAEStorer) UseToken(key, token string) error {
 }
 
 func (s GAEStorer) ConfirmUser(confirmToken string) (result interface{}, err error) {
+	confirmToken = sanitize(confirmToken)
+
 	if user, err := UserQuery("ConfirmToken", confirmToken); err == nil {
 		return user, nil
 	}
@@ -168,6 +199,8 @@ func (s GAEStorer) ConfirmUser(confirmToken string) (result interface{}, err err
 }
 
 func (s GAEStorer) RecoverUser(recoverToken string) (result interface{}, err error) {
+	recoverToken = sanitize(recoverToken)
+
 	if user, err := UserQuery("RecoverToken", recoverToken); err == nil {
 		return user, nil
 	}
