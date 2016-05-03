@@ -69,6 +69,12 @@ angular.
 				controller.update();
 			});
 		}
+	]).
+	config([
+		'$compileProvider',
+		$compileProvider => $compileProvider.
+			aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|sms):/).
+			debugInfoEnabled(false)
 	])
 ;
 
