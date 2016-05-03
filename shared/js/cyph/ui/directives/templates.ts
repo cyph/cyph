@@ -1048,11 +1048,11 @@ export const Templates	= {
 			</p>
 
 			<p flex='nogrow' layout-padding>
-				<a flex href='/contact'>Contact</a>
+				<a flex ng-href='{{Cyph.Env.homeUrl}}contact'>Contact</a>
 			</p>
 
 			<p flex='nogrow' layout-padding>
-				<a href='/donate'>
+				<a ng-href='{{Cyph.Env.homeUrl}}donate'>
 					Donate
 				</a>
 			</p>
@@ -1064,19 +1064,19 @@ export const Templates	= {
 			</p>
 
 			<p flex='nogrow' layout-padding>
-				 <a href='/pricing'>
+				 <a ng-href='{{Cyph.Env.homeUrl}}pricing'>
 				 	Business Pricing
 				</a>
 			</p>
 
 			<p flex='nogrow' layout-padding>
-				<a href='/privacypolicy'>
+				<a ng-href='{{Cyph.Env.homeUrl}}privacypolicy'>
 					Privacy Policy
 				</a>
 			</p>
 
 			<p flex='nogrow' layout-padding>
-				<a href='/termsofservice'>
+				<a ng-href='{{Cyph.Env.homeUrl}}termsofservice'>
 					Terms of Service
 				</a>
 			</p>
