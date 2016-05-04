@@ -45,7 +45,7 @@ type GAEStorer struct {
 	Context appengine.Context
 }
 
-func (s GAEStorer) UserPut(email string, attr authboss.Attributes) error {
+func (s GAEStorer) userPut(email string, attr authboss.Attributes) error {
 	email = sanitize(email)
 
 	var user User
@@ -87,13 +87,13 @@ func (s GAEStorer) UserPut(email string, attr authboss.Attributes) error {
 	return err
 }
 
-func (s GAEStorer) UserQuery(prop string, value interface{}) *datastore.Key, *User, error {
+func (s GAEStorer) userQuery(prop string, value interface{}) (*datastore.Key, *User, error) {
 	var user User
 	key, err := datastore.NewQuery("Users").Filter(prop+"=", value).Run(s.Context).Next(&user)
 	return key, &user, err
 }
 
-func (s GAEStorer) RememberQuery(prop string, value interface{}) *datastore.Key, *Remember, error {
+func (s GAEStorer) rememberQuery(prop string, value interface{}) (*datastore.Key, *Remember, error) {
 	var remember Remember
 	key, err := datastore.NewQuery("Remember").Filter(prop+"=", value).Run(s.Context).Next(&remember)
 	return key, &remember, err
@@ -105,7 +105,7 @@ func NewGAEStorer(context appengine.Context) *GAEStorer {
 
 func (s GAEStorer) Create(email string, attr authboss.Attributes) error {
 	if _, err := s.Get(email); err != nil {
-		return s.UserPut(email, attr)
+		return s.userPut(email, attr)
 	}
 
 	return authboss.ErrUserFound
@@ -116,13 +116,13 @@ func (s GAEStorer) Put(email string, attr authboss.Attributes) error {
 		return nil
 	}
 
-	return s.UserPut(email, attr)
+	return s.userPut(email, attr)
 }
 
 func (s GAEStorer) Get(email string) (result interface{}, err error) {
 	email = sanitize(email)
 
-	_, user, err := s.UserQuery("Email", email)
+	_, user, err := s.userQuery("Email", email)
 	if err != nil {
 		return nil, authboss.ErrUserNotFound
 	}
@@ -131,7 +131,7 @@ func (s GAEStorer) Get(email string) (result interface{}, err error) {
 }
 
 func (s GAEStorer) PutOAuth(uid string, provider string, attr authboss.Attributes) error {
-	return s.UserPut(uid+provider, attr)
+	return s.userPut(uid+provider, attr)
 }
 
 func (s GAEStorer) GetOAuth(uid string, provider string) (result interface{}, err error) {
@@ -142,7 +142,7 @@ func (s GAEStorer) AddToken(email string, token string) error {
 	email = sanitize(email)
 	token = sanitize(token)
 
-	key, remember, err := RememberQuery("Email", email)
+	key, remember, err := s.rememberQuery("Email", email)
 	if err != nil {
 		return authboss.ErrUserNotFound
 	}
@@ -160,7 +160,7 @@ func (s GAEStorer) AddToken(email string, token string) error {
 func (s GAEStorer) DelTokens(email string) error {
 	email = sanitize(email)
 
-	key, remember, err := RememberQuery("Email", email)
+	key, remember, err := s.rememberQuery("Email", email)
 	if err != nil {
 		return authboss.ErrUserNotFound
 	}
@@ -175,7 +175,7 @@ func (s GAEStorer) UseToken(email string, token string) error {
 	email = sanitize(email)
 	token = sanitize(token)
 
-	key, remember, err := RememberQuery("Email", email)
+	key, remember, err := s.rememberQuery("Email", email)
 	if err != nil {
 		return authboss.ErrUserNotFound
 	}
@@ -193,7 +193,7 @@ func (s GAEStorer) UseToken(email string, token string) error {
 func (s GAEStorer) ConfirmUser(confirmToken string) (result interface{}, err error) {
 	confirmToken = sanitize(confirmToken)
 
-	if _, user, err := UserQuery("ConfirmToken", confirmToken); err == nil {
+	if _, user, err := s.userQuery("ConfirmToken", confirmToken); err == nil {
 		return user, nil
 	}
 
@@ -203,7 +203,7 @@ func (s GAEStorer) ConfirmUser(confirmToken string) (result interface{}, err err
 func (s GAEStorer) RecoverUser(recoverToken string) (result interface{}, err error) {
 	recoverToken = sanitize(recoverToken)
 
-	if _, user, err := UserQuery("RecoverToken", recoverToken); err == nil {
+	if _, user, err := s.userQuery("RecoverToken", recoverToken); err == nil {
 		return user, nil
 	}
 
