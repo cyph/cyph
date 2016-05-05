@@ -158,6 +158,27 @@ node tools/build.js :common
 rm -rf node_modules
 cd ../../..
 
+
+# Remove large collections of extra files that we don't need
+
+rm -rf angular2/es6
+find angular2/* -name '*.js' -exec rm {} \;
+
+find rxjs/* -name '*.js' -exec rm {} \;
+
+find twitter/twemoji/* -name '*.svg' -exec rm {} \;
+find twitter/twemoji/* -name '*.ai' -exec rm {} \;
+
+cd isagalaev/highlight.js
+mv src/styles/default.css ../
+mv build/highlight.pack.js ../
+rm -rf *
+mkdir -p src/styles build
+mv ../default.css src/styles/
+mv ../highlight.pack.js build/
+cd ../..
+
+
 cd ..
 
 rm -rf typings typings.json
@@ -200,7 +221,8 @@ cd ..
 
 mkdir go-authboss
 cd go-authboss
-git clone git://github.com/go-authboss/authboss.git
+# git clone git://github.com/go-authboss/authboss.git
+git clone git://github.com/buu700/authboss.git
 cd ..
 
 mkdir lionelbarrow
