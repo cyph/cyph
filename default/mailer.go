@@ -10,8 +10,8 @@ type GAEMailer struct {
 	Context appengine.Context
 }
 
-func NewGAEMailer(context appengine.Context) *GAEMailer {
-	return &GAEMailer{context}
+func NewGAEMailer(_ http.ResponseWriter, r *http.Request) *GAEMailer {
+	return &GAEMailer{appengine.NewContext(r)}
 }
 
 func (m GAEMailer) Send(Email email) error {

@@ -99,8 +99,8 @@ func (s GAEStorer) rememberQuery(prop string, value interface{}) (*datastore.Key
 	return key, &remember, err
 }
 
-func NewGAEStorer(context appengine.Context) *GAEStorer {
-	return &GAEStorer{context}
+func NewGAEStorer(_ http.ResponseWriter, r *http.Request) *GAEStorer {
+	return &GAEStorer{appengine.NewContext(r)}
 }
 
 func (s GAEStorer) Create(email string, attr authboss.Attributes) error {
