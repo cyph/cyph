@@ -158,28 +158,6 @@ node tools/build.js :common
 rm -rf node_modules
 cd ../../..
 
-
-# Remove large collections of extra files that we don't need
-
-filesToDelete='angular2/es6'
-filesToDelete="${filesToDelete} $(find angular2/* -name '*.js' | tr '\n ' ')"
-
-filesToDelete="${filesToDelete} $(find rxjs/* -name '*.js' | tr '\n ' ')"
-
-filesToDelete="${filesToDelete} $(find twitter/twemoji/* -name '*.svg' | tr '\n ' ')"
-filesToDelete="${filesToDelete} $(find twitter/twemoji/* -name '*.ai' | tr '\n ' ')"
-
-mv isagalaev/highlight.js/src/styles/default.css ./
-mv isagalaev/highlight.js/build/highlight.pack.js ./
-filesToDelete="${filesToDelete} isagalaev/highlight.js/*"
-
-rm -rf $filesToDelete
-
-mkdir -p isagalaev/highlight.js/src/styles isagalaev/highlight.js/build
-mv default.css isagalaev/highlight.js/src/styles/
-mv highlight.pack.js isagalaev/highlight.js/build/
-
-
 cd ..
 
 rm -rf typings typings.json
