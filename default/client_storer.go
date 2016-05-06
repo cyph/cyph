@@ -1,8 +1,8 @@
 package api
 
 import (
-	"gopkg.in/authboss.v0"
 	"github.com/gorilla/securecookie"
+	"gopkg.in/authboss.v0"
 	"net/http"
 )
 
