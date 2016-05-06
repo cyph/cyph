@@ -89,12 +89,12 @@ elif [ "${command}" == 'commit' ] ; then
 	cd shared/lib/js
 
 	filesToDelete='angular2/es6'
-	filesToDelete="${filesToDelete} $(find angular2/* -name '*.js' | tr '\n ' ')"
+	filesToDelete="${filesToDelete} $(find angular2/* -name '*.js' | tr '\n' ' ')"
 
-	filesToDelete="${filesToDelete} $(find rxjs/* -name '*.js' | tr '\n ' ')"
+	filesToDelete="${filesToDelete} $(find rxjs/* -name '*.js' | tr '\n' ' ')"
 
-	filesToDelete="${filesToDelete} $(find twitter/twemoji/* -name '*.svg' | tr '\n ' ')"
-	filesToDelete="${filesToDelete} $(find twitter/twemoji/* -name '*.ai' | tr '\n ' ')"
+	filesToDelete="${filesToDelete} $(find twitter/twemoji/* -name '*.svg' | tr '\n' ' ')"
+	filesToDelete="${filesToDelete} $(find twitter/twemoji/* -name '*.ai' | tr '\n' ' ')"
 
 	mv isagalaev/highlight.js/src/styles/default.css ./
 	mv isagalaev/highlight.js/build/highlight.pack.js ./
