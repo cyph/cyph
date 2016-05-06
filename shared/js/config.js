@@ -14,7 +14,7 @@ System.config({
     "angular-material": "github:angular/bower-material@1.0.8",
     "angular2": "npm:angular2@2.0.0-beta.17",
     "animate.css": "npm:animate.css@3.5.1",
-    "aws/aws-sdk-js": "github:aws/aws-sdk-js@2.3.7",
+    "aws/aws-sdk-js": "github:aws/aws-sdk-js@2.3.9",
     "braintree": "github:braintree/braintree-web@2.24.0",
     "crypto/cryptojs": "github:sytelus/cryptojs@3.1.2",
     "crypto/isaac": "github:rubycon/isaac.js@master",
@@ -40,7 +40,7 @@ System.config({
     "siddii/angular-timer": "github:siddii/angular-timer@1.2.1",
     "twitter/twemoji": "github:twitter/twemoji@1.3.2",
     "typescript": "npm:typescript@1.8.10",
-    "unsemantic": "npm:unsemantic@1.0.1",
+    "unsemantic": "npm:unsemantic@1.1.2",
     "github:angular/bower-angular-animate@1.5.5": {
       "angular": "github:angular/bower-angular@1.5.5"
     },
@@ -205,7 +205,7 @@ System.config({
     "npm:typescript@1.8.10": {
       "os": "github:jspm/nodelibs-os@0.1.0"
     },
-    "npm:unsemantic@1.0.1": {
+    "npm:unsemantic@1.1.2": {
       "process": "github:jspm/nodelibs-process@0.1.2"
     },
     "npm:urix@0.1.0": {
