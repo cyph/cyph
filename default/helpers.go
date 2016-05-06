@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"geoip2"
-	"github.com/go-authboss/authboss"
+	"gopkg.in/authboss.v0"
 	"github.com/gorilla/mux"
 	"github.com/justinas/nosurf"
 	"github.com/lionelbarrow/braintree-go"

@@ -3,7 +3,7 @@ package api
 import (
 	"appengine"
 	"appengine/mail"
-	"github.com/go-authboss/authboss"
+	"gopkg.in/authboss.v0"
 )
 
 type GAEMailer struct {

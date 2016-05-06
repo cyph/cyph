@@ -3,7 +3,7 @@ package api
 import (
 	"appengine"
 	"appengine/datastore"
-	"github.com/go-authboss/authboss"
+	"gopkg.in/authboss.v0"
 	"time"
 )
 

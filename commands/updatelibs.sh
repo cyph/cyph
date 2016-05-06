@@ -198,12 +198,6 @@ git clone git://github.com/gorilla/mux.git
 git clone git://github.com/gorilla/securecookie.git
 cd ..
 
-mkdir go-authboss
-cd go-authboss
-# git clone git://github.com/go-authboss/authboss.git
-git clone git://github.com/buu700/authboss.git
-cd ..
-
 mkdir lionelbarrow
 cd lionelbarrow
 git clone git://github.com/lionelbarrow/braintree-go.git
@@ -222,6 +216,15 @@ mkdir microcosm-cc
 cd microcosm-cc
 git clone git://github.com/microcosm-cc/bluemonday.git
 cd ..
+
+cd ..
+
+rm -rf gopkg.in 2> /dev/null
+mkdir gopkg.in
+cd gopkg.in
+
+# git clone git://github.com/go-authboss/authboss.git authboss.v0
+git clone git://github.com/buu700/authboss.git authboss.v0
 
 cd ..
 
