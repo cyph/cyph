@@ -161,22 +161,23 @@ cd ../../..
 
 # Remove large collections of extra files that we don't need
 
-rm -rf angular2/es6
-find angular2/* -name '*.js' -exec rm {} \;
+filesToDelete='angular2/es6'
+filesToDelete="${filesToDelete} $(find angular2/* -name '*.js' | tr '\n ' ')"
 
-find rxjs/* -name '*.js' -exec rm {} \;
+filesToDelete="${filesToDelete} $(find rxjs/* -name '*.js' | tr '\n ' ')"
 
-find twitter/twemoji/* -name '*.svg' -exec rm {} \;
-find twitter/twemoji/* -name '*.ai' -exec rm {} \;
+filesToDelete="${filesToDelete} $(find twitter/twemoji/* -name '*.svg' | tr '\n ' ')"
+filesToDelete="${filesToDelete} $(find twitter/twemoji/* -name '*.ai' | tr '\n ' ')"
 
-cd isagalaev/highlight.js
-mv src/styles/default.css ../
-mv build/highlight.pack.js ../
-rm -rf *
-mkdir -p src/styles build
-mv ../default.css src/styles/
-mv ../highlight.pack.js build/
-cd ../..
+mv isagalaev/highlight.js/src/styles/default.css ./
+mv isagalaev/highlight.js/build/highlight.pack.js ./
+filesToDelete="${filesToDelete} isagalaev/highlight.js/*"
+
+rm -rf $filesToDelete
+
+mkdir -p isagalaev/highlight.js/src/styles isagalaev/highlight.js/build
+mv default.css isagalaev/highlight.js/src/styles/
+mv highlight.pack.js isagalaev/highlight.js/build/
 
 
 cd ..
