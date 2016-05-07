@@ -7,8 +7,17 @@ import (
 	"fmt"
 	"geoip2"
 	"github.com/gorilla/mux"
+	"github.com/justinas/nosurf"
 	"github.com/lionelbarrow/braintree-go"
 	"github.com/microcosm-cc/bluemonday"
+	"golang.org/x/crypto/bcrypt"
+	"gopkg.in/authboss.v0"
+	"gopkg.in/authboss.v0/auth"
+	"gopkg.in/authboss.v0/confirm"
+	"gopkg.in/authboss.v0/lock"
+	"gopkg.in/authboss.v0/recover"
+	"gopkg.in/authboss.v0/register"
+	"gopkg.in/authboss.v0/remember"
 	"io/ioutil"
 	"net"
 	"net/http"
@@ -62,6 +71,8 @@ var empty = struct{}{}
 
 var router = mux.NewRouter()
 var isRouterActive = false
+
+var ab = authboss.New()
 
 var sanitizer = bluemonday.StrictPolicy()
 
@@ -159,6 +170,9 @@ func handleFunc(pattern string, handler Handler) {
 func handleFuncs(pattern string, handlers Handlers) {
 	if !isRouterActive {
 		http.Handle("/", router)
+		setUpAuthboss()
+		router.PathPrefix("/auth").Handler(ab.NewRouter())
+
 		isRouterActive = true
 	}
 
@@ -220,5 +234,50 @@ func sanitize(s string, params ...int) string {
 		return sanitized[:maxLength]
 	} else {
 		return sanitized
+	}
+}
+
+func setUpAuthboss() {
+	ab.StoreMaker = NewGAEStorer
+	ab.MailMaker = NewGAEMailer
+	ab.CookieStoreMaker = NewCookieStorer
+	ab.SessionStoreMaker = NewCookieStorer
+
+	ab.LogWriter = os.Stderr
+	ab.LogWriteMaker = NewGAELogger
+
+	ab.XSRFName = "csrf_token"
+	ab.XSRFMaker = func(_ http.ResponseWriter, r *http.Request) string {
+		return nosurf.Token(r)
+	}
+
+	ab.RootURL = config.RootURL
+	ab.MountPath = "/auth"
+	ab.DisableGoroutines = true
+
+	ab.BCryptCost = bcrypt.MinCost
+	ab.Policies = []authboss.Validator{
+		authboss.Rules{
+			FieldName:       "email",
+			Required:        true,
+			AllowWhitespace: false,
+		},
+		authboss.Rules{
+			FieldName:       "password",
+			Required:        true,
+			MinLength:       32,
+			AllowWhitespace: true,
+		},
+	}
+
+	if err := ab.Init(
+		auth.ModuleName,
+		confirm.ModuleName,
+		lock.ModuleName,
+		recover.ModuleName,
+		register.ModuleName,
+		remember.ModuleName,
+	); err != nil {
+		panic(err)
 	}
 }

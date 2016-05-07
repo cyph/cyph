@@ -55,6 +55,11 @@ fi
 version="$branch"
 
 
+# Authboss views (primarily email templates)
+rm -rf default/gopkg.in/authboss.v0/internal/response/templates
+mv default/views default/gopkg.in/authboss.v0/internal/response/templates
+
+
 if [ ! $simple ] ; then
 	defaultHeadersString='# default_headers'
 	defaultHeaders="$(cat headers.yaml)"
@@ -95,6 +100,7 @@ ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak 's/isLocalEnv: boolean		= true/
 
 if [ $test ] ; then
 	sed -i.bak "s/staging/${branch}/g" default/config.go
+	sed -i.bak "s/http:\/\/localhost:42000/https:\/\/${branch}-dot-cyphme.appspot.com/g" default/config.go
 	ls */*.yaml */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/api.cyph.com/${branch}-dot-cyphme.appspot.com/g" %
 	ls */*.yaml */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/www.cyph.com/${branch}-dot-cyph-com-dot-cyphme.appspot.com/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42000/https:\/\/${branch}-dot-cyphme.appspot.com/g" %
@@ -113,6 +119,7 @@ if [ $test ] ; then
 		mv $yaml.new $yaml
 	done
 else
+	sed -i.bak "s/http:\/\/localhost:42000/https:\/\/api.cyph.com.com/g" default/config.go
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42000/https:\/\/api.cyph.com/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42001/https:\/\/www.cyph.com/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42002/https:\/\/cyph.im/g" %
@@ -311,6 +318,17 @@ if [ ! $test ] ; then
 		cat $project/*.yaml | perl -pe 's/(module: cyph.*)/\1-update/' > $project/update.yaml
 	done
 fi
+
+# Workaround for symlinks doubling up Google's count of the files toward its 10k limit
+find . -type l -exec bash -c '
+	original="$(readlink "{}")";
+	parent="$(echo "{}" | perl -pe "s/(.*)\/.*?$/\1/g")";
+	name="$(echo "{}" | perl -pe "s/.*\/(.*?)$/\1/g")"
+
+	cd "${parent}"
+	rm "${name}"
+	mv "${original}" "${name}"
+' \;
 
 if [ $site ] ; then
 	deploy $site/*.yaml
