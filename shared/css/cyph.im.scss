@@ -65,13 +65,13 @@ html:not(.mobile) .chat-sidebar,
 	font-weight: bold;
 }
 
-#close-cyph:hover{
+#close-cyph:hover {
 	opacity: 1;
 	transition-duration: 0.75s;
 	cursor: pointer;
 }
 
-.plus span{
+.plus span {
 	font-size: 18px;
 	font-weight: bold;
 }
@@ -89,7 +89,7 @@ html:not(.mobile) .chat-sidebar,
 	padding-bottom: 5px;
 }
 
-md-fab-speed-dial.md-fling.desktop-only{
+md-fab-speed-dial.md-fling.desktop-only {
 	position: absolute;
 	left: 93%;
 	top: 8px;
@@ -240,7 +240,6 @@ input, textarea {
 }
 
 .footer {
-	
 	font-size: 14px;
 }
 
@@ -434,18 +433,21 @@ input, textarea {
 html:not(.mobile) {
 	.p2p-section {
 		margin-top: 10px;
-		button{
+
+		button {
 			margin: 5px;
 		}
 
 		.video-call-button {
 			// margin-left: 30px;
 			// margin-right: 10px;
+	
 		}
 
 		.send-file-button {
 			// margin-left: 58px;
 			// margin-top: 5px;
+	
 		}
 	}
 }
