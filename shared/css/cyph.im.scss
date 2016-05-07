@@ -383,15 +383,18 @@ input, textarea {
 html:not(.mobile) {
 	.p2p-section {
 		margin-top: 10px;
+		button{
+			margin: 5px;
+		}
 
 		.video-call-button {
-			margin-left: 30px;
-			margin-right: 10px;
+			// margin-left: 30px;
+			// margin-right: 10px;
 		}
 
 		.send-file-button {
-			margin-left: 58px;
-			margin-top: 5px;
+			// margin-left: 58px;
+			// margin-top: 5px;
 		}
 	}
 }

@@ -482,6 +482,7 @@ export const Templates	= {
 
 				<div
 					class='p2p-section'
+					layout='row'
 					ng-click='$this.p2pManager.disabledAlert()'
 					ng-attr-title='{{
 						$this.isConnected && !$this.p2pManager.isEnabled ?
