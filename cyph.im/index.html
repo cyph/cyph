@@ -60,10 +60,9 @@
 	</head>
 	<body>
 		<section id='main' class='cyph-foreground' layout='column' layout-fill>
-			<div
-				href="#"
-				id='close-cyph'
-				ng-show='ui.state === Cyph.im.UI.States.chat'
+			<div id='close-cyph'
+				ng-show='ui.state === Cyph.im.UI.States.chat && ui.chat.isConnected'
+				ng-click='ui.chat.disconnectButton()'
 				>X
 			</div>
 			<span
@@ -148,7 +147,8 @@
 				<div
 					cyph-chat-message-box='ui.chat'
 					ng-show='ui.state === Cyph.im.UI.States.chat'
-				></div>
+				>
+				</div>
 
 				<div
 					cyph-static-footer
