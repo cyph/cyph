@@ -10,6 +10,7 @@ import (
 	"github.com/justinas/nosurf"
 	"github.com/lionelbarrow/braintree-go"
 	"github.com/microcosm-cc/bluemonday"
+	"golang.org/x/crypto/bcrypt"
 	"gopkg.in/authboss.v0"
 	"gopkg.in/authboss.v0/auth"
 	"gopkg.in/authboss.v0/confirm"
@@ -254,6 +255,7 @@ func setUpAuthboss() {
 	ab.MountPath = "/auth"
 	ab.DisableGoroutines = true
 
+	ab.BCryptCost = bcrypt.MinCost
 	ab.Policies = []authboss.Validator{
 		authboss.Rules{
 			FieldName:       "email",
@@ -263,7 +265,7 @@ func setUpAuthboss() {
 		authboss.Rules{
 			FieldName:       "password",
 			Required:        true,
-			MinLength:       8,
+			MinLength:       32,
 			AllowWhitespace: true,
 		},
 	}
