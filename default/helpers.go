@@ -250,6 +250,7 @@ func setUpAuthboss() {
 		return nosurf.Token(r)
 	}
 
+	ab.RootURL = config.RootURL
 	ab.MountPath = "/auth"
 	ab.DisableGoroutines = true
 

@@ -55,9 +55,14 @@ func (s GAEStorer) userPut(email string, attr authboss.Attributes) error {
 		return err
 	}
 
-	_, err := datastore.Put(
+	key, _, err := s.userQuery("Email", true, email)
+	if err {
+		key = datastore.NewIncompleteKey(s.getContext(), "Users", nil)
+	}
+
+	_, err = datastore.Put(
 		s.getContext(),
-		datastore.NewIncompleteKey(s.getContext(), "Users", nil),
+		key,
 		&User{
 			sanitize(user.Name),
 			sanitize(user.Username),

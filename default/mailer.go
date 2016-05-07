@@ -21,7 +21,7 @@ func (m GAEMailer) getContext() appengine.Context {
 
 func (m GAEMailer) Send(email authboss.Email) error {
 	return mail.Send(m.getContext(), &mail.Message{
-		Sender:   "Cyph <hello@cyph.com>",
+		Sender:   config.EmailAddress,
 		To:       email.To,
 		Cc:       email.Cc,
 		Bcc:      email.Bcc,
