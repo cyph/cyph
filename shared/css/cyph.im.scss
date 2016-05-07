@@ -9,9 +9,7 @@ html, body, #main {
 
 html:not(.mobile) {
 	#main {
-		padding-bottom: 10px;
-		padding-left: 200px;
-		padding-right: 20px;
+		padding: 25px 42px 0px 42px;
 	}
 
 	.md-button img {
@@ -43,6 +41,59 @@ html:not(.mobile) .chat-sidebar,
 			height: 80%;
 		}
 	}
+}
+
+#background-logo {
+	position: absolute;
+	width: 40%;
+	opacity: 0.2;
+	top: 10%;
+	left: 30%;
+}
+
+#close-cyph {
+	text-decoration: none;
+	text-align: center;
+	width: 25px;
+	opacity: 0.50;
+	position: absolute;
+	left: 96%;
+	top: 2%;
+	font-family: ubuntu;
+	float: right;
+	font-size: 24px;
+	font-weight: bold;
+}
+
+#close-cyph:hover{
+	opacity: 1;
+	transition-duration: 0.75s;
+	cursor: pointer;
+}
+
+.plus span{
+	font-size: 18px;
+	font-weight: bold;
+}
+
+.fab .lock-size {
+	min-width: 300px;
+	min-height: 300px;
+	width: 300px;
+	height: 300px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.fab-hover {
+	padding-bottom: 5px;
+}
+
+md-fab-speed-dial.md-fling.desktop-only{
+	position: absolute;
+	left: 93%;
+	top: 8px;
+	height: 0px;
 }
 
 input, textarea {
@@ -189,7 +240,7 @@ input, textarea {
 }
 
 .footer {
-	margin-left: -210px;
+	
 	font-size: 14px;
 }
 
@@ -383,15 +434,18 @@ input, textarea {
 html:not(.mobile) {
 	.p2p-section {
 		margin-top: 10px;
+		button{
+			margin: 5px;
+		}
 
 		.video-call-button {
-			margin-left: 30px;
-			margin-right: 10px;
+			// margin-left: 30px;
+			// margin-right: 10px;
 		}
 
 		.send-file-button {
-			margin-left: 58px;
-			margin-top: 5px;
+			// margin-left: 58px;
+			// margin-top: 5px;
 		}
 	}
 }
@@ -626,7 +680,6 @@ html.mobile {
 html:not(.mobile) {
 	.loading {
 		font-size: 20px;
-		margin-left: -110px;
 	}
 }
 

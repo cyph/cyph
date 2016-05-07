@@ -296,6 +296,11 @@ export const Templates	= {
 					active: $this.state === Cyph.UI.Chat.States.chat
 				}'
 			>
+				<img
+					src='/img/betalogo.png'
+					id='background-logo'
+					alt='Beta logo'
+					ng-hide='!$this.session.state.isAlive'/>
 				<md-content class='nano-content'>
 					<md-list layout='column'>
 						<md-item
@@ -409,19 +414,34 @@ export const Templates	= {
 				/>
 			</md-button>
 
-			<md-button
-				translate
-				class='insert-photo-desktop md-fab desktop-only'
-				ng-class='{"chat-message-box-hidden": $this.currentMessage !== ""}'
-				aria-label='Insert Photo'
-			>
-				<img src='/img/icons/insertphoto.png' alt='Insert photo' />
-				<input
-					accept='image/*'
-					type='file'
-					cyph-filechange='$this.photoManager.insert(this)'
-				/>
-			</md-button>
+			<div class='fab lock-size'>
+				<md-fab-speed-dial
+					md-direction='up'
+					class='md-fling desktop-only'
+					md-open='ui.chat.fab'
+					ng-mouseenter='ui.chat.fab = true'
+					ng-mouseleave='ui.chat.fab = false'>
+						<md-fab-trigger>
+							<md-button aria-label='menu' class='md-fab md-warn plus'>
+								+
+							</md-button>
+						</md-fab-trigger>
+						<md-fab-actions>
+							<md-button aria-label='Send File' class='md-fab md-raised md-mini' ng-class="{'fab-hover' : ui.chat.fab}">
+								<img src='img/icons/file.png' aria-label='Send File'></img>
+							</md-button>
+							<md-button aria-label='Send Image' class='md-fab md-raised md-mini' ng-class="{'fab-hover' : ui.chat.fab}">
+								<img src='img/icons/insertphoto.png' aria-label='Send Image'></img>
+							</md-button>
+							<md-button aria-label='Voice Call' class='md-fab md-raised md-mini' ng-class="{'fab-hover' : ui.chat.fab}">
+								<img src='img/icons/voice.on.png' aria-label='Voice Call'></img>
+							</md-button>
+							<md-button aria-label='Video Call' class='md-fab md-raised md-mini' ng-class="{'fab-hover' : ui.chat.fab}">
+								<img src='img/icons/video.on.png' aria-label='Video Call'></img>
+							</md-button>
+						</md-fab-actions>
+				</md-fab-speed-dial>
+			</div>
 
 			<md-subheader
 				class='new-messages md-subheader-colored md-sticky-clone'
@@ -482,6 +502,7 @@ export const Templates	= {
 
 				<div
 					class='p2p-section'
+					layout='row'
 					ng-click='$this.p2pManager.disabledAlert()'
 					ng-attr-title='{{
 						$this.isConnected && !$this.p2pManager.isEnabled ?
@@ -1048,11 +1069,11 @@ export const Templates	= {
 			</p>
 
 			<p flex='nogrow' layout-padding>
-				<a flex href='/contact'>Contact</a>
+				<a flex ng-href='{{Cyph.Env.homeUrl}}contact'>Contact</a>
 			</p>
 
 			<p flex='nogrow' layout-padding>
-				<a href='/donate'>
+				<a ng-href='{{Cyph.Env.homeUrl}}donate'>
 					Donate
 				</a>
 			</p>
@@ -1064,19 +1085,19 @@ export const Templates	= {
 			</p>
 
 			<p flex='nogrow' layout-padding>
-				 <a href='/pricing'>
+				 <a ng-href='{{Cyph.Env.homeUrl}}pricing'>
 				 	Business Pricing
 				</a>
 			</p>
 
 			<p flex='nogrow' layout-padding>
-				<a href='/privacypolicy'>
+				<a ng-href='{{Cyph.Env.homeUrl}}privacypolicy'>
 					Privacy Policy
 				</a>
 			</p>
 
 			<p flex='nogrow' layout-padding>
-				<a href='/termsofservice'>
+				<a ng-href='{{Cyph.Env.homeUrl}}termsofservice'>
 					Terms of Service
 				</a>
 			</p>

@@ -60,17 +60,18 @@
 	</head>
 	<body>
 		<section id='main' class='cyph-foreground' layout='column' layout-fill>
+			<div id='close-cyph'
+				ng-show='ui.state === Cyph.im.UI.States.chat && ui.chat.isConnected'
+				ng-click='ui.chat.disconnectButton()'
+				>X
+			</div>
 			<span
 				cyph-chat-toolbar='ui.chat'
 				open='ui.openMobileMenu()'
 				show-chat='ui.state === Cyph.im.UI.States.chat'
 				class='mobile-only'
 			></span>
-			<span
-				cyph-chat-sidebar='ui.chat'
-				show-chat='ui.state === Cyph.im.UI.States.chat'
-				class='desktop-only'
-			></span>
+
 
 			<div
 				cyph-chat-main='ui.chat'
@@ -146,7 +147,8 @@
 				<div
 					cyph-chat-message-box='ui.chat'
 					ng-show='ui.state === Cyph.im.UI.States.chat'
-				></div>
+				>
+				</div>
 
 				<div
 					cyph-static-footer
