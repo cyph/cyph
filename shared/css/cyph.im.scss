@@ -9,9 +9,7 @@ html, body, #main {
 
 html:not(.mobile) {
 	#main {
-		padding-bottom: 10px;
-		padding-left: 200px;
-		padding-right: 20px;
+		padding: 25px 42px 0px 42px;
 	}
 
 	.md-button img {
@@ -43,6 +41,26 @@ html:not(.mobile) .chat-sidebar,
 			height: 80%;
 		}
 	}
+}
+
+#close-cyph {
+	text-decoration: none;
+	text-align: center;
+	width: 25px;
+	opacity: 0.50;
+	position: absolute;
+	left: 97.5%;
+	top: 2%;
+	font-family: ubuntu;
+	float: right;
+	font-size: 24px;
+	font-weight: bold;
+}
+
+#close-cyph:hover{
+	opacity: 1;
+	transition-duration: 0.75s;
+	cursor: pointer;
 }
 
 input, textarea {
@@ -189,7 +207,7 @@ input, textarea {
 }
 
 .footer {
-	margin-left: -210px;
+	
 	font-size: 14px;
 }
 
@@ -629,7 +647,6 @@ html.mobile {
 html:not(.mobile) {
 	.loading {
 		font-size: 20px;
-		margin-left: -110px;
 	}
 }
 
