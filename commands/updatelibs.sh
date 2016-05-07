@@ -210,6 +210,7 @@ cd ..
 mkdir justinas
 cd justinas
 git clone git://github.com/justinas/nosurf.git
+rm -rf nosurf/examples
 cd ..
 
 mkdir microcosm-cc
@@ -240,6 +241,8 @@ cd ..
 git clone git://github.com/golang/crypto.git
 git clone git://github.com/golang/oauth2.git
 git clone git://github.com/golang/text.git
+
+rm -rf oauth2/client_appengine.go oauth2/google
 
 cd ../..
 

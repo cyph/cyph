@@ -4,9 +4,14 @@ import (
 	"github.com/gorilla/securecookie"
 	"gopkg.in/authboss.v0"
 	"net/http"
+	"os"
+	"time"
 )
 
-var cookieStore *securecookie.SecureCookie
+var cookieStore = securecookie.New(
+	[]byte(os.Getenv("SECURECOOKIE_HASH_KEY")),
+	[]byte(os.Getenv("SECURECOOKIE_BLOCK_KEY")),
+)
 
 type CookieStorer struct {
 	Request *http.Request

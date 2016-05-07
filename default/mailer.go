@@ -4,18 +4,23 @@ import (
 	"appengine"
 	"appengine/mail"
 	"gopkg.in/authboss.v0"
+	"net/http"
 )
 
 type GAEMailer struct {
-	Context appengine.Context
+	request *http.Request
 }
 
-func NewGAEMailer(_ http.ResponseWriter, r *http.Request) *GAEMailer {
-	return &GAEMailer{appengine.NewContext(r)}
+func NewGAEMailer(_ http.ResponseWriter, r *http.Request) authboss.Mailer {
+	return &GAEMailer{r}
 }
 
-func (m GAEMailer) Send(Email email) error {
-	return mail.Send(m.Context, &mail.Message{
+func (m GAEMailer) getContext() appengine.Context {
+	return appengine.NewContext(m.request)
+}
+
+func (m GAEMailer) Send(email authboss.Email) error {
+	return mail.Send(m.getContext(), &mail.Message{
 		Sender:   "Cyph <hello@cyph.com>",
 		To:       email.To,
 		Cc:       email.Cc,

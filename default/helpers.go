@@ -10,8 +10,13 @@ import (
 	"github.com/justinas/nosurf"
 	"github.com/lionelbarrow/braintree-go"
 	"github.com/microcosm-cc/bluemonday"
-	"golang.org/x/net/context"
 	"gopkg.in/authboss.v0"
+	"gopkg.in/authboss.v0/auth"
+	"gopkg.in/authboss.v0/confirm"
+	"gopkg.in/authboss.v0/lock"
+	"gopkg.in/authboss.v0/recover"
+	"gopkg.in/authboss.v0/register"
+	"gopkg.in/authboss.v0/remember"
 	"io/ioutil"
 	"net"
 	"net/http"
@@ -66,7 +71,7 @@ var empty = struct{}{}
 var router = mux.NewRouter()
 var isRouterActive = false
 
-var auth = authboss.New()
+var ab = authboss.New()
 
 var sanitizer = bluemonday.StrictPolicy()
 
@@ -165,7 +170,7 @@ func handleFuncs(pattern string, handlers Handlers) {
 	if !isRouterActive {
 		http.Handle("/", router)
 		setUpAuthboss()
-		router.PathPrefix("/auth").Handler(auth.NewRouter())
+		router.PathPrefix("/auth").Handler(ab.NewRouter())
 
 		isRouterActive = true
 	}
@@ -232,23 +237,23 @@ func sanitize(s string, params ...int) string {
 }
 
 func setUpAuthboss() {
-	auth.StoreMaker = NewGAEStorer
-	auth.MailMaker = NewGAEMailer
-	auth.CookieStoreMaker = NewCookieStorer
-	auth.SessionStoreMaker = NewCookieStorer
+	ab.StoreMaker = NewGAEStorer
+	ab.MailMaker = NewGAEMailer
+	ab.CookieStoreMaker = NewCookieStorer
+	ab.SessionStoreMaker = NewCookieStorer
 
-	auth.ContextProvider = func(r *http.Request) context.Context {
-		return appengine.NewContext(r)
-	}
+	ab.LogWriter = os.Stderr
+	ab.LogWriteMaker = NewGAELogger
 
-	auth.XSRFName = "csrf_token"
-	auth.XSRFMaker = func(_ http.ResponseWriter, r *http.Request) string {
+	ab.XSRFName = "csrf_token"
+	ab.XSRFMaker = func(_ http.ResponseWriter, r *http.Request) string {
 		return nosurf.Token(r)
 	}
 
-	auth.MountPath = "/auth"
+	ab.MountPath = "/auth"
+	ab.DisableGoroutines = true
 
-	auth.Policies = []authboss.Validator{
+	ab.Policies = []authboss.Validator{
 		authboss.Rules{
 			FieldName:       "email",
 			Required:        true,
@@ -262,7 +267,14 @@ func setUpAuthboss() {
 		},
 	}
 
-	if err := auth.Init(); err != nil {
+	if err := ab.Init(
+		auth.ModuleName,
+		confirm.ModuleName,
+		lock.ModuleName,
+		recover.ModuleName,
+		register.ModuleName,
+		remember.ModuleName,
+	); err != nil {
 		panic(err)
 	}
 }
