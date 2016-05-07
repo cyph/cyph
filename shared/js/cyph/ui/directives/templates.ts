@@ -760,7 +760,7 @@ export const Templates	= {
 			<div ng-hide='complete'>
 				<div class='checkout-ui'></div>
 				<md-button type='submit'>
-					Confirm \${{amount}} checkout
+					Confirm \${{amount}} payment
 				</md-button>
 			</div>
 			<div translate class='confirmation' ng-show='complete'>

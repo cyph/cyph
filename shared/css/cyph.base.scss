@@ -80,16 +80,13 @@ md-toolbar, md-toolbar.md-default-theme:not(.md-menu-toolbar), md-toolbar:not(.m
 }
 
 cyph-checkout, [cyph-checkout] {
-	background-color: white;
-	min-height: 18em;
-	min-width: 40em;
-
-	* {
-		color: rgba(0, 0, 0, 0.87) !important;
-	}
-
+	background-color: #B48DFF;
+	min-height: 300px;
+	min-width: 600px;
+	margin-top: 20px;
 	.checkout-ui {
-		min-height: 14em;
+		padding: 30px 30px 0px 30px;
+		opacity: 0.9;
 	}
 
 	.confirmation {
@@ -101,14 +98,18 @@ cyph-checkout, [cyph-checkout] {
 		@include transform(translateY(-50%));
 	}
 
+
+}
+
+cyph-checkout, [cyph-checkout], #donate {
 	button {
 		display: block;
-		margin-left: auto;
-		margin-right: auto;
-		margin-top: 5px;
-		padding: 11px 19px;
+		margin: 14px auto 25px auto;
+		background-color: #51318C;
+		padding: 15px 20px;
 	}
 }
+
 
 cyph-markdown, [cyph-markdown] {
 	> p:only-child {
@@ -655,6 +656,16 @@ input.doctors {
 		font-family: ubuntu;
 	}
 }
+
+/** Checkout Page */
+.cart {
+	position: relative;
+	top: calc(50vh - 210px);
+	.empty {
+		font-size: 16 px;
+	}
+}
+
 
 #new-cyph-footer {
 	width: 200px;

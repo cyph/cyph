@@ -17,6 +17,9 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	/** Donation amount in dollars (default). */
 	public donationAmount: number		= 10;
 
+	/** Amount ($USD) in Cart */
+	public cart: number;
+
 	/** Pricing states */
 	public individual: boolean			= false;
 	public business: boolean			= false;
@@ -111,8 +114,15 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		setTimeout(oncomplete, delay + 50);
 	}
 
+	public updateCart (
+		amount: number
+	) : void {
+		this.cart = amount;
+		this.changeState(States.checkout);
+	}
+
 	public pricing () : void {
-		this.changeState(4);
+		this.changeState(States.pricing);
 		return;
 	}
 

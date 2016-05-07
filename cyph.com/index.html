@@ -1344,7 +1344,10 @@
 						target='_self'
 						href='bitcoin:1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd'
 					>1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd</a>.
-
+					<p translate>
+						All donations will go directly toward the development of native mobile apps and
+						Cyph accounts.
+					</p>
 					<md-slider
 						class='donation'
 						flex
@@ -1367,15 +1370,31 @@
 						 />
 					</div>
 					<md-button class='donate-button' aria-label='Submit Donation'>
-						<a translate ng-href='https://www.paypal.me/cyph/{{ui.donationAmount}}'>
-							Donate
+						<a translate ng-click='ui.updateCart(ui.donationAmount)'>
+							Confirm Donation Amount
 						</a>
 					</md-button>
 				</p>
-				<p translate>
-					All donations will go directly toward the development of native mobile apps and
-					Cyph accounts.
-				</p>
+			</div>
+		</section>
+
+		<section id='checkout' ng-show='ui.state === Cyph.com.UI.States.checkout' class='unisection'>
+			<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' translate>
+				Checkout
+			</h1>
+			<div layout='row'>
+				<div flex='33'></div>
+				<div class='cart' ng-class='{"empty" : ui.cart}' ng-hide='ui.cart'>
+					<h3 translate> There's nothing in your cart. What are you even doing here?</h3>
+					<br />
+					<span translate> To add something to your cart go to </span>
+					<a href='/pricing'> Business Pricing </a>
+					<span translate> or </span>
+					<a href='/donate'> make a donation </a>
+					.
+				</div>
+				<div cyph-checkout='ui.cart' ng-show='ui.cart'></div>
+				<div flex='33'></div>
 			</div>
 		</section>
 
