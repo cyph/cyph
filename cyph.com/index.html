@@ -938,7 +938,7 @@
 								</div>
 							</div>
 
-							<div class='price'>$499/mo</div>
+							<div class='price' ng-click='ui.updateCart(ui.telehealthSingle)'>${{ui.telehealthSingle}}/mo</div>
 						</div>
 						<br hide-gt-sm />
 						<div  class='pricing'>
@@ -1025,7 +1025,7 @@
 								</div>
 							</div>
 
-							<div class='price'>${{ui.doctorPricing()}}/month</div>
+							<div class='price' ng-click='ui.updateCart(ui.customDoctorPricing)'>${{ui.doctorPricing()}}/month</div>
 						</div>
 						<br hide-gt-sm />
 						<div  class='pricing'>
@@ -1168,7 +1168,7 @@
 								</div>
 							</div>
 
-							<div class='price'>$99/mo</div>
+							<div class='price' ng-click='ui.updateCart(ui.theBasics)'>${{ui.theBasics}}/mo</div>
 						</div>
 						<br hide-gt-sm />
 						<div  class='pricing'>
@@ -1227,7 +1227,7 @@
 								</div>
 							</div>
 
-							<div class='price'>$499/mo</div>
+							<div class='price' ng-click='ui.updateCart(ui.theWorks)'>${{ui.theWorks}}/mo</div>
 						</div>
 						<br hide-gt-sm />
 						<div  class='pricing'>
@@ -1384,16 +1384,16 @@
 			</h1>
 			<div layout='row'>
 				<div flex='33'></div>
-				<div class='cart' ng-class='{"empty" : ui.cart}' ng-hide='ui.cart'>
-					<h3 translate> There's nothing in your cart. What are you even doing here?</h3>
-					<br />
-					<span translate> To add something to your cart go to </span>
-					<a href='/pricing'> Business Pricing </a>
-					<span translate> or </span>
-					<a href='/donate'> make a donation </a>
-					.
-				</div>
-				<div cyph-checkout='ui.cart' ng-show='ui.cart'></div>
+					<div class='cart' ng-class='{"empty" : ui.cart}' ng-hide='ui.cart'>
+						<h3 translate> There's nothing in your cart. What are you even doing here?</h3>
+						<br />
+						<span translate> To add something to your cart go to </span>
+						<a href='/pricing'> Business Pricing </a>
+						<span translate> or </span>
+						<a href='/donate'> make a donation </a>
+						.
+					</div>
+					<div cyph-checkout='ui.cart' ng-show='ui.cart'></div>
 				<div flex='33'></div>
 			</div>
 		</section>

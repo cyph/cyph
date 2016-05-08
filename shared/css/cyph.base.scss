@@ -402,6 +402,13 @@ html:not(.mobile) .platform-container.mobile .mobile-only {
 		width: 100px;
 		background-color: #392859;
 		height: 100px;
+	
+		md-icon {
+			transform: scale(5);
+			top: 42px;
+			position: relative;
+			color: white;
+		}
 	}
 
 	md-input-container {

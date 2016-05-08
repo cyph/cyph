@@ -16,20 +16,28 @@ export class UI extends Cyph.UI.BaseButtonManager {
 
 	/** Donation amount in dollars (default). */
 	public donationAmount: number		= 10;
-
-	/** Amount ($USD) in Cart */
-	public cart: number;
-
+	
 	/** Pricing states */
 	public individual: boolean			= false;
 	public business: boolean			= false;
 	public telehealth: boolean			= false;
 
-	/** Number of Doctors (default) */
-	public doctors: number				= 5;
-	public pricePerDoctor: number		= 350;
-	public telehealthPriceBreak: number	= 5;
-	public telehealthDiscount: number	= 0.10;
+	/** Amount ($USD) in Cart */
+	public cart: number;
+	
+	/**Fixed Business Pricing */
+	public theBasics: number			= 99; // "The Basics" Plan
+	public theWorks: number				= 499; // "The Works" Plan
+	
+	/** Fixed Telehealth Pricing */
+	public telehealthSingle: number		= 499; // Single Practitioner Price (default)
+	
+	/** Custom Telehealth Pricing */
+	public doctors: number				= 5;	// Number of Doctors (default)
+	public pricePerDoctor: number		= 350;	// Price per Doctor
+	public telehealthPriceBreak: number	= 5;	// Number of Doctors required for price break 
+	public telehealthDiscount: number	= 0.10;	// Percentage discount when > telehealthPriceBreak
+	public customDoctorPricing: number;
 
 	/** Home page state/view. */
 	public homeSection: HomeSections;
@@ -126,13 +134,14 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		return;
 	}
 
-	public doctorPricing(){
+	public doctorPricing() {
 		if(this.doctors >= this.telehealthPriceBreak){
-			return (this.doctors * this.pricePerDoctor) - (this.doctors * this.pricePerDoctor * this.telehealthDiscount);
+			this.customDoctorPricing = (this.doctors * this.pricePerDoctor) - (this.doctors * this.pricePerDoctor * this.telehealthDiscount);
 		}
 		else {
-			return this.doctors * this.pricePerDoctor;
+			this.customDoctorPricing =  this.doctors * this.pricePerDoctor;
 		}
+		return this.customDoctorPricing;
 	}
 
 	/**
