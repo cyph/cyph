@@ -224,8 +224,7 @@ rm -rf gopkg.in 2> /dev/null
 mkdir gopkg.in
 cd gopkg.in
 
-# git clone git://github.com/go-authboss/authboss.git authboss.v0
-git clone git://github.com/buu700/authboss.git authboss.v0
+git clone git://github.com/go-authboss/authboss.git authboss.v0
 
 cd ..
 
