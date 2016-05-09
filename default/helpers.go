@@ -12,12 +12,12 @@ import (
 	"github.com/microcosm-cc/bluemonday"
 	"golang.org/x/crypto/bcrypt"
 	"gopkg.in/authboss.v0"
-	"gopkg.in/authboss.v0/auth"
-	"gopkg.in/authboss.v0/confirm"
-	"gopkg.in/authboss.v0/lock"
-	"gopkg.in/authboss.v0/recover"
-	"gopkg.in/authboss.v0/register"
-	"gopkg.in/authboss.v0/remember"
+	_ "gopkg.in/authboss.v0/auth"
+	_ "gopkg.in/authboss.v0/confirm"
+	_ "gopkg.in/authboss.v0/lock"
+	_ "gopkg.in/authboss.v0/recover"
+	_ "gopkg.in/authboss.v0/register"
+	_ "gopkg.in/authboss.v0/remember"
 	"io/ioutil"
 	"net"
 	"net/http"
@@ -270,14 +270,7 @@ func setUpAuthboss() {
 		},
 	}
 
-	if err := ab.Init(
-		auth.ModuleName,
-		confirm.ModuleName,
-		lock.ModuleName,
-		recover.ModuleName,
-		register.ModuleName,
-		remember.ModuleName,
-	); err != nil {
+	if err := ab.Init(); err != nil {
 		panic(err)
 	}
 }
