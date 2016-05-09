@@ -108,6 +108,8 @@ elif [ "${command}" == 'commit' ] ; then
 
 	cd ../../..
 
+	rm $(find default -type f -name '*_test.go' | tr '\n' ' ')
+
 	chmod -R 700 .
 
 elif [ "${command}" == 'backmerge' ] ; then
