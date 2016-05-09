@@ -13,44 +13,49 @@ export class Checkout {
 
 	private static _	= (() => {
 		angular.module(Checkout.title, []).directive(Checkout.title, () => ({
-			restrict: 'A',
+			restrict: 'E',
 			replace: true,
 			template: Templates.checkout,
 			link: (scope, element, attrs) => {
-				const set	= (amount: string) => {
-					scope['amount']	= amount;
+				const watch	= (attr: string) => scope.$watch(attrs[attr], (value: string) => {
+					scope[attr]	= value;
+					self['ui'].controller.update();
+				});
 
-					Util.request({
-						url: Env.baseUrl + Config.braintreeConfig.endpoint,
-						success: (token: string) => {
-							const checkoutUI: JQuery	= element.find('.checkout-ui');
+				watch('amount');
+				watch('category');
+				watch('item');
 
-							checkoutUI.html('');
+				Util.request({
+					url: Env.baseUrl + Config.braintreeConfig.endpoint,
+					success: (token: string) => {
+						const checkoutUI: JQuery	= element.find('.checkout-ui');
 
-							self['braintree'].setup(token, 'dropin', {
-								container: checkoutUI[0],
-								onPaymentMethodReceived: data => {
-									Util.request({
-										url: Env.baseUrl + Config.braintreeConfig.endpoint,
-										method: 'POST',
-										data: {
-											Nonce: data.nonce,
-											Amount: Math.floor(parseFloat(amount) * 100)
-										},
-										success: (response) => {
-											if (JSON.parse(response).Status === 'authorized') {
-												scope['complete']	= true;
-												self['ui'].controller.update();
-											}
+						checkoutUI.html('');
+
+						self['braintree'].setup(token, 'dropin', {
+							container: checkoutUI[0],
+							onPaymentMethodReceived: data => {
+								Util.request({
+									url: Env.baseUrl + Config.braintreeConfig.endpoint,
+									method: 'POST',
+									data: {
+										Nonce: data.nonce,
+										Amount: Math.floor(parseFloat(scope['amount']) * 100),
+										Category: scope['category'],
+										Item: scope['item']
+									},
+									success: (response) => {
+										if (JSON.parse(response).Status === 'authorized') {
+											scope['complete']	= true;
+											self['ui'].controller.update();
 										}
-									});
-								}
-							});
-						}
-					});
-				};
-
-				scope.$watch(attrs[Checkout.title], set);
+									}
+								});
+							}
+						});
+					}
+				});
 			}
 		}));
 	})();
