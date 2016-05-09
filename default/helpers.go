@@ -253,7 +253,6 @@ func setUpAuthboss() {
 
 	ab.RootURL = config.RootURL
 	ab.MountPath = "/auth"
-	ab.DisableGoroutines = true
 
 	ab.BCryptCost = bcrypt.MinCost
 	ab.Policies = []authboss.Validator{
