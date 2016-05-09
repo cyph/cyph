@@ -46,7 +46,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		Type:               "sale",
 		Amount:             braintree.NewDecimal(amount, 2),
 		PaymentMethodNonce: nonce,
-		PlanId:             strconv.Itoa(category) + "-" + strconv.Itoa(item)
+		PlanId:             strconv.Itoa(category) + "-" + strconv.Itoa(item),
 	})
 
 	if err != nil {
