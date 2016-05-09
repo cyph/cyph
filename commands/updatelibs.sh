@@ -83,7 +83,6 @@ jspm install -y \
 	npm:dompurify \
 	github:markdown-it/markdown-it \
 	github:markdown-it/markdown-it-sup \
-	github:twitter/twemoji@1.3.2 \
 	github:markdown-it/markdown-it-emoji \
 	github:isagalaev/highlight.js \
 	github:siddii/angular-timer@1.2.1 \

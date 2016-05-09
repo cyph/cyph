@@ -93,9 +93,6 @@ elif [ "${command}" == 'commit' ] ; then
 
 	filesToDelete="${filesToDelete} $(find rxjs/* -name '*.js' | tr '\n' ' ')"
 
-	filesToDelete="${filesToDelete} $(find twitter/twemoji/* -name '*.svg' | tr '\n' ' ')"
-	filesToDelete="${filesToDelete} $(find twitter/twemoji/* -name '*.ai' | tr '\n' ' ')"
-
 	mv isagalaev/highlight.js/src/styles/default.css ./
 	mv isagalaev/highlight.js/build/highlight.pack.js ./
 	filesToDelete="${filesToDelete} isagalaev/highlight.js/*"

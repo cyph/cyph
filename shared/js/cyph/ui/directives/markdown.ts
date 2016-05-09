@@ -45,13 +45,6 @@ export class Markdown {
 			use(self['markdownitEmoji'])
 		;
 
-		markdown.renderer.rules.emoji	= (token, idx) =>
-			self['twemoji'].parse(
-				token[idx].content,
-				{base: Env.homeUrl + 'lib/js/twitter/twemoji/'}
-			)
-		;
-
 
 		angular.module(Markdown.title, []).directive(Markdown.title, () => ({
 			restrict: 'A',
