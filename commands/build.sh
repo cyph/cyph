@@ -124,7 +124,7 @@ else
 		{ \
 			find shared/css -name '*.css' & \
 			find shared/css -name '*.map' & \
-			find shared/js -name '*.js' & \
+			find shared/js \( -name '*.js' -and -not -name config.js \) & \
 			find shared/js -name '*.map'; \
 		} | xargs -I% rm %
 	elif [ "${1}" == '--prod' ] ; then

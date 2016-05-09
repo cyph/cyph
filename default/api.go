@@ -26,19 +26,34 @@ func init() {
 
 func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	nonce := sanitize(h.Request.PostFormValue("Nonce"))
-	amount, _ := strconv.ParseInt(sanitize(h.Request.PostFormValue("Amount")), 10, 64)
+
+	amount, err := strconv.ParseInt(sanitize(h.Request.PostFormValue("Amount")), 10, 64)
+	if err != nil {
+		return err, http.StatusTeapot
+	}
+
+	category, err := strconv.ParseInt(sanitize(h.Request.PostFormValue("Category")), 10, 64)
+	if err != nil {
+		return err, http.StatusTeapot
+	}
+
+	item, err := strconv.ParseInt(sanitize(h.Request.PostFormValue("Item")), 10, 64)
+	if err != nil {
+		return err, http.StatusTeapot
+	}
 
 	tx, err := braintreeInit(h).Transaction().Create(&braintree.Transaction{
 		Type:               "sale",
 		Amount:             braintree.NewDecimal(amount, 2),
 		PaymentMethodNonce: nonce,
+		PlanId:             strconv.Itoa(category) + "-" + strconv.Itoa(item)
 	})
 
-	if err == nil {
-		return tx, http.StatusOK
-	} else {
-		return braintreeCheckout(h)
+	if err != nil {
+		return err, http.StatusTeapot
 	}
+
+	return tx, http.StatusOK
 }
 
 func braintreeToken(h HandlerArgs) (interface{}, int) {
