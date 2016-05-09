@@ -28,8 +28,6 @@ const (
 )
 
 const (
-	ModuleName = "recover"
-
 	methodGET  = "GET"
 	methodPOST = "POST"
 
@@ -58,7 +56,7 @@ type RecoverStorer interface {
 
 func init() {
 	m := &Recover{}
-	authboss.RegisterModule(ModuleName, m)
+	authboss.RegisterModule("recover", m)
 }
 
 // Recover module
@@ -153,7 +151,7 @@ func (rec *Recover) startHandlerFunc(ctx *authboss.Context, w http.ResponseWrite
 
 		// redirect to login when user not found to prevent username sniffing
 		if err := ctx.LoadUser(primaryID); err == authboss.ErrUserNotFound {
-			return authboss.ErrAndRedirect{err, rec.RecoverOKPath, recoverInitiateSuccessFlash, ""}
+			return authboss.ErrAndRedirect{Err: err, Location: rec.RecoverOKPath, FlashSuccess: recoverInitiateSuccessFlash}
 		} else if err != nil {
 			return err
 		}
@@ -197,7 +195,7 @@ func newToken() (encodedToken, encodedChecksum string, err error) {
 }
 
 var goRecoverEmail = func(r *Recover, ctx *authboss.Context, to, encodedToken string) {
-	if ctx.DisableGoroutines {
+	if ctx.MailMaker != nil {
 		r.sendRecoverEmail(ctx, to, encodedToken)
 	} else {
 		go r.sendRecoverEmail(ctx, to, encodedToken)
@@ -225,9 +223,9 @@ func (r *Recover) completeHandlerFunc(ctx *authboss.Context, w http.ResponseWrit
 	case methodGET:
 		_, err = verifyToken(ctx, req)
 		if err == errRecoveryTokenExpired {
-			return authboss.ErrAndRedirect{err, "/recover", "", recoverTokenExpiredFlash}
+			return authboss.ErrAndRedirect{Err: err, Location: "/recover", FlashError: recoverTokenExpiredFlash}
 		} else if err != nil {
-			return authboss.ErrAndRedirect{err, "/", "", ""}
+			return authboss.ErrAndRedirect{Err: err, Location: "/"}
 		}
 
 		token := req.FormValue(formValueToken)
@@ -236,7 +234,7 @@ func (r *Recover) completeHandlerFunc(ctx *authboss.Context, w http.ResponseWrit
 	case methodPOST:
 		token := req.FormValue(formValueToken)
 		if len(token) == 0 {
-			return authboss.ClientDataErr{formValueToken}
+			return authboss.ClientDataErr{Name: formValueToken}
 		}
 
 		password := req.FormValue(authboss.StorePassword)
@@ -291,7 +289,7 @@ func (r *Recover) completeHandlerFunc(ctx *authboss.Context, w http.ResponseWrit
 func verifyToken(ctx *authboss.Context, r *http.Request) (attrs authboss.Attributes, err error) {
 	token := r.FormValue(formValueToken)
 	if len(token) == 0 {
-		return nil, authboss.ClientDataErr{token}
+		return nil, authboss.ClientDataErr{Name: token}
 	}
 
 	decoded, err := base64.URLEncoding.DecodeString(token)

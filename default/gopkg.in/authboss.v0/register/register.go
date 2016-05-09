@@ -11,8 +11,6 @@ import (
 )
 
 const (
-	ModuleName = "register"
-
 	tplRegister = "register.html.tpl"
 )
 
@@ -26,7 +24,7 @@ type RegisterStorer interface {
 }
 
 func init() {
-	authboss.RegisterModule(ModuleName, &Register{})
+	authboss.RegisterModule("register", &Register{})
 }
 
 // Register module.
@@ -95,7 +93,7 @@ func (reg *Register) registerPostHandler(ctx *authboss.Context, w http.ResponseW
 	if user, err := ctx.Storer.Get(key); err != nil && err != authboss.ErrUserNotFound {
 		return err
 	} else if user != nil {
-		validationErrs = append(validationErrs, authboss.FieldError{reg.PrimaryID, errors.New("Already in use")})
+		validationErrs = append(validationErrs, authboss.FieldError{Name: reg.PrimaryID, Err: errors.New("Already in use")})
 	}
 
 	if len(validationErrs) != 0 {
