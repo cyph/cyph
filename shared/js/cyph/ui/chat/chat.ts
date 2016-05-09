@@ -209,15 +209,15 @@ export class Chat extends BaseButtonManager implements IChat {
 		});
 	}
 
-	public formattingHelpButton () : void {
+	public helpButton () : void {
 		this.baseButtonClick(() => {
 			this.dialogManager.baseDialog({
-				template: Templates.formattingHelp
+				template: Templates.helpModal
 			});
 
 			Analytics.main.send({
 				hitType: 'event',
-				eventCategory: 'formatting-help',
+				eventCategory: 'help',
 				eventAction: 'show',
 				eventValue: 1
 			});

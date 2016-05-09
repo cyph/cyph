@@ -60,18 +60,21 @@
 	</head>
 	<body>
 		<section id='main' class='cyph-foreground' layout='column' layout-fill>
-			<div id='close-cyph'
-				ng-show='ui.state === Cyph.im.UI.States.chat && ui.chat.isConnected'
-				ng-click='ui.chat.disconnectButton()'
-				>X
+			<div layout='row'>
+				<div flex='95'></div>
+				<img id='help'
+					src='/img/icons/help.png'
+					ng-show='ui.state === Cyph.im.UI.States.chat && ui.chat.isConnected'
+					ng-click='ui.chat.helpButton()'
+				>
+				</img>
+				<img id='close-cyph'
+					src='/img/icons/close.png'
+					ng-show='ui.state === Cyph.im.UI.States.chat && ui.chat.isConnected'
+					ng-click='ui.chat.disconnectButton()'
+					>
+				</img>
 			</div>
-			<span
-				cyph-chat-toolbar='ui.chat'
-				open='ui.openMobileMenu()'
-				show-chat='ui.state === Cyph.im.UI.States.chat'
-				class='mobile-only'
-			></span>
-
 
 			<div
 				cyph-chat-main='ui.chat'
@@ -80,6 +83,11 @@
 				layout-fill
 				flex
 			>
+				<img
+					src='/img/betalogo.png'
+					id='background-logo'
+					alt='Beta logo'
+					ng-hide='ui.state != Cyph.im.UI.States.chat'/>
 				<div cyph-signup-form='ui.signupForm'>
 					<div>
 						{{Cyph.Strings.signupMessage1}}

@@ -33,7 +33,7 @@ export const Templates	= {
 		</md-dialog>
 	`,
 
-	formattingHelp: `
+	helpModal: `
 		<md-dialog class='formatting-help'>
 			<md-content>
 				<h2 class='md-title' translate>
