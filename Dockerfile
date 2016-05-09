@@ -60,13 +60,6 @@ RUN sudo ln -s /usr/bin/md5sum /usr/bin/md5
 
 RUN rm -rf ~/.gnupg
 
-RUN bash -c ' \
-	source ~/.bashrc; \
-	go get github.com/gorilla/context; \
-	go get github.com/gorilla/mux; \
-	go get github.com/microcosm-cc/bluemonday; \
-'
-
 
 VOLUME /cyph
 VOLUME /home/gibson/.cyph
