@@ -143,9 +143,27 @@ export const Templates	= {
 	`,
 
 	login: `
-		<md-dialog ng-class='{fullscreen: locals.signupForm.state === 3}' class='login'>
+		<md-dialog class='login'>
 			<md-content>
-				<div cyph-signup-form='locals.signupForm'></div>
+				<h2 class='md-title' translate>
+					Login or Register
+				</h2>
+				<p>
+					No signup is required; just click the button at
+					the top of your screen to cyph right now!
+				</p>
+				<p>
+					<div cyph-signup-form='locals.signupForm'>
+						<p>
+							<strong translate>However</strong>,
+							<span translate>
+								for cool features like group messaging, user accounts,
+								and encrypted chat history, join the waitlist for Cyph v2!
+								(Coming soon to an Internet near you.)
+							</span>
+						</p>
+					</div>
+				</p>
 			</md-content>
 		</md-dialog>
 	`

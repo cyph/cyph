@@ -927,129 +927,39 @@ export const Templates	= {
 	`,
 
 	signupForm: `
-		<form class='beta-signup-form' ng-submit='$this.submit()'>
-			<md-content>
+			<form class='beta-signup-form' ng-submit='$this.submit()'>
 				<div ng-show='$this.state === 0'>
-					<div class='login' flex>
-						<h2 class='md-title' translate>
-							Login or Register
-						</h2>
-						<md-input-container>
-							<label>Email</label>
-							<input ng-model='user.email'>
-						</md-input-container>
-						<md-input-container>
-							<label>Password</label>
-							<input ng-model='user.password' type='password'>
-						</md-input-container>
-						<md-input-container>
-							<div layout='row' layout-sm='column' layout-margin>
-								<md-button
-									translate
-									type='submit'
-									ng-click=''
-									aria-label='Login'
-									class='md-raised'
-								>
-									Login
-								</md-button>
-								<md-button
-									translate
-									type='submit'
-									ng-click='$this.state = 1'
-									aria-label='Register'
-									ng-class='md-raised'
-								>
-									Register
-								</md-button>
-							</div>
-						</md-input-container>
-					</div>
-					<div layout-align='center center' flex></div>
+					<ng-transclude></ng-transclude>
+					<md-input-container>
+						<label translate>email</label>
+						<input type='email' ng-model='$this.data.Email' />
+					</md-input-container>
 				</div>
-
 				<div ng-show='$this.state === 1'>
-					<md-icon
-						md-font-set='material-icons'
-						ng-click='$this.state = 0'
-						class='back'
-					>keyboard_backspace</md-icon>
-					<h1 class='md-title' translate>
-						WHAT ARE YOU?
-					</h1>
-					<div layout='row'>
-						<div flex>
-							<h2>Individual</h2>
-							<md-button
-								type='submit'
-								ng-click='$this.state = 2'
-								aria-label='Individual'
-							>
-								<md-icon md-font-set='material-icons'>person</md-icon>
-							</md-button>
-						</div>
-
-						<div flex>
-							<h2>Business</h2>
-							<md-button
-								type='submit'
-								ng-click='ui.pricing()'
-								aria-label='Business'
-							>
-								<md-icon md-font-set='material-icons'>domain</md-icon>
-							</md-button>
-						</div>
-					</div>
-				</div>
-
-				<div translate ng-show='$this.state === 2'>
-					<md-icon
-						md-font-set='material-icons'
-						ng-click='$this.state = 1'
-						class='back'
-					>keyboard_backspace</md-icon>
-					<h1 translate>Registration</h1>
-					<p>
-						Registration is currently closed, however an acount is not required
-						to use Cyph. To join the waitlist for a Cyph account please enter your
-						email in the form below.
+					<p translate>
+						Thanks so much for signing up!
 					</p>
-					<div layout='row' class='signup-form'>
-						<div layout='column'>
-							<md-input-container>
-								<label translate>email</label>
-								<input type='email' ng-model='$this.data.Email' />
-							</md-input-container>
-							<md-input-container>
-								<label translate>password</label>
-								<input type='password' ng-model='$this.data.Password' ng-disabled='true'/>
-							</md-input-container>
-							<md-input-container>
-								<label translate>password confirmation</label>
-								<input type='password' ng-model='$this.data.Password' ng-disabled='true'/>
-							</md-input-container>
-						</div>
-						<div class='buttons' layout='column'>
-							<md-button
-								type='submit'
-								ng-click='this.signup()'
-								aria-label='Register'
-								ng-disabled='true'
-							>
-								Register
-							</md-button>
-							<md-button
-								type='submit'
-								ng-click='this.signup()'
-								aria-label='Waitlist Signup'
-							>
-								Waitlist Signup
-							</md-button>
-						</div>
-					</div>
+					<p translate>
+						Feel free to add your name as well. :)
+					</p>
+					<md-input-container>
+						<label translate>name (optional)</label>
+						<input ng-model='$this.data.Name' />
+					</md-input-container>
 				</div>
-			</md-content>
-		</form>
+				<div translate ng-show='$this.state === 2'>
+					You rock.
+				</div>
+				<md-button
+					translate
+					type='submit'
+					aria-label='Sign up for beta'
+					ng-hide='$this.state > 1'
+					ng-class='{"hidden-submit-button": hideButton}'
+				>
+					Sign up for beta
+				</md-button>
+			</form>
 	`,
 
 	staticCyphNotFound: `
