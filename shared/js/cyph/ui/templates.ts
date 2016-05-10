@@ -135,7 +135,7 @@ export const Templates	= {
 					<br />
 					<br />
 					<br />
-						<cyph-contact to='"help"' class='contact'></cyph-contact>
+						<cyph-contact to='"help"'></cyph-contact>
 					</md-tab>
 				</md-tabs>
 			</md-content>
