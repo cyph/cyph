@@ -130,18 +130,15 @@ export const Templates	= {
 					</div>
 					<md-tab label='Contact Cyph'>
 					<span translate> Please check out the </span>
-					<a href='{{Cyph.Env.homeUrl}}'>FAQs</a>
+					<a href='{{Cyph.Env.homeUrl}}/faq'>FAQs</a>
 					<span translate> first!</span>
-						<cyph-contact to="help"></cyph-contact>
+					<br />
+					<br />
+					<br />
+						<cyph-contact to='"help"' class='contact'></cyph-contact>
 					</md-tab>
 				</md-tabs>
 			</md-content>
-			<md-dialog-actions layout='row'>
-				<span flex></span>
-				<md-button ng-click="$this.hide()" >
-					Close
-				</md-button>
-			</md-dialog-actions>
 		</md-dialog>
 	`,
 

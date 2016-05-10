@@ -413,9 +413,7 @@ export const Templates	= {
 				<md-fab-speed-dial
 					md-direction='up'
 					class='md-fling desktop-only'
-					md-open='ui.chat.fab'
-					ng-mouseenter='ui.chat.fab = true'
-					ng-mouseleave='ui.chat.fab = false'>
+					md-open='false'>
 						<md-fab-trigger>
 							<md-button aria-label='menu' class='md-fab md-warn plus'>
 								+
@@ -423,9 +421,11 @@ export const Templates	= {
 						</md-fab-trigger>
 						<md-fab-actions>
 							<md-button aria-label='Send File' class='md-fab md-raised md-mini' ng-click='$this.p2pManager.sendFileButton()' ng-class="{'fab-hover' : ui.chat.fab}">
+								<md-tooltip md-direction="left" md-visible="tooltipVisible">Send File</md-tooltip>
 								<img src='img/icons/file.png' aria-label='Send File'></img>
 							</md-button>
 							<md-button aria-label='Send Image' class='md-fab md-raised md-mini' ng-class="{'fab-hover' : ui.chat.fab}">
+								<md-tooltip md-direction="left" md-visible="tooltipVisible">Send Image</md-tooltip>
 								<img src='img/icons/insertphoto.png' aria-label='Send Image'></img>
 								 <input
 									accept='image/*'
@@ -434,9 +434,11 @@ export const Templates	= {
 								/>
 							</md-button>
 							<md-button aria-label='Voice Call' class='md-fab md-raised md-mini' ng-click='$this.p2pManager.voiceCallButton()' ng-class="{'fab-hover' : ui.chat.fab}">
+								<md-tooltip md-direction="left" md-visible="tooltipVisible">Voice Call</md-tooltip>
 								<img src='img/icons/voice.on.png' aria-label='Voice Call'></img>
 							</md-button>
 							<md-button aria-label='Video Call' class='md-fab md-raised md-mini' ng-click='$this.p2pManager.videoCallButton()' ng-class="{'fab-hover' : ui.chat.fab}">
+								<md-tooltip md-direction="left" md-visible="tooltipVisible">Video Call</md-tooltip>
 								<img src='img/icons/video.on.png' aria-label='Video Call'></img>
 							</md-button>
 						</md-fab-actions>

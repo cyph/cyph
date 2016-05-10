@@ -50,6 +50,21 @@ md-sidenav .md-button {
 	}
 }
 
+md-select-menu md-content * {
+	background-color: rgba(180, 141, 255, 0.85);
+	color: white !important;
+}
+
+.contact {
+	* {
+			color: white !important;
+		}
+	.md-button {
+		background-color: #51318C;
+		padding: 5px;
+	}
+}
+
 md-toast {
 	position: fixed;
 }
