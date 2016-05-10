@@ -45,6 +45,10 @@ html:not(.mobile) .chat-sidebar,
 
 #close-cyph, #help {
 	opacity: 0.50;
+	left: 27px;
+	top: -10px;
+	margin-left: 10px;
+	position: relative;
 }
 
 #close-cyph:hover, #help:hover {
@@ -415,6 +419,11 @@ input, textarea {
 	.message-item.author-app {
 		width: 90%;
 		background-color: transparent;
+
+		span p{
+			position: absolute;
+			left: calc(50vw - 112px);
+		}
 
 		.message {
 			text-align: center;
