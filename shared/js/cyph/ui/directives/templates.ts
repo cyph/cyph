@@ -486,10 +486,10 @@ export const Templates	= {
 				</md-button>
 				<md-button
 					translate
-					aria-label='Formatting Help'
-					ng-click='$this.formattingHelpButton()'
+					aria-label='Help'
+					ng-click='$this.helpButton()'
 				>
-					Formatting Help
+					Help
 				</md-button>
 				<md-button
 					translate
@@ -734,10 +734,10 @@ export const Templates	= {
 					<div>
 						<md-button
 							translate
-							aria-label='Formatting Help'
-							ng-click='$this.formattingHelpButton()'
+							aria-label='Help'
+							ng-click='$this.helpButton()'
 						>
-							Formatting Help
+							Help
 						</md-button>
 					</div>
 					<div>
