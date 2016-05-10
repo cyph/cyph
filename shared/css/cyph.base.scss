@@ -55,10 +55,11 @@ md-select-menu md-content * {
 	color: white !important;
 }
 
-.contact {
+cyph-contact {
 	* {
-			color: white !important;
-		}
+		color: white !important;
+	}
+
 	.md-button {
 		background-color: #51318C;
 		padding: 5px;
@@ -101,7 +102,9 @@ cyph-checkout, [cyph-checkout] {
 	margin-top: 20px;
 
 	.checkout-ui {
-		padding: 30px 30px 0px 30px;
+		margin: 30px 30px 0px 30px;
+		padding: 10px;
+		background-color: white;
 		opacity: 0.9;
 	}
 
@@ -117,10 +120,10 @@ cyph-checkout, [cyph-checkout] {
 
 cyph-checkout, [cyph-checkout], #donate {
 	button {
-		display: block;
-		margin: 14px auto 25px auto;
-		background-color: #51318C;
-		padding: 15px 20px;
+		display: block !important;
+		margin: 14px auto 25px auto !important;
+		background-color: #51318C !important;
+		padding: 15px 20px !important;
 	}
 }
 

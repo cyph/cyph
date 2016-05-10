@@ -932,7 +932,7 @@ export const Templates	= {
 					<ng-transclude></ng-transclude>
 					<md-input-container>
 						<label translate>email</label>
-						<input type='email' ng-model='$this.data.Email' />
+						<input type='email' ng-model='$this.data.email' />
 					</md-input-container>
 				</div>
 				<div ng-show='$this.state === 1'>
@@ -944,7 +944,7 @@ export const Templates	= {
 					</p>
 					<md-input-container>
 						<label translate>name (optional)</label>
-						<input ng-model='$this.data.Name' />
+						<input ng-model='$this.data.name' />
 					</md-input-container>
 				</div>
 				<div translate ng-show='$this.state === 2'>

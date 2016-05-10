@@ -14,9 +14,11 @@ export class Checkout {
 	private static _	= (() => {
 		angular.module(Checkout.title, []).directive(Checkout.title, () => ({
 			restrict: 'E',
-			replace: true,
+			replace: false,
 			template: Templates.checkout,
 			link: (scope, element, attrs) => {
+				scope['ui']	= self['ui'];
+
 				const watch	= (attr: string) => scope.$watch(attrs[attr], (value: string) => {
 					scope[attr]	= value;
 					self['ui'].controller.update();
