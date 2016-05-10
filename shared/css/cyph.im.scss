@@ -918,19 +918,18 @@ html:not(.mobile) .amazon-link {
 	max-width: 620px;
 	margin-left: auto;
 	margin-right: auto;
-	padding: 0 5vw;
+	padding: 30px 5vw 0px 5vw;
+	background-color: rgba(98, 69, 153, 0.75);
+	border-radius: 50px;
 
 	div {
 		line-height: 200%;
 	}
 
-	md-input-container {
-		padding: 0 10vw;
-	}
-
 	.md-button {
-		width: 200px !important;
-		margin-bottom: 50px;
+		width: auto;
+		padding: 0px 25px 0px 25px;
+		margin-bottom: 35px;
 	}
 }
 
