@@ -47,7 +47,7 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 			{text: `ttyl :v:`, isMobile: true}
 		*/
 		{text: `anyway, gotta run`, isMobile: false},
-		{text: `cool, ttyl :v:`, isMobile: true}
+		{text: `cool, ttyl :wave:`, isMobile: true}
 	];
 
 	private static getOffset (elem: JQuery, ancestor: JQuery) : { left: number; top: number; } {
