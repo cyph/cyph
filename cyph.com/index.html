@@ -1396,7 +1396,7 @@
 						<a href='/donate'> make a donation </a>
 						.
 					</div>
-					<div cyph-checkout='ui.cart' ng-show='ui.cart'></div>
+					<div cyph-checkout='' amount='ui.cart' ng-show='ui.cart'></div>
 				<div flex='33'></div>
 			</div>
 		</section>
@@ -1405,12 +1405,9 @@
 			<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' translate>
 				Frequently Asked Questions
 			</h1>
-			<div class='bg-image' class='animated bounceInUp' flex='75'>
-				<img src='/img/confused-man.png'></img>
-			</div>
 			<div class='section-content-container' layout='row'>
-				<div flex='20'></div>
-				<div flex='60'>
+				<div flex='20' hide-sm hide-xs></div>
+				<div flex>
 					<ul>
 						<li>
 							<p>
@@ -1432,8 +1429,7 @@
 								<strong translate>How do I send photos?</strong>
 							</p>
 							<p translate>
-								Click the media icon in the message composition textbox (on the far right;
-								only visible when no text has been entered) and select the photo you wish
+								Click the plus icon in the message composition textbox, click the photo icon, and then select the photo you wish
 								to share.
 							</p>
 						</li>
@@ -1442,8 +1438,7 @@
 								<strong translate>How do I send files?</strong>
 							</p>
 							<p translate>
-								Click the paperclip icon (on the far left on desktops and on the top
-								right on mobile) and select the file you wish to share.
+								Click the plus icon in the message composition textbox, click the paperclip icon, and then select the file you wish to share. Note: sending and reveiving files requires a WebRTC compatible browser. We reccomend Chrome or Firefox.
 							</p>
 						</li>
 						<li>
@@ -1451,7 +1446,7 @@
 								<strong translate>How do I start a video or voice call?</strong>
 							</p>
 							<p translate>
-								Click the video (or phone) icon on the far left (desktop) / top right (mobile).
+								Click the plus icon in the message composition textbox, then click the video (or phone) icon.
 								A warning will pop up confirming that you wish to send the call invite and
 								that connecting will expose your IP (Cyph video uses a peer-to-peer connection
 								for voice and video, so you will be connecting directly to the other party
@@ -1555,7 +1550,7 @@
 						</li>
 					</ul>
 				</div>
-				<div flex='20'></div>
+				<div flex='20' hide-sm hide-xs></div>
 			</div>
 		</section>
 

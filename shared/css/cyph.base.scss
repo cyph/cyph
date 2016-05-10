@@ -761,17 +761,14 @@ html.mobile .mfp-content {
 /* FAQ */
 
 #faq {
-	.bg-image {
-		left: 30% !important;
-		top: 45% !important;
-
-		img {
-			transform: scale(2);
-		}
-	}
-
 	li {
 		list-style: none;
+		background-color: rgba(81, 49, 140, 0.75);
+		padding: 10px;
+		margin-top: 30px;
+		text-align: center;
+		border-radius: 20px;
+		box-shadow: 4px 10px 8px #8652e4;
 	}
 }
 
