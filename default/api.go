@@ -32,21 +32,18 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		return err.Error(), http.StatusTeapot
 	}
 
-	category, err := strconv.ParseInt(sanitize(h.Request.PostFormValue("Category")), 10, 64)
-	if err != nil {
-		return err.Error(), http.StatusTeapot
-	}
-
-	item, err := strconv.ParseInt(sanitize(h.Request.PostFormValue("Item")), 10, 64)
-	if err != nil {
-		return err.Error(), http.StatusTeapot
+	planId := ""
+	if category, err := strconv.ParseInt(sanitize(h.Request.PostFormValue("Category")), 10, 64); err == nil {
+		if item, err := strconv.ParseInt(sanitize(h.Request.PostFormValue("Item")), 10, 64); err == nil {
+			planId = strconv.FormatInt(category, 10) + "-" + strconv.FormatInt(item, 10)
+		}
 	}
 
 	tx, err := braintreeInit(h).Transaction().Create(&braintree.Transaction{
 		Type:               "sale",
 		Amount:             braintree.NewDecimal(amount, 2),
 		PaymentMethodNonce: nonce,
-		PlanId:             strconv.FormatInt(category, 10) + "-" + strconv.FormatInt(item, 10),
+		PlanId:             planId,
 	})
 
 	if err != nil {
