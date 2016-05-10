@@ -14,7 +14,7 @@ export class SignupForm implements ISignupForm {
 		Email: <string> '',
 		List: <string> 'Q4YKsEDh2OULosfbBg3IVw',
 		Boolean: <boolean> true
-		
+
 	};
 
 	public submit () : void {

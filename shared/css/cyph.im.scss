@@ -80,12 +80,11 @@ md-fab-speed-dial.md-fling.desktop-only {
 	left: 93%;
 	top: 8px;
 	height: 0px;
-	
+
 	.md-fab-action-item {
 		transform: scale(0.85);
 	}
 }
-
 
 input, textarea {
 	border-radius: 0px;
@@ -420,7 +419,7 @@ input, textarea {
 		width: 90%;
 		background-color: transparent;
 
-		span p{
+		span p {
 			position: absolute;
 			left: calc(50vw - 112px);
 		}
@@ -834,6 +833,7 @@ html:not(.mobile) .cyph-not-found {
 .help {
 	min-width: 60%;
 	height: 80%;
+
 	md-content {
 		width: 100%;
 		overflow-x: hidden;
@@ -848,9 +848,9 @@ html:not(.mobile) .cyph-not-found {
 			color: white;
 		}
 
-	md-tab-content {
-		margin: 25px;
-	}
+		md-tab-content {
+			margin: 25px;
+		}
 
 		md-ink-bar {
 			background-color: #51318C;
