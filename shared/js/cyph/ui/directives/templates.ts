@@ -953,11 +953,11 @@ export const Templates	= {
 				<md-button
 					translate
 					type='submit'
-					aria-label='Sign up for beta'
+					aria-label='Subscribe'
 					ng-hide='$this.state > 1'
 					ng-class='{"hidden-submit-button": hideButton}'
 				>
-					Sign up for beta
+					Subscribe to Beta Waitlist
 				</md-button>
 			</form>
 	`,

@@ -285,13 +285,8 @@ html:not(.mobile) .platform-container.mobile .mobile-only {
 	}
 
 	.md-button {
-		@include transform(scale(1.1) !important);
-
-		background-color: #7d4fd3 !important;
-		margin: 25px auto;
-		height: 100px;
-		width: 110px;
-		display: block;
+		background-color: rgba(125, 79, 211, 0.9) !important;
+		margin: -20px auto;
 	}
 
 	h1 {
