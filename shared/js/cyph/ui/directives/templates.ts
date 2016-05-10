@@ -416,7 +416,7 @@ export const Templates	= {
 					md-open='false'>
 						<md-fab-trigger>
 							<md-button aria-label='menu' class='md-fab md-warn plus'>
-								+
+								<img src='/img/icons/castle.png'></img>
 							</md-button>
 						</md-fab-trigger>
 						<md-fab-actions>

@@ -60,7 +60,13 @@
 	</head>
 	<body>
 		<section id='main' class='cyph-foreground' layout='column' layout-fill>
-			<div layout='row'>
+			<span
+				cyph-chat-toolbar='ui.chat'
+				open='ui.openMobileMenu()'
+				show-chat='ui.state === Cyph.im.UI.States.chat'
+				class='mobile-only'
+			></span>
+			<div layout='row' class='desktop-only'>
 				<div flex='95'></div>
 				<img id='help'
 					src='/img/icons/help.png'
