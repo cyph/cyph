@@ -144,11 +144,12 @@ export class Config {
 	/** User-facing email addresses to include in places like contact forms. */
 	public static cyphEmailAddresses: string[]	= [
 		'hello',
-		'telehealth',
-		'b2b',
-		'privacy',
+		'help',
 		'feedback',
-		'bugs'
+		'bugs',
+		'b2b',
+		'telehealth',
+		'privacy'
 	];
 
 	/** Max unsigned 32-bit integer. */

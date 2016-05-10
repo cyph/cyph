@@ -128,11 +128,11 @@ export const Templates	= {
 							</tbody>
 						</table>
 					</div>
-					<md-tab label='FAQ'>
-						Balls.
-					</md-tab>
 					<md-tab label='Contact Cyph'>
-						Balls.
+					<span translate> Please check out the </span>
+					<a href='{{Cyph.Env.homeUrl}}'>FAQs</a>
+					<span translate> first!</span>
+						<cyph-contact to="help"></cyph-contact>
 					</md-tab>
 				</md-tabs>
 			</md-content>
