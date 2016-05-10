@@ -25,6 +25,7 @@ angular.
 		'ngMaterial',
 		'timer',
 		Cyph.UI.Directives.Chat.title,
+		Cyph.UI.Directives.Contact.title,
 		Cyph.UI.Directives.LinkConnection.title,
 		Cyph.UI.Directives.Markdown.title,
 		Cyph.UI.Directives.Pro.title,

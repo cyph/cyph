@@ -254,7 +254,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		), 500);
 
 
-		/* Section sizing */
+		/* Section sizing
 
 		if (!Cyph.Env.isMobile) {
 			setInterval(() =>
@@ -272,6 +272,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 				})
 			, 2000);
 		}
+		*/
 
 
 		/* Avoid full page reloads */

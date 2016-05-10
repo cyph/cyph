@@ -764,6 +764,39 @@ export const Templates	= {
 		</form>
 	`,
 
+	contact: `
+		<div>
+			<div layout-gt-xs='row'>
+				<md-input-container class='md-block' flex-gt-xs>
+					<label>To</label>
+					<input ng-model='to' type='email' disabled>
+				</md-input-container>
+			</div>
+			<div layout-gt-sm='row'>
+				<md-input-container class='md-block' flex-gt-sm>
+					<label>Name</label>
+					<input ng-model='fromName'>
+				</md-input-container>
+				<md-input-container class='md-block' flex-gt-sm>
+					<label>Email</label>
+					<input ng-model='fromEmail' type='email'>
+				</md-input-container>
+			</div>
+			<md-input-container class='md-block'>
+				<label>Subject</label>
+				<input ng-model='subject'>
+			</md-input-container>
+			<md-input-container class='md-block'>
+				<label>Message</label>
+				<textarea ng-model='message' md-select-on-focus></textarea>
+			</md-input-container>
+
+			<md-button>
+				Send
+			</md-button>
+		</div>
+	`,
+
 	linkConnection: `
 		<div
 			class='link-connection loading'

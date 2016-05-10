@@ -20,15 +20,15 @@ export class Util {
 			data: {
 				key: 'HNz4JExN1MtpKz8uP2RD1Q',
 				message: {
-					from_email: Util.getValue(o, 'fromEmail', 'test@mandrillapp.com').
+					from_email: (o.fromEmail || 'test@mandrillapp.com').
 						replace('@cyph.com', '@mandrillapp.com')
 					,
-					from_name: Util.getValue(o, 'fromName', 'Mandrill'),
+					from_name: o.fromName || 'Mandrill',
 					to: [{
-						email: Util.getValue(o, 'to', 'hello@cyph.com'),
+						email: o.to || 'hello@cyph.com',
 						type: 'to'
 					}],
-					subject: Util.getValue(o, 'subject', 'New Cyph Email'),
+					subject: o.subject || 'New Cyph Email',
 					text: o.message
 				}
 			}

@@ -31,6 +31,7 @@ angular.
 		'ngMaterial',
 		Cyph.UI.Directives.Chat.title,
 		Cyph.UI.Directives.Checkout.title,
+		Cyph.UI.Directives.Contact.title,
 		Cyph.UI.Directives.Markdown.title,
 		Cyph.UI.Directives.SignupForm.title
 	]).
