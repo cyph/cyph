@@ -7,6 +7,10 @@ import {Thread} from 'thread';
  * Miscellaneous helper functions used throughout the codes.
  */
 export class Util {
+	/**
+	 * Sends an email to the Cyph team. "@cyph.com" may be omitted from o.to.
+	 * @param o
+	 */
 	public static email (o: {
 		fromEmail?: string;
 		fromName?: string;
@@ -25,7 +29,7 @@ export class Util {
 					,
 					from_name: o.fromName || 'Mandrill',
 					to: [{
-						email: o.to || 'hello@cyph.com',
+						email: (o.to || 'hello').replace('@cyph.com', '') + '@cyph.com',
 						type: 'to'
 					}],
 					subject: o.subject || 'New Cyph Email',

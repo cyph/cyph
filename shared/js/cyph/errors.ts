@@ -43,7 +43,7 @@ export class Errors {
 
 			if (numEmails++ < 50) {
 				Util.email({
-					to: 'errors@cyph.com',
+					to: 'errors',
 					subject: 'CYPH: ' + subject,
 					message
 				});
