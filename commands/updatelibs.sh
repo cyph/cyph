@@ -224,6 +224,7 @@ mkdir gopkg.in
 cd gopkg.in
 
 git clone git://github.com/go-authboss/authboss.git authboss.v0
+rm -rf authboss.v0/oauth2
 
 cd ..
 

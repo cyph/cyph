@@ -71,6 +71,50 @@ export class Config {
 		endpoint: 'braintree'
 	};
 
+	/** Pricing-related config. */
+	public static pricingConfig	= {
+		categories: {
+			donation: {
+				id: 0,
+				items: {
+					donation: {id: 0}
+				}
+			},
+			individual: {
+				id: 1,
+				items: {
+					pro: {id: 0}
+				}
+			},
+			enterprise: {
+				id: 2,
+				items: {
+					basics: {id: 0},
+					works: {id: 1}
+				}
+			},
+			telehealth: {
+				id: 3,
+				items: {
+					solo: {id: 0},
+					small: {id: 1}
+				}
+			},
+			legal: {
+				id: 4,
+				items: {
+					generic: {id: 0}
+				}
+			},
+			accounting: {
+				id: 5,
+				items: {
+					generic: {id: 0}
+				}
+			}
+		}
+	};
+
 	/** P2P-related config (used by P2P.P2P). */
 	public static p2pConfig	= {
 		fileChunkSize: 1024,

@@ -105,7 +105,7 @@ elif [ "${command}" == 'commit' ] ; then
 
 	cd ../../..
 
-	rm $(find default -type f -name '*_test.go' | tr '\n' ' ')
+	find default -type f -name '*_test.go' -exec rm {} \;
 
 	chmod -R 700 .
 

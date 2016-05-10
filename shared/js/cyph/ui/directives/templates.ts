@@ -296,11 +296,6 @@ export const Templates	= {
 					active: $this.state === Cyph.UI.Chat.States.chat
 				}'
 			>
-				<img
-					src='/img/betalogo.png'
-					id='background-logo'
-					alt='Beta logo'
-					ng-hide='!$this.session.state.isAlive'/>
 				<md-content class='nano-content'>
 					<md-list layout='column'>
 						<md-item
