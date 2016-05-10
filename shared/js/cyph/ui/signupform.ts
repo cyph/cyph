@@ -10,55 +10,61 @@ export class SignupForm implements ISignupForm {
 	public state: number	= 0;
 
 	public data	= {
-		Name: <string> '',
-		Email: <string> '',
-		List: <string> 'Q4YKsEDh2OULosfbBg3IVw',
-		Boolean: <boolean> true
-
+		name: <string> '',
+		email: <string> '',
+		list: <string> 'Q4YKsEDh2OULosfbBg3IVw',
+		boolean: <boolean> true
 	};
 
-	public submit () : void {
-		if (!this.data.Email) {
-					return;
-				}
+	private sendyRequest (method: string, success: (response: string) => void = () => {}) : void {
+		Util.retryUntilComplete(retry =>
+			Util.request({
+				method: 'POST',
+				url: 'https://sendy.cyph.com/' + method,
+				data: this.data,
+				error: retry,
+				success
+			})
+		);
+	}
 
+	public submit () : void {
+		if (!this.data.email) {
+			return;
+		}
+
+		++this.state;
+		this.controller.update();
+
+		if (this.state === 2) {
+			setTimeout(() => {
 				++this.state;
 				this.controller.update();
+			}, 1500);
+		}
 
-				if (this.state === 2) {
-					setTimeout(() => {
-						++this.state;
-						this.controller.update();
-					}, 1500);
-				}
+		setTimeout(() => {
+			const $input: JQuery	= Elements.signupForm.find('input:visible');
 
-				setTimeout(() => {
-					const $input: JQuery	= Elements.signupForm.find('input:visible');
-
-					if ($input.length === 1) {
-						$input.focus();
-					}
-				}, 100);
+			if ($input.length === 1) {
+				$input.focus();
+			}
+		}, 100);
 
 
-				Util.retryUntilComplete(retry =>
-					Util.request({
-						method: 'PUT',
-						url: Env.baseUrl + 'signups',
-						data: this.data,
-						error: retry,
-						success: (isNew: string) => {
-							if (isNew === 'true') {
-								Analytics.main.send({
-									hitType: 'event',
-									eventCategory: 'signup',
-									eventAction: 'new',
-									eventValue: 1
-								});
-							}
-						}
-					})
-				);
+		this.sendyRequest('subscribe', (response: string) => {
+			if (response === '1') {
+				Analytics.main.send({
+					hitType: 'event',
+					eventCategory: 'signup',
+					eventAction: 'new',
+					eventValue: 1
+				});
+			}
+			else if (response === 'Already subscribed.' && this.data.name) {
+				this.sendyRequest('unsubscribe', () => this.sendyRequest('subscribe'));
+			}
+		});
 	}
 
 	/**

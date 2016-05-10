@@ -8,10 +8,10 @@ export interface ISignupForm {
 
 	/** Signup data entered by user. */
 	data: {
-		Name: string;
-		Email: string;
-		List: string;
-
+		name: string;
+		email: string;
+		list: string;
+		boolean: boolean;
 	};
 
 	/**
