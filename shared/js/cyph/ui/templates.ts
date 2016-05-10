@@ -138,7 +138,7 @@ export const Templates	= {
 			</md-content>
 			<md-dialog-actions layout='row'>
 				<span flex></span>
-				<md-button ng-click="console.log('balls')" >
+				<md-button ng-click="$this.hide()" >
 					Close
 				</md-button>
 			</md-dialog-actions>

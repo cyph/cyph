@@ -422,16 +422,21 @@ export const Templates	= {
 							</md-button>
 						</md-fab-trigger>
 						<md-fab-actions>
-							<md-button aria-label='Send File' class='md-fab md-raised md-mini' ng-class="{'fab-hover' : ui.chat.fab}">
+							<md-button aria-label='Send File' class='md-fab md-raised md-mini' ng-click='$this.p2pManager.sendFileButton()' ng-class="{'fab-hover' : ui.chat.fab}">
 								<img src='img/icons/file.png' aria-label='Send File'></img>
 							</md-button>
 							<md-button aria-label='Send Image' class='md-fab md-raised md-mini' ng-class="{'fab-hover' : ui.chat.fab}">
 								<img src='img/icons/insertphoto.png' aria-label='Send Image'></img>
+								 <input
+									accept='image/*'
+									type='file'
+									cyph-filechange='$this.photoManager.insert(this)'
+								/>
 							</md-button>
-							<md-button aria-label='Voice Call' class='md-fab md-raised md-mini' ng-class="{'fab-hover' : ui.chat.fab}">
+							<md-button aria-label='Voice Call' class='md-fab md-raised md-mini' ng-click='$this.p2pManager.voiceCallButton()' ng-class="{'fab-hover' : ui.chat.fab}">
 								<img src='img/icons/voice.on.png' aria-label='Voice Call'></img>
 							</md-button>
-							<md-button aria-label='Video Call' class='md-fab md-raised md-mini' ng-class="{'fab-hover' : ui.chat.fab}">
+							<md-button aria-label='Video Call' class='md-fab md-raised md-mini' ng-click='$this.p2pManager.videoCallButton()' ng-class="{'fab-hover' : ui.chat.fab}">
 								<img src='img/icons/video.on.png' aria-label='Video Call'></img>
 							</md-button>
 						</md-fab-actions>
