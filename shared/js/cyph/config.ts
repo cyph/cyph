@@ -141,6 +141,16 @@ export class Config {
 		workerHelper: 'websign/js/workerhelper.js'
 	};
 
+	/** User-facing email addresses to include in places like contact forms. */
+	public static cyphEmailAddresses: string[]	= [
+		'hello',
+		'telehealth',
+		'b2b',
+		'privacy',
+		'feedback',
+		'bugs'
+	];
+
 	/** Max unsigned 32-bit integer. */
 	public static maxUint32: number	= 4294967296;
 }

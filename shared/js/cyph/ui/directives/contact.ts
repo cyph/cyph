@@ -17,9 +17,11 @@ export class Contact {
 			replace: false,
 			template: Templates.contact,
 			link: (scope, element, attrs) => {
-				const watch	= (attr: string) => scope.$watch(attrs[attr], (value: string) => {
-					scope[attr]	= value;
-				});
+				scope['Cyph']	= self['Cyph'];
+
+				const watch	= (attr: string) => scope.$watch(attrs[attr], (value: string) =>
+					scope[attr]	= value
+				);
 
 				watch('fromEmail');
 				watch('fromName');
@@ -27,7 +29,11 @@ export class Contact {
 				watch('subject');
 				watch('message');
 
-				element.find('button').click(() => Util.email(<any> scope));
+				element.find('button').click(() => {
+					Util.email(<any> scope);
+					scope['sent']	= true;
+					self['ui'].controller.update();
+				});
 			}
 		}));
 	})();
