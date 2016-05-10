@@ -104,7 +104,7 @@ export const Templates	= {
 
 			<div
 				ng-view
-				class='chat-begin-message'
+				class='chat-begin-message loading'
 				layout='column'
 				layout-fill
 				flex
@@ -113,7 +113,15 @@ export const Templates	= {
 				}'
 			>
 				<div flex></div>
-				<div translate>Connected!</div>
+				<div class='logo-animation'>
+					<img src='/img/logo.animated.connected.gif' alt='Animated Cyph logo' />
+				</div>
+				<div translate>Securely Connected!</div>
+				<md-progress-linear
+					class='md-accent key-exchange-progress'
+					md-mode='determinate'
+					ng-value='100'
+				></md-progress-linear>
 				<div flex></div>
 			</div>
 
