@@ -826,16 +826,18 @@ html:not(.mobile) .cyph-not-found {
 		width: 100%;
 		overflow-x: hidden;
 	}
-	
+
 	md-tabs {
-		.md-active{
+		.md-active {
 			color: white;
 		}
+
 		md-ink-bar {
 			background-color: #51318C;
 		}
 	}
-	.md-button{
+
+	.md-button {
 		background-color: #51318C;
 		padding: 5px;
 	}

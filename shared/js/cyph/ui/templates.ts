@@ -35,7 +35,7 @@ export const Templates	= {
 
 	helpModal: `
 		<md-dialog class='help'>
-			
+
 			<md-content>
 				<md-tabs md-dynamic-height md-border-bottom>
 					<md-tab label='Formatting Help'>
