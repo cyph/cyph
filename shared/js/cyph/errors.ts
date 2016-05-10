@@ -42,22 +42,10 @@ export class Errors {
 			message		= message.replace(/\/#.*/g, '');
 
 			if (numEmails++ < 50) {
-				Util.request({
-					method: 'POST',
-					url: 'https://mandrillapp.com/api/1.0/messages/send.json',
-					data: {
-						key: 'HNz4JExN1MtpKz8uP2RD1Q',
-						message: {
-							from_email: 'test@mandrillapp.com',
-							to: [{
-								email: 'errors@cyph.com',
-								type: 'to'
-							}],
-							autotext: 'true',
-							subject: 'CYPH: ' + subject,
-							text: message
-						}
-					}
+				Util.email({
+					to: 'errors@cyph.com',
+					subject: 'CYPH: ' + subject,
+					message
 				});
 			}
 

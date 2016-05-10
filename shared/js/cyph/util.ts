@@ -7,6 +7,34 @@ import {Thread} from 'thread';
  * Miscellaneous helper functions used throughout the codes.
  */
 export class Util {
+	public static email (o: {
+		fromEmail?: string;
+		fromName?: string;
+		to?: string;
+		subject?: string;
+		message: string;
+	}) {
+		Util.request({
+			method: 'POST',
+			url: 'https://mandrillapp.com/api/1.0/messages/send.json',
+			data: {
+				key: 'HNz4JExN1MtpKz8uP2RD1Q',
+				message: {
+					from_email: Util.getValue(o, 'fromEmail', 'test@mandrillapp.com').
+						replace('@cyph.com', '@mandrillapp.com')
+					,
+					from_name: Util.getValue(o, 'fromName', 'Mandrill'),
+					to: [{
+						email: Util.getValue(o, 'to', 'hello@cyph.com'),
+						type: 'to'
+					}],
+					subject: Util.getValue(o, 'subject', 'New Cyph Email'),
+					text: o.message
+				}
+			}
+		});
+	}
+
 	/**
 	 * Randomly generates a GUID of specifed length using Config.guidAddressSpace.
 	 * If no valid length is specified, Config.guidAddressSpace is ignored and the
