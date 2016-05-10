@@ -196,10 +196,6 @@ if [ ! $simple ] ; then
 		filesToModify="$(find . -name '*.html') $(find js -name '*.js') $(find css -name '*.css')"
 
 		for f in $filesToCacheBust ; do
-			if [ $(echo "$f" | grep -oP 'twemoji.*(?<!\.js)$') ] ; then
-				continue
-			fi
-
 			f="$(echo "$f" | sed 's/shared\///g' | sed 's/\.ts$/\.js/g' | sed 's/\.scss$/\.css/g')"
 			safeF="$(echo "$f" | sed 's/\//\\\//g' | sed 's/ /\\ /g' | sed 's/\_/\\_/g')"
 

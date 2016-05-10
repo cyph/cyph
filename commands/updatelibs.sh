@@ -83,7 +83,6 @@ jspm install -y \
 	npm:dompurify \
 	github:markdown-it/markdown-it \
 	github:markdown-it/markdown-it-sup \
-	github:twitter/twemoji@1.3.2 \
 	github:markdown-it/markdown-it-emoji \
 	github:isagalaev/highlight.js \
 	github:siddii/angular-timer@1.2.1 \
@@ -224,8 +223,7 @@ rm -rf gopkg.in 2> /dev/null
 mkdir gopkg.in
 cd gopkg.in
 
-# git clone git://github.com/go-authboss/authboss.git authboss.v0
-git clone git://github.com/buu700/authboss.git authboss.v0
+git clone git://github.com/go-authboss/authboss.git authboss.v0
 
 cd ..
 
