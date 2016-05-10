@@ -34,100 +34,114 @@ export const Templates	= {
 	`,
 
 	helpModal: `
-		<md-dialog class='formatting-help'>
+		<md-dialog class='help'>
+			
 			<md-content>
-				<h2 class='md-title' translate>
-					Formatting Help
-				</h2>
-				<p>
-					<span translate>Cyph uses a version of Markdown called</span>
-					<a href='http://commonmark.org/'>CommonMark</a>
-					<span translate>
-						for formatting. We also support various extensions &ndash;
-						including emojis and code fencing.
-					</span>
-				</p>
-				<p translate>
-					The following examples are shamelessly copied from reddit:
-				</p>
-				<table>
-					<tbody>
-						<tr>
-							<th translate>you type:</th>
-							<th translate>you see:</th>
-						</tr>
-						<tr>
-							<td>*<span translate>italics</span>*</td>
-							<td><em translate>italics</em></td>
-						</tr>
-						<tr>
-							<td>**<span translate>bold</span>**</td>
-							<td><b translate>bold</b></td>
-						</tr>
-						<tr>
-							<td>[cyph <span translate>me</span>!](https://cyph.com)</td>
-							<td><a href='https://cyph.com'>cyph <span translate>me</span>!</a></td>
-						</tr>
-						<tr>
-							<td>
-								<br />
-								* <span translate>item 1</span>
-								<br />
-								* <span translate>item 2</span>
-								<br />
-								* <span translate>item 3</span>
-							</td>
-							<td>
-								<ul>
-									<li translate>item 1</li>
-									<li translate>item 2</li>
-									<li translate>item 3</li>
-								</ul>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<br />
-								&gt; <span translate>quoted text</span>
-							</td>
-							<td>
-								<blockquote translate>quoted text</blockquote>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<span translate>Lines starting with tabs are treated like code:</span>
+				<md-tabs md-dynamic-height md-border-bottom>
+					<md-tab label='Formatting Help'>
+						<p>
+							<span translate>Cyph uses a version of Markdown called</span>
+							<a href='http://commonmark.org/'>CommonMark</a>
+							<span translate>
+								for formatting. We also support various extensions &ndash;
+								including emojis and code fencing.
+							</span>
+						</p>
+						<p translate>
+							The following examples are shamelessly copied from reddit:
+						</p>
+						<table>
+							<tbody>
+								<tr>
+									<th translate>you type:</th>
+									<th translate>you see:</th>
+								</tr>
+								<tr>
+									<td>*<span translate>italics</span>*</td>
+									<td><em translate>italics</em></td>
+								</tr>
+								<tr>
+									<td>**<span translate>bold</span>**</td>
+									<td><b translate>bold</b></td>
+								</tr>
+								<tr>
+									<td>[cyph <span translate>me</span>!](https://cyph.com)</td>
+									<td><a href='https://cyph.com'>cyph <span translate>me</span>!</a></td>
+								</tr>
+								<tr>
+									<td>
+										<br />
+										* <span translate>item 1</span>
+										<br />
+										* <span translate>item 2</span>
+										<br />
+										* <span translate>item 3</span>
+									</td>
+									<td>
+										<ul>
+											<li translate>item 1</li>
+											<li translate>item 2</li>
+											<li translate>item 3</li>
+										</ul>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<br />
+										&gt; <span translate>quoted text</span>
+									</td>
+									<td>
+										<blockquote translate>quoted text</blockquote>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<span translate>Lines starting with tabs are treated like code:</span>
 
-								<br />
-								<br />
+										<br />
+										<br />
 
-								<span class='spaces'>&nbsp;&nbsp;&nbsp;&nbsp;</span>
-								if 1 * 2 &lt; 3:
-								<br />
-								<span class='spaces'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-								print "hello!"
-								<br />
-							</td>
-							<td>
-								<span translate>Lines starting with tabs are treated like code:</span>
+										<span class='spaces'>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+										if 1 * 2 &lt; 3:
+										<br />
+										<span class='spaces'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+										print "hello!"
+										<br />
+									</td>
+									<td>
+										<span translate>Lines starting with tabs are treated like code:</span>
 
-								<br />
-								<br />
+										<br />
+										<br />
 
-								<pre>if 1 * 2 &lt; 3:<br />&nbsp;&nbsp;&nbsp;&nbsp;print "hello!"</pre>
-							</td>
-						</tr>
-						<tr>
-							<td>~~<span translate>strikethrough</span>~~</td>
-							<td><strike translate>strikethrough</strike></td>
-						</tr>
-						<tr>
-							<td><span translate>super</span>^<span translate>script</span>^</td>
-							<td><span translate>super</span><sup translate>script</sup></td>
-						</tr>
-					</tbody>
-				</table>
+										<pre>if 1 * 2 &lt; 3:<br />&nbsp;&nbsp;&nbsp;&nbsp;print "hello!"</pre>
+									</td>
+								</tr>
+								<tr>
+									<td>~~<span translate>strikethrough</span>~~</td>
+									<td><strike translate>strikethrough</strike></td>
+								</tr>
+								<tr>
+									<td><span translate>super</span>^<span translate>script</span>^</td>
+									<td><span translate>super</span><sup translate>script</sup></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<md-tab label='FAQ'>
+						Balls.
+					</md-tab>
+					<md-tab label='Contact Cyph'>
+						Balls.
+					</md-tab>
+				</md-tabs>
 			</md-content>
+			<md-dialog-actions layout='row'>
+				<span flex></span>
+				<md-button ng-click="$this.hide()" >
+					Close
+				</md-button>
+			</md-dialog-actions>
 		</md-dialog>
 	`,
 

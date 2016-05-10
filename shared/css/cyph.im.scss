@@ -821,10 +821,23 @@ html:not(.mobile) .cyph-not-found {
 	}
 }
 
-.formatting-help {
+.help {
 	md-content {
 		width: 100%;
 		overflow-x: hidden;
+	}
+	
+	md-tabs {
+		.md-active{
+			color: white;
+		}
+		md-ink-bar {
+			background-color: #51318C;
+		}
+	}
+	.md-button{
+		background-color: #51318C;
+		padding: 5px;
 	}
 
 	table {
