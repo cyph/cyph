@@ -29,17 +29,17 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 
 	amount, err := strconv.ParseInt(sanitize(h.Request.PostFormValue("Amount")), 10, 64)
 	if err != nil {
-		return err, http.StatusTeapot
+		return err.Error(), http.StatusTeapot
 	}
 
 	category, err := strconv.ParseInt(sanitize(h.Request.PostFormValue("Category")), 10, 64)
 	if err != nil {
-		return err, http.StatusTeapot
+		return err.Error(), http.StatusTeapot
 	}
 
 	item, err := strconv.ParseInt(sanitize(h.Request.PostFormValue("Item")), 10, 64)
 	if err != nil {
-		return err, http.StatusTeapot
+		return err.Error(), http.StatusTeapot
 	}
 
 	tx, err := braintreeInit(h).Transaction().Create(&braintree.Transaction{
@@ -50,7 +50,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	})
 
 	if err != nil {
-		return err, http.StatusTeapot
+		return err.Error(), http.StatusTeapot
 	}
 
 	return tx, http.StatusOK
