@@ -17,22 +17,33 @@ export class Contact {
 			replace: false,
 			template: Templates.contact,
 			link: (scope, element, attrs) => {
-				scope['Cyph']	= self['Cyph'];
+				Util.retryUntilComplete(retry => {
+					const ui: any	= self['ui'];
 
-				const watch	= (attr: string) => scope.$watch(attrs[attr], (value: string) =>
-					scope[attr]	= value
-				);
+					if (!ui) {
+						setTimeout(retry, 250);
+						return;
+					}
 
-				watch('fromEmail');
-				watch('fromName');
-				watch('to');
-				watch('subject');
-				watch('message');
+					scope['ui']		= ui;
+					scope['Cyph']	= self['Cyph'];
 
-				element.find('button').click(() => {
-					Util.email(<any> scope);
-					scope['sent']	= true;
-					self['ui'].controller.update();
+					const watch	= (attr: string) => scope.$watch(attrs[attr], (value: string) => {
+						scope[attr]	= value;	
+						ui.controller.update();
+					});
+
+					watch('fromEmail');
+					watch('fromName');
+					watch('to');
+					watch('subject');
+					watch('message');
+
+					element.find('button').click(() => {
+						Util.email(<any> scope);
+						scope['sent']	= true;
+						self['ui'].controller.update();
+					});
 				});
 			}
 		}));
