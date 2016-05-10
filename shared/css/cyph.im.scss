@@ -43,14 +43,6 @@ html:not(.mobile) .chat-sidebar,
 	}
 }
 
-#background-logo {
-	position: absolute;
-	width: 40%;
-	opacity: 0.2;
-	top: 10%;
-	left: 30%;
-}
-
 #close-cyph, #help {
 	opacity: 0.50;
 }
@@ -209,6 +201,19 @@ input, textarea {
 			width: 8px;
 			height: 8px;
 		}
+	}
+
+	&:after {
+		background-image: url(/img/betalogo.png);
+		background-size: cover;
+		position: absolute;
+		width: 46vh;
+		height: 50vh;
+		left: 50%;
+		top: 50%;
+		opacity: 0.2;
+		content: ' ';
+		@include transform(translateX(-50%) translateY(-50%));
 	}
 }
 

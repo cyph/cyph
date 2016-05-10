@@ -96,9 +96,9 @@ export interface IChat {
 	disconnectButton () : void;
 
 	/**
-	 * Displays Markdown formatting guide in modal.
+	 * Displays help information.
 	 */
-	formattingHelpButton () : void;
+	helpButton () : void;
 
 	/**
 	 * Checks for change to current message, and sends appropriate
