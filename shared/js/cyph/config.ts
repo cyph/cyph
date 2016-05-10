@@ -74,40 +74,34 @@ export class Config {
 	/** Pricing-related config. */
 	public static pricingConfig	= {
 		categories: {
-			donation: {
-				id: 0,
-				items: {
-					donation: {id: 0}
-				}
-			},
 			individual: {
-				id: 1,
+				id: 0,
 				items: {
 					pro: {id: 0}
 				}
 			},
 			enterprise: {
-				id: 2,
+				id: 1,
 				items: {
 					basics: {id: 0},
 					works: {id: 1}
 				}
 			},
 			telehealth: {
-				id: 3,
+				id: 2,
 				items: {
 					solo: {id: 0},
 					small: {id: 1}
 				}
 			},
 			legal: {
-				id: 4,
+				id: 3,
 				items: {
 					generic: {id: 0}
 				}
 			},
 			accounting: {
-				id: 5,
+				id: 4,
 				items: {
 					generic: {id: 0}
 				}
