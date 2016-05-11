@@ -10,22 +10,24 @@ export class NativeCrypto {
 		key: Uint8Array,
 		algorithm: any,
 		purpose: string,
-		callback: (cryptoKey: CryptoKey) => void
+		callback: (cryptoKey: CryptoKey, err: any) => void
 	) : void {
 		NativeCrypto.Subtle.
 			importKey('raw', key, algorithm, false, [purpose]).
-			then(callback)
+			then(callback).
+			catch(err => callback(undefined, err))
 		;
 	}
 
 	private static exportRawKey (
 		cryptoKey: CryptoKey,
 		algorithmName: string,
-		callback: (key: Uint8Array) => void
+		callback: (key: Uint8Array, any) => void
 	) : void {
 		NativeCrypto.Subtle.
 			exportKey('raw', cryptoKey, algorithmName).
-			then(callback)
+			then(callback).
+			catch(err => callback(undefined, err))
 		;
 	}
 
@@ -33,7 +35,7 @@ export class NativeCrypto {
 		key: Uint8Array,
 		algorithm: any,
 		purpose: string,
-		callback: (cryptoKey: CryptoKey) => void
+		callback: (cryptoKey: CryptoKey, err: any) => void
 	) : void {
 		NativeCrypto.Subtle.
 			importKey(
@@ -43,18 +45,20 @@ export class NativeCrypto {
 				false,
 				[purpose]
 			).
-			then(callback)
+			then(callback).
+			catch(err => callback(undefined, err))
 		;
 	}
 
 	private static exportJWK (
 		cryptoKey: CryptoKey,
 		algorithmName: string,
-		callback: (key: Uint8Array) => void
+		callback: (key: Uint8Array, err: any) => void
 	) : void {
 		NativeCrypto.Subtle.
 			exportKey('jwk', cryptoKey, algorithmName).
-			then(jwk => callback(NativeCrypto.Sodium.from_string(JSON.stringify(jwk))))
+			then(jwk => callback(NativeCrypto.Sodium.from_string(JSON.stringify(jwk)), undefined)).
+			catch(err => callback(undefined, err))
 		;
 	}
 
@@ -72,11 +76,14 @@ export class NativeCrypto {
 		privateKeyBytes: 1700,
 
 		keyPair: (
-			callback: (keyPair: {
-				keyType: string;
-				publicKey: Uint8Array;
-				privateKey: Uint8Array;
-			}) => void
+			callback: (
+				keyPair: {
+					keyType: string;
+					publicKey: Uint8Array;
+					privateKey: Uint8Array;
+				},
+				err: any
+			) => void
 		) : void => {
 			NativeCrypto.Subtle.generateKey(
 				NativeCrypto.Box.algorithm,
@@ -92,21 +99,33 @@ export class NativeCrypto {
 				NativeCrypto.exportJWK(
 					cryptoKeyPair.publicKey,
 					NativeCrypto.Box.algorithm.name,
-					(publicKey: Uint8Array) : void => {
+					(publicKey: Uint8Array, err: any) : void => {
+						if (err) {
+							callback(undefined, err);
+							return;
+						}
+
 						keyPair.publicKey	= publicKey;
 
 						NativeCrypto.exportJWK(
 							cryptoKeyPair.privateKey,
 							NativeCrypto.Box.algorithm.name,
-							(privateKey: Uint8Array) : void => {
+							(privateKey: Uint8Array, err: any) : void => {
+								if (err) {
+									callback(undefined, err);
+									return;
+								}
+
 								keyPair.privateKey	= privateKey;
 
-								callback(keyPair);
+								callback(keyPair, undefined);
 							}
 						);
 					}
 				);
-			});
+			}).catch(err =>
+				callback(undefined, err)
+			);
 		},
 
 		seal: (
@@ -114,7 +133,7 @@ export class NativeCrypto {
 			nonce: Uint8Array,
 			publicKey: Uint8Array,
 			privateKey: Uint8Array,
-			callback: (cyphertext: Uint8Array) => void
+			callback: (cyphertext: Uint8Array, err: any) => void
 		) : void => {
 			const symmetricKey: Uint8Array			= NativeCrypto.Sodium.randombytes_buf(
 				NativeCrypto.SecretBox.keyBytes
@@ -135,45 +154,66 @@ export class NativeCrypto {
 				publicKey,
 				NativeCrypto.Box.algorithm,
 				'encrypt',
-				(cryptoKey: CryptoKey) => NativeCrypto.Subtle.encrypt(
-					NativeCrypto.Box.algorithm.name,
-					cryptoKey,
-					asymmetricPlaintext
-				).then((asymmetricCyphertextBuffer: ArrayBuffer) : void => {
-					const asymmetricCyphertext: Uint8Array	= new Uint8Array(
-						asymmetricCyphertextBuffer
-					);
+				(cryptoKey: CryptoKey, err: any) => {
+					if (err) {
+						callback(undefined, err);
+						return;
+					} 
 
-					NativeCrypto.OneTimeAuth.sign(
-						asymmetricCyphertext,
-						macKey,
-						(mac: Uint8Array) => NativeCrypto.SecretBox.seal(
-							plaintext,
-							nonce,
-							symmetricKey,
-							(symmetricCyphertext: Uint8Array) : void => {
-								const cyphertext: Uint8Array	= new Uint8Array(
-									NativeCrypto.Box.algorithm.modulusLengthBytes +
-									NativeCrypto.OneTimeAuth.bytes +
-									symmetricCyphertext.length
-								);
+					NativeCrypto.Subtle.encrypt(
+						NativeCrypto.Box.algorithm.name,
+						cryptoKey,
+						asymmetricPlaintext
+					).then((asymmetricCyphertextBuffer: ArrayBuffer) : void => {
+						const asymmetricCyphertext: Uint8Array	= new Uint8Array(
+							asymmetricCyphertextBuffer
+						);
 
-								cyphertext.set(asymmetricCyphertext);
-								cyphertext.set(
-									mac,
-									NativeCrypto.Box.algorithm.modulusLengthBytes
-								);
-								cyphertext.set(
-									symmetricCyphertext,
-									NativeCrypto.Box.algorithm.modulusLengthBytes +
-										NativeCrypto.OneTimeAuth.bytes
-								);
+						NativeCrypto.OneTimeAuth.sign(
+							asymmetricCyphertext,
+							macKey,
+							(mac: Uint8Array, err: any) => {
+								if (err) {
+									callback(undefined, err);
+									return;
+								}
 
-								callback(cyphertext);
+								NativeCrypto.SecretBox.seal(
+									plaintext,
+									nonce,
+									symmetricKey,
+									(symmetricCyphertext: Uint8Array, err: any) : void => {
+										if (err) {
+											callback(undefined, err);
+											return;
+										}
+
+										const cyphertext: Uint8Array	= new Uint8Array(
+											NativeCrypto.Box.algorithm.modulusLengthBytes +
+											NativeCrypto.OneTimeAuth.bytes +
+											symmetricCyphertext.length
+										);
+
+										cyphertext.set(asymmetricCyphertext);
+										cyphertext.set(
+											mac,
+											NativeCrypto.Box.algorithm.modulusLengthBytes
+										);
+										cyphertext.set(
+											symmetricCyphertext,
+											NativeCrypto.Box.algorithm.modulusLengthBytes +
+												NativeCrypto.OneTimeAuth.bytes
+										);
+
+										callback(cyphertext, undefined);
+									}
+								);
 							}
-						)
+						);
+					}).catch(err =>
+						callback(undefined, err)
 					);
-				})
+				}
 			);
 		},
 
@@ -182,65 +222,83 @@ export class NativeCrypto {
 			nonce: Uint8Array,
 			publicKey: Uint8Array,
 			privateKey: Uint8Array,
-			callback: (plaintext: Uint8Array) => void
+			callback: (plaintext: Uint8Array, err: any) => void
 		) : void => {
-			const asymmetricCyphertext: Uint8Array	= new Uint8Array(
-				cyphertext.buffer,
-				0,
-				NativeCrypto.Box.algorithm.modulusLengthBytes
-			);
+			try {
+				const asymmetricCyphertext: Uint8Array	= new Uint8Array(
+					cyphertext.buffer,
+					0,
+					NativeCrypto.Box.algorithm.modulusLengthBytes
+				);
 
-			const mac: Uint8Array					= new Uint8Array(
-				cyphertext.buffer,
-				NativeCrypto.Box.algorithm.modulusLengthBytes,
-				NativeCrypto.OneTimeAuth.bytes
-			);
-
-			const symmetricCyphertext: Uint8Array	= new Uint8Array(
-				cyphertext.buffer,
-				NativeCrypto.Box.algorithm.modulusLengthBytes +
+				const mac: Uint8Array					= new Uint8Array(
+					cyphertext.buffer,
+					NativeCrypto.Box.algorithm.modulusLengthBytes,
 					NativeCrypto.OneTimeAuth.bytes
-			);
+				);
 
-			NativeCrypto.importJWK(
-				privateKey,
-				NativeCrypto.Box.algorithm,
-				'decrypt',
-				(cryptoKey: CryptoKey) => NativeCrypto.Subtle.decrypt(
-					NativeCrypto.Box.algorithm.name,
-					cryptoKey,
-					asymmetricCyphertext
-				).then((asymmetricPlaintext: ArrayBuffer) : void => {
-					const symmetricKey: Uint8Array	= new Uint8Array(
-						asymmetricPlaintext,
-						0,
-						NativeCrypto.SecretBox.keyBytes
-					);
+				const symmetricCyphertext: Uint8Array	= new Uint8Array(
+					cyphertext.buffer,
+					NativeCrypto.Box.algorithm.modulusLengthBytes +
+						NativeCrypto.OneTimeAuth.bytes
+				);
 
-					const macKey: Uint8Array		= new Uint8Array(
-						asymmetricPlaintext,
-						NativeCrypto.SecretBox.keyBytes
-					);
-
-					NativeCrypto.OneTimeAuth.verify(
-						mac,
-						asymmetricCyphertext,
-						macKey,
-						(isValid: boolean) : void => {
-							if (isValid) {
-								NativeCrypto.SecretBox.open(
-									symmetricCyphertext,
-									nonce,
-									symmetricKey,
-									callback
-								);
-							} else {
-								throw new Error('Invalid RSA cyphertext.');
-							}
+				NativeCrypto.importJWK(
+					privateKey,
+					NativeCrypto.Box.algorithm,
+					'decrypt',
+					(cryptoKey: CryptoKey, err: any) => {
+						if (err) {
+							callback(undefined, err);
 						}
-					);
-				})
-			);
+
+						NativeCrypto.Subtle.decrypt(
+							NativeCrypto.Box.algorithm.name,
+							cryptoKey,
+							asymmetricCyphertext
+						).then((asymmetricPlaintext: ArrayBuffer) : void => {
+							const symmetricKey: Uint8Array	= new Uint8Array(
+								asymmetricPlaintext,
+								0,
+								NativeCrypto.SecretBox.keyBytes
+							);
+
+							const macKey: Uint8Array		= new Uint8Array(
+								asymmetricPlaintext,
+								NativeCrypto.SecretBox.keyBytes
+							);
+
+							NativeCrypto.OneTimeAuth.verify(
+								mac,
+								asymmetricCyphertext,
+								macKey,
+								(isValid: boolean, err: any) : void => {
+									if (err) {
+										callback(undefined, err);
+										return;
+									}
+
+									if (isValid) {
+										NativeCrypto.SecretBox.open(
+											symmetricCyphertext,
+											nonce,
+											symmetricKey,
+											callback
+										);
+									} else {
+										callback(undefined, new Error('Invalid RSA cyphertext.'));
+									}
+								}
+							);
+						}).catch(err =>
+							callback(undefined, err)
+						);
+					}
+				);
+			}
+			catch (err) {
+				callback(undefined, err);
+			}
 		}
 	};
 
@@ -257,19 +315,28 @@ export class NativeCrypto {
 		sign: (
 			message: Uint8Array,
 			key: Uint8Array,
-			callback: (mac: Uint8Array) => void
+			callback: (mac: Uint8Array, err: any) => void
 		) : void => {
 			NativeCrypto.importRawKey(
 				key,
 				NativeCrypto.OneTimeAuth.algorithm,
 				'sign',
-				(cryptoKey: CryptoKey) => NativeCrypto.Subtle.sign(
-					NativeCrypto.OneTimeAuth.algorithm,
-					cryptoKey,
-					message
-				).then((mac: ArrayBuffer) =>
-					callback(new Uint8Array(mac))
-				)
+				(cryptoKey: CryptoKey, err: any) => {
+					if (err) {
+						callback(undefined, err);
+						return;
+					}
+
+					NativeCrypto.Subtle.sign(
+						NativeCrypto.OneTimeAuth.algorithm,
+						cryptoKey,
+						message
+					).then((mac: ArrayBuffer) =>
+						callback(new Uint8Array(mac), undefined)
+					).catch(err =>
+						callback(undefined, err)
+					);
+				}
 			);
 		},
 
@@ -277,18 +344,27 @@ export class NativeCrypto {
 			mac: Uint8Array,
 			message: Uint8Array,
 			key: Uint8Array,
-			callback: (isValid: boolean) => void
+			callback: (isValid: boolean, err: any) => void
 		) : void => {
 			NativeCrypto.importRawKey(
 				key,
 				NativeCrypto.OneTimeAuth.algorithm,
 				'verify',
-				(cryptoKey: CryptoKey) => NativeCrypto.Subtle.verify(
-					NativeCrypto.OneTimeAuth.algorithm,
-					cryptoKey,
-					mac,
-					message
-				).then(callback)
+				(cryptoKey: CryptoKey, err: any) => {
+					if (err) {
+						callback(undefined, err);
+						return;
+					}
+
+					NativeCrypto.Subtle.verify(
+						NativeCrypto.OneTimeAuth.algorithm,
+						cryptoKey,
+						mac,
+						message
+					).then(callback).catch(err =>
+						callback(undefined, err)
+					);
+				}
 			);
 		}
 	};
@@ -319,31 +395,56 @@ export class NativeCrypto {
 				salt: Uint8Array,
 				outputBytes: number,
 				opsLimit: number,
-				memLimit: number
+				memLimit: number,
+				err: any
 			) => void
 		) : void => {
 			NativeCrypto.importRawKey(
 				plaintext,
 				NativeCrypto.PasswordHash.algorithm,
 				'deriveBits',
-				(cryptoKey: CryptoKey) => NativeCrypto.Subtle.deriveBits(
-					{
-						name: NativeCrypto.PasswordHash.algorithm.name,
-						salt: salt,
-						iterations: opsLimit,
-						hash: NativeCrypto.PasswordHash.algorithm.hash
-					},
-					cryptoKey,
-					outputBytes * 8
-				).then((hash: ArrayBuffer) =>
-					callback(
-						new Uint8Array(hash),
-						salt,
-						outputBytes,
-						opsLimit,
-						memLimit
-					)
-				)
+				(cryptoKey: CryptoKey, err: any) => {
+					if (err) {
+						callback(
+							undefined,
+							undefined,
+							undefined,
+							undefined,
+							undefined,
+							err
+						);
+						return;
+					}
+
+					NativeCrypto.Subtle.deriveBits(
+						{
+							name: NativeCrypto.PasswordHash.algorithm.name,
+							salt: salt,
+							iterations: opsLimit,
+							hash: NativeCrypto.PasswordHash.algorithm.hash
+						},
+						cryptoKey,
+						outputBytes * 8
+					).then((hash: ArrayBuffer) =>
+						callback(
+							new Uint8Array(hash),
+							salt,
+							outputBytes,
+							opsLimit,
+							memLimit,
+							undefined
+						)
+					).catch(err =>
+						callback(
+							undefined,
+							undefined,
+							undefined,
+							undefined,
+							undefined,
+							err
+						)
+					);
+				}
 			);
 		}
 	};
@@ -357,22 +458,31 @@ export class NativeCrypto {
 			plaintext: Uint8Array,
 			nonce: Uint8Array,
 			key: Uint8Array,
-			callback: (cyphertext: Uint8Array) => void
+			callback: (cyphertext: Uint8Array, err: any) => void
 		) : void => {
 			NativeCrypto.importRawKey(
 				key,
 				NativeCrypto.SecretBox.algorithm,
 				'encrypt',
-				(cryptoKey: CryptoKey) => NativeCrypto.Subtle.encrypt(
+				(cryptoKey: CryptoKey, err: any) => {
+					if (err) {
+						callback(undefined, err);
+						return;
+					}
+
+					NativeCrypto.Subtle.encrypt(
 						{
-						name: NativeCrypto.SecretBox.algorithm,
-						iv: nonce
-					},
-					cryptoKey,
-					plaintext
-				).then((cyphertext: ArrayBuffer) =>
-					callback(new Uint8Array(cyphertext))
-				)
+							name: NativeCrypto.SecretBox.algorithm,
+							iv: nonce
+						},
+						cryptoKey,
+						plaintext
+					).then((cyphertext: ArrayBuffer) =>
+						callback(new Uint8Array(cyphertext), undefined)
+					).catch(err =>
+						callback(undefined, err)
+					);
+				}
 			);
 		},
 
@@ -380,22 +490,31 @@ export class NativeCrypto {
 			cyphertext: Uint8Array,
 			nonce: Uint8Array,
 			key: Uint8Array,
-			callback: (plaintext: Uint8Array) => void
+			callback: (plaintext: Uint8Array, err: any) => void
 		) : void => {
 			NativeCrypto.importRawKey(
 				key,
 				NativeCrypto.SecretBox.algorithm,
 				'decrypt',
-				(cryptoKey: CryptoKey) => NativeCrypto.Subtle.decrypt(
-					{
-						name: NativeCrypto.SecretBox.algorithm,
-						iv: nonce
-					},
-					cryptoKey,
-					cyphertext
-				).then((plaintext: ArrayBuffer) =>
-					callback(new Uint8Array(plaintext))
-				)
+				(cryptoKey: CryptoKey, err: any) => {
+					if (err) {
+						callback(undefined, err);
+						return;
+					}
+
+					NativeCrypto.Subtle.decrypt(
+						{
+							name: NativeCrypto.SecretBox.algorithm,
+							iv: nonce
+						},
+						cryptoKey,
+						cyphertext
+					).then((plaintext: ArrayBuffer) =>
+						callback(new Uint8Array(plaintext), undefined)
+					).catch(err =>
+						callback(undefined, err)
+					);
+				}
 			);
 		}
 	};
