@@ -40,7 +40,7 @@ export class Checkout {
 					Util.request({
 						url: Env.baseUrl + Config.braintreeConfig.endpoint,
 						success: (token: string) => {
-							const checkoutUI: JQuery	= element.find('.checkout-ui');
+							const checkoutUI: JQuery	= element.find('.braintree');
 
 							checkoutUI.html('');
 
