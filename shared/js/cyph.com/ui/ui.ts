@@ -22,8 +22,8 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	public business: boolean			= false;
 	public telehealth: boolean			= false;
 
-	/** Amount ($USD) in Cart */
-	public cart: number;
+	/** Amount, Category, and Item in Cart */
+	public cart = [0, 0, 0];
 
 	/**Fixed Business Pricing */
 	public theBasics: number			= 99; // "The Basics" Plan
@@ -123,9 +123,13 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	}
 
 	public updateCart (
-		amount: number
+		amount: number,
+		category: number,
+		item: number
 	) : void {
-		this.cart = amount;
+		this.cart[0] = amount;
+		this.cart[1] = category;
+		this.cart[2] = item;
 		this.changeState(States.checkout);
 	}
 
