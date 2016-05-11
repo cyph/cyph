@@ -4,7 +4,7 @@ connect-src 'self' https://*.cyph.com https://api.cyph.com https://ping.cyphdbyh
 font-src 'self' https://www.cyph.com data:;
 form-action https://api.cyph.com;
 frame-src https://api.cyph.com;
-img-src 'self' https://www.cyph.com data:;
+img-src 'self' data:;
 media-src 'self' https://www.cyph.com data: blob:;
 object-src 'none';
 referrer no-referrer;
