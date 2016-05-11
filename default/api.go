@@ -27,30 +27,43 @@ func init() {
 func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	nonce := sanitize(h.Request.PostFormValue("Nonce"))
 
-	amount, err := strconv.ParseInt(sanitize(h.Request.PostFormValue("Amount")), 10, 64)
+	planId := ""
+	if category, err := strconv.ParseInt(sanitize(h.Request.PostFormValue("Category")), 10, 64); err == nil {
+		if item, err := strconv.ParseInt(sanitize(h.Request.PostFormValue("Item")), 10, 64); err == nil {
+			planId = strconv.FormatInt(category, 10) + "-" + strconv.FormatInt(item, 10)
+		}
+	}
+
+	amountString := sanitize(h.Request.PostFormValue("Amount"))
+	amount, err := strconv.ParseInt(amountString, 10, 64)
 	if err != nil {
 		return err.Error(), http.StatusTeapot
 	}
 
-	planId := ""
-	transactionType := "sale"
-	if category, err := strconv.ParseInt(sanitize(h.Request.PostFormValue("Category")), 10, 64); err == nil {
-		if item, err := strconv.ParseInt(sanitize(h.Request.PostFormValue("Item")), 10, 64); err == nil {
-			planId = strconv.FormatInt(category, 10) + "-" + strconv.FormatInt(item, 10)
-			transactionType = "subscription"
-		}
-	}
-
 	tx, err := braintreeInit(h).Transaction().Create(&braintree.Transaction{
-		Type:               transactionType,
+		Type:               "sale",
 		Amount:             braintree.NewDecimal(amount, 2),
 		PaymentMethodNonce: nonce,
-		PlanId:             planId,
 	})
 
 	if err != nil {
 		return err.Error(), http.StatusTeapot
 	}
+
+	txJson, _ := json.Marshal(tx)
+
+	mail.SendToAdmins(h.Context, &mail.Message{
+		Sender:  "Cyph Sales <hello@cyph.com>",
+		Subject: "SALE SALE SALE",
+		Body: ("" +
+			sanitize(string(txJson)) +
+			"\n\nNonce: " + nonce +
+			"\n\nPlan ID: " + planId +
+			"\n\nAmount: " + amountString +
+			"\n\nName: " + sanitize(h.Request.PostFormValue("Name")) +
+			"\n\nEmail: " + sanitize(h.Request.PostFormValue("Email")) +
+		""),
+	})
 
 	return tx, http.StatusOK
 }

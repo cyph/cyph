@@ -768,7 +768,19 @@ export const Templates	= {
 	checkout: `
 		<form>
 			<div ng-hide='complete'>
-				<div class='checkout-ui'></div>
+				<div class='checkout-ui'>
+					<div class='braintree'></div>
+					<div layout-gt-sm='row'>
+						<md-input-container class='md-block' flex-gt-sm>
+							<label>Name</label>
+							<input ng-model='name' />
+						</md-input-container>
+						<md-input-container class='md-block' flex-gt-sm>
+							<label>Email</label>
+							<input ng-model='email' type='email' />
+						</md-input-container>
+					</div>
+				</div>
 				<md-button type='submit'>
 					Confirm \${{amount}} payment
 				</md-button>
@@ -798,16 +810,16 @@ export const Templates	= {
 				<div layout-gt-sm='row'>
 					<md-input-container class='md-block' flex-gt-sm>
 						<label>Name</label>
-						<input ng-model='fromName'>
+						<input ng-model='fromName' />
 					</md-input-container>
 					<md-input-container class='md-block' flex-gt-sm>
 						<label>Email</label>
-						<input ng-model='fromEmail' type='email'>
+						<input ng-model='fromEmail' type='email' />
 					</md-input-container>
 				</div>
 				<md-input-container class='md-block'>
 					<label>Subject</label>
-					<input ng-model='subject'>
+					<input ng-model='subject' />
 				</md-input-container>
 				<md-input-container class='md-block'>
 					<label>Message</label>
