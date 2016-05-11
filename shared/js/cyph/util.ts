@@ -291,10 +291,13 @@ export class Util {
 	public static retryUntilComplete (f: Function, retryIf?: Function) : void {
 		f((delay: number = 250) : void => {
 			if (!retryIf || retryIf()) {
-				setTimeout(
-					() => Util.retryUntilComplete(f, retryIf),
-					delay
-				);
+				const go	= () => Util.retryUntilComplete(f, retryIf);
+				if (delay >= 0) {
+					setTimeout(go, delay);
+				}
+				else {
+					go();
+				}
 			}
 		});
 	}

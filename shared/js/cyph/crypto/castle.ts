@@ -1,5 +1,7 @@
 import {CastleCore} from 'castlecore';
 import {ICastle} from 'icastle';
+import {Potassium} from 'potassium';
+import {Util} from 'cyph/util';
 import {CastleEvents, Events, State, Users} from 'session/enums';
 import {ISession} from 'session/isession';
 
@@ -10,6 +12,7 @@ export class Castle implements ICastle {
 
 	private incomingMessageId: number	= 0;
 	private incomingMessagesMax: number	= 0;
+	private receiveLock: boolean		= false;
 	private sendQueue: string[]			= [];
 
 	private incomingMessages: {
@@ -24,7 +27,7 @@ export class Castle implements ICastle {
 
 	public receive (message: string) : void {
 		try {
-			const cyphertext: Uint8Array	= Sodium.from_base64(message);
+			const cyphertext: Uint8Array	= Potassium.fromBase64(message);
 
 			const id: number	= new Uint32Array(cyphertext.buffer, 0, 1)[0];
 
@@ -43,36 +46,62 @@ export class Castle implements ICastle {
 		}
 		catch (_) {}
 
-		while (
-			this.incomingMessageId <= this.incomingMessagesMax &&
-			this.incomingMessages[this.incomingMessageId]
-		) {
-			let wasSuccessful: boolean;
+		if (this.receiveLock) {
+			return;
+		}
+		this.receiveLock	= true;
 
-			for (
-				const cyphertext of
+		Util.retryUntilComplete(outerRetry => {
+			if (
+				this.incomingMessageId <= this.incomingMessagesMax &&
 				this.incomingMessages[this.incomingMessageId]
 			) {
-				if (!wasSuccessful && this.core.receive(cyphertext)) {
-					this.session.trigger(Events.cyphertext, {
-						cyphertext: Sodium.to_base64(cyphertext),
-						author: Users.friend
-					});
+				let wasSuccessful: boolean;
 
-					wasSuccessful	= true;
-				}
+				let i: number	= 0;
+				const incomingMessages	= this.incomingMessages[this.incomingMessageId];
 
-				Sodium.memzero(cyphertext);
+				Util.retryUntilComplete(innerRetry => {
+					if (i < incomingMessages.length) {
+						const cyphertext:Uint8Array	= incomingMessages[i++]; 
+
+						if (wasSuccessful) {
+							Potassium.clearMemory(cyphertext);
+							innerRetry(-1);
+						}
+						else {
+							this.core.receive(cyphertext, (success: boolean) => {
+								if (success) {
+									this.session.trigger(Events.cyphertext, {
+										cyphertext: Potassium.toBase64(cyphertext),
+										author: Users.friend
+									});
+
+									wasSuccessful	= true;
+								}
+
+								Potassium.clearMemory(cyphertext);
+								innerRetry(-1);
+							});
+						}
+					}
+					else {
+						this.incomingMessages[this.incomingMessageId]	= null;
+
+						if (!wasSuccessful) {
+							this.receiveLock	= false;
+							return;
+						}
+
+						++this.incomingMessageId;
+						outerRetry(-1);
+					}
+				});
 			}
-
-			this.incomingMessages[this.incomingMessageId]	= null;
-
-			if (!wasSuccessful) {
-				break;
+			else {
+				this.receiveLock	= false;
 			}
-
-			++this.incomingMessageId;
-		}
+		});
 	}
 
 	public send (message: string) : void {
@@ -80,7 +109,7 @@ export class Castle implements ICastle {
 			this.sendQueue.push(message);
 		}
 		else {
-			const messageBytes: Uint8Array	= Sodium.from_string(message);
+			const messageBytes: Uint8Array	= Potassium.fromString(message);
 
 			const numBytes: Uint8Array	= new Uint8Array(
 				new Uint32Array([
@@ -94,8 +123,7 @@ export class Castle implements ICastle {
 				]).buffer
 			);
 
-			const id: Uint8Array	= new Uint8Array(4);
-			crypto.getRandomValues(id);
+			const id: Uint8Array	= Potassium.randomBytes(4);
 
 			for (
 				const i = new Uint32Array(1) ;
@@ -123,11 +151,11 @@ export class Castle implements ICastle {
 					this.core.send(data);
 				}
 				finally {
-					Sodium.memzero(data);
+					Potassium.clearMemory(data);
 				}
 			}
 
-			Sodium.memzero(messageBytes);
+			Potassium.clearMemory(messageBytes);
 		}
 	}
 
@@ -170,15 +198,15 @@ export class Castle implements ICastle {
 
 					this.receivedMessages[id].data.set(chunk, index);
 
-					Sodium.memzero(data);
+					Potassium.clearMemory(data);
 
 					if (++this.receivedMessages[id].totalChunks === numChunks) {
 						this.session.trigger(Events.castle, {
 							event: CastleEvents.receive,
-							data: Sodium.to_string(this.receivedMessages[id].data)
+							data: Potassium.toString(this.receivedMessages[id].data)
 						});
 
-						Sodium.memzero(this.receivedMessages[id].data);
+						Potassium.clearMemory(this.receivedMessages[id].data);
 
 						this.receivedMessages[id]	= null;
 					}

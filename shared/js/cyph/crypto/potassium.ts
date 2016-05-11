@@ -116,7 +116,7 @@ export class Potassium {
 				};
 
 				try {
-					ntruKeyPair	= Potassium.Sodium.Ntru.keyPair();
+					ntruKeyPair	= Potassium.Ntru.keyPair();
 
 					keyPair		= {
 						keyType: 'potassium',
@@ -171,6 +171,9 @@ export class Potassium {
 			callback: (cyphertext: Uint8Array, err: any) => void
 		) : void => {
 			try {
+				publicKey	= new Uint8Array(publicKey);
+				privateKey	= new Uint8Array(privateKey);
+
 				const publicKeys	= {
 					ntru: new Uint8Array(publicKey.buffer, 0, Potassium.Ntru.publicKeyLength),
 					alt: new Uint8Array(publicKey.buffer, Potassium.Ntru.publicKeyLength)
@@ -306,6 +309,10 @@ export class Potassium {
 			catch (err) {
 				callback(undefined, err);
 			}
+			finally {
+				Potassium.clearMemory(privateKey);
+				Potassium.clearMemory(publicKey);
+			}
 		},
 
 		open: (
@@ -315,6 +322,10 @@ export class Potassium {
 			callback: (plaintext: Uint8Array, err: any) => void
 		) : void => {
 			try {
+				cyphertext	= new Uint8Array(cyphertext);
+				publicKey	= new Uint8Array(publicKey);
+				privateKey	= new Uint8Array(privateKey);
+
 				const publicKeys	= {
 					ntru: new Uint8Array(publicKey.buffer, 0, Potassium.Ntru.publicKeyLength),
 					alt: new Uint8Array(publicKey.buffer, Potassium.Ntru.publicKeyLength)
@@ -430,6 +441,11 @@ export class Potassium {
 			catch (err) {
 				callback(undefined, err);
 			}
+			finally {
+				Potassium.clearMemory(privateKey);
+				Potassium.clearMemory(publicKey);
+				Potassium.clearMemory(cyphertext);
+			}
 		}
 	};
 
@@ -500,6 +516,8 @@ export class Potassium {
 				err: any
 			) => void
 		) : void => {
+			completeHash	= new Uint8Array(completeHash);
+
 			let outputBytes: number;
 			let hash: Uint8Array;
 			let salt: Uint8Array;
@@ -523,6 +541,9 @@ export class Potassium {
 					err
 				);
 				return;
+			}
+			finally {
+				Potassium.clearMemory(completeHash);
 			}
 
 			callback(
@@ -649,6 +670,7 @@ export class Potassium {
 			const processData	= (symmetricCyphertext: Uint8Array, err: any) : void => {
 				if (err) {
 					callback(undefined, err);
+					return;
 				}
 
 				const cyphertext: Uint8Array	= new Uint8Array(
@@ -699,6 +721,8 @@ export class Potassium {
 			callback: (plaintext: Uint8Array, err: any) => void
 		) : void => {
 			try {
+				cyphertext	= new Uint8Array(cyphertext);
+
 				const nonce: Uint8Array					= new Uint8Array(
 					cyphertext.buffer,
 					0,
@@ -713,6 +737,7 @@ export class Potassium {
 				const unpadData	= (paddedPlaintext: Uint8Array, err: any) : void => {
 					if (err) {
 						callback(undefined, err);
+						return;
 					}
 
 					try {
@@ -751,6 +776,9 @@ export class Potassium {
 			}
 			catch (err) {
 				callback(undefined, err);
+			}
+			finally {
+				Potassium.clearMemory(cyphertext);
 			}
 		}
 	};
