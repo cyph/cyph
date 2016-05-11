@@ -42,7 +42,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	}
 
 	tx, err := braintreeInit(h).Transaction().Create(&braintree.Transaction{
-		Type:               "sale",
+		Type:               transactionType,
 		Amount:             braintree.NewDecimal(amount, 2),
 		PaymentMethodNonce: nonce,
 		PlanId:             planId,
