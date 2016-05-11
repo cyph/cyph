@@ -768,6 +768,16 @@ export const Templates	= {
 	checkout: `
 		<form>
 			<div ng-hide='complete'>
+				<div layout-gt-sm='row'>
+					<md-input-container class='md-block' flex-gt-sm>
+						<label>Name</label>
+						<input ng-model='name'>
+					</md-input-container>
+					<md-input-container class='md-block' flex-gt-sm>
+						<label>Email</label>
+						<input ng-model='email' type='email'>
+					</md-input-container>
+				</div>
 				<div class='checkout-ui'></div>
 				<md-button type='submit'>
 					Confirm \${{amount}} payment

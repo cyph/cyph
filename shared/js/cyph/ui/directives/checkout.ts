@@ -54,7 +54,9 @@ export class Checkout {
 											Nonce: data.nonce,
 											Amount: Math.floor(parseFloat(scope['amount']) * 100),
 											Category: scope['category'],
-											Item: scope['item']
+											Item: scope['item'],
+											Name: scope['name'],
+											Email: scope['email']
 										},
 										success: (response) => {
 											if (JSON.parse(response).Status === 'authorized') {
