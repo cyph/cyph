@@ -37,7 +37,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	if category, err := strconv.ParseInt(sanitize(h.Request.PostFormValue("Category")), 10, 64); err == nil {
 		if item, err := strconv.ParseInt(sanitize(h.Request.PostFormValue("Item")), 10, 64); err == nil {
 			planId = strconv.FormatInt(category, 10) + "-" + strconv.FormatInt(item, 10)
-			transactionType := "subscription"
+			transactionType = "subscription"
 		}
 	}
 
