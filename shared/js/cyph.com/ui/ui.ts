@@ -14,6 +14,9 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	/** Podcast promo page state/view. */
 	public podcast: Podcasts			= Podcasts.none;
 
+	public features						= ["Video Calls", "Voice Calls", "Chats", "Photos", "File Transfers"];
+	public featureIndex: number			= 0;
+
 	/** Donation amount in dollars (default). */
 	public donationAmount: number		= 10;
 
@@ -151,6 +154,17 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		return this.customDoctorPricing;
 	}
 
+	public cycleFeatures(){
+			if(this.featureIndex < this.features.length-1){
+				this.featureIndex++;
+				this.controller.update();
+			}else{
+				this.featureIndex = 0;
+				this.controller.update();
+			}
+	}
+		
+
 	/**
 	 * Changes UI state.
 	 * @param state
@@ -261,6 +275,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		), 500);
 
 
+
 		/* Section sizing
 
 		if (!Cyph.Env.isMobile) {
@@ -301,7 +316,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 			}
 		});
 
-
+		setInterval(() => this.cycleFeatures(), 4200);
 		setTimeout(() => Cyph.UI.Elements.html.addClass('load-complete'), 100);
 	}
 }
