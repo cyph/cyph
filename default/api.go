@@ -27,11 +27,6 @@ func init() {
 func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	nonce := sanitize(h.Request.PostFormValue("Nonce"))
 
-	amount, err := strconv.ParseInt(sanitize(h.Request.PostFormValue("Amount")), 10, 64)
-	if err != nil {
-		return err.Error(), http.StatusTeapot
-	}
-
 	planId := ""
 	transactionType := "sale"
 	if category, err := strconv.ParseInt(sanitize(h.Request.PostFormValue("Category")), 10, 64); err == nil {
@@ -41,9 +36,19 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		}
 	}
 
+	var amount *braintree.Decimal
+	if planId == "" {
+		amountInt, err := strconv.ParseInt(sanitize(h.Request.PostFormValue("Amount")), 10, 64)
+		if err != nil {
+			return err.Error(), http.StatusTeapot
+		}
+
+		amount = braintree.NewDecimal(amountInt, 2)
+	}
+
 	tx, err := braintreeInit(h).Transaction().Create(&braintree.Transaction{
 		Type:               transactionType,
-		Amount:             braintree.NewDecimal(amount, 2),
+		Amount:             amount,
 		PaymentMethodNonce: nonce,
 		PlanId:             planId,
 	})
