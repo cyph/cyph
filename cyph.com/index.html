@@ -1168,7 +1168,7 @@
 								</div>
 							</div>
 
-							<div class='price' ng-click='ui.updateCart(ui.theBasics)'>${{ui.theBasics}}/mo</div>
+							<div class='price' ng-click='ui.updateCart(ui.theBasics, 2, 0)'>${{ui.theBasics}}/mo</div>
 						</div>
 						<br hide-gt-sm />
 						<div  class='pricing'>
@@ -1341,7 +1341,7 @@
 				<p>
 					<span translate>
 						If you'd like to help support our mission, you may donate
-						via PayPal below or use the Bitcoin address
+						via the form below below or use the Bitcoin address
 					</span>
 					<a
 						target='_self'
@@ -1396,7 +1396,7 @@
 						<a href='/donate'> make a donation </a>
 						.
 					</div>
-					<cyph-checkout amount='ui.cart' ng-show='ui.cart'></cyph-checkout>
+					<cyph-checkout amount='ui.cart[0]' category='ui.cart[1]' item='ui.cart[2]' ng-show='ui.cart[0] != 0'></cyph-checkout>
 				<div flex='33'></div>
 			</div>
 		</section>
