@@ -508,7 +508,7 @@ md-icon.back.material-icons:hover {
 
 	md-icon {
 		font-size: 32px;
-		margin: 10px 15px 10px 15px;
+		margin: 10px 15px 10px 10px;
 		width: 32px;
 		position: relative;
 	}
@@ -683,6 +683,19 @@ input.doctors {
 	}
 }
 
+#business .laptop {
+	left: -8%;
+	position: absolute;
+	top: 18%;
+}
+
+#business .doctor {
+	left: 65%;
+	position: absolute;
+	top: 10%;
+	z-index: -1;
+}
+
 /** Checkout Page */
 .cart {
 	position: relative;
@@ -784,13 +797,6 @@ html.mobile .mfp-content {
 	z-index: 0;
 	left: -21%;
 	top: 69%;
-}
-
-#business {
-	.bg-image {
-		left: -6%;
-		top: 9%;
-	}
 }
 
 #telehealth.bgimage {

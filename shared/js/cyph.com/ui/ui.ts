@@ -25,7 +25,10 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	/** Amount, Category, and Item in Cart */
 	public cart = [0, 0, 0];
 
-	/**Fixed Business Pricing */
+	/** Beta Pricing */
+	public betaPlan = 499;
+	
+	/** Fixed Business Pricing */
 	public theBasics: number			= 99; // "The Basics" Plan
 	public theWorks: number				= 499; // "The Works" Plan
 

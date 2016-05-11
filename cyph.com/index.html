@@ -727,7 +727,7 @@
 					<div layout-sm='row' layout-xs='row'>
 						<div flex></div>
 						<div class='pricing-chart animated bounceInDown' ng-hide='ui.individual||ui.business||ui.telehealth' layout='row' layout-sm='column' layout-xs='column'>
-							<div flex='35'></div>
+							<div flex='40'></div>
 							<div class='animated flipInX' data-wow-delay='2250ms' flex='10'>
 								<h2>Individual</h2>
 								<md-button
@@ -751,19 +751,8 @@
 									<md-icon md-font-set='material-icons'>domain</md-icon>
 								</md-button>
 							</div>
-
-							<div class='animated flipInX' data-wow-delay='2250ms' flex='10'>
-								<h2>Telehealth</h2>
-								<md-button
-									type='submit'
-									ng-click='ui.telehealth=true'
-									aria-label='Telehealth'
-									ng-hide=''
-								>
-									<md-icon md-font-set='material-icons'>video_call</md-icon>
-								</md-button>
 							</div>
-							<div flex='35'></div>
+							<div flex='40'></div>
 						</div>
 						<div flex></div>
 					</div>
@@ -861,7 +850,7 @@
 						hide-sm
 						hide-xs
 					>keyboard_backspace</md-icon>
-					<div class='bg-image' class='animated bounceInLeft' flex='20'>
+					<div class='bg-image' class='animated bounceInRight' flex='20'>
 						<img src='/img/doctor.png'></img>
 					</div>
 					<div layout='row' layout-sm='columns' layout-xs='column' layout-align-sm='center center' layout-align-xs='center center' class='pricing-chart animated bounceInUp' flex>
@@ -1041,7 +1030,7 @@
 											md-font-set='material-icons'
 											class='ng-isolate-scope md-default-theme material-icons'
 										>reply_all</md-icon>
-										<h4>Any features, plus:</h4>
+										<h4>Any Beta features, plus:</h4>
 									</div>
 									<hr>
 									<div class='feature indent' layout='row'>
@@ -1119,7 +1108,7 @@
 						hide-sm
 						hide-xs
 					>keyboard_backspace</md-icon>
-					<div class='bg-image' class='animated bounceInLeft' flex='20'>
+					<div class='bg-image laptop' class='animated bounceInLeft' flex='20'>
 						<img src='/img/business-man.png'></img>
 					</div>
 					<div show-sm show-xs flex></div>
@@ -1127,111 +1116,7 @@
 						<div flex></div>
 						<br hide-gt-sm />
 						<div  class='pricing'>
-							<h3>The Basics</h3>
-
-							<div class='features'>
-								<p>
-									The core functionality of Cyph. Registration-optional
-									secure chat and images.
-								</p>
-
-								<div class='feature' layout='row'>
-									<md-icon
-										md-font-set='material-icons'
-										class='ng-isolate-scope md-default-theme material-icons'
-									>chat</md-icon>
-									<h4>Instant Messaging</h4>
-								</div>
-								<div class='feature' layout='row'>
-									<md-icon
-										md-font-set='material-icons'
-										class='ng-isolate-scope md-default-theme material-icons'
-									>photo_camera</md-icon>
-									<h4>Picture Messaging</h4>
-								</div>
-
-								<p>All Plans</p>
-								<hr>
-								<div class='feature' layout='row'>
-									<md-icon
-										md-font-set='material-icons'
-										class='ng-isolate-scope md-default-theme material-icons'
-									>all_inclusive</md-icon>
-									<h4>Unlimited Sessions</h4>
-								</div>
-								<div class='feature' layout='row'>
-									<md-icon
-										md-font-set='material-icons'
-										class='ng-isolate-scope md-default-theme material-icons'
-									>security</md-icon>
-									<h4>Powerful Encryption</h4>
-								</div>
-							</div>
-
-							<div class='price' ng-click='ui.updateCart(ui.theBasics, 2, 0)'>${{ui.theBasics}}/mo</div>
-						</div>
-						<br hide-gt-sm />
-						<div  class='pricing'>
-							<h3>The Works</h3>
-
-							<div class='features'>
-								<p>
-									The current full functionality of Cyph. Everything in
-									The Basics, <em>plus</em> voice, video, and file transfers.
-								</p>
-
-								<div class='feature' layout='row'>
-									<md-icon
-										md-font-set='material-icons'
-										class='ng-isolate-scope md-default-theme material-icons'
-									>reply</md-icon>
-									<h4>The Basics, plus:</h4>
-								</div>
-								<div class='feature indent' layout='row'>
-									<md-icon
-										md-font-set='material-icons'
-										class='ng-isolate-scope md-default-theme material-icons'
-									>videocam</md-icon>
-									<h4>Video Calling</h4>
-								</div>
-								<div class='feature indent' layout='row'>
-									<md-icon
-										md-font-set='material-icons'
-										class='ng-isolate-scope md-default-theme material-icons'
-									>phone</md-icon>
-									<h4>Voice Calling</h4>
-								</div>
-								<div class='feature indent' layout='row'>
-									<md-icon
-										md-font-set='material-icons'
-										class='ng-isolate-scope md-default-theme material-icons'
-									>attach_file</md-icon>
-									<h4>File Transfers</h4>
-								</div>
-
-								<p>All Plans</p>
-								<hr>
-								<div class='feature' layout='row'>
-									<md-icon
-										md-font-set='material-icons'
-										class='ng-isolate-scope md-default-theme material-icons'
-									>all_inclusive</md-icon>
-									<h4>Unlimited Sessions</h4>
-								</div>
-								<div class='feature' layout='row'>
-									<md-icon
-										md-font-set='material-icons'
-										class='ng-isolate-scope md-default-theme material-icons'
-									>security</md-icon>
-									<h4>Powerful Encryption</h4>
-								</div>
-							</div>
-
-							<div class='price' ng-click='ui.updateCart(ui.theWorks)'>${{ui.theWorks}}/mo</div>
-						</div>
-						<br hide-gt-sm />
-						<div  class='pricing'>
-							<h3>Custom</h3>
+							<h3>Enterprise Custom</h3>
 
 							<div class='features'>
 								<p>
@@ -1243,8 +1128,34 @@
 									<md-icon
 										md-font-set='material-icons'
 										class='ng-isolate-scope md-default-theme material-icons'
-									>reply_all</md-icon>
-									<h4>The Works, and/or:</h4>
+									></md-icon>
+									<h4>Beta Features, Plus:</h4>
+										<md-icon
+											md-font-set='material-icons'
+											class='ng-isolate-scope md-default-theme material-icons'
+										>arrow_forward</md-icon>
+								</div>
+								<hr>
+								<div class='feature indent' layout='row'>
+									<md-icon
+										md-font-set='material-icons'
+										class='ng-isolate-scope md-default-theme material-icons'
+									>people</md-icon>
+									<h4>User Management</h4>
+								</div>
+								<div class='feature indent' layout='row'>
+										<md-icon
+											md-font-set='material-icons'
+											class='ng-isolate-scope md-default-theme material-icons'
+										>palette</md-icon>
+									<h4>Custom Theming</h4>
+								</div>
+								<div class='feature indent' layout='row'>
+										<md-icon
+											md-font-set='material-icons'
+											class='ng-isolate-scope md-default-theme material-icons'
+										>domain</md-icon>
+									<h4>Self Hosting</h4>
 								</div>
 								<div class='feature indent' layout='row'>
 									<md-icon
@@ -1270,8 +1181,157 @@
 								<br />
 								<hr>
 							</div>
-
 							<a href='mailto:b2b@cyph.com' target='_blank'>
+								<div class='price' ng-click='/contact'>Contact Us</div>
+							</a>
+						</div>
+						<br hide-gt-sm />
+						<div  class='pricing'>
+							<h3>Early Beta Access</h3>
+
+							<div class='features'>
+								<p>
+									Get early access to Cyph for your business, as well lifetime priority support. Have a feature you really want to see in Cyph? Your requests are sent straight to the founders.
+								</p>
+								<hr />
+
+								<div class='feature' layout='row'>
+									<md-icon
+										md-font-set='material-icons'
+										class='ng-isolate-scope md-default-theme material-icons'
+									>enhanced_encryption</md-icon>
+									<h4>Powerful Encryption</h4>
+								</div>
+								<div class='feature' layout='row'>
+									<md-icon
+										md-font-set='material-icons'
+										class='ng-isolate-scope md-default-theme material-icons'
+									>touch_app</md-icon>
+									<h4>One Click Access</h4>
+								</div>
+								<div class='feature indent' layout='row'>
+									<md-icon
+										md-font-set='material-icons'
+										class='ng-isolate-scope md-default-theme material-icons'
+									>chat</md-icon>
+									<h4>Instant Messaging</h4>
+								</div>
+								<div class='feature indent' layout='row'>
+									<md-icon
+										md-font-set='material-icons'
+										class='ng-isolate-scope md-default-theme material-icons'
+									>photo_camera</md-icon>
+									<h4>Picture Messaging</h4>
+								</div>
+
+								<div class='feature indent' layout='row'>
+									<md-icon
+										md-font-set='material-icons'
+										class='ng-isolate-scope md-default-theme material-icons'
+									>videocam</md-icon>
+									<h4>Video Calling</h4>
+								</div>
+								<div class='feature indent' layout='row'>
+									<md-icon
+										md-font-set='material-icons'
+										class='ng-isolate-scope md-default-theme material-icons'
+									>phone</md-icon>
+									<h4>Voice Calling</h4>
+								</div>
+								<div class='feature indent' layout='row'>
+									<md-icon
+										md-font-set='material-icons'
+										class='ng-isolate-scope md-default-theme material-icons'
+									>attach_file</md-icon>
+									<h4>File Transfers</h4>
+								</div>
+
+								<p>Limited Time Offer</p>
+								<hr>
+								<div class='feature' layout='row'>
+									<md-icon
+										md-font-set='material-icons'
+										class='ng-isolate-scope md-default-theme material-icons'
+									>all_inclusive</md-icon>
+									<h4>Unlimited Sessions</h4>
+								</div>
+								<div class='feature' layout='row'>
+									<md-icon
+										md-font-set='material-icons'
+										class='ng-isolate-scope md-default-theme material-icons'
+									>live_help</md-icon>
+									<h4>Lifetime Priority Support</h4>
+								</div>
+							</div>
+
+							<div class='price' ng-click='ui.updateCart(ui.betaPlan)'>${{ui.betaPlan}} (one time)</div>
+						</div>
+						<br hide-gt-sm />
+						<div  class='pricing'>
+							<h3>Telehealth Custom</h3>
+
+							<div class='features'>
+								<p>
+									Integrate Cyph encryption into your app, site, or service.
+									Need custom features or pricing? Mix-and-match everything in The Works, <em>plus</em> the following premium features.
+								<p>
+
+									<div class='feature' layout='row'>
+										<md-icon
+											md-font-set='material-icons'
+											class='ng-isolate-scope md-default-theme material-icons'
+										>arrow_back</md-icon>
+										<h4>Beta Features, Plus:</h4>
+									</div>
+									<hr>
+									<div class='feature indent' layout='row'>
+										<md-icon
+											md-font-set='material-icons'
+											class='ng-isolate-scope md-default-theme material-icons'
+										>local_hospital</md-icon>
+										<h4>HIPAA BAA</h4>
+									</div>
+									<div class='feature indent' layout='row'>
+										<md-icon
+											md-font-set='material-icons'
+											class='ng-isolate-scope md-default-theme material-icons'
+										>schedule</md-icon>
+										<h4>Paitent Scheduling</h4>
+									</div>
+									<div class='feature indent' layout='row'>
+										<md-icon
+											md-font-set='material-icons'
+											class='ng-isolate-scope md-default-theme material-icons'
+										>credit_card</md-icon>
+										<h4>Payment Processing</h4>
+									</div>
+
+								<div class='feature indent' layout='row'>
+									<md-icon
+										md-font-set='material-icons'
+										class='ng-isolate-scope md-default-theme material-icons'
+									>settings</md-icon>
+									<h4>API Access</h4>
+								</div>
+								<div class='feature indent' layout='row'>
+										<md-icon
+											md-font-set='material-icons'
+											class='ng-isolate-scope md-default-theme material-icons'
+										>bookmark_border</md-icon>
+									<h4>White Label</h4>
+								</div>
+								<div class='feature indent' layout='row'>
+										<md-icon
+											md-font-set='material-icons'
+											class='ng-isolate-scope md-default-theme material-icons'
+										>edit</md-icon>
+									<h4>Custom Features</h4>
+								</div>
+								<br />
+								<hr>
+							</div>
+
+							<a href='mailto:telehealth@cyph.com' target='_blank'>
 								<div class='price'>Contact Us</div>
 							</a>
 							</div>
@@ -1284,6 +1344,9 @@
 								Back
 							</md-button>
 						<div flex></div>
+						<div class='bg-image doctor' class='animated bounceInRight' flex='20'>
+								<img src='/img/doctor.png'></img>
+						</div>
 					</div>
 				</div>
 			</div>
