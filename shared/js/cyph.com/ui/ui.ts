@@ -30,7 +30,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 
 	/** Beta Pricing */
 	public betaPlan = 499;
-	
+
 	/** Fixed Business Pricing */
 	public theBasics: number			= 99; // "The Basics" Plan
 	public theWorks: number				= 499; // "The Works" Plan
@@ -163,7 +163,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 				this.controller.update();
 			}
 	}
-		
+
 
 	/**
 	 * Changes UI state.

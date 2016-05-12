@@ -28,7 +28,7 @@ export class Checkout {
 				scope['Cyph']	= self['Cyph'];
 
 				const watch	= (attr: string) => scope.$watch(attrs[attr], (value: string) => {
-					scope[attr]	= value;	
+					scope[attr]	= value;
 					ui.controller.update();
 				});
 

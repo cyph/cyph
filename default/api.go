@@ -62,7 +62,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 			"\n\nAmount: " + amountString +
 			"\n\nName: " + sanitize(h.Request.PostFormValue("Name")) +
 			"\n\nEmail: " + sanitize(h.Request.PostFormValue("Email")) +
-		""),
+			""),
 	})
 
 	return tx, http.StatusOK
