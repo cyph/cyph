@@ -120,13 +120,19 @@ section#main {
 	box-shadow: 0px 4px 10px -1px rgba(0, 0, 0, 0.25);
 	background-color: #7d4fd3 !important;
 
-	@include transition(all 0.5s ease);
+	@include transition(all 0.75s ease);
 
 	&.focus, &:hover {
 		background-color: #7239dd !important;
 	}
+}
 
-	&.active {
+#main-toolbar .link-wrapper-outer {
+	@include transition(transform 0.5s ease 0.25s);
+}
+
+#main-toolbar.new-cyph-expanded {
+	#new-cyph {
 		font-size: 22px;
 		top: calc(50vh - 98px);
 		left: calc(50% - 120px);
@@ -134,6 +140,15 @@ section#main {
 		width: 240px;
 		border-radius: 3px;
 		opacity: 0.9;
+	}
+
+	.link-wrapper-outer {
+		&.right {
+			@include transform(translateX(60px));
+		}
+		&.left {
+			@include transform(translateX(-60px));
+		}
 	}
 }
 
@@ -247,8 +262,12 @@ html.mobile #hero-section {
 }
 
 .feature-cycle {
-	text-decoration: underline;
-	font-weight: 300;
+	font-family: Ubuntu;
+	font-size: 90%;
+	border-bottom: 1px solid #f1f1f1;
+	display: inline-block;
+	transform: translateY(-5px);
+	width: 300px;
 }
 
 #main-toolbar {
