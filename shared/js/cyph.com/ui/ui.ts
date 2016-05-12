@@ -270,8 +270,10 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		/* Header / new cyph button animation */
 
 		setInterval(() => Elements.newCyph.toggleClass('active',
-			this.state === States.home &&
-			Cyph.UI.Elements.footer.is(':appeared')
+			this.state === States.home && (
+				Elements.heroText.is(':appeared') ||
+				Cyph.UI.Elements.footer.is(':appeared')
+			)
 		), 500);
 
 
