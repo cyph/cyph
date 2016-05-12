@@ -128,7 +128,7 @@ section#main {
 
 	&.active {
 		font-size: 22px;
-		top: calc(50vh - 98px);
+		top: calc(50vh);
 		left: calc(50% - 120px);
 		height: 76px;
 		width: 240px;
@@ -799,7 +799,7 @@ html.mobile .demo-root {
 	}
 
 	> .section-content-container {
-		top: calc(50% + 35px);
+		top: calc(50% - 75px);
 	}
 }
 
