@@ -165,16 +165,23 @@ section#main {
 	}
 }
 
+
+
 #hero-section {
 	.hero-text {
 		margin-top: 65px;
 		font-size: 3.5em;
 	}
+}
 
-	.hero-description {
+.hero-description {
 		font-size: 1.7em;
 		text-align: center;
-		margin-bottom: 16px;
+		margin: auto;
+		
+		p {
+			line-height: 0 !important;
+		}
 
 		> div {
 			top: 50%;
@@ -188,7 +195,6 @@ section#main {
 			}
 		}
 	}
-}
 
 html.mobile #hero-section {
 	.hero-description {
@@ -217,7 +223,7 @@ html.mobile #hero-section {
 		@include transition(all 0.25s ease);
 
 		&.laptop {
-			margin-left: 0;
+			margin-left: calc(((50px + 5.525vw) * 3 - 50px) * -0.885);
 
 			&:not(.demo):hover {
 				margin-left: 0px;
@@ -814,7 +820,7 @@ html.mobile .demo-root {
 	}
 
 	> .section-content-container {
-		top: calc(50% + 35px);
+		top: calc(50% - 75px);
 	}
 }
 
