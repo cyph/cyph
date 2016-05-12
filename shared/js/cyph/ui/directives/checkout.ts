@@ -15,6 +15,7 @@ export class Checkout {
 		angular.module(Checkout.title, []).directive(Checkout.title, () => ({
 			restrict: 'E',
 			replace: false,
+			transclude: true,
 			template: Templates.checkout,
 			link: (scope, element, attrs) => Util.retryUntilComplete(retry => {
 				const ui: any	= self['ui'];
