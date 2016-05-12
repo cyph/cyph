@@ -896,20 +896,19 @@ html:not(.mobile) .amazon-link {
 }
 
 .chat-main .beta-signup-form {
-	text-align: center !important;
-	max-width: 620px;
 	margin-left: auto;
 	margin-right: auto;
-	padding: 30px 5vw 0px 5vw;
 
 	div {
-		line-height: 200%;
+		line-height: 135%;
+	}
+
+	md-input-container {
+		margin-top: 45px;
 	}
 
 	.md-button {
-		width: auto;
-		padding: 0px 25px 0px 25px;
-		margin-bottom: 35px;
+		font-size: 14px !important;
 	}
 }
 

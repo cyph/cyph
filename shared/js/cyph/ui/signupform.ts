@@ -29,19 +29,8 @@ export class SignupForm implements ISignupForm {
 	}
 
 	public submit () : void {
-		if (!this.data.email) {
-			return;
-		}
-
 		++this.state;
 		this.controller.update();
-
-		if (this.state === 2) {
-			setTimeout(() => {
-				++this.state;
-				this.controller.update();
-			}, 1500);
-		}
 
 		setTimeout(() => {
 			const $input: JQuery	= Elements.signupForm.find('input:visible');

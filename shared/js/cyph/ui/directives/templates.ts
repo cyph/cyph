@@ -363,7 +363,7 @@ export const Templates	= {
 						</md-item>
 
 						<div ng-show='$this.isDisconnected' layout='row' layout-align='center center'>
-							<md-card flex='75' class='md-padding'>
+							<md-card flex='50' class='md-padding'>
 								<md-card-content>
 									<ng-transclude></ng-transclude>
 								</md-card-content>
@@ -991,24 +991,22 @@ export const Templates	= {
 				<div ng-show='$this.state === 0'>
 					<ng-transclude></ng-transclude>
 					<md-input-container>
-						<label translate>email</label>
-						<input type='email' ng-model='$this.data.email' />
+						<label translate>Email</label>
+						<input ng-model='$this.data.email' type='email' required />
 					</md-input-container>
 				</div>
 				<div ng-show='$this.state === 1'>
 					<p translate>
-						Thanks so much for signing up!
-					</p>
-					<p translate>
-						Feel free to add your name as well. :)
+						We'll try not to spam you. In fact, you'll probably never
+						hear from us.
 					</p>
 					<md-input-container>
-						<label translate>name (optional)</label>
+						<label translate>Name (optional)</label>
 						<input ng-model='$this.data.name' />
 					</md-input-container>
 				</div>
 				<div translate ng-show='$this.state === 2'>
-					You rock.
+					Hi {{$this.data.name}}. I'm Cyph. Nice to meet you.
 				</div>
 				<md-button
 					translate

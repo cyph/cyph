@@ -77,7 +77,8 @@ export class UI extends Cyph.UI.BaseButtonManager {
 					this.dialogManager.baseDialog({
 						template: Cyph.UI.Templates.login,
 						locals: {
-							signupForm: this.signupForm
+							signupForm: this.signupForm,
+							Cyph: self['Cyph']
 						},
 						onclose: () => Cyph.UrlState.set('')
 					});

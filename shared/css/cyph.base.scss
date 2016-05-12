@@ -273,73 +273,42 @@ html:not(.mobile) .platform-container.mobile .mobile-only {
 
 /* Moved beta signup stuff from cyph.com CSS */
 
-.beta-signup-form {
-	color: #f1f1f1;
-	min-width: 600px;
-
-	*, md-input-container.md-default-theme * {
-		color: #f1f1f1;
-		border-color: #f1f1f1;
-		width: 100%;
-	}
-
-	*:not(p):not(p *) {
-		display: block;
-	}
-
-	md-input-container.md-input-focused * {
-		color: #c9adff !important;
-		border-color: #c9adff !important;
-	}
-
-	md-input-container.md-default-theme label {
-		font-size: 0.75em;
-	}
-
-	.md-button {
-		background-color: rgba(125, 79, 211, 0.9) !important;
-		margin: -20px auto;
-	}
-
-	h1 {
-		text-align: center;
-		position: relative;
-		top: -30px;
-	}
-
-	h2 {
-		text-align: center;
-		font-weight: bold;
-	}
-
-	h4 {
-		float: right;
-	}
-
-	.login .md-button {
-		height: auto !important;
-		width: 28% !important;
-	}
-
-	.back {
-		width: 0px;
-		position: fixed !important;
-		left: -15px;
-		top: 75px;
-		display: block;
-	}
-
-	.back:hover {
-		cursor: pointer;
+.login {
+	md-content {
+		padding: 40px;
 	}
 }
 
-.beta-signup-form .md-button md-icon, .pricing-chart .md-button .md-icon {
+.beta-signup-form {
+	* {
+		color: #f1f1f1 !important;
+		border-color: #f1f1f1 !important;
+	}
+
+	md-input-container {
+		width: 50%;
+		margin: auto;
+		margin-top: 30px;
+		display: block;
+
+		&.md-input-focused * {
+			color: #c9adff !important;
+			border-color: #c9adff !important;
+		}
+	}
+
+	.md-button {
+		margin: auto;
+		display: block;
+	}
+}
+
+.pricing-chart .md-button .md-icon {
 	line-height: 20px !important;
 	font-size: 72px !important;
 }
 
-.beta-signup-form .md-button, .pricing-chart .md-button, #new-cyph-footer {
+.pricing-chart .md-button, #new-cyph-footer {
 	font-family: 'Ubuntu' !important;
 	line-height: 50px !important;
 	font-size: 18px !important;
