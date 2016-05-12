@@ -1007,7 +1007,11 @@
 								</div>
 							</div>
 
-							<div class='price' ng-click='ui.updateCart(ui.betaPlan)'>${{ui.betaPlan}} (one time)</div>
+							<div class='price' ng-click='ui.updateCart(
+								ui.betaPlan,
+								Cyph.Config.pricingConfig.categories.enterprise.id,
+								Cyph.Config.pricingConfig.categories.enterprise.items.beta.id
+							)'>${{ui.betaPlan}} (one time)</div>
 						</div>
 						<br hide-gt-sm />
 						<div  class='pricing'>
@@ -1178,7 +1182,11 @@
 						 />
 					</div>
 					<md-button class='donate-button' aria-label='Submit Donation'>
-						<a translate ng-click='ui.updateCart(ui.donationAmount)'>
+						<a translate ng-click='ui.updateCart(
+							ui.donationAmount,
+							Cyph.Config.pricingConfig.categories.donation.id,
+							Cyph.Config.pricingConfig.categories.donation.items.generic.id
+						)'>
 							Confirm Donation Amount
 						</a>
 					</md-button>
@@ -1201,7 +1209,14 @@
 						<a href='/donate'> make a donation </a>
 						.
 					</div>
-					<cyph-checkout amount='ui.cart[0]' category='ui.cart[1]' item='ui.cart[2]' ng-show='ui.cart[0] != 0'></cyph-checkout>
+					<cyph-checkout amount='ui.cart[0]' category='ui.cart[1]' item='ui.cart[2]' ng-show='ui.cart[0] !== 0'>
+						<div ng-show='ui.cart[1] === Cyph.Config.pricingConfig.categories.donation.id'>
+							Thank you for supporting Cyph!
+						</div>
+						<div ng-hide='ui.cart[1] === Cyph.Config.pricingConfig.categories.donation.id'>
+							Payment confirmed! Follow-up instructions will be sent via email.
+						</div>
+					</cyph-checkout>
 				<div flex='33'></div>
 			</div>
 		</section>
