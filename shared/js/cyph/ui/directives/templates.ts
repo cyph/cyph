@@ -362,8 +362,12 @@ export const Templates	= {
 							</span>
 						</md-item>
 
-						<div ng-show='$this.isDisconnected'>
-							<ng-transclude></ng-transclude>
+						<div ng-show='$this.isDisconnected' layout='row' layout-align='center center'>
+							<md-card flex='75' class='md-padding'>
+								<md-card-content>
+									<ng-transclude></ng-transclude>
+								</md-card-content>
+							</md-card>
 						</div>
 					</md-list>
 				</md-content>
