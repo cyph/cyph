@@ -207,8 +207,7 @@ html.mobile #hero-section {
 		&.laptop {
 			height: calc((50px + 5.525vw) * 3 - 25px);
 			&:not(.demo):hover {
-				margin-left: calc(((50px + 5.525vw) * 3 - 50px) * -0.885);
-
+				opacity: 0.9;
 				@include transition(all 0.75s ease);
 			}
 		}
@@ -226,8 +225,7 @@ html.mobile #hero-section {
 		}
 
 		&:not(.demo):hover {
-			height: calc((50px + 5.525vw) * 3 - 25px);
-			margin-top: 0px;
+			opacity: 0.9;
 			z-index: 3;
 		}
 	}
