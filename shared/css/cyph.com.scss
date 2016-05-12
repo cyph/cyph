@@ -146,6 +146,7 @@ section#main {
 		&.right {
 			@include transform(translateX(60px));
 		}
+
 		&.left {
 			@include transform(translateX(-60px));
 		}
@@ -165,8 +166,6 @@ section#main {
 		margin: 10px -25px;
 	}
 }
-
-
 
 #hero-section {
 	.hero-text {
@@ -218,11 +217,15 @@ html.mobile #hero-section {
 
 	.screenshot {
 		@include transition(all 0.25s ease);
+
 		opacity: 0.5;
+
 		&.laptop {
 			height: calc((50px + 5.525vw) * 3 - 25px);
+
 			&:not(.demo):hover {
 				opacity: 0.9;
+
 				@include transition(all 0.75s ease);
 			}
 		}
