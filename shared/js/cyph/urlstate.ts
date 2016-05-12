@@ -68,8 +68,8 @@ export class UrlState {
 				}
 			}
 
-			/* Force fragment-based paths in WebSigned environments */
-			if (WebSign && path.length > 0) {
+			/* Force fragment-based paths when not on home site */
+			if (!Env.isHomeSite && path.length > 0) {
 				path	= '#' + path;
 			}
 

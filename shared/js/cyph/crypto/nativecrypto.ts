@@ -158,7 +158,7 @@ export class NativeCrypto {
 					if (err) {
 						callback(undefined, err);
 						return;
-					} 
+					}
 
 					NativeCrypto.Subtle.encrypt(
 						NativeCrypto.Box.algorithm.name,
