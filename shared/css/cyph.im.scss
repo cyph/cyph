@@ -500,16 +500,6 @@ html.mobile button[disabled] {
 			position: absolute;
 			top: calc(50% - 25px);
 			left: calc(50% - 25px);
-
-			.md-left .md-half-circle {
-				border-top-color: #f1f1f1;
-				border-left-color: #f1f1f1;
-			}
-
-			.md-right .md-half-circle {
-				border-top-color: #f1f1f1;
-				border-right-color: #f1f1f1;
-			}
 		}
 
 		&:not(.playing) {
@@ -532,14 +522,6 @@ html.mobile button[disabled] {
 				margin-left: 25px;
 				padding-right: 100px;
 				padding-bottom: 20px;
-
-				.md-container {
-					background-color: rgba(197, 202, 233, 0.4);
-
-					.md-bar {
-						background-color: #f1f1f1;
-					}
-				}
 			}
 		}
 	}

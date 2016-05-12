@@ -770,12 +770,12 @@ export const Templates	= {
 			<div ng-hide='complete'>
 				<div class='checkout-ui'>
 					<div class='braintree'></div>
-					<div layout-gt-sm='row'>
-						<md-input-container class='md-block' flex-gt-sm>
+					<div layout='row'>
+						<md-input-container class='md-block' flex>
 							<label>Name</label>
 							<input ng-model='name' />
 						</md-input-container>
-						<md-input-container class='md-block' flex-gt-sm>
+						<md-input-container class='md-block' flex>
 							<label>Email</label>
 							<input ng-model='email' type='email' />
 						</md-input-container>
@@ -795,7 +795,7 @@ export const Templates	= {
 		<div>
 			<div ng-hide='sent'>
 				<div layout-gt-xs='row'>
-					<md-input-container class='md-block' flex-gt-sm>
+					<md-input-container class='md-block' flex>
 						<label>Cyph team to contact</label>
 						<md-select ng-model='to'>
 							<md-option
@@ -807,12 +807,12 @@ export const Templates	= {
 						</md-select>
 					</md-input-container>
 				</div>
-				<div layout-gt-sm='row'>
-					<md-input-container class='md-block' flex-gt-sm>
+				<div layout='row'>
+					<md-input-container class='md-block' flex>
 						<label>Name</label>
 						<input ng-model='fromName' />
 					</md-input-container>
-					<md-input-container class='md-block' flex-gt-sm>
+					<md-input-container class='md-block' flex>
 						<label>Email</label>
 						<input ng-model='fromEmail' type='email' />
 					</md-input-container>
@@ -925,8 +925,52 @@ export const Templates	= {
 			flex
 		>
 			<div class='nano-content'>
-				<div ng-show='$this.proState === Cyph.im.UI.ProStates.login'>
-					Login screen
+				<div
+					class='login-form'
+					ng-show='$this.proState === Cyph.im.UI.ProStates.login'
+					ng-class='{checking: checking}'
+					layout='row'
+					layout-align='center center'
+				>
+					<md-card flex='75' class='md-padding'>
+						<md-card-title>
+							<md-card-title-text>
+								<span class='md-headline' translate>
+									Log In
+								</span>
+								<span class='md-subhead' translate>
+									Welcome to Cyph! You can log in to your beta account here.
+								</span>
+							</md-card-title-text>
+						</md-card-title>
+						<md-card-content>
+							<form>
+								<div layout='row' layout-align='center center'>
+									<md-subheader ng-style='{visibility: error ? "visible" : "hidden"}'>
+										Invalid username or password.
+									</md-subheader>
+								</div>
+								<div layout='row' layout-align='center center'>
+									<md-input-container class='md-block' flex='60'>
+										<label>Username</label>
+										<input ng-model='username' required />
+									</md-input-container>
+								</div>
+								<div layout='row' layout-align='center center'>
+									<md-input-container class='md-block' flex='60'>
+										<label>Password</label>
+										<input ng-model='password' type='password' required />
+									</md-input-container>
+								</div>
+								<div layout='row' layout-align='center center'>
+									<md-button type='submit' aria-label='Log In' translate>
+										Log In
+									</md-button>
+								</div>
+							</form>
+						</md-card-content>
+						<md-progress-circular md-mode='indeterminate'></md-progress-circular>
+					</md-card>
 				</div>
 				<div ng-show='$this.proState === Cyph.im.UI.ProStates.register'>
 					Registration screen

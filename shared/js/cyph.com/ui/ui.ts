@@ -14,6 +14,9 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	/** Podcast promo page state/view. */
 	public podcast: Podcasts			= Podcasts.none;
 
+	public features						= ["Video Calls", "Voice Calls", "Chats", "Photos", "File Transfers"];
+	public featureIndex: number			= 0;
+
 	/** Donation amount in dollars (default). */
 	public donationAmount: number		= 10;
 
@@ -22,10 +25,13 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	public business: boolean			= false;
 	public telehealth: boolean			= false;
 
-	/** Amount ($USD) in Cart */
-	public cart: number;
+	/** Amount, Category, and Item in Cart */
+	public cart = [0, 0, 0];
 
-	/**Fixed Business Pricing */
+	/** Beta Pricing */
+	public betaPlan = 499;
+
+	/** Fixed Business Pricing */
 	public theBasics: number			= 99; // "The Basics" Plan
 	public theWorks: number				= 499; // "The Works" Plan
 
@@ -123,9 +129,13 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	}
 
 	public updateCart (
-		amount: number
+		amount: number,
+		category: number,
+		item: number
 	) : void {
-		this.cart = amount;
+		this.cart[0] = amount;
+		this.cart[1] = category;
+		this.cart[2] = item;
 		this.changeState(States.checkout);
 	}
 
@@ -143,6 +153,17 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		}
 		return this.customDoctorPricing;
 	}
+
+	public cycleFeatures(){
+			if(this.featureIndex < this.features.length-1){
+				this.featureIndex++;
+				this.controller.update();
+			}else{
+				this.featureIndex = 0;
+				this.controller.update();
+			}
+	}
+
 
 	/**
 	 * Changes UI state.
@@ -254,6 +275,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		), 500);
 
 
+
 		/* Section sizing
 
 		if (!Cyph.Env.isMobile) {
@@ -294,7 +316,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 			}
 		});
 
-
+		setInterval(() => this.cycleFeatures(), 4200);
 		setTimeout(() => Cyph.UI.Elements.html.addClass('load-complete'), 100);
 	}
 }
