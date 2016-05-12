@@ -266,8 +266,12 @@ html.mobile #hero-section {
 }
 
 .feature-cycle {
-	text-decoration: underline;
-	font-weight: 300;
+	font-family: Ubuntu;
+	font-size: 90%;
+	border-bottom: 1px solid #f1f1f1;
+	display: inline-block;
+	transform: translateY(-5px);
+	width: 300px;
 }
 
 #main-toolbar {
