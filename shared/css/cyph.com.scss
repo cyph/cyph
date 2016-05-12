@@ -191,7 +191,7 @@ html.mobile #hero-section {
 .hero-container {
 	margin-top: 15px;
 
-	.screenshot, .hero-description {
+	.screenshot {
 		display: block;
 		height: calc((50px + 5.525vw) * 3 - 50px);
 		margin-top: 25px;
@@ -202,7 +202,7 @@ html.mobile #hero-section {
 		@include transition(all 0.25s ease);
 
 		&.laptop {
-			margin-left: calc(((50px + 5.525vw) * 3 - 50px) * -0.885);
+			margin-left: 0;
 
 			&:not(.demo):hover {
 				margin-left: 0px;
