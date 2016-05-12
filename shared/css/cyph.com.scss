@@ -139,6 +139,7 @@ section#main {
 		height: 76px;
 		width: 240px;
 		border-radius: 3px;
+		opacity: 0.9;
 	}
 
 	.link-wrapper-outer {
@@ -172,16 +173,11 @@ section#main {
 		margin-top: 65px;
 		font-size: 3.5em;
 	}
-}
 
-.hero-description {
+	.hero-description {
 		font-size: 1.7em;
 		text-align: center;
 		margin: auto;
-		
-		p {
-			line-height: 0 !important;
-		}
 
 		> div {
 			top: 50%;
@@ -195,6 +191,7 @@ section#main {
 			}
 		}
 	}
+}
 
 html.mobile #hero-section {
 	.hero-description {
@@ -214,20 +211,18 @@ html.mobile #hero-section {
 
 	.screenshot {
 		display: block;
-		height: calc((50px + 5.525vw) * 3 - 50px);
+		height: calc((50px + 3.7525vw) * 3 - 50px);
 		margin-top: 25px;
 		position: relative;
 	}
 
 	.screenshot {
 		@include transition(all 0.25s ease);
-
+		opacity: 0.5;
 		&.laptop {
-			margin-left: calc(((50px + 5.525vw) * 3 - 50px) * -0.885);
-
+			height: calc((50px + 5.525vw) * 3 - 25px);
 			&:not(.demo):hover {
-				margin-left: 0px;
-
+				opacity: 0.9;
 				@include transition(all 0.75s ease);
 			}
 		}
@@ -235,16 +230,17 @@ html.mobile #hero-section {
 		&.phone {
 			margin-left: auto;
 			margin-right: auto;
+			top: 100px;
 		}
 
 		&.demo {
 			position: absolute;
 			height: auto;
+			opacity: 1;
 		}
 
 		&:not(.demo):hover {
-			height: calc((50px + 5.525vw) * 3 - 25px);
-			margin-top: 0px;
+			opacity: 0.9;
 			z-index: 3;
 		}
 	}
@@ -809,7 +805,7 @@ html.mobile .demo-root {
 
 	> .hero-text, > .section-content-container {
 		position: absolute !important;
-		background-color: rgba(38, 38, 56, 0.6);
+		background-color: rgba(38, 38, 56, 0.75);
 		padding: 5px 10px;
 		margin: 0px;
 		text-align: center;
@@ -824,7 +820,7 @@ html.mobile .demo-root {
 	}
 
 	> .section-content-container {
-		top: calc(50% - 75px);
+		top: calc(50% + 50px);
 	}
 }
 
