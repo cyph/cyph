@@ -212,22 +212,30 @@
 					Secure your <span class='feature-cycle'>{{ui.features[ui.featureIndex]}}</span> in one click.
 				</h1>
 				<div class='hero-container grid-container'>
-					<div
-						class='wow desktop-only desktop-class-bounceInLeft grid-25 tablet-grid-25 mobile-grid-100'
-						data-wow-delay='2250ms'
-					>
-						<a href='/intro'>
-							<img class='laptop screenshot' src='/img/laptop-screenshot.png' alt='Laptop displaying secure Cyph video call' />
-						</a>
-						&nbsp;
-					</div>
+					<div layout='row'>	
+						<div flex='20'></div>
+						<div
+							class='wow desktop-only desktop-class-bounceInLeft tablet-grid-25 mobile-grid-100'
+							data-wow-delay='2250ms'
+						>
+							<a href='/intro'>
+								<img class='laptop screenshot' src='/img/laptop-screenshot.png' alt='Laptop displaying secure Cyph video call' />
+							</a>
+							&nbsp;
+						</div>
 
-					<div class='hero-description grid-50 tablet-grid-50 wow animated fadeIn' data-wow-delay='2500ms'>
-						<div>
-							<p translate>
-								Cyph is a powerful secure web application, which protects your {{ui.features[ui.featureIndex]}} against any threat, from lone hackers,
-								to agencies armed with theoretical quantum attacks.
-							</p>
+						<div
+							class='wow desktop-only desktop-class-bounceInRight tablet-grid-25 mobile-grid-100'
+							data-wow-delay='2250ms'
+						>
+							<a href='/intro'>
+								<img class='phone screenshot' src='/img/phone-screenshot.png' alt='Phone displaying secure Cyph video call' />
+							</a>
+							&nbsp;
+						</div>
+						<div flex='20'></div>
+					</div>
+					<div class='hero-description flex-100 wow animated fadeIn' data-wow-delay='2500ms'>
 							<p translate>
 								Just send a link &mdash;
 								no signups or downloads required!
@@ -235,15 +243,6 @@
 						</div>
 					</div>
 
-					<div
-						class='wow desktop-only desktop-class-bounceInRight grid-25 tablet-grid-25 mobile-grid-100'
-						data-wow-delay='2250ms'
-					>
-						<a href='/intro'>
-							<img class='phone screenshot' src='/img/phone-screenshot.png' alt='Phone displaying secure Cyph video call' />
-						</a>
-						&nbsp;
-					</div>
 				</div>
 			</div>
 
