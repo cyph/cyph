@@ -388,6 +388,38 @@ html:not(.mobile) .platform-container.mobile .mobile-only {
 	margin: 0%;
 }
 
+.login-form {
+	height: 100%;
+
+	md-input-container * {
+		color: #f1f1f1 !important;
+		border-color: #f1f1f1 !important;
+	}
+
+	md-progress-circular {
+		display: none;
+		position: absolute;
+		top: calc(50% - 25px);
+		left: calc(50% - 25px);
+	}
+
+	form .md-subheader {
+		color: red;
+		background: #f1f1f1;
+		margin: 20px;
+	}
+
+	&.checking {
+		md-progress-circular {
+			display: block;
+		}
+
+		md-card-title, md-card-content {
+			opacity: 0.15;
+		}
+	}
+}
+
 .buttons *[disabled] {
 	cursor: not-allowed;
 	background-color: #86789F !important;
@@ -772,17 +804,29 @@ html.mobile .mfp-content {
 	pointer-events: none !important;
 }
 
-/* FAQ */
+md-card {
+	background-color: rgba(81, 49, 140, 0.75);
+}
 
-#faq {
-	li {
-		list-style: none;
-		background-color: rgba(81, 49, 140, 0.75);
-		padding: 10px;
-		margin-top: 30px;
-		text-align: center;
-		border-radius: 20px;
-		box-shadow: 4px 10px 8px #8652e4;
+md-progress-circular {
+	.md-left .md-half-circle {
+		border-top-color: #f1f1f1 !important;
+		border-left-color: #f1f1f1 !important;
+	}
+
+	.md-right .md-half-circle {
+		border-top-color: #f1f1f1 !important;
+		border-right-color: #f1f1f1 !important;
+	}
+}
+
+md-progress-linear {
+	.md-container {
+		background-color: rgba(197, 202, 233, 0.4);
+
+		.md-bar {
+			background-color: #f1f1f1;
+		}
 	}
 }
 

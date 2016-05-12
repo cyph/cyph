@@ -69,7 +69,7 @@ $(() => {
 		$button.on('mouseup', () => setTimeout(() => elem.click(), 500));
 	});
 
-	if (WebSign) {
+	if (!Env.isLocalEnv && !Env.isHomeSite) {
 		/* In WebSigned environments, naked domain is canonical hostname */
 		if (locationData.host.indexOf('www.') === 0) {
 			locationData.host	= locationData.host.replace('www.', '');

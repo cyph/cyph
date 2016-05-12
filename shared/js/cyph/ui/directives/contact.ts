@@ -16,36 +16,34 @@ export class Contact {
 			restrict: 'E',
 			replace: false,
 			template: Templates.contact,
-			link: (scope, element, attrs) => {
-				Util.retryUntilComplete(retry => {
-					const ui: any	= self['ui'];
+			link: (scope, element, attrs) => Util.retryUntilComplete(retry => {
+				const ui: any	= self['ui'];
 
-					if (!ui) {
-						setTimeout(retry, 250);
-						return;
-					}
+				if (!ui) {
+					setTimeout(retry, 250);
+					return;
+				}
 
-					scope['ui']		= ui;
-					scope['Cyph']	= self['Cyph'];
+				scope['ui']		= ui;
+				scope['Cyph']	= self['Cyph'];
 
-					const watch	= (attr: string) => scope.$watch(attrs[attr], (value: string) => {
-						scope[attr]	= value;	
-						ui.controller.update();
-					});
-
-					watch('fromEmail');
-					watch('fromName');
-					watch('to');
-					watch('subject');
-					watch('message');
-
-					element.find('button').click(() => {
-						Util.email(<any> scope);
-						scope['sent']	= true;
-						self['ui'].controller.update();
-					});
+				const watch	= (attr: string) => scope.$watch(attrs[attr], (value: string) => {
+					scope[attr]	= value;	
+					ui.controller.update();
 				});
-			}
+
+				watch('fromEmail');
+				watch('fromName');
+				watch('to');
+				watch('subject');
+				watch('message');
+
+				element.find('button').click(() => {
+					Util.email(<any> scope);
+					scope['sent']	= true;
+					self['ui'].controller.update();
+				});
+			})
 		}));
 	})();
 }

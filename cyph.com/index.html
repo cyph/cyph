@@ -1210,16 +1210,19 @@
 			<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' translate>
 				Frequently Asked Questions
 			</h1>
-			<div class='section-content-container' layout='row'>
-				<div flex='20' hide-sm hide-xs></div>
-				<div flex>
-					<ul>
-						<li>
+			<div class='section-content-container' layout='row' layout-align='center center'>
+				<div class='md-padding' flex='75' flex-xs='95' layout='column'>
+					<md-card>
+						<md-card-header>
+							<md-card-header-text>
+								<span class='md-title' translate>
+									How do I use Cyph?
+								</span>
+							</md-card-header-text>
+						</md-card-header>
+						<md-card-content>
 							<p>
-								<strong translate>How do I use Cyph?</strong>
-							</p>
-							<p translate>
-								<span transalte>Simply go to</span>
+								<span translate>Simply go to</span>
 								<a ng-href='{{Cyph.Env.newCyphUrl}}'>cyph.im</a>
 								<span translate>
 									or click the "start new cyph" button and a cyph link will be generated
@@ -1228,28 +1231,47 @@
 									chat.
 								</span>
 							</p>
-						</li>
-						<li>
-							<p>
-								<strong translate>How do I send photos?</strong>
-							</p>
+						</md-card-content>
+					</md-card>
+					<md-card>
+						<md-card-header>
+							<md-card-header-text>
+								<span class='md-title' translate>
+									How do I send photos?
+								</span>
+							</md-card-header-text>
+						</md-card-header>
+						<md-card-content>
 							<p translate>
 								Click the plus icon in the message composition textbox, click the photo icon, and then select the photo you wish
 								to share.
 							</p>
-						</li>
-						<li>
-							<p>
-								<strong translate>How do I send files?</strong>
-							</p>
+						</md-card-content>
+					</md-card>
+					<md-card>
+						<md-card-header>
+							<md-card-header-text>
+								<span class='md-title' translate>
+									How do I send files?
+								</span>
+							</md-card-header-text>
+						</md-card-header>
+						<md-card-content>
 							<p translate>
-								Click the plus icon in the message composition textbox, click the paperclip icon, and then select the file you wish to share. Note: sending and reveiving files requires a WebRTC compatible browser. We reccomend Chrome or Firefox.
+								Click the plus icon in the message composition textbox, click the paperclip icon, and then select the file you wish
+								to share. Note: sending and reveiving files requires a WebRTC-compatible browser. We reccomend Chrome or Firefox.
 							</p>
-						</li>
-						<li>
-							<p>
-								<strong translate>How do I start a video or voice call?</strong>
-							</p>
+						</md-card-content>
+					</md-card>
+					<md-card>
+						<md-card-header>
+							<md-card-header-text>
+								<span class='md-title' translate>
+									How do I start a video or voice call?
+								</span>
+							</md-card-header-text>
+						</md-card-header>
+						<md-card-content>
 							<p translate>
 								Click the plus icon in the message composition textbox, then click the video (or phone) icon.
 								A warning will pop up confirming that you wish to send the call invite and
@@ -1257,56 +1279,84 @@
 								for voice and video, so you will be connecting directly to the other party
 								instead of going through our servers).
 							</p>
-						</li>
-						<li>
-							<p>
-								<strong translate>What data do you track?</strong>
-							</p>
+						</md-card-content>
+					</md-card>
+					<md-card>
+						<md-card-header>
+							<md-card-header-text>
+								<span class='md-title' translate>
+									What data do you track?
+								</span>
+							</md-card-header-text>
+						</md-card-header>
+						<md-card-content>
 							<p translate>
 								Currently, we only track numbers of: cyph sessions, messages, timeouts,
 								voice/video calls, file transfers, signups, "cyphertext" UI views, and calls
 								to our API.
 							</p>
-						</li>
-						<li>
-							<p>
-								<strong translate>How much does Cyph cost?</strong>
-							</p>
+						</md-card-content>
+					</md-card>
+					<md-card>
+						<md-card-header>
+							<md-card-header-text>
+								<span class='md-title' translate>
+									How much does Cyph cost?
+								</span>
+							</md-card-header-text>
+						</md-card-header>
+						<md-card-content>
 							<p>
 								<span translate>
 									The Cyph beta is free to use for individuals (we intend to always have a
 									free tier, because we see online privacy as a basic right) and we are
 									currently piloting
 								</span>
-								<a href='/pricing'>enterprise deployments of secure video and instant messaging</a>.
+								<a href='/pricing' translate>enterprise deployments of secure video and instant messaging</a>.
 							</p>
-						</li>
-						<li>
-							<p>
-								<strong translate>Do you have an Android/iOS/TI-89 app?</strong>
-							</p>
+						</md-card-content>
+					</md-card>
+					<md-card>
+						<md-card-header>
+							<md-card-header-text>
+								<span class='md-title' translate>
+									Do you have an Android/iOS/TI-89 app?
+								</span>
+							</md-card-header-text>
+						</md-card-header>
+						<md-card-content>
 							<p translate>
 								Native chat applications for Android and iOS are in the works.
 								We have no plans to support any Texas Instruments machines.
 							</p>
-						</li>
-						<li>
-							<p>
-								<strong translate>
+						</md-card-content>
+					</md-card>
+					<md-card>
+						<md-card-header>
+							<md-card-header-text>
+								<span class='md-title' translate>
 									Why do I keep getting the "I'm sorry,
 									but your cyph is in another castle" screen?
-								</strong>
-							</p>
+								</span>
+							</md-card-header-text>
+						</md-card-header>
+						<md-card-content>
 							<p translate>
 								Common reasons for landing on this page are: the cyph URL has been
 								opened more than once (only the first person who clicks it is allowed
 								into the chat) or the cyph link has already expired.
 							</p>
-						</li>
-						<li>
-							<p>
-								<strong translate>Has there been a third-party security audit of Cyph?</strong>
-							</p>
+						</md-card-content>
+					</md-card>
+					<md-card>
+						<md-card-header>
+							<md-card-header-text>
+								<span class='md-title' translate>
+									Has there been a third-party security audit of Cyph?
+								</span>
+							</md-card-header-text>
+						</md-card-header>
+						<md-card-content>
 							<p>
 								<span translate>Yes,</span>
 								<a href='https://cure53.de'>Cure53</a>
@@ -1321,11 +1371,17 @@
 								>[Complete Cure53 Pentest Report]</a>
 								<span translate>A postmortem analysis will be posted on our blog soon.</span>
 							</p>
-						</li>
-						<li>
-							<p>
-								<strong translate>How can I support Cyph?</strong>
-							</p>
+						</md-card-content>
+					</md-card>
+					<md-card>
+						<md-card-header>
+							<md-card-header-text>
+								<span class='md-title' translate>
+									How can I support Cyph?
+								</span>
+							</md-card-header-text>
+						</md-card-header>
+						<md-card-content>
 							<p translate>
 								<span translate>
 									One of the best ways you can support Cyph is by using it with your
@@ -1339,11 +1395,17 @@
 									growth of Cyph.
 								</span>
 							</p>
-						</li>
-						<li>
-							<p>
-								<strong translate>What should I do if I encounter a bug?</strong>
-							</p>
+						</md-card-content>
+					</md-card>
+					<md-card>
+						<md-card-header>
+							<md-card-header-text>
+								<span class='md-title' translate>
+									What should I do if I encounter a bug?
+								</span>
+							</md-card-header-text>
+						</md-card-header>
+						<md-card-content>
 							<p>
 								<span translate>Please contact us at</span>
 								<a href='mailto:bugs@cyph.com'>bugs@cyph.com</a>;
@@ -1352,10 +1414,9 @@
 									please include any steps to reproduce or other relevant information.
 								</span>
 							</p>
-						</li>
-					</ul>
+						</md-card-content>
+					</md-card>
 				</div>
-				<div flex='20' hide-sm hide-xs></div>
 			</div>
 		</section>
 

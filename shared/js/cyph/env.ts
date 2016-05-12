@@ -122,6 +122,11 @@ export class Env extends EnvDeploy {
 		}
 	})();
 
+	/** Indicates whether this is the Cyph corporate website (cyph.com). */
+	public static isHomeSite: boolean		=
+		Env.homeUrl.split('/')[2].replace('www.', '') === Env.host
+	;
+
 	/** Full URL for voice call video. */
 	public static p2pVoiceCallVideo: string	= Env.homeUrl + Config.p2pConfig.voiceCallVideo;
 
@@ -129,7 +134,7 @@ export class Env extends EnvDeploy {
 	public static platformString: string	= Env.isMobile ? 'mobile' : 'desktop';
 
 	/** Base URI for sending an SMS. */
-	public static smsUriBase: string	=
+	public static smsUriBase: string		=
 		'sms:' +
 		(Env.isIOS8Plus ? '&' : Env.isIOS ? ';' : '?') +
 		'body='
