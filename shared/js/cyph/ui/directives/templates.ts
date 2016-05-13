@@ -502,18 +502,20 @@ export const Templates	= {
 				<img
 					class='button'
 					src='/img/icons/help.png'
+					ng-hide='!$this.isConnected'
 					ng-click='$this.helpButton()'
 				/>
 				<a
 					class='button'
 					href='{{Cyph.Env.homeUrl}}'
+					ng-hide='!$this.isConnected'
 				>
-					<img src='/img/icons/castle.png' />
+					<img src='/img/icons/castle.small.png' />
 				</a>
 				<img
 					class='button'
 					src='/img/icons/close.png'
-					ng-class='{hidden: !$this.isConnected}'
+					ng-hide='!$this.isConnected'
 					ng-click='$this.disconnectButton()'
 				/>
 			</div>
