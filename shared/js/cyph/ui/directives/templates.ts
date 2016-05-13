@@ -966,7 +966,7 @@ export const Templates	= {
 
 				</div>
 				<div translate ng-show='$this.state === 2'>
-					Thanks for subscribing, {{$this.data.name}}! We'll e-mail you when your invite is ready.
+					Thanks for subscribing, {{$this.data.name}}! We'll email you when your invite is ready.
 				</div>
 			</form>
 	`,
