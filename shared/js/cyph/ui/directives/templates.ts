@@ -1025,7 +1025,7 @@ export const Templates	= {
 							ng-disabled='true'
 						>
 							Register
-							<md-tooltip>
+							<md-tooltip md-direction='up'>
 								Registration is currently closed.
 							</md-tooltip>
 						</md-button>
@@ -1044,10 +1044,14 @@ export const Templates	= {
 					<p translate>
 						Thanks for signing up. Feel free to give us your name too. Privacy is at the core of our ideology, so we'll never give away your email address or personal details.
 					</p>
-					<md-input-container>
-						<label translate>Name (optional)</label>
-						<input ng-model='$this.data.name' />
-					</md-input-container>
+					<div layout='row' flex='50'>
+						<div flex></div>
+						<md-input-container>
+							<label translate>Name (optional)</label>
+							<input ng-model='$this.data.name' />
+						</md-input-container>
+						<div flex></div>
+					</div>
 					<md-button
 							translate
 							type='submit'
@@ -1055,7 +1059,7 @@ export const Templates	= {
 							aria-label='Waitlist Signup'
 						>
 							Submit
-						</md-button>
+					</md-button>
 
 				</div>
 				<div translate ng-show='$this.state === 2'>

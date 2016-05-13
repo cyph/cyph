@@ -290,8 +290,8 @@ md-dialog.login {
 		margin: 1px 25px -5px -8px;
 	}
 
-	.md-input-container[disabled] label {
-		color: #999;
+	.md-input-container label {
+		color: #392859 !important;;
 	}
 	input{
 		background-color: #BBA8DF;
@@ -343,13 +343,9 @@ md-dialog.login {
 }
 
 .beta-signup-form {
-	* {
-		color: #f1f1f1 !important;
-		border-color: #f1f1f1 !important;
-	}
 
 	md-input-container {
-		margin: 25px auto 0px auto;
+		margin: 12px auto 12px auto;
 		display: block;
 
 		&.md-input-focused * {
