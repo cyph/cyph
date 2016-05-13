@@ -631,6 +631,11 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 		}
 	}
 
+	.message-list:after {
+		width: 15em;
+		height: 16.5em;
+	}
+
 	> .desktop {
 		height: calc((100vw - 60px) * 0.47 * 0.565);
 		width: 47%;
