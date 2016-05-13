@@ -498,24 +498,22 @@ export const Templates	= {
 			class='platform-container'
 			ng-class='{mobile: $this.isMobile}'
 		>
-			<div layout='row' layout-align='end end' flex='95'>
+			<div
+				class='buttons'
+				layout='row'
+				layout-align='end end'
+				flex='95'
+				ng-show='$this.isConnected'
+			>
 				<img
-					class='button'
 					src='/img/icons/help.png'
-					ng-hide='!$this.isConnected'
 					ng-click='$this.helpButton()'
 				/>
-				<a
-					class='button'
-					href='{{Cyph.Env.homeUrl}}'
-					ng-hide='!$this.isConnected'
-				>
-					<img src='/img/icons/castle.small.png' />
+				<a href='{{Cyph.Env.homeUrl}}'>
+					<img src='/img/logo.white.icon.small.png' />
 				</a>
 				<img
-					class='button'
 					src='/img/icons/close.png'
-					ng-hide='!$this.isConnected'
 					ng-click='$this.disconnectButton()'
 				/>
 			</div>
