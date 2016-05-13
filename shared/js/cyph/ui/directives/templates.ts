@@ -1025,9 +1025,6 @@ export const Templates	= {
 							ng-disabled='true'
 						>
 							Register
-							<md-tooltip md-direction='up'>
-								Registration is currently closed.
-							</md-tooltip>
 						</md-button>
 						<md-button
 							translate
