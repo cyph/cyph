@@ -1044,13 +1044,13 @@ export const Templates	= {
 					<p translate>
 						Thanks for signing up. Feel free to give us your name too. Privacy is at the core of our ideology, so we'll never give away your email address or personal details.
 					</p>
-					<div layout='row' flex='50'>
-						<div flex></div>
+					<div layout='row' flex='100'>
+						<div flex='20'></div>
 						<md-input-container>
 							<label translate>Name (optional)</label>
 							<input ng-model='$this.data.name' />
 						</md-input-container>
-						<div flex></div>
+						<div flex='15'></div>
 					</div>
 					<md-button
 							translate

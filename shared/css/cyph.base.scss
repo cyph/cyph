@@ -328,9 +328,11 @@ md-dialog.login {
 		position: relative;
 		text-decoration: none;
 		top: -15px;
+		opacity: 0.75;
 	}
 	a:hover {
 		text-decoration: underline;
+		opacity: 1;
 	}
 	.buttons{
 		margin-top: 15px;
