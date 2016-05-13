@@ -186,7 +186,7 @@ input, textarea {
 		left: 50%;
 		top: 50%;
 		z-index: -1;
-		opacity: 0.15;
+		opacity: 0.30;
 		content: ' ';
 
 		@include transform(translateX(-50%) translateY(-50%));
