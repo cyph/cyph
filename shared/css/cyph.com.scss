@@ -139,7 +139,6 @@ section#main {
 		height: 76px;
 		width: 240px;
 		border-radius: 3px;
-		opacity: 0.9;
 	}
 
 	.link-wrapper-outer {
@@ -218,7 +217,7 @@ html.mobile #hero-section {
 	.screenshot {
 		@include transition(all 0.25s ease);
 
-		opacity: 0.5;
+		opacity: 0.15;
 
 		&.laptop {
 			height: calc((50px + 5.525vw) * 3 - 25px);
