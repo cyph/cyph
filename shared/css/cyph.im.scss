@@ -43,15 +43,17 @@ html:not(.mobile) .chat-sidebar,
 	}
 }
 
-#close-cyph, #help {
+#close-cyph, #help, #castle {
 	opacity: 0.50;
 	left: 27px;
 	top: -10px;
+	width: 24px;
+	height: 24px;
 	margin-left: 10px;
 	position: relative;
 }
 
-#close-cyph:hover, #help:hover {
+#close-cyph:hover, #help:hover, #castle:hover {
 	opacity: 1;
 	transition-duration: 0.75s;
 	cursor: pointer;

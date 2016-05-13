@@ -74,6 +74,14 @@
 					ng-click='ui.chat.helpButton()'
 				>
 				</img>
+				<a href='{{Cyph.Env.homeUrl}}'>
+					<img id='castle'
+						src='/img/icons/castle.png'
+						ng-show='ui.state === Cyph.im.UI.States.chat && ui.chat.isConnected'
+						ng-click=''
+					>
+				</a>
+				</img>
 				<img id='close-cyph'
 					src='/img/icons/close.png'
 					ng-show='ui.state === Cyph.im.UI.States.chat && ui.chat.isConnected'
