@@ -142,8 +142,8 @@ export const Templates	= {
 		</md-dialog>
 	`,
 
-	login: `
-		<md-dialog class='login'>
+	register: `
+		<md-dialog class='register'>
 			<md-content layout='column' layout-align='center center'>
 				<md-card layout='column' flex='50' class='md-padding'>
 					<md-card-title>
@@ -159,7 +159,7 @@ export const Templates	= {
 				</md-card>
 			</md-content>
 			<a
-				href='{{locals.Cyph.Env.newCyphBaseUrl}}#pro/login
+				href='{{locals.Cyph.Env.newCyphBaseUrl}}#beta/login
 				'> - Already have a Cyph account? Click here to login. -
 			</a>
 		</md-dialog>

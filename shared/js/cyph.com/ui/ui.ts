@@ -73,9 +73,9 @@ export class UI extends Cyph.UI.BaseButtonManager {
 			this.changeState(States.home);
 
 			setTimeout(() => {
-				if (this.homeSection === HomeSections.login) {
+				if (this.homeSection === HomeSections.register) {
 					this.dialogManager.baseDialog({
-						template: Cyph.UI.Templates.login,
+						template: Cyph.UI.Templates.register,
 						locals: {
 							signupForm: this.signupForm,
 							Cyph: self['Cyph']

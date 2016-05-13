@@ -3,17 +3,17 @@ import {Util} from 'cyph/util';
 
 
 /**
- * Angular directive for Cyph Pro component.
+ * Angular directive for Cyph beta component.
  */
-export class Pro {
+export class Beta {
 	/** Module/directive title. */
-	public static title: string	= 'cyphPro';
+	public static title: string	= 'cyphBeta';
 
 	private static _	= (() => {
-		angular.module(Pro.title, []).directive(Pro.title, () => ({
+		angular.module(Beta.title, []).directive(Beta.title, () => ({
 			restrict: 'A',
 			scope: {
-				$this: '=' + Pro.title
+				$this: '=' + Beta.title
 			},
 			template: Templates.pro,
 			link: (scope, element, attrs) => {

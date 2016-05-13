@@ -287,11 +287,11 @@ html:not(.mobile) .platform-container.mobile .mobile-only {
 
 /* Moved beta signup stuff from cyph.com CSS */
 
-md-dialog.login {
+md-dialog.register {
 	width: 50%;
 }
 
-.beta-signup-form, .login {
+.beta-signup-form, .register {
 	* {
 		.md-input-container {
 			margin: 0px !important;

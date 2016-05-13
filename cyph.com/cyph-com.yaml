@@ -37,7 +37,7 @@ handlers:
   secure: always
   # default_headers Cache-Control Expires
 
-- url: /login[/]?
+- url: /register[/]?
   static_files: index.html
   upload: index.html
   secure: always

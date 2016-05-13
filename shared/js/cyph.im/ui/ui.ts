@@ -1,4 +1,4 @@
-import {ProStates, States, UrlSections} from 'enums';
+import {BetaStates, States, UrlSections} from 'enums';
 import {Config} from 'cyph.im/config';
 import * as Cyph from 'cyph/cyph';
 
@@ -10,8 +10,8 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	/** UI state/view. */
 	public state: States			= States.none;
 
-	/** Pro page state/view. */
-	public proState: ProStates		= ProStates.none;
+	/** Beta page state/view. */
+	public betaState: BetaStates	= BetaStates.none;
 
 	/** Chat UI. */
 	public chat: Cyph.UI.Chat.IChat;
@@ -29,9 +29,9 @@ export class UI extends Cyph.UI.BaseButtonManager {
 
 		const urlStateSplit: string[]	= urlState.split('/');
 
-		if (urlStateSplit[0] === UrlSections.pro) {
-			this.proState	= ProStates[urlStateSplit[1]];
-			this.changeState(States.pro);
+		if (urlStateSplit[0] === UrlSections.beta) {
+			this.betaState	= BetaStates[urlStateSplit[1]];
+			this.changeState(States.beta);
 		}
 		else if (urlState === Cyph.UrlState.states.notFound) {
 			this.changeState(States.error);
@@ -182,7 +182,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 
 		const urlSection: string	= Cyph.UrlState.getSplit()[0];
 
-		if (urlSection === UrlSections.pro) {
+		if (urlSection === UrlSections.beta) {
 			Cyph.UrlState.trigger();
 		}
 		else {

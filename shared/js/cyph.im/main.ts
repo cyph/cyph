@@ -11,7 +11,7 @@
 /// <reference path="../global/base.ts" />
 
 import {Config} from 'config';
-import {ProStates, States, UrlSections} from 'ui/enums';
+import {BetaStates, States, UrlSections} from 'ui/enums';
 import {UI} from 'ui/ui';
 import * as Cyph from 'cyph/cyph';
 import {Loaded} from 'preload/base';
@@ -27,7 +27,7 @@ angular.
 		Cyph.UI.Directives.Contact.title,
 		Cyph.UI.Directives.LinkConnection.title,
 		Cyph.UI.Directives.Markdown.title,
-		Cyph.UI.Directives.Pro.title,
+		Cyph.UI.Directives.Beta.title,
 		Cyph.UI.Directives.SignupForm.title,
 		Cyph.UI.Directives.Static.title
 	]).
@@ -42,7 +42,7 @@ angular.
 			$scope.Cyph.im	= {
 				Config,
 				UI: {
-					ProStates,
+					BetaStates,
 					States,
 					UI,
 					UrlSections
