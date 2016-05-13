@@ -273,9 +273,72 @@ html:not(.mobile) .platform-container.mobile .mobile-only {
 
 /* Moved beta signup stuff from cyph.com CSS */
 
+md-dialog.login {
+	width: 50%;
+}
+
 .login {
-	md-content {
-		padding: 40px;
+	* {
+			.md-input-container {
+				margin: 0px !important;
+			}
+		}
+
+	input {
+		width: 220px !important;
+		color: black !important;
+		margin: 1px 25px -5px -8px;
+	}
+
+	.md-input-container[disabled] label {
+		color: #999;
+	}
+	input{
+		background-color: #BBA8DF;
+	}
+	input[disabled] {
+		background-color: #86789F !important;
+		color: #999;
+		cursor: not-allowed;
+		margin-bottom: -15px;
+		margin-top: 0px;
+		opacity: 0.25 !important;
+	}
+	.md-headline {
+		font-size: 32px;
+		font-weight: 400;
+		text-align: center;
+		line-height: 12px;
+		margin-bottom: 10px;
+	}
+	h2 {
+		text-align: center;
+		font-size: 25px;
+		margin: 5px 0px -10px 0px;
+	}
+
+	h5 {
+		margin-bottom: 34px;
+	}
+	a {
+		text-align: center;
+		font-style: italic;
+		letter-spacing: 0.5px;
+		font-weight: 800;
+		position: relative;
+		text-decoration: none;
+		top: -15px;
+	}
+	a:hover {
+		text-decoration: underline;
+	}
+	.buttons{
+		margin-top: 15px;
+	}
+	.buttons *[disabled] {
+		cursor: not-allowed;
+		background-color: #86789F !important;
+		opacity: 0.25 !important;
 	}
 }
 
@@ -286,19 +349,19 @@ html:not(.mobile) .platform-container.mobile .mobile-only {
 	}
 
 	md-input-container {
-		width: 50%;
-		margin: auto;
-		margin-top: 30px;
+		margin: 25px auto 0px auto;
 		display: block;
 
 		&.md-input-focused * {
-			color: #c9adff !important;
-			border-color: #c9adff !important;
+			// color: #c9adff !important;
+			// border-color: #c9adff !important;
 		}
 	}
 
 	.md-button {
 		margin: auto;
+		padding: 10px 25px;
+		background-color: #51318C;
 		display: block;
 	}
 }

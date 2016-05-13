@@ -144,51 +144,24 @@ export const Templates	= {
 
 	login: `
 		<md-dialog class='login'>
-			<md-content layout='row' layout-align='center center'>
-				<md-card layout='column' flex='75' class='md-padding'>
+			<md-content layout='column' layout-align='center center'>
+				<md-card layout='column' flex='50' class='md-padding'>
 					<md-card-title>
 						<md-card-title-text>
 							<span class='md-headline' translate>
 								Register
 							</span>
-							<span class='md-subhead' translate>
-								Registration is currently closed, but you can sign up for the
-								waitlist to receive an account.
-							</span>
 						</md-card-title-text>
 					</md-card-title>
 					<md-card-content>
-						<p translate>
-							Note that an account isn't necessary just to use Cyph (see the
-							"start new cyph" button on our home page), but rather to receive
-							access to more advanced functionality in the pipeline, such as group
-							messaging and persistent encrypted chat history.
-						</p>
 						<div cyph-signup-form='locals.signupForm'></div>
 					</md-card-content>
 				</md-card>
-				<md-card layout='column' flex='25' class='md-padding'>
-					<md-card-title>
-						<md-card-title-text>
-							<span class='md-headline' translate>
-								Log In
-							</span>
-							<span class='md-subhead' translate>
-								Sign in to your beta account.
-							</span>
-						</md-card-title-text>
-					</md-card-title>
-					<md-card-content>
-						<div layout='row' layout-align='center center'>
-							<md-button aria-label='Log In' translate>
-								<a ng-href='{{locals.Cyph.Env.newCyphBaseUrl}}#pro/login' translate>
-									Log In
-								</a>
-							</md-button>
-						</div>
-					</md-card-content>
-				</md-card>
 			</md-content>
+			<a 
+				href='{{locals.Cyph.Env.newCyphBaseUrl}}#pro/login
+				'> - Already have a Cyph account? Click here to login. -
+			</a>
 		</md-dialog>
 	`
 };
