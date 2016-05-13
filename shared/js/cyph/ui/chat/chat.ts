@@ -281,7 +281,7 @@ export class Chat extends BaseButtonManager implements IChat {
 	public constructor (
 		controller: IController,
 		private dialogManager: IDialogManager,
-		mobileMenu: ISidebar,
+		mobileMenu: () => ISidebar,
 		private notifier: INotifier,
 		public isMobile: boolean = Env.isMobile,
 		session?: Session.ISession,

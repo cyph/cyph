@@ -7,7 +7,6 @@
 /// <reference path="../preload/unsupportedbrowsers.ts" />
 /// <reference path="../preload/dompurify.ts" />
 /// <reference path="../preload/jquery.ts" />
-/// <reference path="../preload/fonts.ts" />
 /// <reference path="../preload/translations.ts" />
 /// <reference path="../global/base.ts" />
 
@@ -58,10 +57,10 @@ angular.
 				const dialogManager: Cyph.UI.IDialogManager	= new Cyph.UI.DialogManager($mdDialog, $mdToast);
 				const notifier: Cyph.UI.INotifier			= new Cyph.UI.Notifier();
 
-				const mobileMenu: Cyph.UI.ISidebar	=
+				const mobileMenu: () => Cyph.UI.ISidebar	=
 					Cyph.Env.isMobile ?
-						chatSidenav() :
-						{close: () => {}, open: () => {}}
+						chatSidenav :
+						() => ({close: () => {}, open: () => {}})
 				;
 
 				$scope.ui	= new UI(controller, dialogManager, mobileMenu, notifier);

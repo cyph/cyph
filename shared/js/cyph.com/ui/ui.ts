@@ -193,9 +193,9 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	 */
 	public constructor (
 		controller: Cyph.IController,
-		mobileMenu: Cyph.UI.ISidebar,
+		mobileMenu: () => Cyph.UI.ISidebar,
 		private dialogManager: Cyph.UI.IDialogManager,
-		demoMobileMenu: Cyph.UI.ISidebar
+		demoMobileMenu: () => Cyph.UI.ISidebar
 	) {
 		super(controller, mobileMenu);
 
@@ -270,7 +270,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 
 		/* Header / new cyph button animation */
 
-		Elements.mainToolbar.addClass('new-cyph-expanded');
+		Elements.mainToolbar.toggleClass('new-cyph-expanded', this.state === States.home);
 		setTimeout(() => setInterval(() => Elements.mainToolbar.toggleClass(
 			'new-cyph-expanded',
 			this.state === States.home && (

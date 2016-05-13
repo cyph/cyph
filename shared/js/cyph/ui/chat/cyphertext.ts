@@ -84,7 +84,7 @@ export class Cyphertext extends BaseButtonManager implements ICyphertext {
 	public constructor (
 		session: Session.ISession,
 		controller: IController,
-		mobileMenu: ISidebar,
+		mobileMenu: () => ISidebar,
 		private dialogManager: IDialogManager,
 		private isMobile: boolean,
 		private elements: IElements

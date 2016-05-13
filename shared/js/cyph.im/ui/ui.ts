@@ -171,7 +171,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	public constructor (
 		controller: Cyph.IController,
 		private dialogManager: Cyph.UI.IDialogManager,
-		mobileMenu: Cyph.UI.ISidebar,
+		mobileMenu: () => Cyph.UI.ISidebar,
 		private notifier: Cyph.UI.INotifier
 	) {
 		super(controller, mobileMenu);

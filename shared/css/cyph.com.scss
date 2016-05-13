@@ -1,4 +1,3 @@
-@import 'fonts';
 @import 'cyph.im';
 
 html, body, #main {
@@ -107,7 +106,7 @@ section#main {
 }
 
 #new-cyph {
-	font-family: 'Ubuntu';
+	font-family: Ubuntu;
 	font-size: 11px;
 	font-weight: 300;
 	position: fixed;
@@ -627,7 +626,7 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 			overflow: hidden;
 
 			&:not(.curtain) {
-				height: 100%;
+				height: calc(100% + 2px);
 			}
 		}
 	}
@@ -638,21 +637,29 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 		margin-top: 64px;
 		left: 11.5%;
 
-		[cyph-chat-main], [cyph-chat-message-box] {
-			margin-left: 120px;
-			width: calc(100% - 120px);
+		[cyph-chat-toolbar] .desktop-toolbar img {
+			height: 15px;
+			left: 20px;
+			top: 5px;
+			margin-left: 6px;
 		}
 
-		[cyph-chat-message-box] {
-			margin-top: -5px;
+		[cyph-chat-main], [cyph-chat-message-box] {
+			margin-left: 17.5px;
+			width: calc(100% - 25px);
 		}
 
 		[cyph-chat-main] {
-			height: calc(100% - 60px);
+			height: calc(100% - 90px);
+			margin-top: 10px;
 
 			.chat-main {
 				.message-list {
 					font-size: 90%;
+
+					&:after {
+						@include transform(translateX(-50%) translateY(-60%));
+					}
 				}
 			}
 
@@ -685,7 +692,7 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 
 		@include filter(blur(0px));
 
-		.chat-toolbar {
+		[cyph-chat-toolbar] .mobile-toolbar {
 			margin-top: 0px;
 
 			.md-toolbar-tools > span {
@@ -713,6 +720,10 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 					}
 				}
 			}
+		}
+
+		md-icon {
+			font-size: 38px;
 		}
 	}
 
@@ -742,13 +753,6 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 
 	.chat-cyphertext {
 		position: absolute;
-	}
-
-	.chat-sidebar {
-		margin-left: -40px;
-		margin-top: -60px;
-
-		@include transform(scale(0.625));
 	}
 
 	.send-file-button {
@@ -853,7 +857,7 @@ html.mobile #gettingstarted-section {
 #error {
 	h1 {
 		text-align: center;
-		font-family: 'Ubuntu', sans-serif;
+		font-family: Ubuntu, sans-serif;
 		font-size: 2.5vw;
 	}
 
@@ -1063,7 +1067,6 @@ md-slider .md-focus-thumb {
 md-slider .md-sign .md-thumb-text {
 	z-index: 1;
 	font-size: 13px;
-	font-weight: 900;
 }
 
 input.donation {

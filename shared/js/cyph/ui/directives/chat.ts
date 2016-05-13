@@ -50,15 +50,6 @@ export class Chat {
 				link: scope => scope['Cyph'] = self['Cyph'],
 				template: Templates.chatMessageBox
 			})).
-			directive(titles.sidebar, () => ({
-				restrict: 'A',
-				scope: {
-					$this: '=' + titles.sidebar,
-					showChat: '='
-				},
-				link: scope => scope['Cyph'] = self['Cyph'],
-				template: Templates.chatSidebar
-			})).
 			directive(titles.toolbar, () => ({
 				restrict: 'A',
 				scope: {

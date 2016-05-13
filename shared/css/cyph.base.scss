@@ -1,4 +1,5 @@
 @import 'bourbon/bourbon';
+@import 'fonts';
 
 * {
 	-webkit-font-smoothing: antialiased !important;
@@ -19,8 +20,20 @@ section {
 	display: block;
 }
 
-#main, .cyph-foreground, .md-button {
+#main, .cyph-foreground, .md-button:not(.md-fab) {
 	color: #f1f1f1 !important;
+}
+
+md-icon {
+	color: #f1f1f1 !important;
+
+	&.grey {
+		color: #757575 !important;
+	}
+
+	&.black {
+		color: #212121 !important;
+	}
 }
 
 html .md-button {
@@ -28,6 +41,7 @@ html .md-button {
 }
 
 md-sidenav .md-button {
+	margin: 0px;
 	width: 100%;
 	text-align: left;
 	line-height: 25px;
@@ -309,7 +323,7 @@ html:not(.mobile) .platform-container.mobile .mobile-only {
 }
 
 .pricing-chart .md-button, #new-cyph-footer {
-	font-family: 'Ubuntu' !important;
+	font-family: Ubuntu !important;
 	line-height: 50px !important;
 	font-size: 18px !important;
 	box-shadow: 0px 4px 10px -1px rgba(0, 0, 0, 0.25) !important;
@@ -431,7 +445,6 @@ html:not(.mobile) .platform-container.mobile .mobile-only {
 			transform: scale(5);
 			top: 42px;
 			position: relative;
-			color: white;
 		}
 	}
 
@@ -487,7 +500,6 @@ md-icon.back.material-icons {
 	position: relative;
 	z-index: 999;
 	margin-left: 50px;
-	color: white;
 	opacity: 0.85;
 
 	/* Temporary */
@@ -682,7 +694,7 @@ input.doctors {
 		margin: 0px 0px 0px 15px;
 		font-size: 17px;
 		font-weight: 400;
-		font-family: ubuntu;
+		font-family: Ubuntu;
 	}
 }
 
@@ -727,7 +739,7 @@ input.doctors {
 	font-size: 5vw;
 	padding: 15vh 15vw;
 	background-color: rgba(97, 51, 163, 0.75);
-	font-family: 'Ubuntu' !important;
+	font-family: Ubuntu !important;
 }
 
 .beta-signup-form.complete + div, .beta-signup-form.visible {
@@ -932,7 +944,6 @@ md-checkbox {
 
 .md-button {
 	padding: 6px;
-	margin: 0px;
 	min-height: 0px;
 	min-width: 0px;
 	line-height: normal;

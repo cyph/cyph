@@ -120,7 +120,6 @@ export class Config {
 	public static p2pConfig	= {
 		fileChunkSize: 1024,
 		maxFileSize: 1100000000,
-		voiceCallVideo: 'video/voicecall.mp4',
 		iceServersEndpoint: 'iceservers'
 	};
 

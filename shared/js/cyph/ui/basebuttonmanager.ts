@@ -18,7 +18,7 @@ export class BaseButtonManager {
 
 			setTimeout(() => {
 				try {
-					this.mobileMenu.close();
+					this.mobileMenu().close();
 
 					if (callback) {
 						callback();
@@ -36,7 +36,7 @@ export class BaseButtonManager {
 	 * Opens mobile sidenav menu.
 	 */
 	public openMobileMenu () : void {
-		setTimeout(() => this.mobileMenu.open(), 250);
+		setTimeout(() => this.mobileMenu().open(), 250);
 	}
 
 	/**
@@ -45,6 +45,6 @@ export class BaseButtonManager {
 	 */
 	public constructor (
 		protected controller: IController,
-		protected mobileMenu: ISidebar
+		protected mobileMenu: () => ISidebar
 	) {}
 }

@@ -163,8 +163,6 @@ for d in cyph.com cyph.im ; do
 		};" > ../$d/js/preload/translations.ts
 
 		cd ../$d
-
-		echo "FontsCSS = \`$(scss css/fonts.scss)\`;" > js/preload/fonts.ts
 	fi
 
 	../commands/build.sh --prod || exit;
@@ -219,8 +217,8 @@ if [ ! $simple ] ; then
 		mv websign/serviceworker.js ./
 		mv websign/unsupportedbrowser.html ./
 
-		# Merge in base64'd images and audio, BUT NOT fonts (they add 7mb)
-		find img audio -type f -print0 | while read -d $'\0' f ; do
+		# Merge in base64'd images, fonts, video, and audio
+		find img fonts audio video -type f -print0 | while read -d $'\0' f ; do
 			for g in index.html $(find js -name '*.js') $(find css -name '*.css') ; do
 				if ( grep -o "$f" $g ) ; then
 					dataURI="data:$(echo -n "$(file --mime-type "$f")" | perl -pe 's/.*\s+(.*?)$/\1/g');base64,$(base64 "$f")"

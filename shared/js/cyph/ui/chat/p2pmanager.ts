@@ -118,7 +118,7 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 	public constructor (
 		private chat: IChat,
 		controller: IController,
-		mobileMenu: ISidebar,
+		mobileMenu: () => ISidebar,
 		private dialogManager: IDialogManager,
 		private elements: IElements,
 		forceTURN?: boolean

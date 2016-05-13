@@ -312,7 +312,8 @@
 				<span class='desktop desktop-only'>
 					<div class='cyph-foreground'>
 						<span
-							cyph-chat-sidebar='ui.cyphDemo.desktop'
+							cyph-chat-toolbar='ui.cyphDemo.desktop'
+							open='ui.cyphDemo.openMobileMenu()'
 							show-chat='true'
 						></span>
 						<div
@@ -320,7 +321,10 @@
 							layout='column'
 							layout-fill
 							flex
-						></div>
+						>
+							We hope you enjoyed our quick demo! Just click
+							the "start new cyph" button to use it for real.
+						</div>
 						<div cyph-chat-message-box='ui.cyphDemo.desktop'></div>
 					</div>
 					<div cyph-chat-cyphertext='ui.cyphDemo.desktop'></div>
@@ -338,7 +342,9 @@
 							layout='column'
 							layout-fill
 							flex
-						></div>
+						>
+							Tell your friends.
+						</div>
 						<div cyph-chat-message-box='ui.cyphDemo.mobile'></div>
 					</div>
 					<div cyph-chat-cyphertext='ui.cyphDemo.mobile'></div>
@@ -728,7 +734,7 @@
 						hide-xs
 					>keyboard_backspace</md-icon>
 					<div class='bg-image laptop' class='animated bounceInLeft' flex='20'>
-						<img src='/img/business-man.png'></img>
+						<img src='/img/business-man.png' />
 					</div>
 					<div show-sm show-xs flex></div>
 					<div layout='row' layout-sm='column' layout-xs='column' layout-align-sm='center center' layout-align-xs='center center' class='pricing-chart animated bounceInUp' flex>
@@ -968,7 +974,7 @@
 							</md-button>
 						<div flex></div>
 						<div class='bg-image doctor' class='animated bounceInRight' flex='20'>
-								<img src='/img/doctor.png'></img>
+								<img src='/img/doctor.png' />
 						</div>
 					</div>
 				</div>

@@ -12,18 +12,6 @@ import {Util} from 'cyph/util';
 import {Elements} from 'cyph/ui/elements';
 
 
-/* In WebSigned environments, can't load fonts from current origin */
-if (FontsCSS) {
-	Elements.body.append(
-		$('<style></style>').html(
-			FontsCSS.replace(
-				/url\(\//g,
-				'url(' + Env.homeUrl
-			)
-		)
-	);
-}
-
 /* Translations */
 if (Translations && Env.language !== Config.defaultLanguage) {
 	$('[translate]').each((i: number, elem: HTMLElement) =>

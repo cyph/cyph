@@ -21,8 +21,6 @@ html:not(.mobile) {
 	font-size: 15px;
 }
 
-html:not(.mobile) .chat-sidebar,
-.chat-message-box:not(.mobile),
 .link-connection .connect-link-mobile {
 	.md-button:not([disabled='disabled']) {
 		color: #444;
@@ -43,46 +41,12 @@ html:not(.mobile) .chat-sidebar,
 	}
 }
 
-#close-cyph, #help {
-	opacity: 0.50;
-	left: 27px;
-	top: -10px;
-	margin-left: 10px;
-	position: relative;
-}
+md-fab-trigger .md-button {
+	background-color: #7d4fd3 !important;
 
-#close-cyph:hover, #help:hover {
-	opacity: 1;
-	transition-duration: 0.75s;
-	cursor: pointer;
-}
-
-.plus span {
-	font-size: 18px;
-	font-weight: bold;
-}
-
-.fab .lock-size {
-	min-width: 300px;
-	min-height: 300px;
-	width: 300px;
-	height: 300px;
-	margin-left: auto;
-	margin-right: auto;
-}
-
-.fab-hover {
-	padding-bottom: 5px;
-}
-
-md-fab-speed-dial.md-fling.desktop-only {
-	position: absolute;
-	left: 93%;
-	top: 8px;
-	height: 0px;
-
-	.md-fab-action-item {
-		transform: scale(0.85);
+	img {
+		height: 85% !important;
+		margin-top: 3px;
 	}
 }
 
@@ -108,6 +72,7 @@ input, textarea {
 
 		outline: none;
 		padding: 3px;
+		padding-right: 60px;
 		border: 1px solid #dddddd;
 		margin: 0px 10px;
 		min-height: 60px;
@@ -171,7 +136,7 @@ input, textarea {
 
 .chat-message-box {
 	.chat-message-box-hidden {
-		@include transform(translateY(50vh) !important);
+		@include transform(translateY(250px) !important);
 
 		@include transition(transform 0.25s linear);
 	}
@@ -213,10 +178,11 @@ input, textarea {
 
 	&:after {
 		background-image: url(/img/betalogo.png);
+		background-repeat: no-repeat;
 		background-size: cover;
 		position: absolute;
-		width: 46vh;
-		height: 50vh;
+		width: 15em;
+		height: 16.5em;
 		left: 50%;
 		top: 50%;
 		z-index: -1;
@@ -284,7 +250,7 @@ input, textarea {
 		text-align: right;
 	}
 
-	img:not(.emoji), .image-frame {
+	img, .image-frame {
 		max-width: 25%;
 		margin-top: 10px;
 		margin-bottom: 10px;
@@ -293,12 +259,6 @@ input, textarea {
 		display: block;
 		box-shadow: 0px 4px 10px -1px rgba(0, 0, 0, 0.4);
 		position: relative;
-	}
-
-	.emoji {
-		height: 1.2em;
-		margin-bottom: -.2em;
-		margin-left: .2em;
 	}
 }
 
@@ -330,7 +290,7 @@ input, textarea {
 			padding-bottom: 0px;
 		}
 
-		img:not(.emoji), .image-frame {
+		img, .image-frame {
 			margin-left: auto;
 		}
 
@@ -369,14 +329,14 @@ input, textarea {
 	}
 
 	.message-item.author-me:after {
-		border-color: transparent #8652e4;
+		border-color: transparent rgba(134, 82, 228, 0.8);
 		right: -12px;
 	}
 
 	.message-item.author-me:before {
 		border-color: transparent transparent;
 		right: 0px;
-		box-shadow: 5px 1px 5px #8652e4;
+		box-shadow: 5px 1px 5px rgba(134, 82, 228, 0.8);
 
 		@include transform(rotate(-35deg));
 	}
@@ -403,14 +363,14 @@ input, textarea {
 	}
 
 	.message-item.author-friend:after {
-		border-color: transparent #7d53cb;
+		border-color: transparent rgba(139, 98, 217, 0.8);
 		left: -12px;
 	}
 
 	.message-item.author-friend:before {
 		border-color: transparent transparent;
 		left: 0px;
-		box-shadow: 5px 1px 5px #7d53cb;
+		box-shadow: 5px 1px 5px rgba(139, 98, 217, 0.8);
 
 		@include transform(rotate(-215deg));
 	}
@@ -418,11 +378,6 @@ input, textarea {
 	.message-item.author-app {
 		width: 90%;
 		background-color: transparent;
-
-		span p {
-			position: absolute;
-			left: calc(50vw - 112px);
-		}
 
 		.message {
 			text-align: center;
@@ -594,45 +549,38 @@ html.mobile button[disabled] {
 	width: 75%;
 }
 
-.chat-sidebar {
-	position: absolute;
-	top: 0px;
-	left: 0px;
-	height: 100%;
-	width: 200px;
-	padding: 20px;
-	z-index: 10;
-
-	.logo > img {
-		width: 70%;
-		margin: 0px auto;
-		margin-bottom: 50px;
-		display: block;
-	}
-
-	.md-button:not(.md-fab) {
-		margin-bottom: 10px;
-	}
-
-	.md-button:not(.md-fab), .md-fab[disabled='disabled'] {
-		font-size: 14px;
-		width: 100%;
-		box-shadow: 0px 0px 2px #7239dd;
-	}
-}
-
-.chat-toolbar {
-	z-index: 6;
-	margin-top: -40px;
-
-	.logo > img {
-		height: 30px !important;
-		margin-left: -8px;
-	}
-}
-
 [cyph-chat-toolbar] > div {
 	overflow: visible !important;
+
+	.mobile-toolbar {
+		z-index: 6;
+		margin-top: -40px;
+
+		.md-button {
+			margin: 0px;
+		}
+
+		.logo > img {
+			height: 30px !important;
+			margin-left: -8px;
+		}
+	}
+
+	.desktop-toolbar {
+		img {
+			opacity: 0.50;
+			left: 75px;
+			top: -10px;
+			margin-left: 10px;
+			position: relative;
+
+			&:hover {
+				opacity: 1;
+				transition-duration: 0.75s;
+				cursor: pointer;
+			}
+		}
+	}
 }
 
 html.mobile #main {
@@ -646,7 +594,7 @@ html.mobile #main {
 
 .loading {
 	> .logo-animation {
-		height: 33vh;
+		height: 33%;
 		margin-bottom: 10px;
 
 		> img {
@@ -660,7 +608,7 @@ html.mobile #main {
 	> *:not(.logo-animation) {
 		letter-spacing: 1px;
 		text-align: center;
-		font-family: 'Ubuntu', sans-serif;
+		font-family: Ubuntu, sans-serif;
 	}
 }
 
@@ -723,7 +671,7 @@ html:not(.mobile) {
 .cyph-not-found {
 	h1 {
 		text-align: center;
-		font-family: 'Ubuntu', sans-serif;
+		font-family: Ubuntu, sans-serif;
 	}
 
 	img {
@@ -805,7 +753,7 @@ html:not(.mobile) .cyph-not-found {
 }
 
 .chat-begin-message {
-	font-family: 'Ubuntu', sans-serif;
+	font-family: Ubuntu, sans-serif;
 	text-align: center;
 	font-size: 20px;
 	font-weight: 300;

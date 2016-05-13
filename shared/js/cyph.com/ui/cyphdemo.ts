@@ -145,6 +145,9 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 				parseFloat(Elements.screenshotLaptop.css('margin-left'))
 			)
 		});
+
+		/* Workaround for Angular Material bug */
+		$('md-fab-speed-dial').removeClass('md-animations-waiting');
 	}
 
 	private resizeMobile () : void {
@@ -177,7 +180,7 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 	public constructor(
 		controller: Cyph.IController,
 		dialogManager: Cyph.UI.IDialogManager,
-		mobileMenu: Cyph.UI.ISidebar
+		mobileMenu: () => Cyph.UI.ISidebar
 	) {
 		super(controller, mobileMenu);
 
@@ -218,7 +221,7 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 					this.desktop	= new Cyph.UI.Chat.Chat(
 						this.controller,
 						dialogManager,
-						{open: () => {}, close: () => {}},
+						() => ({close: () => {}, open: () => {}}),
 						{notify: (message: string) => {}},
 						false,
 						desktopSession,
