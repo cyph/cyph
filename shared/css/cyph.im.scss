@@ -122,8 +122,9 @@ input, textarea {
 	right: 12px;
 	opacity: 0.75;
 	z-index: 3;
-	width: 38px;
-	height: 38px;
+	font-size: 38px;
+	margin: 0px;
+	padding: 0px;
 
 	* {
 		width: 100%;
