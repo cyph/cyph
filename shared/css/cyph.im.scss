@@ -74,7 +74,7 @@ input, textarea {
 		padding: 3px;
 		padding-right: 60px;
 		border: 1px solid #dddddd;
-		margin: 0px 10px;
+		margin: 0px 13px;
 		min-height: 60px;
 		max-height: 120px;
 		width: calc(100% - 29px);
@@ -100,26 +100,26 @@ input, textarea {
 	.message-box:focus ~ .new-messages {
 		display: none;
 	}
+
+	md-fab-speed-dial {
+		position: absolute;
+		top: -280px;
+		right: 0px;
+	}
 }
 
 .chat-message-box {
 	position: relative;
 }
 
-.insert-photo-desktop {
-	position: absolute;
-	top: 9px;
-	right: 29px;
-}
-
 .md-button input[type='file'] {
 	display: none;
 }
 
-.send-button, .insert-photo-mobile {
+.send-button {
 	position: absolute;
 	bottom: 5px;
-	right: 20px;
+	right: 12px;
 	opacity: 0.75;
 	z-index: 3;
 	width: 38px;
@@ -186,7 +186,7 @@ input, textarea {
 		left: 50%;
 		top: 50%;
 		z-index: -1;
-		opacity: 0.42;
+		opacity: 0.15;
 		content: ' ';
 
 		@include transform(translateX(-50%) translateY(-50%));
@@ -268,6 +268,15 @@ input, textarea {
 
 .chat-main .message-item .message {
 	max-width: 85%;
+}
+
+.chat-main.mobile md-list {
+	padding-top: 0px;
+
+	> md-item:first-child {
+		padding-top: 0px;
+		margin-top: 0px;
+	}
 }
 
 .chat-main.mobile, .chat-main.video .video-call.active.playing ~ .message-list {
@@ -549,37 +558,52 @@ html.mobile button[disabled] {
 	width: 75%;
 }
 
-[cyph-chat-toolbar] > div {
-	overflow: visible !important;
+[cyph-chat-toolbar] {
+	.button {
+		opacity: 0.50;
 
-	.mobile-toolbar {
-		z-index: 6;
-		margin-top: -40px;
-
-		.md-button {
-			margin: 0px;
+		&:hover {
+			opacity: 1;
+			transition-duration: 0.75s;
+			cursor: pointer;
 		}
 
-		.logo > img {
-			height: 30px !important;
-			margin-left: -8px;
+		&.hidden {
+			visibility: hidden;
 		}
 	}
 
-	.desktop-toolbar {
-		img {
-			opacity: 0.50;
-			left: 75px;
-			top: -10px;
-			width: 24px;
-			height: 24px;
-			margin-left: 10px;
-			position: relative;
+	img {
+		width: 24px;
+		height: 24px;
+	}
 
-			&:hover {
-				opacity: 1;
-				transition-duration: 0.75s;
-				cursor: pointer;
+	> div:not(.mobile) .button {
+		position: relative;
+		left: 75px;
+		top: -10px;
+		margin-left: 10px;
+	}
+
+	> div.mobile {
+		display: block;
+		position: relative;
+		height: 40px;
+
+		.button {
+			position: absolute;
+			margin-top: 8px;
+
+			&:nth-child(1) {
+				left: 12px;
+			}
+
+			&:nth-child(2) {
+				left: calc(50% - 12px);
+			}
+
+			&:nth-child(3) {
+				right: 12px;
 			}
 		}
 	}

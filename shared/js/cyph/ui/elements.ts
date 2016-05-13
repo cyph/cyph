@@ -15,7 +15,6 @@ export class Elements {
 	public static connectLinkLink: JQuery;
 	public static cyphertext: JQuery;
 	public static footer: JQuery;
-	public static insertPhotoMobile: JQuery;
 	public static messageBox: JQuery;
 	public static messageList: JQuery;
 	public static messageListInner: JQuery;
@@ -40,7 +39,6 @@ export class Elements {
 		Elements.connectLinkLink		= $('.link-connection .connect-link-link');
 		Elements.cyphertext				= $('.chat-cyphertext.curtain, .chat-cyphertext.curtain > md-content');
 		Elements.footer					= $('#footer');
-		Elements.insertPhotoMobile		= $('.insert-photo-mobile');
 		Elements.messageBox				= $('.message-box');
 		Elements.messageList			= $('.message-list, .message-list > md-content');
 		Elements.messageListInner		= $('.message-list md-list');

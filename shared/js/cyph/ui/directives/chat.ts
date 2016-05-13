@@ -54,17 +54,11 @@ export class Chat {
 				restrict: 'A',
 				scope: {
 					$this: '=' + titles.toolbar,
-					open: '&',
 					showChat: '='
 				},
 				link: scope => scope['Cyph'] = self['Cyph'],
 				template: Templates.chatToolbar
-			})).
-			factory('chatSidenav', [
-				'$mdSidenav',
-
-				$mdSidenav => () => $mdSidenav('sidenav')
-			])
+			}))
 		;
 	})();
 }

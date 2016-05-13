@@ -165,16 +165,14 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	/**
 	 * @param controller
 	 * @param dialogManager
-	 * @param mobileMenu
 	 * @param notifier
 	 */
 	public constructor (
 		controller: Cyph.IController,
 		private dialogManager: Cyph.UI.IDialogManager,
-		mobileMenu: () => Cyph.UI.ISidebar,
 		private notifier: Cyph.UI.INotifier
 	) {
-		super(controller, mobileMenu);
+		super(controller);
 
 		Cyph.UrlState.onchange(urlState => this.onUrlStateChange(urlState));
 

@@ -407,23 +407,9 @@ export const Templates	= {
 				<md-icon class='grey'>send</md-icon>
 			</md-button>
 
-			<md-button
-				translate
-				class='insert-photo-mobile mobile-only'
-				ng-class='{"chat-message-box-hidden": $this.currentMessage !== ""}'
-				aria-label='Insert Photo'
-			>
-				<md-icon class='grey'>insert_photo</md-icon>
-				<input
-					accept='image/*'
-					type='file'
-					cyph-filechange='$this.photoManager.insert(this)'
-				/>
-			</md-button>
-
 			<md-fab-speed-dial
 				md-direction='up'
-				class='md-fling md-hover-full md-fab-bottom-right desktop-only'
+				class='md-fling md-hover-full md-fab-bottom-right'
 				md-open='isOpen'
 				ng-mouseenter='isOpen = true'
 				ng-mouseleave='isOpen = false'
@@ -508,169 +494,28 @@ export const Templates	= {
 	`,
 
 	chatToolbar: `
-		<div>
-			<div ng-if='!$this.isMobile'>
-				<div class='desktop-toolbar desktop-only' layout='row' layout-align='end end' flex='95'>
-					<img
-						src='/img/icons/help.png'
-						ng-click='$this.helpButton()'
-					/>
-					<a href='{{Cyph.Env.homeUrl}}'>
-						<img src='/img/icons/castle.png' />
-					</a>
-					<img
-						src='/img/icons/close.png'
-						ng-show='$this.isConnected'
-						ng-click='$this.disconnectButton()'
-					/>
-				</div>
-			</div>
-			<div ng-if='$this.isMobile'>
-				<md-toolbar class='mobile-toolbar'>
-					<div class='md-toolbar-tools'>
-						<a class='logo' rel='noreferrer' ng-href='{{Cyph.Env.homeUrl}}'>
-							<img src='/img/betalogo.mobile.png' alt='Beta logo' />
-						</a>
-
-						<span flex></span>
-
-						<span ng-show='showChat && $this.state === Cyph.UI.Chat.States.chat'>
-							<span ng-click='$this.p2pManager.disabledAlert()'>
-								<md-button
-									translate
-									class='video-call-button'
-									ng-disabled='
-										!$this.p2pManager.isEnabled ||
-										!$this.isConnected ||
-										!$this.session.state.isAlive
-									'
-									ng-click='$this.p2pManager.videoCallButton()'
-									ng-attr-aria-label='{{
-										!$this.p2pManager.isActive ?
-											"Video Call" :
-											!$this.p2pManager.p2p.outgoingStream.video ?
-												"Enable Camera" :
-												"Disable Camera"
-									}}'
-								>
-									<img
-										ng-show='
-											!$this.p2pManager.isActive ||
-											!$this.p2pManager.p2p.outgoingStream.video
-										'
-										src='/img/icons/video.on.png'
-										alt='Video on'
-									/>
-									<img
-										ng-show='
-											$this.p2pManager.isActive &&
-											$this.p2pManager.p2p.outgoingStream.video
-										'
-										src='/img/icons/video.off.png'
-										alt='Video off'
-									/>
-								</md-button>
-								<md-button
-									translate
-									class='voice-call-button'
-									aria-label='Voice Call'
-									ng-disabled='
-										!$this.p2pManager.isEnabled ||
-										!$this.isConnected ||
-										!$this.session.state.isAlive
-									'
-									ng-click='$this.p2pManager.voiceCallButton()'
-									ng-attr-aria-label='{{
-										!$this.p2pManager.isActive ?
-											"Voice Call" :
-											!$this.p2pManager.p2p.outgoingStream.audio ?
-												"Enable Mic" :
-												"Disable Mic"
-									}}'
-								>
-									<img
-										ng-show='!$this.p2pManager.isActive'
-										src='/img/icons/voice.on.png'
-										alt='Voice on'
-									/>
-									<img
-										ng-show='
-											$this.p2pManager.isActive &&
-											!$this.p2pManager.p2p.outgoingStream.audio
-										'
-										src='/img/icons/mic.on.png'
-										alt='Mic on'
-									/>
-									<img
-										ng-show='
-											$this.p2pManager.isActive &&
-											$this.p2pManager.p2p.outgoingStream.audio
-										'
-										src='/img/icons/mic.off.png'
-										alt='Mic off'
-									/>
-								</md-button>
-								<md-button
-									translate
-									class='send-file-button'
-									ng-disabled='
-										$this.p2pManager.p2p.outgoingFile.name ||
-										!$this.p2pManager.isEnabled ||
-										!$this.isConnected ||
-										!$this.session.state.isAlive
-									'
-									aria-label='Send File'
-								>
-									<img src='/img/icons/file.png' alt='File' />
-									<input
-										type='file'
-										cyph-filechange='$this.p2pManager.sendFileButton()'
-									/>
-								</md-button>
-							</span>
-
-							<md-button translate aria-label='Menu' ng-click='open()'>
-								<img src='/img/icons/menu.png' alt='Menu' />
-							</md-button>
-						</span>
-					</div>
-				</md-toolbar>
-
-				<md-sidenav md-component-id='sidenav' class='md-sidenav-right'>
-					<md-toolbar>
-						<h1 translate class='md-toolbar-tools'>Settings</h1>
-					</md-toolbar>
-					<md-content class='md-padding'>
-						<div>
-							<md-button
-								translate
-								aria-label='Show Cyphertext'
-								ng-click='$this.cyphertext.show()'
-							>
-								Show Cyphertext
-							</md-button>
-						</div>
-						<div>
-							<md-button
-								translate
-								aria-label='Help'
-								ng-click='$this.helpButton()'
-							>
-								Help
-							</md-button>
-						</div>
-						<div>
-							<md-button
-								translate
-								aria-label='Disconnect'
-								ng-disabled='!$this.session.state.isAlive'
-								ng-click='$this.disconnectButton()'
-							>
-								Disconnect
-							</md-button>
-						</div>
-					</md-content>
-				</md-sidenav>
+		<div
+			class='platform-container'
+			ng-class='{mobile: $this.isMobile}'
+		>
+			<div layout='row' layout-align='end end' flex='95'>
+				<img
+					class='button'
+					src='/img/icons/help.png'
+					ng-click='$this.helpButton()'
+				/>
+				<a
+					class='button'
+					href='{{Cyph.Env.homeUrl}}'
+				>
+					<img src='/img/icons/castle.png' />
+				</a>
+				<img
+					class='button'
+					src='/img/icons/close.png'
+					ng-class='{hidden: !$this.isConnected}'
+					ng-click='$this.disconnectButton()'
+				/>
 			</div>
 		</div>
 	`,

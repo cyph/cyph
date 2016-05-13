@@ -45,6 +45,6 @@ export class BaseButtonManager {
 	 */
 	public constructor (
 		protected controller: IController,
-		protected mobileMenu: () => ISidebar
+		protected mobileMenu: () => ISidebar = () => ({close: () => {}, open: () => {}})
 	) {}
 }

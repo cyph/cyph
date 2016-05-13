@@ -35,9 +35,8 @@ angular.
 		'$scope',
 		'$mdDialog',
 		'$mdToast',
-		'chatSidenav',
 
-		($scope, $mdDialog, $mdToast, chatSidenav) => {
+		($scope, $mdDialog, $mdToast) => {
 			self['Cyph']	= Cyph;
 			$scope.Cyph		= Cyph;
 			$scope.Cyph.im	= {
@@ -57,13 +56,7 @@ angular.
 				const dialogManager: Cyph.UI.IDialogManager	= new Cyph.UI.DialogManager($mdDialog, $mdToast);
 				const notifier: Cyph.UI.INotifier			= new Cyph.UI.Notifier();
 
-				const mobileMenu: () => Cyph.UI.ISidebar	=
-					Cyph.Env.isMobile ?
-						chatSidenav :
-						() => ({close: () => {}, open: () => {}})
-				;
-
-				$scope.ui	= new UI(controller, dialogManager, mobileMenu, notifier);
+				$scope.ui	= new UI(controller, dialogManager, notifier);
 				self['ui']	= $scope.ui;
 
 				controller.update();

@@ -637,12 +637,17 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 		margin-top: 64px;
 		left: 11.5%;
 
-		[cyph-chat-toolbar] .desktop-toolbar img {
-			width: 15px;
-			height: 15px;
-			left: 20px;
-			top: 5px;
-			margin-left: 6px;
+		[cyph-chat-toolbar] {
+			.button {
+				left: 20px;
+				top: 5px;
+				margin-left: 6px;
+			}
+
+			img {
+				width: 15px;
+				height: 15px;
+			}
 		}
 
 		[cyph-chat-main], [cyph-chat-message-box] {
@@ -697,15 +702,6 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 
 		@include filter(blur(0px));
 
-		[cyph-chat-toolbar] .mobile-toolbar {
-			margin-top: 0px;
-
-			.md-toolbar-tools > span {
-				overflow: hidden;
-				max-height: 100%;
-			}
-		}
-
 		[cyph-chat-main] {
 			height: calc(100% - 88px);
 
@@ -727,7 +723,7 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 			}
 		}
 
-		md-icon {
+		:not(.md-fab) > md-icon {
 			font-size: 38px;
 		}
 	}

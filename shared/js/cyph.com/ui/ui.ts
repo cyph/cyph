@@ -194,13 +194,12 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	public constructor (
 		controller: Cyph.IController,
 		mobileMenu: () => Cyph.UI.ISidebar,
-		private dialogManager: Cyph.UI.IDialogManager,
-		demoMobileMenu: () => Cyph.UI.ISidebar
+		private dialogManager: Cyph.UI.IDialogManager
 	) {
 		super(controller, mobileMenu);
 
 		this.signupForm	= new Cyph.UI.SignupForm(this.controller);
-		this.cyphDemo	= new CyphDemo(this.controller, this.dialogManager, demoMobileMenu);
+		this.cyphDemo	= new CyphDemo(this.controller, this.dialogManager);
 
 		Cyph.UrlState.onchange(urlState => this.onUrlStateChange(urlState));
 
