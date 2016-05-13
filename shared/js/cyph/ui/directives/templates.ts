@@ -942,7 +942,7 @@ export const Templates	= {
 						</md-button>
 					</div>
 				</div>
-						
+
 				<div ng-show='$this.state === 1'>
 					<p translate>
 						Thanks for signing up. Feel free to give us your name too. Privacy is at the core of our ideology, so we'll never give away your email address or personal details.

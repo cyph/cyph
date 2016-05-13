@@ -293,10 +293,10 @@ md-dialog.login {
 
 .beta-signup-form, .login {
 	* {
-			.md-input-container {
-				margin: 0px !important;
-			}
+		.md-input-container {
+			margin: 0px !important;
 		}
+	}
 
 	input {
 		width: 220px !important;
@@ -305,11 +305,13 @@ md-dialog.login {
 	}
 
 	.md-input-container label {
-		color: #392859 !important;;
+		color: #392859 !important;
 	}
-	input{
+
+	input {
 		background-color: #BBA8DF;
 	}
+
 	input[disabled] {
 		background-color: #86789F !important;
 		color: #999;
@@ -318,6 +320,7 @@ md-dialog.login {
 		margin-top: 0px;
 		opacity: 0.25 !important;
 	}
+
 	.md-headline {
 		font-size: 32px;
 		font-weight: 400;
@@ -325,6 +328,7 @@ md-dialog.login {
 		line-height: 12px;
 		margin-bottom: 10px;
 	}
+
 	h2 {
 		text-align: center;
 		font-size: 25px;
@@ -334,6 +338,7 @@ md-dialog.login {
 	h5 {
 		margin-bottom: 34px;
 	}
+
 	a {
 		text-align: center;
 		font-style: italic;
@@ -344,13 +349,16 @@ md-dialog.login {
 		top: -15px;
 		opacity: 0.75;
 	}
+
 	a:hover {
 		text-decoration: underline;
 		opacity: 1;
 	}
-	.buttons{
+
+	.buttons {
 		margin-top: 15px;
 	}
+
 	.buttons *[disabled] {
 		cursor: not-allowed;
 		background-color: #86789F !important;
@@ -359,7 +367,6 @@ md-dialog.login {
 }
 
 .beta-signup-form {
-
 	md-input-container {
 		margin: 12px auto 12px auto;
 		display: block;
@@ -367,6 +374,7 @@ md-dialog.login {
 		&.md-input-focused * {
 			// color: #c9adff !important;
 			// border-color: #c9adff !important;
+	
 		}
 	}
 

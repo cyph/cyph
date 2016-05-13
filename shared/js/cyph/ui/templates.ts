@@ -158,7 +158,7 @@ export const Templates	= {
 					</md-card-content>
 				</md-card>
 			</md-content>
-			<a 
+			<a
 				href='{{locals.Cyph.Env.newCyphBaseUrl}}#pro/login
 				'> - Already have a Cyph account? Click here to login. -
 			</a>
