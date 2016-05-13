@@ -571,6 +571,8 @@ html.mobile button[disabled] {
 			opacity: 0.50;
 			left: 75px;
 			top: -10px;
+			width: 24px;
+			height: 24px;
 			margin-left: 10px;
 			position: relative;
 
@@ -698,10 +700,6 @@ html.mobile .cyph-not-found {
 }
 
 html:not(.mobile) .cyph-not-found {
-	padding: 5% 10%;
-	margin-left: -38px;
-	margin-right: auto;
-
 	.explanation {
 		margin-left: auto;
 		margin-right: auto;

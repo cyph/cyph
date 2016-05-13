@@ -512,12 +512,13 @@ export const Templates	= {
 			<div ng-if='!$this.isMobile'>
 				<div class='desktop-toolbar desktop-only' layout='row' layout-align='end end' flex='95'>
 					<img
-						class='help-button'
 						src='/img/icons/help.png'
 						ng-click='$this.helpButton()'
 					/>
+					<a href='{{Cyph.Env.homeUrl}}'>
+						<img src='/img/icons/castle.png' />
+					</a>
 					<img
-						class='close-cyph-button'
 						src='/img/icons/close.png'
 						ng-show='$this.isConnected'
 						ng-click='$this.disconnectButton()'
@@ -895,33 +896,78 @@ export const Templates	= {
 			<form class='beta-signup-form' ng-submit='$this.submit()'>
 				<div ng-show='$this.state === 0'>
 					<ng-transclude></ng-transclude>
-					<md-input-container>
-						<label translate>Email</label>
-						<input ng-model='$this.data.email' type='email' required />
-					</md-input-container>
+					<div flex layout='row' layout-sm='column' layout-xs='column' class='signup-form'>
+						<div flex='50' layout='column'>
+							<md-input-container>
+								<label translate>email</label>
+								<input type='email' ng-model='$this.data.Email' required />
+							</md-input-container>
+							<md-input-container>
+								<label translate>password</label>
+								<input type='password' ng-model='$this.data.Password' ng-disabled='true'/>
+							</md-input-container>
+							<md-input-container>
+								<label translate>password confirmation</label>
+								<input type='password' ng-model='$this.data.Password' ng-disabled='true'/>
+							</md-input-container>
+						</div>
+						<div flex='50' layout-column>
+							<p translate>
+								We are currently at capacity and registration is closed, but you can sign up for the
+									waitlist to reserve your spot in line for an account.
+							</p>
+							<p translate>
+								But you don't need an account to use Cyph, just click the start new Cyph button on the homepage. Our beta accounts program
+								provides early access to more advanced functionality and cool new features.
+							</p>
+						</div>
+					</div>
+					<div class='buttons' layout='row'>
+						<md-button
+							translate
+							type='submit'
+							aria-label='Register'
+							ng-hide='$this.state > 1'
+							ng-disabled='true'
+						>
+							Register
+						</md-button>
+						<md-button
+							translate
+							type='submit'
+							ng-hide='$this.state > 1'
+							aria-label='Waitlist Signup'
+						>
+							Waitlist Signup
+						</md-button>
+					</div>
 				</div>
+						
 				<div ng-show='$this.state === 1'>
 					<p translate>
-						We'll try not to spam you. In fact, you'll probably never
-						hear from us.
+						Thanks for signing up. Feel free to give us your name too. Privacy is at the core of our ideology, so we'll never give away your email address or personal details.
 					</p>
-					<md-input-container>
-						<label translate>Name (optional)</label>
-						<input ng-model='$this.data.name' />
-					</md-input-container>
+					<div layout='row' flex='100'>
+						<div flex='20'></div>
+						<md-input-container>
+							<label translate>Name (optional)</label>
+							<input ng-model='$this.data.name' />
+						</md-input-container>
+						<div flex='15'></div>
+					</div>
+					<md-button
+							translate
+							type='submit'
+							ng-hide='$this.state > 1'
+							aria-label='Waitlist Signup'
+						>
+							Submit
+					</md-button>
+
 				</div>
 				<div translate ng-show='$this.state === 2'>
-					Hi {{$this.data.name}}. I'm Cyph. Nice to meet you.
+					Thanks for subscribing, {{$this.data.name}}! We'll e-mail you when your invite is ready.
 				</div>
-				<md-button
-					translate
-					type='submit'
-					aria-label='Subscribe'
-					ng-hide='$this.state > 1'
-					ng-class='{"hidden-submit-button": hideButton}'
-				>
-					Subscribe to Beta Waitlist
-				</md-button>
 			</form>
 	`,
 
