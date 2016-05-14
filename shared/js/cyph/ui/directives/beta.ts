@@ -15,7 +15,7 @@ export class Beta {
 			scope: {
 				$this: '=' + Beta.title
 			},
-			template: Templates.pro,
+			template: Templates.beta,
 			link: (scope, element, attrs) => {
 				scope['Cyph']	= self['Cyph'];
 

@@ -70,7 +70,7 @@ export const Templates	= {
 				<md-progress-linear
 					class='md-accent key-exchange-progress'
 					md-mode='determinate'
-					ng-value='$this.keyExchangeProgress'
+					ng-value='$this.keyExchangeBetagress'
 				></md-progress-linear>
 				<div flex></div>
 			</div>
@@ -527,12 +527,12 @@ export const Templates	= {
 					<div class='braintree'></div>
 					<div layout='row'>
 						<md-input-container class='md-block' flex>
-							<label>Name</label>
 							<input ng-model='name' />
+							<label>Name</label>
 						</md-input-container>
 						<md-input-container class='md-block' flex>
-							<label>Email</label>
 							<input ng-model='email' type='email' />
+							<label>Email</label>
 						</md-input-container>
 					</div>
 				</div>
@@ -564,21 +564,21 @@ export const Templates	= {
 				</div>
 				<div layout='row'>
 					<md-input-container class='md-block' flex>
-						<label>Name</label>
 						<input ng-model='fromName' />
+						<label>Name</label>
 					</md-input-container>
 					<md-input-container class='md-block' flex>
-						<label>Email</label>
 						<input ng-model='fromEmail' type='email' />
+						<label>Email</label>
 					</md-input-container>
 				</div>
 				<md-input-container class='md-block'>
-					<label>Subject</label>
 					<input ng-model='subject' />
+					<label>Subject</label>
 				</md-input-container>
 				<md-input-container class='md-block'>
-					<label>Message</label>
 					<textarea ng-model='message' md-select-on-focus></textarea>
+					<label>Message</label>
 				</md-input-container>
 
 				<md-button>
@@ -672,7 +672,7 @@ export const Templates	= {
 		</div>
 	`,
 
-	pro: `
+	beta: `
 		<md-content
 			class='nano'
 			layout='column'
@@ -682,7 +682,7 @@ export const Templates	= {
 			<div class='nano-content'>
 				<div
 					class='login-form'
-					ng-show='$this.proState === Cyph.im.UI.ProStates.login'
+					ng-show='$this.betaState === Cyph.im.UI.BetaStates.login'
 					ng-class='{checking: checking}'
 					layout='row'
 					layout-align='center center'
@@ -707,14 +707,14 @@ export const Templates	= {
 								</div>
 								<div layout='row' layout-align='center center'>
 									<md-input-container class='md-block' flex='60'>
-										<label>Username</label>
 										<input ng-model='username' required />
+										<label>Username</label>
 									</md-input-container>
 								</div>
 								<div layout='row' layout-align='center center'>
 									<md-input-container class='md-block' flex='60'>
-										<label>Password</label>
 										<input ng-model='password' type='password' required />
+										<label>Password</label>
 									</md-input-container>
 								</div>
 								<div layout='row' layout-align='center center'>
@@ -727,10 +727,10 @@ export const Templates	= {
 						<md-progress-circular md-mode='indeterminate'></md-progress-circular>
 					</md-card>
 				</div>
-				<div ng-show='$this.proState === Cyph.im.UI.ProStates.register'>
+				<div ng-show='$this.betaState === Cyph.im.UI.BetaStates.register'>
 					Registration screen
 				</div>
-				<div ng-show='$this.proState === Cyph.im.UI.ProStates.settings'>
+				<div ng-show='$this.betaState === Cyph.im.UI.BetaStates.settings'>
 					Settings screen
 				</div>
 			</div>
@@ -738,81 +738,126 @@ export const Templates	= {
 	`,
 
 	signupForm: `
-			<form class='beta-signup-form' ng-submit='$this.submit()'>
-				<div ng-show='$this.state === 0'>
-					<ng-transclude></ng-transclude>
-					<div flex layout='row' layout-sm='column' layout-xs='column' class='signup-form'>
-						<div flex='50' layout='column'>
-							<md-input-container>
-								<label translate>email</label>
-								<input type='email' ng-model='$this.data.Email' required />
-							</md-input-container>
-							<md-input-container>
-								<label translate>password</label>
-								<input type='password' ng-model='$this.data.Password' ng-disabled='true'/>
-							</md-input-container>
-							<md-input-container>
-								<label translate>password confirmation</label>
-								<input type='password' ng-model='$this.data.Password' ng-disabled='true'/>
-							</md-input-container>
+			<div class='beta-signup-form'>
+				<form ng-submit='$this.submit()' ng-show='$this.state === 0'>
+					<div layout='row' layout-align='center center' flex>
+						<ng-transclude></ng-transclude>
+					</div>
+					<div layout='row' layout-align='center center' flex>
+						<div layout='column' flex='50'>
+							<div layout='row' layout-align='center center'>
+								<md-input-container class='md-block' flex='80'>
+									<input type='email' ng-model='$this.data.email' />
+									<label>Email</label>
+								</md-input-container>
+							</div>
+							<div layout='row' layout-align='center center'>
+								<md-input-container class='md-block' flex='80'>
+									<input type='password' disabled />
+									<label>Password</label>
+								</md-input-container>
+							</div>
+							<div layout='row' layout-align='center center'>
+								<md-input-container class='md-block' flex='80'>
+									<input type='password' disabled />
+									<label>Confirm Password</label>
+								</md-input-container>
+							</div>
+							<div layout='row' layout-align='center end'>
+								<md-button
+									type='submit'
+									aria-label='Register'
+									ng-disabled='true'
+									translate
+								>
+									Register
+								</md-button>
+							</div>
 						</div>
-						<div flex='50' layout-column>
-							<p translate>
-								We are currently at capacity and registration is closed, but you can sign up for the
-									waitlist to reserve your spot in line for an account.
-							</p>
-							<p translate>
-								But you don't need an account to use Cyph, just click the start new Cyph button on the homepage. Our beta accounts program
-								provides early access to more advanced functionality and cool new features.
-							</p>
+						<div layout='column' flex='50'>
+							<div layout='row' layout-align='center center'>
+								<p flex='80' translate>
+									We are currently at capacity and registration is closed,
+									but you can sign up for the waitlist to reserve your spot
+									in line for an account.
+								</p>
+							</div>
+							<div layout='row' layout-align='center center'>
+								<p flex='80' translate>
+									But you don't need an account to use Cyph; just click the "start
+									new cyph" button on the homepage. Our beta accounts program provides
+									early access to more advanced functionality and cool new features.
+								</p>
+							</div>
+							<div layout='row' layout-align='center end'>
+								<md-button
+									type='submit'
+									aria-label='Waitlist Signup'
+									translate
+								>
+									Waitlist Signup
+								</md-button>
+							</div>
 						</div>
 					</div>
-					<div class='buttons' layout='row'>
-						<md-button
-							translate
-							type='submit'
-							aria-label='Register'
-							ng-hide='$this.state > 1'
-							ng-disabled='true'
-						>
-							Register
-						</md-button>
-						<md-button
-							translate
-							type='submit'
-							ng-hide='$this.state > 1'
-							aria-label='Waitlist Signup'
-						>
-							Waitlist Signup
-						</md-button>
-					</div>
-				</div>
+				</form>
 
-				<div ng-show='$this.state === 1'>
-					<p translate>
-						Thanks for signing up. Feel free to give us your name too. Privacy is at the core of our ideology, so we'll never give away your email address or personal details.
-					</p>
-					<div layout='row' flex='100'>
-						<div flex='20'></div>
-						<md-input-container>
-							<label translate>Name (optional)</label>
-							<input ng-model='$this.data.name' />
-						</md-input-container>
-						<div flex='15'></div>
+				<form ng-submit='$this.submit()' ng-show='$this.state === 1'>
+					<div layout='row' layout-align='center center' flex>
+						<div layout='column' flex>
+							<div layout='row' layout-align='center center'>
+								<md-input-container class='md-block' flex='80'>
+									<input type='email' ng-model='$this.data.email' required />
+									<label>Email</label>
+								</md-input-container>
+							</div>
+							<div layout='row' layout-align='center end'>
+								<md-button
+									type='submit'
+									aria-label='Waitlist Signup'
+									translate
+								>
+									Waitlist Signup
+								</md-button>
+							</div>
+						</div>
 					</div>
-					<md-button
-							translate
-							type='submit'
-							ng-hide='$this.state > 1'
-							aria-label='Waitlist Signup'
-						>
-							Submit
-					</md-button>
+				</form>
 
-				</div>
-				<div translate ng-show='$this.state === 2'>
-					Thanks for subscribing, {{$this.data.name}}! We'll email you when your invite is ready.
-				</div>
+				<form ng-submit='$this.submit()' ng-show='$this.state === 2'>
+					<div layout='row' layout-align='center center' flex>
+						<div layout='column' flex>
+							<div layout='row' layout-align='center center'>
+								<md-input-container class='md-block' flex='80'>
+									<input ng-model='$this.data.name' />
+									<label>Name (optional)</label>
+								</md-input-container>
+							</div>
+							<div layout='row' layout-align='center end'>
+								<md-button
+									type='submit'
+									aria-label='Waitlist Signup'
+									translate
+								>
+									Waitlist Signup
+								</md-button>
+							</div>
+						</div>
+					</div>
+				</form>
+
+				<form ng-submit='$this.submit()' ng-show='$this.state === 3'>
+					<div layout='row' layout-align='center center' flex>
+						<div layout='column' flex>
+							<div layout='row' layout-align='center center'>
+								<p flex='80' translate>
+									Thanks for subscribing, {{$this.data.name}}! We'll email you
+									when your invite is ready.
+								</p>
+							</div>
+						</div>
+					</div>
+				</form>
 			</form>
 	`,
 

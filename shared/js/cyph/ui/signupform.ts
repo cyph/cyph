@@ -30,30 +30,39 @@ export class SignupForm implements ISignupForm {
 
 	public submit () : void {
 		++this.state;
+
+		if (this.data.email) {
+			if (this.state === 1) {
+				++this.state;
+			}
+
+			this.sendyRequest('subscribe', (response: string) => {
+				if (response === '1') {
+					Analytics.main.send({
+						hitType: 'event',
+						eventCategory: 'signup',
+						eventAction: 'new',
+						eventValue: 1
+					});
+				}
+				else if (response === 'Already subscribed.' && this.data.name) {
+					this.sendyRequest('unsubscribe', () => this.sendyRequest('subscribe'));
+				}
+			});
+		}
+
 		this.controller.update();
 
 		setTimeout(() => {
-			const $input: JQuery	= Elements.signupForm.find('input:visible');
+			const $input: JQuery	= $(Elements.signupForm.selector).
+				filter(':visible').
+				find('input:visible:not([disabled])')
+			;
 
 			if ($input.length === 1) {
 				$input.focus();
 			}
-		}, 100);
-
-
-		this.sendyRequest('subscribe', (response: string) => {
-			if (response === '1') {
-				Analytics.main.send({
-					hitType: 'event',
-					eventCategory: 'signup',
-					eventAction: 'new',
-					eventValue: 1
-				});
-			}
-			else if (response === 'Already subscribed.' && this.data.name) {
-				this.sendyRequest('unsubscribe', () => this.sendyRequest('subscribe'));
-			}
-		});
+		}, 250);
 	}
 
 	/**
