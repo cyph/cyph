@@ -51,5 +51,8 @@ export class Elements {
 		Elements.sendButton				= $('.send-button');
 		Elements.signupForm				= $('.beta-signup-form');
 		Elements.timer					= $('.link-connection .timer');
+
+		/* Workaround for Angular Material bug */
+		$('md-fab-speed-dial').removeClass('md-animations-waiting');
 	}
 }
