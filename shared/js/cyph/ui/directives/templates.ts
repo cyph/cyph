@@ -70,7 +70,7 @@ export const Templates	= {
 				<md-progress-linear
 					class='md-accent key-exchange-progress'
 					md-mode='determinate'
-					ng-value='$this.keyExchangeBetagress'
+					ng-value='$this.keyExchangeProgress'
 				></md-progress-linear>
 				<div flex></div>
 			</div>
@@ -527,11 +527,11 @@ export const Templates	= {
 					<div class='braintree'></div>
 					<div layout='row'>
 						<md-input-container class='md-block' flex>
-							<input ng-model='name' />
+							<input ng-model='name' aria-label='Name' />
 							<label>Name</label>
 						</md-input-container>
 						<md-input-container class='md-block' flex>
-							<input ng-model='email' type='email' />
+							<input ng-model='email' type='email' aria-label='Email' />
 							<label>Email</label>
 						</md-input-container>
 					</div>
@@ -564,20 +564,20 @@ export const Templates	= {
 				</div>
 				<div layout='row'>
 					<md-input-container class='md-block' flex>
-						<input ng-model='fromName' />
+						<input ng-model='fromName' aria-label='Name' />
 						<label>Name</label>
 					</md-input-container>
 					<md-input-container class='md-block' flex>
-						<input ng-model='fromEmail' type='email' />
+						<input ng-model='fromEmail' type='email' aria-label='Email' />
 						<label>Email</label>
 					</md-input-container>
 				</div>
 				<md-input-container class='md-block'>
-					<input ng-model='subject' />
+					<input ng-model='subject' aria-label='Subject' />
 					<label>Subject</label>
 				</md-input-container>
 				<md-input-container class='md-block'>
-					<textarea ng-model='message' md-select-on-focus></textarea>
+					<textarea ng-model='message' aria-label='Message' md-select-on-focus></textarea>
 					<label>Message</label>
 				</md-input-container>
 
@@ -707,13 +707,13 @@ export const Templates	= {
 								</div>
 								<div layout='row' layout-align='center center'>
 									<md-input-container class='md-block' flex='60'>
-										<input ng-model='username' required />
+										<input ng-model='username' aria-label='Username' required />
 										<label>Username</label>
 									</md-input-container>
 								</div>
 								<div layout='row' layout-align='center center'>
 									<md-input-container class='md-block' flex='60'>
-										<input ng-model='password' type='password' required />
+										<input ng-model='password' type='password' aria-label='Password' required />
 										<label>Password</label>
 									</md-input-container>
 								</div>
@@ -747,19 +747,19 @@ export const Templates	= {
 						<div layout='column' flex='50'>
 							<div layout='row' layout-align='center center'>
 								<md-input-container class='md-block' flex='80'>
-									<input type='email' ng-model='$this.data.email' />
+									<input type='email' ng-model='$this.data.email' aria-label='Email' />
 									<label>Email</label>
 								</md-input-container>
 							</div>
 							<div layout='row' layout-align='center center'>
 								<md-input-container class='md-block' flex='80'>
-									<input type='password' disabled />
+									<input type='password' aria-label='Password' disabled />
 									<label>Password</label>
 								</md-input-container>
 							</div>
 							<div layout='row' layout-align='center center'>
 								<md-input-container class='md-block' flex='80'>
-									<input type='password' disabled />
+									<input type='password' aria-label='Confirm Password' disabled />
 									<label>Confirm Password</label>
 								</md-input-container>
 							</div>
@@ -784,8 +784,8 @@ export const Templates	= {
 							</div>
 							<div layout='row' layout-align='center center'>
 								<p flex='80' translate>
-									But you don't need an account to use Cyph; just click the "start
-									new cyph" button on the homepage. Our beta accounts program provides
+									However, you don't need an account to use Cyph; just click the "start
+									new cyph" button on the homepage. Our beta accounts program only provides
 									early access to more advanced functionality and cool new features.
 								</p>
 							</div>
@@ -807,7 +807,7 @@ export const Templates	= {
 						<div layout='column' flex>
 							<div layout='row' layout-align='center center'>
 								<md-input-container class='md-block' flex='80'>
-									<input type='email' ng-model='$this.data.email' required />
+									<input type='email' ng-model='$this.data.email' aria-label='Email' required />
 									<label>Email</label>
 								</md-input-container>
 							</div>
@@ -829,7 +829,7 @@ export const Templates	= {
 						<div layout='column' flex>
 							<div layout='row' layout-align='center center'>
 								<md-input-container class='md-block' flex='80'>
-									<input ng-model='$this.data.name' />
+									<input ng-model='$this.data.name' aria-label='Name' />
 									<label>Name (optional)</label>
 								</md-input-container>
 							</div>

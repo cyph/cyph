@@ -262,14 +262,17 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		this.testimonialCarousel	= new Cyph.UI.Carousel(Elements.testimonialsSection, () =>
 			Elements.heroSection.css(
 				'min-height',
-				`calc(100vh - ${(Elements.testimonialsSection.height() + 40)}px)`
+				`calc(100vh - ${
+					(Elements.testimonialsSection.height() + 40) /
+					(Cyph.Env.isMobile ? 2 : 1)
+				}px)`
 			)
 		);
 
 
 		/* Header / new cyph button animation */
 
-		Elements.mainToolbar.toggleClass('new-cyph-expanded', this.state === States.home);
+		Elements.mainToolbar.toggleClass('new-cyph-expanded', Cyph.UrlState.get() === '');
 		setTimeout(() => setInterval(() => Elements.mainToolbar.toggleClass(
 			'new-cyph-expanded',
 			this.state === States.home && (
@@ -331,8 +334,13 @@ export class UI extends Cyph.UI.BaseButtonManager {
 					this.cyphDemo.desktop &&
 					this.cyphDemo.desktop.state === Cyph.UI.Chat.States.chat
 				) {
-					this.cyphDemo.desktop.cyphertext.show();
-					setTimeout(() => this.cyphDemo.mobile.cyphertext.show(), 8000);
+					if (Cyph.Env.isMobile) {
+						this.cyphDemo.mobile.cyphertext.show();
+					}
+					else {
+						this.cyphDemo.desktop.cyphertext.show();
+						setTimeout(() => this.cyphDemo.mobile.cyphertext.show(), 8000);
+					}
 				}
 				else {
 					retry();

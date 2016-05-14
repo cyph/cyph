@@ -145,9 +145,6 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 				parseFloat(Elements.screenshotLaptop.css('margin-left'))
 			)
 		});
-
-		/* Workaround for Angular Material bug */
-		$('md-fab-speed-dial').removeClass('md-animations-waiting');
 	}
 
 	private resizeMobile () : void {

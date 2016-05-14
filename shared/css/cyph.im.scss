@@ -34,6 +34,7 @@ html:not(.mobile) {
 	.md-fab {
 		height: 42px;
 		width: 42px;
+		margin-top: 20px;
 
 		img {
 			height: 80%;
@@ -95,6 +96,8 @@ input, textarea {
 		padding: 13px;
 		padding-right: 60px;
 		box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.35);
+		position: relative;
+		z-index: 30;
 	}
 
 	.message-box:focus ~ .new-messages {
@@ -118,32 +121,29 @@ input, textarea {
 
 .send-button {
 	position: absolute;
-	bottom: 5px;
-	right: 12px;
+	bottom: 0px;
+	right: 9px;
 	opacity: 0.75;
-	z-index: 3;
+	z-index: 35;
 	font-size: 38px;
-	margin: 0px;
-	padding: 0px;
+	width: 38px;
+	height: 38px;
 
 	* {
 		width: 100%;
 		height: 100%;
+		display: block;
 	}
 
 	/* Crazy fix to prevent jankiness upon message send on mobile */
 	pointer-events: none;
-}
 
-.chat-message-box {
-	.chat-message-box-hidden {
+	@include transition(transform 0.35s linear);
+
+	&.chat-message-box-hidden {
 		@include transform(translateY(250px) !important);
 
-		@include transition(transform 0.25s linear);
-	}
-
-	:not(.chat-message-box-hidden) {
-		@include transition(transform 0.15s linear);
+		@include transition(transform 0.5s linear);
 	}
 }
 
