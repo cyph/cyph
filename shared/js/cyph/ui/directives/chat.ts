@@ -1,77 +1,64 @@
-/// <reference path="enterpress.ts" />
-/// <reference path="filechange.ts" />
-/// <reference path="templates.ts" />
+import {Enterpress} from 'enterpress';
+import {Filechange} from 'filechange';
+import {Templates} from 'templates';
 
 
-module Cyph {
-	export module UI {
-		export module Directives {
-			/**
-			 * Angular module with directives for chat UI components.
-			 */
-			export class Chat {
-				/** Module title + namespace for included directives. */
-				public static title: string	= 'cyphChat';
+/**
+ * Angular namespace with directives for chat UI components.
+ */
+export class Chat {
+	/** Module title + namespace for included directives. */
+	public static title: string	= 'cyphChat';
 
-				private static _	= (() => {
-					angular.
-						module(Chat.title, [
-							'ngMaterial',
-							Enterpress.title,
-							Filechange.title
-						]).
-						directive(Chat.title + 'Cyphertext', () => ({
-							restrict: 'A',
-							scope: {
-								$this: '=' + Chat.title + 'Cyphertext'
-							},
-							link: scope => scope['Cyph'] = Cyph,
-							template: Templates.chatCyphertext
-						})).
-						directive(Chat.title + 'Main', () => ({
-							restrict: 'A',
-							transclude: true,
-							scope: {
-								$this: '=' + Chat.title + 'Main'
-							},
-							link: scope => scope['Cyph'] = Cyph,
-							template: Templates.chatMain
-						})).
-						directive(Chat.title + 'MessageBox', () => ({
-							restrict: 'A',
-							scope: {
-								$this: '=' + Chat.title + 'MessageBox'
-							},
-							link: scope => scope['Cyph'] = Cyph,
-							template: Templates.chatMessageBox
-						})).
-						directive(Chat.title + 'Sidebar', () => ({
-							restrict: 'A',
-							scope: {
-								$this: '=' + Chat.title + 'Sidebar',
-								showChat: '=showChat'
-							},
-							link: scope => scope['Cyph'] = Cyph,
-							template: Templates.chatSidebar
-						})).
-						directive(Chat.title + 'Toolbar', () => ({
-							restrict: 'A',
-							scope: {
-								$this: '=' + Chat.title + 'Toolbar',
-								open: '&open',
-								showChat: '=showChat'
-							},
-							link: scope => scope['Cyph'] = Cyph,
-							template: Templates.chatToolbar
-						})).
-						factory('chatSidenav', [
-							'$mdSidenav',
+	private static _	= (() => {
+		const titles	= {
+			cyphertext: Chat.title + 'Cyphertext',
+			main: Chat.title + 'Main',
+			messageBox: Chat.title + 'MessageBox',
+			sidebar: Chat.title + 'Sidebar',
+			toolbar: Chat.title + 'Toolbar'
+		};
 
-							$mdSidenav => () => $mdSidenav('sidenav')
-						])
-					;
-				})();
-			}
-		}
-	}
+		angular.
+			module(Chat.title, [
+				'ngMaterial',
+				Enterpress.title,
+				Filechange.title
+			]).
+			directive(titles.cyphertext, () => ({
+				restrict: 'A',
+				scope: {
+					$this: '=' + titles.cyphertext
+				},
+				link: scope => scope['Cyph'] = self['Cyph'],
+				template: Templates.chatCyphertext
+			})).
+			directive(titles.main, () => ({
+				restrict: 'A',
+				transclude: true,
+				scope: {
+					$this: '=' + titles.main
+				},
+				link: scope => scope['Cyph'] = self['Cyph'],
+				template: Templates.chatMain
+			})).
+			directive(titles.messageBox, () => ({
+				restrict: 'A',
+				scope: {
+					$this: '=' + titles.messageBox
+				},
+				link: scope => scope['Cyph'] = self['Cyph'],
+				template: Templates.chatMessageBox
+			})).
+			directive(titles.toolbar, () => ({
+				restrict: 'A',
+				scope: {
+					$this: '=' + titles.toolbar,
+					showChat: '='
+				},
+				link: scope => scope['Cyph'] = self['Cyph'],
+				template: Templates.chatToolbar
+			}))
+		;
+	})();
 }

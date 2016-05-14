@@ -4,27 +4,6 @@ To work locally with the Cyph repository, you'll first need to install [Docker](
 
 ---
 
-If you're running either [OS X](https://docs.docker.com/installation/mac/) or [Windows](https://docs.docker.com/installation/windows/), there's some additional setup required after installing Docker.
-
-First, on Windows, disable Hyper-V.
-
-Next, run the following commands:
-
-	boot2docker init
-	VBoxManage modifyvm "boot2docker-vm" --natpf1 "tcp-port42000,tcp,,42000,,42000"
-	VBoxManage modifyvm "boot2docker-vm" --natpf1 "tcp-port42001,tcp,,42001,,42001"
-	VBoxManage modifyvm "boot2docker-vm" --natpf1 "tcp-port42002,tcp,,42002,,42002"
-	VBoxManage modifyvm "boot2docker-vm" --natpf1 "tcp-port43000,tcp,,43000,,43000"
-	
-	boot2docker start
-	# If not using the included docker.sh, you'll need to run this on each fresh boot
-	
-You'll then need to set the environment variables from `boot2docker start`'s output (and probably add them to your bashrc or equivalent).
-
-(**Note:** Docker's error messages suck. For troubleshooting, run boot2docker with `-v` and read VirtualBox's error log; VT-x issues in particular can cause silent breakage.)
-
----
-
 To build for the first time, run the following command inside your local Cyph repository:
 
 	docker build -t cyph/<branch> .
@@ -54,17 +33,15 @@ To kill it:
 
 	./docker.sh kill
 
-Server host: localhost (Linux) or `boot2docker ip` (OS X / Windows)
+Open ports:
 
-Ports:
+* backend: http://localhost:42000
 
-* backend: 42000
+* cyph.com: http://localhost:42001
 
-* cyph.com: 42001
+* cyph.im: http://localhost:42002
 
-* cyph.im: 42002
-
-* SQS: 43000
+* SQS: http://localhost:43000
 
 ---
 

@@ -12,12 +12,14 @@ var config = struct {
 	AllowedOrigins             map[string]none
 	Continents                 map[string]none
 	DefaultContinent           string
+	EmailAddress               string
 	HPKPHeader                 string
 	HSTSHeader                 string
 	MaxChannelDescriptorLength int
 	MaxSignupValueLength       int
 	MemcacheExpiration         time.Duration
 	NewCyphTimeout             int64
+	RootURL                    string
 }{
 	regexp.MustCompile("[A-Za-z0-9]{7}"),
 
@@ -65,6 +67,8 @@ var config = struct {
 
 	"eu",
 
+	"Cyph <hello@cyph.com>",
+
 	"max-age=31536000; includeSubdomains; pin-sha256=\"8jdS3zcG5kUApHWDrLH5Q8wEygqGbGEhYApjSDtufBU=\"; pin-sha256=\"AMRT67hN1KPI+u7Aw9JpZlzyRaKeO+6u2H+jtOmWVy8=\"",
 
 	"max-age=31536000; includeSubdomains; preload",
@@ -80,4 +84,6 @@ var config = struct {
 	(48 * time.Hour),
 
 	600,
+
+	"http://localhost:42000",
 }

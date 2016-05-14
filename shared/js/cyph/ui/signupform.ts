@@ -1,67 +1,76 @@
-module Cyph {
-	export module UI {
-		export class SignupForm implements ISignupForm {
-			public state: number	= 0;
+import {Elements} from 'elements';
+import {ISignupForm} from 'isignupform';
+import {Analytics} from 'cyph/analytics';
+import {Env} from 'cyph/env';
+import {IController} from 'cyph/icontroller';
+import {Util} from 'cyph/util';
 
-			public data	= {
-				Comment: <string> '',
-				Email: <string> '',
-				Language: <string> Env.fullLanguage,
-				Name: <string> ''
-			};
 
-			public submit () : void {
-				if (!this.data.Email) {
-					return;
-				}
+export class SignupForm implements ISignupForm {
+	public state: number	= 0;
 
+	public data	= {
+		name: <string> '',
+		email: <string> '',
+		list: <string> 'Q4YKsEDh2OULosfbBg3IVw',
+		boolean: <boolean> true
+	};
+
+	private sendyRequest (method: string, success: (response: string) => void = () => {}) : void {
+		Util.retryUntilComplete(retry =>
+			Util.request({
+				method: 'POST',
+				url: 'https://sendy.cyph.com/' + method,
+				data: this.data,
+				error: retry,
+				success
+			})
+		);
+	}
+
+	public submit () : void {
+		++this.state;
+
+		if (this.data.email) {
+			if (this.state === 1) {
 				++this.state;
-				this.controller.update();
+			}
 
-				if (this.state === 2) {
-					setTimeout(() => {
-						++this.state;
-						this.controller.update();
-					}, 1500);
+			this.sendyRequest('subscribe', (response: string) => {
+				if (response === '1') {
+					Analytics.main.send({
+						hitType: 'event',
+						eventCategory: 'signup',
+						eventAction: 'new',
+						eventValue: 1
+					});
 				}
-
-				setTimeout(() => {
-					const $input: JQuery	= Elements.signupForm.find('input:visible');
-
-					if ($input.length === 1) {
-						$input.focus();
-					}
-				}, 100);
-
-
-				Util.retryUntilComplete(retry =>
-					Util.request({
-						method: 'PUT',
-						url: Env.baseUrl + 'signups',
-						data: this.data,
-						error: retry,
-						success: (isNew: string) => {
-							if (isNew === 'true') {
-								Analytics.main.send({
-									hitType: 'event',
-									eventCategory: 'signup',
-									eventAction: 'new',
-									eventValue: 1
-								});
-							}
-						}
-					})
-				);
-			}
-
-			/**
-			 * @param controller
-			 */
-			public constructor (private controller: IController) {
-				setTimeout(() =>
-					Elements.signupForm.addClass('visible')
-				, 500);
-			}
+				else if (response === 'Already subscribed.' && this.data.name) {
+					this.sendyRequest('unsubscribe', () => this.sendyRequest('subscribe'));
+				}
+			});
 		}
+
+		this.controller.update();
+
+		setTimeout(() => {
+			const $input: JQuery	= $(Elements.signupForm.selector).
+				filter(':visible').
+				find('input:visible:not([disabled])')
+			;
+
+			if ($input.length === 1) {
+				$input.focus();
+			}
+		}, 250);
+	}
+
+	/**
+	 * @param controller
+	 */
+	public constructor (private controller: IController) {
+		setTimeout(() =>
+			Elements.signupForm.addClass('visible')
+		, 500);
 	}
 }

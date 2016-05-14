@@ -7,7 +7,17 @@ import (
 	"fmt"
 	"geoip2"
 	"github.com/gorilla/mux"
+	"github.com/justinas/nosurf"
+	"github.com/lionelbarrow/braintree-go"
 	"github.com/microcosm-cc/bluemonday"
+	"golang.org/x/crypto/bcrypt"
+	"gopkg.in/authboss.v0"
+	_ "gopkg.in/authboss.v0/auth"
+	_ "gopkg.in/authboss.v0/confirm"
+	_ "gopkg.in/authboss.v0/lock"
+	_ "gopkg.in/authboss.v0/recover"
+	_ "gopkg.in/authboss.v0/register"
+	_ "gopkg.in/authboss.v0/remember"
 	"io/ioutil"
 	"net"
 	"net/http"
@@ -62,12 +72,18 @@ var empty = struct{}{}
 var router = mux.NewRouter()
 var isRouterActive = false
 
+var ab = authboss.New()
+
 var sanitizer = bluemonday.StrictPolicy()
 
 var geoipdb, _ = geoip2.Open("GeoIP2-Country.mmdb")
 
 var twilioSID = os.Getenv("TWILIO_SID")
 var twilioAuthToken = os.Getenv("TWILIO_AUTH_TOKEN")
+
+var braintreeMerchantID = os.Getenv("BRAINTREE_MERCHANT_ID")
+var braintreePublicKey = os.Getenv("BRAINTREE_PUBLIC_KEY")
+var braintreePrivateKey = os.Getenv("BRAINTREE_PRIVATE_KEY")
 
 func geolocate(h HandlerArgs) (string, string) {
 	return geolocateIp(h.Request.RemoteAddr)
@@ -101,6 +117,19 @@ func getBetaSignupFromRequest(h HandlerArgs) BetaSignup {
 		Referer:  sanitize(h.Request.Referer(), config.MaxSignupValueLength),
 		Time:     time.Now().Unix(),
 	}
+}
+
+func braintreeInit(h HandlerArgs) *braintree.Braintree {
+	bt := braintree.New(
+		braintree.Sandbox,
+		braintreeMerchantID,
+		braintreePublicKey,
+		braintreePrivateKey,
+	)
+
+	bt.SetHTTPClient(urlfetch.Client(h.Context))
+
+	return bt
 }
 
 func getTwilioToken(h HandlerArgs) map[string]interface{} {
@@ -141,6 +170,9 @@ func handleFunc(pattern string, handler Handler) {
 func handleFuncs(pattern string, handlers Handlers) {
 	if !isRouterActive {
 		http.Handle("/", router)
+		setUpAuthboss()
+		router.PathPrefix("/auth").Handler(ab.NewRouter())
+
 		isRouterActive = true
 	}
 
@@ -190,12 +222,54 @@ func nullHandler(h HandlerArgs) (interface{}, int) {
 	return nil, http.StatusOK
 }
 
-func sanitize(s string, maxLength int) string {
+func sanitize(s string, params ...int) string {
 	sanitized := sanitizer.Sanitize(s)
 
-	if len(sanitized) > maxLength {
+	maxLength := -1
+	if len(params) > 0 {
+		maxLength = params[0]
+	}
+
+	if maxLength > -1 && len(sanitized) > maxLength {
 		return sanitized[:maxLength]
 	} else {
 		return sanitized
+	}
+}
+
+func setUpAuthboss() {
+	ab.StoreMaker = NewGAEStorer
+	ab.MailMaker = NewGAEMailer
+	ab.CookieStoreMaker = NewCookieStorer
+	ab.SessionStoreMaker = NewCookieStorer
+
+	ab.LogWriter = os.Stderr
+	ab.LogWriteMaker = NewGAELogger
+
+	ab.XSRFName = "csrf_token"
+	ab.XSRFMaker = func(_ http.ResponseWriter, r *http.Request) string {
+		return nosurf.Token(r)
+	}
+
+	ab.RootURL = config.RootURL
+	ab.MountPath = "/auth"
+
+	ab.BCryptCost = bcrypt.MinCost
+	ab.Policies = []authboss.Validator{
+		authboss.Rules{
+			FieldName:       "email",
+			Required:        true,
+			AllowWhitespace: false,
+		},
+		authboss.Rules{
+			FieldName:       "password",
+			Required:        true,
+			MinLength:       32,
+			AllowWhitespace: true,
+		},
+	}
+
+	if err := ab.Init(); err != nil {
+		panic(err)
 	}
 }

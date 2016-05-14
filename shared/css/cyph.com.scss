@@ -1,6 +1,4 @@
-@import 'fonts';
 @import 'cyph.im';
-
 
 html, body, #main {
 	max-width: initial !important;
@@ -14,7 +12,6 @@ html:not(.mobile) #main {
 	padding-left: initial;
 	padding-right: initial;
 }
-
 
 html:not(.load-complete) {
 	#main > section, footer {
@@ -42,6 +39,7 @@ section#main {
 			max-width: 75%;
 			top: calc(50% + 60px);
 			left: 50%;
+
 			@include transform(translateY(-50%) translateX(-50%));
 
 			&.full {
@@ -56,7 +54,6 @@ section#main {
 		}
 	}
 }
-
 
 .hero-background-wrapper {
 	position: absolute;
@@ -108,9 +105,8 @@ section#main {
 	position: relative;
 }
 
-
 #new-cyph {
-	font-family: 'Ubuntu';
+	font-family: Ubuntu;
 	font-size: 11px;
 	font-weight: 300;
 	position: fixed;
@@ -122,19 +118,36 @@ section#main {
 	border-radius: 1px;
 	box-shadow: 0px 4px 10px -1px rgba(0, 0, 0, 0.25);
 	background-color: #7d4fd3 !important;
-	@include transition(all 0.5s ease);
+
+	@include transition(all 0.75s ease);
 
 	&.focus, &:hover {
 		background-color: #7239dd !important;
 	}
+}
 
-	&.active {
+#main-toolbar .link-wrapper-outer {
+	@include transition(transform 0.5s ease 0.25s);
+}
+
+#main-toolbar.new-cyph-expanded {
+	#new-cyph {
 		font-size: 22px;
 		top: calc(50vh - 98px);
-		left: calc(50% - 120px);
+		left: calc(50vw - 120px);
 		height: 76px;
 		width: 240px;
 		border-radius: 3px;
+	}
+
+	.link-wrapper-outer {
+		&.right {
+			@include transform(translateX(60px));
+		}
+
+		&.left {
+			@include transform(translateX(-60px));
+		}
 	}
 }
 
@@ -161,11 +174,13 @@ section#main {
 	.hero-description {
 		font-size: 1.7em;
 		text-align: center;
-		margin-bottom: 16px;
+		margin: auto;
 
 		> div {
 			top: 50%;
+
 			@include transform(translateY(-50%));
+
 			position: relative;
 
 			> :first-child {
@@ -182,6 +197,7 @@ html.mobile #hero-section {
 
 		> div {
 			top: 50%;
+
 			@include transform(none);
 		}
 	}
@@ -190,9 +206,9 @@ html.mobile #hero-section {
 .hero-container {
 	margin-top: 15px;
 
-	.screenshot, .hero-description {
+	.screenshot {
 		display: block;
-		height: calc((50px + 5.525vw) * 3 - 50px);
+		height: calc((50px + 3.7525vw) * 3 - 50px);
 		margin-top: 25px;
 		position: relative;
 	}
@@ -200,11 +216,14 @@ html.mobile #hero-section {
 	.screenshot {
 		@include transition(all 0.25s ease);
 
+		opacity: 0.15;
+
 		&.laptop {
-			margin-left: calc(((50px + 5.525vw) * 3 - 50px) * -0.885);
+			height: calc((50px + 5.525vw) * 3 - 25px);
 
 			&:not(.demo):hover {
-				margin-left: 0px;
+				opacity: 0.9;
+
 				@include transition(all 0.75s ease);
 			}
 		}
@@ -212,21 +231,21 @@ html.mobile #hero-section {
 		&.phone {
 			margin-left: auto;
 			margin-right: auto;
+			top: 100px;
 		}
 
 		&.demo {
 			position: absolute;
 			height: auto;
+			opacity: 1;
 		}
 
 		&:not(.demo):hover {
-			height: calc((50px + 5.525vw) * 3 - 25px);
-			margin-top: 0px;
+			opacity: 0.9;
 			z-index: 3;
 		}
 	}
 }
-
 
 /* Targeting screens smaller than what Unsemantic considers a "tablet" */
 @media (max-width: 767px) {
@@ -243,6 +262,14 @@ html.mobile #hero-section {
 	}
 }
 
+.feature-cycle {
+	font-family: Ubuntu;
+	font-size: 90%;
+	border-bottom: 1px solid #f1f1f1;
+	display: inline-block;
+	transform: translateY(-5px);
+	width: 300px;
+}
 
 #main-toolbar {
 	position: fixed;
@@ -311,6 +338,7 @@ html.mobile #hero-section {
 		}
 	}
 }
+
 @media (max-width: 1229px) {
 	#main-toolbar {
 		.desktop-only {
@@ -337,11 +365,10 @@ html.mobile #hero-section {
 		height: 100% !important;
 	}
 }
+
 html.mobile #logo {
 	margin-left: 5px;
 }
-
-
 
 .carousel.grid-container {
 	position: relative;
@@ -363,6 +390,7 @@ html.mobile #logo {
 
 			&:hover {
 				opacity: 0.4;
+
 				@include transition(opacity 0.1s linear);
 			}
 		}
@@ -398,6 +426,7 @@ html.mobile #logo {
 				display: block;
 				position: relative;
 				top: 50%;
+
 				@include transform(translateY(-50%));
 			}
 
@@ -453,6 +482,7 @@ html.mobile .carousel.grid-container {
 				left: 0px;
 				width: 100%;
 				text-align: center;
+
 				@include transform(translateY(-50%));
 
 				> h3.title {
@@ -521,8 +551,6 @@ html.mobile #testimonials-section .carousel.grid-container .logo.active {
 	background-color: #6133a3;
 }
 
-
-
 #intro-section {
 	padding-bottom: 0px !important;
 
@@ -580,6 +608,7 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 
 .demo-root {
 	opacity: 0;
+
 	@include transition(opacity 0.75s 0.5s ease);
 
 	&, > * {
@@ -597,9 +626,14 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 			overflow: hidden;
 
 			&:not(.curtain) {
-				height: 100%;
+				height: calc(100% + 2px);
 			}
 		}
+	}
+
+	.message-list:after {
+		width: 15em;
+		height: 16.5em;
 	}
 
 	> .desktop {
@@ -608,21 +642,35 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 		margin-top: 64px;
 		left: 11.5%;
 
-		[cyph-chat-main], [cyph-chat-message-box] {
-			margin-left: 120px;
-			width: calc(100% - 120px);
+		[cyph-chat-toolbar] {
+			.buttons > * {
+				left: 20px;
+				top: 5px;
+				margin-left: 6px;
+
+				&, * {
+					width: 15px;
+					height: 15px;
+				}
+			}
 		}
 
-		[cyph-chat-message-box] {
-			margin-top: -5px;
+		[cyph-chat-main], [cyph-chat-message-box] {
+			margin-left: 17.5px;
+			width: calc(100% - 25px);
 		}
 
 		[cyph-chat-main] {
-			height: calc(100% - 60px);
+			height: calc(100% - 90px);
+			margin-top: 10px;
 
 			.chat-main {
 				.message-list {
 					font-size: 90%;
+
+					&:after {
+						@include transform(translateX(-50%) translateY(-60%));
+					}
 				}
 			}
 
@@ -643,6 +691,20 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 				}
 			}
 		}
+
+		[cyph-chat-message-box] {
+			margin-top: -10px;
+
+			.message-box {
+				min-height: 50px;
+			}
+
+			md-fab-speed-dial {
+				bottom: -25px;
+
+				@include transform(scale(0.8));
+			}
+		}
 	}
 
 	> .mobile {
@@ -650,17 +712,10 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 		width: 26%;
 		margin-top: -60px;
 		left: 21.5%;
+
 		@include transform(scale(0.625));
+
 		@include filter(blur(0px));
-
-		.chat-toolbar {
-			margin-top: 0px;
-
-			.md-toolbar-tools > span {
-				overflow: hidden;
-				max-height: 100%;
-			}
-		}
 
 		[cyph-chat-main] {
 			height: calc(100% - 88px);
@@ -699,6 +754,7 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 			width: 200px;
 			margin-top: -135px;
 			margin-left: 205px;
+
 			@include transform(scale(3.4));
 		}
 	}
@@ -709,12 +765,6 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 
 	.chat-cyphertext {
 		position: absolute;
-	}
-
-	.chat-sidebar {
-		margin-left: -40px;
-		margin-top: -60px;
-		@include transform(scale(0.625));
 	}
 
 	.send-file-button {
@@ -759,10 +809,10 @@ html.mobile .demo-root {
 		top: 0px;
 		left: -50px;
 		margin: auto;
+
 		@include transform(scale(0.8));
 	}
 }
-
 
 #gettingstarted-section {
 	height: calc(100vh - 158px);
@@ -773,11 +823,12 @@ html.mobile .demo-root {
 
 	> .hero-text, > .section-content-container {
 		position: absolute !important;
-		background-color: rgba(38, 38, 56, 0.6);
+		background-color: rgba(38, 38, 56, 0.75);
 		padding: 5px 10px;
 		margin: 0px;
 		text-align: center;
 		left: 50%;
+
 		@include transform(translateX(-50%));
 	}
 
@@ -787,15 +838,13 @@ html.mobile .demo-root {
 	}
 
 	> .section-content-container {
-		top: calc(50% + 35px);
+		top: calc(50% + 50px);
 	}
 }
 
 html.mobile #gettingstarted-section {
 	background-size: auto 100%;
 }
-
-
 
 #footer {
 	padding: 40px;
@@ -817,12 +866,10 @@ html.mobile #gettingstarted-section {
 	}
 }
 
-
-
 #error {
 	h1 {
 		text-align: center;
-		font-family: 'Ubuntu', sans-serif;
+		font-family: Ubuntu, sans-serif;
 		font-size: 2.5vw;
 	}
 
@@ -838,18 +885,13 @@ html.mobile #gettingstarted-section {
 	}
 }
 
-
-
 .section-content-container {
 	width: 100%;
 	max-width: 100%;
 	margin-top: 30px;
 	margin-left: 50%;
-	@include transform(translateX(-50%));
 
-	md-input-container {
-		padding: 0px 10vw;
-	}
+	@include transform(translateX(-50%));
 
 	li {
 		margin-bottom: 15px;
@@ -874,6 +916,7 @@ html:not(.mobile) .section-content-container:not(.full) {
 		visibility: hidden;
 	}
 }
+
 html.mobile {
 	.founder-photos {
 		margin-left: -20px;
@@ -892,6 +935,7 @@ html.mobile {
 		}
 	}
 }
+
 html:not(.mobile) {
 	.founder-photos {
 		padding: 20px;
@@ -915,6 +959,7 @@ html:not(.mobile) {
 			}
 		}
 	}
+
 	.founder-photos:after {
 		clear: both;
 		content: '';
@@ -934,6 +979,7 @@ html:not(.mobile) {
 		}
 	}
 }
+
 html.mobile {
 	#podcast-section {
 		padding-top: 120px !important;
@@ -965,6 +1011,7 @@ div.donation {
 	margin-top: -55px;
 	font-family: Ubuntu;
 }
+
 div.donation span {
 	color: black;
 	font-family: Ubuntu;
@@ -972,39 +1019,49 @@ div.donation span {
 	top: -1px;
 	position: relative;
 }
+
 .donate-button {
 	display: block;
 	width: 100%;
 	margin-top: -15px;
 }
+
 md-slider.donation {
 	width: 91%;
 }
+
 md-slider .md-sign:after {
 	border-top-color: rgb(107, 63, 176);
 }
+
 md-slider .md-thumb:after {
 	border-color: rgb(107, 63, 176);
 	background-color: rgb(107, 63, 176);
 }
+
 span.md-thumb-text:before {
 	content: '$';
 }
+
 md-slider.md-min .md-thumb:after {
-	background-color: rgb(255,255,255);
+	background-color: rgb(255, 255, 255);
 }
+
 md-slider .md-track.md-track-fill {
-	background-color: rgb(255,255,255);
+	background-color: rgb(255, 255, 255);
 }
+
 md-slider .md-sign {
 	background-color: rgb(107, 63, 176);
 }
+
 md-slider .md-sign {
 	left: -20px !important;
 	top: -25px !important;
 	width: 42px !important;
 	height: 42px !important;
 }
+
 md-slider .md-focus-thumb {
 	position: absolute;
 	left: -24px;
@@ -1015,20 +1072,24 @@ md-slider .md-focus-thumb {
 	display: none;
 	opacity: 0;
 	background-color: silver;
-	@include animation(sliderFocusThumb .4s linear);
+
+	@include animation(sliderFocusThumb 0.4s linear);
 }
+
 md-slider .md-sign .md-thumb-text {
 	z-index: 1;
 	font-size: 13px;
-	font-weight: 900;
 }
+
 input.donation {
 	text-align: center;
 	border: 0px;
 }
+
 input.donation:before {
 	content: '$';
 }
+
 .paypal-button button.large {
 	width: 194px;
 	float: right;

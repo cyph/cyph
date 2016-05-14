@@ -2,23 +2,17 @@
  * @file Entry point of cyph.com.
  */
 
-
 /// <reference path="../preload/fakecrypto.ts" />
-/// <reference path="../preload/base.ts" />
+/// <reference path="../preload/jquery.ts" />
+/// <reference path="../global/base.ts" />
 
-/// <reference path="../cyph/controller.ts" />
-/// <reference path="../cyph/session/session.ts" />
-/// <reference path="../cyph/ui/chat/chat.ts" />
-/// <reference path="../cyph/ui/carousel.ts" />
-/// <reference path="../cyph/ui/dialogmanager.ts" />
-/// <reference path="../cyph/ui/signupform.ts" />
-/// <reference path="../cyph/ui/directives/chat.ts" />
-/// <reference path="../cyph/ui/directives/markdown.ts" />
-/// <reference path="../cyph/ui/directives/signupform.ts" />
-/// <reference path="ui/enums.ts" />
-/// <reference path="ui/elements.ts" />
-/// <reference path="ui/cyphdemo.ts" />
-/// <reference path="ui/ui.ts" />
+import {CyphDemo} from 'ui/cyphdemo';
+import {Elements} from 'ui/elements';
+import {HomeSections, Podcasts, States} from 'ui/enums';
+import {UI} from 'ui/ui';
+import * as Cyph from 'cyph/cyph';
+import {Loaded} from 'preload/base';
+
 
 /*
 	cyph.com works fine in every browser except IE/Edge.
@@ -30,37 +24,60 @@ if (Cyph.Env.isIEOrEdge) {
 }
 
 
+Cyph.UI.Elements.body.attr('ng-controller', Cyph.Config.angularConfig.rootController);
+
 angular.
-	module('Cyph', [
+	module(Cyph.Config.angularConfig.rootModule, [
 		'ngMaterial',
 		Cyph.UI.Directives.Chat.title,
+		Cyph.UI.Directives.Checkout.title,
+		Cyph.UI.Directives.Contact.title,
 		Cyph.UI.Directives.Markdown.title,
 		Cyph.UI.Directives.SignupForm.title
 	]).
-	controller('CyphController', [
+	controller(Cyph.Config.angularConfig.rootController, [
 		'$scope',
 		'$mdDialog',
 		'$mdToast',
 		'$mdSidenav',
-		'chatSidenav',
 
-		($scope, $mdDialog, $mdToast, $mdSidenav, chatSidenav) => $(() => {
-			Cyph.com.UI.Elements.load();
+		($scope, $mdDialog, $mdToast, $mdSidenav) => {
+			self['Cyph']	= Cyph;
+			$scope.Cyph		= Cyph;
+			$scope.Cyph.com	= {
+				UI: {
+					CyphDemo,
+					Elements,
+					HomeSections,
+					Podcasts,
+					States,
+					UI
+				}
+			};
 
-			const controller: Cyph.IController				= new Cyph.Controller($scope);
-			const mobileMenu: Cyph.UI.ISidebar				= $mdSidenav('main-toolbar-sidenav');
-			const demoDialogManager: Cyph.UI.IDialogManager	= new Cyph.UI.DialogManager($mdDialog, $mdToast);
-			const demoMobileMenu: Cyph.UI.ISidebar			= chatSidenav();
+			$(() => {
+				Elements.load();
 
-			$scope.Cyph	= Cyph;
-			$scope.ui	= new Cyph.com.UI.UI(controller, mobileMenu, demoDialogManager, demoMobileMenu);
+				const controller: Cyph.IController				= new Cyph.Controller($scope);
+				const mobileMenu: () => Cyph.UI.ISidebar		= $mdSidenav('main-toolbar-sidenav');
+				const demoDialogManager: Cyph.UI.IDialogManager	= new Cyph.UI.DialogManager($mdDialog, $mdToast);
 
-			self['ui']	= $scope.ui;
+				$scope.ui	= new UI(controller, mobileMenu, demoDialogManager);
+				self['ui']	= $scope.ui;
 
-			controller.update();
-		})
+				controller.update();
+			});
+		}
+	]).
+	config([
+		'$compileProvider',
+		$compileProvider => $compileProvider.
+			aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|sms):/).
+			debugInfoEnabled(false)
 	])
 ;
+
+angular.bootstrap(document, [Cyph.Config.angularConfig.rootModule]);
 
 
 /* Redirect to Onion site when on Tor */
@@ -79,3 +96,6 @@ if (!Cyph.Env.isOnion) {
 		}
 	});
 }
+
+
+export {Loaded};

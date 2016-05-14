@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app='Cyph' ng-controller='CyphController'>
+<html>
 	<head>
 		<meta charset='utf-8' />
 		<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1' />
@@ -80,8 +80,8 @@
 					<span class='link-wrapper-inner'>
 						<md-button translate href='/blog'>Blog</md-button>
 						<md-button translate href='/faq'>FAQ</md-button>
-						<md-button translate href='/enterprise'>Enterprise</md-button>
-						<md-button translate href='/login'>Login/Register</md-button>
+						<md-button translate href='/pricing'>Pricing</md-button>
+						<md-button translate href='/register'>Register</md-button>
 					</span>
 				</span>
 
@@ -154,13 +154,13 @@
 					</md-button>
 				</div>
 				<div>
-					<md-button translate href='/enterprise' ng-click='ui.baseButtonClick()'>
-						Enterprise
+					<md-button translate href='/pricing' ng-click='ui.baseButtonClick()'>
+						Pricing
 					</md-button>
 				</div>
 				<div>
-					<md-button translate href='/login' ng-click='ui.baseButtonClick()'>
-						Login/Register
+					<md-button translate href='/register' ng-click='ui.baseButtonClick()'>
+						Register
 					</md-button>
 				</div>
 				<div>
@@ -209,43 +209,40 @@
 		<section id='hero-section'>
 			<div class='hero-foreground'>
 				<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' translate>
-					Completely Private Voice &amp; Video Chat
+					Secure your <span class='feature-cycle'>{{ui.features[ui.featureIndex]}}</span> in one click.
 				</h1>
 				<div class='hero-container grid-container'>
-					<div
-						class='wow desktop-only desktop-class-bounceInLeft grid-25 tablet-grid-25 mobile-grid-100'
-						data-wow-delay='2250ms'
-					>
-						<a href='/intro'>
-							<img class='laptop screenshot' src='/img/laptop-screenshot.png' alt='Laptop displaying secure Cyph video call' />
-						</a>
-						&nbsp;
+					<div layout='row'>	
+						<div flex='25'></div>
+						<div
+							class='wow desktop-only desktop-class-bounceInLeft tablet-grid-25 mobile-grid-100'
+							data-wow-delay='2250ms'
+						>
+							<a href='/intro'>
+								<img class='laptop screenshot' src='/img/laptop-screenshot.png' alt='Laptop displaying secure Cyph video call' />
+							</a>
+							&nbsp;
+						</div>
+						<div
+							class='wow desktop-only desktop-class-bounceInRight tablet-grid-25 mobile-grid-100'
+							data-wow-delay='2250ms'
+						>
+							<a href='/intro'>
+								<img class='phone screenshot' src='/img/phone-screenshot.png' alt='Phone displaying secure Cyph video call' />
+							</a>
+							&nbsp;
+						</div>
+						<div flex='25'></div>
 					</div>
-
-					<div class='hero-description grid-50 tablet-grid-50 wow animated fadeIn' data-wow-delay='2500ms'>
-						<div>
+						<div class='hero-description wow animated fadeIn' data-wow-delay='2500ms'>
 							<p translate>
-								Cyph secures your conversations against any threat, from lone hackers,
-								to agencies armed with theoretical quantum attacks &mdash;
-								no signup or downloads required.
-							</p>
-							<p translate>
-								Cyph your friends. Reclaim your privacy.
+								Just send a link &mdash;
+								no signups or downloads required!
 							</p>
 						</div>
-					</div>
-
-					<div
-						class='wow desktop-only desktop-class-bounceInRight grid-25 tablet-grid-25 mobile-grid-100'
-						data-wow-delay='2250ms'
-					>
-						<a href='/intro'>
-							<img class='phone screenshot' src='/img/phone-screenshot.png' alt='Phone displaying secure Cyph video call' />
-						</a>
-						&nbsp;
-					</div>
 				</div>
 			</div>
+		</div>
 
 			<div class='hero-background-wrapper'>
 				<div class='hero-background'>
@@ -315,7 +312,7 @@
 				<span class='desktop desktop-only'>
 					<div class='cyph-foreground'>
 						<span
-							cyph-chat-sidebar='ui.cyphDemo.desktop'
+							cyph-chat-toolbar='ui.cyphDemo.desktop'
 							show-chat='true'
 						></span>
 						<div
@@ -323,7 +320,10 @@
 							layout='column'
 							layout-fill
 							flex
-						></div>
+						>
+							We hope you enjoyed our quick demo! Just click
+							the "start new cyph" button to use it for real.
+						</div>
 						<div cyph-chat-message-box='ui.cyphDemo.desktop'></div>
 					</div>
 					<div cyph-chat-cyphertext='ui.cyphDemo.desktop'></div>
@@ -333,7 +333,6 @@
 					<div class='cyph-foreground'>
 						<span
 							cyph-chat-toolbar='ui.cyphDemo.mobile'
-							open='ui.cyphDemo.openMobileMenu()'
 							show-chat='true'
 						></span>
 						<div
@@ -341,7 +340,9 @@
 							layout='column'
 							layout-fill
 							flex
-						></div>
+						>
+							Tell your friends.
+						</div>
 						<div cyph-chat-message-box='ui.cyphDemo.mobile'></div>
 					</div>
 					<div cyph-chat-cyphertext='ui.cyphDemo.mobile'></div>
@@ -450,7 +451,7 @@
 								>Off-the-Record (OTR)</a>,
 								<span translate>
 									with a number of architectural details influenced by Open Whisper Systems'
-									TextSecure protocol &mdash; such as the use of elliptic curves (ECDH/Curve25519).
+									Signal Protocol &mdash; such as the use of elliptic curves (ECDH/Curve25519).
 								</span>
 							</p>
 							<p>
@@ -569,9 +570,10 @@
 					<div class='quote'>
 						<div class='text'>
 							<p translate>
-								Cyph from your desktop, laptop, phone, or tablet! Native mobile and desktop
-								apps are on our roadmap, but right now you can use the Web version of Cyph
-								anywhere.
+								Since Cyph is quite literally the only secure web app in existence (see "Application
+								Integrity Validation"), you can use it from your desktop, laptop, phone, or tablet &mdash;
+								really just about any device with a modern web browser! We've got native mobile and desktop
+								apps in the works as well, so be sure to keep an eye out for when you can download Cyph.
 							</p>
 						</div>
 					</div>
@@ -586,11 +588,12 @@
 			</h1>
 			<div class='section-content-container'>
 				<p translate>
-					Cyph provides an end-to-end encrypted messaging solution that, despite its friendliness and
-					ease of use, offers a strong guarantee of confidentiality through the use of patent-pending
-					technologies that dramatically improve upon existing, proven security methods. It was founded
-					by two former SpaceX engineers with the vision of defending innocent people from increasingly
-					sophisticated rogue hackers and invasive government mass surveillance.
+					Cyph is a secure communication tool designed to be extremely friendly for users of any technical
+					skill level, providing such features as encrypted video calling and file transfers to both individuals
+					and businesses. The patent-pending technology underpinning our app was built by two former SpaceX
+					engineers &mdash; and rigorously vetted against a threat model focused on nation-state-level attacks
+					&mdash; with the vision of defending innocent people from increasingly sophisticated rogue hackers and
+					invasive government mass surveillance.
 				</p>
 				<p translate>
 					<div class='founder-photos grid-container'>
@@ -717,56 +720,263 @@
 			</div>
 		</section>
 
-		<section id='enterprise' ng-show='ui.state === Cyph.com.UI.States.enterprise' class='unisection'>
-			<img class='background' src='/img/enterprise.png' />
-			<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' translate>
-				Enterprise
-			</h1>
-			<div class='section-content-container'>
-				<p translate>
-					We're now piloting a beta of Cyph for enterprises with a small set of
-					startups and business customers.
-				</p>
-				<p translate>
-					Our standard enterprise beta offers:
-				</p>
-				<ul>
-					<li translate>
-						SDK for third-party Cyph integration
-					</li>
-					<li translate>
-						Optional "modest branding" feature
-					</li>
-					<li translate>
-						Hands-on support from the founders of Cyph
-					</li>
-					<li translate>
-						Extra priority for feature requests
-					</li>
-				</ul>
-				<p translate>
-					Custom arrangements may include:
-				</p>
-				<ul>
-					<li translate>
-						Extended SLA
-					</li>
-					<li translate>
-						Self-branded white label distribution
-					</li>
-					<li translate>
-						Custom Cyph deployments (internally forked, self-hosted, and/or self-signed)
-					</li>
-				</ul>
-				<p>
-					<span translate>
-						If you're interested in learning more about Cyph's beta enterprise program,
-					</span>
-					<a href='/contact' translate>contact us</a>
-					<span translate>
-						now.
-					</span>
-				</p>
+		<section id='pricing' ng-show='ui.state === Cyph.com.UI.States.pricing' class='unisection'>
+				<div id='business'>
+					<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='25ms' translate>
+						Business Pricing
+					</h1>
+					<md-icon
+						md-font-set='material-icons'
+						ng-click='ui.business = false'
+						class='back animated fadeIn'
+						hide-sm
+						hide-xs
+					>keyboard_backspace</md-icon>
+					<div class='bg-image laptop' class='animated bounceInLeft' flex='20'>
+						<img src='/img/business-man.png' />
+					</div>
+					<div show-sm show-xs flex></div>
+					<div layout='row' layout-sm='column' layout-xs='column' layout-align-sm='center center' layout-align-xs='center center' class='pricing-chart animated bounceInUp' flex>
+						<div flex></div>
+						<br hide-gt-sm />
+						<div  class='pricing'>
+							<h3>Enterprise Custom</h3>
+
+							<div class='features'>
+								<p>
+									Secure your business with Cyph encryption. Integrate into your app, site, or service with our API and whitelabeling.
+									Work directly with our prodcut development team to create custom features that meet your and your customer's needs.
+								<p>
+
+								<div class='feature' layout='row'>
+									<md-icon
+										md-font-set='material-icons'
+										class='ng-isolate-scope md-default-theme material-icons'
+									></md-icon>
+									<h4>Beta Features, Plus:</h4>
+										<md-icon
+											md-font-set='material-icons'
+											class='ng-isolate-scope md-default-theme material-icons'
+										>arrow_forward</md-icon>
+								</div>
+								<hr>
+								<div class='feature indent' layout='row'>
+									<md-icon
+										md-font-set='material-icons'
+										class='ng-isolate-scope md-default-theme material-icons'
+									>people</md-icon>
+									<h4>User Management</h4>
+								</div>
+								<div class='feature indent' layout='row'>
+										<md-icon
+											md-font-set='material-icons'
+											class='ng-isolate-scope md-default-theme material-icons'
+										>palette</md-icon>
+									<h4>Custom Theming</h4>
+								</div>
+								<div class='feature indent' layout='row'>
+										<md-icon
+											md-font-set='material-icons'
+											class='ng-isolate-scope md-default-theme material-icons'
+										>domain</md-icon>
+									<h4>Self Hosting</h4>
+								</div>
+								<div class='feature indent' layout='row'>
+									<md-icon
+										md-font-set='material-icons'
+										class='ng-isolate-scope md-default-theme material-icons'
+									>settings</md-icon>
+									<h4>API Access</h4>
+								</div>
+								<div class='feature indent' layout='row'>
+										<md-icon
+											md-font-set='material-icons'
+											class='ng-isolate-scope md-default-theme material-icons'
+										>bookmark_border</md-icon>
+									<h4>White Label</h4>
+								</div>
+								<div class='feature indent' layout='row'>
+										<md-icon
+											md-font-set='material-icons'
+											class='ng-isolate-scope md-default-theme material-icons'
+										>edit</md-icon>
+									<h4>Custom Features</h4>
+								</div>
+								<br />
+								<hr>
+							</div>
+							<a href='mailto:b2b@cyph.com' target='_blank'>
+								<div class='price'>Contact Us</div>
+							</a>
+						</div>
+						<br hide-gt-sm />
+						<div  class='pricing'>
+							<h3>Early Beta Access</h3>
+
+							<div class='features'>
+								<p>
+									Get early access to Cyph for your business, as well lifetime priority support. Have a feature you really want to see in Cyph? Your requests are sent straight to the founders.
+								</p>
+								<br />
+								<hr />
+
+								<div class='feature' layout='row'>
+									<md-icon
+										md-font-set='material-icons'
+										class='ng-isolate-scope md-default-theme material-icons'
+									>enhanced_encryption</md-icon>
+									<h4>Powerful Encryption</h4>
+								</div>
+								<div class='feature' layout='row'>
+									<md-icon
+										md-font-set='material-icons'
+										class='ng-isolate-scope md-default-theme material-icons'
+									>touch_app</md-icon>
+									<h4>One Click Access</h4>
+								</div>
+								<div class='feature indent' layout='row'>
+									<md-icon
+										md-font-set='material-icons'
+										class='ng-isolate-scope md-default-theme material-icons'
+									>chat</md-icon>
+									<h4>Instant Messaging</h4>
+								</div>
+								<div class='feature indent' layout='row'>
+									<md-icon
+										md-font-set='material-icons'
+										class='ng-isolate-scope md-default-theme material-icons'
+									>photo_camera</md-icon>
+									<h4>Picture Messaging</h4>
+								</div>
+
+								<div class='feature indent' layout='row'>
+									<md-icon
+										md-font-set='material-icons'
+										class='ng-isolate-scope md-default-theme material-icons'
+									>videocam</md-icon>
+									<h4>Video Calling</h4>
+								</div>
+								<div class='feature indent' layout='row'>
+									<md-icon
+										md-font-set='material-icons'
+										class='ng-isolate-scope md-default-theme material-icons'
+									>phone</md-icon>
+									<h4>Voice Calling</h4>
+								</div>
+								<div class='feature indent' layout='row'>
+									<md-icon
+										md-font-set='material-icons'
+										class='ng-isolate-scope md-default-theme material-icons'
+									>attach_file</md-icon>
+									<h4>File Transfers</h4>
+								</div>
+
+								<p>Limited Time Offer</p>
+								<hr>
+								<div class='feature' layout='row'>
+									<md-icon
+										md-font-set='material-icons'
+										class='ng-isolate-scope md-default-theme material-icons'
+									>all_inclusive</md-icon>
+									<h4>Unlimited Sessions</h4>
+								</div>
+								<div class='feature' layout='row'>
+									<md-icon
+										md-font-set='material-icons'
+										class='ng-isolate-scope md-default-theme material-icons'
+									>live_help</md-icon>
+									<h4>Lifetime Priority Support</h4>
+								</div>
+							</div>
+
+							<div class='price' ng-click='ui.updateCart(
+								ui.betaPlan,
+								Cyph.Config.pricingConfig.categories.enterprise.id,
+								Cyph.Config.pricingConfig.categories.enterprise.items.beta.id
+							)'>${{ui.betaPlan}} (one time)</div>
+						</div>
+						<br hide-gt-sm />
+						<div  class='pricing'>
+							<h3>Telehealth Custom</h3>
+
+							<div class='features'>
+								<p>
+									Expand your client base by allowing virtual doctor visits from anywhere with our HIPAA compliant encrypted video calling. Securely send and receive paitent files.
+								<p>
+
+									<div class='feature' layout='row'>
+										<md-icon
+											md-font-set='material-icons'
+											class='ng-isolate-scope md-default-theme material-icons'
+										>arrow_back</md-icon>
+										<h4>Beta Features, Plus:</h4>
+									</div>
+									<hr>
+									<div class='feature indent' layout='row'>
+										<md-icon
+											md-font-set='material-icons'
+											class='ng-isolate-scope md-default-theme material-icons'
+										>local_hospital</md-icon>
+										<h4>HIPAA BAA</h4>
+									</div>
+									<div class='feature indent' layout='row'>
+										<md-icon
+											md-font-set='material-icons'
+											class='ng-isolate-scope md-default-theme material-icons'
+										>schedule</md-icon>
+										<h4>Paitent Scheduling</h4>
+									</div>
+									<div class='feature indent' layout='row'>
+										<md-icon
+											md-font-set='material-icons'
+											class='ng-isolate-scope md-default-theme material-icons'
+										>credit_card</md-icon>
+										<h4>Payment Processing</h4>
+									</div>
+
+								<div class='feature indent' layout='row'>
+									<md-icon
+										md-font-set='material-icons'
+										class='ng-isolate-scope md-default-theme material-icons'
+									>settings</md-icon>
+									<h4>API Access</h4>
+								</div>
+								<div class='feature indent' layout='row'>
+										<md-icon
+											md-font-set='material-icons'
+											class='ng-isolate-scope md-default-theme material-icons'
+										>bookmark_border</md-icon>
+									<h4>White Label</h4>
+								</div>
+								<div class='feature indent' layout='row'>
+										<md-icon
+											md-font-set='material-icons'
+											class='ng-isolate-scope md-default-theme material-icons'
+										>edit</md-icon>
+									<h4>Custom Features</h4>
+								</div>
+								<br />
+								<hr>
+							</div>
+
+							<a href='mailto:telehealth@cyph.com' target='_blank'>
+								<div class='price'>Contact Us</div>
+							</a>
+							</div>
+							<br hide-gt-sm />
+							<md-button 
+								class='md-raised back'
+								ng-click='ui.business=false;'
+								hide-gt-sm
+								>
+								Back
+							</md-button>
+						<div flex></div>
+						<div class='bg-image doctor' class='animated bounceInRight' flex='20'>
+								<img src='/img/doctor.png' />
+						</div>
+					</div>
+				</div>
 			</div>
 		</section>
 
@@ -797,14 +1007,17 @@
 			</h1>
 			<div class='section-content-container'>
 				<p>
-					<span translate>
-						The best way to contact us is by email at
-					</span>
-					<a href='mailto:hello@cyph.com'>hello@cyph.com</a>.
+					<cyph-contact to='"hello"'></cyph-contact>
 				</p>
 				<p>
 					<span translate>
-						However, we also have a phone line open for voice mail:
+						If you prefer to use your own email client, feel free to shoot us a message at 
+					</span>
+					<a href='mailto:hello@cyph.com' title='hello@cyph.com'>hello@cyph.com</a>.
+				</p>
+				<p>
+					<span translate>
+						We also have a phone line open for voicemail:
 					</span>
 					<a href='tel:+19312974462' title='+1(931) 297 4462'>+1(931) CYPH INC</a>.
 				</p>
@@ -819,13 +1032,16 @@
 				<p>
 					<span translate>
 						If you'd like to help support our mission, you may donate
-						via PayPal below or use the Bitcoin address
+						via the form below below or use the Bitcoin address
 					</span>
 					<a
 						target='_self'
 						href='bitcoin:1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd'
 					>1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd</a>.
-
+					<p translate>
+						All donations will go directly toward the development of native mobile apps and
+						Cyph accounts.
+					</p>
 					<md-slider
 						class='donation'
 						flex
@@ -848,15 +1064,42 @@
 						 />
 					</div>
 					<md-button class='donate-button' aria-label='Submit Donation'>
-						<a translate ng-href='https://www.paypal.me/cyph/{{ui.donationAmount}}'>
-							Donate
+						<a translate ng-click='ui.updateCart(
+							ui.donationAmount,
+							Cyph.Config.pricingConfig.categories.donation.id,
+							Cyph.Config.pricingConfig.categories.donation.items.generic.id
+						)'>
+							Confirm Donation Amount
 						</a>
 					</md-button>
 				</p>
-				<p translate>
-					All donations will go directly toward the development of native mobile apps and
-					Cyph accounts.
-				</p>
+			</div>
+		</section>
+
+		<section id='checkout' ng-show='ui.state === Cyph.com.UI.States.checkout' class='unisection'>
+			<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' translate>
+				Checkout
+			</h1>
+			<div layout='row'>
+				<div flex='33'></div>
+					<div class='cart' ng-class='{"empty" : ui.cart}' ng-hide='ui.cart'>
+						<h3 translate> There's nothing in your cart. What are you even doing here?</h3>
+						<br />
+						<span translate> To add something to your cart go to </span>
+						<a href='/pricing'> Business Pricing </a>
+						<span translate> or </span>
+						<a href='/donate'> make a donation </a>
+						.
+					</div>
+					<cyph-checkout amount='ui.cart[0]' category='ui.cart[1]' item='ui.cart[2]' ng-show='ui.cart[0] !== 0'>
+						<div ng-show='ui.cart[1] === Cyph.Config.pricingConfig.categories.donation.id'>
+							Thank you for supporting Cyph!
+						</div>
+						<div ng-hide='ui.cart[1] === Cyph.Config.pricingConfig.categories.donation.id'>
+							Payment confirmed! Follow-up instructions will be sent via email.
+						</div>
+					</cyph-checkout>
+				<div flex='33'></div>
 			</div>
 		</section>
 
@@ -864,150 +1107,213 @@
 			<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' translate>
 				Frequently Asked Questions
 			</h1>
-			<div class='section-content-container'>
-				<ul>
-					<li>
-						<p>
-							<strong translate>How do I use Cyph?</strong>
-						</p>
-						<p translate>
-							<span transalte>Simply go to</span>
-							<a ng-href='{{Cyph.Env.newCyphUrl}}'>cyph.im</a>
-							<span translate>
-								or click the "start new cyph" button and a cyph link will be generated
-								for you to send to a friend. Text, email, or send the link to them via
-								any other channel, and when they click it you both will enter a secure
-								chat.
-							</span>
-						</p>
-					</li>
-					<li>
-						<p>
-							<strong translate>How do I send photos?</strong>
-						</p>
-						<p translate>
-							Click the media icon in the message composition textbox (on the far right;
-							only visible when no text has been entered) and select the photo you wish
-							to share.
-						</p>
-					</li>
-					<li>
-						<p>
-							<strong translate>How do I send files?</strong>
-						</p>
-						<p translate>
-							Click the paperclip icon (on the far left on desktops and on the top
-							right on mobile) and select the file you wish to share.
-						</p>
-					</li>
-					<li>
-						<p>
-							<strong translate>How do I start a video or voice call?</strong>
-						</p>
-						<p translate>
-							Click the video (or phone) icon on the far left (desktop) / top right (mobile).
-							A warning will pop up confirming that you wish to send the call invite and
-							that connecting will expose your IP (Cyph video uses a peer-to-peer connection
-							for voice and video, so you will be connecting directly to the other party
-							instead of going through our servers).
-						</p>
-					</li>
-					<li>
-						<p>
-							<strong translate>What data do you track?</strong>
-						</p>
-						<p translate>
-							Currently, we only track numbers of: cyph sessions, messages, timeouts,
-							voice/video calls, file transfers, signups, "cyphertext" UI views, and calls
-							to our API.
-						</p>
-					</li>
-					<li>
-						<p>
-							<strong translate>How much does Cyph cost?</strong>
-						</p>
-						<p>
-							<span translate>
-								The Cyph beta is free to use for individuals (we intend to always have a
-								free tier, because we see online privacy as a basic right) and we are
-								currently piloting
-							</span>
-							<a href='/enterprise'>enterprise deployments of secure video and instant messaging</a>.
-						</p>
-					</li>
-					<li>
-						<p>
-							<strong translate>Do you have an Android/iOS/TI-89 app?</strong>
-						</p>
-						<p translate>
-							Native chat applications for Android and iOS are in the works.
-							We have no plans to support any Texas Instruments machines.
-						</p>
-					</li>
-					<li>
-						<p>
-							<strong translate>
-								Why do I keep getting the "I'm sorry,
-								but your cyph is in another castle" screen?
-							</strong>
-						</p>
-						<p translate>
-							Common reasons for landing on this page are: the cyph URL has been
-							opened more than once (only the first person who clicks it is allowed
-							into the chat) or the cyph link has already expired.
-						</p>
-					</li>
-					<li>
-						<p>
-							<strong translate>Has there been a third-party security audit of Cyph?</strong>
-						</p>
-						<p>
-							<span translate>Yes,</span>
-							<a href='https://cure53.de'>Cure53</a>
-							<span translate>
-								recently completed their audit of Cyph and concluded that "No
-								major issues in regards to application security or cryptographic
-								implementations could be spotted in spite of a thorough audit."
-							</span>
-							<a
-								translate
-								href='https://cure53.de/pentest-report_cyph.pdf'
-							>[Complete Cure53 Pentest Report]</a>
-							<span translate>A postmortem analysis will be posted on our blog soon.</span>
-						</p>
-					</li>
-					<li>
-						<p>
-							<strong translate>How can I support Cyph?</strong>
-						</p>
-						<p translate>
-							<span translate>
-								One of the best ways you can support Cyph is by using it with your
-								friends and talking about us on social media. You can also
-							</span>
-							<a translate href='mailto:feedback@cyph.com'>give feedback</a>
-							<span translate>or</span>
-							<a translate href='/donate'>donate</a>
-							<span translate>
-								to the cause. All donations will go towards the development and
-								growth of Cyph.
-							</span>
-						</p>
-					</li>
-					<li>
-						<p>
-							<strong translate>What should I do if I encounter a bug?</strong>
-						</p>
-						<p>
-							<span translate>Please contact us at</span>
-							<a href='mailto:bugs@cyph.com'>bugs@cyph.com</a>;
-							<span translate>
-								our team generally has pretty fast response time. If you can,
-								please include any steps to reproduce or other relevant information.
-							</span>
-						</p>
-					</li>
-				</ul>
+			<div class='section-content-container' layout='row' layout-align='center center'>
+				<div class='md-padding' flex='75' flex-xs='95' layout='column'>
+					<md-card>
+						<md-card-header>
+							<md-card-header-text>
+								<span class='md-title' translate>
+									How do I use Cyph?
+								</span>
+							</md-card-header-text>
+						</md-card-header>
+						<md-card-content>
+							<p>
+								<span translate>Simply go to</span>
+								<a ng-href='{{Cyph.Env.newCyphUrl}}'>cyph.im</a>
+								<span translate>
+									or click the "start new cyph" button and a cyph link will be generated
+									for you to send to a friend. Text, email, or send the link to them via
+									any other channel, and when they click it you both will enter a secure
+									chat.
+								</span>
+							</p>
+						</md-card-content>
+					</md-card>
+					<md-card>
+						<md-card-header>
+							<md-card-header-text>
+								<span class='md-title' translate>
+									How do I send photos?
+								</span>
+							</md-card-header-text>
+						</md-card-header>
+						<md-card-content>
+							<p translate>
+								Click the plus icon in the message composition textbox, click the photo icon, and then select the photo you wish
+								to share.
+							</p>
+						</md-card-content>
+					</md-card>
+					<md-card>
+						<md-card-header>
+							<md-card-header-text>
+								<span class='md-title' translate>
+									How do I send files?
+								</span>
+							</md-card-header-text>
+						</md-card-header>
+						<md-card-content>
+							<p translate>
+								Click the plus icon in the message composition textbox, click the paperclip icon, and then select the file you wish
+								to share. Note: sending and reveiving files requires a WebRTC-compatible browser. We reccomend Chrome or Firefox.
+							</p>
+						</md-card-content>
+					</md-card>
+					<md-card>
+						<md-card-header>
+							<md-card-header-text>
+								<span class='md-title' translate>
+									How do I start a video or voice call?
+								</span>
+							</md-card-header-text>
+						</md-card-header>
+						<md-card-content>
+							<p translate>
+								Click the plus icon in the message composition textbox, then click the video (or phone) icon.
+								A warning will pop up confirming that you wish to send the call invite and
+								that connecting will expose your IP (Cyph video uses a peer-to-peer connection
+								for voice and video, so you will be connecting directly to the other party
+								instead of going through our servers).
+							</p>
+						</md-card-content>
+					</md-card>
+					<md-card>
+						<md-card-header>
+							<md-card-header-text>
+								<span class='md-title' translate>
+									What data do you track?
+								</span>
+							</md-card-header-text>
+						</md-card-header>
+						<md-card-content>
+							<p translate>
+								Currently, we only track numbers of: cyph sessions, messages, timeouts,
+								voice/video calls, file transfers, signups, "cyphertext" UI views, and calls
+								to our API.
+							</p>
+						</md-card-content>
+					</md-card>
+					<md-card>
+						<md-card-header>
+							<md-card-header-text>
+								<span class='md-title' translate>
+									How much does Cyph cost?
+								</span>
+							</md-card-header-text>
+						</md-card-header>
+						<md-card-content>
+							<p>
+								<span translate>
+									The Cyph beta is free to use for individuals (we intend to always have a
+									free tier, because we see online privacy as a basic right) and we are
+									currently piloting
+								</span>
+								<a href='/pricing' translate>enterprise deployments of secure video and instant messaging</a>.
+							</p>
+						</md-card-content>
+					</md-card>
+					<md-card>
+						<md-card-header>
+							<md-card-header-text>
+								<span class='md-title' translate>
+									Do you have an Android/iOS/TI-89 app?
+								</span>
+							</md-card-header-text>
+						</md-card-header>
+						<md-card-content>
+							<p translate>
+								Native chat applications for Android and iOS are in the works.
+								We have no plans to support any Texas Instruments machines.
+							</p>
+						</md-card-content>
+					</md-card>
+					<md-card>
+						<md-card-header>
+							<md-card-header-text>
+								<span class='md-title' translate>
+									Why do I keep getting the "I'm sorry,
+									but your cyph is in another castle" screen?
+								</span>
+							</md-card-header-text>
+						</md-card-header>
+						<md-card-content>
+							<p translate>
+								Common reasons for landing on this page are: the cyph URL has been
+								opened more than once (only the first person who clicks it is allowed
+								into the chat) or the cyph link has already expired.
+							</p>
+						</md-card-content>
+					</md-card>
+					<md-card>
+						<md-card-header>
+							<md-card-header-text>
+								<span class='md-title' translate>
+									Has there been a third-party security audit of Cyph?
+								</span>
+							</md-card-header-text>
+						</md-card-header>
+						<md-card-content>
+							<p>
+								<span translate>Yes,</span>
+								<a href='https://cure53.de'>Cure53</a>
+								<span translate>
+									recently completed their audit of Cyph and concluded that "No
+									major issues in regards to application security or cryptographic
+									implementations could be spotted in spite of a thorough audit."
+								</span>
+								<a
+									translate
+									href='https://cure53.de/pentest-report_cyph.pdf'
+								>[Complete Cure53 Pentest Report]</a>
+								<span translate>A postmortem analysis will be posted on our blog soon.</span>
+							</p>
+						</md-card-content>
+					</md-card>
+					<md-card>
+						<md-card-header>
+							<md-card-header-text>
+								<span class='md-title' translate>
+									How can I support Cyph?
+								</span>
+							</md-card-header-text>
+						</md-card-header>
+						<md-card-content>
+							<p translate>
+								<span translate>
+									One of the best ways you can support Cyph is by using it with your
+									friends and talking about us on social media. You can also
+								</span>
+								<a translate href='mailto:feedback@cyph.com'>give feedback</a>
+								<span translate>or</span>
+								<a translate href='/donate'>donate</a>
+								<span translate>
+									to the cause. All donations will go towards the development and
+									growth of Cyph.
+								</span>
+							</p>
+						</md-card-content>
+					</md-card>
+					<md-card>
+						<md-card-header>
+							<md-card-header-text>
+								<span class='md-title' translate>
+									What should I do if I encounter a bug?
+								</span>
+							</md-card-header-text>
+						</md-card-header>
+						<md-card-content>
+							<p>
+								<span translate>Please contact us at</span>
+								<a href='mailto:bugs@cyph.com'>bugs@cyph.com</a>;
+								<span translate>
+									our team generally has pretty fast response time. If you can,
+									please include any steps to reproduce or other relevant information.
+								</span>
+							</p>
+						</md-card-content>
+					</md-card>
+				</div>
 			</div>
 		</section>
 
@@ -1162,31 +1468,35 @@
 
 
 
-		<link rel='stylesheet' href='/lib/bower_components/angular-material/angular-material.min.css' />
-		<link rel='stylesheet' href='/lib/bower_components/nanoscroller/bin/css/nanoscroller.css' />
-		<link rel='stylesheet' href='/lib/bower_components/magnific-popup/dist/magnific-popup.css' />
-		<link rel='stylesheet' href='/lib/bower_components/highlight.js/src/styles/default.css' />
-		<link rel='stylesheet' href='/lib/bower_components/unsemantic/assets/stylesheets/unsemantic-grid-responsive-tablet-no-ie7.css' />
-		<link rel='stylesheet' href='/lib/bower_components/animate.css/animate.min.css' />
+		<link rel='stylesheet' href='/lib/js/angular-material/angular-material.min.css' />
+		<link rel='stylesheet' href='/lib/js/nanoscroller/bin/css/nanoscroller.css' />
+		<link rel='stylesheet' href='/lib/js/magnific-popup/dist/magnific-popup.css' />
+		<link rel='stylesheet' href='/lib/js/isagalaev/highlight.js/src/styles/default.css' />
+		<link rel='stylesheet' href='/lib/js/unsemantic/assets/stylesheets/unsemantic-grid-responsive-tablet-no-ie7.css' />
+		<link rel='stylesheet' href='/lib/js/animate.css/animate.min.css' />
 
 		<link rel='stylesheet' href='/css/cyph.com.css' />
 
-		<script src='/lib/bower_components/jquery-legacy/dist/jquery.min.js'></script>
-		<script src='/lib/bower_components/jquery_appear/jquery.appear.js'></script>
-		<script src='/lib/bower_components/nanoscroller/bin/javascripts/jquery.nanoscroller.min.js'></script>
-		<script src='/lib/bower_components/magnific-popup/dist/jquery.magnific-popup.min.js'></script>
-		<script src='/lib/bower_components/angular/angular.min.js'></script>
-		<script src='/lib/bower_components/angular-aria/angular-aria.min.js'></script>
-		<script src='/lib/bower_components/angular-animate/angular-animate.min.js'></script>
-		<script src='/lib/bower_components/angular-material/angular-material.min.js'></script>
-		<script src='/lib/bower_components/DOMPurify/dist/purify.min.js'></script>
-		<script src='/lib/bower_components/markdown-it/dist/markdown-it.min.js'></script>
-		<script src='/lib/bower_components/markdown-it-sup/dist/markdown-it-sup.min.js'></script>
-		<script src='/lib/bower_components/highlight.js/build/highlight.pack.js'></script>
-		<script src='/lib/bower_components/twemoji/twemoji.min.js'></script>
-		<script src='/lib/bower_components/markdown-it-emoji/dist/markdown-it-emoji.min.js'></script>
-		<script src='/lib/bower_components/tabIndent.js/js/tabIndent.js'></script>
-		<script src='/lib/bower_components/wow/dist/wow.min.js'></script>
+		<script src='/lib/js/system.js'></script>
+		<script src='/lib/js/es5-shim/es5-shim.min.js'></script>
+		<script src='/lib/js/es6-shim/es6-shim.min.js'></script>
+		<script src='/lib/js/jquery-legacy/dist/jquery.min.js'></script>
+		<script src='/lib/js/morr/jquery.appear/jquery.appear.js'></script>
+		<script src='/lib/js/nanoscroller/bin/javascripts/jquery.nanoscroller.js'></script>
+		<script src='/lib/js/magnific-popup/dist/jquery.magnific-popup.min.js'></script>
+		<script src='/lib/js/angular/angular.min.js'></script>
+		<script src='/lib/js/angular-aria/angular-aria.min.js'></script>
+		<script src='/lib/js/angular-animate/angular-animate.min.js'></script>
+		<script src='/lib/js/angular-material/angular-material.min.js'></script>
+		<script src='/lib/js/dompurify/dist/purify.min.js'></script>
+		<script src='/lib/js/markdown-it/markdown-it/dist/markdown-it.min.js'></script>
+		<script src='/lib/js/markdown-it/markdown-it-sup/dist/markdown-it-sup.min.js'></script>
+		<script src='/lib/js/isagalaev/highlight.js/build/highlight.pack.js'></script>
+		<script src='/lib/js/markdown-it/markdown-it-emoji/dist/markdown-it-emoji.min.js'></script>
+		<script src='/lib/js/julianlam/tabIndent.js/js/tabIndent.js'></script>
+		<script src='/lib/js/matthieua/wow/dist/wow.min.js'></script>
+		<script src='/lib/js/braintree/dist/braintree.js'></script>
+		<script src='/lib/js/snaptortoise/konami-js/konami.js'></script>
 
 		<script src='/js/cyph.com/main.js'></script>
 

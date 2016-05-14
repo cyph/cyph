@@ -33,6 +33,7 @@
 #pre-load.load-complete, html.load-complete #pre-load {
 	pointer-events: none;
 	opacity: 0;
+
 	@include transition(opacity 0.25s linear);
 }
 
@@ -48,19 +49,19 @@
 	top: 0;
 	left: 0;
 
-	@include animation(preloadbounce 2.0s infinite ease-in-out);
+	@include animation(preloadbounce 2s infinite ease-in-out);
 }
 
 .double-bounce2 {
-	@include animation-delay(-1.0s);
+	@include animation-delay(-1s);
 }
 
 @include keyframes(preloadbounce) {
 	0%, 100% {
-		@include transform(scale(0.0));
+		@include transform(scale(0));
 	}
 
 	50% {
-		@include transform(scale(1.0));
+		@include transform(scale(1));
 	}
 }

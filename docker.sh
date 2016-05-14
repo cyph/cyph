@@ -4,20 +4,11 @@ cd $(cd "$(dirname "$0")"; pwd)
 
 
 defaultsleep () {
-	sleep 5
-}
-
-shellinit () {
-	defaultsleep
-	$(boot2docker shellinit 2> /dev/null | sed "s|'||g")
-	defaultsleep
+	sleep 2
 }
 
 start () {
-	if boot2docker > /dev/null 2>&1 ; then
-		boot2docker start > /dev/null 2>&1
-		shellinit
-	elif [ "$(ps aux | grep 'docker -d' | grep -v grep)" == '' ] ; then
+	if [ "$(uname -s)" == 'Linux' -a "$(ps aux | grep 'docker -d' | grep -v grep)" == '' ] ; then
 		sudo echo
 		nohup sudo bash -c 'docker -d &' > /dev/null 2>&1
 		defaultsleep
@@ -27,17 +18,12 @@ start () {
 stop () {
 	docker ps -a | grep cyph | awk '{print $1}' | xargs -I% bash -c 'docker kill -s 9 % ; docker rm %'
 
-	if boot2docker > /dev/null 2>&1 ; then
-		shellinit
-		boot2docker stop > /dev/null 2>&1
-	else
+	if [ "$(uname -s)" == 'Linux' ] ; then
 		sudo killall docker > /dev/null 2>&1
 		defaultsleep
 	fi
 }
 
-
-shellinit
 
 image="cyph/$(git describe --tags --exact-match 2> /dev/null || git branch | awk '/^\*/{print $2}')"
 
@@ -58,9 +44,16 @@ if [ "${command}" == 'serve' ] ; then
 		shift
 	fi
 
-	args="--privileged=true -p 42000:5000 -p 42001:5001 -p 42002:5002 -p 43000:4568"
+	args=" \
+		-v $HOME/.cyph:/home/gibson/.cyph \
+		--privileged=true \
+		-p 42000:5000 \
+		-p 42001:5001 \
+		-p 42002:5002 \
+		-p 43000:4568 \
+	"
 
-	base="http://$(boot2docker ip 2>/dev/null || echo localhost)"
+	base='http://localhost'
 
 	i=0
 	for project in backend cyph.com cyph.im ; do
@@ -91,6 +84,29 @@ elif [ "${command}" == 'build' ] ; then
 elif [ "${command}" == 'commit' ] ; then
 	args="-v $HOME/.gitconfig:/home/gibson/.gitconfig -v $HOME/.ssh:/home/gibson/.ssh"
 
+	# Remove large collections of extra files that we don't need so Docker doesn't choke
+
+	cd shared/lib/js
+
+	filesToDelete='angular2/es6'
+	filesToDelete="${filesToDelete} $(find angular2/* -name '*.js' | tr '\n' ' ')"
+
+	filesToDelete="${filesToDelete} $(find rxjs/* -name '*.js' | tr '\n' ' ')"
+
+	mv isagalaev/highlight.js/src/styles/default.css ./
+	mv isagalaev/highlight.js/build/highlight.pack.js ./
+	filesToDelete="${filesToDelete} isagalaev/highlight.js/*"
+
+	rm -rf $filesToDelete
+
+	mkdir -p isagalaev/highlight.js/src/styles isagalaev/highlight.js/build
+	mv default.css isagalaev/highlight.js/src/styles/
+	mv highlight.pack.js isagalaev/highlight.js/build/
+
+	cd ../../..
+
+	find default -type f -name '*_test.go' -exec rm {} \;
+
 	chmod -R 700 .
 
 elif [ "${command}" == 'backmerge' ] ; then
@@ -108,7 +124,10 @@ elif [ "${command}" == 'restart' ] ; then
 	exit 0
 
 elif [ "${command}" == 'updatelibs' ] ; then
-	args=''
+	args=" \
+		-it \
+		-v $HOME/.cyph:/home/gibson/.cyph \
+	"
 
 elif [ "${command}" == 'websignhash' ] ; then
 	args=''
@@ -133,4 +152,4 @@ else
 fi
 
 docker run $processType $args -v "$(echo "$(pwd)://cyph" | sed 's/\/cygdrive/\//g')" "${image}" "/cyph/commands/${command}.sh" $*
-sleep 2
+defaultsleep

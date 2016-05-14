@@ -5,6 +5,7 @@ import (
 	"appengine/mail"
 	"appengine/memcache"
 	"encoding/json"
+	"github.com/lionelbarrow/braintree-go"
 	"net/http"
 	"strconv"
 	"strings"
@@ -12,6 +13,7 @@ import (
 )
 
 func init() {
+	handleFuncs("/braintree", Handlers{methods.GET: braintreeToken, methods.POST: braintreeCheckout})
 	handleFuncs("/channels/{id}", Handlers{methods.POST: channelSetup})
 	handleFuncs("/continent", Handlers{methods.GET: getContinent})
 	handleFuncs("/iceservers", Handlers{methods.GET: getIceServers})
@@ -20,6 +22,60 @@ func init() {
 	handleFunc("/", func(h HandlerArgs) (interface{}, int) {
 		return "Welcome to Cyph, lad", http.StatusOK
 	})
+}
+
+func braintreeCheckout(h HandlerArgs) (interface{}, int) {
+	nonce := sanitize(h.Request.PostFormValue("Nonce"))
+
+	planId := ""
+	if category, err := strconv.ParseInt(sanitize(h.Request.PostFormValue("Category")), 10, 64); err == nil {
+		if item, err := strconv.ParseInt(sanitize(h.Request.PostFormValue("Item")), 10, 64); err == nil {
+			planId = strconv.FormatInt(category, 10) + "-" + strconv.FormatInt(item, 10)
+		}
+	}
+
+	amountString := sanitize(h.Request.PostFormValue("Amount"))
+	amount, err := strconv.ParseInt(amountString, 10, 64)
+	if err != nil {
+		return err.Error(), http.StatusTeapot
+	}
+
+	tx, err := braintreeInit(h).Transaction().Create(&braintree.Transaction{
+		Type:               "sale",
+		Amount:             braintree.NewDecimal(amount, 2),
+		PaymentMethodNonce: nonce,
+	})
+
+	if err != nil {
+		return err.Error(), http.StatusTeapot
+	}
+
+	txJson, _ := json.Marshal(tx)
+
+	mail.SendToAdmins(h.Context, &mail.Message{
+		Sender:  "Cyph Sales <hello@cyph.com>",
+		Subject: "SALE SALE SALE",
+		Body: ("" +
+			string(txJson) +
+			"\n\nNonce: " + nonce +
+			"\n\nPlan ID: " + planId +
+			"\n\nAmount: " + amountString +
+			"\n\nName: " + sanitize(h.Request.PostFormValue("Name")) +
+			"\n\nEmail: " + sanitize(h.Request.PostFormValue("Email")) +
+			""),
+	})
+
+	return tx, http.StatusOK
+}
+
+func braintreeToken(h HandlerArgs) (interface{}, int) {
+	token, err := braintreeInit(h).ClientToken().Generate()
+
+	if err == nil {
+		return token, http.StatusOK
+	} else {
+		return braintreeToken(h)
+	}
 }
 
 func channelSetup(h HandlerArgs) (interface{}, int) {

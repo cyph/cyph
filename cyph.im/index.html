@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app='Cyph' ng-controller='CyphController'>
+<html>
 	<head>
 		<meta charset='utf-8' />
 		<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1' />
@@ -62,14 +62,7 @@
 		<section id='main' class='cyph-foreground' layout='column' layout-fill>
 			<span
 				cyph-chat-toolbar='ui.chat'
-				open='ui.openMobileMenu()'
 				show-chat='ui.state === Cyph.im.UI.States.chat'
-				class='mobile-only'
-			></span>
-			<span
-				cyph-chat-sidebar='ui.chat'
-				show-chat='ui.state === Cyph.im.UI.States.chat'
-				class='desktop-only'
 			></span>
 
 			<div
@@ -80,12 +73,8 @@
 				flex
 			>
 				<div cyph-signup-form='ui.signupForm'>
-					<div>
-						{{Cyph.Strings.signupMessage1}}
-					</div>
-					<div>
-						{{Cyph.Strings.signupMessage2}}
-					</div>
+					{{Cyph.Strings.signupMessage1}}
+					{{Cyph.Strings.signupMessage2}}
 				</div>
 			</div>
 
@@ -124,12 +113,12 @@
 
 			<div
 				ng-view
-				cyph-pro='ui'
+				cyph-beta='ui'
 				layout='column'
 				layout-fill
 				flex
 				ng-class='{
-					active: ui.state === Cyph.im.UI.States.pro
+					active: ui.state === Cyph.im.UI.States.beta
 				}'
 			></div>
 
@@ -146,7 +135,8 @@
 				<div
 					cyph-chat-message-box='ui.chat'
 					ng-show='ui.state === Cyph.im.UI.States.chat'
-				></div>
+				>
+				</div>
 
 				<div
 					cyph-static-footer
@@ -169,33 +159,38 @@
 
 
 
-		<script src='/lib/bower_components/jquery/dist/jquery.min.js'></script>
-		<script src='/lib/bower_components/jquery_appear/jquery.appear.js'></script>
-		<script src='/lib/bower_components/nanoscroller/bin/javascripts/jquery.nanoscroller.min.js'></script>
-		<script src='/lib/bower_components/magnific-popup/dist/jquery.magnific-popup.min.js'></script>
-		<script src='/lib/bower_components/angular/angular.min.js'></script>
-		<script src='/lib/bower_components/angular-aria/angular-aria.min.js'></script>
-		<script src='/lib/bower_components/angular-animate/angular-animate.min.js'></script>
-		<script src='/lib/bower_components/angular-material/angular-material.min.js'></script>
-		<script src='/lib/bower_components/DOMPurify/dist/purify.min.js'></script>
-		<script src='/lib/bower_components/markdown-it/dist/markdown-it.min.js'></script>
-		<script src='/lib/bower_components/markdown-it-sup/dist/markdown-it-sup.min.js'></script>
-		<script src='/lib/bower_components/highlight.js/build/highlight.pack.js'></script>
-		<script src='/lib/bower_components/twemoji/twemoji.min.js'></script>
-		<script src='/lib/bower_components/markdown-it-emoji/dist/markdown-it-emoji.min.js'></script>
-		<script src='/lib/bower_components/angular-timer/dist/angular-timer.min.js'></script>
-		<script src='/lib/bower_components/tabIndent.js/js/tabIndent.js'></script>
-		<script src='/lib/bower_components/aws-sdk/dist/aws-sdk.min.js'></script>
-		<script src='/cryptolib/bower_components/libsodium.js/dist/browsers-sumo/combined/sodium.min.js'></script>
-		<script src='/cryptolib/hmac-sha256.js'></script>
-
-		<script src='/js/cyph.im/main.js'></script>
-
-		<link rel='stylesheet' href='/lib/bower_components/angular-material/angular-material.min.css' />
-		<link rel='stylesheet' href='/lib/bower_components/nanoscroller/bin/css/nanoscroller.css' />
-		<link rel='stylesheet' href='/lib/bower_components/magnific-popup/dist/magnific-popup.css' />
-		<link rel='stylesheet' href='/lib/bower_components/highlight.js/src/styles/default.css' />
+		<link rel='stylesheet' href='/lib/js/angular-material/angular-material.min.css' />
+		<link rel='stylesheet' href='/lib/js/nanoscroller/bin/css/nanoscroller.css' />
+		<link rel='stylesheet' href='/lib/js/magnific-popup/dist/magnific-popup.css' />
+		<link rel='stylesheet' href='/lib/js/isagalaev/highlight.js/src/styles/default.css' />
 
 		<link rel='stylesheet' href='/css/cyph.im.css' />
+
+		<script src='/lib/js/system.js'></script>
+		<script src='/lib/js/es5-shim/es5-shim.min.js'></script>
+		<script src='/lib/js/es6-shim/es6-shim.min.js'></script>
+		<script src='/lib/js/jquery/dist/jquery.min.js'></script>
+		<script src='/lib/js/morr/jquery.appear/jquery.appear.js'></script>
+		<script src='/lib/js/nanoscroller/bin/javascripts/jquery.nanoscroller.js'></script>
+		<script src='/lib/js/magnific-popup/dist/jquery.magnific-popup.min.js'></script>
+		<script src='/lib/js/angular/angular.min.js'></script>
+		<script src='/lib/js/angular-aria/angular-aria.min.js'></script>
+		<script src='/lib/js/angular-animate/angular-animate.min.js'></script>
+		<script src='/lib/js/angular-material/angular-material.min.js'></script>
+		<script src='/lib/js/dompurify/dist/purify.min.js'></script>
+		<script src='/lib/js/markdown-it/markdown-it/dist/markdown-it.min.js'></script>
+		<script src='/lib/js/markdown-it/markdown-it-sup/dist/markdown-it-sup.min.js'></script>
+		<script src='/lib/js/isagalaev/highlight.js/build/highlight.pack.js'></script>
+		<script src='/lib/js/markdown-it/markdown-it-emoji/dist/markdown-it-emoji.min.js'></script>
+		<script src='/lib/js/siddii/angular-timer/dist/angular-timer.min.js'></script>
+		<script src='/lib/js/julianlam/tabIndent.js/js/tabIndent.js'></script>
+		<script src='/lib/js/aws/aws-sdk-js/aws-sdk.min.js'></script>
+		<script src='/lib/js/crypto/libsodium/dist/browsers-sumo/combined/sodium.min.js'></script>
+		<script src='/lib/js/crypto/cryptojs/core-min.js'></script>
+		<script src='/lib/js/crypto/cryptojs/sha256-min.js'></script>
+		<script src='/lib/js/crypto/cryptojs/hmac-min.js'></script>
+		<script src='/lib/js/snaptortoise/konami-js/konami.js'></script>
+
+		<script src='/js/cyph.im/main.js'></script>
 	</body>
 </html>

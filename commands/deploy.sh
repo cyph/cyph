@@ -47,12 +47,17 @@ if [ $branch == 'prod' ] ; then
 	branch='staging'
 fi
 if [ $test ] ; then
-	branch="$(git config --get remote.origin.url | perl -pe 's/.*:(.*)\/.*/\1/')-${branch}"
+	branch="$(git config --get remote.origin.url | perl -pe 's/.*:(.*)\/.*/\1/' | tr '[:upper:]' '[:lower:]')-${branch}"
 fi
 if [ $simple ] ; then
 	branch="simple-${branch}"
 fi
 version="$branch"
+
+
+# Authboss views (primarily email templates)
+rm -rf default/gopkg.in/authboss.v0/internal/response/templates
+mv default/views default/gopkg.in/authboss.v0/internal/response/templates
 
 
 if [ ! $simple ] ; then
@@ -95,6 +100,7 @@ ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak 's/isLocalEnv: boolean		= true/
 
 if [ $test ] ; then
 	sed -i.bak "s/staging/${branch}/g" default/config.go
+	sed -i.bak "s/http:\/\/localhost:42000/https:\/\/${branch}-dot-cyphme.appspot.com/g" default/config.go
 	ls */*.yaml */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/api.cyph.com/${branch}-dot-cyphme.appspot.com/g" %
 	ls */*.yaml */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/www.cyph.com/${branch}-dot-cyph-com-dot-cyphme.appspot.com/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42000/https:\/\/${branch}-dot-cyphme.appspot.com/g" %
@@ -108,11 +114,12 @@ if [ $test ] ; then
 	ls */*.yaml | xargs -I% sed -i.bak 's/Public-Key-Pins: .*/Pragma: no-cache/g' %
 	ls */*.yaml | xargs -I% sed -i.bak 's/max-age=31536000/max-age=0/g' %
 
-	# for yaml in `ls */cyph*.yaml` ; do
-	# 	cat $yaml | perl -pe 's/(- url: .*)/\1\n  login: admin/g' > $yaml.new
-	# 	mv $yaml.new $yaml
-	# done
+	for yaml in `ls */cyph*.yaml` ; do
+		cat $yaml | perl -pe 's/(- url: .*)/\1\n  login: admin/g' > $yaml.new
+		mv $yaml.new $yaml
+	done
 else
+	sed -i.bak "s/http:\/\/localhost:42000/https:\/\/api.cyph.com.com/g" default/config.go
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42000/https:\/\/api.cyph.com/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42001/https:\/\/www.cyph.com/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42002/https:\/\/cyph.im/g" %
@@ -153,11 +160,9 @@ for d in cyph.com cyph.im ; do
 				cut -c 2- | \
 				rev \
 			) \
-		};" >> ../$d/js/preload/translations.ts
+		};" > ../$d/js/preload/translations.ts
 
 		cd ../$d
-
-		echo "FontsCSS = \`$(scss css/fonts.scss)\`;" >> js/preload/fonts.ts
 	fi
 
 	../commands/build.sh --prod || exit;
@@ -189,10 +194,6 @@ if [ ! $simple ] ; then
 		filesToModify="$(find . -name '*.html') $(find js -name '*.js') $(find css -name '*.css')"
 
 		for f in $filesToCacheBust ; do
-			if [ $(echo "$f" | grep -oP 'twemoji.*(?<!\.js)$') ] ; then
-				continue
-			fi
-
 			f="$(echo "$f" | sed 's/shared\///g' | sed 's/\.ts$/\.js/g' | sed 's/\.scss$/\.css/g')"
 			safeF="$(echo "$f" | sed 's/\//\\\//g' | sed 's/ /\\ /g' | sed 's/\_/\\_/g')"
 
@@ -216,8 +217,8 @@ if [ ! $simple ] ; then
 		mv websign/serviceworker.js ./
 		mv websign/unsupportedbrowser.html ./
 
-		# Merge in base64'd images and audio, BUT NOT fonts (they add 7mb)
-		find img audio -type f -print0 | while read -d $'\0' f ; do
+		# Merge in base64'd images, fonts, video, and audio
+		find img fonts audio video -type f -print0 | while read -d $'\0' f ; do
 			for g in index.html $(find js -name '*.js') $(find css -name '*.css') ; do
 				if ( grep -o "$f" $g ) ; then
 					dataURI="data:$(echo -n "$(file --mime-type "$f")" | perl -pe 's/.*\s+(.*?)$/\1/g');base64,$(base64 "$f")"
@@ -285,15 +286,21 @@ fi
 
 find . -name '*.bak' | xargs rm
 
-# Doesn't hurt, legally
 if [ ! $test ] ; then
-	find . -type d -name cryptolib | xargs rm -rf
+	cd shared/lib/js
+	grep 'crypto/' ../../js/package.json | perl -pe 's/.*"(.*?):(.*?)".*/\1\/\2/g' | xargs rm -rf
+	cd ../../..
 fi
 
 
 # Secret credentials
 cat ~/.cyph/default.vars >> default/app.yaml
 cat ~/.cyph/jobs.vars >> jobs/jobs.yaml
+if [ $branch == 'staging' ] ; then
+	cat ~/.cyph/braintree.prod >> default/app.yaml
+else
+	cat ~/.cyph/braintree.sandbox >> default/app.yaml
+fi
 
 deploy () {
 	gcloud preview app deploy --quiet --no-promote --project cyphme --version $version $*
@@ -305,6 +312,17 @@ if [ ! $test ] ; then
 		cat $project/*.yaml | perl -pe 's/(module: cyph.*)/\1-update/' > $project/update.yaml
 	done
 fi
+
+# Workaround for symlinks doubling up Google's count of the files toward its 10k limit
+find . -type l -exec bash -c '
+	original="$(readlink "{}")";
+	parent="$(echo "{}" | perl -pe "s/(.*)\/.*?$/\1/g")";
+	name="$(echo "{}" | perl -pe "s/.*\/(.*?)$/\1/g")"
+
+	cd "${parent}"
+	rm "${name}"
+	mv "${original}" "${name}"
+' \;
 
 if [ $site ] ; then
 	deploy $site/*.yaml

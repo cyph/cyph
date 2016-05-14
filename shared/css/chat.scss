@@ -1,7 +1,6 @@
-html:not(.mobile) .chat-sidebar,
 .chat-message-box:not(.mobile),
 .link-connection .connect-link-mobile {
-	.md-button:not([disabled="disabled"]) {
+	.md-button:not([disabled='disabled']) {
 		color: #444;
 		background-color: #7d4fd3 !important;
 
@@ -19,4 +18,3 @@ html:not(.mobile) .chat-sidebar,
 		}
 	}
 }
-

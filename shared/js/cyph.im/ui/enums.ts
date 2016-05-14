@@ -1,36 +1,32 @@
-module Cyph.im {
-	export module UI {
-		/**
-		 * Possible states of cyph.im UI.
-		 */
-		export enum States {
-			none,
-			blank,
-			chat,
-			error,
-			pro,
-			spinningUp,
-			waitingForFriend
-		}
-
-		/**
-		 * Possible states of Pro UI.
-		 */
-		export enum ProStates {
-			none,
-			login,
-			register,
-			settings
-		}
-
-		/**
-		 * Possible sections of URL state.
-		 */
-		export const UrlSections	= {
-			root: '',
-			pro: 'pro',
-			video: 'video',
-			audio: 'audio'
-		};
-	}
+/**
+ * Possible states of cyph.im UI.
+ */
+export enum States {
+	none,
+	blank,
+	chat,
+	error,
+	beta,
+	spinningUp,
+	waitingForFriend
 }
+
+/**
+ * Possible states of beta UI.
+ */
+export enum BetaStates {
+	none,
+	login,
+	register,
+	settings
+}
+
+/**
+ * Possible sections of URL state.
+ */
+export const UrlSections	= {
+	root: '',
+	beta: 'beta',
+	video: 'video',
+	audio: 'audio'
+};
