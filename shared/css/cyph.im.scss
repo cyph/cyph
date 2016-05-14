@@ -144,7 +144,7 @@ input, textarea {
 		@include transform(translateY(250px) !important);
 
 		@include transition(transform 0.5s linear);
-	}	
+	}
 }
 
 .message-list:not(.nano) {
