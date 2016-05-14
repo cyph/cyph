@@ -580,13 +580,12 @@ export const Templates	= {
 					<textarea ng-model='message' aria-label='Message' md-select-on-focus></textarea>
 					<label>Message</label>
 				</md-input-container>
-
 				<md-button>
 					Send
 				</md-button>
 			</div>
 			<div ng-show='sent'>
-				Your email has been sent! Expect to hear back from us within 72 business hours.
+				Your email has been sent! Someone on the team will get back to you shortly.
 			</div>
 		</div>
 	`,
