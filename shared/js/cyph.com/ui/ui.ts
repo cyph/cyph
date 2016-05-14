@@ -14,7 +14,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	/** Podcast promo page state/view. */
 	public podcast: Podcasts			= Podcasts.none;
 
-	public features						= ["Video Calls", "Voice Calls", "Chats", "Photos", "File Transfers"];
+	public features						= ['Video Calls', 'Voice Calls', 'Chats', 'Photos', 'File Transfers'];
 	public featureIndex: number			= 0;
 
 	/** Donation amount in dollars (default). */
@@ -322,5 +322,22 @@ export class UI extends Cyph.UI.BaseButtonManager {
 
 		setInterval(() => this.cycleFeatures(), 4200);
 		setTimeout(() => Cyph.UI.Elements.html.addClass('load-complete'), 100);
+
+		/* Cyphertext easter egg */
+		new self['Konami'](() => {
+			Cyph.UrlState.set('intro');
+			Cyph.Util.retryUntilComplete(retry => {
+				if (
+					this.cyphDemo.desktop &&
+					this.cyphDemo.desktop.state === Cyph.UI.Chat.States.chat
+				) {
+					this.cyphDemo.desktop.cyphertext.show();
+					setTimeout(() => this.cyphDemo.mobile.cyphertext.show(), 8000);
+				}
+				else {
+					retry();
+				}
+			});
+		});
 	}
 }

@@ -38,6 +38,7 @@ System.config({
     "nanoscroller": "npm:nanoscroller@0.8.7",
     "rxjs": "npm:rxjs@5.0.0-beta.7",
     "siddii/angular-timer": "github:siddii/angular-timer@1.2.1",
+    "snaptortoise/konami-js": "github:snaptortoise/konami-js@1.4.2",
     "typescript": "npm:typescript@1.8.10",
     "unsemantic": "npm:unsemantic@1.1.2",
     "github:angular/bower-angular-animate@1.5.5": {

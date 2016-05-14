@@ -201,5 +201,18 @@ export class UI extends Cyph.UI.BaseButtonManager {
 				content: Cyph.Strings.IEWarning
 			});
 		}
+
+		/* Cyphertext easter egg */
+		new self['Konami'](() => Cyph.Util.retryUntilComplete(retry => {
+			if (
+				this.chat &&
+				this.chat.state === Cyph.UI.Chat.States.chat
+			) {
+				this.chat.cyphertext.show();
+			}
+			else {
+				retry();
+			}
+		}));
 	}
 }
