@@ -43,10 +43,10 @@ done
 
 # Branch config setup
 branch="$(git describe --tags --exact-match 2> /dev/null || git branch | awk '/^\*/{print $2}')"
-version="$branch"
 if [ $branch == 'prod' ] ; then
 	branch='staging'
 fi
+version="$branch"
 if [ $test ] ; then
 	version="$(git config --get remote.origin.url | perl -pe 's/.*:(.*)\/.*/\1/' | tr '[:upper:]' '[:lower:]')-${version}"
 fi
