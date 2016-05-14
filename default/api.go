@@ -56,7 +56,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		Sender:  "Cyph Sales <hello@cyph.com>",
 		Subject: "SALE SALE SALE",
 		Body: ("" +
-			sanitize(string(txJson)) +
+			string(txJson) +
 			"\n\nNonce: " + nonce +
 			"\n\nPlan ID: " + planId +
 			"\n\nAmount: " + amountString +
