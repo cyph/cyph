@@ -41,12 +41,10 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 	}
 
 	public isInUse () : boolean {
-		return this.isPlaying() &&
-		(
-			this.p2p.outgoingStream.audio ||
+		return this.isPlaying() ||
 			!!this.p2p.incomingFile.name ||
 			!!this.p2p.outgoingFile.name
-		);
+		;
 	}
 
 	public isPlaying () : boolean {

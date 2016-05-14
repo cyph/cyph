@@ -426,12 +426,15 @@ export const Templates	= {
 					<md-button
 						aria-label='Send File'
 						class='md-fab md-raised md-mini'
-						ng-click='$this.p2pManager.sendFileButton()'
 					>
 						<md-tooltip md-direction='left'>
 							Send File
 						</md-tooltip>
 						<md-icon class='grey'>attach_file</md-icon>
+						<input
+							type='file'
+							cyph-filechange='$this.p2pManager.sendFileButton()'
+						/>
 					</md-button>
 					<md-button
 						aria-label='Send Image'
