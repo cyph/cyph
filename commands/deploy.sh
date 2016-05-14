@@ -188,7 +188,7 @@ if [ ! $simple ] ; then
 	# Cache bust
 	echo "Cache bust"
 	filesToCacheBust="$( \
-		find shared \
+		find shared \( \
 			-name '*.js' \
 			-o -name '*.css' \
 			-o -name '*.png' \
@@ -197,7 +197,7 @@ if [ ! $simple ] ; then
 			-o -name '*.mp3' \
 			-o -name '*.mp4' \
 			-o -name '*.woff' \
-			! -wholename '*websign*' -type f -print0 | \
+		\) ! -wholename '*websign*' -type f -print0 | \
 		while read -d $'\0' f ; do echo "$f" ; done \
 	)"
 	for d in cyph.com ; do
