@@ -143,7 +143,7 @@ export const Templates	= {
 	`,
 
 	register: `
-		<md-dialog class='register' flex='65'>
+		<md-dialog class='register' flex='65' flex-sm='80' flex-xs='95'>
 			<md-content>
 				<md-card class='md-padding'>
 					<md-card-title>

@@ -743,7 +743,7 @@ export const Templates	= {
 						<ng-transclude></ng-transclude>
 					</div>
 					<div layout='row' layout-align='center stretch' flex>
-						<div layout='column' flex='50'>
+						<div class='desktop-only' layout='column' flex='50'>
 							<div layout='row' layout-align='center center'>
 								<md-input-container class='md-block' flex='80'>
 									<input type='email' ng-model='$this.data.email' aria-label='Email' />
@@ -773,7 +773,7 @@ export const Templates	= {
 								</md-button>
 							</div>
 						</div>
-						<div layout='column' flex='50'>
+						<div layout='column' flex>
 							<div layout='row' layout-align='center center'>
 								<p flex='80' translate>
 									We are currently at capacity and registration is closed,
