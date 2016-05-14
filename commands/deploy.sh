@@ -187,7 +187,18 @@ done
 if [ ! $simple ] ; then
 	# Cache bust
 	echo "Cache bust"
-	filesToCacheBust="$(find shared ! -wholename '*fonts/*' ! -wholename '*websign*' -type f -print0 | while read -d $'\0' f ; do echo "$f" ; done)"
+	filesToCacheBust="$( \
+		find shared \
+			-name '*.js' \
+			-o -name '*.css' \
+			-o -name '*.png' \
+			-o -name '*.jpg' \
+			-o -name '*.mp3' \
+			-o -name '*.mp4' \
+			-o -name '*.woff' \
+			! -wholename '*websign*' -type f -print0 | \
+		while read -d $'\0' f ; do echo "$f" ; done \
+	)"
 	for d in cyph.com ; do
 		cd $d
 
