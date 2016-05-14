@@ -269,7 +269,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 
 		/* Header / new cyph button animation */
 
-		Elements.mainToolbar.toggleClass('new-cyph-expanded', this.state === States.home);
+		Elements.mainToolbar.toggleClass('new-cyph-expanded', Cyph.UrlState.get() === '');
 		setTimeout(() => setInterval(() => Elements.mainToolbar.toggleClass(
 			'new-cyph-expanded',
 			this.state === States.home && (
