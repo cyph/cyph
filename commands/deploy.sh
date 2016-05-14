@@ -188,33 +188,29 @@ if [ ! $simple ] ; then
 	# Cache bust
 	echo "Cache bust"
 	filesToCacheBust="$( \
-		find shared \( \
-			-name '*.js' \
-			-o -name '*.css' \
-			-o -name '*.png' \
-			-o -name '*.jpg' \
-			-o -name '*.gif' \
-			-o -name '*.mp3' \
-			-o -name '*.mp4' \
-			-o -name '*.woff' \
-		\) ! -wholename '*websign*' -type f -print0 | \
+		find shared ! -wholename '*websign*' -type f -print0 | \
 		while read -d $'\0' f ; do echo "$f" ; done \
 	)"
 	for d in cyph.com ; do
 		cd $d
 
 		filesToModify="$(find . -name '*.html') $(find js -name '*.js') $(find css -name '*.css')"
+		filesToModifyText="$(cat $filesToModify)"
 
 		for f in $filesToCacheBust ; do
 			f="$(echo "$f" | sed 's/shared\///g' | sed 's/\.ts$/\.js/g' | sed 's/\.scss$/\.css/g')"
 			safeF="$(echo "$f" | sed 's/\//\\\//g' | sed 's/ /\\ /g' | sed 's/\_/\\_/g')"
 
-			for g in $filesToModify ; do
-				if ( grep -o "$safeF" $g ) ; then
-					cat $g | perl -pe "s/(\\/$safeF)/\1?`md5 "$f" | perl -pe 's/.*([a-f0-9]{32}).*/\1/g'`/g" > $g.new
-					mv $g.new $g
-				fi
-			done
+			if ( echo "$filesToModifyText" | grep -o "$safeF" ) ; then
+				for g in $filesToModify ; do
+					if ( grep -o "$safeF" $g ) ; then
+						cat $g | perl -pe \
+							"s/(\\/$safeF)/\1?`md5 "$f" | perl -pe 's/.*([a-f0-9]{32}).*/\1/g'`/g" \
+						> $g.new
+						mv $g.new $g
+					fi
+				done
+			fi
 		done
 
 		cd ..
