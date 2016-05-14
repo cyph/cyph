@@ -1053,15 +1053,7 @@
 						aria-label='Donation Amount'
 					></md-slider>
 					<div flex='20' class='donation' layout layout-align='center center'>
-						 <span>$</span>
-						 <input
-							class='donation'
-							type='number'
-							ng-model='ui.donationAmount'
-							min='1'
-							max='10000'
-							maxlength='4'
-						 />
+						 ${{ui.donationAmount}}
 					</div>
 					<md-button class='donate-button' aria-label='Submit Donation'>
 						<a translate ng-click='ui.updateCart(
