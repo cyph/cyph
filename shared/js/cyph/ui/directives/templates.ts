@@ -784,8 +784,8 @@ export const Templates	= {
 							</div>
 							<div layout='row' layout-align='center center'>
 								<p flex='80' translate>
-									But you don't need an account to use Cyph; just click the "start
-									new cyph" button on the homepage. Our beta accounts program provides
+									However, you don't need an account to use Cyph; just click the "start
+									new cyph" button on the homepage. Our beta accounts program only provides
 									early access to more advanced functionality and cool new features.
 								</p>
 							</div>
