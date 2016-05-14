@@ -193,6 +193,7 @@ if [ ! $simple ] ; then
 			-o -name '*.css' \
 			-o -name '*.png' \
 			-o -name '*.jpg' \
+			-o -name '*.gif' \
 			-o -name '*.mp3' \
 			-o -name '*.mp4' \
 			-o -name '*.woff' \
