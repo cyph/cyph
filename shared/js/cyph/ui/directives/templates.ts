@@ -743,7 +743,7 @@ export const Templates	= {
 					<div layout='row' layout-align='center center' flex>
 						<ng-transclude></ng-transclude>
 					</div>
-					<div layout='row' layout-align='center center' flex>
+					<div layout='row' layout-align='center stretch' flex>
 						<div layout='column' flex='50'>
 							<div layout='row' layout-align='center center'>
 								<md-input-container class='md-block' flex='80'>
@@ -766,6 +766,7 @@ export const Templates	= {
 							<div layout='row' layout-align='center end'>
 								<md-button
 									type='submit'
+									class='register-button'
 									aria-label='Register'
 									ng-disabled='true'
 									translate
@@ -792,6 +793,7 @@ export const Templates	= {
 							<div layout='row' layout-align='center end'>
 								<md-button
 									type='submit'
+									class='register-button'
 									aria-label='Waitlist Signup'
 									translate
 								>

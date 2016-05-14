@@ -313,6 +313,10 @@ html:not(.mobile) .platform-container.mobile .mobile-only {
 		}
 	}
 
+	.register-button {
+		flex: 1 1 auto;
+	}
+
 	.login-button {
 		padding-top: 10px;
 	}
