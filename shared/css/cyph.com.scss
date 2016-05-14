@@ -30,6 +30,7 @@ section#main {
 	section {
 		position: relative;
 		padding: 20px;
+		margin-top: -1px;
 
 		> img.background {
 			display: block;
@@ -151,6 +152,12 @@ section#main {
 	}
 }
 
+html.mobile #main-toolbar.new-cyph-expanded {
+	#new-cyph {
+		top: calc(50vh - 50px);
+	}
+}
+
 .hero-text {
 	width: 100%;
 	text-align: center;
@@ -191,9 +198,13 @@ section#main {
 }
 
 html.mobile #hero-section {
+	display: flex;
+
 	.hero-description {
 		height: auto;
 		font-size: 1.3em;
+		position: absolute;
+		bottom: 0px;
 
 		> div {
 			top: 50%;
