@@ -143,11 +143,11 @@ input, textarea {
 	.chat-message-box-hidden {
 		@include transform(translateY(250px) !important);
 
-		@include transition(transform 0.25s linear);
+		@include transition(transform 0.5s linear);
 	}
 
 	:not(.chat-message-box-hidden) {
-		@include transition(transform 0.15s linear);
+		@include transition(transform 0.35s linear);
 	}
 }
 
