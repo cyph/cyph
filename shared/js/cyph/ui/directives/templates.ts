@@ -503,7 +503,7 @@ export const Templates	= {
 				layout='row'
 				layout-align='end end'
 				flex='95'
-				ng-show='$this.isConnected'
+				ng-show='$this.isConnected && !$this.isDisconnected'
 			>
 				<img
 					src='/img/icons/help.png'
