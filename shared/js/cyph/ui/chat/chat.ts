@@ -393,7 +393,7 @@ export class Chat extends BaseButtonManager implements IChat {
 			let lastClick: number	= 0;
 
 			this.elements.messageBox.click(e => {
-				const bounds	= this.elements.sendButton['bounds']();
+				const bounds	= this.elements.sendButton.filter(':visible')['bounds']();
 
 				if (
 					(e.pageY > bounds.top && e.pageY < bounds.bottom) &&
