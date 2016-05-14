@@ -137,18 +137,14 @@ input, textarea {
 
 	/* Crazy fix to prevent jankiness upon message send on mobile */
 	pointer-events: none;
-}
 
-.chat-message-box {
-	.chat-message-box-hidden {
+	@include transition(transform 0.35s linear);
+
+	&.chat-message-box-hidden {
 		@include transform(translateY(250px) !important);
 
 		@include transition(transform 0.5s linear);
-	}
-
-	:not(.chat-message-box-hidden) {
-		@include transition(transform 0.35s linear);
-	}
+	}	
 }
 
 .message-list:not(.nano) {

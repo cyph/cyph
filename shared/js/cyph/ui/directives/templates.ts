@@ -70,7 +70,7 @@ export const Templates	= {
 				<md-progress-linear
 					class='md-accent key-exchange-progress'
 					md-mode='determinate'
-					ng-value='$this.keyExchangeBetagress'
+					ng-value='$this.keyExchangeProgress'
 				></md-progress-linear>
 				<div flex></div>
 			</div>
