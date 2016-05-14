@@ -43,16 +43,16 @@ done
 
 # Branch config setup
 branch="$(git describe --tags --exact-match 2> /dev/null || git branch | awk '/^\*/{print $2}')"
+version="$branch"
 if [ $branch == 'prod' ] ; then
 	branch='staging'
 fi
 if [ $test ] ; then
-	branch="$(git config --get remote.origin.url | perl -pe 's/.*:(.*)\/.*/\1/' | tr '[:upper:]' '[:lower:]')-${branch}"
+	version="$(git config --get remote.origin.url | perl -pe 's/.*:(.*)\/.*/\1/' | tr '[:upper:]' '[:lower:]')-${version}"
 fi
 if [ $simple ] ; then
-	branch="simple-${branch}"
+	version="simple-${version}"
 fi
-version="$branch"
 
 
 # Authboss views (primarily email templates)
@@ -75,7 +75,7 @@ if [ ! $simple ] ; then
 	defaultCSPString='DEFAULT_CSP'
 	fullCSP="$(cat shared/websign/csp | tr -d '\n')"
 	coreCSP="$(cat shared/websign/csp | grep -P 'referrer|script-src|style-src|upgrade-insecure-requests' | tr -d '\n')"
-	cyphComCSP="$(cat shared/websign/csp | tr -d '\n' | sed 's|frame-src|frame-src https://*.facebook.com|g')"
+	cyphComCSP="$(cat shared/websign/csp | tr -d '\n' | sed 's|frame-src|frame-src https://*.facebook.com https://*.braintreegateway.com|g')"
 	ls cyph.com/*.yaml | xargs -I% sed -i.bak "s|${defaultCSPString}|\"${cyphComCSP}\"|g" %
 	ls */*.yaml | xargs -I% sed -i.bak "s|${defaultCSPString}|\"${coreCSP}\"|g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s|${defaultCSPString}|${fullCSP}|g" %
@@ -99,16 +99,16 @@ ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}43000//g" %
 ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak 's/isLocalEnv: boolean		= true/isLocalEnv: boolean		= false/g' %
 
 if [ $test ] ; then
-	sed -i.bak "s/staging/${branch}/g" default/config.go
-	sed -i.bak "s/http:\/\/localhost:42000/https:\/\/${branch}-dot-cyphme.appspot.com/g" default/config.go
-	ls */*.yaml */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/api.cyph.com/${branch}-dot-cyphme.appspot.com/g" %
-	ls */*.yaml */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/www.cyph.com/${branch}-dot-cyph-com-dot-cyphme.appspot.com/g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42000/https:\/\/${branch}-dot-cyphme.appspot.com/g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42001/https:\/\/${branch}-dot-cyph-com-dot-cyphme.appspot.com/g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42002/https:\/\/${branch}-dot-cyph-im-dot-cyphme.appspot.com/g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/CYPH-ME/https:\/\/${branch}-dot-cyph-me-dot-cyphme.appspot.com/g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/CYPH-VIDEO/https:\/\/${branch}-dot-cyph-video-dot-cyphme.appspot.com/g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/CYPH-AUDIO/https:\/\/${branch}-dot-cyph-audio-dot-cyphme.appspot.com/g" %
+	sed -i.bak "s/staging/${version}/g" default/config.go
+	sed -i.bak "s/http:\/\/localhost:42000/https:\/\/${version}-dot-cyphme.appspot.com/g" default/config.go
+	ls */*.yaml */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/api.cyph.com/${version}-dot-cyphme.appspot.com/g" %
+	ls */*.yaml */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/www.cyph.com/${version}-dot-cyph-com-dot-cyphme.appspot.com/g" %
+	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42000/https:\/\/${version}-dot-cyphme.appspot.com/g" %
+	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42001/https:\/\/${version}-dot-cyph-com-dot-cyphme.appspot.com/g" %
+	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42002/https:\/\/${version}-dot-cyph-im-dot-cyphme.appspot.com/g" %
+	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/CYPH-ME/https:\/\/${version}-dot-cyph-me-dot-cyphme.appspot.com/g" %
+	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/CYPH-VIDEO/https:\/\/${version}-dot-cyph-video-dot-cyphme.appspot.com/g" %
+	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/CYPH-AUDIO/https:\/\/${version}-dot-cyph-audio-dot-cyphme.appspot.com/g" %
 
 	# Disable caching and HPKP in test environments
 	ls */*.yaml | xargs -I% sed -i.bak 's/Public-Key-Pins: .*/Pragma: no-cache/g' %
@@ -243,8 +243,8 @@ if [ ! $simple ] ; then
 
 		websignhashes=''
 		if [ $test ] ; then
-			websignhashes="{\"$(../commands/websignhash.sh "${d}" "${branch}")\": true}"
-			d="${branch}.${d}"
+			websignhashes="{\"$(../commands/websignhash.sh "${d}" "${version}")\": true}"
+			d="${version}.${d}"
 		fi
 
 		../commands/websign/pack.py index.html $d.pkg
