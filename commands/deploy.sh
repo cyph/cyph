@@ -296,10 +296,10 @@ fi
 # Secret credentials
 cat ~/.cyph/default.vars >> default/app.yaml
 cat ~/.cyph/jobs.vars >> jobs/jobs.yaml
-if [ $test ] ; then
-	cat ~/.cyph/braintree.sandbox >> default/app.yaml
-else
+if [ $branch == 'staging' ] ; then
 	cat ~/.cyph/braintree.prod >> default/app.yaml
+else
+	cat ~/.cyph/braintree.sandbox >> default/app.yaml
 fi
 
 deploy () {
