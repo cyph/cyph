@@ -763,10 +763,9 @@ export const Templates	= {
 									<label>Confirm Password</label>
 								</md-input-container>
 							</div>
-							<div layout='row' layout-align='center end'>
+							<div class='register-button' layout='row' layout-align='center end'>
 								<md-button
 									type='submit'
-									class='register-button'
 									aria-label='Register'
 									ng-disabled='true'
 									translate
@@ -790,10 +789,9 @@ export const Templates	= {
 									early access to more advanced functionality and cool new features.
 								</p>
 							</div>
-							<div layout='row' layout-align='center end'>
+							<div class='register-button' layout='row' layout-align='center end'>
 								<md-button
 									type='submit'
-									class='register-button'
 									aria-label='Waitlist Signup'
 									translate
 								>
