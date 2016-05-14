@@ -334,8 +334,13 @@ export class UI extends Cyph.UI.BaseButtonManager {
 					this.cyphDemo.desktop &&
 					this.cyphDemo.desktop.state === Cyph.UI.Chat.States.chat
 				) {
-					this.cyphDemo.desktop.cyphertext.show();
-					setTimeout(() => this.cyphDemo.mobile.cyphertext.show(), 8000);
+					if (Cyph.Env.isMobile) {
+						this.cyphDemo.mobile.cyphertext.show();
+					}
+					else {
+						this.cyphDemo.desktop.cyphertext.show();
+						setTimeout(() => this.cyphDemo.mobile.cyphertext.show(), 8000);
+					}
 				}
 				else {
 					retry();
