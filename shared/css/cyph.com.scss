@@ -1015,7 +1015,6 @@ div.donation {
 
 .donate-button {
 	display: block;
-	width: 100%;
 	margin-top: -15px;
 }
 
@@ -1077,10 +1076,6 @@ md-slider .md-sign .md-thumb-text {
 input.donation {
 	text-align: center;
 	border: 0px;
-}
-
-input.donation:before {
-	content: '$';
 }
 
 .paypal-button button.large {
