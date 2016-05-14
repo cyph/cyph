@@ -643,15 +643,15 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 		left: 11.5%;
 
 		[cyph-chat-toolbar] {
-			.button {
+			.buttons > * {
 				left: 20px;
 				top: 5px;
 				margin-left: 6px;
-			}
 
-			img {
-				width: 15px;
-				height: 15px;
+				&, * {
+					width: 15px;
+					height: 15px;
+				}
 			}
 		}
 
@@ -693,7 +693,17 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 		}
 
 		[cyph-chat-message-box] {
-			margin-top: -3px;
+			margin-top: -10px;
+
+			.message-box {
+				min-height: 50px;
+			}
+
+			md-fab-speed-dial {
+				bottom: -25px;
+
+				@include transform(scale(0.8));
+			}
 		}
 	}
 
