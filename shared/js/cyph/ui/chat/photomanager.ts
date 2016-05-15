@@ -78,7 +78,7 @@ export class PhotoManager implements IPhotoManager {
 		this.elements.buttons.
 			find('input[type="file"]').
 			each((i: number, elem: HTMLElement) => {
-				let isClicked: boolean;
+				let isClicked: number;
 
 				$(elem).
 					click(e => {
@@ -86,27 +86,11 @@ export class PhotoManager implements IPhotoManager {
 						e.preventDefault();
 					}).
 					parent().click(() => {
-						if (!isClicked) {
-							isClicked	= true;
+						const now: number	= Date.now();
 
+						if (isClicked && (now - isClicked) > 5000) {
+							isClicked	= now;
 							Util.triggerClick(elem);
-
-							let finish: Function;
-
-							const intervalId	= setInterval(() => {
-								if (Util.getValue(elem, 'files', []).length > 0) {
-									finish();
-								}
-							}, 500);
-
-							finish	= () => {
-								clearInterval(intervalId);
-								setTimeout(() =>
-									isClicked	= false
-								, 500);
-							};
-
-							setTimeout(finish, 5000);
 						}
 					})
 				;
