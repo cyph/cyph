@@ -120,8 +120,14 @@ func getBetaSignupFromRequest(h HandlerArgs) BetaSignup {
 }
 
 func braintreeInit(h HandlerArgs) *braintree.Braintree {
+	env := braintree.Sandbox
+
+	if config.IsProd {
+		env = braintree.Production
+	}
+	
 	bt := braintree.New(
-		braintree.Sandbox,
+		env,
 		braintreeMerchantID,
 		braintreePublicKey,
 		braintreePrivateKey,

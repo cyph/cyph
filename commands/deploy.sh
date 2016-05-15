@@ -119,7 +119,8 @@ if [ $test ] ; then
 		mv $yaml.new $yaml
 	done
 else
-	sed -i.bak "s/http:\/\/localhost:42000/https:\/\/api.cyph.com.com/g" default/config.go
+	sed -i.bak "s/false, \/\* IsProd \*\//true,/g" default/config.go
+	sed -i.bak "s/http:\/\/localhost:42000/https:\/\/api.cyph.com/g" default/config.go
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42000/https:\/\/api.cyph.com/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42001/https:\/\/www.cyph.com/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42002/https:\/\/cyph.im/g" %
