@@ -177,7 +177,8 @@ for d in cyph.com cyph.im ; do
 		find css -name '*.css' | grep -v bourbon/ | xargs -I% cleancss -o '%' '%'
 
 		echo "HTML Minify ${d}"
-		ls index.html | xargs -I% html-minifier --minify-js --minify-css --remove-comments --collapse-whitespace '%' -o '%'
+		html-minifier --minify-js --minify-css --remove-comments --collapse-whitespace index.html -o index.html.new
+		mv index.html.new index.html
 	fi
 
 	cd ..
