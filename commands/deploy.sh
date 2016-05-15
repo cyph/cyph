@@ -98,6 +98,10 @@ defaultHost='\${locationData\.protocol}\/\/\${locationData\.hostname}:'
 ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}43000//g" %
 ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak 's/isLocalEnv: boolean		= true/isLocalEnv: boolean		= false/g' %
 
+if [ $branch == 'staging' ] ; then
+	sed -i.bak "s/false, \/\* IsProd \*\//true,/g" default/config.go
+fi
+
 if [ $test ] ; then
 	sed -i.bak "s/staging/${version}/g" default/config.go
 	sed -i.bak "s/http:\/\/localhost:42000/https:\/\/${version}-dot-cyphme.appspot.com/g" default/config.go
@@ -119,7 +123,6 @@ if [ $test ] ; then
 		mv $yaml.new $yaml
 	done
 else
-	sed -i.bak "s/false, \/\* IsProd \*\//true,/g" default/config.go
 	sed -i.bak "s/http:\/\/localhost:42000/https:\/\/api.cyph.com/g" default/config.go
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42000/https:\/\/api.cyph.com/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42001/https:\/\/www.cyph.com/g" %
