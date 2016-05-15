@@ -25,7 +25,7 @@ for elem in html.select('script[src]'):
 	path		= unicode.split(path, '?')[0]
 
 	f			= open(path, 'r')
-	elem.string	= re.sub('</script>', '<\\/script>', re.sub('^//# sourceMappingURL=.*?\.map', '', f.read()))
+	elem.string	= re.sub('</script>', '<\\/script>', re.sub('\n//# sourceMappingURL=.*?\.map', '\n', f.read()))
 	f.close()
 
 	del elem['src']
@@ -37,7 +37,7 @@ for elem in html.select('link[rel="stylesheet"]'):
 	path		= unicode.split(path, '?')[0]
 
 	f			= open(path, 'r')
-	elem.string	= f.read()
+	elem.string	= re.sub('\n/*# sourceMappingURL=.*?\.map */', '\n', f.read())
 	f.close()
 
 	del elem['rel']
