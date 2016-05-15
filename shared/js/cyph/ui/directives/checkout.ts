@@ -46,6 +46,7 @@ export class Checkout {
 
 						self['braintree'].setup(token, 'dropin', {
 							container: checkoutUI[0],
+							enableCORS: true,
 							onPaymentMethodReceived: data => {
 								Util.request({
 									url: Env.baseUrl + Config.braintreeConfig.endpoint,
