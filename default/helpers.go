@@ -125,7 +125,7 @@ func braintreeInit(h HandlerArgs) *braintree.Braintree {
 	if config.IsProd {
 		env = braintree.Production
 	}
-	
+
 	bt := braintree.New(
 		env,
 		braintreeMerchantID,
