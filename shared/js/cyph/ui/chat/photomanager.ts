@@ -75,12 +75,10 @@ export class PhotoManager implements IPhotoManager {
 	 * @param chat
 	 */
 	public constructor (private chat: IChat, private elements: IElements) {
-		const timeout: number	= 5000;
-
 		this.elements.buttons.
 			find('input[type="file"]').
 			each((i: number, elem: HTMLElement) => {
-				let lastClicked: number;
+				let isClicked: boolean;
 
 				$(elem).
 					click(e => {
@@ -88,22 +86,27 @@ export class PhotoManager implements IPhotoManager {
 						e.preventDefault();
 					}).
 					parent().click(() => {
-						const now: number	= Date.now();
-
-						if (lastClicked && (now - lastClicked) > timeout) {
-							lastClicked	= now;
+						if (!isClicked) {
+							isClicked	= true;
 
 							Util.triggerClick(elem);
 
-							let i: number	= 10;
+							let finish: Function;
+
 							const intervalId	= setInterval(() => {
-								if (
-									--i <= 0 ||
-									Util.getValue(elem, 'files', []).length > 0
-								) {
+								if (Util.getValue(elem, 'files', []).length > 0) {
 									finish();
 								}
-							}, timeout / i);
+							}, 500);
+
+							finish	= () => {
+								clearInterval(intervalId);
+								setTimeout(() =>
+									isClicked	= false
+								, 500);
+							};
+
+							setTimeout(finish, 5000);
 						}
 					})
 				;
