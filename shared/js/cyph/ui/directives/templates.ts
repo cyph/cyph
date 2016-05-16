@@ -534,7 +534,7 @@ export const Templates	= {
 			<div ng-hide='complete'>
 				<div class='checkout-ui'>
 					<div class='braintree'></div>
-					<div layout='row'>
+					<div layout='row' layout-sm='column' layout-xs='column'>
 						<md-input-container class='md-block' flex>
 							<input ng-model='name' aria-label='Name' />
 							<label>Name</label>

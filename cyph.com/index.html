@@ -745,8 +745,8 @@
 
 							<div class='features'>
 								<p>
-									Secure your business with Cyph encryption. Integrate into your app, site, or service with our API and whitelabeling.
-									Work directly with our prodcut development team to create custom features that meet your and your customer's needs.
+									Secure your business with Cyph encryption. Integrate into your app, site, or service with our API and white labeling.
+									Work directly with our prodcut development team to create custom features that meet your and your customers' needs.
 								<p>
 
 								<div class='feature' layout='row'>
@@ -757,8 +757,12 @@
 									<h4>Beta Features, Plus:</h4>
 										<md-icon
 											md-font-set='material-icons'
-											class='ng-isolate-scope md-default-theme material-icons'
+											class='ng-isolate-scope md-default-theme material-icons desktop-only'
 										>arrow_forward</md-icon>
+										<md-icon
+											md-font-set='material-icons'
+											class='ng-isolate-scope md-default-theme material-icons mobile-only'
+										>arrow_downward</md-icon>
 								</div>
 								<hr>
 								<div class='feature indent' layout='row'>
@@ -902,14 +906,18 @@
 
 							<div class='features'>
 								<p>
-									Expand your client base by allowing virtual doctor visits from anywhere with our HIPAA compliant encrypted video calling. Securely send and receive paitent files.
+									Expand your client base by allowing virtual doctor visits from anywhere with our HIPAA-compliant encrypted video calling. Securely send and receive patient files.
 								<p>
 
 									<div class='feature' layout='row'>
 										<md-icon
 											md-font-set='material-icons'
-											class='ng-isolate-scope md-default-theme material-icons'
+											class='ng-isolate-scope md-default-theme material-icons desktop-only'
 										>arrow_back</md-icon>
+										<md-icon
+											md-font-set='material-icons'
+											class='ng-isolate-scope md-default-theme material-icons mobile-only'
+										>arrow_upward</md-icon>
 										<h4>Beta Features, Plus:</h4>
 									</div>
 									<hr>
@@ -1066,26 +1074,39 @@
 			<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' translate>
 				Checkout
 			</h1>
-			<div layout='row'>
-				<div flex='33'></div>
-					<div class='cart' ng-class='{"empty" : ui.cart}' ng-hide='ui.cart'>
-						<h3 translate> There's nothing in your cart. What are you even doing here?</h3>
-						<br />
-						<span translate> To add something to your cart go to </span>
-						<a href='/pricing'> Business Pricing </a>
-						<span translate> or </span>
-						<a href='/donate'> make a donation </a>
-						.
+			<div layout='row' layout-align='center center'>
+				<div
+					flex='33'
+					flex-sm='80'
+					flex-xs='95'
+					class='cart'
+					ng-class='{"empty" : ui.cart}'
+					ng-hide='ui.cart'
+				>
+					<h3 translate> There's nothing in your cart. What are you even doing here?</h3>
+					<br />
+					<span translate> To add something to your cart go to </span>
+					<a href='/pricing'> Business Pricing </a>
+					<span translate> or </span>
+					<a href='/donate'> make a donation </a>
+					.
+				</div>
+				<cyph-checkout
+					flex='33'
+					flex-sm='80'
+					flex-xs='95'
+					amount='ui.cart[0]'
+					category='ui.cart[1]'
+					item='ui.cart[2]'
+					ng-show='ui.cart[0] !== 0'
+				>
+					<div ng-show='ui.cart[1] === Cyph.Config.pricingConfig.categories.donation.id'>
+						Thank you for supporting Cyph!
 					</div>
-					<cyph-checkout amount='ui.cart[0]' category='ui.cart[1]' item='ui.cart[2]' ng-show='ui.cart[0] !== 0'>
-						<div ng-show='ui.cart[1] === Cyph.Config.pricingConfig.categories.donation.id'>
-							Thank you for supporting Cyph!
-						</div>
-						<div ng-hide='ui.cart[1] === Cyph.Config.pricingConfig.categories.donation.id'>
-							Payment confirmed! Follow-up instructions will be sent via email.
-						</div>
-					</cyph-checkout>
-				<div flex='33'></div>
+					<div ng-hide='ui.cart[1] === Cyph.Config.pricingConfig.categories.donation.id'>
+						Payment confirmed! Follow-up instructions will be sent via email.
+					</div>
+				</cyph-checkout>
 			</div>
 		</section>
 

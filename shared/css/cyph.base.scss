@@ -115,8 +115,6 @@ md-toolbar, md-toolbar.md-default-theme:not(.md-menu-toolbar), md-toolbar:not(.m
 
 cyph-checkout, [cyph-checkout] {
 	background-color: #B48DFF;
-	min-height: 300px;
-	min-width: 600px;
 	margin-top: 20px;
 
 	.checkout-ui {
@@ -421,7 +419,7 @@ html:not(.mobile) .platform-container.mobile .mobile-only {
 	background-color: #86789F !important;
 }
 
-.mobile .pricing-chart {
+html.mobile .pricing-chart {
 	md-input-container {
 		margin: 0% 0% 0% 5% !important;
 	}
@@ -520,14 +518,9 @@ md-icon.back.material-icons:hover {
 	cursor: pointer;
 }
 
-.mobile .pricing {
-	margin: 5% 1% 5% 1% !important;
-}
-
 .pricing {
 	background-color: #624599 !important;
 	opacity: 0.75;
-	width: 225px;
 	height: auto;
 	margin: auto 1% auto 1%;
 
@@ -613,6 +606,14 @@ md-icon.back.material-icons:hover {
 		background-color: #B48DFF !important;
 		transition: 0.5s;
 		cursor: pointer;
+	}
+
+	html.mobile & {
+		margin: 5% 1% 5% 1% !important;
+	}
+
+	html:not(.mobile) & {
+		width: 225px;
 	}
 }
 
