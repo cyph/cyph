@@ -425,7 +425,7 @@ export const Templates	= {
 				<md-fab-actions>
 					<md-button
 						aria-label='Send File'
-						class='md-fab md-raised md-mini'
+						class='md-fab md-raised md-mini send-file-button'
 						ng-disabled='
 							!$this.p2pManager.isEnabled ||
 							$this.p2pManager.p2p.outgoingFile.name
