@@ -54,7 +54,6 @@ export class Chat extends BaseButtonManager implements IChat {
 	public isConnected: boolean			= false;
 	public isDisconnected: boolean		= false;
 	public isFriendTyping: boolean		= false;
-	public fab: boolean					= false;
 	public currentMessage: string		= '';
 	public keyExchangeProgress: number	= 0;
 	public state: States				= States.none;

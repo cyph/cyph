@@ -130,7 +130,7 @@ export const Templates	= {
 					</div>
 					<md-tab label='Contact Cyph'>
 					<span translate> Please check out the </span>
-					<a href='{{Cyph.Env.homeUrl}}/faq'>FAQs</a>
+					<a href='{{Cyph.Env.homeUrl}}faq'>FAQs</a>
 					<span translate> first!</span>
 					<br />
 					<br />

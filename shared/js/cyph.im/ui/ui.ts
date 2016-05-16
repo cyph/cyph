@@ -13,6 +13,9 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	/** Beta page state/view. */
 	public betaState: BetaStates	= BetaStates.none;
 
+	/** Indicates whether this is the Business edition of Cyph. */
+	public business: boolean;
+
 	/** Chat UI. */
 	public chat: Cyph.UI.Chat.IChat;
 
@@ -149,6 +152,10 @@ export class UI extends Cyph.UI.BaseButtonManager {
 			this.chat.session.state.sharedSecret,
 			this.chat.session.state.wasInitiatedByAPI
 		);
+
+		if (this.chat.session.state.wasInitiatedByAPI) {
+			this.business	= true;
+		}
 
 		this.changeState(States.waitingForFriend);
 	}

@@ -946,8 +946,11 @@ export const Templates	= {
 			</p>
 
 			<p flex='nogrow' layout-padding>
-					<strong>
+					<strong ng-show='ui.business === false'>
 						- Individual Use Only -
+					</strong>
+					<strong ng-show='ui.business'>
+						- Cyph API -
 					</strong>
 			</p>
 
@@ -968,6 +971,7 @@ export const Templates	= {
 					Terms of Service
 				</a>
 			</p>
+
 			<div flex></div>
 		</div>
 	`
