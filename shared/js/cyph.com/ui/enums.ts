@@ -3,7 +3,6 @@
  */
 export enum States {
 	home,
-	podcast,
 	contact,
 	donate,
 	pricing,
@@ -51,6 +50,7 @@ export enum HomeSections {
 	features,
 	gettingstarted,
 	intro,
+	podcast,
 	register,
 	testimonials
 }

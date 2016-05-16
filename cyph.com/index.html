@@ -208,9 +208,47 @@
 
 		<section id='hero-section'>
 			<div class='hero-foreground'>
+				<div id='podcast-section' ng-if='ui.podcast' layout='row' layout-align='center center'>
+					<md-card
+						class='animated wow'
+						data-wow-delay='3000ms'
+						ng-class='ui.podcast === Cyph.com.UI.Podcasts.jjgo ? "bounceInLeft" : "bounceInDown"'
+						flex='33'
+						flex-sm='66'
+						flex-xs='100'
+					>
+						<md-card-header>
+							<md-card-header-text>
+								<img ng-src='/img/thirdparty/{{Cyph.com.UI.Podcasts[ui.podcast]}}.png' />
+							</md-card-header-text>
+						</md-card-header>
+						<md-card-content>
+							<p>
+								<span translate>Welcome </span>
+								<span ng-show='ui.podcast === Cyph.com.UI.Podcasts.betalist'>Betalisters!</span>
+								<span ng-hide='ui.podcast === Cyph.com.UI.Podcasts.betalist'>
+									<i ng-show='ui.podcast === Cyph.com.UI.Podcasts.penn'>Penn's Sunday School</i>
+									<i ng-show='ui.podcast === Cyph.com.UI.Podcasts.jjgo'>Jordan, Jesse, Go!</i>
+									<i ng-show='ui.podcast === Cyph.com.UI.Podcasts.ventura'>We The People</i>
+									<i ng-show='ui.podcast === Cyph.com.UI.Podcasts.sawbones'>Sawbones</i>
+									<i ng-show='ui.podcast === Cyph.com.UI.Podcasts.judgejohn'>Judge John Hodgman</i>
+									<i ng-show='ui.podcast === Cyph.com.UI.Podcasts.mybrother'>My Brother, My Brother and Me</i>
+									<i ng-show='ui.podcast === Cyph.com.UI.Podcasts.security'>The Security Brief</i>
+									<span translate>listeners!</span>
+								</span>
+							</p>
+							<p>
+								<a href='/register' translate>Sign up now</a>,
+								<span translate>and you'll get extra priority on our waitlist for a Cyph beta account.</span>
+							</p>
+						</md-card-content>
+					</md-card>
+				</div>
+
 				<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' translate>
 					Secure your <span class='feature-cycle'>{{ui.features[ui.featureIndex]}}</span> in one click.
 				</h1>
+
 				<div class='hero-container grid-container'>
 					<div layout='row'>	
 						<div flex='25'></div>
@@ -640,84 +678,6 @@
 				<p translate>
 					When your friend opens this link, the conversation will begin.
 				</p>
-			</div>
-		</section>
-
-
-		<section id='podcast-section' ng-show='ui.state === Cyph.com.UI.States.podcast' class='unisection'>
-			<h1 class='hero-text animated' ng-class='Cyph.com.UI.Podcasts[ui.podcast] === "jjgo" ? "bounceInLeft" : "bounceInDown"'>
-				<img class='podcast-logo' />
-			</h1>
-
-			<div class='section-content-container'>
-				<div>
-					<p>
-						<div cyph-signup-form='ui.signupForm' hide-button='true'>
-							<div>
-								<p ng-show='ui.podcast === Cyph.com.UI.Podcasts.betalist'>
-									<span translate>Welcome</span>
-									<span>Betalisters!</span>
-								</p>
-								<p ng-hide='ui.podcast === Cyph.com.UI.Podcasts.betalist'>
-									<span translate>Welcome</span>
-									<i ng-show='ui.podcast === Cyph.com.UI.Podcasts.penn'>Penn's Sunday School</i>
-									<i ng-show='ui.podcast === Cyph.com.UI.Podcasts.jjgo'>Jordan, Jesse, Go!</i>
-									<i ng-show='ui.podcast === Cyph.com.UI.Podcasts.ventura'>We The People</i>
-									<i ng-show='ui.podcast === Cyph.com.UI.Podcasts.sawbones'>Sawbones</i>
-									<i ng-show='ui.podcast === Cyph.com.UI.Podcasts.judgejohn'>Judge John Hodgman</i>
-									<i ng-show='ui.podcast === Cyph.com.UI.Podcasts.mybrother'>My Brother, My Brother and Me</i>
-									<i ng-show='ui.podcast === Cyph.com.UI.Podcasts.security'>The Security Brief</i>
-									<span translate>listeners!</span>
-								</p>
-								<p translate ng-show='ui.podcast !== Cyph.com.UI.Podcasts.penn'>
-									Sign up below, and get bumped to the front of our waitlist for Cyph v2.
-								</p>
-								<p translate ng-show='ui.podcast === Cyph.com.UI.Podcasts.penn'>
-									Sign up below, and you'll get first access to Cyph accounts and an extra 5 invites (10 total), for being a member of the Penn's Sunday School Congregation! Registration will be closing when we reach initial capacity.
-								</p>
-							</div>
-						</div>
-					</p>
-
-			<br />
-			<br />
-			<br />
-			<div class="bounceIn grid-100 tablet-grid-100 feature-list-item animated" desktop-data-wow-delay="300ms" data-wow-delay="300ms" style="visibility: visible; -webkit-animation-delay: 300ms; height: 162px; top:40% position:relative;">
-				<img class="grid-25 tablet-grid-25 mobile-grid-25" src="/img/iconfinder/cyphanyone.png">
-				<div class="grid-75 tablet-grid-75 mobile-grid-75">
-					<h3 translate>Don't be confined to your buddy list &mdash; cyph anyone!</h3>
-				</div>
-				<div class="grid-75 tablet-grid-75 mobile-grid-75">
-					<p><span translate>Unlike other messenger apps, Cyph gives you the freedom to start a secure chat or call with anyone &mdash; regardless of whether they're already using Cyph.</span></p>
-					<p><span translate>Don't be limited by your social network. When you want to chat, your friends who don't use Cyph will simply receive a cyph link, and with one click a private key will be generated for them right in their browser.</span></p>
-				</div>
-				<img class="grid-25 tablet-grid-25 push-50 tablet-push-50 mobile-grid-25" src="/img/iconfinder/videochat.png">
-				<div class="grid-75 tablet-grid-75 mobile-grid-75">
-					<h3 translate>Video chat with peace of mind again.</p>
-				</div>
-				<div class="grid-75 tablet-grid-75 mobile-grid-75">
-					<p><span translate>For optimal performance, all video, audio, and transferred files are sent directly to the person you're cyphing (without ever touching our servers).</span></p>
-					<p><span translate>Since they're encrypted locally, however, even if intercepted, your friendly neighbourhood FBI van will only see gibberish</span></p>
-				</div>
-			</div>
-			<div class="wow bounceIn mobile-class-bounceIn grid-100 tablet-grid-100 feature-list-item animated" style="visibility: visible; height: 261px;">
-				<img class="grid-25 tablet-grid-25 mobile-grid-25" src="/img/iconfinder/crossplatform.png" alt="Desktop, tablet, and phone">
-				<div class="grid-75 tablet-grid-75 mobile-grid-75">
-					<h3 translate>Powerful encryption on all your platforms.</h3>
-				</div>
-				<div class="grid-75 tablet-grid-75 mobile-grid-75">
-					<p><span translate>Cracking a single Cyph message key would take longer than the age of the universe, even using the fastest supercomputers on Earth &mdash; and because the keys are constantly refreshed, even if one were somehow leaked, only a few messages would be compromised (rather than an entire conversation).</span></p>
-					<p><span translate>As an added layer of obfuscation, all of our encrypted traffic is randomly split between eight different datacentres around the world, with no obvious way for us to piece together the data belonging to any one chat.</span></p>
-				</div>
-				<img class="grid-25 tablet-grid-25 push-50 tablet-push-50 mobile-grid-25" src="/img/iconfinder/bigbrother.png">
-				<div class="grid-75 tablet-grid-75 mobile-grid-75">
-					<h3 translate>Circumvent government censorship and blocked access with confidence.</h3>
-				</div>
-				<div class="grid-75 tablet-grid-75 mobile-grid-75">
-					<p><span translate>Cyph is 100% supported for use on the Tor network, which allows you to hide your location, and subvert government and company internet filters.</span></p>
-					<p><span translate>In addition to having a recognisable Tor address (cyphdbyhiddenbhs.onion), Cyph is the first hidden service on the Tor network to deploy an Extended Validation SSL certificate, the highest level of trust and authentication for a website. This helps us easily let you know if you're ever connected to an impostor; to make sure you're connected to the real Cyph, just look for the green lock in the upper left-hand corner of your screen that reads "Cyph, Inc.".</span></p>
-			</div>
-				</div>
 			</div>
 		</section>
 

@@ -981,25 +981,14 @@ html:not(.mobile) {
 }
 
 #podcast-section {
-	padding-top: 75px !important;
+	margin-top: 75px;
 
-	.hero-text {
-		top: 20px;
-
-		img {
-			max-width: 450px;
-			max-height: 175px;
-		}
+	html.mobile & {
+		margin-top: 60px;
 	}
-}
 
-html.mobile {
-	#podcast-section {
-		padding-top: 120px !important;
-
-		.hero-text {
-			top: 75px;
-		}
+	#hero-section & + .hero-text {
+		margin-top: 20px;
 	}
 }
 

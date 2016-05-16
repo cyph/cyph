@@ -8,6 +8,9 @@ import * as Cyph from 'cyph/cyph';
  * Controls the entire cyph.com UI.
  */
 export class UI extends Cyph.UI.BaseButtonManager {
+	private static linkInterceptSelector: string	= 'a[href^="/"]:not(a[href^="/blog"])';
+
+
 	/** UI state/view. */
 	public state: States				= States.home;
 
@@ -69,6 +72,23 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	/** Carousel of testimonials. */
 	public testimonialCarousel: Cyph.UI.Carousel;
 
+	private linkClickHandler (e: Event) {
+		e.preventDefault();
+
+		const href: string		= $(e.currentTarget).attr('href');
+		let scrollDelay: number	= 500;
+
+		if (href !== locationData.pathname || this.homeSection !== undefined) {
+			scrollDelay	= 0;
+
+			Cyph.UrlState.set(href);
+		}
+
+		if (this.homeSection === undefined) {
+			setTimeout(() => this.scroll(0), scrollDelay);
+		}
+	}
+
 	private onUrlStateChange (urlState: string) : void {
 		const urlStateSplit: string[]	= urlState.split('/');
 		const urlStateBase: string		= urlStateSplit[0];
@@ -76,13 +96,17 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		const state: States		= States[urlStateBase];
 		const podcast: Podcasts	= Podcasts[urlStateBase];
 
-		this.homeSection	= HomeSections[urlStateBase];
+		this.homeSection	= podcast === undefined ?
+			HomeSections[urlStateBase] :
+			HomeSections.podcast
+		;
 
-		if (podcast !== undefined) {
-			this.openPodcastPage(podcast);
-		}
-		else if (this.homeSection !== undefined) {
+		if (this.homeSection !== undefined) {
 			this.changeState(States.home);
+
+			if (podcast) {
+				this.podcast	= podcast;
+			}
 
 			setTimeout(() => {
 				if (this.homeSection === HomeSections.register) {
@@ -97,7 +121,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 				}
 				else {
 					this.scroll(
-						$('#' + urlState + '-section').offset().top -
+						$('#' + HomeSections[this.homeSection] + '-section').offset().top -
 						(
 							this.homeSection === HomeSections.gettingstarted ?
 								-1 :
@@ -118,10 +142,10 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		else if (state !== undefined) {
 			this.changeState(state);
 		}
-		else if (urlState === '') {
+		else if (urlStateBase === '') {
 			this.changeState(States.home);
 		}
-		else if (urlState === Cyph.UrlState.states.notFound) {
+		else if (urlStateBase === Cyph.UrlState.states.notFound) {
 			this.changeState(States.error);
 		}
 		else {
@@ -196,19 +220,6 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	}
 
 	/**
-	 * Opens the podcast promo page with the indicated state.
-	 * @param podcast
-	 */
-	public openPodcastPage (podcast: Podcasts) : void {
-		this.podcast	= podcast;
-		this.changeState(States.podcast);
-
-		Elements.heroText.hide();
-		Elements.podcastLogo.attr('src', '/img/thirdparty/' + Podcasts[this.podcast] + '.png');
-		setTimeout(() => Elements.heroText.show(), 1);
-	}
-
-	/**
 	 * @param controller
 	 */
 	public constructor (
@@ -249,7 +260,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		});
 
 		if (!Cyph.Env.isMobile) {
-			new self['WOW']({live: false}).init();
+			new self['WOW']({live: true}).init();
 		}
 
 
@@ -297,7 +308,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		setTimeout(() => setInterval(() => Elements.mainToolbar.toggleClass(
 			'new-cyph-expanded',
 			this.state === States.home && (
-				Elements.heroText.is(':appeared') ||
+				(!this.podcast && Elements.heroText.is(':appeared')) ||
 				Cyph.UI.Elements.footer.is(':appeared')
 			)
 		), 500), 3000);;
@@ -327,21 +338,28 @@ export class UI extends Cyph.UI.BaseButtonManager {
 
 		/* Avoid full page reloads */
 
-		$('a[href^="/"]:not(a[href^="/blog"])').click(e => {
-			e.preventDefault();
+		$(UI.linkInterceptSelector).click(e => this.linkClickHandler(e));
+		new MutationObserver(mutations => {
+			for (const mutation of mutations) {
+				for (let i = 0 ; i < mutation.addedNodes.length ; ++i) {
+					const $elem: JQuery	= $(mutation.addedNodes[i]);
 
-			const href: string		= $(e.currentTarget).attr('href');
-			let scrollDelay: number	= 500;
-
-			if (href !== locationData.pathname || this.homeSection !== undefined) {
-				scrollDelay	= 0;
-
-				Cyph.UrlState.set(href);
+					if ($elem.is(UI.linkInterceptSelector)) {
+						$elem.click(e => this.linkClickHandler(e));
+					}
+					else {
+						$elem.
+							find(UI.linkInterceptSelector).
+							click(e => this.linkClickHandler(e))
+						;
+					}
+				}
 			}
-
-			if (this.homeSection === undefined) {
-				setTimeout(() => this.scroll(0), scrollDelay);
-			}
+		}).observe(document.body, {
+			childList: true,
+			attributes: false,
+			characterData: false,
+			subtree: true
 		});
 
 		setInterval(() => this.cycleFeatures(), 4200);
