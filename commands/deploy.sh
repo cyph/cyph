@@ -300,9 +300,7 @@ fi
 find . -name '*.bak' | xargs rm
 
 if [ ! $test ] ; then
-	cd shared/lib/js
-	grep 'crypto/' ../../js/package.json | perl -pe 's/.*"(.*?):(.*?)".*/\1\/\2/g' | xargs rm -rf
-	cd ../../..
+	rm -rf */lib/js/crypto
 fi
 
 
