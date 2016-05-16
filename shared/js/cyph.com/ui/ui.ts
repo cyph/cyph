@@ -14,6 +14,15 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	/** Podcast promo page state/view. */
 	public podcast: Podcasts			= Podcasts.none;
 
+	public contactState	= {
+		fromEmail: <string> '',
+		fromName: <string> '',
+		message: <string> '',
+		sent: <boolean> false,
+		subject: <string> '',
+		to: <string> 'hello'
+	};
+
 	public features						= ['Video Calls', 'Voice Calls', 'Chats', 'Photos', 'File Transfers'];
 	public featureIndex: number			= 0;
 
@@ -61,10 +70,13 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	public testimonialCarousel: Cyph.UI.Carousel;
 
 	private onUrlStateChange (urlState: string) : void {
-		const state: States		= States[urlState];
-		const podcast: Podcasts	= Podcasts[urlState];
+		const urlStateSplit: string[]	= urlState.split('/');
+		const urlStateBase: string		= urlStateSplit[0];
 
-		this.homeSection	= HomeSections[urlState];
+		const state: States		= States[urlStateBase];
+		const podcast: Podcasts	= Podcasts[urlStateBase];
+
+		this.homeSection	= HomeSections[urlStateBase];
 
 		if (podcast !== undefined) {
 			this.openPodcastPage(podcast);
@@ -94,6 +106,14 @@ export class UI extends Cyph.UI.BaseButtonManager {
 					);
 				}
 			}, 250);
+		}
+		else if (state === States.contact) {
+			const to: string	= urlStateSplit[1];
+			if (Cyph.Config.cyphEmailAddresses.indexOf(to) > -1) {
+				this.contactState.to	= to;
+			}
+
+			this.changeState(state);
 		}
 		else if (state !== undefined) {
 			this.changeState(state);

@@ -7,6 +7,7 @@ import * as Cyph from 'cyph/cyph';
 export class Elements {
 	public static bouncingDownArrow: JQuery;
 	public static backgroundVideo: JQuery;
+	public static contactForm: JQuery;
 	public static contentContainers: JQuery;
 	public static demoRoot: JQuery;
 	public static demoListDesktop: JQuery;
@@ -33,6 +34,7 @@ export class Elements {
 
 		Elements.bouncingDownArrow		= $('.bouncing-down-arrow');
 		Elements.backgroundVideo		= $('.hero-background > :first-child');
+		Elements.contactForm			= $('#contact cyph-contact');
 		Elements.contentContainers		= $('.section-content-container');
 		Elements.demoRoot				= $('.demo-root');
 		Elements.demoListDesktop		= $('.demo-root > .desktop .message-list md-list');

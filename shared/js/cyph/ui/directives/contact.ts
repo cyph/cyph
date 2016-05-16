@@ -27,11 +27,31 @@ export class Contact {
 				scope['ui']		= ui;
 				scope['Cyph']	= self['Cyph'];
 
-				const watch	= (attr: string) => scope.$watch(attrs[attr], (value: string) => {
-					scope[attr]	= value;
+				scope['$this']	= {};
+
+				const watch	= (attr: string) => scope.$watch(attrs[attr], (value: any) => {
+					if (!value) {
+						return;
+					}
+
+					if (attr === 'state') {
+						for (const k of Object.keys(scope['$this'])) {
+							const v	= scope['$this'][k];
+							if (v && !value[k]) {
+								value[k]	= v;
+							}
+						}
+
+						scope['$this']	= value;
+					}
+					else {
+						scope['$this'][attr]	= value;
+					}
+
 					ui.controller.update();
 				});
 
+				watch('state');
 				watch('fromEmail');
 				watch('fromName');
 				watch('to');
@@ -39,8 +59,8 @@ export class Contact {
 				watch('message');
 
 				element.find('button').click(() => {
-					Util.email(<any> scope);
-					scope['sent']	= true;
+					Util.email(<any> scope['$this']);
+					scope['$this'].sent	= true;
 					self['ui'].controller.update();
 				});
 			})

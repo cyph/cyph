@@ -557,11 +557,11 @@ export const Templates	= {
 
 	contact: `
 		<div>
-			<div ng-hide='sent'>
+			<div ng-hide='$this.sent'>
 				<div layout-gt-xs='row'>
 					<md-input-container class='md-block' flex>
 						<label>Cyph team to contact</label>
-						<md-select ng-model='to'>
+						<md-select ng-model='$this.to'>
 							<md-option
 								ng-repeat='address in Cyph.Config.cyphEmailAddresses'
 								value='{{address}}'
@@ -573,27 +573,27 @@ export const Templates	= {
 				</div>
 				<div layout='row'>
 					<md-input-container class='md-block' flex>
-						<input ng-model='fromName' aria-label='Name' />
+						<input ng-model='$this.fromName' aria-label='Name' />
 						<label>Name</label>
 					</md-input-container>
 					<md-input-container class='md-block' flex>
-						<input ng-model='fromEmail' type='email' aria-label='Email' />
+						<input ng-model='$this.fromEmail' type='email' aria-label='Email' />
 						<label>Email</label>
 					</md-input-container>
 				</div>
 				<md-input-container class='md-block'>
-					<input ng-model='subject' aria-label='Subject' />
+					<input ng-model='$this.subject' aria-label='Subject' />
 					<label>Subject</label>
 				</md-input-container>
 				<md-input-container class='md-block'>
-					<textarea ng-model='message' aria-label='Message' md-select-on-focus></textarea>
+					<textarea ng-model='$this.message' aria-label='Message' md-select-on-focus></textarea>
 					<label>Message</label>
 				</md-input-container>
 				<md-button>
 					Send
 				</md-button>
 			</div>
-			<div ng-show='sent'>
+			<div ng-show='$this.sent'>
 				Your email has been sent! Someone on the team will get back to you shortly.
 			</div>
 		</div>
