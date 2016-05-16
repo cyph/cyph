@@ -200,7 +200,7 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 							case P2P.UIEvents.Events.get: {
 								const callback: Function	= e.args[0];
 
-								const file: File	= this.elements.p2pFiles.
+								const file: File	= $(this.elements.p2pFiles.selector).
 									toArray().
 									map((elem: HTMLInputElement) => elem.files || []).
 									reduce((a: File, b: FileList) => a || b[0], null)
