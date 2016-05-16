@@ -52,7 +52,9 @@ export class Elements {
 		Elements.signupForm				= $('.beta-signup-form');
 		Elements.timer					= $('.link-connection .timer');
 
-		/* Workaround for Angular Material bug */
-		$('md-fab-speed-dial').removeClass('md-animations-waiting');
+		/* Temporary workaround for Angular Material bug */
+		const removeWaiting	= () => $('md-fab-speed-dial').removeClass('md-animations-waiting');
+		removeWaiting();
+		setTimeout(removeWaiting, 10000);
 	}
 }

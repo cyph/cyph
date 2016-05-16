@@ -635,12 +635,9 @@ export const Templates	= {
 							translate
 							class='md-fab'
 							aria-label='SMS'
+							ng-href='{{Cyph.Env.smsUriBase}}{{$this.linkEncoded}}'
 						>
 							<img src='/img/icons/sms.png' alt='SMS' />
-							<a
-								target='_self'
-								ng-href='{{Cyph.Env.smsUriBase}}{{$this.linkEncoded}}'
-							></a>
 						</md-button>
 
 						<span class='divider'>
@@ -651,12 +648,10 @@ export const Templates	= {
 							translate
 							class='md-fab'
 							aria-label='Email'
+							target='_self'
+							ng-href='mailto:?body={{$this.linkEncoded}}'
 						>
 							<img src='/img/icons/email.png' alt='Email' />
-							<a
-								target='_self'
-								ng-href='mailto:?body={{$this.linkEncoded}}'
-							></a>
 						</md-button>
 					</div>
 				</div>
