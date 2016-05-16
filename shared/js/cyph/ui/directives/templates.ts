@@ -616,7 +616,7 @@ export const Templates	= {
 				</div>
 				<div ng-hide='$this.isPassive'>
 					<div translate>
-						Send the link below to someone else and when they open it, you'll be securely connected!
+						Send the link below to someone else. When they open it, you'll be securely connected!
 					</div>
 					<br />
 
