@@ -59,6 +59,8 @@ jsbundle () {
 		echo -e "\n\nSystem.import('${1}');" >> $1.js
 	fi
 
+	sed -i 's|use strict||g' $1.js
+
 	# cp ../lib/js/require.js $1.js.new
 	# echo >> $1.js.new
 	# cat $1.js >> $1.js.new

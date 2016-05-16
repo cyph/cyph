@@ -253,6 +253,8 @@ if [ ! $simple ] ; then
 		fi
 
 		../commands/websign/pack.py index.html $d.pkg
+		sed -i 's|use strict||g' $d.pkg
+
 		cat websign/index.html | sed "s/\\\$PROJECT/$d/g" > index.html
 		../commands/websign/pack.py index.html index.html
 		rm websign/index.html
