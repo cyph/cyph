@@ -5,6 +5,71 @@ import {Util} from 'cyph/util';
  * Reusable HTML view templates for component directives.
  */
 export const Templates	= {
+	beta: `
+		<md-content
+			class='nano'
+			layout='column'
+			layout-fill
+			flex
+		>
+			<div class='nano-content'>
+				<div
+					class='login-form'
+					ng-show='$this.betaState === Cyph.im.UI.BetaStates.login'
+					ng-class='{checking: checking}'
+					layout='row'
+					layout-align='center center'
+				>
+					<md-card flex='75' class='md-padding'>
+						<md-card-title>
+							<md-card-title-text>
+								<span class='md-headline' translate>
+									Log In
+								</span>
+								<span class='md-subhead' translate>
+									Welcome to Cyph! You can log in to your beta account here.
+								</span>
+							</md-card-title-text>
+						</md-card-title>
+						<md-card-content>
+							<form>
+								<div layout='row' layout-align='center center'>
+									<md-subheader ng-style='{visibility: error ? "visible" : "hidden"}'>
+										Invalid username or password.
+									</md-subheader>
+								</div>
+								<div layout='row' layout-align='center center'>
+									<md-input-container class='md-block' flex='60'>
+										<input ng-model='username' aria-label='Username' required />
+										<label>Username</label>
+									</md-input-container>
+								</div>
+								<div layout='row' layout-align='center center'>
+									<md-input-container class='md-block' flex='60'>
+										<input ng-model='password' type='password' aria-label='Password' required />
+										<label>Password</label>
+									</md-input-container>
+								</div>
+								<div layout='row' layout-align='center center'>
+									<md-button type='submit' aria-label='Log In' translate>
+										Log In
+									</md-button>
+								</div>
+							</form>
+						</md-card-content>
+						<md-progress-circular md-mode='indeterminate'></md-progress-circular>
+					</md-card>
+				</div>
+				<div ng-show='$this.betaState === Cyph.im.UI.BetaStates.register'>
+					Registration screen
+				</div>
+				<div ng-show='$this.betaState === Cyph.im.UI.BetaStates.settings'>
+					Settings screen
+				</div>
+			</div>
+		</md-content>
+	`,
+
 	chatCyphertext: `
 		<div class='chat-cyphertext nano'>
 			<md-content class='nano-content'>
@@ -673,71 +738,6 @@ export const Templates	= {
 			</div>
 			<div flex></div>
 		</div>
-	`,
-
-	beta: `
-		<md-content
-			class='nano'
-			layout='column'
-			layout-fill
-			flex
-		>
-			<div class='nano-content'>
-				<div
-					class='login-form'
-					ng-show='$this.betaState === Cyph.im.UI.BetaStates.login'
-					ng-class='{checking: checking}'
-					layout='row'
-					layout-align='center center'
-				>
-					<md-card flex='75' class='md-padding'>
-						<md-card-title>
-							<md-card-title-text>
-								<span class='md-headline' translate>
-									Log In
-								</span>
-								<span class='md-subhead' translate>
-									Welcome to Cyph! You can log in to your beta account here.
-								</span>
-							</md-card-title-text>
-						</md-card-title>
-						<md-card-content>
-							<form>
-								<div layout='row' layout-align='center center'>
-									<md-subheader ng-style='{visibility: error ? "visible" : "hidden"}'>
-										Invalid username or password.
-									</md-subheader>
-								</div>
-								<div layout='row' layout-align='center center'>
-									<md-input-container class='md-block' flex='60'>
-										<input ng-model='username' aria-label='Username' required />
-										<label>Username</label>
-									</md-input-container>
-								</div>
-								<div layout='row' layout-align='center center'>
-									<md-input-container class='md-block' flex='60'>
-										<input ng-model='password' type='password' aria-label='Password' required />
-										<label>Password</label>
-									</md-input-container>
-								</div>
-								<div layout='row' layout-align='center center'>
-									<md-button type='submit' aria-label='Log In' translate>
-										Log In
-									</md-button>
-								</div>
-							</form>
-						</md-card-content>
-						<md-progress-circular md-mode='indeterminate'></md-progress-circular>
-					</md-card>
-				</div>
-				<div ng-show='$this.betaState === Cyph.im.UI.BetaStates.register'>
-					Registration screen
-				</div>
-				<div ng-show='$this.betaState === Cyph.im.UI.BetaStates.settings'>
-					Settings screen
-				</div>
-			</div>
-		</md-content>
 	`,
 
 	signupForm: `
