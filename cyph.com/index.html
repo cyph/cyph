@@ -208,32 +208,32 @@
 
 		<section id='hero-section'>
 			<div class='hero-foreground'>
-				<div id='podcast-section' ng-if='ui.podcast' layout='row' layout-align='center center'>
+				<div id='promo-section' ng-if='ui.promo' layout='row' layout-align='center center'>
 					<md-card
 						class='animated wow'
 						data-wow-delay='3000ms'
-						ng-class='ui.podcast === Cyph.com.UI.Podcasts.jjgo ? "bounceInLeft" : "bounceInDown"'
+						ng-class='ui.promo === Cyph.com.UI.Promos.jjgo ? "bounceInLeft" : "bounceInDown"'
 						flex='33'
 						flex-sm='66'
 						flex-xs='100'
 					>
 						<md-card-header>
 							<md-card-header-text>
-								<img ng-src='/img/thirdparty/{{Cyph.com.UI.Podcasts[ui.podcast]}}.png' />
+								<img ng-src='/img/thirdparty/{{Cyph.com.UI.Promos[ui.promo]}}.png' />
 							</md-card-header-text>
 						</md-card-header>
 						<md-card-content>
 							<p>
 								<span translate>Welcome </span>
-								<span ng-show='ui.podcast === Cyph.com.UI.Podcasts.betalist'>Betalisters!</span>
-								<span ng-hide='ui.podcast === Cyph.com.UI.Podcasts.betalist'>
-									<i ng-show='ui.podcast === Cyph.com.UI.Podcasts.penn'>Penn's Sunday School</i>
-									<i ng-show='ui.podcast === Cyph.com.UI.Podcasts.jjgo'>Jordan, Jesse, Go!</i>
-									<i ng-show='ui.podcast === Cyph.com.UI.Podcasts.ventura'>We The People</i>
-									<i ng-show='ui.podcast === Cyph.com.UI.Podcasts.sawbones'>Sawbones</i>
-									<i ng-show='ui.podcast === Cyph.com.UI.Podcasts.judgejohn'>Judge John Hodgman</i>
-									<i ng-show='ui.podcast === Cyph.com.UI.Podcasts.mybrother'>My Brother, My Brother and Me</i>
-									<i ng-show='ui.podcast === Cyph.com.UI.Podcasts.security'>The Security Brief</i>
+								<span ng-show='ui.promo === Cyph.com.UI.Promos.betalist'>Betalisters!</span>
+								<span ng-hide='ui.promo === Cyph.com.UI.Promos.betalist'>
+									<i ng-show='ui.promo === Cyph.com.UI.Promos.penn'>Penn's Sunday School</i>
+									<i ng-show='ui.promo === Cyph.com.UI.Promos.jjgo'>Jordan, Jesse, Go!</i>
+									<i ng-show='ui.promo === Cyph.com.UI.Promos.ventura'>We The People</i>
+									<i ng-show='ui.promo === Cyph.com.UI.Promos.sawbones'>Sawbones</i>
+									<i ng-show='ui.promo === Cyph.com.UI.Promos.judgejohn'>Judge John Hodgman</i>
+									<i ng-show='ui.promo === Cyph.com.UI.Promos.mybrother'>My Brother, My Brother and Me</i>
+									<i ng-show='ui.promo === Cyph.com.UI.Promos.security'>The Security Brief</i>
 									<span translate>listeners!</span>
 								</span>
 							</p>

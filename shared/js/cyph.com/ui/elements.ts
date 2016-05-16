@@ -21,7 +21,7 @@ export class Elements {
 	public static mainToolbar: JQuery;
 	public static newCyph: JQuery;
 	public static newCyphParent: JQuery;
-	public static podcastLogo: JQuery;
+	public static promoLogo: JQuery;
 	public static screenshotLaptop: JQuery;
 	public static screenshotPhone: JQuery;
 	public static testimonialsSection: JQuery;
@@ -47,7 +47,7 @@ export class Elements {
 		Elements.mainToolbar			= $('#main-toolbar');
 		Elements.newCyph				= $('#new-cyph');
 		Elements.newCyphParent			= Elements.newCyph.parent();
-		Elements.podcastLogo			= $('.podcast-logo');
+		Elements.promoLogo			= $('.promo-logo');
 		Elements.screenshotLaptop		= $('#hero-section .laptop.screenshot');
 		Elements.screenshotPhone		= $('#hero-section .phone.screenshot');
 		Elements.testimonialsSection	= $('#testimonials-section');

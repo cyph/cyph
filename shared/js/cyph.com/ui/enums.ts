@@ -50,15 +50,15 @@ export enum HomeSections {
 	features,
 	gettingstarted,
 	intro,
-	podcast,
+	promo,
 	register,
 	testimonials
 }
 
 /**
- * Possible states of podcast promo page.
+ * Possible states of promo promo page.
  */
-export enum Podcasts {
+export enum Promos {
 	none,
 	betalist,
 	jjgo,

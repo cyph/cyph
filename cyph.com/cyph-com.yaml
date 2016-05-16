@@ -68,7 +68,7 @@ handlers:
   # default_headers Cache-Control Expires
 
 
-# Podcasts
+# Promos
 
 - url: /penn[/]?
   static_files: index.html

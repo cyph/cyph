@@ -1,6 +1,6 @@
 import {CyphDemo} from 'cyphdemo';
 import {Elements} from 'elements';
-import {HomeSections, Podcasts, States} from 'enums';
+import {HomeSections, Promos, States} from 'enums';
 import * as Cyph from 'cyph/cyph';
 
 
@@ -14,8 +14,8 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	/** UI state/view. */
 	public state: States				= States.home;
 
-	/** Podcast promo page state/view. */
-	public podcast: Podcasts			= Podcasts.none;
+	/** Promo promo page state/view. */
+	public promo: Promos				= Promos.none;
 
 	public contactState	= {
 		fromEmail: <string> '',
@@ -93,19 +93,19 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		const urlStateSplit: string[]	= urlState.split('/');
 		const urlStateBase: string		= urlStateSplit[0];
 
-		const state: States		= States[urlStateBase];
-		const podcast: Podcasts	= Podcasts[urlStateBase];
+		const state: States	= States[urlStateBase];
+		const promo: Promos	= Promos[urlStateBase];
 
-		this.homeSection	= podcast === undefined ?
+		this.homeSection	= promo === undefined ?
 			HomeSections[urlStateBase] :
-			HomeSections.podcast
+			HomeSections.promo
 		;
 
 		if (this.homeSection !== undefined) {
 			this.changeState(States.home);
 
-			if (podcast) {
-				this.podcast	= podcast;
+			if (promo) {
+				this.promo	= promo;
 			}
 
 			setTimeout(() => {
@@ -308,7 +308,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		setTimeout(() => setInterval(() => Elements.mainToolbar.toggleClass(
 			'new-cyph-expanded',
 			this.state === States.home && (
-				(!this.podcast && Elements.heroText.is(':appeared')) ||
+				(!this.promo && Elements.heroText.is(':appeared')) ||
 				Cyph.UI.Elements.footer.is(':appeared')
 			)
 		), 500), 3000);;
