@@ -262,10 +262,11 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		this.testimonialCarousel	= new Cyph.UI.Carousel(Elements.testimonialsSection, () =>
 			Elements.heroSection.css(
 				'min-height',
-				`calc(100vh - ${
-					(Elements.testimonialsSection.height() + 40) /
-					(Cyph.Env.isMobile ? 2 : 1)
-				}px)`
+				`calc(100vh - ${40 + (
+					Cyph.Env.isMobile ?
+						40 :
+						Elements.testimonialsSection.height()
+				)}px)`
 			)
 		);
 
