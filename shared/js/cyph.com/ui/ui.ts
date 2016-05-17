@@ -105,7 +105,8 @@ export class UI extends Cyph.UI.BaseButtonManager {
 			this.changeState(States.home);
 
 			if (promo) {
-				this.promo	= promo;
+				this.promo				= promo;
+				this.signupForm.promo	= Promos[promo];
 			}
 
 			setTimeout(() => {

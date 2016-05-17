@@ -3,6 +3,9 @@
  * @interface
  */
 export interface ISignupForm {
+	/** Used to track which users signed up through our promo page. */
+	promo: string;
+
 	/** Ordinal number indicating which screen of this form is active. */
 	state: number;
 

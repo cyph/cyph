@@ -7,6 +7,8 @@ import {Util} from 'cyph/util';
 
 
 export class SignupForm implements ISignupForm {
+	public promo: string;
+
 	public state: number	= 0;
 
 	public data	= {
@@ -16,7 +18,10 @@ export class SignupForm implements ISignupForm {
 		boolean: <boolean> true
 	};
 
-	private sendyRequest (method: string, success: (response: string) => void = () => {}) : void {
+	private sendyRequest (
+		method: string,
+		success: (response: string) => void = () => {}
+	) : void {
 		Util.retryUntilComplete(retry =>
 			Util.request({
 				method: 'POST',
@@ -44,6 +49,15 @@ export class SignupForm implements ISignupForm {
 						eventAction: 'new',
 						eventValue: 1
 					});
+
+					if (this.promo) {
+						Analytics.main.send({
+							hitType: 'social',
+							socialNetwork: 'promo-' + this.promo,
+							socialAction: 'signup',
+							socialTarget: this.data.email
+						});
+					}
 				}
 				else if (response === 'Already subscribed.' && this.data.name) {
 					this.sendyRequest('unsubscribe', () => this.sendyRequest('subscribe'));
