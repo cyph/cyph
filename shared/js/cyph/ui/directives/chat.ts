@@ -50,30 +50,15 @@ export class Chat {
 				link: scope => scope['Cyph'] = self['Cyph'],
 				template: Templates.chatMessageBox
 			})).
-			directive(titles.sidebar, () => ({
-				restrict: 'A',
-				scope: {
-					$this: '=' + titles.sidebar,
-					showChat: '='
-				},
-				link: scope => scope['Cyph'] = self['Cyph'],
-				template: Templates.chatSidebar
-			})).
 			directive(titles.toolbar, () => ({
 				restrict: 'A',
 				scope: {
 					$this: '=' + titles.toolbar,
-					open: '&',
 					showChat: '='
 				},
 				link: scope => scope['Cyph'] = self['Cyph'],
 				template: Templates.chatToolbar
-			})).
-			factory('chatSidenav', [
-				'$mdSidenav',
-
-				$mdSidenav => () => $mdSidenav('sidenav')
-			])
+			}))
 		;
 	})();
 }

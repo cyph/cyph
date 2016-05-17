@@ -1,11 +1,11 @@
 default-src 'self';
 child-src 'self' blob:;
-connect-src 'self' https://*.cyph.com https://api.cyph.com https://ping.cyphdbyhiddenbhs.onion https://*.amazonaws.com https://mandrillapp.com;
-font-src 'self' https://www.cyph.com data:;
+connect-src 'self' https://*.cyph.com https://api.cyph.com https://ping.cyphdbyhiddenbhs.onion https://*.amazonaws.com https://*.braintreegateway.com https://mandrillapp.com;
+font-src 'self' data:;
 form-action https://api.cyph.com;
 frame-src https://api.cyph.com;
 img-src 'self' data:;
-media-src 'self' https://www.cyph.com data: blob:;
+media-src 'self' data: blob:;
 object-src 'none';
 referrer no-referrer;
 script-src 'self' 'unsafe-eval' 'unsafe-inline' blob:;

@@ -62,25 +62,8 @@
 		<section id='main' class='cyph-foreground' layout='column' layout-fill>
 			<span
 				cyph-chat-toolbar='ui.chat'
-				open='ui.openMobileMenu()'
 				show-chat='ui.state === Cyph.im.UI.States.chat'
-				class='mobile-only'
 			></span>
-			<div layout='row' class='desktop-only'>
-				<div flex='95'></div>
-				<img id='help'
-					src='/img/icons/help.png'
-					ng-show='ui.state === Cyph.im.UI.States.chat && ui.chat.isConnected'
-					ng-click='ui.chat.helpButton()'
-				>
-				</img>
-				<img id='close-cyph'
-					src='/img/icons/close.png'
-					ng-show='ui.state === Cyph.im.UI.States.chat && ui.chat.isConnected'
-					ng-click='ui.chat.disconnectButton()'
-					>
-				</img>
-			</div>
 
 			<div
 				cyph-chat-main='ui.chat'
@@ -90,13 +73,8 @@
 				flex
 			>
 				<div cyph-signup-form='ui.signupForm'>
-					<div>
-						{{Cyph.Strings.signupMessage1}}
-					</div>
-					<div>
-						{{Cyph.Strings.signupMessage2}}
-					</div>
-					<br/>
+					{{Cyph.Strings.signupMessage1}}
+					{{Cyph.Strings.signupMessage2}}
 				</div>
 			</div>
 
@@ -135,12 +113,12 @@
 
 			<div
 				ng-view
-				cyph-pro='ui'
+				cyph-beta='ui'
 				layout='column'
 				layout-fill
 				flex
 				ng-class='{
-					active: ui.state === Cyph.im.UI.States.pro
+					active: ui.state === Cyph.im.UI.States.beta
 				}'
 			></div>
 
@@ -213,6 +191,7 @@
 		<script src='/lib/js/crypto/cryptojs/core-min.js'></script>
 		<script src='/lib/js/crypto/cryptojs/sha256-min.js'></script>
 		<script src='/lib/js/crypto/cryptojs/hmac-min.js'></script>
+		<script src='/lib/js/snaptortoise/konami-js/konami.js'></script>
 
 		<script src='/js/cyph.im/main.js'></script>
 	</body>

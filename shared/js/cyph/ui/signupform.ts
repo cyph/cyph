@@ -7,6 +7,8 @@ import {Util} from 'cyph/util';
 
 
 export class SignupForm implements ISignupForm {
+	public promo: string;
+
 	public state: number	= 0;
 
 	public data	= {
@@ -16,7 +18,10 @@ export class SignupForm implements ISignupForm {
 		boolean: <boolean> true
 	};
 
-	private sendyRequest (method: string, success: (response: string) => void = () => {}) : void {
+	private sendyRequest (
+		method: string,
+		success: (response: string) => void = () => {}
+	) : void {
 		Util.retryUntilComplete(retry =>
 			Util.request({
 				method: 'POST',
@@ -29,42 +34,49 @@ export class SignupForm implements ISignupForm {
 	}
 
 	public submit () : void {
-		if (!this.data.email) {
-			return;
+		++this.state;
+
+		if (this.data.email) {
+			if (this.state === 1) {
+				++this.state;
+			}
+
+			this.sendyRequest('subscribe', (response: string) => {
+				if (response === '1') {
+					Analytics.main.send({
+						hitType: 'event',
+						eventCategory: 'signup',
+						eventAction: 'new',
+						eventValue: 1
+					});
+
+					if (this.promo) {
+						Analytics.main.send({
+							hitType: 'social',
+							socialNetwork: 'promo-' + this.promo,
+							socialAction: 'signup',
+							socialTarget: this.data.email
+						});
+					}
+				}
+				else if (response === 'Already subscribed.' && this.data.name) {
+					this.sendyRequest('unsubscribe', () => this.sendyRequest('subscribe'));
+				}
+			});
 		}
 
-		++this.state;
 		this.controller.update();
 
-		if (this.state === 2) {
-			setTimeout(() => {
-				++this.state;
-				this.controller.update();
-			}, 1500);
-		}
-
 		setTimeout(() => {
-			const $input: JQuery	= Elements.signupForm.find('input:visible');
+			const $input: JQuery	= $(Elements.signupForm.selector).
+				filter(':visible').
+				find('input:visible:not([disabled])')
+			;
 
 			if ($input.length === 1) {
 				$input.focus();
 			}
-		}, 100);
-
-
-		this.sendyRequest('subscribe', (response: string) => {
-			if (response === '1') {
-				Analytics.main.send({
-					hitType: 'event',
-					eventCategory: 'signup',
-					eventAction: 'new',
-					eventValue: 1
-				});
-			}
-			else if (response === 'Already subscribed.' && this.data.name) {
-				this.sendyRequest('unsubscribe', () => this.sendyRequest('subscribe'));
-			}
-		});
+		}, 250);
 	}
 
 	/**

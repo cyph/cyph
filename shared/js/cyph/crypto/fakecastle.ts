@@ -17,7 +17,12 @@ export class FakeCastle implements ICastle {
 			cyphertext += String.fromCharCode(Util.random(123, 48));
 		}
 
-		return cyphertext;
+		try {
+			return btoa(cyphertext);
+		}
+		catch (_) {
+			return cyphertext;
+		}
 	}
 
 

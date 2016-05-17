@@ -8,7 +8,7 @@
 
 import {CyphDemo} from 'ui/cyphdemo';
 import {Elements} from 'ui/elements';
-import {HomeSections, Podcasts, States} from 'ui/enums';
+import {HomeSections, Promos, States} from 'ui/enums';
 import {UI} from 'ui/ui';
 import * as Cyph from 'cyph/cyph';
 import {Loaded} from 'preload/base';
@@ -40,9 +40,8 @@ angular.
 		'$mdDialog',
 		'$mdToast',
 		'$mdSidenav',
-		'chatSidenav',
 
-		($scope, $mdDialog, $mdToast, $mdSidenav, chatSidenav) => {
+		($scope, $mdDialog, $mdToast, $mdSidenav) => {
 			self['Cyph']	= Cyph;
 			$scope.Cyph		= Cyph;
 			$scope.Cyph.com	= {
@@ -50,7 +49,7 @@ angular.
 					CyphDemo,
 					Elements,
 					HomeSections,
-					Podcasts,
+					Promos,
 					States,
 					UI
 				}
@@ -60,11 +59,10 @@ angular.
 				Elements.load();
 
 				const controller: Cyph.IController				= new Cyph.Controller($scope);
-				const mobileMenu: Cyph.UI.ISidebar				= $mdSidenav('main-toolbar-sidenav');
+				const mobileMenu: () => Cyph.UI.ISidebar		= () => $mdSidenav('main-toolbar-sidenav');
 				const demoDialogManager: Cyph.UI.IDialogManager	= new Cyph.UI.DialogManager($mdDialog, $mdToast);
-				const demoMobileMenu: Cyph.UI.ISidebar			= chatSidenav();
 
-				$scope.ui	= new UI(controller, mobileMenu, demoDialogManager, demoMobileMenu);
+				$scope.ui	= new UI(controller, mobileMenu, demoDialogManager);
 				self['ui']	= $scope.ui;
 
 				controller.update();

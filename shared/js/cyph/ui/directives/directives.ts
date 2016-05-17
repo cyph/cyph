@@ -5,7 +5,7 @@ import {Enterpress} from 'enterpress';
 import {Filechange} from 'filechange';
 import {LinkConnection} from 'linkconnection';
 import {Markdown} from 'markdown';
-import {Pro} from 'pro';
+import {Beta} from 'beta';
 import {SignupForm} from 'signupform';
 import {Static} from 'static';
 import {Templates} from 'templates';
@@ -19,7 +19,7 @@ export {
 	Filechange,
 	LinkConnection,
 	Markdown,
-	Pro,
+	Beta,
 	SignupForm,
 	Static,
 	Templates

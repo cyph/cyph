@@ -6,7 +6,6 @@ export interface IElements {
 	buttons: JQuery;
 	cyphertext: JQuery;
 	everything: JQuery;
-	insertPhotoMobile: JQuery;
 	messageBox: JQuery;
 	messageList: JQuery;
 	messageListInner: JQuery;

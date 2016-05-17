@@ -77,7 +77,7 @@ export class Thread {
 		}
 
 		if (typeof atob === 'undefined' || typeof btoa === 'undefined') {
-			importScripts('/lib/js/davidchambers/base64/base64.min.js');
+			importScripts('/lib/js/davidchambers/base64.js/base64.min.js');
 		}
 
 		if (typeof crypto === 'undefined' && 'msCrypto' in self) {

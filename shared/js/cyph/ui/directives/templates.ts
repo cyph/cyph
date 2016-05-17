@@ -5,6 +5,71 @@ import {Util} from 'cyph/util';
  * Reusable HTML view templates for component directives.
  */
 export const Templates	= {
+	beta: `
+		<md-content
+			class='nano'
+			layout='column'
+			layout-fill
+			flex
+		>
+			<div class='nano-content'>
+				<div
+					class='login-form'
+					ng-show='$this.betaState === Cyph.im.UI.BetaStates.login'
+					ng-class='{checking: checking}'
+					layout='row'
+					layout-align='center center'
+				>
+					<md-card flex='75' class='md-padding'>
+						<md-card-title>
+							<md-card-title-text>
+								<span class='md-headline' translate>
+									Log In
+								</span>
+								<span class='md-subhead' translate>
+									Welcome to Cyph! You can log in to your beta account here.
+								</span>
+							</md-card-title-text>
+						</md-card-title>
+						<md-card-content>
+							<form>
+								<div layout='row' layout-align='center center'>
+									<md-subheader ng-style='{visibility: error ? "visible" : "hidden"}'>
+										Invalid username or password.
+									</md-subheader>
+								</div>
+								<div layout='row' layout-align='center center'>
+									<md-input-container class='md-block' flex='60'>
+										<input ng-model='username' aria-label='Username' required />
+										<label>Username</label>
+									</md-input-container>
+								</div>
+								<div layout='row' layout-align='center center'>
+									<md-input-container class='md-block' flex='60'>
+										<input ng-model='password' type='password' aria-label='Password' required />
+										<label>Password</label>
+									</md-input-container>
+								</div>
+								<div layout='row' layout-align='center center'>
+									<md-button type='submit' aria-label='Log In' translate>
+										Log In
+									</md-button>
+								</div>
+							</form>
+						</md-card-content>
+						<md-progress-circular md-mode='indeterminate'></md-progress-circular>
+					</md-card>
+				</div>
+				<div ng-show='$this.betaState === Cyph.im.UI.BetaStates.register'>
+					Registration screen
+				</div>
+				<div ng-show='$this.betaState === Cyph.im.UI.BetaStates.settings'>
+					Settings screen
+				</div>
+			</div>
+		</md-content>
+	`,
+
 	chatCyphertext: `
 		<div class='chat-cyphertext nano'>
 			<md-content class='nano-content'>
@@ -150,7 +215,7 @@ export const Templates	= {
 					'
 					ng-attr-src='{{
 						$this.p2pManager.isPlaying() ?
-							Cyph.Env.p2pVoiceCallVideo :
+							"/video/voicecall.mp4" :
 							" "
 					}}'
 					autoplay
@@ -362,8 +427,12 @@ export const Templates	= {
 							</span>
 						</md-item>
 
-						<div ng-show='$this.isDisconnected'>
-							<ng-transclude></ng-transclude>
+						<div ng-show='$this.isDisconnected' layout='row' layout-align='center center'>
+							<md-card flex='50' class='md-padding'>
+								<md-card-content>
+									<ng-transclude></ng-transclude>
+								</md-card-content>
+							</md-card>
 						</div>
 					</md-list>
 				</md-content>
@@ -400,58 +469,80 @@ export const Templates	= {
 				ng-click='$this.send()'
 				aria-label='Send'
 			>
-				<img src='/img/icons/send.png' alt='Send' />
+				<md-icon class='grey'>send</md-icon>
 			</md-button>
 
-			<md-button
-				translate
-				class='insert-photo-mobile mobile-only'
-				ng-class='{"chat-message-box-hidden": $this.currentMessage !== ""}'
-				aria-label='Insert Photo'
+			<md-fab-speed-dial
+				md-direction='up'
+				class='md-fling md-hover-full md-fab-bottom-right'
+				md-open='isOpen'
+				ng-mouseenter='isOpen = true'
+				ng-mouseleave='isOpen = false'
 			>
-				<img src='/img/icons/insertphoto.grey.png' alt='Insert photo grey' />
-				<input
-					accept='image/*'
-					type='file'
-					cyph-filechange='$this.photoManager.insert(this)'
-				/>
-			</md-button>
-
-			<div class='fab lock-size'>
-				<md-fab-speed-dial
-					md-direction='up'
-					class='md-fling desktop-only'
-					md-open='false'>
-						<md-fab-trigger>
-							<md-button aria-label='menu' class='md-fab md-warn plus'>
-								<img src='/img/icons/castle.png'></img>
-							</md-button>
-						</md-fab-trigger>
-						<md-fab-actions>
-							<md-button aria-label='Send File' class='md-fab md-raised md-mini' ng-click='$this.p2pManager.sendFileButton()' ng-class="{'fab-hover' : ui.chat.fab}">
-								<md-tooltip md-direction="left" md-visible="tooltipVisible">Send File</md-tooltip>
-								<img src='img/icons/file.png' aria-label='Send File'></img>
-							</md-button>
-							<md-button aria-label='Send Image' class='md-fab md-raised md-mini' ng-class="{'fab-hover' : ui.chat.fab}">
-								<md-tooltip md-direction="left" md-visible="tooltipVisible">Send Image</md-tooltip>
-								<img src='img/icons/insertphoto.png' aria-label='Send Image'></img>
-								 <input
-									accept='image/*'
-									type='file'
-									cyph-filechange='$this.photoManager.insert(this)'
-								/>
-							</md-button>
-							<md-button aria-label='Voice Call' class='md-fab md-raised md-mini' ng-click='$this.p2pManager.voiceCallButton()' ng-class="{'fab-hover' : ui.chat.fab}">
-								<md-tooltip md-direction="left" md-visible="tooltipVisible">Voice Call</md-tooltip>
-								<img src='img/icons/voice.on.png' aria-label='Voice Call'></img>
-							</md-button>
-							<md-button aria-label='Video Call' class='md-fab md-raised md-mini' ng-click='$this.p2pManager.videoCallButton()' ng-class="{'fab-hover' : ui.chat.fab}">
-								<md-tooltip md-direction="left" md-visible="tooltipVisible">Video Call</md-tooltip>
-								<img src='img/icons/video.on.png' aria-label='Video Call'></img>
-							</md-button>
-						</md-fab-actions>
-				</md-fab-speed-dial>
-			</div>
+				<md-fab-trigger>
+					<md-button
+						aria-label='Menu'
+						class='md-fab'
+					>
+						<img src='/img/logo.white.icon.png' />
+					</md-button>
+				</md-fab-trigger>
+				<md-fab-actions>
+					<md-button
+						aria-label='Send File'
+						class='md-fab md-raised md-mini send-file-button'
+						ng-disabled='
+							!$this.p2pManager.isEnabled ||
+							$this.p2pManager.p2p.outgoingFile.name
+						'
+					>
+						<md-tooltip md-direction='left'>
+							Send File
+						</md-tooltip>
+						<md-icon class='grey'>attach_file</md-icon>
+						<input
+							type='file'
+							cyph-filechange='$this.p2pManager.sendFileButton()'
+						/>
+					</md-button>
+					<md-button
+						aria-label='Send Image'
+						class='md-fab md-raised md-mini'
+					>
+						<md-tooltip md-direction='left'>
+							Send Image
+						</md-tooltip>
+						<md-icon class='grey'>insert_photo</md-icon>
+						<input
+							accept='image/*'
+							type='file'
+							cyph-filechange='$this.photoManager.insert(this)'
+						/>
+					</md-button>
+					<md-button
+						aria-label='Voice Call'
+						class='md-fab md-raised md-mini'
+						ng-click='$this.p2pManager.voiceCallButton()'
+						ng-disabled='!$this.p2pManager.isEnabled'
+					>
+						<md-tooltip md-direction='left'>
+							Voice Call
+						</md-tooltip>
+						<md-icon class='grey'>phone</md-icon>
+					</md-button>
+					<md-button
+						aria-label='Video Call'
+						class='md-fab md-raised md-mini'
+						ng-click='$this.p2pManager.videoCallButton()'
+						ng-disabled='!$this.p2pManager.isEnabled'
+					>
+						<md-tooltip md-direction='left'>
+							Video Call
+						</md-tooltip>
+						<md-icon class='grey'>videocam</md-icon>
+					</md-button>
+				</md-fab-actions>
+			</md-fab-speed-dial>
 
 			<md-subheader
 				class='new-messages md-subheader-colored md-sticky-clone'
@@ -476,292 +567,30 @@ export const Templates	= {
 		</div>
 	`,
 
-	chatSidebar: `
-		<div
-			class='chat-sidebar'
-			ng-class='{
-				"show-chat": showChat && $this.state === Cyph.UI.Chat.States.chat
-			}'
-		>
-			<a class='logo' rel='noreferrer' ng-href='{{Cyph.Env.homeUrl}}'>
-				<img src='/img/betalogo.png' alt='Beta logo' />
-			</a>
-			<div ng-show='showChat && $this.state === Cyph.UI.Chat.States.chat'>
-				<md-button
-					translate
-					aria-label='Show Cyphertext'
-					ng-click='$this.cyphertext.show()'
-				>
-					Show Cyphertext
-				</md-button>
-				<md-button
-					translate
-					aria-label='Help'
-					ng-click='$this.helpButton()'
-				>
-					Help
-				</md-button>
-				<md-button
-					translate
-					aria-label='Disconnect'
-					ng-disabled='!$this.session.state.isAlive'
-					ng-click='$this.disconnectButton()'
-				>
-					Disconnect
-				</md-button>
-
-				<div
-					class='p2p-section'
-					layout='row'
-					ng-click='$this.p2pManager.disabledAlert()'
-					ng-attr-title='{{
-						$this.isConnected && !$this.p2pManager.isEnabled ?
-							Cyph.Strings.p2pDisabled :
-							""
-					}}'
-				>
-					<md-button
-						translate
-						class='md-fab video-call-button'
-						ng-disabled='
-							!$this.p2pManager.isEnabled ||
-							!$this.isConnected ||
-							!$this.session.state.isAlive
-						'
-						ng-click='$this.p2pManager.videoCallButton()'
-						ng-attr-aria-label='{{
-							!$this.p2pManager.isActive ?
-								"Video Call" :
-								!$this.p2pManager.p2p.outgoingStream.video ?
-									"Enable Camera" :
-									"Disable Camera"
-						}}'
-					>
-						<img
-							ng-show='
-								!$this.p2pManager.isActive ||
-								!$this.p2pManager.p2p.outgoingStream.video
-							'
-							src='/img/icons/video.on.png'
-							alt='Video on'
-						/>
-						<img
-							ng-show='
-								$this.p2pManager.isActive &&
-								$this.p2pManager.p2p.outgoingStream.video
-							'
-							src='/img/icons/video.off.png'
-							alt='Video off'
-						/>
-					</md-button>
-					<md-button
-						translate
-						class='md-fab voice-call-button'
-						ng-disabled='
-							!$this.p2pManager.isEnabled ||
-							!$this.isConnected ||
-							!$this.session.state.isAlive
-						'
-						ng-click='$this.p2pManager.voiceCallButton()'
-						ng-attr-aria-label='{{
-							!$this.p2pManager.isActive ?
-								"Voice Call" :
-								!$this.p2pManager.p2p.outgoingStream.audio ?
-									"Enable Mic" :
-									"Disable Mic"
-						}}'
-					>
-						<img
-							ng-show='!$this.p2pManager.isActive'
-							src='/img/icons/voice.on.png'
-							alt='Voice on'
-						/>
-						<img
-							ng-show='
-								$this.p2pManager.isActive &&
-								!$this.p2pManager.p2p.outgoingStream.audio
-							'
-							src='/img/icons/mic.on.png'
-							alt='Mic on'
-						/>
-						<img
-							ng-show='
-								$this.p2pManager.isActive &&
-								$this.p2pManager.p2p.outgoingStream.audio
-							'
-							src='/img/icons/mic.off.png'
-							alt='Mic off'
-						/>
-					</md-button>
-					<md-button
-						translate
-						class='md-fab send-file-button'
-						ng-disabled='
-							$this.p2pManager.p2p.outgoingFile.name ||
-							!$this.p2pManager.isEnabled ||
-							!$this.isConnected ||
-							!$this.session.state.isAlive
-						'
-						aria-label='Send File'
-					>
-						<img src='/img/icons/file.png' alt='File' />
-						<input
-							type='file'
-							cyph-filechange='$this.p2pManager.sendFileButton()'
-						/>
-					</md-button>
-				</div>
-			</div>
-		</div>
-	`,
-
 	chatToolbar: `
-		<div>
-			<md-toolbar class='chat-toolbar'>
-				<div class='md-toolbar-tools'>
-					<a class='logo' rel='noreferrer' ng-href='{{Cyph.Env.homeUrl}}'>
-						<img src='/img/betalogo.mobile.png' alt='Beta logo' />
-					</a>
-
-					<span flex></span>
-
-					<span ng-show='showChat && $this.state === Cyph.UI.Chat.States.chat'>
-						<span ng-click='$this.p2pManager.disabledAlert()'>
-							<md-button
-								translate
-								class='video-call-button'
-								ng-disabled='
-									!$this.p2pManager.isEnabled ||
-									!$this.isConnected ||
-									!$this.session.state.isAlive
-								'
-								ng-click='$this.p2pManager.videoCallButton()'
-								ng-attr-aria-label='{{
-									!$this.p2pManager.isActive ?
-										"Video Call" :
-										!$this.p2pManager.p2p.outgoingStream.video ?
-											"Enable Camera" :
-											"Disable Camera"
-								}}'
-							>
-								<img
-									ng-show='
-										!$this.p2pManager.isActive ||
-										!$this.p2pManager.p2p.outgoingStream.video
-									'
-									src='/img/icons/video.on.png'
-									alt='Video on'
-								/>
-								<img
-									ng-show='
-										$this.p2pManager.isActive &&
-										$this.p2pManager.p2p.outgoingStream.video
-									'
-									src='/img/icons/video.off.png'
-									alt='Video off'
-								/>
-							</md-button>
-							<md-button
-								translate
-								class='voice-call-button'
-								aria-label='Voice Call'
-								ng-disabled='
-									!$this.p2pManager.isEnabled ||
-									!$this.isConnected ||
-									!$this.session.state.isAlive
-								'
-								ng-click='$this.p2pManager.voiceCallButton()'
-								ng-attr-aria-label='{{
-									!$this.p2pManager.isActive ?
-										"Voice Call" :
-										!$this.p2pManager.p2p.outgoingStream.audio ?
-											"Enable Mic" :
-											"Disable Mic"
-								}}'
-							>
-								<img
-									ng-show='!$this.p2pManager.isActive'
-									src='/img/icons/voice.on.png'
-									alt='Voice on'
-								/>
-								<img
-									ng-show='
-										$this.p2pManager.isActive &&
-										!$this.p2pManager.p2p.outgoingStream.audio
-									'
-									src='/img/icons/mic.on.png'
-									alt='Mic on'
-								/>
-								<img
-									ng-show='
-										$this.p2pManager.isActive &&
-										$this.p2pManager.p2p.outgoingStream.audio
-									'
-									src='/img/icons/mic.off.png'
-									alt='Mic off'
-								/>
-							</md-button>
-							<md-button
-								translate
-								class='send-file-button'
-								ng-disabled='
-									$this.p2pManager.p2p.outgoingFile.name ||
-									!$this.p2pManager.isEnabled ||
-									!$this.isConnected ||
-									!$this.session.state.isAlive
-								'
-								aria-label='Send File'
-							>
-								<img src='/img/icons/file.png' alt='File' />
-								<input
-									type='file'
-									cyph-filechange='$this.p2pManager.sendFileButton()'
-								/>
-							</md-button>
-						</span>
-
-						<md-button translate aria-label='Menu' ng-click='open()'>
-							<img src='/img/icons/menu.png' alt='Menu' />
-						</md-button>
-					</span>
-				</div>
-			</md-toolbar>
-
-			<md-sidenav md-component-id='sidenav' class='md-sidenav-right'>
-				<md-toolbar>
-					<h1 translate class='md-toolbar-tools'>Settings</h1>
-				</md-toolbar>
-				<md-content class='md-padding'>
-					<div>
-						<md-button
-							translate
-							aria-label='Show Cyphertext'
-							ng-click='$this.cyphertext.show()'
-						>
-							Show Cyphertext
-						</md-button>
-					</div>
-					<div>
-						<md-button
-							translate
-							aria-label='Help'
-							ng-click='$this.helpButton()'
-						>
-							Help
-						</md-button>
-					</div>
-					<div>
-						<md-button
-							translate
-							aria-label='Disconnect'
-							ng-disabled='!$this.session.state.isAlive'
-							ng-click='$this.disconnectButton()'
-						>
-							Disconnect
-						</md-button>
-					</div>
-				</md-content>
-			</md-sidenav>
+		<div
+			class='platform-container'
+			ng-class='{mobile: $this.isMobile}'
+		>
+			<div
+				class='buttons'
+				layout='row'
+				layout-align='end end'
+				flex='95'
+				ng-show='$this.isConnected && !$this.isDisconnected'
+			>
+				<img
+					src='/img/icons/help.png'
+					ng-click='$this.helpButton()'
+				/>
+				<a href='{{Cyph.Env.homeUrl}}'>
+					<img src='/img/logo.white.icon.small.png' />
+				</a>
+				<img
+					src='/img/icons/close.png'
+					ng-click='$this.disconnectButton()'
+				/>
+			</div>
 		</div>
 	`,
 
@@ -770,14 +599,14 @@ export const Templates	= {
 			<div ng-hide='complete'>
 				<div class='checkout-ui'>
 					<div class='braintree'></div>
-					<div layout='row'>
+					<div layout='row' layout-sm='column' layout-xs='column'>
 						<md-input-container class='md-block' flex>
+							<input ng-model='name' aria-label='Name' />
 							<label>Name</label>
-							<input ng-model='name' />
 						</md-input-container>
 						<md-input-container class='md-block' flex>
+							<input ng-model='email' type='email' aria-label='Email' />
 							<label>Email</label>
-							<input ng-model='email' type='email' />
 						</md-input-container>
 					</div>
 				</div>
@@ -786,18 +615,18 @@ export const Templates	= {
 				</md-button>
 			</div>
 			<div translate class='confirmation' ng-show='complete'>
-				Payment confirmed! Follow-up instructions will be sent via email.
+				<ng-transclude></ng-transclude>
 			</div>
 		</form>
 	`,
 
 	contact: `
 		<div>
-			<div ng-hide='sent'>
+			<div ng-hide='$this.sent'>
 				<div layout-gt-xs='row'>
 					<md-input-container class='md-block' flex>
 						<label>Cyph team to contact</label>
-						<md-select ng-model='to'>
+						<md-select ng-model='$this.to'>
 							<md-option
 								ng-repeat='address in Cyph.Config.cyphEmailAddresses'
 								value='{{address}}'
@@ -809,29 +638,28 @@ export const Templates	= {
 				</div>
 				<div layout='row'>
 					<md-input-container class='md-block' flex>
+						<input ng-model='$this.fromName' aria-label='Name' />
 						<label>Name</label>
-						<input ng-model='fromName' />
 					</md-input-container>
 					<md-input-container class='md-block' flex>
+						<input ng-model='$this.fromEmail' type='email' aria-label='Email' />
 						<label>Email</label>
-						<input ng-model='fromEmail' type='email' />
 					</md-input-container>
 				</div>
 				<md-input-container class='md-block'>
+					<input ng-model='$this.subject' aria-label='Subject' />
 					<label>Subject</label>
-					<input ng-model='subject' />
 				</md-input-container>
 				<md-input-container class='md-block'>
+					<textarea ng-model='$this.message' aria-label='Message' md-select-on-focus></textarea>
 					<label>Message</label>
-					<textarea ng-model='message' md-select-on-focus></textarea>
 				</md-input-container>
-
 				<md-button>
 					Send
 				</md-button>
 			</div>
-			<div ng-show='sent'>
-				Your email has been sent! Expect to hear back from us within 72 business hours.
+			<div ng-show='$this.sent'>
+				Your email has been sent! Someone on the team will get back to you shortly.
 			</div>
 		</div>
 	`,
@@ -853,7 +681,7 @@ export const Templates	= {
 				</div>
 				<div ng-hide='$this.isPassive'>
 					<div translate>
-						Send the link below to someone else and when they open it, you'll be securely connected!
+						Send the link below to someone else. When they open it, you'll be securely connected!
 					</div>
 					<br />
 
@@ -872,12 +700,9 @@ export const Templates	= {
 							translate
 							class='md-fab'
 							aria-label='SMS'
+							ng-href='{{Cyph.Env.smsUriBase}}{{$this.linkEncoded}}'
 						>
 							<img src='/img/icons/sms.png' alt='SMS' />
-							<a
-								target='_self'
-								ng-href='{{Cyph.Env.smsUriBase}}{{$this.linkEncoded}}'
-							></a>
 						</md-button>
 
 						<span class='divider'>
@@ -888,12 +713,10 @@ export const Templates	= {
 							translate
 							class='md-fab'
 							aria-label='Email'
+							target='_self'
+							ng-href='mailto:?body={{$this.linkEncoded}}'
 						>
 							<img src='/img/icons/email.png' alt='Email' />
-							<a
-								target='_self'
-								ng-href='mailto:?body={{$this.linkEncoded}}'
-							></a>
 						</md-button>
 					</div>
 				</div>
@@ -917,104 +740,127 @@ export const Templates	= {
 		</div>
 	`,
 
-	pro: `
-		<md-content
-			class='nano'
-			layout='column'
-			layout-fill
-			flex
-		>
-			<div class='nano-content'>
-				<div
-					class='login-form'
-					ng-show='$this.proState === Cyph.im.UI.ProStates.login'
-					ng-class='{checking: checking}'
-					layout='row'
-					layout-align='center center'
-				>
-					<md-card flex='75' class='md-padding'>
-						<md-card-title>
-							<md-card-title-text>
-								<span class='md-headline' translate>
-									Log In
-								</span>
-								<span class='md-subhead' translate>
-									Welcome to Cyph! You can log in to your beta account here.
-								</span>
-							</md-card-title-text>
-						</md-card-title>
-						<md-card-content>
-							<form>
-								<div layout='row' layout-align='center center'>
-									<md-subheader ng-style='{visibility: error ? "visible" : "hidden"}'>
-										Invalid username or password.
-									</md-subheader>
-								</div>
-								<div layout='row' layout-align='center center'>
-									<md-input-container class='md-block' flex='60'>
-										<label>Username</label>
-										<input ng-model='username' required />
-									</md-input-container>
-								</div>
-								<div layout='row' layout-align='center center'>
-									<md-input-container class='md-block' flex='60'>
-										<label>Password</label>
-										<input ng-model='password' type='password' required />
-									</md-input-container>
-								</div>
-								<div layout='row' layout-align='center center'>
-									<md-button type='submit' aria-label='Log In' translate>
-										Log In
-									</md-button>
-								</div>
-							</form>
-						</md-card-content>
-						<md-progress-circular md-mode='indeterminate'></md-progress-circular>
-					</md-card>
-				</div>
-				<div ng-show='$this.proState === Cyph.im.UI.ProStates.register'>
-					Registration screen
-				</div>
-				<div ng-show='$this.proState === Cyph.im.UI.ProStates.settings'>
-					Settings screen
-				</div>
-			</div>
-		</md-content>
-	`,
-
 	signupForm: `
-			<form class='beta-signup-form' ng-submit='$this.submit()'>
-				<div ng-show='$this.state === 0'>
-					<ng-transclude></ng-transclude>
-					<md-input-container>
-						<label translate>email</label>
-						<input type='email' ng-model='$this.data.email' />
-					</md-input-container>
-				</div>
-				<div ng-show='$this.state === 1'>
-					<p translate>
-						Thanks so much for signing up!
-					</p>
-					<p translate>
-						Feel free to add your name as well. :)
-					</p>
-					<md-input-container>
-						<label translate>name (optional)</label>
-						<input ng-model='$this.data.name' />
-					</md-input-container>
-				</div>
-				<div translate ng-show='$this.state === 2'>
-					You rock.
-				</div>
-				<md-button
-					translate
-					type='submit'
-					aria-label='Subscribe'
-					ng-hide='$this.state > 1'
-					ng-class='{"hidden-submit-button": hideButton}'
-				>
-					Subscribe to Beta Waitlist
-				</md-button>
+			<div class='beta-signup-form'>
+				<form ng-submit='$this.submit()' ng-show='$this.state === 0'>
+					<div layout='row' layout-align='center center' flex>
+						<ng-transclude></ng-transclude>
+					</div>
+					<div layout='row' layout-align='center stretch' flex>
+						<div class='desktop-only' layout='column' flex='50'>
+							<div layout='row' layout-align='center center'>
+								<md-input-container class='md-block' flex='80'>
+									<input type='email' ng-model='$this.data.email' aria-label='Email' />
+									<label>Email</label>
+								</md-input-container>
+							</div>
+							<div layout='row' layout-align='center center'>
+								<md-input-container class='md-block' flex='80'>
+									<input type='password' aria-label='Password' disabled />
+									<label>Password</label>
+								</md-input-container>
+							</div>
+							<div layout='row' layout-align='center center'>
+								<md-input-container class='md-block' flex='80'>
+									<input type='password' aria-label='Confirm Password' disabled />
+									<label>Confirm Password</label>
+								</md-input-container>
+							</div>
+							<div class='register-button' layout='row' layout-align='center end'>
+								<md-button
+									type='submit'
+									aria-label='Register'
+									ng-disabled='true'
+									translate
+								>
+									Register
+								</md-button>
+							</div>
+						</div>
+						<div layout='column' flex>
+							<div layout='row' layout-align='center center'>
+								<p flex='80' translate>
+									We are currently at capacity and registration is closed,
+									but you can sign up for the waitlist to reserve your spot
+									in line for an account.
+								</p>
+							</div>
+							<div layout='row' layout-align='center center'>
+								<p flex='80' translate>
+									However, you don't need an account to use Cyph; just click the "start
+									new cyph" button on the homepage. Our beta accounts program only provides
+									early access to more advanced functionality and cool new features.
+								</p>
+							</div>
+							<div class='register-button' layout='row' layout-align='center end'>
+								<md-button
+									type='submit'
+									aria-label='Waitlist Signup'
+									translate
+								>
+									Waitlist Signup
+								</md-button>
+							</div>
+						</div>
+					</div>
+				</form>
+
+				<form ng-submit='$this.submit()' ng-show='$this.state === 1'>
+					<div layout='row' layout-align='center center' flex>
+						<div layout='column' flex>
+							<div layout='row' layout-align='center center'>
+								<md-input-container class='md-block' flex='80'>
+									<input type='email' ng-model='$this.data.email' aria-label='Email' required />
+									<label>Email</label>
+								</md-input-container>
+							</div>
+							<div layout='row' layout-align='center end'>
+								<md-button
+									type='submit'
+									aria-label='Waitlist Signup'
+									translate
+								>
+									Waitlist Signup
+								</md-button>
+							</div>
+						</div>
+					</div>
+				</form>
+
+				<form ng-submit='$this.submit()' ng-show='$this.state === 2'>
+					<div layout='row' layout-align='center center' flex>
+						<div layout='column' flex>
+							<div layout='row' layout-align='center center'>
+								<md-input-container class='md-block' flex='80'>
+									<input ng-model='$this.data.name' aria-label='Name' />
+									<label>Name (optional)</label>
+								</md-input-container>
+							</div>
+							<div layout='row' layout-align='center end'>
+								<md-button
+									type='submit'
+									aria-label='Waitlist Signup'
+									translate
+								>
+									Waitlist Signup
+								</md-button>
+							</div>
+						</div>
+					</div>
+				</form>
+
+				<form ng-submit='$this.submit()' ng-show='$this.state === 3'>
+					<div layout='row' layout-align='center center' flex>
+						<div layout='column' flex>
+							<div layout='row' layout-align='center center'>
+								<p flex='80' translate>
+									Thanks for subscribing, {{$this.data.name}}! We'll email you
+									when your invite is ready.
+								</p>
+							</div>
+						</div>
+					</div>
+				</form>
 			</form>
 	`,
 
@@ -1100,8 +946,11 @@ export const Templates	= {
 			</p>
 
 			<p flex='nogrow' layout-padding>
-					<strong>
+					<strong ng-show='ui.business === false'>
 						- Individual Use Only -
+					</strong>
+					<strong ng-show='ui.business'>
+						- Cyph API -
 					</strong>
 			</p>
 
@@ -1122,6 +971,7 @@ export const Templates	= {
 					Terms of Service
 				</a>
 			</p>
+
 			<div flex></div>
 		</div>
 	`

@@ -176,10 +176,9 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 	 */
 	public constructor(
 		controller: Cyph.IController,
-		dialogManager: Cyph.UI.IDialogManager,
-		mobileMenu: Cyph.UI.ISidebar
+		dialogManager: Cyph.UI.IDialogManager
 	) {
-		super(controller, mobileMenu);
+		super(controller);
 
 		Elements.demoRoot['appear']();
 		Elements.heroText['appear']();
@@ -218,7 +217,7 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 					this.desktop	= new Cyph.UI.Chat.Chat(
 						this.controller,
 						dialogManager,
-						{open: () => {}, close: () => {}},
+						() => ({close: () => {}, open: () => {}}),
 						{notify: (message: string) => {}},
 						false,
 						desktopSession,

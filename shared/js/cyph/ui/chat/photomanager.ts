@@ -50,6 +50,41 @@ export class PhotoManager implements IPhotoManager {
 		this.chat.send('![](' + encodedImage + ')');
 	}
 
+	private watchFileInputButtonClick (elem: HTMLElement) : void {
+		let isClicked: boolean;
+
+		$(elem).
+			click(e => {
+				e.stopPropagation();
+				e.preventDefault();
+			}).
+			parent().click(() => {
+				if (!isClicked) {
+					isClicked	= true;
+
+					Util.triggerClick(elem);
+
+					let finish: Function;
+
+					const intervalId	= setInterval(() => {
+						if (Util.getValue(elem, 'files', []).length > 0) {
+							finish();
+						}
+					}, 500);
+
+					finish	= () => {
+						clearInterval(intervalId);
+						setTimeout(() =>
+							isClicked	= false
+						, 500);
+					};
+
+					setTimeout(finish, 5000);
+				}
+			})
+		;
+	}
+
 	public insert (elem: HTMLInputElement) : void {
 		if (elem.files.length > 0) {
 			const file: File			= elem.files[0];
@@ -75,42 +110,33 @@ export class PhotoManager implements IPhotoManager {
 	 * @param chat
 	 */
 	public constructor (private chat: IChat, private elements: IElements) {
+		this.elements.buttons.each((i: number, parent: HTMLElement) =>
+			new MutationObserver(mutations => {
+				for (const mutation of mutations) {
+					for (let i = 0 ; i < mutation.addedNodes.length ; ++i) {
+						const elem: Node	= mutation.addedNodes[i];
+
+						if (
+							(elem['tagName'] || '').toLowerCase() === 'input' &&
+							elem['type'] === 'file'
+						) {
+							this.watchFileInputButtonClick(<HTMLElement> elem);
+						}
+					}
+				}
+			}).observe(parent, {
+				childList: true,
+				attributes: false,
+				characterData: false,
+				subtree: false
+			})
+		);
+
 		this.elements.buttons.
 			find('input[type="file"]').
-			each((i: number, elem: HTMLElement) => {
-				let isClicked: boolean;
-
-				$(elem).
-					click(e => {
-						e.stopPropagation();
-						e.preventDefault();
-					}).
-					parent().click(() => {
-						if (!isClicked) {
-							isClicked	= true;
-
-							Util.triggerClick(elem);
-
-							let finish: Function;
-
-							const intervalId	= setInterval(() => {
-								if (Util.getValue(elem, 'files', []).length > 0) {
-									finish();
-								}
-							}, 500);
-
-							finish	= () => {
-								clearInterval(intervalId);
-								setTimeout(() =>
-									isClicked	= false
-								, 500);
-							};
-
-							setTimeout(finish, 5000);
-						}
-					})
-				;
-			})
+			each((i: number, elem: HTMLElement) =>
+				this.watchFileInputButtonClick(elem)
+			)
 		;
 	}
 }

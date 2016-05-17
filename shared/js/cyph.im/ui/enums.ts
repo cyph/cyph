@@ -6,15 +6,15 @@ export enum States {
 	blank,
 	chat,
 	error,
-	pro,
+	beta,
 	spinningUp,
 	waitingForFriend
 }
 
 /**
- * Possible states of Pro UI.
+ * Possible states of beta UI.
  */
-export enum ProStates {
+export enum BetaStates {
 	none,
 	login,
 	register,
@@ -26,7 +26,7 @@ export enum ProStates {
  */
 export const UrlSections	= {
 	root: '',
-	pro: 'pro',
+	beta: 'beta',
 	video: 'video',
 	audio: 'audio'
 };

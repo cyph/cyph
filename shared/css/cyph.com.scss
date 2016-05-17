@@ -1,4 +1,3 @@
-@import 'fonts';
 @import 'cyph.im';
 
 html, body, #main {
@@ -22,7 +21,7 @@ html:not(.load-complete) {
 
 section#main {
 	background-color: transparent !important;
-	overflow-x: hidden;
+	overflow-x: hidden !important;
 }
 
 #main {
@@ -31,6 +30,7 @@ section#main {
 	section {
 		position: relative;
 		padding: 20px;
+		margin-top: -1px;
 
 		> img.background {
 			display: block;
@@ -107,7 +107,7 @@ section#main {
 }
 
 #new-cyph {
-	font-family: 'Ubuntu';
+	font-family: Ubuntu;
 	font-size: 11px;
 	font-weight: 300;
 	position: fixed;
@@ -120,19 +120,41 @@ section#main {
 	box-shadow: 0px 4px 10px -1px rgba(0, 0, 0, 0.25);
 	background-color: #7d4fd3 !important;
 
-	@include transition(all 0.5s ease);
+	@include transition(all 0.75s ease);
 
 	&.focus, &:hover {
 		background-color: #7239dd !important;
 	}
+}
 
-	&.active {
+#main-toolbar .link-wrapper-outer {
+	@include transition(transform 0.5s ease 0.25s);
+}
+
+#main-toolbar.new-cyph-expanded {
+	#new-cyph {
 		font-size: 22px;
 		top: calc(50vh - 98px);
-		left: calc(50% - 120px);
+		left: calc(50vw - 120px);
 		height: 76px;
 		width: 240px;
 		border-radius: 3px;
+	}
+
+	.link-wrapper-outer {
+		&.right {
+			@include transform(translateX(60px));
+		}
+
+		&.left {
+			@include transform(translateX(-60px));
+		}
+	}
+}
+
+html.mobile #main-toolbar.new-cyph-expanded {
+	#new-cyph {
+		top: calc(50vh - 50px);
 	}
 }
 
@@ -159,7 +181,7 @@ section#main {
 	.hero-description {
 		font-size: 1.7em;
 		text-align: center;
-		margin-bottom: 16px;
+		margin: auto;
 
 		> div {
 			top: 50%;
@@ -176,9 +198,15 @@ section#main {
 }
 
 html.mobile #hero-section {
+	display: flex;
+
 	.hero-description {
 		height: auto;
 		font-size: 1.3em;
+		position: absolute;
+		bottom: 0px;
+		left: 0px;
+		width: 100%;
 
 		> div {
 			top: 50%;
@@ -191,9 +219,9 @@ html.mobile #hero-section {
 .hero-container {
 	margin-top: 15px;
 
-	.screenshot, .hero-description {
+	.screenshot {
 		display: block;
-		height: calc((50px + 5.525vw) * 3 - 50px);
+		height: calc((50px + 3.7525vw) * 3 - 50px);
 		margin-top: 25px;
 		position: relative;
 	}
@@ -201,11 +229,13 @@ html.mobile #hero-section {
 	.screenshot {
 		@include transition(all 0.25s ease);
 
+		opacity: 0.15;
+
 		&.laptop {
-			margin-left: calc(((50px + 5.525vw) * 3 - 50px) * -0.885);
+			height: calc((50px + 5.525vw) * 3 - 25px);
 
 			&:not(.demo):hover {
-				margin-left: 0px;
+				opacity: 0.9;
 
 				@include transition(all 0.75s ease);
 			}
@@ -214,16 +244,17 @@ html.mobile #hero-section {
 		&.phone {
 			margin-left: auto;
 			margin-right: auto;
+			top: 100px;
 		}
 
 		&.demo {
 			position: absolute;
 			height: auto;
+			opacity: 1;
 		}
 
 		&:not(.demo):hover {
-			height: calc((50px + 5.525vw) * 3 - 25px);
-			margin-top: 0px;
+			opacity: 0.9;
 			z-index: 3;
 		}
 	}
@@ -245,8 +276,12 @@ html.mobile #hero-section {
 }
 
 .feature-cycle {
-	text-decoration: underline;
-	font-weight: 300;
+	font-family: Ubuntu;
+	font-size: 90%;
+	border-bottom: 1px solid #f1f1f1;
+	display: inline-block;
+	transform: translateY(-5px);
+	width: 300px;
 }
 
 #main-toolbar {
@@ -604,9 +639,14 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 			overflow: hidden;
 
 			&:not(.curtain) {
-				height: 100%;
+				height: calc(100% + 2px);
 			}
 		}
+	}
+
+	.message-list:after {
+		width: 15em;
+		height: 16.5em;
 	}
 
 	> .desktop {
@@ -615,21 +655,35 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 		margin-top: 64px;
 		left: 11.5%;
 
-		[cyph-chat-main], [cyph-chat-message-box] {
-			margin-left: 120px;
-			width: calc(100% - 120px);
+		[cyph-chat-toolbar] {
+			.buttons > * {
+				left: 20px;
+				top: 5px;
+				margin-left: 6px;
+
+				&, * {
+					width: 15px;
+					height: 15px;
+				}
+			}
 		}
 
-		[cyph-chat-message-box] {
-			margin-top: -5px;
+		[cyph-chat-main], [cyph-chat-message-box] {
+			margin-left: 17.5px;
+			width: calc(100% - 25px);
 		}
 
 		[cyph-chat-main] {
-			height: calc(100% - 60px);
+			height: calc(100% - 90px);
+			margin-top: 10px;
 
 			.chat-main {
 				.message-list {
 					font-size: 90%;
+
+					&:after {
+						@include transform(translateX(-50%) translateY(-60%));
+					}
 				}
 			}
 
@@ -650,6 +704,20 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 				}
 			}
 		}
+
+		[cyph-chat-message-box] {
+			margin-top: -10px;
+
+			.message-box {
+				min-height: 50px;
+			}
+
+			md-fab-speed-dial {
+				bottom: -25px;
+
+				@include transform(scale(0.8));
+			}
+		}
 	}
 
 	> .mobile {
@@ -661,15 +729,6 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 		@include transform(scale(0.625));
 
 		@include filter(blur(0px));
-
-		.chat-toolbar {
-			margin-top: 0px;
-
-			.md-toolbar-tools > span {
-				overflow: hidden;
-				max-height: 100%;
-			}
-		}
 
 		[cyph-chat-main] {
 			height: calc(100% - 88px);
@@ -719,13 +778,6 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 
 	.chat-cyphertext {
 		position: absolute;
-	}
-
-	.chat-sidebar {
-		margin-left: -40px;
-		margin-top: -60px;
-
-		@include transform(scale(0.625));
 	}
 
 	.send-file-button {
@@ -784,7 +836,7 @@ html.mobile .demo-root {
 
 	> .hero-text, > .section-content-container {
 		position: absolute !important;
-		background-color: rgba(38, 38, 56, 0.6);
+		background-color: rgba(38, 38, 56, 0.75);
 		padding: 5px 10px;
 		margin: 0px;
 		text-align: center;
@@ -799,7 +851,7 @@ html.mobile .demo-root {
 	}
 
 	> .section-content-container {
-		top: calc(50% + 35px);
+		top: calc(50% + 50px);
 	}
 }
 
@@ -830,7 +882,7 @@ html.mobile #gettingstarted-section {
 #error {
 	h1 {
 		text-align: center;
-		font-family: 'Ubuntu', sans-serif;
+		font-family: Ubuntu, sans-serif;
 		font-size: 2.5vw;
 	}
 
@@ -928,26 +980,15 @@ html:not(.mobile) {
 	}
 }
 
-#podcast-section {
-	padding-top: 75px !important;
+#promo-section {
+	margin-top: 75px;
 
-	.hero-text {
-		top: 20px;
-
-		img {
-			max-width: 450px;
-			max-height: 175px;
-		}
+	html.mobile & {
+		margin-top: 60px;
 	}
-}
 
-html.mobile {
-	#podcast-section {
-		padding-top: 120px !important;
-
-		.hero-text {
-			top: 75px;
-		}
+	#hero-section & + .hero-text {
+		margin-top: 20px;
 	}
 }
 
@@ -969,21 +1010,13 @@ html.mobile {
 div.donation {
 	position: relative;
 	float: right;
-	margin-top: -55px;
+	margin-top: -42px;
 	font-family: Ubuntu;
-}
-
-div.donation span {
-	color: black;
-	font-family: Ubuntu;
-	left: 10px;
-	top: -1px;
-	position: relative;
+	font-size: 24px;
 }
 
 .donate-button {
 	display: block;
-	width: 100%;
 	margin-top: -15px;
 }
 
@@ -1040,16 +1073,11 @@ md-slider .md-focus-thumb {
 md-slider .md-sign .md-thumb-text {
 	z-index: 1;
 	font-size: 13px;
-	font-weight: 900;
 }
 
 input.donation {
 	text-align: center;
 	border: 0px;
-}
-
-input.donation:before {
-	content: '$';
 }
 
 .paypal-button button.large {

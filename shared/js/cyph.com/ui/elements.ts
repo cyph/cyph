@@ -7,6 +7,7 @@ import * as Cyph from 'cyph/cyph';
 export class Elements {
 	public static bouncingDownArrow: JQuery;
 	public static backgroundVideo: JQuery;
+	public static contactForm: JQuery;
 	public static contentContainers: JQuery;
 	public static demoRoot: JQuery;
 	public static demoListDesktop: JQuery;
@@ -20,7 +21,7 @@ export class Elements {
 	public static mainToolbar: JQuery;
 	public static newCyph: JQuery;
 	public static newCyphParent: JQuery;
-	public static podcastLogo: JQuery;
+	public static promoLogo: JQuery;
 	public static screenshotLaptop: JQuery;
 	public static screenshotPhone: JQuery;
 	public static testimonialsSection: JQuery;
@@ -33,6 +34,7 @@ export class Elements {
 
 		Elements.bouncingDownArrow		= $('.bouncing-down-arrow');
 		Elements.backgroundVideo		= $('.hero-background > :first-child');
+		Elements.contactForm			= $('#contact cyph-contact');
 		Elements.contentContainers		= $('.section-content-container');
 		Elements.demoRoot				= $('.demo-root');
 		Elements.demoListDesktop		= $('.demo-root > .desktop .message-list md-list');
@@ -45,7 +47,7 @@ export class Elements {
 		Elements.mainToolbar			= $('#main-toolbar');
 		Elements.newCyph				= $('#new-cyph');
 		Elements.newCyphParent			= Elements.newCyph.parent();
-		Elements.podcastLogo			= $('.podcast-logo');
+		Elements.promoLogo			= $('.promo-logo');
 		Elements.screenshotLaptop		= $('#hero-section .laptop.screenshot');
 		Elements.screenshotPhone		= $('#hero-section .phone.screenshot');
 		Elements.testimonialsSection	= $('#testimonials-section');

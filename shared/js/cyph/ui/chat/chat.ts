@@ -54,7 +54,6 @@ export class Chat extends BaseButtonManager implements IChat {
 	public isConnected: boolean			= false;
 	public isDisconnected: boolean		= false;
 	public isFriendTyping: boolean		= false;
-	public fab: boolean					= false;
 	public currentMessage: string		= '';
 	public keyExchangeProgress: number	= 0;
 	public state: States				= States.none;
@@ -281,7 +280,7 @@ export class Chat extends BaseButtonManager implements IChat {
 	public constructor (
 		controller: IController,
 		private dialogManager: IDialogManager,
-		mobileMenu: ISidebar,
+		mobileMenu: () => ISidebar,
 		private notifier: INotifier,
 		public isMobile: boolean = Env.isMobile,
 		session?: Session.ISession,
@@ -293,7 +292,6 @@ export class Chat extends BaseButtonManager implements IChat {
 			buttons: this.rootElement.find(Elements.buttons.selector),
 			cyphertext: this.rootElement.find(Elements.cyphertext.selector),
 			everything: this.rootElement.find(Elements.everything.selector),
-			insertPhotoMobile: this.rootElement.find(Elements.insertPhotoMobile.selector),
 			messageBox: this.rootElement.find(Elements.messageBox.selector),
 			messageList: this.rootElement.find(Elements.messageList.selector),
 			messageListInner: this.rootElement.find(Elements.messageListInner.selector),
@@ -394,24 +392,19 @@ export class Chat extends BaseButtonManager implements IChat {
 			let lastClick: number	= 0;
 
 			this.elements.messageBox.click(e => {
-				this.elements.sendButton.add(this.elements.insertPhotoMobile).each((i, elem) => {
-					const $button	= $(elem);
-					const bounds	= $button['bounds']();
+				const bounds	= this.elements.sendButton.filter(':visible')['bounds']();
 
-					if (
-						(e.pageY > bounds.top && e.pageY < bounds.bottom) &&
-						(e.pageX > bounds.left && e.pageX < bounds.right)
-					) {
-						const now: number	= Date.now();
+				if (
+					(e.pageY > bounds.top && e.pageY < bounds.bottom) &&
+					(e.pageX > bounds.left && e.pageX < bounds.right)
+				) {
+					const now: number	= Date.now();
 
-						if (now - lastClick > 500) {
-							lastClick	= now;
-							$button.click();
-						}
-
-						return;
+					if (now - lastClick > 500) {
+						lastClick	= now;
+						this.elements.sendButton.click();
 					}
-				});
+				}
 			});
 		}
 		else {

@@ -15,7 +15,7 @@ export class UrlState {
 	};
 
 	/**
-	 * Gets URL fragment or (if none exists) the value at the end of the path.
+	 * Gets URL fragment or (if none exists) path without leading slash.
 	 * @param fragmentOnly If true, will only return fragment or empty string.
 	 */
 	public static get (fragmentOnly?: boolean) : string {
@@ -26,7 +26,7 @@ export class UrlState {
 				return fragment;
 			}
 
-			return locationData.pathname.split('/').filter(s => s !== '').slice(-1)[0] || '';
+			return locationData.pathname.substring(1) || '';
 		}
 		catch (_) {
 			return '';

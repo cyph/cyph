@@ -93,6 +93,7 @@ jspm install -y \
 	npm:magnific-popup \
 	npm:nanoscroller \
 	npm:unsemantic \
+	github:snaptortoise/konami-js \
 	github:matthieua/wow \
 	github:morr/jquery.appear \
 	github:julianlam/tabIndent.js \

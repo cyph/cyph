@@ -1,6 +1,6 @@
 import {CyphDemo} from 'cyphdemo';
 import {Elements} from 'elements';
-import {HomeSections, Podcasts, States} from 'enums';
+import {HomeSections, Promos, States} from 'enums';
 import * as Cyph from 'cyph/cyph';
 
 
@@ -8,13 +8,25 @@ import * as Cyph from 'cyph/cyph';
  * Controls the entire cyph.com UI.
  */
 export class UI extends Cyph.UI.BaseButtonManager {
+	private static linkInterceptSelector: string	= 'a[href^="/"]:not(a[href^="/blog"])';
+
+
 	/** UI state/view. */
 	public state: States				= States.home;
 
-	/** Podcast promo page state/view. */
-	public podcast: Podcasts			= Podcasts.none;
+	/** Promo promo page state/view. */
+	public promo: Promos				= Promos.none;
 
-	public features						= ["Video Calls", "Voice Calls", "Chats", "Photos", "File Transfers"];
+	public contactState	= {
+		fromEmail: <string> '',
+		fromName: <string> '',
+		message: <string> '',
+		sent: <boolean> false,
+		subject: <string> '',
+		to: <string> 'hello'
+	};
+
+	public features						= ['Video Calls', 'Voice Calls', 'Chats', 'Photos', 'File Transfers'];
 	public featureIndex: number			= 0;
 
 	/** Donation amount in dollars (default). */
@@ -60,31 +72,57 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	/** Carousel of testimonials. */
 	public testimonialCarousel: Cyph.UI.Carousel;
 
-	private onUrlStateChange (urlState: string) : void {
-		const state: States		= States[urlState];
-		const podcast: Podcasts	= Podcasts[urlState];
+	private linkClickHandler (e: Event) {
+		e.preventDefault();
 
-		this.homeSection	= HomeSections[urlState];
+		const href: string		= $(e.currentTarget).attr('href');
+		let scrollDelay: number	= 500;
 
-		if (podcast !== undefined) {
-			this.openPodcastPage(podcast);
+		if (href !== locationData.pathname || this.homeSection !== undefined) {
+			scrollDelay	= 0;
+
+			Cyph.UrlState.set(href);
 		}
-		else if (this.homeSection !== undefined) {
+
+		if (this.homeSection === undefined) {
+			setTimeout(() => this.scroll(0), scrollDelay);
+		}
+	}
+
+	private onUrlStateChange (urlState: string) : void {
+		const urlStateSplit: string[]	= urlState.split('/');
+		const urlStateBase: string		= urlStateSplit[0];
+
+		const state: States	= States[urlStateBase];
+		const promo: Promos	= Promos[urlStateBase];
+
+		this.homeSection	= promo === undefined ?
+			HomeSections[urlStateBase] :
+			HomeSections.promo
+		;
+
+		if (this.homeSection !== undefined) {
 			this.changeState(States.home);
 
+			if (promo) {
+				this.promo				= promo;
+				this.signupForm.promo	= Promos[promo];
+			}
+
 			setTimeout(() => {
-				if (this.homeSection === HomeSections.login) {
+				if (this.homeSection === HomeSections.register) {
 					this.dialogManager.baseDialog({
-						template: Cyph.UI.Templates.login,
+						template: Cyph.UI.Templates.register,
 						locals: {
-							signupForm: this.signupForm
+							signupForm: this.signupForm,
+							Cyph: self['Cyph']
 						},
 						onclose: () => Cyph.UrlState.set('')
 					});
 				}
 				else {
 					this.scroll(
-						$('#' + urlState + '-section').offset().top -
+						$('#' + HomeSections[this.homeSection] + '-section').offset().top -
 						(
 							this.homeSection === HomeSections.gettingstarted ?
 								-1 :
@@ -94,13 +132,21 @@ export class UI extends Cyph.UI.BaseButtonManager {
 				}
 			}, 250);
 		}
+		else if (state === States.contact) {
+			const to: string	= urlStateSplit[1];
+			if (Cyph.Config.cyphEmailAddresses.indexOf(to) > -1) {
+				this.contactState.to	= to;
+			}
+
+			this.changeState(state);
+		}
 		else if (state !== undefined) {
 			this.changeState(state);
 		}
-		else if (urlState === '') {
+		else if (urlStateBase === '') {
 			this.changeState(States.home);
 		}
-		else if (urlState === Cyph.UrlState.states.notFound) {
+		else if (urlStateBase === Cyph.UrlState.states.notFound) {
 			this.changeState(States.error);
 		}
 		else {
@@ -175,31 +221,17 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	}
 
 	/**
-	 * Opens the podcast promo page with the indicated state.
-	 * @param podcast
-	 */
-	public openPodcastPage (podcast: Podcasts) : void {
-		this.podcast	= podcast;
-		this.changeState(States.podcast);
-
-		Elements.heroText.hide();
-		Elements.podcastLogo.attr('src', '/img/thirdparty/' + Podcasts[this.podcast] + '.png');
-		setTimeout(() => Elements.heroText.show(), 1);
-	}
-
-	/**
 	 * @param controller
 	 */
 	public constructor (
 		controller: Cyph.IController,
-		mobileMenu: Cyph.UI.ISidebar,
-		private dialogManager: Cyph.UI.IDialogManager,
-		demoMobileMenu: Cyph.UI.ISidebar
+		mobileMenu: () => Cyph.UI.ISidebar,
+		private dialogManager: Cyph.UI.IDialogManager
 	) {
 		super(controller, mobileMenu);
 
 		this.signupForm	= new Cyph.UI.SignupForm(this.controller);
-		this.cyphDemo	= new CyphDemo(this.controller, this.dialogManager, demoMobileMenu);
+		this.cyphDemo	= new CyphDemo(this.controller, this.dialogManager);
 
 		Cyph.UrlState.onchange(urlState => this.onUrlStateChange(urlState));
 
@@ -229,7 +261,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		});
 
 		if (!Cyph.Env.isMobile) {
-			new self['WOW']({live: false}).init();
+			new self['WOW']({live: true}).init();
 		}
 
 
@@ -262,17 +294,25 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		this.testimonialCarousel	= new Cyph.UI.Carousel(Elements.testimonialsSection, () =>
 			Elements.heroSection.css(
 				'min-height',
-				`calc(100vh - ${(Elements.testimonialsSection.height() + 40)}px)`
+				`calc(100vh - ${40 + (
+					Cyph.Env.isMobile ?
+						40 :
+						Elements.testimonialsSection.height()
+				)}px)`
 			)
 		);
 
 
 		/* Header / new cyph button animation */
 
-		setInterval(() => Elements.newCyph.toggleClass('active',
-			this.state === States.home &&
-			Cyph.UI.Elements.footer.is(':appeared')
-		), 500);
+		Elements.mainToolbar.toggleClass('new-cyph-expanded', Cyph.UrlState.get() === '');
+		setTimeout(() => setInterval(() => Elements.mainToolbar.toggleClass(
+			'new-cyph-expanded',
+			this.state === States.home && (
+				(!this.promo && Elements.heroText.is(':appeared')) ||
+				Cyph.UI.Elements.footer.is(':appeared')
+			)
+		), 500), 3000);;
 
 
 
@@ -299,24 +339,53 @@ export class UI extends Cyph.UI.BaseButtonManager {
 
 		/* Avoid full page reloads */
 
-		$('a[href^="/"]:not(a[href^="/blog"])').click(e => {
-			e.preventDefault();
+		$(UI.linkInterceptSelector).click(e => this.linkClickHandler(e));
+		new MutationObserver(mutations => {
+			for (const mutation of mutations) {
+				for (let i = 0 ; i < mutation.addedNodes.length ; ++i) {
+					const $elem: JQuery	= $(mutation.addedNodes[i]);
 
-			const href: string		= $(e.currentTarget).attr('href');
-			let scrollDelay: number	= 500;
-
-			if (href !== locationData.pathname || this.homeSection !== undefined) {
-				scrollDelay	= 0;
-
-				Cyph.UrlState.set(href);
+					if ($elem.is(UI.linkInterceptSelector)) {
+						$elem.click(e => this.linkClickHandler(e));
+					}
+					else {
+						$elem.
+							find(UI.linkInterceptSelector).
+							click(e => this.linkClickHandler(e))
+						;
+					}
+				}
 			}
-
-			if (this.homeSection === undefined) {
-				setTimeout(() => this.scroll(0), scrollDelay);
-			}
+		}).observe(document.body, {
+			childList: true,
+			attributes: false,
+			characterData: false,
+			subtree: true
 		});
 
 		setInterval(() => this.cycleFeatures(), 4200);
 		setTimeout(() => Cyph.UI.Elements.html.addClass('load-complete'), 100);
+
+		/* Cyphertext easter egg */
+		new self['Konami'](() => {
+			Cyph.UrlState.set('intro');
+			Cyph.Util.retryUntilComplete(retry => {
+				if (
+					this.cyphDemo.desktop &&
+					this.cyphDemo.desktop.state === Cyph.UI.Chat.States.chat
+				) {
+					if (Cyph.Env.isMobile) {
+						this.cyphDemo.mobile.cyphertext.show();
+					}
+					else {
+						this.cyphDemo.desktop.cyphertext.show();
+						setTimeout(() => this.cyphDemo.mobile.cyphertext.show(), 8000);
+					}
+				}
+				else {
+					retry();
+				}
+			});
+		});
 	}
 }

@@ -41,12 +41,10 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 	}
 
 	public isInUse () : boolean {
-		return this.isPlaying() &&
-		(
-			this.p2p.outgoingStream.audio ||
+		return this.isPlaying() ||
 			!!this.p2p.incomingFile.name ||
 			!!this.p2p.outgoingFile.name
-		);
+		;
 	}
 
 	public isPlaying () : boolean {
@@ -118,7 +116,7 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 	public constructor (
 		private chat: IChat,
 		controller: IController,
-		mobileMenu: ISidebar,
+		mobileMenu: () => ISidebar,
 		private dialogManager: IDialogManager,
 		private elements: IElements,
 		forceTURN?: boolean
@@ -202,7 +200,7 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 							case P2P.UIEvents.Events.get: {
 								const callback: Function	= e.args[0];
 
-								const file: File	= this.elements.p2pFiles.
+								const file: File	= $(this.elements.p2pFiles.selector).
 									toArray().
 									map((elem: HTMLInputElement) => elem.files || []).
 									reduce((a: File, b: FileList) => a || b[0], null)

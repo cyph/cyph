@@ -15,6 +15,7 @@ var config = struct {
 	EmailAddress               string
 	HPKPHeader                 string
 	HSTSHeader                 string
+	IsProd                     bool
 	MaxChannelDescriptorLength int
 	MaxSignupValueLength       int
 	MemcacheExpiration         time.Duration
@@ -72,6 +73,8 @@ var config = struct {
 	"max-age=31536000; includeSubdomains; pin-sha256=\"8jdS3zcG5kUApHWDrLH5Q8wEygqGbGEhYApjSDtufBU=\"; pin-sha256=\"AMRT67hN1KPI+u7Aw9JpZlzyRaKeO+6u2H+jtOmWVy8=\"",
 
 	"max-age=31536000; includeSubdomains; preload",
+
+	false, /* IsProd */
 
 	/* With the current list of AWS regions,
 	no descriptor will exceed this length */
