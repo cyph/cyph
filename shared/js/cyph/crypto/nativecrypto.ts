@@ -302,7 +302,7 @@ export class NativeCrypto {
 				callback(undefined, err);
 			}
 			finally {
-				Potassium.clearMemory(cyphertext);
+				NativeCrypto.Sodium.memzero(cyphertext);
 			}
 		}
 	};
