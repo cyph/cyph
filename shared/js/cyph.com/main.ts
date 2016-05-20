@@ -8,7 +8,7 @@
 
 import {CyphDemo} from 'ui/cyphdemo';
 import {Elements} from 'ui/elements';
-import {HomeSections, Promos, States} from 'ui/enums';
+import {HomeSections, PageTitles, Promos, States} from 'ui/enums';
 import {UI} from 'ui/ui';
 import * as Cyph from 'cyph/cyph';
 import {Loaded} from 'preload/base';
@@ -49,6 +49,7 @@ angular.
 					CyphDemo,
 					Elements,
 					HomeSections,
+					PageTitles,
 					Promos,
 					States,
 					UI
