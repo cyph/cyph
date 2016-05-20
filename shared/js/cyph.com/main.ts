@@ -24,7 +24,7 @@ if (Cyph.Env.isIEOrEdge) {
 }
 
 
-Cyph.UI.Elements.body.attr('ng-controller', Cyph.Config.angularConfig.rootController);
+Cyph.UI.Elements.html.attr('ng-controller', Cyph.Config.angularConfig.rootController);
 
 angular.
 	module(Cyph.Config.angularConfig.rootModule, [
