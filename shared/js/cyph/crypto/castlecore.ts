@@ -147,7 +147,7 @@ export class CastleCore {
 				5 + newPublicKey.length + plaintext.length
 			);
 
-			fullPlaintext.set(this.outgoingMessageId);
+			fullPlaintext.set(new Uint8Array(this.outgoingMessageId.buffer));
 			fullPlaintext.set(plaintext, 5 + newPublicKey.length);
 
 			if (newPublicKey.length > 0) {
@@ -167,7 +167,7 @@ export class CastleCore {
 					let fullCyphertext: Uint8Array;
 					try {
 						fullCyphertext	= new Uint8Array(4 + cyphertext.length);
-						fullCyphertext.set(this.outgoingMessageId);
+						fullCyphertext.set(new Uint8Array(this.outgoingMessageId.buffer));
 						fullCyphertext.set(cyphertext, 4);
 						this.handlers.send(Potassium.toBase64(fullCyphertext));
 					}
@@ -238,7 +238,7 @@ export class CastleCore {
 								4 + encryptedKey.length
 							);
 
-							cyphertext.set(this.outgoingMessageId);
+							cyphertext.set(new Uint8Array(this.outgoingMessageId.buffer));
 							cyphertext.set(encryptedKey, 4);
 
 							++this.outgoingMessageId[0];
