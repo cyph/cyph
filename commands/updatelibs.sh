@@ -213,7 +213,6 @@ mkdir gorilla
 cd gorilla
 git clone git://github.com/gorilla/context.git
 git clone git://github.com/gorilla/mux.git
-git clone git://github.com/gorilla/securecookie.git
 cd ..
 
 mkdir lionelbarrow
@@ -225,25 +224,10 @@ func (g *Braintree) SetHTTPClient(client *http.Client) {
 }' >> braintree-go/braintree.go # Temporary workaround for GAE support
 cd ..
 
-mkdir justinas
-cd justinas
-git clone git://github.com/justinas/nosurf.git
-rm -rf nosurf/examples
-cd ..
-
 mkdir microcosm-cc
 cd microcosm-cc
 git clone git://github.com/microcosm-cc/bluemonday.git
 cd ..
-
-cd ..
-
-rm -rf gopkg.in 2> /dev/null
-mkdir gopkg.in
-cd gopkg.in
-
-git clone git://github.com/go-authboss/authboss.git authboss.v0
-rm -rf authboss.v0/oauth2
 
 cd ..
 
@@ -253,14 +237,10 @@ cd golang.org/x
 
 git clone git://github.com/golang/net.git
 cd net
-rm -rf !(AUTHORS|CONTRIBUTING.md|CONTRIBUTORS|LICENSE|PATENTS|README|html|context)
+rm -rf !(AUTHORS|CONTRIBUTING.md|CONTRIBUTORS|LICENSE|PATENTS|README|html)
 cd ..
 
-git clone git://github.com/golang/crypto.git
-git clone git://github.com/golang/oauth2.git
 git clone git://github.com/golang/text.git
-
-rm -rf oauth2/client_appengine.go oauth2/google
 
 cd ../..
 
