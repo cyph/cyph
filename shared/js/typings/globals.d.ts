@@ -13,13 +13,3 @@ declare let Translations: {[language: string] : {[text: string] : string}};
  * @global WebSign object (only created in WebSigned environments).
  */
 declare let WebSign: IWebSign;
-
-/**
- * @global NTRU library.
- */
-declare let Ntru: any;
-
-/**
- * @global Sodium library.
- */
-declare let Sodium: any;

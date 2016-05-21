@@ -3,6 +3,7 @@
 import {Env} from 'env';
 import {Thread} from 'thread';
 import {Util} from 'util';
+import {Potassium} from 'crypto/crypto';
 
 
 /**
@@ -93,7 +94,7 @@ export class Analytics {
 										document.referrer.match(/[0-9a-fA-F]+/g) || []
 									).map((s: string) => {
 										try {
-											return Sodium.to_string(Sodium.from_hex(s));
+											return Potassium.toString(Potassium.fromHex(s));
 										}
 										catch (e) {
 											return '';
@@ -106,7 +107,7 @@ export class Analytics {
 										)
 									).split(/\&.*?=/g).map((s: string) => {
 										try {
-											return Sodium.to_string(Sodium.from_base64(s));
+											return Potassium.toString(Potassium.fromBase64(s));
 										}
 										catch (e) {
 											return '';

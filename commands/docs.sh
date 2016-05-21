@@ -10,6 +10,9 @@ cd shared/.js.tmp
 
 rm -rf ../js/docs
 
+# Temporary workaround for typedoc using old version of TypeScript
+grep -rl 'for (const' | xargs sed -i 's|for (const|for (var|g'
+
 # NOTE: "--mode file" is a workaround for a typedoc bug; should be "--mode modules"
 typedoc --experimentalDecorators -t ES5 -m system --moduleResolution classic --out ../js/docs --name Cyph --mode file --includeDeclarations --excludeExternals .
 

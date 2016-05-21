@@ -225,6 +225,8 @@ export class NativeCrypto {
 			callback: (plaintext: Uint8Array, err: any) => void
 		) : void => {
 			try {
+				cyphertext	= new Uint8Array(cyphertext);
+
 				const asymmetricCyphertext: Uint8Array	= new Uint8Array(
 					cyphertext.buffer,
 					0,
@@ -298,6 +300,9 @@ export class NativeCrypto {
 			}
 			catch (err) {
 				callback(undefined, err);
+			}
+			finally {
+				NativeCrypto.Sodium.memzero(cyphertext);
 			}
 		}
 	};
