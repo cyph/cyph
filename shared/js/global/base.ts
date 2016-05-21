@@ -26,9 +26,7 @@ for (const k of [
 	'onthreadmessage',
 	'FontsCSS',
 	'Translations',
-	'WebSign',
-	'Ntru',
-	'Sodium'
+	'WebSign'
 ]) {
 	if (!(k in self)) {
 		self[k]	= null;
@@ -66,7 +64,3 @@ const navigatorData: Navigator	= typeof self['navigatorData'] !== 'undefined' ?
 	self['navigatorData'] :
 	navigator
 ;
-
-
-Ntru	= self['ntru'] || {};
-Sodium	= self['sodium'] || {};

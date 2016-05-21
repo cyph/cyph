@@ -16,6 +16,24 @@ browserify node_modules/aws-sdk/lib/xml/node_parser.js -s AWS_XML | uglifyjs -o 
 cd ..
 rm -rf aws-xml
 
+echo "sodium = (function () {
+	$( \
+		curl -s https://raw.githubusercontent.com/jedisct1/libsodium.js/9a8b4f9/wrapper/wrap-template.js | \
+		tr '\n' '☁' | \
+		perl -pe 's/.*Codecs(.*?)Memory management.*/\1/g' | \
+		tr '☁' '\n' \
+	)
+
+	return {
+		from_base64: from_base64,
+		to_base64: to_base64,
+		from_hex: from_hex,
+		to_hex: to_hex,
+		from_string: from_string,
+		to_string: to_string
+	};
+}());" | uglifyjs > sodiumcodecs.js
+
 cd ../../js
 rm config.js package.json
 expect -c ' \

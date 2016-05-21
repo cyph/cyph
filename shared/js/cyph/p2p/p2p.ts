@@ -9,6 +9,7 @@ import {IController} from 'cyph/icontroller';
 import {Timer} from 'cyph/timer';
 import {Util} from 'cyph/util';
 import {WebRTC} from 'cyph/webrtc';
+import {Potassium} from 'crypto/crypto';
 import * as Session from 'session/session';
 
 
@@ -41,14 +42,8 @@ export class P2P implements IP2P {
 		voice: 'voice'
 	};
 
-	private static nonceIndex: number			= 4;
 
-	private static encryptedDataIndex: number	=
-		P2P.nonceIndex +
-		Sodium.crypto_secretbox_NONCEBYTES
-	;
-
-
+	private potassium: Potassium;
 	private mutex: Session.IMutex;
 	private channel: RTCDataChannel;
 	private peer: RTCPeerConnection;
@@ -400,7 +395,7 @@ export class P2P implements IP2P {
 						const name: string			= this.incomingFile.name;
 
 						if (this.incomingFile.key) {
-							Sodium.memzero(this.incomingFile.key);
+							Potassium.clearMemory(this.incomingFile.key);
 						}
 
 						this.incomingFile.data				= null;
@@ -426,7 +421,7 @@ export class P2P implements IP2P {
 					this.incomingFile.data	= [];
 					this.incomingFile.name	= data[0];
 					this.incomingFile.size	= parseInt(data[1], 10);
-					this.incomingFile.key	= Sodium.from_base64(data[2]);
+					this.incomingFile.key	= Potassium.fromBase64(data[2]);
 
 					this.incomingFile.readableSize	=
 						Util.readableByteLength(
@@ -452,33 +447,29 @@ export class P2P implements IP2P {
 						1
 					)[0];
 
-					const nonce: Uint8Array			= new Uint8Array(
-						e.data,
-						P2P.nonceIndex,
-						Sodium.crypto_secretbox_NONCEBYTES
-					);
-
 					const encryptedData: Uint8Array	= new Uint8Array(
 						e.data,
-						P2P.encryptedDataIndex
+						4
 					);
 
-					this.incomingFile.data[index]	=
-						Sodium.crypto_secretbox_open_easy(
-							encryptedData,
-							nonce,
-							this.incomingFile.key
-						).buffer
-					;
+					this.potassium.SecretBox.open(
+						encryptedData,
+						this.incomingFile.key,
+						(plaintext: Uint8Array, err) => {
+							if (!err) {
+								this.incomingFile.data[index]	= plaintext.buffer;
 
-					this.incomingFile.percentComplete	=
-						this.incomingFile.data.length *
-							Config.p2pConfig.fileChunkSize /
-							this.incomingFile.size *
-							100
-					;
+								this.incomingFile.percentComplete	=
+									this.incomingFile.data.length *
+										Config.p2pConfig.fileChunkSize /
+										this.incomingFile.size *
+										100
+								;
 
-					this.controller.update();
+								this.controller.update();
+							}
+						}
+					);
 				}
 				else {
 					++this.incomingFile.pendingChunks;
@@ -635,8 +626,8 @@ export class P2P implements IP2P {
 						this.outgoingFile.name	= file.name;
 						this.outgoingFile.size	= buf.byteLength;
 
-						this.outgoingFile.key	= Sodium.randombytes_buf(
-							Sodium.crypto_secretbox_KEYBYTES
+						this.outgoingFile.key	= Potassium.randomBytes(
+							this.potassium.SecretBox.keyBytes
 						);
 
 						this.outgoingFile.readableSize	=
@@ -652,7 +643,7 @@ export class P2P implements IP2P {
 							'\n' +
 							this.outgoingFile.size +
 							'\n' +
-							Sodium.to_base64(this.outgoingFile.key)
+							Potassium.toBase64(this.outgoingFile.key)
 						);
 
 						const timer: Timer	= new Timer(() => {
@@ -661,65 +652,56 @@ export class P2P implements IP2P {
 								return;
 							}
 
-							try {
-								const old: number	= pos;
-								pos += Config.p2pConfig.fileChunkSize;
+							const old: number	= pos;
+							pos += Config.p2pConfig.fileChunkSize;
 
-								const index: Uint8Array			= new Uint8Array(
-									new Uint32Array([
-										old / Config.p2pConfig.fileChunkSize
-									]).buffer
-								);
+							this.potassium.SecretBox.seal(
+								new Uint8Array(buf.slice(old, pos)),
+								this.outgoingFile.key,
+								(encryptedData: Uint8Array, err) => {
+									if (err) {
+										pos -= Config.p2pConfig.fileChunkSize;
+									}
+									else {
+										const cyphertext: Uint8Array	= new Uint8Array(
+											4 + encryptedData.length
+										);
 
-								const nonce: Uint8Array			= Sodium.randombytes_buf(
-									Sodium.crypto_secretbox_NONCEBYTES
-								);
+										cyphertext.set(new Uint8Array(new Uint32Array([
+											old / Config.p2pConfig.fileChunkSize
+										]).buffer));
 
-								const encryptedData: Uint8Array	= Sodium.crypto_secretbox_easy(
-									new Uint8Array(buf.slice(old, pos)),
-									nonce,
-									this.outgoingFile.key
-								);
+										cyphertext.set(encryptedData, 4);
 
-								const cyphertext: Uint8Array	= new Uint8Array(
-									P2P.encryptedDataIndex +
-									encryptedData.length
-								);
+										this.channel.send(cyphertext.buffer);
+									}
 
-								cyphertext.set(index);
-								cyphertext.set(nonce, P2P.nonceIndex);
-								cyphertext.set(encryptedData, P2P.encryptedDataIndex);
+									if (buf.byteLength > pos) {
+										this.outgoingFile.percentComplete	=
+											pos / buf.byteLength * 100
+										;
 
-								this.channel.send(cyphertext.buffer);
-							}
-							catch (_) {
-								pos -= Config.p2pConfig.fileChunkSize;
-							}
+										this.controller.update();
+									}
+									else {
+										timer.stop();
 
-							if (buf.byteLength > pos) {
-								this.outgoingFile.percentComplete	=
-									pos / buf.byteLength * 100
-								;
+										if (this.outgoingFile.key) {
+											Potassium.clearMemory(this.outgoingFile.key);
+										}
 
-								this.controller.update();
-							}
-							else {
-								timer.stop();
+										this.channel.send(P2P.constants.fileTransferComplete);
 
-								if (this.outgoingFile.key) {
-									Sodium.memzero(this.outgoingFile.key);
+										this.outgoingFile.key				= null;
+										this.outgoingFile.name				= '';
+										this.outgoingFile.size				= 0;
+										this.outgoingFile.readableSize		= '';
+										this.outgoingFile.percentComplete	= 0;
+
+										this.controller.update();
+									}
 								}
-
-								this.channel.send(P2P.constants.fileTransferComplete);
-
-								this.outgoingFile.key				= null;
-								this.outgoingFile.name				= '';
-								this.outgoingFile.size				= 0;
-								this.outgoingFile.readableSize		= '';
-								this.outgoingFile.percentComplete	= 0;
-
-								this.controller.update();
-							}
+							);
 						});
 					};
 
@@ -963,7 +945,8 @@ export class P2P implements IP2P {
 		private controller: IController,
 		private forceTURN: boolean
 	) {
-		this.mutex	= new Session.Mutex(this.session);
+		this.potassium	= new Potassium();
+		this.mutex		= new Session.Mutex(this.session);
 
 		this.session.on(Session.Events.beginChat, () => {
 			if (WebRTC.isSupported) {

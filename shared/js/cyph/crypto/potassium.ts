@@ -210,7 +210,7 @@ export class Potassium {
 						ntruPlaintext.set(symmetricKey);
 						ntruPlaintext.set(ntruAuthKey, this.SecretBox.keyBytes);
 
-						const ntruCyphertext: Uint8Array	= Ntru.encrypt(
+						const ntruCyphertext: Uint8Array	= Potassium.Ntru.encrypt(
 							ntruPlaintext,
 							publicKeys.ntru
 						);
