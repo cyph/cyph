@@ -17,7 +17,7 @@ import * as Cyph from 'cyph/cyph';
 import {Loaded} from 'preload/base';
 
 
-Cyph.UI.Elements.body.attr('ng-controller', Cyph.Config.angularConfig.rootController);
+Cyph.UI.Elements.html.attr('ng-controller', Cyph.Config.angularConfig.rootController);
 
 angular.
 	module(Cyph.Config.angularConfig.rootModule, [

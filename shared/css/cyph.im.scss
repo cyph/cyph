@@ -104,6 +104,10 @@ input, textarea {
 		display: none;
 	}
 
+	.new-messages {
+		z-index: 30 !important;
+	}
+
 	md-fab-speed-dial {
 		position: absolute;
 		top: -280px;
