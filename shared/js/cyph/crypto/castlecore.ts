@@ -17,7 +17,7 @@ export class CastleCore {
 	private keyPairs: {publicKey: Uint8Array; privateKey: Uint8Array}[];
 	private potassium: Potassium;
 
-	public outgoingMessageId: Uint32Array	= new Uint32Array([1]);
+	public outgoingMessageId: Uint32Array	= new Uint32Array([0]);
 
 	private abort () : void {
 		this.isAborted	= true;
@@ -230,7 +230,10 @@ export class CastleCore {
 								4 + encryptedKey.length
 							);
 
+							cyphertext.set(this.outgoingMessageId);
 							cyphertext.set(encryptedKey, 4);
+
+							++this.outgoingMessageId[0];
 
 							try {
 								this.handlers.send(
