@@ -1,4 +1,5 @@
 import {Potassium} from 'potassium';
+import {Util} from 'cyph/util';
 
 
 /**
@@ -79,7 +80,10 @@ export class CastleCore {
 		}
 
 		/* Standard incoming message */
-		for (const keyPair of this.keyPairs) {
+		let i: number	= 0;
+		Util.retryUntilComplete(retry => {
+			const keyPair	= this.keyPairs[i++];
+
 			this.potassium.Box.open(
 				encryptedData,
 				this.friendKey,
@@ -89,13 +93,17 @@ export class CastleCore {
 						new Uint8Array(cyphertext.buffer, 0, 4),
 						new Uint8Array(decrypted.buffer, 0, 4)
 					)) {
-						if (keyPair === this.keyPairs[this.keyPairs.length - 1]) {
+						if (i < this.keyPairs.length) {
+							retry(-1);
+						}
+						else {
 							if (!this.isConnected) {
 								this.abort();
 							}
 
 							callback(false);
 						}
+
 						return;
 					}
 
@@ -126,7 +134,7 @@ export class CastleCore {
 					callback(true);
 				}
 			);
-		}
+		});
 	}
 
 	/**

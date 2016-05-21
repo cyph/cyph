@@ -63,7 +63,7 @@ export class Castle implements ICastle {
 
 				Util.retryUntilComplete(innerRetry => {
 					if (i < incomingMessages.length) {
-						const cyphertext:Uint8Array	= incomingMessages[i++]; 
+						const cyphertext: Uint8Array	= incomingMessages[i++];
 
 						if (wasSuccessful) {
 							Potassium.clearMemory(cyphertext);
