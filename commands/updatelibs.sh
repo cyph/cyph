@@ -120,7 +120,6 @@ jspm install -y \
 	braintree=github:braintree/braintree-web \
 	es5-shim \
 	es6-shim \
-	crypto/libsodium=github:jedisct1/libsodium.js \
 	crypto/ntru=github:cyph/ntru.js \
 	crypto/supersphincs=github:cyph/supersphincs.js \
 	crypto/isaac=github:rubycon/isaac.js \
@@ -168,6 +167,17 @@ bash -c "$(node -e '
 cd lib/js
 
 sed -i 's/^\/dist$//' jquery-legacy/.gitignore
+
+cd crypto
+git clone --recursive https://github.com/jedisct1/libsodium.js libsodium
+cd libsodium
+sed -i 's|TOTAL_MEMORY_SUMO=35000000|TOTAL_MEMORY_SUMO="553648128 -s ALLOW_MEMORY_GROWTH=1"|g' libsodium/dist-build/emscripten.sh
+make
+mv dist dist.new
+make clean
+rm -rf dist 2> /dev/null
+mv dist.new dist
+cd ../..
 
 cd github/isagalaev/highlight.js@*
 sed -i 's/^build$//' .gitignore
