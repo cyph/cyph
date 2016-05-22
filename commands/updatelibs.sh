@@ -173,10 +173,7 @@ git clone --recursive https://github.com/jedisct1/libsodium.js libsodium
 cd libsodium
 sed -i 's|TOTAL_MEMORY_SUMO=35000000|TOTAL_MEMORY_SUMO="553648128 -s ALLOW_MEMORY_GROWTH=1"|g' libsodium/dist-build/emscripten.sh
 make
-mv dist dist.new
-make clean
-rm -rf dist 2> /dev/null
-mv dist.new dist
+rm -rf .git* *.tmp API.md test libsodium
 cd ../..
 
 cd github/isagalaev/highlight.js@*
