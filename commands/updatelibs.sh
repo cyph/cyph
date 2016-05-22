@@ -173,7 +173,7 @@ git clone --recursive https://github.com/jedisct1/libsodium.js libsodium
 cd libsodium
 make libsodium/configure
 sed -i 's|ln |cp |g' Makefile
-sed -i 's|TOTAL_MEMORY_SUMO=35000000|TOTAL_MEMORY_SUMO="553648128 -s ALLOW_MEMORY_GROWTH=1"|g' libsodium/dist-build/emscripten.sh
+sed -i 's|TOTAL_MEMORY_SUMO=35000000|TOTAL_MEMORY_SUMO=150000000|g' libsodium/dist-build/emscripten.sh
 make
 rm -rf .git* *.tmp API.md browsers-test test libsodium
 cd ../..
