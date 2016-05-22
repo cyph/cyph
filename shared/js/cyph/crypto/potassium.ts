@@ -7,9 +7,9 @@ import {NativeCrypto} from 'nativecrypto';
  * should generally not be called directly.
  */
 export class Potassium {
-	private static Ntru			= self['ntru'];
-	private static Sodium		= self['sodium'];
-	private static SuperSphincs	= self['superSphincs'];
+	private static Ntru			= self['ntru'] || {};
+	private static Sodium		= self['sodium'] || {};
+	private static SuperSphincs	= self['superSphincs'] || {};
 
 	public static clearMemory (a: Uint8Array) : void {
 		Potassium.Sodium.memzero(a);
