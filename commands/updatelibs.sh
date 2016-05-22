@@ -175,7 +175,7 @@ make libsodium/configure
 sed -i 's|ln |cp |g' Makefile
 sed -i 's|TOTAL_MEMORY_SUMO=35000000|TOTAL_MEMORY_SUMO="553648128 -s ALLOW_MEMORY_GROWTH=1"|g' libsodium/dist-build/emscripten.sh
 make
-rm -rf .git* *.tmp API.md test libsodium
+rm -rf .git* *.tmp API.md browsers-test test libsodium
 cd ../..
 
 cd github/isagalaev/highlight.js@*
@@ -194,7 +194,6 @@ typings install --ambient --save \
 	angular \
 	angular-material \
 	angular-animate \
-	highlightjs \
 	webrtc/mediastream \
 	webrtc/rtcpeerconnection \
 	cryptojs \
