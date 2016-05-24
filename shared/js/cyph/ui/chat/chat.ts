@@ -214,7 +214,7 @@ export class Chat extends BaseButtonManager implements IChat {
 				template: Templates.helpModal
 			});
 
-			Analytics.main.send({
+			Analytics.send({
 				hitType: 'event',
 				eventCategory: 'help',
 				eventAction: 'show',
@@ -323,7 +323,7 @@ export class Chat extends BaseButtonManager implements IChat {
 
 				this.rootElement.addClass('modest');
 
-				Analytics.main.send({
+				Analytics.send({
 					hitType: 'event',
 					eventCategory: 'modest-branding',
 					eventAction: 'used',
@@ -340,7 +340,7 @@ export class Chat extends BaseButtonManager implements IChat {
 
 				forceTURN	= true;
 
-				Analytics.main.send({
+				Analytics.send({
 					hitType: 'event',
 					eventCategory: 'force-turn',
 					eventAction: 'used',

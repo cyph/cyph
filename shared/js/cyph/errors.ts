@@ -49,7 +49,7 @@ export class Errors {
 				});
 			}
 
-			Analytics.main.send('exception', {
+			Analytics.send('exception', {
 				exDescription: exception
 			});
 		};

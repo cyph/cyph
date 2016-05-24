@@ -4,6 +4,7 @@ import {Controller} from 'controller';
 import {Env} from 'env';
 import {Errors} from 'errors';
 import {EventManager} from 'eventmanager';
+import {Firebase} from 'firebase';
 import {IController} from 'icontroller';
 import {Strings} from 'strings';
 import {Thread} from 'thread';
@@ -25,6 +26,7 @@ export {
 	Env,
 	Errors,
 	EventManager,
+	Firebase,
 	IController,
 	Strings,
 	Thread,

@@ -68,7 +68,7 @@ export class RatchetedChannel implements IChannel {
 					this.ratchetChannels(true);
 				}
 
-				Analytics.main.send({
+				Analytics.send({
 					hitType: 'event',
 					eventCategory: 'sqslag',
 					eventAction: 'detected',

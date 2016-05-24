@@ -292,7 +292,7 @@ export class P2P implements IP2P {
 							audio: true
 						});
 
-						Analytics.main.send({
+						Analytics.send({
 							hitType: 'event',
 							eventCategory: 'call',
 							eventAction: 'start',
