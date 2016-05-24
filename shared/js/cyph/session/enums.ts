@@ -34,7 +34,7 @@ export class Events {
 export const RPCEvents	= {
 	channelRatchet: 'channelRatchet',
 	destroy: 'destroy',
-	files: 'files', 
+	files: 'files',
 	mutex: 'mutex',
 	p2p: 'p2p',
 	text: 'text',

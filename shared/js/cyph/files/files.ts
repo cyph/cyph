@@ -31,14 +31,14 @@ export class Files implements IFiles {
 		key: Uint8Array,
 		callback: (plaintext: Uint8Array) => void
 	) : void {
-		
+
 	}
 
 	private encryptFile (
 		plaintext: Uint8Array,
 		callback: (cyphertext: Uint8Array, key: Uint8Array) => void
 	) : void {
-		
+
 	}
 
 	private receiveTransfer (transfer: ITransfer) : void {
@@ -73,7 +73,7 @@ export class Files implements IFiles {
 							transfer.percentComplete	= Math.max(
 								transfer.percentComplete,
 								85
-							); 
+							);
 
 							this.decryptFile(
 								new Uint8Array(cyphertext),
