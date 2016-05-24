@@ -188,17 +188,18 @@ cd ../../..
 cd ..
 
 rm -rf typings typings.json
-typings install --ambient --save \
-	systemjs \
-	jquery \
-	angular \
-	angular-material \
-	angular-animate \
-	webrtc/mediastream \
-	webrtc/rtcpeerconnection \
-	cryptojs \
-	dompurify \
-	es6-shim
+typings install --global --save \
+	dt~systemjs \
+	dt~jquery \
+	dt~angular \
+	dt~angular-material \
+	dt~angular-animate \
+	dt~highlightjs \
+	dt~webrtc/mediastream \
+	dt~webrtc/rtcpeerconnection \
+	dt~cryptojs \
+	dt~dompurify \
+	dt~es6-shim
 
 mkdir blog
 cd blog
