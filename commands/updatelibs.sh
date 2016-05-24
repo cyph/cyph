@@ -98,6 +98,7 @@ jspm install -y \
 	angular-material \
 	angular-aria \
 	angular-animate \
+	firebase \
 	npm:dompurify \
 	github:markdown-it/markdown-it \
 	github:markdown-it/markdown-it-sup \
@@ -194,6 +195,7 @@ typings install --global --save \
 	dt~angular \
 	dt~angular-material \
 	dt~angular-animate \
+	dt~firebase \
 	dt~highlightjs \
 	dt~webrtc/mediastream \
 	dt~webrtc/rtcpeerconnection \
