@@ -4,10 +4,10 @@ import {IChat} from 'ichat';
 import {ICyphertext} from 'icyphertext';
 import {IElements} from 'ielements';
 import {IP2PManager} from 'ip2pmanager';
-import {IPhotoManager} from 'iphotomanager';
+import {IFileManager} from 'ifilemanager';
 import {IScrollManager} from 'iscrollmanager';
 import {P2PManager} from 'p2pmanager';
-import {PhotoManager} from 'photomanager';
+import {FileManager} from 'filemanager';
 import {ScrollManager} from 'scrollmanager';
 import {Affiliate} from 'ui/affiliate';
 import {BaseButtonManager} from 'ui/basebuttonmanager';
@@ -34,10 +34,10 @@ export {
 	ICyphertext,
 	IElements,
 	IP2PManager,
-	IPhotoManager,
+	IFileManager,
 	IScrollManager,
 	P2PManager,
-	PhotoManager,
+	FileManager,
 	ScrollManager,
 	States
 };
@@ -65,7 +65,7 @@ export class Chat extends BaseButtonManager implements IChat {
 	}[]	= [];
 
 	public cyphertext: ICyphertext;
-	public photoManager: IPhotoManager;
+	public fileManager: IFileManager;
 	public p2pManager: IP2PManager;
 	public scrollManager: IScrollManager;
 	public session: Session.ISession;
@@ -296,7 +296,6 @@ export class Chat extends BaseButtonManager implements IChat {
 			messageList: this.rootElement.find(Elements.messageList.selector),
 			messageListInner: this.rootElement.find(Elements.messageListInner.selector),
 			p2pContainer: this.rootElement.find(Elements.p2pContainer.selector),
-			p2pFiles: this.rootElement.find(Elements.p2pFiles.selector),
 			p2pFriendPlaceholder: this.rootElement.find(Elements.p2pFriendPlaceholder.selector),
 			p2pFriendStream: this.rootElement.find(Elements.p2pFriendStream.selector),
 			p2pMeStream: this.rootElement.find(Elements.p2pMeStream.selector),
@@ -373,8 +372,10 @@ export class Chat extends BaseButtonManager implements IChat {
 			forceTURN
 		);
 
-		this.photoManager	= new PhotoManager(
+		this.fileManager	= new FileManager(
 			this,
+			this.controller,
+			this.dialogManager,
 			this.elements
 		);
 

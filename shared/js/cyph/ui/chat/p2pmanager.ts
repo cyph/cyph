@@ -40,13 +40,6 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 		this.controller.update();
 	}
 
-	public isInUse () : boolean {
-		return this.isPlaying() ||
-			!!this.p2p.incomingFile.name ||
-			!!this.p2p.outgoingFile.name
-		;
-	}
-
 	public isPlaying () : boolean {
 		return this.isActive &&
 		(
@@ -60,19 +53,6 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 		this.isActive	= true;
 		this.isEnabled	= true;
 		this.p2p.preemptivelyAccept();
-	}
-
-	public sendFileButton () : void {
-		this.baseButtonClick(() => {
-			if (this.isEnabled) {
-				if (!this.isActive) {
-					this.p2p.requestCall('file');
-				}
-				else {
-					this.p2p.sendFile();
-				}
-			}
-		});
 	}
 
 	public toggleSidebar () : void {
@@ -128,7 +108,7 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 
 
 		this.chat.session.on(
-			Session.Events.p2pUi,
+			Session.Events.p2pUI,
 			(e: {
 				category: P2P.UIEvents.Categories;
 				event: P2P.UIEvents.Events;
@@ -170,79 +150,6 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 								const isActive: boolean	= e.args[0];
 
 								this.toggle(isActive);
-								break;
-							}
-						}
-						break;
-					}
-					case P2P.UIEvents.Categories.file: {
-						switch (e.event) {
-							case P2P.UIEvents.Events.clear: {
-								this.elements.p2pFiles.each((i: number, elem: HTMLElement) =>
-									$(elem).val('')
-								);
-								break;
-							}
-							case P2P.UIEvents.Events.confirm: {
-								const name: string			= e.args[0];
-								const callback: Function	= e.args[1];
-
-								const title: string	= Strings.incomingFile + ' ' + name;
-
-								this.dialogManager.confirm({
-									title,
-									content: Strings.incomingFileWarning,
-									ok: Strings.save,
-									cancel: Strings.reject
-								}, (ok: boolean) => callback(ok, title));
-								break;
-							}
-							case P2P.UIEvents.Events.get: {
-								const callback: Function	= e.args[0];
-
-								const file: File	= $(this.elements.p2pFiles.selector).
-									toArray().
-									map((elem: HTMLInputElement) => elem.files || []).
-									reduce((a: File, b: FileList) => a || b[0], null)
-								;
-
-								callback(file);
-								break;
-							}
-							case P2P.UIEvents.Events.rejected: {
-								const title: string	= e.args[0];
-
-								this.dialogManager.alert({
-									title,
-									content: Strings.incomingFileReject,
-									ok: Strings.ok
-								});
-								break;
-							}
-							case P2P.UIEvents.Events.tooLarge: {
-								this.dialogManager.alert({
-									title: Strings.oopsTitle,
-									content: Strings.fileTooLarge,
-									ok: Strings.ok
-								});
-								break;
-							}
-							case P2P.UIEvents.Events.transferStarted: {
-								const user: Session.Users	= e.args[0];
-								const fileName: string		= e.args[1];
-
-								const isFromMe: boolean	= user === Session.Users.me;
-								const message: string	=
-									isFromMe ?
-										Strings.fileTransferInitMe :
-										Strings.fileTransferInitFriend
-								;
-
-								this.chat.addMessage(
-									message + ' ' + fileName,
-									Session.Users.app,
-									!isFromMe
-								);
 								break;
 							}
 						}

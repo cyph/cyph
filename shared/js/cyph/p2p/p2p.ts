@@ -1,6 +1,4 @@
 import {UIEvents} from 'enums';
-import {FileTransfer} from 'filetransfer';
-import {IFileTransfer} from 'ifiletransfer';
 import {IP2P} from 'ip2p';
 import {Analytics} from 'cyph/analytics';
 import {Config} from 'cyph/config';
@@ -9,13 +7,10 @@ import {IController} from 'cyph/icontroller';
 import {Timer} from 'cyph/timer';
 import {Util} from 'cyph/util';
 import {WebRTC} from 'cyph/webrtc';
-import {Potassium} from 'crypto/crypto';
 import * as Session from 'session/session';
 
 
 export {
-	FileTransfer,
-	IFileTransfer,
 	IP2P,
 	UIEvents
 };
@@ -27,8 +22,6 @@ export class P2P implements IP2P {
 		audio: 'audio',
 		closed: 'closed',
 		decline: 'decline',
-		file: 'file',
-		fileTransferComplete: 'fileTransferComplete',
 		kill: 'kill',
 		open: 'open',
 		receiveAnswer: 'receiveAnswer',
@@ -37,15 +30,12 @@ export class P2P implements IP2P {
 		setUpStream: 'setUpStream',
 		setUpStreamInit: 'setUpStreamInit',
 		streamOptions: 'streamOptions',
-		subspace: 'subspace',
 		video: 'video',
 		voice: 'voice'
 	};
 
 
-	private potassium: Potassium;
 	private mutex: Session.IMutex;
-	private channel: RTCDataChannel;
 	private peer: RTCPeerConnection;
 	private localStream: MediaStream;
 	private remoteStream: MediaStream;
@@ -172,8 +162,6 @@ export class P2P implements IP2P {
 
 	public incomingStream				= {audio: false, video: false, loading: false};
 	public outgoingStream				= {audio: false, video: false, loading: false};
-	public incomingFile: IFileTransfer	= new FileTransfer();
-	public outgoingFile: IFileTransfer	= new FileTransfer();
 
 	private initPeer (callback: Function = () => {}) : void {
 		if (this.peer) {
@@ -191,11 +179,9 @@ export class P2P implements IP2P {
 		}
 
 		Util.retryUntilComplete((retry: Function) => Util.request({
-			url: Env.baseUrl + Config.p2pConfig.iceServersEndpoint,
+			url: Env.baseUrl + 'iceservers',
 			error: retry,
 			success: (data: string) => {
-				let channel: RTCDataChannel;
-
 				let iceServers: RTCIceServer[]	= JSON.parse(data);
 				if (this.forceTURN) {
 					iceServers	= iceServers.filter(o => o['url'].indexOf('stun:') !== 0);
@@ -233,13 +219,6 @@ export class P2P implements IP2P {
 					}
 				};
 
-				peer.ondatachannel	= e => {
-					channel			= e['channel'];
-					this.channel	= channel;
-
-					this.setUpChannel();
-				};
-
 				peer.onicecandidate	= e => {
 					if (e.candidate) {
 						this.session.send(
@@ -268,14 +247,9 @@ export class P2P implements IP2P {
 
 						this.isAvailable	= false;
 						this.remoteStream	= null;
-						this.channel		= null;
 						this.peer			= null;
 
 						if (forceKill) {
-							if (channel) {
-								channel.close();
-							}
-
 							peer.close();
 						}
 
@@ -302,8 +276,7 @@ export class P2P implements IP2P {
 		}
 		else if (
 			command.method === P2P.constants.video ||
-			command.method === P2P.constants.voice ||
-			command.method === P2P.constants.file
+			command.method === P2P.constants.voice
 		) {
 			this.triggerUiEvent(
 				UIEvents.Categories.request,
@@ -316,7 +289,7 @@ export class P2P implements IP2P {
 						this.isAccepted	= true;
 						this.setUpStream({
 							video: command.method === P2P.constants.video,
-							audio: command.method !== P2P.constants.file
+							audio: true
 						});
 
 						Analytics.main.send({
@@ -340,153 +313,8 @@ export class P2P implements IP2P {
 		}
 	}
 
-	private receiveIncomingFile (data: ArrayBuffer[], name: string) : void {
-		this.triggerUiEvent(
-			UIEvents.Categories.file,
-			UIEvents.Events.confirm,
-			name,
-			(ok: boolean, title: string) => {
-				if (ok) {
-					Util.openUrl(
-						URL.createObjectURL(new Blob(data)),
-						name
-					);
-				}
-				else {
-					this.triggerUiEvent(
-						UIEvents.Categories.file,
-						UIEvents.Events.rejected,
-						title
-					);
-				}
-			}
-		);
-	}
-
 	private retryUntilComplete (f: Function) : void {
 		Util.retryUntilComplete(f, () => this.isAccepted);
-	}
-
-	private setUpChannel (shouldCreate?: boolean) : void {
-		if (!this.isAccepted) {
-			return;
-		}
-
-		if (shouldCreate) {
-			try {
-				this.channel	= this.peer.createDataChannel(
-					P2P.constants.subspace,
-					{
-						ordered: true
-					}
-				);
-			}
-			catch (_) {
-				setTimeout(() => this.setUpChannel(true), 500);
-				return;
-			}
-		}
-
-		this.channel.onmessage	= e => {
-			if (typeof e.data === 'string') {
-				if (e.data === P2P.constants.fileTransferComplete) {
-					if (this.incomingFile.pendingChunks === 0) {
-						const data: ArrayBuffer[]	= this.incomingFile.data;
-						const name: string			= this.incomingFile.name;
-
-						if (this.incomingFile.key) {
-							Potassium.clearMemory(this.incomingFile.key);
-						}
-
-						this.incomingFile.data				= null;
-						this.incomingFile.key				= null;
-						this.incomingFile.name				= '';
-						this.incomingFile.size				= 0;
-						this.incomingFile.readableSize		= '';
-						this.incomingFile.percentComplete	= 0;
-
-						this.controller.update();
-
-						if (data) {
-							this.receiveIncomingFile(data, name);
-						}
-					}
-					else {
-						setTimeout(() => this.channel.onmessage(e), 250);
-					}
-				}
-				else {
-					const data: string[]	= e.data.split('\n');
-
-					this.incomingFile.data	= [];
-					this.incomingFile.name	= data[0];
-					this.incomingFile.size	= parseInt(data[1], 10);
-					this.incomingFile.key	= Potassium.fromBase64(data[2]);
-
-					this.incomingFile.readableSize	=
-						Util.readableByteLength(
-							this.incomingFile.size
-						)
-					;
-
-					this.controller.update();
-
-					this.triggerUiEvent(
-						UIEvents.Categories.file,
-						UIEvents.Events.transferStarted,
-						Session.Users.friend,
-						this.incomingFile.name
-					);
-				}
-			}
-			else if (this.incomingFile.data) {
-				if (e.data instanceof ArrayBuffer) {
-					const index: number				= new Uint32Array(
-						e.data,
-						0,
-						1
-					)[0];
-
-					const encryptedData: Uint8Array	= new Uint8Array(
-						e.data,
-						4
-					);
-
-					this.potassium.SecretBox.open(
-						encryptedData,
-						this.incomingFile.key,
-						(plaintext: Uint8Array, err) => {
-							if (!err) {
-								this.incomingFile.data[index]	= plaintext.buffer;
-
-								this.incomingFile.percentComplete	=
-									this.incomingFile.data.length *
-										Config.p2pConfig.fileChunkSize /
-										this.incomingFile.size *
-										100
-								;
-
-								this.controller.update();
-							}
-						}
-					);
-				}
-				else {
-					++this.incomingFile.pendingChunks;
-
-					const reader: FileReader	= new FileReader();
-
-					reader.onloadend	= readerEvent => {
-						this.channel.onmessage({data: readerEvent.target['result']});
-						--this.incomingFile.pendingChunks;
-					};
-
-					reader.readAsArrayBuffer(e.data);
-				}
-			}
-		};
-
-		this.channel.onopen	= () => this.sendFile();
 	}
 
 	private triggerUiEvent(
@@ -494,7 +322,7 @@ export class P2P implements IP2P {
 		event: UIEvents.Events,
 		...args: any[]
 	) : void {
-		this.session.trigger(Session.Events.p2pUi, {category, event, args});
+		this.session.trigger(Session.Events.p2pUI, {category, event, args});
 	}
 
 	public close () : void {
@@ -525,7 +353,7 @@ export class P2P implements IP2P {
 							if (wasFirstOfType) {
 								this.isAccepted				= true;
 								this.outgoingStream.video	= callType === P2P.constants.video;
-								this.outgoingStream.audio	= callType !== P2P.constants.file;
+								this.outgoingStream.audio	= true;
 
 								this.session.send(
 									new Session.Message(
@@ -554,158 +382,6 @@ export class P2P implements IP2P {
 							this.mutex.unlock();
 						}
 					}, P2P.constants.requestCall);
-				}
-				else {
-					this.triggerUiEvent(
-						UIEvents.Categories.file,
-						UIEvents.Events.clear
-					);
-				}
-			}
-		);
-	}
-
-	public sendFile () : void {
-		if (
-			this.outgoingFile.name ||
-			!this.channel ||
-			this.channel.readyState !== P2P.constants.open
-		) {
-			return;
-		}
-
-		this.triggerUiEvent(
-			UIEvents.Categories.file,
-			UIEvents.Events.get,
-			(file: File) => {
-				this.triggerUiEvent(
-					UIEvents.Categories.file,
-					UIEvents.Events.clear
-				);
-
-
-				if (file) {
-					if (file.size > Config.p2pConfig.maxFileSize) {
-						this.triggerUiEvent(
-							UIEvents.Categories.file,
-							UIEvents.Events.tooLarge
-						);
-
-						Analytics.main.send({
-							hitType: 'event',
-							eventCategory: 'file',
-							eventAction: 'toolarge',
-							eventValue: 1
-						});
-
-						return;
-					}
-
-					Analytics.main.send({
-						hitType: 'event',
-						eventCategory: 'file',
-						eventAction: 'send',
-						eventValue: 1
-					});
-
-					this.triggerUiEvent(
-						UIEvents.Categories.file,
-						UIEvents.Events.transferStarted,
-						Session.Users.me,
-						file.name
-					);
-
-					this.channel.send(P2P.constants.fileTransferComplete);
-
-					const reader: FileReader	= new FileReader();
-
-					reader.onloadend	= e => {
-						const buf: ArrayBuffer	= e.target['result'];
-						let pos: number			= 0;
-
-						this.outgoingFile.name	= file.name;
-						this.outgoingFile.size	= buf.byteLength;
-
-						this.outgoingFile.key	= Potassium.randomBytes(
-							this.potassium.SecretBox.keyBytes
-						);
-
-						this.outgoingFile.readableSize	=
-							Util.readableByteLength(
-								this.outgoingFile.size
-							)
-						;
-
-						this.controller.update();
-
-						this.channel.send(
-							this.outgoingFile.name +
-							'\n' +
-							this.outgoingFile.size +
-							'\n' +
-							Potassium.toBase64(this.outgoingFile.key)
-						);
-
-						const timer: Timer	= new Timer(() => {
-							if (!this.isAccepted) {
-								timer.stop();
-								return;
-							}
-
-							const old: number	= pos;
-							pos += Config.p2pConfig.fileChunkSize;
-
-							this.potassium.SecretBox.seal(
-								new Uint8Array(buf.slice(old, pos)),
-								this.outgoingFile.key,
-								(encryptedData: Uint8Array, err) => {
-									if (err) {
-										pos -= Config.p2pConfig.fileChunkSize;
-									}
-									else {
-										const cyphertext: Uint8Array	= new Uint8Array(
-											4 + encryptedData.length
-										);
-
-										cyphertext.set(new Uint8Array(new Uint32Array([
-											old / Config.p2pConfig.fileChunkSize
-										]).buffer));
-
-										cyphertext.set(encryptedData, 4);
-
-										this.channel.send(cyphertext.buffer);
-									}
-
-									if (buf.byteLength > pos) {
-										this.outgoingFile.percentComplete	=
-											pos / buf.byteLength * 100
-										;
-
-										this.controller.update();
-									}
-									else {
-										timer.stop();
-
-										if (this.outgoingFile.key) {
-											Potassium.clearMemory(this.outgoingFile.key);
-										}
-
-										this.channel.send(P2P.constants.fileTransferComplete);
-
-										this.outgoingFile.key				= null;
-										this.outgoingFile.name				= '';
-										this.outgoingFile.size				= 0;
-										this.outgoingFile.readableSize		= '';
-										this.outgoingFile.percentComplete	= 0;
-
-										this.controller.update();
-									}
-								}
-							);
-						});
-					};
-
-					reader.readAsArrayBuffer(file);
 				}
 			}
 		);
@@ -785,8 +461,6 @@ export class P2P implements IP2P {
 							;
 
 							if (!offer) {
-								this.setUpChannel(true);
-
 								this.retryUntilComplete(retry =>
 									this.peer.createOffer(offer => {
 										/* http://www.kapejod.org/en/2014/05/28/ */
@@ -945,7 +619,6 @@ export class P2P implements IP2P {
 		private controller: IController,
 		private forceTURN: boolean
 	) {
-		this.potassium	= new Potassium();
 		this.mutex		= new Session.Mutex(this.session);
 
 		this.session.on(Session.Events.beginChat, () => {

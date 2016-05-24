@@ -34,6 +34,21 @@ export class EventManager {
 	}
 
 	/**
+	 * Attaches handler to event and removes after first execution.
+	 * @param event
+	 * @param handler
+	 */
+	public static one (event: string, handler: Function) : void {
+		let f: Function;
+		f	= data => {
+			EventManager.off(event, f);
+			handler(data);
+		};
+
+		EventManager.on(event, f);
+	}
+
+	/**
 	 * Triggers event.
 	 * @param event
 	 * @param data Note: If this contains a callback function, the event will not cross

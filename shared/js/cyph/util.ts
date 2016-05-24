@@ -212,18 +212,20 @@ export class Util {
 		data?: any;
 		error?: Function;
 		method?: string;
+		responseType?: string;
 		success?: Function;
 		timeout?: number;
 		url: string;
 	}) : void {
-		const async: boolean	= Util.getValue(o, 'async', true) !== false;
-		const error: Function	= Util.getValue(o, 'error', () => {});
-		const method: string	= Util.getValue(o, 'method', 'GET');
-		const success: Function	= Util.getValue(o, 'success', () => {});
-		const timeout: number	= Util.getValue(o, 'timeout', 0);
-		let contentType: string	= Util.getValue(o, 'contentType', 'application/x-www-form-urlencoded');
-		let data: any			= Util.getValue<any>(o, 'data', '');
-		let url: string			= o.url;
+		const async: boolean		= Util.getValue(o, 'async', true) !== false;
+		const error: Function		= Util.getValue(o, 'error', () => {});
+		const method: string		= Util.getValue(o, 'method', 'GET');
+		const responseType: string	= Util.getValue(o, 'responseType', '');
+		const success: Function		= Util.getValue(o, 'success', () => {});
+		const timeout: number		= Util.getValue(o, 'timeout', 0);
+		let contentType: string		= Util.getValue(o, 'contentType', 'application/x-www-form-urlencoded');
+		let data: any				= Util.getValue<any>(o, 'data', '');
+		let url: string				= o.url;
 
 		if (url.slice(-5) === '.json') {
 			contentType	= 'application/json';
@@ -271,6 +273,7 @@ export class Util {
 
 		try {
 			xhr.open(method, url, async);
+			xhr.responseType	= responseType;
 			xhr.setRequestHeader('Content-Type', contentType);
 			xhr.send(data);
 

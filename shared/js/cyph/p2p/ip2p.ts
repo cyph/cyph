@@ -1,6 +1,3 @@
-import {IFileTransfer} from 'ifiletransfer';
-
-
 /**
  * Manages P2P sessions.
  * @interface
@@ -11,12 +8,6 @@ export interface IP2P {
 
 	/** Description of outgoing data (passed directly into navigator.getUserMedia). */
 	outgoingStream: { audio: boolean; video: boolean; loading: boolean; };
-
-	/** Incoming file transfer. */
-	incomingFile: IFileTransfer;
-
-	/** Outgoing file transfer. */
-	outgoingFile: IFileTransfer;
 
 	/**
 	 * This kills the P2P session.
@@ -30,14 +21,9 @@ export interface IP2P {
 
 	/**
 	 * Sends a new P2P session request to the other party.
-	 * @param callType Requested session type ("video", "audio", or "file").
+	 * @param callType Requested session type ("video" or "audio").
 	 */
 	requestCall (callType: string) : void;
-
-	/**
-	 * Initiates a transfer of the currently selected file over the session.
-	 */
-	sendFile () : void;
 
 	/**
 	 * Sets up a new P2P session.

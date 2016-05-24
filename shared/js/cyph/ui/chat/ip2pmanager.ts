@@ -31,12 +31,6 @@ export interface IP2PManager {
 	enable () : void;
 
 	/**
-	 * Indicates whether a P2P session currently exists and is in active use
-	 * for any form of data transfer (file, audio, or video).
-	 */
-	isInUse () : boolean;
-
-	/**
 	 * Indicates whether the video call screen is to be displayed.
 	 */
 	isPlaying () : boolean;
@@ -45,11 +39,6 @@ export interface IP2PManager {
 	 * Preemptively initiates call, bypassing any prerequisite dialogs and button clicks.
 	 */
 	preemptivelyInitiate () : void;
-
-	/**
-	 * Attempts to send file, requesting new P2P session if necessary.
-	 */
-	sendFileButton () : void;
 
 	/**
 	 * Toggles visibility of sidebar containing chat UI.

@@ -23,7 +23,6 @@ export class Elements {
 	public static p2pFriendPlaceholder: JQuery;
 	public static p2pFriendStream: JQuery;
 	public static p2pMeStream: JQuery;
-	public static p2pFiles: JQuery;
 	public static sendButton: JQuery;
 	public static signupForm: JQuery;
 	public static timer: JQuery;
@@ -47,7 +46,6 @@ export class Elements {
 		Elements.p2pFriendPlaceholder	= $('.video-call .friend:not(.stream)');
 		Elements.p2pFriendStream		= $('.video-call .friend.stream');
 		Elements.p2pMeStream			= $('.video-call .me');
-		Elements.p2pFiles				= $('.send-file-button input[type="file"]');
 		Elements.sendButton				= $('.send-button');
 		Elements.signupForm				= $('.beta-signup-form');
 		Elements.timer					= $('.link-connection .timer');
