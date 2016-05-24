@@ -24,6 +24,7 @@ System.config({
     "dompurify": "npm:dompurify@0.7.4",
     "es5-shim": "github:es-shims/es5-shim@4.5.8",
     "es6-shim": "github:es-shims/es6-shim@0.35.1",
+    "firebase": "github:firebase/firebase-bower@3.0.0",
     "isagalaev/highlight.js": "github:isagalaev/highlight.js@9.4.0",
     "jquery": "npm:jquery@2.2.4",
     "jquery-legacy": "github:jquery/jquery@1.12.4",
