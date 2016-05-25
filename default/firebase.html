@@ -11,8 +11,27 @@
 		});
 
 
+		/* Due to a quirk of Firebase's implementation, this needs to be
+			manually maintained. If it becomes a problem, this could be
+			automated reasonably easily. */
+		var firebaseGetters	= [
+			'bytesTransferred',
+			'downloadURL',
+			'metadata',
+			'totalBytes'
+		];
+
+		var messageIds	= {};
 		function onmessage (e) {
 			try {
+				if (e.data.id) {
+					if (messageIds[e.data.id]) {
+						return;
+					}
+
+					messageIds[e.data.id]	= true;
+				}
+
 				if (!e.data.command) {
 					return;
 				}
@@ -32,19 +51,54 @@
 
 					var args	= command.args || [];
 
-					for (var i = 0 ; i < args.length ; ++i) {
-						var arg			= args[i];
+					args.forEach(function (arg, i) {
 						var callbackId	= arg && arg.callbackId;
 
 						if (callbackId) {
 							args[i]	= function () {
+								var values	= [];
+
+								var args	= JSON.parse(JSON.stringify(
+									arguments,
+									function (key, value) {
+										if (value instanceof Window || value instanceof Node) {
+											return;
+										}
+
+										if (value && typeof value === 'object') {
+											if (values.indexOf(value) > -1) {
+												return;
+											}
+											values.push(value);
+
+											var oldValue	= value;
+											value			= {};
+
+											for (var k in oldValue) {
+												value[k]	= oldValue[k];
+											}
+
+											for (var i = 0 ; i < firebaseGetters.length ; ++i) {
+												var k	= firebaseGetters[i];
+												var v	= oldValue[k];
+
+												if (v !== undefined) {
+													value[k]	= v;
+												}
+											}
+										}
+
+										return value;
+									}
+								));
+
 								e.source.postMessage({
 									callbackId: callbackId,
-									args: JSON.stringify(Array.prototype.slice.call(arguments))
+									args: Object.keys(args).sort().map(function (k) { return args[k] })
 								}, e.origin);
 							};
 						}
-					}
+					});
 
 					if (command.method !== false) {
 						commandTarget	= commandTarget[key].apply(commandTarget, args);

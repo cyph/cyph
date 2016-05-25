@@ -206,7 +206,7 @@ export class Files implements IFiles {
 
 					Firebase.call({ storage: {
 						ref: { args: [path],
-						put: { args: [cyphertext],
+						put: { args: [new Blob([cyphertext])],
 						on: { args: [
 							'state_changed',
 							snapshot => {

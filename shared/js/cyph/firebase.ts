@@ -33,9 +33,9 @@ export class Firebase {
 
 							step.args[i]	= {callbackId};
 
-							EventManager.one(
+							EventManager.on(
 								Firebase.eventPrefix + callbackId,
-								data => arg.apply(null, JSON.parse(data))
+								data => arg.apply(null, data)
 							);
 						}
 					});
@@ -47,10 +47,10 @@ export class Firebase {
 			}
 
 			try {
-				Firebase.frame.contentWindow.postMessage(
-					{command},
-					'*'
-				);
+				Firebase.frame.contentWindow.postMessage({
+					command,
+					id: Util.generateGuid()
+				}, '*');
 			}
 			catch (_) {}
 		}
