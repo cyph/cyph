@@ -343,25 +343,31 @@ export const Templates	= {
 						<md-item
 							class='progress'
 							ng-repeat='transfer in $this.fileManager.files.transfers'
-							layout='horizontal'
+							layout='row'
 						>
-							<span ng-show='transfer.isOutgoing' translate>Sending</span>
-							<span ng-hide='transfer.isOutgoing' translate>Receiving</span>
-							<span>
-								{{transfer.name}}
-								({{Cyph.Util.readableByteLength(transfer.size)}}):
-							</span>
-							<md-progress-linear
-								md-mode='determinate'
-								value='{{transfer.percentComplete}}'
-							></md-progress-linear>
+							<div layout='column' layout-align=' start' flex>
+								<div layout='row'>
+									<span ng-show='transfer.isOutgoing' translate>Sending</span>
+									<span ng-hide='transfer.isOutgoing' translate>Receiving</span>
+									&nbsp;
+									<span>
+										{{transfer.name}}
+										({{Cyph.Util.readableByteLength(transfer.size)}}):
+									</span>
+								</div>
+								<md-progress-linear
+									md-mode='determinate'
+									value='{{transfer.percentComplete}}'
+									layout='row'
+								></md-progress-linear>
+							</div>
 						</md-item>
 
 						<md-item
 							class='message-item unread'
 							ng-class='::"author-" + Cyph.Session.Users[message.author]'
 							ng-repeat='message in $this.messages'
-							layout='horizontal'
+							layout='row'
 						>
 							<span class='message'>
 								<strong
@@ -405,6 +411,7 @@ export const Templates	= {
 						<md-item
 							class='friend-is-typing'
 							ng-class='{"show": $this.isFriendTyping}'
+							layout='row'
 						>
 							<span class='ellipsis-spinner'>
 								<div class='bounce1'></div>
@@ -413,13 +420,17 @@ export const Templates	= {
 							</span>
 						</md-item>
 
-						<div ng-show='$this.isDisconnected' layout='row' layout-align='center center'>
+						<md-item
+							ng-show='$this.isDisconnected'
+							layout='row'
+							layout-align='center center'
+						>
 							<md-card flex='50' class='md-padding'>
 								<md-card-content>
 									<ng-transclude></ng-transclude>
 								</md-card-content>
 							</md-card>
-						</div>
+						</md-item>
 					</md-list>
 				</md-content>
 			</div>
