@@ -1,5 +1,3 @@
-/// <reference path="../../global/base.ts" />
-
 import {Command} from 'command';
 import {CastleEvents, Events, RPCEvents, State, ThreadedSessionEvents, Users} from 'enums';
 import {IMessage} from 'imessage';

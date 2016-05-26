@@ -4,8 +4,10 @@ import {ITransfer} from 'itransfer';
 import {Transfer} from 'transfer';
 import {Analytics} from 'cyph/analytics';
 import {Config} from 'cyph/config';
+import {EventManager} from 'cyph/eventmanager';
 import {Firebase} from 'cyph/firebase';
 import {IController} from 'cyph/icontroller';
+import {Thread} from 'cyph/thread';
 import {Util} from 'cyph/util';
 import {Potassium} from 'crypto/crypto';
 import * as Session from 'session/session';
@@ -23,6 +25,152 @@ export class Files implements IFiles {
 		locationData.protocol === 'https:'
 	;
 
+	private static cryptoThread (
+		locals: {
+			plaintext?: Uint8Array,
+			cyphertext?: Uint8Array,
+			key?: Uint8Array,
+			chunkSize?: number,
+			callbackId?: string
+		},
+		callback: Function
+	) {
+		locals.chunkSize	= Config.filesConfig.chunkSize;
+		locals.callbackId	= 'files-' + Util.generateGuid();
+
+		const thread	= new Thread((Cyph: any, locals: any, importScripts: Function) => {
+			importScripts('/lib/js/crypto/libsodium/dist/browsers-sumo/combined/sodium.min.js');
+			importScripts('/js/cyph/crypto/crypto.js');
+
+			System.import('cyph/crypto/crypto').then(Crypto => {
+				const potassium	= new Crypto.Potassium();
+
+				/* Encrypt */
+				if (locals.plaintext) {
+					const key: Uint8Array	= Crypto.Potassium.randomBytes(
+						potassium.SecretBox.keyBytes
+					);
+
+					const chunks: Uint8Array[]	= [];
+
+					let i: number	= 0;
+					Cyph.Util.retryUntilComplete(retry => {
+						if (i < locals.plaintext.length) {
+							potassium.SecretBox.seal(
+								new Uint8Array(
+									locals.plaintext.buffer,
+									i,
+									(locals.plaintext.length - i) > locals.chunkSize ?
+										locals.chunkSize :
+										undefined
+								),
+								key,
+								(chunk: Uint8Array, err: any) => {
+									if (err) {
+										Cyph.EventManager.trigger(
+											locals.callbackId,
+											[null, null, err]
+										);
+									}
+									else {
+										i += locals.chunkSize;
+										chunks.push(chunk);
+										retry(-1);
+									}
+								}
+							);
+						}
+						else {
+							const cyphertext	= new Uint8Array(
+								chunks.
+									map(chunk => chunk.length + 4).
+									reduce((a, b) => a + b, 0)
+							);
+
+							let j: number	= 0;
+							for (const chunk of chunks) {
+								cyphertext.set(
+									new Uint8Array(new Uint32Array([chunk.length]).buffer),
+									j
+								);
+								j += 4;
+
+								cyphertext.set(chunk, j);
+								j += chunk.length;
+							}
+
+							Cyph.EventManager.trigger(
+								locals.callbackId,
+								[cyphertext, key]
+							);
+						}
+					});
+				}
+				/* Decrypt */
+				else if (locals.cyphertext && locals.key) {
+					const chunks: Uint8Array[]	= [];
+
+					let i: number	= 0;
+					Cyph.Util.retryUntilComplete(retry => {
+						if (i < locals.cyphertext.length) {
+							const chunkSize: number	= new DataView(
+								locals.cyphertext.buffer,
+								i
+							).getUint32(0, true);
+
+							i += 4;
+
+							potassium.SecretBox.open(
+								new Uint8Array(
+									locals.cyphertext.buffer,
+									i,
+									chunkSize
+								),
+								locals.key,
+								(chunk: Uint8Array, err: any) => {
+									if (err) {
+										Cyph.EventManager.trigger(
+											locals.callbackId,
+											[null, err]
+										);
+									}
+									else {
+										i += chunkSize;
+										chunks.push(chunk);
+										retry(-1);
+									}
+								}
+							);
+						}
+						else {
+							const plaintext	= new Uint8Array(
+								chunks.
+									map(chunk => chunk.length).
+									reduce((a, b) => a + b, 0)
+							);
+
+							let j: number	= 0;
+							for (const chunk of chunks) {
+								plaintext.set(chunk, j);
+								j += chunk.length;
+							}
+
+							Cyph.EventManager.trigger(
+								locals.callbackId,
+								[plaintext]
+							);
+						}
+					});
+				}
+			});
+		}, locals);
+
+		EventManager.one(locals.callbackId, data => {
+			thread.stop();
+			callback.apply(this, data);
+		});
+	}
+
 
 	private nativePotassium: Potassium;
 
@@ -33,20 +181,18 @@ export class Files implements IFiles {
 		key: Uint8Array,
 		callback: (plaintext: Uint8Array) => void
 	) : void {
-		if (this.nativePotassium) {
-			this.nativePotassium.SecretBox.open(
-				cyphertext,
-				key,
-				(plaintext: Uint8Array, err: any) => {
-					callback(err ?
-						Potassium.fromString('File decryption failed.') :
-						plaintext
-					);
-				}
+		const f	= (plaintext: Uint8Array, err: any) => {
+			callback(err ?
+				Potassium.fromString('File decryption failed.') :
+				plaintext
 			);
+		};
+
+		if (this.nativePotassium) {
+			this.nativePotassium.SecretBox.open(cyphertext, key, f);
 		}
 		else {
-			throw new Error('Not implemented.');
+			Files.cryptoThread({cyphertext, key}, f);
 		}
 	}
 
@@ -54,6 +200,16 @@ export class Files implements IFiles {
 		plaintext: Uint8Array,
 		callback: (cyphertext: Uint8Array, key: Uint8Array) => void
 	) : void {
+		const f	= (cyphertext: Uint8Array, key: Uint8Array, err: any) => {
+			callback(
+				err ?
+					new Uint8Array(0) :
+					cyphertext
+				,
+				key
+			);
+		};
+
 		if (this.nativePotassium) {
 			const key: Uint8Array	= Potassium.randomBytes(
 				this.nativePotassium.SecretBox.keyBytes
@@ -62,19 +218,11 @@ export class Files implements IFiles {
 			this.nativePotassium.SecretBox.seal(
 				plaintext,
 				key,
-				(cyphertext: Uint8Array, err: any) => {
-					callback(
-						err ?
-							new Uint8Array(0) :
-							cyphertext
-						,
-						key
-					);
-				}
+				(cyphertext: Uint8Array, err: any) => f(cyphertext, key, err)
 			);
 		}
 		else {
-			throw new Error('Not implemented.');
+			Files.cryptoThread({plaintext}, f);
 		}
 	}
 
