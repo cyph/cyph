@@ -76,11 +76,7 @@ export class EventManager {
 			if (Env.isMainThread) {
 				for (const thread of Thread.threads) {
 					try {
-						thread.postMessage(
-							JSON.stringify(
-								{event, data, isThreadEvent: true}
-							)
-						);
+						thread.postMessage({event, data, isThreadEvent: true});
 					}
 					catch (_) {}
 				}
@@ -98,14 +94,7 @@ export class EventManager {
 		}
 		else {
 			self.onmessage	= (e: MessageEvent) => {
-				let data: any;
-
-				try {
-					data	= JSON.parse(e.data);
-				}
-				catch (_) {
-					data	= {};
-				}
+				const data: any	= e.data || {};
 
 				if (data.isThreadEvent) {
 					EventManager.trigger(data.event, data.data, true);

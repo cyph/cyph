@@ -268,6 +268,8 @@ export class Potassium {
 											Potassium.clearMemory(ntruPlaintext);
 											Potassium.clearMemory(ntruCyphertext);
 											Potassium.clearMemory(symmetricCyphertext);
+											Potassium.clearMemory(privateKey);
+											Potassium.clearMemory(publicKey);
 										}
 									}
 								);
@@ -307,11 +309,9 @@ export class Potassium {
 				}
 			}
 			catch (err) {
-				callback(undefined, err);
-			}
-			finally {
 				Potassium.clearMemory(privateKey);
 				Potassium.clearMemory(publicKey);
+				callback(undefined, err);
 			}
 		},
 
@@ -396,42 +396,51 @@ export class Potassium {
 							symmetricCyphertext,
 							symmetricKey,
 							(altCyphertext: Uint8Array, err: any) : void => {
+								const clear	= () => {
+									Potassium.clearMemory(privateKey);
+									Potassium.clearMemory(publicKey);
+									Potassium.clearMemory(cyphertext);
+									Potassium.clearMemory(ntruPlaintext);
+									Potassium.clearMemory(altCyphertext);
+								};
+
 								if (err) {
+									clear();
 									callback(undefined, err);
 									return;
 								}
 
-								try {
-									if (this.isNative) {
-										NativeCrypto.Box.open(
+								if (this.isNative) {
+									NativeCrypto.Box.open(
+										altCyphertext,
+										nonce,
+										publicKeys.alt,
+										privateKeys.alt,
+										(plaintext: Uint8Array, err: any) => {
+											clear();
+											callback(plaintext, err);
+										}
+									);
+								}
+								else {
+									let plaintext: Uint8Array;
+									try {
+										plaintext	= Potassium.Sodium.crypto_box_open_easy(
 											altCyphertext,
 											nonce,
 											publicKeys.alt,
-											privateKeys.alt,
-											callback
+											privateKeys.alt
 										);
 									}
-									else {
-										let plaintext: Uint8Array;
-										try {
-											plaintext	= Potassium.Sodium.crypto_box_open_easy(
-												altCyphertext,
-												nonce,
-												publicKeys.alt,
-												privateKeys.alt
-											);
-										}
-										catch (err) {
-											callback(undefined, err);
-											return;
-										}
-
-										callback(plaintext, undefined);
+									catch (err) {
+										callback(undefined, err);
+										return;
 									}
-								}
-								finally {
-									Potassium.clearMemory(ntruPlaintext);
-									Potassium.clearMemory(altCyphertext);
+									finally {
+										clear();
+									}
+
+									callback(plaintext, undefined);
 								}
 							}
 						);
@@ -439,12 +448,10 @@ export class Potassium {
 				);
 			}
 			catch (err) {
-				callback(undefined, err);
-			}
-			finally {
 				Potassium.clearMemory(privateKey);
 				Potassium.clearMemory(publicKey);
 				Potassium.clearMemory(cyphertext);
+				callback(undefined, err);
 			}
 		}
 	};
@@ -751,6 +758,7 @@ export class Potassium {
 					}
 					finally {
 						Potassium.clearMemory(paddedPlaintext);
+						Potassium.clearMemory(cyphertext);
 					}
 				};
 
@@ -775,10 +783,8 @@ export class Potassium {
 				}
 			}
 			catch (err) {
-				callback(undefined, err);
-			}
-			finally {
 				Potassium.clearMemory(cyphertext);
+				callback(undefined, err);
 			}
 		}
 	};
