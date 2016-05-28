@@ -4,10 +4,19 @@
  */
 export interface IP2P {
 	/** Description of incoming data. */
-	incomingStream: { audio: boolean; video: boolean; loading: boolean; };
+	incomingStream: { audio: boolean; video: boolean; };
+
+	/** Indicates whether session is currently loading. */
+	loading: boolean;
 
 	/** Description of outgoing data (passed directly into navigator.getUserMedia). */
-	outgoingStream: { audio: boolean; video: boolean; loading: boolean; };
+	outgoingStream: { audio: boolean; video: boolean; };
+
+	/**
+	 * Accepts current call request (or preemptively accepts future call requests,
+	 * disabling the confirmation dialog).
+	 */
+	accept () : void;
 
 	/**
 	 * This kills the P2P session.
@@ -15,21 +24,23 @@ export interface IP2P {
 	close () : void;
 
 	/**
-	 * Preemptively accepts future call requests, disabling the confirmation dialog.
+	 * Sets up a new P2P session.
 	 */
-	preemptivelyAccept () : void;
+	join () : void;
 
 	/**
-	 * Sends a new P2P session request to the other party.
+	 * Sends a new call request to the other party.
 	 * @param callType Requested session type ("video" or "audio").
 	 */
-	requestCall (callType: string) : void;
+	request (callType: string) : void;
 
 	/**
-	 * Sets up a new P2P session.
-	 * @param outgoingStream Optional "patch" for this.outgoingStream (any set
-	 * properties override this.outgoingStream; undefined ones are ignored).
-	 * @param offer Incoming session offer description (including shared secret).
+	 * Pauses all or a subset of the current outgoing stream.
+	 * @param shouldPause If not specified, will switch to the opposite
+	 * of the current state.
+	 * @param medium If specified ("video" or "audio"), will only pause
+	 * that subset of the stream. If not specified, the entire stream
+	 * will be affected.
 	 */
-	setUpStream (outgoingStream?: any, offer?: string) : void;
+	toggle (shouldPause?: boolean, medium?: string) : void;
 }

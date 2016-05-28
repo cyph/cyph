@@ -1,7 +1,6 @@
 import {Analytics} from 'analytics';
 import {Errors} from 'errors';
 import {UrlState} from 'urlstate';
-import {WebRTC} from 'webrtc';
 
 import * as Channel from 'channel/channel';
 import * as Crypto from 'crypto/crypto';
@@ -16,7 +15,6 @@ export {
 	Analytics,
 	Errors,
 	UrlState,
-	WebRTC,
 
 	Channel,
 	Crypto,

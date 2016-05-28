@@ -104,6 +104,7 @@ jspm install -y \
 	github:markdown-it/markdown-it-emoji \
 	github:isagalaev/highlight.js \
 	github:siddii/angular-timer@1.2.1 \
+	github:andyet/simplewebrtc \
 	npm:animate.css \
 	github:davidchambers/base64.js \
 	jquery \

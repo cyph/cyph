@@ -211,7 +211,7 @@ export const Templates	= {
 					class='friend'
 					ng-hide='
 						$this.p2pManager.p2p.incomingStream.video ||
-						$this.p2pManager.p2p.incomingStream.loading
+						$this.p2pManager.p2p.loading
 					'
 					ng-attr-src='{{
 						$this.p2pManager.isPlaying() ?
@@ -230,7 +230,7 @@ export const Templates	= {
 				></video>
 
 				<md-progress-circular
-					ng-show='$this.p2pManager.p2p.incomingStream.loading'
+					ng-show='$this.p2pManager.p2p.loading'
 					md-mode='indeterminate'
 				></md-progress-circular>
 

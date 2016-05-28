@@ -8,7 +8,7 @@ import {Util} from 'util';
  * Wraps the Firebase SDK in a sandboxed iframe.
  */
 export class Firebase {
-	private static eventPrefix: string	= 'firebase-';
+	private static eventPrefix: string	= 'firebase';
 	private static origin: string		= Env.baseUrl.slice(0, -1);
 
 	private static frame: HTMLIFrameElement;

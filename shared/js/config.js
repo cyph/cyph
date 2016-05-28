@@ -8,6 +8,7 @@ System.config({
   },
 
   map: {
+    "andyet/simplewebrtc": "github:andyet/simplewebrtc@2.1.0",
     "angular": "github:angular/bower-angular@1.5.5",
     "angular-animate": "github:angular/bower-angular-animate@1.5.5",
     "angular-aria": "github:angular/bower-angular-aria@1.5.5",

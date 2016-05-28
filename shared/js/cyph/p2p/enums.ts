@@ -7,8 +7,7 @@ export namespace UIEvents {
 	 */
 	export enum Categories {
 		base,
-		request,
-		stream
+		request
 	}
 
 	/**
@@ -25,10 +24,6 @@ export namespace UIEvents {
 		acceptConfirmation,
 		requestConfirm,
 		requestConfirmation,
-		requestRejection,
-
-		/* stream */
-		play,
-		set
+		requestRejection
 	}
 }

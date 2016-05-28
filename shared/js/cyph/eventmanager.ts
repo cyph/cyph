@@ -17,9 +17,11 @@ export class EventManager {
 	 * @param event
 	 * @param handler
 	 */
-	public static off (event: string, handler: Function) : void {
+	public static off (event: string, handler?: Function) : void {
 		EventManager.handlers[event]	=
-			(EventManager.handlers[event] || []).filter(f => f !== handler)
+			handler ?
+				(EventManager.handlers[event] || []).filter(f => f !== handler) :
+				undefined
 		;
 	}
 

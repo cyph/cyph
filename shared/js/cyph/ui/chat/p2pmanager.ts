@@ -52,7 +52,7 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 	public preemptivelyInitiate () : void {
 		this.isActive	= true;
 		this.isEnabled	= true;
-		this.p2p.preemptivelyAccept();
+		this.p2p.accept();
 	}
 
 	public toggleSidebar () : void {
@@ -65,10 +65,10 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 		this.baseButtonClick(() => {
 			if (this.isEnabled) {
 				if (!this.isActive) {
-					this.p2p.requestCall('video');
+					this.p2p.request(P2P.P2P.constants.video);
 				}
 				else {
-					this.p2p.setUpStream({video: !this.p2p.outgoingStream.video});
+					this.p2p.toggle(undefined, P2P.P2P.constants.video);
 				}
 			}
 		});
@@ -78,10 +78,10 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 		this.baseButtonClick(() => {
 			if (this.isEnabled) {
 				if (!this.isActive) {
-					this.p2p.requestCall('voice');
+					this.p2p.request(P2P.P2P.constants.audio);
 				}
 				else {
-					this.p2p.setUpStream({audio: !this.p2p.outgoingStream.audio});
+					this.p2p.toggle(undefined, P2P.P2P.constants.audio);
 				}
 			}
 		});
@@ -103,7 +103,13 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 	) {
 		super(controller, mobileMenu);
 
-		this.p2p	= new P2P.P2P(this.chat.session, this.controller, forceTURN);
+		this.p2p	= new P2P.P2P(
+			this.chat.session,
+			this.controller,
+			forceTURN,
+			this.elements.p2pMeStream[0],
+			this.elements.p2pFriendStream[0]
+		);
 
 
 
@@ -219,38 +225,6 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 									content: Strings.p2pDeny,
 									ok: Strings.ok
 								});
-								break;
-							}
-						}
-						break;
-					}
-					case P2P.UIEvents.Categories.stream: {
-						const user: Session.Users	= e.args[0];
-
-						const $stream: JQuery	=
-							user === Session.Users.me ?
-								this.elements.p2pMeStream :
-								user === Session.Users.friend ?
-									this.elements.p2pFriendStream :
-									this.elements.p2pFriendPlaceholder
-						;
-
-						switch (e.event) {
-							case P2P.UIEvents.Events.play: {
-								const shouldPlay: boolean	= e.args[1];
-
-								$stream[0][shouldPlay ? 'play' : 'pause']();
-								break;
-							}
-							case P2P.UIEvents.Events.set: {
-								const url: string	= e.args[1];
-
-								try {
-									URL.revokeObjectURL($stream.attr('src'));
-								}
-								catch (_) {}
-
-								$stream.attr('src', url);
 								break;
 							}
 						}
