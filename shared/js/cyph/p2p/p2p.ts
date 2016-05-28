@@ -266,9 +266,7 @@ export class P2P implements IP2P {
 					this.mutex.lock((wasFirst: boolean, wasFirstOfType: boolean) => {
 						try {
 							if (wasFirstOfType) {
-								this.isAccepted				= true;
-								this.outgoingStream.video	= callType === P2P.constants.video;
-								this.outgoingStream.audio	= true;
+								this.accept(callType);
 
 								this.session.send(
 									new Session.Message(
