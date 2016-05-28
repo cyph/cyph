@@ -204,7 +204,7 @@ export class P2P implements IP2P {
 											).
 											join('\n')
 										;
-									} 
+									}
 
 									callback.apply(this.webRTC, args);
 								}
