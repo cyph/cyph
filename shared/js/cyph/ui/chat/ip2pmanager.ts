@@ -28,11 +28,6 @@ export interface IP2PManager {
 	enable () : void;
 
 	/**
-	 * Indicates whether the video call screen is to be displayed.
-	 */
-	isPlaying () : boolean;
-
-	/**
 	 * Preemptively initiates call, bypassing any prerequisite dialogs and button clicks.
 	 */
 	preemptivelyInitiate () : void;

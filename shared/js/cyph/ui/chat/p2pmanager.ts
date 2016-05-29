@@ -34,14 +34,6 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 		this.controller.update();
 	}
 
-	public isPlaying () : boolean {
-		return this.p2p.isActive && (
-			this.p2p.outgoingStream.video ||
-			this.p2p.incomingStream.video ||
-			this.p2p.incomingStream.audio
-		);
-	}
-
 	public preemptivelyInitiate () : void {
 		this.isEnabled	= true;
 		this.p2p.accept();

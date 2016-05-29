@@ -110,7 +110,7 @@ export const Templates	= {
 		<div
 			class='chat-main platform-container'
 			ng-class='{
-				video: $this.p2pManager.isPlaying(),
+				video: $this.p2pManager.p2p.isActive,
 				mobile: $this.isMobile
 			}'
 			layout='column'
@@ -196,7 +196,7 @@ export const Templates	= {
 				flex
 				ng-class='{
 					active: $this.state === Cyph.UI.Chat.States.chat,
-					playing: $this.p2pManager.isPlaying()
+					playing: $this.p2pManager.p2p.isActive
 				}'
 			>
 				<a class='logo' rel='noreferrer' ng-href='{{Cyph.Env.homeUrl}}'>
@@ -214,7 +214,7 @@ export const Templates	= {
 						$this.p2pManager.p2p.loading
 					'
 					ng-attr-src='{{
-						$this.p2pManager.isPlaying() ?
+						$this.p2pManager.p2p.isActive ?
 							"/video/voicecall.mp4" :
 							" "
 					}}'
