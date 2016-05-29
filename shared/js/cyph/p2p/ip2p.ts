@@ -6,6 +6,9 @@ export interface IP2P {
 	/** Description of incoming data. */
 	incomingStream: { audio: boolean; video: boolean; };
 
+	/** Indicates whether a P2P session currently exists. */
+	isActive: boolean;
+
 	/** Indicates whether session is currently loading. */
 	loading: boolean;
 

@@ -6,9 +6,6 @@ import * as P2P from 'p2p/p2p';
  * @interface
  */
 export interface IP2PManager {
-	/** Indicates whether a P2P session currently exists. */
-	isActive: boolean;
-
 	/** Indicates whether P2P is possible (i.e. both clients support WebRTC). */
 	isEnabled: boolean;
 

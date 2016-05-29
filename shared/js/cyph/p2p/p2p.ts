@@ -31,7 +31,6 @@ export class P2P implements IP2P {
 
 
 	private isAccepted: boolean;
-	private isAvailable: boolean;
 	private mutex: Session.IMutex;
 	private webRTC: any;
 
@@ -52,13 +51,7 @@ export class P2P implements IP2P {
 		kill: () : void => {
 			const wasAccepted: boolean	= this.isAccepted;
 			this.isAccepted				= false;
-			this.isAvailable			= false;
-
-			this.triggerUiEvent(
-				UIEvents.Categories.base,
-				UIEvents.Events.videoToggle,
-				false
-			);
+			this.isActive				= false;
 
 			setTimeout(() => {
 				for (const o of [this.outgoingStream, this.incomingStream]) {
@@ -88,10 +81,11 @@ export class P2P implements IP2P {
 		}
 	};
 
-	public loading: boolean;
-
 	public incomingStream	= {audio: false, video: false};
 	public outgoingStream	= {audio: false, video: false};
+
+	public isActive: boolean;
+	public loading: boolean;
 
 	private receiveCommand (command: Session.Command) : void {
 		if (!P2P.isSupported) {
@@ -165,10 +159,11 @@ export class P2P implements IP2P {
 	}
 
 	public join () : void {
-		for (const k of Object.keys(this.incomingStream)) {
-			this.outgoingStream[k]	= this.incomingStream[k];
+		for (const k of Object.keys(this.outgoingStream)) {
+			this.incomingStream[k]	= this.outgoingStream[k];
 		}
 
+		this.isActive	= true;
 		this.loading	= true;
 		this.controller.update();
 
@@ -180,9 +175,10 @@ export class P2P implements IP2P {
 
 				this.webRTC	= new self['SimpleWebRTC']({
 					localVideoEl: this.localVideo,
-					remoteVideoEl: this.remoteVideo,
+					remoteVideosEl: this.remoteVideo,
 					autoRequestMedia: true,
 					autoRemoveVideos: false,
+					adjustPeerVolume: true,
 					media: this.outgoingStream,
 					connection: {
 						on: (event: string, callback: Function) => {
@@ -210,16 +206,27 @@ export class P2P implements IP2P {
 								}
 							);
 						},
-						emit: (event: string, ...args: any[]) => this.session.send(
-							new Session.Message(
-								Session.RPCEvents.p2p,
-								new Session.Command(
-									P2P.constants.webRTC,
-									{event, args}
-								)
-							)
-						),
-						getSessionId: () => this.session.state.cyphId,
+						emit: (event: string, ...args: any[]) => {
+							const lastArg: any	= args.slice(-1)[0];
+
+							if (event === 'join' && typeof lastArg === 'function') {
+								lastArg(null, {clients: {friend:
+									this.incomingStream.video ? {video: true} : {audio: true}
+								}});
+							}
+							else {
+								this.session.send(
+									new Session.Message(
+										Session.RPCEvents.p2p,
+										new Session.Command(
+											P2P.constants.webRTC,
+											{event, args}
+										)
+									)
+								);
+							}
+						},
+						getSessionid: () => this.session.state.cyphId,
 						disconnect: () => events.forEach(event => EventManager.off(event))
 					}
 				});
@@ -228,15 +235,6 @@ export class P2P implements IP2P {
 					JSON.parse(iceServers).
 					filter(o => !this.forceTURN || o['url'].indexOf('stun:') !== 0)
 				;
-
-				this.webRTC.on('readyToCall', () => {
-					this.isAvailable	= true;
-
-					this.webRTC.joinRoom(P2P.constants.webRTC, () => {
-						this.loading	= false;
-						this.controller.update();
-					});
-				});
 
 				const toggle	= (stream, enabled: boolean, medium: string) => {
 					if (medium in stream) {
@@ -251,6 +249,15 @@ export class P2P implements IP2P {
 				this.webRTC.on('audioOff', data => toggle(this.outgoingStream, false, 'audio'));
 				this.webRTC.on('videoOn', data => toggle(this.outgoingStream, true, 'video'));
 				this.webRTC.on('videoOff', data => toggle(this.outgoingStream, false, 'video'));
+
+				this.webRTC.on('readyToCall', () =>
+					this.webRTC.joinRoom(P2P.constants.webRTC, () => {
+						this.loading	= false;
+						this.controller.update();
+					})
+				);
+
+				this.webRTC.connection.emit('connect');
 			}
 		}));
 	}
@@ -285,7 +292,7 @@ export class P2P implements IP2P {
 								/* Time out if request hasn't been
 									accepted within 10 minutes */
 								setTimeout(() => {
-									if (!this.isAvailable) {
+									if (!this.isActive) {
 										this.isAccepted	= false;
 									}
 								}, 600000);

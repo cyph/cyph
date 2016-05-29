@@ -11,15 +11,9 @@ import * as Session from 'session/session';
 
 
 export class P2PManager extends BaseButtonManager implements IP2PManager {
-	public isActive: boolean	= false;
 	public isEnabled: boolean	= false;
 
 	public p2p: P2P.IP2P;
-
-	private toggle (isActive: boolean) : void {
-		this.isActive	= isActive;
-		this.controller.update();
-	}
 
 	public closeButton () : void {
 		this.baseButtonClick(() => this.p2p.close());
@@ -41,8 +35,7 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 	}
 
 	public isPlaying () : boolean {
-		return this.isActive &&
-		(
+		return this.p2p.isActive && (
 			this.p2p.outgoingStream.video ||
 			this.p2p.incomingStream.video ||
 			this.p2p.incomingStream.audio
@@ -50,7 +43,6 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 	}
 
 	public preemptivelyInitiate () : void {
-		this.isActive	= true;
 		this.isEnabled	= true;
 		this.p2p.accept();
 	}
@@ -64,7 +56,7 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 	public videoCallButton () : void {
 		this.baseButtonClick(() => {
 			if (this.isEnabled) {
-				if (!this.isActive) {
+				if (!this.p2p.isActive) {
 					this.p2p.request(P2P.P2P.constants.video);
 				}
 				else {
@@ -77,7 +69,7 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 	public voiceCallButton () : void {
 		this.baseButtonClick(() => {
 			if (this.isEnabled) {
-				if (!this.isActive) {
+				if (!this.p2p.isActive) {
 					this.p2p.request(P2P.P2P.constants.audio);
 				}
 				else {
@@ -150,12 +142,6 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 							}
 							case P2P.UIEvents.Events.enable: {
 								this.enable();
-								break;
-							}
-							case P2P.UIEvents.Events.videoToggle: {
-								const isActive: boolean	= e.args[0];
-
-								this.toggle(isActive);
 								break;
 							}
 						}

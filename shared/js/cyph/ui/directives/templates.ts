@@ -202,11 +202,11 @@ export const Templates	= {
 				<a class='logo' rel='noreferrer' ng-href='{{Cyph.Env.homeUrl}}'>
 					<img src='/img/betalogo.mobile.png' alt='Beta logo' />
 				</a>
-				<video
+				<div
 					class='friend stream'
 					ng-show='$this.p2pManager.p2p.incomingStream.video'
 					autoplay
-				></video>
+				></div>
 				<video
 					class='friend'
 					ng-hide='
@@ -255,18 +255,12 @@ export const Templates	= {
 						}}'
 					>
 						<img
-							ng-show='
-								!$this.p2pManager.isActive ||
-								!$this.p2pManager.p2p.outgoingStream.video
-							'
+							ng-show='!$this.p2pManager.p2p.outgoingStream.video'
 							src='/img/icons/video.on.png'
 							alt='Video on'
 						/>
 						<img
-							ng-show='
-								$this.p2pManager.isActive &&
-								$this.p2pManager.p2p.outgoingStream.video
-							'
+							ng-show='$this.p2pManager.p2p.outgoingStream.video'
 							src='/img/icons/video.off.png'
 							alt='Video off'
 						/>
@@ -282,23 +276,12 @@ export const Templates	= {
 						}}'
 					>
 						<img
-							ng-show='!$this.p2pManager.isActive'
-							src='/img/icons/voice.on.png'
-							alt='Voice on'
-						/>
-						<img
-							ng-show='
-								$this.p2pManager.isActive &&
-								!$this.p2pManager.p2p.outgoingStream.audio
-							'
+							ng-show='!$this.p2pManager.p2p.outgoingStream.audio'
 							src='/img/icons/mic.on.png'
 							alt='Mic on'
 						/>
 						<img
-							ng-show='
-								$this.p2pManager.isActive &&
-								$this.p2pManager.p2p.outgoingStream.audio
-							'
+							ng-show='$this.p2pManager.p2p.outgoingStream.audio'
 							src='/img/icons/mic.off.png'
 							alt='Mic off'
 						/>
