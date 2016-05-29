@@ -186,6 +186,13 @@ node tools/build.js :common
 rm -rf node_modules
 cd ../../..
 
+cd github/andyet/simplewebrtcjs@*
+sed -i "s|require('./socketioconnection')|null|g" simplewebrtc.js
+npm install
+node build.js
+rm -rf node_modules
+cd ../../..
+
 cd ..
 
 rm -rf typings typings.json
