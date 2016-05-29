@@ -116,11 +116,11 @@ export class Config {
 		}
 	};
 
-	/** P2P-related config (used by P2P.P2P). */
-	public static p2pConfig	= {
-		fileChunkSize: 1024,
-		maxFileSize: 1100000000,
-		iceServersEndpoint: 'iceservers'
+	/** File-transfer-related config (used by Files.Files). */
+	public static filesConfig	= {
+		chunkSize: 67108864,
+		maxImageWidth: 1920,
+		maxSize: 268435456
 	};
 
 	/** Notifier-related config (used by UI.Notifier). */
@@ -128,11 +128,6 @@ export class Config {
 		title: 'Cyph',
 		icon: '/img/favicon/apple-touch-icon-180x180.png',
 		audio: '/audio/beep.mp3'
-	};
-
-	/** Photo-related config (used by UI.Chat.PhotoManager). */
-	public static photoConfig	= {
-		maxWidth: 1920
 	};
 
 	/** WebSign-related config. */

@@ -175,9 +175,26 @@ input, textarea {
 
 		@include transition(opacity 1s ease-in-out);
 
-		.ellipsis-spinner > div {
-			width: 8px;
-			height: 8px;
+		.ellipsis-spinner {
+			margin: 0px;
+
+			.chat-main.mobile & {
+				margin: auto;
+			}
+
+			> div {
+				width: 8px;
+				height: 8px;
+			}
+		}
+	}
+
+	.progress {
+		padding: 5px;
+
+		md-progress-linear {
+			padding: 20px;
+			padding-top: 0px;
 		}
 	}
 
@@ -416,18 +433,6 @@ html:not(.mobile) {
 		button {
 			margin: 5px;
 		}
-
-		.video-call-button {
-			// margin-left: 30px;
-			// margin-right: 10px;
-	
-		}
-
-		.send-file-button {
-			// margin-left: 58px;
-			// margin-top: 5px;
-	
-		}
 	}
 }
 
@@ -448,6 +453,14 @@ html.mobile button[disabled] {
 
 		.friend {
 			height: 100%;
+
+			> video {
+				position: absolute;
+				top: 0px;
+				left: 0px;
+				width: 100%;
+				height: 100%;
+			}
 		}
 
 		.me {
@@ -481,16 +494,6 @@ html.mobile button[disabled] {
 
 			video, md-progress-circular {
 				display: none !important;
-			}
-		}
-
-		> .progress {
-			padding-top: 10px;
-
-			md-progress-linear {
-				margin-left: 25px;
-				padding-right: 100px;
-				padding-bottom: 20px;
 			}
 		}
 	}

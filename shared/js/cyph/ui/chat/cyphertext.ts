@@ -62,7 +62,7 @@ export class Cyphertext extends BaseButtonManager implements ICyphertext {
 					}, () => {
 						this.elements.everything.addClass(this.curtainClass);
 
-						Analytics.main.send({
+						Analytics.send({
 							hitType: 'event',
 							eventCategory: 'cyphertext',
 							eventAction: 'show',

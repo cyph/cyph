@@ -7,9 +7,7 @@ export namespace UIEvents {
 	 */
 	export enum Categories {
 		base,
-		file,
-		request,
-		stream
+		request
 	}
 
 	/**
@@ -21,23 +19,11 @@ export namespace UIEvents {
 		enable,
 		videoToggle,
 
-		/* file */
-		clear,
-		confirm,
-		get,
-		rejected,
-		tooLarge,
-		transferStarted,
-
 		/* request */
 		acceptConfirm,
 		acceptConfirmation,
 		requestConfirm,
 		requestConfirmation,
-		requestRejection,
-
-		/* stream */
-		play,
-		set
+		requestRejection
 	}
 }

@@ -104,6 +104,7 @@ jspm install -y \
 	github:markdown-it/markdown-it-emoji \
 	github:isagalaev/highlight.js \
 	github:siddii/angular-timer@1.2.1 \
+	github:andyet/simplewebrtc \
 	npm:animate.css \
 	github:davidchambers/base64.js \
 	jquery \
@@ -120,7 +121,6 @@ jspm install -y \
 	braintree=github:braintree/braintree-web \
 	es5-shim \
 	es6-shim \
-	crypto/libsodium=github:jedisct1/libsodium.js \
 	crypto/ntru=github:cyph/ntru.js \
 	crypto/supersphincs=github:cyph/supersphincs.js \
 	crypto/isaac=github:rubycon/isaac.js \
@@ -169,6 +169,16 @@ cd lib/js
 
 sed -i 's/^\/dist$//' jquery-legacy/.gitignore
 
+cd crypto
+git clone --recursive https://github.com/jedisct1/libsodium.js libsodium
+cd libsodium
+make libsodium/configure
+sed -i 's|ln |cp |g' Makefile
+sed -i 's|TOTAL_MEMORY_SUMO=35000000|TOTAL_MEMORY_SUMO=150000000|g' libsodium/dist-build/emscripten.sh
+make
+rm -rf .git* *.tmp API.md browsers-test test libsodium
+cd ../..
+
 cd github/isagalaev/highlight.js@*
 sed -i 's/^build$//' .gitignore
 npm install
@@ -176,21 +186,28 @@ node tools/build.js :common
 rm -rf node_modules
 cd ../../..
 
+cd github/andyet/simplewebrtcjs@*
+sed -i "s|require('./socketioconnection')|null|g" simplewebrtc.js
+npm install
+node build.js
+rm -rf node_modules
+cd ../../..
+
 cd ..
 
 rm -rf typings typings.json
-typings install --ambient --save \
-	systemjs \
-	jquery \
-	angular \
-	angular-material \
-	angular-animate \
-	highlightjs \
-	webrtc/mediastream \
-	webrtc/rtcpeerconnection \
-	cryptojs \
-	dompurify \
-	es6-shim
+typings install --global --save \
+	dt~systemjs \
+	dt~jquery \
+	dt~angular \
+	dt~angular-material \
+	dt~angular-animate \
+	dt~highlightjs \
+	dt~webrtc/mediastream \
+	dt~webrtc/rtcpeerconnection \
+	dt~cryptojs \
+	dt~dompurify \
+	dt~es6-shim
 
 mkdir blog
 cd blog
@@ -213,7 +230,6 @@ mkdir gorilla
 cd gorilla
 git clone git://github.com/gorilla/context.git
 git clone git://github.com/gorilla/mux.git
-git clone git://github.com/gorilla/securecookie.git
 cd ..
 
 mkdir lionelbarrow
@@ -225,25 +241,10 @@ func (g *Braintree) SetHTTPClient(client *http.Client) {
 }' >> braintree-go/braintree.go # Temporary workaround for GAE support
 cd ..
 
-mkdir justinas
-cd justinas
-git clone git://github.com/justinas/nosurf.git
-rm -rf nosurf/examples
-cd ..
-
 mkdir microcosm-cc
 cd microcosm-cc
 git clone git://github.com/microcosm-cc/bluemonday.git
 cd ..
-
-cd ..
-
-rm -rf gopkg.in 2> /dev/null
-mkdir gopkg.in
-cd gopkg.in
-
-git clone git://github.com/go-authboss/authboss.git authboss.v0
-rm -rf authboss.v0/oauth2
 
 cd ..
 
@@ -253,14 +254,10 @@ cd golang.org/x
 
 git clone git://github.com/golang/net.git
 cd net
-rm -rf !(AUTHORS|CONTRIBUTING.md|CONTRIBUTORS|LICENSE|PATENTS|README|html|context)
+rm -rf !(AUTHORS|CONTRIBUTING.md|CONTRIBUTORS|LICENSE|PATENTS|README|html)
 cd ..
 
-git clone git://github.com/golang/crypto.git
-git clone git://github.com/golang/oauth2.git
 git clone git://github.com/golang/text.git
-
-rm -rf oauth2/client_appengine.go oauth2/google
 
 cd ../..
 

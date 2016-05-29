@@ -18,7 +18,7 @@ export const Strings = {
 	disconnectWarning: `After closing Cyph, your messages will no longer be retrievable.`,
 	disconnectedNotification: `This cyph has been disconnected.`,
 	fileCall: `file transfer`,
-	fileTooLarge: `The file that you are trying to send exceeds the 1 GB attachment limit.`,
+	fileTooLarge: `The file that you are trying to send exceeds the 250 MB attachment limit.`,
 	fileTransferInitMe: `You are sending the file:`,
 	fileTransferInitFriend: `Your friend is sending the file:`,
 	incomingFile: `Incoming File:`,

@@ -10,7 +10,6 @@ export interface IElements {
 	messageList: JQuery;
 	messageListInner: JQuery;
 	p2pContainer: JQuery;
-	p2pFiles: JQuery;
 	p2pFriendPlaceholder: JQuery;
 	p2pFriendStream: JQuery;
 	p2pMeStream: JQuery;

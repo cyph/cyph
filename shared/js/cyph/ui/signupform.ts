@@ -43,7 +43,7 @@ export class SignupForm implements ISignupForm {
 
 			this.sendyRequest('subscribe', (response: string) => {
 				if (response === '1') {
-					Analytics.main.send({
+					Analytics.send({
 						hitType: 'event',
 						eventCategory: 'signup',
 						eventAction: 'new',
@@ -51,7 +51,7 @@ export class SignupForm implements ISignupForm {
 					});
 
 					if (this.promo) {
-						Analytics.main.send({
+						Analytics.send({
 							hitType: 'social',
 							socialNetwork: 'promo-' + this.promo,
 							socialAction: 'signup',

@@ -17,9 +17,11 @@ export class EventManager {
 	 * @param event
 	 * @param handler
 	 */
-	public static off (event: string, handler: Function) : void {
+	public static off (event: string, handler?: Function) : void {
 		EventManager.handlers[event]	=
-			(EventManager.handlers[event] || []).filter(f => f !== handler)
+			handler ?
+				(EventManager.handlers[event] || []).filter(f => f !== handler) :
+				undefined
 		;
 	}
 
@@ -31,6 +33,21 @@ export class EventManager {
 	public static on (event: string, handler: Function) : void {
 		EventManager.handlers[event]	= EventManager.handlers[event] || [];
 		EventManager.handlers[event].push(handler);
+	}
+
+	/**
+	 * Attaches handler to event and removes after first execution.
+	 * @param event
+	 * @param handler
+	 */
+	public static one (event: string, handler: Function) : void {
+		let f: Function;
+		f	= data => {
+			EventManager.off(event, f);
+			handler(data);
+		};
+
+		EventManager.on(event, f);
 	}
 
 	/**
@@ -61,11 +78,7 @@ export class EventManager {
 			if (Env.isMainThread) {
 				for (const thread of Thread.threads) {
 					try {
-						thread.postMessage(
-							JSON.stringify(
-								{event, data, isThreadEvent: true}
-							)
-						);
+						thread.postMessage({event, data, isThreadEvent: true});
 					}
 					catch (_) {}
 				}
@@ -83,14 +96,7 @@ export class EventManager {
 		}
 		else {
 			self.onmessage	= (e: MessageEvent) => {
-				let data: any;
-
-				try {
-					data	= JSON.parse(e.data);
-				}
-				catch (_) {
-					data	= {};
-				}
+				const data: any	= e.data || {};
 
 				if (data.isThreadEvent) {
 					EventManager.trigger(data.event, data.data, true);

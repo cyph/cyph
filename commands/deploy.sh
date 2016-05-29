@@ -55,11 +55,6 @@ if [ $simple ] ; then
 fi
 
 
-# Authboss views (primarily email templates)
-rm -rf default/gopkg.in/authboss.v0/internal/response/templates
-mv default/views default/gopkg.in/authboss.v0/internal/response/templates
-
-
 if [ ! $simple ] ; then
 	defaultHeadersString='# default_headers'
 	defaultHeaders="$(cat headers.yaml)"

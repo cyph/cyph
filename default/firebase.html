@@ -1,0 +1,119 @@
+<html><body>
+
+<script src='https://www.gstatic.com/firebasejs/live/3.0/firebase.js'></script>
+<script>
+	try {
+		firebase.initializeApp({
+			apiKey: 'AIzaSyB7B8i8AQPtgMXS9o6zbfX1Vv-PwW2Q0Jo',
+			authDomain: 'cyphme.firebaseapp.com',
+			databaseURL: 'https://cyphme.firebaseio.com',
+			storageBucket: 'cyphme.appspot.com'
+		});
+
+
+		/* Due to a quirk of Firebase's implementation, this needs to be
+			manually maintained. If it becomes a problem, this could be
+			automated reasonably easily. */
+		var firebaseGetters	= [
+			'bytesTransferred',
+			'downloadURL',
+			'metadata',
+			'totalBytes'
+		];
+
+		var messageIds	= {};
+		function onmessage (e) {
+			try {
+				if (e.data.id) {
+					if (messageIds[e.data.id]) {
+						return;
+					}
+
+					messageIds[e.data.id]	= true;
+				}
+
+				if (!e.data.command) {
+					return;
+				}
+
+				var command			= e.data.command;
+				var commandTarget	= firebase;
+
+				while (command) {
+					var key	= Object.keys(command).filter(function (k) {
+						return k !== 'args' && k !== 'method';
+					})[0];
+
+					command	= command[key];
+					if (!command) {
+						break;
+					}
+
+					var args	= command.args || [];
+
+					args.forEach(function (arg, i) {
+						var callbackId	= arg && arg.callbackId;
+
+						if (callbackId) {
+							args[i]	= function () {
+								var values	= [];
+
+								var args	= JSON.parse(JSON.stringify(
+									arguments,
+									function (key, value) {
+										if (value instanceof Window || value instanceof Node) {
+											return;
+										}
+
+										if (value && typeof value === 'object') {
+											if (values.indexOf(value) > -1) {
+												return;
+											}
+											values.push(value);
+
+											var oldValue	= value;
+											value			= {};
+
+											for (var k in oldValue) {
+												value[k]	= oldValue[k];
+											}
+
+											for (var i = 0 ; i < firebaseGetters.length ; ++i) {
+												var k	= firebaseGetters[i];
+												var v	= oldValue[k];
+
+												if (v !== undefined) {
+													value[k]	= v;
+												}
+											}
+										}
+
+										return value;
+									}
+								));
+
+								e.source.postMessage({
+									callbackId: callbackId,
+									args: Object.keys(args).sort().map(function (k) { return args[k] })
+								}, e.origin);
+							};
+						}
+					});
+
+					if (command.method !== false) {
+						commandTarget	= commandTarget[key].apply(commandTarget, args);
+					}
+					else {
+						commandTarget	= commandTarget[key];
+					}
+				}
+			}
+			catch (_) {}
+		}
+
+		window.addEventListener('message', onmessage, false);
+	}
+	catch (_) {}
+</script>
+
+</body></html>

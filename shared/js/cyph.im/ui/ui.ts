@@ -61,9 +61,8 @@ export class UI extends Cyph.UI.BaseButtonManager {
 				Cyph.Env.cyphAudioBaseUrl
 			;
 
-			if (!Cyph.WebRTC.isSupported) {
-				/* If unsupported, warn and then close window */
-
+			/* If unsupported, warn and then close window */
+			if (!Cyph.P2P.P2P.isSupported) {
 				this.dialogManager.alert({
 					title: Cyph.Strings.p2pTitle,
 					content: Cyph.Strings.p2pDisabledLocal,
@@ -112,7 +111,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 			;
 
 			if (initialCallType && this.chat.session.state.isCreator) {
-				this.chat.p2pManager.p2p.requestCall(initialCallType);
+				this.chat.p2pManager.p2p.request(initialCallType);
 			}
 		});
 

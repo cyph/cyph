@@ -21,9 +21,10 @@ export class Events {
 	public static connect: string			= 'connect';
 	public static connectFailure: string	= 'connectFailure';
 	public static cyphertext: string		= 'cyphertext';
+	public static filesUI: string			= 'filesUI';
 	public static newChannel: string		= 'newChannel';
 	public static newCyph: string			= 'newCyph';
-	public static p2pUi: string				= 'p2pUi';
+	public static p2pUI: string				= 'p2pUI';
 	public static pingPongTimeout: string	= 'pingPongTimeout';
 }
 
@@ -33,6 +34,7 @@ export class Events {
 export const RPCEvents	= {
 	channelRatchet: 'channelRatchet',
 	destroy: 'destroy',
+	files: 'files',
 	mutex: 'mutex',
 	p2p: 'p2p',
 	text: 'text',

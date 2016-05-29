@@ -82,7 +82,21 @@ export class CastleCore {
 		/* Standard incoming message */
 		let i: number	= 0;
 		Util.retryUntilComplete(retry => {
-			const keyPair	= this.keyPairs[i++];
+			if (i >= this.keyPairs.length) {
+				if (!this.isConnected) {
+					this.abort();
+				}
+
+				callback(false);
+				return;
+			}
+
+			const next		= () => {
+				++i;
+				retry(-1);
+			};
+
+			const keyPair	= this.keyPairs[i];
 
 			this.potassium.Box.open(
 				encryptedData,
@@ -93,21 +107,11 @@ export class CastleCore {
 						new Uint8Array(cyphertext.buffer, 0, 4),
 						new Uint8Array(decrypted.buffer, 0, 4)
 					)) {
-						if (i < this.keyPairs.length) {
-							retry(-1);
-						}
-						else {
-							if (!this.isConnected) {
-								this.abort();
-							}
-
-							callback(false);
-						}
-
+						next();
 						return;
 					}
 
-					if (keyPair === this.keyPairs[0]) {
+					if (i === 0) {
 						this.shouldRatchetKeys	= true;
 					}
 

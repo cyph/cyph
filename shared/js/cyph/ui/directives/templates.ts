@@ -110,7 +110,7 @@ export const Templates	= {
 		<div
 			class='chat-main platform-container'
 			ng-class='{
-				video: $this.p2pManager.isInUse(),
+				video: $this.p2pManager.p2p.isActive,
 				mobile: $this.isMobile
 			}'
 			layout='column'
@@ -196,25 +196,25 @@ export const Templates	= {
 				flex
 				ng-class='{
 					active: $this.state === Cyph.UI.Chat.States.chat,
-					playing: $this.p2pManager.isPlaying()
+					playing: $this.p2pManager.p2p.isActive
 				}'
 			>
 				<a class='logo' rel='noreferrer' ng-href='{{Cyph.Env.homeUrl}}'>
 					<img src='/img/betalogo.mobile.png' alt='Beta logo' />
 				</a>
-				<video
+				<div
 					class='friend stream'
 					ng-show='$this.p2pManager.p2p.incomingStream.video'
 					autoplay
-				></video>
+				></div>
 				<video
 					class='friend'
 					ng-hide='
 						$this.p2pManager.p2p.incomingStream.video ||
-						$this.p2pManager.p2p.incomingStream.loading
+						$this.p2pManager.p2p.loading
 					'
 					ng-attr-src='{{
-						$this.p2pManager.isPlaying() ?
+						$this.p2pManager.p2p.isActive ?
 							"/video/voicecall.mp4" :
 							" "
 					}}'
@@ -230,39 +230,9 @@ export const Templates	= {
 				></video>
 
 				<md-progress-circular
-					ng-show='$this.p2pManager.p2p.incomingStream.loading'
+					ng-show='$this.p2pManager.p2p.loading'
 					md-mode='indeterminate'
 				></md-progress-circular>
-
-				<div
-					class='progress'
-					ng-show='$this.p2pManager.p2p.outgoingFile.name'
-				>
-					<span translate>Sending</span>
-					<span>
-						{{$this.p2pManager.p2p.outgoingFile.name}}
-						({{$this.p2pManager.p2p.outgoingFile.readableSize}}):
-					</span>
-					<md-progress-linear
-						md-mode='determinate'
-						value='{{$this.p2pManager.p2p.outgoingFile.percentComplete}}'
-					></md-progress-linear>
-				</div>
-
-				<div
-					class='progress'
-					ng-show='$this.p2pManager.p2p.incomingFile.name'
-				>
-					<span translate>Receiving</span>
-					<span>
-						{{$this.p2pManager.p2p.incomingFile.name}}
-						({{$this.p2pManager.p2p.incomingFile.readableSize}}):
-					</span>
-					<md-progress-linear
-						md-mode='determinate'
-						value='{{$this.p2pManager.p2p.incomingFile.percentComplete}}'
-					></md-progress-linear>
-				</div>
 
 				<md-button
 					translate
@@ -285,18 +255,12 @@ export const Templates	= {
 						}}'
 					>
 						<img
-							ng-show='
-								!$this.p2pManager.isActive ||
-								!$this.p2pManager.p2p.outgoingStream.video
-							'
+							ng-show='!$this.p2pManager.p2p.outgoingStream.video'
 							src='/img/icons/video.on.png'
 							alt='Video on'
 						/>
 						<img
-							ng-show='
-								$this.p2pManager.isActive &&
-								$this.p2pManager.p2p.outgoingStream.video
-							'
+							ng-show='$this.p2pManager.p2p.outgoingStream.video'
 							src='/img/icons/video.off.png'
 							alt='Video off'
 						/>
@@ -312,23 +276,12 @@ export const Templates	= {
 						}}'
 					>
 						<img
-							ng-show='!$this.p2pManager.isActive'
-							src='/img/icons/voice.on.png'
-							alt='Voice on'
-						/>
-						<img
-							ng-show='
-								$this.p2pManager.isActive &&
-								!$this.p2pManager.p2p.outgoingStream.audio
-							'
+							ng-show='!$this.p2pManager.p2p.outgoingStream.audio'
 							src='/img/icons/mic.on.png'
 							alt='Mic on'
 						/>
 						<img
-							ng-show='
-								$this.p2pManager.isActive &&
-								$this.p2pManager.p2p.outgoingStream.audio
-							'
+							ng-show='$this.p2pManager.p2p.outgoingStream.audio'
 							src='/img/icons/mic.off.png'
 							alt='Mic off'
 						/>
@@ -336,13 +289,12 @@ export const Templates	= {
 					<md-button
 						translate
 						class='md-fab send-file-button'
-						ng-disabled='$this.p2pManager.p2p.outgoingFile.name'
 						aria-label='Send File'
 					>
 						<img src='/img/icons/file.png' alt='File' />
 						<input
 							type='file'
-							cyph-filechange='$this.p2pManager.sendFileButton()'
+							cyph-filechange='$this.fileManager.send(this)'
 						/>
 					</md-button>
 					<md-button
@@ -372,10 +324,33 @@ export const Templates	= {
 				<md-content class='nano-content'>
 					<md-list layout='column'>
 						<md-item
+							class='progress'
+							ng-repeat='transfer in $this.fileManager.files.transfers'
+							layout='row'
+						>
+							<div layout='column' layout-align=' start' flex>
+								<div layout='row'>
+									<span ng-show='transfer.isOutgoing' translate>Sending</span>
+									<span ng-hide='transfer.isOutgoing' translate>Receiving</span>
+									&nbsp;
+									<span>
+										{{transfer.name}}
+										({{Cyph.Util.readableByteLength(transfer.size)}}):
+									</span>
+								</div>
+								<md-progress-linear
+									md-mode='determinate'
+									value='{{transfer.percentComplete}}'
+									layout='row'
+								></md-progress-linear>
+							</div>
+						</md-item>
+
+						<md-item
 							class='message-item unread'
 							ng-class='::"author-" + Cyph.Session.Users[message.author]'
 							ng-repeat='message in $this.messages'
-							layout='horizontal'
+							layout='row'
 						>
 							<span class='message'>
 								<strong
@@ -419,6 +394,7 @@ export const Templates	= {
 						<md-item
 							class='friend-is-typing'
 							ng-class='{"show": $this.isFriendTyping}'
+							layout='row'
 						>
 							<span class='ellipsis-spinner'>
 								<div class='bounce1'></div>
@@ -427,13 +403,17 @@ export const Templates	= {
 							</span>
 						</md-item>
 
-						<div ng-show='$this.isDisconnected' layout='row' layout-align='center center'>
+						<md-item
+							ng-show='$this.isDisconnected'
+							layout='row'
+							layout-align='center center'
+						>
 							<md-card flex='50' class='md-padding'>
 								<md-card-content>
 									<ng-transclude></ng-transclude>
 								</md-card-content>
 							</md-card>
-						</div>
+						</md-item>
 					</md-list>
 				</md-content>
 			</div>
@@ -491,10 +471,6 @@ export const Templates	= {
 					<md-button
 						aria-label='Send File'
 						class='md-fab md-raised md-mini send-file-button'
-						ng-disabled='
-							!$this.p2pManager.isEnabled ||
-							$this.p2pManager.p2p.outgoingFile.name
-						'
 					>
 						<md-tooltip md-direction='left'>
 							Send File
@@ -502,7 +478,7 @@ export const Templates	= {
 						<md-icon class='grey'>attach_file</md-icon>
 						<input
 							type='file'
-							cyph-filechange='$this.p2pManager.sendFileButton()'
+							cyph-filechange='$this.fileManager.send(this)'
 						/>
 					</md-button>
 					<md-button
@@ -516,7 +492,7 @@ export const Templates	= {
 						<input
 							accept='image/*'
 							type='file'
-							cyph-filechange='$this.photoManager.insert(this)'
+							cyph-filechange='$this.fileManager.send(this, true)'
 						/>
 					</md-button>
 					<md-button

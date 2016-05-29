@@ -1,5 +1,3 @@
-/// <reference path="../../global/base.ts" />
-
 import {Command} from 'command';
 import {CastleEvents, Events, RPCEvents, State, ThreadedSessionEvents, Users} from 'enums';
 import {IMessage} from 'imessage';
@@ -122,7 +120,7 @@ export class Session implements ISession {
 
 					this.trigger(Events.pingPongTimeout);
 
-					Analytics.main.send({
+					Analytics.send({
 						hitType: 'event',
 						eventCategory: 'ping-pong-timeout',
 						eventAction: 'detected',
@@ -158,7 +156,7 @@ export class Session implements ISession {
 
 		this.channel.send(messages);
 
-		Analytics.main.send({
+		Analytics.send({
 			hitType: 'event',
 			eventCategory: 'message',
 			eventAction: 'sent',
@@ -210,7 +208,7 @@ export class Session implements ISession {
 					this.trigger(Events.beginWaiting);
 				}
 				else if (!this.isLocalSession) {
-					Analytics.main.send({
+					Analytics.send({
 						hitType: 'event',
 						eventCategory: 'cyph',
 						eventAction: 'started',
@@ -218,7 +216,7 @@ export class Session implements ISession {
 					});
 
 					if (this.state.wasInitiatedByAPI) {
-						Analytics.main.send({
+						Analytics.send({
 							hitType: 'event',
 							eventCategory: 'api-initiated-cyph',
 							eventAction: 'started',

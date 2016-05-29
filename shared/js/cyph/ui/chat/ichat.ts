@@ -1,7 +1,7 @@
 import {States} from 'enums';
 import {ICyphertext} from 'icyphertext';
 import {IP2PManager} from 'ip2pmanager';
-import {IPhotoManager} from 'iphotomanager';
+import {IFileManager} from 'ifilemanager';
 import {IScrollManager} from 'iscrollmanager';
 import * as Session from 'session/session';
 
@@ -44,8 +44,8 @@ export interface IChat {
 	/** Cyphertext instance. */
 	cyphertext: ICyphertext;
 
-	/** Photo manager instance. */
-	photoManager: IPhotoManager;
+	/** File manager instance. */
+	fileManager: IFileManager;
 
 	/** P2P manager instance. */
 	p2pManager: IP2PManager;

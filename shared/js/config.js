@@ -8,53 +8,53 @@ System.config({
   },
 
   map: {
+    "andyet/simplewebrtc": "github:andyet/simplewebrtc@2.1.0",
     "angular": "github:angular/bower-angular@1.5.5",
     "angular-animate": "github:angular/bower-angular-animate@1.5.5",
     "angular-aria": "github:angular/bower-angular-aria@1.5.5",
-    "angular-material": "github:angular/bower-material@1.0.8",
+    "angular-material": "github:angular/bower-material@1.0.9",
     "angular2": "npm:angular2@2.0.0-beta.17",
     "animate.css": "npm:animate.css@3.5.1",
-    "aws/aws-sdk-js": "github:aws/aws-sdk-js@2.3.9",
-    "braintree": "github:braintree/braintree-web@2.24.0",
+    "aws/aws-sdk-js": "github:aws/aws-sdk-js@2.3.15",
+    "braintree": "github:braintree/braintree-web@2.24.1",
     "crypto/cryptojs": "github:sytelus/cryptojs@3.1.2",
     "crypto/isaac": "github:rubycon/isaac.js@master",
-    "crypto/libsodium": "github:jedisct1/libsodium.js@0.3.0",
     "crypto/ntru": "github:cyph/ntru.js@master",
     "crypto/supersphincs": "github:cyph/supersphincs.js@master",
     "davidchambers/base64.js": "github:davidchambers/base64.js@0.3.0",
-    "dompurify": "npm:dompurify@0.7.4",
+    "dompurify": "npm:dompurify@0.8.0",
     "es5-shim": "github:es-shims/es5-shim@4.5.8",
-    "es6-shim": "github:es-shims/es6-shim@0.35.0",
-    "isagalaev/highlight.js": "github:isagalaev/highlight.js@9.3.0",
-    "jquery": "npm:jquery@2.2.3",
-    "jquery-legacy": "github:jquery/jquery@1.12.3",
+    "es6-shim": "github:es-shims/es6-shim@0.35.1",
+    "isagalaev/highlight.js": "github:isagalaev/highlight.js@9.4.0",
+    "jquery": "npm:jquery@2.2.4",
+    "jquery-legacy": "github:jquery/jquery@1.12.4",
     "julianlam/tabIndent.js": "github:julianlam/tabIndent.js@master",
     "magnific-popup": "npm:magnific-popup@1.1.0",
-    "markdown-it/markdown-it": "github:markdown-it/markdown-it@6.0.1",
+    "markdown-it/markdown-it": "github:markdown-it/markdown-it@6.0.2",
     "markdown-it/markdown-it-emoji": "github:markdown-it/markdown-it-emoji@1.1.1",
     "markdown-it/markdown-it-sup": "github:markdown-it/markdown-it-sup@1.0.0",
     "matthieua/wow": "github:matthieua/wow@1.1.2",
     "morr/jquery.appear": "github:morr/jquery.appear@0.3.6",
     "nanoscroller": "npm:nanoscroller@0.8.7",
-    "rxjs": "npm:rxjs@5.0.0-beta.7",
+    "rxjs": "npm:rxjs@5.0.0-beta.8",
     "siddii/angular-timer": "github:siddii/angular-timer@1.2.1",
     "snaptortoise/konami-js": "github:snaptortoise/konami-js@1.4.2",
     "typescript": "npm:typescript@1.8.10",
-    "unsemantic": "npm:unsemantic@1.1.2",
+    "unsemantic": "npm:unsemantic@1.1.3",
     "github:angular/bower-angular-animate@1.5.5": {
       "angular": "github:angular/bower-angular@1.5.5"
     },
     "github:angular/bower-angular-aria@1.5.5": {
       "angular": "github:angular/bower-angular@1.5.5"
     },
-    "github:angular/bower-material@1.0.8": {
+    "github:angular/bower-material@1.0.9": {
       "angular": "github:angular/bower-angular@1.5.5",
       "angular-animate": "github:angular/bower-angular-animate@1.5.5",
       "angular-aria": "github:angular/bower-angular-aria@1.5.5",
-      "css": "github:systemjs/plugin-css@0.1.21"
+      "css": "github:systemjs/plugin-css@0.1.22"
     },
     "github:jspm/nodelibs-assert@0.1.0": {
-      "assert": "npm:assert@1.3.0"
+      "assert": "npm:assert@1.4.0"
     },
     "github:jspm/nodelibs-buffer@0.1.0": {
       "buffer": "npm:buffer@3.6.0"
@@ -99,15 +99,22 @@ System.config({
     },
     "npm:angular2@2.0.0-beta.17": {
       "reflect-metadata": "npm:reflect-metadata@0.1.2",
-      "rxjs": "npm:rxjs@5.0.0-beta.7",
+      "rxjs": "npm:rxjs@5.0.0-beta.8",
       "zone.js": "npm:zone.js@0.6.12"
     },
-    "npm:assert@1.3.0": {
+    "npm:assert@1.4.0": {
+      "assert": "github:jspm/nodelibs-assert@0.1.0",
+      "buffer": "github:jspm/nodelibs-buffer@0.1.0",
+      "buffer-shims": "npm:buffer-shims@1.0.0",
+      "process": "github:jspm/nodelibs-process@0.1.2",
       "util": "npm:util@0.10.3"
     },
     "npm:atob@1.1.3": {
       "buffer": "github:jspm/nodelibs-buffer@0.1.0",
       "process": "github:jspm/nodelibs-process@0.1.2"
+    },
+    "npm:buffer-shims@1.0.0": {
+      "buffer": "github:jspm/nodelibs-buffer@0.1.0"
     },
     "npm:buffer@3.6.0": {
       "base64-js": "npm:base64-js@0.0.8",
@@ -131,7 +138,7 @@ System.config({
     "npm:domain-browser@1.1.7": {
       "events": "github:jspm/nodelibs-events@0.1.1"
     },
-    "npm:dompurify@0.7.4": {
+    "npm:dompurify@0.8.0": {
       "domain": "github:jspm/nodelibs-domain@0.1.0",
       "fs": "github:jspm/nodelibs-fs@0.1.2",
       "http": "github:jspm/nodelibs-http@1.7.1",
@@ -147,7 +154,7 @@ System.config({
     },
     "npm:nanoscroller@0.8.7": {
       "css": "npm:css@2.2.1",
-      "jquery": "npm:jquery@2.2.3"
+      "jquery": "npm:jquery@2.2.4"
     },
     "npm:os-browserify@0.1.2": {
       "os": "github:jspm/nodelibs-os@0.1.0"
@@ -175,7 +182,7 @@ System.config({
       "assert": "github:jspm/nodelibs-assert@0.1.0",
       "process": "github:jspm/nodelibs-process@0.1.2"
     },
-    "npm:rxjs@5.0.0-beta.7": {
+    "npm:rxjs@5.0.0-beta.8": {
       "buffer": "github:jspm/nodelibs-buffer@0.1.0",
       "process": "github:jspm/nodelibs-process@0.1.2",
       "symbol-observable": "npm:symbol-observable@0.2.4"
@@ -205,7 +212,7 @@ System.config({
     "npm:typescript@1.8.10": {
       "os": "github:jspm/nodelibs-os@0.1.0"
     },
-    "npm:unsemantic@1.1.2": {
+    "npm:unsemantic@1.1.3": {
       "process": "github:jspm/nodelibs-process@0.1.2"
     },
     "npm:urix@0.1.0": {

@@ -1,6 +1,7 @@
 import {Config} from 'config';
 import {Env} from 'env';
 import {EventManager} from 'eventmanager';
+import {Util} from 'util';
 
 
 /**
@@ -18,11 +19,11 @@ export class Thread {
 		return s.slice(s.indexOf('{'));
 	}
 
-	private static threadEnvSetup (locals: any, importScripts: Function) : void {
+	private static threadEnvSetup (threadSetupVars: any, importScripts: Function) : void {
 		/* Inherit these from main thread */
 
-		self['locationData']	= locals._locationData;
-		self['navigatorData']	= locals._navigatorData;
+		self['locationData']	= threadSetupVars.locationData;
+		self['navigatorData']	= threadSetupVars.navigatorData;
 
 
 		/* Wrapper to make importScripts work in local dev environments
@@ -41,7 +42,7 @@ export class Thread {
 
 		importScripts('/lib/js/system.js');
 		System.baseURL	= self['locationData'].href;
-		importScripts('/js/global/base.js');
+		importScripts('/js/cyph/base.js');
 
 
 		/* Allow destroying the Thread object from within the thread */
@@ -95,9 +96,9 @@ export class Thread {
 			importScripts('/lib/js/crypto/isaac/isaac.js');
 			isaac	= isaac || self['isaac'];
 
-			isaac.seed(locals._threadRandomSeed);
-			for (let i = 0 ; i < locals._threadRandomSeed.length ; ++i) {
-				locals._threadRandomSeed[i]	= 0;
+			isaac.seed(threadSetupVars.seed);
+			for (let i = 0 ; i < threadSetupVars.seed.length ; ++i) {
+				threadSetupVars.seed[i]	= 0;
 			}
 
 			crypto	= {
@@ -123,9 +124,7 @@ export class Thread {
 
 		self['crypto']	= crypto;
 
-		locals._locationData		= null;
-		locals._navigatorData		= null;
-		locals._threadRandomSeed	= null;
+		threadSetupVars	= null;
 	}
 
 	private static threadPostSetup () : void {
@@ -212,33 +211,44 @@ export class Thread {
 		locals: any = {},
 		onmessage: (e: MessageEvent) => any = e => {}
 	) {
-		locals._locationData			= {
-			hash: locationData.hash,
-			host: locationData.host,
-			hostname: locationData.hostname,
-			href: locationData.href,
-			pathname: locationData.pathname,
-			port: locationData.port,
-			protocol: locationData.protocol,
-			search: locationData.search
+		const threadSetupVars	= {
+			locationData: {
+				hash: locationData.hash,
+				host: locationData.host,
+				hostname: locationData.hostname,
+				href: locationData.href,
+				pathname: locationData.pathname,
+				port: locationData.port,
+				protocol: locationData.protocol,
+				search: locationData.search
+			},
+			navigatorData: {
+				language: Env.fullLanguage,
+				userAgent: Env.userAgent
+			},
+			seed: new Uint8Array(512)
 		};
 
-		locals._navigatorData			= {
-			language: Env.fullLanguage,
-			userAgent: Env.userAgent
-		};
+		crypto.getRandomValues(threadSetupVars.seed);
 
-		locals._threadRandomSeed		= crypto.getRandomValues(new Uint8Array(512));
+		const callbackId: string	= Util.generateGuid();
 
-		const threadBody: string		=
-			'var locals = ' + JSON.stringify(locals) + ';\n' +
+		const threadBody: string	=
+			'var threadSetupVars = ' + JSON.stringify(threadSetupVars) + ';\n' +
 			Thread.stringifyFunction(Thread.threadEnvSetup) +
-			Thread.stringifyFunction(f) +
-			Thread.stringifyFunction(Thread.threadPostSetup)
+			`System.import('cyph/base').then(function (Cyph) {
+				Cyph.EventManager.one(
+					'${callbackId}',
+					function (locals) {
+						${Thread.stringifyFunction(f)}
+						${Thread.stringifyFunction(Thread.threadPostSetup)}
+					}
+				);
+			});`
 		;
 
-		for (let i = 0 ; i < locals._threadRandomSeed.length ; ++i) {
-			locals._threadRandomSeed[i]	= 0;
+		for (let i = 0 ; i < threadSetupVars.seed.length ; ++i) {
+			threadSetupVars.seed[i]	= 0;
 		}
 
 		try {
@@ -291,5 +301,7 @@ export class Thread {
 		};
 
 		Thread.threads.push(this);
+
+		EventManager.trigger(callbackId, locals);
 	}
 }
