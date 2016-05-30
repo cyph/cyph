@@ -9,13 +9,13 @@ System.config({
 
   map: {
     "andyet/simplewebrtc": "github:andyet/simplewebrtc@2.1.0",
-    "angular": "github:angular/bower-angular@1.5.5",
-    "angular-animate": "github:angular/bower-angular-animate@1.5.5",
-    "angular-aria": "github:angular/bower-angular-aria@1.5.5",
+    "angular": "github:angular/bower-angular@1.5.6",
+    "angular-animate": "github:angular/bower-angular-animate@1.5.6",
+    "angular-aria": "github:angular/bower-angular-aria@1.5.6",
     "angular-material": "github:angular/bower-material@1.0.9",
     "angular2": "npm:angular2@2.0.0-beta.17",
     "animate.css": "npm:animate.css@3.5.1",
-    "aws/aws-sdk-js": "github:aws/aws-sdk-js@2.3.15",
+    "aws/aws-sdk-js": "github:aws/aws-sdk-js@2.3.16",
     "braintree": "github:braintree/braintree-web@2.24.1",
     "crypto/cryptojs": "github:sytelus/cryptojs@3.1.2",
     "crypto/isaac": "github:rubycon/isaac.js@master",
@@ -30,8 +30,8 @@ System.config({
     "jquery-legacy": "github:jquery/jquery@1.12.4",
     "julianlam/tabIndent.js": "github:julianlam/tabIndent.js@master",
     "magnific-popup": "npm:magnific-popup@1.1.0",
-    "markdown-it/markdown-it": "github:markdown-it/markdown-it@6.0.2",
-    "markdown-it/markdown-it-emoji": "github:markdown-it/markdown-it-emoji@1.1.1",
+    "markdown-it/markdown-it": "github:markdown-it/markdown-it@6.0.4",
+    "markdown-it/markdown-it-emoji": "github:markdown-it/markdown-it-emoji@1.2.0",
     "markdown-it/markdown-it-sup": "github:markdown-it/markdown-it-sup@1.0.0",
     "matthieua/wow": "github:matthieua/wow@1.1.2",
     "morr/jquery.appear": "github:morr/jquery.appear@0.3.6",
@@ -41,16 +41,16 @@ System.config({
     "snaptortoise/konami-js": "github:snaptortoise/konami-js@1.4.2",
     "typescript": "npm:typescript@1.8.10",
     "unsemantic": "npm:unsemantic@1.1.3",
-    "github:angular/bower-angular-animate@1.5.5": {
-      "angular": "github:angular/bower-angular@1.5.5"
+    "github:angular/bower-angular-animate@1.5.6": {
+      "angular": "github:angular/bower-angular@1.5.6"
     },
-    "github:angular/bower-angular-aria@1.5.5": {
-      "angular": "github:angular/bower-angular@1.5.5"
+    "github:angular/bower-angular-aria@1.5.6": {
+      "angular": "github:angular/bower-angular@1.5.6"
     },
     "github:angular/bower-material@1.0.9": {
-      "angular": "github:angular/bower-angular@1.5.5",
-      "angular-animate": "github:angular/bower-angular-animate@1.5.5",
-      "angular-aria": "github:angular/bower-angular-aria@1.5.5",
+      "angular": "github:angular/bower-angular@1.5.6",
+      "angular-animate": "github:angular/bower-angular-animate@1.5.6",
+      "angular-aria": "github:angular/bower-angular-aria@1.5.6",
       "css": "github:systemjs/plugin-css@0.1.22"
     },
     "github:jspm/nodelibs-assert@0.1.0": {
