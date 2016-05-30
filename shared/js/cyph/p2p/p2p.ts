@@ -174,7 +174,7 @@ export class P2P implements IP2P {
 			success: (iceServers: string) => {
 				const events: string[]	= [];
 
-				this.webRTC	= new self['SimpleWebRTC']({
+				const webRTC	= new self['SimpleWebRTC']({
 					localVideoEl: this.localVideo,
 					remoteVideosEl: this.remoteVideo,
 					autoRequestMedia: true,
@@ -203,7 +203,7 @@ export class P2P implements IP2P {
 										;
 									}
 
-									callback.apply(this.webRTC, args);
+									callback.apply(webRTC, args);
 								}
 							);
 						},
@@ -232,7 +232,7 @@ export class P2P implements IP2P {
 					}
 				});
 
-				this.webRTC.webrtc.config.peerConnectionConfig.iceServers	=
+				webRTC.webrtc.config.peerConnectionConfig.iceServers	=
 					JSON.parse(iceServers).
 					filter(o => !this.forceTURN || o['url'].indexOf('stun:') !== 0)
 				;
@@ -244,21 +244,23 @@ export class P2P implements IP2P {
 					}
 				};
 
-				this.webRTC.on('mute', data => toggle(this.incomingStream, false, data.name));
-				this.webRTC.on('unmute', data => toggle(this.incomingStream, true, data.name));
-				this.webRTC.on('audioOn', () => toggle(this.outgoingStream, true, 'audio'));
-				this.webRTC.on('audioOff', () => toggle(this.outgoingStream, false, 'audio'));
-				this.webRTC.on('videoOn', () => toggle(this.outgoingStream, true, 'video'));
-				this.webRTC.on('videoOff', () => toggle(this.outgoingStream, false, 'video'));
+				webRTC.on('mute', data => toggle(this.incomingStream, false, data.name));
+				webRTC.on('unmute', data => toggle(this.incomingStream, true, data.name));
+				webRTC.on('audioOn', () => toggle(this.outgoingStream, true, 'audio'));
+				webRTC.on('audioOff', () => toggle(this.outgoingStream, false, 'audio'));
+				webRTC.on('videoOn', () => toggle(this.outgoingStream, true, 'video'));
+				webRTC.on('videoOff', () => toggle(this.outgoingStream, false, 'video'));
 
-				this.webRTC.on('readyToCall', () =>
-					this.webRTC.joinRoom(P2P.constants.webRTC, () => {
+				webRTC.on('readyToCall', () =>
+					webRTC.joinRoom(P2P.constants.webRTC, () => {
 						this.loading	= false;
 						this.controller.update();
 					})
 				);
 
-				this.webRTC.connection.emit('connect');
+				webRTC.connection.emit('connect');
+
+				this.webRTC	= webRTC;
 			}
 		}));
 	}
