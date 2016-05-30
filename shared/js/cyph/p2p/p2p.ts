@@ -60,9 +60,11 @@ export class P2P implements IP2P {
 					}
 				}
 
-				this.webRTC.disconnect();
-				this.webRTC.stopLocalVideo();
-				this.webRTC	= null;
+				if (this.webRTC) {
+					this.webRTC.disconnect();
+					this.webRTC.stopLocalVideo();
+					this.webRTC	= null;
+				}
 
 				if (wasAccepted) {
 					this.triggerUIEvent(
