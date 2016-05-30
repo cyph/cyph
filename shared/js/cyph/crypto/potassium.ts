@@ -41,7 +41,9 @@ export class Potassium {
 	}
 
 	public static randomBytes (n: number) : Uint8Array {
-		return Potassium.Sodium.randombytes_buf(n);
+		const bytes	= new Uint8Array(n);
+		crypto.getRandomValues(bytes);
+		return bytes;
 	}
 
 	public static toBase64 (a: Uint8Array | string) : string {

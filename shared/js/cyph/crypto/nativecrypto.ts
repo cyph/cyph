@@ -1,9 +1,11 @@
+import {Potassium} from 'potassium';
+
+
 /**
  * libsodium-inspired wrapper for the browser's native crypto API. Should only
  * ever be depended on by Potassium.
  */
 export class NativeCrypto {
-	private static Sodium		= self['sodium'];
 	private static Subtle: any	= crypto['subtle'];
 
 	private static importRawKey (
@@ -40,7 +42,7 @@ export class NativeCrypto {
 		NativeCrypto.Subtle.
 			importKey(
 				'jwk',
-				JSON.parse(NativeCrypto.Sodium.to_string(key)),
+				JSON.parse(Potassium.toString(key)),
 				algorithm,
 				false,
 				[purpose]
@@ -57,7 +59,7 @@ export class NativeCrypto {
 	) : void {
 		NativeCrypto.Subtle.
 			exportKey('jwk', cryptoKey, algorithmName).
-			then(jwk => callback(NativeCrypto.Sodium.from_string(JSON.stringify(jwk)), undefined)).
+			then(jwk => callback(Potassium.fromString(JSON.stringify(jwk)), undefined)).
 			catch(err => callback(undefined, err))
 		;
 	}
@@ -135,11 +137,11 @@ export class NativeCrypto {
 			privateKey: Uint8Array,
 			callback: (cyphertext: Uint8Array, err: any) => void
 		) : void => {
-			const symmetricKey: Uint8Array			= NativeCrypto.Sodium.randombytes_buf(
+			const symmetricKey: Uint8Array			= Potassium.randomBytes(
 				NativeCrypto.SecretBox.keyBytes
 			);
 
-			const macKey: Uint8Array				= NativeCrypto.Sodium.randombytes_buf(
+			const macKey: Uint8Array				= Potassium.randomBytes(
 				NativeCrypto.OneTimeAuth.keyBytes
 			);
 
@@ -302,7 +304,7 @@ export class NativeCrypto {
 				callback(undefined, err);
 			}
 			finally {
-				NativeCrypto.Sodium.memzero(cyphertext);
+				Potassium.clearMemory(cyphertext);
 			}
 		}
 	};
@@ -389,7 +391,7 @@ export class NativeCrypto {
 
 		hash: (
 			plaintext: Uint8Array,
-			salt: Uint8Array = NativeCrypto.Sodium.randombytes_buf(
+			salt: Uint8Array = Potassium.randomBytes(
 				NativeCrypto.PasswordHash.saltBytes
 			),
 			outputBytes: number = NativeCrypto.SecretBox.keyBytes,
