@@ -266,6 +266,30 @@ find . -name .git -exec rm -rf {} \; 2> /dev/null
 cd ..
 
 
+# Remove large collections of extra files that we don't need
+
+cd shared/lib/js
+
+filesToDelete='angular2/es6'
+filesToDelete="${filesToDelete} $(find angular2/* -name '*.js' | tr '\n' ' ')"
+
+filesToDelete="${filesToDelete} $(find rxjs/* -name '*.js' | tr '\n' ' ')"
+
+mv isagalaev/highlight.js/src/styles/default.css ./
+mv isagalaev/highlight.js/build/highlight.pack.js ./
+filesToDelete="${filesToDelete} isagalaev/highlight.js/*"
+
+rm -rf $filesToDelete
+
+mkdir -p isagalaev/highlight.js/src/styles isagalaev/highlight.js/build
+mv default.css isagalaev/highlight.js/src/styles/
+mv highlight.pack.js isagalaev/highlight.js/build/
+
+cd ../../..
+
+find default -type f -name '*_test.go' -exec rm {} \;
+
+
 commands/commit.sh updatelibs 
 
 cd "${dir}"

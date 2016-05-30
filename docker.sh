@@ -83,30 +83,6 @@ elif [ "${command}" == 'build' ] ; then
 
 elif [ "${command}" == 'commit' ] ; then
 	args="-v $HOME/.gitconfig:/home/gibson/.gitconfig -v $HOME/.ssh:/home/gibson/.ssh"
-
-	# Remove large collections of extra files that we don't need so Docker doesn't choke
-
-	cd shared/lib/js
-
-	filesToDelete='angular2/es6'
-	filesToDelete="${filesToDelete} $(find angular2/* -name '*.js' | tr '\n' ' ')"
-
-	filesToDelete="${filesToDelete} $(find rxjs/* -name '*.js' | tr '\n' ' ')"
-
-	mv isagalaev/highlight.js/src/styles/default.css ./
-	mv isagalaev/highlight.js/build/highlight.pack.js ./
-	filesToDelete="${filesToDelete} isagalaev/highlight.js/*"
-
-	rm -rf $filesToDelete
-
-	mkdir -p isagalaev/highlight.js/src/styles isagalaev/highlight.js/build
-	mv default.css isagalaev/highlight.js/src/styles/
-	mv highlight.pack.js isagalaev/highlight.js/build/
-
-	cd ../../..
-
-	find default -type f -name '*_test.go' -exec rm {} \;
-
 	chmod -R 700 .
 
 elif [ "${command}" == 'backmerge' ] ; then
