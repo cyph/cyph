@@ -3,6 +3,21 @@
 cd $(cd "$(dirname "$0")"; pwd)
 
 
+# Backup before doing anything
+
+currentDir="$(pwd)"
+
+mkdir ~/.cyphbackup 2> /dev/null
+rm -rf ~/.cyphbackup/*
+cd ~/.cyphbackup
+git init > /dev/null
+for f in cyph ssh gitconfig gnupg ; do cp -a ~/.$f $f ; done
+git add .
+git commit -a -m backup
+
+cd "$currentDir"
+
+
 defaultsleep () {
 	sleep 2
 }
@@ -103,6 +118,8 @@ elif [ "${command}" == 'updatelibs' ] ; then
 	args=" \
 		-it \
 		-v $HOME/.cyph:/home/gibson/.cyph \
+		-v $HOME/.gitconfig:/home/gibson/.gitconfig \
+		-v $HOME/.ssh:/home/gibson/.ssh \
 	"
 
 elif [ "${command}" == 'websignhash' ] ; then
