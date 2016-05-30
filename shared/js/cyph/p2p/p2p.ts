@@ -42,7 +42,7 @@ export class P2P implements IP2P {
 		decline: () : void => {
 			this.isAccepted	= false;
 
-			this.triggerUiEvent(
+			this.triggerUIEvent(
 				UIEvents.Categories.request,
 				UIEvents.Events.requestRejection
 			);
@@ -65,7 +65,7 @@ export class P2P implements IP2P {
 				this.webRTC	= null;
 
 				if (wasAccepted) {
-					this.triggerUiEvent(
+					this.triggerUIEvent(
 						UIEvents.Categories.base,
 						UIEvents.Events.connected,
 						false
@@ -100,7 +100,7 @@ export class P2P implements IP2P {
 			command.method === P2P.constants.video ||
 			command.method === P2P.constants.audio
 		) {
-			this.triggerUiEvent(
+			this.triggerUIEvent(
 				UIEvents.Categories.request,
 				UIEvents.Events.acceptConfirm,
 				command.method,
@@ -134,7 +134,7 @@ export class P2P implements IP2P {
 		}
 	}
 
-	private triggerUiEvent(
+	private triggerUIEvent(
 		category: UIEvents.Categories,
 		event: UIEvents.Events,
 		...args: any[]
@@ -264,7 +264,7 @@ export class P2P implements IP2P {
 	}
 
 	public request (callType: string) : void {
-		this.triggerUiEvent(
+		this.triggerUIEvent(
 			UIEvents.Categories.request,
 			UIEvents.Events.requestConfirm,
 			callType,
@@ -284,7 +284,7 @@ export class P2P implements IP2P {
 								);
 
 								setTimeout(() =>
-									this.triggerUiEvent(
+									this.triggerUIEvent(
 										UIEvents.Categories.request,
 										UIEvents.Events.requestConfirmation
 									)
@@ -383,7 +383,7 @@ export class P2P implements IP2P {
 				this.receiveCommand(command);
 			}
 			else if (P2P.isSupported) {
-				this.triggerUiEvent(
+				this.triggerUIEvent(
 					UIEvents.Categories.base,
 					UIEvents.Events.enable
 				);

@@ -230,7 +230,7 @@ export class Files implements IFiles {
 		transfer.isOutgoing			= false;
 		transfer.percentComplete	= 0;
 
-		this.triggerUiEvent(
+		this.triggerUIEvent(
 			UIEvents.confirm,
 			transfer.name,
 			(ok: boolean, title: string) => {
@@ -288,7 +288,7 @@ export class Files implements IFiles {
 					});
 				}
 				else {
-					this.triggerUiEvent(
+					this.triggerUIEvent(
 						UIEvents.rejected,
 						title
 					);
@@ -297,7 +297,7 @@ export class Files implements IFiles {
 		);
 	}
 
-	private triggerUiEvent(
+	private triggerUIEvent(
 		event: UIEvents,
 		...args: any[]
 	) : void {
@@ -306,7 +306,7 @@ export class Files implements IFiles {
 
 	public send (plaintext: Uint8Array, name: string) : void {
 		if (plaintext.length > Config.filesConfig.maxSize) {
-			this.triggerUiEvent(UIEvents.tooLarge);
+			this.triggerUIEvent(UIEvents.tooLarge);
 
 			Analytics.send({
 				hitType: 'event',
@@ -325,7 +325,7 @@ export class Files implements IFiles {
 			eventValue: 1
 		});
 
-		this.triggerUiEvent(
+		this.triggerUIEvent(
 			UIEvents.transferStarted,
 			Session.Users.me,
 			name
@@ -407,7 +407,7 @@ export class Files implements IFiles {
 
 		this.session.on(Session.RPCEvents.files, (data?: string|ITransfer) => {
 			if (typeof data === 'string') {
-				this.triggerUiEvent(
+				this.triggerUIEvent(
 					UIEvents.transferStarted,
 					Session.Users.friend,
 					data
