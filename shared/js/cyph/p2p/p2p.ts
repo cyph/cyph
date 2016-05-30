@@ -160,12 +160,14 @@ export class P2P implements IP2P {
 	}
 
 	public join () : void {
+		this.loading	= true;
+		this.controller.update();
+
 		for (const k of Object.keys(this.outgoingStream)) {
 			this.incomingStream[k]	= this.outgoingStream[k];
 		}
 
 		this.isActive	= true;
-		this.loading	= true;
 		this.controller.update();
 
 		Util.retryUntilComplete((retry: Function) => Util.request({
