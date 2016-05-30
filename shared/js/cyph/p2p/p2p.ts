@@ -251,12 +251,14 @@ export class P2P implements IP2P {
 				webRTC.on('videoOn', () => toggle(this.outgoingStream, true, 'video'));
 				webRTC.on('videoOff', () => toggle(this.outgoingStream, false, 'video'));
 
-				webRTC.on('readyToCall', () =>
-					webRTC.joinRoom(P2P.constants.webRTC, () => {
+				webRTC.on('readyToCall', () => {
+					webRTC.on('videoAdded', () => {
 						this.loading	= false;
 						this.controller.update();
-					})
-				);
+					});
+
+					webRTC.joinRoom(P2P.constants.webRTC);
+				});
 
 				webRTC.connection.emit('connect');
 
