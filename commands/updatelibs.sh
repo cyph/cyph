@@ -186,7 +186,7 @@ node tools/build.js :common
 rm -rf node_modules
 cd ../../..
 
-cd github/andyet/simplewebrtcjs@*
+cd github/andyet/simplewebrtc@*
 sed -i "s|require('./socketioconnection')|null|g" simplewebrtc.js
 npm install
 node build.js
