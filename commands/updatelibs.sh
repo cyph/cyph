@@ -264,6 +264,8 @@ cd ../..
 find . -name .git -exec rm -rf {} \; 2> /dev/null
 
 cd ..
-chmod -R 700 .
+
+
+commands/commit.sh updatelibs 
 
 cd "${dir}"
