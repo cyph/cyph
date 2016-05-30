@@ -246,10 +246,10 @@ export class P2P implements IP2P {
 
 				this.webRTC.on('mute', data => toggle(this.incomingStream, false, data.name));
 				this.webRTC.on('unmute', data => toggle(this.incomingStream, true, data.name));
-				this.webRTC.on('audioOn', data => toggle(this.outgoingStream, true, 'audio'));
-				this.webRTC.on('audioOff', data => toggle(this.outgoingStream, false, 'audio'));
-				this.webRTC.on('videoOn', data => toggle(this.outgoingStream, true, 'video'));
-				this.webRTC.on('videoOff', data => toggle(this.outgoingStream, false, 'video'));
+				this.webRTC.on('audioOn', () => toggle(this.outgoingStream, true, 'audio'));
+				this.webRTC.on('audioOff', () => toggle(this.outgoingStream, false, 'audio'));
+				this.webRTC.on('videoOn', () => toggle(this.outgoingStream, true, 'video'));
+				this.webRTC.on('videoOff', () => toggle(this.outgoingStream, false, 'video'));
 
 				this.webRTC.on('readyToCall', () =>
 					this.webRTC.joinRoom(P2P.constants.webRTC, () => {
