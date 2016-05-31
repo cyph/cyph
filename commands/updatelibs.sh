@@ -102,7 +102,7 @@ jspm install -y \
 	github:markdown-it/markdown-it \
 	github:markdown-it/markdown-it-sup \
 	github:markdown-it/markdown-it-emoji \
-	github:isagalaev/highlight.js \
+	github:asvd/microlight \
 	github:siddii/angular-timer@1.2.1 \
 	github:andyet/simplewebrtc \
 	npm:animate.css \
@@ -179,11 +179,8 @@ make
 rm -rf .git* *.tmp API.md browsers-test test libsodium
 cd ../..
 
-cd github/isagalaev/highlight.js@*
-sed -i 's/^build$//' .gitignore
-npm install
-node tools/build.js :common
-rm -rf node_modules
+cd github/asvd/microlight@*
+uglifyjs microlight.js -m -o microlight.min.js
 cd ../../..
 
 cd github/andyet/simplewebrtc@*
@@ -202,7 +199,6 @@ typings install --global --save \
 	dt~angular \
 	dt~angular-material \
 	dt~angular-animate \
-	dt~highlightjs \
 	dt~webrtc/mediastream \
 	dt~webrtc/rtcpeerconnection \
 	dt~cryptojs \
@@ -275,15 +271,7 @@ filesToDelete="${filesToDelete} $(find angular2/* -name '*.js' | tr '\n' ' ')"
 
 filesToDelete="${filesToDelete} $(find rxjs/* -name '*.js' | tr '\n' ' ')"
 
-mv isagalaev/highlight.js/src/styles/default.css ./
-mv isagalaev/highlight.js/build/highlight.pack.js ./
-filesToDelete="${filesToDelete} isagalaev/highlight.js/*"
-
 rm -rf $filesToDelete
-
-mkdir -p isagalaev/highlight.js/src/styles isagalaev/highlight.js/build
-mv default.css isagalaev/highlight.js/src/styles/
-mv highlight.pack.js isagalaev/highlight.js/build/
 
 cd ../../..
 

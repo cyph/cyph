@@ -9,47 +9,32 @@ export class Markdown {
 	public static title: string	= 'cyphMarkdown';
 
 	private static _	= (() => {
-		const markdown: any	= new self['markdownit']({
-			html: false,
-			breaks: true,
-			linkify: true,
-			typographer: true,
-			quotes:
-				(
-					Env.language === 'ru' ?
-						'«»' :
-						Env.language === 'de' ?
-							'„“' :
-							'“”'
-				) +
-				'‘’'
-			,
-			highlight: (str, lang) => {
-				if (lang && self['hljs'].getLanguage(lang)) {
-					try {
-						return self['hljs'].highlight(lang, str).value;
-					}
-					catch (_) {}
-				}
-
-				try {
-					return self['hljs'].highlightAuto(str).value;
-				}
-				catch (_) {}
-
-				return '';
-			}
-		}).
-			disable('image').
-			use(self['markdownitSup']).
-			use(self['markdownitEmoji'])
-		;
-
-
 		angular.module(Markdown.title, []).directive(Markdown.title, () => ({
 			restrict: 'A',
 			replace: true,
 			link: (scope, element, attrs) => {
+				const markdown: any	= new self['markdownit']({
+					html: false,
+					breaks: true,
+					linkify: true,
+					typographer: true,
+					quotes:
+						(
+							Env.language === 'ru' ?
+								'«»' :
+								Env.language === 'de' ?
+									'„“' :
+									'“”'
+						) +
+						'‘’'
+					,
+					highlight: s => self['microlight'].process(s, element.css('color'))
+				}).
+					disable('image').
+					use(self['markdownitSup']).
+					use(self['markdownitEmoji'])
+				;
+
 				const set	= (val: string) =>
 					element.html(
 						DOMPurify.sanitize(
