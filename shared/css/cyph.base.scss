@@ -196,7 +196,8 @@ textarea {
 	background-image: none !important;
 }
 
-pre {
+pre, code {
+	font-family: 'Ubuntu Mono', monospace;
 	white-space: pre-wrap;
 
 	@include word-wrap;
