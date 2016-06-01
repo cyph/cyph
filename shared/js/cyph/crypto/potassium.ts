@@ -459,13 +459,13 @@ export class Potassium {
 	};
 
 	public Hash	= {
-		bytes: <number> 64,
+		bytes: <number> Potassium.SuperSphincs.hashLength,
 
 		hash: (
 			plaintext: Uint8Array | string,
 			callback: (hash: Uint8Array) => void
 		) : void => {
-			callback(Potassium.SuperSphincs.hashMessage(plaintext).bytes);
+			callback(Potassium.SuperSphincs.hash(plaintext).bytes);
 		}
 	};
 
