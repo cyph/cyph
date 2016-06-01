@@ -458,6 +458,17 @@ export class Potassium {
 		}
 	};
 
+	public Hash	= {
+		bytes: <number> 64,
+
+		hash: (
+			plaintext: Uint8Array | string,
+			callback: (hash: Uint8Array) => void
+		) : void => {
+			callback(Potassium.SuperSphincs.hashMessage(plaintext).bytes);
+		}
+	};
+
 	public OneTimeAuth	= {
 		bytes: <number> Potassium.Sodium.crypto_onetimeauth_BYTES,
 		keyBytes: <number> Potassium.Sodium.crypto_onetimeauth_KEYBYTES,
