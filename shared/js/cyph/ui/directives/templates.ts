@@ -922,7 +922,7 @@ export const Templates	= {
 			</p>
 
 			<p flex='nogrow' layout-padding>
-					<strong ng-show='ui.business === false'>
+					<strong ng-hide='ui.business'>
 						- Individual Use Only -
 					</strong>
 					<strong ng-show='ui.business'>
