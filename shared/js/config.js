@@ -33,7 +33,7 @@ System.config({
     "markdown-it/markdown-it-emoji": "github:markdown-it/markdown-it-emoji@1.2.0",
     "markdown-it/markdown-it-sup": "github:markdown-it/markdown-it-sup@1.0.0",
     "matthieua/wow": "github:matthieua/wow@1.1.2",
-    "microlight": "github:buu700/microlight@0.0.1",
+    "microlight": "github:buu700/microlight@master",
     "morr/jquery.appear": "github:morr/jquery.appear@0.3.6",
     "nanoscroller": "npm:nanoscroller@0.8.7",
     "rxjs": "npm:rxjs@5.0.0-beta.8",
