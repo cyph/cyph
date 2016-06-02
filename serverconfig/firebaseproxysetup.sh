@@ -1,0 +1,46 @@
+#!/bin/bash
+
+# Firebase Storage reverse proxy setup script for Ubuntu 14.04
+
+conf='dXNlciB3d3ctZGF0YTsKd29ya2VyX3Byb2Nlc3NlcyBhdXRvOwpwaWQgL3J1bi9uZ2lueC5waWQ7CgpldmVudHMgewoJd29ya2VyX2Nvbm5lY3Rpb25zIDc2ODsKCW11bHRpX2FjY2VwdCBvZmY7Cn0KCmh0dHAgewoKCSMjCgkjIEJhc2ljIFNldHRpbmdzCgkjIwoKCXNlbmRmaWxlIG9uOwoJdGNwX25vcHVzaCBvbjsKCXRjcF9ub2RlbGF5IG9uOwoJa2VlcGFsaXZlX3RpbWVvdXQgNjU7Cgl0eXBlc19oYXNoX21heF9zaXplIDIwNDg7CglzZXJ2ZXJfdG9rZW5zIG9mZjsKCXNlcnZlcl9uYW1lc19oYXNoX2J1Y2tldF9zaXplIDY0OwoJaW5jbHVkZSAvZXRjL25naW54L21pbWUudHlwZXM7CglkZWZhdWx0X3R5cGUgYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtOwoKCSMjCgkjIExvZ2dpbmcgU2V0dGluZ3MKCSMjCgoJYWNjZXNzX2xvZyBvZmY7CgllcnJvcl9sb2cgL2Rldi9udWxsIGNyaXQ7CgoJIyMKCSMgR3ppcCBTZXR0aW5ncwoJIyMKCglnemlwIG9uOwoJZ3ppcF9odHRwX3ZlcnNpb24gMS4wOwoJZ3ppcF9zdGF0aWMgYWx3YXlzOwoKCSMjCgkjIFNlcnZlciBTZXR0aW5ncwoJIyMKCglzZXJ2ZXIgewoJCWxpc3RlbiA0NDMgc3NsOwoKCQlzc2xfY2VydGlmaWNhdGUgc3NsL2NlcnQucGVtOwoJCXNzbF9jZXJ0aWZpY2F0ZV9rZXkgc3NsL2tleS5wZW07CgkJc3NsX2RocGFyYW0gc3NsL2RocGFyYW1zLnBlbTsKCgkJc3NsX3Nlc3Npb25fdGltZW91dCAxZDsKCQlzc2xfc2Vzc2lvbl9jYWNoZSBzaGFyZWQ6U1NMOjUwbTsKCgkJc3NsX3ByZWZlcl9zZXJ2ZXJfY2lwaGVycyBvbjsKCQlhZGRfaGVhZGVyIFN0cmljdC1UcmFuc3BvcnQtU2VjdXJpdHkgJ21heC1hZ2U9MzE1MzYwMDA7IGluY2x1ZGVTdWJkb21haW5zOyBwcmVsb2FkJzsKCQlzc2xfcHJvdG9jb2xzIFRMU3YxIFRMU3YxLjEgVExTdjEuMjsKCQlzc2xfY2lwaGVycyAnRUNESEUtUlNBLUFFUzEyOC1HQ00tU0hBMjU2OkVDREhFLUVDRFNBLUFFUzEyOC1HQ00tU0hBMjU2OkVDREhFLVJTQS1BRVMyNTYtR0NNLVNIQTM4NDpFQ0RIRS1FQ0RTQS1BRVMyNTYtR0NNLVNIQTM4NDpESEUtUlNBLUFFUzEyOC1HQ00tU0hBMjU2OkRIRS1EU1MtQUVTMTI4LUdDTS1TSEEyNTY6a0VESCtBRVNHQ006RUNESEUtUlNBLUFFUzEyOC1TSEEyNTY6RUNESEUtRUNEU0EtQUVTMTI4LVNIQTI1NjpFQ0RIRS1SU0EtQUVTMTI4LVNIQTpFQ0RIRS1FQ0RTQS1BRVMxMjgtU0hBOkVDREhFLVJTQS1BRVMyNTYtU0hBMzg0OkVDREhFLUVDRFNBLUFFUzI1Ni1TSEEzODQ6RUNESEUtUlNBLUFFUzI1Ni1TSEE6RUNESEUtRUNEU0EtQUVTMjU2LVNIQTpESEUtUlNBLUFFUzEyOC1TSEEyNTY6REhFLVJTQS1BRVMxMjgtU0hBOkRIRS1EU1MtQUVTMTI4LVNIQTI1NjpESEUtUlNBLUFFUzI1Ni1TSEEyNTY6REhFLURTUy1BRVMyNTYtU0hBOkRIRS1SU0EtQUVTMjU2LVNIQTohYU5VTEw6IWVOVUxMOiFFWFBPUlQ6IURFUzohUkM0OiEzREVTOiFNRDU6IVBTSyc7CgoJCXNzbF9zdGFwbGluZyBvbjsKCQlzc2xfc3RhcGxpbmdfdmVyaWZ5IG9uOwoKCQlzZXJ2ZXJfbmFtZSBmaXJlYmFzZS5jeXBoLmNvbTsKCgkJbG9jYXRpb24gLyB7CgkJCXByb3h5X3Bhc3MgaHR0cHM6Ly9maXJlYmFzZXN0b3JhZ2UuZ29vZ2xlYXBpcy5jb20vdjAvYi9jeXBobWUuYXBwc3BvdC5jb20vby87CgkJfQoJfQp9Cg=='
+
+
+cd $(cd "$(dirname "$0")"; pwd)
+dir="$(pwd)"
+
+sed -i 's/# deb /deb /g' /etc/apt/sources.list
+sed -i 's/\/\/.*archive.ubuntu.com/\/\/archive.ubuntu.com/g' /etc/apt/sources.list
+
+export DEBIAN_FRONTEND=noninteractive
+apt-add-repository -y ppa:nginx/development
+apt-get -y --force-yes update
+apt-get -y --force-yes upgrade
+apt-get -y --force-yes install aptitude nginx openssl unzip
+
+mkdir /opt/certbot
+cd /opt/certbot
+wget https://github.com/certbot/certbot/archive/master.zip
+unzip master.zip
+rm master.zip
+certbotdir="$(ls)"
+mv $certbotdir/* ./
+rm -rf $certbotdir
+
+/opt/certbot/certbot-auto certonly \
+	-n \
+	--agree-tos \
+	--standalone \
+	--force-renewal \
+	-d firebase.cyph.com \
+	--email firebaseproxy@cyph.com
+
+mkdir /etc/nginx/ssl
+chmod 600 /etc/nginx/ssl
+openssl dhparam -out /etc/nginx/ssl/dhparams.pem 2048
+ln -s /etc/letsencrypt/live/firebase.cyph.com/privkey.pem /etc/nginx/ssl/key.pem
+ln -s /etc/letsencrypt/live/firebase.cyph.com/cert.pem /etc/nginx/ssl/cert.pem
+
+echo "${conf}" | base64 --decode | sed "s/worker_connections 768;/worker_connections $(ulimit -n);/g" > /etc/nginx/nginx.conf
+
+rm $dir/firebaseproxysetup.sh
+reboot
