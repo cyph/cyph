@@ -81,7 +81,19 @@ export class Session implements ISession {
 				if (e.data) {
 					const data: Message[]	= (() => {
 						try {
-							return JSON.parse(e.data);
+							return JSON.parse(e.data, (_, v) => {
+								if (v.isUint8Array) {
+									const bytes	= new Uint8Array(Object.keys(v).length - 1);
+
+									for (let i = 0 ; i < bytes.length ; ++i) {
+										bytes[i]	= v[i];
+									}
+
+									return bytes;
+								}
+
+								return v;
+							});
 						}
 						catch (_) {
 							return [];
@@ -327,7 +339,13 @@ export class Session implements ISession {
 				}
 			}
 
-			this.castle.send(JSON.stringify(messages));
+			this.castle.send(JSON.stringify(messages, (_, v) => {
+				if (v instanceof Uint8Array) {
+					v.isUint8Array	= true;
+				}
+
+				return v;
+			}));
 		}
 		else {
 			setTimeout(() => this.sendBase(messages), 250);

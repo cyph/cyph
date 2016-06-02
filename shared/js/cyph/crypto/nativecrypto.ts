@@ -15,7 +15,7 @@ export class NativeCrypto {
 		callback: (cryptoKey: CryptoKey, err: any) => void
 	) : void {
 		NativeCrypto.Subtle.
-			importKey('raw', key, algorithm, false, [purpose]).
+			importKey('raw', key.buffer, algorithm, false, [purpose]).
 			then(callback).
 			catch(err => callback(undefined, err))
 		;
