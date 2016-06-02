@@ -25,15 +25,15 @@ System.config({
     "dompurify": "npm:dompurify@0.8.0",
     "es5-shim": "github:es-shims/es5-shim@4.5.8",
     "es6-shim": "github:es-shims/es6-shim@0.35.1",
-    "isagalaev/highlight.js": "github:isagalaev/highlight.js@9.4.0",
     "jquery": "npm:jquery@2.2.4",
     "jquery-legacy": "github:jquery/jquery@1.12.4",
     "julianlam/tabIndent.js": "github:julianlam/tabIndent.js@master",
     "magnific-popup": "npm:magnific-popup@1.1.0",
-    "markdown-it/markdown-it": "github:markdown-it/markdown-it@6.0.4",
+    "markdown-it/markdown-it": "github:markdown-it/markdown-it@6.0.5",
     "markdown-it/markdown-it-emoji": "github:markdown-it/markdown-it-emoji@1.2.0",
     "markdown-it/markdown-it-sup": "github:markdown-it/markdown-it-sup@1.0.0",
     "matthieua/wow": "github:matthieua/wow@1.1.2",
+    "microlight": "github:buu700/microlight@0.0.1",
     "morr/jquery.appear": "github:morr/jquery.appear@0.3.6",
     "nanoscroller": "npm:nanoscroller@0.8.7",
     "rxjs": "npm:rxjs@5.0.0-beta.8",
@@ -54,7 +54,7 @@ System.config({
       "css": "github:systemjs/plugin-css@0.1.22"
     },
     "github:jspm/nodelibs-assert@0.1.0": {
-      "assert": "npm:assert@1.4.0"
+      "assert": "npm:assert@1.4.1"
     },
     "github:jspm/nodelibs-buffer@0.1.0": {
       "buffer": "npm:buffer@3.6.0"
@@ -102,19 +102,15 @@ System.config({
       "rxjs": "npm:rxjs@5.0.0-beta.8",
       "zone.js": "npm:zone.js@0.6.12"
     },
-    "npm:assert@1.4.0": {
+    "npm:assert@1.4.1": {
       "assert": "github:jspm/nodelibs-assert@0.1.0",
       "buffer": "github:jspm/nodelibs-buffer@0.1.0",
-      "buffer-shims": "npm:buffer-shims@1.0.0",
       "process": "github:jspm/nodelibs-process@0.1.2",
       "util": "npm:util@0.10.3"
     },
     "npm:atob@1.1.3": {
       "buffer": "github:jspm/nodelibs-buffer@0.1.0",
       "process": "github:jspm/nodelibs-process@0.1.2"
-    },
-    "npm:buffer-shims@1.0.0": {
-      "buffer": "github:jspm/nodelibs-buffer@0.1.0"
     },
     "npm:buffer@3.6.0": {
       "base64-js": "npm:base64-js@0.0.8",
