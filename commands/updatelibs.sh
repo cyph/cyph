@@ -179,9 +179,9 @@ make
 rm -rf .git* *.tmp API.md browsers-test test libsodium
 cd ../..
 
-cd github/asvd/microlight@*
+cd microlight
 uglifyjs microlight.js -m -o microlight.min.js
-cd ../../..
+cd ..
 
 cd github/andyet/simplewebrtc@*
 sed -i "s|require('./socketioconnection')|null|g" simplewebrtc.js
