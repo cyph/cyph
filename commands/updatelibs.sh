@@ -102,7 +102,7 @@ jspm install -y \
 	github:markdown-it/markdown-it \
 	github:markdown-it/markdown-it-sup \
 	github:markdown-it/markdown-it-emoji \
-	github:asvd/microlight \
+	microlight=github:buu700/microlight \
 	github:siddii/angular-timer@1.2.1 \
 	github:andyet/simplewebrtc \
 	npm:animate.css \
