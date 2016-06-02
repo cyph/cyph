@@ -251,14 +251,12 @@ export class Files implements IFiles {
 						this.controller.update();
 					}, 1000);
 
-					/* Temporary workaround while Firebase adds CORS support */
-					transfer.url	= (transfer.url || '').replace(
-						'firebasestorage.googleapis.com',
-						'firebase.cyph.com'
-					);
-
 					Util.request({
-						url: transfer.url,
+						/* Temporary workaround while Firebase adds CORS support */
+						url: (transfer.url || '').replace(
+							'firebasestorage.googleapis.com',
+							'firebase.cyph.com'
+						),
 						responseType: 'arraybuffer',
 						success: (cyphertext: ArrayBuffer) => {
 							transfer.percentComplete	= Math.max(
