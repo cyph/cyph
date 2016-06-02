@@ -252,10 +252,10 @@ export class Files implements IFiles {
 					}, 1000);
 
 					/* Temporary workaround while Firebase adds CORS support */
-					transfer.url	=
-						'https://firebase.cyph.com' +
-						transfer.url.split('cyphme.appspot.com/o')[1]
-					;
+					transfer.url	= (transfer.url || '').replace(
+						'firebasestorage.googleapis.com',
+						'firebase.cyph.com'
+					);
 
 					Util.request({
 						url: transfer.url,
