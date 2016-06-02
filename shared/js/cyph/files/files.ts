@@ -251,13 +251,14 @@ export class Files implements IFiles {
 						this.controller.update();
 					}, 1000);
 
-					Util.request({
+					Util.retryUntilComplete(retry => Util.request({
 						/* Temporary workaround while Firebase adds CORS support */
 						url: (transfer.url || '').replace(
 							'firebasestorage.googleapis.com',
 							'firebase.cyph.com'
 						),
 						responseType: 'arraybuffer',
+						error: retry,
 						success: (cyphertext: ArrayBuffer) => {
 							transfer.percentComplete	= Math.max(
 								transfer.percentComplete,
@@ -289,7 +290,7 @@ export class Files implements IFiles {
 								}
 							);
 						}
-					});
+					}));
 				}
 				else {
 					this.triggerUIEvent(
