@@ -450,7 +450,7 @@ export const Templates	= {
 
 			<md-fab-speed-dial
 				md-direction='up'
-				class='md-fling md-hover-full md-fab-bottom-right'
+				class='md-fling md-fab-bottom-right'
 				md-open='isOpen'
 				ng-mouseenter='isOpen = true'
 				ng-mouseleave='isOpen = false'
