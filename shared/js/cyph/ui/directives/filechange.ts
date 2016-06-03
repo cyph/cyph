@@ -11,14 +11,24 @@ export class Filechange {
 			restrict: 'A',
 			link: (scope, element, attrs) => {
 				element.change(() => {
-					const methodSplit: string[]	= attrs[Filechange.title].split('.');
-					const methodName: string	= methodSplit.slice(-1)[0].split('(')[0];
+					const methodSplit: string[]		= attrs[Filechange.title].split('.');
+					const methodEndSplit: string[]	= methodSplit.slice(-1)[0].split('(');
+					const methodName: string		= methodEndSplit[0];
+
+					const methodArgs: any[]	= methodEndSplit[1].
+						replace(/(.*)\).*/, '$1').
+						split(',').
+						map((s: string) => s.trim()).
+						map((s: string) =>
+							s === 'this' ? element[0] : scope.$parent.$eval(s)
+						)
+					;
 
 					const methodObject: any		= scope.$parent.$eval(
 						methodSplit.slice(0, -1).join('.')
 					);
 
-					methodObject[methodName](element[0]);
+					methodObject[methodName].apply(methodObject, methodArgs);
 				});
 			}
 		}));
