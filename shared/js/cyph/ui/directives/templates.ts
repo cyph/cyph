@@ -495,7 +495,8 @@ export const Templates	= {
 						aria-label='Voice Call'
 						class='md-fab md-raised md-mini'
 						ng-click='$this.p2pManager.voiceCallButton()'
-						ng-disabled='!$this.p2pManager.isEnabled || $this.p2pManager.p2p.isActive'
+						ng-disabled='!$this.p2pManager.isEnabled'
+						ng-hide='$this.p2pManager.p2p.isActive'
 					>
 						<md-tooltip md-direction='left'>
 							Voice Call
@@ -506,7 +507,8 @@ export const Templates	= {
 						aria-label='Video Call'
 						class='md-fab md-raised md-mini'
 						ng-click='$this.p2pManager.videoCallButton()'
-						ng-disabled='!$this.p2pManager.isEnabled || $this.p2pManager.p2p.isActive'
+						ng-disabled='!$this.p2pManager.isEnabled'
+						ng-hide='$this.p2pManager.p2p.isActive'
 					>
 						<md-tooltip md-direction='left'>
 							Video Call
