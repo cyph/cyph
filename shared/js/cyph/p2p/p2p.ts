@@ -61,8 +61,9 @@ export class P2P implements IP2P {
 				}
 
 				if (this.webRTC) {
-					this.webRTC.disconnect();
+					this.webRTC.mute();
 					this.webRTC.stopLocalVideo();
+					this.webRTC.leaveRoom();
 					this.webRTC	= null;
 				}
 
@@ -162,6 +163,11 @@ export class P2P implements IP2P {
 	}
 
 	public join () : void {
+		if (this.webRTC) {
+			return;
+		}
+		this.webRTC		= {};
+
 		this.loading	= true;
 		this.controller.update();
 
@@ -255,14 +261,13 @@ export class P2P implements IP2P {
 				webRTC.on('videoOn', () => toggle(this.outgoingStream, true, 'video'));
 				webRTC.on('videoOff', () => toggle(this.outgoingStream, false, 'video'));
 
-				webRTC.on('readyToCall', () => {
-					webRTC.on('videoAdded', () => {
-						this.loading	= false;
-						this.controller.update();
-					});
-
-					webRTC.joinRoom(P2P.constants.webRTC);
+				webRTC.on('videoAdded', () => {
+					this.loading	= false;
+					this.controller.update();
 				});
+
+				webRTC.on('readyToCall', () => webRTC.joinRoom(P2P.constants.webRTC));
+				webRTC.on('leftRoom', () => webRTC.disconnect());
 
 				webRTC.connection.emit('connect');
 
