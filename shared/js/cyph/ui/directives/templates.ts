@@ -209,15 +209,11 @@ export const Templates	= {
 				></div>
 				<video
 					class='friend'
-					ng-hide='
+					ng-if='!(
 						$this.p2pManager.p2p.incomingStream.video ||
 						$this.p2pManager.p2p.loading
-					'
-					ng-attr-src='{{
-						$this.p2pManager.p2p.isActive ?
-							"/video/voicecall.mp4" :
-							" "
-					}}'
+					)'
+					src='/video/voicecall.mp4'
 					autoplay
 					loop
 					muted
