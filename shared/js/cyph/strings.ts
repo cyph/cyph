@@ -23,7 +23,6 @@ export const Strings = {
 	fileTransferInitMe: `You are sending the file:`,
 	fileTransferInitFriend: `Your friend is sending the file:`,
 	incomingFile: `Incoming File:`,
-	incomingFileReject: `File rejected.`,
 	introductoryMessage: `You may now speak.`,
 	linkExpiresAt: `Link expires at`,
 	newMessageNotification: `New message!`,
@@ -53,6 +52,10 @@ export const Strings = {
 
 	incomingFileDownload:
 		`Your friend would like to send you a file. Accept the file transfer?`
+	,
+
+	incomingFileRejected:
+		`You have rejected the following file transfer:`
 	,
 
 	incomingFileSave:

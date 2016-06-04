@@ -235,7 +235,7 @@ export class Files implements IFiles {
 			transfer.name,
 			transfer.size,
 			true,
-			(ok: boolean, title: string) => {
+			(ok: boolean) => {
 				transfer.answer	= ok;
 
 				this.session.send(new Session.Message(
@@ -304,7 +304,7 @@ export class Files implements IFiles {
 				else {
 					this.triggerUIEvent(
 						UIEvents.rejected,
-						title
+						transfer.name
 					);
 
 					Firebase.call({ storage: {
@@ -354,7 +354,7 @@ export class Files implements IFiles {
 		});
 
 		this.triggerUIEvent(
-			UIEvents.transferStarted,
+			UIEvents.started,
 			Session.Users.me,
 			transfer.name
 		);
@@ -363,7 +363,7 @@ export class Files implements IFiles {
 			transfer.answer	= answer;
 
 			this.triggerUIEvent(
-				UIEvents.transferCompleted,
+				UIEvents.completed,
 				transfer.name,
 				transfer.answer
 			);
@@ -486,24 +486,23 @@ export class Files implements IFiles {
 				/* Incoming file transfer request */
 				else {
 					this.triggerUIEvent(
+						UIEvents.started,
+						Session.Users.friend,
+						transfer.name
+					);
+
+					this.triggerUIEvent(
 						UIEvents.confirm,
 						transfer.name,
 						transfer.size,
 						false,
-						(ok: boolean, title: string) => {
+						(ok: boolean) => {
 							downloadAnswers[transfer.id]	= ok;
 
-							if (ok) {
-								this.triggerUIEvent(
-									UIEvents.transferStarted,
-									Session.Users.friend,
-									transfer.name
-								);
-							}
-							else {
+							if (!ok) {
 								this.triggerUIEvent(
 									UIEvents.rejected,
-									title
+									transfer.name
 								);
 
 								transfer.answer	= false;

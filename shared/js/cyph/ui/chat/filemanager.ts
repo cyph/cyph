@@ -177,41 +177,7 @@ export class FileManager implements IFileManager {
 				args: any[];
 			}) => {
 				switch (e.event) {
-					case Files.UIEvents.confirm: {
-						const name: string			= e.args[0];
-						const size: number			= e.args[1];
-						const isSave: boolean		= e.args[2];
-						const callback: Function	= e.args[3];
-
-						const title: string	= `${Strings.incomingFile} ${name} (${Util.readableByteLength(size)})`;
-
-						this.dialogManager.confirm({
-							title,
-							content: isSave ? Strings.incomingFileSave : Strings.incomingFileDownload,
-							ok: isSave ? Strings.save : Strings.download,
-							cancel: Strings.reject
-						}, (ok: boolean) => callback(ok, title));
-						break;
-					}
-					case Files.UIEvents.rejected: {
-						const title: string	= e.args[0];
-
-						this.dialogManager.alert({
-							title,
-							content: Strings.incomingFileReject,
-							ok: Strings.ok
-						});
-						break;
-					}
-					case Files.UIEvents.tooLarge: {
-						this.dialogManager.alert({
-							title: Strings.oopsTitle,
-							content: Strings.fileTooLarge,
-							ok: Strings.ok
-						});
-						break;
-					}
-					case Files.UIEvents.transferCompleted: {
+					case Files.UIEvents.completed: {
 						const name: string		= e.args[0];
 						const answer: boolean	= e.args[1];
 
@@ -226,7 +192,33 @@ export class FileManager implements IFileManager {
 						);
 						break;
 					}
-					case Files.UIEvents.transferStarted: {
+					case Files.UIEvents.confirm: {
+						const name: string						= e.args[0];
+						const size: number						= e.args[1];
+						const isSave: boolean					= e.args[2];
+						const callback: (ok: boolean) => void	= e.args[3];
+
+						const title: string	= `${Strings.incomingFile} ${name} (${Util.readableByteLength(size)})`;
+
+						this.dialogManager.confirm({
+							title,
+							content: isSave ? Strings.incomingFileSave : Strings.incomingFileDownload,
+							ok: isSave ? Strings.save : Strings.download,
+							cancel: Strings.reject
+						}, callback);
+						break;
+					}
+					case Files.UIEvents.rejected: {
+						const name: string		= e.args[0];
+
+						this.chat.addMessage(
+							Strings.incomingFileRejected + ' ' + name,
+							Session.Users.app,
+							false
+						);
+						break;
+					}
+					case Files.UIEvents.started: {
 						const user: Session.Users	= e.args[0];
 						const name: string			= e.args[1];
 
@@ -241,6 +233,14 @@ export class FileManager implements IFileManager {
 							Session.Users.app,
 							!isFromMe
 						);
+						break;
+					}
+					case Files.UIEvents.tooLarge: {
+						this.dialogManager.alert({
+							title: Strings.oopsTitle,
+							content: Strings.fileTooLarge,
+							ok: Strings.ok
+						});
 						break;
 					}
 				}
