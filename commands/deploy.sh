@@ -166,10 +166,10 @@ for d in cyph.com cyph.im ; do
 
 	../commands/build.sh --prod || exit;
 
-	if [ "${branch}" == 'staging' -a ! "${simple}" ] ; then
+	if [ ! $simple ] ; then
 		echo "JS Minify ${d}"
 		find js -name '*.js' | xargs -I% uglifyjs -r \
-			importScripts,Cyph,ui,session,locals,self,isaac,onmessage,postMessage,onthreadmessage,WebSign,Translations,IS_WEB,crypto \
+			importScripts,Cyph,ui,session,locals,threadSetupVars,self,isaac,onmessage,postMessage,onthreadmessage,WebSign,Translations,IS_WEB,crypto \
 			'%' -o '%' -m
 
 		echo "CSS Minify ${d}"
