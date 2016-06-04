@@ -233,7 +233,16 @@ export class Files implements IFiles {
 		this.triggerUIEvent(
 			UIEvents.confirm,
 			transfer.name,
+			transfer.size,
+			true,
 			(ok: boolean, title: string) => {
+				transfer.answer	= ok;
+
+				this.session.send(new Session.Message(
+					Session.RPCEvents.files,
+					transfer
+				));
+
 				if (ok) {
 					const transferIndex: number	= this.transfers.push(transfer) - 1;
 
@@ -297,6 +306,11 @@ export class Files implements IFiles {
 						UIEvents.rejected,
 						title
 					);
+
+					Firebase.call({ storage: {
+						refFromURL: { args: [transfer.url],
+						delete: {}}
+					}});
 				}
 			}
 		);
@@ -323,6 +337,15 @@ export class Files implements IFiles {
 			return;
 		}
 
+		let uploadTaskId: string;
+
+		const transfer: ITransfer	= new Transfer(
+			name,
+			plaintext.length
+		);
+
+		const transferIndex: number	= this.transfers.push(transfer) - 1;
+
 		Analytics.send({
 			hitType: 'event',
 			eventCategory: 'file',
@@ -333,24 +356,43 @@ export class Files implements IFiles {
 		this.triggerUIEvent(
 			UIEvents.transferStarted,
 			Session.Users.me,
-			name
+			transfer.name
 		);
+
+		EventManager.one('transfer-' + transfer.id, (answer: boolean) => {
+			transfer.answer	= answer;
+
+			this.triggerUIEvent(
+				UIEvents.transferCompleted,
+				transfer.name,
+				transfer.answer
+			);
+
+			if (transfer.answer === false) {
+				this.transfers.splice(transferIndex, 1);
+				this.controller.update();
+
+				if (uploadTaskId) {
+					Firebase.call({ returnValue: {
+						id: uploadTaskId,
+						command: {
+							cancel: {}
+						}
+					}});
+				}
+			}
+		});
 
 		this.session.send(new Session.Message(
 			Session.RPCEvents.files,
-			name
+			transfer
 		));
 
 		this.encryptFile(
 			plaintext,
 			(cyphertext: Uint8Array, key: Uint8Array) => {
-				const transfer: ITransfer	= new Transfer(
-					name,
-					cyphertext.length,
-					key
-				);
-
-				const transferIndex: number	= this.transfers.push(transfer) - 1;
+				transfer.size	= cyphertext.length;
+				transfer.key	= key;
 
 				this.controller.update();
 
@@ -359,38 +401,49 @@ export class Files implements IFiles {
 
 					Firebase.call({ storage: {
 						ref: { args: [path],
-						put: { args: [new Blob([cyphertext])],
-						on: { args: [
-							'state_changed',
-							snapshot => {
-								transfer.percentComplete	=
-									snapshot.bytesTransferred /
-									snapshot.totalBytes *
-									100
-								;
+						put: { args: [new Blob([cyphertext])]}}
+					}}, id => {
+						uploadTaskId	= id;
 
-								this.controller.update();
-							},
-							err => retry(),
-							() => {
-								Firebase.call({ storage: {
-									ref: { args: [path],
-									getDownloadURL: {
-										then: { args: [(url: string) => {
-											transfer.url	= url;
-											this.session.send(new Session.Message(
-												Session.RPCEvents.files,
-												transfer
-											));
+						Firebase.call({ returnValue: {
+							id: uploadTaskId,
+							command: { on: { args: [
+								'state_changed',
+								snapshot => {
+									transfer.percentComplete	=
+										snapshot.bytesTransferred /
+										snapshot.totalBytes *
+										100
+									;
 
-											this.transfers.splice(transferIndex, 1);
-											this.controller.update();
-										}]}
-									}}
-								}});
-							}
-						]}}}
-					}});
+									this.controller.update();
+								},
+								err => {
+									if (transfer.answer !== false) {
+										retry();
+									}
+								},
+								() => {
+									Firebase.call({ storage: {
+										ref: { args: [path],
+										getDownloadURL: {
+											then: { args: [(url: string) => {
+												transfer.url	= url;
+
+												this.session.send(new Session.Message(
+													Session.RPCEvents.files,
+													transfer
+												));
+
+												this.transfers.splice(transferIndex, 1);
+												this.controller.update();
+											}]}
+										}}
+									}});
+								}
+							]}}
+						}});
+					});
 				});
 			}
 		);
@@ -410,17 +463,61 @@ export class Files implements IFiles {
 			));
 		}
 
-		this.session.on(Session.RPCEvents.files, (data?: string|ITransfer) => {
-			if (typeof data === 'string') {
-				this.triggerUIEvent(
-					UIEvents.transferStarted,
-					Session.Users.friend,
-					data
-				);
+		const acceptedFileTransfers: {[id: string] : boolean}	= {};
+
+		this.session.on(Session.RPCEvents.files, (transfer?: ITransfer) => {
+			if (transfer) {
+				/* Outgoing file transfer acceptance or rejection */
+				if (transfer.answer === true || transfer.answer === false) {
+					EventManager.trigger('transfer-' + transfer.id, transfer.answer);
+				}
+				/* Incoming file transfer */
+				else if (transfer.url) {
+					Util.retryUntilComplete(retry => {
+						if (acceptedFileTransfers[transfer.id]) {
+							acceptedFileTransfers[transfer.id]	= false;
+							this.receiveTransfer(transfer);
+						}
+						else {
+							retry();
+						}
+					});
+				}
+				/* Incoming file transfer request */
+				else {
+					this.triggerUIEvent(
+						UIEvents.confirm,
+						transfer.name,
+						transfer.size,
+						false,
+						(ok: boolean, title: string) => {
+							if (ok) {
+								this.triggerUIEvent(
+									UIEvents.transferStarted,
+									Session.Users.friend,
+									transfer.name
+								);
+
+								acceptedFileTransfers[transfer.id]	= true;
+							}
+							else {
+								this.triggerUIEvent(
+									UIEvents.rejected,
+									title
+								);
+
+								transfer.answer	= false;
+
+								this.session.send(new Session.Message(
+									Session.RPCEvents.files,
+									transfer
+								));
+							}
+						}
+					);
+				}
 			}
-			else if (data) {
-				this.receiveTransfer(data);
-			}
+			/* Negotiation on whether or not to use SubtleCrypto */
 			else if (Files.subtleCryptoIsSupported && !this.nativePotassium) {
 				this.nativePotassium	= new Potassium(true);
 			}

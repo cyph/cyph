@@ -18,12 +18,16 @@ export class Firebase {
 	 * Performs dynamic RPC call to Firebase frame.
 	 * @param command
 	 */
-	public static call (command: any) : void {
+	public static call (command: any, getReturnValue?: (id: string) => void) : void {
 		if (!Env.isMainThread) {
 			Thread.callMainThread('Cyph.Firebase.call', [command]);
 		}
 		else if (Firebase.frameIsReady) {
 			let step	= command;
+
+			if (command && command.returnValue) {
+				step	= command.returnValue.command;
+			}
 
 			while (step) {
 				if (step.args) {
@@ -35,7 +39,7 @@ export class Firebase {
 
 							EventManager.on(
 								Firebase.eventPrefix + callbackId,
-								data => arg.apply(null, data)
+								args => arg.apply(null, args)
 							);
 						}
 					});
@@ -49,7 +53,17 @@ export class Firebase {
 			try {
 				Firebase.frame.contentWindow.postMessage({
 					command,
-					id: Util.generateGuid()
+					id: Util.generateGuid(),
+					returnValueCallbackId: getReturnValue && (() => {
+						const callbackId: string	= Util.generateGuid();
+
+						EventManager.one(
+							Firebase.eventPrefix + callbackId,
+							args => getReturnValue(args[0])
+						);
+
+						return callbackId;
+					})()
 				}, '*');
 			}
 			catch (_) {}

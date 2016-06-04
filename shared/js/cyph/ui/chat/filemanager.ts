@@ -179,14 +179,16 @@ export class FileManager implements IFileManager {
 				switch (e.event) {
 					case Files.UIEvents.confirm: {
 						const name: string			= e.args[0];
-						const callback: Function	= e.args[1];
+						const size: number			= e.args[1];
+						const isSave: boolean		= e.args[2];
+						const callback: Function	= e.args[3];
 
-						const title: string	= Strings.incomingFile + ' ' + name;
+						const title: string	= `${Strings.incomingFile} ${name} (${Util.readableByteLength(size)})`;
 
 						this.dialogManager.confirm({
 							title,
-							content: Strings.incomingFileWarning,
-							ok: Strings.save,
+							content: isSave ? Strings.incomingFileSave : Strings.incomingFileDownload,
+							ok: isSave ? Strings.save : Strings.download,
 							cancel: Strings.reject
 						}, (ok: boolean) => callback(ok, title));
 						break;
@@ -209,19 +211,33 @@ export class FileManager implements IFileManager {
 						});
 						break;
 					}
-					case Files.UIEvents.transferStarted: {
-						const user: Session.Users	= e.args[0];
-						const fileName: string		= e.args[1];
+					case Files.UIEvents.transferCompleted: {
+						const name: string		= e.args[0];
+						const answer: boolean	= e.args[1];
 
-						const isFromMe: boolean	= user === Session.Users.me;
-						const message: string	=
-							isFromMe ?
-								Strings.fileTransferInitMe :
-								Strings.fileTransferInitFriend
+						const message: string	= answer ?
+							Strings.outgoingFileSaved :
+							Strings.outgoingFileRejected
 						;
 
 						this.chat.addMessage(
-							message + ' ' + fileName,
+							message + ' ' + name,
+							Session.Users.app
+						);
+						break;
+					}
+					case Files.UIEvents.transferStarted: {
+						const user: Session.Users	= e.args[0];
+						const name: string			= e.args[1];
+
+						const isFromMe: boolean	= user === Session.Users.me;
+						const message: string	= isFromMe ?
+							Strings.fileTransferInitMe :
+							Strings.fileTransferInitFriend
+						;
+
+						this.chat.addMessage(
+							message + ' ' + name,
 							Session.Users.app,
 							!isFromMe
 						);

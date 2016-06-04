@@ -82,7 +82,7 @@ export class Session implements ISession {
 					const data: Message[]	= (() => {
 						try {
 							return JSON.parse(e.data, (_, v) => {
-								if (v.isUint8Array) {
+								if (v && v.isUint8Array) {
 									const bytes	= new Uint8Array(Object.keys(v).length - 1);
 
 									for (let i = 0 ; i < bytes.length ; ++i) {

@@ -17,6 +17,7 @@ export const Strings = {
 	disconnectTitle: `Disconnect`,
 	disconnectWarning: `After closing Cyph, your messages will no longer be retrievable.`,
 	disconnectedNotification: `This cyph has been disconnected.`,
+	download: `download`,
 	fileCall: `file transfer`,
 	fileTooLarge: `The file that you are trying to send exceeds the 250 MB attachment limit.`,
 	fileTransferInitMe: `You are sending the file:`,
@@ -50,10 +51,18 @@ export const Strings = {
 		`You have been warned.`
 	,
 
-	incomingFileWarning:
+	incomingFileDownload:
+		`Your friend would like to send you a file. Accept the file transfer?`
+	,
+
+	incomingFileSave:
 		`Your friend has sent you a file. It has not been scanned for malware; ` +
 		`you may choose to accept it AT YOUR OWN RISK. Save this file?`
 	,
+
+	outgoingFileRejected: `Your "friend" has rejected the following file transfer:`,
+
+	outgoingFileSaved: `File transfer complete! Your friend has saved the following file:`,
 
 	p2pDisabled:
 		`Your or your friend's browser may lack support for video calling. ` +
