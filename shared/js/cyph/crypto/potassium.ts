@@ -19,21 +19,21 @@ export class Potassium {
 		return a.length === b.length && Potassium.Sodium.memcmp(a, b);
 	}
 
-	public static fromBase64 (s: string | Uint8Array) : Uint8Array {
+	public static fromBase64 (s: string|Uint8Array) : Uint8Array {
 		return typeof s === 'string' ?
 			Potassium.Sodium.from_base64(s) :
 			s
 		;
 	}
 
-	public static fromHex (s: string | Uint8Array) : Uint8Array {
+	public static fromHex (s: string|Uint8Array) : Uint8Array {
 		return typeof s === 'string' ?
 			Potassium.Sodium.from_hex(s) :
 			s
 		;
 	}
 
-	public static fromString (s: string | Uint8Array) : Uint8Array {
+	public static fromString (s: string|Uint8Array) : Uint8Array {
 		return typeof s === 'string' ?
 			Potassium.Sodium.from_string(s) :
 			s
@@ -46,21 +46,21 @@ export class Potassium {
 		return bytes;
 	}
 
-	public static toBase64 (a: Uint8Array | string) : string {
+	public static toBase64 (a: Uint8Array|string) : string {
 		return typeof a === 'string' ?
 			a :
 			Potassium.Sodium.to_base64(a).replace(/\n/g, '')
 		;
 	}
 
-	public static toHex (a: Uint8Array | string) : string {
+	public static toHex (a: Uint8Array|string) : string {
 		return typeof a === 'string' ?
 			a :
 			Potassium.Sodium.to_hex(a)
 		;
 	}
 
-	public static toString (a: Uint8Array | string) : string {
+	public static toString (a: Uint8Array|string) : string {
 		return typeof a === 'string' ?
 			a :
 			Potassium.Sodium.to_string(a)
@@ -462,7 +462,7 @@ export class Potassium {
 		bytes: <number> Potassium.SuperSphincs.hashLength,
 
 		hash: (
-			plaintext: Uint8Array | string,
+			plaintext: Uint8Array|string,
 			callback: (hash: Uint8Array) => void
 		) : void => {
 			callback(Potassium.SuperSphincs.hash(plaintext).bytes);
@@ -818,26 +818,26 @@ export class Potassium {
 		) => void;
 
 		sign: (
-			message: Uint8Array | string,
+			message: Uint8Array|string,
 			privateKey: Uint8Array,
 			callback: (signed: string, messageHash: string, err: any) => void
 		) => void;
 
 		signDetached: (
-			message: Uint8Array | string,
+			message: Uint8Array|string,
 			privateKey: Uint8Array,
 			callback: (signature: string, messageHash: string, err: any) => void
 		) => void;
 
 		open: (
-			signed: Uint8Array | string,
+			signed: Uint8Array|string,
 			publicKey: Uint8Array,
 			callback: (message: string, messageHash: string, err: any) => void
 		) => void;
 
 		verifyDetached: (
-			signature: Uint8Array | string,
-			message: Uint8Array | string,
+			signature: Uint8Array|string,
+			message: Uint8Array|string,
 			publicKey: Uint8Array,
 			callback: (isValid: boolean, messageHash: string, err: any) => void
 		) => void;
