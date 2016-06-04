@@ -463,7 +463,7 @@ export class Files implements IFiles {
 			));
 		}
 
-		const acceptedFileTransfers: {[id: string] : boolean}	= {};
+		const downloadAnswers: {[id: string] : boolean}	= {};
 
 		this.session.on(Session.RPCEvents.files, (transfer?: ITransfer) => {
 			if (transfer) {
@@ -474,11 +474,11 @@ export class Files implements IFiles {
 				/* Incoming file transfer */
 				else if (transfer.url) {
 					Util.retryUntilComplete(retry => {
-						if (acceptedFileTransfers[transfer.id]) {
-							acceptedFileTransfers[transfer.id]	= false;
+						if (downloadAnswers[transfer.id] === true) {
+							downloadAnswers[transfer.id]	= null;
 							this.receiveTransfer(transfer);
 						}
-						else {
+						else if (downloadAnswers[transfer.id] !== false) {
 							retry();
 						}
 					});
@@ -491,14 +491,14 @@ export class Files implements IFiles {
 						transfer.size,
 						false,
 						(ok: boolean, title: string) => {
+							downloadAnswers[transfer.id]	= ok;
+
 							if (ok) {
 								this.triggerUIEvent(
 									UIEvents.transferStarted,
 									Session.Users.friend,
 									transfer.name
 								);
-
-								acceptedFileTransfers[transfer.id]	= true;
 							}
 							else {
 								this.triggerUIEvent(
