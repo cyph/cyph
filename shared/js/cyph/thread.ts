@@ -211,6 +211,9 @@ export class Thread {
 		locals: any = {},
 		onmessage: (e: MessageEvent) => any = e => {}
 	) {
+		const seedBytes	= new Uint8Array(512);
+		crypto.getRandomValues(seedBytes);
+
 		const threadSetupVars	= {
 			locationData: {
 				hash: locationData.hash,
@@ -226,17 +229,15 @@ export class Thread {
 				language: Env.fullLanguage,
 				userAgent: Env.userAgent
 			},
-			seed: new Uint8Array(512)
+			seed: Array.prototype.slice.apply(seedBytes)
 		};
 
-		crypto.getRandomValues(threadSetupVars.seed);
+		const callbackId: string	= 'NewThread-' + Util.generateGuid();
 
-		const callbackId: string	= Util.generateGuid();
-
-		const threadBody: string	=
-			'var threadSetupVars = ' + JSON.stringify(threadSetupVars) + ';\n' +
-			Thread.stringifyFunction(Thread.threadEnvSetup) +
-			`System.import('cyph/base').then(function (Cyph) {
+		const threadBody: string	= `
+			var threadSetupVars = ${JSON.stringify(threadSetupVars)};
+			${Thread.stringifyFunction(Thread.threadEnvSetup)}
+			System.import('cyph/base').then(function (Cyph) {
 				Cyph.EventManager.one(
 					'${callbackId}',
 					function (locals) {
@@ -244,17 +245,20 @@ export class Thread {
 						${Thread.stringifyFunction(Thread.threadPostSetup)}
 					}
 				);
-			});`
-		;
+
+				self.postMessage('ready');
+			});
+		`;
 
 		for (let i = 0 ; i < threadSetupVars.seed.length ; ++i) {
+			seedBytes[i]			= 0;
 			threadSetupVars.seed[i]	= 0;
 		}
 
-		try {
-			let blob: Blob;
-			let blobUrl: string;
+		let blob: Blob;
+		let blobUrl: string;
 
+		try {
 			try {
 				blob	= new Blob([threadBody], {type: 'application/javascript'});
 			}
@@ -273,14 +277,6 @@ export class Thread {
 				this.worker.terminate();
 				throw err;
 			}
-			finally {
-				setTimeout(() => {
-					try {
-						URL.revokeObjectURL(blobUrl);
-					}
-					catch (_) {}
-				}, 60000);
-			}
 		}
 		catch (_) {
 			this.worker	= new Worker(Config.webSignConfig.workerHelper);
@@ -289,7 +285,15 @@ export class Thread {
 
 
 		this.worker.onmessage	= (e: MessageEvent) => {
-			if (e.data === 'close') {
+			if (e.data === 'ready') {
+				try {
+					URL.revokeObjectURL(blobUrl);
+				}
+				catch (_) {}
+
+				EventManager.trigger(callbackId, locals);
+			}
+			else if (e.data === 'close') {
 				this.stop();
 			}
 			else if (e.data && e.data['isThreadEvent']) {
@@ -301,7 +305,5 @@ export class Thread {
 		};
 
 		Thread.threads.push(this);
-
-		EventManager.trigger(callbackId, locals);
 	}
 }

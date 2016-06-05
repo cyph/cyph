@@ -92,7 +92,7 @@ export class Firebase {
 			);
 
 			self.addEventListener('message', e => {
-				if (e.origin === Firebase.origin) {
+				if (e.origin === Firebase.origin && e.data.callbackId) {
 					EventManager.trigger(
 						Firebase.eventPrefix + e.data.callbackId,
 						e.data.args
