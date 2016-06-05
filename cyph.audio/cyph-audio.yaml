@@ -1,4 +1,4 @@
-module: cyph-audio
+service: cyph-audio
 runtime: python27
 api_version: 1
 threadsafe: true

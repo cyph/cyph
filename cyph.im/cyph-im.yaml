@@ -1,4 +1,4 @@
-module: cyph-im
+service: cyph-im
 runtime: python27
 api_version: 1
 threadsafe: true
