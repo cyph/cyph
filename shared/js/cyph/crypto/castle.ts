@@ -159,7 +159,7 @@ export class Castle implements ICastle {
 		}
 	}
 
-	public constructor (private session: ISession) {
+	public constructor (private session: ISession, isNative: boolean = false) {
 		this.core	= new CastleCore(
 			this.session.state.isCreator,
 			this.session.state.sharedSecret,
@@ -222,7 +222,8 @@ export class Castle implements ICastle {
 						author: Users.me
 					});
 				}
-			}
+			},
+			isNative
 		);
 
 		/* Wipe shared secret when finished with it */

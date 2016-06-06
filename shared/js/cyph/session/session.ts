@@ -206,6 +206,7 @@ export class Session implements ISession {
 
 	private setUpChannel (
 		channelDescriptor: string,
+		nativeCrypto: boolean,
 		localChannelCallback?: (localChannel: Channel.LocalChannel) => void
 	) : void {
 		if (localChannelCallback) {
@@ -263,7 +264,7 @@ export class Session implements ISession {
 					this.castle	= new Crypto.FakeCastle(this);
 				}
 				else {
-					this.castle	= new Crypto.Castle(this);
+					this.castle	= new Crypto.Castle(this, nativeCrypto);
 				}
 			},
 			onmessage: message => this.receive(message)
@@ -381,6 +382,7 @@ export class Session implements ISession {
 	 */
 	public constructor(
 		descriptor?: string,
+		nativeCrypto: boolean = false,
 		private controller?: IController,
 		private id: string = Util.generateGuid(),
 		localChannelCallback?: (localChannel: Channel.LocalChannel) => void
@@ -408,7 +410,7 @@ export class Session implements ISession {
 		}
 
 		if (localChannelCallback) {
-			this.setUpChannel(null, localChannelCallback);
+			this.setUpChannel(null, nativeCrypto, localChannelCallback);
 		}
 		else {
 			Util.retryUntilComplete(retry => {
@@ -430,7 +432,7 @@ export class Session implements ISession {
 							retry();
 						}
 						else {
-							this.setUpChannel(data);
+							this.setUpChannel(data, nativeCrypto);
 						}
 					},
 					error: () => {
