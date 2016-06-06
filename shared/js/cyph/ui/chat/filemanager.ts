@@ -203,8 +203,8 @@ export class FileManager implements IFileManager {
 						this.dialogManager.confirm({
 							title,
 							content: isSave ? Strings.incomingFileSave : Strings.incomingFileDownload,
-							ok: isSave ? Strings.save : Strings.download,
-							cancel: Strings.reject
+							ok: isSave ? Strings.save : Strings.accept,
+							cancel: isSave ? Strings.discard : Strings.reject
 						}, callback);
 						break;
 					}
