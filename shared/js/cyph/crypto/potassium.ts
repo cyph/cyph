@@ -577,7 +577,7 @@ export class Potassium {
 		},
 
 		hash: (
-			plaintext: Uint8Array,
+			plaintext: Uint8Array|string,
 			salt: Uint8Array = Potassium.randomBytes(
 				this.PasswordHash.saltBytes
 			),
@@ -594,6 +594,10 @@ export class Potassium {
 				err: any
 			) => void
 		) : void => {
+			if (typeof plaintext === 'string') {
+				plaintext	= Potassium.fromString(plaintext);
+			}
+
 			const addMetadataToHash	= (hash: Uint8Array, err: any) : void => {
 				if (err) {
 					callback(
