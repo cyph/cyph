@@ -95,7 +95,7 @@ if [ "${1}" == '--watch' ] ; then
 				rm .babelrc
 				jsbundle \$file
 			done
-			inotifywait -r --exclude '.*\.(js|map|html)$' .
+			inotifywait -r --exclude '.*\.(js|map|html|babelrc)$' .
 		done
 	" &
 
