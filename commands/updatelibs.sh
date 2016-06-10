@@ -119,7 +119,6 @@ jspm install -y \
 	github:aws/aws-sdk-js \
 	npm:rxjs \
 	braintree=github:braintree/braintree-web \
-	es5-shim \
 	babel-polyfill \
 	crypto/ntru=github:cyph/ntru.js \
 	crypto/supersphincs=github:cyph/supersphincs.js \
@@ -198,8 +197,6 @@ rm -rf node_modules
 cd ../../..
 
 cp system.js base.js
-echo >> base.js
-cat es5-shim/es5-shim.min.js >> base.js
 echo >> base.js
 cat babel-polyfill/browser.js >> base.js
 

@@ -8,6 +8,8 @@ originalDir="$(pwd)"
 
 ./commands/docs.sh
 
+babelrc="{'presets': ['es2015'], 'compact': false"
+
 tsargs="$(node -e '
 	const compilerOptions = JSON.parse(
 		'"'$(cat shared/js/tsconfig.json | tr '\n' ' ')'"'
@@ -88,8 +90,9 @@ if [ "${1}" == '--watch' ] ; then
 		while true ; do
 			for file in $tsfiles ; do
 				tsc $tsargs --sourceMap \$file.ts --outFile \$file.ts.js
-				babel --compact false -s true --source-file-name \$file.ts \$file.ts.js -o \$file.js
-				rm \$file.ts.js
+				echo \"$babelrc, 'sourceMaps': true, 'inputSourceMap': '\$file.ts.js'}\" > .babelrc
+				babel \$file.ts.js -o \$file.js
+				rm .babelrc
 				jsbundle \$file
 			done
 			inotifywait -r --exclude '.*\.(js|map|html)$' .
@@ -116,8 +119,9 @@ else
 	cd js
 	for file in $tsfiles ; do
 		output="${output}$(tsc $tsargs $file.ts --outFile $file.ts.js)"
-		babel --compact false $file.ts.js -o $file.js
-		rm $file.ts.js
+		echo "$babelrc}" > .babelrc
+		babel $file.ts.js -o $file.js
+		rm .babelrc
 		jsbundle $file
 	done
 	cd ..
