@@ -107,7 +107,7 @@ jspm install -y \
 	github:andyet/simplewebrtc \
 	npm:animate.css \
 	github:davidchambers/base64.js \
-	jquery \
+	jquery=github:jquery/jquery \
 	jquery-legacy=github:jquery/jquery@^1 \
 	npm:magnific-popup \
 	npm:nanoscroller \
