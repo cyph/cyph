@@ -71,7 +71,7 @@ RUN sudo ln -s /usr/bin/md5sum /usr/bin/md5
 
 RUN rm -rf ~/.gnupg
 
-RUN bash -c 'cd ; source ~/.bashrc ; npm install babel-preset-es2015'
+RUN bash -c 'cd ; source ~/.bashrc ; npm install babel-preset-es2015 ; sudo mv node_modules / ; sudo chmod -R 777 /node_modules'
 
 
 VOLUME /cyph
