@@ -166,7 +166,7 @@ bash -c "$(node -e '
 
 cd lib/js
 
-sed -i 's/^\/dist$//' jquery-legacy/.gitignore
+sed -i 's/^\/dist$//' jquery*/.gitignore
 
 cd crypto
 git clone --recursive https://github.com/jedisct1/libsodium.js libsodium
