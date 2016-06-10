@@ -90,7 +90,7 @@ if [ "${1}" == '--watch' ] ; then
 		while true ; do
 			for file in $tsfiles ; do
 				tsc $tsargs --sourceMap \$file.ts --outFile \$file.ts.js
-				echo \"$babelrc, 'sourceMaps': true, 'inputSourceMap': '\$file.ts.js.map', 'sourceFileName': '\$file.ts'}\" > .babelrc
+				echo \"$babelrc, 'sourceMaps': true, 'inputSourceMap': \$(cat \$file.ts.js.map), 'sourceFileName': '\$file.ts'}\" > .babelrc
 				babel \$file.ts.js -o \$file.js
 				rm .babelrc
 				jsbundle \$file
