@@ -120,7 +120,7 @@ jspm install -y \
 	npm:rxjs \
 	braintree=github:braintree/braintree-web \
 	es5-shim \
-	es6-shim \
+	babel-polyfill \
 	crypto/ntru=github:cyph/ntru.js \
 	crypto/supersphincs=github:cyph/supersphincs.js \
 	crypto/isaac=github:rubycon/isaac.js \
@@ -183,12 +183,25 @@ cd microlight
 uglifyjs microlight.js -m -o microlight.min.js
 cd ..
 
+cd babel-polyfill
+npm install
+npm install process
+browserify dist/polyfill.min.js -o browser.js
+rm -rf node_modules
+cd ..
+
 cd github/andyet/simplewebrtc@*
 sed -i "s|require('./socketioconnection')|null|g" simplewebrtc.js
 npm install
 node build.js
 rm -rf node_modules
 cd ../../..
+
+cp system.js base.js
+echo >> base.js
+cat es5-shim/es5-shim.min.js >> base.js
+echo >> base.js
+cat babel-polyfill/browser.js >> base.js
 
 cd ..
 
@@ -202,8 +215,7 @@ typings install --global --save \
 	dt~webrtc/mediastream \
 	dt~webrtc/rtcpeerconnection \
 	dt~cryptojs \
-	dt~dompurify \
-	dt~es6-shim
+	dt~dompurify
 
 mkdir blog
 cd blog

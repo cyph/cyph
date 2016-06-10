@@ -12,7 +12,7 @@ RUN apt-get install -y curl golang-go python python-pip perl devscripts build-es
 RUN curl -sL https://deb.nodesource.com/setup_6.x | bash -
 RUN apt-get install -y nodejs
 
-RUN npm -g install html-minifier clean-css uglifyjs typescript typings typedoc jspm browserstack browserify libsodium-wrappers glob read mkdirp
+RUN npm -g install html-minifier clean-css uglifyjs typescript babel-cli typings typedoc jspm browserstack browserify libsodium-wrappers glob read mkdirp
 RUN pip install beautifulsoup4 html5lib
 
 
