@@ -25,7 +25,7 @@ System.config({
     "davidchambers/base64.js": "github:davidchambers/base64.js@0.3.0",
     "dompurify": "npm:dompurify@0.8.2",
     "es5-shim": "github:es-shims/es5-shim@4.5.8",
-    "jquery": "npm:jquery@3.0.0",
+    "jquery": "github:jquery/jquery@3.0.0",
     "jquery-legacy": "github:jquery/jquery@1.12.4",
     "julianlam/tabIndent.js": "github:julianlam/tabIndent.js@master",
     "magnific-popup": "npm:magnific-popup@1.1.0",
