@@ -201,11 +201,13 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 					let mobileSession: Cyph.Session.ISession;
 					const desktopSession: Cyph.Session.ISession	= new Cyph.Session.Session(
 						null,
+						false,
 						this.controller,
 						undefined,
 						(desktopChannel: Cyph.Channel.LocalChannel) => {
 							mobileSession	= new Cyph.Session.Session(
 								null,
+								false,
 								this.controller,
 								undefined,
 								(mobileChannel: Cyph.Channel.LocalChannel) =>

@@ -15,16 +15,15 @@ System.config({
     "angular-material": "github:angular/bower-material@1.0.9",
     "angular2": "npm:angular2@2.0.0-beta.17",
     "animate.css": "npm:animate.css@3.5.1",
-    "aws/aws-sdk-js": "github:aws/aws-sdk-js@2.3.16",
+    "aws/aws-sdk-js": "github:aws/aws-sdk-js@2.3.19",
+    "babel-polyfill": "npm:babel-polyfill@6.9.1",
     "braintree": "github:braintree/braintree-web@2.24.1",
     "crypto/cryptojs": "github:sytelus/cryptojs@3.1.2",
     "crypto/isaac": "github:rubycon/isaac.js@master",
     "crypto/ntru": "github:cyph/ntru.js@master",
     "crypto/supersphincs": "github:cyph/supersphincs.js@master",
     "davidchambers/base64.js": "github:davidchambers/base64.js@0.3.0",
-    "dompurify": "npm:dompurify@0.8.0",
-    "es5-shim": "github:es-shims/es5-shim@4.5.8",
-    "es6-shim": "github:es-shims/es6-shim@0.35.1",
+    "dompurify": "npm:dompurify@0.8.2",
     "jquery": "npm:jquery@2.2.4",
     "jquery-legacy": "github:jquery/jquery@1.12.4",
     "julianlam/tabIndent.js": "github:julianlam/tabIndent.js@master",
@@ -51,7 +50,7 @@ System.config({
       "angular": "github:angular/bower-angular@1.5.6",
       "angular-animate": "github:angular/bower-angular-animate@1.5.6",
       "angular-aria": "github:angular/bower-angular-aria@1.5.6",
-      "css": "github:systemjs/plugin-css@0.1.22"
+      "css": "github:systemjs/plugin-css@0.1.23"
     },
     "github:jspm/nodelibs-assert@0.1.0": {
       "assert": "npm:assert@1.4.1"
@@ -80,7 +79,7 @@ System.config({
       "path-browserify": "npm:path-browserify@0.0.0"
     },
     "github:jspm/nodelibs-process@0.1.2": {
-      "process": "npm:process@0.11.3"
+      "process": "npm:process@0.11.4"
     },
     "github:jspm/nodelibs-stream@0.1.0": {
       "stream-browserify": "npm:stream-browserify@1.0.0"
@@ -112,6 +111,16 @@ System.config({
       "buffer": "github:jspm/nodelibs-buffer@0.1.0",
       "process": "github:jspm/nodelibs-process@0.1.2"
     },
+    "npm:babel-polyfill@6.9.1": {
+      "babel-runtime": "npm:babel-runtime@6.9.2",
+      "core-js": "npm:core-js@2.4.0",
+      "process": "github:jspm/nodelibs-process@0.1.2",
+      "regenerator-runtime": "npm:regenerator-runtime@0.9.5"
+    },
+    "npm:babel-runtime@6.9.2": {
+      "core-js": "npm:core-js@2.4.0",
+      "regenerator-runtime": "npm:regenerator-runtime@0.9.5"
+    },
     "npm:buffer@3.6.0": {
       "base64-js": "npm:base64-js@0.0.8",
       "child_process": "github:jspm/nodelibs-child_process@0.1.0",
@@ -119,6 +128,12 @@ System.config({
       "ieee754": "npm:ieee754@1.1.6",
       "isarray": "npm:isarray@1.0.0",
       "process": "github:jspm/nodelibs-process@0.1.2"
+    },
+    "npm:core-js@2.4.0": {
+      "fs": "github:jspm/nodelibs-fs@0.1.2",
+      "path": "github:jspm/nodelibs-path@0.1.0",
+      "process": "github:jspm/nodelibs-process@0.1.2",
+      "systemjs-json": "github:systemjs/plugin-json@0.1.2"
     },
     "npm:core-util-is@1.0.2": {
       "buffer": "github:jspm/nodelibs-buffer@0.1.0"
@@ -134,7 +149,7 @@ System.config({
     "npm:domain-browser@1.1.7": {
       "events": "github:jspm/nodelibs-events@0.1.1"
     },
-    "npm:dompurify@0.8.0": {
+    "npm:dompurify@0.8.2": {
       "domain": "github:jspm/nodelibs-domain@0.1.0",
       "fs": "github:jspm/nodelibs-fs@0.1.2",
       "http": "github:jspm/nodelibs-http@1.7.1",
@@ -158,7 +173,7 @@ System.config({
     "npm:path-browserify@0.0.0": {
       "process": "github:jspm/nodelibs-process@0.1.2"
     },
-    "npm:process@0.11.3": {
+    "npm:process@0.11.4": {
       "assert": "github:jspm/nodelibs-assert@0.1.0"
     },
     "npm:punycode@1.3.2": {
@@ -176,6 +191,10 @@ System.config({
     },
     "npm:reflect-metadata@0.1.2": {
       "assert": "github:jspm/nodelibs-assert@0.1.0",
+      "process": "github:jspm/nodelibs-process@0.1.2"
+    },
+    "npm:regenerator-runtime@0.9.5": {
+      "path": "github:jspm/nodelibs-path@0.1.0",
       "process": "github:jspm/nodelibs-process@0.1.2"
     },
     "npm:rxjs@5.0.0-beta.8": {

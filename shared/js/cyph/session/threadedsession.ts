@@ -73,6 +73,7 @@ export class ThreadedSession implements ISession {
 	 */
 	public constructor (
 		descriptor?: string,
+		nativeCrypto: boolean = false,
 		private controller?: IController,
 		private id: string = Util.generateGuid()
 	) {
@@ -110,6 +111,7 @@ export class ThreadedSession implements ISession {
 			System.import('cyph/session/session').then(Session => {
 				const session: ISession	= new Session.Session(
 					locals.descriptor,
+					locals.nativeCrypto,
 					null,
 					locals.id
 				);
@@ -136,6 +138,7 @@ export class ThreadedSession implements ISession {
 			});
 		}, {
 			descriptor,
+			nativeCrypto,
 			id: this.id,
 			events: ThreadedSessionEvents
 		});

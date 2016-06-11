@@ -399,10 +399,6 @@ export class NativeCrypto {
 			memLimit: number = NativeCrypto.PasswordHash.memLimitInteractive,
 			callback: (
 				hash: Uint8Array,
-				salt: Uint8Array,
-				outputBytes: number,
-				opsLimit: number,
-				memLimit: number,
 				err: any
 			) => void
 		) : void => {
@@ -412,14 +408,7 @@ export class NativeCrypto {
 				'deriveBits',
 				(cryptoKey: CryptoKey, err: any) => {
 					if (err) {
-						callback(
-							undefined,
-							undefined,
-							undefined,
-							undefined,
-							undefined,
-							err
-						);
+						callback(undefined, err);
 						return;
 					}
 
@@ -433,23 +422,9 @@ export class NativeCrypto {
 						cryptoKey,
 						outputBytes * 8
 					).then((hash: ArrayBuffer) =>
-						callback(
-							new Uint8Array(hash),
-							salt,
-							outputBytes,
-							opsLimit,
-							memLimit,
-							undefined
-						)
+						callback(new Uint8Array(hash), undefined)
 					).catch(err =>
-						callback(
-							undefined,
-							undefined,
-							undefined,
-							undefined,
-							undefined,
-							err
-						)
+						callback(undefined, err)
 					);
 				}
 			);

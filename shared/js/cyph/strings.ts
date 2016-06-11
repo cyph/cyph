@@ -6,6 +6,7 @@ import {Util} from 'util';
  * (translated to user's language where possible).
  */
 export const Strings = {
+	accept: `accept`,
 	cancel: `cancel`,
 	connectedNotification: `Connected!`,
 	continueDialogAction: `continue`,
@@ -13,11 +14,11 @@ export const Strings = {
 	cypherToast2: `This cyphertext is what outsiders spying on your traffic will see (nothing of value).`,
 	cypherToast3: `Thou art amazed.`,
 	decline: `decline`,
+	discard: `discard`,
 	disconnectConfirm: `Are you sure that you wish to disconnect?`,
 	disconnectTitle: `Disconnect`,
 	disconnectWarning: `After closing Cyph, your messages will no longer be retrievable.`,
 	disconnectedNotification: `This cyph has been disconnected.`,
-	download: `download`,
 	fileCall: `file transfer`,
 	fileTooLarge: `The file that you are trying to send exceeds the 250 MB attachment limit.`,
 	fileTransferInitMe: `You are sending the file:`,

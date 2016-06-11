@@ -1,4 +1,4 @@
-module: cyph-me
+service: cyph-me
 runtime: python27
 api_version: 1
 threadsafe: true

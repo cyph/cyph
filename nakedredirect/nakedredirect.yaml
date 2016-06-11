@@ -1,4 +1,4 @@
-module: nakedredirect
+service: nakedredirect
 runtime: go
 api_version: go1
 

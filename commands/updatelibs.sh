@@ -107,7 +107,7 @@ jspm install -y \
 	github:andyet/simplewebrtc \
 	npm:animate.css \
 	github:davidchambers/base64.js \
-	jquery \
+	jquery@^2 \
 	jquery-legacy=github:jquery/jquery@^1 \
 	npm:magnific-popup \
 	npm:nanoscroller \
@@ -119,8 +119,7 @@ jspm install -y \
 	github:aws/aws-sdk-js \
 	npm:rxjs \
 	braintree=github:braintree/braintree-web \
-	es5-shim \
-	es6-shim \
+	babel-polyfill \
 	crypto/ntru=github:cyph/ntru.js \
 	crypto/supersphincs=github:cyph/supersphincs.js \
 	crypto/isaac=github:rubycon/isaac.js \
@@ -167,7 +166,7 @@ bash -c "$(node -e '
 
 cd lib/js
 
-sed -i 's/^\/dist$//' jquery-legacy/.gitignore
+sed -i 's/^\/dist$//' jquery*/.gitignore
 
 cd crypto
 git clone --recursive https://github.com/jedisct1/libsodium.js libsodium
@@ -183,12 +182,23 @@ cd microlight
 uglifyjs microlight.js -m -o microlight.min.js
 cd ..
 
+cd babel-polyfill
+npm install
+npm install process
+browserify dist/polyfill.min.js -o browser.js
+rm -rf node_modules
+cd ..
+
 cd github/andyet/simplewebrtc@*
 sed -i "s|require('./socketioconnection')|null|g" simplewebrtc.js
 npm install
 node build.js
 rm -rf node_modules
 cd ../../..
+
+cp system.js base.js
+echo >> base.js
+cat babel-polyfill/browser.js >> base.js
 
 cd ..
 
@@ -202,8 +212,7 @@ typings install --global --save \
 	dt~webrtc/mediastream \
 	dt~webrtc/rtcpeerconnection \
 	dt~cryptojs \
-	dt~dompurify \
-	dt~es6-shim
+	dt~dompurify
 
 mkdir blog
 cd blog

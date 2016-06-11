@@ -284,17 +284,6 @@ export const Templates	= {
 					</md-button>
 					<md-button
 						translate
-						class='md-fab send-file-button'
-						aria-label='Send File'
-					>
-						<img src='/img/icons/file.png' alt='File' />
-						<input
-							type='file'
-							cyph-filechange='$this.fileManager.send(this)'
-						/>
-					</md-button>
-					<md-button
-						translate
 						aria-label='End Call'
 						class='md-fab md-theme-grey close-button'
 						ng-click='$this.p2pManager.closeButton()'

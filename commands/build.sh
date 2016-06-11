@@ -113,7 +113,8 @@ else
 
 	cd js
 	for file in $tsfiles ; do
-		output="${output}$(tsc $tsargs $file.ts --outFile $file.js)"
+		output="${output}$(tsc $tsargs $file.ts --outFile $file.ts.js)"
+		babel --presets es2015 --compact false $file.ts.js -o $file.js
 		jsbundle $file
 	done
 	cd ..
@@ -122,6 +123,8 @@ else
 
 	if [ "${1}" == '--test' ] ; then
 		cd $originalDir
+
+		rm -rf shared/js/docs
 
 		{ \
 			find shared/css -name '*.css' & \

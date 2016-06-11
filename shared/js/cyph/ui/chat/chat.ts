@@ -304,6 +304,7 @@ export class Chat extends BaseButtonManager implements IChat {
 		};
 
 		let forceTURN: boolean;
+		let nativeCrypto: boolean;
 
 		if (session) {
 			this.session	= session;
@@ -348,8 +349,26 @@ export class Chat extends BaseButtonManager implements IChat {
 				});
 			}
 
+			/* Native crypto API flag */
+			if (id[0] === '%') {
+				id	=
+					id.substring(1) +
+					(id.length > 1 ? 'a' : '')
+				;
+
+				nativeCrypto	= true;
+
+				Analytics.send({
+					hitType: 'event',
+					eventCategory: 'native-crypto',
+					eventAction: 'used',
+					eventValue: 1
+				});
+			}
+
 			this.session	= new Session.ThreadedSession(
 				id,
+				nativeCrypto,
 				controller
 			);
 		}

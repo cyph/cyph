@@ -40,7 +40,7 @@ export class Thread {
 
 		/* Normalisation to increase compatibility with Web libraries */
 
-		importScripts('/lib/js/system.js');
+		importScripts('/lib/js/base.js');
 		System.baseURL	= self['locationData'].href;
 		importScripts('/js/cyph/base.js');
 
