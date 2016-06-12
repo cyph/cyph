@@ -7,7 +7,7 @@
 
 
 /** @ignore */
-const IS_WEB: boolean	= typeof self['IS_WEB'] !== 'undefined' ?
+var IS_WEB: boolean	= typeof self['IS_WEB'] !== 'undefined' ?
 	self['IS_WEB'] :
 	typeof window === 'object'
 ;
@@ -52,7 +52,7 @@ if (
 /**
  * @global Cross-browser container of values in self.location.
  */
-const locationData: Location	= typeof self['locationData'] !== 'undefined' ?
+var locationData: Location		= typeof self['locationData'] !== 'undefined' ?
 	self['locationData'] :
 	location
 ;
@@ -60,7 +60,7 @@ const locationData: Location	= typeof self['locationData'] !== 'undefined' ?
 /**
  * @global Cross-browser container of values in self.navigator.
  */
-const navigatorData: Navigator	= typeof self['navigatorData'] !== 'undefined' ?
+var navigatorData: Navigator	= typeof self['navigatorData'] !== 'undefined' ?
 	self['navigatorData'] :
 	navigator
 ;
