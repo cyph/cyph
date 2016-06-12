@@ -207,7 +207,7 @@ export class Util {
 	 * strict jQuery.ajax compatibility (http://api.jquery.com/jquery.ajax/).
 	 * @param o
 	 */
-	public static async request (o: {
+	public static request (o: {
 		async?: boolean;
 		contentType?: string;
 		data?: any;
@@ -291,7 +291,7 @@ export class Util {
 		}).catch(err => {
 			if (retries > 0) {
 				--o.retries;
-				Util.request(o);
+				return Util.request(o);
 			}
 			else if (!discardErrors) {
 				throw err;
