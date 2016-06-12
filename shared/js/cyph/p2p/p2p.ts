@@ -162,7 +162,7 @@ export class P2P implements IP2P {
 		this.commands.kill();
 	}
 
-	public join () : void {
+	public async join () : Promise<void> {
 		if (this.webRTC) {
 			return;
 		}
@@ -178,102 +178,97 @@ export class P2P implements IP2P {
 		this.isActive	= true;
 		this.controller.update();
 
-		Util.retryUntilComplete((retry: Function) => Util.request({
-			url: Env.baseUrl + 'iceservers',
-			error: retry,
-			success: (iceServers: string) => {
-				const events: string[]	= [];
+		const iceServers: string	= await Util.request({url: Env.baseUrl + 'iceservers'});
+		const events: string[]		= [];
 
-				const webRTC	= new self['SimpleWebRTC']({
-					localVideoEl: this.localVideo,
-					remoteVideosEl: this.remoteVideo,
-					autoRequestMedia: true,
-					autoRemoveVideos: false,
-					adjustPeerVolume: true,
-					media: this.outgoingStream,
-					connection: {
-						on: (event: string, callback: Function) => {
-							const fullEvent: string	= P2P.constants.webRTC + event;
-							events.push(fullEvent);
+		const webRTC	= new self['SimpleWebRTC']({
+			localVideoEl: this.localVideo,
+			remoteVideosEl: this.remoteVideo,
+			autoRequestMedia: true,
+			autoRemoveVideos: false,
+			adjustPeerVolume: true,
+			media: this.outgoingStream,
+			connection: {
+				on: (event: string, callback: Function) => {
+					const fullEvent: string	= P2P.constants.webRTC + event;
+					events.push(fullEvent);
 
-							EventManager.on(
-								fullEvent,
-								args => {
-									/* http://www.kapejod.org/en/2014/05/28/ */
-									if (event === 'message' && args[0].type === 'offer') {
-										args[0].payload.sdp	= args[0].payload.sdp.
-											split('\n').
-											filter((line: string) =>
-												line.indexOf('b=AS:') < 0 &&
-												line.indexOf(
-													'urn:ietf:params:rtp-hdrext:ssrc-audio-level'
-												) < 0
-											).
-											join('\n')
-										;
-									}
-
-									callback.apply(webRTC, args);
-								}
-							);
-						},
-						emit: (event: string, ...args: any[]) => {
-							const lastArg: any	= args.slice(-1)[0];
-
-							if (event === 'join' && typeof lastArg === 'function') {
-								lastArg(null, {clients: {friend:
-									this.incomingStream.video ? {video: true} : {audio: true}
-								}});
+					EventManager.on(
+						fullEvent,
+						args => {
+							/* http://www.kapejod.org/en/2014/05/28/ */
+							if (event === 'message' && args[0].type === 'offer') {
+								args[0].payload.sdp	= args[0].payload.sdp.
+									split('\n').
+									filter((line: string) =>
+										line.indexOf('b=AS:') < 0 &&
+										line.indexOf(
+											'urn:ietf:params:rtp-hdrext:ssrc-audio-level'
+										) < 0
+									).
+									join('\n')
+								;
 							}
-							else {
-								this.session.send(
-									new Session.Message(
-										Session.RPCEvents.p2p,
-										new Session.Command(
-											P2P.constants.webRTC,
-											{event, args}
-										)
-									)
-								);
-							}
-						},
-						getSessionid: () => this.session.state.cyphId,
-						disconnect: () => events.forEach(event => EventManager.off(event))
+
+							callback.apply(webRTC, args);
+						}
+					);
+				},
+				emit: (event: string, ...args: any[]) => {
+					const lastArg: any	= args.slice(-1)[0];
+
+					if (event === 'join' && typeof lastArg === 'function') {
+						lastArg(null, {clients: {friend:
+							this.incomingStream.video ? {video: true} : {audio: true}
+						}});
 					}
-				});
-
-				webRTC.webrtc.config.peerConnectionConfig.iceServers	=
-					JSON.parse(iceServers).
-					filter(o => !this.forceTURN || o['url'].indexOf('stun:') !== 0)
-				;
-
-				const toggle	= (stream, enabled: boolean, medium: string) => {
-					if (medium in stream) {
-						stream[medium]	= enabled;
-						this.controller.update();
+					else {
+						this.session.send(
+							new Session.Message(
+								Session.RPCEvents.p2p,
+								new Session.Command(
+									P2P.constants.webRTC,
+									{event, args}
+								)
+							)
+						);
 					}
-				};
-
-				webRTC.on('mute', data => toggle(this.incomingStream, false, data.name));
-				webRTC.on('unmute', data => toggle(this.incomingStream, true, data.name));
-				webRTC.on('audioOn', () => toggle(this.outgoingStream, true, 'audio'));
-				webRTC.on('audioOff', () => toggle(this.outgoingStream, false, 'audio'));
-				webRTC.on('videoOn', () => toggle(this.outgoingStream, true, 'video'));
-				webRTC.on('videoOff', () => toggle(this.outgoingStream, false, 'video'));
-
-				webRTC.on('videoAdded', () => {
-					this.loading	= false;
-					this.controller.update();
-				});
-
-				webRTC.on('readyToCall', () => webRTC.joinRoom(P2P.constants.webRTC));
-				webRTC.on('leftRoom', () => webRTC.disconnect());
-
-				webRTC.connection.emit('connect');
-
-				this.webRTC	= webRTC;
+				},
+				getSessionid: () => this.session.state.cyphId,
+				disconnect: () => events.forEach(event => EventManager.off(event))
 			}
-		}));
+		});
+
+		webRTC.webrtc.config.peerConnectionConfig.iceServers	=
+			JSON.parse(iceServers).
+			filter(o => !this.forceTURN || o['url'].indexOf('stun:') !== 0)
+		;
+
+		const toggle	= (stream, enabled: boolean, medium: string) => {
+			if (medium in stream) {
+				stream[medium]	= enabled;
+				this.controller.update();
+			}
+		};
+
+		webRTC.on('mute', data => toggle(this.incomingStream, false, data.name));
+		webRTC.on('unmute', data => toggle(this.incomingStream, true, data.name));
+		webRTC.on('audioOn', () => toggle(this.outgoingStream, true, 'audio'));
+		webRTC.on('audioOff', () => toggle(this.outgoingStream, false, 'audio'));
+		webRTC.on('videoOn', () => toggle(this.outgoingStream, true, 'video'));
+		webRTC.on('videoOff', () => toggle(this.outgoingStream, false, 'video'));
+
+		webRTC.on('videoAdded', () => {
+			this.loading	= false;
+			this.controller.update();
+		});
+
+		webRTC.on('readyToCall', () => webRTC.joinRoom(P2P.constants.webRTC));
+		webRTC.on('leftRoom', () => webRTC.disconnect());
+
+		webRTC.connection.emit('connect');
+
+		this.webRTC	= webRTC;
 	}
 
 	public request (callType: string) : void {

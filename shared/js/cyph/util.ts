@@ -35,7 +35,8 @@ export class Util {
 					subject: o.subject || 'New Cyph Email',
 					text: o.message
 				}
-			}
+			},
+			discardErrors: true
 		});
 	}
 
@@ -206,75 +207,75 @@ export class Util {
 	 * strict jQuery.ajax compatibility (http://api.jquery.com/jquery.ajax/).
 	 * @param o
 	 */
-	public static request (o: {
+	public static async request (o: {
 		async?: boolean;
 		contentType?: string;
 		data?: any;
-		error?: Function;
+		discardErrors?: boolean;
 		method?: string;
 		responseType?: string;
-		success?: Function;
+		retries?: number;
 		timeout?: number;
 		url: string;
-	}) : void {
-		const async: boolean		= Util.getValue(o, 'async', true) !== false;
-		const error: Function		= Util.getValue(o, 'error', () => {});
-		const method: string		= Util.getValue(o, 'method', 'GET');
-		const responseType: string	= Util.getValue(o, 'responseType', '');
-		const success: Function		= Util.getValue(o, 'success', () => {});
-		const timeout: number		= Util.getValue(o, 'timeout', 0);
-		let contentType: string		= Util.getValue(o, 'contentType', null);
-		let data: any				= Util.getValue<any>(o, 'data', '');
-		let url: string				= o.url;
+	}) : Promise<any> {
+		const async: boolean			= Util.getValue(o, 'async', true) !== false;
+		const discardErrors: boolean	= Util.getValue(o, 'discardErrors', false);
+		const method: string			= Util.getValue(o, 'method', 'GET');
+		const responseType: string		= Util.getValue(o, 'responseType', '');
+		const retries: number			= Util.getValue(o, 'retries', 0);
+		const timeout: number			= Util.getValue(o, 'timeout', 0);
+		let contentType: string			= Util.getValue(o, 'contentType', null);
+		let data: any					= Util.getValue<any>(o, 'data', '');
+		let url: string					= o.url;
 
-		if (url.slice(-5) === '.json') {
-			contentType	= 'application/json';
-		}
-		else if (!responseType || responseType === 'text') {
-			contentType	= 'application/x-www-form-urlencoded';
-		}
+		return new Promise<any>((resolve, reject) => {
+			if (url.slice(-5) === '.json') {
+				contentType	= 'application/json';
+			}
+			else if (!responseType || responseType === 'text') {
+				contentType	= 'application/x-www-form-urlencoded';
+			}
 
-		if (data && method === 'GET') {
-			url		+= '?' + (
-				typeof data === 'object' ?
-					Util.toQueryString(data) :
-					data.toString()
+			if (data && method === 'GET') {
+				url		+= '?' + (
+					typeof data === 'object' ?
+						Util.toQueryString(data) :
+						data.toString()
+				);
+
+				data	= null;
+			}
+			else if (typeof data === 'object') {
+				data	= contentType === 'application/json' ?
+					JSON.stringify(data) :
+					Util.toQueryString(data)
+				;
+			}
+
+
+			const xhr: XMLHttpRequest	= new XMLHttpRequest();
+
+			const callback: Function	= () => (
+				xhr.status === 200 ?
+					resolve :
+					reject
+			)(
+				xhr.response
 			);
 
-			data	= null;
-		}
-		else if (typeof data === 'object') {
-			data	= contentType === 'application/json' ?
-				JSON.stringify(data) :
-				Util.toQueryString(data)
-			;
-		}
+			if (async) {
+				xhr.onreadystatechange = () => {
+					if (xhr.readyState === 4) {
+						callback();
+					}
+				};
 
-
-		const xhr: XMLHttpRequest	= new XMLHttpRequest();
-
-		const callback: Function	= () => (
-			xhr.status === 200 ?
-				success :
-				error
-		)(
-			xhr.response
-		);
-
-		if (async) {
-			xhr.onreadystatechange = () => {
-				if (xhr.readyState === 4) {
-					callback();
+				try {
+					xhr.timeout = timeout;
 				}
-			};
-
-			try {
-				xhr.timeout = timeout;
+				catch (_) {}
 			}
-			catch (_) {}
-		}
 
-		try {
 			xhr.open(method, url, async);
 			xhr.responseType	= responseType;
 
@@ -287,10 +288,15 @@ export class Util {
 			if (!async) {
 				callback();
 			}
-		}
-		catch (err) {
-			error(err.message);
-		}
+		}).catch(err => {
+			if (retries > 0) {
+				--o.retries;
+				Util.request(o);
+			}
+			else if (!discardErrors) {
+				throw err;
+			}
+		});
 	}
 
 	/**

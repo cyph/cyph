@@ -106,10 +106,8 @@ export class AWS {
 			async: !config.isSynchronous,
 			method: requestMethod,
 			url: config.url,
-			data: query + '&X-Amz-Signature=' + signature,
-			success: callback,
-			error: callback
-		});
+			data: query + '&X-Amz-Signature=' + signature
+		}).then(callback).catch(callback);
 	}
 
 	private static _	= (() => {

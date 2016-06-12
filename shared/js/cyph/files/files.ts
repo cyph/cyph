@@ -235,7 +235,7 @@ export class Files implements IFiles {
 			transfer.name,
 			transfer.size,
 			true,
-			(ok: boolean) => {
+			async (ok: boolean) => {
 				transfer.answer	= ok;
 
 				this.session.send(new Session.Message(
@@ -260,46 +260,45 @@ export class Files implements IFiles {
 						this.controller.update();
 					}, 1000);
 
-					Util.retryUntilComplete(retry => Util.request({
+					const cyphertext: ArrayBuffer	= await Util.request({
 						/* Temporary workaround while Firebase adds CORS support */
 						url: (transfer.url || '').replace(
 							'firebasestorage.googleapis.com',
 							'firebase.cyph.com'
 						),
 						responseType: 'arraybuffer',
-						error: retry,
-						success: (cyphertext: ArrayBuffer) => {
-							transfer.percentComplete	= Math.max(
-								transfer.percentComplete,
-								85
+						retries: 5
+					});
+
+					transfer.percentComplete	= Math.max(
+						transfer.percentComplete,
+						85
+					);
+
+					Firebase.call({ storage: {
+						refFromURL: { args: [transfer.url],
+						delete: {}}
+					}});
+
+					this.decryptFile(
+						new Uint8Array(cyphertext),
+						transfer.key,
+						(plaintext: Uint8Array) => {
+							transfer.percentComplete	= 100;
+
+							Potassium.clearMemory(transfer.key);
+
+							Util.openUrl(
+								URL.createObjectURL(new Blob([plaintext])),
+								transfer.name
 							);
 
-							Firebase.call({ storage: {
-								refFromURL: { args: [transfer.url],
-								delete: {}}
-							}});
-
-							this.decryptFile(
-								new Uint8Array(cyphertext),
-								transfer.key,
-								(plaintext: Uint8Array) => {
-									transfer.percentComplete	= 100;
-
-									Potassium.clearMemory(transfer.key);
-
-									Util.openUrl(
-										URL.createObjectURL(new Blob([plaintext])),
-										transfer.name
-									);
-
-									setTimeout(() => {
-										this.transfers.splice(transferIndex, 1);
-										this.controller.update();
-									}, 1000);
-								}
-							);
+							setTimeout(() => {
+								this.transfers.splice(transferIndex, 1);
+								this.controller.update();
+							}, 1000);
 						}
-					}));
+					);
 				}
 				else {
 					this.triggerUIEvent(

@@ -84,18 +84,20 @@ angular.bootstrap(document, [Cyph.Config.angularConfig.rootModule]);
 /* Redirect to Onion site when on Tor */
 
 if (!Cyph.Env.isOnion) {
-	Cyph.Util.request({
-		url: `https://ping.${Cyph.Config.onionRoot}`,
-		success: (data: string) => {
-			if (data === 'pong') {
-				locationData.href	=
-					'https://' +
-					Cyph.Config.onionRoot +
-					locationData.href.split(locationData.host + '/')[1]
-				;
-			}
+	(async () => {
+		const response: string	= await Cyph.Util.request({
+			url: `https://ping.${Cyph.Config.onionRoot}`,
+			discardErrors: true
+		});
+
+		if (response === 'pong') {
+			locationData.href	=
+				'https://' +
+				Cyph.Config.onionRoot +
+				locationData.href.split(locationData.host + '/')[1]
+			;
 		}
-	});
+	})();
 }
 
 
