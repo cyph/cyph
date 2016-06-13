@@ -42,7 +42,7 @@ export class NativeCrypto {
 			'jwk',
 			JSON.parse(
 				Potassium.toString(
-					new Uint8Array(key.buffer, 0, key.indexOf(0))
+					new Uint8Array(new Uint8Array(key).buffer, 0, key.indexOf(0))
 				)
 			),
 			algorithm,
