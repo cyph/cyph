@@ -64,7 +64,7 @@ export class Castle implements ICastle {
 						const cyphertext of
 						this.incomingMessages[this.incomingMessageId]
 					) {
-						if (!wasSuccessful && await this.core.receive(cyphertext)) {
+						if (!wasSuccessful && (await this.core.receive(cyphertext))) {
 							this.session.trigger(Events.cyphertext, {
 								cyphertext: Potassium.toBase64(cyphertext),
 								author: Users.friend
