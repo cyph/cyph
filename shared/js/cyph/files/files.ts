@@ -32,142 +32,142 @@ export class Files implements IFiles {
 			key?: Uint8Array,
 			chunkSize?: number,
 			callbackId?: string
-		},
-		callback: Function
-	) {
-		locals.chunkSize	= Config.filesConfig.chunkSize;
-		locals.callbackId	= 'files-' + Util.generateGuid();
+		}
+	) : Promise<any[]> {
+		return new Promise((resolve, reject) => {
+			locals.chunkSize	= Config.filesConfig.chunkSize;
+			locals.callbackId	= 'files-' + Util.generateGuid();
 
-		const thread	= new Thread((Cyph: any, locals: any, importScripts: Function) => {
-			importScripts('/lib/js/crypto/libsodium/dist/browsers-sumo/combined/sodium.min.js');
-			importScripts('/js/cyph/crypto/crypto.js');
+			const thread	= new Thread((Cyph: any, locals: any, importScripts: Function) => {
+				importScripts('/lib/js/crypto/libsodium/dist/browsers-sumo/combined/sodium.min.js');
+				importScripts('/js/cyph/crypto/crypto.js');
 
-			System.import('cyph/crypto/crypto').then(Crypto => {
-				const potassium	= new Crypto.Potassium();
+				System.import('cyph/crypto/crypto').then(async (Crypto) => {
+					const potassium	= new Crypto.Potassium();
 
-				/* Encrypt */
-				if (locals.plaintext) {
-					const key: Uint8Array	= Crypto.Potassium.randomBytes(
-						potassium.SecretBox.keyBytes
-					);
+					/* Encrypt */
+					if (locals.plaintext) {
+						const key: Uint8Array	= Crypto.Potassium.randomBytes(
+							potassium.SecretBox.keyBytes
+						);
 
-					const chunks: Uint8Array[]	= [];
+						const chunks: Uint8Array[]	= [];
 
-					let i: number	= 0;
-					Cyph.Util.retryUntilComplete(retry => {
-						if (i < locals.plaintext.length) {
-							potassium.SecretBox.seal(
-								new Uint8Array(
-									locals.plaintext.buffer,
-									i,
-									(locals.plaintext.length - i) > locals.chunkSize ?
-										locals.chunkSize :
-										undefined
-								),
-								key,
-								(chunk: Uint8Array, err: any) => {
-									if (err) {
-										Cyph.EventManager.trigger(
-											locals.callbackId,
-											[null, null, err]
-										);
-									}
-									else {
-										i += locals.chunkSize;
-										chunks.push(chunk);
-										retry(-1);
-									}
-								}
-							);
-						}
-						else {
-							const cyphertext	= new Uint8Array(
-								chunks.
-									map(chunk => chunk.length + 4).
-									reduce((a, b) => a + b, 0)
-							);
-
-							let j: number	= 0;
-							for (const chunk of chunks) {
-								cyphertext.set(
-									new Uint8Array(new Uint32Array([chunk.length]).buffer),
-									j
+						for (let i = 0 ; i < locals.plaintext.length ; i += locals.chunkSize) {
+							try {
+								chunks.push(await potassium.SecretBox.seal(
+									new Uint8Array(
+										locals.plaintext.buffer,
+										i,
+										(locals.plaintext.length - i) > locals.chunkSize ?
+											locals.chunkSize :
+											undefined
+									),
+									key
+								));
+							}
+							catch (err) {
+								Cyph.EventManager.trigger(
+									locals.callbackId,
+									[err, null, null]
 								);
-								j += 4;
 
-								cyphertext.set(chunk, j);
-								j += chunk.length;
+								return;
 							}
-
-							Cyph.EventManager.trigger(
-								locals.callbackId,
-								[cyphertext, key]
-							);
 						}
-					});
-				}
-				/* Decrypt */
-				else if (locals.cyphertext && locals.key) {
-					const chunks: Uint8Array[]	= [];
 
-					let i: number	= 0;
-					Cyph.Util.retryUntilComplete(retry => {
-						if (i < locals.cyphertext.length) {
-							const chunkSize: number	= new DataView(
-								locals.cyphertext.buffer,
-								i
-							).getUint32(0, true);
+						const cyphertext: Uint8Array	= new Uint8Array(
+							chunks.
+								map(chunk => chunk.length + 4).
+								reduce((a, b) => a + b, 0)
+						);
 
-							i += 4;
+						let j: number	= 0;
+						for (const chunk of chunks) {
+							cyphertext.set(
+								new Uint8Array(new Uint32Array([chunk.length]).buffer),
+								j
+							);
+							j += 4;
 
-							potassium.SecretBox.open(
-								new Uint8Array(
+							cyphertext.set(chunk, j);
+							j += chunk.length;
+
+							Crypto.Potassium.clearMemory(chunk);
+						}
+
+						Cyph.EventManager.trigger(
+							locals.callbackId,
+							[null, cyphertext, key]
+						);
+					}
+					/* Decrypt */
+					else if (locals.cyphertext && locals.key) {
+						const chunks: Uint8Array[]	= [];
+
+						for (let i = 0 ; i < locals.cyphertext.length ;) {
+							try {
+								const chunkSize: number	= new DataView(
 									locals.cyphertext.buffer,
-									i,
-									chunkSize
-								),
-								locals.key,
-								(chunk: Uint8Array, err: any) => {
-									if (err) {
-										Cyph.EventManager.trigger(
-											locals.callbackId,
-											[null, err]
-										);
-									}
-									else {
-										i += chunkSize;
-										chunks.push(chunk);
-										retry(-1);
-									}
-								}
-							);
-						}
-						else {
-							const plaintext	= new Uint8Array(
-								chunks.
-									map(chunk => chunk.length).
-									reduce((a, b) => a + b, 0)
-							);
+									i
+								).getUint32(0, true);
 
-							let j: number	= 0;
-							for (const chunk of chunks) {
-								plaintext.set(chunk, j);
-								j += chunk.length;
+								i += 4;
+
+								chunks.push(await potassium.SecretBox.open(
+									new Uint8Array(
+										locals.cyphertext.buffer,
+										i,
+										chunkSize
+									),
+									locals.key
+								));
+
+								i += chunkSize;
 							}
+							catch (err) {
+								Cyph.EventManager.trigger(
+									locals.callbackId,
+									[err, null]
+								);
 
-							Cyph.EventManager.trigger(
-								locals.callbackId,
-								[plaintext]
-							);
+								return;
+							}
 						}
-					});
+
+						const plaintext	= new Uint8Array(
+							chunks.
+								map(chunk => chunk.length).
+								reduce((a, b) => a + b, 0)
+						);
+
+						let j: number	= 0;
+						for (const chunk of chunks) {
+							plaintext.set(chunk, j);
+							j += chunk.length;
+
+							Crypto.Potassium.clearMemory(chunk);
+						}
+
+						Cyph.EventManager.trigger(
+							locals.callbackId,
+							[null, plaintext]
+						);
+					}
+				});
+			}, locals);
+
+			EventManager.one(locals.callbackId, data => {
+				thread.stop();
+
+				const err	= data[0];
+				if (err) {
+					reject(err);
+				}
+				else {
+					resolve(data.slice(1));
 				}
 			});
-		}, locals);
-
-		EventManager.one(locals.callbackId, data => {
-			thread.stop();
-			callback.apply(this, data);
 		});
 	}
 
@@ -176,53 +176,53 @@ export class Files implements IFiles {
 
 	public transfers: ITransfer[]	= [];
 
-	private decryptFile (
+	private async decryptFile (
 		cyphertext: Uint8Array,
-		key: Uint8Array,
-		callback: (plaintext: Uint8Array) => void
-	) : void {
-		const f	= (plaintext: Uint8Array, err: any) => {
-			callback(err ?
-				Potassium.fromString('File decryption failed.') :
-				plaintext
-			);
-		};
-
-		if (this.nativePotassium) {
-			this.nativePotassium.SecretBox.open(cyphertext, key, f);
+		key: Uint8Array
+	) : Promise<Uint8Array> {
+		try {
+			return this.nativePotassium ?
+				await this.nativePotassium.SecretBox.open(cyphertext, key) :
+				(await Files.cryptoThread({cyphertext, key}))[0]
+			;
 		}
-		else {
-			Files.cryptoThread({cyphertext, key}, f);
+		catch (_) {
+			return Potassium.fromString('File decryption failed.');
 		}
 	}
 
-	private encryptFile (
-		plaintext: Uint8Array,
-		callback: (cyphertext: Uint8Array, key: Uint8Array) => void
-	) : void {
-		const f	= (cyphertext: Uint8Array, key: Uint8Array, err: any) => {
-			callback(
-				err ?
-					new Uint8Array(0) :
-					cyphertext
-				,
-				key
-			);
-		};
+	private async encryptFile (plaintext: Uint8Array) : Promise<{
+		cyphertext: Uint8Array;
+		key: Uint8Array;
+	}> {
+		try {
+			if (this.nativePotassium) {
+				const key: Uint8Array	= Potassium.randomBytes(
+					this.nativePotassium.SecretBox.keyBytes
+				);
 
-		if (this.nativePotassium) {
-			const key: Uint8Array	= Potassium.randomBytes(
-				this.nativePotassium.SecretBox.keyBytes
-			);
+				return {
+					cyphertext: await this.nativePotassium.SecretBox.seal(
+						plaintext,
+						key
+					),
+					key
+				};
+			}
+			else {
+				const results	= await Files.cryptoThread({plaintext});
 
-			this.nativePotassium.SecretBox.seal(
-				plaintext,
-				key,
-				(cyphertext: Uint8Array, err: any) => f(cyphertext, key, err)
-			);
+				return {
+					cyphertext: results[0],
+					key: results[1]
+				};
+			}
 		}
-		else {
-			Files.cryptoThread({plaintext}, f);
+		catch (_) {
+			return {
+				cyphertext: new Uint8Array(0),
+				key: new Uint8Array(0)
+			};
 		}
 	}
 
@@ -260,7 +260,7 @@ export class Files implements IFiles {
 						this.controller.update();
 					}, 1000);
 
-					const cyphertext: ArrayBuffer	= await Util.request({
+					const cyphertext: Uint8Array	= new Uint8Array(await Util.request({
 						/* Temporary workaround while Firebase adds CORS support */
 						url: (transfer.url || '').replace(
 							'firebasestorage.googleapis.com',
@@ -268,7 +268,7 @@ export class Files implements IFiles {
 						),
 						responseType: 'arraybuffer',
 						retries: 5
-					});
+					}));
 
 					transfer.percentComplete	= Math.max(
 						transfer.percentComplete,
@@ -280,25 +280,24 @@ export class Files implements IFiles {
 						delete: {}}
 					}});
 
-					this.decryptFile(
-						new Uint8Array(cyphertext),
-						transfer.key,
-						(plaintext: Uint8Array) => {
-							transfer.percentComplete	= 100;
-
-							Potassium.clearMemory(transfer.key);
-
-							Util.openUrl(
-								URL.createObjectURL(new Blob([plaintext])),
-								transfer.name
-							);
-
-							setTimeout(() => {
-								this.transfers.splice(transferIndex, 1);
-								this.controller.update();
-							}, 1000);
-						}
+					const plaintext: Uint8Array	= await this.decryptFile(
+						cyphertext,
+						transfer.key
 					);
+
+					transfer.percentComplete	= 100;
+
+					Potassium.clearMemory(transfer.key);
+
+					Util.openUrl(
+						URL.createObjectURL(new Blob([plaintext])),
+						transfer.name
+					);
+
+					setTimeout(() => {
+						this.transfers.splice(transferIndex, 1);
+						this.controller.update();
+					}, 1000);
 				}
 				else {
 					this.triggerUIEvent(
@@ -322,7 +321,7 @@ export class Files implements IFiles {
 		this.session.trigger(Session.Events.filesUI, {event, args});
 	}
 
-	public send (plaintext: Uint8Array, name: string) : void {
+	public async send (plaintext: Uint8Array, name: string) : Promise<void> {
 		if (plaintext.length > Config.filesConfig.maxSize) {
 			this.triggerUIEvent(UIEvents.tooLarge);
 
@@ -387,65 +386,62 @@ export class Files implements IFiles {
 			transfer
 		));
 
-		this.encryptFile(
-			plaintext,
-			(cyphertext: Uint8Array, key: Uint8Array) => {
-				transfer.size	= cyphertext.length;
-				transfer.key	= key;
+		const o	= await this.encryptFile(plaintext);
 
-				this.controller.update();
+		transfer.size	= o.cyphertext.length;
+		transfer.key	= o.key;
 
-				Util.retryUntilComplete(retry => {
-					const path: string	= 'ephemeral/' +  Util.generateGuid();
+		this.controller.update();
 
-					Firebase.call({ storage: {
-						ref: { args: [path],
-						put: { args: [new Blob([cyphertext])]}}
-					}}, id => {
-						uploadTaskId	= id;
+		Util.retryUntilComplete(retry => {
+			const path: string	= 'ephemeral/' +  Util.generateGuid();
 
-						Firebase.call({ returnValue: {
-							id: uploadTaskId,
-							command: { on: { args: [
-								'state_changed',
-								snapshot => {
-									transfer.percentComplete	=
-										snapshot.bytesTransferred /
-										snapshot.totalBytes *
-										100
-									;
+			Firebase.call({ storage: {
+				ref: { args: [path],
+				put: { args: [new Blob([o.cyphertext])]}}
+			}}, id => {
+				uploadTaskId	= id;
 
-									this.controller.update();
-								},
-								err => {
-									if (transfer.answer !== false) {
-										retry();
-									}
-								},
-								() => {
-									Firebase.call({ storage: {
-										ref: { args: [path],
-										getDownloadURL: {
-											then: { args: [(url: string) => {
-												transfer.url	= url;
+				Firebase.call({ returnValue: {
+					id: uploadTaskId,
+					command: { on: { args: [
+						'state_changed',
+						snapshot => {
+							transfer.percentComplete	=
+								snapshot.bytesTransferred /
+								snapshot.totalBytes *
+								100
+							;
 
-												this.session.send(new Session.Message(
-													Session.RPCEvents.files,
-													transfer
-												));
+							this.controller.update();
+						},
+						err => {
+							if (transfer.answer !== false) {
+								retry();
+							}
+						},
+						() => {
+							Firebase.call({ storage: {
+								ref: { args: [path],
+								getDownloadURL: {
+									then: { args: [(url: string) => {
+										transfer.url	= url;
 
-												this.transfers.splice(transferIndex, 1);
-												this.controller.update();
-											}]}
-										}}
-									}});
-								}
-							]}}
-						}});
-					});
-				});
-			}
-		);
+										this.session.send(new Session.Message(
+											Session.RPCEvents.files,
+											transfer
+										));
+
+										this.transfers.splice(transferIndex, 1);
+										this.controller.update();
+									}]}
+								}}
+							}});
+						}
+					]}}
+				}});
+			});
+		});
 	}
 
 	/**
