@@ -40,7 +40,11 @@ export class NativeCrypto {
 	) : Promise<CryptoKey> {
 		return Promise.resolve().then(() => NativeCrypto.Subtle.importKey(
 			'jwk',
-			JSON.parse(Potassium.toString(key)),
+			JSON.parse(
+				Potassium.toString(
+					new Uint8Array(key.buffer, 0, key.indexOf(0))
+				)
+			),
 			algorithm,
 			false,
 			[purpose]
