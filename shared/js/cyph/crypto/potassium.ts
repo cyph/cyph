@@ -12,7 +12,9 @@ export class Potassium {
 	private static SuperSphincs	= self['superSphincs'] || {};
 
 	public static clearMemory (a: Uint8Array) : void {
-		Potassium.Sodium.memzero(a);
+		if (a instanceof Uint8Array) {
+			Potassium.Sodium.memzero(a);
+		}
 	}
 
 	public static compareMemory (a: Uint8Array, b: Uint8Array) : boolean {
@@ -68,6 +70,54 @@ export class Potassium {
 	}
 
 
+	private BoxHelpers	= {
+		keyPair: <() => any> Potassium.Sodium.crypto_box_keypair,
+
+		seal: <(
+			plaintext: Uint8Array,
+			nonce: Uint8Array,
+			publicKey: Uint8Array,
+			privateKey: Uint8Array
+		) => any> Potassium.Sodium.crypto_box_easy,
+
+		open: <(
+			cyphertext: Uint8Array,
+			nonce: Uint8Array,
+			publicKey: Uint8Array,
+			privateKey: Uint8Array
+		) => any> Potassium.Sodium.crypto_box_open_easy
+	};
+
+	private PasswordHashHelpers	= {
+		hash: (
+			plaintext: Uint8Array,
+			salt: Uint8Array,
+			outputBytes: number,
+			opsLimit: number,
+			memLimit: number
+		) : any => Potassium.Sodium.crypto_pwhash_scryptsalsa208sha256(
+			outputBytes,
+			plaintext,
+			salt,
+			opsLimit,
+			memLimit
+		)
+	};
+
+	private SecretBoxHelpers	= {
+		seal: <(
+			plaintext: Uint8Array,
+			nonce: Uint8Array,
+			key: Uint8Array
+		) => any> Potassium.Sodium.crypto_secretbox_easy,
+
+		open: <(
+			cyphertext: Uint8Array,
+			nonce: Uint8Array,
+			key: Uint8Array
+		) => any> Potassium.Sodium.crypto_secretbox_open_easy
+	};
+
 	public native () : boolean {
 		return this.isNative;
 	}
@@ -83,96 +133,52 @@ export class Potassium {
 			Potassium.Sodium.crypto_box_SECRETKEYBYTES
 		,
 
-		keyPair: (
-			callback: (
-				keyPair: {
-					keyType: string;
+		keyPair: () : Promise<{
+			keyType: string;
+			publicKey: Uint8Array;
+			privateKey: Uint8Array;
+		}> => {
+			return Promise.resolve().then(() =>
+				this.BoxHelpers.keyPair()
+			).then((altKeyPair: {
+				publicKey: Uint8Array;
+				privateKey: Uint8Array;
+			}) => {
+				const ntruKeyPair: {
 					publicKey: Uint8Array;
 					privateKey: Uint8Array;
-				},
-				err: any
-			) => void
-		) : void => {
-			const generateKeyPair	= (
-				altKeyPair: {
-					keyType: string;
-					publicKey: Uint8Array;
-					privateKey: Uint8Array;
-				},
-				err: any
-			) : void => {
-				if (err) {
-					callback(undefined, err);
-					return;
-				}
+				}	= Potassium.Ntru.keyPair();
 
-				let ntruKeyPair: {
+				const keyPair: {
+					keyType: string;
 					publicKey: Uint8Array;
 					privateKey: Uint8Array;
+				}	= {
+					keyType: 'potassium',
+					publicKey: new Uint8Array(this.Box.publicKeyBytes),
+					privateKey: new Uint8Array(this.Box.privateKeyBytes)
 				};
 
-				let keyPair: {
-					keyType: string;
-					publicKey: Uint8Array;
-					privateKey: Uint8Array;
-				};
+				keyPair.publicKey.set(ntruKeyPair.publicKey);
+				keyPair.privateKey.set(altKeyPair.privateKey, Potassium.Ntru.privateKeyLength);
+				keyPair.privateKey.set(ntruKeyPair.privateKey);
+				keyPair.publicKey.set(altKeyPair.publicKey, Potassium.Ntru.publicKeyLength);
 
-				try {
-					ntruKeyPair	= Potassium.Ntru.keyPair();
+				Potassium.clearMemory(ntruKeyPair.privateKey);
+				Potassium.clearMemory(altKeyPair.privateKey);
+				Potassium.clearMemory(ntruKeyPair.publicKey);
+				Potassium.clearMemory(altKeyPair.publicKey);
 
-					keyPair		= {
-						keyType: 'potassium',
-						publicKey: new Uint8Array(this.Box.publicKeyBytes),
-						privateKey: new Uint8Array(this.Box.privateKeyBytes)
-					};
-
-					keyPair.publicKey.set(ntruKeyPair.publicKey);
-					keyPair.privateKey.set(ntruKeyPair.privateKey);
-					keyPair.publicKey.set(altKeyPair.publicKey, Potassium.Ntru.publicKeyLength);
-					keyPair.privateKey.set(altKeyPair.privateKey, Potassium.Ntru.privateKeyLength);
-				}
-				catch (err) {
-					callback(undefined, err);
-					return;
-				}
-				finally {
-					Potassium.clearMemory(ntruKeyPair.privateKey);
-					Potassium.clearMemory(altKeyPair.privateKey);
-					Potassium.clearMemory(ntruKeyPair.publicKey);
-					Potassium.clearMemory(altKeyPair.publicKey);
-				}
-
-				callback(keyPair, undefined);
-			};
-
-			if (this.isNative) {
-				NativeCrypto.Box.keyPair(generateKeyPair);
-			}
-			else {
-				let altKeyPair: {
-					keyType: string;
-					publicKey: Uint8Array;
-					privateKey: Uint8Array;
-				};
-				try {
-					altKeyPair	= Potassium.Sodium.crypto_box_keypair();
-				}
-				catch (err) {
-					callback(undefined, err);
-					return;
-				}
-
-				generateKeyPair(altKeyPair, undefined);
-			}
+				return keyPair;
+			});
 		},
 
 		seal: (
 			plaintext: Uint8Array,
 			publicKey: Uint8Array,
-			privateKey: Uint8Array,
-			callback: (cyphertext: Uint8Array, err: any) => void
-		) : void => {
-			try {
+			privateKey: Uint8Array
+		) : Promise<Uint8Array> => {
+			return Promise.resolve().then(() => {
 				publicKey	= new Uint8Array(publicKey);
 				privateKey	= new Uint8Array(privateKey);
 
@@ -186,152 +192,123 @@ export class Potassium {
 					alt: new Uint8Array(privateKey.buffer, Potassium.Ntru.privateKeyLength)
 				};
 
-				const nonce: Uint8Array	= Potassium.randomBytes(
+				const nonce: Uint8Array				= Potassium.randomBytes(
 					this.Box.nonceBytes
 				);
 
-				const encryptData	= (altCyphertext: Uint8Array, err: any) : void => {
-					if (err) {
-						callback(undefined, err);
-						return;
-					}
+				const ntruPlaintext: Uint8Array		= Potassium.randomBytes(
+					this.SecretBox.keyBytes + this.OneTimeAuth.keyBytes
+				);
 
-					try {
-						const symmetricKey: Uint8Array		= Potassium.randomBytes(
-							this.SecretBox.keyBytes
-						);
+				const ntruAuthKey: Uint8Array		= new Uint8Array(
+					ntruPlaintext.buffer,
+					this.SecretBox.keyBytes
+				);
 
-						const ntruAuthKey: Uint8Array		= Potassium.randomBytes(
-							this.OneTimeAuth.keyBytes
-						);
+				const ntruCyphertext: Uint8Array	= Potassium.Ntru.encrypt(
+					ntruPlaintext,
+					publicKeys.ntru
+				);
 
-						const ntruPlaintext: Uint8Array		= new Uint8Array(
-							this.SecretBox.keyBytes + this.OneTimeAuth.keyBytes
-						);
-
-						ntruPlaintext.set(symmetricKey);
-						ntruPlaintext.set(ntruAuthKey, this.SecretBox.keyBytes);
-
-						const ntruCyphertext: Uint8Array	= Potassium.Ntru.encrypt(
-							ntruPlaintext,
-							publicKeys.ntru
-						);
-
-						this.OneTimeAuth.sign(
-							ntruCyphertext,
-							ntruAuthKey,
-							(ntruMac: Uint8Array, err: any) : void => {
-								if (err) {
-									callback(undefined, err);
-									return;
-								}
-
-								this.SecretBox.seal(
-									altCyphertext,
-									symmetricKey,
-									(symmetricCyphertext: Uint8Array, err: any) : void => {
-										if (err) {
-											callback(undefined, err);
-											return;
-										}
-
-										const cyphertext: Uint8Array	= new Uint8Array(
-											Potassium.Ntru.encryptedDataLength +
-											this.OneTimeAuth.bytes +
-											this.Box.nonceBytes +
-											symmetricCyphertext.length
-										);
-
-										cyphertext.set(ntruCyphertext);
-										cyphertext.set(
-											ntruMac,
-											Potassium.Ntru.encryptedDataLength
-										);
-										cyphertext.set(
-											nonce,
-											Potassium.Ntru.encryptedDataLength +
-												this.OneTimeAuth.bytes
-										);
-										cyphertext.set(
-											symmetricCyphertext,
-											Potassium.Ntru.encryptedDataLength +
-												this.OneTimeAuth.bytes +
-												this.Box.nonceBytes
-										);
-
-										try {
-											callback(cyphertext, undefined);
-										}
-										finally {
-											Potassium.clearMemory(nonce);
-											Potassium.clearMemory(altCyphertext);
-											Potassium.clearMemory(symmetricKey);
-											Potassium.clearMemory(ntruAuthKey);
-											Potassium.clearMemory(ntruPlaintext);
-											Potassium.clearMemory(ntruCyphertext);
-											Potassium.clearMemory(symmetricCyphertext);
-											Potassium.clearMemory(privateKey);
-											Potassium.clearMemory(publicKey);
-										}
-									}
-								);
-							}
-						);
-					}
-					catch (err) {
-						callback(undefined, err);
-					}
-				};
-
-				if (this.isNative) {
-					NativeCrypto.Box.seal(
+				return Promise.all([
+					nonce,
+					ntruPlaintext,
+					ntruCyphertext,
+					this.BoxHelpers.seal(
 						plaintext,
 						nonce,
 						publicKeys.alt,
-						privateKeys.alt,
-						encryptData
-					);
-				}
-				else {
-					let altCyphertext: Uint8Array;
-					try {
-						altCyphertext	= Potassium.Sodium.crypto_box_easy(
-							plaintext,
-							nonce,
-							publicKeys.alt,
-							privateKeys.alt
-						);
-					}
-					catch (err) {
-						callback(undefined, err);
-						return;
-					}
+						privateKeys.alt
+					),
+					this.OneTimeAuth.sign(
+						ntruCyphertext,
+						ntruAuthKey
+					)
+				]);
+			}).then(results => {
+				const nonce: Uint8Array				= results[0];
+				const ntruPlaintext: Uint8Array		= results[1];
+				const ntruCyphertext: Uint8Array	= results[2];
+				const altCyphertext: Uint8Array		= results[3];
+				const ntruMac: Uint8Array			= results[4];
 
-					encryptData(altCyphertext, undefined);
-				}
-			}
-			catch (err) {
+				const symmetricKey: Uint8Array		= new Uint8Array(
+					ntruPlaintext.buffer,
+					0,
+					this.SecretBox.keyBytes
+				);
+
 				Potassium.clearMemory(privateKey);
 				Potassium.clearMemory(publicKey);
-				callback(undefined, err);
-			}
+
+				return Promise.all([
+					nonce,
+					ntruPlaintext,
+					ntruCyphertext,
+					altCyphertext,
+					ntruMac,
+					this.SecretBox.seal(
+						altCyphertext,
+						symmetricKey
+					)
+				]);
+			}).then(results => {
+				const nonce: Uint8Array					= results[0];
+				const ntruPlaintext: Uint8Array			= results[1];
+				const ntruCyphertext: Uint8Array		= results[2];
+				const altCyphertext: Uint8Array			= results[3];
+				const ntruMac: Uint8Array				= results[4];
+				const symmetricCyphertext: Uint8Array	= results[5];
+
+				const cyphertext: Uint8Array	= new Uint8Array(
+					Potassium.Ntru.encryptedDataLength +
+					this.OneTimeAuth.bytes +
+					this.Box.nonceBytes +
+					symmetricCyphertext.length
+				);
+
+				cyphertext.set(ntruCyphertext);
+				cyphertext.set(
+					ntruMac,
+					Potassium.Ntru.encryptedDataLength
+				);
+				cyphertext.set(
+					nonce,
+					Potassium.Ntru.encryptedDataLength +
+						this.OneTimeAuth.bytes
+				);
+				cyphertext.set(
+					symmetricCyphertext,
+					Potassium.Ntru.encryptedDataLength +
+						this.OneTimeAuth.bytes +
+						this.Box.nonceBytes
+				);
+
+				Potassium.clearMemory(nonce);
+				Potassium.clearMemory(ntruPlaintext);
+				Potassium.clearMemory(ntruCyphertext);
+				Potassium.clearMemory(altCyphertext);
+				Potassium.clearMemory(ntruMac);
+				Potassium.clearMemory(symmetricCyphertext);
+
+				return cyphertext;
+			}).catch(err => {
+				Potassium.clearMemory(privateKey);
+				Potassium.clearMemory(publicKey);
+
+				throw err;
+			});
 		},
 
 		open: (
 			cyphertext: Uint8Array,
 			publicKey: Uint8Array,
-			privateKey: Uint8Array,
-			callback: (plaintext: Uint8Array, err: any) => void
-		) : void => {
-			try {
+			privateKey: Uint8Array
+		) : Promise<Uint8Array> => {
+			return Promise.resolve().then(() => {
 				cyphertext	= new Uint8Array(cyphertext);
 				publicKey	= new Uint8Array(publicKey);
 				privateKey	= new Uint8Array(privateKey);
-
-				const publicKeys	= {
-					ntru: new Uint8Array(publicKey.buffer, 0, Potassium.Ntru.publicKeyLength),
-					alt: new Uint8Array(publicKey.buffer, Potassium.Ntru.publicKeyLength)
-				};
 
 				const privateKeys	= {
 					ntru: new Uint8Array(privateKey.buffer, 0, Potassium.Ntru.privateKeyLength),
@@ -350,19 +327,12 @@ export class Potassium {
 					this.OneTimeAuth.bytes
 				);
 
-				const nonce: Uint8Array					= new Uint8Array(
-					cyphertext.buffer,
-					Potassium.Ntru.encryptedDataLength + this.OneTimeAuth.bytes,
-					this.SecretBox.nonceBytes
-				);
-
 				const symmetricCyphertext: Uint8Array	= new Uint8Array(
 					cyphertext.buffer,
 					Potassium.Ntru.encryptedDataLength +
 						this.OneTimeAuth.bytes +
 						this.SecretBox.nonceBytes
 				);
-
 
 				const ntruPlaintext: Uint8Array	= Potassium.Ntru.decrypt(
 					ntruCyphertext,
@@ -380,92 +350,78 @@ export class Potassium {
 					this.SecretBox.keyBytes
 				);
 
-				this.OneTimeAuth.verify(
-					ntruMac,
-					ntruCyphertext,
-					ntruAuthKey,
-					(isValid: boolean, err: any) : void => {
-						if (err) {
-							callback(undefined, err);
-							return;
-						}
-						if (!isValid) {
-							callback(undefined, new Error('Invalid NTRU cyphertext.'));
-							return;
-						}
+				return Promise.all([
+					privateKeys,
+					ntruPlaintext,
+					this.SecretBox.open(
+						symmetricCyphertext,
+						symmetricKey
+					),
+					this.OneTimeAuth.verify(
+						ntruMac,
+						ntruCyphertext,
+						ntruAuthKey
+					)
+				]);
+			}).then(results => {
+				const privateKeys: {alt: Uint8Array; ntru: Uint8Array;}	= results[0];
+				const ntruPlaintext: Uint8Array							= results[1];
+				const altCyphertext: Uint8Array							= results[2];
+				const isValid: boolean									= results[3];
 
-						this.SecretBox.open(
-							symmetricCyphertext,
-							symmetricKey,
-							(altCyphertext: Uint8Array, err: any) : void => {
-								const clear	= () => {
-									Potassium.clearMemory(privateKey);
-									Potassium.clearMemory(publicKey);
-									Potassium.clearMemory(cyphertext);
-									Potassium.clearMemory(ntruPlaintext);
-									Potassium.clearMemory(altCyphertext);
-								};
+				const publicKeys	= {
+					ntru: new Uint8Array(publicKey.buffer, 0, Potassium.Ntru.publicKeyLength),
+					alt: new Uint8Array(publicKey.buffer, Potassium.Ntru.publicKeyLength)
+				};
 
-								if (err) {
-									clear();
-									callback(undefined, err);
-									return;
-								}
-
-								if (this.isNative) {
-									NativeCrypto.Box.open(
-										altCyphertext,
-										nonce,
-										publicKeys.alt,
-										privateKeys.alt,
-										(plaintext: Uint8Array, err: any) => {
-											clear();
-											callback(plaintext, err);
-										}
-									);
-								}
-								else {
-									let plaintext: Uint8Array;
-									try {
-										plaintext	= Potassium.Sodium.crypto_box_open_easy(
-											altCyphertext,
-											nonce,
-											publicKeys.alt,
-											privateKeys.alt
-										);
-									}
-									catch (err) {
-										callback(undefined, err);
-										return;
-									}
-									finally {
-										clear();
-									}
-
-									callback(plaintext, undefined);
-								}
-							}
-						);
-					}
+				const nonce: Uint8Array					= new Uint8Array(
+					cyphertext.buffer,
+					Potassium.Ntru.encryptedDataLength + this.OneTimeAuth.bytes,
+					this.SecretBox.nonceBytes
 				);
-			}
-			catch (err) {
-				Potassium.clearMemory(privateKey);
-				Potassium.clearMemory(publicKey);
+
+				Potassium.clearMemory(ntruPlaintext);
+
+				if (!isValid) {
+					Potassium.clearMemory(altCyphertext);
+					throw new Error('Invalid NTRU cyphertext.')
+				}
+				else {
+					return Promise.all([
+						altCyphertext,
+						this.BoxHelpers.open(
+							altCyphertext,
+							nonce,
+							publicKeys.alt,
+							privateKeys.alt
+						)
+					]);
+				}
+			}).then(results => {
+				const altCyphertext: Uint8Array	= results[0];
+				const plaintext: Uint8Array		= results[1];
+
+				Potassium.clearMemory(altCyphertext);
 				Potassium.clearMemory(cyphertext);
-				callback(undefined, err);
-			}
+				Potassium.clearMemory(publicKey);
+				Potassium.clearMemory(privateKey);
+
+				return plaintext;
+			}).catch(err => {
+				Potassium.clearMemory(cyphertext);
+				Potassium.clearMemory(publicKey);
+				Potassium.clearMemory(privateKey);
+
+				throw err;
+			});
 		}
 	};
 
 	public Hash	= {
 		bytes: <number> Potassium.SuperSphincs.hashLength,
 
-		hash: (
-			plaintext: Uint8Array|string,
-			callback: (hash: Uint8Array) => void
-		) : void => {
-			callback(Potassium.SuperSphincs.hash(plaintext).bytes);
+		hash: (plaintext: Uint8Array|string) : Promise<Uint8Array> => {
+			return Potassium.SuperSphincs.hash(plaintext).then(hash => hash.binary);
 		}
 	};
 
@@ -475,106 +431,34 @@ export class Potassium {
 
 		sign: (
 			message: Uint8Array,
-			key: Uint8Array,
-			callback: (mac: Uint8Array, err: any) => void
-		) : void => {
-			let mac: Uint8Array;
-
-			try {
-				mac	= Potassium.Sodium.crypto_onetimeauth(
-					message,
-					key
-				);
-			}
-			catch (err) {
-				callback(undefined, err);
-				return;
-			}
-
-			callback(mac, undefined);
+			key: Uint8Array
+		) : Promise<Uint8Array> => {
+			return Promise.resolve().then(() => Potassium.Sodium.crypto_onetimeauth(
+				message,
+				key
+			));
 		},
 
 		verify: (
 			mac: Uint8Array,
 			message: Uint8Array,
-			key: Uint8Array,
-			callback: (isValid: boolean, err: any) => void
-		) : void => {
-			let isValid: boolean;
-
-			try {
-				isValid	= Potassium.Sodium.crypto_onetimeauth_verify(
-					mac,
-					message,
-					key
-				);
-			}
-			catch (err) {
-				callback(undefined, err);
-				return;
-			}
-
-			callback(isValid, undefined);
+			key: Uint8Array
+		) : Promise<boolean> => {
+			return Promise.resolve().then(() => Potassium.Sodium.crypto_onetimeauth_verify(
+				mac,
+				message,
+				key
+			));
 		}
 	};
 
 	public PasswordHash	= {
+		algorithm: 'scrypt',
 		memLimitInteractive: <number> Potassium.Sodium.crypto_pwhash_scryptsalsa208sha256_MEMLIMIT_INTERACTIVE,
-		memLimitSensitive: <number> 134217728,
+		memLimitSensitive: <number> 134217728 /* 128 MB */,
 		opsLimitInteractive: <number> Potassium.Sodium.crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_INTERACTIVE,
 		opsLimitSensitive: <number> Potassium.Sodium.crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_SENSITIVE,
 		saltBytes: <number> Potassium.Sodium.crypto_pwhash_scryptsalsa208sha256_SALTBYTES,
-
-		getHashData: (
-			completeHash: Uint8Array,
-			callback: (
-				hash: Uint8Array,
-				salt: Uint8Array,
-				outputBytes: number,
-				opsLimit: number,
-				memLimit: number,
-				err: any
-			) => void
-		) : void => {
-			completeHash	= new Uint8Array(completeHash);
-
-			let outputBytes: number;
-			let hash: Uint8Array;
-			let salt: Uint8Array;
-			let opsLimit: number;
-			let memLimit: number;
-
-			try {
-				outputBytes	= new Uint32Array(completeHash.buffer, 0, 1)[0];
-				hash		= new Uint8Array(new Uint8Array(completeHash.buffer, 12, outputBytes));
-				salt		= new Uint8Array(new Uint8Array(completeHash.buffer, 12 + outputBytes));
-				opsLimit	= new Uint32Array(completeHash.buffer, 1, 1)[0];
-				memLimit	= new Uint32Array(completeHash.buffer, 2, 1)[0];
-			}
-			catch (err) {
-				callback(
-					undefined,
-					undefined,
-					undefined,
-					undefined,
-					undefined,
-					err
-				);
-				return;
-			}
-			finally {
-				Potassium.clearMemory(completeHash);
-			}
-
-			callback(
-				hash,
-				salt,
-				outputBytes,
-				opsLimit,
-				memLimit,
-				undefined
-			);
-		},
 
 		hash: (
 			plaintext: Uint8Array|string,
@@ -583,92 +467,94 @@ export class Potassium {
 			),
 			outputBytes: number = this.SecretBox.keyBytes,
 			opsLimit: number = this.PasswordHash.opsLimitInteractive,
-			memLimit: number = this.PasswordHash.memLimitInteractive,
-			callback: (
-				completeHash: Uint8Array,
-				hash: Uint8Array,
-				salt: Uint8Array,
-				outputBytes: number,
-				opsLimit: number,
-				memLimit: number,
-				err: any
-			) => void
-		) : void => {
-			if (typeof plaintext === 'string') {
-				plaintext	= Potassium.fromString(plaintext);
-			}
-
-			const addMetadataToHash	= (hash: Uint8Array, err: any) : void => {
-				if (err) {
-					callback(
-						undefined,
-						undefined,
-						undefined,
-						undefined,
-						undefined,
-						undefined,
-						err
-					);
-					return;
-				}
-
-				const completeHash: Uint8Array	= new Uint8Array(
-					12 + outputBytes + salt.length
-				);
-
-				completeHash.set(new Uint8Array(new Uint32Array([outputBytes]).buffer));
-				completeHash.set(new Uint8Array(new Uint32Array([opsLimit]).buffer), 4);
-				completeHash.set(new Uint8Array(new Uint32Array([memLimit]).buffer), 8);
-				completeHash.set(hash, 12);
-				completeHash.set(salt, 12 + outputBytes);
-
-				callback(
-					completeHash,
-					hash,
-					salt,
-					outputBytes,
-					opsLimit,
-					memLimit,
-					undefined
-				);
+			memLimit: number = this.PasswordHash.memLimitInteractive
+		) : Promise<{
+			hash: Uint8Array;
+			metadata: Uint8Array,
+			metadataObject: {
+				algorithm: string;
+				memLimit: number;
+				opsLimit: number;
+				salt: Uint8Array;
 			};
+		}> => {
+			let plaintextBinary: Uint8Array;
+			const shouldClearPlaintextBinary: boolean	= typeof plaintext === 'string';
 
-			if (this.isNative) {
-				NativeCrypto.PasswordHash.hash(
-					plaintext,
+			return Promise.resolve().then(() => {
+				plaintextBinary	= Potassium.fromString(plaintext);
+
+				return this.PasswordHashHelpers.hash(
+					plaintextBinary,
 					salt,
 					outputBytes,
 					opsLimit,
-					memLimit,
-					addMetadataToHash
+					memLimit
 				);
-			}
-			else {
-				let hash: Uint8Array;
-				try {
-					hash	= Potassium.Sodium.crypto_pwhash_scryptsalsa208sha256(
-						outputBytes,
-						plaintext,
-						salt,
-						opsLimit,
-						memLimit
-					);
-				}
-				catch (err) {
-					callback(
-						undefined,
-						undefined,
-						undefined,
-						undefined,
-						undefined,
-						undefined,
-						err
-					);
-					return;
+			}).then((hash: Uint8Array) => {
+				if (shouldClearPlaintextBinary) {
+					Potassium.clearMemory(plaintextBinary);
 				}
 
-				addMetadataToHash(hash, undefined);
-			}
+				const algorithm: Uint8Array	= Potassium.fromString(
+					this.PasswordHash.algorithm
+				);
+
+				const metadata: Uint8Array	= new Uint8Array(
+					12 + salt.length + algorithm.length
+				);
+
+				metadata.set(new Uint8Array(new Uint32Array([memLimit]).buffer));
+				metadata.set(new Uint8Array(new Uint32Array([opsLimit]).buffer), 4);
+				metadata.set(new Uint8Array(new Uint32Array([salt.length]).buffer), 8);
+				metadata.set(salt, 12);
+				metadata.set(algorithm, 12 + salt.length);
+
+				return {
+					hash,
+					metadata,
+					metadataObject: {
+						algorithm: this.PasswordHash.algorithm,
+						memLimit,
+						opsLimit,
+						salt
+					}
+				};
+			}).catch(err => {
+				if (shouldClearPlaintextBinary) {
+					Potassium.clearMemory(plaintextBinary);
+				}
+
+				throw err;
+			});
+		},
+
+		parseMetadata: (metadata: Uint8Array) : Promise<{
+			algorithm: string;
+			memLimit: number;
+			opsLimit: number;
+			salt: Uint8Array;
+		}> => {
+			return Promise.resolve().then(() => {
+				metadata	= new Uint8Array(metadata);
+
+				const saltBytes: number	= new Uint32Array(metadata.buffer, 2, 1)[0];
+
+				const metadataObject	= {
+					algorithm: Potassium.toString(new Uint8Array(metadata.buffer, 12 + saltBytes)),
+					memLimit: new Uint32Array(metadata.buffer, 0, 1)[0],
+					opsLimit: new Uint32Array(metadata.buffer, 1, 1)[0],
+					salt: new Uint8Array(new Uint8Array(metadata.buffer, 12, saltBytes)),
+				};
+
+				Potassium.clearMemory(metadata);
+
+				return metadataObject;
+			}).catch(err => {
+				Potassium.clearMemory(metadata);
+
+				throw err;
+			});
 		}
 	};
 
@@ -678,24 +564,36 @@ export class Potassium {
 
 		seal: (
 			plaintext: Uint8Array,
-			key: Uint8Array,
-			callback: (cyphertext: Uint8Array, err: any) => void
-		) : void => {
-			const nonce: Uint8Array	= Potassium.randomBytes(
-				this.SecretBox.nonceBytes
-			);
+			key: Uint8Array
+		) : Promise<Uint8Array> => {
+			return Promise.resolve().then(() => {
+				const nonce: Uint8Array	= Potassium.randomBytes(
+					this.SecretBox.nonceBytes
+				);
 
-			const paddingLength: number			= Potassium.randomBytes(1)[0];
+				const paddingLength: number			= Potassium.randomBytes(1)[0];
 
-			const paddedPlaintext: Uint8Array	= new Uint8Array(
-				1 + paddingLength + plaintext.length
-			);
+				const paddedPlaintext: Uint8Array	= new Uint8Array(
+					1 + paddingLength + plaintext.length
+				);
 
-			const processData	= (symmetricCyphertext: Uint8Array, err: any) : void => {
-				if (err) {
-					callback(undefined, err);
-					return;
-				}
+				paddedPlaintext.set(new Uint8Array([paddingLength]));
+				paddedPlaintext.set(Potassium.randomBytes(paddingLength), 1);
+				paddedPlaintext.set(plaintext, 1 + paddingLength);
+
+				return Promise.all([
+					nonce,
+					paddedPlaintext,
+					this.SecretBoxHelpers.seal(
+						paddedPlaintext,
+						nonce,
+						key
+					)
+				]);
+			}).then(results => {
+				const nonce: Uint8Array					= results[0];
+				const paddedPlaintext: Uint8Array		= results[1];
+				const symmetricCyphertext: Uint8Array	= results[2];
 
 				const cyphertext: Uint8Array	= new Uint8Array(
 					this.SecretBox.nonceBytes + symmetricCyphertext.length
@@ -704,47 +602,19 @@ export class Potassium {
 				cyphertext.set(nonce);
 				cyphertext.set(symmetricCyphertext, this.SecretBox.nonceBytes);
 
-				try {
-					callback(cyphertext, undefined);
-				}
-				finally {
-					Potassium.clearMemory(paddedPlaintext);
-					Potassium.clearMemory(nonce);
-					Potassium.clearMemory(symmetricCyphertext);
-				}
-			};
+				Potassium.clearMemory(paddedPlaintext);
+				Potassium.clearMemory(nonce);
+				Potassium.clearMemory(symmetricCyphertext);
 
-			paddedPlaintext.set(new Uint8Array([paddingLength]));
-			paddedPlaintext.set(Potassium.randomBytes(paddingLength), 1);
-			paddedPlaintext.set(plaintext, 1 + paddingLength);
-
-			if (this.isNative) {
-				NativeCrypto.SecretBox.seal(paddedPlaintext, nonce, key, processData);
-			}
-			else {
-				let symmetricCyphertext: Uint8Array;
-				try {
-					symmetricCyphertext	= Potassium.Sodium.crypto_secretbox_easy(
-						paddedPlaintext,
-						nonce,
-						key
-					);
-				}
-				catch (err) {
-					callback(undefined, err);
-					return;
-				}
-
-				processData(symmetricCyphertext, undefined);
-			}
+				return cyphertext;
+			});
 		},
 
 		open: (
 			cyphertext: Uint8Array,
-			key: Uint8Array,
-			callback: (plaintext: Uint8Array, err: any) => void
-		) : void => {
-			try {
+			key: Uint8Array
+		) : Promise<Uint8Array> => {
+			return Promise.resolve().then(() => {
 				cyphertext	= new Uint8Array(cyphertext);
 
 				const nonce: Uint8Array					= new Uint8Array(
@@ -758,51 +628,26 @@ export class Potassium {
 					this.SecretBox.nonceBytes
 				);
 
-				const unpadData	= (paddedPlaintext: Uint8Array, err: any) : void => {
-					if (err) {
-						callback(undefined, err);
-						return;
-					}
+				return this.SecretBoxHelpers.open(
+					symmetricCyphertext,
+					nonce,
+					key
+				);
+			}).then((paddedPlaintext: Uint8Array) => {
+				const plaintext: Uint8Array	= new Uint8Array(new Uint8Array(
+					paddedPlaintext.buffer,
+					1 + new Uint8Array(paddedPlaintext.buffer, 0, 1)[0]
+				));
 
-					try {
-						callback(
-							new Uint8Array(new Uint8Array(
-								paddedPlaintext.buffer,
-								1 + new Uint8Array(paddedPlaintext.buffer, 0, 1)[0]
-							)),
-							undefined
-						);
-					}
-					finally {
-						Potassium.clearMemory(paddedPlaintext);
-						Potassium.clearMemory(cyphertext);
-					}
-				};
-
-				if (this.isNative) {
-					NativeCrypto.SecretBox.open(symmetricCyphertext, nonce, key, unpadData);
-				}
-				else {
-					let paddedPlaintext;
-					try {
-						paddedPlaintext	= Potassium.Sodium.crypto_secretbox_open_easy(
-							symmetricCyphertext,
-							nonce,
-							key
-						);
-					}
-					catch (err) {
-						callback(undefined, err);
-						return;
-					}
-
-					unpadData(paddedPlaintext, undefined);
-				}
-			}
-			catch (err) {
+				Potassium.clearMemory(paddedPlaintext);
 				Potassium.clearMemory(cyphertext);
-				callback(undefined, err);
-			}
+
+				return plaintext;
+			}).catch(err => {
+				Potassium.clearMemory(cyphertext);
+
+				throw err;
+			});
 		}
 	};
 
@@ -811,50 +656,33 @@ export class Potassium {
 		publicKeyBytes: number;
 		privateKeyBytes: number;
 
-		keyPair: (
-			callback: (
-				keyPair: {
-					publicKey: Uint8Array;
-					privateKey: Uint8Array;
-				},
-				err: any
-			) => void
-		) => void;
+		keyPair: () => Promise<{
+			keyType: string;
+			publicKey: Uint8Array;
+			privateKey: Uint8Array;
+		}>;
 
 		sign: (
 			message: Uint8Array|string,
-			privateKey: Uint8Array,
-			callback: (signed: string, messageHash: string, err: any) => void
-		) => void;
+			privateKey: Uint8Array
+		) => Promise<string>;
 
 		signDetached: (
 			message: Uint8Array|string,
-			privateKey: Uint8Array,
-			callback: (signature: string, messageHash: string, err: any) => void
-		) => void;
+			privateKey: Uint8Array
+		) => Promise<string>;
 
 		open: (
 			signed: Uint8Array|string,
-			publicKey: Uint8Array,
-			callback: (message: string, messageHash: string, err: any) => void
-		) => void;
+			publicKey: Uint8Array
+		) => Promise<string>;
 
 		verifyDetached: (
 			signature: Uint8Array|string,
 			message: Uint8Array|string,
-			publicKey: Uint8Array,
-			callback: (isValid: boolean, messageHash: string, err: any) => void
-		) => void;
-	}	= {
-		bytes: Potassium.SuperSphincs.signatureLength,
-		publicKeyBytes: Potassium.SuperSphincs.publicKeyLength,
-		privateKeyBytes: Potassium.SuperSphincs.privateKeyLength,
-		keyPair: Potassium.SuperSphincs.keyPair,
-		sign: Potassium.SuperSphincs.sign,
-		signDetached: Potassium.SuperSphincs.signDetached,
-		open: Potassium.SuperSphincs.open,
-		verifyDetached: Potassium.SuperSphincs.verifyDetached
-	};
+			publicKey: Uint8Array
+		) => Promise<boolean>;
+	}	= Potassium.SuperSphincs;
 
 	public constructor (private isNative: boolean = false) {
 		if (this.isNative) {
@@ -867,9 +695,16 @@ export class Potassium {
 				Potassium.Ntru.privateKeyLength +
 				NativeCrypto.Box.privateKeyBytes
 			;
+			this.BoxHelpers.keyPair		= NativeCrypto.Box.keyPair;
+			this.BoxHelpers.seal		= NativeCrypto.Box.seal;
+			this.BoxHelpers.open		= NativeCrypto.Box.open;
 
 			this.OneTimeAuth	= NativeCrypto.OneTimeAuth;
 
+			this.PasswordHash.algorithm				=
+				NativeCrypto.PasswordHash.algorithm.name + '/' +
+				NativeCrypto.PasswordHash.algorithm.hash.name
+			;
 			this.PasswordHash.memLimitInteractive	=
 				NativeCrypto.PasswordHash.memLimitInteractive
 			;
@@ -885,9 +720,14 @@ export class Potassium {
 			this.PasswordHash.saltBytes				=
 				NativeCrypto.PasswordHash.saltBytes
 			;
+			this.PasswordHashHelpers.hash			=
+				NativeCrypto.PasswordHash.hash
+			;
 
 			this.SecretBox.keyBytes		= NativeCrypto.SecretBox.keyBytes;
 			this.SecretBox.nonceBytes	= NativeCrypto.SecretBox.nonceBytes;
+			this.SecretBoxHelpers.seal	= NativeCrypto.SecretBox.seal;
+			this.SecretBoxHelpers.open	= NativeCrypto.SecretBox.open;
 		}
 	}
 }
