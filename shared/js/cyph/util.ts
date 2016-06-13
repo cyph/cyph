@@ -277,7 +277,10 @@ export class Util {
 			}
 
 			xhr.open(method, url, async);
-			xhr.responseType	= responseType;
+
+			if (async) {
+				xhr.responseType	= responseType;
+			}
 
 			if (contentType) {
 				xhr.setRequestHeader('Content-Type', contentType);
