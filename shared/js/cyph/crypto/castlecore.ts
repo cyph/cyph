@@ -39,12 +39,12 @@ export class CastleCore {
 	 * @returns Whether or not message was successfully decrypted.
 	 */
 	public async receive (cyphertext: Uint8Array) : Promise<boolean> {
-		if (this.isAborted) {
-			return false;
-		}
-
 		while (!this.keyPairs) {
 			await Util.sleep();
+		}
+
+		if (this.isAborted) {
+			return false;
 		}
 
 		const encryptedData: Uint8Array	= new Uint8Array(cyphertext.buffer, 4);
@@ -134,6 +134,10 @@ export class CastleCore {
 	public async send (plaintext: Uint8Array) : Promise<void> {
 		while (!this.keyPairs) {
 			await Util.sleep();
+		}
+
+		if (this.isAborted) {
+			return;
 		}
 
 		const privateKey: Uint8Array	= this.keyPairs[0].privateKey;
