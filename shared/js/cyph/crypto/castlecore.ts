@@ -43,6 +43,10 @@ export class CastleCore {
 			return false;
 		}
 
+		while (!this.keyPairs) {
+			await Util.sleep(100);
+		}
+
 		const encryptedData: Uint8Array	= new Uint8Array(cyphertext.buffer, 4);
 
 		/* Initial key exchange */

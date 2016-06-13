@@ -322,6 +322,14 @@ export class Util {
 	}
 
 	/**
+	 * Sleep for the specifed amount of time.
+	 * @param ms
+	 */
+	public static sleep (ms: number) : Promise<{}> {
+		return new Promise(resolve => setTimeout(resolve, ms));
+	}
+
+	/**
 	 * Serialises o to a query string (cf. jQuery.param).
 	 * @param o
 	 * @param parent Ignore this (internal use).
