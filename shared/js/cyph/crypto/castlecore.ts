@@ -132,6 +132,10 @@ export class CastleCore {
 	 * @param plaintext Data to be encrypted.
 	 */
 	public async send (plaintext: Uint8Array) : Promise<void> {
+		while (!this.keyPairs) {
+			await Util.sleep();
+		}
+
 		const privateKey: Uint8Array	= this.keyPairs[0].privateKey;
 		let newPublicKey: Uint8Array	= new Uint8Array(0);
 
