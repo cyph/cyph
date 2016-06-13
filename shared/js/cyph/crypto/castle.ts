@@ -25,7 +25,7 @@ export class Castle implements ICastle {
 
 	private core: CastleCore;
 
-	public receive (message: string) : void {
+	public async receive (message: string) : Promise<void> {
 		try {
 			const cyphertext: Uint8Array	= Potassium.fromBase64(message);
 
@@ -49,59 +49,44 @@ export class Castle implements ICastle {
 		if (this.receiveLock) {
 			return;
 		}
-		this.receiveLock	= true;
 
-		Util.retryUntilComplete(outerRetry => {
-			if (
+		try {
+			this.receiveLock	= true;
+
+			while (
 				this.incomingMessageId <= this.incomingMessagesMax &&
 				this.incomingMessages[this.incomingMessageId]
 			) {
 				let wasSuccessful: boolean;
 
-				let i: number	= 0;
-				const incomingMessages	= this.incomingMessages[this.incomingMessageId];
+				for (
+					const cyphertext of
+					this.incomingMessages[this.incomingMessageId]
+				) {
+					if (!wasSuccessful && await this.core.receive(cyphertext)) {
+						this.session.trigger(Events.cyphertext, {
+							cyphertext: Potassium.toBase64(cyphertext),
+							author: Users.friend
+						});
 
-				Util.retryUntilComplete(innerRetry => {
-					if (i < incomingMessages.length) {
-						const cyphertext: Uint8Array	= incomingMessages[i++];
-
-						if (wasSuccessful) {
-							Potassium.clearMemory(cyphertext);
-							innerRetry(-1);
-						}
-						else {
-							this.core.receive(cyphertext, (success: boolean) => {
-								if (success) {
-									this.session.trigger(Events.cyphertext, {
-										cyphertext: Potassium.toBase64(cyphertext),
-										author: Users.friend
-									});
-
-									wasSuccessful	= true;
-								}
-
-								Potassium.clearMemory(cyphertext);
-								innerRetry(-1);
-							});
-						}
+						wasSuccessful	= true;
 					}
-					else {
-						this.incomingMessages[this.incomingMessageId]	= null;
 
-						if (!wasSuccessful) {
-							this.receiveLock	= false;
-							return;
-						}
+					Potassium.clearMemory(cyphertext);
+				}
 
-						++this.incomingMessageId;
-						outerRetry(-1);
-					}
-				});
+				this.incomingMessages[this.incomingMessageId]	= null;
+
+				if (!wasSuccessful) {
+					break;
+				}
+
+				++this.incomingMessageId;
 			}
-			else {
-				this.receiveLock	= false;
-			}
-		});
+		}
+		finally {
+			this.receiveLock	= false;
+		}
 	}
 
 	public send (message: string) : void {
