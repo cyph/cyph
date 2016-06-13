@@ -13,13 +13,13 @@ export class NativeCrypto {
 		algorithm: any,
 		purpose: string
 	) : Promise<CryptoKey> {
-		return NativeCrypto.Subtle.importKey(
+		return Promise.resolve().then(() => NativeCrypto.Subtle.importKey(
 			'raw',
-			key.buffer,
+			new Uint8Array(key).buffer,
 			algorithm,
 			false,
 			[purpose]
-		);
+		));
 	}
 
 	private static exportRawKey (
