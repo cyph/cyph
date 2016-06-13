@@ -44,7 +44,7 @@ export class CastleCore {
 		}
 
 		while (!this.keyPairs) {
-			await Util.sleep(100);
+			await Util.sleep();
 		}
 
 		const encryptedData: Uint8Array	= new Uint8Array(cyphertext.buffer, 4);
