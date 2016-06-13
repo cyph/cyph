@@ -25,7 +25,7 @@ export class Castle implements ICastle {
 
 	private core: CastleCore;
 
-	public async receive (message: string) : Promise<void> {
+	public receive (message: string) : void {
 		try {
 			const cyphertext: Uint8Array	= Potassium.fromBase64(message);
 
@@ -46,47 +46,49 @@ export class Castle implements ICastle {
 		}
 		catch (_) {}
 
-		if (this.receiveLock) {
-			return;
-		}
+		(async () => {
+			if (this.receiveLock) {
+				return;
+			}
 
-		try {
-			this.receiveLock	= true;
+			try {
+				this.receiveLock	= true;
 
-			while (
-				this.incomingMessageId <= this.incomingMessagesMax &&
-				this.incomingMessages[this.incomingMessageId]
-			) {
-				let wasSuccessful: boolean;
-
-				for (
-					const cyphertext of
+				while (
+					this.incomingMessageId <= this.incomingMessagesMax &&
 					this.incomingMessages[this.incomingMessageId]
 				) {
-					if (!wasSuccessful && await this.core.receive(cyphertext)) {
-						this.session.trigger(Events.cyphertext, {
-							cyphertext: Potassium.toBase64(cyphertext),
-							author: Users.friend
-						});
+					let wasSuccessful: boolean;
 
-						wasSuccessful	= true;
+					for (
+						const cyphertext of
+						this.incomingMessages[this.incomingMessageId]
+					) {
+						if (!wasSuccessful && await this.core.receive(cyphertext)) {
+							this.session.trigger(Events.cyphertext, {
+								cyphertext: Potassium.toBase64(cyphertext),
+								author: Users.friend
+							});
+
+							wasSuccessful	= true;
+						}
+
+						Potassium.clearMemory(cyphertext);
 					}
 
-					Potassium.clearMemory(cyphertext);
+					this.incomingMessages[this.incomingMessageId]	= null;
+
+					if (!wasSuccessful) {
+						break;
+					}
+
+					++this.incomingMessageId;
 				}
-
-				this.incomingMessages[this.incomingMessageId]	= null;
-
-				if (!wasSuccessful) {
-					break;
-				}
-
-				++this.incomingMessageId;
 			}
-		}
-		finally {
-			this.receiveLock	= false;
-		}
+			finally {
+				this.receiveLock	= false;
+			}
+		})();
 	}
 
 	public send (message: string) : void {

@@ -88,7 +88,7 @@ export class CastleCore {
 					new Uint8Array(cyphertext.buffer, 0, 4),
 					new Uint8Array(decrypted.buffer, 0, 4)
 				)) {
-					continue;
+					return false;
 				}
 
 				if (i === 0) {
@@ -237,11 +237,10 @@ export class CastleCore {
 				Potassium.clearMemory(cyphertext);
 				Potassium.clearMemory(encryptedKey);
 
-				setTimeout(() => {
-					if (!this.isConnected) {
-						this.abort();
-					}
-				}, CastleCore.handshakeTimeout);
+				await Util.sleep(CastleCore.handshakeTimeout);
+				if (!this.isConnected) {
+					this.abort();
+				}
 			}
 		})();
 	}
