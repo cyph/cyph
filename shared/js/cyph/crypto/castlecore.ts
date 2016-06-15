@@ -18,6 +18,8 @@ export class CastleCore {
 	private keyPairs: {publicKey: Uint8Array; privateKey: Uint8Array}[];
 	private potassium: Potassium;
 
+	private lock: {}	= {};
+
 	public outgoingMessageId: Uint32Array	= new Uint32Array([0]);
 
 	private abort () : void {
@@ -33,16 +35,7 @@ export class CastleCore {
 		}
 	}
 
-	/**
-	 * Receive incoming cyphertext.
-	 * @param cyphertext Data to be decrypted.
-	 * @returns Whether or not message was successfully decrypted.
-	 */
-	public async receive (cyphertext: Uint8Array) : Promise<boolean> {
-		while (!this.keyPairs) {
-			await Util.sleep();
-		}
-
+	public async receiveHelper (cyphertext: Uint8Array) : Promise<boolean> {
 		if (this.isAborted) {
 			return false;
 		}
@@ -63,7 +56,7 @@ export class CastleCore {
 
 				/* Trigger friend's connection acknowledgement logic
 					by sending this user's first encrypted message */
-				this.send(new Uint8Array(0));
+				this.sendHelper(new Uint8Array(0));
 
 				return true;
 			}
@@ -127,15 +120,7 @@ export class CastleCore {
 		return false;
 	}
 
-	/**
-	 * Send outgoing text.
-	 * @param plaintext Data to be encrypted.
-	 */
-	public async send (plaintext: Uint8Array) : Promise<void> {
-		while (!this.keyPairs) {
-			await Util.sleep();
-		}
-
+	private async sendHelper (plaintext: Uint8Array) : Promise<void> {
 		if (this.isAborted) {
 			return;
 		}
@@ -176,23 +161,36 @@ export class CastleCore {
 			privateKey
 		);
 
-		let fullCyphertext: Uint8Array;
-		try {
-			fullCyphertext	= new Uint8Array(4 + cyphertext.length);
-			fullCyphertext.set(new Uint8Array(this.outgoingMessageId.buffer));
-			fullCyphertext.set(cyphertext, 4);
-			this.handlers.send(Potassium.toBase64(fullCyphertext));
-		}
-		finally {
-			++this.outgoingMessageId[0];
+		const fullCyphertext: Uint8Array	= new Uint8Array(4 + cyphertext.length);
+		fullCyphertext.set(new Uint8Array(this.outgoingMessageId.buffer));
+		fullCyphertext.set(cyphertext, 4);
 
-			Potassium.clearMemory(fullPlaintext);
-			Potassium.clearMemory(cyphertext);
+		++this.outgoingMessageId[0];
 
-			if (fullCyphertext) {
-				Potassium.clearMemory(fullCyphertext);
-			}
-		}
+		const fullCyphertextBase64: string	= Potassium.toBase64(fullCyphertext);
+
+		Potassium.clearMemory(fullPlaintext);
+		Potassium.clearMemory(fullCyphertext);
+		Potassium.clearMemory(cyphertext);
+
+		this.handlers.send(fullCyphertextBase64);
+	}
+
+	/**
+	 * Receive incoming cyphertext.
+	 * @param cyphertext Data to be decrypted.
+	 * @returns Whether or not message was successfully decrypted.
+	 */
+	public async receive (cyphertext: Uint8Array) : Promise<boolean> {
+		return Util.lock(this.lock, this.receiveHelper(cyphertext));
+	}
+
+	/**
+	 * Send outgoing text.
+	 * @param plaintext Data to be encrypted.
+	 */
+	public async send (plaintext: Uint8Array) : Promise<void> {
+		return Util.lock(this.lock, this.sendHelper(plaintext));
 	}
 
 	public constructor (
@@ -206,7 +204,7 @@ export class CastleCore {
 		},
 		isNative: boolean = false
 	) {
-		(async () => {
+		Util.lock(this.lock, (async () => {
 			this.potassium		= new Potassium(isNative);
 
 			this.sharedSecret	= (await this.potassium.PasswordHash.hash(
@@ -230,18 +228,18 @@ export class CastleCore {
 
 			++this.outgoingMessageId[0];
 
-			try {
-				this.handlers.send(Potassium.toBase64(cyphertext));
-			}
-			finally {
-				Potassium.clearMemory(cyphertext);
-				Potassium.clearMemory(encryptedKey);
+			const cyphertextBase64: string	= Potassium.toBase64(cyphertext);
 
-				await Util.sleep(CastleCore.handshakeTimeout);
+			Potassium.clearMemory(cyphertext);
+			Potassium.clearMemory(encryptedKey);
+
+			setTimeout(() => {
 				if (!this.isConnected) {
 					this.abort();
 				}
-			}
-		})();
+			}, CastleCore.handshakeTimeout);
+
+			this.handlers.send(cyphertextBase64);
+		})());
 	}
 }

@@ -12,7 +12,7 @@ export class Castle implements ICastle {
 
 	private incomingMessageId: number	= 0;
 	private incomingMessagesMax: number	= 0;
-	private receiveLock: boolean		= false;
+	private receiveLock: {}				= {};
 	private sendQueue: string[]			= [];
 
 	private incomingMessages: {
@@ -46,49 +46,38 @@ export class Castle implements ICastle {
 		}
 		catch (_) {}
 
-		(async () => {
-			if (this.receiveLock) {
-				return;
-			}
+		Util.lock(this.receiveLock, (async () => {
+			while (
+				this.incomingMessageId <= this.incomingMessagesMax &&
+				this.incomingMessages[this.incomingMessageId]
+			) {
+				let wasSuccessful: boolean;
 
-			try {
-				this.receiveLock	= true;
-
-				while (
-					this.incomingMessageId <= this.incomingMessagesMax &&
+				for (
+					const cyphertext of
 					this.incomingMessages[this.incomingMessageId]
 				) {
-					let wasSuccessful: boolean;
+					if (!wasSuccessful && (await this.core.receive(cyphertext))) {
+						this.session.trigger(Events.cyphertext, {
+							cyphertext: Potassium.toBase64(cyphertext),
+							author: Users.friend
+						});
 
-					for (
-						const cyphertext of
-						this.incomingMessages[this.incomingMessageId]
-					) {
-						if (!wasSuccessful && (await this.core.receive(cyphertext))) {
-							this.session.trigger(Events.cyphertext, {
-								cyphertext: Potassium.toBase64(cyphertext),
-								author: Users.friend
-							});
-
-							wasSuccessful	= true;
-						}
-
-						Potassium.clearMemory(cyphertext);
+						wasSuccessful	= true;
 					}
 
-					this.incomingMessages[this.incomingMessageId]	= null;
-
-					if (!wasSuccessful) {
-						break;
-					}
-
-					++this.incomingMessageId;
+					Potassium.clearMemory(cyphertext);
 				}
+
+				this.incomingMessages[this.incomingMessageId]	= null;
+
+				if (!wasSuccessful) {
+					break;
+				}
+
+				++this.incomingMessageId;
 			}
-			finally {
-				this.receiveLock	= false;
-			}
-		})();
+		})());
 	}
 
 	public send (message: string) : void {

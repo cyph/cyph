@@ -117,6 +117,22 @@ export class Util {
 		return value === null ? defaultValue : value;
 	}
 
+	public static async lock<T> (lock: any, f: Promise<T>) : Promise<T> {
+		while (lock.isOwned) {
+			await Util.sleep();
+		}
+
+		lock.isOwned	= true;
+
+		return f.then(val => {
+			lock.isOwned = false;
+			return val;
+		}).catch(err => {
+			lock.isOwned = false;
+			throw err;
+		});
+	}
+
 	/**
 	 * Opens the specified URL.
 	 * @param url
