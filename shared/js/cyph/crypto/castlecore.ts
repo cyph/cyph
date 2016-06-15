@@ -100,7 +100,7 @@ export class CastleCore {
 				}
 
 				if (decrypted.length > startIndex) {
-					this.handlers.receive(decrypted, startIndex);
+					this.handlers.receive(new DataView(decrypted.buffer, startIndex));
 				}
 
 				if (!this.isConnected) {
@@ -199,7 +199,7 @@ export class CastleCore {
 		private handlers: {
 			abort: Function;
 			connect: Function;
-			receive: (data: Uint8Array, startIndex: number) => void;
+			receive: (data: DataView) => void;
 			send: (message: string) => void;
 		},
 		isNative: boolean = false
