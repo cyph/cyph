@@ -117,20 +117,25 @@ export class Util {
 		return value === null ? defaultValue : value;
 	}
 
+	/**
+	 * Executes a Promise within a mutual-exclusion lock.
+	 * @param lock
+	 * @param f
+	 */
 	public static async lock<T> (lock: any, f: Promise<T>) : Promise<T> {
-		while (lock.isOwned) {
-			await Util.sleep();
+		try {
+			while (lock.isOwned) {
+				await Util.sleep();
+			}
+
+			lock.isOwned	= true;
+
+			const result: T	= await f;
+			return result;
 		}
-
-		lock.isOwned	= true;
-
-		return f.then(val => {
-			lock.isOwned = false;
-			return val;
-		}).catch(err => {
-			lock.isOwned = false;
-			throw err;
-		});
+		finally {
+			lock.isOwned	= false;
+		}
 	}
 
 	/**
@@ -342,7 +347,7 @@ export class Util {
 	 * @param ms
 	 */
 	public static sleep (ms: number = 250) : Promise<{}> {
-		return new Promise(resolve => setTimeout(resolve, ms));
+		return new Promise(resolve => setTimeout(() => resolve(), ms));
 	}
 
 	/**
