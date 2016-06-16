@@ -25,6 +25,61 @@ export class Castle implements ICastle {
 
 	private core: CastleCore;
 
+	private async sendHelper (message: string, shouldLock: boolean = true) : Promise<void> {
+		if (this.sendQueue) {
+			this.sendQueue.push(message);
+		}
+		else {
+			const messageBytes: Uint8Array	= Potassium.fromString(message);
+
+			const numBytes: Uint8Array	= new Uint8Array(
+				new Uint32Array([
+					messageBytes.length
+				]).buffer
+			);
+
+			const numChunks: Uint8Array	= new Uint8Array(
+				new Uint32Array([
+					Math.ceil(messageBytes.length / Castle.chunkLength)
+				]).buffer
+			);
+
+			const id: Uint8Array	= Potassium.randomBytes(4);
+
+			for (
+				const i = new Uint32Array(1) ;
+				i[0] < messageBytes.length ;
+				i[0] += Castle.chunkLength
+			) {
+				const chunk: Uint8Array	= new Uint8Array(
+					messageBytes.buffer,
+					i[0],
+					Math.min(
+						Castle.chunkLength,
+						messageBytes.length - i[0]
+					)
+				);
+
+				const data: Uint8Array	= new Uint8Array(chunk.length + 16);
+
+				data.set(id);
+				data.set(new Uint8Array(i.buffer), 4);
+				data.set(numBytes, 8);
+				data.set(numChunks, 12);
+				data.set(chunk, 16);
+
+				try {
+					await this.core.send(data, shouldLock);
+				}
+				finally {
+					Potassium.clearMemory(data);
+				}
+			}
+
+			Potassium.clearMemory(messageBytes);
+		}
+	}
+
 	public receive (message: string) : void {
 		try {
 			const cyphertext: Uint8Array	= Potassium.fromBase64(message);
@@ -80,59 +135,8 @@ export class Castle implements ICastle {
 		})());
 	}
 
-	public send (message: string) : void {
-		if (this.sendQueue) {
-			this.sendQueue.push(message);
-		}
-		else {
-			const messageBytes: Uint8Array	= Potassium.fromString(message);
-
-			const numBytes: Uint8Array	= new Uint8Array(
-				new Uint32Array([
-					messageBytes.length
-				]).buffer
-			);
-
-			const numChunks: Uint8Array	= new Uint8Array(
-				new Uint32Array([
-					Math.ceil(messageBytes.length / Castle.chunkLength)
-				]).buffer
-			);
-
-			const id: Uint8Array	= Potassium.randomBytes(4);
-
-			for (
-				const i = new Uint32Array(1) ;
-				i[0] < messageBytes.length ;
-				i[0] += Castle.chunkLength
-			) {
-				const chunk: Uint8Array	= new Uint8Array(
-					messageBytes.buffer,
-					i[0],
-					Math.min(
-						Castle.chunkLength,
-						messageBytes.length - i[0]
-					)
-				);
-
-				const data: Uint8Array	= new Uint8Array(chunk.length + 16);
-
-				data.set(id);
-				data.set(new Uint8Array(i.buffer), 4);
-				data.set(numBytes, 8);
-				data.set(numChunks, 12);
-				data.set(chunk, 16);
-
-				try {
-					this.core.send(data);
-				}
-				finally {
-					Potassium.clearMemory(data);
-				}
-			}
-
-			Potassium.clearMemory(messageBytes);
-		}
+	public async send (message: string) : Promise<void> {
+		return this.sendHelper(message);
 	}
 
 	public constructor (private session: ISession, isNative: boolean = false) {
@@ -140,24 +144,24 @@ export class Castle implements ICastle {
 			this.session.state.isCreator,
 			this.session.state.sharedSecret,
 			{
-				abort: () =>
+				abort: async () =>
 					this.session.trigger(Events.castle, {
 						event: CastleEvents.abort
 					})
 				,
-				connect: () => {
+				connect: async () => {
 					const sendQueue	= this.sendQueue;
 					this.sendQueue	= null;
 
 					for (const message of sendQueue) {
-						this.send(message);
+						await this.sendHelper(message, false);
 					}
 
 					this.session.trigger(Events.castle, {
 						event: CastleEvents.connect
 					});
 				},
-				receive: (data: DataView) => {
+				receive: async (data: DataView) => {
 					const id: number		= data.getUint32(0, true);
 					const index: number		= data.getUint32(4, true);
 					const numBytes: number	= data.getUint32(8, true);
@@ -186,7 +190,7 @@ export class Castle implements ICastle {
 						this.receivedMessages[id]	= null;
 					}
 				},
-				send: (cyphertext: string) => {
+				send: async (cyphertext: string) => {
 					this.session.trigger(Events.castle, {
 						event: CastleEvents.send,
 						data: cyphertext

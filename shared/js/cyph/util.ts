@@ -121,8 +121,13 @@ export class Util {
 	 * Executes a Promise within a mutual-exclusion lock.
 	 * @param lock
 	 * @param f
+	 * @param shouldLock
 	 */
-	public static async lock<T> (lock: any, f: Promise<T>) : Promise<T> {
+	public static async lock<T> (lock: any, f: Promise<T>, shouldLock: boolean = true) : Promise<T> {
+		if (!shouldLock) {
+			return f;
+		}
+
 		try {
 			while (lock.isOwned) {
 				await Util.sleep();
@@ -130,8 +135,7 @@ export class Util {
 
 			lock.isOwned	= true;
 
-			const result: T	= await f;
-			return result;
+			return (await f);
 		}
 		finally {
 			lock.isOwned	= false;
