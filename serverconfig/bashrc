@@ -3,7 +3,7 @@ cyphbranch () {
 }
 
 cyphbuild () {
-	~/cyph/$(cyphbranch)/docker.sh build --test
+	~/cyph/$(cyphbranch)/docker.sh build --simple
 }
 cyphdeploy () {
 	~/cyph/$(cyphbranch)/docker.sh deploy $*
