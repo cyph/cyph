@@ -13,9 +13,6 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	/** Beta page state/view. */
 	public betaState: BetaStates	= BetaStates.none;
 
-	/** Indicates whether this is the Business edition of Cyph. */
-	public business: boolean;
-
 	/** Chat UI. */
 	public chat: Cyph.UI.Chat.IChat;
 
@@ -92,8 +89,6 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		);
 
 		this.signupForm		= new Cyph.UI.SignupForm(this.controller);
-
-		this.business		= this.chat.session.state.wasInitiatedByAPI;
 
 
 		if (initialCallType) {

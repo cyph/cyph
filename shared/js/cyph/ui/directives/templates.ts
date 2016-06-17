@@ -910,10 +910,10 @@ export const Templates	= {
 			</p>
 
 			<p flex='nogrow' layout-padding>
-					<strong ng-hide='ui.business'>
+					<strong ng-hide='ui.chat.session.state.wasInitiatedByAPI'>
 						- Individual Use Only -
 					</strong>
-					<strong ng-show='ui.business'>
+					<strong ng-show='ui.chat.session.state.wasInitiatedByAPI'>
 						- Cyph API -
 					</strong>
 			</p>
