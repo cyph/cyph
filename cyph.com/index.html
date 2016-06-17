@@ -225,15 +225,15 @@
 						<md-card-content>
 							<p>
 								<span translate>Welcome </span>
-								<span ng-show='ui.promo === Cyph.com.UI.Promos.betalist'>Betalisters!</span>
+								<span ng-if='ui.promo === Cyph.com.UI.Promos.betalist'>Betalisters!</span>
 								<span ng-hide='ui.promo === Cyph.com.UI.Promos.betalist'>
-									<i ng-show='ui.promo === Cyph.com.UI.Promos.penn'>Penn's Sunday School</i>
-									<i ng-show='ui.promo === Cyph.com.UI.Promos.jjgo'>Jordan, Jesse, Go!</i>
-									<i ng-show='ui.promo === Cyph.com.UI.Promos.ventura'>We The People</i>
-									<i ng-show='ui.promo === Cyph.com.UI.Promos.sawbones'>Sawbones</i>
-									<i ng-show='ui.promo === Cyph.com.UI.Promos.judgejohn'>Judge John Hodgman</i>
-									<i ng-show='ui.promo === Cyph.com.UI.Promos.mybrother'>My Brother, My Brother and Me</i>
-									<i ng-show='ui.promo === Cyph.com.UI.Promos.security'>The Security Brief</i>
+									<i ng-if='ui.promo === Cyph.com.UI.Promos.penn'>Penn's Sunday School</i>
+									<i ng-if='ui.promo === Cyph.com.UI.Promos.jjgo'>Jordan, Jesse, Go!</i>
+									<i ng-if='ui.promo === Cyph.com.UI.Promos.ventura'>We The People</i>
+									<i ng-if='ui.promo === Cyph.com.UI.Promos.sawbones'>Sawbones</i>
+									<i ng-if='ui.promo === Cyph.com.UI.Promos.judgejohn'>Judge John Hodgman</i>
+									<i ng-if='ui.promo === Cyph.com.UI.Promos.mybrother'>My Brother, My Brother and Me</i>
+									<i ng-if='ui.promo === Cyph.com.UI.Promos.security'>The Security Brief</i>
 									<span translate>listeners!</span>
 								</span>
 							</p>
@@ -681,7 +681,7 @@
 			</div>
 		</section>
 
-		<section id='pricing' ng-show='ui.state === Cyph.com.UI.States.pricing' class='unisection'>
+		<section id='pricing' ng-if='ui.state === Cyph.com.UI.States.pricing' class='unisection'>
 				<div id='business'>
 					<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='25ms' translate>
 						Business Pricing
@@ -942,7 +942,7 @@
 			</div>
 		</section>
 
-		<section id='error' ng-show='ui.state === Cyph.com.UI.States.error' class='unisection'>
+		<section id='error' ng-if='ui.state === Cyph.com.UI.States.error' class='unisection'>
 			<div>
 				<h1 translate>I'm sorry, but your cyph is in another castle...</h1>
 			</div>
@@ -963,7 +963,7 @@
 			</div>
 		</section>
 
-		<section id='contact' ng-show='ui.state === Cyph.com.UI.States.contact' class='unisection'>
+		<section id='contact' ng-if='ui.state === Cyph.com.UI.States.contact' class='unisection'>
 			<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' translate>
 				Contact Us
 			</h1>
@@ -986,7 +986,7 @@
 			</div>
 		</section>
 
-		<section id='donate' ng-show='ui.state === Cyph.com.UI.States.donate' class='unisection'>
+		<section id='donate' ng-if='ui.state === Cyph.com.UI.States.donate' class='unisection'>
 			<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' translate>
 				Donate
 			</h1>
@@ -1030,7 +1030,7 @@
 			</div>
 		</section>
 
-		<section id='checkout' ng-show='ui.state === Cyph.com.UI.States.checkout' class='unisection'>
+		<section id='checkout' ng-if='ui.state === Cyph.com.UI.States.checkout' class='unisection'>
 			<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' translate>
 				Checkout
 			</h1>
@@ -1058,9 +1058,9 @@
 					amount='ui.cart[0]'
 					category='ui.cart[1]'
 					item='ui.cart[2]'
-					ng-show='ui.cart[0] !== 0'
+					ng-if='ui.cart[0] !== 0'
 				>
-					<div ng-show='ui.cart[1] === Cyph.Config.pricingConfig.categories.donation.id'>
+					<div ng-if='ui.cart[1] === Cyph.Config.pricingConfig.categories.donation.id'>
 						Thank you for supporting Cyph!
 					</div>
 					<div ng-hide='ui.cart[1] === Cyph.Config.pricingConfig.categories.donation.id'>
@@ -1070,7 +1070,7 @@
 			</div>
 		</section>
 
-		<section id='faq' ng-show='ui.state === Cyph.com.UI.States.faq' class='unisection'>
+		<section id='faq' ng-if='ui.state === Cyph.com.UI.States.faq' class='unisection'>
 			<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' translate>
 				Frequently Asked Questions
 			</h1>
@@ -1291,7 +1291,7 @@
 			</div>
 		</section>
 
-		<section id='termsofservice' ng-show='ui.state === Cyph.com.UI.States.termsofservice' class='unisection'>
+		<section id='termsofservice' ng-if='ui.state === Cyph.com.UI.States.termsofservice' class='unisection'>
 			<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' translate>
 				Terms of Service
 			</h1>
@@ -1373,7 +1373,7 @@
 			</div>
 		</section>
 
-		<section id='privacypolicy' ng-show='ui.state === Cyph.com.UI.States.privacypolicy' class='unisection'>
+		<section id='privacypolicy' ng-if='ui.state === Cyph.com.UI.States.privacypolicy' class='unisection'>
 			<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' translate>
 				Privacy Policy
 			</h1>
