@@ -123,9 +123,9 @@ export class Util {
 	 * @param f
 	 * @param shouldLock
 	 */
-	public static async lock<T> (lock: any, f: Promise<T>, shouldLock: boolean = true) : Promise<T> {
+	public static async lock<T> (lock: any, f: () => Promise<T>, shouldLock: boolean = true) : Promise<T> {
 		if (!shouldLock) {
-			return f;
+			return f();
 		}
 
 		try {
@@ -135,7 +135,7 @@ export class Util {
 
 			lock.isOwned	= true;
 
-			return (await f);
+			return (await f());
 		}
 		finally {
 			lock.isOwned	= false;

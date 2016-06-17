@@ -101,7 +101,7 @@ export class Castle implements ICastle {
 		}
 		catch (_) {}
 
-		Util.lock(this.receiveLock, (async () => {
+		Util.lock(this.receiveLock, async () => {
 			while (
 				this.incomingMessageId <= this.incomingMessagesMax &&
 				this.incomingMessages[this.incomingMessageId]
@@ -132,7 +132,7 @@ export class Castle implements ICastle {
 
 				++this.incomingMessageId;
 			}
-		})());
+		});
 	}
 
 	public async send (message: string) : Promise<void> {

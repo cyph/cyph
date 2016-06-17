@@ -44,7 +44,7 @@ export class CastleCore {
 	 * @returns Whether or not message was successfully decrypted.
 	 */
 	public async receive (cyphertext: Uint8Array, shouldLock: boolean = true) : Promise<boolean> {
-		return Util.lock(this.lock, (async () => {
+		return Util.lock(this.lock, async () => {
 			if (this.isAborted) {
 				return false;
 			}
@@ -125,7 +125,7 @@ export class CastleCore {
 			}
 
 			return false;
-		})(), shouldLock);
+		}, shouldLock);
 	}
 
 	/**
@@ -133,7 +133,7 @@ export class CastleCore {
 	 * @param plaintext Data to be encrypted.
 	 */
 	public async send (plaintext: Uint8Array, shouldLock: boolean = true) : Promise<void> {
-		return Util.lock(this.lock, (async () => {
+		return Util.lock(this.lock, async () => {
 			if (this.isAborted) {
 				return;
 			}
@@ -188,7 +188,7 @@ export class CastleCore {
 			Potassium.clearMemory(messageId);
 
 			this.handlers.send(fullCyphertextBase64);
-		})(), shouldLock);
+		}, shouldLock);
 	}
 
 	public constructor (
@@ -202,7 +202,7 @@ export class CastleCore {
 		},
 		isNative: boolean = false
 	) {
-		Util.lock(this.lock, (async () => {
+		Util.lock(this.lock, async () => {
 			this.potassium		= new Potassium(isNative);
 
 			this.sharedSecret	= (await this.potassium.PasswordHash.hash(
@@ -236,6 +236,6 @@ export class CastleCore {
 			}, CastleCore.handshakeTimeout);
 
 			this.handlers.send(cyphertextBase64);
-		})());
+		});
 	}
 }
