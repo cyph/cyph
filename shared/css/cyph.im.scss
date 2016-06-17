@@ -1063,6 +1063,7 @@ html:not(.mobile) .amazon-link {
 			.logo, .buttons, .sidebar, ~ .message-list, ~ .video-call-message-box {
 				@include transform(translateX(-25vw));
 			}
+
 			.me {
 				@include transform(translateX(-25vw) scaleX(-1) !important);
 			}
