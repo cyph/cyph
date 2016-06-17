@@ -121,11 +121,21 @@ export class Util {
 	 * Executes a Promise within a mutual-exclusion lock.
 	 * @param lock
 	 * @param f
-	 * @param shouldLock
+	 * @param shouldLock If set to false, will not lock.
+	 * @param tryOnce If set to true, will give up after first failed attempt to obtain lock.
 	 */
-	public static async lock<T> (lock: any, f: () => Promise<T>, shouldLock: boolean = true) : Promise<T> {
+	public static async lock<T> (
+		lock: any,
+		f: () => Promise<T>,
+		shouldLock: boolean = true,
+		tryOnce: boolean = false
+	) : Promise<T> {
 		if (!shouldLock) {
 			return f();
+		}
+
+		if (tryOnce && lock.isOwned) {
+			return null;
 		}
 
 		try {

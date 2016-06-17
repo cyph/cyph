@@ -1,42 +1,40 @@
 import {ISidebar} from 'isidebar';
 import {IController} from 'cyph/icontroller';
+import {Util} from 'cyph/util';
 
 
 /**
  * Base class for components that handle buttons.
  */
 export class BaseButtonManager {
-	protected static buttonLock: boolean;
+	protected static buttonLock: {}	= {};
 
 
 	/**
 	 * Base logic shared by every button click (e.g. close sidenav).
 	 */
-	public baseButtonClick (callback?: Function) : void {
-		if (!BaseButtonManager.buttonLock) {
-			BaseButtonManager.buttonLock	= true;
+	public async baseButtonClick (callback: Function) : Promise<void> {
+		return Util.lock(BaseButtonManager.buttonLock, async () => {
+			try {
+				await Util.sleep(250);
+				this.mobileMenu().close();
 
-			setTimeout(() => {
-				try {
-					this.mobileMenu().close();
-
-					if (callback) {
-						callback();
-					}
+				if (callback) {
+					callback();
 				}
-				finally {
-					BaseButtonManager.buttonLock	= false;
-					this.controller.update();
-				}
-			}, 250);
-		}
+			}
+			finally {
+				this.controller.update();
+			}
+		}, undefined, true);
 	}
 
 	/**
 	 * Opens mobile sidenav menu.
 	 */
-	public openMobileMenu () : void {
-		setTimeout(() => this.mobileMenu().open(), 250);
+	public async openMobileMenu () : Promise<void> {
+		await Util.sleep(250);
+		this.mobileMenu().open();
 	}
 
 	/**

@@ -132,7 +132,7 @@ export class Castle implements ICastle {
 
 				++this.incomingMessageId;
 			}
-		});
+		}, undefined, true);
 	}
 
 	public async send (message: string) : Promise<void> {

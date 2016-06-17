@@ -6,21 +6,18 @@ export interface IDialogManager {
 	/**
 	 * Displays alert.
 	 * @param o
-	 * @param callback
 	 */
 	alert (
 		o: {
 			title: string;
 			content: string;
 			ok: string;
-		},
-		callback?: (promiseValue: any) => void
-	) : void;
+		}
+	) : Promise<any>;
 
 	/**
 	 * Generic modal implementation that takes a template / content.
 	 * @param o
-	 * @param callback
 	 */
 	baseDialog (
 		o: {
@@ -28,14 +25,12 @@ export interface IDialogManager {
 			locals?: any;
 			oncomplete?: Function;
 			onclose?: Function;
-		},
-		callback?: (ok: boolean, locals: any) => void
-	) : void;
+		}
+	) : Promise<{ok: boolean; locals: any;}>;
 
 	/**
 	 * Displays interactive confirmation prompt.
 	 * @param o
-	 * @param callback
 	 */
 	confirm (
 		o: {
@@ -44,21 +39,18 @@ export interface IDialogManager {
 			ok: string;
 			cancel: string;
 			timeout?: number;
-		},
-		callback?: (ok: boolean) => void
-	) : void;
+		}
+	) : Promise<boolean>;
 
 	/**
 	 * Displays toast notification.
 	 * @param o
-	 * @param callback
 	 */
 	toast (
 		o: {
 			content: string;
 			delay: number;
 			position?: string;
-		},
-		callback?: () => void
-	) : void;
+		}
+	) : Promise<void>;
 }

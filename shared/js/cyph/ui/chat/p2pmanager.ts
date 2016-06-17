@@ -99,7 +99,7 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 
 		this.chat.session.on(
 			Session.Events.p2pUI,
-			(e: {
+			async (e: {
 				category: P2P.UIEvents.Categories;
 				event: P2P.UIEvents.Events;
 				args: any[];
@@ -151,7 +151,7 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 									callback(true);
 								}
 								else {
-									this.dialogManager.confirm({
+									callback(await this.dialogManager.confirm({
 										title: Strings.p2pTitle,
 										content:
 											Strings.p2pRequest + ' ' +
@@ -161,7 +161,7 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 										ok: Strings.continueDialogAction,
 										cancel: Strings.decline,
 										timeout
-									}, (ok: boolean) => callback(ok));
+									}));
 								}
 
 								break;
@@ -175,7 +175,7 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 									callback(true);
 								}
 								else {
-									this.dialogManager.confirm({
+									callback(await this.dialogManager.confirm({
 										title: Strings.p2pTitle,
 										content:
 											Strings.p2pInit + ' ' +
@@ -184,7 +184,7 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 										,
 										ok: Strings.continueDialogAction,
 										cancel: Strings.cancel
-									}, (ok: boolean) => callback(ok));
+									}));
 								}
 
 								break;

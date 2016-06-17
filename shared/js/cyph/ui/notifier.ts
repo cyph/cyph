@@ -10,7 +10,7 @@ export class Notifier implements INotifier {
 		{play: () => {}}
 	;
 
-	private static createNotification (message: string, callback: Function = () => {}) {
+	private static createNotification (message: string, callback: Function = () => {}) : void {
 		const options	= {
 			audio: null,
 			body: message,
