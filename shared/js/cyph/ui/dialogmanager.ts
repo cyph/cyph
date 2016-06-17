@@ -75,7 +75,7 @@ export class DialogManager implements IDialogManager {
 		;
 
 		try {
-			return (await promise.catch(_ => false)); 
+			return (await promise.catch(_ => false));
 		}
 		finally {
 			if (timeoutId) {
