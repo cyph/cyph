@@ -1035,6 +1035,10 @@ html:not(.mobile) .amazon-link {
 		bottom: 0px;
 		right: -310px;
 		width: 310px;
+
+		.chat-message-box.mobile md-fab-speed-dial {
+			top: -180px;
+		}
 	}
 
 	&.sidebar-open {
