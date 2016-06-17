@@ -952,7 +952,7 @@ html:not(.mobile) .amazon-link {
 		position: fixed;
 		z-index: 2;
 		bottom: 25px;
-		left: calc(50vw - 134px);
+		left: calc(50vw - 100px);
 
 		.close-button {
 			position: static;
@@ -1056,8 +1056,11 @@ html:not(.mobile) .amazon-link {
 		}
 
 		&.sidebar-open {
-			.logo, .me, .buttons, .sidebar, ~ .message-list, ~ .video-call-message-box {
+			.logo, .buttons, .sidebar, ~ .message-list, ~ .video-call-message-box {
 				@include transform(translateX(-25vw));
+			}
+			.me {
+				@include transform(translateX(-25vw) scaleX(-1) !important);
 			}
 		}
 	}
