@@ -292,7 +292,8 @@ export class Session implements ISession {
 					block friend from trying to join */
 				Util.request({
 					method: 'POST',
-					url: Env.baseUrl + 'channels/' + this.state.cyphId
+					url: Env.baseUrl + 'channels/' + this.state.cyphId,
+					discardErrors: true
 				});
 			}
 		}
@@ -413,37 +414,38 @@ export class Session implements ISession {
 			this.setUpChannel(null, nativeCrypto, localChannelCallback);
 		}
 		else {
-			Util.retryUntilComplete(retry => {
+			Util.retryUntilComplete(async (retry) => {
 				const channelDescriptor: string	=
 					this.state.isStartingNewCyph === false ?
 						'' :
 						Channel.Channel.newDescriptor()
 				;
 
-				Util.request({
-					method: 'POST',
-					url: Env.baseUrl + 'channels/' + this.state.cyphId,
-					data: {channelDescriptor},
-					success: (data: string) => {
-						if (
-							this.state.isStartingNewCyph === true &&
-							channelDescriptor !== data
-						) {
-							retry();
-						}
-						else {
-							this.setUpChannel(data, nativeCrypto);
-						}
-					},
-					error: () => {
-						if (this.state.isStartingNewCyph === false) {
-							UrlState.set(UrlState.states.notFound);
-						}
-						else {
-							retry();
-						}
+				try {
+					const data: string	= await Util.request({
+						method: 'POST',
+						url: Env.baseUrl + 'channels/' + this.state.cyphId,
+						data: {channelDescriptor}
+					});
+
+					if (
+						this.state.isStartingNewCyph === true &&
+						channelDescriptor !== data
+					) {
+						retry();
 					}
-				});
+					else {
+						this.setUpChannel(data, nativeCrypto);
+					}
+				}
+				catch (_) {
+					if (this.state.isStartingNewCyph === false) {
+						UrlState.set(UrlState.states.notFound);
+					}
+					else {
+						retry();
+					}
+				}
 			});
 		}
 	}

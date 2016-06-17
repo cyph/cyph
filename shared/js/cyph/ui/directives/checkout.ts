@@ -17,7 +17,7 @@ export class Checkout {
 			replace: false,
 			transclude: true,
 			template: Templates.checkout,
-			link: (scope, element, attrs) => Util.retryUntilComplete(retry => {
+			link: (scope, element, attrs) => Util.retryUntilComplete(async (retry) => {
 				const ui: any	= self['ui'];
 
 				if (!ui) {
@@ -37,37 +37,36 @@ export class Checkout {
 				watch('category');
 				watch('item');
 
-				Util.request({
+				const token: string	= await Util.request({
 					url: Env.baseUrl + Config.braintreeConfig.endpoint,
-					success: (token: string) => {
-						const checkoutUI: JQuery	= element.find('.braintree');
+					retries: 5
+				});
 
-						checkoutUI.html('');
+				const checkoutUI: JQuery	= element.find('.braintree');
 
-						self['braintree'].setup(token, 'dropin', {
-							container: checkoutUI[0],
-							enableCORS: true,
-							onPaymentMethodReceived: data => {
-								Util.request({
-									url: Env.baseUrl + Config.braintreeConfig.endpoint,
-									method: 'POST',
-									data: {
-										Nonce: data.nonce,
-										Amount: Math.floor(parseFloat(scope['amount']) * 100),
-										Category: scope['category'],
-										Item: scope['item'],
-										Name: scope['name'],
-										Email: scope['email']
-									},
-									success: (response) => {
-										if (JSON.parse(response).Status === 'authorized') {
-											scope['complete']	= true;
-											self['ui'].controller.update();
-										}
-									}
-								});
+				checkoutUI.html('');
+
+				self['braintree'].setup(token, 'dropin', {
+					container: checkoutUI[0],
+					enableCORS: true,
+					onPaymentMethodReceived: async (data) => {
+						const response: string	= await Util.request({
+							url: Env.baseUrl + Config.braintreeConfig.endpoint,
+							method: 'POST',
+							data: {
+								Nonce: data.nonce,
+								Amount: Math.floor(parseFloat(scope['amount']) * 100),
+								Category: scope['category'],
+								Item: scope['item'],
+								Name: scope['name'],
+								Email: scope['email']
 							}
 						});
+
+						if (JSON.parse(response).Status === 'authorized') {
+							scope['complete']	= true;
+							self['ui'].controller.update();
+						}
 					}
 				});
 			})

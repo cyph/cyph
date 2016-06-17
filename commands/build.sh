@@ -6,7 +6,9 @@ dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd)/..
 originalDir="$(pwd)"
 
-./commands/docs.sh
+if [ "${1}" != '--simple' ] ; then
+	./commands/docs.sh
+fi
 
 tsargs="$(node -e '
 	const compilerOptions = JSON.parse(
@@ -114,14 +116,18 @@ else
 	cd js
 	for file in $tsfiles ; do
 		output="${output}$(tsc $tsargs $file.ts --outFile $file.ts.js)"
-		babel --presets es2015 --compact false $file.ts.js -o $file.js
+		if [ "${1}" == '--simple' ] ; then
+			mv $file.ts.js $file.js
+		else
+			babel --presets es2015 --compact false $file.ts.js -o $file.js
+		fi
 		jsbundle $file
 	done
 	cd ..
 
 	echo -e "${output}"
 
-	if [ "${1}" == '--test' ] ; then
+	if [ "${1}" == '--test' -o "${1}" == '--simple' ] ; then
 		cd $originalDir
 
 		rm -rf shared/js/docs

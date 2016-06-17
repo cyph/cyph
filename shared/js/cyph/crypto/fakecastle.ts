@@ -40,7 +40,7 @@ export class FakeCastle implements ICastle {
 		});
 	}
 
-	public send (message: string) : void {
+	public async send (message: string) : Promise<void> {
 		const cyphertext: string	= FakeCastle.generateCyphertext();
 
 		this.session.trigger(Session.Events.cyphertext, {

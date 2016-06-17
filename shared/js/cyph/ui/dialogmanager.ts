@@ -1,42 +1,38 @@
 import {IDialogManager} from 'idialogmanager';
+import {Util} from 'cyph/util';
 
 
 export class DialogManager implements IDialogManager {
-	public alert (
+	public async alert (
 		o: {
 			title: string;
 			content: string;
 			ok: string;
-		},
-		callback?: (promiseValue: any) => void
-	) : void {
-		this.$mdDialog.
-			show(
-				this.$mdDialog.alert().
-					title(o.title).
-					textContent(o.content).
-					ok(o.ok)
-			).
-			then(callback)
-		;
+		}
+	) : Promise<any> {
+		return this.$mdDialog.show(
+			this.$mdDialog.alert().
+				title(o.title).
+				textContent(o.content).
+				ok(o.ok)
+		);
 	}
 
-	public baseDialog (
+	public async baseDialog (
 		o: {
 			template: string;
 			locals?: any;
 			oncomplete?: Function;
 			onclose?: Function;
-		},
-		callback: (ok: boolean, locals: any) => void = (ok, locals) => {}
-	) : void {
-		const f	= (ok: boolean) => {
-			if (o.onclose) {
-				o.onclose(ok);
-			}
-		};
-
-		this.$mdDialog.show({
+		}
+	) : Promise<{
+		ok: boolean;
+		locals: any;
+	}> {
+		return <Promise<{
+			ok: boolean;
+			locals: any;
+		}>> new Promise(resolve => this.$mdDialog.show({
 			clickOutsideToClose: true,
 			escapeToClose: true,
 			template: o.template,
@@ -45,22 +41,26 @@ export class DialogManager implements IDialogManager {
 				$scope.locals	= o.locals;
 				$scope.close	= (ok: any) => {
 					$mdDialog.hide();
-					callback(ok === true, o.locals);
+
+					resolve({ok: ok === true, locals: o.locals});
+
+					if (o.onclose) {
+						o.onclose(ok);
+					}
 				};
 			}]
-		}).then(f).catch(f);
+		}));
 	}
 
-	public confirm (
+	public async confirm (
 		o: {
 			title: string;
 			content: string;
 			ok: string;
 			cancel: string;
 			timeout?: number;
-		},
-		callback?: (ok: boolean) => void
-	) : void {
+		}
+	) : Promise<boolean> {
 		const promise	= this.$mdDialog.show(
 			this.$mdDialog.confirm().
 				title(o.title).
@@ -69,42 +69,35 @@ export class DialogManager implements IDialogManager {
 				cancel(o.cancel)
 		);
 
-		let timeoutId;
-		if ('timeout' in o) {
-			timeoutId	= setTimeout(() =>
-				this.$mdDialog.cancel(promise)
-			, o.timeout);
-		}
+		const timeoutId	= 'timeout' in o ?
+			setTimeout(() => this.$mdDialog.cancel(promise), o.timeout) :
+			null
+		;
 
-		const f	= (ok: any) => {
+		try {
+			return (await promise.catch(_ => false));
+		}
+		finally {
 			if (timeoutId) {
 				clearTimeout(timeoutId);
 			}
-
-			if (callback) {
-				callback(ok === true);
-				callback	= null;
-			}
-		};
-
-		promise.then(f).catch(f);
+		}
 	}
 
-	public toast (
+	public async toast (
 		o: {
 			content: string;
 			delay: number;
 			position?: string;
-		},
-		callback?: () => void
-	) : void {
+		}
+	) : Promise<void> {
 		this.$mdToast.show({
 			template: `<md-toast><div class='md-toast-content'>${o.content}</div></md-toast>`,
 			hideDelay: o.delay,
 			position: o.position || 'top right'
 		});
 
-		setTimeout(callback, o.delay + 500);
+		await Util.sleep(o.delay + 500);
 	}
 
 	/**

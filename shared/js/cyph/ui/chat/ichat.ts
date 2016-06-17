@@ -75,9 +75,8 @@ export interface IChat {
 
 	/**
 	 * Begins chat.
-	 * @param callback
 	 */
-	begin (callback?: Function) : void;
+	begin () : Promise<void>;
 
 	/**
 	 * Changes chat UI state.

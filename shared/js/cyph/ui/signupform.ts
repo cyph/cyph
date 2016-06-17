@@ -18,51 +18,20 @@ export class SignupForm implements ISignupForm {
 		boolean: <boolean> true
 	};
 
-	private sendyRequest (
-		method: string,
-		success: (response: string) => void = () => {}
-	) : void {
-		Util.retryUntilComplete(retry =>
-			Util.request({
-				method: 'POST',
-				url: 'https://sendy.cyph.com/' + method,
-				data: this.data,
-				error: retry,
-				success
-			})
-		);
+	private sendyRequest (method: string) : Promise<string> {
+		return Util.request({
+			method: 'POST',
+			url: 'https://sendy.cyph.com/' + method,
+			data: this.data,
+			retries: 5
+		});
 	}
 
-	public submit () : void {
+	public async submit () : Promise<void> {
 		++this.state;
 
-		if (this.data.email) {
-			if (this.state === 1) {
-				++this.state;
-			}
-
-			this.sendyRequest('subscribe', (response: string) => {
-				if (response === '1') {
-					Analytics.send({
-						hitType: 'event',
-						eventCategory: 'signup',
-						eventAction: 'new',
-						eventValue: 1
-					});
-
-					if (this.promo) {
-						Analytics.send({
-							hitType: 'social',
-							socialNetwork: 'promo-' + this.promo,
-							socialAction: 'signup',
-							socialTarget: this.data.email
-						});
-					}
-				}
-				else if (response === 'Already subscribed.' && this.data.name) {
-					this.sendyRequest('unsubscribe', () => this.sendyRequest('subscribe'));
-				}
-			});
+		if (this.data.email && this.state === 1) {
+			++this.state;
 		}
 
 		this.controller.update();
@@ -77,6 +46,32 @@ export class SignupForm implements ISignupForm {
 				$input.focus();
 			}
 		}, 250);
+
+		if (this.data.email) {
+			const response: string	= await this.sendyRequest('subscribe');
+
+			if (response === '1') {
+				Analytics.send({
+					hitType: 'event',
+					eventCategory: 'signup',
+					eventAction: 'new',
+					eventValue: 1
+				});
+
+				if (this.promo) {
+					Analytics.send({
+						hitType: 'social',
+						socialNetwork: 'promo-' + this.promo,
+						socialAction: 'signup',
+						socialTarget: this.data.email
+					});
+				}
+			}
+			else if (response === 'Already subscribed.' && this.data.name) {
+				await this.sendyRequest('unsubscribe');
+				this.sendyRequest('subscribe');
+			}
+		}
 	}
 
 	/**

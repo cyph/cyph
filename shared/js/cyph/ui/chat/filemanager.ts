@@ -172,7 +172,7 @@ export class FileManager implements IFileManager {
 
 		this.chat.session.on(
 			Session.Events.filesUI,
-			(e: {
+			async (e: {
 				event: Files.UIEvents;
 				args: any[];
 			}) => {
@@ -200,12 +200,12 @@ export class FileManager implements IFileManager {
 
 						const title: string	= `${Strings.incomingFile} ${name} (${Util.readableByteLength(size)})`;
 
-						this.dialogManager.confirm({
+						callback(await this.dialogManager.confirm({
 							title,
 							content: isSave ? Strings.incomingFileSave : Strings.incomingFileDownload,
 							ok: isSave ? Strings.save : Strings.accept,
 							cancel: isSave ? Strings.discard : Strings.reject
-						}, callback);
+						}));
 						break;
 					}
 					case Files.UIEvents.rejected: {

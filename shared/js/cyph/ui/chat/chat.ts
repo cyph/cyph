@@ -117,7 +117,7 @@ export class Chat extends BaseButtonManager implements IChat {
 		}
 	}
 
-	public begin (callback: Function = () => {}) : void {
+	public async begin () : Promise<void> {
 		if (this.state === States.aborted) {
 			return;
 		}
@@ -125,50 +125,16 @@ export class Chat extends BaseButtonManager implements IChat {
 		this.notifier.notify(Strings.connectedNotification);
 		this.changeState(States.chatBeginMessage);
 
-		setTimeout(() => {
-			if (this.state === States.aborted) {
-				return;
-			}
+		await Util.sleep(3000);
 
-			callback();
+		if (this.state === States.aborted) {
+			return;
+		}
 
-			this.session.trigger(Session.Events.beginChatComplete);
-			this.changeState(States.chat);
-
-			/* Adjust font size for translations */
-			if (!this.isMobile) {
-				setTimeout(() => {
-					this.elements.buttons.each((i: number, elem: HTMLElement) => {
-						const $this: JQuery		= $(elem);
-
-						const $clone: JQuery	= $this
-							.clone()
-							.css({
-								display: 'inline',
-								width: 'auto',
-								visibility: 'hidden',
-								position: 'fixed'
-							})
-							.appendTo('body')
-						;
-
-						const $both: JQuery		= $this.add($clone);
-
-						let fontSize: number	= parseInt($this.css('font-size'), 10);
-
-						for (let i = 0 ; i < 20 && $clone.width() > $this.width() ; ++i) {
-							fontSize	-= 1;
-							$both.css('font-size', fontSize + 'px');
-						}
-
-						$clone.remove();
-					});
-				}, 10000);
-			}
-
-			this.addMessage(Strings.introductoryMessage, Session.Users.app, false);
-			this.setConnected();
-		}, 3000);
+		this.session.trigger(Session.Events.beginChatComplete);
+		this.changeState(States.chat);
+		this.addMessage(Strings.introductoryMessage, Session.Users.app, false);
+		this.setConnected();
 	}
 
 	public changeState (state: States) : void {
@@ -194,17 +160,15 @@ export class Chat extends BaseButtonManager implements IChat {
 	}
 
 	public disconnectButton () : void {
-		this.baseButtonClick(() => {
-			this.dialogManager.confirm({
+		this.baseButtonClick(async () => {
+			if (await this.dialogManager.confirm({
 				title: Strings.disconnectTitle,
 				content: Strings.disconnectConfirm,
 				ok: Strings.continueDialogAction,
 				cancel: Strings.cancel
-			}, (ok) => {
-				if (ok) {
-					this.close();
-				}
-			});
+			})) {
+				this.close();
+			}
 		});
 	}
 

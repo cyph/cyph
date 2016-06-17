@@ -18,7 +18,8 @@ export class CastleCore {
 	private keyPairs: {publicKey: Uint8Array; privateKey: Uint8Array}[];
 	private potassium: Potassium;
 
-	public outgoingMessageId: Uint32Array	= new Uint32Array([0]);
+	private lock: {}					= {};
+	private outgoingMessageId: number	= 0;
 
 	private abort () : void {
 		this.isAborted	= true;
@@ -33,82 +34,61 @@ export class CastleCore {
 		}
 	}
 
+	private newMessageId () : Uint8Array {
+		return new Uint8Array(new Uint32Array([this.outgoingMessageId++]).buffer);
+	}
+
 	/**
 	 * Receive incoming cyphertext.
 	 * @param cyphertext Data to be decrypted.
-	 * @param callback Used to communicate whether message was successfully decrypted.
+	 * @returns Whether or not message was successfully decrypted.
 	 */
-	public receive (
-		cyphertext: Uint8Array,
-		callback: (succcess: boolean) => void
-	) : void {
-		if (this.isAborted) {
-			callback(false);
-			return;
-		}
-
-		const encryptedData: Uint8Array	= new Uint8Array(cyphertext.buffer, 4);
-
-		/* Initial key exchange */
-		if (!this.friendKey) {
-			this.potassium.SecretBox.open(
-				encryptedData,
-				this.sharedSecret,
-				(plaintext: Uint8Array, err: any) => {
-					try {
-						if (err) {
-							this.abort();
-							callback(false);
-							return;
-						}
-
-						this.friendKey	= plaintext;
-
-						/* Trigger friend's connection acknowledgement logic
-							by sending this user's first encrypted message */
-						this.send(new Uint8Array(0));
-
-						callback(true);
-					}
-					finally {
-						Potassium.clearMemory(this.sharedSecret);
-					}
-				}
-			);
-
-			return;
-		}
-
-		/* Standard incoming message */
-		let i: number	= 0;
-		Util.retryUntilComplete(retry => {
-			if (i >= this.keyPairs.length) {
-				if (!this.isConnected) {
-					this.abort();
-				}
-
-				callback(false);
-				return;
+	public async receive (cyphertext: Uint8Array, shouldLock: boolean = true) : Promise<boolean> {
+		return Util.lock(this.lock, async () => {
+			if (this.isAborted) {
+				return false;
 			}
 
-			const next		= () => {
-				++i;
-				retry(-1);
-			};
+			const encryptedData: Uint8Array	= new Uint8Array(cyphertext.buffer, 4);
 
-			const keyPair	= this.keyPairs[i];
+			/* Initial key exchange */
+			if (!this.friendKey) {
+				try {
+					this.friendKey	= await this.potassium.SecretBox.open(
+						encryptedData,
+						this.sharedSecret
+					);
 
-			this.potassium.Box.open(
-				encryptedData,
-				this.friendKey,
-				keyPair.privateKey,
-				(decrypted: Uint8Array, err: any) => {
-					if (err || !Potassium.compareMemory(
+					Potassium.clearMemory(this.sharedSecret);
+
+					/* Trigger friend's connection acknowledgement logic
+						by sending this user's first encrypted message */
+					await this.send(new Uint8Array(0), false);
+
+					return true;
+				}
+				catch (_) {
+					this.abort();
+					return false;
+				}
+			}
+
+			/* Standard incoming message */
+			for (let i = 0 ; i < this.keyPairs.length ; ++i) {
+				try {
+					const keyPair	= this.keyPairs[i];
+
+					const decrypted: Uint8Array	= await this.potassium.Box.open(
+						encryptedData,
+						this.friendKey,
+						keyPair.privateKey
+					);
+
+					if (!Potassium.compareMemory(
 						new Uint8Array(cyphertext.buffer, 0, 4),
 						new Uint8Array(decrypted.buffer, 0, 4)
 					)) {
-						next();
-						return;
+						return false;
 					}
 
 					if (i === 0) {
@@ -127,72 +107,46 @@ export class CastleCore {
 					}
 
 					if (decrypted.length > startIndex) {
-						this.handlers.receive(decrypted, startIndex);
+						this.handlers.receive(new DataView(decrypted.buffer, startIndex));
 					}
 
 					if (!this.isConnected) {
 						this.isConnected	= true;
-						this.handlers.connect();
+						await this.handlers.connect();
 					}
 
-					callback(true);
+					return true;
 				}
-			);
-		});
+				catch (_) {}
+			}
+
+			if (!this.isConnected) {
+				this.abort();
+			}
+
+			return false;
+		}, shouldLock);
 	}
 
 	/**
 	 * Send outgoing text.
 	 * @param plaintext Data to be encrypted.
 	 */
-	public send (plaintext: Uint8Array) : void {
-		const encryptData	= (privateKey: Uint8Array, newPublicKey: Uint8Array) => {
-			const fullPlaintext: Uint8Array	= new Uint8Array(
-				5 + newPublicKey.length + plaintext.length
-			);
-
-			fullPlaintext.set(new Uint8Array(this.outgoingMessageId.buffer));
-			fullPlaintext.set(plaintext, 5 + newPublicKey.length);
-
-			if (newPublicKey.length > 0) {
-				fullPlaintext[4]	= 1;
-				fullPlaintext.set(newPublicKey, 5);
+	public async send (plaintext: Uint8Array, shouldLock: boolean = true) : Promise<void> {
+		return Util.lock(this.lock, async () => {
+			if (this.isAborted) {
+				return;
 			}
 
-			this.potassium.Box.seal(
-				fullPlaintext,
-				this.friendKey,
-				privateKey,
-				(cyphertext: Uint8Array, err: any) => {
-					if (err) {
-						return;
-					}
+			const messageId: Uint8Array		= this.newMessageId();
 
-					let fullCyphertext: Uint8Array;
-					try {
-						fullCyphertext	= new Uint8Array(4 + cyphertext.length);
-						fullCyphertext.set(new Uint8Array(this.outgoingMessageId.buffer));
-						fullCyphertext.set(cyphertext, 4);
-						this.handlers.send(Potassium.toBase64(fullCyphertext));
-					}
-					finally {
-						++this.outgoingMessageId[0];
+			const privateKey: Uint8Array	= this.keyPairs[0].privateKey;
+			let newPublicKey: Uint8Array	= new Uint8Array(0);
 
-						Potassium.clearMemory(fullPlaintext);
-						Potassium.clearMemory(cyphertext);
+			if (this.shouldRatchetKeys) {
+				this.shouldRatchetKeys	= false;
 
-						if (fullCyphertext) {
-							Potassium.clearMemory(fullCyphertext);
-						}
-					}
-				}
-			);
-		};
-
-		if (this.shouldRatchetKeys) {
-			this.shouldRatchetKeys	= false;
-			this.potassium.Box.keyPair(keyPair => {
-				this.keyPairs.unshift(keyPair);
+				this.keyPairs.unshift(await this.potassium.Box.keyPair());
 
 				if (this.keyPairs.length > 2) {
 					const oldKeyPair	= this.keyPairs.pop();
@@ -201,71 +155,87 @@ export class CastleCore {
 					Potassium.clearMemory(oldKeyPair.publicKey);
 				}
 
-				encryptData(this.keyPairs[1].privateKey, this.keyPairs[0].publicKey);
-			});
-		}
-		else {
-			encryptData(this.keyPairs[0].privateKey, new Uint8Array(0));
-		}
+				newPublicKey	= this.keyPairs[0].publicKey;
+			}
+
+			const fullPlaintext: Uint8Array	= new Uint8Array(
+				5 + newPublicKey.length + plaintext.length
+			);
+
+			fullPlaintext.set(messageId);
+			fullPlaintext.set(plaintext, 5 + newPublicKey.length);
+
+			if (newPublicKey.length > 0) {
+				fullPlaintext[4]	= 1;
+				fullPlaintext.set(newPublicKey, 5);
+			}
+
+			const cyphertext: Uint8Array	= await this.potassium.Box.seal(
+				fullPlaintext,
+				this.friendKey,
+				privateKey
+			);
+
+			const fullCyphertext: Uint8Array	= new Uint8Array(4 + cyphertext.length);
+			fullCyphertext.set(messageId);
+			fullCyphertext.set(cyphertext, 4);
+
+			const fullCyphertextBase64: string	= Potassium.toBase64(fullCyphertext);
+
+			Potassium.clearMemory(fullPlaintext);
+			Potassium.clearMemory(fullCyphertext);
+			Potassium.clearMemory(cyphertext);
+			Potassium.clearMemory(messageId);
+
+			this.handlers.send(fullCyphertextBase64);
+		}, shouldLock);
 	}
 
 	public constructor (
 		isCreator: boolean,
 		sharedSecret: string,
 		private handlers: {
-			abort: Function;
-			connect: Function;
-			receive: (data: Uint8Array, startIndex: number) => void;
-			send: (message: string) => void;
+			abort: () => Promise<void>;
+			connect: () => Promise<void>;
+			receive: (data: DataView) => Promise<void>;
+			send: (message: string) => Promise<void>;
 		},
 		isNative: boolean = false
 	) {
-		this.potassium	= new Potassium(isNative);
+		Util.lock(this.lock, async () => {
+			this.potassium		= new Potassium(isNative);
 
-		this.potassium.PasswordHash.hash(
-			sharedSecret,
-			new Uint8Array(this.potassium.PasswordHash.saltBytes),
-			undefined,
-			undefined,
-			undefined,
-			(_: Uint8Array, hash: Uint8Array) => {
-				this.sharedSecret	= hash;
+			this.sharedSecret	= (await this.potassium.PasswordHash.hash(
+				sharedSecret,
+				new Uint8Array(this.potassium.PasswordHash.saltBytes)
+			)).hash;
 
-				this.potassium.Box.keyPair(keyPair => {
-					this.keyPairs	= [keyPair];
+			this.keyPairs		= [await this.potassium.Box.keyPair()];
 
-					this.potassium.SecretBox.seal(
-						this.keyPairs[0].publicKey,
-						this.sharedSecret,
-						(encryptedKey: Uint8Array) => {
-							const cyphertext: Uint8Array	= new Uint8Array(
-								4 + encryptedKey.length
-							);
+			const encryptedKey: Uint8Array	= await this.potassium.SecretBox.seal(
+				this.keyPairs[0].publicKey,
+				this.sharedSecret
+			);
 
-							cyphertext.set(new Uint8Array(this.outgoingMessageId.buffer));
-							cyphertext.set(encryptedKey, 4);
+			const cyphertext: Uint8Array	= new Uint8Array(
+				4 + encryptedKey.length
+			);
 
-							++this.outgoingMessageId[0];
+			cyphertext.set(this.newMessageId());
+			cyphertext.set(encryptedKey, 4);
 
-							try {
-								this.handlers.send(
-									Potassium.toBase64(cyphertext)
-								);
-							}
-							finally {
-								Potassium.clearMemory(cyphertext);
-								Potassium.clearMemory(encryptedKey);
+			const cyphertextBase64: string	= Potassium.toBase64(cyphertext);
 
-								setTimeout(() => {
-									if (!this.isConnected) {
-										this.abort();
-									}
-								}, CastleCore.handshakeTimeout);
-							}
-						}
-					);
-				});
-			}
-		);
+			Potassium.clearMemory(cyphertext);
+			Potassium.clearMemory(encryptedKey);
+
+			setTimeout(() => {
+				if (!this.isConnected) {
+					this.abort();
+				}
+			}, CastleCore.handshakeTimeout);
+
+			this.handlers.send(cyphertextBase64);
+		});
 	}
 }

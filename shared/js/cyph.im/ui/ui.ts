@@ -47,7 +47,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		Cyph.UrlState.set(urlState, true, true);
 	}
 
-	private startChat (initialCallType?: string) : void {
+	private async startChat (initialCallType?: string) : Promise<void> {
 		let baseUrl: string	= Cyph.Env.newCyphBaseUrl;
 
 		if (initialCallType) {
@@ -63,15 +63,15 @@ export class UI extends Cyph.UI.BaseButtonManager {
 
 			/* If unsupported, warn and then close window */
 			if (!Cyph.P2P.P2P.isSupported) {
-				this.dialogManager.alert({
+				this.changeState(States.blank);
+
+				await this.dialogManager.alert({
 					title: Cyph.Strings.p2pTitle,
 					content: Cyph.Strings.p2pDisabledLocal,
 					ok: Cyph.Strings.ok
-				}, ok =>
-					self.close()
-				);
+				});
 
-				this.changeState(States.blank);
+				self.close();
 
 				return;
 			}
