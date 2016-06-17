@@ -93,6 +93,8 @@ export class UI extends Cyph.UI.BaseButtonManager {
 
 		this.signupForm		= new Cyph.UI.SignupForm(this.controller);
 
+		this.business		= this.chat.session.state.wasInitiatedByAPI;
+
 
 		if (initialCallType) {
 			this.chat.p2pManager.preemptivelyInitiate();
@@ -151,10 +153,6 @@ export class UI extends Cyph.UI.BaseButtonManager {
 			this.chat.session.state.sharedSecret,
 			this.chat.session.state.wasInitiatedByAPI
 		);
-
-		if (this.chat.session.state.wasInitiatedByAPI) {
-			this.business	= true;
-		}
 
 		this.changeState(States.waitingForFriend);
 	}
