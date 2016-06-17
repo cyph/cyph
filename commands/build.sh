@@ -143,6 +143,7 @@ else
 			find css -name '*.scss' & \
 			find css -name '*.map' & \
 			find js -name '*.ts' & \
+			find js -name '*.ts.js' & \
 			find js -name '*.map'; \
 		} | xargs -I% rm %
 
