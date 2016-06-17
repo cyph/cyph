@@ -105,6 +105,7 @@ export class AWS {
 		Util.request({
 			async: !config.isSynchronous,
 			method: requestMethod,
+			discardErrors: true,
 			url: config.url,
 			data: query + '&X-Amz-Signature=' + signature
 		}).then(callback).catch(callback);

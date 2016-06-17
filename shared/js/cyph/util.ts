@@ -232,7 +232,7 @@ export class Util {
 	 * strict jQuery.ajax compatibility (http://api.jquery.com/jquery.ajax/).
 	 * @param o
 	 */
-	public static request (o: {
+	public static async request (o: {
 		async?: boolean;
 		contentType?: string;
 		data?: any;

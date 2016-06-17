@@ -292,7 +292,8 @@ export class Session implements ISession {
 					block friend from trying to join */
 				Util.request({
 					method: 'POST',
-					url: Env.baseUrl + 'channels/' + this.state.cyphId
+					url: Env.baseUrl + 'channels/' + this.state.cyphId,
+					discardErrors: true
 				});
 			}
 		}

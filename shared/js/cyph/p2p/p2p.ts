@@ -178,8 +178,12 @@ export class P2P implements IP2P {
 		this.isActive	= true;
 		this.controller.update();
 
-		const iceServers: string	= await Util.request({url: Env.baseUrl + 'iceservers'});
-		const events: string[]		= [];
+		const iceServers: string	= await Util.request({
+			url: Env.baseUrl + 'iceservers',
+			retries: 5
+		});
+
+		const events: string[]	= [];
 
 		const webRTC	= new self['SimpleWebRTC']({
 			localVideoEl: this.localVideo,
