@@ -414,39 +414,25 @@ export class Session implements ISession {
 			this.setUpChannel(null, nativeCrypto, localChannelCallback);
 		}
 		else {
-			Util.retryUntilComplete(async (retry) => {
-				const channelDescriptor: string	=
-					this.state.isStartingNewCyph === false ?
-						'' :
-						Channel.Channel.newDescriptor()
-				;
+			const channelDescriptor: string	=
+				this.state.isStartingNewCyph === false ?
+					'' :
+					Channel.Channel.newDescriptor()
+			;
 
+			(async () => {
 				try {
-					const data: string	= await Util.request({
+					this.setUpChannel(await Util.request({
 						method: 'POST',
 						url: Env.baseUrl + 'channels/' + this.state.cyphId,
-						data: {channelDescriptor}
-					});
-
-					if (
-						this.state.isStartingNewCyph === true &&
-						channelDescriptor !== data
-					) {
-						retry();
-					}
-					else {
-						this.setUpChannel(data, nativeCrypto);
-					}
+						data: {channelDescriptor},
+						retries: 5
+					}), nativeCrypto);
 				}
 				catch (_) {
-					if (this.state.isStartingNewCyph === false) {
-						UrlState.set(UrlState.states.notFound);
-					}
-					else {
-						retry();
-					}
+					UrlState.set(UrlState.states.notFound);
 				}
-			});
+			})();
 		}
 	}
 }
