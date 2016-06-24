@@ -98,6 +98,8 @@ export class CastleCore {
 
 					let startIndex: number	= 5;
 					if (decrypted[4] === 1) {
+						Potassium.clearMemory(this.friendKey);
+
 						this.friendKey	= new Uint8Array(new Uint8Array(
 							decrypted.buffer,
 							5,
