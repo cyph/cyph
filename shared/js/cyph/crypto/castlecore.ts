@@ -41,6 +41,7 @@ export class CastleCore {
 	/**
 	 * Receive incoming cyphertext.
 	 * @param cyphertext Data to be decrypted.
+	 * @param shouldLock
 	 * @returns Whether or not message was successfully decrypted.
 	 */
 	public async receive (cyphertext: Uint8Array, shouldLock: boolean = true) : Promise<boolean> {
@@ -131,6 +132,7 @@ export class CastleCore {
 	/**
 	 * Send outgoing text.
 	 * @param plaintext Data to be encrypted.
+	 * @param shouldLock
 	 */
 	public async send (plaintext: Uint8Array, shouldLock: boolean = true) : Promise<void> {
 		return Util.lock(this.lock, async () => {
