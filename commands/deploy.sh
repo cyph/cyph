@@ -317,7 +317,7 @@ deploy () {
 # Temporary workaround for cache-busting reverse proxies
 if [ ! $test ] ; then
 	for project in cyph.im cyph.video ; do
-		cat $project/*.yaml | perl -pe 's/(module: cyph.*)/\1-update/' > $project/update.yaml
+		cat $project/*.yaml | perl -pe 's/(service: cyph.*)/\1-update/' > $project/update.yaml
 	done
 fi
 
