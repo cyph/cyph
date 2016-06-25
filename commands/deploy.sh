@@ -275,7 +275,7 @@ if [ ! $simple ] ; then
 			websignhashes="$(cat $currentDir/websignhashes.json)"
 		fi
 
-		$currentDir/../commands/websign/sign.js "{
+		$currentDir/../commands/websign/sign.old.js "{
 			\"hash\": \"$sha256hash\",
 			\"timestamp\": $timestamp,
 			\"expires\": $expires,
