@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Reverse proxy server setup script for Ubuntu 14.04
+# WebSign reverse proxy server setup script for Ubuntu 14.04
 
-rekeyscript='base64 websignhpkprekey.sh'
+rekeyscript='base64 hpkpsuicide.sh'
 
 
 sed -i 's/# deb /deb /g' /etc/apt/sources.list
@@ -24,11 +24,12 @@ mount --all
 umask 077
 echo "${rekeyscript}" | base64 --decode > /rekey.sh
 chmod 700 /rekey.sh
+umask 022
 
 crontab -l > /tmp/cyph.cron
 echo '@reboot /rekey.sh' >> /tmp/cyph.cron
 crontab /tmp/cyph.cron
 rm /tmp/cyph.cron
 
-rm reverseproxysetup.sh
+rm websign.sh
 reboot
