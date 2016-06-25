@@ -164,7 +164,7 @@ const reviewText	= text => new Promise(resolve => {
 		reject(err);
 	}
 	else {
-		resolve(answer.toLowerCase() !== 'y');
+		resolve(answer.trim().toLowerCase() === 'y');
 	}
 })));
 
