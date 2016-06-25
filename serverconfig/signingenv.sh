@@ -139,6 +139,7 @@ const dgram			= require('dgram');
 const stream		= require('stream');
 
 const activeKeys	= ${activeKeys};
+const address		= ${address};
 const port			= ${port};
 
 const reviewText	= text => new Promise(resolve => {
@@ -275,9 +276,10 @@ getKeyPair().then(keyData => {
 		const metadata		= new Uint32Array(message.buffer);
 		const id			= metadata[0];
 		const numBytes		= metadata[1];
-		const numChunks		= metadata[2];
-		const mtu			= metadata[3];
-		const chunkIndex	= metadata[4];
+		const chunkSize		= metadata[2];
+		const chunkIndex	= metadata[3];
+
+		const numChunks		= Math.ceil(numBytes / chunkSize);
 
 		if (!incomingMessages[id]) {
 			incomingMessages[id]	= {
@@ -295,7 +297,7 @@ getKeyPair().then(keyData => {
 
 		if (!o.chunksReceived[chunkIndex]) {
 			o.data.set(
-				new Uint8Array(message.buffer, 20),
+				new Uint8Array(message.buffer, 16),
 				chunkIndex
 			);
 
@@ -325,18 +327,33 @@ getKeyPair().then(keyData => {
 					return;
 				}
 
-				const socket			= dgram.createSocket('udp4');
+				const client			= dgram.createSocket('udp4');
 				const signatureBytes	= new Buffer(JSON.stringify({
 					signature,
 					rsaKeyIndex: keyData.rsaKeyIndex
 					sphincsKeyIndex: keyData.sphincsKeyIndex
 				}));
 
-				for (let i = 0 ; i < signatureBytes.length ; i += mtu) {
-					socket.send(
-						signatureBytes,
-						i,
-						Math.min(signatureBytes.length - i, mtu),
+				for (let i = 0 ; i < signatureBytes.length ; i += chunkSize) {
+					const data	= Buffer.concat([
+						new Buffer(
+							new Uint32Array([
+								id,
+								signatureBytes.length,
+								chunkSize,
+								i
+							]).buffer
+						),
+						signatureBytes.slice(
+							i,
+							Math.min(i + chunkSize, signatureBytes.length)
+						)
+					]);
+
+					client.send(
+						data,
+						0,
+						data.length,
 						port,
 						req.address
 					);
@@ -345,7 +362,7 @@ getKeyPair().then(keyData => {
 		}
 	});
 
-	server.bind(port);
+	server.bind(port, address);
 });
 EndOfMessage
 
