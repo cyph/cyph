@@ -12,13 +12,13 @@ var IS_WEB: boolean	= typeof self['IS_WEB'] !== 'undefined' ?
 	typeof window === 'object'
 ;
 
-for (const k of ['window', 'document']) {
+for (let k of ['window', 'document']) {
 	if (!(k in self)) {
 		self[k]	= self;
 	}
 }
 
-for (const k of [
+for (let k of [
 	'history',
 	'location',
 	'navigator',

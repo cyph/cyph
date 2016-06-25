@@ -20,7 +20,7 @@ export class Timer {
 			try {
 				const now: number	= Date.now();
 
-				for (const timer of Timer.timers) {
+				for (let timer of Timer.timers) {
 					if (timer) {
 						try {
 							timer(now);

@@ -341,7 +341,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 
 		$(UI.linkInterceptSelector).click(e => this.linkClickHandler(e));
 		new MutationObserver(mutations => {
-			for (const mutation of mutations) {
+			for (let mutation of mutations) {
 				for (let i = 0 ; i < mutation.addedNodes.length ; ++i) {
 					const $elem: JQuery	= $(mutation.addedNodes[i]);
 

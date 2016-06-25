@@ -153,7 +153,7 @@ export class Castle implements ICastle {
 					const sendQueue	= this.sendQueue;
 					this.sendQueue	= null;
 
-					for (const message of sendQueue) {
+					for (let message of sendQueue) {
 						await this.sendHelper(message, false);
 					}
 

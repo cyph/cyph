@@ -35,7 +35,7 @@ export class Contact {
 					}
 
 					if (attr === 'state') {
-						for (const k of Object.keys(scope['$this'])) {
+						for (let k of Object.keys(scope['$this'])) {
 							const v	= scope['$this'][k];
 							if (v && !value[k]) {
 								value[k]	= v;

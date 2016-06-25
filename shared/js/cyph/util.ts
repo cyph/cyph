@@ -434,7 +434,7 @@ export class Util {
 		const ngBind: string	= $this.attr('ng-bind');
 		const innerHtml: string	= $this.html().trim().replace(/\s+/g, ' ');
 
-		for (const attr of ['content', 'placeholder', 'aria-label', 'label']) {
+		for (let attr of ['content', 'placeholder', 'aria-label', 'label']) {
 			const value: string	= $this.attr(attr);
 
 			if (value) {

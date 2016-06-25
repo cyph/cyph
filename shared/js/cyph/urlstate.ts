@@ -62,7 +62,7 @@ export class UrlState {
 		redirectFallback: boolean = true
 	) : void {
 		if (Env.isMainThread) {
-			for (const c of ['/', '#']) {
+			for (let c of ['/', '#']) {
 				if (path[0] === c) {
 					path	= path.substring(1);
 				}

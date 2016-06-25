@@ -66,7 +66,7 @@ export class EventManager {
 			EventManager.trigger(EventManager.untriggeredEvents, {event, data}, true);
 		}
 		else {
-			for (const handler of (EventManager.handlers[event] || [])) {
+			for (let handler of (EventManager.handlers[event] || [])) {
 				try {
 					handler(data);
 				}
@@ -76,7 +76,7 @@ export class EventManager {
 			}
 
 			if (Env.isMainThread) {
-				for (const thread of Thread.threads) {
+				for (let thread of Thread.threads) {
 					try {
 						thread.postMessage({event, data, isThreadEvent: true});
 					}

@@ -83,7 +83,7 @@ export class Files implements IFiles {
 						);
 
 						let j: number	= 0;
-						for (const chunk of chunks) {
+						for (let chunk of chunks) {
 							cyphertext.set(
 								new Uint8Array(new Uint32Array([chunk.length]).buffer),
 								j
@@ -142,7 +142,7 @@ export class Files implements IFiles {
 						);
 
 						let j: number	= 0;
-						for (const chunk of chunks) {
+						for (let chunk of chunks) {
 							plaintext.set(chunk, j);
 							j += chunk.length;
 

@@ -152,7 +152,7 @@ export class Queue implements IChannel {
 						}, () => {});
 
 						if (messageHandler) {
-							for (const message of messages) {
+							for (let message of messages) {
 								let messageBody: string	= message.Body;
 
 								try {
@@ -231,7 +231,7 @@ export class Queue implements IChannel {
 					const callbacks: Function[]	= <Function[]> callback;
 
 					callback	= (err, data) => {
-						for (const callback of callbacks) {
+						for (let callback of callbacks) {
 							if (callback) {
 								try {
 									callback(err, data);

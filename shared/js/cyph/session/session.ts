@@ -100,7 +100,7 @@ export class Session implements ISession {
 						}
 					})();
 
-					for (const message of data) {
+					for (let message of data) {
 						this.receiveHandler(message);
 					}
 				}
@@ -332,7 +332,7 @@ export class Session implements ISession {
 
 	public sendBase (messages: IMessage[]) : void {
 		if (this.castle) {
-			for (const message of messages) {
+			for (let message of messages) {
 				if (message.event === RPCEvents.text) {
 					this.trigger(RPCEvents.text, {
 						text: message.data,

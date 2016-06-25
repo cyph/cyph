@@ -141,7 +141,7 @@ export class FileManager implements IFileManager {
 
 		this.elements.buttons.each((i: number, parent: HTMLElement) =>
 			new MutationObserver(mutations => {
-				for (const mutation of mutations) {
+				for (let mutation of mutations) {
 					for (let i = 0 ; i < mutation.addedNodes.length ; ++i) {
 						const elem: Node	= mutation.addedNodes[i];
 
