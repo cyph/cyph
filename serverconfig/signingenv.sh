@@ -1,7 +1,6 @@
 #!/bin/bash
 
-cd
-
+# Air gapped signing environment setup script for Debian 8.5 on BeagleBone Black
 
 activeKeys='4'
 backupKeys='21'
@@ -9,29 +8,56 @@ address='10.0.0.42'
 port='31337'
 
 
-sudo bash -c "cat >> /etc/network/interfaces << EndOfMessage
+export DEBIAN_FRONTEND=noninteractive
+apt-get -y --force-yes update
+apt-get -y --force-yes upgrade
+export DEBIAN_FRONTEND=text
+apt-get install console-data console-setup keyboard-configuration
+
+oldhostname=$(hostname)
+echo -n 'Hostname: '
+read hostname
+echo ${hostname} > /etc/hostname
+sed -i "s|${oldhostname}|${hostname}|g" /etc/hosts
+
+oldusername=$(ls /home)
+echo -n 'Username: '
+read username
+echo 'FYI, password must be under 64 characters.'
+adduser ${username}
+adduser ${username} admin
+
+cat >> /etc/network/interfaces << EndOfMessage
 auto eth0
 iface eth0 inet static
 	address ${address}
-EndOfMessage"
+EndOfMessage
 
-sudo ifconfig eth0 down
-sudo ifconfig eth0 up
+ifconfig eth0 down
+ifconfig eth0 up
 
 export DEBIAN_FRONTEND=noninteractive
-sudo apt-get -y --force-yes update
-sudo apt-get -y --force-yes upgrade
-curl -sL https://deb.nodesource.com/setup_6.x | sudo bash -
-sudo apt-get -y --force-yes install nodejs
+apt-get -y --force-yes install curl
+curl -sL https://deb.nodesource.com/setup_6.x | bash -
+apt-get -y --force-yes update
+apt-get -y --force-yes install nodejs ecryptfs-utils lsof
+apt-get -y --force-yes remove apache2 openssh-server
 
-npm install supersphincs level read request
+
+cat > /tmp/setup.sh << EndOfMessage
+#!/bin/bash
+
+cd /home/${username}
+
+npm install clear level read request supersphincs
 
 
 node -e "
-	const superSphincs	= require('supersphincs');
+	const clear			= require('clear');
 	const db			= require('level')('keys');
 	const read			= require('read');
 	const request		= require('request');
+	const superSphincs	= require('supersphincs');
 
 	const activeKeys	= ${activeKeys};
 	const totalKeys		= activeKeys + ${backupKeys};
@@ -51,6 +77,8 @@ node -e "
 		}
 	})).then(result => {
 		if (result.length === activeKeys + 1) {
+			clear();
+			console.log('Passwords confirmed. Generating keys...');
 			return result;
 		}
 		else {
@@ -58,12 +86,12 @@ node -e "
 		}
 	});
 
-	Promise.all([
-		Promise.all(Array(totalKeys).fill(0).map(_ => superSphincs.keyPair())),
-		getPassswords([])
-	]).then(results => {
-		const keyPairs	= results[0];
-		const passwords	= results[1];
+	getPassswords([]).then(passwords => Promise.all([
+		passwords,
+		Promise.all(Array(totalKeys).fill(0).map(_ => superSphincs.keyPair()))
+	])).then(results => {
+		const passwords	= results[0];
+		const keyPairs	= results[1];
 
 		return Promise.all([
 			keyPairs,
@@ -128,245 +156,270 @@ node -e "
 "
 
 
-cat > server.js << EndOfMessage
-#!/usr/bin/env node
+cat > server.js <<- EOM
+	#!/usr/bin/env node
 
-const superSphincs	= require('supersphincs');
-const db			= require('level')('keys');
-const read			= require('read');
-const child_process	= require('child_process');
-const dgram			= require('dgram');
-const stream		= require('stream');
+	const child_process	= require('child_process');
+	const db			= require('level')('keys');
+	const dgram			= require('dgram');
+	const read			= require('read');
+	const stream		= require('stream');
+	const superSphincs	= require('supersphincs');
 
-const activeKeys	= ${activeKeys};
-const address		= ${address};
-const port			= ${port};
+	const activeKeys	= ${activeKeys};
+	const address		= '${address}';
+	const port			= ${port};
 
-const reviewText	= text => new Promise(resolve => {
-	const s	= new stream.Readable();
-	s.push(text);
-	s.push(null);
+	const reviewText	= text => new Promise(resolve => {
+		const s	= new stream.Readable();
+		s.push(text);
+		s.push(null);
 
-	s.pipe(child_process.spawn('less', [], {stdio: [
-		'pipe',
-		process.stdout,
-		process.stderr
-	]}).on(
-		'exit',
-		() => resolve()
-	).stdin.on(
-		'error',
-		() => {}
-	));
-}).then(() => new Promise((resolve, reject) => read({
-	prompt: 'Sign this text? (If so, reverse the fiber now.) [y/N] '
-}, (err, answer) => {
-	if (err) {
-		reject(err);
-	}
-	else {
-		resolve(answer.trim().toLowerCase() === 'y');
-	}
-})));
+		s.pipe(child_process.spawn('less', [], {stdio: [
+			'pipe',
+			process.stdout,
+			process.stderr
+		]}).on(
+			'exit',
+			() => resolve()
+		).stdin.on(
+			'error',
+			() => {}
+		));
+	}).then(() => new Promise((resolve, reject) => read({
+		prompt: 'Sign this text? (If so, reverse the fiber now.) [y/N] '
+	}, (err, answer) => {
+		if (err) {
+			reject(err);
+		}
+		else {
+			resolve(answer.trim().toLowerCase() === 'y');
+		}
+	})));
 
-const getKeyPair	= () => new Promise((resolve, reject) => read({
-	prompt: 'RSA Password: ',
-	silent: true
-}, (err, rsa) => {
-	if (err) {
-		reject(err);
-		return;
-	}
-
-	read({
-		prompt: 'SPHINCS Password: ',
+	const getKeyPair	= () => new Promise((resolve, reject) => read({
+		prompt: 'RSA Password: ',
 		silent: true
-	}, (err, sphincs) => {
+	}, (err, rsa) => {
 		if (err) {
 			reject(err);
 			return;
 		}
 
-		resolve({rsa, sphincs});
-	})
-})).then(passwords => {
-	if (passwords.rsa === passwords.sphincs) {
-		throw new Error('fak u gooby');
-	}
+		read({
+			prompt: 'SPHINCS Password: ',
+			silent: true
+		}, (err, sphincs) => {
+			if (err) {
+				reject(err);
+				return;
+			}
 
-	const tryDecryptAll	= keyType => Promise.all(
-		Array(activeKeys).fill(0).map((_, i) =>
-			Promise.all(['rsa', 'sphincs'].map(kt =>
-				new Promise((resolve, reject) =>
-					db.get(kt + i, (err, val) => {
-						if (err) {
-							console.log(err);
-							reject(err);
-						}
-						else {
-							resolve(val);
-						}
-					})
-				)
-			)).then(results => Promise.all([
-				results[keyType === 'rsa' ? 0 : 1],
-				superSphincs.importKeys(
-					{
-						private: {
-							rsa: results[0],
-							sphincs: results[1]
-						}
-					},
-					passwords[keyType]
-				)
-			])).then(results => ({
-				key: results[0],
-				index: i
-			})).catch(_ => ({
-				key: null,
-				index: -1
-			}))
-		)
-	).then(results => results.reduce((a, b) =>
-		a.key ? a : b
-	));
-
-	return Promise.all([
-		passwords,
-		tryDecryptAll('rsa'),
-		tryDecryptAll('sphincs')
-	]);
-})).then(results => {
-	const passwords			= results[0];
-	const rsaKeyData		= results[1];
-	const sphincsKeyData	= results[2];
-
-	if (!rsaKeyData.key || !sphincsKeyData.key) {
-		throw new Error('Invalid password; please try again.');
-	}
-
-	return Promise.all([
-		rsaKeyData.index,
-		sphincsKeyData.index,
-		superSphincs.importKeys(
-			{
-				private: {
-					rsa: rsaKeyData.key,
-					sphincs: sphincsKeyData.key
-				}
-			},
-			passwords
-		)
-	]);
-})).then(results => ({
-	rsaKeyIndex: results[0],
-	sphincsKeyIndex: results[1],
-	keyPair: results[2]
-})).catch(err => {
-	console.log(err);
-	return getKeyPair();
-});
-
-
-getKeyPair().then(keyData => {
-	const server			= dgram.createSocket('udp4');
-	const incomingMessages	= {};
-
-	server.on('message', (message, req) => {
-		const metadata		= new Uint32Array(message.buffer);
-		const id			= metadata[0];
-		const numBytes		= metadata[1];
-		const chunkSize		= metadata[2];
-		const chunkIndex	= metadata[3];
-
-		const numChunks		= Math.ceil(numBytes / chunkSize);
-
-		if (!incomingMessages[id]) {
-			incomingMessages[id]	= {
-				active: true,
-				chunksReceived: {},
-				data: new Uint8Array(numBytes)
-			};
+			resolve({rsa, sphincs});
+		})
+	})).then(passwords => {
+		if (passwords.rsa === passwords.sphincs) {
+			throw new Error('fak u gooby');
 		}
 
-		const o	= incomingMessages[id];
-
-		if (!o.active) {
-			return;
-		}
-
-		if (!o.chunksReceived[chunkIndex]) {
-			o.data.set(
-				new Uint8Array(message.buffer, 16),
-				chunkIndex
-			);
-
-			o.chunksReceived[chunkIndex]	= true;
-		}
-
-		if (Object.keys(o.chunksReceived).length === numChunks) {
-			const buf		= new Buffer(o.data.buffer);
-			const text		= buf.toString();
-
-			o.active			= false;
-			o.chunksReceived	= null;
-			o.data				= null;
-
-			buf.fill(0);
-
-			reviewText(text).then(shouldSign =>
-				!shouldSign ?
-					null :
-					superSphincs.signDetached(
-						text,
-						keyData.keyPair.privateKey
+		const tryDecryptAll	= keyType => Promise.all(
+			Array(activeKeys).fill(0).map((_, i) =>
+				Promise.all(['rsa', 'sphincs'].map(kt =>
+					new Promise((resolve, reject) =>
+						db.get(kt + i, (err, val) => {
+							if (err) {
+								console.log(err);
+								reject(err);
+							}
+							else {
+								resolve(val);
+							}
+						})
 					)
-			).then(signature => {
-				if (!signature) {
-					console.log('Text discarded.');
-					return;
-				}
+				)).then(results => Promise.all([
+					results[keyType === 'rsa' ? 0 : 1],
+					superSphincs.importKeys(
+						{
+							private: {
+								rsa: results[0],
+								sphincs: results[1]
+							}
+						},
+						passwords[keyType]
+					)
+				])).then(results => ({
+					key: results[0],
+					index: i
+				})).catch(_ => ({
+					key: null,
+					index: -1
+				}))
+			)
+		).then(results => results.reduce((a, b) =>
+			a.key ? a : b
+		));
 
-				const client			= dgram.createSocket('udp4');
-				const signatureBytes	= new Buffer(JSON.stringify({
-					signature,
-					rsaKeyIndex: keyData.rsaKeyIndex
-					sphincsKeyIndex: keyData.sphincsKeyIndex
-				}));
+		return Promise.all([
+			passwords,
+			tryDecryptAll('rsa'),
+			tryDecryptAll('sphincs')
+		]);
+	}).then(results => {
+		const passwords			= results[0];
+		const rsaKeyData		= results[1];
+		const sphincsKeyData	= results[2];
 
-				for (let i = 0 ; i < signatureBytes.length ; i += chunkSize) {
-					const data	= Buffer.concat([
-						new Buffer(
-							new Uint32Array([
-								id,
-								signatureBytes.length,
-								chunkSize,
-								i
-							]).buffer
-						),
-						signatureBytes.slice(
-							i,
-							Math.min(i + chunkSize, signatureBytes.length)
-						)
-					]);
-
-					client.send(
-						data,
-						0,
-						data.length,
-						port,
-						req.address
-					);
-				}
-			});
+		if (!rsaKeyData.key || !sphincsKeyData.key) {
+			throw new Error('Invalid password; please try again.');
 		}
+
+		return Promise.all([
+			rsaKeyData.index,
+			sphincsKeyData.index,
+			superSphincs.importKeys(
+				{
+					private: {
+						rsa: rsaKeyData.key,
+						sphincs: sphincsKeyData.key
+					}
+				},
+				passwords
+			)
+		]);
+	}).then(results => ({
+		rsaKeyIndex: results[0],
+		sphincsKeyIndex: results[1],
+		keyPair: results[2]
+	})).catch(err => {
+		console.log(err);
+		return getKeyPair();
 	});
 
-	server.bind(port, address);
-});
-EndOfMessage
+
+	getKeyPair().then(keyData => {
+		const server			= dgram.createSocket('udp4');
+		const incomingMessages	= {};
+
+		server.on('message', (message, req) => {
+			const metadata		= new Uint32Array(message.buffer);
+			const id			= metadata[0];
+			const numBytes		= metadata[1];
+			const chunkSize		= metadata[2];
+			const chunkIndex	= metadata[3];
+
+			const numChunks		= Math.ceil(numBytes / chunkSize);
+
+			if (!incomingMessages[id]) {
+				incomingMessages[id]	= {
+					active: true,
+					chunksReceived: {},
+					data: new Uint8Array(numBytes)
+				};
+			}
+
+			const o	= incomingMessages[id];
+
+			if (!o.active) {
+				return;
+			}
+
+			if (!o.chunksReceived[chunkIndex]) {
+				o.data.set(
+					new Uint8Array(message.buffer, 16),
+					chunkIndex
+				);
+
+				o.chunksReceived[chunkIndex]	= true;
+			}
+
+			if (Object.keys(o.chunksReceived).length === numChunks) {
+				const buf		= new Buffer(o.data.buffer);
+				const text		= buf.toString();
+
+				o.active			= false;
+				o.chunksReceived	= null;
+				o.data				= null;
+
+				buf.fill(0);
+
+				reviewText(text).then(shouldSign =>
+					!shouldSign ?
+						null :
+						superSphincs.signDetached(
+							text,
+							keyData.keyPair.privateKey
+						)
+				).then(signature => {
+					if (!signature) {
+						console.log('Text discarded.');
+						return;
+					}
+
+					const client			= dgram.createSocket('udp4');
+					const signatureBytes	= new Buffer(JSON.stringify({
+						signature,
+						rsaKeyIndex: keyData.rsaKeyIndex,
+						sphincsKeyIndex: keyData.sphincsKeyIndex
+					}));
+
+					for (let i = 0 ; i < signatureBytes.length ; i += chunkSize) {
+						const data	= Buffer.concat([
+							new Buffer(
+								new Uint32Array([
+									id,
+									signatureBytes.length,
+									chunkSize,
+									i
+								]).buffer
+							),
+							signatureBytes.slice(
+								i,
+								Math.min(i + chunkSize, signatureBytes.length)
+							)
+						]);
+
+						client.send(
+							data,
+							0,
+							data.length,
+							port,
+							req.address
+						);
+					}
+				});
+			}
+		});
+
+		server.bind(port, address);
+		console.log('Ready for input.');
+	});
+EOM
 
 
 chmod +x server.js
+cat >> .bashrc <<- EOM
+	if [ -f /autostart ] ; then
+		if [ -d /home/${oldusername} ] ; then
+			sudo deluser --remove-home ${oldusername}
+		fi
 
-echo './server.js' >> .bashrc
+		./server.js
+	fi
+EOM
+EndOfMessage
+
+
+chmod 777 /tmp/setup.sh
+su ${username} -c /tmp/setup.sh
+rm /tmp/setup.sh
+
+modprobe ecryptfs
+ecryptfs-migrate-home -u ${username}
+su ${username} -c echo
+rm -rf /home/${username}.*
+touch /autostart
+chmod 444 /autostart
+
+echo 'Setup complete; will shut down now.'
+read x
+halt
