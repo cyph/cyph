@@ -49,25 +49,35 @@ cat > /tmp/setup.sh << EndOfMessage
 
 cd /home/${username}
 
-npm install clear level read request supersphincs
+npm install clear level libsodium-wrappers read request supersphincs xkcd-passphrase
 
 
 node -e "
-	const clear			= require('clear');
-	const db			= require('level')('keys');
-	const read			= require('read');
-	const request		= require('request');
-	const superSphincs	= require('supersphincs');
+	const clear				= require('clear');
+	const db				= require('level')('keys');
+	const read				= require('read');
+	const request			= require('request');
+	const superSphincs		= require('supersphincs');
+	const xkcdPassphrase	= require('xkcd-passphrase');
 
-	const activeKeys	= ${activeKeys};
-	const totalKeys		= activeKeys + ${backupKeys};
+	const activeKeys		= ${activeKeys};
+	const totalKeys			= activeKeys + ${backupKeys};
 
-	const getPassswords	= result => new Promise((resolve, reject) => read({
+	const backupPasswords	= {
+		aes: xkcdPassphrase.generate(256),
+		sodium: xkcdPassphrase.generate(256)
+	};
+
+	const getPassswords		= result => new Promise((resolve, reject) => read({
 		prompt: result.length === activeKeys ?
-			'Password for backup keys: ' :
+			'Password for backup keys is: ' +
+				backupPasswords.aes + ' ' +
+				backupPasswords.sodium +
+				'. Memorize this and then hit enter to continue.'
+			:
 			'Password for key #' + (result.length + 1) + ': '
 		,
-		silent: false
+		silent: result.length === activeKeys
 	}, (err, password) => {
 		if (err) {
 			reject(err);
@@ -97,7 +107,7 @@ node -e "
 			keyPairs,
 			Promise.all(keyPairs.map((keyPair, i) => superSphincs.exportKeys(
 				keyPair,
-				i < activeKeys ? passwords[i] : passwords[activeKeys] 
+				i < activeKeys ? passwords[i] : backupPasswords.aes 
 			)))
 		]);
 	}).then(results => {
@@ -114,28 +124,46 @@ node -e "
 			sphincs: keyData.map(o => o.public.sphincs)
 		});
 
-		const putKeys		= keyType => Promise.all(keyData.map((o, i) =>
-			new Promise((resolve, reject) =>
-				db.put(keyType + i, o.private[keyType], err => {
-					if (err) {
-						reject(err);
-					}
-					else {
-						resolve();
-					}
-				})
+		const backupKeys	= sodium.crypto_secretbox_easy(
+			sodium.from_string(JSON.stringify(
+				keyData.slice(activeKeys).map(o => o.private.superSphincs)
+			)),
+			new Uint8Array(sodium.crypto_secretbox_NONCEBYTES),
+			sodium.crypto_pwhash_scryptsalsa208sha256(
+				sodium.crypto_secretbox_KEYBYTES,
+				backupPasswords.sodium,
+				new Uint8Array(sodium.crypto_pwhash_scryptsalsa208sha256_SALTBYTES),
+				sodium.crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_SENSITIVE,
+				sodium.crypto_pwhash_scryptsalsa208sha256_MEMLIMIT_SENSITIVE
 			)
-		));
+		);
+
+		const putKeys		= keyType => Promise.all(
+			keyData.slice(0, activeKeys).map((o, i) =>
+				new Promise((resolve, reject) =>
+					db.put(keyType + i, o.private[keyType], err => {
+						if (err) {
+							reject(err);
+						}
+						else {
+							resolve();
+						}
+					})
+				)
+			)
+		);
 
 		return Promise.all([
 			publicKeys,
+			backupKeys,
 			superSphincs.hash(publicKeys),
 			putKeys('rsa'),
 			putKeys('sphincs')
 		]);
 	}).then(results => {
 		const publicKeys	= results[0];
-		const hash			= results[1].hex;
+		const backupKeys	= results[1];
+		const publicKeyHash	= results[2].hex;
 
 		request.post({
 			url: 'https://mandrillapp.com/api/1.0/messages/send.json',
@@ -146,7 +174,10 @@ node -e "
 					from_email: 'test@mandrillapp.com',
 					to: [{email: 'keys@cyph.com', type: 'to'}],
 					subject: 'New keys: ' + hash,
-					text: publicKeys
+					text:
+						'Public keys:\n\n' + publicKeys +
+						'\n\n\n\n\n\n' +
+						'Encrypted backup private keys:\n\n' + backupKeys
 				}
 			})
 		}, () => console.log(hash));
