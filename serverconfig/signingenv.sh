@@ -31,10 +31,8 @@ cat >> /etc/network/interfaces << EndOfMessage
 auto eth0
 iface eth0 inet static
 	address ${address}
+	netmask 255.255.255.0
 EndOfMessage
-
-ifconfig eth0 down
-ifconfig eth0 up
 
 export DEBIAN_FRONTEND=noninteractive
 apt-get -y --force-yes install curl
