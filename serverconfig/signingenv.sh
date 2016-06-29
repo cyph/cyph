@@ -6,6 +6,7 @@ activeKeys='4'
 backupKeys='21'
 address='10.0.0.42'
 port='31337'
+passwords=()
 
 
 export DEBIAN_FRONTEND=noninteractive
@@ -13,6 +14,13 @@ apt-get -y --force-yes update
 apt-get -y --force-yes upgrade
 export DEBIAN_FRONTEND=text
 apt-get install console-data console-setup keyboard-configuration
+
+for i in `seq 1 ${activeKeys}` ; do
+	echo -n "Password for key #${i}: "
+	read passwords[${i}] 
+done
+
+reset
 
 oldhostname=$(hostname)
 echo -n 'Hostname: '
@@ -23,7 +31,7 @@ sed -i "s|${oldhostname}|${hostname}|g" /etc/hosts
 oldusername=$(ls /home)
 echo -n 'Username: '
 read username
-echo 'FYI, password must be under 64 characters.'
+echo 'FYI, login password must be under 64 characters.'
 adduser ${username}
 adduser ${username} admin
 
@@ -41,74 +49,55 @@ apt-get -y --force-yes update
 apt-get -y --force-yes install nodejs ecryptfs-utils lsof
 apt-get -y --force-yes remove apache2 openssh-server
 
+npm -g install xkcd-passphrase
+
+backupPasswordAes="$(xkcd-passphrase 256)"
+backupPasswordSodium="$(xkcd-passphrase 256)"
+echo "Password for backup keys is: ${backupPasswordAes} ${backupPasswordSodium}"
+echo -e '\nMemorize this and then hit enter to continue.'
+read
+reset
+
 
 cat > /tmp/setup.sh << EndOfMessage
 #!/bin/bash
 
 cd /home/${username}
 
-npm install clear level libsodium-wrappers read request supersphincs xkcd-passphrase
+npm install level libsodium-wrappers read request supersphincs
 
 
 node -e "
-	const clear				= require('clear');
 	const db				= require('level')('keys');
 	const read				= require('read');
 	const request			= require('request');
+	const sodium			= require('libsodium-wrappers');
 	const superSphincs		= require('supersphincs');
-	const xkcdPassphrase	= require('xkcd-passphrase');
 
 	const activeKeys		= ${activeKeys};
 	const totalKeys			= activeKeys + ${backupKeys};
 
+	const passwords			= [
+		'${passwords[1]}',
+		'${passwords[2]}',
+		'${passwords[3]}',
+		'${passwords[4]}'
+	];
+
 	const backupPasswords	= {
-		aes: xkcdPassphrase.generate(256),
-		sodium: xkcdPassphrase.generate(256)
+		aes: '${backupPasswordAes}',
+		sodium: '${backupPasswordSodium}'
 	};
 
-	const getPassswords		= result => new Promise((resolve, reject) => read({
-		prompt: result.length === activeKeys ?
-			'Password for backup keys is: ' +
-				backupPasswords.aes + ' ' +
-				backupPasswords.sodium +
-				'. Memorize this and then hit enter to continue.'
-			:
-			'Password for key #' + (result.length + 1) + ': '
-		,
-		silent: result.length === activeKeys
-	}, (err, password) => {
-		if (err) {
-			reject(err);
-		}
-		else {
-			resolve(result.concat(password));
-		}
-	})).then(result => {
-		if (result.length === activeKeys + 1) {
-			clear();
-			console.log('Passwords confirmed. Generating keys...');
-			return result;
-		}
-		else {
-			return getPassswords(result);
-		}
-	});
-
-	getPassswords([]).then(passwords => Promise.all([
-		passwords,
-		Promise.all(Array(totalKeys).fill(0).map(_ => superSphincs.keyPair()))
+	Promise.all(
+		Array(totalKeys).fill(0).map(_ => superSphincs.keyPair())
+	).then(keyPairs => Promise.all([
+		keyPairs,
+		Promise.all(keyPairs.map((keyPair, i) => superSphincs.exportKeys(
+			keyPair,
+			i < activeKeys ? passwords[i] : backupPasswords.aes 
+		)))
 	])).then(results => {
-		const passwords	= results[0];
-		const keyPairs	= results[1];
-
-		return Promise.all([
-			keyPairs,
-			Promise.all(keyPairs.map((keyPair, i) => superSphincs.exportKeys(
-				keyPair,
-				i < activeKeys ? passwords[i] : backupPasswords.aes 
-			)))
-		]);
-	}).then(results => {
 		const keyPairs	= results[0];
 		const keyData	= results[1];
 
@@ -132,31 +121,29 @@ node -e "
 				backupPasswords.sodium,
 				new Uint8Array(sodium.crypto_pwhash_scryptsalsa208sha256_SALTBYTES),
 				sodium.crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_SENSITIVE,
-				sodium.crypto_pwhash_scryptsalsa208sha256_MEMLIMIT_SENSITIVE
-			)
-		);
-
-		const putKeys		= keyType => Promise.all(
-			keyData.slice(0, activeKeys).map((o, i) =>
-				new Promise((resolve, reject) =>
-					db.put(keyType + i, o.private[keyType], err => {
-						if (err) {
-							reject(err);
-						}
-						else {
-							resolve();
-						}
-					})
-				)
-			)
-		);
+				50331648
+			),
+			'base64'
+		).replace(/\\s+/g, '');
 
 		return Promise.all([
 			publicKeys,
 			backupKeys,
 			superSphincs.hash(publicKeys),
-			putKeys('rsa'),
-			putKeys('sphincs')
+			Promise.all(['rsa', 'sphincs'].map(keyType =>
+				Promise.all(keyData.slice(0, activeKeys).map((o, i) =>
+					new Promise((resolve, reject) =>
+						db.put(keyType + i, o.private[keyType], err => {
+							if (err) {
+								reject(err);
+							}
+							else {
+								resolve();
+							}
+						})
+					)
+				))
+			))
 		]);
 	}).then(results => {
 		const publicKeys	= results[0];
@@ -171,14 +158,14 @@ node -e "
 				message: {
 					from_email: 'test@mandrillapp.com',
 					to: [{email: 'keys@cyph.com', type: 'to'}],
-					subject: 'New keys: ' + hash,
+					subject: 'New keys: ' + publicKeyHash,
 					text:
 						'Public keys:\n\n' + publicKeys +
 						'\n\n\n\n\n\n' +
 						'Encrypted backup private keys:\n\n' + backupKeys
 				}
 			})
-		}, () => console.log(hash));
+		}, () => console.log(publicKeyHash));
 	}).catch(err =>
 		console.log(err)
 	);
@@ -449,6 +436,6 @@ rm -rf /home/${username}.*
 touch /autostart
 chmod 444 /autostart
 
-echo 'Setup complete; will shut down now.'
-read x
+echo 'Setup complete; hit enter to shut down now.'
+read
 halt
