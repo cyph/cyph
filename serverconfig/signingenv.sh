@@ -34,12 +34,13 @@ read username
 echo 'FYI, login password must be under 64 characters.'
 adduser ${username}
 adduser ${username} admin
+echo "${username} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 cat >> /etc/network/interfaces << EndOfMessage
 auto eth0
 iface eth0 inet static
 	address ${address}
-	netmask 255.255.255.0
+	netmask 255.255.0.0
 EndOfMessage
 
 export DEBIAN_FRONTEND=noninteractive
@@ -418,6 +419,18 @@ cat >> .bashrc <<- EOM
 		if [ -d /home/${oldusername} ] ; then
 			sudo deluser --remove-home ${oldusername}
 		fi
+
+		sudo service networking restart
+		sudo systemctl daemon-reload
+
+		network=''
+		while [ ! "\\${network}" ] ; do
+			sleep 1
+			network="\\$(node -e 'console.log(
+				(os.networkInterfaces().eth0 || []).filter(o => o.address === "${address}")[0] || ""
+			)')"
+		done
+		echo "\\${network}"
 
 		./server.js
 	fi
