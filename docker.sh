@@ -93,6 +93,56 @@ elif [ "${command}" == 'deploy' ] ; then
 
 	chmod -R 700 .
 
+	if [ "${1}" != '--simple' ] ; then
+		agseRemoteAddress='10.0.0.42'
+		agseLocalAddress='10.0.0.43'
+		agseRemoteMAC="$(cat $HOME/.cyph/agse.mac)"
+		agseLocalInterface="$(cat $HOME/.cyph/agse.interface)"
+
+		echo 'Need root for AGSE connection setup.'
+		sudo echo
+
+		sudo ipconfig set ${agseLocalInterface} INFORM ${agseLocalAddress} 2> /dev/null
+		sleep 1
+		sudo ip addr add ${agseLocalAddress} dev ${agseLocalInterface} 2> /dev/null
+		sleep 1
+
+		sudo arp -d ${agseRemoteAddress} 2> /dev/null
+		sleep 1
+		sudo route delete ${agseRemoteAddress} 2> /dev/null
+		sleep 1
+		sudo route add -host ${agseRemoteAddress} -interface ${agseLocalInterface} 2> /dev/null
+		sleep 1
+		sudo arp -s ${agseRemoteAddress} ${agseRemoteMAC} 2> /dev/null
+		sleep 1
+		sudo ip neigh add ${agseRemoteAddress} lladdr ${agseRemoteMAC} dev ${agseLocalInterface} 2> /dev/null
+		sleep 1
+
+		sudo bash -c "
+			while [ ! -f /tmp/balls ] ; do sleep 1 ; done
+			rm /tmp/balls
+
+			ip addr del ${agseLocalAddress} dev ${agseLocalInterface} 2> /dev/null
+			sleep 1
+			ipconfig set ${agseLocalInterface} DHCP 2> /dev/null
+			sleep 1
+
+			ip link set ${agseLocalInterface} down 2> /dev/null
+			sleep 1
+			ifconfig ${agseLocalInterface} down 2> /dev/null
+			sleep 1
+
+			ip link set ${agseLocalInterface} up 2> /dev/null
+			sleep 1
+			ifconfig ${agseLocalInterface} up 2> /dev/null
+			sleep 1
+		" &
+		cleanup () {
+			touch /tmp/balls
+		}
+		trap cleanup EXIT
+	fi
+
 elif [ "${command}" == 'build' ] ; then
 	args=''
 

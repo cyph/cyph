@@ -4,7 +4,8 @@
 
 activeKeys='4'
 backupKeys='21'
-address='10.0.0.42'
+localAddress='10.0.0.42'
+remoteAddress='10.0.0.43'
 port='31337'
 passwords=()
 
@@ -39,7 +40,7 @@ echo "${username} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 cat >> /etc/network/interfaces << EndOfMessage
 auto eth0
 iface eth0 inet static
-	address ${address}
+	address ${localAddress}
 	netmask 255.255.0.0
 EndOfMessage
 
@@ -184,7 +185,8 @@ cat > server.js <<- EOM
 	const superSphincs	= require('supersphincs');
 
 	const activeKeys	= ${activeKeys};
-	const address		= '${address}';
+	const localAddress	= '${localAddress}';
+	const remoteAddress	= '${remoteAddress}';
 	const port			= ${port};
 
 	const reviewText	= text => new Promise(resolve => {
@@ -204,7 +206,7 @@ cat > server.js <<- EOM
 			() => {}
 		));
 	}).then(() => new Promise((resolve, reject) => read({
-		prompt: 'Sign this text? (If so, reverse the fiber now.) [y/N] '
+		prompt: 'Sign this text? (If so, reverse the network direction now.) [y/N] '
 	}, (err, answer) => {
 		if (err) {
 			reject(err);
@@ -326,6 +328,13 @@ cat > server.js <<- EOM
 
 			const numChunks		= Math.ceil(numBytes / chunkSize);
 
+			const macAddress	= message.
+				slice(16, 22).
+				toString('hex').
+				replace(/(..)/g, '\$1:').
+				slice(0, -1)
+			;
+
 			if (!incomingMessages[id]) {
 				incomingMessages[id]	= {
 					active: true,
@@ -342,7 +351,7 @@ cat > server.js <<- EOM
 
 			if (!o.chunksReceived[chunkIndex]) {
 				o.data.set(
-					new Uint8Array(message.buffer, 16),
+					new Uint8Array(message.buffer, 22),
 					chunkIndex
 				);
 
@@ -358,6 +367,17 @@ cat > server.js <<- EOM
 				o.data				= null;
 
 				buf.fill(0);
+
+				child_process.spawnSync('sudo', [
+					'ip',
+					'neigh',
+					'add',
+					remoteAddress,
+					'lladdr',
+					macAddress,
+					'dev',
+					'eth0'
+				]);
 
 				reviewText(text).then(shouldSign =>
 					!shouldSign ?
@@ -400,14 +420,14 @@ cat > server.js <<- EOM
 							0,
 							data.length,
 							port,
-							req.address
+							remoteAddress
 						);
 					}
 				});
 			}
 		});
 
-		server.bind(port, address);
+		server.bind(port, localAddress);
 		console.log('Ready for input.');
 	});
 EOM
@@ -423,14 +443,13 @@ cat >> .bashrc <<- EOM
 		sudo service networking restart
 		sudo systemctl daemon-reload
 
-		network=''
-		while [ ! "\\${network}" ] ; do
+		while [ ! "\\$(node -e 'console.log(
+			(os.networkInterfaces().eth0 || []).filter(o =>
+				o.address === "${localAddress}"
+			)[0] || ""
+		)')" ] ; do
 			sleep 1
-			network="\\$(node -e 'console.log(
-				(os.networkInterfaces().eth0 || []).filter(o => o.address === "${address}")[0] || ""
-			)')"
 		done
-		echo "\\${network}"
 
 		./server.js
 	fi
