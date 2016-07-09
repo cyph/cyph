@@ -262,27 +262,15 @@ if [ ! $simple ] ; then
 		git clean -f
 		git pull
 
-		cp -f $currentDir/$d.pkg websign/
-
-		HASH_TTL=3944620 # 1.5 months
-
-		sha512hash="$(shasum -p -a 512 websign/$d.pkg | perl -pe 's/(.*) .*/\1/')"
-		sha256hash="$(shasum -p -a 256 websign/$d.pkg | perl -pe 's/(.*) .*/\1/')"
-		timestamp="$(date +%s)000"
-		expires="$(($(date +%s)+${HASH_TTL}))000"
-
 		if [ ! $test ] ; then
 			websignhashes="$(cat $currentDir/websignhashes.json)"
 		fi
 
-		$currentDir/../commands/websign/sign.old.js "{
-			\"hash\": \"$sha256hash\",
-			\"timestamp\": $timestamp,
-			\"expires\": $expires,
-			\"webSignHashes\": null,
-			\"webSignBootHashWhitelist\": $websignhashes
-		}" > websign/$d.sig
-		echo $timestamp >> websign/$d.sig
+		$currentDir/../commands/websign/sign.js \
+			$currentDir/../shared/websign/js/keys.js \
+			"${websignhashes}" \
+			$currentDir/$d.pkg \
+			websign/$d.pkg
 
 		git add .
 		git commit -a -m 'package update'

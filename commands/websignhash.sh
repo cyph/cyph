@@ -41,6 +41,10 @@ for path in $( \
 	echo -e '\n\n\n\n\n' >> .bootstrapText.tmp
 done
 
-cat .bootstrapText.tmp | shasum -p -a 256 | perl -pe 's/(.*) .*/\1/'
+node -e 'require("supersphincs").hash(
+	fs.readFileSync(".bootstrapText.tmp").toString()
+).then(hash =>
+	console.log(hash.hex)
+)'
 
 rm .bootstrapText.tmp

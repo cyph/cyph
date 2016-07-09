@@ -266,12 +266,17 @@ cat > server.js <<- EOM
 						},
 						passwords[keyType]
 					)
+				])).then(results => Promise.all([
+					results[0],
+					superSphincs.exportKeys(
+						{publicKey: results[1].publicKey}
+					)
 				])).then(results => ({
 					key: results[0],
-					index: i
+					publicKeyString: results[1][keyType]
 				})).catch(_ => ({
 					key: null,
-					index: -1
+					publicKeyString: null
 				}))
 			)
 		).then(results => results.reduce((a, b) =>
@@ -293,8 +298,8 @@ cat > server.js <<- EOM
 		}
 
 		return Promise.all([
-			rsaKeyData.index,
-			sphincsKeyData.index,
+			rsaKeyData.publicKeyString,
+			sphincsKeyData.publicKeyString,
 			superSphincs.importKeys(
 				{
 					private: {
@@ -306,8 +311,8 @@ cat > server.js <<- EOM
 			)
 		]);
 	}).then(results => ({
-		rsaKeyIndex: results[0],
-		sphincsKeyIndex: results[1],
+		rsaKeyString: results[0],
+		sphincsKeyString: results[1],
 		keyPair: results[2]
 	})).catch(err => {
 		console.log(err);
@@ -319,7 +324,7 @@ cat > server.js <<- EOM
 		const server			= dgram.createSocket('udp4');
 		const incomingMessages	= {};
 
-		server.on('message', (message, req) => {
+		server.on('message', message => {
 			const metadata		= new Uint32Array(message.buffer);
 			const id			= metadata[0];
 			const numBytes		= metadata[1];
@@ -395,8 +400,8 @@ cat > server.js <<- EOM
 					const client			= dgram.createSocket('udp4');
 					const signatureBytes	= new Buffer(JSON.stringify({
 						signature,
-						rsaKeyIndex: keyData.rsaKeyIndex,
-						sphincsKeyIndex: keyData.sphincsKeyIndex
+						rsa: keyData.rsaKeyString,
+						sphincs: keyData.sphincsKeyString
 					}));
 
 					for (let i = 0 ; i < signatureBytes.length ; i += chunkSize) {
@@ -405,7 +410,6 @@ cat > server.js <<- EOM
 								new Uint32Array([
 									id,
 									signatureBytes.length,
-									chunkSize,
 									i
 								]).buffer
 							),
