@@ -243,7 +243,7 @@ if [ ! $simple ] ; then
 
 		websignhashes=''
 		if [ $test ] ; then
-			websignhashes="{\"$(../commands/websignhash.sh "${d}" "${version}")\": true}"
+			websignhashes="{\"$(../commands/websign/bootstraphash.sh "${d}" "${version}")\": true}"
 			d="${version}.${d}"
 		fi
 
