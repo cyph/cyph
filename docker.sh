@@ -62,6 +62,7 @@ if [ "${command}" == 'serve' ] ; then
 	args=" \
 		-v $HOME/.cyph:/home/gibson/.cyph \
 		--privileged=true \
+		-p 31337:31337/udp \
 		-p 42000:5000 \
 		-p 42001:5001 \
 		-p 42002:5002 \
