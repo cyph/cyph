@@ -325,7 +325,7 @@ cat > server.js <<- EOM
 		const incomingMessages	= {};
 
 		server.on('message', message => {
-			const metadata		= new Uint32Array(message.buffer);
+			const metadata		= new Uint32Array(message.buffer, 0, 16);
 			const id			= metadata[0];
 			const numBytes		= metadata[1];
 			const chunkSize		= metadata[2];
@@ -333,12 +333,7 @@ cat > server.js <<- EOM
 
 			const numChunks		= Math.ceil(numBytes / chunkSize);
 
-			const macAddress	= message.
-				slice(16, 22).
-				toString('hex').
-				replace(/(..)/g, '\$1:').
-				slice(0, -1)
-			;
+			const macAddress	= message.slice(16, 33).toString();
 
 			if (!incomingMessages[id]) {
 				incomingMessages[id]	= {
@@ -356,7 +351,7 @@ cat > server.js <<- EOM
 
 			if (!o.chunksReceived[chunkIndex]) {
 				o.data.set(
-					new Uint8Array(message.buffer, 22),
+					new Uint8Array(message.buffer, 33),
 					chunkIndex
 				);
 
@@ -373,17 +368,6 @@ cat > server.js <<- EOM
 
 				buf.fill(0);
 
-				child_process.spawnSync('sudo', [
-					'ip',
-					'neigh',
-					'add',
-					remoteAddress,
-					'lladdr',
-					macAddress,
-					'dev',
-					'eth0'
-				]);
-
 				reviewText(text).then(shouldSign =>
 					!shouldSign ?
 						null :
@@ -396,6 +380,31 @@ cat > server.js <<- EOM
 						console.log('Text discarded.');
 						return;
 					}
+
+					console.log('Signature generated.');
+
+					child_process.spawnSync('sudo', ['service', 'networking', 'restart']);
+					child_process.spawnSync('sudo', ['systemctl', 'daemon-reload']);
+
+					while (
+						(os.networkInterfaces().eth0 || []).filter(o =>
+							o.address === localAddress
+						).length < 1
+					) {
+						child_process.spawnSync('sleep', ['1']);
+					}
+
+					child_process.spawnSync('sudo', [
+						'ip',
+						'neigh',
+						'add',
+						remoteAddress,
+						'lladdr',
+						macAddress,
+						'dev',
+						'eth0'
+					]);
+					child_process.spawnSync('sleep', ['1']);
 
 					const client			= dgram.createSocket('udp4');
 					const signatureBytes	= new Buffer(JSON.stringify({

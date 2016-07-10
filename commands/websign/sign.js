@@ -14,22 +14,19 @@ const args			= {
 };
 
 const remoteAddress	= '10.0.0.42';
-const localAddress	= '10.0.0.43';
 const port			= 31337;
 const chunkSize		= 576;
 
 const interfaces	= os.networkInterfaces();
 const macAddress	= new Buffer(
-	(Object.keys(interfaces).
-		map(k => interfaces[k].filter(o => o.address === localAddress)).
-		filter(a => a[0])
-	)[0][0].mac.replace(/:/g, ''),
-	'hex'
+	fs.readFileSync(
+		`${process.env['HOME']}/.cyph/agse.local.mac`
+	).toString().trim()
 );
 
 const publicKeysJS	= fs.readFileSync(args.publicKeysJSPath).toString();
 const publicKeys	= JSON.parse(
-	publicKeysJS.substring(publicKeysJS.indexOf('=')).trim()
+	publicKeysJS.substring(publicKeysJS.indexOf('=') + 1).split(';')[0].trim()
 );
 
 const signatureTTL	= 2.5; // Months
@@ -41,7 +38,9 @@ const dataToSign	= Buffer.concat([
 		expires: timestamp + signatureTTL * 2.628e+9,
 		webSignHashWhitelist: JSON.parse(args.webSignHashWhitelist)
 	}) + '\n'),
-	fs.readFileSync(args.dataToSignPath)
+	new Buffer(
+		fs.readFileSync(args.dataToSignPath).toString().trim()
+	)
 ]);
 
 const id			= new Uint32Array(crypto.randomBytes(4).buffer)[0];
@@ -51,7 +50,7 @@ const server		= dgram.createSocket('udp4');
 
 let incoming;
 server.on('message', message => {
-	const metadata		= new Uint32Array(message.buffer);
+	const metadata		= new Uint32Array(message.buffer, 0, 12);
 
 	if (metadata[0] !== id) {
 		return;
@@ -63,6 +62,8 @@ server.on('message', message => {
 	const numChunks		= Math.ceil(numBytes / chunkSize);
 
 	if (!incoming) {
+		console.log('Receiving signature data.');
+
 		incoming	= {
 			chunksReceived: {},
 			data: new Uint8Array(numBytes)
@@ -105,6 +106,8 @@ server.on('message', message => {
 					sphincsIndex + '\n' + 
 					timestamp
 				);
+
+				console.log(`${args.outputPath} signed.`);
 			}
 			else {
 				console.error('Invalid signature.');
@@ -114,7 +117,7 @@ server.on('message', message => {
 	}
 });
 
-server.bind(port, localAddress);
+server.bind(port);
 
 
 fs.writeFileSync(args.outputPath, dataToSign);

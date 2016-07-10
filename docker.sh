@@ -96,8 +96,8 @@ elif [ "${command}" == 'deploy' ] ; then
 	if [ "${1}" != '--simple' ] ; then
 		agseRemoteAddress='10.0.0.42'
 		agseLocalAddress='10.0.0.43'
-		agseRemoteMAC="$(cat $HOME/.cyph/agse.mac)"
-		agseLocalInterface="$(cat $HOME/.cyph/agse.interface)"
+		agseRemoteMAC="$(cat $HOME/.cyph/agse.remote.mac)"
+		agseLocalInterface="$(cat $HOME/.cyph/agse.local.interface)"
 
 		echo 'Need root for AGSE connection setup.'
 		sudo echo

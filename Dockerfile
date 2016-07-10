@@ -83,7 +83,7 @@ VOLUME /home/gibson/.ssh
 
 WORKDIR /cyph/commands
 
-EXPOSE 5000 5001 5002 4568
+EXPOSE 4568 5000 5001 5002 31337
 
 
 CMD /bin/bash
