@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const fs			= require('fs');
+const read			= require('read');
 const sodium		= require('libsodium-wrappers');
 const superSphincs	= require('supersphincs');
 
@@ -28,8 +29,8 @@ new Promise((resolve, reject) => read({
 		throw 'Password must contain even number of words.'
 	}
 
-	const aesPassword		= passwordSplit(0, passwordMiddle);
-	const sodiumPassword	= passwordSplit(passwordMiddle);
+	const aesPassword		= passwordSplit.slice(0, passwordMiddle).join(' ');
+	const sodiumPassword	= passwordSplit.slice(passwordMiddle).join(' ');
 
 	return Promise.all(JSON.parse(
 		sodium.crypto_secretbox_open_easy(
