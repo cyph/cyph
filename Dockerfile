@@ -54,6 +54,7 @@ RUN bash -c ' \
 	./emsdk update; \
 	./emsdk install latest; \
 	./emsdk activate latest; \
+	./emsdk uninstall $(./emsdk list | grep INSTALLED | grep node | awk "{print \$2}"); \
 '
 
 RUN wget https://keybase.io/mpapis/key.asc -O ~/public.key
