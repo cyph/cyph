@@ -444,10 +444,11 @@ cat >> .bashrc <<- EOM
 			sudo deluser --remove-home ${oldusername}
 		fi
 
+		sleep 5
 		sudo service networking restart
 		sudo systemctl daemon-reload
 
-		while [ ! "\\$(node -e 'console.log(
+		while [ ! "\\\$(node -e 'console.log(
 			(os.networkInterfaces().eth0 || []).filter(o =>
 				o.address === "${localAddress}"
 			)[0] || ""
