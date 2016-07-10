@@ -67,6 +67,7 @@ cat > /tmp/setup.sh << EndOfMessage
 cd /home/${username}
 
 npm install level libsodium-wrappers read request supersphincs
+echo
 
 
 node -e "
@@ -172,6 +173,12 @@ node -e "
 		console.log(err)
 	);
 "
+
+
+echo
+echo "Before committing, you must validate that the SHA-512 of the public key JSON you've been emailed matches the above."
+echo "Hit enter to continue after you've either done so or written the down the hash for validation at a later time."
+read
 
 
 cat > server.js <<- EOM
