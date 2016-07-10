@@ -50,7 +50,7 @@ const server		= dgram.createSocket('udp4');
 
 let incoming;
 server.on('message', message => {
-	const metadata		= new Uint32Array(message.buffer, 0, 12);
+	const metadata		= new Uint32Array(message.buffer, 0, 3);
 
 	if (metadata[0] !== id) {
 		return;
@@ -108,6 +108,7 @@ server.on('message', message => {
 				);
 
 				console.log(`${args.outputPath} signed.`);
+				process.exit(0);
 			}
 			else {
 				console.error('Invalid signature.');

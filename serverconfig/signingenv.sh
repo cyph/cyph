@@ -273,7 +273,7 @@ cat > server.js <<- EOM
 					)
 				])).then(results => ({
 					key: results[0],
-					publicKeyString: results[1][keyType]
+					publicKeyString: results[1].public[keyType]
 				})).catch(_ => ({
 					key: null,
 					publicKeyString: null
@@ -325,7 +325,7 @@ cat > server.js <<- EOM
 		const incomingMessages	= {};
 
 		server.on('message', message => {
-			const metadata		= new Uint32Array(message.buffer, 0, 16);
+			const metadata		= new Uint32Array(message.buffer, 0, 4);
 			const id			= metadata[0];
 			const numBytes		= metadata[1];
 			const chunkSize		= metadata[2];
@@ -382,17 +382,6 @@ cat > server.js <<- EOM
 					}
 
 					console.log('Signature generated.');
-
-					child_process.spawnSync('sudo', ['service', 'networking', 'restart']);
-					child_process.spawnSync('sudo', ['systemctl', 'daemon-reload']);
-
-					while (
-						(os.networkInterfaces().eth0 || []).filter(o =>
-							o.address === localAddress
-						).length < 1
-					) {
-						child_process.spawnSync('sleep', ['1']);
-					}
 
 					child_process.spawnSync('sudo', [
 						'ip',
