@@ -173,7 +173,7 @@ elif [ "${command}" == 'updatelibs' ] ; then
 		-v $HOME/.ssh:/home/gibson/.ssh \
 	"
 
-elif [ "${command}" == 'websignhash' ] ; then
+elif [ "${command}" == 'websign/bootstraphash' ] ; then
 	args=''
 
 elif [ "${command}" == 'make' ] ; then
