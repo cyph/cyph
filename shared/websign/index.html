@@ -358,7 +358,9 @@
 
 		/* Successfully execute package */
 		then(function (package) {
-			validateBootstrap();
+			if (!validateBootstrap()) {
+				return;
+			}
 
 			try {
 				document.open('text/html');
@@ -370,7 +372,9 @@
 
 		/* Abort */
 		catch(function () {
-			validateBootstrap();
+			if (!validateBootstrap()) {
+				return;
+			}
 
 			var preLoad			= document.getElementById('pre-load');
 			var preLoadMessage	= document.getElementById('pre-load-message');
@@ -401,10 +405,15 @@
 		}
 
 		function validateBootstrap () {
-			var hashWhitelist	= JSON.parse(LocalStorage.webSignHashWhitelist);
+			try {
+				var hashWhitelist	= JSON.parse(LocalStorage.webSignHashWhitelist);
 
-			if (hashWhitelist[LocalStorage.webSignHash]) {
-				return;
+				if (hashWhitelist[LocalStorage.webSignHash]) {
+					return true;
+				}
+			}
+			catch (_) {
+				return true;
 			}
 
 			var preLoad			= document.getElementById('pre-load');
@@ -451,6 +460,8 @@
 					}
 				})
 			});
+
+			return false;
 		}
 
 
