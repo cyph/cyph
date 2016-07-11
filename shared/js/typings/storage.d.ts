@@ -7,27 +7,26 @@ interface Storage {
 		data is stored persistently. */
 	isPersistent: string;
 
+	/** Datetime that current package expires. */
+	webSignExpires: string;
+
 	/** Hash of current bootstrap payload. */
-	webSignBootHash: string;
-
-	/** Hash of previous bootstrap payload. */
-	webSignBootHashOld: string;
-
-	/** List of valid bootstrap payload hashes. */
-	webSignBootHashWhitelist: string;
-
-	/** Hash of current package. */
 	webSignHash: string;
 
-	/** Datetime that current package expires. */
-	webSignHashExpires: string;
+	/** Hash of previous bootstrap payload. */
+	webSignHashOld: string;
+
+	/** List of valid bootstrap payload hashes. */
+	webSignHashWhitelist: string;
+
+	/** Hash of current package. */
+	webSignPackageHash: string;
+
+	/** Hash of current package. */
+	webSignPackageUrl: string;
 
 	/** Datetime that current package was released. */
-	webSignHashTimestamp: string;
-
-	/** If true, user will be prompted by WebSign
-		before each package upgrade. */
-	webSignManualUpgrades: string;
+	webSignTimestamp: string;
 
 	/** Indicates whether the www subdomain's
 		AppCache has been pinned. */

@@ -25,8 +25,7 @@ for (let k of [
 	'Audio',
 	'onthreadmessage',
 	'FontsCSS',
-	'Translations',
-	'WebSign'
+	'Translations'
 ]) {
 	if (!(k in self)) {
 		self[k]	= null;

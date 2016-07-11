@@ -33,8 +33,7 @@ export class Errors {
 			let message: string		= exception +
 				'\n\n' + Env.userAgent +
 				'\n\n' + Env.language +
-				'\n\n' + locationData.href +
-				'\n\n' + (WebSign ? WebSign.stringify(shouldIncludeBootstrapText) : '')
+				'\n\n' + locationData.href
 			;
 
 			/* Strip URL fragment where applicable */
