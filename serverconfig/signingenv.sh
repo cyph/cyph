@@ -449,9 +449,11 @@ cat >> .bashrc <<- EOM
 			sudo deluser --remove-home ${oldusername}
 		fi
 
+		setterm -blank 0
+
 		sleep 5
 		sudo service networking restart
-		sudo systemctl daemon-reload
+		sudo systemctl daemon-reload 2> /dev/null
 
 		while [ ! "\\\$(node -e 'console.log(
 			(os.networkInterfaces().eth0 || []).filter(o =>
