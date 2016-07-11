@@ -8,7 +8,7 @@ const superSphincs	= require('supersphincs');
 
 const args			= {
 	publicKeysJSPath: process.argv[2],
-	webSignHashWhitelist: process.argv[3],
+	hashWhitelist: process.argv[3],
 	dataToSignPath: process.argv[4],
 	outputPath: process.argv[5]
 };
@@ -36,7 +36,7 @@ const dataToSign	= Buffer.concat([
 	new Buffer(JSON.stringify({
 		timestamp,
 		expires: timestamp + signatureTTL * 2.628e+9,
-		webSignHashWhitelist: JSON.parse(args.webSignHashWhitelist)
+		hashWhitelist: JSON.parse(args.hashWhitelist)
 	}) + '\n'),
 	new Buffer(
 		fs.readFileSync(args.dataToSignPath).toString().trim()
