@@ -452,7 +452,7 @@ cat >> .bashrc <<- EOM
 		setterm -blank 0
 
 		sleep 5
-		sudo service networking restart
+		sudo service networking restart 2> /dev/null
 		sudo systemctl daemon-reload 2> /dev/null
 
 		while [ ! "\\\$(node -e 'console.log(
