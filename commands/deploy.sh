@@ -267,7 +267,6 @@ if [ ! $simple ] ; then
 		fi
 
 		$currentDir/../commands/websign/sign.js \
-			$currentDir/../shared/websign/js/keys.js \
 			"${websignhashes}" \
 			$currentDir/$d.pkg \
 			websign/$d.pkg

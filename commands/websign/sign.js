@@ -7,15 +7,14 @@ const os			= require('os');
 const superSphincs	= require('supersphincs');
 
 const args			= {
-	publicKeysJSPath: process.argv[2],
-	hashWhitelist: process.argv[3],
-	dataToSignPath: process.argv[4],
-	outputPath: process.argv[5]
+	hashWhitelist: process.argv[2],
+	dataToSignPath: process.argv[3],
+	outputPath: process.argv[4]
 };
 
 const remoteAddress	= '10.0.0.42';
 const port			= 31337;
-const chunkSize		= 576;
+const chunkSize		= 65000;
 
 const interfaces	= os.networkInterfaces();
 const macAddress	= new Buffer(
@@ -24,7 +23,9 @@ const macAddress	= new Buffer(
 	).toString().trim()
 );
 
-const publicKeysJS	= fs.readFileSync(args.publicKeysJSPath).toString();
+const publicKeysJS	= fs.readFileSync(
+	`${__dirname}/../../shared/websign/js/keys.js`
+).toString();
 const publicKeys	= JSON.parse(
 	publicKeysJS.substring(publicKeysJS.indexOf('=') + 1).split(';')[0].trim()
 );
