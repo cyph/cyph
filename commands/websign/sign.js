@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-const child_process	= require('child_process');
 const crypto		= require('crypto');
 const dgram			= require('dgram');
 const fs			= require('fs');
@@ -125,7 +124,16 @@ server.bind(port);
 
 fs.writeFileSync(args.outputPath, dataToSign);
 
-for (let i = 0 ; i < dataToSign.length ; i += chunkSize) {
+let i			= 0;
+const interval	= setInterval(() => {
+	if (incoming) {
+		clearInterval(interval);
+		return;
+	}
+	else if (i >= dataToSign.length) {
+		i	= 0;
+	}
+
 	const data	= Buffer.concat([
 		new Buffer(
 			new Uint32Array([
@@ -150,6 +158,5 @@ for (let i = 0 ; i < dataToSign.length ; i += chunkSize) {
 		remoteAddress
 	);
 
-	child_process.spawnSync('sleep', ['0.01']);
-	console.log(Math.floor((i / dataToSign.length) * 100) + '%');
-}
+	i += chunkSize;
+}, 1);
