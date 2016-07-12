@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+const child_process	= require('child_process');
 const crypto		= require('crypto');
 const dgram			= require('dgram');
 const fs			= require('fs');
@@ -14,7 +15,7 @@ const args			= {
 
 const remoteAddress	= '10.0.0.42';
 const port			= 31337;
-const chunkSize		= 65000;
+const chunkSize		= 1400;
 
 const interfaces	= os.networkInterfaces();
 const macAddress	= new Buffer(
@@ -148,4 +149,7 @@ for (let i = 0 ; i < dataToSign.length ; i += chunkSize) {
 		port,
 		remoteAddress
 	);
+
+	child_process.spawnSync('sleep', ['0.01']);
+	console.log(Math.floor((i / dataToSign.length) * 100) + '%');
 }
