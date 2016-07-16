@@ -101,7 +101,7 @@ server.on('message', message => {
 			keyPair.publicKey
 		)).then(isValid => {
 			if (isValid) {
-				fs.writeFileSync(`${args.outputPath}.sig`,
+				fs.writeFileSync(`${args.outputPath}/sig`,
 					signatureData.signature + '\n' +
 					rsaIndex + '\n' +
 					sphincsIndex + '\n' + 
@@ -122,7 +122,7 @@ server.on('message', message => {
 server.bind(port);
 
 
-fs.writeFileSync(args.outputPath, dataToSign);
+fs.writeFileSync(`${args.outputPath}/pkg`, dataToSign);
 
 let i			= 0;
 const interval	= setInterval(() => {

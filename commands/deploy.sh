@@ -247,11 +247,11 @@ if [ ! $simple ] ; then
 			d="${version}.${d}"
 		fi
 
-		../commands/websign/pack.py index.html $d.pkg
+		../commands/websign/pack.js --webSignSRI index.html $d.pkg
 		sed -i 's|use strict||g' $d.pkg
 
 		cat websign/index.html | sed "s/\\\$PROJECT/$d/g" > index.html
-		../commands/websign/pack.py index.html index.html
+		../commands/websign/pack.js index.html index.html
 		rm websign/index.html
 
 		currentDir="$(pwd)"
@@ -266,11 +266,17 @@ if [ ! $simple ] ; then
 			websignhashes="$(cat $currentDir/websignhashes.json)"
 		fi
 
-		$currentDir/../commands/websign/sign.js \
+		rm -rf $d
+		mkdir $d
+
+		../commands/websign/sign.js \
 			"${websignhashes}" \
 			$currentDir/$d.pkg \
-			websign/$d.pkg
+			$d
 
+		cp -rf $currentDir/css $currentDir/js $currentDir/lib $d/
+
+		chmod -R 777
 		git add .
 		git commit -a -m 'package update'
 		git push
