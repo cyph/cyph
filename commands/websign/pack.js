@@ -2,10 +2,12 @@
 
 const cheerio		= require('cheerio');
 const fs			= require('fs');
+const htmlMinifier	= require('html-minifier');
 const superSphincs	= require('supersphincs');
 
 const args			= {
-	enableSRI: process.argv[2] === '--sri',
+	enableSRI: process.argv.indexOf('--sri') > -1,
+	enableMinify: process.argv.indexOf('--minify') > -1,
 	inputPath: process.argv.slice(-2)[0],
 	outputPath: process.argv.slice(-1)[0] 
 };
@@ -20,7 +22,7 @@ Promise.all(Array.from(
 
 		const enableSRI	=
 			args.enableSRI &&
-			$elem.attr('websign-sri-disable') !== undefined
+			$elem.attr('websign-sri-disable') === undefined
 		;
 
 		const path		= $elem.attr(
@@ -59,17 +61,45 @@ Promise.all(Array.from(
 		$elem.replaceWith(
 			tagName === 'script' ?
 				(enableSRI ?
-					`<script websign-sri-path='${path}' websign-sri-hash='${hash}'></script>` :
-					`<script>${content.replace(/<\/script>/g, '<\\/script>')}</script>`
+					`
+						<script
+							websign-sri-path='${path}'
+							websign-sri-hash='${hash}'
+						></script>
+					` :
+					`
+						<script>${
+							content.replace(/<\/script>/g, '<\\/script>')
+						}</script>
+					`
 				) :
 				(enableSRI ?
-					`<link rel='stylesheet' websign-sri-path='${path}' websign-sri-hash='${hash}'></link>` :
-					`<style>${content}</style>`
+					`
+						<link
+							rel='stylesheet'
+							websign-sri-path='${path}'
+							websign-sri-hash='${hash}'
+						></link>
+					` :
+					`
+						<style>${content}</style>
+					`
 				)	
 		);
 	}
 
-	fs.writeFileSync(args.outputPath, $.html().trim().replace(/use strict/g, ''));
+	const output	= $.html().trim().replace(/use strict/g, '');
+
+	fs.writeFileSync(args.outputPath,
+		args.enableMinify ?
+			htmlMinifier.minify(output, {
+				collapseWhitespace: true,
+				minifyCSS: true,
+				minifyJS: true,
+				removeComments: true
+			}) :
+			output
+	);
 }).catch(err =>
 	console.error(err)
 );

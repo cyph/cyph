@@ -247,7 +247,7 @@ if [ ! $simple ] ; then
 			d="${version}.${d}"
 		fi
 
-		../commands/websign/pack.js --sri index.html $d.pkg
+		../commands/websign/pack.js --sri --minify index.html pkg
 
 		cat websign/index.html | sed "s/\\\$PROJECT/$d/g" > index.html
 		../commands/websign/pack.js index.html index.html
@@ -269,7 +269,7 @@ if [ ! $simple ] ; then
 
 		../commands/websign/sign.js \
 			"${websignhashes}" \
-			$currentDir/$d.pkg \
+			$currentDir/pkg \
 			$d
 
 		cp -rf $currentDir/css $currentDir/js $currentDir/lib $d/
