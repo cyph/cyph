@@ -14,7 +14,7 @@ fi
 rm .bootstrapText.tmp 2> /dev/null
 
 for path in $( \
-	cat websign/index.html | \
+	cat websign/js/main.js | \
 	tr '\n' ' ' | \
 	perl -pe 's/\s+//g' | \
 	perl -pe 's/.*?\[('"'"'.\/'"'"',.*?)\].*/\1,/g' | \
