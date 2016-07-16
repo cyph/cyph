@@ -23,40 +23,35 @@ function WebSignSRI (baseUrl) {
 				return;
 			}
 
+			var contentPromise	= fetch(
+				baseUrl +
+				(path[0] === '/' ? path.slice(1) : path) +
+				'?' +
+				hash
+			).then(function (s) { return (s || '').trim() });
+
+			var hashPromise		= contentPromise.
+				then(function (s) { return superSphincs.hash(s) }).
+				then(function (hash) { return hash.hex })
+			;
+
 			elem.parentElement.removeChild(elem);
 
 			return Promise.all([
 				tagName,
 				hash,
-				fetch(
-					baseUrl +
-					(path[0] === '/' ? path.slice(1) : path) +
-					'?' + 
-					hash
-				).then(function (s) { return (s || '').trim() })
+				contentPromise,
+				hashPromise
 			]);
 		}).filter(function (p) { return p })
 	).then(function (results) {
-		return Promise.all(results.map(function (result) {
-			return Promise.all([
-				result[0],
-				result[1],
-				result[2],
-				superSphincs.hash(result[2])
-			]);
-		}));
-	}).then(function (results) {
-		return results.map(function (result) {
-			return {
-				tagName: result[0],
-				expectedHash: result[1],
-				content: result[2],
-				actualHash: result[3]
+		for (var i = 0 ; i < result.length ; ++i) {
+			var subresource	= {
+				tagName: results[i][0],
+				expectedHash: results[i][1],
+				content: results[i][2],
+				actualHash: results[i][3]
 			};
-		});
-	}).then(function (subresources) {
-		for (var i = 0 ; i < subresources.length ; ++i) {
-			var subresource	= subresources[i];
 
 			if (subresource.actualHash !== subresource.expectedHash) {
 				continue;
