@@ -15,7 +15,7 @@ const args			= {
 
 const remoteAddress	= '10.0.0.42';
 const port			= 31337;
-const chunkSize		= 1400;
+const chunkSize		= 576;
 
 const interfaces	= os.networkInterfaces();
 const macAddress	= new Buffer(
