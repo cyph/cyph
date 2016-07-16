@@ -25,7 +25,7 @@ Promise.all(Array.from(
 
 		const path		= $elem.attr(
 			tagName === 'script' ? 'src' : 'href'
-		).split('?')[0];
+		).split('?')[0].replace(/^\//, '');
 
 		const content	= fs.readFileSync(path).toString().
 			replace(/\n\/\/# sourceMappingURL=.*?\.map/g, '').
@@ -69,7 +69,7 @@ Promise.all(Array.from(
 		);
 	}
 
-	fs.writeFileSync(args.outputPath, $.html().trim());
+	fs.writeFileSync(args.outputPath, $.html().trim().replace(/use strict/g, ''));
 }).catch(err =>
 	console.error(err)
 );

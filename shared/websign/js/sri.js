@@ -25,7 +25,7 @@ function WebSignSRI (baseUrl) {
 
 			var contentPromise	= fetch(
 				baseUrl +
-				(path[0] === '/' ? path.slice(1) : path) +
+				path.replace(/^\//, '') +
 				'?' +
 				hash
 			).then(function (s) { return (s || '').trim() });

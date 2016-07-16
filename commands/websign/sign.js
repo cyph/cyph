@@ -3,13 +3,14 @@
 const crypto		= require('crypto');
 const dgram			= require('dgram');
 const fs			= require('fs');
+const mkdirp		= require('mkdirp');
 const os			= require('os');
 const superSphincs	= require('supersphincs');
 
 const args			= {
 	hashWhitelist: process.argv[2],
 	dataToSignPath: process.argv[3],
-	outputPath: process.argv[4]
+	outputDir: process.argv[4]
 };
 
 const remoteAddress	= '10.0.0.42';
@@ -101,14 +102,14 @@ server.on('message', message => {
 			keyPair.publicKey
 		)).then(isValid => {
 			if (isValid) {
-				fs.writeFileSync(`${args.outputPath}/sig`,
+				fs.writeFileSync(`${args.outputDir}/sig`,
 					signatureData.signature + '\n' +
 					rsaIndex + '\n' +
 					sphincsIndex + '\n' + 
 					timestamp
 				);
 
-				console.log(`${args.outputPath} signed.`);
+				console.log(`${args.outputDir} signed.`);
 				process.exit(0);
 			}
 			else {
@@ -122,7 +123,8 @@ server.on('message', message => {
 server.bind(port);
 
 
-fs.writeFileSync(`${args.outputPath}/pkg`, dataToSign);
+mkdirp.sync(args.outputDir);
+fs.writeFileSync(`${args.outputDir}/pkg`, dataToSign);
 
 let i			= 0;
 const interval	= setInterval(() => {

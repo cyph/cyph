@@ -248,7 +248,6 @@ if [ ! $simple ] ; then
 		fi
 
 		../commands/websign/pack.js --sri index.html $d.pkg
-		sed -i 's|use strict||g' $d.pkg
 
 		cat websign/index.html | sed "s/\\\$PROJECT/$d/g" > index.html
 		../commands/websign/pack.js index.html index.html
@@ -267,7 +266,6 @@ if [ ! $simple ] ; then
 		fi
 
 		rm -rf $d
-		mkdir $d
 
 		../commands/websign/sign.js \
 			"${websignhashes}" \
