@@ -5,7 +5,7 @@ const fs			= require('fs');
 const superSphincs	= require('supersphincs');
 
 const args			= {
-	webSignSRI: process.argv[2] === '--webSignSRI',
+	enableSRI: process.argv[2] === '--sri',
 	inputPath: process.argv.slice(-2)[0],
 	outputPath: process.argv.slice(-1)[0] 
 };
@@ -17,6 +17,11 @@ Promise.all(Array.from(
 	$('script[src], link[rel="stylesheet"][href]').map((_, elem) => {
 		const $elem		= $(elem);
 		const tagName	= $elem.prop('tagName').toLowerCase();
+
+		const enableSRI	=
+			args.enableSRI &&
+			$elem.attr('websign-sri-disable') !== undefined
+		;
 
 		const path		= $elem.attr(
 			tagName === 'script' ? 'src' : 'href'
@@ -32,6 +37,7 @@ Promise.all(Array.from(
 		return Promise.all([
 			$elem,
 			tagName,
+			enableSRI,
 			path,
 			content,
 			superSphincs.hash(content)
@@ -41,37 +47,23 @@ Promise.all(Array.from(
 	for (const result of results) {
 		const $elem		= result[0];
 		const tagName	= result[1];
-		const path		= result[2];
-		const content	= result[3];
-		const hash		= result[4].hex;
+		const enableSRI	= result[2];
+		const path		= result[3];
+		const content	= result[4];
+		const hash		= result[5].hex;
 
-		if (args.webSignSRI) {
+		if (enableSRI) {
 			fs.writeFileSync(path, content);
 		}
 
 		$elem.replaceWith(
 			tagName === 'script' ?
-				(args.webSignSRI ?
-					`
-						<script
-							websign-sri-path='${path}'
-							websign-sri-hash='${hash}'
-						></script>
-					` :
-					`
-						<script>${
-							content.replace(/<\/script>/g, '<\\/script>')
-						}</script>
-					`
+				(enableSRI ?
+					`<script websign-sri-path='${path}' websign-sri-hash='${hash}'></script>` :
+					`<script>${content.replace(/<\/script>/g, '<\\/script>')}</script>`
 				) :
-				(args.webSignSRI ?
-					`
-						<link
-							rel='stylesheet'
-							websign-sri-path='${path}'
-							websign-sri-hash='${hash}'
-						></link>
-					` :
+				(enableSRI ?
+					`<link rel='stylesheet' websign-sri-path='${path}' websign-sri-hash='${hash}'></link>` :
 					`<style>${content}</style>`
 				)	
 		);

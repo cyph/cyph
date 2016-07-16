@@ -247,7 +247,7 @@ if [ ! $simple ] ; then
 			d="${version}.${d}"
 		fi
 
-		../commands/websign/pack.js --webSignSRI index.html $d.pkg
+		../commands/websign/pack.js --sri index.html $d.pkg
 		sed -i 's|use strict||g' $d.pkg
 
 		cat websign/index.html | sed "s/\\\$PROJECT/$d/g" > index.html
