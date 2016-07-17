@@ -271,6 +271,8 @@ if [ ! $simple ] ; then
 			-not -name '*.js' \
 			-not -name '*.yaml' \
 			-not -name 'websign' \
+			-not -name 'img' \
+			-not -name 'favicon.ico' \
 			-exec rm -rf {} \;
 
 		currentDir="$(pwd)"
