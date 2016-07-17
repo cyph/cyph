@@ -36,7 +36,7 @@ mkdir .build
 cp -rf * .build/
 cd .build
 
-for project in cyph.com cyph.im cyph.me cyph.video cyph.audio ; do
+for project in cyph.com cyph.im cyph.video cyph.audio ; do
 	cp -rf shared/* $project/
 done
 
