@@ -2,6 +2,7 @@
 
 const cheerio		= require('cheerio');
 const fs			= require('fs');
+const mkdirp		= require('mkdirp');
 const htmlMinifier	= require('html-minifier');
 const superSphincs	= require('supersphincs');
 
@@ -55,7 +56,9 @@ Promise.all(Array.from(
 		const hash		= result[5].hex;
 
 		if (enableSRI) {
-			fs.writeFileSync(path, content);
+			const newPath	= `${args.outputPath}-subresources/${path}`; 
+			mkdirp.sync(newPath.split('/').slice(0, -1).join('/'));
+			fs.writeFileSync(newPath, content);
 		}
 
 		$elem.replaceWith(

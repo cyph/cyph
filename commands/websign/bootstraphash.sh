@@ -2,14 +2,7 @@
 
 source ~/.bashrc
 
-project="${1}"
-branch="${2}"
-
 cd "$(cd "$(dirname "$0")"; pwd)/../../shared"
-
-if [ "${branch}" ] ; then
-	project="${branch}.${project}"
-fi
 
 rm .bootstrapText.tmp 2> /dev/null
 
@@ -23,19 +16,18 @@ for path in $( \
 "); do
 	file=''
 
-	echo -e "$path:\n" >> .bootstrapText.tmp
+	echo -e "${path}:\n" >> .bootstrapText.tmp
 
-	if [ "$path" == './' ] ; then
-		cat websign/index.html | sed "s/\\\$PROJECT/${project}/g" > .index.html.tmp
-		../commands/websign/pack.js .index.html.tmp .index.html.tmp
+	if [ "${path}" == './' ] ; then
+		../commands/websign/pack.js websign/index.html .index.html.tmp
 		cat .index.html.tmp >> .bootstrapText.tmp
 		rm .index.html.tmp
-	elif [ "$path" == 'serviceworker.js' ] ; then
+	elif [ "${path}" == 'serviceworker.js' ] ; then
 		cat websign/serviceworker.js >> .bootstrapText.tmp
-	elif [ "$path" == 'unsupportedbrowser' ] ; then
+	elif [ "${path}" == 'unsupportedbrowser' ] ; then
 		cat websign/unsupportedbrowser.html >> .bootstrapText.tmp
 	else
-		cat "$path" >> .bootstrapText.tmp
+		cat "${path}" >> .bootstrapText.tmp
 	fi
 
 	echo -e '\n\n\n\n\n' >> .bootstrapText.tmp

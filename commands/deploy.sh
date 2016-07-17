@@ -243,27 +243,31 @@ if [ ! $simple ] ; then
 
 		websignhashes=''
 		if [ $test ] ; then
-			websignhashes="{\"$(../commands/websign/bootstraphash.sh "${d}" "${version}")\": true}"
+			websignhashes="{\"$(../commands/websign/bootstraphash.sh)\": true}"
 			d="${version}.${d}"
+		else
+			websignhashes="$(cat websignhashes.json)"
 		fi
 
 		../commands/websign/pack.js --sri --minify index.html pkg
 
-		cat websign/index.html | sed "s/\\\$PROJECT/$d/g" > index.html
+		mv websign/index.html index.html
 		../commands/websign/pack.js index.html index.html
 		rm websign/index.html
 
+		find . -depth 1 -not -name 'pkg*' -not -name '*.html' -not -name '*.yaml' -not -name 'websign' -exec rm -rf {} \;
+
 		currentDir="$(pwd)"
 		cd ..
-		git clone git@github.com:cyph/cyph.github.io.git github.io
+
+		if [ ! -d github.io ] ; then
+			git clone git@github.com:cyph/cyph.github.io.git github.io
+		fi
+
 		cd github.io
 		git reset --hard
 		git clean -f
 		git pull
-
-		if [ ! $test ] ; then
-			websignhashes="$(cat $currentDir/websignhashes.json)"
-		fi
 
 		rm -rf $d
 
@@ -273,9 +277,11 @@ if [ ! $simple ] ; then
 		../commands/websign/sign.js \
 			"${websignhashes}" \
 			$currentDir/pkg \
-			$d
+			$d \
+		|| exit 1
 
-		cp -rf $currentDir/css $currentDir/js $currentDir/lib $d/
+		mv $currentDir/pkg-subresources/* $d/
+		rm -rf $currentDir/pkg-subresources
 
 		chmod -R 777 .
 		git add .
