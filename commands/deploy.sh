@@ -222,9 +222,6 @@ if [ ! $simple ] ; then
 
 		echo 'WebSign'
 
-		mv websign/serviceworker.js ./
-		mv websign/unsupportedbrowser.html ./
-
 		# Merge in base64'd images, fonts, video, and audio
 		find img fonts audio video -type f -print0 | while read -d $'\0' f ; do
 			for g in index.html $(find js -name '*.js') $(find css -name '*.css') ; do
@@ -263,6 +260,8 @@ if [ ! $simple ] ; then
 		../commands/websign/pack.js --sri --minify index.html pkg
 
 		../commands/websign/pack.js websign/index.html index.html
+		mv websign/serviceworker.js ./
+		mv websign/unsupportedbrowser.html ./
 		rm websign/index.html
 
 		find . \
