@@ -203,8 +203,12 @@ func handleFuncs(pattern string, handlers Handlers) {
 }
 
 func initHandler(w http.ResponseWriter, r *http.Request) {
-	if _, ok := config.AllowedOrigins[r.Host]; ok || appengine.IsDevAppServer() {
-		w.Header().Add("Access-Control-Allow-Origin", "*")
+	origin := r.Header.Get("Origin")
+	host := strings.Split(origin, "/")[2]
+
+	if _, ok := config.AllowedHosts[host]; ok || appengine.IsDevAppServer() {
+		w.Header().Add("Access-Control-Allow-Origin", origin)
+		w.Header().Add("Access-Control-Allow-Credentials", "true")
 		w.Header().Add("Access-Control-Allow-Methods", config.AllowedMethods)
 		w.Header().Set("Public-Key-Pins", config.HPKPHeader)
 		w.Header().Set("Strict-Transport-Security", config.HSTSHeader)

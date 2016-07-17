@@ -9,7 +9,7 @@ var config = struct {
 	AllowedCyphIds             *regexp.Regexp
 	AllowedCyphIdLength        int
 	AllowedMethods             string
-	AllowedOrigins             map[string]none
+	AllowedHosts               map[string]none
 	Continents                 map[string]none
 	DefaultContinent           string
 	EmailAddress               string
