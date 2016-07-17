@@ -82,7 +82,10 @@ Promise.all(
 /* Get user's current location to choose optimal CDN node */
 then(function () {
 	if (!WebSign.isOnion) {
-		return fetch(WebSign.config.continentUrl);
+		return fetch(
+			WebSign.config.continentUrl,
+			{credentials: 'include'}
+		);
 	}
 }).then(function (response) {
 	if (response) {
@@ -268,10 +271,10 @@ then(function (package) {
 			package.
 				split('</html>').slice(0, -1).join('</html>').
 				split('</body>').slice(0, -1).join('</body>') +
-				'<script>' + superSphincs.toString() + '</script>' +
-				'<script>' + fetch.toString() + '</script>' +
-				'<script>' + WebSignSRI.toString() + '</script>' +
-				'<script>WebSignSRI("' + WebSign.cdnUrl + '");</script>' +
+				Array.prototype.slice.apply(
+					document.querySelectorAll('script[websign-sri-include]')
+				).map(function (elem) { return elem.outerHTML }).join('') +
+				'<script>WebSignSRI("' + WebSign.cdnUrl + '")</script>' +
 				'</body></html>'
 		);
 		document.close();

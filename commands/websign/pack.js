@@ -54,6 +54,12 @@ Promise.all(Array.from(
 		const content	= result[4];
 		const hash		= result[5].hex;
 
+		const specialAttributes	= [
+			'websign-sri-include'
+		].map(s =>
+			$elem.attr(s) === undefined ? '' : s
+		).join(' ');
+
 		if (enableSRI) {
 			const newPath	= `${args.outputPath}-subresources/${path}`; 
 			mkdirp.sync(newPath.split('/').slice(0, -1).join('/'));
@@ -67,10 +73,11 @@ Promise.all(Array.from(
 						<script
 							websign-sri-path='${path}'
 							websign-sri-hash='${hash}'
+							${specialAttributes}
 						></script>
 					` :
 					`
-						<script>${
+						<script ${specialAttributes}>${
 							content.replace(/<\/script>/g, '<\\/script>')
 						}</script>
 					`
@@ -81,10 +88,11 @@ Promise.all(Array.from(
 							rel='stylesheet'
 							websign-sri-path='${path}'
 							websign-sri-hash='${hash}'
+							${specialAttributes}
 						></link>
 					` :
 					`
-						<style>${content}</style>
+						<style ${specialAttributes}>${content}</style>
 					`
 				)	
 		);
