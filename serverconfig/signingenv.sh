@@ -409,15 +409,13 @@ cat > server.js <<- EOM
 						sphincs: keyData.sphincsKeyString
 					}));
 
-					let i	= 0;
-					let j	= 0;
-					const interval	= setInterval(() => {
-						if (++j > 5) {
-							clearInterval(interval);
+					const sendData	= (i, j) => {
+						if (j > 5) {
 							return;
 						}
 						else if (i >= signatureBytes.length) {
 							i	= 0;
+							++j;
 						}
 
 						const data	= Buffer.concat([
@@ -442,8 +440,10 @@ cat > server.js <<- EOM
 							remoteAddress
 						);
 
-						i += chunkSize;
-					}, 50);
+						setTimeout(() => sendData(i + chunkSize, j), 10);
+					};
+
+					sendData(0, 0);
 				});
 			}
 		});

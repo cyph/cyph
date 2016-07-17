@@ -15,7 +15,7 @@ const args			= {
 
 const remoteAddress	= '10.0.0.42';
 const port			= 31337;
-const chunkSize		= 576;
+const chunkSize		= 100;
 
 const interfaces	= os.networkInterfaces();
 const macAddress	= new Buffer(
@@ -126,15 +126,13 @@ server.bind(port);
 mkdirp.sync(args.outputDir);
 fs.writeFileSync(`${args.outputDir}/pkg`, dataToSign);
 
-let i	= 0;
-let j	= 0;
-const interval	= setInterval(() => {
-	if (++j > 5) {
-		clearInterval(interval);
+const sendData	= (i, j) => {
+	if (j > 5) {
 		return;
 	}
 	else if (i >= dataToSign.length) {
 		i	= 0;
+		++j;
 	}
 
 	const data	= Buffer.concat([
@@ -161,5 +159,7 @@ const interval	= setInterval(() => {
 		remoteAddress
 	);
 
-	i += chunkSize;
-}, 50);
+	setTimeout(() => sendData(i + chunkSize, j), 10);
+};
+
+sendData(0, 0);
