@@ -266,17 +266,19 @@ then(function (package) {
 	}
 
 	try {
-		document.open('text/html');
-		document.write(
+		var html	=
 			package.
 				split('</html>').slice(0, -1).join('</html>').
 				split('</body>').slice(0, -1).join('</body>') +
-				Array.prototype.slice.apply(
-					document.querySelectorAll('script[websign-sri-include]')
-				).map(function (elem) { return elem.outerHTML }).join('') +
-				'<script>WebSignSRI("' + WebSign.cdnUrl + '")</script>' +
-				'</body></html>'
-		);
+			Array.prototype.slice.apply(
+				document.querySelectorAll('script[websign-sri-include]')
+			).map(function (elem) { return elem.outerHTML }).join('') +
+			'<script>WebSignSRI("' + WebSign.cdnUrl + '")</script>' +
+			'</body></html>'
+		;
+
+		document.open('text/html');
+		document.write(html);
 		document.close();
 	}
 	catch (_) {}
