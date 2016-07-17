@@ -33,7 +33,6 @@ Promise.all(Array.from(
 		const content	= fs.readFileSync(path).toString().
 			replace(/\n\/\/# sourceMappingURL=.*?\.map/g, '').
 			replace(/\n\/*# sourceMappingURL=.*?\.map *\//g, '').
-			replace(/sourceMappingURL=.*?\.map/g, '').
 			trim()
 		;
 

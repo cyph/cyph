@@ -8,7 +8,7 @@ function WebSignSRI (baseUrl) {
 		Array.prototype.slice.apply(
 			document.querySelectorAll('[websign-sri-hash]')
 		).map(function (elem) {
-			var tagName	= (elem.tagName || '').toLowercase();
+			var tagName	= (elem.tagName || '').toLowerCase();
 			var hash	= elem.getAttribute('websign-sri-hash');
 			var path	= elem.getAttribute('websign-sri-path');
 
@@ -28,12 +28,17 @@ function WebSignSRI (baseUrl) {
 				path.replace(/^\//, '') +
 				'?' +
 				hash
-			).then(function (s) { return (s || '').trim() });
+			).then(function (response) {
+				return response.text();
+			}).then(function (s) {
+				return s.trim();
+			});
 
-			var hashPromise		= contentPromise.
-				then(function (s) { return superSphincs.hash(s) }).
-				then(function (hash) { return hash.hex })
-			;
+			var hashPromise		= contentPromise.then(function (s) {
+				return superSphincs.hash(s);
+			}).then(function (hash) {
+				return hash.hex;
+			});
 
 			elem.parentElement.removeChild(elem);
 
@@ -45,7 +50,7 @@ function WebSignSRI (baseUrl) {
 			]);
 		}).filter(function (p) { return p })
 	).then(function (results) {
-		for (var i = 0 ; i < result.length ; ++i) {
+		for (var i = 0 ; i < results.length ; ++i) {
 			var subresource	= {
 				tagName: results[i][0],
 				expectedHash: results[i][1],

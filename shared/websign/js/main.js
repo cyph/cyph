@@ -58,7 +58,10 @@ catch (_) {}
 /* Hash WebSign bootstrap for a self-administered integrity check */
 Promise.all(
 	WebSign.config.files.map(function (file) {
-		return fetch(file).then(function (response) {
+		return fetch(
+			file,
+			{credentials: 'include'}
+		).then(function (response) {
 			return response.text();
 		});
 	})
@@ -261,9 +264,17 @@ then(function (package) {
 
 	try {
 		document.open('text/html');
-		document.write(package);
+		document.write(
+			package.
+				split('</html>').slice(0, -1).join('</html>').
+				split('</body>').slice(0, -1).join('</body>') +
+				'<script>' + superSphincs.toString() + '</script>' +
+				'<script>' + fetch.toString() + '</script>' +
+				'<script>' + WebSignSRI.toString() + '</script>' +
+				'<script>WebSignSRI("' + WebSign.cdnUrl + '");</script>' +
+				'</body></html>'
+		);
 		document.close();
-		WebSignSRI(WebSign.cdnUrl);
 	}
 	catch (_) {}
 }).
