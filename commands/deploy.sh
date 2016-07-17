@@ -277,7 +277,7 @@ if [ ! $simple ] ; then
 
 		cp -rf $currentDir/css $currentDir/js $currentDir/lib $d/
 
-		chmod -R 777
+		chmod -R 777 .
 		git add .
 		git commit -a -m 'package update'
 		git push
