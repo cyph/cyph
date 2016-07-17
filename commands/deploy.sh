@@ -250,6 +250,7 @@ if [ ! $simple ] ; then
 				tr '\n' '☁' | \
 				perl -pe 's/(\(function \(\) \{).*?(var WebSign)/\1☁☁☁\2/' | \
 				sed "s|location.host|'${project}'|g" | \
+				sed "s|api.cyph.com|${version}-dot-cyphme.appspot.com|g" | \
 				tr '☁' '\n' \
 			> websign/js/main.js.new
 			mv websign/js/main.js.new websign/js/main.js
