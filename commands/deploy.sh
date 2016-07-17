@@ -242,9 +242,19 @@ if [ ! $simple ] ; then
 		find js -name '*.js' | xargs -I% ../commands/websign/threadpack.js %
 
 		websignhashes=''
+		project="${d}"
 		if [ $test ] ; then
-			websignhashes="{\"$(../commands/websign/bootstraphash.sh)\": true}"
-			d="${version}.${d}"
+			project="${version}.${d}"
+
+			cat websign/js/main.js | \
+				tr '\n' '☁' | \
+				perl -pe 's/(\(function \(\) \{).*?(var WebSign)/\1☁☁☁\2/' | \
+				sed "s|location.host|'${project}'|g" | \
+				tr '☁' '\n' \
+			> websign/js/main.js.new
+			mv websign/js/main.js.new websign/js/main.js
+
+			websignhashes="{\"$(../commands/websign/bootstraphash.sh ${d})\": true}"
 		else
 			websignhashes="$(cat websignhashes.json)"
 		fi
@@ -275,25 +285,27 @@ if [ ! $simple ] ; then
 		git clean -f
 		git pull
 
-		rm -rf $d
+		rm -rf ${project}
 
-		echo "Press enter to initiate signing process for ${d}."
+		echo "Press enter to initiate signing process for ${project}."
 		read
 
 		../commands/websign/sign.js \
 			"${websignhashes}" \
-			$currentDir/pkg \
-			$d \
+			${currentDir}/pkg \
+			${project} \
 		|| exit 1
 
-		mv $currentDir/pkg-subresources/* $d/
-		rm -rf $currentDir/pkg-subresources
+		if [ -d ${currentDir}/pkg-subresources ] ; then
+			mv ${currentDir}/pkg-subresources/* ${project}/
+			rm -rf ${currentDir}/pkg-subresources
+		fi
 
 		chmod -R 777 .
 		git add .
 		git commit -a -m 'package update'
 		git push
-		cd $currentDir
+		cd ${currentDir}
 
 		cd ..
 	done

@@ -2,7 +2,12 @@
 
 source ~/.bashrc
 
-cd "$(cd "$(dirname "$0")"; pwd)/../../shared"
+d="${1}"
+if [ ! "${d}" ] ; then
+	d=shared
+fi
+
+cd "$(cd "$(dirname "$0")"; pwd)/../../${d}"
 
 rm .bootstrapText.tmp 2> /dev/null
 
