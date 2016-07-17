@@ -126,9 +126,10 @@ server.bind(port);
 mkdirp.sync(args.outputDir);
 fs.writeFileSync(`${args.outputDir}/pkg`, dataToSign);
 
-let i			= 0;
+let i	= 0;
+let j	= 0;
 const interval	= setInterval(() => {
-	if (incoming) {
+	if (++j > 5) {
 		clearInterval(interval);
 		return;
 	}
@@ -161,4 +162,4 @@ const interval	= setInterval(() => {
 	);
 
 	i += chunkSize;
-}, 1);
+}, 50);

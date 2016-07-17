@@ -267,6 +267,9 @@ if [ ! $simple ] ; then
 
 		rm -rf $d
 
+		echo "Press enter to initiate signing process for ${d}."
+		read
+
 		../commands/websign/sign.js \
 			"${websignhashes}" \
 			$currentDir/pkg \

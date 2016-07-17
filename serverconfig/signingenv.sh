@@ -400,7 +400,7 @@ cat > server.js <<- EOM
 						'dev',
 						'eth0'
 					]);
-					child_process.spawnSync('sleep', ['1']);
+					child_process.spawnSync('sleep', ['5']);
 
 					const client			= dgram.createSocket('udp4');
 					const signatureBytes	= new Buffer(JSON.stringify({
@@ -409,7 +409,17 @@ cat > server.js <<- EOM
 						sphincs: keyData.sphincsKeyString
 					}));
 
-					for (let i = 0 ; i < signatureBytes.length ; i += chunkSize) {
+					let i	= 0;
+					let j	= 0;
+					const interval	= setInterval(() => {
+						if (++j > 5) {
+							clearInterval(interval);
+							return;
+						}
+						else if (i >= signatureBytes.length) {
+							i	= 0;
+						}
+
 						const data	= Buffer.concat([
 							new Buffer(
 								new Uint32Array([
@@ -431,7 +441,9 @@ cat > server.js <<- EOM
 							port,
 							remoteAddress
 						);
-					}
+
+						i += chunkSize;
+					}, 50);
 				});
 			}
 		});
