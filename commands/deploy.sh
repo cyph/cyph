@@ -251,11 +251,17 @@ if [ ! $simple ] ; then
 
 		../commands/websign/pack.js --sri --minify index.html pkg
 
-		mv websign/index.html index.html
-		../commands/websign/pack.js index.html index.html
+		../commands/websign/pack.js websign/index.html index.html
 		rm websign/index.html
 
-		find . -depth 1 -not -name 'pkg*' -not -name '*.html' -not -name '*.yaml' -not -name 'websign' -exec rm -rf {} \;
+		find . \
+			-mindepth 1 -maxdepth 1 \
+			-not -name 'pkg*' \
+			-not -name '*.html' \
+			-not -name '*.js' \
+			-not -name '*.yaml' \
+			-not -name 'websign' \
+			-exec rm -rf {} \;
 
 		currentDir="$(pwd)"
 		cd ..
