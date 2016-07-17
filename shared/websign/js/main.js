@@ -267,13 +267,20 @@ then(function (package) {
 
 	try {
 		var html	=
-			package.
+			(package.
 				split('</html>').slice(0, -1).join('</html>').
-				split('</body>').slice(0, -1).join('</body>') +
-			Array.prototype.slice.apply(
-				document.querySelectorAll('script[websign-sri-include]')
-			).map(function (elem) { return elem.outerHTML }).join('') +
-			'<script>WebSignSRI("' + WebSign.cdnUrl + '")</script>' +
+				split('</body>').slice(0, -1).join('</body>')
+			) +
+				Array.prototype.slice.apply(
+					document.querySelectorAll('script[websign-sri-include]')
+				).map(function (elem) { return elem.outerHTML }).join('') +
+				'<script>' +
+					'WebSignSRI("' + WebSign.cdnUrl + '").catch(function (err) {' +
+						'document.open("text/plain");' +
+						'document.write(err);' +
+						'document.close();' +
+					'});' +
+				'</script>' +
 			'</body></html>'
 		;
 
