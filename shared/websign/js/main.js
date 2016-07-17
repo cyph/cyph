@@ -99,7 +99,7 @@ then(function (continent) {
 			'/'
 		;
 
-		return new Promise((resolve, reject) {
+		return new Promise(function (resolve, reject) {
 			setTimeout(reject, 10000);
 
 			fetch(
@@ -221,7 +221,7 @@ catch(function () {
 		throw 'No fallback version.';
 	}
 
-	return new Promise((resolve, reject) {
+	return new Promise(function (resolve, reject) {
 		setTimeout(reject, 3000);
 
 		fetch(LocalStorage.webSignPackageUrl).then(function (response) {
