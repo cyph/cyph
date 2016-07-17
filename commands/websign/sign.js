@@ -126,13 +126,12 @@ server.bind(port);
 mkdirp.sync(args.outputDir);
 fs.writeFileSync(`${args.outputDir}/pkg`, dataToSign);
 
-const sendData	= (i, j) => {
-	if (j > 5) {
+const sendData	= i => {
+	if (incoming) {
 		return;
 	}
 	else if (i >= dataToSign.length) {
 		i	= 0;
-		++j;
 	}
 
 	const data	= Buffer.concat([
@@ -159,7 +158,7 @@ const sendData	= (i, j) => {
 		remoteAddress
 	);
 
-	setTimeout(() => sendData(i + chunkSize, j), 10);
+	setTimeout(() => sendData(i + chunkSize), 10);
 };
 
-sendData(0, 0);
+sendData(0);
