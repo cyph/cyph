@@ -400,7 +400,7 @@ cat > server.js <<- EOM
 						'dev',
 						'eth0'
 					]);
-					child_process.spawnSync('sleep', ['5']);
+					child_process.spawnSync('sleep', ['1']);
 
 					const client			= dgram.createSocket('udp4');
 					const signatureBytes	= new Buffer(JSON.stringify({
