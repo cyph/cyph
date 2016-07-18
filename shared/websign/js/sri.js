@@ -4,86 +4,75 @@
  */
 
 function WebSignSRI (baseUrl) {
-	var promises	= Array.prototype.slice.apply(
-		document.querySelectorAll('[websign-sri-hash]')
-	).map(function (elem) {
-		var tagName	= (elem.tagName || '').toLowerCase();
-		var hash	= elem.getAttribute('websign-sri-hash');
-		var path	= elem.getAttribute('websign-sri-path');
+	var outputIndex		= 0;
+	var outputElements	= [];
 
-		if (
-			!(
-				tagName === 'script' ||
-				(tagName === 'link' && elem.rel === 'stylesheet')
-			) ||
-			!hash ||
-			!path
-		) {
-			return;
-		}
+	var selector		=
+		'[websign-sri-hash]' +
+		'[websign-sri-path]' +
+		':not([websign-sri-hash=""])' +
+		':not([websign-sri-path=""])'
+	;
+
+	var inputElements	= Array.prototype.slice.apply(
+		document.querySelectorAll(
+			'script' + selector + ', ' +
+			'link[rel="stylesheet"]' + selector
+		)
+	);
+
+
+	return Promise.all(inputElements.map(function (elem, i) {
+		var tagName			= elem.tagName.toLowerCase();
+		var expectedHash	= elem.getAttribute('websign-sri-hash');
+		var path			= elem.getAttribute('websign-sri-path');
 
 		elem.parentElement.removeChild(elem);
 
-		return Promise.all([
-			tagName,
-			hash,
-			fetch(
-				baseUrl +
-				path.replace(/^\//, '') +
-				'?' +
-				hash
-			).then(function (response) {
-				return response.text();
-			}).then(function (s) {
-				return s.trim();
-			})
-		]).then(function (results) {
-			return {
-				tagName: results[0],
-				expectedHash: results[1],
-				content: results[2]
-			};
-		});
-	}).filter(function (promise) {
-		return promise;
-	});
+		return fetch(
+			baseUrl +
+			path.replace(/^\//, '') +
+			'?' +
+			expectedHash
+		).then(function (response) {
+			return response.text();
+		}).then(function (s) {
+			var content	= s.trim();
 
-	function loadSubresource (i) {
-		var promise	= promises[i];
-
-		if (!promise) {
-			return;
-		}
-
-		return promise.then(function (subresource) {
 			return Promise.all([
-				subresource,
-				superSphincs.hash(subresource.content)
-			]);
+				content,
+				superSphincs.hash(content)
+			])
 		}).then(function (results) {
-			var subresource	= results[0];
+			var content		= results[0];
 			var actualHash	= results[1].hex;
 
-			if (actualHash !== subresource.expectedHash) {
+			if (actualHash !== expectedHash) {
 				throw 'Invalid subresource.\n\n' +
-					'Expected: ' +  subresource.expectedHash + '.\n\n' +
+					'Expected: ' +  expectedHash + '.\n\n' +
 					'Received: ' + actualHash + '.'
 				;
 			}
 
-			var elem	= document.createElement(
-				subresource.tagName === 'script' ?
+			outputElements[i]	= document.createElement(
+				tagName === 'script' ?
 					'script' :
 					'style'
 			);
 
-			elem.textContent	= subresource.content;
+			outputElements[i].textContent	= content;
 
-			document.head.appendChild(elem);
+			while (true) {
+				var elem	= outputElements[outputIndex];
 
-			return loadSubresource(i + 1);
+				if (!elem) {
+					return;
+				}
+
+				outputElements[outputIndex]	= null;
+				document.head.appendChild(elem);
+				++outputIndex;
+			}
 		});
-	}
-
-	return loadSubresource(0);
+	}));
 }
