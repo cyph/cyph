@@ -15,7 +15,7 @@ const args			= {
 
 const remoteAddress	= '10.0.0.42';
 const port			= 31337;
-const chunkSize		= 100;
+const chunkSize		= 576;
 
 const interfaces	= os.networkInterfaces();
 const macAddress	= new Buffer(
@@ -34,16 +34,12 @@ const publicKeys	= JSON.parse(
 const signatureTTL	= 2.5; // Months
 const timestamp		= Date.now();
 
-const dataToSign	= Buffer.concat([
-	new Buffer(JSON.stringify({
-		timestamp,
-		expires: timestamp + signatureTTL * 2.628e+9,
-		hashWhitelist: JSON.parse(args.hashWhitelist)
-	}) + '\n'),
-	new Buffer(
-		fs.readFileSync(args.dataToSignPath).toString().trim()
-	)
-]);
+const dataToSign	= new Buffer(JSON.stringify({
+	timestamp,
+	expires: timestamp + signatureTTL * 2.628e+9,
+	hashWhitelist: JSON.parse(args.hashWhitelist),
+	package: fs.readFileSync(args.dataToSignPath).toString().trim()
+}));
 
 const id			= new Uint32Array(crypto.randomBytes(4).buffer)[0];
 const client		= dgram.createSocket('udp4');
@@ -96,35 +92,35 @@ server.on('message', message => {
 				rsa: publicKeys.rsa[rsaIndex],
 				sphincs: publicKeys.sphincs[sphincsIndex]
 			}
-		}).then(keyPair => superSphincs.verifyDetached(
-			signatureData.signature,
-			dataToSign.toString(),
+		}).then(keyPair => superSphincs.open(
+			signatureData.signed,
 			keyPair.publicKey
-		)).then(isValid => {
-			if (isValid) {
-				fs.writeFileSync(`${args.outputDir}/sig`,
-					signatureData.signature + '\n' +
-					rsaIndex + '\n' +
-					sphincsIndex + '\n' + 
-					timestamp
-				);
+		)).then(opened => {
+			if (opened !== dataToSign.toString()) {
+				throw 'Incorrect signed data.';
+			}
 
-				console.log(`${args.outputDir} signed.`);
-				process.exit(0);
-			}
-			else {
-				console.error('Invalid signature.');
-				process.exit(1);
-			}
+			mkdirp.sync(args.outputDir);
+
+			fs.writeFileSync(`${args.outputDir}/current`, timestamp);
+
+			fs.writeFileSync(`${args.outputDir}/pkg`,
+				signatureData.signed + '\n' +
+				rsaIndex + '\n' +
+				sphincsIndex
+			);
+
+			console.log(`${args.outputDir} signed.`);
+			process.exit(0);
+		}).catch(() => {
+			console.error('Invalid signature.');
+			process.exit(1);
 		});
 	}
 });
 
 server.bind(port);
 
-
-mkdirp.sync(args.outputDir);
-fs.writeFileSync(`${args.outputDir}/pkg`, dataToSign);
 
 const sendData	= i => {
 	if (incoming) {

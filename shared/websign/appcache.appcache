@@ -7,7 +7,6 @@ appcache.appcache
 manifest.json
 ../serviceworker.js
 ../unsupportedbrowser
-../img/metaimage.png
 ../favicon.ico
 ../img/favicon/favicon-192x192.png
 ../img/favicon/favicon-160x160.png

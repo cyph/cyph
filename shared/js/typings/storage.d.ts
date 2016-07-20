@@ -7,6 +7,9 @@ interface Storage {
 		data is stored persistently. */
 	isPersistent: string;
 
+	/** Most recent working CDN URL. */
+	webSignCdnUrl: string;
+
 	/** Datetime that current package expires. */
 	webSignExpires: string;
 
@@ -19,14 +22,8 @@ interface Storage {
 	/** List of valid bootstrap payload hashes. */
 	webSignHashWhitelist: string;
 
-	/** Hash of current package. */
-	webSignPackageHash: string;
-
-	/** Hash of current package. */
-	webSignPackageUrl: string;
-
 	/** Datetime that current package was released. */
-	webSignTimestamp: string;
+	webSignPackageTimestamp: string;
 
 	/** Indicates whether the www subdomain's
 		AppCache has been pinned. */

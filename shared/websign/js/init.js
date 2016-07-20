@@ -22,7 +22,7 @@ var LocalStorage;
 
 try {
 	localStorage.isPersistent	= 'true';
-	LocalStorage	= localStorage;
+	LocalStorage				= localStorage;
 }
 catch (_) {
 	LocalStorage	= LocalStorage || {};

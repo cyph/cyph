@@ -378,12 +378,12 @@ cat > server.js <<- EOM
 				reviewText(text).then(shouldSign =>
 					!shouldSign ?
 						null :
-						superSphincs.signDetached(
+						superSphincs.sign(
 							text,
 							keyData.keyPair.privateKey
 						)
-				).then(signature => {
-					if (!signature) {
+				).then(signed => {
+					if (!signed) {
 						console.log('Text discarded.');
 						return;
 					}
@@ -403,8 +403,8 @@ cat > server.js <<- EOM
 					child_process.spawnSync('sleep', ['1']);
 
 					const client			= dgram.createSocket('udp4');
-					const signatureBytes	= new Buffer(JSON.stringify({
-						signature,
+					const signedBytes	= new Buffer(JSON.stringify({
+						signed,
 						rsa: keyData.rsaKeyString,
 						sphincs: keyData.sphincsKeyString
 					}));
@@ -413,7 +413,7 @@ cat > server.js <<- EOM
 						if (j > 5) {
 							return;
 						}
-						else if (i >= signatureBytes.length) {
+						else if (i >= signedBytes.length) {
 							i	= 0;
 							++j;
 						}
@@ -422,13 +422,13 @@ cat > server.js <<- EOM
 							new Buffer(
 								new Uint32Array([
 									id,
-									signatureBytes.length,
+									signedBytes.length,
 									i
 								]).buffer
 							),
-							signatureBytes.slice(
+							signedBytes.slice(
 								i,
-								Math.min(i + chunkSize, signatureBytes.length)
+								Math.min(i + chunkSize, signedBytes.length)
 							)
 						]);
 

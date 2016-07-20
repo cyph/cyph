@@ -1,51 +1,13 @@
-(function () {
-
-
+/* Set pin on www subdomain on first use, then force naked domain */
 if (location.host.indexOf('www.') === 0) {
 	location.host	= location.host.replace('www.', '');
 }
-else if (
-	LocalStorage.isPersistent &&
-	!LocalStorage.webSignWWWPinned
-) {
+else if (LocalStorage.isPersistent && !LocalStorage.webSignWWWPinned) {
 	LocalStorage.webSignWWWPinned	= true;
 	location.host					= 'www.' + location.host;
 }
 
-
-var WebSign	= {
-	bootstrapText: '',
-
-	cdnUrl: '',
-
-	isOnion: location.host.split('.').slice(-1)[0] === 'onion',
-
-	config: {
-		abortText: 'Loading Cyph failed. Please try again later.',
-		cdnUrlBase: '.cdn.cyph.com/',
-		continentUrl: 'https://api.cyph.com/continent',
-		defaultContinent: 'eu',
-		signaturePath: 'sig',
-		packagePath: 'pkg',
-
-		files: [
-			'./',
-			'websign/js/workerhelper.js',
-			'websign/appcache.appcache',
-			'websign/manifest.json',
-			'serviceworker.js',
-			'unsupportedbrowser'
-		],
-
-		publicKeys: PUBLIC_KEYS
-	}
-};
-
-if (WebSign.isOnion) {
-	WebSign.config.cdnUrlBase		= 'cdn.cyphdbyhiddenbhs.onion/';
-	WebSign.config.defaultContinent	= '';
-}
-
+/* Initialize ServiceWorker where possible */
 try {
 	navigator.serviceWorker.
 		register('serviceworker.js').
@@ -54,236 +16,231 @@ try {
 }
 catch (_) {}
 
-
-/* Hash WebSign bootstrap for a self-administered integrity check */
-Promise.all(
-	WebSign.config.files.map(function (file) {
-		return fetch(
-			file,
-			{credentials: 'include'}
-		).then(function (response) {
-			return response.text();
-		});
-	})
-).then(function (results) {
-	WebSign.bootstrapText	= WebSign.config.files.
-		map(function (file, i) {
-			return file + ':\n\n' + results[i] + '\n\n\n\n\n\n';
-		}).
-		join('')
-	;
-
-	return superSphincs.hash(WebSign.bootstrapText);
-}).then(function (hash) {
-	LocalStorage.webSignHashOld	= LocalStorage.webSignHash;
-	LocalStorage.webSignHash	= hash.hex;
-}).
-
 /* Get user's current location to choose optimal CDN node */
-then(function () {
-	if (!WebSign.isOnion) {
-		return fetch(
-			WebSign.config.continentUrl,
-			{credentials: 'include'}
-		);
+Promise.resolve().then(function () {
+	if (location.host.split('.').slice(-1)[0] === 'onion') {
+		return null;
 	}
-}).then(function (response) {
-	if (response) {
+
+	return fetch(
+		Config.continentUrl,
+		{credentials: 'include'}
+	).then(function (response) {
 		return response.text();
-	}
+	}).then(function (s) {
+		return s.trim();
+	});
 }).
 
-/* Get latest signature data from CDN, with fallback logic
+/* Get current package timestamp from CDN, with fallback logic
 	in case node for current continent is offline */
 then(function (continent) {
-	function getSignature (newContinent) {
-		WebSign.cdnUrl		=
+	function getCurrent (newContinent, cdnUrlBase) {
+		var cdnUrl	=
 			'https://' +
 			newContinent +
-			WebSign.config.cdnUrlBase +
+			cdnUrlBase +
 			location.host +
 			'/'
 		;
 
 		return new Promise(function (resolve, reject) {
-			setTimeout(reject, 10000);
+			setTimeout(reject, 2000);
 
 			fetch(
-				WebSign.cdnUrl + WebSign.config.signaturePath + '?' + Date.now()
+				cdnUrl + 'current?' + Date.now()
 			).then(function (response) {
-				resolve(response.text());
+				return response.text();
+			}).then(function (s) {
+				var newTimestamp	= parseInt(s.trim(), 10);
+
+				var oldTimestamp	= parseInt(
+					LocalStorage.webSignPackageTimestamp,
+					10
+				);
+
+				if (oldTimestamp > newTimestamp) {
+					reject();
+					return;
+				}
+
+				resolve({
+					cdnUrl: cdnUrl,
+					packageTimestamp: newTimestamp
+				});
 			});
 		});
 	}
 
 	if (continent) {
-		return getSignature(continent).catch(function () {
-			return getSignature(WebSign.config.defaultContinent);
+		return getCurrent(continent, Config.cdnUrlBase).catch(function () {
+			return getCurrent(Config.defaultContinent, Config.cdnUrlBase);
 		});
 	}
 	else {
-		return getSignature(WebSign.config.defaultContinent);
+		return getCurrent('', 'cdn.cyphdbyhiddenbhs.onion/');
 	}
+}).catch(function () {
+	return {
+		cdnUrl: LocalStorage.webSignCdnUrl,
+		packageTimestamp: parseInt(
+			LocalStorage.webSignPackageTimestamp,
+			10
+		)
+	};
 }).
 
-/* Process signature data */
-then(function (s) {
-	var signatureLines	= s.split('\n');
-
-	var signatureData	= {
-		signature: signatureLines[0],
-		rsaKey: WebSign.config.publicKeys.rsa[parseInt(signatureLines[1], 10)],
-		sphincsKey: WebSign.config.publicKeys.sphincs[parseInt(signatureLines[2], 10)],
-		timestamp: parseInt(signatureLines[3], 10)
-	};
-
-	var packageUrl		=
-		WebSign.cdnUrl + WebSign.config.packagePath + '?' + signatureData.timestamp
-	;
-
+/* Get package */
+then(function (downloadMetadata) {
 	return Promise.all([
-		signatureData,
-		packageUrl,
-		superSphincs.importKeys({
-			public: {
-				rsa: signatureData.rsaKey,
-				sphincs: signatureData.sphincsKey
-			}
-		}),
-		fetch(packageUrl).then(function (response) {
+		downloadMetadata,
+		fetch(
+			downloadMetadata.cdnUrl + 'pkg?' + downloadMetadata.timestamp
+		).then(function (response) {
 			return response.text();
 		})
 	]);
-}).catch(function () {
-	return [
-		{
-			signature: null,
-			rsaKey: null,
-			sphincsKey: null,
-			timestamp: 0
-		},
-		'',
-		{},
-		'{}\n'
-	];
 }).
 
-/* Validate signature */
+/* Open package */
 then(function (results) {
-	var signatureData	= results[0];
-	var packageUrl		= results[1];
-	var publicKey		= results[2].publicKey;
-	var signed			= parseSigned(results[3]);
+	var downloadMetadata	= results[0];
+	var packageLines		= results[1].trim().split('\n');
 
-	/* Fall back to previous known good version if this one
-		is older or has invalid metadata */
-	if (
-		!signatureData.rsaKey ||
-		!signatureData.sphincsKey ||
-		signed.metadata.timestamp !== signatureData.timestamp ||
-		Date.now() > signed.metadata.expires ||
-		parseInt(LocalStorage.webSignTimestamp, 10) > signed.metadata.timestamp
-	) {
-		throw 'Invalid data.';
+	var packageData	= {
+		signed: packageLines[0],
+		rsaKey: Config.publicKeys.rsa[
+			parseInt(packageLines[1], 10)
+		],
+		sphincsKey: Config.publicKeys.sphincs[
+			parseInt(packageLines[2], 10)
+		]
+	};
+
+	if (!packageData.rsaKey || !packageData.sphincsKey) {
+		throw 'No valid public key specified.';
 	}
 
 	return Promise.all([
-		signed.metadata,
-		packageUrl,
-		superSphincs.verifyDetached(
-			signatureData.signature,
-			signed.complete,
-			publicKey,
-			true
+		downloadMetadata,
+		packageData.signed,
+		superSphincs.importKeys({
+			public: {
+				rsa: packageData.rsaKey,
+				sphincs: packageData.sphincsKey
+			}
+		})
+	]);
+}).then(function (results) {
+	var downloadMetadata	= results[0];
+	var signed				= results[1];
+	var publicKey			= results[2].publicKey;
+
+	return Promise.all([
+		downloadMetadata,
+		superSphincs.open(
+			signed,
+			publicKey
 		)
 	]);
 }).then(function (results) {
-	var metadata	= results[0];
-	var packageUrl	= results[1];
-	var isValid		= results[2].isValid;
-	var hash		= results[2].hash;
+	var downloadMetadata	= results[0];
+	var opened				= JSON.parse(results[1]);
 
-	if (!isValid) {
-		throw 'Invalid signature.';
+	/* Reject if expired or has invalid timestamp */
+	if (
+		Date.now() > opened.expires ||
+		downloadMetadata.packageTimestamp !== opened.timestamp
+	) {
+		throw 'Stale or invalid data.';
 	}
 
-	LocalStorage.webSignExpires			= metadata.expires;
-	LocalStorage.webSignHashWhitelist	= JSON.stringify(metadata.hashWhitelist);
-	LocalStorage.webSignTimestamp		= metadata.timestamp;
-	LocalStorage.webSignPackageUrl		= packageUrl;
-	LocalStorage.webSignPackageHash		= hash;
+	LocalStorage.webSignExpires				= opened.expires;
+	LocalStorage.webSignHashWhitelist		= JSON.stringify(opened.hashWhitelist);
+	LocalStorage.webSignPackageTimestamp	= opened.timestamp;
+	LocalStorage.webSignCdnUrl				= downloadMetadata.cdnUrl;
 
-	return package;
+	return opened.package;
 }).
 
-/* Invalid signature; attempt to grab previous
-	known good package from cache */
+/* Before finishing, perform self-administered
+	integrity check on WebSign bootstrap */
 catch(function () {
-	if (
-		!LocalStorage.webSignPackageUrl ||
-		!LocalStorage.webSignPackageHash ||
-		Date.now() > parseInt(LocalStorage.webSignExpires, 10)
-	) {
-		throw 'No fallback version.';
+	return null;
+}).then(function (package) {
+	return Promise.all([
+		package,
+		Promise.all(Config.files.map(function (file) {
+			return fetch(
+				file,
+				{credentials: 'include'}
+			).then(function (response) {
+				return response.text();
+			});
+		}))
+	]);
+}).then(function (results) {
+	var package			= results[0];
+	var fileContents	= results[1];
+
+	var bootstrapText	= Config.files.
+		map(function (file, i) {
+			return file + ':\n\n' + fileContents[i].trim();
+		}).
+		join('\n\n\n\n\n\n')
+	;
+
+	return Promise.all([
+		package,
+		bootstrapText,
+		superSphincs.hash(bootstrapText)
+	]);
+}).then(function (results) {
+	var package			= results[0];
+	var bootstrapText	= results[1];
+	var hash			= results[2].hex;
+
+	LocalStorage.webSignHashOld	= LocalStorage.webSignHash;
+	LocalStorage.webSignHash	= hash;
+
+	var hashWhitelist	= JSON.parse(LocalStorage.webSignHashWhitelist);
+
+	if (!hashWhitelist[LocalStorage.webSignHash]) {
+		throw {
+			webSignPanic: true,
+			bootstrapText: bootstrapText
+		};
+	}
+	else if (package) {
+		return package;
 	}
 
-	return new Promise(function (resolve, reject) {
-		setTimeout(reject, 3000);
-
-		fetch(LocalStorage.webSignPackageUrl).then(function (response) {
-			resolve(response.text());
-		});
-	}).then(function (s) {
-		var signed	= parseSigned(s);
-
-		return Promise.all([
-			signed.package,
-			superSphincs.hash(signed.complete)
-		]);
-	}).then(function (results) {
-		var package	= results[0];
-		var hash	= results[1].hex;
-
-		if (hash !== LocalStorage.webSignPackageHash) {
-			throw 'Fallback hash mismatch.';
-		}
-
-		WebSign.cdnUrl	= LocalStorage.webSignPackageUrl.
-			split('/').
-			slice(0, 4).
-			join('/') +
-			'/'
-		;
-
-		return package;
-	});
+	throw null;
 }).
 
 /* Successfully execute package */
 then(function (package) {
-	if (!validateBootstrap()) {
-		return;
-	}
+	var html	=
+		(package.
+			split('</html>').slice(0, -1).join('</html>').
+			split('</body>').slice(0, -1).join('</body>')
+		) +
+			Array.prototype.slice.apply(
+				document.querySelectorAll('script[websign-sri-include]')
+			).map(function (elem) { return elem.outerHTML }).join('') +
+			'<script>' +
+				'WebSignSRI(' +
+					'"' + LocalStorage.webSignCdnUrl + '"' +
+				').catch(function (err) {' +
+					'document.open("text/plain");' +
+					'document.write(err);' +
+					'document.close();' +
+				'});' +
+			'</script>' +
+		'</body></html>'
+	;
 
 	try {
-		var html	=
-			(package.
-				split('</html>').slice(0, -1).join('</html>').
-				split('</body>').slice(0, -1).join('</body>')
-			) +
-				Array.prototype.slice.apply(
-					document.querySelectorAll('script[websign-sri-include]')
-				).map(function (elem) { return elem.outerHTML }).join('') +
-				'<script>' +
-					'WebSignSRI("' + WebSign.cdnUrl + '").catch(function (err) {' +
-						'document.open("text/plain");' +
-						'document.write(err);' +
-						'document.close();' +
-					'});' +
-				'</script>' +
-			'</body></html>'
-		;
-
 		document.open('text/html');
 		document.write(html);
 		document.close();
@@ -291,100 +248,55 @@ then(function (package) {
 	catch (_) {}
 }).
 
-/* Abort */
-catch(function () {
-	if (!validateBootstrap()) {
-		return;
+/* Display either abortion screen or panic screen, depening on the error */
+catch(function (err) {
+	var messageElement;
+
+	if (!err || !err.webSignPanic) {
+		messageElement					= document.getElementById('pre-load-message');
+		messageElement.innerText		= Config.abortText;
+	}
+	else {
+		messageElement					= document.getElementById('panic-message');
+		messageElement.style.display	= 'block';
+
+		/* Also try to warn us, though in a serious attack this may be blocked */
+		fetch('https://mandrillapp.com/api/1.0/messages/send.json', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				key: 'HNz4JExN1MtpKz8uP2RD1Q',
+				message: {
+					from_email: 'test@mandrillapp.com',
+					to: [{
+						email: 'errors@cyph.com',
+						type: 'to'
+					}],
+					autotext: 'true',
+					subject: 'CYPH: SOMEONE JUST GOT THE WEBSIGN ERROR SCREEN LADS',
+					text:
+						navigator.language + '\n\n' +
+						navigator.userAgent + '\n\n' +
+						location.toString().replace(/\/#.*/g, '') + '\n\n' +
+						'\n\ncdn url: ' + LocalStorage.webSignCdnUrl +
+						'\n\ncurrent bootstrap hash: ' + LocalStorage.webSignHash +
+						'\n\nprevious bootstrap hash: ' + LocalStorage.webSignHashOld +
+						'\n\npackage hash: ' + LocalStorage.webSignPackageHash +
+						'\n\n\n\n' + err.bootstrapText
+				}
+			})
+		});
 	}
 
-	var preLoad			= document.getElementById('pre-load');
-	var preLoadMessage	= document.getElementById('pre-load-message');
+	var parent	= messageElement.parentElement;
 
-	while (true) {
-		var child	= preLoad.children[0];
+	for (var i = parent.children.length - 1 ; i >= 0 ; --i) {
+		var child	= parent.children[0];
 
-		if (child === preLoadMessage) {
-			break;
-		}
-		else {
-			preLoad.removeChild(child);
+		if (child !== messageElement) {
+			parent.removeChild(child);
 		}
 	}
-
-	preLoadMessage.innerText	= WebSign.config.abortText;
 });
-
-
-
-function parseSigned (s) {
-	var divider	= s.indexOf('\n');
-
-	return {
-		complete: s,
-		metadata: JSON.parse(s.slice(0, divider)),
-		package: s.slice(divider + 1)
-	};
-}
-
-function validateBootstrap () {
-	try {
-		var hashWhitelist	= JSON.parse(LocalStorage.webSignHashWhitelist);
-
-		if (hashWhitelist[LocalStorage.webSignHash]) {
-			return true;
-		}
-	}
-	catch (_) {
-		return true;
-	}
-
-	var preLoad			= document.getElementById('pre-load');
-	var panicMessage	= document.getElementById('panic-message');
-
-	while (true) {
-		var child	= preLoad.children[0];
-
-		if (child === panicMessage) {
-			break;
-		}
-		else {
-			preLoad.removeChild(child);
-		}
-	}
-
-	panicMessage.style.display	= 'block';
-
-	/* Also try to warn us, though in a serious attack this may be blocked */
-	fetch('https://mandrillapp.com/api/1.0/messages/send.json', {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify({
-			key: 'HNz4JExN1MtpKz8uP2RD1Q',
-			message: {
-				from_email: 'test@mandrillapp.com',
-				to: [{
-					email: 'errors@cyph.com',
-					type: 'to'
-				}],
-				autotext: 'true',
-				subject: 'CYPH: SOMEONE JUST GOT THE WEBSIGN ERROR SCREEN LADS',
-				text:
-					navigator.language + '\n\n' +
-					navigator.userAgent + '\n\n' +
-					location.toString().replace(/\/#.*/g, '') + '\n\n' +
-					'\n\ncdn url: ' + WebSign.cdnUrl +
-					'\n\ncurrent bootstrap hash: ' + LocalStorage.webSignHash +
-					'\n\nprevious bootstrap hash: ' + LocalStorage.webSignHashOld +
-					'\n\npackage hash: ' + LocalStorage.webSignPackageHash +
-					'\n\n\n\n' + WebSign.bootstrapText
-			}
-		})
-	});
-
-	return false;
-}
-
-
-}());
