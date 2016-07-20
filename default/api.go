@@ -40,7 +40,9 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		return err.Error(), http.StatusTeapot
 	}
 
-	tx, err := braintreeInit(h).Transaction().Create(&braintree.Transaction{
+	bt := braintreeInit(h)
+
+	tx, err := bt.Transaction().Create(&braintree.Transaction{
 		Type:               "sale",
 		Amount:             braintree.NewDecimal(amount, 2),
 		PaymentMethodNonce: nonce,
@@ -49,6 +51,8 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	if err != nil {
 		return err.Error(), http.StatusTeapot
 	}
+
+	bt.Transaction().SubmitForSettlement(tx.Id)
 
 	txJson, _ := json.Marshal(tx)
 
