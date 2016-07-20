@@ -87,13 +87,18 @@ server.on('message', message => {
 		const rsaIndex		= publicKeys.rsa.indexOf(signatureData.rsa);
 		const sphincsIndex	= publicKeys.sphincs.indexOf(signatureData.sphincs);
 
+		const signed		= Buffer.concat([
+			Buffer.from(signatureData.signature, 'base64'),
+			dataToSign
+		]).toString('base64').replace(/\s+/g, '');
+
 		superSphincs.importKeys({
 			public: {
 				rsa: publicKeys.rsa[rsaIndex],
 				sphincs: publicKeys.sphincs[sphincsIndex]
 			}
 		}).then(keyPair => superSphincs.open(
-			signatureData.signed,
+			signed,
 			keyPair.publicKey
 		)).then(opened => {
 			if (opened !== dataToSign.toString()) {
@@ -105,7 +110,7 @@ server.on('message', message => {
 			fs.writeFileSync(`${args.outputDir}/current`, timestamp);
 
 			fs.writeFileSync(`${args.outputDir}/pkg`,
-				signatureData.signed + '\n' +
+				signed + '\n' +
 				rsaIndex + '\n' +
 				sphincsIndex
 			);
