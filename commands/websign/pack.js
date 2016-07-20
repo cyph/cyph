@@ -49,45 +49,58 @@ const processDataSRI	= content => Promise.all((content.match(
 ));
 
 
-const $	= cheerio.load(fs.readFileSync(args.inputPath).toString());
+Promise.resolve().then(() => {
+	const html	= fs.readFileSync(args.inputPath).toString();
 
-Promise.all(Array.from(
-	$('script[src], link[rel="stylesheet"][href]').map((_, elem) => {
-		const $elem		= $(elem);
-		const tagName	= $elem.prop('tagName').toLowerCase();
+	if (args.enableSRI) {
+		return processDataSRI(html);
+	}
 
-		const enableSRI	=
-			args.enableSRI &&
-			$elem.attr('websign-sri-disable') === undefined
-		;
+	return html;
+}).then(html => {
+	const $	= cheerio.load(html);
 
-		const path		= $elem.attr(
-			tagName === 'script' ? 'src' : 'href'
-		).split('?')[0].replace(/^\//, '');
+	return Promise.all([$, Promise.all(Array.from(
+		$('script[src], link[rel="stylesheet"][href]').map((_, elem) => {
+			const $elem		= $(elem);
+			const tagName	= $elem.prop('tagName').toLowerCase();
 
-		const content	= fs.readFileSync(path).toString().
-			replace(/\n\/\/# sourceMappingURL=.*?\.map/g, '').
-			replace(/\n\/*# sourceMappingURL=.*?\.map *\//g, '').
-			trim()
-		;
+			const enableSRI	=
+				args.enableSRI &&
+				$elem.attr('websign-sri-disable') === undefined
+			;
 
-		return Promise.all([
-			$elem,
-			tagName,
-			enableSRI,
-			path,
-			content,
-			superSphincs.hash(content)
-		]);
-	})
-)).then(results => {
-	for (const result of results) {
-		const $elem		= result[0];
-		const tagName	= result[1];
-		const enableSRI	= result[2];
-		const path		= result[3];
-		const content	= result[4];
-		const hash		= result[5].hex;
+			const path		= $elem.attr(
+				tagName === 'script' ? 'src' : 'href'
+			).split('?')[0].replace(/^\//, '');
+
+			const content	= fs.readFileSync(path).toString().
+				replace(/\n\/\/# sourceMappingURL=.*?\.map/g, '').
+				replace(/\n\/*# sourceMappingURL=.*?\.map *\//g, '').
+				trim()
+			;
+
+			return Promise.all([
+				$elem,
+				tagName,
+				enableSRI,
+				path,
+				content,
+				superSphincs.hash(content)
+			]);
+		})
+	))]);
+}).then(results => {
+	const $				= results[0];
+	const subresources	= results[1];
+
+	for (const subresource of subresources) {
+		const $elem		= subresource[0];
+		const tagName	= subresource[1];
+		const enableSRI	= subresource[2];
+		const path		= subresource[3];
+		const content	= subresource[4];
+		const hash		= subresource[5].hex;
 
 		const specialAttributes	= [
 			'websign-sri-include'
@@ -134,15 +147,10 @@ Promise.all(Array.from(
 		);
 	}
 
-	Promise.resolve().then(() => {
-		const output	= $.html().trim().replace(/use strict/g, '');
 
-		if (args.enableSRI) {
-			return processDataSRI(output);
-		}
+	const output	= $.html().trim().replace(/use strict/g, '');
 
-		return output;
-	}).then(output => fs.writeFileSync(
+	fs.writeFileSync(
 		args.outputPath,
 		args.enableMinify ?
 			htmlMinifier.minify(output, {
@@ -152,7 +160,7 @@ Promise.all(Array.from(
 				removeComments: true
 			}) :
 			output
-	));
+	);
 }).catch(err =>
 	console.error(err)
 );
