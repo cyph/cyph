@@ -58,22 +58,22 @@ fi
 if [ ! $simple ] ; then
 	defaultHeadersString='# default_headers'
 	defaultHeaders="$(cat headers.yaml)"
-	ls */*.yaml | xargs -I% sed -ri.bak "s/  ${defaultHeadersString}(.*)/\
+	ls */*.yaml | xargs -I% sed -ri "s/  ${defaultHeadersString}(.*)/\
 		headers=\"\$(cat headers.yaml)\" ; \
 		for header in \1 ; do \
 			headers=\"\$(echo \"\$headers\" | grep -v \$header:)\" ; \
 		done ; \
 		echo \"\$headers\" \
 	/ge" %
-	ls */*.yaml | xargs -I% sed -i.bak 's|###| |g' %
+	ls */*.yaml | xargs -I% sed -i 's|###| |g' %
 
 	defaultCSPString='DEFAULT_CSP'
 	fullCSP="$(cat shared/websign/csp | tr -d '\n')"
 	coreCSP="$(cat shared/websign/csp | grep -P 'referrer|script-src|style-src|upgrade-insecure-requests' | tr -d '\n')"
 	cyphComCSP="$(cat shared/websign/csp | tr -d '\n' | sed 's|frame-src|frame-src https://*.facebook.com https://*.braintreegateway.com|g')"
-	ls cyph.com/*.yaml | xargs -I% sed -i.bak "s|${defaultCSPString}|\"${cyphComCSP}\"|g" %
-	ls */*.yaml | xargs -I% sed -i.bak "s|${defaultCSPString}|\"${coreCSP}\"|g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s|${defaultCSPString}|${fullCSP}|g" %
+	ls cyph.com/*.yaml | xargs -I% sed -i "s|${defaultCSPString}|\"${cyphComCSP}\"|g" %
+	ls */*.yaml | xargs -I% sed -i "s|${defaultCSPString}|\"${coreCSP}\"|g" %
+	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|${defaultCSPString}|${fullCSP}|g" %
 
 	# Expand connect-src and frame-src on blog to support social media widgets and stuff
 
@@ -90,41 +90,41 @@ if [ ! $simple ] ; then
 fi
 
 defaultHost='\${locationData\.protocol}\/\/\${locationData\.hostname}:'
-ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}43000//g" %
-ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak 's/isLocalEnv: boolean		= true/isLocalEnv: boolean		= false/g' %
+ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s/${defaultHost}43000//g" %
+ls */js/cyph/envdeploy.ts | xargs -I% sed -i 's/isLocalEnv: boolean		= true/isLocalEnv: boolean		= false/g' %
 
 if [ $branch == 'staging' ] ; then
-	sed -i.bak "s/false, \/\* IsProd \*\//true,/g" default/config.go
+	sed -i "s/false, \/\* IsProd \*\//true,/g" default/config.go
 fi
 
 if [ $test ] ; then
-	sed -i.bak "s/staging/${version}/g" default/config.go
-	sed -i.bak "s/http:\/\/localhost:42000/https:\/\/${version}-dot-cyphme.appspot.com/g" default/config.go
-	ls */*.yaml */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/api.cyph.com/${version}-dot-cyphme.appspot.com/g" %
-	ls */*.yaml */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/www.cyph.com/${version}-dot-cyph-com-dot-cyphme.appspot.com/g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42000/https:\/\/${version}-dot-cyphme.appspot.com/g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42001/https:\/\/${version}-dot-cyph-com-dot-cyphme.appspot.com/g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42002/https:\/\/${version}-dot-cyph-im-dot-cyphme.appspot.com/g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/CYPH-ME/https:\/\/${version}-dot-cyph-me-dot-cyphme.appspot.com/g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/CYPH-VIDEO/https:\/\/${version}-dot-cyph-video-dot-cyphme.appspot.com/g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/CYPH-AUDIO/https:\/\/${version}-dot-cyph-audio-dot-cyphme.appspot.com/g" %
+	sed -i "s/staging/${version}/g" default/config.go
+	sed -i "s/http:\/\/localhost:42000/https:\/\/${version}-dot-cyphme.appspot.com/g" default/config.go
+	ls */*.yaml */js/cyph/envdeploy.ts | xargs -I% sed -i "s/api.cyph.com/${version}-dot-cyphme.appspot.com/g" %
+	ls */*.yaml */js/cyph/envdeploy.ts | xargs -I% sed -i "s/www.cyph.com/${version}-dot-cyph-com-dot-cyphme.appspot.com/g" %
+	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s/${defaultHost}42000/https:\/\/${version}-dot-cyphme.appspot.com/g" %
+	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s/${defaultHost}42001/https:\/\/${version}-dot-cyph-com-dot-cyphme.appspot.com/g" %
+	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s/${defaultHost}42002/https:\/\/${version}-dot-cyph-im-dot-cyphme.appspot.com/g" %
+	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s/CYPH-ME/https:\/\/${version}-dot-cyph-me-dot-cyphme.appspot.com/g" %
+	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s/CYPH-VIDEO/https:\/\/${version}-dot-cyph-video-dot-cyphme.appspot.com/g" %
+	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s/CYPH-AUDIO/https:\/\/${version}-dot-cyph-audio-dot-cyphme.appspot.com/g" %
 
 	# Disable caching and HPKP in test environments
-	ls */*.yaml | xargs -I% sed -i.bak 's/Public-Key-Pins: .*/Pragma: no-cache/g' %
-	ls */*.yaml | xargs -I% sed -i.bak 's/max-age=31536000/max-age=0/g' %
+	ls */*.yaml | xargs -I% sed -i 's/Public-Key-Pins: .*/Pragma: no-cache/g' %
+	ls */*.yaml | xargs -I% sed -i 's/max-age=31536000/max-age=0/g' %
 
 	for yaml in `ls */cyph*.yaml` ; do
 		cat $yaml | perl -pe 's/(- url: .*)/\1\n  login: admin/g' > $yaml.new
 		mv $yaml.new $yaml
 	done
 else
-	sed -i.bak "s/http:\/\/localhost:42000/https:\/\/api.cyph.com/g" default/config.go
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42000/https:\/\/api.cyph.com/g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42001/https:\/\/www.cyph.com/g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/${defaultHost}42002/https:\/\/cyph.im/g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/CYPH-ME/https:\/\/cyph.me/g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/CYPH-VIDEO/https:\/\/cyph.video/g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i.bak "s/CYPH-AUDIO/https:\/\/cyph.audio/g" %
+	sed -i "s/http:\/\/localhost:42000/https:\/\/api.cyph.com/g" default/config.go
+	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s/${defaultHost}42000/https:\/\/api.cyph.com/g" %
+	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s/${defaultHost}42001/https:\/\/www.cyph.com/g" %
+	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s/${defaultHost}42002/https:\/\/cyph.im/g" %
+	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s/CYPH-ME/https:\/\/cyph.me/g" %
+	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s/CYPH-VIDEO/https:\/\/cyph.video/g" %
+	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s/CYPH-AUDIO/https:\/\/cyph.audio/g" %
 
 	version=prod
 fi
@@ -132,7 +132,7 @@ fi
 
 # Blog
 cd cyph.com
-sed -i.bak 's|blog/build|blog|g' cyph-com.yaml
+sed -i 's|blog/build|blog|g' cyph-com.yaml
 mv blog blag
 rm -rf blag/theme/_posts 2> /dev/null
 mv blag/posts blag/theme/_posts
@@ -229,8 +229,7 @@ if [ ! $simple ] ; then
 					dataURI="data:$(echo -n "$(file --mime-type "$f")" | perl -pe 's/.*\s+(.*?)$/\1/g');base64,$(base64 "$f")"
 
 					echo "s|/$f|$dataURI|g" | tr -d '\n' > $g.tmp
-					sed -i.bak -f $g.tmp $g
-					rm $g.tmp $g.bak
+					sed -i -f $g.tmp $g
 				fi
 			done
 		done
@@ -313,8 +312,6 @@ if [ ! $simple ] ; then
 	done
 fi
 
-
-find . -name '*.bak' | xargs rm
 
 if [ ! $test ] ; then
 	rm -rf */lib/js/crypto
