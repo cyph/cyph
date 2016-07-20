@@ -254,7 +254,7 @@ if [ ! $simple ] ; then
 
 			cat websign/js/main.js | \
 				tr '\n' '☁' | \
-				perl -pe 's/(\(function \(\) \{).*?(var WebSign)/\1☁☁☁\2/' | \
+				perl -pe 's/\/\*.*?\/\*/\/\*/' | \
 				sed "s|location.host|'${project}'|g" | \
 				sed "s|api.cyph.com|${version}-dot-cyphme.appspot.com|g" | \
 				tr '☁' '\n' \
