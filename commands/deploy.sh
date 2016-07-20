@@ -284,38 +284,51 @@ if [ ! $simple ] ; then
 			-not -name 'favicon.ico' \
 			-exec rm -rf {} \;
 
-		currentDir="$(pwd)"
 		cd ..
 
-		if [ ! -d github.io ] ; then
+		if [ -d cdn ] ; then
+			for repo in cdn github.io ; do
+				cd $repo
+				git reset --hard
+				git clean -f
+				git pull
+				cd ..
+			done
+		else
+			git clone git@github.com:cyph/cdn.git
 			git clone git@github.com:cyph/cyph.github.io.git github.io
 		fi
 
-		cd github.io
-		git reset --hard
-		git clean -f
-		git pull
-
-		rm -rf ${project}
+		rm -rf cdn/${project} github.io/${project}
 
 		echo "Press enter to initiate signing process for ${project}."
 		read
 
 		../commands/websign/sign.js \
 			"${websignhashes}" \
-			${currentDir}/pkg \
-			${project} \
+			${d}/pkg \
+			cdn/${project} \
 		|| exit 1
 
-		if [ -d ${currentDir}/pkg-subresources ] ; then
-			mv ${currentDir}/pkg-subresources/* ${project}/
-			rm -rf ${currentDir}/pkg-subresources
+		if [ -d ${d}/pkg-subresources ] ; then
+			mv ${d}/pkg-subresources/* cdn/${project}/
+			rm -rf ${d}/pkg-subresources
 		fi
 
-		chmod -R 777 .
-		git add .
-		git commit -a -m 'package update'
-		git push
+		cp -rf cdn/${project} github.io/
+
+		zopfli -i1000 $(find cdn/${project} -type f)
+		find cdn/${project} -type f -not -name '*.gz' -exec rm {} \;
+
+		for repo in cdn github.io ; do
+			cd $repo
+			chmod -R 777 .
+			git add .
+			git commit -a -m 'package update'
+			git push
+			cd ..
+		done
+
 		cd ${currentDir}
 
 		cd ..

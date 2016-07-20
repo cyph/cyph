@@ -13,7 +13,7 @@ sed -i 's/# deb /deb /g' /etc/apt/sources.list
 sed -i 's/\/\/.*archive.ubuntu.com/\/\/archive.ubuntu.com/g' /etc/apt/sources.list
 
 export DEBIAN_FRONTEND=noninteractive
-apt-add-repository -y ppa:nginx/development
+apt-add-repository -y ppa:ondrej/nginx
 apt-get -y --force-yes update
 apt-get -y --force-yes upgrade
 apt-get -y --force-yes install aptitude nginx openssl unzip
@@ -71,7 +71,7 @@ http {
 	##
 
 	server {
-		listen 443 ssl;
+		listen 443 ssl http2;
 		listen [::]:443 ipv6only=on;
 
 		ssl_certificate ssl/cert.pem;
@@ -106,16 +106,15 @@ cat > /cyphcdn.sh << EndOfMessage
 mkdir /cyphcdn.new
 cd /cyphcdn.new
 
-wget https://github.com/cyph/cyph.github.io/archive/master.zip -O dothemove.zip
+wget https://github.com/cyph/cdn/archive/master.zip -O dothemove.zip
 unzip dothemove.zip
 rm dothemove.zip
 repo="\$(ls)"
 repoCount="\$(ls | wc -l)"
-if [ $repoCount == 1 ] ; then
-	mv $repo/* ./
-	rm -rf $repo
+if [ \$repoCount == 1 ] ; then
+	mv \$repo/* ./
+	rm -rf \$repo
 fi
-gzip -9r .
 chmod 777 -R .
 
 cd /
@@ -126,12 +125,6 @@ if [ -d /cyphcdn.new/websign ] ; then
 	mv /cyphcdn.new /cyphcdn
 else
 	rm -rf /cyphcdn.new
-fi
-
-
-if [ \$(ps aux | grep nginx | grep -v grep | wc -l) -lt 1 ] ; then
-	service nginx stop
-	service nginx start
 fi
 EndOfMessage
 
