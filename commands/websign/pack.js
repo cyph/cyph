@@ -14,6 +14,41 @@ const args			= {
 };
 
 
+const writeSubresource	= (path, content) => {
+	const fullPath	= `${args.outputPath}-subresources/${path}`;
+	mkdirp.sync(fullPath.split('/').slice(0, -1).join('/'));
+
+	fs.writeFileSync(
+		fullPath,
+		content
+	);
+};
+
+const processDataSRI	= content => Promise.all((content.match(
+	/WEBSIGN-SRI-DATA-START☁.*?☁data:.*?☁WEBSIGN-SRI-DATA-END/g
+) || []).map(match => {
+	const matchSplit	= match.split('☁');
+	const matchPath		= matchSplit[1];
+	const matchData		= matchSplit[2];
+
+	writeSubresource(matchPath, matchData);
+
+	return superSphincs.hash(matchData).then(hash => ({
+		fullMatch: match,
+		path: matchPath,
+		hash: hash.hex
+	}));
+})).then(results => results.reduce(
+	(newContent, result) => newContent.replace(
+		result.fullMatch,
+		`websign-sri-data ` +
+			`websign-sri-path='${result.path}' ` +
+			`websign-sri-hash='${result.hash}'`
+	),
+	content
+));
+
+
 const $	= cheerio.load(fs.readFileSync(args.inputPath).toString());
 
 Promise.all(Array.from(
@@ -61,9 +96,10 @@ Promise.all(Array.from(
 		).join(' ');
 
 		if (enableSRI) {
-			const newPath	= `${args.outputPath}-subresources/${path}`; 
-			mkdirp.sync(newPath.split('/').slice(0, -1).join('/'));
-			fs.writeFileSync(newPath, content);
+			processDataSRI(content).then(newContent => writeSubresource(
+				path,
+				newContent
+			));
 		}
 
 		$elem.replaceWith(
@@ -98,9 +134,16 @@ Promise.all(Array.from(
 		);
 	}
 
-	const output	= $.html().trim().replace(/use strict/g, '');
+	Promise.resolve().then(() => {
+		const output	= $.html().trim().replace(/use strict/g, '');
 
-	fs.writeFileSync(args.outputPath,
+		if (args.enableSRI) {
+			return processDataSRI(output);
+		}
+
+		return output;
+	}).then(output => fs.writeFileSync(
+		args.outputPath,
 		args.enableMinify ?
 			htmlMinifier.minify(output, {
 				collapseWhitespace: true,
@@ -109,7 +152,7 @@ Promise.all(Array.from(
 				removeComments: true
 			}) :
 			output
-	);
+	));
 }).catch(err =>
 	console.error(err)
 );

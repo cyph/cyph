@@ -4,30 +4,42 @@
  */
 
 function WebSignSRI (baseUrl) {
+	new MutationObserver(function () {
+		WebSignSRI_Process(baseUrl);
+	}).observe(document, {
+		childList: true,
+		attributes: false,
+		characterData: false,
+		subtree: true
+	});
+
+	return WebSignSRI_Process(baseUrl);
+}
+
+function WebSignSRI_Process (baseUrl) {
 	var outputIndex		= 0;
 	var outputElements	= [];
 
-	var selector		=
-		'[websign-sri-hash]' +
-		'[websign-sri-path]' +
-		':not([websign-sri-hash=""])' +
-		':not([websign-sri-path=""])'
-	;
-
 	var inputElements	= Array.prototype.slice.apply(
 		document.querySelectorAll(
-			'script' + selector + ', ' +
-			'link[rel="stylesheet"]' + selector
+			'[websign-sri-hash]' +
+			'[websign-sri-path]' +
+			':not([websign-sri-hash=""])' +
+			':not([websign-sri-path=""])'
 		)
 	);
 
+	function getAndRemoveAttribute (elem, attr) {
+		var value	= elem.getAttribute(attr);
+		elem.removeAttribute(attr);
+		return value;
+	}
 
 	return Promise.all(inputElements.map(function (elem, i) {
 		var tagName			= elem.tagName.toLowerCase();
-		var expectedHash	= elem.getAttribute('websign-sri-hash');
-		var path			= elem.getAttribute('websign-sri-path');
-
-		elem.parentElement.removeChild(elem);
+		var expectedHash	= getAndRemoveAttribute(elem, 'websign-sri-hash');
+		var path			= getAndRemoveAttribute(elem, 'websign-sri-path');
+		var isDataResource	= getAndRemoveAttribute(elem, 'websign-sri-data') !== undefined;
 
 		return fetch(
 			baseUrl +
@@ -48,29 +60,47 @@ function WebSignSRI (baseUrl) {
 			var actualHash	= results[1].hex;
 
 			if (actualHash !== expectedHash) {
-				throw 'Invalid subresource.\n\n' +
+				throw 'Invalid subresource ' + path + '.\n\n' +
 					'Expected: ' +  expectedHash + '.\n\n' +
 					'Received: ' + actualHash + '.'
 				;
 			}
 
-			outputElements[i]	= document.createElement(
-				tagName === 'script' ?
-					'script' :
-					'style'
-			);
+			if (isDataResource) {
+				elem.setAttribute(
+					tagName === 'link' ?
+						'href' :
+						'src'
+					,
+					content
+				);
 
-			outputElements[i].textContent	= content;
+				outputElements[i]	= elem;
+			}
+			else {
+				elem.parentElement.removeChild(elem);
+
+				outputElements[i]	= document.createElement(
+					tagName === 'script' ?
+						'script' :
+						'style'
+				);
+
+				outputElements[i].textContent	= content;
+			}
 
 			while (true) {
-				var elem	= outputElements[outputIndex];
+				var outputElement	= outputElements[outputIndex];
 
-				if (!elem) {
+				if (!outputElement) {
 					return;
 				}
 
+				if (!outputElement.parentElement) {
+					document.head.appendChild(outputElement);
+				}
+
 				outputElements[outputIndex]	= null;
-				document.head.appendChild(elem);
 				++outputIndex;
 			}
 		});
