@@ -59,9 +59,9 @@ unzip dothemove.zip
 rm dothemove.zip
 repo="\$(ls)"
 repoCount="\$(ls | wc -l)"
-if [ $repoCount == 1 ] ; then
-	mv $repo/* ./
-	rm -rf $repo
+if [ \$repoCount == 1 ] ; then
+	mv \$repo/* ./
+	rm -rf \$repo
 fi
 gzip -9r .
 chmod 777 -R .
@@ -81,6 +81,7 @@ if [ \$(ps aux | grep nginx | grep -v grep | wc -l) -lt 1 ] ; then
 	killall nginx
 	service nginx stop
 	service nginx start
+	service nginx restart
 fi
 
 if [ \$(ps aux | grep tor | grep -v grep | wc -l) -lt 1 ] ; then
