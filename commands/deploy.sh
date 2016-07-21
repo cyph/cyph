@@ -145,24 +145,30 @@ cd ..
 
 # Compile + translate + minify
 for d in cyph.com cyph.im ; do
-	if [ $simple ] ; then
-		cd $d
-	else
-		cd translations
-
-		echo "Translations = { \
-			$(echo "$( \
-				ls | \
-				sed 's/\.json//' | \
-				xargs -I% bash -c 'echo -n "\"%\": $(cat %.json | tr "\n" " "),"')" | \
-				rev | \
-				cut -c 2- | \
-				rev \
-			) \
-		};" > ../$d/js/preload/translations.ts
-
-		cd ../$d
+	if [ ! $simple ] ; then
+		node -e "fs.writeFileSync(
+			'$d/js/preload/translations.ts',
+			'Translations = ' + JSON.stringify(
+				child_process.spawnSync('find', [
+					'translations',
+					'-name',
+					'*.json'
+				]).stdout.toString().
+					split('\n').
+					filter(s => s).
+					map(file => ({
+						key: file.split('/')[1].split('.')[0],
+						value: JSON.parse(fs.readFileSync(file).toString())
+					})).
+					reduce((translations, o) => {
+						translations[o.key]	= o.value;
+						return translations;
+					}, {})
+			) + ';'
+		)"
 	fi
+
+	cd $d
 
 	../commands/build.sh --prod || exit;
 
@@ -203,7 +209,7 @@ if [ ! $simple ] ; then
 				"-not",
 				"-path",
 				"*websign*"
-			]).stdout.toString().trim().split("\n").map(s => s.slice(2));
+			]).stdout.toString().split("\n").filter(s => s).map(s => s.slice(2));
 
 			const filesToModify		= child_process.spawnSync("find", [
 				".",
@@ -218,7 +224,7 @@ if [ ! $simple ] ; then
 				"-and",
 				"-type",
 				"f"
-			]).stdout.toString().trim().split("\n");
+			]).stdout.toString().split("\n").filter(s => s);
 
 
 			filesToModify.reduce((promise, file) => promise.then(() => {
@@ -247,6 +253,9 @@ if [ ! $simple ] ; then
 		cd ..
 	done
 
+	git clone git@github.com:cyph/cdn.git
+	git clone git@github.com:cyph/cyph.github.io.git github.io
+
 	# WebSign preprocessing
 	for d in cyph.im cyph.video cyph.audio ; do
 		cd $d
@@ -264,7 +273,7 @@ if [ ! $simple ] ; then
 				"video",
 				"-type",
 				"f"
-			]).stdout.toString().trim().split("\n");
+			]).stdout.toString().split("\n").filter(s => s);
 
 			const filesToModify	= ["js", "css"].reduce((arr, ext) =>
 				arr.concat(
@@ -274,10 +283,10 @@ if [ ! $simple ] ; then
 						"*." + ext,
 						"-type",
 						"f"
-					]).stdout.toString().trim().split("\n")
+					]).stdout.toString().split("\n")
 				),
 				["index.html"]
-			);
+			).filter(s => s);
 
 
 			for (let file of filesToModify) {
@@ -354,19 +363,6 @@ if [ ! $simple ] ; then
 
 		cd ..
 
-		if [ -d cdn ] ; then
-			for repo in cdn github.io ; do
-				cd $repo
-				git reset --hard
-				git clean -f
-				git pull
-				cd ..
-			done
-		else
-			git clone git@github.com:cyph/cdn.git
-			git clone git@github.com:cyph/cyph.github.io.git github.io
-		fi
-
 		rm -rf cdn/${project} github.io/${project}
 
 		echo "Press enter to initiate signing process for ${project}."
@@ -387,15 +383,15 @@ if [ ! $simple ] ; then
 
 		zopfli -i1000 $(find cdn/${project} -type f)
 		find cdn/${project} -type f -not -name '*.gz' -exec rm {} \;
+	done
 
-		for repo in cdn github.io ; do
-			cd $repo
-			chmod -R 777 .
-			git add .
-			git commit -a -m 'package update'
-			git push
-			cd ..
-		done
+	for repo in cdn github.io ; do
+		cd $repo
+		chmod -R 777 .
+		git add .
+		git commit -a -m 'package update'
+		git push
+		cd ..
 	done
 fi
 
