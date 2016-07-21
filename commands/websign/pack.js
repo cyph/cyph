@@ -74,11 +74,19 @@ Promise.resolve().then(() => {
 				tagName === 'script' ? 'src' : 'href'
 			).split('?')[0].replace(/^\//, '');
 
-			const content	= fs.readFileSync(path).toString().
-				replace(/\n\/\/# sourceMappingURL=.*?\.map/g, '').
-				replace(/\n\/*# sourceMappingURL=.*?\.map *\//g, '').
-				trim()
-			;
+			const content	= Promise.resolve().then(() => {
+				const s	= fs.readFileSync(path).toString().
+					replace(/\n\/\/# sourceMappingURL=.*?\.map/g, '').
+					replace(/\n\/*# sourceMappingURL=.*?\.map *\//g, '').
+					trim()
+				;
+
+				if (enableSRI) {
+					return processDataSRI(s);
+				}
+
+				return s;
+			});
 
 			return Promise.all([
 				$elem,
@@ -86,7 +94,7 @@ Promise.resolve().then(() => {
 				enableSRI,
 				path,
 				content,
-				superSphincs.hash(content)
+				content.then(s => superSphincs.hash(s))
 			]);
 		})
 	))]);
@@ -109,10 +117,7 @@ Promise.resolve().then(() => {
 		).join(' ');
 
 		if (enableSRI) {
-			processDataSRI(content).then(newContent => writeSubresource(
-				path,
-				newContent
-			));
+			writeSubresource(path, content);
 		}
 
 		$elem.replaceWith(
