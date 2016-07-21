@@ -259,7 +259,7 @@ if [ ! $simple ] ; then
 			> websign/js/main.js.new
 			mv websign/js/main.js.new websign/js/main.js
 
-			sed -i "s|location.host|'${project}'|g" websign/js/config.js
+			sed -i "s|location.host|'${project}'|g" websign/js/main.js
 			sed -i "s|api.cyph.com|${version}-dot-cyphme.appspot.com|g" websign/js/config.js
 
 			websignhashes="{\"$(../commands/websign/bootstraphash.sh ${d})\": true}"
