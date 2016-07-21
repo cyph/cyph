@@ -253,24 +253,25 @@ if [ ! $simple ] ; then
 
 		echo 'WebSign'
 
-		resourceReplace () {
-			echo "${1}" | tr -d '\n' > "${2}.tmp"
-			sed -i -f "${2}.tmp" "${2}"
-		}
-
 		# Merge in base64'd images, fonts, video, and audio
 		find img fonts audio video -type f -print0 | while read -d $'\0' f ; do
 			for g in index.html $(find js -name '*.js') $(find css -name '*.css') ; do
 				if ( grep -o "$f" $g ) ; then
-					dataURI="data:$(echo -n "$(file --mime-type "$f")" | perl -pe 's/.*\s+(.*?)$/\1/g');base64,$(base64 "$f")"
+					regexF="$(echo "${f}" | sed 's|/|\\/|g')"
 
-					htmlImport="$(grep -oP "(src|href)=['\"]/${f}['\"]" $g)"
+					dataURI="data:$( \
+						echo -n "$(file --mime-type "$f")" | \
+						perl -pe 's/.*\s+(.*?)$/\1/g' \
+					);base64,$(base64 "$f")"
 
-					if [ "$htmlImport" ] ; then
-						resourceReplace "s|${htmlImport}|WEBSIGN-SRI-DATA-START☁${f}☁${dataURI}☁WEBSIGN-SRI-DATA-END|g" $g
-					fi
-
-					resourceReplace "s|/${f}|${dataURI}|g" $g
+					node -e "fs.writeFileSync('${g}', fs.readFileSync('${g}').toString().
+						replace(
+							/(src|href)=(\\\?['\"])\/${regexF}\\\?['\"]/g,
+							'WEBSIGN-SRI-DATA-START☁\$2☁${f}☁${dataURI}☁WEBSIGN-SRI-DATA-END'
+						).
+						split('/${f}').
+						join('${dataURI}')
+					)"
 				fi
 			done
 		done

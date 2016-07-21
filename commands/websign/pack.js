@@ -25,16 +25,18 @@ const writeSubresource	= (path, content) => {
 };
 
 const processDataSRI	= content => Promise.all((content.match(
-	/WEBSIGN-SRI-DATA-START☁.*?☁data:.*?☁WEBSIGN-SRI-DATA-END/g
+	/WEBSIGN-SRI-DATA-START☁.*?☁.*?☁data:.*?☁WEBSIGN-SRI-DATA-END/g
 ) || []).map(match => {
 	const matchSplit	= match.split('☁');
-	const matchPath		= matchSplit[1];
-	const matchData		= matchSplit[2];
+	const matchQuote	= matchSplit[1];
+	const matchPath		= matchSplit[2];
+	const matchData		= matchSplit[3];
 
 	writeSubresource(matchPath, matchData);
 
 	return superSphincs.hash(matchData).then(hash => ({
 		fullMatch: match,
+		quote: matchQuote,
 		path: matchPath,
 		hash: hash.hex
 	}));
@@ -42,8 +44,8 @@ const processDataSRI	= content => Promise.all((content.match(
 	(newContent, result) => newContent.replace(
 		result.fullMatch,
 		`websign-sri-data ` +
-			`websign-sri-path='${result.path}' ` +
-			`websign-sri-hash='${result.hash}'`
+			`websign-sri-path=${result.quote}${result.path}${result.quote} ` +
+			`websign-sri-hash=${result.quote}${result.hash}${result.quote}`
 	),
 	content
 ));
