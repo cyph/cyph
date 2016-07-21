@@ -31,15 +31,18 @@ function WebSignSRI_Process (baseUrl) {
 
 	function getAndRemoveAttribute (elem, attr) {
 		var value	= elem.getAttribute(attr);
+		var exists	= elem.hasAttribute(attr);
+
 		elem.removeAttribute(attr);
-		return value;
+
+		return exists ? value : null;
 	}
 
 	return Promise.all(inputElements.map(function (elem, i) {
 		var tagName			= elem.tagName.toLowerCase();
 		var expectedHash	= getAndRemoveAttribute(elem, 'websign-sri-hash');
 		var path			= getAndRemoveAttribute(elem, 'websign-sri-path');
-		var isDataResource	= getAndRemoveAttribute(elem, 'websign-sri-data') !== undefined;
+		var isDataResource	= getAndRemoveAttribute(elem, 'websign-sri-data') !== null;
 
 		return fetch(
 			baseUrl +
