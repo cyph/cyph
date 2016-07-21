@@ -5,13 +5,12 @@ import {IMutex} from 'imutex';
 import {ISession} from 'isession';
 import {Message} from 'message';
 import {Mutex} from 'mutex';
-import {ThreadedSession} from 'threadedsession';
 import {Analytics} from 'cyph/analytics';
 import {Config} from 'cyph/config';
 import {Env} from 'cyph/env';
 import {Errors} from 'cyph/errors';
 import {EventManager} from 'cyph/eventmanager';
-import {IController} from 'cyph/icontroller';
+import {IController} from 'cyph/icontroller'; 
 import {Timer} from 'cyph/timer';
 import {UrlState} from 'cyph/urlstate';
 import {Util} from 'cyph/util';
@@ -30,7 +29,6 @@ export {
 	Mutex,
 	RPCEvents,
 	State,
-	ThreadedSession,
 	ThreadedSessionEvents,
 	Users
 };
