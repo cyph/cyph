@@ -168,9 +168,11 @@ for d in cyph.com cyph.im ; do
 
 	if [ ! $simple ] ; then
 		echo "JS Minify ${d}"
-		find js -name '*.js' | xargs -I% uglifyjs -r \
-			importScripts,Cyph,ui,session,locals,threadSetupVars,self,isaac,onmessage,postMessage,onthreadmessage,WebSign,Translations,IS_WEB,crypto \
-			'%' -o '%' -m
+		find js -name '*.js' | xargs -I% uglifyjs '%' \
+			-m \
+			-c dead_code=true,unused=true \
+			-r importScripts,Cyph,ui,session,locals,threadSetupVars,self,isaac,onmessage,postMessage,onthreadmessage,WebSign,Translations,IS_WEB,crypto \
+			-o '%'
 
 		echo "CSS Minify ${d}"
 		find css -name '*.css' | grep -v bourbon/ | xargs -I% cleancss -o '%' '%'
