@@ -254,27 +254,62 @@ if [ ! $simple ] ; then
 		echo 'WebSign'
 
 		# Merge in base64'd images, fonts, video, and audio
-		find img fonts audio video -type f -print0 | while read -d $'\0' f ; do
-			for g in index.html $(find js -name '*.js') $(find css -name '*.css') ; do
-				if ( grep -o "$f" $g ) ; then
-					regexF="$(echo "${f}" | sed 's|/|\\/|g')"
+		node -e '
+			const datauri		= require("datauri");
 
-					dataURI="data:$( \
-						echo -n "$(file --mime-type "$f")" | \
-						perl -pe 's/.*\s+(.*?)$/\1/g' \
-					);base64,$(base64 "$f" | tr -d '\n')"
+			const filesToMerge	= child_process.spawnSync("find", [
+				"audio",
+				"fonts",
+				"img",
+				"video",
+				"-type",
+				"f"
+			]).stdout.toString().trim().split("\n");
 
-					node -e "fs.writeFileSync('${g}', fs.readFileSync('${g}').toString().
+			const filesToModify	= ["js", "css"].reduce((arr, ext) =>
+				arr.concat(
+					child_process.spawnSync("find", [
+						ext,
+						"-name",
+						"*." + ext,
+						"-type",
+						"f"
+					]).stdout.toString().trim().split("\n")
+				),
+				["index.html"]
+			);
+
+
+			for (let file of filesToModify) {
+				const originalContent	= fs.readFileSync(file).toString();
+				let content				= originalContent;
+
+				for (let subresource of filesToMerge) {
+					if (content.indexOf(subresource) < 0) {
+						continue;
+					}
+
+					const dataURI	= datauri.sync(subresource);
+
+					content	= content.
 						replace(
-							/(src|href)=(\\\?['\"])\/${regexF}\\\?['\"]/g,
-							'WEBSIGN-SRI-DATA-START☁\$2☁${f}☁${dataURI}☁WEBSIGN-SRI-DATA-END'
-						).
-						split('/${f}').
-						join('${dataURI}')
-					)"
-				fi
-			done
-		done
+							new RegExp(`(src|href)=(\\\\?['"'"'"])/?${subresource}\\\\?['"'"'"]`, "g"),
+							`WEBSIGN-SRI-DATA-START☁$2☁☁☁${dataURI}☁WEBSIGN-SRI-DATA-END`
+						).replace(
+							new RegExp(`/?${subresource}`, "g"),
+							dataURI
+						).replace(
+							/☁☁☁/g,
+							`☁${subresource}☁`
+						)
+					;
+				}
+
+				if (content !== originalContent) {
+					fs.writeFileSync(file, content);
+				}
+			}
+		'
 
 		# Merge imported libraries into threads
 		find js -name '*.js' | xargs -I% ../commands/websign/threadpack.js %

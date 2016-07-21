@@ -12,7 +12,7 @@ RUN apt-get install -y curl golang-go python perl devscripts build-essential cma
 RUN curl -sL https://deb.nodesource.com/setup_6.x | bash -
 RUN apt-get install -y nodejs
 
-RUN npm -g install html-minifier clean-css cheerio uglify-js typescript babel-cli babel-preset-es2015 typings typedoc jspm browserstack browserify supersphincs libsodium-wrappers glob read mkdirp
+RUN npm -g install html-minifier clean-css cheerio uglify-js typescript babel-cli babel-preset-es2015 typings typedoc jspm browserstack browserify supersphincs libsodium-wrappers glob read mkdirp datauri
 
 
 RUN echo '\
