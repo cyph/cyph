@@ -255,11 +255,12 @@ if [ ! $simple ] ; then
 			cat websign/js/main.js | \
 				tr '\n' '☁' | \
 				perl -pe 's/\/\*.*?\/\*/\/\*/' | \
-				sed "s|location.host|'${project}'|g" | \
-				sed "s|api.cyph.com|${version}-dot-cyphme.appspot.com|g" | \
 				tr '☁' '\n' \
 			> websign/js/main.js.new
 			mv websign/js/main.js.new websign/js/main.js
+
+			sed -i "s|location.host|'${project}'|g" websign/js/config.js
+			sed -i "s|api.cyph.com|${version}-dot-cyphme.appspot.com|g" websign/js/config.js
 
 			websignhashes="{\"$(../commands/websign/bootstraphash.sh ${d})\": true}"
 		else
@@ -304,7 +305,7 @@ if [ ! $simple ] ; then
 		echo "Press enter to initiate signing process for ${project}."
 		read
 
-		../commands/websign/sign.js \
+		./commands/websign/sign.js \
 			"${websignhashes}" \
 			${d}/pkg \
 			cdn/${project} \
@@ -328,10 +329,6 @@ if [ ! $simple ] ; then
 			git push
 			cd ..
 		done
-
-		cd ${currentDir}
-
-		cd ..
 	done
 fi
 
