@@ -13,5 +13,5 @@ var Config	= {
 		'unsupportedbrowser'
 	],
 
-	publicKeys: PUBLIC_KEYS
+	publicKeys: typeof PUBLIC_KEYS === 'undefined' ? [] : PUBLIC_KEYS
 };

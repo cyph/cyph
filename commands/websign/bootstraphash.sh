@@ -9,43 +9,28 @@ fi
 
 cd "$(cd "$(dirname "$0")"; pwd)/../../${d}"
 
-trimcat () {
-	node -e "console.log(fs.readFileSync('${1}').toString().trim())"
-}
+../commands/websign/pack.js websign/index.html .index.html.tmp
 
-rm .bootstrapText.tmp 2> /dev/null
+node -e '
+	eval(fs.readFileSync("websign/js/config.js").toString());
 
-for path in $( \
-	cat websign/js/config.js | \
-	tr '\n' ' ' | \
-	perl -pe 's/\s+//g' | \
-	perl -pe 's/.*?\[('"'"'.\/'"'"',.*?)\].*/\1,/g' | \
-	tr ',' '\n' | \
-	sed "s/'//g \
-") ; do
-	file=''
+	require("supersphincs").hash(
+		Config.files.
+			map(file => {
+				return file + ":\n\n" + fs.readFileSync(
+					file === "./" ?
+						".index.html.tmp" :
+						file === "serviceworker.js" ?
+							"websign/serviceworker.js" :
+							file === "unsupportedbrowser" ?
+								"websign/unsupportedbrowser.html" :
+								file
+				).toString().trim();
+			}).
+			join("\n\n\n\n\n\n")
+	).then(hash =>
+		console.log(hash.hex)
+	);
+'
 
-	echo -e "${path}:\n" >> .bootstrapText.tmp
-
-	if [ "${path}" == './' ] ; then
-		../commands/websign/pack.js websign/index.html .index.html.tmp
-		trimcat .index.html.tmp >> .bootstrapText.tmp
-		rm .index.html.tmp
-	elif [ "${path}" == 'serviceworker.js' ] ; then
-		trimcat websign/serviceworker.js >> .bootstrapText.tmp
-	elif [ "${path}" == 'unsupportedbrowser' ] ; then
-		trimcat websign/unsupportedbrowser.html >> .bootstrapText.tmp
-	else
-		trimcat "${path}" >> .bootstrapText.tmp
-	fi
-
-	echo -e '\n\n\n\n\n' >> .bootstrapText.tmp
-done
-
-node -e 'require("supersphincs").hash(
-	fs.readFileSync(".bootstrapText.tmp").toString().trim()
-).then(hash =>
-	console.log(hash.hex)
-)'
-
-rm .bootstrapText.tmp
+rm .index.html.tmp

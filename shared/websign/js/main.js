@@ -95,7 +95,7 @@ then(function (downloadMetadata) {
 	return Promise.all([
 		downloadMetadata,
 		fetch(
-			downloadMetadata.cdnUrl + 'pkg?' + downloadMetadata.timestamp
+			downloadMetadata.cdnUrl + 'pkg?' + downloadMetadata.packageTimestamp
 		).then(function (response) {
 			return response.text();
 		})
