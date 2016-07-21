@@ -7,7 +7,7 @@ import {EventManager} from 'eventmanager';
 import {Firebase} from 'firebase';
 import {IController} from 'icontroller';
 import {Strings} from 'strings';
-import {Thread} from 'thread';
+import {IThread} from 'ithread';
 import {Timer} from 'timer';
 import {Util} from 'util';
 
@@ -20,7 +20,7 @@ export {
 	Firebase,
 	IController,
 	Strings,
-	Thread,
+	IThread,
 	Timer,
 	Util
 };

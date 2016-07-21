@@ -1,6 +1,6 @@
 import {Config} from 'config';
 import {Env} from 'env';
-import {Thread} from 'thread';
+import {EventManager} from 'eventmanager';
 
 
 /**
@@ -182,7 +182,7 @@ export class Util {
 			}, 120000);
 		}
 		else {
-			Thread.callMainThread('Cyph.Util.openUrl', [url, downloadName]);
+			EventManager.callMainThread('Cyph.Util.openUrl', [url, downloadName]);
 		}
 	}
 

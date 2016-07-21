@@ -1,6 +1,5 @@
 import {Env} from 'env';
 import {EventManager} from 'eventmanager';
-import {Thread} from 'thread';
 
 
 /**
@@ -98,7 +97,7 @@ export class UrlState {
 			}
 		}
 		else {
-			Thread.callMainThread('Cyph.UrlState.set', [
+			EventManager.callMainThread('Cyph.UrlState.set', [
 				path,
 				shouldReplace,
 				shouldNotTrigger,

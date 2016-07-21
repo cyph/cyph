@@ -39,7 +39,6 @@ export class Files implements IFiles {
 			locals.callbackId	= 'files-' + Util.generateGuid();
 
 			const thread	= new Thread((Cyph: any, locals: any, importScripts: Function) => {
-				importScripts('/lib/js/crypto/libsodium/dist/browsers-sumo/combined/sodium.min.js');
 				importScripts('/js/cyph/crypto/crypto.js');
 
 				System.import('cyph/crypto/crypto').then(async (Crypto) => {
