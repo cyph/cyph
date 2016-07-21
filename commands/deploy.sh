@@ -262,7 +262,7 @@ if [ ! $simple ] ; then
 					dataURI="data:$( \
 						echo -n "$(file --mime-type "$f")" | \
 						perl -pe 's/.*\s+(.*?)$/\1/g' \
-					);base64,$(base64 "$f")"
+					);base64,$(base64 "$f" | tr -d '\n')"
 
 					node -e "fs.writeFileSync('${g}', fs.readFileSync('${g}').toString().
 						replace(
