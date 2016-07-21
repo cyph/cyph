@@ -188,32 +188,61 @@ done
 
 if [ ! $simple ] ; then
 	# Cache bust
-	echo "Cache bust"
-	filesToCacheBust="$( \
-		find shared ! -wholename '*websign*' -type f -print0 | \
-		while read -d $'\0' f ; do echo "$f" ; done \
-	)"
 	for d in cyph.com ; do
 		cd $d
 
-		filesToModify="$(find . -name '*.html') $(find js -name '*.js') $(find css -name '*.css')"
-		filesToModifyText="$(cat $filesToModify)"
+		echo 'Cache bust'
 
-		for f in $filesToCacheBust ; do
-			f="$(echo "$f" | sed 's/shared\///g' | sed 's/\.ts$/\.js/g' | sed 's/\.scss$/\.css/g')"
-			safeF="$(echo "$f" | sed 's/\//\\\//g' | sed 's/ /\\ /g' | sed 's/\_/\\_/g')"
+		node -e '
+			const superSphincs		= require("supersphincs");
 
-			if ( echo "$filesToModifyText" | grep -o "$safeF" ) ; then
-				for g in $filesToModify ; do
-					if ( grep -o "$safeF" $g ) ; then
-						cat $g | perl -pe \
-							"s/(\\/$safeF)/\1?`md5 "$f" | perl -pe 's/.*([a-f0-9]{32}).*/\1/g'`/g" \
-						> $g.new
-						mv $g.new $g
-					fi
-				done
-			fi
-		done
+			const filesToCacheBust	= child_process.spawnSync("find", [
+				".",
+				"-type",
+				"f",
+				"-not",
+				"-path",
+				"*websign*"
+			]).stdout.toString().trim().split("\n").map(s => s.slice(2));
+
+			const filesToModify		= child_process.spawnSync("find", [
+				".",
+				"-name",
+				"*.html",
+				"-or",
+				"-name",
+				"*.js",
+				"-or",
+				"-name",
+				"*.css",
+				"-and",
+				"-type",
+				"f"
+			]).stdout.toString().trim().split("\n");
+
+
+			filesToModify.reduce((promise, file) => promise.then(() => {
+				const originalContent	= fs.readFileSync(file).toString();
+
+				return filesToCacheBust.reduce((contentPromise, subresource) =>
+					contentPromise.then(content => {
+						if (content.indexOf(subresource) < 0) {
+							return content;
+						}
+
+						return superSphincs.hash(
+							fs.readFileSync(subresource).toString()
+						).then(hash =>
+							content.split(subresource).join(`${subresource}?${hash.hex}`)
+						);
+					})
+				, Promise.resolve(originalContent)).then(content => {
+					if (content !== originalContent) {
+						fs.writeFileSync(file, content);
+					}
+				});
+			}), Promise.resolve());
+		'
 
 		cd ..
 	done
