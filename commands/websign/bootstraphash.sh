@@ -7,10 +7,15 @@ cd "$(cd "$(dirname "$0")"; pwd)/../../shared"
 ../commands/websign/pack.js websign/index.html .index.html.tmp
 
 node -e '
-	eval(fs.readFileSync("websign/js/config.js").toString());
+	const files	= JSON.parse(
+		fs.readFileSync("websign/js/config.js").toString().
+			replace(/\s+/g, " ").
+			replace(/.*files:\s+(\[.*?\]),.*/, "$1").
+			replace(/'"'"'/g, "\"")
+	);
 
 	require("supersphincs").hash(
-		Config.files.
+		files.
 			map(file => {
 				return file + ":\n\n" + fs.readFileSync(
 					file === "./" ?
