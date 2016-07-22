@@ -213,7 +213,7 @@ cat > server.js <<- EOM
 			() => {}
 		));
 	}).then(() => new Promise((resolve, reject) => read({
-		prompt: 'Sign this text? (If so, reverse the network direction now.) [y/N] '
+		prompt: 'Sign these inputs? (If so, reverse the network direction now.) [y/N] '
 	}, (err, answer) => {
 		if (err) {
 			reject(err);

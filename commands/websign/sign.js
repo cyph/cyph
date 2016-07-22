@@ -108,7 +108,7 @@ server.on('message', message => {
 		}).then(keyPair => Promise.all(signedItems.map(signed => superSphincs.open(
 			signed,
 			keyPair.publicKey
-		)))).then(results => {
+		)))).then(openedItems => {
 			if (items.filter((o, i) => openedItems[i] !== o.inputData).length > 0) {
 				throw 'Incorrect signed data.';
 			}
