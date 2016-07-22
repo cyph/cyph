@@ -176,7 +176,6 @@ for d in cyph.com cyph.im ; do
 		echo "JS Minify ${d}"
 		find js -name '*.js' | xargs -I% uglifyjs '%' \
 			-m \
-			-c dead_code=true,unused=true \
 			-r importScripts,Cyph,ui,session,locals,threadSetupVars,self,isaac,onmessage,postMessage,onthreadmessage,WebSign,Translations,IS_WEB,crypto \
 			-o '%'
 
