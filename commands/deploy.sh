@@ -412,7 +412,7 @@ if [ ! $simple ] ; then
 
 		cp -rf cdn/${project} github.io/
 
-		find cdn -type f -not -path 'cdn/.git/*' -not -name '*.gz' -exec bash -c 'zopfli -i1000 {} ; rm {}' \;
+		find cdn/${project} -type f -not -name '*.gz' -exec bash -c 'zopfli -i1000 {} ; rm {}' \;
 	done
 
 	for repo in cdn github.io ; do
