@@ -2,12 +2,7 @@
 
 source ~/.bashrc
 
-d="${1}"
-if [ ! "${d}" ] ; then
-	d=shared
-fi
-
-cd "$(cd "$(dirname "$0")"; pwd)/../../${d}"
+cd "$(cd "$(dirname "$0")"; pwd)/../../shared"
 
 ../commands/websign/pack.js websign/index.html .index.html.tmp
 

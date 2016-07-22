@@ -367,7 +367,22 @@ cat > server.js <<- EOM
 
 			if (Object.keys(o.chunksReceived).length === numChunks) {
 				const buf		= new Buffer(o.data.buffer);
-				const text		= buf.toString();
+
+				const inputs	= (() => {
+					try {
+						const parsed	= JSON.parse(buf.toString());
+
+						if (
+							parsed instanceof Array &&
+							parsed.filter(s => typeof s !== 'string').length === 0
+						) {
+							return parsed;
+						}
+					}
+					catch (_) {}
+
+					return [];
+				})();
 
 				o.active			= false;
 				o.chunksReceived	= null;
@@ -375,20 +390,20 @@ cat > server.js <<- EOM
 
 				buf.fill(0);
 
-				reviewText(text).then(shouldSign =>
+				reviewText(JSON.stringify(inputs, null, '\n\n\t')).then(shouldSign =>
 					!shouldSign ?
 						null :
-						superSphincs.signDetached(
-							text,
+						Promise.all(inputs.map(s => superSphincs.signDetached(
+							s,
 							keyData.keyPair.privateKey
-						)
-				).then(signature => {
-					if (!signature) {
-						console.log('Text discarded.');
+						)))
+				).then(signatures => {
+					if (!signatures) {
+						console.log('Input discarded.');
 						return;
 					}
 
-					console.log('Signature generated.');
+					console.log('Signatures generated.');
 
 					child_process.spawnSync('sudo', [
 						'ip',
@@ -404,7 +419,7 @@ cat > server.js <<- EOM
 
 					const client			= dgram.createSocket('udp4');
 					const signatureBytes	= new Buffer(JSON.stringify({
-						signature,
+						signatures,
 						rsa: keyData.rsaKeyString,
 						sphincs: keyData.sphincsKeyString
 					}));
@@ -452,9 +467,9 @@ cat > server.js <<- EOM
 		console.log('Ready for input.');
 	});
 EOM
-
-
 chmod +x server.js
+
+
 cat >> .bashrc <<- EOM
 	if [ -f /autostart ] ; then
 		if [ -d /home/${oldusername} ] ; then

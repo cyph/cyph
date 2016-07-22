@@ -8,9 +8,8 @@ const os			= require('os');
 const superSphincs	= require('supersphincs');
 
 const args			= {
-	hashWhitelist: process.argv[2],
-	dataToSignPath: process.argv[3],
-	outputDir: process.argv[4]
+	hashWhitelist: JSON.parse(process.argv[2]),
+	items: process.argv.slice(3).filter(s => s)
 };
 
 const remoteAddress	= '10.0.0.42';
@@ -18,7 +17,7 @@ const port			= 31337;
 const chunkSize		= 576;
 
 const interfaces	= os.networkInterfaces();
-const macAddress	= new Buffer(
+const macAddress	= Buffer.from(
 	fs.readFileSync(
 		`${process.env['HOME']}/.cyph/agse.local.mac`
 	).toString().trim()
@@ -34,12 +33,19 @@ const publicKeys	= JSON.parse(
 const signatureTTL	= 2.5; // Months
 const timestamp		= Date.now();
 
-const dataToSign	= new Buffer(JSON.stringify({
-	timestamp,
-	expires: timestamp + signatureTTL * 2.628e+9,
-	hashWhitelist: JSON.parse(args.hashWhitelist),
-	package: fs.readFileSync(args.dataToSignPath).toString().trim()
+const items			= args.items.map(s => s.split('=')).map(arr => ({
+	outputDir: arr[1],
+	inputData: JSON.stringify({
+		timestamp,
+		expires: timestamp + signatureTTL * 2.628e+9,
+		hashWhitelist: args.hashWhitelist,
+		package: fs.readFileSync(arr[0]).toString().trim()
+	})
 }));
+
+const dataToSign	= Buffer.from(JSON.stringify(
+	items.map(o => o.inputData)
+));
 
 const id			= new Uint32Array(crypto.randomBytes(4).buffer)[0];
 const client		= dgram.createSocket('udp4');
@@ -87,38 +93,45 @@ server.on('message', message => {
 		const rsaIndex		= publicKeys.rsa.indexOf(signatureData.rsa);
 		const sphincsIndex	= publicKeys.sphincs.indexOf(signatureData.sphincs);
 
-		const signed		= Buffer.concat([
-			Buffer.from(signatureData.signature, 'base64'),
-			dataToSign
-		]).toString('base64').replace(/\s+/g, '');
+		const signedItems	= items.map((o, i) =>
+			Buffer.concat([
+				Buffer.from(signatureData.signatures[i], 'base64'),
+				Buffer.from(o.inputData)
+			]).toString('base64').replace(/\s+/g, '')
+		);
 
 		superSphincs.importKeys({
 			public: {
 				rsa: publicKeys.rsa[rsaIndex],
 				sphincs: publicKeys.sphincs[sphincsIndex]
 			}
-		}).then(keyPair => superSphincs.open(
+		}).then(keyPair => Promise.all(signedItems.map(signed => superSphincs.open(
 			signed,
 			keyPair.publicKey
-		)).then(opened => {
-			if (opened !== dataToSign.toString()) {
+		)))).then(results => {
+			if (items.filter((o, i) => openedItems[i] !== o.inputData).length > 0) {
 				throw 'Incorrect signed data.';
 			}
 
-			mkdirp.sync(args.outputDir);
+			for (let i = 0 ; i < items.length ; ++i) {
+				const outputDir	= items[i].outputDir;
 
-			fs.writeFileSync(`${args.outputDir}/current`, timestamp);
+				mkdirp.sync(outputDir);
 
-			fs.writeFileSync(`${args.outputDir}/pkg`,
-				signed + '\n' +
-				rsaIndex + '\n' +
-				sphincsIndex
-			);
+				fs.writeFileSync(`${outputDir}/current`, timestamp);
 
-			console.log(`${args.outputDir} signed.`);
+				fs.writeFileSync(`${outputDir}/pkg`,
+					signedItems[i] + '\n' +
+					rsaIndex + '\n' +
+					sphincsIndex
+				);
+
+				console.log(`${outputDir} signed.`);
+			}
+
 			process.exit(0);
 		}).catch(() => {
-			console.error('Invalid signature.');
+			console.error('Invalid signatures.');
 			process.exit(1);
 		});
 	}

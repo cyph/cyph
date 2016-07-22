@@ -5,6 +5,12 @@ source ~/.bashrc
 dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd)/..
 
+activeProjects='cyph.com cyph.im cyph.video cyph.audio'
+websignedProjects='cyph.im cyph.video cyph.audio'
+compiledProjects='cyph.com cyph.im'
+cacheBustedProjects='cyph.com'
+
+
 gcloud auth login
 
 test=true
@@ -36,7 +42,25 @@ mkdir .build
 cp -rf * .build/
 cd .build
 
-for project in cyph.com cyph.im cyph.video cyph.audio ; do
+cd shared
+websignHashWhitelist="$(cat websign/hashwhitelist.json)"
+if [ $test ] ; then
+	cat websign/js/main.js | \
+		tr '\n' '☁' | \
+		perl -pe 's/\/\*.*?\/\*/\/\*/' | \
+		tr '☁' '\n' \
+	> websign/js/main.js.new
+	mv websign/js/main.js.new websign/js/main.js
+
+	hostRegex='/(.*?-.*?)-dot-(.*?)-(.*?)-.*/'
+	sed -i "s|location.host|location.host.replace(${hostRegex}, '\$1.\$2.\$3')|g" websign/js/main.js
+	sed -i "s|api.cyph.com|location.host.replace(${hostRegex}, '\$1')|g" websign/js/config.js
+
+	websignHashWhitelist="{\"$(../commands/websign/bootstraphash.sh)\": true}"
+fi
+cd ..
+
+for project in $activeProjects ; do
 	cp -rf shared/* $project/
 done
 
@@ -53,6 +77,14 @@ fi
 if [ $simple ] ; then
 	version="simple-${version}"
 fi
+
+projectname () {
+	if [ $test ] ; then
+		echo "${version}.${1}"
+	else
+		echo "${1}"
+	fi
+}
 
 
 if [ ! $simple ] ; then
@@ -144,7 +176,7 @@ cd ..
 
 
 # Compile + translate + minify
-for d in cyph.com cyph.im ; do
+for d in $compiledProjects ; do
 	if [ ! $simple ] ; then
 		node -e "fs.writeFileSync(
 			'$d/js/preload/translations.ts',
@@ -193,10 +225,12 @@ done
 
 if [ ! $simple ] ; then
 	# Cache bust
-	for d in cyph.com ; do
+	for d in $cacheBustedProjects ; do
 		cd $d
 
-		echo 'Cache bust'
+		project="$(projectname $d)"
+
+		echo "Cache bust ${project}"
 
 		node -e '
 			const superSphincs		= require("supersphincs");
@@ -256,10 +290,12 @@ if [ ! $simple ] ; then
 	git clone git@github.com:cyph/cyph.github.io.git github.io
 
 	# WebSign preprocessing
-	for d in cyph.im cyph.video cyph.audio ; do
+	for d in $websignedProjects ; do
 		cd $d
 
-		echo 'WebSign'
+		project="$(projectname $d)"
+
+		echo "WebSign ${project}"
 
 		# Merge in base64'd images, fonts, video, and audio
 		node -e '
@@ -322,26 +358,6 @@ if [ ! $simple ] ; then
 		# Merge imported libraries into threads
 		find js -name '*.js' | xargs -I% ../commands/websign/threadpack.js %
 
-		websignhashes=''
-		project="${d}"
-		if [ $test ] ; then
-			project="${version}.${d}"
-
-			cat websign/js/main.js | \
-				tr '\n' '☁' | \
-				perl -pe 's/\/\*.*?\/\*/\/\*/' | \
-				tr '☁' '\n' \
-			> websign/js/main.js.new
-			mv websign/js/main.js.new websign/js/main.js
-
-			sed -i "s|location.host|'${project}'|g" websign/js/main.js
-			sed -i "s|api.cyph.com|${version}-dot-cyphme.appspot.com|g" websign/js/config.js
-
-			websignhashes="{\"$(../commands/websign/bootstraphash.sh ${d})\": true}"
-		else
-			websignhashes="$(cat websignhashes.json)"
-		fi
-
 		../commands/websign/pack.js --sri --minify index.html pkg
 
 		../commands/websign/pack.js websign/index.html index.html
@@ -363,15 +379,21 @@ if [ ! $simple ] ; then
 		cd ..
 
 		rm -rf cdn/${project} github.io/${project}
+	done
 
-		echo "Press enter to initiate signing process for ${project}."
-		read
+	echo "Press enter to initiate signing process."
+	read
 
-		./commands/websign/sign.js \
-			"${websignhashes}" \
-			${d}/pkg \
-			cdn/${project} \
-		|| exit 1
+	./commands/websign/sign.js "${websignHashWhitelist}" $(
+		for d in $websignedProjects ; do
+			echo -n "'${d}/pkg=cdn/$(projectname ${d})' "
+		done
+	) || exit 1
+
+	for d in $websignedProjects ; do
+		project="$(projectname $d)"
+
+		rm ${d}/pkg
 
 		if [ -d ${d}/pkg-subresources ] ; then
 			mv ${d}/pkg-subresources/* cdn/${project}/
@@ -380,8 +402,7 @@ if [ ! $simple ] ; then
 
 		cp -rf cdn/${project} github.io/
 
-		zopfli -i1000 $(find cdn/${project} -type f)
-		find cdn/${project} -type f -not -name '*.gz' -exec rm {} \;
+		find cdn -type f -not -name '*.gz' -exec bash -c 'zopfli -i1000 {} ; rm {}' \;
 	done
 
 	for repo in cdn github.io ; do
