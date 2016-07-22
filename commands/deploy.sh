@@ -54,7 +54,7 @@ if [ $test ] ; then
 
 	hostRegex='/(.*?-.*?)-dot-(.*?)-(.*?)-.*/'
 	sed -i "s|location.host|location.host.replace(${hostRegex}, '\$1.\$2.\$3')|g" websign/js/main.js
-	sed -i "s|api.cyph.com|location.host.replace(${hostRegex}, '\$1')|g" websign/js/config.js
+	sed -i "s|api.cyph.com|' + location.host.replace(${hostRegex}, '\$1') + '|g" websign/js/config.js
 
 	websignHashWhitelist="{\"$(../commands/websign/bootstraphash.sh)\": true}"
 fi
