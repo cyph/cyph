@@ -22,6 +22,12 @@ elif [ "${1}" == '--simple' ] ; then
 	shift
 fi
 
+commit=true
+if [ "${1}" == '--no-commit' ] ; then
+	commit=''
+	shift
+fi
+
 site=''
 if [ "${1}" == '--site' ] ; then
 	shift
@@ -29,12 +35,14 @@ if [ "${1}" == '--site' ] ; then
 	shift
 fi
 
-comment="${*}"
-if [ "${comment}" == "" -a ! "${simple}" ] ; then
-	comment=deploy
-fi
-if [ "${comment}" ] ; then
-	./commands/commit.sh "${comment}"
+if [ "${commit}" ] ; then
+	comment="${*}"
+	if [ "${comment}" == "" -a ! "${simple}" ] ; then
+		comment=deploy
+	fi
+	if [ "${comment}" ] ; then
+		./commands/commit.sh "${comment}"
+	fi
 fi
 
 rm -rf .build
