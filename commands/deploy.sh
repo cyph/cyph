@@ -177,6 +177,8 @@ cd ..
 
 # Compile + translate + minify
 for d in $compiledProjects ; do
+	project="$(projectname $d)"
+
 	if [ ! $simple ] ; then
 		node -e "fs.writeFileSync(
 			'$d/js/preload/translations.ts',
@@ -205,16 +207,16 @@ for d in $compiledProjects ; do
 	../commands/build.sh --prod || exit;
 
 	if [ ! $simple ] ; then
-		echo "JS Minify ${d}"
+		echo "JS Minify ${project}"
 		find js -name '*.js' | xargs -I% uglifyjs '%' \
 			-m \
 			-r importScripts,Cyph,ui,session,locals,threadSetupVars,self,isaac,onmessage,postMessage,onthreadmessage,WebSign,Translations,IS_WEB,crypto \
 			-o '%'
 
-		echo "CSS Minify ${d}"
+		echo "CSS Minify ${project}"
 		find css -name '*.css' | grep -v bourbon/ | xargs -I% cleancss -o '%' '%'
 
-		echo "HTML Minify ${d}"
+		echo "HTML Minify ${project}"
 		html-minifier --minify-js --minify-css --remove-comments --collapse-whitespace index.html -o index.html.new
 		mv index.html.new index.html
 	fi
@@ -386,7 +388,7 @@ if [ ! $simple ] ; then
 
 	./commands/websign/sign.js "${websignHashWhitelist}" $(
 		for d in $websignedProjects ; do
-			echo -n "'${d}/pkg=cdn/$(projectname ${d})' "
+			echo -n "${d}/pkg=cdn/$(projectname ${d}) "
 		done
 	) || exit 1
 
