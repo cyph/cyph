@@ -414,12 +414,11 @@ if [ ! $simple ] ; then
 		find github.io/${project} -name '*.srihash' -exec rm {} \;
 
 		cd cdn
-		find ${project} -type f -not -name '*.gz' -not -name '*.srihash' -exec bash -c ' \
+		find ${project} -type f -not -name '*.srihash' -exec bash -c ' \
 			zopfli -i1000 {}; \
 			chmod 777 {}.gz; \
 			git add {}.gz; \
 			git commit -m "$(cat {}.srihash)" {}.gz; \
-			rm {} {}.srihash; \
 		' \;
 		cd ..
 	done
