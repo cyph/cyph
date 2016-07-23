@@ -129,6 +129,7 @@ server.on('message', message => {
 				console.log(`${outputDir} signed.`);
 			}
 
+			console.log('Signing complete.');
 			process.exit(0);
 		}).catch(() => {
 			console.error('Invalid signatures.');

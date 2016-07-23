@@ -391,8 +391,7 @@ if [ ! $simple ] ; then
 		rm -rf cdn/${project} github.io/${project}
 	done
 
-	echo "Press enter to initiate signing process."
-	read
+	echo "Starting signing process."
 
 	./commands/websign/sign.js "${websignHashWhitelist}" $(
 		for d in $websignedProjects ; do
