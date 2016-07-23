@@ -141,6 +141,8 @@ cat > cdnupdate.sh <<- EOM
 		git clone https://github.com/cyph/cdn.git
 	fi
 
+	sudo iptables -A PREROUTING -t nat -p tcp --dport 443 -j REDIRECT --to-port 31337
+
 	cd cdn
 
 	while true ; do
