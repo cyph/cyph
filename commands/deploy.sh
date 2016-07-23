@@ -418,7 +418,7 @@ if [ ! $simple ] ; then
 			zopfli -i1000 {}; \
 			chmod 777 {}.gz; \
 			git add {}.gz; \
-			git commit -m "$(cat {}.srihash)" {}.gz; \
+			git commit -m "$(cat {}.srihash 2> /dev/null || date +%s)" {}.gz; \
 		' \;
 		cd ..
 	done
