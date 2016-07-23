@@ -13,142 +13,155 @@ sed -i 's/# deb /deb /g' /etc/apt/sources.list
 sed -i 's/\/\/.*archive.ubuntu.com/\/\/archive.ubuntu.com/g' /etc/apt/sources.list
 
 export DEBIAN_FRONTEND=noninteractive
-apt-add-repository -y ppa:ondrej/nginx
 apt-get -y --force-yes update
 apt-get -y --force-yes upgrade
-apt-get -y --force-yes install aptitude nginx openssl git
-
-mkdir /etc/nginx/ssl
-chmod 600 /etc/nginx/ssl
-echo "${cert}" | base64 --decode > /etc/nginx/ssl/cert.pem
-echo "${key}" | base64 --decode > /etc/nginx/ssl/key.pem
-openssl dhparam -out /etc/nginx/ssl/dhparams.pem 2048
+apt-get -y --force-yes install curl
+curl -sL https://deb.nodesource.com/setup_6.x | bash -
+apt-get -y --force-yes update
+apt-get -y --force-yes install nodejs openssl build-essential git
 
 
-cat > /etc/nginx/nginx.conf << EndOfMessage
-user www-data;
-worker_processes auto;
-pid /run/nginx.pid;
-
-events {
-	worker_connections $(ulimit -n);
-	multi_accept off;
-}
-
-http {
-
-	##
-	# Basic Settings
-	##
-
-	sendfile on;
-	tcp_nopush on;
-	tcp_nodelay on;
-	keepalive_timeout 65;
-	types_hash_max_size 2048;
-	server_tokens off;
-	server_names_hash_bucket_size 64;
-	include /etc/nginx/mime.types;
-	default_type application/octet-stream;
-
-	##
-	# Logging Settings
-	##
-
-	access_log off;
-	error_log /dev/null crit;
-
-	##
-	# Gzip Settings
-	##
-
-	gzip on;
-	gzip_http_version 1.0;
-	gzip_static always;
-
-	##
-	# Server Settings
-	##
-
-	server {
-		listen 443 ssl http2;
-		listen [::]:443 ipv6only=on ssl http2;
-
-		ssl_certificate ssl/cert.pem;
-		ssl_certificate_key ssl/key.pem;
-		ssl_dhparam ssl/dhparams.pem;
-
-		ssl_session_timeout 1d;
-		ssl_session_cache shared:SSL:50m;
-
-		ssl_prefer_server_ciphers on;
-		add_header Strict-Transport-Security 'max-age=31536000; includeSubdomains';
-		ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
-		ssl_ciphers 'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!3DES:!MD5:!PSK';
-
-		ssl_stapling on;
-		ssl_stapling_verify on;
-
-		add_header Cache-Control 'public, max-age=31536000';
-		add_header Access-Control-Allow-Origin '*';
-		add_header Access-Control-Allow-Methods 'GET';
-
-		location ~* .*/current {
-			root /cdn;
-		}
-
-		location / {
-			content_by_lua '
-				file		= string.sub(ngx.var.uri, 2) .. ".gz";
-				hash		= ngx.var.QUERY_STRING;
-
-				f	= io.open("/cdn/" .. file, "rb");
-				if f then
-					f:close();
-				end
-				if f == nil then
-					ngx.say("");
-					do return end;
-				end
-
-				revision	= "HEAD";
-
-				if hash ~= nil and hash ~= "" then
-					f		= io.popen("cd /cdn ; git log \"" .. file .. "\"");
-					commit	= f:read("*a"):gsub("\n", " "):gsub("commit ", "\n"):gmatch("[^\n]*" .. hash)();
-					f:close();
-					
-					if commit ~= nil then
-						revision = commit:gmatch("[^ ]*")();
-					end
-				end
-				
-				f		= io.popen("cd /cdn ; git show \"" .. revision .. ":" .. file .. "\"");
-				content	= f:read("*a"):gsub("\n", " "):gsub("commit ", "\n"):gmatch("[^\n]*" .. hash)();
-				f:close();
-
-				ngx.say(content);
-			';
-		}
-	}
-}
-EndOfMessage
-
-
-cat > /cdnupdate.sh << EndOfMessage
+cat > /tmp/setup.sh << EndOfMessage
 #!/bin/bash
 
-if [ ! -d /cdn ] ; then
-	git clone https://github.com/cyph/cdn.git /cdn
-fi
+cd /home/ubuntu
 
-cd /cdn
+echo "${cert}" | base64 --decode > cert.pem
+echo "${key}" | base64 --decode > key.pem
 
-while true ; do
-	git pull
-	sleep 60
-done
+npm install express spdy
+
+
+cat > server.js <<- EOM
+	#!/usr/bin/env node
+
+	const app				= require('express')();
+	const child_process		= require('child_process');
+	const fs				= require('fs');
+	const spdy				= require('spdy');
+
+	const cache				= {};
+
+	const cdnPath			= './cdn/';
+	const certPath			= 'cert.pem';
+	const keyPath			= 'key.pem';
+
+	const getFileName		= req => req.path.slice(1) + '.gz';
+	const returnError		= res => res.status(418).end();
+
+	const git				= (...args) => {
+		return new Promise(resolve => {
+			let data		= new Buffer([]);
+			const stdout	= child_process.spawn('git', args, {cwd: cdnPath}).stdout;
+
+			stdout.on('data', buf => data = Buffer.concat([data, buf]));
+			stdout.on('close', () => resolve(data));
+		});
+	};
+
+	app.use( (req, res, next) => {
+		res.set('Access-Control-Allow-Methods', 'GET');
+		res.set('Access-Control-Allow-Origin', '*');
+		res.set('Cache-Control', 'public, max-age=31536000');
+		res.set('Content-Encoding', 'gzip');
+		res.set('Content-Type', 'application/octet-stream');
+		res.set('Strict-Transport-Security', 'max-age=31536000; includeSubdomains');
+
+		next();
+	});
+
+	app.get(/.*\/current/, (req, res) => {
+		res.sendFile(getFileName(req), {root: cdnPath}, err => {
+			if (err) {
+				returnError(res);
+			}
+		});
+	});
+
+	app.get(/\/.*/, (req, res) => {
+		const cached	= cache[req.originalUrl];
+		if (cached) {
+			res.send(cached);
+			return;
+		}
+
+		const file	= getFileName(req);
+		const hash	= req.originalUrl.split('?')[1];
+
+		fs.stat(cdnPath + file, err => {
+			if (err) {
+				returnError(res);
+				return;
+			}
+
+			Promise.resolve().then(() =>
+				hash ? git('log', file) : ''
+			).then(output => {
+				const revision	= (
+					output.toString().
+						replace(/\n/g, ' ').
+						replace(/commit /g, '\n').
+						split('\n').
+						filter(s => s.indexOf(hash) > -1)
+					[0] || ''
+				).split(' ')[0] || 'HEAD';
+
+				return git('show', revision + ':' + file);
+			}).then(content => {
+				cache[req.originalUrl]	= content;
+				res.send(content);
+			});
+		});
+	});
+
+	spdy.createServer({
+		cert: fs.readFileSync(certPath),
+		key: fs.readFileSync(keyPath),
+		dhparam: child_process.spawnSync('openssl', [
+			'dhparam',
+			/(\d+) bit/.exec(
+				child_process.spawnSync('openssl', [
+					'rsa',
+					'-in',
+					keyPath,
+					'-text',
+					'-noout'
+				]).stdout.toString()
+			)[1]
+		]).stdout.toString()
+	}, app).listen(31337);
+EOM
+chmod +x server.js
+
+
+cat > cdnupdate.sh <<- EOM
+	#!/bin/bash
+
+	if [ ! -d cdn ] ; then
+		git clone https://github.com/cyph/cdn.git
+	fi
+
+	cd cdn
+
+	while true ; do
+		git pull
+		sleep 60
+	done
+EOM
+chmod +x cdnupdate.sh
+
+
+crontab -l > cdn.cron
+echo '@reboot /home/ubuntu/cdnupdate.sh' >> cdn.cron
+echo '@reboot /home/ubuntu/server.js' >> cdn.cron
+crontab cdn.cron
+rm cdn.cron
 EndOfMessage
+
+
+chmod 777 /tmp/setup.sh
+su ubuntu -c /tmp/setup.sh
+rm /tmp/setup.sh
 
 
 cat > /systemupdate.sh << EndOfMessage
@@ -158,13 +171,11 @@ export DEBIAN_FRONTEND=noninteractive
 echo "**************" >> /var/log/apt-security-updates
 date >> /var/log/apt-security-updates
 aptitude update >> /var/log/apt-security-updates
-aptitude safe-upgrade -o Aptitude::Delete-Unused=false --assume-yes --target-release \`lsb_release -cs\`-security >> /var/log/apt-security-updates
+aptitude safe-upgrade -o Aptitude::Delete-Unused=false --assume-yes --target-release \$(lsb_release -cs)-security >> /var/log/apt-security-updates
 reboot
 EndOfMessage
+chmod +x /systemupdate.sh
 
-
-rm -rf /cdn
-chmod 700 /cdnupdate.sh /systemupdate.sh
 
 updatehour=$RANDOM
 let 'updatehour %= 24'
@@ -172,7 +183,6 @@ updateday=$RANDOM
 let 'updateday %= 7'
 
 crontab -l > /cdn.cron
-echo '@reboot /cdnupdate.sh' >> /cdn.cron
 echo "45 ${updatehour} * * ${updateday} /systemupdate.sh" >> /cdn.cron
 crontab /cdn.cron
 rm /cdn.cron

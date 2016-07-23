@@ -1,6 +1,6 @@
 var Config	= {
 	abortText: 'Loading Cyph failed. Please try again later.',
-	cdnUrlBase: '.cdn.cyph.com/',
+	cdnUrlBase: '.cdn.cyph.com:31337/',
 	continentUrl: 'https://api.cyph.com/continent',
 	defaultContinent: 'eu',
 
