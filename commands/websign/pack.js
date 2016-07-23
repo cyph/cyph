@@ -14,13 +14,18 @@ const args			= {
 };
 
 
-const writeSubresource	= (path, content) => {
+const writeSubresource	= (path, content, hash) => {
 	const fullPath	= `${args.outputPath}-subresources/${path}`;
 	mkdirp.sync(fullPath.split('/').slice(0, -1).join('/'));
 
 	fs.writeFileSync(
 		fullPath,
 		content
+	);
+
+	fs.writeFileSync(
+		fullPath + '.srihash',
+		hash
 	);
 };
 
@@ -32,14 +37,16 @@ const processDataSRI	= content => Promise.all((content.match(
 	const matchPath		= matchSplit[2];
 	const matchData		= matchSplit[3];
 
-	writeSubresource(matchPath, matchData);
+	return superSphincs.hash(matchData).then(hash => {
+		writeSubresource(matchPath, matchData, hash.hex);
 
-	return superSphincs.hash(matchData).then(hash => ({
-		fullMatch: match,
-		quote: matchQuote,
-		path: matchPath,
-		hash: hash.hex
-	}));
+		return {
+			fullMatch: match,
+			quote: matchQuote,
+			path: matchPath,
+			hash: hash.hex
+		};
+	});
 })).then(results => results.reduce(
 	(newContent, result) => newContent.replace(
 		result.fullMatch,
@@ -119,7 +126,7 @@ Promise.resolve().then(() => {
 		).join(' ');
 
 		if (enableSRI) {
-			writeSubresource(path, content);
+			writeSubresource(path, content, hash);
 		}
 
 		$elem.replaceWith(

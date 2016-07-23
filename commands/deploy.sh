@@ -412,17 +412,27 @@ if [ ! $simple ] ; then
 
 		cp -rf cdn/${project} github.io/
 
-		find cdn/${project} -type f -not -name '*.gz' -exec bash -c 'zopfli -i1000 {} ; rm {}' \;
+		find github.io/${project} -name '*.srihash' -exec rm {} \;
+
+		find cdn/${project} -type f -not -name '*.gz' -exec bash -c ' \
+			zopfli -i1000 {}; \
+			chmod 777 {}.gz; \
+			git add {}.gz; \
+			git commit -m "$(cat {}.srihash)" {}.gz; \
+			rm {} {}.srihash; \
+		' \;
 	done
 
-	for repo in cdn github.io ; do
-		cd $repo
-		chmod -R 777 .
-		git add .
-		git commit -a -m 'package update'
-		git push
-		cd ..
-	done
+	cd cdn
+	git push
+	cd ..
+
+	cd github.io
+	chmod -R 777 .
+	git add .
+	git commit -a -m 'package update'
+	git push
+	cd ..
 fi
 
 

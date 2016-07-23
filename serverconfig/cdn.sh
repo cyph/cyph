@@ -16,7 +16,7 @@ export DEBIAN_FRONTEND=noninteractive
 apt-add-repository -y ppa:ondrej/nginx
 apt-get -y --force-yes update
 apt-get -y --force-yes upgrade
-apt-get -y --force-yes install aptitude nginx openssl unzip
+apt-get -y --force-yes install aptitude nginx openssl git
 
 mkdir /etc/nginx/ssl
 chmod 600 /etc/nginx/ssl
@@ -72,7 +72,7 @@ http {
 
 	server {
 		listen 443 ssl http2;
-		listen [::]:443 ipv6only=on;
+		listen [::]:443 ipv6only=on ssl http2;
 
 		ssl_certificate ssl/cert.pem;
 		ssl_certificate_key ssl/key.pem;
@@ -89,47 +89,69 @@ http {
 		ssl_stapling on;
 		ssl_stapling_verify on;
 
-		root /cyphcdn;
-		index index.html;
-
 		add_header Cache-Control 'public, max-age=31536000';
 		add_header Access-Control-Allow-Origin '*';
 		add_header Access-Control-Allow-Methods 'GET';
+
+		location ~* .*/current {
+			root /cdn;
+		}
+
+		location / {
+			content_by_lua '
+				file		= string.sub(ngx.var.uri, 2) .. ".gz";
+				hash		= ngx.var.QUERY_STRING;
+
+				f	= io.open("/cdn/" .. file, "rb");
+				if f then
+					f:close();
+				end
+				if f == nil then
+					ngx.say("");
+					do return end;
+				end
+
+				revision	= "HEAD";
+
+				if hash ~= nil and hash ~= "" then
+					f		= io.popen("cd /cdn ; git log \"" .. file .. "\"");
+					commit	= f:read("*a"):gsub("\n", " "):gsub("commit ", "\n"):gmatch("[^\n]*" .. hash)();
+					f:close();
+					
+					if commit ~= nil then
+						revision = commit:gmatch("[^ ]*")();
+					end
+				end
+				
+				f		= io.popen("cd /cdn ; git show \"" .. revision .. ":" .. file .. "\"");
+				content	= f:read("*a"):gsub("\n", " "):gsub("commit ", "\n"):gmatch("[^\n]*" .. hash)();
+				f:close();
+
+				ngx.say(content);
+			';
+		}
 	}
 }
 EndOfMessage
 
 
-cat > /cyphcdn.sh << EndOfMessage
+cat > /cdnupdate.sh << EndOfMessage
 #!/bin/bash
 
-mkdir /cyphcdn.new
-cd /cyphcdn.new
-
-wget https://github.com/cyph/cdn/archive/master.zip -O dothemove.zip
-unzip dothemove.zip
-rm dothemove.zip
-repo="\$(ls)"
-repoCount="\$(ls | wc -l)"
-if [ \$repoCount == 1 ] ; then
-	mv \$repo/* ./
-	rm -rf \$repo
+if [ ! -d /cdn ] ; then
+	git clone https://github.com/cyph/cdn.git /cdn
 fi
-chmod 777 -R .
 
-cd /
+cd /cdn
 
-if [ -d /cyphcdn.new/websign ] ; then
-	rm -rf /cyphcdn.old
-	mv /cyphcdn /cyphcdn.old
-	mv /cyphcdn.new /cyphcdn
-else
-	rm -rf /cyphcdn.new
-fi
+while true ; do
+	git pull
+	sleep 60
+done
 EndOfMessage
 
 
-cat > /update.sh << EndOfMessage
+cat > /systemupdate.sh << EndOfMessage
 #!/bin/bash
 
 export DEBIAN_FRONTEND=noninteractive
@@ -141,20 +163,19 @@ reboot
 EndOfMessage
 
 
-rm -rf /cyphcdn
-chmod 700 /cyphcdn.sh /update.sh
-/cyphcdn.sh
+rm -rf /cdn
+chmod 700 /cdnupdate.sh /systemupdate.sh
 
 updatehour=$RANDOM
 let 'updatehour %= 24'
 updateday=$RANDOM
 let 'updateday %= 7'
 
-crontab -l > /cyphcdn.cron
-echo '0,30 * * * * /cyphcdn.sh' >> /cyphcdn.cron
-echo "45 ${updatehour} * * ${updateday} /update.sh" >> /cyphcdn.cron
-crontab /cyphcdn.cron
-rm /cyphcdn.cron
+crontab -l > /cdn.cron
+echo '@reboot /cdnupdate.sh' >> /cdn.cron
+echo "45 ${updatehour} * * ${updateday} /systemupdate.sh" >> /cdn.cron
+crontab /cdn.cron
+rm /cdn.cron
 
 rm cdn.sh
 reboot
