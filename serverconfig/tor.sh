@@ -48,65 +48,21 @@ chmod -R 0700 /var/lib/tor/hidden_service/
 umask 077
 
 
-cat > /cdn.sh << EndOfMessage
-#!/bin/bash
-
-mkdir /cyphcdn.new
-cd /cyphcdn.new
-
-wget https://github.com/cyph/cyph.github.io/archive/master.zip -O dothemove.zip
-unzip dothemove.zip
-rm dothemove.zip
-repo="\$(ls)"
-repoCount="\$(ls | wc -l)"
-if [ \$repoCount == 1 ] ; then
-	mv \$repo/* ./
-	rm -rf \$repo
-fi
-gzip -9r .
-chmod 777 -R .
-
-cd /
-
-if [ -d /cyphcdn.new/websign ] ; then
-	rm -rf /cyphcdn.old
-	mv /cyphcdn /cyphcdn.old
-	mv /cyphcdn.new /cyphcdn
-else
-	rm -rf /cyphcdn.new
-fi
-
-
-if [ \$(ps aux | grep nginx | grep -v grep | wc -l) -lt 1 ] ; then
-	killall nginx
-	service nginx stop
-	service nginx start
-	service nginx restart
-fi
-
-if [ \$(ps aux | grep tor | grep -v grep | wc -l) -lt 1 ] ; then
-	service tor stop
-	service tor start
-fi
-EndOfMessage
-
-
-cat > /update.sh << EndOfMessage
+cat > /systemupdate.sh << EndOfMessage
 #!/bin/bash
 
 export DEBIAN_FRONTEND=noninteractive
 echo "**************" >> /var/log/apt-security-updates
 date >> /var/log/apt-security-updates
 aptitude update >> /var/log/apt-security-updates
-aptitude safe-upgrade -o Aptitude::Delete-Unused=false --assume-yes --target-release \`lsb_release -cs\`-security >> /var/log/apt-security-updates
+aptitude safe-upgrade -o Aptitude::Delete-Unused=false --assume-yes --target-release \$(lsb_release -cs)-security >> /var/log/apt-security-updates
 reboot
 EndOfMessage
 
 
 echo "${rekeyscript}" | base64 --decode > /rekey.sh
-chmod 700 /cdn.sh /update.sh /rekey.sh
+chmod 700 /systemupdate.sh /rekey.sh
 umask 022
-/cdn.sh
 
 updatehour=$RANDOM
 let 'updatehour %= 24'
@@ -115,8 +71,7 @@ let 'updateday %= 7'
 
 crontab -l > /tmp/cyph.cron
 echo '@reboot /rekey.sh' >> /tmp/cyph.cron
-echo '0,30 * * * * /cdn.sh' >> /tmp/cyph.cron
-echo "45 ${updatehour} * * ${updateday} /update.sh" >> /tmp/cyph.cron
+echo "45 ${updatehour} * * ${updateday} /systemupdate.sh" >> /tmp/cyph.cron
 crontab /tmp/cyph.cron
 rm /tmp/cyph.cron
 
