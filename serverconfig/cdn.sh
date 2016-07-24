@@ -6,7 +6,6 @@ cert='LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tDQpNSUlIeWpDQ0JyS2dBd0lCQWdJUURJd1VxQ0
 key='ASK RYAN FOR THIS'
 
 
-dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd)
 
 sed -i 's/# deb /deb /g' /etc/apt/sources.list
@@ -24,10 +23,10 @@ apt-get -y --force-yes install nodejs openssl build-essential git
 cat > /tmp/setup.sh << EndOfMessage
 #!/bin/bash
 
-cd /home/ubuntu
+cd /home/${SUDO_USER}
 
-echo "${cert}" | base64 --decode > cert.pem
-echo "${key}" | base64 --decode > key.pem
+echo '${cert}' | base64 --decode > cert.pem
+echo '${key}' | base64 --decode > key.pem
 
 npm install express spdy
 
@@ -70,49 +69,80 @@ cat > server.js <<- EOM
 		next();
 	});
 
-	app.get(/.*\/current/, (req, res) => {
+	app.get(/.*\/current/, (req, res) => new Promise( (resolve, reject) =>
 		res.sendFile(getFileName(req), {root: cdnPath}, err => {
 			if (err) {
-				returnError(res);
+				reject(err);
 			}
-		});
-	});
+			else {
+				resolve();
+			}
+		})
+	).catch(() =>
+		returnError(res)
+	));
 
-	app.get(/\/.*/, (req, res) => {
-		const cached	= cache[req.originalUrl];
-		if (cached) {
-			res.send(cached);
+	app.get(/.*\/pkg/, (req, res) => Promise.resolve().then(() => {
+		if (cache[req.originalUrl]) {
+			return;
+		}
+
+		return new Promise( (resolve, reject) =>
+			fs.readFile(cdnPath + getFileName(req), (err, data) => {
+				if (err) {
+					reject(err);
+					return;
+				}
+
+				cache[req.originalUrl]	= data;
+
+				resolve();
+			})
+		);
+	}).then(() =>
+		res.send(cache[req.originalUrl])
+	).catch(() =>
+		returnError(res)
+	));
+
+	app.get(/\/.*/, (req, res) => Promise.resolve().then(() => {
+		if (cache[req.originalUrl]) {
 			return;
 		}
 
 		const file	= getFileName(req);
 		const hash	= req.originalUrl.split('?')[1];
 
-		fs.stat(cdnPath + file, err => {
-			if (err) {
-				returnError(res);
-				return;
-			}
+		return new Promise( (resolve, reject) =>
+			fs.stat(cdnPath + file, err => {
+				if (err) {
+					reject(err);
+					return;
+				}
 
-			Promise.resolve().then(() =>
-				hash ? git('log', file) : ''
-			).then(output => {
-				const revision	= (
-					output.toString().
-						replace(/\n/g, ' ').
-						replace(/commit /g, '\n').
-						split('\n').
-						filter(s => s.indexOf(hash) > -1)
-					[0] || ''
-				).split(' ')[0] || 'HEAD';
+				resolve();
+			})
+		).then(() =>
+			hash ? git('log', file) : ''
+		).then(output => {
+			const revision	= (
+				output.toString().
+					replace(/\n/g, ' ').
+					replace(/commit /g, '\n').
+					split('\n').
+					filter(s => s.indexOf(hash) > -1)
+				[0] || ''
+			).split(' ')[0] || 'HEAD';
 
-				return git('show', revision + ':' + file);
-			}).then(content => {
-				cache[req.originalUrl]	= content;
-				res.send(content);
-			});
+			return git('show', revision + ':' + file);
+		}).then(data => {
+			cache[req.originalUrl]	= data;
 		});
-	});
+	}).then(() =>
+		res.send(cache[req.originalUrl])
+	).catch(() =>
+		returnError(res)
+	));
 
 	spdy.createServer({
 		cert: fs.readFileSync(certPath),
@@ -154,16 +184,24 @@ chmod +x cdnupdate.sh
 
 
 crontab -l > cdn.cron
-echo '@reboot /home/ubuntu/cdnupdate.sh' >> cdn.cron
-echo '@reboot /home/ubuntu/server.js' >> cdn.cron
+echo '@reboot /home/${SUDO_USER}/cdnupdate.sh' >> cdn.cron
+echo '@reboot /home/${SUDO_USER}/server.js' >> cdn.cron
 crontab cdn.cron
 rm cdn.cron
 EndOfMessage
 
 
 chmod 777 /tmp/setup.sh
-su ubuntu -c /tmp/setup.sh
+su ${SUDO_USER} -c /tmp/setup.sh
 rm /tmp/setup.sh
+
+
+cat > /portredirect.sh << EndOfMessage
+#!/bin/bash
+
+iptables -A PREROUTING -t nat -p tcp --dport 443 -j REDIRECT --to-port 31337
+EndOfMessage
+chmod +x /portredirect.sh
 
 
 cat > /systemupdate.sh << EndOfMessage
@@ -184,10 +222,11 @@ let 'updatehour %= 24'
 updateday=$RANDOM
 let 'updateday %= 7'
 
-crontab -l > /cdn.cron
-echo "45 ${updatehour} * * ${updateday} /systemupdate.sh" >> /cdn.cron
-crontab /cdn.cron
-rm /cdn.cron
+crontab -l > /tmp/cdn.cron
+echo "@reboot /portredirect.sh" >> /tmp/cdn.cron
+echo "45 ${updatehour} * * ${updateday} /systemupdate.sh" >> /tmp/cdn.cron
+crontab /tmp/cdn.cron
+rm /tmp/cdn.cron
 
 rm cdn.sh
 reboot
