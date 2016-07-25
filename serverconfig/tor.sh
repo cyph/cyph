@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Tor server setup script for Ubuntu 14.04
+# Tor server setup script for Ubuntu 16.04
 
 onionaddress='cyphdbyhiddenbhs.onion'
 onionkey='ASK RYAN FOR THIS'
@@ -16,7 +16,6 @@ sed -i 's/# deb /deb /g' /etc/apt/sources.list
 sed -i 's/\/\/.*archive.ubuntu.com/\/\/archive.ubuntu.com/g' /etc/apt/sources.list
 
 export DEBIAN_FRONTEND=noninteractive
-apt-add-repository -y ppa:ondrej/nginx
 echo "deb http://deb.torproject.org/torproject.org $(lsb_release -c | awk '{print $2}') main" >> /etc/apt/sources.list
 gpg --keyserver keys.gnupg.net --recv 886DDD89
 gpg --export A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89 | apt-key add -
