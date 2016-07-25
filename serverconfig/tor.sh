@@ -10,7 +10,6 @@ key='ASK RYAN FOR THIS'
 rekeyscript='base64 hpkpsuicide.tor.sh'
 
 
-dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd)
 
 sed -i 's/# deb /deb /g' /etc/apt/sources.list
@@ -26,7 +25,7 @@ apt-get -y --force-yes upgrade
 apt-get -y --force-yes install curl
 curl -sL https://deb.nodesource.com/setup_6.x | bash -
 apt-get -y --force-yes update
-apt-get -y --force-yes install aptitude nginx openssl nodejs unzip deb.torproject.org-keyring tor
+apt-get -y --force-yes install aptitude nginx openssl nodejs deb.torproject.org-keyring tor
 
 mkdir -p /etc/nginx/ssl/websign
 chmod 600 -R /etc/nginx/ssl

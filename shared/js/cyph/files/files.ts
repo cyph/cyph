@@ -263,7 +263,7 @@ export class Files implements IFiles {
 						/* Temporary workaround while Firebase adds CORS support */
 						url: (transfer.url || '').replace(
 							'firebasestorage.googleapis.com',
-							'firebase.cyph.com'
+							'api.cyph.com'
 						),
 						responseType: 'arraybuffer',
 						retries: 5
