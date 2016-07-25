@@ -17,12 +17,15 @@ sed -i 's/# deb /deb /g' /etc/apt/sources.list
 sed -i 's/\/\/.*archive.ubuntu.com/\/\/archive.ubuntu.com/g' /etc/apt/sources.list
 
 export DEBIAN_FRONTEND=noninteractive
-apt-add-repository -y ppa:nginx/development
+apt-add-repository -y ppa:ondrej/nginx
 echo "deb http://deb.torproject.org/torproject.org $(lsb_release -c | awk '{print $2}') main" >> /etc/apt/sources.list
 gpg --keyserver keys.gnupg.net --recv 886DDD89
 gpg --export A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89 | apt-key add -
 apt-get -y --force-yes update
 apt-get -y --force-yes upgrade
+apt-get -y --force-yes install curl
+curl -sL https://deb.nodesource.com/setup_6.x | bash -
+apt-get -y --force-yes update
 apt-get -y --force-yes install aptitude nginx openssl nodejs unzip deb.torproject.org-keyring tor
 
 mkdir -p /etc/nginx/ssl/websign
@@ -52,10 +55,9 @@ cat > /systemupdate.sh << EndOfMessage
 #!/bin/bash
 
 export DEBIAN_FRONTEND=noninteractive
-echo "**************" >> /var/log/apt-security-updates
-date >> /var/log/apt-security-updates
-aptitude update >> /var/log/apt-security-updates
-aptitude safe-upgrade -o Aptitude::Delete-Unused=false --assume-yes --target-release \$(lsb_release -cs)-security >> /var/log/apt-security-updates
+apt-get -y --force-yes update
+apt-get -y --force-yes -o Dpkg::Options::=--force-confdef upgrade
+
 reboot
 EndOfMessage
 

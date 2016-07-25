@@ -207,11 +207,12 @@ chmod +x /portredirect.sh
 cat > /systemupdate.sh << EndOfMessage
 #!/bin/bash
 
+su ${SUDO_USER} -c 'npm update'
+
 export DEBIAN_FRONTEND=noninteractive
-echo "**************" >> /var/log/apt-security-updates
-date >> /var/log/apt-security-updates
-aptitude update >> /var/log/apt-security-updates
-aptitude safe-upgrade -o Aptitude::Delete-Unused=false --assume-yes --target-release \$(lsb_release -cs)-security >> /var/log/apt-security-updates
+apt-get -y --force-yes update
+apt-get -y --force-yes -o Dpkg::Options::=--force-confdef upgrade
+
 reboot
 EndOfMessage
 chmod +x /systemupdate.sh
