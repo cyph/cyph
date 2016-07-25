@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# WebSign reverse proxy server setup script for Ubuntu 14.04
+# WebSign reverse proxy server setup script for Ubuntu 16.04
 
 rekeyscript='base64 hpkpsuicide.sh'
 
@@ -9,7 +9,6 @@ sed -i 's/# deb /deb /g' /etc/apt/sources.list
 sed -i 's/\/\/.*archive.ubuntu.com/\/\/archive.ubuntu.com/g' /etc/apt/sources.list
 
 export DEBIAN_FRONTEND=noninteractive
-apt-add-repository -y ppa:ondrej/nginx
 apt-get -y --force-yes update
 apt-get -y --force-yes upgrade
 apt-get -y --force-yes install curl
