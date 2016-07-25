@@ -215,6 +215,7 @@ su ${SUDO_USER} -c 'npm update'
 export DEBIAN_FRONTEND=noninteractive
 apt-get -y --force-yes update
 apt-get -y --force-yes -o Dpkg::Options::=--force-confdef upgrade
+do-release-upgrade -f DistUpgradeViewNonInteractive
 
 reboot
 EndOfMessage
