@@ -28,6 +28,9 @@ cd /home/${SUDO_USER}
 echo '${cert}' | base64 --decode > cert.pem
 echo '${key}' | base64 --decode > key.pem
 
+keyHash="\$(openssl rsa -in key.pem -outform der -pubout | openssl dgst -sha256 -binary | openssl enc -base64)"
+backupHash='V3Khw3OOrzNle8puKasf47gcsFk9QqKP5wy0WWodtgA='
+
 npm install express spdy
 
 
@@ -64,6 +67,7 @@ cat > server.js <<- EOM
 		res.set('Cache-Control', 'public, max-age=31536000');
 		res.set('Content-Encoding', 'gzip');
 		res.set('Content-Type', 'application/octet-stream');
+		res.set('Public-Key-Pins', 'max-age=5184000; includeSubdomains; pin-sha256="\${keyHash}"; pin-sha256="\${backupHash}"');
 		res.set('Strict-Transport-Security', 'max-age=31536000; includeSubdomains');
 
 		next();

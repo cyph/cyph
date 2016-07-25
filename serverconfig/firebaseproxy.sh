@@ -37,6 +37,14 @@ openssl dhparam -out /etc/nginx/ssl/dhparams.pem 2048
 ln -s /etc/letsencrypt/live/firebase.cyph.com/privkey.pem /etc/nginx/ssl/key.pem
 ln -s /etc/letsencrypt/live/firebase.cyph.com/fullchain.pem /etc/nginx/ssl/cert.pem
 
+keyHash="$( \
+	openssl rsa -in /etc/letsencrypt/live/firebase.cyph.com/privkey.pem -outform der -pubout | \
+	openssl dgst -sha256 -binary | \
+	openssl enc -base64 \
+)"
+
+backupHash='unPe8YYMLOhkaAWcjfFF1q571QqcrI5NUfP+0eBT/po='
+
 
 cat > /etc/nginx/nginx.conf << EndOfMessage
 user www-data;
@@ -99,6 +107,7 @@ http {
 		ssl_ciphers 'ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA:ECDHE-ECDSA-DES-CBC3-SHA:ECDHE-RSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:DES-CBC3-SHA:!DSS';
 		ssl_prefer_server_ciphers on;
 
+		add_header Public-Key-Pins 'max-age=5184000; includeSubdomains; pin-sha256="${keyHash}"; pin-sha256="${backupHash}"';
 		add_header Strict-Transport-Security 'max-age=31536000; includeSubdomains; preload';
 
 		ssl_stapling on;
