@@ -14,7 +14,7 @@ sed -i 's/\/\/.*archive.ubuntu.com/\/\/archive.ubuntu.com/g' /etc/apt/sources.li
 export DEBIAN_FRONTEND=noninteractive
 apt-get -y --force-yes update
 apt-get -y --force-yes upgrade
-apt-get -y --force-yes install aptitude nginx openssl
+apt-get -y --force-yes install apt dpkg nginx openssl
 
 mkdir /etc/nginx/ssl
 chmod 600 /etc/nginx/ssl

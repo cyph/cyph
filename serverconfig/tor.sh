@@ -24,7 +24,7 @@ apt-get -y --force-yes upgrade
 apt-get -y --force-yes install curl
 curl -sL https://deb.nodesource.com/setup_6.x | bash -
 apt-get -y --force-yes update
-apt-get -y --force-yes install aptitude nginx openssl nodejs deb.torproject.org-keyring tor
+apt-get -y --force-yes install apt dpkg nginx openssl nodejs deb.torproject.org-keyring tor
 
 mkdir -p /etc/nginx/ssl/websign
 chmod 600 -R /etc/nginx/ssl
