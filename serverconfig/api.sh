@@ -139,5 +139,5 @@ rm /tmp/cyph.cron
 
 
 cd "${dir}"
-rm gcloudproxy.sh
+rm api.sh
 reboot
