@@ -27,6 +27,7 @@ cd /home/${SUDO_USER}
 
 echo '${cert}' | base64 --decode > cert.pem
 echo '${key}' | base64 --decode > key.pem
+openssl dhparam -out dhparams.pem 2048
 
 keyHash="\$(openssl rsa -in key.pem -outform der -pubout | openssl dgst -sha256 -binary | openssl enc -base64)"
 backupHash='V3Khw3OOrzNle8puKasf47gcsFk9QqKP5wy0WWodtgA='
@@ -47,6 +48,7 @@ cat > server.js <<- EOM
 	const cdnPath			= './cdn/';
 	const certPath			= 'cert.pem';
 	const keyPath			= 'key.pem';
+	const dhparamPath		= 'dhparams.pem';
 
 	const getFileName		= req => req.path.slice(1) + '.gz';
 	const returnError		= res => res.status(418).end();
@@ -151,18 +153,7 @@ cat > server.js <<- EOM
 	spdy.createServer({
 		cert: fs.readFileSync(certPath),
 		key: fs.readFileSync(keyPath),
-		dhparam: child_process.spawnSync('openssl', [
-			'dhparam',
-			/(\d+) bit/.exec(
-				child_process.spawnSync('openssl', [
-					'rsa',
-					'-in',
-					keyPath,
-					'-text',
-					'-noout'
-				]).stdout.toString()
-			)[1]
-		]).stdout.toString()
+		dhparam: fs.readFileSync(dhparamPath)
 	}, app).listen(31337);
 EOM
 chmod +x server.js
