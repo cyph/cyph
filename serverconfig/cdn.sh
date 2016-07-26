@@ -6,6 +6,13 @@ cert='LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tDQpNSUlIeWpDQ0JyS2dBd0lCQWdJUURJd1VxQ0
 key='ASK RYAN FOR THIS'
 
 
+if [ ! "$SUDO_USER" ] ; then
+	SUDO_USER="$(whoami)"
+fi
+
+SUDO_HOME=$(eval echo ~$SUDO_USER)
+
+
 cd $(cd "$(dirname "$0")"; pwd)
 
 sed -i 's/# deb /deb /g' /etc/apt/sources.list
@@ -23,7 +30,7 @@ apt-get -y --force-yes install nodejs openssl build-essential git
 cat > /tmp/setup.sh << EndOfMessage
 #!/bin/bash
 
-cd /home/${SUDO_USER}
+cd ${SUDO_HOME}
 
 echo '${cert}' | base64 --decode > cert.pem
 echo '${key}' | base64 --decode > key.pem
@@ -177,8 +184,8 @@ chmod +x cdnupdate.sh
 
 
 crontab -l > cdn.cron
-echo '@reboot /home/${SUDO_USER}/cdnupdate.sh' >> cdn.cron
-echo '@reboot /home/${SUDO_USER}/server.js' >> cdn.cron
+echo '@reboot ${SUDO_HOME}/cdnupdate.sh' >> cdn.cron
+echo '@reboot ${SUDO_HOME}/server.js' >> cdn.cron
 crontab cdn.cron
 rm cdn.cron
 EndOfMessage
