@@ -6,11 +6,7 @@ cert='LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tDQpNSUlIeWpDQ0JyS2dBd0lCQWdJUURJd1VxQ0
 key='ASK RYAN FOR THIS'
 
 
-if [ ! "$SUDO_USER" ] ; then
-	SUDO_USER="$(whoami)"
-fi
-
-SUDO_HOME=$(eval echo ~$SUDO_USER)
+adduser --gecos '' --disabled-password --home /home/cyph cyph || exit 1
 
 
 cd $(cd "$(dirname "$0")"; pwd)
@@ -30,7 +26,7 @@ apt-get -y --force-yes install apt dpkg nodejs openssl build-essential git
 cat > /tmp/setup.sh << EndOfMessage
 #!/bin/bash
 
-cd ${SUDO_HOME}
+cd /home/cyph
 
 echo '${cert}' | base64 --decode > cert.pem
 echo '${key}' | base64 --decode > key.pem
@@ -184,15 +180,15 @@ chmod +x cdnupdate.sh
 
 
 crontab -l > cdn.cron
-echo '@reboot ${SUDO_HOME}/cdnupdate.sh' >> cdn.cron
-echo '@reboot ${SUDO_HOME}/server.js' >> cdn.cron
+echo '@reboot /home/cyph/cdnupdate.sh' >> cdn.cron
+echo '@reboot /home/cyph/server.js' >> cdn.cron
 crontab cdn.cron
 rm cdn.cron
 EndOfMessage
 
 
 chmod 777 /tmp/setup.sh
-su ${SUDO_USER} -c /tmp/setup.sh
+su cyph -c /tmp/setup.sh
 rm /tmp/setup.sh
 
 
@@ -208,7 +204,7 @@ chmod +x /portredirect.sh
 cat > /systemupdate.sh << EndOfMessage
 #!/bin/bash
 
-su ${SUDO_USER} -c 'npm update'
+su cyph -c 'npm update'
 
 export DEBIAN_FRONTEND=noninteractive
 apt-get -y --force-yes update
