@@ -56,8 +56,9 @@ backupHash="$(openssl rsa -in backup.pem -outform der -pubout | openssl dgst -sh
 delete backup.pem
 
 if [ "${certHash}" == "${keyHash}" ] ; then
-	killall nginx
 	service nginx stop
+	sleep 1
+	killall nginx
 
 	delete /etc/nginx/ssl/websign/cert.pem
 	delete /etc/nginx/ssl/websign/key.pem
@@ -87,7 +88,10 @@ if [ "${certHash}" == "${keyHash}" ] ; then
 		)/g" \
 	> /etc/nginx/nginx.conf
 
+	sleep 1
 	service nginx start
+	sleep 1
+	service nginx restart
 else
 	delete cert.pem
 	delete key.pem
