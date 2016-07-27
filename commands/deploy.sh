@@ -444,6 +444,7 @@ fi
 # Secret credentials
 cat ~/.cyph/default.vars >> default/app.yaml
 cat ~/.cyph/jobs.vars >> jobs/jobs.yaml
+cp ~/.cyph/*.mmdb default/
 if [ $branch == 'staging' ] ; then
 	cat ~/.cyph/braintree.prod >> default/app.yaml
 else

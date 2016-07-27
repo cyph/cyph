@@ -83,6 +83,11 @@ func braintreeToken(h HandlerArgs) (interface{}, int) {
 }
 
 func channelSetup(h HandlerArgs) (interface{}, int) {
+	/* Block Facebook tampering with links sent through Messenger */
+	if getOrg(h) == "Facebook" {
+		return "", http.StatusNotFound
+	}
+
 	id := h.Vars["id"]
 	channelDescriptor := ""
 	status := http.StatusOK

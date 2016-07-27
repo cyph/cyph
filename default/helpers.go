@@ -65,7 +65,8 @@ var isRouterActive = false
 
 var sanitizer = bluemonday.StrictPolicy()
 
-var geoipdb, _ = geoip2.Open("GeoIP2-Country.mmdb")
+var countrydb, _ = geoip2.Open("GeoIP2-Country.mmdb")
+var orgdb, _ = geoip2.Open("GeoIP2-ISP.mmdb")
 
 var twilioSID = os.Getenv("TWILIO_SID")
 var twilioAuthToken = os.Getenv("TWILIO_AUTH_TOKEN")
@@ -75,13 +76,9 @@ var braintreePublicKey = os.Getenv("BRAINTREE_PUBLIC_KEY")
 var braintreePrivateKey = os.Getenv("BRAINTREE_PRIVATE_KEY")
 
 func geolocate(h HandlerArgs) (string, string) {
-	return geolocateIp(h.Request.RemoteAddr)
-}
-
-func geolocateIp(ip string) (string, string) {
-	record, err := geoipdb.Country(net.ParseIP(ip))
+	record, err := countrydb.Country(net.ParseIP(h.Request.RemoteAddr))
 	if err != nil {
-		return "", ""
+		return "", config.DefaultContinent
 	}
 
 	country := strings.ToLower(record.Country.IsoCode)
@@ -106,6 +103,15 @@ func getBetaSignupFromRequest(h HandlerArgs) BetaSignup {
 		Referer:  sanitize(h.Request.Referer(), config.MaxSignupValueLength),
 		Time:     time.Now().Unix(),
 	}
+}
+
+func getOrg(h HandlerArgs) string {
+	record, err := orgdb.ISP(net.ParseIP(h.Request.RemoteAddr))
+	if err != nil {
+		return ""
+	}
+
+	return record.Organization
 }
 
 func braintreeInit(h HandlerArgs) *braintree.Braintree {
