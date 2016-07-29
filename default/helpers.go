@@ -88,12 +88,12 @@ func getSignupFromRequest(h HandlerArgs) map[string]interface{} {
 	signup := make(map[string]interface{})
 	profile := make(map[string]interface{})
 
-	profile["country"]       = country
-	profile["first_name"]    = sanitize(h.Request.PostFormValue("name"), config.MaxSignupValueLength)
+	profile["country"] = country
+	profile["first_name"] = sanitize(h.Request.PostFormValue("name"), config.MaxSignupValueLength)
 	profile["http_referrer"] = sanitize(h.Request.Referer(), config.MaxSignupValueLength)
-	profile["locale"]        = sanitize(strings.ToLower(h.Request.PostFormValue("language")), config.MaxSignupValueLength)
-	signup["email"]          = sanitize(strings.ToLower(h.Request.PostFormValue("email")), config.MaxSignupValueLength)
-	signup["profile"]        = profile
+	profile["locale"] = sanitize(strings.ToLower(h.Request.PostFormValue("language")), config.MaxSignupValueLength)
+	signup["email"] = sanitize(strings.ToLower(h.Request.PostFormValue("email")), config.MaxSignupValueLength)
+	signup["profile"] = profile
 
 	return signup
 }

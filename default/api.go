@@ -150,13 +150,13 @@ func signup(h HandlerArgs) (interface{}, int) {
 	}
 
 	jsonSignup, _ := json.Marshal(signup)
-	
+
 	resource := ""
 	method := methods.POST
-	useridKey := "signup-userid-"+email
+	useridKey := "signup-userid-" + email
 
 	if item, err := memcache.Get(h.Context, useridKey); err != memcache.ErrCacheMiss {
-		resource = "/"+string(item.Value)
+		resource = "/" + string(item.Value)
 		method = methods.PUT
 	}
 
@@ -179,19 +179,19 @@ func signup(h HandlerArgs) (interface{}, int) {
 
 	useridDynamic, _ := body["id"]
 	switch userid := useridDynamic.(type) {
-		case float64:
-			if resource != "" {
-				memcache.Delete(h.Context, useridKey)
-				return "update", http.StatusOK
-			}
+	case float64:
+		if resource != "" {
+			memcache.Delete(h.Context, useridKey)
+			return "update", http.StatusOK
+		}
 
-			memcache.Set(h.Context, &memcache.Item{
-				Key:        useridKey,
-				Value:      []byte(strconv.Itoa(int(userid))),
-				Expiration: config.MemcacheExpiration,
-			})
+		memcache.Set(h.Context, &memcache.Item{
+			Key:        useridKey,
+			Value:      []byte(strconv.Itoa(int(userid))),
+			Expiration: config.MemcacheExpiration,
+		})
 
-			return "set", http.StatusOK
+		return "set", http.StatusOK
 	}
 
 	return "fail", http.StatusInternalServerError
