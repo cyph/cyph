@@ -44,6 +44,7 @@ cd ../../..
 cp -f default/app.yaml default/.build.yaml
 cat ~/.cyph/default.vars >> default/.build.yaml
 cat ~/.cyph/braintree.sandbox >> default/.build.yaml
+cp ~/.cyph/*.mmdb default/
 
 mkdir /tmp/cyph0
 go_appserver --port 5000 --admin_port 6000 --host 0.0.0.0 --storage_path /tmp/cyph0 default/.build.yaml &

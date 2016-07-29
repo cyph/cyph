@@ -1,5 +1,6 @@
 .build
 **/.build.yaml
+**/*.mmdb
 .sass-cache
 .DS_Store
 **/.DS_Store
