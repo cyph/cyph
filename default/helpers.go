@@ -91,7 +91,8 @@ func getSignupFromRequest(h HandlerArgs) map[string]interface{} {
 	profile["country"] = country
 	profile["first_name"] = sanitize(h.Request.PostFormValue("name"), config.MaxSignupValueLength)
 	profile["http_referrer"] = sanitize(h.Request.Referer(), config.MaxSignupValueLength)
-	profile["locale"] = sanitize(strings.ToLower(h.Request.PostFormValue("language")), config.MaxSignupValueLength)
+	profile["locale"] = sanitize(h.Request.PostFormValue("language"), config.MaxSignupValueLength)
+	profile["custom_var1"] = sanitize(h.Request.PostFormValue("inviteCode"), config.MaxSignupValueLength)
 	signup["email"] = sanitize(strings.ToLower(h.Request.PostFormValue("email")), config.MaxSignupValueLength)
 	signup["profile"] = profile
 
