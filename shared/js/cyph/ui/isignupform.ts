@@ -11,10 +11,10 @@ export interface ISignupForm {
 
 	/** Signup data entered by user. */
 	data: {
-		name: string;
 		email: string;
-		list: string;
-		boolean: boolean;
+		inviteCode: string;
+		language: string;
+		name: string;
 	};
 
 	/**

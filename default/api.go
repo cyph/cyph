@@ -1,11 +1,13 @@
 package api
 
 import (
-	"appengine/datastore"
 	"appengine/mail"
 	"appengine/memcache"
+	"appengine/urlfetch"
+	"bytes"
 	"encoding/json"
 	"github.com/lionelbarrow/braintree-go"
+	"io/ioutil"
 	"net/http"
 	"strconv"
 	"strings"
@@ -140,49 +142,57 @@ func getIceServers(h HandlerArgs) (interface{}, int) {
 }
 
 func signup(h HandlerArgs) (interface{}, int) {
-	isNewSignup := false
+	signup := getSignupFromRequest(h)
+	email := signup["email"].(string)
 
-	betaSignup := getBetaSignupFromRequest(h)
-
-	if strings.Contains(betaSignup.Email, "@") {
-		key := datastore.NewKey(h.Context, "BetaSignup", betaSignup.Email, 0, nil)
-
-		existingBetaSignup := new(BetaSignup)
-
-		if err := datastore.Get(h.Context, key, existingBetaSignup); err == nil {
-			if existingBetaSignup.Comment != "" {
-				betaSignup.Comment = existingBetaSignup.Comment
-			}
-			if existingBetaSignup.Country != "" {
-				betaSignup.Country = existingBetaSignup.Country
-			}
-			if existingBetaSignup.Language != "" {
-				betaSignup.Language = existingBetaSignup.Language
-			}
-			if existingBetaSignup.Name != "" {
-				betaSignup.Name = existingBetaSignup.Name
-			}
-			if existingBetaSignup.Referer != "" {
-				betaSignup.Referer = existingBetaSignup.Referer
-			}
-			if existingBetaSignup.Time != 0 {
-				betaSignup.Time = existingBetaSignup.Time
-			}
-		} else {
-			isNewSignup = true
-		}
-
-		if _, err := datastore.Put(h.Context, key, &betaSignup); err != nil {
-			return err.Error(), http.StatusInternalServerError
-		}
-
-		jsonBetaSignup, _ := json.Marshal(betaSignup)
-		mail.SendToAdmins(h.Context, &mail.Message{
-			Sender:  "test@cyphme.appspotmail.com",
-			Subject: "NEW SIGNUP LADS",
-			Body:    string(jsonBetaSignup),
-		})
+	if !strings.Contains(email, "@") {
+		return "", http.StatusTeapot
 	}
 
-	return isNewSignup, http.StatusOK
+	jsonSignup, _ := json.Marshal(signup)
+
+	resource := ""
+	method := methods.POST
+	useridKey := "signup-userid-" + email
+
+	if item, err := memcache.Get(h.Context, useridKey); err != memcache.ErrCacheMiss {
+		resource = "/" + string(item.Value)
+		method = methods.PUT
+	}
+
+	req, _ := http.NewRequest(
+		method,
+		"https://cyph.prefinery.com/api/v2/betas/9034/testers"+resource+".json?api_key="+prefineryKey,
+		bytes.NewBuffer(jsonSignup),
+	)
+
+	req.Header.Add("Accept", "application/json")
+	req.Header.Add("Content-type", "application/json")
+
+	client := urlfetch.Client(h.Context)
+	resp, _ := client.Do(req)
+
+	jsonBody, _ := ioutil.ReadAll(resp.Body)
+
+	var body map[string]interface{}
+	json.Unmarshal(jsonBody, &body)
+
+	useridDynamic, _ := body["id"]
+	switch userid := useridDynamic.(type) {
+	case float64:
+		if resource != "" {
+			memcache.Delete(h.Context, useridKey)
+			return "update", http.StatusOK
+		}
+
+		memcache.Set(h.Context, &memcache.Item{
+			Key:        useridKey,
+			Value:      []byte(strconv.Itoa(int(userid))),
+			Expiration: config.MemcacheExpiration,
+		})
+
+		return "set", http.StatusOK
+	}
+
+	return "fail", http.StatusInternalServerError
 }
