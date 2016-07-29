@@ -4,6 +4,10 @@
 
 rekeyscript='base64 hpkpsuicide.sh'
 
+apikey='ASK RYAN FOR THIS'
+orderid='ASK RYAN FOR THIS'
+csrSubject='/C=US/ST=Delaware/L=Dover/O=Cyph, Inc./CN=cyph.pki.ws'
+
 
 sed -i 's/# deb /deb /g' /etc/apt/sources.list
 sed -i 's/\/\/.*archive.ubuntu.com/\/\/archive.ubuntu.com/g' /etc/apt/sources.list
@@ -36,7 +40,56 @@ reboot
 EndOfMessage
 
 
-echo "${rekeyscript}" | base64 --decode > /rekey.sh
+read -r -d '' nginxconf <<- EOM
+	server {
+		\${sslconf}
+		server_name cyph.im www.cyph.im;
+		\$(proxysite https://prod-dot-cyph-im-dot-cyphme.appspot.com)
+	}
+	server {
+		\${sslconf}
+		server_name cyph.io www.cyph.io;
+		\$(proxysite https://prod-dot-cyph-io-dot-cyphme.appspot.com)
+	}
+	server {
+		\${sslconf}
+		server_name cyph.me www.cyph.me;
+		\$(proxysite https://prod-dot-cyph-me-dot-cyphme.appspot.com)
+	}
+	server {
+		\${sslconf}
+		server_name cyph.video www.cyph.video;
+		\$(proxysite https://prod-dot-cyph-video-dot-cyphme.appspot.com)
+	}
+	server {
+		\${sslconf}
+		server_name cyph.audio www.cyph.audio;
+		\$(proxysite https://prod-dot-cyph-audio-dot-cyphme.appspot.com)
+	}
+
+	server {
+		\$(echo "\${sslconf}" | sed 's|http2|http2 default_server|g')
+		server_name _;
+		\$(proxysite https://prod-dot-websign-dot-cyphme.appspot.com)
+	}
+
+	server {
+		listen 80 default_server;
+		listen [::]:80 default_server;
+		server_name _;
+		return 301 https://\\\$host\\\$request_uri;
+	}
+EOM
+
+
+rekeyscriptDecoded="$(echo "${rekeyscript}" | base64 --decode)"
+echo "${rekeyscriptDecoded/NGINX_CONF/$nginxconf}" | \
+	sed "s|API_KEY|${apikey}|g" | \
+	sed "s|ORDER_ID|${orderid}|g" | \
+	sed "s|CSR_SUBJECT|${csrSubject}|g" \
+> /rekey.sh
+
+
 chmod 700 /systemupdate.sh /rekey.sh
 umask 022
 

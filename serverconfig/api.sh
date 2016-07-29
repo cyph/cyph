@@ -38,11 +38,6 @@ events {
 }
 
 http {
-
-	##
-	# Basic Settings
-	##
-
 	sendfile on;
 	tcp_nopush on;
 	tcp_nodelay on;
@@ -53,24 +48,12 @@ http {
 	include /etc/nginx/mime.types;
 	default_type application/octet-stream;
 
-	##
-	# Logging Settings
-	##
-
 	access_log off;
 	error_log /dev/null crit;
-
-	##
-	# Gzip Settings
-	##
 
 	gzip on;
 	gzip_http_version 1.0;
 	gzip_static always;
-
-	##
-	# Server Settings
-	##
 
 	server {
 		listen 443 ssl http2;
