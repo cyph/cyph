@@ -12,20 +12,11 @@ export class SignupForm implements ISignupForm {
 	public state: number	= 0;
 
 	public data	= {
-		name: <string> '',
 		email: <string> '',
-		list: <string> 'Q4YKsEDh2OULosfbBg3IVw',
-		boolean: <boolean> true
+		inviteCode: <string> '',
+		language: <string> Env.fullLanguage,
+		name: <string> ''
 	};
-
-	private sendyRequest (method: string) : Promise<string> {
-		return Util.request({
-			method: 'POST',
-			url: 'https://sendy.cyph.com/' + method,
-			data: this.data,
-			retries: 5
-		});
-	}
 
 	public async submit () : Promise<void> {
 		++this.state;
@@ -47,30 +38,35 @@ export class SignupForm implements ISignupForm {
 			}
 		}, 250);
 
-		if (this.data.email) {
-			const response: string	= await this.sendyRequest('subscribe');
+		if (!this.data.email) {
+			return;
+		}
 
-			if (response === '1') {
-				Analytics.send({
-					hitType: 'event',
-					eventCategory: 'signup',
-					eventAction: 'new',
-					eventValue: 1
-				});
+		const signupResult: string	= await Util.request({
+			method: 'PUT',
+			url: Env.baseUrl + 'signup',
+			data: this.data,
+			retries: 3
+		});
 
-				if (this.promo) {
-					Analytics.send({
-						hitType: 'social',
-						socialNetwork: 'promo-' + this.promo,
-						socialAction: 'signup',
-						socialTarget: this.data.email
-					});
-				}
-			}
-			else if (response === 'Already subscribed.' && this.data.name) {
-				await this.sendyRequest('unsubscribe');
-				this.sendyRequest('subscribe');
-			}
+		if (signupResult !== 'set') {
+			return;
+		}
+
+		Analytics.send({
+			hitType: 'event',
+			eventCategory: 'signup',
+			eventAction: 'new',
+			eventValue: 1
+		});
+
+		if (this.promo) {
+			Analytics.send({
+				hitType: 'social',
+				socialNetwork: 'promo-' + this.promo,
+				socialAction: 'signup',
+				socialTarget: this.data.email
+			});
 		}
 	}
 

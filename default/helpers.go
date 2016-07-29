@@ -14,7 +14,6 @@ import (
 	"net/http"
 	"os"
 	"strings"
-	"time"
 )
 
 type HandlerArgs struct {
@@ -25,16 +24,6 @@ type HandlerArgs struct {
 }
 type Handler func(HandlerArgs) (interface{}, int)
 type Handlers map[string]Handler
-
-type BetaSignup struct {
-	Comment  string
-	Country  string
-	Email    string
-	Language string
-	Name     string
-	Referer  string
-	Time     int64
-}
 
 type none struct{}
 
@@ -75,6 +64,8 @@ var braintreeMerchantID = os.Getenv("BRAINTREE_MERCHANT_ID")
 var braintreePublicKey = os.Getenv("BRAINTREE_PUBLIC_KEY")
 var braintreePrivateKey = os.Getenv("BRAINTREE_PRIVATE_KEY")
 
+var prefineryKey = os.Getenv("PREFINERY_KEY")
+
 func geolocate(h HandlerArgs) (string, string) {
 	record, err := countrydb.Country(net.ParseIP(h.Request.RemoteAddr))
 	if err != nil {
@@ -91,18 +82,20 @@ func geolocate(h HandlerArgs) (string, string) {
 	return country, continent
 }
 
-func getBetaSignupFromRequest(h HandlerArgs) BetaSignup {
+func getSignupFromRequest(h HandlerArgs) map[string]interface{} {
 	country, _ := geolocate(h)
 
-	return BetaSignup{
-		Comment:  sanitize(h.Request.PostFormValue("Comment"), config.MaxSignupValueLength),
-		Country:  country,
-		Email:    sanitize(strings.ToLower(h.Request.PostFormValue("Email")), config.MaxSignupValueLength),
-		Language: sanitize(strings.ToLower(h.Request.PostFormValue("Language")), config.MaxSignupValueLength),
-		Name:     sanitize(h.Request.PostFormValue("Name"), config.MaxSignupValueLength),
-		Referer:  sanitize(h.Request.Referer(), config.MaxSignupValueLength),
-		Time:     time.Now().Unix(),
-	}
+	signup := make(map[string]interface{})
+	profile := make(map[string]interface{})
+
+	profile["country"]       = country
+	profile["first_name"]    = sanitize(h.Request.PostFormValue("name"), config.MaxSignupValueLength)
+	profile["http_referrer"] = sanitize(h.Request.Referer(), config.MaxSignupValueLength)
+	profile["locale"]        = sanitize(strings.ToLower(h.Request.PostFormValue("language")), config.MaxSignupValueLength)
+	signup["email"]          = sanitize(strings.ToLower(h.Request.PostFormValue("email")), config.MaxSignupValueLength)
+	signup["profile"]        = profile
+
+	return signup
 }
 
 func getOrg(h HandlerArgs) string {
