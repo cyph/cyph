@@ -22,10 +22,7 @@ Promise.resolve().then(function () {
 		return null;
 	}
 
-	return fetch(
-		Config.continentUrl,
-		{credentials: 'include'}
-	).then(function (response) {
+	return fetch(Config.continentUrl).then(function (response) {
 		return response.text();
 	}).then(function (s) {
 		return s.trim();
@@ -174,10 +171,7 @@ catch(function () {
 	return Promise.all([
 		package,
 		Promise.all(Config.files.map(function (file) {
-			return fetch(
-				file,
-				{credentials: 'include'}
-			).then(function (response) {
+			return fetch(file).then(function (response) {
 				return response.text();
 			});
 		}))

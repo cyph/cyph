@@ -32,7 +32,7 @@ self.addEventListener('install', function () {
 	Promise.all([
 		caches.open('cache'),
 		Promise.all(files.map(function (file) {
-			return fetch(file, {credentials: 'include'});
+			return fetch(file);
 		}))
 	]).then(function (results) {
 		var cache		= results[0];

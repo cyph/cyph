@@ -16,14 +16,13 @@ node -e '
 
 	require("supersphincs").hash(
 		files.
-			map(s => "." + s).
 			map(file => {
 				return file + ":\n\n" + fs.readFileSync(
-					file === "./" ?
+					file === "/" ?
 						".index.html.tmp" :
-						file === "./unsupportedbrowser" ?
+						file === "/unsupportedbrowser" ?
 							"unsupportedbrowser.html" :
-							file
+							"." + file
 				).toString().trim();
 			}).
 			join("\n\n\n\n\n\n")
