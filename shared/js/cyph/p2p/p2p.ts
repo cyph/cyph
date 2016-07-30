@@ -54,8 +54,8 @@ export class P2P implements IP2P {
 			this.isActive				= false;
 
 			setTimeout(() => {
-				for (const o of [this.outgoingStream, this.incomingStream]) {
-					for (const k of Object.keys(o)) {
+				for (let o of [this.outgoingStream, this.incomingStream]) {
+					for (let k of Object.keys(o)) {
 						o[k]	= false;
 					}
 				}
@@ -171,7 +171,7 @@ export class P2P implements IP2P {
 		this.loading	= true;
 		this.controller.update();
 
-		for (const k of Object.keys(this.outgoingStream)) {
+		for (let k of Object.keys(this.outgoingStream)) {
 			this.incomingStream[k]	= this.outgoingStream[k];
 		}
 

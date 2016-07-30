@@ -1,6 +1,6 @@
 import {Config} from 'config';
 import {Env} from 'env';
-import {Thread} from 'thread';
+import {EventManager} from 'eventmanager';
 
 
 /**
@@ -182,7 +182,7 @@ export class Util {
 			}, 120000);
 		}
 		else {
-			Thread.callMainThread('Cyph.Util.openUrl', [url, downloadName]);
+			EventManager.callMainThread('Cyph.Util.openUrl', [url, downloadName]);
 		}
 	}
 
@@ -434,7 +434,7 @@ export class Util {
 		const ngBind: string	= $this.attr('ng-bind');
 		const innerHtml: string	= $this.html().trim().replace(/\s+/g, ' ');
 
-		for (const attr of ['content', 'placeholder', 'aria-label', 'label']) {
+		for (let attr of ['content', 'placeholder', 'aria-label', 'label']) {
 			const value: string	= $this.attr(attr);
 
 			if (value) {

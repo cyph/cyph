@@ -1,7 +1,7 @@
 /// <reference path="../global/base.ts" />
 
 import {Env} from 'env';
-import {Thread} from 'thread';
+import {EventManager} from 'eventmanager';
 import {Util} from 'util';
 import {Potassium} from 'crypto/crypto';
 
@@ -21,7 +21,7 @@ export class Analytics {
 	 */
 	public static baseEventSubmit (method: string, args: any[]) : void {
 		if (!Env.isMainThread) {
-			Thread.callMainThread('Cyph.Analytics.baseEventSubmit', [method, args]);
+			EventManager.callMainThread('Cyph.Analytics.baseEventSubmit', [method, args]);
 		}
 		else if (Analytics.analFrameIsReady) {
 			args.unshift(method);

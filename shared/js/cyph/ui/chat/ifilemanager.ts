@@ -1,4 +1,4 @@
-import * as Files from 'files/files';
+import {IFiles} from 'files/ifiles';
 
 
 /**
@@ -7,7 +7,7 @@ import * as Files from 'files/files';
  */
 export interface IFileManager {
 	/** Files instance. */
-	files: Files.IFiles;
+	files: IFiles;
 
 	/**
 	 * Sends file selected by elem.

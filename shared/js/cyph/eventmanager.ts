@@ -1,5 +1,5 @@
 import {Env} from 'env';
-import {Thread} from 'thread';
+import {IThread} from 'ithread';
 
 
 /**
@@ -11,6 +11,42 @@ export class EventManager {
 
 	/** Ignore this (used by EventManager and Thread for cross-thread event stuff). */
 	public static mainThreadEvents: string	= 'mainThreadEvents';
+
+	/** List of all active threads. */
+	public static threads: IThread[]	= [];
+
+	/**
+	 * Sends command to the main thread.
+	 * @param method Fully qualified method name (e.g. "Cyph.EventManager.callMainThread").
+	 * @param args
+	 */
+	public static callMainThread (method: string, args: any[] = []) : void {
+		if (Env.isMainThread) {
+			const methodSplit: string[]	= method.split('.');
+			const methodName: string	= methodSplit.slice(-1)[0];
+
+			/* Validate command against namespace whitelist, then execute */
+			if (['Cyph', 'ui'].indexOf(methodSplit[0]) > -1) {
+				const methodObject: any	= methodSplit.
+					slice(0, -1).
+					reduce((o: any, k: string) : any => o[k], self)
+				;
+
+				methodObject[methodName].apply(methodObject, args);
+			}
+			else {
+				throw new Error(
+					method +
+					' not in whitelist. (args: ' +
+					JSON.stringify(args) +
+					')'
+				);
+			}
+		}
+		else {
+			EventManager.trigger(EventManager.mainThreadEvents, {method, args});
+		}
+	}
 
 	/**
 	 * Removes handler from event.
@@ -66,7 +102,7 @@ export class EventManager {
 			EventManager.trigger(EventManager.untriggeredEvents, {event, data}, true);
 		}
 		else {
-			for (const handler of (EventManager.handlers[event] || [])) {
+			for (let handler of (EventManager.handlers[event] || [])) {
 				try {
 					handler(data);
 				}
@@ -76,7 +112,7 @@ export class EventManager {
 			}
 
 			if (Env.isMainThread) {
-				for (const thread of Thread.threads) {
+				for (let thread of EventManager.threads) {
 					try {
 						thread.postMessage({event, data, isThreadEvent: true});
 					}
@@ -91,7 +127,7 @@ export class EventManager {
 			EventManager.on(
 				EventManager.mainThreadEvents,
 				(o: { method: string; args: any[]; }) =>
-					Thread.callMainThread(o.method, o.args)
+					EventManager.callMainThread(o.method, o.args)
 			);
 		}
 		else {

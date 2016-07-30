@@ -7,13 +7,12 @@ LABEL Name="cyph"
 RUN apt-get update
 RUN apt-get dist-upgrade -y
 
-RUN apt-get install -y curl golang-go python python-pip perl devscripts build-essential cmake autoconf automake libtool git gnupg procps sudo apt-utils expect inotify-tools zopfli
+RUN apt-get install -y curl golang-go python perl devscripts build-essential cmake autoconf automake libtool git gnupg procps sudo apt-utils expect inotify-tools zopfli
 
 RUN curl -sL https://deb.nodesource.com/setup_6.x | bash -
 RUN apt-get install -y nodejs
 
-RUN npm -g install html-minifier clean-css uglifyjs typescript babel-cli typings typedoc jspm browserstack browserify libsodium-wrappers glob read mkdirp
-RUN pip install beautifulsoup4 html5lib
+RUN npm -g install html-minifier clean-css cheerio uglify-js typescript babel-cli babel-preset-es2015 typings typedoc jspm browserstack browserify supersphincs libsodium-wrappers glob read mkdirp datauri
 
 
 RUN echo '\
@@ -54,6 +53,7 @@ RUN bash -c ' \
 	./emsdk update; \
 	./emsdk install latest; \
 	./emsdk activate latest; \
+	./emsdk uninstall $(./emsdk list | grep INSTALLED | grep node | awk "{print \$2}"); \
 '
 
 RUN wget https://keybase.io/mpapis/key.asc -O ~/public.key
@@ -71,7 +71,7 @@ RUN sudo ln -s /usr/bin/md5sum /usr/bin/md5
 
 RUN rm -rf ~/.gnupg
 
-RUN bash -c 'cd ; source ~/.bashrc ; npm install babel-preset-es2015 ; sudo mv node_modules / ; sudo chmod -R 777 /node_modules'
+RUN bash -c 'source ~/.bashrc; ln -s $NODE_PATH $HOME/node_modules ; sudo ln -s $NODE_PATH /node_modules'
 
 
 VOLUME /cyph
@@ -82,7 +82,7 @@ VOLUME /home/gibson/.ssh
 
 WORKDIR /cyph/commands
 
-EXPOSE 5000 5001 5002 4568
+EXPOSE 4568 5000 5001 5002 31337
 
 
 CMD /bin/bash

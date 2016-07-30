@@ -41,6 +41,15 @@ export class EnvDeploy {
 		`CYPH-ME/`
 	;
 
+	/** Base URL for a new file transfer cyph link ("https://cyph.io/" or equivalent). */
+	public static cyphIoBaseUrl: string		= `CYPH-IO/`;
+
+	/** URL for starting a new file transfer cyph (same as cyphIoBaseUrl except on Onion site). */
+	public static cyphIoUrl: string			= EnvDeploy.isOnion ?
+		`https://io.${Config.onionRoot}/` :
+		EnvDeploy.cyphIoBaseUrl
+	;
+
 	/** Base URL for a new video cyph link ("https://cyph.video/" or equivalent). */
 	public static cyphVideoBaseUrl: string	= `CYPH-VIDEO/`;
 
@@ -63,6 +72,6 @@ export class EnvDeploy {
 		(replaces Config.awsEndpointFake). */
 	public static awsEndpoint: string		= `${locationData.protocol}//${locationData.hostname}:43000`;
 
-	/** Content Security Policy defined by WebSign in shared/websign/csp. */
-	public static webSignCSP: string		= "DEFAULT_CSP";
+	/** Content Security Policy defined in shared/csp. */
+	public static CSP: string				= "DEFAULT_CSP";
 }

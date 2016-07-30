@@ -80,7 +80,7 @@ export class RatchetedChannel implements IChannel {
 	}
 
 	public close (callback?: Function) : void {
-		for (const channel of [this.channel, this.newChannel]) {
+		for (let channel of [this.channel, this.newChannel]) {
 			try {
 				channel.close(callback);
 			}

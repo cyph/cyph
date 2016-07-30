@@ -1,6 +1,5 @@
 import {Env} from 'env';
 import {EventManager} from 'eventmanager';
-import {Thread} from 'thread';
 import {Util} from 'util';
 
 
@@ -20,7 +19,7 @@ export class Firebase {
 	 */
 	public static call (command: any, getReturnValue?: (id: string) => void) : void {
 		if (!Env.isMainThread) {
-			Thread.callMainThread('Cyph.Firebase.call', [command]);
+			EventManager.callMainThread('Cyph.Firebase.call', [command]);
 		}
 		else if (Firebase.frameIsReady) {
 			let step	= command;

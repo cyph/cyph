@@ -143,7 +143,7 @@ export class ScrollManager implements IScrollManager {
 		}
 
 		new MutationObserver(mutations => {
-			for (const mutationRecord of mutations) {
+			for (let mutationRecord of mutations) {
 				this.mutationObserverHandler(mutationRecord);
 			}
 		}).observe(this.elements.messageListInner[0], {

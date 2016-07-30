@@ -9,11 +9,10 @@ var config = struct {
 	AllowedCyphIds             *regexp.Regexp
 	AllowedCyphIdLength        int
 	AllowedMethods             string
-	AllowedOrigins             map[string]none
+	AllowedHosts               map[string]none
 	Continents                 map[string]none
 	DefaultContinent           string
 	EmailAddress               string
-	HPKPHeader                 string
 	HSTSHeader                 string
 	IsProd                     bool
 	MaxChannelDescriptorLength int
@@ -69,8 +68,6 @@ var config = struct {
 	"eu",
 
 	"Cyph <hello@cyph.com>",
-
-	"max-age=31536000; includeSubdomains; pin-sha256=\"8jdS3zcG5kUApHWDrLH5Q8wEygqGbGEhYApjSDtufBU=\"; pin-sha256=\"AMRT67hN1KPI+u7Aw9JpZlzyRaKeO+6u2H+jtOmWVy8=\"",
 
 	"max-age=31536000; includeSubdomains; preload",
 

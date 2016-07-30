@@ -5,7 +5,6 @@ import {IMutex} from 'imutex';
 import {ISession} from 'isession';
 import {Message} from 'message';
 import {Mutex} from 'mutex';
-import {ThreadedSession} from 'threadedsession';
 import {Analytics} from 'cyph/analytics';
 import {Config} from 'cyph/config';
 import {Env} from 'cyph/env';
@@ -30,7 +29,6 @@ export {
 	Mutex,
 	RPCEvents,
 	State,
-	ThreadedSession,
 	ThreadedSessionEvents,
 	Users
 };
@@ -100,7 +98,7 @@ export class Session implements ISession {
 						}
 					})();
 
-					for (const message of data) {
+					for (let message of data) {
 						this.receiveHandler(message);
 					}
 				}
@@ -332,7 +330,7 @@ export class Session implements ISession {
 
 	public sendBase (messages: IMessage[]) : void {
 		if (this.castle) {
-			for (const message of messages) {
+			for (let message of messages) {
 				if (message.event === RPCEvents.text) {
 					this.trigger(RPCEvents.text, {
 						text: message.data,

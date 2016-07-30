@@ -109,7 +109,7 @@ export const Strings = {
 };
 
 (() => {
-	for (const k of Object.keys(Strings)) {
+	for (let k of Object.keys(Strings)) {
 		Strings[k]	= Util.translate(Strings[k]);
 	}
 })();

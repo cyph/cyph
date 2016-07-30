@@ -1,19 +1,18 @@
 #!/usr/bin/env node
 
-var fs		= require('fs');
-var args	= process.argv.slice(2);
+const fs	= require('fs');
 
-var path	= args[0];
+const args	= {
+	path: process.argv[2]
+};
 
-var newText	= fs.readFileSync(path).toString().replace(
-	/importScripts\(["'](.*?)["']\)/g,
-	function (match, value) {
-		if (value[0] === '/') {
-			value	= value.slice(1);
-		}
 
-		return fs.readFileSync(value.split('?')[0]).toString();
-	}
+fs.writeFileSync(
+	args.path,
+	fs.readFileSync(args.path).toString().replace(
+		/importScripts\(["'](.*?)["']\)/g,
+		(_, value) => fs.readFileSync(
+			value.slice(value[0] === '/' ? 1 : 0).split('?')[0]
+		).toString()
+	)
 );
-
-fs.writeFileSync(path, newText);

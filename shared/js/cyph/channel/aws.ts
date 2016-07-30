@@ -50,7 +50,7 @@ export class AWS {
 
 		params['Action']	= config.action;
 
-		for (const k of Object.keys(config.params)) {
+		for (let k of Object.keys(config.params)) {
 			params[k]	= config.params[k];
 		}
 

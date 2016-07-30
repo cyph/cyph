@@ -25,6 +25,7 @@ import {IController} from 'cyph/icontroller';
 import {Strings} from 'cyph/strings';
 import {UrlState} from 'cyph/urlstate';
 import {Util} from 'cyph/util';
+import {ThreadedSession} from 'session/threadedsession';
 import * as Session from 'session/session';
 
 
@@ -330,7 +331,7 @@ export class Chat extends BaseButtonManager implements IChat {
 				});
 			}
 
-			this.session	= new Session.ThreadedSession(
+			this.session	= new ThreadedSession(
 				id,
 				nativeCrypto,
 				controller

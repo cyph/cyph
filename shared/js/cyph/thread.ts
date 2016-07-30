@@ -4,9 +4,6 @@ import {EventManager} from 'eventmanager';
 import {Util} from 'util';
 
 
-/**
- * Creates and controls a thread.
- */
 export class Thread {
 	private static BlobBuilder: any	=
 		self['BlobBuilder'] ||
@@ -124,6 +121,9 @@ export class Thread {
 
 		self['crypto']	= crypto;
 
+		importScripts('/lib/js/crypto/libsodium/dist/browsers-sumo/combined/sodium.min.js');
+		importScripts('/lib/js/crypto/ntru/dist/ntru.js');
+
 		threadSetupVars	= null;
 	}
 
@@ -133,64 +133,19 @@ export class Thread {
 		}
 	}
 
-	/** List of all active threads. */
-	public static threads: Thread[]	= [];
-
-	/**
-	 * Sends command to the main thread.
-	 * @param method Fully qualified method name (e.g. "Cyph.Thread.callMainThread").
-	 * @param args
-	 */
-	public static callMainThread (method: string, args: any[] = []) : void {
-		if (Env.isMainThread) {
-			const methodSplit: string[]	= method.split('.');
-			const methodName: string	= methodSplit.slice(-1)[0];
-
-			/* Validate command against namespace whitelist, then execute */
-			if (['Cyph', 'ui'].indexOf(methodSplit[0]) > -1) {
-				const methodObject: any	= methodSplit.
-					slice(0, -1).
-					reduce((o: any, k: string) : any => o[k], self)
-				;
-
-				methodObject[methodName].apply(methodObject, args);
-			}
-			else {
-				throw new Error(
-					method +
-					' not in whitelist. (args: ' +
-					JSON.stringify(args) +
-					')'
-				);
-			}
-		}
-		else {
-			EventManager.trigger(EventManager.mainThreadEvents, {method, args});
-		}
-	}
-
 
 	private worker: Worker;
 
-	/**
-	 * Indicates whether this thread is active.
-	 */
 	public isAlive () : boolean {
 		return !!this.worker;
 	}
 
-	/**
-	 * Sends a message to this thread.
-	 */
 	public postMessage (o: any) : void {
 		if (this.worker) {
 			this.worker.postMessage(o);
 		}
 	}
 
-	/**
-	 * This kills the thread.
-	 */
 	public stop () : void {
 		if (this.worker) {
 			this.worker.terminate();
@@ -198,7 +153,7 @@ export class Thread {
 
 		this.worker	= null;
 
-		Thread.threads	= Thread.threads.filter(t => t !== this);
+		EventManager.threads	= EventManager.threads.filter(t => t !== this);
 	}
 
 	/**
@@ -304,6 +259,6 @@ export class Thread {
 			}
 		};
 
-		Thread.threads.push(this);
+		EventManager.threads.push(this);
 	}
 }

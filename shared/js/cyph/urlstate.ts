@@ -1,6 +1,5 @@
 import {Env} from 'env';
 import {EventManager} from 'eventmanager';
-import {Thread} from 'thread';
 
 
 /**
@@ -62,7 +61,7 @@ export class UrlState {
 		redirectFallback: boolean = true
 	) : void {
 		if (Env.isMainThread) {
-			for (const c of ['/', '#']) {
+			for (let c of ['/', '#']) {
 				if (path[0] === c) {
 					path	= path.substring(1);
 				}
@@ -98,7 +97,7 @@ export class UrlState {
 			}
 		}
 		else {
-			Thread.callMainThread('Cyph.UrlState.set', [
+			EventManager.callMainThread('Cyph.UrlState.set', [
 				path,
 				shouldReplace,
 				shouldNotTrigger,

@@ -51,7 +51,7 @@ export class Potassium {
 	public static toBase64 (a: Uint8Array|string) : string {
 		return typeof a === 'string' ?
 			a :
-			Potassium.Sodium.to_base64(a).replace(/\n/g, '')
+			Potassium.Sodium.to_base64(a).replace(/\s+/g, '')
 		;
 	}
 

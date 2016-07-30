@@ -1,0 +1,7 @@
+  http_headers:
+    Cache-Control: private, max-age=31536000
+    Content-Security-Policy: DEFAULT_CSP
+    Strict-Transport-Security: max-age=31536000; includeSubdomains; preload
+    X-Content-Security-Policy: DEFAULT_CSP
+    X-Frame-Options: deny
+    X-WebKit-CSP: DEFAULT_CSP

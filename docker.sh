@@ -89,9 +89,61 @@ elif [ "${command}" == 'deploy' ] ; then
 		-v $HOME/.gitconfig:/home/gibson/.gitconfig \
 		-v $HOME/.gnupg:/home/gibson/.gnupg \
 		-v $HOME/.ssh:/home/gibson/.ssh \
+		--privileged=true \
+		-p 31337:31337/udp \
 	"
 
 	chmod -R 700 .
+
+	if [ "${1}" != '--simple' ] ; then
+		agseRemoteAddress='10.0.0.42'
+		agseLocalAddress='10.0.0.43'
+		agseRemoteMAC="$(cat $HOME/.cyph/agse.remote.mac)"
+		agseLocalInterface="$(cat $HOME/.cyph/agse.local.interface)"
+
+		echo 'Need root for AGSE connection setup.'
+		sudo echo
+
+		sudo ipconfig set ${agseLocalInterface} INFORM ${agseLocalAddress} 2> /dev/null
+		sleep 1
+		sudo ip addr add ${agseLocalAddress} dev ${agseLocalInterface} 2> /dev/null
+		sleep 1
+
+		sudo arp -d ${agseRemoteAddress} 2> /dev/null
+		sleep 1
+		sudo route delete ${agseRemoteAddress} 2> /dev/null
+		sleep 1
+		sudo route add -host ${agseRemoteAddress} -interface ${agseLocalInterface} 2> /dev/null
+		sleep 1
+		sudo arp -s ${agseRemoteAddress} ${agseRemoteMAC} 2> /dev/null
+		sleep 1
+		sudo ip neigh add ${agseRemoteAddress} lladdr ${agseRemoteMAC} dev ${agseLocalInterface} 2> /dev/null
+		sleep 1
+
+		sudo bash -c "
+			while [ ! -f /tmp/balls ] ; do sleep 1 ; done
+			rm /tmp/balls
+
+			ip addr del ${agseLocalAddress} dev ${agseLocalInterface} 2> /dev/null
+			sleep 1
+			ipconfig set ${agseLocalInterface} DHCP 2> /dev/null
+			sleep 1
+
+			ip link set ${agseLocalInterface} down 2> /dev/null
+			sleep 1
+			ifconfig ${agseLocalInterface} down 2> /dev/null
+			sleep 1
+
+			ip link set ${agseLocalInterface} up 2> /dev/null
+			sleep 1
+			ifconfig ${agseLocalInterface} up 2> /dev/null
+			sleep 1
+		" &
+		cleanup () {
+			touch /tmp/balls
+		}
+		trap cleanup EXIT
+	fi
 
 elif [ "${command}" == 'build' ] ; then
 	args=''
@@ -122,7 +174,7 @@ elif [ "${command}" == 'updatelibs' ] ; then
 		-v $HOME/.ssh:/home/gibson/.ssh \
 	"
 
-elif [ "${command}" == 'websignhash' ] ; then
+elif [ "${command}" == 'websign/bootstraphash' ] ; then
 	args=''
 
 elif [ "${command}" == 'make' ] ; then

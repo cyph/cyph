@@ -39,7 +39,6 @@ export class Files implements IFiles {
 			locals.callbackId	= 'files-' + Util.generateGuid();
 
 			const thread	= new Thread((Cyph: any, locals: any, importScripts: Function) => {
-				importScripts('/lib/js/crypto/libsodium/dist/browsers-sumo/combined/sodium.min.js');
 				importScripts('/js/cyph/crypto/crypto.js');
 
 				System.import('cyph/crypto/crypto').then(async (Crypto) => {
@@ -83,7 +82,7 @@ export class Files implements IFiles {
 						);
 
 						let j: number	= 0;
-						for (const chunk of chunks) {
+						for (let chunk of chunks) {
 							cyphertext.set(
 								new Uint8Array(new Uint32Array([chunk.length]).buffer),
 								j
@@ -142,7 +141,7 @@ export class Files implements IFiles {
 						);
 
 						let j: number	= 0;
-						for (const chunk of chunks) {
+						for (let chunk of chunks) {
 							plaintext.set(chunk, j);
 							j += chunk.length;
 
@@ -264,7 +263,7 @@ export class Files implements IFiles {
 						/* Temporary workaround while Firebase adds CORS support */
 						url: (transfer.url || '').replace(
 							'firebasestorage.googleapis.com',
-							'firebase.cyph.com'
+							'api.cyph.com'
 						),
 						responseType: 'arraybuffer',
 						retries: 5
