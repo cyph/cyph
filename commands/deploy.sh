@@ -132,44 +132,38 @@ if [ ! $simple ] ; then
 	mv cyph.com/new.yaml cyph.com/cyph-com.yaml
 fi
 
-defaultHost='\${locationData\.protocol}\/\/\${locationData\.hostname}:'
-ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s/${defaultHost}43000//g" %
-ls */js/cyph/envdeploy.ts | xargs -I% sed -i 's/isLocalEnv: boolean		= true/isLocalEnv: boolean		= false/g' %
+defaultHost='${locationData.protocol}//${locationData.hostname}:'
+ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|${defaultHost}43000||g" %
+ls */js/cyph/envdeploy.ts | xargs -I% sed -i 's|isLocalEnv: boolean		= true|isLocalEnv: boolean		= false|g' %
 
 if [ $branch == 'staging' ] ; then
-	sed -i "s/false, \/\* IsProd \*\//true,/g" default/config.go
+	sed -i "s|false, /* IsProd */|true,|g" default/config.go
 fi
 
 if [ $test ] ; then
-	sed -i "s/staging/${version}/g" default/config.go
-	sed -i "s/http:\/\/localhost:42000/https:\/\/${version}-dot-cyphme.appspot.com/g" default/config.go
-	ls */*.yaml */js/cyph/envdeploy.ts | xargs -I% sed -i "s/api.cyph.com/${version}-dot-cyphme.appspot.com/g" %
-	ls */*.yaml */js/cyph/envdeploy.ts | xargs -I% sed -i "s/www.cyph.com/${version}-dot-cyph-com-dot-cyphme.appspot.com/g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s/${defaultHost}42000/https:\/\/${version}-dot-cyphme.appspot.com/g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s/${defaultHost}42001/https:\/\/${version}-dot-cyph-com-dot-cyphme.appspot.com/g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s/${defaultHost}42002/https:\/\/${version}-dot-cyph-im-dot-cyphme.appspot.com/g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s/CYPH-IO/https:\/\/${version}-dot-cyph-io-dot-cyphme.appspot.com/g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s/CYPH-ME/https:\/\/${version}-dot-cyph-me-dot-cyphme.appspot.com/g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s/CYPH-VIDEO/https:\/\/${version}-dot-cyph-video-dot-cyphme.appspot.com/g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s/CYPH-AUDIO/https:\/\/${version}-dot-cyph-audio-dot-cyphme.appspot.com/g" %
+	sed -i "s|staging|${version}|g" default/config.go
+	sed -i "s|http://localhost:42000|https://${version}-dot-cyphme.appspot.com|g" default/config.go
+	ls */*.yaml */js/cyph/envdeploy.ts | xargs -I% sed -i "s|api.cyph.com|${version}-dot-cyphme.appspot.com|g" %
+	ls */*.yaml */js/cyph/envdeploy.ts | xargs -I% sed -i "s|www.cyph.com|${version}-dot-cyph-com-dot-cyphme.appspot.com|g" %
+	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|${defaultHost}42000|https://${version}-dot-cyphme.appspot.com|g" %
+	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|${defaultHost}42001|https://${version}-dot-cyph-com-dot-cyphme.appspot.com|g" %
+	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|${defaultHost}42002|https://${version}-dot-cyph-im-dot-cyphme.appspot.com|g" %
+	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|CYPH-IO|https://${version}-dot-cyph-io-dot-cyphme.appspot.com|g" %
+	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|CYPH-ME|https://${version}-dot-cyph-me-dot-cyphme.appspot.com|g" %
+	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|CYPH-VIDEO|https://${version}-dot-cyph-video-dot-cyphme.appspot.com|g" %
+	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|CYPH-AUDIO|https://${version}-dot-cyph-audio-dot-cyphme.appspot.com|g" %
 
-	# Disable caching and HPKP in test environments
-	ls */*.yaml | xargs -I% sed -i 's/Public-Key-Pins: .*/Pragma: no-cache/g' %
-	ls */*.yaml | xargs -I% sed -i 's/max-age=31536000/max-age=0/g' %
-
-	for yaml in `ls */cyph*.yaml` ; do
-		cat $yaml | perl -pe 's/(- url: .*)/\1\n  login: admin/g' > $yaml.new
-		mv $yaml.new $yaml
-	done
+	# Disable caching in test environments
+	ls */*.yaml | xargs -I% sed -i 's|max-age=31536000|max-age=0|g' %
 else
-	sed -i "s/http:\/\/localhost:42000/https:\/\/api.cyph.com/g" default/config.go
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s/${defaultHost}42000/https:\/\/api.cyph.com/g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s/${defaultHost}42001/https:\/\/www.cyph.com/g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s/${defaultHost}42002/https:\/\/cyph.im/g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s/CYPH-IO/https:\/\/cyph.io/g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s/CYPH-ME/https:\/\/cyph.me/g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s/CYPH-VIDEO/https:\/\/cyph.video/g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s/CYPH-AUDIO/https:\/\/cyph.audio/g" %
+	sed -i "s|http://localhost:42000|https://api.cyph.com|g" default/config.go
+	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|${defaultHost}42000|https://api.cyph.com|g" %
+	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|${defaultHost}42001|https://www.cyph.com|g" %
+	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|${defaultHost}42002|https://cyph.im|g" %
+	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|CYPH-IO|https://cyph.io|g" %
+	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|CYPH-ME|https://cyph.me|g" %
+	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|CYPH-VIDEO|https://cyph.video|g" %
+	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|CYPH-AUDIO|https://cyph.audio|g" %
 
 	version=prod
 fi
