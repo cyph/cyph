@@ -100,9 +100,9 @@ setredirect () {
 
 if [ ! $simple ] ; then
 	defaultHeadersString='# default_headers'
-	defaultHeaders="$(cat shared/headers.yaml)"
+	defaultHeaders="$(cat shared/headers)"
 	ls */*.yaml | xargs -I% sed -ri "s/  ${defaultHeadersString}(.*)/\
-		headers=\"\$(cat shared\/headers.yaml)\" ; \
+		headers=\"\$(cat shared\/headers)\" ; \
 		for header in \1 ; do \
 			headers=\"\$(echo \"\$headers\" | grep -v \$header:)\" ; \
 		done ; \
