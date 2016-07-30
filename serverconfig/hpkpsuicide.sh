@@ -12,7 +12,15 @@ openssl req -new -newkey rsa:4096 -nodes -out csr.pem -keyout key.pem -subj 'CSR
 curl -s -u 'API_KEY' -X POST \
 	-H 'X-HTTP-Method-Override: REISSUE' \
 	-H 'Content-Type: application/vnd.digicert.rest-v1+json' \
-	--data "$(node -e 'console.log(JSON.stringify({csr: require("fs").readFileSync("csr.pem").toString().trim()}))')" \
+	--data "$(node -e 'console.log(JSON.stringify({
+		csr: fs.readFileSync("csr.pem").toString().trim(),
+		sans: (() => {
+			try {
+				return fs.readFileSync("/etc/nginx/sans.json").toString().trim();
+			}
+			catch (_) {}
+		})()
+	}))')" \
 	'https://api.digicert.com/order/ORDER_ID'
 
 sleep 1m
@@ -102,21 +110,21 @@ EOM
 
 
 if [ "${certHash}" == "${keyHash}" ] ; then
-	mv ../cert.pem cert.old
 	mv ../key.pem key.old
 	mv ../dhparams.pem dhparams.old
+	mv ../cert.pem cert.old
 
-	mv cert.pem ../cert.pem
 	mv key.pem ../key.pem
 	mv dhparams.pem ../dhparams.pem
+	mv cert.pem ../cert.pem
 
 	mv /etc/nginx/nginx.conf.new /etc/nginx/nginx.conf
 
 	service nginx restart
 
-	mv cert.old cert.pem
 	mv key.old key.pem
 	mv dhparams.old dhparams.pem
+	mv cert.old cert.pem
 fi
 
 for f in key.pem backup.pem dhparam.pem cert.pem csr.pem ; do

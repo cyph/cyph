@@ -18,7 +18,7 @@ apt-get -y --force-yes upgrade
 apt-get -y --force-yes install curl
 curl -sL https://deb.nodesource.com/setup_6.x | bash -
 apt-get -y --force-yes update
-apt-get -y --force-yes install apt dpkg nginx openssl nodejs
+apt-get -y --force-yes install apt dpkg nginx openssl nodejs git
 
 mkdir /etc/nginx/ssl
 chmod 600 /etc/nginx/ssl
@@ -37,6 +37,40 @@ apt-get -y --force-yes -o Dpkg::Options::=--force-confdef upgrade
 do-release-upgrade -f DistUpgradeViewNonInteractive
 
 reboot
+EndOfMessage
+
+
+cat > /certupdate.sh << EndOfMessage
+#!/bin/bash
+
+while [ ! -d /cdn ] ; do
+	git clone https://github.com/cyph/cdn.git /cdn || sleep 5
+done
+
+cd /cdn
+
+while true ; do
+	git pull
+
+	node -e "console.log(
+		['cyph.pki.ws'].concat([...new Set(
+			JSON.parse('$(
+				curl -s -u "${apikey}" "https://api.digicert.com/order/${orderid}"
+			)')['certificate_details'].sans.concat(
+				fs.readdirSync('.').
+					filter(s => s !== '.git' && s !== 'websign').
+					map(s => s + '.pki.ws')
+			).
+				map(s => s.replace(/^www\./, '')).
+				filter(s => s !== 'cyph.pki.ws')
+		)]).
+			map(s => [s, 'www.' + s]).
+			reduce((a, b) => a.concat(b)).
+			join(',')
+	)" > /etc/nginx/sans.json
+
+	sleep 30m
+done
 EndOfMessage
 
 
@@ -90,7 +124,7 @@ echo "${rekeyscriptDecoded/NGINX_CONF/$nginxconf}" | \
 > /rekey.sh
 
 
-chmod 700 /systemupdate.sh /rekey.sh
+chmod 700 /systemupdate.sh /certupdate.sh /rekey.sh
 umask 022
 
 updatehour=$RANDOM
@@ -100,6 +134,7 @@ let 'updateday %= 7'
 
 crontab -l > /tmp/cyph.cron
 echo '@reboot /rekey.sh' >> /tmp/cyph.cron
+echo '@reboot /certupdate.sh' >> /tmp/cyph.cron
 echo "45 ${updatehour} * * ${updateday} /systemupdate.sh" >> /tmp/cyph.cron
 crontab /tmp/cyph.cron
 rm /tmp/cyph.cron
