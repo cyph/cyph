@@ -69,6 +69,10 @@ while true ; do
 		join(',')
 	)" > /etc/nginx/sans.json
 
+	if [ "\${1}" == 'init' ] ; then
+		break
+	fi
+
 	sleep 90m
 done
 EndOfMessage
@@ -138,6 +142,8 @@ echo '@reboot /certupdate.sh' >> /tmp/cyph.cron
 echo "45 ${updatehour} * * ${updateday} /systemupdate.sh" >> /tmp/cyph.cron
 crontab /tmp/cyph.cron
 rm /tmp/cyph.cron
+
+/certupdate.sh init
 
 rm websign.sh
 reboot
