@@ -24,7 +24,7 @@ const macAddress	= Buffer.from(
 );
 
 const publicKeysJS	= fs.readFileSync(
-	`${__dirname}/../../shared/websign/js/keys.js`
+	`${__dirname}/../../websign/js/keys.js`
 ).toString();
 const publicKeys	= JSON.parse(
 	publicKeysJS.substring(publicKeysJS.indexOf('=') + 1).split(';')[0].trim()
