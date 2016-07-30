@@ -66,9 +66,7 @@ $(() => {
 		/* In WebSigned environments, remove no-longer-necessary
 			'unsafe-inline' from CSP after application loads */
 		setTimeout(() => Elements.head.append(
-			'<meta http-equiv="Content-Security-Policy" content="' +
-				Env.webSignCSP.replace(/(script-src.*?) 'unsafe-inline'/g, '$1') +
-			'" />'
+			`<meta http-equiv="Content-Security-Policy" content="${Env.CSP}" />`
 		), 10000);
 	}
 });

@@ -2,15 +2,15 @@
 if (location.host.indexOf('www.') === 0) {
 	location.host	= location.host.replace('www.', '');
 }
-else if (LocalStorage.isPersistent && !LocalStorage.webSignWWWPinned) {
-	LocalStorage.webSignWWWPinned	= true;
+else if (!localStorage.webSignWWWPinned) {
+	localStorage.webSignWWWPinned	= true;
 	location.host					= 'www.' + location.host;
 }
 
 /* Initialize ServiceWorker where possible */
 try {
 	navigator.serviceWorker.
-		register('serviceworker.js').
+		register('/serviceworker.js').
 		catch(function () {})
 	;
 }
@@ -40,7 +40,10 @@ then(function (continent) {
 			'https://' +
 			newContinent +
 			cdnUrlBase +
-			location.host +
+			location.host.
+				replace(/\.pki\.ws$/, '').
+				replace(/\.ws\.cyphdbyhiddenbhs.onion$/, '')
+			+
 			'/'
 		;
 
@@ -55,7 +58,7 @@ then(function (continent) {
 				var newTimestamp	= parseInt(s.trim(), 10);
 
 				var oldTimestamp	= parseInt(
-					LocalStorage.webSignPackageTimestamp,
+					localStorage.webSignPackageTimestamp,
 					10
 				);
 
@@ -82,9 +85,9 @@ then(function (continent) {
 	}
 }).catch(function () {
 	return {
-		cdnUrl: LocalStorage.webSignCdnUrl,
+		cdnUrl: localStorage.webSignCdnUrl,
 		packageTimestamp: parseInt(
-			LocalStorage.webSignPackageTimestamp,
+			localStorage.webSignPackageTimestamp,
 			10
 		)
 	};
@@ -155,10 +158,10 @@ then(function (results) {
 		throw 'Stale or invalid data.';
 	}
 
-	LocalStorage.webSignExpires				= opened.expires;
-	LocalStorage.webSignHashWhitelist		= JSON.stringify(opened.hashWhitelist);
-	LocalStorage.webSignPackageTimestamp	= opened.timestamp;
-	LocalStorage.webSignCdnUrl				= downloadMetadata.cdnUrl;
+	localStorage.webSignExpires				= opened.expires;
+	localStorage.webSignHashWhitelist		= JSON.stringify(opened.hashWhitelist);
+	localStorage.webSignPackageTimestamp	= opened.timestamp;
+	localStorage.webSignCdnUrl				= downloadMetadata.cdnUrl;
 
 	return opened.package;
 }).
@@ -200,12 +203,12 @@ catch(function () {
 	var bootstrapText	= results[1];
 	var hash			= results[2].hex;
 
-	LocalStorage.webSignHashOld	= LocalStorage.webSignHash;
-	LocalStorage.webSignHash	= hash;
+	localStorage.webSignHashOld	= localStorage.webSignHash;
+	localStorage.webSignHash	= hash;
 
-	var hashWhitelist	= JSON.parse(LocalStorage.webSignHashWhitelist);
+	var hashWhitelist	= JSON.parse(localStorage.webSignHashWhitelist);
 
-	if (!hashWhitelist[LocalStorage.webSignHash]) {
+	if (!hashWhitelist[localStorage.webSignHash]) {
 		throw {
 			webSignPanic: true,
 			bootstrapText: bootstrapText
@@ -230,7 +233,7 @@ then(function (package) {
 			).map(function (elem) { return elem.outerHTML }).join('') +
 			'<script>' +
 				'WebSignSRI(' +
-					'"' + LocalStorage.webSignCdnUrl + '"' +
+					'"' + localStorage.webSignCdnUrl + '"' +
 				').catch(function (err) {' +
 					'document.open("text/plain");' +
 					'document.write(err);' +
@@ -280,10 +283,10 @@ catch(function (err) {
 						navigator.language + '\n\n' +
 						navigator.userAgent + '\n\n' +
 						location.toString().replace(/\/#.*/g, '') + '\n\n' +
-						'\n\ncdn url: ' + LocalStorage.webSignCdnUrl +
-						'\n\ncurrent bootstrap hash: ' + LocalStorage.webSignHash +
-						'\n\nprevious bootstrap hash: ' + LocalStorage.webSignHashOld +
-						'\n\npackage hash: ' + LocalStorage.webSignPackageHash +
+						'\n\ncdn url: ' + localStorage.webSignCdnUrl +
+						'\n\ncurrent bootstrap hash: ' + localStorage.webSignHash +
+						'\n\nprevious bootstrap hash: ' + localStorage.webSignHashOld +
+						'\n\npackage hash: ' + localStorage.webSignPackageHash +
 						'\n\n\n\n' + err.bootstrapText
 				}
 			})

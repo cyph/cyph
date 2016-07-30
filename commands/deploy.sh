@@ -5,10 +5,8 @@ source ~/.bashrc
 dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd)/..
 
-activeProjects='cyph.com cyph.im cyph.video cyph.audio'
-websignedProjects='cyph.im cyph.video cyph.audio'
+shortlinkProjects='io me video audio'
 compiledProjects='cyph.com cyph.im'
-cacheBustedProjects='cyph.com'
 
 
 gcloud auth login
@@ -22,7 +20,7 @@ elif [ "${1}" == '--simple' ] ; then
 	shift
 fi
 
-commit=true
+commit=$test
 if [ "${1}" == '--no-commit' ] ; then
 	commit=''
 	shift
@@ -50,25 +48,7 @@ mkdir .build
 cp -rf * .build/
 cd .build
 
-cd shared
-websignHashWhitelist="$(cat websign/hashwhitelist.json)"
-if [ $test ] ; then
-	cat websign/js/main.js | \
-		tr '\n' '☁' | \
-		perl -pe 's/\/\*.*?\/\*/\/\*/' | \
-		tr '☁' '\n' \
-	> websign/js/main.js.new
-	mv websign/js/main.js.new websign/js/main.js
-
-	hostRegex='/(.*?-.*?)-dot-(.*?)-(.*?)-.*/'
-	sed -i "s|location.host|location.host.replace(${hostRegex}, '\$1.\$2.\$3')|g" websign/js/main.js
-	sed -i "s|api.cyph.com|' + location.host.replace(${hostRegex}, '\$1') + '-dot-cyphme.appspot.com|g" websign/js/config.js
-
-	websignHashWhitelist="{\"$(../commands/websign/bootstraphash.sh)\": true}"
-fi
-cd ..
-
-for project in $activeProjects ; do
+for project in $compiledProjects ; do
 	cp -rf shared/* $project/
 done
 
@@ -94,12 +74,35 @@ projectname () {
 	fi
 }
 
+package="$(projectname cyph)"
+
+setredirect () {
+	cat > "${2}.tmp" <<- EOM
+		<html>
+			<body>
+				<script>
+					var path	=
+						'${1}' +
+						location.toString().split(location.host)[1].replace('#', '').replace(/^\\//, '')
+					;
+
+					location	= 'https://${package}.pki.ws' + (path ? ('/#' + path) : '');
+				</script>
+			</body>
+		</html>
+	EOM
+
+	echo -n '<!DOCTYPE html>' > "${2}"
+	cat "${2}.tmp" | perl -pe 's/\s+//g' >> "${2}"
+	rm "${2}.tmp"
+}
+
 
 if [ ! $simple ] ; then
 	defaultHeadersString='# default_headers'
-	defaultHeaders="$(cat headers.yaml)"
+	defaultHeaders="$(cat shared/headers.yaml)"
 	ls */*.yaml | xargs -I% sed -ri "s/  ${defaultHeadersString}(.*)/\
-		headers=\"\$(cat headers.yaml)\" ; \
+		headers=\"\$(cat shared/headers.yaml)\" ; \
 		for header in \1 ; do \
 			headers=\"\$(echo \"\$headers\" | grep -v \$header:)\" ; \
 		done ; \
@@ -108,11 +111,11 @@ if [ ! $simple ] ; then
 	ls */*.yaml | xargs -I% sed -i 's|###| |g' %
 
 	defaultCSPString='DEFAULT_CSP'
-	fullCSP="$(cat shared/websign/csp | tr -d '\n')"
-	coreCSP="$(cat shared/websign/csp | grep -P 'referrer|script-src|style-src|upgrade-insecure-requests' | tr -d '\n')"
-	cyphComCSP="$(cat shared/websign/csp | tr -d '\n' | sed 's|frame-src|frame-src https://*.facebook.com https://*.braintreegateway.com|g')"
+	fullCSP="$(cat shared/csp | tr -d '\n')"
+	webSignCSP="$(cat websign/csp | tr -d '\n')"
+	cyphComCSP="$(cat shared/csp | tr -d '\n' | sed 's|frame-src|frame-src https://*.facebook.com https://*.braintreegateway.com|g')"
 	ls cyph.com/*.yaml | xargs -I% sed -i "s|${defaultCSPString}|\"${cyphComCSP}\"|g" %
-	ls */*.yaml | xargs -I% sed -i "s|${defaultCSPString}|\"${coreCSP}\"|g" %
+	ls */*.yaml | xargs -I% sed -i "s|${defaultCSPString}|\"${webSignCSP}\"|g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|${defaultCSPString}|${fullCSP}|g" %
 
 	# Expand connect-src and frame-src on blog to support social media widgets and stuff
@@ -145,6 +148,7 @@ if [ $test ] ; then
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s/${defaultHost}42000/https:\/\/${version}-dot-cyphme.appspot.com/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s/${defaultHost}42001/https:\/\/${version}-dot-cyph-com-dot-cyphme.appspot.com/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s/${defaultHost}42002/https:\/\/${version}-dot-cyph-im-dot-cyphme.appspot.com/g" %
+	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s/CYPH-IO/https:\/\/${version}-dot-cyph-io-dot-cyphme.appspot.com/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s/CYPH-ME/https:\/\/${version}-dot-cyph-me-dot-cyphme.appspot.com/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s/CYPH-VIDEO/https:\/\/${version}-dot-cyph-video-dot-cyphme.appspot.com/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s/CYPH-AUDIO/https:\/\/${version}-dot-cyph-audio-dot-cyphme.appspot.com/g" %
@@ -162,12 +166,21 @@ else
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s/${defaultHost}42000/https:\/\/api.cyph.com/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s/${defaultHost}42001/https:\/\/www.cyph.com/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s/${defaultHost}42002/https:\/\/cyph.im/g" %
+	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s/CYPH-IO/https:\/\/cyph.io/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s/CYPH-ME/https:\/\/cyph.me/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s/CYPH-VIDEO/https:\/\/cyph.video/g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s/CYPH-AUDIO/https:\/\/cyph.audio/g" %
 
 	version=prod
 fi
+
+
+# WebSign project
+cd websign
+websignHashWhitelist="$(cat hashwhitelist.json)"
+cp -rf ../shared/img ./
+../commands/websign/pack.js index.html index.html
+cd ..
 
 
 # Blog
@@ -235,205 +248,185 @@ done
 
 if [ ! $simple ] ; then
 	# Cache bust
-	for d in $cacheBustedProjects ; do
-		cd $d
 
-		project="$(projectname $d)"
+	cd cyph.com
 
-		echo "Cache bust ${project}"
+	echo "Cache bust $(projectname cyph.com)"
 
-		node -e '
-			const superSphincs		= require("supersphincs");
+	node -e '
+		const superSphincs		= require("supersphincs");
 
-			const filesToCacheBust	= child_process.spawnSync("find", [
-				".",
-				"-type",
-				"f",
-				"-not",
-				"-path",
-				"*websign*"
-			]).stdout.toString().split("\n").filter(s => s).map(s => s.slice(2));
+		const filesToCacheBust	= child_process.spawnSync("find", [
+			".",
+			"-type",
+			"f"
+		]).stdout.toString().split("\n").filter(s => s).map(s => s.slice(2));
 
-			const filesToModify		= child_process.spawnSync("find", [
-				".",
-				"-name",
-				"*.html",
-				"-or",
-				"-name",
-				"*.js",
-				"-or",
-				"-name",
-				"*.css",
-				"-and",
-				"-type",
-				"f"
-			]).stdout.toString().split("\n").filter(s => s);
+		const filesToModify		= child_process.spawnSync("find", [
+			".",
+			"-name",
+			"*.html",
+			"-or",
+			"-name",
+			"*.js",
+			"-or",
+			"-name",
+			"*.css",
+			"-and",
+			"-type",
+			"f"
+		]).stdout.toString().split("\n").filter(s => s);
 
 
-			filesToModify.reduce((promise, file) => promise.then(() => {
-				const originalContent	= fs.readFileSync(file).toString();
+		filesToModify.reduce((promise, file) => promise.then(() => {
+			const originalContent	= fs.readFileSync(file).toString();
 
-				return filesToCacheBust.reduce((contentPromise, subresource) =>
-					contentPromise.then(content => {
-						if (content.indexOf(subresource) < 0) {
-							return content;
-						}
-
-						return superSphincs.hash(
-							fs.readFileSync(subresource).toString()
-						).then(hash =>
-							content.split(subresource).join(`${subresource}?${hash.hex}`)
-						);
-					})
-				, Promise.resolve(originalContent)).then(content => {
-					if (content !== originalContent) {
-						fs.writeFileSync(file, content);
-					}
-				});
-			}), Promise.resolve());
-		'
-
-		cd ..
-	done
-
-	git clone git@github.com:cyph/cdn.git
-	git clone git@github.com:cyph/cyph.github.io.git github.io
-
-	# WebSign preprocessing
-	for d in $websignedProjects ; do
-		cd $d
-
-		project="$(projectname $d)"
-
-		echo "WebSign ${project}"
-
-		# Merge in base64'd images, fonts, video, and audio
-		node -e '
-			const datauri		= require("datauri");
-
-			const filesToMerge	= child_process.spawnSync("find", [
-				"audio",
-				"fonts",
-				"img",
-				"video",
-				"-type",
-				"f"
-			]).stdout.toString().split("\n").filter(s => s);
-
-			const filesToModify	= ["js", "css"].reduce((arr, ext) =>
-				arr.concat(
-					child_process.spawnSync("find", [
-						ext,
-						"-name",
-						"*." + ext,
-						"-type",
-						"f"
-					]).stdout.toString().split("\n")
-				),
-				["index.html"]
-			).filter(s => s);
-
-
-			for (let file of filesToModify) {
-				const originalContent	= fs.readFileSync(file).toString();
-				let content				= originalContent;
-
-				for (let subresource of filesToMerge) {
+			return filesToCacheBust.reduce((contentPromise, subresource) =>
+				contentPromise.then(content => {
 					if (content.indexOf(subresource) < 0) {
-						continue;
+						return content;
 					}
 
-					const dataURI	= datauri.sync(subresource);
-
-					content	= content.
-						replace(
-							new RegExp(`(src|href)=(\\\\?['"'"'"])/?${subresource}\\\\?['"'"'"]`, "g"),
-							`WEBSIGN-SRI-DATA-START☁$2☁☁☁${dataURI}☁WEBSIGN-SRI-DATA-END`
-						).replace(
-							new RegExp(`/?${subresource}`, "g"),
-							dataURI
-						).replace(
-							/☁☁☁/g,
-							`☁${subresource}☁`
-						)
-					;
-				}
-
+					return superSphincs.hash(
+						fs.readFileSync(subresource).toString()
+					).then(hash =>
+						content.split(subresource).join(`${subresource}?${hash.hex}`)
+					);
+				})
+			, Promise.resolve(originalContent)).then(content => {
 				if (content !== originalContent) {
 					fs.writeFileSync(file, content);
 				}
+			});
+		}), Promise.resolve());
+	'
+
+	cd ..
+
+
+	# WebSign packaging
+
+	git clone git@github.com:cyph/cdn.git
+
+	cd cyph.im
+
+	echo "WebSign ${package}"
+
+	# Merge in base64'd images, fonts, video, and audio
+	node -e '
+		const datauri		= require("datauri");
+
+		const filesToMerge	= child_process.spawnSync("find", [
+			"audio",
+			"fonts",
+			"img",
+			"video",
+			"-type",
+			"f"
+		]).stdout.toString().split("\n").filter(s => s);
+
+		const filesToModify	= ["js", "css"].reduce((arr, ext) =>
+			arr.concat(
+				child_process.spawnSync("find", [
+					ext,
+					"-name",
+					"*." + ext,
+					"-type",
+					"f"
+				]).stdout.toString().split("\n")
+			),
+			["index.html"]
+		).filter(s => s);
+
+
+		for (let file of filesToModify) {
+			const originalContent	= fs.readFileSync(file).toString();
+			let content				= originalContent;
+
+			for (let subresource of filesToMerge) {
+				if (content.indexOf(subresource) < 0) {
+					continue;
+				}
+
+				const dataURI	= datauri.sync(subresource);
+
+				content	= content.
+					replace(
+						new RegExp(`(src|href)=(\\\\?['"'"'"])/?${subresource}\\\\?['"'"'"]`, "g"),
+						`WEBSIGN-SRI-DATA-START☁$2☁☁☁${dataURI}☁WEBSIGN-SRI-DATA-END`
+					).replace(
+						new RegExp(`/?${subresource}`, "g"),
+						dataURI
+					).replace(
+						/☁☁☁/g,
+						`☁${subresource}☁`
+					)
+				;
 			}
-		'
 
-		# Merge imported libraries into threads
-		find js -name '*.js' | xargs -I% ../commands/websign/threadpack.js %
+			if (content !== originalContent) {
+				fs.writeFileSync(file, content);
+			}
+		}
+	'
 
-		../commands/websign/pack.js --sri --minify index.html pkg
+	# Merge imported libraries into threads
+	find js -name '*.js' | xargs -I% ../commands/websign/threadpack.js %
 
-		../commands/websign/pack.js websign/index.html index.html
-		mv websign/serviceworker.js ./
-		mv websign/unsupportedbrowser.html ./
-		rm websign/index.html
+	../commands/websign/pack.js --sri --minify index.html pkg
 
-		find . \
-			-mindepth 1 -maxdepth 1 \
-			-not -name 'pkg*' \
-			-not -name '*.html' \
-			-not -name '*.js' \
-			-not -name '*.yaml' \
-			-not -name 'websign' \
-			-not -name 'img' \
-			-not -name 'favicon.ico' \
-			-exec rm -rf {} \;
+	find . \
+		-mindepth 1 -maxdepth 1 \
+		-not -name 'pkg*' \
+		-not -name '*.html' \
+		-not -name '*.js' \
+		-not -name '*.yaml' \
+		-not -name 'img' \
+		-not -name 'favicon.ico' \
+		-exec rm -rf {} \;
 
-		cd ..
+	cd ..
 
-		rm -rf cdn/${project} github.io/${project}
-	done
+	rm -rf cdn/${package}
 
 	echo "Starting signing process."
 
-	./commands/websign/sign.js "${websignHashWhitelist}" $(
-		for d in $websignedProjects ; do
-			echo -n "${d}/pkg=cdn/$(projectname ${d}) "
-		done
-	) || exit 1
+	./commands/websign/sign.js "${websignHashWhitelist}" "cyph.im/pkg=cdn/${package}" || exit 1
 
-	for d in $websignedProjects ; do
-		project="$(projectname $d)"
+	rm cyph.im/pkg
 
-		rm ${d}/pkg
-
-		if [ -d ${d}/pkg-subresources ] ; then
-			mv ${d}/pkg-subresources/* cdn/${project}/
-			rm -rf ${d}/pkg-subresources
-		fi
-
-		cp -rf cdn/${project} github.io/
-
-		find github.io/${project} -name '*.srihash' -exec rm {} \;
-
-		cd cdn
-		find ${project} -type f -not -name '*.srihash' -exec bash -c ' \
-			zopfli -i1000 {}; \
-			chmod 777 {}.gz; \
-			git add {}.gz; \
-			git commit -m "$(cat {}.srihash 2> /dev/null || date +%s)" {}.gz > /dev/null 2>&1; \
-		' \;
-		cd ..
-	done
+	if [ -d cyph.im/pkg-subresources ] ; then
+		mv cyph.im/pkg-subresources/* cdn/${package}/
+		rm -rf cyph.im/pkg-subresources
+	fi
 
 	cd cdn
-	git push
-	cd ..
-
-	cd github.io
-	chmod -R 777 .
-	git add .
-	git commit -a -m 'package update'
+	find ${package} -type f -not -name '*.srihash' -exec bash -c ' \
+		zopfli -i1000 {}; \
+		chmod 777 {}.gz; \
+		git add {}.gz; \
+		git commit -m "$(cat {}.srihash 2> /dev/null || date +%s)" {}.gz > /dev/null 2>&1; \
+	' \;
 	git push
 	cd ..
 fi
+
+
+# WebSign redirects
+
+setredirect '' cyph.im/index.html
+
+for suffix in $shortlinkProjects ; do
+	d=cyph.${suffix}
+	project=cyph-${suffix}
+
+	mkdir $d
+	cat cyph.im/cyph-im.yaml | sed "s|cyph-im|${project}|g" > ${d}/${project}.yaml
+	setredirect ${suffix}/ ${d}/index.html
+done
+
+
+cp -f shared/favicon.ico */
 
 
 if [ ! $test ] ; then

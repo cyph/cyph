@@ -5,12 +5,12 @@ var Config	= {
 	defaultContinent: 'eu',
 
 	files: [
-		'./',
-		'websign/js/workerhelper.js',
-		'websign/appcache.appcache',
-		'websign/manifest.json',
-		'serviceworker.js',
-		'unsupportedbrowser'
+		'/',
+		'/js/workerhelper.js',
+		'/appcache.appcache',
+		'/manifest.json',
+		'/serviceworker.js',
+		'/unsupportedbrowser'
 	],
 
 	publicKeys: PUBLIC_KEYS
