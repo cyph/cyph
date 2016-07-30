@@ -27,7 +27,11 @@ const publicKeysJS	= fs.readFileSync(
 	`${__dirname}/../../websign/js/keys.js`
 ).toString();
 const publicKeys	= JSON.parse(
-	publicKeysJS.substring(publicKeysJS.indexOf('=') + 1).split(';')[0].trim()
+	publicKeysJS.
+		substring(publicKeysJS.indexOf('=') + 1).
+		split(';')[0].
+		trim().
+		replace(/\/\*.*?\*\//g, '')
 );
 
 const signatureTTL	= 2.5; // Months
