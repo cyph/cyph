@@ -52,24 +52,24 @@ cd /cdn
 while true ; do
 	git pull
 
-	node -e "console.log(
-		['cyph.pki.ws'].concat([...new Set(
-			JSON.parse('$(
-				curl -s -u "${apikey}" "https://api.digicert.com/order/${orderid}"
-			)')['certificate_details'].sans.concat(
-				fs.readdirSync('.').
-					filter(s => s !== '.git' && s !== 'websign').
-					map(s => s + '.pki.ws')
-			).
-				map(s => s.replace(/^www\./, '')).
-				filter(s => s !== 'cyph.pki.ws')
-		)]).
-			map(s => [s, 'www.' + s]).
-			reduce((a, b) => a.concat(b)).
-			join(',')
+	node -e "console.log([
+		'cyph.pki.ws',
+		'cyph.im',
+		'cyph.io',
+		'cyph.me',
+		'cyph.video',
+		'cyph.audio'
+	].concat(
+		fs.readdirSync('.').
+			filter(s => s !== '.git' && s !== 'websign' && s !== 'cyph').
+			map(s => s + '.pki.ws')
+	).
+		map(s => [s, 'www.' + s]).
+		reduce((a, b) => a.concat(b)).
+		join(',')
 	)" > /etc/nginx/sans.json
 
-	sleep 30m
+	sleep 90m
 done
 EndOfMessage
 
