@@ -271,6 +271,8 @@ if [ ! $simple ] ; then
 			"f"
 		]).stdout.toString().split("\n").filter(s => s);
 
+		const cacheBustedFiles	= {};
+
 
 		filesToModify.reduce((promise, file) => promise.then(() => {
 			const originalContent	= fs.readFileSync(file).toString();
@@ -289,10 +291,20 @@ if [ ! $simple ] ; then
 				})
 			, Promise.resolve(originalContent)).then(content => {
 				if (content !== originalContent) {
+					cacheBustedFiles[subresource]	= true;
 					fs.writeFileSync(file, content);
 				}
 			});
-		}), Promise.resolve());
+		}), Promise.resolve()).
+
+		/* To save space, remove unused subresources under lib directory */
+		then(() => {
+			for (let subresource of filesToCacheBust) {
+				if (subresource.startsWith("lib/") && !cacheBustedFiles[subresource]) {
+					fs.unlinkSync(subresource);
+				}
+			}
+		});
 	'
 
 	cd ..
