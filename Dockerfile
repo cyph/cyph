@@ -71,7 +71,13 @@ RUN sudo ln -s /usr/bin/md5sum /usr/bin/md5
 
 RUN rm -rf ~/.gnupg
 
-RUN bash -c 'source ~/.bashrc; ln -s $NODE_PATH $HOME/node_modules ; sudo ln -s $NODE_PATH /node_modules'
+RUN bash -c ' \
+	source ~/.bashrc; \
+	ln -s $NODE_PATH $HOME/node_modules; \
+	sudo ln -s $NODE_PATH /node_modules; \
+	mkdir -p /home/gibson/emsdk_portable/node/4.1.1_64bit/bin; \
+	ln -s /usr/bin/node /home/gibson/emsdk_portable/node/4.1.1_64bit/bin/node; \
+'
 
 
 VOLUME /cyph
