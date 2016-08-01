@@ -6,7 +6,7 @@ dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd)/..
 originalDir="$(pwd)"
 
-if [ "${1}" != '--simple' ] ; then
+if [ "${1}" != '--simple' -a "${1}" != '--prod' ] ; then
 	./commands/docs.sh
 fi
 
