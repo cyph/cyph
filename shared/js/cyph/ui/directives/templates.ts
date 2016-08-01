@@ -207,17 +207,14 @@ export const Templates	= {
 					ng-show='$this.p2pManager.p2p.incomingStream.video'
 					autoplay
 				></div>
-				<video
+				<img
 					class='friend'
 					ng-if='!(
 						$this.p2pManager.p2p.incomingStream.video ||
 						$this.p2pManager.p2p.loading
 					)'
-					src='/video/voicecall.mp4'
-					autoplay
-					loop
-					muted
-				></video>
+					src='/img/voicecall.jpg'
+				/>
 				<video
 					class='me'
 					ng-show='$this.p2pManager.p2p.outgoingStream.video'
