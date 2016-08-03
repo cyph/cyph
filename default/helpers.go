@@ -204,8 +204,9 @@ func handleFuncs(pattern string, handlers Handlers) {
 
 func initHandler(w http.ResponseWriter, r *http.Request) {
 	_, ok := config.AllowedHosts[r.Host]
+	origin := r.Header.Get("Origin")
 
-	if ok || strings.HasSuffix(r.Header.Get("Origin"), ".pki.ws") || appengine.IsDevAppServer() {
+	if ok || strings.HasSuffix(origin, ".pki.ws") || strings.HasSuffix(origin, ".cyph.ws") || appengine.IsDevAppServer() {
 		w.Header().Add("Access-Control-Allow-Origin", "*")
 		w.Header().Add("Access-Control-Allow-Credentials", "true")
 		w.Header().Add("Access-Control-Allow-Methods", config.AllowedMethods)

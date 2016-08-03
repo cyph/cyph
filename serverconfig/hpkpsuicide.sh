@@ -137,4 +137,4 @@ done
 
 
 sleep 12h
-/rekey.sh &
+/hpkpsuicide.sh &

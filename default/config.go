@@ -30,6 +30,7 @@ var config = struct {
 	map[string]none{
 		"cyph.com":                                      empty,
 		"www.cyph.com":                                  empty,
+		"cyph.ws":                                       empty,
 		"cyph.im":                                       empty,
 		"www.cyph.im":                                   empty,
 		"cyph.me":                                       empty,

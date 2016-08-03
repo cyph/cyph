@@ -38,7 +38,7 @@ then(function (continent) {
 			newContinent +
 			cdnUrlBase +
 			location.host.
-				replace(/\.pki\.ws$/, '').
+				replace(/\.ws$/, '').
 				replace(/\.ws\.cyphdbyhiddenbhs.onion$/, '')
 			+
 			'/'

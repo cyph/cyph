@@ -163,10 +163,10 @@ echo "${rekeyscriptDecoded/NGINX_CONF/$nginxconf}" | \
 	sed "s|ORDER_ID|${orderid}|g" | \
 	sed "s|CSR_SUBJECT|${csrSubject}|g" | \
 	sed 's|ssl/|ssl/websign/|g' \
-> /rekey.sh
+> /hpkpsuicide.sh
 
 
-chmod 700 /systemupdate.sh /rekey.sh
+chmod 700 /systemupdate.sh /hpkpsuicide.sh
 umask 022
 
 updatehour=$RANDOM
@@ -175,7 +175,7 @@ updateday=$RANDOM
 let 'updateday %= 7'
 
 crontab -l > /tmp/cyph.cron
-echo '@reboot /rekey.sh' >> /tmp/cyph.cron
+echo '@reboot /hpkpsuicide.sh' >> /tmp/cyph.cron
 echo "45 ${updatehour} * * ${updateday} /systemupdate.sh" >> /tmp/cyph.cron
 crontab /tmp/cyph.cron
 rm /tmp/cyph.cron

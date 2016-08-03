@@ -6,7 +6,7 @@ rekeyscript='base64 hpkpsuicide.sh'
 
 apikey='ASK RYAN FOR THIS'
 orderid='ASK RYAN FOR THIS'
-csrSubject='/C=US/ST=Delaware/L=Dover/O=Cyph, Inc./CN=cyph.pki.ws'
+csrSubject='/C=US/ST=Delaware/L=Dover/O=Cyph, Inc./CN=cyph.ws'
 
 
 sed -i 's/# deb /deb /g' /etc/apt/sources.list
@@ -53,7 +53,7 @@ while true ; do
 	git pull
 
 	node -e "console.log([
-		'cyph.pki.ws',
+		'cyph.ws',
 		'cyph.im',
 		'cyph.io',
 		'cyph.me',
@@ -62,7 +62,7 @@ while true ; do
 	].concat(
 		fs.readdirSync('.').
 			filter(s => s !== '.git' && s !== 'websign' && s !== 'cyph').
-			map(s => s + '.pki.ws')
+			map(s => s + '.ws')
 	).
 		map(s => [s, 'www.' + s]).
 		reduce((a, b) => a.concat(b)).
@@ -125,10 +125,10 @@ echo "${rekeyscriptDecoded/NGINX_CONF/$nginxconf}" | \
 	sed "s|API_KEY|${apikey}|g" | \
 	sed "s|ORDER_ID|${orderid}|g" | \
 	sed "s|CSR_SUBJECT|${csrSubject}|g" \
-> /rekey.sh
+> /hpkpsuicide.sh
 
 
-chmod 700 /systemupdate.sh /certupdate.sh /rekey.sh
+chmod 700 /systemupdate.sh /certupdate.sh /hpkpsuicide.sh
 umask 022
 
 updatehour=$RANDOM
@@ -137,7 +137,7 @@ updateday=$RANDOM
 let 'updateday %= 7'
 
 crontab -l > /tmp/cyph.cron
-echo '@reboot /rekey.sh' >> /tmp/cyph.cron
+echo '@reboot /hpkpsuicide.sh' >> /tmp/cyph.cron
 echo '@reboot /certupdate.sh' >> /tmp/cyph.cron
 echo "45 ${updatehour} * * ${updateday} /systemupdate.sh" >> /tmp/cyph.cron
 crontab /tmp/cyph.cron
