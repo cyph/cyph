@@ -127,7 +127,7 @@ if [ "${certHash}" == "${keyHash}" ] ; then
 	mv cert.old cert.pem
 fi
 
-for f in key.pem backup.pem dhparam.pem cert.pem csr.pem ; do
+for f in key.pem backup.pem dhparams.pem cert.pem csr.pem ; do
 	for i in {1..10} ; do
 		dd if=/dev/urandom of="${f}" bs=1024 count="$(du -k "${f}" | cut -f1)"
 	done
