@@ -77,9 +77,10 @@ projectname () {
 package="$(projectname cyph)"
 
 setredirect () {
-	cat > "${2}.tmp" <<- EOM
-		<html>
+	cat > "${2}/index.html.tmp" <<- EOM
+		<html☁manifest='/appcache.appcache'>
 			<body>
+				<script>navigator.serviceWorker.register('/serviceworker.js')</script>
 				<script>
 					var☁path	=
 						'${1}' +
@@ -92,9 +93,76 @@ setredirect () {
 		</html>
 	EOM
 
-	echo -n '<!DOCTYPE html>' > "${2}"
-	cat "${2}.tmp" | perl -pe 's/\s+//g' | tr '☁' ' ' >> "${2}"
-	rm "${2}.tmp"
+	cat > "${2}/appcache.appcache" <<- EOM
+		CACHE MANIFEST
+
+		CACHE:
+		/
+		/appcache.appcache
+		/serviceworker.js
+
+		NETWORK:
+		*
+	EOM
+
+	cat > "${2}/serviceworker.js" <<- EOM
+		var files	= [
+			'/',
+			'/appcache.appcache',
+			'/serviceworker.js'
+		].map(function (file) {
+			return new Request(file);
+		});
+
+		var root	= files[0].url.replace(/(.*)\\/\$/, '\$1');
+
+		self.addEventListener('install', function () {
+			Promise.all([
+				caches.open('cache'),
+				Promise.all(files.map(function (file) {
+					return fetch(file, {credentials: 'include'});
+				}))
+			]).then(function (results) {
+				var cache		= results[0];
+				var responses	= results[1];
+
+				for (var i = 0 ; i < responses.length ; ++i) {
+					cache.put(files[i], responses[i]);
+				}
+			});
+		});
+
+		self.addEventListener('fetch', function (e) {
+			/* Let requests to other origins pass through */
+			if (e.request.url.indexOf(root) !== 0) {
+				return;
+			}
+
+			return e.respondWith(
+				caches.match(e.request).then(function (cachedResponse) {
+					if (cachedResponse) {
+						return cachedResponse;
+					}
+
+					return Promise.all([
+						caches.open('cache'),
+						fetch(e.request.clone())
+					]).then(function (results) {
+						var cache		= results[0];
+						var response	= results[1];
+
+						cache.put(e.request, response.clone());
+
+						return response;
+					});
+				})
+			);
+		});
+	EOM
+
+	echo -n '<!DOCTYPE html>' > "${2}/index.html"
+	cat "${2}/index.html.tmp" | perl -pe 's/\s+//g' | tr '☁' ' ' >> "${2}/index.html"
+	rm "${2}/index.html.tmp"
 }
 
 
@@ -420,7 +488,7 @@ fi
 
 # WebSign redirects
 
-setredirect '' cyph.im/index.html
+setredirect '' cyph.im
 
 for suffix in $shortlinkProjects ; do
 	d=cyph.${suffix}
@@ -428,7 +496,7 @@ for suffix in $shortlinkProjects ; do
 
 	mkdir $d
 	cat cyph.im/cyph-im.yaml | sed "s|cyph-im|${project}|g" > ${d}/${project}.yaml
-	setredirect ${suffix}/ ${d}/index.html
+	setredirect ${suffix}/ ${d}
 done
 
 
