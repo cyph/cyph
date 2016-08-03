@@ -432,7 +432,7 @@ for suffix in $shortlinkProjects ; do
 done
 
 
-cp -f shared/favicon.ico */
+find . -type d -depth 1 -not -name shared -exec cp -f shared/favicon.ico {}/ \;
 
 
 if [ ! $test ] ; then
