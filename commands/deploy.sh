@@ -81,7 +81,7 @@ setredirect () {
 		<html>
 			<body>
 				<script>
-					var path	=
+					var☁path	=
 						'${1}' +
 						location.toString().split(location.host)[1].replace('#', '').replace(/^\\//, '')
 					;
@@ -93,7 +93,7 @@ setredirect () {
 	EOM
 
 	echo -n '<!DOCTYPE html>' > "${2}"
-	cat "${2}.tmp" | perl -pe 's/\s+//g' >> "${2}"
+	cat "${2}.tmp" | perl -pe 's/\s+//g' | tr '☁' ' ' >> "${2}"
 	rm "${2}.tmp"
 }
 
@@ -432,7 +432,7 @@ for suffix in $shortlinkProjects ; do
 done
 
 
-find . -type d -mindepth 1 -maxdepth 1 -not -name shared -exec cp -f shared/favicon.ico {}/ \;
+find . -mindepth 1 -maxdepth 1 -type d -not -name shared -exec cp -f shared/favicon.ico {}/ \;
 
 
 if [ ! $test ] ; then
