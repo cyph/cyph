@@ -86,7 +86,7 @@ setredirect () {
 						location.toString().split(location.host)[1].replace('#', '').replace(/^\\//, '')
 					;
 
-					location	= 'https://${package}.ws' + (path ? ('/#' + path) : '');
+					location	= 'https://${package}.ws' + (path ? ('/#' + path) : '').replace(/\\/\$/, '');
 				</script>
 			</body>
 		</html>
