@@ -5,6 +5,15 @@
 mkdir -p /etc/nginx/ssl/tmp
 cd /etc/nginx/ssl/tmp
 
+if [ -f /dhparams.bak -a ! -f /etc/nginx/ssl/dhparams.pem ] ; then
+	cp /dhparams.bak dhparams.pem
+else
+	openssl dhparam -out dhparams.pem 4096
+fi
+if [ ! -f /dhparams.bak ] ; then
+	cp dhparams.pem /dhparams.bak
+fi
+
 openssl dhparam -out dhparams.pem 4096
 openssl genrsa -out backup.pem 4096
 openssl req -new -newkey rsa:4096 -nodes -out csr.pem -keyout key.pem -subj 'CSR_SUBJECT'
