@@ -721,10 +721,17 @@ export const Templates	= {
 									<label>Password</label>
 								</md-input-container>
 							</div>
+
 							<div layout='row' layout-align='center center'>
 								<md-input-container class='md-block' flex='80'>
 									<input type='password' aria-label='Confirm Password' disabled />
 									<label>Confirm Password</label>
+								</md-input-container>
+							</div>
+							<div ng-if='invite' layout='row' layout-align='center center'>
+								<md-input-container class='md-block' flex='80'>
+									<input type='text' id='invitecode' ng-model='$this.data.inviteCode' aria-label='Invite Code' />
+									<label>Invite Code</label>
 								</md-input-container>
 							</div>
 							<div class='register-button' layout='row' layout-align='center end'>
@@ -752,6 +759,7 @@ export const Templates	= {
 									new cyph" button on the homepage. Our beta accounts program only provides
 									early access to more advanced functionality and cool new features.
 								</p>
+								<br />
 							</div>
 							<div class='register-button' layout='row' layout-align='center end'>
 								<md-button
@@ -773,6 +781,12 @@ export const Templates	= {
 								<md-input-container class='md-block' flex='80'>
 									<input type='email' ng-model='$this.data.email' aria-label='Email' required />
 									<label>Email</label>
+								</md-input-container>
+							</div>
+							<div layout='row' ng-if='invite' layout-align='center center'>
+								<md-input-container class='md-block' flex='80'>
+									<input type='text' ng-model='$this.data.inviteCode' aria-label='Invite Code' required />
+									<label>Invite Code</label>
 								</md-input-container>
 							</div>
 							<div layout='row' layout-align='center end'>

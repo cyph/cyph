@@ -120,6 +120,18 @@ export class UI extends Cyph.UI.BaseButtonManager {
 						onclose: () => Cyph.UrlState.set('')
 					});
 				}
+				else if (this.homeSection === HomeSections.invite) {
+					this.signupForm.data.inviteCode	= Cyph.UrlState.get().split(HomeSections[HomeSections.invite] + '/')[1] || '';
+
+					this.dialogManager.baseDialog({
+						template: Cyph.UI.Templates.invite,
+						locals: {
+							signupForm: this.signupForm,
+							Cyph: self['Cyph']
+						},
+						onclose: () => Cyph.UrlState.set('')
+					});
+				}
 				else {
 					this.scroll(
 						$('#' + HomeSections[this.homeSection] + '-section').offset().top -
@@ -209,7 +221,6 @@ export class UI extends Cyph.UI.BaseButtonManager {
 				this.controller.update();
 			}
 	}
-
 
 	/**
 	 * Changes UI state.

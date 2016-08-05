@@ -44,7 +44,7 @@ export class SignupForm implements ISignupForm {
 
 		const signupResult: string	= await Util.request({
 			method: 'PUT',
-			url: Env.baseUrl + 'signup',
+			url: Env.baseUrl + 'signups',
 			data: this.data,
 			retries: 3
 		});

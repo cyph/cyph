@@ -14,7 +14,7 @@ export class SignupForm {
 			transclude: true,
 			scope: {
 				$this: '=' + SignupForm.title,
-				hideButton: '='
+				invite: '='
 			},
 			link: scope => scope['Cyph'] = self['Cyph'],
 			template: Templates.signupForm

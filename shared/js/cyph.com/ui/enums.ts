@@ -23,6 +23,7 @@ export const PageTitles	= {
 	gettingstarted: `Getting Started with Cyph`,
 	intro: `Introduction to Cyph`,
 	register: `Cyph Account Signup`,
+	invite: `Cyph Account Invite`,
 	testimonials: `What People Say about Cyph`,
 	contact: `Get in Touch with Cyph`,
 	donate: `Donate to Cyph`,
@@ -52,6 +53,7 @@ export enum HomeSections {
 	intro,
 	promo,
 	register,
+	invite,
 	testimonials
 }
 
