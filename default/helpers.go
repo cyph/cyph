@@ -180,7 +180,15 @@ func handleFuncs(pattern string, handlers Handlers) {
 		if handler, ok := handlers[method]; ok {
 			initHandler(w, r)
 
-			responseBody, responseCode := handler(HandlerArgs{appengine.NewContext(r), r, w, mux.Vars(r)})
+			var responseBody interface{}
+			var responseCode int
+
+			if r.Method == "OPTIONS" {
+				responseBody = config.AllowedMethods
+				responseCode = http.StatusOK
+			} else {
+				responseBody, responseCode = handler(HandlerArgs{appengine.NewContext(r), r, w, mux.Vars(r)})
+			}
 
 			w.WriteHeader(responseCode)
 
