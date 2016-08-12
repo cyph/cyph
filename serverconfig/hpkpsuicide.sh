@@ -14,7 +14,6 @@ if [ ! -f /dhparams.bak ] ; then
 	cp dhparams.pem /dhparams.bak
 fi
 
-openssl dhparam -out dhparams.pem 4096
 openssl genrsa -out backup.pem 4096
 openssl req -new -newkey rsa:4096 -nodes -out csr.pem -keyout key.pem -subj 'CSR_SUBJECT'
 
@@ -129,7 +128,7 @@ if [ "${certHash}" == "${keyHash}" ] ; then
 
 	mv /etc/nginx/nginx.conf.new /etc/nginx/nginx.conf
 
-	service nginx restart
+	su -c 'service nginx restart'
 
 	mv key.old key.pem
 	mv dhparams.old dhparams.pem
