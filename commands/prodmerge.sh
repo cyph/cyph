@@ -16,7 +16,7 @@ merge () {
 	git checkout $target
 	git pull $targetSplit
 	git merge $source
-	git commit -a -m merge
+	git commit -S -a -m merge
 	git push $(echo -n $targetSplit | sed 's/ / HEAD:/')
 }
 
