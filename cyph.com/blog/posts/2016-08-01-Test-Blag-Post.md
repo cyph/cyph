@@ -11,6 +11,7 @@ author:
   lastname: Boehm
   twitter: BaronBoehm 
   bio: Co-founder & COO
+  quora: Josh-Boehm
   image: josh.jpg
 ---
 

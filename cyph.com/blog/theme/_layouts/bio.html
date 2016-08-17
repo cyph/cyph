@@ -16,11 +16,7 @@ layout: base
 
     <div class="container">
         <header>
-               <div class="social">
-                        <a href="https://twitter.com/{{ page.author.twitter }}" class="twitter" ><img src='{{ site.baseurl }}/images/twitter.png' style='width:25px;height:25px;margin:-3px 5px auto 5px;'></img></a>
-                        <a href='https://www.quora.com/profile/{{ page.author.quora }}'><img src='{{ site.baseurl }}/images/quora.png' style='width:25px;height:25px;margin:-3px 5px auto 5px;'></img></a>
-                    </div>
-                </div>
+            {% include _social.html %}
         </header>
 
         <section id='bio' >
