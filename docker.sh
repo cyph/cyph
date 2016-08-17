@@ -13,7 +13,7 @@ cd ~/.cyphbackup
 git init > /dev/null
 for f in cyph ssh gitconfig gnupg ; do cp -a ~/.$f $f ; done
 git add .
-git commit -a -m backup
+git commit --no-gpg-sign -a -m backup
 
 cd "$currentDir"
 
@@ -149,7 +149,13 @@ elif [ "${command}" == 'build' ] ; then
 	args=''
 
 elif [ "${command}" == 'commit' ] ; then
-	args="-v $HOME/.gitconfig:/home/gibson/.gitconfig -v $HOME/.ssh:/home/gibson/.ssh"
+	args=" \
+		-it \
+		-v $HOME/.gitconfig:/home/gibson/.gitconfig \
+		-v $HOME/.gnupg:/home/gibson/.gnupg \
+		-v $HOME/.ssh:/home/gibson/.ssh \
+	"
+
 	chmod -R 700 .
 
 elif [ "${command}" == 'backmerge' ] ; then

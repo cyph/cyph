@@ -10,7 +10,7 @@ rm .git/index.lock 2> /dev/null
 git pull
 chmod -R 700 .
 git add .
-git commit -a -m "${*}"
+git commit -S -a -m "${*}"
 git push
 
 # Automated cleanup and beautification
@@ -30,7 +30,7 @@ find shared/js -name '*.ts' -print0 |
 	xargs -0 -I% bash -c "cat % | perl -pe 's/\\s+$/\n/g' | perl -pe 's/    /\\t/g' > %.new ; mv %.new %"
 
 chmod -R 700 .
-git commit -a -m "cleanup: ${*}"
+git commit -S -a -m "cleanup: ${*}"
 git push
 
 cd "${dir}"

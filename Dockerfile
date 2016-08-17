@@ -7,7 +7,7 @@ LABEL Name="cyph"
 RUN apt-get update
 RUN apt-get dist-upgrade -y
 
-RUN apt-get install -y curl golang-go python perl devscripts build-essential cmake autoconf automake libtool git gnupg procps sudo apt-utils expect inotify-tools zopfli
+RUN apt-get install -y curl golang-go python perl devscripts build-essential cmake autoconf automake libtool git gnupg gnupg-agent procps sudo apt-utils expect inotify-tools zopfli
 
 RUN curl -sL https://deb.nodesource.com/setup_6.x | bash -
 RUN apt-get install -y nodejs
@@ -26,6 +26,9 @@ RUN echo '\
 	export CLOUD_PATHS="/google-cloud-sdk/bin:/google-cloud-sdk/platform/google_appengine:/google-cloud-sdk/platform/google_appengine/google/appengine/tools"; \
 \
 	export PATH="/opt/local/bin:/opt/local/sbin:/usr/local/opt/go/libexec/bin:$CLOUD_PATHS:$GOPATH/bin:$PATH"; \
+\
+	export GPG_TTY=$(tty); \
+	eval $(gpg-agent --daemon); \
 ' >> /.bashrc
 
 RUN echo 'gibson ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
