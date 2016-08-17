@@ -24,6 +24,19 @@ export class EventManager {
 	 */
 	public static callMainThread (method: string, args: any[] = []) : void {
 		if (Env.isMainThread) {
+			args.forEach((arg: any, i: number) => {
+				if (arg && arg.callbackId) {
+					args[i]	= (...args) => EventManager.trigger(
+						EventManager.threadEventPrefix + arg.callbackId,
+						args
+					);
+				}
+			});
+
+			if (method === 'Cyph.Firebase.call') {
+				debugger;
+			}
+
 			const methodSplit: string[]	= method.split('.');
 			const methodName: string	= methodSplit.slice(-1)[0];
 
@@ -46,6 +59,19 @@ export class EventManager {
 			}
 		}
 		else {
+			args.forEach((arg: any, i: number) => {
+				if (typeof arg === 'function') {
+					const callbackId: string	= Util.generateGuid();
+
+					args[i]	= {callbackId};
+
+					EventManager.on(
+						EventManager.threadEventPrefix + callbackId,
+						args => arg.apply(null, args)
+					);
+				}
+			});
+
 			EventManager.trigger(EventManager.mainThreadEvents, {method, args});
 		}
 	}
@@ -135,17 +161,6 @@ export class EventManager {
 			self.onmessage	= (e: MessageEvent) => {
 				const data: any	= e.data || {};
 
-				if (data instanceof Array) {
-					data.forEach((arg: any, i: number) => {
-						if (arg && arg.callbackId) {
-							data[i]	= (...args) => EventManager.trigger(
-								EventManager.threadEventPrefix + arg.callbackId,
-								args
-							);
-						}
-					});
-				}
-
 				if (data.isThreadEvent) {
 					EventManager.trigger(data.event, data.data, true);
 				}
@@ -156,24 +171,8 @@ export class EventManager {
 
 			EventManager.on(
 				EventManager.untriggeredEvents,
-				(o: { event: string; data: any; }) => {
-					if (o.data instanceof Array) {
-						o.data.forEach((arg: any, i: number) => {
-							if (typeof arg === 'function') {
-								const callbackId: string	= Util.generateGuid();
-
-								o.data[i]	= {callbackId};
-
-								EventManager.on(
-									EventManager.threadEventPrefix + callbackId,
-									args => arg.apply(null, args)
-								);
-							}
-						});
-					}
-
-					self.postMessage({event: o.event, data: o.data, isThreadEvent: true}, undefined);
-				}
+				(o: { event: string; data: any; }) =>
+					self.postMessage({event: o.event, data: o.data, isThreadEvent: true}, undefined)
 			);
 		}
 	})();

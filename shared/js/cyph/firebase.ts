@@ -20,7 +20,7 @@ export class Firebase {
 	public static call (command: any) : Promise<string> {
 		return new Promise(resolve => {
 			if (!Env.isMainThread) {
-				EventManager.callMainThread('Cyph.Firebase.call', [command, resolve]);
+				EventManager.callMainThread('Cyph.Firebase.call', [command, data => resolve(data)]);
 			}
 			else if (Firebase.frameIsReady) {
 				let step	= command;
