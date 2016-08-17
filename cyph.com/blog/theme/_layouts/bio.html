@@ -1,0 +1,33 @@
+---
+layout: base
+---
+{% if page.cover_image %}
+<div class="article-cover {{page.author.firstname}}">
+    <div class='header'>
+        <div class='header-blurb'>
+            <h1> {{page.author.name}} </h1>
+            <h2> {{page.author.bio}} </h2>
+        </div>
+        <div class='header-image'></div>
+   </div>
+</div>
+{% endif %}
+<article class="{{page.author.firstname}}">
+
+    <div class="container">
+        <header>
+               <div class="social">
+                        <a href="https://twitter.com/{{ page.author.twitter }}" class="twitter" ><img src='{{ site.baseurl }}/images/twitter.png' style='width:25px;height:25px;margin:-3px 5px auto 5px;'></img></a>
+                        <a href='https://www.quora.com/profile/{{ page.author.quora }}'><img src='{{ site.baseurl }}/images/quora.png' style='width:25px;height:25px;margin:-3px 5px auto 5px;'></img></a>
+                    </div>
+                </div>
+        </header>
+
+        <section id='bio' >
+                <div class='content'>
+                    {{ content }}
+                </div>
+            <br />
+        </section>
+    </div>
+</article>

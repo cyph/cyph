@@ -6,12 +6,12 @@ title: test post please ignore
 excerpt: Trying out the new blag.
 
 author:
-  name: Ryan Lester
-  firstname: Ryan
-  lastname: Lester
-  twitter: TheRyanLester
-  bio: Co-founder
-  image: ryan.jpg
+  name: Josh Boehm
+  firstname: Josh
+  lastname: Boehm
+  twitter: BaronBoehm 
+  bio: Co-founder & COO
+  image: josh.jpg
 ---
 
 Trying out the new blag.
