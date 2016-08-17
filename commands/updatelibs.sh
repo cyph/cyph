@@ -114,8 +114,7 @@ jspm install -y \
 	babel-polyfill \
 	crypto/ntru=github:cyph/ntru.js \
 	crypto/supersphincs=github:cyph/supersphincs.js \
-	crypto/isaac=github:rubycon/isaac.js \
-	crypto/cryptojs=cryptojs
+	crypto/isaac=github:rubycon/isaac.js
 
 if (( $? )); then
 	exit 1
@@ -203,7 +202,6 @@ typings install --global --save \
 	dt~angular-animate \
 	dt~webrtc/mediastream \
 	dt~webrtc/rtcpeerconnection \
-	dt~cryptojs \
 	dt~dompurify
 
 mkdir blog

@@ -1,5 +1,0 @@
-cron:
-- description: clean up SQS queues
-  url: /cleanupchannels
-  schedule: every 150 minutes
-  target: jobs
