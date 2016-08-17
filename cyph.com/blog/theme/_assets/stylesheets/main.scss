@@ -27,6 +27,96 @@ $accent: #8b62d9;
 	margin-top: -7px;
 }
 
+#bio {
+	.bio-img {
+	    border-radius: 150px;
+	    float: right;
+	    width: 300px; 
+	}
+	
+}
+
+.Josh, .Ryan {
+	
+	h1 {
+		font-weight: 200;
+		font-family: helvetica;
+		font-size: 99px !important;
+	}
+	.image {
+		width: 115% !important;
+		top: -400px !important;
+		left: -93px !important;
+		position: fixed !important;
+		z-index: -2;
+	}
+	
+}
+.header-blurb {
+	position: absolute;
+	top: 35%;
+	text-align: center;
+	font-weight: 200;
+	left: 8%;
+    text-shadow: 2px 2px 1px rgba(35,35,35,.35);
+	z-index: 1;
+	font-family: helvetica;
+	color: #8b62d9;
+}
+article.Josh, article.Ryan {
+	padding-top: 15px !important;
+    opacity: 0.90;
+    position: relative;
+}
+
+.article-cover.Josh, .article-cover.Ryan {
+    height: 545px !important;
+    max-height: 545px !important;
+	position: relative;
+	width: 100%;
+	top: 0;
+	background-color: #fff;
+	.header{
+		position: fixed;
+		width: 100%;
+		top: 0;
+		.header-blurb {
+			top: 50%;
+		}
+		.header-image {
+			background-image: url('/blog/images/josh.bio.jpg');
+			background-repeat: no-repeat;
+			background-position: center -350px;
+			background-attachment: fixed;
+			background-size: cover;
+			height: 971px;
+		}
+	}
+}
+
+.article-cover.Ryan {
+	.header-image{
+		background-image: url('/blog/images/ryan.bio.jpg') !important;
+	}
+}
+
+
+
+article.Josh .content, article.Ryan .content {
+    margin: 0px 12% 0px 12%;
+}
+
+.site-footer {
+    padding: 5em 0;
+    margin: 4em 0 0 0;
+    background: whitesmoke;
+    color: #aaa;
+    background-color: white;
+    z-index: 8;
+    font-size: 0.8em;
+    position: relative;
+    opacity: 0.90;
+}
 
 /* IMPORT CSS FILES */
 @import 'bootstrap';

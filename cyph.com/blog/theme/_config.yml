@@ -69,7 +69,7 @@ markdown:      maruku
 markdown_ext:  markdown,mkd,mkdn,md
 textile_ext:   textile
 
-excerpt_separator: "<!-- more -->"
+excerpt_separator: ""
 
 safe:        false
 host:        0.0.0.0
