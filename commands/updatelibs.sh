@@ -113,7 +113,7 @@ jspm install -y \
 	braintree=github:braintree/braintree-web \
 	babel-polyfill \
 	crypto/ntru=github:cyph/ntru.js \
-	crypto/supersphincs=github:cyph/supersphincs.js \
+	crypto/supersphincs=github:cyph/supersphincs \
 	crypto/isaac=github:rubycon/isaac.js
 
 if (( $? )); then
