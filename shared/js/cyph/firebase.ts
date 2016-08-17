@@ -76,7 +76,7 @@ export class Firebase {
 		if (Env.isMainThread) {
 			Firebase.frame			= document.createElement('iframe');
 			Firebase.frame.sandbox	= <any> 'allow-scripts allow-same-origin';
-			Firebase.frame.src		= Env.baseUrl + 'firebasesandbox';
+			Firebase.frame.src		= Env.baseUrl + 'firebasesandbox#' + Env.firebaseEndpoint;
 
 			Firebase.frame.style.display	= 'none';
 

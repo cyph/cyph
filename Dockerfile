@@ -12,7 +12,7 @@ RUN apt-get install -y curl golang-go python perl devscripts build-essential cma
 RUN curl -sL https://deb.nodesource.com/setup_6.x | bash -
 RUN apt-get install -y nodejs
 
-RUN npm -g install html-minifier clean-css cheerio uglify-js typescript babel-cli babel-preset-es2015 typings typedoc jspm browserstack browserify supersphincs libsodium-wrappers glob read mkdirp datauri
+RUN npm -g install html-minifier clean-css cheerio uglify-js typescript babel-cli babel-preset-es2015 typings typedoc jspm browserstack browserify supersphincs libsodium-wrappers glob read mkdirp datauri firebase firebase-server
 
 
 RUN echo '\
@@ -66,8 +66,7 @@ RUN curl -sSL https://get.rvm.io | bash -s stable --ruby
 
 RUN bash -c ' \
 	source ~/.bashrc; \
-	gem install specific_install sass jekyll:1.5.1 jekyll-assets:0.9.2 github-pages:20 maruku rake uglifier; \
-	gem specific_install -l https://github.com/buu700/fake_sqs; \
+	gem install sass jekyll:1.5.1 jekyll-assets:0.9.2 github-pages:20 maruku rake uglifier; \
 '
 
 RUN sudo ln -s /usr/bin/md5sum /usr/bin/md5

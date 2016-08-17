@@ -5,7 +5,6 @@ import {EventManager} from 'cyph/eventmanager';
 import {IController} from 'cyph/icontroller';
 import {Thread} from 'cyph/thread';
 import {Util} from 'cyph/util';
-import * as Channel from 'channel/channel';
 
 
 /**
@@ -13,7 +12,6 @@ import * as Channel from 'channel/channel';
  */
 export class ThreadedSession implements ISession {
 	private thread: Thread;
-	private outQueue: Channel.Queue;
 
 	public state	= {
 		cyphId: <string> '',
@@ -25,12 +23,6 @@ export class ThreadedSession implements ISession {
 	};
 
 	public close (shouldSendEvent: boolean = true) : void {
-		/* Synchronously destroy in main thread, because
-			onunload won't wait on cross-thread messages */
-		if (shouldSendEvent && this.outQueue) {
-			this.outQueue.send(RPCEvents.destroy, undefined, true);
-		}
-
 		this.trigger(ThreadedSessionEvents.close, {shouldSendEvent});
 	}
 
@@ -88,21 +80,7 @@ export class ThreadedSession implements ISession {
 			}
 		);
 
-		this.on(
-			Events.newChannel,
-			(e: { queueName: string; region: string; }) =>
-				this.outQueue	= new Channel.Queue(
-					e.queueName,
-					undefined,
-					{region: e.region}
-				)
-		);
-
 		this.thread	= new Thread((locals: any, importScripts: Function) => {
-			importScripts('/lib/js/aws/aws-sdk-js/aws-sdk.min.js');
-			importScripts('/lib/js/aws-xml.js');
-			self['AWS'].XML.Parser	= self['AWS_XML'];
-
 			importScripts('/js/cyph/session/session.js');
 
 			System.import('cyph/session/session').then(Session => {

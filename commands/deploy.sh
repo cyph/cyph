@@ -201,7 +201,7 @@ if [ ! $simple ] ; then
 fi
 
 defaultHost='${locationData.protocol}//${locationData.hostname}:'
-ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|${defaultHost}43000||g" %
+ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|${defaultHost}43000|https://cyphme.firebaseio.com|g" %
 ls */js/cyph/envdeploy.ts | xargs -I% sed -i 's|isLocalEnv: boolean		= true|isLocalEnv: boolean		= false|g' %
 
 if [ $branch == 'staging' ] ; then

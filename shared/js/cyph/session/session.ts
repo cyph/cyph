@@ -273,7 +273,7 @@ export class Session implements ISession {
 			localChannelCallback(<Channel.LocalChannel> this.channel);
 		}
 		else {
-			this.channel	= new Channel.Channel(channelDescriptor, handlers, undefined, this);
+			this.channel	= new Channel.Channel(channelDescriptor, handlers, this);
 		}
 	}
 
@@ -415,7 +415,7 @@ export class Session implements ISession {
 			const channelDescriptor: string	=
 				this.state.isStartingNewCyph === false ?
 					'' :
-					Channel.Channel.newDescriptor()
+					Util.generateGuid(Config.longSecretLength)
 			;
 
 			(async () => {

@@ -9,13 +9,6 @@ rm -rf shared/lib
 mkdir -p shared/lib/js
 cd shared/lib/js
 
-mkdir aws-xml
-cd aws-xml
-npm install --save xml2js aws-sdk
-browserify node_modules/aws-sdk/lib/xml/node_parser.js -s AWS_XML | uglifyjs -o ../aws-xml.js
-cd ..
-rm -rf aws-xml
-
 echo "sodium = (function () {
 	$( \
 		curl -s https://raw.githubusercontent.com/jedisct1/libsodium.js/9a8b4f9/wrapper/wrap-template.js | \
@@ -116,7 +109,6 @@ jspm install -y \
 	github:matthieua/wow \
 	github:morr/jquery.appear \
 	github:julianlam/tabIndent.js \
-	github:aws/aws-sdk-js \
 	npm:rxjs \
 	braintree=github:braintree/braintree-web \
 	babel-polyfill \
