@@ -17,59 +17,61 @@ export class Firebase {
 	 * Performs dynamic RPC call to Firebase frame.
 	 * @param command
 	 */
-	public static call (command: any, getReturnValue?: (id: string) => void) : void {
-		if (!Env.isMainThread) {
-			EventManager.callMainThread('Cyph.Firebase.call', [command]);
-		}
-		else if (Firebase.frameIsReady) {
-			let step	= command;
-
-			if (command && command.returnValue) {
-				step	= command.returnValue.command;
+	public static call (command: any) : Promise<string> {
+		return new Promise(resolve => {
+			if (!Env.isMainThread) {
+				EventManager.callMainThread('Cyph.Firebase.call', [command, resolve]);
 			}
+			else if (Firebase.frameIsReady) {
+				let step	= command;
 
-			while (step) {
-				if (step.args) {
-					step.args.forEach((arg: any, i: number) => {
-						if (typeof arg === 'function') {
-							const callbackId: string	= Util.generateGuid();
-
-							step.args[i]	= {callbackId};
-
-							EventManager.on(
-								Firebase.eventPrefix + callbackId,
-								args => arg.apply(null, args)
-							);
-						}
-					});
+				if (command && command.returnValue) {
+					step	= command.returnValue.command;
 				}
 
-				step	= step[Object.keys(step).filter(
-					k => k !== 'args' && k !== 'method'
-				)[0]];
+				while (step) {
+					if (step.args) {
+						step.args.forEach((arg: any, i: number) => {
+							if (typeof arg === 'function') {
+								const callbackId: string	= Util.generateGuid();
+
+								step.args[i]	= {callbackId};
+
+								EventManager.on(
+									Firebase.eventPrefix + callbackId,
+									args => arg.apply(null, args)
+								);
+							}
+						});
+					}
+
+					step	= step[Object.keys(step).filter(
+						k => k !== 'args' && k !== 'method'
+					)[0]];
+				}
+
+				try {
+					Firebase.frame.contentWindow.postMessage({
+						command,
+						id: Util.generateGuid(),
+						returnValueCallbackId: (() => {
+							const callbackId: string	= Util.generateGuid();
+
+							EventManager.one(
+								Firebase.eventPrefix + callbackId,
+								args => resolve(args[0])
+							);
+
+							return callbackId;
+						})()
+					}, '*');
+				}
+				catch (_) {}
 			}
-
-			try {
-				Firebase.frame.contentWindow.postMessage({
-					command,
-					id: Util.generateGuid(),
-					returnValueCallbackId: getReturnValue && (() => {
-						const callbackId: string	= Util.generateGuid();
-
-						EventManager.one(
-							Firebase.eventPrefix + callbackId,
-							args => getReturnValue(args[0])
-						);
-
-						return callbackId;
-					})()
-				}, '*');
+			else {
+				setTimeout(() => Firebase.call(command), 50);
 			}
-			catch (_) {}
-		}
-		else {
-			setTimeout(() => Firebase.call(command), 50);
-		}
+		});
 	}
 
 	private static _	= (() => {

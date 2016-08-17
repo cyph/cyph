@@ -164,7 +164,9 @@ export class Session implements ISession {
 	private sendHandler (messages: string[]) : void {
 		this.lastOutgoingMessageTimestamp	= Date.now();
 
-		this.channel.send(messages);
+		for (let message of messages) {
+			this.channel.send(message);
+		}
 
 		Analytics.send({
 			hitType: 'event',
@@ -212,6 +214,32 @@ export class Session implements ISession {
 		}
 
 		const handlers	= {
+			onclose: () => {
+				this.updateState(State.isAlive, false);
+
+				if (!this.isLocalSession) {
+					/* If aborting before the cyph begins,
+						block friend from trying to join */
+					Util.request({
+						method: 'POST',
+						url: Env.baseUrl + 'channels/' + this.state.cyphId,
+						discardErrors: true
+					});
+				}
+
+				this.trigger(Events.closeChat);
+			},
+			onconnect: () => {
+				this.trigger(Events.connect);
+
+				if (this.isLocalSession) {
+					this.castle	= new Crypto.FakeCastle(this);
+				}
+				else {
+					this.castle	= new Crypto.Castle(this, nativeCrypto);
+				}
+			},
+			onmessage: message => this.receive(message),
 			onopen: (isCreator: boolean) : void => {
 				this.updateState(State.isCreator, isCreator);
 
@@ -254,18 +282,7 @@ export class Session implements ISession {
 						}
 					});
 				}
-			},
-			onconnect: () => {
-				this.trigger(Events.connect);
-
-				if (this.isLocalSession) {
-					this.castle	= new Crypto.FakeCastle(this);
-				}
-				else {
-					this.castle	= new Crypto.Castle(this, nativeCrypto);
-				}
-			},
-			onmessage: message => this.receive(message)
+			}
 		};
 
 		if (localChannelCallback) {
@@ -273,35 +290,12 @@ export class Session implements ISession {
 			localChannelCallback(<Channel.LocalChannel> this.channel);
 		}
 		else {
-			this.channel	= new Channel.Channel(channelDescriptor, handlers, this);
+			this.channel	= new Channel.Channel(channelDescriptor, handlers);
 		}
 	}
 
-	public close (shouldSendEvent: boolean = true) : void {
-		this.updateState(State.isAlive, false);
-
-		const closeChat: Function	= () => this.trigger(Events.closeChat);
-
-		if (shouldSendEvent) {
-			this.channel.send(RPCEvents.destroy, closeChat, true);
-
-			if (!this.isLocalSession) {
-				/* If aborting before the cyph begins,
-					block friend from trying to join */
-				Util.request({
-					method: 'POST',
-					url: Env.baseUrl + 'channels/' + this.state.cyphId,
-					discardErrors: true
-				});
-			}
-		}
-		else {
-			this.channel.close(closeChat);
-		}
-
-		if (!Env.isMainThread) {
-			setTimeout(() => self.close(), 120000);
-		}
+	public close () : void {
+		this.channel.close();
 	}
 
 	public off (event: string, handler: Function) : void {
@@ -313,10 +307,7 @@ export class Session implements ISession {
 	}
 
 	public receive (data: string) : void {
-		if (data === RPCEvents.destroy) {
-			this.close(false);
-		}
-		else if (this.castle) {
+		if (this.castle) {
 			this.castle.receive(data);
 		}
 		else {

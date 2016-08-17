@@ -22,8 +22,8 @@ export class ThreadedSession implements ISession {
 		wasInitiatedByAPI: <boolean> false
 	};
 
-	public close (shouldSendEvent: boolean = true) : void {
-		this.trigger(ThreadedSessionEvents.close, {shouldSendEvent});
+	public close () : void {
+		this.trigger(ThreadedSessionEvents.close);
 	}
 
 	public off (event: string, handler: Function) : void {
@@ -91,8 +91,8 @@ export class ThreadedSession implements ISession {
 					locals.id
 				);
 
-				session.on(locals.events.close, (e: { shouldSendEvent: boolean; }) =>
-					session.close(e.shouldSendEvent)
+				session.on(locals.events.close, () =>
+					session.close()
 				);
 
 				session.on(locals.events.receive, (e: { data: string; }) =>

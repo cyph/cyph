@@ -1,5 +1,6 @@
 import {Env} from 'env';
 import {IThread} from 'ithread';
+import {Util} from 'util';
 
 
 /**
@@ -7,6 +8,7 @@ import {IThread} from 'ithread';
  */
 export class EventManager {
 	private static handlers: {[event: string] : Function[]}	= {};
+	private static threadEventPrefix: string	= 'threadEventPrefix';
 	private static untriggeredEvents: string	= 'untriggeredEvents';
 
 	/** Ignore this (used by EventManager and Thread for cross-thread event stuff). */
@@ -89,8 +91,7 @@ export class EventManager {
 	/**
 	 * Triggers event.
 	 * @param event
-	 * @param data Note: If this contains a callback function, the event will not cross
-	 * threads. (Adding this functionality would be trivial; it just hasn't been needed.)
+	 * @param data
 	 * @param shouldTrigger Ignore this (used internally for cross-thread events).
 	 */
 	public static trigger (
@@ -134,6 +135,17 @@ export class EventManager {
 			self.onmessage	= (e: MessageEvent) => {
 				const data: any	= e.data || {};
 
+				if (data instanceof Array) {
+					data.forEach((arg: any, i: number) => {
+						if (arg && arg.callbackId) {
+							data[i]	= (...args) => EventManager.trigger(
+								EventManager.threadEventPrefix + arg.callbackId,
+								args
+							);
+						}
+					});
+				}
+
 				if (data.isThreadEvent) {
 					EventManager.trigger(data.event, data.data, true);
 				}
@@ -144,8 +156,24 @@ export class EventManager {
 
 			EventManager.on(
 				EventManager.untriggeredEvents,
-				(o: { event: string; data: any; }) =>
-					self.postMessage({event: o.event, data: o.data, isThreadEvent: true}, undefined)
+				(o: { event: string; data: any; }) => {
+					if (o.data instanceof Array) {
+						o.data.forEach((arg: any, i: number) => {
+							if (typeof arg === 'function') {
+								const callbackId: string	= Util.generateGuid();
+
+								o.data[i]	= {callbackId};
+
+								EventManager.on(
+									EventManager.threadEventPrefix + callbackId,
+									args => arg.apply(null, args)
+								);
+							}
+						});
+					}
+
+					self.postMessage({event: o.event, data: o.data, isThreadEvent: true}, undefined);
+				}
 			);
 		}
 	})();

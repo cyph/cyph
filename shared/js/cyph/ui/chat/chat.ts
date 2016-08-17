@@ -156,7 +156,7 @@ export class Chat extends BaseButtonManager implements IChat {
 		else if (!this.isDisconnected) {
 			this.isDisconnected	= true;
 			this.addMessage(Strings.disconnectedNotification, Session.Users.app);
-			this.session.close(true);
+			this.session.close();
 		}
 	}
 

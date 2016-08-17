@@ -1,10 +1,8 @@
 import {IChannel} from 'ichannel';
 import {LocalChannel} from 'localchannel';
 import {Config} from 'cyph/config';
-import {Timer} from 'cyph/timer';
+import {Firebase} from 'cyph/firebase';
 import {Util} from 'cyph/util';
-import {Events} from 'session/enums';
-import {ISession} from 'session/isession';
 
 
 export {
@@ -17,48 +15,144 @@ export {
  * Standard IChannel implementation built on Firebase.
  */
 export class Channel implements IChannel {
-	public close (callback?: Function) : void {
-		
+	private isClosed: boolean	= false;
+	private isOpen: boolean		= false;
+
+	private channelId: string;
+	private messagesId: string;
+
+	public close () : void {
+		Firebase.call({ returnValue: {
+			id: this.channelId,
+			command: {
+				remove: {}
+			}
+		}});
 	}
 
 	public isAlive () : boolean {
-		return true;
+		return !this.isClosed;
 	}
 
-	public receive (
-		messageHandler?: (message: string) => void,
-		onComplete?: Function,
-		maxNumberOfMessages?: number,
-		waitTimeSeconds?: number,
-		onLag?: Function
-	) : void {
-		
-	}
-
-	public send (
-		message: string|string[],
-		callback?: Function|Function[],
-		isSynchronous?: boolean
-	) : void {
-		
+	public send (message: string) : void {
+		Firebase.call({ returnValue: {
+			id: this.messagesId,
+			command: {
+				push: { args: [message]}
+			}
+		}});
 	}
 
 	/**
 	 * @param channelName Name of this channel.
 	 * @param handlers Event handlers for this channel.
-	 * @param session Optionally pass in to trigger newChannel event.
 	 */
 	public constructor (
 		channelName: string,
 		handlers: ({
-			onclose?: (err: any, data: any) => void;
+			onclose?: () => void;
 			onconnect?: () => void;
-			onlag?: (lag: number, region: string) => void;
 			onmessage?: (message: string) => void;
 			onopen?: (isCreator: boolean) => void;
-		}) = {},
-		session?: ISession
-	) {
-		
-	}
+		}) = {}
+	) { (async () => {
+		this.channelId				= await Firebase.call({ database: {
+			ref: { args: ['channels'],
+			child: { args: [channelName]}}
+		}});
+
+		const usersId: string		= await Firebase.call({ returnValue: {
+			id: this.channelId,
+			command: {
+				child: { args: ['users']}
+			}
+		}});
+
+		const isCreator: boolean	= await new Promise<boolean>(resolve =>
+			Firebase.call({ returnValue: {
+				id: usersId,
+				command: {
+					once: { args: [
+						'value',
+						snapshot => resolve(!snapshot.hasChildren)
+					]}
+				}
+			}})
+		);
+
+		const userId: string		= Util.generateGuid();
+
+		Firebase.call({ returnValue: {
+			id: usersId,
+			command: {
+				child: { args: [userId],
+				set: { args: [userId]}}
+			}
+		}});
+
+		if (handlers.onopen) {
+			Firebase.call({ returnValue: {
+				id: usersId,
+				command: {
+					on: { args: [
+						'child_added',
+						snapshot => {
+							if (!this.isOpen && snapshot.val !== userId) {
+								this.isOpen	= true;
+								handlers.onopen(isCreator);
+							}
+						}
+					]}
+				}
+			}});
+		}
+
+		if (handlers.onconnect) {
+			handlers.onconnect();
+		}
+
+		Firebase.call({ returnValue: {
+			id: this.channelId,
+			command: {
+				onDisconnect: {
+				remove: {}}
+			}
+		}});
+
+		if (handlers.onclose) {
+			Firebase.call({ returnValue: {
+				id: this.channelId,
+				command: {
+					on: { args: [
+						'value',
+						snapshot => {
+							if (!snapshot.exists && !this.isClosed) {
+								this.isClosed	= true;
+								handlers.onclose();
+							}
+						}
+					]}
+				}
+			}});
+		}
+
+		this.messagesId				= await Firebase.call({ returnValue: {
+			id: this.channelId,
+			command: {
+				child: { args: ['messages']}
+			}
+		}});
+
+		if (handlers.onmessage) {
+			Firebase.call({ returnValue: {
+				id: this.messagesId,
+				command: {
+					on: { args: [
+						'child_added',
+						snapshot => handlers.onmessage(snapshot.val)
+					]}
+				}
+			}});
+		}
+	})() }
 }

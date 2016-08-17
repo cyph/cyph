@@ -19,10 +19,8 @@ export interface ISession {
 
 	/**
 	 * This kills the cyph.
-	 * @param shouldSendEvent If true, before closing, will
-	 * send a message telling the other guy that it's over.
 	 */
-	close (shouldSendEvent?: boolean) : void;
+	close () : void;
 
 	/**
 	 * Remove event listener.

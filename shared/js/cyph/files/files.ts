@@ -392,54 +392,52 @@ export class Files implements IFiles {
 
 		this.controller.update();
 
-		Util.retryUntilComplete(retry => {
+		Util.retryUntilComplete(async (retry) => {
 			const path: string	= 'ephemeral/' +  Util.generateGuid();
 
-			Firebase.call({ storage: {
+			uploadTaskId	= await Firebase.call({ storage: {
 				ref: { args: [path],
 				put: { args: [new Blob([o.cyphertext])]}}
-			}}, id => {
-				uploadTaskId	= id;
+			}});
 
-				Firebase.call({ returnValue: {
-					id: uploadTaskId,
-					command: { on: { args: [
-						'state_changed',
-						snapshot => {
-							transfer.percentComplete	=
-								snapshot.bytesTransferred /
-								snapshot.totalBytes *
-								100
-							;
+			Firebase.call({ returnValue: {
+				id: uploadTaskId,
+				command: { on: { args: [
+					'state_changed',
+					snapshot => {
+						transfer.percentComplete	=
+							snapshot.bytesTransferred /
+							snapshot.totalBytes *
+							100
+						;
 
-							this.controller.update();
-						},
-						err => {
-							if (transfer.answer !== false) {
-								retry();
-							}
-						},
-						() => {
-							Firebase.call({ storage: {
-								ref: { args: [path],
-								getDownloadURL: {
-									then: { args: [(url: string) => {
-										transfer.url	= url;
-
-										this.session.send(new Session.Message(
-											Session.RPCEvents.files,
-											transfer
-										));
-
-										this.transfers.splice(transferIndex, 1);
-										this.controller.update();
-									}]}
-								}}
-							}});
+						this.controller.update();
+					},
+					err => {
+						if (transfer.answer !== false) {
+							retry();
 						}
-					]}}
-				}});
-			});
+					},
+					() => {
+						Firebase.call({ storage: {
+							ref: { args: [path],
+							getDownloadURL: {
+								then: { args: [(url: string) => {
+									transfer.url	= url;
+
+									this.session.send(new Session.Message(
+										Session.RPCEvents.files,
+										transfer
+									));
+
+									this.transfers.splice(transferIndex, 1);
+									this.controller.update();
+								}]}
+							}}
+						}});
+					}
+				]}}
+			}});
 		});
 	}
 

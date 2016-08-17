@@ -11,14 +11,20 @@
 		});
 
 
-		/* Due to a quirk of Firebase's implementation, this needs to be
+		/* Due to a quirk of Firebase's implementation, these need to be
 			manually maintained. If it becomes a problem, this could be
 			automated reasonably easily. */
-		var firebaseGetters	= [
+		var firebaseGetValues	= [
 			'bytesTransferred',
 			'downloadURL',
 			'metadata',
 			'totalBytes'
+		];
+		var firebaseGetMethods	= [
+			'exists',
+			'hasChildren',
+			'numChildren',
+			'val'
 		];
 
 		var messageIds	= {};
@@ -83,12 +89,21 @@
 												value[k]	= oldValue[k];
 											}
 
-											for (var i = 0 ; i < firebaseGetters.length ; ++i) {
-												var k	= firebaseGetters[i];
+											for (var i = 0 ; i < firebaseGetValues.length ; ++i) {
+												var k	= firebaseGetValues[i];
 												var v	= oldValue[k];
 
 												if (v !== undefined) {
 													value[k]	= v;
+												}
+											}
+
+											for (var i = 0 ; i < firebaseGetMethods.length ; ++i) {
+												var k	= firebaseGetMethods[i];
+												var f	= oldValue[k];
+
+												if (f !== undefined) {
+													value[k]	= f();
 												}
 											}
 										}
