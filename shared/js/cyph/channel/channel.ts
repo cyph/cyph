@@ -1,7 +1,6 @@
 import {IChannel} from 'ichannel';
 import {LocalChannel} from 'localchannel';
 import {Queue} from 'queue';
-import {RatchetedChannel} from 'ratchetedchannel';
 import {Config} from 'cyph/config';
 import {Timer} from 'cyph/timer';
 import {Util} from 'cyph/util';
@@ -12,8 +11,7 @@ import {ISession} from 'session/isession';
 export {
 	IChannel,
 	LocalChannel,
-	Queue,
-	RatchetedChannel
+	Queue
 };
 
 

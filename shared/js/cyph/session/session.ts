@@ -273,7 +273,7 @@ export class Session implements ISession {
 			localChannelCallback(<Channel.LocalChannel> this.channel);
 		}
 		else {
-			this.channel	= new Channel.RatchetedChannel(this, channelDescriptor, handlers);
+			this.channel	= new Channel.Channel(channelDescriptor, handlers, undefined, this);
 		}
 	}
 
