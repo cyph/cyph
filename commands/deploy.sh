@@ -483,21 +483,20 @@ if [ ! $simple ] ; then
 	' \;
 	git push
 	cd ..
+
+	# WebSign redirects
+
+	setredirect '' cyph.im
+
+	for suffix in $shortlinkProjects ; do
+		d=cyph.${suffix}
+		project=cyph-${suffix}
+
+		mkdir $d
+		cat cyph.im/cyph-im.yaml | sed "s|cyph-im|${project}|g" > ${d}/${project}.yaml
+		setredirect ${suffix}/ ${d}
+	done
 fi
-
-
-# WebSign redirects
-
-setredirect '' cyph.im
-
-for suffix in $shortlinkProjects ; do
-	d=cyph.${suffix}
-	project=cyph-${suffix}
-
-	mkdir $d
-	cat cyph.im/cyph-im.yaml | sed "s|cyph-im|${project}|g" > ${d}/${project}.yaml
-	setredirect ${suffix}/ ${d}
-done
 
 
 find . -mindepth 1 -maxdepth 1 -type d -not -name shared -exec cp -f shared/favicon.ico {}/ \;
