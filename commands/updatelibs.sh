@@ -213,6 +213,8 @@ wget "https://apis.google.com$(cat google/plusone.js | grep -oP '/_/scs/.*?"' | 
 mkdir facebook ; wget https://connect.facebook.net/en_US/sdk.js -O facebook/sdk.js
 mkdir disqus ; wget https://cyph.disqus.com/embed.js -O disqus/embed.js
 npm install --save simple-jekyll-search
+mv node_modules/simple-jekyll-search ./
+rm -rf node_modules
 cd ..
 
 
