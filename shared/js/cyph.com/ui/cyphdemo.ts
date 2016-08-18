@@ -69,7 +69,7 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 	/** Mobile chat UI. */
 	public mobile: Cyph.UI.Chat.IChat;
 
-	private resize (forceActive?: boolean, oncomplete: Function = () => {}) : void {
+	private resize (forceActive?: boolean, oncomplete?: Function) : void {
 		const isActive: boolean	= forceActive || (
 			!Elements.heroText.is(':appeared') &&
 			Elements.demoRoot.is(':appeared')
@@ -119,7 +119,9 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 				;
 			}
 
-			setTimeout(oncomplete, 1100);
+			if (oncomplete) {
+				setTimeout(oncomplete, 1100);
+			}
 		}, 250);
 	}
 

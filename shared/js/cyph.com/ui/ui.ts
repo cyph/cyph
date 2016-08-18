@@ -183,7 +183,9 @@ export class UI extends Cyph.UI.BaseButtonManager {
 			scrollTop: position
 		}, delay);
 
-		setTimeout(oncomplete, delay + 50);
+		if (oncomplete) {
+			setTimeout(oncomplete, delay + 50);
+		}
 	}
 
 	public updateCart (
