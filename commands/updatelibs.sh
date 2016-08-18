@@ -212,6 +212,7 @@ mkdir google ; wget https://apis.google.com/js/plusone.js -O google/plusone.js
 wget "https://apis.google.com$(cat google/plusone.js | grep -oP '/_/scs/.*?"' | sed 's|\\u003d|=|g' | sed 's|__features__|plusone/rt=j/sv=1/d=1/ed=1|g' | rev | cut -c 2- | rev)/cb=gapi.loaded_0" -O google/plusone.helper.js
 mkdir facebook ; wget https://connect.facebook.net/en_US/sdk.js -O facebook/sdk.js
 mkdir disqus ; wget https://cyph.disqus.com/embed.js -O disqus/embed.js
+npm install --save simple-jekyll-search
 cd ..
 
 

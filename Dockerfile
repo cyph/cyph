@@ -66,7 +66,22 @@ RUN curl -sSL https://get.rvm.io | bash -s stable --ruby
 
 RUN bash -c ' \
 	source ~/.bashrc; \
-	gem install sass jekyll:1.5.1 jekyll-assets:0.9.2 github-pages:20 maruku rake uglifier; \
+	gem install \
+		sass \
+		jekyll:1.5.1 \
+		jekyll-assets:0.9.2 \
+		github-pages:20 \
+		maruku \
+		rake \
+		uglifier \
+		liquid_reading_time \
+		jekyll-paginate \
+		jekyll-gist \
+		jekyll-sitemap \
+		jekyll-seo-tag \
+		jekyll-tagging \
+		jekyll-scholar \
+	; \
 '
 
 RUN sudo ln -s /usr/bin/md5sum /usr/bin/md5
