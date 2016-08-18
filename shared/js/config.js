@@ -9,46 +9,46 @@ System.config({
 
   map: {
     "andyet/simplewebrtc": "github:andyet/simplewebrtc@2.1.0",
-    "angular": "github:angular/bower-angular@1.5.6",
-    "angular-animate": "github:angular/bower-angular-animate@1.5.6",
-    "angular-aria": "github:angular/bower-angular-aria@1.5.6",
-    "angular-material": "github:angular/bower-material@1.0.9",
+    "angular": "github:angular/bower-angular@1.5.8",
+    "angular-animate": "github:angular/bower-angular-animate@1.5.8",
+    "angular-aria": "github:angular/bower-angular-aria@1.5.8",
+    "angular-material": "github:angular/bower-material@1.1.0",
     "angular2": "npm:angular2@2.0.0-beta.17",
     "animate.css": "npm:animate.css@3.5.1",
-    "babel-polyfill": "npm:babel-polyfill@6.9.1",
-    "braintree": "github:braintree/braintree-web@2.24.1",
+    "babel-polyfill": "npm:babel-polyfill@6.13.0",
+    "braintree": "github:braintree/braintree-web@3.0.1",
     "crypto/isaac": "github:rubycon/isaac.js@master",
     "crypto/ntru": "github:cyph/ntru.js@master",
-    "crypto/supersphincs": "github:cyph/supersphincs.js@master",
-    "davidchambers/base64.js": "github:davidchambers/base64.js@0.3.0",
+    "crypto/supersphincs": "github:cyph/supersphincs@master",
+    "davidchambers/base64.js": "github:davidchambers/base64.js@1.0.0",
     "dompurify": "npm:dompurify@0.8.2",
     "jquery": "npm:jquery@2.2.4",
     "jquery-legacy": "github:jquery/jquery@1.12.4",
     "julianlam/tabIndent.js": "github:julianlam/tabIndent.js@master",
     "magnific-popup": "npm:magnific-popup@1.1.0",
-    "markdown-it/markdown-it": "github:markdown-it/markdown-it@6.0.5",
+    "markdown-it/markdown-it": "github:markdown-it/markdown-it@7.0.1",
     "markdown-it/markdown-it-emoji": "github:markdown-it/markdown-it-emoji@1.2.0",
     "markdown-it/markdown-it-sup": "github:markdown-it/markdown-it-sup@1.0.0",
     "matthieua/wow": "github:matthieua/wow@1.1.2",
     "microlight": "github:buu700/microlight@master",
     "morr/jquery.appear": "github:morr/jquery.appear@0.3.6",
     "nanoscroller": "npm:nanoscroller@0.8.7",
-    "rxjs": "npm:rxjs@5.0.0-beta.8",
+    "rxjs": "npm:rxjs@5.0.0-beta.11",
     "siddii/angular-timer": "github:siddii/angular-timer@1.2.1",
     "snaptortoise/konami-js": "github:snaptortoise/konami-js@1.4.2",
     "typescript": "npm:typescript@1.8.10",
     "unsemantic": "npm:unsemantic@1.1.3",
-    "github:angular/bower-angular-animate@1.5.6": {
-      "angular": "github:angular/bower-angular@1.5.6"
+    "github:angular/bower-angular-animate@1.5.8": {
+      "angular": "github:angular/bower-angular@1.5.8"
     },
-    "github:angular/bower-angular-aria@1.5.6": {
-      "angular": "github:angular/bower-angular@1.5.6"
+    "github:angular/bower-angular-aria@1.5.8": {
+      "angular": "github:angular/bower-angular@1.5.8"
     },
-    "github:angular/bower-material@1.0.9": {
-      "angular": "github:angular/bower-angular@1.5.6",
-      "angular-animate": "github:angular/bower-angular-animate@1.5.6",
-      "angular-aria": "github:angular/bower-angular-aria@1.5.6",
-      "css": "github:systemjs/plugin-css@0.1.23"
+    "github:angular/bower-material@1.1.0": {
+      "angular": "github:angular/bower-angular@1.5.8",
+      "angular-animate": "github:angular/bower-angular-animate@1.5.8",
+      "angular-aria": "github:angular/bower-angular-aria@1.5.8",
+      "css": "github:systemjs/plugin-css@0.1.26"
     },
     "github:jspm/nodelibs-assert@0.1.0": {
       "assert": "npm:assert@1.4.1"
@@ -77,7 +77,7 @@ System.config({
       "path-browserify": "npm:path-browserify@0.0.0"
     },
     "github:jspm/nodelibs-process@0.1.2": {
-      "process": "npm:process@0.11.4"
+      "process": "npm:process@0.11.8"
     },
     "github:jspm/nodelibs-stream@0.1.0": {
       "stream-browserify": "npm:stream-browserify@1.0.0"
@@ -88,6 +88,9 @@ System.config({
     "github:jspm/nodelibs-util@0.1.0": {
       "util": "npm:util@0.10.3"
     },
+    "github:jspm/nodelibs-vm@0.1.0": {
+      "vm-browserify": "npm:vm-browserify@0.0.4"
+    },
     "npm:amdefine@1.0.0": {
       "fs": "github:jspm/nodelibs-fs@0.1.2",
       "module": "github:jspm/nodelibs-module@0.1.0",
@@ -96,8 +99,8 @@ System.config({
     },
     "npm:angular2@2.0.0-beta.17": {
       "reflect-metadata": "npm:reflect-metadata@0.1.2",
-      "rxjs": "npm:rxjs@5.0.0-beta.8",
-      "zone.js": "npm:zone.js@0.6.12"
+      "rxjs": "npm:rxjs@5.0.0-beta.11",
+      "zone.js": "npm:zone.js@0.6.14"
     },
     "npm:assert@1.4.1": {
       "assert": "github:jspm/nodelibs-assert@0.1.0",
@@ -109,14 +112,14 @@ System.config({
       "buffer": "github:jspm/nodelibs-buffer@0.1.0",
       "process": "github:jspm/nodelibs-process@0.1.2"
     },
-    "npm:babel-polyfill@6.9.1": {
-      "babel-runtime": "npm:babel-runtime@6.9.2",
-      "core-js": "npm:core-js@2.4.0",
+    "npm:babel-polyfill@6.13.0": {
+      "babel-runtime": "npm:babel-runtime@6.11.6",
+      "core-js": "npm:core-js@2.4.1",
       "process": "github:jspm/nodelibs-process@0.1.2",
       "regenerator-runtime": "npm:regenerator-runtime@0.9.5"
     },
-    "npm:babel-runtime@6.9.2": {
-      "core-js": "npm:core-js@2.4.0",
+    "npm:babel-runtime@6.11.6": {
+      "core-js": "npm:core-js@2.4.1",
       "regenerator-runtime": "npm:regenerator-runtime@0.9.5"
     },
     "npm:buffer@3.6.0": {
@@ -127,7 +130,7 @@ System.config({
       "isarray": "npm:isarray@1.0.0",
       "process": "github:jspm/nodelibs-process@0.1.2"
     },
-    "npm:core-js@2.4.0": {
+    "npm:core-js@2.4.1": {
       "fs": "github:jspm/nodelibs-fs@0.1.2",
       "path": "github:jspm/nodelibs-path@0.1.0",
       "process": "github:jspm/nodelibs-process@0.1.2",
@@ -171,8 +174,10 @@ System.config({
     "npm:path-browserify@0.0.0": {
       "process": "github:jspm/nodelibs-process@0.1.2"
     },
-    "npm:process@0.11.4": {
-      "assert": "github:jspm/nodelibs-assert@0.1.0"
+    "npm:process@0.11.8": {
+      "assert": "github:jspm/nodelibs-assert@0.1.0",
+      "fs": "github:jspm/nodelibs-fs@0.1.2",
+      "vm": "github:jspm/nodelibs-vm@0.1.0"
     },
     "npm:punycode@1.3.2": {
       "process": "github:jspm/nodelibs-process@0.1.2"
@@ -195,10 +200,10 @@ System.config({
       "path": "github:jspm/nodelibs-path@0.1.0",
       "process": "github:jspm/nodelibs-process@0.1.2"
     },
-    "npm:rxjs@5.0.0-beta.8": {
+    "npm:rxjs@5.0.0-beta.11": {
       "buffer": "github:jspm/nodelibs-buffer@0.1.0",
       "process": "github:jspm/nodelibs-process@0.1.2",
-      "symbol-observable": "npm:symbol-observable@0.2.4"
+      "symbol-observable": "npm:symbol-observable@1.0.2"
     },
     "npm:source-map-resolve@0.3.1": {
       "atob": "npm:atob@1.1.3",
@@ -241,7 +246,10 @@ System.config({
       "inherits": "npm:inherits@2.0.1",
       "process": "github:jspm/nodelibs-process@0.1.2"
     },
-    "npm:zone.js@0.6.12": {
+    "npm:vm-browserify@0.0.4": {
+      "indexof": "npm:indexof@0.0.1"
+    },
+    "npm:zone.js@0.6.14": {
       "buffer": "github:jspm/nodelibs-buffer@0.1.0",
       "process": "github:jspm/nodelibs-process@0.1.2"
     }
