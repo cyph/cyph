@@ -7,7 +7,8 @@ import {Util} from 'util';
  * Global cross-thread event-manager.
  */
 export class EventManager {
-	private static handlers: {[event: string] : Function[]}	= {};
+	private static handlers: {[event: string] : Function[]}				= {};
+	private static indices: {[event: string] : Map<Function, number>}	= {};
 	private static threadEventPrefix: string	= 'threadEventPrefix';
 	private static untriggeredEvents: string	= 'untriggeredEvents';
 
@@ -78,11 +79,8 @@ export class EventManager {
 	 * @param handler
 	 */
 	public static off (event: string, handler?: Function) : void {
-		EventManager.handlers[event]	=
-			handler ?
-				(EventManager.handlers[event] || []).filter(f => f !== handler) :
-				undefined
-		;
+		EventManager.handlers[event].splice(EventManager.indices[event].get(handler), 1);
+		EventManager.indices[event].delete(handler);
 	}
 
 	/**
@@ -91,8 +89,19 @@ export class EventManager {
 	 * @param handler
 	 */
 	public static on (event: string, handler: Function) : void {
-		EventManager.handlers[event]	= EventManager.handlers[event] || [];
-		EventManager.handlers[event].push(handler);
+		if (!(event in EventManager.handlers)) {
+			EventManager.handlers[event]	= [];
+			EventManager.indices[event]		= new Map<Function, number>();
+		}
+
+		if (EventManager.indices[event].has(handler)) {
+			return;
+		}
+
+		EventManager.indices[event].set(
+			handler,
+			EventManager.handlers[event].push(handler) - 1
+		);
 	}
 
 	/**
