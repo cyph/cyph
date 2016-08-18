@@ -16,13 +16,16 @@ export class Firebase {
 	/**
 	 * Performs dynamic RPC call to Firebase frame.
 	 * @param command
+	 * @param noPreprocessing Ignore this (used internally for cross-thread events).
+	 * @param thenFunction Ignore this (used internally for cross-thread events).
 	 */
-	public static call (command: any) : Promise<string> {
-		return new Promise(resolve => {
-			if (!Env.isMainThread) {
-				EventManager.callMainThread('Cyph.Firebase.call', [command, data => resolve(data)]);
-			}
-			else if (Firebase.frameIsReady) {
+	public static call (
+		command: any,
+		noPreprocessing?: boolean,
+		thenFunction?: (data: string) => string
+	) : Promise<string> {
+		const promise	= new Promise(resolve => {
+			if (!noPreprocessing) {
 				let step	= command;
 
 				if (command && command.returnValue) {
@@ -49,7 +52,12 @@ export class Firebase {
 						k => k !== 'args' && k !== 'method'
 					)[0]];
 				}
+			}
 
+			if (!Env.isMainThread) {
+				EventManager.callMainThread('Cyph.Firebase.call', [command, true, data => resolve(data)]);
+			}
+			else if (Firebase.frameIsReady) {
 				try {
 					Firebase.frame.contentWindow.postMessage({
 						command,
@@ -69,9 +77,15 @@ export class Firebase {
 				catch (_) {}
 			}
 			else {
-				setTimeout(() => Firebase.call(command), 50);
+				setTimeout(() => Firebase.call(command, true), 50);
 			}
 		});
+
+		if (thenFunction) {
+			return promise.then(thenFunction);
+		}
+
+		return promise;
 	}
 
 	private static _	= (() => {

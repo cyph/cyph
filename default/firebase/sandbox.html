@@ -100,10 +100,9 @@
 
 											for (var i = 0 ; i < firebaseGetMethods.length ; ++i) {
 												var k	= firebaseGetMethods[i];
-												var f	= oldValue[k];
 
-												if (f !== undefined) {
-													value[k]	= f();
+												if (typeof oldValue[k] === 'function') {
+													value[k]	=  oldValue[k]();
 												}
 											}
 										}

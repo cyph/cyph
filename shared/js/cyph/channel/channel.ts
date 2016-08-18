@@ -15,11 +15,14 @@ export {
  * Standard IChannel implementation built on Firebase.
  */
 export class Channel implements IChannel {
-	private isClosed: boolean	= false;
-	private isOpen: boolean		= false;
+	private isClosed: boolean		= false;
+	private isConnected: boolean	= false;
+	private isCreator: boolean		= false;
 
 	private channelId: string;
 	private messagesId: string;
+	private userId: string;
+	private usersId: string;
 
 	public close () : void {
 		Firebase.call({ returnValue: {
@@ -38,7 +41,11 @@ export class Channel implements IChannel {
 		Firebase.call({ returnValue: {
 			id: this.messagesId,
 			command: {
-				push: { args: [message]}
+				push: { args: [{
+					cyphertext: message,
+					sender: this.userId,
+					timestamp: Date.now()
+				}]}
 			}
 		}});
 	}
@@ -56,21 +63,21 @@ export class Channel implements IChannel {
 			onopen?: (isCreator: boolean) => void;
 		}) = {}
 	) { (async () => {
-		this.channelId				= await Firebase.call({ database: {
+		this.channelId	= await Firebase.call({ database: {
 			ref: { args: ['channels'],
 			child: { args: [channelName]}}
 		}});
 
-		const usersId: string		= await Firebase.call({ returnValue: {
+		this.usersId	= await Firebase.call({ returnValue: {
 			id: this.channelId,
 			command: {
 				child: { args: ['users']}
 			}
 		}});
 
-		const isCreator: boolean	= await new Promise<boolean>(resolve =>
+		this.isCreator	= await new Promise<boolean>(resolve =>
 			Firebase.call({ returnValue: {
-				id: usersId,
+				id: this.usersId,
 				command: {
 					once: { args: [
 						'value',
@@ -80,35 +87,40 @@ export class Channel implements IChannel {
 			}})
 		);
 
-		const userId: string		= Util.generateGuid();
+		this.userId		= Util.generateGuid();
 
 		Firebase.call({ returnValue: {
-			id: usersId,
+			id: this.usersId,
 			command: {
-				child: { args: [userId],
-				set: { args: [userId]}}
+				child: { args: [this.userId],
+				set: { args: [this.userId]}}
 			}
 		}});
 
 		if (handlers.onopen) {
-			Firebase.call({ returnValue: {
-				id: usersId,
-				command: {
-					on: { args: [
-						'child_added',
-						snapshot => {
-							if (!this.isOpen && snapshot.val !== userId) {
-								this.isOpen	= true;
-								handlers.onopen(isCreator);
-							}
-						}
-					]}
-				}
-			}});
+			handlers.onopen(this.isCreator);
 		}
 
 		if (handlers.onconnect) {
-			handlers.onconnect();
+			if (this.isCreator) {
+				Firebase.call({ returnValue: {
+					id: this.usersId,
+					command: {
+						on: { args: [
+							'child_added',
+							snapshot => {
+								if (!this.isConnected && snapshot.val !== this.userId) {
+									this.isConnected	= true;
+									handlers.onconnect();
+								}
+							}
+						]}
+					}
+				}});
+			}
+			else {
+				handlers.onconnect();
+			}
 		}
 
 		Firebase.call({ returnValue: {
@@ -136,7 +148,7 @@ export class Channel implements IChannel {
 			}});
 		}
 
-		this.messagesId				= await Firebase.call({ returnValue: {
+		this.messagesId	= await Firebase.call({ returnValue: {
 			id: this.channelId,
 			command: {
 				child: { args: ['messages']}
@@ -149,7 +161,11 @@ export class Channel implements IChannel {
 				command: {
 					on: { args: [
 						'child_added',
-						snapshot => handlers.onmessage(snapshot.val)
+						snapshot => {
+							if (snapshot.val.sender !== this.userId) {
+								handlers.onmessage(snapshot.val.cyphertext);
+							}
+						}
 					]}
 				}
 			}});

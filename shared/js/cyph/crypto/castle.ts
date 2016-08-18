@@ -7,7 +7,7 @@ import {ISession} from 'session/isession';
 
 
 export class Castle implements ICastle {
-	private static chunkLength: number	= 40000;
+	private static chunkLength: number	= 8388608;
 
 
 	private incomingMessageId: number	= 0;

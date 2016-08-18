@@ -69,7 +69,7 @@ export class EnvDeploy {
 	;
 
 	/** Endpoint for Firebase server. */
-	public static firebaseEndpoint: string	= `${locationData.protocol}//${locationData.hostname}:43000`;
+	public static firebaseEndpoint: string	= `ws://127.0.1:43000`;
 
 	/** Content Security Policy defined in shared/csp. */
 	public static CSP: string				= "DEFAULT_CSP";

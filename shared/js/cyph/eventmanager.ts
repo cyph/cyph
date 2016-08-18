@@ -33,10 +33,6 @@ export class EventManager {
 				}
 			});
 
-			if (method === 'Cyph.Firebase.call') {
-				debugger;
-			}
-
 			const methodSplit: string[]	= method.split('.');
 			const methodName: string	= methodSplit.slice(-1)[0];
 
