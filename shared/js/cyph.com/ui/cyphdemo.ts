@@ -80,7 +80,10 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 				setTimeout(() => {
 					try {
 						if (Elements.backgroundVideo.is(':appeared')) {
-							Elements.backgroundVideo[0]['play']();
+							try {
+								Elements.backgroundVideo[0]['play']();
+							}
+							catch (_) {}
 						}
 					}
 					catch (_) {}
