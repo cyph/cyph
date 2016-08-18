@@ -283,6 +283,15 @@ for d in $compiledProjects ; do
 					}, {})
 			) + ';'
 		)"
+
+		# Block importScripts in Workers in WebSigned environments
+
+		cat $d/js/cyph/thread.ts | \
+			tr '\n' '☁' | \
+			perl -pe 's/importScripts\s+=.*?;/importScripts = (s: string) => { throw `Cannot load external script \${s}.` };/' | \
+			tr '☁' '\n' \
+		> $d/js/cyph/thread.ts.new
+		mv $d/js/cyph/thread.ts.new $d/js/cyph/thread.ts
 	fi
 
 	cd $d

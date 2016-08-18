@@ -27,12 +27,10 @@ export class Thread {
 			(not used in prod because of WebSign packing) */
 
 		const oldImportScripts	= importScripts;
-		importScripts			= (script: string) => {
-			oldImportScripts(
-				`${self['locationData'].protocol}//${self['locationData'].host}` +
-				script
-			);
-		};
+		importScripts			= (script: string) => oldImportScripts(
+			`${self['locationData'].protocol}//${self['locationData'].host}` +
+			script
+		);
 
 
 		/* Normalisation to increase compatibility with Web libraries */
