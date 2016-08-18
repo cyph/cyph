@@ -188,9 +188,9 @@ node build.js
 rm -rf node_modules
 cd ../../..
 
-cp system.js base.js
+cp babel-polyfill/browser.js base.js
 echo >> base.js
-cat babel-polyfill/browser.js >> base.js
+cat system.js >> base.js
 
 cd ..
 
