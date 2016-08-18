@@ -237,23 +237,25 @@ export class Thread {
 		}
 
 
-		this.worker.onmessage	= (e: MessageEvent) => {
-			if (e.data === 'ready') {
-				try {
-					URL.revokeObjectURL(blobUrl);
-				}
-				catch (_) {}
+		this.worker.onmessage	= (o: {data: MessageEvent[]}) => {
+			for (let e of o.data) {
+				if (e.data === 'ready') {
+					try {
+						URL.revokeObjectURL(blobUrl);
+					}
+					catch (_) {}
 
-				EventManager.trigger(callbackId, locals);
-			}
-			else if (e.data === 'close') {
-				this.stop();
-			}
-			else if (e.data && e.data['isThreadEvent']) {
-				EventManager.trigger(e.data.event, e.data.data);
-			}
-			else {
-				onmessage(e);
+					EventManager.trigger(callbackId, locals);
+				}
+				else if (e.data === 'close') {
+					this.stop();
+				}
+				else if (e.data && e.data['isThreadEvent']) {
+					EventManager.trigger(e.data.event, e.data.data);
+				}
+				else {
+					onmessage(e);
+				}
 			}
 		};
 

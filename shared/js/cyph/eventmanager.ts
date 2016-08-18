@@ -9,6 +9,7 @@ import {Util} from 'util';
 export class EventManager {
 	private static handlers: {[event: string] : Function[]}				= {};
 	private static indices: {[event: string] : Map<Function, number>}	= {};
+	private static mainThreadMessageQueue: any[]						= [];
 	private static threadEventPrefix: string	= 'threadEventPrefix';
 	private static untriggeredEvents: string	= 'untriggeredEvents';
 
@@ -17,6 +18,10 @@ export class EventManager {
 
 	/** List of all active threads. */
 	public static threads: IThread[]	= [];
+
+	private static messageMainThread (message: any) {
+		EventManager.mainThreadMessageQueue.push(message);
+	}
 
 	/**
 	 * Sends command to the main thread.
@@ -176,9 +181,15 @@ export class EventManager {
 
 			EventManager.on(
 				EventManager.untriggeredEvents,
-				(o: { event: string; data: any; }) =>
-					self.postMessage({event: o.event, data: o.data, isThreadEvent: true}, undefined)
+				(o: { event: string; data: any; }) => EventManager.messageMainThread(
+					{event: o.event, data: o.data, isThreadEvent: true}
+				)
 			);
+
+			setInterval(() => {
+				self.postMessage({data: EventManager.mainThreadMessageQueue}, undefined);
+				EventManager.mainThreadMessageQueue.length	= 0;
+			}, 500);
 		}
 	})();
 }

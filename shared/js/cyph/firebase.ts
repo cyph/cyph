@@ -7,8 +7,9 @@ import {Util} from 'util';
  * Wraps the Firebase SDK in a sandboxed iframe.
  */
 export class Firebase {
-	private static eventPrefix: string	= 'firebase';
-	private static origin: string		= Env.baseUrl.slice(0, -1);
+	private static eventPrefix: string		= 'firebase';
+	private static origin: string			= Env.baseUrl.slice(0, -1);
+	private static frameMessageQueue: any[]	= [];
 
 	private static frame: HTMLIFrameElement;
 	private static frameIsReady: boolean;
@@ -57,27 +58,21 @@ export class Firebase {
 			if (!Env.isMainThread) {
 				EventManager.callMainThread('Cyph.Firebase.call', [command, true, data => resolve(data)]);
 			}
-			else if (Firebase.frameIsReady) {
-				try {
-					Firebase.frame.contentWindow.postMessage({
-						command,
-						id: Util.generateGuid(),
-						returnValueCallbackId: (() => {
-							const callbackId: string	= Util.generateGuid();
-
-							EventManager.one(
-								Firebase.eventPrefix + callbackId,
-								args => resolve(args[0])
-							);
-
-							return callbackId;
-						})()
-					}, '*');
-				}
-				catch (_) {}
-			}
 			else {
-				setTimeout(() => Firebase.call(command, true), 50);
+				Firebase.frameMessageQueue.push({
+					command,
+					id: Util.generateGuid(),
+					returnValueCallbackId: (() => {
+						const callbackId: string	= Util.generateGuid();
+
+						EventManager.one(
+							Firebase.eventPrefix + callbackId,
+							args => resolve(args[0])
+						);
+
+						return callbackId;
+					})()
+				});
 			}
 		});
 
@@ -102,6 +97,16 @@ export class Firebase {
 				$(Firebase.frame).load(() =>
 					setTimeout(() => {
 						Firebase.frameIsReady	= true;
+
+						setInterval(() => {
+							try {
+								Firebase.frame.contentWindow.postMessage(
+									{messages: Firebase.frameMessageQueue},
+									'*'
+								);
+							}
+							catch (_) {}
+						}, 500);
 					}, 250)
 				)
 			);
