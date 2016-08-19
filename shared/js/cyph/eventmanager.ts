@@ -84,8 +84,17 @@ export class EventManager {
 	 * @param handler
 	 */
 	public static off (event: string, handler?: Function) : void {
+		if (!EventManager.handlers[event]) {
+			return;
+		}
+
 		EventManager.handlers[event].splice(EventManager.indices[event].get(handler), 1);
 		EventManager.indices[event].delete(handler);
+
+		if (EventManager.handlers[event].length < 1) {
+			EventManager.handlers[event]	= null;
+			EventManager.indices[event]		= null;
+		}
 	}
 
 	/**
@@ -94,7 +103,7 @@ export class EventManager {
 	 * @param handler
 	 */
 	public static on (event: string, handler: Function) : void {
-		if (!(event in EventManager.handlers)) {
+		if (!EventManager.handlers[event]) {
 			EventManager.handlers[event]	= [];
 			EventManager.indices[event]		= new Map<Function, number>();
 		}
@@ -186,10 +195,13 @@ export class EventManager {
 				)
 			);
 
-			setInterval(() => {
-				self.postMessage({data: EventManager.mainThreadMessageQueue}, undefined);
-				EventManager.mainThreadMessageQueue.length	= 0;
-			}, 500);
+			setInterval(() => self.postMessage(
+				EventManager.mainThreadMessageQueue.splice(
+					0,
+					EventManager.mainThreadMessageQueue.length
+				),
+				undefined
+			), 500);
 		}
 	})();
 }

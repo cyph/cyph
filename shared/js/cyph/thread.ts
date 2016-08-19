@@ -42,7 +42,7 @@ export class Thread {
 
 		/* Allow destroying the Thread object from within the thread */
 
-		self.close	= () => self.postMessage('close', undefined);
+		self.close	= () => self.postMessage(['close'], undefined);
 
 
 		/* Polyfills */
@@ -199,7 +199,7 @@ export class Thread {
 					}
 				);
 
-				self.postMessage('ready');
+				self.postMessage(['ready']);
 			});
 		`;
 
@@ -237,9 +237,13 @@ export class Thread {
 		}
 
 
-		this.worker.onmessage	= (o: {data: MessageEvent[]}) => {
-			for (let e of o.data) {
-				if (e.data === 'ready') {
+		this.worker.onmessage	= (e: MessageEvent) => {
+			if (!(e.data instanceof Array)) {
+				return;
+			}
+
+			for (let o of e.data) {
+				if (o === 'ready') {
 					try {
 						URL.revokeObjectURL(blobUrl);
 					}
@@ -247,14 +251,19 @@ export class Thread {
 
 					EventManager.trigger(callbackId, locals);
 				}
-				else if (e.data === 'close') {
+				else if (o === 'close') {
 					this.stop();
 				}
-				else if (e.data && e.data['isThreadEvent']) {
-					EventManager.trigger(e.data.event, e.data.data);
+				else if (o && o['isThreadEvent']) {
+					EventManager.trigger(o.event, o.data);
 				}
 				else {
-					onmessage(e);
+					onmessage(<any> {
+						data: o,
+						origin: e.origin,
+						ports: e.ports,
+						source: e.source
+					});
 				}
 			}
 		};

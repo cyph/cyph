@@ -28,24 +28,22 @@
 		];
 
 		var messageIds	= {};
-		function onmessage (o) {
-			for (var i = 0 ; i < o.messages.length ; ++i) {
-				var e	= o.messages[i];
+		function onmessage (e) {
+			if (!(e.data instanceof Array)) {
+				return;
+			}
 
+			e.data.forEach(function (o) {
 				try {
-					if (e.data.id) {
-						if (messageIds[e.data.id]) {
+					if (o.id) {
+						if (messageIds[o.id]) {
 							return;
 						}
 
-						messageIds[e.data.id]	= true;
+						messageIds[o.id]	= true;
 					}
 
-					if (!e.data.command) {
-						return;
-					}
-
-					var command			= e.data.command;
+					var command			= o.command;
 					var commandTarget	= firebase;
 
 					if (command && command.returnValue) {
@@ -130,7 +128,7 @@
 						}
 					}
 
-					if (e.data.returnValueCallbackId) {
+					if (o.returnValueCallbackId) {
 						if (!self.returnValues) {
 							self.returnValues	= {};
 						}
@@ -140,13 +138,13 @@
 						self.returnValues[id]	= commandTarget;
 
 						e.source.postMessage({
-							callbackId: e.data.returnValueCallbackId,
+							callbackId: o.returnValueCallbackId,
 							args: [id]
 						}, e.origin);
 					}
 				}
 				catch (_) {}
-			}
+			});
 		}
 
 		window.addEventListener('message', onmessage, false);

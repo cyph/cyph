@@ -136,7 +136,7 @@ export class Channel implements IChannel {
 				id: this.channelId,
 				command: {
 					on: { args: [
-						'value',
+						'child_removed',
 						snapshot => {
 							if (!snapshot.exists && !this.isClosed) {
 								this.isClosed	= true;

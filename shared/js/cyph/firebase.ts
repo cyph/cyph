@@ -98,15 +98,13 @@ export class Firebase {
 					setTimeout(() => {
 						Firebase.frameIsReady	= true;
 
-						setInterval(() => {
-							try {
-								Firebase.frame.contentWindow.postMessage(
-									{messages: Firebase.frameMessageQueue},
-									'*'
-								);
-							}
-							catch (_) {}
-						}, 500);
+						setInterval(() => Firebase.frame.contentWindow.postMessage(
+							Firebase.frameMessageQueue.splice(
+								0,
+								Firebase.frameMessageQueue.length
+							),
+							'*'
+						), 500);
 					}, 250)
 				)
 			);
