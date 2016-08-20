@@ -113,7 +113,9 @@ jspm install -y \
 	braintree=github:braintree/braintree-web \
 	babel-polyfill \
 	npm:mutationobserver-shim \
+	crypto/mceliece=github:cyph/mceliece.js \
 	crypto/ntru=github:cyph/ntru.js \
+	crypto/sidh=github:cyph/sidh.js \
 	crypto/supersphincs=github:cyph/supersphincs \
 	crypto/isaac=github:rubycon/isaac.js
 
