@@ -121,6 +121,7 @@ export class Thread {
 
 		importScripts('/lib/js/crypto/libsodium/dist/browsers-sumo/combined/sodium.min.js');
 		importScripts('/lib/js/crypto/ntru/dist/ntru.js');
+		importScripts('/lib/js/crypto/sidh/dist/sidh.js');
 
 		threadSetupVars	= null;
 	}

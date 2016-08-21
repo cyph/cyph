@@ -207,7 +207,7 @@ export class CastleCore {
 		isNative: boolean = false
 	) {
 		Util.lock(this.lock, async () => {
-			this.potassium		= new Potassium(isNative);
+			this.potassium		= new Potassium(isCreator, isNative);
 
 			this.sharedSecret	= (await this.potassium.PasswordHash.hash(
 				sharedSecret,
