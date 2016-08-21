@@ -165,6 +165,38 @@ sed -i 's/^\/dist$//' jquery*/.gitignore
 cd crypto
 git clone --recursive https://github.com/jedisct1/libsodium.js libsodium
 cd libsodium
+cat > wrapper/symbols/crypto_stream_chacha20.json << EOM
+{
+	"name": "crypto_stream_chacha20",
+	"type": "function",
+	"inputs": [
+		{
+			"name": "outLength",
+			"type": "uint"
+		},
+		{
+			"name": "key",
+			"type": "buf",
+			"size": "libsodium._crypto_aead_chacha20poly1305_keybytes()"
+		},
+		{
+			"name": "nonce",
+			"type": "buf",
+			"size": "libsodium._crypto_aead_chacha20poly1305_npubbytes()"
+		}
+	],
+	"outputs": [
+		{
+			"name": "out",
+			"type": "buf",
+			"size": "outLength"
+		}
+	],
+	"target": "libsodium._crypto_stream_chacha20(out_address, outLength, nonce_address, key_address) | 0",
+	"expect": "=== 0",
+	"return": "_format_output(out, outputFormat)"
+}
+EOM
 make libsodium/configure
 sed -i 's|ln |cp |g' Makefile
 sed -i 's|TOTAL_MEMORY_SUMO=35000000|TOTAL_MEMORY_SUMO=150000000|g' libsodium/dist-build/emscripten.sh
