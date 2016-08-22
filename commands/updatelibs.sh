@@ -177,12 +177,12 @@ cat > wrapper/symbols/crypto_stream_chacha20.json << EOM
 		{
 			"name": "key",
 			"type": "buf",
-			"size": "libsodium._crypto_aead_chacha20poly1305_keybytes()"
+			"size": "libsodium._crypto_stream_chacha20_keybytes()"
 		},
 		{
 			"name": "nonce",
 			"type": "buf",
-			"size": "libsodium._crypto_aead_chacha20poly1305_npubbytes()"
+			"size": "libsodium._crypto_stream_chacha20_noncebytes()"
 		}
 	],
 	"outputs": [
