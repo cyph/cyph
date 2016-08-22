@@ -116,8 +116,7 @@ jspm install -y \
 	crypto/mceliece=github:cyph/mceliece.js \
 	crypto/ntru=github:cyph/ntru.js \
 	crypto/sidh=github:cyph/sidh.js \
-	crypto/supersphincs=github:cyph/supersphincs \
-	crypto/isaac=github:rubycon/isaac.js
+	crypto/supersphincs=github:cyph/supersphincs
 
 if (( $? )); then
 	exit 1
