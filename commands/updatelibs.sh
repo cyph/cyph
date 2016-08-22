@@ -115,6 +115,7 @@ jspm install -y \
 	npm:mutationobserver-shim \
 	crypto/mceliece=github:cyph/mceliece.js \
 	crypto/ntru=github:cyph/ntru.js \
+	crypto/rlwe=github:cyph/rlwe.js \
 	crypto/sidh=github:cyph/sidh.js \
 	crypto/supersphincs=github:cyph/supersphincs
 
