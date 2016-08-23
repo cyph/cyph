@@ -96,7 +96,7 @@ export class Thread {
 					getRandomValues: array => {
 						const sodium	= self['sodium'];
 
-						if (sodium) {
+						if (sodium && sodium.crypto_stream_chacha20) {
 							isActive	= true;
 						}
 						else if (!isActive) {
