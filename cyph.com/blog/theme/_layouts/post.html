@@ -21,15 +21,28 @@ layout: base
         </header>
 
         <section>
+            {% include _readtime.html %} 
+            <br />
             {{ content }}
-            {% include _social-sharing.html %}
         </section>
 
         <footer>
+
+            
             <address>
-               {% if page.author.image %}<img src="{{ site.baseurl }}/images/{{ page.author.image }}">{% endif %}
-                <p>Written by <strong><a rel="author" href="https://twitter.com/{{ page.author.twitter }}" title="{{ page.author_name }}" target="_blank">{{ page.author.name }}</a></strong><br>
-                <span class="muted">{{ page.author.bio }}</span>
+               {% include _social-sharing.html %}
+               <div class="author">
+               <div class='picture'>
+                   {% if page.author.image %}
+                        <img src="{{ site.baseurl }}/images/{{ page.author.image }}">
+                   {% endif %}
+                   {% include _social.html %}  
+               </div>
+                 Written By <a href='{{ site.baseurl }}/bio/{{page.author.firstname}}/index.html'>{{ page.author.name }}</a>
+                 <br />
+                 <span class="bio muted">{{ page.author.bio }}</span>  
+               </div>
+                <p>
                 </p>
             </address>
 

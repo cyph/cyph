@@ -73,7 +73,9 @@ RUN bash -c ' \
 		github-pages:20 \
 		maruku \
 		rake \
+		bundler \
 		uglifier \
+		nokogiri \
 		liquid_reading_time \
 		jekyll-paginate \
 		jekyll-gist \

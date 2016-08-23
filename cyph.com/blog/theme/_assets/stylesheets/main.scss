@@ -100,7 +100,53 @@ article.Josh, article.Ryan {
 	}
 }
 
+article .social {
+	float: left;
+	div {
+	min-width: 75px !important;
+	}
+}
 
+article footer address {
+	width: 450px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+address .social-sharing {
+	float: right;
+}
+
+.author {
+	font-size: 20px;
+	text-align: center;
+	.muted{
+		font-size: 18px;
+	}
+	.picture {
+		float: left;
+		img {
+			margin: auto !important;
+			float: left;
+		}
+		.social {
+			a {
+					margin: -5px 0px 10px 5px;
+					clear: both;
+					float: left;
+			}
+		}
+	}
+}
+
+article address{
+	margin-top: -15px;
+	margin-bottom: 40px !important;
+	img {
+		margin-top: 0px !important;
+		margin: 0px 20px 0px 5px;
+	}
+}
 
 article.Josh .content, article.Ryan .content {
     margin: 0px 12% 0px 12%;
