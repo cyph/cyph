@@ -20,6 +20,7 @@ System.config({
     "crypto/isaac": "github:rubycon/isaac.js@master",
     "crypto/mceliece": "github:cyph/mceliece.js@master",
     "crypto/ntru": "github:cyph/ntru.js@master",
+    "crypto/rlwe": "github:cyph/rlwe.js@master",
     "crypto/sidh": "github:cyph/sidh.js@master",
     "crypto/supersphincs": "github:cyph/supersphincs@master",
     "davidchambers/base64.js": "github:davidchambers/base64.js@1.0.0",
