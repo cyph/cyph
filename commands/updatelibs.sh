@@ -192,7 +192,7 @@ cat > wrapper/symbols/crypto_stream_chacha20.json << EOM
 			"size": "outLength"
 		}
 	],
-	"target": "libsodium._crypto_stream_chacha20(out_address, outLength, nonce_address, key_address) | 0",
+	"target": "libsodium._crypto_stream_chacha20(out_address, outLength, 0, nonce_address, key_address) | 0",
 	"expect": "=== 0",
 	"return": "_format_output(out, outputFormat)"
 }
