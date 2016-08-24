@@ -130,7 +130,9 @@ export class Thread {
 		importScripts('/lib/js/crypto/libsodium/dist/browsers-sumo/combined/sodium.min.js');
 		self['sodium'].memzero(threadSetupVars.seed);
 
+		importScripts('/lib/js/crypto/mceliece/dist/mceliece.js');
 		importScripts('/lib/js/crypto/ntru/dist/ntru.js');
+		importScripts('/lib/js/crypto/rlwe/dist/rlwe.js');
 		importScripts('/lib/js/crypto/sidh/dist/sidh.js');
 
 		threadSetupVars	= null;

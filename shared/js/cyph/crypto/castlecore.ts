@@ -162,17 +162,13 @@ export class CastleCore {
 				newPublicKey	= this.keyPairs[0].publicKey;
 			}
 
-			const fullPlaintext: Uint8Array	= new Uint8Array(
-				5 + newPublicKey.length + plaintext.length
+			const fullPlaintext: Uint8Array	= Potassium.concatMemory(
+				false,
+				messageId,
+				new Uint8Array([newPublicKey.length > 0 ? 1 : 0]),
+				newPublicKey,
+				plaintext
 			);
-
-			fullPlaintext.set(messageId);
-			fullPlaintext.set(plaintext, 5 + newPublicKey.length);
-
-			if (newPublicKey.length > 0) {
-				fullPlaintext[4]	= 1;
-				fullPlaintext.set(newPublicKey, 5);
-			}
 
 			const cyphertext: Uint8Array	= await this.potassium.Box.seal(
 				fullPlaintext,
@@ -180,16 +176,16 @@ export class CastleCore {
 				privateKey
 			);
 
-			const fullCyphertext: Uint8Array	= new Uint8Array(4 + cyphertext.length);
-			fullCyphertext.set(messageId);
-			fullCyphertext.set(cyphertext, 4);
+			const fullCyphertext: Uint8Array	= Potassium.concatMemory(
+				true,
+				messageId,
+				cyphertext
+			);
 
 			const fullCyphertextBase64: string	= Potassium.toBase64(fullCyphertext);
 
 			Potassium.clearMemory(fullPlaintext);
 			Potassium.clearMemory(fullCyphertext);
-			Potassium.clearMemory(cyphertext);
-			Potassium.clearMemory(messageId);
 
 			this.handlers.send(fullCyphertextBase64);
 		}, shouldLock);
@@ -221,17 +217,15 @@ export class CastleCore {
 				this.sharedSecret
 			);
 
-			const cyphertext: Uint8Array	= new Uint8Array(
-				4 + encryptedKey.length
+			const cyphertext: Uint8Array	= Potassium.concatMemory(
+				true,
+				this.newMessageId(),
+				encryptedKey
 			);
-
-			cyphertext.set(this.newMessageId());
-			cyphertext.set(encryptedKey, 4);
 
 			const cyphertextBase64: string	= Potassium.toBase64(cyphertext);
 
 			Potassium.clearMemory(cyphertext);
-			Potassium.clearMemory(encryptedKey);
 
 			setTimeout(() => {
 				if (!this.isConnected) {
