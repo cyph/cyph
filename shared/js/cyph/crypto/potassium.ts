@@ -193,6 +193,7 @@ export class Potassium {
 		publicKeyDecrypt: async (
 			keyCyphertext: Uint8Array,
 			encryptedKeyBytes: number,
+			name: string,
 			privateKey: Uint8Array,
 			decrypt: (cyphertext: Uint8Array, privateKey: Uint8Array) => Uint8Array
 		) : Promise<{
@@ -230,13 +231,13 @@ export class Potassium {
 
 			const isValid: boolean			= await this.OneTimeAuth.verify(
 				mac,
-				keyCyphertext,
+				encryptedKeys,
 				authKey
 			);
 
 			if (!isValid) {
 				Potassium.clearMemory(innerKeys);
-				throw 'Invalid cyphertext.';
+				throw `Invalid ${name} cyphertext.`;
 			}
 
 			return {innerKeys, symmetricKey};
@@ -246,7 +247,8 @@ export class Potassium {
 			public: {
 				classical: new Uint8Array(
 					publicKey.buffer,
-					publicKey.byteOffset
+					publicKey.byteOffset,
+					this.BoxHelpers.publicKeyBytes
 				),
 				mceliece: new Uint8Array(
 					publicKey.buffer,
@@ -277,7 +279,8 @@ export class Potassium {
 			private: {
 				classical: new Uint8Array(
 					privateKey.buffer,
-					privateKey.byteOffset
+					privateKey.byteOffset,
+					this.BoxHelpers.privateKeyBytes
 				),
 				mceliece: new Uint8Array(
 					privateKey.buffer,
@@ -447,7 +450,6 @@ export class Potassium {
 				mcelieceData.symmetricKey
 			);
 
-			Potassium.clearMemory(nonce);
 			Potassium.clearMemory(ntruData.innerKeys);
 			Potassium.clearMemory(mcelieceData.innerKeys);
 			Potassium.clearMemory(sidhSymmetricKey);
@@ -478,6 +480,7 @@ export class Potassium {
 						this.OneTimeAuth.bytes
 				),
 				Potassium.McEliece.encryptedDataLength,
+				'McEliece',
 				keys.private.mceliece,
 				Potassium.McEliece.decrypt
 			);
@@ -495,6 +498,7 @@ export class Potassium {
 						this.OneTimeAuth.bytes
 				),
 				Potassium.NTRU.encryptedDataLength,
+				'NTRU',
 				keys.private.ntru,
 				Potassium.NTRU.decrypt
 			);
@@ -567,7 +571,7 @@ export class Potassium {
 			Potassium.RLWE.privateKeyLength +
 			Potassium.Sodium.crypto_scalarmult_SCALARBYTES
 		,
-		secretBytes: <number> 512,
+		secretBytes: <number> 64,
 
 		aliceKeyPair: async () : Promise<{
 			keyType: string;
@@ -688,7 +692,7 @@ export class Potassium {
 					rlweSecretData.publicKey,
 					sodiumPublicKey
 				),
-				secret: this.PasswordHash.weakHash(
+				secret: await this.PasswordHash.weakHash(
 					Potassium.concatMemory(
 						true,
 						rlweSecretData.secret,
