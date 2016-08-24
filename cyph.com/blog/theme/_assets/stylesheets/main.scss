@@ -107,24 +107,36 @@ article .social {
 	}
 }
 
+article .container>footer {
+	border-top: 1px solid #ddd;
+	border-bottom: none !important;
+	padding: 0 !important;
+	margin-bottom: 1.5em;
+}
+
 article footer address {
 	width: 450px;
 	margin-left: auto;
 	margin-right: auto;
 }
 
-address .social-sharing {
-	float: right;
+article .social-sharing {
+	margin-bottom: 10px;
+	display: inline-flex;
+}
+
+.social-sharing div {
+	margin: 4px 2px 2px 5px;
 }
 
 .author {
 	font-size: 20px;
-	text-align: center;
 	.muted{
 		font-size: 18px;
 	}
 	.picture {
 		float: left;
+		margin-right: 12px;
 		img {
 			margin: auto !important;
 			float: left;

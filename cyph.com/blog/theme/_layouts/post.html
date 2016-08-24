@@ -13,22 +13,10 @@ layout: base
     <div class="container">
         <header>
             <div class="meta">
-                By <address><a rel="author" href="{{ page.author.link }}" title="{{ page.author.name }}" target="_blank">{{ page.author.name }}</a></address> &mdash;
-                <time pubdate datetime="{{ page.date | date: "%Y-%d-%B" }}" title="{{ page.date | date: "%B %d, %Y" }}">{{ page.date | date: "%B %d, %Y" }}</time>
+                <time pubdate datetime="{{ page.date | date: "%Y-%d-%B" }}" title="{{ page.date | date: "%B %d, %Y" }}">{{ page.date | date: "%B %d, %Y" }}</time> &mdash; {% include _readtime.html %} 
             </div>
             <h1 class="title">{{ page.title }}</h1>
             {% if page.subtitle %}<h2 class="subtitle">{{ page.subtitle }}</h2>{% endif %}
-        </header>
-
-        <section>
-            {% include _readtime.html %} 
-            <br />
-            {{ content }}
-        </section>
-
-        <footer>
-
-            
             <address>
                {% include _social-sharing.html %}
                <div class="author">
@@ -42,10 +30,15 @@ layout: base
                  <br />
                  <span class="bio muted">{{ page.author.bio }}</span>  
                </div>
-                <p>
-                </p>
             </address>
+                <br />
+        </header>
 
+        <section>
+            {{ content }}
+        </section>
+
+        <footer>
         </footer>
 
         {% if site.inc.disqus.shortname %}
