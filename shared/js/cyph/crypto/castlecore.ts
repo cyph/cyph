@@ -54,7 +54,7 @@ export class CastleCore {
 	}
 
 	private async addNewKey (newKey: Uint8Array) : Promise<void> {
-		const altNewKey	= await this.potassium.Hash.deriveKey(
+		const altNewKey: Uint8Array	= await this.potassium.Hash.deriveKey(
 			Potassium.concatMemory(
 				false,
 				newKey,
@@ -101,7 +101,7 @@ export class CastleCore {
 
 			/* Part 1a: Alice */
 
-			const secret	= Potassium.randomBytes(
+			const secret: Uint8Array	= Potassium.randomBytes(
 				this.potassium.EphemeralKeyExchange.secretBytes
 			);
 
@@ -166,7 +166,7 @@ export class CastleCore {
 
 		/* Part 3: Alice (incoming) */
 		else if (this.isCreator && this.ephemeralKeys.private && incomingPublicKey) {
-			const secret	= await this.potassium.EphemeralKeyExchange.aliceSecret(
+			const secret: Uint8Array	= await this.potassium.EphemeralKeyExchange.aliceSecret(
 				incomingPublicKey,
 				this.ephemeralKeys.private
 			);
@@ -232,7 +232,7 @@ export class CastleCore {
 				}
 			}
 
-			let success	= false;
+			let success: boolean	= false;
 
 			/* Standard incoming message */
 			for (let i = this.keys.length - 1 ; i >= 0 ; --i) {
@@ -246,11 +246,11 @@ export class CastleCore {
 						continue;
 					}
 
-					const incomingKey			= await this.potassium.Hash.deriveKey(
+					const incomingKey: Uint8Array	= await this.potassium.Hash.deriveKey(
 						keys.incoming
 					);
 
-					const decrypted: Uint8Array	= await this.potassium.SecretBox.open(
+					const decrypted: Uint8Array		= await this.potassium.SecretBox.open(
 						encrypted,
 						incomingKey
 					);
