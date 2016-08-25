@@ -134,6 +134,7 @@ export class Thread {
 		importScripts('/lib/js/crypto/ntru/dist/ntru.js');
 		importScripts('/lib/js/crypto/rlwe/dist/rlwe.js');
 		importScripts('/lib/js/crypto/sidh/dist/sidh.js');
+		importScripts('/lib/js/crypto/supersphincs/dist/supersphincs.js');
 
 		threadSetupVars	= null;
 	}

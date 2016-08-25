@@ -2,8 +2,8 @@ import {Potassium} from 'potassium';
 
 
 /**
- * libsodium-inspired wrapper for the browser's native crypto API. Should only
- * ever be depended on by Potassium.
+ * libsodium-inspired wrapper for the browser's native crypto API.
+ * Should only ever be depended on by Potassium.
  */
 export class NativeCrypto {
 	private static Subtle: any	= crypto['subtle'];
@@ -42,7 +42,7 @@ export class NativeCrypto {
 			'jwk',
 			JSON.parse(
 				Potassium.toString(
-					new Uint8Array(new Uint8Array(key).buffer, 0, key.indexOf(0))
+					new Uint8Array(key.buffer, key.byteOffset, key.indexOf(0))
 				)
 			),
 			algorithm,
@@ -90,16 +90,23 @@ export class NativeCrypto {
 				['encrypt', 'decrypt']
 			);
 
+			const publicKey		= new Uint8Array(NativeCrypto.Box.publicKeyBytes);
+			const privateKey	= new Uint8Array(NativeCrypto.Box.privateKeyBytes);
+
+			publicKey.set(await NativeCrypto.exportJWK(
+				keyPair.publicKey,
+				NativeCrypto.Box.algorithm.name
+			));
+
+			privateKey.set(await NativeCrypto.exportJWK(
+				keyPair.privateKey,
+				NativeCrypto.Box.algorithm.name
+			));
+
 			return {
 				keyType: NativeCrypto.Box.algorithm.name,
-				publicKey: await NativeCrypto.exportJWK(
-					keyPair.publicKey,
-					NativeCrypto.Box.algorithm.name
-				),
-				privateKey: await NativeCrypto.exportJWK(
-					keyPair.privateKey,
-					NativeCrypto.Box.algorithm.name
-				)
+				publicKey,
+				privateKey
 			};
 		},
 
