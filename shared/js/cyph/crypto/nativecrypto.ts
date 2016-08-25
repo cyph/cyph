@@ -2,8 +2,8 @@ import {Potassium} from 'potassium';
 
 
 /**
- * libsodium-inspired wrapper for the browser's native crypto API. Should only
- * ever be depended on by Potassium.
+ * libsodium-inspired wrapper for the browser's native crypto API.
+ * Should only ever be depended on by Potassium.
  */
 export class NativeCrypto {
 	private static Subtle: any	= crypto['subtle'];
@@ -42,7 +42,7 @@ export class NativeCrypto {
 			'jwk',
 			JSON.parse(
 				Potassium.toString(
-					new Uint8Array(new Uint8Array(key).buffer, 0, key.indexOf(0))
+					new Uint8Array(key.buffer, key.byteOffset, key.indexOf(0))
 				)
 			),
 			algorithm,
@@ -90,16 +90,23 @@ export class NativeCrypto {
 				['encrypt', 'decrypt']
 			);
 
+			const publicKey		= new Uint8Array(NativeCrypto.Box.publicKeyBytes);
+			const privateKey	= new Uint8Array(NativeCrypto.Box.privateKeyBytes);
+
+			publicKey.set(await NativeCrypto.exportJWK(
+				keyPair.publicKey,
+				NativeCrypto.Box.algorithm.name
+			));
+
+			privateKey.set(await NativeCrypto.exportJWK(
+				keyPair.privateKey,
+				NativeCrypto.Box.algorithm.name
+			));
+
 			return {
 				keyType: NativeCrypto.Box.algorithm.name,
-				publicKey: await NativeCrypto.exportJWK(
-					keyPair.publicKey,
-					NativeCrypto.Box.algorithm.name
-				),
-				privateKey: await NativeCrypto.exportJWK(
-					keyPair.privateKey,
-					NativeCrypto.Box.algorithm.name
-				)
+				publicKey,
+				privateKey
 			};
 		},
 
@@ -147,29 +154,14 @@ export class NativeCrypto {
 				macKey
 			);
 
-			const cyphertext: Uint8Array	= new Uint8Array(
-				NativeCrypto.Box.algorithm.modulusLengthBytes +
-				NativeCrypto.OneTimeAuth.bytes +
-				symmetricCyphertext.length
-			);
-
-			cyphertext.set(asymmetricCyphertext);
-			cyphertext.set(
-				mac,
-				NativeCrypto.Box.algorithm.modulusLengthBytes
-			);
-			cyphertext.set(
-				symmetricCyphertext,
-				NativeCrypto.Box.algorithm.modulusLengthBytes +
-					NativeCrypto.OneTimeAuth.bytes
-			);
-
 			Potassium.clearMemory(asymmetricPlaintext);
-			Potassium.clearMemory(symmetricCyphertext);
-			Potassium.clearMemory(asymmetricCyphertext);
-			Potassium.clearMemory(mac);
 
-			return cyphertext;
+			return Potassium.concatMemory(
+				true,
+				asymmetricCyphertext,
+				mac,
+				symmetricCyphertext
+			);
 		},
 
 		open: async (
@@ -178,74 +170,70 @@ export class NativeCrypto {
 			publicKey: Uint8Array,
 			privateKey: Uint8Array
 		) : Promise<Uint8Array> => {
-			cyphertext	= new Uint8Array(cyphertext)
+			const asymmetricCyphertext: Uint8Array	= new Uint8Array(
+				cyphertext.buffer,
+				cyphertext.byteOffset,
+				NativeCrypto.Box.algorithm.modulusLengthBytes
+			);
 
-			try {
-				const asymmetricCyphertext: Uint8Array	= new Uint8Array(
-					cyphertext.buffer,
-					0,
-					NativeCrypto.Box.algorithm.modulusLengthBytes
-				);
+			const asymmetricPlaintext: Uint8Array	= new Uint8Array(
+				await NativeCrypto.Subtle.decrypt(
+					NativeCrypto.Box.algorithm.name,
+					await NativeCrypto.importJWK(
+						privateKey,
+						NativeCrypto.Box.algorithm,
+						'decrypt'
+					),
+					asymmetricCyphertext
+				)
+			);
 
-				const asymmetricPlaintext: Uint8Array	= new Uint8Array(
-					await NativeCrypto.Subtle.decrypt(
-						NativeCrypto.Box.algorithm.name,
-						await NativeCrypto.importJWK(
-							privateKey,
-							NativeCrypto.Box.algorithm,
-							'decrypt'
-						),
-						asymmetricCyphertext
-					)
-				);
+			const symmetricKey: Uint8Array			= new Uint8Array(
+				asymmetricPlaintext.buffer,
+				0,
+				NativeCrypto.SecretBox.keyBytes
+			);
 
-				const symmetricKey: Uint8Array			= new Uint8Array(
-					asymmetricPlaintext.buffer,
-					0,
-					NativeCrypto.SecretBox.keyBytes
-				);
-
-				const symmetricCyphertext: Uint8Array	= new Uint8Array(
-					cyphertext.buffer,
+			const symmetricCyphertext: Uint8Array	= new Uint8Array(
+				cyphertext.buffer,
+				cyphertext.byteOffset +
 					NativeCrypto.Box.algorithm.modulusLengthBytes +
-						NativeCrypto.OneTimeAuth.bytes
-				);
-
-				const macKey: Uint8Array				= new Uint8Array(
-					asymmetricPlaintext.buffer,
-					NativeCrypto.SecretBox.keyBytes
-				);
-
-				const mac: Uint8Array					= new Uint8Array(
-					cyphertext.buffer,
-					NativeCrypto.Box.algorithm.modulusLengthBytes,
 					NativeCrypto.OneTimeAuth.bytes
-				);
+			);
 
-				const plaintext: Uint8Array	= await NativeCrypto.SecretBox.open(
-					symmetricCyphertext,
-					nonce,
-					symmetricKey
-				);
+			const macKey: Uint8Array				= new Uint8Array(
+				asymmetricPlaintext.buffer,
+				NativeCrypto.SecretBox.keyBytes
+			);
 
-				const isValid: boolean		= await NativeCrypto.OneTimeAuth.verify(
-					mac,
-					asymmetricCyphertext,
-					macKey
-				);
+			const mac: Uint8Array					= new Uint8Array(
+				cyphertext.buffer,
+				cyphertext.byteOffset +
+					NativeCrypto.Box.algorithm.modulusLengthBytes
+				,
+				NativeCrypto.OneTimeAuth.bytes
+			);
 
-				Potassium.clearMemory(asymmetricPlaintext);
+			const plaintext: Uint8Array	= await NativeCrypto.SecretBox.open(
+				symmetricCyphertext,
+				nonce,
+				symmetricKey
+			);
 
-				if (isValid) {
-					return plaintext;
-				}
-				else {
-					Potassium.clearMemory(plaintext);
-					throw new Error('Invalid RSA cyphertext.');
-				}
+			const isValid: boolean		= await NativeCrypto.OneTimeAuth.verify(
+				mac,
+				asymmetricCyphertext,
+				macKey
+			);
+
+			Potassium.clearMemory(asymmetricPlaintext);
+
+			if (isValid) {
+				return plaintext;
 			}
-			finally {
-				Potassium.clearMemory(cyphertext);
+			else {
+				Potassium.clearMemory(plaintext);
+				throw new Error('Invalid RSA cyphertext.');
 			}
 		}
 	};

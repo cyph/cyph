@@ -45,7 +45,7 @@ export {
 
 
 export class Chat extends BaseButtonManager implements IChat {
-	private static approximateKeyExchangeTime: number	= 10000;
+	private static approximateKeyExchangeTime: number	= 15000;
 
 
 	private elements: IElements;

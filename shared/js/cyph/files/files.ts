@@ -30,6 +30,7 @@ export class Files implements IFiles {
 			plaintext?: Uint8Array,
 			cyphertext?: Uint8Array,
 			key?: Uint8Array,
+			isCreator?: boolean,
 			chunkSize?: number,
 			callbackId?: string
 		}
@@ -42,7 +43,7 @@ export class Files implements IFiles {
 				importScripts('/js/cyph/crypto/crypto.js');
 
 				System.import('cyph/crypto/crypto').then(async (Crypto) => {
-					const potassium	= new Crypto.Potassium();
+					const potassium	= new Crypto.Potassium(locals.isCreator);
 
 					/* Encrypt */
 					if (locals.plaintext) {
@@ -182,7 +183,11 @@ export class Files implements IFiles {
 		try {
 			return this.nativePotassium ?
 				await this.nativePotassium.SecretBox.open(cyphertext, key) :
-				(await Files.cryptoThread({cyphertext, key}))[0]
+				(await Files.cryptoThread({
+					cyphertext,
+					key,
+					isCreator: this.session.state.isCreator
+				}))[0]
 			;
 		}
 		catch (_) {
@@ -209,7 +214,10 @@ export class Files implements IFiles {
 				};
 			}
 			else {
-				const results	= await Files.cryptoThread({plaintext});
+				const results	= await Files.cryptoThread({
+					plaintext,
+					isCreator: this.session.state.isCreator
+				});
 
 				return {
 					cyphertext: results[0],
@@ -510,7 +518,10 @@ export class Files implements IFiles {
 			}
 			/* Negotiation on whether or not to use SubtleCrypto */
 			else if (Files.subtleCryptoIsSupported && !this.nativePotassium) {
-				this.nativePotassium	= new Potassium(true);
+				this.nativePotassium	= new Potassium(
+					this.session.state.isCreator,
+					true
+				);
 			}
 		});
 	}

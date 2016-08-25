@@ -109,7 +109,7 @@ export class Castle implements ICastle {
 				let wasSuccessful: boolean;
 
 				for (
-					const cyphertext of
+					let cyphertext of
 					this.incomingMessages[this.incomingMessageId]
 				) {
 					if (!wasSuccessful && (await this.core.receive(cyphertext))) {

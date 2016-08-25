@@ -87,40 +87,54 @@ export class Thread {
 				as a workaround, the main thread's crypto instance
 				is used to seed a different CSPRNG here */
 
-			let isaac: any;
-			importScripts('/lib/js/crypto/isaac/isaac.js');
-			isaac	= isaac || self['isaac'];
+			crypto	= (() => {
+				const key		= new Uint8Array(threadSetupVars.seed);
+				const nonce		= new Uint32Array(2);
+				let isActive	= false;
 
-			isaac.seed(threadSetupVars.seed);
-			for (let i = 0 ; i < threadSetupVars.seed.length ; ++i) {
-				threadSetupVars.seed[i]	= 0;
-			}
+				return {
+					getRandomValues: array => {
+						const sodium	= self['sodium'];
 
-			crypto	= {
-				getRandomValues: array => {
-					const bytes: number	=
-						'BYTES_PER_ELEMENT' in array ?
-							array['BYTES_PER_ELEMENT'] :
-							4
-					;
+						if (sodium && sodium.crypto_stream_chacha20) {
+							isActive	= true;
+						}
+						else if (!isActive) {
+							return array;
+						}
+						else {
+							throw 'No CSPRNG found.';
+						}
 
-					const max: number	= Math.pow(2, bytes * 8) - 1;
+						++nonce[nonce[0] === 4294967295 ? 0 : 1];
 
-					for (let i = 0 ; i < array['length'] ; ++i) {
-						array[i]	= Math.floor(isaac.random() * max);
-					}
+						const newBytes: Uint8Array	= sodium.crypto_stream_chacha20(
+							array.byteLength,
+							key,
+							new Uint8Array(nonce.buffer)
+						);
 
-					return array;
-				},
+						new Uint8Array(array.buffer).set(newBytes);
+						sodium.memzero(newBytes);
 
-				subtle: null
-			};
+						return array;
+					},
+
+					subtle: null
+				};
+			})();
 		}
 
 		self['crypto']	= crypto;
 
 		importScripts('/lib/js/crypto/libsodium/dist/browsers-sumo/combined/sodium.min.js');
+		self['sodium'].memzero(threadSetupVars.seed);
+
+		importScripts('/lib/js/crypto/mceliece/dist/mceliece.js');
 		importScripts('/lib/js/crypto/ntru/dist/ntru.js');
+		importScripts('/lib/js/crypto/rlwe/dist/rlwe.js');
+		importScripts('/lib/js/crypto/sidh/dist/sidh.js');
+		importScripts('/lib/js/crypto/supersphincs/dist/supersphincs.js');
 
 		threadSetupVars	= null;
 	}
@@ -164,7 +178,7 @@ export class Thread {
 		locals: any = {},
 		onmessage: (e: MessageEvent) => any = e => {}
 	) {
-		const seedBytes	= new Uint8Array(512);
+		const seedBytes	= new Uint8Array(32);
 		crypto.getRandomValues(seedBytes);
 
 		const threadSetupVars	= {

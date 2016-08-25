@@ -302,7 +302,7 @@ for d in $compiledProjects ; do
 		echo "JS Minify ${project}"
 		find js -name '*.js' | xargs -I% uglifyjs '%' \
 			-m \
-			-r importScripts,Cyph,ui,session,locals,threadSetupVars,self,isaac,onmessage,postMessage,onthreadmessage,WebSign,Translations,IS_WEB,crypto \
+			-r importScripts,Cyph,ui,session,locals,threadSetupVars,self,onmessage,postMessage,onthreadmessage,WebSign,Translations,IS_WEB,crypto \
 			-o '%'
 
 		echo "CSS Minify ${project}"
