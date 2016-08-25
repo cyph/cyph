@@ -420,7 +420,7 @@ export class Potassium {
 				Potassium.NTRU.encrypt
 			);
 
-			const sidhSymmetricKey: Uint8Array		= await this.PasswordHash.weakHash(
+			const sidhSymmetricKey: Uint8Array		= await this.Hash.deriveKey(
 				Potassium.SIDH.secret(
 					keys.public.sidh,
 					keys.private.sidh
@@ -508,7 +508,7 @@ export class Potassium {
 				this.OneTimeAuth.bytes
 			;
 
-			const sidhSymmetricKey: Uint8Array		= await this.PasswordHash.weakHash(
+			const sidhSymmetricKey: Uint8Array		= await this.Hash.deriveKey(
 				Potassium.SIDH.secret(
 					keys.public.sidh,
 					keys.private.sidh
@@ -642,7 +642,7 @@ export class Potassium {
 				sodiumPublicKey
 			);
 
-			return this.PasswordHash.weakHash(
+			return this.Hash.deriveKey(
 				Potassium.concatMemory(
 					true,
 					rlweSecret,
@@ -692,7 +692,7 @@ export class Potassium {
 					rlweSecretData.publicKey,
 					sodiumPublicKey
 				),
-				secret: await this.PasswordHash.weakHash(
+				secret: await this.Hash.deriveKey(
 					Potassium.concatMemory(
 						true,
 						rlweSecretData.secret,
@@ -706,10 +706,35 @@ export class Potassium {
 	};
 
 	public Hash	= {
-		bytes: <number> Potassium.SuperSphincs.hashLength,
+		bytes: <number> Potassium.SuperSphincs.hashBytes,
 
 		hash: async (plaintext: Uint8Array|string) : Promise<Uint8Array> => {
-			return (await Potassium.SuperSphincs.hash(plaintext)).binary;
+			return Potassium.SuperSphincs.hash(plaintext, true);
+		},
+
+		deriveKey: async (
+			input: Uint8Array,
+			outputBytes?: number,
+			clearInput?: boolean
+		) : Promise<Uint8Array> => {
+			if (!outputBytes) {
+				outputBytes	= input.length;
+			}
+
+			if (outputBytes > Potassium.SuperSphincs.hashBytes) {
+				throw 'Potassium.Hash.deriveKey output cannot exceed 64 bytes.';
+			}
+
+			const hash	= this.isNative ?
+				new Uint8Array((await this.Hash.hash(input)).buffer, 0, outputBytes) :
+				Potassium.Sodium.crypto_generichash(outputBytes, input)
+			;
+
+			if (clearInput) {
+				Potassium.clearMemory(input);
+			}
+
+			return hash;
 		}
 	};
 
@@ -832,26 +857,6 @@ export class Potassium {
 			finally {
 				Potassium.clearMemory(metadata);
 			}
-		},
-
-		weakHash: async (
-			input: Uint8Array,
-			outputBytes?: number,
-			clearInput?: boolean
-		) : Promise<Uint8Array> => {
-			const hash	= await this.PasswordHashHelpers.hash(
-				input,
-				new Uint8Array(this.PasswordHash.saltBytes),
-				outputBytes || input.length,
-				0,
-				0
-			);
-
-			if (clearInput) {
-				Potassium.clearMemory(input);
-			}
-
-			return hash;
 		}
 	};
 
