@@ -110,7 +110,7 @@ jspm install -y \
 	github:morr/jquery.appear \
 	github:julianlam/tabIndent.js \
 	npm:rxjs \
-	braintree=github:braintree/braintree-web@2 \
+	braintree=github:braintree/braintree-web@^2 \
 	babel-polyfill \
 	npm:mutationobserver-shim \
 	crypto/mceliece=github:cyph/mceliece.js \
