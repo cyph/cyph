@@ -16,7 +16,7 @@ System.config({
     "angular2": "npm:angular2@2.0.0-beta.17",
     "animate.css": "npm:animate.css@3.5.1",
     "babel-polyfill": "npm:babel-polyfill@6.13.0",
-    "braintree": "github:braintree/braintree-web@3.0.1",
+    "braintree": "github:braintree/braintree-web@2.27.0",
     "crypto/isaac": "github:rubycon/isaac.js@master",
     "crypto/mceliece": "github:cyph/mceliece.js@master",
     "crypto/ntru": "github:cyph/ntru.js@master",
