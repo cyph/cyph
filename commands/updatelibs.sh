@@ -331,6 +331,6 @@ cd ../../..
 find default -type f -name '*_test.go' -exec rm {} \;
 
 
-commands/commit.sh updatelibs 
+commands/commit.sh updatelibs
 
 cd "${dir}"
