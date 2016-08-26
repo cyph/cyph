@@ -8,7 +8,7 @@ export class Firebase {
 	public static app: firebase.FirebaseApplication;
 
 	private static _	= (() => {
-		if (!firebase) {
+		if (!self['firebase']) {
 			return;
 		}
 
