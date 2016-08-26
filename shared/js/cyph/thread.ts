@@ -136,6 +136,8 @@ export class Thread {
 		importScripts('/lib/js/crypto/sidh/dist/sidh.js');
 		importScripts('/lib/js/crypto/supersphincs/dist/supersphincs.js');
 
+		importScripts('/lib/js/firebase/firebase.js');
+
 		threadSetupVars	= null;
 	}
 

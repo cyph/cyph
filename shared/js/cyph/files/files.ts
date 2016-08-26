@@ -282,10 +282,7 @@ export class Files implements IFiles {
 						85
 					);
 
-					Firebase.call({ storage: {
-						refFromURL: { args: [transfer.url],
-						delete: {}}
-					}});
+					Firebase.app.storage().refFromURL(transfer.url).delete();
 
 					const plaintext: Uint8Array	= await this.decryptFile(
 						cyphertext,
@@ -312,10 +309,7 @@ export class Files implements IFiles {
 						transfer.name
 					);
 
-					Firebase.call({ storage: {
-						refFromURL: { args: [transfer.url],
-						delete: {}}
-					}});
+					Firebase.app.storage().refFromURL(transfer.url).delete();
 				}
 			}
 		);
@@ -342,7 +336,7 @@ export class Files implements IFiles {
 			return;
 		}
 
-		let uploadTaskId: string;
+		let uploadTask: firebase.UploadTask;
 
 		const transfer: ITransfer	= new Transfer(
 			name,
@@ -377,13 +371,8 @@ export class Files implements IFiles {
 				this.transfers.splice(transferIndex, 1);
 				this.controller.update();
 
-				if (uploadTaskId) {
-					Firebase.call({ returnValue: {
-						id: uploadTaskId,
-						command: {
-							cancel: {}
-						}
-					}});
+				if (uploadTask) {
+					uploadTask.cancel();
 				}
 			}
 		});
@@ -403,49 +392,35 @@ export class Files implements IFiles {
 		Util.retryUntilComplete(async (retry) => {
 			const path: string	= 'ephemeral/' +  Util.generateGuid();
 
-			uploadTaskId	= await Firebase.call({ storage: {
-				ref: { args: [path],
-				put: { args: [new Blob([o.cyphertext])]}}
-			}});
+			uploadTask	= Firebase.app.storage().ref(path).put(new Blob([o.cyphertext]));
 
-			Firebase.call({ returnValue: {
-				id: uploadTaskId,
-				command: { on: { args: [
-					'state_changed',
-					snapshot => {
-						transfer.percentComplete	=
-							snapshot.bytesTransferred /
-							snapshot.totalBytes *
-							100
-						;
+			uploadTask.on('state_changed',
+				snapshot => {
+					transfer.percentComplete	=
+						snapshot.bytesTransferred /
+						snapshot.totalBytes *
+						100
+					;
 
-						this.controller.update();
-					},
-					err => {
-						if (transfer.answer !== false) {
-							retry();
-						}
-					},
-					() => {
-						Firebase.call({ storage: {
-							ref: { args: [path],
-							getDownloadURL: {
-								then: { args: [(url: string) => {
-									transfer.url	= url;
-
-									this.session.send(new Session.Message(
-										Session.RPCEvents.files,
-										transfer
-									));
-
-									this.transfers.splice(transferIndex, 1);
-									this.controller.update();
-								}]}
-							}}
-						}});
+					this.controller.update();
+				},
+				err => {
+					if (transfer.answer !== false) {
+						retry();
 					}
-				]}}
-			}});
+				},
+				() => {
+					transfer.url	= uploadTask.snapshot.downloadURL;
+
+					this.session.send(new Session.Message(
+						Session.RPCEvents.files,
+						transfer
+					));
+
+					this.transfers.splice(transferIndex, 1);
+					this.controller.update();
+				}
+			);
 		});
 	}
 

@@ -19,18 +19,13 @@ export class Channel implements IChannel {
 	private isConnected: boolean	= false;
 	private isCreator: boolean		= false;
 
-	private channelId: string;
-	private messagesId: string;
+	private channelRef: firebase.DatabaseReference;
+	private messagesRef: firebase.DatabaseReference;
+	private usersRef: firebase.DatabaseReference;
 	private userId: string;
-	private usersId: string;
 
 	public close () : void {
-		Firebase.call({ returnValue: {
-			id: this.channelId,
-			command: {
-				remove: {}
-			}
-		}});
+		this.channelRef.remove();
 	}
 
 	public isAlive () : boolean {
@@ -38,16 +33,11 @@ export class Channel implements IChannel {
 	}
 
 	public send (message: string) : void {
-		Firebase.call({ returnValue: {
-			id: this.messagesId,
-			command: {
-				push: { args: [{
-					cyphertext: message,
-					sender: this.userId,
-					timestamp: Date.now()
-				}]}
-			}
-		}});
+		this.messagesRef.push({
+			cyphertext: message,
+			sender: this.userId,
+			timestamp: Date.now()
+		});
 	}
 
 	/**
@@ -63,39 +53,15 @@ export class Channel implements IChannel {
 			onopen?: (isCreator: boolean) => void;
 		}) = {}
 	) { (async () => {
-		this.channelId	= await Firebase.call({ database: {
-			ref: { args: ['channels'],
-			child: { args: [channelName]}}
-		}});
+		this.channelRef		= Firebase.app.database().ref('channels').child(channelName);
+		this.messagesRef	= this.channelRef.child('messages');
+		this.usersRef		= this.channelRef.child('users');
 
-		this.usersId	= await Firebase.call({ returnValue: {
-			id: this.channelId,
-			command: {
-				child: { args: ['users']}
-			}
-		}});
+		this.isCreator		= !(await this.usersRef.once('value')).hasChildren();
+		this.userId			= Util.generateGuid();
 
-		this.isCreator	= await new Promise<boolean>(resolve =>
-			Firebase.call({ returnValue: {
-				id: this.usersId,
-				command: {
-					once: { args: [
-						'value',
-						snapshot => resolve(!snapshot.hasChildren)
-					]}
-				}
-			}})
-		);
-
-		this.userId		= Util.generateGuid();
-
-		Firebase.call({ returnValue: {
-			id: this.usersId,
-			command: {
-				child: { args: [this.userId],
-				set: { args: [this.userId]}}
-			}
-		}});
+		this.channelRef.onDisconnect().remove();
+		this.usersRef.child(this.userId).set(this.userId);
 
 		if (handlers.onopen) {
 			handlers.onopen(this.isCreator);
@@ -103,72 +69,34 @@ export class Channel implements IChannel {
 
 		if (handlers.onconnect) {
 			if (this.isCreator) {
-				Firebase.call({ returnValue: {
-					id: this.usersId,
-					command: {
-						on: { args: [
-							'child_added',
-							snapshot => {
-								if (!this.isConnected && snapshot.val !== this.userId) {
-									this.isConnected	= true;
-									handlers.onconnect();
-								}
-							}
-						]}
+				this.usersRef.on('child_added', snapshot => {
+					if (!this.isConnected && snapshot.val() !== this.userId) {
+						this.isConnected	= true;
+						handlers.onconnect();
 					}
-				}});
+				});
 			}
 			else {
 				handlers.onconnect();
 			}
 		}
 
-		Firebase.call({ returnValue: {
-			id: this.channelId,
-			command: {
-				onDisconnect: {
-				remove: {}}
-			}
-		}});
-
 		if (handlers.onclose) {
-			Firebase.call({ returnValue: {
-				id: this.channelId,
-				command: {
-					on: { args: [
-						'child_removed',
-						snapshot => {
-							if (!snapshot.exists && !this.isClosed) {
-								this.isClosed	= true;
-								handlers.onclose();
-							}
-						}
-					]}
+			this.channelRef.on('value', snapshot => {
+				if (!snapshot.exists() && !this.isClosed) {
+					this.isClosed	= true;
+					handlers.onclose();
 				}
-			}});
+			});
 		}
 
-		this.messagesId	= await Firebase.call({ returnValue: {
-			id: this.channelId,
-			command: {
-				child: { args: ['messages']}
-			}
-		}});
-
 		if (handlers.onmessage) {
-			Firebase.call({ returnValue: {
-				id: this.messagesId,
-				command: {
-					on: { args: [
-						'child_added',
-						snapshot => {
-							if (snapshot.val.sender !== this.userId) {
-								handlers.onmessage(snapshot.val.cyphertext);
-							}
-						}
-					]}
+			this.messagesRef.on('child_added', snapshot => {
+				const o	= snapshot.val();
+				if (o.sender !== this.userId) {
+					handlers.onmessage(o.cyphertext);
 				}
-			}});
+			});
 		}
 	})() }
 }

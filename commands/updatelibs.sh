@@ -204,6 +204,16 @@ make
 rm -rf .git* *.tmp API.md browsers-test test libsodium
 cd ../..
 
+mkdir firebase
+cd firebase
+npm install firebase --save
+cd node_modules/firebase
+npm install
+browserify firebase-node.js -o ../../firebase.js
+cd ../..
+rm -rf node_modules
+cd ..
+
 cd microlight
 uglifyjs microlight.js -m -o microlight.min.js
 cd ..
@@ -238,6 +248,11 @@ typings install --global --save \
 	dt~webrtc/mediastream \
 	dt~webrtc/rtcpeerconnection \
 	dt~dompurify
+
+mkdir typings/globals/firebase
+curl -s https://raw.githubusercontent.com/suhdev/firebase-3-typescript/master/firebase.d.ts | \
+	grep -v es6-promise.d.ts > typings/globals/firebase/index.d.ts
+echo '/// <reference path="globals/firebase/index.d.ts" />' >> typings/index.d.ts
 
 mkdir blog
 cd blog
