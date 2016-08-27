@@ -317,7 +317,9 @@ for d in $compiledProjects ; do
 done
 
 
-if [ ! $simple ] ; then
+if [ $simple ] ; then
+	cp websign/js/workerhelper.js cyph.im/js/
+else
 	# Cache bust
 
 	cd cyph.com

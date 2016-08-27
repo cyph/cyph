@@ -104,7 +104,7 @@ export class Config {
 	/** WebSign-related config. */
 	public static webSignConfig	= {
 		serviceWorker: 'serviceworker.js',
-		workerHelper: 'websign/js/workerhelper.js'
+		workerHelper: 'js/workerhelper.js'
 	};
 
 	/** User-facing email addresses to include in places like contact forms. */
