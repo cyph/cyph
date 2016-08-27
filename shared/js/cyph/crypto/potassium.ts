@@ -147,15 +147,19 @@ export class Potassium {
 
 		publicKeyEncrypt: async (
 			publicKey: Uint8Array,
+			name: string,
+			plaintextBytes: number,
 			encrypt: (plaintext: Uint8Array, publicKey: Uint8Array) => Uint8Array
 		) : Promise<{
 			innerKeys: Uint8Array,
 			symmetricKey: Uint8Array,
 			keyCyphertext: Uint8Array
 		}> => {
-			const innerKeys: Uint8Array		= Potassium.randomBytes(
-				this.SecretBox.keyBytes + this.OneTimeAuth.keyBytes
-			);
+			if (plaintextBytes < (this.SecretBox.keyBytes + this.OneTimeAuth.keyBytes)) {
+				throw `Not enough space for keys; must increase ${name} parameters.`;
+			}
+
+			const innerKeys: Uint8Array		= Potassium.randomBytes(plaintextBytes);
 
 			const symmetricKey: Uint8Array	= new Uint8Array(
 				innerKeys.buffer,
@@ -192,9 +196,9 @@ export class Potassium {
 
 		publicKeyDecrypt: async (
 			keyCyphertext: Uint8Array,
-			encryptedKeyBytes: number,
-			name: string,
 			privateKey: Uint8Array,
+			name: string,
+			encryptedKeyBytes: number,
 			decrypt: (cyphertext: Uint8Array, privateKey: Uint8Array) => Uint8Array
 		) : Promise<{
 			innerKeys: Uint8Array,
@@ -412,11 +416,15 @@ export class Potassium {
 
 			const mcelieceData						= await this.BoxHelpers.publicKeyEncrypt(
 				keys.public.mceliece,
+				'McEliece',
+				Potassium.McEliece.decryptedDataLength,
 				Potassium.McEliece.encrypt
 			);
 
 			const ntruData							= await this.BoxHelpers.publicKeyEncrypt(
 				keys.public.ntru,
+				'NTRU',
+				Potassium.NTRU.decryptedDataLength,
 				Potassium.NTRU.encrypt
 			);
 
@@ -479,9 +487,9 @@ export class Potassium {
 					Potassium.McEliece.encryptedDataLength +
 						this.OneTimeAuth.bytes
 				),
-				Potassium.McEliece.encryptedDataLength,
-				'McEliece',
 				keys.private.mceliece,
+				'McEliece',
+				Potassium.McEliece.encryptedDataLength,
 				Potassium.McEliece.decrypt
 			);
 
@@ -497,9 +505,9 @@ export class Potassium {
 					Potassium.NTRU.encryptedDataLength +
 						this.OneTimeAuth.bytes
 				),
-				Potassium.NTRU.encryptedDataLength,
-				'NTRU',
 				keys.private.ntru,
+				'NTRU',
+				Potassium.NTRU.encryptedDataLength,
 				Potassium.NTRU.decrypt
 			);
 
