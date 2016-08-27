@@ -234,8 +234,9 @@ rm -rf node_modules
 cd ../../..
 
 cp babel-polyfill/browser.js base.js
-echo >> base.js
-cat system.js >> base.js
+echo -e '\nif (!self.locationData) self.locationData = self.location;\n' >> base.js
+cat system.js | sed 's|location|locationData|g' >> base.js
+sed -i 's/^\/\/# sourceMappingURL.*//g' base.js
 
 cd ..
 
