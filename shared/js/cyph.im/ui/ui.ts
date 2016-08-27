@@ -193,14 +193,6 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		}
 
 
-		if (!Cyph.Env.isMobile && Cyph.Env.isIEOrEdge) {
-			this.dialogManager.alert({
-				title: Cyph.Strings.warningTitle,
-				ok: Cyph.Strings.ok,
-				content: Cyph.Strings.IEWarning
-			});
-		}
-
 		/* Cyphertext easter egg */
 		new self['Konami'](() => Cyph.Util.retryUntilComplete(retry => {
 			if (

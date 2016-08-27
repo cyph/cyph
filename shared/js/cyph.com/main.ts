@@ -14,12 +14,7 @@ import * as Cyph from 'cyph/cyph';
 import {Loaded} from 'preload/base';
 
 
-/*
-	cyph.com works fine in every browser except IE/Edge.
-	Until Microsoft fixes their shit, it's their problem, not ours.
-*/
-
-if (Cyph.Env.isIEOrEdge) {
+if (Cyph.Env.isIE) {
 	location.pathname	= '/unsupportedbrowser';
 }
 
