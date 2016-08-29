@@ -246,7 +246,7 @@ export class NativeCrypto {
 			}
 		},
 		bytes: 64,
-		keyBytes: 128,
+		keyBytes: 64,
 
 		sign: async (
 			message: Uint8Array,
@@ -334,7 +334,9 @@ export class NativeCrypto {
 			plaintext: Uint8Array,
 			nonce: Uint8Array,
 			key: Uint8Array,
-			additionalData?: Uint8Array
+			additionalData: Uint8Array = new Uint8Array(
+				NativeCrypto.SecretBox.aeadBytes
+			)
 		) : Promise<Uint8Array> => {
 			return new Uint8Array(
 				await NativeCrypto.Subtle.encrypt(
@@ -357,7 +359,9 @@ export class NativeCrypto {
 			cyphertext: Uint8Array,
 			nonce: Uint8Array,
 			key: Uint8Array,
-			additionalData?: Uint8Array
+			additionalData: Uint8Array = new Uint8Array(
+				NativeCrypto.SecretBox.aeadBytes
+			)
 		) : Promise<Uint8Array> => {
 			return new Uint8Array(
 				await NativeCrypto.Subtle.decrypt(
