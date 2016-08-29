@@ -70,14 +70,14 @@ export class NativeCrypto {
 		algorithm: {
 			name: 'RSA-OAEP',
 			hash: {
-				name: 'SHA-256'
+				name: 'SHA-512'
 			},
-			modulusLength: 2048,
-			modulusLengthBytes: 256,
+			modulusLength: 4096,
+			modulusLengthBytes: 512,
 			publicExponent: new Uint8Array([0x01, 0x00, 0x01])
 		},
-		publicKeyBytes: 450,
-		privateKeyBytes: 1700,
+		publicKeyBytes: 800,
+		privateKeyBytes: 3250,
 
 		keyPair: async () : Promise<{
 			keyType: string;
@@ -242,11 +242,11 @@ export class NativeCrypto {
 		algorithm: {
 			name: 'HMAC',
 			hash: {
-				name: 'SHA-256'
+				name: 'SHA-512'
 			}
 		},
-		bytes: 32,
-		keyBytes: 32,
+		bytes: 64,
+		keyBytes: 128,
 
 		sign: async (
 			message: Uint8Array,
@@ -327,7 +327,7 @@ export class NativeCrypto {
 	public static SecretBox	= {
 		algorithm: 'AES-GCM',
 		keyBytes: 32,
-		nonceBytes: 32,
+		nonceBytes: 12,
 
 		seal: async (
 			plaintext: Uint8Array,
