@@ -326,19 +326,22 @@ export class NativeCrypto {
 
 	public static SecretBox	= {
 		algorithm: 'AES-GCM',
+		aeadBytes: 16,
 		keyBytes: 32,
 		nonceBytes: 12,
 
 		seal: async (
 			plaintext: Uint8Array,
 			nonce: Uint8Array,
-			key: Uint8Array
+			key: Uint8Array,
+			additionalData?: Uint8Array
 		) : Promise<Uint8Array> => {
 			return new Uint8Array(
 				await NativeCrypto.Subtle.encrypt(
 					{
 						name: NativeCrypto.SecretBox.algorithm,
-						iv: nonce
+						iv: nonce,
+						additionalData
 					},
 					await NativeCrypto.importRawKey(
 						key,
@@ -353,13 +356,15 @@ export class NativeCrypto {
 		open: async (
 			cyphertext: Uint8Array,
 			nonce: Uint8Array,
-			key: Uint8Array
+			key: Uint8Array,
+			additionalData?: Uint8Array
 		) : Promise<Uint8Array> => {
 			return new Uint8Array(
 				await NativeCrypto.Subtle.decrypt(
 					{
 						name: NativeCrypto.SecretBox.algorithm,
-						iv: nonce
+						iv: nonce,
+						additionalData
 					},
 					await NativeCrypto.importRawKey(
 						key,

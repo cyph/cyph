@@ -218,6 +218,7 @@ export class CastleCore {
 				return false;
 			}
 
+			const messageId: Uint8Array	= new Uint8Array(cyphertext.buffer, 0, 4);
 			const encrypted: Uint8Array	= new Uint8Array(cyphertext.buffer, 4);
 
 			/* Initial handshake */
@@ -252,21 +253,15 @@ export class CastleCore {
 
 					const decrypted: Uint8Array		= await this.potassium.SecretBox.open(
 						encrypted,
-						incomingKey
+						incomingKey,
+						messageId
 					);
-
-					if (!Potassium.compareMemory(
-						new Uint8Array(cyphertext.buffer, 0, 4),
-						new Uint8Array(decrypted.buffer, 0, 4)
-					)) {
-						break;
-					}
 
 					Potassium.clearMemory(keys.incoming);
 					keys.incoming	= incomingKey;
 
-					let startIndex: number	= 5;
-					if (decrypted[4] === 1) {
+					let startIndex: number	= 1;
+					if (decrypted[0] === 1) {
 						await this.ratchet(new Uint8Array(
 							decrypted.buffer,
 							startIndex,
@@ -319,7 +314,6 @@ export class CastleCore {
 
 			const fullPlaintext: Uint8Array	= Potassium.concatMemory(
 				false,
-				messageId,
 				await this.ratchet(),
 				plaintext
 			);
@@ -327,7 +321,8 @@ export class CastleCore {
 			this.sendBase(
 				await this.potassium.SecretBox.seal(
 					fullPlaintext,
-					this.keys[0].outgoing
+					this.keys[0].outgoing,
+					messageId
 				),
 				messageId
 			);

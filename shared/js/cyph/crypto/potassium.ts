@@ -336,10 +336,11 @@ export class Potassium {
 		seal: async (
 			plaintext: Uint8Array,
 			nonce: Uint8Array,
-			key: Uint8Array
+			key: Uint8Array,
+			additionalData?: Uint8Array
 		) : Promise<Uint8Array> => Potassium.Sodium.crypto_aead_chacha20poly1305_encrypt(
 			plaintext,
-			null,
+			additionalData,
 			null,
 			nonce,
 			key
@@ -348,14 +349,29 @@ export class Potassium {
 		open: async (
 			cyphertext: Uint8Array,
 			nonce: Uint8Array,
-			key: Uint8Array
+			key: Uint8Array,
+			additionalData?: Uint8Array
 		) : Promise<Uint8Array> => Potassium.Sodium.crypto_aead_chacha20poly1305_decrypt(
 			null,
 			cyphertext,
-			null,
+			additionalData,
 			nonce,
 			key
-		)
+		),
+
+		getAdditionalData: (input?: Uint8Array) : Uint8Array => {
+			if (!input || input.length === this.SecretBox.aeadBytes) {
+				return input;
+			}
+
+			if (input.length > this.SecretBox.aeadBytes) {
+				throw 'Too much additional data.';
+			}
+
+			const output: Uint8Array	= new Uint8Array(this.SecretBox.aeadBytes);
+			output.set(input);
+			return output;
+		}
 	};
 
 	public native () : boolean {
@@ -869,11 +885,13 @@ export class Potassium {
 	};
 
 	public SecretBox	= {
+		aeadBytes: <number> Potassium.Sodium.crypto_aead_chacha20poly1305_ABYTES,
 		keyBytes: <number> Potassium.Sodium.crypto_aead_chacha20poly1305_KEYBYTES,
 
 		seal: async (
 			plaintext: Uint8Array,
-			key: Uint8Array
+			key: Uint8Array,
+			additionalData?: Uint8Array
 		) : Promise<Uint8Array> => {
 			if (key.length % this.SecretBox.keyBytes !== 0) {
 				throw 'Invalid key.';
@@ -902,7 +920,8 @@ export class Potassium {
 						key.buffer,
 						key.byteOffset + i,
 						this.SecretBox.keyBytes
-					)
+					),
+					this.SecretBoxHelpers.getAdditionalData(additionalData)
 				);
 
 				Potassium.clearMemory(dataToEncrypt);
@@ -917,7 +936,8 @@ export class Potassium {
 
 		open: async (
 			cyphertext: Uint8Array,
-			key: Uint8Array
+			key: Uint8Array,
+			additionalData?: Uint8Array
 		) : Promise<Uint8Array> => {
 			if (key.length % this.SecretBox.keyBytes !== 0) {
 				throw 'Invalid key.';
@@ -953,7 +973,8 @@ export class Potassium {
 							key.buffer,
 							key.byteOffset + i,
 							this.SecretBox.keyBytes
-						)
+						),
+						this.SecretBoxHelpers.getAdditionalData(additionalData)
 					);
 
 					Potassium.clearMemory(dataToDecrypt);
@@ -1051,6 +1072,7 @@ export class Potassium {
 			;
 
 			this.SecretBoxHelpers.nonceBytes	= NativeCrypto.SecretBox.nonceBytes;
+			this.SecretBox.aeadBytes			= NativeCrypto.SecretBox.aeadBytes;
 			this.SecretBox.keyBytes				= NativeCrypto.SecretBox.keyBytes;
 			this.SecretBoxHelpers.seal			= NativeCrypto.SecretBox.seal;
 			this.SecretBoxHelpers.open			= NativeCrypto.SecretBox.open;
