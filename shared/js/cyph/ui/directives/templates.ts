@@ -362,7 +362,7 @@ export const Templates	= {
 									<span translate>me</span> &nbsp;&mdash;&nbsp;
 								</span>
 
-								{{::message.timestamp}}
+								{{::message.timeString}}
 
 								<span
 									class='mobile-only'

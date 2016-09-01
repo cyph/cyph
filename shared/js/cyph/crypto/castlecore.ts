@@ -131,7 +131,7 @@ export class CastleCore {
 	}
 
 	private newMessageId () : Uint8Array {
-		return new Uint8Array(new Uint32Array([this.outgoingMessageId++]).buffer);
+		return new Uint8Array(new Float64Array([this.outgoingMessageId++]).buffer);
 	}
 
 	private async ratchet (incomingPublicKey?: Uint8Array) : Promise<Uint8Array> {
@@ -218,8 +218,8 @@ export class CastleCore {
 				return false;
 			}
 
-			const messageId: Uint8Array	= new Uint8Array(cyphertext.buffer, 0, 4);
-			const encrypted: Uint8Array	= new Uint8Array(cyphertext.buffer, 4);
+			const messageId: Uint8Array	= new Uint8Array(cyphertext.buffer, 0, 8);
+			const encrypted: Uint8Array	= new Uint8Array(cyphertext.buffer, 8);
 
 			/* Initial handshake */
 			if (this.keys.length === 0) {

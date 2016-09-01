@@ -1,6 +1,7 @@
 import {CastleCore} from 'castlecore';
 import {ICastle} from 'icastle';
 import {Potassium} from 'potassium';
+import {Config} from 'cyph/config';
 import {Util} from 'cyph/util';
 import {CastleEvents, Events, State, Users} from 'session/enums';
 import {ISession} from 'session/isession';
@@ -10,10 +11,11 @@ export class Castle implements ICastle {
 	private static chunkLength: number	= 8388608;
 
 
-	private incomingMessageId: number	= 0;
-	private incomingMessagesMax: number	= 0;
-	private receiveLock: {}				= {};
-	private sendQueue: string[]			= [];
+	private incomingMessageId: number				= 0;
+	private incomingMessagesMax: number				= 0;
+	private lastIncomingMessageTimestamp: number	= 0;
+	private receiveLock: {}							= {};
+	private sendQueue: string[]						= [];
 
 	private incomingMessages: {
 		[id: number] : Uint8Array[]
@@ -32,25 +34,24 @@ export class Castle implements ICastle {
 		else {
 			const messageBytes: Uint8Array	= Potassium.fromString(message);
 
-			const numBytes: Uint8Array	= new Uint8Array(
-				new Uint32Array([
-					messageBytes.length
-				]).buffer
-			);
+			const id: Float64Array			= new Float64Array([
+				Util.random(Config.maxSafeUint)
+			]);
 
-			const numChunks: Uint8Array	= new Uint8Array(
-				new Uint32Array([
-					Math.ceil(messageBytes.length / Castle.chunkLength)
-				]).buffer
-			);
+			const timestamp: Float64Array	= new Float64Array([
+				Util.timestamp()
+			]);
 
-			const id: Uint8Array	= Potassium.randomBytes(4);
+			const numBytes: Float64Array	= new Float64Array([
+				messageBytes.length
+			]);
 
-			for (
-				const i = new Uint32Array(1) ;
-				i[0] < messageBytes.length ;
-				i[0] += Castle.chunkLength
-			) {
+			const numChunks: Float64Array	= new Float64Array([
+				Math.ceil(messageBytes.length / Castle.chunkLength)
+			]);
+
+			const i = new Float64Array(1);
+			for (; i[0] < messageBytes.length ; i[0] += Castle.chunkLength) {
 				const chunk: Uint8Array	= new Uint8Array(
 					messageBytes.buffer,
 					i[0],
@@ -60,13 +61,15 @@ export class Castle implements ICastle {
 					)
 				);
 
-				const data: Uint8Array	= new Uint8Array(chunk.length + 16);
-
-				data.set(id);
-				data.set(new Uint8Array(i.buffer), 4);
-				data.set(numBytes, 8);
-				data.set(numChunks, 12);
-				data.set(chunk, 16);
+				const data: Uint8Array	= Potassium.concatMemory(
+					false,
+					id,
+					timestamp,
+					numBytes,
+					numChunks,
+					i,
+					chunk
+				);
 
 				try {
 					await this.core.send(data, shouldLock);
@@ -77,6 +80,11 @@ export class Castle implements ICastle {
 			}
 
 			Potassium.clearMemory(messageBytes);
+			Potassium.clearMemory(id);
+			Potassium.clearMemory(timestamp);
+			Potassium.clearMemory(numBytes);
+			Potassium.clearMemory(numChunks);
+			Potassium.clearMemory(i);
 		}
 	}
 
@@ -84,7 +92,7 @@ export class Castle implements ICastle {
 		try {
 			const cyphertext: Uint8Array	= Potassium.fromBase64(message);
 
-			const id: number	= new Uint32Array(cyphertext.buffer, 0, 1)[0];
+			const id: number	= new Float64Array(cyphertext.buffer, 0, 1)[0];
 
 			if (id >= this.incomingMessageId) {
 				this.incomingMessagesMax	= Math.max(
@@ -162,11 +170,12 @@ export class Castle implements ICastle {
 					});
 				},
 				receive: async (data: DataView) => {
-					const id: number		= data.getUint32(0, true);
-					const index: number		= data.getUint32(4, true);
-					const numBytes: number	= data.getUint32(8, true);
-					const numChunks: number	= data.getUint32(12, true);
-					const chunk: Uint8Array	= new Uint8Array(data.buffer, data.byteOffset + 16);
+					const id: number		= data.getFloat64(0, true);
+					const timestamp: number	= data.getFloat64(8, true);
+					const numBytes: number	= data.getFloat64(16, true);
+					const numChunks: number	= data.getFloat64(24, true);
+					const index: number		= data.getFloat64(32, true);
+					const chunk: Uint8Array	= new Uint8Array(data.buffer, data.byteOffset + 40);
 
 					if (!this.receivedMessages[id]) {
 						this.receivedMessages[id]	= {
@@ -175,20 +184,29 @@ export class Castle implements ICastle {
 						};
 					}
 
-					this.receivedMessages[id].data.set(chunk, index);
+					const message	= this.receivedMessages[id];
 
-					Potassium.clearMemory(new Uint8Array(data.buffer));
+					message.data.set(chunk, index);
+					Potassium.clearMemory(data);
 
-					if (++this.receivedMessages[id].totalChunks === numChunks) {
+					if (++message.totalChunks !== numChunks) {
+						return;
+					}
+
+					if (timestamp >= this.lastIncomingMessageTimestamp) {
+						this.lastIncomingMessageTimestamp	= timestamp;
+
 						this.session.trigger(Events.castle, {
 							event: CastleEvents.receive,
-							data: Potassium.toString(this.receivedMessages[id].data)
+							data: {
+								plaintext: Potassium.toString(message.data),
+								timestamp
+							}
 						});
-
-						Potassium.clearMemory(this.receivedMessages[id].data);
-
-						this.receivedMessages[id]	= null;
 					}
+
+					Potassium.clearMemory(message.data);
+					this.receivedMessages[id]	= null;
 				},
 				send: async (cyphertext: string) => {
 					this.session.trigger(Events.castle, {

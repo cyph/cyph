@@ -36,7 +36,7 @@ export class Channel implements IChannel {
 		this.messagesRef.push({
 			cyphertext: message,
 			sender: this.userId,
-			timestamp: Date.now()
+			timestamp: Util.timestamp()
 		});
 	}
 

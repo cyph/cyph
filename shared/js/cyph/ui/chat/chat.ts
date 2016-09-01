@@ -62,7 +62,8 @@ export class Chat extends BaseButtonManager implements IChat {
 	public messages: {
 		author: Session.Users;
 		text: string;
-		timestamp: string;
+		timestamp: number;
+		timeString: string;
 	}[]	= [];
 
 	public cyphertext: ICyphertext;
@@ -80,6 +81,7 @@ export class Chat extends BaseButtonManager implements IChat {
 	public addMessage (
 		text: string,
 		author: Session.Users,
+		timestamp: number = Util.timestamp(),
 		shouldNotify: boolean = true
 	) : void {
 		if (this.state === States.aborted) {
@@ -102,8 +104,11 @@ export class Chat extends BaseButtonManager implements IChat {
 			this.messages.push({
 				author: author,
 				text: text,
-				timestamp: Util.getTime()
+				timestamp,
+				timeString: Util.getTimeString(timestamp)
 			});
+
+			this.messages.sort((a, b) => a.timestamp - b.timestamp);
 
 			this.controller.update();
 
@@ -134,7 +139,7 @@ export class Chat extends BaseButtonManager implements IChat {
 
 		this.session.trigger(Session.Events.beginChatComplete);
 		this.changeState(States.chat);
-		this.addMessage(Strings.introductoryMessage, Session.Users.app, false);
+		this.addMessage(Strings.introductoryMessage, Session.Users.app, undefined, false);
 		this.setConnected();
 	}
 
@@ -218,7 +223,7 @@ export class Chat extends BaseButtonManager implements IChat {
 		}
 
 		if (message) {
-			this.addMessage(message, Session.Users.me, false);
+			this.addMessage(message, Session.Users.me, undefined, false);
 			this.scrollManager.scrollDown();
 			this.session.sendText(message);
 		}
@@ -383,7 +388,7 @@ export class Chat extends BaseButtonManager implements IChat {
 					(e.pageY > bounds.top && e.pageY < bounds.bottom) &&
 					(e.pageX > bounds.left && e.pageX < bounds.right)
 				) {
-					const now: number	= Date.now();
+					const now: number	= Util.timestamp();
 
 					if (now - lastClick > 500) {
 						lastClick	= now;
@@ -422,10 +427,10 @@ export class Chat extends BaseButtonManager implements IChat {
 			this.changeState(States.keyExchange);
 			Util.getValue(this.elements.timer[0], 'stop', () => {}).call(this.elements.timer[0]);
 
-			const start: number	= Date.now();
+			const start: number	= Util.timestamp();
 			const intervalId	= setInterval(() => {
 				const progress: number	=
-					(Date.now() - start) / Chat.approximateKeyExchangeTime
+					(Util.timestamp() - start) / Chat.approximateKeyExchangeTime
 				;
 
 				if (progress > 1) {
@@ -453,9 +458,9 @@ export class Chat extends BaseButtonManager implements IChat {
 		});
 
 		this.session.on(Session.RPCEvents.text,
-			(o: { text: string; author: Session.Users; }) => {
+			(o: { text: string; author: Session.Users; timestamp: number; }) => {
 				if (o.author !== Session.Users.me) {
-					this.addMessage(o.text, o.author);
+					this.addMessage(o.text, o.author, o.timestamp);
 				}
 			}
 		);

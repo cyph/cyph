@@ -7,6 +7,12 @@ import {EventManager} from 'eventmanager';
  * Miscellaneous helper functions used throughout the codes.
  */
 export class Util {
+	private static timestampData	= {
+		offset: 0,
+		last: 0,
+		subtime: 0
+	};
+
 	/**
 	 * Sends an email to the Cyph team. "@cyph.com" may be omitted from o.to.
 	 * @param o
@@ -57,14 +63,14 @@ export class Util {
 			return guid;
 		}
 
-		return Date.now() + '-' + crypto.getRandomValues(new Uint32Array(1))[0];
+		return Util.timestamp() + '-' + crypto.getRandomValues(new Uint32Array(1))[0];
 	}
 
 	/**
 	 * Returns a human-readable representation of the time (e.g. "3:37pm").
 	 */
-	public static getTime () : string {
-		const date: Date		= new Date();
+	public static getTimeString (timestamp?: number) : string {
+		const date: Date		= new Date(timestamp);
 		const minute: string	= ('0' + date.getMinutes()).slice(-2);
 		let hour: number		= date.getHours();
 		let ampm: string		= 'am';
@@ -194,7 +200,21 @@ export class Util {
 	 * otherwise, returns float in range [0, 1) (like Math.random).
 	 */
 	public static random (max?: number, min: number = 0) : number {
-		const randomFloat: number	= crypto.getRandomValues(new Uint32Array(1))[0] / Config.maxUint32;
+		const randomData: Uint16Array	= new Uint16Array(3);
+
+		crypto.getRandomValues(randomData);
+
+		let randomUint: number	= 0;
+		for (let i = 0 ; i < randomData.length ; ++i) {
+			randomUint		+= randomData[i] * Math.pow(2, i * 16);
+			randomData[i]	= 0;
+		}
+
+		if (max === Config.maxSafeUint) {
+			return randomUint;
+		}
+
+		const randomFloat: number	= randomUint / Config.maxSafeUint;
 
 		if (max === undefined) {
 			return randomFloat;
@@ -365,6 +385,25 @@ export class Util {
 	}
 
 	/**
+	 * Returns current timestamp, with logic to correct for incorrect
+	 * local clocks and ensure each output is unique.
+	 */
+	public static timestamp () : number {
+		let timestamp: number	= Date.now() + Util.timestampData.offset;
+
+		if (timestamp === Util.timestampData.last) {
+			Util.timestampData.subtime += 0.01;
+			timestamp += Util.timestampData.subtime;
+		}
+		else {
+			Util.timestampData.last		= timestamp;
+			Util.timestampData.subtime	= 0;
+		}
+
+		return timestamp;
+	}
+
+	/**
 	 * Serialises o to a query string (cf. jQuery.param).
 	 * @param o
 	 * @param parent Ignore this (internal use).
@@ -476,4 +515,15 @@ export class Util {
 		e.initEvent('click', true, false);
 		elem.dispatchEvent(e);
 	}
+
+	private static _	= (async () => {
+		try {
+			const serverTimestamp: number	= parseFloat(
+				await Util.request({url: Env.baseUrl + 'timestamp'})
+			);
+
+			Util.timestampData.offset	= serverTimestamp - Date.now();
+		}
+		catch (_) {}
+	})();
 }

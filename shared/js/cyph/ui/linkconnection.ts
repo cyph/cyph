@@ -60,7 +60,7 @@ export class LinkConnection implements ILinkConnection {
 		}
 
 		if (Env.isIE) {
-			const expireTime: string	= new Date(Date.now() + this.countdown * 1000)
+			const expireTime: string	= new Date(Util.timestamp() + this.countdown * 1000)
 				.toLocaleTimeString()
 				.toLowerCase()
 				.replace(/(.*:.*):.*? /, '$1')

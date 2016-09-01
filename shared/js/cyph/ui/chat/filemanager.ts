@@ -214,6 +214,7 @@ export class FileManager implements IFileManager {
 						this.chat.addMessage(
 							Strings.incomingFileRejected + ' ' + name,
 							Session.Users.app,
+							undefined,
 							false
 						);
 						break;
@@ -231,6 +232,7 @@ export class FileManager implements IFileManager {
 						this.chat.addMessage(
 							message + ' ' + name,
 							Session.Users.app,
+							undefined,
 							!isFromMe
 						);
 						break;

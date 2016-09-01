@@ -1,4 +1,5 @@
 import {Env} from 'env';
+import {Util} from 'util';
 
 
 /**
@@ -15,7 +16,7 @@ export class Timer {
 			Timer.timerLock	= true;
 
 			try {
-				const now: number	= Date.now();
+				const now: number	= Util.timestamp();
 
 				for (let timer of Timer.timers) {
 					if (timer) {

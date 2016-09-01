@@ -14,25 +14,28 @@ export class Potassium {
 	private static Sodium		= self['sodium'] || {};
 	private static SuperSphincs	= self['superSphincs'] || {};
 
-	public static clearMemory (a: Uint8Array) : void {
+	public static clearMemory (a: ArrayBufferView) : void {
 		if (a instanceof Uint8Array) {
 			Potassium.Sodium.memzero(a);
 		}
 	}
 
-	public static compareMemory (a: Uint8Array, b: Uint8Array) : boolean {
-		return a.length === b.length && Potassium.Sodium.memcmp(a, b);
+	public static compareMemory (a: ArrayBufferView, b: ArrayBufferView) : boolean {
+		return a.byteLength === b.byteLength && Potassium.Sodium.memcmp(
+			Potassium.toBytes(a),
+			Potassium.toBytes(b)
+		);
 	}
 
 	public static concatMemory (
 		clearOriginals: boolean,
-		...arrays: Uint8Array[]
+		...arrays: ArrayBufferView[]
 	) : Uint8Array {
 		const out	= new Uint8Array(arrays.reduce((a, b) => a + b.byteLength, 0));
 		let index	= 0;
 
 		for (let a of arrays) {
-			const array	= new Uint8Array(a.buffer, a.byteOffset, a.byteLength);
+			const array	= Potassium.toBytes(a);
 			out.set(array, index);
 			index += array.length;
 
@@ -44,24 +47,24 @@ export class Potassium {
 		return out;
 	}
 
-	public static fromBase64 (s: string|Uint8Array) : Uint8Array {
+	public static fromBase64 (s: string|ArrayBufferView) : Uint8Array {
 		return typeof s === 'string' ?
 			Potassium.Sodium.from_base64(s) :
-			s
+			Potassium.toBytes(s)
 		;
 	}
 
-	public static fromHex (s: string|Uint8Array) : Uint8Array {
+	public static fromHex (s: string|ArrayBufferView) : Uint8Array {
 		return typeof s === 'string' ?
 			Potassium.Sodium.from_hex(s) :
-			s
+			Potassium.toBytes(s)
 		;
 	}
 
-	public static fromString (s: string|Uint8Array) : Uint8Array {
+	public static fromString (s: string|ArrayBufferView) : Uint8Array {
 		return typeof s === 'string' ?
 			Potassium.Sodium.from_string(s) :
-			s
+			Potassium.toBytes(s)
 		;
 	}
 
@@ -71,24 +74,30 @@ export class Potassium {
 		return bytes;
 	}
 
-	public static toBase64 (a: Uint8Array|string) : string {
+	public static toBase64 (a: ArrayBufferView|string) : string {
 		return typeof a === 'string' ?
 			a :
-			Potassium.Sodium.to_base64(a).replace(/\s+/g, '')
+			Potassium.Sodium.to_base64(
+				Potassium.toBytes(a)
+			).replace(/\s+/g, '')
 		;
 	}
 
-	public static toHex (a: Uint8Array|string) : string {
+	public static toBytes (a: ArrayBufferView) : Uint8Array {
+		return new Uint8Array(a.buffer, a.byteOffset, a.byteLength);
+	}
+
+	public static toHex (a: ArrayBufferView|string) : string {
 		return typeof a === 'string' ?
 			a :
-			Potassium.Sodium.to_hex(a)
+			Potassium.Sodium.to_hex(Potassium.toBytes(a))
 		;
 	}
 
-	public static toString (a: Uint8Array|string) : string {
+	public static toString (a: ArrayBufferView|string) : string {
 		return typeof a === 'string' ?
 			a :
-			Potassium.Sodium.to_string(a)
+			Potassium.Sodium.to_string(Potassium.toBytes(a))
 		;
 	}
 

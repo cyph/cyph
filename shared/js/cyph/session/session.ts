@@ -41,8 +41,8 @@ export {
 export class Session implements ISession {
 	private receivedMessages: {[id: string] : boolean}	= {};
 	private sendQueue: string[]							= [];
-	private lastIncomingMessageTimestamp: number		= Date.now();
-	private lastOutgoingMessageTimestamp: number		= Date.now();
+	private lastIncomingMessageTimestamp: number		= Util.timestamp();
+	private lastOutgoingMessageTimestamp: number		= Util.timestamp();
 	private pingPongTimeouts: number					= 0;
 	private isLocalSession: boolean						= false;
 
@@ -58,7 +58,7 @@ export class Session implements ISession {
 		wasInitiatedByAPI: <boolean> false
 	};
 
-	private castleHandler (e: { event: CastleEvents; data?: string; }) : void {
+	private castleHandler (e: { event: CastleEvents; data?: any; }) : void {
 		switch (e.event) {
 			case CastleEvents.abort: {
 				Errors.logAuthFail();
@@ -74,12 +74,12 @@ export class Session implements ISession {
 				break;
 			}
 			case CastleEvents.receive: {
-				this.lastIncomingMessageTimestamp	= Date.now();
+				this.lastIncomingMessageTimestamp	= Util.timestamp();
 
 				if (e.data) {
-					const data: Message[]	= (() => {
+					const messages: Message[]	= (() => {
 						try {
-							return JSON.parse(e.data, (_, v) => {
+							return JSON.parse(e.data.plaintext, (_, v) => {
 								if (v && v.isUint8Array) {
 									const bytes	= new Uint8Array(Object.keys(v).length - 1);
 
@@ -98,8 +98,8 @@ export class Session implements ISession {
 						}
 					})();
 
-					for (let message of data) {
-						this.receiveHandler(message);
+					for (let i = 0 ; i < messages.length ; ++i) {
+						this.receiveHandler(messages[i], e.data.timestamp + i * 0.001);
 					}
 				}
 				break;
@@ -126,7 +126,7 @@ export class Session implements ISession {
 		new Timer((now: number) => {
 			if (now - this.lastIncomingMessageTimestamp > 180000) {
 				if (this.pingPongTimeouts++ < 2) {
-					this.lastIncomingMessageTimestamp	= Date.now();
+					this.lastIncomingMessageTimestamp	= Util.timestamp();
 
 					this.trigger(Events.pingPongTimeout);
 
@@ -147,14 +147,14 @@ export class Session implements ISession {
 		});
 	}
 
-	private receiveHandler (message: Message) : void {
+	private receiveHandler (message: Message, timestamp: number) : void {
 		if (!this.receivedMessages[message.id]) {
 			this.receivedMessages[message.id]	= true;
 
 			if (message.event in RPCEvents) {
 				this.trigger(message.event,
 					message.event === RPCEvents.text ?
-						{text: message.data, author: Users.friend} :
+						{text: message.data, author: Users.friend, timestamp} :
 						message.data
 				);
 			}
@@ -162,7 +162,7 @@ export class Session implements ISession {
 	}
 
 	private sendHandler (messages: string[]) : void {
-		this.lastOutgoingMessageTimestamp	= Date.now();
+		this.lastOutgoingMessageTimestamp	= Util.timestamp();
 
 		for (let message of messages) {
 			this.channel.send(message);

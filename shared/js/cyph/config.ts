@@ -118,6 +118,6 @@ export class Config {
 		'privacy'
 	];
 
-	/** Max unsigned 32-bit integer. */
-	public static maxUint32: number	= 4294967296;
+	/** Max unsigned 48-bit integer + 1, used by Util.random. */
+	public static maxSafeUint: number	= 281474976710656;
 }
