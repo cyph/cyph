@@ -9,8 +9,7 @@ cover_image: ryan.bio.jpg
 
 author:
   name: Ryan Lester
-  firstname: Ryan
-  lastname: Lester
+  firstname: ryan
   twitter: TheRyanLester
   bio: Co-founder & CEO
   image: ryan.jpg

@@ -9,8 +9,7 @@ cover_image: josh.bio.jpg
 
 author:
   name: Josh Boehm
-  firstname: Josh
-  lastname: Boehm
+  firstname: josh
   nickname: Baron Joshua Cyrus Boehm
   twitter: BaronBoehm
   quora: Josh-Boehm
