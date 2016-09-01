@@ -8,8 +8,7 @@ excerpt: Trying out the new blag.
 
 author:
   name: Josh Boehm
-  firstname: Josh
-  lastname: Boehm
+  firstname: josh
   twitter: BaronBoehm 
   bio: Co-founder & COO
   quora: Josh-Boehm

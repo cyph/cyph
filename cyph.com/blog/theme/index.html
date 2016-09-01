@@ -31,7 +31,7 @@ layout: base
             <h2 class="title"><a href="{{ site.baseurl }}{{ post.url }}" rel="prefetch">{{ post.title }}</a></h2>
             <p>{{ post.excerpt }}</p>
             <div class="meta">
-                Written By <a href='{{ site.baseurl }}/bio/{{post.author.firstname}}/index.html'>{{ post.author.name }}</a> {% include _social.html %}  &mdash;
+                Written By <a href='{{ site.baseurl }}/bio/{{ post.author.firstname }}/index.html'>{{ post.author.name }}</a> {% include _social.html %}  &mdash;
                 <time pubdate datetime="{{ post.date | date: "%Y-%d-%B" }}" title="{{ post.date | date: "%B %d, %Y" }}">{{ post.date | date: "%B %d, %Y" }}</time>
             </div>
         </div>
