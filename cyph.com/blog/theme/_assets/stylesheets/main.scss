@@ -36,7 +36,7 @@ $accent: #8b62d9;
 	
 }
 
-.Josh, .Ryan {
+.josh, .ryan {
 	
 	h1 {
 		font-weight: 200;
@@ -63,13 +63,13 @@ $accent: #8b62d9;
 	font-family: helvetica;
 	color: #8b62d9;
 }
-article.Josh, article.Ryan {
+article.josh, article.ryan {
 	padding-top: 15px !important;
     opacity: 0.90;
     position: relative;
 }
 
-.article-cover.Josh, .article-cover.Ryan {
+.article-cover.josh, .article-cover.ryan {
     height: 545px !important;
     max-height: 545px !important;
 	position: relative;
@@ -94,7 +94,7 @@ article.Josh, article.Ryan {
 	}
 }
 
-.article-cover.Ryan {
+.article-cover.ryan {
 	.header-image{
 		background-image: url('/blog/images/ryan.bio.jpg') !important;
 	}
@@ -160,7 +160,7 @@ article address{
 	}
 }
 
-article.Josh .content, article.Ryan .content {
+article.josh .content, article.ryan .content {
     margin: 0px 12% 0px 12%;
 }
 
