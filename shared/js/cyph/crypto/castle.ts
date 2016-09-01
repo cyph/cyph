@@ -193,7 +193,7 @@ export class Castle implements ICastle {
 						return;
 					}
 
-					if (timestamp >= this.lastIncomingMessageTimestamp) {
+					if (timestamp > this.lastIncomingMessageTimestamp) {
 						this.lastIncomingMessageTimestamp	= timestamp;
 
 						this.session.trigger(Events.castle, {
