@@ -256,19 +256,6 @@ curl -s https://raw.githubusercontent.com/suhdev/firebase-3-typescript/master/fi
 	grep -v es6-promise.d.ts > typings/globals/firebase/index.d.ts
 echo '/// <reference path="globals/firebase/index.d.ts" />' >> typings/index.d.ts
 
-mkdir blog
-cd blog
-mkdir hnbutton ; curl --compressed https://hnbutton.appspot.com/static/hn.min.js > hnbutton/hn.min.js
-mkdir twitter ; wget https://platform.twitter.com/widgets.js -O twitter/widgets.js
-mkdir google ; wget https://apis.google.com/js/plusone.js -O google/plusone.js
-wget "https://apis.google.com$(cat google/plusone.js | grep -oP '/_/scs/.*?"' | sed 's|\\u003d|=|g' | sed 's|__features__|plusone/rt=j/sv=1/d=1/ed=1|g' | rev | cut -c 2- | rev)/cb=gapi.loaded_0" -O google/plusone.helper.js
-mkdir facebook ; wget https://connect.facebook.net/en_US/sdk.js -O facebook/sdk.js
-mkdir disqus ; wget https://cyph.disqus.com/embed.js -O disqus/embed.js
-npm install --save simple-jekyll-search
-mv node_modules/simple-jekyll-search ./
-rm -rf node_modules
-cd ..
-
 
 cd ../../default
 
