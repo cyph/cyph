@@ -11,6 +11,7 @@ author:
   name: Ryan Lester
   firstname: ryan
   twitter: TheRyanLester
+  github: buu700
   bio: Co-founder & CEO
   image: ryan.jpg
 ---
