@@ -27,26 +27,30 @@ export class Castle implements ICastle {
 
 	private core: CastleCore;
 
-	private async sendHelper (message: string, shouldLock: boolean = true) : Promise<void> {
+	private async sendHelper (
+		message: string,
+		timestamp: number = Util.timestamp(),
+		shouldLock: boolean = true
+	) : Promise<void> {
 		if (this.sendQueue) {
 			this.sendQueue.push(message);
 		}
 		else {
-			const messageBytes: Uint8Array	= Potassium.fromString(message);
+			const messageBytes: Uint8Array		= Potassium.fromString(message);
 
-			const id: Float64Array			= new Float64Array([
+			const id: Float64Array				= new Float64Array([
 				Util.random(Config.maxSafeUint)
 			]);
 
-			const timestamp: Float64Array	= new Float64Array([
-				Util.timestamp()
+			const timestampBytes: Float64Array	= new Float64Array([
+				timestamp
 			]);
 
-			const numBytes: Float64Array	= new Float64Array([
+			const numBytes: Float64Array		= new Float64Array([
 				messageBytes.length
 			]);
 
-			const numChunks: Float64Array	= new Float64Array([
+			const numChunks: Float64Array		= new Float64Array([
 				Math.ceil(messageBytes.length / Castle.chunkLength)
 			]);
 
@@ -64,7 +68,7 @@ export class Castle implements ICastle {
 				const data: Uint8Array	= Potassium.concatMemory(
 					false,
 					id,
-					timestamp,
+					timestampBytes,
 					numBytes,
 					numChunks,
 					i,
@@ -81,7 +85,7 @@ export class Castle implements ICastle {
 
 			Potassium.clearMemory(messageBytes);
 			Potassium.clearMemory(id);
-			Potassium.clearMemory(timestamp);
+			Potassium.clearMemory(timestampBytes);
 			Potassium.clearMemory(numBytes);
 			Potassium.clearMemory(numChunks);
 			Potassium.clearMemory(i);
@@ -143,8 +147,11 @@ export class Castle implements ICastle {
 		});
 	}
 
-	public async send (message: string) : Promise<void> {
-		return this.sendHelper(message);
+	public async send (
+		message: string,
+		timestamp: number = Util.timestamp()
+	) : Promise<void> {
+		return this.sendHelper(message, timestamp);
 	}
 
 	public constructor (private session: ISession, isNative: boolean = false) {
@@ -162,7 +169,7 @@ export class Castle implements ICastle {
 					this.sendQueue	= null;
 
 					for (let message of sendQueue) {
-						await this.sendHelper(message, false);
+						await this.sendHelper(message, undefined, false);
 					}
 
 					this.session.trigger(Events.castle, {

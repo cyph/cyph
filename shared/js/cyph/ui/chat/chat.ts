@@ -223,7 +223,6 @@ export class Chat extends BaseButtonManager implements IChat {
 		}
 
 		if (message) {
-			this.addMessage(message, Session.Users.me, undefined, false);
 			this.scrollManager.scrollDown();
 			this.session.sendText(message);
 		}
@@ -458,11 +457,13 @@ export class Chat extends BaseButtonManager implements IChat {
 		});
 
 		this.session.on(Session.RPCEvents.text,
-			(o: { text: string; author: Session.Users; timestamp: number; }) => {
-				if (o.author !== Session.Users.me) {
-					this.addMessage(o.text, o.author, o.timestamp);
-				}
-			}
+			(o: { text: string; author: Session.Users; timestamp: number; }) =>
+				this.addMessage(
+					o.text,
+					o.author,
+					o.timestamp,
+					o.author !== Session.Users.me
+				)
 		);
 
 		this.session.on(Session.RPCEvents.typing, (isFriendTyping: boolean) =>

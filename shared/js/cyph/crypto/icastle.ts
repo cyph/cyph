@@ -12,6 +12,7 @@ export interface ICastle {
 	/**
 	 * Send outgoing text.
 	 * @param message Data to be encrypted.
+	 * @param timestamp Message timestamp.
 	 */
-	send (message: string) : Promise<void>;
+	send (message: string, timestamp?: number) : Promise<void>;
 }

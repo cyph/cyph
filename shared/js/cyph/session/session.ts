@@ -320,27 +320,32 @@ export class Session implements ISession {
 	}
 
 	public sendBase (messages: IMessage[]) : void {
-		if (this.castle) {
-			for (let message of messages) {
-				if (message.event === RPCEvents.text) {
-					this.trigger(RPCEvents.text, {
-						text: message.data,
-						author: Users.me
-					});
-				}
-			}
+		if (!this.castle) {
+			setTimeout(() => this.sendBase(messages), 250);
+			return;
+		}
 
-			this.castle.send(JSON.stringify(messages, (_, v) => {
+
+		for (let message of messages) {
+			if (message.event === RPCEvents.text) {
+				this.trigger(RPCEvents.text, {
+					text: message.data,
+					author: Users.me,
+					timestamp: Util.timestamp()
+				});
+			}
+		}
+
+		this.castle.send(
+			JSON.stringify(messages, (_, v) => {
 				if (v instanceof Uint8Array) {
 					v.isUint8Array	= true;
 				}
 
 				return v;
-			}));
-		}
-		else {
-			setTimeout(() => this.sendBase(messages), 250);
-		}
+			}),
+			Util.timestamp()
+		);
 	}
 
 	public sendText (text: string) : void {
