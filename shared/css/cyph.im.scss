@@ -597,6 +597,7 @@ html.mobile button[disabled] {
 		.buttons > * {
 			position: absolute;
 			margin-top: 8px;
+			top: 0px;
 
 			&:nth-child(1) {
 				left: 12px;
