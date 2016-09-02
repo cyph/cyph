@@ -10,7 +10,6 @@ export class Potassium {
 	private static McEliece		= self['mceliece'] || {};
 	private static NTRU			= self['ntru'] || {};
 	private static RLWE			= self['rlwe'] || {};
-	private static SIDH			= self['sidh'] || {};
 	private static Sodium		= self['sodium'] || {};
 	private static SuperSphincs	= self['superSphincs'] || {};
 
@@ -133,25 +132,20 @@ export class Potassium {
 		seal: async (
 			plaintext: Uint8Array,
 			nonce: Uint8Array,
-			publicKey: Uint8Array,
-			privateKey: Uint8Array
-		) : Promise<Uint8Array> => Potassium.Sodium.crypto_box_easy(
+			publicKey: Uint8Array
+		) : Promise<Uint8Array> => Potassium.Sodium.crypto_box_seal(
 			plaintext,
-			nonce,
-			publicKey,
-			privateKey
+			publicKey
 		),
 
 		open: async (
 			cyphertext: Uint8Array,
 			nonce: Uint8Array,
-			publicKey: Uint8Array,
-			privateKey: Uint8Array
-		) : Promise<Uint8Array> => Potassium.Sodium.crypto_box_open_easy(
+			keyPair: {publicKey: Uint8Array; privateKey: Uint8Array;}
+		) : Promise<Uint8Array> => Potassium.Sodium.crypto_box_seal_open(
 			cyphertext,
-			nonce,
-			publicKey,
-			privateKey
+			keyPair.publicKey,
+			keyPair.privateKey
 		),
 
 		publicKeyEncrypt: async (
@@ -256,8 +250,8 @@ export class Potassium {
 			return {innerKeys, symmetricKey};
 		},
 
-		splitKeys: (publicKey: Uint8Array, privateKey: Uint8Array) => ({
-			public: {
+		splitKeys: (publicKey?: Uint8Array, privateKey?: Uint8Array) => ({
+			public: !publicKey ? null : {
 				classical: new Uint8Array(
 					publicKey.buffer,
 					publicKey.byteOffset,
@@ -277,19 +271,10 @@ export class Potassium {
 						Potassium.McEliece.publicKeyLength
 					,
 					Potassium.NTRU.publicKeyLength
-				),
-				sidh: new Uint8Array(
-					publicKey.buffer,
-					publicKey.byteOffset +
-						this.BoxHelpers.publicKeyBytes +
-						Potassium.McEliece.publicKeyLength +
-						Potassium.NTRU.publicKeyLength
-					,
-					Potassium.SIDH.publicKeyLength
 				)
 			},
 
-			private: {
+			private: !privateKey ? null : {
 				classical: new Uint8Array(
 					privateKey.buffer,
 					privateKey.byteOffset,
@@ -309,15 +294,6 @@ export class Potassium {
 						Potassium.McEliece.privateKeyLength
 					,
 					Potassium.NTRU.privateKeyLength
-				),
-				sidh: new Uint8Array(
-					privateKey.buffer,
-					privateKey.byteOffset +
-						this.BoxHelpers.privateKeyBytes +
-						Potassium.McEliece.privateKeyLength +
-						Potassium.NTRU.privateKeyLength
-					,
-					Potassium.SIDH.privateKeyLength
 				)
 			}
 		})
@@ -391,13 +367,11 @@ export class Potassium {
 		publicKeyBytes: <number>
 			Potassium.McEliece.publicKeyLength +
 			Potassium.NTRU.publicKeyLength +
-			Potassium.SIDH.publicKeyLength +
 			this.BoxHelpers.publicKeyBytes
 		,
 		privateKeyBytes: <number>
 			Potassium.McEliece.privateKeyLength +
 			Potassium.NTRU.privateKeyLength +
-			Potassium.SIDH.privateKeyLength +
 			this.BoxHelpers.privateKeyBytes
 		,
 
@@ -409,8 +383,7 @@ export class Potassium {
 			const keyPairs	= {
 				classical: await this.BoxHelpers.keyPair(),
 				mceliece: Potassium.McEliece.keyPair(),
-				ntru: Potassium.NTRU.keyPair(),
-				sidh: Potassium.SIDH.keyPair()
+				ntru: Potassium.NTRU.keyPair()
 			};
 
 			return {
@@ -419,25 +392,22 @@ export class Potassium {
 					true,
 					keyPairs.classical.publicKey,
 					keyPairs.mceliece.publicKey,
-					keyPairs.ntru.publicKey,
-					keyPairs.sidh.publicKey
+					keyPairs.ntru.publicKey
 				),
 				privateKey: Potassium.concatMemory(
 					true,
 					keyPairs.classical.privateKey,
 					keyPairs.mceliece.privateKey,
-					keyPairs.ntru.privateKey,
-					keyPairs.sidh.privateKey
+					keyPairs.ntru.privateKey
 				)
 			};
 		},
 
 		seal: async (
 			plaintext: Uint8Array,
-			publicKey: Uint8Array,
-			privateKey: Uint8Array
+			publicKey: Uint8Array
 		) : Promise<Uint8Array> => {
-			const keys	= this.BoxHelpers.splitKeys(publicKey, privateKey);
+			const keys	= this.BoxHelpers.splitKeys(publicKey);
 
 			const mcelieceData						= await this.BoxHelpers.publicKeyEncrypt(
 				keys.public.mceliece,
@@ -453,29 +423,15 @@ export class Potassium {
 				Potassium.NTRU.encrypt
 			);
 
-			const sidhSymmetricKey: Uint8Array		= await this.Hash.deriveKey(
-				Potassium.SIDH.secret(
-					keys.public.sidh,
-					keys.private.sidh
-				),
-				this.SecretBox.keyBytes,
-				true
-			);
-
 			const nonce: Uint8Array					= this.newNonce(this.BoxHelpers.nonceBytes);
 
 			const classicalCyphertext: Uint8Array	= await this.BoxHelpers.seal(
 				plaintext,
 				nonce,
-				keys.public.classical,
-				keys.private.classical
-			);
-			const sidhCyphertext: Uint8Array		= await this.SecretBox.seal(
-				classicalCyphertext,
-				sidhSymmetricKey
+				keys.public.classical
 			);
 			const ntruCyphertext: Uint8Array		= await this.SecretBox.seal(
-				sidhCyphertext,
+				classicalCyphertext,
 				ntruData.symmetricKey
 			);
 			const mcelieceCyphertext: Uint8Array	= await this.SecretBox.seal(
@@ -485,7 +441,6 @@ export class Potassium {
 
 			Potassium.clearMemory(ntruData.innerKeys);
 			Potassium.clearMemory(mcelieceData.innerKeys);
-			Potassium.clearMemory(sidhSymmetricKey);
 
 			return Potassium.concatMemory(
 				true,
@@ -498,10 +453,9 @@ export class Potassium {
 
 		open: async (
 			cyphertext: Uint8Array,
-			publicKey: Uint8Array,
-			privateKey: Uint8Array
+			keyPair: {publicKey: Uint8Array; privateKey: Uint8Array;}
 		) : Promise<Uint8Array> => {
-			const keys	= this.BoxHelpers.splitKeys(publicKey, privateKey);
+			const keys	= this.BoxHelpers.splitKeys(keyPair.publicKey, keyPair.privateKey);
 
 			let cyphertextIndex	= cyphertext.byteOffset;
 
@@ -541,15 +495,6 @@ export class Potassium {
 				this.OneTimeAuth.bytes
 			;
 
-			const sidhSymmetricKey: Uint8Array		= await this.Hash.deriveKey(
-				Potassium.SIDH.secret(
-					keys.public.sidh,
-					keys.private.sidh
-				),
-				this.SecretBox.keyBytes,
-				true
-			);
-
 			const nonce: Uint8Array					= new Uint8Array(
 				cyphertext.buffer,
 				cyphertextIndex,
@@ -568,27 +513,23 @@ export class Potassium {
 				mcelieceCyphertext,
 				mcelieceData.symmetricKey
 			);
-			const sidhCyphertext: Uint8Array		= await this.SecretBox.open(
+			const classicalCyphertext: Uint8Array	= await this.SecretBox.open(
 				ntruCyphertext,
 				ntruData.symmetricKey
-			);
-			const classicalCyphertext: Uint8Array	= await this.SecretBox.open(
-				sidhCyphertext,
-				sidhSymmetricKey
 			);
 
 			const plaintext: Uint8Array	= await this.BoxHelpers.open(
 				classicalCyphertext,
 				nonce,
-				keys.public.classical,
-				keys.private.classical
+				{
+					publicKey: keys.public.classical,
+					privateKey: keys.private.classical
+				}
 			);
 
 			Potassium.clearMemory(mcelieceData.innerKeys);
 			Potassium.clearMemory(ntruData.innerKeys);
-			Potassium.clearMemory(sidhSymmetricKey);
 			Potassium.clearMemory(ntruCyphertext);
-			Potassium.clearMemory(sidhCyphertext);
 			Potassium.clearMemory(classicalCyphertext);
 
 			return plaintext;

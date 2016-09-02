@@ -28,12 +28,12 @@ export class CastleCore {
 	}[]	= [];
 
 	private handshakeData: {
+		keyPair: {publicKey: Uint8Array; privateKey: Uint8Array;}
 		publicKey: Uint8Array;
-		privateKey: Uint8Array;
 		sharedSecret: Uint8Array;
 	}	= {
 		publicKey: null,
-		privateKey: null,
+		keyPair: null,
 		sharedSecret: null
 	};
 
@@ -109,8 +109,7 @@ export class CastleCore {
 
 			this.sendBase(await this.potassium.Box.seal(
 				secret,
-				this.handshakeData.publicKey,
-				this.handshakeData.privateKey
+				this.handshakeData.publicKey
 			));
 		}
 
@@ -118,14 +117,14 @@ export class CastleCore {
 		else {
 			await this.addNewKey(await this.potassium.Box.open(
 				cyphertext,
-				this.handshakeData.publicKey,
-				this.handshakeData.privateKey
+				this.handshakeData.keyPair
 			));
 
 			await this.connect();
 		}
 
-		Potassium.clearMemory(this.handshakeData.privateKey);
+		Potassium.clearMemory(this.handshakeData.keyPair.privateKey);
+		Potassium.clearMemory(this.handshakeData.keyPair.publicKey);
 		Potassium.clearMemory(this.handshakeData.publicKey);
 		this.handshakeData	= null;
 	}
@@ -345,9 +344,7 @@ export class CastleCore {
 		Util.lock(this.lock, async () => {
 			this.potassium		= new Potassium(this.isCreator, isNative);
 
-			const keyPair		= await this.potassium.Box.keyPair();
-
-			this.handshakeData.privateKey	= keyPair.privateKey;
+			this.handshakeData.keyPair		= await this.potassium.Box.keyPair();
 
 			this.handshakeData.sharedSecret	= (await this.potassium.PasswordHash.hash(
 				sharedSecret,
@@ -355,11 +352,9 @@ export class CastleCore {
 			)).hash;
 
 			this.sendBase(await this.potassium.SecretBox.seal(
-				keyPair.publicKey,
+				this.handshakeData.keyPair.publicKey,
 				this.handshakeData.sharedSecret
 			));
-
-			Potassium.clearMemory(keyPair.publicKey);
 
 			setTimeout(() => {
 				if (!this.isConnected) {

@@ -113,8 +113,7 @@ export class NativeCrypto {
 		seal: async (
 			plaintext: Uint8Array,
 			nonce: Uint8Array,
-			publicKey: Uint8Array,
-			privateKey: Uint8Array
+			publicKey: Uint8Array
 		) : Promise<Uint8Array> => {
 			const asymmetricPlaintext: Uint8Array	= Potassium.randomBytes(
 				NativeCrypto.SecretBox.keyBytes + NativeCrypto.OneTimeAuth.keyBytes
@@ -167,8 +166,7 @@ export class NativeCrypto {
 		open: async (
 			cyphertext: Uint8Array,
 			nonce: Uint8Array,
-			publicKey: Uint8Array,
-			privateKey: Uint8Array
+			keyPair: {publicKey: Uint8Array; privateKey: Uint8Array;}
 		) : Promise<Uint8Array> => {
 			const asymmetricCyphertext: Uint8Array	= new Uint8Array(
 				cyphertext.buffer,
@@ -180,7 +178,7 @@ export class NativeCrypto {
 				await NativeCrypto.Subtle.decrypt(
 					NativeCrypto.Box.algorithm.name,
 					await NativeCrypto.importJWK(
-						privateKey,
+						keyPair.privateKey,
 						NativeCrypto.Box.algorithm,
 						'decrypt'
 					),
