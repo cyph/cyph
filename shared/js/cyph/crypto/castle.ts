@@ -8,7 +8,8 @@ import {ISession} from 'session/isession';
 
 
 export class Castle implements ICastle {
-	private static chunkLength: number	= 8388608;
+	private static chunkLength: number		= 8388608;
+	private static cyphertextLimit: number	= 200000;
 
 
 	private incomingMessageId: number				= 0;
@@ -125,10 +126,12 @@ export class Castle implements ICastle {
 					this.incomingMessages[this.incomingMessageId]
 				) {
 					if (!wasSuccessful && (await this.core.receive(cyphertext))) {
-						this.session.trigger(Events.cyphertext, {
-							cyphertext: Potassium.toBase64(cyphertext),
-							author: Users.friend
-						});
+						if (cyphertext.length < Castle.cyphertextLimit) {
+							this.session.trigger(Events.cyphertext, {
+								cyphertext: Potassium.toBase64(cyphertext),
+								author: Users.friend
+							});
+						}
 
 						wasSuccessful	= true;
 					}
@@ -221,10 +224,12 @@ export class Castle implements ICastle {
 						data: cyphertext
 					});
 
-					this.session.trigger(Events.cyphertext, {
-						cyphertext,
-						author: Users.me
-					});
+					if (cyphertext.length < Castle.cyphertextLimit) {
+						this.session.trigger(Events.cyphertext, {
+							cyphertext,
+							author: Users.me
+						});
+					}
 				}
 			},
 			isNative
