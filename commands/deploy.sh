@@ -476,11 +476,11 @@ else
 	# Merge imported libraries into threads
 	find js -name '*.js' | xargs -I% ../commands/websign/threadpack.js %
 
-	../commands/websign/pack.js --sri --minify index.html pkg
+	mkdir ../pkg
+	../commands/websign/pack.js --sri --minify index.html ../pkg/cyph
 
 	find . \
 		-mindepth 1 -maxdepth 1 \
-		-not -name 'pkg*' \
 		-not -name '*.html' \
 		-not -name '*.js' \
 		-not -name '*.yaml' \
@@ -490,28 +490,58 @@ else
 
 	cd ..
 
-	rm -rf cdn/${package}
+	packages="${package}"
+
+	git clone git@github.com:cyph/custom-builds.git
+	cd custom-builds
+	for f in *.css ; do
+		custombuild="$(projectname "$(echo "${f}" | sed 's|.css||')")"
+		packages="${packages} ${custombuild}"
+
+		node -e "
+			const cheerio	= require('cheerio');
+
+			const $	= cheerio.load(fs.readFileSync('../pkg/cyph').toString());
+
+			$('head').append('<style>' + fs.readFileSync('${f}').toString() + '</style>');
+
+			fs.writeFileSync(
+				'../pkg/${custombuild}',
+				$.html().trim()
+			);
+		"
+	done
+	cd ..
+
+	mv pkg/cyph "pkg/${package}"
+
+	for p in $packages ; do
+		rm -rf cdn/${p}
+	done
 
 	echo "Starting signing process."
 
-	./commands/websign/sign.js "${websignHashWhitelist}" "cyph.im/pkg=cdn/${package}" || exit 1
+	./commands/websign/sign.js "${websignHashWhitelist}" $(
+		for p in $packages ; do
+			echo -n "pkg/${p}=cdn/${p} "
+		done
+	) || exit 1
 
-	rm cyph.im/pkg
+	for p in $packages ; do
+		if [ -d pkg/cyph-subresources ] ; then
+			cp -a pkg/cyph-subresources/* cdn/${p}/
+		fi
 
-	if [ -d cyph.im/pkg-subresources ] ; then
-		mv cyph.im/pkg-subresources/* cdn/${package}/
-		rm -rf cyph.im/pkg-subresources
-	fi
-
-	cd cdn
-	find ${package} -type f -not -name '*.srihash' -exec bash -c ' \
-		zopfli -i1000 {}; \
-		chmod 777 {}.gz; \
-		git add {}.gz; \
-		git commit -S -m "$(cat {}.srihash 2> /dev/null || date +%s)" {}.gz > /dev/null 2>&1; \
-	' \;
-	git push
-	cd ..
+		cd cdn
+		find ${p} -type f -not -name '*.srihash' -exec bash -c ' \
+			zopfli -i1000 {}; \
+			chmod 777 {}.gz; \
+			git add {}.gz; \
+			git commit -S -m "$(cat {}.srihash 2> /dev/null || date +%s)" {}.gz > /dev/null 2>&1; \
+		' \;
+		git push
+		cd ..
+	done
 
 	# WebSign redirects
 
