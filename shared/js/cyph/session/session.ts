@@ -41,8 +41,8 @@ export {
 export class Session implements ISession {
 	private receivedMessages: {[id: string] : boolean}	= {};
 	private sendQueue: string[]							= [];
-	private lastIncomingMessageTimestamp: number		= Date.now();
-	private lastOutgoingMessageTimestamp: number		= Date.now();
+	private lastIncomingMessageTimestamp: number		= Util.timestamp();
+	private lastOutgoingMessageTimestamp: number		= Util.timestamp();
 	private pingPongTimeouts: number					= 0;
 	private isLocalSession: boolean						= false;
 
@@ -58,7 +58,7 @@ export class Session implements ISession {
 		wasInitiatedByAPI: <boolean> false
 	};
 
-	private castleHandler (e: { event: CastleEvents; data?: string; }) : void {
+	private castleHandler (e: { event: CastleEvents; data?: any; }) : void {
 		switch (e.event) {
 			case CastleEvents.abort: {
 				Errors.logAuthFail();
@@ -74,12 +74,12 @@ export class Session implements ISession {
 				break;
 			}
 			case CastleEvents.receive: {
-				this.lastIncomingMessageTimestamp	= Date.now();
+				this.lastIncomingMessageTimestamp	= Util.timestamp();
 
 				if (e.data) {
-					const data: Message[]	= (() => {
+					const messages: Message[]	= (() => {
 						try {
-							return JSON.parse(e.data, (_, v) => {
+							return JSON.parse(e.data.plaintext, (_, v) => {
 								if (v && v.isUint8Array) {
 									const bytes	= new Uint8Array(Object.keys(v).length - 1);
 
@@ -98,8 +98,8 @@ export class Session implements ISession {
 						}
 					})();
 
-					for (let message of data) {
-						this.receiveHandler(message);
+					for (let i = 0 ; i < messages.length ; ++i) {
+						this.receiveHandler(messages[i], e.data.timestamp + i * 0.001);
 					}
 				}
 				break;
@@ -126,7 +126,7 @@ export class Session implements ISession {
 		new Timer((now: number) => {
 			if (now - this.lastIncomingMessageTimestamp > 180000) {
 				if (this.pingPongTimeouts++ < 2) {
-					this.lastIncomingMessageTimestamp	= Date.now();
+					this.lastIncomingMessageTimestamp	= Util.timestamp();
 
 					this.trigger(Events.pingPongTimeout);
 
@@ -147,14 +147,14 @@ export class Session implements ISession {
 		});
 	}
 
-	private receiveHandler (message: Message) : void {
+	private receiveHandler (message: Message, timestamp: number) : void {
 		if (!this.receivedMessages[message.id]) {
 			this.receivedMessages[message.id]	= true;
 
 			if (message.event in RPCEvents) {
 				this.trigger(message.event,
 					message.event === RPCEvents.text ?
-						{text: message.data, author: Users.friend} :
+						{text: message.data, author: Users.friend, timestamp} :
 						message.data
 				);
 			}
@@ -162,9 +162,11 @@ export class Session implements ISession {
 	}
 
 	private sendHandler (messages: string[]) : void {
-		this.lastOutgoingMessageTimestamp	= Date.now();
+		this.lastOutgoingMessageTimestamp	= Util.timestamp();
 
-		this.channel.send(messages);
+		for (let message of messages) {
+			this.channel.send(message);
+		}
 
 		Analytics.send({
 			hitType: 'event',
@@ -212,6 +214,32 @@ export class Session implements ISession {
 		}
 
 		const handlers	= {
+			onclose: () => {
+				this.updateState(State.isAlive, false);
+
+				if (!this.isLocalSession) {
+					/* If aborting before the cyph begins,
+						block friend from trying to join */
+					Util.request({
+						method: 'POST',
+						url: Env.baseUrl + 'channels/' + this.state.cyphId,
+						discardErrors: true
+					});
+				}
+
+				this.trigger(Events.closeChat);
+			},
+			onconnect: () => {
+				this.trigger(Events.connect);
+
+				if (this.isLocalSession) {
+					this.castle	= new Crypto.FakeCastle(this);
+				}
+				else {
+					this.castle	= new Crypto.Castle(this, nativeCrypto);
+				}
+			},
+			onmessage: message => this.receive(message),
 			onopen: (isCreator: boolean) : void => {
 				this.updateState(State.isCreator, isCreator);
 
@@ -254,18 +282,7 @@ export class Session implements ISession {
 						}
 					});
 				}
-			},
-			onconnect: () => {
-				this.trigger(Events.connect);
-
-				if (this.isLocalSession) {
-					this.castle	= new Crypto.FakeCastle(this);
-				}
-				else {
-					this.castle	= new Crypto.Castle(this, nativeCrypto);
-				}
-			},
-			onmessage: message => this.receive(message)
+			}
 		};
 
 		if (localChannelCallback) {
@@ -273,35 +290,12 @@ export class Session implements ISession {
 			localChannelCallback(<Channel.LocalChannel> this.channel);
 		}
 		else {
-			this.channel	= new Channel.RatchetedChannel(this, channelDescriptor, handlers);
+			this.channel	= new Channel.Channel(channelDescriptor, handlers);
 		}
 	}
 
-	public close (shouldSendEvent: boolean = true) : void {
-		this.updateState(State.isAlive, false);
-
-		const closeChat: Function	= () => this.trigger(Events.closeChat);
-
-		if (shouldSendEvent) {
-			this.channel.send(RPCEvents.destroy, closeChat, true);
-
-			if (!this.isLocalSession) {
-				/* If aborting before the cyph begins,
-					block friend from trying to join */
-				Util.request({
-					method: 'POST',
-					url: Env.baseUrl + 'channels/' + this.state.cyphId,
-					discardErrors: true
-				});
-			}
-		}
-		else {
-			this.channel.close(closeChat);
-		}
-
-		if (!Env.isMainThread) {
-			setTimeout(() => self.close(), 120000);
-		}
+	public close () : void {
+		this.channel.close();
 	}
 
 	public off (event: string, handler: Function) : void {
@@ -313,10 +307,7 @@ export class Session implements ISession {
 	}
 
 	public receive (data: string) : void {
-		if (data === RPCEvents.destroy) {
-			this.close(false);
-		}
-		else if (this.castle) {
+		if (this.castle) {
 			this.castle.receive(data);
 		}
 		else {
@@ -329,27 +320,32 @@ export class Session implements ISession {
 	}
 
 	public sendBase (messages: IMessage[]) : void {
-		if (this.castle) {
-			for (let message of messages) {
-				if (message.event === RPCEvents.text) {
-					this.trigger(RPCEvents.text, {
-						text: message.data,
-						author: Users.me
-					});
-				}
-			}
+		if (!this.castle) {
+			setTimeout(() => this.sendBase(messages), 250);
+			return;
+		}
 
-			this.castle.send(JSON.stringify(messages, (_, v) => {
+
+		for (let message of messages) {
+			if (message.event === RPCEvents.text) {
+				this.trigger(RPCEvents.text, {
+					text: message.data,
+					author: Users.me,
+					timestamp: Util.timestamp()
+				});
+			}
+		}
+
+		this.castle.send(
+			JSON.stringify(messages, (_, v) => {
 				if (v instanceof Uint8Array) {
 					v.isUint8Array	= true;
 				}
 
 				return v;
-			}));
-		}
-		else {
-			setTimeout(() => this.sendBase(messages), 250);
-		}
+			}),
+			Util.timestamp()
+		);
 	}
 
 	public sendText (text: string) : void {
@@ -415,7 +411,7 @@ export class Session implements ISession {
 			const channelDescriptor: string	=
 				this.state.isStartingNewCyph === false ?
 					'' :
-					Channel.Channel.newDescriptor()
+					Util.generateGuid(Config.longSecretLength)
 			;
 
 			(async () => {

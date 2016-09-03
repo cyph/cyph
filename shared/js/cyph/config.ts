@@ -28,35 +28,6 @@ export class Config {
 		'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
 	];
 
-	/** AWS-related config (used by Channel.Queue). */
-	public static awsConfig	= {
-		region: 'us-east-1',
-		accessKeyId: 'AKIAIN2DSULSB77U4S2A',
-		secretAccessKey: '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',
-		apiVersions: {
-			sqs: '2012-11-05'
-		},
-
-		/* Workaround for TorBrowser "feature" */
-		signatureVersion: 'v2'
-	};
-
-	/** Endpoint reported by Fake SQS in local environments; used for replacing
-		with the correct endpoint, since this isn't correct because of Docker. */
-	public static awsEndpointFake: string	= 'http://0.0.0.0:4568';
-
-	/** AWS regions used for SQS. */
-	public static awsRegions: string[]	= [
-		'us-east-1',
-		'us-west-1',
-		'us-west-2',
-		'eu-west-1',
-		'ap-southeast-1',
-		'ap-northeast-1',
-		'ap-southeast-2',
-		'sa-east-1'
-	];
-
 	/** Affiliate code for Amazon links in chat (used by UI.Affiliate). */
 	public static amazonAffiliateCode: string	= 'cyph-20';
 
@@ -133,7 +104,7 @@ export class Config {
 	/** WebSign-related config. */
 	public static webSignConfig	= {
 		serviceWorker: 'serviceworker.js',
-		workerHelper: 'websign/js/workerhelper.js'
+		workerHelper: 'js/workerhelper.js'
 	};
 
 	/** User-facing email addresses to include in places like contact forms. */
@@ -147,6 +118,6 @@ export class Config {
 		'privacy'
 	];
 
-	/** Max unsigned 32-bit integer. */
-	public static maxUint32: number	= 4294967296;
+	/** Max unsigned 48-bit integer + 1, used by Util.random. */
+	public static maxSafeUint: number	= 281474976710656;
 }

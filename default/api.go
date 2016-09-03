@@ -20,6 +20,7 @@ func init() {
 	handleFuncs("/continent", Handlers{methods.GET: getContinent})
 	handleFuncs("/iceservers", Handlers{methods.GET: getIceServers})
 	handleFuncs("/signups", Handlers{methods.PUT: signup})
+	handleFuncs("/timestamp", Handlers{methods.GET: getTimestamp})
 
 	handleFunc("/", func(h HandlerArgs) (interface{}, int) {
 		return "Welcome to Cyph, lad", http.StatusOK
@@ -139,6 +140,10 @@ func getContinent(h HandlerArgs) (interface{}, int) {
 
 func getIceServers(h HandlerArgs) (interface{}, int) {
 	return getTwilioToken(h)["ice_servers"], http.StatusOK
+}
+
+func getTimestamp(h HandlerArgs) (interface{}, int) {
+	return strconv.FormatInt(time.Now().UnixNano()/1000000, 10), http.StatusOK
 }
 
 func signup(h HandlerArgs) (interface{}, int) {

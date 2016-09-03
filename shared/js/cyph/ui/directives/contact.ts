@@ -20,7 +20,7 @@ export class Contact {
 				const ui: any	= self['ui'];
 
 				if (!ui) {
-					setTimeout(retry, 250);
+					retry();
 					return;
 				}
 

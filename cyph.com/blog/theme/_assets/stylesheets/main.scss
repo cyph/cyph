@@ -27,6 +27,154 @@ $accent: #8b62d9;
 	margin-top: -7px;
 }
 
+#bio {
+	.bio-img {
+	    border-radius: 150px;
+	    float: right;
+	    width: 300px; 
+	}
+	
+}
+
+.josh, .ryan {
+	
+	h1 {
+		font-weight: 200;
+		font-family: helvetica;
+		font-size: 99px !important;
+	}
+	.image {
+		width: 115% !important;
+		top: -400px !important;
+		left: -93px !important;
+		position: fixed !important;
+		z-index: -2;
+	}
+	
+}
+.header-blurb {
+	position: absolute;
+	top: 35%;
+	text-align: center;
+	font-weight: 200;
+	left: 8%;
+    text-shadow: 2px 2px 1px rgba(35,35,35,.35);
+	z-index: 1;
+	font-family: helvetica;
+	color: #8b62d9;
+}
+article.josh, article.ryan {
+	padding-top: 15px !important;
+    opacity: 0.90;
+    position: relative;
+}
+
+.article-cover.josh, .article-cover.ryan {
+    height: 545px !important;
+    max-height: 545px !important;
+	position: relative;
+	width: 100%;
+	top: 0;
+	background-color: #fff;
+	.header{
+		position: fixed;
+		width: 100%;
+		top: 0;
+		.header-blurb {
+			top: 50%;
+		}
+		.header-image {
+			background-image: url('/blog/images/josh.bio.jpg');
+			background-repeat: no-repeat;
+			background-position: center -350px;
+			background-attachment: fixed;
+			background-size: cover;
+			height: 971px;
+		}
+	}
+}
+
+.article-cover.ryan {
+	.header-image{
+		background-image: url('/blog/images/ryan.bio.jpg') !important;
+	}
+}
+
+article .social {
+	float: left;
+	div {
+	min-width: 75px !important;
+	}
+}
+
+article .container>footer {
+	border-top: 1px solid #ddd;
+	border-bottom: none !important;
+	padding: 0 !important;
+	margin-bottom: 1.5em;
+}
+
+article footer address {
+	width: 450px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+article .social-sharing {
+	margin-bottom: 10px;
+	display: inline-flex;
+}
+
+.social-sharing div {
+	margin: 4px 2px 2px 5px;
+}
+
+.author {
+	font-size: 20px;
+	.muted{
+		font-size: 18px;
+	}
+	.picture {
+		float: left;
+		margin-right: 12px;
+		img {
+			margin: auto !important;
+			float: left;
+		}
+		.social {
+			a {
+					margin: -5px 0px 10px 5px;
+					clear: both;
+					float: left;
+			}
+		}
+	}
+}
+
+article address{
+	margin-top: -15px;
+	margin-bottom: 40px !important;
+	img {
+		margin-top: 0px !important;
+		margin: 0px 20px 0px 5px;
+	}
+}
+
+article.josh .content, article.ryan .content {
+    margin: 0px 12% 0px 12%;
+}
+
+.site-footer {
+    padding: 5em 0;
+    margin: 4em 0 0 0;
+    background: whitesmoke;
+    color: #aaa;
+    background-color: white;
+    z-index: 8;
+    font-size: 0.8em;
+    position: relative;
+    opacity: 0.90;
+}
 
 /* IMPORT CSS FILES */
 @import 'bootstrap';

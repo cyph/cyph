@@ -40,6 +40,24 @@ if [ "${commit}" ] ; then
 	fi
 	if [ "${comment}" ] ; then
 		./commands/commit.sh "${comment}"
+
+		cd shared/lib
+		rm -rf blog
+		mkdir blog
+		cd blog
+		mkdir hnbutton ; curl --compressed https://hnbutton.appspot.com/static/hn.min.js > hnbutton/hn.min.js
+		mkdir twitter ; wget https://platform.twitter.com/widgets.js -O twitter/widgets.js
+		mkdir google ; wget https://apis.google.com/js/plusone.js -O google/plusone.js
+		wget "https://apis.google.com$(cat google/plusone.js | grep -oP '/_/scs/.*?"' | sed 's|\\u003d|=|g' | sed 's|__features__|plusone/rt=j/sv=1/d=1/ed=1|g' | rev | cut -c 2- | rev)/cb=gapi.loaded_0" -O google/plusone.helper.js
+		mkdir facebook ; wget https://connect.facebook.net/en_US/sdk.js -O facebook/sdk.js
+		mkdir disqus ; wget https://cyph.disqus.com/embed.js -O disqus/embed.js
+		npm install --save simple-jekyll-search
+		mv node_modules/simple-jekyll-search ./
+		rm -rf node_modules
+		cd ../../..
+		chmod -R 700 .
+		git commit -S -a -m "update blog libs: ${comment}"
+		git push
 	fi
 fi
 
@@ -201,8 +219,8 @@ if [ ! $simple ] ; then
 fi
 
 defaultHost='${locationData.protocol}//${locationData.hostname}:'
-ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|${defaultHost}43000||g" %
 ls */js/cyph/envdeploy.ts | xargs -I% sed -i 's|isLocalEnv: boolean		= true|isLocalEnv: boolean		= false|g' %
+ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|ws://127.0.1:43000|https://cyphme.firebaseio.com|g" %
 
 if [ $branch == 'staging' ] ; then
 	sed -i "s|false, /* IsProd */|true,|g" default/config.go
@@ -283,6 +301,15 @@ for d in $compiledProjects ; do
 					}, {})
 			) + ';'
 		)"
+
+		# Block importScripts in Workers in WebSigned environments
+
+		cat $d/js/cyph/thread.ts | \
+			tr '\n' '☁' | \
+			perl -pe 's/importScripts\s+=.*?;/importScripts = (s: string) => { throw `Cannot load external script \${s}.` };/' | \
+			tr '☁' '\n' \
+		> $d/js/cyph/thread.ts.new
+		mv $d/js/cyph/thread.ts.new $d/js/cyph/thread.ts
 	fi
 
 	cd $d
@@ -293,7 +320,7 @@ for d in $compiledProjects ; do
 		echo "JS Minify ${project}"
 		find js -name '*.js' | xargs -I% uglifyjs '%' \
 			-m \
-			-r importScripts,Cyph,ui,session,locals,threadSetupVars,self,isaac,onmessage,postMessage,onthreadmessage,WebSign,Translations,IS_WEB,crypto \
+			-r importScripts,Cyph,ui,session,locals,threadSetupVars,self,onmessage,postMessage,onthreadmessage,WebSign,Translations,IS_WEB,crypto \
 			-o '%'
 
 		echo "CSS Minify ${project}"
@@ -308,7 +335,9 @@ for d in $compiledProjects ; do
 done
 
 
-if [ ! $simple ] ; then
+if [ $simple ] ; then
+	cp websign/js/workerhelper.js cyph.im/js/
+else
 	# Cache bust
 
 	cd cyph.com
@@ -483,21 +512,20 @@ if [ ! $simple ] ; then
 	' \;
 	git push
 	cd ..
+
+	# WebSign redirects
+
+	setredirect '' cyph.im
+
+	for suffix in $shortlinkProjects ; do
+		d=cyph.${suffix}
+		project=cyph-${suffix}
+
+		mkdir $d
+		cat cyph.im/cyph-im.yaml | sed "s|cyph-im|${project}|g" > ${d}/${project}.yaml
+		setredirect ${suffix}/ ${d}
+	done
 fi
-
-
-# WebSign redirects
-
-setredirect '' cyph.im
-
-for suffix in $shortlinkProjects ; do
-	d=cyph.${suffix}
-	project=cyph-${suffix}
-
-	mkdir $d
-	cat cyph.im/cyph-im.yaml | sed "s|cyph-im|${project}|g" > ${d}/${project}.yaml
-	setredirect ${suffix}/ ${d}
-done
 
 
 find . -mindepth 1 -maxdepth 1 -type d -not -name shared -exec cp -f shared/favicon.ico {}/ \;
@@ -510,7 +538,6 @@ fi
 
 # Secret credentials
 cat ~/.cyph/default.vars >> default/app.yaml
-cat ~/.cyph/jobs.vars >> jobs/jobs.yaml
 cp ~/.cyph/*.mmdb default/
 if [ $branch == 'staging' ] ; then
 	cat ~/.cyph/braintree.prod >> default/app.yaml
@@ -546,6 +573,6 @@ else
 	deploy */*.yaml
 fi
 
-deploy dispatch.yaml cron.yaml
+deploy dispatch.yaml
 
 cd "${dir}"

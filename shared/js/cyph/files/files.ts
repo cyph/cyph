@@ -30,6 +30,7 @@ export class Files implements IFiles {
 			plaintext?: Uint8Array,
 			cyphertext?: Uint8Array,
 			key?: Uint8Array,
+			isCreator?: boolean,
 			chunkSize?: number,
 			callbackId?: string
 		}
@@ -42,7 +43,7 @@ export class Files implements IFiles {
 				importScripts('/js/cyph/crypto/crypto.js');
 
 				System.import('cyph/crypto/crypto').then(async (Crypto) => {
-					const potassium	= new Crypto.Potassium();
+					const potassium	= new Crypto.Potassium(locals.isCreator);
 
 					/* Encrypt */
 					if (locals.plaintext) {
@@ -182,7 +183,11 @@ export class Files implements IFiles {
 		try {
 			return this.nativePotassium ?
 				await this.nativePotassium.SecretBox.open(cyphertext, key) :
-				(await Files.cryptoThread({cyphertext, key}))[0]
+				(await Files.cryptoThread({
+					cyphertext,
+					key,
+					isCreator: this.session.state.isCreator
+				}))[0]
 			;
 		}
 		catch (_) {
@@ -209,7 +214,10 @@ export class Files implements IFiles {
 				};
 			}
 			else {
-				const results	= await Files.cryptoThread({plaintext});
+				const results	= await Files.cryptoThread({
+					plaintext,
+					isCreator: this.session.state.isCreator
+				});
 
 				return {
 					cyphertext: results[0],
@@ -274,10 +282,7 @@ export class Files implements IFiles {
 						85
 					);
 
-					Firebase.call({ storage: {
-						refFromURL: { args: [transfer.url],
-						delete: {}}
-					}});
+					Firebase.app.storage().refFromURL(transfer.url).delete();
 
 					const plaintext: Uint8Array	= await this.decryptFile(
 						cyphertext,
@@ -304,10 +309,7 @@ export class Files implements IFiles {
 						transfer.name
 					);
 
-					Firebase.call({ storage: {
-						refFromURL: { args: [transfer.url],
-						delete: {}}
-					}});
+					Firebase.app.storage().refFromURL(transfer.url).delete();
 				}
 			}
 		);
@@ -334,7 +336,7 @@ export class Files implements IFiles {
 			return;
 		}
 
-		let uploadTaskId: string;
+		let uploadTask: firebase.UploadTask;
 
 		const transfer: ITransfer	= new Transfer(
 			name,
@@ -369,13 +371,8 @@ export class Files implements IFiles {
 				this.transfers.splice(transferIndex, 1);
 				this.controller.update();
 
-				if (uploadTaskId) {
-					Firebase.call({ returnValue: {
-						id: uploadTaskId,
-						command: {
-							cancel: {}
-						}
-					}});
+				if (uploadTask) {
+					uploadTask.cancel();
 				}
 			}
 		});
@@ -392,54 +389,38 @@ export class Files implements IFiles {
 
 		this.controller.update();
 
-		Util.retryUntilComplete(retry => {
+		Util.retryUntilComplete(async (retry) => {
 			const path: string	= 'ephemeral/' +  Util.generateGuid();
 
-			Firebase.call({ storage: {
-				ref: { args: [path],
-				put: { args: [new Blob([o.cyphertext])]}}
-			}}, id => {
-				uploadTaskId	= id;
+			uploadTask	= Firebase.app.storage().ref(path).put(new Blob([o.cyphertext]));
 
-				Firebase.call({ returnValue: {
-					id: uploadTaskId,
-					command: { on: { args: [
-						'state_changed',
-						snapshot => {
-							transfer.percentComplete	=
-								snapshot.bytesTransferred /
-								snapshot.totalBytes *
-								100
-							;
+			uploadTask.on('state_changed',
+				snapshot => {
+					transfer.percentComplete	=
+						snapshot.bytesTransferred /
+						snapshot.totalBytes *
+						100
+					;
 
-							this.controller.update();
-						},
-						err => {
-							if (transfer.answer !== false) {
-								retry();
-							}
-						},
-						() => {
-							Firebase.call({ storage: {
-								ref: { args: [path],
-								getDownloadURL: {
-									then: { args: [(url: string) => {
-										transfer.url	= url;
+					this.controller.update();
+				},
+				err => {
+					if (transfer.answer !== false) {
+						retry();
+					}
+				},
+				() => {
+					transfer.url	= uploadTask.snapshot.downloadURL;
 
-										this.session.send(new Session.Message(
-											Session.RPCEvents.files,
-											transfer
-										));
+					this.session.send(new Session.Message(
+						Session.RPCEvents.files,
+						transfer
+					));
 
-										this.transfers.splice(transferIndex, 1);
-										this.controller.update();
-									}]}
-								}}
-							}});
-						}
-					]}}
-				}});
-			});
+					this.transfers.splice(transferIndex, 1);
+					this.controller.update();
+				}
+			);
 		});
 	}
 
@@ -512,7 +493,10 @@ export class Files implements IFiles {
 			}
 			/* Negotiation on whether or not to use SubtleCrypto */
 			else if (Files.subtleCryptoIsSupported && !this.nativePotassium) {
-				this.nativePotassium	= new Potassium(true);
+				this.nativePotassium	= new Potassium(
+					this.session.state.isCreator,
+					true
+				);
 			}
 		});
 	}

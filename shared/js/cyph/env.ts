@@ -52,10 +52,7 @@ export class Env extends EnvDeploy {
 	public static isIE: boolean			= /msie |trident\//.test(Env.userAgent);
 
 	/** Indicates whether this is Edge. */
-	public static isEdge: boolean		= /Edge\/\d+/.test(Env.userAgent);
-
-	/** Indicates whether this is Internet Explorer or Edge. */
-	public static isIEOrEdge: boolean	= Env.isIE || Env.isEdge;
+	public static isEdge: boolean		= /edge\/\d+/.test(Env.userAgent);
 
 	/** Indicates whether this is OS X. */
 	public static isOSX: boolean		= /mac os x/.test(Env.userAgent);
@@ -110,6 +107,9 @@ export class Env extends EnvDeploy {
 
 	/** Indicates whether this should be considered a tablet. */
 	public static isTablet: boolean	= Env.isMobile && self.outerWidth > 767;
+
+	/** Indicates whether this is Internet Explorer or Edge. */
+	public static isIEOrEdge: boolean	= Env.isIE || Env.isEdge || Env.isWP;
 
 	/** Indicates whether this is a touchscreen environment. */
 	public static isTouch: boolean	= (() => {

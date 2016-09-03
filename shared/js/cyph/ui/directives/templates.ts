@@ -362,7 +362,7 @@ export const Templates	= {
 									<span translate>me</span> &nbsp;&mdash;&nbsp;
 								</span>
 
-								{{::message.timestamp}}
+								{{::message.timeString}}
 
 								<span
 									class='mobile-only'
@@ -391,7 +391,7 @@ export const Templates	= {
 							layout='row'
 							layout-align='center center'
 						>
-							<md-card flex='50' class='md-padding'>
+							<md-card flex='75' flex-gt-sm='50' class='md-padding'>
 								<md-card-content>
 									<ng-transclude></ng-transclude>
 								</md-card-content>

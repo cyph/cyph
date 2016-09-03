@@ -36,7 +36,10 @@ export class FakeCastle implements ICastle {
 
 		this.session.trigger(Session.Events.castle, {
 			event: Session.CastleEvents.receive,
-			data: messageSplit[1]
+			data: {
+				plaintext: messageSplit[1],
+				timestamp: Util.timestamp()
+			}
 		});
 	}
 

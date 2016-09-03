@@ -40,7 +40,7 @@ html .md-button {
 }
 
 md-sidenav .md-button {
-	margin: 0px;
+	margin-left: 0px;
 	width: 100%;
 	text-align: left;
 	line-height: 25px;
@@ -852,145 +852,152 @@ md-progress-linear {
 	}
 }
 
-/*** Angular Material patches (from 0.4 to 0.6 upgrade) ***/
-
-md-content.md-default-theme {
-	background-color: transparent;
-}
-
-html > body p {
-	line-height: 135%;
-}
-
-input, textarea {
-	line-height: 26px;
-}
-
-button.md-button.md-fab {
-	z-index: auto;
-}
-
-.md-button > a {
-	text-decoration: none;
-}
-
-[layout-fill] {
-	min-height: 0px;
-	height: 100%;
-}
-
-md-toolbar, md-toolbar.md-default-theme:not(.md-menu-toolbar), md-toolbar:not(.md-menu-toolbar) {
-	.md-toolbar-tools {
-		height: 40px;
-		min-height: 40px;
-		max-height: 40px;
-	}
-}
-
-md-dialog {
-	background-color: rgba(139, 98, 217, 0.97) !important;
-	color: #f1f1f1 !important;
-
-	h2 {
-		font-family: Ubuntu;
-		font-weight: normal;
-	}
-}
-
-md-dialog.fullscreen {
-	height: calc( 100% - 50px );
-	max-width: 100%;
-	width: calc(75% - 50px);
-	max-height: 100%;
-	transition: 1.5s;
-}
-
-md-checkbox {
-	.md-icon {
-		background: none !important;
-		border-color: #f1f1f1 !important;
-	}
-
-	.md-label {
-		border: 0px !important;
-	}
-}
-
-#templates {
-	display: none;
-}
-
-@include keyframes(inkRippleCheckbox) {
-	0% {
-		@include transform(scale(0));
-
-		opacity: 0.4;
-	}
-
-	50% {
-		@include transform(scale(1));
-
-		opacity: 0.4;
-	}
-
-	100% {
-		@include transform(scale(1));
-
-		opacity: 0;
-	}
-}
-
-
 /*** Unsemantic ***/
 
 .grid-container {
 	max-width: initial;
 }
 
-/*** Angular Material patches (from 0.8 to 0.9 upgrade) ***/
+html {
+	/*** Angular Material patches (from 0.4 to 0.6 upgrade) ***/
 
-*, *:before, *:after {
-	box-sizing: border-box;
-}
-
-.md-button {
-	padding: 6px;
-	min-height: 0px;
-	min-width: 0px;
-	line-height: normal;
-
-	&.md-fab {
-		line-height: 100% !important;
+	md-content.md-default-theme {
+		background-color: transparent;
 	}
-}
 
-md-dialog {
-	.md-title {
-		font-size: 1.5em;
-		font-weight: normal;
+	html > body p {
+		line-height: 135%;
 	}
+
+	input, textarea {
+		line-height: 26px;
+	}
+
+	button.md-button.md-fab {
+		z-index: auto;
+	}
+
+	.md-button > a {
+		text-decoration: none;
+	}
+
+	[layout-fill] {
+		min-height: 0px;
+		height: 100%;
+	}
+
+	md-toolbar, md-toolbar.md-default-theme:not(.md-menu-toolbar), md-toolbar:not(.md-menu-toolbar) {
+		.md-toolbar-tools {
+			height: 40px;
+			min-height: 40px;
+			max-height: 40px;
+		}
+	}
+
+	md-dialog {
+		background-color: rgba(139, 98, 217, 0.97) !important;
+		color: #f1f1f1 !important;
+
+		h2 {
+			font-family: Ubuntu;
+			font-weight: normal;
+		}
+	}
+
+	md-dialog.fullscreen {
+		height: calc( 100% - 50px );
+		max-width: 100%;
+		width: calc(75% - 50px);
+		max-height: 100%;
+		transition: 1.5s;
+	}
+
+	md-checkbox {
+		.md-icon {
+			background: none !important;
+			border-color: #f1f1f1 !important;
+		}
+
+		.md-label {
+			border: 0px !important;
+		}
+	}
+
+	#templates {
+		display: none;
+	}
+
+	@include keyframes(inkRippleCheckbox) {
+		0% {
+			@include transform(scale(0));
+
+			opacity: 0.4;
+		}
+
+		50% {
+			@include transform(scale(1));
+
+			opacity: 0.4;
+		}
+
+		100% {
+			@include transform(scale(1));
+
+			opacity: 0;
+		}
+	}
+
+	/*** Angular Material patches (from 0.8 to 0.9 upgrade) ***/
+
+	*, *:before, *:after {
+		box-sizing: border-box;
+	}
+
+	.md-button {
+		padding: 6px;
+		min-height: 0px;
+		min-width: 0px;
+		line-height: normal;
+
+		&.md-fab {
+			line-height: 100% !important;
+		}
+	}
+
+	md-dialog {
+		.md-title {
+			font-size: 1.5em;
+			font-weight: normal;
+		}
+
+		md-content {
+			padding: 24px;
+		}
+	}
+
+	/*** Angular Material patches (from 0.9 to 0.10 upgrade) ***/
 
 	md-content {
-		padding: 24px;
+		color: inherit;
 	}
-}
 
-/*** Angular Material patches (from 0.9 to 0.10 upgrade) ***/
+	/*** Angular Material patches (from 0.10.1 to 1.0.7 upgrade) ***/
 
-md-content {
-	color: inherit;
-}
+	md-content {
+		background-color: inherit;
+	}
 
-/*** Angular Material patches (from 0.10.1 to 1.0.7 upgrade) ***/
+	md-input-container {
+		margin-top: 0px;
+	}
 
-md-content {
-	background-color: inherit;
-}
+	md-sidenav {
+		max-width: calc(100% - 50px) !important;
+	}
 
-md-input-container {
-	margin-top: 0px;
-}
+	/*** Angular Material patches (from 1.0.7 to 1.1.0 upgrade) ***/
 
-md-sidenav {
-	max-width: calc(100% - 50px) !important;
+	md-card {
+		color: inherit;
+	}
 }

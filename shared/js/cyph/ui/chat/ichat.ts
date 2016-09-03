@@ -38,7 +38,8 @@ export interface IChat {
 	messages: {
 		author: Session.Users;
 		text: string;
-		timestamp: string;
+		timestamp: number;
+		timeString: string;
 	}[];
 
 	/** Cyphertext instance. */
@@ -65,11 +66,13 @@ export interface IChat {
 	 * Adds a message to the chat.
 	 * @param text
 	 * @param author
+	 * @param timestamp If not set, will use Util.timestamp().
 	 * @param shouldNotify If true, a notification will be sent.
 	 */
 	addMessage (
 		text: string,
 		author: Session.Users,
+		timestamp?: number,
 		shouldNotify?: boolean
 	) : void;
 

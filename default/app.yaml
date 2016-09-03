@@ -8,12 +8,6 @@ handlers:
   secure: always
   # default_headers Cache-Control X-Frame-Options Content-Security-Policy X-Content-Security-Policy X-WebKit-CSP
 
-- url: /firebasesandbox
-  static_files: firebase.html
-  upload: firebase.html
-  secure: always
-  # default_headers Cache-Control X-Frame-Options Content-Security-Policy X-Content-Security-Policy X-WebKit-CSP
-
 - url: .*
   script: _go_app
   secure: always

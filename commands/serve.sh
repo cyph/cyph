@@ -34,7 +34,7 @@ for f in $(find default -mindepth 1 -maxdepth 4 -type d) ; do
 	go install $(echo "$f" | sed 's|default/||')
 done
 
-fake_sqs &
+node -e 'new (require("firebase-server"))(4568)' &
 
 cd cyph.com/blog/theme
 rm -rf ../build

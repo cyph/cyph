@@ -114,6 +114,7 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 									this.chat.addMessage(
 										Strings.p2pConnect,
 										Session.Users.app,
+										undefined,
 										false
 									);
 								}
@@ -127,6 +128,7 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 									this.chat.addMessage(
 										Strings.p2pDisconnect,
 										Session.Users.app,
+										undefined,
 										false
 									);
 								}
@@ -193,6 +195,7 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 								this.chat.addMessage(
 									Strings.p2pRequestConfirmation,
 									Session.Users.app,
+									undefined,
 									false
 								);
 								break;

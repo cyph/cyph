@@ -1,12 +1,15 @@
 import {Env} from 'env';
 import {IThread} from 'ithread';
+import {Util} from 'util';
 
 
 /**
  * Global cross-thread event-manager.
  */
 export class EventManager {
-	private static handlers: {[event: string] : Function[]}	= {};
+	private static handlers: {[event: string] : Function[]}				= {};
+	private static indices: {[event: string] : Map<Function, number>}	= {};
+	private static threadEventPrefix: string	= 'threadEventPrefix';
 	private static untriggeredEvents: string	= 'untriggeredEvents';
 
 	/** Ignore this (used by EventManager and Thread for cross-thread event stuff). */
@@ -22,6 +25,15 @@ export class EventManager {
 	 */
 	public static callMainThread (method: string, args: any[] = []) : void {
 		if (Env.isMainThread) {
+			args.forEach((arg: any, i: number) => {
+				if (arg && arg.callbackId) {
+					args[i]	= (...args) => EventManager.trigger(
+						EventManager.threadEventPrefix + arg.callbackId,
+						args
+					);
+				}
+			});
+
 			const methodSplit: string[]	= method.split('.');
 			const methodName: string	= methodSplit.slice(-1)[0];
 
@@ -44,6 +56,19 @@ export class EventManager {
 			}
 		}
 		else {
+			args.forEach((arg: any, i: number) => {
+				if (typeof arg === 'function') {
+					const callbackId: string	= Util.generateGuid();
+
+					args[i]	= {callbackId};
+
+					EventManager.on(
+						EventManager.threadEventPrefix + callbackId,
+						args => arg.apply(null, args)
+					);
+				}
+			});
+
 			EventManager.trigger(EventManager.mainThreadEvents, {method, args});
 		}
 	}
@@ -54,11 +79,17 @@ export class EventManager {
 	 * @param handler
 	 */
 	public static off (event: string, handler?: Function) : void {
-		EventManager.handlers[event]	=
-			handler ?
-				(EventManager.handlers[event] || []).filter(f => f !== handler) :
-				undefined
-		;
+		if (!EventManager.handlers[event]) {
+			return;
+		}
+
+		EventManager.handlers[event].splice(EventManager.indices[event].get(handler), 1);
+		EventManager.indices[event].delete(handler);
+
+		if (EventManager.handlers[event].length < 1) {
+			EventManager.handlers[event]	= null;
+			EventManager.indices[event]		= null;
+		}
 	}
 
 	/**
@@ -67,8 +98,19 @@ export class EventManager {
 	 * @param handler
 	 */
 	public static on (event: string, handler: Function) : void {
-		EventManager.handlers[event]	= EventManager.handlers[event] || [];
-		EventManager.handlers[event].push(handler);
+		if (!EventManager.handlers[event]) {
+			EventManager.handlers[event]	= [];
+			EventManager.indices[event]		= new Map<Function, number>();
+		}
+
+		if (EventManager.indices[event].has(handler)) {
+			return;
+		}
+
+		EventManager.indices[event].set(
+			handler,
+			EventManager.handlers[event].push(handler) - 1
+		);
 	}
 
 	/**
@@ -89,8 +131,7 @@ export class EventManager {
 	/**
 	 * Triggers event.
 	 * @param event
-	 * @param data Note: If this contains a callback function, the event will not cross
-	 * threads. (Adding this functionality would be trivial; it just hasn't been needed.)
+	 * @param data
 	 * @param shouldTrigger Ignore this (used internally for cross-thread events).
 	 */
 	public static trigger (
@@ -144,8 +185,10 @@ export class EventManager {
 
 			EventManager.on(
 				EventManager.untriggeredEvents,
-				(o: { event: string; data: any; }) =>
-					self.postMessage({event: o.event, data: o.data, isThreadEvent: true}, undefined)
+				(o: { event: string; data: any; }) => self.postMessage(
+					{event: o.event, data: o.data, isThreadEvent: true},
+					undefined
+				)
 			);
 		}
 	})();

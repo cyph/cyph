@@ -183,7 +183,9 @@ export class UI extends Cyph.UI.BaseButtonManager {
 			scrollTop: position
 		}, delay);
 
-		setTimeout(oncomplete, delay + 50);
+		if (oncomplete) {
+			setTimeout(oncomplete, delay + 50);
+		}
 	}
 
 	public updateCart (
@@ -292,8 +294,8 @@ export class UI extends Cyph.UI.BaseButtonManager {
 			catch (_) {}
 
 			setTimeout(() => Elements.backgroundVideo['appear']().
-				on('appear', () => Elements.backgroundVideo[0]['play']()).
-				on('disappear', () => Elements.backgroundVideo[0]['pause']())
+				on('appear', () => { try { Elements.backgroundVideo[0]['play'](); } catch (_) {} }).
+				on('disappear', () => { try { Elements.backgroundVideo[0]['pause'](); } catch (_) {} })
 			, 2000);
 		}
 

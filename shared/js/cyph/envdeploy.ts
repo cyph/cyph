@@ -68,9 +68,8 @@ export class EnvDeploy {
 		EnvDeploy.cyphAudioBaseUrl
 	;
 
-	/** Correct endpoint for Fake SQS in local environments
-		(replaces Config.awsEndpointFake). */
-	public static awsEndpoint: string		= `${locationData.protocol}//${locationData.hostname}:43000`;
+	/** Endpoint for Firebase server. */
+	public static firebaseEndpoint: string	= `ws://127.0.1:43000`;
 
 	/** Content Security Policy defined in shared/csp. */
 	public static CSP: string				= "DEFAULT_CSP";

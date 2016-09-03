@@ -135,6 +135,12 @@ handlers:
   secure: always
   # default_headers Cache-Control Expires
 
+- url: /blog/(bio/.*?)[/]?
+  static_files: blog/build/\1/index.html
+  upload: blog/build/.*
+  secure: always
+  # default_headers Cache-Control Expires
+
 - url: /blog/(.*\..*)
   static_files: blog/build/\1
   upload: blog/build/.*

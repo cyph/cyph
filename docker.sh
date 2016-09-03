@@ -177,6 +177,7 @@ elif [ "${command}" == 'updatelibs' ] ; then
 		-it \
 		-v $HOME/.cyph:/home/gibson/.cyph \
 		-v $HOME/.gitconfig:/home/gibson/.gitconfig \
+		-v $HOME/.gnupg:/home/gibson/.gnupg \
 		-v $HOME/.ssh:/home/gibson/.ssh \
 	"
 

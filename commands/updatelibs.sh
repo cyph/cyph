@@ -9,13 +9,6 @@ rm -rf shared/lib
 mkdir -p shared/lib/js
 cd shared/lib/js
 
-mkdir aws-xml
-cd aws-xml
-npm install --save xml2js aws-sdk
-browserify node_modules/aws-sdk/lib/xml/node_parser.js -s AWS_XML | uglifyjs -o ../aws-xml.js
-cd ..
-rm -rf aws-xml
-
 echo "sodium = (function () {
 	$( \
 		curl -s https://raw.githubusercontent.com/jedisct1/libsodium.js/9a8b4f9/wrapper/wrap-template.js | \
@@ -116,14 +109,15 @@ jspm install -y \
 	github:matthieua/wow \
 	github:morr/jquery.appear \
 	github:julianlam/tabIndent.js \
-	github:aws/aws-sdk-js \
 	npm:rxjs \
-	braintree=github:braintree/braintree-web \
+	braintree=github:braintree/braintree-web@^2 \
 	babel-polyfill \
+	npm:mutationobserver-shim \
+	crypto/mceliece=github:cyph/mceliece.js \
 	crypto/ntru=github:cyph/ntru.js \
-	crypto/supersphincs=github:cyph/supersphincs.js \
-	crypto/isaac=github:rubycon/isaac.js \
-	crypto/cryptojs=cryptojs
+	crypto/rlwe=github:cyph/rlwe.js \
+	crypto/sidh=github:cyph/sidh.js \
+	crypto/supersphincs=github:cyph/supersphincs
 
 if (( $? )); then
 	exit 1
@@ -171,12 +165,55 @@ sed -i 's/^\/dist$//' jquery*/.gitignore
 cd crypto
 git clone --recursive https://github.com/jedisct1/libsodium.js libsodium
 cd libsodium
+cat > wrapper/symbols/crypto_stream_chacha20.json << EOM
+{
+	"name": "crypto_stream_chacha20",
+	"type": "function",
+	"inputs": [
+		{
+			"name": "outLength",
+			"type": "uint"
+		},
+		{
+			"name": "key",
+			"type": "buf",
+			"size": "libsodium._crypto_stream_chacha20_keybytes()"
+		},
+		{
+			"name": "nonce",
+			"type": "buf",
+			"size": "libsodium._crypto_stream_chacha20_noncebytes()"
+		}
+	],
+	"outputs": [
+		{
+			"name": "out",
+			"type": "buf",
+			"size": "outLength"
+		}
+	],
+	"target": "libsodium._crypto_stream_chacha20(out_address, outLength, 0, nonce_address, key_address) | 0",
+	"expect": "=== 0",
+	"return": "_format_output(out, outputFormat)"
+}
+EOM
 make libsodium/configure
 sed -i 's|ln |cp |g' Makefile
 sed -i 's|TOTAL_MEMORY_SUMO=35000000|TOTAL_MEMORY_SUMO=150000000|g' libsodium/dist-build/emscripten.sh
 make
+find dist -name '*.js' | xargs sed -i 's|use strict||g'
 rm -rf .git* *.tmp API.md browsers-test test libsodium
 cd ../..
+
+mkdir firebase
+cd firebase
+npm install firebase --save
+cd node_modules/firebase
+npm install
+browserify firebase-node.js -o ../../firebase.js
+cd ../..
+rm -rf node_modules
+cd ..
 
 cd microlight
 uglifyjs microlight.js -m -o microlight.min.js
@@ -196,9 +233,10 @@ node build.js
 rm -rf node_modules
 cd ../../..
 
-cp system.js base.js
-echo >> base.js
-cat babel-polyfill/browser.js >> base.js
+cp babel-polyfill/browser.js base.js
+echo -e '\nif (!self.locationData) self.locationData = self.location;\n' >> base.js
+cat system.js | sed 's|location|locationData|g' >> base.js
+sed -i 's/^\/\/# sourceMappingURL.*//g' base.js
 
 cd ..
 
@@ -211,18 +249,12 @@ typings install --global --save \
 	dt~angular-animate \
 	dt~webrtc/mediastream \
 	dt~webrtc/rtcpeerconnection \
-	dt~cryptojs \
 	dt~dompurify
 
-mkdir blog
-cd blog
-mkdir hnbutton ; curl --compressed https://hnbutton.appspot.com/static/hn.min.js > hnbutton/hn.min.js
-mkdir twitter ; wget https://platform.twitter.com/widgets.js -O twitter/widgets.js
-mkdir google ; wget https://apis.google.com/js/plusone.js -O google/plusone.js
-wget "https://apis.google.com$(cat google/plusone.js | grep -oP '/_/scs/.*?"' | sed 's|\\u003d|=|g' | sed 's|__features__|plusone/rt=j/sv=1/d=1/ed=1|g' | rev | cut -c 2- | rev)/cb=gapi.loaded_0" -O google/plusone.helper.js
-mkdir facebook ; wget https://connect.facebook.net/en_US/sdk.js -O facebook/sdk.js
-mkdir disqus ; wget https://cyph.disqus.com/embed.js -O disqus/embed.js
-cd ..
+mkdir typings/globals/firebase
+curl -s https://raw.githubusercontent.com/suhdev/firebase-3-typescript/master/firebase.d.ts | \
+	grep -v es6-promise.d.ts > typings/globals/firebase/index.d.ts
+echo '/// <reference path="globals/firebase/index.d.ts" />' >> typings/index.d.ts
 
 
 cd ../../default
@@ -287,6 +319,6 @@ cd ../../..
 find default -type f -name '*_test.go' -exec rm {} \;
 
 
-commands/commit.sh updatelibs 
+commands/commit.sh updatelibs
 
 cd "${dir}"

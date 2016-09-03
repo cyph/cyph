@@ -22,7 +22,6 @@ export class Events {
 	public static connectFailure: string	= 'connectFailure';
 	public static cyphertext: string		= 'cyphertext';
 	public static filesUI: string			= 'filesUI';
-	public static newChannel: string		= 'newChannel';
 	public static newCyph: string			= 'newCyph';
 	public static p2pUI: string				= 'p2pUI';
 	public static pingPongTimeout: string	= 'pingPongTimeout';
@@ -32,8 +31,6 @@ export class Events {
  * Subset of events allowed to be remotely triggered by other parties.
  */
 export const RPCEvents	= {
-	channelRatchet: 'channelRatchet',
-	destroy: 'destroy',
 	files: 'files',
 	mutex: 'mutex',
 	p2p: 'p2p',
