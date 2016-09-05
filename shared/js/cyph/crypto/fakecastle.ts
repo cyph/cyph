@@ -1,13 +1,15 @@
 import {ICastle} from 'icastle';
 import {Util} from 'cyph/util';
-import * as Session from 'session/session';
+import {CastleEvents, Events, State, Users} from 'session/enums';
+import {ISession} from 'session/isession';
 
 
 /**
  * Fake ICastle implementation (NOT secure; for demo purposes only).
  */
 export class FakeCastle implements ICastle {
-	private static delimiter: string	= '☁☁☁ PRAISE BE TO CYPH ☀☀☀';
+	private static delimiter: string		= '☁☁☁ PRAISE BE TO CYPH ☀☀☀';
+	private static remoteUsername: string	= 'friend';
 
 	private static generateCyphertext () : string {
 		let cyphertext: string	= '';
@@ -26,40 +28,46 @@ export class FakeCastle implements ICastle {
 	}
 
 
-	public receive (message: string) : void {
-		const messageSplit: string[]	= message.split(FakeCastle.delimiter);
+	public receive (cyphertext: string) : void {
+		const cyphertextSplit: string[]	=
+			cyphertext.split(FakeCastle.delimiter)
+		;
 
-		this.session.trigger(Session.Events.cyphertext, {
-			cyphertext: messageSplit[0],
-			author: Session.Users.friend
+		this.session.trigger(Events.cyphertext, {
+			author: FakeCastle.remoteUsername,
+			cyphertext: cyphertextSplit[0]
 		});
 
-		this.session.trigger(Session.Events.castle, {
-			event: Session.CastleEvents.receive,
+		this.session.trigger(Events.castle, {
+			event: CastleEvents.receive,
 			data: {
-				plaintext: messageSplit[1],
+				author: FakeCastle.remoteUsername,
+				plaintext: cyphertextSplit[1],
 				timestamp: Util.timestamp()
 			}
 		});
 	}
 
-	public async send (message: string) : Promise<void> {
+	public async send (plaintext: string) : Promise<void> {
 		const cyphertext: string	= FakeCastle.generateCyphertext();
 
-		this.session.trigger(Session.Events.cyphertext, {
+		this.session.trigger(Events.cyphertext, {
 			cyphertext,
-			author: Session.Users.me
+			author: Users.me
 		});
 
-		this.session.trigger(Session.Events.castle, {
-			event: Session.CastleEvents.send,
-			data: cyphertext + FakeCastle.delimiter + message
+		this.session.trigger(Events.castle, {
+			event: CastleEvents.send,
+			data: cyphertext + FakeCastle.delimiter + plaintext
 		});
 	}
 
-	public constructor (private session: Session.ISession) {
-		setTimeout(() => this.session.trigger(Session.Events.castle, {
-			event: Session.CastleEvents.connect
+	/**
+	 * @param session
+	 */
+	public constructor (private session: ISession) {
+		setTimeout(() => this.session.trigger(Events.castle, {
+			event: CastleEvents.connect
 		}), 1000);
 	}
 }

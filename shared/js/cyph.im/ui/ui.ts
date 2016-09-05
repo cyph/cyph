@@ -107,7 +107,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 				on('beforeunload', () => Cyph.Strings.disconnectWarning)
 			;
 
-			if (initialCallType && this.chat.session.state.isCreator) {
+			if (initialCallType && this.chat.session.state.isAlice) {
 				this.chat.p2pManager.p2p.request(initialCallType);
 			}
 		});

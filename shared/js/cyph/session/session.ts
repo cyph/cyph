@@ -1,3 +1,5 @@
+/// <reference path="../../global/base.ts" />
+
 import {Command} from 'command';
 import {CastleEvents, Events, RPCEvents, State, ThreadedSessionEvents, Users} from 'enums';
 import {IMessage} from 'imessage';
@@ -52,8 +54,8 @@ export class Session implements ISession {
 	public state	= {
 		cyphId: <string> '',
 		sharedSecret: <string> '',
+		isAlice: <boolean> false,
 		isAlive: <boolean> true,
-		isCreator: <boolean> false,
 		isStartingNewCyph: <boolean> false,
 		wasInitiatedByAPI: <boolean> false
 	};
@@ -99,7 +101,11 @@ export class Session implements ISession {
 					})();
 
 					for (let i = 0 ; i < messages.length ; ++i) {
-						this.receiveHandler(messages[i], e.data.timestamp + i * 0.001);
+						this.receiveHandler(
+							messages[i],
+							e.data.timestamp + i * 0.001,
+							e.data.author
+						);
 					}
 				}
 				break;
@@ -147,14 +153,18 @@ export class Session implements ISession {
 		});
 	}
 
-	private receiveHandler (message: Message, timestamp: number) : void {
+	private receiveHandler (message: Message, timestamp: number, author: string) : void {
 		if (!this.receivedMessages[message.id]) {
 			this.receivedMessages[message.id]	= true;
 
 			if (message.event in RPCEvents) {
 				this.trigger(message.event,
 					message.event === RPCEvents.text ?
-						{text: message.data, author: Users.friend, timestamp} :
+						{
+							text: message.data,
+							author,
+							timestamp
+						} :
 						message.data
 				);
 			}
@@ -236,14 +246,14 @@ export class Session implements ISession {
 					this.castle	= new Crypto.FakeCastle(this);
 				}
 				else {
-					this.castle	= new Crypto.Castle(this, nativeCrypto);
+					this.castle	= new Crypto.AnonymousCastle(this, nativeCrypto);
 				}
 			},
 			onmessage: message => this.receive(message),
-			onopen: (isCreator: boolean) : void => {
-				this.updateState(State.isCreator, isCreator);
+			onopen: (isAlice: boolean) : void => {
+				this.updateState(State.isAlice, isAlice);
 
-				if (this.state.isCreator) {
+				if (this.state.isAlice) {
 					this.trigger(Events.beginWaiting);
 				}
 				else if (!this.isLocalSession) {
@@ -329,8 +339,8 @@ export class Session implements ISession {
 		for (let message of messages) {
 			if (message.event === RPCEvents.text) {
 				this.trigger(RPCEvents.text, {
-					text: message.data,
 					author: Users.me,
+					text: message.data,
 					timestamp: Util.timestamp()
 				});
 			}
@@ -375,7 +385,7 @@ export class Session implements ISession {
 	 * session and initiate a LocalChannel instance, passing it in to this
 	 * callback to be connected to a second local session's instance.
 	 */
-	public constructor(
+	public constructor (
 		descriptor?: string,
 		nativeCrypto: boolean = false,
 		private controller?: IController,
@@ -385,7 +395,7 @@ export class Session implements ISession {
 		/* true = yes; false = no; null = maybe */
 		this.updateState(
 			State.isStartingNewCyph,
-			!descriptor || descriptor === 'new' ?
+			!descriptor ?
 				true :
 				descriptor.length > Config.secretLength ?
 					null :

@@ -38,7 +38,7 @@ export class Cyphertext extends BaseButtonManager implements ICyphertext {
 		}
 	}
 
-	public log (text: string, author: Session.Users) : void {
+	public log (text: string, author: string) : void {
 		if (text) {
 			/* Performance optimisation */
 			if (this.messages.length > (this.isMobile ? 5 : 50)) {
@@ -104,7 +104,7 @@ export class Cyphertext extends BaseButtonManager implements ICyphertext {
 
 
 		session.on(Session.Events.cyphertext,
-			(o: { cyphertext: string; author: Session.Users; }) =>
+			(o: { cyphertext: string; author: string; }) =>
 				this.log(o.cyphertext, o.author)
 		);
 	}

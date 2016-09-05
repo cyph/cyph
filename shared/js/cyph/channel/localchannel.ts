@@ -35,12 +35,12 @@ export class LocalChannel implements IChannel {
 
 		this.other	= other;
 
-		const isCreator: boolean	= !this.other.isAlive();
+		const isAlice: boolean	= !this.other.isAlive();
 
 		this.other.connect(this);
 
 		if (this.handlers.onopen) {
-			this.handlers.onopen(isCreator);
+			this.handlers.onopen(isAlice);
 		}
 
 		if (this.handlers.onconnect) {
@@ -68,7 +68,7 @@ export class LocalChannel implements IChannel {
 			onclose?: () => void;
 			onconnect?: () => void;
 			onmessage?: (message: string) => void;
-			onopen?: (isCreator: boolean) => void;
+			onopen?: (isAlice: boolean) => void;
 		}) = {}
 	) {}
 }

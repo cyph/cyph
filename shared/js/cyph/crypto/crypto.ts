@@ -1,16 +1,16 @@
-import {Castle} from 'castle';
-import {CastleCore} from 'castlecore';
+/// <reference path="../../global/base.ts" />
+
+import {AnonymousCastle} from 'anonymouscastle';
 import {FakeCastle} from 'fakecastle';
 import {ICastle} from 'icastle';
-import {NativeCrypto} from 'nativecrypto';
 import {Potassium} from 'potassium';
+import * as Castle from 'castle/castle';
 
 
 export {
-	Castle,
-	CastleCore,
+	AnonymousCastle,
 	FakeCastle,
 	ICastle,
-	NativeCrypto,
-	Potassium
+	Potassium,
+	Castle
 };

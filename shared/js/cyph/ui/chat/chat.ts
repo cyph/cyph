@@ -48,8 +48,9 @@ export class Chat extends BaseButtonManager implements IChat {
 	private static approximateKeyExchangeTime: number	= 15000;
 
 
+	private isMessageChanged: boolean	= false;
+
 	private elements: IElements;
-	private isMessageChanged: boolean;
 	private previousMessage: string;
 
 	public isConnected: boolean			= false;
@@ -60,7 +61,7 @@ export class Chat extends BaseButtonManager implements IChat {
 	public state: States				= States.none;
 
 	public messages: {
-		author: Session.Users;
+		author: string;
 		text: string;
 		timestamp: number;
 		timeString: string;
@@ -80,46 +81,41 @@ export class Chat extends BaseButtonManager implements IChat {
 
 	public addMessage (
 		text: string,
-		author: Session.Users,
+		author: string,
 		timestamp: number = Util.timestamp(),
 		shouldNotify: boolean = true
 	) : void {
-		if (this.state === States.aborted) {
+		if (this.state === States.aborted || !text) {
 			return;
 		}
 
-		if (text) {
-			if (shouldNotify !== false) {
-				switch (author) {
-					case Session.Users.friend:
-						this.notifier.notify(Strings.newMessageNotification);
-						break;
-
-					case Session.Users.app:
-						this.notifier.notify(text);
-						break;
-				}
-			}
-
-			this.messages.push({
-				author: author,
-				text: text,
-				timestamp,
-				timeString: Util.getTimeString(timestamp)
-			});
-
-			this.messages.sort((a, b) => a.timestamp - b.timestamp);
-
-			this.controller.update();
-
-			this.scrollManager.scrollDown(true);
-
-			if (author === Session.Users.me) {
-				this.scrollManager.scrollDown();
+		if (shouldNotify !== false) {
+			if (author === Session.Users.app) {
+				this.notifier.notify(text);
 			}
 			else {
-				NanoScroller.update();
+				this.notifier.notify(Strings.newMessageNotification);
 			}
+		}
+
+		this.messages.push({
+			author,
+			text,
+			timestamp,
+			timeString: Util.getTimeString(timestamp)
+		});
+
+		this.messages.sort((a, b) => a.timestamp - b.timestamp);
+
+		this.controller.update();
+
+		this.scrollManager.scrollDown(true);
+
+		if (author === Session.Users.me) {
+			this.scrollManager.scrollDown();
+		}
+		else {
+			NanoScroller.update();
 		}
 	}
 
@@ -457,7 +453,7 @@ export class Chat extends BaseButtonManager implements IChat {
 		});
 
 		this.session.on(Session.RPCEvents.text,
-			(o: { text: string; author: Session.Users; timestamp: number; }) =>
+			(o: { text: string; author: string; timestamp: number; }) =>
 				this.addMessage(
 					o.text,
 					o.author,

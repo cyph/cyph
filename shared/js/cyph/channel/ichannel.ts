@@ -15,7 +15,7 @@ export interface IChannel {
 
 	/**
 	 * Sends at message through this channel.
-	 * @param messagek
+	 * @param message
 	 */
 	send (message: string) : void;
 }

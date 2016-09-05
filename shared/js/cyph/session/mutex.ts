@@ -13,9 +13,9 @@ export class Mutex implements IMutex {
 	};
 
 
-	private owner: Users;
+	private owner: string;
 	private purpose: string;
-	private requester: { user: Users; purpose: string; };
+	private requester: { user: string; purpose: string; };
 
 	private commands	= {
 		release: () : void => {
@@ -26,7 +26,7 @@ export class Mutex implements IMutex {
 
 		request: (purpose: string) : void => {
 			if (this.owner !== Users.me) {
-				this.owner		= Users.friend;
+				this.owner		= Users.other;
 				this.purpose	= purpose;
 
 				this.session.send(
@@ -37,7 +37,7 @@ export class Mutex implements IMutex {
 				);
 			}
 			else {
-				this.requester	= {user: Users.friend, purpose};
+				this.requester	= {user: Users.other, purpose};
 			}
 		}
 	};
@@ -55,7 +55,7 @@ export class Mutex implements IMutex {
 
 	public lock (f: Function, purpose: string = '') : void {
 		if (this.owner !== Users.me) {
-			if (!this.owner && this.session.state.isCreator) {
+			if (!this.owner && this.session.state.isAlice) {
 				this.owner		= Users.me;
 				this.purpose	= purpose;
 			}
@@ -87,7 +87,7 @@ export class Mutex implements IMutex {
 				);
 			}
 			else {
-				if (this.owner === Users.friend) {
+				if (this.owner === Users.other) {
 					friendHadLockFirst	= true;
 					friendLockpurpose	= this.purpose;
 				}

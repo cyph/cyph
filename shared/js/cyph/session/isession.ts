@@ -11,8 +11,8 @@ export interface ISession {
 	state: {
 		cyphId: string;
 		sharedSecret: string;
+		isAlice: boolean;
 		isAlive: boolean;
-		isCreator: boolean;
 		isStartingNewCyph: boolean;
 		wasInitiatedByAPI: boolean;
 	};

@@ -16,8 +16,8 @@ export class ThreadedSession implements ISession {
 	public state	= {
 		cyphId: <string> '',
 		sharedSecret: <string> '',
+		isAlice: <boolean> false,
 		isAlive: <boolean> true,
-		isCreator: <boolean> false,
 		isStartingNewCyph: <boolean> false,
 		wasInitiatedByAPI: <boolean> false
 	};

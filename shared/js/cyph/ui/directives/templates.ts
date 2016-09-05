@@ -82,11 +82,7 @@ export const Templates	= {
 						<span class='message'>
 							<strong
 								translate
-								ng-bind='::(
-									message.author === Cyph.Session.Users.me ?
-										"me" :
-										"friend"
-								) + ": "'
+								ng-bind='::message.author + ": "'
 							></strong>
 							<span flex>{{::message.text}}</span>
 							<br />
@@ -339,11 +335,7 @@ export const Templates	= {
 									translate
 									class='message-author'
 									ng-hide='::message.author === Cyph.Session.Users.app'
-									ng-bind='::(
-										message.author === Cyph.Session.Users.me ?
-											"me" :
-											"friend"
-									) + ": "'
+									ng-bind='::message.author + ": "'
 								></strong>
 								<span
 									class='message-text'
@@ -359,16 +351,19 @@ export const Templates	= {
 									class='mobile-only'
 									ng-show='::message.author === Cyph.Session.Users.me'
 								>
-									<span translate>me</span> &nbsp;&mdash;&nbsp;
+									<span>{{::message.author}}</span> &nbsp;&mdash;&nbsp;
 								</span>
 
 								{{::message.timeString}}
 
 								<span
 									class='mobile-only'
-									ng-show='::message.author === Cyph.Session.Users.friend'
+									ng-show='::
+										message.author !== Cyph.Session.Users.me &&
+										message.author !== Cyph.Session.Users.app
+									'
 								>
-									&nbsp;&mdash;&nbsp; <span translate>friend</span>
+									&nbsp;&mdash;&nbsp; <span>{{::message.author}}</span>
 								</span>
 							</span>
 						</md-item>

@@ -17,7 +17,7 @@ export {
 export class Channel implements IChannel {
 	private isClosed: boolean		= false;
 	private isConnected: boolean	= false;
-	private isCreator: boolean		= false;
+	private isAlice: boolean		= false;
 
 	private channelRef: firebase.DatabaseReference;
 	private messagesRef: firebase.DatabaseReference;
@@ -50,25 +50,25 @@ export class Channel implements IChannel {
 			onclose?: () => void;
 			onconnect?: () => void;
 			onmessage?: (message: string) => void;
-			onopen?: (isCreator: boolean) => void;
+			onopen?: (isAlice: boolean) => void;
 		}) = {}
 	) { (async () => {
 		this.channelRef		= Firebase.app.database().ref('channels').child(channelName);
 		this.messagesRef	= this.channelRef.child('messages');
 		this.usersRef		= this.channelRef.child('users');
 
-		this.isCreator		= !(await this.usersRef.once('value')).hasChildren();
+		this.isAlice		= !(await this.usersRef.once('value')).hasChildren();
 		this.userId			= Util.generateGuid();
 
 		this.channelRef.onDisconnect().remove();
 		this.usersRef.child(this.userId).set(this.userId);
 
 		if (handlers.onopen) {
-			handlers.onopen(this.isCreator);
+			handlers.onopen(this.isAlice);
 		}
 
 		if (handlers.onconnect) {
-			if (this.isCreator) {
+			if (this.isAlice) {
 				this.usersRef.on('child_added', snapshot => {
 					if (!this.isConnected && snapshot.val() !== this.userId) {
 						this.isConnected	= true;

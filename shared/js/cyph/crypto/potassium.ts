@@ -106,16 +106,11 @@ export class Potassium {
 			throw 'Nonce size too small.';
 		}
 
-		if (this.isCreator) {
-			++this.counter;
-		}
-		else {
-			--this.counter;
-		}
-
-		const nonce	= Potassium.randomBytes(size);
-		nonce.set(new Uint8Array(new Int32Array([this.counter]).buffer));
-		return nonce;
+		return Potassium.concatMemory(
+			true,
+			new Uint32Array([this.counter++]),
+			Potassium.randomBytes(size - 4)
+		);
 	}
 
 	private BoxHelpers	= {
@@ -979,8 +974,11 @@ export class Potassium {
 		) => Promise<boolean>;
 	}	= Potassium.SuperSphincs;
 
+	/**
+	 * @param isNative If true, will use NativeCrypto instead of libsodium.
+	 * @param counter Initial value of counter for nonces.
+	 */
 	public constructor (
-		private isCreator: boolean = true,
 		private isNative: boolean = false,
 		private counter: number = 0
 	) {

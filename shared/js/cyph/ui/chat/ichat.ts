@@ -36,7 +36,7 @@ export interface IChat {
 
 	/** Message list. */
 	messages: {
-		author: Session.Users;
+		author: string;
 		text: string;
 		timestamp: number;
 		timeString: string;

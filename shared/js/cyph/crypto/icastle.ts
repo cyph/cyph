@@ -5,14 +5,14 @@
 export interface ICastle {
 	/**
 	 * Receive incoming cyphertext.
-	 * @param message Data to be decrypted.
+	 * @param cyphertext Data to be decrypted.
 	 */
-	receive (message: string) : void;
+	receive (cyphertext: string) : void;
 
 	/**
 	 * Send outgoing text.
-	 * @param message Data to be encrypted.
+	 * @param plaintext Data to be encrypted.
 	 * @param timestamp Message timestamp.
 	 */
-	send (message: string, timestamp?: number) : Promise<void>;
+	send (plaintext: string, timestamp?: number) : Promise<void>;
 }

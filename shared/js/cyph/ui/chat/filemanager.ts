@@ -220,8 +220,8 @@ export class FileManager implements IFileManager {
 						break;
 					}
 					case Files.UIEvents.started: {
-						const user: Session.Users	= e.args[0];
-						const name: string			= e.args[1];
+						const user: string	= e.args[0];
+						const name: string	= e.args[1];
 
 						const isFromMe: boolean	= user === Session.Users.me;
 						const message: string	= isFromMe ?

@@ -1,3 +1,6 @@
+import {Strings} from 'cyph/strings';
+
+
 /**
  * Castle-specific events (handled within Session).
  */
@@ -45,7 +48,7 @@ export class State {
 	public static cyphId: string			= 'cyphId';
 	public static sharedSecret: string		= 'sharedSecret';
 	public static isAlive: string			= 'isAlive';
-	public static isCreator: string			= 'isCreator';
+	public static isAlice: string			= 'isAlice';
 	public static isStartingNewCyph: string	= 'isStartingNewCyph';
 	public static wasInitiatedByAPI: string	= 'wasInitiatedByAPI';
 }
@@ -65,8 +68,8 @@ export const ThreadedSessionEvents	= {
 /**
  * Representations of users in a session.
  */
-export enum Users {
-	me,
-	friend,
-	app
+export class Users {
+	public static app: string	= 'app';
+	public static me: string	= Strings.me;
+	public static other: string	= 'other';
 }
