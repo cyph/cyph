@@ -9,11 +9,6 @@ import {Potassium} from 'crypto/potassium';
  */
 export class AnonymousLocalUser implements ILocalUser {
 	private keyPair: {publicKey: Uint8Array; privateKey: Uint8Array;};
-	private cyphertextPromise: Promise<Uint8Array>;
-
-	public getInitialSecret () : Promise<Uint8Array> {
-		return this.cyphertextPromise;
-	}
 
 	public async getKeyPair () : Promise<{
 		publicKey: Uint8Array;
@@ -37,11 +32,13 @@ export class AnonymousLocalUser implements ILocalUser {
 
 		Potassium.clearMemory(sharedSecret);
 
-		this.potassium			= null;
 		this.sharedSecret		= null;
-		this.transport			= null;
 
 		return this.keyPair;
+	}
+
+	public getRemoteSecret () : Promise<Uint8Array> {
+		return this.transport.interceptIncomingCyphertext();
 	}
 
 	/**
@@ -53,7 +50,5 @@ export class AnonymousLocalUser implements ILocalUser {
 		private potassium: Potassium,
 		private transport: Transport,
 		private sharedSecret: string
-	) {
-		this.cyphertextPromise	= this.transport.interceptIncomingCyphertext();
-	}
+	) {}
 }

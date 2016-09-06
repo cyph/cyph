@@ -19,6 +19,57 @@ export class PairwiseSession {
 
 	private core: Core;
 	private isAborted: boolean;
+	private isConnected: boolean;
+	private remoteUsername: string;
+
+	private abort () : void {
+		if (this.isAborted) {
+			return;
+		}
+
+		this.isAborted	= true;
+		this.transport.abort();
+	}
+
+	private connect () : void {
+		if (this.isConnected) {
+			return;
+		}
+
+		this.isConnected	= true;
+		this.transport.connect();
+	}
+
+	private async handshakeOpenSecret (cyphertext: Uint8Array) : Promise<Uint8Array> {
+		const keyPair	= await this.localUser.getKeyPair();
+
+		const secret	= await this.potassium.Box.open(
+			cyphertext,
+			keyPair
+		);
+
+		Potassium.clearMemory(keyPair.privateKey);
+		Potassium.clearMemory(keyPair.publicKey);
+
+		this.localUser	= null;
+
+		return secret;
+	}
+
+	private async handshakeSendSecret (secret: Uint8Array) : Promise<Uint8Array> {
+		const remotePublicKey	= await this.remoteUser.getPublicKey();
+
+		const cyphertext		= await this.potassium.Box.seal(
+			secret,
+			remotePublicKey
+		);
+
+		Potassium.clearMemory(remotePublicKey);
+
+		this.remoteUser	= null;
+
+		return cyphertext;
+	}
 
 	private newMessageId () : Uint8Array {
 		return new Uint8Array(new Float64Array([
@@ -37,10 +88,7 @@ export class PairwiseSession {
 			;
 
 			if (this.transport.cyphertextIntercepters.length > 0) {
-				let resolve: Function;
-				while (resolve = this.transport.cyphertextIntercepters.shift()) {
-					resolve(cyphertextBytes);
-				}
+				this.transport.cyphertextIntercepters.shift()(cyphertextBytes);
 				return;
 			}
 
@@ -76,14 +124,41 @@ export class PairwiseSession {
 					let cyphertextBytes of
 					this.incomingMessages[this.incomingMessageId]
 				) {
-					if (
-						!success &&
-						(await this.core.receive(
-							cyphertextBytes,
-							this.remoteUser.getUsername()
-						))
-					) {
-						success	= true;
+					if (!success) {
+						try {
+							let plaintext: DataView	= await this.core.decrypt(
+								cyphertextBytes
+							);
+
+							/* Part 2 of handshake for Alice */
+							if (this.localUser) {
+								const oldPlaintext	= Potassium.toBytes(plaintext);
+
+								plaintext	= new DataView((
+									await this.handshakeOpenSecret(oldPlaintext)
+								).buffer);
+
+								Potassium.clearMemory(oldPlaintext);
+							}
+
+							/* Completion of handshake for Bob */
+							if (!this.remoteUser) {
+								this.connect();
+							}
+
+							this.transport.receive(
+								cyphertextBytes,
+								plaintext,
+								this.remoteUsername
+							);
+
+							success	= true;
+						}
+						catch (_) {
+							if (!this.isConnected) {
+								this.abort();
+							}
+						}
 					}
 
 					Potassium.clearMemory(cyphertextBytes);
@@ -127,7 +202,10 @@ export class PairwiseSession {
 		]);
 
 		const i = new Float64Array(1);
-		for (; i[0] < plaintextBytes.length ; i[0] += Transport.chunkLength) {
+		while (
+			i[0] < plaintextBytes.length ||
+			(i[0] === 0 && plaintextBytes.length === 0) 
+		) {
 			const chunk: Uint8Array	= new Uint8Array(
 				plaintextBytes.buffer,
 				i[0],
@@ -137,7 +215,7 @@ export class PairwiseSession {
 				)
 			);
 
-			const data: Uint8Array	= Potassium.concatMemory(
+			let data: Uint8Array	= Potassium.concatMemory(
 				false,
 				id,
 				timestampBytes,
@@ -147,12 +225,21 @@ export class PairwiseSession {
 				chunk
 			);
 
-			try {
-				await this.core.send(data, this.newMessageId());
+			/* Part 2 of handshake for Bob */
+			if (this.remoteUser) {
+				const oldData	= data;
+				data			= await this.handshakeSendSecret(oldData);
+				Potassium.clearMemory(oldData);
 			}
-			finally {
-				Potassium.clearMemory(data);
-			}
+
+			const messageId		= this.newMessageId();
+			const cyphertext	= await this.core.encrypt(data, messageId);
+
+			Potassium.clearMemory(data);
+
+			this.transport.send(cyphertext, messageId);
+
+			i[0] += Transport.chunkLength;
 		}
 
 		Potassium.clearMemory(plaintextBytes);
@@ -171,57 +258,46 @@ export class PairwiseSession {
 	 * @param isAlice
 	 */
 	public constructor (
-		potassium: Potassium,
+		private potassium: Potassium,
 		private transport: Transport,
-		localUser: ILocalUser,
+		private localUser: ILocalUser,
 		private remoteUser: IRemoteUser,
 		isAlice: boolean
 	) { (async () => {
 		try {
-			let secret: Uint8Array;
+			this.remoteUsername	= this.remoteUser.getUsername();
 
+			await this.localUser.getKeyPair();
+
+			let secret: Uint8Array;
 			if (isAlice) {
 				secret	= Potassium.randomBytes(
 					potassium.EphemeralKeyExchange.secretBytes
 				);
 
-				const remotePublicKey	= await this.remoteUser.getPublicKey();
-
-				this.transport.send(await potassium.Box.seal(
-					secret,
-					remotePublicKey
-				));
-
-				Potassium.clearMemory(remotePublicKey);
+				this.transport.send(await this.handshakeSendSecret(secret));
 			}
 			else {
-				const keyPair	= await localUser.getKeyPair();
-
-				secret	= await potassium.Box.open(
-					await localUser.getInitialSecret(),
-					keyPair
+				secret	= await this.handshakeOpenSecret(
+					await this.localUser.getRemoteSecret()
 				);
-
-				Potassium.clearMemory(keyPair.privateKey);
-				Potassium.clearMemory(keyPair.publicKey);
 			}
 
 			this.core	= new Core(
-				potassium,
-				this.transport,
+				this.potassium,
 				isAlice,
-				[await Core.newKeys(potassium, isAlice, secret)]
+				[await Core.newKeys(this.potassium, isAlice, secret)]
 			);
 
-			this.transport.connect();
+			if (isAlice) {
+				this.connect();
+			}
+			else {
+				this.send('');
+			}
 		}
 		catch (_) {
-			this.isAborted	= true;
-			this.transport.abort();
-
-			/* Send invalid cyphertext to trigger
-				friend's abortion logic */
-			this.transport.send('');
+			this.abort();
 		}
 	})(); }
 }

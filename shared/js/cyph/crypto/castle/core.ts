@@ -1,4 +1,3 @@
-import {Transport} from 'transport';
 import {Potassium} from 'crypto/potassium';
 import {Util} from 'cyph/util';
 
@@ -111,21 +110,20 @@ export class Core {
 	/**
 	 * Receive incoming cyphertext.
 	 * @param cyphertext Data to be decrypted.
-	 * @param author Username of message author.
-	 * @returns Whether or not message was successfully decrypted.
+	 * @returns Plaintext.
 	 */
-	public async receive (cyphertext: Uint8Array, author: string) : Promise<boolean> {
+	public async decrypt (cyphertext: Uint8Array) : Promise<DataView> {
 		return Util.lock(this.lock, async () => {
 			const messageId: Uint8Array	= new Uint8Array(cyphertext.buffer, 0, 8);
 			const encrypted: Uint8Array	= new Uint8Array(cyphertext.buffer, 8);
 
-			let success: boolean;
+			let plaintext: DataView;
 
 			for (let i = this.keys.length - 1 ; i >= 0 ; --i) {
 				try {
 					const keys	= this.keys[i];
 
-					if (success) {
+					if (plaintext) {
 						this.keys.splice(i, 1);
 						Potassium.clearMemory(keys.incoming);
 						Potassium.clearMemory(keys.outgoing);
@@ -156,29 +154,29 @@ export class Core {
 						startIndex += this.potassium.EphemeralKeyExchange.publicKeyBytes;
 					}
 
-					if (decrypted.length > startIndex) {
-						this.transport.receive(
-							cyphertext,
-							new DataView(decrypted.buffer, startIndex),
-							author
-						);
-					}
-
-					success	= true;
+					plaintext	= new DataView(decrypted.buffer, startIndex);
 				}
 				catch (_) {}
 			}
 
-			return success;
+			if (!plaintext) {
+				throw 'Invalid cyphertext.';
+			}
+
+			return plaintext;
 		});
 	}
 
 	/**
-	 * Send outgoing text.
+	 * Encrypt outgoing text.
 	 * @param plaintext Data to be encrypted.
 	 * @param messageId Used to enforce message ordering.
+	 * @returns Cyphertext.
 	 */
-	public async send (plaintext: Uint8Array, messageId: Uint8Array) : Promise<void> {
+	public async encrypt (
+		plaintext: Uint8Array,
+		messageId: Uint8Array
+	) : Promise<Uint8Array> {
 		return Util.lock(this.lock, async () => {
 			this.keys[0].outgoing	= await this.potassium.Hash.deriveKey(
 				this.keys[0].outgoing,
@@ -192,28 +190,25 @@ export class Core {
 				plaintext
 			);
 
-			this.transport.send(
-				await this.potassium.SecretBox.seal(
-					fullPlaintext,
-					this.keys[0].outgoing,
-					messageId
-				),
+			const cyphertext: Uint8Array	= await this.potassium.SecretBox.seal(
+				fullPlaintext,
+				this.keys[0].outgoing,
 				messageId
 			);
 
 			Potassium.clearMemory(fullPlaintext);
+
+			return cyphertext;
 		});
 	}
 
 	/**
 	 * @param potassium
-	 * @param transport
 	 * @param isAlice
 	 * @param keys Initial state of key ratchet.
 	 */
 	public constructor (
 		private potassium: Potassium,
-		private transport: Transport,
 		private isAlice: boolean,
 		private keys: {incoming: Uint8Array; outgoing: Uint8Array;}[]
 	) {}

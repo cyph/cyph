@@ -3,9 +3,9 @@
  * @interface
  */
 export interface ILocalUser {
-	/** Public Potassium.Box key. */
-	getInitialSecret () : Promise<Uint8Array>;
-
 	/** Potassium.Box key pair. */
 	getKeyPair () : Promise<{publicKey: Uint8Array; privateKey: Uint8Array;}>;
+
+	/** Encrypted secret from remote user. */
+	getRemoteSecret () : Promise<Uint8Array>;
 }
