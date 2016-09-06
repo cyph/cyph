@@ -204,7 +204,7 @@ export class PairwiseSession {
 		const i = new Float64Array(1);
 		while (
 			i[0] < plaintextBytes.length ||
-			(i[0] === 0 && plaintextBytes.length === 0) 
+			(i[0] === 0 && plaintextBytes.length === 0)
 		) {
 			const chunk: Uint8Array	= new Uint8Array(
 				plaintextBytes.buffer,
