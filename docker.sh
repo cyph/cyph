@@ -101,6 +101,8 @@ elif [ "${command}" == 'deploy' ] ; then
 		agse=''
 	elif [ "${1}" == '--site' -a "${2}" != 'cyph.im' ] ; then
 		agse=''
+	elif [ "${2}" == '--site' -a "${3}" != 'cyph.im' ] ; then
+		agse=''
 	fi
 
 	if [ $agse ] ; then
