@@ -204,7 +204,7 @@ if [ ! $simple ] ; then
 
 	# Expand connect-src and frame-src on blog to support social media widgets and stuff
 
-	blogCSPSources="$(cat cyph.com/blog/csp | perl -pe 's/^(.*)$/https:\/\/\1 https:\/\/*.\1/g' | tr '\n' ' ')"
+	blogCSPSources="$(cat cyph.com/blogcsp | perl -pe 's/^(.*)$/https:\/\/\1 https:\/\/*.\1/g' | tr '\n' ' ')"
 
 	cat cyph.com/cyph-com.yaml | \
 		tr '\n' '☁' | \
