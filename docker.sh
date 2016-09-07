@@ -96,7 +96,14 @@ elif [ "${command}" == 'deploy' ] ; then
 
 	chmod -R 700 .
 
-	if [ "${1}" != '--simple' ] ; then
+	agse=true
+	if [ "${1}" == '--simple' ] ; then
+		agse=''
+	elif [ "${1}" == '--site' -a "${2}" != 'cyph.im' ] ; then
+		agse=''
+	fi
+
+	if [ $agse ] ; then
 		agseRemoteAddress='10.0.0.42'
 		agseLocalAddress='10.0.0.43'
 		agseRemoteMAC="$(cat $HOME/.cyph/agse.remote.mac)"
