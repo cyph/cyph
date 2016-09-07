@@ -336,6 +336,7 @@ done
 if [ $simple ] ; then
 	cp websign/js/workerhelper.js cyph.im/js/
 else
+if [ ! $site -o $site == cyph.com ] ; then
 	# Cache bust
 
 	cd cyph.com
@@ -403,8 +404,8 @@ else
 	'
 
 	cd ..
-
-
+fi
+if [ ! $site -o $site == cyph.im ] ; then
 	# WebSign packaging
 
 	git clone git@github.com:cyph/cdn.git
@@ -553,6 +554,7 @@ else
 		cat cyph.im/cyph-im.yaml | sed "s|cyph-im|${project}|g" > ${d}/${project}.yaml
 		setredirect ${suffix}/ ${d}
 	done
+fi
 fi
 
 
