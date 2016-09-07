@@ -61,11 +61,13 @@ if [ "${command}" == 'serve' ] ; then
 
 	args=" \
 		-v $HOME/.cyph:/home/gibson/.cyph \
+		-v $HOME/.ssh:/home/gibson/.ssh \
 		--privileged=true \
 		-p 42000:5000 \
 		-p 42001:5001 \
 		-p 42002:5002 \
-		-p 43000:4568 \
+		-p 43000:43000 \
+		-p 44000:44000 \
 	"
 
 	base='http://localhost'

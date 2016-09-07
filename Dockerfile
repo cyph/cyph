@@ -7,12 +7,52 @@ LABEL Name="cyph"
 RUN apt-get update
 RUN apt-get dist-upgrade -y
 
-RUN apt-get install -y curl golang-go python perl devscripts build-essential cmake autoconf automake libtool git gnupg gnupg-agent procps sudo apt-utils expect inotify-tools zopfli
+RUN apt-get install -y \
+	curl \
+	golang-go \
+	python \
+	perl \
+	devscripts \
+	build-essential \
+	cmake \
+	autoconf \
+	automake \
+	libtool \
+	git \
+	gnupg \
+	gnupg-agent \
+	procps \
+	sudo \
+	apt-utils \
+	expect \
+	inotify-tools \
+	zopfli
 
 RUN curl -sL https://deb.nodesource.com/setup_6.x | bash -
 RUN apt-get install -y nodejs
 
-RUN npm -g install html-minifier clean-css cheerio uglify-js typescript babel-cli babel-preset-es2015 typings typedoc jspm browserstack browserify supersphincs libsodium-wrappers glob read mkdirp datauri firebase firebase-server
+RUN npm -g install \
+	html-minifier \
+	clean-css \
+	cheerio \
+	uglify-js \
+	typescript \
+	babel-cli \
+	babel-preset-es2015 \
+	typings \
+	typedoc \
+	jspm \
+	browserstack \
+	zombie \
+	browserify \
+	supersphincs \
+	libsodium-wrappers \
+	glob \
+	read \
+	mkdirp \
+	datauri \
+	firebase \
+	firebase-server
 
 
 RUN echo '\
@@ -66,27 +106,8 @@ RUN curl -sSL https://get.rvm.io | bash -s stable --ruby
 
 RUN bash -c ' \
 	source ~/.bashrc; \
-	gem install \
-		sass \
-		jekyll:1.5.1 \
-		jekyll-assets:0.9.2 \
-		github-pages:20 \
-		maruku \
-		rake \
-		bundler \
-		uglifier \
-		nokogiri \
-		liquid_reading_time \
-		jekyll-paginate \
-		jekyll-gist \
-		jekyll-sitemap \
-		jekyll-seo-tag \
-		jekyll-tagging \
-		jekyll-scholar \
-	; \
+	gem install sass; \
 '
-
-RUN sudo ln -s /usr/bin/md5sum /usr/bin/md5
 
 RUN rm -rf ~/.gnupg
 
@@ -107,7 +128,7 @@ VOLUME /home/gibson/.ssh
 
 WORKDIR /cyph/commands
 
-EXPOSE 4568 5000 5001 5002 31337
+EXPOSE 5000 5001 5002 31337 43000 44000
 
 
 CMD /bin/bash

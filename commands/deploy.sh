@@ -51,8 +51,6 @@ if [ "${commit}" ] ; then
 		wget "https://apis.google.com$(cat google/plusone.js | grep -oP '/_/scs/.*?"' | sed 's|\\u003d|=|g' | sed 's|__features__|plusone/rt=j/sv=1/d=1/ed=1|g' | rev | cut -c 2- | rev)/cb=gapi.loaded_0" -O google/plusone.helper.js
 		mkdir facebook ; wget https://connect.facebook.net/en_US/sdk.js -O facebook/sdk.js
 		mkdir disqus ; wget https://cyph.disqus.com/embed.js -O disqus/embed.js
-		npm install --save simple-jekyll-search
-		mv node_modules/simple-jekyll-search ./
 		rm -rf node_modules
 		cd ../../..
 		chmod -R 700 .
@@ -220,7 +218,7 @@ fi
 
 defaultHost='${locationData.protocol}//${locationData.hostname}:'
 ls */js/cyph/envdeploy.ts | xargs -I% sed -i 's|isLocalEnv: boolean		= true|isLocalEnv: boolean		= false|g' %
-ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|ws://127.0.1:43000|https://cyphme.firebaseio.com|g" %
+ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|ws://127.0.1:44000|https://cyphme.firebaseio.com|g" %
 
 if [ $branch == 'staging' ] ; then
 	sed -i "s|false, /* IsProd */|true,|g" default/config.go
@@ -239,6 +237,8 @@ if [ $test ] ; then
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|CYPH-VIDEO|https://${version}-dot-cyph-video-dot-cyphme.appspot.com|g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|CYPH-AUDIO|https://${version}-dot-cyph-audio-dot-cyphme.appspot.com|g" %
 
+	homeURL="https://${version}-dot-cyph-com-dot-cyphme.appspot.com"
+
 	# Disable caching in test environments
 	ls */*.yaml | xargs -I% sed -i 's|max-age=31536000|max-age=0|g' %
 else
@@ -250,6 +250,8 @@ else
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|CYPH-ME|https://cyph.me|g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|CYPH-VIDEO|https://cyph.video|g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|CYPH-AUDIO|https://cyph.audio|g" %
+
+	homeURL="https://www.cyph.com"
 
 	version=prod
 fi
@@ -265,15 +267,11 @@ cd ..
 
 # Blog
 cd cyph.com
-sed -i 's|blog/build|blog|g' cyph-com.yaml
-mv blog blag
-rm -rf blag/theme/_posts 2> /dev/null
-mv blag/posts blag/theme/_posts
-cd blag/theme
-jekyll build --destination ../../blog
+rm -rf blog 2> /dev/null
+mkdir blog
+cd blog
+../../commands/wpstatic.sh "${homeURL}/blog"
 cd ../..
-rm -rf blag
-cd ..
 
 
 # Compile + translate + minify

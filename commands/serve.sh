@@ -34,12 +34,14 @@ for f in $(find default -mindepth 1 -maxdepth 4 -type d) ; do
 	go install $(echo "$f" | sed 's|default/||')
 done
 
-node -e 'new (require("firebase-server"))(4568)' &
+node -e 'new (require("firebase-server"))(44000)' &
 
-cd cyph.com/blog/theme
-rm -rf ../build
-jekyll build --watch --destination ../build &
-cd ../../..
+cd cyph.com
+rm -rf blog 2> /dev/null
+mkdir blog
+cd blog
+../../commands/wpstatic.sh http://localhost:43000/blog &
+cd ../..
 
 cp -f default/app.yaml default/.build.yaml
 cat ~/.cyph/default.vars >> default/.build.yaml

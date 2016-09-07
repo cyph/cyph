@@ -11,61 +11,61 @@ handlers:
   static_files: index.html
   upload: index.html
   secure: always
-  # default_headers Cache-Control Expires
+  # default_headers Cache-Control
 
 - url: /about[/]?
   static_files: index.html
   upload: index.html
   secure: always
-  # default_headers Cache-Control Expires
+  # default_headers Cache-Control
 
 - url: /contact.*
   static_files: index.html
   upload: index.html
   secure: always
-  # default_headers Cache-Control Expires
+  # default_headers Cache-Control
 
 - url: /features[/]?
   static_files: index.html
   upload: index.html
   secure: always
-  # default_headers Cache-Control Expires
+  # default_headers Cache-Control
 
 - url: /intro[/]?
   static_files: index.html
   upload: index.html
   secure: always
-  # default_headers Cache-Control Expires
+  # default_headers Cache-Control
 
 - url: /register[/]?
   static_files: index.html
   upload: index.html
   secure: always
-  # default_headers Cache-Control Expires
+  # default_headers Cache-Control
 
 - url: /pricing[/]?
   static_files: index.html
   upload: index.html
   secure: always
-  # default_headers Cache-Control Expires
+  # default_headers Cache-Control
 
 - url: /faq[/]?
   static_files: index.html
   upload: index.html
   secure: always
-  # default_headers Cache-Control Expires
+  # default_headers Cache-Control
 
 - url: /privacypolicy[/]?
   static_files: index.html
   upload: index.html
   secure: always
-  # default_headers Cache-Control Expires
+  # default_headers Cache-Control
 
 - url: /termsofservice[/]?
   static_files: index.html
   upload: index.html
   secure: always
-  # default_headers Cache-Control Expires
+  # default_headers Cache-Control
 
 
 # Promos
@@ -74,43 +74,43 @@ handlers:
   static_files: index.html
   upload: index.html
   secure: always
-  # default_headers Cache-Control Expires
+  # default_headers Cache-Control
 
 - url: /jjgo[/]?
   static_files: index.html
   upload: index.html
   secure: always
-  # default_headers Cache-Control Expires
+  # default_headers Cache-Control
 
 - url: /ventura[/]?
   static_files: index.html
   upload: index.html
   secure: always
-  # default_headers Cache-Control Expires
+  # default_headers Cache-Control
 
 - url: /sawbones[/]?
   static_files: index.html
   upload: index.html
   secure: always
-  # default_headers Cache-Control Expires
+  # default_headers Cache-Control
 
 - url: /judgejohn[/]?
   static_files: index.html
   upload: index.html
   secure: always
-  # default_headers Cache-Control Expires
+  # default_headers Cache-Control
 
 - url: /mybrother[/]?
   static_files: index.html
   upload: index.html
   secure: always
-  # default_headers Cache-Control Expires
+  # default_headers Cache-Control
 
 - url: /security[/]?
   static_files: index.html
   upload: index.html
   secure: always
-  # default_headers Cache-Control Expires
+  # default_headers Cache-Control
 
 
 # Unsupported browsers
@@ -118,32 +118,26 @@ handlers:
   static_files: unsupportedbrowser.html
   upload: unsupportedbrowser.html
   secure: always
-  # default_headers Cache-Control Expires
+  # default_headers Cache-Control
 
 
 # Blog
 
 - url: /blog[/]?
-  static_files: blog/build/index.html
-  upload: blog/build/index.html
+  static_files: blog/index.html
+  upload: blog/index.html
   secure: always
-  # default_headers Cache-Control Expires
+  # default_headers Cache-Control
 
-- url: /blog/(\d+/\d+/\d+/.*?)[/]?
-  static_files: blog/build/\1/index.html
-  upload: blog/build/.*
+- url: /blog/((author|category|page|comments|feed|tag|\d+)/.*?)[/]?
+  static_files: blog/\1/index.html
+  upload: blog/.*
   secure: always
-  # default_headers Cache-Control Expires
-
-- url: /blog/(bio/.*?)[/]?
-  static_files: blog/build/\1/index.html
-  upload: blog/build/.*
-  secure: always
-  # default_headers Cache-Control Expires
+  # default_headers Cache-Control
 
 - url: /blog/(.*\..*)
-  static_files: blog/build/\1
-  upload: blog/build/.*
+  static_files: blog/\1
+  upload: blog/.*
   secure: always
   # default_headers
 
@@ -165,4 +159,4 @@ handlers:
   static_files: index.html
   upload: index.html
   secure: always
-  # default_headers Cache-Control Expires
+  # default_headers Cache-Control

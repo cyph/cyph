@@ -2,10 +2,10 @@
 **/.build.yaml
 **/*.mmdb
 .sass-cache
+**/.sass-cache
 .DS_Store
 **/.DS_Store
 nohup.out
-shared/lib/.oldbower
 *.swp
 **/*.swp
 *.orig
