@@ -36,12 +36,15 @@ done
 
 node -e 'new (require("firebase-server"))(44000)' &
 
-cd cyph.com
-rm -rf blog 2> /dev/null
-mkdir blog
-cd blog
-../../commands/wpstatic.sh http://localhost:42001/blog
-cd ../..
+if [ "${1}" == '--blog' ] ; then
+	echo -e '\n\nGenerating static blog\n'
+	cd cyph.com
+	rm -rf blog 2> /dev/null
+	mkdir blog
+	cd blog
+	../../commands/wpstatic.sh http://localhost:42001/blog
+	cd ../..
+fi
 
 cp -f default/app.yaml default/.build.yaml
 cat ~/.cyph/default.vars >> default/.build.yaml
