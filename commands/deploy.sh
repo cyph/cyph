@@ -500,13 +500,13 @@ if [ ! $site -o $site == cyph.im ] ; then
 		node -e "
 			const cheerio	= require('cheerio');
 
-			const $	= cheerio.load(fs.readFileSync('../pkg/cyph').toString());
+			const \$	= cheerio.load(fs.readFileSync('../pkg/cyph').toString());
 
-			$('head').append('<style>' + fs.readFileSync('${f}').toString() + '</style>');
+			\$('head').append('<style>' + fs.readFileSync('${f}').toString() + '</style>');
 
 			fs.writeFileSync(
 				'../pkg/${custombuild}',
-				$.html().trim()
+				\$.html().trim()
 			);
 		"
 	done
