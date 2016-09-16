@@ -103,7 +103,7 @@ export class Potassium {
 
 	private newNonce (size: number) {
 		if (size < 4) {
-			throw 'Nonce size too small.';
+			throw new Error('Nonce size too small.');
 		}
 
 		return Potassium.concatMemory(
@@ -154,7 +154,7 @@ export class Potassium {
 			keyCyphertext: Uint8Array
 		}> => {
 			if (plaintextBytes < (this.SecretBox.keyBytes + this.OneTimeAuth.keyBytes)) {
-				throw `Not enough space for keys; must increase ${name} parameters.`;
+				throw new Error(`Not enough space for keys; must increase ${name} parameters.`);
 			}
 
 			const innerKeys: Uint8Array		= Potassium.randomBytes(plaintextBytes);
@@ -239,7 +239,7 @@ export class Potassium {
 
 			if (!isValid) {
 				Potassium.clearMemory(innerKeys);
-				throw `Invalid ${name} cyphertext.`;
+				throw new Error(`Invalid ${name} cyphertext.`);
 			}
 
 			return {innerKeys, symmetricKey};
@@ -345,7 +345,7 @@ export class Potassium {
 			}
 
 			if (input.length > this.SecretBox.aeadBytes) {
-				throw 'Too much additional data.';
+				throw new Error('Too much additional data.');
 			}
 
 			const output: Uint8Array	= new Uint8Array(this.SecretBox.aeadBytes);
@@ -691,7 +691,7 @@ export class Potassium {
 			}
 
 			if (outputBytes > Potassium.SuperSphincs.hashBytes) {
-				throw 'Potassium.Hash.deriveKey output cannot exceed 64 bytes.';
+				throw new Error('Potassium.Hash.deriveKey output cannot exceed 64 bytes.');
 			}
 
 			const hash	= this.isNative ?
@@ -839,7 +839,7 @@ export class Potassium {
 			additionalData?: Uint8Array
 		) : Promise<Uint8Array> => {
 			if (key.length % this.SecretBox.keyBytes !== 0) {
-				throw 'Invalid key.';
+				throw new Error('Invalid key.');
 			}
 
 			const paddingLength: number			= Potassium.randomBytes(1)[0];
@@ -885,7 +885,7 @@ export class Potassium {
 			additionalData?: Uint8Array
 		) : Promise<Uint8Array> => {
 			if (key.length % this.SecretBox.keyBytes !== 0) {
-				throw 'Invalid key.';
+				throw new Error('Invalid key.');
 			}
 
 			cyphertext	= new Uint8Array(cyphertext);

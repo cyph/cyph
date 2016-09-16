@@ -102,7 +102,7 @@ export class Thread {
 							return array;
 						}
 						else {
-							throw 'No CSPRNG found.';
+							throw new Error('No CSPRNG found.');
 						}
 
 						++nonce[nonce[0] === 4294967295 ? 0 : 1];

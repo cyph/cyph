@@ -48,10 +48,7 @@ export class EventManager {
 			}
 			else {
 				throw new Error(
-					method +
-					' not in whitelist. (args: ' +
-					JSON.stringify(args) +
-					')'
+					`${method} not in whitelist. (args: ${JSON.stringify(args)})`
 				);
 			}
 		}

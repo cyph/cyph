@@ -114,7 +114,7 @@ server.on('message', message => {
 			keyPair.publicKey
 		)))).then(openedItems => {
 			if (items.filter((o, i) => openedItems[i] !== o.inputData).length > 0) {
-				throw 'Incorrect signed data.';
+				throw new Error('Incorrect signed data.');
 			}
 
 			for (let i = 0 ; i < items.length ; ++i) {

@@ -160,7 +160,7 @@ export class Core {
 			}
 
 			if (!plaintext) {
-				throw 'Invalid cyphertext.';
+				throw new Error('Invalid cyphertext.');
 			}
 
 			return plaintext;

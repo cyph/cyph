@@ -26,7 +26,7 @@ new Promise((resolve, reject) => read({
 	const passwordMiddle	= passwordSplit.length / 2;
 
 	if (passwordSplit.length % 2 !== 0) {
-		throw 'Password must contain even number of words.'
+		throw new Error('Password must contain even number of words.');
 	}
 
 	const aesPassword		= passwordSplit.slice(0, passwordMiddle).join(' ');

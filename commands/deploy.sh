@@ -304,7 +304,7 @@ for d in $compiledProjects ; do
 
 		cat $d/js/cyph/thread.ts | \
 			tr '\n' '☁' | \
-			perl -pe 's/importScripts\s+=.*?;/importScripts = (s: string) => { throw `Cannot load external script \${s}.` };/' | \
+			perl -pe 's/importScripts\s+=.*?;/importScripts = (s: string) => { throw new Error(`Cannot load external script \${s}.`) };/' | \
 			tr '☁' '\n' \
 		> $d/js/cyph/thread.ts.new
 		mv $d/js/cyph/thread.ts.new $d/js/cyph/thread.ts
