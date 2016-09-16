@@ -491,26 +491,39 @@ if [ ! $site -o $site == cyph.im ] ; then
 
 	packages="${package}"
 
+	mkdir -p pkg/cyph-subresources 2> /dev/null
+	cd pkg/cyph-subresources
 	git clone git@github.com:cyph/custom-builds.git
-	cd custom-builds
-	for f in *.css ; do
-		custombuild="$(projectname "$(echo "${f}" | sed 's|.css||')")"
+	rm -rf custom-builds/.git
+	for f in custom-builds/*.css ; do
+		custombuild="$(projectname "$(echo "${f}" | perl -pe 's/.*\/(.*)\.css$/\1/')")"
 		packages="${packages} ${custombuild}"
 
 		node -e "
-			const cheerio	= require('cheerio');
+			const cheerio		= require('cheerio');
+			const superSphincs	= require('supersphincs');
 
-			const \$	= cheerio.load(fs.readFileSync('../pkg/cyph').toString());
+			const \$	= cheerio.load(fs.readFileSync('../cyph').toString());
 
-			\$('head').append('<style>' + fs.readFileSync('${f}').toString() + '</style>');
+			superSphincs.hash(
+				fs.readFileSync('${f}').toString().trim()
+			).then(hash => {
+				\$('head').append(\`
+					<link
+						rel='stylesheet'
+						websign-sri-path='${f}'
+						websign-sri-hash='\${hash.hex}'
+					></link>
+				\`);
 
-			fs.writeFileSync(
-				'../pkg/${custombuild}',
-				\$.html().trim()
-			);
+				fs.writeFileSync(
+					'../${custombuild}',
+					\$.html().trim()
+				);
+			});
 		"
 	done
-	cd ..
+	cd ../..
 
 	mv pkg/cyph "pkg/${package}"
 
