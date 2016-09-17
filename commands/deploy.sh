@@ -379,6 +379,8 @@ if [ ! $site -o $site == cyph.com ] ; then
 						return content;
 					}
 
+					cacheBustedFiles[subresource]	= true;
+
 					return superSphincs.hash(
 						fs.readFileSync(subresource).toString()
 					).then(hash =>
@@ -387,7 +389,6 @@ if [ ! $site -o $site == cyph.com ] ; then
 				})
 			, Promise.resolve(originalContent)).then(content => {
 				if (content !== originalContent) {
-					cacheBustedFiles[subresource]	= true;
 					fs.writeFileSync(file, content);
 				}
 			});
