@@ -426,7 +426,10 @@ for d in $cacheBustedProjects ; do
 		then(() => {
 			for (let subresource of filesToCacheBust) {
 				if (subresource.startsWith("lib/") && !cacheBustedFiles[subresource]) {
-					fs.unlinkSync(subresource);
+					try {
+						fs.unlinkSync(subresource);
+					}
+					catch (_) {}
 				}
 			}
 		});
