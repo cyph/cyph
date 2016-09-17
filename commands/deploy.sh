@@ -372,8 +372,8 @@ for d in $cacheBustedProjects ; do
 		const superSphincs		= require("supersphincs");
 
 		const filesToCacheBust	= child_process.spawnSync("find", [
-			".",
 			"-L",
+			".",
 			"-type",
 			"f"
 		]).stdout.toString().split("\n").filter(s => s).map(s => s.slice(2));
