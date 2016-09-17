@@ -35,7 +35,7 @@ export class LinkConnection implements ILinkConnection {
 
 	public beginWaiting (baseUrl: string, secret: string, isPassive: boolean) : void {
 		this.isWaiting		= true;
-		this.linkConstant	= baseUrl + '#' + secret;
+		this.linkConstant	= baseUrl + (baseUrl.indexOf('#') > -1 ? '' : '#') + secret;
 		this.linkEncoded	= encodeURIComponent(this.linkConstant);
 		this.link			= this.linkConstant;
 		this.isPassive		= isPassive;

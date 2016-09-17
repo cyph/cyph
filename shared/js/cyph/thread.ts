@@ -19,6 +19,7 @@ export class Thread {
 	private static threadEnvSetup (threadSetupVars: any, importScripts: Function) : void {
 		/* Inherit these from main thread */
 
+		self['customBuild']		= threadSetupVars.customBuild;
 		self['locationData']	= threadSetupVars.locationData;
 		self['navigatorData']	= threadSetupVars.navigatorData;
 
@@ -182,6 +183,7 @@ export class Thread {
 		crypto.getRandomValues(seedBytes);
 
 		const threadSetupVars	= {
+			customBuild,
 			locationData: {
 				hash: locationData.hash,
 				host: locationData.host,

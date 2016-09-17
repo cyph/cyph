@@ -95,7 +95,7 @@ export class Env extends EnvDeploy {
 	;
 
 	/** Indicates whether this is mobile. */
-	public static isMobile: boolean	=
+	public static isMobile: boolean		=
 		Env.isAndroid ||
 		Env.isIOS ||
 		Env.isWP ||
@@ -106,13 +106,13 @@ export class Env extends EnvDeploy {
 	;
 
 	/** Indicates whether this should be considered a tablet. */
-	public static isTablet: boolean	= Env.isMobile && self.outerWidth > 767;
+	public static isTablet: boolean		= Env.isMobile && self.outerWidth > 767;
 
 	/** Indicates whether this is Internet Explorer or Edge. */
 	public static isIEOrEdge: boolean	= Env.isIE || Env.isEdge || Env.isWP;
 
 	/** Indicates whether this is a touchscreen environment. */
-	public static isTouch: boolean	= (() => {
+	public static isTouch: boolean		= (() => {
 		try {
 			document.createEvent('TouchEvent');
 			return true;
@@ -136,4 +136,21 @@ export class Env extends EnvDeploy {
 		(Env.isIOS8Plus ? '&' : Env.isIOS ? ';' : '?') +
 		'body='
 	;
+
+	private static _	= (() => {
+		if (!customBuild) {
+			return;
+		}
+
+		Env.newCyphBaseUrl		= `https://${customBuild}.ws/`;
+		Env.newCyphUrl			= Env.newCyphBaseUrl;
+		Env.cyphMeBaseUrl		= `${Env.newCyphBaseUrl}#me/`;
+		Env.cyphMeUrl			= Env.cyphMeBaseUrl;
+		Env.cyphIoBaseUrl		= `${Env.newCyphBaseUrl}#io/`;
+		Env.cyphIoUrl			= Env.cyphIoBaseUrl;
+		Env.cyphVideoBaseUrl	= `${Env.newCyphBaseUrl}#video/`;
+		Env.cyphVideoUrl		= Env.cyphVideoBaseUrl;
+		Env.cyphAudioBaseUrl	= `${Env.newCyphBaseUrl}#audio/`;
+		Env.cyphAudioUrl		= Env.cyphAudioBaseUrl;
+	})();
 }

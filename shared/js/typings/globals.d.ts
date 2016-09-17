@@ -1,4 +1,9 @@
 /**
+ * @global If applicable, identifier of this custom build.
+ */
+declare let customBuild: string;
+
+/**
  * @global Event handler for messages to the current thread.
  */
 declare let onthreadmessage: (e: MessageEvent) => any;

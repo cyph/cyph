@@ -35,10 +35,13 @@ export class EnvDeploy {
 		EnvDeploy.newCyphBaseUrl
 	;
 
-	/** URL for Cyph account application ("https://cyph.me/" or equivalent). */
+	/** Base URL for Cyph account application ("https://cyph.io/" or equivalent). */
+	public static cyphMeBaseUrl: string		= `CYPH-ME/`;
+
+	/** URL for Cyph account application (same as cyphMeBaseUrl except on Onion site). */
 	public static cyphMeUrl: string			= EnvDeploy.isOnion ?
 		`https://me.${Config.onionRoot}/` :
-		`CYPH-ME/`
+		EnvDeploy.cyphMeBaseUrl
 	;
 
 	/** Base URL for a new file transfer cyph link ("https://cyph.io/" or equivalent). */

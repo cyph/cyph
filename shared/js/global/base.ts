@@ -23,8 +23,8 @@ for (let k of [
 	'location',
 	'navigator',
 	'Audio',
+	'customBuild',
 	'onthreadmessage',
-	'FontsCSS',
 	'Translations'
 ]) {
 	if (!(k in self)) {
