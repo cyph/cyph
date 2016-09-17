@@ -646,7 +646,7 @@ find . -type l -exec bash -c '
 ' \;
 
 if [ $site ] ; then
-	deploy $site/*.yaml
+	deploy "$site/*.yaml"
 else
 	deploy */*.yaml
 fi
