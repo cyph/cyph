@@ -5,13 +5,16 @@ source ~/.bashrc
 dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd)/..
 
-shortlinkProjects='io me video audio'
+cacheBustedProjects='cyph.com'
 compiledProjects='cyph.com cyph.im'
+shortlinkProjects='io me video audio'
+site=''
+test=true
+websign=true
 
 
 gcloud auth login
 
-test=true
 if [ "${1}" == '--prod' ] ; then
 	test=''
 	shift
@@ -26,18 +29,29 @@ if [ "${1}" == '--no-commit' ] ; then
 	shift
 fi
 
-site=''
 if [ "${1}" == '--site' ] ; then
 	shift
 	site="${1}"
 	shift
+fi
 
-	for d in $compiledProjects ; do
-		if [ $d == $site ] ; then
-			compiledProjects=$site
-			break
-		fi
+if [ $simple ] ; then
+	websign=''
+	cacheBustedProjects="$compiledProjects"
+fi
+
+if [ $site ] ; then
+	for var in cacheBustedProjects compiledProjects ; do
+		for d in $(eval "echo \$$var") ; do
+			if [ $d != $site ] ; then
+				eval "$var='$(eval "echo \$$var" | sed "s|$d||")'"
+			fi
+		done
 	done
+
+	if [ $site != cyph.im ] ; then
+		websign=''
+	fi
 fi
 
 if [ "${commit}" ] ; then
@@ -347,15 +361,12 @@ for d in $compiledProjects ; do
 done
 
 
-if [ $simple ] ; then
-	cp websign/js/workerhelper.js cyph.im/js/
-else
-if [ ! $site -o $site == cyph.com ] ; then
+for d in $cacheBustedProjects ; do
 	# Cache bust
 
-	cd cyph.com
+	cd $d
 
-	echo "Cache bust $(projectname cyph.com)"
+	echo "Cache bust $(projectname $d)"
 
 	node -e '
 		const superSphincs		= require("supersphincs");
@@ -422,8 +433,9 @@ if [ ! $site -o $site == cyph.com ] ; then
 	'
 
 	cd ..
-fi
-if [ ! $site -o $site == cyph.im ] ; then
+done
+
+if [ $websign ] ; then
 	# WebSign packaging
 
 	git clone git@github.com:cyph/cdn.git
@@ -589,14 +601,15 @@ if [ ! $site -o $site == cyph.im ] ; then
 		cat cyph.im/cyph-im.yaml | sed "s|cyph-im|${project}|g" > ${d}/${project}.yaml
 		setredirect ${suffix}/ ${d}
 	done
-fi
+else
+	cp websign/js/workerhelper.js cyph.im/js/
 fi
 
 
 find . -mindepth 1 -maxdepth 1 -type d -not -name shared -exec cp -f shared/favicon.ico {}/ \;
 
 
-if [ ! $test ] ; then
+if [ ! $simple ] ; then
 	rm -rf */lib/js/crypto
 fi
 
