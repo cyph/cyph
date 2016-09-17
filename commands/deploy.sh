@@ -30,7 +30,14 @@ site=''
 if [ "${1}" == '--site' ] ; then
 	shift
 	site="${1}"
-	shift 
+	shift
+
+	for d in $compiledProjects ; do
+		if [ $d == $site ] ; then
+			compiledProjects=$site
+			break
+		fi
+	done
 fi
 
 if [ "${commit}" ] ; then
