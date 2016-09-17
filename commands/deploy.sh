@@ -517,7 +517,7 @@ if [ ! $site -o $site == cyph.im ] ; then
 				\`);
 
 				\$('head').append(
-					\`<script>self.custombuild	= '${custombuild}';</script>\`
+					\`<script>self.customBuild	= '${custombuild}';</script>\`
 				);
 
 				fs.writeFileSync(
