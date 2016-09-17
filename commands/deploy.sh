@@ -601,7 +601,7 @@ if [ $websign ] ; then
 		cat cyph.im/cyph-im.yaml | sed "s|cyph-im|${project}|g" > ${d}/${project}.yaml
 		setredirect ${suffix}/ ${d}
 	done
-else
+elif [ ! $site -o $site == cyph.im ] ; then
 	cp websign/js/workerhelper.js cyph.im/js/
 fi
 
