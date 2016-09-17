@@ -624,7 +624,7 @@ else
 fi
 
 deploy () {
-	gcloud preview app deploy --quiet --no-promote --project cyphme --version $version $*
+	gcloud app deploy --quiet --no-promote --project cyphme --version $version $*
 }
 
 # Temporary workaround for cache-busting reverse proxies
