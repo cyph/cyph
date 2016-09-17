@@ -265,13 +265,15 @@ cp -rf ../shared/img ./
 cd ..
 
 
-# Blog
-cd cyph.com
-rm -rf blog 2> /dev/null
-mkdir blog
-cd blog
-../../commands/wpstatic.sh "${homeURL}/blog"
-cd ../..
+if [ ! $site -o $site == cyph.com ] ; then
+	# Blog
+	cd cyph.com
+	rm -rf blog 2> /dev/null
+	mkdir blog
+	cd blog
+	../../commands/wpstatic.sh "${homeURL}/blog"
+	cd ../..
+fi
 
 
 # Compile + translate + minify
