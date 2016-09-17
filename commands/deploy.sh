@@ -264,12 +264,14 @@ else
 fi
 
 
-# WebSign project
-cd websign
-websignHashWhitelist="$(cat hashwhitelist.json)"
-cp -rf ../shared/img ./
-../commands/websign/pack.js index.html index.html
-cd ..
+if [ ! $site -o $site == websign ] ; then
+	# WebSign project
+	cd websign
+	websignHashWhitelist="$(cat hashwhitelist.json)"
+	cp -rf ../shared/img ./
+	../commands/websign/pack.js index.html index.html
+	cd ..
+fi
 
 
 if [ ! $site -o $site == cyph.com ] ; then
@@ -279,6 +281,9 @@ if [ ! $site -o $site == cyph.com ] ; then
 	mkdir blog
 	cd blog
 	../../commands/wpstatic.sh "${homeURL}/blog"
+	if [ ! -f index.html ] ; then
+		exit 1
+	fi
 	cd ../..
 fi
 
