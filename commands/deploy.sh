@@ -362,6 +362,7 @@ if [ ! $site -o $site == cyph.com ] ; then
 
 		const filesToCacheBust	= child_process.spawnSync("find", [
 			".",
+			"-L",
 			"-type",
 			"f"
 		]).stdout.toString().split("\n").filter(s => s).map(s => s.slice(2));
