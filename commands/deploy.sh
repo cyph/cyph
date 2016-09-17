@@ -30,7 +30,7 @@ site=''
 if [ "${1}" == '--site' ] ; then
 	shift
 	site="${1}"
-	shift
+	shift 
 fi
 
 if [ "${commit}" ] ; then
@@ -499,8 +499,8 @@ if [ ! $site -o $site == cyph.im ] ; then
 	git clone git@github.com:cyph/custom-builds.git
 	rm -rf custom-builds/.git
 	for f in custom-builds/*.css ; do
-		custombuild="$(projectname "$(echo "${f}" | perl -pe 's/.*\/(.*)\.css$/\1/')")"
-		packages="${packages} ${custombuild}"
+		customBuild="$(projectname "$(echo "${f}" | perl -pe 's/.*\/(.*)\.css$/\1/')")"
+		packages="${packages} ${customBuild}"
 
 		node -e "
 			const cheerio		= require('cheerio');
@@ -520,11 +520,11 @@ if [ ! $site -o $site == cyph.im ] ; then
 				\`);
 
 				\$('head').append(
-					\`<script>self.customBuild	= '${custombuild}';</script>\`
+					\`<script>self.customBuild	= '${customBuild}';</script>\`
 				);
 
 				fs.writeFileSync(
-					'../${custombuild}',
+					'../${customBuild}',
 					\$.html().trim()
 				);
 			});
