@@ -363,6 +363,10 @@ if [ ! $site -o $site == cyph.com ] ; then
 
 		const filesToModify		= child_process.spawnSync("find", [
 			".",
+			"-type",
+			"f",
+			"-and",
+			"\(",
 			"-name",
 			"*.html",
 			"-or",
@@ -371,9 +375,7 @@ if [ ! $site -o $site == cyph.com ] ; then
 			"-or",
 			"-name",
 			"*.css",
-			"-and",
-			"-type",
-			"f"
+			"\)"
 		]).stdout.toString().split("\n").filter(s => s);
 
 		const cacheBustedFiles	= {};
