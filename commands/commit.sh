@@ -11,7 +11,6 @@ git pull
 chmod -R 700 .
 git add .
 git commit -S -a -m "${*}"
-git push
 
 # Automated cleanup and beautification
 
@@ -31,6 +30,7 @@ find shared/js -name '*.ts' -print0 |
 
 chmod -R 700 .
 git commit -S -a -m "cleanup: ${*}"
+
 git push
 
 cd "${dir}"

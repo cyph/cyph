@@ -3,6 +3,8 @@
 destinationProtocol="$(echo "${1}" | perl -pe 's/(.*?):\/\/.*/\1/')"
 destinationURL="$(echo "${1}" | perl -pe 's/.*?:\/\/(.*)/\1/')"
 
+echo -e '\n\nGenerating static blog\n'
+
 if [ ! -f ~/.ssh/id_rsa_docker ] ; then
 	ssh-keygen -t rsa -b 4096 -C 'gibson@docker' -P '' -f ~/.ssh/id_rsa_docker
 	echo -e '\n\nGive this public key access to WordPress and then hit enter to continue:\n'

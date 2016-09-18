@@ -4,6 +4,7 @@ source ~/.bashrc
 
 dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd)/..
+rootDir="$(pwd)"
 
 cacheBustedProjects='cyph.com'
 compiledProjects='cyph.com cyph.im'
@@ -14,6 +15,18 @@ websign=true
 
 
 gcloud auth login
+
+echo -e '\n\n\ncaching SSH and GPG keys\n'
+eval "$(ssh-agent)"
+ssh-add ~/.ssh/id_rsa
+mkdir ~/tmpgit
+cd ~/tmpgit
+git init
+touch balls
+git add balls
+git commit -S -a -m test
+cd "$rootDir"
+
 
 if [ "${1}" == '--prod' ] ; then
 	test=''
