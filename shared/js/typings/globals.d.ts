@@ -4,6 +4,11 @@
 declare let customBuild: string;
 
 /**
+ * @global If applicable, favicon for this custom build.
+ */
+declare let customBuildFavicon: string;
+
+/**
  * @global Event handler for messages to the current thread.
  */
 declare let onthreadmessage: (e: MessageEvent) => any;

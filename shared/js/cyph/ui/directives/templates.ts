@@ -901,46 +901,56 @@ export const Templates	= {
 		<div layout='row' flex class='footer desktop-only'>
 			<div flex></div>
 
-			<p flex='nogrow' layout-padding>
-				© Cyph 2016 (Patents Pending)
-			</p>
+			<span ng-hide='ui.coBranded'>
+				<p flex='nogrow' layout-padding>
+					© Cyph 2016 (Patents Pending)
+				</p>
 
-			<p flex='nogrow' layout-padding>
-				<a flex ng-href='{{Cyph.Env.homeUrl}}contact'>Contact</a>
-			</p>
+				<p flex='nogrow' layout-padding>
+					<a flex ng-href='{{Cyph.Env.homeUrl}}contact'>Contact</a>
+				</p>
 
-			<p flex='nogrow' layout-padding>
-				<a ng-href='{{Cyph.Env.homeUrl}}donate'>
-					Donate
-				</a>
-			</p>
+				<p flex='nogrow' layout-padding>
+					<a ng-href='{{Cyph.Env.homeUrl}}donate'>
+						Donate
+					</a>
+				</p>
 
-			<p flex='nogrow' layout-padding>
+				<p flex='nogrow' layout-padding>
 					<strong ng-hide='ui.chat.session.state.wasInitiatedByAPI'>
 						- Individual Use Only -
 					</strong>
 					<strong ng-show='ui.chat.session.state.wasInitiatedByAPI'>
 						- Cyph API -
 					</strong>
-			</p>
+				</p>
 
-			<p flex='nogrow' layout-padding>
-				 <a ng-href='{{Cyph.Env.homeUrl}}pricing'>
-				 	Business Pricing
-				</a>
-			</p>
+				<p flex='nogrow' layout-padding>
+					<a ng-href='{{Cyph.Env.homeUrl}}pricing'>
+						Business Pricing
+					</a>
+				</p>
 
-			<p flex='nogrow' layout-padding>
-				<a ng-href='{{Cyph.Env.homeUrl}}privacypolicy'>
-					Privacy Policy
-				</a>
-			</p>
+				<p flex='nogrow' layout-padding>
+					<a ng-href='{{Cyph.Env.homeUrl}}privacypolicy'>
+						Privacy Policy
+					</a>
+				</p>
 
-			<p flex='nogrow' layout-padding>
-				<a ng-href='{{Cyph.Env.homeUrl}}termsofservice'>
-					Terms of Service
-				</a>
-			</p>
+				<p flex='nogrow' layout-padding>
+					<a ng-href='{{Cyph.Env.homeUrl}}termsofservice'>
+						Terms of Service
+					</a>
+				</p>
+			</span>
+
+			<span ng-show='ui.coBranded'>
+				<p flex='nogrow' layout-padding>
+					<a ng-href='{{Cyph.Env.homeUrl}}' class='small-font'>
+						Powered by Cyph
+					</a>
+				</p>
+			</span>
 
 			<div flex></div>
 		</div>

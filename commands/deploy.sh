@@ -540,10 +540,12 @@ if [ $websign ] ; then
 	rm -rf custom-builds/.git
 	for f in custom-builds/*.css ; do
 		customBuild="$(projectname "$(echo "${f}" | perl -pe 's/.*\/(.*)\.css$/\1/')")"
+		customBuildFavicon="$(echo "${f}" | sed 's/\.css$/.favicon.png/')"
 		packages="${packages} ${customBuild}"
 
 		node -e "
 			const cheerio		= require('cheerio');
+			const datauri		= require('datauri');
 			const superSphincs	= require('supersphincs');
 
 			const \$	= cheerio.load(fs.readFileSync('../cyph').toString());
@@ -559,9 +561,32 @@ if [ $websign ] ; then
 					></link>
 				\`);
 
-				\$('head').append(
-					\`<script>self.customBuild	= '${customBuild}';</script>\`
-				);
+				\$('head').find(
+					'link[type=\"image/png\"],' + 
+					'meta[name=\"msapplication-TileImage\"]'
+				).
+					attr('websign-sri-path', '').
+					attr('websign-sri-hash', '').
+					attr('href', '').
+					attr('content', '').
+					addClass('custom-build-favicon')
+				;
+
+				\$('head').append(\`<script>
+					self.customBuild		= '${customBuild}';
+					self.customBuildFavicon	= '\${datauri.sync('${customBuildFavicon}')}';
+
+					Array.prototype.slice.apply(
+						document.getElementsByClassName('custom-build-favicon')
+					).forEach(function (elem) {
+						if (elem instanceof HTMLLinkElement) {
+							elem.href		= self.customBuildFavicon;
+						}
+						else if (elem instanceof HTMLMetaElement) {
+							elem.content	= self.customBuildFavicon;
+						}
+					});
+				</script>\`);
 
 				fs.writeFileSync(
 					'../${customBuild}',

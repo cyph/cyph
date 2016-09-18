@@ -13,6 +13,9 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	/** Beta page state/view. */
 	public betaState: BetaStates	= BetaStates.none;
 
+	/** Indicates whether this is a co-branded instance of Cyph. */
+	public coBranded: boolean		= !!customBuild;
+
 	/** Chat UI. */
 	public chat: Cyph.UI.Chat.IChat;
 

@@ -24,6 +24,7 @@ for (let k of [
 	'navigator',
 	'Audio',
 	'customBuild',
+	'customBuildFavicon',
 	'onthreadmessage',
 	'Translations'
 ]) {

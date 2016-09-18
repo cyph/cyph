@@ -95,6 +95,10 @@ md-toast {
 	z-index: 2;
 }
 
+.small-font {
+	font-size: 80%;
+}
+
 md-toolbar, md-toolbar.md-default-theme:not(.md-menu-toolbar), md-toolbar:not(.md-menu-toolbar) {
 	background-color: #7d4fd3;
 	height: 40px !important;
@@ -372,9 +376,6 @@ html:not(.mobile) .platform-container.mobile .mobile-only {
 		.buttons {
 			margin-left: 20px;
 		}
-
-		// width: 250px;
-
 	}
 }
 
