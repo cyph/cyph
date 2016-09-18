@@ -553,22 +553,14 @@ if [ $websign ] ; then
 			superSphincs.hash(
 				fs.readFileSync('${f}').toString().trim()
 			).then(hash => {
-				\$('head').append(\`
-					<link
-						rel='stylesheet'
-						websign-sri-path='${f}'
-						websign-sri-hash='\${hash.hex}'
-					></link>
-				\`);
-
 				\$('head').find(
 					'link[type=\"image/png\"],' + 
 					'meta[name=\"msapplication-TileImage\"]'
 				).
-					attr('websign-sri-path', '').
-					attr('websign-sri-hash', '').
-					attr('href', '').
-					attr('content', '').
+					removeAttr('websign-sri-path').
+					removeAttr('websign-sri-hash').
+					removeAttr('href').
+					removeAttr('content').
 					addClass('custom-build-favicon')
 				;
 
@@ -587,6 +579,14 @@ if [ $websign ] ; then
 						}
 					});
 				</script>\`);
+
+				\$('body').append(\`
+					<link
+						rel='stylesheet'
+						websign-sri-path='${f}'
+						websign-sri-hash='\${hash.hex}'
+					></link>
+				\`);
 
 				fs.writeFileSync(
 					'../${customBuild}',
