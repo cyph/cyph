@@ -35,11 +35,6 @@ if [ "${1}" == '--site' ] ; then
 	shift
 fi
 
-if [ $simple ] ; then
-	websign=''
-	cacheBustedProjects="$compiledProjects"
-fi
-
 if [ $site ] ; then
 	for var in cacheBustedProjects compiledProjects ; do
 		for d in $(eval "echo \$$var") ; do
@@ -52,6 +47,11 @@ if [ $site ] ; then
 	if [ $site != cyph.im ] ; then
 		websign=''
 	fi
+fi
+
+if [ $simple ] ; then
+	websign=''
+	cacheBustedProjects=''
 fi
 
 if [ "${commit}" ] ; then
