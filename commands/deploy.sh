@@ -395,44 +395,52 @@ for d in $cacheBustedProjects ; do
 			"\)"
 		]).stdout.toString().split("\n").filter(s => s);
 
+		const fileContents		= {};
 		const cacheBustedFiles	= {};
 
+		const getFileName		= file => file.split("/").slice(-1)[0];
 
-		filesToModify.reduce((promise, file) => promise.then(() => {
-			const originalContent	= fs.readFileSync(file).toString();
 
-			return filesToCacheBust.reduce((contentPromise, subresource) =>
-				contentPromise.then(content => {
+		Promise.all(filesToModify.map(file =>
+			new Promise((resolve, reject) => fs.readFile(file, (err, data) => {
+				try {
+					fileContents[file]	= data.toString();
+					resolve();
+				}
+				catch (_) {
+					reject(err);
+				}
+			})).then(() =>
+				filesToCacheBust.reduce((p, subresource) => p.then(content => {
 					if (content.indexOf(subresource) < 0) {
 						return content;
 					}
 
-					cacheBustedFiles[subresource]	= true;
+					cacheBustedFiles[getFileName(subresource)]	= true;
 
 					return superSphincs.hash(
 						fs.readFileSync(subresource).toString()
 					).then(hash =>
 						content.split(subresource).join(`${subresource}?${hash.hex}`)
 					);
+				}), Promise.resolve(fileContents[file])).then(content => {
+					if (content !== fileContents[file]) {
+						fileContents[file]	= content;
+						fs.writeFileSync(file, content);
+					}
 				})
-			, Promise.resolve(originalContent)).then(content => {
-				if (content !== originalContent) {
-					fs.writeFileSync(file, content);
-				}
-			});
-		}), Promise.resolve()).
+			)
+		)).
 
 		/* To save space, remove unused subresources under lib directory */
-		then(() => {
-			for (let subresource of filesToCacheBust) {
-				if (subresource.startsWith("lib/") && !cacheBustedFiles[subresource]) {
-					try {
-						fs.unlinkSync(subresource);
-					}
-					catch (_) {}
-				}
-			}
-		});
+		then(() => Promise.all(
+			filesToCacheBust.filter(subresource =>
+				subresource.startsWith("lib/") &&
+				!cacheBustedFiles[getFileName(subresource)]
+			).map(subresource => new Promise(resolve =>
+				fs.unlink(subresource, resolve)
+			))
+		));
 	'
 
 	cd ..
