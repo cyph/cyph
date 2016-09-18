@@ -37,7 +37,8 @@ export class Chat {
 				restrict: 'A',
 				transclude: true,
 				scope: {
-					$this: '=' + titles.main
+					$this: '=' + titles.main,
+					hideDisconnectMessage: '='
 				},
 				link: scope => scope['Cyph'] = self['Cyph'],
 				template: Templates.chatMain

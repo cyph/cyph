@@ -67,12 +67,13 @@
 
 			<div
 				cyph-chat-main='ui.chat'
+				hide-disconnect-message='ui.coBranded'
 				ng-show='ui.state === Cyph.im.UI.States.chat'
 				layout='column'
 				layout-fill
 				flex
 			>
-				<div ng-hide='ui.coBranded' cyph-signup-form='ui.signupForm'>
+				<div cyph-signup-form='ui.signupForm'>
 					{{Cyph.Strings.signupMessage1}}
 					{{Cyph.Strings.signupMessage2}}
 				</div>

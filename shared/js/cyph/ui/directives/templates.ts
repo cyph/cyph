@@ -382,7 +382,7 @@ export const Templates	= {
 
 						<md-item
 							class='chat-end-message'
-							ng-show='$this.isDisconnected'
+							ng-show='$this.isDisconnected && !hideDisconnectMessage'
 							layout='row'
 							layout-align='center center'
 						>
