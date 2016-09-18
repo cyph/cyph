@@ -247,7 +247,7 @@ input, textarea {
 	box-shadow: 0px 0px 5px rgba(134, 82, 228, 0.8);
 }
 
-.message-item.author-friend {
+.message-item.author-other {
 	background-color: rgba(139, 98, 217, 0.8);
 	box-shadow: 0px 0px 5px rgba(139, 98, 217, 0.8);
 }
@@ -372,7 +372,7 @@ input, textarea {
 		@include transform(rotate(-35deg));
 	}
 
-	.message-item.author-friend {
+	.message-item.author-other {
 		margin-left: 5%;
 
 		.message {
@@ -385,7 +385,7 @@ input, textarea {
 		}
 	}
 
-	.message-item.author-friend:after, .message-item.author-friend:before {
+	.message-item.author-other:after, .message-item.author-other:before {
 		content: '';
 		position: absolute;
 		border-style: solid;
@@ -393,12 +393,12 @@ input, textarea {
 		top: 0px;
 	}
 
-	.message-item.author-friend:after {
+	.message-item.author-other:after {
 		border-color: transparent rgba(139, 98, 217, 0.8);
 		left: -12px;
 	}
 
-	.message-item.author-friend:before {
+	.message-item.author-other:before {
 		border-color: transparent transparent;
 		left: 0px;
 		box-shadow: 5px 1px 5px rgba(139, 98, 217, 0.8);
@@ -999,7 +999,7 @@ html:not(.mobile) .amazon-link {
 				background-color: rgba(0, 0, 0, 0.3);
 			}
 
-			&.author-friend {
+			&.author-other {
 				background-color: rgba(125, 83, 203, 0.4);
 
 				&:before {

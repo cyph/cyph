@@ -19,9 +19,10 @@ export class Thread {
 	private static threadEnvSetup (threadSetupVars: any, importScripts: Function) : void {
 		/* Inherit these from main thread */
 
-		self['customBuild']		= threadSetupVars.customBuild;
-		self['locationData']	= threadSetupVars.locationData;
-		self['navigatorData']	= threadSetupVars.navigatorData;
+		self['customBuild']			= threadSetupVars.customBuild;
+		self['customBuildFavicon']	= threadSetupVars.customBuildFavicon;
+		self['locationData']		= threadSetupVars.locationData;
+		self['navigatorData']		= threadSetupVars.navigatorData;
 
 
 		/* Wrapper to make importScripts work in local dev environments
@@ -184,6 +185,7 @@ export class Thread {
 
 		const threadSetupVars	= {
 			customBuild,
+			customBuildFavicon,
 			locationData: {
 				hash: locationData.hash,
 				host: locationData.host,

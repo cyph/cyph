@@ -808,16 +808,8 @@ md-card {
 	background-color: rgba(81, 49, 140, 0.75);
 }
 
-md-progress-circular {
-	.md-left .md-half-circle {
-		border-top-color: #f1f1f1 !important;
-		border-left-color: #f1f1f1 !important;
-	}
-
-	.md-right .md-half-circle {
-		border-top-color: #f1f1f1 !important;
-		border-right-color: #f1f1f1 !important;
-	}
+md-progress-circular path {
+	stroke: #f1f1f1 !important;
 }
 
 md-progress-linear {

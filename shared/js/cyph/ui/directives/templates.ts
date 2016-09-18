@@ -326,7 +326,10 @@ export const Templates	= {
 
 						<md-item
 							class='message-item unread'
-							ng-class='::"author-" + Cyph.Session.Users[message.author]'
+							ng-class='::
+								"author-" +
+								(Cyph.Session.Users[message.author] || Cyph.Session.Users.other)
+							'
 							ng-repeat='message in $this.messages'
 							layout='row'
 						>
@@ -901,7 +904,7 @@ export const Templates	= {
 		<div layout='row' flex class='footer desktop-only'>
 			<div flex></div>
 
-			<span ng-hide='ui.coBranded'>
+			<div layout='row' ng-hide='ui.coBranded'>
 				<p flex='nogrow' layout-padding>
 					© Cyph 2016 (Patents Pending)
 				</p>
@@ -942,15 +945,15 @@ export const Templates	= {
 						Terms of Service
 					</a>
 				</p>
-			</span>
+			</div>
 
-			<span ng-show='ui.coBranded'>
+			<div layout='row' ng-show='ui.coBranded'>
 				<p flex='nogrow' layout-padding>
 					<a ng-href='{{Cyph.Env.homeUrl}}' class='small-font'>
 						Powered by Cyph
 					</a>
 				</p>
-			</span>
+			</div>
 
 			<div flex></div>
 		</div>
