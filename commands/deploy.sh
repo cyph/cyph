@@ -375,7 +375,9 @@ for d in $cacheBustedProjects ; do
 			"-L",
 			".",
 			"-type",
-			"f"
+			"f",
+			"-mindepth",
+			"2"
 		]).stdout.toString().split("\n").filter(s => s).map(s => s.slice(2));
 
 		const filesToModify		= child_process.spawnSync("find", [
