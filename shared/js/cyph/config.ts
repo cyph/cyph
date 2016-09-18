@@ -97,7 +97,7 @@ export class Config {
 	/** Notifier-related config (used by UI.Notifier). */
 	public static notifierConfig	= {
 		title: 'Cyph',
-		icon: customBuildFavicon || '/img/favicon/apple-touch-icon-180x180.png',
+		icon: customBuildFavicon || '/img/favicon/favicon-192x192.png',
 		audio: '/audio/beep.mp3'
 	};
 
