@@ -713,7 +713,7 @@ find . -type l -exec bash -c '
 	mv "${original}" "${name}"
 ' \;
 
-gcloud app deploy --quiet --no-promote --project cyphme --version $(
+gcloud app deploy --quiet --no-promote --project cyphme --version $version $(
 	if [ $site ] ; then
 		ls $site/*.yaml
 	else
