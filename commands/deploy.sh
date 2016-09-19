@@ -568,6 +568,15 @@ if [ $websign ] ; then
 			const \$	= cheerio.load(fs.readFileSync('../cyph').toString());
 
 			const css	= (fs.readFileSync('${f}').toString() + \`
+				html, body, #main, .cyph-foreground, .chat-begin-message, md-sidenav {
+					background-color: ${customBuildColor} !important;
+				}
+
+				.chat-main.video .video-call.active.playing .logo img {
+					height: 75%;
+					opacity: 0.25;
+				}
+
 				.message-list:after {
 					background-image: url(\${
 						datauri.sync('${customBuildBackground}')
@@ -620,6 +629,12 @@ if [ $websign ] ; then
 						}
 					});
 				</script>\`);
+
+				\$('head').append(\`<style>
+					#pre-load {
+						background-color: ${customBuildColor} !important;
+					}
+				</style>\`);
 
 				\$('body').append(\`
 					<link
