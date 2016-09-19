@@ -695,10 +695,6 @@ else
 	cat ~/.cyph/braintree.sandbox >> default/app.yaml
 fi
 
-deploy () {
-	gcloud app deploy --quiet --no-promote --project cyphme --version $version $*
-}
-
 # Temporary workaround for cache-busting reverse proxies
 if [ ! $test ] ; then
 	for project in cyph.im cyph.video ; do
@@ -717,12 +713,12 @@ find . -type l -exec bash -c '
 	mv "${original}" "${name}"
 ' \;
 
-if [ $site ] ; then
-	deploy "$site/*.yaml"
-else
-	deploy */*.yaml
-fi
-
-deploy dispatch.yaml
+gcloud app deploy --quiet --no-promote --project cyphme --version $(
+	if [ $site ] ; then
+		ls $site/*.yaml
+	else
+		ls */*.yaml
+	fi
+) dispatch.yaml
 
 cd "${dir}"
