@@ -550,7 +550,6 @@ if [ $websign ] ; then
 	mkdir -p pkg/cyph-subresources 2> /dev/null
 	cd pkg/cyph-subresources
 	git clone git@github.com:cyph/custom-builds.git
-	rm -rf custom-builds/.git
 	for f in custom-builds/*.css ; do
 		customBuildBase="$(echo "${f}" | perl -pe 's/.*\/(.*)\.css$/\1/')"
 		customBuild="$(projectname "${customBuildBase}")"
@@ -627,7 +626,7 @@ if [ $websign ] ; then
 			});
 		"
 	done
-	rm *.png *.txt
+	find custom-builds -not -name '*.css' -exec rm -rf {} \;
 	cd ../..
 
 	mv pkg/cyph "pkg/${package}"
