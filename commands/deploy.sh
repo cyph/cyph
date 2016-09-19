@@ -552,13 +552,16 @@ if [ $websign ] ; then
 	git clone git@github.com:cyph/custom-builds.git
 	rm -rf custom-builds/.git
 	for f in custom-builds/*.css ; do
-		customBuild="$(projectname "$(echo "${f}" | perl -pe 's/.*\/(.*)\.css$/\1/')")"
-		customBuildFavicon="$(echo "${f}" | sed 's/\.css$/.favicon.png/')"
+		customBuildBase="$(echo "${f}" | perl -pe 's/.*\/(.*)\.css$/\1/')"
+		customBuild="$(projectname "${customBuildBase}")"
+		customBuildFavicon="custom-builds/${customBuildBase}.favicon.png"
+		customBuildTitle="$(cat "custom-builds/${customBuildBase}.title.txt")"
 		packages="${packages} ${customBuild}"
 
 		node -e "
 			const cheerio		= require('cheerio');
 			const datauri		= require('datauri');
+			const htmlencode	= require('htmlencode');
 			const superSphincs	= require('supersphincs');
 
 			const \$	= cheerio.load(fs.readFileSync('../cyph').toString());
@@ -566,6 +569,17 @@ if [ $websign ] ; then
 			superSphincs.hash(
 				fs.readFileSync('${f}').toString().trim()
 			).then(hash => {
+				\$('title').
+					attr(
+						'ng-bind',
+						\$('title').attr('ng-bind').replace(
+							htmlencode.htmlDecode(\$('title').text().trim()),
+							'${customBuildTitle}'
+						)
+					).
+					text(htmlencode.htmlEncode('${customBuildTitle}'))
+				;
+
 				\$('head').find(
 					'link[type=\"image/png\"],' + 
 					'meta[name=\"msapplication-TileImage\"]'
