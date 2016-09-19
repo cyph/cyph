@@ -622,12 +622,13 @@ if [ $websign ] ; then
 				\`);
 
 				fs.writeFileSync('${f}', css);
+				fs.writeFileSync('${f}.srihash', hash.hex);
 				fs.writeFileSync('../${customBuild}', \$.html().trim());
 			});
 		"
 	done
 	rm -rf custom-builds/.git
-	find custom-builds -type f -not -name '*.css' -exec rm -rf {} \;
+	find custom-builds -type f -not -name '*.css*' -exec rm -rf {} \;
 	cd ../..
 
 	mv pkg/cyph "pkg/${package}"
