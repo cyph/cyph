@@ -554,6 +554,7 @@ if [ $websign ] ; then
 	for f in custom-builds/*.css ; do
 		customBuildBase="$(echo "${f}" | perl -pe 's/.*\/(.*)\.css$/\1/')"
 		customBuild="$(projectname "${customBuildBase}")"
+		customBuildBackground="custom-builds/${customBuildBase}.background.png"
 		customBuildFavicon="custom-builds/${customBuildBase}.favicon.png"
 		customBuildTitle="$(cat "custom-builds/${customBuildBase}.title.txt")"
 		packages="${packages} ${customBuild}"
@@ -566,9 +567,15 @@ if [ $websign ] ; then
 
 			const \$	= cheerio.load(fs.readFileSync('../cyph').toString());
 
-			superSphincs.hash(
-				fs.readFileSync('${f}').toString().trim()
-			).then(hash => {
+			const css	= (fs.readFileSync('${f}').toString() + \`
+				.message-list:after {
+					background-image: url(\${
+						datauri.sync('${customBuildBackground}')
+					}) !important;
+				}
+			\`).trim();
+
+			superSphincs.hash(css).then(hash => {
 				\$('title').
 					attr(
 						'ng-bind',
@@ -615,13 +622,12 @@ if [ $websign ] ; then
 					></link>
 				\`);
 
-				fs.writeFileSync(
-					'../${customBuild}',
-					\$.html().trim()
-				);
+				fs.writeFileSync('${f}', css);
+				fs.writeFileSync('../${customBuild}', \$.html().trim());
 			});
 		"
 	done
+	rm *.png *.txt
 	cd ../..
 
 	mv pkg/cyph "pkg/${package}"
