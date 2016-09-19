@@ -555,6 +555,7 @@ if [ $websign ] ; then
 		customBuild="$(projectname "${customBuildBase}")"
 		customBuildBackground="custom-builds/${customBuildBase}.background.png"
 		customBuildFavicon="custom-builds/${customBuildBase}.favicon.png"
+		customBuildColor="$(cat "custom-builds/${customBuildBase}.color.txt")"
 		customBuildTitle="$(cat "custom-builds/${customBuildBase}.title.txt")"
 		packages="${packages} ${customBuild}"
 
@@ -584,6 +585,13 @@ if [ $websign ] ; then
 						)
 					).
 					text(htmlencode.htmlEncode('${customBuildTitle}'))
+				;
+
+				\$('head').find(
+					'meta[name=\"theme-color\"],' + 
+					'meta[name=\"msapplication-TileColor\"]'
+				).
+					attr('content', '${customBuildColor}')
 				;
 
 				\$('head').find(
