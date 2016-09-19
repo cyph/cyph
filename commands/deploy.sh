@@ -626,7 +626,8 @@ if [ $websign ] ; then
 			});
 		"
 	done
-	find custom-builds -not -name '*.css' -exec rm -rf {} \;
+	rm -rf custom-builds/.git
+	find custom-builds -type f -not -name '*.css' -exec rm -rf {} \;
 	cd ../..
 
 	mv pkg/cyph "pkg/${package}"
