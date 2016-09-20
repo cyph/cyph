@@ -434,7 +434,7 @@ for d in $cacheBustedProjects ; do
 					cacheBustedFiles[getFileName(subresource)]	= true;
 
 					return superSphincs.hash(
-						fs.readFileSync(subresource).toString()
+						fs.readFileSync(subresource)
 					).then(hash =>
 						content.split(subresource).join(`${subresource}?${hash.hex}`)
 					);
