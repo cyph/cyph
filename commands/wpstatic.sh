@@ -1,5 +1,6 @@
 #!/bin/bash
 
+fullDestinationURL="${1}"
 destinationProtocol="$(echo "${1}" | perl -pe 's/(.*?):\/\/.*/\1/')"
 destinationURL="$(echo "${1}" | perl -pe 's/.*?:\/\/(.*)/\1/')"
 
@@ -59,3 +60,99 @@ wget "${downloadURL}" -O wpstatic.zip
 unzip wpstatic.zip
 
 rm -rf wpstatic.zip wp-admin wp-json $(find . -name '*.php')
+
+grep -rl "${fullDestinationURL}" | xargs sed -i "s|${fullDestinationURL}|/blog|g"
+
+mkdir css fonts img js
+
+for f in $(find . -name '*.html') ; do node -e "
+	const cheerio		= require('cheerio');
+	const fetch			= require('node-fetch');
+	const htmlMinifier	= require('html-minifier');
+	const imageType		= require('image-type');
+	const superSphincs	= require('supersphincs');
+
+	const \$	= cheerio.load(fs.readFileSync('${f}').toString());
+
+	Promise.all(
+		\$(
+			'script:not([src]), style'
+		).toArray().map(elem => Promise.resolve().then(() => {
+			elem	= \$(elem);
+
+			const content	= elem.text().trim();
+			const isScript	= elem.prop('tagName').toLowerCase() === 'script';
+
+			elem.text('');
+
+			return superSphincs.hash(content).then(hash => {
+				let path;
+
+				if (isScript) {
+					path	= \`js/\${hash.hex}.js\`;
+					elem.attr('src', \`/blog/\${path}\`);
+				}
+				else {
+					path	= \`css/\${hash.hex}.css\`;
+					elem.replaceWith(\`
+						<link
+							rel='stylesheet'
+							href='/blog/\${path}'
+						></link>
+					\`);
+				}
+
+				fs.writeFileSync(path, content);
+			});
+		})).concat(\$(
+			'img[src]:not([src^=\"/blog\"]), ' +
+			'script[src]:not([src^=\"/blog\"]), ' +
+			'link[rel=\"stylesheet\"][href]:not([href^=\"/blog\"])'
+		).toArray().map(elem => Promise.resolve().then(() => {
+			elem	= \$(elem);
+
+			const tagName	= elem.prop('tagName').toLowerCase();
+			const attr		= tagName === 'link' ? 'href' : 'src';
+			const url		= elem.attr(attr).replace(/^\/\//, 'https://');
+
+			return fetch(
+				url,
+				{headers: {'User-Agent': 'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; Trident/6.0)'}}
+			).then(res =>
+				res.buffer()
+			).then(content => Promise.all([
+				content,
+				superSphincs.hash(content)
+			])).then(results => {
+				const content		= results[0];
+				const hash			= results[1].hex;
+
+				const path		=
+					tagName === 'script' ? \`js/\${hash}.js\` :
+					tagName === 'link' ? \`css/\${hash}.css\` :
+					\`img/\${hash}.\${(imageType(content) || {ext: 'jpg'}).ext}\`
+				;
+
+				elem.attr(attr, \`/blog/\${path}\`);
+				fs.writeFileSync(path, content);
+			});
+		})))
+	).then(() => fs.writeFileSync('${f}', htmlMinifier.minify(
+		\$.html().trim(),
+		{
+			collapseWhitespace: true,
+			removeComments: true
+		}
+	)));
+" ; done
+
+cd css
+grep -r '\.woff' |
+	grep -oP '(http)?(s)?(:)?//.*?\.woff' |
+	sort |
+	uniq |
+	xargs -I% bash -c '
+		path="fonts/$(node -e "require(\"supersphincs\").hash(\"%\").then(hash => console.log(hash.hex))").woff";
+		wget "%" -O ../$path;
+		grep -rl "%" | xargs sed -i "s|%|/blog/${path}|g";
+	'

@@ -52,6 +52,8 @@ RUN npm -g install \
 	mkdirp \
 	datauri \
 	htmlencode \
+	node-fetch \
+	image-type \
 	firebase \
 	firebase-server
 
