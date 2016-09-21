@@ -139,7 +139,10 @@ for f in $(find . -name '*.html') ; do node -e "
 				fs.writeFileSync(path, content);
 			});
 		})))
-	).then(() => fs.writeFileSync('${f}', htmlMinifier.minify(
+	).then(() =>\$('body').append(\`
+		<script src='/lib/js/base.js'></script>
+		<script src='/js/cyph/analytics.js'></script>
+	\`)).then(() => fs.writeFileSync('${f}', htmlMinifier.minify(
 		\$.html().trim(),
 		{
 			collapseWhitespace: true,
