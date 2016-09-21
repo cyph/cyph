@@ -906,7 +906,9 @@ export const Templates	= {
 
 			<div layout='row' ng-hide='ui.coBranded'>
 				<p flex='nogrow' layout-padding>
-					© Cyph 2016 (Patents Pending)
+					<a flex ng-href='{{Cyph.Env.homeUrl}}'>
+						© Cyph 2016 (Patents Pending)
+					</a>
 				</p>
 
 				<p flex='nogrow' layout-padding>
