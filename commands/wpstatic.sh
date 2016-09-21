@@ -146,21 +146,19 @@ for f in $(find . -name '*.html') ; do node -e "
 	)));
 " ; done
 
-cd js
 grep -rl "'//' + disqus_shortname" |
 	xargs sed -i "s|'//' + disqus_shortname|'/blog/js/' + disqus_shortname|g"
 
 for id in cyph cyphtest ; do
-	mkdir ${id}.disqus.com
-	cd ${id}.disqus.com
-	wget https://${id}.disqus.com/embed.js
-	wget https://${id}.disqus.com/count.js
-	cd ..
+	mkdir js/${id}.disqus.com
+	for script in count embed ; do
+		wget https://${id}.disqus.com/${script}.js -O js/${id}.disqus.com/${script}.js
+	done
 done
 
-mkdir -p platform.twitter.com/js
-wget https://platform.twitter.com/jot.html -O platform.twitter.com/jot.html
-for f in $(grep -rl platform.twitter.com) ; do
+mkdir -p js/platform.twitter.com/js
+wget https://platform.twitter.com/jot.html -O js/platform.twitter.com/jot.html
+for f in $(grep -rl https://platform.twitter.com) ; do
 	node -e "
 		const s	= '$(grep -oP '\{[a-z0-9_,:"]+button".*?\}.*?\{.*?\}' ${f})'.
 			replace(/(\\d+):/g, '\"\$1\":')
@@ -173,11 +171,10 @@ for f in $(grep -rl platform.twitter.com) ; do
 			console.log(\`\${a[k]}.\${b[k]}.js\`);
 		}
 	" |
-		xargs -I% wget "https://platform.twitter.com/js/%" -O "platform.twitter.com/js/%"
+		xargs -I% wget "https://platform.twitter.com/js/%" -O "js/platform.twitter.com/js/%"
 
 	sed -i 's|https://platform.twitter.com|/blog/js/platform.twitter.com|g' $f
 done
-cd ..
 
 cd css
 grep -r '\.woff' |
