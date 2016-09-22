@@ -85,13 +85,19 @@ done
 
 
 # Branch config setup
+staging=''
 branch="$(git describe --tags --exact-match 2> /dev/null || git branch | awk '/^\*/{print $2}')"
 if [ $branch == 'prod' ] ; then
 	branch='staging'
+
+	if [ $test -a ! $simple ] ; then
+		staging=true
+	fi
 fi
 version="$branch"
-if [ $test ] ; then
-	version="$(git config --get remote.origin.url | perl -pe 's/.*:(.*)\/.*/\1/' | tr '[:upper:]' '[:lower:]')-${version}"
+username="$(git config --get remote.origin.url | perl -pe 's/.*:(.*)\/.*/\1/' | tr '[:upper:]' '[:lower:]')"
+if [ $test -a $username != cyph ] ; then
+	version="${username}-${version}"
 fi
 if [ $simple ] ; then
 	version="simple-${version}"
@@ -240,13 +246,18 @@ if [ $branch == 'staging' ] ; then
 fi
 
 if [ $test ] ; then
+	newCyphURL="https://${version}.cyph.ws"
+	if [ $simple ] ; then
+		newCyphURL="https://${version}-dot-cyph-im-dot-cyphme.appspot.com"
+	fi
+
 	sed -i "s|staging|${version}|g" default/config.go
 	sed -i "s|http://localhost:42000|https://${version}-dot-cyphme.appspot.com|g" default/config.go
 	ls */*.yaml */js/cyph/envdeploy.ts | xargs -I% sed -i "s|api.cyph.com|${version}-dot-cyphme.appspot.com|g" %
 	ls */*.yaml */js/cyph/envdeploy.ts | xargs -I% sed -i "s|www.cyph.com|${version}-dot-cyph-com-dot-cyphme.appspot.com|g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|${defaultHost}42000|https://${version}-dot-cyphme.appspot.com|g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|${defaultHost}42001|https://${version}-dot-cyph-com-dot-cyphme.appspot.com|g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|${defaultHost}42002|https://${version}-dot-cyph-im-dot-cyphme.appspot.com|g" %
+	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|${defaultHost}42002|${newCyphURL}|g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|CYPH-IO|https://${version}-dot-cyph-io-dot-cyphme.appspot.com|g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|CYPH-ME|https://${version}-dot-cyph-me-dot-cyphme.appspot.com|g" %
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|CYPH-VIDEO|https://${version}-dot-cyph-video-dot-cyphme.appspot.com|g" %
@@ -254,8 +265,10 @@ if [ $test ] ; then
 
 	homeURL="https://${version}-dot-cyph-com-dot-cyphme.appspot.com"
 
-	# Disable caching in test environments
-	ls */*.yaml | xargs -I% sed -i 's|max-age=31536000|max-age=0|g' %
+	if [ ! $staging ] ; then
+		# Disable caching in test environments
+		ls */*.yaml | xargs -I% sed -i 's|max-age=31536000|max-age=0|g' %
+	fi
 else
 	sed -i "s|http://localhost:42000|https://api.cyph.com|g" default/config.go
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|${defaultHost}42000|https://api.cyph.com|g" %
