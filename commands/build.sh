@@ -32,14 +32,15 @@ tsargs="$(node -e '
 
 tsfiles="$( \
 	{ \
-		cat cyph.*/*.html | \
-		grep "<script.*'/js/" & \
-		grep -ro "importScripts('/js/.*)" shared/js; \
+		find . -name '*.html' -exec cat {} \; | \
+		grep -oP "src=(['\"])/js/.*?\1" & \
+		grep -roP "importScripts\((['\"])/js/.*\1\)" shared/js; \
 	} | \
 		grep -v js/config.js | \
-		perl -pe "s/.*?'\/js\/(.*)\.js.*/\1/g" | \
+		perl -pe "s/.*?['\"]\/js\/(.*)\.js.*/\1/g" | \
 		sort | \
 		uniq | \
+		grep -v 'Binary file' | \
 		tr '\n' ' ' \
 )"
 
