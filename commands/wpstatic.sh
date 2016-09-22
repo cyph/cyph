@@ -61,11 +61,15 @@ unzip wpstatic.zip
 
 rm -rf wpstatic.zip wp-admin wp-json $(find . -name '*.php')
 
-grep -rl "${fullDestinationURL}" | xargs sed -i "s|${fullDestinationURL}|/blog|g"
-sleep 1
-grep -rl 'Permalink: /blog' | xargs sed -i "s|Permalink: /blog|Permalink: ${fullDestinationURL}|g"
-sleep 1
-grep -rl '#x2013' | xargs sed -i 's|#x2013|mdash|g'
+for f in $(find . -type f) ; do
+	cat "${f}" |
+		sed "s|${fullDestinationURL}|/blog|g" |
+		sed "s|Permalink: /blog|Permalink: ${fullDestinationURL}|g" |
+		sed 's|&#x2013;|&mdash;|g' \
+	> "${f}.new"
+
+	mv "${f}.new" "${f}"
+done
 
 mkdir css fonts img js
 
