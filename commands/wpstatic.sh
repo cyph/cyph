@@ -65,7 +65,10 @@ for f in $(find . -type f) ; do
 	cat "${f}" |
 		sed "s|${fullDestinationURL}|/blog|g" |
 		sed "s|Permalink: /blog|Permalink: ${fullDestinationURL}|g" |
-		sed 's|&#x2013;|&mdash;|g' \
+		sed 's|–|—|g' |
+		sed 's|&ndash;|\&mdash;|g' |
+		sed 's|&#8211;|\&mdash;|g' |
+		sed 's|&#x2013;|\&mdash;|g' \
 	> "${f}.new"
 
 	mv "${f}.new" "${f}"
