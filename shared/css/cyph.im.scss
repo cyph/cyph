@@ -1113,6 +1113,14 @@ html:not(.mobile) .amazon-link {
 	}
 }
 
+/** Advanced Features Section */
+md-input-container.message-box.first {
+	position: relative;
+	margin: 15px 0;
+	width: 50%;
+	color: white;
+}
+
 /*** SpinKit animation: http://tobiasahlin.com/spinkit/ ***/
 
 .ellipsis-spinner {

@@ -60,6 +60,8 @@ export class Chat extends BaseButtonManager implements IChat {
 	public keyExchangeProgress: number	= 0;
 	public state: States				= States.none;
 
+	public firstMessage: string;
+
 	public messages: {
 		author: string;
 		text: string;
@@ -137,6 +139,8 @@ export class Chat extends BaseButtonManager implements IChat {
 		this.changeState(States.chat);
 		this.addMessage(Strings.introductoryMessage, Session.Users.app, undefined, false);
 		this.setConnected();
+		this.send(this.firstMessage);
+		//Add 'send first message'
 	}
 
 	public changeState (state: States) : void {
@@ -232,6 +236,11 @@ export class Chat extends BaseButtonManager implements IChat {
 	public setFriendTyping (isFriendTyping: boolean) : void {
 		this.isFriendTyping	= isFriendTyping;
 		this.controller.update();
+	}
+
+	public setFirstMessage () : void {
+		this.firstMessage = $('.message-box.first input').val();
+		console.log('firstMessage set to: '+ this.firstMessage);
 	}
 
 	/**

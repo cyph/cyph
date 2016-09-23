@@ -31,6 +31,9 @@ export interface IChat {
 		(approximate / faked out). */
 	keyExchangeProgress: number;
 
+	/** Advanced Features Section */
+	//firstMessage: string;
+
 	/** Chat UI state/view. */
 	state: States;
 
@@ -124,4 +127,10 @@ export interface IChat {
 	 * @param isFriendTyping
 	 */
 	setFriendTyping (isFriendTyping: boolean) : void;
+
+	/**
+	 * Sets the first message to be sent.
+	 * @param messageText
+	 */
+	setFirstMessage(messageText: string) : void;
 }

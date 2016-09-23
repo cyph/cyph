@@ -4,6 +4,8 @@ import {Env} from 'cyph/env';
 import {IController} from 'cyph/icontroller';
 import {Strings} from 'cyph/strings';
 import {Util} from 'cyph/util';
+import * as Chat from 'chat/chat';
+
 
 
 export class LinkConnection implements ILinkConnection {
@@ -48,9 +50,10 @@ export class LinkConnection implements ILinkConnection {
 		}
 		else {
 			const linkInterval	= setInterval(() => {
+				//Elements.connectLinkInput.focus();
 				if (this.isWaiting) {
 					this.setLink();
-					Elements.connectLinkInput.focus();
+					//Elements.connectLinkInput.focus();
 					this.selectLink();
 				}
 				else {

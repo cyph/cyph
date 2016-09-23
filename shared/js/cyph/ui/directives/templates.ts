@@ -695,6 +695,17 @@ export const Templates	= {
 					</timer>
 				</div>
 			</div>
+			<div id='advanced-features'>
+				<md-input-container class='message-box first'>
+					<label>Queue up first message</label>
+					<input type="text">
+				</md-input-container>
+				<md-button
+					ng-click='{{$this.setFirstMessage()}}'
+				>
+					<i class="material-icons">cached</i>
+				</md-button>
+			</div>
 			<div flex></div>
 		</div>
 	`,
