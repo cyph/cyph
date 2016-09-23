@@ -40,7 +40,10 @@ stop () {
 }
 
 
-image="cyph/$(git describe --tags --exact-match 2> /dev/null || git branch | awk '/^\*/{print $2}')"
+image="cyph/$(
+	git describe --tags --exact-match 2> /dev/null ||
+	git branch | awk '/^\*/{print $2}' | tr '[:upper:]' '[:lower:]'
+)"
 
 # Foreground by default
 processType='--rm=true'
