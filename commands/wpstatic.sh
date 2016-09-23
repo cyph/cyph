@@ -200,3 +200,16 @@ grep -r '\.woff' |
 		wget "%" -O ../$path;
 		grep -rl "%" | xargs sed -i "s|%|/blog/${path}|g";
 	'
+cd ..
+
+for path in $(
+	grep -roP '<meta property="og:image".*?>' |
+		perl -pe 's/.*content="\/blog\/(.*?)".*/\1/g' |
+		grep -v 'og:image' |
+		sort |
+		uniq
+) ; do
+	parent="$(echo "${path}" | perl -pe 's/\/[^\/]+$//')"
+	mkdir -p "${parent}"
+	wget "http://localhost:43000/${path}" -O "${path}"
+done
