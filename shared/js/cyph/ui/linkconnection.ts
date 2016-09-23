@@ -1,5 +1,6 @@
 import {Elements} from 'elements';
 import {ILinkConnection} from 'ilinkconnection';
+import {IChat} from 'chat/ichat';
 import {Env} from 'cyph/env';
 import {IController} from 'cyph/icontroller';
 import {Strings} from 'cyph/strings';
@@ -75,7 +76,7 @@ export class LinkConnection implements ILinkConnection {
 		setTimeout(
 			() => {
 				if (this.isWaiting) {
-					this.abort();
+					this.chat.abortSetup();
 				}
 			},
 			this.countdown * 1000
@@ -95,11 +96,11 @@ export class LinkConnection implements ILinkConnection {
 	/**
 	 * @param countdown
 	 * @param controller
-	 * @param abort
+	 * @param chat
 	 */
 	public constructor (
 		public countdown: number,
 		private controller: IController,
-		private abort: Function
+		private chat: IChat
 	) {}
 }

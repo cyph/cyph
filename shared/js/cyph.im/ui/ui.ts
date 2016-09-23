@@ -88,7 +88,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		this.cyphConnection	= new Cyph.UI.LinkConnection(
 			Config.newCyphCountdown,
 			this.controller,
-			() => this.chat.abortSetup()
+			this.chat
 		);
 
 		this.signupForm		= new Cyph.UI.SignupForm(this.controller);
