@@ -84,7 +84,7 @@ ENV HOME /home/gibson
 
 
 RUN wget "$( \
-	curl -s https://cloud.google.com/appengine/downloads | \
+	curl -s https://cloud.google.com/appengine/docs/go/download | \
 	grep -oP 'https://.*?go_appengine_sdk_linux_amd64.*?\.zip' | \
 	head -n1 \
 )" -O ~/go_appengine.zip
