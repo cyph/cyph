@@ -32,7 +32,7 @@ tsargs="$(node -e '
 
 tsfiles="$( \
 	{ \
-		find . -name '*.html' -exec cat {} \; | \
+		find . -name '*.html' -not -path './websign/*' -not -path '*/lib/*' -exec cat {} \; | \
 		grep -oP "src=(['\"])/js/.*?\1" & \
 		grep -roP "importScripts\((['\"])/js/.*\1\)" shared/js; \
 	} | \
