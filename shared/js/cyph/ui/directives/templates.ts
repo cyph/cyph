@@ -703,7 +703,7 @@ export const Templates	= {
 				<md-button
 					ng-click='{{$this.chat.setFirstMessage()}}'
 				>
-					<i class="material-icons">cached</i>
+					<i class='material-icons'>save</i>
 				</md-button>
 			</div>
 			<div flex></div>
