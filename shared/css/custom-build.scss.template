@@ -103,8 +103,8 @@ ${!o.colors.linkConnection ? '' : `
 
 		${!o.colors.messages.other ? '' : `
 			.message-item.author-other {
-				background-color: ${o.colors.messages.me.desktop};
-				box-shadow: 0px 0px 5px ${o.colors.messages.me.desktop};
+				background-color: ${o.colors.messages.other.desktop};
+				box-shadow: 0px 0px 5px ${o.colors.messages.other.desktop};
 				color: ${o.colors.messages.other.text};
 			}
 			&.mobile, &.video {
