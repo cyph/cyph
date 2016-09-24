@@ -701,7 +701,7 @@ export const Templates	= {
 					<input type="text">
 				</md-input-container>
 				<md-button
-					ng-click='{{$this.setFirstMessage()}}'
+					ng-click='{{$this.chat.setFirstMessage()}}'
 				>
 					<i class="material-icons">cached</i>
 				</md-button>
