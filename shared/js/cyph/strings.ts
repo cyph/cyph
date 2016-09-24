@@ -7,6 +7,7 @@ import {Util} from 'util';
  */
 export const Strings = {
 	accept: `accept`,
+	audioCall: `call`,
 	cancel: `cancel`,
 	connectedNotification: `Connected!`,
 	continueDialogAction: `continue`,
@@ -44,7 +45,6 @@ export const Strings = {
 	save: `save`,
 	suregoahead: `sure, go ahead`,
 	videoCall: `video call`,
-	voiceCall: `call`,
 	warningTitle: `Warning`,
 
 	IEWarning:
