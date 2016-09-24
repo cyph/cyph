@@ -7,7 +7,8 @@ ${!o.colors.main ? '' : `
 `}
 
 ${!o.colors.text ? '' : `
-	&, body, #main, .cyph-foreground, .md-button:not(.md-fab):not([disabled]) {
+	&, body, #main, .cyph-foreground, .message-item *,
+	.md-button:not(.md-fab):not([disabled]) {
 		color: ${o.colors.text};
 	}
 `}
@@ -70,7 +71,10 @@ ${!o.colors.linkConnection ? '' : `
 			.message-item.author-app {
 				background-color: ${o.colors.messages.app.desktop};
 				box-shadow: 0px 0px 5px ${o.colors.messages.app.desktop};
-				color: ${o.colors.messages.app.text};
+
+				* {
+					color: ${o.colors.messages.app.text};
+				}
 			}
 			&.mobile, &.video {
 				.message-item.author-app {
@@ -84,7 +88,10 @@ ${!o.colors.linkConnection ? '' : `
 			.message-item.author-me {
 				background-color: ${o.colors.messages.me.desktop};
 				box-shadow: 0px 0px 5px ${o.colors.messages.me.desktop};
-				color: ${o.colors.messages.me.text};
+
+				* {
+					color: ${o.colors.messages.me.text};
+				}
 			}
 			&.mobile, &.video {
 				.message-item.author-me {
@@ -105,7 +112,10 @@ ${!o.colors.linkConnection ? '' : `
 			.message-item.author-other {
 				background-color: ${o.colors.messages.other.desktop};
 				box-shadow: 0px 0px 5px ${o.colors.messages.other.desktop};
-				color: ${o.colors.messages.other.text};
+
+				* {
+					color: ${o.colors.messages.other.text};
+				}
 			}
 			&.mobile, &.video {
 				.message-item.author-other {
