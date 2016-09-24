@@ -35,7 +35,6 @@ export const Templates	= {
 
 	helpModal: `
 		<md-dialog class='help'>
-
 			<md-content>
 				<md-tabs md-dynamic-height md-border-bottom>
 					<md-tab label='Formatting Help'>
@@ -127,14 +126,14 @@ export const Templates	= {
 								</tr>
 							</tbody>
 						</table>
-					</div>
-					<md-tab label='Contact Cyph'>
-					<span translate> Please check out the </span>
-					<a href='{{Cyph.Env.homeUrl}}faq'>FAQs</a>
-					<span translate> first!</span>
-					<br />
-					<br />
-					<br />
+					</md-tab>
+					<md-tab label='Contact Cyph' class='contact-cyph-tab'>
+						<span translate> Please check out the</span>
+						<a href='{{Cyph.Env.homeUrl}}faq'>FAQs</a>
+						<span translate>first!</span>
+						<br />
+						<br />
+						<br />
 						<cyph-contact to='"help"'></cyph-contact>
 					</md-tab>
 				</md-tabs>

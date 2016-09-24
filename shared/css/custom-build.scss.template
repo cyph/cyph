@@ -134,4 +134,15 @@ ${!o.colors.messageBox ? '' : `
 	}
 `}
 
+${!o.colors.newMessages ? '' : `
+	.new-messages {
+		background-color: ${o.colors.newMessages.background};
+		color: ${o.colors.newMessages.text};
+	}
+`}
+
+.contact-cyph-tab {
+	display: none;
+}
+
 }
