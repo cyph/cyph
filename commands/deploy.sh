@@ -544,13 +544,11 @@ if [ $websign ] ; then
 	mkdir -p pkg/cyph-subresources 2> /dev/null
 	cd pkg/cyph-subresources
 	git clone git@github.com:cyph/custom-builds.git
-	for f in custom-builds/*.css ; do
-		customBuildBase="$(echo "${f}" | perl -pe 's/.*\/(.*)\.css$/\1/')"
+	for f in custom-builds/*.json ; do
+		customBuildBase="$(echo "${f}" | perl -pe 's/.*\/(.*)\.json$/\1/')"
 		customBuild="$(projectname "${customBuildBase}")"
 		customBuildBackground="custom-builds/${customBuildBase}.background.png"
 		customBuildFavicon="custom-builds/${customBuildBase}.favicon.png"
-		customBuildColor="$(cat "custom-builds/${customBuildBase}.color.txt")"
-		customBuildTitle="$(cat "custom-builds/${customBuildBase}.title.txt")"
 		packages="${packages} ${customBuild}"
 
 		node -e "
@@ -560,23 +558,15 @@ if [ $websign ] ; then
 			const superSphincs	= require('supersphincs');
 
 			const \$	= cheerio.load(fs.readFileSync('../cyph').toString());
+			const o		= JSON.parse(fs.readFileSync('${f}').toString());
 
-			const css	= (fs.readFileSync('${f}').toString() + \`
-				html, body, #main, .cyph-foreground, .chat-begin-message, md-sidenav {
-					background-color: ${customBuildColor} !important;
-				}
+			o.background	= datauri.sync('${customBuildBackground}');
 
-				.chat-main.video .video-call.active.playing .logo img {
-					height: 75%;
-					opacity: 0.25;
-				}
-
-				.message-list:after {
-					background-image: url(\${
-						datauri.sync('${customBuildBackground}')
-					}) !important;
-				}
-			\`).trim();
+			const css	= child_process.spawnSync('cleancss', [], {input:
+				child_process.spawnSync('sass', ['-s', '--scss'], {input: \`
+					$(cat shared/css/custom-build.scss.template | sed 's|;| \!important;|g')
+				\`}).stdout.toString()
+			}).stdout.toString().trim();
 
 			superSphincs.hash(css).then(hash => {
 				\$('title').
@@ -584,18 +574,26 @@ if [ $websign ] ; then
 						'ng-bind',
 						\$('title').attr('ng-bind').replace(
 							htmlencode.htmlDecode(\$('title').text().trim()),
-							'${customBuildTitle}'
+							o.title
 						)
 					).
-					text(htmlencode.htmlEncode('${customBuildTitle}'))
+					text(htmlencode.htmlEncode(o.title))
 				;
 
-				\$('head').find(
-					'meta[name=\"theme-color\"],' + 
-					'meta[name=\"msapplication-TileColor\"]'
-				).
-					attr('content', '${customBuildColor}')
-				;
+				if (o.colors.main) {
+					\$('head').find(
+						'meta[name=\"theme-color\"],' + 
+						'meta[name=\"msapplication-TileColor\"]'
+					).
+						attr('content', o.colors.main)
+					;
+
+					\$('head').append(\`<style>
+						#pre-load {
+							background-color: \${o.colors.main} !important;
+						}
+					</style>\`);
+				}
 
 				\$('head').find(
 					'link[type=\"image/png\"],' + 
@@ -623,12 +621,6 @@ if [ $websign ] ; then
 						}
 					});
 				</script>\`);
-
-				\$('head').append(\`<style>
-					#pre-load {
-						background-color: ${customBuildColor} !important;
-					}
-				</style>\`);
 
 				\$('body').append(\`
 					<link

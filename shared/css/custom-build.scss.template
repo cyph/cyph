@@ -1,0 +1,133 @@
+${!o.colors.main ? '' : `
+	html, body, #main, .cyph-foreground, .chat-begin-message, md-sidenav {
+		background-color: ${o.colors.main};
+	}
+`}
+
+${!o.colors.card ? '' : `
+	md-card {
+		background-color: ${o.colors.card};
+	}
+`}
+
+${!o.colors.dialog ? '' : `
+	md-dialog {
+		background-color: ${o.colors.dialog};
+	}
+`}
+
+${!o.colors.speedDial ? '' : `
+	md-fab-trigger .md-button {
+		background-color: ${o.colors.speedDial};
+	}
+`}
+
+${!o.background ? '' : `
+	.message-list:after {
+		background-image: url(${o.background});
+	}
+`}
+
+${!o.speedDialInvert ? '' : `
+	md-fab-actions .md-button md-icon.grey {
+		color: #f1f1f1;
+	}
+	md-fab-actions .md-button {
+		background-color: #444;
+	}
+`}
+
+${!o.colors.linkConnection ? '' : `
+	.link-connection {
+		.connect-link-mobile .md-button:not([disabled=disabled]) {
+			background-color: ${o.colors.linkConnection.buttons};
+		}
+
+		.connect-link-input input {
+			background-color: ${o.colors.linkConnection.input.background};
+			border: 1px solid ${o.colors.linkConnection.input.border};
+			box-shadow: 0px 0px 10px ${o.colors.linkConnection.input.shadow};
+		}
+	}
+`}
+
+.chat-main {
+	&.video .video-call.active.playing .logo img {
+		height: 75%;
+		opacity: 0.4;
+	}
+
+	${!o.colors.messages ? '' : `
+		${!o.colors.messages.app ? '' : `
+			.message-item .author-app {
+				background-color: ${o.colors.messages.app.desktop};
+				box-shadow: 0px 0px 5px ${o.colors.messages.app.desktop};
+			}
+			&.mobile, &.video {
+				.message-item .author-app {
+					background-color: ${o.colors.messages.app.mobile};
+					box-shadow: 0px 0px 5px ${o.colors.messages.app.mobile};
+				}
+			}
+		`}
+
+		${!o.colors.messages.me ? '' : `
+			.message-item .author-me {
+				background-color: ${o.colors.messages.me.desktop};
+				box-shadow: 0px 0px 5px ${o.colors.messages.me.desktop};
+			}
+			&.mobile, &.video {
+				.message-item .author-me {
+					background-color: ${o.colors.messages.me.mobilePrimary};
+					box-shadow: 0px 0px 5px ${o.colors.messages.me.mobilePrimary};
+
+					&:after {
+						border-color: transparent ${o.colors.messages.me.mobileBorder};
+					}
+					&:before {
+						box-shadow: 5px 1px 5px ${o.colors.messages.me.mobileShadow};
+					}
+				}
+			}
+		`}
+
+		${!o.colors.messages.other ? '' : `
+			.message-item .author-other {
+				background-color: ${o.colors.messages.me.desktop};
+				box-shadow: 0px 0px 5px ${o.colors.messages.me.desktop};
+			}
+			&.mobile, &.video {
+				.message-item .author-other {
+					background-color: ${o.colors.messages.other.mobilePrimary};
+					box-shadow: 0px 0px 5px ${o.colors.messages.other.mobilePrimary};
+
+					&:after {
+						border-color: transparent ${o.colors.messages.other.mobileBorder};
+					}
+					&:before {
+						box-shadow: 5px 1px 5px ${o.colors.messages.other.mobileShadow};
+					}
+				}
+			}
+		`}
+	`}
+}
+
+${!o.colors.messageBox ? '' : `
+	.chat-message-box {
+		.message-box {
+			background-color: ${o.colors.messageBox.background};
+			color: ${o.colors.messageBox.text};
+		}
+
+		&:not(.mobile) .message-box:focus {
+			box-shadow: 0px 0px 10px ${o.colors.messageBox.desktopGlow};
+			border: 1px solid ${o.colors.messageBox.desktopGlow};
+		}
+
+		&.mobile .message-box:focus {
+			box-shadow: 0px 0px 10px ${o.colors.messageBox.mobileGlow};
+			border: 1px solid ${o.colors.messageBox.mobileGlow};
+		}
+	}
+`}
