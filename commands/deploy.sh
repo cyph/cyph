@@ -564,7 +564,7 @@ if [ $websign ] ; then
 
 			const css	= child_process.spawnSync('cleancss', [], {input:
 				child_process.spawnSync('sass', ['-s', '--scss'], {input: \`
-					$(cat shared/css/custom-build.scss.template | sed 's|;| \!important;|g')
+					$(cat ../../shared/css/custom-build.scss.template | sed 's|;| \!important;|g')
 				\`}).stdout.toString()
 			}).stdout.toString().trim();
 
