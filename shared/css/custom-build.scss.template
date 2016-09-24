@@ -1,3 +1,5 @@
+@import 'bourbon/bourbon';
+
 html {
 
 ${!o.colors.main ? '' : `
