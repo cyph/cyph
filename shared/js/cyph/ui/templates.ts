@@ -127,8 +127,8 @@ export const Templates	= {
 							</tbody>
 						</table>
 					</md-tab>
-					<md-tab label='Contact Cyph' class='contact-cyph-tab'>
-						<span translate> Please check out the</span>
+					<md-tab label='Contact Cyph' ng-disabled='ui.coBranded'>
+						<span translate>Please check out the</span>
 						<a href='{{Cyph.Env.homeUrl}}faq'>FAQs</a>
 						<span translate>first!</span>
 						<br />

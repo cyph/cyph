@@ -141,7 +141,7 @@ ${!o.colors.newMessages ? '' : `
 	}
 `}
 
-.contact-cyph-tab {
+md-dialog.help md-tab-item[disabled] {
 	display: none;
 }
 
