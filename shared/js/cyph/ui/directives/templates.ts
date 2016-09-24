@@ -698,7 +698,7 @@ export const Templates	= {
 			<div id='advanced-features'>
 				<md-input-container class='message-box first'>
 					<label>Queue up first message</label>
-					<input type="text">
+					<textarea rows='3'></textarea>
 				</md-input-container>
 				<md-button
 					ng-click='{{$this.chat.setFirstMessage()}}'

@@ -1116,9 +1116,36 @@ html:not(.mobile) .amazon-link {
 /** Advanced Features Section */
 md-input-container.message-box.first {
 	position: relative;
+	top: 25px;
 	margin: 15px 0;
 	width: 50%;
+}
+
+md-input-container.message-box.first textarea {
 	color: white;
+	background-color: rgba(180, 141, 255, 0.95);
+	max-height: 150px;
+	overflow-y: scroll;
+	position: relative;
+	padding: 10px 15px;
+	top: 10px;
+}
+
+md-input-container.message-box label:not(.md-no-float) {
+	transform: translate3d(12.5%,6px,0) scale(.75);
+}
+
+#advanced-features .md-button {
+	position: absolute;
+	margin-top: 75px;
+}
+
+#advanced-features md-input-container:not(.md-input-invalid).md-input-focused .md-input {
+	border-color: #51318C;
+}
+
+#advanced-features md-input-container:not(.md-input-invalid).md-input-focused label {
+	color: #51318C;
 }
 
 /*** SpinKit animation: http://tobiasahlin.com/spinkit/ ***/

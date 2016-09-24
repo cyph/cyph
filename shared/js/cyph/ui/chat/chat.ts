@@ -239,7 +239,7 @@ export class Chat extends BaseButtonManager implements IChat {
 	}
 
 	public setFirstMessage () : void {
-		this.firstMessage = $('.message-box.first input').val();
+		this.firstMessage = $('.message-box.first textarea').val();
 		console.log('firstMessage set to: '+ this.firstMessage);
 	}
 
