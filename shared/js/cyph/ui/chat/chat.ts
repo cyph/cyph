@@ -62,6 +62,9 @@ export class Chat extends BaseButtonManager implements IChat {
 
 	public firstMessage: string;
 
+	public setToSelfDestruct: boolean = true;
+	public selfDesructTime: number = 15000;
+
 	public messages: {
 		author: string;
 		text: string;
@@ -140,7 +143,8 @@ export class Chat extends BaseButtonManager implements IChat {
 		this.addMessage(Strings.introductoryMessage, Session.Users.app, undefined, false);
 		this.setConnected();
 		this.send(this.firstMessage);
-		//Add 'send first message'
+		await Util.sleep(this.selfDesructTime);
+		this.selfDestruct();
 	}
 
 	public changeState (state: States) : void {
@@ -241,6 +245,13 @@ export class Chat extends BaseButtonManager implements IChat {
 	public setFirstMessage () : void {
 		this.firstMessage = $('.message-box.first textarea').val();
 		console.log('firstMessage set to: '+ this.firstMessage);
+	}
+
+	public selfDestruct () : void {
+		$('.chat-message-box').remove();
+		Util.sleep(this.selfDesructTime);
+		this.close();
+		$('.message-item').remove();
 	}
 
 	/**

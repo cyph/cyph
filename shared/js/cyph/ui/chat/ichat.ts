@@ -132,5 +132,11 @@ export interface IChat {
 	 * Sets the first message to be sent.
 	 * @param messageText
 	 */
-	setFirstMessage(messageText: string) : void;
+	setFirstMessage (messageText: string) : void;
+
+	/**
+	 * Destroys Cyph
+	 */
+	selfDestruct () : void;
+	
 }
