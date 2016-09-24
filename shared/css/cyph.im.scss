@@ -637,6 +637,7 @@ html.mobile button[disabled] {
 			margin-left: auto;
 			margin-right: auto;
 			display: block;
+			@include filter(drop-shadow(3px 3px 3px rgba(68, 68, 68, 0.25)));
 		}
 	}
 
