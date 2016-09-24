@@ -549,6 +549,7 @@ if [ $websign ] ; then
 		customBuild="$(projectname "${customBuildBase}")"
 		customBuildBackground="custom-builds/${customBuildBase}.background.png"
 		customBuildFavicon="custom-builds/${customBuildBase}.favicon.png"
+		customBuildStylesheet="custom-builds/${customBuildBase}.css"
 		packages="${packages} ${customBuild}"
 
 		node -e "
@@ -625,13 +626,13 @@ if [ $websign ] ; then
 				\$('body').append(\`
 					<link
 						rel='stylesheet'
-						websign-sri-path='${f}'
+						websign-sri-path='${customBuildStylesheet}'
 						websign-sri-hash='\${hash.hex}'
 					></link>
 				\`);
 
-				fs.writeFileSync('${f}', css);
-				fs.writeFileSync('${f}.srihash', hash.hex);
+				fs.writeFileSync('${customBuildStylesheet}', css);
+				fs.writeFileSync('${customBuildStylesheet}.srihash', hash.hex);
 				fs.writeFileSync('../${customBuild}', \$.html().trim());
 			});
 		"
