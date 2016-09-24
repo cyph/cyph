@@ -7,7 +7,7 @@ ${!o.colors.main ? '' : `
 `}
 
 ${!o.colors.text ? '' : `
-	&, * {
+	&, body, #main, .cyph-foreground, .md-button:not(.md-fab):not([disabled]) {
 		color: ${o.colors.text};
 	}
 `}
