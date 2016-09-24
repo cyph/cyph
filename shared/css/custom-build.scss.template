@@ -48,7 +48,7 @@ ${!o.speedDialInvert ? '' : `
 
 ${!o.colors.linkConnection ? '' : `
 	.link-connection {
-		.connect-link-mobile .md-button:not([disabled=disabled]) {
+		.connect-link-mobile .md-button {
 			background-color: ${o.colors.linkConnection.buttons};
 		}
 
