@@ -72,6 +72,7 @@ ${!o.colors.linkConnection ? '' : `
 			.message-item.author-app {
 				background-color: ${o.colors.messages.app.desktop};
 				box-shadow: 0px 0px 5px ${o.colors.messages.app.desktop};
+				color: ${o.colors.messages.app.text};
 			}
 			&.mobile, &.video {
 				.message-item.author-app {
@@ -85,6 +86,7 @@ ${!o.colors.linkConnection ? '' : `
 			.message-item.author-me {
 				background-color: ${o.colors.messages.me.desktop};
 				box-shadow: 0px 0px 5px ${o.colors.messages.me.desktop};
+				color: ${o.colors.messages.me.text};
 			}
 			&.mobile, &.video {
 				.message-item.author-me {
@@ -105,6 +107,7 @@ ${!o.colors.linkConnection ? '' : `
 			.message-item.author-other {
 				background-color: ${o.colors.messages.me.desktop};
 				box-shadow: 0px 0px 5px ${o.colors.messages.me.desktop};
+				color: ${o.colors.messages.other.text};
 			}
 			&.mobile, &.video {
 				.message-item.author-other {
