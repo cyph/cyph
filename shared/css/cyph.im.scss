@@ -228,8 +228,10 @@ input, textarea {
 	padding-left: 20px;
 }
 
-.chat-main.mobile .friend-is-typing {
-	text-align: center;
+.chat-main.mobile, .chat-main.video{
+	.friend-is-typing {
+		text-align: center;
+	}
 }
 
 .message-list {
