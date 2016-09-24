@@ -156,6 +156,6 @@ md-dialog.help md-tab-item[disabled] {
 	display: none;
 }
 
-${o.additionalStyling}
+${o.additionalStyling ? o.additionalStyling : ''}
 
 }
