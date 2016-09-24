@@ -6,6 +6,12 @@ ${!o.colors.main ? '' : `
 	}
 `}
 
+${!o.colors.text ? '' : `
+	&, * {
+		color: ${o.colors.text};
+	}
+`}
+
 ${!o.colors.card ? '' : `
 	md-card {
 		background-color: ${o.colors.card};
@@ -144,5 +150,7 @@ ${!o.colors.newMessages ? '' : `
 md-dialog.help md-tab-item[disabled] {
 	display: none;
 }
+
+${o.additionalStyling}
 
 }

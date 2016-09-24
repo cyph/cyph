@@ -559,7 +559,7 @@ if [ $websign ] ; then
 			const superSphincs	= require('supersphincs');
 
 			const \$	= cheerio.load(fs.readFileSync('../cyph').toString());
-			const o		= JSON.parse(fs.readFileSync('${f}').toString());
+			const o		= JSON.parse(fs.readFileSync('${f}').toString().replace(/\s/g, ' '));
 
 			o.background	= datauri.sync('${customBuildBackground}');
 
