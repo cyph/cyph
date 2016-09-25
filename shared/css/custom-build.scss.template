@@ -48,7 +48,9 @@ ${!o.speedDialInvert ? '' : `
 ${!o.colors.linkConnection ? '' : `
 	.link-connection {
 		.connect-link-mobile .md-button {
-			background-color: ${o.colors.linkConnection.buttons};
+			&, &:not([disabled=disabled]), &:hover, &:hover:not([disabled=disabled]) {
+				background-color: ${o.colors.linkConnection.buttons};
+			}
 		}
 
 		.connect-link-input input {
