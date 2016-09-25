@@ -204,7 +204,7 @@ chmod +x /portredirect.sh
 cat > /systemupdate.sh << EndOfMessage
 #!/bin/bash
 
-su cyph -c 'npm update'
+su cyph -c 'cd ; npm update'
 
 export DEBIAN_FRONTEND=noninteractive
 apt-get -y --force-yes update
