@@ -157,13 +157,14 @@ read -r -d '' nginxconf <<- EOM
 EOM
 
 
-rekeyscriptDecoded="$(echo "${rekeyscript}" | base64 --decode)"
-echo "${rekeyscriptDecoded/NGINX_CONF/$nginxconf}" | \
-	sed "s|API_KEY|${apikey}|g" | \
-	sed "s|ORDER_ID|${orderid}|g" | \
-	sed "s|CSR_SUBJECT|${csrSubject}|g" | \
-	sed 's|ssl/|ssl/websign/|g' \
-> /hpkpsuicide.sh
+rekeyscriptDecoded="$(
+	echo "${rekeyscript}" | base64 --decode |
+	sed "s|API_KEY|${apikey}|g" |
+	sed "s|ORDER_ID|${orderid}|g" |
+	sed "s|CSR_SUBJECT|${csrSubject}|g" |
+	sed 's|ssl/|ssl/websign/|g'
+)"
+echo "${rekeyscriptDecoded/NGINX_CONF/$nginxconf}" | sed 's|443|8081|g' > /hpkpsuicide.sh
 
 
 chmod 700 /systemupdate.sh /hpkpsuicide.sh
