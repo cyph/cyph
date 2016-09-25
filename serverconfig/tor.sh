@@ -25,10 +25,14 @@ gpg --keyserver keys.gnupg.net --recv 886DDD89
 gpg --export A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89 | apt-key add -
 apt-get -y --force-yes update
 apt-get -y --force-yes upgrade
-apt-get -y --force-yes install curl
-curl -sL https://deb.nodesource.com/setup_6.x | bash -
-apt-get -y --force-yes update
-apt-get -y --force-yes install apt dpkg nginx openssl nodejs deb.torproject.org-keyring tor
+apt-get -y --force-yes install apt dpkg nginx openssl curl deb.torproject.org-keyring tor
+
+while ! node -e '' 2> /dev/null ; do
+	apt-get -y --force-yes remove nodejs
+	curl -sL https://deb.nodesource.com/setup_6.x | bash -
+	apt-get -y --force-yes update
+	apt-get -y --force-yes install nodejs
+done
 
 mkdir -p /etc/nginx/ssl/websign
 chmod 600 -R /etc/nginx/ssl

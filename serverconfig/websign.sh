@@ -15,10 +15,14 @@ sed -i 's/\/\/.*archive.ubuntu.com/\/\/archive.ubuntu.com/g' /etc/apt/sources.li
 export DEBIAN_FRONTEND=noninteractive
 apt-get -y --force-yes update
 apt-get -y --force-yes upgrade
-apt-get -y --force-yes install curl
-curl -sL https://deb.nodesource.com/setup_6.x | bash -
-apt-get -y --force-yes update
-apt-get -y --force-yes install apt dpkg nginx openssl nodejs git
+apt-get -y --force-yes install apt dpkg nginx openssl curl git
+
+while ! node -e '' 2> /dev/null ; do
+	apt-get -y --force-yes remove nodejs
+	curl -sL https://deb.nodesource.com/setup_6.x | bash -
+	apt-get -y --force-yes update
+	apt-get -y --force-yes install nodejs
+done
 
 mkdir /etc/nginx/ssl
 chmod 600 /etc/nginx/ssl

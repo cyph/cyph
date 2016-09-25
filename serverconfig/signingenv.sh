@@ -45,11 +45,17 @@ iface eth0 inet static
 EndOfMessage
 
 export DEBIAN_FRONTEND=noninteractive
-apt-get -y --force-yes install curl
-curl -sL https://deb.nodesource.com/setup_6.x | bash -
 apt-get -y --force-yes update
-apt-get -y --force-yes install nodejs ecryptfs-utils lsof
+apt-get -y --force-yes upgrade
+apt-get -y --force-yes install curl ecryptfs-utils lsof
 apt-get -y --force-yes remove apache2 openssh-server
+
+while ! node -e '' 2> /dev/null ; do
+	apt-get -y --force-yes remove nodejs
+	curl -sL https://deb.nodesource.com/setup_6.x | bash -
+	apt-get -y --force-yes update
+	apt-get -y --force-yes install nodejs
+done
 
 npm -g install xkcd-passphrase
 
