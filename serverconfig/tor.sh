@@ -20,19 +20,17 @@ sed -i 's/# deb /deb /g' /etc/apt/sources.list
 sed -i 's/\/\/.*archive.ubuntu.com/\/\/archive.ubuntu.com/g' /etc/apt/sources.list
 
 export DEBIAN_FRONTEND=noninteractive
-echo "deb http://deb.torproject.org/torproject.org $(lsb_release -c | awk '{print $2}') main" >> /etc/apt/sources.list
+distro="$(lsb_release -c | awk '{print $2}')"
+echo "
+	deb http://deb.torproject.org/torproject.org ${distro} main
+	deb https://deb.nodesource.com/node_6.x ${distro} main
+" >> /etc/apt/sources.list
 gpg --keyserver keys.gnupg.net --recv 886DDD89
 gpg --export A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89 | apt-key add -
+wget -qO- https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
 apt-get -y --force-yes update
 apt-get -y --force-yes upgrade
-apt-get -y --force-yes install apt dpkg nginx openssl curl deb.torproject.org-keyring tor
-
-while ! node -e '' 2> /dev/null ; do
-	apt-get -y --force-yes remove nodejs
-	curl -sL https://deb.nodesource.com/setup_6.x | bash -
-	apt-get -y --force-yes update
-	apt-get -y --force-yes install nodejs
-done
+apt-get -y --force-yes install apt dpkg nginx openssl curl nodejs deb.torproject.org-keyring tor
 
 mkdir -p /etc/nginx/ssl/websign
 chmod 600 -R /etc/nginx/ssl

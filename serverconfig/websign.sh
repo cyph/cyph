@@ -13,16 +13,12 @@ sed -i 's/# deb /deb /g' /etc/apt/sources.list
 sed -i 's/\/\/.*archive.ubuntu.com/\/\/archive.ubuntu.com/g' /etc/apt/sources.list
 
 export DEBIAN_FRONTEND=noninteractive
+distro="$(lsb_release -c | awk '{print $2}')"
+echo "deb https://deb.nodesource.com/node_6.x ${distro} main" >> /etc/apt/sources.list
+wget -qO- https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
 apt-get -y --force-yes update
 apt-get -y --force-yes upgrade
-apt-get -y --force-yes install apt dpkg nginx openssl curl git
-
-while ! node -e '' 2> /dev/null ; do
-	apt-get -y --force-yes remove nodejs
-	curl -sL https://deb.nodesource.com/setup_6.x | bash -
-	apt-get -y --force-yes update
-	apt-get -y --force-yes install nodejs
-done
+apt-get -y --force-yes install apt dpkg nginx openssl curl nodejs git
 
 mkdir /etc/nginx/ssl
 chmod 600 /etc/nginx/ssl
