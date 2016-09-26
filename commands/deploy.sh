@@ -580,7 +580,7 @@ if [ $websign ] ; then
 			const htmlencode	= require('htmlencode');
 			const superSphincs	= require('supersphincs');
 
-			const \$	= cheerio.load(fs.readFileSync('../cyph').toString());
+			const \$	= cheerio.load(fs.readFileSync('../cyph.ws').toString());
 
 			const o		= JSON.parse(
 				fs.readFileSync('${customBuildTheme}').toString().replace(/\s/g, ' ')
