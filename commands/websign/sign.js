@@ -43,7 +43,8 @@ const items			= args.items.map(s => s.split('=')).map(arr => ({
 		timestamp,
 		expires: timestamp + signatureTTL * 2.628e+9,
 		hashWhitelist: args.hashWhitelist,
-		package: fs.readFileSync(arr[0]).toString().trim()
+		package: fs.readFileSync(arr[0]).toString().trim(),
+		packageName: arr[1].split('/').slice(-1)[0]
 	})
 }));
 

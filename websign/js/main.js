@@ -1,5 +1,10 @@
 var isHiddenService	= location.host.split('.').slice(-1)[0] === 'onion';
 
+var packageName		= isHiddenService ?
+	location.host.split('.')[0].replace(/_/g, '.') :
+	location.host
+;
+
 /* Set pin on www subdomain on first use, then force naked domain */
 if (location.host.indexOf('www.') === 0) {
 	location.host	= location.host.replace('www.', '');
@@ -39,11 +44,7 @@ then(function (continent) {
 			'https://' +
 			newContinent +
 			cdnUrlBase +
-			(
-				isHiddenService ?
-					location.host.split('.')[0].replace(/_/g, '.') :
-					location.host
-			) +
+			packageName +
 			'/'
 		;
 
@@ -153,7 +154,8 @@ then(function (results) {
 	/* Reject if expired or has invalid timestamp */
 	if (
 		Date.now() > opened.expires ||
-		downloadMetadata.packageTimestamp !== opened.timestamp
+		downloadMetadata.packageTimestamp !== opened.timestamp ||
+		packageName !== opened.packageName
 	) {
 		throw 'Stale or invalid data.';
 	}
