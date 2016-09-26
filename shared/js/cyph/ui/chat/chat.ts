@@ -62,8 +62,8 @@ export class Chat extends BaseButtonManager implements IChat {
 
 	public firstMessage: string;
 
-	public setToSelfDestruct: boolean = true;
-	public selfDesructTime: number = 15000;
+	public setToSelfDestruct: boolean = false;
+	public selfDesructTime: number = 10000;
 
 	public messages: {
 		author: string;
@@ -143,8 +143,10 @@ export class Chat extends BaseButtonManager implements IChat {
 		this.addMessage(Strings.introductoryMessage, Session.Users.app, undefined, false);
 		this.setConnected();
 		this.send(this.firstMessage);
-		await Util.sleep(this.selfDesructTime);
-		this.selfDestruct();
+		if (this.setToSelfDestruct === true){
+			await Util.sleep(this.selfDesructTime);
+			this.selfDestruct();
+		}
 	}
 
 	public changeState (state: States) : void {

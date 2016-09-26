@@ -700,11 +700,23 @@ export const Templates	= {
 					<label>Queue up first message</label>
 					<textarea rows='3'></textarea>
 				</md-input-container>
-				<md-button
-					ng-click='{{$this.chat.setFirstMessage()}}'
-				>
-					<i class='material-icons'>save</i>
-				</md-button>
+				<div class='buttons'>
+					<md-button
+						ng-click='$this.chat.setFirstMessage()'
+					>
+						<i class='material-icons'>save</i>
+					</md-button>
+					<md-button
+						ng-click='$this.chat.setToSelfDestruct = !$this.chat.setToSelfDestruct'
+						class='self-destruct'
+					>
+						<i
+							class='material-icons'
+							ng-class='{"active": $this.chat.setToSelfDestruct === true}'
+						>
+							timer
+						</i>
+					</div>
 			</div>
 			<div flex></div>
 		</div>

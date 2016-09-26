@@ -1116,8 +1116,9 @@ html:not(.mobile) .amazon-link {
 /** Advanced Features Section */
 md-input-container.message-box.first {
 	position: relative;
+	float: left;
 	top: 25px;
-	margin: 15px 0;
+	margin: 15px 15px 0px 25%;
 	width: 50%;
 }
 
@@ -1135,9 +1136,22 @@ md-input-container.message-box label:not(.md-no-float) {
 	transform: translate3d(12.5%,6px,0) scale(.75);
 }
 
-#advanced-features .md-button {
-	position: absolute;
-	margin-top: 75px;
+#advanced-features .buttons {
+	width: 25px;
+	float: left;
+	top: 51px;
+	position: relative;
+	.md-button{
+		padding: 0;
+	}
+}
+
+.self-destruct.md-button .active {
+	opacity: 1;
+}
+
+.self-destruct.md-button i {
+	opacity: 0.25;
 }
 
 #advanced-features md-input-container:not(.md-input-invalid).md-input-focused .md-input {
