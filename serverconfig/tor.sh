@@ -147,7 +147,7 @@ read -r -d '' nginxconf <<- EOM
 
 	server {
 		\${sslconf}
-		server_name ~.*\\.ws\\.cyphdbyhiddenbhs\\.onion;
+		server_name ~.*\\.cyphdbyhiddenbhs\\.onion;
 		\$(proxysite https://prod-dot-websign-dot-cyphme.appspot.com)
 	}
 

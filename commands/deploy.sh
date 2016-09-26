@@ -111,7 +111,7 @@ projectname () {
 	fi
 }
 
-package="$(projectname cyph)"
+package="$(projectname cyph.ws)"
 
 setredirect () {
 	cat > "${2}/index.html.tmp" <<- EOM
@@ -119,12 +119,32 @@ setredirect () {
 			<body>
 				<script>navigator.serviceWorker.register('/serviceworker.js')</script>
 				<script>
-					var☁path	=
-						'${1}' +
-						location.toString().split(location.host)[1].replace('#', '').replace(/^\\//, '')
-					;
+					var☁path	= $(
+						if [ $1 ] ; then
+							echo "
+								(
+									'/#${1}/' +
+									location.toString().
+										split(location.host)[1].
+										replace('#', '').
+										replace(/^\\//, '')
+								).replace(/\\/\$/, '')
+							"
+						else
+							echo "''"
+						fi
+					);
 
-					location	= 'https://${package}.ws' + (path ? ('/#' + path) : '').replace(/\\/\$/, '');
+					var☁host	= '${package}';
+
+					if (location.host.split('.').slice(-1)[0] === 'onion') {
+						host	=
+							host.replace(/\\.ws\$/, '').replace(/\\./g, '_') +
+							'.cyphdbyhiddenbhs.onion'
+						;
+					}
+
+					location	= 'https://' + host + path;
 				</script>
 			</body>
 		</html>
@@ -526,7 +546,7 @@ if [ $websign ] ; then
 	find js -name '*.js' | xargs -I% ../commands/websign/threadpack.js %
 
 	mkdir ../pkg
-	../commands/websign/pack.js --sri --minify index.html ../pkg/cyph
+	../commands/websign/pack.js --sri --minify index.html ../pkg/cyph.ws
 
 	find . \
 		-mindepth 1 -maxdepth 1 \
@@ -541,14 +561,16 @@ if [ $websign ] ; then
 
 	packages="${package}"
 
-	mkdir -p pkg/cyph-subresources 2> /dev/null
-	cd pkg/cyph-subresources
+	mkdir -p pkg/cyph.ws-subresources 2> /dev/null
+	cd pkg/cyph.ws-subresources
 	git clone git@github.com:cyph/custom-builds.git
-	for f in custom-builds/*.json ; do
-		customBuildBase="$(echo "${f}" | perl -pe 's/.*\/(.*)\.json$/\1/')"
+	rm -rf custom-builds/.git
+	for d in $(find custom-builds -mindepth 1 -maxdepth 1 -type d) ; do
+		customBuildBase="$(echo "${d}" | perl -pe 's/.*\/(.*)$/\1/')"
 		customBuild="$(projectname "${customBuildBase}")"
-		customBuildBackground="custom-builds/${customBuildBase}.background.png"
-		customBuildFavicon="custom-builds/${customBuildBase}.favicon.png"
+		customBuildBackground="${d}/background.png"
+		customBuildFavicon="${d}/favicon.png"
+		customBuildTheme="${d}/theme.json"
 		customBuildStylesheet="custom-builds/${customBuildBase}.css"
 		packages="${packages} ${customBuild}"
 
@@ -559,7 +581,10 @@ if [ $websign ] ; then
 			const superSphincs	= require('supersphincs');
 
 			const \$	= cheerio.load(fs.readFileSync('../cyph').toString());
-			const o		= JSON.parse(fs.readFileSync('${f}').toString().replace(/\s/g, ' '));
+
+			const o		= JSON.parse(
+				fs.readFileSync('${customBuildTheme}').toString().replace(/\s/g, ' ')
+			);
 
 			o.background	= datauri.sync('${customBuildBackground}');
 
@@ -636,12 +661,12 @@ if [ $websign ] ; then
 				fs.writeFileSync('../${customBuild}', \$.html().trim());
 			});
 		"
+
+		rm -rf ${d}
 	done
-	rm -rf custom-builds/.git
-	find custom-builds -type f -not -name '*.css*' -exec rm -rf {} \;
 	cd ../..
 
-	mv pkg/cyph "pkg/${package}"
+	mv pkg/cyph.ws "pkg/${package}"
 
 	for p in $packages ; do
 		rm -rf cdn/${p}
@@ -656,12 +681,21 @@ if [ $websign ] ; then
 	) || exit 1
 
 	for p in $packages ; do
-		if [ -d pkg/cyph-subresources ] ; then
-			cp -a pkg/cyph-subresources/* cdn/${p}/
+		if [ -d pkg/cyph.ws-subresources ] ; then
+			cp -a pkg/cyph.ws-subresources/* cdn/${p}/
 		fi
 
 		cd cdn
-		find ${p} -type f -not -name '*.srihash' -exec bash -c ' \
+
+		plink=$(echo $p | sed 's/\.ws$//')
+		if (echo $p | grep -P '\.ws$' > /dev/null) && ! [ -L $plink ] ; then
+			ln -s $p $plink
+			chmod 777 $plink
+			git add $plink
+			git commit -S -m $plink $plink > /dev/null 2>&1
+		fi
+
+		find $p -type f -not -name '*.srihash' -exec bash -c ' \
 			zopfli -i1000 {}; \
 			chmod 777 {}.gz; \
 			git add {}.gz; \
@@ -681,7 +715,7 @@ if [ $websign ] ; then
 
 		mkdir $d
 		cat cyph.im/cyph-im.yaml | sed "s|cyph-im|${project}|g" > ${d}/${project}.yaml
-		setredirect ${suffix}/ ${d}
+		setredirect ${suffix} ${d}
 	done
 elif [ ! $site -o $site == cyph.im ] ; then
 	cp websign/js/workerhelper.js cyph.im/js/

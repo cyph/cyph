@@ -60,9 +60,12 @@ while true ; do
 		'cyph.video',
 		'cyph.audio'
 	].concat(
-		fs.readdirSync('.').
-			filter(s => s !== '.git' && s !== 'websign' && s !== 'cyph').
-			map(s => s + '.ws')
+		fs.readdirSync('.').filter(f =>
+			f !== '.git' &&
+			f !== 'websign' &&
+			f !== 'cyph' &&
+			!fs.lstatSync(f).isSymbolicLink()
+		)
 	).
 		map(s => [s, 'www.' + s]).
 		reduce((a, b) => a.concat(b)).

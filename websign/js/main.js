@@ -1,8 +1,10 @@
+var isHiddenService	= location.host.split('.').slice(-1)[0] === 'onion';
+
 /* Set pin on www subdomain on first use, then force naked domain */
 if (location.host.indexOf('www.') === 0) {
 	location.host	= location.host.replace('www.', '');
 }
-else if (!localStorage.webSignWWWPinned) {
+else if (!isHiddenService && !localStorage.webSignWWWPinned) {
 	localStorage.webSignWWWPinned	= true;
 	location.host					= 'www.' + location.host;
 }
@@ -18,7 +20,7 @@ catch (_) {}
 
 /* Get user's current location to choose optimal CDN node */
 Promise.resolve().then(function () {
-	if (location.host.split('.').slice(-1)[0] === 'onion') {
+	if (isHiddenService) {
 		return null;
 	}
 
@@ -37,10 +39,11 @@ then(function (continent) {
 			'https://' +
 			newContinent +
 			cdnUrlBase +
-			location.host.
-				replace(/\.ws$/, '').
-				replace(/\.ws\.cyphdbyhiddenbhs.onion$/, '')
-			+
+			(
+				isHiddenService ?
+					location.host.split('.')[0].replace(/_/g, '.') :
+					location.host
+			) +
 			'/'
 		;
 
