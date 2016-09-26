@@ -28,6 +28,7 @@ export class Events {
 	public static newCyph: string			= 'newCyph';
 	public static p2pUI: string				= 'p2pUI';
 	public static pingPongTimeout: string	= 'pingPongTimeout';
+	public static selfDestruct: string		= 'selfDestruct';
 }
 
 /**

@@ -358,8 +358,9 @@ export class Session implements ISession {
 		);
 	}
 
-	public sendText (text: string) : void {
-		this.send(new Message(RPCEvents.text, text));
+	public sendText (text: string, selfDestruct?: boolean) : void {
+		selfDestruct = selfDestruct || false;
+		this.send(new Message(RPCEvents.text, text, selfDestruct));
 	}
 
 	public trigger (event: string, data?: any) : void {

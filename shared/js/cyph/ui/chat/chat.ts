@@ -62,7 +62,7 @@ export class Chat extends BaseButtonManager implements IChat {
 
 	public firstMessage: string;
 
-	public setToSelfDestruct: boolean = false;
+	public selfDestruct: boolean = false;
 	public selfDesructTime: number = 10000;
 
 	public messages: {
@@ -142,10 +142,11 @@ export class Chat extends BaseButtonManager implements IChat {
 		this.changeState(States.chat);
 		this.addMessage(Strings.introductoryMessage, Session.Users.app, undefined, false);
 		this.setConnected();
-		this.send(this.firstMessage);
-		if (this.setToSelfDestruct === true){
-			await Util.sleep(this.selfDesructTime);
-			this.selfDestruct();
+
+		/** Check for first message and if it is set to self destruct */
+		if (this.firstMessage){
+			this.send(this.firstMessage, this.selfDestruct);
+			setTimeout(function(){this.activateSelfDestruct()}, this.selfDesructTime);
 		}
 	}
 
@@ -218,7 +219,7 @@ export class Chat extends BaseButtonManager implements IChat {
 		}
 	}
 
-	public send (message?: string) : void {
+	public send (message?: string, selfDestruct?: boolean) : void {
 		if (!message) {
 			message	= this.currentMessage;
 
@@ -228,9 +229,16 @@ export class Chat extends BaseButtonManager implements IChat {
 			this.messageChange();
 		}
 
-		if (message) {
+		if (message && !selfDestruct) {
 			this.scrollManager.scrollDown();
-			this.session.sendText(message);
+			this.session.sendText(message, false);
+		}
+
+		if (message && selfDestruct) {
+			this.session.sendText(message, true);
+			//setTimeout(function(){this.activateSelfDestruct()}, this.selfDesructTime);
+			Util.sleep(this.selfDesructTime);
+			this.activateSelfDestruct();
 		}
 	}
 
@@ -249,10 +257,9 @@ export class Chat extends BaseButtonManager implements IChat {
 		console.log('firstMessage set to: '+ this.firstMessage);
 	}
 
-	public selfDestruct () : void {
-		$('.chat-message-box').remove();
-		Util.sleep(this.selfDesructTime);
+	public activateSelfDestruct () : void {
 		this.close();
+		$('.chat-message-box').remove();
 		$('.message-item').remove();
 	}
 
@@ -439,6 +446,8 @@ export class Chat extends BaseButtonManager implements IChat {
 		this.session.on(Session.Events.beginChat, () => this.begin());
 
 		this.session.on(Session.Events.closeChat, () => this.close());
+
+		this.session.on(Session.Events.selfDestruct, () => this.activateSelfDestruct());
 
 		this.session.on(Session.Events.connect, () => {
 			this.changeState(States.keyExchange);

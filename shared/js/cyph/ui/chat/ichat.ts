@@ -115,7 +115,7 @@ export interface IChat {
 	 * Sends a message.
 	 * @param message
 	 */
-	send (message?: string) : void;
+	send (message?: string, selfDestruct?: boolean) : void;
 
 	/**
 	 * Sets this.isConnected to true.
@@ -137,6 +137,6 @@ export interface IChat {
 	/**
 	 * Destroys Cyph
 	 */
-	selfDestruct () : void;
+	activateSelfDestruct () : void;
 	
 }

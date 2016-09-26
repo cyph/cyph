@@ -707,12 +707,12 @@ export const Templates	= {
 						<i class='material-icons'>save</i>
 					</md-button>
 					<md-button
-						ng-click='$this.chat.setToSelfDestruct = !$this.chat.setToSelfDestruct'
+						ng-click='$this.chat.selfDestruct = !$this.chat.selfDestruct'
 						class='self-destruct'
 					>
 						<i
 							class='material-icons'
-							ng-class='{"active": $this.chat.setToSelfDestruct === true}'
+							ng-class='{"active": $this.chat.selfDestruct === true}'
 						>
 							timer
 						</i>

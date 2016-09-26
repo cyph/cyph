@@ -58,7 +58,7 @@ export interface ISession {
 	 * Shorthand for sending a user-facing chat message.
 	 * @param text
 	 */
-	sendText (text: string) : void;
+	sendText (text: string, selfDestruct?: boolean) : void;
 
 	/**
 	 * Trigger event, passing in optional data.
