@@ -125,7 +125,7 @@ setredirect () {
 						if (location.host.indexOf('www.') === 0) {
 							location.host	= location.host.replace('www.', '');
 						}
-						else if (
+						else☁if (
 							!isHiddenService &&
 							self.localStorage &&
 							!localStorage.webSignWWWPinned
