@@ -53,18 +53,33 @@ cat > server.js <<- EOM
 	const keyPath			= 'key.pem';
 	const dhparamPath		= 'dhparams.pem';
 
-	const getFileName		= req => req.path.slice(1) + '.gz';
 	const returnError		= res => res.status(418).end();
 
-	const git				= (...args) => {
-		return new Promise(resolve => {
-			let data		= new Buffer([]);
-			const stdout	= child_process.spawn('git', args, {cwd: cdnPath}).stdout;
+	const getFileName		= req => new Promise( (resolve, reject) =>
+		fs.realpath(cdnPath + req.path.slice(1) + '.gz', (err, path) => {
+			if (err || !path) {
+				reject(err);
+				return;
+			}
 
-			stdout.on('data', buf => data = Buffer.concat([data, buf]));
-			stdout.on('close', () => resolve(data));
-		});
-	};
+			const fileName	= path.split(process.env['HOME'] + cdnPath.slice(1))[1];
+
+			if (fileName) {
+				resolve(fileName);
+				return;
+			}
+
+			reject(path);
+		})
+	);
+
+	const git				= (...args) => new Promise(resolve => {
+		let data		= new Buffer([]);
+		const stdout	= child_process.spawn('git', args, {cwd: cdnPath}).stdout;
+
+		stdout.on('data', buf => data = Buffer.concat([data, buf]));
+		stdout.on('close', () => resolve(data));
+	});
 
 	app.use( (req, res, next) => {
 		res.set('Access-Control-Allow-Methods', 'GET');
@@ -78,26 +93,28 @@ cat > server.js <<- EOM
 		next();
 	});
 
-	app.get(/.*\/current/, (req, res) => new Promise( (resolve, reject) =>
-		res.sendFile(getFileName(req), {root: cdnPath}, err => {
-			if (err) {
-				reject(err);
-			}
-			else {
-				resolve();
-			}
-		})
-	).catch(() =>
+	app.get(/.*\/current/, (req, res) => getFileName(req).then(fileName =>
+		new Promise( (resolve, reject) =>
+			res.sendFile(fileName, {root: cdnPath}, err => {
+				if (err) {
+					reject(err);
+				}
+				else {
+					resolve();
+				}
+			})
+		)
+	).catch( () =>
 		returnError(res)
 	));
 
-	app.get(/.*\/pkg/, (req, res) => Promise.resolve().then(() => {
+	app.get(/.*\/pkg/, (req, res) => Promise.resolve().then( () => {
 		if (cache[req.originalUrl]) {
 			return;
 		}
 
-		return new Promise( (resolve, reject) =>
-			fs.readFile(cdnPath + getFileName(req), (err, data) => {
+		return getFileName(req).then(fileName => new Promise( (resolve, reject) =>
+			fs.readFile(cdnPath + fileName, (err, data) => {
 				if (err) {
 					reject(err);
 					return;
@@ -107,23 +124,22 @@ cat > server.js <<- EOM
 
 				resolve();
 			})
-		);
-	}).then(() =>
+		));
+	}).then( () =>
 		res.send(cache[req.originalUrl])
-	).catch(() =>
+	).catch( () =>
 		returnError(res)
 	));
 
-	app.get(/\/.*/, (req, res) => Promise.resolve().then(() => {
+	app.get(/\/.*/, (req, res) => Promise.resolve().then( () => {
 		if (cache[req.originalUrl]) {
 			return;
 		}
 
-		const file	= getFileName(req);
 		const hash	= req.originalUrl.split('?')[1];
 
-		return new Promise( (resolve, reject) =>
-			fs.stat(cdnPath + file, err => {
+		return getFileName(req).then(fileName => new Promise( (resolve, reject) =>
+			fs.stat(cdnPath + fileName, err => {
 				if (err) {
 					reject(err);
 					return;
@@ -131,8 +147,8 @@ cat > server.js <<- EOM
 
 				resolve();
 			})
-		).then(() =>
-			hash ? git('log', file) : ''
+		).then( () =>
+			hash ? git('log', fileName) : ''
 		).then(output => {
 			const revision	= (
 				output.toString().
@@ -143,13 +159,13 @@ cat > server.js <<- EOM
 				[0] || ''
 			).split(' ')[0] || 'HEAD';
 
-			return git('show', revision + ':' + file);
+			return git('show', revision + ':' + fileName);
 		}).then(data => {
 			cache[req.originalUrl]	= data;
-		});
-	}).then(() =>
+		}));
+	}).then( () =>
 		res.send(cache[req.originalUrl])
-	).catch(() =>
+	).catch( () =>
 		returnError(res)
 	));
 
