@@ -119,6 +119,22 @@ setredirect () {
 			<body>
 				<script>navigator.serviceWorker.register('/serviceworker.js')</script>
 				<script>
+					var☁isHiddenService	= location.host.split('.').slice(-1)[0] === 'onion';
+
+					$(if [ ! "${test}" ] ; then echo "
+						if (location.host.indexOf('www.') === 0) {
+							location.host	= location.host.replace('www.', '');
+						}
+						else if (
+							!isHiddenService &&
+							self.localStorage &&
+							!localStorage.webSignWWWPinned
+						) {
+							localStorage.webSignWWWPinned	= true;
+							location.host					= 'www.' + location.host;
+						}
+					" ; fi)
+
 					var☁path	= (
 						'/#' +
 						'$(if [ "${1}" ] ; then echo "${1}/" ; fi)' +
@@ -130,7 +146,7 @@ setredirect () {
 
 					var☁host	= '${package}';
 
-					if (location.host.split('.').slice(-1)[0] === 'onion') {
+					if (isHiddenService) {
 						host	=
 							host.replace(/\\.ws\$/, '').replace(/\\./g, '_') +
 							'.cyphdbyhiddenbhs.onion'
