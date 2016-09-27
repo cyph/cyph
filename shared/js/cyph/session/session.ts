@@ -349,7 +349,7 @@ export class Session implements ISession {
 		this.castle.send(
 			JSON.stringify(messages, (_, v) => {
 				if (v instanceof Uint8Array) {
-					v.isUint8Array	= true;
+					(<any> v).isUint8Array	= true;
 				}
 
 				return v;

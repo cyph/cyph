@@ -67,7 +67,7 @@ export class Analytics {
 			try {
 				Analytics.analFrame	= document.createElement('iframe');
 
-				Analytics.analFrame.sandbox	= <any> 'allow-scripts allow-same-origin';
+				(<any> Analytics.analFrame).sandbox	= 'allow-scripts allow-same-origin';
 
 				Analytics.analFrame.src	=
 					Env.baseUrl +

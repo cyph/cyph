@@ -5,11 +5,11 @@
 
 
 if (!('crypto' in self) && 'msCrypto' in self) {
-	self['crypto']	= self['msCrypto'];
+	(<any> self)['crypto']	= self['msCrypto'];
 }
 
 if (!('crypto' in self)) {
-	crypto	= {
+	(<any> self)['crypto']	= {
 		getRandomValues: array => {
 			const bytes: number	=
 				'BYTES_PER_ELEMENT' in array ?

@@ -5,7 +5,7 @@
 
 
 if (!('crypto' in self) && 'msCrypto' in self) {
-	self['crypto']	= self['msCrypto'];
+	(<any> self)['crypto']	= self['msCrypto'];
 }
 
 if (!(
@@ -30,7 +30,7 @@ if (!(
 }
 
 if (!('subtle' in crypto) && 'webkitSubtle' in crypto) {
-	crypto.subtle	= crypto['webkitSubtle'];
+	(<any> crypto).subtle	= crypto['webkitSubtle'];
 }
 
 let LocalStorage: Storage;
