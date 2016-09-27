@@ -48,21 +48,21 @@ if [ "${1}" == '--site' ] ; then
 	shift
 fi
 
-if [ $site ] ; then
+if [ "${site}" ] ; then
 	for var in cacheBustedProjects compiledProjects ; do
 		for d in $(eval "echo \$$var") ; do
-			if [ $d != $site ] ; then
+			if [ "${d}" != "${site}" ] ; then
 				eval "$var='$(eval "echo \$$var" | sed "s|$d||")'"
 			fi
 		done
 	done
 
-	if [ $site != cyph.im ] ; then
+	if [ "${site}" != cyph.im ] ; then
 		websign=''
 	fi
 fi
 
-if [ $simple ] ; then
+if [ "${simple}" ] ; then
 	websign=''
 	cacheBustedProjects=''
 fi
@@ -87,24 +87,24 @@ done
 # Branch config setup
 staging=''
 branch="$(git describe --tags --exact-match 2> /dev/null || git branch | awk '/^\*/{print $2}')"
-if [ $branch == 'prod' ] ; then
+if [ "${branch}" == 'prod' ] ; then
 	branch='staging'
 
-	if [ $test -a ! $simple ] ; then
+	if [ "${test}" -a ! "$simple" ] ; then
 		staging=true
 	fi
 fi
 version="$branch"
 username="$(git config --get remote.origin.url | perl -pe 's/.*:(.*)\/.*/\1/' | tr '[:upper:]' '[:lower:]')"
-if [ $test -a $username != cyph ] ; then
+if [ "${test}" -a "${username}" != cyph ] ; then
 	version="${username}-${version}"
 fi
-if [ $simple ] ; then
+if [ "${simple}" ] ; then
 	version="simple-${version}"
 fi
 
 projectname () {
-	if [ $test ] ; then
+	if [ "${test}" ] ; then
 		echo "${version}.${1}"
 	else
 		echo "${1}"
@@ -120,7 +120,7 @@ setredirect () {
 				<script>navigator.serviceWorker.register('/serviceworker.js')</script>
 				<script>
 					var☁path	= $(
-						if [ $1 ] ; then
+						if [ "${1}" ] ; then
 							echo "
 								(
 									'/#${1}/' +
@@ -223,7 +223,7 @@ setredirect () {
 }
 
 
-if [ ! $simple ] ; then
+if [ ! "${simple}" ] ; then
 	defaultHeadersString='# default_headers'
 	defaultHeaders="$(cat shared/headers)"
 	ls */*.yaml | xargs -I% sed -ri "s/  ${defaultHeadersString}(.*)/\
@@ -261,13 +261,13 @@ defaultHost='${locationData.protocol}//${locationData.hostname}:'
 ls */js/cyph/envdeploy.ts | xargs -I% sed -i 's|isLocalEnv: boolean		= true|isLocalEnv: boolean		= false|g' %
 ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|ws://127.0.1:44000|https://cyphme.firebaseio.com|g" %
 
-if [ $branch == 'staging' ] ; then
+if [ "${branch}" == 'staging' ] ; then
 	sed -i "s|false, /* IsProd */|true,|g" default/config.go
 fi
 
-if [ $test ] ; then
+if [ "${test}" ] ; then
 	newCyphURL="https://${version}.cyph.ws"
-	if [ $simple ] ; then
+	if [ "${simple}" ] ; then
 		newCyphURL="https://${version}-dot-cyph-im-dot-cyphme.appspot.com"
 	fi
 
@@ -285,7 +285,7 @@ if [ $test ] ; then
 
 	homeURL="https://${version}-dot-cyph-com-dot-cyphme.appspot.com"
 
-	if [ ! $staging ] ; then
+	if [ ! "${staging}" ] ; then
 		# Disable caching in test environments
 		ls */*.yaml | xargs -I% sed -i 's|max-age=31536000|max-age=0|g' %
 	fi
@@ -305,7 +305,7 @@ else
 fi
 
 
-if [ ! $site -o $site == websign ] ; then
+if [ ! "${site}" -o "${site}" == websign ] ; then
 	# WebSign project
 	cd websign
 	websignHashWhitelist="$(cat hashwhitelist.json)"
@@ -315,7 +315,7 @@ if [ ! $site -o $site == websign ] ; then
 fi
 
 
-if [ ! $site -o $site == cyph.com ] ; then
+if [ ! "${site}" -o "${site}" == cyph.com ] ; then
 	# Blog
 	cd cyph.com
 	rm -rf blog 2> /dev/null
@@ -333,7 +333,7 @@ fi
 for d in $compiledProjects ; do
 	project="$(projectname $d)"
 
-	if [ ! $simple ] ; then
+	if [ ! "${simple}" ] ; then
 		node -e "fs.writeFileSync(
 			'$d/js/preload/translations.ts',
 			'Translations = ' + JSON.stringify(
@@ -369,7 +369,7 @@ for d in $compiledProjects ; do
 
 	../commands/build.sh --prod || exit;
 
-	if [ ! $simple ] ; then
+	if [ ! "${simple}" ] ; then
 		echo "JS Minify ${project}"
 		find js -name '*.js' | xargs -I% uglifyjs '%' \
 			-m \
@@ -475,7 +475,7 @@ for d in $cacheBustedProjects ; do
 	cd ..
 done
 
-if [ $websign ] ; then
+if [ "${websign}" ] ; then
 	# WebSign packaging
 
 	git clone git@github.com:cyph/cdn.git
@@ -717,7 +717,7 @@ if [ $websign ] ; then
 		cat cyph.im/cyph-im.yaml | sed "s|cyph-im|${project}|g" > ${d}/${project}.yaml
 		setredirect ${suffix} ${d}
 	done
-elif [ ! $site -o $site == cyph.im ] ; then
+elif [ ! "${site}" -o "${site}" == cyph.im ] ; then
 	cp websign/js/workerhelper.js cyph.im/js/
 fi
 
@@ -725,7 +725,7 @@ fi
 find . -mindepth 1 -maxdepth 1 -type d -not -name shared -exec cp -f shared/favicon.ico {}/ \;
 
 
-if [ ! $simple ] ; then
+if [ ! "${simple}" ] ; then
 	rm -rf */lib/js/crypto
 fi
 
@@ -733,14 +733,14 @@ fi
 # Secret credentials
 cat ~/.cyph/default.vars >> default/app.yaml
 cp ~/.cyph/*.mmdb default/
-if [ $branch == 'staging' ] ; then
+if [ "${branch}" == 'staging' ] ; then
 	cat ~/.cyph/braintree.prod >> default/app.yaml
 else
 	cat ~/.cyph/braintree.sandbox >> default/app.yaml
 fi
 
 # Temporary workaround for cache-busting reverse proxies
-if [ ! $test ] ; then
+if [ ! "${test}" ] ; then
 	for project in cyph.im cyph.video ; do
 		cat $project/*.yaml | perl -pe 's/(service: cyph.*)/\1-update/' > $project/update.yaml
 	done
@@ -758,7 +758,7 @@ find . -type l -exec bash -c '
 ' \;
 
 gcloud app deploy --quiet --no-promote --project cyphme --version $version $(
-	if [ $site ] ; then
+	if [ "${site}" ] ; then
 		ls $site/*.yaml
 	else
 		ls */*.yaml
