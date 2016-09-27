@@ -142,7 +142,7 @@ export class Env extends EnvDeploy {
 			return;
 		}
 
-		Env.newCyphBaseUrl		= `https://${customBuild}.ws/`;
+		Env.newCyphBaseUrl		= `https://${customBuild}/`;
 		Env.newCyphUrl			= Env.newCyphBaseUrl;
 		Env.cyphMeBaseUrl		= `${Env.newCyphBaseUrl}#me/`;
 		Env.cyphMeUrl			= Env.cyphMeBaseUrl;
