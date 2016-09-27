@@ -247,8 +247,8 @@ typings install --global --save \
 	dt~angular \
 	dt~angular-material \
 	dt~angular-animate \
-	dt~webrtc/mediastream \
-	dt~webrtc/rtcpeerconnection \
+	# dt~webrtc/mediastream \
+	# dt~webrtc/rtcpeerconnection \
 	dt~dompurify
 
 mkdir typings/globals/firebase
