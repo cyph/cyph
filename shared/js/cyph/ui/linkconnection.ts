@@ -55,7 +55,7 @@ export class LinkConnection implements ILinkConnection {
 				if (this.isWaiting) {
 					this.setLink();
 					//Elements.connectLinkInput.focus();
-					this.selectLink();
+					//this.selectLink();
 				}
 				else {
 					clearInterval(linkInterval);

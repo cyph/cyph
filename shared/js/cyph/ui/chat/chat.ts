@@ -236,9 +236,7 @@ export class Chat extends BaseButtonManager implements IChat {
 
 		if (message && selfDestruct) {
 			this.session.sendText(message, true);
-			//setTimeout(function(){this.activateSelfDestruct()}, this.selfDesructTime);
-			Util.sleep(this.selfDesructTime);
-			this.activateSelfDestruct();
+			setTimeout(() => this.activateSelfDestruct(), this.selfDesructTime);
 		}
 	}
 
