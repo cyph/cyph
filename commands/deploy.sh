@@ -119,21 +119,14 @@ setredirect () {
 			<body>
 				<script>navigator.serviceWorker.register('/serviceworker.js')</script>
 				<script>
-					var☁path	= $(
-						if [ "${1}" ] ; then
-							echo "
-								(
-									'/#${1}/' +
-									location.toString().
-										split(location.host)[1].
-										replace('#', '').
-										replace(/^\\//, '')
-								).replace(/\\/\$/, '')
-							"
-						else
-							echo "''"
-						fi
-					);
+					var☁path	= (
+						'/#' +
+						'$(if [ "${1}" ] ; then echo "${1}/" ; fi)' +
+						location.toString().
+							split(location.host)[1].
+							replace('#', '').
+							replace(/^\\//, '')
+					).replace(/\\/\$/, '');
 
 					var☁host	= '${package}';
 
@@ -144,7 +137,7 @@ setredirect () {
 						;
 					}
 
-					location	= 'https://' + host + path;
+					location	= 'https://' + host + (path === '/#' ? '' : path);
 				</script>
 			</body>
 		</html>
