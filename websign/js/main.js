@@ -155,7 +155,10 @@ then(function (results) {
 	if (
 		Date.now() > opened.expires ||
 		downloadMetadata.packageTimestamp !== opened.timestamp ||
-		packageName !== opened.packageName
+		(
+			packageName !== opened.packageName &&
+			packageName !== opened.packageName.replace(/\.ws$/, '')
+		)
 	) {
 		throw 'Stale or invalid data.';
 	}
