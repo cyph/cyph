@@ -9,9 +9,6 @@ export interface IMessage {
 	/** Event name (e.g. "text"). */
 	event?: string;
 
-	/** Self Destruct Flag */
-	selfDestruct?: boolean;
-
 	/** Associated data (e.g. a user-facing chat message). */
 	data?: any;
 }

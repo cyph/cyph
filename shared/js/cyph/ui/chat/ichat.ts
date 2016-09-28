@@ -71,12 +71,14 @@ export interface IChat {
 	 * @param author
 	 * @param timestamp If not set, will use Util.timestamp().
 	 * @param shouldNotify If true, a notification will be sent.
+	 * @param selfDestructTimeout
 	 */
 	addMessage (
 		text: string,
 		author: Session.Users,
 		timestamp?: number,
-		shouldNotify?: boolean
+		shouldNotify?: boolean,
+		selfDestructTimeout?: number
 	) : void;
 
 	/**
@@ -114,8 +116,9 @@ export interface IChat {
 	/**
 	 * Sends a message.
 	 * @param message
+	 * @param selfDestructTimeout
 	 */
-	send (message?: string, selfDestruct?: boolean) : void;
+	send (message?: string, selfDestructTimeout?: number) : void;
 
 	/**
 	 * Sets this.isConnected to true.
@@ -133,10 +136,4 @@ export interface IChat {
 	 * @param messageText
 	 */
 	setFirstMessage (messageText: string) : void;
-
-	/**
-	 * Destroys Cyph
-	 */
-	activateSelfDestruct () : void;
-
 }

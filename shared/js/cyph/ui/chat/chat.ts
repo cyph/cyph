@@ -63,7 +63,7 @@ export class Chat extends BaseButtonManager implements IChat {
 	public firstMessage: string;
 
 	public selfDestruct: boolean = false;
-	public selfDesructTime: number = 10000;
+	public selfDestructTimeout: number = 10000;
 
 	public messages: {
 		author: string;
@@ -78,6 +78,15 @@ export class Chat extends BaseButtonManager implements IChat {
 	public scrollManager: IScrollManager;
 	public session: Session.ISession;
 
+	private async activateSelfDestruct (timeout: number) : Promise<void> {
+		await Util.sleep(timeout);
+
+		/* TODO: remove just the one message */
+		this.close();
+		$('.chat-message-box').remove();
+		$('.message-item').remove();
+	}
+
 	public abortSetup () : void {
 		this.changeState(States.aborted);
 		this.session.trigger(Session.Events.abort);
@@ -88,9 +97,10 @@ export class Chat extends BaseButtonManager implements IChat {
 		text: string,
 		author: string,
 		timestamp: number = Util.timestamp(),
-		shouldNotify: boolean = true
+		shouldNotify: boolean = true,
+		selfDestructTimeout?: number
 	) : void {
-		if (this.state === States.aborted || !text) {
+		if (this.state === States.aborted || typeof text !== 'string') {
 			return;
 		}
 
@@ -122,6 +132,10 @@ export class Chat extends BaseButtonManager implements IChat {
 		else {
 			NanoScroller.update();
 		}
+
+		if (!isNaN(selfDestructTimeout) && selfDestructTimeout > 0) {
+			this.activateSelfDestruct(selfDestructTimeout);
+		}
 	}
 
 	public async begin () : Promise<void> {
@@ -145,8 +159,7 @@ export class Chat extends BaseButtonManager implements IChat {
 
 		/** Check for first message and if it is set to self destruct */
 		if (this.firstMessage){
-			this.send(this.firstMessage, this.selfDestruct);
-			setTimeout(function(){this.activateSelfDestruct()}, this.selfDesructTime);
+			this.send(this.firstMessage, this.selfDestruct ? this.selfDestructTimeout : 0);
 		}
 	}
 
@@ -219,7 +232,7 @@ export class Chat extends BaseButtonManager implements IChat {
 		}
 	}
 
-	public send (message?: string, selfDestruct?: boolean) : void {
+	public send (message?: string, selfDestructTimeout?: number) : void {
 		if (!message) {
 			message	= this.currentMessage;
 
@@ -229,14 +242,9 @@ export class Chat extends BaseButtonManager implements IChat {
 			this.messageChange();
 		}
 
-		if (message && !selfDestruct) {
+		if (message) {
 			this.scrollManager.scrollDown();
-			this.session.sendText(message, false);
-		}
-
-		if (message && selfDestruct) {
-			this.session.sendText(message, true);
-			setTimeout(() => this.activateSelfDestruct(), this.selfDesructTime);
+			this.session.sendText(message, selfDestructTimeout);
 		}
 	}
 
@@ -253,12 +261,6 @@ export class Chat extends BaseButtonManager implements IChat {
 	public setFirstMessage () : void {
 		this.firstMessage = $('.message-box.first textarea').val();
 		console.log('firstMessage set to: '+ this.firstMessage);
-	}
-
-	public activateSelfDestruct () : void {
-		this.close();
-		$('.chat-message-box').remove();
-		$('.message-item').remove();
 	}
 
 	/**
@@ -445,8 +447,6 @@ export class Chat extends BaseButtonManager implements IChat {
 
 		this.session.on(Session.Events.closeChat, () => this.close());
 
-		this.session.on(Session.Events.selfDestruct, () => this.activateSelfDestruct());
-
 		this.session.on(Session.Events.connect, () => {
 			this.changeState(States.keyExchange);
 			Util.getValue(this.elements.timer[0], 'stop', () => {}).call(this.elements.timer[0]);
@@ -481,14 +481,19 @@ export class Chat extends BaseButtonManager implements IChat {
 			}
 		});
 
-		this.session.on(Session.RPCEvents.text,
-			(o: { text: string; author: string; timestamp: number; }) =>
-				this.addMessage(
-					o.text,
-					o.author,
-					o.timestamp,
-					o.author !== Session.Users.me
-				)
+		this.session.on(Session.RPCEvents.text, (o: {
+			text: string;
+			author: string;
+			timestamp: number;
+			selfDestructTimeout?: number;
+		}) =>
+			this.addMessage(
+				o.text,
+				o.author,
+				o.timestamp,
+				o.author !== Session.Users.me,
+				o.selfDestructTimeout
+			)
 		);
 
 		this.session.on(Session.RPCEvents.typing, (isFriendTyping: boolean) =>

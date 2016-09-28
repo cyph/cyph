@@ -57,8 +57,9 @@ export interface ISession {
 	/**
 	 * Shorthand for sending a user-facing chat message.
 	 * @param text
+	 * @param selfDestructTimeout
 	 */
-	sendText (text: string, selfDestruct?: boolean) : void;
+	sendText (text: string, selfDestructTimeout?: number) : void;
 
 	/**
 	 * Trigger event, passing in optional data.
