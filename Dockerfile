@@ -5,7 +5,7 @@ MAINTAINER Ryan Lester <hacker@linux.com>
 LABEL Name="cyph"
 
 RUN apt-get -y --force-yes update
-RUN apt-get -y --force-yes install curl lsb-release
+RUN apt-get -y --force-yes install curl lsb-release apt-transport-https
 
 RUN echo " \
 	deb https://deb.nodesource.com/node_6.x $(lsb_release -c | awk '{print $2}') main \
