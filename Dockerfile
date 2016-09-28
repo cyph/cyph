@@ -4,11 +4,18 @@ MAINTAINER Ryan Lester <hacker@linux.com>
 
 LABEL Name="cyph"
 
+RUN echo " \
+	deb https://deb.nodesource.com/node_6.x $(lsb_release -c | awk '{print $2}') main \
+" >> /etc/apt/sources.list
+RUN wget -qO- https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
+
 RUN apt-get update
 RUN apt-get dist-upgrade -y
 
 RUN apt-get install -y \
 	curl \
+	nano \
+	nodejs \
 	golang-go \
 	python \
 	perl \
@@ -27,35 +34,6 @@ RUN apt-get install -y \
 	expect \
 	inotify-tools \
 	zopfli
-
-RUN curl -sL https://deb.nodesource.com/setup_6.x | bash -
-RUN apt-get install -y nodejs
-
-RUN npm -g install \
-	html-minifier \
-	clean-css \
-	cheerio \
-	uglify-js \
-	typescript \
-	babel-cli \
-	babel-preset-es2015 \
-	typings \
-	typedoc \
-	jspm \
-	browserstack \
-	zombie \
-	browserify \
-	supersphincs \
-	libsodium-wrappers \
-	glob \
-	read \
-	mkdirp \
-	datauri \
-	htmlencode \
-	node-fetch \
-	image-type \
-	firebase \
-	firebase-server
 
 
 RUN echo '\
@@ -102,6 +80,14 @@ RUN bash -c ' \
 	./emsdk uninstall $(./emsdk list | grep INSTALLED | grep node | awk "{print \$2}"); \
 '
 
+RUN bash -c ' \
+	source ~/.bashrc; \
+	ln -s $NODE_PATH $HOME/node_modules; \
+	sudo ln -s $NODE_PATH /node_modules; \
+	mkdir -p /home/gibson/emsdk_portable/node/4.1.1_64bit/bin; \
+	ln -s /usr/bin/node /home/gibson/emsdk_portable/node/4.1.1_64bit/bin/node; \
+'
+
 RUN wget https://keybase.io/mpapis/key.asc -O ~/public.key
 RUN gpg --import ~/public.key
 RUN rm ~/public.key
@@ -114,13 +100,32 @@ RUN bash -c ' \
 
 RUN rm -rf ~/.gnupg
 
-RUN bash -c ' \
-	source ~/.bashrc; \
-	ln -s $NODE_PATH $HOME/node_modules; \
-	sudo ln -s $NODE_PATH /node_modules; \
-	mkdir -p /home/gibson/emsdk_portable/node/4.1.1_64bit/bin; \
-	ln -s /usr/bin/node /home/gibson/emsdk_portable/node/4.1.1_64bit/bin/node; \
-'
+
+RUN sudo npm -g install \
+	html-minifier \
+	clean-css \
+	cheerio \
+	uglify-js \
+	typescript \
+	babel-cli \
+	babel-preset-es2015 \
+	typings \
+	typedoc \
+	jspm \
+	browserstack \
+	zombie \
+	browserify \
+	supersphincs \
+	libsodium-wrappers \
+	glob \
+	read \
+	mkdirp \
+	datauri \
+	htmlencode \
+	node-fetch \
+	image-type \
+	firebase \
+	firebase-server
 
 
 VOLUME /cyph
