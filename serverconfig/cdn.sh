@@ -15,12 +15,15 @@ sed -i 's/# deb /deb /g' /etc/apt/sources.list
 sed -i 's/\/\/.*archive.ubuntu.com/\/\/archive.ubuntu.com/g' /etc/apt/sources.list
 
 export DEBIAN_FRONTEND=noninteractive
+apt-get -y --force-yes update
+apt-get -y --force-yes install curl lsb-release apt-transport-https
+apt-get -y --force-yes purge apache* mysql*
 distro="$(lsb_release -c | awk '{print $2}')"
 echo "deb https://deb.nodesource.com/node_6.x ${distro} main" >> /etc/apt/sources.list
-wget -qO- https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
+curl https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
 apt-get -y --force-yes update
 apt-get -y --force-yes upgrade
-apt-get -y --force-yes install apt dpkg curl nodejs openssl build-essential git
+apt-get -y --force-yes install apt dpkg nodejs openssl build-essential git
 
 
 cat > /tmp/setup.sh << EndOfMessage
