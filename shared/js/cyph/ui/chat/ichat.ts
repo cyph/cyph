@@ -138,5 +138,5 @@ export interface IChat {
 	 * Destroys Cyph
 	 */
 	activateSelfDestruct () : void;
-	
+
 }

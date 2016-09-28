@@ -1133,7 +1133,7 @@ md-input-container.message-box.first textarea {
 }
 
 md-input-container.message-box label:not(.md-no-float) {
-	transform: translate3d(12.5%,6px,0) scale(.75);
+	transform: translate3d(12.5%, 6px, 0) scale(0.75);
 }
 
 #advanced-features .buttons {
@@ -1141,7 +1141,8 @@ md-input-container.message-box label:not(.md-no-float) {
 	float: left;
 	top: 51px;
 	position: relative;
-	.md-button{
+
+	.md-button {
 		padding: 0;
 	}
 }

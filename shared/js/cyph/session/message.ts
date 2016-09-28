@@ -14,6 +14,6 @@ export class Message implements IMessage {
 		public data?: any,
 		public selfDestruct?: boolean,
 		public id: string = Util.generateGuid()
-		
+
 	) {}
 }
