@@ -103,6 +103,7 @@ jspm install -y \
 	jquery@^2 \
 	jquery-legacy=github:jquery/jquery@^1 \
 	npm:magnific-popup \
+	npm:clipboard-js \
 	npm:nanoscroller \
 	npm:unsemantic \
 	github:snaptortoise/konami-js \
@@ -291,10 +292,19 @@ cd golang.org/x
 
 git clone git://github.com/golang/net.git
 cd net
-rm -rf !(AUTHORS|CONTRIBUTING.md|CONTRIBUTORS|LICENSE|PATENTS|README|html)
+rm -rf !(AUTHORS|CONTRIBUTING.md|CONTRIBUTORS|LICENSE|PATENTS|README|html|context)
 cd ..
 
 git clone git://github.com/golang/text.git
+
+git clone git://github.com/golang/tools.git tools-tmp
+mkdir -p tools/go
+cd tools-tmp
+mv AUTHORS CONTRIBUTING.md CONTRIBUTORS LICENSE PATENTS README ../tools
+cd go
+mv ast buildutil loader ../../tools/go/
+cd ../..
+rm -rf tools-tmp
 
 cd ../..
 
