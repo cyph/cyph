@@ -48,21 +48,21 @@ if [ "${1}" == '--site' ] ; then
 	shift
 fi
 
-if [ $site ] ; then
+if [ "${site}" ] ; then
 	for var in cacheBustedProjects compiledProjects ; do
 		for d in $(eval "echo \$$var") ; do
-			if [ $d != $site ] ; then
+			if [ "${d}" != "${site}" ] ; then
 				eval "$var='$(eval "echo \$$var" | sed "s|$d||")'"
 			fi
 		done
 	done
 
-	if [ $site != cyph.im ] ; then
+	if [ "${site}" != cyph.im ] ; then
 		websign=''
 	fi
 fi
 
-if [ $simple ] ; then
+if [ "${simple}" ] ; then
 	websign=''
 	cacheBustedProjects=''
 fi
@@ -87,31 +87,31 @@ done
 # Branch config setup
 staging=''
 branch="$(git describe --tags --exact-match 2> /dev/null || git branch | awk '/^\*/{print $2}')"
-if [ $branch == 'prod' ] ; then
+if [ "${branch}" == 'prod' ] ; then
 	branch='staging'
 
-	if [ $test -a ! $simple ] ; then
+	if [ "${test}" -a ! "$simple" ] ; then
 		staging=true
 	fi
 fi
 version="$branch"
 username="$(git config --get remote.origin.url | perl -pe 's/.*:(.*)\/.*/\1/' | tr '[:upper:]' '[:lower:]')"
-if [ $test -a $username != cyph ] ; then
+if [ "${test}" -a "${username}" != cyph ] ; then
 	version="${username}-${version}"
 fi
-if [ $simple ] ; then
+if [ "${simple}" ] ; then
 	version="simple-${version}"
 fi
 
 projectname () {
-	if [ $test ] ; then
+	if [ "${test}" ] ; then
 		echo "${version}.${1}"
 	else
 		echo "${1}"
 	fi
 }
 
-package="$(projectname cyph)"
+package="$(projectname cyph.ws)"
 
 setredirect () {
 	cat > "${2}/index.html.tmp" <<- EOM
@@ -119,12 +119,41 @@ setredirect () {
 			<body>
 				<script>navigator.serviceWorker.register('/serviceworker.js')</script>
 				<script>
-					var☁path	=
-						'${1}' +
-						location.toString().split(location.host)[1].replace('#', '').replace(/^\\//, '')
-					;
+					var☁isHiddenService	= location.host.split('.').slice(-1)[0] === 'onion';
 
-					location	= 'https://${package}.ws' + (path ? ('/#' + path) : '').replace(/\\/\$/, '');
+					$(if [ ! "${test}" ] ; then echo "
+						if (location.host.indexOf('www.') === 0) {
+							location.host	= location.host.replace('www.', '');
+						}
+						else☁if (
+							!isHiddenService &&
+							self.localStorage &&
+							!localStorage.webSignWWWPinned
+						) {
+							localStorage.webSignWWWPinned	= true;
+							location.host					= 'www.' + location.host;
+						}
+					" ; fi)
+
+					var☁path	= (
+						'/#' +
+						'$(if [ "${1}" ] ; then echo "${1}/" ; fi)' +
+						location.toString().
+							split(location.host)[1].
+							replace('#', '').
+							replace(/^\\//, '')
+					).replace(/\\/\$/, '');
+
+					var☁host	= '${package}';
+
+					if (isHiddenService) {
+						host	=
+							host.replace(/\\.ws\$/, '').replace(/\\./g, '_') +
+							'.cyphdbyhiddenbhs.onion'
+						;
+					}
+
+					location	= 'https://' + host + (path === '/#' ? '' : path);
 				</script>
 			</body>
 		</html>
@@ -203,7 +232,7 @@ setredirect () {
 }
 
 
-if [ ! $simple ] ; then
+if [ ! "${simple}" ] ; then
 	defaultHeadersString='# default_headers'
 	defaultHeaders="$(cat shared/headers)"
 	ls */*.yaml | xargs -I% sed -ri "s/  ${defaultHeadersString}(.*)/\
@@ -241,13 +270,13 @@ defaultHost='${locationData.protocol}//${locationData.hostname}:'
 ls */js/cyph/envdeploy.ts | xargs -I% sed -i 's|isLocalEnv: boolean		= true|isLocalEnv: boolean		= false|g' %
 ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|ws://127.0.1:44000|https://cyphme.firebaseio.com|g" %
 
-if [ $branch == 'staging' ] ; then
+if [ "${branch}" == 'staging' ] ; then
 	sed -i "s|false, /* IsProd */|true,|g" default/config.go
 fi
 
-if [ $test ] ; then
+if [ "${test}" ] ; then
 	newCyphURL="https://${version}.cyph.ws"
-	if [ $simple ] ; then
+	if [ "${simple}" ] ; then
 		newCyphURL="https://${version}-dot-cyph-im-dot-cyphme.appspot.com"
 	fi
 
@@ -265,7 +294,7 @@ if [ $test ] ; then
 
 	homeURL="https://${version}-dot-cyph-com-dot-cyphme.appspot.com"
 
-	if [ ! $staging ] ; then
+	if [ ! "${staging}" ] ; then
 		# Disable caching in test environments
 		ls */*.yaml | xargs -I% sed -i 's|max-age=31536000|max-age=0|g' %
 	fi
@@ -285,7 +314,7 @@ else
 fi
 
 
-if [ ! $site -o $site == websign ] ; then
+if [ ! "${site}" -o "${site}" == websign ] ; then
 	# WebSign project
 	cd websign
 	websignHashWhitelist="$(cat hashwhitelist.json)"
@@ -295,7 +324,7 @@ if [ ! $site -o $site == websign ] ; then
 fi
 
 
-if [ ! $site -o $site == cyph.com ] ; then
+if [ ! "${site}" -o "${site}" == cyph.com ] ; then
 	# Blog
 	cd cyph.com
 	rm -rf blog 2> /dev/null
@@ -313,7 +342,7 @@ fi
 for d in $compiledProjects ; do
 	project="$(projectname $d)"
 
-	if [ ! $simple ] ; then
+	if [ ! "${simple}" ] ; then
 		node -e "fs.writeFileSync(
 			'$d/js/preload/translations.ts',
 			'Translations = ' + JSON.stringify(
@@ -349,7 +378,7 @@ for d in $compiledProjects ; do
 
 	../commands/build.sh --prod || exit;
 
-	if [ ! $simple ] ; then
+	if [ ! "${simple}" ] ; then
 		echo "JS Minify ${project}"
 		find js -name '*.js' | xargs -I% uglifyjs '%' \
 			-m \
@@ -455,7 +484,7 @@ for d in $cacheBustedProjects ; do
 	cd ..
 done
 
-if [ $websign ] ; then
+if [ "${websign}" ] ; then
 	# WebSign packaging
 
 	git clone git@github.com:cyph/cdn.git
@@ -526,7 +555,7 @@ if [ $websign ] ; then
 	find js -name '*.js' | xargs -I% ../commands/websign/threadpack.js %
 
 	mkdir ../pkg
-	../commands/websign/pack.js --sri --minify index.html ../pkg/cyph
+	../commands/websign/pack.js --sri --minify index.html ../pkg/cyph.ws
 
 	find . \
 		-mindepth 1 -maxdepth 1 \
@@ -541,16 +570,17 @@ if [ $websign ] ; then
 
 	packages="${package}"
 
-	mkdir -p pkg/cyph-subresources 2> /dev/null
-	cd pkg/cyph-subresources
+	mkdir -p pkg/cyph.ws-subresources 2> /dev/null
+	cd pkg/cyph.ws-subresources
 	git clone git@github.com:cyph/custom-builds.git
-	for f in custom-builds/*.css ; do
-		customBuildBase="$(echo "${f}" | perl -pe 's/.*\/(.*)\.css$/\1/')"
+	rm -rf custom-builds/.git
+	for d in $(find custom-builds -mindepth 1 -maxdepth 1 -type d) ; do
+		customBuildBase="$(echo "${d}" | perl -pe 's/.*\/(.*)$/\1/')"
 		customBuild="$(projectname "${customBuildBase}")"
-		customBuildBackground="custom-builds/${customBuildBase}.background.png"
-		customBuildFavicon="custom-builds/${customBuildBase}.favicon.png"
-		customBuildColor="$(cat "custom-builds/${customBuildBase}.color.txt")"
-		customBuildTitle="$(cat "custom-builds/${customBuildBase}.title.txt")"
+		customBuildBackground="${d}/background.png"
+		customBuildFavicon="${d}/favicon.png"
+		customBuildTheme="${d}/theme.json"
+		customBuildStylesheet="custom-builds/${customBuildBase}.css"
 		packages="${packages} ${customBuild}"
 
 		node -e "
@@ -559,24 +589,19 @@ if [ $websign ] ; then
 			const htmlencode	= require('htmlencode');
 			const superSphincs	= require('supersphincs');
 
-			const \$	= cheerio.load(fs.readFileSync('../cyph').toString());
+			const \$	= cheerio.load(fs.readFileSync('../cyph.ws').toString());
 
-			const css	= (fs.readFileSync('${f}').toString() + \`
-				html, body, #main, .cyph-foreground, .chat-begin-message, md-sidenav {
-					background-color: ${customBuildColor} !important;
-				}
+			const o		= JSON.parse(
+				fs.readFileSync('${customBuildTheme}').toString().replace(/\s/g, ' ')
+			);
 
-				.chat-main.video .video-call.active.playing .logo img {
-					height: 75%;
-					opacity: 0.25;
-				}
+			o.background	= datauri.sync('${customBuildBackground}');
 
-				.message-list:after {
-					background-image: url(\${
-						datauri.sync('${customBuildBackground}')
-					}) !important;
-				}
-			\`).trim();
+			const css	= child_process.spawnSync('cleancss', [], {input:
+				child_process.spawnSync('sass', ['-s', '--scss'], {input: \`
+					$(cat ../../shared/css/custom-build.scss.template | sed 's|;| \!important;|g')
+				\`}).stdout.toString()
+			}).stdout.toString().trim();
 
 			superSphincs.hash(css).then(hash => {
 				\$('title').
@@ -584,18 +609,26 @@ if [ $websign ] ; then
 						'ng-bind',
 						\$('title').attr('ng-bind').replace(
 							htmlencode.htmlDecode(\$('title').text().trim()),
-							'${customBuildTitle}'
+							o.title
 						)
 					).
-					text(htmlencode.htmlEncode('${customBuildTitle}'))
+					text(htmlencode.htmlEncode(o.title))
 				;
 
-				\$('head').find(
-					'meta[name=\"theme-color\"],' + 
-					'meta[name=\"msapplication-TileColor\"]'
-				).
-					attr('content', '${customBuildColor}')
-				;
+				if (o.colors.main) {
+					\$('head').find(
+						'meta[name=\"theme-color\"],' + 
+						'meta[name=\"msapplication-TileColor\"]'
+					).
+						attr('content', o.colors.main)
+					;
+
+					\$('head').append(\`<style>
+						#pre-load {
+							background-color: \${o.colors.main} !important;
+						}
+					</style>\`);
+				}
 
 				\$('head').find(
 					'link[type=\"image/png\"],' + 
@@ -624,31 +657,25 @@ if [ $websign ] ; then
 					});
 				</script>\`);
 
-				\$('head').append(\`<style>
-					#pre-load {
-						background-color: ${customBuildColor} !important;
-					}
-				</style>\`);
-
 				\$('body').append(\`
 					<link
 						rel='stylesheet'
-						websign-sri-path='${f}'
+						websign-sri-path='${customBuildStylesheet}'
 						websign-sri-hash='\${hash.hex}'
 					></link>
 				\`);
 
-				fs.writeFileSync('${f}', css);
-				fs.writeFileSync('${f}.srihash', hash.hex);
+				fs.writeFileSync('${customBuildStylesheet}', css);
+				fs.writeFileSync('${customBuildStylesheet}.srihash', hash.hex);
 				fs.writeFileSync('../${customBuild}', \$.html().trim());
 			});
 		"
+
+		rm -rf ${d}
 	done
-	rm -rf custom-builds/.git
-	find custom-builds -type f -not -name '*.css*' -exec rm -rf {} \;
 	cd ../..
 
-	mv pkg/cyph "pkg/${package}"
+	mv pkg/cyph.ws "pkg/${package}"
 
 	for p in $packages ; do
 		rm -rf cdn/${p}
@@ -663,12 +690,21 @@ if [ $websign ] ; then
 	) || exit 1
 
 	for p in $packages ; do
-		if [ -d pkg/cyph-subresources ] ; then
-			cp -a pkg/cyph-subresources/* cdn/${p}/
+		if [ -d pkg/cyph.ws-subresources ] ; then
+			cp -a pkg/cyph.ws-subresources/* cdn/${p}/
 		fi
 
 		cd cdn
-		find ${p} -type f -not -name '*.srihash' -exec bash -c ' \
+
+		plink=$(echo $p | sed 's/\.ws$//')
+		if (echo $p | grep -P '\.ws$' > /dev/null) && ! [ -L $plink ] ; then
+			ln -s $p $plink
+			chmod 777 $plink
+			git add $plink
+			git commit -S -m $plink $plink > /dev/null 2>&1
+		fi
+
+		find $p -type f -not -name '*.srihash' -exec bash -c ' \
 			zopfli -i1000 {}; \
 			chmod 777 {}.gz; \
 			git add {}.gz; \
@@ -688,9 +724,9 @@ if [ $websign ] ; then
 
 		mkdir $d
 		cat cyph.im/cyph-im.yaml | sed "s|cyph-im|${project}|g" > ${d}/${project}.yaml
-		setredirect ${suffix}/ ${d}
+		setredirect ${suffix} ${d}
 	done
-elif [ ! $site -o $site == cyph.im ] ; then
+elif [ ! "${site}" -o "${site}" == cyph.im ] ; then
 	cp websign/js/workerhelper.js cyph.im/js/
 fi
 
@@ -698,7 +734,7 @@ fi
 find . -mindepth 1 -maxdepth 1 -type d -not -name shared -exec cp -f shared/favicon.ico {}/ \;
 
 
-if [ ! $simple ] ; then
+if [ ! "${simple}" ] ; then
 	rm -rf */lib/js/crypto
 fi
 
@@ -706,14 +742,14 @@ fi
 # Secret credentials
 cat ~/.cyph/default.vars >> default/app.yaml
 cp ~/.cyph/*.mmdb default/
-if [ $branch == 'staging' ] ; then
+if [ "${branch}" == 'staging' ] ; then
 	cat ~/.cyph/braintree.prod >> default/app.yaml
 else
 	cat ~/.cyph/braintree.sandbox >> default/app.yaml
 fi
 
 # Temporary workaround for cache-busting reverse proxies
-if [ ! $test ] ; then
+if [ ! "${test}" ] ; then
 	for project in cyph.im cyph.video ; do
 		cat $project/*.yaml | perl -pe 's/(service: cyph.*)/\1-update/' > $project/update.yaml
 	done
@@ -731,7 +767,7 @@ find . -type l -exec bash -c '
 ' \;
 
 gcloud app deploy --quiet --no-promote --project cyphme --version $version $(
-	if [ $site ] ; then
+	if [ "${site}" ] ; then
 		ls $site/*.yaml
 	else
 		ls */*.yaml

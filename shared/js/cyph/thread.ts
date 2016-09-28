@@ -57,6 +57,7 @@ export class Thread {
 				dir: () => {},
 				dirxml: () => {},
 				error: () => {},
+				exception: () => {},
 				group: () => {},
 				groupCollapsed: () => {},
 				groupEnd: () => {},
@@ -66,6 +67,7 @@ export class Thread {
 				profile: () => {},
 				profileEnd: () => {},
 				select: () => {},
+				table: () => {},
 				time: () => {},
 				timeEnd: () => {},
 				trace: () => {},
@@ -126,7 +128,7 @@ export class Thread {
 			})();
 		}
 
-		self['crypto']	= crypto;
+		(<any> self)['crypto']	= crypto;
 
 		importScripts('/lib/js/crypto/libsodium/dist/browsers-sumo/combined/sodium.min.js');
 		self['sodium'].memzero(threadSetupVars.seed);

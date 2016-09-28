@@ -18,8 +18,8 @@ export class Carousel {
 	public setItem (itemNumber: number = this.itemNumber) : void {
 		this.quotes.parent().height(
 			this.quotes.
-				map((i, elem: HTMLElement) => $(elem).height()).
 				toArray().
+				map((elem: HTMLElement) => $(elem).height()).
 				reduce((a: number, b: number) => Math.max(a, b))
 		);
 

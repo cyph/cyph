@@ -134,7 +134,7 @@ export class Chat extends BaseButtonManager implements IChat {
 
 		await Util.sleep(3000);
 
-		if (this.state === States.aborted) {
+		if (<States> this.state === States.aborted) {
 			return;
 		}
 

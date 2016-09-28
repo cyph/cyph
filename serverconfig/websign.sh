@@ -14,10 +14,13 @@ sed -i 's/\/\/.*archive.ubuntu.com/\/\/archive.ubuntu.com/g' /etc/apt/sources.li
 
 export DEBIAN_FRONTEND=noninteractive
 apt-get -y --force-yes update
-apt-get -y --force-yes upgrade
-apt-get -y --force-yes install curl
-curl -sL https://deb.nodesource.com/setup_6.x | bash -
+apt-get -y --force-yes install curl lsb-release apt-transport-https
+apt-get -y --force-yes purge apache* mysql*
+distro="$(lsb_release -c | awk '{print $2}')"
+echo "deb https://deb.nodesource.com/node_6.x ${distro} main" >> /etc/apt/sources.list
+curl https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
 apt-get -y --force-yes update
+apt-get -y --force-yes upgrade
 apt-get -y --force-yes install apt dpkg nginx openssl nodejs git
 
 mkdir /etc/nginx/ssl
@@ -60,9 +63,12 @@ while true ; do
 		'cyph.video',
 		'cyph.audio'
 	].concat(
-		fs.readdirSync('.').
-			filter(s => s !== '.git' && s !== 'websign' && s !== 'cyph').
-			map(s => s + '.ws')
+		fs.readdirSync('.').filter(f =>
+			f !== '.git' &&
+			f !== 'websign' &&
+			f !== 'cyph' &&
+			!fs.lstatSync(f).isSymbolicLink()
+		)
 	).
 		map(s => [s, 'www.' + s]).
 		reduce((a, b) => a.concat(b)).
@@ -120,12 +126,13 @@ read -r -d '' nginxconf <<- EOM
 EOM
 
 
-rekeyscriptDecoded="$(echo "${rekeyscript}" | base64 --decode)"
-echo "${rekeyscriptDecoded/NGINX_CONF/$nginxconf}" | \
-	sed "s|API_KEY|${apikey}|g" | \
-	sed "s|ORDER_ID|${orderid}|g" | \
-	sed "s|CSR_SUBJECT|${csrSubject}|g" \
-> /hpkpsuicide.sh
+rekeyscriptDecoded="$(
+	echo "${rekeyscript}" | base64 --decode |
+	sed "s|API_KEY|${apikey}|g" |
+	sed "s|ORDER_ID|${orderid}|g" |
+	sed "s|CSR_SUBJECT|${csrSubject}|g"
+)"
+echo "${rekeyscriptDecoded/NGINX_CONF/$nginxconf}" > /hpkpsuicide.sh
 
 
 chmod 700 /systemupdate.sh /certupdate.sh /hpkpsuicide.sh
