@@ -305,6 +305,7 @@ cd go
 mv ast buildutil loader ../../tools/go/
 cd ../..
 rm -rf tools-tmp
+find tools -name '*test*' -exec rm -rf {} \; 2> /dev/null
 
 cd ../..
 
