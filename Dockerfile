@@ -51,7 +51,7 @@ RUN echo '\
 	export PATH="/opt/local/bin:/opt/local/sbin:/usr/local/opt/go/libexec/bin:$CLOUD_PATHS:$GOPATH/bin:$PATH"; \
 \
 	export GPG_TTY=$(tty); \
-	eval $(gpg-agent --daemon); \
+	eval $(gpg-agent --daemon) > /dev/null 2>&1; \
 ' >> /.bashrc
 
 RUN echo 'gibson ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
