@@ -648,6 +648,14 @@ export const Templates	= {
 						<input translate ng-model='$this.link' aria-label='Cyph link' />
 					</md-input-container>
 
+					<md-button
+						class='copy md-fab'
+						aria-label='Copy'
+						ng-click='$this.copyToClipboard(this.textContent)'
+					>
+						<i class='material-icons'>content reload</i>
+					</md-button>
+
 					<div class='connect-link-mobile mobile-only'>
 						<a
 							class='connect-link-link'

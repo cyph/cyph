@@ -117,7 +117,8 @@ jspm install -y \
 	crypto/ntru=github:cyph/ntru.js \
 	crypto/rlwe=github:cyph/rlwe.js \
 	crypto/sidh=github:cyph/sidh.js \
-	crypto/supersphincs=github:cyph/supersphincs
+	crypto/supersphincs=github:cyph/supersphincs \
+	npm:clipboard-js
 
 if (( $? )); then
 	exit 1

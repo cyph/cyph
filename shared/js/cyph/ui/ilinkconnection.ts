@@ -31,4 +31,6 @@ export interface ILinkConnection {
 	 * Stops waiting and tears down this link connection instance.
 	 */
 	stop () : void;
+
+	copyToClipboard (); 
 }
