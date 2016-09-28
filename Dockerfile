@@ -4,16 +4,18 @@ MAINTAINER Ryan Lester <hacker@linux.com>
 
 LABEL Name="cyph"
 
+RUN apt-get update
+RUN apt-get install -y curl lsb-release
+
 RUN echo " \
 	deb https://deb.nodesource.com/node_6.x $(lsb_release -c | awk '{print $2}') main \
 " >> /etc/apt/sources.list
-RUN wget -qO- https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
+RUN curl https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
 
 RUN apt-get update
 RUN apt-get dist-upgrade -y
 
 RUN apt-get install -y \
-	curl \
 	nano \
 	nodejs \
 	golang-go \
