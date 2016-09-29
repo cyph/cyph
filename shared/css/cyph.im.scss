@@ -510,7 +510,10 @@ html.mobile button[disabled] {
 }
 
 @media all and (orientation: landscape) {
-	.video-call {
+	.chat-main.video .video-call.active.playing {
+		top: -17.5% !important;
+		height: 135% !important;
+
 		.me {
 			min-width: 100px;
 			width: 20vw;
@@ -519,7 +522,10 @@ html.mobile button[disabled] {
 }
 
 @media all and (orientation: portrait) {
-	.video-call {
+	.chat-main.video .video-call.active.playing {
+		left: -17.5% !important;
+		width: 135% !important;
+
 		.me {
 			width: 40vw;
 		}
@@ -904,10 +910,10 @@ html:not(.mobile) .amazon-link {
 .chat-main.video .video-call.active.playing {
 	position: fixed;
 	z-index: 10000;
-	top: -50%;
-	left: -50%;
-	height: 200%;
-	width: 200%;
+	top: 0px;
+	left: 0px;
+	height: 100%;
+	width: 100%;
 
 	* {
 		z-index: 1;
@@ -941,6 +947,8 @@ html:not(.mobile) .amazon-link {
 		min-height: 50%;
 		min-width: 50%;
 		margin: auto;
+
+		@include transform(scaleX(-1));
 	}
 
 	.me {

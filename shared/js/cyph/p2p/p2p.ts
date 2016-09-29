@@ -62,6 +62,7 @@ export class P2P implements IP2P {
 
 				if (this.webRTC) {
 					this.webRTC.mute();
+					this.webRTC.pauseVideo();
 					this.webRTC.stopLocalVideo();
 					this.webRTC.leaveRoom();
 					this.webRTC	= null;
@@ -166,6 +167,7 @@ export class P2P implements IP2P {
 		if (this.webRTC) {
 			return;
 		}
+
 		this.webRTC		= {};
 
 		this.loading	= true;
@@ -249,10 +251,17 @@ export class P2P implements IP2P {
 		;
 
 		const toggle	= (stream, enabled: boolean, medium: string) => {
+			if (stream === this.incomingStream) {
+				this.loading	= true;
+			}
+
 			if (medium in stream) {
 				stream[medium]	= enabled;
-				this.controller.update();
 			}
+
+			this.controller.update();
+			webRTC.stopLocalVideo();
+			webRTC.startLocalVideo();
 		};
 
 		webRTC.on('mute', data => toggle(this.incomingStream, false, data.name));
@@ -263,6 +272,8 @@ export class P2P implements IP2P {
 		webRTC.on('videoOff', () => toggle(this.outgoingStream, false, 'video'));
 
 		webRTC.on('videoAdded', () => {
+			$(this.remoteVideo).find('video').slice(0, -1).remove();
+
 			this.loading	= false;
 			this.controller.update();
 		});
