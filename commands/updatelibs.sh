@@ -103,6 +103,7 @@ jspm install -y \
 	jquery@^2 \
 	jquery-legacy=github:jquery/jquery@^1 \
 	npm:magnific-popup \
+	npm:clipboard-js \
 	npm:nanoscroller \
 	npm:unsemantic \
 	github:snaptortoise/konami-js \
@@ -200,6 +201,7 @@ cat > wrapper/symbols/crypto_stream_chacha20.json << EOM
 EOM
 make libsodium/configure
 sed -i 's|ln |cp |g' Makefile
+sed -i 's|cp -s|cp -r|g' Makefile
 sed -i 's|TOTAL_MEMORY_SUMO=35000000|TOTAL_MEMORY_SUMO=150000000|g' libsodium/dist-build/emscripten.sh
 make
 find dist -name '*.js' | xargs sed -i 's|use strict||g'
@@ -248,9 +250,9 @@ typings install --global --save \
 	dt~angular \
 	dt~angular-material \
 	dt~angular-animate \
-	# dt~webrtc/mediastream \
-	# dt~webrtc/rtcpeerconnection \
 	dt~dompurify
+	# dt~webrtc/mediastream
+	# dt~webrtc/rtcpeerconnection
 
 mkdir typings/globals/firebase
 curl -s https://raw.githubusercontent.com/suhdev/firebase-3-typescript/master/firebase.d.ts | \
@@ -292,10 +294,20 @@ cd golang.org/x
 
 git clone git://github.com/golang/net.git
 cd net
-rm -rf !(AUTHORS|CONTRIBUTING.md|CONTRIBUTORS|LICENSE|PATENTS|README|html)
+rm -rf !(AUTHORS|CONTRIBUTING.md|CONTRIBUTORS|LICENSE|PATENTS|README|html|context)
 cd ..
 
 git clone git://github.com/golang/text.git
+
+git clone git://github.com/golang/tools.git tools-tmp
+mkdir -p tools/go
+cd tools-tmp
+mv AUTHORS CONTRIBUTING.md CONTRIBUTORS LICENSE PATENTS README ../tools
+cd go
+mv ast buildutil loader ../../tools/go/
+cd ../..
+rm -rf tools-tmp
+find tools -name '*test*' -exec rm -rf {} \; 2> /dev/null
 
 cd ../..
 

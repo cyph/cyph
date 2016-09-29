@@ -15,7 +15,7 @@ System.config({
     "angular-material": "github:angular/bower-material@1.1.1",
     "angular2": "npm:angular2@2.0.0-beta.17",
     "animate.css": "npm:animate.css@3.5.2",
-    "babel-polyfill": "npm:babel-polyfill@6.13.0",
+    "babel-polyfill": "npm:babel-polyfill@6.16.0",
     "braintree": "github:braintree/braintree-web@2.27.0",
     "clipboard-js": "npm:clipboard-js@0.3.1",
     "crypto/mceliece": "github:cyph/mceliece.js@master",
@@ -124,9 +124,11 @@ System.config({
       "buffer": "github:jspm/nodelibs-buffer@0.1.0",
       "process": "github:jspm/nodelibs-process@0.1.2"
     },
-    "npm:babel-polyfill@6.13.0": {
+    "npm:babel-polyfill@6.16.0": {
       "babel-runtime": "npm:babel-runtime@6.11.6",
       "core-js": "npm:core-js@2.4.1",
+      "fs": "github:jspm/nodelibs-fs@0.1.2",
+      "path": "github:jspm/nodelibs-path@0.1.0",
       "process": "github:jspm/nodelibs-process@0.1.2",
       "regenerator-runtime": "npm:regenerator-runtime@0.9.5"
     },

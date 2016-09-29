@@ -11,7 +11,7 @@
       "angular-material": "github:angular/bower-material@^1.1.1",
       "angular2": "npm:angular2@^2.0.0-beta.17",
       "animate.css": "npm:animate.css@^3.5.2",
-      "babel-polyfill": "npm:babel-polyfill@^6.13.0",
+      "babel-polyfill": "npm:babel-polyfill@^6.16.0",
       "braintree": "github:braintree/braintree-web@^2",
       "clipboard-js": "npm:clipboard-js@^0.3.1",
       "crypto/mceliece": "github:cyph/mceliece.js@master",
