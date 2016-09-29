@@ -212,7 +212,7 @@ cd firebase
 npm install firebase --save
 cd node_modules/firebase
 npm install
-browserify firebase-node.js -o ../../firebase.js
+browserify firebase-node.js -o ../../firebase.js -s firebase
 cd ../..
 rm -rf node_modules
 cd ..
