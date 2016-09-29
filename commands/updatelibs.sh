@@ -249,9 +249,9 @@ typings install --global --save \
 	dt~angular \
 	dt~angular-material \
 	dt~angular-animate \
-	\ # dt~webrtc/mediastream
-	\ # dt~webrtc/rtcpeerconnection
 	dt~dompurify
+	# dt~webrtc/mediastream
+	# dt~webrtc/rtcpeerconnection
 
 mkdir typings/globals/firebase
 curl -s https://raw.githubusercontent.com/suhdev/firebase-3-typescript/master/firebase.d.ts | \
