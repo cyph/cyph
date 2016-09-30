@@ -100,7 +100,7 @@ export class Chat extends BaseButtonManager implements IChat {
 		shouldNotify: boolean = true,
 		selfDestructTimeout?: number
 	) : void {
-		if (this.state === States.aborted || typeof text !== 'string') {
+		if (this.state === States.aborted || !text || typeof text !== 'string') {
 			return;
 		}
 
