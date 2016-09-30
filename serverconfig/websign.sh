@@ -22,6 +22,7 @@ curl https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
 apt-get -y --force-yes update
 apt-get -y --force-yes upgrade
 apt-get -y --force-yes install apt dpkg nginx openssl nodejs git
+do-release-upgrade -f DistUpgradeViewNonInteractive
 
 mkdir /etc/nginx/ssl
 chmod 600 /etc/nginx/ssl
