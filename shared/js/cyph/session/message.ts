@@ -8,7 +8,7 @@ export class Message implements IMessage {
 	 * @param data
 	 * @param id
 	 */
-	public constructor(
+	public constructor (
 		public event: string = '',
 		public data?: any,
 		public id: string = Util.generateGuid()
