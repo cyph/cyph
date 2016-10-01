@@ -34,7 +34,28 @@ export class Config {
 	/** Angular-related config. */
 	public static angularConfig	= {
 		rootModule: 'Cyph',
-		rootController: 'CyphController'
+		rootController: 'CyphController',
+		config: [
+			'$compileProvider',
+			'$mdThemingProvider',
+			($compileProvider, $mdThemingProvider) => {
+				$compileProvider.
+					aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|sms):/).
+					debugInfoEnabled(false)
+				;
+
+				$mdThemingProvider.definePalette('cyph',
+					$mdThemingProvider.extendPalette('deep-purple', {
+						'400': '8b62d9'
+					})
+				);
+
+				$mdThemingProvider.theme('default').
+					primaryPalette('cyph').
+					accentPalette('cyph')
+				;
+			}
+		]
 	};
 
 	/** Braintree-related config. */

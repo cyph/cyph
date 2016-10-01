@@ -24,6 +24,7 @@ curl https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
 apt-get -y --force-yes update
 apt-get -y --force-yes upgrade
 apt-get -y --force-yes install apt dpkg nodejs openssl build-essential git
+do-release-upgrade -f DistUpgradeViewNonInteractive
 
 
 cat > /tmp/setup.sh << EndOfMessage

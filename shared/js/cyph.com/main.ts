@@ -65,12 +65,7 @@ angular.
 			});
 		}
 	]).
-	config([
-		'$compileProvider',
-		$compileProvider => $compileProvider.
-			aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|sms):/).
-			debugInfoEnabled(false)
-	])
+	config(Cyph.Config.angularConfig.config)
 ;
 
 angular.bootstrap(document, [Cyph.Config.angularConfig.rootModule]);

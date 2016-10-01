@@ -200,7 +200,10 @@ export const Templates	= {
 				</a>
 				<div
 					class='friend stream'
-					ng-show='$this.p2pManager.p2p.incomingStream.video'
+					ng-show='
+						$this.p2pManager.p2p.incomingStream.video &&
+						!$this.p2pManager.p2p.loading
+					'
 					autoplay
 				></div>
 				<img

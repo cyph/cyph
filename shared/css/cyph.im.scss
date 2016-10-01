@@ -522,6 +522,11 @@ html.mobile button[disabled] {
 			min-width: 100px;
 			width: 20vw;
 		}
+
+		img.friend {
+			height: 56.25vw !important;
+			width: 100vw !important;
+		}
 	}
 }
 
@@ -532,6 +537,11 @@ html.mobile button[disabled] {
 
 		.me {
 			width: 40vw;
+		}
+
+		img.friend {
+			height: 100vh !important;
+			width: 177.78vh !important;
 		}
 	}
 }
@@ -951,6 +961,16 @@ html:not(.mobile) .amazon-link {
 		min-height: 50%;
 		min-width: 50%;
 		margin: auto;
+	}
+
+	img.friend {
+		top: 50%;
+		left: 50%;
+		min-width: 0px;
+		min-height: 0px;
+		margin: 0px;
+
+		@include transform(translateX(-50%) translateY(-50%));
 	}
 
 	.me {

@@ -34,6 +34,7 @@ curl https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
 apt-get -y --force-yes update
 apt-get -y --force-yes upgrade
 apt-get -y --force-yes install apt dpkg nginx openssl nodejs deb.torproject.org-keyring tor
+do-release-upgrade -f DistUpgradeViewNonInteractive
 
 mkdir -p /etc/nginx/ssl/websign
 chmod 600 -R /etc/nginx/ssl

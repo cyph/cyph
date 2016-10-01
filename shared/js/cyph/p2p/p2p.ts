@@ -65,6 +65,7 @@ export class P2P implements IP2P {
 					this.webRTC.pauseVideo();
 					this.webRTC.stopLocalVideo();
 					this.webRTC.leaveRoom();
+					this.webRTC.disconnect();
 					this.webRTC	= null;
 				}
 
@@ -138,6 +139,18 @@ export class P2P implements IP2P {
 		}
 	}
 
+	private refresh (webRTC: any = this.webRTC) : void {
+		this.controller.update();
+
+		if (!webRTC) {
+			return;
+		}
+
+		webRTC.leaveRoom();
+		webRTC.stopLocalVideo();
+		webRTC.startLocalVideo();
+	}
+
 	private triggerUIEvent(
 		category: UIEvents.Categories,
 		event: UIEvents.Events,
@@ -190,7 +203,7 @@ export class P2P implements IP2P {
 		const webRTC	= new self['SimpleWebRTC']({
 			localVideoEl: this.localVideo,
 			remoteVideosEl: this.remoteVideo,
-			autoRequestMedia: true,
+			autoRequestMedia: false,
 			autoRemoveVideos: false,
 			adjustPeerVolume: true,
 			media: this.outgoingStream,
@@ -224,9 +237,7 @@ export class P2P implements IP2P {
 					const lastArg: any	= args.slice(-1)[0];
 
 					if (event === 'join' && typeof lastArg === 'function') {
-						lastArg(null, {clients: {friend:
-							this.incomingStream.video ? {video: true} : {audio: true}
-						}});
+						lastArg(null, {clients: {friend: {video: true}}});
 					}
 					else {
 						this.session.send(
@@ -250,26 +261,12 @@ export class P2P implements IP2P {
 			filter(o => !this.forceTURN || o['url'].indexOf('stun:') !== 0)
 		;
 
-		const toggle	= (stream, enabled: boolean, medium: string) => {
-			if (stream === this.incomingStream) {
-				this.loading	= true;
-			}
-
-			if (medium in stream) {
-				stream[medium]	= enabled;
-			}
-
-			this.controller.update();
-			webRTC.stopLocalVideo();
-			webRTC.startLocalVideo();
-		};
-
-		webRTC.on('mute', data => toggle(this.incomingStream, false, data.name));
-		webRTC.on('unmute', data => toggle(this.incomingStream, true, data.name));
-		webRTC.on('audioOn', () => toggle(this.outgoingStream, true, 'audio'));
-		webRTC.on('audioOff', () => toggle(this.outgoingStream, false, 'audio'));
-		webRTC.on('videoOn', () => toggle(this.outgoingStream, true, 'video'));
-		webRTC.on('videoOff', () => toggle(this.outgoingStream, false, 'video'));
+		webRTC.connection.on('streamUpdate', incomingStream => {
+			this.loading	= true;
+			this.incomingStream.audio	= !!incomingStream.audio;
+			this.incomingStream.video	= !!incomingStream.video;
+			this.refresh(webRTC);
+		});
 
 		webRTC.on('videoAdded', () => {
 			$(this.remoteVideo).find('video').slice(0, -1).remove();
@@ -279,8 +276,7 @@ export class P2P implements IP2P {
 		});
 
 		webRTC.on('readyToCall', () => webRTC.joinRoom(P2P.constants.webRTC));
-		webRTC.on('leftRoom', () => webRTC.disconnect());
-
+		webRTC.startLocalVideo();
 		webRTC.connection.emit('connect');
 
 		this.webRTC	= webRTC;
@@ -332,44 +328,31 @@ export class P2P implements IP2P {
 	}
 
 	public toggle (shouldPause?: boolean, medium?: string) : void {
-		if (medium && shouldPause !== true && shouldPause !== false) {
-			shouldPause	= this.outgoingStream[medium];
+		if (!this.webRTC) {
+			return;
 		}
 
-		switch (medium) {
-			case P2P.constants.video: {
-				if (shouldPause) {
-					this.webRTC.pauseVideo();
-				}
-				else {
-					this.webRTC.resumeVideo();
-				}
+		this.loading	= true;
 
-				break;
+		if (shouldPause !== true && shouldPause !== false) {
+			if (medium) {
+				this.outgoingStream[medium]	= !this.outgoingStream[medium];
 			}
-			case P2P.constants.audio: {
-				if (shouldPause) {
-					this.webRTC.mute();
-				}
-				else {
-					this.webRTC.unmute();
-				}
-
-				break;
-			}
-			default: {
-				if (shouldPause !== true && shouldPause !== false) {
-					this.toggle(undefined, 'audio');
-					this.toggle(undefined, 'video');
-				}
-				else if (shouldPause) {
-					this.webRTC.pause();
-				}
-				else {
-					this.webRTC.resume();
-				}
+			else {
+				this.outgoingStream.audio	= !this.outgoingStream.audio;
+				this.outgoingStream.video	= !this.outgoingStream.video;
 			}
 		}
+		else if (medium) {
+			this.outgoingStream[medium]	= !shouldPause;
+		}
+		else {
+			this.outgoingStream.audio	= !shouldPause;
+			this.outgoingStream.video	= !shouldPause;
+		}
+
+		this.webRTC.connection.emit('streamUpdate', this.outgoingStream);
+		this.refresh();
 	}
 
 	/**
