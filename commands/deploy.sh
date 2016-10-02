@@ -14,20 +14,6 @@ test=true
 websign=true
 
 
-gcloud auth login
-
-echo -e '\n\n\ncaching SSH and GPG keys\n'
-eval "$(ssh-agent)"
-ssh-add ~/.ssh/id_rsa
-mkdir ~/tmpgit
-cd ~/tmpgit
-git init
-touch balls
-git add balls
-git commit -S -a -m test
-cd "$rootDir"
-
-
 if [ "${1}" == '--prod' ] ; then
 	test=''
 	shift
@@ -35,6 +21,21 @@ elif [ "${1}" == '--simple' ] ; then
 	simple=true
 	shift
 fi
+
+if [ ! "${simple}" ] ; then
+	echo -e '\n\n\ncaching SSH and GPG keys\n'
+	eval "$(ssh-agent)"
+	ssh-add ~/.ssh/id_rsa
+	mkdir ~/tmpgit
+	cd ~/tmpgit
+	git init
+	touch balls
+	git add balls
+	git commit -S -a -m test
+	cd "$rootDir"
+fi
+
+gcloud auth login
 
 commit=$test
 if [ "${1}" == '--no-commit' ] ; then
