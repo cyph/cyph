@@ -12,12 +12,6 @@ ${!o.colors.text ? '' : `
 	}
 `}
 
-${!o.colors.card ? '' : `
-	md-card {
-		background-color: ${o.colors.card};
-	}
-`}
-
 ${!o.colors.dialog ? '' : `
 	md-dialog {
 		background-color: ${o.colors.dialog};
