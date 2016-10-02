@@ -592,10 +592,11 @@ if [ "${websign}" ] ; then
 			const \$	= cheerio.load(fs.readFileSync('../cyph.ws').toString());
 
 			const o		= JSON.parse(
-				fs.readFileSync('${customBuildTheme}').toString().replace(/\s/g, ' ')
+				fs.readFileSync('${customBuildTheme}').toString().replace(/\s+/g, ' ')
 			);
 
 			o.background	= datauri.sync('${customBuildBackground}');
+			o.favicon		= datauri.sync('${customBuildFavicon}');
 
 			const css	= child_process.spawnSync('cleancss', [], {input:
 				child_process.spawnSync('sass', ['-s', '--scss'], {input: \`
@@ -643,7 +644,7 @@ if [ "${websign}" ] ; then
 
 				\$('head').append(\`<script>
 					self.customBuild		= '${customBuild}';
-					self.customBuildFavicon	= '\${datauri.sync('${customBuildFavicon}')}';
+					self.customBuildFavicon	= '\${o.favicon}';
 
 					Array.prototype.slice.apply(
 						document.getElementsByClassName('custom-build-favicon')

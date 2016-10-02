@@ -953,7 +953,7 @@ export const Templates	= {
 			</div>
 
 			<div layout='row' ng-show='ui.coBranded'>
-				<p flex='nogrow' layout-padding>
+				<p class='powered-by-cyph' flex='nogrow' layout-padding>
 					<a ng-href='{{Cyph.Env.homeUrl}}' class='small-font'>
 						Powered by Cyph
 					</a>
