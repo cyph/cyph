@@ -675,7 +675,9 @@ if [ "${websign}" ] ; then
 	done
 	cd ../..
 
-	mv pkg/cyph.ws "pkg/${package}"
+	if [ $test ] ; then
+		mv pkg/cyph.ws "pkg/${package}"
+	fi
 
 	for p in $packages ; do
 		rm -rf cdn/${p}
@@ -756,7 +758,7 @@ if [ ! "${test}" ] ; then
 fi
 
 # Workaround for symlinks doubling up Google's count of the files toward its 10k limit
-find . -type l -exec bash -c '
+find . -type l -not -wholename './cdn/*' -exec bash -c '
 	original="$(readlink "{}")";
 	parent="$(echo "{}" | perl -pe "s/(.*)\/.*?$/\1/g")";
 	name="$(echo "{}" | perl -pe "s/.*\/(.*?)$/\1/g")"
