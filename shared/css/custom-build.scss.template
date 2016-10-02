@@ -170,6 +170,7 @@ ${!o.noCyphBranding ? '' : `
 
 	md-fab-trigger img {
 		content: url(${o.favicon});
+		-webkit-filter: brightness(0%) invert(100%);
 		filter: brightness(0%) invert(100%);
 	}
 
