@@ -77,12 +77,21 @@ cat > server.js <<- EOM
 		})
 	);
 
-	const git				= (...args) => new Promise(resolve => {
+	const git				= (...args) => new Promise( (resolve, reject) => {
 		let data		= new Buffer([]);
 		const stdout	= child_process.spawn('git', args, {cwd: cdnPath}).stdout;
 
 		stdout.on('data', buf => data = Buffer.concat([data, buf]));
-		stdout.on('close', () => resolve(data));
+
+		stdout.on('close', () => {
+			stdout.removeAllListeners();
+			resolve(data);
+		});
+
+		stdout.on('error', () => {
+			stdout.removeAllListeners();
+			reject();
+		});
 	});
 
 	app.use( (req, res, next) => {
