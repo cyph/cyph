@@ -10,7 +10,7 @@ import {ISession} from 'session/isession';
 export class Transport {
 	private static cyphertextLimit: number	= 200000;
 
-	public static chunkLength: number		= 8388608;
+	public static chunkLength: number		= 5000000;
 
 
 	private lastIncomingMessageTimestamp: number	= 0;
