@@ -50,7 +50,7 @@ cat > server.js <<- EOM
 	const fs				= require('fs');
 	const spdy				= require('spdy');
 
-	const cache				= {};
+	const cache				= {gzip: {}, br: {}};
 
 	const cdnPath			= './cdn/';
 	const certPath			= 'cert.pem';
@@ -59,8 +59,8 @@ cat > server.js <<- EOM
 
 	const returnError		= res => res.status(418).end();
 
-	const getFileName		= req => new Promise( (resolve, reject) =>
-		fs.realpath(cdnPath + req.path.slice(1) + '.gz', (err, path) => {
+	const getFileName		= (req, ext) => () => new Promise( (resolve, reject) =>
+		fs.realpath(cdnPath + req.path.slice(1) + ext, (err, path) => {
 			if (err || !path) {
 				reject(err);
 				return;
@@ -89,15 +89,27 @@ cat > server.js <<- EOM
 		res.set('Access-Control-Allow-Methods', 'GET');
 		res.set('Access-Control-Allow-Origin', '*');
 		res.set('Cache-Control', 'public, max-age=31536000');
-		res.set('Content-Encoding', 'gzip');
 		res.set('Content-Type', 'application/octet-stream');
 		res.set('Public-Key-Pins', 'max-age=5184000; includeSubdomains; pin-sha256="\${keyHash}"; pin-sha256="\${backupHash}"');
 		res.set('Strict-Transport-Security', 'max-age=31536000; includeSubdomains');
 
+		if ( (req.get('Accept-Encoding') || '').replace(/\s+/g, '').split(',').indexOf('br') > -1) {
+			req.cache		= cache.br;
+			req.getFileName	= getFileName(req, '.br');
+
+			res.set('Content-Encoding', 'br');
+		}
+		else {
+			req.cache		= cache.gzip;
+			req.getFileName	= getFileName(req, '.gz');
+
+			res.set('Content-Encoding', 'gzip');
+		}
+
 		next();
 	});
 
-	app.get(/.*\/current/, (req, res) => getFileName(req).then(fileName =>
+	app.get(/.*\/current/, (req, res) => req.getFileName().then(fileName =>
 		new Promise( (resolve, reject) =>
 			res.sendFile(fileName, {root: cdnPath}, err => {
 				if (err) {
@@ -113,36 +125,36 @@ cat > server.js <<- EOM
 	));
 
 	app.get(/.*\/pkg/, (req, res) => Promise.resolve().then( () => {
-		if (cache[req.originalUrl]) {
+		if (req.cache[req.originalUrl]) {
 			return;
 		}
 
-		return getFileName(req).then(fileName => new Promise( (resolve, reject) =>
+		return req.getFileName().then(fileName => new Promise( (resolve, reject) =>
 			fs.readFile(cdnPath + fileName, (err, data) => {
 				if (err) {
 					reject(err);
 					return;
 				}
 
-				cache[req.originalUrl]	= data;
+				req.cache[req.originalUrl]	= data;
 
 				resolve();
 			})
 		));
 	}).then( () =>
-		res.send(cache[req.originalUrl])
+		res.send(req.cache[req.originalUrl])
 	).catch( () =>
 		returnError(res)
 	));
 
 	app.get(/\/.*/, (req, res) => Promise.resolve().then( () => {
-		if (cache[req.originalUrl]) {
+		if (req.cache[req.originalUrl]) {
 			return;
 		}
 
 		const hash	= req.originalUrl.split('?')[1];
 
-		return getFileName(req).then(fileName => new Promise( (resolve, reject) =>
+		return req.getFileName().then(fileName => new Promise( (resolve, reject) =>
 			fs.stat(cdnPath + fileName, err => {
 				if (err) {
 					reject(err);
@@ -165,10 +177,10 @@ cat > server.js <<- EOM
 
 			return git('show', revision + ':' + fileName);
 		}).then(data => {
-			cache[req.originalUrl]	= data;
+			req.cache[req.originalUrl]	= data;
 		}));
 	}).then( () =>
-		res.send(cache[req.originalUrl])
+		res.send(req.cache[req.originalUrl])
 	).catch( () =>
 		returnError(res)
 	));

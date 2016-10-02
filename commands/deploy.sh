@@ -706,6 +706,13 @@ if [ "${websign}" ] ; then
 		done
 	) || exit 1
 
+	if [ -d pkg/cyph.ws-subresources ] ; then
+		find pkg/cyph.ws-subresources -type f -not -name '*.srihash' -print0 | xargs -0 -P4 -I% bash -c ' \
+			zopfli -i1000 %; \
+			bro --quality 99 --repeat 99 --input % --output %.br; \
+		'
+	fi
+
 	for p in $packages ; do
 		if [ -d pkg/cyph.ws-subresources ] ; then
 			cp -a pkg/cyph.ws-subresources/* cdn/${p}/
@@ -721,12 +728,12 @@ if [ "${websign}" ] ; then
 			git commit -S -m $plink $plink > /dev/null 2>&1
 		fi
 
-		find $p -type f -not -name '*.srihash' -exec bash -c ' \
-			zopfli -i1000 {}; \
-			chmod 777 {}.gz; \
-			git add {}.gz; \
-			git commit -S -m "$(cat {}.srihash 2> /dev/null || date +%s)" {}.gz > /dev/null 2>&1; \
+		find $p -type f -not \( -name '*.srihash' -or -name '*.gz' -or -name '*.br' \) -exec bash -c ' \
+			chmod 777 {}.gz {}.br; \
+			git add {}.gz {}.br; \
+			git commit -S -m "$(cat {}.srihash 2> /dev/null || date +%s)" {}.gz {}.br > /dev/null 2>&1; \
 		' \;
+
 		git push
 		cd ..
 	done

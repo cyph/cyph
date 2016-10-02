@@ -102,6 +102,15 @@ RUN bash -c ' \
 
 RUN rm -rf ~/.gnupg
 
+RUN bash -c ' \
+	cd; \
+	git clone https://github.com/google/brotli.git; \
+	cd brotli; \
+	make; \
+	sudo mv bin/bro /usr/bin/; \
+	cd; \
+	rm -rf brotli; \
+'
 
 RUN sudo npm -g install \
 	html-minifier \
