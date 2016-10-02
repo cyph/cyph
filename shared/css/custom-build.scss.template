@@ -1,3 +1,5 @@
+@import 'bourbon/bourbon';
+
 html {
 
 ${!o.colors.main ? '' : `
@@ -170,8 +172,7 @@ ${!o.noCyphBranding ? '' : `
 
 	md-fab-trigger img {
 		content: url(${o.favicon});
-		-webkit-filter: brightness(0%) invert(100%);
-		filter: brightness(0%) invert(100%);
+		@include filter(brightness(0%) invert(100%));
 	}
 
 	.chat-main.video .video-call.active.playing .logo {

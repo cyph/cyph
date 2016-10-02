@@ -578,6 +578,7 @@ if [ "${websign}" ] ; then
 	for d in $(find custom-builds -mindepth 1 -maxdepth 1 -type d) ; do
 		customBuildBase="$(echo "${d}" | perl -pe 's/.*\/(.*)$/\1/')"
 		customBuild="$(projectname "${customBuildBase}")"
+		customBuildAdditionalStyling="${d}/custom.scss"
 		customBuildBackground="${d}/background.png"
 		customBuildFavicon="${d}/favicon.png"
 		customBuildTheme="${d}/theme.json"
@@ -590,20 +591,32 @@ if [ "${websign}" ] ; then
 			const htmlencode	= require('htmlencode');
 			const superSphincs	= require('supersphincs');
 
+			const compileSCSS	= scss =>
+				child_process.spawnSync('cleancss', [], {input:
+					child_process.spawnSync(
+						'scss',
+						['-s', '-I../../shared/css'],
+						{input: scss}
+					).stdout.toString()
+				}).stdout.toString().trim()
+			;
+
 			const \$	= cheerio.load(fs.readFileSync('../cyph.ws').toString());
 
 			const o		= JSON.parse(
-				fs.readFileSync('${customBuildTheme}').toString().replace(/\s+/g, ' ')
+				fs.readFileSync('${customBuildTheme}').toString()
 			);
 
 			o.background	= datauri.sync('${customBuildBackground}');
 			o.favicon		= datauri.sync('${customBuildFavicon}');
 
-			const css	= child_process.spawnSync('cleancss', [], {input:
-				child_process.spawnSync('sass', ['-s', '--scss'], {input: \`
-					$(cat ../../shared/css/custom-build.scss.template | sed 's|;| \!important;|g')
-				\`}).stdout.toString()
-			}).stdout.toString().trim();
+			o.additionalStyling	= compileSCSS(\`
+				$(cat "${customBuildAdditionalStyling}" 2> /dev/null)
+			\`);
+
+			const css	= compileSCSS(\`
+				$(cat ../../shared/css/custom-build.scss.template | sed 's|;| \!important;|g')
+			\`);
 
 			superSphincs.hash(css).then(hash => {
 				\$('title').
