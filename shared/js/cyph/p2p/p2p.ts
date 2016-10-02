@@ -140,6 +140,11 @@ export class P2P implements IP2P {
 	}
 
 	private refresh (webRTC: any = this.webRTC) : void {
+		this.loading	=
+			this.incomingStream.audio ||
+			this.incomingStream.video
+		;
+
 		this.controller.update();
 
 		if (!webRTC) {
@@ -262,7 +267,6 @@ export class P2P implements IP2P {
 		;
 
 		webRTC.connection.on('streamUpdate', incomingStream => {
-			this.loading	= true;
 			this.incomingStream.audio	= !!incomingStream.audio;
 			this.incomingStream.video	= !!incomingStream.video;
 			this.refresh(webRTC);
@@ -331,8 +335,6 @@ export class P2P implements IP2P {
 		if (!this.webRTC) {
 			return;
 		}
-
-		this.loading	= true;
 
 		if (shouldPause !== true && shouldPause !== false) {
 			if (medium) {

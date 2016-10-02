@@ -208,7 +208,7 @@ export const Templates	= {
 				></div>
 				<img
 					class='friend'
-					ng-if='!(
+					ng-show='!(
 						$this.p2pManager.p2p.incomingStream.video ||
 						$this.p2pManager.p2p.loading
 					)'
