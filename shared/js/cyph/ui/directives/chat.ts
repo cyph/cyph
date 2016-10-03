@@ -1,6 +1,6 @@
 import {Enterpress} from 'enterpress';
 import {Filechange} from 'filechange';
-import {Templates} from 'templates';
+import {Templates} from 'ui/templates';
 
 
 /**

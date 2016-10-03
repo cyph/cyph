@@ -8,7 +8,6 @@ import {Markdown} from 'markdown';
 import {Beta} from 'beta';
 import {SignupForm} from 'signupform';
 import {Static} from 'static';
-import {Templates} from 'templates';
 
 
 export {
@@ -21,6 +20,5 @@ export {
 	Markdown,
 	Beta,
 	SignupForm,
-	Static,
-	Templates
+	Static
 };

@@ -1,4 +1,4 @@
-import {Templates} from 'templates';
+import {Templates} from 'ui/templates';
 
 
 /**
