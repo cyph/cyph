@@ -740,6 +740,10 @@ if [ "${websign}" ] ; then
 		fi
 
 		find $p -type f -not \( -name '*.srihash' -or -name '*.gz' -or -name '*.br' \) -exec bash -c ' \
+			if [ ! -f {}.gz ] ; then \
+				zopfli -i1000 {}; \
+				bro --quality 99 --repeat 99 --input {} --output {}.br; \
+			fi; \
 			chmod 777 {}.gz {}.br; \
 			git add {}.gz {}.br; \
 			git commit -S -m "$(cat {}.srihash 2> /dev/null || date +%s)" {}.gz {}.br > /dev/null 2>&1; \
