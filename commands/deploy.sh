@@ -574,7 +574,7 @@ if [ "${websign}" ] ; then
 	mkdir -p pkg/cyph.ws-subresources 2> /dev/null
 	cd pkg/cyph.ws-subresources
 	git clone git@github.com:cyph/custom-builds.git
-	rm -rf custom-builds/.git
+	rm -rf custom-builds/.git custom-builds/reference.json
 	for d in $(find custom-builds -mindepth 1 -maxdepth 1 -type d) ; do
 		customBuildBase="$(echo "${d}" | perl -pe 's/.*\/(.*)$/\1/')"
 		customBuild="$(projectname "${customBuildBase}")"
