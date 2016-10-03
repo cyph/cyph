@@ -12,12 +12,6 @@ ${!o.colors.text ? '' : `
 	}
 `}
 
-${!o.colors.card ? '' : `
-	md-card {
-		background-color: ${o.colors.card};
-	}
-`}
-
 ${!o.colors.dialog ? '' : `
 	md-dialog {
 		background-color: ${o.colors.dialog};
@@ -164,6 +158,25 @@ ${!o.colors.newMessages ? '' : `
 md-dialog.help md-tab-item[disabled] {
 	display: none;
 }
+
+${!o.noCyphBranding ? '' : `
+	.powered-by-cyph {
+		display: none;
+	}
+
+	[cyph-chat-toolbar] a {
+		display: none;
+	}
+
+	md-fab-trigger img {
+		content: url(${o.favicon});
+		@include filter(brightness(0%) invert(100%));
+	}
+
+	.chat-main.video .video-call.active.playing .logo {
+		display: none;
+	}
+`}
 
 ${o.additionalStyling ? o.additionalStyling : ''}
 

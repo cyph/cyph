@@ -14,20 +14,6 @@ test=true
 websign=true
 
 
-gcloud auth login
-
-echo -e '\n\n\ncaching SSH and GPG keys\n'
-eval "$(ssh-agent)"
-ssh-add ~/.ssh/id_rsa
-mkdir ~/tmpgit
-cd ~/tmpgit
-git init
-touch balls
-git add balls
-git commit -S -a -m test
-cd "$rootDir"
-
-
 if [ "${1}" == '--prod' ] ; then
 	test=''
 	shift
@@ -35,6 +21,21 @@ elif [ "${1}" == '--simple' ] ; then
 	simple=true
 	shift
 fi
+
+if [ ! "${simple}" ] ; then
+	echo -e '\n\n\ncaching SSH and GPG keys\n'
+	eval "$(ssh-agent)"
+	ssh-add ~/.ssh/id_rsa
+	mkdir ~/tmpgit
+	cd ~/tmpgit
+	git init
+	touch balls
+	git add balls
+	git commit -S -a -m test
+	cd "$rootDir"
+fi
+
+gcloud auth login
 
 commit=$test
 if [ "${1}" == '--no-commit' ] ; then
@@ -577,6 +578,7 @@ if [ "${websign}" ] ; then
 	for d in $(find custom-builds -mindepth 1 -maxdepth 1 -type d) ; do
 		customBuildBase="$(echo "${d}" | perl -pe 's/.*\/(.*)$/\1/')"
 		customBuild="$(projectname "${customBuildBase}")"
+		customBuildAdditionalStyling="${d}/custom.scss"
 		customBuildBackground="${d}/background.png"
 		customBuildFavicon="${d}/favicon.png"
 		customBuildTheme="${d}/theme.json"
@@ -589,19 +591,43 @@ if [ "${websign}" ] ; then
 			const htmlencode	= require('htmlencode');
 			const superSphincs	= require('supersphincs');
 
+			const compileSCSS	= scss =>
+				child_process.spawnSync('cleancss', [], {input:
+					child_process.spawnSync(
+						'scss',
+						['-s', '-I../../shared/css'],
+						{input: scss}
+					).stdout.toString()
+				}).stdout.toString().trim()
+			;
+
 			const \$	= cheerio.load(fs.readFileSync('../cyph.ws').toString());
 
 			const o		= JSON.parse(
-				fs.readFileSync('${customBuildTheme}').toString().replace(/\s/g, ' ')
+				fs.readFileSync('${customBuildTheme}').toString()
 			);
 
 			o.background	= datauri.sync('${customBuildBackground}');
+			o.favicon		= datauri.sync('${customBuildFavicon}');
 
-			const css	= child_process.spawnSync('cleancss', [], {input:
-				child_process.spawnSync('sass', ['-s', '--scss'], {input: \`
-					$(cat ../../shared/css/custom-build.scss.template | sed 's|;| \!important;|g')
-				\`}).stdout.toString()
-			}).stdout.toString().trim();
+			try {
+				o.additionalStyling	= compileSCSS(
+					fs.readFileSync('${customBuildAdditionalStyling}').toString()
+				);
+			}
+			catch (_) {}
+
+			const css	= compileSCSS(
+				eval(\`\\\`
+					@import 'bourbon/bourbon';
+
+					\${
+						fs.readFileSync(
+							'../../shared/css/custom-build.scss.template'
+						).toString().replace(/;/g, '!important;')
+					}
+				\\\`\`)
+			);
 
 			superSphincs.hash(css).then(hash => {
 				\$('title').
@@ -643,7 +669,7 @@ if [ "${websign}" ] ; then
 
 				\$('head').append(\`<script>
 					self.customBuild		= '${customBuild}';
-					self.customBuildFavicon	= '\${datauri.sync('${customBuildFavicon}')}';
+					self.customBuildFavicon	= '\${o.favicon}';
 
 					Array.prototype.slice.apply(
 						document.getElementsByClassName('custom-build-favicon')
@@ -691,6 +717,13 @@ if [ "${websign}" ] ; then
 		done
 	) || exit 1
 
+	if [ -d pkg/cyph.ws-subresources ] ; then
+		find pkg/cyph.ws-subresources -type f -not -name '*.srihash' -print0 | xargs -0 -P4 -I% bash -c ' \
+			zopfli -i1000 %; \
+			bro --quality 99 --repeat 99 --input % --output %.br; \
+		'
+	fi
+
 	for p in $packages ; do
 		if [ -d pkg/cyph.ws-subresources ] ; then
 			cp -a pkg/cyph.ws-subresources/* cdn/${p}/
@@ -706,12 +739,16 @@ if [ "${websign}" ] ; then
 			git commit -S -m $plink $plink > /dev/null 2>&1
 		fi
 
-		find $p -type f -not -name '*.srihash' -exec bash -c ' \
-			zopfli -i1000 {}; \
-			chmod 777 {}.gz; \
-			git add {}.gz; \
-			git commit -S -m "$(cat {}.srihash 2> /dev/null || date +%s)" {}.gz > /dev/null 2>&1; \
+		find $p -type f -not \( -name '*.srihash' -or -name '*.gz' -or -name '*.br' \) -exec bash -c ' \
+			if [ ! -f {}.gz ] ; then \
+				zopfli -i1000 {}; \
+				bro --quality 99 --repeat 99 --input {} --output {}.br; \
+			fi; \
+			chmod 777 {}.gz {}.br; \
+			git add {}.gz {}.br; \
+			git commit -S -m "$(cat {}.srihash 2> /dev/null || date +%s)" {}.gz {}.br > /dev/null 2>&1; \
 		' \;
+
 		git push
 		cd ..
 	done
