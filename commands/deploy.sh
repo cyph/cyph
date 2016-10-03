@@ -610,13 +610,24 @@ if [ "${websign}" ] ; then
 			o.background	= datauri.sync('${customBuildBackground}');
 			o.favicon		= datauri.sync('${customBuildFavicon}');
 
-			o.additionalStyling	= compileSCSS(\`
-				$(cat "${customBuildAdditionalStyling}" 2> /dev/null)
-			\`);
+			try {
+				o.additionalStyling	= compileSCSS(
+					fs.readFileSync('${customBuildAdditionalStyling}').toString()
+				);
+			}
+			catch (_) {}
 
-			const css	= compileSCSS(\`
-				$(cat ../../shared/css/custom-build.scss.template | sed 's|;| \!important;|g')
-			\`);
+			const css	= compileSCSS(
+				eval(\`\\\`
+					@import 'bourbon/bourbon';
+
+					\${
+						fs.readFileSync(
+							'../../shared/css/custom-build.scss.template'
+						).toString().replace(/;/g, '!important;')
+					}
+				\\\`\`)
+			);
 
 			superSphincs.hash(css).then(hash => {
 				\$('title').
