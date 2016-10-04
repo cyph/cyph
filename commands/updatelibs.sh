@@ -201,8 +201,11 @@ cat > wrapper/symbols/crypto_stream_chacha20.json << EOM
 	"return": "_format_output(out, outputFormat)"
 }
 EOM
-sed -i 's/.*--browser-tests.*/\techo/g' Makefile
-sed -i 's/.*BROWSERS_TEST_DIR.*//g' Makefile
+cat Makefile |
+	perl -pe 's/(\s+).*--browser-tests.*/\1\@echo/g' |
+	perl -pe 's/(\s+).*BROWSERS_TEST_DIR.*/\1\@echo/g' \
+> Makefile.new
+mv Makefile.new Makefile
 make libsodium/configure
 sed -i 's|TOTAL_MEMORY_SUMO=35000000|TOTAL_MEMORY_SUMO=150000000|g' libsodium/dist-build/emscripten.sh
 make
