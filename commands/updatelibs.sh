@@ -311,10 +311,12 @@ rm -rf golang.org 2> /dev/null
 mkdir -p golang.org/x
 cd golang.org/x
 
-git clone git://github.com/golang/net.git
-cd net
-rm -rf !(AUTHORS|CONTRIBUTING.md|CONTRIBUTORS|LICENSE|PATENTS|README|html|context)
+git clone git://github.com/golang/net.git net.tmp
+mkdir net
+cd net.tmp
+mv AUTHORS CONTRIBUTING.md CONTRIBUTORS LICENSE PATENTS README html context ../net/
 cd ..
+rm -rf net.tmp
 
 git clone git://github.com/golang/text.git
 
