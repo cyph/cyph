@@ -202,8 +202,9 @@ cat > wrapper/symbols/crypto_stream_chacha20.json << EOM
 }
 EOM
 cat Makefile |
-	perl -pe 's/(\s+).*--browser-tests.*/\1\@echo/g' |
-	perl -pe 's/(\s+).*BROWSERS_TEST_DIR.*/\1\@echo/g' \
+	perl -pe 's/^(\s+).*--browser-tests.*/\1\@echo/g' |
+	perl -pe 's/^(\s+).*BROWSERS_TEST_DIR.*/\1\@echo/g' |
+	perl -pe 's/^(\s+)ln /\1ln -f /g' \
 > Makefile.new
 mv Makefile.new Makefile
 make libsodium/configure
