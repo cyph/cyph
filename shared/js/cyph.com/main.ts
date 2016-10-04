@@ -24,11 +24,14 @@ Cyph.UI.Elements.html.attr('ng-controller', Cyph.Config.angularConfig.rootContro
 angular.
 	module(Cyph.Config.angularConfig.rootModule, [
 		'ngMaterial',
-		Cyph.UI.Directives.Chat.title,
-		Cyph.UI.Directives.Checkout.title,
-		Cyph.UI.Directives.Contact.title,
-		Cyph.UI.Directives.Markdown.title,
-		Cyph.UI.Directives.SignupForm.title
+		Cyph.UI.Components.ChatCyphertext.title,
+		Cyph.UI.Components.ChatMain.title,
+		Cyph.UI.Components.ChatMessageBox.title,
+		Cyph.UI.Components.ChatToolbar.title,
+		Cyph.UI.Components.Checkout.title,
+		Cyph.UI.Components.Contact.title,
+		Cyph.UI.Components.SignupForm.title,
+		Cyph.UI.Directives.Markdown.title
 	]).
 	controller(Cyph.Config.angularConfig.rootController, [
 		'$scope',

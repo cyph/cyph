@@ -655,7 +655,7 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 		margin-top: 64px;
 		left: 11.5%;
 
-		[cyph-chat-toolbar] {
+		cyph-chat-toolbar {
 			.buttons > * {
 				left: 20px;
 				top: 5px;
@@ -668,12 +668,12 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 			}
 		}
 
-		[cyph-chat-main], [cyph-chat-message-box] {
+		cyph-chat-main, cyph-chat-message-box {
 			margin-left: 17.5px;
 			width: calc(100% - 25px);
 		}
 
-		[cyph-chat-main] {
+		cyph-chat-main {
 			height: calc(100% - 90px);
 			margin-top: 10px;
 
@@ -705,7 +705,7 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 			}
 		}
 
-		[cyph-chat-message-box] {
+		cyph-chat-message-box {
 			margin-top: -10px;
 
 			.message-box {
@@ -730,7 +730,7 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 
 		@include filter(blur(0px));
 
-		[cyph-chat-main] {
+		cyph-chat-main {
 			height: calc(100% - 88px);
 
 			.chat-main.video .video-call.active.playing {
@@ -785,7 +785,7 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 		opacity: 0.5 !important;
 	}
 
-	[cyph-chat-main] .chat-main.video {
+	cyph-chat-main .chat-main.video {
 		.video-call.active.playing {
 			&, .logo, .me, .sidebar, .buttons, ~ .message-list, ~ .video-call-message-box {
 				position: absolute;

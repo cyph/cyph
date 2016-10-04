@@ -97,6 +97,7 @@ jspm install -y \
 	github:markdown-it/markdown-it-emoji \
 	microlight=github:buu700/microlight \
 	github:siddii/angular-timer@1.2.1 \
+	angular-timer=github:siddii/angular-timer \
 	github:andyet/simplewebrtc \
 	npm:animate.css \
 	github:davidchambers/base64.js \

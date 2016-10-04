@@ -116,7 +116,7 @@ md-toolbar, md-toolbar.md-default-theme:not(.md-menu-toolbar), md-toolbar:not(.m
 	top: 0px;
 }
 
-cyph-checkout, [cyph-checkout] {
+cyph-checkout {
 	background-color: #B48DFF;
 	margin-top: 20px;
 
@@ -145,7 +145,7 @@ cyph-checkout, [cyph-checkout] {
 	}
 }
 
-cyph-checkout, [cyph-checkout], #donate {
+cyph-checkout, #donate {
 	button {
 		display: block !important;
 		margin: 14px auto 25px auto !important;
@@ -154,7 +154,7 @@ cyph-checkout, [cyph-checkout], #donate {
 	}
 }
 
-cyph-markdown, [cyph-markdown] {
+[cyph-markdown] {
 	> p:only-child {
 		display: inline;
 	}
@@ -165,7 +165,7 @@ cyph-markdown, [cyph-markdown] {
 }
 
 html:not(.mobile) {
-	cyph-markdown, [cyph-markdown] {
+	[cyph-markdown] {
 		:not(p:only-child) {
 			margin-left: 25px;
 		}

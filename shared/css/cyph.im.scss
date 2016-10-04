@@ -246,7 +246,7 @@ input, textarea {
 	font-size: 14px;
 }
 
-[cyph-static-footer].center .footer {
+cyph-static-footer.center .footer {
 	margin-left: 0px;
 
 	@include transition(margin-left 1s cubic-bezier(1, 0, 0, 1));
@@ -596,7 +596,7 @@ html.mobile button[disabled] {
 	width: 75%;
 }
 
-[cyph-chat-toolbar] {
+cyph-chat-toolbar {
 	.buttons > * {
 		opacity: 0.50;
 
