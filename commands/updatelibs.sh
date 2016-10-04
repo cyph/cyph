@@ -95,7 +95,7 @@ jspm install -y \
 	npm:@angular/platform-browser-dynamic \
 	npm:@angular/router \
 	npm:@angular/upgrade \
-	rxjs=npm:@reactivex/rxjs \
+	npm:rxjs \
 	angular \
 	angular-material \
 	angular-aria \
