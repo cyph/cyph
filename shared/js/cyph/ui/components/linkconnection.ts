@@ -2,10 +2,10 @@ import {Templates} from 'ui/templates';
 
 
 /**
- * Angular directive for link connection component.
+ * Angular component for link connection.
  */
 export class LinkConnection {
-	/** Module/directive title. */
+	/** Module/component title. */
 	public static title: string	= 'cyphLinkConnection';
 
 	private static _	= (() => {

@@ -1,19 +1,17 @@
-import {Enterpress} from 'enterpress';
-import {Filechange} from 'filechange';
 import {Templates} from 'ui/templates';
 
 
 /**
- * Angular directive for chat toolbar.
+ * Angular component for chat toolbar.
  */
 export class ChatToolbar {
-	/** Module/directive title. */
+	/** Module/component title. */
 	public static title: string	= 'cyphChatToolbar';
 
 	private static _	= (() => {
 		angular.module(
 			ChatToolbar.title,
-			['ngMaterial', Enterpress.title, Filechange.title]
+			['ngMaterial']
 		).directive(ChatToolbar.title, () => ({
 			restrict: 'A',
 				scope: {

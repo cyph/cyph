@@ -2,10 +2,10 @@ import {Templates} from 'ui/templates';
 
 
 /**
- * Angular directive for static footer content.
+ * Angular component for static footer content.
  */
 export class StaticFooter {
-	/** Module/directive title. */
+	/** Module/component title. */
 	public static title: string	= 'cyphStaticFooter';
 
 	private static _	= (() => {

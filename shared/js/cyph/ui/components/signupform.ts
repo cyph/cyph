@@ -2,10 +2,10 @@ import {Templates} from 'ui/templates';
 
 
 /**
- * Angular directive for signup form component.
+ * Angular component for signup form.
  */
 export class SignupForm {
-	/** Module/directive title. */
+	/** Module/component title. */
 	public static title: string	= 'cyphSignupForm';
 
 	private static _	= (() => {

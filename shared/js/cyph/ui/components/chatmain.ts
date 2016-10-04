@@ -1,19 +1,17 @@
-import {Enterpress} from 'enterpress';
-import {Filechange} from 'filechange';
 import {Templates} from 'ui/templates';
 
 
 /**
- * Angular directive for main chat UI.
+ * Angular component for main chat UI.
  */
 export class ChatMain {
-	/** Module/directive title. */
+	/** Module/component title. */
 	public static title: string	= 'cyphChatMain';
 
 	private static _	= (() => {
 		angular.module(
 			ChatMain.title,
-			['ngMaterial', Enterpress.title, Filechange.title]
+			['ngMaterial']
 		).directive(ChatMain.title, () => ({
 			restrict: 'A',
 			transclude: true,

@@ -2,10 +2,10 @@ import {Templates} from 'ui/templates';
 
 
 /**
- * Angular directive for the new cyph spin-up screen.
+ * Angular component for the new cyph spin-up screen.
  */
 export class StaticCyphSpinningUp {
-	/** Module/directive title. */
+	/** Module/component title. */
 	public static title: string	= 'cyphStaticCyphSpinningUp';
 
 	private static _	= (() => {

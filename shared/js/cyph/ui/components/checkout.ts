@@ -5,10 +5,10 @@ import {Util} from 'cyph/util';
 
 
 /**
- * Angular directive for Braintree payment checkout UI component.
+ * Angular component for Braintree payment checkout UI.
  */
 export class Checkout {
-	/** Module/directive title. */
+	/** Module/component title. */
 	public static title: string	= 'cyphCheckout';
 
 	private static _	= (() => {

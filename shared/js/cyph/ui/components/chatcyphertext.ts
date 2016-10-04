@@ -1,19 +1,17 @@
-import {Enterpress} from 'enterpress';
-import {Filechange} from 'filechange';
 import {Templates} from 'ui/templates';
 
 
 /**
- * Angular directive for chat cyphertext UI.
+ * Angular component for chat cyphertext UI.
  */
 export class ChatCyphertext {
-	/** Module/directive title. */
+	/** Module/component title. */
 	public static title: string	= 'cyphChatCyphertext';
 
 	private static _	= (() => {
 		angular.module(
 			ChatCyphertext.title,
-			['ngMaterial', Enterpress.title, Filechange.title]
+			['ngMaterial']
 		).directive(ChatCyphertext.title, () => ({
 			restrict: 'A',
 			scope: {

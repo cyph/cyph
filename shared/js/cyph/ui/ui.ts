@@ -16,6 +16,7 @@ import {Templates} from 'templates';
 import {VirtualKeyboardWatcher} from 'virtualkeyboardwatcher';
 import {VisibilityWatcher} from 'visibilitywatcher';
 import * as Chat from 'chat/chat';
+import * as Components from 'components/components';
 import * as Directives from 'directives/directives';
 
 
@@ -39,5 +40,6 @@ export {
 	VisibilityWatcher,
 
 	Chat,
+	Components,
 	Directives
 };

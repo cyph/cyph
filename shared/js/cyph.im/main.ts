@@ -23,18 +23,18 @@ angular.
 	module(Cyph.Config.angularConfig.rootModule, [
 		'ngMaterial',
 		'timer',
-		Cyph.UI.Directives.ChatCyphertext.title,
-		Cyph.UI.Directives.ChatMain.title,
-		Cyph.UI.Directives.ChatMessageBox.title,
-		Cyph.UI.Directives.ChatToolbar.title,
-		Cyph.UI.Directives.Contact.title,
-		Cyph.UI.Directives.LinkConnection.title,
-		Cyph.UI.Directives.Markdown.title,
-		Cyph.UI.Directives.Beta.title,
-		Cyph.UI.Directives.SignupForm.title,
-		Cyph.UI.Directives.StaticCyphNotFound.title,
-		Cyph.UI.Directives.StaticCyphSpinningUp.title,
-		Cyph.UI.Directives.StaticFooter.title
+		Cyph.UI.Components.ChatCyphertext.title,
+		Cyph.UI.Components.ChatMain.title,
+		Cyph.UI.Components.ChatMessageBox.title,
+		Cyph.UI.Components.ChatToolbar.title,
+		Cyph.UI.Components.Contact.title,
+		Cyph.UI.Components.LinkConnection.title,
+		Cyph.UI.Components.Beta.title,
+		Cyph.UI.Components.SignupForm.title,
+		Cyph.UI.Components.StaticCyphNotFound.title,
+		Cyph.UI.Components.StaticCyphSpinningUp.title,
+		Cyph.UI.Components.StaticFooter.title,
+		Cyph.UI.Directives.Markdown.title
 	]).
 	controller(Cyph.Config.angularConfig.rootController, [
 		'$scope',

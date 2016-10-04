@@ -2,10 +2,10 @@ import {Templates} from 'ui/templates';
 
 
 /**
- * Angular directive for the new cyph not found screen.
+ * Angular component for the cyph not found screen.
  */
 export class StaticCyphNotFound {
-	/** Module/directive title. */
+	/** Module/component title. */
 	public static title: string	= 'cyphStaticCyphNotFound';
 
 	private static _	= (() => {

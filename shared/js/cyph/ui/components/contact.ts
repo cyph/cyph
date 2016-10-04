@@ -5,10 +5,10 @@ import {Util} from 'cyph/util';
 
 
 /**
- * Angular directive for contact form UI component.
+ * Angular component for contact form UI.
  */
 export class Contact {
-	/** Module/directive title. */
+	/** Module/component title. */
 	public static title: string	= 'cyphContact';
 
 	private static _	= (() => {

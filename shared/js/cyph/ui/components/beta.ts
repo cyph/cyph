@@ -3,10 +3,10 @@ import {Util} from 'cyph/util';
 
 
 /**
- * Angular directive for Cyph beta component.
+ * Angular component for Cyph beta UI.
  */
 export class Beta {
-	/** Module/directive title. */
+	/** Module/component title. */
 	public static title: string	= 'cyphBeta';
 
 	private static _	= (() => {
