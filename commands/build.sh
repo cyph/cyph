@@ -84,6 +84,9 @@ fi
 scssfiles="$(find css -name '*.scss' | grep -v bourbon/ | perl -pe 's/(.*)\.scss/\1/g' | tr '\n' ' ')"
 
 
+ln -s lib/js node_modules
+find js -type d -exec bash -c 'cd {} ; ln -s . node_modules' \;
+
 if [ "${1}" == '--watch' ] ; then
 	bash -c "
 		cd js
@@ -126,6 +129,9 @@ else
 	cd ..
 
 	echo -e "${output}"
+
+	rm node_modules
+	find js -name node_modules -type l -exec rm {} \;
 
 	if [ "${1}" == '--test' -o "${1}" == '--simple' ] ; then
 		cd $originalDir

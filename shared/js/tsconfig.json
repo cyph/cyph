@@ -3,9 +3,9 @@
 	"compilerOptions": {
 		 "target": "es6",
 		 "module": "system",
-		 "moduleResolution": "classic",
+		 "moduleResolution": "node",
 		 "emitDecoratorMetadata": true,
 		 "experimentalDecorators": true,
-		 "rootDir": "."
+		 "rootDir": ".."
 	}
 }

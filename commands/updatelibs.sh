@@ -86,8 +86,17 @@ expect -c ' \
 # mv config.js.new config.js
 
 jspm install -y \
+	npm:@angular/common \
+	npm:@angular/compiler \
+	npm:@angular/core \
+	npm:@angular/forms \
+	npm:@angular/http \
+	npm:@angular/platform-browser \
+	npm:@angular/platform-browser-dynamic \
+	npm:@angular/router \
+	npm:@angular/upgrade \
+	npm:@reactivex/rxjs \
 	angular \
-	angular2 \
 	angular-material \
 	angular-aria \
 	angular-animate \
@@ -113,7 +122,6 @@ jspm install -y \
 	github:matthieua/wow \
 	github:morr/jquery.appear \
 	github:julianlam/tabIndent.js \
-	npm:rxjs \
 	braintree=github:braintree/braintree-web@^2 \
 	babel-polyfill \
 	npm:mutationobserver-shim \
@@ -320,20 +328,6 @@ cd ../..
 find . -name .git -exec rm -rf {} \; 2> /dev/null
 
 cd ..
-
-
-# Remove large collections of extra files that we don't need
-
-cd shared/lib/js
-
-filesToDelete='angular2/es6'
-filesToDelete="${filesToDelete} $(find angular2/* -name '*.js' | tr '\n' ' ')"
-
-filesToDelete="${filesToDelete} $(find rxjs/* -name '*.js' | tr '\n' ' ')"
-
-rm -rf $filesToDelete
-
-cd ../../..
 
 find default -type f -name '*_test.go' -exec rm {} \;
 
