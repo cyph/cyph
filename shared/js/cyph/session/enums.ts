@@ -1,4 +1,4 @@
-import {Strings} from 'cyph/strings';
+import {Strings} from '../strings';
 
 
 /**

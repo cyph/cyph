@@ -1,4 +1,4 @@
-import * as Session from 'session/session';
+import {Users} from '../../session/enums';
 
 
 /**
@@ -7,7 +7,7 @@ import * as Session from 'session/session';
  */
 export interface ICyphertext {
 	/** Cyphertext message list. */
-	messages: { author: Session.Users; text: string; }[];
+	messages: { author: Users; text: string; }[];
 
 	/**
 	 * Hides cyphertext UI.
@@ -19,7 +19,7 @@ export interface ICyphertext {
 	 * @param text
 	 * @param author
 	 */
-	log (text: string, author: Session.Users) : void;
+	log (text: string, author: Users) : void;
 
 	/**
 	 * Shows cyphertext UI.

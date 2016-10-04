@@ -1,6 +1,6 @@
-import {Elements} from 'elements';
-import {Env} from 'cyph/env';
-import {EventManager} from 'cyph/eventmanager';
+import {Elements} from './elements';
+import {Env} from '../env';
+import {EventManager} from '../eventmanager';
 
 
 /**

@@ -1,9 +1,9 @@
-import {Events, RPCEvents, Users} from 'enums';
-import {Command} from 'command';
-import {Message} from 'message';
-import {IMutex} from 'imutex';
-import {ISession} from 'isession';
-import {Util} from 'cyph/util';
+import {Events, RPCEvents, Users} from './enums';
+import {Command} from './command';
+import {Message} from './message';
+import {IMutex} from './imutex';
+import {ISession} from './isession';
+import {Util} from '../util';
 
 
 export class Mutex implements IMutex {

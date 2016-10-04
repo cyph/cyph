@@ -1,4 +1,4 @@
-import {IDialogManager} from 'idialogmanager';
+import {IDialogManager} from './idialogmanager';
 
 
 /**

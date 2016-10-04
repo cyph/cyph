@@ -1,7 +1,7 @@
-import {Config} from 'config';
-import {Env} from 'env';
-import {EventManager} from 'eventmanager';
-import {Util} from 'util';
+import {Config} from './config';
+import {Env} from './env';
+import {EventManager} from './eventmanager';
+import {Util} from './util';
 
 
 export class Thread {

@@ -1,5 +1,5 @@
-import {Env} from 'env';
-import {EventManager} from 'eventmanager';
+import {Env} from './env';
+import {EventManager} from './eventmanager';
 
 
 /**

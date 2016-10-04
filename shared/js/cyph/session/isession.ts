@@ -1,4 +1,4 @@
-import {IMessage} from 'imessage';
+import {IMessage} from './imessage';
 
 
 /**

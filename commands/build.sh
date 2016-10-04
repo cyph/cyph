@@ -1,7 +1,5 @@
 #!/bin/bash
 
-source ~/.bashrc
-
 dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd)/..
 originalDir="$(pwd)"
@@ -86,6 +84,10 @@ fi
 scssfiles="$(find css -name '*.scss' | grep -v bourbon/ | perl -pe 's/(.*)\.scss/\1/g' | tr '\n' ' ')"
 
 
+cd js
+ln -s ../lib/js node_modules
+cd ..
+
 if [ "${1}" == '--watch' ] ; then
 	bash -c "
 		cd js
@@ -128,6 +130,8 @@ else
 	cd ..
 
 	echo -e "${output}"
+
+	rm js/node_modules
 
 	if [ "${1}" == '--test' -o "${1}" == '--simple' ] ; then
 		cd $originalDir

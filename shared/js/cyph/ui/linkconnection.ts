@@ -1,12 +1,11 @@
-import {Elements} from 'elements';
-import {ILinkConnection} from 'ilinkconnection';
-import {IChat} from 'chat/ichat';
-import {Env} from 'cyph/env';
-import {IController} from 'cyph/icontroller';
-import {Strings} from 'cyph/strings';
-import {Util} from 'cyph/util';
-import * as Chat from 'chat/chat';
-
+import {Elements} from './elements';
+import {ILinkConnection} from './ilinkconnection';
+import {IChat} from './chat/ichat';
+import {Env} from '../env';
+import {IController} from '../icontroller';
+import {Strings} from '../strings';
+import {Util} from '../util';
+import * as Chat from './chat';
 
 
 export class LinkConnection implements ILinkConnection {

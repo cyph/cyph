@@ -1,7 +1,7 @@
-import {Enterpress} from 'directives/enterpress';
-import {Filechange} from 'directives/filechange';
-import {Templates} from 'ui/templates';
-import {IChat} from 'chat/ichat';
+import {Templates} from '../templates';
+import {IChat} from '../chat/ichat';
+import {Enterpress} from '../directives/enterpress';
+import {Filechange} from '../directives/filechange';
 
 
 /**

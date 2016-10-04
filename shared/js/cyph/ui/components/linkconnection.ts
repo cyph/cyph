@@ -1,5 +1,5 @@
-import {ILinkConnection} from 'ui/ilinkconnection';
-import {Templates} from 'ui/templates';
+import {ILinkConnection} from '../ilinkconnection';
+import {Templates} from '../templates';
 
 
 /**

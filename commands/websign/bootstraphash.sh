@@ -1,7 +1,5 @@
 #!/bin/bash
 
-source ~/.bashrc
-
 cd "$(cd "$(dirname "$0")"; pwd)/../../websign"
 
 ../commands/websign/pack.js index.html .index.html.tmp

@@ -1,6 +1,6 @@
-import {Analytics} from 'analytics';
-import {Env} from 'env';
-import {Util} from 'util';
+import {Analytics} from './analytics';
+import {Env} from './env';
+import {Util} from './util';
 
 
 /**

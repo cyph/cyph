@@ -1,6 +1,6 @@
-import {Elements} from 'elements';
-import {Env} from 'cyph/env';
-import {Util} from 'cyph/util';
+import {Elements} from './elements';
+import {Env} from '../env';
+import {Util} from '../util';
 
 
 /**

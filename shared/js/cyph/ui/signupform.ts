@@ -1,9 +1,9 @@
-import {Elements} from 'elements';
-import {ISignupForm} from 'isignupform';
-import {Analytics} from 'cyph/analytics';
-import {Env} from 'cyph/env';
-import {IController} from 'cyph/icontroller';
-import {Util} from 'cyph/util';
+import {Elements} from './elements';
+import {ISignupForm} from './isignupform';
+import {Analytics} from '../analytics';
+import {Env} from '../env';
+import {IController} from '../icontroller';
+import {Util} from '../util';
 
 
 export class SignupForm implements ISignupForm {

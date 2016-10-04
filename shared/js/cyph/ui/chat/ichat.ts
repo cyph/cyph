@@ -1,9 +1,10 @@
-import {States} from 'enums';
-import {ICyphertext} from 'icyphertext';
-import {IP2PManager} from 'ip2pmanager';
-import {IFileManager} from 'ifilemanager';
-import {IScrollManager} from 'iscrollmanager';
-import * as Session from 'session/session';
+import {States} from './enums';
+import {ICyphertext} from './icyphertext';
+import {IP2PManager} from './ip2pmanager';
+import {IFileManager} from './ifilemanager';
+import {IScrollManager} from './iscrollmanager';
+import {Users} from '../../session/enums';
+import {ISession} from '../../session/isession';
 
 
 /**
@@ -58,7 +59,7 @@ export interface IChat {
 	scrollManager: IScrollManager;
 
 	/** Session instance. */
-	session: Session.ISession;
+	session: ISession;
 
 	/**
 	 * Aborts the process of chat initialisation and authentication.
@@ -75,7 +76,7 @@ export interface IChat {
 	 */
 	addMessage (
 		text: string,
-		author: Session.Users,
+		author: Users,
 		timestamp?: number,
 		shouldNotify?: boolean,
 		selfDestructTimeout?: number

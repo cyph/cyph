@@ -1,10 +1,10 @@
-import {Events, RPCEvents, ThreadedSessionEvents} from 'enums';
-import {IMessage} from 'imessage';
-import {ISession} from 'isession';
-import {EventManager} from 'cyph/eventmanager';
-import {IController} from 'cyph/icontroller';
-import {Thread} from 'cyph/thread';
-import {Util} from 'cyph/util';
+import {Events, RPCEvents, ThreadedSessionEvents} from './enums';
+import {IMessage} from './imessage';
+import {ISession} from './isession';
+import {EventManager} from '../eventmanager';
+import {IController} from '../icontroller';
+import {Thread} from '../thread';
+import {Util} from '../util';
 
 
 /**

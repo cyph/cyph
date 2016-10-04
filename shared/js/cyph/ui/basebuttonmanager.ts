@@ -1,6 +1,6 @@
-import {ISidebar} from 'isidebar';
-import {IController} from 'cyph/icontroller';
-import {Util} from 'cyph/util';
+import {ISidebar} from './isidebar';
+import {IController} from '../icontroller';
+import {Util} from '../util';
 
 
 /**

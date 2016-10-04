@@ -1,4 +1,4 @@
-import {NativeCrypto} from 'nativecrypto';
+import {NativeCrypto} from './nativecrypto';
 
 
 /**

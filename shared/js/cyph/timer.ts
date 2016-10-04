@@ -1,5 +1,5 @@
-import {Env} from 'env';
-import {Util} from 'util';
+import {Env} from './env';
+import {Util} from './util';
 
 
 /**

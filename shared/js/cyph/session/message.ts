@@ -1,5 +1,5 @@
-import {IMessage} from 'imessage';
-import {Util} from 'cyph/util';
+import {IMessage} from './imessage';
+import {Util} from '../util';
 
 
 export class Message implements IMessage {

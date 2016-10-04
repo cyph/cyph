@@ -1,4 +1,4 @@
-import {ITransfer} from 'itransfer';
+import {ITransfer} from './itransfer';
 
 
 /**

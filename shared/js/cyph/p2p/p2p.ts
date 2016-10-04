@@ -1,17 +1,11 @@
-import {UIEvents} from 'enums';
-import {IP2P} from 'ip2p';
-import {Analytics} from 'cyph/analytics';
-import {Env} from 'cyph/env';
-import {EventManager} from 'cyph/eventmanager';
-import {IController} from 'cyph/icontroller';
-import {Util} from 'cyph/util';
-import * as Session from 'session/session';
-
-
-export {
-	IP2P,
-	UIEvents
-};
+import {UIEvents} from './enums';
+import {IP2P} from './ip2p';
+import {Analytics} from '../analytics';
+import {Env} from '../env';
+import {EventManager} from '../eventmanager';
+import {IController} from '../icontroller';
+import {Util} from '../util';
+import * as Session from '../session';
 
 
 export class P2P implements IP2P {

@@ -1,9 +1,9 @@
 #!/bin/bash
 
-source ~/.bashrc
-
 dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd)/..
+
+./commands/keycache.sh
 
 rm -rf shared/lib
 mkdir -p shared/lib/js
@@ -86,8 +86,17 @@ expect -c ' \
 # mv config.js.new config.js
 
 jspm install -y \
+	npm:@angular/common \
+	npm:@angular/compiler \
+	npm:@angular/core \
+	npm:@angular/forms \
+	npm:@angular/http \
+	npm:@angular/platform-browser \
+	npm:@angular/platform-browser-dynamic \
+	npm:@angular/router \
+	npm:@angular/upgrade \
+	npm:@reactivex/rxjs \
 	angular \
-	angular2 \
 	angular-material \
 	angular-aria \
 	angular-animate \
@@ -98,6 +107,8 @@ jspm install -y \
 	microlight=github:buu700/microlight \
 	github:siddii/angular-timer@1.2.1 \
 	angular-timer=github:siddii/angular-timer \
+	moment \
+	npm:humanize-duration \
 	github:andyet/simplewebrtc \
 	npm:animate.css \
 	github:davidchambers/base64.js \
@@ -111,7 +122,6 @@ jspm install -y \
 	github:matthieua/wow \
 	github:morr/jquery.appear \
 	github:julianlam/tabIndent.js \
-	npm:rxjs \
 	braintree=github:braintree/braintree-web@^2 \
 	babel-polyfill \
 	npm:mutationobserver-shim \
@@ -119,8 +129,7 @@ jspm install -y \
 	crypto/ntru=github:cyph/ntru.js \
 	crypto/rlwe=github:cyph/rlwe.js \
 	crypto/sidh=github:cyph/sidh.js \
-	crypto/supersphincs=github:cyph/supersphincs \
-	npm:clipboard-js
+	crypto/supersphincs=github:cyph/supersphincs
 
 if (( $? )); then
 	exit 1
@@ -129,19 +138,24 @@ fi
 cd ..
 
 bash -c "$(node -e '
-	const basePath = "lib/js/";
-	const deps = JSON.parse(
+	const basePath	= "lib/js/";
+	const deps		= JSON.parse(
 		'"'$(cat js/package.json | tr '\n' ' ')'"'
 	).jspm.dependencies;
 
-	console.log(Object.keys(deps).map(k => {
-		const path = deps[k].replace(":", "/");
-		const pathBase = path.split("@")[0];
-		const pathSplit = path.split("/");
-		const package = pathSplit.slice(1).join("/").split("@");
-		const symlinkParent = k.split("/").map(s => "..").join("/").replace(/..$/, "");
+	const versionSplit	= path => {
+		const index	= path.lastIndexOf("@");
+		return [path.slice(0, index), path.slice(index + 1)];
+	};
 
-		const findVersionCommand =
+	console.log(Object.keys(deps).map(k => {
+		const path			= deps[k].replace(":", "/");
+		const pathBase		= versionSplit(path)[0];
+		const pathSplit		= path.split("/");
+		const package		= versionSplit(pathSplit.slice(1).join("/"));
+		const symlinkParent	= k.split("/").map(s => "..").join("/").replace(/..$/, "");
+
+		const findVersionCommand	=
 			`find ${basePath}${pathSplit[0]} -type d | ` +
 			`grep "${package[0]}@" | ` +
 			`perl -pe "s/.*@//g" | ` +
@@ -149,7 +163,7 @@ bash -c "$(node -e '
 			`grep -v /`
 		;
 
-		const mkdirCommand = k.indexOf("/") > -1 ?
+		const mkdirCommand	= k.indexOf("/") > -1 ?
 			`mkdir -p "${basePath}${k.split("/").slice(0, -1).join("/")}" ; ` :
 			``
 		;
@@ -200,9 +214,13 @@ cat > wrapper/symbols/crypto_stream_chacha20.json << EOM
 	"return": "_format_output(out, outputFormat)"
 }
 EOM
+cat Makefile |
+	perl -pe 's/^(\s+).*--browser-tests.*/\1\@echo/g' |
+	perl -pe 's/^(\s+).*BROWSERS_TEST_DIR.*/\1\@echo/g' |
+	perl -pe 's/^(\s+)ln /\1ln -f /g' \
+> Makefile.new
+mv Makefile.new Makefile
 make libsodium/configure
-sed -i 's|ln |cp |g' Makefile
-sed -i 's|cp -s|cp -r|g' Makefile
 sed -i 's|TOTAL_MEMORY_SUMO=35000000|TOTAL_MEMORY_SUMO=150000000|g' libsodium/dist-build/emscripten.sh
 make
 find dist -name '*.js' | xargs sed -i 's|use strict||g'
@@ -293,10 +311,12 @@ rm -rf golang.org 2> /dev/null
 mkdir -p golang.org/x
 cd golang.org/x
 
-git clone git://github.com/golang/net.git
-cd net
-rm -rf !(AUTHORS|CONTRIBUTING.md|CONTRIBUTORS|LICENSE|PATENTS|README|html|context)
+git clone git://github.com/golang/net.git net.tmp
+mkdir net
+cd net.tmp
+mv AUTHORS CONTRIBUTING.md CONTRIBUTORS LICENSE PATENTS README html context ../net/
 cd ..
+rm -rf net.tmp
 
 git clone git://github.com/golang/text.git
 
@@ -315,20 +335,6 @@ cd ../..
 find . -name .git -exec rm -rf {} \; 2> /dev/null
 
 cd ..
-
-
-# Remove large collections of extra files that we don't need
-
-cd shared/lib/js
-
-filesToDelete='angular2/es6'
-filesToDelete="${filesToDelete} $(find angular2/* -name '*.js' | tr '\n' ' ')"
-
-filesToDelete="${filesToDelete} $(find rxjs/* -name '*.js' | tr '\n' ' ')"
-
-rm -rf $filesToDelete
-
-cd ../../..
 
 find default -type f -name '*_test.go' -exec rm {} \;
 

@@ -1,6 +1,6 @@
-import {ILocalUser} from 'ilocaluser';
-import {Transport} from 'transport';
-import {Potassium} from 'crypto/potassium';
+import {ILocalUser} from './ilocaluser';
+import {Transport} from './transport';
+import {Potassium} from '../potassium';
 
 
 /**
