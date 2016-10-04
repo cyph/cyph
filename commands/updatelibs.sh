@@ -5,6 +5,8 @@ source ~/.bashrc
 dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd)/..
 
+./commands/keycache.sh
+
 rm -rf shared/lib
 mkdir -p shared/lib/js
 cd shared/lib/js

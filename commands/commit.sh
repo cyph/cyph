@@ -7,6 +7,8 @@ cd $(cd "$(dirname "$0")"; pwd)/..
 
 rm .git/index.lock 2> /dev/null
 
+./commands/keycache.sh
+
 git pull
 chmod -R 700 .
 git add .

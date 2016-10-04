@@ -4,7 +4,6 @@ source ~/.bashrc
 
 dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd)/..
-rootDir="$(pwd)"
 
 cacheBustedProjects='cyph.com'
 compiledProjects='cyph.com cyph.im'
@@ -23,16 +22,7 @@ elif [ "${1}" == '--simple' ] ; then
 fi
 
 if [ ! "${simple}" ] ; then
-	echo -e '\n\n\ncaching SSH and GPG keys\n'
-	eval "$(ssh-agent)"
-	ssh-add ~/.ssh/id_rsa
-	mkdir ~/tmpgit
-	cd ~/tmpgit
-	git init
-	touch balls
-	git add balls
-	git commit -S -a -m test
-	cd "$rootDir"
+	./commands/keycache.sh
 fi
 
 gcloud auth login
@@ -73,6 +63,7 @@ if [ "${commit}" ] ; then
 	if [ "${comment}" == "" -a ! "${simple}" ] ; then
 		comment=deploy
 	fi
+	./commands/commit.sh "${comment}"
 fi
 
 rm -rf .build
