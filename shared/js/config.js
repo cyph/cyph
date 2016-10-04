@@ -49,7 +49,7 @@ System.config({
     "morr/jquery.appear": "github:morr/jquery.appear@0.3.6",
     "mutationobserver-shim": "npm:mutationobserver-shim@0.3.2",
     "nanoscroller": "npm:nanoscroller@0.8.7",
-    "rxjs": "npm:@reactivex/rxjs@5.0.0-beta.12",
+    "rxjs": "npm:rxjs@5.0.0-beta.12",
     "siddii/angular-timer": "github:siddii/angular-timer@1.2.1",
     "snaptortoise/konami-js": "github:snaptortoise/konami-js@1.4.6",
     "typescript": "npm:typescript@1.8.10",
