@@ -8,12 +8,22 @@ System.config({
   },
 
   map: {
+    "@angular/common": "npm:@angular/common@2.0.1",
+    "@angular/compiler": "npm:@angular/compiler@2.0.1",
+    "@angular/core": "npm:@angular/core@2.0.1",
+    "@angular/forms": "npm:@angular/forms@2.0.1",
+    "@angular/http": "npm:@angular/http@2.0.1",
+    "@angular/platform-browser": "npm:@angular/platform-browser@2.0.1",
+    "@angular/platform-browser-dynamic": "npm:@angular/platform-browser-dynamic@2.0.1",
+    "@angular/router": "npm:@angular/router@3.0.1",
+    "@angular/upgrade": "npm:@angular/upgrade@2.0.1",
+    "@reactivex/rxjs": "npm:@reactivex/rxjs@5.0.0-beta.12",
     "andyet/simplewebrtc": "github:andyet/simplewebrtc@2.1.0",
     "angular": "github:angular/bower-angular@1.5.8",
     "angular-animate": "github:angular/bower-angular-animate@1.5.8",
     "angular-aria": "github:angular/bower-angular-aria@1.5.8",
     "angular-material": "github:angular/bower-material@1.1.1",
-    "angular2": "npm:angular2@2.0.0-beta.17",
+    "angular-timer": "github:siddii/angular-timer@1.3.4",
     "animate.css": "npm:animate.css@3.5.2",
     "babel-polyfill": "npm:babel-polyfill@6.16.0",
     "braintree": "github:braintree/braintree-web@2.27.0",
@@ -25,19 +35,20 @@ System.config({
     "crypto/supersphincs": "github:cyph/supersphincs@master",
     "davidchambers/base64.js": "github:davidchambers/base64.js@1.0.0",
     "dompurify": "npm:dompurify@0.8.3",
+    "humanize-duration": "npm:humanize-duration@3.9.1",
     "jquery": "npm:jquery@2.2.4",
     "jquery-legacy": "github:jquery/jquery@1.12.4",
     "julianlam/tabIndent.js": "github:julianlam/tabIndent.js@master",
     "magnific-popup": "npm:magnific-popup@1.1.0",
     "markdown-it/markdown-it": "github:markdown-it/markdown-it@8.0.0",
-    "markdown-it/markdown-it-emoji": "github:markdown-it/markdown-it-emoji@1.2.0",
+    "markdown-it/markdown-it-emoji": "github:markdown-it/markdown-it-emoji@1.3.0",
     "markdown-it/markdown-it-sup": "github:markdown-it/markdown-it-sup@1.0.0",
     "matthieua/wow": "github:matthieua/wow@1.1.2",
     "microlight": "github:buu700/microlight@master",
+    "moment": "npm:moment@2.15.1",
     "morr/jquery.appear": "github:morr/jquery.appear@0.3.6",
-    "mutationobserver-shim": "npm:mutationobserver-shim@0.3.1",
+    "mutationobserver-shim": "npm:mutationobserver-shim@0.3.2",
     "nanoscroller": "npm:nanoscroller@0.8.7",
-    "rxjs": "npm:rxjs@5.0.0-beta.12",
     "siddii/angular-timer": "github:siddii/angular-timer@1.2.1",
     "snaptortoise/konami-js": "github:snaptortoise/konami-js@1.4.6",
     "typescript": "npm:typescript@1.8.10",
@@ -52,7 +63,7 @@ System.config({
       "angular": "github:angular/bower-angular@1.5.8",
       "angular-animate": "github:angular/bower-angular-animate@1.5.8",
       "angular-aria": "github:angular/bower-angular-aria@1.5.8",
-      "css": "github:systemjs/plugin-css@0.1.29"
+      "css": "github:systemjs/plugin-css@0.1.30"
     },
     "github:jspm/nodelibs-assert@0.1.0": {
       "assert": "npm:assert@1.4.1"
@@ -96,16 +107,71 @@ System.config({
     "github:jspm/nodelibs-vm@0.1.0": {
       "vm-browserify": "npm:vm-browserify@0.0.4"
     },
+    "github:siddii/angular-timer@1.3.4": {
+      "angular": "github:angular/bower-angular@1.5.8",
+      "humanize-duration": "github:EvanHahn/HumanizeDuration.js@3.9.1",
+      "moment": "npm:moment@2.15.1"
+    },
+    "npm:@angular/common@2.0.1": {
+      "@angular/core": "npm:@angular/core@2.0.1"
+    },
+    "npm:@angular/compiler@2.0.1": {
+      "@angular/core": "npm:@angular/core@2.0.1",
+      "process": "github:jspm/nodelibs-process@0.1.2"
+    },
+    "npm:@angular/core@2.0.1": {
+      "process": "github:jspm/nodelibs-process@0.1.2",
+      "rxjs": "npm:rxjs@5.0.0-beta.12",
+      "zone.js": "npm:zone.js@0.6.25"
+    },
+    "npm:@angular/forms@2.0.1": {
+      "@angular/common": "npm:@angular/common@2.0.1",
+      "@angular/core": "npm:@angular/core@2.0.1",
+      "process": "github:jspm/nodelibs-process@0.1.2"
+    },
+    "npm:@angular/http@2.0.1": {
+      "@angular/core": "npm:@angular/core@2.0.1",
+      "@angular/platform-browser": "npm:@angular/platform-browser@2.0.1",
+      "rxjs": "npm:rxjs@5.0.0-beta.12"
+    },
+    "npm:@angular/platform-browser-dynamic@2.0.1": {
+      "@angular/common": "npm:@angular/common@2.0.1",
+      "@angular/compiler": "npm:@angular/compiler@2.0.1",
+      "@angular/core": "npm:@angular/core@2.0.1",
+      "@angular/platform-browser": "npm:@angular/platform-browser@2.0.1"
+    },
+    "npm:@angular/platform-browser@2.0.1": {
+      "@angular/common": "npm:@angular/common@2.0.1",
+      "@angular/core": "npm:@angular/core@2.0.1",
+      "process": "github:jspm/nodelibs-process@0.1.2"
+    },
+    "npm:@angular/router@3.0.1": {
+      "@angular/common": "npm:@angular/common@2.0.1",
+      "@angular/core": "npm:@angular/core@2.0.1",
+      "@angular/platform-browser": "npm:@angular/platform-browser@2.0.1",
+      "process": "github:jspm/nodelibs-process@0.1.2",
+      "rxjs": "npm:rxjs@5.0.0-beta.12"
+    },
+    "npm:@angular/upgrade@2.0.1": {
+      "@angular/compiler": "npm:@angular/compiler@2.0.1",
+      "@angular/core": "npm:@angular/core@2.0.1",
+      "@angular/platform-browser": "npm:@angular/platform-browser@2.0.1",
+      "@angular/platform-browser-dynamic": "npm:@angular/platform-browser-dynamic@2.0.1"
+    },
+    "npm:@reactivex/rxjs@5.0.0-beta.12": {
+      "buffer": "github:jspm/nodelibs-buffer@0.1.0",
+      "fs": "github:jspm/nodelibs-fs@0.1.2",
+      "module": "github:jspm/nodelibs-module@0.1.0",
+      "path": "github:jspm/nodelibs-path@0.1.0",
+      "process": "github:jspm/nodelibs-process@0.1.2",
+      "symbol-observable": "npm:symbol-observable@1.0.2",
+      "systemjs-json": "github:systemjs/plugin-json@0.1.2"
+    },
     "npm:amdefine@1.0.0": {
       "fs": "github:jspm/nodelibs-fs@0.1.2",
       "module": "github:jspm/nodelibs-module@0.1.0",
       "path": "github:jspm/nodelibs-path@0.1.0",
       "process": "github:jspm/nodelibs-process@0.1.2"
-    },
-    "npm:angular2@2.0.0-beta.17": {
-      "reflect-metadata": "npm:reflect-metadata@0.1.2",
-      "rxjs": "npm:rxjs@5.0.0-beta.12",
-      "zone.js": "npm:zone.js@0.6.25"
     },
     "npm:asn1.js@4.8.1": {
       "bn.js": "npm:bn.js@4.11.6",
@@ -191,7 +257,7 @@ System.config({
       "base64-js": "npm:base64-js@0.0.8",
       "child_process": "github:jspm/nodelibs-child_process@0.1.0",
       "fs": "github:jspm/nodelibs-fs@0.1.2",
-      "ieee754": "npm:ieee754@1.1.6",
+      "ieee754": "npm:ieee754@1.1.8",
       "isarray": "npm:isarray@1.0.0",
       "process": "github:jspm/nodelibs-process@0.1.2"
     },
@@ -349,10 +415,6 @@ System.config({
       "process": "github:jspm/nodelibs-process@0.1.2",
       "stream-browserify": "npm:stream-browserify@1.0.0",
       "string_decoder": "npm:string_decoder@0.10.31"
-    },
-    "npm:reflect-metadata@0.1.2": {
-      "assert": "github:jspm/nodelibs-assert@0.1.0",
-      "process": "github:jspm/nodelibs-process@0.1.2"
     },
     "npm:regenerator-runtime@0.9.5": {
       "path": "github:jspm/nodelibs-path@0.1.0",
