@@ -11,5 +11,12 @@ git init
 touch balls
 git add balls
 git commit -S -a -m test
-cd
-rm -rf ~/tmpgit
+
+bash -c '
+	cd ~/tmpgit
+	while true ; do
+		sleep 60
+		date > balls
+		git commit -S -a -m test
+	done
+' &
