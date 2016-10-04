@@ -15,9 +15,9 @@ import {SignupForm} from './signupform';
 import {Templates} from './templates';
 import {VirtualKeyboardWatcher} from './virtualkeyboardwatcher';
 import {VisibilityWatcher} from './visibilitywatcher';
-import * as Chat from './chat/chat';
-import * as Components from './components/components';
-import * as Directives from './directives/directives';
+import * as Chat from './chat';
+import * as Components from './components';
+import * as Directives from './directives';
 
 
 export {

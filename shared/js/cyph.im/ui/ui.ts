@@ -1,6 +1,6 @@
 import {BetaStates, States, UrlSections} from './enums';
 import {Config} from '../config';
-import * as Cyph from '../../cyph/cyph';
+import * as Cyph from '../../cyph';
 
 
 /**

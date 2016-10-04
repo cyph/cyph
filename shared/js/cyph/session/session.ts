@@ -1,12 +1,9 @@
 /// <reference path="../../global/base.ts" />
 
-import {Command} from './command';
 import {CastleEvents, Events, RPCEvents, State, ThreadedSessionEvents, Users} from './enums';
 import {IMessage} from './imessage';
-import {IMutex} from './imutex';
 import {ISession} from './isession';
 import {Message} from './message';
-import {Mutex} from './mutex';
 import {Analytics} from '../analytics';
 import {Config} from '../config';
 import {Env} from '../env';
@@ -16,24 +13,8 @@ import {IController} from '../icontroller';
 import {Timer} from '../timer';
 import {UrlState} from '../urlstate';
 import {Util} from '../util';
-import * as Channel from '../channel/channel';
-import * as Crypto from '../crypto/crypto';
-
-
-export {
-	CastleEvents,
-	Command,
-	Events,
-	IMessage,
-	IMutex,
-	ISession,
-	Message,
-	Mutex,
-	RPCEvents,
-	State,
-	ThreadedSessionEvents,
-	Users
-};
+import * as Channel from '../channel';
+import * as Crypto from '../crypto';
 
 
 /**

@@ -1,14 +1,7 @@
 import {IChannel} from './ichannel';
-import {LocalChannel} from './localchannel';
 import {Config} from '../config';
 import {Firebase} from '../firebase';
 import {Util} from '../util';
-
-
-export {
-	IChannel,
-	LocalChannel
-};
 
 
 /**

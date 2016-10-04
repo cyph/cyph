@@ -6,8 +6,8 @@ import {IDialogManager} from '../idialogmanager';
 import {ISidebar} from '../isidebar';
 import {IController} from '../../icontroller';
 import {Strings} from '../../strings';
-import * as P2P from '../../p2p/p2p';
-import * as Session from '../../session/session';
+import * as P2P from '../../p2p';
+import * as Session from '../../session';
 
 
 export class P2PManager extends BaseButtonManager implements IP2PManager {

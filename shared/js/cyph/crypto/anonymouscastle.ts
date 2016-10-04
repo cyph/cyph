@@ -3,7 +3,7 @@ import {Potassium} from './potassium';
 import {Util} from '../util';
 import {State} from '../session/enums';
 import {ISession} from '../session/isession';
-import * as Castle from './castle/castle';
+import * as Castle from './castle';
 
 
 export class AnonymousCastle implements ICastle {

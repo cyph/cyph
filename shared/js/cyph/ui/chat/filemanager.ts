@@ -6,8 +6,8 @@ import {Config} from '../../config';
 import {IController} from '../../icontroller';
 import {Strings} from '../../strings';
 import {Util} from '../../util';
-import * as Files from '../../files/files';
-import * as Session from '../../session/session';
+import * as Files from '../../files';
+import * as Session from '../../session';
 
 
 export class FileManager implements IFileManager {

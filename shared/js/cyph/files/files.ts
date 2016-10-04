@@ -9,14 +9,8 @@ import {Firebase} from '../firebase';
 import {IController} from '../icontroller';
 import {Thread} from '../thread';
 import {Util} from '../util';
-import {Potassium} from '../crypto/crypto';
-import * as Session from '../session/session';
-
-
-export {
-	IFiles,
-	UIEvents
-};
+import {Potassium} from '../crypto';
+import * as Session from '../session';
 
 
 export class Files implements IFiles {
@@ -40,9 +34,9 @@ export class Files implements IFiles {
 			locals.callbackId	= 'files-' + Util.generateGuid();
 
 			const thread	= new Thread((Cyph: any, locals: any, importScripts: Function) => {
-				importScripts('/js/cyph/crypto/crypto.js');
+				importScripts('/js/cyph/crypto/index.js');
 
-				System.import('cyph/crypto/crypto').then(async (Crypto) => {
+				System.import('cyph/crypto/index').then(async (Crypto) => {
 					const potassium	= new Crypto.Potassium(locals.isAlice);
 
 					/* Encrypt */

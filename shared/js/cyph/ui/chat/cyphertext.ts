@@ -8,7 +8,7 @@ import {Analytics} from '../../analytics';
 import {IController} from '../../icontroller';
 import {Util} from '../../util';
 import {Strings} from '../../strings';
-import * as Session from '../../session/session';
+import * as Session from '../../session';
 
 
 export class Cyphertext extends BaseButtonManager implements ICyphertext {

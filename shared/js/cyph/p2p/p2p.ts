@@ -5,13 +5,7 @@ import {Env} from '../env';
 import {EventManager} from '../eventmanager';
 import {IController} from '../icontroller';
 import {Util} from '../util';
-import * as Session from '../session/session';
-
-
-export {
-	IP2P,
-	UIEvents
-};
+import * as Session from '../session';
 
 
 export class P2P implements IP2P {

@@ -1,4 +1,4 @@
-import * as Cyph from '../../cyph/cyph';
+import * as Cyph from '../../cyph';
 
 
 /**

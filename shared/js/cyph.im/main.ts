@@ -13,7 +13,7 @@
 import {Config} from './config';
 import {BetaStates, States, UrlSections} from './ui/enums';
 import {UI} from './ui/ui';
-import * as Cyph from '../cyph/cyph';
+import * as Cyph from '../cyph';
 import {Loaded} from '../preload/base';
 
 

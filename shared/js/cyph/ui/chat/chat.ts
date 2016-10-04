@@ -26,22 +26,7 @@ import {Strings} from '../../strings';
 import {UrlState} from '../../urlstate';
 import {Util} from '../../util';
 import {ThreadedSession} from '../../session/threadedsession';
-import * as Session from '../../session/session';
-
-
-export {
-	Cyphertext,
-	IChat,
-	ICyphertext,
-	IElements,
-	IP2PManager,
-	IFileManager,
-	IScrollManager,
-	P2PManager,
-	FileManager,
-	ScrollManager,
-	States
-};
+import * as Session from '../../session';
 
 
 export class Chat extends BaseButtonManager implements IChat {
