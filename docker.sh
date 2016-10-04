@@ -218,5 +218,11 @@ else
 	exit 1
 fi
 
-docker run $processType $args -v "$(echo "$(pwd)://cyph" | sed 's/\/cygdrive/\//g')" "${image}" "/cyph/commands/${command}.sh" $*
+docker run \
+	$processType \
+	$args \
+	-v "$(echo "$(pwd)://cyph" | sed 's/\/cygdrive/\//g')" \
+	"${image}" \
+	bash -c "source ~/.bashrc ; /cyph/commands/${command}.sh $*"
+
 defaultsleep
