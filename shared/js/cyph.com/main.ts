@@ -24,7 +24,10 @@ Cyph.UI.Elements.html.attr('ng-controller', Cyph.Config.angularConfig.rootContro
 angular.
 	module(Cyph.Config.angularConfig.rootModule, [
 		'ngMaterial',
-		Cyph.UI.Directives.Chat.title,
+		Cyph.UI.Directives.ChatCyphertext.title,
+		Cyph.UI.Directives.ChatMain.title,
+		Cyph.UI.Directives.ChatMessageBox.title,
+		Cyph.UI.Directives.ChatToolbar.title,
 		Cyph.UI.Directives.Checkout.title,
 		Cyph.UI.Directives.Contact.title,
 		Cyph.UI.Directives.Markdown.title,
