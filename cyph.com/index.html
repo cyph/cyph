@@ -349,41 +349,41 @@
 			<div class='demo-root grid-container'>
 				<span class='desktop desktop-only'>
 					<div class='cyph-foreground'>
-						<span
-							cyph-chat-toolbar='ui.cyphDemo.desktop'
+						<cyph-chat-toolbar
+							self='ui.cyphDemo.desktop'
 							show-chat='true'
-						></span>
-						<div
-							cyph-chat-main='ui.cyphDemo.desktop'
+						></cyph-chat-toolbar>
+						<cyph-chat-main
+							self='ui.cyphDemo.desktop'
 							layout='column'
 							layout-fill
 							flex
 						>
 							We hope you enjoyed our quick demo! Just click
 							the "start new cyph" button to use it for real.
-						</div>
-						<div cyph-chat-message-box='ui.cyphDemo.desktop'></div>
+						</cyph-chat-main>
+						<cyph-chat-message-box self='ui.cyphDemo.desktop'></cyph-chat-message-box>
 					</div>
-					<div cyph-chat-cyphertext='ui.cyphDemo.desktop'></div>
+					<cyph-chat-cyphertext self='ui.cyphDemo.desktop'></cyph-chat-cyphertext>
 				</span>
 
 				<span class='mobile'>
 					<div class='cyph-foreground'>
-						<span
-							cyph-chat-toolbar='ui.cyphDemo.mobile'
+						<cyph-chat-toolbar
+							self='ui.cyphDemo.mobile'
 							show-chat='true'
-						></span>
-						<div
-							cyph-chat-main='ui.cyphDemo.mobile'
+						></cyph-chat-toolbar>
+						<cyph-chat-main
+							self='ui.cyphDemo.mobile'
 							layout='column'
 							layout-fill
 							flex
 						>
 							Tell your friends.
-						</div>
-						<div cyph-chat-message-box='ui.cyphDemo.mobile'></div>
+						</cyph-chat-main>
+						<cyph-chat-message-box self='ui.cyphDemo.mobile'></cyph-chat-message-box>
 					</div>
-					<div cyph-chat-cyphertext='ui.cyphDemo.mobile'></div>
+					<cyph-chat-cyphertext self='ui.cyphDemo.mobile'></cyph-chat-cyphertext>
 				</span>
 			</div>
 		</section>
@@ -969,7 +969,7 @@
 			</h1>
 			<div class='section-content-container'>
 				<p>
-					<cyph-contact state='ui.contactState'></cyph-contact>
+					<cyph-contact self='ui.contactState'></cyph-contact>
 				</p>
 				<p>
 					<span translate>

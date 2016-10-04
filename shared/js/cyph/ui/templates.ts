@@ -43,8 +43,8 @@ export const Templates	= {
 			<div class='nano-content'>
 				<div
 					class='login-form'
-					ng-show='$this.betaState === Cyph.im.UI.BetaStates.login'
-					ng-class='{checking: checking}'
+					ng-show='$ctrl.ui.betaState === $ctrl.Cyph.im.UI.BetaStates.login'
+					ng-class='{checking: $ctrl.checking}'
 					layout='row'
 					layout-align='center center'
 				>
@@ -62,7 +62,7 @@ export const Templates	= {
 						<md-card-content>
 							<form>
 								<div layout='row' layout-align='center center'>
-									<md-subheader ng-style='{visibility: error ? "visible" : "hidden"}'>
+									<md-subheader ng-style='{visibility: $ctrl.error ? "visible" : "hidden"}'>
 										Invalid username or password.
 									</md-subheader>
 								</div>
@@ -88,10 +88,10 @@ export const Templates	= {
 						<md-progress-circular md-mode='indeterminate'></md-progress-circular>
 					</md-card>
 				</div>
-				<div ng-show='$this.betaState === Cyph.im.UI.BetaStates.register'>
+				<div ng-show='$ctrl.ui.betaState === $ctrl.Cyph.im.UI.BetaStates.register'>
 					Registration screen
 				</div>
-				<div ng-show='$this.betaState === Cyph.im.UI.BetaStates.settings'>
+				<div ng-show='$ctrl.ui.betaState === $ctrl.Cyph.im.UI.BetaStates.settings'>
 					Settings screen
 				</div>
 			</div>
@@ -104,7 +104,7 @@ export const Templates	= {
 				<md-list layout='column'>
 					<md-item
 						class='message-item unread'
-						ng-repeat='message in $this.cyphertext.messages'
+						ng-repeat='message in $ctrl.self.cyphertext.messages'
 						layout='horizontal'
 					>
 						<span class='message'>
@@ -123,7 +123,7 @@ export const Templates	= {
 				translate
 				aria-label='Close Cyphertext'
 				class='md-fab md-theme-grey close-button'
-				ng-click='$this.cyphertext.hide()'
+				ng-click='$ctrl.self.cyphertext.hide()'
 			>
 				<strong>&times;</strong>
 			</md-button>
@@ -134,8 +134,8 @@ export const Templates	= {
 		<div
 			class='chat-main platform-container'
 			ng-class='{
-				video: $this.p2pManager.p2p.isActive,
-				mobile: $this.isMobile
+				video: $ctrl.self.p2pManager.p2p.isActive,
+				mobile: $ctrl.self.isMobile
 			}'
 			layout='column'
 			layout-fill
@@ -148,7 +148,7 @@ export const Templates	= {
 				layout-fill
 				flex
 				ng-class='{
-					active: $this.state === Cyph.UI.Chat.States.keyExchange
+					active: $ctrl.self.state === $ctrl.Cyph.UI.Chat.States.keyExchange
 				}'
 			>
 				<div flex></div>
@@ -159,7 +159,7 @@ export const Templates	= {
 				<md-progress-linear
 					class='md-accent key-exchange-progress'
 					md-mode='determinate'
-					ng-value='$this.keyExchangeProgress'
+					ng-value='$ctrl.self.keyExchangeProgress'
 				></md-progress-linear>
 				<div flex></div>
 			</div>
@@ -171,7 +171,7 @@ export const Templates	= {
 				layout-fill
 				flex
 				ng-class='{
-					active: $this.state === Cyph.UI.Chat.States.aborted
+					active: $ctrl.self.state === $ctrl.Cyph.UI.Chat.States.aborted
 				}'
 			>
 				<div flex></div>
@@ -185,7 +185,7 @@ export const Templates	= {
 					<a
 						translate
 						target='_self'
-						ng-href='{{Cyph.Env.newCyphUrl}}'
+						ng-href='{{$ctrl.Cyph.Env.newCyphUrl}}'
 					>try again</a>.
 				</div>
 				<div flex></div>
@@ -198,7 +198,7 @@ export const Templates	= {
 				layout-fill
 				flex
 				ng-class='{
-					active: $this.state === Cyph.UI.Chat.States.chatBeginMessage
+					active: $ctrl.self.state === $ctrl.Cyph.UI.Chat.States.chatBeginMessage
 				}'
 			>
 				<div flex></div>
@@ -219,38 +219,38 @@ export const Templates	= {
 				class='video-call'
 				flex
 				ng-class='{
-					active: $this.state === Cyph.UI.Chat.States.chat,
-					playing: $this.p2pManager.p2p.isActive
+					active: $ctrl.self.state === $ctrl.Cyph.UI.Chat.States.chat,
+					playing: $ctrl.self.p2pManager.p2p.isActive
 				}'
 			>
-				<a class='logo' rel='noreferrer' ng-href='{{Cyph.Env.homeUrl}}'>
+				<a class='logo' rel='noreferrer' ng-href='{{$ctrl.Cyph.Env.homeUrl}}'>
 					<img src='/img/betalogo.mobile.png' alt='Beta logo' />
 				</a>
 				<div
 					class='friend stream'
 					ng-show='
-						$this.p2pManager.p2p.incomingStream.video &&
-						!$this.p2pManager.p2p.loading
+						$ctrl.self.p2pManager.p2p.incomingStream.video &&
+						!$ctrl.self.p2pManager.p2p.loading
 					'
 					autoplay
 				></div>
 				<img
 					class='friend'
 					ng-show='!(
-						$this.p2pManager.p2p.incomingStream.video ||
-						$this.p2pManager.p2p.loading
+						$ctrl.self.p2pManager.p2p.incomingStream.video ||
+						$ctrl.self.p2pManager.p2p.loading
 					)'
 					src='/img/voicecall.jpg'
 				/>
 				<video
 					class='me'
-					ng-show='$this.p2pManager.p2p.outgoingStream.video'
+					ng-show='$ctrl.self.p2pManager.p2p.outgoingStream.video'
 					autoplay
 					muted
 				></video>
 
 				<md-progress-circular
-					ng-show='$this.p2pManager.p2p.loading'
+					ng-show='$ctrl.self.p2pManager.p2p.loading'
 					md-mode='indeterminate'
 				></md-progress-circular>
 
@@ -258,7 +258,7 @@ export const Templates	= {
 					translate
 					class='sidebar'
 					aria-label='Sidebar'
-					ng-click='$this.p2pManager.toggleSidebar()'
+					ng-click='$ctrl.self.p2pManager.toggleSidebar()'
 				>
 					<img src='/img/icons/chat.png' alt='Chat' />
 				</md-button>
@@ -267,20 +267,20 @@ export const Templates	= {
 					<md-button
 						translate
 						class='md-fab video-call-button'
-						ng-click='$this.p2pManager.videoCallButton()'
+						ng-click='$ctrl.self.p2pManager.videoCallButton()'
 						ng-attr-aria-label='{{
-							!$this.p2pManager.p2p.outgoingStream.video ?
+							!$ctrl.self.p2pManager.p2p.outgoingStream.video ?
 								"Enable Camera" :
 								"Disable Camera"
 						}}'
 					>
 						<img
-							ng-show='!$this.p2pManager.p2p.outgoingStream.video'
+							ng-show='!$ctrl.self.p2pManager.p2p.outgoingStream.video'
 							src='/img/icons/video.on.png'
 							alt='Video on'
 						/>
 						<img
-							ng-show='$this.p2pManager.p2p.outgoingStream.video'
+							ng-show='$ctrl.self.p2pManager.p2p.outgoingStream.video'
 							src='/img/icons/video.off.png'
 							alt='Video off'
 						/>
@@ -288,20 +288,20 @@ export const Templates	= {
 					<md-button
 						translate
 						class='md-fab voice-call-button'
-						ng-click='$this.p2pManager.voiceCallButton()'
+						ng-click='$ctrl.self.p2pManager.voiceCallButton()'
 						ng-attr-aria-label='{{
-							!$this.p2pManager.p2p.outgoingStream.audio ?
+							!$ctrl.self.p2pManager.p2p.outgoingStream.audio ?
 								"Enable Mic" :
 								"Disable Mic"
 						}}'
 					>
 						<img
-							ng-show='!$this.p2pManager.p2p.outgoingStream.audio'
+							ng-show='!$ctrl.self.p2pManager.p2p.outgoingStream.audio'
 							src='/img/icons/mic.on.png'
 							alt='Mic on'
 						/>
 						<img
-							ng-show='$this.p2pManager.p2p.outgoingStream.audio'
+							ng-show='$ctrl.self.p2pManager.p2p.outgoingStream.audio'
 							src='/img/icons/mic.off.png'
 							alt='Mic off'
 						/>
@@ -310,31 +310,31 @@ export const Templates	= {
 						translate
 						aria-label='End Call'
 						class='md-fab md-theme-grey close-button'
-						ng-click='$this.p2pManager.closeButton()'
+						ng-click='$ctrl.self.p2pManager.closeButton()'
 					>
 						<strong>&times;</strong>
 					</md-button>
 				</div>
 			</div>
 
-			<div
+			<cyph-chat-message-box
 				class='video-call-message-box'
-				cyph-chat-message-box='$this'
-			></div>
+				self='$ctrl.self'
+			></cyph-chat-message-box>
 
 			<div
 				ng-view
 				class='message-list nano'
 				flex
 				ng-class='{
-					active: $this.state === Cyph.UI.Chat.States.chat
+					active: $ctrl.self.state === $ctrl.Cyph.UI.Chat.States.chat
 				}'
 			>
 				<md-content class='nano-content'>
 					<md-list layout='column'>
 						<md-item
 							class='progress'
-							ng-repeat='transfer in $this.fileManager.files.transfers'
+							ng-repeat='transfer in $ctrl.self.fileManager.files.transfers'
 							layout='row'
 						>
 							<div layout='column' layout-align=' start' flex>
@@ -344,7 +344,7 @@ export const Templates	= {
 									&nbsp;
 									<span>
 										{{transfer.name}}
-										({{Cyph.Util.readableByteLength(transfer.size)}}):
+										({{$ctrl.Cyph.Util.readableByteLength(transfer.size)}}):
 									</span>
 								</div>
 								<md-progress-linear
@@ -359,16 +359,16 @@ export const Templates	= {
 							class='message-item unread'
 							ng-class='::
 								"author-" +
-								(Cyph.Session.Users[message.author] || Cyph.Session.Users.other)
+								($ctrl.Cyph.Session.Users[message.author] || $ctrl.Cyph.Session.Users.other)
 							'
-							ng-repeat='message in $this.messages'
+							ng-repeat='message in $ctrl.self.messages'
 							layout='row'
 						>
 							<span class='message'>
 								<strong
 									translate
 									class='message-author'
-									ng-hide='::message.author === Cyph.Session.Users.app'
+									ng-hide='::message.author === $ctrl.Cyph.Session.Users.app'
 									ng-bind='::message.author + ": "'
 								></strong>
 								<span
@@ -376,14 +376,14 @@ export const Templates	= {
 									cyph-markdown='::message.text'
 									ng-class='::{
 										"app-message":
-											message.author === Cyph.Session.Users.app
+											message.author === $ctrl.Cyph.Session.Users.app
 									}'
 								></span>
 							</span>
 							<span flex class='message-timestamp'>
 								<span
 									class='mobile-only'
-									ng-show='::message.author === Cyph.Session.Users.me'
+									ng-show='::message.author === $ctrl.Cyph.Session.Users.me'
 								>
 									<span>{{::message.author}}</span> &nbsp;&mdash;&nbsp;
 								</span>
@@ -393,8 +393,8 @@ export const Templates	= {
 								<span
 									class='mobile-only'
 									ng-show='::
-										message.author !== Cyph.Session.Users.me &&
-										message.author !== Cyph.Session.Users.app
+										message.author !== $ctrl.Cyph.Session.Users.me &&
+										message.author !== $ctrl.Cyph.Session.Users.app
 									'
 								>
 									&nbsp;&mdash;&nbsp; <span>{{::message.author}}</span>
@@ -404,7 +404,7 @@ export const Templates	= {
 
 						<md-item
 							class='friend-is-typing'
-							ng-class='{"show": $this.isFriendTyping}'
+							ng-class='{"show": $ctrl.self.isFriendTyping}'
 							layout='row'
 						>
 							<span class='ellipsis-spinner'>
@@ -416,7 +416,7 @@ export const Templates	= {
 
 						<md-item
 							class='chat-end-message'
-							ng-show='$this.isDisconnected && !hideDisconnectMessage'
+							ng-show='$ctrl.self.isDisconnected && !$ctrl.hideDisconnectMessage'
 							layout='row'
 							layout-align='center center'
 						>
@@ -435,19 +435,19 @@ export const Templates	= {
 	chatMessageBox: `
 		<div
 			class='chat-message-box platform-container'
-			ng-class='{mobile: $this.isMobile}'
+			ng-class='{mobile: $ctrl.self.isMobile}'
 			ng-show='
-				$this.state === Cyph.UI.Chat.States.chat &&
-				$this.session.state.isAlive
+				$ctrl.self.state === $ctrl.Cyph.UI.Chat.States.chat &&
+				$ctrl.self.session.state.isAlive
 			'
 		>
 			<textarea
 				translate
 				class='message-box tabIndent'
-				ng-model='$this.currentMessage'
+				ng-model='$ctrl.self.currentMessage'
 				ng-trim='false'
-				ng-change='$this.messageChange()'
-				cyph-enterpress='$this.send()'
+				ng-change='$ctrl.self.messageChange()'
+				cyph-enterpress='$ctrl.self.send()'
 				enterpress-only='desktop'
 				placeholder='Send a secure message...'
 			></textarea>
@@ -456,9 +456,9 @@ export const Templates	= {
 				translate
 				class='send-button mobile-only'
 				ng-class='{
-					"chat-message-box-hidden": $this.currentMessage === ""
+					"chat-message-box-hidden": $ctrl.self.currentMessage === ""
 				}'
-				ng-click='$this.send()'
+				ng-click='$ctrl.self.send()'
 				aria-label='Send'
 			>
 				<md-icon class='grey'>send</md-icon>
@@ -490,7 +490,7 @@ export const Templates	= {
 						<md-icon class='grey'>attach_file</md-icon>
 						<input
 							type='file'
-							cyph-filechange='$this.fileManager.send(this)'
+							cyph-filechange='$ctrl.self.fileManager.send(this)'
 						/>
 					</md-button>
 					<md-button
@@ -504,15 +504,15 @@ export const Templates	= {
 						<input
 							accept='image/*'
 							type='file'
-							cyph-filechange='$this.fileManager.send(this, true)'
+							cyph-filechange='$ctrl.self.fileManager.send(this, true)'
 						/>
 					</md-button>
 					<md-button
 						aria-label='Voice Call'
 						class='md-fab md-raised md-mini'
-						ng-click='$this.p2pManager.voiceCallButton()'
-						ng-disabled='!$this.p2pManager.isEnabled'
-						ng-hide='$this.p2pManager.p2p.isActive'
+						ng-click='$ctrl.self.p2pManager.voiceCallButton()'
+						ng-disabled='!$ctrl.self.p2pManager.isEnabled'
+						ng-hide='$ctrl.self.p2pManager.p2p.isActive'
 					>
 						<md-tooltip md-direction='left'>
 							Voice Call
@@ -522,9 +522,9 @@ export const Templates	= {
 					<md-button
 						aria-label='Video Call'
 						class='md-fab md-raised md-mini'
-						ng-click='$this.p2pManager.videoCallButton()'
-						ng-disabled='!$this.p2pManager.isEnabled'
-						ng-hide='$this.p2pManager.p2p.isActive'
+						ng-click='$ctrl.self.p2pManager.videoCallButton()'
+						ng-disabled='!$ctrl.self.p2pManager.isEnabled'
+						ng-hide='$ctrl.self.p2pManager.p2p.isActive'
 					>
 						<md-tooltip md-direction='left'>
 							Video Call
@@ -536,18 +536,18 @@ export const Templates	= {
 
 			<md-subheader
 				class='new-messages md-subheader-colored md-sticky-clone'
-				ng-show='$this.scrollManager.unreadMessages > 0'
+				ng-show='$ctrl.self.scrollManager.unreadMessages > 0'
 				sticky-state='active'
-				ng-click='$this.scrollManager.scrollDown()'
+				ng-click='$ctrl.self.scrollManager.scrollDown()'
 			>
 				<strong>&#8595;&nbsp;&nbsp;</strong>
 				<span
 					translate
 					ng-bind='
-						$this.scrollManager.unreadMessages +
+						$ctrl.self.scrollManager.unreadMessages +
 						" " + "new" + " " +
 						(
-							$this.scrollManager.unreadMessages > 1 ?
+							$ctrl.self.scrollManager.unreadMessages > 1 ?
 								"messages" :
 								"message"
 						)
@@ -560,25 +560,25 @@ export const Templates	= {
 	chatToolbar: `
 		<div
 			class='platform-container'
-			ng-class='{mobile: $this.isMobile}'
+			ng-class='{mobile: $ctrl.self.isMobile}'
 		>
 			<div
 				class='buttons'
 				layout='row'
 				layout-align='end end'
 				flex='95'
-				ng-show='$this.isConnected && !$this.isDisconnected'
+				ng-show='$ctrl.self.isConnected && !$ctrl.self.isDisconnected'
 			>
 				<img
 					src='/img/icons/help.png'
-					ng-click='$this.helpButton()'
+					ng-click='$ctrl.self.helpButton()'
 				/>
-				<a href='{{Cyph.Env.homeUrl}}'>
+				<a href='{{$ctrl.Cyph.Env.homeUrl}}'>
 					<img src='/img/logo.white.icon.small.png' />
 				</a>
 				<img
 					src='/img/icons/close.png'
-					ng-click='$this.disconnectButton()'
+					ng-click='$ctrl.self.disconnectButton()'
 				/>
 			</div>
 		</div>
@@ -586,25 +586,25 @@ export const Templates	= {
 
 	checkout: `
 		<form>
-			<div ng-hide='complete'>
+			<div ng-hide='$ctrl.complete'>
 				<div class='checkout-ui'>
 					<div class='braintree'></div>
 					<div layout='row' layout-sm='column' layout-xs='column'>
 						<md-input-container class='md-block' flex>
-							<input ng-model='name' aria-label='Name' />
+							<input ng-model='$ctrl.name' aria-label='Name' />
 							<label>Name</label>
 						</md-input-container>
 						<md-input-container class='md-block' flex>
-							<input ng-model='email' type='email' aria-label='Email' />
+							<input ng-model='$ctrl.email' type='email' aria-label='Email' />
 							<label>Email</label>
 						</md-input-container>
 					</div>
 				</div>
 				<md-button type='submit'>
-					Confirm \${{amount}} payment
+					Confirm \${{$ctrl.amount}} payment
 				</md-button>
 			</div>
-			<div translate class='confirmation' ng-show='complete'>
+			<div translate class='confirmation' ng-show='$ctrl.complete'>
 				<ng-transclude></ng-transclude>
 			</div>
 		</form>
@@ -612,13 +612,13 @@ export const Templates	= {
 
 	contact: `
 		<div>
-			<div ng-hide='$this.sent'>
+			<div ng-hide='$ctrl.self.sent'>
 				<div layout-gt-xs='row'>
 					<md-input-container class='md-block' flex>
 						<label>Cyph team to contact</label>
-						<md-select ng-model='$this.to'>
+						<md-select ng-model='$ctrl.self.to'>
 							<md-option
-								ng-repeat='address in Cyph.Config.cyphEmailAddresses'
+								ng-repeat='address in $ctrl.Cyph.Config.cyphEmailAddresses'
 								value='{{address}}'
 							>
 								{{address}}
@@ -628,27 +628,27 @@ export const Templates	= {
 				</div>
 				<div layout='row'>
 					<md-input-container class='md-block' flex>
-						<input ng-model='$this.fromName' aria-label='Name' />
+						<input ng-model='$ctrl.self.fromName' aria-label='Name' />
 						<label>Name</label>
 					</md-input-container>
 					<md-input-container class='md-block' flex>
-						<input ng-model='$this.fromEmail' type='email' aria-label='Email' />
+						<input ng-model='$ctrl.self.fromEmail' type='email' aria-label='Email' />
 						<label>Email</label>
 					</md-input-container>
 				</div>
 				<md-input-container class='md-block'>
-					<input ng-model='$this.subject' aria-label='Subject' />
+					<input ng-model='$ctrl.self.subject' aria-label='Subject' />
 					<label>Subject</label>
 				</md-input-container>
 				<md-input-container class='md-block'>
-					<textarea ng-model='$this.message' aria-label='Message' md-select-on-focus></textarea>
+					<textarea ng-model='$ctrl.self.message' aria-label='Message' md-select-on-focus></textarea>
 					<label>Message</label>
 				</md-input-container>
 				<md-button>
 					Send
 				</md-button>
 			</div>
-			<div ng-show='$this.sent'>
+			<div ng-show='$ctrl.self.sent'>
 				Your email has been sent! Someone on the team will get back to you shortly.
 			</div>
 		</div>
@@ -748,9 +748,9 @@ export const Templates	= {
 							</tbody>
 						</table>
 					</md-tab>
-					<md-tab label='Contact Cyph' ng-disabled='ui.coBranded'>
+					<md-tab label='Contact Cyph' ng-disabled='$ctrl.ui.coBranded'>
 						<span translate>Please check out the</span>
-						<a href='{{Cyph.Env.homeUrl}}faq'>FAQs</a>
+						<a href='{{$ctrl.Cyph.Env.homeUrl}}faq'>FAQs</a>
 						<span translate>first!</span>
 						<br />
 						<br />
@@ -784,7 +784,7 @@ export const Templates	= {
 						</md-card-title-text>
 					</md-card-title>
 					<md-card-content>
-						<div invite='true' cyph-signup-form='locals.signupForm'></div>
+						<cyph-signup-form self='locals.signupForm' invite='true'></cyph-signup-form>
 					</md-card-content>
 				</md-card>
 
@@ -812,31 +812,31 @@ export const Templates	= {
 				<img src='/img/logo.animated.gif' alt='Animated Cyph logo' />
 			</div>
 			<div>
-				<div ng-show='$this.isPassive' translate>
+				<div ng-show='$ctrl.self.isPassive' translate>
 					Waiting for friend to join...
 				</div>
-				<div ng-hide='$this.isPassive'>
+				<div ng-hide='$ctrl.self.isPassive'>
 					<div translate>
 						Send the link below to someone else. When they open it, you'll be securely connected!
 					</div>
 					<br />
 
 					<md-input-container class='connect-link-input desktop-only'>
-						<input translate ng-model='$this.link' aria-label='Cyph link' />
+						<input translate ng-model='$ctrl.self.link' aria-label='Cyph link' />
 					</md-input-container>
 
 					<div class='connect-link-mobile mobile-only'>
 						<a
 							class='connect-link-link'
-							ng-href='{{$this.link}}'
-						>{{$this.link}}</a>
+							ng-href='{{$ctrl.self.link}}'
+						>{{$ctrl.self.link}}</a>
 						<br />
 
 						<md-button
 							translate
 							class='md-fab'
 							aria-label='SMS'
-							ng-href='{{Cyph.Env.smsUriBase}}{{$this.linkEncoded}}'
+							ng-href='{{$ctrl.Cyph.Env.smsUriBase}}{{$ctrl.self.linkEncoded}}'
 						>
 							<img src='/img/icons/sms.png' alt='SMS' />
 						</md-button>
@@ -850,7 +850,7 @@ export const Templates	= {
 							class='md-fab'
 							aria-label='Email'
 							target='_self'
-							ng-href='mailto:?body={{$this.linkEncoded}}'
+							ng-href='mailto:?body={{$ctrl.self.linkEncoded}}'
 						>
 							<img src='/img/icons/email.png' alt='Email' />
 						</md-button>
@@ -865,7 +865,7 @@ export const Templates	= {
 					<timer
 						class='timer'
 						interval='1000'
-						countdown='$this.countdown'
+						countdown='$ctrl.self.countdown'
 						autostart='false'
 					>
 						{{minutes}}:{{sseconds}}
@@ -898,7 +898,7 @@ export const Templates	= {
 						</md-card-title-text>
 					</md-card-title>
 					<md-card-content>
-						<div cyph-signup-form='locals.signupForm'></div>
+						<cyph-signup-form self='locals.signupForm'></cyph-signup-form>
 					</md-card-content>
 				</md-card>
 
@@ -916,7 +916,7 @@ export const Templates	= {
 
 	signupForm: `
 			<div class='beta-signup-form'>
-				<form ng-submit='$this.submit()' ng-show='$this.state === 0'>
+				<form ng-submit='$ctrl.self.submit()' ng-show='$ctrl.self.state === 0'>
 					<div layout='row' layout-align='center center' flex>
 						<ng-transclude></ng-transclude>
 					</div>
@@ -924,7 +924,7 @@ export const Templates	= {
 						<div class='desktop-only' layout='column' flex='50'>
 							<div layout='row' layout-align='center center'>
 								<md-input-container class='md-block' flex='80'>
-									<input type='email' ng-model='$this.data.email' aria-label='Email' />
+									<input type='email' ng-model='$ctrl.self.data.email' aria-label='Email' />
 									<label>Email</label>
 								</md-input-container>
 							</div>
@@ -941,9 +941,9 @@ export const Templates	= {
 									<label>Confirm Password</label>
 								</md-input-container>
 							</div>
-							<div ng-if='invite' layout='row' layout-align='center center'>
+							<div ng-if='$ctrl.invite' layout='row' layout-align='center center'>
 								<md-input-container class='md-block' flex='80'>
-									<input type='text' id='invitecode' ng-model='$this.data.inviteCode' aria-label='Invite Code' />
+									<input type='text' id='invitecode' ng-model='$ctrl.self.data.inviteCode' aria-label='Invite Code' />
 									<label>Invite Code</label>
 								</md-input-container>
 							</div>
@@ -987,18 +987,18 @@ export const Templates	= {
 					</div>
 				</form>
 
-				<form ng-submit='$this.submit()' ng-show='$this.state === 1'>
+				<form ng-submit='$ctrl.self.submit()' ng-show='$ctrl.self.state === 1'>
 					<div layout='row' layout-align='center center' flex>
 						<div layout='column' flex>
 							<div layout='row' layout-align='center center'>
 								<md-input-container class='md-block' flex='80'>
-									<input type='email' ng-model='$this.data.email' aria-label='Email' required />
+									<input type='email' ng-model='$ctrl.self.data.email' aria-label='Email' required />
 									<label>Email</label>
 								</md-input-container>
 							</div>
-							<div layout='row' ng-if='invite' layout-align='center center'>
+							<div layout='row' ng-if='$ctrl.invite' layout-align='center center'>
 								<md-input-container class='md-block' flex='80'>
-									<input type='text' ng-model='$this.data.inviteCode' aria-label='Invite Code' required />
+									<input type='text' ng-model='$ctrl.self.data.inviteCode' aria-label='Invite Code' required />
 									<label>Invite Code</label>
 								</md-input-container>
 							</div>
@@ -1015,12 +1015,12 @@ export const Templates	= {
 					</div>
 				</form>
 
-				<form ng-submit='$this.submit()' ng-show='$this.state === 2'>
+				<form ng-submit='$ctrl.self.submit()' ng-show='$ctrl.self.state === 2'>
 					<div layout='row' layout-align='center center' flex>
 						<div layout='column' flex>
 							<div layout='row' layout-align='center center'>
 								<md-input-container class='md-block' flex='80'>
-									<input ng-model='$this.data.name' aria-label='Name' />
+									<input ng-model='$ctrl.self.data.name' aria-label='Name' />
 									<label>Name (optional)</label>
 								</md-input-container>
 							</div>
@@ -1037,12 +1037,12 @@ export const Templates	= {
 					</div>
 				</form>
 
-				<form ng-submit='$this.submit()' ng-show='$this.state === 3'>
+				<form ng-submit='$ctrl.self.submit()' ng-show='$ctrl.self.state === 3'>
 					<div layout='row' layout-align='center center' flex>
 						<div layout='column' flex>
 							<div layout='row' layout-align='center center'>
 								<p flex='80' translate>
-									Thanks for subscribing, {{$this.data.name}}! We'll email you
+									Thanks for subscribing, {{$ctrl.self.data.name}}! We'll email you
 									when your invite is ready.
 								</p>
 							</div>
@@ -1072,7 +1072,7 @@ export const Templates	= {
 						<a
 							translate
 							target='_self'
-							ng-href='{{Cyph.Env.newCyphUrl}}'
+							ng-href='{{$ctrl.Cyph.Env.newCyphUrl}}'
 						>try again</a>.
 					</p>
 					<p translate>Reasons why you may have landed here:</p>
@@ -1119,54 +1119,54 @@ export const Templates	= {
 		<div layout='row' flex class='footer desktop-only'>
 			<div flex></div>
 
-			<div layout='row' ng-hide='ui.coBranded'>
+			<div layout='row' ng-hide='$ctrl.ui.coBranded'>
 				<p flex='nogrow' layout-padding>
-					<a flex ng-href='{{Cyph.Env.homeUrl}}'>
+					<a flex ng-href='{{$ctrl.Cyph.Env.homeUrl}}'>
 						© Cyph 2016 (Patents Pending)
 					</a>
 				</p>
 
 				<p flex='nogrow' layout-padding>
-					<a flex ng-href='{{Cyph.Env.homeUrl}}contact'>Contact</a>
+					<a flex ng-href='{{$ctrl.Cyph.Env.homeUrl}}contact'>Contact</a>
 				</p>
 
 				<p flex='nogrow' layout-padding>
-					<a ng-href='{{Cyph.Env.homeUrl}}donate'>
+					<a ng-href='{{$ctrl.Cyph.Env.homeUrl}}donate'>
 						Donate
 					</a>
 				</p>
 
 				<p flex='nogrow' layout-padding>
-					<strong ng-hide='ui.chat.session.state.wasInitiatedByAPI'>
+					<strong ng-hide='$ctrl.ui.chat.session.state.wasInitiatedByAPI'>
 						- Individual Use Only -
 					</strong>
-					<strong ng-show='ui.chat.session.state.wasInitiatedByAPI'>
+					<strong ng-show='$ctrl.ui.chat.session.state.wasInitiatedByAPI'>
 						- Cyph API -
 					</strong>
 				</p>
 
 				<p flex='nogrow' layout-padding>
-					<a ng-href='{{Cyph.Env.homeUrl}}pricing'>
+					<a ng-href='{{$ctrl.Cyph.Env.homeUrl}}pricing'>
 						Business Pricing
 					</a>
 				</p>
 
 				<p flex='nogrow' layout-padding>
-					<a ng-href='{{Cyph.Env.homeUrl}}privacypolicy'>
+					<a ng-href='{{$ctrl.Cyph.Env.homeUrl}}privacypolicy'>
 						Privacy Policy
 					</a>
 				</p>
 
 				<p flex='nogrow' layout-padding>
-					<a ng-href='{{Cyph.Env.homeUrl}}termsofservice'>
+					<a ng-href='{{$ctrl.Cyph.Env.homeUrl}}termsofservice'>
 						Terms of Service
 					</a>
 				</p>
 			</div>
 
-			<div layout='row' ng-show='ui.coBranded'>
+			<div layout='row' ng-show='$ctrl.ui.coBranded'>
 				<p class='powered-by-cyph' flex='nogrow' layout-padding>
-					<a ng-href='{{Cyph.Env.homeUrl}}' class='small-font'>
+					<a ng-href='{{$ctrl.Cyph.Env.homeUrl}}' class='small-font'>
 						Powered by Cyph
 					</a>
 				</p>

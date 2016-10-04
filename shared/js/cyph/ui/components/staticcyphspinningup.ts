@@ -8,17 +8,18 @@ export class StaticCyphSpinningUp {
 	/** Module/component title. */
 	public static title: string	= 'cyphStaticCyphSpinningUp';
 
+	private Cyph: any	= self['Cyph'];
+	private ui: any		= self['ui'];
+
+	constructor () {}
+
 	private static _	= (() => {
 		angular.module(
 			StaticCyphSpinningUp.title,
 			[]
-		).directive(StaticCyphSpinningUp.title, () => ({
-			restrict: 'A',
-			link: scope => {
-				scope['Cyph']	= self['Cyph'];
-				scope['ui']		= self['ui'];
-			},
+		).component(StaticCyphSpinningUp.title, {
+			controller: StaticCyphSpinningUp,
 			template: Templates.staticCyphSpinningUp
-		}));
+		});
 	})();
 }

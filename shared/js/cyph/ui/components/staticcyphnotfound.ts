@@ -8,17 +8,18 @@ export class StaticCyphNotFound {
 	/** Module/component title. */
 	public static title: string	= 'cyphStaticCyphNotFound';
 
+	private Cyph: any	= self['Cyph'];
+	private ui: any		= self['ui'];
+
+	constructor () {}
+
 	private static _	= (() => {
 		angular.module(
 			StaticCyphNotFound.title,
 			[]
-		).directive(StaticCyphNotFound.title, () => ({
-			restrict: 'A',
-			link: scope => {
-				scope['Cyph']	= self['Cyph'];
-				scope['ui']		= self['ui'];
-			},
+		).component(StaticCyphNotFound.title, {
+			controller: StaticCyphNotFound,
 			template: Templates.staticCyphNotFound
-		}));
+		});
 	})();
 }

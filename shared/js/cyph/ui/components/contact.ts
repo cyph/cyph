@@ -11,59 +11,62 @@ export class Contact {
 	/** Module/component title. */
 	public static title: string	= 'cyphContact';
 
-	private static _	= (() => {
-		angular.module(Contact.title, []).directive(Contact.title, () => ({
-			restrict: 'E',
-			replace: false,
-			template: Templates.contact,
-			link: (scope, element, attrs) => Util.retryUntilComplete(retry => {
-				const ui: any	= self['ui'];
+	private Cyph: any;
+	private ui: any;
 
-				if (!ui) {
-					retry();
-					return;
+	private self: {
+		fromEmail: string;
+		fromName: string;
+		message: string;
+		to: string;
+		sent: boolean;
+		subject: string;
+	};
+
+	constructor ($scope, $element, $attrs) {
+		Util.retryUntilComplete(retry => {
+			this.Cyph	= self['Cyph'];
+			this.ui		= self['ui'];
+
+			if (!this.Cyph || !this.ui) {
+				retry();
+				return;
+			}
+
+			if (!this.self) {
+				this.self	= {
+					fromEmail: '',
+					fromName: '',
+					message: '',
+					to: '',
+					sent: false,
+					subject: ''
+				};
+			}
+
+			for (let k of ['fromEmail', 'fromName', 'to', 'subject', 'message']) {
+				if ($attrs[k]) {
+					this.self[k]	= $attrs[k];
 				}
+			}
 
-				scope['ui']		= ui;
-				scope['Cyph']	= self['Cyph'];
+			this.ui.controller.update();
 
-				scope['$this']	= {};
+			$element.find('button').click(() => {
+				Util.email(this.self);
+				this.self.sent	= true;
+				this.ui.controller.update();
+			});
+		});
+	}
 
-				const watch	= (attr: string) => scope.$watch(attrs[attr], (value: any) => {
-					if (!value) {
-						return;
-					}
-
-					if (attr === 'state') {
-						for (let k of Object.keys(scope['$this'])) {
-							const v	= scope['$this'][k];
-							if (v && !value[k]) {
-								value[k]	= v;
-							}
-						}
-
-						scope['$this']	= value;
-					}
-					else {
-						scope['$this'][attr]	= value;
-					}
-
-					ui.controller.update();
-				});
-
-				watch('state');
-				watch('fromEmail');
-				watch('fromName');
-				watch('to');
-				watch('subject');
-				watch('message');
-
-				element.find('button').click(() => {
-					Util.email(<any> scope['$this']);
-					scope['$this'].sent	= true;
-					self['ui'].controller.update();
-				});
-			})
-		}));
+	private static _	= (() => {
+		angular.module(Contact.title, []).component(Contact.title, {
+			bindings: {
+				self: '<'
+			},
+			controller: Contact,
+			template: Templates.contact
+		});
 	})();
 }

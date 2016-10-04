@@ -11,65 +11,72 @@ export class Checkout {
 	/** Module/component title. */
 	public static title: string	= 'cyphCheckout';
 
-	private static _	= (() => {
-		angular.module(Checkout.title, []).directive(Checkout.title, () => ({
-			restrict: 'E',
-			replace: false,
-			transclude: true,
-			template: Templates.checkout,
-			link: (scope, element, attrs) => Util.retryUntilComplete(async (retry) => {
-				const ui: any	= self['ui'];
+	private Cyph: any;
+	private ui: any;
+	private amount: string;
+	private category: string;
+	private email: string;
+	private item: string;
+	private name: string;
+	private complete: boolean;
 
-				if (!ui) {
-					retry();
-					return;
-				}
+	constructor ($scope, $element, $attrs) {
+		Util.retryUntilComplete(async (retry) => {
+			this.Cyph	= self['Cyph'];
+			this.ui		= self['ui'];
 
-				scope['ui']		= ui;
-				scope['Cyph']	= self['Cyph'];
+			if (!this.Cyph || !this.ui) {
+				retry();
+				return;
+			}
 
-				const watch	= (attr: string) => scope.$watch(attrs[attr], (value: string) => {
-					scope[attr]	= value;
-					ui.controller.update();
-				});
+			const token: string	= await Util.request({
+				url: Env.baseUrl + Config.braintreeConfig.endpoint,
+				retries: 5
+			});
 
-				watch('amount');
-				watch('category');
-				watch('item');
+			const checkoutUI: JQuery	= $element.find('.braintree');
 
-				const token: string	= await Util.request({
-					url: Env.baseUrl + Config.braintreeConfig.endpoint,
-					retries: 5
-				});
+			checkoutUI.html('');
 
-				const checkoutUI: JQuery	= element.find('.braintree');
-
-				checkoutUI.html('');
-
-				self['braintree'].setup(token, 'dropin', {
-					container: checkoutUI[0],
-					enableCORS: true,
-					onPaymentMethodReceived: async (data) => {
-						const response: string	= await Util.request({
-							url: Env.baseUrl + Config.braintreeConfig.endpoint,
-							method: 'POST',
-							data: {
-								Nonce: data.nonce,
-								Amount: Math.floor(parseFloat(scope['amount']) * 100),
-								Category: scope['category'],
-								Item: scope['item'],
-								Name: scope['name'],
-								Email: scope['email']
-							}
-						});
-
-						if (JSON.parse(response).Status === 'authorized') {
-							scope['complete']	= true;
-							self['ui'].controller.update();
+			self['braintree'].setup(token, 'dropin', {
+				container: checkoutUI[0],
+				enableCORS: true,
+				onPaymentMethodReceived: async (data) => {
+					const response: string	= await Util.request({
+						url: Env.baseUrl + Config.braintreeConfig.endpoint,
+						method: 'POST',
+						data: {
+							Nonce: data.nonce,
+							Amount: Math.floor(parseFloat(this.amount) * 100),
+							Category: this.category,
+							Item: this.item,
+							Name: this.name,
+							Email: this.email
 						}
+					});
+
+					if (JSON.parse(response).Status === 'authorized') {
+						this.complete	= true;
+						this.ui.controller.update();
 					}
-				});
-			})
-		}));
+				}
+			});
+		});
+	}
+
+	private static _	= (() => {
+		angular.module(Checkout.title, []).component(Checkout.title, {
+			bindings: {
+				amount: '=',
+				category: '=',
+				email: '=',
+				item: '=',
+				name: '='
+			},
+			controller: Checkout,
+			transclude: true,
+			template: Templates.checkout
+		});
 	})();
 }

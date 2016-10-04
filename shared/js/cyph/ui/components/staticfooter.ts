@@ -8,17 +8,18 @@ export class StaticFooter {
 	/** Module/component title. */
 	public static title: string	= 'cyphStaticFooter';
 
+	private Cyph: any	= self['Cyph'];
+	private ui: any		= self['ui'];
+
+	constructor () {}
+
 	private static _	= (() => {
 		angular.module(
 			StaticFooter.title,
 			[]
-		).directive(StaticFooter.title, () => ({
-			restrict: 'A',
-			link: scope => {
-				scope['Cyph']	= self['Cyph'];
-				scope['ui']		= self['ui'];
-			},
+		).component(StaticFooter.title, {
+			controller: StaticFooter,
 			template: Templates.staticFooter
-		}));
+		});
 	})();
 }

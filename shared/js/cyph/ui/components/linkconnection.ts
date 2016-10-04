@@ -1,3 +1,4 @@
+import {ILinkConnection} from 'ui/ilinkconnection';
 import {Templates} from 'ui/templates';
 
 
@@ -8,15 +9,20 @@ export class LinkConnection {
 	/** Module/component title. */
 	public static title: string	= 'cyphLinkConnection';
 
+	private Cyph: any	= self['Cyph'];
+
+	private self: ILinkConnection;
+
+	constructor () {}
+
 	private static _	= (() => {
-		angular.module(LinkConnection.title, []).directive(LinkConnection.title, () => ({
-			restrict: 'A',
-			transclude: true,
-			scope: {
-				$this: '=' + LinkConnection.title
+		angular.module(LinkConnection.title, []).component(LinkConnection.title, {
+			bindings: {
+				self: '<'
 			},
-			link: scope => scope['Cyph'] = self['Cyph'],
-			template: Templates.linkConnection
-		}));
+			controller: LinkConnection,
+			template: Templates.linkConnection,
+			transclude: true
+		});
 	})();
 }

@@ -1,4 +1,5 @@
 import {Templates} from 'ui/templates';
+import {IChat} from 'chat/ichat';
 
 
 /**
@@ -8,18 +9,22 @@ export class ChatToolbar {
 	/** Module/component title. */
 	public static title: string	= 'cyphChatToolbar';
 
+	private Cyph: any	= self['Cyph'];
+
+	private self: IChat;
+
+	constructor () {}
+
 	private static _	= (() => {
 		angular.module(
 			ChatToolbar.title,
 			['ngMaterial']
-		).directive(ChatToolbar.title, () => ({
-			restrict: 'A',
-				scope: {
-					$this: '=' + ChatToolbar.title,
-					showChat: '='
-				},
-				link: scope => scope['Cyph'] = self['Cyph'],
-				template: Templates.chatToolbar
-		}));
+		).component(ChatToolbar.title, {
+			bindings: {
+				self: '<'
+			},
+			controller: ChatToolbar,
+			template: Templates.chatToolbar
+		});
 	})();
 }

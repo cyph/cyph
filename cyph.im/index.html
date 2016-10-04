@@ -60,68 +60,66 @@
 	</head>
 	<body>
 		<section id='main' class='cyph-foreground' layout='column' layout-fill>
-			<span
-				cyph-chat-toolbar='ui.chat'
+			<cyph-chat-toolbar
+				self='ui.chat'
 				show-chat='ui.state === Cyph.im.UI.States.chat'
-			></span>
+			></cyph-chat-toolbar>
 
-			<div
-				cyph-chat-main='ui.chat'
+			<cyph-chat-main
+				self='ui.chat'
 				hide-disconnect-message='ui.coBranded'
 				ng-show='ui.state === Cyph.im.UI.States.chat'
 				layout='column'
 				layout-fill
 				flex
 			>
-				<div cyph-signup-form='ui.signupForm'>
+				<cyph-signup-form self='ui.signupForm'>
 					{{Cyph.Strings.signupMessage1}}
 					{{Cyph.Strings.signupMessage2}}
 				</div>
-			</div>
+			</cyph-chat-main>
 
-			<div
+			<cyph-static-cyph-spinning-up
 				ng-view
-				cyph-static-cyph-spinning-up
 				layout='column'
 				layout-fill
 				flex
 				ng-class='{
 					active: ui.state === Cyph.im.UI.States.spinningUp
 				}'
-			></div>
+			></cyph-static-cyph-spinning-up>
 
-			<div
+			<cyph-link-connection
 				ng-view
-				cyph-link-connection='ui.cyphConnection'
+				self='ui.cyphConnection'
 				layout='column'
 				layout-fill
 				flex
 				ng-class='{
 					active: ui.state === Cyph.im.UI.States.waitingForFriend
 				}'
-			></div>
+			></cyph-link-connection>
 
-			<div
+			<cyph-static-cyph-not-found
 				ng-view
-				cyph-static-cyph-not-found
 				layout='column'
 				layout-fill
 				flex
 				ng-class='{
 					active: ui.state === Cyph.im.UI.States.error
 				}'
-			></div>
+			></cyph-static-cyph-not-found>
 
-			<div
+			<cyph-beta
 				ng-view
-				cyph-beta='ui'
+				self='ui'
 				layout='column'
 				layout-fill
 				flex
 				ng-class='{
 					active: ui.state === Cyph.im.UI.States.beta
 				}'
-			></div>
+			></cyph-beta>
 
 			<div
 				ng-view
@@ -133,22 +131,21 @@
 			></div>
 
 			<footer>
-				<div
-					cyph-chat-message-box='ui.chat'
+				<cyph-chat-message-box
+					self='ui.chat'
 					ng-show='ui.state === Cyph.im.UI.States.chat'
 				>
-				</div>
+				</cyph-chat-message-box>
 
-				<div
-					cyph-static-footer
+				<cyph-static-footer
 					ng-class='{
 						center: ui.chat.state === Cyph.UI.Chat.States.chat
 					}'
-				></div>
+				></cyph-static-footer>
 			</footer>
 		</section>
 
-		<div cyph-chat-cyphertext='ui.chat'></div>
+		<cyph-chat-cyphertext self='ui.chat'></cyph-chat-cyphertext>
 
 		<div
 			id='pre-load'

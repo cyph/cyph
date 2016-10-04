@@ -1,4 +1,5 @@
 import {Templates} from 'ui/templates';
+import {IChat} from 'chat/ichat';
 
 
 /**
@@ -8,19 +9,25 @@ export class ChatMain {
 	/** Module/component title. */
 	public static title: string	= 'cyphChatMain';
 
+	private Cyph: any	= self['Cyph'];
+
+	private self: IChat;
+	private hideDisconnectMessage: boolean;
+
+	constructor () {}
+
 	private static _	= (() => {
 		angular.module(
 			ChatMain.title,
 			['ngMaterial']
-		).directive(ChatMain.title, () => ({
-			restrict: 'A',
-			transclude: true,
-			scope: {
-				$this: '=' + ChatMain.title,
-				hideDisconnectMessage: '='
+		).component(ChatMain.title, {
+			bindings: {
+				self: '<',
+				hideDisconnectMessage: '<'
 			},
-			link: scope => scope['Cyph'] = self['Cyph'],
-			template: Templates.chatMain
-		}));
+			controller: ChatMain,
+			template: Templates.chatMain,
+			transclude: true
+		});
 	})();
 }
