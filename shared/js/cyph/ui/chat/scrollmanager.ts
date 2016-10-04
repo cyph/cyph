@@ -1,12 +1,12 @@
-import {IChat} from 'ichat';
-import {IElements} from 'ielements';
-import {IScrollManager} from 'iscrollmanager';
-import {Affiliate} from 'ui/affiliate';
-import {IDialogManager} from 'ui/idialogmanager';
-import {NanoScroller} from 'ui/nanoscroller';
-import {VisibilityWatcher} from 'ui/visibilitywatcher';
-import {IController} from 'cyph/icontroller';
-import {Util} from 'cyph/util';
+import {IChat} from './ichat';
+import {IElements} from './ielements';
+import {IScrollManager} from './iscrollmanager';
+import {Affiliate} from '../affiliate';
+import {IDialogManager} from '../idialogmanager';
+import {NanoScroller} from '../nanoscroller';
+import {VisibilityWatcher} from '../visibilitywatcher';
+import {IController} from '../../icontroller';
+import {Util} from '../../util';
 
 
 export class ScrollManager implements IScrollManager {

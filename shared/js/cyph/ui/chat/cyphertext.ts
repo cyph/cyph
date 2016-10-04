@@ -1,14 +1,14 @@
-import {ICyphertext} from 'icyphertext';
-import {IElements} from 'ielements';
-import {BaseButtonManager} from 'ui/basebuttonmanager';
-import {Elements} from 'ui/elements';
-import {IDialogManager} from 'ui/idialogmanager';
-import {ISidebar} from 'ui/isidebar';
-import {Analytics} from 'cyph/analytics';
-import {IController} from 'cyph/icontroller';
-import {Util} from 'cyph/util';
-import {Strings} from 'cyph/strings';
-import * as Session from 'session/session';
+import {ICyphertext} from './icyphertext';
+import {IElements} from './ielements';
+import {BaseButtonManager} from '../basebuttonmanager';
+import {Elements} from '../elements';
+import {IDialogManager} from '../idialogmanager';
+import {ISidebar} from '../isidebar';
+import {Analytics} from '../../analytics';
+import {IController} from '../../icontroller';
+import {Util} from '../../util';
+import {Strings} from '../../strings';
+import * as Session from '../../session/session';
 
 
 export class Cyphertext extends BaseButtonManager implements ICyphertext {

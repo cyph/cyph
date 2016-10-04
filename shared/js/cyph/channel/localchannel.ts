@@ -1,4 +1,4 @@
-import {IChannel} from 'ichannel';
+import {IChannel} from './ichannel';
 
 
 /**

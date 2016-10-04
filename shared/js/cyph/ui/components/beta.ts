@@ -1,5 +1,5 @@
-import {Templates} from 'ui/templates';
-import {Util} from 'cyph/util';
+import {Templates} from '../templates';
+import {Util} from '../../util';
 
 
 /**

@@ -1,13 +1,13 @@
-import {IChat} from 'ichat';
-import {IElements} from 'ielements';
-import {IP2PManager} from 'ip2pmanager';
-import {BaseButtonManager} from 'ui/basebuttonmanager';
-import {IDialogManager} from 'ui/idialogmanager';
-import {ISidebar} from 'ui/isidebar';
-import {IController} from 'cyph/icontroller';
-import {Strings} from 'cyph/strings';
-import * as P2P from 'p2p/p2p';
-import * as Session from 'session/session';
+import {IChat} from './ichat';
+import {IElements} from './ielements';
+import {IP2PManager} from './ip2pmanager';
+import {BaseButtonManager} from '../basebuttonmanager';
+import {IDialogManager} from '../idialogmanager';
+import {ISidebar} from '../isidebar';
+import {IController} from '../../icontroller';
+import {Strings} from '../../strings';
+import * as P2P from '../../p2p/p2p';
+import * as Session from '../../session/session';
 
 
 export class P2PManager extends BaseButtonManager implements IP2PManager {

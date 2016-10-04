@@ -1,5 +1,5 @@
-import {IDialogManager} from 'idialogmanager';
-import {Util} from 'cyph/util';
+import {IDialogManager} from './idialogmanager';
+import {Util} from '../util';
 
 
 export class DialogManager implements IDialogManager {

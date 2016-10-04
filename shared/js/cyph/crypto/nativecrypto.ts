@@ -1,4 +1,4 @@
-import {Potassium} from 'potassium';
+import {Potassium} from './potassium';
 
 
 /**

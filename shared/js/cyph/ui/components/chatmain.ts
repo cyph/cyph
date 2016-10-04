@@ -1,5 +1,5 @@
-import {Templates} from 'ui/templates';
-import {IChat} from 'chat/ichat';
+import {Templates} from '../templates';
+import {IChat} from '../chat/ichat';
 
 
 /**

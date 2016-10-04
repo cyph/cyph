@@ -1,5 +1,5 @@
-import {Potassium} from 'crypto/potassium';
-import {Util} from 'cyph/util';
+import {Potassium} from '../potassium';
+import {Util} from '../../util';
 
 
 /**

@@ -1,5 +1,5 @@
-import {ISignupForm} from 'ui/isignupform';
-import {Templates} from 'ui/templates';
+import {ISignupForm} from '../isignupform';
+import {Templates} from '../templates';
 
 
 /**

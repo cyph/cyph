@@ -1,7 +1,7 @@
-import {INotifier} from 'inotifier';
-import {VisibilityWatcher} from 'visibilitywatcher';
-import {Config} from 'cyph/config';
-import {Env} from 'cyph/env';
+import {INotifier} from './inotifier';
+import {VisibilityWatcher} from './visibilitywatcher';
+import {Config} from '../config';
+import {Env} from '../env';
 
 
 export class Notifier implements INotifier {

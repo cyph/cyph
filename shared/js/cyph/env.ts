@@ -1,5 +1,5 @@
-import {Config} from 'config';
-import {EnvDeploy} from 'envdeploy';
+import {Config} from './config';
+import {EnvDeploy} from './envdeploy';
 
 
 /**

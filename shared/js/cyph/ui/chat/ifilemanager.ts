@@ -1,4 +1,4 @@
-import {IFiles} from 'files/ifiles';
+import {IFiles} from '../../files/ifiles';
 
 
 /**

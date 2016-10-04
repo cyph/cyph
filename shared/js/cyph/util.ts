@@ -1,6 +1,6 @@
-import {Config} from 'config';
-import {Env} from 'env';
-import {EventManager} from 'eventmanager';
+import {Config} from './config';
+import {Env} from './env';
+import {EventManager} from './eventmanager';
 
 
 /**

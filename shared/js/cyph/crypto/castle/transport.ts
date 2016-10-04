@@ -1,6 +1,6 @@
-import {Potassium} from 'crypto/potassium';
-import {CastleEvents, Events, Users} from 'session/enums';
-import {ISession} from 'session/isession';
+import {Potassium} from '../potassium';
+import {CastleEvents, Events, Users} from '../../session/enums';
+import {ISession} from '../../session/isession';
 
 
 /**

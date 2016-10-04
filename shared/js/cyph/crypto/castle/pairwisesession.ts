@@ -1,10 +1,10 @@
-import {Core} from 'core';
-import {ILocalUser} from 'ilocaluser';
-import {IRemoteUser} from 'iremoteuser';
-import {Transport} from 'transport';
-import {Potassium} from 'crypto/potassium';
-import {Config} from 'cyph/config';
-import {Util} from 'cyph/util';
+import {Core} from './core';
+import {ILocalUser} from './ilocaluser';
+import {IRemoteUser} from './iremoteuser';
+import {Transport} from './transport';
+import {Potassium} from '../potassium';
+import {Config} from '../../config';
+import {Util} from '../../util';
 
 
 /**

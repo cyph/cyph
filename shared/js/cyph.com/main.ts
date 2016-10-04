@@ -6,12 +6,12 @@
 /// <reference path="../preload/jquery.ts" />
 /// <reference path="../global/base.ts" />
 
-import {CyphDemo} from 'ui/cyphdemo';
-import {Elements} from 'ui/elements';
-import {HomeSections, PageTitles, Promos, States} from 'ui/enums';
-import {UI} from 'ui/ui';
-import * as Cyph from 'cyph/cyph';
-import {Loaded} from 'preload/base';
+import {CyphDemo} from './ui/cyphdemo';
+import {Elements} from './ui/elements';
+import {HomeSections, PageTitles, Promos, States} from './ui/enums';
+import {UI} from './ui/ui';
+import * as Cyph from '../cyph/cyph';
+import {Loaded} from '../preload/base';
 
 
 if (Cyph.Env.isIE) {

@@ -1,5 +1,5 @@
-import {Elements} from 'elements';
-import {EventManager} from 'cyph/eventmanager';
+import {Elements} from './elements';
+import {EventManager} from '../eventmanager';
 
 
 /**

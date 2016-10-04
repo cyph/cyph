@@ -1,5 +1,5 @@
-import {ITransfer} from 'itransfer';
-import {Util} from 'cyph/util';
+import {ITransfer} from './itransfer';
+import {Util} from '../util';
 
 
 export class Transfer implements ITransfer {

@@ -1,16 +1,16 @@
-import {UIEvents} from 'enums';
-import {IFiles} from 'ifiles';
-import {ITransfer} from 'itransfer';
-import {Transfer} from 'transfer';
-import {Analytics} from 'cyph/analytics';
-import {Config} from 'cyph/config';
-import {EventManager} from 'cyph/eventmanager';
-import {Firebase} from 'cyph/firebase';
-import {IController} from 'cyph/icontroller';
-import {Thread} from 'cyph/thread';
-import {Util} from 'cyph/util';
-import {Potassium} from 'crypto/crypto';
-import * as Session from 'session/session';
+import {UIEvents} from './enums';
+import {IFiles} from './ifiles';
+import {ITransfer} from './itransfer';
+import {Transfer} from './transfer';
+import {Analytics} from '../analytics';
+import {Config} from '../config';
+import {EventManager} from '../eventmanager';
+import {Firebase} from '../firebase';
+import {IController} from '../icontroller';
+import {Thread} from '../thread';
+import {Util} from '../util';
+import {Potassium} from '../crypto/crypto';
+import * as Session from '../session/session';
 
 
 export {

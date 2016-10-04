@@ -1,4 +1,4 @@
-import {Util} from 'cyph/util';
+import {Util} from '../util';
 
 
 /**

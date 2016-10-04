@@ -1,9 +1,9 @@
-import {ICastle} from 'icastle';
-import {Potassium} from 'potassium';
-import {Util} from 'cyph/util';
-import {State} from 'session/enums';
-import {ISession} from 'session/isession';
-import * as Castle from 'castle/castle';
+import {ICastle} from './icastle';
+import {Potassium} from './potassium';
+import {Util} from '../util';
+import {State} from '../session/enums';
+import {ISession} from '../session/isession';
+import * as Castle from './castle/castle';
 
 
 export class AnonymousCastle implements ICastle {

@@ -1,4 +1,4 @@
-import * as P2P from 'p2p/p2p';
+import {IP2P} from '../../p2p/ip2p';
 
 
 /**
@@ -10,7 +10,7 @@ export interface IP2PManager {
 	isEnabled: boolean;
 
 	/** P2P instance. */
-	p2p: P2P.IP2P;
+	p2p: IP2P;
 
 	/**
 	 * Closes active P2P session.

@@ -1,23 +1,23 @@
 /// <reference path="../../global/base.ts" />
 
-import {Command} from 'command';
-import {CastleEvents, Events, RPCEvents, State, ThreadedSessionEvents, Users} from 'enums';
-import {IMessage} from 'imessage';
-import {IMutex} from 'imutex';
-import {ISession} from 'isession';
-import {Message} from 'message';
-import {Mutex} from 'mutex';
-import {Analytics} from 'cyph/analytics';
-import {Config} from 'cyph/config';
-import {Env} from 'cyph/env';
-import {Errors} from 'cyph/errors';
-import {EventManager} from 'cyph/eventmanager';
-import {IController} from 'cyph/icontroller';
-import {Timer} from 'cyph/timer';
-import {UrlState} from 'cyph/urlstate';
-import {Util} from 'cyph/util';
-import * as Channel from 'channel/channel';
-import * as Crypto from 'crypto/crypto';
+import {Command} from './command';
+import {CastleEvents, Events, RPCEvents, State, ThreadedSessionEvents, Users} from './enums';
+import {IMessage} from './imessage';
+import {IMutex} from './imutex';
+import {ISession} from './isession';
+import {Message} from './message';
+import {Mutex} from './mutex';
+import {Analytics} from '../analytics';
+import {Config} from '../config';
+import {Env} from '../env';
+import {Errors} from '../errors';
+import {EventManager} from '../eventmanager';
+import {IController} from '../icontroller';
+import {Timer} from '../timer';
+import {UrlState} from '../urlstate';
+import {Util} from '../util';
+import * as Channel from '../channel/channel';
+import * as Crypto from '../crypto/crypto';
 
 
 export {

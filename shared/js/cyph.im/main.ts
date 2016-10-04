@@ -10,11 +10,11 @@
 /// <reference path="../preload/translations.ts" />
 /// <reference path="../global/base.ts" />
 
-import {Config} from 'config';
-import {BetaStates, States, UrlSections} from 'ui/enums';
-import {UI} from 'ui/ui';
-import * as Cyph from 'cyph/cyph';
-import {Loaded} from 'preload/base';
+import {Config} from './config';
+import {BetaStates, States, UrlSections} from './ui/enums';
+import {UI} from './ui/ui';
+import * as Cyph from '../cyph/cyph';
+import {Loaded} from '../preload/base';
 
 
 Cyph.UI.Elements.html.attr('ng-controller', Cyph.Config.angularConfig.rootController);

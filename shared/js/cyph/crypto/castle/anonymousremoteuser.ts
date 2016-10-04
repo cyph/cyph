@@ -1,7 +1,7 @@
-import {IRemoteUser} from 'iremoteuser';
-import {Transport} from 'transport';
-import {Potassium} from 'crypto/potassium';
-import {Strings} from 'cyph/strings';
+import {IRemoteUser} from './iremoteuser';
+import {Transport} from './transport';
+import {Potassium} from '../potassium';
+import {Strings} from '../../strings';
 
 
 /**

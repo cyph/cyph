@@ -1,15 +1,15 @@
 /// <reference path="../global/base.ts" />
 
-import {Config} from 'cyph/config';
-import {Controller} from 'cyph/controller';
-import {Env} from 'cyph/env';
-import {EventManager} from 'cyph/eventmanager';
-import {Firebase} from 'cyph/firebase';
-import {IController} from 'cyph/icontroller';
-import {Strings} from 'cyph/strings';
-import {IThread} from 'cyph/ithread';
-import {Timer} from 'cyph/timer';
-import {Util} from 'cyph/util';
+import {Config} from './config';
+import {Controller} from './controller';
+import {Env} from './env';
+import {EventManager} from './eventmanager';
+import {Firebase} from './firebase';
+import {IController} from './icontroller';
+import {Strings} from './strings';
+import {IThread} from './ithread';
+import {Timer} from './timer';
+import {Util} from './util';
 
 
 export {

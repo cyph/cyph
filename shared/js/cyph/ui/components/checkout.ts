@@ -1,7 +1,7 @@
-import {Templates} from 'ui/templates';
-import {Config} from 'cyph/config';
-import {Env} from 'cyph/env';
-import {Util} from 'cyph/util';
+import {Templates} from '../templates';
+import {Config} from '../../config';
+import {Env} from '../../env';
+import {Util} from '../../util';
 
 
 /**

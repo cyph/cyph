@@ -6,10 +6,10 @@
 
 /// <reference path="../global/base.ts" />
 
-import {Config} from 'cyph/config';
-import {Env} from 'cyph/env';
-import {Util} from 'cyph/util';
-import {Elements} from 'cyph/ui/elements';
+import {Config} from '../cyph/config';
+import {Env} from '../cyph/env';
+import {Util} from '../cyph/util';
+import {Elements} from '../cyph/ui/elements';
 
 
 /* Translations */

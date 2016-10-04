@@ -1,6 +1,6 @@
-import {Env} from 'env';
-import {IThread} from 'ithread';
-import {Util} from 'util';
+import {Env} from './env';
+import {IThread} from './ithread';
+import {Util} from './util';
 
 
 /**

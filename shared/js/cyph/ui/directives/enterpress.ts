@@ -1,5 +1,5 @@
-import {VirtualKeyboardWatcher} from 'ui/virtualkeyboardwatcher';
-import {Env} from 'cyph/env';
+import {VirtualKeyboardWatcher} from '../virtualkeyboardwatcher';
+import {Env} from '../../env';
 
 
 /**

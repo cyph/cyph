@@ -6,6 +6,6 @@
 		 "moduleResolution": "node",
 		 "emitDecoratorMetadata": true,
 		 "experimentalDecorators": true,
-		 "rootDir": ".."
+		 "rootDir": "."
 	}
 }

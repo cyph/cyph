@@ -1,13 +1,13 @@
-import {IChat} from 'ichat';
-import {IElements} from 'ielements';
-import {IFileManager} from 'ifilemanager';
-import {Config} from 'cyph/config';
-import {IController} from 'cyph/icontroller';
-import {Strings} from 'cyph/strings';
-import {Util} from 'cyph/util';
-import {IDialogManager} from 'ui/idialogmanager';
-import * as Files from 'files/files';
-import * as Session from 'session/session';
+import {IChat} from './ichat';
+import {IElements} from './ielements';
+import {IFileManager} from './ifilemanager';
+import {IDialogManager} from '../idialogmanager';
+import {Config} from '../../config';
+import {IController} from '../../icontroller';
+import {Strings} from '../../strings';
+import {Util} from '../../util';
+import * as Files from '../../files/files';
+import * as Session from '../../session/session';
 
 
 export class FileManager implements IFileManager {

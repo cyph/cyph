@@ -1,8 +1,8 @@
-import {IChannel} from 'ichannel';
-import {LocalChannel} from 'localchannel';
-import {Config} from 'cyph/config';
-import {Firebase} from 'cyph/firebase';
-import {Util} from 'cyph/util';
+import {IChannel} from './ichannel';
+import {LocalChannel} from './localchannel';
+import {Config} from '../config';
+import {Firebase} from '../firebase';
+import {Util} from '../util';
 
 
 export {
