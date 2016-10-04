@@ -4,6 +4,8 @@ dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd)/..
 originalDir="$(pwd)"
 
+find . -name node_modules -exec rm -rf {} \;
+
 if [ "${1}" != '--simple' -a "${1}" != '--prod' ] ; then
 	./commands/docs.sh
 fi
@@ -84,9 +86,7 @@ fi
 scssfiles="$(find css -name '*.scss' | grep -v bourbon/ | perl -pe 's/(.*)\.scss/\1/g' | tr '\n' ' ')"
 
 
-cd js
-ln -s ../lib/js node_modules
-cd ..
+cp -La lib/js js/node_modules
 
 if [ "${1}" == '--watch' ] ; then
 	bash -c "
@@ -131,7 +131,7 @@ else
 
 	echo -e "${output}"
 
-	rm js/node_modules
+	rm -rf js/node_modules
 
 	if [ "${1}" == '--test' -o "${1}" == '--simple' ] ; then
 		cd $originalDir
