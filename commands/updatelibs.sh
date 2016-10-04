@@ -205,7 +205,7 @@ cat > wrapper/symbols/crypto_stream_chacha20.json << EOM
 EOM
 make libsodium/configure
 sed -i 's|ln |cp |g' Makefile
-sed -i 's|cp -s|cp -r|g' Makefile
+sed -i 's|cp -s|cp -a|g' Makefile
 sed -i 's|TOTAL_MEMORY_SUMO=35000000|TOTAL_MEMORY_SUMO=150000000|g' libsodium/dist-build/emscripten.sh
 make
 find dist -name '*.js' | xargs sed -i 's|use strict||g'
