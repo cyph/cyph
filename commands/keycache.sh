@@ -1,5 +1,9 @@
 #!/bin/bash
 
+if [ -d ~/tmpgit ] ; then
+	exit
+fi
+
 echo -e '\n\n\ncaching SSH and GPG keys\n'
 
 eval "$(ssh-agent)"
