@@ -138,19 +138,24 @@ fi
 cd ..
 
 bash -c "$(node -e '
-	const basePath = "lib/js/";
-	const deps = JSON.parse(
+	const basePath	= "lib/js/";
+	const deps		= JSON.parse(
 		'"'$(cat js/package.json | tr '\n' ' ')'"'
 	).jspm.dependencies;
 
-	console.log(Object.keys(deps).map(k => {
-		const path = deps[k].replace(":", "/");
-		const pathBase = path.split("@")[0];
-		const pathSplit = path.split("/");
-		const package = pathSplit.slice(1).join("/").split("@");
-		const symlinkParent = k.split("/").map(s => "..").join("/").replace(/..$/, "");
+	const versionSplit	= path => {
+		const index	= path.lastIndexOf("@");
+		return [path.slice(0, index), path.slice(index + 1)];
+	};
 
-		const findVersionCommand =
+	console.log(Object.keys(deps).map(k => {
+		const path			= deps[k].replace(":", "/");
+		const pathBase		= versionSplit(path)[0];
+		const pathSplit		= path.split("/");
+		const package		= versionSplit(pathSplit.slice(1).join("/"));
+		const symlinkParent	= k.split("/").map(s => "..").join("/").replace(/..$/, "");
+
+		const findVersionCommand	=
 			`find ${basePath}${pathSplit[0]} -type d | ` +
 			`grep "${package[0]}@" | ` +
 			`perl -pe "s/.*@//g" | ` +
@@ -158,7 +163,7 @@ bash -c "$(node -e '
 			`grep -v /`
 		;
 
-		const mkdirCommand = k.indexOf("/") > -1 ?
+		const mkdirCommand	= k.indexOf("/") > -1 ?
 			`mkdir -p "${basePath}${k.split("/").slice(0, -1).join("/")}" ; ` :
 			``
 		;
