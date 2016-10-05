@@ -48,7 +48,7 @@ export class Chat extends BaseButtonManager implements IChat {
 	public firstMessage: string;
 
 	public selfDestruct: boolean = false;
-	public selfDestructTimeout: number = 10000;
+	public selfDestructTimeout: number = 10; //in seconds
 
 	public messages: {
 		author: string;
@@ -122,7 +122,7 @@ export class Chat extends BaseButtonManager implements IChat {
 		}
 
 		if (!isNaN(selfDestructTimeout) && selfDestructTimeout > 0) {
-			this.activateSelfDestruct(selfDestructTimeout);
+			this.activateSelfDestruct(selfDestructTimeout*1000);
 		}
 	}
 

@@ -324,7 +324,7 @@ export const Templates	= {
 
 			<timer
 				id='self-destruct-timer'
-				interval='10'
+				interval='1000'
 				countdown='$ctrl.self.selfDestructTimeout'
 				autostart='false'
 			>
