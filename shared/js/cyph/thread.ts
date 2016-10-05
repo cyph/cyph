@@ -210,17 +210,16 @@ export class Thread {
 		const threadBody: string	= `
 			var threadSetupVars = ${JSON.stringify(threadSetupVars)};
 			${Thread.stringifyFunction(Thread.threadEnvSetup)}
-			System.import('cyph/base').then(function (Cyph) {
-				Cyph.EventManager.one(
-					'${callbackId}',
-					function (locals) {
-						${Thread.stringifyFunction(f)}
-						${Thread.stringifyFunction(Thread.threadPostSetup)}
-					}
-				);
 
-				self.postMessage('ready');
-			});
+			Cyph.EventManager.one(
+				'${callbackId}',
+				function (locals) {
+					${Thread.stringifyFunction(f)}
+					${Thread.stringifyFunction(Thread.threadPostSetup)}
+				}
+			);
+
+			self.postMessage('ready');
 		`;
 
 		for (let i = 0 ; i < threadSetupVars.seed.length ; ++i) {

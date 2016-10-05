@@ -80,37 +80,35 @@ export class ThreadedSession implements ISession {
 			}
 		);
 
-		this.thread	= new Thread((locals: any, importScripts: Function) => {
+		this.thread	= new Thread((Session: any, locals: any, importScripts: Function) => {
 			importScripts('/js/cyph/session/session.js');
 
-			System.import('cyph/session/session').then(Session => {
-				const session: ISession	= new Session.Session(
-					locals.descriptor,
-					locals.nativeCrypto,
-					null,
-					locals.id
-				);
+			const session: ISession	= new Session.Session(
+				locals.descriptor,
+				locals.nativeCrypto,
+				null,
+				locals.id
+			);
 
-				session.on(locals.events.close, () =>
-					session.close()
-				);
+			session.on(locals.events.close, () =>
+				session.close()
+			);
 
-				session.on(locals.events.receive, (e: { data: string; }) =>
-					session.receive(e.data)
-				);
+			session.on(locals.events.receive, (e: { data: string; }) =>
+				session.receive(e.data)
+			);
 
-				session.on(locals.events.send, (e: { messages: IMessage[]; }) =>
-					session.sendBase(e.messages)
-				);
+			session.on(locals.events.send, (e: { messages: IMessage[]; }) =>
+				session.sendBase(e.messages)
+			);
 
-				session.on(locals.events.sendText, (e: { text: string; }) =>
-					session.sendText(e.text)
-				);
+			session.on(locals.events.sendText, (e: { text: string; }) =>
+				session.sendText(e.text)
+			);
 
-				session.on(locals.events.updateState, (e: { key: string; value: any; }) =>
-					session.updateState(e.key, e.value)
-				);
-			});
+			session.on(locals.events.updateState, (e: { key: string; value: any; }) =>
+				session.updateState(e.key, e.value)
+			);
 		}, {
 			descriptor,
 			nativeCrypto,

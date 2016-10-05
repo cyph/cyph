@@ -17,13 +17,13 @@ tsargs="$(node -e '
 
 	console.log(Object.keys(compilerOptions).map(k => {
 		const v			= compilerOptions[k];
-		var argValue	= "";
+		let argValue	= "";
 
 		if (v === false) {
 			return;
 		}
 		else if (v !== true) {
-			argValue = " " + v.toString();
+			argValue	= " " + v.toString();
 		}
 
 		return `--${k}${argValue}`;
@@ -32,7 +32,7 @@ tsargs="$(node -e '
 
 tsfiles="$( \
 	{ \
-		find . -name '*.html' -not -path './websign/*' -not -path '*/lib/*' -exec cat {} \; | \
+		find . -name '*.html' -not \( -path './websign/*' -or -path '*/lib/*' \) -exec cat {} \; | \
 		grep -oP "src=(['\"])/js/.*?\1" & \
 		grep -roP "importScripts\((['\"])/js/.*\1\)" shared/js; \
 	} | \
@@ -45,31 +45,9 @@ tsfiles="$( \
 )"
 
 jsbundle () {
-	# # Temporary workaround for jspm bug
-	# if [ "$1" == "global/base" ] ; then
-	# 	cat $1.js | \
-	# 		tr '\n' '☁' | \
-	# 		perl -pe 's/.*var .*?(var .*?;).*execute:.*?\{(.*?)exports.*/\1\n\2/g' | \
-	# 		tr '☁' '\n' | \
-	# 		perl -pe 's/^ {12}//g' \
-	# 	> $1.js.new
-	# 	mv $1.js.new $1.js
-	# else
-	# 	jspm bundle-sfx $1 $1.js
-	# 	git checkout HEAD -- config.js
-	# fi
-
-	if [ "${1}" != 'global/base' -a "${1}" != 'cyph/session' ] ; then
-		echo -e "\n\nSystem.import('${1}');" >> $1.js
-	fi
-
+	webpack --optimize-dedupe $1.js $1.js.packed
+	mv $1.js.packed $1.js
 	sed -i 's|use strict||g' $1.js
-
-	# cp ../lib/js/require.js $1.js.new
-	# echo >> $1.js.new
-	# cat $1.js >> $1.js.new
-	# echo -e "\n\nrequire(['${1}']);\ndefine = undefined;\nrequire = undefined;" >> $1.js.new
-	# mv $1.js.new $1.js
 }
 export -f jsbundle
 
@@ -95,7 +73,7 @@ if [ "${1}" == '--watch' ] ; then
 		cd js
 		while true ; do
 			for file in $tsfiles ; do
-				tsc $tsargs --sourceMap \$file.ts --outFile \$file.js
+				tsc $tsargs --sourceMap \$file.ts
 				jsbundle \$file
 			done
 			inotifywait -r --exclude '.*\.(js|map|html)$' .
@@ -121,12 +99,18 @@ else
 
 	cd js
 	for file in $tsfiles ; do
-		output="${output}$(tsc $tsargs $file.ts --outFile $file.ts.js)"
-		if [ "${1}" == '--simple' ] ; then
-			mv $file.ts.js $file.js
-		else
-			babel --presets es2015 --compact false $file.ts.js -o $file.js
-		fi
+		output="${output}$(tsc $tsargs $file.ts)"
+	done
+	if [ "${1}" != '--simple' ] ; then
+		find . -name '*.js' -not \( \
+			-wholename './config.js' -or \
+			-path './node_modules/*' \
+		\) -exec bash -c '
+			babel --presets es2015 --compact false {} -o {}.babel;
+			mv {}.babel {};
+		' \;
+	fi
+	for file in $tsfiles ; do
 		jsbundle $file
 	done
 	cd ..

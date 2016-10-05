@@ -256,15 +256,11 @@ rm -rf node_modules
 cd ../../..
 
 cp babel-polyfill/browser.js base.js
-echo -e '\nif (!self.locationData) self.locationData = self.location;\n' >> base.js
-cat system.js | sed 's|location|locationData|g' >> base.js
-sed -i 's/^\/\/# sourceMappingURL.*//g' base.js
 
 cd ..
 
 rm -rf typings typings.json
 typings install --global --save \
-	dt~systemjs \
 	dt~jquery \
 	dt~angular \
 	dt~angular-material \

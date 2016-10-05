@@ -33,122 +33,125 @@ export class Files implements IFiles {
 			locals.chunkSize	= Config.filesConfig.chunkSize;
 			locals.callbackId	= 'files-' + Util.generateGuid();
 
-			const thread	= new Thread((Cyph: any, locals: any, importScripts: Function) => {
+			const thread	= new Thread(async (
+				Cyph: any,
+				Crypto: any,
+				locals: any,
+				importScripts: Function
+			) => {
 				importScripts('/js/cyph/crypto/index.js');
 
-				System.import('cyph/crypto/index').then(async (Crypto) => {
-					const potassium	= new Crypto.Potassium(locals.isAlice);
+				const potassium	= new Crypto.Potassium(locals.isAlice);
 
-					/* Encrypt */
-					if (locals.plaintext) {
-						const key: Uint8Array	= Crypto.Potassium.randomBytes(
-							potassium.SecretBox.keyBytes
-						);
+				/* Encrypt */
+				if (locals.plaintext) {
+					const key: Uint8Array	= Crypto.Potassium.randomBytes(
+						potassium.SecretBox.keyBytes
+					);
 
-						const chunks: Uint8Array[]	= [];
+					const chunks: Uint8Array[]	= [];
 
-						for (let i = 0 ; i < locals.plaintext.length ; i += locals.chunkSize) {
-							try {
-								chunks.push(await potassium.SecretBox.seal(
-									new Uint8Array(
-										locals.plaintext.buffer,
-										i,
-										(locals.plaintext.length - i) > locals.chunkSize ?
-											locals.chunkSize :
-											undefined
-									),
-									key
-								));
-							}
-							catch (err) {
-								Cyph.EventManager.trigger(
-									locals.callbackId,
-									[err, null, null]
-								);
-
-								return;
-							}
+					for (let i = 0 ; i < locals.plaintext.length ; i += locals.chunkSize) {
+						try {
+							chunks.push(await potassium.SecretBox.seal(
+								new Uint8Array(
+									locals.plaintext.buffer,
+									i,
+									(locals.plaintext.length - i) > locals.chunkSize ?
+										locals.chunkSize :
+										undefined
+								),
+								key
+							));
 						}
-
-						const cyphertext: Uint8Array	= new Uint8Array(
-							chunks.
-								map(chunk => chunk.length + 4).
-								reduce((a, b) => a + b, 0)
-						);
-
-						let j: number	= 0;
-						for (let chunk of chunks) {
-							cyphertext.set(
-								new Uint8Array(new Uint32Array([chunk.length]).buffer),
-								j
+						catch (err) {
+							Cyph.EventManager.trigger(
+								locals.callbackId,
+								[err, null, null]
 							);
-							j += 4;
 
-							cyphertext.set(chunk, j);
-							j += chunk.length;
-
-							Crypto.Potassium.clearMemory(chunk);
+							return;
 						}
-
-						Cyph.EventManager.trigger(
-							locals.callbackId,
-							[null, cyphertext, key]
-						);
 					}
-					/* Decrypt */
-					else if (locals.cyphertext && locals.key) {
-						const chunks: Uint8Array[]	= [];
 
-						for (let i = 0 ; i < locals.cyphertext.length ;) {
-							try {
-								const chunkSize: number	= new DataView(
+					const cyphertext: Uint8Array	= new Uint8Array(
+						chunks.
+							map(chunk => chunk.length + 4).
+							reduce((a, b) => a + b, 0)
+					);
+
+					let j: number	= 0;
+					for (let chunk of chunks) {
+						cyphertext.set(
+							new Uint8Array(new Uint32Array([chunk.length]).buffer),
+							j
+						);
+						j += 4;
+
+						cyphertext.set(chunk, j);
+						j += chunk.length;
+
+						Crypto.Potassium.clearMemory(chunk);
+					}
+
+					Cyph.EventManager.trigger(
+						locals.callbackId,
+						[null, cyphertext, key]
+					);
+				}
+				/* Decrypt */
+				else if (locals.cyphertext && locals.key) {
+					const chunks: Uint8Array[]	= [];
+
+					for (let i = 0 ; i < locals.cyphertext.length ;) {
+						try {
+							const chunkSize: number	= new DataView(
+								locals.cyphertext.buffer,
+								i
+							).getUint32(0, true);
+
+							i += 4;
+
+							chunks.push(await potassium.SecretBox.open(
+								new Uint8Array(
 									locals.cyphertext.buffer,
-									i
-								).getUint32(0, true);
+									i,
+									chunkSize
+								),
+								locals.key
+							));
 
-								i += 4;
-
-								chunks.push(await potassium.SecretBox.open(
-									new Uint8Array(
-										locals.cyphertext.buffer,
-										i,
-										chunkSize
-									),
-									locals.key
-								));
-
-								i += chunkSize;
-							}
-							catch (err) {
-								Cyph.EventManager.trigger(
-									locals.callbackId,
-									[err, null]
-								);
-
-								return;
-							}
+							i += chunkSize;
 						}
+						catch (err) {
+							Cyph.EventManager.trigger(
+								locals.callbackId,
+								[err, null]
+							);
 
-						const plaintext	= new Uint8Array(
-							chunks.
-								map(chunk => chunk.length).
-								reduce((a, b) => a + b, 0)
-						);
-
-						let j: number	= 0;
-						for (let chunk of chunks) {
-							plaintext.set(chunk, j);
-							j += chunk.length;
-
-							Crypto.Potassium.clearMemory(chunk);
+							return;
 						}
-
-						Cyph.EventManager.trigger(
-							locals.callbackId,
-							[null, plaintext]
-						);
 					}
-				});
+
+					const plaintext	= new Uint8Array(
+						chunks.
+							map(chunk => chunk.length).
+							reduce((a, b) => a + b, 0)
+					);
+
+					let j: number	= 0;
+					for (let chunk of chunks) {
+						plaintext.set(chunk, j);
+						j += chunk.length;
+
+						Crypto.Potassium.clearMemory(chunk);
+					}
+
+					Cyph.EventManager.trigger(
+						locals.callbackId,
+						[null, plaintext]
+					);
+				}
 			}, locals);
 
 			EventManager.one(locals.callbackId, data => {
