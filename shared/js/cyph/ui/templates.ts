@@ -322,6 +322,15 @@ export const Templates	= {
 				self='$ctrl.self'
 			></cyph-chat-message-box>
 
+			<timer
+				id='self-destruct-timer'
+				interval='10'
+				countdown='$ctrl.self.selfDestructTimeout'
+				autostart='false'
+			>
+				Message will self-destruct in {{countdown}}
+			</timer>
+
 			<div
 				ng-view
 				class='message-list nano'
