@@ -86,7 +86,9 @@ fi
 scssfiles="$(find css -name '*.scss' | grep -v bourbon/ | perl -pe 's/(.*)\.scss/\1/g' | tr '\n' ' ')"
 
 
-cp -Lr lib/js js/node_modules
+rm -rf js/node_modules 2> /dev/null
+mkdir js/node_modules
+cp -Lr lib/js/@angular lib/js/rxjs js/node_modules/
 
 if [ "${1}" == '--watch' ] ; then
 	bash -c "
