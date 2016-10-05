@@ -13,8 +13,12 @@ import {IController} from '../icontroller';
 import {Timer} from '../timer';
 import {UrlState} from '../urlstate';
 import {Util} from '../util';
-import * as Channel from '../channel';
-import * as Crypto from '../crypto';
+import {Channel} from '../channel/channel';
+import {IChannel} from '../channel/ichannel';
+import {LocalChannel} from '../channel/localchannel';
+import {AnonymousCastle} from '../crypto/anonymouscastle';
+import {FakeCastle} from '../crypto/fakecastle';
+import {ICastle} from '../crypto/icastle';
 
 
 /**
@@ -29,8 +33,8 @@ export class Session implements ISession {
 	private pingPongTimeouts: number					= 0;
 	private isLocalSession: boolean						= false;
 
-	private channel: Channel.IChannel;
-	private castle: Crypto.ICastle;
+	private castle: ICastle;
+	private channel: IChannel;
 
 	public state	= {
 		cyphId: <string> '',
@@ -198,7 +202,7 @@ export class Session implements ISession {
 	private setUpChannel (
 		channelDescriptor: string,
 		nativeCrypto: boolean,
-		localChannelCallback?: (localChannel: Channel.LocalChannel) => void
+		localChannelCallback?: (localChannel: LocalChannel) => void
 	) : void {
 		if (localChannelCallback) {
 			this.isLocalSession	= true;
@@ -224,10 +228,10 @@ export class Session implements ISession {
 				this.trigger(Events.connect);
 
 				if (this.isLocalSession) {
-					this.castle	= new Crypto.FakeCastle(this);
+					this.castle	= new FakeCastle(this);
 				}
 				else {
-					this.castle	= new Crypto.AnonymousCastle(this, nativeCrypto);
+					this.castle	= new AnonymousCastle(this, nativeCrypto);
 				}
 			},
 			onmessage: message => this.receive(message),
@@ -277,11 +281,11 @@ export class Session implements ISession {
 		};
 
 		if (localChannelCallback) {
-			this.channel	= new Channel.LocalChannel(handlers);
-			localChannelCallback(<Channel.LocalChannel> this.channel);
+			this.channel	= new LocalChannel(handlers);
+			localChannelCallback(<LocalChannel> this.channel);
 		}
 		else {
-			this.channel	= new Channel.Channel(channelDescriptor, handlers);
+			this.channel	= new Channel(channelDescriptor, handlers);
 		}
 	}
 
@@ -371,7 +375,7 @@ export class Session implements ISession {
 		nativeCrypto: boolean = false,
 		private controller?: IController,
 		private id: string = Util.generateGuid(),
-		localChannelCallback?: (localChannel: Channel.LocalChannel) => void
+		localChannelCallback?: (localChannel: LocalChannel) => void
 	) {
 		/* true = yes; false = no; null = maybe */
 		this.updateState(

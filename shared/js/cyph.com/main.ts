@@ -10,8 +10,8 @@ import {CyphDemo} from './ui/cyphdemo';
 import {Elements} from './ui/elements';
 import {HomeSections, PageTitles, Promos, States} from './ui/enums';
 import {UI} from './ui/ui';
-import * as Cyph from '../cyph';
 import {Loaded} from '../preload/base';
+import * as Cyph from '../cyph';
 
 
 if (Cyph.Env.isIE) {

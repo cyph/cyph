@@ -8,14 +8,15 @@ import {Analytics} from '../../analytics';
 import {IController} from '../../icontroller';
 import {Util} from '../../util';
 import {Strings} from '../../strings';
-import * as Session from '../../session';
+import {Events, Users} from '../../session/enums';
+import {ISession} from '../../session/isession';
 
 
 export class Cyphertext extends BaseButtonManager implements ICyphertext {
 	private showLock: boolean		= false;
 	private curtainClass: string	= 'curtain';
 
-	public messages: { author: Session.Users; text: string; }[]	= [];
+	public messages: { author: Users; text: string; }[]	= [];
 
 	public hide () : void {
 		if ($('.' + this.curtainClass).length > 0) {
@@ -85,7 +86,7 @@ export class Cyphertext extends BaseButtonManager implements ICyphertext {
 	 * @param isMobile
 	 */
 	public constructor (
-		session: Session.ISession,
+		session: ISession,
 		controller: IController,
 		mobileMenu: () => ISidebar,
 		private dialogManager: IDialogManager,
@@ -103,7 +104,7 @@ export class Cyphertext extends BaseButtonManager implements ICyphertext {
 
 
 
-		session.on(Session.Events.cyphertext,
+		session.on(Events.cyphertext,
 			(o: { cyphertext: string; author: string; }) =>
 				this.log(o.cyphertext, o.author)
 		);

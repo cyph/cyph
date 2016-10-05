@@ -6,14 +6,16 @@ import {IDialogManager} from '../idialogmanager';
 import {ISidebar} from '../isidebar';
 import {IController} from '../../icontroller';
 import {Strings} from '../../strings';
-import * as P2P from '../../p2p';
-import * as Session from '../../session';
+import {UIEvents} from '../../p2p/enums';
+import {P2P} from '../../p2p/p2p';
+import {IP2P} from '../../p2p/ip2p';
+import {Events, Users} from '../../session/enums';
 
 
 export class P2PManager extends BaseButtonManager implements IP2PManager {
 	public isEnabled: boolean	= false;
 
-	public p2p: P2P.IP2P;
+	public p2p: IP2P;
 
 	public closeButton () : void {
 		this.baseButtonClick(() => this.p2p.close());
@@ -49,10 +51,10 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 		this.baseButtonClick(() => {
 			if (this.isEnabled) {
 				if (!this.p2p.isActive) {
-					this.p2p.request(P2P.P2P.constants.video);
+					this.p2p.request(P2P.constants.video);
 				}
 				else {
-					this.p2p.toggle(undefined, P2P.P2P.constants.video);
+					this.p2p.toggle(undefined, P2P.constants.video);
 				}
 			}
 		});
@@ -62,10 +64,10 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 		this.baseButtonClick(() => {
 			if (this.isEnabled) {
 				if (!this.p2p.isActive) {
-					this.p2p.request(P2P.P2P.constants.audio);
+					this.p2p.request(P2P.constants.audio);
 				}
 				else {
-					this.p2p.toggle(undefined, P2P.P2P.constants.audio);
+					this.p2p.toggle(undefined, P2P.constants.audio);
 				}
 			}
 		});
@@ -87,7 +89,7 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 	) {
 		super(controller, mobileMenu);
 
-		this.p2p	= new P2P.P2P(
+		this.p2p	= new P2P(
 			this.chat.session,
 			this.controller,
 			forceTURN,
@@ -98,22 +100,22 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 
 
 		this.chat.session.on(
-			Session.Events.p2pUI,
+			Events.p2pUI,
 			async (e: {
-				category: P2P.UIEvents.Categories;
-				event: P2P.UIEvents.Events;
+				category: UIEvents.Categories;
+				event: UIEvents.Events;
 				args: any[];
 			}) => {
 				switch (e.category) {
-					case P2P.UIEvents.Categories.base: {
+					case UIEvents.Categories.base: {
 						switch (e.event) {
-							case P2P.UIEvents.Events.connected: {
+							case UIEvents.Events.connected: {
 								const isConnected: boolean	= e.args[0];
 
 								if (isConnected) {
 									this.chat.addMessage(
 										Strings.p2pConnect,
-										Session.Users.app,
+										Users.app,
 										undefined,
 										false
 									);
@@ -127,23 +129,23 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 
 									this.chat.addMessage(
 										Strings.p2pDisconnect,
-										Session.Users.app,
+										Users.app,
 										undefined,
 										false
 									);
 								}
 								break;
 							}
-							case P2P.UIEvents.Events.enable: {
+							case UIEvents.Events.enable: {
 								this.enable();
 								break;
 							}
 						}
 						break;
 					}
-					case P2P.UIEvents.Categories.request: {
+					case UIEvents.Categories.request: {
 						switch (e.event) {
-							case P2P.UIEvents.Events.acceptConfirm: {
+							case UIEvents.Events.acceptConfirm: {
 								const callType: string		= e.args[0];
 								const timeout: number		= e.args[1];
 								const isAccepted: boolean	= e.args[2];
@@ -168,7 +170,7 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 
 								break;
 							}
-							case P2P.UIEvents.Events.requestConfirm: {
+							case UIEvents.Events.requestConfirm: {
 								const callType: string		= e.args[0];
 								const isAccepted: boolean	= e.args[1];
 								const callback: Function	= e.args[2];
@@ -191,16 +193,16 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 
 								break;
 							}
-							case P2P.UIEvents.Events.requestConfirmation: {
+							case UIEvents.Events.requestConfirmation: {
 								this.chat.addMessage(
 									Strings.p2pRequestConfirmation,
-									Session.Users.app,
+									Users.app,
 									undefined,
 									false
 								);
 								break;
 							}
-							case P2P.UIEvents.Events.requestRejection: {
+							case UIEvents.Events.requestRejection: {
 								this.dialogManager.alert({
 									title: Strings.p2pTitle,
 									content: Strings.p2pDeny,

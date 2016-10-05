@@ -9,8 +9,10 @@ import {Firebase} from '../firebase';
 import {IController} from '../icontroller';
 import {Thread} from '../thread';
 import {Util} from '../util';
-import {Potassium} from '../crypto';
-import * as Session from '../session';
+import {Potassium} from '../crypto/potassium';
+import {Events, RPCEvents, Users} from '../session/enums';
+import {ISession} from '../session/isession';
+import {Message} from '../session/message';
 
 
 export class Files implements IFiles {
@@ -242,8 +244,8 @@ export class Files implements IFiles {
 			async (ok: boolean) => {
 				transfer.answer	= ok;
 
-				this.session.send(new Session.Message(
-					Session.RPCEvents.files,
+				this.session.send(new Message(
+					RPCEvents.files,
 					transfer
 				));
 
@@ -316,7 +318,7 @@ export class Files implements IFiles {
 		event: UIEvents,
 		...args: any[]
 	) : void {
-		this.session.trigger(Session.Events.filesUI, {event, args});
+		this.session.trigger(Events.filesUI, {event, args});
 	}
 
 	public async send (plaintext: Uint8Array, name: string) : Promise<void> {
@@ -351,7 +353,7 @@ export class Files implements IFiles {
 
 		this.triggerUIEvent(
 			UIEvents.started,
-			Session.Users.me,
+			Users.me,
 			transfer.name
 		);
 
@@ -374,8 +376,8 @@ export class Files implements IFiles {
 			}
 		});
 
-		this.session.send(new Session.Message(
-			Session.RPCEvents.files,
+		this.session.send(new Message(
+			RPCEvents.files,
 			transfer
 		));
 
@@ -409,8 +411,8 @@ export class Files implements IFiles {
 				() => {
 					transfer.url	= uploadTask.snapshot.downloadURL;
 
-					this.session.send(new Session.Message(
-						Session.RPCEvents.files,
+					this.session.send(new Message(
+						RPCEvents.files,
 						transfer
 					));
 
@@ -426,18 +428,18 @@ export class Files implements IFiles {
 	 * @param controller
 	 */
 	public constructor (
-		private session: Session.ISession,
+		private session: ISession,
 		private controller: IController
 	) {
 		if (Files.subtleCryptoIsSupported) {
-			this.session.on(Session.Events.beginChat, () => this.session.send(
-				new Session.Message(Session.RPCEvents.files)
+			this.session.on(Events.beginChat, () => this.session.send(
+				new Message(RPCEvents.files)
 			));
 		}
 
 		const downloadAnswers: {[id: string] : boolean}	= {};
 
-		this.session.on(Session.RPCEvents.files, (transfer?: ITransfer) => {
+		this.session.on(RPCEvents.files, (transfer?: ITransfer) => {
 			if (transfer) {
 				/* Outgoing file transfer acceptance or rejection */
 				if (transfer.answer === true || transfer.answer === false) {
@@ -459,7 +461,7 @@ export class Files implements IFiles {
 				else {
 					this.triggerUIEvent(
 						UIEvents.started,
-						Session.Users.other,
+						Users.other,
 						transfer.name
 					);
 
@@ -479,8 +481,8 @@ export class Files implements IFiles {
 
 								transfer.answer	= false;
 
-								this.session.send(new Session.Message(
-									Session.RPCEvents.files,
+								this.session.send(new Message(
+									RPCEvents.files,
 									transfer
 								));
 							}

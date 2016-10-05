@@ -25,8 +25,10 @@ import {IController} from '../../icontroller';
 import {Strings} from '../../strings';
 import {UrlState} from '../../urlstate';
 import {Util} from '../../util';
+import {Events, RPCEvents, Users} from '../../session/enums';
+import {ISession} from '../../session/isession';
+import {Message} from '../../session/message';
 import {ThreadedSession} from '../../session/threadedsession';
-import * as Session from '../../session';
 
 
 export class Chat extends BaseButtonManager implements IChat {
@@ -56,11 +58,11 @@ export class Chat extends BaseButtonManager implements IChat {
 	public fileManager: IFileManager;
 	public p2pManager: IP2PManager;
 	public scrollManager: IScrollManager;
-	public session: Session.ISession;
+	public session: ISession;
 
 	public abortSetup () : void {
 		this.changeState(States.aborted);
-		this.session.trigger(Session.Events.abort);
+		this.session.trigger(Events.abort);
 		this.session.close();
 	}
 
@@ -75,7 +77,7 @@ export class Chat extends BaseButtonManager implements IChat {
 		}
 
 		if (shouldNotify !== false) {
-			if (author === Session.Users.app) {
+			if (author === Users.app) {
 				this.notifier.notify(text);
 			}
 			else {
@@ -96,7 +98,7 @@ export class Chat extends BaseButtonManager implements IChat {
 
 		this.scrollManager.scrollDown(true);
 
-		if (author === Session.Users.me) {
+		if (author === Users.me) {
 			this.scrollManager.scrollDown();
 		}
 		else {
@@ -118,9 +120,9 @@ export class Chat extends BaseButtonManager implements IChat {
 			return;
 		}
 
-		this.session.trigger(Session.Events.beginChatComplete);
+		this.session.trigger(Events.beginChatComplete);
 		this.changeState(States.chat);
-		this.addMessage(Strings.introductoryMessage, Session.Users.app, undefined, false);
+		this.addMessage(Strings.introductoryMessage, Users.app, undefined, false);
 		this.setConnected();
 	}
 
@@ -141,7 +143,7 @@ export class Chat extends BaseButtonManager implements IChat {
 		}
 		else if (!this.isDisconnected) {
 			this.isDisconnected	= true;
-			this.addMessage(Strings.disconnectedNotification, Session.Users.app);
+			this.addMessage(Strings.disconnectedNotification, Users.app);
 			this.session.close();
 		}
 	}
@@ -185,8 +187,8 @@ export class Chat extends BaseButtonManager implements IChat {
 		if (this.isMessageChanged !== isMessageChanged) {
 			this.isMessageChanged	= isMessageChanged;
 			this.session.send(
-				new Session.Message(
-					Session.RPCEvents.typing,
+				new Message(
+					RPCEvents.typing,
 					this.isMessageChanged
 				)
 			);
@@ -233,7 +235,7 @@ export class Chat extends BaseButtonManager implements IChat {
 		mobileMenu: () => ISidebar,
 		private notifier: INotifier,
 		public isMobile: boolean = Env.isMobile,
-		session?: Session.ISession,
+		session?: ISession,
 		private rootElement: JQuery = Elements.html
 	) {
 		super(controller, mobileMenu);
@@ -399,11 +401,11 @@ export class Chat extends BaseButtonManager implements IChat {
 
 
 
-		this.session.on(Session.Events.beginChat, () => this.begin());
+		this.session.on(Events.beginChat, () => this.begin());
 
-		this.session.on(Session.Events.closeChat, () => this.close());
+		this.session.on(Events.closeChat, () => this.close());
 
-		this.session.on(Session.Events.connect, () => {
+		this.session.on(Events.connect, () => {
 			this.changeState(States.keyExchange);
 			Util.getValue(this.elements.timer[0], 'stop', () => {}).call(this.elements.timer[0]);
 
@@ -423,11 +425,11 @@ export class Chat extends BaseButtonManager implements IChat {
 			}, 50);
 		});
 
-		this.session.on(Session.Events.connectFailure, () => this.abortSetup());
+		this.session.on(Events.connectFailure, () => this.abortSetup());
 
-		this.session.on(Session.Events.pingPongTimeout, () => {
+		this.session.on(Events.pingPongTimeout, () => {
 			if (!this.isDisconnected) {
-				this.addMessage(Strings.pingPongTimeout, Session.Users.app);
+				this.addMessage(Strings.pingPongTimeout, Users.app);
 
 				this.dialogManager.alert({
 					title: Strings.pingPongTimeoutTitle,
@@ -437,17 +439,17 @@ export class Chat extends BaseButtonManager implements IChat {
 			}
 		});
 
-		this.session.on(Session.RPCEvents.text,
+		this.session.on(RPCEvents.text,
 			(o: { text: string; author: string; timestamp: number; }) =>
 				this.addMessage(
 					o.text,
 					o.author,
 					o.timestamp,
-					o.author !== Session.Users.me
+					o.author !== Users.me
 				)
 		);
 
-		this.session.on(Session.RPCEvents.typing, (isFriendTyping: boolean) =>
+		this.session.on(RPCEvents.typing, (isFriendTyping: boolean) =>
 			this.setFriendTyping(isFriendTyping)
 		);
 	}

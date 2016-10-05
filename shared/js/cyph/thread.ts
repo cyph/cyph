@@ -39,6 +39,8 @@ export class Thread {
 
 		importScripts('/lib/js/base.js');
 		importScripts('/js/cyph/base.js');
+		self['Cyph']	= self['Base'];
+		self['Base']	= undefined;
 
 
 		/* Allow destroying the Thread object from within the thread */

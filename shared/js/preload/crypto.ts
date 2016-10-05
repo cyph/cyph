@@ -16,6 +16,7 @@ if (!(
 	'pushState' in self['history'] &&
 	'replaceState' in self['history'] &&
 	'MutationObserver' in self &&
+	'localStorage' in self &&
 
 	/* Test for https://github.com/jedisct1/libsodium.js/issues/28 */
 	self['sodium'].crypto_box_easy(
@@ -31,14 +32,4 @@ if (!(
 
 if (!('subtle' in crypto) && 'webkitSubtle' in crypto) {
 	(<any> crypto).subtle	= crypto['webkitSubtle'];
-}
-
-let LocalStorage: Storage;
-
-try {
-	LocalStorage	= <any> localStorage;
-	LocalStorage.isPersistent	= 'true';
-}
-catch (_) {
-	LocalStorage	= <Storage> {};
 }
