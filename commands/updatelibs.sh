@@ -27,7 +27,7 @@ echo "sodium = (function () {
 	};
 }());" | uglifyjs > sodiumcodecs.js
 
-cd ../../js
+cd ../../lib/js
 rm config.js package.json
 expect -c ' \
 	spawn jspm init; \
@@ -36,9 +36,9 @@ expect -c ' \
 	expect "prefix the jspm package.json"; \
 	send "yes\n"; \
 	expect "server baseURL"; \
-	send "./\n"; \
+	send "../../js/\n"; \
 	expect "jspm packages folder"; \
-	send "../lib/js\n"; \
+	send "./\n"; \
 	expect "config file path"; \
 	send "./config.js\n"; \
 	expect "create it?"; \
@@ -114,12 +114,9 @@ if (( $? )); then
 	exit 1
 fi
 
-cd ..
-
 bash -c "$(node -e '
-	const basePath	= "lib/js/";
 	const deps		= JSON.parse(
-		'"'$(cat js/package.json | tr '\n' ' ')'"'
+		'"'$(cat package.json | tr '\n' ' ')'"'
 	).jspm.dependencies;
 
 	const versionSplit	= path => {
@@ -135,7 +132,7 @@ bash -c "$(node -e '
 		const symlinkParent	= k.split("/").map(s => "..").join("/").replace(/..$/, "");
 
 		const findVersionCommand	=
-			`find ${basePath}${pathSplit[0]} -type d | ` +
+			`find ${pathSplit[0]} -type d | ` +
 			`grep "${package[0]}@" | ` +
 			`perl -pe "s/.*@//g" | ` +
 			`grep -P "${package[1]}" | ` +
@@ -143,18 +140,16 @@ bash -c "$(node -e '
 		;
 
 		const mkdirCommand	= k.indexOf("/") > -1 ?
-			`mkdir -p "${basePath}${k.split("/").slice(0, -1).join("/")}" ; ` :
+			`mkdir -p "${k.split("/").slice(0, -1).join("/")}" ; ` :
 			``
 		;
 
 		return mkdirCommand +
-			`ln -s "${symlinkParent}${pathBase}@$(${findVersionCommand})" "${basePath}${k}"`
+			`ln -s "${symlinkParent}${pathBase}@$(${findVersionCommand})" "${k}"`
 		;
 	}).join(" ; "));'
 )"
 
-
-cd lib/js
 
 sed -i 's/^\/dist$//' jquery*/.gitignore
 

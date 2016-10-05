@@ -43,7 +43,6 @@ tsfiles="$( \
 		grep -oP "src=(['\"])/js/.*?\1" & \
 		grep -roP "importScripts\((['\"])/js/.*\1\)" shared/js; \
 	} | \
-		grep -v js/config.js | \
 		perl -pe "s/.*?['\"]\/js\/(.*)\.js.*/\1/g" | \
 		sort | \
 		uniq | \
@@ -83,10 +82,7 @@ for file in $tsfiles ; do
 done
 
 if [ "${1}" != '--simpletest' ] ; then
-	find . -name '*.js' -not \( \
-		-wholename './config.js' -or \
-		-path './node_modules/*' \
-	\) -exec node -e '
+	find . -name '*.js' -not -path './node_modules/*' -exec node -e '
 		const build	= f => {
 			const path		= fs.realpathSync(f);
 			const parent	= path.split("/").slice(0, -1).join("/");
@@ -140,7 +136,7 @@ if [ "${1}" == '--test' -o "${1}" == '--simpletest' ] ; then
 	{ \
 		find shared/css -name '*.css' & \
 		find shared/css -name '*.map' & \
-		find shared/js \( -name '*.js' -and -not -name config.js \) & \
+		find shared/js -name '*.js' & \
 		find shared/js -name '*.map'; \
 	} | xargs -I% rm %
 elif [ "${1}" == '--prod' ] ; then
