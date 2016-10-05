@@ -5,7 +5,12 @@ import {Env} from '../env';
 import {EventManager} from '../eventmanager';
 import {IController} from '../icontroller';
 import {Util} from '../util';
-import * as Session from '../session';
+import {Command} from '../session/command';
+import {Events, RPCEvents} from '../session/enums';
+import {IMutex} from '../session/imutex';
+import {ISession} from '../session/isession';
+import {Message} from '../session/message';
+import {Mutex} from '../session/mutex';
 
 
 export class P2P implements IP2P {
@@ -25,7 +30,7 @@ export class P2P implements IP2P {
 
 
 	private isAccepted: boolean;
-	private mutex: Session.IMutex;
+	private mutex: IMutex;
 	private webRTC: any;
 
 	private commands	= {
@@ -87,7 +92,7 @@ export class P2P implements IP2P {
 	public isActive: boolean;
 	public loading: boolean;
 
-	private receiveCommand (command: Session.Command) : void {
+	private receiveCommand (command: Command) : void {
 		if (!P2P.isSupported) {
 			return;
 		}
@@ -107,9 +112,9 @@ export class P2P implements IP2P {
 				this.isAccepted,
 				(ok: boolean) => {
 					this.session.send(
-						new Session.Message(
-							Session.RPCEvents.p2p,
-							new Session.Command(ok ?
+						new Message(
+							RPCEvents.p2p,
+							new Command(ok ?
 								P2P.constants.accept :
 								P2P.constants.decline
 							)
@@ -155,7 +160,7 @@ export class P2P implements IP2P {
 		event: UIEvents.Events,
 		...args: any[]
 	) : void {
-		this.session.trigger(Session.Events.p2pUI, {category, event, args});
+		this.session.trigger(Events.p2pUI, {category, event, args});
 	}
 
 	public accept (callType?: string) {
@@ -166,9 +171,9 @@ export class P2P implements IP2P {
 
 	public close () : void {
 		this.session.send(
-			new Session.Message(
-				Session.RPCEvents.p2p,
-				new Session.Command(P2P.constants.kill)
+			new Message(
+				RPCEvents.p2p,
+				new Command(P2P.constants.kill)
 			)
 		);
 
@@ -240,9 +245,9 @@ export class P2P implements IP2P {
 					}
 					else {
 						this.session.send(
-							new Session.Message(
-								Session.RPCEvents.p2p,
-								new Session.Command(
+							new Message(
+								RPCEvents.p2p,
+								new Command(
 									P2P.constants.webRTC,
 									{event, args}
 								)
@@ -294,9 +299,9 @@ export class P2P implements IP2P {
 								this.accept(callType);
 
 								this.session.send(
-									new Session.Message(
-										Session.RPCEvents.p2p,
-										new Session.Command(callType)
+									new Message(
+										RPCEvents.p2p,
+										new Command(callType)
 									)
 								);
 
@@ -359,28 +364,28 @@ export class P2P implements IP2P {
 	 * @param remoteVideo
 	 */
 	public constructor (
-		private session: Session.ISession,
+		private session: ISession,
 		private controller: IController,
 		private forceTURN: boolean,
 		private localVideo: HTMLElement,
 		private remoteVideo: HTMLElement
 	) {
-		this.mutex	= new Session.Mutex(this.session);
+		this.mutex	= new Mutex(this.session);
 
-		this.session.on(Session.Events.beginChat, () => {
+		this.session.on(Events.beginChat, () => {
 			if (P2P.isSupported) {
 				this.session.send(
-					new Session.Message(
-						Session.RPCEvents.p2p,
-						new Session.Command()
+					new Message(
+						RPCEvents.p2p,
+						new Command()
 					)
 				);
 			}
 		});
 
-		this.session.on(Session.Events.closeChat, () => this.close());
+		this.session.on(Events.closeChat, () => this.close());
 
-		this.session.on(Session.RPCEvents.p2p, (command: Session.Command) => {
+		this.session.on(RPCEvents.p2p, (command: Command) => {
 			if (command.method) {
 				this.receiveCommand(command);
 			}

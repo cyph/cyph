@@ -47,7 +47,7 @@ export class Elements {
 		Elements.mainToolbar			= $('#main-toolbar');
 		Elements.newCyph				= $('#new-cyph');
 		Elements.newCyphParent			= Elements.newCyph.parent();
-		Elements.promoLogo			= $('.promo-logo');
+		Elements.promoLogo				= $('.promo-logo');
 		Elements.screenshotLaptop		= $('#hero-section .laptop.screenshot');
 		Elements.screenshotPhone		= $('#hero-section .phone.screenshot');
 		Elements.testimonialsSection	= $('#testimonials-section');

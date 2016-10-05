@@ -13,8 +13,8 @@
 import {Config} from './config';
 import {BetaStates, States, UrlSections} from './ui/enums';
 import {UI} from './ui/ui';
-import * as Cyph from '../cyph';
 import {Loaded} from '../preload/base';
+import * as Cyph from '../cyph';
 
 
 Cyph.UI.Elements.html.attr('ng-controller', Cyph.Config.angularConfig.rootController);

@@ -8,6 +8,19 @@ declare let customBuild: string;
  */
 declare let customBuildFavicon: string;
 
+/** @ignore */
+declare let IS_WEB: boolean;
+
+/**
+ * @global Cross-browser container of values in self.location.
+ */
+declare let locationData: Location;
+
+/**
+ * @global Cross-browser container of values in self.navigator.
+ */
+declare let navigatorData: Navigator;
+
 /**
  * @global Event handler for messages to the current thread.
  */

@@ -27,7 +27,7 @@ echo "sodium = (function () {
 	};
 }());" | uglifyjs > sodiumcodecs.js
 
-cd ../../js
+cd ../../lib/js
 rm config.js package.json
 expect -c ' \
 	spawn jspm init; \
@@ -36,9 +36,9 @@ expect -c ' \
 	expect "prefix the jspm package.json"; \
 	send "yes\n"; \
 	expect "server baseURL"; \
-	send "./\n"; \
+	send "../../js/\n"; \
 	expect "jspm packages folder"; \
-	send "../lib/js\n"; \
+	send "./\n"; \
 	expect "config file path"; \
 	send "./config.js\n"; \
 	expect "create it?"; \
@@ -64,27 +64,6 @@ expect -c ' \
 	interact; \
 '
 
-# echo "$(cat config.js | tr '\n' '☁' | rev | cut -c 6- | rev | tr '☁' '\n')"',
-#
-#   typescriptOptions: {
-#     "tsconfig": true
-#   },
-#
-#   "meta": {
-#     "*.ts": {
-#       "loader": "ts"
-#     }
-#   },
-#
-#   packages: {
-#     "cyph.im": {
-#       "main": "main",
-#       "defaultExtension": "ts"
-#     }
-#   }
-# });' > config.js.new
-# mv config.js.new config.js
-
 jspm install -y \
 	npm:@angular/common \
 	npm:@angular/compiler \
@@ -95,7 +74,7 @@ jspm install -y \
 	npm:@angular/platform-browser-dynamic \
 	npm:@angular/router \
 	npm:@angular/upgrade \
-	npm:@reactivex/rxjs \
+	npm:rxjs \
 	angular \
 	angular-material \
 	angular-aria \
@@ -135,12 +114,9 @@ if (( $? )); then
 	exit 1
 fi
 
-cd ..
-
 bash -c "$(node -e '
-	const basePath	= "lib/js/";
 	const deps		= JSON.parse(
-		'"'$(cat js/package.json | tr '\n' ' ')'"'
+		'"'$(cat package.json | tr '\n' ' ')'"'
 	).jspm.dependencies;
 
 	const versionSplit	= path => {
@@ -156,7 +132,7 @@ bash -c "$(node -e '
 		const symlinkParent	= k.split("/").map(s => "..").join("/").replace(/..$/, "");
 
 		const findVersionCommand	=
-			`find ${basePath}${pathSplit[0]} -type d | ` +
+			`find ${pathSplit[0]} -type d | ` +
 			`grep "${package[0]}@" | ` +
 			`perl -pe "s/.*@//g" | ` +
 			`grep -P "${package[1]}" | ` +
@@ -164,23 +140,21 @@ bash -c "$(node -e '
 		;
 
 		const mkdirCommand	= k.indexOf("/") > -1 ?
-			`mkdir -p "${basePath}${k.split("/").slice(0, -1).join("/")}" ; ` :
+			`mkdir -p "${k.split("/").slice(0, -1).join("/")}" ; ` :
 			``
 		;
 
 		return mkdirCommand +
-			`ln -s "${symlinkParent}${pathBase}@$(${findVersionCommand})" "${basePath}${k}"`
+			`ln -s "${symlinkParent}${pathBase}@$(${findVersionCommand})" "${k}"`
 		;
 	}).join(" ; "));'
 )"
 
 
-cd lib/js
-
 sed -i 's/^\/dist$//' jquery*/.gitignore
 
 cd crypto
-git clone --recursive https://github.com/jedisct1/libsodium.js libsodium
+git clone --depth 1 --recursive https://github.com/jedisct1/libsodium.js libsodium
 cd libsodium
 cat > wrapper/symbols/crypto_stream_chacha20.json << EOM
 {
@@ -256,15 +230,11 @@ rm -rf node_modules
 cd ../../..
 
 cp babel-polyfill/browser.js base.js
-echo -e '\nif (!self.locationData) self.locationData = self.location;\n' >> base.js
-cat system.js | sed 's|location|locationData|g' >> base.js
-sed -i 's/^\/\/# sourceMappingURL.*//g' base.js
 
 cd ..
 
 rm -rf typings typings.json
 typings install --global --save \
-	dt~systemjs \
 	dt~jquery \
 	dt~angular \
 	dt~angular-material \
@@ -287,13 +257,13 @@ cd github.com
 
 mkdir gorilla
 cd gorilla
-git clone git://github.com/gorilla/context.git
-git clone git://github.com/gorilla/mux.git
+git clone --depth 1 git://github.com/gorilla/context.git
+git clone --depth 1 git://github.com/gorilla/mux.git
 cd ..
 
 mkdir lionelbarrow
 cd lionelbarrow
-git clone git://github.com/lionelbarrow/braintree-go.git
+git clone --depth 1 git://github.com/lionelbarrow/braintree-go.git
 echo '
 func (g *Braintree) SetHTTPClient(client *http.Client) {
 	g.HttpClient = client
@@ -302,7 +272,7 @@ cd ..
 
 mkdir microcosm-cc
 cd microcosm-cc
-git clone git://github.com/microcosm-cc/bluemonday.git
+git clone --depth 1 git://github.com/microcosm-cc/bluemonday.git
 cd ..
 
 cd ..
@@ -311,16 +281,16 @@ rm -rf golang.org 2> /dev/null
 mkdir -p golang.org/x
 cd golang.org/x
 
-git clone git://github.com/golang/net.git net.tmp
+git clone --depth 1 git://github.com/golang/net.git net.tmp
 mkdir net
 cd net.tmp
 mv AUTHORS CONTRIBUTING.md CONTRIBUTORS LICENSE PATENTS README html context ../net/
 cd ..
 rm -rf net.tmp
 
-git clone git://github.com/golang/text.git
+git clone --depth 1 git://github.com/golang/text.git
 
-git clone git://github.com/golang/tools.git tools-tmp
+git clone --depth 1 git://github.com/golang/tools.git tools-tmp
 mkdir -p tools/go
 cd tools-tmp
 mv AUTHORS CONTRIBUTING.md CONTRIBUTORS LICENSE PATENTS README ../tools

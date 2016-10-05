@@ -9,7 +9,7 @@ cd shared/.js.tmp
 rm -rf ../js/docs
 
 # NOTE: "--mode file" is a workaround for a typedoc bug; should be "--mode modules"
-typedoc --experimentalDecorators -t ES6 -m system --moduleResolution classic --out ../js/docs --name Cyph --mode file --includeDeclarations --excludeExternals .
+typedoc --experimentalDecorators -t ES6 -m system --moduleResolution node --out ../js/docs --name Cyph --mode file --includeDeclarations --excludeExternals .
 
 cd ..
 rm -rf .js.tmp
