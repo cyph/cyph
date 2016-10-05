@@ -322,15 +322,6 @@ export const Templates	= {
 				self='$ctrl.self'
 			></cyph-chat-message-box>
 
-			<timer
-				id='self-destruct-timer'
-				interval='1000'
-				countdown='$ctrl.self.selfDestructTimeout'
-				autostart='false'
-			>
-				Message will self-destruct in {{countdown}}
-			</timer>
-
 			<div
 				ng-view
 				class='message-list nano'
@@ -438,6 +429,14 @@ export const Templates	= {
 					</md-list>
 				</md-content>
 			</div>
+			<timer
+				id='self-destruct-timer'
+				interval='1000'
+				countdown='$ctrl.self.selfDestructTimeout'
+				autostart='false'
+			>
+				Message will self-destruct in {{countdown}}
+			</timer>
 		</div>
 	`,
 
@@ -447,7 +446,8 @@ export const Templates	= {
 			ng-class='{mobile: $ctrl.self.isMobile}'
 			ng-show='
 				$ctrl.self.state === $ctrl.Cyph.UI.Chat.States.chat &&
-				$ctrl.self.session.state.isAlive
+				$ctrl.self.session.state.isAlive &&
+				!$ctrl.self.selfDestruct
 			'
 		>
 			<textarea

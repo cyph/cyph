@@ -1218,6 +1218,14 @@ md-input-container.message-box label:not(.md-no-float) {
 	color: #51318C;
 }
 
+#self-destruct-timer{
+	position: absolute;
+	font-size: 32px;
+	font-weight: bold;
+	top: 10px;
+	left: 33vw;
+}
+
 /*** SpinKit animation: http://tobiasahlin.com/spinkit/ ***/
 
 .ellipsis-spinner {

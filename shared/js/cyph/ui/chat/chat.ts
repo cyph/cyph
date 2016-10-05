@@ -48,7 +48,7 @@ export class Chat extends BaseButtonManager implements IChat {
 	public firstMessage: string;
 
 	public selfDestruct: boolean = false;
-	public selfDestructTimeout: number = 10; //in seconds
+	public selfDestructTimeout: number = 1000; //in seconds
 
 	public messages: {
 		author: string;
