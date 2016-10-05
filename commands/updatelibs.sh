@@ -180,7 +180,7 @@ cd lib/js
 sed -i 's/^\/dist$//' jquery*/.gitignore
 
 cd crypto
-git clone --recursive https://github.com/jedisct1/libsodium.js libsodium
+git clone --depth 1 --recursive https://github.com/jedisct1/libsodium.js libsodium
 cd libsodium
 cat > wrapper/symbols/crypto_stream_chacha20.json << EOM
 {
@@ -287,13 +287,13 @@ cd github.com
 
 mkdir gorilla
 cd gorilla
-git clone git://github.com/gorilla/context.git
-git clone git://github.com/gorilla/mux.git
+git clone --depth 1 git://github.com/gorilla/context.git
+git clone --depth 1 git://github.com/gorilla/mux.git
 cd ..
 
 mkdir lionelbarrow
 cd lionelbarrow
-git clone git://github.com/lionelbarrow/braintree-go.git
+git clone --depth 1 git://github.com/lionelbarrow/braintree-go.git
 echo '
 func (g *Braintree) SetHTTPClient(client *http.Client) {
 	g.HttpClient = client
@@ -302,7 +302,7 @@ cd ..
 
 mkdir microcosm-cc
 cd microcosm-cc
-git clone git://github.com/microcosm-cc/bluemonday.git
+git clone --depth 1 git://github.com/microcosm-cc/bluemonday.git
 cd ..
 
 cd ..
@@ -311,16 +311,16 @@ rm -rf golang.org 2> /dev/null
 mkdir -p golang.org/x
 cd golang.org/x
 
-git clone git://github.com/golang/net.git net.tmp
+git clone --depth 1 git://github.com/golang/net.git net.tmp
 mkdir net
 cd net.tmp
 mv AUTHORS CONTRIBUTING.md CONTRIBUTORS LICENSE PATENTS README html context ../net/
 cd ..
 rm -rf net.tmp
 
-git clone git://github.com/golang/text.git
+git clone --depth 1 git://github.com/golang/text.git
 
-git clone git://github.com/golang/tools.git tools-tmp
+git clone --depth 1 git://github.com/golang/tools.git tools-tmp
 mkdir -p tools/go
 cd tools-tmp
 mv AUTHORS CONTRIBUTING.md CONTRIBUTORS LICENSE PATENTS README ../tools

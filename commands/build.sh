@@ -11,13 +11,13 @@ if [ "${1}" != '--simple' -a "${1}" != '--prod' ] ; then
 fi
 
 tsargs="$(node -e '
-	const compilerOptions = JSON.parse(
+	const compilerOptions	= JSON.parse(
 		'"'$(cat shared/js/tsconfig.json | tr '\n' ' ')'"'
 	).compilerOptions;
 
 	console.log(Object.keys(compilerOptions).map(k => {
-		const v = compilerOptions[k];
-		var argValue = "";
+		const v			= compilerOptions[k];
+		var argValue	= "";
 
 		if (v === false) {
 			return;
@@ -86,7 +86,7 @@ fi
 scssfiles="$(find css -name '*.scss' | grep -v bourbon/ | perl -pe 's/(.*)\.scss/\1/g' | tr '\n' ' ')"
 
 
-cp -La lib/js js/node_modules
+cp -Lr lib/js js/node_modules
 
 if [ "${1}" == '--watch' ] ; then
 	bash -c "
