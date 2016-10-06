@@ -1,5 +1,4 @@
 import {BetaStates, States, UrlSections} from './enums';
-import {Config} from '../config';
 import * as Cyph from '../../cyph';
 
 
@@ -86,7 +85,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		);
 
 		this.cyphConnection	= new Cyph.UI.LinkConnection(
-			Config.newCyphCountdown,
+			Cyph.Config.cyphCountdown,
 			this.controller,
 			this.chat
 		);

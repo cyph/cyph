@@ -10,7 +10,6 @@
 /// <reference path="../preload/translations.ts" />
 /// <reference path="../global/base.ts" />
 
-import {Config} from './config';
 import {BetaStates, States, UrlSections} from './ui/enums';
 import {UI} from './ui/ui';
 import {Loaded} from '../preload/base';
@@ -45,7 +44,6 @@ angular.
 			self['Cyph']	= Cyph;
 			$scope.Cyph		= Cyph;
 			$scope.Cyph.im	= {
-				Config,
 				UI: {
 					BetaStates,
 					States,
