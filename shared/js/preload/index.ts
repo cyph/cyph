@@ -4,7 +4,7 @@
  */
 
 
-/// <reference path="../global/base.ts" />
+/// <reference path="./global.ts" />
 
 import {Config} from '../cyph/config';
 import {Env} from '../cyph/env';

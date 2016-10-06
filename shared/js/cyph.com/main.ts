@@ -4,13 +4,12 @@
 
 /// <reference path="../preload/fakecrypto.ts" />
 /// <reference path="../preload/jquery.ts" />
-/// <reference path="../global/base.ts" />
 
 import {CyphDemo} from './ui/cyphdemo';
 import {Elements} from './ui/elements';
 import {HomeSections, PageTitles, Promos, States} from './ui/enums';
 import {UI} from './ui/ui';
-import {Loaded} from '../preload/base';
+import {Loaded} from '../preload';
 import * as Cyph from '../cyph';
 
 
