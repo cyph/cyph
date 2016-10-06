@@ -156,7 +156,13 @@ rm -rf config.js package.json jspm_packages 2> /dev/null
 sed -i 's/^\/dist$//' jquery*/.gitignore
 
 cd crypto
-git clone --depth 1 --recursive https://github.com/jedisct1/libsodium.js libsodium
+sodiumrepo='https://github.com/jedisct1/libsodium.js'
+git clone \
+	-b $(git ls-remote --tags $sodiumrepo | grep -v '{}' | awk -F'/' '{print $3}' | sort -V | tail -n1) \
+	--depth 1 \
+	--recursive \
+	$sodiumrepo \
+	libsodium
 cd libsodium
 cat > wrapper/symbols/crypto_stream_chacha20.json << EOM
 {
