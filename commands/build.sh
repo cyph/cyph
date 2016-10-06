@@ -4,17 +4,19 @@ dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd)/..
 originalDir="$(pwd)"
 
-if [ "${1}" == '--watch' ] ; then
-	bash -c "
-		while true ; do
-			./commands/build.sh
-			echo -e '\n\n\nFinished building JS/CSS\n\n'
-			inotifywait -r --exclude '(node_modules|sed.*|.*\.(html|css|js|map|tmp))$' shared/css shared/js
-			echo -e '\n\n\nRebuilding JS/CSS\n\n'
-		done
-	" &
+watch=''
+test=''
+simpletest=''
+prod=''
 
-	sleep infinity
+if [ "${1}" == '--watch' ] ; then
+	watch=true
+elif [ "${1}" == '--test' ] ; then
+	test=true
+elif [ "${1}" == '--simpletest' ] ; then
+	simpletest=true
+elif [ "${1}" == '--prod' ] ; then
+	prod=true
 fi
 
 tsargs="$(node -e '
@@ -71,64 +73,86 @@ cd ..
 
 output=''
 
-for file in $scssfiles ; do
-	output="${output}$(scss -Icss $file.scss $file.css)"
-done
-
-cd js
-
-for file in $tsfiles ; do
-	output="${output}$(tsc $tsargs $file.ts)"
-done
-
-if [ "${1}" != '--simpletest' ] ; then
-	find . -name '*.js' -not -path './node_modules/*' -exec node -e '
-		const build	= f => {
-			const path		= fs.realpathSync(f);
-			const parent	= path.split("/").slice(0, -1).join("/");
-
-			const content	= child_process.spawnSync("babel", [
-				"--presets",
-				"es2015",
-				"--compact",
-				"false"
-			], {input:
-				fs.readFileSync(path).toString()
-			}).stdout.toString().trim().replace(
-				/\/\/\/ <reference path="(.*)".*/g,
-				(_, sub) => sub.match(/\.d\.ts$/) ?
-					"" :
-					build(parent + "/" + sub.replace(/\.ts$/, ".js"))
-			);
-
-			fs.writeFileSync(path, content);
-
-			return content;
-		};
-
-		build("{}");
-	' \;
-
-	for file in $tsfiles ; do
-		webpack \
-			--optimize-dedupe \
-			--output-library-target var \
-			--output-library "$(echo $file | perl -pe 's/.*\/([^\/]+)$/\u$1/')" \
-			$file.js \
-			$file.js.tmp
-
-		cat $file.js.tmp | sed 's|use strict||g' > $file.js
-		rm $file.js.tmp
+compile () {
+	for file in $scssfiles ; do
+		command="scss -Icss $file.scss $file.css"
+		if [ "${watch}" ] ; then
+			$command &
+		else
+			output="${output}$($command)"
+		fi
 	done
-fi
 
-cd ..
+	cd js
+
+	output="${output}$(tsc $tsargs $(for f in $tsfiles ; do echo $f.ts ; done))"
+
+	if [ ! "${simpletest}" ] ; then
+		find . -name '*.js' -not -path './node_modules/*' -exec node -e '
+			const watch	= "'"${watch}"'";
+
+			const build	= f => {
+				const path		= fs.realpathSync(f);
+				const parent	= path.split("/").slice(0, -1).join("/");
+
+				const input		= fs.readFileSync(path).toString();
+				const content	= (
+					watch ?
+						input :
+						child_process.spawnSync("babel", [
+							"--presets",
+							"es2015",
+							"--compact",
+							"false"
+						], {input}).stdout.toString()
+				).trim().replace(
+					/\/\/\/ <reference path="(.*)".*/g,
+					(_, sub) => sub.match(/\.d\.ts$/) ?
+						"" :
+						build(parent + "/" + sub.replace(/\.ts$/, ".js"))
+				);
+
+				fs.writeFileSync(path, content);
+
+				return content;
+			};
+
+			build("{}");
+		' \;
+
+		for file in $tsfiles ; do
+			webpack \
+				--optimize-dedupe \
+				--output-library-target var \
+				--output-library "$(echo $file | perl -pe 's/.*\/([^\/]+)$/\u$1/')" \
+				$file.js \
+				$file.js.tmp
+
+			cat $file.js.tmp | sed 's|use strict||g' > $file.js
+			rm $file.js.tmp
+		done
+	fi
+
+	cd ..
+}
+
+if [ "${watch}" ] ; then
+	while true ; do
+		start="$(date +%s)"
+		echo -e '\n\n\nBuilding JS/CSS\n\n'
+		compile
+		echo -e "\n\n\nFinished building JS/CSS ($(expr $(date +%s) - $start)s)\n\n"
+		inotifywait -r --exclude '(node_modules|sed.*|.*\.(html|css|js|map|tmp))$' css js
+	done
+else
+	compile
+fi
 
 echo -e "${output}"
 
 rm lib/js/node_modules js/node_modules
 
-if [ "${1}" == '--test' -o "${1}" == '--simpletest' ] ; then
+if [ "${test}" -o "${simpletest}" ] ; then
 	cd $originalDir
 
 	rm -rf shared/js/docs
@@ -139,7 +163,7 @@ if [ "${1}" == '--test' -o "${1}" == '--simpletest' ] ; then
 		find shared/js -name '*.js' & \
 		find shared/js -name '*.map'; \
 	} | xargs -I% rm %
-elif [ "${1}" == '--prod' ] ; then
+elif [ "${prod}" ] ; then
 	{ \
 		find css -name '*.scss' & \
 		find css -name '*.map' & \
