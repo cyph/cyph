@@ -9,8 +9,8 @@
 /// <reference path="../preload/jquery.ts" />
 /// <reference path="../preload/translations.ts" />
 
-import {BetaStates, States, UrlSections} from './ui/enums';
-import {UI} from './ui/ui';
+import {BetaStates, States, UrlSections} from './enums';
+import {UI} from './ui';
 import {Loaded} from '../preload';
 import * as Cyph from '../cyph';
 
@@ -43,12 +43,10 @@ angular.
 			self['Cyph']	= Cyph;
 			$scope.Cyph		= Cyph;
 			$scope.Cyph.im	= {
-				UI: {
-					BetaStates,
-					States,
-					UI,
-					UrlSections
-				}
+				BetaStates,
+				States,
+				UI,
+				UrlSections
 			};
 
 			$(() => {
