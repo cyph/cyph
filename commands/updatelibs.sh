@@ -6,7 +6,7 @@ cd $(cd "$(dirname "$0")"; pwd)/..
 ./commands/keycache.sh
 
 rm -rf shared/lib
-mkdir -p shared/lib/js
+mkdir -p shared/lib/js/crypto
 cd shared/lib/js
 
 echo "sodium = (function () {
@@ -27,8 +27,6 @@ echo "sodium = (function () {
 	};
 }());" | uglifyjs > sodiumcodecs.js
 
-cd ../../lib/js
-rm config.js package.json
 expect -c ' \
 	spawn jspm init; \
 	expect "Package.json file does not exist"; \
@@ -36,7 +34,7 @@ expect -c ' \
 	expect "prefix the jspm package.json"; \
 	send "yes\n"; \
 	expect "server baseURL"; \
-	send "../../js/\n"; \
+	send "./\n"; \
 	expect "jspm packages folder"; \
 	send "./\n"; \
 	expect "config file path"; \
@@ -44,7 +42,7 @@ expect -c ' \
 	expect "create it?"; \
 	send "yes\n"; \
 	expect "Enter client baseURL"; \
-	send "/js/\n"; \
+	send "/\n"; \
 	expect "transpiler"; \
 	send "yes\n"; \
 	expect "transpiler"; \
@@ -114,6 +112,8 @@ if (( $? )); then
 	exit 1
 fi
 
+find jspm_packages -mindepth 1 -maxdepth 1 -type d -exec mv {} ./ \;
+
 bash -c "$(node -e '
 	const deps		= JSON.parse(
 		'"'$(cat package.json | tr '\n' ' ')'"'
@@ -132,7 +132,7 @@ bash -c "$(node -e '
 		const symlinkParent	= k.split("/").map(s => "..").join("/").replace(/..$/, "");
 
 		const findVersionCommand	=
-			`find ${pathSplit[0]} -type d | ` +
+			`find ./${pathSplit[0]} -type d | ` +
 			`grep "${package[0]}@" | ` +
 			`perl -pe "s/.*@//g" | ` +
 			`grep -P "${package[1]}" | ` +
@@ -149,6 +149,8 @@ bash -c "$(node -e '
 		;
 	}).join(" ; "));'
 )"
+
+rm -rf config.js package.json jspm_packages 2> /dev/null
 
 
 sed -i 's/^\/dist$//' jquery*/.gitignore
