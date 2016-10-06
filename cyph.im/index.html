@@ -62,13 +62,13 @@
 		<section id='main' class='cyph-foreground' layout='column' layout-fill>
 			<cyph-chat-toolbar
 				self='ui.chat'
-				show-chat='ui.state === Cyph.im.UI.States.chat'
+				show-chat='ui.state === Cyph.im.States.chat'
 			></cyph-chat-toolbar>
 
 			<cyph-chat-main
 				self='ui.chat'
 				hide-disconnect-message='ui.coBranded'
-				ng-show='ui.state === Cyph.im.UI.States.chat'
+				ng-show='ui.state === Cyph.im.States.chat'
 				layout='column'
 				layout-fill
 				flex
@@ -85,7 +85,7 @@
 				layout-fill
 				flex
 				ng-class='{
-					active: ui.state === Cyph.im.UI.States.spinningUp
+					active: ui.state === Cyph.im.States.spinningUp
 				}'
 			></cyph-static-cyph-spinning-up>
 
@@ -96,7 +96,7 @@
 				layout-fill
 				flex
 				ng-class='{
-					active: ui.state === Cyph.im.UI.States.waitingForFriend
+					active: ui.state === Cyph.im.States.waitingForFriend
 				}'
 			></cyph-link-connection>
 
@@ -106,7 +106,7 @@
 				layout-fill
 				flex
 				ng-class='{
-					active: ui.state === Cyph.im.UI.States.error
+					active: ui.state === Cyph.im.States.error
 				}'
 			></cyph-static-cyph-not-found>
 
@@ -117,7 +117,7 @@
 				layout-fill
 				flex
 				ng-class='{
-					active: ui.state === Cyph.im.UI.States.beta
+					active: ui.state === Cyph.im.States.beta
 				}'
 			></cyph-beta>
 
@@ -126,14 +126,14 @@
 				id='blank'
 				flex
 				ng-class='{
-					active: ui.state === Cyph.im.UI.States.blank
+					active: ui.state === Cyph.im.States.blank
 				}'
 			></div>
 
 			<footer>
 				<cyph-chat-message-box
 					self='ui.chat'
-					ng-show='ui.state === Cyph.im.UI.States.chat'
+					ng-show='ui.state === Cyph.im.States.chat'
 				>
 				</cyph-chat-message-box>
 

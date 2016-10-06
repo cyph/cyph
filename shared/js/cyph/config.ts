@@ -11,6 +11,9 @@ export class Config {
 	/** Length of server ID for a cyph. */
 	public static cyphIdLength: number			= 7;
 
+	/** Number of seconds before new cyph wait screen will abort. */
+	public static cyphCountdown: number			= 600;
+
 	/** Length of random IDs in cyph links. */
 	public static secretLength: number			= 25;
 

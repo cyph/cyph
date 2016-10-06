@@ -8,7 +8,9 @@ declare let customBuild: string;
  */
 declare let customBuildFavicon: string;
 
-/** @ignore */
+/**
+ * @ignore 
+ */
 declare let IS_WEB: boolean;
 
 /**

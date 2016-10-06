@@ -1,4 +1,4 @@
-/// <reference path="../global/base.ts" />
+/// <reference path="../preload/global.ts" />
 
 import {Env} from './env';
 import {EventManager} from './eventmanager';

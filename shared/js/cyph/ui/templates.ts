@@ -43,7 +43,7 @@ export const Templates	= {
 			<div class='nano-content'>
 				<div
 					class='login-form'
-					ng-show='$ctrl.ui.betaState === $ctrl.Cyph.im.UI.BetaStates.login'
+					ng-show='$ctrl.ui.betaState === $ctrl.Cyph.im.BetaStates.login'
 					ng-class='{checking: $ctrl.checking}'
 					layout='row'
 					layout-align='center center'
@@ -88,10 +88,10 @@ export const Templates	= {
 						<md-progress-circular md-mode='indeterminate'></md-progress-circular>
 					</md-card>
 				</div>
-				<div ng-show='$ctrl.ui.betaState === $ctrl.Cyph.im.UI.BetaStates.register'>
+				<div ng-show='$ctrl.ui.betaState === $ctrl.Cyph.im.BetaStates.register'>
 					Registration screen
 				</div>
-				<div ng-show='$ctrl.ui.betaState === $ctrl.Cyph.im.UI.BetaStates.settings'>
+				<div ng-show='$ctrl.ui.betaState === $ctrl.Cyph.im.BetaStates.settings'>
 					Settings screen
 				</div>
 			</div>

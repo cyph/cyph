@@ -8,12 +8,10 @@
 /// <reference path="../preload/dompurify.ts" />
 /// <reference path="../preload/jquery.ts" />
 /// <reference path="../preload/translations.ts" />
-/// <reference path="../global/base.ts" />
 
-import {Config} from './config';
-import {BetaStates, States, UrlSections} from './ui/enums';
-import {UI} from './ui/ui';
-import {Loaded} from '../preload/base';
+import {BetaStates, States, UrlSections} from './enums';
+import {UI} from './ui';
+import {Loaded} from '../preload';
 import * as Cyph from '../cyph';
 
 
@@ -45,13 +43,10 @@ angular.
 			self['Cyph']	= Cyph;
 			$scope.Cyph		= Cyph;
 			$scope.Cyph.im	= {
-				Config,
-				UI: {
-					BetaStates,
-					States,
-					UI,
-					UrlSections
-				}
+				BetaStates,
+				States,
+				UI,
+				UrlSections
 			};
 
 			$(() => {
