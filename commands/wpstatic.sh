@@ -56,7 +56,7 @@ downloadURL="$(node -e "
 	});
 " | tail -n1)"
 
-wget "${downloadURL}" -O wpstatic.zip
+wget --tries=50 "${downloadURL}" -O wpstatic.zip
 unzip wpstatic.zip
 
 rm -rf wpstatic.zip wp-admin wp-json $(find . -name '*.php')
@@ -78,10 +78,13 @@ mkdir css fonts img js
 
 for f in $(find . -name '*.html') ; do node -e "
 	const cheerio		= require('cheerio');
-	const fetch			= require('node-fetch');
 	const htmlMinifier	= require('html-minifier');
 	const imageType		= require('image-type');
 	const superSphincs	= require('supersphincs');
+
+	const fetch	= (url, opts) =>
+		require('node-fetch')(url, opts).catch(() => fetch(url, opts))
+	;
 
 	const \$	= cheerio.load(fs.readFileSync('${f}').toString());
 
@@ -166,12 +169,12 @@ grep -rl "'//' + disqus_shortname" |
 for id in cyph cyphtest ; do
 	mkdir js/${id}.disqus.com
 	for script in count embed ; do
-		wget https://${id}.disqus.com/${script}.js -O js/${id}.disqus.com/${script}.js
+		wget --tries=50 https://${id}.disqus.com/${script}.js -O js/${id}.disqus.com/${script}.js
 	done
 done
 
 mkdir -p js/platform.twitter.com/js
-wget https://platform.twitter.com/jot.html -O js/platform.twitter.com/jot.html
+wget --tries=50 https://platform.twitter.com/jot.html -O js/platform.twitter.com/jot.html
 for f in $(grep -rl https://platform.twitter.com) ; do
 	node -e "
 		const s	= '$(grep -oP '\{[a-z0-9_,:"]+button".*?\}.*?\{.*?\}' ${f})'.
@@ -185,7 +188,7 @@ for f in $(grep -rl https://platform.twitter.com) ; do
 			console.log(\`\${a[k]}.\${b[k]}.js\`);
 		}
 	" |
-		xargs -I% wget "https://platform.twitter.com/js/%" -O "js/platform.twitter.com/js/%"
+		xargs -I% wget --tries=50 "https://platform.twitter.com/js/%" -O "js/platform.twitter.com/js/%"
 
 	sed -i 's|https://platform.twitter.com|/blog/js/platform.twitter.com|g' $f
 done
@@ -197,7 +200,7 @@ grep -r '\.woff' |
 	uniq |
 	xargs -I% bash -c '
 		path="fonts/$(node -e "require(\"supersphincs\").hash(\"%\").then(hash => console.log(hash.hex))").woff";
-		wget "%" -O ../$path;
+		wget --tries=50 "%" -O ../$path;
 		grep -rl "%" | xargs sed -i "s|%|/blog/${path}|g";
 	'
 cd ..
@@ -211,5 +214,5 @@ for path in $(
 ) ; do
 	parent="$(echo "${path}" | perl -pe 's/\/[^\/]+$//')"
 	mkdir -p "${parent}"
-	wget "http://localhost:43000/${path}" -O "${path}"
+	wget --tries=50 "http://localhost:43000/${path}" -O "${path}"
 done
