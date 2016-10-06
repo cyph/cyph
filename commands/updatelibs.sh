@@ -61,6 +61,7 @@ expect -c ' \
 	send "yes\n"; \
 	interact; \
 '
+jspm config registries.github.timeouts.download 600
 
 jspm install -y \
 	npm:@angular/common \
