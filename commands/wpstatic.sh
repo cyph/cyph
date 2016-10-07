@@ -4,6 +4,8 @@ fullDestinationURL="${1}"
 destinationProtocol="$(echo "${1}" | perl -pe 's/(.*?):\/\/.*/\1/')"
 destinationURL="$(echo "${1}" | perl -pe 's/.*?:\/\/(.*)/\1/')"
 
+echo -e '\n\nGenerating static blog\n'
+
 ssh -i ~/.ssh/id_rsa_docker -f -N -L 43000:localhost:43000 wordpress.internal.cyph.com > /dev/null 2>&1
 
 downloadURL="$(node -e "
