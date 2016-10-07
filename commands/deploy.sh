@@ -301,6 +301,17 @@ echo "
   NEW_CYPH_URL: '${newCyphURL}'
 " >> test/test.yaml
 
+
+if [ ! "${site}" -o "${site}" == cyph.com ] ; then
+	# Blog
+	rm -rf cyph.com/blog 2> /dev/null
+	mkdir -p cyph.com/blog
+	cd cyph.com/blog
+	../../commands/wpstatic.sh "${homeURL}/blog" > ../.blog.output
+	touch ../.blog.done
+fi &
+
+
 if [ ! "${site}" -o "${site}" == websign ] ; then
 	# WebSign project
 	cd websign
@@ -308,20 +319,6 @@ if [ ! "${site}" -o "${site}" == websign ] ; then
 	cp -rf ../shared/img ./
 	../commands/websign/pack.js index.html index.html
 	cd ..
-fi
-
-
-if [ ! "${site}" -o "${site}" == cyph.com ] ; then
-	# Blog
-	cd cyph.com
-	rm -rf blog 2> /dev/null
-	mkdir blog
-	cd blog
-	../../commands/wpstatic.sh "${homeURL}/blog"
-	if [ ! -f index.html ] ; then
-		exit 1
-	fi
-	cd ../..
 fi
 
 
@@ -390,6 +387,16 @@ for d in $compiledProjects ; do
 		mv ${d}/index.html.new ${d}/index.html
 	fi
 done
+
+
+if [ ! "${site}" -o "${site}" == cyph.com ] ; then
+	while [ ! -f cyph.com/.blog.done ] ; do sleep 5 ; done
+	cat cyph.com/.blog.output
+	rm cyph.com/.blog.done cyph.com/.blog.output
+	if [ ! -f cyph.com/blog/index.html ] ; then
+		exit 1
+	fi
+fi
 
 
 for d in $cacheBustedProjects ; do
@@ -779,7 +786,7 @@ if [ ! "${test}" ] ; then
 fi
 
 # Workaround for symlinks doubling up Google's count of the files toward its 10k limit
-find . -type l -not -wholename './cdn/*' -exec bash -c '
+find . -type l -not -path './cdn/*' -exec bash -c '
 	original="$(readlink "{}")";
 	parent="$(echo "{}" | perl -pe "s/(.*)\/.*?$/\1/g")";
 	name="$(echo "{}" | perl -pe "s/.*\/(.*?)$/\1/g")"
