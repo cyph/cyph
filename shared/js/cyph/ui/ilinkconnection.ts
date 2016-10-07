@@ -20,6 +20,11 @@ export interface ILinkConnection {
 	linkEncoded: string;
 
 	/**
+	 * Stops waiting and tears down this link connection instance.
+	 */
+	copyLink () : void;
+
+	/**
 	 * Initiates UI for sending this link to friend.
 	 * @param baseUrl Base URL before the hash.
 	 * @param secret Secret being sent via URL fragment.

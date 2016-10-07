@@ -836,7 +836,7 @@ export const Templates	= {
 							class='copy'
 						>
 							<i class='material-icons'
-							onClick='clipboard.copy( $(".connect-link-input input").val() )'
+							ng-click='$ctrl.self.copyLink();';
 							>content_copy</i>
 						</md-button>
 					</md-input-container>
