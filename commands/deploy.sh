@@ -302,14 +302,18 @@ echo "
 " >> test/test.yaml
 
 
+waitingForBlog=''
 if [ ! "${site}" -o "${site}" == cyph.com ] ; then
 	# Blog
-	rm -rf cyph.com/blog 2> /dev/null
-	mkdir -p cyph.com/blog
-	cd cyph.com/blog
-	../../commands/wpstatic.sh "${homeURL}/blog" > ../.blog.output 2>&1
-	touch ../.blog.done
-fi &
+	waitingForBlog=true
+	bash -c "
+		rm -rf cyph.com/blog 2> /dev/null;
+		mkdir -p cyph.com/blog;
+		cd cyph.com/blog;
+		../../commands/wpstatic.sh '${homeURL}/blog' > ../.blog.output 2>&1;
+		touch ../.blog.done;
+	" &
+fi
 
 
 if [ ! "${site}" -o "${site}" == websign ] ; then
@@ -389,7 +393,7 @@ for d in $compiledProjects ; do
 done
 
 
-if [ ! "${site}" -o "${site}" == cyph.com ] ; then
+if [ "${waitingForBlog}" ] ; then
 	while [ ! -f cyph.com/.blog.done ] ; do sleep 5 ; done
 	cat cyph.com/.blog.output
 	rm cyph.com/.blog.done cyph.com/.blog.output
