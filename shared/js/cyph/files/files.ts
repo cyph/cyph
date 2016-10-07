@@ -9,8 +9,10 @@ import {Firebase} from '../firebase';
 import {IController} from '../icontroller';
 import {Thread} from '../thread';
 import {Util} from '../util';
-import {Potassium} from '../crypto';
-import * as Session from '../session';
+import {Potassium} from '../crypto/potassium';
+import {Events, RPCEvents, Users} from '../session/enums';
+import {ISession} from '../session/isession';
+import {Message} from '../session/message';
 
 
 export class Files implements IFiles {
@@ -33,122 +35,125 @@ export class Files implements IFiles {
 			locals.chunkSize	= Config.filesConfig.chunkSize;
 			locals.callbackId	= 'files-' + Util.generateGuid();
 
-			const thread	= new Thread((Cyph: any, locals: any, importScripts: Function) => {
+			const thread	= new Thread(async (
+				Cyph: any,
+				Crypto: any,
+				locals: any,
+				importScripts: Function
+			) => {
 				importScripts('/js/cyph/crypto/index.js');
 
-				System.import('cyph/crypto/index').then(async (Crypto) => {
-					const potassium	= new Crypto.Potassium(locals.isAlice);
+				const potassium	= new Crypto.Potassium(locals.isAlice);
 
-					/* Encrypt */
-					if (locals.plaintext) {
-						const key: Uint8Array	= Crypto.Potassium.randomBytes(
-							potassium.SecretBox.keyBytes
-						);
+				/* Encrypt */
+				if (locals.plaintext) {
+					const key: Uint8Array	= Crypto.Potassium.randomBytes(
+						potassium.SecretBox.keyBytes
+					);
 
-						const chunks: Uint8Array[]	= [];
+					const chunks: Uint8Array[]	= [];
 
-						for (let i = 0 ; i < locals.plaintext.length ; i += locals.chunkSize) {
-							try {
-								chunks.push(await potassium.SecretBox.seal(
-									new Uint8Array(
-										locals.plaintext.buffer,
-										i,
-										(locals.plaintext.length - i) > locals.chunkSize ?
-											locals.chunkSize :
-											undefined
-									),
-									key
-								));
-							}
-							catch (err) {
-								Cyph.EventManager.trigger(
-									locals.callbackId,
-									[err, null, null]
-								);
-
-								return;
-							}
+					for (let i = 0 ; i < locals.plaintext.length ; i += locals.chunkSize) {
+						try {
+							chunks.push(await potassium.SecretBox.seal(
+								new Uint8Array(
+									locals.plaintext.buffer,
+									i,
+									(locals.plaintext.length - i) > locals.chunkSize ?
+										locals.chunkSize :
+										undefined
+								),
+								key
+							));
 						}
-
-						const cyphertext: Uint8Array	= new Uint8Array(
-							chunks.
-								map(chunk => chunk.length + 4).
-								reduce((a, b) => a + b, 0)
-						);
-
-						let j: number	= 0;
-						for (let chunk of chunks) {
-							cyphertext.set(
-								new Uint8Array(new Uint32Array([chunk.length]).buffer),
-								j
+						catch (err) {
+							Cyph.EventManager.trigger(
+								locals.callbackId,
+								[err, null, null]
 							);
-							j += 4;
 
-							cyphertext.set(chunk, j);
-							j += chunk.length;
-
-							Crypto.Potassium.clearMemory(chunk);
+							return;
 						}
-
-						Cyph.EventManager.trigger(
-							locals.callbackId,
-							[null, cyphertext, key]
-						);
 					}
-					/* Decrypt */
-					else if (locals.cyphertext && locals.key) {
-						const chunks: Uint8Array[]	= [];
 
-						for (let i = 0 ; i < locals.cyphertext.length ;) {
-							try {
-								const chunkSize: number	= new DataView(
+					const cyphertext: Uint8Array	= new Uint8Array(
+						chunks.
+							map(chunk => chunk.length + 4).
+							reduce((a, b) => a + b, 0)
+					);
+
+					let j: number	= 0;
+					for (let chunk of chunks) {
+						cyphertext.set(
+							new Uint8Array(new Uint32Array([chunk.length]).buffer),
+							j
+						);
+						j += 4;
+
+						cyphertext.set(chunk, j);
+						j += chunk.length;
+
+						Crypto.Potassium.clearMemory(chunk);
+					}
+
+					Cyph.EventManager.trigger(
+						locals.callbackId,
+						[null, cyphertext, key]
+					);
+				}
+				/* Decrypt */
+				else if (locals.cyphertext && locals.key) {
+					const chunks: Uint8Array[]	= [];
+
+					for (let i = 0 ; i < locals.cyphertext.length ;) {
+						try {
+							const chunkSize: number	= new DataView(
+								locals.cyphertext.buffer,
+								i
+							).getUint32(0, true);
+
+							i += 4;
+
+							chunks.push(await potassium.SecretBox.open(
+								new Uint8Array(
 									locals.cyphertext.buffer,
-									i
-								).getUint32(0, true);
+									i,
+									chunkSize
+								),
+								locals.key
+							));
 
-								i += 4;
-
-								chunks.push(await potassium.SecretBox.open(
-									new Uint8Array(
-										locals.cyphertext.buffer,
-										i,
-										chunkSize
-									),
-									locals.key
-								));
-
-								i += chunkSize;
-							}
-							catch (err) {
-								Cyph.EventManager.trigger(
-									locals.callbackId,
-									[err, null]
-								);
-
-								return;
-							}
+							i += chunkSize;
 						}
+						catch (err) {
+							Cyph.EventManager.trigger(
+								locals.callbackId,
+								[err, null]
+							);
 
-						const plaintext	= new Uint8Array(
-							chunks.
-								map(chunk => chunk.length).
-								reduce((a, b) => a + b, 0)
-						);
-
-						let j: number	= 0;
-						for (let chunk of chunks) {
-							plaintext.set(chunk, j);
-							j += chunk.length;
-
-							Crypto.Potassium.clearMemory(chunk);
+							return;
 						}
-
-						Cyph.EventManager.trigger(
-							locals.callbackId,
-							[null, plaintext]
-						);
 					}
-				});
+
+					const plaintext	= new Uint8Array(
+						chunks.
+							map(chunk => chunk.length).
+							reduce((a, b) => a + b, 0)
+					);
+
+					let j: number	= 0;
+					for (let chunk of chunks) {
+						plaintext.set(chunk, j);
+						j += chunk.length;
+
+						Crypto.Potassium.clearMemory(chunk);
+					}
+
+					Cyph.EventManager.trigger(
+						locals.callbackId,
+						[null, plaintext]
+					);
+				}
 			}, locals);
 
 			EventManager.one(locals.callbackId, data => {
@@ -239,8 +244,8 @@ export class Files implements IFiles {
 			async (ok: boolean) => {
 				transfer.answer	= ok;
 
-				this.session.send(new Session.Message(
-					Session.RPCEvents.files,
+				this.session.send(new Message(
+					RPCEvents.files,
 					transfer
 				));
 
@@ -313,7 +318,7 @@ export class Files implements IFiles {
 		event: UIEvents,
 		...args: any[]
 	) : void {
-		this.session.trigger(Session.Events.filesUI, {event, args});
+		this.session.trigger(Events.filesUI, {event, args});
 	}
 
 	public async send (plaintext: Uint8Array, name: string) : Promise<void> {
@@ -348,7 +353,7 @@ export class Files implements IFiles {
 
 		this.triggerUIEvent(
 			UIEvents.started,
-			Session.Users.me,
+			Users.me,
 			transfer.name
 		);
 
@@ -371,8 +376,8 @@ export class Files implements IFiles {
 			}
 		});
 
-		this.session.send(new Session.Message(
-			Session.RPCEvents.files,
+		this.session.send(new Message(
+			RPCEvents.files,
 			transfer
 		));
 
@@ -406,8 +411,8 @@ export class Files implements IFiles {
 				() => {
 					transfer.url	= uploadTask.snapshot.downloadURL;
 
-					this.session.send(new Session.Message(
-						Session.RPCEvents.files,
+					this.session.send(new Message(
+						RPCEvents.files,
 						transfer
 					));
 
@@ -423,18 +428,18 @@ export class Files implements IFiles {
 	 * @param controller
 	 */
 	public constructor (
-		private session: Session.ISession,
+		private session: ISession,
 		private controller: IController
 	) {
 		if (Files.subtleCryptoIsSupported) {
-			this.session.on(Session.Events.beginChat, () => this.session.send(
-				new Session.Message(Session.RPCEvents.files)
+			this.session.on(Events.beginChat, () => this.session.send(
+				new Message(RPCEvents.files)
 			));
 		}
 
 		const downloadAnswers: {[id: string] : boolean}	= {};
 
-		this.session.on(Session.RPCEvents.files, (transfer?: ITransfer) => {
+		this.session.on(RPCEvents.files, (transfer?: ITransfer) => {
 			if (transfer) {
 				/* Outgoing file transfer acceptance or rejection */
 				if (transfer.answer === true || transfer.answer === false) {
@@ -456,7 +461,7 @@ export class Files implements IFiles {
 				else {
 					this.triggerUIEvent(
 						UIEvents.started,
-						Session.Users.other,
+						Users.other,
 						transfer.name
 					);
 
@@ -476,8 +481,8 @@ export class Files implements IFiles {
 
 								transfer.answer	= false;
 
-								this.session.send(new Session.Message(
-									Session.RPCEvents.files,
+								this.session.send(new Message(
+									RPCEvents.files,
 									transfer
 								));
 							}

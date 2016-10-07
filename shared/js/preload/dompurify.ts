@@ -7,19 +7,18 @@
 (() => {
 
 
-// allowed URI schemes
+/* Allowed URI schemes */
 const whitelist: string[]	= ['http', 'https', 'ftp'];
 
-// build fitting regex
+/* Build fitting regex */
 const regex: RegExp			= RegExp('^(' + whitelist.join('|') + '):', 'gim');
 
-// Add a hook to enforce URI scheme whitelist
+/* Add a hook to enforce URI scheme whitelist */
 DOMPurify.addHook('afterSanitizeAttributes', (node: HTMLElement) => {
-
-	// build an anchor to map URLs to
+	/* Build an anchor to map URLs to */
 	const anchor: HTMLAnchorElement	= document.createElement('a');
 
-	// check all href attributes for validity
+	/* Check all href attributes for validity */
 	if (node.hasAttribute('href')) {
 		anchor.href	= node.getAttribute('href');
 		if (!anchor.protocol.match(regex)) {
@@ -27,7 +26,7 @@ DOMPurify.addHook('afterSanitizeAttributes', (node: HTMLElement) => {
 		}
 	}
 
-	// check all action attributes for validity
+	/* Check all action attributes for validity */
 	if (node.hasAttribute('action')) {
 		anchor.href	= node.getAttribute('action');
 		if (!anchor.protocol.match(regex)) {
@@ -35,7 +34,7 @@ DOMPurify.addHook('afterSanitizeAttributes', (node: HTMLElement) => {
 		}
 	}
 
-	// check all xlink:href attributes for validity
+	/* Check all xlink:href attributes for validity */
 	if (node.hasAttribute('xlink:href')) {
 		anchor.href	= node.getAttribute('xlink:href');
 		if (!anchor.protocol.match(regex)) {

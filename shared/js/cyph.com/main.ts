@@ -4,14 +4,13 @@
 
 /// <reference path="../preload/fakecrypto.ts" />
 /// <reference path="../preload/jquery.ts" />
-/// <reference path="../global/base.ts" />
 
-import {CyphDemo} from './ui/cyphdemo';
-import {Elements} from './ui/elements';
-import {HomeSections, PageTitles, Promos, States} from './ui/enums';
-import {UI} from './ui/ui';
+import {CyphDemo} from './cyphdemo';
+import {Elements} from './elements';
+import {HomeSections, PageTitles, Promos, States} from './enums';
+import {UI} from './ui';
+import {Loaded} from '../preload';
 import * as Cyph from '../cyph';
-import {Loaded} from '../preload/base';
 
 
 if (Cyph.Env.isIE) {
@@ -43,15 +42,13 @@ angular.
 			self['Cyph']	= Cyph;
 			$scope.Cyph		= Cyph;
 			$scope.Cyph.com	= {
-				UI: {
-					CyphDemo,
-					Elements,
-					HomeSections,
-					PageTitles,
-					Promos,
-					States,
-					UI
-				}
+				CyphDemo,
+				Elements,
+				HomeSections,
+				PageTitles,
+				Promos,
+				States,
+				UI
 			};
 
 			$(() => {

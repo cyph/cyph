@@ -58,10 +58,12 @@ fi
 
 if [ "${commit}" ] ; then
 	comment="${*}"
-	if [ "${comment}" == "" -a ! "${simple}" ] ; then
+	if [ ! "${comment}" -a ! "${simple}" ] ; then
 		comment=deploy
 	fi
-	./commands/commit.sh "${comment}"
+	if [ "${comment}" ] ; then
+		./commands/commit.sh "${comment}"
+	fi
 fi
 
 rm -rf .build

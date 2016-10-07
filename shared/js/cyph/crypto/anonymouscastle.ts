@@ -1,13 +1,16 @@
 import {ICastle} from './icastle';
 import {Potassium} from './potassium';
+import {AnonymousLocalUser} from './castle/anonymouslocaluser';
+import {AnonymousRemoteUser} from './castle/anonymousremoteuser';
+import {PairwiseSession} from './castle/pairwisesession';
+import {Transport} from './castle/transport';
 import {Util} from '../util';
 import {State} from '../session/enums';
 import {ISession} from '../session/isession';
-import * as Castle from './castle';
 
 
 export class AnonymousCastle implements ICastle {
-	private pairwiseSession: Castle.PairwiseSession;
+	private pairwiseSession: PairwiseSession;
 
 	public receive (cyphertext: string) : void {
 		return this.pairwiseSession.receive(cyphertext);
@@ -22,15 +25,15 @@ export class AnonymousCastle implements ICastle {
 
 	public constructor (session: ISession, isNative: boolean) {
 		const potassium		= new Potassium(isNative);
-		const transport		= new Castle.Transport(session);
+		const transport		= new Transport(session);
 
-		const localUser		= new Castle.AnonymousLocalUser(
+		const localUser		= new AnonymousLocalUser(
 			potassium,
 			transport,
 			session.state.sharedSecret
 		);
 
-		const remoteUser	= new Castle.AnonymousRemoteUser(
+		const remoteUser	= new AnonymousRemoteUser(
 			potassium,
 			transport,
 			session.state.sharedSecret
@@ -38,7 +41,7 @@ export class AnonymousCastle implements ICastle {
 
 		session.updateState(State.sharedSecret, '');
 
-		this.pairwiseSession	= new Castle.PairwiseSession(
+		this.pairwiseSession	= new PairwiseSession(
 			potassium,
 			transport,
 			localUser,

@@ -1,4 +1,4 @@
-/// <reference path="../global/base.ts" />
+/// <reference path="../preload/global.ts" />
 
 import {Config} from './config';
 import {Controller} from './controller';

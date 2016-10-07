@@ -1,9 +1,9 @@
-/// <reference path="../global/base.ts" />
+/// <reference path="../preload/global.ts" />
 
 import {Env} from './env';
 import {EventManager} from './eventmanager';
 import {Util} from './util';
-import {Potassium} from './crypto';
+import {Potassium} from './crypto/potassium';
 
 
 /**

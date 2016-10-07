@@ -6,12 +6,14 @@ import {Config} from '../../config';
 import {IController} from '../../icontroller';
 import {Strings} from '../../strings';
 import {Util} from '../../util';
-import * as Files from '../../files';
-import * as Session from '../../session';
+import {UIEvents} from '../../files/enums';
+import {Files} from '../../files/files';
+import {IFiles} from '../../files/ifiles';
+import {Events, Users} from '../../session/enums';
 
 
 export class FileManager implements IFileManager {
-	public files: Files.IFiles;
+	public files: IFiles;
 
 	private compressImage (image: HTMLImageElement, file: File) : string {
 		const canvas: HTMLCanvasElement			= document.createElement('canvas');
@@ -137,7 +139,7 @@ export class FileManager implements IFileManager {
 		private dialogManager: IDialogManager,
 		private elements: IElements
 	) {
-		this.files	= new Files.Files(this.chat.session, this.controller);
+		this.files	= new Files(this.chat.session, this.controller);
 
 		this.elements.buttons.each((i: number, parent: HTMLElement) =>
 			new MutationObserver(mutations => {
@@ -171,13 +173,13 @@ export class FileManager implements IFileManager {
 
 
 		this.chat.session.on(
-			Session.Events.filesUI,
+			Events.filesUI,
 			async (e: {
-				event: Files.UIEvents;
+				event: UIEvents;
 				args: any[];
 			}) => {
 				switch (e.event) {
-					case Files.UIEvents.completed: {
+					case UIEvents.completed: {
 						const name: string		= e.args[0];
 						const answer: boolean	= e.args[1];
 
@@ -188,11 +190,11 @@ export class FileManager implements IFileManager {
 
 						this.chat.addMessage(
 							message + ' ' + name,
-							Session.Users.app
+							Users.app
 						);
 						break;
 					}
-					case Files.UIEvents.confirm: {
+					case UIEvents.confirm: {
 						const name: string						= e.args[0];
 						const size: number						= e.args[1];
 						const isSave: boolean					= e.args[2];
@@ -208,22 +210,22 @@ export class FileManager implements IFileManager {
 						}));
 						break;
 					}
-					case Files.UIEvents.rejected: {
+					case UIEvents.rejected: {
 						const name: string		= e.args[0];
 
 						this.chat.addMessage(
 							Strings.incomingFileRejected + ' ' + name,
-							Session.Users.app,
+							Users.app,
 							undefined,
 							false
 						);
 						break;
 					}
-					case Files.UIEvents.started: {
+					case UIEvents.started: {
 						const user: string	= e.args[0];
 						const name: string	= e.args[1];
 
-						const isFromMe: boolean	= user === Session.Users.me;
+						const isFromMe: boolean	= user === Users.me;
 						const message: string	= isFromMe ?
 							Strings.fileTransferInitMe :
 							Strings.fileTransferInitFriend
@@ -231,13 +233,13 @@ export class FileManager implements IFileManager {
 
 						this.chat.addMessage(
 							message + ' ' + name,
-							Session.Users.app,
+							Users.app,
 							undefined,
 							!isFromMe
 						);
 						break;
 					}
-					case Files.UIEvents.tooLarge: {
+					case UIEvents.tooLarge: {
 						this.dialogManager.alert({
 							title: Strings.oopsTitle,
 							content: Strings.fileTooLarge,

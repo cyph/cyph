@@ -5,11 +5,11 @@ cd $(cd "$(dirname "$0")"; pwd)/..
 
 
 appserver () {
-	sudo /google-cloud-sdk/bin/dev_appserver.py $*
+	sudo /google-cloud-sdk/bin/dev_appserver.py $* > /dev/null 2>&1 &
 }
 
 go_appserver () {
-	yes | sudo ~/go_appengine/dev_appserver.py $*
+	yes | sudo ~/go_appengine/dev_appserver.py $* &
 }
 
 
@@ -20,16 +20,12 @@ for project in cyph.com cyph.im ; do
 	done
 done
 
-rm -rf cyph.com/blog/theme/_posts 2> /dev/null
-mkdir cyph.com/blog/theme/_posts
-sudo mount -o bind cyph.com/blog/posts cyph.com/blog/theme/_posts
-
 rm -rf $GOPATH/src/*
 for f in $(find $(pwd)/default -mindepth 1 -maxdepth 1 -type d) ; do
-	ln -s $f $GOPATH/src/$(echo "$f" | perl -pe 's/.*\///g')
+	ln -s $f $GOPATH/src/$(echo "$f" | perl -pe 's/.*\///g') > /dev/null 2>&1 &
 done
 for f in $(find default -mindepth 1 -maxdepth 4 -type d) ; do
-	go install $(echo "$f" | sed 's|default/||')
+	go install $(echo "$f" | sed 's|default/||') > /dev/null 2>&1 & 
 done
 
 node -e 'new (require("firebase-server"))(44000)' &
@@ -38,7 +34,7 @@ cd cyph.com
 rm -rf blog 2> /dev/null
 mkdir blog
 cd blog
-../../commands/wpstatic.sh http://localhost:42001/blog &
+../../commands/wpstatic.sh http://localhost:42001/blog > /dev/null 2>&1 &
 cd ../..
 
 cp -f default/app.yaml default/.build.yaml
@@ -47,13 +43,13 @@ cat ~/.cyph/braintree.sandbox >> default/.build.yaml
 cp ~/.cyph/*.mmdb default/
 
 mkdir /tmp/cyph0
-go_appserver --port 5000 --admin_port 6000 --host 0.0.0.0 --storage_path /tmp/cyph0 default/.build.yaml &
+go_appserver --port 5000 --admin_port 6000 --host 0.0.0.0 --storage_path /tmp/cyph0 default/.build.yaml
 
 mkdir /tmp/cyph1
-appserver --port 5001 --admin_port 6001 --host 0.0.0.0 --storage_path /tmp/cyph1 cyph.com/cyph-com.yaml &
+appserver --port 5001 --admin_port 6001 --host 0.0.0.0 --storage_path /tmp/cyph1 cyph.com/cyph-com.yaml
 
 mkdir /tmp/cyph2
-appserver --port 5002 --admin_port 6002 --host 0.0.0.0 --storage_path /tmp/cyph2 cyph.im/cyph-im.yaml &
+appserver --port 5002 --admin_port 6002 --host 0.0.0.0 --storage_path /tmp/cyph2 cyph.im/cyph-im.yaml
 
 ./commands/build.sh --watch
 

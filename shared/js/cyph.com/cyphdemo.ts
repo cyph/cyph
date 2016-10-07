@@ -1,5 +1,5 @@
 import {Elements} from './elements';
-import * as Cyph from '../../cyph';
+import * as Cyph from '../cyph';
 
 
 /**
