@@ -832,12 +832,15 @@ export const Templates	= {
 
 					<md-input-container class='connect-link-input desktop-only'>
 						<input translate ng-model='$ctrl.self.link' aria-label='Cyph link' />
+						<md-button
+							class='copy'
+						>
+							<i class='material-icons'
+							onClick='clipboard.copy( $(".connect-link-input input").val() )'
+							>content_copy</i>
+						</md-button>
 					</md-input-container>
 
-
-					<i class='material-icons'
-					onClick='clipboard.copy( $(".connect-link-input input").val() )'
-					>content_copy</i>
 
 
 					<md-button

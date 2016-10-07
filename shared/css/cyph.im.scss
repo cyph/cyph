@@ -1226,6 +1226,16 @@ md-input-container.message-box label:not(.md-no-float) {
 	left: 33vw;
 }
 
+.md-button:hover{
+	cursor: pointer !important;
+}
+
+.md-button.copy{
+	position: relative;
+	left: 28px;
+	top: -3px;
+}
+
 /*** SpinKit animation: http://tobiasahlin.com/spinkit/ ***/
 
 .ellipsis-spinner {
