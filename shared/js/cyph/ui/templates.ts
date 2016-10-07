@@ -433,6 +433,7 @@ export const Templates	= {
 				id='self-destruct-timer'
 				interval='1000'
 				countdown='$ctrl.self.selfDestructTimeout'
+				ng-show='$ctrl.self.selfDestruct'
 				autostart='false'
 			>
 				Message will self-destruct in {{countdown}}
@@ -841,14 +842,6 @@ export const Templates	= {
 						</md-button>
 					</md-input-container>
 
-
-
-					<md-button
-						class='md-fab'
-						aria-label='Increase Time'
-						ng-click=''
-					></md-button>
-
 					<div class='connect-link-mobile mobile-only'>
 						<a
 							class='connect-link-link'
@@ -882,12 +875,11 @@ export const Templates	= {
 				</div>
 
 				<br />
-				<div>
+				<div id='expiration-time'>
 					<span translate>
 						Link expires in
 					</span>
 					<timer
-						id='expiration-time'
 						class='timer'
 						interval='1000'
 						countdown='$ctrl.self.countdown'
@@ -895,6 +887,14 @@ export const Templates	= {
 					>
 						{{minutes}}:{{sseconds}}
 					</timer>
+					<md-button
+						aria-label='Increase Time'
+						onclick=''
+					>
+						<i class='material-icons'
+							ng-click='';
+							>alarm_add</i>
+					</md-button>
 				</div>
 			</div>
 			<div id='advanced-features'>

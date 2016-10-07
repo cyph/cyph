@@ -37,15 +37,15 @@ export class LinkConnection implements ILinkConnection {
 
 	public copyLink () : void {
 		clipboard.copy($(".connect-link-input input").val()).then(
-								function(){
-									console.log("success");
-									//TO-DO: add toast message
-								},
-								function(err){
-									console.log("failure", err);
-									//TO-DO: add toast message
-								;}
-							);
+			function(){
+				console.log("success");
+				//TO-DO: add toast message
+			},
+			function(err){
+				console.log("failure", err);
+				//TO-DO: add toast message
+			;}
+		);
 	}
 
 	public beginWaiting (baseUrl: string, secret: string, isPassive: boolean) : void {
