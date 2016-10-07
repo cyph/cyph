@@ -15,7 +15,7 @@ for f in cyph ssh gitconfig gnupg ; do cp -a ~/.$f $f ; done
 git add .
 git commit --no-gpg-sign -a -m backup
 
-cd "$currentDir"
+cd "${currentDir}"
 
 
 defaultsleep () {
@@ -59,6 +59,7 @@ start
 if [ "${command}" == 'serve' ] ; then
 	if [ "${1}" != '--foreground' ] ; then
 		processType='-d'
+	else
 		shift
 	fi
 
