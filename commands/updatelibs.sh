@@ -109,7 +109,7 @@ jspm install -y \
 	crypto/sidh=github:cyph/sidh.js \
 	crypto/supersphincs=github:cyph/supersphincs
 
-if (( $? )); then
+if (( $? )) ; then
 	exit 1
 fi
 

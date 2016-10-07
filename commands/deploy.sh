@@ -379,13 +379,9 @@ fi
 ../commands/build.sh --prod || exit;
 
 if [ ! "${simple}" ] ; then
-	echo "JS Minify"
-	find js -name '*.js' | xargs -I% uglifyjs '%' \
-		-m \
-		-r importScripts,Cyph,ui,session,locals,threadSetupVars,self,onmessage,postMessage,onthreadmessage,WebSign,Translations,IS_WEB,crypto \
-		-o '%'
-
-	echo "CSS Minify"
+	echo 'JS Minify'
+	find js -name '*.js' | xargs -I% uglifyjs '%' -o '%'
+	echo 'CSS Minify'
 	find css -name '*.css' | grep -v bourbon/ | xargs -I% cleancss -o '%' '%'
 fi
 
