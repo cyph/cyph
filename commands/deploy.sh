@@ -95,6 +95,16 @@ if [ "${simple}" ] ; then
 	version="simple-${version}"
 fi
 
+# Secret credentials
+echo -n "$(cat ~/.cyph/default.vars)" >> default/app.yaml
+echo -n "$(cat ~/.cyph/test.vars)" >> test/test.yaml
+cp ~/.cyph/*.mmdb default/
+if [ "${branch}" == 'staging' ] ; then
+	cat ~/.cyph/braintree.prod >> default/app.yaml
+else
+	cat ~/.cyph/braintree.sandbox >> default/app.yaml
+fi
+
 projectname () {
 	if [ "${test}" ] ; then
 		echo "${version}.${1}"
@@ -301,10 +311,15 @@ else
 	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|CYPH-AUDIO|https://cyph.audio|g" %
 
 	homeURL="https://www.cyph.com"
+	newCyphURL="https://www.cyph.im"
 
 	version=prod
 fi
 
+echo "
+  HOME_URL: '${homeURL}'
+  NEW_CYPH_URL: '${newCyphURL}'
+" >> test/test.yaml
 
 if [ ! "${site}" -o "${site}" == websign ] ; then
 	# WebSign project
@@ -766,16 +781,6 @@ find . -mindepth 1 -maxdepth 1 -type d -not -name shared -exec cp -f shared/favi
 
 if [ ! "${simple}" ] ; then
 	rm -rf */lib/js/crypto
-fi
-
-
-# Secret credentials
-cat ~/.cyph/default.vars >> default/app.yaml
-cp ~/.cyph/*.mmdb default/
-if [ "${branch}" == 'staging' ] ; then
-	cat ~/.cyph/braintree.prod >> default/app.yaml
-else
-	cat ~/.cyph/braintree.sandbox >> default/app.yaml
 fi
 
 # Temporary workaround for cache-busting reverse proxies

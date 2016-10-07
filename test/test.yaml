@@ -1,0 +1,8 @@
+service: test
+runtime: nodejs
+vm: true
+
+handlers:
+- url: /.*
+  script: test.js
+  secure: always
