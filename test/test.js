@@ -109,7 +109,7 @@ http.createServer((request, response) => {
 			'browserstack.key': process.env.BS_KEY
 		};
 
-		for (let k of browser) {
+		for (let k of Object.keys(browser)) {
 			o[k]	= browser[k];
 		}
 
