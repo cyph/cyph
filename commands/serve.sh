@@ -67,10 +67,21 @@ appserver --port 5002 --admin_port 6002 --host 0.0.0.0 --storage_path /tmp/cyph2
 
 if [ "${prodlike}" ] ; then
 	./commands/build.sh --prod
-	find shared/js -name '*.js' | xargs -I% ./commands/websign/threadpack.js %
-	ls */index.html | xargs -I% ./commands/websign/pack.js % %
+
+	cd shared
+	find js -name '*.js' | xargs -I% ../commands/websign/threadpack.js %
+	cd ..
+
+	for d in cyph.im cyph.com ; do
+		cd $d
+		../commands/websign/pack.js index.html index.html
+		cd ..
+	done
+
+	echo -e "\n\n\nLocal env ready\n\n"
 	sleep infinity
 else
+	bash -c 'sleep 90 ; ./commands/docs.sh > /dev/null 2>&1' &
 	./commands/build.sh --watch
 fi
 
