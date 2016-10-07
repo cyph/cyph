@@ -4,16 +4,6 @@ fullDestinationURL="${1}"
 destinationProtocol="$(echo "${1}" | perl -pe 's/(.*?):\/\/.*/\1/')"
 destinationURL="$(echo "${1}" | perl -pe 's/.*?:\/\/(.*)/\1/')"
 
-echo -e '\n\nGenerating static blog\n'
-
-if [ ! -f ~/.ssh/id_rsa_docker ] ; then
-	ssh-keygen -t rsa -b 4096 -C 'gibson@docker' -P '' -f ~/.ssh/id_rsa_docker
-	echo -e '\n\nGive this public key access to WordPress and then hit enter to continue:\n'
-	cat ~/.ssh/id_rsa_docker.pub
-	read
-	sleep 30
-fi
-
 ssh -i ~/.ssh/id_rsa_docker -f -N -L 43000:localhost:43000 wordpress.internal.cyph.com > /dev/null 2>&1
 
 downloadURL="$(node -e "

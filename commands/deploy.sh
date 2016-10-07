@@ -394,6 +394,7 @@ done
 
 
 if [ "${waitingForBlog}" ] ; then
+	echo -e '\n\nGenerating static blog\n'
 	while [ ! -f cyph.com/.blog.done ] ; do sleep 5 ; done
 	cat cyph.com/.blog.output
 	rm cyph.com/.blog.done cyph.com/.blog.output
