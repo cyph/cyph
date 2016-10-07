@@ -66,14 +66,10 @@ if [ "${commit}" ] ; then
 	fi
 fi
 
-rm -rf .build
+rm -rf .build 2> /dev/null
 mkdir .build
 cp -rf * .build/
 cd .build
-
-for project in $compiledProjects ; do
-	cp -rf shared/* $project/
-done
 
 
 # Branch config setup
@@ -252,7 +248,7 @@ if [ ! "${simple}" ] ; then
 	cyphComCSP="$(cat shared/csp | tr -d '\n' | sed 's|frame-src|frame-src https://*.facebook.com https://*.braintreegateway.com|g')"
 	ls cyph.com/*.yaml | xargs -I% sed -i "s|${defaultCSPString}|\"${cyphComCSP}\"|g" %
 	ls */*.yaml | xargs -I% sed -i "s|${defaultCSPString}|\"${webSignCSP}\"|g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|${defaultCSPString}|${fullCSP}|g" %
+	ls shared/js/cyph/envdeploy.ts | xargs -I% sed -i "s|${defaultCSPString}|${fullCSP}|g" %
 
 	# Expand connect-src and frame-src on blog to support social media widgets and stuff
 
@@ -269,8 +265,8 @@ if [ ! "${simple}" ] ; then
 fi
 
 defaultHost='${locationData.protocol}//${locationData.hostname}:'
-ls */js/cyph/envdeploy.ts | xargs -I% sed -i 's|isLocalEnv: boolean		= true|isLocalEnv: boolean		= false|g' %
-ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|ws://127.0.1:44000|https://cyphme.firebaseio.com|g" %
+ls shared/js/cyph/envdeploy.ts | xargs -I% sed -i 's|isLocalEnv: boolean		= true|isLocalEnv: boolean		= false|g' %
+ls shared/js/cyph/envdeploy.ts | xargs -I% sed -i "s|ws://127.0.1:44000|https://cyphme.firebaseio.com|g" %
 
 if [ "${branch}" == 'staging' ] ; then
 	sed -i "s|false, /* IsProd */|true,|g" default/config.go
@@ -284,15 +280,15 @@ if [ "${test}" ] ; then
 
 	sed -i "s|staging|${version}|g" default/config.go
 	sed -i "s|http://localhost:42000|https://${version}-dot-cyphme.appspot.com|g" default/config.go
-	ls */*.yaml */js/cyph/envdeploy.ts | xargs -I% sed -i "s|api.cyph.com|${version}-dot-cyphme.appspot.com|g" %
-	ls */*.yaml */js/cyph/envdeploy.ts | xargs -I% sed -i "s|www.cyph.com|${version}-dot-cyph-com-dot-cyphme.appspot.com|g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|${defaultHost}42000|https://${version}-dot-cyphme.appspot.com|g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|${defaultHost}42001|https://${version}-dot-cyph-com-dot-cyphme.appspot.com|g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|${defaultHost}42002|${newCyphURL}|g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|CYPH-IO|https://${version}-dot-cyph-io-dot-cyphme.appspot.com|g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|CYPH-ME|https://${version}-dot-cyph-me-dot-cyphme.appspot.com|g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|CYPH-VIDEO|https://${version}-dot-cyph-video-dot-cyphme.appspot.com|g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|CYPH-AUDIO|https://${version}-dot-cyph-audio-dot-cyphme.appspot.com|g" %
+	ls */*.yaml shared/js/cyph/envdeploy.ts | xargs -I% sed -i "s|api.cyph.com|${version}-dot-cyphme.appspot.com|g" %
+	ls */*.yaml shared/js/cyph/envdeploy.ts | xargs -I% sed -i "s|www.cyph.com|${version}-dot-cyph-com-dot-cyphme.appspot.com|g" %
+	ls shared/js/cyph/envdeploy.ts | xargs -I% sed -i "s|${defaultHost}42000|https://${version}-dot-cyphme.appspot.com|g" %
+	ls shared/js/cyph/envdeploy.ts | xargs -I% sed -i "s|${defaultHost}42001|https://${version}-dot-cyph-com-dot-cyphme.appspot.com|g" %
+	ls shared/js/cyph/envdeploy.ts | xargs -I% sed -i "s|${defaultHost}42002|${newCyphURL}|g" %
+	ls shared/js/cyph/envdeploy.ts | xargs -I% sed -i "s|CYPH-IO|https://${version}-dot-cyph-io-dot-cyphme.appspot.com|g" %
+	ls shared/js/cyph/envdeploy.ts | xargs -I% sed -i "s|CYPH-ME|https://${version}-dot-cyph-me-dot-cyphme.appspot.com|g" %
+	ls shared/js/cyph/envdeploy.ts | xargs -I% sed -i "s|CYPH-VIDEO|https://${version}-dot-cyph-video-dot-cyphme.appspot.com|g" %
+	ls shared/js/cyph/envdeploy.ts | xargs -I% sed -i "s|CYPH-AUDIO|https://${version}-dot-cyph-audio-dot-cyphme.appspot.com|g" %
 
 	homeURL="https://${version}-dot-cyph-com-dot-cyphme.appspot.com"
 
@@ -302,13 +298,13 @@ if [ "${test}" ] ; then
 	fi
 else
 	sed -i "s|http://localhost:42000|https://api.cyph.com|g" default/config.go
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|${defaultHost}42000|https://api.cyph.com|g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|${defaultHost}42001|https://www.cyph.com|g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|${defaultHost}42002|https://cyph.im|g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|CYPH-IO|https://cyph.io|g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|CYPH-ME|https://cyph.me|g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|CYPH-VIDEO|https://cyph.video|g" %
-	ls */js/cyph/envdeploy.ts | xargs -I% sed -i "s|CYPH-AUDIO|https://cyph.audio|g" %
+	ls shared/js/cyph/envdeploy.ts | xargs -I% sed -i "s|${defaultHost}42000|https://api.cyph.com|g" %
+	ls shared/js/cyph/envdeploy.ts | xargs -I% sed -i "s|${defaultHost}42001|https://www.cyph.com|g" %
+	ls shared/js/cyph/envdeploy.ts | xargs -I% sed -i "s|${defaultHost}42002|https://cyph.im|g" %
+	ls shared/js/cyph/envdeploy.ts | xargs -I% sed -i "s|CYPH-IO|https://cyph.io|g" %
+	ls shared/js/cyph/envdeploy.ts | xargs -I% sed -i "s|CYPH-ME|https://cyph.me|g" %
+	ls shared/js/cyph/envdeploy.ts | xargs -I% sed -i "s|CYPH-VIDEO|https://cyph.video|g" %
+	ls shared/js/cyph/envdeploy.ts | xargs -I% sed -i "s|CYPH-AUDIO|https://cyph.audio|g" %
 
 	homeURL="https://www.cyph.com"
 	newCyphURL="https://www.cyph.im"
@@ -346,61 +342,65 @@ fi
 
 
 # Compile + translate + minify
+cd shared
+
+if [ ! "${simple}" ] ; then
+	node -e "fs.writeFileSync(
+		'js/preload/translations.ts',
+		'Translations = ' + JSON.stringify(
+			child_process.spawnSync('find', [
+				'../translations',
+				'-name',
+				'*.json'
+			]).stdout.toString().
+				split('\n').
+				filter(s => s).
+				map(file => ({
+					key: file.split('/').slice(-1)[0].split('.')[0],
+					value: JSON.parse(fs.readFileSync(file).toString())
+				})).
+				reduce((translations, o) => {
+					translations[o.key]	= o.value;
+					return translations;
+				}, {})
+		) + ';'
+	)"
+
+	# Block importScripts in Workers in WebSigned environments
+
+	cat js/cyph/thread.ts | \
+		tr '\n' '☁' | \
+		perl -pe 's/importScripts\s+=.*?;/importScripts = (s: string) => { throw new Error(`Cannot load external script \${s}.`) };/' | \
+		tr '☁' '\n' \
+	> js/cyph/thread.ts.new
+	mv js/cyph/thread.ts.new js/cyph/thread.ts
+fi
+
+../commands/build.sh --prod || exit;
+
+if [ ! "${simple}" ] ; then
+	echo "JS Minify"
+	find js -name '*.js' | xargs -I% uglifyjs '%' \
+		-m \
+		-r importScripts,Cyph,ui,session,locals,threadSetupVars,self,onmessage,postMessage,onthreadmessage,WebSign,Translations,IS_WEB,crypto \
+		-o '%'
+
+	echo "CSS Minify"
+	find css -name '*.css' | grep -v bourbon/ | xargs -I% cleancss -o '%' '%'
+fi
+
+cd ..
+
 for d in $compiledProjects ; do
 	project="$(projectname $d)"
 
-	if [ ! "${simple}" ] ; then
-		node -e "fs.writeFileSync(
-			'$d/js/preload/translations.ts',
-			'Translations = ' + JSON.stringify(
-				child_process.spawnSync('find', [
-					'translations',
-					'-name',
-					'*.json'
-				]).stdout.toString().
-					split('\n').
-					filter(s => s).
-					map(file => ({
-						key: file.split('/')[1].split('.')[0],
-						value: JSON.parse(fs.readFileSync(file).toString())
-					})).
-					reduce((translations, o) => {
-						translations[o.key]	= o.value;
-						return translations;
-					}, {})
-			) + ';'
-		)"
-
-		# Block importScripts in Workers in WebSigned environments
-
-		cat $d/js/cyph/thread.ts | \
-			tr '\n' '☁' | \
-			perl -pe 's/importScripts\s+=.*?;/importScripts = (s: string) => { throw new Error(`Cannot load external script \${s}.`) };/' | \
-			tr '☁' '\n' \
-		> $d/js/cyph/thread.ts.new
-		mv $d/js/cyph/thread.ts.new $d/js/cyph/thread.ts
-	fi
-
-	cd $d
-
-	../commands/build.sh --prod || exit;
+	cp -rf shared/* ${d}/
 
 	if [ ! "${simple}" ] ; then
-		echo "JS Minify ${project}"
-		find js -name '*.js' | xargs -I% uglifyjs '%' \
-			-m \
-			-r importScripts,Cyph,ui,session,locals,threadSetupVars,self,onmessage,postMessage,onthreadmessage,WebSign,Translations,IS_WEB,crypto \
-			-o '%'
-
-		echo "CSS Minify ${project}"
-		find css -name '*.css' | grep -v bourbon/ | xargs -I% cleancss -o '%' '%'
-
 		echo "HTML Minify ${project}"
-		html-minifier --minify-js --minify-css --remove-comments --collapse-whitespace index.html -o index.html.new
-		mv index.html.new index.html
+		html-minifier --minify-js --minify-css --remove-comments --collapse-whitespace ${d}/index.html -o ${d}/index.html.new
+		mv ${d}/index.html.new ${d}/index.html
 	fi
-
-	cd ..
 done
 
 
