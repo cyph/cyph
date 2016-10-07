@@ -25,12 +25,6 @@ fi
 
 gcloud auth login
 
-commit=$test
-if [ "${1}" == '--no-commit' ] ; then
-	commit=''
-	shift
-fi
-
 if [ "${1}" == '--site' ] ; then
 	shift
 	site="${1}"
@@ -54,16 +48,6 @@ fi
 if [ "${simple}" ] ; then
 	websign=''
 	cacheBustedProjects=''
-fi
-
-if [ "${commit}" ] ; then
-	comment="${*}"
-	if [ ! "${comment}" -a ! "${simple}" ] ; then
-		comment=deploy
-	fi
-	if [ "${comment}" ] ; then
-		./commands/commit.sh "${comment}"
-	fi
 fi
 
 rm -rf .build 2> /dev/null
