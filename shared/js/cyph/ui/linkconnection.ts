@@ -35,25 +35,6 @@ export class LinkConnection implements ILinkConnection {
 		}
 	}
 
-	public copyToClipboard = (function() {
-		var _dataString = null;
-		document.addEventListener("copy", function(e){
-			if (_dataString !== null) {
-			try {
-				e.clipboardData.setData("text/plain", _dataString);
-				e.preventDefault();
-			} finally {
-				_dataString = null;
-			}
-			}
-		});
-		return function(data) {
-			_dataString = data;
-			document.execCommand("copy");
-		};
-	})();
-
-
 	public beginWaiting (baseUrl: string, secret: string, isPassive: boolean) : void {
 		this.isWaiting		= true;
 		this.linkConstant	= baseUrl + (baseUrl.indexOf('#') > -1 ? '' : '#') + secret;
@@ -91,7 +72,7 @@ export class LinkConnection implements ILinkConnection {
 			Elements.timer.parent().text(Strings.linkExpiresAt + ' ' + expireTime);
 		}
 		else {
-			Elements.timer[0]['start']();
+			$('timer')[1].start();
 		}
 
 		setTimeout(

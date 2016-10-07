@@ -32,5 +32,4 @@ export interface ILinkConnection {
 	 */
 	stop () : void;
 
-	copyToClipboard ();
 }

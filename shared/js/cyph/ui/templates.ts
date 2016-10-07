@@ -834,13 +834,17 @@ export const Templates	= {
 						<input translate ng-model='$ctrl.self.link' aria-label='Cyph link' />
 					</md-input-container>
 
+
+					<i class='material-icons'
+					onClick='clipboard.copy( $(".connect-link-input input").val() )'
+					>content_copy</i>
+
+
 					<md-button
-						class='copy md-fab'
-						aria-label='Copy'
-						ng-click='$ctrl.self.copyToClipboard(this.textContent)'
-					>
-						<i class='material-icons'>content reload</i>
-					</md-button>
+						class='md-fab'
+						aria-label='Increase Time'
+						ng-click=''
+					></md-button>
 
 					<div class='connect-link-mobile mobile-only'>
 						<a
@@ -880,6 +884,7 @@ export const Templates	= {
 						Link expires in
 					</span>
 					<timer
+						id='expiration-time'
 						class='timer'
 						interval='1000'
 						countdown='$ctrl.self.countdown'
