@@ -307,7 +307,7 @@ if [ ! "${site}" -o "${site}" == cyph.com ] ; then
 	rm -rf cyph.com/blog 2> /dev/null
 	mkdir -p cyph.com/blog
 	cd cyph.com/blog
-	../../commands/wpstatic.sh "${homeURL}/blog" > ../.blog.output
+	../../commands/wpstatic.sh "${homeURL}/blog" > ../.blog.output 2>&1
 	touch ../.blog.done
 fi &
 
