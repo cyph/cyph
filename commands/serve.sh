@@ -66,7 +66,12 @@ mkdir /tmp/cyph2
 appserver --port 5002 --admin_port 6002 --host 0.0.0.0 --storage_path /tmp/cyph2 cyph.im/cyph-im.yaml
 
 if [ "${prodlike}" ] ; then
-	./commands/build.sh --prod
+	./commands/build.sh
+
+	if (( $? )) ; then
+		echo -e '\n\nBuild failed\n'
+		exit 1
+	fi
 
 	cd shared
 	find js -name '*.js' | xargs -I% ../commands/websign/threadpack.js %

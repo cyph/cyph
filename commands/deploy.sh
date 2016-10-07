@@ -360,7 +360,7 @@ if [ ! "${simple}" ] ; then
 	mv js/cyph/thread.ts.new js/cyph/thread.ts
 fi
 
-../commands/build.sh --prod || exit;
+../commands/build.sh || exit;
 
 if [ ! "${simple}" ] ; then
 	echo 'JS Minify'
@@ -375,6 +375,14 @@ for d in $compiledProjects ; do
 	project="$(projectname $d)"
 
 	cp -rf shared/* ${d}/
+
+	{ \
+		find ${d}/css -name '*.scss' & \
+		find ${d}/css -name '*.map' & \
+		find ${d}/js -name '*.ts' & \
+		find ${d}/js -name '*.ts.js' & \
+		find ${d}/js -name '*.map'; \
+	} | xargs -I% rm %
 
 	if [ ! "${simple}" ] ; then
 		echo "HTML Minify ${project}"
@@ -559,7 +567,7 @@ if [ "${websign}" ] ; then
 
 	mkdir -p pkg/cyph.ws-subresources 2> /dev/null
 	cd pkg/cyph.ws-subresources
-	git clone git@github.com:cyph/custom-builds.git
+	git clone --depth 1 git@github.com:cyph/custom-builds.git
 	rm -rf custom-builds/.git custom-builds/reference.json
 	for d in $(find custom-builds -mindepth 1 -maxdepth 1 -type d) ; do
 		customBuildBase="$(echo "${d}" | perl -pe 's/.*\/(.*)$/\1/')"
