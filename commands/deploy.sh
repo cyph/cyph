@@ -96,7 +96,7 @@ if [ "${simple}" ] ; then
 fi
 
 # Secret credentials
-echo -n "$(cat ~/.cyph/default.vars)" >> default/app.yaml
+cat ~/.cyph/default.vars >> default/app.yaml
 echo -n "$(cat ~/.cyph/test.vars)" >> test/test.yaml
 cp ~/.cyph/*.mmdb default/
 if [ "${branch}" == 'staging' ] ; then
