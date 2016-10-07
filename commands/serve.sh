@@ -4,6 +4,20 @@ dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd)/..
 
 
+prodlike=''
+if [ "${1}" == '--prodlike' ] ; then
+	prodlike=true
+	shift
+fi
+
+if [ "${prodlike}" ] ; then
+	rm -rf .build 2> /dev/null
+	mkdir .build
+	cp -rf * .build/
+	cd .build
+fi
+
+
 appserver () {
 	sudo /google-cloud-sdk/bin/dev_appserver.py $* > /dev/null 2>&1 &
 }
@@ -51,6 +65,13 @@ appserver --port 5001 --admin_port 6001 --host 0.0.0.0 --storage_path /tmp/cyph1
 mkdir /tmp/cyph2
 appserver --port 5002 --admin_port 6002 --host 0.0.0.0 --storage_path /tmp/cyph2 cyph.im/cyph-im.yaml
 
-./commands/build.sh --watch
+if [ "${prodlike}" ] ; then
+	./commands/build.sh --prod
+	find shared/js -name '*.js' | xargs -I% ./commands/websign/threadpack.js %
+	ls */index.html | xargs -I% ./commands/websign/pack.js % %
+	sleep infinity
+else
+	./commands/build.sh --watch
+fi
 
 trap 'jobs -p | xargs kill' EXIT
