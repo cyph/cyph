@@ -8,8 +8,17 @@ echo -e '\n\nGenerating static blog\n'
 
 ssh -i ~/.ssh/id_rsa_docker -f -N -L 43000:localhost:43000 wordpress.internal.cyph.com > /dev/null 2>&1
 
-downloadURL="$(node -e "
+downloadURL="$(node -e "const script = () => {
 	const browser	= new (require('zombie'));
+
+	let timedOut	= false;
+	const timeout	= () => {
+		if (!timedOut) {
+			timedOut	= true;
+			script();
+		}
+	};
+	setTimeout(timeout, 300000);
 
 	new Promise(resolve => browser.visit(
 		'http://localhost:43000/wp-admin/admin.php?page=simply-static_settings',
@@ -35,6 +44,9 @@ downloadURL="$(node -e "
 				console.log(a.href);
 				process.exit();
 			}
+			else if (timedOut) {
+				return;
+			}
 
 			try {
 				browser.pressButton('Resume', tryDownload);
@@ -45,8 +57,8 @@ downloadURL="$(node -e "
 		}, 5000);
 
 		tryDownload();
-	});
-" | tail -n1)"
+	}).catch(timeout);
+}; script();" | tail -n1)"
 
 wget --tries=50 "${downloadURL}" -O wpstatic.zip
 unzip wpstatic.zip
