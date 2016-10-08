@@ -169,8 +169,8 @@ Promise.resolve().then(() => {
 		args.enableMinify ?
 			htmlMinifier.minify(output, {
 				collapseWhitespace: true,
-				minifyCSS: true,
-				minifyJS: true,
+				minifyCSS: false,
+				minifyJS: false,
 				removeComments: true
 			}) :
 			output
