@@ -5,6 +5,7 @@ cd $(cd "$(dirname "$0")"; pwd)/..
 
 cacheBustedProjects='cyph.com'
 compiledProjects='cyph.com cyph.im'
+prodOnlyProjects='test nakedredirect'
 shortlinkProjects='io me video audio'
 site=''
 test=true
@@ -86,6 +87,10 @@ if [ "${branch}" == 'staging' ] ; then
 	cat ~/.cyph/braintree.prod >> default/app.yaml
 else
 	cat ~/.cyph/braintree.sandbox >> default/app.yaml
+fi
+
+if [ "${test}" ] ; then
+	rm -rf $prodOnlyProjects
 fi
 
 projectname () {
