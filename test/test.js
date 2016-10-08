@@ -68,7 +68,22 @@ const driverScript	= (driver, f) => driverPromise(() =>
 
 const driverSetURL	= (driver, url) => driverPromise(() =>
 	driver.get(url)
-);
+).then(() => driverScript(
+	driver,
+	function () {
+		self.onerror	= function (err) {
+			if (err === 'Script error.') {
+				return;
+			}
+
+			document.body.innerHTML	=
+				'<pre style="font-size: 24px; white-space: pre-wrap;">' +
+					JSON.stringify(arguments, null, '\t') +
+				'</pre>'
+			;
+		};
+	}
+));
 
 const driverWait	= (driver, until, timeout) => driverPromise(() =>
 	driver.wait(until, timeout)
