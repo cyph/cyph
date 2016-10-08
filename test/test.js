@@ -50,11 +50,22 @@ const getDriver		= o => new webdriver.Builder().
 const homeTest		= o => {
 	const driver	= getDriver(o);
 
-	new Promise.resolve().then(() => {
-		driver.get(process.env.HOME_URL);
+	return Promise.resolve().then(() => {
+		driver.get(o.homeURL);
 
 		return driver.wait(
-			webdriver.until.elementLocated(webdriver.By.id('new-cyph')),
+			webdriver.until.elementLocated(webdriver.By.js(function () {
+				return self.$ && $('#new-cyph:visible')[0];
+			})),
+			15000
+		);
+	}).then(() => {
+		driver.get(`${o.homeURL}/blog`);
+
+		return driver.wait(
+			webdriver.until.elementLocated(webdriver.By.js(function () {
+				return document.getElementsByClassName('postlist')[0];
+			})),
 			15000
 		);
 	}).then(() =>
@@ -68,28 +79,30 @@ const homeTest		= o => {
 const newCyphTest	= o => {
 	const driver	= getDriver(o);
 
-	new Promise.resolve().then(() => {
-		driver.get(`${process.env.NEW_CYPH_URL}/#${o.secret}`);
+	return Promise.resolve().then(() => {
+		driver.get(`${o.newCyphURL}/#${o.secret}`);
 
 		return driver.wait(
-			webdriver.until.elementLocated(webdriver.By.js(() =>
-				$('.message-box:visible')[0]
-			)),
-			45000
+			webdriver.until.elementLocated(webdriver.By.js(function () {
+				return self.$ && $('.message-box:visible')[0];
+			})),
+			300000
 		);
 	}).then(results => {
-		driver.executeScript(() => ui.chat.send('balls'));
+		driver.executeScript(function () { ui.chat.send('balls') });
 
 		return driver.wait(
-			webdriver.until.elementLocated(webdriver.By.js(() =>
-				$('.message-item:visible').toArray().filter(function (elem) {
-					return $(elem).text().
-						replace(/\s+/g, '').
-						indexOf('friend:balls') > -1
-					;
-				})[0]
-			)),
-			5000
+			webdriver.until.elementLocated(webdriver.By.js(function () {
+				return self.$ && $('.message-item:visible').toArray().
+					filter(function (elem) {
+						return $(elem).text().
+							replace(/\s+/g, '').
+							indexOf('friend:balls') > -1
+						;
+					})[0]
+				;
+			})),
+			15000
 		);
 	}).then(() =>
 		driver.quit()
@@ -100,13 +113,28 @@ const newCyphTest	= o => {
 };
 
 
-http.createServer((request, response) => {
+const server	= http.createServer((req, res) => Promise.resolve().then(() => {
+	const urlSplit		= req.url.split('/');
+
+	if (urlSplit[1] === '_ah') {
+		return 200;
+	}
+
+	if (urlSplit.length !== 3) {
+		return 404;
+	}
+
+	const homeURL		= `https://${urlSplit[1]}`;
+	const newCyphURL	= `https://${urlSplit[2]}`;
+
 	const testCases	= browsers.sort(() =>
 		crypto.randomBytes(1)[0] > 127
 	).map(browser => {
 		const o	= {
 			'browserstack.user': process.env.BS_USER,
-			'browserstack.key': process.env.BS_KEY
+			'browserstack.key': process.env.BS_KEY,
+			homeURL,
+			newCyphURL
 		};
 
 		for (let k of Object.keys(browser)) {
@@ -145,10 +173,17 @@ http.createServer((request, response) => {
 		Promise.resolve()
 	).then(() =>
 		200
-	).catch(() =>
-		418
-	).then(statusCode => {
-		response.statusCode	= statusCode;
-		response.end();
+	).catch(err => {
+		console.log(err);
+		return 418;
 	});
-}).listen(process.env.PORT);
+}).catch(err => {
+	console.log(err);
+	return 500;
+}).then(statusCode => {
+	res.statusCode	= statusCode;
+	res.end();
+}));
+
+server.timeout	= 0;
+server.listen(process.env.PORT);
