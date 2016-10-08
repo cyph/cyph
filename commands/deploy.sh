@@ -397,7 +397,7 @@ if [ "${waitingForBlog}" ] ; then
 	while true ; do
 		cat cyph.com/.blog.output
 		echo -n > cyph.com/.blog.output
-		if [ ! -f cyph.com/.blog.done ] ; then
+		if [ -f cyph.com/.blog.done ] ; then
 			break
 		fi
 		sleep 5
