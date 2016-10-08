@@ -65,6 +65,9 @@ if [ "${branch}" == 'prod' ] ; then
 	if [ "${test}" -a ! "$simple" ] ; then
 		staging=true
 	fi
+elif [ ! "${test}" ] ; then
+	echo 'Cannot do prod deploy from test branch'
+	exit 1
 fi
 version="$branch"
 username="$(git config --get remote.origin.url | perl -pe 's/.*:(.*)\/.*/\1/' | tr '[:upper:]' '[:lower:]')"
