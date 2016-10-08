@@ -116,6 +116,10 @@ const newCyphTest	= o => {
 const server	= http.createServer((req, res) => Promise.resolve().then(() => {
 	const urlSplit		= req.url.split('/');
 
+	if (urlSplit[1] === '_ah') {
+		return 200;
+	}
+
 	if (urlSplit.length !== 3) {
 		return 404;
 	}
