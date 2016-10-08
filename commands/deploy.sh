@@ -5,6 +5,7 @@ cd $(cd "$(dirname "$0")"; pwd)/..
 
 cacheBustedProjects='cyph.com'
 compiledProjects='cyph.com cyph.im'
+prodOnlyProjects='test nakedredirect'
 shortlinkProjects='io me video audio'
 site=''
 test=true
@@ -65,6 +66,9 @@ if [ "${branch}" == 'prod' ] ; then
 	if [ "${test}" -a ! "$simple" ] ; then
 		staging=true
 	fi
+elif [ ! "${test}" ] ; then
+	echo 'Cannot do prod deploy from test branch'
+	exit 1
 fi
 version="$branch"
 username="$(git config --get remote.origin.url | perl -pe 's/.*:(.*)\/.*/\1/' | tr '[:upper:]' '[:lower:]')"
@@ -83,6 +87,10 @@ if [ "${branch}" == 'staging' ] ; then
 	cat ~/.cyph/braintree.prod >> default/app.yaml
 else
 	cat ~/.cyph/braintree.sandbox >> default/app.yaml
+fi
+
+if [ "${test}" ] ; then
+	rm -rf $prodOnlyProjects
 fi
 
 projectname () {
@@ -321,50 +329,52 @@ fi
 
 
 # Compile + translate + minify
-cd shared
+if [ "${compiledProjects}" ] ; then
+	cd shared
 
-if [ ! "${simple}" ] ; then
-	node -e "fs.writeFileSync(
-		'js/preload/translations.ts',
-		'Translations = ' + JSON.stringify(
-			child_process.spawnSync('find', [
-				'../translations',
-				'-name',
-				'*.json'
-			]).stdout.toString().
-				split('\n').
-				filter(s => s).
-				map(file => ({
-					key: file.split('/').slice(-1)[0].split('.')[0],
-					value: JSON.parse(fs.readFileSync(file).toString())
-				})).
-				reduce((translations, o) => {
-					translations[o.key]	= o.value;
-					return translations;
-				}, {})
-		) + ';'
-	)"
+	if [ ! "${simple}" ] ; then
+		node -e "fs.writeFileSync(
+			'js/preload/translations.ts',
+			'Translations = ' + JSON.stringify(
+				child_process.spawnSync('find', [
+					'../translations',
+					'-name',
+					'*.json'
+				]).stdout.toString().
+					split('\n').
+					filter(s => s).
+					map(file => ({
+						key: file.split('/').slice(-1)[0].split('.')[0],
+						value: JSON.parse(fs.readFileSync(file).toString())
+					})).
+					reduce((translations, o) => {
+						translations[o.key]	= o.value;
+						return translations;
+					}, {})
+			) + ';'
+		)"
 
-	# Block importScripts in Workers in WebSigned environments
+		# Block importScripts in Workers in WebSigned environments
 
-	cat js/cyph/thread.ts | \
-		tr '\n' '☁' | \
-		perl -pe 's/importScripts\s+=.*?;/importScripts = (s: string) => { throw new Error(`Cannot load external script \${s}.`) };/' | \
-		tr '☁' '\n' \
-	> js/cyph/thread.ts.new
-	mv js/cyph/thread.ts.new js/cyph/thread.ts
+		cat js/cyph/thread.ts | \
+			tr '\n' '☁' | \
+			perl -pe 's/importScripts\s+=.*?;/importScripts = (s: string) => { throw new Error(`Cannot load external script \${s}.`) };/' | \
+			tr '☁' '\n' \
+		> js/cyph/thread.ts.new
+		mv js/cyph/thread.ts.new js/cyph/thread.ts
+	fi
+
+	../commands/build.sh || exit;
+
+	if [ ! "${simple}" ] ; then
+		echo 'JS Minify'
+		find js -name '*.js' | xargs -I% uglifyjs '%' -o '%'
+		echo 'CSS Minify'
+		find css -name '*.css' | grep -v bourbon/ | xargs -I% cleancss -o '%' '%'
+	fi
+
+	cd ..
 fi
-
-../commands/build.sh || exit;
-
-if [ ! "${simple}" ] ; then
-	echo 'JS Minify'
-	find js -name '*.js' | xargs -I% uglifyjs '%' -o '%'
-	echo 'CSS Minify'
-	find css -name '*.css' | grep -v bourbon/ | xargs -I% cleancss -o '%' '%'
-fi
-
-cd ..
 
 for d in $compiledProjects ; do
 	project="$(projectname $d)"
