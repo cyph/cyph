@@ -77,7 +77,7 @@ fi
 
 # Secret credentials
 cat ~/.cyph/default.vars >> default/app.yaml
-echo -n "$(cat ~/.cyph/test.vars)" >> test/test.yaml
+cat ~/.cyph/test.vars >> test/test.yaml
 cp ~/.cyph/*.mmdb default/
 if [ "${branch}" == 'staging' ] ; then
 	cat ~/.cyph/braintree.prod >> default/app.yaml
@@ -290,16 +290,10 @@ else
 	ls shared/js/cyph/envdeploy.ts | xargs -I% sed -i "s|CYPH-VIDEO|https://cyph.video|g" %
 	ls shared/js/cyph/envdeploy.ts | xargs -I% sed -i "s|CYPH-AUDIO|https://cyph.audio|g" %
 
-	homeURL="https://www.cyph.com"
-	newCyphURL="https://www.cyph.im"
+	homeURL='https://www.cyph.com'
 
 	version=prod
 fi
-
-echo "
-  HOME_URL: '${homeURL}'
-  NEW_CYPH_URL: '${newCyphURL}'
-" >> test/test.yaml
 
 
 waitingForBlog=''

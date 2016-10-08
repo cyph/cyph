@@ -51,7 +51,7 @@ const homeTest		= o => {
 	const driver	= getDriver(o);
 
 	new Promise.resolve().then(() => {
-		driver.get(process.env.HOME_URL);
+		driver.get(o.homeUrl);
 
 		return driver.wait(
 			webdriver.until.elementLocated(webdriver.By.id('new-cyph')),
@@ -69,7 +69,7 @@ const newCyphTest	= o => {
 	const driver	= getDriver(o);
 
 	new Promise.resolve().then(() => {
-		driver.get(`${process.env.NEW_CYPH_URL}/#${o.secret}`);
+		driver.get(`${o.newCyphUrl}/#${o.secret}`);
 
 		return driver.wait(
 			webdriver.until.elementLocated(webdriver.By.js(() =>
@@ -100,13 +100,19 @@ const newCyphTest	= o => {
 };
 
 
-http.createServer((request, response) => {
+http.createServer((req, res) => {
+	const urlSplit		= req.url.split('/');
+	const homeUrl		= `https://urlSplit[0]`;
+	const newCyphUrl	= `https://urlSplit[1]`;
+
 	const testCases	= browsers.sort(() =>
 		crypto.randomBytes(1)[0] > 127
 	).map(browser => {
 		const o	= {
 			'browserstack.user': process.env.BS_USER,
-			'browserstack.key': process.env.BS_KEY
+			'browserstack.key': process.env.BS_KEY,
+			homeUrl,
+			newCyphUrl
 		};
 
 		for (let k of Object.keys(browser)) {
@@ -148,7 +154,7 @@ http.createServer((request, response) => {
 	).catch(() =>
 		418
 	).then(statusCode => {
-		response.statusCode	= statusCode;
-		response.end();
+		res.statusCode	= statusCode;
+		res.end();
 	});
 }).listen(process.env.PORT);
