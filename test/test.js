@@ -8,25 +8,25 @@ const browsers	= [
 		browserName: 'Chrome',
 		os: 'OS X',
 		os_version: 'El Capitan',
-		resolution: '1024x768'
+		resolution: '1920x1080'
 	},
 	{
 		browserName: 'Chrome',
 		os: 'Windows',
-		os_version: '7',
-		resolution: '2048x1536'
+		os_version: 'XP',
+		resolution: '1024x768'
+	},
+	{
+		browserName: 'Firefox',
+		os: 'OS X',
+		os_version: 'Yosemite',
+		resolution: '1280x960'
 	},
 	{
 		browserName: 'Firefox',
 		os: 'Windows',
 		os_version: '10',
-		resolution: '1920x1080'
-	},
-	{
-		browserName: 'Safari',
-		os: 'OS X',
-		os_version: 'El Capitan',
-		resolution: '1280x1024'
+		resolution: '2048x1536'
 	},
 	{
 		browserName: 'iPhone',
@@ -34,15 +34,48 @@ const browsers	= [
 		device: 'iPhone 6S Plus'
 	},
 	{
-		browserName: 'android',
-		platform: 'ANDROID',
-		device: 'Samsung Galaxy S5'
+		browserName: 'iPad',
+		platform: 'MAC',
+		device: 'iPad Air'
 	}
 ];
 
+let testLock		= true;
+const testResults	= {};
+const testTimes		= {};
+
+
+const driverPromise	= f => new Promise((resolve, reject) => {
+	try {
+		f().then(resolve).catch(err => {
+			console.error(err);
+			reject(err);
+		});
+	}
+	catch (err) {
+		console.error(err);
+		reject(err);
+	}
+});
+
+const driverQuit	= driver => driverPromise(() =>
+	driver.quit()
+);
+
+const driverScript	= (driver, f) => driverPromise(() =>
+	driver.executeScript(f)
+);
+
+const driverSetURL	= (driver, url) => driverPromise(() =>
+	driver.get(url)
+);
+
+const driverWait	= (driver, until, timeout) => driverPromise(() =>
+	driver.wait(until, timeout)
+);
 
 const getDriver		= o => new webdriver.Builder().
-	usingServer('http://hub-cloud.browserstack.com/wd/hub').
+	usingServer('https://hub-cloud.browserstack.com/wd/hub').
 	withCapabilities(o).
 	build()
 ;
@@ -50,28 +83,28 @@ const getDriver		= o => new webdriver.Builder().
 const homeTest		= o => {
 	const driver	= getDriver(o);
 
-	return Promise.resolve().then(() => {
-		driver.get(o.homeURL);
-
-		return driver.wait(
+	return driverSetURL(driver, o.homeURL).then(() =>
+		driverWait(
+			driver,
 			webdriver.until.elementLocated(webdriver.By.js(function () {
 				return self.$ && $('#new-cyph:visible')[0];
 			})),
 			15000
-		);
-	}).then(() => {
-		driver.get(`${o.homeURL}/blog`);
-
-		return driver.wait(
+		)
+	).then(() =>
+		driverSetURL(driver, `${o.homeURL}/blog`)
+	).then(() =>
+		driverWait(
+			driver,
 			webdriver.until.elementLocated(webdriver.By.js(function () {
 				return document.getElementsByClassName('postlist')[0];
 			})),
 			15000
-		);
-	}).then(() =>
-		driver.quit()
+		)
+	).then(() =>
+		driverQuit(driver)
 	).catch(err => {
-		driver.quit();
+		driverQuit(driver);
 		throw err;
 	});
 };
@@ -79,19 +112,19 @@ const homeTest		= o => {
 const newCyphTest	= o => {
 	const driver	= getDriver(o);
 
-	return Promise.resolve().then(() => {
-		driver.get(`${o.newCyphURL}/#${o.secret}`);
-
-		return driver.wait(
+	return driverSetURL(driver, `${o.newCyphURL}/#${o.secret}`).then(() =>
+		driverWait(
+			driver,
 			webdriver.until.elementLocated(webdriver.By.js(function () {
 				return self.$ && $('.message-box:visible')[0];
 			})),
 			300000
-		);
-	}).then(results => {
-		driver.executeScript(function () { ui.chat.send('balls') });
-
-		return driver.wait(
+		)
+	).then(() =>
+		driverScript(driver, function () { ui.chat.send('balls') })
+	).then(() =>
+		driverWait(
+			driver,
 			webdriver.until.elementLocated(webdriver.By.js(function () {
 				return self.$ && $('.message-item:visible').toArray().
 					filter(function (elem) {
@@ -103,29 +136,29 @@ const newCyphTest	= o => {
 				;
 			})),
 			15000
-		);
-	}).then(() =>
-		driver.quit()
+		)
+	).then(() =>
+		driverQuit(driver)
 	).catch(err => {
-		driver.quit();
+		driverQuit(driver);
 		throw err;
 	});
 };
 
-
-const server	= http.createServer((req, res) => Promise.resolve().then(() => {
-	const urlSplit		= req.url.split('/');
-
-	if (urlSplit[1] === '_ah') {
-		return 200;
+const runTests	= (homeURL, newCyphURL) => Promise.resolve().then(() => {
+	/* Never run test suites concurrently, and never run the same
+		test suite more frequently than once every three hours */
+	if (
+		testLock ||
+		(
+			!isNaN(testTimes[homeURL + newCyphURL]) &&
+			Date.now() - testTimes[homeURL + newCyphURL] < 10800000
+		)
+	) {
+		return;
 	}
 
-	if (urlSplit.length !== 3) {
-		return 404;
-	}
-
-	const homeURL		= `https://${urlSplit[1]}`;
-	const newCyphURL	= `https://${urlSplit[2]}`;
+	testLock	= true;
 
 	const testCases	= browsers.sort(() =>
 		crypto.randomBytes(1)[0] > 127
@@ -174,16 +207,59 @@ const server	= http.createServer((req, res) => Promise.resolve().then(() => {
 	).then(() =>
 		200
 	).catch(err => {
-		console.log(err);
+		console.error(err);
 		return 418;
 	});
 }).catch(err => {
-	console.log(err);
+	console.error(err);
+	return 500;
+}).then(statusCode => {
+	if (!statusCode) {
+		return;
+	}
+
+	testResults[homeURL + newCyphURL]	= statusCode;
+	testTimes[homeURL + newCyphURL]		= Date.now();
+
+	testLock	= false;
+});
+
+
+http.createServer((req, res) => Promise.resolve().then(() => {
+	const urlSplit		= req.url.split('/');
+
+	if (urlSplit[1] === '_ah') {
+		return 200;
+	}
+	else if (req.headers.authorization !== process.env.AUTH) {
+		return 403;
+	}
+	else if (urlSplit.length !== 3) {
+		return 404;
+	}
+
+	const homeURL		= `https://${urlSplit[1]}`;
+	const newCyphURL	= `https://${urlSplit[2]}`;
+
+	setImmediate(() => {
+		try {
+			runTests(homeURL, newCyphURL);
+		}
+		catch (err) {
+			console.error(err);
+		}
+	});
+
+	return testResults[homeURL + newCyphURL] || 200;
+}).catch(err => {
+	console.error(err);
 	return 500;
 }).then(statusCode => {
 	res.statusCode	= statusCode;
 	res.end();
-}));
+})).listen(process.env.PORT);
 
-server.timeout	= 0;
-server.listen(process.env.PORT);
+
+setTimeout(() => {
+	testLock	= false;
+}, 300000);
