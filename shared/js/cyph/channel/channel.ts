@@ -50,11 +50,18 @@ export class Channel implements IChannel {
 		this.messagesRef	= this.channelRef.child('messages');
 		this.usersRef		= this.channelRef.child('users');
 
-		this.isAlice		= !(await this.usersRef.once('value')).hasChildren();
-		this.userId			= Util.generateGuid();
+		const userRef		= await this.usersRef.push('');
+		this.userId			= userRef.key;
+
+		userRef.set(this.userId);
+
+		this.isAlice		=
+			Object.keys(
+				(await this.usersRef.once('value')).val()
+			).sort()[0] === this.userId
+		;
 
 		this.channelRef.onDisconnect().remove();
-		this.usersRef.child(this.userId).set(this.userId);
 
 		if (handlers.onopen) {
 			handlers.onopen(this.isAlice);
@@ -63,7 +70,7 @@ export class Channel implements IChannel {
 		if (handlers.onconnect) {
 			if (this.isAlice) {
 				this.usersRef.on('child_added', snapshot => {
-					if (!this.isConnected && snapshot.val() !== this.userId) {
+					if (!this.isConnected && snapshot.key !== this.userId) {
 						this.isConnected	= true;
 						handlers.onconnect();
 					}
