@@ -68,7 +68,22 @@ const driverScript	= (driver, f) => driverPromise(() =>
 
 const driverSetURL	= (driver, url) => driverPromise(() =>
 	driver.get(url)
-);
+).then(() => driverScript(
+	driver,
+	function () {
+		self.onerror	= function (err) {
+			if (err === 'Script error.') {
+				return;
+			}
+
+			document.body.innerHTML	=
+				'<pre style="font-size: 24px; white-space: pre-wrap;">' +
+					JSON.stringify(arguments, null, '\t') +
+				'</pre>'
+			;
+		};
+	}
+));
 
 const driverWait	= (driver, until, timeout) => driverPromise(() =>
 	driver.wait(until, timeout)
@@ -137,7 +152,9 @@ const newCyphTest	= o => {
 			})),
 			15000
 		)
-	).then(() =>
+	).then(() => new Promise(resolve =>
+		setTimeout(resolve, 5000)
+	)).then(() =>
 		driverQuit(driver)
 	).catch(err => {
 		driverQuit(driver);
