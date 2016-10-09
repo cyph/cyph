@@ -152,7 +152,9 @@ const newCyphTest	= o => {
 			})),
 			15000
 		)
-	).then(() =>
+	).then(() => new Promise(resolve =>
+		setTimeout(resolve, 5000)
+	)).then(() =>
 		driverQuit(driver)
 	).catch(err => {
 		driverQuit(driver);
