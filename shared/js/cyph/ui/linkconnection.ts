@@ -60,18 +60,7 @@ export class LinkConnection implements ILinkConnection {
 			}, 250);
 		}
 
-		if (Env.isIE) {
-			const expireTime: string	= new Date(Util.timestamp() + this.countdown * 1000)
-				.toLocaleTimeString()
-				.toLowerCase()
-				.replace(/(.*:.*):.*? /, '$1')
-			;
-
-			Elements.timer.parent().text(Strings.linkExpiresAt + ' ' + expireTime);
-		}
-		else {
-			Elements.timer[0]['start']();
-		}
+		Elements.timer[0]['start']();
 
 		setTimeout(
 			() => {

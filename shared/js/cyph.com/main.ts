@@ -2,6 +2,7 @@
  * @file Entry point of cyph.com.
  */
 
+/// <reference path="../preload/unsupportedbrowsers.ts" />
 /// <reference path="../preload/fakecrypto.ts" />
 /// <reference path="../preload/jquery.ts" />
 
@@ -11,11 +12,6 @@ import {HomeSections, PageTitles, Promos, States} from './enums';
 import {UI} from './ui';
 import {Loaded} from '../preload';
 import * as Cyph from '../cyph';
-
-
-if (Cyph.Env.isIE) {
-	location.pathname	= '/unsupportedbrowser';
-}
 
 
 Cyph.UI.Elements.html.attr('ng-controller', Cyph.Config.angularConfig.rootController);
