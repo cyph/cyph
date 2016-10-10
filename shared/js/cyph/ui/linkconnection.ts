@@ -6,6 +6,7 @@ import {IController} from '../icontroller';
 import {Strings} from '../strings';
 import {Util} from '../util';
 import * as Chat from './chat';
+import {IDialogManager} from './IDialogManager';
 
 
 export class LinkConnection implements ILinkConnection {
@@ -37,14 +38,7 @@ export class LinkConnection implements ILinkConnection {
 
 	public copyLink () : void {
 		clipboard.copy($(".connect-link-input input").val()).then(
-			function(){
-				console.log("success");
-				//TO-DO: add toast message
-			},
-			function(err){
-				console.log("failure", err);
-				//TO-DO: add toast message
-			;}
+			this.dialogManager.toast({content: Strings.linkCopied, delay: 2000})
 		);
 	}
 
@@ -116,6 +110,7 @@ export class LinkConnection implements ILinkConnection {
 	public constructor (
 		public countdown: number,
 		private controller: IController,
-		private chat: IChat
+		private chat: IChat,
+		private dialogManager: IDialogManager
 	) {}
 }

@@ -27,6 +27,7 @@ export const Strings = {
 	friend: `friend`,
 	incomingFile: `Incoming File:`,
 	introductoryMessage: `You may now speak.`,
+	linkCopied: `Cyph link copied.`,
 	linkExpiresAt: `Link expires at`,
 	me: `me`,
 	newMessageNotification: `New message!`,
