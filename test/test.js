@@ -104,7 +104,7 @@ const homeTest		= o => {
 			webdriver.until.elementLocated(webdriver.By.js(function () {
 				return self.$ && $('#new-cyph:visible')[0];
 			})),
-			15000
+			30000
 		)
 	).then(() =>
 		driverSetURL(driver, `${o.homeURL}/blog`)
@@ -114,7 +114,7 @@ const homeTest		= o => {
 			webdriver.until.elementLocated(webdriver.By.js(function () {
 				return document.getElementsByClassName('postlist')[0];
 			})),
-			15000
+			30000
 		)
 	).then(() =>
 		driverQuit(driver)
@@ -133,7 +133,7 @@ const newCyphTest	= o => {
 			webdriver.until.elementLocated(webdriver.By.js(function () {
 				return self.$ && $('.message-box:visible')[0];
 			})),
-			300000
+			150000
 		)
 	).then(() =>
 		driverScript(driver, function () { ui.chat.send('balls') })
@@ -150,10 +150,10 @@ const newCyphTest	= o => {
 					})[0]
 				;
 			})),
-			15000
+			30000
 		)
 	).then(() => new Promise(resolve =>
-		setTimeout(resolve, 5000)
+		setTimeout(resolve, 30000)
 	)).then(() =>
 		driverQuit(driver)
 	).catch(err => {
