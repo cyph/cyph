@@ -250,8 +250,15 @@ export class Chat extends BaseButtonManager implements IChat {
 
 	public setFirstMessage () : void {
 		this.firstMessage = $('.message-box.first textarea').val();
-		console.log('firstMessage set to: '+ this.firstMessage);
+		this.dialogManager.toast({content: Strings.firstMessageSaved, delay: 2500});
 	}
+
+	/* TODO: Fix self destruct toast
+	public toggleSelfDestruct () : void {
+		console.log('balls');
+		this.selfDestruct = !this.selfDestruct;
+		this.dialogManager.toast({content: "balls", delay: 2500})
+	}*/
 
 	/**
 	 * @param controller
