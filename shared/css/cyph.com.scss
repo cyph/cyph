@@ -701,6 +701,7 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 					.logo, .buttons, .sidebar, ~ .message-list, ~ .video-call-message-box {
 						@include transform(translateX(-20vw));
 					}
+
 					.me {
 						@include transform(translateX(-20vw) scaleX(-1) !important);
 					}
@@ -751,6 +752,7 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 					.logo, .buttons, .sidebar, ~ .message-list, ~ .video-call-message-box {
 						@include transform(translateX(calc(150px - 30vw)));
 					}
+
 					.me {
 						@include transform(translateX(calc(150px - 30vw)) scaleX(-1) !important);
 					}
