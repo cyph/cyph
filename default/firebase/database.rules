@@ -35,7 +35,10 @@
 				"users": {
 					"$user": {
 						".write": "!data.exists() && newData.exists()",
-						".validate": "newData.isString() && newData.val() == $user"
+						".validate": "
+							newData.isString() &&
+							(newData.val() == '' || newData.val() == $user)
+						"
 					}
 				}
 			}
