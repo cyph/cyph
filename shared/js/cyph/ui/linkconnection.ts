@@ -17,6 +17,8 @@ export class LinkConnection implements ILinkConnection {
 	public link: string;
 	public linkEncoded: string;
 
+	public advancedFeatures: boolean;
+
 	private selectLink () : void {
 		Util.getValue(
 			Elements.connectLinkInput[0],

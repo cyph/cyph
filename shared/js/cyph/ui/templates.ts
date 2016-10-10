@@ -897,7 +897,10 @@ export const Templates	= {
 					</md-button>
 				</div>
 			</div>
-			<div id='advanced-features'>
+
+			<md-switch class='advanced-features' ng-model="$ctrl.self.advancedFeatures" aria-label="Advanced Features">Advanced Features</md-switch>
+
+			<div id='advanced-features' ng-show='$ctrl.self.advancedFeatures'>
 				<md-input-container class='message-box first'>
 					<label>Queue up first message</label>
 					<textarea rows='3'></textarea>
