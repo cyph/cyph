@@ -15,11 +15,6 @@ import {Loaded} from '../preload';
 import * as Cyph from '../cyph';
 
 
-if (Cyph.Env.isEdge) {
-	location.pathname	= '/unsupportedbrowser';
-}
-
-
 Cyph.UI.Elements.html.attr('ng-controller', Cyph.Config.angularConfig.rootController);
 
 angular.

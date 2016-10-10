@@ -29,6 +29,18 @@ const browsers	= [
 		resolution: '2048x1536'
 	},
 	{
+		browserName: 'Firefox',
+		os: 'Windows',
+		os_version: 'XP',
+		resolution: '1024x768'
+	},
+	{
+		browserName: 'Edge',
+		os: 'Windows',
+		os_version: '10',
+		resolution: '2048x1536'
+	},
+	{
 		browserName: 'iPhone',
 		platform: 'MAC',
 		device: 'iPhone 6S Plus'
