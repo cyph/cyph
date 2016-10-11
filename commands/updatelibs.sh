@@ -9,6 +9,8 @@ rm -rf shared/lib
 mkdir -p shared/lib/js/crypto
 cd shared/lib/js
 
+ln -s . node_modules
+
 echo "sodium = (function () {
 	$( \
 		curl -s https://raw.githubusercontent.com/jedisct1/libsodium.js/9a8b4f9/wrapper/wrap-template.js | \

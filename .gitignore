@@ -10,4 +10,3 @@ nohup.out
 **/*.swp
 *.orig
 **/*.orig
-**/node_modules

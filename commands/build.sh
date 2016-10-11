@@ -64,14 +64,6 @@ fi
 scssfiles="$(find css -name '*.scss' | grep -v bourbon/ | perl -pe 's/(.*)\.scss/\1/g' | tr '\n' ' ')"
 
 
-rm lib/js/node_modules js/node_modules 2> /dev/null
-cd lib/js
-ln -s . node_modules
-cd ../../js
-ln -s ../lib/js node_modules
-cd ..
-
-
 output=''
 
 compile () {
@@ -155,8 +147,6 @@ else
 fi
 
 echo -e "${output}"
-
-rm lib/js/node_modules js/node_modules
 
 if [ "${test}" -o "${simpletest}" ] ; then
 	{ \
