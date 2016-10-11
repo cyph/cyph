@@ -6,6 +6,7 @@
 /// <reference path="../preload/fakecrypto.ts" />
 /// <reference path="../preload/jquery.ts" />
 
+import {AppModule} from './appmodule';
 import {CyphDemo} from './cyphdemo';
 import {Elements} from './elements';
 import {HomeSections, PageTitles, Promos, States} from './enums';
@@ -50,7 +51,7 @@ angular.
 			$(() => {
 				Elements.load();
 
-				const controller: Cyph.IController				= new Cyph.Controller($scope);
+				const controller: Cyph.IController				= new Cyph.Controller();
 				const mobileMenu: () => Cyph.UI.ISidebar		= () => $mdSidenav('main-toolbar-sidenav');
 				const demoDialogManager: Cyph.UI.IDialogManager	= new Cyph.UI.DialogManager($mdDialog, $mdToast);
 
@@ -64,7 +65,11 @@ angular.
 	config(Cyph.Config.angularConfig.config)
 ;
 
-angular.bootstrap(document, [Cyph.Config.angularConfig.rootModule]);
+
+AppModule.upgradeAdapter.bootstrap(
+	document.documentElement,
+	[Cyph.Config.angularConfig.rootModule]
+);
 
 
 /* Redirect to Onion site when on Tor */
