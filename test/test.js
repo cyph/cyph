@@ -70,9 +70,10 @@ const driverPromise	= f => new Promise((resolve, reject) => {
 	}
 });
 
-const driverQuit	= driver => driverPromise(() =>
-	driver.quit()
-);
+const driverQuit	= driver => {
+	driver.isClosed	= true;
+	return driverPromise(() => driver.quit());
+}
 
 const driverScript	= (driver, f) => driverPromise(() =>
 	driver.executeScript(f)
@@ -81,10 +82,13 @@ const driverScript	= (driver, f) => driverPromise(() =>
 const driverSetURL	= (driver, url) => driverPromise(() =>
 	driver.get(url)
 ).then(() => {
-	for (let n of [0, 1000, 2500, 5000, 15000, 30000]) {
-		setTimeout(() => driverScript(
-			driver,
-			function () {
+	for (let n of [0, 1000, 2500, 5000, 15000, 30000, 45000, 60000]) {
+		setTimeout(() => {
+			if (driver.isClosed) {
+				return;
+			}
+
+			driverScript(driver, function () {
 				self.onerror	= function (err) {
 					if (err === 'Script error.') {
 						return;
@@ -96,8 +100,8 @@ const driverSetURL	= (driver, url) => driverPromise(() =>
 						'</pre>'
 					;
 				};
-			}
-		), n);
+			});
+		}, n);
 	}
 });
 
