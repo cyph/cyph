@@ -120,13 +120,12 @@ compile () {
 				--output-library "$(echo $f | perl -pe 's/.*\/([^\/]+)$/\u$1/')" \
 				$f.js \
 				$f.js.tmp
-
-			cat $f.js.tmp | sed 's|use strict||g' > $f.js
 		done
 		for f in $tsfiles ; do
-			mv $f.js $f.js.tmp
-			cp preload/global.js $f.js
-			cat $f.js.tmp >> $f.js
+			{
+				cat preload/global.js;
+				cat $f.js.tmp;
+			} | sed 's|use strict||g' > $f.js
 			rm $f.js.tmp
 		done
 	fi
@@ -140,7 +139,7 @@ if [ "${watch}" ] ; then
 		echo -e '\n\n\nBuilding JS/CSS\n\n'
 		compile
 		echo -e "\n\n\nFinished building JS/CSS ($(expr $(date +%s) - $start)s)\n\n"
-		inotifywait -r --exclude '(node_modules|sed.*|.*\.(html|css|js|map|tmp))$' css js
+		inotifywait -r --exclude '(.|node_modules|sed.*|.*\.(html|css|js|map|tmp))$' css js
 	done
 else
 	compile
