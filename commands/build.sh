@@ -37,7 +37,11 @@ tsargs="$(node -e '
 
 tsfiles="$( \
 	{ \
-		find . -name '*.html' -not \( -path './websign/*' -or -path '*/lib/*' \) -exec cat {} \; | \
+		find . -name '*.html' -not \( \
+			-path './.build/*' \
+			-or -path './websign/*' \
+			-or -path '*/lib/*' \
+		\) -exec cat {} \; | \
 		grep -oP "src=(['\"])/js/.*?\1" & \
 		grep -roP "importScripts\((['\"])/js/.*\1\)" shared/js & \
 		echo cyph/analytics; \
