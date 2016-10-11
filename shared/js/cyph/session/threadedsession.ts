@@ -80,7 +80,6 @@ export class ThreadedSession implements ISession {
 			const session: ISession	= new Session.Session(
 				locals.descriptor,
 				locals.nativeCrypto,
-				null,
 				locals.id
 			);
 
