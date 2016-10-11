@@ -74,6 +74,7 @@ jspm install -y \
 	npm:@angular/router \
 	npm:@angular/upgrade \
 	npm:rxjs \
+	zone.js=github:angular/zone.js \
 	angular \
 	angular-material \
 	angular-aria \
