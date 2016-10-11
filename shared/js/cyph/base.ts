@@ -1,5 +1,3 @@
-/// <reference path="../preload/global.ts" />
-
 import {Config} from './config';
 import {Controller} from './controller';
 import {Env} from './env';

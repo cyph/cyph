@@ -1,5 +1,3 @@
-/// <reference path="../../preload/global.ts" />
-
 import {CastleEvents, Events, RPCEvents, State, ThreadedSessionEvents, Users} from './enums';
 import {IMessage} from './imessage';
 import {ISession} from './isession';

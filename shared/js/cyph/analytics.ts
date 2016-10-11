@@ -1,5 +1,3 @@
-/// <reference path="../preload/global.ts" />
-
 import {Env} from './env';
 import {EventManager} from './eventmanager';
 import {Util} from './util';
