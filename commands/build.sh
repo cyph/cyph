@@ -39,7 +39,8 @@ tsfiles="$( \
 	{ \
 		find . -name '*.html' -not \( -path './websign/*' -or -path '*/lib/*' \) -exec cat {} \; | \
 		grep -oP "src=(['\"])/js/.*?\1" & \
-		grep -roP "importScripts\((['\"])/js/.*\1\)" shared/js; \
+		grep -roP "importScripts\((['\"])/js/.*\1\)" shared/js & \
+		echo cyph/analytics; \
 	} | \
 		perl -pe "s/.*?['\"]\/js\/(.*)\.js.*/\1/g" | \
 		sort | \
