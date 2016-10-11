@@ -70,10 +70,9 @@ const driverPromise	= f => new Promise((resolve, reject) => {
 	}
 });
 
-const driverQuit	= driver => {
-	clearInterval(driver.onerrorInterval);
-	return driverPromise(() => driver.quit());
-};
+const driverQuit	= driver => driverPromise(() =>
+	driver.quit()
+);
 
 const driverScript	= (driver, f) => driverPromise(() =>
 	driver.executeScript(f)
@@ -82,22 +81,24 @@ const driverScript	= (driver, f) => driverPromise(() =>
 const driverSetURL	= (driver, url) => driverPromise(() =>
 	driver.get(url)
 ).then(() => {
-	driver.onerrorInterval	= setInterval(() => driverScript(
-		driver,
-		function () {
-			self.onerror	= function (err) {
-				if (err === 'Script error.') {
-					return;
-				}
+	for (let n of [0, 1000, 2500, 5000, 15000, 30000]) {
+		setTimeout(() => driverScript(
+			driver,
+			function () {
+				self.onerror	= function (err) {
+					if (err === 'Script error.') {
+						return;
+					}
 
-				document.body.innerHTML	=
-					'<pre style="font-size: 24px; white-space: pre-wrap;">' +
-						JSON.stringify(arguments, null, '\t') +
-					'</pre>'
-				;
-			};
-		}
-	), 250);
+					document.body.innerHTML	=
+						'<pre style="font-size: 24px; white-space: pre-wrap;">' +
+							JSON.stringify(arguments, null, '\t') +
+						'</pre>'
+					;
+				};
+			}
+		), n);
+	}
 });
 
 const driverWait	= (driver, until, timeout) => driverPromise(() =>
