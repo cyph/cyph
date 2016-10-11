@@ -81,39 +81,42 @@ const driverScript	= (driver, f) => driverPromise(() =>
 
 const driverSetURL	= (driver, url) => driverPromise(() =>
 	driver.get(url)
-).then(() => {
-	for (let n of [0, 1000, 2500, 5000, 15000, 30000, 45000, 60000]) {
-		setTimeout(() => {
-			if (driver.isClosed) {
-				return;
-			}
-
-			driverScript(driver, function () {
-				self.onerror	= function (err) {
-					if (err === 'Script error.') {
-						return;
-					}
-
-					document.body.innerHTML	=
-						'<pre style="font-size: 24px; white-space: pre-wrap;">' +
-							JSON.stringify(arguments, null, '\t') +
-						'</pre>'
-					;
-				};
-			});
-		}, n);
-	}
-});
+);
 
 const driverWait	= (driver, until, timeout) => driverPromise(() =>
 	driver.wait(until, timeout)
 );
 
-const getDriver		= o => new webdriver.Builder().
-	usingServer('https://hub-cloud.browserstack.com/wd/hub').
-	withCapabilities(o).
-	build()
-;
+const getDriver		= o => {
+	const driver	= new webdriver.Builder().
+		usingServer('https://hub-cloud.browserstack.com/wd/hub').
+		withCapabilities(o).
+		build()
+	;
+
+	const interval	= setInterval(() => {
+		if (driver.isClosed) {
+			clearInterval(interval);
+			return;
+		}
+
+		driverScript(driver, function () {
+			self.onerror	= function (err) {
+				if (err === 'Script error.') {
+					return;
+				}
+
+				document.body.innerHTML	=
+					'<pre style="font-size: 24px; white-space: pre-wrap;">' +
+						JSON.stringify(arguments, null, '\t') +
+					'</pre>'
+				;
+			};
+		});
+	}, 250);
+
+	return driver;
+};
 
 const homeTest		= o => {
 	const driver	= getDriver(o);
