@@ -1,5 +1,4 @@
 import {ISidebar} from './isidebar';
-import {IController} from '../icontroller';
 import {Util} from '../util';
 
 
@@ -15,16 +14,11 @@ export class BaseButtonManager {
 	 */
 	public async baseButtonClick (callback: Function) : Promise<void> {
 		return Util.lock(BaseButtonManager.buttonLock, async () => {
-			try {
-				await Util.sleep(250);
-				this.mobileMenu().close();
+			await Util.sleep(250);
+			this.mobileMenu().close();
 
-				if (callback) {
-					callback();
-				}
-			}
-			finally {
-				this.controller.update();
+			if (callback) {
+				callback();
 			}
 		}, undefined, true);
 	}
@@ -38,11 +32,9 @@ export class BaseButtonManager {
 	}
 
 	/**
-	 * @param controller
 	 * @param mobileMenu
 	 */
 	public constructor (
-		protected controller: IController,
 		protected mobileMenu: () => ISidebar = () => ({close: () => {}, open: () => {}})
 	) {}
 }

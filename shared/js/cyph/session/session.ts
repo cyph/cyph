@@ -7,7 +7,6 @@ import {Config} from '../config';
 import {Env} from '../env';
 import {Errors} from '../errors';
 import {EventManager} from '../eventmanager';
-import {IController} from '../icontroller';
 import {Timer} from '../timer';
 import {UrlState} from '../urlstate';
 import {Util} from '../util';
@@ -352,17 +351,14 @@ export class Session implements ISession {
 	public updateState (key: string, value: any) : void {
 		this.state[key]	= value;
 
-		if (this.controller) {
-			this.controller.update();
-		}
-		else {
+		if (!Env.isMainThread) {
 			this.trigger(ThreadedSessionEvents.updateStateThread, {key, value});
 		}
 	}
 
 	/**
 	 * @param descriptor Descriptor used for brokering the session.
-	 * @param controller
+	 * @param nativeCrypto
 	 * @param id
 	 * @param localChannelCallback If set, will assume that this is a local
 	 * session and initiate a LocalChannel instance, passing it in to this
@@ -371,7 +367,6 @@ export class Session implements ISession {
 	public constructor (
 		descriptor?: string,
 		nativeCrypto: boolean = false,
-		private controller?: IController,
 		private id: string = Util.generateGuid(),
 		localChannelCallback?: (localChannel: LocalChannel) => void
 	) {

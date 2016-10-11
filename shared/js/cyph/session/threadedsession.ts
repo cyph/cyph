@@ -2,7 +2,6 @@ import {Events, RPCEvents, ThreadedSessionEvents} from './enums';
 import {IMessage} from './imessage';
 import {ISession} from './isession';
 import {EventManager} from '../eventmanager';
-import {IController} from '../icontroller';
 import {Thread} from '../thread';
 import {Util} from '../util';
 
@@ -60,23 +59,18 @@ export class ThreadedSession implements ISession {
 
 	/**
 	 * @param descriptor Descriptor used for brokering the session.
-	 * @param controller
+	 * @param nativeCrypto
 	 * @param id
 	 */
 	public constructor (
 		descriptor?: string,
 		nativeCrypto: boolean = false,
-		private controller?: IController,
 		private id: string = Util.generateGuid()
 	) {
 		this.on(
 			ThreadedSessionEvents.updateStateThread,
 			(e: { key: string; value: any; }) => {
 				this.state[e.key]	= e.value;
-
-				if (this.controller) {
-					this.controller.update();
-				}
 			}
 		);
 

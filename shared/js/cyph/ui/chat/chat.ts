@@ -21,7 +21,6 @@ import {NanoScroller} from '../nanoscroller';
 import {Templates} from '../templates';
 import {Analytics} from '../../analytics';
 import {Env} from '../../env';
-import {IController} from '../../icontroller';
 import {Strings} from '../../strings';
 import {UrlState} from '../../urlstate';
 import {Util} from '../../util';
@@ -94,8 +93,6 @@ export class Chat extends BaseButtonManager implements IChat {
 
 		this.messages.sort((a, b) => a.timestamp - b.timestamp);
 
-		this.controller.update();
-
 		this.scrollManager.scrollDown(true);
 
 		if (author === Users.me) {
@@ -128,7 +125,6 @@ export class Chat extends BaseButtonManager implements IChat {
 
 	public changeState (state: States) : void {
 		this.state	= state;
-		this.controller.update();
 	}
 
 	public close () : void {
@@ -200,7 +196,6 @@ export class Chat extends BaseButtonManager implements IChat {
 			message	= this.currentMessage;
 
 			this.currentMessage	= '';
-			this.controller.update();
 
 			this.messageChange();
 		}
@@ -213,24 +208,21 @@ export class Chat extends BaseButtonManager implements IChat {
 
 	public setConnected () : void {
 		this.isConnected	= true;
-		this.controller.update();
 	}
 
 	public setFriendTyping (isFriendTyping: boolean) : void {
 		this.isFriendTyping	= isFriendTyping;
-		this.controller.update();
 	}
 
 	/**
-	 * @param controller
 	 * @param dialogManager
 	 * @param mobileMenu
 	 * @param notifier
 	 * @param isMobile
 	 * @param session If not specified, one will be created.
+	 * @param rootElement
 	 */
 	public constructor (
-		controller: IController,
 		private dialogManager: IDialogManager,
 		mobileMenu: () => ISidebar,
 		private notifier: INotifier,
@@ -238,7 +230,7 @@ export class Chat extends BaseButtonManager implements IChat {
 		session?: ISession,
 		private rootElement: JQuery = Elements.html
 	) {
-		super(controller, mobileMenu);
+		super(mobileMenu);
 
 		this.elements	= {
 			buttons: this.rootElement.find(Elements.buttons.selector),
@@ -320,14 +312,12 @@ export class Chat extends BaseButtonManager implements IChat {
 
 			this.session	= new ThreadedSession(
 				id,
-				nativeCrypto,
-				controller
+				nativeCrypto
 			);
 		}
 
 		this.cyphertext		= new Cyphertext(
 			this.session,
-			this.controller,
 			this.mobileMenu,
 			this.dialogManager,
 			this.isMobile,
@@ -336,7 +326,6 @@ export class Chat extends BaseButtonManager implements IChat {
 
 		this.p2pManager		= new P2PManager(
 			this,
-			this.controller,
 			this.mobileMenu,
 			this.dialogManager,
 			this.elements,
@@ -345,13 +334,11 @@ export class Chat extends BaseButtonManager implements IChat {
 
 		this.fileManager	= new FileManager(
 			this,
-			this.controller,
 			this.dialogManager,
 			this.elements
 		);
 
 		this.scrollManager	= new ScrollManager(
-			this.controller,
 			this.dialogManager,
 			this.isMobile,
 			this.elements
@@ -420,7 +407,6 @@ export class Chat extends BaseButtonManager implements IChat {
 				}
 				else {
 					this.keyExchangeProgress	= progress * 100;
-					this.controller.update();
 				}
 			}, 50);
 		});

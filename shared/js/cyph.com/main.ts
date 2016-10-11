@@ -51,14 +51,11 @@ angular.
 			$(() => {
 				Elements.load();
 
-				const controller: Cyph.IController				= new Cyph.Controller();
 				const mobileMenu: () => Cyph.UI.ISidebar		= () => $mdSidenav('main-toolbar-sidenav');
 				const demoDialogManager: Cyph.UI.IDialogManager	= new Cyph.UI.DialogManager($mdDialog, $mdToast);
 
-				$scope.ui	= new UI(controller, mobileMenu, demoDialogManager);
+				$scope.ui	= new UI(mobileMenu, demoDialogManager);
 				self['ui']	= $scope.ui;
-
-				controller.update();
 			});
 		}
 	]).

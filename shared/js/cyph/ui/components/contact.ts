@@ -50,12 +50,9 @@ export class Contact {
 				}
 			}
 
-			this.ui.controller.update();
-
 			$element.find('button').click(() => {
 				Util.email(this.self);
 				this.self.sent	= true;
-				this.ui.controller.update();
 			});
 		});
 	}

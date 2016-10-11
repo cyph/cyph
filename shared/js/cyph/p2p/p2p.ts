@@ -3,7 +3,6 @@ import {IP2P} from './ip2p';
 import {Analytics} from '../analytics';
 import {Env} from '../env';
 import {EventManager} from '../eventmanager';
-import {IController} from '../icontroller';
 import {Util} from '../util';
 import {Command} from '../session/command';
 import {Events, RPCEvents} from '../session/enums';
@@ -144,8 +143,6 @@ export class P2P implements IP2P {
 			this.incomingStream.video
 		;
 
-		this.controller.update();
-
 		if (!webRTC) {
 			return;
 		}
@@ -188,14 +185,12 @@ export class P2P implements IP2P {
 		this.webRTC		= {};
 
 		this.loading	= true;
-		this.controller.update();
 
 		for (let k of Object.keys(this.outgoingStream)) {
 			this.incomingStream[k]	= this.outgoingStream[k];
 		}
 
 		this.isActive	= true;
-		this.controller.update();
 
 		const iceServers: string	= await Util.request({
 			url: Env.baseUrl + 'iceservers',
@@ -275,7 +270,6 @@ export class P2P implements IP2P {
 			$(this.remoteVideo).find('video').slice(0, -1).remove();
 
 			this.loading	= false;
-			this.controller.update();
 		});
 
 		webRTC.on('readyToCall', () => webRTC.joinRoom(P2P.constants.webRTC));
@@ -358,14 +352,12 @@ export class P2P implements IP2P {
 
 	/**
 	 * @param session
-	 * @param controller
 	 * @param forceTURN
 	 * @param localVideo
 	 * @param remoteVideo
 	 */
 	public constructor (
 		private session: ISession,
-		private controller: IController,
 		private forceTURN: boolean,
 		private localVideo: HTMLElement,
 		private remoteVideo: HTMLElement

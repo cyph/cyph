@@ -2,7 +2,6 @@ import {Elements} from './elements';
 import {ILinkConnection} from './ilinkconnection';
 import {IChat} from './chat/ichat';
 import {Env} from '../env';
-import {IController} from '../icontroller';
 import {Strings} from '../strings';
 import {Util} from '../util';
 
@@ -30,7 +29,6 @@ export class LinkConnection implements ILinkConnection {
 	private setLink () : void {
 		if (this.link !== this.linkConstant) {
 			this.link	= this.linkConstant;
-			this.controller.update();
 		}
 	}
 
@@ -84,12 +82,10 @@ export class LinkConnection implements ILinkConnection {
 
 	/**
 	 * @param countdown
-	 * @param controller
 	 * @param chat
 	 */
 	public constructor (
 		public countdown: number,
-		private controller: IController,
 		private chat: IChat
 	) {}
 }

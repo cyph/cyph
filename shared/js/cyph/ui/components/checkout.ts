@@ -58,7 +58,6 @@ export class Checkout {
 
 					if (JSON.parse(response).Status === 'authorized') {
 						this.complete	= true;
-						this.ui.controller.update();
 					}
 				}
 			});

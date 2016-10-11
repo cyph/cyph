@@ -58,14 +58,11 @@ angular.
 			$(() => {
 				Cyph.UI.Elements.load();
 
-				const controller: Cyph.IController			= new Cyph.Controller();
 				const dialogManager: Cyph.UI.IDialogManager	= new Cyph.UI.DialogManager($mdDialog, $mdToast);
 				const notifier: Cyph.UI.INotifier			= new Cyph.UI.Notifier();
 
-				$scope.ui	= new UI(controller, dialogManager, notifier);
+				$scope.ui	= new UI(dialogManager, notifier);
 				self['ui']	= $scope.ui;
-
-				controller.update();
 			});
 		}
 	]).

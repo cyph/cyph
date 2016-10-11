@@ -5,7 +5,6 @@ import {Affiliate} from '../affiliate';
 import {IDialogManager} from '../idialogmanager';
 import {NanoScroller} from '../nanoscroller';
 import {VisibilityWatcher} from '../visibilitywatcher';
-import {IController} from '../../icontroller';
 import {Util} from '../../util';
 
 
@@ -44,7 +43,6 @@ export class ScrollManager implements IScrollManager {
 					!$elem.find('*').add($elem.parentsUntil().addBack()).is('.app-message')
 				) {
 					this.unreadMessages	+= 1;
-					this.controller.update();
 
 					const intervalId	= setInterval(() => {
 						if (
@@ -58,7 +56,6 @@ export class ScrollManager implements IScrollManager {
 
 							$elem.removeClass('unread');
 							this.unreadMessages	-= 1;
-							this.controller.update();
 
 							if ($elem.nextAll().length === 0) {
 								this.scrollDown();
@@ -126,12 +123,11 @@ export class ScrollManager implements IScrollManager {
 	}
 
 	/**
-	 * @param controller
 	 * @param dialogManager
 	 * @param isMobile
+	 * @param elements
 	 */
 	public constructor (
-		private controller: IController,
 		dialogManager: IDialogManager,
 		private isMobile: boolean,
 		private elements: IElements

@@ -42,7 +42,8 @@ export class Carousel {
 	}
 
 	/**
-	 * @param controller
+	 * @param rootElement
+	 * @param callback
 	 */
 	public constructor (
 		private rootElement: JQuery,

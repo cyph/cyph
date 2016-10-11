@@ -177,13 +177,10 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 	}
 
 	/**
-	 * @param controller
+	 * @param dialogManager
 	 */
-	public constructor(
-		controller: Cyph.IController,
-		dialogManager: Cyph.UI.IDialogManager
-	) {
-		super(controller);
+	public constructor (dialogManager: Cyph.UI.IDialogManager) {
+		super();
 
 		Elements.demoRoot['appear']();
 		Elements.heroText['appear']();
@@ -207,13 +204,11 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 					const desktopSession: Cyph.Session.ISession	= new Cyph.Session.Session(
 						null,
 						false,
-						this.controller,
 						undefined,
 						(desktopChannel: Cyph.Channel.LocalChannel) => {
 							mobileSession	= new Cyph.Session.Session(
 								null,
 								false,
-								this.controller,
 								undefined,
 								(mobileChannel: Cyph.Channel.LocalChannel) =>
 									desktopChannel.connect(mobileChannel)
@@ -222,7 +217,6 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 					);
 
 					this.desktop	= new Cyph.UI.Chat.Chat(
-						this.controller,
 						dialogManager,
 						() => ({close: () => {}, open: () => {}}),
 						{notify: (message: string) => {}},
@@ -232,7 +226,6 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 					);
 
 					this.mobile		= new Cyph.UI.Chat.Chat(
-						this.controller,
 						dialogManager,
 						this.mobileMenu,
 						{notify: (message: string) => {}},
@@ -261,7 +254,6 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 								text.split('').forEach((c: string) => {
 									setTimeout(() => {
 										chat.currentMessage += c;
-										this.controller.update();
 									}, totalDelay);
 
 									totalDelay += Cyph.Util.random(50, 10);
@@ -338,7 +330,6 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 						setTimeout(() => {
 							this.desktop.currentMessage	= '';
 							this.mobile.currentMessage	= '';
-							this.controller.update();
 						}, totalDelay);
 					}, 750);
 				});

@@ -2,7 +2,6 @@ import {Elements} from './elements';
 import {ISignupForm} from './isignupform';
 import {Analytics} from '../analytics';
 import {Env} from '../env';
-import {IController} from '../icontroller';
 import {Util} from '../util';
 
 
@@ -24,8 +23,6 @@ export class SignupForm implements ISignupForm {
 		if (this.data.email && this.state === 1) {
 			++this.state;
 		}
-
-		this.controller.update();
 
 		setTimeout(() => {
 			const $input: JQuery	= $(Elements.signupForm.selector).
@@ -70,10 +67,7 @@ export class SignupForm implements ISignupForm {
 		}
 	}
 
-	/**
-	 * @param controller
-	 */
-	public constructor (private controller: IController) {
+	public constructor () {
 		setTimeout(() =>
 			Elements.signupForm.addClass('visible')
 		, 500);

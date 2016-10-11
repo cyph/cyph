@@ -78,7 +78,6 @@ export class UI extends Cyph.UI.BaseButtonManager {
 
 
 		this.chat			= new Cyph.UI.Chat.Chat(
-			this.controller,
 			this.dialogManager,
 			this.mobileMenu,
 			this.notifier
@@ -86,11 +85,10 @@ export class UI extends Cyph.UI.BaseButtonManager {
 
 		this.cyphConnection	= new Cyph.UI.LinkConnection(
 			Cyph.Config.cyphCountdown,
-			this.controller,
 			this.chat
 		);
 
-		this.signupForm		= new Cyph.UI.SignupForm(this.controller);
+		this.signupForm		= new Cyph.UI.SignupForm();
 
 
 		if (initialCallType) {
@@ -160,20 +158,17 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	 */
 	public changeState (state: States) : void {
 		this.state	= state;
-		this.controller.update();
 	}
 
 	/**
-	 * @param controller
 	 * @param dialogManager
 	 * @param notifier
 	 */
 	public constructor (
-		controller: Cyph.IController,
 		private dialogManager: Cyph.UI.IDialogManager,
 		private notifier: Cyph.UI.INotifier
 	) {
-		super(controller);
+		super();
 
 		Cyph.UrlState.onchange(urlState => this.onUrlStateChange(urlState));
 

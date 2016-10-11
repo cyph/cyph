@@ -217,10 +217,8 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	public cycleFeatures(){
 			if(this.featureIndex < this.features.length-1){
 				this.featureIndex++;
-				this.controller.update();
 			}else{
 				this.featureIndex = 0;
-				this.controller.update();
 			}
 	}
 
@@ -230,21 +228,20 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	 */
 	public changeState (state: States) : void {
 		this.state	= state;
-		this.controller.update();
 	}
 
 	/**
-	 * @param controller
+	 * @param mobileMenu
+	 * @param dialogManager
 	 */
 	public constructor (
-		controller: Cyph.IController,
 		mobileMenu: () => Cyph.UI.ISidebar,
 		private dialogManager: Cyph.UI.IDialogManager
 	) {
-		super(controller, mobileMenu);
+		super(mobileMenu);
 
-		this.signupForm	= new Cyph.UI.SignupForm(this.controller);
-		this.cyphDemo	= new CyphDemo(this.controller, this.dialogManager);
+		this.signupForm	= new Cyph.UI.SignupForm();
+		this.cyphDemo	= new CyphDemo(this.dialogManager);
 
 		Cyph.UrlState.onchange(urlState => this.onUrlStateChange(urlState));
 
