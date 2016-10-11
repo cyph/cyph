@@ -6,7 +6,6 @@ import {Analytics} from '../analytics';
 import {Config} from '../config';
 import {EventManager} from '../eventmanager';
 import {Firebase} from '../firebase';
-import {IController} from '../icontroller';
 import {Thread} from '../thread';
 import {Util} from '../util';
 import {Potassium} from '../crypto/potassium';
@@ -262,8 +261,6 @@ export class Files implements IFiles {
 								Util.random(100000, 25000) / transfer.size * 100
 							;
 						}
-
-						this.controller.update();
 					}, 1000);
 
 					const cyphertext: Uint8Array	= new Uint8Array(await Util.request({
@@ -297,10 +294,7 @@ export class Files implements IFiles {
 						transfer.name
 					);
 
-					setTimeout(() => {
-						this.transfers.splice(transferIndex, 1);
-						this.controller.update();
-					}, 1000);
+					setTimeout(() => this.transfers.splice(transferIndex, 1), 1000);
 				}
 				else {
 					this.triggerUIEvent(
@@ -368,7 +362,6 @@ export class Files implements IFiles {
 
 			if (transfer.answer === false) {
 				this.transfers.splice(transferIndex, 1);
-				this.controller.update();
 
 				if (uploadTask) {
 					uploadTask.cancel();
@@ -386,8 +379,6 @@ export class Files implements IFiles {
 		transfer.size	= o.cyphertext.length;
 		transfer.key	= o.key;
 
-		this.controller.update();
-
 		Util.retryUntilComplete(async (retry) => {
 			const path: string	= 'ephemeral/' +  Util.generateGuid();
 
@@ -400,8 +391,6 @@ export class Files implements IFiles {
 						snapshot.totalBytes *
 						100
 					;
-
-					this.controller.update();
 				},
 				err => {
 					if (transfer.answer !== false) {
@@ -417,7 +406,6 @@ export class Files implements IFiles {
 					));
 
 					this.transfers.splice(transferIndex, 1);
-					this.controller.update();
 				}
 			);
 		});
@@ -425,12 +413,8 @@ export class Files implements IFiles {
 
 	/**
 	 * @param session
-	 * @param controller
 	 */
-	public constructor (
-		private session: ISession,
-		private controller: IController
-	) {
+	public constructor (private session: ISession) {
 		if (Files.subtleCryptoIsSupported) {
 			this.session.on(Events.beginChat, () => this.session.send(
 				new Message(RPCEvents.files)

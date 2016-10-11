@@ -37,9 +37,14 @@ tsargs="$(node -e '
 
 tsfiles="$( \
 	{ \
-		find . -name '*.html' -not \( -path './websign/*' -or -path '*/lib/*' \) -exec cat {} \; | \
+		find . -name '*.html' -not \( \
+			-path './.build/*' \
+			-or -path './websign/*' \
+			-or -path '*/lib/*' \
+		\) -exec cat {} \; | \
 		grep -oP "src=(['\"])/js/.*?\1" & \
-		grep -roP "importScripts\((['\"])/js/.*\1\)" shared/js; \
+		grep -roP "importScripts\((['\"])/js/.*\1\)" shared/js & \
+		echo cyph/analytics; \
 	} | \
 		perl -pe "s/.*?['\"]\/js\/(.*)\.js.*/\1/g" | \
 		sort | \
@@ -59,19 +64,11 @@ fi
 scssfiles="$(find css -name '*.scss' | grep -v bourbon/ | perl -pe 's/(.*)\.scss/\1/g' | tr '\n' ' ')"
 
 
-rm lib/js/node_modules js/node_modules 2> /dev/null
-cd lib/js
-ln -s . node_modules
-cd ../../js
-ln -s ../lib/js node_modules
-cd ..
-
-
 output=''
 
 compile () {
-	for file in $scssfiles ; do
-		command="scss -Icss $file.scss $file.css"
+	for f in $scssfiles ; do
+		command="scss -Icss $f.scss $f.css"
 		if [ "${watch}" ] ; then
 			$command &
 		else
@@ -81,7 +78,7 @@ compile () {
 
 	cd js
 
-	output="${output}$(tsc $tsargs $(for f in $tsfiles ; do echo $f.ts ; done))"
+	output="${output}$(tsc $tsargs preload/*.ts $(for f in $tsfiles ; do echo $f.ts ; done))"
 
 	if [ ! "${simpletest}" ] ; then
 		find . -name '*.js' -not -path './node_modules/*' -exec node -e '
@@ -116,16 +113,20 @@ compile () {
 			build("{}");
 		' \;
 
-		for file in $tsfiles ; do
+		for f in $tsfiles ; do
 			webpack \
 				--optimize-dedupe \
 				--output-library-target var \
-				--output-library "$(echo $file | perl -pe 's/.*\/([^\/]+)$/\u$1/')" \
-				$file.js \
-				$file.js.tmp
-
-			cat $file.js.tmp | sed 's|use strict||g' > $file.js
-			rm $file.js.tmp
+				--output-library "$(echo $f | perl -pe 's/.*\/([^\/]+)$/\u$1/')" \
+				$f.js \
+				$f.js.tmp
+		done
+		for f in $tsfiles ; do
+			{
+				cat preload/global.js;
+				cat $f.js.tmp;
+			} | sed 's|use strict||g' > $f.js
+			rm $f.js.tmp
 		done
 	fi
 
@@ -138,15 +139,13 @@ if [ "${watch}" ] ; then
 		echo -e '\n\n\nBuilding JS/CSS\n\n'
 		compile
 		echo -e "\n\n\nFinished building JS/CSS ($(expr $(date +%s) - $start)s)\n\n"
-		inotifywait -r --exclude '(node_modules|sed.*|.*\.(html|css|js|map|tmp))$' css js
+		inotifywait -r --exclude '(.|node_modules|sed.*|.*\.(html|css|js|map|tmp))$' css js
 	done
 else
 	compile
 fi
 
 echo -e "${output}"
-
-rm lib/js/node_modules js/node_modules
 
 if [ "${test}" -o "${simpletest}" ] ; then
 	{ \

@@ -104,7 +104,7 @@ export class DialogManager implements IDialogManager {
 	 * @param $mdDialog
 	 * @param $mdToast
 	 */
-	public constructor(
+	public constructor (
 		private $mdDialog: angular.material.IDialogService,
 		private $mdToast: angular.material.IToastService
 	) {}

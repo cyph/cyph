@@ -3,7 +3,6 @@ import {IElements} from './ielements';
 import {IFileManager} from './ifilemanager';
 import {IDialogManager} from '../idialogmanager';
 import {Config} from '../../config';
-import {IController} from '../../icontroller';
 import {Strings} from '../../strings';
 import {Util} from '../../util';
 import {UIEvents} from '../../files/enums';
@@ -132,14 +131,15 @@ export class FileManager implements IFileManager {
 
 	/**
 	 * @param chat
+	 * @param dialogManager
+	 * @param elements
 	 */
 	public constructor (
 		private chat: IChat,
-		private controller: IController,
 		private dialogManager: IDialogManager,
 		private elements: IElements
 	) {
-		this.files	= new Files(this.chat.session, this.controller);
+		this.files	= new Files(this.chat.session);
 
 		this.elements.buttons.each((i: number, parent: HTMLElement) =>
 			new MutationObserver(mutations => {

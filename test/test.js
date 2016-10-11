@@ -29,6 +29,18 @@ const browsers	= [
 		resolution: '2048x1536'
 	},
 	{
+		browserName: 'Firefox',
+		os: 'Windows',
+		os_version: 'XP',
+		resolution: '1024x768'
+	},
+	{
+		browserName: 'Chrome', // 'Edge',
+		os: 'Windows',
+		os_version: '10',
+		resolution: '2048x1536'
+	},
+	{
 		browserName: 'iPhone',
 		platform: 'MAC',
 		device: 'iPhone 6S Plus'
@@ -58,9 +70,10 @@ const driverPromise	= f => new Promise((resolve, reject) => {
 	}
 });
 
-const driverQuit	= driver => driverPromise(() =>
-	driver.quit()
-);
+const driverQuit	= driver => {
+	driver.isClosed	= true;
+	return driverPromise(() => driver.quit());
+}
 
 const driverScript	= (driver, f) => driverPromise(() =>
 	driver.executeScript(f)
@@ -68,32 +81,42 @@ const driverScript	= (driver, f) => driverPromise(() =>
 
 const driverSetURL	= (driver, url) => driverPromise(() =>
 	driver.get(url)
-).then(() => driverScript(
-	driver,
-	function () {
-		self.onerror	= function (err) {
-			if (err === 'Script error.') {
-				return;
-			}
-
-			document.body.innerHTML	=
-				'<pre style="font-size: 24px; white-space: pre-wrap;">' +
-					JSON.stringify(arguments, null, '\t') +
-				'</pre>'
-			;
-		};
-	}
-));
+);
 
 const driverWait	= (driver, until, timeout) => driverPromise(() =>
 	driver.wait(until, timeout)
 );
 
-const getDriver		= o => new webdriver.Builder().
-	usingServer('https://hub-cloud.browserstack.com/wd/hub').
-	withCapabilities(o).
-	build()
-;
+const getDriver		= o => {
+	const driver	= new webdriver.Builder().
+		usingServer('https://hub-cloud.browserstack.com/wd/hub').
+		withCapabilities(o).
+		build()
+	;
+
+	const interval	= setInterval(() => {
+		if (driver.isClosed) {
+			clearInterval(interval);
+			return;
+		}
+
+		driverScript(driver, function () {
+			self.onerror	= function (err) {
+				if (err === 'Script error.') {
+					return;
+				}
+
+				document.body.innerHTML	=
+					'<pre style="font-size: 24px; white-space: pre-wrap;">' +
+						JSON.stringify(arguments, null, '\t') +
+					'</pre>'
+				;
+			};
+		});
+	}, 250);
+
+	return driver;
+};
 
 const homeTest		= o => {
 	const driver	= getDriver(o);
@@ -104,7 +127,7 @@ const homeTest		= o => {
 			webdriver.until.elementLocated(webdriver.By.js(function () {
 				return self.$ && $('#new-cyph:visible')[0];
 			})),
-			15000
+			30000
 		)
 	).then(() =>
 		driverSetURL(driver, `${o.homeURL}/blog`)
@@ -114,7 +137,7 @@ const homeTest		= o => {
 			webdriver.until.elementLocated(webdriver.By.js(function () {
 				return document.getElementsByClassName('postlist')[0];
 			})),
-			15000
+			30000
 		)
 	).then(() =>
 		driverQuit(driver)
@@ -133,7 +156,7 @@ const newCyphTest	= o => {
 			webdriver.until.elementLocated(webdriver.By.js(function () {
 				return self.$ && $('.message-box:visible')[0];
 			})),
-			300000
+			150000
 		)
 	).then(() =>
 		driverScript(driver, function () { ui.chat.send('balls') })
@@ -150,10 +173,10 @@ const newCyphTest	= o => {
 					})[0]
 				;
 			})),
-			15000
+			30000
 		)
 	).then(() => new Promise(resolve =>
-		setTimeout(resolve, 5000)
+		setTimeout(resolve, 30000)
 	)).then(() =>
 		driverQuit(driver)
 	).catch(err => {

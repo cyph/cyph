@@ -4,7 +4,6 @@ import {IP2PManager} from './ip2pmanager';
 import {BaseButtonManager} from '../basebuttonmanager';
 import {IDialogManager} from '../idialogmanager';
 import {ISidebar} from '../isidebar';
-import {IController} from '../../icontroller';
 import {Strings} from '../../strings';
 import {UIEvents} from '../../p2p/enums';
 import {P2P} from '../../p2p/p2p';
@@ -33,7 +32,6 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 
 	public enable () : void {
 		this.isEnabled	= true;
-		this.controller.update();
 	}
 
 	public preemptivelyInitiate () : void {
@@ -75,23 +73,22 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 
 	/**
 	 * @param chat
-	 * @param controller
 	 * @param mobileMenu
 	 * @param dialogManager
+	 * @param elements
+	 * @param forceTURN
 	 */
 	public constructor (
 		private chat: IChat,
-		controller: IController,
 		mobileMenu: () => ISidebar,
 		private dialogManager: IDialogManager,
 		private elements: IElements,
 		forceTURN?: boolean
 	) {
-		super(controller, mobileMenu);
+		super(mobileMenu);
 
 		this.p2p	= new P2P(
 			this.chat.session,
-			this.controller,
 			forceTURN,
 			this.elements.p2pMeStream[0],
 			this.elements.p2pFriendStream[0]

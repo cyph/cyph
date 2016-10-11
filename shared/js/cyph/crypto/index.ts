@@ -1,5 +1,3 @@
-/// <reference path="../../preload/global.ts" />
-
 import {AnonymousCastle} from './anonymouscastle';
 import {FakeCastle} from './fakecastle';
 import {ICastle} from './icastle';

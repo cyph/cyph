@@ -48,9 +48,6 @@ export class Env extends EnvDeploy {
 	/** Current user agent (lowercase). */
 	public static userAgent: string		= navigatorData.userAgent.toLowerCase();
 
-	/** Indicates whether this is Internet Explorer. */
-	public static isIE: boolean			= /msie |trident\//.test(Env.userAgent);
-
 	/** Indicates whether this is Edge. */
 	public static isEdge: boolean		= /edge\/\d+/.test(Env.userAgent);
 
@@ -69,17 +66,11 @@ export class Env extends EnvDeploy {
 		parseInt((Env.userAgent.match(/ os (\d+)_/) || [])[1], 10) >= 8
 	;
 
-	/** Indicates whether this is Windows Phone. */
-	public static isWP: boolean			= /iemobile/.test(Env.userAgent);
-
 	/** Indicates whether this is WebOS. */
 	public static isWebOS: boolean		= /webos/.test(Env.userAgent);
 
 	/** Indicates whether this is BlackBerry. */
 	public static isBB: boolean			= /blackberry/.test(Env.userAgent);
-
-	/** Indicates whether this is Opera Mini. */
-	public static isOperaMini: boolean	= /opera mini/.test(Env.userAgent);
 
 	/** Indicates whether this is mobile Firefox. */
 	public static isFFMobile: boolean	=
@@ -98,18 +89,13 @@ export class Env extends EnvDeploy {
 	public static isMobile: boolean		=
 		Env.isAndroid ||
 		Env.isIOS ||
-		Env.isWP ||
 		Env.isWebOS ||
 		Env.isBB ||
-		Env.isOperaMini ||
 		Env.isFFMobile
 	;
 
 	/** Indicates whether this should be considered a tablet. */
 	public static isTablet: boolean		= Env.isMobile && self.outerWidth > 767;
-
-	/** Indicates whether this is Internet Explorer or Edge. */
-	public static isIEOrEdge: boolean	= Env.isIE || Env.isEdge || Env.isWP;
 
 	/** Indicates whether this is a touchscreen environment. */
 	public static isTouch: boolean		= (() => {

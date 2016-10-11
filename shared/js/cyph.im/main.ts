@@ -9,10 +9,16 @@
 /// <reference path="../preload/jquery.ts" />
 /// <reference path="../preload/translations.ts" />
 
+import {AppModule} from './appmodule';
 import {BetaStates, States, UrlSections} from './enums';
 import {UI} from './ui';
 import {Loaded} from '../preload';
 import * as Cyph from '../cyph';
+
+
+if (Cyph.Env.isEdge) {
+	location.pathname	= '/unsupportedbrowser';
+}
 
 
 Cyph.UI.Elements.html.attr('ng-controller', Cyph.Config.angularConfig.rootController);
@@ -52,21 +58,22 @@ angular.
 			$(() => {
 				Cyph.UI.Elements.load();
 
-				const controller: Cyph.IController			= new Cyph.Controller($scope);
 				const dialogManager: Cyph.UI.IDialogManager	= new Cyph.UI.DialogManager($mdDialog, $mdToast);
 				const notifier: Cyph.UI.INotifier			= new Cyph.UI.Notifier();
 
-				$scope.ui	= new UI(controller, dialogManager, notifier);
+				$scope.ui	= new UI(dialogManager, notifier);
 				self['ui']	= $scope.ui;
-
-				controller.update();
 			});
 		}
 	]).
 	config(Cyph.Config.angularConfig.config)
 ;
 
-angular.bootstrap(document, [Cyph.Config.angularConfig.rootModule]);
+
+AppModule.upgradeAdapter.bootstrap(
+	document.documentElement,
+	[Cyph.Config.angularConfig.rootModule]
+);
 
 
 export {Loaded};

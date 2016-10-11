@@ -2,7 +2,6 @@ import {Elements} from './elements';
 import {ILinkConnection} from './ilinkconnection';
 import {IChat} from './chat/ichat';
 import {Env} from '../env';
-import {IController} from '../icontroller';
 import {Strings} from '../strings';
 import {Util} from '../util';
 import * as Chat from './chat';
@@ -34,7 +33,6 @@ export class LinkConnection implements ILinkConnection {
 	private setLink () : void {
 		if (this.link !== this.linkConstant) {
 			this.link	= this.linkConstant;
-			this.controller.update();
 		}
 	}
 
@@ -71,18 +69,7 @@ export class LinkConnection implements ILinkConnection {
 			}, 250);
 		}
 
-		if (Env.isIE) {
-			const expireTime: string	= new Date(Util.timestamp() + this.countdown * 1000)
-				.toLocaleTimeString()
-				.toLowerCase()
-				.replace(/(.*:.*):.*? /, '$1')
-			;
-
-			Elements.timer.parent().text(Strings.linkExpiresAt + ' ' + expireTime);
-		}
-		else {
-			$('timer')[1].start();
-		}
+		$('timer')[1].start();
 
 		setTimeout(
 			() => {
@@ -106,13 +93,12 @@ export class LinkConnection implements ILinkConnection {
 
 	/**
 	 * @param countdown
-	 * @param controller
 	 * @param chat
+	 * @param dialogManager
 	 */
 	public constructor (
 		public countdown: number,
 		private controller: IController,
-		private chat: IChat,
-		private dialogManager: IDialogManager
+		private chat: IChat
 	) {}
 }

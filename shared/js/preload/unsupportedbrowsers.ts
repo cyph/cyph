@@ -24,18 +24,17 @@ const isStockAndroid: boolean	=
 	!!userAgent.match(/version\/\d\.\d/)
 ;
 
-const isIE: boolean				= /msie |trident\//.test(userAgent);
-const isEdge: boolean			= /edge\/\d+/.test(userAgent);
-const isWindowsPhone: boolean	= /iemobile/.test(userAgent);
+const isOldOpera: boolean		= /opera/.test(navigator.userAgent);
+
+const isIE: boolean				= /msie |trident\/|iemobile/.test(userAgent);
 
 
 if (
 	isFirefoxOS ||
 	isOldIOS ||
 	isStockAndroid ||
-	isIE ||
-	isEdge ||
-	isWindowsPhone
+	isOldOpera ||
+	isIE
 ) {
 	location.pathname	= '/unsupportedbrowser';
 }

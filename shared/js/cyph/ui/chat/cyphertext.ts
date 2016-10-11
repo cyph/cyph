@@ -5,7 +5,6 @@ import {Elements} from '../elements';
 import {IDialogManager} from '../idialogmanager';
 import {ISidebar} from '../isidebar';
 import {Analytics} from '../../analytics';
-import {IController} from '../../icontroller';
 import {Util} from '../../util';
 import {Strings} from '../../strings';
 import {Events, Users} from '../../session/enums';
@@ -47,7 +46,6 @@ export class Cyphertext extends BaseButtonManager implements ICyphertext {
 			}
 
 			this.messages.push({author, text});
-			this.controller.update();
 		}
 	}
 
@@ -80,20 +78,19 @@ export class Cyphertext extends BaseButtonManager implements ICyphertext {
 
 	/**
 	 * @param session
-	 * @param controller
 	 * @param mobileMenu
 	 * @param dialogManager
 	 * @param isMobile
+	 * @param elements
 	 */
 	public constructor (
 		session: ISession,
-		controller: IController,
 		mobileMenu: () => ISidebar,
 		private dialogManager: IDialogManager,
 		private isMobile: boolean,
 		private elements: IElements
 	) {
-		super(controller, mobileMenu);
+		super(mobileMenu);
 
 		/* Close cyphertext on esc */
 		Elements.window.keyup(e => {
