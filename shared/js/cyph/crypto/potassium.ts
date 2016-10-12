@@ -1,4 +1,5 @@
 import {NativeCrypto} from './nativecrypto';
+import {PotassiumUtil} from './potassiumutil';
 
 
 /**
@@ -6,101 +7,7 @@ import {NativeCrypto} from './nativecrypto';
  * Outside of this class, libsodium and other cryptographic implementations
  * should generally not be called directly.
  */
-export class Potassium {
-	private static McEliece		= self['mceliece'] || {};
-	private static NTRU			= self['ntru'] || {};
-	private static RLWE			= self['rlwe'] || {};
-	private static Sodium		= self['sodium'] || {};
-	private static SuperSphincs	= self['superSphincs'] || {};
-
-	public static clearMemory (a: ArrayBufferView) : void {
-		if (a instanceof Uint8Array) {
-			Potassium.Sodium.memzero(a);
-		}
-	}
-
-	public static compareMemory (a: ArrayBufferView, b: ArrayBufferView) : boolean {
-		return a.byteLength === b.byteLength && Potassium.Sodium.memcmp(
-			Potassium.toBytes(a),
-			Potassium.toBytes(b)
-		);
-	}
-
-	public static concatMemory (
-		clearOriginals: boolean,
-		...arrays: ArrayBufferView[]
-	) : Uint8Array {
-		const out	= new Uint8Array(arrays.reduce((a, b) => a + b.byteLength, 0));
-		let index	= 0;
-
-		for (let a of arrays) {
-			const array	= Potassium.toBytes(a);
-			out.set(array, index);
-			index += array.length;
-
-			if (clearOriginals) {
-				Potassium.clearMemory(array);
-			}
-		}
-
-		return out;
-	}
-
-	public static fromBase64 (s: string|ArrayBufferView) : Uint8Array {
-		return typeof s === 'string' ?
-			Potassium.Sodium.from_base64(s) :
-			Potassium.toBytes(s)
-		;
-	}
-
-	public static fromHex (s: string|ArrayBufferView) : Uint8Array {
-		return typeof s === 'string' ?
-			Potassium.Sodium.from_hex(s) :
-			Potassium.toBytes(s)
-		;
-	}
-
-	public static fromString (s: string|ArrayBufferView) : Uint8Array {
-		return typeof s === 'string' ?
-			Potassium.Sodium.from_string(s) :
-			Potassium.toBytes(s)
-		;
-	}
-
-	public static randomBytes (n: number) : Uint8Array {
-		const bytes	= new Uint8Array(n);
-		crypto.getRandomValues(bytes);
-		return bytes;
-	}
-
-	public static toBase64 (a: ArrayBufferView|string) : string {
-		return typeof a === 'string' ?
-			a :
-			Potassium.Sodium.to_base64(
-				Potassium.toBytes(a)
-			).replace(/\s+/g, '')
-		;
-	}
-
-	public static toBytes (a: ArrayBufferView) : Uint8Array {
-		return new Uint8Array(a.buffer, a.byteOffset, a.byteLength);
-	}
-
-	public static toHex (a: ArrayBufferView|string) : string {
-		return typeof a === 'string' ?
-			a :
-			Potassium.Sodium.to_hex(Potassium.toBytes(a))
-		;
-	}
-
-	public static toString (a: ArrayBufferView|string) : string {
-		return typeof a === 'string' ?
-			a :
-			Potassium.Sodium.to_string(Potassium.toBytes(a))
-		;
-	}
-
-
+export class Potassium extends PotassiumUtil {
 	private newNonce (size: number) {
 		if (size < 4) {
 			throw new Error('Nonce size too small.');
@@ -982,6 +889,8 @@ export class Potassium {
 		private isNative: boolean = false,
 		private counter: number = 0
 	) {
+		super();
+
 		if (this.isNative) {
 			this.BoxHelpers.nonceBytes		= NativeCrypto.SecretBox.nonceBytes;
 			this.Box.publicKeyBytes			-= this.BoxHelpers.publicKeyBytes;

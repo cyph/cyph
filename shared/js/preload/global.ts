@@ -41,3 +41,8 @@ self['navigatorData']	= typeof self['navigatorData'] !== 'undefined' ?
 	self['navigatorData'] :
 	navigator
 ;
+
+
+/* Make sure compiler adds necessary helpers to global scope in threads */
+
+(async () => {})();

@@ -71,8 +71,8 @@ cd ..
 output=''
 
 compile () {
-	for file in $scssfiles ; do
-		command="scss -Icss $file.scss $file.css"
+	for f in $scssfiles ; do
+		command="scss -Icss $f.scss $f.css"
 		if [ "${watch}" ] ; then
 			$command &
 		else
@@ -82,7 +82,7 @@ compile () {
 
 	cd js
 
-	output="${output}$(tsc $tsargs $(for f in $tsfiles ; do echo $f.ts ; done))"
+	output="${output}$(tsc $tsargs $(find . -name '*.ts' -not -name '*.d.ts'))"
 
 	if [ ! "${simpletest}" ] ; then
 		find . -name '*.js' -not -path './node_modules/*' -exec node -e '
@@ -117,16 +117,27 @@ compile () {
 			build("{}");
 		' \;
 
-		for file in $tsfiles ; do
+		for f in $tsfiles ; do
 			webpack \
 				--optimize-dedupe \
 				--output-library-target var \
-				--output-library "$(echo $file | perl -pe 's/.*\/([^\/]+)$/\u$1/')" \
-				$file.js \
-				$file.js.tmp
+				--output-library "$(modulename $f)" \
+				$f.js \
+				$f.js.tmp
+		done
+		for f in $tsfiles ; do
+			m="$(modulename $f)"
 
-			cat $file.js.tmp | sed 's|use strict||g' > $file.js
-			rm $file.js.tmp
+			{
+				cat preload/global.js;
+				cat $f.js.tmp;
+				echo "${m} = ${m}.${m} || ${m};";
+			} | \
+				sed 's|use strict||g' | \
+				sed "s|var ${m} =|${m} =|" \
+			> $f.js
+
+			rm $f.js.tmp
 		done
 	fi
 

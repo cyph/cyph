@@ -80,10 +80,14 @@ export class ThreadedSession implements ISession {
 			}
 		);
 
-		this.thread	= new Thread((Session: any, locals: any, importScripts: Function) => {
+		this.thread	= new Thread(function (
+			Session: any,
+			locals: any,
+			importScripts: Function
+		) {
 			importScripts('/js/cyph/session/session.js');
 
-			const session: ISession	= new Session.Session(
+			const session: ISession	= new Session(
 				locals.descriptor,
 				locals.nativeCrypto,
 				null,
