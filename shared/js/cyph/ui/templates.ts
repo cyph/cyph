@@ -433,9 +433,8 @@ export const Templates	= {
 				id='self-destruct-timer'
 				countdown='$ctrl.self.selfDestructTimeout'
 				ng-show='$ctrl.self.selfDestruct'
-				autostart='false'
 			>
-				Message will self-destruct in {{countdown}}
+				Message will self-destruct in {{timestamp}}
 			</timer>
 		</div>
 	`,
@@ -878,11 +877,8 @@ export const Templates	= {
 					<span translate>
 						Link expires in
 					</span>
-					<cyph-timer
-						countdown='$ctrl.self.countdown'
-						autostart='false'
-					>
-						{{minutes}}:{{sseconds}}
+					<cyph-timer countdown='$ctrl.self.countdown'>
+						{{timestamp}}
 					</cyph-timer>
 					<md-button
 						aria-label='Increase Time'

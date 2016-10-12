@@ -12,35 +12,39 @@ export class Timer {
 	private autostart: boolean;
 	private stopped: boolean;
 	private countdown: number;
-	private hours: string;
-	private minutes: string;
-	private seconds: string;
 
 	constructor ($scope, $element, $attrs) {
-		$element['start']	= () => {
-			const endTime	= Util.timestamp() + this.countdown * 1000;
+		$element[0]['start']	= () => {
+			const includeHours	= this.countdown >= 3600;
+			const endTime		= Util.timestamp() + this.countdown * 1000;
 
 			const interval	= setInterval(() => {
 				const diff	= endTime - Util.timestamp();
 
 				if (this.stopped || diff < 1) {
-					$scope.$parent.hours	= '0';
-					$scope.$parent.minutes	= '0';
-					$scope.$parent.seconds	= '00';
-
+					$scope.$parent.timestamp	= includeHours ? '0:00:00' : '0:00';
 					clearInterval(interval);
 					return;
 				}
 
-				$scope.$parent.hours	= Math.floor(diff / 3600000).toString();
-				$scope.$parent.minutes	= Math.floor((diff % 3600000) / 60000).toString();
-				$scope.$parent.seconds	= ('0' + Math.floor(((diff % 3600000) % 60000) / 1000)).slice(-2);
+				const hours		= Math.floor(diff / 3600000);
+				const minutes	= Math.floor((diff % 3600000) / 60000);
+				const seconds	= Math.floor(((diff % 3600000) % 60000) / 1000);
+
+				$scope.$parent.timestamp	= includeHours ?
+					`${hours}:${`0${minutes}`.slice(-2)}:${`0${seconds}`.slice(-2)}` :
+					`${minutes}:${`0${seconds}`.slice(-2)}`
+				;
 			}, 500);
 		};
 
-		$element['stop']	= () => {
+		$element[0]['stop']		= () => {
 			this.stopped	= true;
 		};
+
+		if (this.autostart) {
+			$element[0]['start']();
+		}
 	}
 
 	private static _	= (() => {
