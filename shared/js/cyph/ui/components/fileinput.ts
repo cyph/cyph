@@ -1,36 +1,58 @@
+import {Templates} from '../templates';
+import {Util} from '../../util';
+
+
 /**
- * Angular directive for handling changes to the
- * selected file of an input element.
+ * Angular component for taking file input.
  */
-export class Filechange {
-	/** Module/directive title. */
-	public static title: string	= 'cyphFilechange';
+export class FileInput {
+	/** Module/component title. */
+	public static title: string	= 'cyphFileInput';
+
+	private accept: string;
+	private fileChange: Function;
+
+	constructor ($scope, $element, $attrs) {
+		const $input	= $element.children();
+		const input		= $input[0];
+		const lock		= {};
+
+		$input.
+			change(() => {
+				if (input.files.length < 1 || !this.fileChange) {
+					return;
+				}
+
+				$scope.$parent.file	= input.files[0];
+				this.fileChange();
+
+				$scope.$parent.file	= null;
+				$input.val('');
+			}).
+			click(e => {
+				e.stopPropagation();
+				e.preventDefault();
+			}).
+			parent().parent().click(() => Util.lock(lock, async () => {
+				Util.triggerClick(input);
+
+				for (let i = 0 ; input.files.length < 1 && i < 10 ; ++i) {
+					await Util.sleep(500);
+				}
+
+				await Util.sleep(500);
+			}))
+		;
+	}
 
 	private static _	= (() => {
-		angular.module(Filechange.title, []).directive(Filechange.title, () => ({
-			restrict: 'A',
-			link: (scope, element, attrs) => {
-				element.change(() => {
-					const methodSplit: string[]		= attrs[Filechange.title].split('.');
-					const methodEndSplit: string[]	= methodSplit.slice(-1)[0].split('(');
-					const methodName: string		= methodEndSplit[0];
-
-					const methodArgs: any[]	= methodEndSplit[1].
-						replace(/(.*)\).*/, '$1').
-						split(',').
-						map((s: string) => s.trim()).
-						map((s: string) =>
-							s === 'this' ? element[0] : scope.$parent.$eval(s)
-						)
-					;
-
-					const methodObject: any		= scope.$parent.$eval(
-						methodSplit.slice(0, -1).join('.')
-					);
-
-					methodObject[methodName].apply(methodObject, methodArgs);
-				});
-			}
-		}));
+		angular.module(FileInput.title, []).component(FileInput.title, {
+			bindings: {
+				accept: '@',
+				fileChange: '&'
+			},
+			controller: FileInput,
+			template: Templates.fileInput
+		});
 	})();
 }

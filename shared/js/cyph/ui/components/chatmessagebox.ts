@@ -1,7 +1,7 @@
+import {FileInput} from './fileinput';
 import {Templates} from '../templates';
 import {IChat} from '../chat/ichat';
 import {Enterpress} from '../directives/enterpress';
-import {Filechange} from '../directives/filechange';
 
 
 /**
@@ -20,7 +20,7 @@ export class ChatMessageBox {
 	private static _	= (() => {
 		angular.module(
 			ChatMessageBox.title,
-			['ngMaterial', Enterpress.title, Filechange.title]
+			['ngMaterial', Enterpress.title, FileInput.title]
 		).component(ChatMessageBox.title, {
 			bindings: {
 				self: '<'

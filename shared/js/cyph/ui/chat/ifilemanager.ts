@@ -10,10 +10,10 @@ export interface IFileManager {
 	files: IFiles;
 
 	/**
-	 * Sends file selected by elem.
-	 * @param elem
+	 * Sends file.
+	 * @param file
 	 * @param processImage If true, file is assumed to be an image,
 	 * and compressed and sent as base64 text.
 	 */
-	send (elem: HTMLInputElement, processImage?: boolean) : void;
+	send (file: File, processImage?: boolean) : void;
 }
