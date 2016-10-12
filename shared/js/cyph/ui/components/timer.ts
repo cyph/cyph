@@ -9,18 +9,24 @@ export class Timer {
 	/** Module/component title. */
 	public static title: string	= 'cyphTimer';
 
-	private autostart: boolean;
-	private stopped: boolean;
-	private countdown: number;
+	private autostart: boolean	= false;
+	private stopped: boolean	= false;
+	private countdown: number	= 0;
+	private endTime: number		= 0;
 
 	constructor ($scope, $element, $attrs) {
+		$element[0]['addCountdownSeconds']	= seconds => {
+			this.endTime	+= seconds * 1000;
+		};
+
 		$element[0]['start']	= () => {
 			const includeHours		= this.countdown >= 3600;
 			const includeMinutes	= this.countdown >= 60;
-			const endTime			= Util.timestamp() + this.countdown * 1000;
+
+			this.endTime	= Util.timestamp() + this.countdown * 1000;
 
 			const interval	= setInterval(() => {
-				const diff	= endTime - Util.timestamp();
+				const diff	= this.endTime - Util.timestamp();
 
 				if (this.stopped || diff < 1) {
 					$scope.$parent.timestamp	= includeHours ? '0:00:00' : '0:00';
@@ -41,7 +47,7 @@ export class Timer {
 			}, 500);
 		};
 
-		$element[0]['stop']		= () => {
+		$element[0]['stop']	= () => {
 			this.stopped	= true;
 		};
 
