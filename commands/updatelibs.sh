@@ -86,8 +86,6 @@ jspm install -y \
 	github:markdown-it/markdown-it-sup \
 	github:markdown-it/markdown-it-emoji \
 	microlight=github:buu700/microlight \
-	moment \
-	npm:humanize-duration \
 	github:andyet/simplewebrtc \
 	npm:animate.css \
 	github:davidchambers/base64.js \
