@@ -1,3 +1,4 @@
+import {Timer} from './timer';
 import {ILinkConnection} from '../ilinkconnection';
 import {Templates} from '../templates';
 
@@ -16,13 +17,14 @@ export class LinkConnection {
 	constructor () {}
 
 	private static _	= (() => {
-		angular.module(LinkConnection.title, []).component(LinkConnection.title, {
+		angular.module(LinkConnection.title, [
+			Timer.title
+		]).component(LinkConnection.title, {
 			bindings: {
 				self: '<'
 			},
 			controller: LinkConnection,
-			template: Templates.linkConnection,
-			transclude: true
+			template: Templates.linkConnection
 		});
 	})();
 }

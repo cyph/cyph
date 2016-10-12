@@ -429,9 +429,8 @@ export const Templates	= {
 					</md-list>
 				</md-content>
 			</div>
-			<timer
+			<cyph-timer
 				id='self-destruct-timer'
-				interval='1000'
 				countdown='$ctrl.self.selfDestructTimeout'
 				ng-show='$ctrl.self.selfDestruct'
 				autostart='false'
@@ -879,14 +878,12 @@ export const Templates	= {
 					<span translate>
 						Link expires in
 					</span>
-					<timer
-						class='timer'
-						interval='1000'
+					<cyph-timer
 						countdown='$ctrl.self.countdown'
 						autostart='false'
 					>
 						{{minutes}}:{{sseconds}}
-					</timer>
+					</cyph-timer>
 					<md-button
 						aria-label='Increase Time'
 						onclick=''
@@ -1225,6 +1222,10 @@ export const Templates	= {
 
 			<div flex></div>
 		</div>
+	`,
+
+	transclude: `
+		<ng-transclude></ng-transclude>
 	`
 };
 

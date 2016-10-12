@@ -48,7 +48,7 @@ export class Elements {
 		Elements.p2pMeStream			= $('.video-call .me');
 		Elements.sendButton				= $('.send-button');
 		Elements.signupForm				= $('.beta-signup-form');
-		Elements.timer					= $('.link-connection .timer');
+		Elements.timer					= $('cyph-timer');
 
 		/* Temporary workaround for Angular Material bug */
 		const removeWaiting	= () => $('md-fab-speed-dial').removeClass('md-animations-waiting');

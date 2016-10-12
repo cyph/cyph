@@ -26,14 +26,13 @@ Cyph.UI.Elements.html.attr('ng-controller', Cyph.Config.angularConfig.rootContro
 angular.
 	module(Cyph.Config.angularConfig.rootModule, [
 		'ngMaterial',
-		'timer',
+		Cyph.UI.Components.Beta.title,
 		Cyph.UI.Components.ChatCyphertext.title,
 		Cyph.UI.Components.ChatMain.title,
 		Cyph.UI.Components.ChatMessageBox.title,
 		Cyph.UI.Components.ChatToolbar.title,
 		Cyph.UI.Components.Contact.title,
 		Cyph.UI.Components.LinkConnection.title,
-		Cyph.UI.Components.Beta.title,
 		Cyph.UI.Components.SignupForm.title,
 		Cyph.UI.Components.StaticCyphNotFound.title,
 		Cyph.UI.Components.StaticCyphSpinningUp.title,
