@@ -1,7 +1,8 @@
 import {FileInput} from './fileinput';
 import {Templates} from '../templates';
+import {VirtualKeyboardWatcher} from '../virtualkeyboardwatcher';
 import {IChat} from '../chat/ichat';
-import {Enterpress} from '../directives/enterpress';
+import {Env} from '../../env';
 
 
 /**
@@ -15,12 +16,26 @@ export class ChatMessageBox {
 
 	private self: IChat;
 
-	constructor () {}
+	constructor ($scope, $element, $attrs) {
+		/* Allow enter press to submit, except on
+			mobile without external keyboard */
+		$element.find('textarea').keypress(e => {
+			if (
+				(Env.isMobile && VirtualKeyboardWatcher.isOpen) ||
+				(e.keyCode !== 13 || e.shiftKey)
+			) {
+				return;
+			}
+
+			e.preventDefault();
+			this.self.send();
+		});
+	}
 
 	private static _	= (() => {
 		angular.module(
 			ChatMessageBox.title,
-			['ngMaterial', Enterpress.title, FileInput.title]
+			['ngMaterial', FileInput.title]
 		).component(ChatMessageBox.title, {
 			bindings: {
 				self: '<'

@@ -447,8 +447,6 @@ export const Templates	= {
 				ng-model='$ctrl.self.currentMessage'
 				ng-trim='false'
 				ng-change='$ctrl.self.messageChange()'
-				cyph-enterpress='$ctrl.self.send()'
-				enterpress-only='desktop'
 				placeholder='Send a secure message...'
 			></textarea>
 
