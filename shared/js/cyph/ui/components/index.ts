@@ -6,6 +6,7 @@ import {ChatToolbar} from './chattoolbar';
 import {Checkout} from './checkout';
 import {Contact} from './contact';
 import {LinkConnection} from './linkconnection';
+import {Markdown} from './markdown';
 import {SignupForm} from './signupform';
 import {StaticCyphNotFound} from './staticcyphnotfound';
 import {StaticCyphSpinningUp} from './staticcyphspinningup';
@@ -22,6 +23,7 @@ export {
 	Checkout,
 	Contact,
 	LinkConnection,
+	Markdown,
 	SignupForm,
 	StaticCyphNotFound,
 	StaticCyphSpinningUp,

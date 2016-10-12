@@ -371,14 +371,14 @@ export const Templates	= {
 									ng-hide='::message.author === $ctrl.Cyph.Session.Users.app'
 									ng-bind='::message.author + ": "'
 								></strong>
-								<span
+								<cyph-markdown
 									class='message-text'
-									cyph-markdown='::message.text'
+									markdown='::message.text'
 									ng-class='::{
 										"app-message":
 											message.author === $ctrl.Cyph.Session.Users.app
 									}'
-								></span>
+								></cyph-markdown>
 							</span>
 							<span flex class='message-timestamp'>
 								<span

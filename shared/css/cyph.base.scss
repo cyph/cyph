@@ -154,7 +154,7 @@ cyph-checkout, #donate {
 	}
 }
 
-[cyph-markdown] {
+cyph-markdown {
 	> p:only-child {
 		display: inline;
 	}
@@ -165,7 +165,7 @@ cyph-checkout, #donate {
 }
 
 html:not(.mobile) {
-	[cyph-markdown] {
+	cyph-markdown {
 		:not(p:only-child) {
 			margin-left: 25px;
 		}
