@@ -187,12 +187,12 @@ const newCyphTest	= o => {
 
 const runTests	= (homeURL, newCyphURL) => Promise.resolve().then(() => {
 	/* Never run test suites concurrently, and never run the same
-		test suite more frequently than once every three hours */
+		test suite more frequently than once every six hours */
 	if (
 		testLock ||
 		(
 			!isNaN(testTimes[homeURL + newCyphURL]) &&
-			Date.now() - testTimes[homeURL + newCyphURL] < 10800000
+			Date.now() - testTimes[homeURL + newCyphURL] < 21600000
 		)
 	) {
 		return;
