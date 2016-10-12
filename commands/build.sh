@@ -66,6 +66,17 @@ scssfiles="$(find css -name '*.scss' | grep -v bourbon/ | perl -pe 's/(.*)\.scss
 
 output=''
 
+modulename () {
+	m="$(echo ${1} | perl -pe 's/.*\/([^\/]+)$/\u$1/')"
+	classM="$(grep -oiP "class\s+${m}" ${1}.ts | perl -pe 's/class\s+//')"
+
+	if [ "${classM}" ] ; then
+		echo "${classM}"
+	else
+		echo "${m}"
+	fi
+}
+
 compile () {
 	for f in $scssfiles ; do
 		command="scss -Icss $f.scss $f.css"
@@ -78,7 +89,7 @@ compile () {
 
 	cd js
 
-	output="${output}$(tsc $tsargs preload/*.ts $(for f in $tsfiles ; do echo $f.ts ; done))"
+	output="${output}$(tsc $tsargs $(find . -name '*.ts' -not -name '*.d.ts'))"
 
 	if [ ! "${simpletest}" ] ; then
 		find . -name '*.js' -not -path './node_modules/*' -exec node -e '
@@ -117,15 +128,22 @@ compile () {
 			webpack \
 				--optimize-dedupe \
 				--output-library-target var \
-				--output-library "$(echo $f | perl -pe 's/.*\/([^\/]+)$/\u$1/')" \
+				--output-library "$(modulename $f)" \
 				$f.js \
 				$f.js.tmp
 		done
 		for f in $tsfiles ; do
+			m="$(modulename $f)"
+
 			{
 				cat preload/global.js;
 				cat $f.js.tmp;
-			} | sed 's|use strict||g' > $f.js
+				echo "${m} = ${m}.${m} || ${m};";
+			} | \
+				sed 's|use strict||g' | \
+				sed "s|var ${m} =|${m} =|" \
+			> $f.js
+
 			rm $f.js.tmp
 		done
 	fi

@@ -1,4 +1,4 @@
-import {Potassium} from './potassium';
+import {PotassiumUtil} from './potassiumutil';
 
 
 /**
@@ -41,7 +41,7 @@ export class NativeCrypto {
 		return NativeCrypto.Subtle.importKey(
 			'jwk',
 			JSON.parse(
-				Potassium.toString(
+				PotassiumUtil.toString(
 					new Uint8Array(key.buffer, key.byteOffset, key.indexOf(0))
 				)
 			),
@@ -55,7 +55,7 @@ export class NativeCrypto {
 		cryptoKey: CryptoKey,
 		algorithmName: string
 	) : Promise<Uint8Array> {
-		return Potassium.fromString(
+		return PotassiumUtil.fromString(
 			JSON.stringify(
 				await NativeCrypto.Subtle.exportKey(
 					'jwk',
@@ -115,7 +115,7 @@ export class NativeCrypto {
 			nonce: Uint8Array,
 			publicKey: Uint8Array
 		) : Promise<Uint8Array> => {
-			const asymmetricPlaintext: Uint8Array	= Potassium.randomBytes(
+			const asymmetricPlaintext: Uint8Array	= PotassiumUtil.randomBytes(
 				NativeCrypto.SecretBox.keyBytes + NativeCrypto.OneTimeAuth.keyBytes
 			);
 
@@ -153,9 +153,9 @@ export class NativeCrypto {
 				macKey
 			);
 
-			Potassium.clearMemory(asymmetricPlaintext);
+			PotassiumUtil.clearMemory(asymmetricPlaintext);
 
-			return Potassium.concatMemory(
+			return PotassiumUtil.concatMemory(
 				true,
 				asymmetricCyphertext,
 				mac,
@@ -224,13 +224,13 @@ export class NativeCrypto {
 				macKey
 			);
 
-			Potassium.clearMemory(asymmetricPlaintext);
+			PotassiumUtil.clearMemory(asymmetricPlaintext);
 
 			if (isValid) {
 				return plaintext;
 			}
 			else {
-				Potassium.clearMemory(plaintext);
+				PotassiumUtil.clearMemory(plaintext);
 				throw new Error('Invalid RSA cyphertext.');
 			}
 		}
@@ -296,7 +296,7 @@ export class NativeCrypto {
 
 		hash: async (
 			plaintext: Uint8Array,
-			salt: Uint8Array = Potassium.randomBytes(
+			salt: Uint8Array = PotassiumUtil.randomBytes(
 				NativeCrypto.PasswordHash.saltBytes
 			),
 			outputBytes: number = NativeCrypto.SecretBox.keyBytes,
