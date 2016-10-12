@@ -15,8 +15,9 @@ export class Timer {
 
 	constructor ($scope, $element, $attrs) {
 		$element[0]['start']	= () => {
-			const includeHours	= this.countdown >= 3600;
-			const endTime		= Util.timestamp() + this.countdown * 1000;
+			const includeHours		= this.countdown >= 3600;
+			const includeMinutes	= this.countdown >= 60;
+			const endTime			= Util.timestamp() + this.countdown * 1000;
 
 			const interval	= setInterval(() => {
 				const diff	= endTime - Util.timestamp();
@@ -33,7 +34,9 @@ export class Timer {
 
 				$scope.$parent.timestamp	= includeHours ?
 					`${hours}:${`0${minutes}`.slice(-2)}:${`0${seconds}`.slice(-2)}` :
-					`${minutes}:${`0${seconds}`.slice(-2)}`
+					includeMinutes ?
+						`${minutes}:${`0${seconds}`.slice(-2)}` :
+						seconds
 				;
 			}, 500);
 		};
