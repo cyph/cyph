@@ -862,11 +862,8 @@ export const Templates	= {
 					<span translate>
 						Link expires in
 					</span>
-					<cyph-timer
-						countdown='$ctrl.self.countdown'
-						autostart='false'
-					>
-						{{minutes}}:{{seconds}}
+					<cyph-timer countdown='$ctrl.self.countdown'>
+						{{timestamp}}
 					</cyph-timer>
 				</div>
 			</div>
