@@ -862,14 +862,12 @@ export const Templates	= {
 					<span translate>
 						Link expires in
 					</span>
-					<timer
-						class='timer'
-						interval='1000'
+					<cyph-timer
 						countdown='$ctrl.self.countdown'
 						autostart='false'
 					>
-						{{minutes}}:{{sseconds}}
-					</timer>
+						{{minutes}}:{{seconds}}
+					</cyph-timer>
 				</div>
 			</div>
 			<div flex></div>
@@ -1174,6 +1172,10 @@ export const Templates	= {
 
 			<div flex></div>
 		</div>
+	`,
+
+	transclude: `
+		<ng-transclude></ng-transclude>
 	`
 };
 

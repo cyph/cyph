@@ -12,6 +12,7 @@ export class SignupForm {
 	private Cyph: any	= self['Cyph'];
 
 	private self: ISignupForm;
+	private invite: string;
 
 	constructor () {}
 
