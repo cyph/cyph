@@ -154,25 +154,25 @@ cyph-checkout, #donate {
 	}
 }
 
-[cyph-markdown] {
+cyph-markdown {
 	> p:only-child {
 		display: inline;
 	}
 
-	:not(p:only-child) {
+	:not(p), p:not(:only-child) {
 		margin: 10px;
 	}
 }
 
 html:not(.mobile) {
-	[cyph-markdown] {
-		:not(p:only-child) {
+	cyph-markdown {
+		:not(p), p:not(:only-child) {
 			margin-left: 25px;
 		}
 	}
 }
 
-:not(textarea):not(md-input-container):not(input):not(blockquote):not(md-progress-circular *) {
+:not(textarea):not(md-input-container):not(input):not(blockquote) {
 	border: 0px !important;
 }
 
@@ -637,10 +637,6 @@ md-icon.back.material-icons:hover {
 
 .pricing-chart.individual.layout-row .layout-column {
 	text-align: right;
-}
-
-.pricing-chart.individual {
-	// width: 50%;
 }
 
 .pricing-chart .md-button.back {

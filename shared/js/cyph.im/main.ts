@@ -33,11 +33,11 @@ angular.
 		Cyph.UI.Components.ChatToolbar.title,
 		Cyph.UI.Components.Contact.title,
 		Cyph.UI.Components.LinkConnection.title,
+		Cyph.UI.Components.Markdown.title,
 		Cyph.UI.Components.SignupForm.title,
 		Cyph.UI.Components.StaticCyphNotFound.title,
 		Cyph.UI.Components.StaticCyphSpinningUp.title,
-		Cyph.UI.Components.StaticFooter.title,
-		Cyph.UI.Directives.Markdown.title
+		Cyph.UI.Components.StaticFooter.title
 	]).
 	controller(Cyph.Config.angularConfig.rootController, [
 		'$scope',

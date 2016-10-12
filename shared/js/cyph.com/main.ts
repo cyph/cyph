@@ -26,8 +26,8 @@ angular.
 		Cyph.UI.Components.ChatToolbar.title,
 		Cyph.UI.Components.Checkout.title,
 		Cyph.UI.Components.Contact.title,
-		Cyph.UI.Components.SignupForm.title,
-		Cyph.UI.Directives.Markdown.title
+		Cyph.UI.Components.Markdown.title,
+		Cyph.UI.Components.SignupForm.title
 	]).
 	controller(Cyph.Config.angularConfig.rootController, [
 		'$scope',
