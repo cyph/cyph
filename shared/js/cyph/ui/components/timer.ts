@@ -32,6 +32,10 @@ export class Timer {
 	}
 
 	constructor ($scope, $element, $attrs) { (async () => {
+		for (let k of ['start', 'stop']) {
+			$element[0][k]	= () => setTimeout(() => $element[0][k](), 100);
+		}
+
 		while (!this.countdown) {
 			await Util.sleep(100);
 		}
