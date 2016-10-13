@@ -137,7 +137,15 @@ RUN sudo npm -g install \
 	node-fetch \
 	image-type \
 	firebase \
-	firebase-server
+	firebase-server \
+	rxjs \
+	zone.js \
+	@angular/common \
+	@angular/compiler \
+	@angular/compiler-cli \
+	@angular/core \
+	@angular/platform-browser \
+	@angular/platform-server
 
 
 VOLUME /cyph

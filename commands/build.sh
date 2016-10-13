@@ -15,26 +15,6 @@ elif [ "${1}" == '--simpletest' ] ; then
 	simpletest=true
 fi
 
-tsargs="$(node -e '
-	const compilerOptions	= JSON.parse(
-		fs.readFileSync("shared/js/tsconfig.json").toString()
-	).compilerOptions;
-
-	console.log(Object.keys(compilerOptions).map(k => {
-		const v			= compilerOptions[k];
-		let argValue	= "";
-
-		if (v === false) {
-			return;
-		}
-		else if (v !== true) {
-			argValue	= " " + v.toString();
-		}
-
-		return `--${k}${argValue}`;
-	}).join(" "));
-')"
-
 tsfiles="$( \
 	{ \
 		find . -name '*.html' -not \( \
@@ -77,6 +57,14 @@ modulename () {
 	fi
 }
 
+tsbuild () {
+	if [ "${watch}" -o "${test}" -o "${simpletest}" ] ; then
+		tsc $*
+	else
+		ngc $*
+	fi
+}
+
 compile () {
 	for f in $scssfiles ; do
 		command="scss -Icss $f.scss $f.css"
@@ -87,6 +75,7 @@ compile () {
 		fi
 	done
 
+	rm -rf .js.tmp 2> /dev/null
 	cp -a js .js.tmp
 	cd .js.tmp
 
@@ -115,7 +104,23 @@ compile () {
 		done
 	fi
 
-	output="${output}$(tsc $tsargs preload/global.ts $(for f in $tsfiles ; do echo $f.ts ; done))"
+	node -e "
+		const tsconfig	= JSON.parse(
+			fs.readFileSync('tsconfig.json').toString()
+		);
+
+		tsconfig.files	= 'preload/global ${tsfiles}'.
+			trim().
+			split(/\s+/).map(f => f + '.ts')
+		;
+
+		fs.writeFileSync(
+			'tsconfig.json',
+			JSON.stringify(tsconfig)
+		);
+	"
+
+	output="${output}$(tsbuild -p .)"
 
 	if [ ! "${simpletest}" ] ; then
 		for f in $tsfiles ; do
