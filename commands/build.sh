@@ -145,6 +145,7 @@ if [ "${watch}" ] ; then
 		echo -e '\n\n\nBuilding JS/CSS\n\n'
 		compile
 		echo -e "\n\n\nFinished building JS/CSS ($(expr $(date +%s) - $start)s)\n\n"
+		sleep 10
 		inotifywait -r --exclude '(node_modules|sed.*|.*\.(html|css|js|map|tmp))$' css js
 	done
 else
