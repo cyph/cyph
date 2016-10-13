@@ -119,7 +119,7 @@ const getDriver			= o => {
 		else {
 			driverSetOnerror(driver);
 		}
-	}, 1000);
+	}, 5000);
 
 	return driver;
 };
@@ -212,6 +212,7 @@ const runTests	= (homeURL, newCyphURL) => Promise.resolve().then(() => {
 		const o	= {
 			'browserstack.user': process.env.BS_USER,
 			'browserstack.key': process.env.BS_KEY,
+			'browserstack.debug': true,
 			homeURL,
 			newCyphURL
 		};
