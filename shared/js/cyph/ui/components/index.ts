@@ -23,6 +23,7 @@ export {
 	ChatToolbar,
 	Checkout,
 	Contact,
+	FileInput,
 	LinkConnection,
 	Markdown,
 	SignupForm,
