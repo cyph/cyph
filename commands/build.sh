@@ -93,27 +93,15 @@ compile () {
 
 	if [ ! "${simpletest}" ] ; then
 		find . -name '*.js' -not -path './node_modules/*' -exec node -e '
-			const watch	= "'"${watch}"'";
-
-			const build	= f => {
+			const resolveReferences	= f => {
 				const path		= fs.realpathSync(f);
 				const parent	= path.split("/").slice(0, -1).join("/");
 
-				const input		= fs.readFileSync(path).toString();
-				const content	= (
-					watch ?
-						input :
-						child_process.spawnSync("babel", [
-							"--presets",
-							"es2015",
-							"--compact",
-							"false"
-						], {input}).stdout.toString()
-				).trim().replace(
+				const content	= fs.readFileSync(path).toString().trim().replace(
 					/\/\/\/ <reference path="(.*)".*/g,
 					(_, sub) => sub.match(/\.d\.ts$/) ?
 						"" :
-						build(parent + "/" + sub.replace(/\.ts$/, ".js"))
+						resolveReferences(parent + "/" + sub.replace(/\.ts$/, ".js"))
 				);
 
 				fs.writeFileSync(path, content);
@@ -121,7 +109,7 @@ compile () {
 				return content;
 			};
 
-			build("{}");
+			resolveReferences("{}");
 		' \;
 
 		for f in $tsfiles ; do
@@ -140,6 +128,7 @@ compile () {
 				cat $f.js.tmp | sed '0,/var ${m} =/s||self.${m} =|';
 				echo "${m} = ${m}.${m} || ${m};";
 			} | \
+				if [ "${watch}" ] ; then cat - ; else babel --presets es2015 --compact false ; fi | \
 				sed 's|use strict||g' \
 			> $f.js
 

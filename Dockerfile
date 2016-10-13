@@ -123,7 +123,7 @@ RUN sudo npm -g install \
 	typings \
 	typedoc \
 	jspm \
-	webpack \
+	webpack@beta \
 	browserstack \
 	zombie \
 	browserify \
