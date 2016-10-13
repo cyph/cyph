@@ -137,11 +137,10 @@ compile () {
 
 			{
 				cat preload/global.js;
-				cat $f.js.tmp;
+				cat $f.js.tmp | sed '0,/var ${m} =/s||self.${m} =|';
 				echo "${m} = ${m}.${m} || ${m};";
 			} | \
-				sed 's|use strict||g' | \
-				sed "s|var ${m} =|${m} =|" \
+				sed 's|use strict||g' \
 			> $f.js
 
 			rm $f.js.tmp
