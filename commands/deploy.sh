@@ -366,6 +366,8 @@ if [ "${compiledProjects}" ] ; then
 
 	../commands/build.sh || exit;
 
+	rm -rf js/node_modules lib/js/node_modules
+
 	if [ ! "${simple}" ] ; then
 		echo 'JS Minify'
 		find js -name '*.js' | xargs -I% uglifyjs '%' -o '%'
