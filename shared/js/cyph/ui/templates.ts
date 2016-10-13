@@ -455,8 +455,6 @@ export const Templates	= {
 				ng-model='$ctrl.self.currentMessage'
 				ng-trim='false'
 				ng-change='$ctrl.self.messageChange()'
-				cyph-enterpress='$ctrl.self.send()'
-				enterpress-only='desktop'
 				placeholder='Send a secure message...'
 			></textarea>
 
@@ -496,10 +494,9 @@ export const Templates	= {
 							Send File
 						</md-tooltip>
 						<md-icon class='grey'>attach_file</md-icon>
-						<input
-							type='file'
-							cyph-filechange='$ctrl.self.fileManager.send(this)'
-						/>
+						<cyph-file-input
+							file-change='$ctrl.self.fileManager.send(file)'
+						></cyph-file-input>
 					</md-button>
 					<md-button
 						aria-label='Send Image'
@@ -509,11 +506,10 @@ export const Templates	= {
 							Send Image
 						</md-tooltip>
 						<md-icon class='grey'>insert_photo</md-icon>
-						<input
+						<cyph-file-input
 							accept='image/*'
-							type='file'
-							cyph-filechange='$ctrl.self.fileManager.send(this, true)'
-						/>
+							file-change='$ctrl.self.fileManager.send(file, true)'
+						></cyph-file-input>
 					</md-button>
 					<md-button
 						aria-label='Voice Call'
@@ -660,6 +656,10 @@ export const Templates	= {
 				Your email has been sent! Someone on the team will get back to you shortly.
 			</div>
 		</div>
+	`,
+
+	fileInput: `
+		<input type='file' ng-attr-accept='{{$ctrl.accept}}' />
 	`,
 
 	helpModal: `

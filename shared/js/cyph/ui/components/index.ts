@@ -5,6 +5,7 @@ import {ChatMessageBox} from './chatmessagebox';
 import {ChatToolbar} from './chattoolbar';
 import {Checkout} from './checkout';
 import {Contact} from './contact';
+import {FileInput} from './fileinput';
 import {LinkConnection} from './linkconnection';
 import {Markdown} from './markdown';
 import {SignupForm} from './signupform';
@@ -22,6 +23,7 @@ export {
 	ChatToolbar,
 	Checkout,
 	Contact,
+	FileInput,
 	LinkConnection,
 	Markdown,
 	SignupForm,

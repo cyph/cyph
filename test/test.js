@@ -57,7 +57,7 @@ const testResults	= {};
 const testTimes		= {};
 
 
-const driverPromise	= f => new Promise((resolve, reject) => {
+const driverPromise		= f => new Promise((resolve, reject) => {
 	try {
 		f().then(resolve).catch(err => {
 			console.error(err);
@@ -70,24 +70,44 @@ const driverPromise	= f => new Promise((resolve, reject) => {
 	}
 });
 
-const driverQuit	= driver => {
+const driverQuit		= driver => {
 	driver.isClosed	= true;
 	return driverPromise(() => driver.quit());
 }
 
-const driverScript	= (driver, f) => driverPromise(() =>
-	driver.executeScript(f)
-);
+const driverScript		= (driver, f) => driverPromise(() => {
+	if (!driver.isClosed) {
+		driver.executeScript(f);
+	}
+});
 
-const driverSetURL	= (driver, url) => driverPromise(() =>
+const driverSetOnerror	= driver => driverScript(driver, function () {
+	self.onerror	= function (err) {
+		if (err === 'Script error.') {
+			return;
+		}
+
+		document.body.innerHTML	=
+			'<pre style="font-size: 24px; white-space: pre-wrap;">' +
+				JSON.stringify(arguments, null, '\t') +
+			'</pre>'
+		;
+	};
+});
+
+const driverSetURL		= (driver, url) => driverPromise(() =>
 	driver.get(url)
-);
+).then(() =>
+	driverSetOnerror(driver)
+).then(() => {
+	driver.isActive	= true;
+});
 
-const driverWait	= (driver, until, timeout) => driverPromise(() =>
+const driverWait		= (driver, until, timeout) => driverPromise(() =>
 	driver.wait(until, timeout)
 );
 
-const getDriver		= o => {
+const getDriver			= o => {
 	const driver	= new webdriver.Builder().
 		usingServer('https://hub-cloud.browserstack.com/wd/hub').
 		withCapabilities(o).
@@ -97,23 +117,11 @@ const getDriver		= o => {
 	const interval	= setInterval(() => {
 		if (driver.isClosed) {
 			clearInterval(interval);
-			return;
 		}
-
-		driverScript(driver, function () {
-			self.onerror	= function (err) {
-				if (err === 'Script error.') {
-					return;
-				}
-
-				document.body.innerHTML	=
-					'<pre style="font-size: 24px; white-space: pre-wrap;">' +
-						JSON.stringify(arguments, null, '\t') +
-					'</pre>'
-				;
-			};
-		});
-	}, 250);
+		else if (driver.isActive) {
+			driverSetOnerror(driver);
+		}
+	}, 2500);
 
 	return driver;
 };
@@ -187,12 +195,12 @@ const newCyphTest	= o => {
 
 const runTests	= (homeURL, newCyphURL) => Promise.resolve().then(() => {
 	/* Never run test suites concurrently, and never run the same
-		test suite more frequently than once every three hours */
+		test suite more frequently than once every six hours */
 	if (
 		testLock ||
 		(
 			!isNaN(testTimes[homeURL + newCyphURL]) &&
-			Date.now() - testTimes[homeURL + newCyphURL] < 10800000
+			Date.now() - testTimes[homeURL + newCyphURL] < 21600000
 		)
 	) {
 		return;
@@ -206,6 +214,7 @@ const runTests	= (homeURL, newCyphURL) => Promise.resolve().then(() => {
 		const o	= {
 			'browserstack.user': process.env.BS_USER,
 			'browserstack.key': process.env.BS_KEY,
+			'browserstack.debug': true,
 			homeURL,
 			newCyphURL
 		};

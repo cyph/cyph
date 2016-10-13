@@ -3,9 +3,6 @@
  */
 
 
-(() => {
-
-
 const userAgent: string	= navigator.userAgent.toLowerCase();
 
 const isFirefoxOS: boolean		=
@@ -38,6 +35,3 @@ if (
 ) {
 	location.pathname	= '/unsupportedbrowser';
 }
-
-
-})();

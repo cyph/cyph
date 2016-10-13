@@ -4,9 +4,6 @@
  */
 
 
-(() => {
-
-
 /* Allowed URI schemes */
 const whitelist: string[]	= ['http', 'https', 'ftp'];
 
@@ -44,6 +41,3 @@ DOMPurify.addHook('afterSanitizeAttributes', (node: HTMLElement) => {
 
 	return node;
 });
-
-
-})();

@@ -34,19 +34,19 @@ export class Files implements IFiles {
 			locals.chunkSize	= Config.filesConfig.chunkSize;
 			locals.callbackId	= 'files-' + Util.generateGuid();
 
-			const thread	= new Thread(async (
+			const thread	= new Thread(async function (
 				Cyph: any,
-				Crypto: any,
+				Potassium: any,
 				locals: any,
 				importScripts: Function
-			) => {
-				importScripts('/js/cyph/crypto/index.js');
+			) {
+				importScripts('/js/cyph/crypto/potassium.js');
 
-				const potassium	= new Crypto.Potassium(locals.isAlice);
+				const potassium: Potassium	= new Potassium(locals.isAlice);
 
 				/* Encrypt */
 				if (locals.plaintext) {
-					const key: Uint8Array	= Crypto.Potassium.randomBytes(
+					const key: Uint8Array	= Potassium.randomBytes(
 						potassium.SecretBox.keyBytes
 					);
 
@@ -92,7 +92,7 @@ export class Files implements IFiles {
 						cyphertext.set(chunk, j);
 						j += chunk.length;
 
-						Crypto.Potassium.clearMemory(chunk);
+						Potassium.clearMemory(chunk);
 					}
 
 					Cyph.EventManager.trigger(
@@ -145,7 +145,7 @@ export class Files implements IFiles {
 						plaintext.set(chunk, j);
 						j += chunk.length;
 
-						Crypto.Potassium.clearMemory(chunk);
+						Potassium.clearMemory(chunk);
 					}
 
 					Cyph.EventManager.trigger(

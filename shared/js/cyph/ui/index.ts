@@ -17,7 +17,6 @@ import {VirtualKeyboardWatcher} from './virtualkeyboardwatcher';
 import {VisibilityWatcher} from './visibilitywatcher';
 import * as Chat from './chat';
 import * as Components from './components';
-import * as Directives from './directives';
 
 
 export {
@@ -40,6 +39,5 @@ export {
 	VisibilityWatcher,
 
 	Chat,
-	Components,
-	Directives
+	Components
 };

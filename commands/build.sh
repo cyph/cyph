@@ -15,26 +15,6 @@ elif [ "${1}" == '--simpletest' ] ; then
 	simpletest=true
 fi
 
-tsargs="$(node -e '
-	const compilerOptions	= JSON.parse(
-		'"'$(cat shared/js/tsconfig.json | tr '\n' ' ')'"'
-	).compilerOptions;
-
-	console.log(Object.keys(compilerOptions).map(k => {
-		const v			= compilerOptions[k];
-		let argValue	= "";
-
-		if (v === false) {
-			return;
-		}
-		else if (v !== true) {
-			argValue	= " " + v.toString();
-		}
-
-		return `--${k}${argValue}`;
-	}).join(" "));
-')"
-
 tsfiles="$( \
 	{ \
 		find . -name '*.html' -not \( \
@@ -66,6 +46,25 @@ scssfiles="$(find css -name '*.scss' | grep -v bourbon/ | perl -pe 's/(.*)\.scss
 
 output=''
 
+modulename () {
+	m="$(echo ${1} | perl -pe 's/.*\/([^\/]+)$/\u$1/')"
+	classM="$(grep -oiP "class\s+${m}" ${1}.ts | perl -pe 's/class\s+//')"
+
+	if [ "${classM}" ] ; then
+		echo "${classM}"
+	else
+		echo "${m}"
+	fi
+}
+
+tsbuild () {
+	if [ "${watch}" -o "${test}" -o "${simpletest}" ] ; then
+		tsc $*
+	else
+		ngc $*
+	fi
+}
+
 compile () {
 	for f in $scssfiles ; do
 		command="scss -Icss $f.scss $f.css"
@@ -76,61 +75,78 @@ compile () {
 		fi
 	done
 
-	cd js
-
-	output="${output}$(tsc $tsargs preload/*.ts $(for f in $tsfiles ; do echo $f.ts ; done))"
+	rm -rf .js.tmp 2> /dev/null
+	cp -a js .js.tmp
+	cd .js.tmp
 
 	if [ ! "${simpletest}" ] ; then
-		find . -name '*.js' -not -path './node_modules/*' -exec node -e '
-			const watch	= "'"${watch}"'";
+		for f in $tsfiles ; do
+			node -e "
+				const resolveReferences	= f => {
+					const path		= fs.realpathSync(f);
+					const parent	= path.split('/').slice(0, -1).join('/');
 
-			const build	= f => {
-				const path		= fs.realpathSync(f);
-				const parent	= path.split("/").slice(0, -1).join("/");
+					return fs.readFileSync(path).toString().trim().replace(
+						/\/\/\/ <reference path=\"(.*)\".*/g,
+						(ref, sub) => sub.match(/\.d\.ts\$/) ?
+							ref :
+							\`export const _\${crypto.randomBytes(4).toString('hex')} = (() => {
+								\${resolveReferences(parent + '/' + sub)}
+							})();\`
+					);
+				};
 
-				const input		= fs.readFileSync(path).toString();
-				const content	= (
-					watch ?
-						input :
-						child_process.spawnSync("babel", [
-							"--presets",
-							"es2015",
-							"--compact",
-							"false"
-						], {input}).stdout.toString()
-				).trim().replace(
-					/\/\/\/ <reference path="(.*)".*/g,
-					(_, sub) => sub.match(/\.d\.ts$/) ?
-						"" :
-						build(parent + "/" + sub.replace(/\.ts$/, ".js"))
+				fs.writeFileSync(
+					'${f}.ts',
+					resolveReferences('${f}.ts')
 				);
+			"
+		done
+	fi
 
-				fs.writeFileSync(path, content);
+	node -e "
+		const tsconfig	= JSON.parse(
+			fs.readFileSync('tsconfig.json').toString()
+		);
 
-				return content;
-			};
+		tsconfig.files	= 'preload/global ${tsfiles}'.
+			trim().
+			split(/\s+/).map(f => f + '.ts')
+		;
 
-			build("{}");
-		' \;
+		fs.writeFileSync(
+			'tsconfig.json',
+			JSON.stringify(tsconfig)
+		);
+	"
 
+	output="${output}$(tsbuild -p .)"
+
+	if [ ! "${simpletest}" ] ; then
 		for f in $tsfiles ; do
 			webpack \
 				--optimize-dedupe \
 				--output-library-target var \
-				--output-library "$(echo $f | perl -pe 's/.*\/([^\/]+)$/\u$1/')" \
+				--output-library "$(modulename $f)" \
 				$f.js \
 				$f.js.tmp
 		done
 		for f in $tsfiles ; do
+			m="$(modulename $f)"
+
 			{
 				cat preload/global.js;
-				cat $f.js.tmp;
-			} | sed 's|use strict||g' > $f.js
-			rm $f.js.tmp
+				cat $f.js.tmp | sed '0,/var ${m} =/s||self.${m} =|';
+				echo "${m} = ${m}.${m} || ${m};";
+			} | \
+				if [ "${watch}" ] ; then cat - ; else babel --presets es2015 --compact false ; fi | \
+				sed 's|use strict||g' \
+			> ../js/$f.js
 		done
 	fi
 
 	cd ..
+	rm -rf .js.tmp
 }
 
 if [ "${watch}" ] ; then
@@ -139,6 +155,7 @@ if [ "${watch}" ] ; then
 		echo -e '\n\n\nBuilding JS/CSS\n\n'
 		compile
 		echo -e "\n\n\nFinished building JS/CSS ($(expr $(date +%s) - $start)s)\n\n"
+		sleep 30
 		inotifywait -r --exclude '(node_modules|sed.*|.*\.(html|css|js|map|tmp))$' css js
 	done
 else

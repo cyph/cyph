@@ -152,6 +152,11 @@ bash -c "$(node -e '
 
 rm -rf config.js package.json jspm_packages 2> /dev/null
 
+find . -name '*@*.js' -type f -exec bash -c '
+	cat {} | perl -pe "s/(require\(\".*?):/\1\//g" > {}.new;
+	mv {}.new {};
+' \;
+
 
 sed -i 's/^\/dist$//' jquery*/.gitignore
 
