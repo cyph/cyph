@@ -23,7 +23,7 @@ export class Timer {
 			const includeHours		= this.countdown >= 3600;
 			const includeMinutes	= this.countdown >= 60;
 
-			this.endTime	= Util.timestamp() + this.countdown * 1000;
+			this.endTime	= Util.timestamp() + (this.countdown + 1) * 1000;
 
 			const interval	= setInterval(() => {
 				const diff	= this.endTime - Util.timestamp();
