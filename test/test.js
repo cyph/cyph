@@ -99,7 +99,9 @@ const driverSetURL		= (driver, url) => driverPromise(() =>
 	driver.get(url)
 ).then(() =>
 	driverSetOnerror(driver)
-);
+).then(() => {
+	driver.isActive	= true;
+});
 
 const driverWait		= (driver, until, timeout) => driverPromise(() =>
 	driver.wait(until, timeout)
@@ -116,10 +118,10 @@ const getDriver			= o => {
 		if (driver.isClosed) {
 			clearInterval(interval);
 		}
-		else {
+		else if (driver.isActive) {
 			driverSetOnerror(driver);
 		}
-	}, 5000);
+	}, 2500);
 
 	return driver;
 };
