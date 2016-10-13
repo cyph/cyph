@@ -81,7 +81,7 @@ const driverScript		= (driver, f) => driverPromise(() => {
 	}
 });
 
-const driverSetOnerror	= driverScript(driver, function () {
+const driverSetOnerror	= driver => driverScript(driver, function () {
 	self.onerror	= function (err) {
 		if (err === 'Script error.') {
 			return;
