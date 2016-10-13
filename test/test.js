@@ -97,6 +97,8 @@ const driverSetOnerror	= driver => driverScript(driver, function () {
 
 const driverSetURL		= (driver, url) => driverPromise(() =>
 	driver.get(url)
+).then(() =>
+	driverSetOnerror(driver)
 );
 
 const driverWait		= (driver, until, timeout) => driverPromise(() =>
@@ -109,8 +111,6 @@ const getDriver			= o => {
 		withCapabilities(o).
 		build()
 	;
-
-	driverSetOnerror(driver);
 
 	const interval	= setInterval(() => {
 		if (driver.isClosed) {
