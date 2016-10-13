@@ -17,7 +17,7 @@ fi
 
 tsargs="$(node -e '
 	const compilerOptions	= JSON.parse(
-		'"'$(cat shared/js/tsconfig.json | tr '\n' ' ')'"'
+		fs.readFileSync("shared/js/tsconfig.json").toString()
 	).compilerOptions;
 
 	console.log(Object.keys(compilerOptions).map(k => {
@@ -87,31 +87,37 @@ compile () {
 		fi
 	done
 
-	cd js
-
-	output="${output}$(tsc $tsargs $(find . -name '*.ts' -not -name '*.d.ts'))"
+	cp -a js .js.tmp
+	cd .js.tmp
 
 	if [ ! "${simpletest}" ] ; then
-		find . -name '*.js' -not -path './node_modules/*' -exec node -e '
-			const resolveReferences	= f => {
-				const path		= fs.realpathSync(f);
-				const parent	= path.split("/").slice(0, -1).join("/");
+		for f in $tsfiles ; do
+			node -e "
+				const resolveReferences	= f => {
+					const path		= fs.realpathSync(f);
+					const parent	= path.split('/').slice(0, -1).join('/');
 
-				const content	= fs.readFileSync(path).toString().trim().replace(
-					/\/\/\/ <reference path="(.*)".*/g,
-					(_, sub) => sub.match(/\.d\.ts$/) ?
-						"" :
-						resolveReferences(parent + "/" + sub.replace(/\.ts$/, ".js"))
+					return fs.readFileSync(path).toString().trim().replace(
+						/\/\/\/ <reference path=\"(.*)\".*/g,
+						(ref, sub) => sub.match(/\.d\.ts\$/) ?
+							ref :
+							\`export const _\${crypto.randomBytes(4).toString('hex')} = (() => {
+								\${resolveReferences(parent + '/' + sub)}
+							})();\`
+					);
+				};
+
+				fs.writeFileSync(
+					'${f}.ts',
+					resolveReferences('${f}.ts')
 				);
+			"
+		done
+	fi
 
-				fs.writeFileSync(path, content);
+	output="${output}$(tsc $tsargs preload/global.ts $(for f in $tsfiles ; do echo $f.ts ; done))"
 
-				return content;
-			};
-
-			resolveReferences("{}");
-		' \;
-
+	if [ ! "${simpletest}" ] ; then
 		for f in $tsfiles ; do
 			webpack \
 				--optimize-dedupe \
@@ -130,13 +136,12 @@ compile () {
 			} | \
 				if [ "${watch}" ] ; then cat - ; else babel --presets es2015 --compact false ; fi | \
 				sed 's|use strict||g' \
-			> $f.js
-
-			rm $f.js.tmp
+			> ../js/$f.js
 		done
 	fi
 
 	cd ..
+	rm -rf .js.tmp
 }
 
 if [ "${watch}" ] ; then
@@ -145,7 +150,7 @@ if [ "${watch}" ] ; then
 		echo -e '\n\n\nBuilding JS/CSS\n\n'
 		compile
 		echo -e "\n\n\nFinished building JS/CSS ($(expr $(date +%s) - $start)s)\n\n"
-		sleep 10
+		sleep 30
 		inotifywait -r --exclude '(node_modules|sed.*|.*\.(html|css|js|map|tmp))$' css js
 	done
 else

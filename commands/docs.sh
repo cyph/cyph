@@ -3,7 +3,7 @@
 dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd)/..
 
-cp -rf shared/js shared/.js.tmp
+cp -a shared/js shared/.js.tmp
 cd shared/.js.tmp
 
 rm -rf ../js/docs
