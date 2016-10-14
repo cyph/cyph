@@ -67,8 +67,6 @@ rm -rf wpstatic.zip wp-admin wp-json $(find . -name '*.php')
 
 for f in $(find . -type f) ; do
 	cat "${f}" |
-		sed "s|${fullDestinationURL}|/blog|g" |
-		sed "s|Permalink: /blog|Permalink: ${fullDestinationURL}|g" |
 		sed 's|–|—|g' |
 		sed 's|&ndash;|\&mdash;|g' |
 		sed 's|&#8211;|\&mdash;|g' |
@@ -91,6 +89,10 @@ for f in $(find . -name '*.html') ; do node -e "
 	;
 
 	const \$	= cheerio.load(fs.readFileSync('${f}').toString());
+
+	\$('meta[name=\"twitter:card\"]').each((i, elem) =>
+		\$(elem).attr('content', 'summary_large_image')
+	);
 
 	Promise.all(
 		\$(
