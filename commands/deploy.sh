@@ -364,7 +364,7 @@ if [ "${compiledProjects}" ] ; then
 		mv js/cyph/thread.ts.new js/cyph/thread.ts
 	fi
 
-	../commands/build.sh || exit;
+	../commands/build.sh $(test "${simple}" && echo '--simple') || exit;
 
 	rm -rf js/node_modules lib/js/node_modules
 
