@@ -15,4 +15,5 @@ export interface IElements {
 	p2pMeStream: JQuery;
 	sendButton: JQuery;
 	timer: JQuery;
+	title: JQuery;
 }

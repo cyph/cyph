@@ -42,7 +42,7 @@ export class ScrollManager implements IScrollManager {
 					) &&
 					!$elem.find('*').add($elem.parentsUntil().addBack()).is('.app-message')
 				) {
-					this.unreadMessages	+= 1;
+					this.updateMessageCount(1);
 
 					const intervalId	= setInterval(() => {
 						if (
@@ -55,7 +55,7 @@ export class ScrollManager implements IScrollManager {
 							clearInterval(intervalId);
 
 							$elem.removeClass('unread');
-							this.unreadMessages	-= 1;
+							this.updateMessageCount(-1);
 
 							if ($elem.nextAll().length === 0) {
 								this.scrollDown();
@@ -95,6 +95,19 @@ export class ScrollManager implements IScrollManager {
 		this.affiliate.process($elem);
 	}
 
+	private updateMessageCount (increment: number) : void {
+		this.unreadMessages	+= increment;
+
+		if (!this.messageCountInTitle) {
+			return;
+		}
+
+		this.elements.title.text(
+			(this.unreadMessages > 0 ? `(${this.unreadMessages}) ` : '') +
+			this.elements.title.text().replace(/^\(\d+\) /, '')
+		);
+	}
+
 	public scrollDown (shouldScrollCyphertext?: boolean) : void {
 		if (this.scrollDownLock < 1) {
 			try {
@@ -126,11 +139,13 @@ export class ScrollManager implements IScrollManager {
 	 * @param dialogManager
 	 * @param isMobile
 	 * @param elements
+	 * @param messageCountInTitle
 	 */
 	public constructor (
 		dialogManager: IDialogManager,
 		private isMobile: boolean,
-		private elements: IElements
+		private elements: IElements,
+		private messageCountInTitle?: boolean
 	) {
 		this.affiliate	= new Affiliate(dialogManager);
 

@@ -26,6 +26,7 @@ export class Elements {
 	public static sendButton: JQuery;
 	public static signupForm: JQuery;
 	public static timer: JQuery;
+	public static title: JQuery;
 
 	/**
 	 * Loads elements (call this after page is loaded).
@@ -49,6 +50,7 @@ export class Elements {
 		Elements.sendButton				= $('.send-button');
 		Elements.signupForm				= $('.beta-signup-form');
 		Elements.timer					= $('cyph-timer');
+		Elements.title					= $('title');
 
 		/* Temporary workaround for Angular Material bug */
 		const removeWaiting	= () => $('md-fab-speed-dial').removeClass('md-animations-waiting');

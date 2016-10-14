@@ -33,6 +33,96 @@ export const Templates	= {
 		</md-dialog>
 	`,
 
+	app: `
+		<section id='main' class='cyph-foreground' layout='column' layout-fill>
+			<cyph-chat-toolbar
+				self='$ctrl.ui.chat'
+				show-chat='$ctrl.ui.state === $ctrl.Cyph.im.States.chat'
+			></cyph-chat-toolbar>
+
+			<cyph-chat-main
+				self='$ctrl.ui.chat'
+				hide-disconnect-message='$ctrl.ui.coBranded'
+				ng-show='$ctrl.ui.state === $ctrl.Cyph.im.States.chat'
+				layout='column'
+				layout-fill
+				flex
+			>
+				<cyph-signup-form self='$ctrl.ui.signupForm'>
+					{{$ctrl.Cyph.Strings.signupMessage1}}
+					{{$ctrl.Cyph.Strings.signupMessage2}}
+				</cyph-signup-form>
+			</cyph-chat-main>
+
+			<cyph-static-cyph-spinning-up
+				ng-view
+				layout='column'
+				layout-fill
+				flex
+				ng-class='{
+					active: $ctrl.ui.state === $ctrl.Cyph.im.States.spinningUp
+				}'
+			></cyph-static-cyph-spinning-up>
+
+			<cyph-link-connection
+				ng-view
+				self='$ctrl.ui.cyphConnection'
+				layout='column'
+				layout-fill
+				flex
+				ng-class='{
+					active: $ctrl.ui.state === $ctrl.Cyph.im.States.waitingForFriend
+				}'
+			></cyph-link-connection>
+
+			<cyph-static-cyph-not-found
+				ng-view
+				layout='column'
+				layout-fill
+				flex
+				ng-class='{
+					active: $ctrl.ui.state === $ctrl.Cyph.im.States.error
+				}'
+			></cyph-static-cyph-not-found>
+
+			<cyph-beta
+				ng-view
+				self='$ctrl.ui'
+				layout='column'
+				layout-fill
+				flex
+				ng-class='{
+					active: $ctrl.ui.state === $ctrl.Cyph.im.States.beta
+				}'
+			></cyph-beta>
+
+			<div
+				ng-view
+				id='blank'
+				flex
+				ng-class='{
+					active: $ctrl.ui.state === $ctrl.Cyph.im.States.blank
+				}'
+			></div>
+
+			<footer>
+				<cyph-chat-message-box
+					self='$ctrl.ui.chat'
+					ng-show='$ctrl.ui.state === $ctrl.Cyph.im.States.chat'
+				>
+				</cyph-chat-message-box>
+
+				<cyph-static-footer
+					ng-class='{
+						center: $ctrl.ui.chat.state === $ctrl.Cyph.UI.Chat.States.chat
+					}'
+				></cyph-static-footer>
+			</footer>
+		</section>
+
+		<cyph-chat-cyphertext self='$ctrl.ui.chat'></cyph-chat-cyphertext>
+	`,
+
 	beta: `
 		<md-content
 			class='nano'

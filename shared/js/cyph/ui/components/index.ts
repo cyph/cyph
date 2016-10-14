@@ -1,3 +1,4 @@
+import {App} from './app';
 import {Beta} from './beta';
 import {ChatCyphertext} from './chatcyphertext';
 import {ChatMain} from './chatmain';
@@ -16,6 +17,7 @@ import {Timer} from './timer';
 
 
 export {
+	App,
 	Beta,
 	ChatCyphertext,
 	ChatMain,

@@ -23,39 +23,36 @@ export class Contact {
 		subject: string;
 	};
 
-	constructor ($scope, $element, $attrs) {
-		Util.retryUntilComplete(retry => {
-			this.Cyph	= self['Cyph'];
-			this.ui		= self['ui'];
+	constructor ($scope, $element, $attrs) { (async () => {
+		while (!self['Cyph'] || !self['ui']) {
+			await Util.sleep(100);
+		}
 
-			if (!this.Cyph || !this.ui) {
-				retry();
-				return;
+		this.Cyph	= self['Cyph'];
+		this.ui		= self['ui'];
+
+		if (!this.self) {
+			this.self	= {
+				fromEmail: '',
+				fromName: '',
+				message: '',
+				to: '',
+				sent: false,
+				subject: ''
+			};
+		}
+
+		for (let k of ['fromEmail', 'fromName', 'to', 'subject', 'message']) {
+			if ($attrs[k]) {
+				this.self[k]	= $attrs[k];
 			}
+		}
 
-			if (!this.self) {
-				this.self	= {
-					fromEmail: '',
-					fromName: '',
-					message: '',
-					to: '',
-					sent: false,
-					subject: ''
-				};
-			}
-
-			for (let k of ['fromEmail', 'fromName', 'to', 'subject', 'message']) {
-				if ($attrs[k]) {
-					this.self[k]	= $attrs[k];
-				}
-			}
-
-			$element.find('button').click(() => {
-				Util.email(this.self);
-				this.self.sent	= true;
-			});
+		$element.find('button').click(() => {
+			Util.email(this.self);
+			this.self.sent	= true;
 		});
-	}
+	})(); }
 
 	private static _	= (() => {
 		angular.module(Contact.title, []).component(Contact.title, {

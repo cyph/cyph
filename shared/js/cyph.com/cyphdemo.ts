@@ -221,6 +221,7 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 						() => ({close: () => {}, open: () => {}}),
 						{notify: (message: string) => {}},
 						false,
+						false,
 						desktopSession,
 						Elements.demoRootDesktop
 					);
@@ -229,6 +230,7 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 						dialogManager,
 						this.mobileMenu,
 						{notify: (message: string) => {}},
+						false,
 						true,
 						mobileSession,
 						Elements.demoRootMobile
