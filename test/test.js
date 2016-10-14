@@ -84,19 +84,8 @@ const driverScript	= (driver, f) => driverPromise(() => {
 const driverSetURL	= (driver, url) => driverPromise(() =>
 	driver.get(url)
 ).then(() => {
-	if (driver.isActive) {
-		return;
-	}
-
-	driver.isActive	= true;
-
-	const interval	= setInterval(() => {
-		if (driver.isClosed) {
-			clearInterval(interval);
-			return;
-		}
-
-		driverScript(driver, function () {
+	for (let n of [1000, 15000]) {
+		setTimeout(() => driverScript(driver, function () {
 			self.onerror	= function (err) {
 				if (err === 'Script error.') {
 					return;
@@ -108,8 +97,8 @@ const driverSetURL	= (driver, url) => driverPromise(() =>
 					'</pre>'
 				;
 			};
-		});
-	}, 2500);
+		}), n);
+	}
 });
 
 const driverWait	= (driver, until, timeout) => driverPromise(() =>
