@@ -257,6 +257,7 @@ export class Chat extends BaseButtonManager implements IChat {
 	 * @param dialogManager
 	 * @param mobileMenu
 	 * @param notifier
+	 * @param messageCountInTitle
 	 * @param isMobile
 	 * @param session If not specified, one will be created.
 	 * @param rootElement
@@ -265,6 +266,7 @@ export class Chat extends BaseButtonManager implements IChat {
 		private dialogManager: IDialogManager,
 		mobileMenu: () => ISidebar,
 		private notifier: INotifier,
+		messageCountInTitle?: boolean,
 		public isMobile: boolean = Env.isMobile,
 		session?: ISession,
 		private rootElement: JQuery = Elements.html
@@ -283,7 +285,8 @@ export class Chat extends BaseButtonManager implements IChat {
 			p2pFriendStream: this.rootElement.find(Elements.p2pFriendStream.selector),
 			p2pMeStream: this.rootElement.find(Elements.p2pMeStream.selector),
 			sendButton: this.rootElement.find(Elements.sendButton.selector),
-			timer: this.rootElement.find(Elements.timer.selector)
+			timer: this.rootElement.find(Elements.timer.selector),
+			title: this.rootElement.find(Elements.title.selector)
 		};
 
 		let forceTURN: boolean;
@@ -380,7 +383,8 @@ export class Chat extends BaseButtonManager implements IChat {
 		this.scrollManager	= new ScrollManager(
 			this.dialogManager,
 			this.isMobile,
-			this.elements
+			this.elements,
+			messageCountInTitle
 		);
 
 

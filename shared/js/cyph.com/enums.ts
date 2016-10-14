@@ -17,7 +17,7 @@ export enum States {
  * Map of URL states to page titles.
  */
 export const PageTitles	= {
-	'': `Cyph – Encrypted Messenger`,
+	default: `Cyph – Encrypted Messenger`,
 	about: `About Cyph`,
 	features: `Cyph's Features`,
 	gettingstarted: `Getting Started with Cyph`,

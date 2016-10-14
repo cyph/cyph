@@ -1,6 +1,6 @@
 import {CyphDemo} from './cyphdemo';
 import {Elements} from './elements';
-import {HomeSections, Promos, States} from './enums';
+import {HomeSections, PageTitles, Promos, States} from './enums';
 import * as Cyph from '../cyph';
 
 
@@ -100,6 +100,10 @@ export class UI extends Cyph.UI.BaseButtonManager {
 			HomeSections[urlStateBase] :
 			HomeSections.promo
 		;
+
+		Cyph.UI.Elements.title.text(
+			PageTitles[urlStateBase] || PageTitles.default
+		);
 
 		if (this.homeSection !== undefined) {
 			this.changeState(States.home);
@@ -374,7 +378,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		});
 
 		setInterval(() => this.cycleFeatures(), 4200);
-		setTimeout(() => Cyph.UI.Elements.html.addClass('load-complete'), 100);
+		setTimeout(() => Cyph.UI.Elements.html.addClass('load-complete'), 250);
 
 		/* Cyphertext easter egg */
 		new self['Konami'](() => {

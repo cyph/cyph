@@ -1,3 +1,4 @@
+import {App} from './app';
 import {Beta} from './beta';
 import {ChatCyphertext} from './chatcyphertext';
 import {ChatMain} from './chatmain';
@@ -6,6 +7,7 @@ import {ChatToolbar} from './chattoolbar';
 import {Checkout} from './checkout';
 import {Contact} from './contact';
 import {FileInput} from './fileinput';
+import {Home} from './home';
 import {LinkConnection} from './linkconnection';
 import {Markdown} from './markdown';
 import {SignupForm} from './signupform';
@@ -16,6 +18,7 @@ import {Timer} from './timer';
 
 
 export {
+	App,
 	Beta,
 	ChatCyphertext,
 	ChatMain,
@@ -24,6 +27,7 @@ export {
 	Checkout,
 	Contact,
 	FileInput,
+	Home,
 	LinkConnection,
 	Markdown,
 	SignupForm,

@@ -20,49 +20,46 @@ export class Checkout {
 	private name: string;
 	private complete: boolean;
 
-	constructor ($scope, $element, $attrs) {
-		Util.retryUntilComplete(async (retry) => {
-			this.Cyph	= self['Cyph'];
-			this.ui		= self['ui'];
+	constructor ($scope, $element, $attrs) { (async () => {
+		while (!self['Cyph'] || !self['ui']) {
+			await Util.sleep(100);
+		}
 
-			if (!this.Cyph || !this.ui) {
-				retry();
-				return;
-			}
+		this.Cyph	= self['Cyph'];
+		this.ui		= self['ui'];
 
-			const token: string	= await Util.request({
-				url: Env.baseUrl + Config.braintreeConfig.endpoint,
-				retries: 5
-			});
-
-			const checkoutUI: JQuery	= $element.find('.braintree');
-
-			checkoutUI.html('');
-
-			self['braintree'].setup(token, 'dropin', {
-				container: checkoutUI[0],
-				enableCORS: true,
-				onPaymentMethodReceived: async (data) => {
-					const response: string	= await Util.request({
-						url: Env.baseUrl + Config.braintreeConfig.endpoint,
-						method: 'POST',
-						data: {
-							Nonce: data.nonce,
-							Amount: Math.floor(parseFloat(this.amount) * 100),
-							Category: this.category,
-							Item: this.item,
-							Name: this.name,
-							Email: this.email
-						}
-					});
-
-					if (JSON.parse(response).Status === 'authorized') {
-						this.complete	= true;
-					}
-				}
-			});
+		const token: string	= await Util.request({
+			url: Env.baseUrl + Config.braintreeConfig.endpoint,
+			retries: 5
 		});
-	}
+
+		const checkoutUI: JQuery	= $element.find('.braintree');
+
+		checkoutUI.html('');
+
+		self['braintree'].setup(token, 'dropin', {
+			container: checkoutUI[0],
+			enableCORS: true,
+			onPaymentMethodReceived: async (data) => {
+				const response: string	= await Util.request({
+					url: Env.baseUrl + Config.braintreeConfig.endpoint,
+					method: 'POST',
+					data: {
+						Nonce: data.nonce,
+						Amount: Math.floor(parseFloat(this.amount) * 100),
+						Category: this.category,
+						Item: this.item,
+						Name: this.name,
+						Email: this.email
+					}
+				});
+
+				if (JSON.parse(response).Status === 'authorized') {
+					this.complete	= true;
+				}
+			}
+		});
+	})(); }
 
 	private static _	= (() => {
 		angular.module(Checkout.title, []).component(Checkout.title, {

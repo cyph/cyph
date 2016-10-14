@@ -21,33 +21,23 @@ if (Cyph.Env.isEdge) {
 }
 
 
-Cyph.UI.Elements.html.attr('ng-controller', Cyph.Config.angularConfig.rootController);
+Cyph.UI.Elements.body.attr(
+	'ng-controller',
+	Cyph.Config.angularConfig.rootController
+);
 
 angular.
 	module(Cyph.Config.angularConfig.rootModule, [
 		'ngMaterial',
-		Cyph.UI.Components.Beta.title,
-		Cyph.UI.Components.ChatCyphertext.title,
-		Cyph.UI.Components.ChatMain.title,
-		Cyph.UI.Components.ChatMessageBox.title,
-		Cyph.UI.Components.ChatToolbar.title,
-		Cyph.UI.Components.Contact.title,
-		Cyph.UI.Components.LinkConnection.title,
-		Cyph.UI.Components.Markdown.title,
-		Cyph.UI.Components.SignupForm.title,
-		Cyph.UI.Components.StaticCyphNotFound.title,
-		Cyph.UI.Components.StaticCyphSpinningUp.title,
-		Cyph.UI.Components.StaticFooter.title
+		Cyph.UI.Components.App.title
 	]).
 	controller(Cyph.Config.angularConfig.rootController, [
-		'$scope',
 		'$mdDialog',
 		'$mdToast',
 
-		($scope, $mdDialog, $mdToast) => {
+		($mdDialog, $mdToast) => {
 			self['Cyph']	= Cyph;
-			$scope.Cyph		= Cyph;
-			$scope.Cyph.im	= {
+			self['Cyph'].im	= {
 				BetaStates,
 				States,
 				UI,
@@ -57,11 +47,10 @@ angular.
 			$(() => {
 				Cyph.UI.Elements.load();
 
-				const dialogManager: Cyph.UI.IDialogManager	= new Cyph.UI.DialogManager($mdDialog, $mdToast);
-				const notifier: Cyph.UI.INotifier			= new Cyph.UI.Notifier();
-
-				$scope.ui	= new UI(dialogManager, notifier);
-				self['ui']	= $scope.ui;
+				self['ui']	= new UI(
+					new Cyph.UI.DialogManager($mdDialog, $mdToast),
+					new Cyph.UI.Notifier()
+				);
 			});
 		}
 	]).
@@ -70,7 +59,7 @@ angular.
 
 
 AppModule.upgradeAdapter.bootstrap(
-	document.documentElement,
+	document.body,
 	[Cyph.Config.angularConfig.rootModule]
 );
 

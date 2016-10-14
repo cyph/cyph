@@ -80,7 +80,8 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		this.chat			= new Cyph.UI.Chat.Chat(
 			this.dialogManager,
 			this.mobileMenu,
-			this.notifier
+			this.notifier,
+			true
 		);
 
 		this.cyphConnection	= new Cyph.UI.LinkConnection(
@@ -189,6 +190,16 @@ export class UI extends Cyph.UI.BaseButtonManager {
 					undefined
 			);
 		}
+
+		(async () => {
+			while (this.state === States.none) {
+				await Cyph.Util.sleep(100);
+			}
+
+			await Cyph.Util.sleep(250);
+
+			Cyph.UI.Elements.html.addClass('load-complete');
+		})();
 
 
 		/* Cyphertext easter egg */

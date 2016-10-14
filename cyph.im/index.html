@@ -5,25 +5,16 @@
 		<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1' />
 		<link rel='manifest' href='/manifest.json' />
 
-		<title
-			translate
-			ng-bind='
-				(
-					ui.chat.scrollManager.unreadMessages > 0 ?
-						("(" + ui.chat.scrollManager.unreadMessages + ") ") :
-						""
-				) +
-				"Cyph – Encrypted Messenger"
-			'
-		>
+		<title translate>
 			Cyph &ndash; Encrypted Messenger
 		</title>
 
-		<meta
-			translate
-			name='description'
-			content='Completely Private Voice and Video Chat. Cyph secures your conversations against any threat, from lone hackers, to agencies armed with theoretical quantum attacks — no signup or downloads required. Cyph your friends. Reclaim your privacy.'
-		/>
+		<meta translate name='description' content='
+			Completely Private Voice and Video Chat. Cyph secures your conversations
+			against any threat, from lone hackers, to agencies armed with theoretical
+			quantum attacks — no signup or downloads required. Cyph your friends.
+			Reclaim your privacy.
+		' />
 
 		<meta
 			name='viewport'
@@ -59,103 +50,12 @@
 		<meta name='referrer' content='no-referrer' />
 	</head>
 	<body>
-		<section id='main' class='cyph-foreground' layout='column' layout-fill>
-			<cyph-chat-toolbar
-				self='ui.chat'
-				show-chat='ui.state === Cyph.im.States.chat'
-			></cyph-chat-toolbar>
+		<cyph-app></cyph-app>
 
-			<cyph-chat-main
-				self='ui.chat'
-				hide-disconnect-message='ui.coBranded'
-				ng-show='ui.state === Cyph.im.States.chat'
-				layout='column'
-				layout-fill
-				flex
-			>
-				<cyph-signup-form self='ui.signupForm'>
-					{{Cyph.Strings.signupMessage1}}
-					{{Cyph.Strings.signupMessage2}}
-				</cyph-signup-form>
-			</cyph-chat-main>
-
-			<cyph-static-cyph-spinning-up
-				ng-view
-				layout='column'
-				layout-fill
-				flex
-				ng-class='{
-					active: ui.state === Cyph.im.States.spinningUp
-				}'
-			></cyph-static-cyph-spinning-up>
-
-			<cyph-link-connection
-				ng-view
-				self='ui.cyphConnection'
-				layout='column'
-				layout-fill
-				flex
-				ng-class='{
-					active: ui.state === Cyph.im.States.waitingForFriend
-				}'
-			></cyph-link-connection>
-
-			<cyph-static-cyph-not-found
-				ng-view
-				layout='column'
-				layout-fill
-				flex
-				ng-class='{
-					active: ui.state === Cyph.im.States.error
-				}'
-			></cyph-static-cyph-not-found>
-
-			<cyph-beta
-				ng-view
-				self='ui'
-				layout='column'
-				layout-fill
-				flex
-				ng-class='{
-					active: ui.state === Cyph.im.States.beta
-				}'
-			></cyph-beta>
-
-			<div
-				ng-view
-				id='blank'
-				flex
-				ng-class='{
-					active: ui.state === Cyph.im.States.blank
-				}'
-			></div>
-
-			<footer>
-				<cyph-chat-message-box
-					self='ui.chat'
-					ng-show='ui.state === Cyph.im.States.chat'
-				>
-				</cyph-chat-message-box>
-
-				<cyph-static-footer
-					ng-class='{
-						center: ui.chat.state === Cyph.UI.Chat.States.chat
-					}'
-				></cyph-static-footer>
-			</footer>
-		</section>
-
-		<cyph-chat-cyphertext self='ui.chat'></cyph-chat-cyphertext>
-
-		<div
-			id='pre-load'
-			ng-class='{"load-complete": ui.state}'
-		>
+		<div id='pre-load'>
 			<div class='double-bounce1'></div>
 			<div class='double-bounce2'></div>
 		</div>
-
-
 
 		<link rel='stylesheet' href='/lib/js/angular-material/angular-material.min.css' />
 		<link rel='stylesheet' href='/lib/js/nanoscroller/bin/css/nanoscroller.css' />
