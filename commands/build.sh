@@ -141,7 +141,7 @@ compile () {
 
 			{
 				cat preload/global.js;
-				cat $f.js.tmp | sed '0,/var ${m} =/s||self.${m} =|';
+				cat $f.js.tmp | sed "0,/var ${m} =/s||self.${m} =|";
 				echo "${m} = ${m}.${m} || ${m};";
 			} | \
 				if [ "${watch}" ] ; then cat - ; else babel --presets es2015 --compact false ; fi | \
