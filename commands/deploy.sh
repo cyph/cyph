@@ -647,16 +647,7 @@ if [ "${websign}" ] ; then
 			);
 
 			superSphincs.hash(css).then(hash => {
-				\$('title').
-					attr(
-						'ng-bind',
-						\$('title').attr('ng-bind').replace(
-							htmlencode.htmlDecode(\$('title').text().trim()),
-							o.title
-						)
-					).
-					text(htmlencode.htmlEncode(o.title))
-				;
+				\$('title').text(htmlencode.htmlEncode(o.title));
 
 				if (o.colors.main) {
 					\$('head').find(
