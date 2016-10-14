@@ -39,10 +39,10 @@ export class ChatMessageBox {
 	})(); }
 
 	private static _	= (() => {
-		angular.module(
-			ChatMessageBox.title,
-			['ngMaterial', FileInput.title]
-		).component(ChatMessageBox.title, {
+		angular.module(ChatMessageBox.title, [
+			'ngMaterial',
+			FileInput.title
+		]).component(ChatMessageBox.title, {
 			bindings: {
 				self: '<'
 			},

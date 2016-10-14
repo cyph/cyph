@@ -22,10 +22,9 @@ export class ChatToolbar {
 	})(); }
 
 	private static _	= (() => {
-		angular.module(
-			ChatToolbar.title,
-			['ngMaterial']
-		).component(ChatToolbar.title, {
+		angular.module(ChatToolbar.title, [
+			'ngMaterial'
+		]).component(ChatToolbar.title, {
 			bindings: {
 				self: '<'
 			},

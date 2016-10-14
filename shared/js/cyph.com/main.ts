@@ -15,30 +15,24 @@ import {Loaded} from '../preload';
 import * as Cyph from '../cyph';
 
 
-Cyph.UI.Elements.html.attr('ng-controller', Cyph.Config.angularConfig.rootController);
+Cyph.UI.Elements.body.attr(
+	'ng-controller',
+	Cyph.Config.angularConfig.rootController
+);
 
 angular.
 	module(Cyph.Config.angularConfig.rootModule, [
 		'ngMaterial',
-		Cyph.UI.Components.ChatCyphertext.title,
-		Cyph.UI.Components.ChatMain.title,
-		Cyph.UI.Components.ChatMessageBox.title,
-		Cyph.UI.Components.ChatToolbar.title,
-		Cyph.UI.Components.Checkout.title,
-		Cyph.UI.Components.Contact.title,
-		Cyph.UI.Components.Markdown.title,
-		Cyph.UI.Components.SignupForm.title
+		Cyph.UI.Components.Home.title
 	]).
 	controller(Cyph.Config.angularConfig.rootController, [
-		'$scope',
 		'$mdDialog',
 		'$mdToast',
 		'$mdSidenav',
 
-		($scope, $mdDialog, $mdToast, $mdSidenav) => {
-			self['Cyph']	= Cyph;
-			$scope.Cyph		= Cyph;
-			$scope.Cyph.com	= {
+		($mdDialog, $mdToast, $mdSidenav) => {
+			self['Cyph']		= Cyph;
+			self['Cyph'].com	= {
 				CyphDemo,
 				Elements,
 				HomeSections,
@@ -51,11 +45,10 @@ angular.
 			$(() => {
 				Elements.load();
 
-				const mobileMenu: () => Cyph.UI.ISidebar		= () => $mdSidenav('main-toolbar-sidenav');
-				const demoDialogManager: Cyph.UI.IDialogManager	= new Cyph.UI.DialogManager($mdDialog, $mdToast);
-
-				$scope.ui	= new UI(mobileMenu, demoDialogManager);
-				self['ui']	= $scope.ui;
+				self['ui']	= new UI(
+					() => $mdSidenav('main-toolbar-sidenav'),
+					new Cyph.UI.DialogManager($mdDialog, $mdToast)
+				);
 			});
 		}
 	]).
@@ -64,7 +57,7 @@ angular.
 
 
 AppModule.upgradeAdapter.bootstrap(
-	document.documentElement,
+	document.body,
 	[Cyph.Config.angularConfig.rootModule]
 );
 

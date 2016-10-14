@@ -1,3 +1,4 @@
+import {Markdown} from './markdown';
 import {Templates} from '../templates';
 import {IChat} from '../chat/ichat';
 import {Util} from '../../util';
@@ -23,10 +24,10 @@ export class ChatMain {
 	})(); }
 
 	private static _	= (() => {
-		angular.module(
-			ChatMain.title,
-			['ngMaterial']
-		).component(ChatMain.title, {
+		angular.module(ChatMain.title, [
+			'ngMaterial',
+			Markdown.title
+		]).component(ChatMain.title, {
 			bindings: {
 				self: '<',
 				hideDisconnectMessage: '<'

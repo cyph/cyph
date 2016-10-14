@@ -1,13 +1,10 @@
-import {Beta} from './beta';
 import {ChatCyphertext} from './chatcyphertext';
 import {ChatMain} from './chatmain';
 import {ChatMessageBox} from './chatmessagebox';
 import {ChatToolbar} from './chattoolbar';
-import {LinkConnection} from './linkconnection';
+import {Checkout} from './checkout';
+import {Contact} from './contact';
 import {SignupForm} from './signupform';
-import {StaticCyphNotFound} from './staticcyphnotfound';
-import {StaticCyphSpinningUp} from './staticcyphspinningup';
-import {StaticFooter} from './staticfooter';
 import {Templates} from '../templates';
 import {Util} from '../../util';
 
@@ -15,9 +12,9 @@ import {Util} from '../../util';
 /**
  * Angular component for Cyph UI.
  */
-export class App {
+export class Home {
 	/** Module/component title. */
-	public static title: string	= 'cyphApp';
+	public static title: string	= 'cyphHome';
 
 	private Cyph: any;
 	private ui: any;
@@ -32,20 +29,18 @@ export class App {
 	})(); }
 
 	private static _	= (() => {
-		angular.module(App.title, [
-			Beta.title,
+		angular.module(Home.title, [
+			'ngMaterial',
 			ChatCyphertext.title,
 			ChatMain.title,
 			ChatMessageBox.title,
 			ChatToolbar.title,
-			LinkConnection.title,
-			SignupForm.title,
-			StaticCyphNotFound.title,
-			StaticCyphSpinningUp.title,
-			StaticFooter.title
-		]).component(App.title, {
-			controller: App,
-			template: Templates.app
+			Checkout.title,
+			Contact.title,
+			SignupForm.title
+		]).component(Home.title, {
+			controller: Home,
+			template: Templates.home
 		});
 	})();
 }

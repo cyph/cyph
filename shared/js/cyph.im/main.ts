@@ -21,7 +21,10 @@ if (Cyph.Env.isEdge) {
 }
 
 
-Cyph.UI.Elements.body.attr('ng-controller', Cyph.Config.angularConfig.rootController);
+Cyph.UI.Elements.body.attr(
+	'ng-controller',
+	Cyph.Config.angularConfig.rootController
+);
 
 angular.
 	module(Cyph.Config.angularConfig.rootModule, [
@@ -44,10 +47,10 @@ angular.
 			$(() => {
 				Cyph.UI.Elements.load();
 
-				const dialogManager: Cyph.UI.IDialogManager	= new Cyph.UI.DialogManager($mdDialog, $mdToast);
-				const notifier: Cyph.UI.INotifier			= new Cyph.UI.Notifier();
-
-				self['ui']	= new UI(dialogManager, notifier);
+				self['ui']	= new UI(
+					new Cyph.UI.DialogManager($mdDialog, $mdToast),
+					new Cyph.UI.Notifier()
+				);
 			});
 		}
 	]).

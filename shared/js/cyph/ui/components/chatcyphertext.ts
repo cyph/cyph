@@ -22,10 +22,9 @@ export class ChatCyphertext {
 	})(); }
 
 	private static _	= (() => {
-		angular.module(
-			ChatCyphertext.title,
-			['ngMaterial']
-		).component(ChatCyphertext.title, {
+		angular.module(ChatCyphertext.title, [
+			'ngMaterial'
+		]).component(ChatCyphertext.title, {
 			bindings: {
 				self: '<'
 			},
