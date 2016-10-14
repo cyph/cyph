@@ -25,6 +25,12 @@ if [ ! -d ~/.build ] ; then
 	shift
 fi
 
+if [ "${cloneworkingdir}" ] ; then
+	mkdir ~/.build
+	cp -rf * ~/.build/
+	cd ~/.build/
+fi
+
 tsfiles="$( \
 	{ \
 		find . -name '*.html' -not \( \
@@ -73,16 +79,17 @@ compile () {
 	cd "${dir}"
 
 	if [ "${cloneworkingdir}" ] ; then
-		rm -rf ~/.build 2> /dev/null
-		mkdir ~/.build
-		cp -rf * ~/.build/
+		find shared -mindepth 1 -maxdepth 1 -type d -not -name lib -exec bash -c '
+			rm -rf ~/.build/shared/{} 2> /dev/null;
+			cp -rf shared/{} ~/.build/shared/;
+		'
 		cd ~/.build/
 	fi
 
 	cd shared
 
 	for f in $scssfiles ; do
-		command="scss -Icss ${f}.scss ${dir}/shared/css/${f}.css"
+		command="scss -Icss ${f}.scss ${dir}/shared/${f}.css"
 		if [ "${watch}" ] ; then
 			$command &
 		else
