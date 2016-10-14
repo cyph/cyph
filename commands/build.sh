@@ -5,14 +5,19 @@ cd $(cd "$(dirname "$0")"; pwd)/..
 
 watch=''
 test=''
-simpletest=''
+simple=''
 
 if [ "${1}" == '--watch' ] ; then
 	watch=true
-elif [ "${1}" == '--test' ] ; then
+	shift
+fi
+if [ "${1}" == '--test' ] ; then
 	test=true
-elif [ "${1}" == '--simpletest' ] ; then
-	simpletest=true
+	shift
+fi
+if [ "${1}" == '--simple' ] ; then
+	simple=true
+	shift
 fi
 
 tsfiles="$( \
@@ -58,7 +63,7 @@ modulename () {
 }
 
 tsbuild () {
-	if [ "${watch}" -o "${test}" -o "${simpletest}" ] ; then
+	if [ "${watch}" -o "${test}" -o "${simple}" ] ; then
 		tsc $*
 	else
 		ngc $*
@@ -79,7 +84,7 @@ compile () {
 	cp -a js .js.tmp
 	cd .js.tmp
 
-	if [ ! "${simpletest}" ] ; then
+	if [ ! "${simple}" -o ! "${test}" ] ; then
 		for f in $tsfiles ; do
 			node -e "
 				const resolveReferences	= f => {
@@ -122,7 +127,7 @@ compile () {
 
 	output="${output}$(tsbuild -p .)"
 
-	if [ ! "${simpletest}" ] ; then
+	if [ ! "${simple}" -o ! "${test}" ] ; then
 		for f in $tsfiles ; do
 			webpack \
 				--optimize-dedupe \
@@ -164,7 +169,7 @@ fi
 
 echo -e "${output}"
 
-if [ "${test}" -o "${simpletest}" ] ; then
+if [ "${test}" ] ; then
 	{ \
 		find css -name '*.css' & \
 		find css -name '*.map' & \
