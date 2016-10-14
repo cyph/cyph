@@ -70,6 +70,17 @@ cd ..
 
 output=''
 
+modulename () {
+	m="$(echo ${1} | perl -pe 's/.*\/([^\/]+)$/\u$1/')"
+	classM="$(grep -oiP "class\s+${m}" ${1}.ts | perl -pe 's/class\s+//')"
+
+	if [ "${classM}" ] ; then
+		echo "${classM}"
+	else
+		echo "${m}"
+	fi
+}
+
 compile () {
 	for f in $scssfiles ; do
 		command="scss -Icss $f.scss $f.css"
