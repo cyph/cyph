@@ -352,7 +352,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 
 
 		/* Avoid full page reloads */
- 
+
 		$(UI.linkInterceptSelector).click(e => this.linkClickHandler(e));
 		new MutationObserver(mutations => {
 			for (let mutation of mutations) {

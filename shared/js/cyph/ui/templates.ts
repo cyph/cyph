@@ -1003,7 +1003,7 @@ export const Templates	= {
 					</h1>
 
 					<div class='hero-container grid-container'>
-						<div layout='row'>	
+						<div layout='row'>
 							<div flex='25'></div>
 							<div
 								class='wow desktop-only desktop-class-bounceInLeft tablet-grid-25 mobile-grid-100'
@@ -1716,7 +1716,7 @@ export const Templates	= {
 					</p>
 					<p>
 						<span translate>
-							If you prefer to use your own email client, feel free to shoot us a message at 
+							If you prefer to use your own email client, feel free to shoot us a message at
 						</span>
 						<a href='mailto:hello@cyph.com' title='hello@cyph.com'>hello@cyph.com</a>.
 					</p>
