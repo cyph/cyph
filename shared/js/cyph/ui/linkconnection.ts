@@ -37,7 +37,7 @@ export class LinkConnection implements ILinkConnection {
 	}
 
 	public copyLink () : void {
-		clipboard.copy($(".connect-link-input input").val()).then(
+		clipboard.copy($(".connect-link-input input").val()).then(() =>
 			this.dialogManager.toast({content: Strings.linkCopied, delay: 2500})
 		);
 	}
