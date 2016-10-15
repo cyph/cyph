@@ -63,11 +63,11 @@ export class Chat extends BaseButtonManager implements IChat {
 	public session: ISession;
 
 	private async activateSelfDestruct (timeout: number) : Promise<void> {
-		$('#self-destruct-timer')[0].start();
+		$('#self-destruct-timer')[0]['start']();
 		await Util.sleep(timeout);
 
 		/* TODO: remove just the one message */
-		$('#self-destruct-timer')[0].stop();
+		$('#self-destruct-timer')[0]['stop']();
 		$('#self-destruct-timer').hide();
 		$('.chat-message-box').remove();
 		$('.message-item').remove();

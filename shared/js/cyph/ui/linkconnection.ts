@@ -1,11 +1,11 @@
 import {Elements} from './elements';
+import {IDialogManager} from './idialogmanager';
 import {ILinkConnection} from './ilinkconnection';
 import {IChat} from './chat/ichat';
 import {Env} from '../env';
 import {Strings} from '../strings';
 import {Util} from '../util';
 import * as Chat from './chat';
-import {IDialogManager} from './IDialogManager';
 
 
 export class LinkConnection implements ILinkConnection {
@@ -69,7 +69,7 @@ export class LinkConnection implements ILinkConnection {
 			}, 250);
 		}
 
-		$('timer')[1].start();
+		$('timer')[1]['start']();
 
 		setTimeout(
 			() => {
@@ -98,7 +98,7 @@ export class LinkConnection implements ILinkConnection {
 	 */
 	public constructor (
 		public countdown: number,
-		private controller: IController,
-		private chat: IChat
+		private chat: IChat,
+		private dialogManager: IDialogManager
 	) {}
 }
