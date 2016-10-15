@@ -90,8 +90,8 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 		this.p2p	= new P2P(
 			this.chat.session,
 			forceTURN,
-			this.elements.p2pMeStream()[0],
-			this.elements.p2pFriendStream()[0]
+			this.elements.p2pMeStream,
+			this.elements.p2pFriendStream
 		);
 
 

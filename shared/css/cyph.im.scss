@@ -242,12 +242,6 @@ input, textarea {
 	font-size: 14px;
 }
 
-cyph-static-footer.center .footer {
-	margin-left: 0px;
-
-	@include transition(margin-left 1s cubic-bezier(1, 0, 0, 1));
-}
-
 .message-item.author-me {
 	background-color: rgba(134, 82, 228, 0.8);
 	box-shadow: 0px 0px 5px rgba(134, 82, 228, 0.8);
@@ -967,6 +961,7 @@ html:not(.mobile) .amazon-link {
 		margin: 0px;
 
 		@include transform(translateX(-50%) translateY(-50%));
+		@include transition(none !important);
 	}
 
 	.me {

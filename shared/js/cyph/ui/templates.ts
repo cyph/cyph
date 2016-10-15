@@ -7,16 +7,14 @@ import {Util} from '../util';
 export const Templates	= {
 	app: `
 		<span *ngIf='Cyph && ui'>
-			<section id='main' class='cyph-foreground' layout='column' layout-fill>
+			<section id='main' class='cyph-foreground layout-fill layout-column'>
 				<cyph-chat-toolbar [self]='ui.chat'></cyph-chat-toolbar>
 
 				<cyph-chat-main
 					[self]='ui.chat'
 					[hideDisconnectMessage]='ui.coBranded'
-					*ngIf='ui.state === Cyph.im.States.chat'
-					layout='column'
-					layout-fill
-					flex
+					[class.active]='ui.state === Cyph.im.States.chat'
+					class='cyph-view layout-fill layout-column flex'
 				>
 					<cyph-signup-form [self]='ui.signupForm'>
 						{{Cyph.Strings.signupMessage1}}
@@ -25,55 +23,39 @@ export const Templates	= {
 				</cyph-chat-main>
 
 				<cyph-static-cyph-spinning-up
-					class='cyph-view'
-					layout='column'
-					layout-fill
-					flex
 					[class.active]='ui.state === Cyph.im.States.spinningUp'
+					class='cyph-view layout-fill layout-column flex'
 				></cyph-static-cyph-spinning-up>
 
 				<cyph-link-connection
-					class='cyph-view'
 					[self]='ui.cyphConnection'
-					layout='column'
-					layout-fill
-					flex
 					[class.active]='ui.state === Cyph.im.States.waitingForFriend'
+					class='cyph-view layout-fill layout-column flex'
 				></cyph-link-connection>
 
 				<cyph-static-cyph-not-found
-					class='cyph-view'
-					layout='column'
-					layout-fill
-					flex
 					[class.active]='ui.state === Cyph.im.States.error'
+					class='cyph-view layout-fill layout-column flex'
 				></cyph-static-cyph-not-found>
 
 				<cyph-beta
-					class='cyph-view'
-					layout='column'
-					layout-fill
-					flex
 					[class.active]='ui.state === Cyph.im.States.beta'
+					class='cyph-view layout-fill layout-column flex'
 				></cyph-beta>
 
 				<div
-					class='cyph-view'
-					id='blank'
-					flex
 					[class.active]='ui.state === Cyph.im.States.blank'
+					id='blank'
+					class='cyph-view layout-fill layout-column flex'
 				></div>
 
 				<footer>
 					<cyph-chat-message-box
 						[self]='ui.chat'
 						*ngIf='ui.state === Cyph.im.States.chat'
-					>
-					</cyph-chat-message-box>
+					></cyph-chat-message-box>
 
-					<cyph-static-footer
-						[class.center]='ui.chat.state === Cyph.UI.Chat.States.chat'
-					></cyph-static-footer>
+					<cyph-static-footer></cyph-static-footer>
 				</footer>
 			</section>
 
@@ -190,8 +172,7 @@ export const Templates	= {
 			flex
 		>
 			<div
-				class='cyph-view'
-				class='loading'
+				class='cyph-view loading'
 				layout='column'
 				layout-fill
 				flex

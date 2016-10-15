@@ -35,10 +35,18 @@ export class ChatMessageBox {
 
 		/* Allow enter press to submit, except on
 			mobile without external keyboard */
-		$element.find('textarea').keypress(e => {
+
+		let $textarea: JQuery;
+		while (!$textarea || $textarea.length < 1) {
+			$textarea	= $element.find('textarea');
+			await Util.sleep(500);
+		}
+
+		$textarea.keypress(e => {
 			if (
 				(Env.isMobile && VirtualKeyboardWatcher.isOpen) ||
-				(e.keyCode !== 13 || e.shiftKey)
+				e.keyCode !== 13 ||
+				e.shiftKey
 			) {
 				return;
 			}
@@ -46,5 +54,15 @@ export class ChatMessageBox {
 			e.preventDefault();
 			this.self.send();
 		});
+
+		/* Temporary workaround for Angular Material bug */
+
+		let $speedDial: JQuery;
+		while (!$speedDial || $speedDial.length < 1) {
+			$speedDial	= $element.find('md-fab-speed-dial');
+			await Util.sleep(500);
+		}
+
+		$speedDial.removeClass('md-animations-waiting');
 	})(); }
 }
