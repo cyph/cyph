@@ -252,7 +252,8 @@ typings install --global --save \
 	dt~angular \
 	dt~angular-material \
 	dt~angular-animate \
-	dt~dompurify
+	dt~dompurify \
+	dt~clipboard-js
 	# dt~webrtc/mediastream
 	# dt~webrtc/rtcpeerconnection
 
