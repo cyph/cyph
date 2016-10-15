@@ -10,13 +10,23 @@ import {Util} from '../../util';
  * Angular component for chat message box.
  */
 export class ChatMessageBox {
-	/** Module/component title. */
+	/** Component title. */
 	public static title: string	= 'cyphChatMessageBox';
+
+	/** Component configuration. */
+	public static config		= {
+		bindings: {
+			self: '<'
+		},
+		controller: ChatMessageBox,
+		template: Templates.chatMessageBox
+	};
+
 
 	private Cyph: any;
 	private self: IChat;
 
-	constructor ($scope, $element, $attrs) { (async () => {
+	constructor ($scope, $element) { (async () => {
 		while (!self['Cyph']) {
 			await Util.sleep(100);
 		}
@@ -25,10 +35,18 @@ export class ChatMessageBox {
 
 		/* Allow enter press to submit, except on
 			mobile without external keyboard */
-		$element.find('textarea').keypress(e => {
+
+		let $textarea: JQuery;
+		while (!$textarea || $textarea.length < 1) {
+			$textarea	= $element.find('textarea');
+			await Util.sleep(500);
+		}
+
+		$textarea.keypress(e => {
 			if (
 				(Env.isMobile && VirtualKeyboardWatcher.isOpen) ||
-				(e.keyCode !== 13 || e.shiftKey)
+				e.keyCode !== 13 ||
+				e.shiftKey
 			) {
 				return;
 			}
@@ -36,18 +54,15 @@ export class ChatMessageBox {
 			e.preventDefault();
 			this.self.send();
 		});
-	})(); }
 
-	private static _	= (() => {
-		angular.module(ChatMessageBox.title, [
-			'ngMaterial',
-			FileInput.title
-		]).component(ChatMessageBox.title, {
-			bindings: {
-				self: '<'
-			},
-			controller: ChatMessageBox,
-			template: Templates.chatMessageBox
-		});
-	})();
+		/* Temporary workaround for Angular Material bug */
+
+		let $speedDial: JQuery;
+		while (!$speedDial || $speedDial.length < 1) {
+			$speedDial	= $element.find('md-fab-speed-dial');
+			await Util.sleep(500);
+		}
+
+		$speedDial.removeClass('md-animations-waiting');
+	})(); }
 }

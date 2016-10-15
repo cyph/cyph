@@ -70,36 +70,33 @@ const driverPromise	= f => new Promise((resolve, reject) => {
 	}
 });
 
-const driverQuit	= driver => {
-	driver.isClosed	= true;
-	return driverPromise(() => driver.quit());
-}
+const driverQuit	= driver => driverPromise(() =>
+	driver.quit()
+);
 
-const driverScript	= (driver, f) => driverPromise(() => {
-	if (!driver.isClosed) {
-		driver.executeScript(f);
-	}
-});
+const driverScript	= (driver, f) => driverPromise(() =>
+	driver.executeScript(f)
+);
 
 const driverSetURL	= (driver, url) => driverPromise(() =>
 	driver.get(url)
-).then(() => {
-	for (let n of [1000, 15000]) {
-		setTimeout(() => driverScript(driver, function () {
-			self.onerror	= function (err) {
-				if (err === 'Script error.') {
-					return;
-				}
+).then(() => driverScript(driver, function () {
+	self.setOnerror	= function () {
+		self.onerror	= function (err) {
+			if (err === 'Script error.') {
+				return;
+			}
 
-				document.body.innerHTML	=
-					'<pre style="font-size: 24px; white-space: pre-wrap;">' +
-						JSON.stringify(arguments, null, '\t') +
-					'</pre>'
-				;
-			};
-		}), n);
-	}
-});
+			document.body.innerHTML	=
+				'<pre style="font-size: 24px; white-space: pre-wrap;">' +
+					JSON.stringify(arguments, null, '\t') +
+				'</pre>'
+			;
+		};
+	};
+
+	self.setOnerror();
+}));
 
 const driverWait	= (driver, until, timeout) => driverPromise(() =>
 	driver.wait(until, timeout)
@@ -118,6 +115,7 @@ const homeTest		= o => {
 		driverWait(
 			driver,
 			webdriver.until.elementLocated(webdriver.By.js(function () {
+				self.setOnerror();
 				return self.$ && $('#new-cyph:visible')[0];
 			})),
 			30000
@@ -128,6 +126,7 @@ const homeTest		= o => {
 		driverWait(
 			driver,
 			webdriver.until.elementLocated(webdriver.By.js(function () {
+				self.setOnerror();
 				return document.getElementsByClassName('postlist')[0];
 			})),
 			30000
@@ -147,6 +146,7 @@ const newCyphTest	= o => {
 		driverWait(
 			driver,
 			webdriver.until.elementLocated(webdriver.By.js(function () {
+				self.setOnerror();
 				return self.$ && $('.message-box:visible')[0];
 			})),
 			150000

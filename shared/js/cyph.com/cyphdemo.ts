@@ -71,17 +71,17 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 
 	private resize (forceActive?: boolean, oncomplete?: Function) : void {
 		const isActive: boolean	= forceActive || (
-			!Elements.heroText.is(':appeared') &&
-			Elements.demoRoot.is(':appeared')
+			!Elements.heroText().is(':appeared') &&
+			Elements.demoRoot().is(':appeared')
 		);
 
 		if (this.isActive !== isActive) {
-			if (!Elements.backgroundVideo[0]['paused']) {
+			if (!Elements.backgroundVideo()[0]['paused']) {
 				setTimeout(() => {
 					try {
-						if (Elements.backgroundVideo.is(':appeared')) {
+						if (Elements.backgroundVideo().is(':appeared')) {
 							try {
-								Elements.backgroundVideo[0]['play']();
+								Elements.backgroundVideo()[0]['play']();
 							}
 							catch (_) {}
 						}
@@ -91,7 +91,7 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 			}
 
 			try {
-				Elements.backgroundVideo[0]['pause']();
+				Elements.backgroundVideo()[0]['pause']();
 			}
 			catch (_) {}
 		}
@@ -104,8 +104,8 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 				setTimeout(() => this.resizeMobile(), 500);
 			}
 			else {
-				Elements.screenshotLaptop.
-					add(Elements.screenshotPhone).
+				Elements.screenshotLaptop().
+					add(Elements.screenshotPhone()).
 					each((i: number, elem: HTMLElement) => setTimeout(() => {
 						const $this: JQuery	= $(elem);
 
@@ -130,48 +130,48 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 
 	private resizeDesktop () : void {
 		const width: number		= Math.floor(
-			(Cyph.UI.Elements.window.width() - 70) * 0.47 / 0.75
+			(Cyph.UI.Elements.window().width() - 70) * 0.47 / 0.75
 		);
 
 		const height: number	= width * 0.563;
 
-		Elements.screenshotLaptop.addClass(CyphDemo.demoClass).css({
+		Elements.screenshotLaptop().addClass(CyphDemo.demoClass).css({
 			width,
 			'margin-top': Math.ceil(
-				Elements.demoRootDesktop.offset().top -
-				Elements.screenshotLaptop.offset().top -
+				Elements.demoRootDesktop().offset().top -
+				Elements.screenshotLaptop().offset().top -
 				height * 0.104 +
-				parseFloat(Elements.screenshotLaptop.css('margin-top'))
+				parseFloat(Elements.screenshotLaptop().css('margin-top'))
 			),
 			'margin-left': Math.ceil(
-				Elements.demoRootDesktop.offset().left -
-				Elements.screenshotLaptop.offset().left -
+				Elements.demoRootDesktop().offset().left -
+				Elements.screenshotLaptop().offset().left -
 				width * 0.13 +
-				parseFloat(Elements.screenshotLaptop.css('margin-left'))
+				parseFloat(Elements.screenshotLaptop().css('margin-left'))
 			)
 		});
 	}
 
 	private resizeMobile () : void {
 		const width: number		= Math.floor(
-			(Cyph.UI.Elements.window.width() - 70) * 0.26 / 1.404
+			(Cyph.UI.Elements.window().width() - 70) * 0.26 / 1.404
 		);
 
 		const height: number	= width * 2.033;
 
-		Elements.screenshotPhone.addClass(CyphDemo.demoClass).css({
+		Elements.screenshotPhone().addClass(CyphDemo.demoClass).css({
 			width,
 			'margin-top': Math.ceil(
-				Elements.demoRootMobile.offset().top -
-				Elements.screenshotPhone.offset().top -
+				Elements.demoRootMobile().offset().top -
+				Elements.screenshotPhone().offset().top -
 				height * 0.098 +
-				parseFloat(Elements.screenshotPhone.css('margin-top'))
+				parseFloat(Elements.screenshotPhone().css('margin-top'))
 			),
 			'margin-left': Math.ceil(
-				Elements.demoRootMobile.offset().left -
-				Elements.screenshotPhone.offset().left -
+				Elements.demoRootMobile().offset().left -
+				Elements.screenshotPhone().offset().left -
 				width * 0.073 +
-				parseFloat(Elements.screenshotPhone.css('margin-left'))
+				parseFloat(Elements.screenshotPhone().css('margin-left'))
 			)
 		});
 	}
@@ -182,20 +182,20 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 	public constructor (dialogManager: Cyph.UI.IDialogManager) {
 		super();
 
-		Elements.demoRoot['appear']();
-		Elements.heroText['appear']();
+		Elements.demoRoot()['appear']();
+		Elements.heroText()['appear']();
 
 		const begin	= (e: Event) => {
 			setTimeout(() => {
 				this.resize(true, () => {
-					Elements.demoRoot.css('opacity', 1);
+					Elements.demoRoot().css('opacity', 1);
 
 					const $desktopFacebookPic: JQuery	= $(CyphDemo.facebookPicFrame);
 					const $mobileFacebookPic: JQuery	= $(CyphDemo.facebookPicFrame);
 
 					if (!Cyph.Env.isMobile) {
-						Elements.demoListDesktop.append($desktopFacebookPic);
-						Elements.demoListMobile.append($mobileFacebookPic);
+						Elements.demoListDesktop().append($desktopFacebookPic);
+						Elements.demoListMobile().append($mobileFacebookPic);
 					}
 
 					setInterval(() => this.resize(), 2000);
@@ -223,7 +223,7 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 						false,
 						false,
 						desktopSession,
-						Elements.demoRootDesktop
+						Elements.demoRootDesktop()
 					);
 
 					this.mobile		= new Cyph.UI.Chat.Chat(
@@ -233,7 +233,7 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 						false,
 						true,
 						mobileSession,
-						Elements.demoRootMobile
+						Elements.demoRootMobile()
 					);
 
 					setTimeout(() => {
@@ -275,7 +275,7 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 									totalDelay += (innerTimeout + outerTimeout) * 1.5;
 
 									setTimeout(() =>
-										Elements.demoRoot.find(
+										Elements.demoRoot().find(
 											'.message-text > p > a > img:visible[src="' +
 												CyphDemo.facebookPicUrl +
 											'"]'
@@ -285,7 +285,7 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 											const isDesktop: boolean	=
 												$this.
 													parentsUntil().
-													index(Elements.demoListDesktop[0])
+													index(Elements.demoListDesktop()[0])
 												> -1
 											;
 
@@ -305,8 +305,8 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 												const offset	= CyphDemo.getOffset(
 													$placeholder,
 													isDesktop ?
-														Elements.demoListDesktop :
-														Elements.demoListMobile
+														Elements.demoListDesktop() :
+														Elements.demoListMobile()
 												);
 
 												if (!isDesktop) {
@@ -340,9 +340,9 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 
 		setTimeout(() => {
 			const intervalId	= setInterval(() => {
-				if (!Elements.heroText.is(':appeared')) {
+				if (!Elements.heroText().is(':appeared')) {
 					clearInterval(intervalId);
-					Elements.demoRoot.one('appear', begin);
+					Elements.demoRoot().one('appear', begin);
 				}
 			}, 250);
 		}, 1000);

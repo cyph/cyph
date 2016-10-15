@@ -8,8 +8,23 @@ import {Util} from '../../util';
  * Angular component for Braintree payment checkout UI.
  */
 export class Checkout {
-	/** Module/component title. */
+	/** Component title. */
 	public static title: string	= 'cyphCheckout';
+
+	/** Component configuration. */
+	public static config		= {
+		bindings: {
+			amount: '=',
+			category: '=',
+			email: '=',
+			item: '=',
+			name: '='
+		},
+		controller: Checkout,
+		transclude: true,
+		template: Templates.checkout
+	};
+
 
 	private Cyph: any;
 	private ui: any;
@@ -20,7 +35,7 @@ export class Checkout {
 	private name: string;
 	private complete: boolean;
 
-	constructor ($scope, $element, $attrs) { (async () => {
+	constructor ($scope, $element) { (async () => {
 		while (!self['Cyph'] || !self['ui']) {
 			await Util.sleep(100);
 		}
@@ -60,19 +75,4 @@ export class Checkout {
 			}
 		});
 	})(); }
-
-	private static _	= (() => {
-		angular.module(Checkout.title, []).component(Checkout.title, {
-			bindings: {
-				amount: '=',
-				category: '=',
-				email: '=',
-				item: '=',
-				name: '='
-			},
-			controller: Checkout,
-			transclude: true,
-			template: Templates.checkout
-		});
-	})();
 }

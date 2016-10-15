@@ -8,8 +8,18 @@ import {Util} from '../../util';
  * Angular component for contact form UI.
  */
 export class Contact {
-	/** Module/component title. */
+	/** Component title. */
 	public static title: string	= 'cyphContact';
+
+	/** Component configuration. */
+	public static config		= {
+		bindings: {
+			self: '<'
+		},
+		controller: Contact,
+		template: Templates.contact
+	};
+
 
 	private Cyph: any;
 	private ui: any;
@@ -23,7 +33,7 @@ export class Contact {
 		subject: string;
 	};
 
-	constructor ($scope, $element, $attrs) { (async () => {
+	constructor ($scope, $element) { (async () => {
 		while (!self['Cyph'] || !self['ui']) {
 			await Util.sleep(100);
 		}
@@ -43,8 +53,9 @@ export class Contact {
 		}
 
 		for (let k of ['fromEmail', 'fromName', 'to', 'subject', 'message']) {
-			if ($attrs[k]) {
-				this.self[k]	= $attrs[k];
+			const v	= $element.attr(k);
+			if (v) {
+				this.self[k]	= v;
 			}
 		}
 
@@ -53,14 +64,4 @@ export class Contact {
 			this.self.sent	= true;
 		});
 	})(); }
-
-	private static _	= (() => {
-		angular.module(Contact.title, []).component(Contact.title, {
-			bindings: {
-				self: '<'
-			},
-			controller: Contact,
-			template: Templates.contact
-		});
-	})();
 }

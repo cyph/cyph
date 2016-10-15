@@ -6,12 +6,22 @@ import {Util} from '../../util';
  * Angular component for rendering Markdown.
  */
 export class Markdown {
-	/** Module/component title. */
+	/** Component title. */
 	public static title: string	= 'cyphMarkdown';
+
+	/** Component configuration. */
+	public static config		= {
+		bindings: {
+			markdown: '<'
+		},
+		controller: Markdown,
+		template: ''
+	};
+
 
 	private markdown: string;
 
-	constructor ($scope, $element, $attrs) { (async () => {
+	constructor ($scope, $element) { (async () => {
 		while (!this.markdown) {
 			await Util.sleep(100);
 		}
@@ -68,14 +78,4 @@ export class Markdown {
 			)
 		);
 	})(); }
-
-	private static _	= (() => {
-		angular.module(Markdown.title, []).component(Markdown.title, {
-			bindings: {
-				markdown: '<'
-			},
-			controller: Markdown,
-			template: ''
-		});
-	})();
 }

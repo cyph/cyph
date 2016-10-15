@@ -19,7 +19,7 @@ export class Cyphertext extends BaseButtonManager implements ICyphertext {
 
 	public hide () : void {
 		if ($('.' + this.curtainClass).length > 0) {
-			this.elements.everything.removeClass(this.curtainClass);
+			this.elements.everything().removeClass(this.curtainClass);
 
 			(async () => {
 				await Util.sleep(2000);
@@ -64,7 +64,7 @@ export class Cyphertext extends BaseButtonManager implements ICyphertext {
 					delay: 3000
 				});
 
-				this.elements.everything.addClass(this.curtainClass);
+				this.elements.everything().addClass(this.curtainClass);
 
 				Analytics.send({
 					hitType: 'event',
@@ -93,7 +93,7 @@ export class Cyphertext extends BaseButtonManager implements ICyphertext {
 		super(mobileMenu);
 
 		/* Close cyphertext on esc */
-		Elements.window.keyup(e => {
+		Elements.window().keyup(e => {
 			if (e.keyCode === 27) {
 				this.hide();
 			}

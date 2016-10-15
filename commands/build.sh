@@ -1,11 +1,12 @@
 #!/bin/bash
 
-dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd)/..
+dir="$(pwd)"
 
 watch=''
 test=''
 simple=''
+cloneworkingdir=''
 
 if [ "${1}" == '--watch' ] ; then
 	watch=true
@@ -18,6 +19,16 @@ fi
 if [ "${1}" == '--simple' ] ; then
 	simple=true
 	shift
+fi
+if [ ! -d ~/.build ] ; then
+	cloneworkingdir=true
+	shift
+fi
+
+if [ "${cloneworkingdir}" ] ; then
+	mkdir ~/.build
+	cp -rf * ~/.build/
+	cd ~/.build/
 fi
 
 tsfiles="$( \
@@ -38,13 +49,7 @@ tsfiles="$( \
 		tr '\n' ' ' \
 )"
 
-cd $dir
-if [ -f build.sh ] ; then
-	cd ..
-fi
-if [ -d shared ] ; then
-	cd shared
-fi
+cd shared
 
 scssfiles="$(find css -name '*.scss' | grep -v bourbon/ | perl -pe 's/(.*)\.scss/\1/g' | tr '\n' ' ')"
 
@@ -71,8 +76,18 @@ tsbuild () {
 }
 
 compile () {
+	cd "${dir}/shared"
+
+	if [ "${cloneworkingdir}" ] ; then
+		find . -mindepth 1 -maxdepth 1 -type d -not -name lib -exec bash -c '
+			rm -rf ~/.build/shared/{} 2> /dev/null;
+			cp -rf {} ~/.build/shared/;
+		' \;
+		cd ~/.build/shared
+	fi
+
 	for f in $scssfiles ; do
-		command="scss -Icss $f.scss $f.css"
+		command="scss -Icss ${f}.scss ${dir}/shared/${f}.css"
 		if [ "${watch}" ] ; then
 			$command &
 		else
@@ -80,9 +95,7 @@ compile () {
 		fi
 	done
 
-	rm -rf .js.tmp 2> /dev/null
-	cp -a js .js.tmp
-	cd .js.tmp
+	cd js
 
 	if [ ! "${simple}" -o ! "${test}" ] ; then
 		for f in $tsfiles ; do
@@ -141,17 +154,14 @@ compile () {
 
 			{
 				cat preload/global.js;
-				cat $f.js.tmp | sed '0,/var ${m} =/s||self.${m} =|';
+				cat $f.js.tmp | sed "0,/var ${m} =/s||self.${m} =|";
 				echo "${m} = ${m}.${m} || ${m};";
 			} | \
 				if [ "${watch}" ] ; then cat - ; else babel --presets es2015 --compact false ; fi | \
 				sed 's|use strict||g' \
-			> ../js/$f.js
+			> "${dir}/shared/js/${f}.js"
 		done
 	fi
-
-	cd ..
-	rm -rf .js.tmp
 }
 
 if [ "${watch}" ] ; then
@@ -161,6 +171,7 @@ if [ "${watch}" ] ; then
 		compile
 		echo -e "\n\n\nFinished building JS/CSS ($(expr $(date +%s) - $start)s)\n\n"
 		sleep 30
+		cd "${dir}/shared"
 		inotifywait -r --exclude '(node_modules|sed.*|.*\.(html|css|js|map|tmp))$' css js
 	done
 else
@@ -168,14 +179,4 @@ else
 fi
 
 echo -e "${output}"
-
-if [ "${test}" ] ; then
-	{ \
-		find css -name '*.css' & \
-		find css -name '*.map' & \
-		find js -name '*.js' & \
-		find js -name '*.map'; \
-	} | xargs -I% rm %
-fi
-
 exit ${#output}

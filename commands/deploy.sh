@@ -1,7 +1,7 @@
 #!/bin/bash
 
-dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd)/..
+dir="$(pwd)"
 
 cacheBustedProjects='cyph.com'
 compiledProjects='cyph.com cyph.im'
@@ -51,10 +51,9 @@ if [ "${simple}" ] ; then
 	cacheBustedProjects=''
 fi
 
-rm -rf .build 2> /dev/null
-mkdir .build
-cp -rf * .build/
-cd .build
+mkdir ~/.build
+cp -rf * ~/.build/
+cd ~/.build
 
 
 # Branch config setup
@@ -364,7 +363,7 @@ if [ "${compiledProjects}" ] ; then
 		mv js/cyph/thread.ts.new js/cyph/thread.ts
 	fi
 
-	../commands/build.sh $(test "${simple}" && echo '--simple') || exit;
+	../commands/build.sh || exit;
 
 	rm -rf js/node_modules lib/js/node_modules
 
@@ -812,3 +811,5 @@ gcloud app deploy --quiet --no-promote --project cyphme --version $version $(
 ) dispatch.yaml
 
 cd "${dir}"
+rm -rf .build 2> /dev/null
+mv ~/.build ./

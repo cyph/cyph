@@ -32,7 +32,7 @@ export class VisibilityWatcher {
 			);
 		}
 		else {
-			Elements.window.
+			Elements.window().
 				focus(() => VisibilityWatcher.trigger(true)).
 				blur(() => VisibilityWatcher.trigger(false))
 			;

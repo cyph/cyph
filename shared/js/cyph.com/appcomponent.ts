@@ -1,20 +1,19 @@
-import {Templates} from '../templates';
-import {Util} from '../../util';
+import {Templates} from '../cyph/ui/templates';
+import {Util} from '../cyph/util';
 
 
 /**
- * Angular component for the new cyph spin-up screen.
+ * Angular component for Cyph home page.
  */
-export class StaticCyphSpinningUp {
+export class AppComponent {
 	/** Component title. */
-	public static title: string	= 'cyphStaticCyphSpinningUp';
+	public static title: string	= 'cyphApp';
 
 	/** Component configuration. */
 	public static config		= {
-		controller: StaticCyphSpinningUp,
-		template: Templates.staticCyphSpinningUp
+		controller: AppComponent,
+		template: Templates.home
 	};
-
 
 	private Cyph: any;
 	private ui: any;

@@ -5,122 +5,62 @@ import {Util} from '../util';
  * Reusable HTML view templates.
  */
 export const Templates	= {
-	amazonLink: `
-		<md-dialog class='amazon-link'>
-			<md-content>
-				<h2 class='md-title' translate>
-					Amazon Link
-				</h2>
-				<p translate>
-					You have the option to add Cyph's Amazon affiliate code to this link.
-				</p>
-				<p translate>
-					If you make a purchase, this code will give us a small commission to help keep
-					the service running. However, it will also anonymously include your purchase in
-					aggregate data reported to us by Amazon.
-				</p>
-				<p translate>
-					Add the code?
-				</p>
-				<md-checkbox translate ng-model='locals.remember' aria-label='Remember my preference'>
-					Remember my preference
-				</md-checkbox>
-			</md-content>
-			<div class='md-actions'>
-				<md-button translate aria-label='No' ng-click='close(false)'>No</md-button>
-				<md-button translate aria-label='Sure, add the code' ng-click='close(true)'>Sure, add the code</md-button>
-			</div>
-		</md-dialog>
-	`,
-
 	app: `
-		<section id='main' class='cyph-foreground' layout='column' layout-fill>
-			<cyph-chat-toolbar
-				self='$ctrl.ui.chat'
-				show-chat='$ctrl.ui.state === $ctrl.Cyph.im.States.chat'
-			></cyph-chat-toolbar>
+		<span *ngIf='Cyph && ui'>
+			<section id='main' class='cyph-foreground layout-fill layout-column'>
+				<cyph-chat-toolbar [self]='ui.chat'></cyph-chat-toolbar>
 
-			<cyph-chat-main
-				self='$ctrl.ui.chat'
-				hide-disconnect-message='$ctrl.ui.coBranded'
-				ng-show='$ctrl.ui.state === $ctrl.Cyph.im.States.chat'
-				layout='column'
-				layout-fill
-				flex
-			>
-				<cyph-signup-form self='$ctrl.ui.signupForm'>
-					{{$ctrl.Cyph.Strings.signupMessage1}}
-					{{$ctrl.Cyph.Strings.signupMessage2}}
-				</cyph-signup-form>
-			</cyph-chat-main>
-
-			<cyph-static-cyph-spinning-up
-				ng-view
-				layout='column'
-				layout-fill
-				flex
-				ng-class='{
-					active: $ctrl.ui.state === $ctrl.Cyph.im.States.spinningUp
-				}'
-			></cyph-static-cyph-spinning-up>
-
-			<cyph-link-connection
-				ng-view
-				self='$ctrl.ui.cyphConnection'
-				layout='column'
-				layout-fill
-				flex
-				ng-class='{
-					active: $ctrl.ui.state === $ctrl.Cyph.im.States.waitingForFriend
-				}'
-			></cyph-link-connection>
-
-			<cyph-static-cyph-not-found
-				ng-view
-				layout='column'
-				layout-fill
-				flex
-				ng-class='{
-					active: $ctrl.ui.state === $ctrl.Cyph.im.States.error
-				}'
-			></cyph-static-cyph-not-found>
-
-			<cyph-beta
-				ng-view
-				self='$ctrl.ui'
-				layout='column'
-				layout-fill
-				flex
-				ng-class='{
-					active: $ctrl.ui.state === $ctrl.Cyph.im.States.beta
-				}'
-			></cyph-beta>
-
-			<div
-				ng-view
-				id='blank'
-				flex
-				ng-class='{
-					active: $ctrl.ui.state === $ctrl.Cyph.im.States.blank
-				}'
-			></div>
-
-			<footer>
-				<cyph-chat-message-box
-					self='$ctrl.ui.chat'
-					ng-show='$ctrl.ui.state === $ctrl.Cyph.im.States.chat'
+				<cyph-chat-main
+					[self]='ui.chat'
+					[hideDisconnectMessage]='ui.coBranded'
+					[class.active]='ui.state === Cyph.im.States.chat'
+					class='cyph-view layout-fill layout-column flex'
 				>
-				</cyph-chat-message-box>
+					<cyph-signup-form [self]='ui.signupForm'>
+						{{Cyph.Strings.signupMessage1}}
+						{{Cyph.Strings.signupMessage2}}
+					</cyph-signup-form>
+				</cyph-chat-main>
 
-				<cyph-static-footer
-					ng-class='{
-						center: $ctrl.ui.chat.state === $ctrl.Cyph.UI.Chat.States.chat
-					}'
-				></cyph-static-footer>
-			</footer>
-		</section>
+				<cyph-static-cyph-spinning-up
+					[class.active]='ui.state === Cyph.im.States.spinningUp'
+					class='cyph-view layout-fill layout-column flex'
+				></cyph-static-cyph-spinning-up>
 
-		<cyph-chat-cyphertext self='$ctrl.ui.chat'></cyph-chat-cyphertext>
+				<cyph-link-connection
+					[self]='ui.cyphConnection'
+					[class.active]='ui.state === Cyph.im.States.waitingForFriend'
+					class='cyph-view layout-fill layout-column flex'
+				></cyph-link-connection>
+
+				<cyph-static-cyph-not-found
+					[class.active]='ui.state === Cyph.im.States.error'
+					class='cyph-view layout-fill layout-column flex'
+				></cyph-static-cyph-not-found>
+
+				<cyph-beta
+					[class.active]='ui.state === Cyph.im.States.beta'
+					class='cyph-view layout-fill layout-column flex'
+				></cyph-beta>
+
+				<div
+					[class.active]='ui.state === Cyph.im.States.blank'
+					id='blank'
+					class='cyph-view layout-fill layout-column flex'
+				></div>
+
+				<footer>
+					<cyph-chat-message-box
+						[self]='ui.chat'
+						*ngIf='ui.state === Cyph.im.States.chat'
+					></cyph-chat-message-box>
+
+					<cyph-static-footer></cyph-static-footer>
+				</footer>
+			</section>
+
+			<cyph-chat-cyphertext [self]='ui.chat'></cyph-chat-cyphertext>
+		</span>
 	`,
 
 	beta: `
@@ -232,8 +172,7 @@ export const Templates	= {
 			flex
 		>
 			<div
-				ng-view
-				class='loading'
+				class='cyph-view loading'
 				layout='column'
 				layout-fill
 				flex
@@ -255,8 +194,7 @@ export const Templates	= {
 			</div>
 
 			<div
-				ng-view
-				class='abort-screen loading'
+				class='cyph-view abort-screen loading'
 				layout='column'
 				layout-fill
 				flex
@@ -282,8 +220,7 @@ export const Templates	= {
 			</div>
 
 			<div
-				ng-view
-				class='chat-begin-message loading'
+				class='cyph-view chat-begin-message loading'
 				layout='column'
 				layout-fill
 				flex
@@ -305,8 +242,7 @@ export const Templates	= {
 			</div>
 
 			<div
-				ng-view
-				class='video-call'
+				class='cyph-view video-call'
 				flex
 				ng-class='{
 					active: $ctrl.self.state === $ctrl.Cyph.UI.Chat.States.chat,
@@ -413,8 +349,7 @@ export const Templates	= {
 			></cyph-chat-message-box>
 
 			<div
-				ng-view
-				class='message-list nano'
+				class='cyph-view message-list nano'
 				flex
 				ng-class='{
 					active: $ctrl.self.state === $ctrl.Cyph.UI.Chat.States.chat
@@ -1057,7 +992,7 @@ export const Templates	= {
 					</h1>
 
 					<div class='hero-container grid-container'>
-						<div layout='row'>	
+						<div layout='row'>
 							<div flex='25'></div>
 							<div
 								class='wow desktop-only desktop-class-bounceInLeft tablet-grid-25 mobile-grid-100'
@@ -1155,10 +1090,7 @@ export const Templates	= {
 				<div class='demo-root grid-container'>
 					<span class='desktop desktop-only'>
 						<div class='cyph-foreground'>
-							<cyph-chat-toolbar
-								self='$ctrl.ui.cyphDemo.desktop'
-								show-chat='true'
-							></cyph-chat-toolbar>
+							<cyph-chat-toolbar self='$ctrl.ui.cyphDemo.desktop'></cyph-chat-toolbar>
 							<cyph-chat-main
 								self='$ctrl.ui.cyphDemo.desktop'
 								layout='column'
@@ -1175,10 +1107,7 @@ export const Templates	= {
 
 					<span class='mobile'>
 						<div class='cyph-foreground'>
-							<cyph-chat-toolbar
-								self='$ctrl.ui.cyphDemo.mobile'
-								show-chat='true'
-							></cyph-chat-toolbar>
+							<cyph-chat-toolbar self='$ctrl.ui.cyphDemo.mobile'></cyph-chat-toolbar>
 							<cyph-chat-main
 								self='$ctrl.ui.cyphDemo.mobile'
 								layout='column'
@@ -1776,7 +1705,7 @@ export const Templates	= {
 					</p>
 					<p>
 						<span translate>
-							If you prefer to use your own email client, feel free to shoot us a message at 
+							If you prefer to use your own email client, feel free to shoot us a message at
 						</span>
 						<a href='mailto:hello@cyph.com' title='hello@cyph.com'>hello@cyph.com</a>.
 					</p>
@@ -2696,8 +2625,11 @@ export const Templates	= {
 	`
 };
 
+
+/*
 (() => {
 	for (let k of Object.keys(Templates)) {
 		Templates[k]	= Util.translateHtml(Templates[k]);
 	}
 })();
+*/

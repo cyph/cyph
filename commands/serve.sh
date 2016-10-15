@@ -86,7 +86,7 @@ if [ "${prodlike}" ] ; then
 	echo -e "\n\n\nLocal env ready\n\n"
 	sleep infinity
 else
-	bash -c 'sleep 90 ; ./commands/docs.sh > /dev/null 2>&1' &
+	# bash -c 'sleep 90 ; ./commands/docs.sh > /dev/null 2>&1' &
 	./commands/build.sh --watch
 fi
 

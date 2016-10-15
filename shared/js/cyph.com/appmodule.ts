@@ -1,11 +1,19 @@
-import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {NgModule, forwardRef} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
-import {UpgradeAdapter} from '@angular/upgrade';
+import {UpgradeAdapter as NgUpgradeAdapter} from '@angular/upgrade';
+
+
+export const UpgradeAdapter	= new NgUpgradeAdapter(
+	forwardRef(() => AppModule)
+);
 
 
 @NgModule({
-	imports: [BrowserModule]
+	imports: [
+		BrowserModule,
+		CommonModule
+	],
+	declarations: []
 })
-export class AppModule {
-	public static upgradeAdapter	= new UpgradeAdapter(AppModule);
-}
+export class AppModule {}

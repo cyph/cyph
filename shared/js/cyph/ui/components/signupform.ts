@@ -7,8 +7,20 @@ import {Util} from '../../util';
  * Angular component for signup form.
  */
 export class SignupForm {
-	/** Module/component title. */
+	/** Component title. */
 	public static title: string	= 'cyphSignupForm';
+
+	/** Component configuration. */
+	public static config		= {
+		bindings: {
+			self: '<',
+			invite: '<'
+		},
+		controller: SignupForm,
+		template: Templates.signupForm,
+		transclude: true
+	};
+
 
 	private Cyph: any;
 	private self: ISignupForm;
@@ -21,16 +33,4 @@ export class SignupForm {
 
 		this.Cyph	= self['Cyph'];
 	})(); }
-
-	private static _	= (() => {
-		angular.module(SignupForm.title, []).component(SignupForm.title, {
-			bindings: {
-				self: '<',
-				invite: '<'
-			},
-			controller: SignupForm,
-			template: Templates.signupForm,
-			transclude: true
-		});
-	})();
 }

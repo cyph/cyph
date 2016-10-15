@@ -6,8 +6,20 @@ import {Util} from '../../util';
  * Angular component for countdown timer.
  */
 export class Timer {
-	/** Module/component title. */
+	/** Component title. */
 	public static title: string	= 'cyphTimer';
+
+	/** Component configuration. */
+	public static config		= {
+		bindings: {
+			countdown: '<',
+			autostart: '<'
+		},
+		controller: Timer,
+		template: Templates.transclude,
+		transclude: true
+	};
+
 
 	private autostart: boolean	= false;
 	private stopped: boolean	= false;
@@ -31,7 +43,7 @@ export class Timer {
 		;
 	}
 
-	constructor ($scope, $element, $attrs) { (async () => {
+	constructor ($scope, $element) { (async () => {
 		for (let k of ['start', 'stop']) {
 			$element[0][k]	= () => setTimeout(() => $element[0][k](), 100);
 		}
@@ -84,16 +96,4 @@ export class Timer {
 			$element[0]['start']();
 		}
 	})(); }
-
-	private static _	= (() => {
-		angular.module(Timer.title, []).component(Timer.title, {
-			bindings: {
-				countdown: '<',
-				autostart: '<'
-			},
-			controller: Timer,
-			template: Templates.transclude,
-			transclude: true
-		});
-	})();
 }

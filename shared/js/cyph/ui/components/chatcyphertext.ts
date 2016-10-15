@@ -7,8 +7,18 @@ import {Util} from '../../util';
  * Angular component for chat cyphertext UI.
  */
 export class ChatCyphertext {
-	/** Module/component title. */
+	/** Component title. */
 	public static title: string	= 'cyphChatCyphertext';
+
+	/** Component configuration. */
+	public static config		= {
+		bindings: {
+			self: '<'
+		},
+		controller: ChatCyphertext,
+		template: Templates.chatCyphertext
+	};
+
 
 	private Cyph: any;
 	private self: IChat;
@@ -20,16 +30,4 @@ export class ChatCyphertext {
 
 		this.Cyph	= self['Cyph'];
 	})(); }
-
-	private static _	= (() => {
-		angular.module(ChatCyphertext.title, [
-			'ngMaterial'
-		]).component(ChatCyphertext.title, {
-			bindings: {
-				self: '<'
-			},
-			controller: ChatCyphertext,
-			template: Templates.chatCyphertext
-		});
-	})();
 }

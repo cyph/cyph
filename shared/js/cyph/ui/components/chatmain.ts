@@ -8,8 +8,20 @@ import {Util} from '../../util';
  * Angular component for main chat UI.
  */
 export class ChatMain {
-	/** Module/component title. */
+	/** Component title. */
 	public static title: string	= 'cyphChatMain';
+
+	/** Component configuration. */
+	public static config		= {
+		bindings: {
+			self: '<',
+			hideDisconnectMessage: '<'
+		},
+		controller: ChatMain,
+		template: Templates.chatMain,
+		transclude: true
+	};
+
 
 	private Cyph: any;
 	private self: IChat;
@@ -22,19 +34,4 @@ export class ChatMain {
 
 		this.Cyph	= self['Cyph'];
 	})(); }
-
-	private static _	= (() => {
-		angular.module(ChatMain.title, [
-			'ngMaterial',
-			Markdown.title
-		]).component(ChatMain.title, {
-			bindings: {
-				self: '<',
-				hideDisconnectMessage: '<'
-			},
-			controller: ChatMain,
-			template: Templates.chatMain,
-			transclude: true
-		});
-	})();
 }

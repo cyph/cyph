@@ -6,8 +6,15 @@ import {Util} from '../../util';
  * Angular component for Cyph beta UI.
  */
 export class Beta {
-	/** Module/component title. */
+	/** Component title. */
 	public static title: string	= 'cyphBeta';
+
+	/** Component configuration. */
+	public static config		= {
+		controller: Beta,
+		template: Templates.beta
+	};
+
 
 	private Cyph: any;
 	private ui: any;
@@ -15,7 +22,7 @@ export class Beta {
 	private checking: boolean	= false;
 	private error: boolean		= false;
 
-	constructor ($scope, $element, $attrs) { (async () => {
+	constructor ($scope, $element) { (async () => {
 		while (!self['Cyph'] || !self['ui']) {
 			await Util.sleep(100);
 		}
@@ -36,11 +43,4 @@ export class Beta {
 			}, Util.random(4000, 1500));
 		});
 	})(); }
-
-	private static _	= (() => {
-		angular.module(Beta.title, []).component(Beta.title, {
-			controller: Beta,
-			template: Templates.beta
-		});
-	})();
 }
