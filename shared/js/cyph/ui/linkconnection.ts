@@ -16,11 +16,11 @@ export class LinkConnection implements ILinkConnection {
 
 	private selectLink () : void {
 		Util.getValue(
-			Elements.connectLinkInput[0],
+			Elements.connectLinkInput()[0],
 			'setSelectionRange',
 			() => {}
 		).call(
-			Elements.connectLinkInput[0],
+			Elements.connectLinkInput()[0],
 			0,
 			this.linkConstant.length
 		);
@@ -43,13 +43,13 @@ export class LinkConnection implements ILinkConnection {
 			this.setLink();
 
 			/* Only allow right-clicking (for copying the link) */
-			Elements.connectLinkLink.click(e => e.preventDefault());
+			Elements.connectLinkLink().click(e => e.preventDefault());
 		}
 		else {
 			const linkInterval	= setInterval(() => {
 				if (this.isWaiting) {
 					this.setLink();
-					Elements.connectLinkInput.focus();
+					Elements.connectLinkInput().focus();
 					this.selectLink();
 				}
 				else {
@@ -58,7 +58,7 @@ export class LinkConnection implements ILinkConnection {
 			}, 250);
 		}
 
-		Elements.timer[0]['start']();
+		Elements.timer()[0]['start']();
 
 		setTimeout(
 			() => {
@@ -77,7 +77,7 @@ export class LinkConnection implements ILinkConnection {
 		this.linkEncoded	= '';
 
 		/* Stop mobile browsers from keeping this selected */
-		Elements.connectLinkInput.blur();
+		Elements.connectLinkInput().blur();
 	}
 
 	/**

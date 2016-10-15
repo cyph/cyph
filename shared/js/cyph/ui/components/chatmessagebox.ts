@@ -10,13 +10,23 @@ import {Util} from '../../util';
  * Angular component for chat message box.
  */
 export class ChatMessageBox {
-	/** Module/component title. */
+	/** Component title. */
 	public static title: string	= 'cyphChatMessageBox';
+
+	/** Component configuration. */
+	public static config		= {
+		bindings: {
+			self: '<'
+		},
+		controller: ChatMessageBox,
+		template: Templates.chatMessageBox
+	};
+
 
 	private Cyph: any;
 	private self: IChat;
 
-	constructor ($scope, $element, $attrs) { (async () => {
+	constructor ($scope, $element) { (async () => {
 		while (!self['Cyph']) {
 			await Util.sleep(100);
 		}
@@ -37,17 +47,4 @@ export class ChatMessageBox {
 			this.self.send();
 		});
 	})(); }
-
-	private static _	= (() => {
-		angular.module(ChatMessageBox.title, [
-			'ngMaterial',
-			FileInput.title
-		]).component(ChatMessageBox.title, {
-			bindings: {
-				self: '<'
-			},
-			controller: ChatMessageBox,
-			template: Templates.chatMessageBox
-		});
-	})();
 }

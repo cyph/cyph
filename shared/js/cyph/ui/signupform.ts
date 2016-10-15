@@ -25,7 +25,7 @@ export class SignupForm implements ISignupForm {
 		}
 
 		setTimeout(() => {
-			const $input: JQuery	= $(Elements.signupForm.selector).
+			const $input: JQuery	= $(Elements.signupForm().selector).
 				filter(':visible').
 				find('input:visible:not([disabled])')
 			;
@@ -69,7 +69,7 @@ export class SignupForm implements ISignupForm {
 
 	public constructor () {
 		setTimeout(() =>
-			Elements.signupForm.addClass('visible')
+			Elements.signupForm().addClass('visible')
 		, 500);
 	}
 }

@@ -57,6 +57,10 @@ export class Chat extends BaseButtonManager implements IChat {
 	public scrollManager: IScrollManager;
 	public session: ISession;
 
+	private findElement (selector: string) : () => JQuery {
+		return () => this.rootElement.find(selector);
+	}
+
 	public abortSetup () : void {
 		this.changeState(States.aborted);
 		this.session.trigger(Events.abort);
@@ -228,24 +232,24 @@ export class Chat extends BaseButtonManager implements IChat {
 		messageCountInTitle?: boolean,
 		public isMobile: boolean = Env.isMobile,
 		session?: ISession,
-		private rootElement: JQuery = Elements.html
+		private rootElement: JQuery = Elements.html()
 	) {
 		super(mobileMenu);
 
 		this.elements	= {
-			buttons: this.rootElement.find(Elements.buttons.selector),
-			cyphertext: this.rootElement.find(Elements.cyphertext.selector),
-			everything: this.rootElement.find(Elements.everything.selector),
-			messageBox: this.rootElement.find(Elements.messageBox.selector),
-			messageList: this.rootElement.find(Elements.messageList.selector),
-			messageListInner: this.rootElement.find(Elements.messageListInner.selector),
-			p2pContainer: this.rootElement.find(Elements.p2pContainer.selector),
-			p2pFriendPlaceholder: this.rootElement.find(Elements.p2pFriendPlaceholder.selector),
-			p2pFriendStream: this.rootElement.find(Elements.p2pFriendStream.selector),
-			p2pMeStream: this.rootElement.find(Elements.p2pMeStream.selector),
-			sendButton: this.rootElement.find(Elements.sendButton.selector),
-			timer: this.rootElement.find(Elements.timer.selector),
-			title: this.rootElement.find(Elements.title.selector)
+			buttons: this.findElement(Elements.buttons().selector),
+			cyphertext: this.findElement(Elements.cyphertext().selector),
+			everything: this.findElement(Elements.everything().selector),
+			messageBox: this.findElement(Elements.messageBox().selector),
+			messageList: this.findElement(Elements.messageList().selector),
+			messageListInner: this.findElement(Elements.messageListInner().selector),
+			p2pContainer: this.findElement(Elements.p2pContainer().selector),
+			p2pFriendPlaceholder: this.findElement(Elements.p2pFriendPlaceholder().selector),
+			p2pFriendStream: this.findElement(Elements.p2pFriendStream().selector),
+			p2pMeStream: this.findElement(Elements.p2pMeStream().selector),
+			sendButton: this.findElement(Elements.sendButton().selector),
+			timer: this.findElement(Elements.timer().selector),
+			title: this.findElement(Elements.title().selector)
 		};
 
 		let forceTURN: boolean;
@@ -335,8 +339,7 @@ export class Chat extends BaseButtonManager implements IChat {
 
 		this.fileManager	= new FileManager(
 			this,
-			this.dialogManager,
-			this.elements
+			this.dialogManager
 		);
 
 		this.scrollManager	= new ScrollManager(
@@ -352,8 +355,8 @@ export class Chat extends BaseButtonManager implements IChat {
 
 			let lastClick: number	= 0;
 
-			this.elements.messageBox.click(e => {
-				const bounds	= this.elements.sendButton.filter(':visible')['bounds']();
+			this.elements.messageBox().click(e => {
+				const bounds	= this.elements.sendButton().filter(':visible')['bounds']();
 
 				if (
 					(e.pageY > bounds.top && e.pageY < bounds.bottom) &&
@@ -363,7 +366,7 @@ export class Chat extends BaseButtonManager implements IChat {
 
 					if (now - lastClick > 500) {
 						lastClick	= now;
-						this.elements.sendButton.click();
+						this.elements.sendButton().click();
 					}
 				}
 			});
@@ -372,14 +375,14 @@ export class Chat extends BaseButtonManager implements IChat {
 			/* Adapt message box to content size on desktop */
 
 			const messageBoxLineHeight: number	= parseInt(
-				this.elements.messageBox.css('line-height'),
+				this.elements.messageBox().css('line-height'),
 				10
 			);
 
-			this.elements.messageBox.on('keyup', () =>
-				this.elements.messageBox.height(
+			this.elements.messageBox().on('keyup', () =>
+				this.elements.messageBox().height(
 					messageBoxLineHeight *
-					this.elements.messageBox.val().split('\n').length
+					this.elements.messageBox().val().split('\n').length
 				)
 			);
 		}
@@ -396,7 +399,7 @@ export class Chat extends BaseButtonManager implements IChat {
 
 		this.session.on(Events.connect, () => {
 			this.changeState(States.keyExchange);
-			Util.getValue(this.elements.timer[0], 'stop', () => {}).call(this.elements.timer[0]);
+			Util.getValue(this.elements.timer()[0], 'stop', () => {}).call(this.elements.timer()[0]);
 
 			const start: number	= Util.timestamp();
 			const intervalId	= setInterval(() => {

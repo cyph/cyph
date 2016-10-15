@@ -6,8 +6,15 @@ import {Util} from '../../util';
  * Angular component for the cyph not found screen.
  */
 export class StaticCyphNotFound {
-	/** Module/component title. */
+	/** Component title. */
 	public static title: string	= 'cyphStaticCyphNotFound';
+
+	/** Component configuration. */
+	public static config		= {
+		controller: StaticCyphNotFound,
+		template: Templates.staticCyphNotFound
+	};
+
 
 	private Cyph: any;
 	private ui: any;
@@ -20,14 +27,4 @@ export class StaticCyphNotFound {
 		this.Cyph	= self['Cyph'];
 		this.ui		= self['ui'];
 	})(); }
-
-	private static _	= (() => {
-		angular.module(
-			StaticCyphNotFound.title,
-			[]
-		).component(StaticCyphNotFound.title, {
-			controller: StaticCyphNotFound,
-			template: Templates.staticCyphNotFound
-		});
-	})();
 }

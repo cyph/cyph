@@ -232,13 +232,13 @@ pre, code {
 	z-index: 2;
 }
 
-[ng-view]:not(.active) {
+.cyph-view:not(.active) {
 	opacity: 0;
 	pointer-events: none;
 	position: fixed;
 }
 
-[ng-view].active {
+.cyph-view.active {
 	position: relative;
 
 	@include transition(opacity 0.75s linear);

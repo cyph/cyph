@@ -5,56 +5,30 @@ import * as Cyph from '../cyph';
  * cyph.com-specific UI elements.
  */
 export class Elements {
-	public static bouncingDownArrow: JQuery;
-	public static backgroundVideo: JQuery;
-	public static contactForm: JQuery;
-	public static contentContainers: JQuery;
-	public static demoRoot: JQuery;
-	public static demoListDesktop: JQuery;
-	public static demoRootDesktop: JQuery;
-	public static demoRootMobile: JQuery;
-	public static demoListMobile: JQuery;
-	public static featuresSection: JQuery;
-	public static fixedHeaderStuff: JQuery;
-	public static heroSection: JQuery;
-	public static heroText: JQuery;
-	public static mainToolbar: JQuery;
-	public static newCyph: JQuery;
-	public static newCyphParent: JQuery;
-	public static promoLogo: JQuery;
-	public static screenshotLaptop: JQuery;
-	public static screenshotPhone: JQuery;
-	public static testimonialsSection: JQuery;
+	public static bouncingDownArrow		= Cyph.UI.Elements.get('.bouncing-down-arrow');
+	public static backgroundVideo		= Cyph.UI.Elements.get('.hero-background > :first-child');
+	public static contactForm			= Cyph.UI.Elements.get('#contact cyph-contact');
+	public static contentContainers		= Cyph.UI.Elements.get('.section-content-container');
+	public static demoRoot				= Cyph.UI.Elements.get('.demo-root');
+	public static demoListDesktop		= Cyph.UI.Elements.get('.demo-root > .desktop .message-list md-list');
+	public static demoRootDesktop		= Cyph.UI.Elements.get('.demo-root > .desktop');
+	public static demoListMobile		= Cyph.UI.Elements.get('.demo-root > .mobile .message-list md-list');
+	public static demoRootMobile		= Cyph.UI.Elements.get('.demo-root > .mobile');
+	public static featuresSection		= Cyph.UI.Elements.get('#features-section');
+	public static heroSection			= Cyph.UI.Elements.get('#hero-section');
+	public static heroText				= Cyph.UI.Elements.get('#hero-section .hero-text');
+	public static mainToolbar			= Cyph.UI.Elements.get('#main-toolbar');
+	public static newCyph				= Cyph.UI.Elements.get('#new-cyph');
+	public static promoLogo				= Cyph.UI.Elements.get('.promo-logo');
+	public static screenshotLaptop		= Cyph.UI.Elements.get('#hero-section .laptop.screenshot');
+	public static screenshotPhone		= Cyph.UI.Elements.get('#hero-section .phone.screenshot');
+	public static testimonialsSection	= Cyph.UI.Elements.get('#testimonials-section');
 
-	/**
-	 * Loads elements (call this after page is loaded).
-	 */
-	public static load () : void {
-		Cyph.UI.Elements.load();
+	public static newCyphParent		= () => Elements.newCyph().parent();
 
-		Elements.bouncingDownArrow		= $('.bouncing-down-arrow');
-		Elements.backgroundVideo		= $('.hero-background > :first-child');
-		Elements.contactForm			= $('#contact cyph-contact');
-		Elements.contentContainers		= $('.section-content-container');
-		Elements.demoRoot				= $('.demo-root');
-		Elements.demoListDesktop		= $('.demo-root > .desktop .message-list md-list');
-		Elements.demoRootDesktop		= $('.demo-root > .desktop');
-		Elements.demoListMobile			= $('.demo-root > .mobile .message-list md-list');
-		Elements.demoRootMobile			= $('.demo-root > .mobile');
-		Elements.featuresSection		= $('#features-section');
-		Elements.heroSection			= $('#hero-section');
-		Elements.heroText				= $('#hero-section .hero-text');
-		Elements.mainToolbar			= $('#main-toolbar');
-		Elements.newCyph				= $('#new-cyph');
-		Elements.newCyphParent			= Elements.newCyph.parent();
-		Elements.promoLogo				= $('.promo-logo');
-		Elements.screenshotLaptop		= $('#hero-section .laptop.screenshot');
-		Elements.screenshotPhone		= $('#hero-section .phone.screenshot');
-		Elements.testimonialsSection	= $('#testimonials-section');
-
-		Elements.fixedHeaderStuff	= Elements.newCyph.
-			add('#main-toolbar').
-			add(Elements.bouncingDownArrow)
-		;
-	}
+	public static fixedHeaderStuff	= () => Elements.newCyph().add(
+		'#main-toolbar'
+	).add(
+		Elements.bouncingDownArrow()
+	);
 }

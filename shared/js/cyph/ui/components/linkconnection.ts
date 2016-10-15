@@ -8,8 +8,18 @@ import {Util} from '../../util';
  * Angular component for link connection.
  */
 export class LinkConnection {
-	/** Module/component title. */
+	/** Component title. */
 	public static title: string	= 'cyphLinkConnection';
+
+	/** Component configuration. */
+	public static config		= {
+		bindings: {
+			self: '<'
+		},
+		controller: LinkConnection,
+		template: Templates.linkConnection
+	};
+
 
 	private Cyph: any;
 	private self: ILinkConnection;
@@ -21,16 +31,4 @@ export class LinkConnection {
 
 		this.Cyph	= self['Cyph'];
 	})(); }
-
-	private static _	= (() => {
-		angular.module(LinkConnection.title, [
-			Timer.title
-		]).component(LinkConnection.title, {
-			bindings: {
-				self: '<'
-			},
-			controller: LinkConnection,
-			template: Templates.linkConnection
-		});
-	})();
 }

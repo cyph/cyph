@@ -29,15 +29,15 @@ export class VirtualKeyboardWatcher {
 		/* http://stackoverflow.com/a/11650231/459881 */
 
 		/* Android */
-		Elements.window.on('resize', () =>
+		Elements.window().on('resize', () =>
 			VirtualKeyboardWatcher.trigger(window.innerHeight < VirtualKeyboardWatcher.initialScreenSize)
 		);
 
 		/* iOS */
 		$('input').on('focus blur', () => {
-			Elements.window.scrollTop(10);
-			VirtualKeyboardWatcher.trigger(Elements.window.scrollTop() > 0);
-			Elements.window.scrollTop(0);
+			Elements.window().scrollTop(10);
+			VirtualKeyboardWatcher.trigger(Elements.window().scrollTop() > 0);
+			Elements.window().scrollTop(0);
 		});
 	})();
 }

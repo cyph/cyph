@@ -32,7 +32,7 @@ $(
 
 /* Mobile CSS class */
 if (Env.isMobile) {
-	Elements.html.addClass('mobile');
+	Elements.html().addClass('mobile');
 }
 
 /* Polyfills */
@@ -63,7 +63,7 @@ $(() => {
 
 		/* In WebSigned environments, remove no-longer-necessary
 			'unsafe-inline' from CSP after application loads */
-		setTimeout(() => Elements.head.append(
+		setTimeout(() => Elements.head().append(
 			`<meta http-equiv="Content-Security-Policy" content="${Env.CSP}" />`
 		), 10000);
 	}

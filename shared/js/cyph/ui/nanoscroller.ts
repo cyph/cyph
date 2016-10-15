@@ -17,10 +17,10 @@ export class NanoScroller {
 	public static update () : void {
 		if (NanoScroller.isActive) {
 			Util.getValue(
-				Elements.nanoScroller,
+				Elements.nanoScroller(),
 				'nanoScroller',
 				() => {}
-			).call(Elements.nanoScroller);
+			).call(Elements.nanoScroller());
 		}
 	}
 

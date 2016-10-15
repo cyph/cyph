@@ -21,7 +21,7 @@ export class ScrollManager implements IScrollManager {
 
 		/* Process read-ness and scrolling */
 		if ($elem.is('.message-item.unread')) {
-			const currentScrollPosition: number	= this.elements.messageList['scrollPosition']();
+			const currentScrollPosition: number	= this.elements.messageList()['scrollPosition']();
 
 			if (
 				VisibilityWatcher.isVisible &&
@@ -96,9 +96,9 @@ export class ScrollManager implements IScrollManager {
 			return;
 		}
 
-		this.elements.title.text(
+		this.elements.title().text(
 			(this.unreadMessages > 0 ? `(${this.unreadMessages}) ` : '') +
-			this.elements.title.text().replace(/^\(\d+\) /, '')
+			this.elements.title().text().replace(/^\(\d+\) /, '')
 		);
 	}
 
@@ -111,7 +111,7 @@ export class ScrollManager implements IScrollManager {
 					shouldScrollCyphertext ?
 						this.elements.cyphertext :
 						this.elements.messageList
-				).each((i: number, elem: HTMLElement) => {
+				)().each((i: number, elem: HTMLElement) => {
 					++this.scrollDownLock;
 
 					$(elem).animate(
@@ -140,20 +140,24 @@ export class ScrollManager implements IScrollManager {
 		private isMobile: boolean,
 		private elements: IElements,
 		private messageCountInTitle?: boolean
-	) {
+	) { (async () => {
 		if (this.isMobile) {
-			this.elements.messageBox.focus(this.scrollDown);
+			this.elements.messageBox().focus(this.scrollDown);
+		}
+
+		while (this.elements.messageListInner().length < 1) {
+			await Util.sleep(500);
 		}
 
 		new MutationObserver(mutations => {
 			for (let mutationRecord of mutations) {
 				this.mutationObserverHandler(mutationRecord);
 			}
-		}).observe(this.elements.messageListInner[0], {
+		}).observe(this.elements.messageListInner()[0], {
 			childList: true,
 			attributes: false,
 			characterData: false,
 			subtree: true
 		});
-	}
+	})(); }
 }

@@ -7,8 +7,18 @@ import {Util} from '../../util';
  * Angular component for chat toolbar.
  */
 export class ChatToolbar {
-	/** Module/component title. */
+	/** Component title. */
 	public static title: string	= 'cyphChatToolbar';
+
+	/** Component configuration. */
+	public static config		= {
+		bindings: {
+			self: '<'
+		},
+		controller: ChatToolbar,
+		template: Templates.chatToolbar
+	};
+
 
 	private Cyph: any;
 	private self: IChat;
@@ -20,16 +30,4 @@ export class ChatToolbar {
 
 		this.Cyph	= self['Cyph'];
 	})(); }
-
-	private static _	= (() => {
-		angular.module(ChatToolbar.title, [
-			'ngMaterial'
-		]).component(ChatToolbar.title, {
-			bindings: {
-				self: '<'
-			},
-			controller: ChatToolbar,
-			template: Templates.chatToolbar
-		});
-	})();
 }

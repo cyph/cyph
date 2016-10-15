@@ -6,13 +6,24 @@ import {Util} from '../../util';
  * Angular component for taking file input.
  */
 export class FileInput {
-	/** Module/component title. */
+	/** Component title. */
 	public static title: string	= 'cyphFileInput';
+
+	/** Component configuration. */
+	public static config		= {
+		bindings: {
+			accept: '@',
+			fileChange: '&'
+		},
+		controller: FileInput,
+		template: Templates.fileInput
+	};
+
 
 	private accept: string;
 	private fileChange: Function;
 
-	constructor ($scope, $element, $attrs) {
+	constructor ($scope, $element) {
 		const $input	= $element.children();
 		const input		= $input[0];
 		const lock		= {};
@@ -44,15 +55,4 @@ export class FileInput {
 			}))
 		;
 	}
-
-	private static _	= (() => {
-		angular.module(FileInput.title, []).component(FileInput.title, {
-			bindings: {
-				accept: '@',
-				fileChange: '&'
-			},
-			controller: FileInput,
-			template: Templates.fileInput
-		});
-	})();
 }

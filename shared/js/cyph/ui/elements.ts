@@ -2,59 +2,40 @@
  * Non-project-specific UI elements.
  */
 export class Elements {
-	public static window: JQuery	= $(window);
-	public static document: JQuery	= $(document);
-	public static html: JQuery		= $('html');
-	public static head: JQuery		= $('head');
-	public static body: JQuery		= $('body');
+	public static window				= Elements.get(window);
+	public static document				= Elements.get(document);
+	public static html					= Elements.get('html');
+	public static head					= Elements.get('head');
+	public static body					= Elements.get('body');
+	public static everything			= Elements.get('*');
+	public static affiliateCheckbox		= Elements.get('.amazon-link:visible md-checkbox');
+	public static buttons				= Elements.get('.md-button');
+	public static connectLinkInput		= Elements.get('.link-connection .connect-link-input input');
+	public static connectLinkLink		= Elements.get('.link-connection .connect-link-link');
+	public static cyphertext			= Elements.get('.chat-cyphertext.curtain, .chat-cyphertext.curtain > md-content');
+	public static footer				= Elements.get('#footer');
+	public static messageBox			= Elements.get('.message-box');
+	public static messageList			= Elements.get('.message-list, .message-list > md-content');
+	public static messageListInner		= Elements.get('.message-list md-list');
+	public static nanoScroller			= Elements.get('.nano');
+	public static p2pContainer			= Elements.get('.video-call');
+	public static p2pFriendPlaceholder	= Elements.get('.video-call .friend:not(.stream)');
+	public static p2pFriendStream		= Elements.get('.video-call .friend.stream');
+	public static p2pMeStream			= Elements.get('.video-call .me');
+	public static sendButton			= Elements.get('.send-button');
+	public static signupForm			= Elements.get('.beta-signup-form');
+	public static timer					= Elements.get('cyph-timer');
+	public static title					= Elements.get('title');
 
-	public static everything: JQuery;
-	public static affiliateCheckbox: JQuery;
-	public static buttons: JQuery;
-	public static connectLinkInput: JQuery;
-	public static connectLinkLink: JQuery;
-	public static cyphertext: JQuery;
-	public static footer: JQuery;
-	public static messageBox: JQuery;
-	public static messageList: JQuery;
-	public static messageListInner: JQuery;
-	public static nanoScroller: JQuery;
-	public static p2pContainer: JQuery;
-	public static p2pFriendPlaceholder: JQuery;
-	public static p2pFriendStream: JQuery;
-	public static p2pMeStream: JQuery;
-	public static sendButton: JQuery;
-	public static signupForm: JQuery;
-	public static timer: JQuery;
-	public static title: JQuery;
+	public static get (selector: any) : () => JQuery {
+		let cache: JQuery;
 
-	/**
-	 * Loads elements (call this after page is loaded).
-	 */
-	public static load () : void {
-		Elements.everything				= $('*');
-		Elements.affiliateCheckbox		= $('.amazon-link:visible md-checkbox');
-		Elements.buttons				= $('.md-button');
-		Elements.connectLinkInput		= $('.link-connection .connect-link-input input');
-		Elements.connectLinkLink		= $('.link-connection .connect-link-link');
-		Elements.cyphertext				= $('.chat-cyphertext.curtain, .chat-cyphertext.curtain > md-content');
-		Elements.footer					= $('#footer');
-		Elements.messageBox				= $('.message-box');
-		Elements.messageList			= $('.message-list, .message-list > md-content');
-		Elements.messageListInner		= $('.message-list md-list');
-		Elements.nanoScroller			= $('.nano');
-		Elements.p2pContainer			= $('.video-call');
-		Elements.p2pFriendPlaceholder	= $('.video-call .friend:not(.stream)');
-		Elements.p2pFriendStream		= $('.video-call .friend.stream');
-		Elements.p2pMeStream			= $('.video-call .me');
-		Elements.sendButton				= $('.send-button');
-		Elements.signupForm				= $('.beta-signup-form');
-		Elements.timer					= $('cyph-timer');
-		Elements.title					= $('title');
+		return () => {
+			if (!cache || cache.length < 1) {
+				cache	= $(selector);
+			}
 
-		/* Temporary workaround for Angular Material bug */
-		const removeWaiting	= () => $('md-fab-speed-dial').removeClass('md-animations-waiting');
-		removeWaiting();
-		setTimeout(removeWaiting, 10000);
+			return cache;
+		};
 	}
 }

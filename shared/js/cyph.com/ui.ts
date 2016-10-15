@@ -101,7 +101,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 			HomeSections.promo
 		;
 
-		Cyph.UI.Elements.title.text(
+		Cyph.UI.Elements.title().text(
 			PageTitles[urlStateBase] || PageTitles.default
 		);
 
@@ -142,7 +142,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 						(
 							this.homeSection === HomeSections.gettingstarted ?
 								-1 :
-								Elements.mainToolbar.height()
+								Elements.mainToolbar().height()
 						)
 					);
 				}
@@ -180,10 +180,10 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	) : void {
 		const delay: number	=
 			delayFactor *
-			Math.abs(Cyph.UI.Elements.document.scrollTop() - position)
+			Math.abs(Cyph.UI.Elements.document().scrollTop() - position)
 		;
 
-		Cyph.UI.Elements.html.add(Cyph.UI.Elements.body).animate({
+		Cyph.UI.Elements.html().add(Cyph.UI.Elements.body()).animate({
 			scrollTop: position
 		}, delay);
 
@@ -283,35 +283,35 @@ export class UI extends Cyph.UI.BaseButtonManager {
 
 		if (Cyph.Env.isMobile) {
 			const $mobilePoster: JQuery	= $('<img />');
-			$mobilePoster.attr('src', Elements.backgroundVideo.attr('mobile-poster'));
+			$mobilePoster.attr('src', Elements.backgroundVideo().attr('mobile-poster'));
 
-			Elements.backgroundVideo.replaceWith($mobilePoster).remove();
-			Elements.backgroundVideo	= $mobilePoster;
+			Elements.backgroundVideo().replaceWith($mobilePoster).remove();
+			Elements.backgroundVideo	= () => $mobilePoster;
 		}
 		else {
 			try {
-				Elements.backgroundVideo[0]['currentTime']	= 1.25;
+				Elements.backgroundVideo()[0]['currentTime']	= 1.25;
 			}
 			catch (_) {}
 
-			setTimeout(() => Elements.backgroundVideo['appear']().
-				on('appear', () => { try { Elements.backgroundVideo[0]['play'](); } catch (_) {} }).
-				on('disappear', () => { try { Elements.backgroundVideo[0]['pause'](); } catch (_) {} })
+			setTimeout(() => Elements.backgroundVideo()['appear']().
+				on('appear', () => { try { Elements.backgroundVideo()[0]['play'](); } catch (_) {} }).
+				on('disappear', () => { try { Elements.backgroundVideo()[0]['pause'](); } catch (_) {} })
 			, 2000);
 		}
 
 
 		/* Carousels */
 
-		this.featureCarousel		= new Cyph.UI.Carousel(Elements.featuresSection);
+		this.featureCarousel		= new Cyph.UI.Carousel(Elements.featuresSection());
 
-		this.testimonialCarousel	= new Cyph.UI.Carousel(Elements.testimonialsSection, () =>
-			Elements.heroSection.css(
+		this.testimonialCarousel	= new Cyph.UI.Carousel(Elements.testimonialsSection(), () =>
+			Elements.heroSection().css(
 				'min-height',
 				`calc(100vh - ${40 + (
 					Cyph.Env.isMobile ?
 						40 :
-						Elements.testimonialsSection.height()
+						Elements.testimonialsSection().height()
 				)}px)`
 			)
 		);
@@ -319,12 +319,12 @@ export class UI extends Cyph.UI.BaseButtonManager {
 
 		/* Header / new cyph button animation */
 
-		Elements.mainToolbar.toggleClass('new-cyph-expanded', Cyph.UrlState.get() === '');
-		setTimeout(() => setInterval(() => Elements.mainToolbar.toggleClass(
+		Elements.mainToolbar().toggleClass('new-cyph-expanded', Cyph.UrlState.get() === '');
+		setTimeout(() => setInterval(() => Elements.mainToolbar().toggleClass(
 			'new-cyph-expanded',
 			this.state === States.home && (
-				(!this.promo && Elements.heroText.is(':appeared')) ||
-				Cyph.UI.Elements.footer.is(':appeared')
+				(!this.promo && Elements.heroText().is(':appeared')) ||
+				Cyph.UI.Elements.footer().is(':appeared')
 			)
 		), 500), 3000);;
 
@@ -334,7 +334,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 
 		if (!Cyph.Env.isMobile) {
 			setInterval(() =>
-				Elements.contentContainers.each((i: number, elem: HTMLElement) => {
+				Elements.contentContainers().each((i: number, elem: HTMLElement) => {
 					const $this: JQuery	= $(elem);
 
 					$this.width(
@@ -352,7 +352,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 
 
 		/* Avoid full page reloads */
-
+ 
 		$(UI.linkInterceptSelector).click(e => this.linkClickHandler(e));
 		new MutationObserver(mutations => {
 			for (let mutation of mutations) {
@@ -378,7 +378,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		});
 
 		setInterval(() => this.cycleFeatures(), 4200);
-		setTimeout(() => Cyph.UI.Elements.html.addClass('load-complete'), 250);
+		setTimeout(() => Cyph.UI.Elements.html().addClass('load-complete'), 250);
 
 		/* Cyphertext easter egg */
 		new self['Konami'](() => {

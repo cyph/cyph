@@ -6,8 +6,15 @@ import {Util} from '../../util';
  * Angular component for static footer content.
  */
 export class StaticFooter {
-	/** Module/component title. */
+	/** Component title. */
 	public static title: string	= 'cyphStaticFooter';
+
+	/** Component configuration. */
+	public static config		= {
+		controller: StaticFooter,
+		template: Templates.staticFooter
+	};
+
 
 	private Cyph: any;
 	private ui: any;
@@ -20,14 +27,4 @@ export class StaticFooter {
 		this.Cyph	= self['Cyph'];
 		this.ui		= self['ui'];
 	})(); }
-
-	private static _	= (() => {
-		angular.module(
-			StaticFooter.title,
-			[]
-		).component(StaticFooter.title, {
-			controller: StaticFooter,
-			template: Templates.staticFooter
-		});
-	})();
 }

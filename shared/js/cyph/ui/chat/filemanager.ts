@@ -1,5 +1,4 @@
 import {IChat} from './ichat';
-import {IElements} from './ielements';
 import {IFileManager} from './ifilemanager';
 import {IDialogManager} from '../idialogmanager';
 import {Config} from '../../config';
@@ -92,12 +91,10 @@ export class FileManager implements IFileManager {
 	/**
 	 * @param chat
 	 * @param dialogManager
-	 * @param elements
 	 */
 	public constructor (
 		private chat: IChat,
-		private dialogManager: IDialogManager,
-		private elements: IElements
+		private dialogManager: IDialogManager
 	) {
 		this.files	= new Files(this.chat.session);
 

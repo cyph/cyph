@@ -99,11 +99,11 @@ export class UI extends Cyph.UI.BaseButtonManager {
 
 		this.chat.session.on(Cyph.Session.Events.abort, () => {
 			this.changeState(States.chat);
-			Cyph.UI.Elements.window.off('beforeunload');
+			Cyph.UI.Elements.window().off('beforeunload');
 		});
 
 		this.chat.session.on(Cyph.Session.Events.beginChatComplete, () => {
-			Cyph.UI.Elements.window.
+			Cyph.UI.Elements.window().
 				unload(() => this.chat.session.close()).
 				on('beforeunload', () => Cyph.Strings.disconnectWarning)
 			;
@@ -197,7 +197,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 
 			await Cyph.Util.sleep(250);
 
-			Cyph.UI.Elements.html.addClass('load-complete');
+			Cyph.UI.Elements.html().addClass('load-complete');
 		})();
 
 
