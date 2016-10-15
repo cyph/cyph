@@ -21,10 +21,10 @@ export class Timer {
 	};
 
 
-	private autostart: boolean	= false;
-	private stopped: boolean	= false;
-	private countdown: number	= 0;
-	private endTime: number		= 0;
+	private autostart: boolean;
+	private stopped: boolean;
+	private countdown: number;
+	private endTime: number;
 
 	private getTimestamp (
 		diff: number,
@@ -74,7 +74,9 @@ export class Timer {
 				if (this.stopped || diff < 1) {
 					$scope.$parent.timestamp	= includeHours ?
 						'0:00:00' :
-						'0:00'
+						includeMinutes ?
+							'0:00' :
+							'0'
 					;
 					clearInterval(interval);
 					return;

@@ -6,7 +6,7 @@ import {Util} from '../util';
  */
 export const Templates	= {
 	app: `
-		<span *ngIf='Cyph && ui'>
+		<span *ngIf='Cyph && ui && ui.chat'>
 			<section id='main' class='cyph-foreground layout-fill layout-column'>
 				<cyph-chat-toolbar [self]='ui.chat'></cyph-chat-toolbar>
 
