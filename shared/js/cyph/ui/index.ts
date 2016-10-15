@@ -1,4 +1,3 @@
-import {Affiliate} from './affiliate';
 import {BaseButtonManager} from './basebuttonmanager';
 import {Carousel} from './carousel';
 import {DialogManager} from './dialogmanager';
@@ -20,7 +19,6 @@ import * as Components from './components';
 
 
 export {
-	Affiliate,
 	BaseButtonManager,
 	Carousel,
 	DialogManager,

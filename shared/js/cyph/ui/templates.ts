@@ -5,34 +5,6 @@ import {Util} from '../util';
  * Reusable HTML view templates.
  */
 export const Templates	= {
-	amazonLink: `
-		<md-dialog class='amazon-link'>
-			<md-content>
-				<h2 class='md-title' translate>
-					Amazon Link
-				</h2>
-				<p translate>
-					You have the option to add Cyph's Amazon affiliate code to this link.
-				</p>
-				<p translate>
-					If you make a purchase, this code will give us a small commission to help keep
-					the service running. However, it will also anonymously include your purchase in
-					aggregate data reported to us by Amazon.
-				</p>
-				<p translate>
-					Add the code?
-				</p>
-				<md-checkbox translate ng-model='locals.remember' aria-label='Remember my preference'>
-					Remember my preference
-				</md-checkbox>
-			</md-content>
-			<div class='md-actions'>
-				<md-button translate aria-label='No' ng-click='close(false)'>No</md-button>
-				<md-button translate aria-label='Sure, add the code' ng-click='close(true)'>Sure, add the code</md-button>
-			</div>
-		</md-dialog>
-	`,
-
 	app: `
 		<section id='main' class='cyph-foreground' layout='column' layout-fill>
 			<cyph-chat-toolbar

@@ -1,7 +1,6 @@
 import {IChat} from './ichat';
 import {IElements} from './ielements';
 import {IScrollManager} from './iscrollmanager';
-import {Affiliate} from '../affiliate';
 import {IDialogManager} from '../idialogmanager';
 import {NanoScroller} from '../nanoscroller';
 import {VisibilityWatcher} from '../visibilitywatcher';
@@ -10,8 +9,6 @@ import {Util} from '../../util';
 
 export class ScrollManager implements IScrollManager {
 	private scrollDownLock: number	= 0;
-
-	private affiliate: Affiliate;
 
 	public unreadMessages: number	= 0;
 
@@ -90,9 +87,6 @@ export class ScrollManager implements IScrollManager {
 
 			$elem.replaceWith($html);
 		}
-
-		/* Amazon affiliate links */
-		this.affiliate.process($elem);
 	}
 
 	private updateMessageCount (increment: number) : void {
@@ -147,8 +141,6 @@ export class ScrollManager implements IScrollManager {
 		private elements: IElements,
 		private messageCountInTitle?: boolean
 	) {
-		this.affiliate	= new Affiliate(dialogManager);
-
 		if (this.isMobile) {
 			this.elements.messageBox.focus(this.scrollDown);
 		}
