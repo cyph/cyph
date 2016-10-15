@@ -76,17 +76,15 @@ tsbuild () {
 }
 
 compile () {
-	cd "${dir}"
+	cd "${dir}/shared"
 
 	if [ "${cloneworkingdir}" ] ; then
-		find shared -mindepth 1 -maxdepth 1 -type d -not -name lib -exec bash -c '
+		find . -mindepth 1 -maxdepth 1 -type d -not -name lib -exec bash -c '
 			rm -rf ~/.build/shared/{} 2> /dev/null;
-			cp -rf shared/{} ~/.build/shared/;
-		'
-		cd ~/.build/
+			cp -rf {} ~/.build/shared/;
+		' \;
+		cd ~/.build/shared
 	fi
-
-	cd shared
 
 	for f in $scssfiles ; do
 		command="scss -Icss ${f}.scss ${dir}/shared/${f}.css"
