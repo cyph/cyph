@@ -51,11 +51,6 @@ if [ "${simple}" ] ; then
 	cacheBustedProjects=''
 fi
 
-mkdir ~/.build
-cp -rf * ~/.build/
-cd ~/.build
-
-
 # Branch config setup
 staging=''
 branch="$(git describe --tags --exact-match 2> /dev/null || git branch | awk '/^\*/{print $2}')"
@@ -77,6 +72,11 @@ fi
 if [ "${simple}" ] ; then
 	version="simple-${version}"
 fi
+
+
+mkdir ~/.build
+cp -rf * ~/.build/
+cd ~/.build
 
 # Secret credentials
 cat ~/.cyph/default.vars >> default/app.yaml
