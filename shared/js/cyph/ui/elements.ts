@@ -30,9 +30,14 @@ export class Elements {
 	public static get (selector: any) : () => JQuery {
 		let cache: JQuery;
 
+		const f	= typeof selector === 'function' ?
+			selector :
+			() => $(selector)
+		;
+
 		return () => {
 			if (!cache || cache.length < 1) {
-				cache	= $(selector);
+				cache	= f();
 			}
 
 			return cache;

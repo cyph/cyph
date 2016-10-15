@@ -58,7 +58,7 @@ export class Chat extends BaseButtonManager implements IChat {
 	public session: ISession;
 
 	private findElement (selector: string) : () => JQuery {
-		return () => this.rootElement.find(selector);
+		return Elements.get(() => this.rootElement.find(selector));
 	}
 
 	public abortSetup () : void {

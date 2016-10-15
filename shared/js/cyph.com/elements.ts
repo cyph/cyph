@@ -19,16 +19,13 @@ export class Elements {
 	public static heroText				= Cyph.UI.Elements.get('#hero-section .hero-text');
 	public static mainToolbar			= Cyph.UI.Elements.get('#main-toolbar');
 	public static newCyph				= Cyph.UI.Elements.get('#new-cyph');
+	public static newCyphParent			= Cyph.UI.Elements.get(() => Elements.newCyph().parent());
 	public static promoLogo				= Cyph.UI.Elements.get('.promo-logo');
 	public static screenshotLaptop		= Cyph.UI.Elements.get('#hero-section .laptop.screenshot');
 	public static screenshotPhone		= Cyph.UI.Elements.get('#hero-section .phone.screenshot');
 	public static testimonialsSection	= Cyph.UI.Elements.get('#testimonials-section');
 
-	public static newCyphParent		= () => Elements.newCyph().parent();
-
-	public static fixedHeaderStuff	= () => Elements.newCyph().add(
-		'#main-toolbar'
-	).add(
-		Elements.bouncingDownArrow()
+	public static fixedHeaderStuff		= Cyph.UI.Elements.get(
+		() => Elements.newCyph().add('#main-toolbar').add(Elements.bouncingDownArrow())
 	);
 }
