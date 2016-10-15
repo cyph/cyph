@@ -378,7 +378,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		});
 
 		setInterval(() => this.cycleFeatures(), 4200);
-		setTimeout(() => Cyph.UI.Elements.html().addClass('load-complete'), 250);
+		setTimeout(() => Cyph.UI.Elements.html().addClass('load-complete'), 750);
 
 		/* Cyphertext easter egg */
 		new self['Konami'](() => {
