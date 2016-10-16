@@ -68,7 +68,7 @@ export class Timer implements ITimer {
 	 * @param autostart
 	 */
 	public constructor (
-		private countdown: number,
+		public countdown: number,
 		autostart?: boolean
 	) {
 		this.includeHours	= this.countdown >= 3600000;

@@ -3,6 +3,9 @@
  * @interface
  */
 export interface ITimer {
+	/** Countdown duration in milliseconds. */
+	countdown: number;
+
 	/** Human-readable string indicating remaining time. */
 	timestamp: string;
 
