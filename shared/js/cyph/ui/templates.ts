@@ -454,13 +454,12 @@ export const Templates	= {
 					</md-list>
 				</md-content>
 			</div>
-			<cyph-timer
+			<span
 				id='self-destruct-timer'
-				countdown='$ctrl.self.selfDestructTimeout'
 				ng-show='$ctrl.self.selfDestruct'
 			>
-				Message will self-destruct in {{timestamp}}
-			</timer>
+				Message will self-destruct in {{$ctrl.self.selfDestructTimer.timestamp}}
+			</span>
 		</div>
 	`,
 

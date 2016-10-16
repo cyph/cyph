@@ -19,9 +19,11 @@ import {NanoScroller} from '../nanoscroller';
 import {Templates} from '../templates';
 import {Analytics} from '../../analytics';
 import {Env} from '../../env';
+import {ITimer} from '../../itimer';
 import {Strings} from '../../strings';
 import {UrlState} from '../../urlstate';
 import {Util} from '../../util';
+import {Timer} from '../../timer';
 import {Events, RPCEvents, Users} from '../../session/enums';
 import {ISession} from '../../session/isession';
 import {Message} from '../../session/message';
@@ -47,7 +49,7 @@ export class Chat extends BaseButtonManager implements IChat {
 	public firstMessage: string;
 
 	public selfDestruct: boolean = false;
-	public selfDestructTimeout: number = 1000; //in seconds
+	public selfDestructTimer: ITimer = new Timer(1000000);
 
 	public messages: {
 		author: string;
@@ -63,11 +65,9 @@ export class Chat extends BaseButtonManager implements IChat {
 	public session: ISession;
 
 	private async activateSelfDestruct (timeout: number) : Promise<void> {
-		$('#self-destruct-timer')[0]['start']();
-		await Util.sleep(timeout);
+		await this.selfDestructTimer.start();
 
 		/* TODO: remove just the one message */
-		$('#self-destruct-timer')[0]['stop']();
 		$('#self-destruct-timer').hide();
 		$('.chat-message-box').remove();
 		$('.message-item').remove();
@@ -123,7 +123,7 @@ export class Chat extends BaseButtonManager implements IChat {
 		}
 
 		if (!isNaN(selfDestructTimeout) && selfDestructTimeout > 0) {
-			this.activateSelfDestruct(selfDestructTimeout*1000);
+			this.activateSelfDestruct(selfDestructTimeout);
 		}
 	}
 
@@ -148,7 +148,10 @@ export class Chat extends BaseButtonManager implements IChat {
 
 		/** Check for first message and if it is set to self destruct */
 		if (this.firstMessage){
-			this.send(this.firstMessage, this.selfDestruct ? this.selfDestructTimeout : 0);
+			this.send(
+				this.firstMessage,
+				this.selfDestruct ? this.selfDestructTimer.countdown : 0
+			);
 		}
 	}
 
