@@ -12,7 +12,6 @@ import {SignupForm} from './signupform';
 import {StaticCyphNotFound} from './staticcyphnotfound';
 import {StaticCyphSpinningUp} from './staticcyphspinningup';
 import {StaticFooter} from './staticfooter';
-import {Timer} from './timer';
 
 
 export {
@@ -29,6 +28,5 @@ export {
 	SignupForm,
 	StaticCyphNotFound,
 	StaticCyphSpinningUp,
-	StaticFooter,
-	Timer
+	StaticFooter
 };

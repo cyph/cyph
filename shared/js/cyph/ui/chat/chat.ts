@@ -287,7 +287,6 @@ export class Chat extends BaseButtonManager implements IChat {
 			p2pFriendStream: this.findElement(Elements.p2pFriendStream().selector),
 			p2pMeStream: this.findElement(Elements.p2pMeStream().selector),
 			sendButton: this.findElement(Elements.sendButton().selector),
-			timer: this.findElement(Elements.timer().selector),
 			title: this.findElement(Elements.title().selector)
 		};
 
@@ -438,7 +437,6 @@ export class Chat extends BaseButtonManager implements IChat {
 
 		this.session.on(Events.connect, () => {
 			this.changeState(States.keyExchange);
-			Util.getValue(this.elements.timer()[0], 'stop', () => {}).call(this.elements.timer()[0]);
 
 			const start: number	= Util.timestamp();
 			const intervalId	= setInterval(() => {

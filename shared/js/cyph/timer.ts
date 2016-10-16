@@ -1,81 +1,83 @@
-import {Env} from './env';
+import {ITimer} from './itimer';
 import {Util} from './util';
 
 
-/**
- * Generates a recurring background event.
- */
-export class Timer {
-	private static timerLock: boolean;
+export class Timer implements ITimer {
+	private endTime: number;
+	private includeHours: boolean;
+	private includeMinutes: boolean;
+	private stopped: boolean;
 
-	private static timers: Function[]	= [];
-	private static total: number		= 0;
+	public timestamp: string;
 
-	private static processTimers () : boolean {
-		if (!Timer.timerLock) {
-			Timer.timerLock	= true;
+	private updateTimestamp (timeRemaining: number) : void {
+		const hours		= Math.floor(timeRemaining / 3600000);
+		const minutes	= Math.floor((timeRemaining % 3600000) / 60000);
+		const seconds	= Math.floor(((timeRemaining % 3600000) % 60000) / 1000);
 
-			try {
-				const now: number	= Util.timestamp();
-
-				for (let timer of Timer.timers) {
-					if (timer) {
-						try {
-							timer(now);
-						}
-						catch (err) {
-							setTimeout(() => { throw err }, 0);
-						}
-					}
-				}
-			}
-			finally {
-				Timer.timerLock	= false;
-			}
-		}
-
-		return Timer.timers.length > 0;
+		this.timestamp	= this.includeHours ?
+			`${hours}:${`0${minutes}`.slice(-2)}:${`0${seconds}`.slice(-2)}` :
+			this.includeMinutes ?
+				`${minutes}:${`0${seconds}`.slice(-2)}` :
+				`${seconds}`
+		;
 	}
 
-	private static runWithTimeoutLoop (interval: number) : void {
-		if (Timer.processTimers()) {
-			setTimeout(() =>
-				Timer.runWithTimeoutLoop(interval)
-			, interval);
+	public addTime (milliseconds: number) : void {
+		this.countdown += milliseconds;
+
+		if (this.endTime) {
+			this.endTime += milliseconds;
 		}
 	}
 
-	/**
-	 * Stops all timers on this thread.
-	 */
-	public static stopAll () : void {
-		Timer.timers.length	= 0;
+	public async start () : Promise<void> {
+		if (this.stopped) {
+			return;
+		}
+
+		this.endTime	= Util.timestamp() + this.countdown;
+
+		for (
+			let timeRemaining = this.countdown;
+			timeRemaining > 0;
+			timeRemaining = this.endTime - Util.timestamp()
+		) {
+			if (this.stopped) {
+				return;
+			}
+
+			this.updateTimestamp(timeRemaining);
+			await Util.sleep(500);
+		}
+
+		this.timestamp	= this.includeHours ?
+			'0:00:00' :
+			this.includeMinutes ?
+				'0:00' :
+				'0'
+		;
 	}
 
-
-	private id: number;
-
-	/**
-	 * Stops this timer.
-	 */
 	public stop () : void {
-		Timer.timers[this.id]	= null;
-
-		if (--Timer.total < 1) {
-			Timer.stopAll();
-		}
+		this.stopped	= true;
 	}
 
 	/**
-	 * @param f The current datetime is passed in on each run.
+	 * @param countdown
+	 * @param autostart
 	 */
-	public constructor (f: Function) {
-		this.id	= Timer.total++;
+	public constructor (
+		private countdown: number,
+		autostart?: boolean
+	) {
+		this.includeHours	= this.countdown >= 3600000;
+		this.includeMinutes	= this.countdown >= 60000;
 
-		Timer.timers.push(f);
+		this.updateTimestamp(this.countdown);
 
-		if (this.id < 1) {
-			setTimeout(() => Timer.runWithTimeoutLoop(50), 50);
+		if (autostart) {
+			this.start();
 		}
 	}
 }

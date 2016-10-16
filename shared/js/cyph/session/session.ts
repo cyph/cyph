@@ -7,7 +7,6 @@ import {Config} from '../config';
 import {Env} from '../env';
 import {Errors} from '../errors';
 import {EventManager} from '../eventmanager';
-import {Timer} from '../timer';
 import {UrlState} from '../urlstate';
 import {Util} from '../util';
 import {Channel} from '../channel/channel';
@@ -111,7 +110,14 @@ export class Session implements ISession {
 	private pingPong () : void {
 		let nextPing: number	= 0;
 
-		new Timer((now: number) => {
+		const interval	= setInterval(() => {
+			if (!this.state.isAlive) {
+				clearInterval(interval);
+				return;
+			}
+
+			const now	= Util.timestamp();
+
 			if (now - this.lastIncomingMessageTimestamp > 180000) {
 				if (this.pingPongTimeouts++ < 2) {
 					this.lastIncomingMessageTimestamp	= Util.timestamp();
@@ -132,7 +138,7 @@ export class Session implements ISession {
 
 				nextPing	= now + Util.random(90000, 30000);
 			}
-		});
+		}, 1000);
 	}
 
 	private receiveHandler (message: Message, timestamp: number, author: string) : void {
@@ -262,20 +268,20 @@ export class Session implements ISession {
 				this.on(Events.castle, e => this.castleHandler(e));
 
 				if (!this.isLocalSession) {
-					const sendTimer: Timer	= new Timer((now: number) => {
+					const interval	= setInterval(() => {
 						if (!this.state.isAlive) {
-							sendTimer.stop();
+							clearInterval(interval);
 						}
 						else if (
 							this.sendQueue.length &&
 							(
 								this.sendQueue.length >= 4 ||
-								(now - this.lastOutgoingMessageTimestamp) > 500
+								(Util.timestamp() - this.lastOutgoingMessageTimestamp) > 500
 							)
 						) {
 							this.sendHandler(this.sendQueue.splice(0, 4));
 						}
-					});
+					}, 250);
 				}
 			}
 		};
