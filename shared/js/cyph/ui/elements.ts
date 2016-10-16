@@ -24,7 +24,6 @@ export class Elements {
 	public static p2pMeStream			= Elements.get('.video-call .me');
 	public static sendButton			= Elements.get('.send-button');
 	public static signupForm			= Elements.get('.beta-signup-form');
-	public static timer					= Elements.get('cyph-timer');
 	public static title					= Elements.get('title');
 
 	public static get (selector: any) : () => JQuery {
