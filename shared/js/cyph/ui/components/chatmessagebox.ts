@@ -1,4 +1,3 @@
-import {FileInput} from './fileinput';
 import {Templates} from '../templates';
 import {VirtualKeyboardWatcher} from '../virtualkeyboardwatcher';
 import {IChat} from '../chat/ichat';

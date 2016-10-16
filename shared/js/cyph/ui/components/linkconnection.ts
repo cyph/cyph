@@ -1,4 +1,3 @@
-import {Timer} from './timer';
 import {ILinkConnection} from '../ilinkconnection';
 import {Templates} from '../templates';
 import {Util} from '../../util';

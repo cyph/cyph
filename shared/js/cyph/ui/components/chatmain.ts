@@ -1,4 +1,3 @@
-import {Markdown} from './markdown';
 import {Templates} from '../templates';
 import {IChat} from '../chat/ichat';
 import {Util} from '../../util';
