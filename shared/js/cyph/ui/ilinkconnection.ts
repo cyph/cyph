@@ -28,7 +28,7 @@ export interface ILinkConnection {
 	 * @param secret Secret being sent via URL fragment.
 	 * @param isPassive
 	 */
-	beginWaiting (baseUrl: string, secret: string, isPassive: boolean) : void;
+	beginWaiting (baseUrl: string, secret: string, isPassive: boolean) : Promise<void>;
 
 	/**
 	 * Stops waiting and tears down this link connection instance.
