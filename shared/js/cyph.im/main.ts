@@ -97,10 +97,6 @@ angular.
 		Cyph.UI.Components.StaticFooter.title,
 		Cyph.UI.Components.StaticFooter.config
 	).
-	component(
-		Cyph.UI.Components.Timer.title,
-		Cyph.UI.Components.Timer.config
-	).
 	directive(
 		'cyphApp',
 		<angular.IDirectiveFactory>

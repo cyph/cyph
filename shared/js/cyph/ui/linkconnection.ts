@@ -2,8 +2,11 @@ import {Elements} from './elements';
 import {ILinkConnection} from './ilinkconnection';
 import {IChat} from './chat/ichat';
 import {Env} from '../env';
+import {Timer} from '../timer';
+import {ITimer} from '../itimer';
 import {Strings} from '../strings';
 import {Util} from '../util';
+import {Events} from '../session/enums';
 
 
 export class LinkConnection implements ILinkConnection {
@@ -13,6 +16,7 @@ export class LinkConnection implements ILinkConnection {
 	public isPassive: boolean;
 	public link: string;
 	public linkEncoded: string;
+	public timer: ITimer;
 
 	private selectLink () : void {
 		Util.getValue(
@@ -32,7 +36,11 @@ export class LinkConnection implements ILinkConnection {
 		}
 	}
 
-	public beginWaiting (baseUrl: string, secret: string, isPassive: boolean) : void {
+	public async beginWaiting (
+		baseUrl: string,
+		secret: string,
+		isPassive: boolean
+	) : Promise<void> {
 		this.isWaiting		= true;
 		this.linkConstant	= baseUrl + (baseUrl.indexOf('#') > -1 ? '' : '#') + secret;
 		this.linkEncoded	= encodeURIComponent(this.linkConstant);
@@ -58,16 +66,12 @@ export class LinkConnection implements ILinkConnection {
 			}, 250);
 		}
 
-		Elements.timer()[0]['start']();
+		this.chat.session.on(Events.connect, () => this.timer.stop());
+		await this.timer.start();
 
-		setTimeout(
-			() => {
-				if (this.isWaiting) {
-					this.chat.abortSetup();
-				}
-			},
-			this.countdown * 1000
-		);
+		if (this.isWaiting) {
+			this.chat.abortSetup();
+		}
 	}
 
 	public stop () : void {
@@ -85,7 +89,9 @@ export class LinkConnection implements ILinkConnection {
 	 * @param chat
 	 */
 	public constructor (
-		public countdown: number,
+		countdown: number,
 		private chat: IChat
-	) {}
+	) {
+		this.timer	= new Timer(countdown);
+	}
 }

@@ -53,9 +53,6 @@ export const UpgradeAdapter	= new NgUpgradeAdapter(
 		),
 		UpgradeAdapter.upgradeNg1Component(
 			Cyph.UI.Components.StaticFooter.title
-		),
-		UpgradeAdapter.upgradeNg1Component(
-			Cyph.UI.Components.Timer.title
 		)
 	]
 })

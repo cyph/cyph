@@ -2262,9 +2262,9 @@ export const Templates	= {
 					<span translate>
 						Link expires in
 					</span>
-					<cyph-timer countdown='$ctrl.self.countdown'>
-						{{timestamp}}
-					</cyph-timer>
+					<span>
+						{{$ctrl.self.timer.timestamp}}
+					</span>
 				</div>
 			</div>
 			<div flex></div>

@@ -1,12 +1,12 @@
+import {ITimer} from '../itimer';
+
+
 /**
  * Represents a link-based initial connection screen
  * (e.g. for starting a new cyph).
  * @interface
  */
 export interface ILinkConnection {
-	/** Total amount of time for which this link will remain active. */
-	countdown: number;
-
 	/**
 	 * Indicates whether this link connection was initiated passively
 	 * via API integration.
@@ -18,6 +18,9 @@ export interface ILinkConnection {
 
 	/** URL-encoded version of this link (for sms and mailto links). */
 	linkEncoded: string;
+
+	/** Counts down until link expires. */
+	timer: ITimer;
 
 	/**
 	 * Initiates UI for sending this link to friend.

@@ -14,6 +14,5 @@ export interface IElements {
 	p2pFriendStream: () => JQuery;
 	p2pMeStream: () => JQuery;
 	sendButton: () => JQuery;
-	timer: () => JQuery;
 	title: () => JQuery;
 }
