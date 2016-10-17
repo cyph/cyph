@@ -6,6 +6,13 @@
 /// <reference path="../typings/main.d.ts" />
 
 
+if (!('crypto' in self) && 'msCrypto' in self) {
+	(<any> self).crypto			= self['msCrypto'];
+}
+if (!('subtle' in self.crypto) && 'webkitSubtle' in crypto) {
+	(<any> self).crypto.subtle	= crypto['webkitSubtle'];
+}
+
 self['IS_WEB']	= typeof self['IS_WEB'] !== 'undefined' ?
 	self['IS_WEB'] :
 	typeof window === 'object'

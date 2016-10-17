@@ -1,12 +1,7 @@
 /**
- * @file Initialise crypto object on IE + redirect browsers
- * that don't support crypto (or other required features).
+ * @file Redirect browsers that don't have required capabilities.
  */
 
-
-if (!('crypto' in self) && 'msCrypto' in self) {
-	(<any> self)['crypto']	= self['msCrypto'];
-}
 
 if (!(
 	'crypto' in self &&
@@ -28,8 +23,4 @@ if (!(
 	) === '7a47747857c2560f2dea0e5acca7497209465d5419'
 )) {
 	location.pathname	= '/unsupportedbrowser';
-}
-
-if (!('subtle' in crypto) && 'webkitSubtle' in crypto) {
-	(<any> crypto).subtle	= crypto['webkitSubtle'];
 }

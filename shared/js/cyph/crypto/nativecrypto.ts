@@ -6,7 +6,7 @@ import {PotassiumUtil} from './potassiumutil';
  * Should only ever be depended on by Potassium.
  */
 export class NativeCrypto {
-	private static Subtle: any	= crypto['subtle'];
+	private static Subtle: any	= crypto.subtle;
 
 	private static async importRawKey (
 		key: Uint8Array,

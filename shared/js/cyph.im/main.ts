@@ -3,7 +3,7 @@
  */
 
 
-/// <reference path="../preload/crypto.ts" />
+/// <reference path="../preload/capabilities.ts" />
 /// <reference path="../preload/unsupportedbrowsers.ts" />
 /// <reference path="../preload/dompurify.ts" />
 /// <reference path="../preload/jquery.ts" />
