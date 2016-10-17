@@ -26,7 +26,7 @@ export class P2P implements IP2P {
 
 	public static isSupported: boolean	= new self['SimpleWebRTC'](
 		{connection: {on: () => {}}}
-	).capabilities.supportMediaStream;
+	).capabilities.support;
 
 
 	private isAccepted: boolean;
