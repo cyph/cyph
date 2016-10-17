@@ -35,7 +35,7 @@ export class Thread {
 		);
 
 
-		/* Normalisation to increase compatibility with Web libraries */
+		/* Normalisation to increase compatibility with web libraries */
 
 		importScripts('/lib/js/base.js');
 		importScripts('/js/cyph/base.js');
@@ -81,14 +81,11 @@ export class Thread {
 			importScripts('/lib/js/davidchambers/base64.js/base64.min.js');
 		}
 
-		if (typeof crypto === 'undefined' && 'msCrypto' in self) {
-			crypto	= self['msCrypto'];
-		}
 		try {
 			crypto.getRandomValues(new Uint8Array(1));
 		}
 		catch (_) {
-			/* Firefox only exposes crypto in the main thread;
+			/* Some browsers only expose crypto in the main thread;
 				as a workaround, the main thread's crypto instance
 				is used to seed a different CSPRNG here */
 
