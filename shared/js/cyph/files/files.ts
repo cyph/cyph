@@ -26,7 +26,6 @@ export class Files implements IFiles {
 			plaintext?: Uint8Array,
 			cyphertext?: Uint8Array,
 			key?: Uint8Array,
-			isAlice?: boolean,
 			chunkSize?: number,
 			callbackId?: string
 		}
@@ -43,7 +42,7 @@ export class Files implements IFiles {
 			) {
 				importScripts('/js/cyph/crypto/potassium.js');
 
-				const potassium: Potassium	= new Potassium(locals.isAlice);
+				const potassium: Potassium	= new Potassium();
 
 				/* Encrypt */
 				if (locals.plaintext) {
@@ -69,7 +68,7 @@ export class Files implements IFiles {
 						catch (err) {
 							Cyph.EventManager.trigger(
 								locals.callbackId,
-								[err, null, null]
+								[err.message, null, null]
 							);
 
 							return;
@@ -128,7 +127,7 @@ export class Files implements IFiles {
 						catch (err) {
 							Cyph.EventManager.trigger(
 								locals.callbackId,
-								[err, null]
+								[err.message, null]
 							);
 
 							return;
@@ -182,11 +181,7 @@ export class Files implements IFiles {
 		try {
 			return this.nativePotassium ?
 				await this.nativePotassium.SecretBox.open(cyphertext, key) :
-				(await Files.cryptoThread({
-					cyphertext,
-					key,
-					isAlice: this.session.state.isAlice
-				}))[0]
+				(await Files.cryptoThread({cyphertext, key}))[0]
 			;
 		}
 		catch (_) {
@@ -213,10 +208,7 @@ export class Files implements IFiles {
 				};
 			}
 			else {
-				const results	= await Files.cryptoThread({
-					plaintext,
-					isAlice: this.session.state.isAlice
-				});
+				const results	= await Files.cryptoThread({plaintext});
 
 				return {
 					cyphertext: results[0],
