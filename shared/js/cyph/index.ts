@@ -4,6 +4,7 @@ import {UrlState} from './urlstate';
 
 import * as Channel from './channel';
 import * as Crypto from './crypto';
+import * as Files from './files';
 import * as P2P from './p2p';
 import * as Session from './session';
 import * as UI from './ui';
@@ -18,6 +19,7 @@ export {
 
 	Channel,
 	Crypto,
+	Files,
 	P2P,
 	Session,
 	UI

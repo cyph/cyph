@@ -1,5 +1,5 @@
 default-src 'self';
-child-src https://api.cyph.com;
+child-src 'self' blob: https://api.cyph.com;
 connect-src 'self' https://*.cyph.com https://api.cyph.com https://*.cyphdbyhiddenbhs.onion https://*.firebaseio.com wss://*.firebaseio.com https://firebasestorage.googleapis.com https://*.braintreegateway.com https://mandrillapp.com;
 font-src 'self' data:;
 form-action https://api.cyph.com;

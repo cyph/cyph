@@ -25,7 +25,7 @@ export class P2P implements IP2P {
 
 	public static isSupported: boolean	= new self['SimpleWebRTC'](
 		{connection: {on: () => {}}}
-	).capabilities.supportMediaStream;
+	).capabilities.support;
 
 
 	private isAccepted: boolean;
@@ -364,16 +364,11 @@ export class P2P implements IP2P {
 	) {
 		this.mutex	= new Mutex(this.session);
 
-		this.session.on(Events.beginChat, () => {
-			if (P2P.isSupported) {
-				this.session.send(
-					new Message(
-						RPCEvents.p2p,
-						new Command()
-					)
-				);
-			}
-		});
+		if (P2P.isSupported) {
+			this.session.on(Events.beginChat, () => this.session.send(
+				new Message(RPCEvents.p2p, new Command())
+			));
+		}
 
 		this.session.on(Events.closeChat, () => this.close());
 
