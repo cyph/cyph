@@ -212,13 +212,13 @@ grep -r '\.woff' |
 cd ..
 
 for path in $(
-	grep -roP '<meta property="og:image".*?>' |
-		perl -pe 's/.*content="\/blog\/(.*?)".*/\1/g' |
-		grep -v 'og:image' |
+	grep -hroP "${fullDestinationURL}([A-Za-z0-9]|/|-|_)+\.(jpg|jpeg|png|gif|webp|svg)" |
+		sed "s|${fullDestinationURL}/||g" |
 		sort |
 		uniq
 ) ; do
 	parent="$(echo "${path}" | perl -pe 's/\/[^\/]+$//')"
 	mkdir -p "${parent}"
+	rm "${path}" 2> /dev/null
 	wget --tries=50 "http://localhost:43000/${path}" -O "${path}"
 done
