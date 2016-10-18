@@ -125,9 +125,9 @@ for f in $(find . -name '*.html') ; do node -e "
 				fs.writeFileSync(path, content);
 			});
 		})).concat(\$(
-			'img[src]:not([src^=\"/blog\"]), ' +
-			'script[src]:not([src^=\"/blog\"]), ' +
-			'link[rel=\"stylesheet\"][href]:not([href^=\"/blog\"])'
+			'img[src]:not([src^=\"/blog\"]):not([src^=\"${fullDestinationURL}\"]), ' +
+			'script[src]:not([src^=\"/blog\"]):not([src^=\"${fullDestinationURL}\"]), ' +
+			'link[rel=\"stylesheet\"][href]:not([href^=\"/blog\"]):not([href^=\"${fullDestinationURL}\"])'
 		).toArray().map(elem => Promise.resolve().then(() => {
 			elem	= \$(elem);
 
