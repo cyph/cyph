@@ -8,6 +8,21 @@ import {PotassiumUtil} from './potassiumutil';
  * should generally not be called directly.
  */
 export class Potassium extends PotassiumUtil {
+	public static async isNativeCryptoSupported () : Promise<boolean> {
+		try {
+			await NativeCrypto.SecretBox.seal(
+				Potassium.randomBytes(1),
+				Potassium.randomBytes(NativeCrypto.SecretBox.nonceBytes),
+				Potassium.randomBytes(NativeCrypto.SecretBox.keyBytes)
+			);
+			return true;
+		}
+		catch (_) {
+			return false;
+		}
+	}
+
+
 	private newNonce (size: number) {
 		if (size < 4) {
 			throw new Error('Nonce size too small.');

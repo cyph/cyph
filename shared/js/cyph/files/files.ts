@@ -16,11 +16,6 @@ import {Message} from '../session/message';
 
 
 export class Files implements IFiles {
-	private static subtleCryptoIsSupported: boolean	=
-		!!(crypto && crypto.subtle && crypto.subtle.encrypt) &&
-		locationData.protocol === 'https:'
-	;
-
 	private static cryptoThread (
 		locals: {
 			plaintext?: Uint8Array,
@@ -422,8 +417,12 @@ export class Files implements IFiles {
 	public constructor (
 		private session: ISession,
 		private controller: IController
-	) {
-		if (Files.subtleCryptoIsSupported) {
+	) { (async () => {
+		const isNativeCryptoSupported	=
+			await Potassium.isNativeCryptoSupported()
+		;
+
+		if (isNativeCryptoSupported) {
 			this.session.on(Events.beginChat, () => this.session.send(
 				new Message(RPCEvents.files)
 			));
@@ -483,9 +482,9 @@ export class Files implements IFiles {
 				}
 			}
 			/* Negotiation on whether or not to use SubtleCrypto */
-			else if (Files.subtleCryptoIsSupported && !this.nativePotassium) {
+			else if (isNativeCryptoSupported && !this.nativePotassium) {
 				this.nativePotassium	= new Potassium(true);
 			}
 		});
-	}
+	})(); }
 }
