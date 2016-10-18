@@ -219,6 +219,6 @@ for path in $(
 ) ; do
 	parent="$(echo "${path}" | perl -pe 's/\/[^\/]+$//')"
 	mkdir -p "${parent}"
-	rm "${path}" 2> /dev/null
-	wget --tries=50 "http://localhost:43000/${path}" -O "${path}"
+	wget --tries=50 "http://localhost:43000/${path}" -O "${path}.new"
+	mv "${path}.new" "${path}" 2> /dev/null
 done
