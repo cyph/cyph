@@ -278,12 +278,7 @@ export class Files implements IFiles {
 					transfer.percentComplete	= 100;
 
 					Potassium.clearMemory(transfer.key);
-
-					Util.openUrl(
-						URL.createObjectURL(new Blob([plaintext])),
-						transfer.name
-					);
-
+					Util.saveFile(plaintext, transfer.name);
 					setTimeout(() => {
 						this.transfers.splice(transferIndex, 1);
 						this.controller.update();

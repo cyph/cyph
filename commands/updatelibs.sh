@@ -93,6 +93,7 @@ jspm install -y \
 	jquery@^2 \
 	jquery-legacy=github:jquery/jquery@^1 \
 	npm:magnific-popup \
+	npm:file-saver \
 	npm:clipboard-js \
 	npm:nanoscroller \
 	npm:unsemantic \
@@ -248,6 +249,7 @@ typings install --global --save \
 	dt~angular \
 	dt~angular-material \
 	dt~angular-animate \
+	dt~filesaver \
 	dt~dompurify
 	# dt~webrtc/mediastream
 	# dt~webrtc/rtcpeerconnection

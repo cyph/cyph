@@ -161,19 +161,14 @@ export class Util {
 	/**
 	 * Opens the specified URL.
 	 * @param url
-	 * @param downloadName Default name if a file is to be downloaded.
 	 */
-	public static openUrl (url: string, downloadName?: string) : void {
+	public static openUrl (url: string) : void {
 		if (Env.isMainThread) {
 			const a: HTMLAnchorElement	= document.createElement('a');
 
 			a.href			= url;
 			a.target		= '_blank';
 			a.style.display	= 'none';
-
-			if (downloadName) {
-				a['download']	= downloadName;
-			}
 
 			document.body.appendChild(a);
 			a.click();
@@ -188,7 +183,7 @@ export class Util {
 			}, 120000);
 		}
 		else {
-			EventManager.callMainThread('Cyph.Util.openUrl', [url, downloadName]);
+			EventManager.callMainThread('Cyph.Util.openUrl', [url]);
 		}
 	}
 
@@ -374,6 +369,20 @@ export class Util {
 				}
 			}
 		});
+	}
+
+	/**
+	 * Opens the specified URL.
+	 * @param content
+	 * @param fileName
+	 */
+	public static saveFile (content: Uint8Array, fileName?: string) : void {
+		if (Env.isMainThread) {
+			saveAs(new Blob([content], {type: 'application/octet-stream'}), fileName);
+		}
+		else {
+			EventManager.callMainThread('Cyph.Util.saveFile', [content, fileName]);
+		}
 	}
 
 	/**
