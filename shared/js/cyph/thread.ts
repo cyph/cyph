@@ -127,7 +127,7 @@ export class Thread {
 			})();
 		}
 
-		(<any> self)['crypto']	= crypto;
+		(<any> self).crypto	= crypto;
 
 		importScripts('/lib/js/crypto/libsodium/dist/browsers-sumo/combined/sodium.min.js');
 		self['sodium'].memzero(threadSetupVars.seed);
