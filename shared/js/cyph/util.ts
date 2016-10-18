@@ -376,9 +376,19 @@ export class Util {
 	 * @param content
 	 * @param fileName
 	 */
-	public static saveFile (content: Uint8Array, fileName?: string) : void {
+	public static async saveFile (content: Uint8Array, fileName?: string) : Promise<void> {
 		if (Env.isMainThread) {
-			saveAs(new Blob([content], {type: 'application/octet-stream'}), fileName);
+			const onbeforeunload	= self.onbeforeunload;
+			self.onbeforeunload		= null;
+
+			saveAs(
+				new Blob([content], {type: 'application/octet-stream'}),
+				fileName,
+				false
+			);
+
+			await Util.sleep(50);
+			self.onbeforeunload		= onbeforeunload;
 		}
 		else {
 			EventManager.callMainThread('Cyph.Util.saveFile', [content, fileName]);
