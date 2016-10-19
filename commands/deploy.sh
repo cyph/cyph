@@ -221,6 +221,10 @@ setredirect () {
 }
 
 
+if [ -d test ] ; then
+	sed -i "s|setOnerror()|$(cat test/setonerror.js | tr '\n' ' ')|g" test/test.js
+fi
+
 if [ ! "${simple}" ] ; then
 	defaultHeadersString='# default_headers'
 	defaultHeaders="$(cat shared/headers)"

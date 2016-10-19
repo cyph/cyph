@@ -81,21 +81,7 @@ const driverScript	= (driver, f) => driverPromise(() =>
 const driverSetURL	= (driver, url) => driverPromise(() =>
 	driver.get(url)
 ).then(() => driverScript(driver, function () {
-	self.setOnerror	= function () {
-		self.onerror	= function (err) {
-			if (err === 'Script error.') {
-				return;
-			}
-
-			document.body.innerHTML	=
-				'<pre style="font-size: 24px; white-space: pre-wrap;">' +
-					JSON.stringify(arguments, null, '\t') +
-				'</pre>'
-			;
-		};
-	};
-
-	self.setOnerror();
+	setOnerror();
 }));
 
 const driverWait	= (driver, until, timeout) => driverPromise(() =>
@@ -115,7 +101,7 @@ const homeTest		= o => {
 		driverWait(
 			driver,
 			webdriver.until.elementLocated(webdriver.By.js(function () {
-				self.setOnerror();
+				setOnerror();
 				return self.$ && $('#new-cyph:visible')[0];
 			})),
 			30000
@@ -126,7 +112,7 @@ const homeTest		= o => {
 		driverWait(
 			driver,
 			webdriver.until.elementLocated(webdriver.By.js(function () {
-				self.setOnerror();
+				setOnerror();
 				return document.getElementsByClassName('postlist')[0];
 			})),
 			30000
@@ -146,7 +132,7 @@ const newCyphTest	= o => {
 		driverWait(
 			driver,
 			webdriver.until.elementLocated(webdriver.By.js(function () {
-				self.setOnerror();
+				setOnerror();
 				return self.$ && $('.message-box:visible')[0];
 			})),
 			150000
