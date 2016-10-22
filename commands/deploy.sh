@@ -106,7 +106,15 @@ setredirect () {
 	cat > "${2}/index.html.tmp" <<- EOM
 		<html☁manifest='/appcache.appcache'>
 			<body>
-				<script>navigator.serviceWorker.register('/serviceworker.js')</script>
+				<script>
+					try {
+						navigator.serviceWorker.
+							register('/serviceworker.js').
+							catch(function () {})
+						;
+					}
+					catch (_) {}
+				</script>
 				<script>
 					var☁isHiddenService	= location.host.split('.').slice(-1)[0] === 'onion';
 
@@ -220,6 +228,10 @@ setredirect () {
 	rm "${2}/index.html.tmp"
 }
 
+
+if [ -d test ] ; then
+	sed -i "s|setOnerror()|$(cat test/setonerror.js | tr '\n' ' ')|g" test/test.js
+fi
 
 if [ ! "${simple}" ] ; then
 	defaultHeadersString='# default_headers'

@@ -1,68 +1,93 @@
 #!/bin/bash
 
 fullDestinationURL="${1}"
-destinationProtocol="$(echo "${1}" | perl -pe 's/(.*?):\/\/.*/\1/')"
+destinationProtocol="$(echo "${1}" | perl -pe 's/(.*?:\/\/).*/\1/')"
 destinationURL="$(echo "${1}" | perl -pe 's/.*?:\/\/(.*)/\1/')"
 
 echo -e '\n\nGenerating static blog\n'
 
 ssh -i ~/.ssh/id_rsa_docker -f -N -L 43000:localhost:43000 wordpress.internal.cyph.com > /dev/null 2>&1
 
-downloadURL="$(node -e "const script = () => {
-	const browser	= new (require('zombie'));
+while [ ! -f wpstatic.zip ] ; do
+	commandComment="# wpstatic-download $(node -e '
+		console.log(crypto.randomBytes(32).toString("hex"))
+	')"
 
-	let timedOut	= false;
-	const timeout	= () => {
-		if (!timedOut) {
-			timedOut	= true;
-			script();
-		}
-	};
-	setTimeout(timeout, 300000);
+	command="$(node -e "
+		const browser	= new (require('zombie'));
 
-	new Promise(resolve => browser.visit(
-		'http://localhost:43000/wp-admin/admin.php?page=simply-static_settings',
-		resolve
-	)).then(() => new Promise(resolve => browser.
-		fill('log', 'admin').
-		fill('pwd', 'hunter2').
-		pressButton('Log In', resolve)
-	)).then(() => new Promise(resolve => browser.
-		select('destination_scheme', '${destinationProtocol}').
-		fill('destination_host', '${destinationURL}').
-		pressButton('Save Changes', resolve)
-	)).then(() => new Promise(resolve => browser.visit(
-		'http://localhost:43000/wp-admin/admin.php?page=simply-static',
-		resolve
-	))).then(() => new Promise(resolve => browser.
-		pressButton('Generate Static Files', resolve)
-	)).then(() => {
-		const tryDownload	= () => setTimeout(() => {
-			const a	= browser.document.querySelectorAll('a[href*=\".zip\"]')[0];
+		setTimeout(() => process.exit(), 300000);
 
-			if (a) {
-				console.log(a.href);
-				process.exit();
-			}
-			else if (timedOut) {
-				return;
-			}
+		new Promise(resolve => browser.visit(
+			'http://localhost:43000/wp-admin/admin.php?page=simply-static_settings',
+			resolve
+		)).then(() => new Promise(resolve => browser.
+			fill('log', 'admin').
+			fill('pwd', 'hunter2').
+			pressButton('Log In', resolve)
+		)).then(() => new Promise(resolve => browser.
+			select('destination_scheme', '${destinationProtocol}').
+			fill('destination_host', '${destinationURL}').
+			pressButton('Save Changes', resolve)
+		)).then(() => {
+			const tryDownload	= () =>
+				new Promise(resolve => browser.visit(
+					'http://localhost:43000/wp-admin/admin.php?page=simply-static',
+					() => setTimeout(resolve, 5000)
+				)).then(() => new Promise(resolve =>
+					!browser.document.querySelectorAll('#generate:not(.hide)')[0] ?
+						resolve() :
+						browser.pressButton(
+							'Generate Static Files',
+							() => setTimeout(resolve, 5000)
+						)
+				)).
+				catch(() => {}).
+				then(() => new Promise(resolve =>
+					!browser.document.querySelectorAll('#resume:not(.hide)')[0] ?
+						resolve() :
+						browser.pressButton(
+							'Resume',
+							() => setTimeout(resolve, 5000)
+						)
+				)).
+				catch(() => {}).
+				then(() => {
+					const a	= browser.document.querySelectorAll(
+						'a[href*=\".zip\"]'
+					)[0];
 
-			try {
-				browser.pressButton('Resume', tryDownload);
-			}
-			catch (_) {
-				tryDownload();
-			}
-		}, 5000);
+					if (!a) {
+						throw 'Not found.';
+					}
 
-		tryDownload();
-	}).catch(timeout);
-}; script();" | tail -n1)"
+					const command	=
+						\`wget --header 'Cookie: \${browser.cookies.join('; ')}' \` +
+						\`--tries=50 '\${a.href}' -O wpstatic.zip ${commandComment}\`
+					;
 
-wget --tries=50 "${downloadURL}" -O wpstatic.zip
+					browser.tabs.closeAll();
+
+					setTimeout(() => {
+						console.log(command);
+						process.exit();
+					}, 1000);
+				}).catch(() =>
+					setTimeout(tryDownload, 10000)
+				)
+			;
+
+			tryDownload();
+		});
+	" 2> /dev/null | tail -n1)"
+
+	if [ "$(echo "${command}" | grep "${commandComment}")" ] ; then
+		echo -e "${command}\n"
+		eval "${command}"
+	fi
+done
+
 unzip wpstatic.zip
-
 rm -rf wpstatic.zip wp-admin wp-json $(find . -name '*.php')
 
 for f in $(find . -type f) ; do
