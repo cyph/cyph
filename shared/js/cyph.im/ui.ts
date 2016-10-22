@@ -103,7 +103,6 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		});
 
 		this.chat.session.on(Cyph.Session.Events.beginChatComplete, () => {
-			Cyph.UI.Elements.window().unload(() => this.chat.session.close());
 			self.onbeforeunload	= () => Cyph.Strings.disconnectWarning;
 
 			if (initialCallType && this.chat.session.state.isAlice) {
