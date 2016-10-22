@@ -1,4 +1,5 @@
 import {Env} from './env';
+import {Util} from './util';
 
 
 /**
@@ -7,16 +8,30 @@ import {Env} from './env';
 export class Firebase {
 	public static app: firebase.FirebaseApplication;
 
-	private static _	= (() => {
+	private static _	= (async () => {
 		if (!self['firebase']) {
 			return;
 		}
 
-		Firebase.app	= firebase.initializeApp({
-			apiKey: 'AIzaSyB7B8i8AQPtgMXS9o6zbfX1Vv-PwW2Q0Jo',
-			authDomain: 'cyphme.firebaseapp.com',
-			databaseURL: Env.firebaseEndpoint,
-			storageBucket: 'cyphme.appspot.com'
-		});
+		for (let i = 0 ; true ; ++i) {
+			try {
+				Firebase.app	= firebase.initializeApp({
+					apiKey: 'AIzaSyB7B8i8AQPtgMXS9o6zbfX1Vv-PwW2Q0Jo',
+					authDomain: 'cyphme.firebaseapp.com',
+					databaseURL: Env.firebaseEndpoint,
+					storageBucket: 'cyphme.appspot.com'
+				});
+
+				return;
+			}
+			catch (err) {
+				if (i > 10) {
+					throw err;
+				}
+				else {
+					await Util.sleep(2500);
+				}
+			}
+		}
 	})();
 }
