@@ -326,6 +326,9 @@ cd ..
 
 find default -type f -name '*_test.go' -exec rm {} \;
 
+find default -type f -mindepth 2 -name '*.go' -exec \
+	sed -i 's|func main|func functionRemoved|g' {} \;
+
 
 commands/commit.sh updatelibs
 
