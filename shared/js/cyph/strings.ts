@@ -42,7 +42,6 @@ export const Strings = {
 	p2pRequest: `Your friend has requested an encrypted`,
 	p2pRequestConfirmation: `Your request has been sent.`,
 	p2pTitle: `Cyph Call`,
-	pingPongTimeoutTitle: `Connection timeout`,
 	reject: `reject`,
 	save: `save`,
 	selfDestructActivated: `Cyph set to self-destruct.`,
@@ -97,12 +96,6 @@ export const Strings = {
 	p2pDisabledLocal:
 		`Your browser does not support voice or video calling. ` +
 		`Try again with the latest Chrome or Firefox.`
-	,
-
-	pingPongTimeout:
-		`Unable to ping your friend...\n\n` +
-		`They might have gone offline, or one of you could be experiencing network connectivity issues.\n\n` +
-		`If you weren’t expecting your friend to leave the cyph, you may want to wait around a little longer.`
 	,
 
 	signupMessage1:

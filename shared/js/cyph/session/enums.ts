@@ -27,7 +27,6 @@ export class Events {
 	public static filesUI: string			= 'filesUI';
 	public static newCyph: string			= 'newCyph';
 	public static p2pUI: string				= 'p2pUI';
-	public static pingPongTimeout: string	= 'pingPongTimeout';
 }
 
 /**
