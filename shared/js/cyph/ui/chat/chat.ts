@@ -416,18 +416,6 @@ export class Chat extends BaseButtonManager implements IChat {
 
 		this.session.on(Events.connectFailure, () => this.abortSetup());
 
-		this.session.on(Events.pingPongTimeout, () => {
-			if (!this.isDisconnected) {
-				this.addMessage(Strings.pingPongTimeout, Users.app);
-
-				this.dialogManager.alert({
-					title: Strings.pingPongTimeoutTitle,
-					content: Strings.pingPongTimeout,
-					ok: Strings.ok
-				});
-			}
-		});
-
 		this.session.on(RPCEvents.text,
 			(o: { text: string; author: string; timestamp: number; }) =>
 				this.addMessage(

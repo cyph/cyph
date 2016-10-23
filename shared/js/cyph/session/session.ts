@@ -50,10 +50,6 @@ export class Session implements ISession {
 			}
 			case CastleEvents.connect: {
 				this.trigger(Events.beginChat);
-
-				if (!this.isLocalSession) {
-					this.pingPong();
-				}
 				break;
 			}
 			case CastleEvents.receive: {
@@ -121,8 +117,6 @@ export class Session implements ISession {
 			if (now - this.lastIncomingMessageTimestamp > 180000) {
 				if (this.pingPongTimeouts++ < 2) {
 					this.lastIncomingMessageTimestamp	= Util.timestamp();
-
-					this.trigger(Events.pingPongTimeout);
 
 					Analytics.send({
 						hitType: 'event',
@@ -245,6 +239,8 @@ export class Session implements ISession {
 					this.trigger(Events.beginWaiting);
 				}
 				else if (!this.isLocalSession) {
+					this.pingPong();
+
 					Analytics.send({
 						hitType: 'event',
 						eventCategory: 'cyph',
