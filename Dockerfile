@@ -113,39 +113,39 @@ RUN bash -c ' \
 '
 
 RUN sudo npm -g install \
-	html-minifier \
-	clean-css \
-	cheerio \
-	uglify-js \
-	typescript \
-	babel-cli \
-	babel-preset-es2015 \
-	typings \
-	typedoc \
-	jspm \
-	webpack@beta \
+	@angular/common@2.1.1 \
+	@angular/compiler@2.1.1 \
+	@angular/compiler-cli@2.1.1 \
+	@angular/core@2.1.1 \
+	@angular/platform-browser@2.1.1 \
+	@angular/platform-server@2.1.1 \
+	babel-cli@6.16.0 \
+	babel-preset-es2015@6.16.0 \
+	browserify@13.1.1 \
+	cheerio@0.22.0 \
+	clean-css@3.4.20 \
+	datauri@1.0.4  \
+	htmlencode@0.0.4  \
+	image-type@2.1.0 \
+	html-minifier@3.1.0 \
+	rxjs@5.0.0-beta.12 \
+	typescript@2.0.3 \
+	uglify-js@2.7.4 \
+	webpack@2.1.0-beta.25 \
+	zone.js@0.6.26 \
 	browserstack \
-	zombie \
-	browserify \
-	supersphincs \
-	libsodium-wrappers \
-	glob \
-	read \
-	mkdirp \
-	datauri \
-	htmlencode \
-	node-fetch \
-	image-type \
 	firebase \
 	firebase-server \
-	rxjs \
-	zone.js \
-	@angular/common \
-	@angular/compiler \
-	@angular/compiler-cli \
-	@angular/core \
-	@angular/platform-browser \
-	@angular/platform-server
+	glob \
+	jspm \
+	libsodium-wrappers \
+	mkdirp \
+	node-fetch \
+	read \
+	supersphincs \
+	typedoc \
+	typings \
+	zombie
 
 
 VOLUME /cyph
