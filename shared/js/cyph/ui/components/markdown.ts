@@ -19,7 +19,7 @@ export class Markdown {
 	};
 
 
-	private markdown: string;
+	public markdown: string;
 
 	constructor ($scope, $element) { (async () => {
 		while (!this.markdown) {

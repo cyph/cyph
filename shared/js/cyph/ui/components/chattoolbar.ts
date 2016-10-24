@@ -20,8 +20,8 @@ export class ChatToolbar {
 	};
 
 
-	private Cyph: any;
-	private self: IChat;
+	public Cyph: any;
+	public self: IChat;
 
 	constructor () { (async () => {
 		while (!self['Cyph']) {

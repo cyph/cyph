@@ -26,14 +26,14 @@ export class Checkout {
 	};
 
 
-	private Cyph: any;
-	private ui: any;
-	private amount: string;
-	private category: string;
-	private email: string;
-	private item: string;
-	private name: string;
-	private complete: boolean;
+	public Cyph: any;
+	public ui: any;
+	public amount: string;
+	public category: string;
+	public email: string;
+	public item: string;
+	public name: string;
+	public complete: boolean;
 
 	constructor ($scope, $element) { (async () => {
 		while (!self['Cyph'] || !self['ui']) {

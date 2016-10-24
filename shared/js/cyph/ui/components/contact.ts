@@ -21,10 +21,10 @@ export class Contact {
 	};
 
 
-	private Cyph: any;
-	private ui: any;
+	public Cyph: any;
+	public ui: any;
 
-	private self: {
+	public self: {
 		fromEmail: string;
 		fromName: string;
 		message: string;

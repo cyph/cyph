@@ -16,8 +16,8 @@ export class StaticFooter {
 	};
 
 
-	private Cyph: any;
-	private ui: any;
+	public Cyph: any;
+	public ui: any;
 
 	constructor () { (async () => {
 		while (!self['Cyph'] || !self['ui']) {

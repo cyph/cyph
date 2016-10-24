@@ -22,9 +22,9 @@ export class SignupForm {
 	};
 
 
-	private Cyph: any;
-	private self: ISignupForm;
-	private invite: string;
+	public Cyph: any;
+	public self: ISignupForm;
+	public invite: string;
 
 	constructor () { (async () => {
 		while (!self['Cyph']) {

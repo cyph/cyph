@@ -20,8 +20,8 @@ export class FileInput {
 	};
 
 
-	private accept: string;
-	private fileChange: Function;
+	public accept: string;
+	public fileChange: Function;
 
 	constructor ($scope, $element) {
 		const $input	= $element.children();
