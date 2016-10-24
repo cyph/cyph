@@ -43,9 +43,7 @@ expect -c ' \
 	expect "Enter client baseURL"; \
 	send "/\n"; \
 	expect "transpiler"; \
-	send "yes\n"; \
-	expect "transpiler"; \
-	send "typescript\n"; \
+	send "no\n"; \
 	interact; \
 '
 expect -c ' \
@@ -73,7 +71,7 @@ jspm install -y \
 	npm:@angular/router \
 	npm:@angular/upgrade \
 	npm:rxjs \
-	zone.js=github:angular/zone.js \
+	npm:zone.js \
 	angular \
 	angular-material \
 	angular-aria \
@@ -214,6 +212,7 @@ cd ../..
 
 mkdir firebase
 cd firebase
+mkdir node_modules
 npm install firebase --save
 cd node_modules/firebase
 npm install
@@ -229,6 +228,7 @@ uglifyjs microlight.js -m -o microlight.min.js
 cd ..
 
 cd babel-polyfill
+mkdir node_modules
 npm install
 npm install process
 browserify dist/polyfill.min.js -o browser.js
@@ -237,6 +237,7 @@ cd ..
 
 cd github/andyet/simplewebrtc@*
 sed -i "s|require('./socketioconnection')|null|g" simplewebrtc.js
+mkdir node_modules
 npm install
 node build.js
 rm -rf node_modules
