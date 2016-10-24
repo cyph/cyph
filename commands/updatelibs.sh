@@ -1,15 +1,12 @@
 #!/bin/bash
 
-dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd)/..
+dir="$(pwd)"
 
 ./commands/keycache.sh
 
-rm -rf shared/lib
-mkdir -p shared/lib/js/crypto
-cd shared/lib/js
-
-ln -s . node_modules
+mkdir -p ~/lib/js/crypto
+cd ~/lib/js
 
 echo "sodium = (function () {
 	$( \
@@ -267,7 +264,8 @@ curl -s https://raw.githubusercontent.com/suhdev/firebase-3-typescript/master/fi
 echo '/// <reference path="globals/firebase/index.d.ts" />' >> typings/index.d.ts
 
 
-cd ../../default
+mkdir ~/golibs
+cd ~/golibs
 
 rm -rf github.com 2> /dev/null
 mkdir github.com
@@ -321,15 +319,20 @@ find tools -name '*test*' -exec rm -rf {} \; 2> /dev/null
 cd ../..
 
 find . -name .git -exec rm -rf {} \; 2> /dev/null
+find . -type f -name '*_test.go' -exec rm {} \;
+find . -type f -name '*.go' -exec sed -i 's|func main|func functionRemoved|g' {} \;
 
-cd ..
-
-find default -type f -name '*_test.go' -exec rm {} \;
-
-find default -type f -mindepth 2 -name '*.go' -exec \
-	sed -i 's|func main|func functionRemoved|g' {} \;
-
-
-commands/commit.sh updatelibs
 
 cd "${dir}"
+rm -rf shared/lib
+cp -a ~/lib shared/
+cd shared/lib/js
+ln -s . node_modules
+cd ../../..
+
+for d in $(ls ~/golibs) ; do
+	rm -rf default/${d} 2> /dev/null
+	cp -a ~/golibs/${d} default/
+done
+
+commands/commit.sh updatelibs
