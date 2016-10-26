@@ -10,7 +10,7 @@
 /// <reference path="../preload/translations.ts" />
 
 import {AppComponent} from './appcomponent';
-import {UpgradeAdapter} from './appmodule';
+import {upgradeAdapter} from './appmodule';
 import {BetaStates, States, UrlSections} from './enums';
 import {UI} from './ui';
 import {Loaded} from '../preload';
@@ -100,14 +100,14 @@ angular.
 	directive(
 		'cyphApp',
 		<angular.IDirectiveFactory>
-		UpgradeAdapter.downgradeNg2Component(
+		upgradeAdapter.downgradeNg2Component(
 			AppComponent
 		)
 	)
 ;
 
 
-UpgradeAdapter.bootstrap(
+upgradeAdapter.bootstrap(
 	document.body,
 	[Cyph.Config.angularConfig.rootModule]
 );
