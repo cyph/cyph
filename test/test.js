@@ -250,12 +250,12 @@ const runTests	= (homeURL, newCyphURL) => Promise.resolve().then(() => {
 }).catch(err => {
 	console.error(err);
 	return false;
-}).then(result => {
-	if (statusCode === undefined) {
+}).then(passing => {
+	if (passing === undefined) {
 		return;
 	}
 
-	setTestResult(homeURL + newCyphURL, result);
+	setTestResult(homeURL + newCyphURL, passing);
 	testTimes[homeURL + newCyphURL]		= Date.now();
 
 	testLock	= false;
@@ -295,7 +295,7 @@ http.createServer((req, res) => Promise.resolve().then(() => {
 		console.error(err);
 	}
 
-	return 500;
+	return 418;
 }).then(statusCode => {
 	res.statusCode	= statusCode;
 	res.end();
