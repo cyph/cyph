@@ -1,4 +1,5 @@
 const crypto	= require('crypto');
+const datastore	= require('@google-cloud/datastore')();
 const http		= require('http');
 const webdriver	= require('selenium-webdriver');
 
@@ -53,7 +54,6 @@ const browsers	= [
 ];
 
 let testLock		= true;
-const testResults	= {};
 const testTimes		= {};
 
 
@@ -93,6 +93,26 @@ const getDriver		= o => new webdriver.Builder().
 	withCapabilities(o).
 	build()
 ;
+
+const isTestPassing	= key => new Promise((resolve, reject) =>
+	datastore.get(testResultKey(key), (err, entity) => {
+		if (entity.data && entity.data.passing) {
+			resolve();
+		}
+		else {
+			reject();
+		}
+	})
+);
+
+const setTestResult	= (key, passing) => datastore.save({
+	key: testResultKey(key),
+	data: {
+		passing
+	}
+}, () => {});
+
+const testResultKey	= key => datastore.key(['TestResult', key]);
 
 const homeTest		= o => {
 	const driver	= getDriver(o);
@@ -225,20 +245,17 @@ const runTests	= (homeURL, newCyphURL) => Promise.resolve().then(() => {
 		),
 		Promise.resolve()
 	).then(() =>
-		200
-	).catch(err => {
-		console.error(err);
-		return 418;
-	});
+		true
+	);
 }).catch(err => {
 	console.error(err);
-	return 500;
-}).then(statusCode => {
-	if (!statusCode) {
+	return false;
+}).then(result => {
+	if (statusCode === undefined) {
 		return;
 	}
 
-	testResults[homeURL + newCyphURL]	= statusCode;
+	setTestResult(homeURL + newCyphURL, result);
 	testTimes[homeURL + newCyphURL]		= Date.now();
 
 	testLock	= false;
@@ -270,9 +287,14 @@ http.createServer((req, res) => Promise.resolve().then(() => {
 		}
 	});
 
-	return testResults[homeURL + newCyphURL] || 200;
-}).catch(err => {
-	console.error(err);
+	return isTestPassing(homeURL + newCyphURL);
+}).then(() =>
+	200
+).catch(err => {
+	if (err) {
+		console.error(err);
+	}
+
 	return 500;
 }).then(statusCode => {
 	res.statusCode	= statusCode;
