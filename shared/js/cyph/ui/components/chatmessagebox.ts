@@ -22,8 +22,8 @@ export class ChatMessageBox {
 	};
 
 
-	private Cyph: any;
-	private self: IChat;
+	public Cyph: any;
+	public self: IChat;
 
 	constructor ($scope, $element) { (async () => {
 		while (!self['Cyph']) {

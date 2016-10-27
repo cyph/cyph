@@ -961,6 +961,7 @@ html:not(.mobile) .amazon-link {
 		margin: 0px;
 
 		@include transform(translateX(-50%) translateY(-50%));
+
 		@include transition(none !important);
 	}
 

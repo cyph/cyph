@@ -7,7 +7,7 @@
 /// <reference path="../preload/jquery.ts" />
 
 import {AppComponent} from './appcomponent';
-import {UpgradeAdapter} from './appmodule';
+import {upgradeAdapter} from './appmodule';
 import {CyphDemo} from './cyphdemo';
 import {Elements} from './elements';
 import {HomeSections, PageTitles, Promos, States} from './enums';
@@ -90,7 +90,7 @@ angular.
 ;
 
 
-UpgradeAdapter.bootstrap(
+upgradeAdapter.bootstrap(
 	document.body,
 	[Cyph.Config.angularConfig.rootModule]
 );

@@ -16,11 +16,11 @@ export class Beta {
 	};
 
 
-	private Cyph: any;
-	private ui: any;
+	public Cyph: any;
+	public ui: any;
 
-	private checking: boolean	= false;
-	private error: boolean		= false;
+	public checking: boolean	= false;
+	public error: boolean		= false;
 
 	constructor ($scope, $element) { (async () => {
 		while (!self['Cyph'] || !self['ui']) {

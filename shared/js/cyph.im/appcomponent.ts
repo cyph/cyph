@@ -11,8 +11,8 @@ import {Component} from '@angular/core';
 	template: Templates.app
 })
 export class AppComponent {
-	private Cyph: any;
-	private ui: any;
+	public Cyph: any;
+	public ui: any;
 
 	constructor () { (async () => {
 		while (!self['Cyph'] || !self['ui']) {

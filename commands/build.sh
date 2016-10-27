@@ -68,11 +68,11 @@ modulename () {
 }
 
 tsbuild () {
-	# if [ "${watch}" -o "${test}" -o "${simple}" ] ; then
+	if [ "${watch}" -o "${test}" -o "${simple}" ] ; then
 		tsc $*
-	# else
-	# 	ngc $*
-	# fi
+	else
+		ngc $*
+	fi
 }
 
 compile () {

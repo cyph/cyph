@@ -22,29 +22,19 @@ export class Errors {
 				return;
 			}
 
-			let exception: string	= !errorMessage ? '' : (
+			const exception: string	= !errorMessage ? '' : (
 				errorMessage + '\n\n' +
 				'URL: ' + url + '\n' +
 				'Line: ' + line + '\n' +
 				'Column: ' + column + '\n\n' +
 				(errorObject && errorObject.stack)
-			);
-
-			let message: string		= exception +
-				'\n\n' + Env.userAgent +
-				'\n\n' + Env.language +
-				'\n\n' + locationData.href
-			;
-
-			/* Strip URL fragment where applicable */
-			exception	= exception.replace(/\/#.*/g, '');
-			message		= message.replace(/\/#.*/g, '');
+			).replace(/\/#.*/g, '');
 
 			if (numEmails++ < 50) {
 				Util.email({
 					to: 'errors',
 					subject: 'CYPH: ' + subject,
-					message
+					message: exception
 				});
 			}
 

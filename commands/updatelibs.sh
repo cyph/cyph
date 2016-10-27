@@ -1,15 +1,12 @@
 #!/bin/bash
 
-dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd)/..
+dir="$(pwd)"
 
 ./commands/keycache.sh
 
-rm -rf shared/lib
-mkdir -p shared/lib/js/crypto
-cd shared/lib/js
-
-ln -s . node_modules
+mkdir -p ~/lib/js/crypto
+cd ~/lib/js
 
 echo "sodium = (function () {
 	$( \
@@ -46,9 +43,7 @@ expect -c ' \
 	expect "Enter client baseURL"; \
 	send "/\n"; \
 	expect "transpiler"; \
-	send "yes\n"; \
-	expect "transpiler"; \
-	send "typescript\n"; \
+	send "no\n"; \
 	interact; \
 '
 expect -c ' \
@@ -76,7 +71,7 @@ jspm install -y \
 	npm:@angular/router \
 	npm:@angular/upgrade \
 	npm:rxjs \
-	zone.js=github:angular/zone.js \
+	npm:zone.js \
 	angular \
 	angular-material \
 	angular-aria \
@@ -217,6 +212,7 @@ cd ../..
 
 mkdir firebase
 cd firebase
+mkdir node_modules
 npm install firebase --save
 cd node_modules/firebase
 npm install
@@ -232,6 +228,7 @@ uglifyjs microlight.js -m -o microlight.min.js
 cd ..
 
 cd babel-polyfill
+mkdir node_modules
 npm install
 npm install process
 browserify dist/polyfill.min.js -o browser.js
@@ -240,6 +237,7 @@ cd ..
 
 cd github/andyet/simplewebrtc@*
 sed -i "s|require('./socketioconnection')|null|g" simplewebrtc.js
+mkdir node_modules
 npm install
 node build.js
 rm -rf node_modules
@@ -267,7 +265,8 @@ curl -s https://raw.githubusercontent.com/suhdev/firebase-3-typescript/master/fi
 echo '/// <reference path="globals/firebase/index.d.ts" />' >> typings/index.d.ts
 
 
-cd ../../default
+mkdir ~/golibs
+cd ~/golibs
 
 rm -rf github.com 2> /dev/null
 mkdir github.com
@@ -321,15 +320,20 @@ find tools -name '*test*' -exec rm -rf {} \; 2> /dev/null
 cd ../..
 
 find . -name .git -exec rm -rf {} \; 2> /dev/null
+find . -type f -name '*_test.go' -exec rm {} \;
+find . -type f -name '*.go' -exec sed -i 's|func main|func functionRemoved|g' {} \;
 
-cd ..
-
-find default -type f -name '*_test.go' -exec rm {} \;
-
-find default -type f -mindepth 2 -name '*.go' -exec \
-	sed -i 's|func main|func functionRemoved|g' {} \;
-
-
-commands/commit.sh updatelibs
 
 cd "${dir}"
+rm -rf shared/lib
+cp -a ~/lib shared/
+cd shared/lib/js
+ln -s . node_modules
+cd ../../..
+
+for d in $(ls ~/golibs) ; do
+	rm -rf default/${d} 2> /dev/null
+	cp -a ~/golibs/${d} default/
+done
+
+commands/commit.sh updatelibs

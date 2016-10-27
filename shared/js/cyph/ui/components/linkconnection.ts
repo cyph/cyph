@@ -20,8 +20,8 @@ export class LinkConnection {
 	};
 
 
-	private Cyph: any;
-	private self: ILinkConnection;
+	public Cyph: any;
+	public self: ILinkConnection;
 
 	constructor () { (async () => {
 		while (!self['Cyph']) {

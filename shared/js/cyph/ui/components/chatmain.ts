@@ -22,9 +22,9 @@ export class ChatMain {
 	};
 
 
-	private Cyph: any;
-	private self: IChat;
-	private hideDisconnectMessage: boolean;
+	public Cyph: any;
+	public self: IChat;
+	public hideDisconnectMessage: boolean;
 
 	constructor () { (async () => {
 		while (!self['Cyph']) {
