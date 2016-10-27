@@ -633,7 +633,7 @@ export const Templates	= {
 
 	contact: `
 		<div>
-			<div ng-hide='$ctrl.self.sent'>
+			<form ng-submit='$ctrl.send()' ng-hide='$ctrl.self.sent'>
 				<div layout-gt-xs='row'>
 					<md-input-container class='md-block' flex>
 						<label>Cyph team to contact</label>
@@ -653,7 +653,12 @@ export const Templates	= {
 						<label>Name</label>
 					</md-input-container>
 					<md-input-container class='md-block' flex>
-						<input ng-model='$ctrl.self.fromEmail' type='email' aria-label='Email' required />
+						<input
+							ng-model='$ctrl.self.fromEmail'
+							type='email'
+							aria-label='Email'
+							required
+						/>
 						<label>Email</label>
 					</md-input-container>
 				</div>
@@ -662,13 +667,18 @@ export const Templates	= {
 					<label>Subject</label>
 				</md-input-container>
 				<md-input-container class='md-block'>
-					<textarea ng-model='$ctrl.self.message' aria-label='Message' md-select-on-focus></textarea>
+					<textarea
+						ng-model='$ctrl.self.message'
+						aria-label='Message'
+						md-select-on-focus
+						required
+					></textarea>
 					<label>Message</label>
 				</md-input-container>
-				<md-button>
+				<md-button type='submit' aria-label='Send' translate>
 					Send
 				</md-button>
-			</div>
+			</form>
 			<div ng-show='$ctrl.self.sent'>
 				Your email has been sent! Someone on the team will get back to you shortly.
 			</div>
