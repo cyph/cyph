@@ -212,7 +212,7 @@ input, textarea {
 		left: 50%;
 		top: 50%;
 		z-index: -1;
-		opacity: 0.30;
+		opacity: 0.10;
 		content: ' ';
 
 		@include transform(translateX(-50%) translateY(-50%));
@@ -586,57 +586,7 @@ html.mobile button[disabled] {
 	width: 75%;
 }
 
-cyph-chat-toolbar {
-	.buttons > * {
-		opacity: 0.50;
-
-		&:hover {
-			opacity: 1;
-			transition-duration: 0.75s;
-			cursor: pointer;
-		}
-
-		&, * {
-			width: 24px;
-			height: 24px;
-
-			@include filter(drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.4)));
-		}
-	}
-
-	> div:not(.mobile) .buttons > * {
-		position: relative;
-		left: 75px;
-		top: -10px;
-		margin-left: 10px;
-	}
-
-	> div.mobile {
-		display: block;
-		position: relative;
-		height: 40px;
-
-		.buttons > * {
-			position: absolute;
-			margin-top: 8px;
-			top: 0px;
-
-			&:nth-child(1) {
-				left: 12px;
-			}
-
-			&:nth-child(2) {
-				left: calc(50% - 12px);
-			}
-
-			&:nth-child(3) {
-				right: 12px;
-			}
-		}
-	}
-}
-
-cyph-timer {
+.link-connection .timer {
 	font-family: 'Ubuntu Mono', monospace;
 	padding-left: 10px;
 }

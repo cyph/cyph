@@ -8,8 +8,6 @@ export const Templates	= {
 	app: `
 		<span *ngIf='Cyph && ui && ui.chat'>
 			<section id='main' class='cyph-foreground layout-fill layout-column'>
-				<cyph-chat-toolbar [self]='ui.chat'></cyph-chat-toolbar>
-
 				<cyph-chat-main
 					[self]='ui.chat'
 					[hideDisconnectMessage]='ui.coBranded'
@@ -490,16 +488,16 @@ export const Templates	= {
 			<md-fab-speed-dial
 				md-direction='up'
 				class='md-fling md-fab-bottom-right'
-				md-open='isOpen'
-				ng-mouseenter='isOpen = true'
-				ng-mouseleave='isOpen = false'
+				md-open='$ctrl.isSpeedDialOpen'
+				ng-mouseenter='$ctrl.isSpeedDialOpen = true'
+				ng-mouseleave='$ctrl.isSpeedDialOpen = false'
 			>
 				<md-fab-trigger>
 					<md-button
 						aria-label='Menu'
 						class='md-fab'
 					>
-						<img src='/img/logo.white.icon.png' />
+						<img src='/img/icons/menu.png' />
 					</md-button>
 				</md-fab-trigger>
 				<md-fab-actions>
@@ -552,6 +550,39 @@ export const Templates	= {
 						</md-tooltip>
 						<md-icon class='grey'>videocam</md-icon>
 					</md-button>
+					<md-button
+						aria-label='Send Image'
+						class='md-fab md-raised md-mini'
+					>
+						<md-tooltip md-direction='left'>
+							Send Image
+						</md-tooltip>
+						<md-icon class='grey'>insert_photo</md-icon>
+						<cyph-file-input
+							accept='image/*'
+							file-change='$ctrl.self.fileManager.send(file, true)'
+						></cyph-file-input>
+					</md-button>
+					<md-button
+						aria-label='Close Chat'
+						class='md-fab md-raised md-mini'
+						ng-click='$ctrl.self.disconnectButton()'
+					>
+						<md-tooltip md-direction='left'>
+							Close Chat
+						</md-tooltip>
+						<md-icon class='grey'>close</md-icon>
+					</md-button>
+					<md-button
+						aria-label='Help'
+						class='md-fab md-raised md-mini'
+						ng-click='$ctrl.self.helpButton()'
+					>
+						<md-tooltip md-direction='left'>
+							Help
+						</md-tooltip>
+						<md-icon class='grey'>help</md-icon>
+					</md-button>
 				</md-fab-actions>
 			</md-fab-speed-dial>
 
@@ -575,33 +606,6 @@ export const Templates	= {
 					'
 				></span>
 			</md-subheader>
-		</div>
-	`,
-
-	chatToolbar: `
-		<div
-			class='platform-container'
-			ng-class='{mobile: $ctrl.self.isMobile}'
-		>
-			<div
-				class='buttons'
-				layout='row'
-				layout-align='end end'
-				flex='95'
-				ng-show='$ctrl.self.isConnected && !$ctrl.self.isDisconnected'
-			>
-				<img
-					src='/img/icons/help.png'
-					ng-click='$ctrl.self.helpButton()'
-				/>
-				<a href='{{$ctrl.Cyph.Env.homeUrl}}'>
-					<img src='/img/logo.white.icon.small.png' />
-				</a>
-				<img
-					src='/img/icons/close.png'
-					ng-click='$ctrl.self.disconnectButton()'
-				/>
-			</div>
 		</div>
 	`,
 
@@ -1092,7 +1096,6 @@ export const Templates	= {
 				<div class='demo-root grid-container'>
 					<span class='desktop desktop-only'>
 						<div class='cyph-foreground'>
-							<cyph-chat-toolbar self='$ctrl.ui.cyphDemo.desktop'></cyph-chat-toolbar>
 							<cyph-chat-main
 								self='$ctrl.ui.cyphDemo.desktop'
 								layout='column'
@@ -1109,7 +1112,6 @@ export const Templates	= {
 
 					<span class='mobile'>
 						<div class='cyph-foreground'>
-							<cyph-chat-toolbar self='$ctrl.ui.cyphDemo.mobile'></cyph-chat-toolbar>
 							<cyph-chat-main
 								self='$ctrl.ui.cyphDemo.mobile'
 								layout='column'
@@ -2268,7 +2270,7 @@ export const Templates	= {
 				</div>
 
 				<br />
-				<div>
+				<div class='timer'>
 					<span translate>
 						Link expires in
 					</span>

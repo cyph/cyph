@@ -2,7 +2,6 @@ import {Beta} from './beta';
 import {ChatCyphertext} from './chatcyphertext';
 import {ChatMain} from './chatmain';
 import {ChatMessageBox} from './chatmessagebox';
-import {ChatToolbar} from './chattoolbar';
 import {Checkout} from './checkout';
 import {Contact} from './contact';
 import {FileInput} from './fileinput';
@@ -19,7 +18,6 @@ export {
 	ChatCyphertext,
 	ChatMain,
 	ChatMessageBox,
-	ChatToolbar,
 	Checkout,
 	Contact,
 	FileInput,

@@ -25,6 +25,8 @@ export class ChatMessageBox {
 	public Cyph: any;
 	public self: IChat;
 
+	public isSpeedDialOpen: boolean	= false;
+
 	constructor ($scope, $element) { (async () => {
 		while (!self['Cyph']) {
 			await Util.sleep(100);

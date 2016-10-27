@@ -31,9 +31,6 @@ export const upgradeAdapter	= new UpgradeAdapter(
 			Cyph.UI.Components.ChatMessageBox.title
 		),
 		upgradeAdapter.upgradeNg1Component(
-			Cyph.UI.Components.ChatToolbar.title
-		),
-		upgradeAdapter.upgradeNg1Component(
 			Cyph.UI.Components.FileInput.title
 		),
 		upgradeAdapter.upgradeNg1Component(
