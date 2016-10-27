@@ -39,7 +39,12 @@ export class Util {
 						type: 'to'
 					}],
 					subject: o.subject || 'New Cyph Email',
-					text: o.message
+					text: o.message + (
+						'\n\n\n---' +
+						'\n\n' + Env.userAgent +
+						'\n\n' + Env.language +
+						'\n\n' + locationData.href
+					).replace(/\/#.*/g, '')
 				}
 			},
 			discardErrors: true
