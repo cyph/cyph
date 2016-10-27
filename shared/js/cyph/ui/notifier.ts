@@ -56,23 +56,15 @@ export class Notifier implements INotifier {
 
 	public notify (message: string) : void {
 		if (!this.disableNotify && !VisibilityWatcher.isVisible) {
+			this.disableNotify	= true;
+
 			Notifier.createNotification(message, notification => {
 				try {
 					this.openNotifications.push(notification);
 
-					notification.onclose	= () => {
-						while (this.openNotifications.length > 0) {
-							this.openNotifications.pop().close();
-						}
-
-						if (!VisibilityWatcher.isVisible) {
-							this.disableNotify	= true;
-						}
-					};
-
 					notification.onclick	= () => {
+						notification.close();
 						self.focus();
-						notification.onclose();
 					};
 				}
 				catch (_) {}

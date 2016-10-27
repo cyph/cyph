@@ -243,13 +243,13 @@ input, textarea {
 }
 
 .message-item.author-me {
-	background-color: rgba(134, 82, 228, 0.8);
-	box-shadow: 0px 0px 5px rgba(134, 82, 228, 0.8);
+	background-color: rgba(139, 98, 217, 0.8);
+	box-shadow: 0px 0px 5px rgba(139, 98, 217, 0.8);
 }
 
 .message-item.author-other {
-	background-color: rgba(139, 98, 217, 0.8);
-	box-shadow: 0px 0px 5px rgba(139, 98, 217, 0.8);
+	background-color: rgba(97, 47, 192, 0.6);
+	box-shadow: 0px 0px 5px rgba(97, 47, 192, 0.6);
 }
 
 .message-item {
@@ -360,14 +360,14 @@ input, textarea {
 	}
 
 	.message-item.author-me:after {
-		border-color: transparent rgba(134, 82, 228, 0.8);
+		border-color: transparent rgba(139, 98, 217, 0.8);
 		right: -12px;
 	}
 
 	.message-item.author-me:before {
 		border-color: transparent transparent;
 		right: 0px;
-		box-shadow: 5px 1px 5px rgba(134, 82, 228, 0.8);
+		box-shadow: 5px 1px 5px rgba(139, 98, 217, 0.8);
 
 		@include transform(rotate(-35deg));
 	}
@@ -394,14 +394,14 @@ input, textarea {
 	}
 
 	.message-item.author-other:after {
-		border-color: transparent rgba(139, 98, 217, 0.8);
+		border-color: transparent rgba(100, 55, 190, 0.6);
 		left: -12px;
 	}
 
 	.message-item.author-other:before {
 		border-color: transparent transparent;
-		left: 0px;
-		box-shadow: 5px 1px 5px rgba(139, 98, 217, 0.8);
+		left: -3px;
+		box-shadow: 5px 1px 5px rgba(100, 51, 193, 0.6);
 
 		@include transform(rotate(-215deg));
 	}
@@ -1038,6 +1038,18 @@ html:not(.mobile) .amazon-link {
 			}
 
 			&.author-other {
+				background-color: rgba(97, 47, 192, 0.6);
+
+				&:before {
+					display: none;
+				}
+
+				&:after {
+					border-color: transparent rgba(97, 47, 192, 0.6);
+				}
+			}
+
+			&.author-me {
 				background-color: rgba(125, 83, 203, 0.4);
 
 				&:before {
@@ -1046,18 +1058,6 @@ html:not(.mobile) .amazon-link {
 
 				&:after {
 					border-color: transparent rgba(125, 83, 203, 0.4);
-				}
-			}
-
-			&.author-me {
-				background-color: rgba(134, 82, 228, 0.4);
-
-				&:before {
-					display: none;
-				}
-
-				&:after {
-					border-color: transparent rgba(134, 82, 228, 0.4);
 				}
 			}
 		}
