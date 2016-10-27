@@ -258,8 +258,8 @@ cyph-static-footer.center .footer {
 }
 
 .message-item.author-other {
-	background-color: rgba(97, 47, 192, 0.8);
-	box-shadow: 0px 0px 5px rgba(97, 47, 192, 0.8);
+	background-color: rgba(97, 47, 192, 0.6);
+	box-shadow: 0px 0px 5px rgba(97, 47, 192, 0.6);
 }
 
 .message-item {
@@ -404,14 +404,14 @@ cyph-static-footer.center .footer {
 	}
 
 	.message-item.author-other:after {
-		border-color: transparent rgba(100, 55, 190, 0.9);
+		border-color: transparent rgba(100, 55, 190, 0.6);
 		left: -12px;
 	}
 
 	.message-item.author-other:before {
 		border-color: transparent transparent;
-		left: 0px;
-		box-shadow: 5px 1px 5px rgba(100, 51, 193, 0.8);
+		left: -3px;
+		box-shadow: 5px 1px 5px rgba(100, 51, 193, 0.6);
 
 		@include transform(rotate(-215deg));
 	}
@@ -1046,14 +1046,14 @@ html:not(.mobile) .amazon-link {
 			}
 
 			&.author-other {
-				background-color: rgba(97, 47, 192, 0.8);
+				background-color: rgba(97, 47, 192, 0.6);
 
 				&:before {
 					display: none;
 				}
 
 				&:after {
-					border-color: transparent rgba(97, 47, 192, 0.8);
+					border-color: transparent rgba(97, 47, 192, 0.6);
 				}
 			}
 
