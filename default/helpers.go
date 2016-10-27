@@ -67,7 +67,7 @@ var braintreePrivateKey = os.Getenv("BRAINTREE_PRIVATE_KEY")
 var prefineryKey = os.Getenv("PREFINERY_KEY")
 
 func geolocate(h HandlerArgs) (string, string) {
-	record, err := countrydb.Country(net.ParseIP(h.Request.RemoteAddr))
+	record, err := countrydb.Country(getIP(h))
 	if err != nil {
 		return "", config.DefaultContinent
 	}
@@ -100,12 +100,23 @@ func getSignupFromRequest(h HandlerArgs) map[string]interface{} {
 }
 
 func getOrg(h HandlerArgs) string {
-	record, err := orgdb.ISP(net.ParseIP(h.Request.RemoteAddr))
+	record, err := orgdb.ISP(getIP(h))
 	if err != nil {
 		return ""
 	}
 
 	return record.Organization
+}
+
+func getIP(h HandlerArgs) []byte {
+	var ip string
+	if forwarded, ok := h.Request.Header["X-Forwarded-For"]; ok && len(forwarded) > 0 {
+		ip = forwarded[0]
+	} else {
+		ip = h.Request.RemoteAddr
+	}
+
+	return net.ParseIP(ip)
 }
 
 func braintreeInit(h HandlerArgs) *braintree.Braintree {

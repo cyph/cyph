@@ -86,6 +86,7 @@ http {
 			proxy_pass https://prod-dot-default-dot-cyphme.appspot.com/;
 			proxy_hide_header Public-Key-Pins;
 			proxy_hide_header Strict-Transport-Security;
+			proxy_set_header X-Forwarded-For \$remote_addr;
 		}
 
 		location /v0/b/cyphme.appspot.com {
