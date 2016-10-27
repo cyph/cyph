@@ -229,6 +229,14 @@ cd microlight
 uglifyjs microlight.js -m -o microlight.min.js
 cd ..
 
+cd andyet/simplewebrtc
+sed -i "s|require('./socketioconnection')|null|g" simplewebrtc.js
+mkdir node_modules
+npm install
+node build.js
+rm -rf node_modules
+cd ../..
+
 cd babel-polyfill
 mkdir node_modules
 npm install
@@ -236,14 +244,6 @@ npm install process
 browserify dist/polyfill.min.js -o browser.js
 rm -rf node_modules
 cd ..
-
-cd github/andyet/simplewebrtc@*
-sed -i "s|require('./socketioconnection')|null|g" simplewebrtc.js
-mkdir node_modules
-npm install
-node build.js
-rm -rf node_modules
-cd ../../..
 
 cp babel-polyfill/browser.js base.js
 
