@@ -23,6 +23,12 @@ export class Contact {
 		subject: string;
 	};
 
+	private send () : void {
+		Util.email(this.self);
+		this.self.sent	= true;
+		this.ui.controller.update();
+	}
+
 	constructor ($scope, $element, $attrs) {
 		Util.retryUntilComplete(retry => {
 			this.Cyph	= self['Cyph'];
@@ -51,12 +57,6 @@ export class Contact {
 			}
 
 			this.ui.controller.update();
-
-			$element.find('button').click(() => {
-				Util.email(this.self);
-				this.self.sent	= true;
-				this.ui.controller.update();
-			});
 		});
 	}
 
