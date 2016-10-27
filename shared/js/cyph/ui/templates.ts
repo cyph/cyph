@@ -595,7 +595,7 @@ export const Templates	= {
 							<label>Name</label>
 						</md-input-container>
 						<md-input-container class='md-block' flex>
-							<input ng-model='$ctrl.email' type='email' aria-label='Email' />
+							<input ng-model='$ctrl.email' type='email' aria-label='Email' required />
 							<label>Email</label>
 						</md-input-container>
 					</div>
@@ -632,7 +632,7 @@ export const Templates	= {
 						<label>Name</label>
 					</md-input-container>
 					<md-input-container class='md-block' flex>
-						<input ng-model='$ctrl.self.fromEmail' type='email' aria-label='Email' />
+						<input ng-model='$ctrl.self.fromEmail' type='email' aria-label='Email' required />
 						<label>Email</label>
 					</md-input-container>
 				</div>
