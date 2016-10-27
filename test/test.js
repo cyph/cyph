@@ -96,7 +96,7 @@ const getDriver		= o => new webdriver.Builder().
 
 const isTestPassing	= key => new Promise((resolve, reject) =>
 	datastore.get(testResultKey(key), (err, entity) => {
-		if (entity.data && entity.data.passing) {
+		if (entity && entity.data && entity.data.passing) {
 			resolve();
 		}
 		else {
