@@ -71,7 +71,6 @@ jspm install -y \
 	npm:@angular/router \
 	npm:@angular/upgrade \
 	npm:rxjs \
-	npm:zone.js \
 	angular \
 	angular-material \
 	angular-aria \
@@ -155,6 +154,9 @@ find . -name '*@*.js' -type f -exec bash -c '
 
 
 sed -i 's/^\/dist$//' jquery*/.gitignore
+
+git clone https://github.com/angular/zone.js.git
+rm -rf zone.js/.git
 
 cd crypto
 sodiumrepo='https://github.com/jedisct1/libsodium.js'
