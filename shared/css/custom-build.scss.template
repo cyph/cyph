@@ -31,11 +31,20 @@ ${!o.background ? '' : `
 `}
 
 ${!o.speedDialInvert ? '' : `
-	md-fab-actions .md-button md-icon.grey {
-		color: #f1f1f1;
-	}
 	md-fab-actions .md-button {
 		background-color: #444;
+
+		md-icon.grey {
+			color: #f1f1f1;
+		}
+	}
+
+	md-fab-actions .md-button.invert {
+		background-color: #fafafa;
+
+		md-icon {
+			color: #757575;
+		}
 	}
 `}
 

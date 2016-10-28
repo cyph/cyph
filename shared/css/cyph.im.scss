@@ -97,14 +97,14 @@ input, textarea {
 		padding-right: 60px;
 		margin-left: -2px;
 		margin-bottom: -2px;
-		box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.35);
+		box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25);
 		position: relative;
 		z-index: 30;
 		outline: none !important;
 	}
 
 	.message-box:focus {
-		box-shadow: 0px 0px 10px #000000;
+		box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
 		border: 1px solid #000000;
 	}
 
@@ -118,7 +118,7 @@ input, textarea {
 
 	md-fab-speed-dial {
 		position: absolute;
-		top: -280px;
+		top: -390px;
 		right: 0px;
 	}
 }
@@ -212,7 +212,7 @@ input, textarea {
 		left: 50%;
 		top: 50%;
 		z-index: -1;
-		opacity: 0.30;
+		opacity: 0.10;
 		content: ' ';
 
 		@include transform(translateX(-50%) translateY(-50%));
@@ -243,13 +243,13 @@ input, textarea {
 }
 
 .message-item.author-me {
-	background-color: rgba(134, 82, 228, 0.8);
-	box-shadow: 0px 0px 5px rgba(134, 82, 228, 0.8);
+	background-color: rgba(139, 98, 217, 0.8);
+	box-shadow: 0px 0px 5px rgba(139, 98, 217, 0.8);
 }
 
 .message-item.author-other {
-	background-color: rgba(139, 98, 217, 0.8);
-	box-shadow: 0px 0px 5px rgba(139, 98, 217, 0.8);
+	background-color: rgba(97, 47, 192, 0.5);
+	box-shadow: 0px 0px 5px rgba(97, 47, 192, 0.5);
 }
 
 .message-item {
@@ -296,8 +296,7 @@ input, textarea {
 	padding-top: 0px;
 
 	> md-item:first-child {
-		padding-top: 0px;
-		margin-top: 0px;
+		padding-top: 25px;
 	}
 }
 
@@ -360,14 +359,14 @@ input, textarea {
 	}
 
 	.message-item.author-me:after {
-		border-color: transparent rgba(134, 82, 228, 0.8);
+		border-color: transparent rgba(139, 98, 217, 0.8);
 		right: -12px;
 	}
 
 	.message-item.author-me:before {
 		border-color: transparent transparent;
 		right: 0px;
-		box-shadow: 5px 1px 5px rgba(134, 82, 228, 0.8);
+		box-shadow: 5px 1px 5px rgba(139, 98, 217, 0.8);
 
 		@include transform(rotate(-35deg));
 	}
@@ -394,14 +393,14 @@ input, textarea {
 	}
 
 	.message-item.author-other:after {
-		border-color: transparent rgba(139, 98, 217, 0.8);
+		border-color: transparent rgba(100, 55, 190, 0.5);
 		left: -12px;
 	}
 
 	.message-item.author-other:before {
 		border-color: transparent transparent;
-		left: 0px;
-		box-shadow: 5px 1px 5px rgba(139, 98, 217, 0.8);
+		left: -3px;
+		box-shadow: 5px 1px 5px rgba(100, 51, 193, 0.5);
 
 		@include transform(rotate(-215deg));
 	}
@@ -586,57 +585,7 @@ html.mobile button[disabled] {
 	width: 75%;
 }
 
-cyph-chat-toolbar {
-	.buttons > * {
-		opacity: 0.50;
-
-		&:hover {
-			opacity: 1;
-			transition-duration: 0.75s;
-			cursor: pointer;
-		}
-
-		&, * {
-			width: 24px;
-			height: 24px;
-
-			@include filter(drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.4)));
-		}
-	}
-
-	> div:not(.mobile) .buttons > * {
-		position: relative;
-		left: 75px;
-		top: -10px;
-		margin-left: 10px;
-	}
-
-	> div.mobile {
-		display: block;
-		position: relative;
-		height: 40px;
-
-		.buttons > * {
-			position: absolute;
-			margin-top: 8px;
-			top: 0px;
-
-			&:nth-child(1) {
-				left: 12px;
-			}
-
-			&:nth-child(2) {
-				left: calc(50% - 12px);
-			}
-
-			&:nth-child(3) {
-				right: 12px;
-			}
-		}
-	}
-}
-
-cyph-timer {
+.link-connection .timer {
 	font-family: 'Ubuntu Mono', monospace;
 	padding-left: 10px;
 }
@@ -1038,6 +987,18 @@ html:not(.mobile) .amazon-link {
 			}
 
 			&.author-other {
+				background-color: rgba(97, 47, 192, 0.5);
+
+				&:before {
+					display: none;
+				}
+
+				&:after {
+					border-color: transparent rgba(97, 47, 192, 0.5);
+				}
+			}
+
+			&.author-me {
 				background-color: rgba(125, 83, 203, 0.4);
 
 				&:before {
@@ -1046,18 +1007,6 @@ html:not(.mobile) .amazon-link {
 
 				&:after {
 					border-color: transparent rgba(125, 83, 203, 0.4);
-				}
-			}
-
-			&.author-me {
-				background-color: rgba(134, 82, 228, 0.4);
-
-				&:before {
-					display: none;
-				}
-
-				&:after {
-					border-color: transparent rgba(134, 82, 228, 0.4);
 				}
 			}
 		}

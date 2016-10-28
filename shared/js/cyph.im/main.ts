@@ -66,10 +66,6 @@ angular.
 		Cyph.UI.Components.ChatMessageBox.config
 	).
 	component(
-		Cyph.UI.Components.ChatToolbar.title,
-		Cyph.UI.Components.ChatToolbar.config
-	).
-	component(
 		Cyph.UI.Components.FileInput.title,
 		Cyph.UI.Components.FileInput.config
 	).

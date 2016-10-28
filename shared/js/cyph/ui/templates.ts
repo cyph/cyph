@@ -8,8 +8,6 @@ export const Templates	= {
 	app: `
 		<span *ngIf='Cyph && ui && ui.chat'>
 			<section id='main' class='cyph-foreground layout-fill layout-column'>
-				<cyph-chat-toolbar [self]='ui.chat'></cyph-chat-toolbar>
-
 				<cyph-chat-main
 					[self]='ui.chat'
 					[hideDisconnectMessage]='ui.coBranded'
@@ -497,19 +495,29 @@ export const Templates	= {
 			<md-fab-speed-dial
 				md-direction='up'
 				class='md-fling md-fab-bottom-right'
-				md-open='isOpen'
-				ng-mouseenter='isOpen = true'
-				ng-mouseleave='isOpen = false'
+				md-open='$ctrl.isSpeedDialOpen'
+				ng-mouseenter='$ctrl.isSpeedDialOpen = true'
+				ng-mouseleave='$ctrl.isSpeedDialOpen = false'
 			>
 				<md-fab-trigger>
 					<md-button
 						aria-label='Menu'
 						class='md-fab'
 					>
-						<img src='/img/logo.white.icon.png' />
+						<img src='/img/icons/menu.png' />
 					</md-button>
 				</md-fab-trigger>
 				<md-fab-actions>
+					<md-button
+						aria-label='Help'
+						class='md-fab md-raised md-mini'
+						ng-click='$ctrl.self.helpButton()'
+					>
+						<md-tooltip md-direction='left'>
+							Help
+						</md-tooltip>
+						<md-icon>help_outline</md-icon>
+					</md-button>
 					<md-button
 						aria-label='Send File'
 						class='md-fab md-raised md-mini send-file-button'
@@ -517,7 +525,7 @@ export const Templates	= {
 						<md-tooltip md-direction='left'>
 							Send File
 						</md-tooltip>
-						<md-icon class='grey'>attach_file</md-icon>
+						<md-icon>attach_file</md-icon>
 						<cyph-file-input
 							file-change='$ctrl.self.fileManager.send(file)'
 						></cyph-file-input>
@@ -529,7 +537,7 @@ export const Templates	= {
 						<md-tooltip md-direction='left'>
 							Send Image
 						</md-tooltip>
-						<md-icon class='grey'>insert_photo</md-icon>
+						<md-icon>insert_photo</md-icon>
 						<cyph-file-input
 							accept='image/*'
 							file-change='$ctrl.self.fileManager.send(file, true)'
@@ -545,7 +553,7 @@ export const Templates	= {
 						<md-tooltip md-direction='left'>
 							Voice Call
 						</md-tooltip>
-						<md-icon class='grey'>phone</md-icon>
+						<md-icon>phone</md-icon>
 					</md-button>
 					<md-button
 						aria-label='Video Call'
@@ -557,7 +565,17 @@ export const Templates	= {
 						<md-tooltip md-direction='left'>
 							Video Call
 						</md-tooltip>
-						<md-icon class='grey'>videocam</md-icon>
+						<md-icon>videocam</md-icon>
+					</md-button>
+					<md-button
+						aria-label='Close Chat'
+						class='invert md-fab md-raised md-mini'
+						ng-click='$ctrl.self.disconnectButton()'
+					>
+						<md-tooltip md-direction='left'>
+							Close Chat
+						</md-tooltip>
+						<md-icon>close</md-icon>
 					</md-button>
 				</md-fab-actions>
 			</md-fab-speed-dial>
@@ -582,33 +600,6 @@ export const Templates	= {
 					'
 				></span>
 			</md-subheader>
-		</div>
-	`,
-
-	chatToolbar: `
-		<div
-			class='platform-container'
-			ng-class='{mobile: $ctrl.self.isMobile}'
-		>
-			<div
-				class='buttons'
-				layout='row'
-				layout-align='end end'
-				flex='95'
-				ng-show='$ctrl.self.isConnected && !$ctrl.self.isDisconnected'
-			>
-				<img
-					src='/img/icons/help.png'
-					ng-click='$ctrl.self.helpButton()'
-				/>
-				<a href='{{$ctrl.Cyph.Env.homeUrl}}'>
-					<img src='/img/logo.white.icon.small.png' />
-				</a>
-				<img
-					src='/img/icons/close.png'
-					ng-click='$ctrl.self.disconnectButton()'
-				/>
-			</div>
 		</div>
 	`,
 
@@ -640,7 +631,7 @@ export const Templates	= {
 
 	contact: `
 		<div>
-			<div ng-hide='$ctrl.self.sent'>
+			<form ng-submit='$ctrl.send()' ng-hide='$ctrl.self.sent'>
 				<div layout-gt-xs='row'>
 					<md-input-container class='md-block' flex>
 						<label>Cyph team to contact</label>
@@ -660,7 +651,12 @@ export const Templates	= {
 						<label>Name</label>
 					</md-input-container>
 					<md-input-container class='md-block' flex>
-						<input ng-model='$ctrl.self.fromEmail' type='email' aria-label='Email' required />
+						<input
+							ng-model='$ctrl.self.fromEmail'
+							type='email'
+							aria-label='Email'
+							required
+						/>
 						<label>Email</label>
 					</md-input-container>
 				</div>
@@ -669,13 +665,18 @@ export const Templates	= {
 					<label>Subject</label>
 				</md-input-container>
 				<md-input-container class='md-block'>
-					<textarea ng-model='$ctrl.self.message' aria-label='Message' md-select-on-focus></textarea>
+					<textarea
+						ng-model='$ctrl.self.message'
+						aria-label='Message'
+						md-select-on-focus
+						required
+					></textarea>
 					<label>Message</label>
 				</md-input-container>
-				<md-button>
+				<md-button type='submit' aria-label='Send' translate>
 					Send
 				</md-button>
-			</div>
+			</form>
 			<div ng-show='$ctrl.self.sent'>
 				Your email has been sent! Someone on the team will get back to you shortly.
 			</div>
@@ -1089,7 +1090,6 @@ export const Templates	= {
 				<div class='demo-root grid-container'>
 					<span class='desktop desktop-only'>
 						<div class='cyph-foreground'>
-							<cyph-chat-toolbar self='$ctrl.ui.cyphDemo.desktop'></cyph-chat-toolbar>
 							<cyph-chat-main
 								self='$ctrl.ui.cyphDemo.desktop'
 								layout='column'
@@ -1106,7 +1106,6 @@ export const Templates	= {
 
 					<span class='mobile'>
 						<div class='cyph-foreground'>
-							<cyph-chat-toolbar self='$ctrl.ui.cyphDemo.mobile'></cyph-chat-toolbar>
 							<cyph-chat-main
 								self='$ctrl.ui.cyphDemo.mobile'
 								layout='column'
@@ -2276,7 +2275,7 @@ export const Templates	= {
 					<span translate>
 						Link expires in
 					</span>
-					<span>
+					<span class='timer'>
 						{{$ctrl.self.timer.timestamp}}
 					</span>
 					<md-button

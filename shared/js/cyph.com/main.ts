@@ -60,10 +60,6 @@ angular.
 		Cyph.UI.Components.ChatMessageBox.config
 	).
 	component(
-		Cyph.UI.Components.ChatToolbar.title,
-		Cyph.UI.Components.ChatToolbar.config
-	).
-	component(
 		Cyph.UI.Components.Checkout.title,
 		Cyph.UI.Components.Checkout.config
 	).

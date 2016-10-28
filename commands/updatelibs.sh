@@ -71,7 +71,6 @@ jspm install -y \
 	npm:@angular/router \
 	npm:@angular/upgrade \
 	npm:rxjs \
-	npm:zone.js \
 	angular \
 	angular-material \
 	angular-aria \
@@ -156,6 +155,9 @@ find . -name '*@*.js' -type f -exec bash -c '
 
 sed -i 's/^\/dist$//' jquery*/.gitignore
 
+git clone https://github.com/angular/zone.js.git
+rm -rf zone.js/.git
+
 cd crypto
 sodiumrepo='https://github.com/jedisct1/libsodium.js'
 git clone \
@@ -204,7 +206,7 @@ cat Makefile |
 > Makefile.new
 mv Makefile.new Makefile
 make libsodium/configure
-sed -i 's|TOTAL_MEMORY_SUMO=35000000|TOTAL_MEMORY_SUMO=150000000|g' libsodium/dist-build/emscripten.sh
+# sed -i 's|TOTAL_MEMORY_SUMO=35000000|TOTAL_MEMORY_SUMO=150000000|g' libsodium/dist-build/emscripten.sh
 make
 find dist -name '*.js' | xargs sed -i 's|use strict||g'
 rm -rf .git* *.tmp API.md browsers-test test libsodium
@@ -227,6 +229,14 @@ cd microlight
 uglifyjs microlight.js -m -o microlight.min.js
 cd ..
 
+cd andyet/simplewebrtc
+sed -i "s|require('./socketioconnection')|null|g" simplewebrtc.js
+mkdir node_modules
+npm install
+node build.js
+rm -rf node_modules
+cd ../..
+
 cd babel-polyfill
 mkdir node_modules
 npm install
@@ -234,14 +244,6 @@ npm install process
 browserify dist/polyfill.min.js -o browser.js
 rm -rf node_modules
 cd ..
-
-cd github/andyet/simplewebrtc@*
-sed -i "s|require('./socketioconnection')|null|g" simplewebrtc.js
-mkdir node_modules
-npm install
-node build.js
-rm -rf node_modules
-cd ../../..
 
 cp babel-polyfill/browser.js base.js
 

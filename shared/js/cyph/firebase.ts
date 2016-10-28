@@ -26,7 +26,7 @@ export class Firebase {
 			}
 			catch (err) {
 				if (i > 10) {
-					throw err;
+					throw new Error(`Firebase Error: ${err.message}`);
 				}
 				else {
 					await Util.sleep(2500);

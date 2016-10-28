@@ -33,6 +33,11 @@ export class Contact {
 		subject: string;
 	};
 
+	public send () : void {
+		Util.email(this.self);
+		this.self.sent	= true;
+	}
+
 	constructor ($scope, $element) { (async () => {
 		while (!self['Cyph'] || !self['ui']) {
 			await Util.sleep(100);
@@ -58,10 +63,5 @@ export class Contact {
 				this.self[k]	= v;
 			}
 		}
-
-		$element.find('button').click(() => {
-			Util.email(this.self);
-			this.self.sent	= true;
-		});
 	})(); }
 }

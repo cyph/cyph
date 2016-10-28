@@ -1,5 +1,6 @@
 import {Templates} from '../templates';
 import {VirtualKeyboardWatcher} from '../virtualkeyboardwatcher';
+import {VisibilityWatcher} from '../visibilitywatcher';
 import {IChat} from '../chat/ichat';
 import {Env} from '../../env';
 import {Util} from '../../util';
@@ -25,6 +26,8 @@ export class ChatMessageBox {
 	public Cyph: any;
 	public self: IChat;
 
+	public isSpeedDialOpen: boolean	= true;
+
 	constructor ($scope, $element) { (async () => {
 		while (!self['Cyph']) {
 			await Util.sleep(100);
@@ -38,7 +41,7 @@ export class ChatMessageBox {
 		let $textarea: JQuery;
 		while (!$textarea || $textarea.length < 1) {
 			$textarea	= $element.find('textarea');
-			await Util.sleep(500);
+			await Util.sleep(100);
 		}
 
 		$textarea.keypress(e => {
@@ -56,12 +59,14 @@ export class ChatMessageBox {
 
 		/* Temporary workaround for Angular Material bug */
 
-		let $speedDial: JQuery;
-		while (!$speedDial || $speedDial.length < 1) {
-			$speedDial	= $element.find('md-fab-speed-dial');
-			await Util.sleep(500);
+		while (
+			!VisibilityWatcher.isVisible ||
+			$element.find('md-fab-speed-dial:visible').length < 1
+		) {
+			await Util.sleep(100);
 		}
 
-		$speedDial.removeClass('md-animations-waiting');
+		await Util.sleep(1000);
+		this.isSpeedDialOpen	= false;
 	})(); }
 }
