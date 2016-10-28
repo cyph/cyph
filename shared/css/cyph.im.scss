@@ -97,14 +97,14 @@ input, textarea {
 		padding-right: 60px;
 		margin-left: -2px;
 		margin-bottom: -2px;
-		box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.35);
+		box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25);
 		position: relative;
 		z-index: 30;
 		outline: none !important;
 	}
 
 	.message-box:focus {
-		box-shadow: 0px 0px 10px #000000;
+		box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
 		border: 1px solid #000000;
 	}
 
@@ -216,7 +216,7 @@ input, textarea {
 		left: 50%;
 		top: 50%;
 		z-index: -1;
-		opacity: 0.30;
+		opacity: 0.10;
 		content: ' ';
 
 		@include transform(translateX(-50%) translateY(-50%));
@@ -258,8 +258,8 @@ cyph-static-footer.center .footer {
 }
 
 .message-item.author-other {
-	background-color: rgba(97, 47, 192, 0.6);
-	box-shadow: 0px 0px 5px rgba(97, 47, 192, 0.6);
+	background-color: rgba(97, 47, 192, 0.5);
+	box-shadow: 0px 0px 5px rgba(97, 47, 192, 0.5);
 }
 
 .message-item {
@@ -404,14 +404,14 @@ cyph-static-footer.center .footer {
 	}
 
 	.message-item.author-other:after {
-		border-color: transparent rgba(100, 55, 190, 0.6);
+		border-color: transparent rgba(100, 55, 190, 0.5);
 		left: -12px;
 	}
 
 	.message-item.author-other:before {
 		border-color: transparent transparent;
 		left: -3px;
-		box-shadow: 5px 1px 5px rgba(100, 51, 193, 0.6);
+		box-shadow: 5px 1px 5px rgba(100, 51, 193, 0.5);
 
 		@include transform(rotate(-215deg));
 	}
@@ -1046,14 +1046,14 @@ html:not(.mobile) .amazon-link {
 			}
 
 			&.author-other {
-				background-color: rgba(97, 47, 192, 0.6);
+				background-color: rgba(97, 47, 192, 0.5);
 
 				&:before {
 					display: none;
 				}
 
 				&:after {
-					border-color: transparent rgba(97, 47, 192, 0.6);
+					border-color: transparent rgba(97, 47, 192, 0.5);
 				}
 			}
 
