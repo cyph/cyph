@@ -502,13 +502,23 @@ export const Templates	= {
 				</md-fab-trigger>
 				<md-fab-actions>
 					<md-button
+						aria-label='Help'
+						class='md-fab md-raised md-mini'
+						ng-click='$ctrl.self.helpButton()'
+					>
+						<md-tooltip md-direction='left'>
+							Help
+						</md-tooltip>
+						<md-icon>help_outline</md-icon>
+					</md-button>
+					<md-button
 						aria-label='Send File'
 						class='md-fab md-raised md-mini send-file-button'
 					>
 						<md-tooltip md-direction='left'>
 							Send File
 						</md-tooltip>
-						<md-icon class='grey'>attach_file</md-icon>
+						<md-icon>attach_file</md-icon>
 						<cyph-file-input
 							file-change='$ctrl.self.fileManager.send(file)'
 						></cyph-file-input>
@@ -520,7 +530,7 @@ export const Templates	= {
 						<md-tooltip md-direction='left'>
 							Send Image
 						</md-tooltip>
-						<md-icon class='grey'>insert_photo</md-icon>
+						<md-icon>insert_photo</md-icon>
 						<cyph-file-input
 							accept='image/*'
 							file-change='$ctrl.self.fileManager.send(file, true)'
@@ -536,7 +546,7 @@ export const Templates	= {
 						<md-tooltip md-direction='left'>
 							Voice Call
 						</md-tooltip>
-						<md-icon class='grey'>phone</md-icon>
+						<md-icon>phone</md-icon>
 					</md-button>
 					<md-button
 						aria-label='Video Call'
@@ -548,40 +558,17 @@ export const Templates	= {
 						<md-tooltip md-direction='left'>
 							Video Call
 						</md-tooltip>
-						<md-icon class='grey'>videocam</md-icon>
-					</md-button>
-					<md-button
-						aria-label='Send Image'
-						class='md-fab md-raised md-mini'
-					>
-						<md-tooltip md-direction='left'>
-							Send Image
-						</md-tooltip>
-						<md-icon class='grey'>insert_photo</md-icon>
-						<cyph-file-input
-							accept='image/*'
-							file-change='$ctrl.self.fileManager.send(file, true)'
-						></cyph-file-input>
+						<md-icon>videocam</md-icon>
 					</md-button>
 					<md-button
 						aria-label='Close Chat'
-						class='md-fab md-raised md-mini'
+						class='invert md-fab md-raised md-mini'
 						ng-click='$ctrl.self.disconnectButton()'
 					>
 						<md-tooltip md-direction='left'>
 							Close Chat
 						</md-tooltip>
-						<md-icon class='grey'>close</md-icon>
-					</md-button>
-					<md-button
-						aria-label='Help'
-						class='md-fab md-raised md-mini'
-						ng-click='$ctrl.self.helpButton()'
-					>
-						<md-tooltip md-direction='left'>
-							Help
-						</md-tooltip>
-						<md-icon class='grey'>help</md-icon>
+						<md-icon>close</md-icon>
 					</md-button>
 				</md-fab-actions>
 			</md-fab-speed-dial>
@@ -2270,11 +2257,11 @@ export const Templates	= {
 				</div>
 
 				<br />
-				<div class='timer'>
+				<div>
 					<span translate>
 						Link expires in
 					</span>
-					<span>
+					<span class='timer'>
 						{{$ctrl.self.timer.timestamp}}
 					</span>
 				</div>

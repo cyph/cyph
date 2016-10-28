@@ -118,7 +118,7 @@ input, textarea {
 
 	md-fab-speed-dial {
 		position: absolute;
-		top: -280px;
+		top: -390px;
 		right: 0px;
 	}
 }
@@ -296,8 +296,7 @@ input, textarea {
 	padding-top: 0px;
 
 	> md-item:first-child {
-		padding-top: 0px;
-		margin-top: 0px;
+		padding-top: 25px;
 	}
 }
 
