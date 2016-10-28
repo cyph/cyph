@@ -34,12 +34,12 @@ ${!o.speedDialInvert ? '' : `
 	md-fab-actions .md-button {
 		background-color: #444;
 
-		md-icon.grey {
+		md-icon {
 			color: #f1f1f1;
 		}
 	}
 
-	md-fab-actions .md-button.invert {
+	md-fab-actions .md-button.dark {
 		background-color: #fafafa;
 
 		md-icon {

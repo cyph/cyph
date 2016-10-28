@@ -26,12 +26,20 @@ section {
 md-fab-actions .md-button {
 	background-color: #fafafa !important;
 
-	&.invert {
+	&.dark {
 		background-color: #444 !important;
+	}
+
+	&.invert {
+		background-color: #757575 !important;
+
+		md-icon {
+			color: #fafafa !important;
+		}
 	}
 }
 
-md-fab-actions .md-button:not(.invert) md-icon, md-icon.grey {
+md-fab-actions .md-button:not(.dark):not(.invert) md-icon, md-icon.grey {
 	color: #757575 !important;
 }
 
