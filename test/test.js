@@ -94,9 +94,14 @@ const getDriver		= o => new webdriver.Builder().
 	build()
 ;
 
+
 const isTestPassing	= key => new Promise((resolve, reject) =>
-	datastore.get(testResultKey(key), (err, entity) => {
-		if (entity && entity.data && entity.data.passing) {
+	datastore.get(testResultKey(key), (err, data) => {
+		if (err) {
+			console.error(err);
+			reject(err);
+		}
+		else if (data && data.passing) {
 			resolve();
 		}
 		else {
@@ -113,6 +118,7 @@ const setTestResult	= (key, passing) => datastore.save({
 }, () => {});
 
 const testResultKey	= key => datastore.key(['TestResult', key]);
+
 
 const homeTest		= o => {
 	const driver	= getDriver(o);
@@ -183,6 +189,7 @@ const newCyphTest	= o => {
 		throw err;
 	});
 };
+
 
 const runTests	= (homeURL, newCyphURL) => Promise.resolve().then(() => {
 	/* Never run test suites concurrently, and never run the same
@@ -287,10 +294,8 @@ http.createServer((req, res) => Promise.resolve().then(() => {
 		}
 	});
 
-	return isTestPassing(homeURL + newCyphURL);
-}).then(() =>
-	200
-).catch(err => {
+	return isTestPassing(homeURL + newCyphURL).then(() => 200);
+}).catch(err => {
 	if (err) {
 		console.error(err);
 	}

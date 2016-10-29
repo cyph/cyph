@@ -120,6 +120,7 @@ input, textarea {
 		position: absolute;
 		top: -390px;
 		right: 0px;
+		z-index: 50;
 	}
 }
 
@@ -1033,7 +1034,7 @@ html:not(.mobile) .amazon-link {
 			}
 
 			md-fab-speed-dial {
-				top: -180px;
+				top: -280px;
 			}
 		}
 	}

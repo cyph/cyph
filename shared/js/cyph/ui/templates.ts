@@ -510,7 +510,7 @@ export const Templates	= {
 				<md-fab-actions>
 					<md-button
 						aria-label='Help'
-						class='md-fab md-raised md-mini'
+						class='invert md-fab md-raised md-mini'
 						ng-click='$ctrl.self.helpButton()'
 					>
 						<md-tooltip md-direction='left'>
@@ -569,7 +569,7 @@ export const Templates	= {
 					</md-button>
 					<md-button
 						aria-label='Close Chat'
-						class='invert md-fab md-raised md-mini'
+						class='dark md-fab md-raised md-mini'
 						ng-click='$ctrl.self.disconnectButton()'
 					>
 						<md-tooltip md-direction='left'>

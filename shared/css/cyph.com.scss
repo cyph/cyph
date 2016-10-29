@@ -654,27 +654,13 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 		margin-top: 64px;
 		left: 11.5%;
 
-		cyph-chat-toolbar {
-			.buttons > * {
-				left: 20px;
-				top: 5px;
-				margin-left: 6px;
-
-				&, * {
-					width: 15px;
-					height: 15px;
-				}
-			}
-		}
-
 		cyph-chat-main, cyph-chat-message-box {
 			margin-left: 17.5px;
 			width: calc(100% - 25px);
 		}
 
 		cyph-chat-main {
-			height: calc(100% - 90px);
-			margin-top: 10px;
+			height: calc(100% - 70px);
 
 			.chat-main {
 				.message-list {
@@ -717,7 +703,7 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 			}
 
 			md-fab-speed-dial {
-				bottom: -25px;
+				bottom: -35px;
 
 				@include transform(scale(0.8));
 			}
@@ -735,7 +721,7 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 		@include filter(blur(0px));
 
 		cyph-chat-main {
-			height: calc(100% - 88px);
+			height: calc(100% - 50px);
 
 			.chat-main.video .video-call.active.playing {
 				~ .message-list {

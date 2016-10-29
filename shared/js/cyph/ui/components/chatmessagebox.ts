@@ -57,12 +57,17 @@ export class ChatMessageBox {
 			this.self.send();
 		});
 
-		/* Temporary workaround for Angular Material bug */
+		/* Temporary workarounds for Angular Material bugs */
 
-		while (
-			!VisibilityWatcher.isVisible ||
-			$element.find('md-fab-speed-dial:visible').length < 1
-		) {
+		let $speedDial: JQuery;
+		while (!$speedDial || $speedDial.length < 1) {
+			$speedDial	= $element.find('md-fab-speed-dial:visible');
+			await Util.sleep(100);
+		}
+
+		$speedDial.removeClass('md-animations-waiting');
+
+		while (!VisibilityWatcher.isVisible) {
 			await Util.sleep(100);
 		}
 
