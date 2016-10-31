@@ -13,25 +13,13 @@ export class Firebase {
 			return;
 		}
 
-		for (let i = 0 ; true ; ++i) {
-			try {
-				Firebase.app	= firebase.initializeApp({
-					apiKey: 'AIzaSyB7B8i8AQPtgMXS9o6zbfX1Vv-PwW2Q0Jo',
-					authDomain: 'cyphme.firebaseapp.com',
-					databaseURL: Env.firebaseEndpoint,
-					storageBucket: 'cyphme.appspot.com'
-				});
-
-				return;
-			}
-			catch (err) {
-				if (i > 10) {
-					throw new Error(`Firebase Error: ${err.message}`);
-				}
-				else {
-					await Util.sleep(2500);
-				}
-			}
-		}
+		Firebase.app	= await Util.retryUntilSuccessful(() =>
+			firebase.initializeApp({
+				apiKey: 'AIzaSyB7B8i8AQPtgMXS9o6zbfX1Vv-PwW2Q0Jo',
+				authDomain: 'cyphme.firebaseapp.com',
+				databaseURL: Env.firebaseEndpoint,
+				storageBucket: 'cyphme.appspot.com'
+			})
+		);
 	})();
 }
