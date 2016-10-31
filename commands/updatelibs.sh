@@ -222,6 +222,7 @@ browserify firebase-node.js -o ../../firebase.js -s firebase
 cd ../..
 sed -i 's|https://apis.google.com||g' firebase.js
 sed -i 's|iframe||g' firebase.js
+sed -i 's|IFRAME||g' firebase.js
 rm -rf node_modules
 cd ..
 

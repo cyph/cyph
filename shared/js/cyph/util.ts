@@ -377,6 +377,30 @@ export class Util {
 	}
 
 	/**
+	 * Runs f until it returns with no errors.
+	 * @param f
+	 * @param maxAttempts
+	 */
+	public static async retryUntilSuccessful<T> (
+		f: () => (T|Promise<T>),
+		maxAttempts: number = 10
+	) : Promise<T> {
+		for (let i = 0 ; true ; ++i) {
+			try {
+				return await f();
+			}
+			catch (err) {
+				if (i > maxAttempts) {
+					throw err;
+				}
+				else {
+					await Util.sleep(250);
+				}
+			}
+		}
+	}
+
+	/**
 	 * Opens the specified URL.
 	 * @param content
 	 * @param fileName

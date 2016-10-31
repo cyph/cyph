@@ -178,7 +178,7 @@ const newCyphTest	= o => {
 					})[0]
 				;
 			})),
-			30000
+			60000
 		)
 	).then(() => new Promise(resolve =>
 		setTimeout(resolve, 30000)
