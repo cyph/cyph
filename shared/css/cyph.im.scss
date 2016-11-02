@@ -44,11 +44,6 @@ html:not(.mobile) {
 
 md-fab-trigger .md-button {
 	background-color: #7d4fd3 !important;
-
-	img {
-		height: 85% !important;
-		margin-top: 3px;
-	}
 }
 
 input, textarea {
@@ -118,7 +113,7 @@ input, textarea {
 
 	md-fab-speed-dial {
 		position: absolute;
-		top: -390px;
+		top: -410px;
 		right: 0px;
 		z-index: 50;
 	}

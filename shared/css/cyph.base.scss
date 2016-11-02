@@ -23,6 +23,28 @@ section {
 	color: #f1f1f1 !important;
 }
 
+md-fab-speed-dial {
+	md-fab-trigger {
+		img {
+			height: 65% !important;
+			margin: auto;
+			display: block;
+		}
+
+		md-icon, img {
+			@include transition(all 0.2s ease-out);
+		}
+	}
+
+	&.md-is-open md-fab-trigger {
+		md-icon, img {
+			margin-top: -5%;
+
+			@include transform(rotate(225deg));
+		}
+	}
+}
+
 md-fab-actions .md-button {
 	background-color: #fafafa !important;
 
