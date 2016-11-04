@@ -71,7 +71,8 @@ elif [ ! "${test}" ] ; then
 	exit 1
 fi
 version="$branch"
-username="$(git config --get remote.origin.url | perl -pe 's/.*:(.*)\/.*/\1/' | tr '[:upper:]' '[:lower:]')"
+remote="$(git branch -vv | grep '^*' | perl -pe 's/.*\[(.*?)\/.*/\1/')"
+username="$(git config --get remote.${remote}.url | perl -pe 's/.*:(.*)\/.*/\1/' | tr '[:upper:]' '[:lower:]')"
 if [ "${test}" -a "${username}" != cyph ] ; then
 	version="${username}-${version}"
 fi
