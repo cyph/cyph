@@ -8,18 +8,15 @@ echo -e '\n\n\nCaching SSH and GPG keys\n'
 
 ssh-add ~/.ssh/id_rsa
 
-if [ -f ~/.gnupg/gpg-agent.conf ] ; then
-	mv ~/.gnupg/gpg-agent.conf ~/.gnupg/gpg-agent.conf.bak
-fi
+cat > ~/.gnupg/gpg.conf <<- EOM
+	use-agent
+EOM
 cat > ~/.gnupg/gpg-agent.conf <<- EOM
 	default-cache-ttl 34560000
 	max-cache-ttl 34560000
+	pinentry-program /usr/bin/pinentry-curses
 EOM
 gpg-connect-agent reloadagent /bye
-rm ~/.gnupg/gpg-agent.conf
-if [ -f ~/.gnupg/gpg-agent.conf.bak ] ; then
-	mv ~/.gnupg/gpg-agent.conf.bak ~/.gnupg/gpg-agent.conf
-fi
 
 mkdir ~/tmpgit
 cd ~/tmpgit
