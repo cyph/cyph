@@ -4,9 +4,8 @@ if [ -d ~/tmpgit ] ; then
 	exit
 fi
 
-echo -e '\n\n\ncaching SSH and GPG keys\n'
+echo -e '\n\n\nCaching SSH and GPG keys\n'
 
-eval "$(ssh-agent)"
 ssh-add ~/.ssh/id_rsa
 
 if [ -f ~/.gnupg/gpg-agent.conf ] ; then

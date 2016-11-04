@@ -504,7 +504,7 @@ export const Templates	= {
 						aria-label='Menu'
 						class='md-fab'
 					>
-						<img src='/img/icons/menu.png' />
+						<md-icon>add</md-icon>
 					</md-button>
 				</md-fab-trigger>
 				<md-fab-actions>
