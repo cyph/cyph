@@ -26,7 +26,7 @@ fi
 
 gcloud auth login
 
-echo -e '\n\n\Initial setup\n'
+echo -e '\n\nInitial setup\n'
 
 if [ "${1}" == '--site' ] ; then
 	shift
@@ -361,7 +361,7 @@ fi
 if [ "${compiledProjects}" ] ; then
 	cd shared
 
-	echo -e 'Compiling'
+	echo 'Compiling'
 
 	if [ ! "${simple}" ] ; then
 		node -e "fs.writeFileSync(
