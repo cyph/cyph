@@ -26,6 +26,8 @@ fi
 
 gcloud auth login
 
+echo -e '\n\n\Initial setup\n'
+
 if [ "${1}" == '--site' ] ; then
 	shift
 	site="${1}"
@@ -65,7 +67,8 @@ elif [ ! "${test}" ] ; then
 	exit 1
 fi
 version="$branch"
-username="$(git config --get remote.origin.url | perl -pe 's/.*:(.*)\/.*/\1/' | tr '[:upper:]' '[:lower:]')"
+remote="$(git branch -vv | grep '^*' | perl -pe 's/.*\[(.*?)\/.*/\1/')"
+username="$(git config --get remote.${remote}.url | perl -pe 's/.*:(.*)\/.*/\1/' | tr '[:upper:]' '[:lower:]')"
 if [ "${test}" -a "${username}" != cyph ] ; then
 	version="${username}-${version}"
 fi
@@ -357,6 +360,8 @@ fi
 # Compile + translate + minify
 if [ "${compiledProjects}" ] ; then
 	cd shared
+
+	echo -e 'Compiling'
 
 	if [ ! "${simple}" ] ; then
 		node -e "fs.writeFileSync(
