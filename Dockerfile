@@ -30,6 +30,7 @@ RUN apt-get -y --force-yes install \
 	git \
 	gnupg \
 	gnupg-agent \
+	pinentry-curses \
 	procps \
 	sudo \
 	apt-utils \
@@ -50,6 +51,7 @@ RUN echo '\
 \
 	export PATH="/opt/local/bin:/opt/local/sbin:/usr/local/opt/go/libexec/bin:$CLOUD_PATHS:$GOPATH/bin:$PATH"; \
 \
+	if [ ! -d ~/.gnupg ] ; then cp -a ~/.gnupg.original ~/.gnupg ; fi; \
 	export GPG_TTY=$(tty); \
 	eval $(gpg-agent --daemon 2> /dev/null) > /dev/null 2>&1; \
 \
@@ -153,7 +155,7 @@ RUN sudo npm -g install \
 VOLUME /cyph
 VOLUME /home/gibson/.cyph
 VOLUME /home/gibson/.gitconfig
-VOLUME /home/gibson/.gnupg
+VOLUME /home/gibson/.gnupg.original
 VOLUME /home/gibson/.ssh
 
 WORKDIR /cyph/commands
