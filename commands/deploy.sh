@@ -26,6 +26,8 @@ fi
 
 gcloud auth login
 
+echo -e '\n\n\Initial setup\n'
+
 if [ "${1}" == '--site' ] ; then
 	shift
 	site="${1}"
@@ -340,6 +342,8 @@ fi
 # Compile + translate + minify
 if [ "${compiledProjects}" ] ; then
 	cd shared
+
+	echo -e 'Compiling'
 
 	if [ ! "${simple}" ] ; then
 		node -e "fs.writeFileSync(
