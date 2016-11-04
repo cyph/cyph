@@ -1,7 +1,7 @@
 #!/bin/bash
 
-dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd)/..
+dir="$(pwd)"
 
 cacheBustedProjects='cyph.com'
 compiledProjects='cyph.com cyph.im'
@@ -53,12 +53,6 @@ if [ "${simple}" ] ; then
 	cacheBustedProjects=''
 fi
 
-rm -rf .build 2> /dev/null
-mkdir .build
-cp -rf * .build/
-cd .build
-
-
 # Branch config setup
 staging=''
 branch="$(git describe --tags --exact-match 2> /dev/null || git branch | awk '/^\*/{print $2}')"
@@ -82,10 +76,30 @@ if [ "${simple}" ] ; then
 	version="simple-${version}"
 fi
 
+
+mkdir ~/.build
+cp -rf * ~/.build/
+cd ~/.build
+
+mkdir geoisp.tmp
+cd geoisp.tmp
+wget "https://download.maxmind.com/app/geoip_download?edition_id=GeoIP2-ISP&suffix=tar.gz&license_key=$(
+	cat ~/.cyph/maxmind.key
+)" -O geoisp.tar.gz
+tar xzf geoisp.tar.gz
+mv */*.mmdb GeoIP2-ISP.mmdb
+if [ ! -f GeoIP2-ISP.mmdb ] ; then
+	echo 'GeoIP2-ISP.mmdb missing'
+	exit 1
+fi
+mv GeoIP2-ISP.mmdb ../default/
+cd ..
+rm -rf geoisp.tmp
+
 # Secret credentials
 cat ~/.cyph/default.vars >> default/app.yaml
 cat ~/.cyph/test.vars >> test/test.yaml
-cp ~/.cyph/*.mmdb default/
+cp ~/.cyph/GeoIP2-Country.mmdb default/
 if [ "${branch}" == 'staging' ] ; then
 	cat ~/.cyph/braintree.prod >> default/app.yaml
 else
@@ -832,3 +846,5 @@ gcloud app deploy --quiet --no-promote --project cyphme --version $version $(
 ) dispatch.yaml
 
 cd "${dir}"
+rm -rf .build 2> /dev/null
+mv ~/.build ./
