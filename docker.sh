@@ -92,7 +92,7 @@ elif [ "${command}" == 'deploy' ] ; then
 		-it \
 		-v $HOME/.cyph:/home/gibson/.cyph \
 		-v $HOME/.gitconfig:/home/gibson/.gitconfig \
-		-v $HOME/.gnupg:/home/gibson/.gnupg \
+		-v $HOME/.gnupg:/home/gibson/.gnupg.original \
 		-v $HOME/.ssh:/home/gibson/.ssh \
 		--privileged=true \
 		-p 31337:31337/udp \
@@ -168,7 +168,7 @@ elif [ "${command}" == 'commit' ] ; then
 	args=" \
 		-it \
 		-v $HOME/.gitconfig:/home/gibson/.gitconfig \
-		-v $HOME/.gnupg:/home/gibson/.gnupg \
+		-v $HOME/.gnupg:/home/gibson/.gnupg.original \
 		-v $HOME/.ssh:/home/gibson/.ssh \
 	"
 
@@ -193,7 +193,7 @@ elif [ "${command}" == 'updatelibs' ] ; then
 		-it \
 		-v $HOME/.cyph:/home/gibson/.cyph \
 		-v $HOME/.gitconfig:/home/gibson/.gitconfig \
-		-v $HOME/.gnupg:/home/gibson/.gnupg \
+		-v $HOME/.gnupg:/home/gibson/.gnupg.original \
 		-v $HOME/.ssh:/home/gibson/.ssh \
 	"
 
