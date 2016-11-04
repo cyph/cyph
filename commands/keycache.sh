@@ -7,7 +7,7 @@ fi
 echo -e '\n\n\ncaching SSH and GPG keys\n'
 
 eval "$(ssh-agent)"
-ssh-add ~/.ssh/id_rsa
+ssh-add -t 34560000 ~/.ssh/id_rsa
 
 if [ -f ~/.gnupg/gpg-agent.conf ] ; then
 	mv ~/.gnupg/gpg-agent.conf ~/.gnupg/gpg-agent.conf.bak
