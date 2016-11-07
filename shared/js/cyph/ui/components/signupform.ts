@@ -1,5 +1,6 @@
 import {ISignupForm} from '../isignupform';
 import {Templates} from '../templates';
+import {Util} from '../../util';
 
 
 /**
@@ -9,11 +10,16 @@ export class SignupForm {
 	/** Module/component title. */
 	public static title: string	= 'cyphSignupForm';
 
-	private Cyph: any	= self['Cyph'];
-
+	private Cyph: any;
 	private self: ISignupForm;
 
-	constructor () {}
+	constructor () { (async () => {
+		while (!self['Cyph']) {
+			await Util.sleep(100);
+		}
+
+		this.Cyph	= self['Cyph'];
+	})(); }
 
 	private static _	= (() => {
 		angular.module(SignupForm.title, []).component(SignupForm.title, {

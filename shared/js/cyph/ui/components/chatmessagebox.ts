@@ -2,6 +2,7 @@ import {Templates} from '../templates';
 import {IChat} from '../chat/ichat';
 import {Enterpress} from '../directives/enterpress';
 import {Filechange} from '../directives/filechange';
+import {Util} from '../../util';
 
 
 /**
@@ -11,11 +12,16 @@ export class ChatMessageBox {
 	/** Module/component title. */
 	public static title: string	= 'cyphChatMessageBox';
 
-	private Cyph: any	= self['Cyph'];
-
+	private Cyph: any;
 	private self: IChat;
 
-	constructor () {}
+	constructor () { (async () => {
+		while (!self['Cyph']) {
+			await Util.sleep(100);
+		}
+
+		this.Cyph	= self['Cyph'];
+	})(); }
 
 	private static _	= (() => {
 		angular.module(

@@ -1,5 +1,6 @@
 import {ILinkConnection} from '../ilinkconnection';
 import {Templates} from '../templates';
+import {Util} from '../../util';
 
 
 /**
@@ -9,11 +10,16 @@ export class LinkConnection {
 	/** Module/component title. */
 	public static title: string	= 'cyphLinkConnection';
 
-	private Cyph: any	= self['Cyph'];
-
+	private Cyph: any;
 	private self: ILinkConnection;
 
-	constructor () {}
+	constructor () { (async () => {
+		while (!self['Cyph']) {
+			await Util.sleep(100);
+		}
+
+		this.Cyph	= self['Cyph'];
+	})(); }
 
 	private static _	= (() => {
 		angular.module(LinkConnection.title, []).component(LinkConnection.title, {

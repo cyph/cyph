@@ -9,25 +9,33 @@ export class Beta {
 	/** Module/component title. */
 	public static title: string	= 'cyphBeta';
 
-	private Cyph: any			= self['Cyph'];
-	private ui: any				= self['ui'];
 	private checking: boolean	= false;
 	private error: boolean		= false;
 
-	constructor ($scope, $element, $attrs) {
+	private Cyph: any;
+	private ui: any;
+
+	constructor ($scope, $element, $attrs) { (async () => {
+		while (!self['Cyph'] || !self['ui']) {
+			await Util.sleep(100);
+		}
+
+		this.Cyph	= self['Cyph'];
+		this.ui		= self['ui'];
+
 		/* TODO: stop blatantly lying to people */
 		$element.find('form').submit(() => {
 			this.checking	= true;
 			this.error		= false;
-			self['ui'].controller.update();
+			this.ui.controller.update();
 
 			setTimeout(() => {
 				this.checking	= false;
 				this.error		= true;
-				self['ui'].controller.update();
+				this.ui.controller.update();
 			}, Util.random(4000, 1500));
 		});
-	}
+	})(); }
 
 	private static _	= (() => {
 		angular.module(Beta.title, []).component(Beta.title, {

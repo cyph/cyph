@@ -1,4 +1,5 @@
 import {Templates} from '../templates';
+import {Util} from '../../util';
 
 
 /**
@@ -8,10 +9,17 @@ export class StaticFooter {
 	/** Module/component title. */
 	public static title: string	= 'cyphStaticFooter';
 
-	private Cyph: any	= self['Cyph'];
-	private ui: any		= self['ui'];
+	private Cyph: any;
+	private ui: any;
 
-	constructor () {}
+	constructor () { (async () => {
+		while (!self['Cyph'] || !self['ui']) {
+			await Util.sleep(100);
+		}
+
+		this.Cyph	= self['Cyph'];
+		this.ui		= self['ui'];
+	})(); }
 
 	private static _	= (() => {
 		angular.module(
