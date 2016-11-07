@@ -55,7 +55,11 @@ fi
 
 # Branch config setup
 staging=''
-branch="$(git describe --tags --exact-match 2> /dev/null || git branch | awk '/^\*/{print $2}')"
+branch="$(
+	git describe --tags --exact-match 2> /dev/null || git branch | 
+	awk '/^\*/{print $2}' | 
+	tr '[:upper:]' '[:lower:]'
+)"
 if [ "${branch}" == 'prod' ] ; then
 	branch='staging'
 
@@ -441,6 +445,7 @@ if [ "${waitingForBlog}" ] ; then
 	done
 	rm cyph.com/.blog.done cyph.com/.blog.output
 	if [ ! -f cyph.com/blog/index.html ] ; then
+		echo -e '\n\nStatic blog generation failed\n'
 		exit 1
 	fi
 fi
