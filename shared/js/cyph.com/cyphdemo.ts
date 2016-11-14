@@ -40,7 +40,7 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 		{text: `I don't believe you :expressionless:`, isMobile: true},
 		{text: `all right fine, it just creeps me out that *someone* might have been reading our conversation`, isMobile: false},
 		/*
-			{text: `anyway, you think this pic is approriate for LinkedIn?`, isMobile: false},
+			{text: `anyway, you think this pic is appropriate for LinkedIn?`, isMobile: false},
 			{text: CyphDemo.facebookPicMessage, isMobile: false},
 			{text: `lol yeah, looks great ;)`, isMobile: true},
 			{text: `cool, gotta run`, isMobile: false},
