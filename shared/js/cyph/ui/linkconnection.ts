@@ -40,12 +40,6 @@ export class LinkConnection implements ILinkConnection {
 		}
 	}
 
-	public copyLink () : void {
-		clipboard.copy($(".connect-link-input input").val()).then(() =>
-			this.dialogManager.toast({content: Strings.linkCopied, delay: 2500})
-		);
-	}
-
 	public async beginWaiting (
 		baseUrl: string,
 		secret: string,
@@ -83,6 +77,11 @@ export class LinkConnection implements ILinkConnection {
 		if (this.isWaiting) {
 			this.chat.abortSetup();
 		}
+	}
+
+	public async copyToClipboard () : Promise<void> {
+		await clipboard.copy(Elements.connectLinkInput().val());
+		this.dialogManager.toast({content: Strings.linkCopied, delay: 2500});
 	}
 
 	public stop () : void {

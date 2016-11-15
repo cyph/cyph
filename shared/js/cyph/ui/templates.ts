@@ -453,7 +453,7 @@ export const Templates	= {
 				</md-content>
 			</div>
 			<span
-				id='self-destruct-timer'
+				class='self-destruct-timer'
 				ng-show='$ctrl.self.selfDestruct'
 			>
 				Message will self-destruct in {{$ctrl.self.selfDestructTimer.timestamp}}
@@ -2229,12 +2229,8 @@ export const Templates	= {
 
 					<md-input-container class='connect-link-input desktop-only'>
 						<input translate ng-model='$ctrl.self.link' aria-label='Cyph link' />
-						<md-button
-							class='copy'
-						>
-							<i class='material-icons'
-							ng-click='$ctrl.self.copyLink();';
-							>content_copy</i>
+						<md-button class='copy' ng-click='$ctrl.self.copyToClipboard()'>
+							<i class='material-icons'>content_copy</i>
 						</md-button>
 					</md-input-container>
 
@@ -2271,34 +2267,40 @@ export const Templates	= {
 				</div>
 
 				<br />
-				<div id='expiration-time'>
+				<div>
 					<span translate>
 						Link expires in
 					</span>
 					<span class='timer'>
 						{{$ctrl.self.timer.timestamp}}
 					</span>
-					<md-button
-						aria-label='Increase Time'
-						onclick=''
-					>
-						<i class='material-icons'
-							ng-click='';
-							>alarm_add</i>
+					<md-button aria-label='Increase Time'>
+						<i class='material-icons'>alarm_add</i>
 					</md-button>
 				</div>
 			</div>
 
-			<md-switch class='advanced-features' ng-model="$ctrl.self.advancedFeatures" aria-label="Advanced Features">Advanced Features</md-switch>
+			<md-switch
+				class='advanced-features-switch'
+				ng-model='$ctrl.self.advancedFeatures'
+				aria-label='Advanced Features'
+			>
+				Advanced Features
+			</md-switch>
 
-			<div id='advanced-features' ng-show='$ctrl.self.advancedFeatures'>
-				<md-input-container class='message-box first'>
+			<div class='advanced-features' ng-show='$ctrl.self.advancedFeatures'>
+				<md-input-container class='queued-message-box'>
 					<label>Queue up first message</label>
-					<textarea rows='3'></textarea>
+					<textarea
+						rows='3'
+						ng-model='$ctrl.queuedMessageDraft'
+					></textarea>
 				</md-input-container>
 				<div class='buttons'>
 					<md-button
-						ng-click='$ctrl.self.chat.setFirstMessage()'
+						ng-click='$ctrl.self.chat.setFirstMessage(
+							$ctrl.queuedMessageDraft
+						)'
 					>
 						<i class='material-icons'>save</i>
 					</md-button>
@@ -2385,7 +2387,7 @@ export const Templates	= {
 						</div>
 						<div ng-if='$ctrl.invite' layout='row' layout-align='center center'>
 							<md-input-container class='md-block' flex='80'>
-								<input type='text' id='invitecode' ng-model='$ctrl.self.data.inviteCode' aria-label='Invite Code' />
+								<input type='text' ng-model='$ctrl.self.data.inviteCode' aria-label='Invite Code' />
 								<label>Invite Code</label>
 							</md-input-container>
 						</div>

@@ -38,18 +38,16 @@ export class Chat extends BaseButtonManager implements IChat {
 
 	private elements: IElements;
 	private previousMessage: string;
+	private queuedMessage: string;
 
 	public isConnected: boolean			= false;
 	public isDisconnected: boolean		= false;
 	public isFriendTyping: boolean		= false;
+	public selfDestruct: boolean		= false;
+	public selfDestructTimer: ITimer	= new Timer(1000000);
 	public currentMessage: string		= '';
 	public keyExchangeProgress: number	= 0;
 	public state: States				= States.none;
-
-	public firstMessage: string;
-
-	public selfDestruct: boolean = false;
-	public selfDestructTimer: ITimer = new Timer(1000000);
 
 	public messages: {
 		author: string;
@@ -146,10 +144,10 @@ export class Chat extends BaseButtonManager implements IChat {
 		this.addMessage(Strings.introductoryMessage, Users.app, undefined, false);
 		this.setConnected();
 
-		/** Check for first message and if it is set to self destruct */
-		if (this.firstMessage){
+		/* If set, send queued message */
+		if (this.queuedMessage) {
 			this.send(
-				this.firstMessage,
+				this.queuedMessage,
 				this.selfDestruct ? this.selfDestructTimer.countdown : 0
 			);
 		}
@@ -246,17 +244,10 @@ export class Chat extends BaseButtonManager implements IChat {
 		this.isFriendTyping	= isFriendTyping;
 	}
 
-	public setFirstMessage () : void {
-		this.firstMessage = $('.message-box.first textarea').val();
-		this.dialogManager.toast({content: Strings.firstMessageSaved, delay: 2500});
+	public setQueuedMessage (messageText: string) : void {
+		this.queuedMessage	= messageText;
+		this.dialogManager.toast({content: Strings.queuedMessageSaved, delay: 2500});
 	}
-
-	/* TODO: Fix self destruct toast
-	public toggleSelfDestruct () : void {
-		console.log('balls');
-		this.selfDestruct = !this.selfDestruct;
-		this.dialogManager.toast({content: "balls", delay: 2500})
-	}*/
 
 	/**
 	 * @param dialogManager
