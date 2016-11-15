@@ -12,6 +12,7 @@ import * as Chat from './chat';
 
 
 export class LinkConnection implements ILinkConnection {
+	private isCopying: boolean;
 	private isWaiting: boolean;
 	private linkConstant: string;
 
@@ -34,12 +35,6 @@ export class LinkConnection implements ILinkConnection {
 		);
 	}
 
-	private setLink () : void {
-		if (this.link !== this.linkConstant) {
-			this.link	= this.linkConstant;
-		}
-	}
-
 	public async beginWaiting (
 		baseUrl: string,
 		secret: string,
@@ -52,24 +47,28 @@ export class LinkConnection implements ILinkConnection {
 		this.isPassive		= isPassive;
 
 		if (Env.isMobile) {
-			this.setLink();
-
 			/* Only allow right-clicking (for copying the link) */
 			Elements.connectLinkLink().click(e => e.preventDefault());
 		}
 		else {
 			const linkInterval	= setInterval(() => {
-				//Elements.connectLinkInput().focus();
-				if (this.isWaiting) {
-					this.setLink();
-					//Elements.connectLinkInput().focus();
-					//this.selectLink();
-				}
-				else {
+				if (!this.isWaiting) {
 					clearInterval(linkInterval);
+					return;
 				}
-			}, 250);
+				else if (this.advancedFeatures) {
+					return;
+				}
+
+				this.link	= this.linkConstant;
+				Elements.connectLinkInput().focus();
+				this.selectLink();
+			}, 1000);
 		}
+
+		Elements.body().one('click', () =>
+			this.copyToClipboard().catch(() => {})
+		);
 
 		this.chat.session.on(Events.connect, () => this.timer.stop());
 		await this.timer.start();
@@ -80,8 +79,19 @@ export class LinkConnection implements ILinkConnection {
 	}
 
 	public async copyToClipboard () : Promise<void> {
-		await clipboard.copy(Elements.connectLinkInput().val());
-		this.dialogManager.toast({content: Strings.linkCopied, delay: 2500});
+		if (this.isCopying) {
+			return;
+		}
+
+		this.isCopying	= true;
+
+		try {
+			await clipboard.copy(this.linkConstant);
+			await this.dialogManager.toast({content: Strings.linkCopied, delay: 2500});
+		}
+		finally {
+			this.isCopying	= false;
+		}
 	}
 
 	public stop () : void {
