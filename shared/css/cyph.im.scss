@@ -251,6 +251,7 @@ input, textarea {
 .message-item {
 	padding: 7.5px 10px 5px 10px;
 	margin: 2.5px;
+	position: relative;
 
 	.message {
 		max-width: 100%;
@@ -277,6 +278,24 @@ input, textarea {
 		display: block;
 		box-shadow: 0px 4px 10px -1px rgba(0, 0, 0, 0.4);
 		position: relative;
+	}
+
+	/* Self-destruct animation */
+	&:after {
+		content: ' ';
+		height: 100%;
+		width: 120%;
+		top: 0px;
+		left: -10%;
+		background-color: black;
+		position: absolute;
+
+		@include transform(scaleX(0));
+		@include transform-origin(top left);
+	}
+	&.self-destructed:after {
+		@include transform(scaleX(1));
+		@include transition(transform 3s cubic-bezier(0.8, 0.4, 1, 0.3));
 	}
 }
 
@@ -581,7 +600,7 @@ html.mobile button[disabled] {
 	width: 75%;
 }
 
-.link-connection .timer {
+.countdown {
 	font-family: 'Ubuntu Mono', monospace;
 	padding-left: 10px;
 }
@@ -1121,7 +1140,7 @@ html:not(.mobile) .amazon-link {
 		.md-button {
 			padding: 0px;
 
-			&.self-destruct i:not(.active) {
+			&.self-destruct-button i:not(.active) {
 				opacity: 0.25;
 			}
 		}
@@ -1161,11 +1180,10 @@ html:not(.mobile) .amazon-link {
 }
 
 .self-destruct-timer {
-	position: absolute;
 	font-size: 32px;
-	font-weight: bold;
-	top: 10px;
-	left: 33vw;
+	text-align: center;
+	padding: 20px;
+	display: block;
 }
 
 .md-button.copy {

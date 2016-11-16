@@ -31,7 +31,8 @@ import {ThreadedSession} from '../../session/threadedsession';
 
 
 export class Chat extends BaseButtonManager implements IChat {
-	private static approximateKeyExchangeTime: number	= 15000;
+	private static approximateKeyExchangeTime: number		= 15000;
+	private static queuedMessageSelfDestructTimeout: number	= 15000;
 
 
 	private isMessageChanged: boolean	= false;
@@ -40,17 +41,17 @@ export class Chat extends BaseButtonManager implements IChat {
 	private previousMessage: string;
 	private queuedMessage: string;
 
-	public isConnected: boolean			= false;
-	public isDisconnected: boolean		= false;
-	public isFriendTyping: boolean		= false;
-	public selfDestruct: boolean		= false;
-	public selfDestructTimer: ITimer	= new Timer(1000000);
-	public currentMessage: string		= '';
-	public keyExchangeProgress: number	= 0;
-	public state: States				= States.none;
+	public isConnected: boolean					= false;
+	public isDisconnected: boolean				= false;
+	public isFriendTyping: boolean				= false;
+	public queuedMessageSelfDestruct: boolean	= false;
+	public currentMessage: string				= '';
+	public keyExchangeProgress: number			= 0;
+	public state: States						= States.none;
 
 	public messages: {
 		author: string;
+		selfDestructTimer: ITimer;
 		text: string;
 		timestamp: number;
 		timeString: string;
@@ -62,16 +63,6 @@ export class Chat extends BaseButtonManager implements IChat {
 	public scrollManager: IScrollManager;
 	public session: ISession;
 
-	private async activateSelfDestruct (timeout: number) : Promise<void> {
-		await this.selfDestructTimer.start();
-
-		/* TODO: remove just the one message */
-		$('#self-destruct-timer').hide();
-		$('.chat-message-box').remove();
-		$('.message-item').remove();
-		this.close();
-	}
-
 	private findElement (selector: string) : () => JQuery {
 		return Elements.get(() => this.rootElement.find(selector));
 	}
@@ -82,13 +73,13 @@ export class Chat extends BaseButtonManager implements IChat {
 		this.session.close();
 	}
 
-	public addMessage (
+	public async addMessage (
 		text: string,
 		author: string,
 		timestamp: number = Util.timestamp(),
 		shouldNotify: boolean = true,
 		selfDestructTimeout?: number
-	) : void {
+	) : Promise<void> {
 		if (this.state === States.aborted || !text || typeof text !== 'string') {
 			return;
 		}
@@ -102,13 +93,15 @@ export class Chat extends BaseButtonManager implements IChat {
 			}
 		}
 
-		this.messages.push({
+		const message	= {
 			author,
 			text,
 			timestamp,
+			selfDestructTimer: null,
 			timeString: Util.getTimeString(timestamp)
-		});
+		};
 
+		this.messages.push(message);
 		this.messages.sort((a, b) => a.timestamp - b.timestamp);
 
 		this.scrollManager.scrollDown(true);
@@ -121,7 +114,10 @@ export class Chat extends BaseButtonManager implements IChat {
 		}
 
 		if (!isNaN(selfDestructTimeout) && selfDestructTimeout > 0) {
-			this.activateSelfDestruct(selfDestructTimeout);
+			message.selfDestructTimer	= new Timer(selfDestructTimeout);
+			await message.selfDestructTimer.start();
+			await Util.sleep(10000);
+			message.text	= null;
 		}
 	}
 
@@ -144,12 +140,17 @@ export class Chat extends BaseButtonManager implements IChat {
 		this.addMessage(Strings.introductoryMessage, Users.app, undefined, false);
 		this.setConnected();
 
-		/* If set, send queued message */
-		if (this.queuedMessage) {
+		if (this.queuedMessage && this.queuedMessageSelfDestruct) {
 			this.send(
 				this.queuedMessage,
-				this.selfDestruct ? this.selfDestructTimer.countdown : 0
+				Chat.queuedMessageSelfDestructTimeout
 			);
+
+			await Util.sleep(Chat.queuedMessageSelfDestructTimeout + 5000);
+			this.close();
+		}
+		else if (this.queuedMessage) {
+			this.send(this.queuedMessage);
 		}
 	}
 
@@ -244,9 +245,17 @@ export class Chat extends BaseButtonManager implements IChat {
 		this.isFriendTyping	= isFriendTyping;
 	}
 
-	public setQueuedMessage (messageText: string) : void {
-		this.queuedMessage	= messageText;
-		this.dialogManager.toast({content: Strings.queuedMessageSaved, delay: 2500});
+	public setQueuedMessage (messageText?: string, selfDestruct?: boolean) : void {
+		if (typeof messageText === 'string') {
+			this.queuedMessage	= messageText;
+			this.dialogManager.toast({
+				content: Strings.queuedMessageSaved,
+				delay: 2500
+			});
+		}
+		if (typeof selfDestruct === 'boolean') {
+			this.queuedMessageSelfDestruct	= selfDestruct;
+		}
 	}
 
 	/**

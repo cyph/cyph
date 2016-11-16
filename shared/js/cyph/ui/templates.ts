@@ -380,49 +380,73 @@ export const Templates	= {
 
 						<md-item
 							class='message-item unread'
-							ng-class='::
-								"author-" +
-								($ctrl.Cyph.Session.Users[message.author] || $ctrl.Cyph.Session.Users.other)
-							'
+							ng-class='[
+								"author-" + (
+									$ctrl.Cyph.Session.Users[message.author] ||
+									$ctrl.Cyph.Session.Users.other
+								),
+								{
+									"self-destructed":
+										message.selfDestructTimer &&
+										message.selfDestructTimer.isComplete
+								}
+							]'
 							ng-repeat='message in $ctrl.self.messages'
 							layout='row'
 						>
-							<span class='message'>
-								<strong
-									translate
-									class='message-author'
-									ng-hide='::message.author === $ctrl.Cyph.Session.Users.app'
-									ng-bind='::message.author + ": "'
-								></strong>
-								<cyph-markdown
-									class='message-text'
-									markdown='::message.text'
-									ng-class='::{
-										"app-message":
-											message.author === $ctrl.Cyph.Session.Users.app
-									}'
-								></cyph-markdown>
-							</span>
-							<span flex class='message-timestamp'>
-								<span
-									class='mobile-only'
-									ng-show='::message.author === $ctrl.Cyph.Session.Users.me'
-								>
-									<span>{{::message.author}}</span> &nbsp;&mdash;&nbsp;
-								</span>
+							<div flex layout='column'>
+								<div layout='row'>
+									<span class='message'>
+										<strong
+											translate
+											class='message-author'
+											ng-hide='::message.author === $ctrl.Cyph.Session.Users.app'
+											ng-bind='::message.author + ": "'
+										></strong>
+										<cyph-markdown
+											class='message-text'
+											markdown='message.text'
+											ng-class='::{
+												"app-message":
+													message.author === $ctrl.Cyph.Session.Users.app
+											}'
+										></cyph-markdown>
+									</span>
+									<span flex class='message-timestamp'>
+										<span
+											class='mobile-only'
+											ng-show='::message.author === $ctrl.Cyph.Session.Users.me'
+										>
+											<span>{{::message.author}}</span> &nbsp;&mdash;&nbsp;
+										</span>
 
-								{{::message.timeString}}
+										{{::message.timeString}}
 
-								<span
-									class='mobile-only'
-									ng-show='::
-										message.author !== $ctrl.Cyph.Session.Users.me &&
-										message.author !== $ctrl.Cyph.Session.Users.app
+										<span
+											class='mobile-only'
+											ng-show='::
+												message.author !== $ctrl.Cyph.Session.Users.me &&
+												message.author !== $ctrl.Cyph.Session.Users.app
+											'
+										>
+											&nbsp;&mdash;&nbsp; <span>{{::message.author}}</span>
+										</span>
+									</span>
+								</div>
+								<div
+									class='self-destruct-timer'
+									layout='row'
+									ng-show='
+										message.selfDestructTimer &&
+										!message.selfDestructTimer.isComplete
 									'
 								>
-									&nbsp;&mdash;&nbsp; <span>{{::message.author}}</span>
-								</span>
-							</span>
+									Message will self-destruct in
+									<span class='countdown'>
+										{{message.selfDestructTimer.timestamp}}
+									</span>
+								</div>
+							</div>
 						</md-item>
 
 						<md-item
@@ -452,12 +476,6 @@ export const Templates	= {
 					</md-list>
 				</md-content>
 			</div>
-			<span
-				class='self-destruct-timer'
-				ng-show='$ctrl.self.selfDestruct'
-			>
-				Message will self-destruct in {{$ctrl.self.selfDestructTimer.timestamp}}
-			</span>
 		</div>
 	`,
 
@@ -467,8 +485,7 @@ export const Templates	= {
 			ng-class='{mobile: $ctrl.self.isMobile}'
 			ng-show='
 				$ctrl.self.state === $ctrl.Cyph.UI.Chat.States.chat &&
-				$ctrl.self.session.state.isAlive &&
-				!$ctrl.self.selfDestruct
+				$ctrl.self.session.state.isAlive
 			'
 		>
 			<textarea
@@ -2271,7 +2288,7 @@ export const Templates	= {
 					<span translate>
 						Link expires in
 					</span>
-					<span class='timer'>
+					<span class='countdown'>
 						{{$ctrl.self.timer.timestamp}}
 					</span>
 					<md-button aria-label='Increase Time'>
@@ -2298,19 +2315,24 @@ export const Templates	= {
 				</md-input-container>
 				<div class='buttons'>
 					<md-button
-						ng-click='$ctrl.self.chat.setFirstMessage(
+						ng-click='$ctrl.self.chat.setQueuedMessage(
 							$ctrl.queuedMessageDraft
 						)'
 					>
 						<i class='material-icons'>save</i>
 					</md-button>
 					<md-button
-						ng-click='$ctrl.self.chat.selfDestruct = !$ctrl.self.chat.selfDestruct'
-						class='self-destruct'
+						class='self-destruct-button'
+						ng-click='$ctrl.self.chat.setQueuedMessage(
+							undefined,
+							!$ctrl.self.chat.queuedMessageSelfDestruct
+						)'
 					>
 						<i
 							class='material-icons'
-							ng-class='{"active": $ctrl.self.chat.selfDestruct === true}'
+							ng-class='{
+								"active": $ctrl.self.chat.queuedMessageSelfDestruct === true
+							}'
 						>
 							timer
 						</i>
