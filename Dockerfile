@@ -117,12 +117,12 @@ RUN bash -c ' \
 '
 
 RUN sudo npm -g install \
-	@angular/common@2.1.1 \
-	@angular/compiler@2.1.1 \
-	@angular/compiler-cli@2.1.1 \
-	@angular/core@2.1.1 \
-	@angular/platform-browser@2.1.1 \
-	@angular/platform-server@2.1.1 \
+	@angular/common@2.2.0 \
+	@angular/compiler@2.2.0 \
+	@angular/compiler-cli@2.2.0 \
+	@angular/core@2.2.0 \
+	@angular/platform-browser@2.2.0 \
+	@angular/platform-server@2.2.0 \
 	babel-cli@6.16.0 \
 	babel-preset-es2015@6.16.0 \
 	browserify@13.1.1 \
@@ -133,7 +133,7 @@ RUN sudo npm -g install \
 	image-type@2.1.0 \
 	html-minifier@3.1.0 \
 	rxjs@5.0.0-beta.12 \
-	typescript@2.0.3 \
+	typescript@2.0.9 \
 	uglify-js@2.7.4 \
 	webpack@2.1.0-beta.25 \
 	zone.js@0.6.26 \
