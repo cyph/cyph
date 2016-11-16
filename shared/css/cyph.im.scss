@@ -291,10 +291,13 @@ input, textarea {
 		position: absolute;
 
 		@include transform(scaleX(0));
+
 		@include transform-origin(top left);
 	}
+
 	&.self-destructed:after {
 		@include transform(scaleX(1));
+
 		@include transition(transform 3s cubic-bezier(0.8, 0.4, 1, 0.3));
 	}
 }
