@@ -19,9 +19,11 @@ import {NanoScroller} from '../nanoscroller';
 import {Templates} from '../templates';
 import {Analytics} from '../../analytics';
 import {Env} from '../../env';
+import {ITimer} from '../../itimer';
 import {Strings} from '../../strings';
 import {UrlState} from '../../urlstate';
 import {Util} from '../../util';
+import {Timer} from '../../timer';
 import {Events, RPCEvents, Users} from '../../session/enums';
 import {ISession} from '../../session/isession';
 import {Message} from '../../session/message';
@@ -29,23 +31,27 @@ import {ThreadedSession} from '../../session/threadedsession';
 
 
 export class Chat extends BaseButtonManager implements IChat {
-	private static approximateKeyExchangeTime: number	= 15000;
+	private static approximateKeyExchangeTime: number		= 15000;
+	private static queuedMessageSelfDestructTimeout: number	= 15000;
 
 
 	private isMessageChanged: boolean	= false;
 
 	private elements: IElements;
 	private previousMessage: string;
+	private queuedMessage: string;
 
-	public isConnected: boolean			= false;
-	public isDisconnected: boolean		= false;
-	public isFriendTyping: boolean		= false;
-	public currentMessage: string		= '';
-	public keyExchangeProgress: number	= 0;
-	public state: States				= States.none;
+	public isConnected: boolean					= false;
+	public isDisconnected: boolean				= false;
+	public isFriendTyping: boolean				= false;
+	public queuedMessageSelfDestruct: boolean	= false;
+	public currentMessage: string				= '';
+	public keyExchangeProgress: number			= 0;
+	public state: States						= States.none;
 
 	public messages: {
 		author: string;
+		selfDestructTimer: ITimer;
 		text: string;
 		timestamp: number;
 		timeString: string;
@@ -67,13 +73,14 @@ export class Chat extends BaseButtonManager implements IChat {
 		this.session.close();
 	}
 
-	public addMessage (
+	public async addMessage (
 		text: string,
 		author: string,
 		timestamp: number = Util.timestamp(),
-		shouldNotify: boolean = true
-	) : void {
-		if (this.state === States.aborted || !text) {
+		shouldNotify: boolean = true,
+		selfDestructTimeout?: number
+	) : Promise<void> {
+		if (this.state === States.aborted || !text || typeof text !== 'string') {
 			return;
 		}
 
@@ -86,13 +93,15 @@ export class Chat extends BaseButtonManager implements IChat {
 			}
 		}
 
-		this.messages.push({
+		const message	= {
 			author,
 			text,
 			timestamp,
+			selfDestructTimer: null,
 			timeString: Util.getTimeString(timestamp)
-		});
+		};
 
+		this.messages.push(message);
 		this.messages.sort((a, b) => a.timestamp - b.timestamp);
 
 		this.scrollManager.scrollDown(true);
@@ -102,6 +111,13 @@ export class Chat extends BaseButtonManager implements IChat {
 		}
 		else {
 			NanoScroller.update();
+		}
+
+		if (!isNaN(selfDestructTimeout) && selfDestructTimeout > 0) {
+			message.selfDestructTimer	= new Timer(selfDestructTimeout);
+			await message.selfDestructTimer.start();
+			await Util.sleep(10000);
+			message.text	= null;
 		}
 	}
 
@@ -123,6 +139,19 @@ export class Chat extends BaseButtonManager implements IChat {
 		this.changeState(States.chat);
 		this.addMessage(Strings.introductoryMessage, Users.app, undefined, false);
 		this.setConnected();
+
+		if (this.queuedMessage && this.queuedMessageSelfDestruct) {
+			this.send(
+				this.queuedMessage,
+				Chat.queuedMessageSelfDestructTimeout
+			);
+
+			await Util.sleep(Chat.queuedMessageSelfDestructTimeout + 5000);
+			this.close();
+		}
+		else if (this.queuedMessage) {
+			this.send(this.queuedMessage);
+		}
 	}
 
 	public changeState (state: States) : void {
@@ -193,7 +222,7 @@ export class Chat extends BaseButtonManager implements IChat {
 		}
 	}
 
-	public send (message?: string) : void {
+	public send (message?: string, selfDestructTimeout?: number) : void {
 		if (!message) {
 			message	= this.currentMessage;
 
@@ -204,7 +233,7 @@ export class Chat extends BaseButtonManager implements IChat {
 
 		if (message) {
 			this.scrollManager.scrollDown();
-			this.session.sendText(message);
+			this.session.sendText(message, selfDestructTimeout);
 		}
 	}
 
@@ -214,6 +243,19 @@ export class Chat extends BaseButtonManager implements IChat {
 
 	public setFriendTyping (isFriendTyping: boolean) : void {
 		this.isFriendTyping	= isFriendTyping;
+	}
+
+	public setQueuedMessage (messageText?: string, selfDestruct?: boolean) : void {
+		if (typeof messageText === 'string') {
+			this.queuedMessage	= messageText;
+			this.dialogManager.toast({
+				content: Strings.queuedMessageSaved,
+				delay: 2500
+			});
+		}
+		if (typeof selfDestruct === 'boolean') {
+			this.queuedMessageSelfDestruct	= selfDestruct;
+		}
 	}
 
 	/**
@@ -416,14 +458,19 @@ export class Chat extends BaseButtonManager implements IChat {
 
 		this.session.on(Events.connectFailure, () => this.abortSetup());
 
-		this.session.on(RPCEvents.text,
-			(o: { text: string; author: string; timestamp: number; }) =>
-				this.addMessage(
-					o.text,
-					o.author,
-					o.timestamp,
-					o.author !== Users.me
-				)
+		this.session.on(RPCEvents.text, (o: {
+			text: string;
+			author: string;
+			timestamp: number;
+			selfDestructTimeout?: number;
+		}) =>
+			this.addMessage(
+				o.text,
+				o.author,
+				o.timestamp,
+				o.author !== Users.me,
+				o.selfDestructTimeout
+			)
 		);
 
 		this.session.on(RPCEvents.typing, (isFriendTyping: boolean) =>

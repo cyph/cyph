@@ -3,6 +3,7 @@ import {ICyphertext} from './icyphertext';
 import {IP2PManager} from './ip2pmanager';
 import {IFileManager} from './ifilemanager';
 import {IScrollManager} from './iscrollmanager';
+import {ITimer} from '../../itimer';
 import {Users} from '../../session/enums';
 import {ISession} from '../../session/isession';
 
@@ -22,6 +23,9 @@ export interface IChat {
 	/** Indicates whether the other party is typing. */
 	isFriendTyping: boolean;
 
+	/** Indicates whether the queued message is self-destructing. */
+	queuedMessageSelfDestruct: boolean;
+
 	/** Indicates whether the mobile chat UI is to be displayed. */
 	isMobile: boolean;
 
@@ -38,6 +42,7 @@ export interface IChat {
 	/** Message list. */
 	messages: {
 		author: string;
+		selfDestructTimer: ITimer;
 		text: string;
 		timestamp: number;
 		timeString: string;
@@ -69,13 +74,15 @@ export interface IChat {
 	 * @param author
 	 * @param timestamp If not set, will use Util.timestamp().
 	 * @param shouldNotify If true, a notification will be sent.
+	 * @param selfDestructTimeout
 	 */
 	addMessage (
 		text: string,
 		author: Users,
 		timestamp?: number,
-		shouldNotify?: boolean
-	) : void;
+		shouldNotify?: boolean,
+		selfDestructTimeout?: number
+	) : Promise<void>;
 
 	/**
 	 * Begins chat.
@@ -112,8 +119,9 @@ export interface IChat {
 	/**
 	 * Sends a message.
 	 * @param message
+	 * @param selfDestructTimeout
 	 */
-	send (message?: string) : void;
+	send (message?: string, selfDestructTimeout?: number) : void;
 
 	/**
 	 * Sets this.isConnected to true.
@@ -125,4 +133,14 @@ export interface IChat {
 	 * @param isFriendTyping
 	 */
 	setFriendTyping (isFriendTyping: boolean) : void;
+
+	/**
+	 * Sets queued message to be sent after handshake.
+	 * @param messageText
+	 * @param selfDestruct
+	 */
+	setQueuedMessage (
+		messageText?: string,
+		selfDestruct?: boolean
+	) : void;
 }

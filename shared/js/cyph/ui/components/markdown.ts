@@ -19,38 +19,25 @@ export class Markdown {
 	};
 
 
+	private markdownIt: any;
+
 	public markdown: string;
 
-	constructor ($scope, $element) { (async () => {
-		while (!this.markdown) {
-			await Util.sleep(100);
+	public async $onChanges (changes: any) : Promise<void> {
+		if (this.markdown === null) {
+			this.$element.css('display', 'block');
+
+			await Util.sleep(10000);
+
+			this.$element.
+				height(this.$element.height()).
+				width(this.$element.width())
+			;
 		}
 
-		const markdown: any	= new self['markdownit']({
-			html: false,
-			breaks: true,
-			linkify: true,
-			typographer: true,
-			quotes:
-				(
-					Env.language === 'ru' ?
-						'«»' :
-						Env.language === 'de' ?
-							'„“' :
-							'“”'
-				) +
-				'‘’'
-			,
-			highlight: s => self['microlight'].process(s, $element.css('color'))
-		}).
-			disable('image').
-			use(self['markdownitSup']).
-			use(self['markdownitEmoji'])
-		;
-
-		$element.html(
+		this.$element.html(
 			DOMPurify.sanitize(
-				markdown.render(this.markdown).
+				this.markdownIt.render(this.markdown || '').
 
 					/* Merge blockquotes like reddit */
 					replace(/\<\/blockquote>\n\<blockquote>\n/g, '').
@@ -77,5 +64,29 @@ export class Markdown {
 				}
 			)
 		);
-	})(); }
+	}
+
+	constructor ($scope, private $element) {
+		this.markdownIt	= new self['markdownit']({
+			html: false,
+			breaks: true,
+			linkify: true,
+			typographer: true,
+			quotes:
+				(
+					Env.language === 'ru' ?
+						'«»' :
+						Env.language === 'de' ?
+							'„“' :
+							'“”'
+				) +
+				'‘’'
+			,
+			highlight: s => self['microlight'].process(s, this.$element.css('color'))
+		}).
+			disable('image').
+			use(self['markdownitSup']).
+			use(self['markdownitEmoji'])
+		;
+	}
 }

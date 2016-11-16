@@ -8,6 +8,7 @@ export class Timer implements ITimer {
 	private includeMinutes: boolean;
 	private stopped: boolean;
 
+	public isComplete: boolean;
 	public timestamp: string;
 
 	private updateTimestamp (timeRemaining: number) : void {
@@ -51,6 +52,7 @@ export class Timer implements ITimer {
 			await Util.sleep(500);
 		}
 
+		this.isComplete	= true;
 		this.timestamp	= this.includeHours ?
 			'0:00:00' :
 			this.includeMinutes ?
@@ -60,6 +62,7 @@ export class Timer implements ITimer {
 	}
 
 	public stop () : void {
+		this.isComplete	= true;
 		this.stopped	= true;
 	}
 

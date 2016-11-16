@@ -1,4 +1,5 @@
 import {Elements} from './elements';
+import {IDialogManager} from './idialogmanager';
 import {ILinkConnection} from './ilinkconnection';
 import {IChat} from './chat/ichat';
 import {Env} from '../env';
@@ -7,9 +8,11 @@ import {ITimer} from '../itimer';
 import {Strings} from '../strings';
 import {Util} from '../util';
 import {Events} from '../session/enums';
+import * as Chat from './chat';
 
 
 export class LinkConnection implements ILinkConnection {
+	private isCopying: boolean;
 	private isWaiting: boolean;
 	private linkConstant: string;
 
@@ -17,6 +20,8 @@ export class LinkConnection implements ILinkConnection {
 	public link: string;
 	public linkEncoded: string;
 	public timer: ITimer;
+
+	public advancedFeatures: boolean;
 
 	private selectLink () : void {
 		Util.getValue(
@@ -30,10 +35,12 @@ export class LinkConnection implements ILinkConnection {
 		);
 	}
 
-	private setLink () : void {
-		if (this.link !== this.linkConstant) {
-			this.link	= this.linkConstant;
-		}
+	public addTime (milliseconds: number) : void {
+		this.timer.addTime(milliseconds);
+		this.dialogManager.toast({
+			content: Strings.timeExtended,
+			delay: 2500
+		});
 	}
 
 	public async beginWaiting (
@@ -48,29 +55,53 @@ export class LinkConnection implements ILinkConnection {
 		this.isPassive		= isPassive;
 
 		if (Env.isMobile) {
-			this.setLink();
-
 			/* Only allow right-clicking (for copying the link) */
 			Elements.connectLinkLink().click(e => e.preventDefault());
 		}
 		else {
 			const linkInterval	= setInterval(() => {
-				if (this.isWaiting) {
-					this.setLink();
-					Elements.connectLinkInput().focus();
-					this.selectLink();
-				}
-				else {
+				if (!this.isWaiting) {
 					clearInterval(linkInterval);
+					return;
 				}
-			}, 250);
+				else if (this.advancedFeatures) {
+					return;
+				}
+
+				this.link	= this.linkConstant;
+				Elements.connectLinkInput().focus();
+				this.selectLink();
+			}, 1000);
 		}
+
+		Elements.body().one('click', () =>
+			this.copyToClipboard().catch(() => {})
+		);
 
 		this.chat.session.on(Events.connect, () => this.timer.stop());
 		await this.timer.start();
 
 		if (this.isWaiting) {
 			this.chat.abortSetup();
+		}
+	}
+
+	public async copyToClipboard () : Promise<void> {
+		if (this.isCopying) {
+			return;
+		}
+
+		this.isCopying	= true;
+
+		try {
+			await clipboard.copy(this.linkConstant);
+			await this.dialogManager.toast({
+				content: Strings.linkCopied,
+				delay: 2500
+			});
+		}
+		finally {
+			this.isCopying	= false;
 		}
 	}
 
@@ -87,10 +118,12 @@ export class LinkConnection implements ILinkConnection {
 	/**
 	 * @param countdown
 	 * @param chat
+	 * @param dialogManager
 	 */
 	public constructor (
 		countdown: number,
-		private chat: IChat
+		private chat: IChat,
+		private dialogManager: IDialogManager
 	) {
 		this.timer	= new Timer(countdown);
 	}

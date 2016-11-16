@@ -143,7 +143,10 @@ export class Session implements ISession {
 				this.trigger(message.event,
 					message.event === RPCEvents.text ?
 						{
-							text: message.data,
+							selfDestructTimeout:
+								Util.getValue(message.data, 'selfDestructTimeout')
+							,
+							text: Util.getValue(message.data, 'text'),
 							author,
 							timestamp
 						} :
@@ -324,7 +327,10 @@ export class Session implements ISession {
 			if (message.event === RPCEvents.text) {
 				this.trigger(RPCEvents.text, {
 					author: Users.me,
-					text: message.data,
+					selfDestructTimeout:
+						Util.getValue(message.data, 'selfDestructTimeout')
+					,
+					text: Util.getValue(message.data, 'text'),
 					timestamp: Util.timestamp()
 				});
 			}
@@ -342,8 +348,8 @@ export class Session implements ISession {
 		);
 	}
 
-	public sendText (text: string) : void {
-		this.send(new Message(RPCEvents.text, text));
+	public sendText (text: string, selfDestructTimeout?: number) : void {
+		this.send(new Message(RPCEvents.text, {text, selfDestructTimeout}));
 	}
 
 	public trigger (event: string, data?: any) : void {

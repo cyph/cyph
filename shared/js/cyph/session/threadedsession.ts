@@ -45,8 +45,8 @@ export class ThreadedSession implements ISession {
 		this.trigger(ThreadedSessionEvents.send, {messages});
 	}
 
-	public sendText (text: string) : void {
-		this.trigger(ThreadedSessionEvents.sendText, {text});
+	public sendText (text: string, selfDestructTimeout?: number) : void {
+		this.trigger(ThreadedSessionEvents.sendText, {text, selfDestructTimeout});
 	}
 
 	public trigger (event: string, data?: any) : void {
@@ -99,8 +99,11 @@ export class ThreadedSession implements ISession {
 				session.sendBase(e.messages)
 			);
 
-			session.on(locals.events.sendText, (e: { text: string; }) =>
-				session.sendText(e.text)
+			session.on(locals.events.sendText, (e: {
+				text: string;
+				selfDestructTimeout?: number;
+			}) =>
+				session.sendText(e.text, e.selfDestructTimeout)
 			);
 
 			session.on(locals.events.updateState, (e: { key: string; value: any; }) =>

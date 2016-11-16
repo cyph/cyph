@@ -6,6 +6,9 @@ export interface ITimer {
 	/** Countdown duration in milliseconds. */
 	countdown: number;
 
+	/** Indicates whether timer's countdown has completed. */
+	isComplete: boolean;
+
 	/** Human-readable string indicating remaining time. */
 	timestamp: string;
 

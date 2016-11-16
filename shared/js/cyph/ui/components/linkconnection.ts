@@ -20,6 +20,8 @@ export class LinkConnection {
 	};
 
 
+	public queuedMessageDraft: string	= '';
+
 	public Cyph: any;
 	public self: ILinkConnection;
 

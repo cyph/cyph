@@ -380,49 +380,73 @@ export const Templates	= {
 
 						<md-item
 							class='message-item unread'
-							ng-class='::
-								"author-" +
-								($ctrl.Cyph.Session.Users[message.author] || $ctrl.Cyph.Session.Users.other)
-							'
+							ng-class='[
+								"author-" + (
+									$ctrl.Cyph.Session.Users[message.author] ||
+									$ctrl.Cyph.Session.Users.other
+								),
+								{
+									"self-destructed":
+										message.selfDestructTimer &&
+										message.selfDestructTimer.isComplete
+								}
+							]'
 							ng-repeat='message in $ctrl.self.messages'
 							layout='row'
 						>
-							<span class='message'>
-								<strong
-									translate
-									class='message-author'
-									ng-hide='::message.author === $ctrl.Cyph.Session.Users.app'
-									ng-bind='::message.author + ": "'
-								></strong>
-								<cyph-markdown
-									class='message-text'
-									markdown='::message.text'
-									ng-class='::{
-										"app-message":
-											message.author === $ctrl.Cyph.Session.Users.app
-									}'
-								></cyph-markdown>
-							</span>
-							<span flex class='message-timestamp'>
-								<span
-									class='mobile-only'
-									ng-show='::message.author === $ctrl.Cyph.Session.Users.me'
-								>
-									<span>{{::message.author}}</span> &nbsp;&mdash;&nbsp;
-								</span>
+							<div flex layout='column'>
+								<div layout='row'>
+									<span class='message'>
+										<strong
+											translate
+											class='message-author'
+											ng-hide='::message.author === $ctrl.Cyph.Session.Users.app'
+											ng-bind='::message.author + ": "'
+										></strong>
+										<cyph-markdown
+											class='message-text'
+											markdown='message.text'
+											ng-class='::{
+												"app-message":
+													message.author === $ctrl.Cyph.Session.Users.app
+											}'
+										></cyph-markdown>
+									</span>
+									<span flex class='message-timestamp'>
+										<span
+											class='mobile-only'
+											ng-show='::message.author === $ctrl.Cyph.Session.Users.me'
+										>
+											<span>{{::message.author}}</span> &nbsp;&mdash;&nbsp;
+										</span>
 
-								{{::message.timeString}}
+										{{::message.timeString}}
 
-								<span
-									class='mobile-only'
-									ng-show='::
-										message.author !== $ctrl.Cyph.Session.Users.me &&
-										message.author !== $ctrl.Cyph.Session.Users.app
+										<span
+											class='mobile-only'
+											ng-show='::
+												message.author !== $ctrl.Cyph.Session.Users.me &&
+												message.author !== $ctrl.Cyph.Session.Users.app
+											'
+										>
+											&nbsp;&mdash;&nbsp; <span>{{::message.author}}</span>
+										</span>
+									</span>
+								</div>
+								<div
+									class='self-destruct-timer'
+									layout='row'
+									ng-show='
+										message.selfDestructTimer &&
+										!message.selfDestructTimer.isComplete
 									'
 								>
-									&nbsp;&mdash;&nbsp; <span>{{::message.author}}</span>
-								</span>
-							</span>
+									Message will self-destruct in
+									<span class='countdown'>
+										{{message.selfDestructTimer.timestamp}}
+									</span>
+								</div>
+							</div>
 						</md-item>
 
 						<md-item
@@ -2222,6 +2246,9 @@ export const Templates	= {
 
 					<md-input-container class='connect-link-input desktop-only'>
 						<input translate ng-model='$ctrl.self.link' aria-label='Cyph link' />
+						<md-button class='copy' ng-click='$ctrl.self.copyToClipboard()'>
+							<i class='material-icons'>content_copy</i>
+						</md-button>
 					</md-input-container>
 
 					<div class='connect-link-mobile mobile-only'>
@@ -2261,10 +2288,58 @@ export const Templates	= {
 					<span translate>
 						Link expires in
 					</span>
-					<span class='timer'>
+					<span class='countdown'>
 						{{$ctrl.self.timer.timestamp}}
 					</span>
+					<md-button
+						ng-click='$ctrl.self.addTime(30000)'
+						aria-label='Increase Time by 30 seconds'
+					>
+						<i class='material-icons'>alarm_add</i>
+					</md-button>
 				</div>
+			</div>
+
+			<md-switch
+				class='advanced-features-switch'
+				ng-model='$ctrl.self.advancedFeatures'
+				aria-label='Advanced Features'
+			>
+				Advanced Features
+			</md-switch>
+
+			<div class='advanced-features' ng-show='$ctrl.self.advancedFeatures'>
+				<md-input-container class='queued-message-box'>
+					<label>Queue up first message</label>
+					<textarea
+						rows='3'
+						ng-model='$ctrl.queuedMessageDraft'
+					></textarea>
+				</md-input-container>
+				<div class='buttons'>
+					<md-button
+						ng-click='$ctrl.self.chat.setQueuedMessage(
+							$ctrl.queuedMessageDraft
+						)'
+					>
+						<i class='material-icons'>save</i>
+					</md-button>
+					<md-button
+						class='self-destruct-button'
+						ng-click='$ctrl.self.chat.setQueuedMessage(
+							undefined,
+							!$ctrl.self.chat.queuedMessageSelfDestruct
+						)'
+					>
+						<i
+							class='material-icons'
+							ng-class='{
+								"active": $ctrl.self.chat.queuedMessageSelfDestruct === true
+							}'
+						>
+							timer
+						</i>
+					</div>
 			</div>
 			<div flex></div>
 		</div>
@@ -2337,7 +2412,7 @@ export const Templates	= {
 						</div>
 						<div ng-if='$ctrl.invite' layout='row' layout-align='center center'>
 							<md-input-container class='md-block' flex='80'>
-								<input type='text' id='invitecode' ng-model='$ctrl.self.data.inviteCode' aria-label='Invite Code' />
+								<input type='text' ng-model='$ctrl.self.data.inviteCode' aria-label='Invite Code' />
 								<label>Invite Code</label>
 							</md-input-container>
 						</div>

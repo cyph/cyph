@@ -23,12 +23,21 @@ export interface ILinkConnection {
 	timer: ITimer;
 
 	/**
+	 * Extends the countdown duration.
+	 * @param milliseconds
+	 */
+	addTime (milliseconds: number) : void;
+
+	/**
 	 * Initiates UI for sending this link to friend.
 	 * @param baseUrl Base URL before the hash.
 	 * @param secret Secret being sent via URL fragment.
 	 * @param isPassive
 	 */
 	beginWaiting (baseUrl: string, secret: string, isPassive: boolean) : Promise<void>;
+
+	/** Copies link to clipboard. */
+	copyToClipboard () : Promise<void>;
 
 	/**
 	 * Stops waiting and tears down this link connection instance.
