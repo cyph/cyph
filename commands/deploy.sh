@@ -24,8 +24,6 @@ if [ ! "${simple}" ] ; then
 	./commands/keycache.sh
 fi
 
-gcloud auth login
-
 echo -e '\n\nInitial setup\n'
 
 if [ "${1}" == '--site' ] ; then

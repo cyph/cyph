@@ -203,7 +203,20 @@ elif [ "${command}" == 'websign/bootstraphash' ] ; then
 elif [ "${command}" == 'make' ] ; then
 	stop
 	start
-	docker build -t "${image}" .
+	docker build -t "${image}_base" .
+
+	interactiveContainer="$(echo "${image}_interactive" | sed 's|/|_|g')"
+	docker run -it \
+		-v $HOME/.cyph:/home/gibson/.cyph \
+		-v $HOME/.gitconfig:/home/gibson/.gitconfig \
+		-v $HOME/.gnupg:/home/gibson/.gnupg.original \
+		-v $HOME/.ssh:/home/gibson/.ssh \
+		--name="${interactiveContainer}" \
+		"${image}_base" \
+		/bin/bash -c 'gcloud auth login'
+	docker commit "${interactiveContainer}" "${image}"
+	docker rm -f "${interactiveContainer}"
+
 	exit 0
 
 elif [ "${command}" == 'makeclean' ] ; then
