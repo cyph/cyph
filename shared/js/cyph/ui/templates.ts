@@ -2291,7 +2291,10 @@ export const Templates	= {
 					<span class='countdown'>
 						{{$ctrl.self.timer.timestamp}}
 					</span>
-					<md-button aria-label='Increase Time'>
+					<md-button
+						ng-click='$ctrl.self.addTime(30000)'
+						aria-label='Increase Time by 30 seconds'
+					>
 						<i class='material-icons'>alarm_add</i>
 					</md-button>
 				</div>

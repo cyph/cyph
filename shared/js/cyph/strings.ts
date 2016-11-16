@@ -47,6 +47,7 @@ export const Strings = {
 	selfDestructActivated: `Cyph set to self-destruct.`,
 	selfDestructDeactivated: `Self-destruct deactivated.`,
 	suregoahead: `sure, go ahead`,
+	timeExtended: `Added time to countdown.`,
 	videoCall: `video call`,
 	warningTitle: `Warning`,
 

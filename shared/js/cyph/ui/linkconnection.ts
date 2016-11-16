@@ -35,6 +35,14 @@ export class LinkConnection implements ILinkConnection {
 		);
 	}
 
+	public addTime (milliseconds: number) : void {
+		this.timer.addTime(milliseconds);
+		this.dialogManager.toast({
+			content: Strings.timeExtended,
+			delay: 2500
+		});
+	}
+
 	public async beginWaiting (
 		baseUrl: string,
 		secret: string,
@@ -87,7 +95,10 @@ export class LinkConnection implements ILinkConnection {
 
 		try {
 			await clipboard.copy(this.linkConstant);
-			await this.dialogManager.toast({content: Strings.linkCopied, delay: 2500});
+			await this.dialogManager.toast({
+				content: Strings.linkCopied,
+				delay: 2500
+			});
 		}
 		finally {
 			this.isCopying	= false;
