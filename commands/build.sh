@@ -8,6 +8,8 @@ test=''
 simple=''
 cloneworkingdir=''
 
+eval "$(./commands/getgitdata.sh)"
+
 if [ "${1}" == '--watch' ] ; then
 	watch=true
 	shift
@@ -164,13 +166,32 @@ compile () {
 	fi
 }
 
+litedeploy () {
+	rm -rf ~/.litedeploy 2> /dev/null
+	mkdir ~/.litedeploy
+	cp -rf ~/.build/default ~/.build/cyph.im ~/.litedeploy
+	cd ~/.litedeploy
+
+	version="lite-${username}-${branch}"
+	deployedBackend="https://${version}-dot-cyphme.appspot.com"
+	localBackend='${locationData.protocol}//${locationData.hostname}:42000'
+
+	sed -i "s|staging|${version}|g" default/config.go
+	sed -i "s|${localBackend}|${deployedBackend}|g" cyph.im/js/cyph.im/main.js
+	gcloud app deploy --quiet --no-promote --project cyphme --version $version */*.yaml
+}
+
 if [ "${watch}" ] ; then
 	while true ; do
 		start="$(date +%s)"
 		echo -e '\n\n\nBuilding JS/CSS\n\n'
 		compile
 		echo -e "\n\n\nFinished building JS/CSS ($(expr $(date +%s) - $start)s)\n\n"
-		sleep 30
+
+		echo -e "\n\n\nDeploying to lite env\n\n"
+		litedeploy
+		echo -e "\n\n\nFinished deploying\n\n"
+
 		cd "${dir}/shared"
 		inotifywait -r --exclude '(node_modules|sed.*|.*\.(html|css|js|map|tmp))$' css js
 	done

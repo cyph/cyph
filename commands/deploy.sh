@@ -52,12 +52,9 @@ if [ "${simple}" ] ; then
 fi
 
 # Branch config setup
+eval "$(./commands/getgitdata.sh)"
+
 staging=''
-branch="$(
-	git describe --tags --exact-match 2> /dev/null || git branch | 
-	awk '/^\*/{print $2}' | 
-	tr '[:upper:]' '[:lower:]'
-)"
 if [ "${branch}" == 'prod' ] ; then
 	branch='staging'
 
@@ -68,9 +65,7 @@ elif [ ! "${test}" ] ; then
 	echo 'Cannot do prod deploy from test branch'
 	exit 1
 fi
-version="$branch"
-remote="$(git branch -vv | grep '^*' | perl -pe 's/.*\[(.*?)\/.*/\1/')"
-username="$(git config --get remote.${remote}.url | perl -pe 's/.*:(.*)\/.*/\1/' | tr '[:upper:]' '[:lower:]')"
+version="${branch}"
 if [ "${test}" -a "${username}" != cyph ] ; then
 	version="${username}-${version}"
 fi
