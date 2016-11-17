@@ -45,6 +45,14 @@ image="cyph/$(
 	git branch | awk '/^\*/{print $2}' | tr '[:upper:]' '[:lower:]'
 )"
 
+mounts=" \
+	-v $HOME/.cyph:/home/gibson/.cyph \
+	-v $HOME/.gitconfig:/home/gibson/.gitconfig \
+	-v $HOME/.gnupg:/home/gibson/.gnupg.original \
+	-v $HOME/.ssh:/home/gibson/.ssh \
+	-v $(echo "$(pwd)://cyph" | sed 's/\/cygdrive/\//g') \
+"
+
 # Foreground by default
 processType='--rm=true'
 
@@ -63,15 +71,7 @@ if [ "${command}" == 'serve' ] ; then
 		shift
 	fi
 
-	args=" \
-		-v $HOME/.cyph:/home/gibson/.cyph \
-		-v $HOME/.ssh:/home/gibson/.ssh \
-		--privileged=true \
-		-p 42000:5000 \
-		-p 42001:5001 \
-		-p 42002:5002 \
-		-p 44000:44000 \
-	"
+	args='--privileged=true -p 42000:5000 -p 42001:5001 -p 42002:5002 -p 44000:44000'
 
 	base='http://localhost'
 
@@ -88,15 +88,7 @@ elif [ "${command}" == 'kill' ] ; then
 	exit 0
 
 elif [ "${command}" == 'deploy' ] ; then
-	args=" \
-		-it \
-		-v $HOME/.cyph:/home/gibson/.cyph \
-		-v $HOME/.gitconfig:/home/gibson/.gitconfig \
-		-v $HOME/.gnupg:/home/gibson/.gnupg.original \
-		-v $HOME/.ssh:/home/gibson/.ssh \
-		--privileged=true \
-		-p 31337:31337/udp \
-	"
+	args='-it --privileged=true -p 31337:31337/udp'
 
 	chmod -R 700 .
 
@@ -165,20 +157,15 @@ elif [ "${command}" == 'build' ] ; then
 	args=''
 
 elif [ "${command}" == 'commit' ] ; then
-	args=" \
-		-it \
-		-v $HOME/.gitconfig:/home/gibson/.gitconfig \
-		-v $HOME/.gnupg:/home/gibson/.gnupg.original \
-		-v $HOME/.ssh:/home/gibson/.ssh \
-	"
+	args='-it'
 
 	chmod -R 700 .
 
 elif [ "${command}" == 'backmerge' ] ; then
-	args="-v $HOME/.gitconfig:/home/gibson/.gitconfig -v $HOME/.ssh:/home/gibson/.ssh"
+	args=''
 
 elif [ "${command}" == 'prodmerge' ] ; then
-	args="-v $HOME/.gitconfig:/home/gibson/.gitconfig -v $HOME/.ssh:/home/gibson/.ssh"
+	args=''
 
 elif [ "${command}" == 'docs' ] ; then
 	args=''
@@ -189,13 +176,7 @@ elif [ "${command}" == 'restart' ] ; then
 	exit 0
 
 elif [ "${command}" == 'updatelibs' ] ; then
-	args=" \
-		-it \
-		-v $HOME/.cyph:/home/gibson/.cyph \
-		-v $HOME/.gitconfig:/home/gibson/.gitconfig \
-		-v $HOME/.gnupg:/home/gibson/.gnupg.original \
-		-v $HOME/.ssh:/home/gibson/.ssh \
-	"
+	args='-it'
 
 elif [ "${command}" == 'websign/bootstraphash' ] ; then
 	args=''
@@ -207,10 +188,7 @@ elif [ "${command}" == 'make' ] ; then
 
 	interactiveContainer="$(echo "${image}_interactive" | sed 's|/|_|g')"
 	docker run -it \
-		-v $HOME/.cyph:/home/gibson/.cyph \
-		-v $HOME/.gitconfig:/home/gibson/.gitconfig \
-		-v $HOME/.gnupg:/home/gibson/.gnupg.original \
-		-v $HOME/.ssh:/home/gibson/.ssh \
+		$mounts \
 		--name="${interactiveContainer}" \
 		"${image}_base" \
 		/bin/bash -c 'gcloud auth login'
@@ -234,8 +212,8 @@ fi
 
 docker run \
 	$processType \
+	$mounts \
 	$args \
-	-v "$(echo "$(pwd)://cyph" | sed 's/\/cygdrive/\//g')" \
 	"${image}" \
 	bash -c "source ~/.bashrc ; /cyph/commands/${command}.sh $*"
 
