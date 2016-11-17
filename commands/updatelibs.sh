@@ -140,12 +140,12 @@ bash -c "$(node -e '
 		;
 
 		return mkdirCommand +
-			`ln -s "${symlinkParent}${pathBase}@$(${findVersionCommand})" "${k}"`
+			`mv "${symlinkParent}${pathBase}@$(${findVersionCommand})" "${k}"`
 		;
 	}).join(" ; "));'
 )"
 
-rm -rf config.js package.json jspm_packages 2> /dev/null
+rm -rf github npm config.js package.json jspm_packages 2> /dev/null
 
 find . -name '*@*.js' -type f -exec bash -c '
 	cat {} | perl -pe "s/(require\(\".*?):/\1\//g" > {}.new;
