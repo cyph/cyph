@@ -310,10 +310,15 @@ if [ "${test}" ] ; then
 
 	homeURL="https://${version}-dot-cyph-com-dot-cyphme.appspot.com"
 
+	# Disable caching in test environments
 	if [ ! "${staging}" ] ; then
-		# Disable caching in test environments
 		ls */*.yaml | xargs -I% sed -i 's|max-age=31536000|max-age=0|g' %
 	fi
+
+	for yaml in `ls */cyph*.yaml` ; do
+		cat $yaml | perl -pe 's/(- url: .*)/\1\n  login: admin/g' > $yaml.new
+		mv $yaml.new $yaml
+	done
 else
 	sed -i "s|http://localhost:42000|https://api.cyph.com|g" default/config.go
 	ls shared/js/cyph/envdeploy.ts | xargs -I% sed -i "s|${defaultHost}42000|https://api.cyph.com|g" %

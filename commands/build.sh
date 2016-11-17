@@ -178,6 +178,9 @@ litedeploy () {
 
 	sed -i "s|staging|${version}|g" default/config.go
 	sed -i "s|${localBackend}|${deployedBackend}|g" cyph.im/js/cyph.im/main.js
+	cat cyph.im/cyph-im.yaml | perl -pe 's/(- url: .*)/\1\n  login: admin/g' > yaml.new
+	mv yaml.new cyph.im/cyph-im.yaml
+
 	gcloud app deploy --quiet --no-promote --project cyphme --version $version */*.yaml
 }
 
