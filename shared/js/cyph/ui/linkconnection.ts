@@ -8,7 +8,6 @@ import {ITimer} from '../itimer';
 import {Strings} from '../strings';
 import {Util} from '../util';
 import {Events} from '../session/enums';
-import * as Chat from './chat';
 
 
 export class LinkConnection implements ILinkConnection {
