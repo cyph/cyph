@@ -6,8 +6,8 @@
 /// <reference path="../preload/fakecrypto.ts" />
 /// <reference path="../preload/jquery.ts" />
 
-import {AppComponent} from './appcomponent';
 import {AppModule} from './appmodule';
+import {HomeComponent} from './homecomponent';
 import {CyphDemo} from './cyphdemo';
 import {Elements} from './elements';
 import {HomeSections, PageTitles, Promos, States} from './enums';
@@ -82,8 +82,8 @@ angular.
 		Cyph.UI.Components.SignupForm.config
 	).
 	component(
-		AppComponent.title,
-		AppComponent.config
+		HomeComponent.title,
+		HomeComponent.config
 	)
 ;
 

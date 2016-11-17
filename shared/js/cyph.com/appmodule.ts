@@ -1,4 +1,5 @@
 import {AppComponent} from './appcomponent';
+import {HomeComponent} from './homecomponent';
 import {CommonModule} from '@angular/common';
 import {NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
@@ -35,6 +36,7 @@ import {
 		Checkout,
 		Contact,
 		FileInput,
+		HomeComponent,
 		LinkConnection,
 		Markdown,
 		SignupForm,

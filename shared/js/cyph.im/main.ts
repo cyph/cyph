@@ -9,7 +9,6 @@
 /// <reference path="../preload/jquery.ts" />
 /// <reference path="../preload/translations.ts" />
 
-import {AppComponent} from './appcomponent';
 import {AppModule} from './appmodule';
 import {BetaStates, States, UrlSections} from './enums';
 import {UI} from './ui';
