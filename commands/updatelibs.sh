@@ -123,7 +123,6 @@ bash -c "$(node -e '
 		const pathBase		= versionSplit(path)[0];
 		const pathSplit		= path.split("/");
 		const package		= versionSplit(pathSplit.slice(1).join("/"));
-		const symlinkParent	= k.split("/").map(s => "..").join("/").replace(/..$/, "");
 
 		const findVersionCommand	=
 			`find ./${pathSplit[0]} -type d | ` +
@@ -138,9 +137,7 @@ bash -c "$(node -e '
 			``
 		;
 
-		return mkdirCommand +
-			`mv "${symlinkParent}${pathBase}@$(${findVersionCommand})" "${k}"`
-		;
+		return mkdirCommand + `mv "${pathBase}@$(${findVersionCommand})" "${k}"`;
 	}).join(" ; "));'
 )"
 
