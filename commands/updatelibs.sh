@@ -72,7 +72,7 @@ jspm install -y \
 	npm:@angular/upgrade \
 	npm:rxjs \
 	angular \
-	angular-material \
+	angular-material@master \
 	angular-aria \
 	angular-animate \
 	npm:dompurify \
