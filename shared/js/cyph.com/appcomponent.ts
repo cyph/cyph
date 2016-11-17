@@ -22,7 +22,7 @@ import {
 })
 export class AppComponent extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
 	/** Component title. */
-	public static title: string	= 'cyphStaticFooter';
+	public static title: string	= 'cyphApp';
 
 	/** Component configuration. */
 	public static config		= {
