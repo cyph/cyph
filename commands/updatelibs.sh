@@ -149,8 +149,6 @@ find . -name '*@*.js' -type f -exec bash -c '
 ' \;
 
 
-sed -i 's/^\/dist$//' jquery/.gitignore
-
 git clone https://github.com/angular/zone.js.git
 rm -rf zone.js/.git
 
