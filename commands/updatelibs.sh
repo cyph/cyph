@@ -83,8 +83,7 @@ jspm install -y \
 	github:andyet/simplewebrtc \
 	npm:animate.css \
 	github:davidchambers/base64.js \
-	jquery@^2 \
-	jquery-legacy=github:jquery/jquery@^1 \
+	jquery \
 	npm:magnific-popup \
 	npm:file-saver \
 	npm:clipboard-js \
@@ -153,7 +152,7 @@ find . -name '*@*.js' -type f -exec bash -c '
 ' \;
 
 
-sed -i 's/^\/dist$//' jquery*/.gitignore
+sed -i 's/^\/dist$//' jquery/.gitignore
 
 git clone https://github.com/angular/zone.js.git
 rm -rf zone.js/.git
