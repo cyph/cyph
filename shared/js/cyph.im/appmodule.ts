@@ -43,4 +43,6 @@ import {
 		StaticFooter
 	]
 })
-export class AppModule {}
+export class AppModule {
+	ngDoBootstrap () {}
+}

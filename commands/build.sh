@@ -140,7 +140,6 @@ compile () {
 	if [ ! "${simple}" -o ! "${test}" ] ; then
 		for f in $tsfiles ; do
 			webpack \
-				--optimize-dedupe \
 				--output-library-target var \
 				--output-library "$(modulename $f)" \
 				$f.js \

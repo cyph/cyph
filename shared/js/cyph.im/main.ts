@@ -14,7 +14,7 @@ import {AppModule} from './appmodule';
 import {BetaStates, States, UrlSections} from './enums';
 import {UI} from './ui';
 import {Loaded} from '../preload';
-import {platformBrowser} from '@angular/platform-browser';
+import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
 import {UpgradeModule} from '@angular/upgrade/static';
 import * as Cyph from '../cyph';
 
@@ -99,7 +99,7 @@ angular.
 
 
 (async () => (
-	await platformBrowser().bootstrapModule(AppModule)
+	await platformBrowserDynamic().bootstrapModule(AppModule)
 ).injector.get(UpgradeModule).bootstrap(
 	document.body,
 	[Cyph.Config.angularConfig.rootModule]
