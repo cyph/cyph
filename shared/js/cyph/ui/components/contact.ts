@@ -2,12 +2,28 @@ import {Templates} from '../templates';
 import {Config} from '../../config';
 import {Env} from '../../env';
 import {Util} from '../../util';
+import {UpgradeComponent} from '@angular/upgrade/static';
+import {
+	Directive,
+	DoCheck,
+	ElementRef,
+	Inject,
+	Injector,
+	Input,
+	OnChanges,
+	OnDestroy,
+	OnInit,
+	SimpleChanges
+} from '@angular/core';
 
 
 /**
  * Angular component for contact form UI.
  */
-export class Contact {
+@Directive({
+	selector: 'cyph-contact'
+})
+export class Contact extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
 	/** Component title. */
 	public static title: string	= 'cyphContact';
 
@@ -24,7 +40,7 @@ export class Contact {
 	public Cyph: any;
 	public ui: any;
 
-	public self: {
+	@Input() self: {
 		fromEmail: string;
 		fromName: string;
 		message: string;
@@ -38,30 +54,44 @@ export class Contact {
 		this.self.sent	= true;
 	}
 
-	constructor ($scope, $element) { (async () => {
-		while (!self['Cyph'] || !self['ui']) {
-			await Util.sleep(100);
-		}
+	ngDoCheck () { super.ngDoCheck(); }
+	ngOnChanges (changes: SimpleChanges) { super.ngOnChanges(changes); }
+	ngOnDestroy () { super.ngOnDestroy(); }
+	ngOnInit () { super.ngOnInit(); }
 
-		this.Cyph	= self['Cyph'];
-		this.ui		= self['ui'];
+	constructor (
+		@Inject(ElementRef) elementRef: ElementRef,
+		@Inject(Injector) injector: Injector
+	) {
+		super(Contact.title, elementRef, injector);
 
-		if (!this.self) {
-			this.self	= {
-				fromEmail: '',
-				fromName: '',
-				message: '',
-				to: '',
-				sent: false,
-				subject: ''
-			};
-		}
-
-		for (let k of ['fromEmail', 'fromName', 'to', 'subject', 'message']) {
-			const v	= $element.attr(k);
-			if (v) {
-				this.self[k]	= v;
+		(async () => {
+			while (!self['Cyph'] || !self['ui']) {
+				await Util.sleep(100);
 			}
-		}
-	})(); }
+
+			this.Cyph	= self['Cyph'];
+			this.ui		= self['ui'];
+
+			const $elementRef	= $(elementRef);
+
+			if (!this.self) {
+				this.self	= {
+					fromEmail: '',
+					fromName: '',
+					message: '',
+					to: '',
+					sent: false,
+					subject: ''
+				};
+			}
+
+			for (let k of ['fromEmail', 'fromName', 'to', 'subject', 'message']) {
+				const v	= $elementRef.attr(k);
+				if (v) {
+					this.self[k]	= v;
+				}
+			}
+		})();
+	}
 }

@@ -10,10 +10,12 @@
 /// <reference path="../preload/translations.ts" />
 
 import {AppComponent} from './appcomponent';
-import {upgradeAdapter} from './appmodule';
+import {AppModule} from './appmodule';
 import {BetaStates, States, UrlSections} from './enums';
 import {UI} from './ui';
 import {Loaded} from '../preload';
+import {platformBrowser} from '@angular/platform-browser';
+import {UpgradeModule} from '@angular/upgrade/static';
 import * as Cyph from '../cyph';
 
 
@@ -92,21 +94,16 @@ angular.
 	component(
 		Cyph.UI.Components.StaticFooter.title,
 		Cyph.UI.Components.StaticFooter.config
-	).
-	directive(
-		'cyphApp',
-		<angular.IDirectiveFactory>
-		upgradeAdapter.downgradeNg2Component(
-			AppComponent
-		)
 	)
 ;
 
 
-upgradeAdapter.bootstrap(
+(async () => (
+	await platformBrowser().bootstrapModule(AppModule)
+).injector.get(UpgradeModule).bootstrap(
 	document.body,
 	[Cyph.Config.angularConfig.rootModule]
-);
+))();
 
 
 export {Loaded};

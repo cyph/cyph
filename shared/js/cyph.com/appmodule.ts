@@ -1,19 +1,27 @@
+import {AppComponent} from './appcomponent';
 import {CommonModule} from '@angular/common';
-import {NgModule, forwardRef} from '@angular/core';
+import {NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
-import {UpgradeAdapter} from '@angular/upgrade';
-
-
-export const upgradeAdapter	= new UpgradeAdapter(
-	forwardRef(() => AppModule)
-);
+import {UpgradeModule} from '@angular/upgrade/static';
+import * as Cyph from '../cyph';
 
 
 @NgModule({
 	imports: [
 		BrowserModule,
-		CommonModule
+		CommonModule,
+		UpgradeModule
 	],
-	declarations: []
+	declarations: [
+		AppComponent,
+		Cyph.UI.Components.ChatCyphertext,
+		Cyph.UI.Components.ChatMain,
+		Cyph.UI.Components.ChatMessageBox,
+		Cyph.UI.Components.Checkout,
+		Cyph.UI.Components.Contact,
+		Cyph.UI.Components.FileInput,
+		Cyph.UI.Components.Markdown,
+		Cyph.UI.Components.SignupForm
+	]
 })
 export class AppModule {}

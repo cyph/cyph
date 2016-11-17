@@ -69,14 +69,6 @@ modulename () {
 	fi
 }
 
-tsbuild () {
-	# if [ "${watch}" -o "${test}" -o "${simple}" ] ; then
-		tsc $*
-	# else
-	# 	ngc $*
-	# fi
-}
-
 compile () {
 	cd "${dir}/shared"
 
@@ -140,7 +132,7 @@ compile () {
 		);
 	"
 
-	output="${output}$(tsbuild -p .)"
+	output="${output}$(ngc -p .)"
 
 	if [ ! "${simple}" -o ! "${test}" ] ; then
 		for f in $tsfiles ; do

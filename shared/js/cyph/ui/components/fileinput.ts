@@ -1,11 +1,29 @@
 import {Templates} from '../templates';
 import {Util} from '../../util';
+import {UpgradeComponent} from '@angular/upgrade/static';
+import {
+	Directive,
+	DoCheck,
+	ElementRef,
+	EventEmitter,
+	Inject,
+	Injector,
+	Input,
+	OnChanges,
+	OnDestroy,
+	OnInit,
+	Output,
+	SimpleChanges
+} from '@angular/core';
 
 
 /**
  * Angular component for taking file input.
  */
-export class FileInput {
+@Directive({
+	selector: 'cyph-file-input'
+})
+export class FileInput extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
 	/** Component title. */
 	public static title: string	= 'cyphFileInput';
 
@@ -20,13 +38,24 @@ export class FileInput {
 	};
 
 
-	public accept: string;
-	public fileChange: Function;
+	@Input() accept: string;
+	@Output() fileChange	= new EventEmitter<File>();
 
-	constructor ($scope, $element) {
-		const $input	= $element.children();
-		const input		= $input[0];
-		const lock		= {};
+	ngDoCheck () { super.ngDoCheck(); }
+	ngOnChanges (changes: SimpleChanges) { super.ngOnChanges(changes); }
+	ngOnDestroy () { super.ngOnDestroy(); }
+	ngOnInit () { super.ngOnInit(); }
+
+	constructor (
+		@Inject(ElementRef) elementRef: ElementRef,
+		@Inject(Injector) injector: Injector
+	) {
+		super(FileInput.title, elementRef, injector);
+
+		const $elementRef	= $(elementRef);
+		const $input		= $elementRef.children();
+		const input			= <HTMLInputElement> $input[0];
+		const lock			= {};
 
 		$input.
 			change(() => {
@@ -34,10 +63,7 @@ export class FileInput {
 					return;
 				}
 
-				$scope.$parent.file	= input.files[0];
-				this.fileChange();
-
-				$scope.$parent.file	= null;
+				this.fileChange.emit(input.files[0]);
 				$input.val('');
 			}).
 			click(e => {

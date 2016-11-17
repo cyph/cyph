@@ -1,11 +1,27 @@
 import {Env} from '../../env';
 import {Util} from '../../util';
+import {UpgradeComponent} from '@angular/upgrade/static';
+import {
+	Directive,
+	DoCheck,
+	ElementRef,
+	Inject,
+	Injector,
+	Input,
+	OnChanges,
+	OnDestroy,
+	OnInit,
+	SimpleChanges
+} from '@angular/core';
 
 
 /**
  * Angular component for rendering Markdown.
  */
-export class Markdown {
+@Directive({
+	selector: 'cyph-markdown'
+})
+export class Markdown extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
 	/** Component title. */
 	public static title: string	= 'cyphMarkdown';
 
@@ -19,23 +35,26 @@ export class Markdown {
 	};
 
 
+	private $elementRef: JQuery;
 	private markdownIt: any;
 
-	public markdown: string;
+	@Input() markdown: string;
 
-	public async $onChanges (changes: any) : Promise<void> {
+	async ngOnChanges (changes: SimpleChanges) {
+		super.ngOnChanges(changes);
+
 		if (this.markdown === null) {
-			this.$element.css('display', 'block');
+			this.$elementRef.css('display', 'block');
 
 			await Util.sleep(10000);
 
-			this.$element.
-				height(this.$element.height()).
-				width(this.$element.width())
+			this.$elementRef.
+				height(this.$elementRef.height()).
+				width(this.$elementRef.width())
 			;
 		}
 
-		this.$element.html(
+		this.$elementRef.html(
 			DOMPurify.sanitize(
 				this.markdownIt.render(this.markdown || '').
 
@@ -66,8 +85,19 @@ export class Markdown {
 		);
 	}
 
-	constructor ($scope, private $element) {
-		this.markdownIt	= new self['markdownit']({
+	ngDoCheck () { super.ngDoCheck(); }
+	ngOnDestroy () { super.ngOnDestroy(); }
+	ngOnInit () { super.ngOnInit(); }
+
+	constructor (
+		@Inject(ElementRef) elementRef: ElementRef,
+		@Inject(Injector) injector: Injector
+	) {
+		super(Markdown.title, elementRef, injector);
+
+		this.$elementRef	= $(elementRef);
+
+		this.markdownIt		= new self['markdownit']({
 			html: false,
 			breaks: true,
 			linkify: true,
@@ -82,7 +112,10 @@ export class Markdown {
 				) +
 				'‘’'
 			,
-			highlight: s => self['microlight'].process(s, this.$element.css('color'))
+			highlight: s => self['microlight'].process(
+				s,
+				this.$elementRef.css('color')
+			)
 		}).
 			disable('image').
 			use(self['markdownitSup']).

@@ -7,12 +7,14 @@
 /// <reference path="../preload/jquery.ts" />
 
 import {AppComponent} from './appcomponent';
-import {upgradeAdapter} from './appmodule';
+import {AppModule} from './appmodule';
 import {CyphDemo} from './cyphdemo';
 import {Elements} from './elements';
 import {HomeSections, PageTitles, Promos, States} from './enums';
 import {UI} from './ui';
 import {Loaded} from '../preload';
+import {platformBrowser} from '@angular/platform-browser';
+import {UpgradeModule} from '@angular/upgrade/static';
 import * as Cyph from '../cyph';
 
 
@@ -86,10 +88,12 @@ angular.
 ;
 
 
-upgradeAdapter.bootstrap(
+(async () => (
+	await platformBrowser().bootstrapModule(AppModule)
+).injector.get(UpgradeModule).bootstrap(
 	document.body,
 	[Cyph.Config.angularConfig.rootModule]
-);
+))();
 
 
 /* Redirect to Onion site when on Tor */

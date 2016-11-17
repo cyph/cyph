@@ -4,12 +4,28 @@ import {VisibilityWatcher} from '../visibilitywatcher';
 import {IChat} from '../chat/ichat';
 import {Env} from '../../env';
 import {Util} from '../../util';
+import {UpgradeComponent} from '@angular/upgrade/static';
+import {
+	Directive,
+	DoCheck,
+	ElementRef,
+	Inject,
+	Injector,
+	Input,
+	OnChanges,
+	OnDestroy,
+	OnInit,
+	SimpleChanges
+} from '@angular/core';
 
 
 /**
  * Angular component for chat message box.
  */
-export class ChatMessageBox {
+@Directive({
+	selector: 'cyph-chat-message-box'
+})
+export class ChatMessageBox extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
 	/** Component title. */
 	public static title: string	= 'cyphChatMessageBox';
 
@@ -24,54 +40,68 @@ export class ChatMessageBox {
 
 
 	public Cyph: any;
-	public self: IChat;
+	@Input() self: IChat;
 
 	public isSpeedDialOpen: boolean	= true;
 
-	constructor ($scope, $element) { (async () => {
-		while (!self['Cyph']) {
-			await Util.sleep(100);
-		}
+	ngDoCheck () { super.ngDoCheck(); }
+	ngOnChanges (changes: SimpleChanges) { super.ngOnChanges(changes); }
+	ngOnDestroy () { super.ngOnDestroy(); }
+	ngOnInit () { super.ngOnInit(); }
 
-		this.Cyph	= self['Cyph'];
+	constructor (
+		@Inject(ElementRef) elementRef: ElementRef,
+		@Inject(Injector) injector: Injector
+	) {
+		super(ChatMessageBox.title, elementRef, injector);
 
-		/* Allow enter press to submit, except on
-			mobile without external keyboard */
-
-		let $textarea: JQuery;
-		while (!$textarea || $textarea.length < 1) {
-			$textarea	= $element.find('textarea');
-			await Util.sleep(100);
-		}
-
-		$textarea.keypress(e => {
-			if (
-				(Env.isMobile && VirtualKeyboardWatcher.isOpen) ||
-				e.keyCode !== 13 ||
-				e.shiftKey
-			) {
-				return;
+		(async () => {
+			while (!self['Cyph']) {
+				await Util.sleep(100);
 			}
 
-			e.preventDefault();
-			this.self.send();
-		});
+			this.Cyph	= self['Cyph'];
 
-		/* Temporary workarounds for Angular Material bugs */
+			const $elementRef	= $(elementRef);
 
-		let $speedDial: JQuery;
-		while (!$speedDial || $speedDial.length < 1) {
-			$speedDial	= $element.find('md-fab-speed-dial:visible');
-			await Util.sleep(100);
-		}
+			/* Allow enter press to submit, except on
+				mobile without external keyboard */
 
-		$speedDial.removeClass('md-animations-waiting');
+			let $textarea: JQuery;
+			while (!$textarea || $textarea.length < 1) {
+				$textarea	= $elementRef.find('textarea');
+				await Util.sleep(100);
+			}
 
-		while (!VisibilityWatcher.isVisible) {
-			await Util.sleep(100);
-		}
+			$textarea.keypress(e => {
+				if (
+					(Env.isMobile && VirtualKeyboardWatcher.isOpen) ||
+					e.keyCode !== 13 ||
+					e.shiftKey
+				) {
+					return;
+				}
 
-		await Util.sleep(1000);
-		this.isSpeedDialOpen	= false;
-	})(); }
+				e.preventDefault();
+				this.self.send();
+			});
+
+			/* Temporary workarounds for Angular Material bugs */
+
+			let $speedDial: JQuery;
+			while (!$speedDial || $speedDial.length < 1) {
+				$speedDial	= $elementRef.find('md-fab-speed-dial:visible');
+				await Util.sleep(100);
+			}
+
+			$speedDial.removeClass('md-animations-waiting');
+
+			while (!VisibilityWatcher.isVisible) {
+				await Util.sleep(100);
+			}
+
+			await Util.sleep(1000);
+			this.isSpeedDialOpen	= false;
+		})();
+	}
 }
