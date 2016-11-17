@@ -85,7 +85,7 @@ compile () {
 		if [ "${watch}" ] ; then
 			$command &
 		else
-			output="${output}$($command)"
+			output="${output}$($command 2>&1)"
 		fi
 	done
 
@@ -116,23 +116,26 @@ compile () {
 		done
 	fi
 
-	node -e "
-		const tsconfig	= JSON.parse(
-			fs.readFileSync('tsconfig.json').toString()
-		);
+	for f in $tsfiles ; do
+		node -e "
+			const tsconfig	= JSON.parse(
+				fs.readFileSync('tsconfig.json').toString()
+			);
 
-		tsconfig.files	= 'preload/global ${tsfiles}'.
-			trim().
-			split(/\s+/).map(f => f + '.ts')
-		;
+			tsconfig.files	= 'preload/global ${f}'.
+				trim().
+				split(/\s+/).
+				map(f => f + '.ts')
+			;
 
-		fs.writeFileSync(
-			'tsconfig.json',
-			JSON.stringify(tsconfig)
-		);
-	"
+			fs.writeFileSync(
+				'tsconfig.json',
+				JSON.stringify(tsconfig)
+			);
+		"
 
-	output="${output}$(ngc -p .)"
+		output="${output}$(ngc -p . 2>&1)"
+	done
 
 	if [ ! "${simple}" -o ! "${test}" ] ; then
 		for f in $tsfiles ; do

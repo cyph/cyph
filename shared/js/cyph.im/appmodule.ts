@@ -3,7 +3,21 @@ import {CommonModule} from '@angular/common';
 import {NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import {UpgradeModule} from '@angular/upgrade/static';
-import * as Cyph from '../cyph';
+import {
+	Beta,
+	ChatCyphertext,
+	ChatMain,
+	ChatMessageBox,
+	Checkout,
+	Contact,
+	FileInput,
+	LinkConnection,
+	Markdown,
+	SignupForm,
+	StaticCyphNotFound,
+	StaticCyphSpinningUp,
+	StaticFooter
+} from '../cyph/ui/components';
 
 
 @NgModule({
@@ -14,17 +28,19 @@ import * as Cyph from '../cyph';
 	],
 	declarations: [
 		AppComponent,
-		Cyph.UI.Components.Beta,
-		Cyph.UI.Components.ChatCyphertext,
-		Cyph.UI.Components.ChatMain,
-		Cyph.UI.Components.ChatMessageBox,
-		Cyph.UI.Components.FileInput,
-		Cyph.UI.Components.LinkConnection,
-		Cyph.UI.Components.Markdown,
-		Cyph.UI.Components.SignupForm,
-		Cyph.UI.Components.StaticCyphNotFound,
-		Cyph.UI.Components.StaticCyphSpinningUp,
-		Cyph.UI.Components.StaticFooter
+		Beta,
+		ChatCyphertext,
+		ChatMain,
+		ChatMessageBox,
+		Checkout,
+		Contact,
+		FileInput,
+		LinkConnection,
+		Markdown,
+		SignupForm,
+		StaticCyphNotFound,
+		StaticCyphSpinningUp,
+		StaticFooter
 	]
 })
 export class AppModule {}
