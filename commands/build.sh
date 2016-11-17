@@ -179,15 +179,13 @@ litedeploy () {
 }
 
 if [ "${watch}" ] ; then
-	deploy=''
-
 	while true ; do
 		sleep 2m
 
-		if [ "${deploy}" ] ; then
+		if [ -f ~/.litedeploy.tmp ] ; then
 			echo -e "\n\n\nDeploying to lite env\n\n"
 			litedeploy
-			deploy=''
+			rm ~/.litedeploy.tmp 2> /dev/null
 			echo -e "\n\n\nFinished deploying\n\n"
 		fi
 
@@ -195,12 +193,14 @@ if [ "${watch}" ] ; then
 	done &
 
 	while true ; do
+		rm ~/.litedeploy.tmp 2> /dev/null
+
 		start="$(date +%s)"
 		echo -e '\n\n\nBuilding JS/CSS\n\n'
 		compile
 		echo -e "\n\n\nFinished building JS/CSS ($(expr $(date +%s) - $start)s)\n\n"
 
-		deploy=true
+		touch ~/.litedeploy.tmp
 
 		cd "${dir}/shared"
 		inotifywait -r --exclude '(node_modules|sed.*|.*\.(html|css|js|map|tmp))$' css js
