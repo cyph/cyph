@@ -1,3 +1,6 @@
+import {Util} from '../util';
+
+
 /**
  * Carousel UI component.
  */
@@ -48,19 +51,20 @@ export class Carousel {
 	public constructor (
 		private rootElement: JQuery,
 		callback: Function = () => {}
-	) {
-		this.logos	= this.rootElement.find('.logo');
-		this.quotes	= this.rootElement.find('.quote');
+	) { (async () => {
+		while (!this.quotes || this.quotes.length < 1) {
+			await Util.sleep(100);
+			this.logos	= this.rootElement.find('.logo');
+			this.quotes	= this.rootElement.find('.quote');
+		}
+		
+		this.setItem(0);
+		callback();
 
-		setTimeout(() => {
-			this.setItem(0);
-			callback();
-
-			setInterval(() => {
-				if (this.rootElement.is(':appeared') && --this.counter <= 0) {
-					this.setItem();
-				}
-			}, 50);
-		}, 1000);
-	}
+		setInterval(() => {
+			if (this.rootElement.is(':appeared') && --this.counter <= 0) {
+				this.setItem();
+			}
+		}, 50);
+	})(); }
 }
