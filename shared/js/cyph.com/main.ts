@@ -14,7 +14,7 @@ import {Elements} from './elements';
 import {HomeSections, PageTitles, Promos, States} from './enums';
 import {UI} from './ui';
 import {Loaded} from '../preload';
-import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
+import {platformBrowser} from '@angular/platform-browser';
 import {UpgradeModule, downgradeComponent} from '@angular/upgrade/static';
 import * as Cyph from '../cyph';
 
@@ -96,7 +96,7 @@ angular.
 (async () => (
 	<UpgradeModule>
 	(
-		await platformBrowserDynamic().bootstrapModule(AppModule)
+		await platformBrowser().bootstrapModule(AppModule)
 	).injector.get(UpgradeModule)
 ).bootstrap(
 	document.body,
