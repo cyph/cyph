@@ -6,7 +6,7 @@ dir="$(pwd)"
 
 cacheBustedProjects='cyph.com'
 compiledProjects='cyph.com cyph.im'
-prodOnlyProjects='test nakedredirect'
+prodOnlyProjects='nakedredirect test websign'
 shortlinkProjects='io me video audio'
 site=''
 test=true
@@ -19,12 +19,6 @@ elif [ "${1}" == '--simple' ] ; then
 	simple=true
 	shift
 fi
-
-if [ ! "${simple}" ] ; then
-	./commands/keycache.sh
-fi
-
-echo -e '\n\nInitial setup\n'
 
 if [ "${1}" == '--site' ] ; then
 	shift
@@ -50,6 +44,12 @@ if [ "${simple}" ] ; then
 	websign=''
 	cacheBustedProjects=''
 fi
+
+if [ "${websign}" ] ; then
+	./commands/keycache.sh
+fi
+
+echo -e '\n\nInitial setup\n'
 
 # Branch config setup
 eval "$(./commands/getgitdata.sh)"
@@ -847,7 +847,10 @@ gcloud app deploy --quiet --no-promote --project cyphme --version $version $(
 	else
 		ls */*.yaml
 	fi
-) dispatch.yaml
+	if [ ! "${test}" ] ; then
+		echo dispatch.yaml
+	fi
+)
 
 cd "${dir}"
 rm -rf .build 2> /dev/null
