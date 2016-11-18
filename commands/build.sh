@@ -174,7 +174,7 @@ compile () {
 					delete=''
 				fi
 			done
-			if [ "${include}" ] ; then
+			if [ "${delete}" ] ; then
 				rm "${js}"
 			fi
 		done
