@@ -18,7 +18,13 @@ export class Carousel {
 	 * Sets the active item to be displayed.
 	 * @param itemNumber
 	 */
-	public setItem (itemNumber: number = this.itemNumber) : void {
+	public async setItem (itemNumber: number = this.itemNumber) : Promise<void> {
+		while (!this.quotes || this.quotes.length < 1) {
+			await Util.sleep(100);
+			this.logos	= this.rootElement.find('.logo');
+			this.quotes	= this.rootElement.find('.quote');
+		}
+
 		this.quotes.parent().height(
 			this.quotes.
 				toArray().
@@ -52,13 +58,7 @@ export class Carousel {
 		private rootElement: JQuery,
 		callback: Function = () => {}
 	) { (async () => {
-		while (!this.quotes || this.quotes.length < 1) {
-			await Util.sleep(100);
-			this.logos	= this.rootElement.find('.logo');
-			this.quotes	= this.rootElement.find('.quote');
-		}
-		
-		this.setItem(0);
+		await this.setItem(0);
 		callback();
 
 		setInterval(() => {
