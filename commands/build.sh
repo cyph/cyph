@@ -47,7 +47,7 @@ tsfiles="$( \
 		sort | \
 		uniq | \
 		grep -v 'Binary file' | \
-		tr '\n' ' ' \
+		tr ' ' '\n' \
 )"
 
 cd shared
@@ -66,6 +66,27 @@ modulename () {
 	else
 		echo "${m}"
 	fi
+}
+
+tsbuild () {
+	node -e "
+		const tsconfig	= JSON.parse(
+			fs.readFileSync('tsconfig.json').toString()
+		);
+
+		tsconfig.files	= 'preload/global ${*}'.
+			trim().
+			split(/\s+/).
+			map(f => f + '.ts')
+		;
+
+		fs.writeFileSync(
+			'tsconfig.json',
+			JSON.stringify(tsconfig)
+		);
+	"
+
+	output="${output}$(ngc -p . 2>&1)"
 }
 
 compile () {
@@ -115,33 +136,14 @@ compile () {
 		done
 	fi
 
-	for f in $tsfiles ; do
-		node -e "
-			const tsconfig	= JSON.parse(
-				fs.readFileSync('tsconfig.json').toString()
-			);
+	tsbuild $(echo "$tsfiles" | grep -vP '/main$')
 
-			tsconfig.files	= 'preload/global ${f}'.
-				trim().
-				split(/\s+/).
-				map(f => f + '.ts')
-			;
-
-			fs.writeFileSync(
-				'tsconfig.json',
-				JSON.stringify(tsconfig)
-			);
-		"
-
-		output="${output}$(ngc -p . 2>&1)"
-
-		if (echo $f | grep -P '/main$' > /dev/null) ; then
-			sed -i 's|./appmodule|./appmodule.ngfactory|g' "${f}.ts"
-			sed -i 's|AppModule|AppModuleNgFactory|g' "${f}.ts"
-			sed -i 's|bootstrapModule|bootstrapModuleFactory|g' "${f}.ts"
-
-			output="${output}$(ngc -p . 2>&1)"
-		fi
+	for f in $(echo "$tsfiles" | grep -P '/main$') ; do
+		tsbuild $f
+		sed -i 's|./appmodule|./appmodule.ngfactory|g' "${f}.ts"
+		sed -i 's|AppModule|AppModuleNgFactory|g' "${f}.ts"
+		sed -i 's|bootstrapModule|bootstrapModuleFactory|g' "${f}.ts"
+		tsbuild $f
 	done
 
 	if [ ! "${simple}" -o ! "${test}" ] ; then
@@ -206,8 +208,9 @@ if [ "${watch}" ] ; then
 
 		start="$(date +%s)"
 		echo -e '\n\n\nBuilding JS/CSS\n\n'
+		output=''
 		compile
-		echo -e "\n\n\nFinished building JS/CSS ($(expr $(date +%s) - $start)s)\n\n"
+		echo -e "${output}\n\n\nFinished building JS/CSS ($(expr $(date +%s) - $start)s)\n\n"
 
 		touch ~/.litedeploy.tmp
 
