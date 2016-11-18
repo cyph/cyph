@@ -27,6 +27,9 @@ import {
 		CommonModule,
 		UpgradeModule
 	],
+	entryComponents: [
+		AppComponent
+	],
 	declarations: [
 		AppComponent,
 		Beta,
