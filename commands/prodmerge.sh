@@ -1,7 +1,7 @@
 #!/bin/bash
 
-dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd)/..
+
 
 merge () {
 	source="$1"
@@ -28,5 +28,3 @@ merge internal/prod public/master
 merge internal/prod internal/master
 
 git checkout $branch
-
-cd "${dir}"

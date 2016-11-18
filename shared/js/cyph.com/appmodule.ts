@@ -1,19 +1,53 @@
+import {AppComponent} from './appcomponent';
+import {HomeComponent} from './homecomponent';
 import {CommonModule} from '@angular/common';
-import {NgModule, forwardRef} from '@angular/core';
+import {NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
-import {UpgradeAdapter} from '@angular/upgrade';
-
-
-export const upgradeAdapter	= new UpgradeAdapter(
-	forwardRef(() => AppModule)
-);
+import {UpgradeModule} from '@angular/upgrade/static';
+import {
+	Beta,
+	ChatCyphertext,
+	ChatMain,
+	ChatMessageBox,
+	Checkout,
+	Contact,
+	FileInput,
+	LinkConnection,
+	Markdown,
+	SignupForm,
+	StaticCyphNotFound,
+	StaticCyphSpinningUp,
+	StaticFooter
+} from '../cyph/ui/components';
 
 
 @NgModule({
 	imports: [
 		BrowserModule,
-		CommonModule
+		CommonModule,
+		UpgradeModule
 	],
-	declarations: []
+	entryComponents: [
+		AppComponent
+	],
+	declarations: [
+		AppComponent,
+		Beta,
+		ChatCyphertext,
+		ChatMain,
+		ChatMessageBox,
+		Checkout,
+		Contact,
+		FileInput,
+		HomeComponent,
+		LinkConnection,
+		Markdown,
+		SignupForm,
+		StaticCyphNotFound,
+		StaticCyphSpinningUp,
+		StaticFooter
+	]
 })
-export class AppModule {}
+export class AppModule {
+	ngDoBootstrap () {}
+}

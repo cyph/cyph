@@ -3,6 +3,7 @@
 cd $(cd "$(dirname "$0")"; pwd)/..
 dir="$(pwd)"
 
+
 watch=''
 test=''
 simple=''
@@ -46,7 +47,7 @@ tsfiles="$( \
 		sort | \
 		uniq | \
 		grep -v 'Binary file' | \
-		tr '\n' ' ' \
+		tr ' ' '\n' \
 )"
 
 cd shared
@@ -68,11 +69,24 @@ modulename () {
 }
 
 tsbuild () {
-	# if [ "${watch}" -o "${test}" -o "${simple}" ] ; then
-		tsc $*
-	# else
-	# 	ngc $*
-	# fi
+	node -e "
+		const tsconfig	= JSON.parse(
+			fs.readFileSync('tsconfig.json').toString()
+		);
+
+		tsconfig.files	= 'preload/global ${*}'.
+			trim().
+			split(/\s+/).
+			map(f => f + '.ts')
+		;
+
+		fs.writeFileSync(
+			'tsconfig.json',
+			JSON.stringify(tsconfig)
+		);
+	"
+
+	output="${output}$(ngc -p . 2>&1)"
 }
 
 compile () {
@@ -91,7 +105,7 @@ compile () {
 		if [ "${watch}" ] ; then
 			$command &
 		else
-			output="${output}$($command)"
+			output="${output}$($command 2>&1)"
 		fi
 	done
 
@@ -122,28 +136,19 @@ compile () {
 		done
 	fi
 
-	node -e "
-		const tsconfig	= JSON.parse(
-			fs.readFileSync('tsconfig.json').toString()
-		);
+	tsbuild $(echo "$tsfiles" | grep -vP '/main$')
 
-		tsconfig.files	= 'preload/global ${tsfiles}'.
-			trim().
-			split(/\s+/).map(f => f + '.ts')
-		;
-
-		fs.writeFileSync(
-			'tsconfig.json',
-			JSON.stringify(tsconfig)
-		);
-	"
-
-	output="${output}$(tsbuild -p .)"
+	for f in $(echo "$tsfiles" | grep -P '/main$') ; do
+		tsbuild $f
+		sed -i 's|./appmodule|./appmodule.ngfactory|g' "${f}.ts"
+		sed -i 's|AppModule|AppModuleNgFactory|g' "${f}.ts"
+		sed -i 's|bootstrapModule|bootstrapModuleFactory|g' "${f}.ts"
+		tsbuild $f
+	done
 
 	if [ ! "${simple}" -o ! "${test}" ] ; then
 		for f in $tsfiles ; do
 			webpack \
-				--optimize-dedupe \
 				--output-library-target var \
 				--output-library "$(modulename $f)" \
 				$f.js \
@@ -161,16 +166,66 @@ compile () {
 				sed 's|use strict||g' \
 			> "${dir}/shared/js/${f}.js"
 		done
+
+		for js in $(find . -name '*.js') ; do
+			delete=true
+			for f in $tsfiles ; do
+				if [ "${js}" == "./${f}.js" ] ; then
+					delete=''
+				fi
+			done
+			if [ "${include}" ] ; then
+				rm "${js}"
+			fi
+		done
 	fi
 }
 
+litedeploy () {
+	rm -rf ~/.litedeploy 2> /dev/null
+	mkdir ~/.litedeploy
+	cp -rf ~/.build/default ~/.build/cyph.im ~/.litedeploy
+	cd ~/.litedeploy
+
+	version="lite-${username}-${branch}"
+	deployedBackend="https://${version}-dot-cyphme.appspot.com"
+	localBackend='${locationData.protocol}//${locationData.hostname}:42000'
+
+	sed -i "s|staging|${version}|g" default/config.go
+	sed -i "s|${localBackend}|${deployedBackend}|g" cyph.im/js/cyph.im/main.js
+	cat cyph.im/cyph-im.yaml | perl -pe 's/(- url: .*)/\1\n  login: admin/g' > yaml.new
+	mv yaml.new cyph.im/cyph-im.yaml
+
+	gcloud app deploy --quiet --no-promote --project cyphme --version $version */*.yaml
+}
+
 if [ "${watch}" ] ; then
+	eval "$(${dir}/commands/getgitdata.sh)"
+
 	while true ; do
+		sleep 2m
+
+		if [ -f ~/.litedeploy.tmp ] ; then
+			echo -e "\n\n\nDeploying to lite env\n\n"
+			litedeploy
+			rm ~/.litedeploy.tmp 2> /dev/null
+			echo -e "\n\n\nFinished deploying\n\n"
+		fi
+
+		sleep 13m
+	done &
+
+	while true ; do
+		rm ~/.litedeploy.tmp 2> /dev/null
+
 		start="$(date +%s)"
 		echo -e '\n\n\nBuilding JS/CSS\n\n'
+		output=''
 		compile
-		echo -e "\n\n\nFinished building JS/CSS ($(expr $(date +%s) - $start)s)\n\n"
-		sleep 30
+		echo -e "${output}\n\n\nFinished building JS/CSS ($(expr $(date +%s) - $start)s)\n\n"
+
+		touch ~/.litedeploy.tmp
+
 		cd "${dir}/shared"
 		inotifywait -r --exclude '(node_modules|sed.*|.*\.(html|css|js|map|tmp))$' css js
 	done

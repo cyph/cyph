@@ -1,6 +1,5 @@
-import {ISignupForm} from '../isignupform';
-import {Templates} from '../templates';
-import {Util} from '../../util';
+import {Templates} from '../cyph/ui/templates';
+import {Util} from '../cyph/util';
 import {UpgradeComponent} from '@angular/upgrade/static';
 import {
 	Directive,
@@ -8,7 +7,6 @@ import {
 	ElementRef,
 	Inject,
 	Injector,
-	Input,
 	OnChanges,
 	OnDestroy,
 	OnInit,
@@ -17,41 +15,33 @@ import {
 
 
 /**
- * Angular component for signup form.
+ * Angular component for Cyph home page.
  */
 @Directive({
-	selector: 'cyph-signup-form'
+	selector: 'cyph-home'
 })
-export class SignupForm extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
+export class HomeComponent extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
 	/** Component title. */
-	public static title: string	= 'cyphSignupForm';
+	public static title: string	= 'cyphHome';
 
 	/** Component configuration. */
 	public static config		= {
-		bindings: {
-			self: '<',
-			invite: '<'
-		},
-		template: Templates.signupForm,
-		transclude: true,
+		template: Templates.home,
 		controller: class {
 			public Cyph: any;
-			public self: ISignupForm;
-			public invite: string;
+			public ui: any;
 
 			constructor () { (async () => {
-				while (!self['Cyph']) {
+				while (!self['Cyph'] || !self['ui']) {
 					await Util.sleep(100);
 				}
 
 				this.Cyph	= self['Cyph'];
+				this.ui		= self['ui'];
 			})(); }
 		}
 	};
 
-
-	@Input() self: ISignupForm;
-	@Input() invite: string;
 
 	ngDoCheck () { super.ngDoCheck(); }
 	ngOnChanges (changes: SimpleChanges) { super.ngOnChanges(changes); }
@@ -62,6 +52,6 @@ export class SignupForm extends UpgradeComponent implements DoCheck, OnChanges, 
 		@Inject(ElementRef) elementRef: ElementRef,
 		@Inject(Injector) injector: Injector
 	) {
-		super(SignupForm.title, elementRef, injector);
+		super(HomeComponent.title, elementRef, injector);
 	}
 }

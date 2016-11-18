@@ -244,162 +244,174 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	) {
 		super(mobileMenu);
 
-		this.signupForm	= new Cyph.UI.SignupForm();
-		this.cyphDemo	= new CyphDemo(this.dialogManager);
+		(async () => {
+			this.signupForm	= new Cyph.UI.SignupForm();
+			this.cyphDemo	= new CyphDemo(this.dialogManager);
 
-		Cyph.UrlState.onchange(urlState => this.onUrlStateChange(urlState));
+			Cyph.UrlState.onchange(urlState => this.onUrlStateChange(urlState));
 
-		const urlState: string	= Cyph.UrlState.get();
-		setTimeout(
-			() => Cyph.UrlState.set(urlState, true, false, false),
-			HomeSections[urlState] === undefined ? 0 : 2500
-		);
-
-
-		const wowDelay: string			= 'data-wow-delay';
-		const platformWowDelay: string	= Cyph.Env.platformString + '-' + wowDelay;
-
-		$('[' + platformWowDelay + ']').each((i: number, elem: HTMLElement) => {
-			const $this: JQuery	= $(elem);
-			$this.attr(wowDelay, $this.attr(platformWowDelay));
-		});
-
-		const platformClass: string	= Cyph.Env.platformString + '-class-';
-
-		$('[class*="' + platformClass + '"]').each((i: number, elem: HTMLElement) => {
-			const $this: JQuery	= $(elem);
-			$this.attr(
-				'class',
-				$this.attr('class').replace(new RegExp(platformClass, 'g'), '')
+			const urlState: string	= Cyph.UrlState.get();
+			setTimeout(
+				() => Cyph.UrlState.set(urlState, true, false, false),
+				HomeSections[urlState] === undefined ? 0 : 2500
 			);
-		});
 
-		if (!Cyph.Env.isMobile) {
-			new self['WOW']({live: true}).init();
-		}
-
-
-		/* Disable background video on mobile */
-
-		if (Cyph.Env.isMobile) {
-			const $mobilePoster: JQuery	= $('<img />');
-			$mobilePoster.attr('src', Elements.backgroundVideo().attr('mobile-poster'));
-
-			Elements.backgroundVideo().replaceWith($mobilePoster).remove();
-			Elements.backgroundVideo	= () => $mobilePoster;
-		}
-		else {
-			try {
-				Elements.backgroundVideo()[0]['currentTime']	= 1.25;
+			while (
+				Elements.backgroundVideo().length < 1 ||
+				Elements.featuresSection().length < 1 ||
+				Elements.heroSection().length < 1 ||
+				Elements.mainToolbar().length < 1 ||
+				Elements.testimonialsSection().length < 1
+			) {
+				await Cyph.Util.sleep(100);
 			}
-			catch (_) {}
-
-			setTimeout(() => Elements.backgroundVideo()['appear']().
-				on('appear', () => { try { Elements.backgroundVideo()[0]['play'](); } catch (_) {} }).
-				on('disappear', () => { try { Elements.backgroundVideo()[0]['pause'](); } catch (_) {} })
-			, 2000);
-		}
 
 
-		/* Carousels */
+			const wowDelay: string			= 'data-wow-delay';
+			const platformWowDelay: string	= Cyph.Env.platformString + '-' + wowDelay;
 
-		this.featureCarousel		= new Cyph.UI.Carousel(Elements.featuresSection());
-
-		this.testimonialCarousel	= new Cyph.UI.Carousel(Elements.testimonialsSection(), () =>
-			Elements.heroSection().css(
-				'min-height',
-				`calc(100vh - ${40 + (
-					Cyph.Env.isMobile ?
-						40 :
-						Elements.testimonialsSection().height()
-				)}px)`
-			)
-		);
-
-
-		/* Header / new cyph button animation */
-
-		Elements.mainToolbar().toggleClass('new-cyph-expanded', Cyph.UrlState.get() === '');
-		setTimeout(() => setInterval(() => Elements.mainToolbar().toggleClass(
-			'new-cyph-expanded',
-			this.state === States.home && (
-				(!this.promo && Elements.heroText().is(':appeared')) ||
-				Cyph.UI.Elements.footer().is(':appeared')
-			)
-		), 500), 3000);;
-
-
-
-		/* Section sizing
-
-		if (!Cyph.Env.isMobile) {
-			setInterval(() =>
-				Elements.contentContainers().each((i: number, elem: HTMLElement) => {
-					const $this: JQuery	= $(elem);
-
-					$this.width(
-						($this[0].innerText || $this.text()).
-							split('\n').
-							map((s: string) => (s.match(/[A-Za-z0-9]/g) || []).length).
-							reduce((a: number, b: number) => Math.max(a, b))
-						*
-						parseInt($this.css('font-size'), 10) / 1.6
-					);
-				})
-			, 2000);
-		}
-		*/
-
-
-		/* Avoid full page reloads */
-
-		$(UI.linkInterceptSelector).click(e => this.linkClickHandler(e));
-		new MutationObserver(mutations => {
-			for (let mutation of mutations) {
-				for (let i = 0 ; i < mutation.addedNodes.length ; ++i) {
-					const $elem: JQuery	= $(mutation.addedNodes[i]);
-
-					if ($elem.is(UI.linkInterceptSelector)) {
-						$elem.click(e => this.linkClickHandler(e));
-					}
-					else {
-						$elem.
-							find(UI.linkInterceptSelector).
-							click(e => this.linkClickHandler(e))
-						;
-					}
-				}
-			}
-		}).observe(document.body, {
-			childList: true,
-			attributes: false,
-			characterData: false,
-			subtree: true
-		});
-
-		setInterval(() => this.cycleFeatures(), 4200);
-		setTimeout(() => Cyph.UI.Elements.html().addClass('load-complete'), 750);
-
-		/* Cyphertext easter egg */
-		new self['Konami'](() => {
-			Cyph.UrlState.set('intro');
-			Cyph.Util.retryUntilComplete(retry => {
-				if (
-					this.cyphDemo.desktop &&
-					this.cyphDemo.desktop.state === Cyph.UI.Chat.States.chat
-				) {
-					if (Cyph.Env.isMobile) {
-						this.cyphDemo.mobile.cyphertext.show();
-					}
-					else {
-						this.cyphDemo.desktop.cyphertext.show();
-						setTimeout(() => this.cyphDemo.mobile.cyphertext.show(), 8000);
-					}
-				}
-				else {
-					retry();
-				}
+			$('[' + platformWowDelay + ']').each((i: number, elem: HTMLElement) => {
+				const $this: JQuery	= $(elem);
+				$this.attr(wowDelay, $this.attr(platformWowDelay));
 			});
-		});
+
+			const platformClass: string	= Cyph.Env.platformString + '-class-';
+
+			$('[class*="' + platformClass + '"]').each((i: number, elem: HTMLElement) => {
+				const $this: JQuery	= $(elem);
+				$this.attr(
+					'class',
+					$this.attr('class').replace(new RegExp(platformClass, 'g'), '')
+				);
+			});
+
+			if (!Cyph.Env.isMobile) {
+				new self['WOW']({live: true}).init();
+			}
+
+
+			/* Disable background video on mobile */
+
+			if (Cyph.Env.isMobile) {
+				const $mobilePoster: JQuery	= $('<img />');
+				$mobilePoster.attr('src', Elements.backgroundVideo().attr('mobile-poster'));
+
+				Elements.backgroundVideo().replaceWith($mobilePoster).remove();
+				Elements.backgroundVideo	= () => $mobilePoster;
+			}
+			else {
+				try {
+					Elements.backgroundVideo()[0]['currentTime']	= 1.25;
+				}
+				catch (_) {}
+
+				setTimeout(() => Elements.backgroundVideo()['appear']().
+					on('appear', () => { try { Elements.backgroundVideo()[0]['play'](); } catch (_) {} }).
+					on('disappear', () => { try { Elements.backgroundVideo()[0]['pause'](); } catch (_) {} })
+				, 2000);
+			}
+
+
+			/* Carousels */
+
+			this.featureCarousel		= new Cyph.UI.Carousel(Elements.featuresSection());
+
+			this.testimonialCarousel	= new Cyph.UI.Carousel(Elements.testimonialsSection(), () =>
+				Elements.heroSection().css(
+					'min-height',
+					`calc(100vh - ${40 + (
+						Cyph.Env.isMobile ?
+							40 :
+							Elements.testimonialsSection().height()
+					)}px)`
+				)
+			);
+
+
+			/* Header / new cyph button animation */
+
+			Elements.mainToolbar().toggleClass('new-cyph-expanded', Cyph.UrlState.get() === '');
+			setTimeout(() => setInterval(() => Elements.mainToolbar().toggleClass(
+				'new-cyph-expanded',
+				this.state === States.home && (
+					(!this.promo && Elements.heroText().is(':appeared')) ||
+					Cyph.UI.Elements.footer().is(':appeared')
+				)
+			), 500), 3000);;
+
+
+
+			/* Section sizing
+
+			if (!Cyph.Env.isMobile) {
+				setInterval(() =>
+					Elements.contentContainers().each((i: number, elem: HTMLElement) => {
+						const $this: JQuery	= $(elem);
+
+						$this.width(
+							($this[0].innerText || $this.text()).
+								split('\n').
+								map((s: string) => (s.match(/[A-Za-z0-9]/g) || []).length).
+								reduce((a: number, b: number) => Math.max(a, b))
+							*
+							parseInt($this.css('font-size'), 10) / 1.6
+						);
+					})
+				, 2000);
+			}
+			*/
+
+
+			/* Avoid full page reloads */
+
+			$(UI.linkInterceptSelector).click(e => this.linkClickHandler(e));
+			new MutationObserver(mutations => {
+				for (let mutation of mutations) {
+					for (let i = 0 ; i < mutation.addedNodes.length ; ++i) {
+						const $elem: JQuery	= $(mutation.addedNodes[i]);
+
+						if ($elem.is(UI.linkInterceptSelector)) {
+							$elem.click(e => this.linkClickHandler(e));
+						}
+						else {
+							$elem.
+								find(UI.linkInterceptSelector).
+								click(e => this.linkClickHandler(e))
+							;
+						}
+					}
+				}
+			}).observe(document.body, {
+				childList: true,
+				attributes: false,
+				characterData: false,
+				subtree: true
+			});
+
+			setInterval(() => this.cycleFeatures(), 4200);
+			setTimeout(() => Cyph.UI.Elements.html().addClass('load-complete'), 750);
+
+			/* Cyphertext easter egg */
+			new self['Konami'](() => {
+				Cyph.UrlState.set('intro');
+				Cyph.Util.retryUntilComplete(retry => {
+					if (
+						this.cyphDemo.desktop &&
+						this.cyphDemo.desktop.state === Cyph.UI.Chat.States.chat
+					) {
+						if (Cyph.Env.isMobile) {
+							this.cyphDemo.mobile.cyphertext.show();
+						}
+						else {
+							this.cyphDemo.desktop.cyphertext.show();
+							setTimeout(() => this.cyphDemo.mobile.cyphertext.show(), 8000);
+						}
+					}
+					else {
+						retry();
+					}
+				});
+			});
+		})();
 	}
 }

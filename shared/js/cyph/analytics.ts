@@ -122,7 +122,7 @@ export class Analytics {
 				document.body.appendChild(Analytics.analFrame);
 
 				$(() =>
-					$(Analytics.analFrame).load(() =>
+					$(Analytics.analFrame).one('load', () =>
 						setTimeout(() => {
 							Analytics.analFrameIsReady	= true;
 							Analytics.set({appName, appVersion});

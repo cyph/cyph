@@ -3,14 +3,14 @@
 cd $(cd "$(dirname "$0")"; pwd)/..
 dir="$(pwd)"
 
+
 cacheBustedProjects='cyph.com'
 compiledProjects='cyph.com cyph.im'
-prodOnlyProjects='test nakedredirect'
+prodOnlyProjects='nakedredirect test websign'
 shortlinkProjects='io me video audio'
 site=''
 test=true
 websign=true
-
 
 if [ "${1}" == '--prod' ] ; then
 	test=''
@@ -19,14 +19,6 @@ elif [ "${1}" == '--simple' ] ; then
 	simple=true
 	shift
 fi
-
-if [ ! "${simple}" ] ; then
-	./commands/keycache.sh
-fi
-
-gcloud auth login
-
-echo -e '\n\nInitial setup\n'
 
 if [ "${1}" == '--site' ] ; then
 	shift
@@ -53,13 +45,16 @@ if [ "${simple}" ] ; then
 	cacheBustedProjects=''
 fi
 
+if [ "${websign}" ] ; then
+	./commands/keycache.sh
+fi
+
+echo -e '\n\nInitial setup\n'
+
 # Branch config setup
+eval "$(./commands/getgitdata.sh)"
+
 staging=''
-branch="$(
-	git describe --tags --exact-match 2> /dev/null || git branch | 
-	awk '/^\*/{print $2}' | 
-	tr '[:upper:]' '[:lower:]'
-)"
 if [ "${branch}" == 'prod' ] ; then
 	branch='staging'
 
@@ -70,9 +65,7 @@ elif [ ! "${test}" ] ; then
 	echo 'Cannot do prod deploy from test branch'
 	exit 1
 fi
-version="$branch"
-remote="$(git branch -vv | grep '^*' | perl -pe 's/.*\[(.*?)\/.*/\1/')"
-username="$(git config --get remote.${remote}.url | perl -pe 's/.*:(.*)\/.*/\1/' | tr '[:upper:]' '[:lower:]')"
+version="${branch}"
 if [ "${test}" -a "${username}" != cyph ] ; then
 	version="${username}-${version}"
 fi
@@ -317,9 +310,16 @@ if [ "${test}" ] ; then
 
 	homeURL="https://${version}-dot-cyph-com-dot-cyphme.appspot.com"
 
+	# Disable caching in test environments
 	if [ ! "${staging}" ] ; then
-		# Disable caching in test environments
 		ls */*.yaml | xargs -I% sed -i 's|max-age=31536000|max-age=0|g' %
+	fi
+
+	if [ "${branch}" != 'master' -a "${branch}" != 'staging' ] ; then
+		for yaml in `ls */cyph*.yaml` ; do
+			cat $yaml | perl -pe 's/(- url: .*)/\1\n  login: admin/g' > $yaml.new
+			mv $yaml.new $yaml
+		done
 	fi
 else
 	sed -i "s|http://localhost:42000|https://api.cyph.com|g" default/config.go
@@ -761,6 +761,8 @@ if [ "${websign}" ] ; then
 		done
 	) || exit 1
 
+	echo -e '\n\nCompressing resources for deployment to CDN\n'
+
 	if [ -d pkg/cyph.ws-subresources ] ; then
 		find pkg/cyph.ws-subresources -type f -not -name '*.srihash' -print0 | xargs -0 -P4 -I% bash -c ' \
 			zopfli -i1000 %; \
@@ -845,7 +847,10 @@ gcloud app deploy --quiet --no-promote --project cyphme --version $version $(
 	else
 		ls */*.yaml
 	fi
-) dispatch.yaml
+	if [ ! "${test}" ] ; then
+		echo dispatch.yaml
+	fi
+)
 
 cd "${dir}"
 rm -rf .build 2> /dev/null

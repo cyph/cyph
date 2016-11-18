@@ -1,7 +1,7 @@
 #!/bin/bash
 
-dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd)/..
+
 
 rm .git/index.lock 2> /dev/null
 
@@ -32,5 +32,3 @@ chmod -R 700 .
 git commit -S -a -m "cleanup: ${*}"
 
 git push
-
-cd "${dir}"

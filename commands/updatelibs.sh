@@ -3,6 +3,7 @@
 cd $(cd "$(dirname "$0")"; pwd)/..
 dir="$(pwd)"
 
+
 ./commands/keycache.sh
 
 mkdir -p ~/lib/js/crypto
@@ -72,7 +73,7 @@ jspm install -y \
 	npm:@angular/upgrade \
 	npm:rxjs \
 	angular \
-	angular-material \
+	angular-material@master \
 	angular-aria \
 	angular-animate \
 	npm:dompurify \
@@ -83,8 +84,7 @@ jspm install -y \
 	github:andyet/simplewebrtc \
 	npm:animate.css \
 	github:davidchambers/base64.js \
-	jquery@^2 \
-	jquery-legacy=github:jquery/jquery@^1 \
+	jquery \
 	npm:magnific-popup \
 	npm:file-saver \
 	npm:clipboard-js \
@@ -124,7 +124,6 @@ bash -c "$(node -e '
 		const pathBase		= versionSplit(path)[0];
 		const pathSplit		= path.split("/");
 		const package		= versionSplit(pathSplit.slice(1).join("/"));
-		const symlinkParent	= k.split("/").map(s => "..").join("/").replace(/..$/, "");
 
 		const findVersionCommand	=
 			`find ./${pathSplit[0]} -type d | ` +
@@ -139,21 +138,17 @@ bash -c "$(node -e '
 			``
 		;
 
-		return mkdirCommand +
-			`ln -s "${symlinkParent}${pathBase}@$(${findVersionCommand})" "${k}"`
-		;
+		return mkdirCommand + `mv "${pathBase}@$(${findVersionCommand})" "${k}"`;
 	}).join(" ; "));'
 )"
 
-rm -rf config.js package.json jspm_packages 2> /dev/null
+rm -rf github npm config.js package.json jspm_packages 2> /dev/null
 
 find . -name '*@*.js' -type f -exec bash -c '
 	cat {} | perl -pe "s/(require\(\".*?):/\1\//g" > {}.new;
 	mv {}.new {};
 ' \;
 
-
-sed -i 's/^\/dist$//' jquery*/.gitignore
 
 git clone https://github.com/angular/zone.js.git
 rm -rf zone.js/.git

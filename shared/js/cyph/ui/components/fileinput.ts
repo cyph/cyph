@@ -1,11 +1,29 @@
 import {Templates} from '../templates';
 import {Util} from '../../util';
+import {UpgradeComponent} from '@angular/upgrade/static';
+import {
+	Directive,
+	DoCheck,
+	ElementRef,
+	EventEmitter,
+	Inject,
+	Injector,
+	Input,
+	OnChanges,
+	OnDestroy,
+	OnInit,
+	Output,
+	SimpleChanges
+} from '@angular/core';
 
 
 /**
  * Angular component for taking file input.
  */
-export class FileInput {
+@Directive({
+	selector: 'cyph-file-input'
+})
+export class FileInput extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
 	/** Component title. */
 	public static title: string	= 'cyphFileInput';
 
@@ -15,44 +33,56 @@ export class FileInput {
 			accept: '@',
 			fileChange: '&'
 		},
-		controller: FileInput,
-		template: Templates.fileInput
+		template: Templates.fileInput,
+		controller: class {
+			public accept: string;
+			public fileChange: ({file: File}) => void;
+
+			constructor ($element: JQuery) {
+				const $input	= $element.children();
+				const input		= <HTMLInputElement> $input[0];
+				const lock		= {};
+
+				$input.
+					change(() => {
+						if (input.files.length < 1 || !this.fileChange) {
+							return;
+						}
+
+						this.fileChange({file: input.files[0]});
+						$input.val('');
+					}).
+					click(e => {
+						e.stopPropagation();
+						e.preventDefault();
+					}).
+					parent().parent().click(() => Util.lock(lock, async () => {
+						Util.triggerClick(input);
+
+						for (let i = 0 ; input.files.length < 1 && i < 10 ; ++i) {
+							await Util.sleep(500);
+						}
+
+						await Util.sleep(500);
+					}))
+				;
+			}
+		}
 	};
 
 
-	public accept: string;
-	public fileChange: Function;
+	@Input() accept: string;
+	@Output() fileChange: EventEmitter<File>;
 
-	constructor ($scope, $element) {
-		const $input	= $element.children();
-		const input		= $input[0];
-		const lock		= {};
+	ngDoCheck () { super.ngDoCheck(); }
+	ngOnChanges (changes: SimpleChanges) { super.ngOnChanges(changes); }
+	ngOnDestroy () { super.ngOnDestroy(); }
+	ngOnInit () { super.ngOnInit(); }
 
-		$input.
-			change(() => {
-				if (input.files.length < 1 || !this.fileChange) {
-					return;
-				}
-
-				$scope.$parent.file	= input.files[0];
-				this.fileChange();
-
-				$scope.$parent.file	= null;
-				$input.val('');
-			}).
-			click(e => {
-				e.stopPropagation();
-				e.preventDefault();
-			}).
-			parent().parent().click(() => Util.lock(lock, async () => {
-				Util.triggerClick(input);
-
-				for (let i = 0 ; input.files.length < 1 && i < 10 ; ++i) {
-					await Util.sleep(500);
-				}
-
-				await Util.sleep(500);
-			}))
-		;
+	constructor (
+		@Inject(ElementRef) elementRef: ElementRef,
+		@Inject(Injector) injector: Injector
+	) {
+		super(FileInput.title, elementRef, injector);
 	}
 }

@@ -1,56 +1,51 @@
 import {AppComponent} from './appcomponent';
 import {CommonModule} from '@angular/common';
-import {NgModule, forwardRef} from '@angular/core';
+import {NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
-import {UpgradeAdapter} from '@angular/upgrade';
-import * as Cyph from '../cyph';
-
-
-export const upgradeAdapter	= new UpgradeAdapter(
-	forwardRef(() => AppModule)
-);
+import {UpgradeModule} from '@angular/upgrade/static';
+import {
+	Beta,
+	ChatCyphertext,
+	ChatMain,
+	ChatMessageBox,
+	Checkout,
+	Contact,
+	FileInput,
+	LinkConnection,
+	Markdown,
+	SignupForm,
+	StaticCyphNotFound,
+	StaticCyphSpinningUp,
+	StaticFooter
+} from '../cyph/ui/components';
 
 
 @NgModule({
 	imports: [
 		BrowserModule,
-		CommonModule
+		CommonModule,
+		UpgradeModule
+	],
+	entryComponents: [
+		AppComponent
 	],
 	declarations: [
 		AppComponent,
-		upgradeAdapter.upgradeNg1Component(
-			Cyph.UI.Components.Beta.title
-		),
-		upgradeAdapter.upgradeNg1Component(
-			Cyph.UI.Components.ChatCyphertext.title
-		),
-		upgradeAdapter.upgradeNg1Component(
-			Cyph.UI.Components.ChatMain.title
-		),
-		upgradeAdapter.upgradeNg1Component(
-			Cyph.UI.Components.ChatMessageBox.title
-		),
-		upgradeAdapter.upgradeNg1Component(
-			Cyph.UI.Components.FileInput.title
-		),
-		upgradeAdapter.upgradeNg1Component(
-			Cyph.UI.Components.LinkConnection.title
-		),
-		upgradeAdapter.upgradeNg1Component(
-			Cyph.UI.Components.Markdown.title
-		),
-		upgradeAdapter.upgradeNg1Component(
-			Cyph.UI.Components.SignupForm.title
-		),
-		upgradeAdapter.upgradeNg1Component(
-			Cyph.UI.Components.StaticCyphNotFound.title
-		),
-		upgradeAdapter.upgradeNg1Component(
-			Cyph.UI.Components.StaticCyphSpinningUp.title
-		),
-		upgradeAdapter.upgradeNg1Component(
-			Cyph.UI.Components.StaticFooter.title
-		)
+		Beta,
+		ChatCyphertext,
+		ChatMain,
+		ChatMessageBox,
+		Checkout,
+		Contact,
+		FileInput,
+		LinkConnection,
+		Markdown,
+		SignupForm,
+		StaticCyphNotFound,
+		StaticCyphSpinningUp,
+		StaticFooter
 	]
 })
-export class AppModule {}
+export class AppModule {
+	ngDoBootstrap () {}
+}

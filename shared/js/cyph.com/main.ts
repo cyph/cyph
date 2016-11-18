@@ -7,12 +7,15 @@
 /// <reference path="../preload/jquery.ts" />
 
 import {AppComponent} from './appcomponent';
-import {upgradeAdapter} from './appmodule';
+import {AppModule} from './appmodule';
+import {HomeComponent} from './homecomponent';
 import {CyphDemo} from './cyphdemo';
 import {Elements} from './elements';
 import {HomeSections, PageTitles, Promos, States} from './enums';
 import {UI} from './ui';
 import {Loaded} from '../preload';
+import {platformBrowser} from '@angular/platform-browser';
+import {UpgradeModule, downgradeComponent} from '@angular/upgrade/static';
 import * as Cyph from '../cyph';
 
 
@@ -80,16 +83,25 @@ angular.
 		Cyph.UI.Components.SignupForm.config
 	).
 	component(
-		AppComponent.title,
-		AppComponent.config
+		HomeComponent.title,
+		HomeComponent.config
+	).
+	directive(
+		'cyphApp',
+		downgradeComponent({component: AppComponent})
 	)
 ;
 
 
-upgradeAdapter.bootstrap(
+(async () => (
+	<UpgradeModule>
+	(
+		await platformBrowser().bootstrapModule(AppModule)
+	).injector.get(UpgradeModule)
+).bootstrap(
 	document.body,
 	[Cyph.Config.angularConfig.rootModule]
-);
+))();
 
 
 /* Redirect to Onion site when on Tor */
