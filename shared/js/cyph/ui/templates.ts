@@ -447,6 +447,7 @@ export const Templates	= {
 									</span>
 								</div>
 							</div>
+							<div class='self-destruct-cover'></div>
 						</md-item>
 
 						<md-item

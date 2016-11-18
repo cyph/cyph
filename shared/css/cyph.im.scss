@@ -281,7 +281,7 @@ input, textarea {
 	}
 
 	/* Self-destruct animation */
-	&:after {
+	> .self-destruct-cover {
 		content: ' ';
 		height: 100%;
 		width: 120%;
@@ -289,13 +289,14 @@ input, textarea {
 		left: -10%;
 		background-color: black;
 		position: absolute;
+		z-index: 5;
 
 		@include transform(scaleX(0));
 
 		@include transform-origin(top left);
 	}
 
-	&.self-destructed:after {
+	&.self-destructed > .self-destruct-cover {
 		@include transform(scaleX(1));
 
 		@include transition(transform 3s cubic-bezier(0.8, 0.4, 1, 0.3));
