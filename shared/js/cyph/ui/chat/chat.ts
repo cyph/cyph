@@ -140,17 +140,13 @@ export class Chat extends BaseButtonManager implements IChat {
 		this.addMessage(Strings.introductoryMessage, Users.app, undefined, false);
 		this.setConnected();
 
-		if (this.queuedMessage && this.queuedMessageSelfDestruct) {
+		if (this.queuedMessage) {
 			this.send(
 				this.queuedMessage,
-				Chat.queuedMessageSelfDestructTimeout
+				this.queuedMessageSelfDestruct ?
+					Chat.queuedMessageSelfDestructTimeout :
+					undefined
 			);
-
-			await Util.sleep(Chat.queuedMessageSelfDestructTimeout + 5000);
-			this.close();
-		}
-		else if (this.queuedMessage) {
-			this.send(this.queuedMessage);
 		}
 	}
 
