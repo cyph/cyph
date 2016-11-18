@@ -1,7 +1,7 @@
 #!/bin/bash
 
-dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd)/..
+
 
 cp -a shared/js shared/.js.tmp
 cd shared/.js.tmp

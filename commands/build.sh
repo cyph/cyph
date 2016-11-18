@@ -3,6 +3,7 @@
 cd $(cd "$(dirname "$0")"; pwd)/..
 dir="$(pwd)"
 
+
 watch=''
 test=''
 simple=''

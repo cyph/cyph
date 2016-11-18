@@ -3,6 +3,7 @@
 cd $(cd "$(dirname "$0")"; pwd)/..
 dir="$(pwd)"
 
+
 cacheBustedProjects='cyph.com'
 compiledProjects='cyph.com cyph.im'
 prodOnlyProjects='test nakedredirect'
@@ -10,7 +11,6 @@ shortlinkProjects='io me video audio'
 site=''
 test=true
 websign=true
-
 
 if [ "${1}" == '--prod' ] ; then
 	test=''

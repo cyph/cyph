@@ -1,7 +1,7 @@
 #!/bin/bash
 
-dir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd)/..
+
 
 merge () {
 	source="$1"
@@ -32,5 +32,3 @@ if [ "$branch" != "master" -a "$branch" != "prod" ] ; then
 else
 	git checkout $branch
 fi
-
-cd "${dir}"
