@@ -177,7 +177,7 @@ litedeploy () {
 }
 
 if [ "${watch}" ] ; then
-	eval "$(./commands/getgitdata.sh)"
+	eval "$(${dir}/commands/getgitdata.sh)"
 
 	while true ; do
 		sleep 2m
