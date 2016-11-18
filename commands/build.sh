@@ -166,6 +166,18 @@ compile () {
 				sed 's|use strict||g' \
 			> "${dir}/shared/js/${f}.js"
 		done
+
+		for js in $(find . -name '*.js') ; do
+			delete=true
+			for f in $tsfiles ; do
+				if [ "${js}" == "./${f}.js" ] ; then
+					delete=''
+				fi
+			done
+			if [ "${include}" ] ; then
+				rm "${js}"
+			fi
+		done
 	fi
 }
 

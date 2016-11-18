@@ -759,6 +759,8 @@ if [ "${websign}" ] ; then
 		done
 	) || exit 1
 
+	echo -e '\n\nCompressing resources for deployment to CDN\n'
+
 	if [ -d pkg/cyph.ws-subresources ] ; then
 		find pkg/cyph.ws-subresources -type f -not -name '*.srihash' -print0 | xargs -0 -P4 -I% bash -c ' \
 			zopfli -i1000 %; \
