@@ -26,13 +26,22 @@ export class StaticCyphNotFound extends UpgradeComponent implements DoCheck, OnC
 
 	/** Component configuration. */
 	public static config		= {
-		controller: StaticCyphNotFound,
-		template: Templates.staticCyphNotFound
+		template: Templates.staticCyphNotFound,
+		controller: class {
+			public Cyph: any;
+			public ui: any;
+
+			constructor () { (async () => {
+				while (!self['Cyph'] || !self['ui']) {
+					await Util.sleep(100);
+				}
+
+				this.Cyph	= self['Cyph'];
+				this.ui		= self['ui'];
+			})(); }
+		}
 	};
 
-
-	public Cyph: any;
-	public ui: any;
 
 	ngDoCheck () { super.ngDoCheck(); }
 	ngOnChanges (changes: SimpleChanges) { super.ngOnChanges(changes); }
@@ -44,14 +53,5 @@ export class StaticCyphNotFound extends UpgradeComponent implements DoCheck, OnC
 		@Inject(Injector) injector: Injector
 	) {
 		super(StaticCyphNotFound.title, elementRef, injector);
-
-		(async () => {
-			while (!self['Cyph'] || !self['ui']) {
-				await Util.sleep(100);
-			}
-
-			this.Cyph	= self['Cyph'];
-			this.ui		= self['ui'];
-		})();
 	}
 }

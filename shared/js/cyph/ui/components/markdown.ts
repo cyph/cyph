@@ -30,62 +30,89 @@ export class Markdown extends UpgradeComponent implements DoCheck, OnChanges, On
 		bindings: {
 			markdown: '<'
 		},
-		controller: Markdown,
-		template: ''
+		template: '',
+		controller: class {
+			private markdownIt: any;
+
+			public markdown: string;
+
+			public async $onChanges (changes: any) : Promise<void> {
+				if (this.markdown === null) {
+					this.$element.css('display', 'block');
+
+					await Util.sleep(10000);
+
+					this.$element.
+						height(this.$element.height()).
+						width(this.$element.width())
+					;
+				}
+
+				this.$element.html(
+					DOMPurify.sanitize(
+						this.markdownIt.render(this.markdown || '').
+
+							/* Merge blockquotes like reddit */
+							replace(/\<\/blockquote>\n\<blockquote>\n/g, '').
+
+							/* Images */
+							replace(
+								/!\<a href="(data:image\/(png|jpeg|gif)\;.*?)"><\/a>/g,
+								(match, value: string) => {
+									const img: HTMLImageElement	= document.createElement('img');
+									img.src	= value;
+									return img.outerHTML;
+								}
+							).
+
+							/* Block window.opener in new window */
+							replace(
+								/\<a href=/g,
+								'<a rel="noreferrer" href='
+							)
+						,
+						{
+							FORBID_TAGS: ['style'],
+							SAFE_FOR_JQUERY: true
+						}
+					)
+				);
+			}
+
+			constructor (private $element: JQuery) {
+				this.markdownIt	= new self['markdownit']({
+					html: false,
+					breaks: true,
+					linkify: true,
+					typographer: true,
+					quotes:
+						(
+							Env.language === 'ru' ?
+								'«»' :
+								Env.language === 'de' ?
+									'„“' :
+									'“”'
+						) +
+						'‘’'
+					,
+					highlight: s => self['microlight'].process(
+						s,
+						this.$element.css('color')
+					)
+				}).
+					disable('image').
+					use(self['markdownitSup']).
+					use(self['markdownitEmoji'])
+				;
+			}
+		}
 	};
 
 
-	private $elementRef: JQuery;
-	private markdownIt: any;
-
 	@Input() markdown: string;
 
-	async ngOnChanges (changes: SimpleChanges) {
-		super.ngOnChanges(changes);
-
-		if (this.markdown === null) {
-			this.$elementRef.css('display', 'block');
-
-			await Util.sleep(10000);
-
-			this.$elementRef.
-				height(this.$elementRef.height()).
-				width(this.$elementRef.width())
-			;
-		}
-
-		this.$elementRef.html(
-			DOMPurify.sanitize(
-				this.markdownIt.render(this.markdown || '').
-
-					/* Merge blockquotes like reddit */
-					replace(/\<\/blockquote>\n\<blockquote>\n/g, '').
-
-					/* Images */
-					replace(
-						/!\<a href="(data:image\/(png|jpeg|gif)\;.*?)"><\/a>/g,
-						(match, value: string) => {
-							const img: HTMLImageElement	= document.createElement('img');
-							img.src	= value;
-							return img.outerHTML;
-						}
-					).
-
-					/* Block window.opener in new window */
-					replace(
-						/\<a href=/g,
-						'<a rel="noreferrer" href='
-					)
-				,
-				{
-					FORBID_TAGS: ['style'],
-					SAFE_FOR_JQUERY: true
-				}
-			)
-		);
-	}
-
 	ngDoCheck () { super.ngDoCheck(); }
+	ngOnChanges (changes: SimpleChanges) { super.ngOnChanges(changes); }
 	ngOnDestroy () { super.ngOnDestroy(); }
 	ngOnInit () { super.ngOnInit(); }
 
@@ -94,32 +121,5 @@ export class Markdown extends UpgradeComponent implements DoCheck, OnChanges, On
 		@Inject(Injector) injector: Injector
 	) {
 		super(Markdown.title, elementRef, injector);
-
-		this.$elementRef	= $(elementRef);
-
-		this.markdownIt		= new self['markdownit']({
-			html: false,
-			breaks: true,
-			linkify: true,
-			typographer: true,
-			quotes:
-				(
-					Env.language === 'ru' ?
-						'«»' :
-						Env.language === 'de' ?
-							'„“' :
-							'“”'
-				) +
-				'‘’'
-			,
-			highlight: s => self['microlight'].process(
-				s,
-				this.$elementRef.css('color')
-			)
-		}).
-			disable('image').
-			use(self['markdownitSup']).
-			use(self['markdownitEmoji'])
-		;
 	}
 }

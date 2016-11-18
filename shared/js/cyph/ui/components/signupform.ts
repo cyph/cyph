@@ -32,13 +32,24 @@ export class SignupForm extends UpgradeComponent implements DoCheck, OnChanges, 
 			self: '<',
 			invite: '<'
 		},
-		controller: SignupForm,
 		template: Templates.signupForm,
-		transclude: true
+		transclude: true,
+		controller: class {
+			public Cyph: any;
+			public self: ISignupForm;
+			public invite: string;
+
+			constructor () { (async () => {
+				while (!self['Cyph']) {
+					await Util.sleep(100);
+				}
+
+				this.Cyph	= self['Cyph'];
+			})(); }
+		}
 	};
 
 
-	public Cyph: any;
 	@Input() self: ISignupForm;
 	@Input() invite: string;
 
@@ -52,13 +63,5 @@ export class SignupForm extends UpgradeComponent implements DoCheck, OnChanges, 
 		@Inject(Injector) injector: Injector
 	) {
 		super(SignupForm.title, elementRef, injector);
-
-		(async () => {
-			while (!self['Cyph']) {
-				await Util.sleep(100);
-			}
-
-			this.Cyph	= self['Cyph'];
-		})();
 	}
 }

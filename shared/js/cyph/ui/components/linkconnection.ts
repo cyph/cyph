@@ -31,14 +31,24 @@ export class LinkConnection extends UpgradeComponent implements DoCheck, OnChang
 		bindings: {
 			self: '<'
 		},
-		controller: LinkConnection,
-		template: Templates.linkConnection
+		template: Templates.linkConnection,
+		controller: class {
+			public Cyph: any;
+			public self: ILinkConnection;
+
+			public queuedMessageDraft: string	= '';
+
+			constructor () { (async () => {
+				while (!self['Cyph']) {
+					await Util.sleep(100);
+				}
+
+				this.Cyph	= self['Cyph'];
+			})(); }
+		}
 	};
 
 
-	public queuedMessageDraft: string	= '';
-
-	public Cyph: any;
 	@Input() self: ILinkConnection;
 
 	ngDoCheck () { super.ngDoCheck(); }
@@ -51,13 +61,5 @@ export class LinkConnection extends UpgradeComponent implements DoCheck, OnChang
 		@Inject(Injector) injector: Injector
 	) {
 		super(LinkConnection.title, elementRef, injector);
-
-		(async () => {
-			while (!self['Cyph']) {
-				await Util.sleep(100);
-			}
-
-			this.Cyph	= self['Cyph'];
-		})();
 	}
 }

@@ -36,15 +36,62 @@ export class Checkout extends UpgradeComponent implements DoCheck, OnChanges, On
 			item: '=',
 			fullName: '='
 		},
-		controller: Checkout,
 		transclude: true,
-		template: Templates.checkout
+		template: Templates.checkout,
+		controller: class {
+			public Cyph: any;
+			public ui: any;
+			public complete: boolean;
+			public amount: string;
+			public category: string;
+			public email: string;
+			public item: string;
+			public fullName: string;
+
+			constructor ($element: JQuery) { (async () => {
+				while (!self['Cyph'] || !self['ui']) {
+					await Util.sleep(100);
+				}
+
+				this.Cyph	= self['Cyph'];
+				this.ui		= self['ui'];
+
+				const token: string	= await Util.request({
+					url: Env.baseUrl + Config.braintreeConfig.endpoint,
+					retries: 5
+				});
+
+				const checkoutUI: JQuery	= $element.find('.braintree');
+
+				checkoutUI.html('');
+
+				self['braintree'].setup(token, 'dropin', {
+					container: checkoutUI[0],
+					enableCORS: true,
+					onPaymentMethodReceived: async (data) => {
+						const response: string	= await Util.request({
+							url: Env.baseUrl + Config.braintreeConfig.endpoint,
+							method: 'POST',
+							data: {
+								Nonce: data.nonce,
+								Amount: Math.floor(parseFloat(this.amount) * 100),
+								Category: this.category,
+								Item: this.item,
+								Name: this.fullName,
+								Email: this.email
+							}
+						});
+
+						if (JSON.parse(response).Status === 'authorized') {
+							this.complete	= true;
+						}
+					}
+				});
+			})(); }
+		}
 	};
 
 
-	public Cyph: any;
-	public ui: any;
-	public complete: boolean;
 	@Input() amount: string;
 	@Input() category: string;
 	@Input() email: string;
@@ -61,48 +108,5 @@ export class Checkout extends UpgradeComponent implements DoCheck, OnChanges, On
 		@Inject(Injector) injector: Injector
 	) {
 		super(Checkout.title, elementRef, injector);
-
-		(async () => {
-			while (!self['Cyph'] || !self['ui']) {
-				await Util.sleep(100);
-			}
-
-			this.Cyph	= self['Cyph'];
-			this.ui		= self['ui'];
-
-			const $elementRef	= $(elementRef);
-
-			const token: string	= await Util.request({
-				url: Env.baseUrl + Config.braintreeConfig.endpoint,
-				retries: 5
-			});
-
-			const checkoutUI: JQuery	= $elementRef.find('.braintree');
-
-			checkoutUI.html('');
-
-			self['braintree'].setup(token, 'dropin', {
-				container: checkoutUI[0],
-				enableCORS: true,
-				onPaymentMethodReceived: async (data) => {
-					const response: string	= await Util.request({
-						url: Env.baseUrl + Config.braintreeConfig.endpoint,
-						method: 'POST',
-						data: {
-							Nonce: data.nonce,
-							Amount: Math.floor(parseFloat(this.amount) * 100),
-							Category: this.category,
-							Item: this.item,
-							Name: this.fullName,
-							Email: this.email
-						}
-					});
-
-					if (JSON.parse(response).Status === 'authorized') {
-						this.complete	= true;
-					}
-				}
-			});
-		})();
 	}
 }

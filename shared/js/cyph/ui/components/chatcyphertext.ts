@@ -31,12 +31,22 @@ export class ChatCyphertext extends UpgradeComponent implements DoCheck, OnChang
 		bindings: {
 			self: '<'
 		},
-		controller: ChatCyphertext,
-		template: Templates.chatCyphertext
+		template: Templates.chatCyphertext,
+		controller: class {
+			public Cyph: any;
+			public self: IChat;
+
+			constructor () { (async () => {
+				while (!self['Cyph']) {
+					await Util.sleep(100);
+				}
+
+				this.Cyph	= self['Cyph'];
+			})(); }
+		}
 	};
 
 
-	public Cyph: any;
 	@Input() self: IChat;
 
 	ngDoCheck () { super.ngDoCheck(); }
@@ -49,13 +59,5 @@ export class ChatCyphertext extends UpgradeComponent implements DoCheck, OnChang
 		@Inject(Injector) injector: Injector
 	) {
 		super(ChatCyphertext.title, elementRef, injector);
-
-		(async () => {
-			while (!self['Cyph']) {
-				await Util.sleep(100);
-			}
-
-			this.Cyph	= self['Cyph'];
-		})();
 	}
 }

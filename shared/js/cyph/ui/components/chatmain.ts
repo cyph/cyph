@@ -32,13 +32,24 @@ export class ChatMain extends UpgradeComponent implements DoCheck, OnChanges, On
 			self: '<',
 			hideDisconnectMessage: '<'
 		},
-		controller: ChatMain,
 		template: Templates.chatMain,
-		transclude: true
+		transclude: true,
+		controller: class {
+			public Cyph: any;
+			public self: IChat;
+			public hideDisconnectMessage: boolean;
+
+			constructor () { (async () => {
+				while (!self['Cyph']) {
+					await Util.sleep(100);
+				}
+
+				this.Cyph	= self['Cyph'];
+			})(); }
+		}
 	};
 
 
-	public Cyph: any;
 	@Input() self: IChat;
 	@Input() hideDisconnectMessage: boolean;
 
@@ -52,13 +63,5 @@ export class ChatMain extends UpgradeComponent implements DoCheck, OnChanges, On
 		@Inject(Injector) injector: Injector
 	) {
 		super(ChatMain.title, elementRef, injector);
-
-		(async () => {
-			while (!self['Cyph']) {
-				await Util.sleep(100);
-			}
-
-			this.Cyph	= self['Cyph'];
-		})();
 	}
 }

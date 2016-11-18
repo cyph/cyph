@@ -34,15 +34,64 @@ export class ChatMessageBox extends UpgradeComponent implements DoCheck, OnChang
 		bindings: {
 			self: '<'
 		},
-		controller: ChatMessageBox,
-		template: Templates.chatMessageBox
+		template: Templates.chatMessageBox,
+		controller: class {
+			public Cyph: any;
+			public self: IChat;
+
+			public isSpeedDialOpen: boolean	= true;
+
+			constructor ($element: JQuery) { (async () => {
+				while (!self['Cyph']) {
+					await Util.sleep(100);
+				}
+
+				this.Cyph	= self['Cyph'];
+
+				/* Allow enter press to submit, except on
+					mobile without external keyboard */
+
+				let $textarea: JQuery;
+				while (!$textarea || $textarea.length < 1) {
+					$textarea	= $element.find('textarea');
+					await Util.sleep(100);
+				}
+
+				$textarea.keypress(e => {
+					if (
+						(Env.isMobile && VirtualKeyboardWatcher.isOpen) ||
+						e.keyCode !== 13 ||
+						e.shiftKey
+					) {
+						return;
+					}
+
+					e.preventDefault();
+					this.self.send();
+				});
+
+				/* Temporary workarounds for Angular Material bugs */
+
+				let $speedDial: JQuery;
+				while (!$speedDial || $speedDial.length < 1) {
+					$speedDial	= $element.find('md-fab-speed-dial:visible');
+					await Util.sleep(100);
+				}
+
+				$speedDial.removeClass('md-animations-waiting');
+
+				while (!VisibilityWatcher.isVisible) {
+					await Util.sleep(100);
+				}
+
+				await Util.sleep(1000);
+				this.isSpeedDialOpen	= false;
+			})(); }
+		}
 	};
 
 
-	public Cyph: any;
 	@Input() self: IChat;
-
-	public isSpeedDialOpen: boolean	= true;
 
 	ngDoCheck () { super.ngDoCheck(); }
 	ngOnChanges (changes: SimpleChanges) { super.ngOnChanges(changes); }
@@ -54,54 +103,5 @@ export class ChatMessageBox extends UpgradeComponent implements DoCheck, OnChang
 		@Inject(Injector) injector: Injector
 	) {
 		super(ChatMessageBox.title, elementRef, injector);
-
-		(async () => {
-			while (!self['Cyph']) {
-				await Util.sleep(100);
-			}
-
-			this.Cyph	= self['Cyph'];
-
-			const $elementRef	= $(elementRef);
-
-			/* Allow enter press to submit, except on
-				mobile without external keyboard */
-
-			let $textarea: JQuery;
-			while (!$textarea || $textarea.length < 1) {
-				$textarea	= $elementRef.find('textarea');
-				await Util.sleep(100);
-			}
-
-			$textarea.keypress(e => {
-				if (
-					(Env.isMobile && VirtualKeyboardWatcher.isOpen) ||
-					e.keyCode !== 13 ||
-					e.shiftKey
-				) {
-					return;
-				}
-
-				e.preventDefault();
-				this.self.send();
-			});
-
-			/* Temporary workarounds for Angular Material bugs */
-
-			let $speedDial: JQuery;
-			while (!$speedDial || $speedDial.length < 1) {
-				$speedDial	= $elementRef.find('md-fab-speed-dial:visible');
-				await Util.sleep(100);
-			}
-
-			$speedDial.removeClass('md-animations-waiting');
-
-			while (!VisibilityWatcher.isVisible) {
-				await Util.sleep(100);
-			}
-
-			await Util.sleep(1000);
-			this.isSpeedDialOpen	= false;
-		})();
 	}
 }

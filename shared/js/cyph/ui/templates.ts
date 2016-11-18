@@ -544,7 +544,7 @@ export const Templates	= {
 						</md-tooltip>
 						<md-icon>attach_file</md-icon>
 						<cyph-file-input
-							file-change='$ctrl.self.fileManager.send($event)'
+							file-change='$ctrl.self.fileManager.send(file)'
 						></cyph-file-input>
 					</md-button>
 					<md-button
@@ -557,7 +557,7 @@ export const Templates	= {
 						<md-icon>insert_photo</md-icon>
 						<cyph-file-input
 							accept='image/*'
-							file-change='$ctrl.self.fileManager.send($event, true)'
+							file-change='$ctrl.self.fileManager.send(file, true)'
 						></cyph-file-input>
 					</md-button>
 					<md-button

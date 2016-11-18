@@ -33,13 +33,46 @@ export class FileInput extends UpgradeComponent implements DoCheck, OnChanges, O
 			accept: '@',
 			fileChange: '&'
 		},
-		controller: FileInput,
-		template: Templates.fileInput
+		template: Templates.fileInput,
+		controller: class {
+			public accept: string;
+			public fileChange: ({file: File}) => void;
+
+			constructor ($element: JQuery) {
+				const $input	= $element.children();
+				const input		= <HTMLInputElement> $input[0];
+				const lock		= {};
+
+				$input.
+					change(() => {
+						if (input.files.length < 1 || !this.fileChange) {
+							return;
+						}
+
+						this.fileChange({file: input.files[0]});
+						$input.val('');
+					}).
+					click(e => {
+						e.stopPropagation();
+						e.preventDefault();
+					}).
+					parent().parent().click(() => Util.lock(lock, async () => {
+						Util.triggerClick(input);
+
+						for (let i = 0 ; input.files.length < 1 && i < 10 ; ++i) {
+							await Util.sleep(500);
+						}
+
+						await Util.sleep(500);
+					}))
+				;
+			}
+		}
 	};
 
 
 	@Input() accept: string;
-	@Output() fileChange	= new EventEmitter<File>();
+	@Output() fileChange: EventEmitter<File>;
 
 	ngDoCheck () { super.ngDoCheck(); }
 	ngOnChanges (changes: SimpleChanges) { super.ngOnChanges(changes); }
@@ -51,34 +84,5 @@ export class FileInput extends UpgradeComponent implements DoCheck, OnChanges, O
 		@Inject(Injector) injector: Injector
 	) {
 		super(FileInput.title, elementRef, injector);
-
-		const $elementRef	= $(elementRef);
-		const $input		= $elementRef.children();
-		const input			= <HTMLInputElement> $input[0];
-		const lock			= {};
-
-		$input.
-			change(() => {
-				if (input.files.length < 1 || !this.fileChange) {
-					return;
-				}
-
-				this.fileChange.emit(input.files[0]);
-				$input.val('');
-			}).
-			click(e => {
-				e.stopPropagation();
-				e.preventDefault();
-			}).
-			parent().parent().click(() => Util.lock(lock, async () => {
-				Util.triggerClick(input);
-
-				for (let i = 0 ; input.files.length < 1 && i < 10 ; ++i) {
-					await Util.sleep(500);
-				}
-
-				await Util.sleep(500);
-			}))
-		;
 	}
 }

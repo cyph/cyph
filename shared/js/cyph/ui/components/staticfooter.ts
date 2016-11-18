@@ -26,13 +26,22 @@ export class StaticFooter extends UpgradeComponent implements DoCheck, OnChanges
 
 	/** Component configuration. */
 	public static config		= {
-		controller: StaticFooter,
-		template: Templates.staticFooter
+		template: Templates.staticFooter,
+		controller: class {
+			public Cyph: any;
+			public ui: any;
+
+			constructor () { (async () => {
+				while (!self['Cyph'] || !self['ui']) {
+					await Util.sleep(100);
+				}
+
+				this.Cyph	= self['Cyph'];
+				this.ui		= self['ui'];
+			})(); }
+		}
 	};
 
-
-	public Cyph: any;
-	public ui: any;
 
 	ngDoCheck () { super.ngDoCheck(); }
 	ngOnChanges (changes: SimpleChanges) { super.ngOnChanges(changes); }
@@ -44,14 +53,5 @@ export class StaticFooter extends UpgradeComponent implements DoCheck, OnChanges
 		@Inject(Injector) injector: Injector
 	) {
 		super(StaticFooter.title, elementRef, injector);
-
-		(async () => {
-			while (!self['Cyph'] || !self['ui']) {
-				await Util.sleep(100);
-			}
-
-			this.Cyph	= self['Cyph'];
-			this.ui		= self['ui'];
-		})();
 	}
 }

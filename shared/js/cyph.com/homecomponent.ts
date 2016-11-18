@@ -26,13 +26,22 @@ export class HomeComponent extends UpgradeComponent implements DoCheck, OnChange
 
 	/** Component configuration. */
 	public static config		= {
-		controller: HomeComponent,
-		template: Templates.home
+		template: Templates.home,
+		controller: class {
+			public Cyph: any;
+			public ui: any;
+
+			constructor () { (async () => {
+				while (!self['Cyph'] || !self['ui']) {
+					await Util.sleep(100);
+				}
+
+				this.Cyph	= self['Cyph'];
+				this.ui		= self['ui'];
+			})(); }
+		}
 	};
 
-
-	public Cyph: any;
-	public ui: any;
 
 	ngDoCheck () { super.ngDoCheck(); }
 	ngOnChanges (changes: SimpleChanges) { super.ngOnChanges(changes); }
@@ -44,14 +53,5 @@ export class HomeComponent extends UpgradeComponent implements DoCheck, OnChange
 		@Inject(Injector) injector: Injector
 	) {
 		super(HomeComponent.title, elementRef, injector);
-
-		(async () => {
-			while (!self['Cyph'] || !self['ui']) {
-				await Util.sleep(100);
-			}
-
-			this.Cyph	= self['Cyph'];
-			this.ui		= self['ui'];
-		})();
 	}
 }

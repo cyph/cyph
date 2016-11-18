@@ -32,13 +32,60 @@ export class Contact extends UpgradeComponent implements DoCheck, OnChanges, OnI
 		bindings: {
 			self: '<'
 		},
-		controller: Contact,
-		template: Templates.contact
+		template: Templates.contact,
+		controller: class {
+			public Cyph: any;
+			public ui: any;
+
+			public self: {
+				fromEmail: string;
+				fromName: string;
+				message: string;
+				to: string;
+				sent: boolean;
+				subject: string;
+			};
+
+			public send () : void {
+				Util.email(this.self);
+				this.self.sent	= true;
+			}
+
+			constructor ($element: JQuery) { (async () => {
+				while (!self['Cyph'] || !self['ui']) {
+					await Util.sleep(100);
+				}
+
+				this.Cyph	= self['Cyph'];
+				this.ui		= self['ui'];
+
+				if (!this.self) {
+					this.self	= {
+						fromEmail: '',
+						fromName: '',
+						message: '',
+						to: '',
+						sent: false,
+						subject: ''
+					};
+				}
+
+				for (let k of [
+					'fromEmail',
+					'fromName',
+					'to',
+					'subject',
+					'message'
+				]) {
+					const v	= $element.attr(k);
+					if (v) {
+						this.self[k]	= v;
+					}
+				}
+			})(); }
+		}
 	};
 
-
-	public Cyph: any;
-	public ui: any;
 
 	@Input() self: {
 		fromEmail: string;
@@ -48,11 +95,6 @@ export class Contact extends UpgradeComponent implements DoCheck, OnChanges, OnI
 		sent: boolean;
 		subject: string;
 	};
-
-	public send () : void {
-		Util.email(this.self);
-		this.self.sent	= true;
-	}
 
 	ngDoCheck () { super.ngDoCheck(); }
 	ngOnChanges (changes: SimpleChanges) { super.ngOnChanges(changes); }
@@ -64,34 +106,5 @@ export class Contact extends UpgradeComponent implements DoCheck, OnChanges, OnI
 		@Inject(Injector) injector: Injector
 	) {
 		super(Contact.title, elementRef, injector);
-
-		(async () => {
-			while (!self['Cyph'] || !self['ui']) {
-				await Util.sleep(100);
-			}
-
-			this.Cyph	= self['Cyph'];
-			this.ui		= self['ui'];
-
-			const $elementRef	= $(elementRef);
-
-			if (!this.self) {
-				this.self	= {
-					fromEmail: '',
-					fromName: '',
-					message: '',
-					to: '',
-					sent: false,
-					subject: ''
-				};
-			}
-
-			for (let k of ['fromEmail', 'fromName', 'to', 'subject', 'message']) {
-				const v	= $elementRef.attr(k);
-				if (v) {
-					this.self[k]	= v;
-				}
-			}
-		})();
 	}
 }
