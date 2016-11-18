@@ -165,6 +165,8 @@ compile () {
 				if [ "${watch}" ] ; then cat - ; else babel --presets es2015 --compact false ; fi | \
 				sed 's|use strict||g' \
 			> "${dir}/shared/js/${f}.js"
+
+			rm $f.js.tmp
 		done
 
 		for js in $(find . -name '*.js') ; do
