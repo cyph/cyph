@@ -8,8 +8,6 @@ test=''
 simple=''
 cloneworkingdir=''
 
-eval "$(./commands/getgitdata.sh)"
-
 if [ "${1}" == '--watch' ] ; then
 	watch=true
 	shift
@@ -179,6 +177,8 @@ litedeploy () {
 }
 
 if [ "${watch}" ] ; then
+	eval "$(./commands/getgitdata.sh)"
+
 	while true ; do
 		sleep 2m
 
