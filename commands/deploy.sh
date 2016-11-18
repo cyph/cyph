@@ -103,10 +103,6 @@ else
 	cat ~/.cyph/braintree.sandbox >> default/app.yaml
 fi
 
-if [ "${test}" ] ; then
-	rm -rf $prodOnlyProjects
-fi
-
 projectname () {
 	if [ "${test}" ] ; then
 		echo "${version}.${1}"
@@ -840,6 +836,10 @@ find . -type l -not -path './cdn/*' -exec bash -c '
 	rm "${name}"
 	mv "${original}" "${name}"
 ' \;
+
+if [ "${test}" ] ; then
+	rm -rf $prodOnlyProjects
+fi
 
 gcloud app deploy --quiet --no-promote --project cyphme --version $version $(
 	if [ "${site}" ] ; then
