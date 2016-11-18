@@ -8,8 +8,6 @@ export class Carousel {
 	private static activeClass: string	= 'active';
 
 
-	private counter: number	= 0;
-
 	private itemNumber: number;
 	private logos: JQuery;
 	private quotes: JQuery;
@@ -18,12 +16,18 @@ export class Carousel {
 	 * Sets the active item to be displayed.
 	 * @param itemNumber
 	 */
-	public async setItem (itemNumber: number = this.itemNumber) : Promise<void> {
-		while (!this.quotes || this.quotes.length < 1) {
-			await Util.sleep(100);
-			this.logos	= this.rootElement.find('.logo');
-			this.quotes	= this.rootElement.find('.quote');
+	public async setItem (itemNumber: number = this.itemNumber) : Promise<number> {
+		if (!this.logos || !this.quotes) {
+			do {
+				await Util.sleep(250);
+				this.logos	= this.rootElement.find('.logo');
+				this.quotes	= this.rootElement.find('.quote');
+			} while (this.logos.length < 1 || this.quotes.length < 1);
+
+			await Util.sleep(1000);
 		}
+
+		this.itemNumber	= itemNumber;
 
 		this.quotes.parent().height(
 			this.quotes.
@@ -37,17 +41,25 @@ export class Carousel {
 			removeClass(Carousel.activeClass)
 		;
 
-		setTimeout(() => this.logos.eq(itemNumber).
-			add(this.quotes.eq(itemNumber)).
-			addClass(Carousel.activeClass)
-		, 600);
+		await Util.sleep(600);
 
-		this.itemNumber	= itemNumber + 1;
-		if (this.itemNumber >= this.logos.length) {
-			this.itemNumber	= 0;
+		const timeout	=
+			(this.quotes.eq(this.itemNumber).text().length + 10) * 50
+		;
+
+		if (this.itemNumber === itemNumber) {
+			this.logos.eq(itemNumber).
+				add(this.quotes.eq(itemNumber)).
+				addClass(Carousel.activeClass)
+			;
+
+			++this.itemNumber;
+			if (this.itemNumber >= this.logos.length) {
+				this.itemNumber	= 0;
+			}
 		}
 
-		this.counter	= this.quotes.eq(itemNumber).text().length + 10;
+		return timeout;
 	}
 
 	/**
@@ -58,13 +70,16 @@ export class Carousel {
 		private rootElement: JQuery,
 		callback: Function = () => {}
 	) { (async () => {
-		await this.setItem(0);
+		const timeout	= await this.setItem(0);
 		callback();
+		await Util.sleep(timeout);
 
-		setInterval(() => {
-			if (this.rootElement.is(':appeared') && --this.counter <= 0) {
-				this.setItem();
-			}
-		}, 50);
+		while (true) {
+			await Util.sleep(
+				this.rootElement.is(':appeared') ?
+					(await this.setItem()) :
+					500
+			);
+		}
 	})(); }
 }
