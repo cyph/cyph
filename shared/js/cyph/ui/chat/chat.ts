@@ -84,6 +84,10 @@ export class Chat extends BaseButtonManager implements IChat {
 			return;
 		}
 
+		while (author !== Users.app && !this.isConnected) {
+			await Util.sleep(500);
+		}
+
 		if (shouldNotify !== false) {
 			if (author === Users.app) {
 				this.notifier.notify(text);
