@@ -315,10 +315,12 @@ if [ "${test}" ] ; then
 		ls */*.yaml | xargs -I% sed -i 's|max-age=31536000|max-age=0|g' %
 	fi
 
-	for yaml in `ls */cyph*.yaml` ; do
-		cat $yaml | perl -pe 's/(- url: .*)/\1\n  login: admin/g' > $yaml.new
-		mv $yaml.new $yaml
-	done
+	if [ "${branch}" != 'master' -a "${branch}" != 'staging' ] ; then
+		for yaml in `ls */cyph*.yaml` ; do
+			cat $yaml | perl -pe 's/(- url: .*)/\1\n  login: admin/g' > $yaml.new
+			mv $yaml.new $yaml
+		done
+	fi
 else
 	sed -i "s|http://localhost:42000|https://api.cyph.com|g" default/config.go
 	ls shared/js/cyph/envdeploy.ts | xargs -I% sed -i "s|${defaultHost}42000|https://api.cyph.com|g" %
