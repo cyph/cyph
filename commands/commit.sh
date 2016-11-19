@@ -25,8 +25,7 @@ print \$0
 mv %.new %
 '
 
-find shared/js -name '*.ts' -print0 |
-	xargs -0 -I% bash -c "cat % | perl -pe 's/\\s+$/\n/g' | perl -pe 's/    /\\t/g' > %.new ; mv %.new %"
+tslint --fix --noUnusedLocals --noUnusedParameters --project shared/js/tsconfig.json --type-check
 
 chmod -R 700 .
 git commit -S -a -m "cleanup: ${*}"

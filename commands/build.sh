@@ -113,6 +113,10 @@ compile () {
 
 	cd js
 
+	output="${output}$(
+		tslint --noUnusedLocals --noUnusedParameters --project tsconfig.json --type-check 2>&1
+	)"
+
 	if [ ! "${simple}" -o ! "${test}" ] ; then
 		for f in $tsfiles ; do
 			node -e "

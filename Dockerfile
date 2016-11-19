@@ -147,6 +147,7 @@ RUN sudo npm -g install \
 	node-fetch \
 	read \
 	supersphincs \
+	tslint \
 	typedoc \
 	typings \
 	zombie
