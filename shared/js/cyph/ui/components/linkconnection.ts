@@ -1,7 +1,3 @@
-import {ILinkConnection} from '../ilinkconnection';
-import {Templates} from '../templates';
-import {Util} from '../../util';
-import {UpgradeComponent} from '@angular/upgrade/static';
 import {
 	Directive,
 	DoCheck,
@@ -14,6 +10,10 @@ import {
 	OnInit,
 	SimpleChanges
 } from '@angular/core';
+import {UpgradeComponent} from '@angular/upgrade/static';
+import {Util} from '../../util';
+import {ILinkConnection} from '../ilinkconnection';
+import {Templates} from '../templates';
 
 
 /**

@@ -1,5 +1,5 @@
-import {ITransfer} from './itransfer';
 import {Util} from '../util';
+import {ITransfer} from './itransfer';
 
 
 export class Transfer implements ITransfer {

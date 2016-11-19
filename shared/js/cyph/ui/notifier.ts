@@ -1,7 +1,7 @@
-import {INotifier} from './inotifier';
-import {VisibilityWatcher} from './visibilitywatcher';
 import {Config} from '../config';
 import {Env} from '../env';
+import {INotifier} from './inotifier';
+import {VisibilityWatcher} from './visibilitywatcher';
 
 
 export class Notifier implements INotifier {

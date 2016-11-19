@@ -1,6 +1,3 @@
-import {Templates} from '../cyph/ui/templates';
-import {Util} from '../cyph/util';
-import {UpgradeComponent} from '@angular/upgrade/static';
 import {
 	Directive,
 	DoCheck,
@@ -12,6 +9,9 @@ import {
 	OnInit,
 	SimpleChanges
 } from '@angular/core';
+import {UpgradeComponent} from '@angular/upgrade/static';
+import {Templates} from '../cyph/ui/templates';
+import {Util} from '../cyph/util';
 
 
 /**

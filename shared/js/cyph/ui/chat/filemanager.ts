@@ -1,13 +1,13 @@
-import {IChat} from './ichat';
-import {IFileManager} from './ifilemanager';
-import {IDialogManager} from '../idialogmanager';
 import {Config} from '../../config';
-import {Strings} from '../../strings';
-import {Util} from '../../util';
 import {UIEvents} from '../../files/enums';
 import {Files} from '../../files/files';
 import {IFiles} from '../../files/ifiles';
 import {Events, Users} from '../../session/enums';
+import {Strings} from '../../strings';
+import {Util} from '../../util';
+import {IDialogManager} from '../idialogmanager';
+import {IChat} from './ichat';
+import {IFileManager} from './ifilemanager';
 
 
 export class FileManager implements IFileManager {

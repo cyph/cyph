@@ -1,3 +1,22 @@
+import {Analytics} from '../../analytics';
+import {Env} from '../../env';
+import {ITimer} from '../../itimer';
+import {Events, RPCEvents, Users} from '../../session/enums';
+import {ISession} from '../../session/isession';
+import {Message} from '../../session/message';
+import {ThreadedSession} from '../../session/threadedsession';
+import {Strings} from '../../strings';
+import {Timer} from '../../timer';
+import {UrlState} from '../../urlstate';
+import {Util} from '../../util';
+import {BaseButtonManager} from '../basebuttonmanager';
+import {DialogManager} from '../dialogmanager';
+import {Elements} from '../elements';
+import {IDialogManager} from '../idialogmanager';
+import {INotifier} from '../inotifier';
+import {ISidebar} from '../isidebar';
+import {NanoScroller} from '../nanoscroller';
+import {Templates} from '../templates';
 import {Cyphertext} from './cyphertext';
 import {States} from './enums';
 import {FileManager} from './filemanager';
@@ -9,25 +28,6 @@ import {IP2PManager} from './ip2pmanager';
 import {IScrollManager} from './iscrollmanager';
 import {P2PManager} from './p2pmanager';
 import {ScrollManager} from './scrollmanager';
-import {BaseButtonManager} from '../basebuttonmanager';
-import {DialogManager} from '../dialogmanager';
-import {Elements} from '../elements';
-import {IDialogManager} from '../idialogmanager';
-import {INotifier} from '../inotifier';
-import {ISidebar} from '../isidebar';
-import {NanoScroller} from '../nanoscroller';
-import {Templates} from '../templates';
-import {Analytics} from '../../analytics';
-import {Env} from '../../env';
-import {ITimer} from '../../itimer';
-import {Strings} from '../../strings';
-import {UrlState} from '../../urlstate';
-import {Util} from '../../util';
-import {Timer} from '../../timer';
-import {Events, RPCEvents, Users} from '../../session/enums';
-import {ISession} from '../../session/isession';
-import {Message} from '../../session/message';
-import {ThreadedSession} from '../../session/threadedsession';
 
 
 export class Chat extends BaseButtonManager implements IChat {

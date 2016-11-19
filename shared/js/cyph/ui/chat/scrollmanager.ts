@@ -1,10 +1,10 @@
-import {IChat} from './ichat';
-import {IElements} from './ielements';
-import {IScrollManager} from './iscrollmanager';
+import {Util} from '../../util';
 import {IDialogManager} from '../idialogmanager';
 import {NanoScroller} from '../nanoscroller';
 import {VisibilityWatcher} from '../visibilitywatcher';
-import {Util} from '../../util';
+import {IChat} from './ichat';
+import {IElements} from './ielements';
+import {IScrollManager} from './iscrollmanager';
 
 
 export class ScrollManager implements IScrollManager {

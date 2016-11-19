@@ -1,7 +1,7 @@
+import {Strings} from '../../strings';
+import {Potassium} from '../potassium';
 import {IRemoteUser} from './iremoteuser';
 import {Transport} from './transport';
-import {Potassium} from '../potassium';
-import {Strings} from '../../strings';
 
 
 /**

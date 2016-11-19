@@ -1,8 +1,3 @@
-import {Templates} from '../templates';
-import {Config} from '../../config';
-import {Env} from '../../env';
-import {Util} from '../../util';
-import {UpgradeComponent} from '@angular/upgrade/static';
 import {
 	Directive,
 	DoCheck,
@@ -15,6 +10,11 @@ import {
 	OnInit,
 	SimpleChanges
 } from '@angular/core';
+import {UpgradeComponent} from '@angular/upgrade/static';
+import {Config} from '../../config';
+import {Env} from '../../env';
+import {Util} from '../../util';
+import {Templates} from '../templates';
 
 
 /**

@@ -1,5 +1,5 @@
-import {BetaStates, States, UrlSections} from './enums';
 import * as Cyph from '../cyph';
+import {BetaStates, States, UrlSections} from './enums';
 
 
 /**

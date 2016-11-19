@@ -467,7 +467,7 @@ export class Util {
 						encodeURIComponent(key) +
 						'=' +
 						encodeURIComponent(o[k])
-					)
+					);
 			}).
 			join('&').
 			replace(/%20/g, '+')

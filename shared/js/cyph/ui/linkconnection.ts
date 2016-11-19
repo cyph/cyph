@@ -1,13 +1,13 @@
+import {Env} from '../env';
+import {ITimer} from '../itimer';
+import {Events} from '../session/enums';
+import {Strings} from '../strings';
+import {Timer} from '../timer';
+import {Util} from '../util';
+import {IChat} from './chat/ichat';
 import {Elements} from './elements';
 import {IDialogManager} from './idialogmanager';
 import {ILinkConnection} from './ilinkconnection';
-import {IChat} from './chat/ichat';
-import {Env} from '../env';
-import {Timer} from '../timer';
-import {ITimer} from '../itimer';
-import {Strings} from '../strings';
-import {Util} from '../util';
-import {Events} from '../session/enums';
 
 
 export class LinkConnection implements ILinkConnection {

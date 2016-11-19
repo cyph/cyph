@@ -1,5 +1,5 @@
-import {Templates} from '../cyph/ui/templates';
 import {Component} from '@angular/core';
+import {Templates} from '../cyph/ui/templates';
 
 
 /**

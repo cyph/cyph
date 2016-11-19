@@ -1,7 +1,7 @@
+import * as Cyph from '../cyph';
 import {CyphDemo} from './cyphdemo';
 import {Elements} from './elements';
 import {HomeSections, PageTitles, Promos, States} from './enums';
-import * as Cyph from '../cyph';
 
 
 /**

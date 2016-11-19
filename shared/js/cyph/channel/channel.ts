@@ -1,7 +1,7 @@
-import {IChannel} from './ichannel';
 import {Config} from '../config';
 import {Firebase} from '../firebase';
 import {Util} from '../util';
+import {IChannel} from './ichannel';
 
 
 /**
@@ -123,5 +123,5 @@ export class Channel implements IChannel {
 				})
 			);
 		}
-	})() }
+	})(); }
 }

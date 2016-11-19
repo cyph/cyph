@@ -1,7 +1,7 @@
-import {ICastle} from './icastle';
-import {Util} from '../util';
 import {CastleEvents, Events, State, Users} from '../session/enums';
 import {ISession} from '../session/isession';
+import {Util} from '../util';
+import {ICastle} from './icastle';
 
 
 /**

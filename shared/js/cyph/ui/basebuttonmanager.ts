@@ -1,5 +1,5 @@
-import {ISidebar} from './isidebar';
 import {Util} from '../util';
+import {ISidebar} from './isidebar';
 
 
 /**

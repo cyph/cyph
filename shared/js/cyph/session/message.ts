@@ -1,5 +1,5 @@
-import {IMessage} from './imessage';
 import {Util} from '../util';
+import {IMessage} from './imessage';
 
 
 export class Message implements IMessage {

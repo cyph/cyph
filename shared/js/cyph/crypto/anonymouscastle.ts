@@ -1,12 +1,12 @@
-import {ICastle} from './icastle';
-import {Potassium} from './potassium';
+import {State} from '../session/enums';
+import {ISession} from '../session/isession';
+import {Util} from '../util';
 import {AnonymousLocalUser} from './castle/anonymouslocaluser';
 import {AnonymousRemoteUser} from './castle/anonymousremoteuser';
 import {PairwiseSession} from './castle/pairwisesession';
 import {Transport} from './castle/transport';
-import {Util} from '../util';
-import {State} from '../session/enums';
-import {ISession} from '../session/isession';
+import {ICastle} from './icastle';
+import {Potassium} from './potassium';
 
 
 export class AnonymousCastle implements ICastle {

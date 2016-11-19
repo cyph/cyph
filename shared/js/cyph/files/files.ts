@@ -1,17 +1,17 @@
+import {Analytics} from '../analytics';
+import {Config} from '../config';
+import {Potassium} from '../crypto/potassium';
+import {EventManager} from '../eventmanager';
+import {Firebase} from '../firebase';
+import {Events, RPCEvents, Users} from '../session/enums';
+import {ISession} from '../session/isession';
+import {Message} from '../session/message';
+import {Thread} from '../thread';
+import {Util} from '../util';
 import {UIEvents} from './enums';
 import {IFiles} from './ifiles';
 import {ITransfer} from './itransfer';
 import {Transfer} from './transfer';
-import {Analytics} from '../analytics';
-import {Config} from '../config';
-import {EventManager} from '../eventmanager';
-import {Firebase} from '../firebase';
-import {Thread} from '../thread';
-import {Util} from '../util';
-import {Potassium} from '../crypto/potassium';
-import {Events, RPCEvents, Users} from '../session/enums';
-import {ISession} from '../session/isession';
-import {Message} from '../session/message';
 
 
 export class Files implements IFiles {

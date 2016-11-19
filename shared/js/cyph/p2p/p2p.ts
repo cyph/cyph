@@ -1,15 +1,15 @@
-import {UIEvents} from './enums';
-import {IP2P} from './ip2p';
 import {Analytics} from '../analytics';
 import {Env} from '../env';
 import {EventManager} from '../eventmanager';
-import {Util} from '../util';
 import {Command} from '../session/command';
 import {Events, RPCEvents} from '../session/enums';
 import {IMutex} from '../session/imutex';
 import {ISession} from '../session/isession';
 import {Message} from '../session/message';
 import {Mutex} from '../session/mutex';
+import {Util} from '../util';
+import {UIEvents} from './enums';
+import {IP2P} from './ip2p';
 
 
 export class P2P implements IP2P {

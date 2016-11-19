@@ -145,7 +145,7 @@ export class EventManager {
 					handler(data);
 				}
 				catch (err) {
-					setTimeout(() => { throw err }, 0);
+					setTimeout(() => { throw err; }, 0);
 				}
 			}
 

@@ -1,6 +1,6 @@
+import {Component} from '@angular/core';
 import {Templates} from '../cyph/ui/templates';
 import {Util} from '../cyph/util';
-import {Component} from '@angular/core';
 
 
 /**

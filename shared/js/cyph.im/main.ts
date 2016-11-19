@@ -9,14 +9,14 @@
 /// <reference path="../preload/jquery.ts" />
 /// <reference path="../preload/translations.ts" />
 
+import {platformBrowser} from '@angular/platform-browser';
+import {downgradeComponent, UpgradeModule} from '@angular/upgrade/static';
+import * as Cyph from '../cyph';
+import {Loaded} from '../preload';
 import {AppComponent} from './appcomponent';
 import {AppModule} from './appmodule';
 import {BetaStates, States, UrlSections} from './enums';
 import {UI} from './ui';
-import {Loaded} from '../preload';
-import {platformBrowser} from '@angular/platform-browser';
-import {UpgradeModule, downgradeComponent} from '@angular/upgrade/static';
-import * as Cyph from '../cyph';
 
 
 if (Cyph.Env.isEdge) {

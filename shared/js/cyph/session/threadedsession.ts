@@ -1,9 +1,9 @@
-import {Events, RPCEvents, ThreadedSessionEvents} from './enums';
-import {IMessage} from './imessage';
-import {ISession} from './isession';
 import {EventManager} from '../eventmanager';
 import {Thread} from '../thread';
 import {Util} from '../util';
+import {Events, RPCEvents, ThreadedSessionEvents} from './enums';
+import {IMessage} from './imessage';
+import {ISession} from './isession';
 
 
 /**

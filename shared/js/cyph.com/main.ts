@@ -6,17 +6,17 @@
 /// <reference path="../preload/fakecrypto.ts" />
 /// <reference path="../preload/jquery.ts" />
 
+import {platformBrowser} from '@angular/platform-browser';
+import {downgradeComponent, UpgradeModule} from '@angular/upgrade/static';
+import * as Cyph from '../cyph';
+import {Loaded} from '../preload';
 import {AppComponent} from './appcomponent';
 import {AppModule} from './appmodule';
-import {HomeComponent} from './homecomponent';
 import {CyphDemo} from './cyphdemo';
 import {Elements} from './elements';
 import {HomeSections, PageTitles, Promos, States} from './enums';
+import {HomeComponent} from './homecomponent';
 import {UI} from './ui';
-import {Loaded} from '../preload';
-import {platformBrowser} from '@angular/platform-browser';
-import {UpgradeModule, downgradeComponent} from '@angular/upgrade/static';
-import * as Cyph from '../cyph';
 
 
 Cyph.UI.Elements.body().attr(

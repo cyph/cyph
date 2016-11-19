@@ -1,7 +1,3 @@
-import {Templates} from '../templates';
-import {IChat} from '../chat/ichat';
-import {Util} from '../../util';
-import {UpgradeComponent} from '@angular/upgrade/static';
 import {
 	Directive,
 	DoCheck,
@@ -14,6 +10,10 @@ import {
 	OnInit,
 	SimpleChanges
 } from '@angular/core';
+import {UpgradeComponent} from '@angular/upgrade/static';
+import {Util} from '../../util';
+import {IChat} from '../chat/ichat';
+import {Templates} from '../templates';
 
 
 /**

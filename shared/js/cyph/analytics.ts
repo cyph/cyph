@@ -1,7 +1,7 @@
+import {Potassium} from './crypto/potassium';
 import {Env} from './env';
 import {EventManager} from './eventmanager';
 import {Util} from './util';
-import {Potassium} from './crypto/potassium';
 
 
 /**

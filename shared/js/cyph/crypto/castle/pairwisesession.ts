@@ -1,10 +1,10 @@
+import {Config} from '../../config';
+import {Util} from '../../util';
+import {Potassium} from '../potassium';
 import {Core} from './core';
 import {ILocalUser} from './ilocaluser';
 import {IRemoteUser} from './iremoteuser';
 import {Transport} from './transport';
-import {Potassium} from '../potassium';
-import {Config} from '../../config';
-import {Util} from '../../util';
 
 
 /**

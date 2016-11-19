@@ -1,4 +1,3 @@
-import {AppComponent} from './appcomponent';
 import {CommonModule} from '@angular/common';
 import {NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
@@ -18,6 +17,7 @@ import {
 	StaticCyphSpinningUp,
 	StaticFooter
 } from '../cyph/ui/components';
+import {AppComponent} from './appcomponent';
 
 
 @NgModule({

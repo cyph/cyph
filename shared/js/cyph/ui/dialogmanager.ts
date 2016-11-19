@@ -1,5 +1,5 @@
-import {IDialogManager} from './idialogmanager';
 import {Util} from '../util';
+import {IDialogManager} from './idialogmanager';
 
 
 export class DialogManager implements IDialogManager {

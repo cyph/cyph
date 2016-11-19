@@ -1,5 +1,5 @@
-import {Potassium} from '../potassium';
 import {Util} from '../../util';
+import {Potassium} from '../potassium';
 
 
 /**

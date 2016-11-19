@@ -1,8 +1,8 @@
-import {Elements} from './elements';
-import {ISignupForm} from './isignupform';
 import {Analytics} from '../analytics';
 import {Env} from '../env';
 import {Util} from '../util';
+import {Elements} from './elements';
+import {ISignupForm} from './isignupform';
 
 
 export class SignupForm implements ISignupForm {

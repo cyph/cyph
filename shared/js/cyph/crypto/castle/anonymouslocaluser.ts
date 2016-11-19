@@ -1,6 +1,6 @@
+import {Potassium} from '../potassium';
 import {ILocalUser} from './ilocaluser';
 import {Transport} from './transport';
-import {Potassium} from '../potassium';
 
 
 /**

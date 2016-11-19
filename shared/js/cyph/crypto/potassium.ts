@@ -742,7 +742,7 @@ export class Potassium extends PotassiumUtil {
 					algorithm: Potassium.toString(new Uint8Array(metadata.buffer, 12 + saltBytes)),
 					memLimit: new Uint32Array(metadata.buffer, 0, 1)[0],
 					opsLimit: new Uint32Array(metadata.buffer, 1, 1)[0],
-					salt: new Uint8Array(new Uint8Array(metadata.buffer, 12, saltBytes)),
+					salt: new Uint8Array(new Uint8Array(metadata.buffer, 12, saltBytes))
 				};
 			}
 			finally {
