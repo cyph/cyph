@@ -436,10 +436,7 @@ export const Templates	= {
 								<div
 									class='self-destruct-timer'
 									layout='row'
-									ng-show='
-										message.selfDestructTimer &&
-										!message.selfDestructTimer.isComplete
-									'
+									ng-show='message.selfDestructTimer'
 								>
 									Message will self-destruct in
 									<span class='countdown'>

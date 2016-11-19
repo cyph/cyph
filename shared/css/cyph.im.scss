@@ -284,9 +284,9 @@ input, textarea {
 	> .self-destruct-cover {
 		content: ' ';
 		height: 100%;
-		width: 120%;
+		width: 100%;
 		top: 0px;
-		left: -10%;
+		left: 0px;
 		background-color: black;
 		position: absolute;
 		z-index: 5;
@@ -301,6 +301,10 @@ input, textarea {
 
 		@include transition(transform 3s cubic-bezier(0.8, 0.4, 1, 0.3));
 	}
+}
+.chat-main.mobile .message-item > .self-destruct-cover {
+	left: -25vw;
+	width: 150vw;
 }
 
 .image-frame {
@@ -1188,6 +1192,10 @@ html:not(.mobile) .amazon-link {
 	text-align: center;
 	padding: 20px;
 	display: block;
+}
+.chat-main.mobile .self-destruct-timer {
+	font-size: 20px;
+	padding: 5px;
 }
 
 .md-button.copy {

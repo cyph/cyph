@@ -141,7 +141,12 @@ export class Chat extends BaseButtonManager implements IChat {
 
 		this.session.trigger(Events.beginChatComplete);
 		this.changeState(States.chat);
-		this.addMessage(Strings.introductoryMessage, Users.app, undefined, false);
+		this.addMessage(
+			Strings.introductoryMessage,
+			Users.app,
+			Util.timestamp() - 30000,
+			false
+		);
 		this.setConnected();
 
 		if (this.queuedMessage) {

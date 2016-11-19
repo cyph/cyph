@@ -38,13 +38,12 @@ export class Markdown extends UpgradeComponent implements DoCheck, OnChanges, On
 
 			public async $onChanges (changes: any) : Promise<void> {
 				if (this.markdown === null) {
-					this.$element.css('display', 'block');
-
 					await Util.sleep(10000);
 
 					this.$element.
 						height(this.$element.height()).
-						width(this.$element.width())
+						width(this.$element.width()).
+						css('display', 'inline-block')
 					;
 				}
 
