@@ -74,6 +74,8 @@ tsbuild () {
 			fs.readFileSync('tsconfig.json').toString()
 		);
 
+		tsconfig.compilerOptions.outDir	= '.';
+
 		tsconfig.files	= 'preload/global ${*}'.
 			trim().
 			split(/\s+/).

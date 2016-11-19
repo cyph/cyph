@@ -6,8 +6,7 @@
 		 "moduleResolution": "node",
 		 "emitDecoratorMetadata": true,
 		 "experimentalDecorators": true,
-		 "rootDir": ".",
-		 "outDir": "."
+		 "rootDir": "."
 	},
 	"angularCompilerOptions": {
 		"genDir": ".",
