@@ -26,9 +26,9 @@ export class Errors {
 			const exception: string	= !errorMessage ? '' : (
 				errorMessage + '\n\n' +
 				'URL: ' + url + '\n' +
-				'Line: ' + line + '\n' +
-				'Column: ' + column + '\n\n' +
-				(errorObject && errorObject.stack)
+				'Line: ' + line.toString() + '\n' +
+				'Column: ' + column.toString() + '\n\n' +
+				(<string> (errorObject ? errorObject.stack : ''))
 			).replace(/\/#.*/g, '');
 
 			if (numEmails++ < 50) {

@@ -12,12 +12,15 @@ $.fn.bounds	= function () : ({
 	right: number;
 	top: number;
 }) {
-	const bounds: JQueryCoordinates	= this.offset();
+	 /* tslint:disable-next-line:no-invalid-this */
+	const $elem: JQuery	= this;
+
+	const bounds	= $elem.offset();
 
 	return {
-		bottom: bounds.top + this.outerHeight(),
+		bottom: bounds.top + $elem.outerHeight(),
 		left: bounds.left,
-		right: bounds.left + this.outerWidth(),
+		right: bounds.left + $elem.outerWidth(),
 		top: bounds.top
 	};
 };
@@ -26,9 +29,12 @@ $.fn.bounds	= function () : ({
  * Calculate number of pixels user has scrolled relative to this element.
  */
 $.fn.scrollPosition	= function () : number {
-	return this[0].scrollHeight -
+	/* tslint:disable-next-line:no-invalid-this */
+	const $elem: JQuery	= this;
+
+	return $elem[0].scrollHeight -
 	(
-		this[0].scrollTop +
-		this[0].clientHeight
+		$elem[0].scrollTop +
+		$elem[0].clientHeight
 	);
 };

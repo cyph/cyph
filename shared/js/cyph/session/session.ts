@@ -95,7 +95,7 @@ export class Session implements ISession {
 					for (let i = 0 ; i < messages.length ; ++i) {
 						this.receiveHandler(
 							messages[i],
-							e.data.timestamp + i * 0.001,
+							(<number> e.data.timestamp) + i * 0.001,
 							e.data.author
 						);
 					}

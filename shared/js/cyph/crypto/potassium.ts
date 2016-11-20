@@ -876,38 +876,16 @@ export class Potassium extends PotassiumUtil {
 	};
 
 	/** Equivalent to sodium.crypto_sign. */
-	public Sign: {
-		bytes: number;
-		publicKeyBytes: number;
-		privateKeyBytes: number;
-
-		keyPair: () => Promise<{
-			keyType: string;
-			publicKey: Uint8Array;
-			privateKey: Uint8Array;
-		}>;
-
-		sign: (
-			message: Uint8Array|string,
-			privateKey: Uint8Array
-		) => Promise<string>;
-
-		signDetached: (
-			message: Uint8Array|string,
-			privateKey: Uint8Array
-		) => Promise<string>;
-
-		open: (
-			signed: Uint8Array|string,
-			publicKey: Uint8Array
-		) => Promise<string>;
-
-		verifyDetached: (
-			signature: Uint8Array|string,
-			message: Uint8Array|string,
-			publicKey: Uint8Array
-		) => Promise<boolean>;
-	}	= Potassium.SuperSphincs;
+	public Sign	= {
+		bytes: Potassium.SuperSphincs.bytes,
+		keyPair: Potassium.SuperSphincs.keyPair,
+		open: Potassium.SuperSphincs.open,
+		privateKeyBytes: Potassium.SuperSphincs.privateKeyBytes,
+		publicKeyBytes: Potassium.SuperSphincs.publicKeyBytes,
+		sign: Potassium.SuperSphincs.sign,
+		signDetached: Potassium.SuperSphincs.signDetached,
+		verifyDetached: Potassium.SuperSphincs.verifyDetached
+	};
 
 	/**
 	 * @param isNative If true, will use NativeCrypto instead of libsodium.

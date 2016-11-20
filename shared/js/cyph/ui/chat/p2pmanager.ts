@@ -165,11 +165,13 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 									callback(await this.dialogManager.confirm({
 										timeout,
 										cancel: Strings.decline,
-										content:
-											Strings.p2pRequest + ' ' +
-											Strings[callType + 'Call'] + '. ' +
+										content: `${
+											Strings.p2pRequest
+										} ${
+											<string> (Strings[callType + 'Call'] || '')
+										}. ${
 											Strings.p2pWarning
-										,
+										}`,
 										ok: Strings.continueDialogAction,
 										title: Strings.p2pTitle
 									}));
@@ -188,11 +190,13 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 								else {
 									callback(await this.dialogManager.confirm({
 										cancel: Strings.cancel,
-										content:
-											Strings.p2pInit + ' ' +
-											Strings[callType + 'Call'] + '. ' +
+										content: `${
+											Strings.p2pInit
+										} ${
+											<string> (Strings[callType + 'Call'] || '')
+										}. ${
 											Strings.p2pWarning
-										,
+										}`,
 										ok: Strings.continueDialogAction,
 										title: Strings.p2pTitle
 									}));

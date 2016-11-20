@@ -69,7 +69,11 @@ export class Util {
 			return guid;
 		}
 
-		return Util.timestamp() + '-' + crypto.getRandomValues(new Uint32Array(1))[0];
+		return `${
+			Util.timestamp().toString()
+		}-${
+			crypto.getRandomValues(new Uint32Array(1))[0].toString()
+		}`;
 	}
 
 	/**
@@ -77,7 +81,7 @@ export class Util {
 	 */
 	public static getTimeString (timestamp?: number) : string {
 		const date: Date		= new Date(timestamp);
-		const minute: string	= ('0' + date.getMinutes()).slice(-2);
+		const minute: string	= ('0' + date.getMinutes().toString()).slice(-2);
 		let hour: number		= date.getHours();
 		let ampm: string		= 'am';
 
@@ -89,7 +93,7 @@ export class Util {
 			hour	= 12;
 		}
 
-		return hour + ':' + minute + ampm;
+		return `${hour.toString()}:${minute}${ampm}`;
 	}
 
 	/**
@@ -296,7 +300,7 @@ export class Util {
 				url		+= '?' + (
 					typeof data === 'object' ?
 						Util.toQueryString(data) :
-						data.toString()
+						(<string> data.toString())
 				);
 
 				data	= null;
@@ -543,14 +547,17 @@ export class Util {
 		}
 
 		if (innerHtml) {
-			$this.html(innerHtml.replace(/(.*?)(\{\{.*?\}\}|$)/g, (match, value, binding) => {
-				const translation: string	= Util.translate(value, true, '');
+			$this.html(innerHtml.replace(
+				/(.*?)(\{\{.*?\}\}|$)/g,
+				(match, value, binding: string) => {
+					const translation: string	= Util.translate(value, true, '');
 
-				return translation ?
-					translation + binding :
-					match
-				;
-			}));
+					return translation ?
+						translation + binding :
+						match
+					;
+				}
+			));
 		}
 
 		return $this.prop('outerHTML');

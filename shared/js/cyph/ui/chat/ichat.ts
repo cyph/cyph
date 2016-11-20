@@ -12,8 +12,7 @@ import {IScrollManager} from './iscrollmanager';
  * This is the entire end-to-end representation of a cyph.
  */
 export interface IChat {
-	/** Indicates whether authentication has completed
-		(still true even after disconnect). */
+	/** Indicates whether authentication has completed (still true even after disconnect). */
 	isConnected: boolean;
 
 	/** Indicates whether chat has been disconnected. */
@@ -31,8 +30,7 @@ export interface IChat {
 	/** The current message being composed. */
 	currentMessage: string;
 
-	/** Percentage complete with initial handshake
-		(approximate / faked out). */
+	/** Percentage complete with initial handshake (approximate / faked out). */
 	keyExchangeProgress: number;
 
 	/** Chat UI state/view. */

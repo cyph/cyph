@@ -38,7 +38,7 @@ export class EventManager {
 			args.forEach((arg: any, i: number) => {
 				if (arg && arg.callbackId) {
 					args[i]	= (...threadArgs) => EventManager.trigger(
-						EventManager.threadEventPrefix + arg.callbackId,
+						EventManager.threadEventPrefix + (<string> arg.callbackId),
 						threadArgs
 					);
 				}
