@@ -36,8 +36,8 @@ angular.
 		'$mdToast',
 
 		($mdDialog, $mdToast) => {
-			self['Cyph']	= Cyph;
-			self['Cyph'].im	= {
+			self['cyph']	= Cyph;
+			self['cyph'].im	= {
 				BetaStates,
 				States,
 				UI,

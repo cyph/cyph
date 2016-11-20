@@ -37,7 +37,7 @@ export class ChatMessageBox
 		},
 		controller: class {
 			/** @ignore */
-			public Cyph: any;
+			public cyph: any;
 
 			/** @ignore */
 			public self: IChat;
@@ -46,11 +46,11 @@ export class ChatMessageBox
 			public isSpeedDialOpen: boolean	= true;
 
 			constructor ($element: JQuery) { (async () => {
-				while (!self['Cyph']) {
+				while (!self['cyph']) {
 					await Util.sleep();
 				}
 
-				this.Cyph	= self['Cyph'];
+				this.cyph	= self['cyph'];
 
 				/* Allow enter press to submit, except on
 					mobile without external keyboard */

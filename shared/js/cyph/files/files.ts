@@ -34,7 +34,7 @@ export class Files implements IFiles {
 		threadLocals.callbackId	= 'files-' + Util.generateGuid();
 
 		const thread	= new Thread(async function (
-			Cyph: any,
+			cyph: any,
 			Potassium: any,
 			locals: any,
 			importScripts: Function
@@ -65,7 +65,7 @@ export class Files implements IFiles {
 						));
 					}
 					catch (err) {
-						Cyph.EventManager.trigger(
+						cyph.EventManager.trigger(
 							locals.callbackId,
 							[err.message, null, null]
 						);
@@ -94,7 +94,7 @@ export class Files implements IFiles {
 					Potassium.clearMemory(chunk);
 				}
 
-				Cyph.EventManager.trigger(
+				cyph.EventManager.trigger(
 					locals.callbackId,
 					[null, cyphertext, key]
 				);
@@ -124,7 +124,7 @@ export class Files implements IFiles {
 						i += chunkSize;
 					}
 					catch (err) {
-						Cyph.EventManager.trigger(
+						cyph.EventManager.trigger(
 							locals.callbackId,
 							[err.message, null]
 						);
@@ -147,7 +147,7 @@ export class Files implements IFiles {
 					Potassium.clearMemory(chunk);
 				}
 
-				Cyph.EventManager.trigger(
+				cyph.EventManager.trigger(
 					locals.callbackId,
 					[null, plaintext]
 				);

@@ -44,7 +44,7 @@ export class Thread implements IThread {
 
 		importScripts('/lib/js/base.js');
 		importScripts('/js/cyph/base.js');
-		self['Cyph']	= self['Base'];
+		self['cyph']	= self['Base'];
 		self['Base']	= undefined;
 
 

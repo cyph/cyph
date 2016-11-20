@@ -39,7 +39,7 @@ export class Checkout
 		},
 		controller: class {
 			/** @ignore */
-			public Cyph: any;
+			public cyph: any;
 
 			/** @ignore */
 			public ui: any;
@@ -63,11 +63,11 @@ export class Checkout
 			public fullName: string;
 
 			constructor ($element: JQuery) { (async () => {
-				while (!self['Cyph'] || !self['ui']) {
+				while (!self['cyph'] || !self['ui']) {
 					await Util.sleep();
 				}
 
-				this.Cyph	= self['Cyph'];
+				this.cyph	= self['cyph'];
 				this.ui		= self['ui'];
 
 				const token: string	= await Util.request({

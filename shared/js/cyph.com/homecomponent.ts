@@ -29,17 +29,17 @@ export class HomeComponent
 	public static config		= {
 		controller: class {
 			/** @ignore */
-			public Cyph: any;
+			public cyph: any;
 
 			/** @ignore */
 			public ui: any;
 
 			constructor () { (async () => {
-				while (!self['Cyph'] || !self['ui']) {
+				while (!self['cyph'] || !self['ui']) {
 					await Util.sleep();
 				}
 
-				this.Cyph	= self['Cyph'];
+				this.cyph	= self['cyph'];
 				this.ui		= self['ui'];
 			})(); }
 		},

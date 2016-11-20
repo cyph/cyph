@@ -12,17 +12,17 @@ import {Util} from '../cyph/util';
 })
 export class AppComponent {
 	/** @ignore */
-	public Cyph: any;
+	public cyph: any;
 
 	/** @ignore */
 	public ui: any;
 
 	constructor () { (async () => {
-		while (!self['Cyph'] || !self['ui']) {
+		while (!self['cyph'] || !self['ui']) {
 			await Util.sleep();
 		}
 
-		this.Cyph	= self['Cyph'];
+		this.cyph	= self['cyph'];
 		this.ui		= self['ui'];
 	})(); }
 }

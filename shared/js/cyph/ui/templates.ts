@@ -6,43 +6,43 @@ import {Util} from '../util';
  */
 export const Templates	= {
 	app: `
-		<span *ngIf='Cyph && ui && ui.chat'>
+		<span *ngIf='cyph && ui && ui.chat'>
 			<section id='main' class='cyph-foreground layout-fill layout-column'>
 				<cyph-chat-main
 					[self]='ui.chat'
 					[hideDisconnectMessage]='ui.coBranded'
-					[class.active]='ui.state === Cyph.im.States.chat'
+					[class.active]='ui.state === cyph.im.States.chat'
 					class='cyph-view layout-fill layout-column flex'
 				>
 					<cyph-signup-form [self]='ui.signupForm'>
-						{{Cyph.Strings.signupMessage1}}
-						{{Cyph.Strings.signupMessage2}}
+						{{cyph.Strings.signupMessage1}}
+						{{cyph.Strings.signupMessage2}}
 					</cyph-signup-form>
 				</cyph-chat-main>
 
 				<cyph-static-cyph-spinning-up
-					[class.active]='ui.state === Cyph.im.States.spinningUp'
+					[class.active]='ui.state === cyph.im.States.spinningUp'
 					class='cyph-view layout-fill layout-column flex'
 				></cyph-static-cyph-spinning-up>
 
 				<cyph-link-connection
 					[self]='ui.cyphConnection'
-					[class.active]='ui.state === Cyph.im.States.waitingForFriend'
+					[class.active]='ui.state === cyph.im.States.waitingForFriend'
 					class='cyph-view layout-fill layout-column flex'
 				></cyph-link-connection>
 
 				<cyph-static-cyph-not-found
-					[class.active]='ui.state === Cyph.im.States.error'
+					[class.active]='ui.state === cyph.im.States.error'
 					class='cyph-view layout-fill layout-column flex'
 				></cyph-static-cyph-not-found>
 
 				<cyph-beta
-					[class.active]='ui.state === Cyph.im.States.beta'
+					[class.active]='ui.state === cyph.im.States.beta'
 					class='cyph-view layout-fill layout-column flex'
 				></cyph-beta>
 
 				<div
-					[class.active]='ui.state === Cyph.im.States.blank'
+					[class.active]='ui.state === cyph.im.States.blank'
 					id='blank'
 					class='cyph-view layout-fill layout-column flex'
 				></div>
@@ -50,7 +50,7 @@ export const Templates	= {
 				<footer>
 					<cyph-chat-message-box
 						[self]='ui.chat'
-						*ngIf='ui.state === Cyph.im.States.chat'
+						*ngIf='ui.state === cyph.im.States.chat'
 					></cyph-chat-message-box>
 
 					<cyph-static-footer></cyph-static-footer>
@@ -71,7 +71,7 @@ export const Templates	= {
 			<div class='nano-content'>
 				<div
 					class='login-form'
-					ng-show='$ctrl.ui.betaState === $ctrl.Cyph.im.BetaStates.login'
+					ng-show='$ctrl.ui.betaState === $ctrl.cyph.im.BetaStates.login'
 					ng-class='{checking: $ctrl.checking}'
 					layout='row'
 					layout-align='center center'
@@ -116,10 +116,10 @@ export const Templates	= {
 						<md-progress-circular md-mode='indeterminate'></md-progress-circular>
 					</md-card>
 				</div>
-				<div ng-show='$ctrl.ui.betaState === $ctrl.Cyph.im.BetaStates.register'>
+				<div ng-show='$ctrl.ui.betaState === $ctrl.cyph.im.BetaStates.register'>
 					Registration screen
 				</div>
-				<div ng-show='$ctrl.ui.betaState === $ctrl.Cyph.im.BetaStates.settings'>
+				<div ng-show='$ctrl.ui.betaState === $ctrl.cyph.im.BetaStates.settings'>
 					Settings screen
 				</div>
 			</div>
@@ -175,7 +175,7 @@ export const Templates	= {
 				layout-fill
 				flex
 				ng-class='{
-					active: $ctrl.self.state === $ctrl.Cyph.UI.Chat.States.keyExchange
+					active: $ctrl.self.state === $ctrl.cyph.UI.Chat.States.keyExchange
 				}'
 			>
 				<div flex></div>
@@ -197,7 +197,7 @@ export const Templates	= {
 				layout-fill
 				flex
 				ng-class='{
-					active: $ctrl.self.state === $ctrl.Cyph.UI.Chat.States.aborted
+					active: $ctrl.self.state === $ctrl.cyph.UI.Chat.States.aborted
 				}'
 			>
 				<div flex></div>
@@ -211,7 +211,7 @@ export const Templates	= {
 					<a
 						translate
 						target='_self'
-						ng-href='{{$ctrl.Cyph.Env.newCyphUrl}}'
+						ng-href='{{$ctrl.cyph.Env.newCyphUrl}}'
 					>try again</a>.
 				</div>
 				<div flex></div>
@@ -223,7 +223,7 @@ export const Templates	= {
 				layout-fill
 				flex
 				ng-class='{
-					active: $ctrl.self.state === $ctrl.Cyph.UI.Chat.States.chatBeginMessage
+					active: $ctrl.self.state === $ctrl.cyph.UI.Chat.States.chatBeginMessage
 				}'
 			>
 				<div flex></div>
@@ -243,11 +243,11 @@ export const Templates	= {
 				class='cyph-view video-call'
 				flex
 				ng-class='{
-					active: $ctrl.self.state === $ctrl.Cyph.UI.Chat.States.chat,
+					active: $ctrl.self.state === $ctrl.cyph.UI.Chat.States.chat,
 					playing: $ctrl.self.p2pManager.p2p.isActive
 				}'
 			>
-				<a class='logo' rel='noreferrer' ng-href='{{$ctrl.Cyph.Env.homeUrl}}'>
+				<a class='logo' rel='noreferrer' ng-href='{{$ctrl.cyph.Env.homeUrl}}'>
 					<img src='/img/betalogo.mobile.png' alt='Beta logo' />
 				</a>
 				<div
@@ -350,7 +350,7 @@ export const Templates	= {
 				class='cyph-view message-list nano'
 				flex
 				ng-class='{
-					active: $ctrl.self.state === $ctrl.Cyph.UI.Chat.States.chat
+					active: $ctrl.self.state === $ctrl.cyph.UI.Chat.States.chat
 				}'
 			>
 				<md-content class='nano-content'>
@@ -367,7 +367,7 @@ export const Templates	= {
 									&nbsp;
 									<span>
 										{{transfer.name}}
-										({{$ctrl.Cyph.Util.readableByteLength(transfer.size)}}):
+										({{$ctrl.cyph.Util.readableByteLength(transfer.size)}}):
 									</span>
 								</div>
 								<md-progress-linear
@@ -382,8 +382,8 @@ export const Templates	= {
 							class='message-item unread'
 							ng-class='[
 								"author-" + (
-									$ctrl.Cyph.Session.Users[message.author] ||
-									$ctrl.Cyph.Session.Users.other
+									$ctrl.cyph.Session.Users[message.author] ||
+									$ctrl.cyph.Session.Users.other
 								),
 								{
 									"self-destructed":
@@ -400,7 +400,7 @@ export const Templates	= {
 										<strong
 											translate
 											class='message-author'
-											ng-hide='::message.author === $ctrl.Cyph.Session.Users.app'
+											ng-hide='::message.author === $ctrl.cyph.Session.Users.app'
 											ng-bind='::message.author + ": "'
 										></strong>
 										<cyph-markdown
@@ -408,14 +408,14 @@ export const Templates	= {
 											markdown='message.text'
 											ng-class='::{
 												"app-message":
-													message.author === $ctrl.Cyph.Session.Users.app
+													message.author === $ctrl.cyph.Session.Users.app
 											}'
 										></cyph-markdown>
 									</span>
 									<span flex class='message-timestamp'>
 										<span
 											class='mobile-only'
-											ng-show='::message.author === $ctrl.Cyph.Session.Users.me'
+											ng-show='::message.author === $ctrl.cyph.Session.Users.me'
 										>
 											<span>{{::message.author}}</span> &nbsp;&mdash;&nbsp;
 										</span>
@@ -425,8 +425,8 @@ export const Templates	= {
 										<span
 											class='mobile-only'
 											ng-show='::
-												message.author !== $ctrl.Cyph.Session.Users.me &&
-												message.author !== $ctrl.Cyph.Session.Users.app
+												message.author !== $ctrl.cyph.Session.Users.me &&
+												message.author !== $ctrl.cyph.Session.Users.app
 											'
 										>
 											&nbsp;&mdash;&nbsp; <span>{{::message.author}}</span>
@@ -482,7 +482,7 @@ export const Templates	= {
 			class='chat-message-box platform-container'
 			ng-class='{mobile: $ctrl.self.isMobile}'
 			ng-show='
-				$ctrl.self.state === $ctrl.Cyph.UI.Chat.States.chat &&
+				$ctrl.self.state === $ctrl.cyph.UI.Chat.States.chat &&
 				$ctrl.self.session.state.isAlive
 			'
 		>
@@ -652,7 +652,7 @@ export const Templates	= {
 						<label>Cyph team to contact</label>
 						<md-select ng-model='$ctrl.self.to'>
 							<md-option
-								ng-repeat='address in $ctrl.Cyph.Config.cyphEmailAddresses'
+								ng-repeat='address in $ctrl.cyph.Config.cyphEmailAddresses'
 								value='{{address}}'
 							>
 								{{address}}
@@ -798,7 +798,7 @@ export const Templates	= {
 					</md-tab>
 					<md-tab label='Contact Cyph' ng-disabled='$ctrl.ui.coBranded'>
 						<span translate>Please check out the</span>
-						<a href='{{$ctrl.Cyph.Env.homeUrl}}faq'>FAQs</a>
+						<a href='{{$ctrl.cyph.Env.homeUrl}}faq'>FAQs</a>
 						<span translate>first!</span>
 						<br />
 						<br />
@@ -811,7 +811,7 @@ export const Templates	= {
 	`,
 
 	home: `
-		<section id='main' layout='column' ng-class='{"unisection-mode": $ctrl.ui.state !== $ctrl.Cyph.com.States.home}'>
+		<section id='main' layout='column' ng-class='{"unisection-mode": $ctrl.ui.state !== $ctrl.cyph.com.States.home}'>
 			<md-toolbar id='main-toolbar' class='wow animated fadeInDownBig'>
 				<div class='md-toolbar-tools'>
 					<span class='padding'></span>
@@ -821,7 +821,7 @@ export const Templates	= {
 					</a>
 
 					<md-button id='new-cyph' aria-label='Start new cyph' class='breathe'>
-						<a translate ng-href='{{$ctrl.Cyph.Env.newCyphUrl}}'>Start new cyph</a>
+						<a translate ng-href='{{$ctrl.cyph.Env.newCyphUrl}}'>Start new cyph</a>
 					</md-button>
 
 					<span class='link-wrapper-outer right desktop-only'>
@@ -969,28 +969,28 @@ export const Templates	= {
 						<md-card
 							class='animated wow'
 							data-wow-delay='3000ms'
-							ng-class='$ctrl.ui.promo === $ctrl.Cyph.com.Promos.jjgo ? "bounceInLeft" : "bounceInDown"'
+							ng-class='$ctrl.ui.promo === $ctrl.cyph.com.Promos.jjgo ? "bounceInLeft" : "bounceInDown"'
 							flex='33'
 							flex-sm='66'
 							flex-xs='100'
 						>
 							<md-card-header>
 								<md-card-header-text>
-									<img ng-src='/img/thirdparty/{{$ctrl.Cyph.com.Promos[$ctrl.ui.promo]}}.png' />
+									<img ng-src='/img/thirdparty/{{$ctrl.cyph.com.Promos[$ctrl.ui.promo]}}.png' />
 								</md-card-header-text>
 							</md-card-header>
 							<md-card-content>
 								<p>
 									<span translate>Welcome </span>
-									<span ng-if='$ctrl.ui.promo === $ctrl.Cyph.com.Promos.betalist'>Betalisters!</span>
-									<span ng-hide='$ctrl.ui.promo === $ctrl.Cyph.com.Promos.betalist'>
-										<i ng-if='$ctrl.ui.promo === $ctrl.Cyph.com.Promos.penn'>Penn's Sunday School</i>
-										<i ng-if='$ctrl.ui.promo === $ctrl.Cyph.com.Promos.jjgo'>Jordan, Jesse, Go!</i>
-										<i ng-if='$ctrl.ui.promo === $ctrl.Cyph.com.Promos.ventura'>We The People</i>
-										<i ng-if='$ctrl.ui.promo === $ctrl.Cyph.com.Promos.sawbones'>Sawbones</i>
-										<i ng-if='$ctrl.ui.promo === $ctrl.Cyph.com.Promos.judgejohn'>Judge John Hodgman</i>
-										<i ng-if='$ctrl.ui.promo === $ctrl.Cyph.com.Promos.mybrother'>My Brother, My Brother and Me</i>
-										<i ng-if='$ctrl.ui.promo === $ctrl.Cyph.com.Promos.security'>The Security Brief</i>
+									<span ng-if='$ctrl.ui.promo === $ctrl.cyph.com.Promos.betalist'>Betalisters!</span>
+									<span ng-hide='$ctrl.ui.promo === $ctrl.cyph.com.Promos.betalist'>
+										<i ng-if='$ctrl.ui.promo === $ctrl.cyph.com.Promos.penn'>Penn's Sunday School</i>
+										<i ng-if='$ctrl.ui.promo === $ctrl.cyph.com.Promos.jjgo'>Jordan, Jesse, Go!</i>
+										<i ng-if='$ctrl.ui.promo === $ctrl.cyph.com.Promos.ventura'>We The People</i>
+										<i ng-if='$ctrl.ui.promo === $ctrl.cyph.com.Promos.sawbones'>Sawbones</i>
+										<i ng-if='$ctrl.ui.promo === $ctrl.cyph.com.Promos.judgejohn'>Judge John Hodgman</i>
+										<i ng-if='$ctrl.ui.promo === $ctrl.cyph.com.Promos.mybrother'>My Brother, My Brother and Me</i>
+										<i ng-if='$ctrl.ui.promo === $ctrl.cyph.com.Promos.security'>The Security Brief</i>
 										<span translate>listeners!</span>
 									</span>
 								</p>
@@ -1271,7 +1271,7 @@ export const Templates	= {
 									<a
 										class='oneline'
 										target='_blank'
-										ng-href='https://www.{{$ctrl.Cyph.Config.onionRoot}}'
+										ng-href='https://www.{{$ctrl.cyph.Config.onionRoot}}'
 									>cyphdbyhiddenbhs.onion</a>
 									<em>("cyph'd by hidden backbone host server")</em>.
 									<span translate>
@@ -1427,7 +1427,7 @@ export const Templates	= {
 				</div>
 			</section>
 
-			<section id='pricing' ng-if='$ctrl.ui.state === $ctrl.Cyph.com.States.pricing' class='unisection'>
+			<section id='pricing' ng-if='$ctrl.ui.state === $ctrl.cyph.com.States.pricing' class='unisection'>
 				<div id='business'>
 					<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='25ms' translate>
 						Business Pricing
@@ -1602,8 +1602,8 @@ export const Templates	= {
 
 							<div class='price' ng-click='$ctrl.ui.updateCart(
 								$ctrl.ui.betaPlan,
-								$ctrl.Cyph.Config.pricingConfig.categories.enterprise.id,
-								$ctrl.Cyph.Config.pricingConfig.categories.enterprise.items.beta.id
+								$ctrl.cyph.Config.pricingConfig.categories.enterprise.id,
+								$ctrl.cyph.Config.pricingConfig.categories.enterprise.items.beta.id
 							)'>\${{$ctrl.ui.betaPlan}} (one time)</div>
 						</div>
 						<br hide-gt-sm />
@@ -1687,7 +1687,7 @@ export const Templates	= {
 				</div>
 			</section>
 
-			<section id='error' ng-if='$ctrl.ui.state === $ctrl.Cyph.com.States.error' class='unisection'>
+			<section id='error' ng-if='$ctrl.ui.state === $ctrl.cyph.com.States.error' class='unisection'>
 				<div>
 					<h1 translate>I'm sorry, but your cyph is in another castle...</h1>
 				</div>
@@ -1708,7 +1708,7 @@ export const Templates	= {
 				</div>
 			</section>
 
-			<section id='contact' ng-if='$ctrl.ui.state === $ctrl.Cyph.com.States.contact' class='unisection'>
+			<section id='contact' ng-if='$ctrl.ui.state === $ctrl.cyph.com.States.contact' class='unisection'>
 				<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' translate>
 					Contact Us
 				</h1>
@@ -1731,7 +1731,7 @@ export const Templates	= {
 				</div>
 			</section>
 
-			<section id='donate' ng-if='$ctrl.ui.state === $ctrl.Cyph.com.States.donate' class='unisection'>
+			<section id='donate' ng-if='$ctrl.ui.state === $ctrl.cyph.com.States.donate' class='unisection'>
 				<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' translate>
 					Donate
 				</h1>
@@ -1765,8 +1765,8 @@ export const Templates	= {
 						<md-button class='donate-button' aria-label='Submit Donation'>
 							<a translate ng-click='$ctrl.ui.updateCart(
 								$ctrl.ui.donationAmount,
-								$ctrl.Cyph.Config.pricingConfig.categories.donation.id,
-								$ctrl.Cyph.Config.pricingConfig.categories.donation.items.generic.id
+								$ctrl.cyph.Config.pricingConfig.categories.donation.id,
+								$ctrl.cyph.Config.pricingConfig.categories.donation.items.generic.id
 							)'>
 								Confirm Donation Amount
 							</a>
@@ -1775,7 +1775,7 @@ export const Templates	= {
 				</div>
 			</section>
 
-			<section id='checkout' ng-if='$ctrl.ui.state === $ctrl.Cyph.com.States.checkout' class='unisection'>
+			<section id='checkout' ng-if='$ctrl.ui.state === $ctrl.cyph.com.States.checkout' class='unisection'>
 				<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' translate>
 					Checkout
 				</h1>
@@ -1805,17 +1805,17 @@ export const Templates	= {
 						item='$ctrl.ui.cart[2]'
 						ng-if='$ctrl.ui.cart[0] !== 0'
 					>
-						<div ng-if='$ctrl.ui.cart[1] === $ctrl.Cyph.Config.pricingConfig.categories.donation.id'>
+						<div ng-if='$ctrl.ui.cart[1] === $ctrl.cyph.Config.pricingConfig.categories.donation.id'>
 							Thank you for supporting Cyph!
 						</div>
-						<div ng-hide='$ctrl.ui.cart[1] === $ctrl.Cyph.Config.pricingConfig.categories.donation.id'>
+						<div ng-hide='$ctrl.ui.cart[1] === $ctrl.cyph.Config.pricingConfig.categories.donation.id'>
 							Payment confirmed! Follow-up instructions will be sent via email.
 						</div>
 					</cyph-checkout>
 				</div>
 			</section>
 
-			<section id='faq' ng-if='$ctrl.ui.state === $ctrl.Cyph.com.States.faq' class='unisection'>
+			<section id='faq' ng-if='$ctrl.ui.state === $ctrl.cyph.com.States.faq' class='unisection'>
 				<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' translate>
 					Frequently Asked Questions
 				</h1>
@@ -1832,7 +1832,7 @@ export const Templates	= {
 							<md-card-content>
 								<p>
 									<span translate>Simply go to</span>
-									<a ng-href='{{$ctrl.Cyph.Env.newCyphUrl}}'>cyph.im</a>
+									<a ng-href='{{$ctrl.cyph.Env.newCyphUrl}}'>cyph.im</a>
 									<span translate>
 										or click the "start new cyph" button and a cyph link will be generated
 										for you to send to a friend. Text, email, or send the link to them via
@@ -2036,7 +2036,7 @@ export const Templates	= {
 				</div>
 			</section>
 
-			<section id='termsofservice' ng-if='$ctrl.ui.state === $ctrl.Cyph.com.States.termsofservice' class='unisection'>
+			<section id='termsofservice' ng-if='$ctrl.ui.state === $ctrl.cyph.com.States.termsofservice' class='unisection'>
 				<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' translate>
 					Terms of Service
 				</h1>
@@ -2124,7 +2124,7 @@ export const Templates	= {
 				</div>
 			</section>
 
-			<section id='privacypolicy' ng-if='$ctrl.ui.state === $ctrl.Cyph.com.States.privacypolicy' class='unisection'>
+			<section id='privacypolicy' ng-if='$ctrl.ui.state === $ctrl.cyph.com.States.privacypolicy' class='unisection'>
 				<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' translate>
 					Privacy Policy
 				</h1>
@@ -2260,7 +2260,7 @@ export const Templates	= {
 							translate
 							class='md-fab'
 							aria-label='SMS'
-							ng-href='{{$ctrl.Cyph.Env.smsUriBase}}{{$ctrl.self.linkEncoded}}'
+							ng-href='{{$ctrl.cyph.Env.smsUriBase}}{{$ctrl.self.linkEncoded}}'
 						>
 							<img src='/img/icons/sms.png' alt='SMS' />
 						</md-button>
@@ -2539,7 +2539,7 @@ export const Templates	= {
 						<a
 							translate
 							target='_self'
-							ng-href='{{$ctrl.Cyph.Env.newCyphUrl}}'
+							ng-href='{{$ctrl.cyph.Env.newCyphUrl}}'
 						>try again</a>.
 					</p>
 					<p translate>Reasons why you may have landed here:</p>
@@ -2588,17 +2588,17 @@ export const Templates	= {
 
 			<div layout='row' ng-hide='$ctrl.ui.coBranded'>
 				<p flex='nogrow' layout-padding>
-					<a flex ng-href='{{$ctrl.Cyph.Env.homeUrl}}'>
+					<a flex ng-href='{{$ctrl.cyph.Env.homeUrl}}'>
 						© Cyph 2016 (Patents Pending)
 					</a>
 				</p>
 
 				<p flex='nogrow' layout-padding>
-					<a flex ng-href='{{$ctrl.Cyph.Env.homeUrl}}contact'>Contact</a>
+					<a flex ng-href='{{$ctrl.cyph.Env.homeUrl}}contact'>Contact</a>
 				</p>
 
 				<p flex='nogrow' layout-padding>
-					<a ng-href='{{$ctrl.Cyph.Env.homeUrl}}donate'>
+					<a ng-href='{{$ctrl.cyph.Env.homeUrl}}donate'>
 						Donate
 					</a>
 				</p>
@@ -2613,19 +2613,19 @@ export const Templates	= {
 				</p>
 
 				<p flex='nogrow' layout-padding>
-					<a ng-href='{{$ctrl.Cyph.Env.homeUrl}}pricing'>
+					<a ng-href='{{$ctrl.cyph.Env.homeUrl}}pricing'>
 						Business Pricing
 					</a>
 				</p>
 
 				<p flex='nogrow' layout-padding>
-					<a ng-href='{{$ctrl.Cyph.Env.homeUrl}}privacypolicy'>
+					<a ng-href='{{$ctrl.cyph.Env.homeUrl}}privacypolicy'>
 						Privacy Policy
 					</a>
 				</p>
 
 				<p flex='nogrow' layout-padding>
-					<a ng-href='{{$ctrl.Cyph.Env.homeUrl}}termsofservice'>
+					<a ng-href='{{$ctrl.cyph.Env.homeUrl}}termsofservice'>
 						Terms of Service
 					</a>
 				</p>
@@ -2633,7 +2633,7 @@ export const Templates	= {
 
 			<div layout='row' ng-show='$ctrl.ui.coBranded'>
 				<p class='powered-by-cyph' flex='nogrow' layout-padding>
-					<a ng-href='{{$ctrl.Cyph.Env.homeUrl}}' class='small-font'>
+					<a ng-href='{{$ctrl.cyph.Env.homeUrl}}' class='small-font'>
 						Powered by Cyph
 					</a>
 				</p>

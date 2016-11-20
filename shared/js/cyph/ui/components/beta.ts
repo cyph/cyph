@@ -29,7 +29,7 @@ export class Beta
 	public static config		= {
 		controller: class {
 			/** @ignore */
-			public Cyph: any;
+			public cyph: any;
 
 			/** @ignore */
 			public ui: any;
@@ -41,11 +41,11 @@ export class Beta
 			public error: boolean		= false;
 
 			constructor ($element: JQuery) { (async () => {
-				while (!self['Cyph'] || !self['ui']) {
+				while (!self['cyph'] || !self['ui']) {
 					await Util.sleep();
 				}
 
-				this.Cyph	= self['Cyph'];
+				this.cyph	= self['cyph'];
 				this.ui		= self['ui'];
 
 				/* TODO: stop blatantly lying to people */

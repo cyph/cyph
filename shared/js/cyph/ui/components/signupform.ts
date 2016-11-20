@@ -35,7 +35,7 @@ export class SignupForm
 		},
 		controller: class {
 			/** @ignore */
-			public Cyph: any;
+			public cyph: any;
 
 			/** @ignore */
 			public self: ISignupForm;
@@ -44,11 +44,11 @@ export class SignupForm
 			public invite: string;
 
 			constructor () { (async () => {
-				while (!self['Cyph']) {
+				while (!self['cyph']) {
 					await Util.sleep();
 				}
 
-				this.Cyph	= self['Cyph'];
+				this.cyph	= self['cyph'];
 			})(); }
 		},
 		template: Templates.signupForm,

@@ -32,8 +32,8 @@ angular.
 		'$mdSidenav',
 
 		($mdDialog, $mdToast, $mdSidenav) => {
-			self['Cyph']		= Cyph;
-			self['Cyph'].com	= {
+			self['cyph']		= Cyph;
+			self['cyph'].com	= {
 				CyphDemo,
 				Elements,
 				HomeSections,

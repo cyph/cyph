@@ -34,7 +34,7 @@ export class LinkConnection
 		},
 		controller: class {
 			/** @ignore */
-			public Cyph: any;
+			public cyph: any;
 
 			/** @ignore */
 			public self: ILinkConnection;
@@ -43,11 +43,11 @@ export class LinkConnection
 			public queuedMessageDraft: string	= '';
 
 			constructor () { (async () => {
-				while (!self['Cyph']) {
+				while (!self['cyph']) {
 					await Util.sleep();
 				}
 
-				this.Cyph	= self['Cyph'];
+				this.cyph	= self['cyph'];
 			})(); }
 		},
 		template: Templates.linkConnection

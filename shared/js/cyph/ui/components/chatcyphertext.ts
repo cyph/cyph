@@ -34,17 +34,17 @@ export class ChatCyphertext
 		},
 		controller: class {
 			/** @ignore */
-			public Cyph: any;
+			public cyph: any;
 
 			/** @ignore */
 			public self: IChat;
 
 			constructor () { (async () => {
-				while (!self['Cyph']) {
+				while (!self['cyph']) {
 					await Util.sleep();
 				}
 
-				this.Cyph	= self['Cyph'];
+				this.cyph	= self['cyph'];
 			})(); }
 		},
 		template: Templates.chatCyphertext

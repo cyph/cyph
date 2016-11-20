@@ -169,7 +169,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 				if (this.homeSection === HomeSections.register) {
 					this.dialogManager.baseDialog({
 						locals: {
-							Cyph: self['Cyph'],
+							Cyph: self['cyph'],
 							signupForm: this.signupForm
 						},
 						onclose: () => Cyph.UrlState.set(''),
@@ -183,7 +183,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 
 					this.dialogManager.baseDialog({
 						locals: {
-							Cyph: self['Cyph'],
+							Cyph: self['cyph'],
 							signupForm: this.signupForm
 						},
 						onclose: () => Cyph.UrlState.set(''),
