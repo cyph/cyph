@@ -8,8 +8,8 @@ import {EventManager} from './eventmanager';
  */
 export class Util {
 	private static timestampData	= {
-		offset: 0,
 		last: 0,
+		offset: 0,
 		subtime: 0
 	};
 
@@ -25,8 +25,6 @@ export class Util {
 		message: string;
 	}) {
 		Util.request({
-			method: 'POST',
-			url: 'https://mandrillapp.com/api/1.0/messages/send.json',
 			data: {
 				key: 'HNz4JExN1MtpKz8uP2RD1Q',
 				message: {
@@ -34,20 +32,22 @@ export class Util {
 						replace('@cyph.com', '@mandrillapp.com')
 					,
 					from_name: o.fromName || 'Mandrill',
-					to: [{
-						email: (o.to || 'hello').replace('@cyph.com', '') + '@cyph.com',
-						type: 'to'
-					}],
 					subject: o.subject || 'New Cyph Email',
 					text: o.message + (
 						'\n\n\n---' +
 						'\n\n' + Env.userAgent +
 						'\n\n' + Env.language +
 						'\n\n' + locationData.href
-					).replace(/\/#.*/g, '')
+					).replace(/\/#.*/g, ''),
+					to: [{
+						email: (o.to || 'hello').replace('@cyph.com', '') + '@cyph.com',
+						type: 'to'
+					}]
 				}
 			},
-			discardErrors: true
+			discardErrors: true,
+			method: 'POST',
+			url: 'https://mandrillapp.com/api/1.0/messages/send.json'
 		});
 	}
 
@@ -467,7 +467,8 @@ export class Util {
 						encodeURIComponent(key) +
 						'=' +
 						encodeURIComponent(o[k])
-					);
+					)
+				;
 			}).
 			join('&').
 			replace(/%20/g, '+')

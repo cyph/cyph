@@ -45,7 +45,7 @@ export class AnonymousRemoteUser implements IRemoteUser {
 	 * @param sharedSecret
 	 * @param username
 	 */
-	public constructor (
+	constructor (
 		private potassium: Potassium,
 		private transport: Transport,
 		private sharedSecret: string,

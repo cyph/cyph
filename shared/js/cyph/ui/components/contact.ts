@@ -32,7 +32,6 @@ export class Contact extends UpgradeComponent implements DoCheck, OnChanges, OnI
 		bindings: {
 			self: '<'
 		},
-		template: Templates.contact,
 		controller: class {
 			public Cyph: any;
 			public ui: any;
@@ -41,9 +40,9 @@ export class Contact extends UpgradeComponent implements DoCheck, OnChanges, OnI
 				fromEmail: string;
 				fromName: string;
 				message: string;
-				to: string;
 				sent: boolean;
 				subject: string;
+				to: string;
 			};
 
 			public send () : void {
@@ -64,18 +63,18 @@ export class Contact extends UpgradeComponent implements DoCheck, OnChanges, OnI
 						fromEmail: '',
 						fromName: '',
 						message: '',
-						to: '',
 						sent: false,
-						subject: ''
+						subject: '',
+						to: ''
 					};
 				}
 
 				for (let k of [
 					'fromEmail',
 					'fromName',
-					'to',
+					'message',
 					'subject',
-					'message'
+					'to'
 				]) {
 					const v	= $element.attr(k);
 					if (v) {
@@ -83,7 +82,8 @@ export class Contact extends UpgradeComponent implements DoCheck, OnChanges, OnI
 					}
 				}
 			})(); }
-		}
+		},
+		template: Templates.contact
 	};
 
 

@@ -26,7 +26,6 @@ export class StaticCyphSpinningUp extends UpgradeComponent implements DoCheck, O
 
 	/** Component configuration. */
 	public static config		= {
-		template: Templates.staticCyphSpinningUp,
 		controller: class {
 			public Cyph: any;
 			public ui: any;
@@ -39,7 +38,8 @@ export class StaticCyphSpinningUp extends UpgradeComponent implements DoCheck, O
 				this.Cyph	= self['Cyph'];
 				this.ui		= self['ui'];
 			})(); }
-		}
+		},
+		template: Templates.staticCyphSpinningUp
 	};
 
 

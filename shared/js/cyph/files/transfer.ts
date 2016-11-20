@@ -3,7 +3,7 @@ import {ITransfer} from './itransfer';
 
 
 export class Transfer implements ITransfer {
-	public constructor (
+	constructor (
 		public name: string = '',
 		public size: number = 0,
 		public key: Uint8Array = new Uint8Array(0),

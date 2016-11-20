@@ -92,8 +92,8 @@ export class Transport {
 
 			if (plaintext) {
 				this.session.trigger(Events.castle, {
-					event: CastleEvents.receive,
-					data: {author, plaintext, timestamp}
+					data: {author, plaintext, timestamp},
+					event: CastleEvents.receive
 				});
 			}
 		}
@@ -119,8 +119,8 @@ export class Transport {
 		}
 
 		this.session.trigger(Events.castle, {
-			event: CastleEvents.send,
-			data: fullCyphertext
+			data: fullCyphertext,
+			event: CastleEvents.send
 		});
 
 		this.logCyphertext(fullCyphertext, Users.me);
@@ -129,5 +129,5 @@ export class Transport {
 	/**
 	 * @param session
 	 */
-	public constructor (private session: ISession) {}
+	constructor (private session: ISession) {}
 }

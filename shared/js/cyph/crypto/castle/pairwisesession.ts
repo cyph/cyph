@@ -257,7 +257,7 @@ export class PairwiseSession {
 	 * @param remoteUser
 	 * @param isAlice
 	 */
-	public constructor (
+	constructor (
 		private potassium: Potassium,
 		private transport: Transport,
 		private localUser: ILocalUser,

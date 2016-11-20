@@ -33,7 +33,6 @@ export class FileInput extends UpgradeComponent implements DoCheck, OnChanges, O
 			accept: '@',
 			fileChange: '&'
 		},
-		template: Templates.fileInput,
 		controller: class {
 			public accept: string;
 			public fileChange: ({file: File}) => void;
@@ -67,7 +66,8 @@ export class FileInput extends UpgradeComponent implements DoCheck, OnChanges, O
 					}))
 				;
 			}
-		}
+		},
+		template: Templates.fileInput
 	};
 
 

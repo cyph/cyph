@@ -176,7 +176,7 @@ export class Thread {
 	 * @param locals Local data to pass in to the new thread.
 	 * @param onmessage Handler for messages from the thread.
 	 */
-	public constructor (
+	constructor (
 		f: Function,
 		locals: any = {},
 		onmessage: (e: MessageEvent) => any = e => {}

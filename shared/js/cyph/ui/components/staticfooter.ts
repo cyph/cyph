@@ -26,7 +26,6 @@ export class StaticFooter extends UpgradeComponent implements DoCheck, OnChanges
 
 	/** Component configuration. */
 	public static config		= {
-		template: Templates.staticFooter,
 		controller: class {
 			public Cyph: any;
 			public ui: any;
@@ -39,7 +38,8 @@ export class StaticFooter extends UpgradeComponent implements DoCheck, OnChanges
 				this.Cyph	= self['Cyph'];
 				this.ui		= self['ui'];
 			})(); }
-		}
+		},
+		template: Templates.staticFooter
 	};
 
 

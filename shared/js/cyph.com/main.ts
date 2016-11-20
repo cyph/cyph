@@ -9,12 +9,12 @@
 import {platformBrowser} from '@angular/platform-browser';
 import {downgradeComponent, UpgradeModule} from '@angular/upgrade/static';
 import * as Cyph from '../cyph';
-import {Loaded} from '../preload';
+import {loaded} from '../preload';
 import {AppComponent} from './appcomponent';
 import {AppModule} from './appmodule';
 import {CyphDemo} from './cyphdemo';
 import {Elements} from './elements';
-import {HomeSections, PageTitles, Promos, States} from './enums';
+import {HomeSections, pageTitles, Promos, States} from './enums';
 import {HomeComponent} from './homecomponent';
 import {UI} from './ui';
 
@@ -37,7 +37,7 @@ angular.
 				CyphDemo,
 				Elements,
 				HomeSections,
-				PageTitles,
+				pageTitles,
 				Promos,
 				States,
 				UI
@@ -109,8 +109,8 @@ angular.
 if (!Cyph.Env.isOnion) {
 	(async () => {
 		const response: string	= await Cyph.Util.request({
-			url: `https://ping.${Cyph.Config.onionRoot}`,
-			discardErrors: true
+			discardErrors: true,
+			url: `https://ping.${Cyph.Config.onionRoot}`
 		});
 
 		if (response === 'pong') {
@@ -124,4 +124,4 @@ if (!Cyph.Env.isOnion) {
 }
 
 
-export {Loaded};
+export {loaded};

@@ -12,10 +12,10 @@
 import {platformBrowser} from '@angular/platform-browser';
 import {downgradeComponent, UpgradeModule} from '@angular/upgrade/static';
 import * as Cyph from '../cyph';
-import {Loaded} from '../preload';
+import {loaded} from '../preload';
 import {AppComponent} from './appcomponent';
 import {AppModule} from './appmodule';
-import {BetaStates, States, UrlSections} from './enums';
+import {BetaStates, States, urlSections} from './enums';
 import {UI} from './ui';
 
 
@@ -41,7 +41,7 @@ angular.
 				BetaStates,
 				States,
 				UI,
-				UrlSections
+				urlSections
 			};
 
 			self['ui']	= new UI(
@@ -113,4 +113,4 @@ angular.
 ))();
 
 
-export {Loaded};
+export {loaded};

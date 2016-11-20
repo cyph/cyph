@@ -6,7 +6,7 @@ export class Command {
 	 * @param method
 	 * @param argument
 	 */
-	public constructor (
+	constructor (
 		public method: string = '',
 		public argument: any = ''
 	) {}

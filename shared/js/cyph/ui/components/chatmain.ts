@@ -29,11 +29,9 @@ export class ChatMain extends UpgradeComponent implements DoCheck, OnChanges, On
 	/** Component configuration. */
 	public static config		= {
 		bindings: {
-			self: '<',
-			hideDisconnectMessage: '<'
+			hideDisconnectMessage: '<',
+			self: '<'
 		},
-		template: Templates.chatMain,
-		transclude: true,
 		controller: class {
 			public Cyph: any;
 			public self: IChat;
@@ -46,7 +44,9 @@ export class ChatMain extends UpgradeComponent implements DoCheck, OnChanges, On
 
 				this.Cyph	= self['Cyph'];
 			})(); }
-		}
+		},
+		template: Templates.chatMain,
+		transclude: true
 	};
 
 

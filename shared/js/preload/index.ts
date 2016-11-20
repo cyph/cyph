@@ -70,5 +70,5 @@ $(() => {
 });
 
 
-const Loaded: boolean	= true;
-export {Loaded};
+const loaded: boolean	= true;
+export {loaded};

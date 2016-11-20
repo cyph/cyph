@@ -39,12 +39,12 @@ export class FakeCastle implements ICastle {
 		});
 
 		this.session.trigger(Events.castle, {
-			event: CastleEvents.receive,
 			data: {
 				author: FakeCastle.remoteUsername,
 				plaintext: cyphertextSplit[1],
 				timestamp: Util.timestamp()
-			}
+			},
+			event: CastleEvents.receive
 		});
 	}
 
@@ -57,15 +57,15 @@ export class FakeCastle implements ICastle {
 		});
 
 		this.session.trigger(Events.castle, {
-			event: CastleEvents.send,
-			data: cyphertext + FakeCastle.delimiter + plaintext
+			data: cyphertext + FakeCastle.delimiter + plaintext,
+			event: CastleEvents.send
 		});
 	}
 
 	/**
 	 * @param session
 	 */
-	public constructor (private session: ISession) {
+	constructor (private session: ISession) {
 		setTimeout(() => this.session.trigger(Events.castle, {
 			event: CastleEvents.connect
 		}), 1000);

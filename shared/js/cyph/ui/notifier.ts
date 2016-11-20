@@ -72,7 +72,7 @@ export class Notifier implements INotifier {
 		}
 	}
 
-	public constructor () {
+	constructor () {
 		VisibilityWatcher.onchange((isVisible: boolean) => {
 			if (isVisible) {
 				for (let notification of this.openNotifications) {

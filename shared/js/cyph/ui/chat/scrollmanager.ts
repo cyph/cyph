@@ -135,7 +135,7 @@ export class ScrollManager implements IScrollManager {
 	 * @param elements
 	 * @param messageCountInTitle
 	 */
-	public constructor (
+	constructor (
 		dialogManager: IDialogManager,
 		private isMobile: boolean,
 		private elements: IElements,
@@ -154,9 +154,9 @@ export class ScrollManager implements IScrollManager {
 				this.mutationObserverHandler(mutationRecord);
 			}
 		}).observe(this.elements.messageListInner()[0], {
-			childList: true,
 			attributes: false,
 			characterData: false,
+			childList: true,
 			subtree: true
 		});
 	})(); }

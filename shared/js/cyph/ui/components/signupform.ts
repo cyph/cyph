@@ -29,11 +29,9 @@ export class SignupForm extends UpgradeComponent implements DoCheck, OnChanges, 
 	/** Component configuration. */
 	public static config		= {
 		bindings: {
-			self: '<',
-			invite: '<'
+			invite: '<',
+			self: '<'
 		},
-		template: Templates.signupForm,
-		transclude: true,
 		controller: class {
 			public Cyph: any;
 			public self: ISignupForm;
@@ -46,7 +44,9 @@ export class SignupForm extends UpgradeComponent implements DoCheck, OnChanges, 
 
 				this.Cyph	= self['Cyph'];
 			})(); }
-		}
+		},
+		template: Templates.signupForm,
+		transclude: true
 	};
 
 

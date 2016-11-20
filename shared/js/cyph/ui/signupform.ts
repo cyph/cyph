@@ -40,10 +40,10 @@ export class SignupForm implements ISignupForm {
 		}
 
 		const signupResult: string	= await Util.request({
-			method: 'PUT',
-			url: Env.baseUrl + 'signups',
 			data: this.data,
-			retries: 3
+			method: 'PUT',
+			retries: 3,
+			url: Env.baseUrl + 'signups'
 		});
 
 		if (signupResult !== 'set') {
@@ -51,23 +51,23 @@ export class SignupForm implements ISignupForm {
 		}
 
 		Analytics.send({
-			hitType: 'event',
-			eventCategory: 'signup',
 			eventAction: 'new',
-			eventValue: 1
+			eventCategory: 'signup',
+			eventValue: 1,
+			hitType: 'event'
 		});
 
 		if (this.promo) {
 			Analytics.send({
 				hitType: 'social',
-				socialNetwork: 'promo-' + this.promo,
 				socialAction: 'signup',
+				socialNetwork: 'promo-' + this.promo,
 				socialTarget: this.data.email
 			});
 		}
 	}
 
-	public constructor () {
+	constructor () {
 		setTimeout(() =>
 			Elements.signupForm().addClass('visible')
 		, 500);

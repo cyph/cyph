@@ -37,7 +37,7 @@ export class Channel implements IChannel {
 	 * @param channelName Name of this channel.
 	 * @param handlers Event handlers for this channel.
 	 */
-	public constructor (
+	constructor (
 		channelName: string,
 		handlers: ({
 			onclose?: () => void;

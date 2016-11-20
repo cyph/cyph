@@ -175,7 +175,7 @@ export class Chat extends BaseButtonManager implements IChat {
 		}
 		else if (!this.isDisconnected) {
 			this.isDisconnected	= true;
-			this.addMessage(Strings.disconnectedNotification, Users.app);
+			this.addMessage(Strings.disconnectNotification, Users.app);
 			this.session.close();
 		}
 	}
@@ -183,10 +183,10 @@ export class Chat extends BaseButtonManager implements IChat {
 	public disconnectButton () : void {
 		this.baseButtonClick(async () => {
 			if (await this.dialogManager.confirm({
-				title: Strings.disconnectTitle,
+				cancel: Strings.cancel,
 				content: Strings.disconnectConfirm,
 				ok: Strings.continueDialogAction,
-				cancel: Strings.cancel
+				title: Strings.disconnectTitle
 			})) {
 				this.close();
 			}
@@ -200,10 +200,10 @@ export class Chat extends BaseButtonManager implements IChat {
 			});
 
 			Analytics.send({
-				hitType: 'event',
-				eventCategory: 'help',
 				eventAction: 'show',
-				eventValue: 1
+				eventCategory: 'help',
+				eventValue: 1,
+				hitType: 'event'
 			});
 		});
 	}
@@ -272,7 +272,7 @@ export class Chat extends BaseButtonManager implements IChat {
 	 * @param session If not specified, one will be created.
 	 * @param rootElement
 	 */
-	public constructor (
+	constructor (
 		private dialogManager: IDialogManager,
 		mobileMenu: () => ISidebar,
 		private notifier: INotifier,
@@ -320,10 +320,10 @@ export class Chat extends BaseButtonManager implements IChat {
 				this.rootElement.addClass('modest');
 
 				Analytics.send({
-					hitType: 'event',
-					eventCategory: 'modest-branding',
 					eventAction: 'used',
-					eventValue: 1
+					eventCategory: 'modest-branding',
+					eventValue: 1,
+					hitType: 'event'
 				});
 			}
 
@@ -337,10 +337,10 @@ export class Chat extends BaseButtonManager implements IChat {
 				forceTURN	= true;
 
 				Analytics.send({
-					hitType: 'event',
-					eventCategory: 'force-turn',
 					eventAction: 'used',
-					eventValue: 1
+					eventCategory: 'force-turn',
+					eventValue: 1,
+					hitType: 'event'
 				});
 			}
 
@@ -354,10 +354,10 @@ export class Chat extends BaseButtonManager implements IChat {
 				nativeCrypto	= true;
 
 				Analytics.send({
-					hitType: 'event',
-					eventCategory: 'native-crypto',
 					eventAction: 'used',
-					eventValue: 1
+					eventCategory: 'native-crypto',
+					eventValue: 1,
+					hitType: 'event'
 				});
 			}
 

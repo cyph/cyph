@@ -31,7 +31,6 @@ export class ChatCyphertext extends UpgradeComponent implements DoCheck, OnChang
 		bindings: {
 			self: '<'
 		},
-		template: Templates.chatCyphertext,
 		controller: class {
 			public Cyph: any;
 			public self: IChat;
@@ -43,7 +42,8 @@ export class ChatCyphertext extends UpgradeComponent implements DoCheck, OnChang
 
 				this.Cyph	= self['Cyph'];
 			})(); }
-		}
+		},
+		template: Templates.chatCyphertext
 	};
 
 

@@ -34,10 +34,10 @@ export class Session implements ISession {
 
 	public state	= {
 		cyphId: <string> '',
-		sharedSecret: <string> '',
 		isAlice: <boolean> false,
 		isAlive: <boolean> true,
 		isStartingNewCyph: <boolean> false,
+		sharedSecret: <string> '',
 		wasInitiatedByAPI: <boolean> false
 	};
 
@@ -119,10 +119,10 @@ export class Session implements ISession {
 					this.lastIncomingMessageTimestamp	= Util.timestamp();
 
 					Analytics.send({
-						hitType: 'event',
-						eventCategory: 'ping-pong-timeout',
 						eventAction: 'detected',
-						eventValue: 1
+						eventCategory: 'ping-pong-timeout',
+						eventValue: 1,
+						hitType: 'event'
 					});
 				}
 			}
@@ -143,12 +143,12 @@ export class Session implements ISession {
 				this.trigger(message.event,
 					message.event === RPCEvents.text ?
 						{
+							author,
+							timestamp,
 							selfDestructTimeout:
 								Util.getValue(message.data, 'selfDestructTimeout')
 							,
-							text: Util.getValue(message.data, 'text'),
-							author,
-							timestamp
+							text: Util.getValue(message.data, 'text')
 						} :
 						message.data
 				);
@@ -164,10 +164,10 @@ export class Session implements ISession {
 		}
 
 		Analytics.send({
-			hitType: 'event',
-			eventCategory: 'message',
 			eventAction: 'sent',
-			eventValue: messages.length
+			eventCategory: 'message',
+			eventValue: messages.length,
+			hitType: 'event'
 		});
 	}
 
@@ -216,9 +216,9 @@ export class Session implements ISession {
 					/* If aborting before the cyph begins,
 						block friend from trying to join */
 					Util.request({
+						discardErrors: true,
 						method: 'POST',
-						url: Env.baseUrl + 'channels/' + this.state.cyphId,
-						discardErrors: true
+						url: Env.baseUrl + 'channels/' + this.state.cyphId
 					});
 				}
 
@@ -245,18 +245,18 @@ export class Session implements ISession {
 					this.pingPong();
 
 					Analytics.send({
-						hitType: 'event',
-						eventCategory: 'cyph',
 						eventAction: 'started',
-						eventValue: 1
+						eventCategory: 'cyph',
+						eventValue: 1,
+						hitType: 'event'
 					});
 
 					if (this.state.wasInitiatedByAPI) {
 						Analytics.send({
-							hitType: 'event',
-							eventCategory: 'api-initiated-cyph',
 							eventAction: 'started',
-							eventValue: 1
+							eventCategory: 'api-initiated-cyph',
+							eventValue: 1,
+							hitType: 'event'
 						});
 					}
 				}
@@ -372,7 +372,7 @@ export class Session implements ISession {
 	 * session and initiate a LocalChannel instance, passing it in to this
 	 * callback to be connected to a second local session's instance.
 	 */
-	public constructor (
+	constructor (
 		descriptor?: string,
 		nativeCrypto: boolean = false,
 		private id: string = Util.generateGuid(),
@@ -413,10 +413,10 @@ export class Session implements ISession {
 			(async () => {
 				try {
 					this.setUpChannel(await Util.request({
-						method: 'POST',
-						url: Env.baseUrl + 'channels/' + this.state.cyphId,
 						data: {channelDescriptor},
-						retries: 5
+						method: 'POST',
+						retries: 5,
+						url: Env.baseUrl + 'channels/' + this.state.cyphId
 					}), nativeCrypto);
 				}
 				catch (_) {

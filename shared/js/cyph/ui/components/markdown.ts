@@ -30,7 +30,6 @@ export class Markdown extends UpgradeComponent implements DoCheck, OnChanges, On
 		bindings: {
 			markdown: '<'
 		},
-		template: '',
 		controller: class {
 			private markdownIt: any;
 
@@ -80,10 +79,13 @@ export class Markdown extends UpgradeComponent implements DoCheck, OnChanges, On
 
 			constructor (private $element: JQuery) {
 				this.markdownIt	= new self['markdownit']({
-					html: false,
 					breaks: true,
+					highlight: s => self['microlight'].process(
+						s,
+						this.$element.css('color')
+					),
+					html: false,
 					linkify: true,
-					typographer: true,
 					quotes:
 						(
 							Env.language === 'ru' ?
@@ -94,17 +96,16 @@ export class Markdown extends UpgradeComponent implements DoCheck, OnChanges, On
 						) +
 						'‘’'
 					,
-					highlight: s => self['microlight'].process(
-						s,
-						this.$element.css('color')
-					)
+					typographer: true
+					
 				}).
 					disable('image').
 					use(self['markdownitSup']).
 					use(self['markdownitEmoji'])
 				;
 			}
-		}
+		},
+		template: ''
 	};
 
 

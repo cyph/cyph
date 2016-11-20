@@ -2,13 +2,13 @@
  * Possible states of cyph.com UI.
  */
 export enum States {
-	home,
+	checkout,
 	contact,
 	donate,
-	pricing,
-	checkout,
+	home,
 	error,
 	faq,
+	pricing,
 	privacypolicy,
 	termsofservice
 }
@@ -16,30 +16,30 @@ export enum States {
 /**
  * Map of URL states to page titles.
  */
-export const PageTitles	= {
-	default: `Cyph – Encrypted Messenger`,
+export const pageTitles	= {
 	about: `About Cyph`,
+	betalist: `Cyph – BetaList`,
+	checkout: `Cyph - Checkout`,
+	contact: `Get in Touch with Cyph`,
+	default: `Cyph – Encrypted Messenger`,
+	donate: `Donate to Cyph`,
+	error: `Page Not Found`,
+	faq: `Frequently Asked Questions`,
 	features: `Cyph's Features`,
 	gettingstarted: `Getting Started with Cyph`,
 	intro: `Introduction to Cyph`,
-	register: `Cyph Account Signup`,
 	invite: `Cyph Account Invite`,
-	testimonials: `What People Say about Cyph`,
-	contact: `Get in Touch with Cyph`,
-	donate: `Donate to Cyph`,
-	pricing: `Cyph Pricing`,
-	checkout: `Cyph - Checkout`,
-	error: `Page Not Found`,
-	faq: `Frequently Asked Questions`,
-	privacypolicy: `Cyph's Privacy Policy`,
-	termsofservice: `Cyph's Terms of Service`,
-	betalist: `Cyph – BetaList`,
 	jjgo: `Cyph – Jordan, Jesse, Go!`,
 	judgejohn: `Cyph – Judge John Hodgman`,
 	mybrother: `Cyph – My Brother, My Brother and Me`,
 	penn: `Cyph – Penn's Sunday School`,
+	pricing: `Cyph Pricing`,
+	privacypolicy: `Cyph's Privacy Policy`,
+	register: `Cyph Account Signup`,
 	sawbones: `Cyph – Sawbones`,
 	security: `Cyph – The Security Brief`,
+	termsofservice: `Cyph's Terms of Service`,
+	testimonials: `What People Say about Cyph`,
 	ventura: `Cyph – We The People`
 };
 
@@ -51,9 +51,9 @@ export enum HomeSections {
 	features,
 	gettingstarted,
 	intro,
+	invite,
 	promo,
 	register,
-	invite,
 	testimonials
 }
 
@@ -61,11 +61,11 @@ export enum HomeSections {
  * Possible states of promo promo page.
  */
 export enum Promos {
-	none,
 	betalist,
 	jjgo,
 	judgejohn,
 	mybrother,
+	none,
 	penn,
 	sawbones,
 	security,

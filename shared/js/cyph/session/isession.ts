@@ -10,10 +10,10 @@ export interface ISession {
 	/** State of the cyph (referenced by UI). */
 	state: {
 		cyphId: string;
-		sharedSecret: string;
 		isAlice: boolean;
 		isAlive: boolean;
 		isStartingNewCyph: boolean;
+		sharedSecret: string;
 		wasInitiatedByAPI: boolean;
 	};
 

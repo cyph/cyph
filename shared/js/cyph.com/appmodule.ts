@@ -22,14 +22,6 @@ import {HomeComponent} from './homecomponent';
 
 
 @NgModule({
-	imports: [
-		BrowserModule,
-		CommonModule,
-		UpgradeModule
-	],
-	entryComponents: [
-		AppComponent
-	],
 	declarations: [
 		AppComponent,
 		Beta,
@@ -46,8 +38,16 @@ import {HomeComponent} from './homecomponent';
 		StaticCyphNotFound,
 		StaticCyphSpinningUp,
 		StaticFooter
+	],
+	entryComponents: [
+		AppComponent
+	],
+	imports: [
+		BrowserModule,
+		CommonModule,
+		UpgradeModule
 	]
 })
 export class AppModule {
-	ngDoBootstrap () {}
+	public ngDoBootstrap () : void {}
 }

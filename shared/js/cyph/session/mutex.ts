@@ -113,7 +113,7 @@ export class Mutex implements IMutex {
 	/**
 	 * @param session
 	 */
-	public constructor (private session: ISession) {
+	constructor (private session: ISession) {
 		this.session.on(RPCEvents.mutex, (command: Command) =>
 			Util.getValue(this.commands, command.method, o => {})(command.argument)
 		);

@@ -1,5 +1,5 @@
 import * as Cyph from '../cyph';
-import {BetaStates, States, UrlSections} from './enums';
+import {BetaStates, States, urlSections} from './enums';
 
 
 /**
@@ -25,13 +25,13 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	public signupForm: Cyph.UI.ISignupForm;
 
 	private onUrlStateChange (urlState: string) : void {
-		if (urlState === UrlSections.root) {
+		if (urlState === urlSections.root) {
 			return;
 		}
 
 		const urlStateSplit: string[]	= urlState.split('/');
 
-		if (urlStateSplit[0] === UrlSections.beta) {
+		if (urlStateSplit[0] === urlSections.beta) {
 			this.betaState	= BetaStates[urlStateSplit[1]];
 			this.changeState(States.beta);
 		}
@@ -55,7 +55,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 				Cyph.UrlState.set(urlState + '/', true, true);
 			}
 
-			baseUrl	= initialCallType === UrlSections.video ?
+			baseUrl	= initialCallType === urlSections.video ?
 				Cyph.Env.cyphVideoBaseUrl :
 				Cyph.Env.cyphAudioBaseUrl
 			;
@@ -65,9 +65,9 @@ export class UI extends Cyph.UI.BaseButtonManager {
 				this.changeState(States.blank);
 
 				await this.dialogManager.alert({
-					title: Cyph.Strings.p2pTitle,
 					content: Cyph.Strings.p2pDisabledLocal,
-					ok: Cyph.Strings.ok
+					ok: Cyph.Strings.ok,
+					title: Cyph.Strings.p2pTitle
 				});
 
 				self.close();
@@ -124,7 +124,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 
 			if (initialCallType) {
 				this.dialogManager.toast({
-					content: initialCallType === UrlSections.video ?
+					content: initialCallType === urlSections.video ?
 						Cyph.Strings.p2pWarningVideoPassive :
 						Cyph.Strings.p2pWarningAudioPassive
 					,
@@ -163,7 +163,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	 * @param dialogManager
 	 * @param notifier
 	 */
-	public constructor (
+	constructor (
 		private dialogManager: Cyph.UI.IDialogManager,
 		private notifier: Cyph.UI.INotifier
 	) {
@@ -177,12 +177,12 @@ export class UI extends Cyph.UI.BaseButtonManager {
 
 		const urlSection: string	= Cyph.UrlState.getSplit()[0];
 
-		if (urlSection === UrlSections.beta) {
+		if (urlSection === urlSections.beta) {
 			Cyph.UrlState.trigger();
 		}
 		else {
 			this.startChat(
-				urlSection === UrlSections.video || urlSection === UrlSections.audio ?
+				urlSection === urlSections.video || urlSection === urlSections.audio ?
 					urlSection :
 					undefined
 			);

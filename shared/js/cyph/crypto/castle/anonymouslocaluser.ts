@@ -46,7 +46,7 @@ export class AnonymousLocalUser implements ILocalUser {
 	 * @param transport
 	 * @param sharedSecret
 	 */
-	public constructor (
+	constructor (
 		private potassium: Potassium,
 		private transport: Transport,
 		private sharedSecret: string

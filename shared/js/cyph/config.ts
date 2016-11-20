@@ -36,8 +36,6 @@ export class Config {
 
 	/** Angular-related config. */
 	public static angularConfig	= {
-		rootModule: 'Cyph',
-		rootController: 'CyphController',
 		config: [
 			'$compileProvider',
 			'$mdThemingProvider',
@@ -58,7 +56,9 @@ export class Config {
 					accentPalette('cyph')
 				;
 			}
-		]
+		],
+		rootController: 'CyphController',
+		rootModule: 'Cyph'
 	};
 
 	/** Braintree-related config. */
@@ -120,9 +120,9 @@ export class Config {
 
 	/** Notifier-related config (used by UI.Notifier). */
 	public static notifierConfig	= {
-		title: 'Cyph',
+		audio: '/audio/beep.mp3',
 		icon: customBuildFavicon || '/img/favicon/favicon-192x192.png',
-		audio: '/audio/beep.mp3'
+		title: 'Cyph'
 	};
 
 	/** WebSign-related config. */

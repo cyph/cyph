@@ -23,9 +23,9 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 	public disabledAlert () : void {
 		if (this.chat.isConnected && !this.isEnabled) {
 			this.dialogManager.alert({
-				title: Strings.p2pTitle,
 				content: Strings.p2pDisabled,
-				ok: Strings.ok
+				ok: Strings.ok,
+				title: Strings.p2pTitle
 			});
 		}
 	}
@@ -78,7 +78,7 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 	 * @param elements
 	 * @param forceTURN
 	 */
-	public constructor (
+	constructor (
 		private chat: IChat,
 		mobileMenu: () => ISidebar,
 		private dialogManager: IDialogManager,
@@ -119,9 +119,9 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 								}
 								else {
 									this.dialogManager.alert({
-										title: Strings.p2pTitle,
 										content: Strings.p2pDisconnect,
-										ok: Strings.ok
+										ok: Strings.ok,
+										title: Strings.p2pTitle
 									});
 
 									this.chat.addMessage(
@@ -153,15 +153,15 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 								}
 								else {
 									callback(await this.dialogManager.confirm({
-										title: Strings.p2pTitle,
+										timeout,
+										cancel: Strings.decline,
 										content:
 											Strings.p2pRequest + ' ' +
 											Strings[callType + 'Call'] + '. ' +
 											Strings.p2pWarning
 										,
 										ok: Strings.continueDialogAction,
-										cancel: Strings.decline,
-										timeout
+										title: Strings.p2pTitle
 									}));
 								}
 
@@ -177,14 +177,14 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 								}
 								else {
 									callback(await this.dialogManager.confirm({
-										title: Strings.p2pTitle,
+										cancel: Strings.cancel,
 										content:
 											Strings.p2pInit + ' ' +
 											Strings[callType + 'Call'] + '. ' +
 											Strings.p2pWarning
 										,
 										ok: Strings.continueDialogAction,
-										cancel: Strings.cancel
+										title: Strings.p2pTitle
 									}));
 								}
 
@@ -201,9 +201,9 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 							}
 							case UIEvents.Events.requestRejection: {
 								this.dialogManager.alert({
-									title: Strings.p2pTitle,
 									content: Strings.p2pDeny,
-									ok: Strings.ok
+									ok: Strings.ok,
+									title: Strings.p2pTitle
 								});
 								break;
 							}

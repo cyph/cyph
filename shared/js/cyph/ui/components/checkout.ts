@@ -33,11 +33,9 @@ export class Checkout extends UpgradeComponent implements DoCheck, OnChanges, On
 			amount: '=',
 			category: '=',
 			email: '=',
-			item: '=',
-			fullName: '='
+			fullName: '=',
+			item: '='
 		},
-		transclude: true,
-		template: Templates.checkout,
 		controller: class {
 			public Cyph: any;
 			public ui: any;
@@ -57,8 +55,8 @@ export class Checkout extends UpgradeComponent implements DoCheck, OnChanges, On
 				this.ui		= self['ui'];
 
 				const token: string	= await Util.request({
-					url: Env.baseUrl + Config.braintreeConfig.endpoint,
-					retries: 5
+					retries: 5,
+					url: Env.baseUrl + Config.braintreeConfig.endpoint
 				});
 
 				const checkoutUI: JQuery	= $element.find('.braintree');
@@ -70,16 +68,16 @@ export class Checkout extends UpgradeComponent implements DoCheck, OnChanges, On
 					enableCORS: true,
 					onPaymentMethodReceived: async (data) => {
 						const response: string	= await Util.request({
-							url: Env.baseUrl + Config.braintreeConfig.endpoint,
-							method: 'POST',
 							data: {
-								Nonce: data.nonce,
 								Amount: Math.floor(parseFloat(this.amount) * 100),
 								Category: this.category,
+								Email: this.email,
 								Item: this.item,
 								Name: this.fullName,
-								Email: this.email
-							}
+								Nonce: data.nonce
+							},
+							method: 'POST',
+							url: Env.baseUrl + Config.braintreeConfig.endpoint
 						});
 
 						if (JSON.parse(response).Status === 'authorized') {
@@ -88,7 +86,9 @@ export class Checkout extends UpgradeComponent implements DoCheck, OnChanges, On
 					}
 				});
 			})(); }
-		}
+		},
+		template: Templates.checkout,
+		transclude: true
 	};
 
 

@@ -1,7 +1,7 @@
 import * as Cyph from '../cyph';
 import {CyphDemo} from './cyphdemo';
 import {Elements} from './elements';
-import {HomeSections, PageTitles, Promos, States} from './enums';
+import {HomeSections, pageTitles, Promos, States} from './enums';
 
 
 /**
@@ -102,7 +102,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		;
 
 		Cyph.UI.Elements.title().text(
-			PageTitles[urlStateBase] || PageTitles.default
+			pageTitles[urlStateBase] || pageTitles.default
 		);
 
 		if (this.homeSection !== undefined) {
@@ -116,24 +116,26 @@ export class UI extends Cyph.UI.BaseButtonManager {
 			setTimeout(() => {
 				if (this.homeSection === HomeSections.register) {
 					this.dialogManager.baseDialog({
-						template: Cyph.UI.Templates.register,
 						locals: {
-							signupForm: this.signupForm,
-							Cyph: self['Cyph']
+							Cyph: self['Cyph'],
+							signupForm: this.signupForm
 						},
-						onclose: () => Cyph.UrlState.set('')
+						onclose: () => Cyph.UrlState.set(''),
+						template: Cyph.UI.Templates.register
 					});
 				}
 				else if (this.homeSection === HomeSections.invite) {
-					this.signupForm.data.inviteCode	= Cyph.UrlState.get().split(HomeSections[HomeSections.invite] + '/')[1] || '';
+					this.signupForm.data.inviteCode	=
+						Cyph.UrlState.get().split(HomeSections[HomeSections.invite] + '/')[1] || ''
+					;
 
 					this.dialogManager.baseDialog({
-						template: Cyph.UI.Templates.invite,
 						locals: {
-							signupForm: this.signupForm,
-							Cyph: self['Cyph']
+							Cyph: self['Cyph'],
+							signupForm: this.signupForm
 						},
-						onclose: () => Cyph.UrlState.set('')
+						onclose: () => Cyph.UrlState.set(''),
+						template: Cyph.UI.Templates.invite
 					});
 				}
 				else {
@@ -238,7 +240,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	 * @param mobileMenu
 	 * @param dialogManager
 	 */
-	public constructor (
+	constructor (
 		mobileMenu: () => Cyph.UI.ISidebar,
 		private dialogManager: Cyph.UI.IDialogManager
 	) {
@@ -367,8 +369,8 @@ export class UI extends Cyph.UI.BaseButtonManager {
 			$(UI.linkInterceptSelector).click(e => this.linkClickHandler(e));
 			new MutationObserver(mutations => {
 				for (let mutation of mutations) {
-					for (let i = 0 ; i < mutation.addedNodes.length ; ++i) {
-						const $elem: JQuery	= $(mutation.addedNodes[i]);
+					for (let elem of mutation.addedNodes) {
+						const $elem: JQuery	= $(elem);
 
 						if ($elem.is(UI.linkInterceptSelector)) {
 							$elem.click(e => this.linkClickHandler(e));
@@ -382,9 +384,9 @@ export class UI extends Cyph.UI.BaseButtonManager {
 					}
 				}
 			}).observe(document.body, {
-				childList: true,
 				attributes: false,
 				characterData: false,
+				childList: true,
 				subtree: true
 			});
 

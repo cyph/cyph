@@ -26,7 +26,6 @@ export class Beta extends UpgradeComponent implements DoCheck, OnChanges, OnInit
 
 	/** Component configuration. */
 	public static config		= {
-		template: Templates.beta,
 		controller: class {
 			public Cyph: any;
 			public ui: any;
@@ -55,7 +54,8 @@ export class Beta extends UpgradeComponent implements DoCheck, OnChanges, OnInit
 					}, Util.random(4000, 1500));
 				});
 			})(); }
-		}
+		},
+		template: Templates.beta
 	};
 
 

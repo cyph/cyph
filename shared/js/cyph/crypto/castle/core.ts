@@ -33,11 +33,11 @@ export class Core {
 	private lock: {}	= {};
 
 	private ephemeralKeys: {
-		public: Uint8Array;
 		private: Uint8Array;
+		public: Uint8Array;
 	}	= {
-		public: null,
-		private: null
+		private: null,
+		public: null
 	};
 
 	private async ratchet (incomingPublicKey?: Uint8Array) : Promise<Uint8Array> {
@@ -207,7 +207,7 @@ export class Core {
 	 * @param isAlice
 	 * @param keys Initial state of key ratchet.
 	 */
-	public constructor (
+	constructor (
 		private potassium: Potassium,
 		private isAlice: boolean,
 		private keys: {incoming: Uint8Array; outgoing: Uint8Array;}[]

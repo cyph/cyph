@@ -23,7 +23,7 @@ export class AnonymousCastle implements ICastle {
 		return this.pairwiseSession.send(plaintext, timestamp);
 	}
 
-	public constructor (session: ISession, isNative: boolean) {
+	constructor (session: ISession, isNative: boolean) {
 		const potassium		= new Potassium(isNative);
 		const transport		= new Transport(session);
 

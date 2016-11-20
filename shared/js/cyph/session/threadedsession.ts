@@ -14,10 +14,10 @@ export class ThreadedSession implements ISession {
 
 	public state	= {
 		cyphId: <string> '',
-		sharedSecret: <string> '',
 		isAlice: <boolean> false,
 		isAlive: <boolean> true,
 		isStartingNewCyph: <boolean> false,
+		sharedSecret: <string> '',
 		wasInitiatedByAPI: <boolean> false
 	};
 
@@ -62,7 +62,7 @@ export class ThreadedSession implements ISession {
 	 * @param nativeCrypto
 	 * @param id
 	 */
-	public constructor (
+	constructor (
 		descriptor?: string,
 		nativeCrypto: boolean = false,
 		private id: string = Util.generateGuid()
@@ -112,8 +112,8 @@ export class ThreadedSession implements ISession {
 		}, {
 			descriptor,
 			nativeCrypto,
-			id: this.id,
-			events: ThreadedSessionEvents
+			events: ThreadedSessionEvents,
+			id: this.id
 		});
 	}
 }

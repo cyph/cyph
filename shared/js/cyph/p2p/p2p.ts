@@ -132,11 +132,11 @@ export class P2P implements IP2P {
 						this.join();
 
 						Analytics.send({
-							hitType: 'event',
-							eventCategory: 'call',
 							eventAction: 'start',
+							eventCategory: 'call',
 							eventLabel: command.method,
-							eventValue: 1
+							eventValue: 1,
+							hitType: 'event'
 						});
 					}
 				}
@@ -200,20 +200,37 @@ export class P2P implements IP2P {
 		this.isActive	= true;
 
 		const iceServers: string	= await Util.request({
-			url: Env.baseUrl + 'iceservers',
-			retries: 5
+			retries: 5,
+			url: Env.baseUrl + 'iceservers'
 		});
 
 		const events: string[]	= [];
 
 		const webRTC	= new self['SimpleWebRTC']({
-			localVideoEl: this.localVideo()[0],
-			remoteVideosEl: this.remoteVideo()[0],
-			autoRequestMedia: false,
-			autoRemoveVideos: false,
 			adjustPeerVolume: true,
-			media: this.outgoingStream,
+			autoRemoveVideos: false,
+			autoRequestMedia: false,
 			connection: {
+				disconnect: () => events.forEach(event => EventManager.off(event)),
+				emit: (event: string, ...args: any[]) => {
+					const lastArg: any	= args.slice(-1)[0];
+
+					if (event === 'join' && typeof lastArg === 'function') {
+						lastArg(null, {clients: {friend: {video: true}}});
+					}
+					else {
+						this.session.send(
+							new Message(
+								RPCEvents.p2p,
+								new Command(
+									P2P.constants.webRTC,
+									{event, args}
+								)
+							)
+						);
+					}
+				},
+				getSessionid: () => this.session.state.cyphId,
 				on: (event: string, callback: Function) => {
 					const fullEvent: string	= P2P.constants.webRTC + event;
 					events.push(fullEvent);
@@ -238,28 +255,11 @@ export class P2P implements IP2P {
 							callback.apply(webRTC, args);
 						}
 					);
-				},
-				emit: (event: string, ...args: any[]) => {
-					const lastArg: any	= args.slice(-1)[0];
-
-					if (event === 'join' && typeof lastArg === 'function') {
-						lastArg(null, {clients: {friend: {video: true}}});
-					}
-					else {
-						this.session.send(
-							new Message(
-								RPCEvents.p2p,
-								new Command(
-									P2P.constants.webRTC,
-									{event, args}
-								)
-							)
-						);
-					}
-				},
-				getSessionid: () => this.session.state.cyphId,
-				disconnect: () => events.forEach(event => EventManager.off(event))
-			}
+				}
+			},
+			localVideoEl: this.localVideo()[0],
+			media: this.outgoingStream,
+			remoteVideosEl: this.remoteVideo()[0]
 		});
 
 		webRTC.webrtc.config.peerConnectionConfig.iceServers	=
@@ -363,7 +363,7 @@ export class P2P implements IP2P {
 	 * @param localVideo
 	 * @param remoteVideo
 	 */
-	public constructor (
+	constructor (
 		private session: ISession,
 		private forceTURN: boolean,
 		private localVideo: () => JQuery,

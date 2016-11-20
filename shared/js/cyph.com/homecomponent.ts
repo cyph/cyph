@@ -26,7 +26,6 @@ export class HomeComponent extends UpgradeComponent implements DoCheck, OnChange
 
 	/** Component configuration. */
 	public static config		= {
-		template: Templates.home,
 		controller: class {
 			public Cyph: any;
 			public ui: any;
@@ -39,7 +38,8 @@ export class HomeComponent extends UpgradeComponent implements DoCheck, OnChange
 				this.Cyph	= self['Cyph'];
 				this.ui		= self['ui'];
 			})(); }
-		}
+		},
+		template: Templates.home
 	};
 
 

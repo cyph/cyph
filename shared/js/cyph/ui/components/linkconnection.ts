@@ -31,7 +31,6 @@ export class LinkConnection extends UpgradeComponent implements DoCheck, OnChang
 		bindings: {
 			self: '<'
 		},
-		template: Templates.linkConnection,
 		controller: class {
 			public Cyph: any;
 			public self: ILinkConnection;
@@ -45,7 +44,8 @@ export class LinkConnection extends UpgradeComponent implements DoCheck, OnChang
 
 				this.Cyph	= self['Cyph'];
 			})(); }
-		}
+		},
+		template: Templates.linkConnection
 	};
 
 

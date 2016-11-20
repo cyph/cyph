@@ -70,7 +70,7 @@ export class Timer implements ITimer {
 	 * @param countdown
 	 * @param autostart
 	 */
-	public constructor (
+	constructor (
 		public countdown: number,
 		autostart?: boolean
 	) {

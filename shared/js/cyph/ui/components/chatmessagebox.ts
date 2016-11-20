@@ -34,7 +34,6 @@ export class ChatMessageBox extends UpgradeComponent implements DoCheck, OnChang
 		bindings: {
 			self: '<'
 		},
-		template: Templates.chatMessageBox,
 		controller: class {
 			public Cyph: any;
 			public self: IChat;
@@ -87,7 +86,8 @@ export class ChatMessageBox extends UpgradeComponent implements DoCheck, OnChang
 				await Util.sleep(1000);
 				this.isSpeedDialOpen	= false;
 			})(); }
-		}
+		},
+		template: Templates.chatMessageBox
 	};
 
 

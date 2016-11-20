@@ -26,7 +26,6 @@ export class StaticCyphNotFound extends UpgradeComponent implements DoCheck, OnC
 
 	/** Component configuration. */
 	public static config		= {
-		template: Templates.staticCyphNotFound,
 		controller: class {
 			public Cyph: any;
 			public ui: any;
@@ -39,7 +38,8 @@ export class StaticCyphNotFound extends UpgradeComponent implements DoCheck, OnC
 				this.Cyph	= self['Cyph'];
 				this.ui		= self['ui'];
 			})(); }
-		}
+		},
+		template: Templates.staticCyphNotFound
 	};
 
 

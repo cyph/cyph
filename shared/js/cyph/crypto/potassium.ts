@@ -23,7 +23,7 @@ export class Potassium extends PotassiumUtil {
 	}
 
 
-	private newNonce (size: number) {
+	private newNonce (size: number) : Uint8Array {
 		if (size < 4) {
 			throw new Error('Nonce size too small.');
 		}
@@ -900,7 +900,7 @@ export class Potassium extends PotassiumUtil {
 	 * @param isNative If true, will use NativeCrypto instead of libsodium.
 	 * @param counter Initial value of counter for nonces.
 	 */
-	public constructor (
+	constructor (
 		private isNative: boolean = false,
 		private counter: number = 0
 	) {

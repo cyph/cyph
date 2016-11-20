@@ -7,18 +7,18 @@
  * Calculate absolute coordinates of the boundaries of this element.
  */
 $.fn.bounds	= function () : ({
-	top: number;
-	left: number;
 	bottom: number;
+	left: number;
 	right: number;
+	top: number;
 }) {
 	const bounds: JQueryCoordinates	= this.offset();
 
 	return {
-		top: bounds.top,
-		left: bounds.left,
 		bottom: bounds.top + this.outerHeight(),
-		right: bounds.left + this.outerWidth()
+		left: bounds.left,
+		right: bounds.left + this.outerWidth(),
+		top: bounds.top
 	};
 };
 

@@ -63,7 +63,7 @@ export class LocalChannel implements IChannel {
 	/**
 	 * @param handlers Event handlers for this channel.
 	 */
-	public constructor (
+	constructor (
 		public handlers: ({
 			onclose?: () => void;
 			onconnect?: () => void;

@@ -34,7 +34,7 @@ export class BaseButtonManager {
 	/**
 	 * @param mobileMenu
 	 */
-	public constructor (
+	constructor (
 		protected mobileMenu: () => ISidebar = () => ({close: () => {}, open: () => {}})
 	) {}
 }

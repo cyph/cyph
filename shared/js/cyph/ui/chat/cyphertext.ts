@@ -67,10 +67,10 @@ export class Cyphertext extends BaseButtonManager implements ICyphertext {
 				this.elements.everything().addClass(this.curtainClass);
 
 				Analytics.send({
-					hitType: 'event',
-					eventCategory: 'cyphertext',
 					eventAction: 'show',
-					eventValue: 1
+					eventCategory: 'cyphertext',
+					eventValue: 1,
+					hitType: 'event'
 				});
 			}
 		});
@@ -83,7 +83,7 @@ export class Cyphertext extends BaseButtonManager implements ICyphertext {
 	 * @param isMobile
 	 * @param elements
 	 */
-	public constructor (
+	constructor (
 		session: ISession,
 		mobileMenu: () => ISidebar,
 		private dialogManager: IDialogManager,

@@ -251,13 +251,13 @@ export class Files implements IFiles {
 					}, 1000);
 
 					const cyphertext: Uint8Array	= new Uint8Array(await Util.request({
+						responseType: 'arraybuffer',
+						retries: 5,
 						/* Temporary workaround while Firebase adds CORS support */
 						url: (transfer.url || '').replace(
 							'firebasestorage.googleapis.com',
 							'api.cyph.com'
-						),
-						responseType: 'arraybuffer',
-						retries: 5
+						)
 					}));
 
 					transfer.percentComplete	= Math.max(
@@ -302,10 +302,10 @@ export class Files implements IFiles {
 			this.triggerUIEvent(UIEvents.tooLarge);
 
 			Analytics.send({
-				hitType: 'event',
-				eventCategory: 'file',
 				eventAction: 'toolarge',
-				eventValue: 1
+				eventCategory: 'file',
+				eventValue: 1,
+				hitType: 'event'
 			});
 
 			return;
@@ -321,10 +321,10 @@ export class Files implements IFiles {
 		const transferIndex: number	= this.transfers.push(transfer) - 1;
 
 		Analytics.send({
-			hitType: 'event',
-			eventCategory: 'file',
 			eventAction: 'send',
-			eventValue: 1
+			eventCategory: 'file',
+			eventValue: 1,
+			hitType: 'event'
 		});
 
 		this.triggerUIEvent(
@@ -396,7 +396,7 @@ export class Files implements IFiles {
 	/**
 	 * @param session
 	 */
-	public constructor (private session: ISession) { (async () => {
+	constructor (private session: ISession) { (async () => {
 		const isNativeCryptoSupported	=
 			await Potassium.isNativeCryptoSupported()
 		;

@@ -2,11 +2,11 @@
  * Possible states of cyph.im UI.
  */
 export enum States {
-	none,
+	beta,
 	blank,
 	chat,
 	error,
-	beta,
+	none,
 	spinningUp,
 	waitingForFriend
 }
@@ -15,8 +15,8 @@ export enum States {
  * Possible states of beta UI.
  */
 export enum BetaStates {
-	none,
 	login,
+	none,
 	register,
 	settings
 }
@@ -24,9 +24,9 @@ export enum BetaStates {
 /**
  * Possible sections of URL state.
  */
-export const UrlSections	= {
-	root: '',
+export const urlSections	= {
+	audio: 'audio',
 	beta: 'beta',
-	video: 'video',
-	audio: 'audio'
+	root: '',
+	video: 'video'
 };

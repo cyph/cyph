@@ -119,7 +119,7 @@ export class LinkConnection implements ILinkConnection {
 	 * @param chat
 	 * @param dialogManager
 	 */
-	public constructor (
+	constructor (
 		countdown: number,
 		private chat: IChat,
 		private dialogManager: IDialogManager

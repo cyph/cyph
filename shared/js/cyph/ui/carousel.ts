@@ -66,7 +66,7 @@ export class Carousel {
 	 * @param rootElement
 	 * @param callback
 	 */
-	public constructor (
+	constructor (
 		private rootElement: JQuery,
 		callback: Function = () => {}
 	) { (async () => {
