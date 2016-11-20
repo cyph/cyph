@@ -19,7 +19,7 @@ export class Carousel {
 	public async setItem (itemNumber: number = this.itemNumber) : Promise<number> {
 		if (!this.logos || !this.quotes) {
 			do {
-				await Util.sleep(250);
+				await Util.sleep();
 				this.logos	= this.rootElement.find('.logo');
 				this.quotes	= this.rootElement.find('.quote');
 			} while (this.logos.length < 1 || this.quotes.length < 1);

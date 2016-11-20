@@ -52,7 +52,7 @@ export class Contact extends UpgradeComponent implements DoCheck, OnChanges, OnI
 
 			constructor ($element: JQuery) { (async () => {
 				while (!self['Cyph'] || !self['ui']) {
-					await Util.sleep(100);
+					await Util.sleep();
 				}
 
 				this.Cyph	= self['Cyph'];

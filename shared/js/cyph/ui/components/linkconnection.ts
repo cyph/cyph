@@ -39,7 +39,7 @@ export class LinkConnection extends UpgradeComponent implements DoCheck, OnChang
 
 			constructor () { (async () => {
 				while (!self['Cyph']) {
-					await Util.sleep(100);
+					await Util.sleep();
 				}
 
 				this.Cyph	= self['Cyph'];

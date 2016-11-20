@@ -39,7 +39,7 @@ export class SignupForm extends UpgradeComponent implements DoCheck, OnChanges, 
 
 			constructor () { (async () => {
 				while (!self['Cyph']) {
-					await Util.sleep(100);
+					await Util.sleep();
 				}
 
 				this.Cyph	= self['Cyph'];

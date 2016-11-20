@@ -32,7 +32,7 @@ export class StaticCyphSpinningUp extends UpgradeComponent implements DoCheck, O
 
 			constructor () { (async () => {
 				while (!self['Cyph'] || !self['ui']) {
-					await Util.sleep(100);
+					await Util.sleep();
 				}
 
 				this.Cyph	= self['Cyph'];

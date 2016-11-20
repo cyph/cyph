@@ -190,10 +190,10 @@ export class UI extends Cyph.UI.BaseButtonManager {
 
 		(async () => {
 			while (this.state === States.none) {
-				await Cyph.Util.sleep(100);
+				await Cyph.Util.sleep();
 			}
 
-			await Cyph.Util.sleep(250);
+			await Cyph.Util.sleep();
 
 			Cyph.UI.Elements.html().addClass('load-complete');
 		})();

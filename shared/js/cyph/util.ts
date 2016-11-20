@@ -394,7 +394,7 @@ export class Util {
 					throw err;
 				}
 				else {
-					await Util.sleep(250);
+					await Util.sleep();
 				}
 			}
 		}

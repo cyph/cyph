@@ -39,7 +39,7 @@ export class ChatMain extends UpgradeComponent implements DoCheck, OnChanges, On
 
 			constructor () { (async () => {
 				while (!self['Cyph']) {
-					await Util.sleep(100);
+					await Util.sleep();
 				}
 
 				this.Cyph	= self['Cyph'];

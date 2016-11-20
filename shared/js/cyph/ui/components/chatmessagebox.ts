@@ -42,7 +42,7 @@ export class ChatMessageBox extends UpgradeComponent implements DoCheck, OnChang
 
 			constructor ($element: JQuery) { (async () => {
 				while (!self['Cyph']) {
-					await Util.sleep(100);
+					await Util.sleep();
 				}
 
 				this.Cyph	= self['Cyph'];
@@ -53,7 +53,7 @@ export class ChatMessageBox extends UpgradeComponent implements DoCheck, OnChang
 				let $textarea: JQuery;
 				while (!$textarea || $textarea.length < 1) {
 					$textarea	= $element.find('textarea');
-					await Util.sleep(100);
+					await Util.sleep();
 				}
 
 				$textarea.keypress(e => {
@@ -74,13 +74,13 @@ export class ChatMessageBox extends UpgradeComponent implements DoCheck, OnChang
 				let $speedDial: JQuery;
 				while (!$speedDial || $speedDial.length < 1) {
 					$speedDial	= $element.find('md-fab-speed-dial:visible');
-					await Util.sleep(100);
+					await Util.sleep();
 				}
 
 				$speedDial.removeClass('md-animations-waiting');
 
 				while (!VisibilityWatcher.isVisible) {
-					await Util.sleep(100);
+					await Util.sleep();
 				}
 
 				await Util.sleep(1000);

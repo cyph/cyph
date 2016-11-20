@@ -234,7 +234,7 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 				Elements.demoRoot().length < 1 ||
 				Elements.heroText().length < 1
 			) {
-				await Cyph.Util.sleep(100);
+				await Cyph.Util.sleep();
 			}
 
 			Elements.demoRoot()['appear']();
@@ -242,7 +242,7 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 
 			await Cyph.Util.sleep(1000);
 			while (Elements.heroText().is(':appeared')) {
-				await Cyph.Util.sleep(250);
+				await Cyph.Util.sleep();
 			}
 
 			Elements.demoRoot().one('appear', async (e: Event) => {

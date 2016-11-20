@@ -14,7 +14,7 @@ export class BaseButtonManager {
 	 */
 	public async baseButtonClick (callback: Function) : Promise<void> {
 		return Util.lock(BaseButtonManager.buttonLock, async () => {
-			await Util.sleep(250);
+			await Util.sleep();
 			this.mobileMenu().close();
 
 			if (callback) {
@@ -27,7 +27,7 @@ export class BaseButtonManager {
 	 * Opens mobile sidenav menu.
 	 */
 	public async openMobileMenu () : Promise<void> {
-		await Util.sleep(250);
+		await Util.sleep();
 		this.mobileMenu().open();
 	}
 

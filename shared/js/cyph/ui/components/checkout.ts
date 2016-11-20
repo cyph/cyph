@@ -48,7 +48,7 @@ export class Checkout extends UpgradeComponent implements DoCheck, OnChanges, On
 
 			constructor ($element: JQuery) { (async () => {
 				while (!self['Cyph'] || !self['ui']) {
-					await Util.sleep(100);
+					await Util.sleep();
 				}
 
 				this.Cyph	= self['Cyph'];

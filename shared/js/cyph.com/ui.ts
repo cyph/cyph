@@ -265,7 +265,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 				Elements.mainToolbar().length < 1 ||
 				Elements.testimonialsSection().length < 1
 			) {
-				await Cyph.Util.sleep(100);
+				await Cyph.Util.sleep();
 			}
 
 
