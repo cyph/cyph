@@ -18,9 +18,9 @@ export class PotassiumUtil {
 	protected static SuperSphincs	= self['superSphincs'] || {};
 
 	public static clearMemory (a: ArrayBufferView) : void {
-		if (a instanceof Uint8Array) {
-			PotassiumUtil.Sodium.memzero(a);
-		}
+		PotassiumUtil.Sodium.memzero(
+			PotassiumUtil.toBytes(a)
+		);
 	}
 
 	public static compareMemory (a: ArrayBufferView, b: ArrayBufferView) : boolean {
