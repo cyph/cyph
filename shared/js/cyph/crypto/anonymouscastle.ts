@@ -9,13 +9,19 @@ import {ICastle} from './icastle';
 import {Potassium} from './potassium';
 
 
+/**
+ * Castle instance between two anonymous users.
+ */
 export class AnonymousCastle implements ICastle {
+	/** @ignore */
 	private pairwiseSession: PairwiseSession;
 
+	/** @inheritDoc */
 	public receive (cyphertext: string) : void {
 		return this.pairwiseSession.receive(cyphertext);
 	}
 
+	/** @inheritDoc */
 	public send (
 		plaintext: string,
 		timestamp: number = Util.timestamp()

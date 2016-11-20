@@ -10,8 +10,10 @@ import {ISession} from './isession';
  * Wrapper around Session that spawns it in a new thread.
  */
 export class ThreadedSession implements ISession {
+	/** @ignore */
 	private thread: Thread;
 
+	/** @inheritDoc */
 	public state	= {
 		cyphId: <string> '',
 		isAlice: <boolean> false,
@@ -21,38 +23,47 @@ export class ThreadedSession implements ISession {
 		wasInitiatedByAPI: <boolean> false
 	};
 
+	/** @inheritDoc */
 	public close () : void {
 		this.trigger(ThreadedSessionEvents.close);
 	}
 
+	/** @inheritDoc */
 	public off (event: string, handler: Function) : void {
 		EventManager.off(event + this.id, handler);
 	}
 
+	/** @inheritDoc */
 	public on (event: string, handler: Function) : void {
 		EventManager.on(event + this.id, handler);
 	}
 
+	/** @inheritDoc */
 	public receive (data: string) : void {
 		this.trigger(ThreadedSessionEvents.receive, {data});
 	}
 
+	/** @inheritDoc */
 	public send (...messages: IMessage[]) : void {
 		this.sendBase(messages);
 	}
 
+	/** @inheritDoc */
 	public sendBase (messages: IMessage[]) : void {
 		this.trigger(ThreadedSessionEvents.send, {messages});
 	}
 
+	/** @inheritDoc */
 	public sendText (text: string, selfDestructTimeout?: number) : void {
 		this.trigger(ThreadedSessionEvents.sendText, {text, selfDestructTimeout});
 	}
 
+	/** @inheritDoc */
 	public trigger (event: string, data?: any) : void {
 		EventManager.trigger(event + this.id, data);
 	}
 
+	/** @inheritDoc */
 	public updateState (key: string, value: any) : void {
 		this.trigger(ThreadedSessionEvents.updateState, {key, value});
 	}
@@ -64,12 +75,15 @@ export class ThreadedSession implements ISession {
 	 */
 	constructor (
 		descriptor?: string,
+
 		nativeCrypto: boolean = false,
+
+		/** @ignore */
 		private id: string = Util.generateGuid()
 	) {
 		this.on(
 			ThreadedSessionEvents.updateStateThread,
-			(e: { key: string; value: any; }) => {
+			(e: {key: string; value: any;}) => {
 				this.state[e.key]	= e.value;
 			}
 		);
@@ -91,11 +105,11 @@ export class ThreadedSession implements ISession {
 				session.close()
 			);
 
-			session.on(locals.events.receive, (e: { data: string; }) =>
+			session.on(locals.events.receive, (e: {data: string;}) =>
 				session.receive(e.data)
 			);
 
-			session.on(locals.events.send, (e: { messages: IMessage[]; }) =>
+			session.on(locals.events.send, (e: {messages: IMessage[];}) =>
 				session.sendBase(e.messages)
 			);
 
@@ -106,7 +120,7 @@ export class ThreadedSession implements ISession {
 				session.sendText(e.text, e.selfDestructTimeout)
 			);
 
-			session.on(locals.events.updateState, (e: { key: string; value: any; }) =>
+			session.on(locals.events.updateState, (e: {key: string; value: any;}) =>
 				session.updateState(e.key, e.value)
 			);
 		}, {

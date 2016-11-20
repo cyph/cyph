@@ -1,6 +1,5 @@
 /**
  * Represents the local user in a Castle session.
- * @interface
  */
 export interface ILocalUser {
 	/** Potassium.Box key pair. */

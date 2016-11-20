@@ -22,7 +22,10 @@ import {Templates} from '../templates';
 @Directive({
 	selector: 'cyph-signup-form'
 })
-export class SignupForm extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
+export class SignupForm
+	extends UpgradeComponent
+	implements DoCheck, OnChanges, OnInit, OnDestroy
+{
 	/** Component title. */
 	public static title: string	= 'cyphSignupForm';
 
@@ -50,13 +53,31 @@ export class SignupForm extends UpgradeComponent implements DoCheck, OnChanges, 
 	};
 
 
-	@Input() self: ISignupForm;
-	@Input() invite: string;
+	/** @ignore */
+	@Input() public self: ISignupForm;
 
-	ngDoCheck () { super.ngDoCheck(); }
-	ngOnChanges (changes: SimpleChanges) { super.ngOnChanges(changes); }
-	ngOnDestroy () { super.ngOnDestroy(); }
-	ngOnInit () { super.ngOnInit(); }
+	/** @ignore */
+	@Input() public invite: string;
+
+	/** @ignore */
+	public ngDoCheck () : void {
+		super.ngDoCheck();
+	}
+
+	/** @ignore */
+	public ngOnChanges (changes: SimpleChanges) : void {
+		super.ngOnChanges(changes);
+	}
+
+	/** @ignore */
+	public ngOnDestroy () : void {
+		super.ngOnDestroy();
+	}
+
+	/** @ignore */
+	public ngOnInit () : void {
+		super.ngOnInit();
+	}
 
 	constructor (
 		@Inject(ElementRef) elementRef: ElementRef,

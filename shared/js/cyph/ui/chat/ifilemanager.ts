@@ -3,7 +3,6 @@ import {IFiles} from '../../files/ifiles';
 
 /**
  * Manages files within a chat.
- * @interface
  */
 export interface IFileManager {
 	/** Files instance. */

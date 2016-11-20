@@ -1,6 +1,5 @@
 /**
  * Distributed lock between session parties.
- * @interface
  */
 export interface IMutex {
 	/**

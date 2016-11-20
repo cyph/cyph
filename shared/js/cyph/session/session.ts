@@ -18,20 +18,34 @@ import {Message} from './message';
 
 
 /**
- * Standard ISession implementation with the properties
- * that one would expect.
+ * Standard ISession implementation.
  */
 export class Session implements ISession {
+	/** @ignore */
 	private receivedMessages: {[id: string] : boolean}	= {};
+
+	/** @ignore */
 	private sendQueue: string[]							= [];
+
+	/** @ignore */
 	private lastIncomingMessageTimestamp: number		= Util.timestamp();
+
+	/** @ignore */
 	private lastOutgoingMessageTimestamp: number		= Util.timestamp();
+
+	/** @ignore */
 	private pingPongTimeouts: number					= 0;
+
+	/** @ignore */
 	private isLocalSession: boolean						= false;
 
+	/** @ignore */
 	private castle: ICastle;
+
+	/** @ignore */
 	private channel: IChannel;
 
+	/** @inheritDoc */
 	public state	= {
 		cyphId: <string> '',
 		isAlice: <boolean> false,
@@ -41,7 +55,8 @@ export class Session implements ISession {
 		wasInitiatedByAPI: <boolean> false
 	};
 
-	private castleHandler (e: { event: CastleEvents; data?: any; }) : void {
+	/** @ignore */
+	private castleHandler (e: {event: CastleEvents; data?: any;}) : void {
 		switch (e.event) {
 			case CastleEvents.abort: {
 				Errors.logAuthFail();
@@ -101,8 +116,10 @@ export class Session implements ISession {
 		}
 	}
 
-	/* Intermittent check to verify chat is still alive
-		and send fake encrypted chatter */
+	/**
+	 * @ignore
+	 * Intermittent check to verify chat is still alive and send fake encrypted chatter.
+	 */
 	private pingPong () : void {
 		let nextPing: number	= 0;
 
@@ -135,6 +152,7 @@ export class Session implements ISession {
 		}, 1000);
 	}
 
+	/** @ignore */
 	private receiveHandler (message: Message, timestamp: number, author: string) : void {
 		if (!this.receivedMessages[message.id]) {
 			this.receivedMessages[message.id]	= true;
@@ -156,6 +174,7 @@ export class Session implements ISession {
 		}
 	}
 
+	/** @ignore */
 	private sendHandler (messages: string[]) : void {
 		this.lastOutgoingMessageTimestamp	= Util.timestamp();
 
@@ -171,6 +190,7 @@ export class Session implements ISession {
 		});
 	}
 
+	/** @ignore */
 	private setDescriptor (descriptor?: string) : void {
 		if (
 			/* Empty/null string */
@@ -199,6 +219,7 @@ export class Session implements ISession {
 		);
 	}
 
+	/** @ignore */
 	private setUpChannel (
 		channelDescriptor: string,
 		nativeCrypto: boolean,
@@ -291,18 +312,22 @@ export class Session implements ISession {
 		}
 	}
 
+	/** @inheritDoc */
 	public close () : void {
 		this.channel.close();
 	}
 
+	/** @inheritDoc */
 	public off (event: string, handler: Function) : void {
 		EventManager.off(event + this.id, handler);
 	}
 
+	/** @inheritDoc */
 	public on (event: string, handler: Function) : void {
 		EventManager.on(event + this.id, handler);
 	}
 
+	/** @inheritDoc */
 	public receive (data: string) : void {
 		if (this.castle) {
 			this.castle.receive(data);
@@ -312,10 +337,12 @@ export class Session implements ISession {
 		}
 	}
 
+	/** @inheritDoc */
 	public send (...messages: IMessage[]) : void {
 		this.sendBase(messages);
 	}
 
+	/** @inheritDoc */
 	public sendBase (messages: IMessage[]) : void {
 		if (!this.castle) {
 			setTimeout(() => this.sendBase(messages), 250);
@@ -348,14 +375,17 @@ export class Session implements ISession {
 		);
 	}
 
+	/** @inheritDoc */
 	public sendText (text: string, selfDestructTimeout?: number) : void {
 		this.send(new Message(RPCEvents.text, {text, selfDestructTimeout}));
 	}
 
+	/** @inheritDoc */
 	public trigger (event: string, data?: any) : void {
 		EventManager.trigger(event + this.id, data);
 	}
 
+	/** @inheritDoc */
 	public updateState (key: string, value: any) : void {
 		this.state[key]	= value;
 
@@ -374,8 +404,12 @@ export class Session implements ISession {
 	 */
 	constructor (
 		descriptor?: string,
+
 		nativeCrypto: boolean = false,
+
+		/** @ignore */
 		private id: string = Util.generateGuid(),
+
 		localChannelCallback?: (localChannel: LocalChannel) => void
 	) {
 		/* true = yes; false = no; null = maybe */

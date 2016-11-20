@@ -10,7 +10,6 @@ import {IScrollManager} from './iscrollmanager';
 
 /**
  * This is the entire end-to-end representation of a cyph.
- * @interface
  */
 export interface IChat {
 	/** Indicates whether authentication has completed

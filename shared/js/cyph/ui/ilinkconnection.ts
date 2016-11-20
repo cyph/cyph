@@ -4,13 +4,12 @@ import {ITimer} from '../itimer';
 /**
  * Represents a link-based initial connection screen
  * (e.g. for starting a new cyph).
- * @interface
  */
 export interface ILinkConnection {
-	/**
-	 * Indicates whether this link connection was initiated passively
-	 * via API integration.
-	 */
+	/** Indicates whether the advanced features menu is open. */
+	advancedFeatures: boolean;
+
+	/** Indicates whether this link connection was initiated passively via API integration. */
 	isPassive: boolean;
 
 	/** The link to join this connection. */
@@ -39,8 +38,6 @@ export interface ILinkConnection {
 	/** Copies link to clipboard. */
 	copyToClipboard () : Promise<void>;
 
-	/**
-	 * Stops waiting and tears down this link connection instance.
-	 */
+	/** Stops waiting and tears down this link connection instance. */
 	stop () : void;
 }

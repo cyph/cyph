@@ -2,10 +2,19 @@
  * Miscellaneous helper functions for Potassium.
  */
 export class PotassiumUtil {
+	/** @ignore */
 	protected static McEliece		= self['mceliece'] || {};
+
+	/** @ignore */
 	protected static NTRU			= self['ntru'] || {};
+
+	/** @ignore */
 	protected static RLWE			= self['rlwe'] || {};
+
+	/** @ignore */
 	protected static Sodium			= self['sodium'] || {};
+
+	/** @ignore */
 	protected static SuperSphincs	= self['superSphincs'] || {};
 
 	public static clearMemory (a: ArrayBufferView) : void {

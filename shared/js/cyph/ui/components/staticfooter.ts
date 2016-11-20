@@ -20,7 +20,10 @@ import {Templates} from '../templates';
 @Directive({
 	selector: 'cyph-static-footer'
 })
-export class StaticFooter extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
+export class StaticFooter
+	extends UpgradeComponent
+	implements DoCheck, OnChanges, OnInit, OnDestroy
+{
 	/** Component title. */
 	public static title: string	= 'cyphStaticFooter';
 
@@ -43,10 +46,25 @@ export class StaticFooter extends UpgradeComponent implements DoCheck, OnChanges
 	};
 
 
-	ngDoCheck () { super.ngDoCheck(); }
-	ngOnChanges (changes: SimpleChanges) { super.ngOnChanges(changes); }
-	ngOnDestroy () { super.ngOnDestroy(); }
-	ngOnInit () { super.ngOnInit(); }
+	/** @ignore */
+	public ngDoCheck () : void {
+		super.ngDoCheck();
+	}
+
+	/** @ignore */
+	public ngOnChanges (changes: SimpleChanges) : void {
+		super.ngOnChanges(changes);
+	}
+
+	/** @ignore */
+	public ngOnDestroy () : void {
+		super.ngOnDestroy();
+	}
+
+	/** @ignore */
+	public ngOnInit () : void {
+		super.ngOnInit();
+	}
 
 	constructor (
 		@Inject(ElementRef) elementRef: ElementRef,

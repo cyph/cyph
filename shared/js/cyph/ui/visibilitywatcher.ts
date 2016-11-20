@@ -7,11 +7,13 @@ import {Elements} from './elements';
  * Keeps track of this window's visibility to user.
  */
 export class VisibilityWatcher {
+	/** @ignore */
 	private static visibilityChangeEvent: string	= 'visibilityChangeEvent';
 
 	/** Indicates whether the window is currently visible. */
 	public static isVisible: boolean	= true;
 
+	/** @ignore */
 	private static trigger (isVisible: boolean) : void {
 		VisibilityWatcher.isVisible	= isVisible;
 		EventManager.trigger(VisibilityWatcher.visibilityChangeEvent, VisibilityWatcher.isVisible);
@@ -25,6 +27,7 @@ export class VisibilityWatcher {
 		EventManager.on(VisibilityWatcher.visibilityChangeEvent, handler);
 	}
 
+	/** @ignore */
 	private static _	= (() => {
 		if (Env.isMobile) {
 			document.addEventListener('visibilitychange', () =>

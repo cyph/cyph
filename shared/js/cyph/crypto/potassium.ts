@@ -23,6 +23,7 @@ export class Potassium extends PotassiumUtil {
 	}
 
 
+	/** @ignore */
 	private newNonce (size: number) : Uint8Array {
 		if (size < 4) {
 			throw new Error('Nonce size too small.');
@@ -35,6 +36,7 @@ export class Potassium extends PotassiumUtil {
 		);
 	}
 
+	/** @ignore */
 	private BoxHelpers	= {
 		publicKeyBytes: <number> Potassium.Sodium.crypto_box_PUBLICKEYBYTES,
 		privateKeyBytes: <number> Potassium.Sodium.crypto_box_SECRETKEYBYTES,
@@ -216,6 +218,7 @@ export class Potassium extends PotassiumUtil {
 		})
 	};
 
+	/** @ignore */
 	private PasswordHashHelpers	= {
 		hash: async (
 			plaintext: Uint8Array,
@@ -232,6 +235,7 @@ export class Potassium extends PotassiumUtil {
 		)
 	};
 
+	/** @ignore */
 	private SecretBoxHelpers	= {
 		nonceBytes: <number> Potassium.Sodium.crypto_aead_chacha20poly1305_NPUBBYTES,
 
@@ -901,7 +905,10 @@ export class Potassium extends PotassiumUtil {
 	 * @param counter Initial value of counter for nonces.
 	 */
 	constructor (
+		/** @ignore */
 		private isNative: boolean = false,
+
+		/** @ignore */
 		private counter: number = 0
 	) {
 		super();

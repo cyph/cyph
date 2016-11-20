@@ -1,6 +1,5 @@
 /**
  * Represents modal/dialog functionality.
- * @interface
  */
 export interface IDialogManager {
 	/**

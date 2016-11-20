@@ -1,21 +1,26 @@
 import {Config} from './config';
 import {Env} from './env';
 import {EventManager} from './eventmanager';
+import {IThread} from './ithread';
 import {Util} from './util';
 
 
-export class Thread {
+/** @inheritDoc */
+export class Thread implements IThread {
+	/** @ignore */
 	private static BlobBuilder: any	=
 		self['BlobBuilder'] ||
 		self['WebKitBlobBuilder'] ||
 		self['MozBlobBuilder']
 	;
 
+	/** @ignore */
 	private static stringifyFunction (f: Function) : string {
 		const s: string	= f.toString();
 		return s.slice(s.indexOf('{'));
 	}
 
+	/** @ignore */
 	private static threadEnvSetup (threadSetupVars: any, importScripts: Function) : void {
 		/* Inherit these from main thread */
 
@@ -142,6 +147,7 @@ export class Thread {
 		threadSetupVars	= null;
 	}
 
+	/** @ignore */
 	private static threadPostSetup () : void {
 		if (!self.onmessage) {
 			self.onmessage	= onthreadmessage;
@@ -149,18 +155,22 @@ export class Thread {
 	}
 
 
+	/** @ignore */
 	private worker: Worker;
 
+	/** @inheritDoc */
 	public isAlive () : boolean {
 		return !!this.worker;
 	}
 
+	/** @inheritDoc */
 	public postMessage (o: any) : void {
 		if (this.worker) {
 			this.worker.postMessage(o);
 		}
 	}
 
+	/** @inheritDoc */
 	public stop () : void {
 		if (this.worker) {
 			this.worker.terminate();

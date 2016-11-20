@@ -22,7 +22,10 @@ import {Templates} from '../templates';
 @Directive({
 	selector: 'cyph-chat-main'
 })
-export class ChatMain extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
+export class ChatMain
+	extends UpgradeComponent
+	implements DoCheck, OnChanges, OnInit, OnDestroy
+{
 	/** Component title. */
 	public static title: string	= 'cyphChatMain';
 
@@ -50,13 +53,31 @@ export class ChatMain extends UpgradeComponent implements DoCheck, OnChanges, On
 	};
 
 
-	@Input() self: IChat;
-	@Input() hideDisconnectMessage: boolean;
+	/** @ignore */
+	@Input() public self: IChat;
 
-	ngDoCheck () { super.ngDoCheck(); }
-	ngOnChanges (changes: SimpleChanges) { super.ngOnChanges(changes); }
-	ngOnDestroy () { super.ngOnDestroy(); }
-	ngOnInit () { super.ngOnInit(); }
+	/** @ignore */
+	@Input() public hideDisconnectMessage: boolean;
+
+	/** @ignore */
+	public ngDoCheck () : void {
+		super.ngDoCheck();
+	}
+
+	/** @ignore */
+	public ngOnChanges (changes: SimpleChanges) : void {
+		super.ngOnChanges(changes);
+	}
+
+	/** @ignore */
+	public ngOnDestroy () : void {
+		super.ngOnDestroy();
+	}
+
+	/** @ignore */
+	public ngOnInit () : void {
+		super.ngOnInit();
+	}
 
 	constructor (
 		@Inject(ElementRef) elementRef: ElementRef,

@@ -5,11 +5,17 @@ import {Util} from '../util';
  * Carousel UI component.
  */
 export class Carousel {
+	/** @ignore */
 	private static activeClass: string	= 'active';
 
 
+	/** @ignore */
 	private itemNumber: number;
+
+	/** @ignore */
 	private logos: JQuery;
+
+	/** @ignore */
 	private quotes: JQuery;
 
 	/**
@@ -62,12 +68,10 @@ export class Carousel {
 		return timeout;
 	}
 
-	/**
-	 * @param rootElement
-	 * @param callback
-	 */
 	constructor (
+		/** @ignore */
 		private rootElement: JQuery,
+
 		callback: Function = () => {}
 	) { (async () => {
 		const timeout	= await this.setItem(0);

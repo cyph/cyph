@@ -1,6 +1,5 @@
 /**
  * Represents a logical network connection that can send and receive data.
- * @interface
  */
 export interface IChannel {
 	/**

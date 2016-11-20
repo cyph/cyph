@@ -8,13 +8,17 @@ import {Potassium} from '../potassium';
  * Note that each PairwiseSession must have a unique Transport instance.
  */
 export class Transport {
+	/** @ignore */
 	private static cyphertextLimit: number	= 200000;
 
+	/** @ignore */
 	public static chunkLength: number		= 5000000;
 
 
+	/** @ignore */
 	private lastIncomingMessageTimestamp: number	= 0;
 
+	/** @ignore */
 	private receivedMessages: {
 		[id: number] : {data: Uint8Array; totalChunks: number;}
 	}	= {};
@@ -126,8 +130,8 @@ export class Transport {
 		this.logCyphertext(fullCyphertext, Users.me);
 	}
 
-	/**
-	 * @param session
-	 */
-	constructor (private session: ISession) {}
+	constructor (
+		/** @ignore */
+		private session: ISession
+	) {}
 }

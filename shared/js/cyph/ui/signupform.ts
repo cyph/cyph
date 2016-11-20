@@ -5,11 +5,15 @@ import {Elements} from './elements';
 import {ISignupForm} from './isignupform';
 
 
+/** @inheritDoc */
 export class SignupForm implements ISignupForm {
+	/** @inheritDoc */
 	public promo: string;
 
+	/** @inheritDoc */
 	public state: number	= 0;
 
+	/** @inheritDoc */
 	public data	= {
 		email: <string> '',
 		inviteCode: <string> '',
@@ -17,6 +21,7 @@ export class SignupForm implements ISignupForm {
 		name: <string> ''
 	};
 
+	/** @inheritDoc */
 	public async submit () : Promise<void> {
 		++this.state;
 

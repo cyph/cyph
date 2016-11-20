@@ -8,6 +8,7 @@ import {Util} from './util';
 export class Firebase {
 	public static app: firebase.FirebaseApplication;
 
+	/** @ignore */
 	private static _	= (async () => {
 		if (!self['firebase']) {
 			return;

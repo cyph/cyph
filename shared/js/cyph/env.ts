@@ -123,6 +123,7 @@ export class Env extends EnvDeploy {
 		'body='
 	;
 
+	/** @ignore */
 	private static _	= (() => {
 		if (!customBuild) {
 			return;

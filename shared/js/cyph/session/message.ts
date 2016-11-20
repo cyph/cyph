@@ -2,15 +2,16 @@ import {Util} from '../util';
 import {IMessage} from './imessage';
 
 
+/** @inheritDoc */
 export class Message implements IMessage {
-	/**
-	 * @param event
-	 * @param data
-	 * @param id
-	 */
 	constructor (
+		/** @inheritDoc */
 		public event: string = '',
+
+		/** @inheritDoc */
 		public data?: any,
+
+		/** @inheritDoc */
 		public id: string = Util.generateGuid()
 	) {}
 }

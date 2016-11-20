@@ -23,7 +23,10 @@ import {Templates} from '../templates';
 @Directive({
 	selector: 'cyph-checkout'
 })
-export class Checkout extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
+export class Checkout
+	extends UpgradeComponent
+	implements DoCheck, OnChanges, OnInit, OnDestroy
+{
 	/** Component title. */
 	public static title: string	= 'cyphCheckout';
 
@@ -92,16 +95,40 @@ export class Checkout extends UpgradeComponent implements DoCheck, OnChanges, On
 	};
 
 
-	@Input() amount: string;
-	@Input() category: string;
-	@Input() email: string;
-	@Input() item: string;
-	@Input() fullName: string;
+	/** @ignore */
+	@Input() public amount: string;
 
-	ngDoCheck () { super.ngDoCheck(); }
-	ngOnChanges (changes: SimpleChanges) { super.ngOnChanges(changes); }
-	ngOnDestroy () { super.ngOnDestroy(); }
-	ngOnInit () { super.ngOnInit(); }
+	/** @ignore */
+	@Input() public category: string;
+
+	/** @ignore */
+	@Input() public email: string;
+
+	/** @ignore */
+	@Input() public item: string;
+
+	/** @ignore */
+	@Input() public fullName: string;
+
+	/** @ignore */
+	public ngDoCheck () : void {
+		super.ngDoCheck();
+	}
+
+	/** @ignore */
+	public ngOnChanges (changes: SimpleChanges) : void {
+		super.ngOnChanges(changes);
+	}
+
+	/** @ignore */
+	public ngOnDestroy () : void {
+		super.ngOnDestroy();
+	}
+
+	/** @ignore */
+	public ngOnInit () : void {
+		super.ngOnInit();
+	}
 
 	constructor (
 		@Inject(ElementRef) elementRef: ElementRef,

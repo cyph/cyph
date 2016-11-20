@@ -23,7 +23,10 @@ import {Templates} from '../templates';
 @Directive({
 	selector: 'cyph-file-input'
 })
-export class FileInput extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
+export class FileInput
+	extends UpgradeComponent
+	implements DoCheck, OnChanges, OnInit, OnDestroy
+{
 	/** Component title. */
 	public static title: string	= 'cyphFileInput';
 
@@ -71,13 +74,31 @@ export class FileInput extends UpgradeComponent implements DoCheck, OnChanges, O
 	};
 
 
-	@Input() accept: string;
-	@Output() fileChange: EventEmitter<File>;
+	/** @ignore */
+	@Input() public accept: string;
 
-	ngDoCheck () { super.ngDoCheck(); }
-	ngOnChanges (changes: SimpleChanges) { super.ngOnChanges(changes); }
-	ngOnDestroy () { super.ngOnDestroy(); }
-	ngOnInit () { super.ngOnInit(); }
+	/** @ignore */
+	@Output() public fileChange: EventEmitter<File>;
+
+	/** @ignore */
+	public ngDoCheck () : void {
+		super.ngDoCheck();
+	}
+
+	/** @ignore */
+	public ngOnChanges (changes: SimpleChanges) : void {
+		super.ngOnChanges(changes);
+	}
+
+	/** @ignore */
+	public ngOnDestroy () : void {
+		super.ngOnDestroy();
+	}
+
+	/** @ignore */
+	public ngOnInit () : void {
+		super.ngOnInit();
+	}
 
 	constructor (
 		@Inject(ElementRef) elementRef: ElementRef,

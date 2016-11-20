@@ -10,9 +10,12 @@ import {IChat} from './ichat';
 import {IFileManager} from './ifilemanager';
 
 
+/** @inheritDoc */
 export class FileManager implements IFileManager {
+	/** @inheritDoc */
 	public files: IFiles;
 
+	/** @ignore */
 	private compressImage (image: HTMLImageElement, file: File) : string {
 		const canvas: HTMLCanvasElement			= document.createElement('canvas');
 		const context: CanvasRenderingContext2D	=
@@ -53,10 +56,12 @@ export class FileManager implements IFileManager {
 		return encodedImage;
 	}
 
+	/** @ignore */
 	private sendImage (encodedImage: string) : void {
 		this.chat.send('![](' + encodedImage + ')');
 	}
 
+	/** @inheritDoc */
 	public send (file: File, processImage?: boolean) : void {
 		const reader: FileReader	= new FileReader();
 
@@ -88,12 +93,11 @@ export class FileManager implements IFileManager {
 		}
 	}
 
-	/**
-	 * @param chat
-	 * @param dialogManager
-	 */
 	constructor (
+		/** @ignore */
 		private chat: IChat,
+
+		/** @ignore */
 		private dialogManager: IDialogManager
 	) {
 		this.files	= new Files(this.chat.session);

@@ -6,16 +6,20 @@ import {Elements} from './elements';
  * Controls the Cyph chat demo.
  */
 export class CyphDemo extends Cyph.UI.BaseButtonManager {
+	/** @ignore */
 	private static demoClass: string	= 'demo';
 
+	/** @ignore */
 	private static facebookPicUrl: string			=
 		`data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=`
 	;
 
+	/** @ignore */
 	private static facebookPicMessage: string		=
 		'![](' + CyphDemo.facebookPicUrl + ')'
 	;
 
+	/** @ignore */
 	private static facebookPicFrame: string			= Cyph.Env.isMobile ? '' : `
 		<div class='facebook-pic image-frame real'>
 			<iframe
@@ -26,13 +30,16 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 		</div>
 	`;
 
+	/** @ignore */
 	private static facebookPicPlaceholder: string	= `
 		<div class='facebook-pic image-frame'>&nbsp;</div>
 	`;
 
+	/** @ignore */
 	private static mobileUIScale: number	= 0.625;
 
-	private static messages: { text: string; isMobile: boolean; }[]	= [
+	/** @ignore */
+	private static messages: {text: string; isMobile: boolean;}[]	= [
 		{
 			isMobile: true,
 			text: `why did we have to switch from Facebook?`
@@ -97,7 +104,8 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 		}
 	];
 
-	private static getOffset (elem: JQuery, ancestor: JQuery) : { left: number; top: number; } {
+	/** @ignore */
+	private static getOffset (elem: JQuery, ancestor: JQuery) : {left: number; top: number;} {
 		const elemOffset		= elem.offset();
 		const ancestorOffset	= ancestor.offset();
 
@@ -108,6 +116,7 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 	}
 
 
+	/** @ignore */
 	private isActive: boolean;
 
 	/** Desktop chat UI. */
@@ -116,6 +125,7 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 	/** Mobile chat UI. */
 	public mobile: Cyph.UI.Chat.IChat;
 
+	/** @ignore */
 	private resize (forceActive?: boolean, oncomplete?: Function) : void {
 		const isActive: boolean	= forceActive || (
 			!Elements.heroText().is(':appeared') &&
@@ -175,6 +185,7 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 		}, 250);
 	}
 
+	/** @ignore */
 	private resizeDesktop () : void {
 		const width: number		= Math.floor(
 			(Cyph.UI.Elements.window().width() - 70) * 0.47 / 0.75
@@ -199,6 +210,7 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 		});
 	}
 
+	/** @ignore */
 	private resizeMobile () : void {
 		const width: number		= Math.floor(
 			(Cyph.UI.Elements.window().width() - 70) * 0.26 / 1.404
@@ -223,9 +235,6 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 		});
 	}
 
-	/**
-	 * @param dialogManager
-	 */
 	constructor (dialogManager: Cyph.UI.IDialogManager) {
 		super();
 

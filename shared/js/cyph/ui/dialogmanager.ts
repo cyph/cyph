@@ -2,7 +2,9 @@ import {Util} from '../util';
 import {IDialogManager} from './idialogmanager';
 
 
+/** @inheritDoc */
 export class DialogManager implements IDialogManager {
+	/** @inheritDoc */
 	public async alert (
 		o: {
 			title: string;
@@ -18,6 +20,7 @@ export class DialogManager implements IDialogManager {
 		);
 	}
 
+	/** @inheritDoc */
 	public async baseDialog (
 		o: {
 			template: string;
@@ -52,6 +55,7 @@ export class DialogManager implements IDialogManager {
 		}));
 	}
 
+	/** @inheritDoc */
 	public async confirm (
 		o: {
 			title: string;
@@ -84,6 +88,7 @@ export class DialogManager implements IDialogManager {
 		}
 	}
 
+	/** @inheritDoc */
 	public async toast (
 		o: {
 			content: string;
@@ -100,12 +105,11 @@ export class DialogManager implements IDialogManager {
 		await Util.sleep(o.delay + 500);
 	}
 
-	/**
-	 * @param $mdDialog
-	 * @param $mdToast
-	 */
 	constructor (
+		/** @ignore */
 		private $mdDialog: angular.material.IDialogService,
+
+		/** @ignore */
 		private $mdToast: angular.material.IToastService
 	) {}
 }

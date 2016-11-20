@@ -7,6 +7,7 @@ import {Util} from './util';
  * Handles errors.
  */
 export class Errors {
+	/** @ignore */
 	private static baseErrorLog (subject: string, shouldIncludeBootstrapText?: boolean) : Function {
 		let numEmails: number	= 0;
 
@@ -51,16 +52,15 @@ export class Errors {
 	 * @param line
 	 * @param column
 	 * @param errorObject
-	 * @function
 	 */
 	public static log			= Errors.baseErrorLog('WARNING WARNING WARNING SOMETHING IS SRSLY FUCKED UP LADS');
 
 	/**
 	 * Logs chat authentication failure (attempted mitm and/or mistyped shared secret).
-	 * @function
 	 */
 	public static logAuthFail	= Errors.baseErrorLog('AUTHENTICATION JUST FAILED FOR SOMEONE LADS');
 
+	/** @ignore */
 	private static _	= (() => {
 		self.onerror	= <ErrorEventHandler> Errors.log;
 	})();

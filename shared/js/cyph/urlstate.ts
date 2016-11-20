@@ -6,6 +6,7 @@ import {EventManager} from './eventmanager';
  * Manages URL state.
  */
 export class UrlState {
+	/** @ignore */
 	private static urlStateChangeEvent	= 'urlStateChangeEvent';
 
 	/** Generic/non-site-specific URL states. */
@@ -113,6 +114,7 @@ export class UrlState {
 		EventManager.trigger(UrlState.urlStateChangeEvent);
 	}
 
+	/** @ignore */
 	private static _	= (() => {
 		self.onpopstate	= () => EventManager.trigger(UrlState.urlStateChangeEvent);
 	})();

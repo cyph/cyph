@@ -9,7 +9,10 @@ import {Util} from './util';
  * (https://developers.google.com/analytics/devguides/collection/analyticsjs/events)
  */
 export class Analytics {
+	/** @ignore */
 	private static analFrame: HTMLIFrameElement;
+
+	/** @ignore */
 	private static analFrameIsReady: boolean;
 
 	/**
@@ -54,6 +57,7 @@ export class Analytics {
 		Analytics.baseEventSubmit('set', args);
 	}
 
+	/** @ignore */
 	private static _	= (() => {
 		const appName: string		= Env.host;
 		const appVersion: string	= Env.isWeb ? 'Web' : 'Native';

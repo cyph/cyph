@@ -24,6 +24,7 @@ export class NanoScroller {
 		}
 	}
 
+	/** @ignore */
 	private static _	= (() => {
 		$(NanoScroller.update);
 	})();

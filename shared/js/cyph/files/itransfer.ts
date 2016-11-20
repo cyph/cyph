@@ -1,6 +1,5 @@
 /**
  * Represents an active file transfer.
- * @interface
  */
 export interface ITransfer {
 	/** If defined, indicates an acceptance or rejection of a file transfer. */

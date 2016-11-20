@@ -7,6 +7,7 @@ import {EventManager} from './eventmanager';
  * Miscellaneous helper functions used throughout the codes.
  */
 export class Util {
+	/** @ignore */
 	private static timestampData	= {
 		last: 0,
 		offset: 0,
@@ -565,6 +566,7 @@ export class Util {
 		elem.dispatchEvent(e);
 	}
 
+	/** @ignore */
 	private static _	= (async () => {
 		try {
 			const serverTimestamp: number	= parseFloat(

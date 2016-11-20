@@ -4,7 +4,6 @@ import {IMessage} from './imessage';
 /**
  * Encapsulates an end-to-end encrypted communication session.
  * This is the entire non-UI representation of a cyph.
- * @interface
  */
 export interface ISession {
 	/** State of the cyph (referenced by UI). */

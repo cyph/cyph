@@ -6,6 +6,7 @@ import {ISidebar} from './isidebar';
  * Base class for components that handle buttons.
  */
 export class BaseButtonManager {
+	/** @ignore */
 	protected static buttonLock: {}	= {};
 
 
@@ -31,10 +32,8 @@ export class BaseButtonManager {
 		this.mobileMenu().open();
 	}
 
-	/**
-	 * @param mobileMenu
-	 */
 	constructor (
+		/** @ignore */
 		protected mobileMenu: () => ISidebar = () => ({close: () => {}, open: () => {}})
 	) {}
 }

@@ -8,9 +8,13 @@ import {ICastle} from './icastle';
  * Fake ICastle implementation (NOT secure; for demo purposes only).
  */
 export class FakeCastle implements ICastle {
+	/** @ignore */
 	private static delimiter: string		= '☁☁☁ PRAISE BE TO CYPH ☀☀☀';
+
+	/** @ignore */
 	private static remoteUsername: string	= 'friend';
 
+	/** @ignore */
 	private static generateCyphertext () : string {
 		let cyphertext: string	= '';
 		const length: number	= Util.random(1024, 100);
@@ -28,6 +32,7 @@ export class FakeCastle implements ICastle {
 	}
 
 
+	/** @inheritDoc */
 	public receive (cyphertext: string) : void {
 		const cyphertextSplit: string[]	=
 			cyphertext.split(FakeCastle.delimiter)
@@ -48,6 +53,7 @@ export class FakeCastle implements ICastle {
 		});
 	}
 
+	/** @inheritDoc */
 	public async send (plaintext: string) : Promise<void> {
 		const cyphertext: string	= FakeCastle.generateCyphertext();
 
@@ -62,10 +68,10 @@ export class FakeCastle implements ICastle {
 		});
 	}
 
-	/**
-	 * @param session
-	 */
-	constructor (private session: ISession) {
+	constructor (
+		/** @ignore */
+		private session: ISession
+	) {
 		setTimeout(() => this.session.trigger(Events.castle, {
 			event: CastleEvents.connect
 		}), 1000);

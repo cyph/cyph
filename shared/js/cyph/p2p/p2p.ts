@@ -12,6 +12,7 @@ import {UIEvents} from './enums';
 import {IP2P} from './ip2p';
 
 
+/** @inheritDoc */
 export class P2P implements IP2P {
 	public static constants	= {
 		accept: 'accept',
@@ -35,10 +36,16 @@ export class P2P implements IP2P {
 	})();
 
 
+	/** @ignore */
 	private isAccepted: boolean;
+
+	/** @ignore */
 	private mutex: IMutex;
+
+	/** @ignore */
 	private webRTC: any;
 
+	/** @ignore */
 	private commands	= {
 		accept: () : void => {
 			this.join();
@@ -92,12 +99,19 @@ export class P2P implements IP2P {
 		}
 	};
 
+	/** @inheritDoc */
 	public incomingStream	= {audio: false, video: false};
+
+	/** @inheritDoc */
 	public outgoingStream	= {audio: false, video: false};
 
+	/** @inheritDoc */
 	public isActive: boolean;
+
+	/** @inheritDoc */
 	public loading: boolean;
 
+	/** @ignore */
 	private receiveCommand (command: Command) : void {
 		if (!P2P.isSupported) {
 			return;
@@ -144,6 +158,7 @@ export class P2P implements IP2P {
 		}
 	}
 
+	/** @ignore */
 	private refresh (webRTC: any = this.webRTC) : void {
 		this.loading	=
 			this.incomingStream.audio ||
@@ -159,6 +174,7 @@ export class P2P implements IP2P {
 		webRTC.startLocalVideo();
 	}
 
+	/** @ignore */
 	private triggerUIEvent(
 		category: UIEvents.Categories,
 		event: UIEvents.Events,
@@ -167,12 +183,14 @@ export class P2P implements IP2P {
 		this.session.trigger(Events.p2pUI, {category, event, args});
 	}
 
+	/** @inheritDoc */
 	public accept (callType?: string) {
 		this.isAccepted				= true;
 		this.outgoingStream.video	= callType === P2P.constants.video;
 		this.outgoingStream.audio	= true;
 	}
 
+	/** @inheritDoc */
 	public close () : void {
 		this.session.send(
 			new Message(
@@ -184,6 +202,7 @@ export class P2P implements IP2P {
 		this.commands.kill();
 	}
 
+	/** @inheritDoc */
 	public async join () : Promise<void> {
 		if (this.webRTC) {
 			return;
@@ -286,6 +305,7 @@ export class P2P implements IP2P {
 		this.webRTC	= webRTC;
 	}
 
+	/** @inheritDoc */
 	public request (callType: string) : void {
 		this.triggerUIEvent(
 			UIEvents.Categories.request,
@@ -331,6 +351,7 @@ export class P2P implements IP2P {
 		);
 	}
 
+	/** @inheritDoc */
 	public toggle (shouldPause?: boolean, medium?: string) : void {
 		if (!this.webRTC) {
 			return;
@@ -357,16 +378,17 @@ export class P2P implements IP2P {
 		this.refresh();
 	}
 
-	/**
-	 * @param session
-	 * @param forceTURN
-	 * @param localVideo
-	 * @param remoteVideo
-	 */
 	constructor (
+		/** @ignore */
 		private session: ISession,
+
+		/** @ignore */
 		private forceTURN: boolean,
+
+		/** @ignore */
 		private localVideo: () => JQuery,
+
+		/** @ignore */
 		private remoteVideo: () => JQuery
 	) {
 		this.mutex	= new Mutex(this.session);

@@ -6,17 +6,25 @@ import {ISession} from './isession';
 import {Message} from './message';
 
 
+/** @inheritDoc */
 export class Mutex implements IMutex {
+	/** @ignore */
 	private static constants	= {
 		release: 'release',
 		request: 'request'
 	};
 
 
+	/** @ignore */
 	private owner: string;
-	private purpose: string;
-	private requester: { user: string; purpose: string; };
 
+	/** @ignore */
+	private purpose: string;
+
+	/** @ignore */
+	private requester: {user: string; purpose: string;};
+
+	/** @ignore */
 	private commands	= {
 		release: () : void => {
 			if (this.owner !== Users.me) {
@@ -42,6 +50,7 @@ export class Mutex implements IMutex {
 		}
 	};
 
+	/** @ignore */
 	private shiftRequester () : void {
 		this.owner		= null;
 		this.purpose	= null;
@@ -53,6 +62,7 @@ export class Mutex implements IMutex {
 		}
 	}
 
+	/** @inheritDoc */
 	public lock (f: Function, purpose: string = '') : void {
 		if (this.owner !== Users.me) {
 			if (!this.owner && this.session.state.isAlice) {
@@ -97,6 +107,7 @@ export class Mutex implements IMutex {
 		});
 	}
 
+	/** @inheritDoc */
 	public unlock () : void {
 		if (this.owner === Users.me) {
 			this.shiftRequester();
@@ -110,10 +121,10 @@ export class Mutex implements IMutex {
 		}
 	}
 
-	/**
-	 * @param session
-	 */
-	constructor (private session: ISession) {
+	constructor (
+		/** @ignore */
+		private session: ISession
+	) {
 		this.session.on(RPCEvents.mutex, (command: Command) =>
 			Util.getValue(this.commands, command.method, o => {})(command.argument)
 		);

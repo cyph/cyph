@@ -11,15 +11,20 @@ import {IElements} from './ielements';
 import {IP2PManager} from './ip2pmanager';
 
 
+/** @inheritDoc */
 export class P2PManager extends BaseButtonManager implements IP2PManager {
+	/** @inheritDoc */
 	public isEnabled: boolean	= false;
 
+	/** @inheritDoc */
 	public p2p: IP2P;
 
+	/** @inheritDoc */
 	public closeButton () : void {
 		this.baseButtonClick(() => this.p2p.close());
 	}
 
+	/** @inheritDoc */
 	public disabledAlert () : void {
 		if (this.chat.isConnected && !this.isEnabled) {
 			this.dialogManager.alert({
@@ -30,21 +35,25 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 		}
 	}
 
+	/** @inheritDoc */
 	public enable () : void {
 		this.isEnabled	= true;
 	}
 
+	/** @inheritDoc */
 	public preemptivelyInitiate () : void {
 		this.isEnabled	= true;
 		this.p2p.accept();
 	}
 
+	/** @inheritDoc */
 	public toggleSidebar () : void {
 		this.baseButtonClick(() =>
 			this.elements.p2pContainer().toggleClass('sidebar-open')
 		);
 	}
 
+	/** @inheritDoc */
 	public videoCallButton () : void {
 		this.baseButtonClick(() => {
 			if (this.isEnabled) {
@@ -58,6 +67,7 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 		});
 	}
 
+	/** @inheritDoc */
 	public voiceCallButton () : void {
 		this.baseButtonClick(() => {
 			if (this.isEnabled) {
@@ -71,18 +81,18 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 		});
 	}
 
-	/**
-	 * @param chat
-	 * @param mobileMenu
-	 * @param dialogManager
-	 * @param elements
-	 * @param forceTURN
-	 */
 	constructor (
+		/** @ignore */
 		private chat: IChat,
+
 		mobileMenu: () => ISidebar,
+
+		/** @ignore */
 		private dialogManager: IDialogManager,
+
+		/** @ignore */
 		private elements: IElements,
+
 		forceTURN?: boolean
 	) {
 		super(mobileMenu);

@@ -6,8 +6,10 @@ import {PotassiumUtil} from './potassiumutil';
  * Should only ever be depended on by Potassium.
  */
 export class NativeCrypto {
+	/** @ignore */
 	private static Subtle: any	= crypto.subtle;
 
+	/** @ignore */
 	private static async importRawKey (
 		key: Uint8Array,
 		algorithm: any,
@@ -22,6 +24,7 @@ export class NativeCrypto {
 		);
 	}
 
+	/** @ignore */
 	private static async exportRawKey (
 		cryptoKey: CryptoKey,
 		algorithmName: string
@@ -33,6 +36,7 @@ export class NativeCrypto {
 		);
 	}
 
+	/** @ignore */
 	private static async importJWK (
 		key: Uint8Array,
 		algorithm: any,
@@ -51,6 +55,7 @@ export class NativeCrypto {
 		);
 	}
 
+	/** @ignore */
 	private static async exportJWK (
 		cryptoKey: CryptoKey,
 		algorithmName: string

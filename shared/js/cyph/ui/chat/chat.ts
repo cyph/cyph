@@ -30,25 +30,49 @@ import {P2PManager} from './p2pmanager';
 import {ScrollManager} from './scrollmanager';
 
 
+/** @inheritDoc */
 export class Chat extends BaseButtonManager implements IChat {
+	/** @ignore */
 	private static approximateKeyExchangeTime: number		= 15000;
+
+	/** @ignore */
 	private static queuedMessageSelfDestructTimeout: number	= 15000;
 
 
+	/** @ignore */
 	private isMessageChanged: boolean	= false;
 
+	/** @ignore */
 	private elements: IElements;
+
+	/** @ignore */
 	private previousMessage: string;
+
+	/** @ignore */
 	private queuedMessage: string;
 
+	/** @inheritDoc */
 	public isConnected: boolean					= false;
+
+	/** @inheritDoc */
 	public isDisconnected: boolean				= false;
+
+	/** @inheritDoc */
 	public isFriendTyping: boolean				= false;
+
+	/** @inheritDoc */
 	public queuedMessageSelfDestruct: boolean	= false;
+
+	/** @inheritDoc */
 	public currentMessage: string				= '';
+
+	/** @inheritDoc */
 	public keyExchangeProgress: number			= 0;
+
+	/** @inheritDoc */
 	public state: States						= States.none;
 
+	/** @inheritDoc */
 	public messages: {
 		author: string;
 		selfDestructTimer: ITimer;
@@ -57,22 +81,34 @@ export class Chat extends BaseButtonManager implements IChat {
 		timeString: string;
 	}[]	= [];
 
+	/** @inheritDoc */
 	public cyphertext: ICyphertext;
+
+	/** @inheritDoc */
 	public fileManager: IFileManager;
+
+	/** @inheritDoc */
 	public p2pManager: IP2PManager;
+
+	/** @inheritDoc */
 	public scrollManager: IScrollManager;
+
+	/** @inheritDoc */
 	public session: ISession;
 
+	/** @ignore */
 	private findElement (selector: string) : () => JQuery {
 		return Elements.get(() => this.rootElement.find(selector));
 	}
 
+	/** @inheritDoc */
 	public abortSetup () : void {
 		this.changeState(States.aborted);
 		this.session.trigger(Events.abort);
 		this.session.close();
 	}
 
+	/** @inheritDoc */
 	public async addMessage (
 		text: string,
 		author: string,
@@ -125,6 +161,7 @@ export class Chat extends BaseButtonManager implements IChat {
 		}
 	}
 
+	/** @inheritDoc */
 	public async begin () : Promise<void> {
 		if (this.state === States.aborted) {
 			return;
@@ -159,10 +196,12 @@ export class Chat extends BaseButtonManager implements IChat {
 		}
 	}
 
+	/** @inheritDoc */
 	public changeState (state: States) : void {
 		this.state	= state;
 	}
 
+	/** @inheritDoc */
 	public close () : void {
 		if (this.state === States.aborted) {
 			return;
@@ -180,6 +219,7 @@ export class Chat extends BaseButtonManager implements IChat {
 		}
 	}
 
+	/** @inheritDoc */
 	public disconnectButton () : void {
 		this.baseButtonClick(async () => {
 			if (await this.dialogManager.confirm({
@@ -193,6 +233,7 @@ export class Chat extends BaseButtonManager implements IChat {
 		});
 	}
 
+	/** @inheritDoc */
 	public helpButton () : void {
 		this.baseButtonClick(() => {
 			this.dialogManager.baseDialog({
@@ -208,6 +249,7 @@ export class Chat extends BaseButtonManager implements IChat {
 		});
 	}
 
+	/** @inheritDoc */
 	public messageChange () : void {
 		const isMessageChanged: boolean	=
 			this.currentMessage !== '' &&
@@ -227,6 +269,7 @@ export class Chat extends BaseButtonManager implements IChat {
 		}
 	}
 
+	/** @inheritDoc */
 	public send (message?: string, selfDestructTimeout?: number) : void {
 		if (!message) {
 			message	= this.currentMessage;
@@ -242,14 +285,17 @@ export class Chat extends BaseButtonManager implements IChat {
 		}
 	}
 
+	/** @inheritDoc */
 	public setConnected () : void {
 		this.isConnected	= true;
 	}
 
+	/** @inheritDoc */
 	public setFriendTyping (isFriendTyping: boolean) : void {
 		this.isFriendTyping	= isFriendTyping;
 	}
 
+	/** @inheritDoc */
 	public setQueuedMessage (messageText?: string, selfDestruct?: boolean) : void {
 		if (typeof messageText === 'string') {
 			this.queuedMessage	= messageText;
@@ -273,12 +319,22 @@ export class Chat extends BaseButtonManager implements IChat {
 	 * @param rootElement
 	 */
 	constructor (
+		/** @ignore */
 		private dialogManager: IDialogManager,
+
 		mobileMenu: () => ISidebar,
+
+		/** @ignore */
 		private notifier: INotifier,
+
 		messageCountInTitle?: boolean,
+
+		/** @ignore */
 		public isMobile: boolean = Env.isMobile,
+
 		session?: ISession,
+
+		/** @ignore */
 		private rootElement: JQuery = Elements.html()
 	) {
 		super(mobileMenu);

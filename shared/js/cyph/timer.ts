@@ -2,15 +2,27 @@ import {ITimer} from './itimer';
 import {Util} from './util';
 
 
+/** @inheritDoc */
 export class Timer implements ITimer {
+	/** @ignore */
 	private endTime: number;
+
+	/** @ignore */
 	private includeHours: boolean;
+
+	/** @ignore */
 	private includeMinutes: boolean;
+
+	/** @ignore */
 	private stopped: boolean;
 
+	/** @inheritDoc */
 	public isComplete: boolean;
+
+	/** @inheritDoc */
 	public timestamp: string;
 
+	/** @ignore */
 	private updateTimestamp (timeRemaining: number) : void {
 		const hours		= Math.floor(timeRemaining / 3600000);
 		const minutes	= Math.floor((timeRemaining % 3600000) / 60000);
@@ -24,6 +36,7 @@ export class Timer implements ITimer {
 		;
 	}
 
+	/** @inheritDoc */
 	public addTime (milliseconds: number) : void {
 		this.countdown += milliseconds;
 
@@ -32,6 +45,7 @@ export class Timer implements ITimer {
 		}
 	}
 
+	/** @inheritDoc */
 	public async start () : Promise<void> {
 		if (this.stopped) {
 			return;
@@ -61,17 +75,16 @@ export class Timer implements ITimer {
 		;
 	}
 
+	/** @inheritDoc */
 	public stop () : void {
 		this.isComplete	= true;
 		this.stopped	= true;
 	}
 
-	/**
-	 * @param countdown
-	 * @param autostart
-	 */
 	constructor (
+		/** @inheritDoc */
 		public countdown: number,
+
 		autostart?: boolean
 	) {
 		this.includeHours	= this.countdown >= 3600000;

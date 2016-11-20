@@ -11,17 +11,34 @@ import {Transport} from './transport';
  * Represents a pairwise (one-to-one) Castle session.
  */
 export class PairwiseSession {
+	/** @ignore */
 	private incomingMessageId: number						= 0;
+
+	/** @ignore */
 	private incomingMessagesMax: number						= 0;
+
+	/** @ignore */
 	private outgoingMessageId: number						= 0;
+
+	/** @ignore */
 	private receiveLock: {}									= {};
+
+	/** @ignore */
 	private incomingMessages: {[id: number] : Uint8Array[]}	= {};
 
+	/** @ignore */
 	private core: Core;
+
+	/** @ignore */
 	private isAborted: boolean;
+
+	/** @ignore */
 	private isConnected: boolean;
+
+	/** @ignore */
 	private remoteUsername: string;
 
+	/** @ignore */
 	private abort () : void {
 		if (this.isAborted) {
 			return;
@@ -31,6 +48,7 @@ export class PairwiseSession {
 		this.transport.abort();
 	}
 
+	/** @ignore */
 	private connect () : void {
 		if (this.isConnected) {
 			return;
@@ -40,6 +58,7 @@ export class PairwiseSession {
 		this.transport.connect();
 	}
 
+	/** @ignore */
 	private async handshakeOpenSecret (cyphertext: Uint8Array) : Promise<Uint8Array> {
 		const keyPair	= await this.localUser.getKeyPair();
 
@@ -56,6 +75,7 @@ export class PairwiseSession {
 		return secret;
 	}
 
+	/** @ignore */
 	private async handshakeSendSecret (secret: Uint8Array) : Promise<Uint8Array> {
 		const remotePublicKey	= await this.remoteUser.getPublicKey();
 
@@ -71,6 +91,7 @@ export class PairwiseSession {
 		return cyphertext;
 	}
 
+	/** @ignore */
 	private newMessageId () : Uint8Array {
 		return new Uint8Array(new Float64Array([
 			this.outgoingMessageId++
@@ -250,18 +271,19 @@ export class PairwiseSession {
 		Potassium.clearMemory(i);
 	}
 
-	/**
-	 * @param potassium
-	 * @param transport
-	 * @param localUser
-	 * @param remoteUser
-	 * @param isAlice
-	 */
 	constructor (
+		/** @ignore */
 		private potassium: Potassium,
+
+		/** @ignore */
 		private transport: Transport,
+
+		/** @ignore */
 		private localUser: ILocalUser,
+
+		/** @ignore */
 		private remoteUser: IRemoteUser,
+
 		isAlice: boolean
 	) { (async () => {
 		try {

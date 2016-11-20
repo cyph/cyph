@@ -14,7 +14,13 @@ import {ITransfer} from './itransfer';
 import {Transfer} from './transfer';
 
 
+/**
+ * Standard IFiles implementation built on Firebase.
+ * For encryption, SubtleCrypto is preferred when available,
+ * but libsodium in a separate thread is used as a fallback.
+ */
 export class Files implements IFiles {
+	/** @ignore */
 	private static cryptoThread (
 		locals: {
 			plaintext?: Uint8Array,
@@ -164,10 +170,13 @@ export class Files implements IFiles {
 	}
 
 
+	/** @ignore */
 	private nativePotassium: Potassium;
 
+	/** @inheritDoc */
 	public transfers: ITransfer[]	= [];
 
+	/** @ignore */
 	private async decryptFile (
 		cyphertext: Uint8Array,
 		key: Uint8Array
@@ -183,6 +192,7 @@ export class Files implements IFiles {
 		}
 	}
 
+	/** @ignore */
 	private async encryptFile (plaintext: Uint8Array) : Promise<{
 		cyphertext: Uint8Array;
 		key: Uint8Array;
@@ -218,6 +228,7 @@ export class Files implements IFiles {
 		}
 	}
 
+	/** @ignore */
 	private receiveTransfer (transfer: ITransfer) : void {
 		transfer.isOutgoing			= false;
 		transfer.percentComplete	= 0;
@@ -290,6 +301,7 @@ export class Files implements IFiles {
 		);
 	}
 
+	/** @ignore */
 	private triggerUIEvent(
 		event: UIEvents,
 		...args: any[]
@@ -297,6 +309,7 @@ export class Files implements IFiles {
 		this.session.trigger(Events.filesUI, {event, args});
 	}
 
+	/** @inheritDoc */
 	public async send (plaintext: Uint8Array, name: string) : Promise<void> {
 		if (plaintext.length > Config.filesConfig.maxSize) {
 			this.triggerUIEvent(UIEvents.tooLarge);
@@ -393,10 +406,10 @@ export class Files implements IFiles {
 		});
 	}
 
-	/**
-	 * @param session
-	 */
-	constructor (private session: ISession) { (async () => {
+	constructor (
+		/** @ignore */
+		private session: ISession
+	) { (async () => {
 		const isNativeCryptoSupported	=
 			await Potassium.isNativeCryptoSupported()
 		;

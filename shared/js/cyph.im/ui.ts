@@ -24,6 +24,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	/** Signup form to be displayed at the end of a cyph. */
 	public signupForm: Cyph.UI.ISignupForm;
 
+	/** @ignore */
 	private onUrlStateChange (urlState: string) : void {
 		if (urlState === urlSections.root) {
 			return;
@@ -46,6 +47,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		Cyph.UrlState.set(urlState, true, true);
 	}
 
+	/** @ignore */
 	private async startChat (initialCallType?: string) : Promise<void> {
 		let baseUrl: string	= Cyph.Env.newCyphBaseUrl;
 
@@ -159,12 +161,11 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		this.state	= state;
 	}
 
-	/**
-	 * @param dialogManager
-	 * @param notifier
-	 */
 	constructor (
+		/** @ignore */
 		private dialogManager: Cyph.UI.IDialogManager,
+
+		/** @ignore */
 		private notifier: Cyph.UI.INotifier
 	) {
 		super();

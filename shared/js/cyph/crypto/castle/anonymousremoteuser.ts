@@ -9,9 +9,13 @@ import {Transport} from './transport';
  * shared secret rather than AGSE signature.
  */
 export class AnonymousRemoteUser implements IRemoteUser {
+	/** @ignore */
 	private publicKey: Uint8Array;
+
+	/** @ignore */
 	private cyphertextPromise: Promise<Uint8Array>;
 
+	/** @inheritDoc */
 	public async getPublicKey () : Promise<Uint8Array> {
 		if (this.publicKey) {
 			return this.publicKey;
@@ -35,20 +39,22 @@ export class AnonymousRemoteUser implements IRemoteUser {
 		return this.publicKey;
 	}
 
+	/** @inheritDoc */
 	public getUsername () : string {
 		return this.username;
 	}
 
-	/**
-	 * @param potassium
-	 * @param transport
-	 * @param sharedSecret
-	 * @param username
-	 */
 	constructor (
+		/** @ignore */
 		private potassium: Potassium,
+
+		/** @ignore */
 		private transport: Transport,
+
+		/** @ignore */
 		private sharedSecret: string,
+
+		/** @ignore */
 		private username: string = Strings.friend
 	) {
 		this.cyphertextPromise	= this.transport.interceptIncomingCyphertext();

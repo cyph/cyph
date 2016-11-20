@@ -8,8 +8,10 @@ import {Transport} from './transport';
  * shared secret rather than AGSE signature.
  */
 export class AnonymousLocalUser implements ILocalUser {
+	/** @ignore */
 	private keyPair: {publicKey: Uint8Array; privateKey: Uint8Array;};
 
+	/** @inheritDoc */
 	public async getKeyPair () : Promise<{
 		publicKey: Uint8Array;
 		privateKey: Uint8Array;
@@ -37,18 +39,19 @@ export class AnonymousLocalUser implements ILocalUser {
 		return this.keyPair;
 	}
 
+	/** @inheritDoc */
 	public getRemoteSecret () : Promise<Uint8Array> {
 		return this.transport.interceptIncomingCyphertext();
 	}
 
-	/**
-	 * @param potassium
-	 * @param transport
-	 * @param sharedSecret
-	 */
 	constructor (
+		/** @ignore */
 		private potassium: Potassium,
+
+		/** @ignore */
 		private transport: Transport,
+
+		/** @ignore */
 		private sharedSecret: string
 	) {}
 }

@@ -1,6 +1,5 @@
 /**
  * Represents a form to register for cyph.me waitlist.
- * @interface
  */
 export interface ISignupForm {
 	/** Used to track which users signed up through our promo page. */

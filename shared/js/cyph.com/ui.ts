@@ -8,6 +8,7 @@ import {HomeSections, pageTitles, Promos, States} from './enums';
  * Controls the entire cyph.com UI.
  */
 export class UI extends Cyph.UI.BaseButtonManager {
+	/** @ignore */
 	private static linkInterceptSelector: string	= 'a[href^="/"]:not(a[href^="/blog"])';
 
 
@@ -17,6 +18,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	/** Promo promo page state/view. */
 	public promo: Promos				= Promos.none;
 
+	/** Contact form state. */
 	public contactState	= {
 		fromEmail: <string> '',
 		fromName: <string> '',
@@ -26,35 +28,58 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		to: <string> 'hello'
 	};
 
-	public features						= ['Video Calls', 'Voice Calls', 'Chats', 'Photos', 'File Transfers'];
+	/** List of features to cycle through in hero section. */
+	public features: string[]			= [
+		'Video Calls',
+		'Voice Calls',
+		'Chats',
+		'Photos',
+		'File Transfers'
+	];
+
+	/** Current feature displayed in hero section. */
 	public featureIndex: number			= 0;
 
-	/** Donation amount in dollars (default). */
+	/** Donation amount in dollars. */
 	public donationAmount: number		= 10;
 
-	/** Pricing states */
+	/** Individual pricing state. */
 	public individual: boolean			= false;
+
+	/** Business pricing state. */
 	public business: boolean			= false;
+
+	/** Telehealth pricing state. */
 	public telehealth: boolean			= false;
 
-	/** Amount, Category, and Item in Cart */
-	public cart = [0, 0, 0];
+	/** Amount, category, and item respectively in cart. */
+	public cart: number[]				= [0, 0, 0];
 
-	/** Beta Pricing */
-	public betaPlan = 499;
+	/** Beta plan price in dollars. */
+	public betaPlan: number				= 499;
 
-	/** Fixed Business Pricing */
-	public theBasics: number			= 99; // "The Basics" Plan
-	public theWorks: number				= 499; // "The Works" Plan
+	/** Business pricing: "The Basics" plan. */
+	public theBasics: number			= 99;
 
-	/** Fixed Telehealth Pricing */
-	public telehealthSingle: number		= 499; // Single Practitioner Price (default)
+	/** Business pricing: "The Works" plan. */
+	public theWorks: number				= 499;
 
-	/** Custom Telehealth Pricing */
-	public doctors: number				= 5;	// Number of Doctors (default)
-	public pricePerDoctor: number		= 350;	// Price per Doctor
-	public telehealthPriceBreak: number	= 5;	// Number of Doctors required for price break
-	public telehealthDiscount: number	= 0.10;	// Percentage discount when > telehealthPriceBreak
+	/** Telehealth pricing: single-practicioner plan. */
+	public telehealthSingle: number		= 499;
+
+	/** Custom telehealth pricing: number of doctors. */
+	public doctors: number				= 5;
+
+	/** Custom telehealth pricing: price per doctor. */
+	public pricePerDoctor: number		= 350;
+
+	/** Custom telehealth pricing: number of doctors required for price break. */
+	public telehealthPriceBreak: number	= 5;
+
+	/** Custom telehealth pricing: % discount for price break. */
+	public telehealthDiscount: number	= 0.10;
+
+	/** Custom telehealth pricing: plan amount in dollars. */
 	public customDoctorPricing: number;
 
 	/** Home page state/view. */
@@ -72,6 +97,32 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	/** Carousel of testimonials. */
 	public testimonialCarousel: Cyph.UI.Carousel;
 
+	/** @ignore */
+	private cycleFeatures () : void {
+		if (this.featureIndex < this.features.length - 1) {
+			this.featureIndex++;
+		}
+		else {
+			this.featureIndex	= 0;
+		}
+	}
+
+	/** @ignore */
+	private doctorPricing () : number {
+		if (this.doctors >= this.telehealthPriceBreak) {
+			this.customDoctorPricing	=
+				(this.doctors * this.pricePerDoctor) -
+				(this.doctors * this.pricePerDoctor * this.telehealthDiscount)
+			;
+		}
+		else {
+			this.customDoctorPricing	= this.doctors * this.pricePerDoctor;
+		}
+
+		return this.customDoctorPricing;
+	}
+
+	/** @ignore */
 	private linkClickHandler (e: Event) {
 		e.preventDefault();
 
@@ -89,6 +140,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		}
 	}
 
+	/** @ignore */
 	private onUrlStateChange (urlState: string) : void {
 		const urlStateSplit: string[]	= urlState.split('/');
 		const urlStateBase: string		= urlStateSplit[0];
@@ -175,6 +227,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		Cyph.UrlState.set(urlState, true, true);
 	}
 
+	/** @ignore */
 	private scroll (
 		position: number,
 		delayFactor: number = 0.75,
@@ -194,38 +247,17 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		}
 	}
 
+	/** Update cart and open checkout screen. */
 	public updateCart (
 		amount: number,
 		category: number,
 		item: number
 	) : void {
-		this.cart[0] = amount;
-		this.cart[1] = category;
-		this.cart[2] = item;
+		this.cart[0]	= amount;
+		this.cart[1]	= category;
+		this.cart[2]	= item;
+
 		this.changeState(States.checkout);
-	}
-
-	public pricing () : void {
-		this.changeState(States.pricing);
-		return;
-	}
-
-	public doctorPricing() {
-		if(this.doctors >= this.telehealthPriceBreak){
-			this.customDoctorPricing = (this.doctors * this.pricePerDoctor) - (this.doctors * this.pricePerDoctor * this.telehealthDiscount);
-		}
-		else {
-			this.customDoctorPricing =  this.doctors * this.pricePerDoctor;
-		}
-		return this.customDoctorPricing;
-	}
-
-	public cycleFeatures(){
-			if(this.featureIndex < this.features.length-1){
-				this.featureIndex++;
-			}else{
-				this.featureIndex = 0;
-			}
 	}
 
 	/**
@@ -236,12 +268,10 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		this.state	= state;
 	}
 
-	/**
-	 * @param mobileMenu
-	 * @param dialogManager
-	 */
 	constructor (
 		mobileMenu: () => Cyph.UI.ISidebar,
+
+		/** @ignore */
 		private dialogManager: Cyph.UI.IDialogManager
 	) {
 		super(mobileMenu);

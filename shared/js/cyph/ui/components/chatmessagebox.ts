@@ -25,7 +25,10 @@ import {VisibilityWatcher} from '../visibilitywatcher';
 @Directive({
 	selector: 'cyph-chat-message-box'
 })
-export class ChatMessageBox extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
+export class ChatMessageBox
+	extends UpgradeComponent
+	implements DoCheck, OnChanges, OnInit, OnDestroy
+{
 	/** Component title. */
 	public static title: string	= 'cyphChatMessageBox';
 
@@ -91,12 +94,28 @@ export class ChatMessageBox extends UpgradeComponent implements DoCheck, OnChang
 	};
 
 
-	@Input() self: IChat;
+	/** @ignore */
+	@Input() public self: IChat;
 
-	ngDoCheck () { super.ngDoCheck(); }
-	ngOnChanges (changes: SimpleChanges) { super.ngOnChanges(changes); }
-	ngOnDestroy () { super.ngOnDestroy(); }
-	ngOnInit () { super.ngOnInit(); }
+	/** @ignore */
+	public ngDoCheck () : void {
+		super.ngDoCheck();
+	}
+
+	/** @ignore */
+	public ngOnChanges (changes: SimpleChanges) : void {
+		super.ngOnChanges(changes);
+	}
+
+	/** @ignore */
+	public ngOnDestroy () : void {
+		super.ngOnDestroy();
+	}
+
+	/** @ignore */
+	public ngOnInit () : void {
+		super.ngOnInit();
+	}
 
 	constructor (
 		@Inject(ElementRef) elementRef: ElementRef,

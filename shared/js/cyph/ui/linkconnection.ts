@@ -10,18 +10,33 @@ import {IDialogManager} from './idialogmanager';
 import {ILinkConnection} from './ilinkconnection';
 
 
+/** @inheritDoc */
 export class LinkConnection implements ILinkConnection {
+	/** @ignore */
 	private isCopying: boolean;
+
+	/** @ignore */
 	private isWaiting: boolean;
+
+	/** @ignore */
 	private linkConstant: string;
 
-	public isPassive: boolean;
-	public link: string;
-	public linkEncoded: string;
-	public timer: ITimer;
-
+	/** @inheritDoc */
 	public advancedFeatures: boolean;
 
+	/** @inheritDoc */
+	public isPassive: boolean;
+
+	/** @inheritDoc */
+	public link: string;
+
+	/** @inheritDoc */
+	public linkEncoded: string;
+
+	/** @inheritDoc */
+	public timer: ITimer;
+
+	/** @ignore */
 	private selectLink () : void {
 		Util.getValue(
 			Elements.connectLinkInput()[0],
@@ -34,6 +49,7 @@ export class LinkConnection implements ILinkConnection {
 		);
 	}
 
+	/** @inheritDoc */
 	public addTime (milliseconds: number) : void {
 		this.timer.addTime(milliseconds);
 		this.dialogManager.toast({
@@ -42,6 +58,7 @@ export class LinkConnection implements ILinkConnection {
 		});
 	}
 
+	/** @inheritDoc */
 	public async beginWaiting (
 		baseUrl: string,
 		secret: string,
@@ -85,6 +102,7 @@ export class LinkConnection implements ILinkConnection {
 		}
 	}
 
+	/** @inheritDoc */
 	public async copyToClipboard () : Promise<void> {
 		if (this.isCopying) {
 			return;
@@ -104,6 +122,7 @@ export class LinkConnection implements ILinkConnection {
 		}
 	}
 
+	/** @inheritDoc */
 	public stop () : void {
 		this.isWaiting		= false;
 		this.linkConstant	= '';
@@ -114,14 +133,13 @@ export class LinkConnection implements ILinkConnection {
 		Elements.connectLinkInput().blur();
 	}
 
-	/**
-	 * @param countdown
-	 * @param chat
-	 * @param dialogManager
-	 */
 	constructor (
 		countdown: number,
+
+		/** @ignore */
 		private chat: IChat,
+
+		/** @ignore */
 		private dialogManager: IDialogManager
 	) {
 		this.timer	= new Timer(countdown);

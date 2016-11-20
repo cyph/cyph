@@ -7,11 +7,15 @@ import {IElements} from './ielements';
 import {IScrollManager} from './iscrollmanager';
 
 
+/** @inheritDoc */
 export class ScrollManager implements IScrollManager {
+	/** @ignore */
 	private scrollDownLock: number	= 0;
 
+	/** @inheritDoc */
 	public unreadMessages: number	= 0;
 
+	/** @ignore */
 	private mutationObserverHandler (mutation: MutationRecord) : void {
 		const $elem: JQuery	= $(
 			mutation.addedNodes.length > 0 ?
@@ -89,6 +93,7 @@ export class ScrollManager implements IScrollManager {
 		}
 	}
 
+	/** @ignore */
 	private updateMessageCount (increment: number) : void {
 		this.unreadMessages	+= increment;
 
@@ -102,6 +107,7 @@ export class ScrollManager implements IScrollManager {
 		);
 	}
 
+	/** @inheritDoc */
 	public scrollDown (shouldScrollCyphertext?: boolean) : void {
 		if (this.scrollDownLock < 1) {
 			try {
@@ -129,16 +135,16 @@ export class ScrollManager implements IScrollManager {
 		}
 	}
 
-	/**
-	 * @param dialogManager
-	 * @param isMobile
-	 * @param elements
-	 * @param messageCountInTitle
-	 */
 	constructor (
 		dialogManager: IDialogManager,
+
+		/** @ignore */
 		private isMobile: boolean,
+
+		/** @ignore */
 		private elements: IElements,
+
+		/** @ignore */
 		private messageCountInTitle?: boolean
 	) { (async () => {
 		if (this.isMobile) {

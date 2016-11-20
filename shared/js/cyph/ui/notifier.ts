@@ -4,12 +4,15 @@ import {INotifier} from './inotifier';
 import {VisibilityWatcher} from './visibilitywatcher';
 
 
+/** @inheritDoc */
 export class Notifier implements INotifier {
+	/** @ignore */
 	private static audio : {play: Function}	= Audio ?
 		new Audio(Config.notifierConfig.audio) :
 		{play: () => {}}
 	;
 
+	/** @ignore */
 	private static createNotification (message: string, callback: Function = () => {}) : void {
 		const options	= {
 			audio: null,
@@ -51,9 +54,13 @@ export class Notifier implements INotifier {
 	}
 
 
+	/** @ignore */
 	private disableNotify: boolean		= false;
+
+	/** @ignore */
 	private openNotifications: any[]	= [];
 
+	/** @inheritDoc */
 	public notify (message: string) : void {
 		if (!this.disableNotify && !VisibilityWatcher.isVisible) {
 			this.disableNotify	= true;

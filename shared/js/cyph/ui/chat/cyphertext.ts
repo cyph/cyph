@@ -11,12 +11,18 @@ import {ICyphertext} from './icyphertext';
 import {IElements} from './ielements';
 
 
+/** @inheritDoc */
 export class Cyphertext extends BaseButtonManager implements ICyphertext {
+	/** @ignore */
 	private showLock: boolean		= false;
+
+	/** @ignore */
 	private curtainClass: string	= 'curtain';
 
-	public messages: { author: Users; text: string; }[]	= [];
+	/** @inheritDoc */
+	public messages: {author: Users; text: string;}[]	= [];
 
+	/** @inheritDoc */
 	public hide () : void {
 		if ($('.' + this.curtainClass).length > 0) {
 			this.elements.everything().removeClass(this.curtainClass);
@@ -38,6 +44,7 @@ export class Cyphertext extends BaseButtonManager implements ICyphertext {
 		}
 	}
 
+	/** @inheritDoc */
 	public log (text: string, author: string) : void {
 		if (text) {
 			/* Performance optimisation */
@@ -49,6 +56,7 @@ export class Cyphertext extends BaseButtonManager implements ICyphertext {
 		}
 	}
 
+	/** @inheritDoc */
 	public show () : void {
 		this.baseButtonClick(async () => {
 			if (!this.showLock) {
@@ -76,18 +84,18 @@ export class Cyphertext extends BaseButtonManager implements ICyphertext {
 		});
 	}
 
-	/**
-	 * @param session
-	 * @param mobileMenu
-	 * @param dialogManager
-	 * @param isMobile
-	 * @param elements
-	 */
 	constructor (
 		session: ISession,
+
 		mobileMenu: () => ISidebar,
+
+		/** @ignore */
 		private dialogManager: IDialogManager,
+
+		/** @ignore */
 		private isMobile: boolean,
+
+		/** @ignore */
 		private elements: IElements
 	) {
 		super(mobileMenu);
@@ -101,9 +109,8 @@ export class Cyphertext extends BaseButtonManager implements ICyphertext {
 
 
 
-		session.on(Events.cyphertext,
-			(o: { cyphertext: string; author: string; }) =>
-				this.log(o.cyphertext, o.author)
+		session.on(Events.cyphertext, (o: {cyphertext: string; author: string;}) =>
+			this.log(o.cyphertext, o.author)
 		);
 	}
 }

@@ -6,8 +6,10 @@ import {IChannel} from './ichannel';
  * locally, without hitting the network.
  */
 export class LocalChannel implements IChannel {
+	/** @ignore */
 	private other: LocalChannel;
 
+	/** @inheritDoc */
 	public close () : void {
 		const other: LocalChannel	= this.other;
 		this.other	= null;
@@ -48,10 +50,12 @@ export class LocalChannel implements IChannel {
 		}
 	}
 
+	/** @inheritDoc */
 	public isAlive () : boolean {
 		return !!this.other;
 	}
 
+	/** @inheritDoc */
 	public send (message: string) : void {
 		if (!this.other || !this.other.handlers.onmessage) {
 			return;

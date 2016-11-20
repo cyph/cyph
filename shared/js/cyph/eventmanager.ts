@@ -7,12 +7,22 @@ import {Util} from './util';
  * Global cross-thread event-manager.
  */
 export class EventManager {
+	/** @ignore */
 	private static handlers: {[event: string] : Function[]}				= {};
+
+	/** @ignore */
 	private static indices: {[event: string] : Map<Function, number>}	= {};
+
+	/** @ignore */
 	private static threadEventPrefix: string	= 'threadEventPrefix';
+
+	/** @ignore */
 	private static untriggeredEvents: string	= 'untriggeredEvents';
 
-	/** Ignore this (used by EventManager and Thread for cross-thread event stuff). */
+	/**
+	 * @ignore
+	 * (Used internally by EventManager and Thread for cross-thread event stuff.)
+	 */
 	public static mainThreadEvents: string	= 'mainThreadEvents';
 
 	/** List of all active threads. */
@@ -160,11 +170,12 @@ export class EventManager {
 		}
 	}
 
+	/** @ignore */
 	private static _	= (() => {
 		if (Env.isMainThread) {
 			EventManager.on(
 				EventManager.mainThreadEvents,
-				(o: { method: string; args: any[]; }) =>
+				(o: {method: string; args: any[];}) =>
 					EventManager.callMainThread(o.method, o.args)
 			);
 		}
@@ -182,7 +193,7 @@ export class EventManager {
 
 			EventManager.on(
 				EventManager.untriggeredEvents,
-				(o: { event: string; data: any; }) => self.postMessage(
+				(o: {event: string; data: any;}) => self.postMessage(
 					{event: o.event, data: o.data, isThreadEvent: true},
 					undefined
 				)
