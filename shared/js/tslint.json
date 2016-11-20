@@ -26,7 +26,7 @@
 		"no-reference": false,
 		"no-var-requires": true,
 		"only-arrow-functions": false,
-		/* "prefer-for-of": true, */
+		/* Pending tslint fix: "prefer-for-of": true, */
 		"typedef": [
 			true,
 			"call-signature",
@@ -91,7 +91,8 @@
 		"eofline": true,
 		"indent": [true, "tabs"],
 		"linebreak-style": [true, "LF"],
-		"max-classes-per-file": [true, 1],
+		"max-classes-per-file": [true, 2],
+		/* Pending Material2 upgrade: "max-classes-per-file": [true, 1], */
 		"max-file-line-count": [true, 1000],
 		"max-line-length": [true, 100],
 		"no-default-export": true,

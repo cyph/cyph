@@ -117,11 +117,11 @@ export class Util {
 		const value: T	=
 			keys.length < 1 ?
 				null :
-				keys.reduce((value: T, key: string) : T =>
-					value !== null ?
-						value :
-						key in o ?
-							o[key] :
+				keys.reduce((v: T, k: string) : T =>
+					v !== null ?
+						v :
+						k in o ?
+							o[k] :
 							null
 				, null)
 		;

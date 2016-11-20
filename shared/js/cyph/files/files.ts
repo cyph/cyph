@@ -21,8 +21,8 @@ import {Transfer} from './transfer';
  */
 export class Files implements IFiles {
 	/** @ignore */
-	private static cryptoThread (
-		locals: {
+	private static async cryptoThread (
+		threadLocals: {
 			plaintext?: Uint8Array,
 			cyphertext?: Uint8Array,
 			key?: Uint8Array,
@@ -30,132 +30,132 @@ export class Files implements IFiles {
 			callbackId?: string
 		}
 	) : Promise<any[]> {
-		return new Promise((resolve, reject) => {
-			locals.chunkSize	= Config.filesConfig.chunkSize;
-			locals.callbackId	= 'files-' + Util.generateGuid();
+		threadLocals.chunkSize	= Config.filesConfig.chunkSize;
+		threadLocals.callbackId	= 'files-' + Util.generateGuid();
 
-			const thread	= new Thread(async function (
-				Cyph: any,
-				Potassium: any,
-				locals: any,
-				importScripts: Function
-			) {
-				importScripts('/js/cyph/crypto/potassium.js');
+		const thread	= new Thread(async function (
+			Cyph: any,
+			Potassium: any,
+			locals: any,
+			importScripts: Function
+		) {
+			importScripts('/js/cyph/crypto/potassium.js');
 
-				const potassium: Potassium	= new Potassium();
+			const potassium: Potassium	= new Potassium();
 
-				/* Encrypt */
-				if (locals.plaintext) {
-					const key: Uint8Array	= Potassium.randomBytes(
-						potassium.SecretBox.keyBytes
-					);
+			/* Encrypt */
+			if (locals.plaintext) {
+				const key: Uint8Array	= Potassium.randomBytes(
+					potassium.SecretBox.keyBytes
+				);
 
-					const chunks: Uint8Array[]	= [];
+				const chunks: Uint8Array[]	= [];
 
-					for (let i = 0 ; i < locals.plaintext.length ; i += locals.chunkSize) {
-						try {
-							chunks.push(await potassium.SecretBox.seal(
-								new Uint8Array(
-									locals.plaintext.buffer,
-									i,
-									(locals.plaintext.length - i) > locals.chunkSize ?
-										locals.chunkSize :
-										undefined
-								),
-								key
-							));
-						}
-						catch (err) {
-							Cyph.EventManager.trigger(
-								locals.callbackId,
-								[err.message, null, null]
-							);
-
-							return;
-						}
+				for (let i = 0 ; i < locals.plaintext.length ; i += locals.chunkSize) {
+					try {
+						chunks.push(await potassium.SecretBox.seal(
+							new Uint8Array(
+								locals.plaintext.buffer,
+								i,
+								(locals.plaintext.length - i) > locals.chunkSize ?
+									locals.chunkSize :
+									undefined
+							),
+							key
+						));
 					}
-
-					const cyphertext: Uint8Array	= new Uint8Array(
-						chunks.
-							map(chunk => chunk.length + 4).
-							reduce((a, b) => a + b, 0)
-					);
-
-					let j: number	= 0;
-					for (let chunk of chunks) {
-						cyphertext.set(
-							new Uint8Array(new Uint32Array([chunk.length]).buffer),
-							j
+					catch (err) {
+						Cyph.EventManager.trigger(
+							locals.callbackId,
+							[err.message, null, null]
 						);
-						j += 4;
 
-						cyphertext.set(chunk, j);
-						j += chunk.length;
-
-						Potassium.clearMemory(chunk);
+						return;
 					}
-
-					Cyph.EventManager.trigger(
-						locals.callbackId,
-						[null, cyphertext, key]
-					);
 				}
-				/* Decrypt */
-				else if (locals.cyphertext && locals.key) {
-					const chunks: Uint8Array[]	= [];
 
-					for (let i = 0 ; i < locals.cyphertext.length ;) {
-						try {
-							const chunkSize: number	= new DataView(
+				const cyphertext: Uint8Array	= new Uint8Array(
+					chunks.
+						map(chunk => chunk.length + 4).
+						reduce((a, b) => a + b, 0)
+				);
+
+				let j: number	= 0;
+				for (let chunk of chunks) {
+					cyphertext.set(
+						new Uint8Array(new Uint32Array([chunk.length]).buffer),
+						j
+					);
+					j += 4;
+
+					cyphertext.set(chunk, j);
+					j += chunk.length;
+
+					Potassium.clearMemory(chunk);
+				}
+
+				Cyph.EventManager.trigger(
+					locals.callbackId,
+					[null, cyphertext, key]
+				);
+			}
+			/* Decrypt */
+			else if (locals.cyphertext && locals.key) {
+				const chunks: Uint8Array[]	= [];
+
+				for (let i = 0 ; i < locals.cyphertext.length ;) {
+					try {
+						const chunkSize: number	= new DataView(
+							locals.cyphertext.buffer,
+							i
+						).getUint32(0, true);
+
+						i += 4;
+
+						chunks.push(await potassium.SecretBox.open(
+							new Uint8Array(
 								locals.cyphertext.buffer,
-								i
-							).getUint32(0, true);
+								i,
+								chunkSize
+							),
+							locals.key
+						));
 
-							i += 4;
-
-							chunks.push(await potassium.SecretBox.open(
-								new Uint8Array(
-									locals.cyphertext.buffer,
-									i,
-									chunkSize
-								),
-								locals.key
-							));
-
-							i += chunkSize;
-						}
-						catch (err) {
-							Cyph.EventManager.trigger(
-								locals.callbackId,
-								[err.message, null]
-							);
-
-							return;
-						}
+						i += chunkSize;
 					}
+					catch (err) {
+						Cyph.EventManager.trigger(
+							locals.callbackId,
+							[err.message, null]
+						);
 
-					const plaintext	= new Uint8Array(
-						chunks.
-							map(chunk => chunk.length).
-							reduce((a, b) => a + b, 0)
-					);
-
-					let j: number	= 0;
-					for (let chunk of chunks) {
-						plaintext.set(chunk, j);
-						j += chunk.length;
-
-						Potassium.clearMemory(chunk);
+						return;
 					}
-
-					Cyph.EventManager.trigger(
-						locals.callbackId,
-						[null, plaintext]
-					);
 				}
-			}, locals);
 
-			EventManager.one(locals.callbackId, data => {
+				const plaintext	= new Uint8Array(
+					chunks.
+						map(chunk => chunk.length).
+						reduce((a, b) => a + b, 0)
+				);
+
+				let j: number	= 0;
+				for (let chunk of chunks) {
+					plaintext.set(chunk, j);
+					j += chunk.length;
+
+					Potassium.clearMemory(chunk);
+				}
+
+				Cyph.EventManager.trigger(
+					locals.callbackId,
+					[null, plaintext]
+				);
+			}
+		}, threadLocals);
+
+		return new Promise<any[]>((resolve, reject) =>
+			EventManager.one(threadLocals.callbackId, data => {
 				thread.stop();
 
 				const err	= data[0];
@@ -165,8 +165,8 @@ export class Files implements IFiles {
 				else {
 					resolve(data.slice(1));
 				}
-			});
-		});
+			})
+		);
 	}
 
 
@@ -420,7 +420,7 @@ export class Files implements IFiles {
 			));
 		}
 
-		const downloadAnswers: {[id: string] : boolean}	= {};
+		const downloadAnswers: {[id: string]: boolean}	= {};
 
 		this.session.on(RPCEvents.files, (transfer?: ITransfer) => {
 			if (transfer) {

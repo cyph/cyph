@@ -24,9 +24,7 @@ import {Templates} from '../templates';
 	selector: 'cyph-file-input'
 })
 export class FileInput
-	extends UpgradeComponent
-	implements DoCheck, OnChanges, OnInit, OnDestroy
-{
+	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
 	/** Component title. */
 	public static title: string	= 'cyphFileInput';
 

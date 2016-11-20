@@ -21,9 +21,7 @@ import {Templates} from '../templates';
 	selector: 'cyph-beta'
 })
 export class Beta
-	extends UpgradeComponent
-	implements DoCheck, OnChanges, OnInit, OnDestroy
-{
+	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
 	/** Component title. */
 	public static title: string	= 'cyphBeta';
 
@@ -42,7 +40,7 @@ export class Beta
 			/** @ignore */
 			public error: boolean		= false;
 
-			constructor ($element) { (async () => {
+			constructor ($element: JQuery) { (async () => {
 				while (!self['Cyph'] || !self['ui']) {
 					await Util.sleep();
 				}

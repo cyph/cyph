@@ -23,9 +23,7 @@ import {Templates} from '../templates';
 	selector: 'cyph-chat-cyphertext'
 })
 export class ChatCyphertext
-	extends UpgradeComponent
-	implements DoCheck, OnChanges, OnInit, OnDestroy
-{
+	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
 	/** Component title. */
 	public static title: string	= 'cyphChatCyphertext';
 

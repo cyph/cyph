@@ -21,9 +21,7 @@ import {Util} from '../cyph/util';
 	selector: 'cyph-home'
 })
 export class HomeComponent
-	extends UpgradeComponent
-	implements DoCheck, OnChanges, OnInit, OnDestroy
-{
+	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
 	/** Component title. */
 	public static title: string	= 'cyphHome';
 

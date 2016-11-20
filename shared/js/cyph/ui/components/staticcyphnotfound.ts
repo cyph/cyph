@@ -21,9 +21,7 @@ import {Templates} from '../templates';
 	selector: 'cyph-static-cyph-not-found'
 })
 export class StaticCyphNotFound
-	extends UpgradeComponent
-	implements DoCheck, OnChanges, OnInit, OnDestroy
-{
+	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
 	/** Component title. */
 	public static title: string	= 'cyphStaticCyphNotFound';
 

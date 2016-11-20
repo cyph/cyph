@@ -8,10 +8,10 @@ import {Util} from './util';
  */
 export class EventManager {
 	/** @ignore */
-	private static handlers: {[event: string] : Function[]}				= {};
+	private static handlers: {[event: string]: Function[]}				= {};
 
 	/** @ignore */
-	private static indices: {[event: string] : Map<Function, number>}	= {};
+	private static indices: {[event: string]: Map<Function, number>}	= {};
 
 	/** @ignore */
 	private static threadEventPrefix: string	= 'threadEventPrefix';
@@ -37,9 +37,9 @@ export class EventManager {
 		if (Env.isMainThread) {
 			args.forEach((arg: any, i: number) => {
 				if (arg && arg.callbackId) {
-					args[i]	= (...args) => EventManager.trigger(
+					args[i]	= (...threadArgs) => EventManager.trigger(
 						EventManager.threadEventPrefix + arg.callbackId,
-						args
+						threadArgs
 					);
 				}
 			});
@@ -71,7 +71,7 @@ export class EventManager {
 
 					EventManager.on(
 						EventManager.threadEventPrefix + callbackId,
-						args => arg.apply(null, args)
+						threadArgs => arg.apply(null, threadArgs)
 					);
 				}
 			});

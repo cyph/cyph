@@ -22,9 +22,7 @@ import {Util} from '../../util';
 	selector: 'cyph-markdown'
 })
 export class Markdown
-	extends UpgradeComponent
-	implements DoCheck, OnChanges, OnInit, OnDestroy
-{
+	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
 	/** Component title. */
 	public static title: string	= 'cyphMarkdown';
 

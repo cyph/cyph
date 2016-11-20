@@ -22,7 +22,7 @@ import {Message} from './message';
  */
 export class Session implements ISession {
 	/** @ignore */
-	private receivedMessages: {[id: string] : boolean}	= {};
+	private receivedMessages: {[id: string]: boolean}	= {};
 
 	/** @ignore */
 	private sendQueue: string[]							= [];

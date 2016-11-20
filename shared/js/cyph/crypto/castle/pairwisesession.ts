@@ -24,7 +24,7 @@ export class PairwiseSession {
 	private receiveLock: {}									= {};
 
 	/** @ignore */
-	private incomingMessages: {[id: number] : Uint8Array[]}	= {};
+	private incomingMessages: {[id: number]: Uint8Array[]}	= {};
 
 	/** @ignore */
 	private core: Core;

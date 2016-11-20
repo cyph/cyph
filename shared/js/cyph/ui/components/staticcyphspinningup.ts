@@ -21,9 +21,7 @@ import {Templates} from '../templates';
 	selector: 'cyph-static-cyph-spinning-up'
 })
 export class StaticCyphSpinningUp
-	extends UpgradeComponent
-	implements DoCheck, OnChanges, OnInit, OnDestroy
-{
+	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
 	/** Component title. */
 	public static title: string	= 'cyphStaticCyphSpinningUp';
 

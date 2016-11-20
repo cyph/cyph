@@ -26,9 +26,7 @@ import {VisibilityWatcher} from '../visibilitywatcher';
 	selector: 'cyph-chat-message-box'
 })
 export class ChatMessageBox
-	extends UpgradeComponent
-	implements DoCheck, OnChanges, OnInit, OnDestroy
-{
+	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
 	/** Component title. */
 	public static title: string	= 'cyphChatMessageBox';
 
