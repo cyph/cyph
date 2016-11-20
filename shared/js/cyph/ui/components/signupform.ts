@@ -36,8 +36,13 @@ export class SignupForm
 			self: '<'
 		},
 		controller: class {
+			/** @ignore */
 			public Cyph: any;
+
+			/** @ignore */
 			public self: ISignupForm;
+
+			/** @ignore */
 			public invite: string;
 
 			constructor () { (async () => {

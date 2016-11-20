@@ -30,7 +30,10 @@ export class StaticCyphNotFound
 	/** Component configuration. */
 	public static config		= {
 		controller: class {
+			/** @ignore */
 			public Cyph: any;
+
+			/** @ignore */
 			public ui: any;
 
 			constructor () { (async () => {

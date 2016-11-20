@@ -16,7 +16,7 @@ import {Transfer} from './transfer';
 
 /**
  * Standard IFiles implementation built on Firebase.
- * For encryption, SubtleCrypto is preferred when available,
+ * For encryption, native crypto is preferred when available,
  * but libsodium in a separate thread is used as a fallback.
  */
 export class Files implements IFiles {

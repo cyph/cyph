@@ -6,6 +6,7 @@ import {Util} from './util';
  * Wraps the Firebase SDK.
  */
 export class Firebase {
+	/** Firebase app instance. */
 	public static app: firebase.FirebaseApplication;
 
 	/** @ignore */

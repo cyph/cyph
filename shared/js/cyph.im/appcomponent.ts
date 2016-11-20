@@ -11,7 +11,10 @@ import {Util} from '../cyph/util';
 	template: Templates.app
 })
 export class AppComponent {
+	/** @ignore */
 	public Cyph: any;
+
+	/** @ignore */
 	public ui: any;
 
 	constructor () { (async () => {

@@ -40,13 +40,28 @@ export class Checkout
 			item: '='
 		},
 		controller: class {
+			/** @ignore */
 			public Cyph: any;
+
+			/** @ignore */
 			public ui: any;
+
+			/** @ignore */
 			public complete: boolean;
+
+			/** @ignore */
 			public amount: string;
+
+			/** @ignore */
 			public category: string;
+
+			/** @ignore */
 			public email: string;
+
+			/** @ignore */
 			public item: string;
+
+			/** @ignore */
 			public fullName: string;
 
 			constructor ($element: JQuery) { (async () => {

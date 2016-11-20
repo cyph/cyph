@@ -14,6 +14,7 @@ import {IP2P} from './ip2p';
 
 /** @inheritDoc */
 export class P2P implements IP2P {
+	/** Constant values used by P2P. */
 	public static constants	= {
 		accept: 'accept',
 		audio: 'audio',
@@ -24,6 +25,7 @@ export class P2P implements IP2P {
 		webRTC: 'webRTC'
 	};
 
+	/** Indicates whether WebRTC is supported in the current environment. */
 	public static isSupported: boolean	= (() => {
 		try {
 			return new self['SimpleWebRTC']({

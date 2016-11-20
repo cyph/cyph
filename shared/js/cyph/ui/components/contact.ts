@@ -36,9 +36,13 @@ export class Contact
 			self: '<'
 		},
 		controller: class {
+			/** @ignore */
 			public Cyph: any;
+
+			/** @ignore */
 			public ui: any;
 
+			/** @ignore */
 			public self: {
 				fromEmail: string;
 				fromName: string;
@@ -48,6 +52,7 @@ export class Contact
 				to: string;
 			};
 
+			/** @ignore */
 			public send () : void {
 				Util.email(this.self);
 				this.self.sent	= true;

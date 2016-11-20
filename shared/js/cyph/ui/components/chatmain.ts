@@ -36,8 +36,13 @@ export class ChatMain
 			self: '<'
 		},
 		controller: class {
+			/** @ignore */
 			public Cyph: any;
+
+			/** @ignore */
 			public self: IChat;
+
+			/** @ignore */
 			public hideDisconnectMessage: boolean;
 
 			constructor () { (async () => {

@@ -6,6 +6,12 @@ import {Potassium} from '../potassium';
  * The core Castle protocol logic.
  */
 export class Core {
+	/**
+	 * Convert newly established shared secret into session keys.
+	 * @param potassium
+	 * @param isAlice
+	 * @param secret
+	 */
 	public static async newKeys (
 		potassium: Potassium,
 		isAlice: boolean,
@@ -111,7 +117,7 @@ export class Core {
 	}
 
 	/**
-	 * Receive incoming cyphertext.
+	 * Decrypt incoming cyphertext.
 	 * @param cyphertext Data to be decrypted.
 	 * @returns Plaintext.
 	 */
@@ -171,7 +177,7 @@ export class Core {
 	}
 
 	/**
-	 * Encrypt outgoing text.
+	 * Encrypt outgoing plaintext.
 	 * @param plaintext Data to be encrypted.
 	 * @param messageId Used to enforce message ordering.
 	 * @returns Cyphertext.

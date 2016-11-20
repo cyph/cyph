@@ -37,7 +37,10 @@ export class FileInput
 			fileChange: '&'
 		},
 		controller: class {
+			/** @ignore */
 			public accept: string;
+
+			/** @ignore */
 			public fileChange: ({file: File}) => void;
 
 			constructor ($element: JQuery) {

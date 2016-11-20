@@ -38,9 +38,13 @@ export class ChatMessageBox
 			self: '<'
 		},
 		controller: class {
+			/** @ignore */
 			public Cyph: any;
+
+			/** @ignore */
 			public self: IChat;
 
+			/** @ignore */
 			public isSpeedDialOpen: boolean	= true;
 
 			constructor ($element: JQuery) { (async () => {

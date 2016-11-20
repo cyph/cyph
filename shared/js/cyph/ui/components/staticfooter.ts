@@ -30,7 +30,10 @@ export class StaticFooter
 	/** Component configuration. */
 	public static config		= {
 		controller: class {
+			/** @ignore */
 			public Cyph: any;
+
+			/** @ignore */
 			public ui: any;
 
 			constructor () { (async () => {

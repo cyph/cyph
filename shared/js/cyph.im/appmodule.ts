@@ -20,6 +20,9 @@ import {
 import {AppComponent} from './appcomponent';
 
 
+/**
+ * Angular module for Cyph UI.
+ */
 @NgModule({
 	declarations: [
 		AppComponent,
@@ -47,5 +50,6 @@ import {AppComponent} from './appcomponent';
 	]
 })
 export class AppModule {
+	/** @ignore */
 	public ngDoBootstrap () : void {}
 }

@@ -71,6 +71,7 @@ export class NativeCrypto {
 		);
 	}
 
+	/** Equivalent to sodium.crypto_box. */
 	public static Box	= {
 		algorithm: {
 			name: 'RSA-OAEP',
@@ -241,6 +242,7 @@ export class NativeCrypto {
 		}
 	};
 
+	/** Equivalent to sodium.crypto_onetimeauth. */
 	public static OneTimeAuth	= {
 		algorithm: {
 			name: 'HMAC',
@@ -286,6 +288,7 @@ export class NativeCrypto {
 		}
 	};
 
+	/** Equivalent to sodium.crypto_pwhash. */
 	public static PasswordHash	= {
 		algorithm: {
 			name: 'PBKDF2',
@@ -327,6 +330,7 @@ export class NativeCrypto {
 		}
 	};
 
+	/** Equivalent to sodium.crypto_secretbox. */
 	public static SecretBox	= {
 		algorithm: 'AES-GCM',
 		aeadBytes: 16,

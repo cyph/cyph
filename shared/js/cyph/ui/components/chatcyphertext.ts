@@ -35,7 +35,10 @@ export class ChatCyphertext
 			self: '<'
 		},
 		controller: class {
+			/** @ignore */
 			public Cyph: any;
+
+			/** @ignore */
 			public self: IChat;
 
 			constructor () { (async () => {

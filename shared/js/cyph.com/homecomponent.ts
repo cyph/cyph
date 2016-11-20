@@ -20,14 +20,20 @@ import {Util} from '../cyph/util';
 @Directive({
 	selector: 'cyph-home'
 })
-export class HomeComponent extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
+export class HomeComponent
+	extends UpgradeComponent
+	implements DoCheck, OnChanges, OnInit, OnDestroy
+{
 	/** Component title. */
 	public static title: string	= 'cyphHome';
 
 	/** Component configuration. */
 	public static config		= {
 		controller: class {
+			/** @ignore */
 			public Cyph: any;
+
+			/** @ignore */
 			public ui: any;
 
 			constructor () { (async () => {
@@ -43,10 +49,25 @@ export class HomeComponent extends UpgradeComponent implements DoCheck, OnChange
 	};
 
 
-	ngDoCheck () { super.ngDoCheck(); }
-	ngOnChanges (changes: SimpleChanges) { super.ngOnChanges(changes); }
-	ngOnDestroy () { super.ngOnDestroy(); }
-	ngOnInit () { super.ngOnInit(); }
+	/** @ignore */
+	public ngDoCheck () : void {
+		super.ngDoCheck();
+	}
+
+	/** @ignore */
+	public ngOnChanges (changes: SimpleChanges) : void {
+		super.ngOnChanges(changes);
+	}
+
+	/** @ignore */
+	public ngOnDestroy () : void {
+		super.ngOnDestroy();
+	}
+
+	/** @ignore */
+	public ngOnInit () : void {
+		super.ngOnInit();
+	}
 
 	constructor (
 		@Inject(ElementRef) elementRef: ElementRef,

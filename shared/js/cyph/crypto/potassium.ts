@@ -8,6 +8,7 @@ import {PotassiumUtil} from './potassiumutil';
  * should generally not be called directly.
  */
 export class Potassium extends PotassiumUtil {
+	/** Indicates whether native crypto API is supported in this environment. */
 	public static async isNativeCryptoSupported () : Promise<boolean> {
 		try {
 			await NativeCrypto.SecretBox.seal(
@@ -280,10 +281,12 @@ export class Potassium extends PotassiumUtil {
 		}
 	};
 
+	/** Indicates whether this Potassium instance is using native crypto. */
 	public native () : boolean {
 		return this.isNative;
 	}
 
+	/** Equivalent to sodium.crypto_box. */
 	public Box	= {
 		publicKeyBytes: <number>
 			Potassium.McEliece.publicKeyLength +
@@ -457,6 +460,7 @@ export class Potassium extends PotassiumUtil {
 		}
 	};
 
+	/** Equivalent to sodium.crypto_scalarmult. */
 	public EphemeralKeyExchange	= {
 		publicKeyBytes: <number>
 			Potassium.RLWE.publicKeyLength +
@@ -600,6 +604,7 @@ export class Potassium extends PotassiumUtil {
 		}
 	};
 
+	/** Equivalent to sodium.crypto_generichash. */
 	public Hash	= {
 		bytes: <number> Potassium.SuperSphincs.hashBytes,
 
@@ -633,6 +638,7 @@ export class Potassium extends PotassiumUtil {
 		}
 	};
 
+	/** Equivalent to sodium.crypto_onetimeauth. */
 	public OneTimeAuth	= {
 		bytes: <number> Potassium.Sodium.crypto_onetimeauth_BYTES,
 		keyBytes: <number> Potassium.Sodium.crypto_onetimeauth_KEYBYTES,
@@ -660,6 +666,7 @@ export class Potassium extends PotassiumUtil {
 		}
 	};
 
+	/** Equivalent to sodium.crypto_pwhash. */
 	public PasswordHash	= {
 		algorithm: 'scrypt',
 		memLimitInteractive: <number> Potassium.Sodium.crypto_pwhash_scryptsalsa208sha256_MEMLIMIT_INTERACTIVE,
@@ -755,6 +762,7 @@ export class Potassium extends PotassiumUtil {
 		}
 	};
 
+	/** Equivalent to sodium.crypto_secretbox. */
 	public SecretBox	= {
 		aeadBytes: <number> Potassium.Sodium.crypto_aead_chacha20poly1305_ABYTES,
 		keyBytes: <number> Potassium.Sodium.crypto_aead_chacha20poly1305_KEYBYTES,
@@ -867,6 +875,7 @@ export class Potassium extends PotassiumUtil {
 		}
 	};
 
+	/** Equivalent to sodium.crypto_sign. */
 	public Sign: {
 		bytes: number;
 		publicKeyBytes: number;

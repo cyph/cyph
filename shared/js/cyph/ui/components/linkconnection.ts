@@ -35,9 +35,13 @@ export class LinkConnection
 			self: '<'
 		},
 		controller: class {
+			/** @ignore */
 			public Cyph: any;
+
+			/** @ignore */
 			public self: ILinkConnection;
 
+			/** @ignore */
 			public queuedMessageDraft: string	= '';
 
 			constructor () { (async () => {

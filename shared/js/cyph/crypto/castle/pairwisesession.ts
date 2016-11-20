@@ -98,6 +98,10 @@ export class PairwiseSession {
 		]).buffer);
 	}
 
+	/**
+	 * Receive/decrypt incoming message.
+	 * @param cyphertext
+	 */
 	public receive (cyphertext: string) : void {
 		if (this.isAborted) {
 			return;
@@ -196,6 +200,11 @@ export class PairwiseSession {
 		});
 	}
 
+	/**
+	 * Send/encrypt outgoing message.
+	 * @param plaintext
+	 * @param timestamp
+	 */
 	public async send (
 		plaintext: string,
 		timestamp: number = Util.timestamp()

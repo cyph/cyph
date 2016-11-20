@@ -34,10 +34,13 @@ export class Markdown
 			markdown: '<'
 		},
 		controller: class {
+			/** @ignore */
 			private markdownIt: any;
 
+			/** @ignore */
 			public markdown: string;
 
+			/** @ignore */
 			public async $onChanges (changes: any) : Promise<void> {
 				if (this.markdown === null) {
 					await Util.sleep(10000);
@@ -80,7 +83,10 @@ export class Markdown
 				);
 			}
 
-			constructor (private $element: JQuery) {
+			constructor (
+				/** @ignore */
+				private $element: JQuery
+			) {
 				this.markdownIt	= new self['markdownit']({
 					breaks: true,
 					highlight: s => self['microlight'].process(

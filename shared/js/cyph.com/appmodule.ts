@@ -21,6 +21,9 @@ import {AppComponent} from './appcomponent';
 import {HomeComponent} from './homecomponent';
 
 
+/**
+ * Angular module for Cyph home page.
+ */
 @NgModule({
 	declarations: [
 		AppComponent,
@@ -49,5 +52,6 @@ import {HomeComponent} from './homecomponent';
 	]
 })
 export class AppModule {
+	/** @ignore */
 	public ngDoBootstrap () : void {}
 }

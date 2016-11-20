@@ -23,16 +23,23 @@ export class Transport {
 		[id: number] : {data: Uint8Array; totalChunks: number}
 	}	= {};
 
+	/** Queue of cyphertext interception handlers. */
 	public cyphertextIntercepters: Function[]	= [];
 
+	/** Trigger abortion event. */
 	public abort () : void {
 		this.session.trigger(Events.castle, {event: CastleEvents.abort});
 	}
 
+	/** Trigger connection event. */
 	public connect () : void {
 		this.session.trigger(Events.castle, {event: CastleEvents.connect});
 	}
 
+	/**
+	 * Intercept raw data of next incoming message before
+	 * it ever hits the core Castle protocol logic.
+	 */
 	public interceptIncomingCyphertext (
 		timeout: number = 45000
 	) : Promise<Uint8Array> {
@@ -47,6 +54,11 @@ export class Transport {
 		});
 	}
 
+	/**
+	 * Trigger event for logging cyphertext.
+	 * @param cyphertext
+	 * @param author
+	 */
 	public logCyphertext (cyphertext: string, author: string) : void {
 		if (cyphertext.length >= Transport.cyphertextLimit) {
 			return;
@@ -55,6 +67,11 @@ export class Transport {
 		this.session.trigger(Events.cyphertext, {author, cyphertext});
 	}
 
+	/**
+	 * Handle decrypted incoming message.
+	 * @param cyphertext
+	 * @param messageId
+	 */
 	public receive (
 		cyphertext: Uint8Array,
 		plaintext: DataView,
@@ -106,6 +123,11 @@ export class Transport {
 		this.receivedMessages[id]	= null;
 	}
 
+	/**
+	 * Send outgoing encrypted message.
+	 * @param cyphertext
+	 * @param messageId
+	 */
 	public send (
 		cyphertext: string|ArrayBufferView,
 		messageId?: ArrayBufferView

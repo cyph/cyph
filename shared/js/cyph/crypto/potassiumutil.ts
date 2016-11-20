@@ -17,12 +17,14 @@ export class PotassiumUtil {
 	/** @ignore */
 	protected static SuperSphincs	= self['superSphincs'] || {};
 
+	/** Zeroes out memory. */
 	public static clearMemory (a: ArrayBufferView) : void {
 		PotassiumUtil.Sodium.memzero(
 			PotassiumUtil.toBytes(a)
 		);
 	}
 
+	/** Indicates whether two blocks of memory contain the same data. */
 	public static compareMemory (a: ArrayBufferView, b: ArrayBufferView) : boolean {
 		return a.byteLength === b.byteLength && PotassiumUtil.Sodium.memcmp(
 			PotassiumUtil.toBytes(a),
@@ -30,6 +32,7 @@ export class PotassiumUtil {
 		);
 	}
 
+	/** Concatenates multiple blocks of memory into one. */
 	public static concatMemory (
 		clearOriginals: boolean,
 		...arrays: ArrayBufferView[]
@@ -50,6 +53,7 @@ export class PotassiumUtil {
 		return out;
 	}
 
+	/** Converts base64 string into binary byte array. */
 	public static fromBase64 (s: string|ArrayBufferView) : Uint8Array {
 		return typeof s === 'string' ?
 			PotassiumUtil.Sodium.from_base64(s) :
@@ -57,6 +61,7 @@ export class PotassiumUtil {
 		;
 	}
 
+	/** Converts hex string into binary byte array. */
 	public static fromHex (s: string|ArrayBufferView) : Uint8Array {
 		return typeof s === 'string' ?
 			PotassiumUtil.Sodium.from_hex(s) :
@@ -64,6 +69,7 @@ export class PotassiumUtil {
 		;
 	}
 
+	/** Converts ASCII/Unicode string into binary byte array. */
 	public static fromString (s: string|ArrayBufferView) : Uint8Array {
 		return typeof s === 'string' ?
 			PotassiumUtil.Sodium.from_string(s) :
@@ -71,12 +77,14 @@ export class PotassiumUtil {
 		;
 	}
 
+	/** Returns array of n random bytes. */
 	public static randomBytes (n: number) : Uint8Array {
 		const bytes	= new Uint8Array(n);
 		crypto.getRandomValues(bytes);
 		return bytes;
 	}
 
+	/** Converts binary into base64 string. */
 	public static toBase64 (a: ArrayBufferView|string) : string {
 		return typeof a === 'string' ?
 			a :
@@ -86,10 +94,12 @@ export class PotassiumUtil {
 		;
 	}
 
+	/** Normalises any binary data as standard byte array format. */
 	public static toBytes (a: ArrayBufferView) : Uint8Array {
 		return new Uint8Array(a.buffer, a.byteOffset, a.byteLength);
 	}
 
+	/** Converts binary into hex string. */
 	public static toHex (a: ArrayBufferView|string) : string {
 		return typeof a === 'string' ?
 			a :
@@ -97,6 +107,7 @@ export class PotassiumUtil {
 		;
 	}
 
+	/** Converts binary into ASCII/Unicode string. */
 	public static toString (a: ArrayBufferView|string) : string {
 		return typeof a === 'string' ?
 			a :
