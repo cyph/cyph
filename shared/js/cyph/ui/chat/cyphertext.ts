@@ -20,7 +20,7 @@ export class Cyphertext extends BaseButtonManager implements ICyphertext {
 	private curtainClass: string	= 'curtain';
 
 	/** @inheritDoc */
-	public messages: {author: Users; text: string;}[]	= [];
+	public messages: {author: Users; text: string}[]	= [];
 
 	/** @inheritDoc */
 	public hide () : void {
@@ -109,7 +109,7 @@ export class Cyphertext extends BaseButtonManager implements ICyphertext {
 
 
 
-		session.on(Events.cyphertext, (o: {cyphertext: string; author: string;}) =>
+		session.on(Events.cyphertext, (o: {cyphertext: string; author: string}) =>
 			this.log(o.cyphertext, o.author)
 		);
 	}

@@ -56,7 +56,7 @@ export class Session implements ISession {
 	};
 
 	/** @ignore */
-	private castleHandler (e: {event: CastleEvents; data?: any;}) : void {
+	private castleHandler (e: {event: CastleEvents; data?: any}) : void {
 		switch (e.event) {
 			case CastleEvents.abort: {
 				Errors.logAuthFail();

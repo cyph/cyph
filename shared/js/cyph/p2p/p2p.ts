@@ -91,7 +91,7 @@ export class P2P implements IP2P {
 			}, 500);
 		},
 
-		webRTC: (data: {event: string; args: any[];}) : void => {
+		webRTC: (data: {event: string; args: any[]}) : void => {
 			EventManager.trigger(
 				P2P.constants.webRTC + data.event,
 				data.args

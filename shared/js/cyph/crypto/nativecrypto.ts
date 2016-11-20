@@ -171,7 +171,7 @@ export class NativeCrypto {
 		open: async (
 			cyphertext: Uint8Array,
 			nonce: Uint8Array,
-			keyPair: {publicKey: Uint8Array; privateKey: Uint8Array;}
+			keyPair: {publicKey: Uint8Array; privateKey: Uint8Array}
 		) : Promise<Uint8Array> => {
 			const asymmetricCyphertext: Uint8Array	= new Uint8Array(
 				cyphertext.buffer,

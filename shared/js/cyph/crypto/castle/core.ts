@@ -218,6 +218,6 @@ export class Core {
 		private isAlice: boolean,
 
 		/** @ignore */
-		private keys: {incoming: Uint8Array; outgoing: Uint8Array;}[]
+		private keys: {incoming: Uint8Array; outgoing: Uint8Array}[]
 	) {}
 }

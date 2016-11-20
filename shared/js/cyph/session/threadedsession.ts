@@ -83,7 +83,7 @@ export class ThreadedSession implements ISession {
 	) {
 		this.on(
 			ThreadedSessionEvents.updateStateThread,
-			(e: {key: string; value: any;}) => {
+			(e: {key: string; value: any}) => {
 				this.state[e.key]	= e.value;
 			}
 		);
@@ -105,11 +105,11 @@ export class ThreadedSession implements ISession {
 				session.close()
 			);
 
-			session.on(locals.events.receive, (e: {data: string;}) =>
+			session.on(locals.events.receive, (e: {data: string}) =>
 				session.receive(e.data)
 			);
 
-			session.on(locals.events.send, (e: {messages: IMessage[];}) =>
+			session.on(locals.events.send, (e: {messages: IMessage[]}) =>
 				session.sendBase(e.messages)
 			);
 
@@ -120,7 +120,7 @@ export class ThreadedSession implements ISession {
 				session.sendText(e.text, e.selfDestructTimeout)
 			);
 
-			session.on(locals.events.updateState, (e: {key: string; value: any;}) =>
+			session.on(locals.events.updateState, (e: {key: string; value: any}) =>
 				session.updateState(e.key, e.value)
 			);
 		}, {

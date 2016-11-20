@@ -20,7 +20,7 @@ export class Transport {
 
 	/** @ignore */
 	private receivedMessages: {
-		[id: number] : {data: Uint8Array; totalChunks: number;}
+		[id: number] : {data: Uint8Array; totalChunks: number}
 	}	= {};
 
 	public cyphertextIntercepters: Function[]	= [];

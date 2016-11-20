@@ -3,7 +3,7 @@
  */
 export interface IP2P {
 	/** Description of incoming data. */
-	incomingStream: {audio: boolean; video: boolean;};
+	incomingStream: {audio: boolean; video: boolean};
 
 	/** Indicates whether a P2P session currently exists. */
 	isActive: boolean;
@@ -12,7 +12,7 @@ export interface IP2P {
 	loading: boolean;
 
 	/** Description of outgoing data (passed directly into navigator.getUserMedia). */
-	outgoingStream: {audio: boolean; video: boolean;};
+	outgoingStream: {audio: boolean; video: boolean};
 
 	/**
 	 * Accepts current call request (or preemptively accepts future call requests,

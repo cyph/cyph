@@ -22,7 +22,7 @@ export class Mutex implements IMutex {
 	private purpose: string;
 
 	/** @ignore */
-	private requester: {user: string; purpose: string;};
+	private requester: {user: string; purpose: string};
 
 	/** @ignore */
 	private commands	= {

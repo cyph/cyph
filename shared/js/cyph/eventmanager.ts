@@ -175,7 +175,7 @@ export class EventManager {
 		if (Env.isMainThread) {
 			EventManager.on(
 				EventManager.mainThreadEvents,
-				(o: {method: string; args: any[];}) =>
+				(o: {method: string; args: any[]}) =>
 					EventManager.callMainThread(o.method, o.args)
 			);
 		}
@@ -193,7 +193,7 @@ export class EventManager {
 
 			EventManager.on(
 				EventManager.untriggeredEvents,
-				(o: {event: string; data: any;}) => self.postMessage(
+				(o: {event: string; data: any}) => self.postMessage(
 					{event: o.event, data: o.data, isThreadEvent: true},
 					undefined
 				)

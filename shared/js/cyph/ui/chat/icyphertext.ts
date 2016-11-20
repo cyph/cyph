@@ -6,7 +6,7 @@ import {Users} from '../../session/enums';
  */
 export interface ICyphertext {
 	/** Cyphertext message list. */
-	messages: {author: Users; text: string;}[];
+	messages: {author: Users; text: string}[];
 
 	/**
 	 * Hides cyphertext UI.

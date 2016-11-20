@@ -25,7 +25,7 @@ export interface IDialogManager {
 			oncomplete?: Function;
 			onclose?: Function;
 		}
-	) : Promise<{ok: boolean; locals: any;}>;
+	) : Promise<{ok: boolean; locals: any}>;
 
 	/**
 	 * Displays interactive confirmation prompt.

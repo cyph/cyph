@@ -9,7 +9,7 @@ import {Transport} from './transport';
  */
 export class AnonymousLocalUser implements ILocalUser {
 	/** @ignore */
-	private keyPair: {publicKey: Uint8Array; privateKey: Uint8Array;};
+	private keyPair: {publicKey: Uint8Array; privateKey: Uint8Array};
 
 	/** @inheritDoc */
 	public async getKeyPair () : Promise<{

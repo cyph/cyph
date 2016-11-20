@@ -60,7 +60,7 @@ export class Potassium extends PotassiumUtil {
 		open: async (
 			cyphertext: Uint8Array,
 			nonce: Uint8Array,
-			keyPair: {publicKey: Uint8Array; privateKey: Uint8Array;}
+			keyPair: {publicKey: Uint8Array; privateKey: Uint8Array}
 		) : Promise<Uint8Array> => Potassium.Sodium.crypto_box_seal_open(
 			cyphertext,
 			keyPair.publicKey,
@@ -374,7 +374,7 @@ export class Potassium extends PotassiumUtil {
 
 		open: async (
 			cyphertext: Uint8Array,
-			keyPair: {publicKey: Uint8Array; privateKey: Uint8Array;}
+			keyPair: {publicKey: Uint8Array; privateKey: Uint8Array}
 		) : Promise<Uint8Array> => {
 			const keys	= this.BoxHelpers.splitKeys(keyPair.publicKey, keyPair.privateKey);
 

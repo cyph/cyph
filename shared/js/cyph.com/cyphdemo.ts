@@ -39,7 +39,7 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 	private static mobileUIScale: number	= 0.625;
 
 	/** @ignore */
-	private static messages: {text: string; isMobile: boolean;}[]	= [
+	private static messages: {text: string; isMobile: boolean}[]	= [
 		{
 			isMobile: true,
 			text: `why did we have to switch from Facebook?`
@@ -105,7 +105,7 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 	];
 
 	/** @ignore */
-	private static getOffset (elem: JQuery, ancestor: JQuery) : {left: number; top: number;} {
+	private static getOffset (elem: JQuery, ancestor: JQuery) : {left: number; top: number} {
 		const elemOffset		= elem.offset();
 		const ancestorOffset	= ancestor.offset();
 
