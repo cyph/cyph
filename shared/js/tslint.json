@@ -121,7 +121,7 @@
 		"object-literal-shorthand": true,
 		"one-line": [true, "check-open-brace", "check-whitespace"],
 		"one-variable-per-declaration": [true, "ignore-for-loop"],
-		"ordered-imports": [true, "lowercase-last"],
+		"ordered-imports": true,
 		"quotemark": [true, "single", "avoid-escape"],
 		"semicolon": [true, "always"],
 		"variable-name": [true, "ban-keywords", "check-format"],
