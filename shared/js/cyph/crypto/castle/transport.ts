@@ -92,11 +92,11 @@ export class Transport {
 		if (timestamp > this.lastIncomingMessageTimestamp) {
 			this.lastIncomingMessageTimestamp	= timestamp;
 
-			const plaintext	= Potassium.toString(message.data);
+			const plaintextString	= Potassium.toString(message.data);
 
-			if (plaintext) {
+			if (plaintextString) {
 				this.session.trigger(Events.castle, {
-					data: {author, plaintext, timestamp},
+					data: {author, timestamp, plaintext: plaintextString},
 					event: CastleEvents.receive
 				});
 			}
