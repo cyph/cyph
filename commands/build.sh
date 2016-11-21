@@ -184,9 +184,6 @@ compile () {
 }
 
 litedeploy () {
-	rm -rf ~/.litedeploy 2> /dev/null
-	mkdir ~/.litedeploy
-	cp -rf /cyph/default /cyph/cyph.im ~/.litedeploy/
 	cd ~/.litedeploy
 
 	version="lite-${username}-${branch}"
@@ -199,34 +196,33 @@ litedeploy () {
 	mv yaml.new cyph.im/cyph-im.yaml
 
 	gcloud app deploy --quiet --no-promote --project cyphme --version $version */*.yaml
+
+	cd
+	rm -rf ~/.litedeploy
+
+	echo -e "\n\n\nFinished deploying\n\n"
 }
 
 if [ "${watch}" ] ; then
 	eval "$(${dir}/commands/getgitdata.sh)"
 
-	while true ; do
-		sleep 2m
-
-		if [ -f ~/.litedeploy.tmp ] ; then
-			echo -e "\n\n\nDeploying to lite env\n\n"
-			litedeploy
-			rm ~/.litedeploy.tmp 2> /dev/null
-			echo -e "\n\n\nFinished deploying\n\n"
-		fi
-
-		sleep 13m
-	done &
+	liteDeployInterval=1800 # 30 minutes
+	SECONDS=$liteDeployInterval
 
 	while true ; do
-		rm ~/.litedeploy.tmp 2> /dev/null
-
 		start="$(date +%s)"
 		echo -e '\n\n\nBuilding JS/CSS\n\n'
 		output=''
 		compile
 		echo -e "${output}\n\n\nFinished building JS/CSS ($(expr $(date +%s) - $start)s)\n\n"
 
-		touch ~/.litedeploy.tmp
+		if [ $SECONDS -gt $liteDeployInterval -a ! -d ~/.litedeploy ] ; then
+			echo -e "\n\n\nDeploying to lite env\n\n"
+			mkdir ~/.litedeploy
+			cp -rf "${dir}/default" "${dir}/cyph.im" ~/.litedeploy/
+			litedeploy &
+			SECONDS=0
+		fi
 
 		cd "${dir}/shared"
 		inotifywait -r --exclude '(node_modules|sed.*|.*\.(html|css|js|map|tmp))$' css js
