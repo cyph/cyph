@@ -98,7 +98,7 @@ export class UrlState {
 			}
 		}
 		else {
-			EventManager.callMainThread('Cyph.UrlState.set', [
+			EventManager.callMainThread('cyph.UrlState.set', [
 				path,
 				shouldReplace,
 				shouldNotTrigger,

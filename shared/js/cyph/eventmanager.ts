@@ -48,7 +48,7 @@ export class EventManager {
 			const methodName: string	= methodSplit.slice(-1)[0];
 
 			/* Validate command against namespace whitelist, then execute */
-			if (['Cyph', 'ui'].indexOf(methodSplit[0]) > -1) {
+			if (['cyph', 'ui'].indexOf(methodSplit[0]) > -1) {
 				const methodObject: any	= methodSplit.
 					slice(0, -1).
 					reduce((o: any, k: string) : any => o[k], self)

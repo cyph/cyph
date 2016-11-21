@@ -22,7 +22,7 @@ export class Analytics {
 	 */
 	public static baseEventSubmit (method: string, args: any[]) : void {
 		if (!Env.isMainThread) {
-			EventManager.callMainThread('Cyph.Analytics.baseEventSubmit', [method, args]);
+			EventManager.callMainThread('cyph.Analytics.baseEventSubmit', [method, args]);
 		}
 		else if (Analytics.analFrameIsReady) {
 			args.unshift(method);

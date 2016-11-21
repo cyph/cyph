@@ -196,7 +196,7 @@ export class Util {
 			catch (_) {}
 		}
 		else {
-			EventManager.callMainThread('Cyph.Util.openUrl', [url]);
+			EventManager.callMainThread('cyph.Util.openUrl', [url]);
 		}
 	}
 
@@ -428,7 +428,7 @@ export class Util {
 			self.onbeforeunload		= onbeforeunload;
 		}
 		else {
-			EventManager.callMainThread('Cyph.Util.saveFile', [content, fileName]);
+			EventManager.callMainThread('cyph.Util.saveFile', [content, fileName]);
 		}
 	}
 
