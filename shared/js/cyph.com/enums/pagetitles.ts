@@ -1,19 +1,4 @@
 /**
- * Possible states of cyph.com UI.
- */
-export enum States {
-	checkout,
-	contact,
-	donate,
-	home,
-	error,
-	faq,
-	pricing,
-	privacypolicy,
-	termsofservice
-}
-
-/**
  * Map of URL states to page titles.
  */
 export const pageTitles	= {
@@ -42,32 +27,3 @@ export const pageTitles	= {
 	testimonials: `What People Say about Cyph`,
 	ventura: `Cyph – We The People`
 };
-
-/**
- * Possible states of home page.
- */
-export enum HomeSections {
-	about,
-	features,
-	gettingstarted,
-	intro,
-	invite,
-	promo,
-	register,
-	testimonials
-}
-
-/**
- * Possible states of promo promo page.
- */
-export enum Promos {
-	betalist,
-	jjgo,
-	judgejohn,
-	mybrother,
-	none,
-	penn,
-	sawbones,
-	security,
-	ventura
-}

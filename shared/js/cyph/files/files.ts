@@ -3,7 +3,7 @@ import {Config} from '../config';
 import {Potassium} from '../crypto/potassium';
 import {EventManager} from '../eventmanager';
 import {Firebase} from '../firebase';
-import {Events, RPCEvents, Users} from '../session/enums';
+import {Events, rpcEvents, Users} from '../session/enums';
 import {ISession} from '../session/isession';
 import {Message} from '../session/message';
 import {Thread} from '../thread';
@@ -248,7 +248,7 @@ export class Files implements IFiles {
 				transfer.answer	= ok;
 
 				this.session.send(new Message(
-					RPCEvents.files,
+					rpcEvents.files,
 					transfer
 				));
 
@@ -374,7 +374,7 @@ export class Files implements IFiles {
 		});
 
 		this.session.send(new Message(
-			RPCEvents.files,
+			rpcEvents.files,
 			transfer
 		));
 
@@ -406,7 +406,7 @@ export class Files implements IFiles {
 					transfer.url	= uploadTask.snapshot.downloadURL;
 
 					this.session.send(new Message(
-						RPCEvents.files,
+						rpcEvents.files,
 						transfer
 					));
 
@@ -426,13 +426,13 @@ export class Files implements IFiles {
 
 		if (isNativeCryptoSupported) {
 			this.session.on(Events.beginChat, () => this.session.send(
-				new Message(RPCEvents.files)
+				new Message(rpcEvents.files)
 			));
 		}
 
 		const downloadAnswers: {[id: string]: boolean}	= {};
 
-		this.session.on(RPCEvents.files, (transfer?: ITransfer) => {
+		this.session.on(rpcEvents.files, (transfer?: ITransfer) => {
 			if (transfer) {
 				/* Outgoing file transfer acceptance or rejection */
 				if (transfer.answer === true || transfer.answer === false) {
@@ -475,7 +475,7 @@ export class Files implements IFiles {
 								transfer.answer	= false;
 
 								this.session.send(new Message(
-									RPCEvents.files,
+									rpcEvents.files,
 									transfer
 								));
 							}

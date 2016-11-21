@@ -1,4 +1,4 @@
-import {UIEvents} from '../../p2p/enums';
+import {UIEventCategories, UIEvents} from '../../p2p/enums';
 import {IP2P} from '../../p2p/ip2p';
 import {P2P} from '../../p2p/p2p';
 import {Events, Users} from '../../session/enums';
@@ -107,14 +107,14 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 		this.chat.session.on(
 			Events.p2pUI,
 			async (e: {
-				category: UIEvents.Categories;
-				event: UIEvents.Events;
+				category: UIEventCategories;
+				event: UIEvents;
 				args: any[];
 			}) => {
 				switch (e.category) {
-					case UIEvents.Categories.base: {
+					case UIEventCategories.base: {
 						switch (e.event) {
-							case UIEvents.Events.connected: {
+							case UIEvents.connected: {
 								const isConnected: boolean	= e.args[0];
 
 								if (isConnected) {
@@ -141,16 +141,16 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 								}
 								break;
 							}
-							case UIEvents.Events.enable: {
+							case UIEvents.enable: {
 								this.enable();
 								break;
 							}
 						}
 						break;
 					}
-					case UIEvents.Categories.request: {
+					case UIEventCategories.request: {
 						switch (e.event) {
-							case UIEvents.Events.acceptConfirm: {
+							case UIEvents.acceptConfirm: {
 								const callType: string		= e.args[0];
 								const timeout: number		= e.args[1];
 								const isAccepted: boolean	= e.args[2];
@@ -177,7 +177,7 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 
 								break;
 							}
-							case UIEvents.Events.requestConfirm: {
+							case UIEvents.requestConfirm: {
 								const callType: string		= e.args[0];
 								const isAccepted: boolean	= e.args[1];
 								const callback: Function	= e.args[2];
@@ -202,7 +202,7 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 
 								break;
 							}
-							case UIEvents.Events.requestConfirmation: {
+							case UIEvents.requestConfirmation: {
 								this.chat.addMessage(
 									Strings.p2pRequestConfirmation,
 									Users.app,
@@ -211,7 +211,7 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 								);
 								break;
 							}
-							case UIEvents.Events.requestRejection: {
+							case UIEvents.requestRejection: {
 								this.dialogManager.alert({
 									content: Strings.p2pDeny,
 									ok: Strings.ok,

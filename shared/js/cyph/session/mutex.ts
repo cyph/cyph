@@ -1,6 +1,6 @@
 import {Util} from '../util';
 import {Command} from './command';
-import {Events, RPCEvents, Users} from './enums';
+import {Events, rpcEvents, Users} from './enums';
 import {IMutex} from './imutex';
 import {ISession} from './isession';
 import {Message} from './message';
@@ -39,7 +39,7 @@ export class Mutex implements IMutex {
 
 				this.session.send(
 					new Message(
-						RPCEvents.mutex,
+						rpcEvents.mutex,
 						new Command(Mutex.constants.release)
 					)
 				);
@@ -82,7 +82,7 @@ export class Mutex implements IMutex {
 
 			this.session.send(
 				new Message(
-					RPCEvents.mutex,
+					rpcEvents.mutex,
 					new Command(
 						Mutex.constants.request,
 						purpose
@@ -114,7 +114,7 @@ export class Mutex implements IMutex {
 
 			this.session.send(
 				new Message(
-					RPCEvents.mutex,
+					rpcEvents.mutex,
 					new Command(Mutex.constants.release)
 				)
 			);
@@ -125,7 +125,7 @@ export class Mutex implements IMutex {
 		/** @ignore */
 		private session: ISession
 	) {
-		this.session.on(RPCEvents.mutex, (command: Command) =>
+		this.session.on(rpcEvents.mutex, (command: Command) =>
 			Util.getValue(this.commands, command.method, o => {})(command.argument)
 		);
 

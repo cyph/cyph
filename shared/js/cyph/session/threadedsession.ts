@@ -1,7 +1,7 @@
 import {EventManager} from '../eventmanager';
 import {Thread} from '../thread';
 import {Util} from '../util';
-import {Events, RPCEvents, ThreadedSessionEvents} from './enums';
+import {Events, rpcEvents, threadedSessionEvents} from './enums';
 import {IMessage} from './imessage';
 import {ISession} from './isession';
 
@@ -25,7 +25,7 @@ export class ThreadedSession implements ISession {
 
 	/** @inheritDoc */
 	public close () : void {
-		this.trigger(ThreadedSessionEvents.close);
+		this.trigger(threadedSessionEvents.close);
 	}
 
 	/** @inheritDoc */
@@ -40,7 +40,7 @@ export class ThreadedSession implements ISession {
 
 	/** @inheritDoc */
 	public receive (data: string) : void {
-		this.trigger(ThreadedSessionEvents.receive, {data});
+		this.trigger(threadedSessionEvents.receive, {data});
 	}
 
 	/** @inheritDoc */
@@ -50,12 +50,12 @@ export class ThreadedSession implements ISession {
 
 	/** @inheritDoc */
 	public sendBase (messages: IMessage[]) : void {
-		this.trigger(ThreadedSessionEvents.send, {messages});
+		this.trigger(threadedSessionEvents.send, {messages});
 	}
 
 	/** @inheritDoc */
 	public sendText (text: string, selfDestructTimeout?: number) : void {
-		this.trigger(ThreadedSessionEvents.sendText, {text, selfDestructTimeout});
+		this.trigger(threadedSessionEvents.sendText, {text, selfDestructTimeout});
 	}
 
 	/** @inheritDoc */
@@ -65,7 +65,7 @@ export class ThreadedSession implements ISession {
 
 	/** @inheritDoc */
 	public updateState (key: string, value: any) : void {
-		this.trigger(ThreadedSessionEvents.updateState, {key, value});
+		this.trigger(threadedSessionEvents.updateState, {key, value});
 	}
 
 	/**
@@ -82,7 +82,7 @@ export class ThreadedSession implements ISession {
 		private id: string = Util.generateGuid()
 	) {
 		this.on(
-			ThreadedSessionEvents.updateStateThread,
+			threadedSessionEvents.updateStateThread,
 			(e: {key: string; value: any}) => {
 				this.state[e.key]	= e.value;
 			}
@@ -130,7 +130,7 @@ export class ThreadedSession implements ISession {
 			{
 				descriptor,
 				nativeCrypto,
-				events: ThreadedSessionEvents,
+				events: threadedSessionEvents,
 				id: this.id
 			}
 		);

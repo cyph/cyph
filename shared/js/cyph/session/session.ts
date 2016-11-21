@@ -11,7 +11,7 @@ import {Errors} from '../errors';
 import {EventManager} from '../eventmanager';
 import {UrlState} from '../urlstate';
 import {Util} from '../util';
-import {CastleEvents, Events, RPCEvents, State, ThreadedSessionEvents, Users} from './enums';
+import {CastleEvents, Events, rpcEvents, State, threadedSessionEvents, Users} from './enums';
 import {IMessage} from './imessage';
 import {ISession} from './isession';
 import {Message} from './message';
@@ -154,10 +154,10 @@ export class Session implements ISession {
 		if (!this.receivedMessages[message.id]) {
 			this.receivedMessages[message.id]	= true;
 
-			if (message.event in RPCEvents) {
+			if (message.event in rpcEvents) {
 				this.trigger(
 					message.event,
-					message.event === RPCEvents.text ?
+					message.event === rpcEvents.text ?
 						{
 							author,
 							timestamp,
@@ -350,8 +350,8 @@ export class Session implements ISession {
 
 
 		for (let message of messages) {
-			if (message.event === RPCEvents.text) {
-				this.trigger(RPCEvents.text, {
+			if (message.event === rpcEvents.text) {
+				this.trigger(rpcEvents.text, {
 					author: Users.me,
 					selfDestructTimeout:
 						Util.getValue(message.data, 'selfDestructTimeout')
@@ -376,7 +376,7 @@ export class Session implements ISession {
 
 	/** @inheritDoc */
 	public sendText (text: string, selfDestructTimeout?: number) : void {
-		this.send(new Message(RPCEvents.text, {text, selfDestructTimeout}));
+		this.send(new Message(rpcEvents.text, {text, selfDestructTimeout}));
 	}
 
 	/** @inheritDoc */
@@ -389,7 +389,7 @@ export class Session implements ISession {
 		this.state[key]	= value;
 
 		if (!Env.isMainThread) {
-			this.trigger(ThreadedSessionEvents.updateStateThread, {key, value});
+			this.trigger(threadedSessionEvents.updateStateThread, {key, value});
 		}
 	}
 

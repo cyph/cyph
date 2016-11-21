@@ -1,7 +1,7 @@
 import {Analytics} from '../../analytics';
 import {Env} from '../../env';
 import {ITimer} from '../../itimer';
-import {Events, RPCEvents, Users} from '../../session/enums';
+import {Events, rpcEvents, Users} from '../../session/enums';
 import {ISession} from '../../session/isession';
 import {Message} from '../../session/message';
 import {ThreadedSession} from '../../session/threadedsession';
@@ -262,7 +262,7 @@ export class Chat extends BaseButtonManager implements IChat {
 			this.isMessageChanged	= isMessageChanged;
 			this.session.send(
 				new Message(
-					RPCEvents.typing,
+					rpcEvents.typing,
 					this.isMessageChanged
 				)
 			);
@@ -514,7 +514,7 @@ export class Chat extends BaseButtonManager implements IChat {
 
 		this.session.on(Events.connectFailure, () => this.abortSetup());
 
-		this.session.on(RPCEvents.text, (o: {
+		this.session.on(rpcEvents.text, (o: {
 			text: string;
 			author: string;
 			timestamp: number;
@@ -529,7 +529,7 @@ export class Chat extends BaseButtonManager implements IChat {
 			)
 		);
 
-		this.session.on(RPCEvents.typing, (isFriendTyping: boolean) =>
+		this.session.on(rpcEvents.typing, (isFriendTyping: boolean) =>
 			this.setFriendTyping(isFriendTyping)
 		);
 	}

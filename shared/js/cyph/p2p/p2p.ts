@@ -2,13 +2,13 @@ import {Analytics} from '../analytics';
 import {Env} from '../env';
 import {EventManager} from '../eventmanager';
 import {Command} from '../session/command';
-import {Events, RPCEvents} from '../session/enums';
+import {Events, rpcEvents} from '../session/enums';
 import {IMutex} from '../session/imutex';
 import {ISession} from '../session/isession';
 import {Message} from '../session/message';
 import {Mutex} from '../session/mutex';
 import {Util} from '../util';
-import {UIEvents} from './enums';
+import {UIEventCategories, UIEvents} from './enums';
 import {IP2P} from './ip2p';
 
 
@@ -57,8 +57,8 @@ export class P2P implements IP2P {
 			this.isAccepted	= false;
 
 			this.triggerUIEvent(
-				UIEvents.Categories.request,
-				UIEvents.Events.requestRejection
+				UIEventCategories.request,
+				UIEvents.requestRejection
 			);
 		},
 
@@ -86,8 +86,8 @@ export class P2P implements IP2P {
 
 			if (wasAccepted) {
 				this.triggerUIEvent(
-					UIEvents.Categories.base,
-					UIEvents.Events.connected,
+					UIEventCategories.base,
+					UIEvents.connected,
 					false
 				);
 			}
@@ -127,15 +127,15 @@ export class P2P implements IP2P {
 			command.method === P2P.constants.audio
 		) {
 			this.triggerUIEvent(
-				UIEvents.Categories.request,
-				UIEvents.Events.acceptConfirm,
+				UIEventCategories.request,
+				UIEvents.acceptConfirm,
 				command.method,
 				500000,
 				this.isAccepted,
 				(ok: boolean) => {
 					this.session.send(
 						new Message(
-							RPCEvents.p2p,
+							rpcEvents.p2p,
 							new Command(ok ?
 								P2P.constants.accept :
 								P2P.constants.decline
@@ -178,8 +178,8 @@ export class P2P implements IP2P {
 
 	/** @ignore */
 	private triggerUIEvent(
-		category: UIEvents.Categories,
-		event: UIEvents.Events,
+		category: UIEventCategories,
+		event: UIEvents,
 		...args: any[]
 	) : void {
 		this.session.trigger(Events.p2pUI, {category, event, args});
@@ -196,7 +196,7 @@ export class P2P implements IP2P {
 	public close () : void {
 		this.session.send(
 			new Message(
-				RPCEvents.p2p,
+				rpcEvents.p2p,
 				new Command(P2P.constants.kill)
 			)
 		);
@@ -242,7 +242,7 @@ export class P2P implements IP2P {
 					else {
 						this.session.send(
 							new Message(
-								RPCEvents.p2p,
+								rpcEvents.p2p,
 								new Command(
 									P2P.constants.webRTC,
 									{event, args}
@@ -310,8 +310,8 @@ export class P2P implements IP2P {
 	/** @inheritDoc */
 	public request (callType: string) : void {
 		this.triggerUIEvent(
-			UIEvents.Categories.request,
-			UIEvents.Events.requestConfirm,
+			UIEventCategories.request,
+			UIEvents.requestConfirm,
 			callType,
 			this.isAccepted,
 			async (ok: boolean) => {
@@ -330,15 +330,15 @@ export class P2P implements IP2P {
 
 					this.session.send(
 						new Message(
-							RPCEvents.p2p,
+							rpcEvents.p2p,
 							new Command(callType)
 						)
 					);
 
 					await Util.sleep();
 					this.triggerUIEvent(
-						UIEvents.Categories.request,
-						UIEvents.Events.requestConfirmation
+						UIEventCategories.request,
+						UIEvents.requestConfirmation
 					);
 
 					/* Time out if request hasn't been accepted within 10 minutes */
@@ -398,20 +398,20 @@ export class P2P implements IP2P {
 
 		if (P2P.isSupported) {
 			this.session.on(Events.beginChat, () => this.session.send(
-				new Message(RPCEvents.p2p, new Command())
+				new Message(rpcEvents.p2p, new Command())
 			));
 		}
 
 		this.session.on(Events.closeChat, () => this.close());
 
-		this.session.on(RPCEvents.p2p, (command: Command) => {
+		this.session.on(rpcEvents.p2p, (command: Command) => {
 			if (command.method) {
 				this.receiveCommand(command);
 			}
 			else if (P2P.isSupported) {
 				this.triggerUIEvent(
-					UIEvents.Categories.base,
-					UIEvents.Events.enable
+					UIEventCategories.base,
+					UIEvents.enable
 				);
 			}
 		});
