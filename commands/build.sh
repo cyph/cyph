@@ -4,16 +4,15 @@ cd $(cd "$(dirname "$0")"; pwd)/..
 dir="$(pwd)"
 
 
-watch=''
 cloneworkingdir=''
-test=true
+test=''
+watch=''
 
 if [ "${1}" == '--watch' ] ; then
 	watch=true
 	shift
-fi
-if [ "${1}" == '--prod' ] ; then
-	test=''
+elif [ "${1}" != '--prod' ] ; then
+	test=true
 	shift
 fi
 if [ ! -d ~/.build ] ; then
