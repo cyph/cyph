@@ -116,13 +116,35 @@ compile () {
 				'${f}',
 				fs.readFileSync('${f}').toString().replace(
 					/templateUrl: '(.*?)'/g,
-					(_, path) =>
-						'template: \`' +
-						fs.readFileSync('${f}'.replace(/[^\\/]+\\.ts\$/, path)).
-							toString().
-							replace(/\\$\\{/g, '\\\\\${')
-						+
-						'\`'
+					(_, path) => {
+						const templatePath		= '${f}'.replace(
+							/[^\\/]+\\.ts\$/,
+							path
+						);
+
+						const stylesheetPath	= templatePath.
+							replace(/\.[A-Za-z]+$/, '.css').
+							replace('/templates/', '/css/components/')
+						;
+
+						return 'template: \`' +
+							(
+								(
+									fs.existsSync(stylesheetPath) ?
+										(
+											'<style>' +
+												child_process.spawnSync(
+													'cleancss',
+													[stylesheetPath]
+												).stdout.toString() +
+											'</style>'
+										) :
+										''
+								) +
+								fs.readFileSync(templatePath).toString()
+							).replace(/\\$\\{/g, '\\\\\${') +
+						'\`';
+					}
 				)
 			)"
 		done
