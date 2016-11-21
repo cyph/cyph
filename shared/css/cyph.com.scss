@@ -635,11 +635,8 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 
 		> .cyph-foreground {
 			font-size: 14px;
+			height: calc(100% + 2px);
 			overflow: hidden;
-
-			&:not(.curtain) {
-				height: calc(100% + 2px);
-			}
 		}
 	}
 

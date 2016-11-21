@@ -111,29 +111,31 @@ export class ScrollManager implements IScrollManager {
 
 	/** @inheritDoc */
 	public scrollDown (shouldScrollCyphertext?: boolean) : void {
-		if (this.scrollDownLock < 1) {
-			try {
+		if (this.scrollDownLock > 0) {
+			return;
+		}
+
+		try {
+			++this.scrollDownLock;
+
+			(
+				shouldScrollCyphertext ?
+					this.elements.cyphertext :
+					this.elements.messageList
+			)().each((i: number, elem: HTMLElement) => {
 				++this.scrollDownLock;
 
-				(
-					shouldScrollCyphertext ?
-						this.elements.cyphertext :
-						this.elements.messageList
-				)().each((i: number, elem: HTMLElement) => {
-					++this.scrollDownLock;
+				$(elem).animate(
+					{scrollTop: elem.scrollHeight},
+					350,
+					() => --this.scrollDownLock
+				);
+			});
 
-					$(elem).animate(
-						{scrollTop: elem.scrollHeight},
-						350,
-						() => --this.scrollDownLock
-					);
-				});
-
-				NanoScroller.update();
-			}
-			finally {
-				--this.scrollDownLock;
-			}
+			NanoScroller.update();
+		}
+		finally {
+			--this.scrollDownLock;
 		}
 	}
 

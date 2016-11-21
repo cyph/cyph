@@ -965,7 +965,12 @@ export const Templates	= {
 
 			<section id='hero-section'>
 				<div class='hero-foreground'>
-					<div id='promo-section' ng-if='$ctrl.ui.promo' layout='row' layout-align='center center'>
+					<div
+						id='promo-section'
+						ng-if='$ctrl.ui.promo !== $ctrl.cyph.com.Promos.none'
+						layout='row'
+						layout-align='center center'
+					>
 						<md-card
 							class='animated wow'
 							data-wow-delay='3000ms'

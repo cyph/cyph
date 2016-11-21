@@ -78,17 +78,20 @@ export class Elements {
 	public static title					= Elements.get('title');
 
 	/** jQuery wrapper that memoizes DOM elements for performance. */
-	public static get (selector: any) : () => JQuery {
+	public static get (
+		selector: string|HTMLElement|Window|Document|(() => JQuery)
+	) : () => JQuery {
 		let cache: JQuery;
 
 		const f	= typeof selector === 'function' ?
 			selector :
-			() => $(selector)
+			() => $(selector);
 		;
 
 		return () => {
 			if (!cache || cache.length < 1) {
-				cache	= f();
+				cache			= f();
+				cache.selector	= typeof selector === 'string' ? selector : '';
 			}
 
 			return cache;

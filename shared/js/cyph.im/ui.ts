@@ -101,8 +101,8 @@ export class UI extends Cyph.UI.BaseButtonManager {
 
 
 		this.chat.session.on(Cyph.Session.Events.abort, () => {
+			self.onbeforeunload	= null;
 			this.changeState(States.chat);
-			Cyph.UI.Elements.window().off('beforeunload');
 		});
 
 		this.chat.session.on(Cyph.Session.Events.beginChatComplete, () => {
