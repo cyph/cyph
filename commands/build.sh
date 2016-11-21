@@ -5,25 +5,19 @@ dir="$(pwd)"
 
 
 watch=''
-test=''
-simple=''
 cloneworkingdir=''
+test=true
 
 if [ "${1}" == '--watch' ] ; then
 	watch=true
 	shift
 fi
-if [ "${1}" == '--test' ] ; then
-	test=true
-	shift
-fi
-if [ "${1}" == '--simple' ] ; then
-	simple=true
+if [ "${1}" == '--prod' ] ; then
+	test=''
 	shift
 fi
 if [ ! -d ~/.build ] ; then
 	cloneworkingdir=true
-	shift
 fi
 
 if [ "${cloneworkingdir}" ] ; then
@@ -117,7 +111,7 @@ compile () {
 		tslint --noUnusedLocals --noUnusedParameters --project tsconfig.json --type-check 2>&1
 	)"
 
-	if [ ! "${simple}" -o ! "${test}" ] ; then
+	if [ ! "${test}" ] ; then
 		for f in $tsfiles ; do
 			node -e "
 				const resolveReferences	= f => {
@@ -152,7 +146,7 @@ compile () {
 		tsbuild $f
 	done
 
-	if [ ! "${simple}" -o ! "${test}" ] ; then
+	if [ ! "${test}" ] ; then
 		for f in $tsfiles ; do
 			webpack \
 				--output-library-target var \

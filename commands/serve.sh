@@ -66,7 +66,7 @@ mkdir /tmp/cyph2
 appserver --port 5002 --admin_port 6002 --host 0.0.0.0 --storage_path /tmp/cyph2 cyph.im/cyph-im.yaml
 
 if [ "${prodlike}" ] ; then
-	./commands/build.sh
+	./commands/build.sh --prod
 
 	if (( $? )) ; then
 		echo -e '\n\nBuild failed\n'
