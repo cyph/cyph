@@ -20,14 +20,14 @@ export class AnonymousLocalUser implements ILocalUser {
 			return this.keyPair;
 		}
 
-		this.keyPair		= await this.potassium.Box.keyPair();
+		this.keyPair		= await this.potassium.box.keyPair();
 
-		const sharedSecret	= (await this.potassium.PasswordHash.hash(
+		const sharedSecret	= (await this.potassium.passwordHash.hash(
 			this.sharedSecret,
-			new Uint8Array(this.potassium.PasswordHash.saltBytes)
+			new Uint8Array(this.potassium.passwordHash.saltBytes)
 		)).hash;
 
-		this.transport.send(await this.potassium.SecretBox.seal(
+		this.transport.send(await this.potassium.secretBox.seal(
 			this.keyPair.publicKey,
 			sharedSecret
 		));

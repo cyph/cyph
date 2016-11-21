@@ -21,12 +21,12 @@ export class AnonymousRemoteUser implements IRemoteUser {
 			return this.publicKey;
 		}
 
-		const sharedSecret	= (await this.potassium.PasswordHash.hash(
+		const sharedSecret	= (await this.potassium.passwordHash.hash(
 			this.sharedSecret,
-			new Uint8Array(this.potassium.PasswordHash.saltBytes)
+			new Uint8Array(this.potassium.passwordHash.saltBytes)
 		)).hash;
 
-		this.publicKey		= await this.potassium.SecretBox.open(
+		this.publicKey		= await this.potassium.secretBox.open(
 			await this.cyphertextPromise,
 			sharedSecret
 		);

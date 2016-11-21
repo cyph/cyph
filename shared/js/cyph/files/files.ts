@@ -43,21 +43,21 @@ export class Files implements IFiles {
 				locals: any,
 				importScripts: Function
 			) : Promise<void> {
-				importScripts('/js/cyph/crypto/potassium.js');
+				importScripts('/js/cyph/crypto/potassium/index.js');
 
 				const potassium: Potassium	= new Potassium();
 
 				/* Encrypt */
 				if (locals.plaintext) {
 					const key: Uint8Array	= Potassium.randomBytes(
-						potassium.SecretBox.keyBytes
+						potassium.secretBox.keyBytes
 					);
 
 					const chunks: Uint8Array[]	= [];
 
 					for (let i = 0 ; i < locals.plaintext.length ; i += locals.chunkSize) {
 						try {
-							chunks.push(await potassium.SecretBox.seal(
+							chunks.push(await potassium.secretBox.seal(
 								new Uint8Array(
 									locals.plaintext.buffer,
 									i,
@@ -116,7 +116,7 @@ export class Files implements IFiles {
 
 							i += 4;
 
-							chunks.push(await potassium.SecretBox.open(
+							chunks.push(await potassium.secretBox.open(
 								new Uint8Array(
 									locals.cyphertext.buffer,
 									i,
@@ -189,7 +189,7 @@ export class Files implements IFiles {
 	) : Promise<Uint8Array> {
 		try {
 			return this.nativePotassium ?
-				await this.nativePotassium.SecretBox.open(cyphertext, key) :
+				await this.nativePotassium.secretBox.open(cyphertext, key) :
 				(await Files.cryptoThread({cyphertext, key}))[0]
 			;
 		}
@@ -206,11 +206,11 @@ export class Files implements IFiles {
 		try {
 			if (this.nativePotassium) {
 				const key: Uint8Array	= Potassium.randomBytes(
-					this.nativePotassium.SecretBox.keyBytes
+					this.nativePotassium.secretBox.keyBytes
 				);
 
 				return {
-					cyphertext: await this.nativePotassium.SecretBox.seal(
+					cyphertext: await this.nativePotassium.secretBox.seal(
 						plaintext,
 						key
 					),

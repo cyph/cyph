@@ -62,7 +62,7 @@ export class PairwiseSession {
 	private async handshakeOpenSecret (cyphertext: Uint8Array) : Promise<Uint8Array> {
 		const keyPair	= await this.localUser.getKeyPair();
 
-		const secret	= await this.potassium.Box.open(
+		const secret	= await this.potassium.box.open(
 			cyphertext,
 			keyPair
 		);
@@ -79,7 +79,7 @@ export class PairwiseSession {
 	private async handshakeSendSecret (secret: Uint8Array) : Promise<Uint8Array> {
 		const remotePublicKey	= await this.remoteUser.getPublicKey();
 
-		const cyphertext		= await this.potassium.Box.seal(
+		const cyphertext		= await this.potassium.box.seal(
 			secret,
 			remotePublicKey
 		);
@@ -303,7 +303,7 @@ export class PairwiseSession {
 			let secret: Uint8Array;
 			if (isAlice) {
 				secret	= Potassium.randomBytes(
-					potassium.EphemeralKeyExchange.secretBytes
+					potassium.ephemeralKeyExchange.secretBytes
 				);
 
 				this.transport.send(await this.handshakeSendSecret(secret));
