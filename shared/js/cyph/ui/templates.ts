@@ -2646,10 +2646,6 @@ export const Templates	= {
 
 			<div flex></div>
 		</div>
-	`,
-
-	transclude: `
-		<ng-transclude></ng-transclude>
 	`
 };
 
