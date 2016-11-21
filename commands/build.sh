@@ -192,7 +192,7 @@ compile () {
 litedeploy () {
 	rm -rf ~/.litedeploy 2> /dev/null
 	mkdir ~/.litedeploy
-	cp -rf ~/.build/default ~/.build/cyph.im ~/.litedeploy
+	cp -rf /cyph/default /cyph/cyph.im ~/.litedeploy/
 	cd ~/.litedeploy
 
 	version="lite-${username}-${branch}"
