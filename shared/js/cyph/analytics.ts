@@ -58,6 +58,7 @@ export class Analytics {
 	}
 
 	/** @ignore */
+	/* tslint:disable-next-line:member-ordering */
 	private static _	= (() => {
 		const appName: string		= Env.host;
 		const appVersion: string	= Env.isWeb ? 'Web' : 'Native';
@@ -126,12 +127,11 @@ export class Analytics {
 				document.body.appendChild(Analytics.analFrame);
 
 				$(() =>
-					$(Analytics.analFrame).one('load', () =>
-						setTimeout(() => {
-							Analytics.analFrameIsReady	= true;
-							Analytics.set({appName, appVersion});
-						}, 250)
-					)
+					$(Analytics.analFrame).one('load', async () => {
+						await Util.sleep();
+						Analytics.analFrameIsReady	= true;
+						Analytics.set({appName, appVersion});
+					})
 				);
 			}
 			catch (_) {

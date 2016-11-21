@@ -49,16 +49,13 @@ export class Beta
 				this.ui		= self['ui'];
 
 				/* TODO: stop blatantly lying to people */
-				$element.find('form').submit(() => {
+				$element.find('form').submit(async () => {
 					this.checking	= true;
 					this.error		= false;
-					this.ui.controller.update();
 
-					setTimeout(() => {
-						this.checking	= false;
-						this.error		= true;
-						this.ui.controller.update();
-					}, Util.random(4000, 1500));
+					await Util.sleep(Util.random(4000, 1500));
+					this.checking	= false;
+					this.error		= true;
 				});
 			})(); }
 		},

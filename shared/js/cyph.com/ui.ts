@@ -123,7 +123,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	}
 
 	/** @ignore */
-	private linkClickHandler (e: Event) {
+	private linkClickHandler (e: Event) : void {
 		e.preventDefault();
 
 		const href: string		= $(e.currentTarget).attr('href');
@@ -141,7 +141,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	}
 
 	/** @ignore */
-	private onUrlStateChange (urlState: string) : void {
+	private async onUrlStateChange (urlState: string) : Promise<void> {
 		const urlStateSplit: string[]	= urlState.split('/');
 		const urlStateBase: string		= urlStateSplit[0];
 
@@ -157,6 +157,8 @@ export class UI extends Cyph.UI.BaseButtonManager {
 			pageTitles[urlStateBase] || pageTitles.default
 		);
 
+		Cyph.UrlState.set(urlState, true, true);
+
 		if (this.homeSection !== undefined) {
 			this.changeState(States.home);
 
@@ -165,42 +167,42 @@ export class UI extends Cyph.UI.BaseButtonManager {
 				this.signupForm.promo	= Promos[promo];
 			}
 
-			setTimeout(() => {
-				if (this.homeSection === HomeSections.register) {
-					this.dialogManager.baseDialog({
-						locals: {
-							Cyph: self['cyph'],
-							signupForm: this.signupForm
-						},
-						onclose: () => Cyph.UrlState.set(''),
-						template: Cyph.UI.Templates.register
-					});
-				}
-				else if (this.homeSection === HomeSections.invite) {
-					this.signupForm.data.inviteCode	=
-						Cyph.UrlState.get().split(HomeSections[HomeSections.invite] + '/')[1] || ''
-					;
+			await Cyph.Util.sleep();
 
-					this.dialogManager.baseDialog({
-						locals: {
-							Cyph: self['cyph'],
-							signupForm: this.signupForm
-						},
-						onclose: () => Cyph.UrlState.set(''),
-						template: Cyph.UI.Templates.invite
-					});
-				}
-				else {
-					this.scroll(
-						$('#' + HomeSections[this.homeSection] + '-section').offset().top -
-						(
-							this.homeSection === HomeSections.gettingstarted ?
-								-1 :
-								Elements.mainToolbar().height()
-						)
-					);
-				}
-			}, 250);
+			if (this.homeSection === HomeSections.register) {
+				this.dialogManager.baseDialog({
+					locals: {
+						Cyph: self['cyph'],
+						signupForm: this.signupForm
+					},
+					onclose: () => Cyph.UrlState.set(''),
+					template: Cyph.UI.Templates.register
+				});
+			}
+			else if (this.homeSection === HomeSections.invite) {
+				this.signupForm.data.inviteCode	=
+					Cyph.UrlState.get().split(HomeSections[HomeSections.invite] + '/')[1] || ''
+				;
+
+				this.dialogManager.baseDialog({
+					locals: {
+						Cyph: self['cyph'],
+						signupForm: this.signupForm
+					},
+					onclose: () => Cyph.UrlState.set(''),
+					template: Cyph.UI.Templates.invite
+				});
+			}
+			else {
+				this.scroll(
+					$('#' + HomeSections[this.homeSection] + '-section').offset().top -
+					(
+						this.homeSection === HomeSections.gettingstarted ?
+							-1 :
+							Elements.mainToolbar().height()
+					)
+				);
+			}
 		}
 		else if (state === States.contact) {
 			const to: string	= urlStateSplit[1];
@@ -221,10 +223,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		}
 		else {
 			Cyph.UrlState.set(Cyph.UrlState.states.notFound);
-			return;
 		}
-
-		Cyph.UrlState.set(urlState, true, true);
 	}
 
 	/** @ignore */
@@ -238,9 +237,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 			Math.abs(Cyph.UI.Elements.document().scrollTop() - position)
 		;
 
-		Cyph.UI.Elements.html().add(Cyph.UI.Elements.body()).animate({
-			scrollTop: position
-		}, delay);
+		Cyph.UI.Elements.html().add(Cyph.UI.Elements.body()).animate({scrollTop: position}, delay);
 
 		if (oncomplete) {
 			setTimeout(oncomplete, delay + 50);
@@ -337,10 +334,23 @@ export class UI extends Cyph.UI.BaseButtonManager {
 				}
 				catch (_) {}
 
-				setTimeout(() => Elements.backgroundVideo()['appear']().
-					on('appear', () => { try { Elements.backgroundVideo()[0]['play'](); } catch (_) {} }).
-					on('disappear', () => { try { Elements.backgroundVideo()[0]['pause'](); } catch (_) {} })
-				, 2000);
+				setTimeout(
+					() => Elements.backgroundVideo()['appear']().
+						on('appear', () => {
+							try {
+								Elements.backgroundVideo()[0]['play']();
+							}
+							catch (_) {}
+						}).
+						on('disappear', () => {
+							try {
+								Elements.backgroundVideo()[0]['pause']();
+							}
+							catch (_) {}
+						})
+					,
+					2000
+				);
 			}
 
 
@@ -348,8 +358,9 @@ export class UI extends Cyph.UI.BaseButtonManager {
 
 			this.featureCarousel		= new Cyph.UI.Carousel(Elements.featuresSection());
 
-			this.testimonialCarousel	= new Cyph.UI.Carousel(Elements.testimonialsSection(), () =>
-				Elements.heroSection().css(
+			this.testimonialCarousel	= new Cyph.UI.Carousel(
+				Elements.testimonialsSection(),
+				() => Elements.heroSection().css(
 					'min-height',
 					`calc(100vh - ${40 + (
 						Cyph.Env.isMobile ?
@@ -362,15 +373,24 @@ export class UI extends Cyph.UI.BaseButtonManager {
 
 			/* Header / new cyph button animation */
 
-			Elements.mainToolbar().toggleClass('new-cyph-expanded', Cyph.UrlState.get() === '');
-			setTimeout(() => setInterval(() => Elements.mainToolbar().toggleClass(
+			Elements.mainToolbar().toggleClass(
 				'new-cyph-expanded',
-				this.state === States.home && (
-					(!this.promo && Elements.heroText().is(':appeared')) ||
-					Cyph.UI.Elements.footer().is(':appeared')
-				)
-			), 500), 3000);;
+				Cyph.UrlState.get() === ''
+			);
 
+			setTimeout(
+				() => setInterval(
+					() => Elements.mainToolbar().toggleClass(
+						'new-cyph-expanded',
+						this.state === States.home && (
+							(!this.promo && Elements.heroText().is(':appeared')) ||
+							Cyph.UI.Elements.footer().is(':appeared')
+						)
+					),
+					500
+				),
+				3000
+			);
 
 
 			/* Section sizing
@@ -424,6 +444,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 			setTimeout(() => Cyph.UI.Elements.html().addClass('load-complete'), 750);
 
 			/* Cyphertext easter egg */
+			/* tslint:disable-next-line:no-unused-new */
 			new self['Konami'](() => {
 				Cyph.UrlState.set('intro');
 				Cyph.Util.retryUntilComplete(retry => {

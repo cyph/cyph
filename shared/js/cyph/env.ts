@@ -25,7 +25,7 @@ export class Env extends EnvDeploy {
 		/* Consistency in special cases */
 		return language === 'nb' ?
 			'no' :
-			language === 'zh-cn'?
+			language === 'zh-cn' ?
 				'zh-chs' :
 				language === 'zh-tw' ?
 					'zh-cht' :
@@ -124,6 +124,7 @@ export class Env extends EnvDeploy {
 	;
 
 	/** @ignore */
+	/* tslint:disable-next-line:member-ordering */
 	private static _	= (() => {
 		if (!customBuild) {
 			return;

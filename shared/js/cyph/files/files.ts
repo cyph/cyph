@@ -33,126 +33,132 @@ export class Files implements IFiles {
 		threadLocals.chunkSize	= Config.filesConfig.chunkSize;
 		threadLocals.callbackId	= 'files-' + Util.generateGuid();
 
-		const thread	= new Thread(async function (
-			cyph: any,
-			Potassium: any,
-			locals: any,
-			importScripts: Function
-		) {
-			importScripts('/js/cyph/crypto/potassium.js');
+		const thread	= new Thread(
+			/* tslint:disable-next-line:only-arrow-functions */
+			async function (
+				/* tslint:disable-next-line:variable-name */
+				Cyph: any,
+				/* tslint:disable-next-line:variable-name */
+				Potassium: any,
+				locals: any,
+				importScripts: Function
+			) : Promise<void> {
+				importScripts('/js/cyph/crypto/potassium.js');
 
-			const potassium: Potassium	= new Potassium();
+				const potassium: Potassium	= new Potassium();
 
-			/* Encrypt */
-			if (locals.plaintext) {
-				const key: Uint8Array	= Potassium.randomBytes(
-					potassium.SecretBox.keyBytes
-				);
-
-				const chunks: Uint8Array[]	= [];
-
-				for (let i = 0 ; i < locals.plaintext.length ; i += locals.chunkSize) {
-					try {
-						chunks.push(await potassium.SecretBox.seal(
-							new Uint8Array(
-								locals.plaintext.buffer,
-								i,
-								(locals.plaintext.length - i) > locals.chunkSize ?
-									locals.chunkSize :
-									undefined
-							),
-							key
-						));
-					}
-					catch (err) {
-						cyph.EventManager.trigger(
-							locals.callbackId,
-							[err.message, null, null]
-						);
-
-						return;
-					}
-				}
-
-				const cyphertext: Uint8Array	= new Uint8Array(
-					chunks.
-						map(chunk => chunk.length + 4).
-						reduce((a, b) => a + b, 0)
-				);
-
-				let j: number	= 0;
-				for (let chunk of chunks) {
-					cyphertext.set(
-						new Uint8Array(new Uint32Array([chunk.length]).buffer),
-						j
+				/* Encrypt */
+				if (locals.plaintext) {
+					const key: Uint8Array	= Potassium.randomBytes(
+						potassium.SecretBox.keyBytes
 					);
-					j += 4;
 
-					cyphertext.set(chunk, j);
-					j += chunk.length;
+					const chunks: Uint8Array[]	= [];
 
-					Potassium.clearMemory(chunk);
-				}
+					for (let i = 0 ; i < locals.plaintext.length ; i += locals.chunkSize) {
+						try {
+							chunks.push(await potassium.SecretBox.seal(
+								new Uint8Array(
+									locals.plaintext.buffer,
+									i,
+									(locals.plaintext.length - i) > locals.chunkSize ?
+										locals.chunkSize :
+										undefined
+								),
+								key
+							));
+						}
+						catch (err) {
+							Cyph.EventManager.trigger(
+								locals.callbackId,
+								[err.message, null, null]
+							);
 
-				cyph.EventManager.trigger(
-					locals.callbackId,
-					[null, cyphertext, key]
-				);
-			}
-			/* Decrypt */
-			else if (locals.cyphertext && locals.key) {
-				const chunks: Uint8Array[]	= [];
-
-				for (let i = 0 ; i < locals.cyphertext.length ;) {
-					try {
-						const chunkSize: number	= new DataView(
-							locals.cyphertext.buffer,
-							i
-						).getUint32(0, true);
-
-						i += 4;
-
-						chunks.push(await potassium.SecretBox.open(
-							new Uint8Array(
-								locals.cyphertext.buffer,
-								i,
-								chunkSize
-							),
-							locals.key
-						));
-
-						i += chunkSize;
+							return;
+						}
 					}
-					catch (err) {
-						cyph.EventManager.trigger(
-							locals.callbackId,
-							[err.message, null]
+
+					const cyphertext: Uint8Array	= new Uint8Array(
+						chunks.
+							map(chunk => chunk.length + 4).
+							reduce((a, b) => a + b, 0)
+					);
+
+					let j: number	= 0;
+					for (let chunk of chunks) {
+						cyphertext.set(
+							new Uint8Array(new Uint32Array([chunk.length]).buffer),
+							j
 						);
+						j += 4;
 
-						return;
+						cyphertext.set(chunk, j);
+						j += chunk.length;
+
+						Potassium.clearMemory(chunk);
 					}
+
+					Cyph.EventManager.trigger(
+						locals.callbackId,
+						[null, cyphertext, key]
+					);
 				}
+				/* Decrypt */
+				else if (locals.cyphertext && locals.key) {
+					const chunks: Uint8Array[]	= [];
 
-				const plaintext	= new Uint8Array(
-					chunks.
-						map(chunk => chunk.length).
-						reduce((a, b) => a + b, 0)
-				);
+					for (let i = 0 ; i < locals.cyphertext.length ; ) {
+						try {
+							const chunkSize: number	= new DataView(
+								locals.cyphertext.buffer,
+								i
+							).getUint32(0, true);
 
-				let j: number	= 0;
-				for (let chunk of chunks) {
-					plaintext.set(chunk, j);
-					j += chunk.length;
+							i += 4;
 
-					Potassium.clearMemory(chunk);
+							chunks.push(await potassium.SecretBox.open(
+								new Uint8Array(
+									locals.cyphertext.buffer,
+									i,
+									chunkSize
+								),
+								locals.key
+							));
+
+							i += chunkSize;
+						}
+						catch (err) {
+							Cyph.EventManager.trigger(
+								locals.callbackId,
+								[err.message, null]
+							);
+
+							return;
+						}
+					}
+
+					const plaintext	= new Uint8Array(
+						chunks.
+							map(chunk => chunk.length).
+							reduce((a, b) => a + b, 0)
+					);
+
+					let j: number	= 0;
+					for (let chunk of chunks) {
+						plaintext.set(chunk, j);
+						j += chunk.length;
+
+						Potassium.clearMemory(chunk);
+					}
+
+					Cyph.EventManager.trigger(
+						locals.callbackId,
+						[null, plaintext]
+					);
 				}
-
-				cyph.EventManager.trigger(
-					locals.callbackId,
-					[null, plaintext]
-				);
-			}
-		}, threadLocals);
+			},
+			threadLocals
+		);
 
 		return new Promise<any[]>((resolve, reject) =>
 			EventManager.one(threadLocals.callbackId, data => {
@@ -250,16 +256,19 @@ export class Files implements IFiles {
 					const transferIndex: number	= this.transfers.push(transfer) - 1;
 
 					/* Arbitrarily assume ~500 Kb/s for progress bar estimation */
-					const intervalId: number	= setInterval(() => {
-						if (transfer.percentComplete >= 100) {
-							clearInterval(intervalId);
-						}
-						else {
-							transfer.percentComplete +=
-								Util.random(100000, 25000) / transfer.size * 100
-							;
-						}
-					}, 1000);
+					const intervalId: number	= setInterval(
+						() => {
+							if (transfer.percentComplete >= 100) {
+								clearInterval(intervalId);
+							}
+							else {
+								transfer.percentComplete +=
+									Util.random(100000, 25000) / transfer.size * 100
+								;
+							}
+						},
+						1000
+					);
 
 					const cyphertext: Uint8Array	= new Uint8Array(await Util.request({
 						responseType: 'arraybuffer',
@@ -379,7 +388,8 @@ export class Files implements IFiles {
 
 			uploadTask	= Firebase.app.storage().ref(path).put(new Blob([o.cyphertext]));
 
-			uploadTask.on('state_changed',
+			uploadTask.on(
+				'state_changed',
 				snapshot => {
 					transfer.percentComplete	=
 						snapshot.bytesTransferred /

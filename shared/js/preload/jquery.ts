@@ -6,6 +6,7 @@
 /**
  * Calculate absolute coordinates of the boundaries of this element.
  */
+/* tslint:disable-next-line:only-arrow-functions */
 $.fn.bounds	= function () : ({
 	bottom: number;
 	left: number;
@@ -13,14 +14,14 @@ $.fn.bounds	= function () : ({
 	top: number;
 }) {
 	 /* tslint:disable-next-line:no-invalid-this */
-	const $elem: JQuery	= this;
+	const $this: JQuery	= this;
 
-	const bounds	= $elem.offset();
+	const bounds	= $this.offset();
 
 	return {
-		bottom: bounds.top + $elem.outerHeight(),
+		bottom: bounds.top + $this.outerHeight(),
 		left: bounds.left,
-		right: bounds.left + $elem.outerWidth(),
+		right: bounds.left + $this.outerWidth(),
 		top: bounds.top
 	};
 };
@@ -28,13 +29,14 @@ $.fn.bounds	= function () : ({
 /**
  * Calculate number of pixels user has scrolled relative to this element.
  */
+/* tslint:disable-next-line:only-arrow-functions */
 $.fn.scrollPosition	= function () : number {
 	/* tslint:disable-next-line:no-invalid-this */
-	const $elem: JQuery	= this;
+	const $this: JQuery	= this;
 
-	return $elem[0].scrollHeight -
+	return $this[0].scrollHeight -
 	(
-		$elem[0].scrollTop +
-		$elem[0].clientHeight
+		$this[0].scrollTop +
+		$this[0].clientHeight
 	);
 };

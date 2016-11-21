@@ -47,9 +47,10 @@ export class Transport {
 			this.cyphertextIntercepters.push(resolve);
 
 			if (timeout) {
-				setTimeout(() =>
-					reject('Cyphertext interception timeout.')
-				, timeout);
+				setTimeout(
+					() => reject('Cyphertext interception timeout.'),
+					timeout
+				);
 			}
 		});
 	}

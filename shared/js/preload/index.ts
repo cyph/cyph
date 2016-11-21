@@ -37,7 +37,9 @@ if (Env.isMobile) {
 
 /* Polyfills */
 if (!HTMLElement.prototype.click) {
-	HTMLElement.prototype.click	= function () {
+	/* tslint:disable-next-line:only-arrow-functions */
+	HTMLElement.prototype.click	= function () : void {
+		/* tslint:disable-next-line:no-invalid-this */
 		Util.triggerClick(this);
 	};
 }
@@ -63,9 +65,12 @@ $(() => {
 
 		/* In WebSigned environments, remove no-longer-necessary
 			'unsafe-inline' from CSP after application loads */
-		setTimeout(() => Elements.head().append(
-			`<meta http-equiv="Content-Security-Policy" content="${Env.CSP}" />`
-		), 10000);
+		setTimeout(
+			() => Elements.head().append(
+				`<meta http-equiv="Content-Security-Policy" content="${Env.CSP}" />`
+			),
+			10000
+		);
 	}
 });
 

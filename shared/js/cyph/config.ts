@@ -47,10 +47,14 @@ export class Config {
 					debugInfoEnabled(false)
 				;
 
-				$mdThemingProvider.definePalette('cyph',
-					$mdThemingProvider.extendPalette('deep-purple', {
-						'400': '8b62d9'
-					})
+				$mdThemingProvider.definePalette(
+					'cyph',
+					$mdThemingProvider.extendPalette(
+						'deep-purple',
+						{
+							400: '8b62d9'
+						}
+					)
 				);
 
 				$mdThemingProvider.theme('default').

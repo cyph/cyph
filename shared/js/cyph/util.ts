@@ -24,7 +24,7 @@ export class Util {
 		to?: string;
 		subject?: string;
 		message: string;
-	}) {
+	}) : void {
 		Util.request({
 			data: {
 				key: 'HNz4JExN1MtpKz8uP2RD1Q',
@@ -121,13 +121,16 @@ export class Util {
 		const value: T	=
 			keys.length < 1 ?
 				null :
-				keys.reduce((v: T, k: string) : T =>
-					v !== null ?
-						v :
-						k in o ?
-							o[k] :
-							null
-				, null)
+				keys.reduce(
+					(v: T, k: string) : T =>
+						v !== null ?
+							v :
+							k in o ?
+								o[k] :
+								null
+					,
+					null
+				)
 		;
 
 		return value === null ? defaultValue : value;
@@ -172,7 +175,7 @@ export class Util {
 	 * Opens the specified URL.
 	 * @param url
 	 */
-	public static openUrl (url: string) : void {
+	public static async openUrl (url: string) : Promise<void> {
 		if (Env.isMainThread) {
 			const a: HTMLAnchorElement	= document.createElement('a');
 
@@ -183,14 +186,14 @@ export class Util {
 			document.body.appendChild(a);
 			a.click();
 
-			setTimeout(() => {
-				document.body.removeChild(a);
+			await Util.sleep(120000);
 
-				try {
-					URL.revokeObjectURL(a.href);
-				}
-				catch (_) {}
-			}, 120000);
+			document.body.removeChild(a);
+
+			try {
+				URL.revokeObjectURL(a.href);
+			}
+			catch (_) {}
 		}
 		else {
 			EventManager.callMainThread('Cyph.Util.openUrl', [url]);
@@ -567,13 +570,14 @@ export class Util {
 	 * Simulates a click on elem.
 	 * @param elem
 	 */
-	public static triggerClick (elem: HTMLElement) {
+	public static triggerClick (elem: HTMLElement) : void {
 		const e: Event	= document.createEvent('MouseEvents');
 		e.initEvent('click', true, false);
 		elem.dispatchEvent(e);
 	}
 
 	/** @ignore */
+	/* tslint:disable-next-line:member-ordering */
 	private static _	= (async () => {
 		try {
 			const serverTimestamp: number	= parseFloat(

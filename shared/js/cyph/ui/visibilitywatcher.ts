@@ -28,6 +28,7 @@ export class VisibilityWatcher {
 	}
 
 	/** @ignore */
+	/* tslint:disable-next-line:member-ordering */
 	private static _	= (() => {
 		if (Env.isMobile) {
 			document.addEventListener('visibilitychange', () =>

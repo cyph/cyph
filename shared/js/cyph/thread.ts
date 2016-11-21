@@ -8,7 +8,7 @@ import {Util} from './util';
 /** @inheritDoc */
 export class Thread implements IThread {
 	/** @ignore */
-	private static BlobBuilder: any	=
+	private static blobBuilder: any	=
 		self['BlobBuilder'] ||
 		self['WebKitBlobBuilder'] ||
 		self['MozBlobBuilder']
@@ -44,7 +44,7 @@ export class Thread implements IThread {
 
 		importScripts('/lib/js/base.js');
 		importScripts('/js/cyph/base.js');
-		self['cyph']	= self['Base'];
+		self['Cyph']	= self['Base'];
 		self['Base']	= undefined;
 
 
@@ -244,7 +244,7 @@ export class Thread implements IThread {
 				blob	= new Blob([threadBody], {type: 'application/javascript'});
 			}
 			catch (_) {
-				const blobBuilder	= new Thread.BlobBuilder();
+				const blobBuilder	= new Thread.blobBuilder();
 				blobBuilder.append(threadBody);
 
 				blob	= blobBuilder.getBlob();

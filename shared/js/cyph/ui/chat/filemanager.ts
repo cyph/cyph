@@ -102,8 +102,6 @@ export class FileManager implements IFileManager {
 	) {
 		this.files	= new Files(this.chat.session);
 
-
-
 		this.chat.session.on(
 			Events.filesUI,
 			async (e: {

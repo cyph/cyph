@@ -88,46 +88,51 @@ export class ThreadedSession implements ISession {
 			}
 		);
 
-		this.thread	= new Thread(function (
-			Session: any,
-			locals: any,
-			importScripts: Function
-		) {
-			importScripts('/js/cyph/session/session.js');
+		this.thread	= new Thread(
+			/* tslint:disable-next-line:only-arrow-functions */
+			function (
+				/* tslint:disable-next-line:variable-name */
+				Session: any,
+				locals: any,
+				importScripts: Function
+			) : void {
+				importScripts('/js/cyph/session/session.js');
 
-			const session: ISession	= new Session(
-				locals.descriptor,
-				locals.nativeCrypto,
-				locals.id
-			);
+				const session: ISession	= new Session(
+					locals.descriptor,
+					locals.nativeCrypto,
+					locals.id
+				);
 
-			session.on(locals.events.close, () =>
-				session.close()
-			);
+				session.on(locals.events.close, () =>
+					session.close()
+				);
 
-			session.on(locals.events.receive, (e: {data: string}) =>
-				session.receive(e.data)
-			);
+				session.on(locals.events.receive, (e: {data: string}) =>
+					session.receive(e.data)
+				);
 
-			session.on(locals.events.send, (e: {messages: IMessage[]}) =>
-				session.sendBase(e.messages)
-			);
+				session.on(locals.events.send, (e: {messages: IMessage[]}) =>
+					session.sendBase(e.messages)
+				);
 
-			session.on(locals.events.sendText, (e: {
-				text: string;
-				selfDestructTimeout?: number;
-			}) =>
-				session.sendText(e.text, e.selfDestructTimeout)
-			);
+				session.on(locals.events.sendText, (e: {
+					text: string;
+					selfDestructTimeout?: number;
+				}) =>
+					session.sendText(e.text, e.selfDestructTimeout)
+				);
 
-			session.on(locals.events.updateState, (e: {key: string; value: any}) =>
-				session.updateState(e.key, e.value)
-			);
-		}, {
-			descriptor,
-			nativeCrypto,
-			events: ThreadedSessionEvents,
-			id: this.id
-		});
+				session.on(locals.events.updateState, (e: {key: string; value: any}) =>
+					session.updateState(e.key, e.value)
+				);
+			},
+			{
+				descriptor,
+				nativeCrypto,
+				events: ThreadedSessionEvents,
+				id: this.id
+			}
+		);
 	}
 }

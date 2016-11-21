@@ -62,35 +62,35 @@ export class P2P implements IP2P {
 			);
 		},
 
-		kill: () : void => {
+		kill: async () : Promise<void> => {
 			const wasAccepted: boolean	= this.isAccepted;
 			this.isAccepted				= false;
 			this.isActive				= false;
 
-			setTimeout(() => {
-				for (let o of [this.outgoingStream, this.incomingStream]) {
-					for (let k of Object.keys(o)) {
-						o[k]	= false;
-					}
-				}
+			await Util.sleep(500);
 
-				if (this.webRTC) {
-					this.webRTC.mute();
-					this.webRTC.pauseVideo();
-					this.webRTC.stopLocalVideo();
-					this.webRTC.leaveRoom();
-					this.webRTC.disconnect();
-					this.webRTC	= null;
+			for (let o of [this.outgoingStream, this.incomingStream]) {
+				for (let k of Object.keys(o)) {
+					o[k]	= false;
 				}
+			}
 
-				if (wasAccepted) {
-					this.triggerUIEvent(
-						UIEvents.Categories.base,
-						UIEvents.Events.connected,
-						false
-					);
-				}
-			}, 500);
+			if (this.webRTC) {
+				this.webRTC.mute();
+				this.webRTC.pauseVideo();
+				this.webRTC.stopLocalVideo();
+				this.webRTC.leaveRoom();
+				this.webRTC.disconnect();
+				this.webRTC	= null;
+			}
+
+			if (wasAccepted) {
+				this.triggerUIEvent(
+					UIEvents.Categories.base,
+					UIEvents.Events.connected,
+					false
+				);
+			}
 		},
 
 		webRTC: (data: {event: string; args: any[]}) : void => {
@@ -186,7 +186,7 @@ export class P2P implements IP2P {
 	}
 
 	/** @inheritDoc */
-	public accept (callType?: string) {
+	public accept (callType?: string) : void {
 		this.isAccepted				= true;
 		this.outgoingStream.video	= callType === P2P.constants.video;
 		this.outgoingStream.audio	= true;
@@ -314,40 +314,41 @@ export class P2P implements IP2P {
 			UIEvents.Events.requestConfirm,
 			callType,
 			this.isAccepted,
-			(ok: boolean) => {
-				if (ok) {
-					this.mutex.lock((wasFirst: boolean, wasFirstOfType: boolean) => {
-						try {
-							if (wasFirstOfType) {
-								this.accept(callType);
+			async (ok: boolean) => {
+				if (!ok) {
+					return;
+				}
 
-								this.session.send(
-									new Message(
-										RPCEvents.p2p,
-										new Command(callType)
-									)
-								);
+				const lockDetails	= await this.mutex.lock(P2P.constants.requestCall);
 
-								setTimeout(() =>
-									this.triggerUIEvent(
-										UIEvents.Categories.request,
-										UIEvents.Events.requestConfirmation
-									)
-								, 250);
+				try {
+					if (!lockDetails.wasFirstOfType) {
+						return;
+					}
 
-								/* Time out if request hasn't been
-									accepted within 10 minutes */
-								setTimeout(() => {
-									if (!this.isActive) {
-										this.isAccepted	= false;
-									}
-								}, 600000);
-							}
-						}
-						finally {
-							this.mutex.unlock();
-						}
-					}, P2P.constants.requestCall);
+					this.accept(callType);
+
+					this.session.send(
+						new Message(
+							RPCEvents.p2p,
+							new Command(callType)
+						)
+					);
+
+					await Util.sleep();
+					this.triggerUIEvent(
+						UIEvents.Categories.request,
+						UIEvents.Events.requestConfirmation
+					);
+
+					/* Time out if request hasn't been accepted within 10 minutes */
+					await Util.sleep(600000);
+					if (!this.isActive) {
+						this.isAccepted	= false;
+					}
+				}
+				finally {
+					this.mutex.unlock();
 				}
 			}
 		);

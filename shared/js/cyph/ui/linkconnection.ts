@@ -75,19 +75,22 @@ export class LinkConnection implements ILinkConnection {
 			Elements.connectLinkLink().click(e => e.preventDefault());
 		}
 		else {
-			const linkInterval	= setInterval(() => {
-				if (!this.isWaiting) {
-					clearInterval(linkInterval);
-					return;
-				}
-				else if (this.advancedFeatures) {
-					return;
-				}
+			const linkInterval	= setInterval(
+				() => {
+					if (!this.isWaiting) {
+						clearInterval(linkInterval);
+						return;
+					}
+					else if (this.advancedFeatures) {
+						return;
+					}
 
-				this.link	= this.linkConstant;
-				Elements.connectLinkInput().focus();
-				this.selectLink();
-			}, 1000);
+					this.link	= this.linkConstant;
+					Elements.connectLinkInput().focus();
+					this.selectLink();
+				},
+				1000
+			);
 		}
 
 		Elements.body().one('click', () =>

@@ -63,7 +63,14 @@ export class Mutex implements IMutex {
 	}
 
 	/** @inheritDoc */
-	public lock (f: Function, purpose: string = '') : void {
+	public async lock (purpose: string = '') : Promise<{
+		friendLockpurpose: string;
+		wasFirst: boolean;
+		wasFirstOfType: boolean;
+	}> {
+		let friendHadLockFirst: boolean	= false;
+		let friendLockpurpose: string	= '';
+
 		if (this.owner !== Users.me) {
 			if (!this.owner && this.session.state.isAlice) {
 				this.owner		= Users.me;
@@ -84,27 +91,20 @@ export class Mutex implements IMutex {
 			);
 		}
 
+		while (this.owner !== Users.me) {
+			await Util.sleep(250);
 
-		let friendHadLockFirst: boolean	= false;
-		let friendLockpurpose: string	= '';
-
-		Util.retryUntilComplete(retry => {
-			if (this.owner === Users.me) {
-				f(
-					!friendHadLockFirst,
-					!friendLockpurpose || friendLockpurpose !== purpose,
-					friendLockpurpose
-				);
+			if (this.owner === Users.other) {
+				friendHadLockFirst	= true;
+				friendLockpurpose	= this.purpose;
 			}
-			else {
-				if (this.owner === Users.other) {
-					friendHadLockFirst	= true;
-					friendLockpurpose	= this.purpose;
-				}
+		}
 
-				retry();
-			}
-		});
+		return {
+			friendLockpurpose,
+			wasFirst: !friendHadLockFirst,
+			wasFirstOfType: !friendLockpurpose || friendLockpurpose !== purpose
+		};
 	}
 
 	/** @inheritDoc */

@@ -494,27 +494,22 @@ export class Chat extends BaseButtonManager implements IChat {
 		self['tabIndent'].renderAll();
 
 
-
 		this.session.on(Events.beginChat, () => this.begin());
 
 		this.session.on(Events.closeChat, () => this.close());
 
-		this.session.on(Events.connect, () => {
+		this.session.on(Events.connect, async () => {
 			this.changeState(States.keyExchange);
 
 			const start: number	= Util.timestamp();
-			const intervalId	= setInterval(() => {
-				const progress: number	=
-					(Util.timestamp() - start) / Chat.approximateKeyExchangeTime
-				;
 
-				if (progress > 1) {
-					clearInterval(intervalId);
-				}
-				else {
-					this.keyExchangeProgress	= progress * 100;
-				}
-			}, 50);
+			while (this.keyExchangeProgress < 100) {
+				await Util.sleep(50);
+
+				this.keyExchangeProgress	=
+					(Util.timestamp() - start) / Chat.approximateKeyExchangeTime * 100
+				;
+			}
 		});
 
 		this.session.on(Events.connectFailure, () => this.abortSetup());

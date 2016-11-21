@@ -72,8 +72,9 @@ export class FakeCastle implements ICastle {
 		/** @ignore */
 		private session: ISession
 	) {
-		setTimeout(() => this.session.trigger(Events.castle, {
-			event: CastleEvents.connect
-		}), 1000);
+		setTimeout(
+			() => this.session.trigger(Events.castle, {event: CastleEvents.connect}),
+			1000
+		);
 	}
 }

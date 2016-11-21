@@ -39,7 +39,7 @@ export class FileInput
 			public accept: string;
 
 			/** @ignore */
-			public fileChange: ({file: File}) => void;
+			public fileChange: (o: {file: File}) => void;
 
 			constructor ($element: JQuery) {
 				const $input	= $element.children();

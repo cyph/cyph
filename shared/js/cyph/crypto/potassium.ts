@@ -669,11 +669,21 @@ export class Potassium extends PotassiumUtil {
 	/** Equivalent to sodium.crypto_pwhash. */
 	public PasswordHash	= {
 		algorithm: 'scrypt',
-		memLimitInteractive: <number> Potassium.Sodium.crypto_pwhash_scryptsalsa208sha256_MEMLIMIT_INTERACTIVE,
-		memLimitSensitive: <number> 134217728 /* 128 MB */,
-		opsLimitInteractive: <number> Potassium.Sodium.crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_INTERACTIVE,
-		opsLimitSensitive: <number> Potassium.Sodium.crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_SENSITIVE,
-		saltBytes: <number> Potassium.Sodium.crypto_pwhash_scryptsalsa208sha256_SALTBYTES,
+		memLimitInteractive:
+			<number> Potassium.Sodium.crypto_pwhash_scryptsalsa208sha256_MEMLIMIT_INTERACTIVE
+		,
+		memLimitSensitive:
+			<number> 134217728 /* 128 MB */
+		,
+		opsLimitInteractive:
+			<number> Potassium.Sodium.crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_INTERACTIVE
+		,
+		opsLimitSensitive:
+			<number> Potassium.Sodium.crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_SENSITIVE
+		,
+		saltBytes:
+			<number> Potassium.Sodium.crypto_pwhash_scryptsalsa208sha256_SALTBYTES
+		,
 
 		hash: async (
 			plaintext: Uint8Array|string,

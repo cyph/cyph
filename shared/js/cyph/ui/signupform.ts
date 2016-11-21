@@ -29,16 +29,19 @@ export class SignupForm implements ISignupForm {
 			++this.state;
 		}
 
-		setTimeout(() => {
-			const $input: JQuery	= $(Elements.signupForm().selector).
-				filter(':visible').
-				find('input:visible:not([disabled])')
-			;
+		setTimeout(
+			() => {
+				const $input: JQuery	= $(Elements.signupForm().selector).
+					filter(':visible').
+					find('input:visible:not([disabled])')
+				;
 
-			if ($input.length === 1) {
-				$input.focus();
-			}
-		}, 250);
+				if ($input.length === 1) {
+					$input.focus();
+				}
+			},
+			250
+		);
 
 		if (!this.data.email) {
 			return;
@@ -73,8 +76,6 @@ export class SignupForm implements ISignupForm {
 	}
 
 	constructor () {
-		setTimeout(() =>
-			Elements.signupForm().addClass('visible')
-		, 500);
+		setTimeout(() => Elements.signupForm().addClass('visible'), 500);
 	}
 }

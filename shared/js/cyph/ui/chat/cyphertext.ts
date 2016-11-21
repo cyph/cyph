@@ -107,8 +107,6 @@ export class Cyphertext extends BaseButtonManager implements ICyphertext {
 			}
 		});
 
-
-
 		session.on(Events.cyphertext, (o: {cyphertext: string; author: string}) =>
 			this.log(o.cyphertext, o.author)
 		);

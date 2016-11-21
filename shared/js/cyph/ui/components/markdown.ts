@@ -104,7 +104,6 @@ export class Markdown
 						'‘’'
 					,
 					typographer: true
-					
 				}).
 					disable('image').
 					use(self['markdownitSup']).

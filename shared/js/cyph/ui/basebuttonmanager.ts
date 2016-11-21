@@ -14,14 +14,19 @@ export class BaseButtonManager {
 	 * Base logic shared by every button click (e.g. close sidenav).
 	 */
 	public async baseButtonClick (callback: Function) : Promise<void> {
-		return Util.lock(BaseButtonManager.buttonLock, async () => {
-			await Util.sleep();
-			this.mobileMenu().close();
+		return Util.lock(
+			BaseButtonManager.buttonLock,
+			async () => {
+				await Util.sleep();
+				this.mobileMenu().close();
 
-			if (callback) {
-				callback();
-			}
-		}, undefined, true);
+				if (callback) {
+					callback();
+				}
+			},
+			undefined,
+			true
+		);
 	}
 
 	/**

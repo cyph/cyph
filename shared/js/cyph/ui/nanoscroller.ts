@@ -25,6 +25,7 @@ export class NanoScroller {
 	}
 
 	/** @ignore */
+	/* tslint:disable-next-line:member-ordering */
 	private static _	= (() => {
 		$(NanoScroller.update);
 	})();

@@ -30,6 +30,7 @@ export class VirtualKeyboardWatcher {
 	}
 
 	/** @ignore */
+	/* tslint:disable-next-line:member-ordering */
 	private static _	= (() => {
 		/* http://stackoverflow.com/a/11650231/459881 */
 

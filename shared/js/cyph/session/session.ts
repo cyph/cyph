@@ -120,14 +120,11 @@ export class Session implements ISession {
 	 * @ignore
 	 * Intermittent check to verify chat is still alive and send fake encrypted chatter.
 	 */
-	private pingPong () : void {
+	private async pingPong () : Promise<void> {
 		let nextPing: number	= 0;
 
-		const interval	= setInterval(() => {
-			if (!this.state.isAlive) {
-				clearInterval(interval);
-				return;
-			}
+		while (this.state.isAlive) {
+			await Util.sleep(1000);
 
 			const now	= Util.timestamp();
 
@@ -149,7 +146,7 @@ export class Session implements ISession {
 
 				nextPing	= now + Util.random(90000, 30000);
 			}
-		}, 1000);
+		}
 	}
 
 	/** @ignore */
@@ -158,7 +155,8 @@ export class Session implements ISession {
 			this.receivedMessages[message.id]	= true;
 
 			if (message.event in RPCEvents) {
-				this.trigger(message.event,
+				this.trigger(
+					message.event,
 					message.event === RPCEvents.text ?
 						{
 							author,
@@ -210,11 +208,13 @@ export class Session implements ISession {
 			descriptor	= Util.generateGuid(Config.secretLength);
 		}
 
-		this.updateState(State.cyphId,
+		this.updateState(
+			State.cyphId,
 			descriptor.substr(0, Config.cyphIdLength)
 		);
 
-		this.updateState(State.sharedSecret,
+		this.updateState(
+			State.sharedSecret,
 			this.state.sharedSecret || descriptor
 		);
 	}
@@ -256,7 +256,7 @@ export class Session implements ISession {
 				}
 			},
 			onmessage: message => this.receive(message),
-			onopen: (isAlice: boolean) : void => {
+			onopen: async (isAlice: boolean) : Promise<void> => {
 				this.updateState(State.isAlice, isAlice);
 
 				if (this.state.isAlice) {
@@ -285,11 +285,10 @@ export class Session implements ISession {
 				this.on(Events.castle, e => this.castleHandler(e));
 
 				if (!this.isLocalSession) {
-					const interval	= setInterval(() => {
-						if (!this.state.isAlive) {
-							clearInterval(interval);
-						}
-						else if (
+					while (this.state.isAlive) {
+						await Util.sleep();
+
+						if (
 							this.sendQueue.length &&
 							(
 								this.sendQueue.length >= 4 ||
@@ -298,7 +297,7 @@ export class Session implements ISession {
 						) {
 							this.sendHandler(this.sendQueue.splice(0, 4));
 						}
-					}, 250);
+					}
 				}
 			}
 		};
@@ -411,7 +410,7 @@ export class Session implements ISession {
 		private id: string = Util.generateGuid(),
 
 		localChannelCallback?: (localChannel: LocalChannel) => void
-	) {
+	) { (async () => {
 		/* true = yes; false = no; null = maybe */
 		this.updateState(
 			State.isStartingNewCyph,
@@ -444,19 +443,20 @@ export class Session implements ISession {
 					Util.generateGuid(Config.longSecretLength)
 			;
 
-			(async () => {
-				try {
-					this.setUpChannel(await Util.request({
+			try {
+				this.setUpChannel(
+					await Util.request({
 						data: {channelDescriptor},
 						method: 'POST',
 						retries: 5,
 						url: Env.baseUrl + 'channels/' + this.state.cyphId
-					}), nativeCrypto);
-				}
-				catch (_) {
-					UrlState.set(UrlState.states.notFound);
-				}
-			})();
+					}),
+					nativeCrypto
+				);
+			}
+			catch (_) {
+				UrlState.set(UrlState.states.notFound);
+			}
 		}
-	}
+	})(); }
 }

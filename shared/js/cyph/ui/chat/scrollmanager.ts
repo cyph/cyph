@@ -16,7 +16,7 @@ export class ScrollManager implements IScrollManager {
 	public unreadMessages: number	= 0;
 
 	/** @ignore */
-	private mutationObserverHandler (mutation: MutationRecord) : void {
+	private async mutationObserverHandler (mutation: MutationRecord) : Promise<void> {
 		const $elem: JQuery	= $(
 			mutation.addedNodes.length > 0 ?
 				mutation.addedNodes[0] :
@@ -29,42 +29,42 @@ export class ScrollManager implements IScrollManager {
 
 			if (
 				VisibilityWatcher.isVisible &&
-				($elem.height() + 50) > currentScrollPosition)
-			{
+				($elem.height() + 50) > currentScrollPosition
+			) {
 				this.scrollDown();
 				$elem.removeClass('unread');
 			}
 
-			setTimeout(() => {
-				if (
-					(
-						!VisibilityWatcher.isVisible ||
-						!$elem.is(':appeared')
-					) &&
-					!$elem.find('*').add($elem.parentsUntil().addBack()).is('.app-message')
-				) {
-					this.updateMessageCount(1);
+			await Util.sleep();
 
-					const intervalId	= setInterval(() => {
-						if (
-							VisibilityWatcher.isVisible &&
-							(
-								$elem.is(':appeared') ||
-								$elem.nextAll('.message-item:not(.unread)').length > 0
-							)
-						) {
-							clearInterval(intervalId);
+			if (
+				(
+					VisibilityWatcher.isVisible &&
+					$elem.is(':appeared')
+				) ||
+				$elem.find('*').add($elem.parentsUntil().addBack()).is('.app-message')
+			) {
+				return;
+			}
 
-							$elem.removeClass('unread');
-							this.updateMessageCount(-1);
+			this.updateMessageCount(1);
 
-							if ($elem.nextAll().length === 0) {
-								this.scrollDown();
-							}
-						}
-					}, 100);
-				}
-			}, 250);
+			while (
+				!VisibilityWatcher.isVisible ||
+				!(
+					$elem.is(':appeared') ||
+					$elem.nextAll('.message-item:not(.unread)').length > 0
+				)
+			) {
+				await Util.sleep();
+			}
+
+			$elem.removeClass('unread');
+			this.updateMessageCount(-1);
+
+			if ($elem.nextAll().length === 0) {
+				this.scrollDown();
+			}
 		}
 
 		/* Process image lightboxes */
