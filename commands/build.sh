@@ -111,6 +111,22 @@ compile () {
 	)"
 
 	if [ ! "${test}" ] ; then
+		for f in $(grep -rl templateUrl | grep '\.ts$') ; do
+			node -e "fs.writeFileSync(
+				'${f}',
+				fs.readFileSync('${f}').toString().replace(
+					/templateUrl: '(.*?)'/g,
+					(_, path) =>
+						'template: \`' +
+						fs.readFileSync('${f}'.replace(/[^\\/]+\\.ts\$/, path)).
+							toString().
+							replace(/\\$\\{/g, '\\\\\${')
+						+
+						'\`'
+				)
+			)"
+		done
+
 		for f in $tsfiles ; do
 			node -e "
 				const resolveReferences	= f => {
