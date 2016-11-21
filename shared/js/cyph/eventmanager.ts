@@ -35,14 +35,16 @@ export class EventManager {
 	 */
 	public static callMainThread (method: string, args: any[] = []) : void {
 		if (Env.isMainThread) {
-			args.forEach((arg: any, i: number) => {
-				if (arg && arg.callbackId) {
+			for (let i = 0 ; i < args.length ; ++i) {
+				const callbackId: string	= (args[i] && args[i].callbackId) || '';
+
+				if (callbackId) {
 					args[i]	= (...threadArgs) => EventManager.trigger(
-						EventManager.threadEventPrefix + (<string> arg.callbackId),
+						EventManager.threadEventPrefix + callbackId,
 						threadArgs
 					);
 				}
-			});
+			}
 
 			const methodSplit: string[]	= method.split('.');
 			const methodName: string	= methodSplit.slice(-1)[0];
@@ -63,18 +65,22 @@ export class EventManager {
 			}
 		}
 		else {
-			args.forEach((arg: any, i: number) => {
-				if (typeof arg === 'function') {
-					const callbackId: string	= Util.generateGuid();
+			for (let i = 0 ; i < args.length ; ++i) {
+				const arg	= args[i];
 
-					args[i]	= {callbackId};
-
-					EventManager.on(
-						EventManager.threadEventPrefix + callbackId,
-						threadArgs => arg.apply(null, threadArgs)
-					);
+				if (typeof arg !== 'function') {
+					continue;
 				}
-			});
+
+				const callbackId: string	= Util.generateGuid();
+
+				args[i]	= {callbackId};
+
+				EventManager.on(
+					EventManager.threadEventPrefix + callbackId,
+					threadArgs => arg.apply(null, threadArgs)
+				);
+			}
 
 			EventManager.trigger(EventManager.mainThreadEvents, {method, args});
 		}
