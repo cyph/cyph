@@ -11,10 +11,10 @@ export class Env extends EnvDeploy {
 
 	/** Complete (lowercase) language code, e.g. "en-us". */
 	public static fullLanguage: string	= (
-		navigatorData['language'] ||
-		navigatorData['userLanguage'] ||
-		navigatorData['browserLanguage'] ||
-		navigatorData['systemLanguage'] ||
+		navigatorData.language ||
+		(<any> navigatorData).userLanguage ||
+		(<any> navigatorData).browserLanguage ||
+		(<any> navigatorData).systemLanguage ||
 		Config.defaultLanguage
 	).toLowerCase();
 
@@ -41,8 +41,8 @@ export class Env extends EnvDeploy {
 
 	/** Indicates whether this is Node.js/io.js. */
 	public static isNode: boolean		=
-		typeof self['process'] === 'object' &&
-		typeof self['require'] === 'function'
+		typeof (<any> self).process === 'object' &&
+		typeof (<any> self).require === 'function'
 	;
 
 	/** Current user agent (lowercase). */

@@ -33,6 +33,7 @@ export class Contact
 		bindings: {
 			self: '<'
 		},
+		/* tslint:disable-next-line:max-classes-per-file */
 		controller: class {
 			/** @ignore */
 			public cyph: any;
@@ -57,12 +58,12 @@ export class Contact
 			}
 
 			constructor ($element: JQuery) { (async () => {
-				while (!self['cyph'] || !self['ui']) {
+				while (!cyph || !ui) {
 					await Util.sleep();
 				}
 
-				this.cyph	= self['cyph'];
-				this.ui		= self['ui'];
+				this.cyph	= cyph;
+				this.ui		= ui;
 
 				if (!this.self) {
 					this.self	= {

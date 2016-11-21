@@ -31,6 +31,7 @@ export class Markdown
 		bindings: {
 			markdown: '<'
 		},
+		/* tslint:disable-next-line:max-classes-per-file */
 		controller: class {
 			/** @ignore */
 			private markdownIt: any;
@@ -85,9 +86,9 @@ export class Markdown
 				/** @ignore */
 				private $element: JQuery
 			) {
-				this.markdownIt	= new self['markdownit']({
+				this.markdownIt	= new (<any> self).markdownit({
 					breaks: true,
-					highlight: s => self['microlight'].process(
+					highlight: s => (<any> self).microlight.process(
 						s,
 						this.$element.css('color')
 					),
@@ -106,8 +107,8 @@ export class Markdown
 					typographer: true
 				}).
 					disable('image').
-					use(self['markdownitSup']).
-					use(self['markdownitEmoji'])
+					use((<any> self).markdownitSup).
+					use((<any> self).markdownitEmoji)
 				;
 			}
 		},

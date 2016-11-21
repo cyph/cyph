@@ -35,6 +35,7 @@ export class ChatMessageBox
 		bindings: {
 			self: '<'
 		},
+		/* tslint:disable-next-line:max-classes-per-file */
 		controller: class {
 			/** @ignore */
 			public cyph: any;
@@ -46,11 +47,11 @@ export class ChatMessageBox
 			public isSpeedDialOpen: boolean	= true;
 
 			constructor ($element: JQuery) { (async () => {
-				while (!self['cyph']) {
+				while (!cyph) {
 					await Util.sleep();
 				}
 
-				this.cyph	= self['cyph'];
+				this.cyph	= cyph;
 
 				/* Allow enter press to submit, except on
 					mobile without external keyboard */

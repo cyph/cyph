@@ -34,6 +34,7 @@ export class FileInput
 			accept: '@',
 			fileChange: '&'
 		},
+		/* tslint:disable-next-line:max-classes-per-file */
 		controller: class {
 			/** @ignore */
 			public accept: string;

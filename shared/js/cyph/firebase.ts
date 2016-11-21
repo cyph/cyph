@@ -12,7 +12,7 @@ export class Firebase {
 	/** @ignore */
 	/* tslint:disable-next-line:member-ordering */
 	private static _	= (async () => {
-		if (!self['firebase']) {
+		if (typeof firebase === 'undefined') {
 			return;
 		}
 

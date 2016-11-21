@@ -28,7 +28,7 @@ export class P2P implements IP2P {
 	/** Indicates whether WebRTC is supported in the current environment. */
 	public static isSupported: boolean	= (() => {
 		try {
-			return new self['SimpleWebRTC']({
+			return new (<any> self).SimpleWebRTC({
 				connection: {on: () => {}}
 			}).capabilities.support;
 		}
@@ -227,7 +227,7 @@ export class P2P implements IP2P {
 
 		const events: string[]	= [];
 
-		const webRTC	= new self['SimpleWebRTC']({
+		const webRTC	= new (<any> self).SimpleWebRTC({
 			adjustPeerVolume: true,
 			autoRemoveVideos: false,
 			autoRequestMedia: false,
@@ -285,7 +285,7 @@ export class P2P implements IP2P {
 
 		webRTC.webrtc.config.peerConnectionConfig.iceServers	=
 			JSON.parse(iceServers).
-			filter(o => !this.forceTURN || o['url'].indexOf('stun:') !== 0)
+			filter(o => !this.forceTURN || o.url.indexOf('stun:') !== 0)
 		;
 
 		webRTC.connection.on('streamUpdate', incomingStream => {

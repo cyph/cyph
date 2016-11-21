@@ -172,7 +172,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 			if (this.homeSection === HomeSections.register) {
 				this.dialogManager.baseDialog({
 					locals: {
-						Cyph: self['cyph'],
+						cyph,
 						signupForm: this.signupForm
 					},
 					onclose: () => Cyph.UrlState.set(''),
@@ -186,7 +186,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 
 				this.dialogManager.baseDialog({
 					locals: {
-						Cyph: self['cyph'],
+						cyph,
 						signupForm: this.signupForm
 					},
 					onclose: () => Cyph.UrlState.set(''),
@@ -315,7 +315,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 			});
 
 			if (!Cyph.Env.isMobile) {
-				new self['WOW']({live: true}).init();
+				new (<any> self).WOW({live: true}).init();
 			}
 
 
@@ -330,21 +330,21 @@ export class UI extends Cyph.UI.BaseButtonManager {
 			}
 			else {
 				try {
-					Elements.backgroundVideo()[0]['currentTime']	= 1.25;
+					(<HTMLVideoElement> Elements.backgroundVideo()[0]).currentTime	= 1.25;
 				}
 				catch (_) {}
 
 				setTimeout(
-					() => Elements.backgroundVideo()['appear']().
+					() => (<any> Elements.backgroundVideo()).appear().
 						on('appear', () => {
 							try {
-								Elements.backgroundVideo()[0]['play']();
+								(<HTMLVideoElement> Elements.backgroundVideo()[0]).play();
 							}
 							catch (_) {}
 						}).
 						on('disappear', () => {
 							try {
-								Elements.backgroundVideo()[0]['pause']();
+								(<HTMLVideoElement> Elements.backgroundVideo()[0]).pause();
 							}
 							catch (_) {}
 						})
@@ -445,7 +445,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 
 			/* Cyphertext easter egg */
 			/* tslint:disable-next-line:no-unused-new */
-			new self['Konami'](() => {
+			new (<any> self).Konami(() => {
 				Cyph.UrlState.set('intro');
 				Cyph.Util.retryUntilComplete(retry => {
 					if (

@@ -202,7 +202,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 
 		/* Cyphertext easter egg */
 		/* tslint:disable-next-line:no-unused-new */
-		new self['Konami'](() => Cyph.Util.retryUntilComplete(retry => {
+		new (<any> self).Konami(() => Cyph.Util.retryUntilComplete(retry => {
 			if (
 				this.chat &&
 				this.chat.state === Cyph.UI.Chat.States.chat

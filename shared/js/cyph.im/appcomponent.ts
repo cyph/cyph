@@ -18,11 +18,11 @@ export class AppComponent {
 	public ui: any;
 
 	constructor () { (async () => {
-		while (!self['cyph'] || !self['ui']) {
+		while (!cyph || !ui) {
 			await Util.sleep();
 		}
 
-		this.cyph	= self['cyph'];
-		this.ui		= self['ui'];
+		this.cyph	= cyph;
+		this.ui		= ui;
 	})(); }
 }

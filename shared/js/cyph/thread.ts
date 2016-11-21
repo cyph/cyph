@@ -9,9 +9,9 @@ import {Util} from './util';
 export class Thread implements IThread {
 	/** @ignore */
 	private static blobBuilder: any	=
-		self['BlobBuilder'] ||
-		self['WebKitBlobBuilder'] ||
-		self['MozBlobBuilder']
+		(<any> self).BlobBuilder ||
+		(<any> self).WebKitBlobBuilder ||
+		(<any> self).MozBlobBuilder
 	;
 
 	/** @ignore */
@@ -24,10 +24,10 @@ export class Thread implements IThread {
 	private static threadEnvSetup (threadSetupVars: any, importScripts: Function) : void {
 		/* Inherit these from main thread */
 
-		self['customBuild']			= threadSetupVars.customBuild;
-		self['customBuildFavicon']	= threadSetupVars.customBuildFavicon;
-		self['locationData']		= threadSetupVars.locationData;
-		self['navigatorData']		= threadSetupVars.navigatorData;
+		(<any> self).customBuild		= threadSetupVars.customBuild;
+		(<any> self).customBuildFavicon	= threadSetupVars.customBuildFavicon;
+		(<any> self).locationData		= threadSetupVars.locationData;
+		(<any> self).navigatorData		= threadSetupVars.navigatorData;
 
 
 		/* Wrapper to make importScripts work in local dev environments
@@ -35,8 +35,7 @@ export class Thread implements IThread {
 
 		const oldImportScripts	= importScripts;
 		importScripts			= (script: string) => oldImportScripts(
-			`${self['locationData'].protocol}//${self['locationData'].host}` +
-			script
+			`${(<any> self).locationData.protocol}//${(<any> self).locationData.host}${script}`
 		);
 
 
@@ -44,8 +43,8 @@ export class Thread implements IThread {
 
 		importScripts('/lib/js/base.js');
 		importScripts('/js/cyph/base.js');
-		self['Cyph']	= self['Base'];
-		self['Base']	= undefined;
+		(<any> self).Cyph	= (<any> self).Base;
+		(<any> self).Base	= undefined;
 
 
 		/* Allow destroying the Thread object from within the thread */
@@ -101,7 +100,7 @@ export class Thread implements IThread {
 
 				return {
 					getRandomValues: array => {
-						const sodium	= self['sodium'];
+						const sodium	= (<any> self).sodium;
 
 						if (sodium && sodium.crypto_stream_chacha20) {
 							isActive	= true;
@@ -135,7 +134,7 @@ export class Thread implements IThread {
 		(<any> self).crypto	= crypto;
 
 		importScripts('/lib/js/crypto/libsodium/dist/browsers-sumo/combined/sodium.min.js');
-		self['sodium'].memzero(threadSetupVars.seed);
+		(<any> self).sodium.memzero(threadSetupVars.seed);
 
 		importScripts('/lib/js/crypto/mceliece/dist/mceliece.js');
 		importScripts('/lib/js/crypto/ntru/dist/ntru.js');
@@ -277,7 +276,7 @@ export class Thread implements IThread {
 			else if (e.data === 'close') {
 				this.stop();
 			}
-			else if (e.data && e.data['isThreadEvent']) {
+			else if (e.data && e.data.isThreadEvent) {
 				EventManager.trigger(e.data.event, e.data.data);
 			}
 			else {

@@ -12,7 +12,7 @@ export class PotassiumUtil {
 		decrypt: (encrypted: Uint8Array|string, privateKey: Uint8Array) => Uint8Array;
 		encrypt: (message: Uint8Array|string, publicKey: Uint8Array) => Uint8Array;
 		keyPair: () => {privateKey: Uint8Array; publicKey: Uint8Array};
-	}	= self['mceliece'] || (<any> {});
+	}	= (<any> self).mceliece || (<any> {});
 
 	/** @ignore */
 	protected static NTRU: {
@@ -24,7 +24,7 @@ export class PotassiumUtil {
 		decrypt: (encrypted: Uint8Array|string, privateKey: Uint8Array) => Uint8Array;
 		encrypt: (message: Uint8Array|string, publicKey: Uint8Array) => Uint8Array;
 		keyPair: () => {privateKey: Uint8Array; publicKey: Uint8Array};
-	}	= self['ntru'] || (<any> {});
+	}	= (<any> self).ntru || (<any> {});
 
 	/** @ignore */
 	protected static RLWE: {
@@ -35,7 +35,7 @@ export class PotassiumUtil {
 		aliceKeyPair: () => {privateKey: Uint8Array; publicKey: Uint8Array};
 		aliceSecret: (publicKey: Uint8Array, privateKey: Uint8Array) => Uint8Array;
 		bobSecret: (alicePublicKey: Uint8Array) => {publicKey: Uint8Array; secret: Uint8Array};
-	}	= self['rlwe'] || (<any> {});
+	}	= (<any> self).rlwe || (<any> {});
 
 	/** @ignore */
 	protected static Sodium: {
@@ -106,7 +106,7 @@ export class PotassiumUtil {
 		to_base64: (a: Uint8Array) => string;
 		to_hex: (a: Uint8Array) => string;
 		to_string: (a: Uint8Array) => string;
-	}	= self['sodium'] || {};
+	}	= (<any> self).sodium || {};
 
 	/** @ignore */
 	protected static SuperSphincs: {
@@ -125,7 +125,7 @@ export class PotassiumUtil {
 			message: Uint8Array|string,
 			publicKey: Uint8Array
 		) => Promise<boolean>;
-	}	= self['superSphincs'] || (<any> {});
+	}	= (<any> self).superSphincs || (<any> {});
 
 	/** Zeroes out memory. */
 	public static clearMemory (a: ArrayBufferView) : void {

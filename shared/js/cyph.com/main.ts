@@ -32,8 +32,8 @@ angular.
 		'$mdSidenav',
 
 		($mdDialog, $mdToast, $mdSidenav) => {
-			self['cyph']		= Cyph;
-			self['cyph'].com	= {
+			cyph		= Cyph;
+			cyph.com	= {
 				CyphDemo,
 				Elements,
 				HomeSections,
@@ -43,7 +43,7 @@ angular.
 				UI
 			};
 
-			self['ui']	= new UI(
+			ui	= new UI(
 				() => $mdSidenav('main-toolbar-sidenav'),
 				new Cyph.UI.DialogManager($mdDialog, $mdToast)
 			);

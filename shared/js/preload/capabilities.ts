@@ -5,16 +5,16 @@
 
 if (!(
 	'crypto' in self &&
-	'getRandomValues' in self['crypto'] &&
+	'getRandomValues' in (<any> self).crypto &&
 	'Worker' in self &&
 	'history' in self &&
-	'pushState' in self['history'] &&
-	'replaceState' in self['history'] &&
+	'pushState' in (<any> self).history &&
+	'replaceState' in (<any> self).history &&
 	'MutationObserver' in self &&
 	'localStorage' in self &&
 
 	/* Test for https://github.com/jedisct1/libsodium.js/issues/28 */
-	self['sodium'].crypto_box_easy(
+	(<any> self).sodium.crypto_box_easy(
 		new Uint8Array([
 			104, 101, 108, 108, 111
 		]),

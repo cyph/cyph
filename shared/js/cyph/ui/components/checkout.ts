@@ -37,6 +37,7 @@ export class Checkout
 			fullName: '=',
 			item: '='
 		},
+		/* tslint:disable-next-line:max-classes-per-file */
 		controller: class {
 			/** @ignore */
 			public cyph: any;
@@ -63,12 +64,12 @@ export class Checkout
 			public fullName: string;
 
 			constructor ($element: JQuery) { (async () => {
-				while (!self['cyph'] || !self['ui']) {
+				while (!cyph || !ui) {
 					await Util.sleep();
 				}
 
-				this.cyph	= self['cyph'];
-				this.ui		= self['ui'];
+				this.cyph	= cyph;
+				this.ui		= ui;
 
 				const token: string	= await Util.request({
 					retries: 5,
@@ -79,7 +80,7 @@ export class Checkout
 
 				checkoutUI.html('');
 
-				self['braintree'].setup(token, 'dropin', {
+				(<any> self).braintree.setup(token, 'dropin', {
 					container: checkoutUI[0],
 					enableCORS: true,
 					onPaymentMethodReceived: async (data) => {

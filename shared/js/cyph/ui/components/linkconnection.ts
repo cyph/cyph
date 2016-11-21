@@ -32,6 +32,7 @@ export class LinkConnection
 		bindings: {
 			self: '<'
 		},
+		/* tslint:disable-next-line:max-classes-per-file */
 		controller: class {
 			/** @ignore */
 			public cyph: any;
@@ -43,11 +44,11 @@ export class LinkConnection
 			public queuedMessageDraft: string	= '';
 
 			constructor () { (async () => {
-				while (!self['cyph']) {
+				while (!cyph) {
 					await Util.sleep();
 				}
 
-				this.cyph	= self['cyph'];
+				this.cyph	= cyph;
 			})(); }
 		},
 		template: Templates.linkConnection

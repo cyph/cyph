@@ -27,6 +27,7 @@ export class StaticCyphSpinningUp
 
 	/** Component configuration. */
 	public static config		= {
+		/* tslint:disable-next-line:max-classes-per-file */
 		controller: class {
 			/** @ignore */
 			public cyph: any;
@@ -35,12 +36,12 @@ export class StaticCyphSpinningUp
 			public ui: any;
 
 			constructor () { (async () => {
-				while (!self['cyph'] || !self['ui']) {
+				while (!cyph || !ui) {
 					await Util.sleep();
 				}
 
-				this.cyph	= self['cyph'];
-				this.ui		= self['ui'];
+				this.cyph	= cyph;
+				this.ui		= ui;
 			})(); }
 		},
 		template: Templates.staticCyphSpinningUp

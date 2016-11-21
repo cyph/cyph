@@ -36,15 +36,15 @@ angular.
 		'$mdToast',
 
 		($mdDialog, $mdToast) => {
-			self['cyph']	= Cyph;
-			self['cyph'].im	= {
+			cyph	= Cyph;
+			cyph.im	= {
 				BetaStates,
 				States,
 				UI,
 				urlSections
 			};
 
-			self['ui']	= new UI(
+			ui	= new UI(
 				new Cyph.UI.DialogManager($mdDialog, $mdToast),
 				new Cyph.UI.Notifier()
 			);

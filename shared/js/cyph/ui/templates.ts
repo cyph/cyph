@@ -2211,7 +2211,7 @@ export const Templates	= {
 
 				<div class='login-button' layout='row' layout-align='center center'>
 					<md-button
-						ng-href='{{locals.Cyph.Env.newCyphBaseUrl}}#beta/login'
+						ng-href='{{locals.cyph.Env.newCyphBaseUrl}}#beta/login'
 						translate
 					>
 						Already have a Cyph account? Click here to login.
@@ -2371,7 +2371,7 @@ export const Templates	= {
 
 				<div class='login-button' layout='row' layout-align='center center'>
 					<md-button
-						ng-href='{{locals.Cyph.Env.newCyphBaseUrl}}#beta/login'
+						ng-href='{{locals.cyph.Env.newCyphBaseUrl}}#beta/login'
 						translate
 					>
 						Already have a Cyph account? Click here to login.

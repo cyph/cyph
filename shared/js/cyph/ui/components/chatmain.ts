@@ -33,6 +33,7 @@ export class ChatMain
 			hideDisconnectMessage: '<',
 			self: '<'
 		},
+		/* tslint:disable-next-line:max-classes-per-file */
 		controller: class {
 			/** @ignore */
 			public cyph: any;
@@ -44,11 +45,11 @@ export class ChatMain
 			public hideDisconnectMessage: boolean;
 
 			constructor () { (async () => {
-				while (!self['cyph']) {
+				while (!cyph) {
 					await Util.sleep();
 				}
 
-				this.cyph	= self['cyph'];
+				this.cyph	= cyph;
 			})(); }
 		},
 		template: Templates.chatMain,

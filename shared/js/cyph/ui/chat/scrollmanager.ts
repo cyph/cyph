@@ -25,7 +25,9 @@ export class ScrollManager implements IScrollManager {
 
 		/* Process read-ness and scrolling */
 		if ($elem.is('.message-item.unread')) {
-			const currentScrollPosition: number	= this.elements.messageList()['scrollPosition']();
+			const currentScrollPosition: number	=
+				(<any> this.elements.messageList()).scrollPosition()
+			;
 
 			if (
 				VisibilityWatcher.isVisible &&

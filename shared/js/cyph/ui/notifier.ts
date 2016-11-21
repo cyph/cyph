@@ -24,7 +24,7 @@ export class Notifier implements INotifier {
 		};
 
 		try {
-			callback(new self['Notification'](Config.notifierConfig.title, options));
+			callback(new (<any> self).Notification(Config.notifierConfig.title, options));
 
 			try {
 				Notifier.audio.play();
@@ -35,7 +35,7 @@ export class Notifier implements INotifier {
 			try {
 				options.audio	= Config.notifierConfig.audio;
 
-				navigator['serviceWorker'].
+				(<any> navigator).serviceWorker.
 					register(Config.webSignConfig.serviceWorker).
 					then(serviceWorkerRegistration => {
 						try {
@@ -97,7 +97,7 @@ export class Notifier implements INotifier {
 		});
 
 		try {
-			self['Notification'].requestPermission();
+			(<any> self).Notification.requestPermission();
 		}
 		catch (_) {}
 	}

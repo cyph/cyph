@@ -133,13 +133,13 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 		);
 
 		if (this.isActive !== isActive) {
-			if (!Elements.backgroundVideo()[0]['paused']) {
+			if (!(<HTMLVideoElement> Elements.backgroundVideo()[0]).paused) {
 				setTimeout(
 					() => {
 						try {
 							if (Elements.backgroundVideo().is(':appeared')) {
 								try {
-									Elements.backgroundVideo()[0]['play']();
+									(<HTMLVideoElement> Elements.backgroundVideo()[0]).play();
 								}
 								catch (_) {}
 							}
@@ -151,7 +151,7 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 			}
 
 			try {
-				Elements.backgroundVideo()[0]['pause']();
+				(<HTMLVideoElement> Elements.backgroundVideo()[0]).pause();
 			}
 			catch (_) {}
 		}
@@ -249,8 +249,8 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 				await Cyph.Util.sleep();
 			}
 
-			Elements.demoRoot()['appear']();
-			Elements.heroText()['appear']();
+			(<any> Elements.demoRoot()).appear();
+			(<any> Elements.heroText()).appear();
 
 			await Cyph.Util.sleep(1000);
 			while (Elements.heroText().is(':appeared')) {
