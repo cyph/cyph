@@ -14,7 +14,6 @@ import {UpgradeComponent} from '@angular/upgrade/static';
 import {Config} from '../../config';
 import {Env} from '../../env';
 import {Util} from '../../util';
-import {Templates} from '../templates';
 
 
 /**
@@ -104,7 +103,7 @@ export class Checkout
 				});
 			})(); }
 		},
-		template: Templates.checkout,
+		templateUrl: '../../../../templates/checkout.html',
 		transclude: true
 	};
 

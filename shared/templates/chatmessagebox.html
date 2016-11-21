@@ -1,0 +1,138 @@
+<div
+	class='chat-message-box platform-container'
+	ng-class='{mobile: $ctrl.self.isMobile}'
+	ng-show='
+		$ctrl.self.state === $ctrl.cyph.UI.Chat.States.chat &&
+		$ctrl.self.session.state.isAlive
+	'
+>
+	<textarea
+		translate
+		class='message-box tabIndent'
+		ng-model='$ctrl.self.currentMessage'
+		ng-trim='false'
+		ng-change='$ctrl.self.messageChange()'
+		placeholder='Send a secure message...'
+	></textarea>
+
+	<md-button
+		translate
+		class='send-button mobile-only'
+		ng-class='{
+			"chat-message-box-hidden": $ctrl.self.currentMessage === ""
+		}'
+		ng-click='$ctrl.self.send()'
+		aria-label='Send'
+	>
+		<md-icon class='grey'>send</md-icon>
+	</md-button>
+
+	<md-fab-speed-dial
+		md-direction='up'
+		class='md-fling md-fab-bottom-right'
+		md-open='$ctrl.isSpeedDialOpen'
+		ng-mouseenter='$ctrl.isSpeedDialOpen = true'
+		ng-mouseleave='$ctrl.isSpeedDialOpen = false'
+	>
+		<md-fab-trigger>
+			<md-button
+				aria-label='Menu'
+				class='md-fab'
+			>
+				<md-icon>add</md-icon>
+			</md-button>
+		</md-fab-trigger>
+		<md-fab-actions>
+			<md-button
+				aria-label='Help'
+				class='invert md-fab md-raised md-mini'
+				ng-click='$ctrl.self.helpButton()'
+			>
+				<md-tooltip md-direction='left'>
+					Help
+				</md-tooltip>
+				<md-icon>help_outline</md-icon>
+			</md-button>
+			<md-button
+				aria-label='Send File'
+				class='md-fab md-raised md-mini send-file-button'
+			>
+				<md-tooltip md-direction='left'>
+					Send File
+				</md-tooltip>
+				<md-icon>attach_file</md-icon>
+				<cyph-file-input
+					file-change='$ctrl.self.fileManager.send(file)'
+				></cyph-file-input>
+			</md-button>
+			<md-button
+				aria-label='Send Image'
+				class='md-fab md-raised md-mini'
+			>
+				<md-tooltip md-direction='left'>
+					Send Image
+				</md-tooltip>
+				<md-icon>insert_photo</md-icon>
+				<cyph-file-input
+					accept='image/*'
+					file-change='$ctrl.self.fileManager.send(file, true)'
+				></cyph-file-input>
+			</md-button>
+			<md-button
+				aria-label='Voice Call'
+				class='md-fab md-raised md-mini'
+				ng-click='$ctrl.self.p2pManager.voiceCallButton()'
+				ng-disabled='!$ctrl.self.p2pManager.isEnabled'
+				ng-hide='$ctrl.self.p2pManager.p2p.isActive'
+			>
+				<md-tooltip md-direction='left'>
+					Voice Call
+				</md-tooltip>
+				<md-icon>phone</md-icon>
+			</md-button>
+			<md-button
+				aria-label='Video Call'
+				class='md-fab md-raised md-mini'
+				ng-click='$ctrl.self.p2pManager.videoCallButton()'
+				ng-disabled='!$ctrl.self.p2pManager.isEnabled'
+				ng-hide='$ctrl.self.p2pManager.p2p.isActive'
+			>
+				<md-tooltip md-direction='left'>
+					Video Call
+				</md-tooltip>
+				<md-icon>videocam</md-icon>
+			</md-button>
+			<md-button
+				aria-label='Close Chat'
+				class='dark md-fab md-raised md-mini'
+				ng-click='$ctrl.self.disconnectButton()'
+			>
+				<md-tooltip md-direction='left'>
+					Close Chat
+				</md-tooltip>
+				<md-icon>close</md-icon>
+			</md-button>
+		</md-fab-actions>
+	</md-fab-speed-dial>
+
+	<md-subheader
+		class='new-messages md-subheader-colored md-sticky-clone'
+		ng-show='$ctrl.self.scrollManager.unreadMessages > 0'
+		sticky-state='active'
+		ng-click='$ctrl.self.scrollManager.scrollDown()'
+	>
+		<strong>&#8595;&nbsp;&nbsp;</strong>
+		<span
+			translate
+			ng-bind='
+				$ctrl.self.scrollManager.unreadMessages +
+				" " + "new" + " " +
+				(
+					$ctrl.self.scrollManager.unreadMessages > 1 ?
+						"messages" :
+						"message"
+				)
+			'
+		></span>
+	</md-subheader>
+</div>

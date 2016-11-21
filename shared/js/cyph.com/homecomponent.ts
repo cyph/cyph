@@ -10,7 +10,6 @@ import {
 	SimpleChanges
 } from '@angular/core';
 import {UpgradeComponent} from '@angular/upgrade/static';
-import {Templates} from '../cyph/ui/templates';
 import {Util} from '../cyph/util';
 
 
@@ -44,7 +43,7 @@ export class HomeComponent
 				this.ui		= ui;
 			})(); }
 		},
-		template: Templates.home
+		templateUrl: '../../templates/cyph.com.html'
 	};
 
 

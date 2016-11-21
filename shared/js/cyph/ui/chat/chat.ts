@@ -16,7 +16,6 @@ import {IDialogManager} from '../idialogmanager';
 import {INotifier} from '../inotifier';
 import {ISidebar} from '../isidebar';
 import {NanoScroller} from '../nanoscroller';
-import {Templates} from '../templates';
 import {Cyphertext} from './cyphertext';
 import {States} from './enums';
 import {FileManager} from './filemanager';
@@ -237,7 +236,7 @@ export class Chat extends BaseButtonManager implements IChat {
 	public helpButton () : void {
 		this.baseButtonClick(() => {
 			this.dialogManager.baseDialog({
-				template: Templates.helpModal
+				templateUrl: '../../../../templates/helpmodal.html'
 			});
 
 			Analytics.send({

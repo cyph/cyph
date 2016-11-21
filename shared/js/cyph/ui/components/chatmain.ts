@@ -13,7 +13,6 @@ import {
 import {UpgradeComponent} from '@angular/upgrade/static';
 import {Util} from '../../util';
 import {IChat} from '../chat/ichat';
-import {Templates} from '../templates';
 
 
 /**
@@ -52,7 +51,7 @@ export class ChatMain
 				this.cyph	= cyph;
 			})(); }
 		},
-		template: Templates.chatMain,
+		templateUrl: '../../../../templates/chatmain.html',
 		transclude: true
 	};
 

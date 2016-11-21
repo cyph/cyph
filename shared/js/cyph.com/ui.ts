@@ -176,7 +176,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 						signupForm: this.signupForm
 					},
 					onclose: () => Cyph.UrlState.set(''),
-					template: Cyph.UI.Templates.register
+					templateUrl: '../../templates/register.html'
 				});
 			}
 			else if (this.homeSection === HomeSections.invite) {
@@ -190,7 +190,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 						signupForm: this.signupForm
 					},
 					onclose: () => Cyph.UrlState.set(''),
-					template: Cyph.UI.Templates.invite
+					templateUrl: '../../templates/invite.html'
 				});
 			}
 			else {

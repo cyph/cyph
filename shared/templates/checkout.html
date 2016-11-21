@@ -1,0 +1,23 @@
+<form>
+	<div ng-hide='$ctrl.complete'>
+		<div class='checkout-ui'>
+			<div class='braintree'></div>
+			<div layout='row' layout-sm='column' layout-xs='column'>
+				<md-input-container class='md-block' flex>
+					<input ng-model='$ctrl.name' aria-label='Name' />
+					<label>Name</label>
+				</md-input-container>
+				<md-input-container class='md-block' flex>
+					<input ng-model='$ctrl.email' type='email' aria-label='Email' required />
+					<label>Email</label>
+				</md-input-container>
+			</div>
+		</div>
+		<md-button type='submit'>
+			Confirm \${{$ctrl.amount}} payment
+		</md-button>
+	</div>
+	<div translate class='confirmation' ng-show='$ctrl.complete'>
+		<ng-transclude></ng-transclude>
+	</div>
+</form>

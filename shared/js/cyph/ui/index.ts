@@ -13,7 +13,6 @@ import {LinkConnection} from './linkconnection';
 import {NanoScroller} from './nanoscroller';
 import {Notifier} from './notifier';
 import {SignupForm} from './signupform';
-import {Templates} from './templates';
 import {VirtualKeyboardWatcher} from './virtualkeyboardwatcher';
 import {VisibilityWatcher} from './visibilitywatcher';
 
@@ -32,7 +31,6 @@ export {
 	NanoScroller,
 	Notifier,
 	SignupForm,
-	Templates,
 	VirtualKeyboardWatcher,
 	VisibilityWatcher,
 

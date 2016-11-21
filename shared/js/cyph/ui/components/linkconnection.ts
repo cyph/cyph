@@ -13,7 +13,6 @@ import {
 import {UpgradeComponent} from '@angular/upgrade/static';
 import {Util} from '../../util';
 import {ILinkConnection} from '../ilinkconnection';
-import {Templates} from '../templates';
 
 
 /**
@@ -51,7 +50,7 @@ export class LinkConnection
 				this.cyph	= cyph;
 			})(); }
 		},
-		template: Templates.linkConnection
+		templateUrl: '../../../../templates/linkconnection.html'
 	};
 
 

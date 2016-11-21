@@ -14,7 +14,6 @@ import {
 } from '@angular/core';
 import {UpgradeComponent} from '@angular/upgrade/static';
 import {Util} from '../../util';
-import {Templates} from '../templates';
 
 
 /**
@@ -72,7 +71,7 @@ export class FileInput
 				;
 			}
 		},
-		template: Templates.fileInput
+		templateUrl: '../../../../templates/fileinput.html'
 	};
 
 

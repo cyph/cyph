@@ -1,0 +1,53 @@
+<span *ngIf='cyph && ui && ui.chat'>
+	<section id='main' class='cyph-foreground layout-fill layout-column'>
+		<cyph-chat-main
+			[self]='ui.chat'
+			[hideDisconnectMessage]='ui.coBranded'
+			[class.active]='ui.state === cyph.im.States.chat'
+			class='cyph-view layout-fill layout-column flex'
+		>
+			<cyph-signup-form [self]='ui.signupForm'>
+				{{cyph.Strings.signupMessage1}}
+				{{cyph.Strings.signupMessage2}}
+			</cyph-signup-form>
+		</cyph-chat-main>
+
+		<cyph-static-cyph-spinning-up
+			[class.active]='ui.state === cyph.im.States.spinningUp'
+			class='cyph-view layout-fill layout-column flex'
+		></cyph-static-cyph-spinning-up>
+
+		<cyph-link-connection
+			[self]='ui.cyphConnection'
+			[class.active]='ui.state === cyph.im.States.waitingForFriend'
+			class='cyph-view layout-fill layout-column flex'
+		></cyph-link-connection>
+
+		<cyph-static-cyph-not-found
+			[class.active]='ui.state === cyph.im.States.error'
+			class='cyph-view layout-fill layout-column flex'
+		></cyph-static-cyph-not-found>
+
+		<cyph-beta
+			[class.active]='ui.state === cyph.im.States.beta'
+			class='cyph-view layout-fill layout-column flex'
+		></cyph-beta>
+
+		<div
+			[class.active]='ui.state === cyph.im.States.blank'
+			id='blank'
+			class='cyph-view layout-fill layout-column flex'
+		></div>
+
+		<footer>
+			<cyph-chat-message-box
+				[self]='ui.chat'
+				*ngIf='ui.state === cyph.im.States.chat'
+			></cyph-chat-message-box>
+
+			<cyph-static-footer></cyph-static-footer>
+		</footer>
+	</section>
+
+	<cyph-chat-cyphertext [self]='ui.chat'></cyph-chat-cyphertext>
+</span>

@@ -13,7 +13,6 @@ import {
 import {UpgradeComponent} from '@angular/upgrade/static';
 import {Util} from '../../util';
 import {IChat} from '../chat/ichat';
-import {Templates} from '../templates';
 
 
 /**
@@ -48,7 +47,7 @@ export class ChatCyphertext
 				this.cyph	= cyph;
 			})(); }
 		},
-		template: Templates.chatCyphertext
+		templateUrl: '../../../../templates/chatcyphertext.html'
 	};
 
 

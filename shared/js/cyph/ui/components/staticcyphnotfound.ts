@@ -11,7 +11,6 @@ import {
 } from '@angular/core';
 import {UpgradeComponent} from '@angular/upgrade/static';
 import {Util} from '../../util';
-import {Templates} from '../templates';
 
 
 /**
@@ -44,7 +43,7 @@ export class StaticCyphNotFound
 				this.ui		= ui;
 			})(); }
 		},
-		template: Templates.staticCyphNotFound
+		templateUrl: '../../../../templates/staticcyphnotfound.html'
 	};
 
 

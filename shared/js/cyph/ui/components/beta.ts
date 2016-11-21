@@ -11,7 +11,6 @@ import {
 } from '@angular/core';
 import {UpgradeComponent} from '@angular/upgrade/static';
 import {Util} from '../../util';
-import {Templates} from '../templates';
 
 
 /**
@@ -60,7 +59,7 @@ export class Beta
 				});
 			})(); }
 		},
-		template: Templates.beta
+		templateUrl: '../../../../templates/beta.html'
 	};
 
 

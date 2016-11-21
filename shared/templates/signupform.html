@@ -1,0 +1,153 @@
+<div class='beta-signup-form'>
+	<form ng-submit='$ctrl.self.submit()' ng-show='$ctrl.self.state === 0'>
+		<div layout='row' layout-align='center center' flex>
+			<ng-transclude></ng-transclude>
+		</div>
+		<div layout='row' layout-align='center stretch' flex>
+			<div class='desktop-only' layout='column' flex='50'>
+				<div layout='row' layout-align='center center'>
+					<md-input-container class='md-block' flex='80'>
+						<input
+							type='email'
+							ng-model='$ctrl.self.data.email'
+							aria-label='Email'
+						/>
+						<label>Email</label>
+					</md-input-container>
+				</div>
+				<div layout='row' layout-align='center center'>
+					<md-input-container class='md-block' flex='80'>
+						<input type='password' aria-label='Password' disabled />
+						<label>Password</label>
+					</md-input-container>
+				</div>
+
+				<div layout='row' layout-align='center center'>
+					<md-input-container class='md-block' flex='80'>
+						<input type='password' aria-label='Confirm Password' disabled />
+						<label>Confirm Password</label>
+					</md-input-container>
+				</div>
+				<div ng-if='$ctrl.invite' layout='row' layout-align='center center'>
+					<md-input-container class='md-block' flex='80'>
+						<input
+							type='text'
+							ng-model='$ctrl.self.data.inviteCode'
+							aria-label='Invite Code'
+						/>
+						<label>Invite Code</label>
+					</md-input-container>
+				</div>
+				<div class='register-button' layout='row' layout-align='center end'>
+					<md-button
+						type='submit'
+						aria-label='Register'
+						ng-disabled='true'
+						translate
+					>
+						Register
+					</md-button>
+				</div>
+			</div>
+			<div layout='column' flex>
+				<div layout='row' layout-align='center center'>
+					<p flex='80' translate>
+						We are currently at capacity and registration is closed,
+						but you can sign up for the waitlist to reserve your spot
+						in line for an account.
+					</p>
+				</div>
+				<div layout='row' layout-align='center center'>
+					<p flex='80' translate>
+						However, you don't need an account to use Cyph; just click the
+						"start new cyph" button on the homepage. Our beta accounts program
+						only provides early access to more advanced functionality and cool
+						new features.
+					</p>
+					<br />
+				</div>
+				<div class='register-button' layout='row' layout-align='center end'>
+					<md-button
+						type='submit'
+						aria-label='Waitlist Signup'
+						translate
+					>
+						Waitlist Signup
+					</md-button>
+				</div>
+			</div>
+		</div>
+	</form>
+
+	<form ng-submit='$ctrl.self.submit()' ng-show='$ctrl.self.state === 1'>
+		<div layout='row' layout-align='center center' flex>
+			<div layout='column' flex>
+				<div layout='row' layout-align='center center'>
+					<md-input-container class='md-block' flex='80'>
+						<input
+							type='email'
+							ng-model='$ctrl.self.data.email'
+							aria-label='Email' required
+						/>
+						<label>Email</label>
+					</md-input-container>
+				</div>
+				<div layout='row' ng-if='$ctrl.invite' layout-align='center center'>
+					<md-input-container class='md-block' flex='80'>
+						<input
+							type='text'
+							ng-model='$ctrl.self.data.inviteCode'
+							aria-label='Invite Code'
+							required
+						/>
+						<label>Invite Code</label>
+					</md-input-container>
+				</div>
+				<div layout='row' layout-align='center end'>
+					<md-button
+						type='submit'
+						aria-label='Waitlist Signup'
+						translate
+					>
+						Waitlist Signup
+					</md-button>
+				</div>
+			</div>
+		</div>
+	</form>
+
+	<form ng-submit='$ctrl.self.submit()' ng-show='$ctrl.self.state === 2'>
+		<div layout='row' layout-align='center center' flex>
+			<div layout='column' flex>
+				<div layout='row' layout-align='center center'>
+					<md-input-container class='md-block' flex='80'>
+						<input ng-model='$ctrl.self.data.name' aria-label='Name' />
+						<label>Name (optional)</label>
+					</md-input-container>
+				</div>
+				<div layout='row' layout-align='center end'>
+					<md-button
+						type='submit'
+						aria-label='Waitlist Signup'
+						translate
+					>
+						Waitlist Signup
+					</md-button>
+				</div>
+			</div>
+		</div>
+	</form>
+
+	<form ng-submit='$ctrl.self.submit()' ng-show='$ctrl.self.state === 3'>
+		<div layout='row' layout-align='center center' flex>
+			<div layout='column' flex>
+				<div layout='row' layout-align='center center'>
+					<p flex='80' translate>
+						Thanks for subscribing, {{$ctrl.self.data.name}}! We'll email you
+						when your invite is ready.
+					</p>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>

@@ -14,7 +14,6 @@ import {UpgradeComponent} from '@angular/upgrade/static';
 import {Config} from '../../config';
 import {Env} from '../../env';
 import {Util} from '../../util';
-import {Templates} from '../templates';
 
 
 /**
@@ -90,7 +89,7 @@ export class Contact
 				}
 			})(); }
 		},
-		template: Templates.contact
+		templateUrl: '../../../../templates/contact.html'
 	};
 
 

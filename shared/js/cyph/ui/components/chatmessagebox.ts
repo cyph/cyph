@@ -14,7 +14,6 @@ import {UpgradeComponent} from '@angular/upgrade/static';
 import {Env} from '../../env';
 import {Util} from '../../util';
 import {IChat} from '../chat/ichat';
-import {Templates} from '../templates';
 import {VirtualKeyboardWatcher} from '../virtualkeyboardwatcher';
 import {VisibilityWatcher} from '../visibilitywatcher';
 
@@ -93,7 +92,7 @@ export class ChatMessageBox
 				this.isSpeedDialOpen	= false;
 			})(); }
 		},
-		template: Templates.chatMessageBox
+		templateUrl: '../../../../templates/chatmessagebox.html'
 	};
 
 

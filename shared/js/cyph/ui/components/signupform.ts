@@ -13,7 +13,6 @@ import {
 import {UpgradeComponent} from '@angular/upgrade/static';
 import {Util} from '../../util';
 import {ISignupForm} from '../isignupform';
-import {Templates} from '../templates';
 
 
 /**
@@ -52,7 +51,7 @@ export class SignupForm
 				this.cyph	= cyph;
 			})(); }
 		},
-		template: Templates.signupForm,
+		templateUrl: '../../../../templates/signupform.html',
 		transclude: true
 	};
 

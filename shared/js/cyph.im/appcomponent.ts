@@ -1,5 +1,4 @@
 import {Component} from '@angular/core';
-import {Templates} from '../cyph/ui/templates';
 import {Util} from '../cyph/util';
 
 
@@ -8,7 +7,7 @@ import {Util} from '../cyph/util';
  */
 @Component({
 	selector: 'cyph-app',
-	template: Templates.app
+	templateUrl: '../../templates/cyph.im.html'
 })
 export class AppComponent {
 	/** @ignore */

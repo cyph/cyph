@@ -1,0 +1,120 @@
+<div
+	class='link-connection loading'
+	layout='column'
+	layout-fill
+	flex
+>
+	<div flex></div>
+	<div class='logo-animation'>
+		<img src='/img/logo.animated.gif' alt='Animated Cyph logo' />
+	</div>
+	<div>
+		<div ng-show='$ctrl.self.isPassive' translate>
+			Waiting for friend to join...
+		</div>
+		<div ng-hide='$ctrl.self.isPassive'>
+			<div translate>
+				Send the link below to someone else. When they open it,
+				you'll be securely connected!
+			</div>
+			<br />
+
+			<md-input-container class='connect-link-input desktop-only'>
+				<input translate ng-model='$ctrl.self.link' aria-label='Cyph link' />
+				<md-button class='copy' ng-click='$ctrl.self.copyToClipboard()'>
+					<i class='material-icons'>content_copy</i>
+				</md-button>
+			</md-input-container>
+
+			<div class='connect-link-mobile mobile-only'>
+				<a
+					class='connect-link-link'
+					ng-href='{{$ctrl.self.link}}'
+				>{{$ctrl.self.link}}</a>
+				<br />
+
+				<md-button
+					translate
+					class='md-fab'
+					aria-label='SMS'
+					ng-href='{{$ctrl.cyph.Env.smsUriBase}}{{$ctrl.self.linkEncoded}}'
+				>
+					<img src='/img/icons/sms.png' alt='SMS' />
+				</md-button>
+
+				<span class='divider'>
+					&nbsp;
+				</span>
+
+				<md-button
+					translate
+					class='md-fab'
+					aria-label='Email'
+					target='_self'
+					ng-href='mailto:?body={{$ctrl.self.linkEncoded}}'
+				>
+					<img src='/img/icons/email.png' alt='Email' />
+				</md-button>
+			</div>
+		</div>
+
+		<br />
+		<div>
+			<span translate>
+				Link expires in
+			</span>
+			<span class='countdown'>
+				{{$ctrl.self.timer.timestamp}}
+			</span>
+			<md-button
+				ng-click='$ctrl.self.addTime(30000)'
+				aria-label='Increase Time by 30 seconds'
+			>
+				<i class='material-icons'>alarm_add</i>
+			</md-button>
+		</div>
+	</div>
+
+	<md-switch
+		class='advanced-features-switch'
+		ng-model='$ctrl.self.advancedFeatures'
+		aria-label='Advanced Features'
+	>
+		Advanced Features
+	</md-switch>
+
+	<div class='advanced-features' ng-show='$ctrl.self.advancedFeatures'>
+		<md-input-container class='queued-message-box'>
+			<label>Queue up first message</label>
+			<textarea
+				rows='3'
+				ng-model='$ctrl.queuedMessageDraft'
+			></textarea>
+		</md-input-container>
+		<div class='buttons'>
+			<md-button
+				ng-click='$ctrl.self.chat.setQueuedMessage(
+					$ctrl.queuedMessageDraft
+				)'
+			>
+				<i class='material-icons'>save</i>
+			</md-button>
+			<md-button
+				class='self-destruct-button'
+				ng-click='$ctrl.self.chat.setQueuedMessage(
+					undefined,
+					!$ctrl.self.chat.queuedMessageSelfDestruct
+				)'
+			>
+				<i
+					class='material-icons'
+					ng-class='{
+						"active": $ctrl.self.chat.queuedMessageSelfDestruct === true
+					}'
+				>
+					timer
+				</i>
+			</div>
+	</div>
+	<div flex></div>
+</div>
