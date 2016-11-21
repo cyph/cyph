@@ -1,0 +1,23 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA256
+
+Cyph provides very strong client-side crypto and security from a broad
+range of cryptographic attacks.
+
+The general conclusion of the test is that no major issues in regards
+to application security or cryptographic implementations could be
+spotted in spite of a thorough audit.
+
+Mario Heiderich, July 31, 2015
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.17 (GNU/Linux)
+
+iQEcBAEBCAAGBQJWo9gyAAoJEHDUy0rTNEGo/FAIAJsepEof1bz2L5mqT9BioBDi
+I2WhxyDMqYxekiHpV9K37tFlPT5hswT+oURra75yTWSm2+3V3bk0msuf9L7vYkxz
+r4l2aZx/uis8JK5UVIkPZ8cMliW2xf5PBtSSYd5DKnm8l5Y5CEZXn1Cq8EAIvemZ
+ynkn3fYUed+beghZ+2n7EJ8AfTnEdKtkjYzFlZx/+VlmdgXtST4Q08yH87BYKh2S
+QIVY5tmDCpuomgV5gVctTG0w0ibYxl0vUTkyPbDdzp/7cdeTDDnetaM61APNIX8u
+GzLpNG66Hg/ypKsgbRzVkxKA9kEnwqKnrbUiA+IivtCaT89pL4P3usCr9aAejdk=
+=XdJS
+-----END PGP SIGNATURE-----
