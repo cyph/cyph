@@ -231,7 +231,7 @@ export class PairwiseSession {
 			Math.ceil(plaintextBytes.length / Transport.chunkLength)
 		]);
 
-		const i = new Float64Array(1);
+		const i	= new Float64Array(1);
 		while (
 			i[0] < plaintextBytes.length ||
 			(i[0] === 0 && plaintextBytes.length === 0)

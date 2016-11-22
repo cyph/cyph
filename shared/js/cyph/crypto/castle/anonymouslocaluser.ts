@@ -40,7 +40,7 @@ export class AnonymousLocalUser implements ILocalUser {
 	}
 
 	/** @inheritDoc */
-	public getRemoteSecret () : Promise<Uint8Array> {
+	public async getRemoteSecret () : Promise<Uint8Array> {
 		return this.transport.interceptIncomingCyphertext();
 	}
 

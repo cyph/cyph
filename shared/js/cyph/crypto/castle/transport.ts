@@ -24,7 +24,7 @@ export class Transport {
 	}	= {};
 
 	/** Queue of cyphertext interception handlers. */
-	public cyphertextIntercepters: Function[]	= [];
+	public cyphertextIntercepters: ((cyphertext: Uint8Array) => void)[]	= [];
 
 	/** Trigger abortion event. */
 	public abort () : void {
@@ -40,10 +40,10 @@ export class Transport {
 	 * Intercept raw data of next incoming message before
 	 * it ever hits the core Castle protocol logic.
 	 */
-	public interceptIncomingCyphertext (
+	public async interceptIncomingCyphertext (
 		timeout: number = 45000
 	) : Promise<Uint8Array> {
-		return new Promise((resolve, reject) => {
+		return new Promise<Uint8Array>((resolve, reject) => {
 			this.cyphertextIntercepters.push(resolve);
 
 			if (timeout) {

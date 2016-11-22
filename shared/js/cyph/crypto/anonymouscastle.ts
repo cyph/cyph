@@ -22,7 +22,7 @@ export class AnonymousCastle implements ICastle {
 	}
 
 	/** @inheritDoc */
-	public send (
+	public async send (
 		plaintext: string,
 		timestamp: number = Util.timestamp()
 	) : Promise<void> {

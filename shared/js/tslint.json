@@ -1,5 +1,11 @@
 {
 	"rules": {
+		/* Custom */
+
+		"promise-async": true,
+		"tab-equals": true,
+
+
 		/* TypeScript-Specific */
 
 		"adjacent-overload-signatures": true,

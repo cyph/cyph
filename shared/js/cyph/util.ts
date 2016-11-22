@@ -440,7 +440,7 @@ export class Util {
 	 * Sleep for the specifed amount of time.
 	 * @param ms
 	 */
-	public static sleep (ms: number = 250) : Promise<{}> {
+	public static async sleep (ms: number = 250) : Promise<{}> {
 		return new Promise(resolve => setTimeout(() => resolve(), ms));
 	}
 
