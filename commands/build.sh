@@ -251,13 +251,13 @@ if [ "${watch}" ] ; then
 		compile
 		echo -e "${output}\n\n\nFinished building JS/CSS ($(expr $(date +%s) - $start)s)\n\n"
 
-		if [ $SECONDS -gt $liteDeployInterval -a ! -d ~/.litedeploy ] ; then
-			echo -e "\n\n\nDeploying to lite env\n\n"
-			mkdir ~/.litedeploy
-			cp -rf "${dir}/default" "${dir}/cyph.im" ~/.litedeploy/
-			litedeploy &
-			SECONDS=0
-		fi
+		#if [ $SECONDS -gt $liteDeployInterval -a ! -d ~/.litedeploy ] ; then
+		#	echo -e "\n\n\nDeploying to lite env\n\n"
+		#	mkdir ~/.litedeploy
+		#	cp -rf "${dir}/default" "${dir}/cyph.im" ~/.litedeploy/
+		#	litedeploy &
+		#	SECONDS=0
+		#fi
 
 		cd "${dir}/shared"
 		inotifywait -r --exclude '(node_modules|sed.*|.*\.(html|css|js|map|tmp))$' css js
