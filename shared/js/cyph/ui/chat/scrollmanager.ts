@@ -76,7 +76,7 @@ export class ScrollManager implements IScrollManager {
 				const $this: JQuery	= $(elem);
 
 				if ($this.parent().prop('tagName').toLowerCase() !== 'a') {
-					const $a: JQuery	= $('<a></a>');
+					const $a: JQuery	= $(document.createElement('a'));
 
 					$a.attr('href', $this.attr('src'));
 

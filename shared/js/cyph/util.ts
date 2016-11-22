@@ -509,7 +509,7 @@ export class Util {
 		);
 
 		return htmlDecode ?
-			$('<div />').html(translation).text() :
+			$(document.createElement('div')).html(translation).text() :
 			translation
 		;
 	}

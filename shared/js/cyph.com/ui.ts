@@ -307,7 +307,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 			/* Disable background video on mobile */
 
 			if (Cyph.Env.isMobile) {
-				const $mobilePoster: JQuery	= $('<img />');
+				const $mobilePoster: JQuery	= $(document.createElement('img'));
 				$mobilePoster.attr('src', Elements.backgroundVideo().attr('mobile-poster'));
 
 				Elements.backgroundVideo().replaceWith($mobilePoster).remove();
