@@ -323,7 +323,9 @@ export class Util {
 					resolve :
 					reject
 			)(
-				xhr.response
+				typeof xhr.response === 'string' ?
+					xhr.response.trim() :
+					xhr.response
 			);
 
 			if (async) {

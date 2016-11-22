@@ -155,7 +155,7 @@ export class ScrollManager implements IScrollManager {
 		private messageCountInTitle?: boolean
 	) { (async () => {
 		if (this.isMobile) {
-			this.elements.messageBox().focus(this.scrollDown);
+			this.elements.messageBox().focus(() => this.scrollDown());
 		}
 
 		while (this.elements.messageListInner().length < 1) {

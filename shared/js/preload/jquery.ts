@@ -14,7 +14,7 @@ $.fn.bounds	= function () : ({
 	top: number;
 }) {
 	 /* tslint:disable-next-line:no-invalid-this */
-	const $this: JQuery	= this;
+	const $this: JQuery	= $(this);
 
 	const bounds	= $this.offset();
 
@@ -32,7 +32,7 @@ $.fn.bounds	= function () : ({
 /* tslint:disable-next-line:only-arrow-functions */
 $.fn.scrollPosition	= function () : number {
 	/* tslint:disable-next-line:no-invalid-this */
-	const $this: JQuery	= this;
+	const $this: JQuery	= $(this);
 
 	return $this[0].scrollHeight -
 	(

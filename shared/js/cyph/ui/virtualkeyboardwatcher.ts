@@ -18,7 +18,10 @@ export class VirtualKeyboardWatcher {
 	/** @ignore */
 	private static trigger (isOpen: boolean) : void {
 		VirtualKeyboardWatcher.isOpen	= isOpen;
-		EventManager.trigger(VirtualKeyboardWatcher.keyboardChangeEvent, VirtualKeyboardWatcher.isOpen);
+		EventManager.trigger(
+			VirtualKeyboardWatcher.keyboardChangeEvent,
+			VirtualKeyboardWatcher.isOpen
+		);
 	}
 
 	/**
@@ -36,7 +39,9 @@ export class VirtualKeyboardWatcher {
 
 		/* Android */
 		Elements.window().on('resize', () =>
-			VirtualKeyboardWatcher.trigger(window.innerHeight < VirtualKeyboardWatcher.initialScreenSize)
+			VirtualKeyboardWatcher.trigger(
+				window.innerHeight < VirtualKeyboardWatcher.initialScreenSize
+			)
 		);
 
 		/* iOS */

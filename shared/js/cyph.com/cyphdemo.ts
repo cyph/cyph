@@ -10,15 +10,16 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 	private static demoClass: string	= 'demo';
 
 	/** @ignore */
-	private static facebookPicUrl: string			= Cyph.Env.isMobile ?
-		'/img/fbimageplaceholder.jpg' :
-		`data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=`
-	;
+	private static facebookPicUrl: Promise<string>		= Cyph.Util.request({
+		url: Cyph.Env.isMobile ?
+			'/img/fbimagealt.txt' :
+			'/img/null.txt'
+	});
 
 	/** @ignore */
-	private static facebookPicMessage: string		=
-		'![](' + CyphDemo.facebookPicUrl + ')'
-	;
+	private static facebookPicMessage: Promise<string>	= (async () =>
+		'![](' + (await CyphDemo.facebookPicUrl) + ')'
+	)();
 
 	/** @ignore */
 	private static facebookPicFrame: string			= Cyph.Env.isMobile ? '' : `
@@ -40,7 +41,7 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 	private static mobileUIScale: number	= 0.625;
 
 	/** @ignore */
-	private static messages: {text: string; isMobile: boolean}[]	= [
+	private static messages: Promise<{text: string; isMobile: boolean}[]>	= (async () => [
 		{
 			isMobile: true,
 			text: `why did we have to switch from Facebook?`
@@ -79,7 +80,7 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 		},
 		{
 			isMobile: false,
-			text: CyphDemo.facebookPicMessage
+			text: await CyphDemo.facebookPicMessage
 		},
 		{
 			isMobile: true,
@@ -93,7 +94,7 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 			isMobile: true,
 			text: `ttyl :v:`
 		}
-	];
+	])();
 
 	/** @ignore */
 	private static getOffset (elem: JQuery, ancestor: JQuery) : {left: number; top: number} {
@@ -302,7 +303,11 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 
 					await Cyph.Util.sleep(7500);
 
-					for (let message of CyphDemo.messages) {
+					const messages				= await CyphDemo.messages;
+					const facebookPicUrl		= await CyphDemo.facebookPicUrl;
+					const facebookPicMessage	= await CyphDemo.facebookPicMessage;
+
+					for (let message of messages) {
 						const chat: Cyph.UI.Chat.IChat	=
 							message.isMobile ?
 								this.mobile :
@@ -315,7 +320,7 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 
 						await Cyph.Util.sleep(Cyph.Util.random(maxDelay, minDelay));
 
-						if (text !== CyphDemo.facebookPicMessage) {
+						if (text !== facebookPicMessage) {
 							for (let c of text.split('')) {
 								chat.currentMessage += c;
 								await Cyph.Util.sleep(Cyph.Util.random(50, 10));
@@ -327,14 +332,22 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 						chat.currentMessage	= '';
 						chat.send(text);
 
-						if (!Cyph.Env.isMobile && text === CyphDemo.facebookPicMessage) {
-							await Cyph.Util.sleep();
+						if (!Cyph.Env.isMobile && text === facebookPicMessage) {
+							let facebookPic: JQuery;
 
-							Elements.demoRoot().find(
-								'.message-text > p > a > img:visible[src="' +
-									CyphDemo.facebookPicUrl +
-								'"]'
-							).each(async (i: number, elem: HTMLElement) => {
+							while (true) {
+								facebookPic	= Elements.demoRoot().find(
+									`.message-text > p > a > img:visible[src='${facebookPicUrl}']`
+								);
+
+								if (facebookPic && facebookPic.length > 0) {
+									break;
+								}
+
+								await Cyph.Util.sleep();
+							}
+
+							facebookPic.each(async (i: number, elem: HTMLElement) => {
 								const $this: JQuery			= $(elem);
 
 								const isDesktop: boolean	=
