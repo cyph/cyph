@@ -744,22 +744,25 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 	}
 
 	.facebook-pic {
-		width: 106px !important;
-		height: 106px !important;
-		max-width: 106px !important;
+		width: 105px !important;
+		height: 105px !important;
+		max-width: 105px !important;
 		pointer-events: none;
 	}
 
 	.facebook-pic.real {
 		position: absolute;
 		top: -200px;
+		width: 106px !important;
+		height: 106px !important;
+		max-width: 106px !important;
 
 		> iframe {
-			width: 200px;
-			margin-top: -135px;
-			margin-left: 205px;
+			width: 1000px;
+			margin-top: -55px;
+			margin-left: 608px;
 
-			@include transform(scale(3.4));
+			@include transform(scale(2.25));
 		}
 	}
 

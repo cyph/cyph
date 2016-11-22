@@ -10,7 +10,8 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 	private static demoClass: string	= 'demo';
 
 	/** @ignore */
-	private static facebookPicUrl: string			=
+	private static facebookPicUrl: string			= Cyph.Env.isMobile ?
+		'/img/fbimageplaceholder.jpg' :
 		`data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=`
 	;
 
@@ -25,7 +26,7 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 			<iframe
 				src='https://www.facebook.com/plugins/comments.php?href=https://www.${
 					Cyph.Util.generateGuid(Cyph.Util.random(20, 5))
-				}.com'
+				}.com&width=1000'
 			></iframe>
 		</div>
 	`;
@@ -72,35 +73,25 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 				`all right fine, it just creeps me out that *someone* ` +
 				`might have been reading our conversation`
 		},
-		/*
-			{
-				isMobile: false,
-				text: `anyway, you think this pic is appropriate for LinkedIn?`
-			},
-			{
-				isMobile: false,
-				text: CyphDemo.facebookPicMessage
-			},
-			{
-				isMobile: true,
-				text: `lol yeah, looks great ;)`
-			},
-			{
-				isMobile: false,
-				text: `cool, gotta run`
-			},
-			{
-				isMobile: true,
-				text: `ttyl :v:`
-			}
-		*/
 		{
 			isMobile: false,
-			text: `anyway, gotta run`
+			text: `anyway, you think this pic is appropriate for LinkedIn?`
+		},
+		{
+			isMobile: false,
+			text: CyphDemo.facebookPicMessage
 		},
 		{
 			isMobile: true,
-			text: `cool, ttyl :wave:`
+			text: `lol yeah, looks great ;)`
+		},
+		{
+			isMobile: false,
+			text: `cool, gotta run`
+		},
+		{
+			isMobile: true,
+			text: `ttyl :v:`
 		}
 	];
 
