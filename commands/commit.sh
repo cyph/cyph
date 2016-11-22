@@ -25,7 +25,7 @@ print \$0
 mv %.new %
 '
 
-tslint --fix --noUnusedLocals --noUnusedParameters --project shared/js/tsconfig.json --type-check
+./commands/tslint.sh --fix
 
 chmod -R 700 .
 git commit -S -a -m "cleanup: ${*}"

@@ -20,6 +20,7 @@ if (!('crypto' in self)) {
 			const max: number	= Math.pow(2, bytes * 8) - 1;
 
 			for (let i = 0 ; i < array.length ; ++i) {
+				/* tslint:disable-next-line:ban */
 				array[i]	= Math.floor(Math.random() * max);
 			}
 

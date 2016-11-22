@@ -106,9 +106,7 @@ compile () {
 
 	cd js
 
-	output="${output}$(
-		tslint --noUnusedLocals --noUnusedParameters --project tsconfig.json --type-check 2>&1
-	)"
+	output="${output}$(../../commands/tslint.sh 2>&1)"
 
 	if [ ! "${test}" ] ; then
 		for f in $(grep -rl templateUrl | grep '\.ts$') ; do

@@ -54,7 +54,7 @@
 
 		/* Functionality */
 
-		"ban": false,
+		"ban": [true, ["require"], ["Math", "random"]],
 		"curly": true,
 		"forin": true,
 		"label-position": true,
@@ -136,5 +136,77 @@
 			"check-type",
 			"check-typecast"
 		]
+
+
+		/* Codelyzer */
+
+		/*
+			Pending codelyzer tslint v4 support:
+
+			"directive-selector": [true, "attribute", "cyph", "camelCase"],
+			"component-selector": [true, "element", "cyph", "kebab-case"],
+			"use-input-property-decorator": true,
+			"use-output-property-decorator": true,
+			"use-host-property-decorator": true,
+			"no-attribute-parameter-decorator": true,
+			"no-input-rename": true,
+			"no-output-rename": true,
+			"no-forward-ref": true,
+			"use-life-cycle-interface": true,
+			"use-pipe-transform-interface": true,
+			"pipe-naming": [true, "camelCase", "cyph"],
+			"component-class-suffix": true,
+			"directive-class-suffix": true,
+			"import-destructuring-spacing": true,
+			"templates-use-public": true,
+			"no-access-missing-member": true,
+			"invoke-injectable": true,
+		*/
+
+
+		/* Microsoft Contrib */
+
+		/*
+			Pending tslint-microsoft-contrib tslint v4 support:
+
+			"export-name": true,
+			"insecure-random": true,
+			"max-func-body-length": [true, 100],
+			"no-banned-terms": true,
+			"no-constant-condition": true,
+			"no-delete-expression": true,
+			"no-disable-auto-sanitization": true,
+			"no-document-domain": true,
+			"no-document-write": true,
+			"no-duplicate-case": true,
+			"no-empty-interfaces": true,
+			"no-empty-line-after-opening-brace": true,
+			"no-exec-script": true,
+			"no-for-in": true,
+			"no-function-constructor-with-string-args": true,
+			"no-increment-decrement": true,
+			"no-inner-html": true,
+			"no-invalid-regexp": true,
+			"no-jquery-raw-elements": true,
+			"no-octal-literal": true,
+			"no-reserved-keywords": true,
+			"no-sparse-arrays": true,
+			"no-string-based-set-immediate": true,
+			"no-string-based-set-interval": true,
+			"no-string-based-set-timeout": true,
+			"no-unnecessary-bind": true,
+			"no-unnecessary-field-initialization": true,
+			"no-unnecessary-local-variable": true,
+			"no-unnecessary-override": true,
+			"no-unnecessary-semicolons": true,
+			"no-var-self": true,
+			"no-with-statement": true,
+			"possible-timing-attack": true,
+			"prefer-const": true,
+			"prefer-type-cast": true,
+			"promise-must-complete": true,
+			"use-named-parameter": true,
+			"valid-typeof": true
+		*/
 	}
 }
