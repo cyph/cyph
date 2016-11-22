@@ -1,6 +1,5 @@
 /**
  * Message to be sent over a session, indicating some RPC event.
- * @interface
  */
 export interface IMessage {
 	/** Unique id for this message. */

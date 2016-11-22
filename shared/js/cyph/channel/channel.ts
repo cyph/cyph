@@ -1,30 +1,45 @@
-import {IChannel} from './ichannel';
 import {Config} from '../config';
 import {Firebase} from '../firebase';
 import {Util} from '../util';
+import {IChannel} from './ichannel';
 
 
 /**
  * Standard IChannel implementation built on Firebase.
  */
 export class Channel implements IChannel {
+	/** @ignore */
 	private isClosed: boolean		= false;
+
+	/** @ignore */
 	private isConnected: boolean	= false;
+
+	/** @ignore */
 	private isAlice: boolean		= false;
 
+	/** @ignore */
 	private channelRef: firebase.DatabaseReference;
+
+	/** @ignore */
 	private messagesRef: firebase.DatabaseReference;
+
+	/** @ignore */
 	private usersRef: firebase.DatabaseReference;
+
+	/** @ignore */
 	private userId: string;
 
+	/** @inheritDoc */
 	public close () : void {
 		Util.retryUntilSuccessful(() => this.channelRef.remove());
 	}
 
+	/** @inheritDoc */
 	public isAlive () : boolean {
 		return !this.isClosed;
 	}
 
+	/** @inheritDoc */
 	public send (message: string) : void {
 		Util.retryUntilSuccessful(() => this.messagesRef.push({
 			cyphertext: message,
@@ -37,7 +52,7 @@ export class Channel implements IChannel {
 	 * @param channelName Name of this channel.
 	 * @param handlers Event handlers for this channel.
 	 */
-	public constructor (
+	constructor (
 		channelName: string,
 		handlers: ({
 			onclose?: () => void;
@@ -123,5 +138,5 @@ export class Channel implements IChannel {
 				})
 			);
 		}
-	})() }
+	})(); }
 }

@@ -1,6 +1,5 @@
 /**
  * Chat-specific UI elements.
- * @interface
  */
 export interface IElements {
 	buttons: () => JQuery;

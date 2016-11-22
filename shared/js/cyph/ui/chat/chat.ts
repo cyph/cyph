@@ -1,3 +1,21 @@
+import {Analytics} from '../../analytics';
+import {Env} from '../../env';
+import {ITimer} from '../../itimer';
+import {Events, rpcEvents, Users} from '../../session/enums';
+import {ISession} from '../../session/isession';
+import {Message} from '../../session/message';
+import {ThreadedSession} from '../../session/threadedsession';
+import {Strings} from '../../strings';
+import {Timer} from '../../timer';
+import {UrlState} from '../../urlstate';
+import {Util} from '../../util';
+import {BaseButtonManager} from '../basebuttonmanager';
+import {DialogManager} from '../dialogmanager';
+import {Elements} from '../elements';
+import {IDialogManager} from '../idialogmanager';
+import {INotifier} from '../inotifier';
+import {ISidebar} from '../isidebar';
+import {NanoScroller} from '../nanoscroller';
 import {Cyphertext} from './cyphertext';
 import {States} from './enums';
 import {FileManager} from './filemanager';
@@ -9,46 +27,51 @@ import {IP2PManager} from './ip2pmanager';
 import {IScrollManager} from './iscrollmanager';
 import {P2PManager} from './p2pmanager';
 import {ScrollManager} from './scrollmanager';
-import {BaseButtonManager} from '../basebuttonmanager';
-import {DialogManager} from '../dialogmanager';
-import {Elements} from '../elements';
-import {IDialogManager} from '../idialogmanager';
-import {INotifier} from '../inotifier';
-import {ISidebar} from '../isidebar';
-import {NanoScroller} from '../nanoscroller';
-import {Templates} from '../templates';
-import {Analytics} from '../../analytics';
-import {Env} from '../../env';
-import {ITimer} from '../../itimer';
-import {Strings} from '../../strings';
-import {UrlState} from '../../urlstate';
-import {Util} from '../../util';
-import {Timer} from '../../timer';
-import {Events, RPCEvents, Users} from '../../session/enums';
-import {ISession} from '../../session/isession';
-import {Message} from '../../session/message';
-import {ThreadedSession} from '../../session/threadedsession';
 
 
+/** @inheritDoc */
 export class Chat extends BaseButtonManager implements IChat {
+	/** @ignore */
 	private static approximateKeyExchangeTime: number		= 15000;
+
+	/** @ignore */
 	private static queuedMessageSelfDestructTimeout: number	= 15000;
 
 
+	/** @ignore */
 	private isMessageChanged: boolean	= false;
 
+	/** @ignore */
 	private elements: IElements;
+
+	/** @ignore */
 	private previousMessage: string;
+
+	/** @ignore */
 	private queuedMessage: string;
 
+	/** @inheritDoc */
 	public isConnected: boolean					= false;
+
+	/** @inheritDoc */
 	public isDisconnected: boolean				= false;
+
+	/** @inheritDoc */
 	public isFriendTyping: boolean				= false;
+
+	/** @inheritDoc */
 	public queuedMessageSelfDestruct: boolean	= false;
+
+	/** @inheritDoc */
 	public currentMessage: string				= '';
+
+	/** @inheritDoc */
 	public keyExchangeProgress: number			= 0;
+
+	/** @inheritDoc */
 	public state: States						= States.none;
 
+	/** @inheritDoc */
 	public messages: {
 		author: string;
 		selfDestructTimer: ITimer;
@@ -57,22 +80,34 @@ export class Chat extends BaseButtonManager implements IChat {
 		timeString: string;
 	}[]	= [];
 
+	/** @inheritDoc */
 	public cyphertext: ICyphertext;
+
+	/** @inheritDoc */
 	public fileManager: IFileManager;
+
+	/** @inheritDoc */
 	public p2pManager: IP2PManager;
+
+	/** @inheritDoc */
 	public scrollManager: IScrollManager;
+
+	/** @inheritDoc */
 	public session: ISession;
 
+	/** @ignore */
 	private findElement (selector: string) : () => JQuery {
 		return Elements.get(() => this.rootElement.find(selector));
 	}
 
+	/** @inheritDoc */
 	public abortSetup () : void {
 		this.changeState(States.aborted);
 		this.session.trigger(Events.abort);
 		this.session.close();
 	}
 
+	/** @inheritDoc */
 	public async addMessage (
 		text: string,
 		author: string,
@@ -125,6 +160,7 @@ export class Chat extends BaseButtonManager implements IChat {
 		}
 	}
 
+	/** @inheritDoc */
 	public async begin () : Promise<void> {
 		if (this.state === States.aborted) {
 			return;
@@ -159,10 +195,12 @@ export class Chat extends BaseButtonManager implements IChat {
 		}
 	}
 
+	/** @inheritDoc */
 	public changeState (state: States) : void {
 		this.state	= state;
 	}
 
+	/** @inheritDoc */
 	public close () : void {
 		if (this.state === States.aborted) {
 			return;
@@ -175,39 +213,42 @@ export class Chat extends BaseButtonManager implements IChat {
 		}
 		else if (!this.isDisconnected) {
 			this.isDisconnected	= true;
-			this.addMessage(Strings.disconnectedNotification, Users.app);
+			this.addMessage(Strings.disconnectNotification, Users.app);
 			this.session.close();
 		}
 	}
 
+	/** @inheritDoc */
 	public disconnectButton () : void {
 		this.baseButtonClick(async () => {
 			if (await this.dialogManager.confirm({
-				title: Strings.disconnectTitle,
+				cancel: Strings.cancel,
 				content: Strings.disconnectConfirm,
 				ok: Strings.continueDialogAction,
-				cancel: Strings.cancel
+				title: Strings.disconnectTitle
 			})) {
 				this.close();
 			}
 		});
 	}
 
+	/** @inheritDoc */
 	public helpButton () : void {
 		this.baseButtonClick(() => {
 			this.dialogManager.baseDialog({
-				template: Templates.helpModal
+				templateUrl: '../../../../templates/helpmodal.html'
 			});
 
 			Analytics.send({
-				hitType: 'event',
-				eventCategory: 'help',
 				eventAction: 'show',
-				eventValue: 1
+				eventCategory: 'help',
+				eventValue: 1,
+				hitType: 'event'
 			});
 		});
 	}
 
+	/** @inheritDoc */
 	public messageChange () : void {
 		const isMessageChanged: boolean	=
 			this.currentMessage !== '' &&
@@ -220,13 +261,14 @@ export class Chat extends BaseButtonManager implements IChat {
 			this.isMessageChanged	= isMessageChanged;
 			this.session.send(
 				new Message(
-					RPCEvents.typing,
+					rpcEvents.typing,
 					this.isMessageChanged
 				)
 			);
 		}
 	}
 
+	/** @inheritDoc */
 	public send (message?: string, selfDestructTimeout?: number) : void {
 		if (!message) {
 			message	= this.currentMessage;
@@ -242,14 +284,17 @@ export class Chat extends BaseButtonManager implements IChat {
 		}
 	}
 
+	/** @inheritDoc */
 	public setConnected () : void {
 		this.isConnected	= true;
 	}
 
+	/** @inheritDoc */
 	public setFriendTyping (isFriendTyping: boolean) : void {
 		this.isFriendTyping	= isFriendTyping;
 	}
 
+	/** @inheritDoc */
 	public setQueuedMessage (messageText?: string, selfDestruct?: boolean) : void {
 		if (typeof messageText === 'string') {
 			this.queuedMessage	= messageText;
@@ -272,13 +317,23 @@ export class Chat extends BaseButtonManager implements IChat {
 	 * @param session If not specified, one will be created.
 	 * @param rootElement
 	 */
-	public constructor (
+	constructor (
+		/** @ignore */
 		private dialogManager: IDialogManager,
+
 		mobileMenu: () => ISidebar,
+
+		/** @ignore */
 		private notifier: INotifier,
+
 		messageCountInTitle?: boolean,
+
+		/** @ignore */
 		public isMobile: boolean = Env.isMobile,
+
 		session?: ISession,
+
+		/** @ignore */
 		private rootElement: JQuery = Elements.html()
 	) {
 		super(mobileMenu);
@@ -320,10 +375,10 @@ export class Chat extends BaseButtonManager implements IChat {
 				this.rootElement.addClass('modest');
 
 				Analytics.send({
-					hitType: 'event',
-					eventCategory: 'modest-branding',
 					eventAction: 'used',
-					eventValue: 1
+					eventCategory: 'modest-branding',
+					eventValue: 1,
+					hitType: 'event'
 				});
 			}
 
@@ -337,10 +392,10 @@ export class Chat extends BaseButtonManager implements IChat {
 				forceTURN	= true;
 
 				Analytics.send({
-					hitType: 'event',
-					eventCategory: 'force-turn',
 					eventAction: 'used',
-					eventValue: 1
+					eventCategory: 'force-turn',
+					eventValue: 1,
+					hitType: 'event'
 				});
 			}
 
@@ -354,10 +409,10 @@ export class Chat extends BaseButtonManager implements IChat {
 				nativeCrypto	= true;
 
 				Analytics.send({
-					hitType: 'event',
-					eventCategory: 'native-crypto',
 					eventAction: 'used',
-					eventValue: 1
+					eventCategory: 'native-crypto',
+					eventValue: 1,
+					hitType: 'event'
 				});
 			}
 
@@ -402,7 +457,7 @@ export class Chat extends BaseButtonManager implements IChat {
 			let lastClick: number	= 0;
 
 			this.elements.messageBox().click(e => {
-				const bounds	= this.elements.sendButton().filter(':visible')['bounds']();
+				const bounds	= (<any> this.elements.sendButton().filter(':visible')).bounds();
 
 				if (
 					(e.pageY > bounds.top && e.pageY < bounds.bottom) &&
@@ -435,35 +490,30 @@ export class Chat extends BaseButtonManager implements IChat {
 
 		setInterval(() => this.messageChange(), 5000);
 
-		self['tabIndent'].renderAll();
-
+		(<any> self).tabIndent.renderAll();
 
 
 		this.session.on(Events.beginChat, () => this.begin());
 
 		this.session.on(Events.closeChat, () => this.close());
 
-		this.session.on(Events.connect, () => {
+		this.session.on(Events.connect, async () => {
 			this.changeState(States.keyExchange);
 
 			const start: number	= Util.timestamp();
-			const intervalId	= setInterval(() => {
-				const progress: number	=
-					(Util.timestamp() - start) / Chat.approximateKeyExchangeTime
-				;
 
-				if (progress > 1) {
-					clearInterval(intervalId);
-				}
-				else {
-					this.keyExchangeProgress	= progress * 100;
-				}
-			}, 50);
+			while (this.keyExchangeProgress < 100) {
+				await Util.sleep(50);
+
+				this.keyExchangeProgress	=
+					(Util.timestamp() - start) / Chat.approximateKeyExchangeTime * 100
+				;
+			}
 		});
 
 		this.session.on(Events.connectFailure, () => this.abortSetup());
 
-		this.session.on(RPCEvents.text, (o: {
+		this.session.on(rpcEvents.text, (o: {
 			text: string;
 			author: string;
 			timestamp: number;
@@ -478,7 +528,7 @@ export class Chat extends BaseButtonManager implements IChat {
 			)
 		);
 
-		this.session.on(RPCEvents.typing, (isFriendTyping: boolean) =>
+		this.session.on(rpcEvents.typing, (isFriendTyping: boolean) =>
 			this.setFriendTyping(isFriendTyping)
 		);
 	}

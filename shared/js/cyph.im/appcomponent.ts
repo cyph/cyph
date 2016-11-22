@@ -1,6 +1,5 @@
-import {Templates} from '../cyph/ui/templates';
-import {Util} from '../cyph/util';
 import {Component} from '@angular/core';
+import {Util} from '../cyph/util';
 
 
 /**
@@ -8,18 +7,21 @@ import {Component} from '@angular/core';
  */
 @Component({
 	selector: 'cyph-app',
-	template: Templates.app
+	templateUrl: '../../templates/cyph.im.html'
 })
 export class AppComponent {
-	public Cyph: any;
+	/** @ignore */
+	public cyph: any;
+
+	/** @ignore */
 	public ui: any;
 
 	constructor () { (async () => {
-		while (!self['Cyph'] || !self['ui']) {
-			await Util.sleep(100);
+		while (!cyph || !ui) {
+			await Util.sleep();
 		}
 
-		this.Cyph	= self['Cyph'];
-		this.ui		= self['ui'];
+		this.cyph	= cyph;
+		this.ui		= ui;
 	})(); }
 }

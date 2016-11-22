@@ -7,12 +7,22 @@ import {Util} from './util';
  * Global cross-thread event-manager.
  */
 export class EventManager {
-	private static handlers: {[event: string] : Function[]}				= {};
-	private static indices: {[event: string] : Map<Function, number>}	= {};
+	/** @ignore */
+	private static handlers: {[event: string]: Function[]}				= {};
+
+	/** @ignore */
+	private static indices: {[event: string]: Map<Function, number>}	= {};
+
+	/** @ignore */
 	private static threadEventPrefix: string	= 'threadEventPrefix';
+
+	/** @ignore */
 	private static untriggeredEvents: string	= 'untriggeredEvents';
 
-	/** Ignore this (used by EventManager and Thread for cross-thread event stuff). */
+	/**
+	 * @ignore
+	 * (Used internally by EventManager and Thread for cross-thread event stuff.)
+	 */
 	public static mainThreadEvents: string	= 'mainThreadEvents';
 
 	/** List of all active threads. */
@@ -25,20 +35,22 @@ export class EventManager {
 	 */
 	public static callMainThread (method: string, args: any[] = []) : void {
 		if (Env.isMainThread) {
-			args.forEach((arg: any, i: number) => {
-				if (arg && arg.callbackId) {
-					args[i]	= (...args) => EventManager.trigger(
-						EventManager.threadEventPrefix + arg.callbackId,
-						args
+			for (let i = 0 ; i < args.length ; ++i) {
+				const callbackId: string	= (args[i] && args[i].callbackId) || '';
+
+				if (callbackId) {
+					args[i]	= (...threadArgs) => EventManager.trigger(
+						EventManager.threadEventPrefix + callbackId,
+						threadArgs
 					);
 				}
-			});
+			}
 
 			const methodSplit: string[]	= method.split('.');
 			const methodName: string	= methodSplit.slice(-1)[0];
 
 			/* Validate command against namespace whitelist, then execute */
-			if (['Cyph', 'ui'].indexOf(methodSplit[0]) > -1) {
+			if (['cyph', 'ui'].indexOf(methodSplit[0]) > -1) {
 				const methodObject: any	= methodSplit.
 					slice(0, -1).
 					reduce((o: any, k: string) : any => o[k], self)
@@ -53,18 +65,22 @@ export class EventManager {
 			}
 		}
 		else {
-			args.forEach((arg: any, i: number) => {
-				if (typeof arg === 'function') {
-					const callbackId: string	= Util.generateGuid();
+			for (let i = 0 ; i < args.length ; ++i) {
+				const arg	= args[i];
 
-					args[i]	= {callbackId};
-
-					EventManager.on(
-						EventManager.threadEventPrefix + callbackId,
-						args => arg.apply(null, args)
-					);
+				if (typeof arg !== 'function') {
+					continue;
 				}
-			});
+
+				const callbackId: string	= Util.generateGuid();
+
+				args[i]	= {callbackId};
+
+				EventManager.on(
+					EventManager.threadEventPrefix + callbackId,
+					threadArgs => arg.apply(null, threadArgs)
+				);
+			}
 
 			EventManager.trigger(EventManager.mainThreadEvents, {method, args});
 		}
@@ -145,7 +161,7 @@ export class EventManager {
 					handler(data);
 				}
 				catch (err) {
-					setTimeout(() => { throw err }, 0);
+					setTimeout(() => { throw err; }, 0);
 				}
 			}
 
@@ -160,11 +176,13 @@ export class EventManager {
 		}
 	}
 
+	/** @ignore */
+	/* tslint:disable-next-line:member-ordering */
 	private static _	= (() => {
 		if (Env.isMainThread) {
 			EventManager.on(
 				EventManager.mainThreadEvents,
-				(o: { method: string; args: any[]; }) =>
+				(o: {method: string; args: any[]}) =>
 					EventManager.callMainThread(o.method, o.args)
 			);
 		}
@@ -182,7 +200,7 @@ export class EventManager {
 
 			EventManager.on(
 				EventManager.untriggeredEvents,
-				(o: { event: string; data: any; }) => self.postMessage(
+				(o: {event: string; data: any}) => self.postMessage(
 					{event: o.event, data: o.data, isThreadEvent: true},
 					undefined
 				)

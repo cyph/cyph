@@ -3,7 +3,6 @@ import {ITransfer} from './itransfer';
 
 /**
  * Manages file transfers.
- * @interface
  */
 export interface IFiles {
 	/** In-progress file transfers. */

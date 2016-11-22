@@ -1,6 +1,5 @@
 /**
  * Manages user-facing notifications.
- * @interface
  */
 export interface INotifier {
 	/**

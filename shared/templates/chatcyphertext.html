@@ -1,0 +1,29 @@
+<div class='chat-cyphertext nano'>
+	<md-content class='nano-content'>
+		<md-list layout='column'>
+			<md-item
+				class='message-item unread'
+				ng-repeat='message in $ctrl.self.cyphertext.messages'
+				layout='horizontal'
+			>
+				<span class='message'>
+					<strong
+						translate
+						ng-bind='::message.author + ": "'
+					></strong>
+					<span flex>{{::message.text}}</span>
+					<br />
+					<br />
+				</span>
+			</md-item>
+		</md-list>
+	</md-content>
+	<md-button
+		translate
+		aria-label='Close Cyphertext'
+		class='md-fab md-theme-grey close-button'
+		ng-click='$ctrl.self.cyphertext.hide()'
+	>
+		<strong>&times;</strong>
+	</md-button>
+</div>

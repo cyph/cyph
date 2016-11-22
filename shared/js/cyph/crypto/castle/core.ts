@@ -1,11 +1,17 @@
-import {Potassium} from '../potassium';
 import {Util} from '../../util';
+import {Potassium} from '../potassium';
 
 
 /**
  * The core Castle protocol logic.
  */
 export class Core {
+	/**
+	 * Convert newly established shared secret into session keys.
+	 * @param potassium
+	 * @param isAlice
+	 * @param secret
+	 */
 	public static async newKeys (
 		potassium: Potassium,
 		isAlice: boolean,
@@ -14,7 +20,7 @@ export class Core {
 		incoming: Uint8Array;
 		outgoing: Uint8Array;
 	}> {
-		const alt: Uint8Array	= await potassium.Hash.deriveKey(
+		const alt: Uint8Array	= await potassium.hash.deriveKey(
 			Potassium.concatMemory(
 				false,
 				secret,
@@ -30,23 +36,26 @@ export class Core {
 	}
 
 
+	/** @ignore */
 	private lock: {}	= {};
 
+	/** @ignore */
 	private ephemeralKeys: {
-		public: Uint8Array;
 		private: Uint8Array;
+		public: Uint8Array;
 	}	= {
-		public: null,
-		private: null
+		private: null,
+		public: null
 	};
 
+	/** @ignore */
 	private async ratchet (incomingPublicKey?: Uint8Array) : Promise<Uint8Array> {
 		let outgoingPublicKey: Uint8Array;
 
 		/* Part 1: Alice (outgoing) */
 		if (this.isAlice && !this.ephemeralKeys.private && !incomingPublicKey) {
 			const ephemeralKeyPair		=
-				await this.potassium.EphemeralKeyExchange.aliceKeyPair()
+				await this.potassium.ephemeralKeyExchange.aliceKeyPair()
 			;
 
 			this.ephemeralKeys.private	= ephemeralKeyPair.privateKey;
@@ -56,7 +65,7 @@ export class Core {
 		/* Part 2a: Bob (incoming) */
 		else if (!this.isAlice && !this.ephemeralKeys.public && incomingPublicKey) {
 			const secretData			=
-				await this.potassium.EphemeralKeyExchange.bobSecret(
+				await this.potassium.ephemeralKeyExchange.bobSecret(
 					incomingPublicKey
 				)
 			;
@@ -79,7 +88,7 @@ export class Core {
 		/* Part 3: Alice (incoming) */
 		else if (this.isAlice && this.ephemeralKeys.private && incomingPublicKey) {
 			const secret: Uint8Array	=
-				await this.potassium.EphemeralKeyExchange.aliceSecret(
+				await this.potassium.ephemeralKeyExchange.aliceSecret(
 					incomingPublicKey,
 					this.ephemeralKeys.private
 				)
@@ -108,7 +117,7 @@ export class Core {
 	}
 
 	/**
-	 * Receive incoming cyphertext.
+	 * Decrypt incoming cyphertext.
 	 * @param cyphertext Data to be decrypted.
 	 * @returns Plaintext.
 	 */
@@ -130,11 +139,11 @@ export class Core {
 						continue;
 					}
 
-					const incomingKey: Uint8Array	= await this.potassium.Hash.deriveKey(
+					const incomingKey: Uint8Array	= await this.potassium.hash.deriveKey(
 						keys.incoming
 					);
 
-					const decrypted: Uint8Array		= await this.potassium.SecretBox.open(
+					const decrypted: Uint8Array		= await this.potassium.secretBox.open(
 						encrypted,
 						incomingKey,
 						messageId
@@ -148,10 +157,10 @@ export class Core {
 						await this.ratchet(new Uint8Array(
 							decrypted.buffer,
 							startIndex,
-							this.potassium.EphemeralKeyExchange.publicKeyBytes
+							this.potassium.ephemeralKeyExchange.publicKeyBytes
 						));
 
-						startIndex += this.potassium.EphemeralKeyExchange.publicKeyBytes;
+						startIndex += this.potassium.ephemeralKeyExchange.publicKeyBytes;
 					}
 
 					plaintext	= new DataView(decrypted.buffer, startIndex);
@@ -168,7 +177,7 @@ export class Core {
 	}
 
 	/**
-	 * Encrypt outgoing text.
+	 * Encrypt outgoing plaintext.
 	 * @param plaintext Data to be encrypted.
 	 * @param messageId Used to enforce message ordering.
 	 * @returns Cyphertext.
@@ -178,7 +187,7 @@ export class Core {
 		messageId: Uint8Array
 	) : Promise<Uint8Array> {
 		return Util.lock(this.lock, async () => {
-			this.keys[0].outgoing	= await this.potassium.Hash.deriveKey(
+			this.keys[0].outgoing	= await this.potassium.hash.deriveKey(
 				this.keys[0].outgoing,
 				undefined,
 				true
@@ -190,7 +199,7 @@ export class Core {
 				plaintext
 			);
 
-			const cyphertext: Uint8Array	= await this.potassium.SecretBox.seal(
+			const cyphertext: Uint8Array	= await this.potassium.secretBox.seal(
 				fullPlaintext,
 				this.keys[0].outgoing,
 				messageId
@@ -207,9 +216,14 @@ export class Core {
 	 * @param isAlice
 	 * @param keys Initial state of key ratchet.
 	 */
-	public constructor (
+	constructor (
+		/** @ignore */
 		private potassium: Potassium,
+
+		/** @ignore */
 		private isAlice: boolean,
-		private keys: {incoming: Uint8Array; outgoing: Uint8Array;}[]
+
+		/** @ignore */
+		private keys: {incoming: Uint8Array; outgoing: Uint8Array}[]
 	) {}
 }

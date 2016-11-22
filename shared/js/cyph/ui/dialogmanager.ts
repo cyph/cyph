@@ -1,8 +1,10 @@
-import {IDialogManager} from './idialogmanager';
 import {Util} from '../util';
+import {IDialogManager} from './idialogmanager';
 
 
+/** @inheritDoc */
 export class DialogManager implements IDialogManager {
+	/** @inheritDoc */
 	public async alert (
 		o: {
 			title: string;
@@ -18,9 +20,11 @@ export class DialogManager implements IDialogManager {
 		);
 	}
 
+	/** @inheritDoc */
 	public async baseDialog (
 		o: {
-			template: string;
+			template?: string;
+			templateUrl?: string;
 			locals?: any;
 			oncomplete?: Function;
 			onclose?: Function;
@@ -34,9 +38,6 @@ export class DialogManager implements IDialogManager {
 			locals: any;
 		}>> new Promise(resolve => this.$mdDialog.show({
 			clickOutsideToClose: true,
-			escapeToClose: true,
-			template: o.template,
-			onComplete: o.oncomplete,
 			controller: <any> ['$scope', '$mdDialog', ($scope, $mdDialog) => {
 				$scope.locals	= o.locals;
 				$scope.close	= (ok: any) => {
@@ -48,10 +49,15 @@ export class DialogManager implements IDialogManager {
 						o.onclose(ok);
 					}
 				};
-			}]
+			}],
+			escapeToClose: true,
+			onComplete: o.oncomplete,
+			template: o.template,
+			templateUrl: o.templateUrl
 		}));
 	}
 
+	/** @inheritDoc */
 	public async confirm (
 		o: {
 			title: string;
@@ -84,6 +90,7 @@ export class DialogManager implements IDialogManager {
 		}
 	}
 
+	/** @inheritDoc */
 	public async toast (
 		o: {
 			content: string;
@@ -92,20 +99,19 @@ export class DialogManager implements IDialogManager {
 		}
 	) : Promise<void> {
 		this.$mdToast.show({
-			template: `<md-toast><div class='md-toast-content'>${o.content}</div></md-toast>`,
 			hideDelay: o.delay,
-			position: o.position || 'top right'
+			position: o.position || 'top right',
+			template: `<md-toast><div class='md-toast-content'>${o.content}</div></md-toast>`
 		});
 
 		await Util.sleep(o.delay + 500);
 	}
 
-	/**
-	 * @param $mdDialog
-	 * @param $mdToast
-	 */
-	public constructor (
+	constructor (
+		/** @ignore */
 		private $mdDialog: angular.material.IDialogService,
+
+		/** @ignore */
 		private $mdToast: angular.material.IToastService
 	) {}
 }

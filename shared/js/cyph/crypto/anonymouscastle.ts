@@ -1,21 +1,27 @@
-import {ICastle} from './icastle';
-import {Potassium} from './potassium';
+import {State} from '../session/enums';
+import {ISession} from '../session/isession';
+import {Util} from '../util';
 import {AnonymousLocalUser} from './castle/anonymouslocaluser';
 import {AnonymousRemoteUser} from './castle/anonymousremoteuser';
 import {PairwiseSession} from './castle/pairwisesession';
 import {Transport} from './castle/transport';
-import {Util} from '../util';
-import {State} from '../session/enums';
-import {ISession} from '../session/isession';
+import {ICastle} from './icastle';
+import {Potassium} from './potassium';
 
 
+/**
+ * Castle instance between two anonymous users.
+ */
 export class AnonymousCastle implements ICastle {
+	/** @ignore */
 	private pairwiseSession: PairwiseSession;
 
+	/** @inheritDoc */
 	public receive (cyphertext: string) : void {
 		return this.pairwiseSession.receive(cyphertext);
 	}
 
+	/** @inheritDoc */
 	public send (
 		plaintext: string,
 		timestamp: number = Util.timestamp()
@@ -23,7 +29,7 @@ export class AnonymousCastle implements ICastle {
 		return this.pairwiseSession.send(plaintext, timestamp);
 	}
 
-	public constructor (session: ISession, isNative: boolean) {
+	constructor (session: ISession, isNative: boolean) {
 		const potassium		= new Potassium(isNative);
 		const transport		= new Transport(session);
 

@@ -4,26 +4,19 @@ cd $(cd "$(dirname "$0")"; pwd)/..
 dir="$(pwd)"
 
 
-watch=''
-test=''
-simple=''
 cloneworkingdir=''
+test=''
+watch=''
 
 if [ "${1}" == '--watch' ] ; then
 	watch=true
 	shift
-fi
-if [ "${1}" == '--test' ] ; then
+elif [ "${1}" != '--prod' ] ; then
 	test=true
-	shift
-fi
-if [ "${1}" == '--simple' ] ; then
-	simple=true
 	shift
 fi
 if [ ! -d ~/.build ] ; then
 	cloneworkingdir=true
-	shift
 fi
 
 if [ "${cloneworkingdir}" ] ; then
@@ -113,7 +106,47 @@ compile () {
 
 	cd js
 
-	if [ ! "${simple}" -o ! "${test}" ] ; then
+	output="${output}$(../../commands/tslint.sh 2>&1)"
+
+	if [ ! "${test}" ] ; then
+		for f in $(grep -rl templateUrl | grep '\.ts$') ; do
+			node -e "fs.writeFileSync(
+				'${f}',
+				fs.readFileSync('${f}').toString().replace(
+					/templateUrl: '(.*?)'/g,
+					(_, path) => {
+						const templatePath		= '${f}'.replace(
+							/[^\\/]+\\.ts\$/,
+							path
+						);
+
+						const stylesheetPath	= templatePath.
+							replace(/\.[A-Za-z]+$/, '.css').
+							replace('/templates/', '/css/components/')
+						;
+
+						return 'template: \`' +
+							(
+								(
+									fs.existsSync(stylesheetPath) ?
+										(
+											'<style>' +
+												child_process.spawnSync(
+													'cleancss',
+													[stylesheetPath]
+												).stdout.toString() +
+											'</style>'
+										) :
+										''
+								) +
+								fs.readFileSync(templatePath).toString()
+							).replace(/\\$\\{/g, '\\\\\${') +
+						'\`';
+					}
+				)
+			)"
+		done
+
 		for f in $tsfiles ; do
 			node -e "
 				const resolveReferences	= f => {
@@ -148,7 +181,7 @@ compile () {
 		tsbuild $f
 	done
 
-	if [ ! "${simple}" -o ! "${test}" ] ; then
+	if [ ! "${test}" ] ; then
 		for f in $tsfiles ; do
 			webpack \
 				--output-library-target var \
@@ -186,9 +219,6 @@ compile () {
 }
 
 litedeploy () {
-	rm -rf ~/.litedeploy 2> /dev/null
-	mkdir ~/.litedeploy
-	cp -rf ~/.build/default ~/.build/cyph.im ~/.litedeploy
 	cd ~/.litedeploy
 
 	version="lite-${username}-${branch}"
@@ -201,34 +231,33 @@ litedeploy () {
 	mv yaml.new cyph.im/cyph-im.yaml
 
 	gcloud app deploy --quiet --no-promote --project cyphme --version $version */*.yaml
+
+	cd
+	rm -rf ~/.litedeploy
+
+	echo -e "\n\n\nFinished deploying\n\n"
 }
 
 if [ "${watch}" ] ; then
 	eval "$(${dir}/commands/getgitdata.sh)"
 
-	while true ; do
-		sleep 2m
-
-		if [ -f ~/.litedeploy.tmp ] ; then
-			echo -e "\n\n\nDeploying to lite env\n\n"
-			litedeploy
-			rm ~/.litedeploy.tmp 2> /dev/null
-			echo -e "\n\n\nFinished deploying\n\n"
-		fi
-
-		sleep 13m
-	done &
+	liteDeployInterval=1800 # 30 minutes
+	SECONDS=$liteDeployInterval
 
 	while true ; do
-		rm ~/.litedeploy.tmp 2> /dev/null
-
 		start="$(date +%s)"
 		echo -e '\n\n\nBuilding JS/CSS\n\n'
 		output=''
 		compile
 		echo -e "${output}\n\n\nFinished building JS/CSS ($(expr $(date +%s) - $start)s)\n\n"
 
-		touch ~/.litedeploy.tmp
+		if [ $SECONDS -gt $liteDeployInterval -a ! -d ~/.litedeploy ] ; then
+			echo -e "\n\n\nDeploying to lite env\n\n"
+			mkdir ~/.litedeploy
+			cp -rf "${dir}/default" "${dir}/cyph.im" ~/.litedeploy/
+			litedeploy &
+			SECONDS=0
+		fi
 
 		cd "${dir}/shared"
 		inotifywait -r --exclude '(node_modules|sed.*|.*\.(html|css|js|map|tmp))$' css js

@@ -1,6 +1,3 @@
-import {Templates} from '../templates';
-import {Util} from '../../util';
-import {UpgradeComponent} from '@angular/upgrade/static';
 import {
 	Directive,
 	DoCheck,
@@ -15,6 +12,8 @@ import {
 	Output,
 	SimpleChanges
 } from '@angular/core';
+import {UpgradeComponent} from '@angular/upgrade/static';
+import {Util} from '../../util';
 
 
 /**
@@ -23,7 +22,8 @@ import {
 @Directive({
 	selector: 'cyph-file-input'
 })
-export class FileInput extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
+export class FileInput
+	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
 	/** Component title. */
 	public static title: string	= 'cyphFileInput';
 
@@ -33,10 +33,13 @@ export class FileInput extends UpgradeComponent implements DoCheck, OnChanges, O
 			accept: '@',
 			fileChange: '&'
 		},
-		template: Templates.fileInput,
+		/* tslint:disable-next-line:max-classes-per-file */
 		controller: class {
+			/** @ignore */
 			public accept: string;
-			public fileChange: ({file: File}) => void;
+
+			/** @ignore */
+			public fileChange: (o: {file: File}) => void;
 
 			constructor ($element: JQuery) {
 				const $input	= $element.children();
@@ -67,17 +70,36 @@ export class FileInput extends UpgradeComponent implements DoCheck, OnChanges, O
 					}))
 				;
 			}
-		}
+		},
+		templateUrl: '../../../../templates/fileinput.html'
 	};
 
 
-	@Input() accept: string;
-	@Output() fileChange: EventEmitter<File>;
+	/** @ignore */
+	@Input() public accept: string;
 
-	ngDoCheck () { super.ngDoCheck(); }
-	ngOnChanges (changes: SimpleChanges) { super.ngOnChanges(changes); }
-	ngOnDestroy () { super.ngOnDestroy(); }
-	ngOnInit () { super.ngOnInit(); }
+	/** @ignore */
+	@Output() public fileChange: EventEmitter<File>;
+
+	/** @ignore */
+	public ngDoCheck () : void {
+		super.ngDoCheck();
+	}
+
+	/** @ignore */
+	public ngOnChanges (changes: SimpleChanges) : void {
+		super.ngOnChanges(changes);
+	}
+
+	/** @ignore */
+	public ngOnDestroy () : void {
+		super.ngOnDestroy();
+	}
+
+	/** @ignore */
+	public ngOnInit () : void {
+		super.ngOnInit();
+	}
 
 	constructor (
 		@Inject(ElementRef) elementRef: ElementRef,

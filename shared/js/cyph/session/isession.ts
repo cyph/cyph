@@ -4,16 +4,15 @@ import {IMessage} from './imessage';
 /**
  * Encapsulates an end-to-end encrypted communication session.
  * This is the entire non-UI representation of a cyph.
- * @interface
  */
 export interface ISession {
 	/** State of the cyph (referenced by UI). */
 	state: {
 		cyphId: string;
-		sharedSecret: string;
 		isAlice: boolean;
 		isAlive: boolean;
 		isStartingNewCyph: boolean;
+		sharedSecret: string;
 		wasInitiatedByAPI: boolean;
 	};
 

@@ -9,14 +9,14 @@
 /// <reference path="../preload/jquery.ts" />
 /// <reference path="../preload/translations.ts" />
 
+import {platformBrowser} from '@angular/platform-browser';
+import {downgradeComponent, UpgradeModule} from '@angular/upgrade/static';
+import * as Cyph from '../cyph';
+import {loaded} from '../preload';
 import {AppComponent} from './appcomponent';
 import {AppModule} from './appmodule';
-import {BetaStates, States, UrlSections} from './enums';
+import {BetaStates, States, urlSections} from './enums';
 import {UI} from './ui';
-import {Loaded} from '../preload';
-import {platformBrowser} from '@angular/platform-browser';
-import {UpgradeModule, downgradeComponent} from '@angular/upgrade/static';
-import * as Cyph from '../cyph';
 
 
 if (Cyph.Env.isEdge) {
@@ -36,15 +36,15 @@ angular.
 		'$mdToast',
 
 		($mdDialog, $mdToast) => {
-			self['Cyph']	= Cyph;
-			self['Cyph'].im	= {
+			cyph	= Cyph;
+			cyph.im	= {
 				BetaStates,
 				States,
 				UI,
-				UrlSections
+				urlSections
 			};
 
-			self['ui']	= new UI(
+			ui	= new UI(
 				new Cyph.UI.DialogManager($mdDialog, $mdToast),
 				new Cyph.UI.Notifier()
 			);
@@ -113,4 +113,4 @@ angular.
 ))();
 
 
-export {Loaded};
+export {loaded};

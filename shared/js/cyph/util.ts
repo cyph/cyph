@@ -7,9 +7,10 @@ import {EventManager} from './eventmanager';
  * Miscellaneous helper functions used throughout the codes.
  */
 export class Util {
+	/** @ignore */
 	private static timestampData	= {
-		offset: 0,
 		last: 0,
+		offset: 0,
 		subtime: 0
 	};
 
@@ -23,10 +24,8 @@ export class Util {
 		to?: string;
 		subject?: string;
 		message: string;
-	}) {
+	}) : void {
 		Util.request({
-			method: 'POST',
-			url: 'https://mandrillapp.com/api/1.0/messages/send.json',
 			data: {
 				key: 'HNz4JExN1MtpKz8uP2RD1Q',
 				message: {
@@ -34,20 +33,22 @@ export class Util {
 						replace('@cyph.com', '@mandrillapp.com')
 					,
 					from_name: o.fromName || 'Mandrill',
-					to: [{
-						email: (o.to || 'hello').replace('@cyph.com', '') + '@cyph.com',
-						type: 'to'
-					}],
 					subject: o.subject || 'New Cyph Email',
 					text: o.message + (
 						'\n\n\n---' +
 						'\n\n' + Env.userAgent +
 						'\n\n' + Env.language +
 						'\n\n' + locationData.href
-					).replace(/\/#.*/g, '')
+					).replace(/\/#.*/g, ''),
+					to: [{
+						email: (o.to || 'hello').replace('@cyph.com', '') + '@cyph.com',
+						type: 'to'
+					}]
 				}
 			},
-			discardErrors: true
+			discardErrors: true,
+			method: 'POST',
+			url: 'https://mandrillapp.com/api/1.0/messages/send.json'
 		});
 	}
 
@@ -68,7 +69,11 @@ export class Util {
 			return guid;
 		}
 
-		return Util.timestamp() + '-' + crypto.getRandomValues(new Uint32Array(1))[0];
+		return `${
+			Util.timestamp().toString()
+		}-${
+			crypto.getRandomValues(new Uint32Array(1))[0].toString()
+		}`;
 	}
 
 	/**
@@ -76,7 +81,7 @@ export class Util {
 	 */
 	public static getTimeString (timestamp?: number) : string {
 		const date: Date		= new Date(timestamp);
-		const minute: string	= ('0' + date.getMinutes()).slice(-2);
+		const minute: string	= ('0' + date.getMinutes().toString()).slice(-2);
 		let hour: number		= date.getHours();
 		let ampm: string		= 'am';
 
@@ -88,7 +93,7 @@ export class Util {
 			hour	= 12;
 		}
 
-		return hour + ':' + minute + ampm;
+		return `${hour.toString()}:${minute}${ampm}`;
 	}
 
 	/**
@@ -116,13 +121,16 @@ export class Util {
 		const value: T	=
 			keys.length < 1 ?
 				null :
-				keys.reduce((value: T, key: string) : T =>
-					value !== null ?
-						value :
-						key in o ?
-							o[key] :
-							null
-				, null)
+				keys.reduce(
+					(v: T, k: string) : T =>
+						v !== null ?
+							v :
+							k in o ?
+								o[k] :
+								null
+					,
+					null
+				)
 		;
 
 		return value === null ? defaultValue : value;
@@ -167,7 +175,7 @@ export class Util {
 	 * Opens the specified URL.
 	 * @param url
 	 */
-	public static openUrl (url: string) : void {
+	public static async openUrl (url: string) : Promise<void> {
 		if (Env.isMainThread) {
 			const a: HTMLAnchorElement	= document.createElement('a');
 
@@ -178,17 +186,17 @@ export class Util {
 			document.body.appendChild(a);
 			a.click();
 
-			setTimeout(() => {
-				document.body.removeChild(a);
+			await Util.sleep(120000);
 
-				try {
-					URL.revokeObjectURL(a.href);
-				}
-				catch (_) {}
-			}, 120000);
+			document.body.removeChild(a);
+
+			try {
+				URL.revokeObjectURL(a.href);
+			}
+			catch (_) {}
 		}
 		else {
-			EventManager.callMainThread('Cyph.Util.openUrl', [url]);
+			EventManager.callMainThread('cyph.Util.openUrl', [url]);
 		}
 	}
 
@@ -295,7 +303,7 @@ export class Util {
 				url		+= '?' + (
 					typeof data === 'object' ?
 						Util.toQueryString(data) :
-						data.toString()
+						(<string> data.toString())
 				);
 
 				data	= null;
@@ -394,7 +402,7 @@ export class Util {
 					throw err;
 				}
 				else {
-					await Util.sleep(250);
+					await Util.sleep();
 				}
 			}
 		}
@@ -420,7 +428,7 @@ export class Util {
 			self.onbeforeunload		= onbeforeunload;
 		}
 		else {
-			EventManager.callMainThread('Cyph.Util.saveFile', [content, fileName]);
+			EventManager.callMainThread('cyph.Util.saveFile', [content, fileName]);
 		}
 	}
 
@@ -468,6 +476,7 @@ export class Util {
 						'=' +
 						encodeURIComponent(o[k])
 					)
+				;
 			}).
 			join('&').
 			replace(/%20/g, '+')
@@ -541,14 +550,17 @@ export class Util {
 		}
 
 		if (innerHtml) {
-			$this.html(innerHtml.replace(/(.*?)(\{\{.*?\}\}|$)/g, (match, value, binding) => {
-				const translation: string	= Util.translate(value, true, '');
+			$this.html(innerHtml.replace(
+				/(.*?)(\{\{.*?\}\}|$)/g,
+				(match, value, binding: string) => {
+					const translation: string	= Util.translate(value, true, '');
 
-				return translation ?
-					translation + binding :
-					match
-				;
-			}));
+					return translation ?
+						translation + binding :
+						match
+					;
+				}
+			));
 		}
 
 		return $this.prop('outerHTML');
@@ -558,12 +570,14 @@ export class Util {
 	 * Simulates a click on elem.
 	 * @param elem
 	 */
-	public static triggerClick (elem: HTMLElement) {
+	public static triggerClick (elem: HTMLElement) : void {
 		const e: Event	= document.createEvent('MouseEvents');
 		e.initEvent('click', true, false);
 		elem.dispatchEvent(e);
 	}
 
+	/** @ignore */
+	/* tslint:disable-next-line:member-ordering */
 	private static _	= (async () => {
 		try {
 			const serverTimestamp: number	= parseFloat(

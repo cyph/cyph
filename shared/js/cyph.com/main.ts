@@ -6,17 +6,17 @@
 /// <reference path="../preload/fakecrypto.ts" />
 /// <reference path="../preload/jquery.ts" />
 
+import {platformBrowser} from '@angular/platform-browser';
+import {downgradeComponent, UpgradeModule} from '@angular/upgrade/static';
+import * as Cyph from '../cyph';
+import {loaded} from '../preload';
 import {AppComponent} from './appcomponent';
 import {AppModule} from './appmodule';
-import {HomeComponent} from './homecomponent';
 import {CyphDemo} from './cyphdemo';
 import {Elements} from './elements';
-import {HomeSections, PageTitles, Promos, States} from './enums';
+import {HomeSections, pageTitles, Promos, States} from './enums';
+import {HomeComponent} from './homecomponent';
 import {UI} from './ui';
-import {Loaded} from '../preload';
-import {platformBrowser} from '@angular/platform-browser';
-import {UpgradeModule, downgradeComponent} from '@angular/upgrade/static';
-import * as Cyph from '../cyph';
 
 
 Cyph.UI.Elements.body().attr(
@@ -32,18 +32,18 @@ angular.
 		'$mdSidenav',
 
 		($mdDialog, $mdToast, $mdSidenav) => {
-			self['Cyph']		= Cyph;
-			self['Cyph'].com	= {
+			cyph		= Cyph;
+			cyph.com	= {
 				CyphDemo,
 				Elements,
 				HomeSections,
-				PageTitles,
+				pageTitles,
 				Promos,
 				States,
 				UI
 			};
 
-			self['ui']	= new UI(
+			ui	= new UI(
 				() => $mdSidenav('main-toolbar-sidenav'),
 				new Cyph.UI.DialogManager($mdDialog, $mdToast)
 			);
@@ -109,8 +109,8 @@ angular.
 if (!Cyph.Env.isOnion) {
 	(async () => {
 		const response: string	= await Cyph.Util.request({
-			url: `https://ping.${Cyph.Config.onionRoot}`,
-			discardErrors: true
+			discardErrors: true,
+			url: `https://ping.${Cyph.Config.onionRoot}`
 		});
 
 		if (response === 'pong') {
@@ -124,4 +124,4 @@ if (!Cyph.Env.isOnion) {
 }
 
 
-export {Loaded};
+export {loaded};

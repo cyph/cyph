@@ -1,6 +1,5 @@
 /**
  * Manages scrolling and scroll-detection within a chat component.
- * @interface
  */
 export interface IScrollManager {
 	/** Number of messages that haven't appeared in viewport */

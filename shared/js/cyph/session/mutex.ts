@@ -1,22 +1,30 @@
-import {Events, RPCEvents, Users} from './enums';
+import {Util} from '../util';
 import {Command} from './command';
-import {Message} from './message';
+import {Events, rpcEvents, Users} from './enums';
 import {IMutex} from './imutex';
 import {ISession} from './isession';
-import {Util} from '../util';
+import {Message} from './message';
 
 
+/** @inheritDoc */
 export class Mutex implements IMutex {
+	/** @ignore */
 	private static constants	= {
 		release: 'release',
 		request: 'request'
 	};
 
 
+	/** @ignore */
 	private owner: string;
-	private purpose: string;
-	private requester: { user: string; purpose: string; };
 
+	/** @ignore */
+	private purpose: string;
+
+	/** @ignore */
+	private requester: {user: string; purpose: string};
+
+	/** @ignore */
 	private commands	= {
 		release: () : void => {
 			if (this.owner !== Users.me) {
@@ -31,7 +39,7 @@ export class Mutex implements IMutex {
 
 				this.session.send(
 					new Message(
-						RPCEvents.mutex,
+						rpcEvents.mutex,
 						new Command(Mutex.constants.release)
 					)
 				);
@@ -42,6 +50,7 @@ export class Mutex implements IMutex {
 		}
 	};
 
+	/** @ignore */
 	private shiftRequester () : void {
 		this.owner		= null;
 		this.purpose	= null;
@@ -53,7 +62,15 @@ export class Mutex implements IMutex {
 		}
 	}
 
-	public lock (f: Function, purpose: string = '') : void {
+	/** @inheritDoc */
+	public async lock (purpose: string = '') : Promise<{
+		friendLockpurpose: string;
+		wasFirst: boolean;
+		wasFirstOfType: boolean;
+	}> {
+		let friendHadLockFirst: boolean	= false;
+		let friendLockpurpose: string	= '';
+
 		if (this.owner !== Users.me) {
 			if (!this.owner && this.session.state.isAlice) {
 				this.owner		= Users.me;
@@ -65,7 +82,7 @@ export class Mutex implements IMutex {
 
 			this.session.send(
 				new Message(
-					RPCEvents.mutex,
+					rpcEvents.mutex,
 					new Command(
 						Mutex.constants.request,
 						purpose
@@ -74,47 +91,41 @@ export class Mutex implements IMutex {
 			);
 		}
 
+		while (this.owner !== Users.me) {
+			await Util.sleep(250);
 
-		let friendHadLockFirst: boolean	= false;
-		let friendLockpurpose: string	= '';
-
-		Util.retryUntilComplete(retry => {
-			if (this.owner === Users.me) {
-				f(
-					!friendHadLockFirst,
-					!friendLockpurpose || friendLockpurpose !== purpose,
-					friendLockpurpose
-				);
+			if (this.owner === Users.other) {
+				friendHadLockFirst	= true;
+				friendLockpurpose	= this.purpose;
 			}
-			else {
-				if (this.owner === Users.other) {
-					friendHadLockFirst	= true;
-					friendLockpurpose	= this.purpose;
-				}
+		}
 
-				retry();
-			}
-		});
+		return {
+			friendLockpurpose,
+			wasFirst: !friendHadLockFirst,
+			wasFirstOfType: !friendLockpurpose || friendLockpurpose !== purpose
+		};
 	}
 
+	/** @inheritDoc */
 	public unlock () : void {
 		if (this.owner === Users.me) {
 			this.shiftRequester();
 
 			this.session.send(
 				new Message(
-					RPCEvents.mutex,
+					rpcEvents.mutex,
 					new Command(Mutex.constants.release)
 				)
 			);
 		}
 	}
 
-	/**
-	 * @param session
-	 */
-	public constructor (private session: ISession) {
-		this.session.on(RPCEvents.mutex, (command: Command) =>
+	constructor (
+		/** @ignore */
+		private session: ISession
+	) {
+		this.session.on(rpcEvents.mutex, (command: Command) =>
 			Util.getValue(this.commands, command.method, o => {})(command.argument)
 		);
 

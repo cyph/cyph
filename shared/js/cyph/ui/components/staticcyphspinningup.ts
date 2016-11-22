@@ -1,6 +1,3 @@
-import {Templates} from '../templates';
-import {Util} from '../../util';
-import {UpgradeComponent} from '@angular/upgrade/static';
 import {
 	Directive,
 	DoCheck,
@@ -12,6 +9,8 @@ import {
 	OnInit,
 	SimpleChanges
 } from '@angular/core';
+import {UpgradeComponent} from '@angular/upgrade/static';
+import {Util} from '../../util';
 
 
 /**
@@ -20,33 +19,53 @@ import {
 @Directive({
 	selector: 'cyph-static-cyph-spinning-up'
 })
-export class StaticCyphSpinningUp extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
+export class StaticCyphSpinningUp
+	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
 	/** Component title. */
 	public static title: string	= 'cyphStaticCyphSpinningUp';
 
 	/** Component configuration. */
 	public static config		= {
-		template: Templates.staticCyphSpinningUp,
+		/* tslint:disable-next-line:max-classes-per-file */
 		controller: class {
-			public Cyph: any;
+			/** @ignore */
+			public cyph: any;
+
+			/** @ignore */
 			public ui: any;
 
 			constructor () { (async () => {
-				while (!self['Cyph'] || !self['ui']) {
-					await Util.sleep(100);
+				while (!cyph || !ui) {
+					await Util.sleep();
 				}
 
-				this.Cyph	= self['Cyph'];
-				this.ui		= self['ui'];
+				this.cyph	= cyph;
+				this.ui		= ui;
 			})(); }
-		}
+		},
+		templateUrl: '../../../../templates/staticcyphspinningup.html'
 	};
 
 
-	ngDoCheck () { super.ngDoCheck(); }
-	ngOnChanges (changes: SimpleChanges) { super.ngOnChanges(changes); }
-	ngOnDestroy () { super.ngOnDestroy(); }
-	ngOnInit () { super.ngOnInit(); }
+	/** @ignore */
+	public ngDoCheck () : void {
+		super.ngDoCheck();
+	}
+
+	/** @ignore */
+	public ngOnChanges (changes: SimpleChanges) : void {
+		super.ngOnChanges(changes);
+	}
+
+	/** @ignore */
+	public ngOnDestroy () : void {
+		super.ngOnDestroy();
+	}
+
+	/** @ignore */
+	public ngOnInit () : void {
+		super.ngOnInit();
+	}
 
 	constructor (
 		@Inject(ElementRef) elementRef: ElementRef,

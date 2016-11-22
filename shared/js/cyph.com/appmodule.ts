@@ -1,5 +1,3 @@
-import {AppComponent} from './appcomponent';
-import {HomeComponent} from './homecomponent';
 import {CommonModule} from '@angular/common';
 import {NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
@@ -19,17 +17,14 @@ import {
 	StaticCyphSpinningUp,
 	StaticFooter
 } from '../cyph/ui/components';
+import {AppComponent} from './appcomponent';
+import {HomeComponent} from './homecomponent';
 
 
+/**
+ * Angular module for Cyph home page.
+ */
 @NgModule({
-	imports: [
-		BrowserModule,
-		CommonModule,
-		UpgradeModule
-	],
-	entryComponents: [
-		AppComponent
-	],
 	declarations: [
 		AppComponent,
 		Beta,
@@ -46,8 +41,17 @@ import {
 		StaticCyphNotFound,
 		StaticCyphSpinningUp,
 		StaticFooter
+	],
+	entryComponents: [
+		AppComponent
+	],
+	imports: [
+		BrowserModule,
+		CommonModule,
+		UpgradeModule
 	]
 })
 export class AppModule {
-	ngDoBootstrap () {}
+	/** @ignore */
+	public ngDoBootstrap () : void {}
 }

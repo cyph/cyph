@@ -1,20 +1,18 @@
-import {States} from './enums';
-import {ICyphertext} from './icyphertext';
-import {IP2PManager} from './ip2pmanager';
-import {IFileManager} from './ifilemanager';
-import {IScrollManager} from './iscrollmanager';
 import {ITimer} from '../../itimer';
 import {Users} from '../../session/enums';
 import {ISession} from '../../session/isession';
+import {States} from './enums';
+import {ICyphertext} from './icyphertext';
+import {IFileManager} from './ifilemanager';
+import {IP2PManager} from './ip2pmanager';
+import {IScrollManager} from './iscrollmanager';
 
 
 /**
  * This is the entire end-to-end representation of a cyph.
- * @interface
  */
 export interface IChat {
-	/** Indicates whether authentication has completed
-		(still true even after disconnect). */
+	/** Indicates whether authentication has completed (still true even after disconnect). */
 	isConnected: boolean;
 
 	/** Indicates whether chat has been disconnected. */
@@ -32,8 +30,7 @@ export interface IChat {
 	/** The current message being composed. */
 	currentMessage: string;
 
-	/** Percentage complete with initial handshake
-		(approximate / faked out). */
+	/** Percentage complete with initial handshake (approximate / faked out). */
 	keyExchangeProgress: number;
 
 	/** Chat UI state/view. */

@@ -6,8 +6,8 @@
 
 import {Config} from '../cyph/config';
 import {Env} from '../cyph/env';
-import {Util} from '../cyph/util';
 import {Elements} from '../cyph/ui/elements';
+import {Util} from '../cyph/util';
 
 
 /* Translations */
@@ -37,7 +37,9 @@ if (Env.isMobile) {
 
 /* Polyfills */
 if (!HTMLElement.prototype.click) {
-	HTMLElement.prototype.click	= function () {
+	/* tslint:disable-next-line:only-arrow-functions */
+	HTMLElement.prototype.click	= function () : void {
+		/* tslint:disable-next-line:no-invalid-this */
 		Util.triggerClick(this);
 	};
 }
@@ -63,12 +65,15 @@ $(() => {
 
 		/* In WebSigned environments, remove no-longer-necessary
 			'unsafe-inline' from CSP after application loads */
-		setTimeout(() => Elements.head().append(
-			`<meta http-equiv="Content-Security-Policy" content="${Env.CSP}" />`
-		), 10000);
+		setTimeout(
+			() => Elements.head().append(
+				`<meta http-equiv="Content-Security-Policy" content="${Env.CSP}" />`
+			),
+			10000
+		);
 	}
 });
 
 
-const Loaded: boolean	= true;
-export {Loaded};
+const loaded: boolean	= true;
+export {loaded};

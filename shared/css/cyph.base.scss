@@ -240,16 +240,14 @@ pre, code {
 	@include word-wrap;
 }
 
-.cyph-foreground.curtain {
-	height: 10%;
+.cyph-foreground {
+	@include transform-origin(top left);
 
-	@include transform(translateY(-90%));
+	@include transition(transform 2s cubic-bezier(1, 0, 0, 1));
 
-	@include transition(transform 2s cubic-bezier(1, 0, 0, 1), height 2s cubic-bezier(1, 0, 0, 1));
-}
-
-.cyph-foreground:not(.curtain) {
-	@include transition(transform 2s cubic-bezier(1, 0, 0, 1), height 2s cubic-bezier(1, 0, 0, 1));
+	&.curtain {
+		@include transform(scaleY(0.1) translateY(-90%));
+	}
 }
 
 .cyph-foreground {

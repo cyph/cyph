@@ -1,6 +1,3 @@
-import {Env} from '../../env';
-import {Util} from '../../util';
-import {UpgradeComponent} from '@angular/upgrade/static';
 import {
 	Directive,
 	DoCheck,
@@ -13,6 +10,9 @@ import {
 	OnInit,
 	SimpleChanges
 } from '@angular/core';
+import {UpgradeComponent} from '@angular/upgrade/static';
+import {Env} from '../../env';
+import {Util} from '../../util';
 
 
 /**
@@ -21,7 +21,8 @@ import {
 @Directive({
 	selector: 'cyph-markdown'
 })
-export class Markdown extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
+export class Markdown
+	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
 	/** Component title. */
 	public static title: string	= 'cyphMarkdown';
 
@@ -30,12 +31,15 @@ export class Markdown extends UpgradeComponent implements DoCheck, OnChanges, On
 		bindings: {
 			markdown: '<'
 		},
-		template: '',
+		/* tslint:disable-next-line:max-classes-per-file */
 		controller: class {
+			/** @ignore */
 			private markdownIt: any;
 
+			/** @ignore */
 			public markdown: string;
 
+			/** @ignore */
 			public async $onChanges (changes: any) : Promise<void> {
 				if (this.markdown === null) {
 					await Util.sleep(10000);
@@ -78,12 +82,18 @@ export class Markdown extends UpgradeComponent implements DoCheck, OnChanges, On
 				);
 			}
 
-			constructor (private $element: JQuery) {
-				this.markdownIt	= new self['markdownit']({
-					html: false,
+			constructor (
+				/** @ignore */
+				private $element: JQuery
+			) {
+				this.markdownIt	= new (<any> self).markdownit({
 					breaks: true,
+					highlight: s => (<any> self).microlight.process(
+						s,
+						this.$element.css('color')
+					),
+					html: false,
 					linkify: true,
-					typographer: true,
 					quotes:
 						(
 							Env.language === 'ru' ?
@@ -94,26 +104,40 @@ export class Markdown extends UpgradeComponent implements DoCheck, OnChanges, On
 						) +
 						'‘’'
 					,
-					highlight: s => self['microlight'].process(
-						s,
-						this.$element.css('color')
-					)
+					typographer: true
 				}).
 					disable('image').
-					use(self['markdownitSup']).
-					use(self['markdownitEmoji'])
+					use((<any> self).markdownitSup).
+					use((<any> self).markdownitEmoji)
 				;
 			}
-		}
+		},
+		template: ''
 	};
 
 
-	@Input() markdown: string;
+	/** @ignore */
+	@Input() public markdown: string;
 
-	ngDoCheck () { super.ngDoCheck(); }
-	ngOnChanges (changes: SimpleChanges) { super.ngOnChanges(changes); }
-	ngOnDestroy () { super.ngOnDestroy(); }
-	ngOnInit () { super.ngOnInit(); }
+	/** @ignore */
+	public ngDoCheck () : void {
+		super.ngDoCheck();
+	}
+
+	/** @ignore */
+	public ngOnChanges (changes: SimpleChanges) : void {
+		super.ngOnChanges(changes);
+	}
+
+	/** @ignore */
+	public ngOnDestroy () : void {
+		super.ngOnDestroy();
+	}
+
+	/** @ignore */
+	public ngOnInit () : void {
+		super.ngOnInit();
+	}
 
 	constructor (
 		@Inject(ElementRef) elementRef: ElementRef,

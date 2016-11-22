@@ -1,8 +1,3 @@
-import {Templates} from '../templates';
-import {Config} from '../../config';
-import {Env} from '../../env';
-import {Util} from '../../util';
-import {UpgradeComponent} from '@angular/upgrade/static';
 import {
 	Directive,
 	DoCheck,
@@ -15,6 +10,10 @@ import {
 	OnInit,
 	SimpleChanges
 } from '@angular/core';
+import {UpgradeComponent} from '@angular/upgrade/static';
+import {Config} from '../../config';
+import {Env} from '../../env';
+import {Util} from '../../util';
 
 
 /**
@@ -23,7 +22,8 @@ import {
 @Directive({
 	selector: 'cyph-contact'
 })
-export class Contact extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
+export class Contact
+	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
 	/** Component title. */
 	public static title: string	= 'cyphContact';
 
@@ -32,50 +32,55 @@ export class Contact extends UpgradeComponent implements DoCheck, OnChanges, OnI
 		bindings: {
 			self: '<'
 		},
-		template: Templates.contact,
+		/* tslint:disable-next-line:max-classes-per-file */
 		controller: class {
-			public Cyph: any;
+			/** @ignore */
+			public cyph: any;
+
+			/** @ignore */
 			public ui: any;
 
+			/** @ignore */
 			public self: {
 				fromEmail: string;
 				fromName: string;
 				message: string;
-				to: string;
 				sent: boolean;
 				subject: string;
+				to: string;
 			};
 
+			/** @ignore */
 			public send () : void {
 				Util.email(this.self);
 				this.self.sent	= true;
 			}
 
 			constructor ($element: JQuery) { (async () => {
-				while (!self['Cyph'] || !self['ui']) {
-					await Util.sleep(100);
+				while (!cyph || !ui) {
+					await Util.sleep();
 				}
 
-				this.Cyph	= self['Cyph'];
-				this.ui		= self['ui'];
+				this.cyph	= cyph;
+				this.ui		= ui;
 
 				if (!this.self) {
 					this.self	= {
 						fromEmail: '',
 						fromName: '',
 						message: '',
-						to: '',
 						sent: false,
-						subject: ''
+						subject: '',
+						to: ''
 					};
 				}
 
 				for (let k of [
 					'fromEmail',
 					'fromName',
-					'to',
+					'message',
 					'subject',
-					'message'
+					'to'
 				]) {
 					const v	= $element.attr(k);
 					if (v) {
@@ -83,11 +88,13 @@ export class Contact extends UpgradeComponent implements DoCheck, OnChanges, OnI
 					}
 				}
 			})(); }
-		}
+		},
+		templateUrl: '../../../../templates/contact.html'
 	};
 
 
-	@Input() self: {
+	/** @ignore */
+	@Input() public self: {
 		fromEmail: string;
 		fromName: string;
 		message: string;
@@ -96,10 +103,25 @@ export class Contact extends UpgradeComponent implements DoCheck, OnChanges, OnI
 		subject: string;
 	};
 
-	ngDoCheck () { super.ngDoCheck(); }
-	ngOnChanges (changes: SimpleChanges) { super.ngOnChanges(changes); }
-	ngOnDestroy () { super.ngOnDestroy(); }
-	ngOnInit () { super.ngOnInit(); }
+	/** @ignore */
+	public ngDoCheck () : void {
+		super.ngDoCheck();
+	}
+
+	/** @ignore */
+	public ngOnChanges (changes: SimpleChanges) : void {
+		super.ngOnChanges(changes);
+	}
+
+	/** @ignore */
+	public ngOnDestroy () : void {
+		super.ngOnDestroy();
+	}
+
+	/** @ignore */
+	public ngOnInit () : void {
+		super.ngOnInit();
+	}
 
 	constructor (
 		@Inject(ElementRef) elementRef: ElementRef,

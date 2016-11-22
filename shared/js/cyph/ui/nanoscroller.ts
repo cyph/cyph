@@ -1,6 +1,6 @@
-import {Elements} from './elements';
 import {Env} from '../env';
 import {Util} from '../util';
+import {Elements} from './elements';
 
 
 /**
@@ -24,6 +24,8 @@ export class NanoScroller {
 		}
 	}
 
+	/** @ignore */
+	/* tslint:disable-next-line:member-ordering */
 	private static _	= (() => {
 		$(NanoScroller.update);
 	})();

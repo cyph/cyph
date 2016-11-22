@@ -1,27 +1,44 @@
+import {Config} from '../../config';
+import {Util} from '../../util';
+import {Potassium} from '../potassium';
 import {Core} from './core';
 import {ILocalUser} from './ilocaluser';
 import {IRemoteUser} from './iremoteuser';
 import {Transport} from './transport';
-import {Potassium} from '../potassium';
-import {Config} from '../../config';
-import {Util} from '../../util';
 
 
 /**
  * Represents a pairwise (one-to-one) Castle session.
  */
 export class PairwiseSession {
+	/** @ignore */
 	private incomingMessageId: number						= 0;
-	private incomingMessagesMax: number						= 0;
-	private outgoingMessageId: number						= 0;
-	private receiveLock: {}									= {};
-	private incomingMessages: {[id: number] : Uint8Array[]}	= {};
 
+	/** @ignore */
+	private incomingMessagesMax: number						= 0;
+
+	/** @ignore */
+	private outgoingMessageId: number						= 0;
+
+	/** @ignore */
+	private receiveLock: {}									= {};
+
+	/** @ignore */
+	private incomingMessages: {[id: number]: Uint8Array[]}	= {};
+
+	/** @ignore */
 	private core: Core;
+
+	/** @ignore */
 	private isAborted: boolean;
+
+	/** @ignore */
 	private isConnected: boolean;
+
+	/** @ignore */
 	private remoteUsername: string;
 
+	/** @ignore */
 	private abort () : void {
 		if (this.isAborted) {
 			return;
@@ -31,6 +48,7 @@ export class PairwiseSession {
 		this.transport.abort();
 	}
 
+	/** @ignore */
 	private connect () : void {
 		if (this.isConnected) {
 			return;
@@ -40,10 +58,11 @@ export class PairwiseSession {
 		this.transport.connect();
 	}
 
+	/** @ignore */
 	private async handshakeOpenSecret (cyphertext: Uint8Array) : Promise<Uint8Array> {
 		const keyPair	= await this.localUser.getKeyPair();
 
-		const secret	= await this.potassium.Box.open(
+		const secret	= await this.potassium.box.open(
 			cyphertext,
 			keyPair
 		);
@@ -56,10 +75,11 @@ export class PairwiseSession {
 		return secret;
 	}
 
+	/** @ignore */
 	private async handshakeSendSecret (secret: Uint8Array) : Promise<Uint8Array> {
 		const remotePublicKey	= await this.remoteUser.getPublicKey();
 
-		const cyphertext		= await this.potassium.Box.seal(
+		const cyphertext		= await this.potassium.box.seal(
 			secret,
 			remotePublicKey
 		);
@@ -71,12 +91,17 @@ export class PairwiseSession {
 		return cyphertext;
 	}
 
+	/** @ignore */
 	private newMessageId () : Uint8Array {
 		return new Uint8Array(new Float64Array([
 			this.outgoingMessageId++
 		]).buffer);
 	}
 
+	/**
+	 * Receive/decrypt incoming message.
+	 * @param cyphertext
+	 */
 	public receive (cyphertext: string) : void {
 		if (this.isAborted) {
 			return;
@@ -175,6 +200,11 @@ export class PairwiseSession {
 		});
 	}
 
+	/**
+	 * Send/encrypt outgoing message.
+	 * @param plaintext
+	 * @param timestamp
+	 */
 	public async send (
 		plaintext: string,
 		timestamp: number = Util.timestamp()
@@ -250,18 +280,19 @@ export class PairwiseSession {
 		Potassium.clearMemory(i);
 	}
 
-	/**
-	 * @param potassium
-	 * @param transport
-	 * @param localUser
-	 * @param remoteUser
-	 * @param isAlice
-	 */
-	public constructor (
+	constructor (
+		/** @ignore */
 		private potassium: Potassium,
+
+		/** @ignore */
 		private transport: Transport,
+
+		/** @ignore */
 		private localUser: ILocalUser,
+
+		/** @ignore */
 		private remoteUser: IRemoteUser,
+
 		isAlice: boolean
 	) { (async () => {
 		try {
@@ -272,7 +303,7 @@ export class PairwiseSession {
 			let secret: Uint8Array;
 			if (isAlice) {
 				secret	= Potassium.randomBytes(
-					potassium.EphemeralKeyExchange.secretBytes
+					potassium.ephemeralKeyExchange.secretBytes
 				);
 
 				this.transport.send(await this.handshakeSendSecret(secret));

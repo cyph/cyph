@@ -1,18 +1,21 @@
-import {IChat} from './ichat';
-import {IFileManager} from './ifilemanager';
-import {IDialogManager} from '../idialogmanager';
 import {Config} from '../../config';
-import {Strings} from '../../strings';
-import {Util} from '../../util';
 import {UIEvents} from '../../files/enums';
 import {Files} from '../../files/files';
 import {IFiles} from '../../files/ifiles';
 import {Events, Users} from '../../session/enums';
+import {Strings} from '../../strings';
+import {Util} from '../../util';
+import {IDialogManager} from '../idialogmanager';
+import {IChat} from './ichat';
+import {IFileManager} from './ifilemanager';
 
 
+/** @inheritDoc */
 export class FileManager implements IFileManager {
+	/** @inheritDoc */
 	public files: IFiles;
 
+	/** @ignore */
 	private compressImage (image: HTMLImageElement, file: File) : string {
 		const canvas: HTMLCanvasElement			= document.createElement('canvas');
 		const context: CanvasRenderingContext2D	=
@@ -53,10 +56,12 @@ export class FileManager implements IFileManager {
 		return encodedImage;
 	}
 
+	/** @ignore */
 	private sendImage (encodedImage: string) : void {
 		this.chat.send('![](' + encodedImage + ')');
 	}
 
+	/** @inheritDoc */
 	public send (file: File, processImage?: boolean) : void {
 		const reader: FileReader	= new FileReader();
 
@@ -88,17 +93,14 @@ export class FileManager implements IFileManager {
 		}
 	}
 
-	/**
-	 * @param chat
-	 * @param dialogManager
-	 */
-	public constructor (
+	constructor (
+		/** @ignore */
 		private chat: IChat,
+
+		/** @ignore */
 		private dialogManager: IDialogManager
 	) {
 		this.files	= new Files(this.chat.session);
-
-
 
 		this.chat.session.on(
 			Events.filesUI,
@@ -132,9 +134,9 @@ export class FileManager implements IFileManager {
 
 						callback(await this.dialogManager.confirm({
 							title,
+							cancel: isSave ? Strings.discard : Strings.reject,
 							content: isSave ? Strings.incomingFileSave : Strings.incomingFileDownload,
-							ok: isSave ? Strings.save : Strings.accept,
-							cancel: isSave ? Strings.discard : Strings.reject
+							ok: isSave ? Strings.save : Strings.accept
 						}));
 						break;
 					}
@@ -169,9 +171,9 @@ export class FileManager implements IFileManager {
 					}
 					case UIEvents.tooLarge: {
 						this.dialogManager.alert({
-							title: Strings.oopsTitle,
 							content: Strings.fileTooLarge,
-							ok: Strings.ok
+							ok: Strings.ok,
+							title: Strings.oopsTitle
 						});
 						break;
 					}

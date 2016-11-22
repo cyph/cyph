@@ -1,0 +1,316 @@
+<div
+	class='chat-main platform-container'
+	ng-class='{
+		video: $ctrl.self.p2pManager.p2p.isActive,
+		mobile: $ctrl.self.isMobile
+	}'
+	layout='column'
+	layout-fill
+	flex
+>
+	<div
+		class='cyph-view loading'
+		layout='column'
+		layout-fill
+		flex
+		ng-class='{
+			active: $ctrl.self.state === $ctrl.cyph.UI.Chat.States.keyExchange
+		}'
+	>
+		<div flex></div>
+		<div class='logo-animation'>
+			<img src='/img/logo.animated.gif' alt='Animated Cyph logo' />
+		</div>
+		<div translate>Initiating key exchange...</div>
+		<md-progress-linear
+			class='md-accent key-exchange-progress'
+			md-mode='determinate'
+			ng-value='$ctrl.self.keyExchangeProgress'
+		></md-progress-linear>
+		<div flex></div>
+	</div>
+
+	<div
+		class='cyph-view abort-screen loading'
+		layout='column'
+		layout-fill
+		flex
+		ng-class='{
+			active: $ctrl.self.state === $ctrl.cyph.UI.Chat.States.aborted
+		}'
+	>
+		<div flex></div>
+		<div class='logo-animation'>
+			<img src='/img/walken.png' alt='Definitely not Christopher Walken' />
+		</div>
+		<div>
+			<div translate>This cyph has been aborted.</div>
+			<br />
+			<span translate>Please</span>
+			<a
+				translate
+				target='_self'
+				ng-href='{{$ctrl.cyph.Env.newCyphUrl}}'
+			>try again</a>.
+		</div>
+		<div flex></div>
+	</div>
+
+	<div
+		class='cyph-view chat-begin-message loading'
+		layout='column'
+		layout-fill
+		flex
+		ng-class='{
+			active: $ctrl.self.state === $ctrl.cyph.UI.Chat.States.chatBeginMessage
+		}'
+	>
+		<div flex></div>
+		<div class='logo-animation'>
+			<img src='/img/logo.animated.connected.gif' alt='Animated Cyph logo' />
+		</div>
+		<div translate>Securely Connected!</div>
+		<md-progress-linear
+			class='md-accent key-exchange-progress'
+			md-mode='determinate'
+			ng-value='100'
+		></md-progress-linear>
+		<div flex></div>
+	</div>
+
+	<div
+		class='cyph-view video-call'
+		flex
+		ng-class='{
+			active: $ctrl.self.state === $ctrl.cyph.UI.Chat.States.chat,
+			playing: $ctrl.self.p2pManager.p2p.isActive
+		}'
+	>
+		<a class='logo' rel='noreferrer' ng-href='{{$ctrl.cyph.Env.homeUrl}}'>
+			<img src='/img/betalogo.mobile.png' alt='Beta logo' />
+		</a>
+		<div
+			class='friend stream'
+			ng-show='
+				$ctrl.self.p2pManager.p2p.incomingStream.video &&
+				!$ctrl.self.p2pManager.p2p.loading
+			'
+			autoplay
+		></div>
+		<img
+			class='friend'
+			ng-show='!(
+				$ctrl.self.p2pManager.p2p.incomingStream.video ||
+				$ctrl.self.p2pManager.p2p.loading
+			)'
+			src='/img/voicecall.jpg'
+		/>
+		<video
+			class='me'
+			ng-show='$ctrl.self.p2pManager.p2p.outgoingStream.video'
+			autoplay
+			muted
+		></video>
+
+		<md-progress-circular
+			ng-show='$ctrl.self.p2pManager.p2p.loading'
+			md-mode='indeterminate'
+		></md-progress-circular>
+
+		<md-button
+			translate
+			class='sidebar'
+			aria-label='Sidebar'
+			ng-click='$ctrl.self.p2pManager.toggleSidebar()'
+		>
+			<img src='/img/icons/chat.png' alt='Chat' />
+		</md-button>
+
+		<div class='buttons'>
+			<md-button
+				translate
+				class='md-fab video-call-button'
+				ng-click='$ctrl.self.p2pManager.videoCallButton()'
+				ng-attr-aria-label='{{
+					!$ctrl.self.p2pManager.p2p.outgoingStream.video ?
+						"Enable Camera" :
+						"Disable Camera"
+				}}'
+			>
+				<img
+					ng-show='!$ctrl.self.p2pManager.p2p.outgoingStream.video'
+					src='/img/icons/video.on.png'
+					alt='Video on'
+				/>
+				<img
+					ng-show='$ctrl.self.p2pManager.p2p.outgoingStream.video'
+					src='/img/icons/video.off.png'
+					alt='Video off'
+				/>
+			</md-button>
+			<md-button
+				translate
+				class='md-fab voice-call-button'
+				ng-click='$ctrl.self.p2pManager.voiceCallButton()'
+				ng-attr-aria-label='{{
+					!$ctrl.self.p2pManager.p2p.outgoingStream.audio ?
+						"Enable Mic" :
+						"Disable Mic"
+				}}'
+			>
+				<img
+					ng-show='!$ctrl.self.p2pManager.p2p.outgoingStream.audio'
+					src='/img/icons/mic.on.png'
+					alt='Mic on'
+				/>
+				<img
+					ng-show='$ctrl.self.p2pManager.p2p.outgoingStream.audio'
+					src='/img/icons/mic.off.png'
+					alt='Mic off'
+				/>
+			</md-button>
+			<md-button
+				translate
+				aria-label='End Call'
+				class='md-fab md-theme-grey close-button'
+				ng-click='$ctrl.self.p2pManager.closeButton()'
+			>
+				<strong>&times;</strong>
+			</md-button>
+		</div>
+	</div>
+
+	<cyph-chat-message-box
+		class='video-call-message-box'
+		self='$ctrl.self'
+	></cyph-chat-message-box>
+
+	<div
+		class='cyph-view message-list nano'
+		flex
+		ng-class='{
+			active: $ctrl.self.state === $ctrl.cyph.UI.Chat.States.chat
+		}'
+	>
+		<md-content class='nano-content'>
+			<md-list layout='column'>
+				<md-item
+					class='progress'
+					ng-repeat='transfer in $ctrl.self.fileManager.files.transfers'
+					layout='row'
+				>
+					<div layout='column' layout-align=' start' flex>
+						<div layout='row'>
+							<span ng-show='transfer.isOutgoing' translate>Sending</span>
+							<span ng-hide='transfer.isOutgoing' translate>Receiving</span>
+							&nbsp;
+							<span>
+								{{transfer.name}}
+								({{$ctrl.cyph.Util.readableByteLength(transfer.size)}}):
+							</span>
+						</div>
+						<md-progress-linear
+							md-mode='determinate'
+							value='{{transfer.percentComplete}}'
+							layout='row'
+						></md-progress-linear>
+					</div>
+				</md-item>
+
+				<md-item
+					class='message-item unread'
+					ng-class='[
+						"author-" + (
+							$ctrl.cyph.Session.Users[message.author] ||
+							$ctrl.cyph.Session.Users.other
+						),
+						{
+							"self-destructed":
+								message.selfDestructTimer &&
+								message.selfDestructTimer.isComplete
+						}
+					]'
+					ng-repeat='message in $ctrl.self.messages'
+					layout='row'
+				>
+					<div flex layout='column'>
+						<div layout='row'>
+							<span class='message'>
+								<strong
+									translate
+									class='message-author'
+									ng-hide='::message.author === $ctrl.cyph.Session.Users.app'
+									ng-bind='::message.author + ": "'
+								></strong>
+								<cyph-markdown
+									class='message-text'
+									markdown='message.text'
+									ng-class='::{
+										"app-message":
+											message.author === $ctrl.cyph.Session.Users.app
+									}'
+								></cyph-markdown>
+							</span>
+							<span flex class='message-timestamp'>
+								<span
+									class='mobile-only'
+									ng-show='::message.author === $ctrl.cyph.Session.Users.me'
+								>
+									<span>{{::message.author}}</span> &nbsp;&mdash;&nbsp;
+								</span>
+
+								{{::message.timeString}}
+
+								<span
+									class='mobile-only'
+									ng-show='::
+										message.author !== $ctrl.cyph.Session.Users.me &&
+										message.author !== $ctrl.cyph.Session.Users.app
+									'
+								>
+									&nbsp;&mdash;&nbsp; <span>{{::message.author}}</span>
+								</span>
+							</span>
+						</div>
+						<div
+							class='self-destruct-timer'
+							layout='row'
+							ng-show='message.selfDestructTimer'
+						>
+							Message will self-destruct in
+							<span class='countdown'>
+								{{message.selfDestructTimer.timestamp}}
+							</span>
+						</div>
+					</div>
+					<div class='self-destruct-cover'></div>
+				</md-item>
+
+				<md-item
+					class='friend-is-typing'
+					ng-class='{"show": $ctrl.self.isFriendTyping}'
+					layout='row'
+				>
+					<span class='ellipsis-spinner'>
+						<div class='bounce1'></div>
+						<div class='bounce2'></div>
+						<div class='bounce3'></div>
+					</span>
+				</md-item>
+
+				<md-item
+					class='chat-end-message'
+					ng-show='$ctrl.self.isDisconnected && !$ctrl.hideDisconnectMessage'
+					layout='row'
+					layout-align='center center'
+				>
+					<md-card flex='75' flex-gt-sm='50' class='md-padding'>
+						<md-card-content>
+							<ng-transclude></ng-transclude>
+						</md-card-content>
+					</md-card>
+				</md-item>
+			</md-list>
+		</md-content>
+	</div>
+</div>

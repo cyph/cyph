@@ -6,6 +6,7 @@ import {EventManager} from './eventmanager';
  * Manages URL state.
  */
 export class UrlState {
+	/** @ignore */
 	private static urlStateChangeEvent	= 'urlStateChangeEvent';
 
 	/** Generic/non-site-specific URL states. */
@@ -97,7 +98,7 @@ export class UrlState {
 			}
 		}
 		else {
-			EventManager.callMainThread('Cyph.UrlState.set', [
+			EventManager.callMainThread('cyph.UrlState.set', [
 				path,
 				shouldReplace,
 				shouldNotTrigger,
@@ -113,6 +114,8 @@ export class UrlState {
 		EventManager.trigger(UrlState.urlStateChangeEvent);
 	}
 
+	/** @ignore */
+	/* tslint:disable-next-line:member-ordering */
 	private static _	= (() => {
 		self.onpopstate	= () => EventManager.trigger(UrlState.urlStateChangeEvent);
 	})();

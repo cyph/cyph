@@ -5,21 +5,22 @@
 
 
 if (!('crypto' in self) && 'msCrypto' in self) {
-	(<any> self)['crypto']	= self['msCrypto'];
+	(<any> self).crypto	= (<any> self).msCrypto;
 }
 
 if (!('crypto' in self)) {
-	(<any> self)['crypto']	= {
+	(<any> self).crypto	= {
 		getRandomValues: array => {
 			const bytes: number	=
 				'BYTES_PER_ELEMENT' in array ?
-					array['BYTES_PER_ELEMENT'] :
+					array.BYTES_PER_ELEMENT :
 					4
 			;
 
 			const max: number	= Math.pow(2, bytes * 8) - 1;
 
-			for (let i = 0 ; i < array['length'] ; ++i) {
+			for (let i = 0 ; i < array.length ; ++i) {
+				/* tslint:disable-next-line:ban */
 				array[i]	= Math.floor(Math.random() * max);
 			}
 
@@ -31,27 +32,13 @@ if (!('crypto' in self)) {
 }
 
 if (!('Uint8Array' in self)) {
-	self['Float32Array']		= Array;
-	self['Float64Array']		= Array;
-	self['Int8Array']			= Array;
-	self['Int16Array']			= Array;
-	self['Int32Array']			= Array;
-	self['Uint8Array']			= Array;
-	self['Uint16Array']			= Array;
-	self['Uint32Array']			= Array;
-	self['Uint8ClampedArray']	= Array;
-}
-
-if (!('ntru' in self)) {
-	self['ntru']	= {};
-}
-
-if (!('sodium' in self)) {
-	self['sodium']	= {
-		randombytes_buf: (n: number) => crypto.getRandomValues(new Uint8Array(n))
-	};
-}
-
-if (!('superSphincs' in self)) {
-	self['superSphincs']	= {};
+	(<any> self).Float32Array		= Array;
+	(<any> self).Float64Array		= Array;
+	(<any> self).Int8Array			= Array;
+	(<any> self).Int16Array			= Array;
+	(<any> self).Int32Array			= Array;
+	(<any> self).Uint8Array			= Array;
+	(<any> self).Uint16Array		= Array;
+	(<any> self).Uint32Array		= Array;
+	(<any> self).Uint8ClampedArray	= Array;
 }

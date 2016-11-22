@@ -7,17 +7,17 @@
 
 
 try {
-	if (!self.crypto && self['msCrypto']) {
-		(<any> self).crypto			= self['msCrypto'];
+	if (!self.crypto && (<any> self).msCrypto) {
+		(<any> self).crypto			= (<any> self).msCrypto;
 	}
-	if (!self.crypto.subtle && crypto['webkitSubtle']) {
-		(<any> self).crypto.subtle	= crypto['webkitSubtle'];
+	if (!self.crypto.subtle && (<any> crypto).webkitSubtle) {
+		(<any> self).crypto.subtle	= (<any> crypto).webkitSubtle;
 	}
 }
 catch (_) {}
 
-self['IS_WEB']	= typeof self['IS_WEB'] !== 'undefined' ?
-	self['IS_WEB'] :
+(<any> self).IS_WEB	= typeof IS_WEB !== 'undefined' ?
+	IS_WEB :
 	typeof window === 'object'
 ;
 
@@ -28,27 +28,29 @@ for (let k of ['window', 'document']) {
 }
 
 for (let k of [
+	'Audio',
+	'cyph',
+	'customBuild',
+	'customBuildFavicon',
 	'history',
 	'location',
 	'navigator',
-	'Audio',
-	'customBuild',
-	'customBuildFavicon',
 	'onthreadmessage',
-	'Translations'
+	'Translations',
+	'ui'
 ]) {
 	if (!(k in self)) {
 		self[k]	= null;
 	}
 }
 
-self['locationData']	= typeof self['locationData'] !== 'undefined' ?
-	self['locationData'] :
+(<any> self).locationData	= typeof locationData !== 'undefined' ?
+	locationData :
 	location
 ;
 
-self['navigatorData']	= typeof self['navigatorData'] !== 'undefined' ?
-	self['navigatorData'] :
+(<any> self).navigatorData	= typeof navigatorData !== 'undefined' ?
+	navigatorData :
 	navigator
 ;
 

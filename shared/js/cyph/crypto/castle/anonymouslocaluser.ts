@@ -1,6 +1,6 @@
+import {Potassium} from '../potassium';
 import {ILocalUser} from './ilocaluser';
 import {Transport} from './transport';
-import {Potassium} from '../potassium';
 
 
 /**
@@ -8,8 +8,10 @@ import {Potassium} from '../potassium';
  * shared secret rather than AGSE signature.
  */
 export class AnonymousLocalUser implements ILocalUser {
-	private keyPair: {publicKey: Uint8Array; privateKey: Uint8Array;};
+	/** @ignore */
+	private keyPair: {publicKey: Uint8Array; privateKey: Uint8Array};
 
+	/** @inheritDoc */
 	public async getKeyPair () : Promise<{
 		publicKey: Uint8Array;
 		privateKey: Uint8Array;
@@ -18,14 +20,14 @@ export class AnonymousLocalUser implements ILocalUser {
 			return this.keyPair;
 		}
 
-		this.keyPair		= await this.potassium.Box.keyPair();
+		this.keyPair		= await this.potassium.box.keyPair();
 
-		const sharedSecret	= (await this.potassium.PasswordHash.hash(
+		const sharedSecret	= (await this.potassium.passwordHash.hash(
 			this.sharedSecret,
-			new Uint8Array(this.potassium.PasswordHash.saltBytes)
+			new Uint8Array(this.potassium.passwordHash.saltBytes)
 		)).hash;
 
-		this.transport.send(await this.potassium.SecretBox.seal(
+		this.transport.send(await this.potassium.secretBox.seal(
 			this.keyPair.publicKey,
 			sharedSecret
 		));
@@ -37,18 +39,19 @@ export class AnonymousLocalUser implements ILocalUser {
 		return this.keyPair;
 	}
 
+	/** @inheritDoc */
 	public getRemoteSecret () : Promise<Uint8Array> {
 		return this.transport.interceptIncomingCyphertext();
 	}
 
-	/**
-	 * @param potassium
-	 * @param transport
-	 * @param sharedSecret
-	 */
-	public constructor (
+	constructor (
+		/** @ignore */
 		private potassium: Potassium,
+
+		/** @ignore */
 		private transport: Transport,
+
+		/** @ignore */
 		private sharedSecret: string
 	) {}
 }

@@ -1,27 +1,42 @@
+import {Env} from '../env';
+import {ITimer} from '../itimer';
+import {Events} from '../session/enums';
+import {Strings} from '../strings';
+import {Timer} from '../timer';
+import {Util} from '../util';
+import {IChat} from './chat/ichat';
 import {Elements} from './elements';
 import {IDialogManager} from './idialogmanager';
 import {ILinkConnection} from './ilinkconnection';
-import {IChat} from './chat/ichat';
-import {Env} from '../env';
-import {Timer} from '../timer';
-import {ITimer} from '../itimer';
-import {Strings} from '../strings';
-import {Util} from '../util';
-import {Events} from '../session/enums';
 
 
+/** @inheritDoc */
 export class LinkConnection implements ILinkConnection {
+	/** @ignore */
 	private isCopying: boolean;
+
+	/** @ignore */
 	private isWaiting: boolean;
+
+	/** @ignore */
 	private linkConstant: string;
 
-	public isPassive: boolean;
-	public link: string;
-	public linkEncoded: string;
-	public timer: ITimer;
-
+	/** @inheritDoc */
 	public advancedFeatures: boolean;
 
+	/** @inheritDoc */
+	public isPassive: boolean;
+
+	/** @inheritDoc */
+	public link: string;
+
+	/** @inheritDoc */
+	public linkEncoded: string;
+
+	/** @inheritDoc */
+	public timer: ITimer;
+
+	/** @ignore */
 	private selectLink () : void {
 		Util.getValue(
 			Elements.connectLinkInput()[0],
@@ -34,6 +49,7 @@ export class LinkConnection implements ILinkConnection {
 		);
 	}
 
+	/** @inheritDoc */
 	public addTime (milliseconds: number) : void {
 		this.timer.addTime(milliseconds);
 		this.dialogManager.toast({
@@ -42,6 +58,7 @@ export class LinkConnection implements ILinkConnection {
 		});
 	}
 
+	/** @inheritDoc */
 	public async beginWaiting (
 		baseUrl: string,
 		secret: string,
@@ -58,19 +75,22 @@ export class LinkConnection implements ILinkConnection {
 			Elements.connectLinkLink().click(e => e.preventDefault());
 		}
 		else {
-			const linkInterval	= setInterval(() => {
-				if (!this.isWaiting) {
-					clearInterval(linkInterval);
-					return;
-				}
-				else if (this.advancedFeatures) {
-					return;
-				}
+			const linkInterval	= setInterval(
+				() => {
+					if (!this.isWaiting) {
+						clearInterval(linkInterval);
+						return;
+					}
+					else if (this.advancedFeatures) {
+						return;
+					}
 
-				this.link	= this.linkConstant;
-				Elements.connectLinkInput().focus();
-				this.selectLink();
-			}, 1000);
+					this.link	= this.linkConstant;
+					Elements.connectLinkInput().focus();
+					this.selectLink();
+				},
+				1000
+			);
 		}
 
 		Elements.body().one('click', () =>
@@ -85,6 +105,7 @@ export class LinkConnection implements ILinkConnection {
 		}
 	}
 
+	/** @inheritDoc */
 	public async copyToClipboard () : Promise<void> {
 		if (this.isCopying) {
 			return;
@@ -104,6 +125,7 @@ export class LinkConnection implements ILinkConnection {
 		}
 	}
 
+	/** @inheritDoc */
 	public stop () : void {
 		this.isWaiting		= false;
 		this.linkConstant	= '';
@@ -114,14 +136,13 @@ export class LinkConnection implements ILinkConnection {
 		Elements.connectLinkInput().blur();
 	}
 
-	/**
-	 * @param countdown
-	 * @param chat
-	 * @param dialogManager
-	 */
-	public constructor (
+	constructor (
 		countdown: number,
+
+		/** @ignore */
 		private chat: IChat,
+
+		/** @ignore */
 		private dialogManager: IDialogManager
 	) {
 		this.timer	= new Timer(countdown);

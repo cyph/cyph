@@ -1,7 +1,3 @@
-import {ILinkConnection} from '../ilinkconnection';
-import {Templates} from '../templates';
-import {Util} from '../../util';
-import {UpgradeComponent} from '@angular/upgrade/static';
 import {
 	Directive,
 	DoCheck,
@@ -14,6 +10,9 @@ import {
 	OnInit,
 	SimpleChanges
 } from '@angular/core';
+import {UpgradeComponent} from '@angular/upgrade/static';
+import {Util} from '../../util';
+import {ILinkConnection} from '../ilinkconnection';
 
 
 /**
@@ -22,7 +21,8 @@ import {
 @Directive({
 	selector: 'cyph-link-connection'
 })
-export class LinkConnection extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
+export class LinkConnection
+	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
 	/** Component title. */
 	public static title: string	= 'cyphLinkConnection';
 
@@ -31,30 +31,51 @@ export class LinkConnection extends UpgradeComponent implements DoCheck, OnChang
 		bindings: {
 			self: '<'
 		},
-		template: Templates.linkConnection,
+		/* tslint:disable-next-line:max-classes-per-file */
 		controller: class {
-			public Cyph: any;
+			/** @ignore */
+			public cyph: any;
+
+			/** @ignore */
 			public self: ILinkConnection;
 
+			/** @ignore */
 			public queuedMessageDraft: string	= '';
 
 			constructor () { (async () => {
-				while (!self['Cyph']) {
-					await Util.sleep(100);
+				while (!cyph) {
+					await Util.sleep();
 				}
 
-				this.Cyph	= self['Cyph'];
+				this.cyph	= cyph;
 			})(); }
-		}
+		},
+		templateUrl: '../../../../templates/linkconnection.html'
 	};
 
 
-	@Input() self: ILinkConnection;
+	/** @ignore */
+	@Input() public self: ILinkConnection;
 
-	ngDoCheck () { super.ngDoCheck(); }
-	ngOnChanges (changes: SimpleChanges) { super.ngOnChanges(changes); }
-	ngOnDestroy () { super.ngOnDestroy(); }
-	ngOnInit () { super.ngOnInit(); }
+	/** @ignore */
+	public ngDoCheck () : void {
+		super.ngDoCheck();
+	}
+
+	/** @ignore */
+	public ngOnChanges (changes: SimpleChanges) : void {
+		super.ngOnChanges(changes);
+	}
+
+	/** @ignore */
+	public ngOnDestroy () : void {
+		super.ngOnDestroy();
+	}
+
+	/** @ignore */
+	public ngOnInit () : void {
+		super.ngOnInit();
+	}
 
 	constructor (
 		@Inject(ElementRef) elementRef: ElementRef,

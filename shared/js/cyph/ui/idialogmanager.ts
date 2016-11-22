@@ -1,6 +1,5 @@
 /**
  * Represents modal/dialog functionality.
- * @interface
  */
 export interface IDialogManager {
 	/**
@@ -21,12 +20,13 @@ export interface IDialogManager {
 	 */
 	baseDialog (
 		o: {
-			template: string;
+			template?: string;
+			templateUrl?: string;
 			locals?: any;
 			oncomplete?: Function;
 			onclose?: Function;
 		}
-	) : Promise<{ok: boolean; locals: any;}>;
+	) : Promise<{ok: boolean; locals: any}>;
 
 	/**
 	 * Displays interactive confirmation prompt.

@@ -1,6 +1,5 @@
 /**
  * Creates and controls a thread.
- * @interface
  */
 export interface IThread {
 	/**

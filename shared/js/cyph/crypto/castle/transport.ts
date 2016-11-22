@@ -1,6 +1,6 @@
-import {Potassium} from '../potassium';
 import {CastleEvents, Events, Users} from '../../session/enums';
 import {ISession} from '../../session/isession';
+import {Potassium} from '../potassium';
 
 
 /**
@@ -8,27 +8,38 @@ import {ISession} from '../../session/isession';
  * Note that each PairwiseSession must have a unique Transport instance.
  */
 export class Transport {
+	/** @ignore */
 	private static cyphertextLimit: number	= 200000;
 
+	/** @ignore */
 	public static chunkLength: number		= 5000000;
 
 
+	/** @ignore */
 	private lastIncomingMessageTimestamp: number	= 0;
 
+	/** @ignore */
 	private receivedMessages: {
-		[id: number] : {data: Uint8Array; totalChunks: number;}
+		[id: number]: {data: Uint8Array; totalChunks: number}
 	}	= {};
 
+	/** Queue of cyphertext interception handlers. */
 	public cyphertextIntercepters: Function[]	= [];
 
+	/** Trigger abortion event. */
 	public abort () : void {
 		this.session.trigger(Events.castle, {event: CastleEvents.abort});
 	}
 
+	/** Trigger connection event. */
 	public connect () : void {
 		this.session.trigger(Events.castle, {event: CastleEvents.connect});
 	}
 
+	/**
+	 * Intercept raw data of next incoming message before
+	 * it ever hits the core Castle protocol logic.
+	 */
 	public interceptIncomingCyphertext (
 		timeout: number = 45000
 	) : Promise<Uint8Array> {
@@ -36,13 +47,19 @@ export class Transport {
 			this.cyphertextIntercepters.push(resolve);
 
 			if (timeout) {
-				setTimeout(() =>
-					reject('Cyphertext interception timeout.')
-				, timeout);
+				setTimeout(
+					() => reject('Cyphertext interception timeout.'),
+					timeout
+				);
 			}
 		});
 	}
 
+	/**
+	 * Trigger event for logging cyphertext.
+	 * @param cyphertext
+	 * @param author
+	 */
 	public logCyphertext (cyphertext: string, author: string) : void {
 		if (cyphertext.length >= Transport.cyphertextLimit) {
 			return;
@@ -51,6 +68,11 @@ export class Transport {
 		this.session.trigger(Events.cyphertext, {author, cyphertext});
 	}
 
+	/**
+	 * Handle decrypted incoming message.
+	 * @param cyphertext
+	 * @param messageId
+	 */
 	public receive (
 		cyphertext: Uint8Array,
 		plaintext: DataView,
@@ -88,12 +110,12 @@ export class Transport {
 		if (timestamp > this.lastIncomingMessageTimestamp) {
 			this.lastIncomingMessageTimestamp	= timestamp;
 
-			const plaintext	= Potassium.toString(message.data);
+			const messageData	= Potassium.toString(message.data);
 
-			if (plaintext) {
+			if (messageData) {
 				this.session.trigger(Events.castle, {
-					event: CastleEvents.receive,
-					data: {author, plaintext, timestamp}
+					data: {author, timestamp, plaintext: messageData},
+					event: CastleEvents.receive
 				});
 			}
 		}
@@ -102,6 +124,11 @@ export class Transport {
 		this.receivedMessages[id]	= null;
 	}
 
+	/**
+	 * Send outgoing encrypted message.
+	 * @param cyphertext
+	 * @param messageId
+	 */
 	public send (
 		cyphertext: string|ArrayBufferView,
 		messageId?: ArrayBufferView
@@ -119,15 +146,15 @@ export class Transport {
 		}
 
 		this.session.trigger(Events.castle, {
-			event: CastleEvents.send,
-			data: fullCyphertext
+			data: fullCyphertext,
+			event: CastleEvents.send
 		});
 
 		this.logCyphertext(fullCyphertext, Users.me);
 	}
 
-	/**
-	 * @param session
-	 */
-	public constructor (private session: ISession) {}
+	constructor (
+		/** @ignore */
+		private session: ISession
+	) {}
 }

@@ -1,7 +1,3 @@
-import {ISignupForm} from '../isignupform';
-import {Templates} from '../templates';
-import {Util} from '../../util';
-import {UpgradeComponent} from '@angular/upgrade/static';
 import {
 	Directive,
 	DoCheck,
@@ -14,6 +10,9 @@ import {
 	OnInit,
 	SimpleChanges
 } from '@angular/core';
+import {UpgradeComponent} from '@angular/upgrade/static';
+import {Util} from '../../util';
+import {ISignupForm} from '../isignupform';
 
 
 /**
@@ -22,41 +21,66 @@ import {
 @Directive({
 	selector: 'cyph-signup-form'
 })
-export class SignupForm extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
+export class SignupForm
+	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
 	/** Component title. */
 	public static title: string	= 'cyphSignupForm';
 
 	/** Component configuration. */
 	public static config		= {
 		bindings: {
-			self: '<',
-			invite: '<'
+			invite: '<',
+			self: '<'
 		},
-		template: Templates.signupForm,
-		transclude: true,
+		/* tslint:disable-next-line:max-classes-per-file */
 		controller: class {
-			public Cyph: any;
+			/** @ignore */
+			public cyph: any;
+
+			/** @ignore */
 			public self: ISignupForm;
+
+			/** @ignore */
 			public invite: string;
 
 			constructor () { (async () => {
-				while (!self['Cyph']) {
-					await Util.sleep(100);
+				while (!cyph) {
+					await Util.sleep();
 				}
 
-				this.Cyph	= self['Cyph'];
+				this.cyph	= cyph;
 			})(); }
-		}
+		},
+		templateUrl: '../../../../templates/signupform.html',
+		transclude: true
 	};
 
 
-	@Input() self: ISignupForm;
-	@Input() invite: string;
+	/** @ignore */
+	@Input() public self: ISignupForm;
 
-	ngDoCheck () { super.ngDoCheck(); }
-	ngOnChanges (changes: SimpleChanges) { super.ngOnChanges(changes); }
-	ngOnDestroy () { super.ngOnDestroy(); }
-	ngOnInit () { super.ngOnInit(); }
+	/** @ignore */
+	@Input() public invite: string;
+
+	/** @ignore */
+	public ngDoCheck () : void {
+		super.ngDoCheck();
+	}
+
+	/** @ignore */
+	public ngOnChanges (changes: SimpleChanges) : void {
+		super.ngOnChanges(changes);
+	}
+
+	/** @ignore */
+	public ngOnDestroy () : void {
+		super.ngOnDestroy();
+	}
+
+	/** @ignore */
+	public ngOnInit () : void {
+		super.ngOnInit();
+	}
 
 	constructor (
 		@Inject(ElementRef) elementRef: ElementRef,

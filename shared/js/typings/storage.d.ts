@@ -1,6 +1,5 @@
 /**
  * This represents the local storage values used by Cyph.
- * @interface
  */
 interface Storage {
 	/** Indicates whether this Storage instance

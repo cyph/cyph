@@ -1,7 +1,3 @@
-import {Templates} from '../templates';
-import {IChat} from '../chat/ichat';
-import {Util} from '../../util';
-import {UpgradeComponent} from '@angular/upgrade/static';
 import {
 	Directive,
 	DoCheck,
@@ -14,6 +10,9 @@ import {
 	OnInit,
 	SimpleChanges
 } from '@angular/core';
+import {UpgradeComponent} from '@angular/upgrade/static';
+import {Util} from '../../util';
+import {IChat} from '../chat/ichat';
 
 
 /**
@@ -22,41 +21,66 @@ import {
 @Directive({
 	selector: 'cyph-chat-main'
 })
-export class ChatMain extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
+export class ChatMain
+	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
 	/** Component title. */
 	public static title: string	= 'cyphChatMain';
 
 	/** Component configuration. */
 	public static config		= {
 		bindings: {
-			self: '<',
-			hideDisconnectMessage: '<'
+			hideDisconnectMessage: '<',
+			self: '<'
 		},
-		template: Templates.chatMain,
-		transclude: true,
+		/* tslint:disable-next-line:max-classes-per-file */
 		controller: class {
-			public Cyph: any;
+			/** @ignore */
+			public cyph: any;
+
+			/** @ignore */
 			public self: IChat;
+
+			/** @ignore */
 			public hideDisconnectMessage: boolean;
 
 			constructor () { (async () => {
-				while (!self['Cyph']) {
-					await Util.sleep(100);
+				while (!cyph) {
+					await Util.sleep();
 				}
 
-				this.Cyph	= self['Cyph'];
+				this.cyph	= cyph;
 			})(); }
-		}
+		},
+		templateUrl: '../../../../templates/chatmain.html',
+		transclude: true
 	};
 
 
-	@Input() self: IChat;
-	@Input() hideDisconnectMessage: boolean;
+	/** @ignore */
+	@Input() public self: IChat;
 
-	ngDoCheck () { super.ngDoCheck(); }
-	ngOnChanges (changes: SimpleChanges) { super.ngOnChanges(changes); }
-	ngOnDestroy () { super.ngOnDestroy(); }
-	ngOnInit () { super.ngOnInit(); }
+	/** @ignore */
+	@Input() public hideDisconnectMessage: boolean;
+
+	/** @ignore */
+	public ngDoCheck () : void {
+		super.ngDoCheck();
+	}
+
+	/** @ignore */
+	public ngOnChanges (changes: SimpleChanges) : void {
+		super.ngOnChanges(changes);
+	}
+
+	/** @ignore */
+	public ngOnDestroy () : void {
+		super.ngOnDestroy();
+	}
+
+	/** @ignore */
+	public ngOnInit () : void {
+		super.ngOnInit();
+	}
 
 	constructor (
 		@Inject(ElementRef) elementRef: ElementRef,

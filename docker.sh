@@ -153,22 +153,10 @@ elif [ "${command}" == 'deploy' ] ; then
 		trap cleanup EXIT
 	fi
 
-elif [ "${command}" == 'build' ] ; then
-	args=''
-
 elif [ "${command}" == 'commit' ] ; then
 	args='-it'
 
 	chmod -R 700 .
-
-elif [ "${command}" == 'backmerge' ] ; then
-	args=''
-
-elif [ "${command}" == 'prodmerge' ] ; then
-	args=''
-
-elif [ "${command}" == 'docs' ] ; then
-	args=''
 
 elif [ "${command}" == 'restart' ] ; then
 	stop
@@ -177,9 +165,6 @@ elif [ "${command}" == 'restart' ] ; then
 
 elif [ "${command}" == 'updatelibs' ] ; then
 	args='-it'
-
-elif [ "${command}" == 'websign/bootstraphash' ] ; then
-	args=''
 
 elif [ "${command}" == 'make' ] ; then
 	stop
@@ -205,7 +190,7 @@ elif [ "${command}" == 'makeclean' ] ; then
 	docker images --filter dangling=true --quiet | xargs -I% docker rmi -f %
 	exit 0
 
-else
+elif [ ! -f "commands/${command}.sh" ] ; then
 	echo fak u gooby
 	exit 1
 fi

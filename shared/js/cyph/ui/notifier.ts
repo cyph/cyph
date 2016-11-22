@@ -1,15 +1,18 @@
-import {INotifier} from './inotifier';
-import {VisibilityWatcher} from './visibilitywatcher';
 import {Config} from '../config';
 import {Env} from '../env';
+import {INotifier} from './inotifier';
+import {VisibilityWatcher} from './visibilitywatcher';
 
 
+/** @inheritDoc */
 export class Notifier implements INotifier {
-	private static audio : {play: Function}	= Audio ?
+	/** @ignore */
+	private static audio: {play: Function}	= Audio ?
 		new Audio(Config.notifierConfig.audio) :
 		{play: () => {}}
 	;
 
+	/** @ignore */
 	private static createNotification (message: string, callback: Function = () => {}) : void {
 		const options	= {
 			audio: null,
@@ -21,7 +24,7 @@ export class Notifier implements INotifier {
 		};
 
 		try {
-			callback(new self['Notification'](Config.notifierConfig.title, options));
+			callback(new (<any> self).Notification(Config.notifierConfig.title, options));
 
 			try {
 				Notifier.audio.play();
@@ -32,7 +35,7 @@ export class Notifier implements INotifier {
 			try {
 				options.audio	= Config.notifierConfig.audio;
 
-				navigator['serviceWorker'].
+				(<any> navigator).serviceWorker.
 					register(Config.webSignConfig.serviceWorker).
 					then(serviceWorkerRegistration => {
 						try {
@@ -51,9 +54,13 @@ export class Notifier implements INotifier {
 	}
 
 
+	/** @ignore */
 	private disableNotify: boolean		= false;
+
+	/** @ignore */
 	private openNotifications: any[]	= [];
 
+	/** @inheritDoc */
 	public notify (message: string) : void {
 		if (!this.disableNotify && !VisibilityWatcher.isVisible) {
 			this.disableNotify	= true;
@@ -72,7 +79,7 @@ export class Notifier implements INotifier {
 		}
 	}
 
-	public constructor () {
+	constructor () {
 		VisibilityWatcher.onchange((isVisible: boolean) => {
 			if (isVisible) {
 				for (let notification of this.openNotifications) {
@@ -90,7 +97,7 @@ export class Notifier implements INotifier {
 		});
 
 		try {
-			self['Notification'].requestPermission();
+			(<any> self).Notification.requestPermission();
 		}
 		catch (_) {}
 	}

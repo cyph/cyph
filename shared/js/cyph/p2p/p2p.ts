@@ -1,18 +1,20 @@
-import {UIEvents} from './enums';
-import {IP2P} from './ip2p';
 import {Analytics} from '../analytics';
 import {Env} from '../env';
 import {EventManager} from '../eventmanager';
-import {Util} from '../util';
 import {Command} from '../session/command';
-import {Events, RPCEvents} from '../session/enums';
+import {Events, rpcEvents} from '../session/enums';
 import {IMutex} from '../session/imutex';
 import {ISession} from '../session/isession';
 import {Message} from '../session/message';
 import {Mutex} from '../session/mutex';
+import {Util} from '../util';
+import {UIEventCategories, UIEvents} from './enums';
+import {IP2P} from './ip2p';
 
 
+/** @inheritDoc */
 export class P2P implements IP2P {
+	/** Constant values used by P2P. */
 	public static constants	= {
 		accept: 'accept',
 		audio: 'audio',
@@ -23,9 +25,10 @@ export class P2P implements IP2P {
 		webRTC: 'webRTC'
 	};
 
+	/** Indicates whether WebRTC is supported in the current environment. */
 	public static isSupported: boolean	= (() => {
 		try {
-			return new self['SimpleWebRTC']({
+			return new (<any> self).SimpleWebRTC({
 				connection: {on: () => {}}
 			}).capabilities.support;
 		}
@@ -35,10 +38,16 @@ export class P2P implements IP2P {
 	})();
 
 
+	/** @ignore */
 	private isAccepted: boolean;
+
+	/** @ignore */
 	private mutex: IMutex;
+
+	/** @ignore */
 	private webRTC: any;
 
+	/** @ignore */
 	private commands	= {
 		accept: () : void => {
 			this.join();
@@ -48,43 +57,43 @@ export class P2P implements IP2P {
 			this.isAccepted	= false;
 
 			this.triggerUIEvent(
-				UIEvents.Categories.request,
-				UIEvents.Events.requestRejection
+				UIEventCategories.request,
+				UIEvents.requestRejection
 			);
 		},
 
-		kill: () : void => {
+		kill: async () : Promise<void> => {
 			const wasAccepted: boolean	= this.isAccepted;
 			this.isAccepted				= false;
 			this.isActive				= false;
 
-			setTimeout(() => {
-				for (let o of [this.outgoingStream, this.incomingStream]) {
-					for (let k of Object.keys(o)) {
-						o[k]	= false;
-					}
-				}
+			await Util.sleep(500);
 
-				if (this.webRTC) {
-					this.webRTC.mute();
-					this.webRTC.pauseVideo();
-					this.webRTC.stopLocalVideo();
-					this.webRTC.leaveRoom();
-					this.webRTC.disconnect();
-					this.webRTC	= null;
+			for (let o of [this.outgoingStream, this.incomingStream]) {
+				for (let k of Object.keys(o)) {
+					o[k]	= false;
 				}
+			}
 
-				if (wasAccepted) {
-					this.triggerUIEvent(
-						UIEvents.Categories.base,
-						UIEvents.Events.connected,
-						false
-					);
-				}
-			}, 500);
+			if (this.webRTC) {
+				this.webRTC.mute();
+				this.webRTC.pauseVideo();
+				this.webRTC.stopLocalVideo();
+				this.webRTC.leaveRoom();
+				this.webRTC.disconnect();
+				this.webRTC	= null;
+			}
+
+			if (wasAccepted) {
+				this.triggerUIEvent(
+					UIEventCategories.base,
+					UIEvents.connected,
+					false
+				);
+			}
 		},
 
-		webRTC: (data: {event: string; args: any[];}) : void => {
+		webRTC: (data: {event: string; args: any[]}) : void => {
 			EventManager.trigger(
 				P2P.constants.webRTC + data.event,
 				data.args
@@ -92,12 +101,19 @@ export class P2P implements IP2P {
 		}
 	};
 
+	/** @inheritDoc */
 	public incomingStream	= {audio: false, video: false};
+
+	/** @inheritDoc */
 	public outgoingStream	= {audio: false, video: false};
 
+	/** @inheritDoc */
 	public isActive: boolean;
+
+	/** @inheritDoc */
 	public loading: boolean;
 
+	/** @ignore */
 	private receiveCommand (command: Command) : void {
 		if (!P2P.isSupported) {
 			return;
@@ -111,15 +127,15 @@ export class P2P implements IP2P {
 			command.method === P2P.constants.audio
 		) {
 			this.triggerUIEvent(
-				UIEvents.Categories.request,
-				UIEvents.Events.acceptConfirm,
+				UIEventCategories.request,
+				UIEvents.acceptConfirm,
 				command.method,
 				500000,
 				this.isAccepted,
 				(ok: boolean) => {
 					this.session.send(
 						new Message(
-							RPCEvents.p2p,
+							rpcEvents.p2p,
 							new Command(ok ?
 								P2P.constants.accept :
 								P2P.constants.decline
@@ -132,11 +148,11 @@ export class P2P implements IP2P {
 						this.join();
 
 						Analytics.send({
-							hitType: 'event',
-							eventCategory: 'call',
 							eventAction: 'start',
+							eventCategory: 'call',
 							eventLabel: command.method,
-							eventValue: 1
+							eventValue: 1,
+							hitType: 'event'
 						});
 					}
 				}
@@ -144,6 +160,7 @@ export class P2P implements IP2P {
 		}
 	}
 
+	/** @ignore */
 	private refresh (webRTC: any = this.webRTC) : void {
 		this.loading	=
 			this.incomingStream.audio ||
@@ -159,24 +176,27 @@ export class P2P implements IP2P {
 		webRTC.startLocalVideo();
 	}
 
+	/** @ignore */
 	private triggerUIEvent(
-		category: UIEvents.Categories,
-		event: UIEvents.Events,
+		category: UIEventCategories,
+		event: UIEvents,
 		...args: any[]
 	) : void {
 		this.session.trigger(Events.p2pUI, {category, event, args});
 	}
 
-	public accept (callType?: string) {
+	/** @inheritDoc */
+	public accept (callType?: string) : void {
 		this.isAccepted				= true;
 		this.outgoingStream.video	= callType === P2P.constants.video;
 		this.outgoingStream.audio	= true;
 	}
 
+	/** @inheritDoc */
 	public close () : void {
 		this.session.send(
 			new Message(
-				RPCEvents.p2p,
+				rpcEvents.p2p,
 				new Command(P2P.constants.kill)
 			)
 		);
@@ -184,6 +204,7 @@ export class P2P implements IP2P {
 		this.commands.kill();
 	}
 
+	/** @inheritDoc */
 	public async join () : Promise<void> {
 		if (this.webRTC) {
 			return;
@@ -200,20 +221,37 @@ export class P2P implements IP2P {
 		this.isActive	= true;
 
 		const iceServers: string	= await Util.request({
-			url: Env.baseUrl + 'iceservers',
-			retries: 5
+			retries: 5,
+			url: Env.baseUrl + 'iceservers'
 		});
 
 		const events: string[]	= [];
 
-		const webRTC	= new self['SimpleWebRTC']({
-			localVideoEl: this.localVideo()[0],
-			remoteVideosEl: this.remoteVideo()[0],
-			autoRequestMedia: false,
-			autoRemoveVideos: false,
+		const webRTC	= new (<any> self).SimpleWebRTC({
 			adjustPeerVolume: true,
-			media: this.outgoingStream,
+			autoRemoveVideos: false,
+			autoRequestMedia: false,
 			connection: {
+				disconnect: () => events.forEach(event => EventManager.off(event)),
+				emit: (event: string, ...args: any[]) => {
+					const lastArg: any	= args.slice(-1)[0];
+
+					if (event === 'join' && typeof lastArg === 'function') {
+						lastArg(null, {clients: {friend: {video: true}}});
+					}
+					else {
+						this.session.send(
+							new Message(
+								rpcEvents.p2p,
+								new Command(
+									P2P.constants.webRTC,
+									{event, args}
+								)
+							)
+						);
+					}
+				},
+				getSessionid: () => this.session.state.cyphId,
 				on: (event: string, callback: Function) => {
 					const fullEvent: string	= P2P.constants.webRTC + event;
 					events.push(fullEvent);
@@ -238,33 +276,16 @@ export class P2P implements IP2P {
 							callback.apply(webRTC, args);
 						}
 					);
-				},
-				emit: (event: string, ...args: any[]) => {
-					const lastArg: any	= args.slice(-1)[0];
-
-					if (event === 'join' && typeof lastArg === 'function') {
-						lastArg(null, {clients: {friend: {video: true}}});
-					}
-					else {
-						this.session.send(
-							new Message(
-								RPCEvents.p2p,
-								new Command(
-									P2P.constants.webRTC,
-									{event, args}
-								)
-							)
-						);
-					}
-				},
-				getSessionid: () => this.session.state.cyphId,
-				disconnect: () => events.forEach(event => EventManager.off(event))
-			}
+				}
+			},
+			localVideoEl: this.localVideo()[0],
+			media: this.outgoingStream,
+			remoteVideosEl: this.remoteVideo()[0]
 		});
 
 		webRTC.webrtc.config.peerConnectionConfig.iceServers	=
 			JSON.parse(iceServers).
-			filter(o => !this.forceTURN || o['url'].indexOf('stun:') !== 0)
+			filter(o => !this.forceTURN || o.url.indexOf('stun:') !== 0)
 		;
 
 		webRTC.connection.on('streamUpdate', incomingStream => {
@@ -286,51 +307,54 @@ export class P2P implements IP2P {
 		this.webRTC	= webRTC;
 	}
 
+	/** @inheritDoc */
 	public request (callType: string) : void {
 		this.triggerUIEvent(
-			UIEvents.Categories.request,
-			UIEvents.Events.requestConfirm,
+			UIEventCategories.request,
+			UIEvents.requestConfirm,
 			callType,
 			this.isAccepted,
-			(ok: boolean) => {
-				if (ok) {
-					this.mutex.lock((wasFirst: boolean, wasFirstOfType: boolean) => {
-						try {
-							if (wasFirstOfType) {
-								this.accept(callType);
+			async (ok: boolean) => {
+				if (!ok) {
+					return;
+				}
 
-								this.session.send(
-									new Message(
-										RPCEvents.p2p,
-										new Command(callType)
-									)
-								);
+				const lockDetails	= await this.mutex.lock(P2P.constants.requestCall);
 
-								setTimeout(() =>
-									this.triggerUIEvent(
-										UIEvents.Categories.request,
-										UIEvents.Events.requestConfirmation
-									)
-								, 250);
+				try {
+					if (!lockDetails.wasFirstOfType) {
+						return;
+					}
 
-								/* Time out if request hasn't been
-									accepted within 10 minutes */
-								setTimeout(() => {
-									if (!this.isActive) {
-										this.isAccepted	= false;
-									}
-								}, 600000);
-							}
-						}
-						finally {
-							this.mutex.unlock();
-						}
-					}, P2P.constants.requestCall);
+					this.accept(callType);
+
+					this.session.send(
+						new Message(
+							rpcEvents.p2p,
+							new Command(callType)
+						)
+					);
+
+					await Util.sleep();
+					this.triggerUIEvent(
+						UIEventCategories.request,
+						UIEvents.requestConfirmation
+					);
+
+					/* Time out if request hasn't been accepted within 10 minutes */
+					await Util.sleep(600000);
+					if (!this.isActive) {
+						this.isAccepted	= false;
+					}
+				}
+				finally {
+					this.mutex.unlock();
 				}
 			}
 		);
 	}
 
+	/** @inheritDoc */
 	public toggle (shouldPause?: boolean, medium?: string) : void {
 		if (!this.webRTC) {
 			return;
@@ -357,36 +381,37 @@ export class P2P implements IP2P {
 		this.refresh();
 	}
 
-	/**
-	 * @param session
-	 * @param forceTURN
-	 * @param localVideo
-	 * @param remoteVideo
-	 */
-	public constructor (
+	constructor (
+		/** @ignore */
 		private session: ISession,
+
+		/** @ignore */
 		private forceTURN: boolean,
+
+		/** @ignore */
 		private localVideo: () => JQuery,
+
+		/** @ignore */
 		private remoteVideo: () => JQuery
 	) {
 		this.mutex	= new Mutex(this.session);
 
 		if (P2P.isSupported) {
 			this.session.on(Events.beginChat, () => this.session.send(
-				new Message(RPCEvents.p2p, new Command())
+				new Message(rpcEvents.p2p, new Command())
 			));
 		}
 
 		this.session.on(Events.closeChat, () => this.close());
 
-		this.session.on(RPCEvents.p2p, (command: Command) => {
+		this.session.on(rpcEvents.p2p, (command: Command) => {
 			if (command.method) {
 				this.receiveCommand(command);
 			}
 			else if (P2P.isSupported) {
 				this.triggerUIEvent(
-					UIEvents.Categories.base,
-					UIEvents.Events.enable
+					UIEventCategories.base,
+					UIEvents.enable
 				);
 			}
 		});

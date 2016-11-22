@@ -1,7 +1,7 @@
+import {Potassium} from './crypto/potassium';
 import {Env} from './env';
 import {EventManager} from './eventmanager';
 import {Util} from './util';
-import {Potassium} from './crypto/potassium';
 
 
 /**
@@ -9,7 +9,10 @@ import {Potassium} from './crypto/potassium';
  * (https://developers.google.com/analytics/devguides/collection/analyticsjs/events)
  */
 export class Analytics {
+	/** @ignore */
 	private static analFrame: HTMLIFrameElement;
+
+	/** @ignore */
 	private static analFrameIsReady: boolean;
 
 	/**
@@ -19,7 +22,7 @@ export class Analytics {
 	 */
 	public static baseEventSubmit (method: string, args: any[]) : void {
 		if (!Env.isMainThread) {
-			EventManager.callMainThread('Cyph.Analytics.baseEventSubmit', [method, args]);
+			EventManager.callMainThread('cyph.Analytics.baseEventSubmit', [method, args]);
 		}
 		else if (Analytics.analFrameIsReady) {
 			args.unshift(method);
@@ -54,6 +57,8 @@ export class Analytics {
 		Analytics.baseEventSubmit('set', args);
 	}
 
+	/** @ignore */
+	/* tslint:disable-next-line:member-ordering */
 	private static _	= (() => {
 		const appName: string		= Env.host;
 		const appVersion: string	= Env.isWeb ? 'Web' : 'Native';
@@ -122,12 +127,11 @@ export class Analytics {
 				document.body.appendChild(Analytics.analFrame);
 
 				$(() =>
-					$(Analytics.analFrame).one('load', () =>
-						setTimeout(() => {
-							Analytics.analFrameIsReady	= true;
-							Analytics.set({appName, appVersion});
-						}, 250)
-					)
+					$(Analytics.analFrame).one('load', async () => {
+						await Util.sleep();
+						Analytics.analFrameIsReady	= true;
+						Analytics.set({appName, appVersion});
+					})
 				);
 			}
 			catch (_) {

@@ -7,6 +7,26 @@ import {Util} from './util';
  * Handles errors.
  */
 export class Errors {
+	/**
+	 * Logs generic error (used by self.onerror).
+	 * @param errorMessage
+	 * @param url
+	 * @param line
+	 * @param column
+	 * @param errorObject
+	 */
+	public static log			= Errors.baseErrorLog(
+		'WARNING WARNING WARNING SOMETHING IS SRSLY FUCKED UP LADS'
+	);
+
+	/**
+	 * Logs chat authentication failure (attempted mitm and/or mistyped shared secret).
+	 */
+	public static logAuthFail	= Errors.baseErrorLog(
+		'AUTHENTICATION JUST FAILED FOR SOMEONE LADS'
+	);
+
+	/** @ignore */
 	private static baseErrorLog (subject: string, shouldIncludeBootstrapText?: boolean) : Function {
 		let numEmails: number	= 0;
 
@@ -25,16 +45,16 @@ export class Errors {
 			const exception: string	= !errorMessage ? '' : (
 				errorMessage + '\n\n' +
 				'URL: ' + url + '\n' +
-				'Line: ' + line + '\n' +
-				'Column: ' + column + '\n\n' +
-				(errorObject && errorObject.stack)
+				'Line: ' + line.toString() + '\n' +
+				'Column: ' + column.toString() + '\n\n' +
+				(<string> (errorObject ? errorObject.stack : ''))
 			).replace(/\/#.*/g, '');
 
 			if (numEmails++ < 50) {
 				Util.email({
-					to: 'errors',
+					message: exception,
 					subject: 'CYPH: ' + subject,
-					message: exception
+					to: 'errors'
 				});
 			}
 
@@ -44,23 +64,8 @@ export class Errors {
 		};
 	}
 
-	/**
-	 * Logs generic error (used by self.onerror).
-	 * @param errorMessage
-	 * @param url
-	 * @param line
-	 * @param column
-	 * @param errorObject
-	 * @function
-	 */
-	public static log			= Errors.baseErrorLog('WARNING WARNING WARNING SOMETHING IS SRSLY FUCKED UP LADS');
-
-	/**
-	 * Logs chat authentication failure (attempted mitm and/or mistyped shared secret).
-	 * @function
-	 */
-	public static logAuthFail	= Errors.baseErrorLog('AUTHENTICATION JUST FAILED FOR SOMEONE LADS');
-
+	/** @ignore */
+	/* tslint:disable-next-line:member-ordering */
 	private static _	= (() => {
 		self.onerror	= <ErrorEventHandler> Errors.log;
 	})();

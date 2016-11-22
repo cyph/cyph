@@ -1,6 +1,3 @@
-import {Templates} from '../templates';
-import {Util} from '../../util';
-import {UpgradeComponent} from '@angular/upgrade/static';
 import {
 	Directive,
 	DoCheck,
@@ -12,6 +9,8 @@ import {
 	OnInit,
 	SimpleChanges
 } from '@angular/core';
+import {UpgradeComponent} from '@angular/upgrade/static';
+import {Util} from '../../util';
 
 
 /**
@@ -20,49 +19,69 @@ import {
 @Directive({
 	selector: 'cyph-beta'
 })
-export class Beta extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
+export class Beta
+	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
 	/** Component title. */
 	public static title: string	= 'cyphBeta';
 
 	/** Component configuration. */
 	public static config		= {
-		template: Templates.beta,
+		/* tslint:disable-next-line:max-classes-per-file */
 		controller: class {
-			public Cyph: any;
+			/** @ignore */
+			public cyph: any;
+
+			/** @ignore */
 			public ui: any;
 
+			/** @ignore */
 			public checking: boolean	= false;
+
+			/** @ignore */
 			public error: boolean		= false;
 
-			constructor ($element) { (async () => {
-				while (!self['Cyph'] || !self['ui']) {
-					await Util.sleep(100);
+			constructor ($element: JQuery) { (async () => {
+				while (!cyph || !ui) {
+					await Util.sleep();
 				}
 
-				this.Cyph	= self['Cyph'];
-				this.ui		= self['ui'];
+				this.cyph	= cyph;
+				this.ui		= ui;
 
 				/* TODO: stop blatantly lying to people */
-				$element.find('form').submit(() => {
+				$element.find('form').submit(async () => {
 					this.checking	= true;
 					this.error		= false;
-					this.ui.controller.update();
 
-					setTimeout(() => {
-						this.checking	= false;
-						this.error		= true;
-						this.ui.controller.update();
-					}, Util.random(4000, 1500));
+					await Util.sleep(Util.random(4000, 1500));
+					this.checking	= false;
+					this.error		= true;
 				});
 			})(); }
-		}
+		},
+		templateUrl: '../../../../templates/beta.html'
 	};
 
 
-	ngDoCheck () { super.ngDoCheck(); }
-	ngOnChanges (changes: SimpleChanges) { super.ngOnChanges(changes); }
-	ngOnDestroy () { super.ngOnDestroy(); }
-	ngOnInit () { super.ngOnInit(); }
+	/** @ignore */
+	public ngDoCheck () : void {
+		super.ngDoCheck();
+	}
+
+	/** @ignore */
+	public ngOnChanges (changes: SimpleChanges) : void {
+		super.ngOnChanges(changes);
+	}
+
+	/** @ignore */
+	public ngOnDestroy () : void {
+		super.ngOnDestroy();
+	}
+
+	/** @ignore */
+	public ngOnInit () : void {
+		super.ngOnInit();
+	}
 
 	constructor (
 		@Inject(ElementRef) elementRef: ElementRef,

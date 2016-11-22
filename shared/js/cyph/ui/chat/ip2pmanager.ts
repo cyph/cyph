@@ -3,7 +3,6 @@ import {IP2P} from '../../p2p/ip2p';
 
 /**
  * Represents P2P component of chat UI.
- * @interface
  */
 export interface IP2PManager {
 	/** Indicates whether P2P is possible (i.e. both clients support WebRTC). */

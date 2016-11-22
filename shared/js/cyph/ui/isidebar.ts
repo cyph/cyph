@@ -1,6 +1,5 @@
 /**
  * Represents a slide-out menu component.
- * @interface
  */
 export interface ISidebar {
 	/**

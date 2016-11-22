@@ -1,6 +1,5 @@
 /**
  * Represents a countdown timer.
- * @interface
  */
 export interface ITimer {
 	/** Countdown duration in milliseconds. */

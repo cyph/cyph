@@ -1,6 +1,5 @@
 /**
  * Represents a Castle encryption instance.
- * @interface
  */
 export interface ICastle {
 	/**

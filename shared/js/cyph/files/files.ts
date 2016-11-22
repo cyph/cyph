@@ -1,22 +1,28 @@
+import {Analytics} from '../analytics';
+import {Config} from '../config';
+import {Potassium} from '../crypto/potassium';
+import {EventManager} from '../eventmanager';
+import {Firebase} from '../firebase';
+import {Events, rpcEvents, Users} from '../session/enums';
+import {ISession} from '../session/isession';
+import {Message} from '../session/message';
+import {Thread} from '../thread';
+import {Util} from '../util';
 import {UIEvents} from './enums';
 import {IFiles} from './ifiles';
 import {ITransfer} from './itransfer';
 import {Transfer} from './transfer';
-import {Analytics} from '../analytics';
-import {Config} from '../config';
-import {EventManager} from '../eventmanager';
-import {Firebase} from '../firebase';
-import {Thread} from '../thread';
-import {Util} from '../util';
-import {Potassium} from '../crypto/potassium';
-import {Events, RPCEvents, Users} from '../session/enums';
-import {ISession} from '../session/isession';
-import {Message} from '../session/message';
 
 
+/**
+ * Standard IFiles implementation built on Firebase.
+ * For encryption, native crypto is preferred when available,
+ * but libsodium in a separate thread is used as a fallback.
+ */
 export class Files implements IFiles {
-	private static cryptoThread (
-		locals: {
+	/** @ignore */
+	private static async cryptoThread (
+		threadLocals: {
 			plaintext?: Uint8Array,
 			cyphertext?: Uint8Array,
 			key?: Uint8Array,
@@ -24,31 +30,34 @@ export class Files implements IFiles {
 			callbackId?: string
 		}
 	) : Promise<any[]> {
-		return new Promise((resolve, reject) => {
-			locals.chunkSize	= Config.filesConfig.chunkSize;
-			locals.callbackId	= 'files-' + Util.generateGuid();
+		threadLocals.chunkSize	= Config.filesConfig.chunkSize;
+		threadLocals.callbackId	= 'files-' + Util.generateGuid();
 
-			const thread	= new Thread(async function (
+		const thread	= new Thread(
+			/* tslint:disable-next-line:only-arrow-functions */
+			async function (
+				/* tslint:disable-next-line:variable-name */
 				Cyph: any,
+				/* tslint:disable-next-line:variable-name */
 				Potassium: any,
 				locals: any,
 				importScripts: Function
-			) {
-				importScripts('/js/cyph/crypto/potassium.js');
+			) : Promise<void> {
+				importScripts('/js/cyph/crypto/potassium/index.js');
 
 				const potassium: Potassium	= new Potassium();
 
 				/* Encrypt */
 				if (locals.plaintext) {
 					const key: Uint8Array	= Potassium.randomBytes(
-						potassium.SecretBox.keyBytes
+						potassium.secretBox.keyBytes
 					);
 
 					const chunks: Uint8Array[]	= [];
 
 					for (let i = 0 ; i < locals.plaintext.length ; i += locals.chunkSize) {
 						try {
-							chunks.push(await potassium.SecretBox.seal(
+							chunks.push(await potassium.secretBox.seal(
 								new Uint8Array(
 									locals.plaintext.buffer,
 									i,
@@ -98,7 +107,7 @@ export class Files implements IFiles {
 				else if (locals.cyphertext && locals.key) {
 					const chunks: Uint8Array[]	= [];
 
-					for (let i = 0 ; i < locals.cyphertext.length ;) {
+					for (let i = 0 ; i < locals.cyphertext.length ; ) {
 						try {
 							const chunkSize: number	= new DataView(
 								locals.cyphertext.buffer,
@@ -107,7 +116,7 @@ export class Files implements IFiles {
 
 							i += 4;
 
-							chunks.push(await potassium.SecretBox.open(
+							chunks.push(await potassium.secretBox.open(
 								new Uint8Array(
 									locals.cyphertext.buffer,
 									i,
@@ -147,9 +156,12 @@ export class Files implements IFiles {
 						[null, plaintext]
 					);
 				}
-			}, locals);
+			},
+			threadLocals
+		);
 
-			EventManager.one(locals.callbackId, data => {
+		return new Promise<any[]>((resolve, reject) =>
+			EventManager.one(threadLocals.callbackId, data => {
 				thread.stop();
 
 				const err	= data[0];
@@ -159,22 +171,25 @@ export class Files implements IFiles {
 				else {
 					resolve(data.slice(1));
 				}
-			});
-		});
+			})
+		);
 	}
 
 
+	/** @ignore */
 	private nativePotassium: Potassium;
 
+	/** @inheritDoc */
 	public transfers: ITransfer[]	= [];
 
+	/** @ignore */
 	private async decryptFile (
 		cyphertext: Uint8Array,
 		key: Uint8Array
 	) : Promise<Uint8Array> {
 		try {
 			return this.nativePotassium ?
-				await this.nativePotassium.SecretBox.open(cyphertext, key) :
+				await this.nativePotassium.secretBox.open(cyphertext, key) :
 				(await Files.cryptoThread({cyphertext, key}))[0]
 			;
 		}
@@ -183,6 +198,7 @@ export class Files implements IFiles {
 		}
 	}
 
+	/** @ignore */
 	private async encryptFile (plaintext: Uint8Array) : Promise<{
 		cyphertext: Uint8Array;
 		key: Uint8Array;
@@ -190,11 +206,11 @@ export class Files implements IFiles {
 		try {
 			if (this.nativePotassium) {
 				const key: Uint8Array	= Potassium.randomBytes(
-					this.nativePotassium.SecretBox.keyBytes
+					this.nativePotassium.secretBox.keyBytes
 				);
 
 				return {
-					cyphertext: await this.nativePotassium.SecretBox.seal(
+					cyphertext: await this.nativePotassium.secretBox.seal(
 						plaintext,
 						key
 					),
@@ -218,6 +234,7 @@ export class Files implements IFiles {
 		}
 	}
 
+	/** @ignore */
 	private receiveTransfer (transfer: ITransfer) : void {
 		transfer.isOutgoing			= false;
 		transfer.percentComplete	= 0;
@@ -231,7 +248,7 @@ export class Files implements IFiles {
 				transfer.answer	= ok;
 
 				this.session.send(new Message(
-					RPCEvents.files,
+					rpcEvents.files,
 					transfer
 				));
 
@@ -239,25 +256,28 @@ export class Files implements IFiles {
 					const transferIndex: number	= this.transfers.push(transfer) - 1;
 
 					/* Arbitrarily assume ~500 Kb/s for progress bar estimation */
-					const intervalId: number	= setInterval(() => {
-						if (transfer.percentComplete >= 100) {
-							clearInterval(intervalId);
-						}
-						else {
-							transfer.percentComplete +=
-								Util.random(100000, 25000) / transfer.size * 100
-							;
-						}
-					}, 1000);
+					const intervalId: number	= setInterval(
+						() => {
+							if (transfer.percentComplete >= 100) {
+								clearInterval(intervalId);
+							}
+							else {
+								transfer.percentComplete +=
+									Util.random(100000, 25000) / transfer.size * 100
+								;
+							}
+						},
+						1000
+					);
 
 					const cyphertext: Uint8Array	= new Uint8Array(await Util.request({
+						responseType: 'arraybuffer',
+						retries: 5,
 						/* Temporary workaround while Firebase adds CORS support */
 						url: (transfer.url || '').replace(
 							'firebasestorage.googleapis.com',
 							'api.cyph.com'
-						),
-						responseType: 'arraybuffer',
-						retries: 5
+						)
 					}));
 
 					transfer.percentComplete	= Math.max(
@@ -290,6 +310,7 @@ export class Files implements IFiles {
 		);
 	}
 
+	/** @ignore */
 	private triggerUIEvent(
 		event: UIEvents,
 		...args: any[]
@@ -297,15 +318,16 @@ export class Files implements IFiles {
 		this.session.trigger(Events.filesUI, {event, args});
 	}
 
+	/** @inheritDoc */
 	public async send (plaintext: Uint8Array, name: string) : Promise<void> {
 		if (plaintext.length > Config.filesConfig.maxSize) {
 			this.triggerUIEvent(UIEvents.tooLarge);
 
 			Analytics.send({
-				hitType: 'event',
-				eventCategory: 'file',
 				eventAction: 'toolarge',
-				eventValue: 1
+				eventCategory: 'file',
+				eventValue: 1,
+				hitType: 'event'
 			});
 
 			return;
@@ -321,10 +343,10 @@ export class Files implements IFiles {
 		const transferIndex: number	= this.transfers.push(transfer) - 1;
 
 		Analytics.send({
-			hitType: 'event',
-			eventCategory: 'file',
 			eventAction: 'send',
-			eventValue: 1
+			eventCategory: 'file',
+			eventValue: 1,
+			hitType: 'event'
 		});
 
 		this.triggerUIEvent(
@@ -352,7 +374,7 @@ export class Files implements IFiles {
 		});
 
 		this.session.send(new Message(
-			RPCEvents.files,
+			rpcEvents.files,
 			transfer
 		));
 
@@ -366,7 +388,8 @@ export class Files implements IFiles {
 
 			uploadTask	= Firebase.app.storage().ref(path).put(new Blob([o.cyphertext]));
 
-			uploadTask.on('state_changed',
+			uploadTask.on(
+				'state_changed',
 				snapshot => {
 					transfer.percentComplete	=
 						snapshot.bytesTransferred /
@@ -383,7 +406,7 @@ export class Files implements IFiles {
 					transfer.url	= uploadTask.snapshot.downloadURL;
 
 					this.session.send(new Message(
-						RPCEvents.files,
+						rpcEvents.files,
 						transfer
 					));
 
@@ -393,23 +416,23 @@ export class Files implements IFiles {
 		});
 	}
 
-	/**
-	 * @param session
-	 */
-	public constructor (private session: ISession) { (async () => {
+	constructor (
+		/** @ignore */
+		private session: ISession
+	) { (async () => {
 		const isNativeCryptoSupported	=
 			await Potassium.isNativeCryptoSupported()
 		;
 
 		if (isNativeCryptoSupported) {
 			this.session.on(Events.beginChat, () => this.session.send(
-				new Message(RPCEvents.files)
+				new Message(rpcEvents.files)
 			));
 		}
 
-		const downloadAnswers: {[id: string] : boolean}	= {};
+		const downloadAnswers: {[id: string]: boolean}	= {};
 
-		this.session.on(RPCEvents.files, (transfer?: ITransfer) => {
+		this.session.on(rpcEvents.files, (transfer?: ITransfer) => {
 			if (transfer) {
 				/* Outgoing file transfer acceptance or rejection */
 				if (transfer.answer === true || transfer.answer === false) {
@@ -452,7 +475,7 @@ export class Files implements IFiles {
 								transfer.answer	= false;
 
 								this.session.send(new Message(
-									RPCEvents.files,
+									rpcEvents.files,
 									transfer
 								));
 							}

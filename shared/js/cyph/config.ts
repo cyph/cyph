@@ -20,8 +20,10 @@ export class Config {
 	/** Length of random SQS queue IDs. */
 	public static longSecretLength: number		= 52;
 
-	/** Characters used by Util.generateGuid (includes all alphanumeric
-		characters except 'l' and 'I' for readability reasons). */
+	/**
+	 * Characters used by Util.generateGuid (includes all alphanumeric
+	 * characters except 'l' and 'I' for readability reasons).
+	 */
 	public static guidAddressSpace: string[]	= [
 		'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
 		'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
@@ -36,8 +38,6 @@ export class Config {
 
 	/** Angular-related config. */
 	public static angularConfig	= {
-		rootModule: 'Cyph',
-		rootController: 'CyphController',
 		config: [
 			'$compileProvider',
 			'$mdThemingProvider',
@@ -47,10 +47,14 @@ export class Config {
 					debugInfoEnabled(false)
 				;
 
-				$mdThemingProvider.definePalette('cyph',
-					$mdThemingProvider.extendPalette('deep-purple', {
-						'400': '8b62d9'
-					})
+				$mdThemingProvider.definePalette(
+					'cyph',
+					$mdThemingProvider.extendPalette(
+						'deep-purple',
+						{
+							400: '8b62d9'
+						}
+					)
 				);
 
 				$mdThemingProvider.theme('default').
@@ -58,7 +62,9 @@ export class Config {
 					accentPalette('cyph')
 				;
 			}
-		]
+		],
+		rootController: 'CyphController',
+		rootModule: 'Cyph'
 	};
 
 	/** Braintree-related config. */
@@ -69,10 +75,24 @@ export class Config {
 	/** Pricing-related config. */
 	public static pricingConfig	= {
 		categories: {
+			accounting: {
+				id: 5,
+				items: {
+					generic: {id: 0}
+				}
+			},
 			donation: {
 				id: 0,
 				items: {
 					generic: {id: 0}
+				}
+			},
+			enterprise: {
+				id: 2,
+				items: {
+					basics: {id: 1},
+					beta: {id: 0},
+					works: {id: 2}
 				}
 			},
 			individual: {
@@ -81,31 +101,17 @@ export class Config {
 					pro: {id: 0}
 				}
 			},
-			enterprise: {
-				id: 2,
-				items: {
-					beta: {id: 0},
-					basics: {id: 1},
-					works: {id: 2}
-				}
-			},
-			telehealth: {
-				id: 3,
-				items: {
-					solo: {id: 0},
-					small: {id: 1}
-				}
-			},
 			legal: {
 				id: 4,
 				items: {
 					generic: {id: 0}
 				}
 			},
-			accounting: {
-				id: 5,
+			telehealth: {
+				id: 3,
 				items: {
-					generic: {id: 0}
+					small: {id: 1},
+					solo: {id: 0}
 				}
 			}
 		}
@@ -120,9 +126,9 @@ export class Config {
 
 	/** Notifier-related config (used by UI.Notifier). */
 	public static notifierConfig	= {
-		title: 'Cyph',
+		audio: '/audio/beep.mp3',
 		icon: customBuildFavicon || '/img/favicon/favicon-192x192.png',
-		audio: '/audio/beep.mp3'
+		title: 'Cyph'
 	};
 
 	/** WebSign-related config. */

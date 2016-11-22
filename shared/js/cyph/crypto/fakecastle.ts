@@ -1,16 +1,20 @@
-import {ICastle} from './icastle';
-import {Util} from '../util';
 import {CastleEvents, Events, State, Users} from '../session/enums';
 import {ISession} from '../session/isession';
+import {Util} from '../util';
+import {ICastle} from './icastle';
 
 
 /**
  * Fake ICastle implementation (NOT secure; for demo purposes only).
  */
 export class FakeCastle implements ICastle {
+	/** @ignore */
 	private static delimiter: string		= '☁☁☁ PRAISE BE TO CYPH ☀☀☀';
+
+	/** @ignore */
 	private static remoteUsername: string	= 'friend';
 
+	/** @ignore */
 	private static generateCyphertext () : string {
 		let cyphertext: string	= '';
 		const length: number	= Util.random(1024, 100);
@@ -28,6 +32,7 @@ export class FakeCastle implements ICastle {
 	}
 
 
+	/** @inheritDoc */
 	public receive (cyphertext: string) : void {
 		const cyphertextSplit: string[]	=
 			cyphertext.split(FakeCastle.delimiter)
@@ -39,15 +44,16 @@ export class FakeCastle implements ICastle {
 		});
 
 		this.session.trigger(Events.castle, {
-			event: CastleEvents.receive,
 			data: {
 				author: FakeCastle.remoteUsername,
 				plaintext: cyphertextSplit[1],
 				timestamp: Util.timestamp()
-			}
+			},
+			event: CastleEvents.receive
 		});
 	}
 
+	/** @inheritDoc */
 	public async send (plaintext: string) : Promise<void> {
 		const cyphertext: string	= FakeCastle.generateCyphertext();
 
@@ -57,17 +63,18 @@ export class FakeCastle implements ICastle {
 		});
 
 		this.session.trigger(Events.castle, {
-			event: CastleEvents.send,
-			data: cyphertext + FakeCastle.delimiter + plaintext
+			data: cyphertext + FakeCastle.delimiter + plaintext,
+			event: CastleEvents.send
 		});
 	}
 
-	/**
-	 * @param session
-	 */
-	public constructor (private session: ISession) {
-		setTimeout(() => this.session.trigger(Events.castle, {
-			event: CastleEvents.connect
-		}), 1000);
+	constructor (
+		/** @ignore */
+		private session: ISession
+	) {
+		setTimeout(
+			() => this.session.trigger(Events.castle, {event: CastleEvents.connect}),
+			1000
+		);
 	}
 }

@@ -1,13 +1,14 @@
+import * as Cyph from '../cyph';
 import {CyphDemo} from './cyphdemo';
 import {Elements} from './elements';
-import {HomeSections, PageTitles, Promos, States} from './enums';
-import * as Cyph from '../cyph';
+import {HomeSections, pageTitles, Promos, States} from './enums';
 
 
 /**
  * Controls the entire cyph.com UI.
  */
 export class UI extends Cyph.UI.BaseButtonManager {
+	/** @ignore */
 	private static linkInterceptSelector: string	= 'a[href^="/"]:not(a[href^="/blog"])';
 
 
@@ -17,6 +18,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	/** Promo promo page state/view. */
 	public promo: Promos				= Promos.none;
 
+	/** Contact form state. */
 	public contactState	= {
 		fromEmail: <string> '',
 		fromName: <string> '',
@@ -26,35 +28,58 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		to: <string> 'hello'
 	};
 
-	public features						= ['Video Calls', 'Voice Calls', 'Chats', 'Photos', 'File Transfers'];
+	/** List of features to cycle through in hero section. */
+	public features: string[]			= [
+		'Video Calls',
+		'Voice Calls',
+		'Chats',
+		'Photos',
+		'File Transfers'
+	];
+
+	/** Current feature displayed in hero section. */
 	public featureIndex: number			= 0;
 
-	/** Donation amount in dollars (default). */
+	/** Donation amount in dollars. */
 	public donationAmount: number		= 10;
 
-	/** Pricing states */
+	/** Individual pricing state. */
 	public individual: boolean			= false;
+
+	/** Business pricing state. */
 	public business: boolean			= false;
+
+	/** Telehealth pricing state. */
 	public telehealth: boolean			= false;
 
-	/** Amount, Category, and Item in Cart */
-	public cart = [0, 0, 0];
+	/** Amount, category, and item respectively in cart. */
+	public cart: number[]				= [0, 0, 0];
 
-	/** Beta Pricing */
-	public betaPlan = 499;
+	/** Beta plan price in dollars. */
+	public betaPlan: number				= 499;
 
-	/** Fixed Business Pricing */
-	public theBasics: number			= 99; // "The Basics" Plan
-	public theWorks: number				= 499; // "The Works" Plan
+	/** Business pricing: "The Basics" plan. */
+	public theBasics: number			= 99;
 
-	/** Fixed Telehealth Pricing */
-	public telehealthSingle: number		= 499; // Single Practitioner Price (default)
+	/** Business pricing: "The Works" plan. */
+	public theWorks: number				= 499;
 
-	/** Custom Telehealth Pricing */
-	public doctors: number				= 5;	// Number of Doctors (default)
-	public pricePerDoctor: number		= 350;	// Price per Doctor
-	public telehealthPriceBreak: number	= 5;	// Number of Doctors required for price break
-	public telehealthDiscount: number	= 0.10;	// Percentage discount when > telehealthPriceBreak
+	/** Telehealth pricing: single-practicioner plan. */
+	public telehealthSingle: number		= 499;
+
+	/** Custom telehealth pricing: number of doctors. */
+	public doctors: number				= 5;
+
+	/** Custom telehealth pricing: price per doctor. */
+	public pricePerDoctor: number		= 350;
+
+	/** Custom telehealth pricing: number of doctors required for price break. */
+	public telehealthPriceBreak: number	= 5;
+
+	/** Custom telehealth pricing: % discount for price break. */
+	public telehealthDiscount: number	= 0.10;
+
+	/** Custom telehealth pricing: plan amount in dollars. */
 	public customDoctorPricing: number;
 
 	/** Home page state/view. */
@@ -72,7 +97,33 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	/** Carousel of testimonials. */
 	public testimonialCarousel: Cyph.UI.Carousel;
 
-	private linkClickHandler (e: Event) {
+	/** @ignore */
+	private cycleFeatures () : void {
+		if (this.featureIndex < this.features.length - 1) {
+			this.featureIndex++;
+		}
+		else {
+			this.featureIndex	= 0;
+		}
+	}
+
+	/** @ignore */
+	private doctorPricing () : number {
+		if (this.doctors >= this.telehealthPriceBreak) {
+			this.customDoctorPricing	=
+				(this.doctors * this.pricePerDoctor) -
+				(this.doctors * this.pricePerDoctor * this.telehealthDiscount)
+			;
+		}
+		else {
+			this.customDoctorPricing	= this.doctors * this.pricePerDoctor;
+		}
+
+		return this.customDoctorPricing;
+	}
+
+	/** @ignore */
+	private linkClickHandler (e: Event) : void {
 		e.preventDefault();
 
 		const href: string		= $(e.currentTarget).attr('href');
@@ -89,7 +140,8 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		}
 	}
 
-	private onUrlStateChange (urlState: string) : void {
+	/** @ignore */
+	private async onUrlStateChange (urlState: string) : Promise<void> {
 		const urlStateSplit: string[]	= urlState.split('/');
 		const urlStateBase: string		= urlStateSplit[0];
 
@@ -102,8 +154,10 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		;
 
 		Cyph.UI.Elements.title().text(
-			PageTitles[urlStateBase] || PageTitles.default
+			pageTitles[urlStateBase] || pageTitles.default
 		);
+
+		Cyph.UrlState.set(urlState, true, true);
 
 		if (this.homeSection !== undefined) {
 			this.changeState(States.home);
@@ -113,40 +167,42 @@ export class UI extends Cyph.UI.BaseButtonManager {
 				this.signupForm.promo	= Promos[promo];
 			}
 
-			setTimeout(() => {
-				if (this.homeSection === HomeSections.register) {
-					this.dialogManager.baseDialog({
-						template: Cyph.UI.Templates.register,
-						locals: {
-							signupForm: this.signupForm,
-							Cyph: self['Cyph']
-						},
-						onclose: () => Cyph.UrlState.set('')
-					});
-				}
-				else if (this.homeSection === HomeSections.invite) {
-					this.signupForm.data.inviteCode	= Cyph.UrlState.get().split(HomeSections[HomeSections.invite] + '/')[1] || '';
+			await Cyph.Util.sleep();
 
-					this.dialogManager.baseDialog({
-						template: Cyph.UI.Templates.invite,
-						locals: {
-							signupForm: this.signupForm,
-							Cyph: self['Cyph']
-						},
-						onclose: () => Cyph.UrlState.set('')
-					});
-				}
-				else {
-					this.scroll(
-						$('#' + HomeSections[this.homeSection] + '-section').offset().top -
-						(
-							this.homeSection === HomeSections.gettingstarted ?
-								-1 :
-								Elements.mainToolbar().height()
-						)
-					);
-				}
-			}, 250);
+			if (this.homeSection === HomeSections.register) {
+				this.dialogManager.baseDialog({
+					locals: {
+						cyph,
+						signupForm: this.signupForm
+					},
+					onclose: () => Cyph.UrlState.set(''),
+					templateUrl: '../../templates/register.html'
+				});
+			}
+			else if (this.homeSection === HomeSections.invite) {
+				this.signupForm.data.inviteCode	=
+					Cyph.UrlState.get().split(HomeSections[HomeSections.invite] + '/')[1] || ''
+				;
+
+				this.dialogManager.baseDialog({
+					locals: {
+						cyph,
+						signupForm: this.signupForm
+					},
+					onclose: () => Cyph.UrlState.set(''),
+					templateUrl: '../../templates/invite.html'
+				});
+			}
+			else {
+				this.scroll(
+					$('#' + HomeSections[this.homeSection] + '-section').offset().top -
+					(
+						this.homeSection === HomeSections.gettingstarted ?
+							-1 :
+							Elements.mainToolbar().height()
+					)
+				);
+			}
 		}
 		else if (state === States.contact) {
 			const to: string	= urlStateSplit[1];
@@ -167,12 +223,10 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		}
 		else {
 			Cyph.UrlState.set(Cyph.UrlState.states.notFound);
-			return;
 		}
-
-		Cyph.UrlState.set(urlState, true, true);
 	}
 
+	/** @ignore */
 	private scroll (
 		position: number,
 		delayFactor: number = 0.75,
@@ -183,47 +237,24 @@ export class UI extends Cyph.UI.BaseButtonManager {
 			Math.abs(Cyph.UI.Elements.document().scrollTop() - position)
 		;
 
-		Cyph.UI.Elements.html().add(Cyph.UI.Elements.body()).animate({
-			scrollTop: position
-		}, delay);
+		Cyph.UI.Elements.html().add(Cyph.UI.Elements.body()).animate({scrollTop: position}, delay);
 
 		if (oncomplete) {
 			setTimeout(oncomplete, delay + 50);
 		}
 	}
 
+	/** Update cart and open checkout screen. */
 	public updateCart (
 		amount: number,
 		category: number,
 		item: number
 	) : void {
-		this.cart[0] = amount;
-		this.cart[1] = category;
-		this.cart[2] = item;
+		this.cart[0]	= amount;
+		this.cart[1]	= category;
+		this.cart[2]	= item;
+
 		this.changeState(States.checkout);
-	}
-
-	public pricing () : void {
-		this.changeState(States.pricing);
-		return;
-	}
-
-	public doctorPricing() {
-		if(this.doctors >= this.telehealthPriceBreak){
-			this.customDoctorPricing = (this.doctors * this.pricePerDoctor) - (this.doctors * this.pricePerDoctor * this.telehealthDiscount);
-		}
-		else {
-			this.customDoctorPricing =  this.doctors * this.pricePerDoctor;
-		}
-		return this.customDoctorPricing;
-	}
-
-	public cycleFeatures(){
-			if(this.featureIndex < this.features.length-1){
-				this.featureIndex++;
-			}else{
-				this.featureIndex = 0;
-			}
 	}
 
 	/**
@@ -234,12 +265,10 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		this.state	= state;
 	}
 
-	/**
-	 * @param mobileMenu
-	 * @param dialogManager
-	 */
-	public constructor (
+	constructor (
 		mobileMenu: () => Cyph.UI.ISidebar,
+
+		/** @ignore */
 		private dialogManager: Cyph.UI.IDialogManager
 	) {
 		super(mobileMenu);
@@ -263,7 +292,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 				Elements.mainToolbar().length < 1 ||
 				Elements.testimonialsSection().length < 1
 			) {
-				await Cyph.Util.sleep(100);
+				await Cyph.Util.sleep();
 			}
 
 
@@ -286,7 +315,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 			});
 
 			if (!Cyph.Env.isMobile) {
-				new self['WOW']({live: true}).init();
+				new (<any> self).WOW({live: true}).init();
 			}
 
 
@@ -301,14 +330,27 @@ export class UI extends Cyph.UI.BaseButtonManager {
 			}
 			else {
 				try {
-					Elements.backgroundVideo()[0]['currentTime']	= 1.25;
+					(<HTMLVideoElement> Elements.backgroundVideo()[0]).currentTime	= 1.25;
 				}
 				catch (_) {}
 
-				setTimeout(() => Elements.backgroundVideo()['appear']().
-					on('appear', () => { try { Elements.backgroundVideo()[0]['play'](); } catch (_) {} }).
-					on('disappear', () => { try { Elements.backgroundVideo()[0]['pause'](); } catch (_) {} })
-				, 2000);
+				setTimeout(
+					() => (<any> Elements.backgroundVideo()).appear().
+						on('appear', () => {
+							try {
+								(<HTMLVideoElement> Elements.backgroundVideo()[0]).play();
+							}
+							catch (_) {}
+						}).
+						on('disappear', () => {
+							try {
+								(<HTMLVideoElement> Elements.backgroundVideo()[0]).pause();
+							}
+							catch (_) {}
+						})
+					,
+					2000
+				);
 			}
 
 
@@ -316,8 +358,9 @@ export class UI extends Cyph.UI.BaseButtonManager {
 
 			this.featureCarousel		= new Cyph.UI.Carousel(Elements.featuresSection());
 
-			this.testimonialCarousel	= new Cyph.UI.Carousel(Elements.testimonialsSection(), () =>
-				Elements.heroSection().css(
+			this.testimonialCarousel	= new Cyph.UI.Carousel(
+				Elements.testimonialsSection(),
+				() => Elements.heroSection().css(
 					'min-height',
 					`calc(100vh - ${40 + (
 						Cyph.Env.isMobile ?
@@ -330,15 +373,24 @@ export class UI extends Cyph.UI.BaseButtonManager {
 
 			/* Header / new cyph button animation */
 
-			Elements.mainToolbar().toggleClass('new-cyph-expanded', Cyph.UrlState.get() === '');
-			setTimeout(() => setInterval(() => Elements.mainToolbar().toggleClass(
+			Elements.mainToolbar().toggleClass(
 				'new-cyph-expanded',
-				this.state === States.home && (
-					(!this.promo && Elements.heroText().is(':appeared')) ||
-					Cyph.UI.Elements.footer().is(':appeared')
-				)
-			), 500), 3000);;
+				Cyph.UrlState.get() === ''
+			);
 
+			setTimeout(
+				() => setInterval(
+					() => Elements.mainToolbar().toggleClass(
+						'new-cyph-expanded',
+						this.state === States.home && (
+							(!this.promo && Elements.heroText().is(':appeared')) ||
+							Cyph.UI.Elements.footer().is(':appeared')
+						)
+					),
+					500
+				),
+				3000
+			);
 
 
 			/* Section sizing
@@ -367,8 +419,8 @@ export class UI extends Cyph.UI.BaseButtonManager {
 			$(UI.linkInterceptSelector).click(e => this.linkClickHandler(e));
 			new MutationObserver(mutations => {
 				for (let mutation of mutations) {
-					for (let i = 0 ; i < mutation.addedNodes.length ; ++i) {
-						const $elem: JQuery	= $(mutation.addedNodes[i]);
+					for (let elem of mutation.addedNodes) {
+						const $elem: JQuery	= $(elem);
 
 						if ($elem.is(UI.linkInterceptSelector)) {
 							$elem.click(e => this.linkClickHandler(e));
@@ -382,9 +434,9 @@ export class UI extends Cyph.UI.BaseButtonManager {
 					}
 				}
 			}).observe(document.body, {
-				childList: true,
 				attributes: false,
 				characterData: false,
+				childList: true,
 				subtree: true
 			});
 
@@ -392,7 +444,8 @@ export class UI extends Cyph.UI.BaseButtonManager {
 			setTimeout(() => Cyph.UI.Elements.html().addClass('load-complete'), 750);
 
 			/* Cyphertext easter egg */
-			new self['Konami'](() => {
+			/* tslint:disable-next-line:no-unused-new */
+			new (<any> self).Konami(() => {
 				Cyph.UrlState.set('intro');
 				Cyph.Util.retryUntilComplete(retry => {
 					if (

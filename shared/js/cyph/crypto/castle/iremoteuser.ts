@@ -1,6 +1,5 @@
 /**
  * Represents a remote user in a Castle session.
- * @interface
  */
 export interface IRemoteUser {
 	/** Public Potassium.Box key. */
