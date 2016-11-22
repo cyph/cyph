@@ -11,8 +11,6 @@ import {
 	SimpleChanges
 } from '@angular/core';
 import {UpgradeComponent} from '@angular/upgrade/static';
-import {Config} from '../../config';
-import {Env} from '../../env';
 import {Util} from '../../util';
 
 
@@ -84,7 +82,7 @@ export class Contact
 				]) {
 					const v	= $element.attr(k);
 					if (v) {
-						this.self[k]	= v;
+						(<any> this.self)[k]	= v;
 					}
 				}
 			})(); }

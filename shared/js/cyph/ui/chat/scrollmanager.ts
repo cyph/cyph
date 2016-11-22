@@ -2,7 +2,6 @@ import {Util} from '../../util';
 import {IDialogManager} from '../idialogmanager';
 import {NanoScroller} from '../nanoscroller';
 import {VisibilityWatcher} from '../visibilitywatcher';
-import {IChat} from './ichat';
 import {IElements} from './ielements';
 import {IScrollManager} from './iscrollmanager';
 
@@ -85,7 +84,11 @@ export class ScrollManager implements IScrollManager {
 					$this.detach();
 					$a.append($this);
 
-					Util.getValue($a, 'magnificPopup', o => {}).call($a, {type: 'image'});
+					Util.getValue(
+						$a,
+						'magnificPopup',
+						(o: JQuery) => {}
+					).call($a, {type: 'image'});
 				}
 			});
 

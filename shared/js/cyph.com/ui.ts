@@ -108,21 +108,6 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	}
 
 	/** @ignore */
-	private doctorPricing () : number {
-		if (this.doctors >= this.telehealthPriceBreak) {
-			this.customDoctorPricing	=
-				(this.doctors * this.pricePerDoctor) -
-				(this.doctors * this.pricePerDoctor * this.telehealthDiscount)
-			;
-		}
-		else {
-			this.customDoctorPricing	= this.doctors * this.pricePerDoctor;
-		}
-
-		return this.customDoctorPricing;
-	}
-
-	/** @ignore */
 	private linkClickHandler (e: Event) : void {
 		e.preventDefault();
 
@@ -145,16 +130,16 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		const urlStateSplit: string[]	= urlState.split('/');
 		const urlStateBase: string		= urlStateSplit[0];
 
-		const state: States	= States[urlStateBase];
-		const promo: Promos	= Promos[urlStateBase];
+		const state: States	= (<any> States)[urlStateBase];
+		const promo: Promos	= (<any> Promos)[urlStateBase];
 
 		this.homeSection	= promo === undefined ?
-			HomeSections[urlStateBase] :
+			(<any> HomeSections)[urlStateBase] :
 			HomeSections.promo
 		;
 
 		Cyph.UI.Elements.title().text(
-			pageTitles[urlStateBase] || pageTitles.default
+			(<any> pageTitles)[urlStateBase] || pageTitles.default
 		);
 
 		Cyph.UrlState.set(urlState, true, true);
@@ -282,7 +267,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 			const urlState: string	= Cyph.UrlState.get();
 			setTimeout(
 				() => Cyph.UrlState.set(urlState, true, false, false),
-				HomeSections[urlState] === undefined ? 0 : 2500
+				(<any> HomeSections)[urlState] === undefined ? 0 : 2500
 			);
 
 			while (

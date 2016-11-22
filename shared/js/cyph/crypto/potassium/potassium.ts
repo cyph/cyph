@@ -1,7 +1,6 @@
 import {Box} from './box';
 import {EphemeralKeyExchange} from './ephemeralkeyexchange';
 import {Hash} from './hash';
-import {Lib} from './lib';
 import * as NativeCrypto from './nativecrypto';
 import {OneTimeAuth} from './onetimeauth';
 import {PasswordHash} from './passwordhash';

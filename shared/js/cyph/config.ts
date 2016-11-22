@@ -41,7 +41,10 @@ export class Config {
 		config: [
 			'$compileProvider',
 			'$mdThemingProvider',
-			($compileProvider, $mdThemingProvider) => {
+			(
+				$compileProvider: angular.ICompileProvider,
+				$mdThemingProvider: angular.material.IThemingProvider
+			) => {
 				$compileProvider.
 					aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|sms):/).
 					debugInfoEnabled(false)

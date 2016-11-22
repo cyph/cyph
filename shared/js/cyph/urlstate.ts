@@ -44,7 +44,7 @@ export class UrlState {
 	 * Sets handler to run when URL changes.
 	 * @param handler
 	 */
-	public static onchange (handler: Function) : void {
+	public static onchange (handler: (urlState: string) => void) : void {
 		EventManager.on(UrlState.urlStateChangeEvent, () => handler(UrlState.get()));
 	}
 

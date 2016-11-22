@@ -1,12 +1,21 @@
 {
 	"compileOnSave": true,
 	"compilerOptions": {
-		 "target": "es6",
-		 "module": "es6",
-		 "moduleResolution": "node",
 		 "emitDecoratorMetadata": true,
 		 "experimentalDecorators": true,
-		 "rootDir": "."
+		 "forceConsistentCasingInFileNames": true,
+		 "module": "es6",
+		 "moduleResolution": "node",
+		 "newLine": "LF",
+		 "noFallthroughCasesInSwitch": true,
+		 "noImplicitAny": true,
+		 "noImplicitReturns": true,
+		 "noImplicitThis": false,
+		 "noImplicitUseStrict": true,
+		 "noUnusedLocals": false,
+		 "noUnusedParameters": false,
+		 "rootDir": ".",
+		 "target": "es6"
 	},
 	"angularCompilerOptions": {
 		"genDir": ".",

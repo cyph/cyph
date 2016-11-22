@@ -1,4 +1,4 @@
-import {CastleEvents, Events, State, Users} from '../session/enums';
+import {CastleEvents, Events, Users} from '../session/enums';
 import {ISession} from '../session/isession';
 import {Util} from '../util';
 import {ICastle} from './icastle';

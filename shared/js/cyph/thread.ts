@@ -99,7 +99,7 @@ export class Thread implements IThread {
 				let isActive	= false;
 
 				return {
-					getRandomValues: array => {
+					getRandomValues: (array: ArrayBufferView) => {
 						const sodium	= (<any> self).sodium;
 
 						if (sodium && sodium.crypto_stream_chacha20) {
@@ -126,7 +126,7 @@ export class Thread implements IThread {
 						return array;
 					},
 
-					subtle: null
+					subtle: <SubtleCrypto> null
 				};
 			})();
 		}

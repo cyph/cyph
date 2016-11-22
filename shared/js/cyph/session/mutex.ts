@@ -126,7 +126,7 @@ export class Mutex implements IMutex {
 		private session: ISession
 	) {
 		this.session.on(rpcEvents.mutex, (command: Command) =>
-			Util.getValue(this.commands, command.method, o => {})(command.argument)
+			Util.getValue(this.commands, command.method, (o: any) => {})(command.argument)
 		);
 
 		this.session.on(Events.closeChat, () => this.owner = Users.me);

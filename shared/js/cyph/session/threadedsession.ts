@@ -1,7 +1,7 @@
 import {EventManager} from '../eventmanager';
 import {Thread} from '../thread';
 import {Util} from '../util';
-import {Events, rpcEvents, threadedSessionEvents} from './enums';
+import {threadedSessionEvents} from './enums';
 import {IMessage} from './imessage';
 import {ISession} from './isession';
 
@@ -84,7 +84,7 @@ export class ThreadedSession implements ISession {
 		this.on(
 			threadedSessionEvents.updateStateThread,
 			(e: {key: string; value: any}) => {
-				this.state[e.key]	= e.value;
+				(<any> this.state)[e.key]	= e.value;
 			}
 		);
 

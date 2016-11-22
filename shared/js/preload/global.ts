@@ -23,7 +23,7 @@ catch (_) {}
 
 for (let k of ['window', 'document']) {
 	if (!(k in self)) {
-		self[k]	= self;
+		(<any> self)[k]	= self;
 	}
 }
 
@@ -40,7 +40,7 @@ for (let k of [
 	'ui'
 ]) {
 	if (!(k in self)) {
-		self[k]	= null;
+		(<any> self)[k]	= null;
 	}
 }
 

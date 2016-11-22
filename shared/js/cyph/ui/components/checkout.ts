@@ -82,7 +82,7 @@ export class Checkout
 				(<any> self).braintree.setup(token, 'dropin', {
 					container: checkoutUI[0],
 					enableCORS: true,
-					onPaymentMethodReceived: async (data) => {
+					onPaymentMethodReceived: async (data: any) => {
 						const response: string	= await Util.request({
 							data: {
 								Amount: Math.floor(parseFloat(this.amount) * 100),

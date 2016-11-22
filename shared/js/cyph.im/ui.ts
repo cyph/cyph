@@ -33,7 +33,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		const urlStateSplit: string[]	= urlState.split('/');
 
 		if (urlStateSplit[0] === urlSections.beta) {
-			this.betaState	= BetaStates[urlStateSplit[1]];
+			this.betaState	= (<any> BetaStates)[urlStateSplit[1]];
 			this.changeState(States.beta);
 		}
 		else if (urlState === Cyph.UrlState.states.notFound) {

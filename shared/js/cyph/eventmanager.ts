@@ -39,7 +39,7 @@ export class EventManager {
 				const callbackId: string	= (args[i] && args[i].callbackId) || '';
 
 				if (callbackId) {
-					args[i]	= (...threadArgs) => EventManager.trigger(
+					args[i]	= (...threadArgs: any[]) => EventManager.trigger(
 						EventManager.threadEventPrefix + callbackId,
 						threadArgs
 					);
@@ -78,7 +78,7 @@ export class EventManager {
 
 				EventManager.on(
 					EventManager.threadEventPrefix + callbackId,
-					threadArgs => arg.apply(null, threadArgs)
+					(threadArgs: any[]) => arg.apply(null, threadArgs)
 				);
 			}
 
@@ -133,7 +133,7 @@ export class EventManager {
 	 */
 	public static one (event: string, handler: Function) : void {
 		let f: Function;
-		f	= data => {
+		f	= (data: any) => {
 			EventManager.off(event, f);
 			handler(data);
 		};

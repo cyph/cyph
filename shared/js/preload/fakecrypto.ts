@@ -10,11 +10,11 @@ if (!('crypto' in self) && 'msCrypto' in self) {
 
 if (!('crypto' in self)) {
 	(<any> self).crypto	= {
-		getRandomValues: array => {
+		getRandomValues: (array: number[]|Uint8Array) => {
 			const bytes: number	=
-				'BYTES_PER_ELEMENT' in array ?
-					array.BYTES_PER_ELEMENT :
-					4
+				array instanceof Array ?
+					4 :
+					array.BYTES_PER_ELEMENT
 			;
 
 			const max: number	= Math.pow(2, bytes * 8) - 1;

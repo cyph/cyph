@@ -255,7 +255,7 @@ export class Session implements ISession {
 					this.castle	= new AnonymousCastle(this, nativeCrypto);
 				}
 			},
-			onmessage: message => this.receive(message),
+			onmessage: (message: string) => this.receive(message),
 			onopen: async (isAlice: boolean) : Promise<void> => {
 				this.updateState(State.isAlice, isAlice);
 
@@ -282,7 +282,7 @@ export class Session implements ISession {
 					}
 				}
 
-				this.on(Events.castle, e => this.castleHandler(e));
+				this.on(Events.castle, (e: any) => this.castleHandler(e));
 
 				if (!this.isLocalSession) {
 					while (this.state.isAlive) {
@@ -386,7 +386,7 @@ export class Session implements ISession {
 
 	/** @inheritDoc */
 	public updateState (key: string, value: any) : void {
-		this.state[key]	= value;
+		(<any> this.state)[key]	= value;
 
 		if (!Env.isMainThread) {
 			this.trigger(threadedSessionEvents.updateStateThread, {key, value});

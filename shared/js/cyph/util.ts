@@ -72,7 +72,7 @@ export class Util {
 		return `${
 			Util.timestamp().toString()
 		}-${
-			crypto.getRandomValues(new Uint32Array(1))[0].toString()
+			new Uint32Array(crypto.getRandomValues(new Uint32Array(1)).buffer)[0].toString()
 		}`;
 	}
 
@@ -357,11 +357,12 @@ export class Util {
 		}).catch(err => {
 			if (retries > 0) {
 				--o.retries;
-				return Util.request(o);
 			}
 			else if (!discardErrors) {
 				throw err;
 			}
+
+			return Util.request(o);
 		});
 	}
 
@@ -370,7 +371,10 @@ export class Util {
 	 * @param f
 	 * @param retryIf If this is specified and returns false, f will not be retried.
 	 */
-	public static retryUntilComplete (f: Function, retryIf?: Function) : void {
+	public static retryUntilComplete (
+		f: (retry: (delay?: number) => void) => void,
+		retryIf?: () => boolean
+	) : void {
 		f((delay: number = 250) : void => {
 			if (!retryIf || retryIf()) {
 				const go	= () => Util.retryUntilComplete(f, retryIf);
@@ -552,7 +556,7 @@ export class Util {
 		if (innerHtml) {
 			$this.html(innerHtml.replace(
 				/(.*?)(\{\{.*?\}\}|$)/g,
-				(match, value, binding: string) => {
+				(match: string, value: string, binding: string) => {
 					const translation: string	= Util.translate(value, true, '');
 
 					return translation ?

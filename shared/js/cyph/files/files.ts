@@ -29,7 +29,7 @@ export class Files implements IFiles {
 			chunkSize?: number,
 			callbackId?: string
 		}
-	) : Promise<any[]> {
+	) : Promise<Uint8Array[]> {
 		threadLocals.chunkSize	= Config.filesConfig.chunkSize;
 		threadLocals.callbackId	= 'files-' + Util.generateGuid();
 
@@ -161,7 +161,7 @@ export class Files implements IFiles {
 		);
 
 		return new Promise<any[]>((resolve, reject) =>
-			EventManager.one(threadLocals.callbackId, data => {
+			EventManager.one(threadLocals.callbackId, (data: any[]) => {
 				thread.stop();
 
 				const err	= data[0];
@@ -390,14 +390,14 @@ export class Files implements IFiles {
 
 			uploadTask.on(
 				'state_changed',
-				snapshot => {
+				(snapshot: firebase.UploadTaskSnapshot) => {
 					transfer.percentComplete	=
 						snapshot.bytesTransferred /
 						snapshot.totalBytes *
 						100
 					;
 				},
-				err => {
+				(err: any) => {
 					if (transfer.answer !== false) {
 						retry();
 					}

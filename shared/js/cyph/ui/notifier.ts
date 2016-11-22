@@ -15,7 +15,7 @@ export class Notifier implements INotifier {
 	/** @ignore */
 	private static createNotification (message: string, callback: Function = () => {}) : void {
 		const options	= {
-			audio: null,
+			audio: <string> null,
 			body: message,
 			icon: Config.notifierConfig.icon,
 			lang: Env.language,
@@ -37,7 +37,7 @@ export class Notifier implements INotifier {
 
 				(<any> navigator).serviceWorker.
 					register(Config.webSignConfig.serviceWorker).
-					then(serviceWorkerRegistration => {
+					then((serviceWorkerRegistration: any) => {
 						try {
 							serviceWorkerRegistration.showNotification(
 								Config.notifierConfig.title,
@@ -65,7 +65,7 @@ export class Notifier implements INotifier {
 		if (!this.disableNotify && !VisibilityWatcher.isVisible) {
 			this.disableNotify	= true;
 
-			Notifier.createNotification(message, notification => {
+			Notifier.createNotification(message, (notification: any) => {
 				try {
 					this.openNotifications.push(notification);
 

@@ -1,4 +1,3 @@
-import {Config} from '../config';
 import {Firebase} from '../firebase';
 import {Util} from '../util';
 import {IChannel} from './ichannel';
@@ -99,7 +98,7 @@ export class Channel implements IChannel {
 		if (handlers.onconnect) {
 			if (this.isAlice) {
 				Util.retryUntilSuccessful(() =>
-					this.usersRef.on('child_added', snapshot => {
+					this.usersRef.on('child_added', (snapshot: firebase.DataSnapshot) => {
 						if (!this.isConnected && snapshot.key !== this.userId) {
 							this.isConnected	= true;
 							handlers.onconnect();
@@ -114,7 +113,7 @@ export class Channel implements IChannel {
 
 		if (handlers.onclose) {
 			Util.retryUntilSuccessful(() =>
-				this.channelRef.on('value', async (snapshot) => {
+				this.channelRef.on('value', async (snapshot: firebase.DataSnapshot) => {
 					if (await Util.retryUntilSuccessful(() =>
 						!snapshot.exists() && !this.isClosed
 					)) {
@@ -127,7 +126,7 @@ export class Channel implements IChannel {
 
 		if (handlers.onmessage) {
 			Util.retryUntilSuccessful(() =>
-				this.messagesRef.on('child_added', async (snapshot) => {
+				this.messagesRef.on('child_added', async (snapshot: firebase.DataSnapshot) => {
 					const o	= await Util.retryUntilSuccessful(() =>
 						snapshot.val()
 					);

@@ -38,18 +38,22 @@ export class DialogManager implements IDialogManager {
 			locals: any;
 		}>> new Promise(resolve => this.$mdDialog.show({
 			clickOutsideToClose: true,
-			controller: <any> ['$scope', '$mdDialog', ($scope, $mdDialog) => {
-				$scope.locals	= o.locals;
-				$scope.close	= (ok: any) => {
-					$mdDialog.hide();
+			controller: <any> [
+				'$scope',
+				'$mdDialog',
+				($scope: any, $mdDialog: angular.material.IDialogService) => {
+					$scope.locals	= o.locals;
+					$scope.close	= (ok: any) => {
+						$mdDialog.hide();
 
-					resolve({ok: ok === true, locals: o.locals});
+						resolve({ok: ok === true, locals: o.locals});
 
-					if (o.onclose) {
-						o.onclose(ok);
-					}
-				};
-			}],
+						if (o.onclose) {
+							o.onclose(ok);
+						}
+					};
+				}
+			],
 			escapeToClose: true,
 			onComplete: o.oncomplete,
 			template: o.template,

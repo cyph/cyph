@@ -69,11 +69,10 @@ export class P2P implements IP2P {
 
 			await Util.sleep(500);
 
-			for (let o of [this.outgoingStream, this.incomingStream]) {
-				for (let k of Object.keys(o)) {
-					o[k]	= false;
-				}
-			}
+			this.incomingStream.audio	= false;
+			this.incomingStream.video	= false;
+			this.outgoingStream.audio	= false;
+			this.outgoingStream.video	= false;
 
 			if (this.webRTC) {
 				this.webRTC.mute();
@@ -120,7 +119,7 @@ export class P2P implements IP2P {
 		}
 
 		if (this.isAccepted && command.method in this.commands) {
-			this.commands[command.method](command.argument);
+			(<any> this.commands)[command.method](command.argument);
 		}
 		else if (
 			command.method === P2P.constants.video ||
@@ -214,9 +213,8 @@ export class P2P implements IP2P {
 
 		this.loading	= true;
 
-		for (let k of Object.keys(this.outgoingStream)) {
-			this.incomingStream[k]	= this.outgoingStream[k];
-		}
+		this.incomingStream.audio	= this.outgoingStream.audio;
+		this.incomingStream.video	= this.outgoingStream.video;
 
 		this.isActive	= true;
 
@@ -258,7 +256,7 @@ export class P2P implements IP2P {
 
 					EventManager.on(
 						fullEvent,
-						args => {
+						(args: any) => {
 							/* http://www.kapejod.org/en/2014/05/28/ */
 							if (event === 'message' && args[0].type === 'offer') {
 								args[0].payload.sdp	= args[0].payload.sdp.
@@ -285,14 +283,17 @@ export class P2P implements IP2P {
 
 		webRTC.webrtc.config.peerConnectionConfig.iceServers	=
 			JSON.parse(iceServers).
-			filter(o => !this.forceTURN || o.url.indexOf('stun:') !== 0)
+			filter((o: any) => !this.forceTURN || o.url.indexOf('stun:') !== 0)
 		;
 
-		webRTC.connection.on('streamUpdate', incomingStream => {
-			this.incomingStream.audio	= !!incomingStream.audio;
-			this.incomingStream.video	= !!incomingStream.video;
-			this.refresh(webRTC);
-		});
+		webRTC.connection.on(
+			'streamUpdate',
+			(incomingStream: {audio: boolean; video: boolean}) => {
+				this.incomingStream.audio	= !!incomingStream.audio;
+				this.incomingStream.video	= !!incomingStream.video;
+				this.refresh(webRTC);
+			}
+		);
 
 		webRTC.on('videoAdded', () => {
 			this.remoteVideo().find('video').slice(0, -1).remove();
@@ -362,7 +363,7 @@ export class P2P implements IP2P {
 
 		if (shouldPause !== true && shouldPause !== false) {
 			if (medium) {
-				this.outgoingStream[medium]	= !this.outgoingStream[medium];
+				(<any> this.outgoingStream)[medium]	= !(<any> this.outgoingStream)[medium];
 			}
 			else {
 				this.outgoingStream.audio	= !this.outgoingStream.audio;
@@ -370,7 +371,7 @@ export class P2P implements IP2P {
 			}
 		}
 		else if (medium) {
-			this.outgoingStream[medium]	= !shouldPause;
+			(<any> this.outgoingStream)[medium]	= !shouldPause;
 		}
 		else {
 			this.outgoingStream.audio	= !shouldPause;

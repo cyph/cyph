@@ -61,7 +61,7 @@ export class Markdown
 							/* Images */
 							replace(
 								/!\<a href="(data:image\/(png|jpeg|gif)\;.*?)"><\/a>/g,
-								(match, value: string) => {
+								(match: string, value: string) => {
 									const img: HTMLImageElement	= document.createElement('img');
 									img.src	= value;
 									return img.outerHTML;
@@ -88,7 +88,7 @@ export class Markdown
 			) {
 				this.markdownIt	= new (<any> self).markdownit({
 					breaks: true,
-					highlight: s => (<any> self).microlight.process(
+					highlight: (s: string) => (<any> self).microlight.process(
 						s,
 						this.$element.css('color')
 					),

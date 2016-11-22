@@ -166,7 +166,7 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 										content: `${
 											Strings.p2pRequest
 										} ${
-											<string> (Strings[callType + 'Call'] || '')
+											<string> ((<any> Strings)[callType + 'Call'] || '')
 										}. ${
 											Strings.p2pWarning
 										}`,
@@ -191,7 +191,7 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 										content: `${
 											Strings.p2pInit
 										} ${
-											<string> (Strings[callType + 'Call'] || '')
+											<string> ((<any> Strings)[callType + 'Call'] || '')
 										}. ${
 											Strings.p2pWarning
 										}`,

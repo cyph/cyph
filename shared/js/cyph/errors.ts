@@ -1,5 +1,4 @@
 import {Analytics} from './analytics';
-import {Env} from './env';
 import {Util} from './util';
 
 
@@ -27,7 +26,10 @@ export class Errors {
 	);
 
 	/** @ignore */
-	private static baseErrorLog (subject: string, shouldIncludeBootstrapText?: boolean) : Function {
+	private static baseErrorLog (
+		subject: string,
+		shouldIncludeBootstrapText?: boolean
+	) : Function {
 		let numEmails: number	= 0;
 
 		return (

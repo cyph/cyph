@@ -10,7 +10,6 @@ import {Timer} from '../../timer';
 import {UrlState} from '../../urlstate';
 import {Util} from '../../util';
 import {BaseButtonManager} from '../basebuttonmanager';
-import {DialogManager} from '../dialogmanager';
 import {Elements} from '../elements';
 import {IDialogManager} from '../idialogmanager';
 import {INotifier} from '../inotifier';
@@ -136,7 +135,7 @@ export class Chat extends BaseButtonManager implements IChat {
 			author,
 			text,
 			timestamp,
-			selfDestructTimer: null,
+			selfDestructTimer: <ITimer> null,
 			timeString: Util.getTimeString(timestamp)
 		};
 
