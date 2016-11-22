@@ -18,8 +18,16 @@ git commit --no-gpg-sign -a -m backup
 cd "${currentDir}"
 
 
+containername () {
+	echo "$(echo "${image}_${1}" | sed 's|/|_|g')"
+}
+
 defaultsleep () {
 	sleep 2
+}
+
+killcontainer () {
+	docker ps -a | grep "${1}" | awk '{print $1}' | xargs -I% bash -c 'docker kill -s 9 % ; docker rm %'
 }
 
 start () {
@@ -31,7 +39,7 @@ start () {
 }
 
 stop () {
-	docker ps -a | grep cyph | awk '{print $1}' | xargs -I% bash -c 'docker kill -s 9 % ; docker rm %'
+	killcontainer cyph
 
 	if [ "$(uname -s)" == 'Linux' ] ; then
 		sudo killall docker > /dev/null 2>&1
@@ -57,6 +65,7 @@ mounts=" \
 processType='--rm=true'
 
 command="${1}"
+commandScript="commands/${command}.sh"
 shift
 
 args=''
@@ -82,6 +91,15 @@ if [ "${command}" == 'serve' ] ; then
 	done
 
 	echo "docs: ${base}:42001/js/docs/index.html"
+
+elif [ "${command}" == 'stopserve' ] ; then
+	killcontainer "$(containername serve)"
+	rm -rf \
+		cyph.com/blog \
+		shared/js/docs \
+		$(find shared/css -name '*.css') \
+		$(find shared/js -name '*.js')
+	exit 0
 
 elif [ "${command}" == 'kill' ] ; then
 	stop
@@ -171,7 +189,7 @@ elif [ "${command}" == 'make' ] ; then
 	start
 	docker build -t "${image}_base" .
 
-	interactiveContainer="$(echo "${image}_interactive" | sed 's|/|_|g')"
+	interactiveContainer="$(containername interactive)"
 	docker run -it \
 		$mounts \
 		--name="${interactiveContainer}" \
@@ -190,7 +208,7 @@ elif [ "${command}" == 'makeclean' ] ; then
 	docker images --filter dangling=true --quiet | xargs -I% docker rmi -f %
 	exit 0
 
-elif [ ! -f "commands/${command}.sh" ] ; then
+elif [ ! -f "${commandScript}" ] ; then
 	echo fak u gooby
 	exit 1
 fi
@@ -199,7 +217,8 @@ docker run \
 	$processType \
 	$mounts \
 	$args \
+	--name="$(containername "${command}")" \
 	"${image}" \
-	bash -c "source ~/.bashrc ; /cyph/commands/${command}.sh $*"
+	bash -c "source ~/.bashrc ; /cyph/${commandScript} $*"
 
 defaultsleep
