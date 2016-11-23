@@ -15,13 +15,18 @@ export class Rule extends Rules.AbstractRule {
 
 	public static FAILURE_STRING: string	= 'functions that return promises must be async';
 
-	public static isAsync (text: string) : boolean {
-		return text.split(/[^A-Za-z0-9_\s]/)[0].match(/\s?async\s+?/) !== null;
+	private static isAsync (text: string) : boolean {
+		return text.split(/[\(=]/)[0].match(/\s?async\s+?/) !== null;
 	}
 
-	public static isPromise (type: ts.TypeNode) : boolean {
-		return type.getText().indexOf('Promise') === 0;
+	private static isPromise (type: ts.TypeNode) : boolean {
+		return type.getText().indexOf('Promise<') === 0;
 	}
+
+	public static isCompliant (node: ts.FunctionExpression|ts.MethodDeclaration) : boolean {
+		return Rule.isAsync(node.getText()) || !Rule.isPromise(node.type);
+	}
+
 
 	public apply (sourceFile: ts.SourceFile) : RuleFailure[] {
 		return this.applyWithWalker(
@@ -33,10 +38,7 @@ export class Rule extends Rules.AbstractRule {
 class PromiseAsyncWalker extends RuleWalker {
 	public visitFunctionExpression (node: ts.FunctionExpression) : void {
 		try {
-			if (
-				Rule.isAsync(node.getText()) ||
-				!Rule.isPromise(node.type)
-			) {
+			if (Rule.isCompliant(node)) {
 				return;
 			}
 
@@ -55,10 +57,7 @@ class PromiseAsyncWalker extends RuleWalker {
 
 	public visitMethodDeclaration (node: ts.MethodDeclaration) : void {
 		try {
-			if (
-				Rule.isAsync(node.getText()) ||
-				!Rule.isPromise(node.type)
-			) {
+			if (Rule.isCompliant(node)) {
 				return;
 			}
 

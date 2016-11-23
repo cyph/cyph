@@ -20,8 +20,8 @@ export class Rule extends Rules.AbstractRule {
 		'assignment operator must be preceded by tab(s) and followed by newline or space'
 	;
 
-	public static isEqualsWhitespaceCompliant (text: string) : boolean {
-		const equalsSplit	= text.replace(/=>/g, '').split('=');
+	public static isCompliant (node: ts.PropertyDeclaration|ts.VariableStatement) : boolean {
+		const equalsSplit	= node.getText().replace(/=>/g, '').split('=');
 
 		if (equalsSplit.length < 2) {
 			return true;
@@ -49,7 +49,7 @@ export class Rule extends Rules.AbstractRule {
 class TabEqualsWalker extends RuleWalker {
 	public visitPropertyDeclaration (node: ts.PropertyDeclaration) : void {
 		try {
-			if (Rule.isEqualsWhitespaceCompliant(node.getText())) {
+			if (Rule.isCompliant(node)) {
 				return;
 			}
 
@@ -68,7 +68,7 @@ class TabEqualsWalker extends RuleWalker {
 
 	public visitVariableStatement (node: ts.VariableStatement) : void {
 		try {
-			if (Rule.isEqualsWhitespaceCompliant(node.getText())) {
+			if (Rule.isCompliant(node)) {
 				return;
 			}
 
