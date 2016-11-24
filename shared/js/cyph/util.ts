@@ -360,7 +360,10 @@ export class Util {
 			if (retries > 0) {
 				--o.retries;
 			}
-			else if (!discardErrors) {
+			else if (discardErrors) {
+				return null;
+			}
+			else {
 				throw err;
 			}
 
