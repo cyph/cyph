@@ -9,4 +9,4 @@ dependencies:
 
 test:
   override:
-    - docker run -v $PWD:/cyph cyph/cyph /cyph/commands/build.sh
+    - docker run -v $PWD:/cyph cyph/cyph bash -c 'source ~/.bashrc ; /cyph/commands/build.sh'
