@@ -4,6 +4,7 @@ machine:
 
 dependencies:
   override:
+    - sed -i 's/.*emsdk.*//g' Dockerfile
     - docker build -t cyph/cyph .
 
 test:
