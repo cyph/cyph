@@ -1,0 +1,12 @@
+machine:
+  node:
+    version: 6.9.1
+
+dependencies:
+  override:
+    - npm install @angular/compiler-cli tslint typescript
+    - gem install sass
+
+test:
+  override:
+    - ./commands/build.sh
