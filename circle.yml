@@ -4,7 +4,7 @@ machine:
 
 dependencies:
   override:
-    - docker build -t cyph/cyph
+    - docker build -t cyph/cyph .
 
 test:
   override:
