@@ -5,8 +5,8 @@ machine:
 dependencies:
   override:
     - sed -i 's/.*emsdk.*//g' Dockerfile
-    - docker build -t cyph/cyph .
+    - docker build --rm=false -t cyph/cyph .
 
 test:
   override:
-    - docker run cyph/cyph ./commands/build.sh
+    - docker run -v .:/cyph cyph/cyph 'source ~/.bashrc ; /cyph/commands/build.sh'
