@@ -4,7 +4,8 @@ machine:
 
 dependencies:
   override:
-    - npm -g install @angular/compiler-cli tslint typescript
+    - npm -g install @angular/common @angular/compiler @angular/compiler-cli @angular/core tslint typescript
+    - npm install @angular/common @angular/compiler @angular/compiler-cli @angular/core tslint typescript
     - gem install sass
 
 test:
