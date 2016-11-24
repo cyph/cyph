@@ -1,13 +1,11 @@
 machine:
-  node:
-    version: 6.9.1
+  services:
+    - docker
 
 dependencies:
   override:
-    - npm -g install @angular/common @angular/compiler @angular/compiler-cli @angular/core tslint typescript
-    - npm install @angular/common @angular/compiler @angular/compiler-cli @angular/core tslint typescript
-    - gem install sass
+    - docker build -t cyph/cyph
 
 test:
   override:
-    - ./commands/build.sh
+    - docker run cyph/cyph ./commands/build.sh
