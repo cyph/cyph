@@ -93,10 +93,6 @@ export class LinkConnection implements ILinkConnection {
 			);
 		}
 
-		Elements.body().one('click', async () =>
-			this.copyToClipboard().catch(() => {})
-		);
-
 		this.chat.session.on(Events.connect, () => this.timer.stop());
 		await this.timer.start();
 
