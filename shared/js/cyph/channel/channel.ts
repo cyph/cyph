@@ -30,7 +30,7 @@ export class Channel implements IChannel {
 
 	/** @inheritDoc */
 	public close () : void {
-		Util.retryUntilSuccessful(() => this.channelRef.remove());
+		Util.retryUntilSuccessful(async () => this.channelRef.remove());
 	}
 
 	/** @inheritDoc */
@@ -87,7 +87,7 @@ export class Channel implements IChannel {
 			).sort()[0] === this.userId
 		;
 
-		Util.retryUntilSuccessful(() =>
+		Util.retryUntilSuccessful(async () =>
 			this.channelRef.onDisconnect().remove()
 		);
 

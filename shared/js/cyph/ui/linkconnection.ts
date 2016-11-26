@@ -93,7 +93,7 @@ export class LinkConnection implements ILinkConnection {
 			);
 		}
 
-		Elements.body().one('click', () =>
+		Elements.body().one('click', async () =>
 			this.copyToClipboard().catch(() => {})
 		);
 

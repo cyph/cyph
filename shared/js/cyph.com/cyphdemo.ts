@@ -263,7 +263,7 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 						Elements.demoListMobile().append($mobileFacebookPic);
 					}
 
-					setInterval(() => this.resize(), 2000);
+					setInterval(async () => this.resize(), 2000);
 
 					let mobileSession: Cyph.Session.ISession;
 					const desktopSession: Cyph.Session.ISession	= new Cyph.Session.Session(

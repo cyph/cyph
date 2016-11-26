@@ -356,7 +356,7 @@ export class Util {
 			if (!async) {
 				callback();
 			}
-		}).catch(err => {
+		}).catch(async (err) => {
 			if (retries > 0) {
 				--o.retries;
 			}

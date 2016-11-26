@@ -59,7 +59,7 @@ export class FileInput
 						e.stopPropagation();
 						e.preventDefault();
 					}).
-					parent().parent().click(() => Util.lock(lock, async () => {
+					parent().parent().click(async () => Util.lock(lock, async () => {
 						Util.triggerClick(input);
 
 						for (let i = 0 ; input.files.length < 1 && i < 10 ; ++i) {

@@ -492,7 +492,7 @@ export class Chat extends BaseButtonManager implements IChat {
 		(<any> self).tabIndent.renderAll();
 
 
-		this.session.on(Events.beginChat, () => this.begin());
+		this.session.on(Events.beginChat, async () => this.begin());
 
 		this.session.on(Events.closeChat, () => this.close());
 
@@ -512,7 +512,7 @@ export class Chat extends BaseButtonManager implements IChat {
 
 		this.session.on(Events.connectFailure, () => this.abortSetup());
 
-		this.session.on(rpcEvents.text, (o: {
+		this.session.on(rpcEvents.text, async (o: {
 			text: string;
 			author: string;
 			timestamp: number;

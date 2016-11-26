@@ -262,7 +262,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 			this.signupForm	= new Cyph.UI.SignupForm();
 			this.cyphDemo	= new CyphDemo(this.dialogManager);
 
-			Cyph.UrlState.onchange(urlState => this.onUrlStateChange(urlState));
+			Cyph.UrlState.onchange(async (urlState) => this.onUrlStateChange(urlState));
 
 			const urlState: string	= Cyph.UrlState.get();
 			setTimeout(
