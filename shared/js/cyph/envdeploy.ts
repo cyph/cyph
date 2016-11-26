@@ -29,7 +29,9 @@ export class EnvDeploy {
 	;
 
 	/** Base URL for a new cyph link ("https://cyph.im/" or equivalent). */
-	public static newCyphBaseUrl: string	= `${locationData.protocol}//${locationData.hostname}:42002/`;
+	public static newCyphBaseUrl: string	=
+		`${locationData.protocol}//${locationData.hostname}:42002/`
+	;
 
 	/** URL for starting a new cyph (same as newCyphBaseUrl except on Onion site). */
 	public static newCyphUrl: string		= EnvDeploy.isOnion ?

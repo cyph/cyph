@@ -130,13 +130,23 @@ export class FileManager implements IFileManager {
 						const isSave: boolean					= e.args[2];
 						const callback: (ok: boolean) => void	= e.args[3];
 
-						const title: string	= `${Strings.incomingFile} ${name} (${Util.readableByteLength(size)})`;
+						const title: string	=
+							`${Strings.incomingFile} ${name} (${Util.readableByteLength(size)})`
+						;
 
 						callback(await this.dialogManager.confirm({
 							title,
-							cancel: isSave ? Strings.discard : Strings.reject,
-							content: isSave ? Strings.incomingFileSave : Strings.incomingFileDownload,
-							ok: isSave ? Strings.save : Strings.accept
+							cancel: isSave ?
+								Strings.discard :
+								Strings.reject
+							,
+							content: isSave ?
+								Strings.incomingFileSave :
+								Strings.incomingFileDownload
+							,
+							ok: isSave ?
+								Strings.save :
+								Strings.accept
 						}));
 						break;
 					}
