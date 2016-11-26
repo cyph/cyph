@@ -29,6 +29,7 @@ export class LinkConnection
 	/** Component configuration. */
 	public static config		= {
 		bindings: {
+			enableAdvancedFeatures: '<',
 			self: '<'
 		},
 		/* tslint:disable-next-line:max-classes-per-file */
@@ -40,7 +41,10 @@ export class LinkConnection
 			public self: ILinkConnection;
 
 			/** @ignore */
-			public queuedMessageDraft: string	= '';
+			public enableAdvancedFeatures: boolean	= false;
+
+			/** @ignore */
+			public queuedMessageDraft: string		= '';
 
 			constructor () { (async () => {
 				while (!cyph) {
@@ -56,6 +60,9 @@ export class LinkConnection
 
 	/** @ignore */
 	@Input() public self: ILinkConnection;
+
+	/** @ignore */
+	@Input() public enableAdvancedFeatures: boolean;
 
 	/** @ignore */
 	public ngDoCheck () : void {
