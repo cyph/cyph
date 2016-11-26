@@ -364,32 +364,35 @@ if [ "${compiledProjects}" ] ; then
 	echo 'Compiling'
 
 	if [ ! "${simple}" ] ; then
-		node -e "fs.writeFileSync(
-			'js/preload/translations.ts',
-			'Translations = ' + JSON.stringify(
-				child_process.spawnSync('find', [
-					'../translations',
-					'-name',
-					'*.json'
-				]).stdout.toString().
-					split('\n').
-					filter(s => s).
-					map(file => ({
-						key: file.split('/').slice(-1)[0].split('.')[0],
-						value: JSON.parse(fs.readFileSync(file).toString())
-					})).
-					reduce((translations, o) => {
-						translations[o.key]	= o.value;
-						return translations;
-					}, {})
-			) + ';'
-		)"
+		node -e 'fs.writeFileSync(
+			"js/preload/translations.ts",
+			`
+				/* tslint:disable */
+				Translations = ${JSON.stringify(
+					child_process.spawnSync("find", [
+						"../translations",
+						"-name",
+						"*.json"
+					]).stdout.toString().
+						split("\n").
+						filter(s => s).
+						map(file => ({
+							key: file.split("/").slice(-1)[0].split(".")[0],
+							value: JSON.parse(fs.readFileSync(file).toString())
+						})).
+						reduce((translations, o) => {
+							translations[o.key]	= o.value;
+							return translations;
+						}, {})
+				)};
+			`.trim() + "\n"
+		)'
 
 		# Block importScripts in Workers in WebSigned environments
 
 		cat js/cyph/thread.ts | \
 			tr '\n' '☁' | \
-			perl -pe 's/importScripts\s+=.*?;/importScripts = (s: string) => { throw new Error(`Cannot load external script \${s}.`) };/' | \
+			perl -pe 's/importScripts\s+=.*?;/importScripts = (s: string) => { throw new Error(`Cannot load external script \${s}.`); };/' | \
 			tr '☁' '\n' \
 		> js/cyph/thread.ts.new
 		mv js/cyph/thread.ts.new js/cyph/thread.ts
