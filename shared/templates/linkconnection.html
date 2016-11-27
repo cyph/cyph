@@ -21,8 +21,13 @@
 
 			<md-input-container class='connect-link-input desktop-only'>
 				<input cyph-translate ng-model='$ctrl.self.link' aria-label='Cyph link' />
-				<md-button class='copy' ng-click='$ctrl.self.copyToClipboard()'>
-					<i class='material-icons'>content_copy</i>
+				<md-button
+					class='copy'
+					aria-label='Copy to clipboard'
+					ng-click='$ctrl.self.copyToClipboard()'
+					cyph-translate
+				>
+					<md-icon>content_copy</md-icon>
 				</md-button>
 			</md-input-container>
 
@@ -34,10 +39,10 @@
 				<br />
 
 				<md-button
-					cyph-translate
 					class='md-fab'
 					aria-label='SMS'
 					ng-href='{{$ctrl.cyph.Env.smsUriBase}}{{$ctrl.self.linkEncoded}}'
+					cyph-translate
 				>
 					<img src='/img/icons/sms.png' alt='SMS' cyph-translate />
 				</md-button>
@@ -47,13 +52,26 @@
 				</span>
 
 				<md-button
-					cyph-translate
 					class='md-fab'
 					aria-label='Email'
 					target='_self'
 					ng-href='mailto:?body={{$ctrl.self.linkEncoded}}'
+					cyph-translate
 				>
 					<img src='/img/icons/email.png' alt='Email' cyph-translate />
+				</md-button>
+
+				<span class='divider'>
+					&nbsp;
+				</span>
+
+				<md-button
+					class='md-fab'
+					aria-label='Copy to clipboard'
+					ng-click='$ctrl.self.copyToClipboard()'
+					cyph-translate
+				>
+					<md-icon>content_copy</md-icon>
 				</md-button>
 			</div>
 		</div>
@@ -68,9 +86,9 @@
 			</span>
 			<md-button
 				ng-click='$ctrl.self.addTime(30000)'
-				aria-label='Increase Time by 30 seconds'
+				aria-label='Increase time by 30 seconds'
 			>
-				<i class='material-icons'>alarm_add</i>
+				<md-icon>alarm_add</md-icon>
 			</md-button>
 		</div>
 	</div>
@@ -99,7 +117,7 @@
 					$ctrl.queuedMessageDraft
 				)'
 			>
-				<i class='material-icons'>save</i>
+				<md-icon>save</md-icon>
 			</md-button>
 			<md-button
 				class='self-destruct-button'
@@ -108,14 +126,13 @@
 					!$ctrl.self.chat.queuedMessageSelfDestruct
 				)'
 			>
-				<i
-					class='material-icons'
+				<md-icon
 					ng-class='{
 						"active": $ctrl.self.chat.queuedMessageSelfDestruct === true
 					}'
 				>
 					timer
-				</i>
+				</md-icon>
 			</div>
 	</div>
 	<div flex></div>
