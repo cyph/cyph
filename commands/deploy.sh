@@ -368,7 +368,8 @@ if [ "${compiledProjects}" ] ; then
 		cat js/cyph/thread.ts | \
 			tr '\n' '☁' | \
 			perl -pe 's/importScripts\s+=.*?;/importScripts = (s: string) => { throw new Error(`Cannot load external script \${s}.`); };/' | \
-			tr '☁' '\n' \
+			tr '☁' '\n' | \
+			grep -v oldImportScripts \
 		> js/cyph/thread.ts.new
 		mv js/cyph/thread.ts.new js/cyph/thread.ts
 	fi
