@@ -10,13 +10,6 @@ import {Elements} from '../cyph/ui/elements';
 import {Util} from '../cyph/util';
 
 
-/* Translations */
-if (Translations && Env.language !== Config.defaultLanguage) {
-	$('[translate]').each((i: number, elem: HTMLElement) =>
-		Util.translateHtml(elem)
-	);
-}
-
 /* Load assets only for the current platform */
 $(
 	'.' +

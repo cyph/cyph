@@ -17,6 +17,7 @@ import {
 	StaticCyphSpinningUp,
 	StaticFooter
 } from '../cyph/ui/components';
+import {Translate} from '../cyph/ui/directives';
 import {AppComponent} from './appcomponent';
 
 
@@ -38,7 +39,8 @@ import {AppComponent} from './appcomponent';
 		SignupForm,
 		StaticCyphNotFound,
 		StaticCyphSpinningUp,
-		StaticFooter
+		StaticFooter,
+		Translate
 	],
 	entryComponents: [
 		AppComponent

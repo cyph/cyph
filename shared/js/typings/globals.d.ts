@@ -42,10 +42,10 @@ declare let onthreadmessage: (e: MessageEvent) => any;
 
 /**
  * @global
- * Object containing translations for English phrases
- * (only exists in main thread of production environments).
+ * Mapping of language codes to translations of English phrases
+ * (populated during build process).
  */
-declare let Translations: {[language: string] : {[text: string] : string}};
+declare let translations: {[language: string]: {[text: string]: string}};
 
 /**
  * @global

@@ -87,6 +87,10 @@ angular.
 		HomeComponent.config
 	).
 	directive(
+		Cyph.UI.Directives.Translate.title,
+		Cyph.UI.Directives.Translate.config
+	).
+	directive(
 		'cyphApp',
 		downgradeComponent({component: AppComponent})
 	)

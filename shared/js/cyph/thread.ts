@@ -28,6 +28,7 @@ export class Thread implements IThread {
 		(<any> self).customBuildFavicon	= threadSetupVars.customBuildFavicon;
 		(<any> self).locationData		= threadSetupVars.locationData;
 		(<any> self).navigatorData		= threadSetupVars.navigatorData;
+		(<any> self).translations		= threadSetupVars.translations;
 
 
 		/* Wrapper to make importScripts work in local dev environments
@@ -196,6 +197,7 @@ export class Thread implements IThread {
 		const threadSetupVars	= {
 			customBuild,
 			customBuildFavicon,
+			translations,
 			locationData: {
 				hash: locationData.hash,
 				host: locationData.host,

@@ -495,84 +495,14 @@ export class Util {
 	/**
 	 * Attempts to translate text into the user's language.
 	 * @param text
-	 * @param htmlDecode If true, HTML-decodes the return value.
 	 * @param defaultValue Falls back to this if no translation exists.
 	 */
-	public static translate (
-		text: string,
-		htmlDecode?: boolean,
-		defaultValue: string = text
-	) : string {
-		if (!Env.isMainThread && htmlDecode) {
-			throw new Error('Can only HTML-decode translations in main thread.');
-		}
-
-		const translation: string	= Util.getValue(
-			Util.getValue(Translations, Env.language, {}),
+	public static translate (text: string, defaultValue: string = text) : string {
+		return Util.getValue(
+			Util.getValue(translations, Env.language, {}),
 			text,
 			defaultValue
 		);
-
-		return htmlDecode ?
-			$(document.createElement('div')).html(translation).text() :
-			translation
-		;
-	}
-
-	/**
-	 * Attempts to translate a string of HTML or DOM element into
-	 * the user's local language. If translating a DOM element,
-	 * translation will both be made in-place and returned as HTML.
-	 * @param html
-	 */
-	public static translateHtml (html: string|HTMLElement) : string {
-		if (!Env.isMainThread) {
-			if (typeof html === 'string') {
-				return html;
-			}
-			else {
-				throw new Error('Can only translate DOM elements in main thread.');
-			}
-		}
-
-		const $this: JQuery		= $(html);
-		const ngBind: string	= $this.attr('ng-bind');
-		const innerHtml: string	= $this.html().trim().replace(/\s+/g, ' ');
-
-		for (let attr of ['content', 'placeholder', 'aria-label', 'label']) {
-			const value: string	= $this.attr(attr);
-
-			if (value) {
-				$this.attr(attr, Util.translate(value, true));
-			}
-		}
-
-		if (ngBind) {
-			$this.attr('ng-bind', ngBind.replace(/"([^"]*)"/g, (match, value) => {
-				const translation: string	= Util.translate(value, true, '');
-
-				return translation ?
-					'"' + translation + '"' :
-					match
-				;
-			}));
-		}
-
-		if (innerHtml) {
-			$this.html(innerHtml.replace(
-				/(.*?)(\{\{.*?\}\}|$)/g,
-				(match: string, value: string, binding: string) => {
-					const translation: string	= Util.translate(value, true, '');
-
-					return translation ?
-						translation + binding :
-						match
-					;
-				}
-			));
-		}
-
-		return $this.prop('outerHTML');
 	}
 
 	/**

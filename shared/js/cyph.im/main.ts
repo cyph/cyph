@@ -7,7 +7,6 @@
 /// <reference path="../preload/unsupportedbrowsers.ts" />
 /// <reference path="../preload/dompurify.ts" />
 /// <reference path="../preload/jquery.ts" />
-/// <reference path="../preload/translations.ts" />
 
 import {platformBrowser} from '@angular/platform-browser';
 import {downgradeComponent, UpgradeModule} from '@angular/upgrade/static';
@@ -94,6 +93,10 @@ angular.
 	component(
 		Cyph.UI.Components.StaticFooter.title,
 		Cyph.UI.Components.StaticFooter.config
+	).
+	directive(
+		Cyph.UI.Directives.Translate.title,
+		Cyph.UI.Directives.Translate.config
 	).
 	directive(
 		'cyphApp',

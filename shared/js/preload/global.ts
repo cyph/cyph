@@ -36,7 +36,7 @@ for (let k of [
 	'location',
 	'navigator',
 	'onthreadmessage',
-	'Translations',
+	'translations',
 	'ui'
 ]) {
 	if (!(k in self)) {

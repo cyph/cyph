@@ -182,6 +182,26 @@ compile () {
 	done
 
 	if [ ! "${test}" ] ; then
+		translations="$(node -e 'console.log(`
+			self.translations = ${JSON.stringify(
+				child_process.spawnSync("find", [
+					"../../translations",
+					"-name",
+					"*.json"
+				]).stdout.toString().
+					split("\n").
+					filter(s => s).
+					map(file => ({
+						key: file.split("/").slice(-1)[0].split(".")[0],
+						value: JSON.parse(fs.readFileSync(file).toString())
+					})).
+					reduce((translations, o) => {
+						translations[o.key]	= o.value;
+						return translations;
+					}, {})
+			)};
+		`.trim())')"
+
 		for f in $tsfiles ; do
 			webpack \
 				--output-library-target var \
@@ -191,6 +211,13 @@ compile () {
 		done
 		for f in $tsfiles ; do
 			m="$(modulename $f)"
+			outputFile="${dir}/shared/js/${f}.js"
+
+			rm "${outputFile}" 2> /dev/null
+
+			if [ "${m}" == 'Main' ] ; then
+				echo "${translations}" > "${outputFile}"
+			fi
 
 			{
 				cat preload/global.js;
@@ -199,7 +226,7 @@ compile () {
 			} | \
 				if [ "${watch}" ] ; then cat - ; else babel --presets es2015 --compact false ; fi | \
 				sed 's|use strict||g' \
-			> "${dir}/shared/js/${f}.js"
+			>> "${outputFile}"
 
 			rm $f.js.tmp
 		done

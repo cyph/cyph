@@ -3,6 +3,7 @@ import {Carousel} from './carousel';
 import * as Chat from './chat';
 import * as Components from './components';
 import {DialogManager} from './dialogmanager';
+import * as Directives from './directives';
 import {Elements} from './elements';
 import {IDialogManager} from './idialogmanager';
 import {ILinkConnection} from './ilinkconnection';
@@ -35,5 +36,6 @@ export {
 	VisibilityWatcher,
 
 	Chat,
-	Components
+	Components,
+	Directives
 };
