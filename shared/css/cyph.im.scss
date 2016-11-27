@@ -614,41 +614,6 @@ html.mobile button[disabled] {
 	padding-left: 10px;
 }
 
-.loading {
-	> .logo-animation {
-		height: 33%;
-		margin-bottom: 10px;
-
-		> img {
-			height: 100%;
-			margin-left: auto;
-			margin-right: auto;
-			display: block;
-
-			@include filter(drop-shadow(3px 3px 3px rgba(68, 68, 68, 0.25)));
-		}
-	}
-
-	> *:not(.logo-animation) {
-		letter-spacing: 1px;
-		text-align: center;
-		font-family: Ubuntu, sans-serif;
-	}
-}
-
-html.mobile {
-	.loading {
-		font-size: 18px;
-		padding: 10px;
-	}
-}
-
-html:not(.mobile) {
-	.loading {
-		font-size: 20px;
-	}
-}
-
 .link-connection {
 	.connect-link-input {
 		width: 100%;

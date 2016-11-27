@@ -7,6 +7,5 @@ export enum States {
 	chat,
 	error,
 	none,
-	spinningUp,
 	waitingForFriend
 }

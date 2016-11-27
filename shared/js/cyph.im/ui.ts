@@ -134,10 +134,6 @@ export class UI extends Cyph.UI.BaseButtonManager {
 				});
 			}
 		});
-
-		this.chat.session.on(Cyph.Session.Events.newCyph, () =>
-			this.changeState(States.spinningUp)
-		);
 	}
 
 	/**

@@ -87,10 +87,6 @@ angular.
 		Cyph.UI.Components.StaticCyphNotFound.config
 	).
 	component(
-		Cyph.UI.Components.StaticCyphSpinningUp.title,
-		Cyph.UI.Components.StaticCyphSpinningUp.config
-	).
-	component(
 		Cyph.UI.Components.StaticFooter.title,
 		Cyph.UI.Components.StaticFooter.config
 	).

@@ -14,7 +14,6 @@ import {
 	Markdown,
 	SignupForm,
 	StaticCyphNotFound,
-	StaticCyphSpinningUp,
 	StaticFooter
 } from '../cyph/ui/components';
 import {Translate} from '../cyph/ui/directives';
@@ -40,7 +39,6 @@ import {HomeComponent} from './homecomponent';
 		Markdown,
 		SignupForm,
 		StaticCyphNotFound,
-		StaticCyphSpinningUp,
 		StaticFooter,
 		Translate
 	],

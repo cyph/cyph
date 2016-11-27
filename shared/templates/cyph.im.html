@@ -12,11 +12,6 @@
 			</cyph-signup-form>
 		</cyph-chat-main>
 
-		<cyph-static-cyph-spinning-up
-			[class.active]='ui.state === cyph.im.States.spinningUp'
-			class='cyph-view layout-fill layout-column flex'
-		></cyph-static-cyph-spinning-up>
-
 		<cyph-link-connection
 			[self]='ui.cyphConnection'
 			[class.active]='ui.state === cyph.im.States.waitingForFriend'

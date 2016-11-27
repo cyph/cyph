@@ -9,7 +9,6 @@ import {LinkConnection} from './linkconnection';
 import {Markdown} from './markdown';
 import {SignupForm} from './signupform';
 import {StaticCyphNotFound} from './staticcyphnotfound';
-import {StaticCyphSpinningUp} from './staticcyphspinningup';
 import {StaticFooter} from './staticfooter';
 
 
@@ -25,6 +24,5 @@ export {
 	Markdown,
 	SignupForm,
 	StaticCyphNotFound,
-	StaticCyphSpinningUp,
 	StaticFooter
 };
