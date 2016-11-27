@@ -7,7 +7,7 @@
  * Calculate absolute coordinates of the boundaries of this element.
  */
 /* tslint:disable-next-line:only-arrow-functions */
-$.fn.bounds	= function () : ({
+$.fn.bounds	= function (this: HTMLElement) : ({
 	bottom: number;
 	left: number;
 	right: number;
@@ -30,7 +30,7 @@ $.fn.bounds	= function () : ({
  * Calculate number of pixels user has scrolled relative to this element.
  */
 /* tslint:disable-next-line:only-arrow-functions */
-$.fn.scrollPosition	= function () : number {
+$.fn.scrollPosition	= function (this: HTMLElement) : number {
 	/* tslint:disable-next-line:no-invalid-this */
 	const $this: JQuery	= $(this);
 

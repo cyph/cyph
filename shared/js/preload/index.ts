@@ -31,7 +31,7 @@ if (Env.isMobile) {
 /* Polyfills */
 if (!HTMLElement.prototype.click) {
 	/* tslint:disable-next-line:only-arrow-functions */
-	HTMLElement.prototype.click	= function () : void {
+	HTMLElement.prototype.click	= function (this: HTMLElement) : void {
 		/* tslint:disable-next-line:no-invalid-this */
 		Util.triggerClick(this);
 	};
