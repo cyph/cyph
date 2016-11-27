@@ -1,10 +1,11 @@
 <div
 	class='chat-message-box platform-container'
 	ng-class='{mobile: $ctrl.self.isMobile}'
-	ng-show='
+	ng-if='
 		$ctrl.self.state === $ctrl.cyph.UI.Chat.States.chat &&
 		$ctrl.self.session.state.isAlive
 	'
+	ng-cloak
 >
 	<textarea
 		cyph-translate

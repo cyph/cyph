@@ -43,7 +43,7 @@ export class ChatMessageBox
 			public self: IChat;
 
 			/** @ignore */
-			public isSpeedDialOpen: boolean	= true;
+			public isSpeedDialOpen: boolean	= false;
 
 			constructor ($element: JQuery) { (async () => {
 				while (!cyph) {
@@ -73,23 +73,6 @@ export class ChatMessageBox
 					e.preventDefault();
 					this.self.send();
 				});
-
-				/* Temporary workarounds for Angular Material bugs */
-
-				let $speedDial: JQuery;
-				while (!$speedDial || $speedDial.length < 1) {
-					$speedDial	= $element.find('md-fab-speed-dial:visible');
-					await Util.sleep();
-				}
-
-				$speedDial.removeClass('md-animations-waiting');
-
-				while (!VisibilityWatcher.isVisible) {
-					await Util.sleep();
-				}
-
-				await Util.sleep(1000);
-				this.isSpeedDialOpen	= false;
 			})(); }
 		},
 		templateUrl: '../../../../templates/chatmessagebox.html'
