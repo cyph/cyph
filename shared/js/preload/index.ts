@@ -4,7 +4,6 @@
  */
 
 
-import {Config} from '../cyph/config';
 import {Env} from '../cyph/env';
 import {Elements} from '../cyph/ui/elements';
 import {Util} from '../cyph/util';

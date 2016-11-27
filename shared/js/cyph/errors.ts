@@ -68,7 +68,7 @@ export class Errors {
 
 	/** @ignore */
 	/* tslint:disable-next-line:member-ordering */
-	private static readonly _	= (() => {
+	public static readonly _	= (() => {
 		self.onerror	= <ErrorEventHandler> Errors.log;
 	})();
 }

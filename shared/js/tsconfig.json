@@ -12,7 +12,7 @@
 		 "noImplicitReturns": true,
 		 "noImplicitThis": true,
 		 "noImplicitUseStrict": true,
-		 "noUnusedLocals": false,
+		 "noUnusedLocals": true,
 		 "noUnusedParameters": false,
 		 "rootDir": ".",
 		 "target": "es6"

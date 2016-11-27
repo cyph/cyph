@@ -517,7 +517,7 @@ export class Util {
 
 	/** @ignore */
 	/* tslint:disable-next-line:member-ordering */
-	private static readonly _	= (async () => {
+	public static readonly _	= (async () => {
 		try {
 			const serverTimestamp: number	= parseFloat(
 				await Util.request({url: Env.baseUrl + 'timestamp'})

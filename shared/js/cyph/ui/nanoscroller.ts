@@ -26,7 +26,7 @@ export class NanoScroller {
 
 	/** @ignore */
 	/* tslint:disable-next-line:member-ordering */
-	private static readonly _	= (() => {
+	public static readonly _	= (() => {
 		$(NanoScroller.update);
 	})();
 }

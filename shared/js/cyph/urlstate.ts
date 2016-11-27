@@ -116,7 +116,7 @@ export class UrlState {
 
 	/** @ignore */
 	/* tslint:disable-next-line:member-ordering */
-	private static readonly _	= (() => {
+	public static readonly _	= (() => {
 		self.onpopstate	= () => EventManager.trigger(UrlState.urlStateChangeEvent);
 	})();
 }

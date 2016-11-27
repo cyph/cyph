@@ -29,7 +29,7 @@ export class VisibilityWatcher {
 
 	/** @ignore */
 	/* tslint:disable-next-line:member-ordering */
-	private static readonly _	= (() => {
+	public static readonly _	= (() => {
 		if (Env.isMobile) {
 			document.addEventListener('visibilitychange', () =>
 				VisibilityWatcher.trigger(!document.hidden)

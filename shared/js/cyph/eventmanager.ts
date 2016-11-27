@@ -178,7 +178,7 @@ export class EventManager {
 
 	/** @ignore */
 	/* tslint:disable-next-line:member-ordering */
-	private static readonly _	= (() => {
+	public static readonly _	= (() => {
 		if (Env.isMainThread) {
 			EventManager.on(
 				EventManager.mainThreadEvents,

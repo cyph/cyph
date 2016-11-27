@@ -34,7 +34,7 @@ export class VirtualKeyboardWatcher {
 
 	/** @ignore */
 	/* tslint:disable-next-line:member-ordering */
-	private static readonly _	= (() => {
+	public static readonly _	= (() => {
 		/* http://stackoverflow.com/a/11650231/459881 */
 
 		/* Android */
