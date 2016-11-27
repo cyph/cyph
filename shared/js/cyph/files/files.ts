@@ -84,7 +84,7 @@ export class Files implements IFiles {
 							reduce((a, b) => a + b, 0)
 					);
 
-					let j: number	= 0;
+					let j	= 0;
 					for (let chunk of chunks) {
 						cyphertext.set(
 							new Uint8Array(new Uint32Array([chunk.length]).buffer),
@@ -143,7 +143,7 @@ export class Files implements IFiles {
 							reduce((a, b) => a + b, 0)
 					);
 
-					let j: number	= 0;
+					let j	= 0;
 					for (let chunk of chunks) {
 						plaintext.set(chunk, j);
 						j += chunk.length;

@@ -219,9 +219,9 @@ export class Thread implements IThread {
 			seed: Array.prototype.slice.apply(seedBytes)
 		};
 
-		const callbackId: string	= 'NewThread-' + Util.generateGuid();
+		const callbackId	= 'NewThread-' + Util.generateGuid();
 
-		const threadBody: string	= `
+		const threadBody	= `
 			var threadSetupVars = ${JSON.stringify(threadSetupVars)};
 			${Thread.stringifyFunction(Thread.threadEnvSetup)}
 

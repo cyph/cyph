@@ -314,9 +314,9 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 								this.desktop
 						;
 
-						const text: string		= Cyph.Util.translate(message.text);
-						const maxDelay: number	= text.length > 15 ? 500 : 250;
-						const minDelay: number	= 125;
+						const text		= Cyph.Util.translate(message.text);
+						const maxDelay	= text.length > 15 ? 500 : 250;
+						const minDelay	= 125;
 
 						await Cyph.Util.sleep(Cyph.Util.random(maxDelay, minDelay));
 

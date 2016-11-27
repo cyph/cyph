@@ -121,7 +121,7 @@ export class Session implements ISession {
 	 * Intermittent check to verify chat is still alive and send fake encrypted chatter.
 	 */
 	private async pingPong () : Promise<void> {
-		let nextPing: number	= 0;
+		let nextPing	= 0;
 
 		while (this.state.isAlive) {
 			await Util.sleep(1000);

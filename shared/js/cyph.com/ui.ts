@@ -108,8 +108,8 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	private linkClickHandler (e: Event) : void {
 		e.preventDefault();
 
-		const href: string		= $(e.currentTarget).attr('href');
-		let scrollDelay: number	= 500;
+		const href		= $(e.currentTarget).attr('href');
+		let scrollDelay	= 500;
 
 		if (href !== locationData.pathname || this.homeSection !== undefined) {
 			scrollDelay	= 0;
@@ -278,8 +278,8 @@ export class UI extends Cyph.UI.BaseButtonManager {
 			}
 
 
-			const wowDelay: string			= 'data-wow-delay';
-			const platformWowDelay: string	= Cyph.Env.platformString + '-' + wowDelay;
+			const wowDelay			= 'data-wow-delay';
+			const platformWowDelay	= Cyph.Env.platformString + '-' + wowDelay;
 
 			$('[' + platformWowDelay + ']').each((i: number, elem: HTMLElement) => {
 				const $this: JQuery	= $(elem);

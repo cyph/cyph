@@ -68,5 +68,4 @@ $(() => {
 });
 
 
-const loaded: boolean	= true;
-export {loaded};
+export const loaded	= true;

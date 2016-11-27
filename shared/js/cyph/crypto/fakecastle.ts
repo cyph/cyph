@@ -17,7 +17,7 @@ export class FakeCastle implements ICastle {
 
 	/** @ignore */
 	private static generateCyphertext () : string {
-		let cyphertext: string	= '';
+		let cyphertext			= '';
 		const length: number	= Util.random(1024, 100);
 
 		for (let i = 0 ; i < length ; ++i) {

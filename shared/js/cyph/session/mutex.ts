@@ -68,8 +68,8 @@ export class Mutex implements IMutex {
 		wasFirst: boolean;
 		wasFirstOfType: boolean;
 	}> {
-		let friendHadLockFirst: boolean	= false;
-		let friendLockpurpose: string	= '';
+		let friendHadLockFirst	= false;
+		let friendLockpurpose	= '';
 
 		if (this.owner !== Users.me) {
 			if (!this.owner && this.session.state.isAlice) {

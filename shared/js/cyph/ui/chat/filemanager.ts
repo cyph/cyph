@@ -130,7 +130,7 @@ export class FileManager implements IFileManager {
 						const isSave: boolean					= e.args[2];
 						const callback: (ok: boolean) => void	= e.args[3];
 
-						const title: string	=
+						const title	=
 							`${Strings.incomingFile} ${name} (${Util.readableByteLength(size)})`
 						;
 

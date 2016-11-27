@@ -30,7 +30,7 @@ export class Errors {
 		subject: string,
 		shouldIncludeBootstrapText?: boolean
 	) : Function {
-		let numEmails: number	= 0;
+		let numEmails	= 0;
 
 		return (
 			errorMessage?: string,

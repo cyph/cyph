@@ -26,7 +26,7 @@
 			"constructor"
 		]}],
 		"no-any": false,
-		"no-inferrable-types": false,
+		"no-inferrable-types": [true, "ignore-params"],
 		"no-internal-module": true,
 		"no-namespace": true,
 		"no-reference": false,

@@ -60,7 +60,7 @@ export class Util {
 	 */
 	public static generateGuid (length: number = 0) : string {
 		if (length > 0) {
-			let guid: string	= '';
+			let guid	= '';
 
 			for (let i = 0 ; i < length ; ++i) {
 				guid += Config.guidAddressSpace[Util.random(Config.guidAddressSpace.length)];
@@ -83,7 +83,7 @@ export class Util {
 		const date: Date		= new Date(timestamp);
 		const minute: string	= ('0' + date.getMinutes().toString()).slice(-2);
 		let hour: number		= date.getHours();
-		let ampm: string		= 'am';
+		let ampm				= 'am';
 
 		if (hour >= 12) {
 			hour	-= 12;
@@ -212,7 +212,7 @@ export class Util {
 
 		crypto.getRandomValues(randomData);
 
-		let randomUint: number	= 0;
+		let randomUint	= 0;
 		for (let i = 0 ; i < randomData.length ; ++i) {
 			randomUint		+= randomData[i] * Math.pow(2, i * 16);
 			randomData[i]	= 0;

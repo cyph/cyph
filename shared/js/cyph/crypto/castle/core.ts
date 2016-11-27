@@ -152,7 +152,7 @@ export class Core {
 					Potassium.clearMemory(keys.incoming);
 					keys.incoming	= incomingKey;
 
-					let startIndex: number	= 1;
+					let startIndex	= 1;
 					if (decrypted[0] === 1) {
 						await this.ratchet(new Uint8Array(
 							decrypted.buffer,

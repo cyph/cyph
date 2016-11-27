@@ -453,7 +453,7 @@ export class Chat extends BaseButtonManager implements IChat {
 		if (this.isMobile) {
 			/* Prevent jankiness upon message send on mobile */
 
-			let lastClick: number	= 0;
+			let lastClick	= 0;
 
 			this.elements.messageBox().click(e => {
 				const bounds	= (<any> this.elements.sendButton().filter(':visible')).bounds();
