@@ -13,6 +13,9 @@ import {ILinkConnection} from './ilinkconnection';
 /** @inheritDoc */
 export class LinkConnection implements ILinkConnection {
 	/** @ignore */
+	private isAddingTime: boolean;
+
+	/** @ignore */
 	private isCopying: boolean;
 
 	/** @ignore */
@@ -50,12 +53,24 @@ export class LinkConnection implements ILinkConnection {
 	}
 
 	/** @inheritDoc */
-	public addTime (milliseconds: number) : void {
+	public async addTime (milliseconds: number) : Promise<void> {
 		this.timer.addTime(milliseconds);
-		this.dialogManager.toast({
-			content: Strings.timeExtended,
-			delay: 2500
-		});
+
+		if (this.isAddingTime) {
+			return;
+		}
+
+		this.isAddingTime	= true;
+
+		try {
+			await this.dialogManager.toast({
+				content: Strings.timeExtended,
+				delay: 2500
+			});
+		}
+		finally {
+			this.isAddingTime	= false;
+		}
 	}
 
 	/** @inheritDoc */

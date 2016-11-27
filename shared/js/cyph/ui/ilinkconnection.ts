@@ -25,7 +25,7 @@ export interface ILinkConnection {
 	 * Extends the countdown duration.
 	 * @param milliseconds
 	 */
-	addTime (milliseconds: number) : void;
+	addTime (milliseconds: number) : Promise<void>;
 
 	/**
 	 * Initiates UI for sending this link to friend.
