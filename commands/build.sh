@@ -287,7 +287,7 @@ if [ "${watch}" ] ; then
 		#fi
 
 		cd "${dir}/shared"
-		inotifywait -r --exclude '(node_modules|sed.*|.*\.(html|css|js|map|tmp))$' css js
+		inotifywait -r --exclude '(node_modules|sed.*|.*\.(css|js|map|tmp))$' css js templates
 	done
 else
 	compile
