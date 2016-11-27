@@ -22,22 +22,22 @@ import {Message} from './message';
  */
 export class Session implements ISession {
 	/** @ignore */
-	private receivedMessages: {[id: string]: boolean}	= {};
+	private readonly receivedMessages: {[id: string]: boolean}	= {};
 
 	/** @ignore */
-	private sendQueue: string[]							= [];
+	private readonly sendQueue: string[]						= [];
 
 	/** @ignore */
-	private lastIncomingMessageTimestamp: number		= Util.timestamp();
+	private lastIncomingMessageTimestamp: number				= Util.timestamp();
 
 	/** @ignore */
-	private lastOutgoingMessageTimestamp: number		= Util.timestamp();
+	private lastOutgoingMessageTimestamp: number				= Util.timestamp();
 
 	/** @ignore */
-	private pingPongTimeouts: number					= 0;
+	private pingPongTimeouts: number							= 0;
 
 	/** @ignore */
-	private isLocalSession: boolean						= false;
+	private isLocalSession: boolean								= false;
 
 	/** @ignore */
 	private castle: ICastle;
@@ -46,7 +46,7 @@ export class Session implements ISession {
 	private channel: IChannel;
 
 	/** @inheritDoc */
-	public state	= {
+	public readonly state	= {
 		cyphId: <string> '',
 		isAlice: <boolean> false,
 		isAlive: <boolean> true,
@@ -407,7 +407,7 @@ export class Session implements ISession {
 		nativeCrypto: boolean = false,
 
 		/** @ignore */
-		private id: string = Util.generateGuid(),
+		private readonly id: string = Util.generateGuid(),
 
 		localChannelCallback?: (localChannel: LocalChannel) => void
 	) { (async () => {

@@ -7,7 +7,7 @@ import {Util} from './util';
 /** Equivalent to sodium.crypto_pwhash. */
 export class PasswordHash {
 	/** @ignore */
-	private helpers: {
+	private readonly helpers: {
 		hash: (
 			plaintext: Uint8Array,
 			salt: Uint8Array,
@@ -32,30 +32,30 @@ export class PasswordHash {
 	};
 
 	/** Algorithm name. */
-	public algorithm: string	= 'scrypt';
+	public readonly algorithm: string			= 'scrypt';
 
 	/** Moderate mem limit. */
-	public memLimitInteractive: number	=
+	public readonly memLimitInteractive: number	=
 		Lib.sodium.crypto_pwhash_scryptsalsa208sha256_MEMLIMIT_INTERACTIVE
 	;
 
 	/** Heavy mem limit. */
-	public memLimitSensitive: number	=
+	public readonly memLimitSensitive: number	=
 		134217728 /* 128 MB */
 	;
 
 	/** Moderate ops limit. */
-	public opsLimitInteractive: number	=
+	public readonly opsLimitInteractive: number	=
 		Lib.sodium.crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_INTERACTIVE
 	;
 
 	/** Heavy ops limit. */
-	public opsLimitSensitive: number	=
+	public readonly opsLimitSensitive: number	=
 		Lib.sodium.crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_SENSITIVE
 	;
 
 	/** Salt length. */
-	public saltBytes: number	=
+	public readonly saltBytes: number			=
 		Lib.sodium.crypto_pwhash_scryptsalsa208sha256_SALTBYTES
 	;
 
@@ -151,7 +151,7 @@ export class PasswordHash {
 		isNative: boolean,
 
 		/** @ignore */
-		private secretBox: SecretBox
+		private readonly secretBox: SecretBox
 	) {
 		if (isNative) {
 			this.algorithm				=

@@ -22,10 +22,10 @@ import {Util} from '../cyph/util';
 export class HomeComponent
 	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
 	/** Component title. */
-	public static title: string	= 'cyphHome';
+	public static readonly title: string	= 'cyphHome';
 
 	/** Component configuration. */
-	public static config		= {
+	public static readonly config			= {
 		/* tslint:disable-next-line:max-classes-per-file */
 		controller: class {
 			/** @ignore */

@@ -3,28 +3,28 @@
  */
 export class Config {
 	/** URL for Cyph Tor site. */
-	public static onionRoot: string				= 'cyphdbyhiddenbhs.onion';
+	public static readonly onionRoot: string			= 'cyphdbyhiddenbhs.onion';
 
 	/** Indicates the original language of any content to be translated. */
-	public static defaultLanguage: string		= 'en';
+	public static readonly defaultLanguage: string		= 'en';
 
 	/** Length of server ID for a cyph. */
-	public static cyphIdLength: number			= 7;
+	public static readonly cyphIdLength: number			= 7;
 
 	/** Number of milliseconds before new cyph wait screen will abort. */
-	public static cyphCountdown: number			= 600000;
+	public static readonly cyphCountdown: number		= 600000;
 
 	/** Length of random IDs in cyph links. */
-	public static secretLength: number			= 25;
+	public static readonly secretLength: number			= 25;
 
 	/** Length of random SQS queue IDs. */
-	public static longSecretLength: number		= 52;
+	public static readonly longSecretLength: number		= 52;
 
 	/**
 	 * Characters used by Util.generateGuid (includes all alphanumeric
 	 * characters except 'l' and 'I' for readability reasons).
 	 */
-	public static guidAddressSpace: string[]	= [
+	public static readonly guidAddressSpace: string[]	= [
 		'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
 		'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
 		'k', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u',
@@ -34,10 +34,10 @@ export class Config {
 	];
 
 	/** Affiliate code for Amazon links in chat (used by UI.Affiliate). */
-	public static amazonAffiliateCode: string	= 'cyph-20';
+	public static readonly amazonAffiliateCode: string	= 'cyph-20';
 
 	/** Angular-related config. */
-	public static angularConfig	= {
+	public static readonly angularConfig	= {
 		config: [
 			'$compileProvider',
 			'$mdThemingProvider',
@@ -71,12 +71,12 @@ export class Config {
 	};
 
 	/** Braintree-related config. */
-	public static braintreeConfig	= {
+	public static readonly braintreeConfig	= {
 		endpoint: 'braintree'
 	};
 
 	/** Pricing-related config. */
-	public static pricingConfig	= {
+	public static readonly pricingConfig	= {
 		categories: {
 			accounting: {
 				id: 5,
@@ -121,27 +121,27 @@ export class Config {
 	};
 
 	/** File-transfer-related config (used by Files.Files). */
-	public static filesConfig	= {
+	public static readonly filesConfig	= {
 		chunkSize: 67108864,
 		maxImageWidth: 1920,
 		maxSize: 268435456
 	};
 
 	/** Notifier-related config (used by UI.Notifier). */
-	public static notifierConfig	= {
+	public static readonly notifierConfig	= {
 		audio: '/audio/beep.mp3',
 		icon: customBuildFavicon || '/img/favicon/favicon-192x192.png',
 		title: 'Cyph'
 	};
 
 	/** WebSign-related config. */
-	public static webSignConfig	= {
+	public static readonly webSignConfig	= {
 		serviceWorker: 'serviceworker.js',
 		workerHelper: 'js/workerhelper.js'
 	};
 
 	/** User-facing email addresses to include in places like contact forms. */
-	public static cyphEmailAddresses: string[]	= [
+	public static readonly cyphEmailAddresses: string[]	= [
 		'hello',
 		'help',
 		'feedback',
@@ -152,5 +152,5 @@ export class Config {
 	];
 
 	/** Max unsigned 48-bit integer + 1, used by Util.random. */
-	public static maxSafeUint: number	= 281474976710656;
+	public static readonly maxSafeUint: number	= 281474976710656;
 }

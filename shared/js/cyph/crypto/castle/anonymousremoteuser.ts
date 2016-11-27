@@ -46,16 +46,16 @@ export class AnonymousRemoteUser implements IRemoteUser {
 
 	constructor (
 		/** @ignore */
-		private potassium: Potassium,
+		private readonly potassium: Potassium,
 
 		/** @ignore */
-		private transport: Transport,
+		private readonly transport: Transport,
 
 		/** @ignore */
 		private sharedSecret: string,
 
 		/** @ignore */
-		private username: string = Strings.friend
+		private readonly username: string = Strings.friend
 	) {
 		this.cyphertextPromise	= this.transport.interceptIncomingCyphertext();
 	}

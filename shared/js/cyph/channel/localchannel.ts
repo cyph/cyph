@@ -68,7 +68,7 @@ export class LocalChannel implements IChannel {
 	 * @param handlers Event handlers for this channel.
 	 */
 	constructor (
-		public handlers: ({
+		public readonly handlers: ({
 			onclose?: () => void;
 			onconnect?: () => void;
 			onmessage?: (message: string) => void;

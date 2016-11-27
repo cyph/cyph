@@ -8,7 +8,7 @@ import {Elements} from './elements';
  */
 export class VisibilityWatcher {
 	/** @ignore */
-	private static visibilityChangeEvent: string	= 'visibilityChangeEvent';
+	private static readonly visibilityChangeEvent: string	= 'visibilityChangeEvent';
 
 	/** Indicates whether the window is currently visible. */
 	public static isVisible: boolean	= true;
@@ -29,7 +29,7 @@ export class VisibilityWatcher {
 
 	/** @ignore */
 	/* tslint:disable-next-line:member-ordering */
-	private static _	= (() => {
+	private static readonly _	= (() => {
 		if (Env.isMobile) {
 			document.addEventListener('visibilitychange', () =>
 				VisibilityWatcher.trigger(!document.hidden)

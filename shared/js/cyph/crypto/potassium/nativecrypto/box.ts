@@ -8,7 +8,7 @@ import {SecretBox} from './secretbox';
 /** Equivalent to sodium.crypto_box. */
 export class Box {
 	/** Algorithm details. */
-	public static algorithm: {
+	public static readonly algorithm: {
 		hash: {name: string};
 		modulusLength: number;
 		modulusLengthBytes: number;
@@ -25,10 +25,10 @@ export class Box {
 	};
 
 	/** Public key length. */
-	public static publicKeyBytes: number	= 800;
+	public static readonly publicKeyBytes: number	= 800;
 
 	/** Private key length. */
-	public static privateKeyBytes: number	= 3250;
+	public static readonly privateKeyBytes: number	= 3250;
 
 	/** Generates key pair. */
 	public static async keyPair () : Promise<{

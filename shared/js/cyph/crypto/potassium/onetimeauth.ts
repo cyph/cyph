@@ -5,7 +5,7 @@ import * as NativeCrypto from './nativecrypto';
 /** Equivalent to sodium.crypto_onetimeauth. */
 export class OneTimeAuth {
 	/** @ignore */
-	private helpers: {
+	private readonly helpers: {
 		sign: (
 			message: Uint8Array,
 			key: Uint8Array
@@ -36,10 +36,10 @@ export class OneTimeAuth {
 	};
 
 	/** MAC length. */
-	public bytes: number	= Lib.sodium.crypto_onetimeauth_BYTES;
+	public readonly bytes: number		= Lib.sodium.crypto_onetimeauth_BYTES;
 
 	/** Key length. */
-	public keyBytes: number	= Lib.sodium.crypto_onetimeauth_KEYBYTES;
+	public readonly keyBytes: number	= Lib.sodium.crypto_onetimeauth_KEYBYTES;
 
 	/** Signs message. */
 	public async sign (

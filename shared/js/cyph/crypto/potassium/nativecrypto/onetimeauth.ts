@@ -5,7 +5,7 @@ import {ImportHelper} from './importhelper';
 /** Equivalent to sodium.crypto_onetimeauth. */
 export class OneTimeAuth {
 	/** Algorithm details. */
-	public static algorithm: {
+	public static readonly algorithm: {
 		hash: {name: string};
 		name: string;
 	}	= {
@@ -16,10 +16,10 @@ export class OneTimeAuth {
 	};
 
 	/** MAC length. */
-	public static bytes: number		= 64;
+	public static readonly bytes: number	= 64;
 
 	/** Key length. */
-	public static keyBytes: number	= 64;
+	public static readonly keyBytes: number	= 64;
 
 	/** Signs message. */
 	public static async sign (

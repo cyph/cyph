@@ -24,10 +24,10 @@ import {IChat} from '../chat/ichat';
 export class ChatCyphertext
 	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
 	/** Component title. */
-	public static title: string	= 'cyphChatCyphertext';
+	public static readonly title: string	= 'cyphChatCyphertext';
 
 	/** Component configuration. */
-	public static config		= {
+	public static readonly config			= {
 		bindings: {
 			self: '<'
 		},
@@ -37,7 +37,7 @@ export class ChatCyphertext
 			public cyph: any;
 
 			/** @ignore */
-			public self: IChat;
+			public readonly self: IChat;
 
 			constructor () { (async () => {
 				while (!cyph) {

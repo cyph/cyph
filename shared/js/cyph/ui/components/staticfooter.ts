@@ -22,10 +22,10 @@ import {Util} from '../../util';
 export class StaticFooter
 	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
 	/** Component title. */
-	public static title: string	= 'cyphStaticFooter';
+	public static readonly title: string	= 'cyphStaticFooter';
 
 	/** Component configuration. */
-	public static config		= {
+	public static readonly config			= {
 		/* tslint:disable-next-line:max-classes-per-file */
 		controller: class {
 			/** @ignore */

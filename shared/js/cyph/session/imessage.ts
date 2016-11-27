@@ -3,11 +3,11 @@
  */
 export interface IMessage {
 	/** Unique id for this message. */
-	id?: string;
+	readonly id?: string;
 
 	/** Event name (e.g. "text"). */
-	event?: string;
+	readonly event?: string;
 
 	/** Associated data (e.g. a user-facing chat message). */
-	data?: any;
+	readonly data?: any;
 }

@@ -8,13 +8,13 @@ export class Timer implements ITimer {
 	private endTime: number;
 
 	/** @ignore */
-	private includeHours: boolean;
+	private readonly includeHours: boolean;
 
 	/** @ignore */
-	private includeMinutes: boolean;
+	private readonly includeMinutes: boolean;
 
 	/** @ignore */
-	private stopped: boolean;
+	private isStopped: boolean;
 
 	/** @inheritDoc */
 	public isComplete: boolean;
@@ -47,7 +47,7 @@ export class Timer implements ITimer {
 
 	/** @inheritDoc */
 	public async start () : Promise<void> {
-		if (this.stopped) {
+		if (this.isStopped) {
 			return;
 		}
 
@@ -58,7 +58,7 @@ export class Timer implements ITimer {
 			timeRemaining > 0;
 			timeRemaining = this.endTime - Util.timestamp()
 		) {
-			if (this.stopped) {
+			if (this.isStopped) {
 				return;
 			}
 
@@ -78,7 +78,7 @@ export class Timer implements ITimer {
 	/** @inheritDoc */
 	public stop () : void {
 		this.isComplete	= true;
-		this.stopped	= true;
+		this.isStopped	= true;
 	}
 
 	constructor (

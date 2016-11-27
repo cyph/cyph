@@ -59,7 +59,7 @@ export class Analytics {
 
 	/** @ignore */
 	/* tslint:disable-next-line:member-ordering */
-	private static _	= (() => {
+	private static readonly _	= (() => {
 		const appName: string		= Env.host;
 		const appVersion: string	= Env.isWeb ? 'Web' : 'Native';
 

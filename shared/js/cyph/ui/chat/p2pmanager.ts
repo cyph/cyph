@@ -17,7 +17,7 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 	public isEnabled: boolean	= false;
 
 	/** @inheritDoc */
-	public p2p: IP2P;
+	public readonly p2p: IP2P;
 
 	/** @inheritDoc */
 	public closeButton () : void {
@@ -83,15 +83,15 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 
 	constructor (
 		/** @ignore */
-		private chat: IChat,
+		private readonly chat: IChat,
 
 		mobileMenu: () => ISidebar,
 
 		/** @ignore */
-		private dialogManager: IDialogManager,
+		private readonly dialogManager: IDialogManager,
 
 		/** @ignore */
-		private elements: IElements,
+		private readonly elements: IElements,
 
 		forceTURN?: boolean
 	) {

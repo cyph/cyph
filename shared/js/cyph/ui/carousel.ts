@@ -6,7 +6,7 @@ import {Util} from '../util';
  */
 export class Carousel {
 	/** @ignore */
-	private static activeClass: string	= 'active';
+	private static readonly activeClass: string	= 'active';
 
 
 	/** @ignore */
@@ -70,7 +70,7 @@ export class Carousel {
 
 	constructor (
 		/** @ignore */
-		private rootElement: JQuery,
+		private readonly rootElement: JQuery,
 
 		callback: Function = () => {}
 	) { (async () => {

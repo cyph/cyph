@@ -10,10 +10,10 @@ import {ICastle} from './icastle';
  */
 export class FakeCastle implements ICastle {
 	/** @ignore */
-	private static delimiter: string		= '☁☁☁ PRAISE BE TO CYPH ☀☀☀';
+	private static readonly delimiter: string		= '☁☁☁ PRAISE BE TO CYPH ☀☀☀';
 
 	/** @ignore */
-	private static remoteUsername: string	= Strings.friend;
+	private static readonly remoteUsername: string	= Strings.friend;
 
 	/** @ignore */
 	private static generateCyphertext () : string {
@@ -71,7 +71,7 @@ export class FakeCastle implements ICastle {
 
 	constructor (
 		/** @ignore */
-		private session: ISession
+		private readonly session: ISession
 	) {
 		setTimeout(
 			() => this.session.trigger(Events.castle, {event: CastleEvents.connect}),

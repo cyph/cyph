@@ -113,9 +113,9 @@ export class DialogManager implements IDialogManager {
 
 	constructor (
 		/** @ignore */
-		private $mdDialog: angular.material.IDialogService,
+		private readonly $mdDialog: angular.material.IDialogService,
 
 		/** @ignore */
-		private $mdToast: angular.material.IToastService
+		private readonly $mdToast: angular.material.IToastService
 	) {}
 }

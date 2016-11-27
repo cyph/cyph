@@ -3,7 +3,7 @@
  */
 export interface IScrollManager {
 	/** Number of messages that haven't appeared in viewport */
-	unreadMessages: number;
+	readonly unreadMessages: number;
 
 	/**
 	 * Scrolls to bottom of message list

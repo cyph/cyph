@@ -9,22 +9,22 @@ import {Potassium} from '../potassium';
  */
 export class Transport {
 	/** @ignore */
-	private static cyphertextLimit: number	= 200000;
+	private static readonly cyphertextLimit: number	= 200000;
 
 	/** @ignore */
-	public static chunkLength: number		= 5000000;
+	public static readonly chunkLength: number		= 5000000;
 
 
 	/** @ignore */
 	private lastIncomingMessageTimestamp: number	= 0;
 
 	/** @ignore */
-	private receivedMessages: {
+	private readonly receivedMessages: {
 		[id: number]: {data: Uint8Array; totalChunks: number}
 	}	= {};
 
 	/** Queue of cyphertext interception handlers. */
-	public cyphertextIntercepters: ((cyphertext: Uint8Array) => void)[]	= [];
+	public readonly cyphertextIntercepters: ((cyphertext: Uint8Array) => void)[]	= [];
 
 	/** Trigger abortion event. */
 	public abort () : void {
@@ -155,6 +155,6 @@ export class Transport {
 
 	constructor (
 		/** @ignore */
-		private session: ISession
+		private readonly session: ISession
 	) {}
 }

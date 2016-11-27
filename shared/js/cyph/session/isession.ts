@@ -7,7 +7,7 @@ import {IMessage} from './imessage';
  */
 export interface ISession {
 	/** State of the cyph (referenced by UI). */
-	state: {
+	readonly state: {
 		cyphId: string;
 		isAlice: boolean;
 		isAlive: boolean;

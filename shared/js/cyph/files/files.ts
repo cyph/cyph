@@ -180,7 +180,7 @@ export class Files implements IFiles {
 	private nativePotassium: Potassium;
 
 	/** @inheritDoc */
-	public transfers: ITransfer[]	= [];
+	public readonly transfers: ITransfer[]	= [];
 
 	/** @ignore */
 	private async decryptFile (
@@ -418,7 +418,7 @@ export class Files implements IFiles {
 
 	constructor (
 		/** @ignore */
-		private session: ISession
+		private readonly session: ISession
 	) { (async () => {
 		const isNativeCryptoSupported	=
 			await Potassium.isNativeCryptoSupported()

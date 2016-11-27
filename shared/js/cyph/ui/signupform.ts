@@ -8,13 +8,13 @@ import {ISignupForm} from './isignupform';
 /** @inheritDoc */
 export class SignupForm implements ISignupForm {
 	/** @inheritDoc */
-	public promo: string;
+	public readonly promo: string;
 
 	/** @inheritDoc */
 	public state: number	= 0;
 
 	/** @inheritDoc */
-	public data	= {
+	public readonly data	= {
 		email: <string> '',
 		inviteCode: <string> '',
 		language: <string> Env.fullLanguage,

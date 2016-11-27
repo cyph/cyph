@@ -7,10 +7,10 @@ import {EnvDeploy} from './envdeploy';
  */
 export class Env extends EnvDeploy {
 	/** Current URL host (with www subdomain removed). */
-	public static host: string	= locationData.host.replace('www.', '');
+	public static readonly host: string	= locationData.host.replace('www.', '');
 
 	/** Complete (lowercase) language code, e.g. "en-us". */
-	public static fullLanguage: string	= (
+	public static readonly fullLanguage: string	= (
 		navigatorData.language ||
 		(<any> navigatorData).userLanguage ||
 		(<any> navigatorData).browserLanguage ||
@@ -19,7 +19,7 @@ export class Env extends EnvDeploy {
 	).toLowerCase();
 
 	/** Normalised language code, used for translations. */
-	public static language: string		= (() => {
+	public static readonly language: string		= (() => {
 		const language: string	= Env.fullLanguage.split('-')[0];
 
 		/* Consistency in special cases */
@@ -34,46 +34,46 @@ export class Env extends EnvDeploy {
 	})();
 
 	/** Indicates whether this is (the main thread of) a Web environment. */
-	public static isWeb: boolean		= IS_WEB;
+	public static readonly isWeb: boolean			= IS_WEB;
 
 	/** Indicates whether this is the main thread. */
-	public static isMainThread: boolean	= typeof importScripts !== 'function';
+	public static readonly isMainThread: boolean	= typeof importScripts !== 'function';
 
 	/** Indicates whether this is Node.js/io.js. */
-	public static isNode: boolean		=
+	public static readonly isNode: boolean		=
 		typeof (<any> self).process === 'object' &&
 		typeof (<any> self).require === 'function'
 	;
 
 	/** Current user agent (lowercase). */
-	public static userAgent: string		= navigatorData.userAgent.toLowerCase();
+	public static readonly userAgent: string	= navigatorData.userAgent.toLowerCase();
 
 	/** Indicates whether this is Edge. */
-	public static isEdge: boolean		= /edge\/\d+/.test(Env.userAgent);
+	public static readonly isEdge: boolean		= /edge\/\d+/.test(Env.userAgent);
 
 	/** Indicates whether this is OS X. */
-	public static isOSX: boolean		= /mac os x/.test(Env.userAgent);
+	public static readonly isOSX: boolean		= /mac os x/.test(Env.userAgent);
 
 	/** Indicates whether this is Android. */
-	public static isAndroid: boolean	= /android/.test(Env.userAgent);
+	public static readonly isAndroid: boolean	= /android/.test(Env.userAgent);
 
 	/** Indicates whether this is iOS. */
-	public static isIOS: boolean		= /ipad|iphone|ipod/.test(Env.userAgent);
+	public static readonly isIOS: boolean		= /ipad|iphone|ipod/.test(Env.userAgent);
 
 	/** Indicates whether this is iOS 8 or greater. */
-	public static isIOS8Plus: boolean	=
+	public static readonly isIOS8Plus: boolean	=
 		Env.isIOS &&
 		parseInt((Env.userAgent.match(/ os (\d+)_/) || [])[1], 10) >= 8
 	;
 
 	/** Indicates whether this is WebOS. */
-	public static isWebOS: boolean		= /webos/.test(Env.userAgent);
+	public static readonly isWebOS: boolean		= /webos/.test(Env.userAgent);
 
 	/** Indicates whether this is BlackBerry. */
-	public static isBB: boolean			= /blackberry/.test(Env.userAgent);
+	public static readonly isBB: boolean		= /blackberry/.test(Env.userAgent);
 
 	/** Indicates whether this is mobile Firefox. */
-	public static isFFMobile: boolean	=
+	public static readonly isFFMobile: boolean	=
 		/fennec/.test(Env.userAgent) ||
 		(
 			/firefox/.test(Env.userAgent) &&
@@ -86,7 +86,7 @@ export class Env extends EnvDeploy {
 	;
 
 	/** Indicates whether this is mobile. */
-	public static isMobile: boolean		=
+	public static readonly isMobile: boolean	=
 		Env.isAndroid ||
 		Env.isIOS ||
 		Env.isWebOS ||
@@ -95,10 +95,10 @@ export class Env extends EnvDeploy {
 	;
 
 	/** Indicates whether this should be considered a tablet. */
-	public static isTablet: boolean		= Env.isMobile && self.outerWidth > 767;
+	public static readonly isTablet: boolean	= Env.isMobile && self.outerWidth > 767;
 
 	/** Indicates whether this is a touchscreen environment. */
-	public static isTouch: boolean		= (() => {
+	public static readonly isTouch: boolean		= (() => {
 		try {
 			document.createEvent('TouchEvent');
 			return true;
@@ -109,36 +109,17 @@ export class Env extends EnvDeploy {
 	})();
 
 	/** Indicates whether this is the Cyph corporate website (cyph.com). */
-	public static isHomeSite: boolean		=
+	public static readonly isHomeSite: boolean	=
 		Env.homeUrl.split('/')[2].replace('www.', '') === Env.host
 	;
 
 	/** Either "mobile" or "desktop", depending on Env.isMobile. */
-	public static platformString: string	= Env.isMobile ? 'mobile' : 'desktop';
+	public static platformString: string		= Env.isMobile ? 'mobile' : 'desktop';
 
 	/** Base URI for sending an SMS. */
-	public static smsUriBase: string		=
+	public static readonly smsUriBase: string	=
 		'sms:' +
 		(Env.isIOS8Plus ? '&' : Env.isIOS ? ';' : '?') +
 		'body='
 	;
-
-	/** @ignore */
-	/* tslint:disable-next-line:member-ordering */
-	private static _	= (() => {
-		if (!customBuild) {
-			return;
-		}
-
-		Env.newCyphBaseUrl		= `https://${customBuild}/`;
-		Env.newCyphUrl			= Env.newCyphBaseUrl;
-		Env.cyphMeBaseUrl		= `${Env.newCyphBaseUrl}#me/`;
-		Env.cyphMeUrl			= Env.cyphMeBaseUrl;
-		Env.cyphIoBaseUrl		= `${Env.newCyphBaseUrl}#io/`;
-		Env.cyphIoUrl			= Env.cyphIoBaseUrl;
-		Env.cyphVideoBaseUrl	= `${Env.newCyphBaseUrl}#video/`;
-		Env.cyphVideoUrl		= Env.cyphVideoBaseUrl;
-		Env.cyphAudioBaseUrl	= `${Env.newCyphBaseUrl}#audio/`;
-		Env.cyphAudioUrl		= Env.cyphAudioBaseUrl;
-	})();
 }

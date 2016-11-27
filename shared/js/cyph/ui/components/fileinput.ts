@@ -25,10 +25,10 @@ import {Util} from '../../util';
 export class FileInput
 	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
 	/** Component title. */
-	public static title: string	= 'cyphFileInput';
+	public static readonly title: string	= 'cyphFileInput';
 
 	/** Component configuration. */
-	public static config		= {
+	public static readonly config			= {
 		bindings: {
 			accept: '@',
 			fileChange: '&'
@@ -36,10 +36,10 @@ export class FileInput
 		/* tslint:disable-next-line:max-classes-per-file */
 		controller: class {
 			/** @ignore */
-			public accept: string;
+			public readonly accept: string;
 
 			/** @ignore */
-			public fileChange: (o: {file: File}) => void;
+			public readonly fileChange: (o: {file: File}) => void;
 
 			constructor ($element: JQuery) {
 				const $input	= $element.children();

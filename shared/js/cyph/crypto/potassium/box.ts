@@ -8,7 +8,7 @@ import {Util} from './util';
 /** Equivalent to sodium.crypto_box. */
 export class Box {
 	/** @ignore */
-	private helpers: {
+	private readonly helpers: {
 		keyPair: () => Promise<{
 			keyType: string;
 			publicKey: Uint8Array;
@@ -61,14 +61,14 @@ export class Box {
 	};
 
 	/** Private key length. */
-	public privateKeyBytes: number	=
+	public readonly privateKeyBytes: number	=
 		Lib.mcEliece.privateKeyLength +
 		Lib.ntru.privateKeyLength +
 		this.helpers.privateKeyBytes
 	;
 
 	/** Public key length. */
-	public publicKeyBytes: number	=
+	public readonly publicKeyBytes: number	=
 		Lib.mcEliece.publicKeyLength +
 		Lib.ntru.publicKeyLength +
 		this.helpers.publicKeyBytes
@@ -398,13 +398,13 @@ export class Box {
 		isNative: boolean,
 
 		/** @ignore */
-		private newNonce: (size: number) => Uint8Array,
+		private readonly newNonce: (size: number) => Uint8Array,
 
 		/** @ignore */
-		private oneTimeAuth: OneTimeAuth,
+		private readonly oneTimeAuth: OneTimeAuth,
 
 		/** @ignore */
-		private secretBox: SecretBox
+		private readonly secretBox: SecretBox
 	) {
 		if (isNative) {
 			this.helpers.nonceBytes			= NativeCrypto.SecretBox.nonceBytes;

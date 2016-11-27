@@ -24,10 +24,10 @@ import {ILinkConnection} from '../ilinkconnection';
 export class LinkConnection
 	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
 	/** Component title. */
-	public static title: string	= 'cyphLinkConnection';
+	public static readonly title: string	= 'cyphLinkConnection';
 
 	/** Component configuration. */
-	public static config		= {
+	public static readonly config			= {
 		bindings: {
 			enableAdvancedFeatures: '<',
 			self: '<'
@@ -38,13 +38,13 @@ export class LinkConnection
 			public cyph: any;
 
 			/** @ignore */
-			public self: ILinkConnection;
+			public readonly self: ILinkConnection;
 
 			/** @ignore */
-			public enableAdvancedFeatures: boolean	= false;
+			public readonly enableAdvancedFeatures: boolean	= false;
 
 			/** @ignore */
-			public queuedMessageDraft: string		= '';
+			public readonly queuedMessageDraft: string		= '';
 
 			constructor () { (async () => {
 				while (!cyph) {

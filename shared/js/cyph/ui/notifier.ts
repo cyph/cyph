@@ -7,7 +7,7 @@ import {VisibilityWatcher} from './visibilitywatcher';
 /** @inheritDoc */
 export class Notifier implements INotifier {
 	/** @ignore */
-	private static audio: {play: Function}	= Audio ?
+	private static readonly audio: {play: Function}	= Audio ?
 		new Audio(Config.notifierConfig.audio) :
 		{play: () => {}}
 	;
@@ -55,10 +55,10 @@ export class Notifier implements INotifier {
 
 
 	/** @ignore */
-	private disableNotify: boolean		= false;
+	private disableNotify: boolean				= false;
 
 	/** @ignore */
-	private openNotifications: any[]	= [];
+	private readonly openNotifications: any[]	= [];
 
 	/** @inheritDoc */
 	public notify (message: string) : void {

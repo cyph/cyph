@@ -6,7 +6,7 @@ import {Util} from './util';
 /** Equivalent to sodium.crypto_secretbox. */
 export class SecretBox {
 	/** @ignore */
-	private helpers: {
+	private readonly helpers: {
 		nonceBytes: number;
 		open: (
 			cyphertext: Uint8Array,
@@ -51,10 +51,10 @@ export class SecretBox {
 	};
 
 	/** Additional data length. */
-	public aeadBytes: number	= Lib.sodium.crypto_aead_chacha20poly1305_ABYTES;
+	public readonly aeadBytes: number	= Lib.sodium.crypto_aead_chacha20poly1305_ABYTES;
 
 	/** Key length. */
-	public keyBytes: number		= Lib.sodium.crypto_aead_chacha20poly1305_KEYBYTES;
+	public readonly keyBytes: number	= Lib.sodium.crypto_aead_chacha20poly1305_KEYBYTES;
 
 	/** @ignore */
 	private getAdditionalData (input?: Uint8Array) : Uint8Array {
@@ -184,7 +184,7 @@ export class SecretBox {
 		isNative: boolean,
 
 		/** @ignore */
-		private newNonce: (size: number) => Uint8Array
+		private readonly newNonce: (size: number) => Uint8Array
 	) {
 		if (isNative) {
 			this.helpers.nonceBytes	= NativeCrypto.SecretBox.nonceBytes;

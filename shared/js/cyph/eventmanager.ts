@@ -8,25 +8,25 @@ import {Util} from './util';
  */
 export class EventManager {
 	/** @ignore */
-	private static handlers: {[event: string]: Function[]}				= {};
+	private static readonly handlers: {[event: string]: Function[]}				= {};
 
 	/** @ignore */
-	private static indices: {[event: string]: Map<Function, number>}	= {};
+	private static readonly indices: {[event: string]: Map<Function, number>}	= {};
 
 	/** @ignore */
-	private static threadEventPrefix: string	= 'threadEventPrefix';
+	private static readonly threadEventPrefix: string	= 'threadEventPrefix';
 
 	/** @ignore */
-	private static untriggeredEvents: string	= 'untriggeredEvents';
+	private static readonly untriggeredEvents: string	= 'untriggeredEvents';
 
 	/**
 	 * @ignore
 	 * (Used internally by EventManager and Thread for cross-thread event stuff.)
 	 */
-	public static mainThreadEvents: string	= 'mainThreadEvents';
+	public static readonly mainThreadEvents: string	= 'mainThreadEvents';
 
 	/** List of all active threads. */
-	public static threads: IThread[]	= [];
+	public static readonly threads: IThread[]		= [];
 
 	/**
 	 * Sends command to the main thread.
@@ -178,7 +178,7 @@ export class EventManager {
 
 	/** @ignore */
 	/* tslint:disable-next-line:member-ordering */
-	private static _	= (() => {
+	private static readonly _	= (() => {
 		if (Env.isMainThread) {
 			EventManager.on(
 				EventManager.mainThreadEvents,

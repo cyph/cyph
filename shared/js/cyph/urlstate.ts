@@ -7,10 +7,10 @@ import {EventManager} from './eventmanager';
  */
 export class UrlState {
 	/** @ignore */
-	private static urlStateChangeEvent	= 'urlStateChangeEvent';
+	private static readonly urlStateChangeEvent	= 'urlStateChangeEvent';
 
 	/** Generic/non-site-specific URL states. */
-	public static states	= {
+	public static readonly states	= {
 		notFound: '404'
 	};
 
@@ -116,7 +116,7 @@ export class UrlState {
 
 	/** @ignore */
 	/* tslint:disable-next-line:member-ordering */
-	private static _	= (() => {
+	private static readonly _	= (() => {
 		self.onpopstate	= () => EventManager.trigger(UrlState.urlStateChangeEvent);
 	})();
 }

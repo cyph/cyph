@@ -13,7 +13,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	public betaState: BetaStates	= BetaStates.none;
 
 	/** Indicates whether this is a co-branded instance of Cyph. */
-	public coBranded: boolean		= !!customBuild;
+	public readonly coBranded: boolean		= !!customBuild;
 
 	/** Chat UI. */
 	public chat: Cyph.UI.Chat.IChat;
@@ -159,10 +159,10 @@ export class UI extends Cyph.UI.BaseButtonManager {
 
 	constructor (
 		/** @ignore */
-		private dialogManager: Cyph.UI.IDialogManager,
+		private readonly dialogManager: Cyph.UI.IDialogManager,
 
 		/** @ignore */
-		private notifier: Cyph.UI.INotifier
+		private readonly notifier: Cyph.UI.INotifier
 	) {
 		super();
 

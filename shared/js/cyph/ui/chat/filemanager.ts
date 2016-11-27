@@ -13,7 +13,7 @@ import {IFileManager} from './ifilemanager';
 /** @inheritDoc */
 export class FileManager implements IFileManager {
 	/** @inheritDoc */
-	public files: IFiles;
+	public readonly files: IFiles;
 
 	/** @ignore */
 	private compressImage (image: HTMLImageElement, file: File) : string {
@@ -95,10 +95,10 @@ export class FileManager implements IFileManager {
 
 	constructor (
 		/** @ignore */
-		private chat: IChat,
+		private readonly chat: IChat,
 
 		/** @ignore */
-		private dialogManager: IDialogManager
+		private readonly dialogManager: IDialogManager
 	) {
 		this.files	= new Files(this.chat.session);
 

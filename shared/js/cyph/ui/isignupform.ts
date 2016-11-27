@@ -6,10 +6,10 @@ export interface ISignupForm {
 	promo: string;
 
 	/** Ordinal number indicating which screen of this form is active. */
-	state: number;
+	readonly state: number;
 
 	/** Signup data entered by user. */
-	data: {
+	readonly data: {
 		email: string;
 		inviteCode: string;
 		language: string;

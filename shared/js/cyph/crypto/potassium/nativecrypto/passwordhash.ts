@@ -7,7 +7,7 @@ import {SecretBox} from './secretbox';
 /** Equivalent to sodium.crypto_pwhash. */
 export class PasswordHash {
 	/** Algorithm details. */
-	public static algorithm: {
+	public static readonly algorithm: {
 		hash: {name: string};
 		name: string;
 	}	= {
@@ -18,19 +18,19 @@ export class PasswordHash {
 	};
 
 	/** Mem limit not used by PBKDF2. */
-	public static memLimitInteractive: number	= 0;
+	public static readonly memLimitInteractive: number	= 0;
 
 	/** Mem limit not used by PBKDF2. */
-	public static memLimitSensitive: number		= 0;
+	public static readonly memLimitSensitive: number	= 0;
 
 	/** Moderate ops limit. */
-	public static opsLimitInteractive: number	= 250000;
+	public static readonly opsLimitInteractive: number	= 250000;
 
 	/** Heavy ops limit. */
-	public static opsLimitSensitive: number		= 2500000;
+	public static readonly opsLimitSensitive: number	= 2500000;
 
 	/** Salt length. */
-	public static saltBytes: number				= 32;
+	public static readonly saltBytes: number			= 32;
 
 	/** Hashes plaintext. */
 	public static async hash (

@@ -6,27 +6,27 @@ import {ITransfer} from './itransfer';
 export class Transfer implements ITransfer {
 	constructor (
 		/** @inheritDoc */
-		public name: string = '',
+		public readonly name: string = '',
 
 		/** @inheritDoc */
-		public size: number = 0,
+		public readonly size: number = 0,
 
 		/** @inheritDoc */
-		public key: Uint8Array = new Uint8Array(0),
+		public readonly key: Uint8Array = new Uint8Array(0),
 
 		/** @inheritDoc */
-		public isOutgoing: boolean = true,
+		public readonly isOutgoing: boolean = true,
 
 		/** @inheritDoc */
-		public url: string = '',
+		public readonly url: string = '',
 
 		/** @inheritDoc */
-		public percentComplete: number = 0,
+		public readonly percentComplete: number = 0,
 
 		/** @inheritDoc */
-		public id: string = Util.generateGuid(),
+		public readonly id: string = Util.generateGuid(),
 
 		/** @inheritDoc */
-		public answer: boolean = null
+		public readonly answer: boolean = null
 	) {}
 }

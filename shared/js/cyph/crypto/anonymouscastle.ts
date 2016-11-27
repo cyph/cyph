@@ -14,7 +14,7 @@ import {Potassium} from './potassium';
  */
 export class AnonymousCastle implements ICastle {
 	/** @ignore */
-	private pairwiseSession: PairwiseSession;
+	private readonly pairwiseSession: PairwiseSession;
 
 	/** @inheritDoc */
 	public receive (cyphertext: string) : void {

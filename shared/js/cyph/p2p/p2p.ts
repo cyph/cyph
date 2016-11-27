@@ -15,7 +15,7 @@ import {IP2P} from './ip2p';
 /** @inheritDoc */
 export class P2P implements IP2P {
 	/** Constant values used by P2P. */
-	public static constants	= {
+	public static readonly constants	= {
 		accept: 'accept',
 		audio: 'audio',
 		decline: 'decline',
@@ -26,7 +26,7 @@ export class P2P implements IP2P {
 	};
 
 	/** Indicates whether WebRTC is supported in the current environment. */
-	public static isSupported: boolean	= (() => {
+	public static readonly isSupported: boolean	= (() => {
 		try {
 			return new (<any> self).SimpleWebRTC({
 				connection: {on: () => {}}
@@ -42,13 +42,13 @@ export class P2P implements IP2P {
 	private isAccepted: boolean;
 
 	/** @ignore */
-	private mutex: IMutex;
+	private readonly mutex: IMutex;
 
 	/** @ignore */
 	private webRTC: any;
 
 	/** @ignore */
-	private commands	= {
+	private readonly commands	= {
 		accept: () : void => {
 			this.join();
 		},
@@ -101,10 +101,10 @@ export class P2P implements IP2P {
 	};
 
 	/** @inheritDoc */
-	public incomingStream	= {audio: false, video: false};
+	public readonly incomingStream	= {audio: false, video: false};
 
 	/** @inheritDoc */
-	public outgoingStream	= {audio: false, video: false};
+	public readonly outgoingStream	= {audio: false, video: false};
 
 	/** @inheritDoc */
 	public isActive: boolean;
@@ -384,16 +384,16 @@ export class P2P implements IP2P {
 
 	constructor (
 		/** @ignore */
-		private session: ISession,
+		private readonly session: ISession,
 
 		/** @ignore */
-		private forceTURN: boolean,
+		private readonly forceTURN: boolean,
 
 		/** @ignore */
-		private localVideo: () => JQuery,
+		private readonly localVideo: () => JQuery,
 
 		/** @ignore */
-		private remoteVideo: () => JQuery
+		private readonly remoteVideo: () => JQuery
 	) {
 		this.mutex	= new Mutex(this.session);
 

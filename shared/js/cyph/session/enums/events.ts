@@ -3,38 +3,38 @@
  */
 export class Events {
 	/** @see Events */
-	public static abort: string				= 'abort';
+	public static readonly abort: string				= 'abort';
 
 	/** @see Events */
-	public static beginChat: string			= 'beginChat';
+	public static readonly beginChat: string			= 'beginChat';
 
 	/** @see Events */
-	public static beginChatComplete: string	= 'beginChatComplete';
+	public static readonly beginChatComplete: string	= 'beginChatComplete';
 
 	/** @see Events */
-	public static beginWaiting: string		= 'beginWaiting';
+	public static readonly beginWaiting: string			= 'beginWaiting';
 
 	/** @see Events */
-	public static castle: string			= 'castle';
+	public static readonly castle: string				= 'castle';
 
 	/** @see Events */
-	public static closeChat: string			= 'closeChat';
+	public static readonly closeChat: string			= 'closeChat';
 
 	/** @see Events */
-	public static connect: string			= 'connect';
+	public static readonly connect: string				= 'connect';
 
 	/** @see Events */
-	public static connectFailure: string	= 'connectFailure';
+	public static readonly connectFailure: string		= 'connectFailure';
 
 	/** @see Events */
-	public static cyphertext: string		= 'cyphertext';
+	public static readonly cyphertext: string			= 'cyphertext';
 
 	/** @see Events */
-	public static filesUI: string			= 'filesUI';
+	public static readonly filesUI: string				= 'filesUI';
 
 	/** @see Events */
-	public static newCyph: string			= 'newCyph';
+	public static readonly newCyph: string				= 'newCyph';
 
 	/** @see Events */
-	public static p2pUI: string				= 'p2pUI';
+	public static readonly p2pUI: string				= 'p2pUI';
 }

@@ -4,13 +4,13 @@ import {Lib} from './lib';
 /** Equivalent to sodium.crypto_sign. */
 export class Sign {
 	/** Signature length. */
-	public bytes: number	= Lib.superSphincs.bytes;
+	public readonly bytes: number			= Lib.superSphincs.bytes;
 
 	/** Private key length. */
-	public privateKeyBytes: number	= Lib.superSphincs.privateKeyBytes;
+	public readonly privateKeyBytes: number	= Lib.superSphincs.privateKeyBytes;
 
 	/** Public key length. */
-	public publicKeyBytes: number	= Lib.superSphincs.publicKeyBytes;
+	public readonly publicKeyBytes: number	= Lib.superSphincs.publicKeyBytes;
 
 	/** Generates key pair. */
 	public async keyPair () : Promise<{

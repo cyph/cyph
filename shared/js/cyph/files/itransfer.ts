@@ -6,7 +6,7 @@ export interface ITransfer {
 	answer: boolean;
 
 	/** Unique ID to represent this file transfer. */
-	id: string;
+	readonly id: string;
 
 	/** Indicates whether file is being sent from this Cyph instance. */
 	isOutgoing: boolean;
@@ -15,7 +15,7 @@ export interface ITransfer {
 	key: Uint8Array;
 
 	/** File name. */
-	name: string;
+	readonly name: string;
 
 	/** Percentage completion of transfer. */
 	percentComplete: number;

@@ -7,17 +7,17 @@ import {Elements} from './elements';
  */
 export class CyphDemo extends Cyph.UI.BaseButtonManager {
 	/** @ignore */
-	private static demoClass: string	= 'demo';
+	private static readonly demoClass: string	= 'demo';
 
 	/** @ignore */
-	private static facebookPicUrl: Promise<string>		= Cyph.Util.request({
+	private static readonly facebookPicUrl: Promise<string>		= Cyph.Util.request({
 		url: Cyph.Env.isMobile ?
 			'/img/fbimagealt.txt' :
 			'/img/null.txt'
 	});
 
 	/** @ignore */
-	private static facebookPicMessage: Promise<string>	= (async () =>
+	private static readonly facebookPicMessage: Promise<string>	= (async () =>
 		'![](' + (await CyphDemo.facebookPicUrl) + ')'
 	)();
 
@@ -33,15 +33,15 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 	`;
 
 	/** @ignore */
-	private static facebookPicPlaceholder: string	= `
+	private static readonly facebookPicPlaceholder: string	= `
 		<div class='facebook-pic image-frame'>&nbsp;</div>
 	`;
 
 	/** @ignore */
-	private static mobileUIScale: number	= 0.625;
+	private static readonly mobileUIScale: number	= 0.625;
 
 	/** @ignore */
-	private static messages: Promise<{text: string; isMobile: boolean}[]>	= (async () => [
+	private static readonly messages: Promise<{text: string; isMobile: boolean}[]>	= (async () => [
 		{
 			isMobile: true,
 			text: `why did we have to switch from Facebook?`

@@ -25,7 +25,7 @@ export class LinkConnection implements ILinkConnection {
 	private linkConstant: string;
 
 	/** @inheritDoc */
-	public advancedFeatures: boolean;
+	public readonly advancedFeatures: boolean;
 
 	/** @inheritDoc */
 	public isPassive: boolean;
@@ -37,7 +37,7 @@ export class LinkConnection implements ILinkConnection {
 	public linkEncoded: string;
 
 	/** @inheritDoc */
-	public timer: ITimer;
+	public readonly timer: ITimer;
 
 	/** @ignore */
 	private selectLink () : void {
@@ -151,10 +151,10 @@ export class LinkConnection implements ILinkConnection {
 		countdown: number,
 
 		/** @ignore */
-		private chat: IChat,
+		private readonly chat: IChat,
 
 		/** @ignore */
-		private dialogManager: IDialogManager
+		private readonly dialogManager: IDialogManager
 	) {
 		this.timer	= new Timer(countdown);
 	}

@@ -9,7 +9,7 @@ import {Message} from './message';
 /** @inheritDoc */
 export class Mutex implements IMutex {
 	/** @ignore */
-	private static constants	= {
+	private static readonly constants	= {
 		release: 'release',
 		request: 'request'
 	};
@@ -25,7 +25,7 @@ export class Mutex implements IMutex {
 	private requester: {user: string; purpose: string};
 
 	/** @ignore */
-	private commands	= {
+	private readonly commands	= {
 		release: () : void => {
 			if (this.owner !== Users.me) {
 				this.shiftRequester();
@@ -123,7 +123,7 @@ export class Mutex implements IMutex {
 
 	constructor (
 		/** @ignore */
-		private session: ISession
+		private readonly session: ISession
 	) {
 		this.session.on(rpcEvents.mutex, (command: Command) =>
 			Util.getValue(this.commands, command.method, (o: any) => {})(command.argument)

@@ -12,19 +12,19 @@ import {Transport} from './transport';
  */
 export class PairwiseSession {
 	/** @ignore */
-	private incomingMessageId: number						= 0;
+	private incomingMessageId: number	= 0;
 
 	/** @ignore */
-	private incomingMessagesMax: number						= 0;
+	private incomingMessagesMax: number	= 0;
 
 	/** @ignore */
-	private outgoingMessageId: number						= 0;
+	private outgoingMessageId: number	= 0;
 
 	/** @ignore */
-	private receiveLock: {}									= {};
+	private readonly receiveLock: {}	= {};
 
 	/** @ignore */
-	private incomingMessages: {[id: number]: Uint8Array[]}	= {};
+	private readonly incomingMessages: {[id: number]: Uint8Array[]}	= {};
 
 	/** @ignore */
 	private core: Core;
@@ -282,10 +282,10 @@ export class PairwiseSession {
 
 	constructor (
 		/** @ignore */
-		private potassium: Potassium,
+		private readonly potassium: Potassium,
 
 		/** @ignore */
-		private transport: Transport,
+		private readonly transport: Transport,
 
 		/** @ignore */
 		private localUser: ILocalUser,

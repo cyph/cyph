@@ -13,31 +13,31 @@ import {IScrollManager} from './iscrollmanager';
  */
 export interface IChat {
 	/** Indicates whether authentication has completed (still true even after disconnect). */
-	isConnected: boolean;
+	readonly isConnected: boolean;
 
 	/** Indicates whether chat has been disconnected. */
-	isDisconnected: boolean;
+	readonly isDisconnected: boolean;
 
 	/** Indicates whether the other party is typing. */
-	isFriendTyping: boolean;
+	readonly isFriendTyping: boolean;
 
 	/** Indicates whether the queued message is self-destructing. */
-	queuedMessageSelfDestruct: boolean;
+	readonly queuedMessageSelfDestruct: boolean;
 
 	/** Indicates whether the mobile chat UI is to be displayed. */
-	isMobile: boolean;
+	readonly isMobile: boolean;
 
 	/** The current message being composed. */
 	currentMessage: string;
 
 	/** Percentage complete with initial handshake (approximate / faked out). */
-	keyExchangeProgress: number;
+	readonly keyExchangeProgress: number;
 
 	/** Chat UI state/view. */
-	state: States;
+	readonly state: States;
 
 	/** Message list. */
-	messages: {
+	readonly messages: {
 		author: string;
 		selfDestructTimer: ITimer;
 		text: string;
@@ -46,19 +46,19 @@ export interface IChat {
 	}[];
 
 	/** Cyphertext instance. */
-	cyphertext: ICyphertext;
+	readonly cyphertext: ICyphertext;
 
 	/** File manager instance. */
-	fileManager: IFileManager;
+	readonly fileManager: IFileManager;
 
 	/** P2P manager instance. */
-	p2pManager: IP2PManager;
+	readonly p2pManager: IP2PManager;
 
 	/** Scroll manager instance. */
-	scrollManager: IScrollManager;
+	readonly scrollManager: IScrollManager;
 
 	/** Session instance. */
-	session: ISession;
+	readonly session: ISession;
 
 	/**
 	 * Aborts the process of chat initialisation and authentication.

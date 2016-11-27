@@ -5,16 +5,16 @@ import {ImportHelper} from './importhelper';
 /** Equivalent to sodium.crypto_secretbox. */
 export class SecretBox {
 	/** Algorithm name. */
-	public static algorithm: string		= 'AES-GCM';
+	public static readonly algorithm: string	= 'AES-GCM';
 
 	/** Additional data length. */
-	public static aeadBytes: number		= 16;
+	public static readonly aeadBytes: number	= 16;
 
 	/** Key length. */
-	public static keyBytes: number		= 32;
+	public static readonly keyBytes: number		= 32;
 
 	/** Nonce length. */
-	public static nonceBytes: number	= 12;
+	public static readonly nonceBytes: number	= 12;
 
 	/** Encrypts plaintext. */
 	public static async seal (

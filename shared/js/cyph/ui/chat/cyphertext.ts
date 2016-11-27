@@ -14,18 +14,19 @@ import {IElements} from './ielements';
 /** @inheritDoc */
 export class Cyphertext extends BaseButtonManager implements ICyphertext {
 	/** @ignore */
-	private showLock: boolean		= false;
+	private static readonly curtainClass: string	= 'curtain';
+
 
 	/** @ignore */
-	private curtainClass: string	= 'curtain';
+	private showLock: boolean	= false;
 
 	/** @inheritDoc */
-	public messages: {author: Users; text: string}[]	= [];
+	public readonly messages: {author: Users; text: string}[]	= [];
 
 	/** @inheritDoc */
 	public hide () : void {
-		if ($('.' + this.curtainClass).length > 0) {
-			this.elements.everything().removeClass(this.curtainClass);
+		if ($('.' + Cyphertext.curtainClass).length > 0) {
+			this.elements.everything().removeClass(Cyphertext.curtainClass);
 
 			(async () => {
 				await Util.sleep(2000);
@@ -72,7 +73,7 @@ export class Cyphertext extends BaseButtonManager implements ICyphertext {
 					delay: 3000
 				});
 
-				this.elements.everything().addClass(this.curtainClass);
+				this.elements.everything().addClass(Cyphertext.curtainClass);
 
 				Analytics.send({
 					eventAction: 'show',
@@ -90,13 +91,13 @@ export class Cyphertext extends BaseButtonManager implements ICyphertext {
 		mobileMenu: () => ISidebar,
 
 		/** @ignore */
-		private dialogManager: IDialogManager,
+		private readonly dialogManager: IDialogManager,
 
 		/** @ignore */
-		private isMobile: boolean,
+		private readonly isMobile: boolean,
 
 		/** @ignore */
-		private elements: IElements
+		private readonly elements: IElements
 	) {
 		super(mobileMenu);
 

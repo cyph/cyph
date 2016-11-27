@@ -22,10 +22,10 @@ import {Util} from '../../util';
 export class StaticCyphNotFound
 	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
 	/** Component title. */
-	public static title: string	= 'cyphStaticCyphNotFound';
+	public static readonly title: string	= 'cyphStaticCyphNotFound';
 
 	/** Component configuration. */
-	public static config		= {
+	public static readonly config			= {
 		/* tslint:disable-next-line:max-classes-per-file */
 		controller: class {
 			/** @ignore */

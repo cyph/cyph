@@ -32,25 +32,25 @@ export class Potassium extends Util {
 
 
 	/** @see Box */
-	public box: Box;
+	public readonly box: Box;
 
 	/** @see EphemeralKeyExchange */
-	public ephemeralKeyExchange: EphemeralKeyExchange;
+	public readonly ephemeralKeyExchange: EphemeralKeyExchange;
 
 	/** @see Hash */
-	public hash: Hash;
+	public readonly hash: Hash;
 
 	/** @see OneTimeAuth */
-	public oneTimeAuth: OneTimeAuth;
+	public readonly oneTimeAuth: OneTimeAuth;
 
 	/** @see PasswordHash */
-	public passwordHash: PasswordHash;
+	public readonly passwordHash: PasswordHash;
 
 	/** @see SecretBox */
-	public secretBox: SecretBox;
+	public readonly secretBox: SecretBox;
 
 	/** @see Sign */
-	public sign: Sign;
+	public readonly sign: Sign;
 
 	/** @ignore */
 	private newNonce (size: number) : Uint8Array {
@@ -76,7 +76,7 @@ export class Potassium extends Util {
 	 */
 	constructor (
 		/** @ignore */
-		private isNative: boolean = false,
+		private readonly isNative: boolean = false,
 
 		/** @ignore */
 		private counter: number = 0

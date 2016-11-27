@@ -9,7 +9,7 @@ import {Elements} from './elements';
  */
 export class NanoScroller {
 	/** Indicates whether NanoScroller is to be used. */
-	public static isActive: boolean	= !Env.isMobile && !Env.isOSX;
+	public static readonly isActive: boolean	= !Env.isMobile && !Env.isOSX;
 
 	/**
 	 * Updates the state of all NanoScroller scrollbars.
@@ -26,7 +26,7 @@ export class NanoScroller {
 
 	/** @ignore */
 	/* tslint:disable-next-line:member-ordering */
-	private static _	= (() => {
+	private static readonly _	= (() => {
 		$(NanoScroller.update);
 	})();
 }

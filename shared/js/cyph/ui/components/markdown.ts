@@ -24,20 +24,20 @@ import {Util} from '../../util';
 export class Markdown
 	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
 	/** Component title. */
-	public static title: string	= 'cyphMarkdown';
+	public static readonly title: string	= 'cyphMarkdown';
 
 	/** Component configuration. */
-	public static config		= {
+	public static readonly config			= {
 		bindings: {
 			markdown: '<'
 		},
 		/* tslint:disable-next-line:max-classes-per-file */
 		controller: class {
 			/** @ignore */
-			private markdownIt: any;
+			private readonly markdownIt: any;
 
 			/** @ignore */
-			public markdown: string;
+			public readonly markdown: string;
 
 			/** @ignore */
 			public async $onChanges (changes: any) : Promise<void> {
@@ -84,7 +84,7 @@ export class Markdown
 
 			constructor (
 				/** @ignore */
-				private $element: JQuery
+				private readonly $element: JQuery
 			) {
 				this.markdownIt	= new (<any> self).markdownit({
 					breaks: true,

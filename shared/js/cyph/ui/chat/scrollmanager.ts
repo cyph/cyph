@@ -146,13 +146,13 @@ export class ScrollManager implements IScrollManager {
 		dialogManager: IDialogManager,
 
 		/** @ignore */
-		private isMobile: boolean,
+		private readonly isMobile: boolean,
 
 		/** @ignore */
-		private elements: IElements,
+		private readonly elements: IElements,
 
 		/** @ignore */
-		private messageCountInTitle?: boolean
+		private readonly messageCountInTitle?: boolean
 	) { (async () => {
 		if (this.isMobile) {
 			this.elements.messageBox().focus(() => this.scrollDown());

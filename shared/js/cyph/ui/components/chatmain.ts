@@ -24,10 +24,10 @@ import {IChat} from '../chat/ichat';
 export class ChatMain
 	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
 	/** Component title. */
-	public static title: string	= 'cyphChatMain';
+	public static readonly title: string	= 'cyphChatMain';
 
 	/** Component configuration. */
-	public static config		= {
+	public static readonly config			= {
 		bindings: {
 			hideDisconnectMessage: '<',
 			self: '<'
@@ -38,10 +38,10 @@ export class ChatMain
 			public cyph: any;
 
 			/** @ignore */
-			public self: IChat;
+			public readonly self: IChat;
 
 			/** @ignore */
-			public hideDisconnectMessage: boolean;
+			public readonly hideDisconnectMessage: boolean;
 
 			constructor () { (async () => {
 				while (!cyph) {

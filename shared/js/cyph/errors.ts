@@ -14,14 +14,14 @@ export class Errors {
 	 * @param column
 	 * @param errorObject
 	 */
-	public static log			= Errors.baseErrorLog(
+	public static readonly log			= Errors.baseErrorLog(
 		'WARNING WARNING WARNING SOMETHING IS SRSLY FUCKED UP LADS'
 	);
 
 	/**
 	 * Logs chat authentication failure (attempted mitm and/or mistyped shared secret).
 	 */
-	public static logAuthFail	= Errors.baseErrorLog(
+	public static readonly logAuthFail	= Errors.baseErrorLog(
 		'AUTHENTICATION JUST FAILED FOR SOMEONE LADS'
 	);
 
@@ -68,7 +68,7 @@ export class Errors {
 
 	/** @ignore */
 	/* tslint:disable-next-line:member-ordering */
-	private static _	= (() => {
+	private static readonly _	= (() => {
 		self.onerror	= <ErrorEventHandler> Errors.log;
 	})();
 }

@@ -9,7 +9,7 @@ import {HomeSections, pageTitles, Promos, States} from './enums';
  */
 export class UI extends Cyph.UI.BaseButtonManager {
 	/** @ignore */
-	private static linkInterceptSelector: string	= 'a[href^="/"]:not(a[href^="/blog"])';
+	private static readonly linkInterceptSelector: string	= 'a[href^="/"]:not(a[href^="/blog"])';
 
 
 	/** UI state/view. */
@@ -19,7 +19,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	public promo: Promos				= Promos.none;
 
 	/** Contact form state. */
-	public contactState	= {
+	public readonly contactState		= {
 		fromEmail: <string> '',
 		fromName: <string> '',
 		message: <string> '',
@@ -29,7 +29,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	};
 
 	/** List of features to cycle through in hero section. */
-	public features: string[]			= [
+	public readonly features: string[]	= [
 		'Video Calls',
 		'Voice Calls',
 		'Chats',
@@ -41,55 +41,52 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	public featureIndex: number			= 0;
 
 	/** Donation amount in dollars. */
-	public donationAmount: number		= 10;
+	public readonly donationAmount: number			= 10;
 
 	/** Individual pricing state. */
-	public individual: boolean			= false;
+	public readonly individual: boolean				= false;
 
 	/** Business pricing state. */
-	public business: boolean			= false;
+	public readonly business: boolean				= false;
 
 	/** Telehealth pricing state. */
-	public telehealth: boolean			= false;
+	public readonly telehealth: boolean				= false;
 
 	/** Amount, category, and item respectively in cart. */
-	public cart: number[]				= [0, 0, 0];
+	public readonly cart: number[]					= [0, 0, 0];
 
 	/** Beta plan price in dollars. */
-	public betaPlan: number				= 499;
+	public readonly betaPlan: number				= 499;
 
 	/** Business pricing: "The Basics" plan. */
-	public theBasics: number			= 99;
+	public readonly theBasics: number				= 99;
 
 	/** Business pricing: "The Works" plan. */
-	public theWorks: number				= 499;
+	public readonly theWorks: number				= 499;
 
 	/** Telehealth pricing: single-practicioner plan. */
-	public telehealthSingle: number		= 499;
+	public readonly telehealthSingle: number		= 499;
 
 	/** Custom telehealth pricing: number of doctors. */
-	public doctors: number				= 5;
+	public readonly doctors: number					= 5;
 
 	/** Custom telehealth pricing: price per doctor. */
-	public pricePerDoctor: number		= 350;
+	public readonly pricePerDoctor: number			= 350;
 
 	/** Custom telehealth pricing: number of doctors required for price break. */
-	public telehealthPriceBreak: number	= 5;
+	public readonly telehealthPriceBreak: number	= 5;
 
 	/** Custom telehealth pricing: % discount for price break. */
-	public telehealthDiscount: number	= 0.10;
-
-	/** Custom telehealth pricing: plan amount in dollars. */
-	public customDoctorPricing: number;
+	public readonly telehealthDiscount: number		= 0.10;
 
 	/** Home page state/view. */
 	public homeSection: HomeSections;
 
 	/** Cyph demo animation. */
-	public cyphDemo: CyphDemo;
+	public readonly cyphDemo: CyphDemo;
 
 	/** Signup form to be displayed throughout the site. */
-	public signupForm: Cyph.UI.ISignupForm;
+	public readonly signupForm: Cyph.UI.ISignupForm;
 
 	/** Carousel of features. */
 	public featureCarousel: Cyph.UI.Carousel;
@@ -254,14 +251,14 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		mobileMenu: () => Cyph.UI.ISidebar,
 
 		/** @ignore */
-		private dialogManager: Cyph.UI.IDialogManager
+		private readonly dialogManager: Cyph.UI.IDialogManager
 	) {
 		super(mobileMenu);
 
-		(async () => {
-			this.signupForm	= new Cyph.UI.SignupForm();
-			this.cyphDemo	= new CyphDemo(this.dialogManager);
+		this.signupForm	= new Cyph.UI.SignupForm();
+		this.cyphDemo	= new CyphDemo(this.dialogManager);
 
+		(async () => {
 			Cyph.UrlState.onchange(async (urlState) => this.onUrlStateChange(urlState));
 
 			const urlState: string	= Cyph.UrlState.get();

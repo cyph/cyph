@@ -7,10 +7,10 @@ import {Elements} from './elements';
  */
 export class VirtualKeyboardWatcher {
 	/** @ignore */
-	private static initialScreenSize: number	= self.innerHeight;
+	private static readonly initialScreenSize: number	= self.innerHeight;
 
 	/** @ignore */
-	private static keyboardChangeEvent: string	= 'keyboardChangeEvent';
+	private static readonly keyboardChangeEvent: string	= 'keyboardChangeEvent';
 
 	/** Indicates whether the virtual keyboard is currently open. */
 	public static isOpen: boolean	= false;
@@ -34,7 +34,7 @@ export class VirtualKeyboardWatcher {
 
 	/** @ignore */
 	/* tslint:disable-next-line:member-ordering */
-	private static _	= (() => {
+	private static readonly _	= (() => {
 		/* http://stackoverflow.com/a/11650231/459881 */
 
 		/* Android */

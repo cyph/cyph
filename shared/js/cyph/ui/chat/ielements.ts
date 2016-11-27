@@ -2,16 +2,16 @@
  * Chat-specific UI elements.
  */
 export interface IElements {
-	buttons: () => JQuery;
-	cyphertext: () => JQuery;
-	everything: () => JQuery;
-	messageBox: () => JQuery;
-	messageList: () => JQuery;
-	messageListInner: () => JQuery;
-	p2pContainer: () => JQuery;
-	p2pFriendPlaceholder: () => JQuery;
-	p2pFriendStream: () => JQuery;
-	p2pMeStream: () => JQuery;
-	sendButton: () => JQuery;
-	title: () => JQuery;
+	readonly buttons: () => JQuery;
+	readonly cyphertext: () => JQuery;
+	readonly everything: () => JQuery;
+	readonly messageBox: () => JQuery;
+	readonly messageList: () => JQuery;
+	readonly messageListInner: () => JQuery;
+	readonly p2pContainer: () => JQuery;
+	readonly p2pFriendPlaceholder: () => JQuery;
+	readonly p2pFriendStream: () => JQuery;
+	readonly p2pMeStream: () => JQuery;
+	readonly sendButton: () => JQuery;
+	readonly title: () => JQuery;
 }

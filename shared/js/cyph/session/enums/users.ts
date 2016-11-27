@@ -3,11 +3,11 @@
  */
 export class Users {
 	/** @see Users */
-	public static app: string	= 'app';
+	public static readonly app: string		= 'app';
 
 	/** @see Users */
-	public static me: string	= 'me';
+	public static readonly me: string		= 'me';
 
 	/** @see Users */
-	public static other: string	= 'other';
+	public static readonly other: string	= 'other';
 }

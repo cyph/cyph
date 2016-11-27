@@ -23,10 +23,10 @@ import {Util} from '../../util';
 export class Contact
 	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
 	/** Component title. */
-	public static title: string	= 'cyphContact';
+	public static readonly title: string	= 'cyphContact';
 
 	/** Component configuration. */
-	public static config		= {
+	public static readonly config			= {
 		bindings: {
 			self: '<'
 		},
@@ -39,7 +39,7 @@ export class Contact
 			public ui: any;
 
 			/** @ignore */
-			public self: {
+			public readonly self: {
 				fromEmail: string;
 				fromName: string;
 				message: string;

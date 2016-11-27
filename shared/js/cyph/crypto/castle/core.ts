@@ -37,10 +37,10 @@ export class Core {
 
 
 	/** @ignore */
-	private lock: {}	= {};
+	private readonly lock: {}	= {};
 
 	/** @ignore */
-	private ephemeralKeys: {
+	private readonly ephemeralKeys: {
 		private: Uint8Array;
 		public: Uint8Array;
 	}	= {
@@ -218,12 +218,12 @@ export class Core {
 	 */
 	constructor (
 		/** @ignore */
-		private potassium: Potassium,
+		private readonly potassium: Potassium,
 
 		/** @ignore */
-		private isAlice: boolean,
+		private readonly isAlice: boolean,
 
 		/** @ignore */
-		private keys: {incoming: Uint8Array; outgoing: Uint8Array}[]
+		private readonly keys: {incoming: Uint8Array; outgoing: Uint8Array}[]
 	) {}
 }

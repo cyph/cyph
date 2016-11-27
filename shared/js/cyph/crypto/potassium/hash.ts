@@ -5,7 +5,7 @@ import {Util} from './util';
 /** Equivalent to sodium.crypto_generichash. */
 export class Hash {
 	/** Hash length. */
-	public bytes: number	= Lib.superSphincs.hashBytes;
+	public readonly bytes: number	= Lib.superSphincs.hashBytes;
 
 	/** Hashes plaintext. */
 	public async hash (plaintext: Uint8Array|string) : Promise<Uint8Array> {
@@ -40,6 +40,6 @@ export class Hash {
 
 	constructor (
 		/** @ignore */
-		private isNative: boolean
+		private readonly isNative: boolean
 	) {}
 }

@@ -11,7 +11,7 @@ export class Firebase {
 
 	/** @ignore */
 	/* tslint:disable-next-line:member-ordering */
-	private static _	= (async () => {
+	private static readonly _	= (async () => {
 		if (typeof firebase === 'undefined') {
 			return;
 		}

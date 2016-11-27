@@ -3,7 +3,7 @@
  */
 export class Lib {
 	/** https://github.com/cyph/mceliece.js */
-	public static mcEliece: {
+	public static readonly mcEliece: {
 		decryptedDataLength: number;
 		encryptedDataLength: number;
 		privateKeyLength: number;
@@ -15,7 +15,7 @@ export class Lib {
 	}	= (<any> self).mceliece || (<any> {});
 
 	/** https://github.com/cyph/ntru.js */
-	public static ntru: {
+	public static readonly ntru: {
 		decryptedDataLength: number;
 		encryptedDataLength: number;
 		privateKeyLength: number;
@@ -27,7 +27,7 @@ export class Lib {
 	}	= (<any> self).ntru || (<any> {});
 
 	/** https://github.com/cyph/rlwe.js */
-	public static rlwe: {
+	public static readonly rlwe: {
 		privateKeyLength: number;
 		publicKeyLength: number;
 		secretLength: number;
@@ -38,7 +38,7 @@ export class Lib {
 	}	= (<any> self).rlwe || (<any> {});
 
 	/** https://github.com/jedisct1/libsodium.js */
-	public static sodium: {
+	public static readonly sodium: {
 		crypto_aead_chacha20poly1305_ABYTES: number;
 		crypto_aead_chacha20poly1305_KEYBYTES: number;
 		crypto_aead_chacha20poly1305_NPUBBYTES: number;
@@ -109,10 +109,10 @@ export class Lib {
 	}	= (<any> self).sodium || {};
 
 	/** https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto */
-	public static subtleCrypto: any	= crypto.subtle;
+	public static readonly subtleCrypto: any	= crypto.subtle;
 
 	/** https://github.com/cyph/supersphincs */
-	public static superSphincs: {
+	public static readonly superSphincs: {
 		bytes: number;
 		hashBytes: number;
 		privateKeyBytes: number;

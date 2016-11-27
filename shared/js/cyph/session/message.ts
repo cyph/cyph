@@ -6,12 +6,12 @@ import {IMessage} from './imessage';
 export class Message implements IMessage {
 	constructor (
 		/** @inheritDoc */
-		public event: string = '',
+		public readonly event: string = '',
 
 		/** @inheritDoc */
-		public data?: any,
+		public readonly data?: any,
 
 		/** @inheritDoc */
-		public id: string = Util.generateGuid()
+		public readonly id: string = Util.generateGuid()
 	) {}
 }

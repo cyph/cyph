@@ -7,19 +7,19 @@ import {ITimer} from '../itimer';
  */
 export interface ILinkConnection {
 	/** Indicates whether the advanced features menu is open. */
-	advancedFeatures: boolean;
+	readonly advancedFeatures: boolean;
 
 	/** Indicates whether this link connection was initiated passively via API integration. */
-	isPassive: boolean;
+	readonly isPassive: boolean;
 
 	/** The link to join this connection. */
-	link: string;
+	readonly link: string;
 
 	/** URL-encoded version of this link (for sms and mailto links). */
-	linkEncoded: string;
+	readonly linkEncoded: string;
 
 	/** Counts down until link expires. */
-	timer: ITimer;
+	readonly timer: ITimer;
 
 	/**
 	 * Extends the countdown duration.

@@ -6,19 +6,19 @@ import {Util} from './util';
 /** Equivalent to sodium.crypto_scalarmult. */
 export class EphemeralKeyExchange {
 	/** Private key length. */
-	public privateKeyBytes: number	=
+	public readonly privateKeyBytes: number	=
 		Lib.rlwe.privateKeyLength +
 		Lib.sodium.crypto_scalarmult_SCALARBYTES
 	;
 
 	/** Public key length. */
-	public publicKeyBytes: number	=
+	public readonly publicKeyBytes: number	=
 		Lib.rlwe.publicKeyLength +
 		Lib.sodium.crypto_scalarmult_BYTES
 	;
 
 	/** Shared secret length. */
-	public secretBytes: number		= 64;
+	public readonly secretBytes: number		= 64;
 
 	/** Generates Alice's key pair. */
 	public async aliceKeyPair () : Promise<{
@@ -156,6 +156,6 @@ export class EphemeralKeyExchange {
 
 	constructor (
 		/** @ignore */
-		private hash: Hash
+		private readonly hash: Hash
 	) {}
 }

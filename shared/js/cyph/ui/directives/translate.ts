@@ -12,7 +12,7 @@ import {Util} from '../../util';
 })
 export class Translate {
 	/** Directive title. */
-	public static title: string	= 'cyphTranslate';
+	public static readonly title: string	= 'cyphTranslate';
 
 	/** @ignore */
 	private static translate (

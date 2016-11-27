@@ -6,10 +6,10 @@ import {IP2P} from '../../p2p/ip2p';
  */
 export interface IP2PManager {
 	/** Indicates whether P2P is possible (i.e. both clients support WebRTC). */
-	isEnabled: boolean;
+	readonly isEnabled: boolean;
 
 	/** P2P instance. */
-	p2p: IP2P;
+	readonly p2p: IP2P;
 
 	/**
 	 * Closes active P2P session.

@@ -8,7 +8,7 @@ import {Util} from './util';
 /** @inheritDoc */
 export class Thread implements IThread {
 	/** @ignore */
-	private static blobBuilder: any	=
+	private static readonly blobBuilder: any	=
 		(<any> self).BlobBuilder ||
 		(<any> self).WebKitBlobBuilder ||
 		(<any> self).MozBlobBuilder
@@ -178,7 +178,11 @@ export class Thread implements IThread {
 
 		this.worker	= null;
 
-		EventManager.threads	= EventManager.threads.filter(t => t !== this);
+		for (let i = 0 ; i < EventManager.threads.length ; ++i) {
+			if (EventManager.threads[i] === this) {
+				EventManager.threads.splice(i, 1);
+			}
+		}
 	}
 
 	/**

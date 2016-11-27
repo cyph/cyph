@@ -11,10 +11,10 @@ import {ISession} from './isession';
  */
 export class ThreadedSession implements ISession {
 	/** @ignore */
-	private thread: Thread;
+	private readonly thread: Thread;
 
 	/** @inheritDoc */
-	public state	= {
+	public readonly state	= {
 		cyphId: <string> '',
 		isAlice: <boolean> false,
 		isAlive: <boolean> true,
@@ -79,7 +79,7 @@ export class ThreadedSession implements ISession {
 		nativeCrypto: boolean = false,
 
 		/** @ignore */
-		private id: string = Util.generateGuid()
+		private readonly id: string = Util.generateGuid()
 	) {
 		this.on(
 			threadedSessionEvents.updateStateThread,

@@ -4,9 +4,9 @@
 export class Command {
 	constructor (
 		/** Method identifier. */
-		public method: string = '',
+		public readonly method: string = '',
 
 		/** Argument to pass to method. */
-		public argument: any = ''
+		public readonly argument: any = ''
 	) {}
 }

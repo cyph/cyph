@@ -25,10 +25,10 @@ import {Util} from '../../util';
 export class Checkout
 	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
 	/** Component title. */
-	public static title: string	= 'cyphCheckout';
+	public static readonly title: string	= 'cyphCheckout';
 
 	/** Component configuration. */
-	public static config		= {
+	public static readonly config			= {
 		bindings: {
 			amount: '=',
 			category: '=',
@@ -48,19 +48,19 @@ export class Checkout
 			public complete: boolean;
 
 			/** @ignore */
-			public amount: string;
+			public readonly amount: string;
 
 			/** @ignore */
-			public category: string;
+			public readonly category: string;
 
 			/** @ignore */
-			public email: string;
+			public readonly email: string;
 
 			/** @ignore */
-			public item: string;
+			public readonly item: string;
 
 			/** @ignore */
-			public fullName: string;
+			public readonly fullName: string;
 
 			constructor ($element: JQuery) { (async () => {
 				while (!cyph || !ui) {

@@ -6,7 +6,7 @@ import {ITransfer} from './itransfer';
  */
 export interface IFiles {
 	/** In-progress file transfers. */
-	transfers: ITransfer[];
+	readonly transfers: ITransfer[];
 
 	/**
 	 * Sends data as a file with the specified name.

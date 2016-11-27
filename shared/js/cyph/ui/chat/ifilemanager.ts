@@ -6,7 +6,7 @@ import {IFiles} from '../../files/ifiles';
  */
 export interface IFileManager {
 	/** Files instance. */
-	files: IFiles;
+	readonly files: IFiles;
 
 	/**
 	 * Sends file.

@@ -24,10 +24,10 @@ import {ISignupForm} from '../isignupform';
 export class SignupForm
 	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
 	/** Component title. */
-	public static title: string	= 'cyphSignupForm';
+	public static readonly title: string	= 'cyphSignupForm';
 
 	/** Component configuration. */
-	public static config		= {
+	public static readonly config			= {
 		bindings: {
 			invite: '<',
 			self: '<'
@@ -38,10 +38,10 @@ export class SignupForm
 			public cyph: any;
 
 			/** @ignore */
-			public self: ISignupForm;
+			public readonly self: ISignupForm;
 
 			/** @ignore */
-			public invite: string;
+			public readonly invite: string;
 
 			constructor () { (async () => {
 				while (!cyph) {

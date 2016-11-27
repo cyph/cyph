@@ -27,10 +27,10 @@ import {VisibilityWatcher} from '../visibilitywatcher';
 export class ChatMessageBox
 	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
 	/** Component title. */
-	public static title: string	= 'cyphChatMessageBox';
+	public static readonly title: string	= 'cyphChatMessageBox';
 
 	/** Component configuration. */
-	public static config		= {
+	public static readonly config			= {
 		bindings: {
 			self: '<'
 		},
@@ -40,13 +40,13 @@ export class ChatMessageBox
 			public cyph: any;
 
 			/** @ignore */
-			public self: IChat;
+			public readonly self: IChat;
+
+			/** @ignore */
+			public readonly isSpeedDialOpen: boolean;
 
 			/** @ignore */
 			public isSpeedDialReady: boolean;
-
-			/** @ignore */
-			public isSpeedDialOpen: boolean;
 
 			constructor ($element: JQuery) { (async () => {
 				while (!cyph) {

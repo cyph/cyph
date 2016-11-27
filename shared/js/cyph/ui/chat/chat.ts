@@ -31,17 +31,17 @@ import {ScrollManager} from './scrollmanager';
 /** @inheritDoc */
 export class Chat extends BaseButtonManager implements IChat {
 	/** @ignore */
-	private static approximateKeyExchangeTime: number		= 15000;
+	private static readonly approximateKeyExchangeTime: number			= 15000;
 
 	/** @ignore */
-	private static queuedMessageSelfDestructTimeout: number	= 15000;
+	private static readonly queuedMessageSelfDestructTimeout: number	= 15000;
 
 
 	/** @ignore */
 	private isMessageChanged: boolean	= false;
 
 	/** @ignore */
-	private elements: IElements;
+	private readonly elements: IElements;
 
 	/** @ignore */
 	private previousMessage: string;
@@ -71,7 +71,7 @@ export class Chat extends BaseButtonManager implements IChat {
 	public state: States						= States.none;
 
 	/** @inheritDoc */
-	public messages: {
+	public readonly messages: {
 		author: string;
 		selfDestructTimer: ITimer;
 		text: string;
@@ -80,19 +80,19 @@ export class Chat extends BaseButtonManager implements IChat {
 	}[]	= [];
 
 	/** @inheritDoc */
-	public cyphertext: ICyphertext;
+	public readonly cyphertext: ICyphertext;
 
 	/** @inheritDoc */
-	public fileManager: IFileManager;
+	public readonly fileManager: IFileManager;
 
 	/** @inheritDoc */
-	public p2pManager: IP2PManager;
+	public readonly p2pManager: IP2PManager;
 
 	/** @inheritDoc */
-	public scrollManager: IScrollManager;
+	public readonly scrollManager: IScrollManager;
 
 	/** @inheritDoc */
-	public session: ISession;
+	public readonly session: ISession;
 
 	/** @ignore */
 	private findElement (selector: string) : () => JQuery {
@@ -318,22 +318,22 @@ export class Chat extends BaseButtonManager implements IChat {
 	 */
 	constructor (
 		/** @ignore */
-		private dialogManager: IDialogManager,
+		private readonly dialogManager: IDialogManager,
 
 		mobileMenu: () => ISidebar,
 
 		/** @ignore */
-		private notifier: INotifier,
+		private readonly notifier: INotifier,
 
 		messageCountInTitle?: boolean,
 
 		/** @ignore */
-		public isMobile: boolean = Env.isMobile,
+		public readonly isMobile: boolean = Env.isMobile,
 
 		session?: ISession,
 
 		/** @ignore */
-		private rootElement: JQuery = Elements.html()
+		private readonly rootElement: JQuery = Elements.html()
 	) {
 		super(mobileMenu);
 

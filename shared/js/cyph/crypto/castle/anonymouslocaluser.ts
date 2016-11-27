@@ -46,10 +46,10 @@ export class AnonymousLocalUser implements ILocalUser {
 
 	constructor (
 		/** @ignore */
-		private potassium: Potassium,
+		private readonly potassium: Potassium,
 
 		/** @ignore */
-		private transport: Transport,
+		private readonly transport: Transport,
 
 		/** @ignore */
 		private sharedSecret: string

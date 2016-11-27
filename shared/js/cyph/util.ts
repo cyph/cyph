@@ -8,7 +8,7 @@ import {EventManager} from './eventmanager';
  */
 export class Util {
 	/** @ignore */
-	private static timestampData	= {
+	private static readonly timestampData	= {
 		last: 0,
 		offset: 0,
 		subtime: 0
@@ -517,7 +517,7 @@ export class Util {
 
 	/** @ignore */
 	/* tslint:disable-next-line:member-ordering */
-	private static _	= (async () => {
+	private static readonly _	= (async () => {
 		try {
 			const serverTimestamp: number	= parseFloat(
 				await Util.request({url: Env.baseUrl + 'timestamp'})
