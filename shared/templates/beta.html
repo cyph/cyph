@@ -15,10 +15,10 @@
 			<md-card flex='75' class='md-padding'>
 				<md-card-title>
 					<md-card-title-text>
-						<span class='md-headline' translate>
+						<span class='md-headline' cyph-translate>
 							Log In
 						</span>
-						<span class='md-subhead' translate>
+						<span class='md-subhead' cyph-translate>
 							Welcome to Cyph! You can log in to your beta account here.
 						</span>
 					</md-card-title-text>
@@ -27,6 +27,7 @@
 					<form>
 						<div layout='row' layout-align='center center'>
 							<md-subheader
+								cyph-translate
 								ng-style='{visibility: $ctrl.error ? "visible" : "hidden"}'
 							>
 								Invalid username or password.
@@ -37,9 +38,10 @@
 								<input
 									ng-model='username'
 									aria-label='Username'
+									cyph-translate
 									required
 								/>
-								<label>Username</label>
+								<label cyph-translate>Username</label>
 							</md-input-container>
 						</div>
 						<div layout='row' layout-align='center center'>
@@ -48,13 +50,14 @@
 									ng-model='password'
 									type='password'
 									aria-label='Password'
+									cyph-translate
 									required
 								/>
-								<label>Password</label>
+								<label cyph-translate>Password</label>
 							</md-input-container>
 						</div>
 						<div layout='row' layout-align='center center'>
-							<md-button type='submit' aria-label='Log In' translate>
+							<md-button type='submit' aria-label='Log In' cyph-translate>
 								Log In
 							</md-button>
 						</div>
@@ -63,10 +66,10 @@
 				<md-progress-circular md-mode='indeterminate'></md-progress-circular>
 			</md-card>
 		</div>
-		<div ng-show='$ctrl.ui.betaState === $ctrl.cyph.im.BetaStates.register'>
+		<div ng-show='$ctrl.ui.betaState === $ctrl.cyph.im.BetaStates.register' cyph-translate>
 			Registration screen
 		</div>
-		<div ng-show='$ctrl.ui.betaState === $ctrl.cyph.im.BetaStates.settings'>
+		<div ng-show='$ctrl.ui.betaState === $ctrl.cyph.im.BetaStates.settings' cyph-translate>
 			Settings screen
 		</div>
 	</div>

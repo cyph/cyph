@@ -1,69 +1,69 @@
 <md-dialog class='help'>
 	<md-content>
 		<md-tabs md-dynamic-height md-border-bottom>
-			<md-tab label='Formatting Help'>
+			<md-tab label='Formatting Help' cyph-translate>
 				<p>
-					<span translate>Cyph uses a version of Markdown called</span>
+					<span cyph-translate>Cyph uses a version of Markdown called</span>
 					<a href='http://commonmark.org/'>CommonMark</a>
-					<span translate>
+					<span cyph-translate>
 						for formatting. We also support various extensions &ndash;
 						including emojis and code fencing.
 					</span>
 				</p>
-				<p translate>
+				<p cyph-translate>
 					The following examples are shamelessly copied from reddit:
 				</p>
 				<table>
 					<tbody>
 						<tr>
-							<th translate>you type:</th>
-							<th translate>you see:</th>
+							<th cyph-translate>you type:</th>
+							<th cyph-translate>you see:</th>
 						</tr>
 						<tr>
-							<td>*<span translate>italics</span>*</td>
-							<td><em translate>italics</em></td>
+							<td>*<span cyph-translate>italics</span>*</td>
+							<td><em cyph-translate>italics</em></td>
 						</tr>
 						<tr>
-							<td>**<span translate>bold</span>**</td>
-							<td><b translate>bold</b></td>
+							<td>**<span cyph-translate>bold</span>**</td>
+							<td><b cyph-translate>bold</b></td>
 						</tr>
 						<tr>
 							<td>
-								[cyph <span translate>me</span>!](https://cyph.com)
+								[cyph <span cyph-translate>me</span>!](https://cyph.com)
 							</td>
 							<td>
-								<a href='https://cyph.com'>cyph <span translate>me</span>!</a>
+								<a href='https://cyph.com'>cyph <span cyph-translate>me</span>!</a>
 							</td>
 						</tr>
 						<tr>
 							<td>
 								<br />
-								* <span translate>item 1</span>
+								* <span cyph-translate>item 1</span>
 								<br />
-								* <span translate>item 2</span>
+								* <span cyph-translate>item 2</span>
 								<br />
-								* <span translate>item 3</span>
+								* <span cyph-translate>item 3</span>
 							</td>
 							<td>
 								<ul>
-									<li translate>item 1</li>
-									<li translate>item 2</li>
-									<li translate>item 3</li>
+									<li cyph-translate>item 1</li>
+									<li cyph-translate>item 2</li>
+									<li cyph-translate>item 3</li>
 								</ul>
 							</td>
 						</tr>
 						<tr>
 							<td>
 								<br />
-								&gt; <span translate>quoted text</span>
+								&gt; <span cyph-translate>quoted text</span>
 							</td>
 							<td>
-								<blockquote translate>quoted text</blockquote>
+								<blockquote cyph-translate>quoted text</blockquote>
 							</td>
 						</tr>
 						<tr>
 							<td>
-								<span translate>
+								<span cyph-translate>
 									Lines starting with tabs are treated like code:
 								</span>
 
@@ -80,7 +80,7 @@
 								<br />
 							</td>
 							<td>
-								<span translate>
+								<span cyph-translate>
 									Lines starting with tabs are treated like code:
 								</span>
 
@@ -92,20 +92,32 @@
 							</td>
 						</tr>
 						<tr>
-							<td>~~<span translate>strikethrough</span>~~</td>
-							<td><strike translate>strikethrough</strike></td>
+							<td>~~<span cyph-translate>strikethrough</span>~~</td>
+							<td><strike cyph-translate>strikethrough</strike></td>
 						</tr>
 						<tr>
-							<td><span translate>super</span>^<span translate>script</span>^</td>
-							<td><span translate>super</span><sup translate>script</sup></td>
+							<td>
+								<span
+									cyph-translate
+								>super</span>^<span
+									cyph-translate
+								>script</span>^
+							</td>
+							<td>
+								<span
+									cyph-translate
+								>super</span><sup
+									cyph-translate
+								>script</sup>
+							</td>
 						</tr>
 					</tbody>
 				</table>
 			</md-tab>
-			<md-tab label='Contact Cyph' ng-disabled='$ctrl.ui.coBranded'>
-				<span translate>Please check out the</span>
-				<a href='{{$ctrl.cyph.Env.homeUrl}}faq'>FAQs</a>
-				<span translate>first!</span>
+			<md-tab label='Contact Cyph' ng-disabled='$ctrl.ui.coBranded' cyph-translate>
+				<span cyph-translate>Please check out the</span>
+				<a cyph-translate href='{{$ctrl.cyph.Env.homeUrl}}faq'>FAQs</a>
+				<span cyph-translate>first!</span>
 				<br />
 				<br />
 				<br />

@@ -9,18 +9,18 @@
 		<img src='/img/logo.animated.gif' alt='Animated Cyph logo' />
 	</div>
 	<div>
-		<div ng-show='$ctrl.self.isPassive' translate>
+		<div ng-show='$ctrl.self.isPassive' cyph-translate>
 			Waiting for friend to join...
 		</div>
 		<div ng-hide='$ctrl.self.isPassive'>
-			<div translate>
+			<div cyph-translate>
 				Send the link below to someone else. When they open it,
 				you'll be securely connected!
 			</div>
 			<br />
 
 			<md-input-container class='connect-link-input desktop-only'>
-				<input translate ng-model='$ctrl.self.link' aria-label='Cyph link' />
+				<input cyph-translate ng-model='$ctrl.self.link' aria-label='Cyph link' />
 				<md-button class='copy' ng-click='$ctrl.self.copyToClipboard()'>
 					<i class='material-icons'>content_copy</i>
 				</md-button>
@@ -34,12 +34,12 @@
 				<br />
 
 				<md-button
-					translate
+					cyph-translate
 					class='md-fab'
 					aria-label='SMS'
 					ng-href='{{$ctrl.cyph.Env.smsUriBase}}{{$ctrl.self.linkEncoded}}'
 				>
-					<img src='/img/icons/sms.png' alt='SMS' />
+					<img src='/img/icons/sms.png' alt='SMS' cyph-translate />
 				</md-button>
 
 				<span class='divider'>
@@ -47,20 +47,20 @@
 				</span>
 
 				<md-button
-					translate
+					cyph-translate
 					class='md-fab'
 					aria-label='Email'
 					target='_self'
 					ng-href='mailto:?body={{$ctrl.self.linkEncoded}}'
 				>
-					<img src='/img/icons/email.png' alt='Email' />
+					<img src='/img/icons/email.png' alt='Email' cyph-translate />
 				</md-button>
 			</div>
 		</div>
 
 		<br />
 		<div>
-			<span translate>
+			<span cyph-translate>
 				Link expires in
 			</span>
 			<span class='countdown'>
@@ -80,13 +80,14 @@
 		ng-if='$ctrl.enableAdvancedFeatures'
 		ng-model='$ctrl.self.advancedFeatures'
 		aria-label='Advanced Features'
+		cyph-translate
 	>
 		Advanced Features
 	</md-switch>
 
 	<div class='advanced-features' ng-show='$ctrl.self.advancedFeatures'>
 		<md-input-container class='queued-message-box'>
-			<label>Queue up first message</label>
+			<label cyph-translate>Queue up first message</label>
 			<textarea
 				rows='3'
 				ng-model='$ctrl.queuedMessageDraft'

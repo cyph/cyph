@@ -4,20 +4,28 @@
 			<div class='braintree'></div>
 			<div layout='row' layout-sm='column' layout-xs='column'>
 				<md-input-container class='md-block' flex>
-					<input ng-model='$ctrl.name' aria-label='Name' />
-					<label>Name</label>
+					<input ng-model='$ctrl.name' aria-label='Name' cyph-translate />
+					<label cyph-translate>Name</label>
 				</md-input-container>
 				<md-input-container class='md-block' flex>
-					<input ng-model='$ctrl.email' type='email' aria-label='Email' required />
-					<label>Email</label>
+					<input
+						ng-model='$ctrl.email'
+						type='email'
+						aria-label='Email'
+						cyph-translate
+						required
+					/>
+					<label cyph-translate>Email</label>
 				</md-input-container>
 			</div>
 		</div>
 		<md-button type='submit'>
-			Confirm ${{$ctrl.amount}} payment
+			<span cyph-translate>Confirm</span>
+			<span>${{$ctrl.amount}}</span>
+			<span cyph-translate>payment</span>
 		</md-button>
 	</div>
-	<div translate class='confirmation' ng-show='$ctrl.complete'>
+	<div class='confirmation' ng-show='$ctrl.complete'>
 		<ng-transclude></ng-transclude>
 	</div>
 </form>

@@ -19,9 +19,9 @@
 	>
 		<div flex></div>
 		<div class='logo-animation'>
-			<img src='/img/logo.animated.gif' alt='Animated Cyph logo' />
+			<img src='/img/logo.animated.gif' alt='Animated Cyph logo' cyph-translate />
 		</div>
-		<div translate>Initiating key exchange...</div>
+		<div cyph-translate>Initiating key exchange...</div>
 		<md-progress-linear
 			class='md-accent key-exchange-progress'
 			md-mode='determinate'
@@ -44,11 +44,11 @@
 			<img src='/img/walken.png' alt='Definitely not Christopher Walken' />
 		</div>
 		<div>
-			<div translate>This cyph has been aborted.</div>
+			<div cyph-translate>This cyph has been aborted.</div>
 			<br />
-			<span translate>Please</span>
+			<span cyph-translate>Please</span>
 			<a
-				translate
+				cyph-translate
 				target='_self'
 				ng-href='{{$ctrl.cyph.Env.newCyphUrl}}'
 			>try again</a>.
@@ -69,7 +69,7 @@
 		<div class='logo-animation'>
 			<img src='/img/logo.animated.connected.gif' alt='Animated Cyph logo' />
 		</div>
-		<div translate>Securely Connected!</div>
+		<div cyph-translate>Securely Connected!</div>
 		<md-progress-linear
 			class='md-accent key-exchange-progress'
 			md-mode='determinate'
@@ -118,7 +118,7 @@
 		></md-progress-circular>
 
 		<md-button
-			translate
+			cyph-translate
 			class='sidebar'
 			aria-label='Sidebar'
 			ng-click='$ctrl.self.p2pManager.toggleSidebar()'
@@ -128,7 +128,7 @@
 
 		<div class='buttons'>
 			<md-button
-				translate
+				cyph-translate
 				class='md-fab video-call-button'
 				ng-click='$ctrl.self.p2pManager.videoCallButton()'
 				ng-attr-aria-label='{{
@@ -149,7 +149,7 @@
 				/>
 			</md-button>
 			<md-button
-				translate
+				cyph-translate
 				class='md-fab voice-call-button'
 				ng-click='$ctrl.self.p2pManager.voiceCallButton()'
 				ng-attr-aria-label='{{
@@ -170,7 +170,7 @@
 				/>
 			</md-button>
 			<md-button
-				translate
+				cyph-translate
 				aria-label='End Call'
 				class='md-fab md-theme-grey close-button'
 				ng-click='$ctrl.self.p2pManager.closeButton()'
@@ -201,8 +201,8 @@
 				>
 					<div layout='column' layout-align=' start' flex>
 						<div layout='row'>
-							<span ng-show='transfer.isOutgoing' translate>Sending</span>
-							<span ng-hide='transfer.isOutgoing' translate>Receiving</span>
+							<span ng-show='transfer.isOutgoing' cyph-translate>Sending</span>
+							<span ng-hide='transfer.isOutgoing' cyph-translate>Receiving</span>
 							&nbsp;
 							<span>
 								{{transfer.name}}
@@ -237,11 +237,11 @@
 						<div layout='row'>
 							<span class='message'>
 								<strong
-									translate
 									class='message-author'
 									ng-hide='::message.author === $ctrl.cyph.Session.Users.app'
-									ng-bind='::message.author + ": "'
-								></strong>
+								>
+									{{::message.author}}:
+								</strong>
 								<cyph-markdown
 									class='message-text'
 									markdown='message.text'
@@ -256,7 +256,7 @@
 									class='mobile-only'
 									ng-show='::message.author === $ctrl.cyph.Session.Users.me'
 								>
-									<span>{{::message.author}}</span> &nbsp;&mdash;&nbsp;
+									{{::message.author}} &nbsp;&mdash;&nbsp;
 								</span>
 
 								{{::message.timeString}}
@@ -268,7 +268,7 @@
 										message.author !== $ctrl.cyph.Session.Users.app
 									'
 								>
-									&nbsp;&mdash;&nbsp; <span>{{::message.author}}</span>
+									&nbsp;&mdash;&nbsp; {{::message.author}}
 								</span>
 							</span>
 						</div>
@@ -277,10 +277,8 @@
 							layout='row'
 							ng-show='message.selfDestructTimer'
 						>
-							Message will self-destruct in
-							<span class='countdown'>
-								{{message.selfDestructTimer.timestamp}}
-							</span>
+							<span cyph-translate>Message will self-destruct in</span>
+							<span class='countdown'>{{message.selfDestructTimer.timestamp}}</span>
 						</div>
 					</div>
 					<div class='self-destruct-cover'></div>

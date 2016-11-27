@@ -11,21 +11,27 @@
 							type='email'
 							ng-model='$ctrl.self.data.email'
 							aria-label='Email'
+							cyph-translate
 						/>
-						<label>Email</label>
+						<label cyph-translate>Email</label>
 					</md-input-container>
 				</div>
 				<div layout='row' layout-align='center center'>
 					<md-input-container class='md-block' flex='80'>
-						<input type='password' aria-label='Password' disabled />
-						<label>Password</label>
+						<input type='password' aria-label='Password' cyph-translate disabled />
+						<label cyph-translate>Password</label>
 					</md-input-container>
 				</div>
 
 				<div layout='row' layout-align='center center'>
 					<md-input-container class='md-block' flex='80'>
-						<input type='password' aria-label='Confirm Password' disabled />
-						<label>Confirm Password</label>
+						<input
+							type='password'
+							aria-label='Confirm Password'
+							cyph-translate
+							disabled
+						/>
+						<label cyph-translate>Confirm Password</label>
 					</md-input-container>
 				</div>
 				<div ng-if='$ctrl.invite' layout='row' layout-align='center center'>
@@ -34,8 +40,9 @@
 							type='text'
 							ng-model='$ctrl.self.data.inviteCode'
 							aria-label='Invite Code'
+							cyph-translate
 						/>
-						<label>Invite Code</label>
+						<label cyph-translate>Invite Code</label>
 					</md-input-container>
 				</div>
 				<div class='register-button' layout='row' layout-align='center end'>
@@ -43,7 +50,7 @@
 						type='submit'
 						aria-label='Register'
 						ng-disabled='true'
-						translate
+						cyph-translate
 					>
 						Register
 					</md-button>
@@ -51,14 +58,14 @@
 			</div>
 			<div layout='column' flex>
 				<div layout='row' layout-align='center center'>
-					<p flex='80' translate>
+					<p flex='80' cyph-translate>
 						We are currently at capacity and registration is closed,
 						but you can sign up for the waitlist to reserve your spot
 						in line for an account.
 					</p>
 				</div>
 				<div layout='row' layout-align='center center'>
-					<p flex='80' translate>
+					<p flex='80' cyph-translate>
 						However, you don't need an account to use Cyph; just click the
 						"start new cyph" button on the homepage. Our beta accounts program
 						only provides early access to more advanced functionality and cool
@@ -70,7 +77,7 @@
 					<md-button
 						type='submit'
 						aria-label='Waitlist Signup'
-						translate
+						cyph-translate
 					>
 						Waitlist Signup
 					</md-button>
@@ -87,9 +94,11 @@
 						<input
 							type='email'
 							ng-model='$ctrl.self.data.email'
-							aria-label='Email' required
+							aria-label='Email'
+							cyph-translate
+							required
 						/>
-						<label>Email</label>
+						<label cyph-translate>Email</label>
 					</md-input-container>
 				</div>
 				<div layout='row' ng-if='$ctrl.invite' layout-align='center center'>
@@ -98,16 +107,17 @@
 							type='text'
 							ng-model='$ctrl.self.data.inviteCode'
 							aria-label='Invite Code'
+							cyph-translate
 							required
 						/>
-						<label>Invite Code</label>
+						<label cyph-translate>Invite Code</label>
 					</md-input-container>
 				</div>
 				<div layout='row' layout-align='center end'>
 					<md-button
 						type='submit'
 						aria-label='Waitlist Signup'
-						translate
+						cyph-translate
 					>
 						Waitlist Signup
 					</md-button>
@@ -121,15 +131,15 @@
 			<div layout='column' flex>
 				<div layout='row' layout-align='center center'>
 					<md-input-container class='md-block' flex='80'>
-						<input ng-model='$ctrl.self.data.name' aria-label='Name' />
-						<label>Name (optional)</label>
+						<input ng-model='$ctrl.self.data.name' aria-label='Name' cyph-translate />
+						<label cyph-translate>Name (optional)</label>
 					</md-input-container>
 				</div>
 				<div layout='row' layout-align='center end'>
 					<md-button
 						type='submit'
 						aria-label='Waitlist Signup'
-						translate
+						cyph-translate
 					>
 						Waitlist Signup
 					</md-button>
@@ -142,9 +152,10 @@
 		<div layout='row' layout-align='center center' flex>
 			<div layout='column' flex>
 				<div layout='row' layout-align='center center'>
-					<p flex='80' translate>
-						Thanks for subscribing, {{$ctrl.self.data.name}}! We'll email you
-						when your invite is ready.
+					<p flex='80'>
+						<span cyph-translate>Thanks for subscribing,</span>
+						<span>{{$ctrl.self.data.name}}!</span>
+						<span cyph-translate>We'll email you when your invite is ready.</span>
 					</p>
 				</div>
 			</div>

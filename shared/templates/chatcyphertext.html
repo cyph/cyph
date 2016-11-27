@@ -7,10 +7,7 @@
 				layout='horizontal'
 			>
 				<span class='message'>
-					<strong
-						translate
-						ng-bind='::message.author + ": "'
-					></strong>
+					<strong>{{::message.author}}:</strong>
 					<span flex>{{::message.text}}</span>
 					<br />
 					<br />
@@ -19,7 +16,7 @@
 		</md-list>
 	</md-content>
 	<md-button
-		translate
+		cyph-translate
 		aria-label='Close Cyphertext'
 		class='md-fab md-theme-grey close-button'
 		ng-click='$ctrl.self.cyphertext.hide()'

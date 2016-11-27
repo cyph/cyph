@@ -3,14 +3,14 @@
 		<md-card class='md-padding'>
 			<md-card-title>
 				<md-card-title-text>
-					<span class='md-headline' translate>
+					<span class='md-headline' cyph-translate>
 						Register
 					</span>
 					<span class='md-subhead'>
-						<div ng-show='locals.signupForm.state === 1'>
+						<div ng-show='locals.signupForm.state === 1' cyph-translate>
 							Enter your email address.
 						</div>
-						<div ng-show='locals.signupForm.state === 2'>
+						<div ng-show='locals.signupForm.state === 2' cyph-translate>
 							Thanks for signing up. Feel free to give us your name too.
 							Privacy is at the core of our ideology, so we'll never give
 							away your email address or personal details.
@@ -26,7 +26,7 @@
 		<div class='login-button' layout='row' layout-align='center center'>
 			<md-button
 				ng-href='{{locals.cyph.Env.newCyphBaseUrl}}#beta/login'
-				translate
+				cyph-translate
 			>
 				Already have a Cyph account? Click here to login.
 			</md-button>

@@ -2,7 +2,7 @@
 	<form ng-submit='$ctrl.send()' ng-hide='$ctrl.self.sent'>
 		<div layout-gt-xs='row'>
 			<md-input-container class='md-block' flex>
-				<label>Cyph team to contact</label>
+				<label cyph-translate>Cyph team to contact</label>
 				<md-select ng-model='$ctrl.self.to'>
 					<md-option
 						ng-repeat='address in $ctrl.cyph.Config.cyphEmailAddresses'
@@ -15,37 +15,39 @@
 		</div>
 		<div layout='row'>
 			<md-input-container class='md-block' flex>
-				<input ng-model='$ctrl.self.fromName' aria-label='Name' />
-				<label>Name</label>
+				<input ng-model='$ctrl.self.fromName' aria-label='Name' cyph-translate />
+				<label cyph-translate>Name</label>
 			</md-input-container>
 			<md-input-container class='md-block' flex>
 				<input
 					ng-model='$ctrl.self.fromEmail'
 					type='email'
 					aria-label='Email'
+					cyph-translate
 					required
 				/>
-				<label>Email</label>
+				<label cyph-translate>Email</label>
 			</md-input-container>
 		</div>
 		<md-input-container class='md-block'>
-			<input ng-model='$ctrl.self.subject' aria-label='Subject' />
-			<label>Subject</label>
+			<input ng-model='$ctrl.self.subject' aria-label='Subject' cyph-translate />
+			<label cyph-translate>Subject</label>
 		</md-input-container>
 		<md-input-container class='md-block'>
 			<textarea
 				ng-model='$ctrl.self.message'
 				aria-label='Message'
+				cyph-translate
 				md-select-on-focus
 				required
 			></textarea>
-			<label>Message</label>
+			<label cyph-translate>Message</label>
 		</md-input-container>
-		<md-button type='submit' aria-label='Send' translate>
+		<md-button type='submit' aria-label='Send' cyph-translate>
 			Send
 		</md-button>
 	</form>
-	<div ng-show='$ctrl.self.sent'>
+	<div ng-show='$ctrl.self.sent' cyph-translate>
 		Your email has been sent! Someone on the team will get back to you shortly.
 	</div>
 </div>

@@ -7,7 +7,7 @@
 	'
 >
 	<textarea
-		translate
+		cyph-translate
 		class='message-box tabIndent'
 		ng-model='$ctrl.self.currentMessage'
 		ng-trim='false'
@@ -16,7 +16,7 @@
 	></textarea>
 
 	<md-button
-		translate
+		cyph-translate
 		class='send-button mobile-only'
 		ng-class='{
 			"chat-message-box-hidden": $ctrl.self.currentMessage === ""
@@ -48,7 +48,7 @@
 				class='invert md-fab md-raised md-mini'
 				ng-click='$ctrl.self.helpButton()'
 			>
-				<md-tooltip md-direction='left'>
+				<md-tooltip md-direction='left' cyph-translate>
 					Help
 				</md-tooltip>
 				<md-icon>help_outline</md-icon>
@@ -57,7 +57,7 @@
 				aria-label='Send File'
 				class='md-fab md-raised md-mini send-file-button'
 			>
-				<md-tooltip md-direction='left'>
+				<md-tooltip md-direction='left' cyph-translate>
 					Send File
 				</md-tooltip>
 				<md-icon>attach_file</md-icon>
@@ -69,7 +69,7 @@
 				aria-label='Send Image'
 				class='md-fab md-raised md-mini'
 			>
-				<md-tooltip md-direction='left'>
+				<md-tooltip md-direction='left' cyph-translate>
 					Send Image
 				</md-tooltip>
 				<md-icon>insert_photo</md-icon>
@@ -85,7 +85,7 @@
 				ng-disabled='!$ctrl.self.p2pManager.isEnabled'
 				ng-hide='$ctrl.self.p2pManager.p2p.isActive'
 			>
-				<md-tooltip md-direction='left'>
+				<md-tooltip md-direction='left' cyph-translate>
 					Voice Call
 				</md-tooltip>
 				<md-icon>phone</md-icon>
@@ -97,7 +97,7 @@
 				ng-disabled='!$ctrl.self.p2pManager.isEnabled'
 				ng-hide='$ctrl.self.p2pManager.p2p.isActive'
 			>
-				<md-tooltip md-direction='left'>
+				<md-tooltip md-direction='left' cyph-translate>
 					Video Call
 				</md-tooltip>
 				<md-icon>videocam</md-icon>
@@ -107,7 +107,7 @@
 				class='dark md-fab md-raised md-mini'
 				ng-click='$ctrl.self.disconnectButton()'
 			>
-				<md-tooltip md-direction='left'>
+				<md-tooltip md-direction='left' cyph-translate>
 					Close Chat
 				</md-tooltip>
 				<md-icon>close</md-icon>
@@ -122,17 +122,9 @@
 		ng-click='$ctrl.self.scrollManager.scrollDown()'
 	>
 		<strong>&#8595;&nbsp;&nbsp;</strong>
-		<span
-			translate
-			ng-bind='
-				$ctrl.self.scrollManager.unreadMessages +
-				" " + "new" + " " +
-				(
-					$ctrl.self.scrollManager.unreadMessages > 1 ?
-						"messages" :
-						"message"
-				)
-			'
-		></span>
+		<span>{{$ctrl.self.scrollManager.unreadMessages}}</span>
+		<span cyph-translate>new</span>
+		<span ng-if='$ctrl.self.scrollManager.unreadMessages === 1' cyph-translate>message</span>
+		<span ng-if='$ctrl.self.scrollManager.unreadMessages > 1' cyph-translate>messages</span>
 	</md-subheader>
 </div>
