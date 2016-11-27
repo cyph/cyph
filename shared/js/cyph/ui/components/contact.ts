@@ -61,30 +61,6 @@ export class Contact
 
 				this.cyph	= cyph;
 				this.ui		= ui;
-
-				if (!this.self) {
-					this.self	= {
-						fromEmail: '',
-						fromName: '',
-						message: '',
-						sent: false,
-						subject: '',
-						to: ''
-					};
-				}
-
-				for (let k of [
-					'fromEmail',
-					'fromName',
-					'message',
-					'subject',
-					'to'
-				]) {
-					const v	= $element.attr(k);
-					if (v) {
-						(<any> this.self)[k]	= v;
-					}
-				}
 			})(); }
 		},
 		templateUrl: '../../../../templates/contact.html'
