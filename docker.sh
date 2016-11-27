@@ -97,8 +97,8 @@ elif [ "${command}" == 'stopserve' ] ; then
 	rm -rf \
 		cyph.com/blog \
 		shared/js/docs \
-		$(find shared/css -name '*.css') \
-		$(find shared/js -name '*.js')
+		$(find shared/css -name '*.css' -or -name '*.map') \
+		$(find shared/js -name '*.js' -or -name '*.map')
 	exit 0
 
 elif [ "${command}" == 'kill' ] ; then
