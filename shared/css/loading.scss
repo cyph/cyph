@@ -26,10 +26,10 @@
 	}
 
 	> .transition {
-		@include animation(preloadfadeout 100s linear);
+		@include animation(preloadfadeout 50s linear);
 
 		+ .loading {
-			@include animation(preloadfadein 150s linear);
+			@include animation(preloadfadein 75s linear);
 		}
 	}
 }
@@ -97,21 +97,21 @@ html.load-complete #pre-load {
 }
 
 @include keyframes(preloadfadein) {
-	0%, 1% {
+	0%, 3% {
 		opacity: 0;
 	}
 
-	2%, 100% {
+	4%, 100% {
 		opacity: 1;
 	}
 }
 
 @include keyframes(preloadfadeout) {
-	0%, 1% {
+	0%, 3% {
 		opacity: 1;
 	}
 
-	2%, 100% {
+	4%, 100% {
 		opacity: 0;
 	}
 }
