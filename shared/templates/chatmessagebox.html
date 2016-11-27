@@ -8,22 +8,22 @@
 	ng-cloak
 >
 	<textarea
-		cyph-translate
 		class='message-box tabIndent'
 		ng-model='$ctrl.self.currentMessage'
 		ng-trim='false'
 		ng-change='$ctrl.self.messageChange()'
 		placeholder='Send a secure message...'
+		cyph-translate
 	></textarea>
 
 	<md-button
-		cyph-translate
 		class='send-button mobile-only'
 		ng-class='{
 			"chat-message-box-hidden": $ctrl.self.currentMessage === ""
 		}'
 		ng-click='$ctrl.self.send()'
 		aria-label='Send'
+		cyph-translate
 	>
 		<md-icon class='grey'>send</md-icon>
 	</md-button>
@@ -39,6 +39,7 @@
 			<md-button
 				aria-label='Menu'
 				class='md-fab'
+				cyph-translate
 			>
 				<md-icon>add</md-icon>
 			</md-button>
@@ -48,6 +49,7 @@
 				aria-label='Help'
 				class='invert md-fab md-raised md-mini'
 				ng-click='$ctrl.self.helpButton()'
+				cyph-translate
 			>
 				<md-tooltip md-direction='left' cyph-translate>
 					Help
@@ -57,6 +59,7 @@
 			<md-button
 				aria-label='Send File'
 				class='md-fab md-raised md-mini send-file-button'
+				cyph-translate
 			>
 				<md-tooltip md-direction='left' cyph-translate>
 					Send File
@@ -69,6 +72,7 @@
 			<md-button
 				aria-label='Send Image'
 				class='md-fab md-raised md-mini'
+				cyph-translate
 			>
 				<md-tooltip md-direction='left' cyph-translate>
 					Send Image
@@ -85,6 +89,7 @@
 				ng-click='$ctrl.self.p2pManager.voiceCallButton()'
 				ng-disabled='!$ctrl.self.p2pManager.isEnabled'
 				ng-hide='$ctrl.self.p2pManager.p2p.isActive'
+				cyph-translate
 			>
 				<md-tooltip md-direction='left' cyph-translate>
 					Voice Call
@@ -97,6 +102,7 @@
 				ng-click='$ctrl.self.p2pManager.videoCallButton()'
 				ng-disabled='!$ctrl.self.p2pManager.isEnabled'
 				ng-hide='$ctrl.self.p2pManager.p2p.isActive'
+				cyph-translate
 			>
 				<md-tooltip md-direction='left' cyph-translate>
 					Video Call
@@ -107,6 +113,7 @@
 				aria-label='Close Chat'
 				class='dark md-fab md-raised md-mini'
 				ng-click='$ctrl.self.disconnectButton()'
+				cyph-translate
 			>
 				<md-tooltip md-direction='left' cyph-translate>
 					Close Chat
