@@ -44,7 +44,7 @@
 		<meta name='msapplication-TileColor' content='#8b62d9' />
 		<meta name='theme-color' content='#8b62d9' />
 
-		<link rel='stylesheet' href='/css/cyph.im.loading.css' websign-sri-disable />
+		<link rel='stylesheet' href='/css/loading.css' websign-sri-disable />
 
 		<base target='_blank' />
 		<meta name='referrer' content='no-referrer' />
@@ -52,11 +52,17 @@
 	<body>
 		<cyph-app></cyph-app>
 
-		<div id='pre-load' class='loading'>
-			<div class='logo-animation'>
-				<img src='/img/logo.animated.gif' alt='Animated Cyph logo' />
+		<div id='pre-load'>
+			<div class='transition'>
+				<div class='double-bounce1'></div>
+				<div class='double-bounce2'></div>
 			</div>
-			<div>Now spinning up your cyph room...</div>
+			<div class='loading'>
+				<div class='logo-animation'>
+					<img src='/img/logo.animated.gif' alt='Animated Cyph logo' />
+				</div>
+				<div>Now spinning up your cyph room...</div>
+			</div>
 		</div>
 
 		<link rel='stylesheet' href='/lib/js/angular-material/angular-material.min.css' />
