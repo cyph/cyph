@@ -40,6 +40,7 @@ tsfiles="$( \
 		sort | \
 		uniq | \
 		grep -v 'Binary file' | \
+		grep -v 'main.lib' | \
 		tr ' ' '\n' \
 )"
 
@@ -203,19 +204,43 @@ compile () {
 		`.trim())')"
 
 		for f in $tsfiles ; do
-			webpack \
-				--output-library-target var \
-				--output-library "$(modulename $f)" \
-				$f.js \
-				$f.js.tmp
+			m="$(modulename "${f}")"
+
+			cat > "${f}.webpack.js" <<- EOM
+				const webpack	= require('webpack');
+
+				module.exports	= {
+					entry: {
+						app: './${f}.js'
+					},
+					output: {
+						filename: './${f}.js.tmp',
+						library: '${m}',
+						libraryTarget: 'var'
+					},
+					$(test "${m}" == 'Main' && echo "
+						plugins: [
+							new webpack.optimize.CommonsChunkPlugin({
+								name: 'lib',
+								filename: './${f}.lib.js',
+								minChunks: module => /\/lib\//.test(module.resource)
+							})
+						]
+					")
+				};
+			EOM
+
+			webpack --config "${f}.webpack.js"
 		done
 		for f in $tsfiles ; do
-			m="$(modulename $f)"
-			outputFile="${dir}/shared/js/${f}.js"
+			m="$(modulename "${f}")"
+			outputDir="${dir}/shared/js"
+			outputFile="${outputDir}/${f}.js"
 
 			rm "${outputFile}" 2> /dev/null
 
 			if [ "${m}" == 'Main' ] ; then
+				cp -f "${f}.lib.js" "${outputDir}/${f}.lib.js"
 				echo "${translations}" > "${outputFile}"
 			fi
 
@@ -234,7 +259,7 @@ compile () {
 		for js in $(find . -name '*.js') ; do
 			delete=true
 			for f in $tsfiles ; do
-				if [ "${js}" == "./${f}.js" ] ; then
+				if [ "${js}" == "./${f}.js" -o "${js}" == "./${f}.lib.js" ] ; then
 					delete=''
 				fi
 			done
