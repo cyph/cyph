@@ -1,17 +1,19 @@
 machine:
+  environment:
+    DOCKER_IMAGE: cyph/circleci:${CIRCLE_BRANCH}
   services:
     - docker
 
 dependencies:
   pre:
-    - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+    - docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
 
   override:
-    - docker pull cyph/circleci:latest || true
+    - docker pull ${DOCKER_IMAGE} || true
     - sed -i 's/.*emsdk.*//g' Dockerfile
-    - docker build --rm=false -t cyph/circleci .
-    - docker push cyph/circleci:latest
+    - docker build --rm=false -t ${DOCKER_IMAGE} .
+    - docker push ${DOCKER_IMAGE}
 
 test:
   override:
-    - docker run -v $PWD:/cyph cyph/circleci bash -c 'source ~/.bashrc ; /cyph/commands/build.sh'
+    - docker run -v ${PWD}:/cyph ${DOCKER_IMAGE} bash -c 'source ~/.bashrc ; /cyph/commands/build.sh'
