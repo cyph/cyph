@@ -3,8 +3,7 @@
 	ng-class='{mobile: $ctrl.self.isMobile}'
 	ng-if='
 		$ctrl.self.state === $ctrl.cyph.UI.Chat.States.chat &&
-		$ctrl.self.session.state.isAlive &&
-		$ctrl.isReady
+		$ctrl.self.session.state.isAlive
 	'
 	ng-cloak
 >
@@ -35,6 +34,7 @@
 		md-open='$ctrl.isSpeedDialOpen'
 		ng-mouseenter='$ctrl.isSpeedDialOpen = true'
 		ng-mouseleave='$ctrl.isSpeedDialOpen = false'
+		ng-if='$ctrl.isSpeedDialReady'
 	>
 		<md-fab-trigger>
 			<md-button

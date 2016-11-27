@@ -43,7 +43,7 @@ export class ChatMessageBox
 			public self: IChat;
 
 			/** @ignore */
-			public isReady: boolean;
+			public isSpeedDialReady: boolean;
 
 			/** @ignore */
 			public isSpeedDialOpen: boolean;
@@ -61,7 +61,7 @@ export class ChatMessageBox
 					await Util.sleep();
 				}
 
-				this.isReady	= true;
+				this.isSpeedDialReady	= true;
 
 				/* Allow enter press to submit, except on
 					mobile without external keyboard */
