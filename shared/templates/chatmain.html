@@ -238,7 +238,16 @@
 							<span class='message'>
 								<strong
 									class='message-author'
-									ng-hide='::message.author === $ctrl.cyph.Session.Users.app'
+									ng-if='::message.author === $ctrl.cyph.Session.Users.me'
+								>
+									{{::$ctrl.cyph.Strings.me}}:
+								</strong>
+								<strong
+									class='message-author'
+									ng-if='::
+										message.author !== $ctrl.cyph.Session.Users.me &&
+										message.author !== $ctrl.cyph.Session.Users.app
+									'
 								>
 									{{::message.author}}:
 								</strong>
@@ -254,16 +263,16 @@
 							<span flex class='message-timestamp'>
 								<span
 									class='mobile-only'
-									ng-show='::message.author === $ctrl.cyph.Session.Users.me'
+									ng-if='::message.author === $ctrl.cyph.Session.Users.me'
 								>
-									{{::message.author}} &nbsp;&mdash;&nbsp;
+									{{::$ctrl.cyph.Strings.me}} &nbsp;&mdash;&nbsp;
 								</span>
 
 								{{::message.timeString}}
 
 								<span
 									class='mobile-only'
-									ng-show='::
+									ng-if='::
 										message.author !== $ctrl.cyph.Session.Users.me &&
 										message.author !== $ctrl.cyph.Session.Users.app
 									'

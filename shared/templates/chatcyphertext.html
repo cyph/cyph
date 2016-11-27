@@ -7,7 +7,12 @@
 				layout='horizontal'
 			>
 				<span class='message'>
-					<strong>{{::message.author}}:</strong>
+					<strong ng-if='::message.author === $ctrl.cyph.Session.Users.me'>
+						{{::$ctrl.cyph.Strings.me}}:
+					</strong>
+					<strong ng-if='::message.author !== $ctrl.cyph.Session.Users.me'>
+						{{::message.author}}:
+					</strong>
 					<span flex>{{::message.text}}</span>
 					<br />
 					<br />
