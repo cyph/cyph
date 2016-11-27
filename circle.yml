@@ -3,10 +3,15 @@ machine:
     - docker
 
 dependencies:
+  pre:
+    - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+
   override:
+    - docker pull cyph/circleci:latest || true
     - sed -i 's/.*emsdk.*//g' Dockerfile
-    - docker build --rm=false -t cyph/cyph .
+    - docker build --rm=false -t cyph/circleci .
+    - docker push cyph/circleci:latest
 
 test:
   override:
-    - docker run -v $PWD:/cyph cyph/cyph bash -c 'source ~/.bashrc ; /cyph/commands/build.sh'
+    - docker run -v $PWD:/cyph cyph/circleci bash -c 'source ~/.bashrc ; /cyph/commands/build.sh'
