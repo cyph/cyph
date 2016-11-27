@@ -1,5 +1,6 @@
 import {CastleEvents, Events, Users} from '../session/enums';
 import {ISession} from '../session/isession';
+import {Strings} from '../strings';
 import {Util} from '../util';
 import {ICastle} from './icastle';
 
@@ -12,7 +13,7 @@ export class FakeCastle implements ICastle {
 	private static delimiter: string		= '☁☁☁ PRAISE BE TO CYPH ☀☀☀';
 
 	/** @ignore */
-	private static remoteUsername: string	= 'friend';
+	private static remoteUsername: string	= Strings.friend;
 
 	/** @ignore */
 	private static generateCyphertext () : string {
