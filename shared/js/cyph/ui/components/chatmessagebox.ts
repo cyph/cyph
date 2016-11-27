@@ -43,7 +43,10 @@ export class ChatMessageBox
 			public self: IChat;
 
 			/** @ignore */
-			public isSpeedDialOpen: boolean	= false;
+			public isReady: boolean;
+
+			/** @ignore */
+			public isSpeedDialOpen: boolean;
 
 			constructor ($element: JQuery) { (async () => {
 				while (!cyph) {
@@ -51,6 +54,14 @@ export class ChatMessageBox
 				}
 
 				this.cyph	= cyph;
+
+				/* Temporary workaround for Angular Material bug */
+
+				while (!VisibilityWatcher.isVisible) {
+					await Util.sleep();
+				}
+
+				this.isReady	= true;
 
 				/* Allow enter press to submit, except on
 					mobile without external keyboard */

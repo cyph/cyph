@@ -3,7 +3,8 @@
 	ng-class='{mobile: $ctrl.self.isMobile}'
 	ng-if='
 		$ctrl.self.state === $ctrl.cyph.UI.Chat.States.chat &&
-		$ctrl.self.session.state.isAlive
+		$ctrl.self.session.state.isAlive &&
+		$ctrl.isReady
 	'
 	ng-cloak
 >
