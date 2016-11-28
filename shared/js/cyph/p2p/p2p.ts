@@ -74,7 +74,7 @@ export class P2P implements IP2P {
 			this.outgoingStream.audio	= false;
 			this.outgoingStream.video	= false;
 
-			if (this.webRTC) {
+			if (this.webRTC && this.webRTC.mute) {
 				this.webRTC.mute();
 				this.webRTC.pauseVideo();
 				this.webRTC.stopLocalVideo();
