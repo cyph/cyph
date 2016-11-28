@@ -812,6 +812,7 @@ html.mobile .demo-root {
 .md-open-menu-container, .demo-root > .mobile {
 	@include transform(scale(0.625));
 }
+
 html.mobile {
 	.md-open-menu-container, .demo-root > .mobile {
 		@include transform(scale(0.8));
