@@ -62,7 +62,10 @@ export class FileManager implements IFileManager {
 	}
 
 	/** @inheritDoc */
-	public send (file: File, processImage?: boolean) : void {
+	public send (
+		file: File,
+		processImage: boolean = file.type.indexOf('image/') === 0
+	) : void {
 		const reader: FileReader	= new FileReader();
 
 		if (processImage) {

@@ -58,30 +58,16 @@
 				<md-icon>help_outline</md-icon>
 			</md-button>
 			<md-button
-				aria-label='Send File'
+				aria-label='Send File or Photo'
 				class='md-fab md-raised md-mini send-file-button'
 				cyph-translate
 			>
 				<md-tooltip md-direction='left' cyph-translate>
-					Send File
+					Send File or Photo
 				</md-tooltip>
 				<md-icon>attach_file</md-icon>
 				<cyph-file-input
 					file-change='$ctrl.self.fileManager.send(file)'
-				></cyph-file-input>
-			</md-button>
-			<md-button
-				aria-label='Send Image'
-				class='md-fab md-raised md-mini'
-				cyph-translate
-			>
-				<md-tooltip md-direction='left' cyph-translate>
-					Send Image
-				</md-tooltip>
-				<md-icon>insert_photo</md-icon>
-				<cyph-file-input
-					accept='image/*'
-					file-change='$ctrl.self.fileManager.send(file, true)'
 				></cyph-file-input>
 			</md-button>
 			<md-button
