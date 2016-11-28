@@ -8,7 +8,6 @@ export interface IElements {
 	readonly messageBox: () => JQuery;
 	readonly messageList: () => JQuery;
 	readonly messageListInner: () => JQuery;
-	readonly p2pContainer: () => JQuery;
 	readonly p2pFriendPlaceholder: () => JQuery;
 	readonly p2pFriendStream: () => JQuery;
 	readonly p2pMeStream: () => JQuery;

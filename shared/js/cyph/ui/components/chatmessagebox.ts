@@ -43,7 +43,7 @@ export class ChatMessageBox
 			public readonly self: IChat;
 
 			/** @ignore */
-			public readonly isSpeedDialOpen: boolean;
+			public isSpeedDialOpen: boolean	= true;
 
 			/** @ignore */
 			public isSpeedDialReady: boolean;
@@ -57,11 +57,22 @@ export class ChatMessageBox
 
 				/* Temporary workaround for Angular Material bug */
 
-				while (!VisibilityWatcher.isVisible) {
+				const isVideoCallMessageBox	= $element.hasClass('video-call-message-box');
+
+				while (
+					!VisibilityWatcher.isVisible ||
+					!$element.is(':visible') ||
+					(
+						isVideoCallMessageBox &&
+						!this.self.p2pManager.isSidebarOpen
+					)
+				) {
 					await Util.sleep();
 				}
 
 				this.isSpeedDialReady	= true;
+				await Util.sleep(1000);
+				this.isSpeedDialOpen	= false;
 
 				/* Allow enter press to submit, except on
 					mobile without external keyboard */

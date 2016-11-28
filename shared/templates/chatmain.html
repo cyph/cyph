@@ -82,8 +82,9 @@
 		class='cyph-view video-call'
 		flex
 		ng-class='{
-			active: $ctrl.self.state === $ctrl.cyph.UI.Chat.States.chat,
-			playing: $ctrl.self.p2pManager.p2p.isActive
+			"active": $ctrl.self.state === $ctrl.cyph.UI.Chat.States.chat,
+			"playing": $ctrl.self.p2pManager.p2p.isActive,
+			"sidebar-open": $ctrl.self.p2pManager.isSidebarOpen
 		}'
 	>
 		<a class='logo' rel='noreferrer' ng-href='{{$ctrl.cyph.Env.homeUrl}}'>

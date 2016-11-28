@@ -14,6 +14,9 @@ import {IP2PManager} from './ip2pmanager';
 /** @inheritDoc */
 export class P2PManager extends BaseButtonManager implements IP2PManager {
 	/** @inheritDoc */
+	public isSidebarOpen: boolean;
+
+	/** @inheritDoc */
 	public isEnabled: boolean	= false;
 
 	/** @inheritDoc */
@@ -48,9 +51,9 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 
 	/** @inheritDoc */
 	public toggleSidebar () : void {
-		this.baseButtonClick(() =>
-			this.elements.p2pContainer().toggleClass('sidebar-open')
-		);
+		this.baseButtonClick(() => {
+			this.isSidebarOpen	= !this.isSidebarOpen;
+		});
 	}
 
 	/** @inheritDoc */

@@ -59,9 +59,6 @@ export class Elements {
 	public static readonly nanoScroller			= Elements.get('.nano');
 
 	/** @see Elements */
-	public static readonly p2pContainer			= Elements.get('.video-call');
-
-	/** @see Elements */
 	public static readonly p2pFriendPlaceholder	= Elements.get('.video-call .friend:not(.stream)');
 
 	/** @see Elements */

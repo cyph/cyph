@@ -344,7 +344,6 @@ export class Chat extends BaseButtonManager implements IChat {
 			messageBox: this.findElement(Elements.messageBox().selector),
 			messageList: this.findElement(Elements.messageList().selector),
 			messageListInner: this.findElement(Elements.messageListInner().selector),
-			p2pContainer: this.findElement(Elements.p2pContainer().selector),
 			p2pFriendPlaceholder: this.findElement(Elements.p2pFriendPlaceholder().selector),
 			p2pFriendStream: this.findElement(Elements.p2pFriendStream().selector),
 			p2pMeStream: this.findElement(Elements.p2pMeStream().selector),

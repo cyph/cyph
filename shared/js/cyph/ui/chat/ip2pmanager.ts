@@ -8,6 +8,9 @@ export interface IP2PManager {
 	/** Indicates whether P2P is possible (i.e. both clients support WebRTC). */
 	readonly isEnabled: boolean;
 
+	/** Indicates whether sidebar is open. */
+	readonly isSidebarOpen: boolean;
+
 	/** P2P instance. */
 	readonly p2p: IP2P;
 
