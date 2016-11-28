@@ -240,7 +240,7 @@ compile () {
 			rm "${outputFile}" 2> /dev/null
 
 			if [ "${m}" == 'Main' ] ; then
-				cp -f "${f}.lib.js" "${outputDir}/${f}.lib.js"
+				cp -f "${f}.lib.js" "${outputDir}/${f}.lib.js" 2> /dev/null
 				echo "${translations}" > "${outputFile}"
 			fi
 

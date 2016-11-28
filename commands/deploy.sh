@@ -393,13 +393,8 @@ for d in $compiledProjects ; do
 
 	cp -rf shared/* ${d}/
 
-	{ \
-		find ${d}/css -name '*.scss' & \
-		find ${d}/css -name '*.map' & \
-		find ${d}/js -name '*.ts' & \
-		find ${d}/js -name '*.ts.js' & \
-		find ${d}/js -name '*.map'; \
-	} | xargs -I% rm %
+	find ${d}/css -name '*.scss' -or -name '*.map' -exec rm {} \;
+	find ${d}/js -name '*.ts' -or -name '*.ts.js' -name '*.map' -exec rm {} \;
 
 	if [ ! "${simple}" ] ; then
 		echo "HTML Minify ${project}"
