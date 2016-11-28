@@ -11,6 +11,5 @@ export interface IElements {
 	readonly p2pFriendPlaceholder: () => JQuery;
 	readonly p2pFriendStream: () => JQuery;
 	readonly p2pMeStream: () => JQuery;
-	readonly sendButton: () => JQuery;
 	readonly title: () => JQuery;
 }

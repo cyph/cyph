@@ -770,11 +770,6 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 		position: absolute;
 	}
 
-	.send-file-button {
-		pointer-events: none !important;
-		opacity: 0.5 !important;
-	}
-
 	cyph-chat-main .chat-main.video {
 		.video-call.active.playing {
 			&, .logo, .me, .sidebar, .buttons, ~ .message-list, ~ .video-call-message-box {

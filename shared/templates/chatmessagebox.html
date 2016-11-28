@@ -16,21 +16,57 @@
 		cyph-translate
 	></textarea>
 
-	<md-button
-		class='send-button mobile-only'
+	<div
+		class='message-box-button-group mobile-only'
 		ng-class='{
-			"chat-message-box-hidden": $ctrl.self.currentMessage === ""
+			"hidden": $ctrl.self.currentMessage === ""
 		}'
-		ng-click='$ctrl.self.send()'
-		aria-label='Send'
-		cyph-translate
 	>
-		<md-icon class='grey'>send</md-icon>
-	</md-button>
+		<md-button
+			aria-label='Send'
+			ng-click='$ctrl.self.send()'
+			cyph-translate
+		>
+			<md-icon class='grey'>send</md-icon>
+		</md-button>
+	</div>
+	<div
+		class='message-box-button-group mobile-only'
+		ng-class='{
+			"hidden": $ctrl.self.currentMessage !== ""
+		}'
+	>
+		<md-button
+			aria-label='Video Call'
+			ng-click='$ctrl.self.p2pManager.videoCallButton()'
+			ng-disabled='!$ctrl.self.p2pManager.isEnabled'
+			cyph-translate
+		>
+			<md-icon class='grey'>videocam</md-icon>
+		</md-button>
+		<md-button
+			aria-label='Voice Call'
+			ng-click='$ctrl.self.p2pManager.voiceCallButton()'
+			ng-disabled='!$ctrl.self.p2pManager.isEnabled'
+			cyph-translate
+		>
+			<md-icon class='grey'>phone</md-icon>
+		</md-button>
+		<md-button
+			aria-label='Send File or Photo'
+			cyph-translate
+		>
+			<md-icon class='grey'>attach_file</md-icon>
+			<cyph-file-input
+				file-change='$ctrl.self.fileManager.send(file)'
+				accept='$ctrl.fileInputAccept'
+			></cyph-file-input>
+		</md-button>
+	</div>
 
 	<md-fab-speed-dial
 		md-direction='up'
-		class='md-fling md-fab-bottom-right'
+		class='desktop-only md-fling md-fab-bottom-right'
 		md-open='$ctrl.isSpeedDialOpen'
 		ng-mouseenter='$ctrl.isSpeedDialOpen = true'
 		ng-mouseleave='$ctrl.isSpeedDialOpen = false'
@@ -47,19 +83,8 @@
 		</md-fab-trigger>
 		<md-fab-actions ng-if='!$ctrl.self.p2pManager.p2p.isActive'>
 			<md-button
-				aria-label='Help'
-				class='invert md-fab md-raised md-mini'
-				ng-click='$ctrl.self.helpButton()'
-				cyph-translate
-			>
-				<md-tooltip md-direction='left' cyph-translate>
-					Help
-				</md-tooltip>
-				<md-icon>help_outline</md-icon>
-			</md-button>
-			<md-button
 				aria-label='Send File or Photo'
-				class='md-fab md-raised md-mini send-file-button'
+				class='md-fab md-raised md-mini'
 				cyph-translate
 			>
 				<md-tooltip md-direction='left' cyph-translate>
@@ -68,6 +93,7 @@
 				<md-icon>attach_file</md-icon>
 				<cyph-file-input
 					file-change='$ctrl.self.fileManager.send(file)'
+					accept='$ctrl.fileInputAccept'
 				></cyph-file-input>
 			</md-button>
 			<md-button
@@ -95,6 +121,17 @@
 				<md-icon>videocam</md-icon>
 			</md-button>
 			<md-button
+				aria-label='Help'
+				class='dark md-fab md-raised md-mini'
+				ng-click='$ctrl.self.helpButton()'
+				cyph-translate
+			>
+				<md-tooltip md-direction='left' cyph-translate>
+					Help
+				</md-tooltip>
+				<md-icon>help_outline</md-icon>
+			</md-button>
+			<md-button
 				aria-label='Close Chat'
 				class='dark md-fab md-raised md-mini'
 				ng-click='$ctrl.self.disconnectButton()'
@@ -120,7 +157,7 @@
 			</md-button>
 			<md-button
 				aria-label='Send File or Photo'
-				class='md-fab md-raised md-mini send-file-button'
+				class='md-fab md-raised md-mini'
 				cyph-translate
 			>
 				<md-tooltip md-direction='left' cyph-translate>
@@ -129,6 +166,7 @@
 				<md-icon>attach_file</md-icon>
 				<cyph-file-input
 					file-change='$ctrl.self.fileManager.send(file)'
+					accept='$ctrl.fileInputAccept'
 				></cyph-file-input>
 			</md-button>
 			<md-button

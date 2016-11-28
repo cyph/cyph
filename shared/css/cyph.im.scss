@@ -123,28 +123,32 @@ input, textarea {
 	position: relative;
 }
 
-.send-button {
+.message-box-button-group {
 	position: absolute;
-	bottom: 0px;
-	right: 9px;
-	opacity: 0.75;
-	z-index: 35;
-	font-size: 38px;
-	width: 38px;
-	height: 38px;
+	bottom: -2px;
+	right: 10px;
 
-	* {
-		width: 100%;
-		height: 100%;
-		display: block;
+	.md-button {
+		opacity: 0.75;
+		z-index: 35;
+		font-size: 38px;
+		height: 38px;
+		padding-left: 0px;
+		padding-right: 0px;
+		margin-left: 0px;
+		margin-right: 3px;
+		pointer-events: none;
+
+		@include transition(transform 0.35s linear);
+
+		md-icon {
+			width: 100%;
+			height: 100%;
+			display: block;
+		}
 	}
 
-	/* Crazy fix to prevent jankiness upon message send on mobile */
-	pointer-events: none;
-
-	@include transition(transform 0.35s linear);
-
-	&.chat-message-box-hidden {
+	&.hidden .md-button {
 		@include transform(translateY(250px) !important);
 
 		@include transition(transform 0.5s linear);

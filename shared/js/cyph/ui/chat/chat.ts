@@ -347,7 +347,6 @@ export class Chat extends BaseButtonManager implements IChat {
 			p2pFriendPlaceholder: this.findElement(Elements.p2pFriendPlaceholder().selector),
 			p2pFriendStream: this.findElement(Elements.p2pFriendStream().selector),
 			p2pMeStream: this.findElement(Elements.p2pMeStream().selector),
-			sendButton: this.findElement(Elements.sendButton().selector),
 			title: this.findElement(Elements.title().selector)
 		};
 
@@ -448,43 +447,6 @@ export class Chat extends BaseButtonManager implements IChat {
 			messageCountInTitle
 		);
 
-
-		if (this.isMobile) {
-			/* Prevent jankiness upon message send on mobile */
-
-			let lastClick	= 0;
-
-			this.elements.messageBox().click(e => {
-				const bounds	= (<any> this.elements.sendButton().filter(':visible')).bounds();
-
-				if (
-					(e.pageY > bounds.top && e.pageY < bounds.bottom) &&
-					(e.pageX > bounds.left && e.pageX < bounds.right)
-				) {
-					const now: number	= Util.timestamp();
-
-					if (now - lastClick > 500) {
-						lastClick	= now;
-						this.elements.sendButton().click();
-					}
-				}
-			});
-		}
-		else {
-			/* Adapt message box to content size on desktop */
-
-			const messageBoxLineHeight: number	= parseInt(
-				this.elements.messageBox().css('line-height'),
-				10
-			);
-
-			this.elements.messageBox().on('keyup', () =>
-				this.elements.messageBox().height(
-					messageBoxLineHeight *
-					this.elements.messageBox().val().split('\n').length
-				)
-			);
-		}
 
 		setInterval(() => this.messageChange(), 5000);
 

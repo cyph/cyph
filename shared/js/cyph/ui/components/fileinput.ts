@@ -30,7 +30,7 @@ export class FileInput
 	/** Component configuration. */
 	public static readonly config			= {
 		bindings: {
-			accept: '@',
+			accept: '<',
 			fileChange: '&'
 		},
 		/* tslint:disable-next-line:max-classes-per-file */

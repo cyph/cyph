@@ -32,6 +32,7 @@ export class ChatMessageBox
 	/** Component configuration. */
 	public static readonly config			= {
 		bindings: {
+			fileInputAccept: '<',
 			self: '<'
 		},
 		/* tslint:disable-next-line:max-classes-per-file */
@@ -41,6 +42,9 @@ export class ChatMessageBox
 
 			/** @ignore */
 			public readonly self: IChat;
+
+			/** @ignore */
+			public readonly fileInputAccept: string;
 
 			/** @ignore */
 			public isSpeedDialOpen: boolean	= true;
@@ -95,6 +99,56 @@ export class ChatMessageBox
 					e.preventDefault();
 					this.self.send();
 				});
+
+				if (this.self.isMobile) {
+					/* Prevent jankiness upon message send on mobile */
+
+					let lastClick	= 0;
+
+					let $buttons: JQuery;
+					while (!$buttons || $buttons.length < 1) {
+						$buttons	= $element.find('.message-box-button-group .md-button');
+						await Util.sleep();
+					}
+
+					$textarea.click(e =>
+						$buttons.filter(':visible').each((i: number, elem: HTMLElement) => {
+							const $elem		= $(elem);
+							const bounds	= (<any> $elem).bounds();
+
+							if (!(
+								(e.pageY > bounds.top && e.pageY < bounds.bottom) &&
+								(e.pageX > bounds.left && e.pageX < bounds.right)
+							)) {
+								return;
+							}
+
+							const now: number	= Util.timestamp();
+
+							if (now - lastClick <= 500) {
+								return;
+							}
+
+							lastClick	= now;
+							$elem.click();
+						})
+					);
+				}
+				else {
+					/* Adapt message box to content size on desktop */
+
+					const messageBoxLineHeight: number	= parseInt(
+						$textarea.css('line-height'),
+						10
+					);
+
+					$textarea.on('keyup', () =>
+						$textarea.height(
+							messageBoxLineHeight *
+							$textarea.val().split('\n').length
+						)
+					);
+				}
 			})(); }
 		},
 		templateUrl: '../../../../templates/chatmessagebox.html'
@@ -103,6 +157,9 @@ export class ChatMessageBox
 
 	/** @ignore */
 	@Input() public self: IChat;
+
+	/** @ignore */
+	@Input() public fileInputAccept: string;
 
 	/** @ignore */
 	public ngDoCheck () : void {

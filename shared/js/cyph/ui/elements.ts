@@ -68,9 +68,6 @@ export class Elements {
 	public static readonly p2pMeStream			= Elements.get('.video-call .me');
 
 	/** @see Elements */
-	public static readonly sendButton			= Elements.get('.send-button');
-
-	/** @see Elements */
 	public static readonly signupForm			= Elements.get('.beta-signup-form');
 
 	/** @see Elements */
