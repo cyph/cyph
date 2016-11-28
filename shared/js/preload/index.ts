@@ -64,6 +64,16 @@ $(() => {
 			10000
 		);
 	}
+
+	/* Try again if page takes too long to initialise */
+	setTimeout(
+		() => {
+			if (!Elements.html().hasClass('load-complete')) {
+				location.reload();
+			}
+		},
+		15000
+	);
 });
 
 
