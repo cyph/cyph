@@ -112,33 +112,35 @@ export class ChatMessageBox
 					}
 
 					$textarea.click(e => {
-						const wasButtonClicked	= $buttons.filter(':visible').toArray().reduce(
-							(clicked: boolean, elem: HTMLElement) => {
-								if (clicked) {
-									return true;
-								}
+						const now: number	= Util.timestamp();
 
-								const $elem		= $(elem);
-								const bounds	= (<any> $elem).bounds();
+						const wasButtonClicked	=
+							(now - lastClick <= 500) ||
+							$buttons.filter(':visible').toArray().reduce(
+								(clicked: boolean, elem: HTMLElement) => {
+									if (clicked) {
+										return true;
+									}
 
-								if (!(
-									(e.pageY > bounds.top && e.pageY < bounds.bottom) &&
-									(e.pageX > bounds.left && e.pageX < bounds.right)
-								)) {
-									return false;
-								}
+									const $elem		= $(elem);
+									const bounds	= (<any> $elem).bounds();
 
-								const now: number	= Util.timestamp();
+									if (!(
+										(e.pageY > bounds.top && e.pageY < bounds.bottom) &&
+										(e.pageX > bounds.left && e.pageX < bounds.right)
+									)) {
+										return false;
+									}
 
-								if (now - lastClick > 500) {
-									lastClick	= now;
 									$elem.click();
-								}
 
-								return true;
-							},
-							false
-						);
+									return true;
+								},
+								false
+							)
+						;
+
+						lastClick	= now;
 
 						if (wasButtonClicked) {
 							e.stopPropagation();
