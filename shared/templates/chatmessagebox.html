@@ -64,6 +64,43 @@
 		</md-button>
 	</div>
 
+	<md-menu
+		class='mobile-only'
+		md-position-mode='target-right target'
+		ng-if='!$ctrl.self.p2pManager.p2p.isActive'
+	>
+		<md-button
+			aria-label='Menu'
+			class='md-icon-button'
+			ng-click='$mdMenu.open($event)'
+			cyph-translate
+		>
+			<md-icon>more_vert</md-icon>
+		</md-button>
+		<md-menu-content width='4'>
+			<md-menu-item>
+				<md-button
+					aria-label='Help'
+					ng-click='$ctrl.self.helpButton()'
+					cyph-translate
+				>
+					<md-icon md-menu-align-target>help_outline</md-icon>
+					<span cyph-translate>Help</span>
+				</md-button>
+			</md-menu-item>
+			<md-menu-item>
+				<md-button
+					aria-label='Close Chat'
+					ng-click='$ctrl.self.disconnectButton()'
+					cyph-translate
+				>
+					<md-icon md-menu-align-target>close</md-icon>
+					<span cyph-translate>Close Chat</span>
+				</md-button>
+			</md-menu-item>
+		</md-menu-content>
+	</md-menu>
+
 	<md-fab-speed-dial
 		md-direction='up'
 		class='desktop-only md-fling md-fab-bottom-right'

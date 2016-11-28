@@ -713,8 +713,6 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 		margin-top: -60px;
 		left: 21.5%;
 
-		@include transform(scale(0.625));
-
 		@include filter(blur(0px));
 
 		cyph-chat-main {
@@ -808,9 +806,20 @@ html.mobile .demo-root {
 		top: 0px;
 		left: -50px;
 		margin: auto;
+	}
+}
 
+.md-open-menu-container, .demo-root > .mobile {
+	@include transform(scale(0.625));
+}
+html.mobile {
+	.md-open-menu-container, .demo-root > .mobile {
 		@include transform(scale(0.8));
 	}
+}
+
+.md-open-menu-container {
+	margin-left: -160px;
 }
 
 #gettingstarted-section {

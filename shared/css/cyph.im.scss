@@ -111,11 +111,16 @@ input, textarea {
 		z-index: 35 !important;
 	}
 
-	md-fab-speed-dial {
-		position: absolute;
-		top: -340px;
-		right: 10px;
-		z-index: 50;
+	md-menu {
+		position: fixed;
+		top: 5px;
+		right: 0px;
+	}
+}
+
+md-menu-item {
+	md-icon, span {
+		color: #444 !important;
 	}
 }
 
