@@ -182,17 +182,6 @@
 		</md-fab-actions>
 		<md-fab-actions ng-if='$ctrl.self.p2pManager.p2p.isActive'>
 			<md-button
-				aria-label='Help'
-				class='invert md-fab md-raised md-mini'
-				ng-click='$ctrl.self.helpButton()'
-				cyph-translate
-			>
-				<md-tooltip md-direction='left' cyph-translate>
-					Help
-				</md-tooltip>
-				<md-icon>help_outline</md-icon>
-			</md-button>
-			<md-button
 				aria-label='Send File or Photo'
 				class='md-fab md-raised md-mini'
 				cyph-translate
@@ -205,6 +194,17 @@
 					file-change='$ctrl.self.fileManager.send(file)'
 					accept='$ctrl.fileInputAccept'
 				></cyph-file-input>
+			</md-button>
+			<md-button
+				aria-label='Help'
+				class='dark md-fab md-raised md-mini'
+				ng-click='$ctrl.self.helpButton()'
+				cyph-translate
+			>
+				<md-tooltip md-direction='left' cyph-translate>
+					Help
+				</md-tooltip>
+				<md-icon>help_outline</md-icon>
 			</md-button>
 			<md-button
 				aria-label='Close Chat'
