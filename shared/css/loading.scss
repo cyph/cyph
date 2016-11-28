@@ -26,10 +26,18 @@
 	}
 
 	> .transition {
-		@include animation(preloadfadeout 50s linear);
+		@include animation(preloadfadeout 500ms linear);
+
+		@include animation-delay(1s);
+
+		@include animation-fill-mode(forwards);
 
 		+ .loading {
-			@include animation(preloadfadein 75s linear);
+			@include animation(preloadfadein 500ms linear);
+
+			@include animation-delay(1.5s);
+
+			@include animation-fill-mode(backwards);
 		}
 	}
 }
@@ -97,21 +105,21 @@ html.load-complete #pre-load {
 }
 
 @include keyframes(preloadfadein) {
-	0%, 3% {
+	0% {
 		opacity: 0;
 	}
 
-	4%, 100% {
+	100% {
 		opacity: 1;
 	}
 }
 
 @include keyframes(preloadfadeout) {
-	0%, 3% {
+	0% {
 		opacity: 1;
 	}
 
-	4%, 100% {
+	100% {
 		opacity: 0;
 	}
 }
