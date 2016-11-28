@@ -40,6 +40,7 @@
 			aria-label='Video Call'
 			ng-click='$ctrl.self.p2pManager.videoCallButton()'
 			ng-disabled='!$ctrl.self.p2pManager.isEnabled'
+			ng-if='!$ctrl.self.p2pManager.p2p.isActive'
 			cyph-translate
 		>
 			<md-icon class='grey'>videocam</md-icon>
@@ -48,6 +49,7 @@
 			aria-label='Voice Call'
 			ng-click='$ctrl.self.p2pManager.voiceCallButton()'
 			ng-disabled='!$ctrl.self.p2pManager.isEnabled'
+			ng-if='!$ctrl.self.p2pManager.p2p.isActive'
 			cyph-translate
 		>
 			<md-icon class='grey'>phone</md-icon>
@@ -67,7 +69,6 @@
 	<md-menu
 		class='mobile-only'
 		md-position-mode='target-right target'
-		ng-if='!$ctrl.self.p2pManager.p2p.isActive'
 	>
 		<md-button
 			aria-label='Menu'
