@@ -433,7 +433,7 @@ export class Util {
 				false
 			);
 
-			await Util.sleep(50);
+			await Util.sleep();
 			self.onbeforeunload		= onbeforeunload;
 		}
 		else {

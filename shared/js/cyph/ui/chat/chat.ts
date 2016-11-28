@@ -501,13 +501,15 @@ export class Chat extends BaseButtonManager implements IChat {
 
 			const start: number	= Util.timestamp();
 
-			while (this.keyExchangeProgress < 100) {
-				await Util.sleep(50);
+			while (this.keyExchangeProgress <= 100) {
+				await Util.sleep();
 
 				this.keyExchangeProgress	=
 					(Util.timestamp() - start) / Chat.approximateKeyExchangeTime * 100
 				;
 			}
+
+			this.keyExchangeProgress	= 100;
 		});
 
 		this.session.on(Events.connectFailure, () => this.abortSetup());
