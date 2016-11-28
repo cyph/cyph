@@ -715,6 +715,8 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 
 		@include filter(blur(0px));
 
+		@include transform(scale(0.625));
+
 		cyph-chat-main {
 			height: calc(100% - 50px);
 
@@ -806,15 +808,7 @@ html.mobile .demo-root {
 		top: 0px;
 		left: -50px;
 		margin: auto;
-	}
-}
 
-.md-open-menu-container, .demo-root > .mobile {
-	@include transform(scale(0.625));
-}
-
-html.mobile {
-	.md-open-menu-container, .demo-root > .mobile {
 		@include transform(scale(0.8));
 	}
 }
@@ -822,10 +816,14 @@ html.mobile {
 .md-open-menu-container {
 	right: 12vw;
 	left: initial !important;
+
+	@include transform(scale(0.625) translateY(20px));
 }
 
 html.mobile .md-open-menu-container {
 	right: 5vw;
+
+	@include transform(scale(0.8) translateY(30px));
 }
 
 #gettingstarted-section {
