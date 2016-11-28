@@ -820,7 +820,12 @@ html.mobile {
 }
 
 .md-open-menu-container {
-	margin-left: -160px;
+	right: 12vw;
+	left: initial !important;
+}
+
+html.mobile .md-open-menu-container {
+	right: 5vw;
 }
 
 #gettingstarted-section {

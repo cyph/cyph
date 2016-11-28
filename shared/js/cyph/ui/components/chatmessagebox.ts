@@ -111,28 +111,40 @@ export class ChatMessageBox
 						await Util.sleep();
 					}
 
-					$textarea.click(e =>
-						$buttons.filter(':visible').each((i: number, elem: HTMLElement) => {
-							const $elem		= $(elem);
-							const bounds	= (<any> $elem).bounds();
+					$textarea.click(e => {
+						const wasButtonClicked	= $buttons.filter(':visible').toArray().reduce(
+							(clicked: boolean, elem: HTMLElement) => {
+								if (clicked) {
+									return true;
+								}
 
-							if (!(
-								(e.pageY > bounds.top && e.pageY < bounds.bottom) &&
-								(e.pageX > bounds.left && e.pageX < bounds.right)
-							)) {
-								return;
-							}
+								const $elem		= $(elem);
+								const bounds	= (<any> $elem).bounds();
 
-							const now: number	= Util.timestamp();
+								if (!(
+									(e.pageY > bounds.top && e.pageY < bounds.bottom) &&
+									(e.pageX > bounds.left && e.pageX < bounds.right)
+								)) {
+									return false;
+								}
 
-							if (now - lastClick <= 500) {
-								return;
-							}
+								const now: number	= Util.timestamp();
 
-							lastClick	= now;
-							$elem.click();
-						})
-					);
+								if (now - lastClick > 500) {
+									lastClick	= now;
+									$elem.click();
+								}
+
+								return true;
+							},
+							false
+						);
+
+						if (wasButtonClicked) {
+							e.stopPropagation();
+							e.preventDefault();
+						}
+					});
 				}
 				else {
 					/* Adapt message box to content size on desktop */
