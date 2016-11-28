@@ -8,10 +8,10 @@ export class Timer implements ITimer {
 	private endTime: number;
 
 	/** @ignore */
-	private readonly includeHours: boolean;
+	private includeHours: boolean;
 
 	/** @ignore */
-	private readonly includeMinutes: boolean;
+	private includeMinutes: boolean;
 
 	/** @ignore */
 	private isStopped: boolean;
@@ -27,6 +27,9 @@ export class Timer implements ITimer {
 		const hours		= Math.floor(timeRemaining / 3600000);
 		const minutes	= Math.floor((timeRemaining % 3600000) / 60000);
 		const seconds	= Math.floor(((timeRemaining % 3600000) % 60000) / 1000);
+
+		this.includeHours	= this.includeHours || this.countdown >= 3600000;
+		this.includeMinutes	= this.includeMinutes || this.countdown >= 60000;
 
 		this.timestamp	= this.includeHours ?
 			`${hours}:${`0${minutes}`.slice(-2)}:${`0${seconds}`.slice(-2)}` :
@@ -87,9 +90,6 @@ export class Timer implements ITimer {
 
 		autostart?: boolean
 	) {
-		this.includeHours	= this.countdown >= 3600000;
-		this.includeMinutes	= this.countdown >= 60000;
-
 		this.updateTimestamp(this.countdown);
 
 		if (autostart) {
