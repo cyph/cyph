@@ -145,6 +145,7 @@ export class ChatMessageBox
 						if (wasButtonClicked) {
 							e.stopPropagation();
 							e.preventDefault();
+							$textarea.blur();
 						}
 					});
 				}
