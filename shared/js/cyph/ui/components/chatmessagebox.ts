@@ -122,17 +122,16 @@ export class ChatMessageBox
 										return true;
 									}
 
-									const $elem		= $(elem);
-									const bounds	= (<any> $elem).bounds();
+									const bounds	= elem.getBoundingClientRect();
 
 									if (!(
-										(e.pageY > bounds.top && e.pageY < bounds.bottom) &&
-										(e.pageX > bounds.left && e.pageX < bounds.right)
+										(e.clientY > bounds.top && e.clientY < bounds.bottom) &&
+										(e.clientX > bounds.left && e.clientX < bounds.right)
 									)) {
 										return false;
 									}
 
-									$elem.click();
+									$(elem).click();
 
 									return true;
 								},
@@ -140,11 +139,16 @@ export class ChatMessageBox
 							)
 						;
 
+						if (!wasButtonClicked) {
+							return;
+						}
+
 						lastClick	= now;
 
-						if (wasButtonClicked) {
-							e.stopPropagation();
-							e.preventDefault();
+						e.stopPropagation();
+						e.preventDefault();
+
+						if (!VirtualKeyboardWatcher.isOpen) {
 							$textarea.blur();
 						}
 					});
