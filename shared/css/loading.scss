@@ -26,9 +26,9 @@
 	}
 
 	> .transition {
-		@include animation(preloadfadeout 500ms linear);
+		@include animation(preloadfadeout 1s linear);
 
-		@include animation-delay(2s);
+		@include animation-delay(1.5s);
 
 		@include animation-fill-mode(forwards);
 
