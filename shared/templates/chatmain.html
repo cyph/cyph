@@ -187,16 +187,16 @@
 	></cyph-chat-message-box>
 
 	<div
-		class='cyph-view message-list nano'
+		class='cyph-view transfer-list'
 		flex
 		ng-class='{
 			active: $ctrl.self.state === $ctrl.cyph.UI.Chat.States.chat
 		}'
 	>
-		<md-content class='nano-content'>
+		<md-content>
 			<md-list layout='column'>
 				<md-item
-					class='progress'
+					class='transfer'
 					ng-repeat='transfer in $ctrl.self.fileManager.files.transfers'
 					layout='row'
 				>
@@ -217,7 +217,29 @@
 						></md-progress-linear>
 					</div>
 				</md-item>
+			</md-list>
+		</md-content>
+	</div>
 
+	<div
+		class='cyph-view message-list nano'
+		flex
+		ng-class='{
+			active: $ctrl.self.state === $ctrl.cyph.UI.Chat.States.chat
+		}'
+		ng-style='{
+			"margin-top":
+				(
+					(
+						$ctrl.self.fileManager.files.transfers.length < 3 ?
+							$ctrl.self.fileManager.files.transfers.length :
+							3
+					) * 55
+				).toString() + "px"
+		}'
+	>
+		<md-content class='nano-content'>
+			<md-list layout='column'>
 				<md-item
 					class='message-item unread'
 					ng-class='[

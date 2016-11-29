@@ -196,15 +196,6 @@ md-menu-item {
 		}
 	}
 
-	.progress {
-		padding: 5px;
-
-		md-progress-linear {
-			padding: 20px;
-			padding-top: 0px;
-		}
-	}
-
 	&:after {
 		background-image: url(/img/betalogo.png);
 		background-repeat: no-repeat;
@@ -219,6 +210,25 @@ md-menu-item {
 		content: ' ';
 
 		@include transform(translateX(-50%) translateY(-50%));
+	}
+}
+
+.transfer-list {
+	position: absolute !important;
+	width: 100%;
+
+	md-content {
+		max-height: 165px;
+
+		md-item {
+			height: 45px;
+			padding: 5px;
+
+			md-progress-linear {
+				padding: 20px;
+				padding-top: 0px;
+			}
+		}
 	}
 }
 
