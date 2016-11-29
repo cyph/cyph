@@ -256,9 +256,10 @@ md-menu-item {
 }
 
 .message-item.author-app .message {
-	margin-left: 50%;
+	text-align: center;
+	width: 85%;
 
-	@include transform(translateX(-50%));
+	@include transform(translateX(7.5%));
 }
 
 .message-item {
@@ -445,13 +446,6 @@ md-menu-item {
 	.message-item.author-app {
 		width: 90%;
 		background-color: transparent;
-
-		.message {
-			margin-left: 0px;
-			text-align: center;
-
-			@include transform(none);
-		}
 
 		.message-timestamp {
 			text-align: center;
