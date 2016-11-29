@@ -12,8 +12,13 @@ export class Firebase {
 	/** @ignore */
 	/* tslint:disable-next-line:member-ordering */
 	public static readonly _	= (async () => {
-		if (typeof firebase === 'undefined') {
-			return;
+		for (let i = 0 ; typeof firebase === 'undefined' ; ++i) {
+			if (i < 2) {
+				await Util.sleep();
+			}
+			else {
+				return;
+			}
 		}
 
 		Firebase.app	= await Util.retryUntilSuccessful(() =>

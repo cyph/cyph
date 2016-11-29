@@ -42,3 +42,5 @@ if (!('Uint8Array' in self)) {
 	(<any> self).Uint32Array		= Array;
 	(<any> self).Uint8ClampedArray	= Array;
 }
+
+(<any> self).sodium.memzero	= () => {};
