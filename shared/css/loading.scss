@@ -28,14 +28,14 @@
 	> .transition {
 		@include animation(preloadfadeout 500ms linear);
 
-		@include animation-delay(1s);
+		@include animation-delay(2s);
 
 		@include animation-fill-mode(forwards);
 
 		+ .loading {
 			@include animation(preloadfadein 500ms linear);
 
-			@include animation-delay(1.5s);
+			@include animation-delay(2.75s);
 
 			@include animation-fill-mode(backwards);
 		}
