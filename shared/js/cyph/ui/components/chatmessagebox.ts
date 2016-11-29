@@ -111,7 +111,7 @@ export class ChatMessageBox
 						await Util.sleep();
 					}
 
-					$textarea.click(e => {
+					$textarea.on('mousedown', e => {
 						const now: number	= Util.timestamp();
 
 						const wasButtonClicked	=
@@ -147,10 +147,6 @@ export class ChatMessageBox
 
 						e.stopPropagation();
 						e.preventDefault();
-
-						if (!VirtualKeyboardWatcher.isOpen) {
-							$textarea.blur();
-						}
 					});
 				}
 				else {
