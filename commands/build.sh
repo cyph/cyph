@@ -240,7 +240,7 @@ compile () {
 			rm "${outputFile}" 2> /dev/null
 
 			if [ "${m}" == 'Main' ] ; then
-				cp -f "${f}.lib.js" "${outputDir}/${f}.lib.js" 2> /dev/null
+				babel --presets es2015 --compact false "${f}.lib.js" -o "${outputDir}/${f}.lib.js"
 				echo "${translations}" > "${outputFile}"
 			fi
 
