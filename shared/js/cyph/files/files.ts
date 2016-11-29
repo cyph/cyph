@@ -3,7 +3,7 @@ import {Config} from '../config';
 import {Potassium} from '../crypto/potassium';
 import {EventManager} from '../eventmanager';
 import {Firebase} from '../firebase';
-import {Events, rpcEvents, Users} from '../session/enums';
+import {Events, rpcEvents} from '../session/enums';
 import {ISession} from '../session/isession';
 import {Message} from '../session/message';
 import {Thread} from '../thread';
@@ -241,8 +241,7 @@ export class Files implements IFiles {
 
 		this.triggerUIEvent(
 			UIEvents.confirm,
-			transfer.name,
-			transfer.size,
+			transfer,
 			true,
 			async (ok: boolean) => {
 				transfer.answer	= ok;
@@ -295,13 +294,18 @@ export class Files implements IFiles {
 					transfer.percentComplete	= 100;
 
 					Potassium.clearMemory(transfer.key);
-					Util.saveFile(plaintext, transfer.name);
 					setTimeout(() => this.transfers.splice(transferIndex, 1), 1000);
+
+					this.triggerUIEvent(
+						UIEvents.save,
+						transfer,
+						plaintext
+					);
 				}
 				else {
 					this.triggerUIEvent(
 						UIEvents.rejected,
-						transfer.name
+						transfer
 					);
 
 					Firebase.app.storage().refFromURL(transfer.url).delete();
@@ -319,7 +323,13 @@ export class Files implements IFiles {
 	}
 
 	/** @inheritDoc */
-	public async send (plaintext: Uint8Array, name: string) : Promise<void> {
+	public async send (
+		plaintext: Uint8Array,
+		name: string,
+		type: string,
+		image: boolean,
+		imageSelfDestructTimeout: number
+	) : Promise<void> {
 		if (plaintext.length > Config.filesConfig.maxSize) {
 			this.triggerUIEvent(UIEvents.tooLarge);
 
@@ -337,6 +347,9 @@ export class Files implements IFiles {
 
 		const transfer: ITransfer	= new Transfer(
 			name,
+			type,
+			image,
+			imageSelfDestructTimeout,
 			plaintext.length
 		);
 
@@ -351,8 +364,7 @@ export class Files implements IFiles {
 
 		this.triggerUIEvent(
 			UIEvents.started,
-			Users.me,
-			transfer.name
+			transfer
 		);
 
 		EventManager.one('transfer-' + transfer.id, (answer: boolean) => {
@@ -360,8 +372,8 @@ export class Files implements IFiles {
 
 			this.triggerUIEvent(
 				UIEvents.completed,
-				transfer.name,
-				transfer.answer
+				transfer,
+				transfer.image ? plaintext : null
 			);
 
 			if (transfer.answer === false) {
@@ -432,8 +444,8 @@ export class Files implements IFiles {
 
 		const downloadAnswers: {[id: string]: boolean}	= {};
 
-		this.session.on(rpcEvents.files, (transfer?: ITransfer) => {
-			if (transfer) {
+		this.session.on(rpcEvents.files, (transfer: ITransfer) => {
+			if (transfer.id) {
 				/* Outgoing file transfer acceptance or rejection */
 				if (transfer.answer === true || transfer.answer === false) {
 					EventManager.trigger('transfer-' + transfer.id, transfer.answer);
@@ -454,14 +466,12 @@ export class Files implements IFiles {
 				else {
 					this.triggerUIEvent(
 						UIEvents.started,
-						Users.other,
-						transfer.name
+						transfer
 					);
 
 					this.triggerUIEvent(
 						UIEvents.confirm,
-						transfer.name,
-						transfer.size,
+						transfer,
 						false,
 						(ok: boolean) => {
 							downloadAnswers[transfer.id]	= ok;
@@ -469,7 +479,7 @@ export class Files implements IFiles {
 							if (!ok) {
 								this.triggerUIEvent(
 									UIEvents.rejected,
-									transfer.name
+									transfer
 								);
 
 								transfer.answer	= false;

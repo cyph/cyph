@@ -111,7 +111,7 @@ export class Chat extends BaseButtonManager implements IChat {
 		text: string,
 		author: string,
 		timestamp: number = Util.timestamp(),
-		shouldNotify: boolean = true,
+		shouldNotify: boolean = author !== Users.me,
 		selfDestructTimeout?: number
 	) : Promise<void> {
 		if (this.state === States.aborted || !text || typeof text !== 'string') {
@@ -261,7 +261,7 @@ export class Chat extends BaseButtonManager implements IChat {
 			this.session.send(
 				new Message(
 					rpcEvents.typing,
-					this.isMessageChanged
+					{isTyping: this.isMessageChanged}
 				)
 			);
 		}
@@ -485,13 +485,13 @@ export class Chat extends BaseButtonManager implements IChat {
 				o.text,
 				o.author,
 				o.timestamp,
-				o.author !== Users.me,
+				undefined,
 				o.selfDestructTimeout
 			)
 		);
 
-		this.session.on(rpcEvents.typing, (isFriendTyping: boolean) =>
-			this.setFriendTyping(isFriendTyping)
+		this.session.on(rpcEvents.typing, (o: {isTyping: boolean}) =>
+			this.setFriendTyping(o.isTyping)
 		);
 	}
 }

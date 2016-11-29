@@ -1,3 +1,6 @@
+import {IMessageData} from './imessagedata';
+
+
 /**
  * Message to be sent over a session, indicating some RPC event.
  */
@@ -9,5 +12,5 @@ export interface IMessage {
 	readonly event?: string;
 
 	/** Associated data (e.g. a user-facing chat message). */
-	readonly data?: any;
+	data: IMessageData;
 }

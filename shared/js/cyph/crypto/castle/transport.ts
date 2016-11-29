@@ -71,7 +71,8 @@ export class Transport {
 	/**
 	 * Handle decrypted incoming message.
 	 * @param cyphertext
-	 * @param messageId
+	 * @param plaintext
+	 * @param author
 	 */
 	public receive (
 		cyphertext: Uint8Array,

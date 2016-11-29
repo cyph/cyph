@@ -1,5 +1,4 @@
 import {ITimer} from '../../itimer';
-import {Users} from '../../session/enums';
 import {ISession} from '../../session/isession';
 import {States} from './enums';
 import {ICyphertext} from './icyphertext';
@@ -75,7 +74,7 @@ export interface IChat {
 	 */
 	addMessage (
 		text: string,
-		author: Users,
+		author: string,
 		timestamp?: number,
 		shouldNotify?: boolean,
 		selfDestructTimeout?: number

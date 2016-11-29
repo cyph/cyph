@@ -11,7 +11,7 @@ import {Errors} from '../errors';
 import {EventManager} from '../eventmanager';
 import {UrlState} from '../urlstate';
 import {Util} from '../util';
-import {CastleEvents, Events, rpcEvents, State, threadedSessionEvents, Users} from './enums';
+import {CastleEvents, Events, rpcEvents, State, threadedSessionEvents} from './enums';
 import {IMessage} from './imessage';
 import {ISession} from './isession';
 import {Message} from './message';
@@ -71,7 +71,7 @@ export class Session implements ISession {
 				this.lastIncomingMessageTimestamp	= Util.timestamp();
 
 				if (e.data) {
-					const messages: Message[]	= (() => {
+					const messages: IMessage[]	= (() => {
 						try {
 							return JSON.parse(e.data.plaintext, (_, v) => {
 								if (v && v.isUint8Array) {
@@ -93,11 +93,19 @@ export class Session implements ISession {
 					})();
 
 					for (let i = 0 ; i < messages.length ; ++i) {
-						this.receiveHandler(
-							messages[i],
-							(<number> e.data.timestamp) + i * 0.001,
-							e.data.author
-						);
+						const message	= messages[i];
+
+						if (typeof message.data !== 'object') {
+							message.data	= {
+								author: '',
+								timestamp: 0
+							};
+						}
+
+						message.data.author		= e.data.author;
+						message.data.timestamp	= (<number> e.data.timestamp) + i * 0.001;
+
+						this.receiveHandler(message);
 					}
 				}
 				break;
@@ -150,24 +158,12 @@ export class Session implements ISession {
 	}
 
 	/** @ignore */
-	private receiveHandler (message: Message, timestamp: number, author: string) : void {
+	private receiveHandler (message: IMessage) : void {
 		if (!this.receivedMessages[message.id]) {
 			this.receivedMessages[message.id]	= true;
 
 			if (message.event in rpcEvents) {
-				this.trigger(
-					message.event,
-					message.event === rpcEvents.text ?
-						{
-							author,
-							timestamp,
-							selfDestructTimeout:
-								Util.getValue(message.data, 'selfDestructTimeout')
-							,
-							text: Util.getValue(message.data, 'text')
-						} :
-						message.data
-				);
+				this.trigger(message.event, message.data);
 			}
 		}
 	}
@@ -348,17 +344,9 @@ export class Session implements ISession {
 			return;
 		}
 
-
 		for (let message of messages) {
 			if (message.event === rpcEvents.text) {
-				this.trigger(rpcEvents.text, {
-					author: Users.me,
-					selfDestructTimeout:
-						Util.getValue(message.data, 'selfDestructTimeout')
-					,
-					text: Util.getValue(message.data, 'text'),
-					timestamp: Util.timestamp()
-				});
+				this.trigger(rpcEvents.text, message.data);
 			}
 		}
 

@@ -11,8 +11,9 @@ export interface IFileManager {
 	/**
 	 * Sends file.
 	 * @param file
-	 * @param processImage If true, file is assumed to be an image,
-	 * and compressed and sent as base64 text.
+	 * @param image If true, file is processed as an image
+	 * (compressed and displayed in the message list).
+	 * @param imageSelfDestructTimeout
 	 */
-	send (file: File, processImage?: boolean) : void;
+	send (file: File, image?: boolean, imageSelfDestructTimeout?: number) : Promise<void>;
 }

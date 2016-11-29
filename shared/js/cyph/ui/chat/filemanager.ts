@@ -1,7 +1,9 @@
 import {Config} from '../../config';
+import {Potassium} from '../../crypto/potassium';
 import {UIEvents} from '../../files/enums';
 import {Files} from '../../files/files';
 import {IFiles} from '../../files/ifiles';
+import {ITransfer} from '../../files/itransfer';
 import {Events, Users} from '../../session/enums';
 import {Strings} from '../../strings';
 import {Util} from '../../util';
@@ -16,7 +18,7 @@ export class FileManager implements IFileManager {
 	public readonly files: IFiles;
 
 	/** @ignore */
-	private compressImage (image: HTMLImageElement, file: File) : string {
+	private async compressImage (image: HTMLImageElement, file: File) : Promise<Uint8Array> {
 		const canvas: HTMLCanvasElement			= document.createElement('canvas');
 		const context: CanvasRenderingContext2D	=
 			<CanvasRenderingContext2D> canvas.getContext('2d')
@@ -44,56 +46,70 @@ export class FileManager implements IFileManager {
 			context.getImageData(0, 0, image.width, image.height).data[3] !== 255
 		;
 
-		const encodedImage: string	=
-			hasTransparency ?
-				canvas.toDataURL() :
-				canvas.toDataURL(
+		return new Promise<Uint8Array>(resolve => {
+			const callback	= (blob: Blob) => {
+				const reader	= new FileReader();
+				reader.onload	= () => resolve(new Uint8Array(reader.result));
+				reader.readAsArrayBuffer(blob);
+			};
+
+			if (hasTransparency) {
+				canvas.toBlob(callback);
+			}
+			else {
+				canvas.toBlob(
+					callback,
 					'image/jpeg',
 					Math.min(960 / Math.max(canvas.width, canvas.height), 1)
-				)
-		;
-
-		return encodedImage;
+				);
+			}
+		});
 	}
 
 	/** @ignore */
-	private sendImage (encodedImage: string) : void {
-		this.chat.send('![](' + encodedImage + ')');
+	private addImage (transfer: ITransfer, plaintext: Uint8Array) : void {
+		this.chat.addMessage(
+			`![](data:${transfer.type};base64,${Potassium.toBase64(plaintext)})` +
+				`\n\n#### ${transfer.name}`
+			,
+			transfer.author,
+			undefined,
+			undefined,
+			transfer.imageSelfDestructTimeout
+		);
 	}
 
 	/** @inheritDoc */
-	public send (
+	public async send (
 		file: File,
-		processImage: boolean = file.type.indexOf('image/') === 0
-	) : void {
-		const reader: FileReader	= new FileReader();
+		image: boolean = file.type.indexOf('image/') === 0,
+		imageSelfDestructTimeout?: number
+	) : Promise<void> {
+		const plaintext	= await new Promise<Uint8Array>(resolve => {
+			const reader	= new FileReader();
 
-		if (processImage) {
-			reader.onload	= () => {
-				if (file.type === 'image/gif') {
-					this.sendImage(reader.result);
-				}
-				else {
-					const image: HTMLImageElement	= new Image();
+			if (image && file.type === 'image/gif') {
+				reader.onload	= () => {
+					const img	= document.createElement('img');
+					img.onload	= () => resolve(this.compressImage(img, file));
+					img.src		= reader.result;
+				};
 
-					image.onload	= () => this.sendImage(
-						this.compressImage(image, file)
-					);
+				reader.readAsDataURL(file);
+			}
+			else {
+				reader.onload	= () => resolve(new Uint8Array(reader.result));
+				reader.readAsArrayBuffer(file);
+			}
+		});
 
-					image.src		= reader.result;
-				}
-			};
-
-			reader.readAsDataURL(file);
-		}
-		else {
-			reader.onload	= () => this.files.send(
-				new Uint8Array(reader.result),
-				file.name
-			);
-
-			reader.readAsArrayBuffer(file);
-		}
+		this.files.send(
+			plaintext,
+			file.name,
+			file.type,
+			image,
+			imageSelfDestructTimeout
+		);
 	}
 
 	constructor (
@@ -113,73 +129,98 @@ export class FileManager implements IFileManager {
 			}) => {
 				switch (e.event) {
 					case UIEvents.completed: {
-						const name: string		= e.args[0];
-						const answer: boolean	= e.args[1];
+						const transfer: ITransfer	= e.args[0];
+						const plaintext: Uint8Array	= e.args[1];
 
-						const message: string	= answer ?
-							Strings.outgoingFileSaved :
-							Strings.outgoingFileRejected
-						;
+						if (transfer.image) {
+							this.addImage(
+								transfer,
+								plaintext
+							);
+						}
+						else {
+							const message: string	= transfer.answer ?
+								Strings.outgoingFileSaved :
+								Strings.outgoingFileRejected
+							;
 
-						this.chat.addMessage(
-							message + ' ' + name,
-							Users.app
-						);
+							this.chat.addMessage(
+								`${message} ${transfer.name}`,
+								Users.app
+							);
+						}
 						break;
 					}
 					case UIEvents.confirm: {
-						const name: string						= e.args[0];
-						const size: number						= e.args[1];
-						const isSave: boolean					= e.args[2];
-						const callback: (ok: boolean) => void	= e.args[3];
+						const transfer: ITransfer				= e.args[0];
+						const isSave: boolean					= e.args[1];
+						const callback: (ok: boolean) => void	= e.args[2];
 
 						const title	=
-							`${Strings.incomingFile} ${name} (${Util.readableByteLength(size)})`
+							`${Strings.incomingFile} ${transfer.name} ` +
+							`(${Util.readableByteLength(transfer.size)})`
 						;
 
-						callback(await this.dialogManager.confirm({
-							title,
-							cancel: isSave ?
-								Strings.discard :
-								Strings.reject
-							,
-							content: isSave ?
-								Strings.incomingFileSave :
-								Strings.incomingFileDownload
-							,
-							ok: isSave ?
-								Strings.save :
-								Strings.accept
-						}));
+						callback(
+							(!isSave && transfer.size < Config.filesConfig.approvalLimit) ||
+							(isSave && transfer.image) ||
+							await this.dialogManager.confirm({
+								title,
+								cancel: isSave ?
+									Strings.discard :
+									Strings.reject
+								,
+								content: isSave ?
+									Strings.incomingFileSave :
+									Strings.incomingFileDownload
+								,
+								ok: isSave ?
+									Strings.save :
+									Strings.accept
+							})
+						);
 						break;
 					}
 					case UIEvents.rejected: {
-						const name: string		= e.args[0];
+						const transfer: ITransfer	= e.args[0];
 
 						this.chat.addMessage(
-							Strings.incomingFileRejected + ' ' + name,
+							`${Strings.incomingFileRejected} ${transfer.name}`,
 							Users.app,
 							undefined,
 							false
 						);
 						break;
 					}
-					case UIEvents.started: {
-						const user: string	= e.args[0];
-						const name: string	= e.args[1];
+					case UIEvents.save: {
+						const transfer: ITransfer	= e.args[0];
+						const plaintext: Uint8Array	= e.args[1];
 
-						const isFromMe: boolean	= user === Users.me;
-						const message: string	= isFromMe ?
+						if (transfer.image) {
+							this.addImage(
+								transfer,
+								plaintext
+							);
+						}
+						else {
+							Util.saveFile(plaintext, transfer.name);
+						}
+						break;
+					}
+					case UIEvents.started: {
+						const transfer: ITransfer	= e.args[0];
+
+						const message: string	= transfer.author === Users.me ?
 							Strings.fileTransferInitMe :
 							Strings.fileTransferInitFriend
 						;
 
-						this.chat.addMessage(
-							message + ' ' + name,
-							Users.app,
-							undefined,
-							!isFromMe
-						);
+						if (!transfer.image) {
+							this.chat.addMessage(
+								`${message} ${transfer.name}`,
+								Users.app
+							);
+						}
 						break;
 					}
 					case UIEvents.tooLarge: {

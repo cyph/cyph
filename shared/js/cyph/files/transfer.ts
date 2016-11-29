@@ -1,3 +1,4 @@
+import {Users} from '../session/enums';
 import {Util} from '../util';
 import {ITransfer} from './itransfer';
 
@@ -7,6 +8,15 @@ export class Transfer implements ITransfer {
 	constructor (
 		/** @inheritDoc */
 		public readonly name: string = '',
+
+		/** @inheritDoc */
+		public readonly type: string = '',
+
+		/** @inheritDoc */
+		public readonly image: boolean = false,
+
+		/** @inheritDoc */
+		public readonly imageSelfDestructTimeout: number = 0,
 
 		/** @inheritDoc */
 		public readonly size: number = 0,
@@ -27,6 +37,12 @@ export class Transfer implements ITransfer {
 		public readonly id: string = Util.generateGuid(),
 
 		/** @inheritDoc */
-		public readonly answer: boolean = null
+		public readonly answer: boolean = null,
+
+		/** @inheritDoc */
+		public readonly author: string = Users.me,
+
+		/** @inheritDoc */
+		public readonly timestamp: number = Util.timestamp()
 	) {}
 }

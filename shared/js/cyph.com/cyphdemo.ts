@@ -18,7 +18,7 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 
 	/** @ignore */
 	private static readonly facebookPicMessage: Promise<string>	= (async () =>
-		'![](' + (await CyphDemo.facebookPicUrl) + ')'
+		`![](${await CyphDemo.facebookPicUrl})\n\n#### mynewpic.jpg`
 	)();
 
 	/** @ignore */
