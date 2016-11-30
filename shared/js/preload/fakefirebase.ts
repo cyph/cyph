@@ -4,7 +4,7 @@
 
 
 (<any> self).firebase	= {
-	initializeApp: () => ({
+	apps: [{
 		storage: () => ({
 			ref: () => ({
 				put: (blob: Blob) => {
@@ -48,5 +48,5 @@
 				delete: () => {}
 			})
 		})
-	})
+	}]
 };
