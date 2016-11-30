@@ -60,8 +60,8 @@ export class Channel implements IChannel {
 			onopen?: (isAlice: boolean) => void;
 		}) = {}
 	) { (async () => {
-		this.channelRef		= await Util.retryUntilSuccessful(() =>
-			Firebase.app.database().ref('channels').child(channelName)
+		this.channelRef		= await Util.retryUntilSuccessful(async () =>
+			(await Firebase.app).database().ref('channels').child(channelName)
 		);
 
 		this.messagesRef	= await Util.retryUntilSuccessful(() =>

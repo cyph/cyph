@@ -284,7 +284,7 @@ export class Files implements IFiles {
 						85
 					);
 
-					Firebase.app.storage().refFromURL(transfer.url).delete();
+					(await Firebase.app).storage().refFromURL(transfer.url).delete();
 
 					const plaintext: Uint8Array	= await this.decryptFile(
 						cyphertext,
@@ -308,7 +308,7 @@ export class Files implements IFiles {
 						transfer
 					);
 
-					Firebase.app.storage().refFromURL(transfer.url).delete();
+					(await Firebase.app).storage().refFromURL(transfer.url).delete();
 				}
 			}
 		);
@@ -398,7 +398,7 @@ export class Files implements IFiles {
 		Util.retryUntilComplete(async (retry) => {
 			const path: string	= 'ephemeral/' +  Util.generateGuid();
 
-			uploadTask	= Firebase.app.storage().ref(path).put(new Blob([o.cyphertext]));
+			uploadTask	= (await Firebase.app).storage().ref(path).put(new Blob([o.cyphertext]));
 
 			uploadTask.on(
 				'state_changed',
