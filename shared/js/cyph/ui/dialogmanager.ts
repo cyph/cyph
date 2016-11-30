@@ -4,6 +4,9 @@ import {IDialogManager} from './idialogmanager';
 
 /** @inheritDoc */
 export class DialogManager implements IDialogManager {
+	/** @ignore */
+	private readonly lock: {}	= {};
+
 	/** @inheritDoc */
 	public async alert (
 		o: {
@@ -11,12 +14,14 @@ export class DialogManager implements IDialogManager {
 			content: string;
 			ok: string;
 		}
-	) : Promise<any> {
-		return this.$mdDialog.show(
-			this.$mdDialog.alert().
-				title(o.title).
-				textContent(o.content).
-				ok(o.ok)
+	) : Promise<void> {
+		Util.lock(this.lock, async () =>
+			this.$mdDialog.show(
+				this.$mdDialog.alert().
+					title(o.title).
+					textContent(o.content).
+					ok(o.ok)
+			)
 		);
 	}
 
@@ -33,10 +38,10 @@ export class DialogManager implements IDialogManager {
 		ok: boolean;
 		locals: any;
 	}> {
-		return <Promise<{
+		return Util.lock(this.lock, async () => new Promise<{
 			ok: boolean;
 			locals: any;
-		}>> new Promise(resolve => this.$mdDialog.show({
+		}>(resolve => this.$mdDialog.show({
 			clickOutsideToClose: true,
 			controller: <any> [
 				'$scope',
@@ -58,7 +63,7 @@ export class DialogManager implements IDialogManager {
 			onComplete: o.oncomplete,
 			template: o.template,
 			templateUrl: o.templateUrl
-		}));
+		})));
 	}
 
 	/** @inheritDoc */
@@ -71,27 +76,29 @@ export class DialogManager implements IDialogManager {
 			timeout?: number;
 		}
 	) : Promise<boolean> {
-		const promise	= this.$mdDialog.show(
-			this.$mdDialog.confirm().
-				title(o.title).
-				textContent(o.content).
-				ok(o.ok).
-				cancel(o.cancel)
-		);
+		return Util.lock(this.lock, async () => {
+			const promise	= this.$mdDialog.show(
+				this.$mdDialog.confirm().
+					title(o.title).
+					textContent(o.content).
+					ok(o.ok).
+					cancel(o.cancel)
+			);
 
-		const timeoutId	= 'timeout' in o ?
-			setTimeout(() => this.$mdDialog.cancel(promise), o.timeout) :
-			null
-		;
+			const timeoutId	= 'timeout' in o ?
+				setTimeout(() => this.$mdDialog.cancel(promise), o.timeout) :
+				null
+			;
 
-		try {
-			return (await promise.catch(_ => false));
-		}
-		finally {
-			if (timeoutId) {
-				clearTimeout(timeoutId);
+			try {
+				return (await promise.catch(_ => false));
 			}
-		}
+			finally {
+				if (timeoutId) {
+					clearTimeout(timeoutId);
+				}
+			}
+		});
 	}
 
 	/** @inheritDoc */

@@ -12,7 +12,7 @@ export interface IDialogManager {
 			content: string;
 			ok: string;
 		}
-	) : Promise<any>;
+	) : Promise<void>;
 
 	/**
 	 * Generic modal implementation that takes a template / content.
