@@ -193,9 +193,9 @@
 			active: $ctrl.self.state === $ctrl.cyph.UI.Chat.States.chat
 		}'
 	>
-		<md-content>
+		<md-content class='md-no-flicker'>
 			<md-list layout='column'>
-				<md-item
+				<md-list-item
 					class='transfer'
 					ng-repeat='transfer in $ctrl.self.fileManager.files.transfers'
 					layout='row'
@@ -216,7 +216,7 @@
 							layout='row'
 						></md-progress-linear>
 					</div>
-				</md-item>
+				</md-list-item>
 			</md-list>
 		</md-content>
 	</div>
@@ -238,9 +238,9 @@
 				).toString() + "px"
 		}'
 	>
-		<md-content class='nano-content'>
+		<md-content class='nano-content md-no-flicker'>
 			<md-list layout='column'>
-				<md-item
+				<md-list-item
 					class='message-item unread'
 					ng-class='[
 						"author-" + (
@@ -314,9 +314,9 @@
 						</div>
 					</div>
 					<div class='self-destruct-cover'></div>
-				</md-item>
+				</md-list-item>
 
-				<md-item
+				<md-list-item
 					class='friend-is-typing'
 					ng-class='{"show": $ctrl.self.isFriendTyping}'
 					layout='row'
@@ -326,9 +326,9 @@
 						<div class='bounce2'></div>
 						<div class='bounce3'></div>
 					</span>
-				</md-item>
+				</md-list-item>
 
-				<md-item
+				<md-list-item
 					class='chat-end-message'
 					ng-show='$ctrl.self.isDisconnected && !$ctrl.hideDisconnectMessage'
 					layout='row'
@@ -339,7 +339,7 @@
 							<ng-transclude></ng-transclude>
 						</md-card-content>
 					</md-card>
-				</md-item>
+				</md-list-item>
 			</md-list>
 		</md-content>
 	</div>
