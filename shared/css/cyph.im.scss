@@ -196,6 +196,10 @@ md-menu-item {
 		}
 	}
 
+	md-card + .md-secondary-container, .friend-is-typing .md-secondary-container {
+		display: none;
+	}
+
 	&:after {
 		background-image: url(/img/betalogo.png);
 		background-repeat: no-repeat;
@@ -267,6 +271,9 @@ md-menu-item {
 
 .message-item.author-app .message {
 	text-align: center;
+}
+
+.chat-main:not(.mobile) .message-item.author-app .message {
 	width: 85%;
 
 	@include transform(translateX(7.5%));
