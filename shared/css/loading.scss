@@ -26,16 +26,16 @@
 	}
 
 	> .transition {
-		@include animation(preloadfadeout 1s linear);
+		@include animation(preloadfadeout 1.5s linear);
 
 		@include animation-delay(1.5s);
 
 		@include animation-fill-mode(forwards);
 
 		+ .loading {
-			@include animation(preloadfadein 500ms linear);
+			@include animation(preloadfadein 1.5s linear);
 
-			@include animation-delay(2.75s);
+			@include animation-delay(2.5s);
 
 			@include animation-fill-mode(backwards);
 		}
