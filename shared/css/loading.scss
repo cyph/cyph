@@ -26,16 +26,14 @@
 	}
 
 	> .transition {
-		@include animation(preloadfadeout 1.5s linear);
-
-		@include animation-delay(1.5s);
+		@include animation(preloadfadeout 500ms linear);
 
 		@include animation-fill-mode(forwards);
 
 		+ .loading {
-			@include animation(preloadfadein 1.5s linear);
+			@include animation(preloadfadein 500ms linear);
 
-			@include animation-delay(2.5s);
+			@include animation-delay(500ms);
 
 			@include animation-fill-mode(backwards);
 		}
@@ -67,7 +65,7 @@ html.load-complete #pre-load {
 		}
 	}
 
-	> *:not(.logo-animation) {
+	> :not(.logo-animation) {
 		letter-spacing: 1px;
 		color: #f1f1f1;
 		text-align: center;
