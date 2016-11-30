@@ -557,7 +557,7 @@ if [ "${websign}" ] ; then
 
 				content	= content.
 					replace(
-						new RegExp(`(src|href)=(\\\\?['"'"'"])/?${subresource}\\\\?['"'"'"]`, "g"),
+						new RegExp(`(src|href|content)=(\\\\?['"'"'"])/?${subresource}\\\\?['"'"'"]`, "g"),
 						`WEBSIGN-SRI-DATA-START☁$2☁☁☁${dataURI}☁WEBSIGN-SRI-DATA-END`
 					).replace(
 						new RegExp(`/?${subresource}(\\?websign-sri-disable)?`, "g"),
