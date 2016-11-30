@@ -44,7 +44,6 @@ export class FileInput
 			constructor ($element: JQuery) {
 				const $input	= $element.children();
 				const input		= <HTMLInputElement> $input[0];
-				const lock		= {};
 
 				$input.
 					change(() => {
@@ -59,15 +58,9 @@ export class FileInput
 						e.stopPropagation();
 						e.preventDefault();
 					}).
-					parent().parent().click(async () => Util.lock(lock, async () => {
-						Util.triggerClick(input);
-
-						for (let i = 0 ; input.files.length < 1 && i < 10 ; ++i) {
-							await Util.sleep(500);
-						}
-
-						await Util.sleep(500);
-					}))
+					parent().parent().click(() =>
+						Util.triggerClick(input)
+					)
 				;
 			}
 		},
