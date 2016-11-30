@@ -132,11 +132,8 @@ export class FileManager implements IFileManager {
 						const transfer: ITransfer	= e.args[0];
 						const plaintext: Uint8Array	= e.args[1];
 
-						if (transfer.image) {
-							this.addImage(
-								transfer,
-								plaintext
-							);
+						if (transfer.answer && transfer.image) {
+							this.addImage(transfer, plaintext);
 						}
 						else {
 							const message: string	= transfer.answer ?
@@ -197,10 +194,7 @@ export class FileManager implements IFileManager {
 						const plaintext: Uint8Array	= e.args[1];
 
 						if (transfer.image) {
-							this.addImage(
-								transfer,
-								plaintext
-							);
+							this.addImage(transfer, plaintext);
 						}
 						else {
 							Util.saveFile(plaintext, transfer.name);
