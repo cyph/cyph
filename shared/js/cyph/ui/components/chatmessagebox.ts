@@ -52,6 +52,15 @@ export class ChatMessageBox
 			/** @ignore */
 			public isSpeedDialReady: boolean;
 
+			/** @ignore */
+			public async openMenu ($mdMenu: any, $event: any) : Promise<void> {
+				/* Workaround for Angular Material menu bug */
+				$(':focus').blur();
+				await Util.sleep();
+
+				$mdMenu.open($event);
+			}
+
 			constructor ($element: JQuery) { (async () => {
 				while (!cyph) {
 					await Util.sleep();
