@@ -560,7 +560,7 @@ if [ "${websign}" ] ; then
 						new RegExp(`(src|href)=(\\\\?['"'"'"])/?${subresource}\\\\?['"'"'"]`, "g"),
 						`WEBSIGN-SRI-DATA-START☁$2☁☁☁${dataURI}☁WEBSIGN-SRI-DATA-END`
 					).replace(
-						new RegExp(`/?${subresource}`, "g"),
+						new RegExp(`/?${subresource}(\\?websign-sri-disable)?`, "g"),
 						dataURI
 					).replace(
 						/☁☁☁/g,
