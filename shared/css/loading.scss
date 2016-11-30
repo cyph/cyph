@@ -26,14 +26,14 @@
 	}
 
 	> .transition {
-		@include animation(preloadfadeout 500ms linear);
+		@include animation(preloadfadeout 1.5s linear);
 
 		@include animation-fill-mode(forwards);
 
 		+ .loading {
-			@include animation(preloadfadein 500ms linear);
+			@include animation(preloadfadein 1s linear);
 
-			@include animation-delay(500ms);
+			@include animation-delay(1.5s);
 
 			@include animation-fill-mode(backwards);
 		}
@@ -52,7 +52,7 @@ html.load-complete #pre-load {
 	padding: 10px;
 
 	> .logo-animation {
-		height: 33%;
+		height: 33vh;
 		margin-bottom: 20px;
 
 		> img {
