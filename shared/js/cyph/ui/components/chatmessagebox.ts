@@ -123,6 +123,10 @@ export class ChatMessageBox
 					$textarea.on('mousedown', e => {
 						const now: number	= Util.timestamp();
 
+						if ($textarea.is(':focus') && !VirtualKeyboardWatcher.isOpen) {
+							$textarea.blur();
+						}
+
 						const wasButtonClicked	=
 							(now - lastClick <= 500) ||
 							$buttons.filter(':visible').toArray().reduce(
