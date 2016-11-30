@@ -2,6 +2,7 @@
 
 cd $(cd "$(dirname "$0")"; pwd)/..
 dir="$(pwd)"
+originalArgs="${*}"
 
 
 cacheBustedProjects='cyph.com'
@@ -828,4 +829,13 @@ gcloud app deploy --quiet --no-promote --project cyphme --version $version $(
 
 cd "${dir}"
 rm -rf .build 2> /dev/null
-mv ~/.build ./
+
+if [ "${test}" -a ! "${simple}" ] ; then
+	mv ~/.build ~/.build.original
+	./commands/deploy.sh --simple $originalArgs
+elif [ -d ~/.build.original ] ; then
+	mv ~/.build  ~/.build.original/simplebuild
+	mv ~/.build.original .build
+else
+	mv ~/.build ./
+fi
