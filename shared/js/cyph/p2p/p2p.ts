@@ -306,6 +306,12 @@ export class P2P implements IP2P {
 		webRTC.connection.emit('connect');
 
 		this.webRTC	= webRTC;
+
+		/* Temporary workaround */
+		if (this.session.state.isAlice) {
+			await Util.sleep(5000);
+			this.refresh();
+		}
 	}
 
 	/** @inheritDoc */

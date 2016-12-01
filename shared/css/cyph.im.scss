@@ -185,8 +185,12 @@ md-menu-item {
 		.ellipsis-spinner {
 			margin: 0px;
 
-			.chat-main.mobile & {
+			.chat-main.mobile &, .chat-main.video & {
 				margin: auto;
+
+				> div {
+					background-color: #444;
+				}
 			}
 
 			> div {
@@ -236,7 +240,7 @@ md-menu-item {
 	}
 }
 
-.chat-main:not(.mobile) .friend-is-typing {
+.chat-main:not(.mobile):not(.video) .friend-is-typing {
 	text-align: left;
 	padding-left: 20px;
 }
@@ -273,7 +277,7 @@ md-menu-item {
 	text-align: center;
 }
 
-.chat-main:not(.mobile) .message-item.author-app .message {
+.chat-main:not(.mobile):not(.video) .message-item.author-app .message {
 	width: 85%;
 
 	@include transform(translateX(7.5%));
@@ -335,7 +339,7 @@ md-menu-item {
 	}
 }
 
-.chat-main:not(.mobile) .message-list .message-item {
+.chat-main:not(.mobile):not(.video) .message-item, .message-item.author-app {
 	&:before, &:after {
 		display: none;
 	}
@@ -354,11 +358,11 @@ md-menu-item {
 	max-width: 85%;
 }
 
-.chat-main.mobile md-list {
+.chat-main.mobile.video md-list {
 	padding-top: 0px;
 
-	> md-item:first-child {
-		padding-top: 25px;
+	> md-list-item:first-child {
+		margin-top: 40px !important;
 	}
 }
 
@@ -479,7 +483,7 @@ md-menu-item {
 	}
 }
 
-.chat-main:not(.mobile) .message-item:not(.unread) {
+.chat-main:not(.mobile):not(.video) .message-item:not(.unread) {
 	@include animation(inkRippleCheckbox 0.35s linear 0s 1 normal);
 }
 
@@ -903,7 +907,7 @@ html:not(.mobile) .amazon-link {
 		z-index: 1;
 	}
 
-	*, ~ *, ~ * * {
+	*, ~ *, ~ * :not(.md-fab-action-item) {
 		@include transition(transform 0.5s ease-in-out !important);
 	}
 
