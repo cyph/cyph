@@ -114,7 +114,7 @@ html.load-complete #pre-load {
 			width: 35%;
 			top: 35%;
 			left: 65%;
-			background-position: 100% 47.5%;
+			background-position: 100% 47%;
 
 			@include animation(logo2 1890ms step-end);
 		}
@@ -124,7 +124,7 @@ html.load-complete #pre-load {
 			width: 65%;
 			top: 35%;
 			left: 0%;
-			background-position: 0% 47.5%;
+			background-position: 0% 47%;
 
 			@include animation(logo3 1890ms step-end);
 		}

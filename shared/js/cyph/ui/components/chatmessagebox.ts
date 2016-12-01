@@ -56,8 +56,12 @@ export class ChatMessageBox
 			/** @ignore */
 			public async openMenu ($mdMenu: any, $event: any) : Promise<void> {
 				/* Workaround for Angular Material menu bug */
-				$(':focus').blur();
-				await Util.sleep();
+				let $focused: JQuery;
+				do {
+					$focused	= $(':focus');
+					$focused.blur();
+					await Util.sleep();
+				} while ($focused.length > 0);
 
 				$mdMenu.open($event);
 			}

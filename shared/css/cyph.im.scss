@@ -279,7 +279,7 @@ md-menu-item {
 	@include transform(translateX(7.5%));
 }
 
-.message-list .message-item {
+.message-list .message-item, .chat-cyphertext .message-item {
 	padding: 7.5px 10px 5px 10px;
 	margin: 2.5px;
 	min-height: 0px;
