@@ -4,6 +4,25 @@ cd $(cd "$(dirname "$0")"; pwd)/..
 dir="$(pwd)"
 
 
+clone () {
+	repo="${1}"
+	outdir="${2}"
+
+	git clone \
+		-b $(
+			{
+				git ls-remote --tags ${repo};
+				echo '//master';
+			} | grep -v '{}' | awk -F'/' '{print $3}' | sort -V | tail -n1
+		) \
+		--depth 1 \
+		--recursive \
+		${repo} \
+		${outdir}
+
+	rm -rf ${outdir}/.git
+}
+
 ./commands/keycache.sh
 
 mkdir -p ~/lib/js/crypto
@@ -150,17 +169,10 @@ find . -name '*@*.js' -type f -exec bash -c '
 ' \;
 
 
-git clone https://github.com/angular/zone.js.git
-rm -rf zone.js/.git
+clone https://github.com/angular/zone.js.git
 
 cd crypto
-sodiumrepo='https://github.com/jedisct1/libsodium.js'
-git clone \
-	-b $(git ls-remote --tags $sodiumrepo | grep -v '{}' | awk -F'/' '{print $3}' | sort -V | tail -n1) \
-	--depth 1 \
-	--recursive \
-	$sodiumrepo \
-	libsodium
+clone https://github.com/jedisct1/libsodium.js libsodium
 cd libsodium
 cat > wrapper/symbols/crypto_stream_chacha20.json << EOM
 {
@@ -272,13 +284,13 @@ cd github.com
 
 mkdir gorilla
 cd gorilla
-git clone --depth 1 git://github.com/gorilla/context.git
-git clone --depth 1 git://github.com/gorilla/mux.git
+clone https://github.com/gorilla/context.git
+clone https://github.com/gorilla/mux.git
 cd ..
 
 mkdir lionelbarrow
 cd lionelbarrow
-git clone --depth 1 git://github.com/lionelbarrow/braintree-go.git
+clone https://github.com/lionelbarrow/braintree-go.git
 echo '
 func (g *Braintree) SetHTTPClient(client *http.Client) {
 	g.HttpClient = client
@@ -287,7 +299,7 @@ cd ..
 
 mkdir microcosm-cc
 cd microcosm-cc
-git clone --depth 1 git://github.com/microcosm-cc/bluemonday.git
+clone https://github.com/microcosm-cc/bluemonday.git
 cd ..
 
 cd ..
@@ -296,16 +308,16 @@ rm -rf golang.org 2> /dev/null
 mkdir -p golang.org/x
 cd golang.org/x
 
-git clone --depth 1 git://github.com/golang/net.git net.tmp
+clone https://github.com/golang/net.git net.tmp
 mkdir net
 cd net.tmp
 mv AUTHORS CONTRIBUTING.md CONTRIBUTORS LICENSE PATENTS README html context ../net/
 cd ..
 rm -rf net.tmp
 
-git clone --depth 1 git://github.com/golang/text.git
+clone https://github.com/golang/text.git
 
-git clone --depth 1 git://github.com/golang/tools.git tools-tmp
+clone https://github.com/golang/tools.git tools-tmp
 mkdir -p tools/go
 cd tools-tmp
 mv AUTHORS CONTRIBUTING.md CONTRIBUTORS LICENSE PATENTS README ../tools
