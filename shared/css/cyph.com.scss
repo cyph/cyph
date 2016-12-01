@@ -645,8 +645,16 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 	}
 
 	.message-list:after {
-		width: 15em;
+		width: 16.5em;
 		height: 16.5em;
+	}
+
+	.logo-animation.connected {
+		height: 8em;
+		width: 8em;
+		min-height: 8em;
+		min-width: 8em;
+		background-size: 8em 8em;
 	}
 
 	> .desktop {
