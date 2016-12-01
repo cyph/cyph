@@ -26,16 +26,12 @@
 	}
 
 	> .transition {
-		@include animation(preloadfadeout 1.5s linear);
+		@include animation(preloadfadeout 1s linear);
 
 		@include animation-fill-mode(forwards);
 
-		+ .loading {
-			@include animation(preloadfadein 1s linear);
-
-			@include animation-delay(1.5s);
-
-			@include animation-fill-mode(backwards);
+		+ .loading > .logo-animation * {
+			@include animation-delay(1s);
 		}
 	}
 }
@@ -43,33 +39,160 @@
 html.load-complete #pre-load {
 	pointer-events: none;
 	opacity: 0;
-
-	@include transition(opacity 0.25s linear);
 }
 
 .loading {
 	font-size: 20px;
 	padding: 10px;
 
-	> .logo-animation {
+	> .image, > .logo-animation {
 		height: 33vh;
+		width: 33vh;
+		margin-left: auto;
+		margin-right: auto;
 		margin-bottom: 20px;
+		position: relative;
 
-		> img {
-			height: 100%;
-			margin-left: auto;
-			margin-right: auto;
+		> * {
 			display: block;
-
-			@include filter(drop-shadow(3px 3px 3px rgba(68, 68, 68, 0.25)));
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			height: 100%;
+			width: 100%;
 		}
 	}
 
-	> :not(.logo-animation) {
+	> .logo-animation {
+		&, > * {
+			background-color: transparent;
+			background-repeat: no-repeat;
+			background-size: contain;
+
+			@include animation-iteration-count(infinite !important);
+
+			@include filter(drop-shadow(3px 3px 3px rgba(68, 68, 68, 0.25)));
+		}
+
+		&.connected {
+			@include animation(logoconnected 3250ms step-end);
+
+			> * {
+				@include animation(none !important);
+			}
+		}
+
+		&:not(.connected) > * {
+			opacity: 0;
+		}
+
+		> :nth-child(1) {
+			background-image: url(/img/logo.animated/0.png);
+
+			@include animation(logo0 1890ms step-end);
+		}
+
+		> :nth-child(2) {
+			background-image: url(/img/logo.animated/1.png);
+
+			@include animation(logo1 1890ms step-end);
+		}
+
+		> :nth-child(3) {
+			background-image: url(/img/logo.animated/2.png);
+
+			@include animation(logo2 1890ms step-end);
+		}
+
+		> :nth-child(4) {
+			background-image: url(/img/logo.animated/3.png);
+
+			@include animation(logo3 1890ms step-end);
+		}
+
+		> :nth-child(5) {
+			background-image: url(/img/logo.animated/4.png);
+
+			@include animation(logo4 1890ms step-end);
+		}
+	}
+
+	> :not(.image):not(.logo-animation) {
 		letter-spacing: 1px;
 		color: #f1f1f1;
 		text-align: center;
 		font-family: Ubuntu, 'Century Gothic', CenturyGothic, AppleGothic, sans-serif;
+	}
+}
+
+
+@include keyframes(logoconnected) {
+	0%, 38.4%, 53.8%, 69.2%, 100% {
+		opacity: 1;
+	}
+
+	30.8%, 46.2%, 61.5% {
+		opacity: 0;
+	}
+}
+
+@include keyframes(logo0) {
+	0%, 100% {
+		opacity: 0;
+	}
+
+	26.4% {
+		opacity: 1;
+	}
+}
+
+@include keyframes(logo1) {
+	0%, 95.8%, 100% {
+		opacity: 0;
+	}
+
+	30.7% {
+		opacity: 1;
+	}
+}
+
+@include keyframes(logo2) {
+	0%, 91.5%, 100% {
+		opacity: 0;
+	}
+
+	34.9% {
+		opacity: 1;
+	}
+}
+
+@include keyframes(logo3) {
+	0%, 87.3%, 100% {
+		opacity: 0;
+	}
+
+	39.2% {
+		opacity: 1;
+	}
+}
+
+@include keyframes(logo4) {
+	0%, 83.1%, 100% {
+		opacity: 0;
+	}
+
+	43.4% {
+		opacity: 1;
+	}
+}
+
+@include keyframes(preloadfadeout) {
+	0% {
+		opacity: 1;
+	}
+
+	100% {
+		opacity: 0;
 	}
 }
 
@@ -99,27 +222,5 @@ html.load-complete #pre-load {
 
 	50% {
 		@include transform(scale(1));
-	}
-}
-
-
-@include keyframes(preloadfadein) {
-	0% {
-		opacity: 0;
-	}
-
-	100% {
-		opacity: 1;
-	}
-}
-
-
-@include keyframes(preloadfadeout) {
-	0% {
-		opacity: 1;
-	}
-
-	100% {
-		opacity: 0;
 	}
 }

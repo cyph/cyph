@@ -13,6 +13,10 @@ html:not(.mobile) #main {
 	padding-right: initial;
 }
 
+html.load-complete #pre-load {
+	@include transition(opacity 0.25s linear);
+}
+
 html:not(.load-complete) {
 	#main > section, footer {
 		display: none;
