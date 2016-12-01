@@ -487,16 +487,6 @@ md-menu-item {
 	@include animation(inkRippleCheckbox 0.35s linear 0s 1 normal);
 }
 
-html:not(.mobile) {
-	.p2p-section {
-		margin-top: 10px;
-
-		button {
-			margin: 5px;
-		}
-	}
-}
-
 html.mobile button[disabled] {
 	opacity: 0.25;
 }
@@ -862,18 +852,6 @@ html:not(.mobile) .formatting-help {
 
 html.mobile .formatting-help {
 	font-size: 75%;
-}
-
-.amazon-link {
-	md-checkbox {
-		position: absolute;
-		right: 24px;
-		margin-top: -10px;
-	}
-}
-
-html:not(.mobile) .amazon-link {
-	max-width: 600px;
 }
 
 .chat-main .beta-signup-form {
