@@ -139,33 +139,31 @@
 			"check-separator",
 			"check-type",
 			"check-typecast"
-		]
+		],
 
 
 		/* Codelyzer */
 
-		/*
-			Pending codelyzer tslint v4 support:
-
-			"directive-selector": [true, "attribute", "cyph", "camelCase"],
-			"component-selector": [true, "element", "cyph", "kebab-case"],
-			"use-input-property-decorator": true,
-			"use-output-property-decorator": true,
-			"use-host-property-decorator": true,
-			"no-attribute-parameter-decorator": true,
-			"no-input-rename": true,
-			"no-output-rename": true,
-			"no-forward-ref": true,
-			"use-life-cycle-interface": true,
-			"use-pipe-transform-interface": true,
-			"pipe-naming": [true, "camelCase", "cyph"],
-			"component-class-suffix": true,
-			"directive-class-suffix": true,
-			"import-destructuring-spacing": true,
-			"templates-use-public": true,
-			"no-access-missing-member": true,
-			"invoke-injectable": true,
-		*/
+		"component-class-suffix": false,
+		"component-selector": [true, "element", "cyph", "kebab-case"],
+		"directive-class-suffix": false,
+		"directive-selector": [true, "attribute", "cyph", "camelCase"],
+		"import-destructuring-spacing": false,
+		"invoke-injectable": true,
+		"no-access-missing-member": true,
+		"no-attribute-parameter-decorator": true,
+		"no-forward-ref": true,
+		"no-input-rename": true,
+		"no-output-rename": true,
+		"no-unused-css": true,
+		"pipe-impure": true,
+		"pipe-naming": [true, "camelCase", "cyph"],
+		"templates-use-public": true,
+		"use-host-property-decorator": true,
+		"use-input-property-decorator": true,
+		"use-life-cycle-interface": true,
+		"use-output-property-decorator": true,
+		"use-pipe-transform-interface": true
 
 
 		/* Microsoft Contrib */
