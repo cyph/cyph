@@ -512,7 +512,14 @@ done
 if [ "${websign}" ] ; then
 	# WebSign packaging
 
-	git clone git@github.com:cyph/cdn.git
+	if [ -d ~/.cyph/cdn ] ; then
+		bash -c 'cd ~/.cyph/cdn ; git reset --hard ; git clean -dfx ; git pull'
+		cp -rf ~/.cyph/cdn ./
+	else
+		git clone git@github.com:cyph/cdn.git
+		rm -rf ~/.cyph/cdn 2> /dev/null
+		cp -rf cdn ~/.cyph/
+	fi
 
 	cd cyph.im
 
