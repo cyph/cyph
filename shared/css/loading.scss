@@ -55,63 +55,84 @@ html.load-complete #pre-load {
 
 		> * {
 			display: block;
-			position: absolute;
-			top: 0px;
-			left: 0px;
-			height: 100%;
-			width: 100%;
 		}
 	}
 
+	> .image > img {
+		height: 100%;
+	}
+
 	> .logo-animation {
-		&, > * {
+		@include filter(drop-shadow(3px 3px 3px rgba(68, 68, 68, 0.25)));
+
+		&.connected, > * {
 			background-color: transparent;
 			background-repeat: no-repeat;
-			background-size: contain;
+			background-size: 33vh 33vh;
+			background-image: url(/img/logo.white.icon.png);
+			opacity: 0;
 
 			@include animation-iteration-count(infinite !important);
-
-			@include filter(drop-shadow(3px 3px 3px rgba(68, 68, 68, 0.25)));
 		}
 
 		&.connected {
 			@include animation(logoconnected 3250ms step-end);
 
 			> * {
-				@include animation(none !important);
+				display: none;
 			}
 		}
 
-		&:not(.connected) > * {
-			opacity: 0;
+		> * {
+			position: absolute;
 		}
 
 		> :nth-child(1) {
-			background-image: url(/img/logo.animated/0.png);
+			height: 40%;
+			width: 60%;
+			top: 60%;
+			left: 40%;
+			background-position: 100% 100%;
 
 			@include animation(logo0 1890ms step-end);
 		}
 
 		> :nth-child(2) {
-			background-image: url(/img/logo.animated/1.png);
+			height: 40%;
+			width: 40%;
+			top: 60%;
+			left: 0%;
+			background-position: 0% 100%;
 
 			@include animation(logo1 1890ms step-end);
 		}
 
 		> :nth-child(3) {
-			background-image: url(/img/logo.animated/2.png);
+			height: 25%;
+			width: 35%;
+			top: 35%;
+			left: 65%;
+			background-position: 100% 47.5%;
 
 			@include animation(logo2 1890ms step-end);
 		}
 
 		> :nth-child(4) {
-			background-image: url(/img/logo.animated/3.png);
+			height: 25%;
+			width: 65%;
+			top: 35%;
+			left: 0%;
+			background-position: 0% 47.5%;
 
 			@include animation(logo3 1890ms step-end);
 		}
 
 		> :nth-child(5) {
-			background-image: url(/img/logo.animated/4.png);
+			height: 35%;
+			width: 100%;
+			top: 0%;
+			left: 0%;
+			background-position: 0% 0%;
 
 			@include animation(logo4 1890ms step-end);
 		}
