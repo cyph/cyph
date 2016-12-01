@@ -19,6 +19,7 @@ import {ISignupForm} from '../isignupform';
  * Angular component for signup form.
  */
 @Directive({
+	/* tslint:disable-next-line:directive-selector */
 	selector: 'cyph-signup-form'
 })
 export class SignupForm

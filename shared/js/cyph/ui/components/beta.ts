@@ -17,6 +17,7 @@ import {Util} from '../../util';
  * Angular component for Cyph beta UI.
  */
 @Directive({
+	/* tslint:disable-next-line:directive-selector */
 	selector: 'cyph-beta'
 })
 export class Beta

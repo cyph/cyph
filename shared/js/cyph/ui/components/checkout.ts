@@ -20,6 +20,7 @@ import {Util} from '../../util';
  * Angular component for Braintree payment checkout UI.
  */
 @Directive({
+	/* tslint:disable-next-line:directive-selector */
 	selector: 'cyph-checkout'
 })
 export class Checkout

@@ -19,6 +19,7 @@ import {IChat} from '../chat/ichat';
  * Angular component for chat cyphertext UI.
  */
 @Directive({
+	/* tslint:disable-next-line:directive-selector */
 	selector: 'cyph-chat-cyphertext'
 })
 export class ChatCyphertext

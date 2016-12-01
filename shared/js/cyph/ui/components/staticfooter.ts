@@ -17,6 +17,7 @@ import {Util} from '../../util';
  * Angular component for static footer content.
  */
 @Directive({
+	/* tslint:disable-next-line:directive-selector */
 	selector: 'cyph-static-footer'
 })
 export class StaticFooter

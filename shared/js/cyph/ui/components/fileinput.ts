@@ -20,6 +20,7 @@ import {Util} from '../../util';
  * Angular component for taking file input.
  */
 @Directive({
+	/* tslint:disable-next-line:directive-selector */
 	selector: 'cyph-file-input'
 })
 export class FileInput

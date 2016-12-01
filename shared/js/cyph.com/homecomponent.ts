@@ -17,6 +17,7 @@ import {Util} from '../cyph/util';
  * Angular component for Cyph home page.
  */
 @Directive({
+	/* tslint:disable-next-line:directive-selector */
 	selector: 'cyph-home'
 })
 export class HomeComponent

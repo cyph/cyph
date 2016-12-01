@@ -19,6 +19,7 @@ import {ILinkConnection} from '../ilinkconnection';
  * Angular component for link connection.
  */
 @Directive({
+	/* tslint:disable-next-line:directive-selector */
 	selector: 'cyph-link-connection'
 })
 export class LinkConnection

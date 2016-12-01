@@ -22,6 +22,7 @@ import {VisibilityWatcher} from '../visibilitywatcher';
  * Angular component for chat message box.
  */
 @Directive({
+	/* tslint:disable-next-line:directive-selector */
 	selector: 'cyph-chat-message-box'
 })
 export class ChatMessageBox

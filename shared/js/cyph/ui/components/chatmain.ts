@@ -19,6 +19,7 @@ import {IChat} from '../chat/ichat';
  * Angular component for main chat UI.
  */
 @Directive({
+	/* tslint:disable-next-line:directive-selector */
 	selector: 'cyph-chat-main'
 })
 export class ChatMain

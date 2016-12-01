@@ -17,6 +17,7 @@ import {Util} from '../../util';
  * Angular component for the cyph not found screen.
  */
 @Directive({
+	/* tslint:disable-next-line:directive-selector */
 	selector: 'cyph-static-cyph-not-found'
 })
 export class StaticCyphNotFound

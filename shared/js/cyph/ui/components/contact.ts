@@ -18,6 +18,7 @@ import {Util} from '../../util';
  * Angular component for contact form UI.
  */
 @Directive({
+	/* tslint:disable-next-line:directive-selector */
 	selector: 'cyph-contact'
 })
 export class Contact
