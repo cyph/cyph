@@ -67,6 +67,10 @@ export class Timer implements ITimer {
 
 			this.updateTimestamp(timeRemaining);
 			await Util.sleep(500);
+
+			if (timeRemaining < 1) {
+				await Util.sleep(1000);
+			}
 		}
 
 		this.isComplete	= true;
