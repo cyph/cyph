@@ -148,7 +148,6 @@ html.load-complete #pre-load {
 	}
 }
 
-
 @include keyframes(logoconnected) {
 	0%, 38.4%, 53.8%, 69.2%, 100% {
 		opacity: 1;
@@ -158,6 +157,7 @@ html.load-complete #pre-load {
 		opacity: 0;
 	}
 }
+
 
 @include keyframes(logo0) {
 	0%, 100% {
@@ -169,6 +169,7 @@ html.load-complete #pre-load {
 	}
 }
 
+
 @include keyframes(logo1) {
 	0%, 95.8%, 100% {
 		opacity: 0;
@@ -178,6 +179,7 @@ html.load-complete #pre-load {
 		opacity: 1;
 	}
 }
+
 
 @include keyframes(logo2) {
 	0%, 91.5%, 100% {
@@ -189,6 +191,7 @@ html.load-complete #pre-load {
 	}
 }
 
+
 @include keyframes(logo3) {
 	0%, 87.3%, 100% {
 		opacity: 0;
@@ -198,6 +201,7 @@ html.load-complete #pre-load {
 		opacity: 1;
 	}
 }
+
 
 @include keyframes(logo4) {
 	0%, 83.1%, 100% {
@@ -209,6 +213,7 @@ html.load-complete #pre-load {
 	}
 }
 
+
 @include keyframes(preloadfadeout) {
 	0% {
 		opacity: 1;
@@ -218,6 +223,7 @@ html.load-complete #pre-load {
 		opacity: 0;
 	}
 }
+
 
 /*** SpinKit animation: http://tobiasahlin.com/spinkit/ ***/
 
