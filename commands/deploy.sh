@@ -281,7 +281,7 @@ fi
 
 defaultHost='${locationData.protocol}//${locationData.hostname}:'
 ls shared/js/cyph/envdeploy.ts | xargs -I% sed -i 's|isLocalEnv: boolean		= true|isLocalEnv: boolean		= false|g' %
-ls shared/js/cyph/envdeploy.ts | xargs -I% sed -i "s|ws://127.0.1:44000|https://cyphme.firebaseio.com|g" %
+ls shared/js/cyph/envdeploy.ts | xargs -I% sed -i "s/ws:\/\/.*:44000/https:\/\/cyphme.firebaseio.com/g" %
 
 if [ "${branch}" == 'staging' ] ; then
 	sed -i "s|false, /* IsProd */|true,|g" default/config.go
