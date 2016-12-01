@@ -218,6 +218,8 @@ export class P2P implements IP2P {
 
 		this.isActive	= true;
 
+		let initialRefresh	= true;
+
 		const iceServers: string	= await Util.request({
 			retries: 5,
 			url: Env.baseUrl + 'iceservers'
@@ -301,17 +303,21 @@ export class P2P implements IP2P {
 			this.loading	= false;
 		});
 
-		webRTC.on('readyToCall', () => webRTC.joinRoom(P2P.constants.webRTC));
+		webRTC.on('readyToCall', async () => {
+			webRTC.joinRoom(P2P.constants.webRTC);
+
+			/* Possible edge case workaround */
+			if (initialRefresh) {
+				initialRefresh	= false;
+				await Util.sleep();
+				this.refresh();
+			}
+		});
+
 		webRTC.startLocalVideo();
 		webRTC.connection.emit('connect');
 
 		this.webRTC	= webRTC;
-
-		/* Temporary workaround */
-		if (this.session.state.isAlice) {
-			await Util.sleep(5000);
-			this.refresh();
-		}
 	}
 
 	/** @inheritDoc */
