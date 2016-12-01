@@ -48,6 +48,8 @@ html.load-complete #pre-load {
 	> .image, > .logo-animation {
 		height: 33vh;
 		width: 33vh;
+		min-height: 33vh;
+		min-width: 33vh;
 		margin-left: auto;
 		margin-right: auto;
 		margin-bottom: 20px;
