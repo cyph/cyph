@@ -73,7 +73,9 @@ function WebSignSRI_Process (baseUrl) {
 				elem.setAttribute(
 					tagName === 'link' ?
 						'href' :
-						'src'
+						tagName === 'meta' ?
+							'content' :
+							'src'
 					,
 					content
 				);
