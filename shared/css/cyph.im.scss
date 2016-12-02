@@ -187,10 +187,10 @@ md-menu-item {
 
 			.chat-main.mobile &, .chat-main.video & {
 				margin: auto;
+			}
 
-				> div {
-					background-color: #444;
-				}
+			.chat-main.video & > div {
+				background-color: #444;
 			}
 
 			> div {
