@@ -176,6 +176,12 @@ elif [ "${command}" == 'commit' ] ; then
 
 	chmod -R 700 .
 
+elif [ "${command}" == 'prodmerge' ] ; then
+	args='-it'
+
+elif [ "${command}" == 'backmerge' ] ; then
+	args='-it'
+
 elif [ "${command}" == 'restart' ] ; then
 	stop
 	start
