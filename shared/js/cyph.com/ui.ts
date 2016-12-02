@@ -365,7 +365,11 @@ export class UI extends Cyph.UI.BaseButtonManager {
 					() => Elements.mainToolbar().toggleClass(
 						'new-cyph-expanded',
 						this.state === States.home && (
-							(!this.promo && Elements.heroText().is(':appeared')) ||
+							(
+								this.promo !== Promos.none &&
+								!Cyph.Env.isMobile &&
+								Elements.heroText().is(':appeared')
+							) ||
 							Cyph.UI.Elements.footer().is(':appeared')
 						)
 					),

@@ -282,9 +282,12 @@ html.mobile #hero-section {
 .feature-cycle {
 	font-family: Ubuntu;
 	font-size: 90%;
-	border-bottom: 1px solid #f1f1f1;
+	border: 1px solid #f1f1f1;
+	border-top: 0px;
+	border-left: 0px;
+	border-right: 0px;
 	display: inline-block;
-	transform: translateY(-5px);
+	@include transform(translateY(-5px));
 	width: 300px;
 }
 

@@ -34,7 +34,7 @@ ${!o.speedDialInvert ? '' : `
 	md-fab-actions .md-button {
 		background-color: #444;
 
-		md-icon {
+		md-icon:not(.dark):not(.invert), md-icon.grey {
 			color: #f1f1f1;
 		}
 	}
