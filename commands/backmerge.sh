@@ -18,9 +18,13 @@ merge () {
 	git push $(echo -n $targetSplit | sed 's/ / HEAD:/')
 }
 
+rm .git/index.lock 2> /dev/null
+
+./commands/keycache.sh
+
 branch="$(git branch | awk '/^\*/{print $2}')"
 
-git remote add internal git@github.com:cyph/internal.git
+git remote add internal git@github.com:cyph/internal.git 2> /dev/null
 git fetch --all
 git checkout internal/prod
 git pull internal prod

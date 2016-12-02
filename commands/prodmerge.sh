@@ -18,10 +18,14 @@ merge () {
 	git push $(echo -n $targetSplit | sed 's/ / HEAD:/')
 }
 
+rm .git/index.lock 2> /dev/null
+
+./commands/keycache.sh
+
 branch="$(git branch | awk '/^\*/{print $2}')"
 
-git remote add internal git@github.com:cyph/internal.git
-git remote add public git@github.com:cyph/cyph.git
+git remote add internal git@github.com:cyph/internal.git 2> /dev/null
+git remote add public git@github.com:cyph/cyph.git 2> /dev/null
 git fetch --all
 merge internal/master internal/prod
 merge internal/prod public/master
