@@ -366,7 +366,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 						'new-cyph-expanded',
 						this.state === States.home && (
 							(
-								this.promo !== Promos.none &&
+								this.promo === Promos.none &&
 								!Cyph.Env.isMobile &&
 								Elements.heroText().is(':appeared')
 							) ||
