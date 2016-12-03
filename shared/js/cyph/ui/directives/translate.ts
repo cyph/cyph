@@ -15,6 +15,41 @@ export class Translate {
 	public static readonly title: string	= 'cyphTranslate';
 
 	/** @ignore */
+	private static handleElement (
+		nativeElement: HTMLElement,
+		renderer: Renderer
+	) : void {
+		const $element	= $(nativeElement);
+		const $children	= $element.children();
+
+		for (let attr of ['alt', 'aria-label', 'content', 'label', 'placeholder']) {
+			Translate.translate(
+				$element.attr(attr),
+				translation => renderer.setElementAttribute(
+					nativeElement,
+					attr,
+					translation
+				)
+			);
+		}
+
+		if ($children.length > 0) {
+			for (let child of $children.not('[cyph-translate]').toArray()) {
+				Translate.handleElement(child, renderer);
+			}
+		}
+		else {
+			Translate.translate(
+				$element.text(),
+				translation => renderer.setText(
+					nativeElement,
+					translation
+				)
+			);
+		}
+	}
+
+	/** @ignore */
 	private static translate (
 		value: string,
 		callback: (translation: string) => void
@@ -66,29 +101,6 @@ export class Translate {
 			return;
 		}
 
-		const $element	= $(elementRef.nativeElement);
-
-		for (let attr of ['alt', 'aria-label', 'content', 'label', 'placeholder']) {
-			Translate.translate(
-				$element.attr(attr),
-				translation => renderer.setElementAttribute(
-					elementRef.nativeElement,
-					attr,
-					translation
-				)
-			);
-		}
-
-		if ($element.children().length > 0) {
-			return;
-		}
-
-		Translate.translate(
-			$element.text(),
-			translation => renderer.setText(
-				elementRef.nativeElement,
-				translation
-			)
-		);
+		Translate.handleElement(elementRef.nativeElement, renderer);
 	}
 }
