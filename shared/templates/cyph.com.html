@@ -14,8 +14,8 @@
 				/>
 			</a>
 
-			<md-button id='new-cyph' aria-label='Start new cyph' class='breathe'>
-				<a cyph-translate ng-href='{{$ctrl.cyph.Env.newCyphUrl}}'>Start new cyph</a>
+			<md-button cyph-translate id='new-cyph' aria-label='Start new cyph' class='breathe'>
+				<a ng-href='{{$ctrl.cyph.Env.newCyphUrl}}'>Start new cyph</a>
 			</md-button>
 
 			<span class='link-wrapper-outer right desktop-only'>
@@ -38,6 +38,7 @@
 
 			<span class='social-media desktop-only'>
 				<md-button
+					cyph-translate
 					aria-label='GitHub'
 					rel='noreferrer'
 					href='https://github.com/cyph'
@@ -46,6 +47,7 @@
 					<img src='/img/iconfinder/github.png' alt='GitHub icon' />
 				</md-button>
 				<md-button
+					cyph-translate
 					aria-label='Twitter'
 					rel='noreferrer'
 					href='https://twitter.com/cyph'
@@ -54,6 +56,7 @@
 					<img src='/img/iconfinder/twitter.png' alt='Twitter icon' />
 				</md-button>
 				<md-button
+					cyph-translate
 					aria-label='Facebook'
 					rel='noreferrer'
 					href='https://www.facebook.com/pages/Cyph/299270843606014'
@@ -65,7 +68,8 @@
 
 			<span flex class='mobile-only'></span>
 			<md-button
-				cyph-translate aria-label='Menu'
+				cyph-translate
+				aria-label='Menu'
 				ng-click='$ctrl.ui.openMobileMenu()'
 				class='mobile-only'
 			>
@@ -124,6 +128,7 @@
 			</div>
 			<div>
 				<md-button
+					cyph-translate
 					rel='noreferrer'
 					href='https://github.com/cyph'
 					target='_blank'
@@ -137,6 +142,7 @@
 			</div>
 			<div>
 				<md-button
+					cyph-translate
 					rel='noreferrer'
 					href='https://twitter.com/cyph'
 					target='_blank'
@@ -150,6 +156,7 @@
 			</div>
 			<div>
 				<md-button
+					cyph-translate
 					rel='noreferrer'
 					href='https://www.facebook.com/pages/Cyph/299270843606014'
 					target='_blank'
@@ -1216,8 +1223,8 @@
 				<div flex='20' class='donation' layout layout-align='center center'>
 					${{$ctrl.ui.donationAmount}}
 				</div>
-				<md-button class='donate-button' aria-label='Submit Donation'>
-					<a cyph-translate ng-click='$ctrl.ui.updateCart(
+				<md-button cyph-translate class='donate-button' aria-label='Submit Donation'>
+					<a ng-click='$ctrl.ui.updateCart(
 						$ctrl.ui.donationAmount,
 						$ctrl.cyph.Config.pricingConfig.categories.donation.id,
 						$ctrl.cyph.Config.pricingConfig.categories.donation.items.generic.id
