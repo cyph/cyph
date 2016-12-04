@@ -7,6 +7,7 @@ import {Contact} from './contact';
 import {FileInput} from './fileinput';
 import {LinkConnection} from './linkconnection';
 import {Markdown} from './markdown';
+import * as Material from './material';
 import {SignupForm} from './signupform';
 import {StaticCyphNotFound} from './staticcyphnotfound';
 import {StaticFooter} from './staticfooter';
@@ -22,6 +23,7 @@ export {
 	FileInput,
 	LinkConnection,
 	Markdown,
+	Material,
 	SignupForm,
 	StaticCyphNotFound,
 	StaticFooter
