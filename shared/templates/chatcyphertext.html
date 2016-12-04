@@ -4,7 +4,7 @@
 			<md-list-item
 				class='message-item unread'
 				ng-repeat='message in $ctrl.self.cyphertext.messages'
-				layout='horizontal'
+				layout='row'
 			>
 				<span class='message'>
 					<strong ng-if='::message.author === $ctrl.cyph.Session.Users.me'>
