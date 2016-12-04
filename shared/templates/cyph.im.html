@@ -23,11 +23,6 @@
 			class='cyph-view layout-fill layout-column flex'
 		></cyph-static-cyph-not-found>
 
-		<cyph-beta
-			[class.active]='ui.state === cyph.im.States.beta'
-			class='cyph-view layout-fill layout-column flex'
-		></cyph-beta>
-
 		<div
 			[class.active]='ui.state === cyph.im.States.blank'
 			id='blank'
@@ -45,4 +40,12 @@
 	</section>
 
 	<cyph-chat-cyphertext [self]='ui.chat'></cyph-chat-cyphertext>
+</span>
+<span *ngIf='cyph && ui && !ui.chat'>
+	<section id='main' class='cyph-foreground layout-fill layout-column'>
+		<cyph-beta
+			[class.active]='ui.state === cyph.im.States.beta'
+			class='cyph-view layout-fill layout-column flex'
+		></cyph-beta>
+	</section>
 </span>
