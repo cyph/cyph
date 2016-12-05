@@ -83,10 +83,6 @@ angular.
 		Cyph.UI.Components.Material.MdContent.config
 	).
 	component(
-		Cyph.UI.Components.Material.MdDialog.title,
-		Cyph.UI.Components.Material.MdDialog.config
-	).
-	component(
 		Cyph.UI.Components.Material.MdFabActions.title,
 		Cyph.UI.Components.Material.MdFabActions.config
 	).

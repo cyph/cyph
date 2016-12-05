@@ -6,7 +6,6 @@ import {MdCardHeaderText} from './mdcardheadertext';
 import {MdCardTitle} from './mdcardtitle';
 import {MdCardTitleText} from './mdcardtitletext';
 import {MdContent} from './mdcontent';
-import {MdDialog} from './mddialog';
 import {MdFabActions} from './mdfabactions';
 import {MdFabSpeedDial} from './mdfabspeeddial';
 import {MdFabTrigger} from './mdfabtrigger';
@@ -40,7 +39,6 @@ export {
 	MdCardTitle,
 	MdCardTitleText,
 	MdContent,
-	MdDialog,
 	MdFabActions,
 	MdFabSpeedDial,
 	MdFabTrigger,
