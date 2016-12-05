@@ -19,7 +19,7 @@ export class Translate {
 		const $element	= $(nativeElement);
 		const $children	= $element.children();
 
-		for (let attr of ['alt', 'aria-label', 'content', 'label', 'placeholder']) {
+		for (let attr of ['alt', 'aria-label', 'ariaLabel', 'content', 'label', 'placeholder']) {
 			Translate.translate(
 				$element.attr(attr),
 				translation => renderer.setElementAttribute(

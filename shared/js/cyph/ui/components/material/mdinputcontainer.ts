@@ -11,6 +11,7 @@ import {
 	SimpleChanges
 } from '@angular/core';
 import {UpgradeComponent} from '@angular/upgrade/static';
+import {Util} from '../../../util';
 
 
 /**
@@ -35,7 +36,15 @@ export class MdInputContainer
 			/** @ignore */
 			public readonly childClass: string;
 
-			constructor () {}
+			constructor ($element: JQuery) { (async () => {
+				let $input: JQuery;
+				while (!$input || $input.length < 1) {
+					$input	= $element.find('input');
+					await Util.sleep();
+				}
+
+				$input.addClass('md-input');
+			})(); }
 		},
 		template: `
 			<md-input-container

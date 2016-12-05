@@ -163,16 +163,31 @@ angular.
 		Cyph.UI.Components.Material.MdTooltip.config
 	).
 	directive(
+		'cyphFileInput',
+		downgradeComponent({
+			component: Cyph.UI.Components.FileInput,
+			inputs: ['accept'],
+			outputs: ['change']
+		})
+	).
+	directive(
 		'cyphHelp',
-		downgradeComponent({component: Cyph.UI.Components.Help})
+		downgradeComponent({
+			component: Cyph.UI.Components.Help
+		})
 	).
 	directive(
 		'cyphRegister',
-		downgradeComponent({component: Cyph.UI.Components.Register})
+		downgradeComponent({
+			component: Cyph.UI.Components.Register,
+			inputs: ['invite', 'signupForm']
+		})
 	).
 	directive(
 		'cyphApp',
-		downgradeComponent({component: AppComponent})
+		downgradeComponent({
+			component: AppComponent
+		})
 	)
 ;
 

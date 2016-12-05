@@ -85,8 +85,7 @@ export class MdMenu
 					</md-menu-item>
 				</md-menu-content>
 			</md-menu>
-		`,
-		transclude: true
+		`
 	};
 
 

@@ -14,28 +14,38 @@ export class FileInput {
 	@Input() public accept: string;
 
 	/** @ignore */
-	@Output() public fileChange: EventEmitter<File>	= new EventEmitter<File>();
+	@Output() public change: EventEmitter<File>	= new EventEmitter<File>();
 
-	constructor (elementRef: ElementRef) {
-		const $input	= $(elementRef.nativeElement).children();
-		const input		= <HTMLInputElement> $input[0];
+	constructor (elementRef: ElementRef) { (async () => {
+		let $input: JQuery;
+		while (!$input || $input.length < 1) {
+			$input	= $(elementRef.nativeElement).children();
+			await Util.sleep();
+		}
+
+		const input	= <HTMLInputElement> $input[0];
 
 		$input.
 			change(() => {
-				if (input.files.length < 1 || !this.fileChange) {
+				if (input.files.length < 1 || !this.change) {
 					return;
 				}
 
-				this.fileChange.emit(input.files[0]);
+				this.change.emit(input.files[0]);
 				$input.val('');
 			}).
 			click(e => {
 				e.stopPropagation();
 				e.preventDefault();
-			}).
-			parent().parent().click(() =>
-				Util.triggerClick(input)
-			)
+			})
 		;
-	}
+
+		let $button: JQuery;
+		while (!$button || $button.length < 1) {
+			$button	= $input.closest('button');
+			await Util.sleep();
+		}
+
+		$button.click(() => Util.triggerClick(input));
+	})(); }
 }

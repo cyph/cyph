@@ -56,8 +56,8 @@
 			>
 				<md2-icon childClass='grey'>attach_file</md2-icon>
 				<cyph-file-input
-					(fileChange)='self.fileManager.send($event)'
-					[accept]='fileInputAccept'
+					[accept]='fileAccept'
+					(change)='self.fileManager.send($event)'
 				></cyph-file-input>
 			</md2-button>
 		</div>
@@ -71,123 +71,29 @@
 	</div>
 
 	<md2-fab-speed-dial
+		cyphTranslate
+		ariaLabel='Menu'
+		icon='add'
+		[buttons]='speedDialButtons'
 		mdDirection='up'
 		childClass='md-fling md-fab-bottom-right'
 		[mdOpen]='isSpeedDialOpen'
 		(mouseenter)='isSpeedDialOpen = true'
 		(mouseleave)='isSpeedDialOpen = false'
-		*ngIf='!self.isMobile && isSpeedDialReady'
-	>
-		<md2-fab-trigger>
-			<md2-button
-				ariaLabel='Menu'
-				childClass='md-fab'
-				cyphTranslate
-			>
-				<md2-icon>add</md2-icon>
-			</md2-button>
-		</md2-fab-trigger>
-		<md2-fab-actions *ngIf='!self.p2pManager.p2p.isActive'>
-			<md2-button
-				ariaLabel='Send File or Photo'
-				childClass='md-fab md-raised md-mini'
-				cyphTranslate
-			>
-				<md2-tooltip mdDirection='left' cyphTranslate>
-					Send File or Photo
-				</md2-tooltip>
-				<md2-icon>attach_file</md2-icon>
-				<cyph-file-input
-					(fileChange)='self.fileManager.send($event)'
-					[accept]='fileInputAccept'
-				></cyph-file-input>
-			</md2-button>
-			<md2-button
-				ariaLabel='Voice Call'
-				childClass='md-fab md-raised md-mini'
-				(childClick)='self.p2pManager.voiceCallButton()'
-				[disabled]='!self.p2pManager.isEnabled'
-				cyphTranslate
-			>
-				<md2-tooltip mdDirection='left' cyphTranslate>
-					Voice Call
-				</md2-tooltip>
-				<md2-icon>phone</md2-icon>
-			</md2-button>
-			<md2-button
-				ariaLabel='Video Call'
-				childClass='md-fab md-raised md-mini'
-				(childClick)='self.p2pManager.videoCallButton()'
-				[disabled]='!self.p2pManager.isEnabled'
-				cyphTranslate
-			>
-				<md2-tooltip mdDirection='left' cyphTranslate>
-					Video Call
-				</md2-tooltip>
-				<md2-icon>videocam</md2-icon>
-			</md2-button>
-			<md2-button
-				ariaLabel='Help'
-				childClass='dark md-fab md-raised md-mini'
-				(childClick)='self.helpButton()'
-				cyphTranslate
-			>
-				<md2-tooltip mdDirection='left' cyphTranslate>
-					Help
-				</md2-tooltip>
-				<md2-icon>help_outline</md2-icon>
-			</md2-button>
-			<md2-button
-				ariaLabel='Disconnect'
-				childClass='dark md-fab md-raised md-mini'
-				(childClick)='self.disconnectButton()'
-				cyphTranslate
-			>
-				<md2-tooltip mdDirection='left' cyphTranslate>
-					Disconnect
-				</md2-tooltip>
-				<md2-icon>close</md2-icon>
-			</md2-button>
-		</md2-fab-actions>
-		<md2-fab-actions *ngIf='self.p2pManager.p2p.isActive'>
-			<md2-button
-				ariaLabel='Send File or Photo'
-				childClass='md-fab md-raised md-mini'
-				cyphTranslate
-			>
-				<md2-tooltip mdDirection='left' cyphTranslate>
-					Send File or Photo
-				</md2-tooltip>
-				<md2-icon>attach_file</md2-icon>
-				<cyph-file-input
-					(fileChange)='self.fileManager.send($event)'
-					[accept]='fileInputAccept'
-				></cyph-file-input>
-			</md2-button>
-			<md2-button
-				ariaLabel='Help'
-				childClass='dark md-fab md-raised md-mini'
-				(childClick)='self.helpButton()'
-				cyphTranslate
-			>
-				<md2-tooltip mdDirection='left' cyphTranslate>
-					Help
-				</md2-tooltip>
-				<md2-icon>help_outline</md2-icon>
-			</md2-button>
-			<md2-button
-				ariaLabel='Disconnect'
-				childClass='dark md-fab md-raised md-mini'
-				(childClick)='self.disconnectButton()'
-				cyphTranslate
-			>
-				<md2-tooltip mdDirection='left' cyphTranslate>
-					Disconnect
-				</md2-tooltip>
-				<md2-icon>close</md2-icon>
-			</md2-button>
-		</md2-fab-actions>
-	</md2-fab-speed-dial>
+		*ngIf='!self.isMobile && isSpeedDialReady && !self.p2pManager.p2p.isActive'
+	></md2-fab-speed-dial>
+	<md2-fab-speed-dial
+		cyphTranslate
+		ariaLabel='Menu'
+		icon='add'
+		[buttons]='speedDialButtonsP2P'
+		mdDirection='up'
+		childClass='md-fling md-fab-bottom-right'
+		[mdOpen]='isSpeedDialOpen'
+		(mouseenter)='isSpeedDialOpen = true'
+		(mouseleave)='isSpeedDialOpen = false'
+		*ngIf='!self.isMobile && isSpeedDialReady && self.p2pManager.p2p.isActive'
+	></md2-fab-speed-dial>
 
 	<md2-subheader
 		childClass='new-messages md-subheader-colored md-sticky-clone'

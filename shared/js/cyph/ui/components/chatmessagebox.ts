@@ -19,7 +19,7 @@ export class ChatMessageBox {
 	@Input() public self: IChat;
 
 	/** @ignore */
-	@Input() public fileInputAccept: string;
+	@Input() public fileAccept: string;
 
 	/** @ignore */
 	public cyph: any;
@@ -58,6 +58,65 @@ export class ChatMessageBox {
 			label: Strings.disconnect
 		}
 	];
+
+	/** @ignore */
+	public speedDialButtons: {
+		class?: string;
+		click?: () => void;
+		disabled?: () => boolean;
+		fileAccept?: string;
+		fileChange?: ($event: File) => void;
+		icon: string;
+		label: string;
+		tooltipDirection: string;
+	}[]	= [
+		{
+			fileAccept: this.fileAccept,
+			fileChange: ($event: File) => this.self.fileManager.send($event),
+			icon: 'attach_file',
+			label: 'Send File or Photo',
+			tooltipDirection: 'left'
+		},
+		{
+			click: () => this.self.p2pManager.voiceCallButton(),
+			disabled: () => !this.self.p2pManager.isEnabled,
+			icon: 'phone',
+			label: 'Voice Call',
+			tooltipDirection: 'left'
+		},
+		{
+			click: () => this.self.p2pManager.videoCallButton(),
+			disabled: () => !this.self.p2pManager.isEnabled,
+			icon: 'videocam',
+			label: 'Video Call',
+			tooltipDirection: 'left'
+		},
+		{
+			class: 'dark',
+			click: () => this.self.helpButton(),
+			icon: 'help_outline',
+			label: Strings.help,
+			tooltipDirection: 'left'
+		},
+		{
+			class: 'dark',
+			click: () => this.self.disconnectButton(),
+			icon: 'close',
+			label: Strings.disconnect,
+			tooltipDirection: 'left'
+		}
+	];
+
+	/** @ignore */
+	public speedDialButtonsP2P: {
+		click?: () => void;
+		disabled?: () => boolean;
+		fileAccept?: string;
+		fileChange?: ($event: File) => void;
+		icon: string;
+		label: string;
+		tooltipDirection: string;
+	}[]	= this.speedDialButtons.filter(o => !o.disabled);
 
 	/** @ignore */
 	public async openMenu ($mdMenu: any) : Promise<void> {

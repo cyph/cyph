@@ -310,27 +310,6 @@ html:not(.mobile) * {
 	outline: none !important;
 }
 
-/* Dialog size */
-
-md-dialog {
-	width: 65%;
-	height: 80%;
-}
-
-/* Material "sm" */
-@media (min-width: 600px) and (max-width: 959px) {
-	md-dialog {
-		width: 80%;
-	}
-}
-
-/* Material "xs" */
-@media (max-width: 599px) {
-	md-dialog {
-		width: 95%;
-	}
-}
-
 /* Moved beta signup stuff from cyph.com CSS */
 
 .beta-signup-form, cyph-register {

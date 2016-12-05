@@ -158,7 +158,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 					},
 					template: `
 						<cyph-register
-							signup-form='locals.signupForm'
+							[signup-form]='locals.signupForm'
 						></cyph-register>
 					`
 				});
@@ -176,8 +176,8 @@ export class UI extends Cyph.UI.BaseButtonManager {
 					},
 					template: `
 						<cyph-register
-							invite='true'
-							signup-form='locals.signupForm'
+							[invite]='true'
+							[signup-form]='locals.signupForm'
 						></cyph-register>
 					`
 				});

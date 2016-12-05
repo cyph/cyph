@@ -105,6 +105,7 @@ import {AppComponent} from './appcomponent';
 	],
 	entryComponents: [
 		AppComponent,
+		FileInput,
 		Help,
 		Register
 	],

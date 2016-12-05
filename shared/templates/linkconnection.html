@@ -18,7 +18,10 @@
 			</div>
 			<br />
 
-			<md2-input-container childClass='connect-link-input' *ngIf='!cyph.Env.isMobile'>
+			<md2-input-container
+				childClass='connect-link-input md-input-has-value'
+				*ngIf='!cyph.Env.isMobile'
+			>
 				<input cyphTranslate [(ngModel)]='self.link' aria-label='Cyph link' />
 				<md2-button
 					childClass='copy'
