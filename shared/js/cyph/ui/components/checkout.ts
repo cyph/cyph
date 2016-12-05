@@ -28,22 +28,9 @@ export class Checkout {
 	@Input() public name: string;
 
 	/** @ignore */
-	public cyph: any;
-
-	/** @ignore */
-	public ui: any;
-
-	/** @ignore */
 	public complete: boolean;
 
 	constructor (elementRef: ElementRef) { (async () => {
-		while (!cyph || !ui) {
-			await Util.sleep();
-		}
-
-		this.cyph	= cyph;
-		this.ui		= ui;
-
 		const token: string	= await Util.request({
 			retries: 5,
 			url: Env.baseUrl + Config.braintreeConfig.endpoint

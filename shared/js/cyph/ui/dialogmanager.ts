@@ -30,38 +30,33 @@ export class DialogManager implements IDialogManager {
 		o: {
 			template: string;
 			locals?: any;
-			oncomplete?: Function;
-			onclose?: Function;
 		}
 	) : Promise<{
 		ok: boolean;
 		locals: any;
 	}> {
-		return Util.lock(this.lock, async () => new Promise<{
-			ok: boolean;
-			locals: any;
-		}>(resolve => this.$mdDialog.show({
-			clickOutsideToClose: true,
-			controller: <any> [
-				'$scope',
-				'$mdDialog',
-				($scope: any, $mdDialog: angular.material.IDialogService) => {
-					$scope.locals	= o.locals;
-					$scope.close	= (ok: any) => {
-						$mdDialog.hide();
-
-						resolve({ok: ok === true, locals: o.locals});
-
-						if (o.onclose) {
-							o.onclose(ok);
-						}
-					};
-				}
-			],
-			escapeToClose: true,
-			onComplete: o.oncomplete,
-			template: `<md-dialog>${o.template}</md-dialog>`
-		})));
+		return Util.lock(
+			this.lock,
+			async () => this.$mdDialog.show({
+				clickOutsideToClose: true,
+				controller: <any> [
+					'$scope',
+					'$mdDialog',
+					($scope: any, $mdDialog: angular.material.IDialogService) => {
+						$scope.locals	= o.locals;
+					}
+				],
+				escapeToClose: true,
+				template: `<md-dialog>${o.template}</md-dialog>`
+			}).then(() =>
+				true
+			).catch(() =>
+				false
+			).then(ok => ({
+				ok,
+				locals: o.locals
+			}))
+		);
 	}
 
 	/** @inheritDoc */

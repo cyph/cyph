@@ -657,7 +657,7 @@ html.mobile button[disabled] {
 			height: auto;
 			width: 50%;
 
-			@include transform(translateX(50%));
+			@include transform(translateX(18px));
 		}
 	}
 

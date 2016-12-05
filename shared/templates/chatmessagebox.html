@@ -2,6 +2,7 @@
 	class='chat-message-box platform-container'
 	[class.mobile]='self.isMobile'
 	*ngIf='
+		(cyph && self) &&
 		self.state === cyph.UI.Chat.States.chat &&
 		self.session.state.isAlive
 	'

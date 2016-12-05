@@ -1,4 +1,4 @@
-<div class='link-connection loading layout-column layout-fill flex'>
+<div class='link-connection loading layout-column layout-fill flex' *ngIf='cyph && self'>
 	<div class='flex'></div>
 	<div class='logo-animation'>
 		<div></div>
@@ -18,7 +18,7 @@
 			</div>
 			<br />
 
-			<md2-input-container class='connect-link-input desktop-only'>
+			<md2-input-container class='connect-link-input desktop-only md-input-has-value'>
 				<input cyphTranslate [(ngModel)]='self.link' aria-label='Cyph link' />
 				<md2-button
 					class='copy'

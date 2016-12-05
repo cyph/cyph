@@ -152,28 +152,28 @@ export class UI extends Cyph.UI.BaseButtonManager {
 			await Cyph.Util.sleep();
 
 			if (this.homeSection === HomeSections.register) {
-				this.dialogManager.baseDialog({
+				await this.dialogManager.baseDialog({
 					locals: {
 						signupForm: this.signupForm
 					},
-					onclose: () => Cyph.UrlState.set(''),
 					template: `
 						<cyph-register
 							signup-form='locals.signupForm'
 						></cyph-register>
 					`
 				});
+
+				Cyph.UrlState.set('');
 			}
 			else if (this.homeSection === HomeSections.invite) {
 				this.signupForm.data.inviteCode	=
 					Cyph.UrlState.get().split(HomeSections[HomeSections.invite] + '/')[1] || ''
 				;
 
-				this.dialogManager.baseDialog({
+				await this.dialogManager.baseDialog({
 					locals: {
 						signupForm: this.signupForm
 					},
-					onclose: () => Cyph.UrlState.set(''),
 					template: `
 						<cyph-register
 							invite='true'
@@ -181,6 +181,8 @@ export class UI extends Cyph.UI.BaseButtonManager {
 						></cyph-register>
 					`
 				});
+
+				Cyph.UrlState.set('');
 			}
 			else {
 				this.scroll(

@@ -22,8 +22,6 @@ export interface IDialogManager {
 		o: {
 			template: string;
 			locals?: any;
-			oncomplete?: Function;
-			onclose?: Function;
 		}
 	) : Promise<{ok: boolean; locals: any}>;
 

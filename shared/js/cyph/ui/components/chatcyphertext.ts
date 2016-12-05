@@ -17,15 +17,11 @@ export class ChatCyphertext {
 	/** @ignore */
 	public cyph: any;
 
-	/** @ignore */
-	public ui: any;
-
 	constructor () { (async () => {
-		while (!cyph || !ui) {
+		while (!cyph) {
 			await Util.sleep();
 		}
 
 		this.cyph	= cyph;
-		this.ui		= ui;
 	})(); }
 }

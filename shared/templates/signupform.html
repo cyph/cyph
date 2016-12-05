@@ -1,4 +1,4 @@
-<div class='beta-signup-form'>
+<div class='beta-signup-form' *ngIf='self'>
 	<form (submit)='self.submit()' *ngIf='self.state === 0'>
 		<div class='layout-row layout-align-center-center flex'>
 			<ng-content></ng-content>

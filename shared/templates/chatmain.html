@@ -2,6 +2,7 @@
 	class='chat-main platform-container layout-column layout-fill flex'
 	[class.video]='self.p2pManager.p2p.isActive'
 	[class.mobile]='self.isMobile'
+	*ngIf='cyph && self'
 >
 	<div
 		class='cyph-view loading layout-column layout-fill flex'
