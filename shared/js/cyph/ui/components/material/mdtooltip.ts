@@ -28,35 +28,32 @@ export class MdTooltip
 	/** Component configuration. */
 	public static readonly config			= {
 		bindings: {
-			class: '@',
+			childClass: '@',
 			mdDirection: '@'
 		},
 		/* tslint:disable-next-line:max-classes-per-file */
 		controller: class {
 			/** @ignore */
-			public readonly class: string;
+			public readonly childClass: string;
 
 			/** @ignore */
 			public readonly mdDirection: string;
 
-			constructor ($element: JQuery) {
-				$element.removeAttr('class');
-			}
+			constructor () {}
 		},
 		template: `
 			<md-tooltip
-				ng-attr-class='{{$ctrl.class || ""}}'
+				ng-class='$ctrl.childClass'
 				ng-attr-md-direction='{{$ctrl.mdDirection}}'
-			>
-				<ng-transclude></ng-transclude>
-			</md-tooltip>
+				ng-transclude
+			></md-tooltip>
 		`,
 		transclude: true
 	};
 
 
 	/** @ignore */
-	@Input() public class: string;
+	@Input() public childClass: string;
 
 	/** @ignore */
 	@Input() public mdDirection: string;

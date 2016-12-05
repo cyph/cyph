@@ -28,28 +28,27 @@ export class MdMenuItem
 	/** Component configuration. */
 	public static readonly config			= {
 		bindings: {
-			class: '@'
+			childClass: '@'
 		},
 		/* tslint:disable-next-line:max-classes-per-file */
 		controller: class {
 			/** @ignore */
-			public readonly class: string;
+			public readonly childClass: string;
 
-			constructor ($element: JQuery) {
-				$element.removeAttr('class');
-			}
+			constructor () {}
 		},
 		template: `
-			<md-menu-item ng-attr-class='{{$ctrl.class || ""}}'>
-				<ng-transclude></ng-transclude>
-			</md-menu-item>
+			<md-menu-item
+				ng-class='$ctrl.childClass'
+				ng-transclude
+			></md-menu-item>
 		`,
 		transclude: true
 	};
 
 
 	/** @ignore */
-	@Input() public class: string;
+	@Input() public childClass: string;
 
 	/** @ignore */
 	public ngDoCheck () : void {

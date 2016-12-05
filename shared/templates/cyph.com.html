@@ -4,7 +4,7 @@
 	[class.unisection-mode]='ui.state !== cyph.com.States.home'
 	*ngIf='cyph && ui'
 >
-	<md2-toolbar id='main-toolbar' class='wow animated fadeInDownBig'>
+	<md2-toolbar childId='main-toolbar' childClass='wow animated fadeInDownBig'>
 		<div class='md-toolbar-tools'>
 			<span class='padding'></span>
 
@@ -16,7 +16,12 @@
 				/>
 			</a>
 
-			<md2-button cyphTranslate id='new-cyph' ariaLabel='Start new cyph' class='breathe'>
+			<md2-button
+				cyphTranslate
+				childId='new-cyph'
+				ariaLabel='Start new cyph'
+				childClass='breathe'
+			>
 				<a [href]='cyph.Env.newCyphUrl'>Start new cyph</a>
 			</md2-button>
 
@@ -73,8 +78,8 @@
 			<md2-button
 				cyphTranslate
 				ariaLabel='Menu'
-				(click)='ui.openMobileMenu()'
-				class='hide-gt-md'
+				(childClick)='ui.openMobileMenu()'
+				childClass='hide-gt-md'
 			>
 				<img src='/img/icons/menu.png' alt='Menu' />
 			</md2-button>
@@ -83,20 +88,20 @@
 		</div>
 	</md2-toolbar>
 
-	<md2-sidenav mdComponentId='main-toolbar-sidenav' class='md-sidenav-right'>
-		<md2-content class='md-padding md-no-flicker'>
+	<md2-sidenav mdComponentId='main-toolbar-sidenav' childClass='md-sidenav-right'>
+		<md2-content childClass='md-padding md-no-flicker'>
 			<div>
-				<md2-button cyphTranslate href='/intro' (click)='ui.baseButtonClick()'>
+				<md2-button cyphTranslate href='/intro' (childClick)='ui.baseButtonClick()'>
 					Intro
 				</md2-button>
 			</div>
 			<div>
-				<md2-button cyphTranslate href='/features' (click)='ui.baseButtonClick()'>
+				<md2-button cyphTranslate href='/features' (childClick)='ui.baseButtonClick()'>
 					Features
 				</md2-button>
 			</div>
 			<div>
-				<md2-button cyphTranslate href='/about' (click)='ui.baseButtonClick()'>
+				<md2-button cyphTranslate href='/about' (childClick)='ui.baseButtonClick()'>
 					About
 				</md2-button>
 			</div>
@@ -104,28 +109,28 @@
 				<md2-button
 					cyphTranslate
 					href='/gettingstarted'
-					(click)='ui.baseButtonClick()'
+					(childClick)='ui.baseButtonClick()'
 				>
 					Getting Started
 				</md2-button>
 			</div>
 			<div>
-				<md2-button cyphTranslate href='/blog' (click)='ui.baseButtonClick()'>
+				<md2-button cyphTranslate href='/blog' (childClick)='ui.baseButtonClick()'>
 					Blog
 				</md2-button>
 			</div>
 			<div>
-				<md2-button cyphTranslate href='/faq' (click)='ui.baseButtonClick()'>
+				<md2-button cyphTranslate href='/faq' (childClick)='ui.baseButtonClick()'>
 					FAQ
 				</md2-button>
 			</div>
 			<div>
-				<md2-button cyphTranslate href='/pricing' (click)='ui.baseButtonClick()'>
+				<md2-button cyphTranslate href='/pricing' (childClick)='ui.baseButtonClick()'>
 					Pricing
 				</md2-button>
 			</div>
 			<div>
-				<md2-button cyphTranslate href='/register' (click)='ui.baseButtonClick()'>
+				<md2-button cyphTranslate href='/register' (childClick)='ui.baseButtonClick()'>
 					Register
 				</md2-button>
 			</div>
@@ -135,7 +140,7 @@
 					rel='noreferrer'
 					href='https://github.com/cyph'
 					target='_blank'
-					(click)='ui.baseButtonClick()'
+					(childClick)='ui.baseButtonClick()'
 				>
 					<span class='image'>
 						<img src='/img/iconfinder/github.png' alt='GitHub icon' />
@@ -149,7 +154,7 @@
 					rel='noreferrer'
 					href='https://twitter.com/cyph'
 					target='_blank'
-					(click)='ui.baseButtonClick()'
+					(childClick)='ui.baseButtonClick()'
 				>
 					<span class='image'>
 						<img src='/img/iconfinder/twitter.png' alt='Twitter icon' />
@@ -163,7 +168,7 @@
 					rel='noreferrer'
 					href='https://www.facebook.com/pages/Cyph/299270843606014'
 					target='_blank'
-					(click)='ui.baseButtonClick()'
+					(childClick)='ui.baseButtonClick()'
 				>
 					<span class='image'>
 						<img src='/img/iconfinder/facebook.png' alt='Facebook icon' />
@@ -183,7 +188,7 @@
 				class='layout-row layout-align-center-center'
 			>
 				<md2-card
-					class='animated wow flex-33 flex-sm-66 flex-xs-100'
+					childClass='animated wow flex-33 flex-sm-66 flex-xs-100'
 					data-wow-delay='3000ms'
 					[class.bounceInLeft]='ui.promo === cyph.com.Promos.jjgo'
 					[class.bounceInDown]='ui.promo !== cyph.com.Promos.jjgo'
@@ -802,7 +807,7 @@
 			</h1>
 			<md2-icon
 				(click)='ui.business = false'
-				class='back animated fadeIn hide-sm hide-xs'
+				childClass='back animated fadeIn hide-sm hide-xs'
 			>
 				keyboard_backspace
 			</md2-icon>
@@ -1065,7 +1070,7 @@
 					native mobile apps and Cyph accounts.
 				</p>
 				<md2-slider
-					class='donation flex'
+					childClass='donation flex'
 					mdDiscrete
 					[(model)]='ui.donationAmount'
 					[step]='1'
@@ -1076,7 +1081,7 @@
 				<div class='donation flex-20 layout layout-align-center-center'>
 					${{ui.donationAmount}}
 				</div>
-				<md2-button cyphTranslate class='donate-button' ariaLabel='Submit Donation'>
+				<md2-button cyphTranslate childClass='donate-button' ariaLabel='Submit Donation'>
 					<a (click)='ui.updateCart(
 						ui.donationAmount,
 						cyph.Config.pricingConfig.categories.donation.id,

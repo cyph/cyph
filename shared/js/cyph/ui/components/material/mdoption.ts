@@ -28,35 +28,32 @@ export class MdOption
 	/** Component configuration. */
 	public static readonly config			= {
 		bindings: {
-			class: '@',
+			childClass: '@',
 			value: '@'
 		},
 		/* tslint:disable-next-line:max-classes-per-file */
 		controller: class {
 			/** @ignore */
-			public readonly class: string;
+			public readonly childClass: string;
 
 			/** @ignore */
 			public readonly value: string;
 
-			constructor ($element: JQuery) {
-				$element.removeAttr('class');
-			}
+			constructor () {}
 		},
 		template: `
 			<md-option
-				ng-attr-class='{{$ctrl.class || ""}}'
+				ng-class='$ctrl.childClass'
 				ng-value='$ctrl.value'
-			>
-				<ng-transclude></ng-transclude>
-			</md-option>
+				ng-transclude
+			></md-option>
 		`,
 		transclude: true
 	};
 
 
 	/** @ignore */
-	@Input() public class: string;
+	@Input() public childClass: string;
 
 	/** @ignore */
 	@Input() public value: string;

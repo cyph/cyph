@@ -28,38 +28,35 @@ export class MdToolbar
 	/** Component configuration. */
 	public static readonly config			= {
 		bindings: {
-			class: '@',
-			id: '@'
+			childClass: '@',
+			childId: '@'
 		},
 		/* tslint:disable-next-line:max-classes-per-file */
 		controller: class {
 			/** @ignore */
-			public readonly class: string;
+			public readonly childClass: string;
 
 			/** @ignore */
-			public readonly id: string;
+			public readonly childId: string;
 
-			constructor ($element: JQuery) {
-				$element.removeAttr('class id');
-			}
+			constructor () {}
 		},
 		template: `
 			<md-toolbar
-				ng-attr-class='{{$ctrl.class || ""}}'
-				ng-attr-id='{{$ctrl.id}}'
-			>
-				<ng-transclude></ng-transclude>
-			</md-toolbar>
+				ng-class='$ctrl.childClass'
+				ng-attr-id='{{$ctrl.childId}}'
+				ng-transclude
+			></md-toolbar>
 		`,
 		transclude: true
 	};
 
 
 	/** @ignore */
-	@Input() public class: string;
+	@Input() public childClass: string;
 
 	/** @ignore */
-	@Input() public id: string;
+	@Input() public childId: string;
 
 	/** @ignore */
 	public ngDoCheck () : void {

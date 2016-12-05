@@ -1,8 +1,8 @@
 <div class='chat-cyphertext nano' *ngIf='cyph && self'>
-	<md2-content class='nano-content'>
-		<md2-list class='layout-column'>
+	<md2-content childClass='nano-content'>
+		<md2-list childClass='layout-column'>
 			<md2-list-item
-				class='message-item unread layout-row'
+				childClass='message-item unread layout-row'
 				*ngFor='let message of self.cyphertext.messages'
 			>
 				<span class='message'>
@@ -22,8 +22,8 @@
 	<md2-button
 		cyphTranslate
 		ariaLabel='Close Cyphertext'
-		class='md-fab md-theme-grey close-button'
-		(click)='self.cyphertext.hide()'
+		childClass='md-fab md-theme-grey close-button'
+		(childClick)='self.cyphertext.hide()'
 	>
 		<strong>&times;</strong>
 	</md2-button>

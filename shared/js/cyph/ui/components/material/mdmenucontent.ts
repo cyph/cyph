@@ -28,35 +28,32 @@ export class MdMenuContent
 	/** Component configuration. */
 	public static readonly config			= {
 		bindings: {
-			class: '@',
+			childClass: '@',
 			width: '@'
 		},
 		/* tslint:disable-next-line:max-classes-per-file */
 		controller: class {
 			/** @ignore */
-			public readonly class: string;
+			public readonly childClass: string;
 
 			/** @ignore */
 			public readonly width: string;
 
-			constructor ($element: JQuery) {
-				$element.removeAttr('class');
-			}
+			constructor () {}
 		},
 		template: `
 			<md-menu-content
-				ng-attr-class='{{$ctrl.class || ""}}'
+				ng-class='$ctrl.childClass'
 				ng-attr-width='{{$ctrl.width}}'
-			>
-				<ng-transclude></ng-transclude>
-			</md-menu-content>
+				ng-transclude
+			></md-menu-content>
 		`,
 		transclude: true
 	};
 
 
 	/** @ignore */
-	@Input() public class: string;
+	@Input() public childClass: string;
 
 	/** @ignore */
 	@Input() public width: string;

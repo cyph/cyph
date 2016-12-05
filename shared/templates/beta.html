@@ -1,11 +1,11 @@
-<md2-content class='nano md-no-flicker flex layout-column layout-fill' *ngIf='cyph && ui'>
+<md2-content childClass='nano md-no-flicker flex layout-column layout-fill' *ngIf='cyph && ui'>
 	<div class='nano-content'>
 		<div
 			class='login-form layout-row layout-align-center-center'
 			*ngIf='ui.betaState === cyph.im.BetaStates.login'
 			[class.checking]='checking'
 		>
-			<md2-card class='md-padding flex-75'>
+			<md2-card childClass='md-padding flex-75'>
 				<md2-card-title>
 					<md2-card-title-text>
 						<span class='md-headline' cyphTranslate>
@@ -27,7 +27,7 @@
 							</md2-subheader>
 						</div>
 						<div class='layout-row layout-align-center-center'>
-							<md2-input-container class='md-block flex-60'>
+							<md2-input-container childClass='md-block flex-60'>
 								<input
 									[(ngModel)]='username'
 									name='username'
@@ -39,7 +39,7 @@
 							</md2-input-container>
 						</div>
 						<div class='layout-row layout-align-center-center'>
-							<md2-input-container class='md-block flex-60'>
+							<md2-input-container childClass='md-block flex-60'>
 								<input
 									[(ngModel)]='password'
 									name='password'

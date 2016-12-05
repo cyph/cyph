@@ -1,5 +1,6 @@
 import {Component, ElementRef, Input} from '@angular/core';
 import {Env} from '../../env';
+import {Strings} from '../../strings';
 import {Util} from '../../util';
 import {IChat} from '../chat/ichat';
 import {VirtualKeyboardWatcher} from '../virtualkeyboardwatcher';
@@ -24,25 +25,53 @@ export class ChatMessageBox {
 	public cyph: any;
 
 	/** @ignore */
-	public $mdMenu: any;
-
-	/** @ignore */
 	public isSpeedDialReady: boolean;
 
 	/** @ignore */
 	public isSpeedDialOpen: boolean	= true;
 
 	/** @ignore */
-	public async openMenu () : Promise<void> {
-		/* Workaround for Angular Material menu bug */
-		let $focused: JQuery;
-		do {
-			$focused	= $(':focus');
-			$focused.blur();
-			await Util.sleep();
-		} while ($focused.length > 0);
+	public menuButton: {
+		click: ($mdMenu: any) => void,
+		icon: string,
+		label: string
+	}	= {
+		click: ($mdMenu: any) => this.openMenu($mdMenu),
+		icon: 'more_horiz',
+		label: Util.translate('Menu')
+	};
 
-		this.$mdMenu.open();
+	/** @ignore */
+	public menuItems: {
+		click: () => void,
+		icon: string,
+		label: string
+	}[]	= [
+		{
+			click: () => this.self.helpButton(),
+			icon: 'help_outline',
+			label: Strings.help
+		},
+		{
+			click: () => this.self.disconnectButton(),
+			icon: 'close',
+			label: Strings.disconnect
+		}
+	];
+
+	/** @ignore */
+	public async openMenu ($mdMenu: any) : Promise<void> {
+		/* Workaround for Angular Material menu bug */
+		if (Env.isMobile) {
+			let $focused: JQuery;
+			do {
+				$focused	= $(':focus');
+				$focused.blur();
+				await Util.sleep();
+			} while ($focused.length > 0);
+		}
+
+		$mdMenu.open();
 	}
 
 	constructor (elementRef: ElementRef) { (async () => {

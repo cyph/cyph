@@ -28,35 +28,32 @@ export class MdSidenav
 	/** Component configuration. */
 	public static readonly config			= {
 		bindings: {
-			class: '@',
+			childClass: '@',
 			mdComponentId: '@'
 		},
 		/* tslint:disable-next-line:max-classes-per-file */
 		controller: class {
 			/** @ignore */
-			public readonly class: string;
+			public readonly childClass: string;
 
 			/** @ignore */
 			public readonly mdComponentId: string;
 
-			constructor ($element: JQuery) {
-				$element.removeAttr('class');
-			}
+			constructor () {}
 		},
 		template: `
 			<md-sidenav
-				ng-attr-class='{{$ctrl.class || ""}}'
+				ng-class='$ctrl.childClass'
 				ng-attr-md-component-id='{{$ctrl.mdComponentId}}'
-			>
-				<ng-transclude></ng-transclude>
-			</md-sidenav>
+				ng-transclude
+			></md-sidenav>
 		`,
 		transclude: true
 	};
 
 
 	/** @ignore */
-	@Input() public class: string;
+	@Input() public childClass: string;
 
 	/** @ignore */
 	@Input() public mdComponentId: string;

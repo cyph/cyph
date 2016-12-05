@@ -28,29 +28,27 @@ export class MdInputContainer
 	/** Component configuration. */
 	public static readonly config			= {
 		bindings: {
-			class: '@'
+			childClass: '@'
 		},
 		/* tslint:disable-next-line:max-classes-per-file */
 		controller: class {
 			/** @ignore */
-			public readonly class: string;
+			public readonly childClass: string;
 
-			constructor ($element: JQuery) {
-				$element.removeAttr('class');
-				$element.find('input').addClass('md-input');
-			}
+			constructor () {}
 		},
 		template: `
-			<md-input-container ng-attr-class='{{$ctrl.class || ""}}'>
-				<ng-transclude></ng-transclude>
-			</md-input-container>
+			<md-input-container
+				ng-class='$ctrl.childClass'
+				ng-transclude
+			></md-input-container>
 		`,
 		transclude: true
 	};
 
 
 	/** @ignore */
-	@Input() public class: string;
+	@Input() public childClass: string;
 
 	/** @ignore */
 	public ngDoCheck () : void {

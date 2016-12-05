@@ -28,14 +28,14 @@ export class MdProgressCircular
 	/** Component configuration. */
 	public static readonly config			= {
 		bindings: {
-			class: '@',
+			childClass: '@',
 			mdMode: '@',
 			value: '@'
 		},
 		/* tslint:disable-next-line:max-classes-per-file */
 		controller: class {
 			/** @ignore */
-			public readonly class: string;
+			public readonly childClass: string;
 
 			/** @ignore */
 			public readonly mdMode: string;
@@ -43,13 +43,11 @@ export class MdProgressCircular
 			/** @ignore */
 			public readonly value: number;
 
-			constructor ($element: JQuery) {
-				$element.removeAttr('class');
-			}
+			constructor () {}
 		},
 		template: `
 			<md-progress-circular
-				ng-attr-class='{{$ctrl.class || ""}}'
+				ng-class='$ctrl.childClass'
 				ng-value='$ctrl.value'
 			>
 				<ng-transclude></ng-transclude>
@@ -60,7 +58,7 @@ export class MdProgressCircular
 
 
 	/** @ignore */
-	@Input() public class: string;
+	@Input() public childClass: string;
 
 	/** @ignore */
 	@Input() public mdMode: string;

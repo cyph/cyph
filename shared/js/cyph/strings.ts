@@ -41,6 +41,9 @@ export class Strings {
 	public static readonly discard: string	= Util.translate(`discard`);
 
 	/** @see Strings */
+	public static readonly disconnect: string				= Util.translate(`Disconnect`);
+
+	/** @see Strings */
 	public static readonly disconnectConfirm: string		= Util.translate(
 		`Are you sure that you wish to disconnect?`
 	);
@@ -78,6 +81,9 @@ export class Strings {
 
 	/** @see Strings */
 	public static readonly friend: string	= Util.translate(`friend`);
+
+	/** @see Strings */
+	public static readonly help: string		= Util.translate(`Help`);
 
 	/** @see Strings */
 	public static readonly incomingFile: string	= Util.translate(`Incoming File:`);

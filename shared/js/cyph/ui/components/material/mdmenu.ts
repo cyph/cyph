@@ -2,14 +2,12 @@ import {
 	Directive,
 	DoCheck,
 	ElementRef,
-	EventEmitter,
 	Inject,
 	Injector,
 	Input,
 	OnChanges,
 	OnDestroy,
 	OnInit,
-	Output,
 	SimpleChanges
 } from '@angular/core';
 import {UpgradeComponent} from '@angular/upgrade/static';
@@ -30,35 +28,62 @@ export class MdMenu
 	/** Component configuration. */
 	public static readonly config			= {
 		bindings: {
-			class: '@',
-			init: '&',
-			mdPositionMode: '@'
+			button: '<',
+			childClass: '@',
+			icons: '<',
+			mdPositionMode: '@',
+			width: '@'
 		},
 		/* tslint:disable-next-line:max-classes-per-file */
 		controller: class {
 			/** @ignore */
-			public readonly class: string;
+			public readonly button: {
+				click: ($mdMenu: any) => void,
+				icon: string,
+				label: string
+			};
 
 			/** @ignore */
-			public readonly init: ($event: any) => void;
+			public readonly childClass: string;
+
+			/** @ignore */
+			public readonly items: {
+				click: () => void,
+				icon: string,
+				label: string
+			}[];
 
 			/** @ignore */
 			public readonly mdPositionMode: string;
 
-			constructor ($scope: any, $element: JQuery) {
-				$element.removeAttr('class');
+			/** @ignore */
+			public readonly width: string;
 
-				if (this.init) {
-					this.init($scope.$mdMenu);
-				}
-			}
+			constructor () {}
 		},
 		template: `
 			<md-menu
-				ng-attr-class='{{$ctrl.class || ""}}'
+				ng-class='$ctrl.childClass'
 				ng-attr-md-position-mode='{{$ctrl.mdPositionMode}}'
 			>
-				<ng-transclude></ng-transclude>
+				<md-button
+					ng-attr-aria-label='{{$ctrl.button.label}}'
+					class='md-icon-button'
+					ng-click='$ctrl.button.click($mdMenu)'
+				>
+					<md-icon>{{$ctrl.button.icon}}</md-icon>
+				</md-button>
+				<md-menu-content ng-attr-width='{{$ctrl.width}}'>
+					<md-menu-item ng-repeat='item in $ctrl.items'>
+						<md-button
+							ng-attr-aria-label='{{item.label}}'
+							ng-click='item.click()'
+						>
+							<md-icon md-menu-align-target>{{item.icon}}</md-icon>
+							<span>{{item.label}}</span>
+						</md-button>
+					</md-menu-item>
+				</md-menu-content>
 			</md-menu>
 		`,
 		transclude: true
@@ -66,13 +91,27 @@ export class MdMenu
 
 
 	/** @ignore */
-	@Input() public class: string;
+	@Input() public button: {
+		click: ($mdMenu: any) => void,
+		icon: string,
+		label: string
+	};
 
 	/** @ignore */
-	@Output() public init: EventEmitter<any>;
+	@Input() public childClass: string;
+
+	/** @ignore */
+	@Input() public items: {
+		click: () => void,
+		icon: string,
+		label: string
+	}[];
 
 	/** @ignore */
 	@Input() public mdPositionMode: string;
+
+	/** @ignore */
+	@Input() public width: string;
 
 	/** @ignore */
 	public ngDoCheck () : void {

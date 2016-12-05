@@ -18,15 +18,12 @@
 			</div>
 			<br />
 
-			<md2-input-container
-				class='connect-link-input md-input-has-value'
-				*ngIf='!cyph.Env.isMobile'
-			>
+			<md2-input-container childClass='connect-link-input' *ngIf='!cyph.Env.isMobile'>
 				<input cyphTranslate [(ngModel)]='self.link' aria-label='Cyph link' />
 				<md2-button
-					class='copy'
+					childClass='copy'
 					ariaLabel='Copy to clipboard'
-					(click)='self.copyToClipboard()'
+					(childClick)='self.copyToClipboard()'
 					cyphTranslate
 				>
 					<md2-icon>content_copy</md2-icon>
@@ -41,7 +38,7 @@
 				<br />
 
 				<md2-button
-					class='md-fab'
+					childClass='md-fab'
 					ariaLabel='SMS'
 					[href]='cyph.Env.smsUriBase + self.linkEncoded'
 					cyphTranslate
@@ -54,7 +51,7 @@
 				</span>
 
 				<md2-button
-					class='md-fab'
+					childClass='md-fab'
 					ariaLabel='Email'
 					target='_self'
 					[href]='"mailto:?body=" + self.linkEncoded'
@@ -68,9 +65,9 @@
 				</span>
 
 				<md2-button
-					class='md-fab'
+					childClass='md-fab'
 					ariaLabel='Copy to clipboard'
-					(click)='self.copyToClipboard()'
+					(childClick)='self.copyToClipboard()'
 					cyphTranslate
 				>
 					<md2-icon>content_copy</md2-icon>
@@ -87,7 +84,7 @@
 				{{self.timer.timestamp}}
 			</span>
 			<md2-button
-				(click)='self.addTime(60000)'
+				(childClick)='self.addTime(60000)'
 				ariaLabel='Increase time by one minute'
 			>
 				<md2-icon>alarm_add</md2-icon>
@@ -96,7 +93,7 @@
 	</div>
 
 	<md2-switch
-		class='advanced-features-switch'
+		childClass='advanced-features-switch'
 		*ngIf='enableAdvancedFeatures'
 		[(model)]='self.advancedFeatures'
 		ariaLabel='Advanced Features'
@@ -106,22 +103,24 @@
 	</md2-switch>
 
 	<div class='advanced-features' *ngIf='self.advancedFeatures'>
-		<md2-input-container class='queued-message-box'>
+		<md2-input-container childClass='queued-message-box'>
 			<label cyphTranslate>Queue up first message</label>
 			<textarea rows='3' [(ngModel)]='queuedMessageDraft'></textarea>
 		</md2-input-container>
 		<div class='buttons'>
-			<md2-button (click)='self.chat.setQueuedMessage(queuedMessageDraft)'>
+			<md2-button (childClick)='self.chat.setQueuedMessage(queuedMessageDraft)'>
 				<md2-icon>save</md2-icon>
 			</md2-button>
 			<md2-button
-				class='self-destruct-button'
-				(click)='self.chat.setQueuedMessage(
+				childClass='self-destruct-button'
+				(childClick)='self.chat.setQueuedMessage(
 					undefined,
 					!self.chat.queuedMessageSelfDestruct
 				)'
 			>
-				<md2-icon [class.active]='self.chat.queuedMessageSelfDestruct === true'>
+				<md2-icon [childClass]='
+					self.chat.queuedMessageSelfDestruct === true ? "active" : ""
+				'>
 					timer
 				</md2-icon>
 			</md2-button>

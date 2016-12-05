@@ -28,35 +28,32 @@ export class MdIcon
 	/** Component configuration. */
 	public static readonly config			= {
 		bindings: {
-			class: '@',
+			childClass: '@',
 			mdMenuAlignTarget: '@'
 		},
 		/* tslint:disable-next-line:max-classes-per-file */
 		controller: class {
 			/** @ignore */
-			public readonly class: string;
+			public readonly childClass: string;
 
 			/** @ignore */
 			public readonly mdMenuAlignTarget: string;
 
-			constructor ($element: JQuery) {
-				$element.removeAttr('class');
-			}
+			constructor () {}
 		},
 		template: `
 			<md-icon
-				ng-attr-class='material-icons {{$ctrl.class || ""}}'
+				ng-class='$ctrl.childClass'
 				ng-attr-md-menu-align-target='{{$ctrl.mdMenuAlignTarget}}'
-			>
-				<ng-transclude></ng-transclude>
-			</md-icon>
+				ng-transclude
+			></md-icon>
 		`,
 		transclude: true
 	};
 
 
 	/** @ignore */
-	@Input() public class: string;
+	@Input() public childClass: string;
 
 	/** @ignore */
 	@Input() public mdMenuAlignTarget: string;

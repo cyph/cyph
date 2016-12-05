@@ -28,14 +28,14 @@ export class MdTabs
 	/** Component configuration. */
 	public static readonly config			= {
 		bindings: {
-			class: '@',
+			childClass: '@',
 			mdBorderBottom: '@',
 			mdDynamicHeight: '@'
 		},
 		/* tslint:disable-next-line:max-classes-per-file */
 		controller: class {
 			/** @ignore */
-			public readonly class: string;
+			public readonly childClass: string;
 
 			/** @ignore */
 			public readonly mdBorderBottom: string;
@@ -43,25 +43,22 @@ export class MdTabs
 			/** @ignore */
 			public readonly mdDynamicHeight: string;
 
-			constructor ($element: JQuery) {
-				$element.removeAttr('class');
-			}
+			constructor () {}
 		},
 		template: `
 			<md-tabs
-				ng-attr-class='{{$ctrl.class || ""}}'
+				ng-class='$ctrl.childClass'
 				ng-attr-md-border-bottom='{{$ctrl.mdBorderBottom}}'
 				ng-attr-md-dynamic-height='{{$ctrl.mdDynamicHeight}}'
-			>
-				<ng-transclude></ng-transclude>
-			</md-tabs>
+				ng-transclude
+			></md-tabs>
 		`,
 		transclude: true
 	};
 
 
 	/** @ignore */
-	@Input() public class: string;
+	@Input() public childClass: string;
 
 	/** @ignore */
 	@Input() public mdBorderBottom: string;

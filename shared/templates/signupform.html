@@ -6,7 +6,7 @@
 		<div class='layout-row layout-align-center-stretch flex'>
 			<div class='layout-column flex-50' *ngIf='!cyph.Env.isMobile'>
 				<div class='layout-row layout-align-center-center'>
-					<md2-input-container class='md-block flex-80'>
+					<md2-input-container childClass='md-block flex-80'>
 						<input
 							name='email'
 							type='email'
@@ -18,7 +18,7 @@
 					</md2-input-container>
 				</div>
 				<div class='layout-row layout-align-center-center'>
-					<md2-input-container class='md-block flex-80'>
+					<md2-input-container childClass='md-block flex-80'>
 						<input
 							name='password'
 							type='password'
@@ -31,7 +31,7 @@
 				</div>
 
 				<div layout='row' layout-align='center center'>
-					<md2-input-container class='md-block flex-80'>
+					<md2-input-container childClass='md-block flex-80'>
 						<input
 							name='confirmPassword'
 							type='password'
@@ -43,7 +43,7 @@
 					</md2-input-container>
 				</div>
 				<div *ngIf='invite' class='layout-row layout-align-center-center'>
-					<md2-input-container class='md-block flex-80'>
+					<md2-input-container childClass='md-block flex-80'>
 						<input
 							name='inviteCode'
 							type='text'
@@ -99,7 +99,7 @@
 		<div class='layout-row layout-align-center-center flex'>
 			<div class='layout-column flex'>
 				<div class='layout-row layout-align-center-center'>
-					<md2-input-container class='md-block flex-80'>
+					<md2-input-container childClass='md-block flex-80'>
 						<input
 							name='email'
 							type='email'
@@ -112,7 +112,7 @@
 					</md2-input-container>
 				</div>
 				<div *ngIf='invite' class='layout-row layout-align-center-center'>
-					<md2-input-container class='md-block flex-80'>
+					<md2-input-container childClass='md-block flex-80'>
 						<input
 							name='inviteCode'
 							type='text'
@@ -141,7 +141,7 @@
 		<div class='layout-row layout-align-center-center flex'>
 			<div class='layout-column flex'>
 				<div class='layout-row layout-align-center-center'>
-					<md2-input-container class='md-block flex-80'>
+					<md2-input-container childClass='md-block flex-80'>
 						<input
 							name='name'
 							[(ngModel)]='self.data.name'

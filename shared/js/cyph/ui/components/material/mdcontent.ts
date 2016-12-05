@@ -28,28 +28,27 @@ export class MdContent
 	/** Component configuration. */
 	public static readonly config			= {
 		bindings: {
-			class: '@'
+			childClass: '@'
 		},
 		/* tslint:disable-next-line:max-classes-per-file */
 		controller: class {
 			/** @ignore */
-			public readonly class: string;
+			public readonly childClass: string;
 
-			constructor ($element: JQuery) {
-				$element.removeAttr('class');
-			}
+			constructor () {}
 		},
 		template: `
-			<md-content ng-attr-class='{{$ctrl.class || ""}}'>
-				<ng-transclude></ng-transclude>
-			</md-content>
+			<md-content
+				ng-class='$ctrl.childClass'
+				ng-transclude
+			></md-content>
 		`,
 		transclude: true
 	};
 
 
 	/** @ignore */
-	@Input() public class: string;
+	@Input() public childClass: string;
 
 	/** @ignore */
 	public ngDoCheck () : void {

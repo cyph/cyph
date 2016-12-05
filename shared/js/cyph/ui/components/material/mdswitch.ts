@@ -29,7 +29,7 @@ export class MdSwitch
 	public static readonly config			= {
 		bindings: {
 			ariaLabel: '@',
-			class: '@',
+			childClass: '@',
 			model: '='
 		},
 		/* tslint:disable-next-line:max-classes-per-file */
@@ -38,23 +38,20 @@ export class MdSwitch
 			public readonly ariaLabel: string;
 
 			/** @ignore */
-			public readonly class: string;
+			public readonly childClass: string;
 
 			/** @ignore */
 			public readonly model: boolean;
 
-			constructor ($element: JQuery) {
-				$element.removeAttr('aria-label class');
-			}
+			constructor () {}
 		},
 		template: `
 			<md-switch
 				ng-attr-aria-label='{{$ctrl.ariaLabel}}'
-				ng-attr-class='{{$ctrl.class || ""}}'
+				ng-class='$ctrl.childClass'
 				ng-model='$ctrl.model'
-			>
-				<ng-transclude></ng-transclude>
-			</md-switch>
+				ng-transclude
+			></md-switch>
 		`,
 		transclude: true
 	};
@@ -64,7 +61,7 @@ export class MdSwitch
 	@Input() public ariaLabel: string;
 
 	/** @ignore */
-	@Input() public class: string;
+	@Input() public childClass: string;
 
 	/** @ignore */
 	@Input() public model: number;

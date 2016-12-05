@@ -18,7 +18,7 @@
 		</div>
 		<div cyphTranslate>Initiating key exchange...</div>
 		<md2-progress-linear
-			class='md-accent key-exchange-progress'
+			childClass='md-accent key-exchange-progress'
 			mdMode='determinate'
 			[value]='self.keyExchangeProgress'
 		></md2-progress-linear>
@@ -54,7 +54,7 @@
 		<div class='logo-animation connected'></div>
 		<div cyphTranslate>Securely Connected!</div>
 		<md2-progress-linear
-			class='md-accent key-exchange-progress'
+			childClass='md-accent key-exchange-progress'
 			mdMode='determinate'
 			[value]='100'
 		></md2-progress-linear>
@@ -99,9 +99,9 @@
 
 		<md2-button
 			cyphTranslate
-			class='sidebar'
+			childClass='sidebar'
 			ariaLabel='Sidebar'
-			(click)='self.p2pManager.toggleSidebar()'
+			(childClick)='self.p2pManager.toggleSidebar()'
 		>
 			<img src='/img/icons/chat.png' alt='Chat' cyphTranslate />
 		</md2-button>
@@ -109,8 +109,8 @@
 		<div class='buttons'>
 			<md2-button
 				cyphTranslate
-				class='md-fab video-call-button'
-				(click)='self.p2pManager.videoCallButton()'
+				childClass='md-fab video-call-button'
+				(childClick)='self.p2pManager.videoCallButton()'
 				[ariaLabel]='
 					!self.p2pManager.p2p.outgoingStream.video ?
 						"Enable Camera" :
@@ -132,8 +132,8 @@
 			</md2-button>
 			<md2-button
 				cyphTranslate
-				class='md-fab voice-call-button'
-				(click)='self.p2pManager.voiceCallButton()'
+				childClass='md-fab voice-call-button'
+				(childClick)='self.p2pManager.voiceCallButton()'
 				[ariaLabel]='
 					!self.p2pManager.p2p.outgoingStream.audio ?
 						"Enable Mic" :
@@ -156,8 +156,8 @@
 			<md2-button
 				cyphTranslate
 				ariaLabel='End Call'
-				class='md-fab md-theme-grey close-button'
-				(click)='self.p2pManager.closeButton()'
+				childClass='md-fab md-theme-grey close-button'
+				(childClick)='self.p2pManager.closeButton()'
 			>
 				<md2-icon>call_end</md2-icon>
 			</md2-button>
@@ -173,10 +173,10 @@
 		class='cyph-view transfer-list flex'
 		[class.active]='self.state === cyph.UI.Chat.States.chat'
 	>
-		<md2-content class='md-no-flicker'>
-			<md2-list class='layout-column'>
+		<md2-content childClass='md-no-flicker'>
+			<md2-list childClass='layout-column'>
 				<md2-list-item
-					class='transfer layout-row'
+					childClass='transfer layout-row'
 					*ngFor='let transfer of self.fileManager.files.transfers'
 				>
 					<div class='layout-column layout-align-start-stretch flex'>
@@ -192,7 +192,7 @@
 						<md2-progress-linear
 							mdMode='determinate'
 							[value]='transfer.percentComplete'
-							class='layout-row'
+							childClass='layout-row'
 						></md2-progress-linear>
 					</div>
 				</md2-list-item>
@@ -213,18 +213,21 @@
 			) + "px"
 		'
 	>
-		<md2-content class='nano-content md-no-flicker'>
-			<md2-list class='layout-column'>
+		<md2-content childClass='nano-content md-no-flicker'>
+			<md2-list childClass='layout-column'>
 				<md2-list-item
-					class='message-item unread layout-row'
-					[class.self-destructed]='
-						message.selfDestructTimer &&
-						message.selfDestructTimer.isComplete
-					'
-					[ngClass]='
-						"author-" + (
-							cyph.Session.Users[message.author] ||
-							cyph.Session.Users.other
+					[childClass]='
+						"message-item unread layout-row" +
+						(
+							" author-" + (
+								cyph.Session.Users[message.author] ||
+								cyph.Session.Users.other
+							)
+						) +
+						(
+							message.selfDestructTimer && message.selfDestructTimer.isComplete ?
+								" self-destructed" :
+								""
 						)
 					'
 					*ngFor='let message of self.messages'
@@ -284,8 +287,10 @@
 				</md2-list-item>
 
 				<md2-list-item
-					class='friend-is-typing layout-row'
-					[class.show]='self.isFriendTyping'
+					[childClass]='
+						"friend-is-typing layout-row" +
+						(self.isFriendTyping ? " show" : "")
+					'
 				>
 					<span class='ellipsis-spinner'>
 						<div class='bounce1'></div>
@@ -295,10 +300,10 @@
 				</md2-list-item>
 
 				<md2-list-item
-					class='chat-end-message layout-row layout-align-center-center'
+					childClass='chat-end-message layout-row layout-align-center-center'
 					*ngIf='self.isDisconnected && !hideDisconnectMessage'
 				>
-					<md2-card class='md-padding flex-75 flex-gt-sm-50'>
+					<md2-card childClass='md-padding flex-75 flex-gt-sm-50'>
 						<md2-card-content>
 							<ng-content></ng-content>
 						</md2-card-content>

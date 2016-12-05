@@ -29,7 +29,7 @@ export class MdSlider
 	public static readonly config			= {
 		bindings: {
 			ariaLabel: '@',
-			class: '@',
+			childClass: '@',
 			max: '<',
 			mdDiscrete: '@',
 			min: '<',
@@ -42,7 +42,7 @@ export class MdSlider
 			public readonly ariaLabel: string;
 
 			/** @ignore */
-			public readonly class: string;
+			public readonly childClass: string;
 
 			/** @ignore */
 			public readonly max: number;
@@ -59,22 +59,19 @@ export class MdSlider
 			/** @ignore */
 			public readonly step: number;
 
-			constructor ($element: JQuery) {
-				$element.removeAttr('aria-label class');
-			}
+			constructor () {}
 		},
 		template: `
 			<md-slider
 				ng-attr-aria-label='{{$ctrl.ariaLabel}}'
-				ng-attr-class='{{$ctrl.class || ""}}'
+				ng-class='$ctrl.childClass'
 				ng-attr-max='{{$ctrl.max}}'
 				ng-attr-md-discrete='{{$ctrl.mdDiscrete}}'
 				ng-attr-min='{{$ctrl.min}}'
 				ng-model='$ctrl.model'
 				ng-attr-step='{{$ctrl.step}}'
-			>
-				<ng-transclude></ng-transclude>
-			</md-slider>
+				ng-transclude
+			></md-slider>
 		`,
 		transclude: true
 	};
@@ -84,7 +81,7 @@ export class MdSlider
 	@Input() public ariaLabel: string;
 
 	/** @ignore */
-	@Input() public class: string;
+	@Input() public childClass: string;
 
 	/** @ignore */
 	@Input() public max: number;

@@ -31,11 +31,11 @@ export class MdButton
 	public static readonly config			= {
 		bindings: {
 			ariaLabel: '@',
-			class: '@',
-			click: '&',
+			childClass: '@',
+			childClick: '&',
+			childId: '@',
 			disabled: '<',
 			href: '@',
-			id: '@',
 			rel: '@',
 			target: '@',
 			type: '@'
@@ -46,19 +46,19 @@ export class MdButton
 			public readonly ariaLabel: string;
 
 			/** @ignore */
-			public readonly class: string;
+			public readonly childClass: string;
 
 			/** @ignore */
-			public readonly click: () => void;
+			public readonly childClick: () => void;
+
+			/** @ignore */
+			public readonly childId: string;
 
 			/** @ignore */
 			public readonly disabled: boolean;
 
 			/** @ignore */
 			public readonly href: string;
-
-			/** @ignore */
-			public readonly id: string;
 
 			/** @ignore */
 			public readonly rel: string;
@@ -69,19 +69,17 @@ export class MdButton
 			/** @ignore */
 			public readonly type: string;
 
-			constructor ($element: JQuery) {
-				$element.removeAttr('aria-label class id');
-			}
+			constructor () {}
 		},
 		template: `
 			<md-button
 				ng-if='$ctrl.href'
 				ng-attr-aria-label='{{$ctrl.ariaLabel}}'
-				ng-attr-class='{{$ctrl.class || ""}}'
-				ng-click='$ctrl.click && $ctrl.click()'
+				ng-class='$ctrl.childClass'
+				ng-click='$ctrl.childClick && $ctrl.childClick()'
 				ng-disabled='$ctrl.disabled'
 				ng-href='{{$ctrl.href}}'
-				ng-attr-id='{{$ctrl.id}}'
+				ng-attr-id='{{$ctrl.childId}}'
 				ng-attr-rel='{{$ctrl.rel}}'
 				ng-attr-target='{{$ctrl.target}}'
 				ng-attr-type='{{$ctrl.type}}'
@@ -91,10 +89,10 @@ export class MdButton
 			<md-button
 				ng-if='!$ctrl.href'
 				ng-attr-aria-label='{{$ctrl.ariaLabel}}'
-				ng-attr-class='{{$ctrl.class || ""}}'
-				ng-click='$ctrl.click && $ctrl.click()'
+				ng-class='$ctrl.childClass'
+				ng-click='$ctrl.childClick && $ctrl.childClick()'
 				ng-disabled='$ctrl.disabled'
-				ng-attr-id='{{$ctrl.id}}'
+				ng-attr-id='{{$ctrl.childId}}'
 				ng-attr-rel='{{$ctrl.rel}}'
 				ng-attr-target='{{$ctrl.target}}'
 				ng-attr-type='{{$ctrl.type}}'
@@ -110,19 +108,19 @@ export class MdButton
 	@Input() public ariaLabel: string;
 
 	/** @ignore */
-	@Input() public class: string;
+	@Input() public childClass: string;
 
 	/** @ignore */
-	@Output() public click: EventEmitter<void>;
+	@Output() public childClick: EventEmitter<void>;
+
+	/** @ignore */
+	@Input() public childId: string;
 
 	/** @ignore */
 	@Input() public disabled: boolean;
 
 	/** @ignore */
 	@Input() public href: string;
-
-	/** @ignore */
-	@Input() public id: string;
 
 	/** @ignore */
 	@Input() public rel: string;

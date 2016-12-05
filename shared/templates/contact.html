@@ -1,7 +1,7 @@
 <div *ngIf='cyph && self'>
 	<form (submit)='send()' *ngIf='!self.sent'>
 		<div class='layout-gt-xs-row'>
-			<md2-input-container class='md-block flex'>
+			<md2-input-container childClass='md-block flex'>
 				<label cyphTranslate>Cyph team to contact</label>
 				<md2-select [(model)]='self.to' name='to'>
 					<md2-option
@@ -14,11 +14,11 @@
 			</md2-input-container>
 		</div>
 		<div class='layout-row'>
-			<md2-input-container class='md-block flex'>
+			<md2-input-container childClass='md-block flex'>
 				<input [(ngModel)]='self.fromName' name='name' aria-label='Name' cyphTranslate />
 				<label cyphTranslate>Name</label>
 			</md2-input-container>
-			<md2-input-container class='md-block flex'>
+			<md2-input-container childClass='md-block flex'>
 				<input
 					[(ngModel)]='self.fromEmail'
 					name='email'
@@ -30,11 +30,11 @@
 				<label cyphTranslate>Email</label>
 			</md2-input-container>
 		</div>
-		<md2-input-container class='md-block'>
+		<md2-input-container childClass='md-block'>
 			<input [(ngModel)]='self.subject' name='subject' aria-label='Subject' cyphTranslate />
 			<label cyphTranslate>Subject</label>
 		</md2-input-container>
-		<md2-input-container class='md-block'>
+		<md2-input-container childClass='md-block'>
 			<textarea
 				[(ngModel)]='self.message'
 				name='message'

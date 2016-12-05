@@ -28,14 +28,14 @@ export class MdFabSpeedDial
 	/** Component configuration. */
 	public static readonly config			= {
 		bindings: {
-			class: '@',
+			childClass: '@',
 			mdDirection: '@',
 			mdOpen: '<'
 		},
 		/* tslint:disable-next-line:max-classes-per-file */
 		controller: class {
 			/** @ignore */
-			public readonly class: string;
+			public readonly childClass: string;
 
 			/** @ignore */
 			public readonly mdDirection: string;
@@ -43,25 +43,22 @@ export class MdFabSpeedDial
 			/** @ignore */
 			public readonly mdOpen: boolean;
 
-			constructor ($element: JQuery) {
-				$element.removeAttr('class');
-			}
+			constructor () {}
 		},
 		template: `
 			<md-fab-speed-dial
-				ng-attr-class='{{$ctrl.class || ""}}'
+				ng-class='$ctrl.childClass'
 				ng-attr-md-direction='{{$ctrl.mdDirection}}'
 				md-open='$ctrl.mdOpen'
-			>
-				<ng-transclude></ng-transclude>
-			</md-fab-speed-dial>
+				ng-transclude
+			></md-fab-speed-dial>
 		`,
 		transclude: true
 	};
 
 
 	/** @ignore */
-	@Input() public class: string;
+	@Input() public childClass: string;
 
 	/** @ignore */
 	@Input() public mdDirection: string;

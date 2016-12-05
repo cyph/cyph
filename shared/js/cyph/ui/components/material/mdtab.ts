@@ -28,14 +28,14 @@ export class MdTab
 	/** Component configuration. */
 	public static readonly config			= {
 		bindings: {
-			class: '@',
+			childClass: '@',
 			disabled: '<',
 			label: '@'
 		},
 		/* tslint:disable-next-line:max-classes-per-file */
 		controller: class {
 			/** @ignore */
-			public readonly class: string;
+			public readonly childClass: string;
 
 			/** @ignore */
 			public readonly disabled: boolean;
@@ -43,25 +43,22 @@ export class MdTab
 			/** @ignore */
 			public readonly label: string;
 
-			constructor ($element: JQuery) {
-				$element.removeAttr('class');
-			}
+			constructor () {}
 		},
 		template: `
 			<md-tab
-				ng-attr-class='{{$ctrl.class || ""}}'
+				ng-class='$ctrl.childClass'
 				ng-disabled='$ctrl.disabled'
 				ng-attr-label='{{$ctrl.label}}'
-			>
-				<ng-transclude></ng-transclude>
-			</md-tab>
+				ng-transclude
+			></md-tab>
 		`,
 		transclude: true
 	};
 
 
 	/** @ignore */
-	@Input() public class: string;
+	@Input() public childClass: string;
 
 	/** @ignore */
 	@Input() public disabled: boolean;
