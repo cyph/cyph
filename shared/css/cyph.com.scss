@@ -287,7 +287,9 @@ html.mobile #hero-section {
 	border-left: 0px !important;
 	border-right: 0px !important;
 	display: inline-block;
+
 	@include transform(translateY(-5px));
+
 	width: 300px;
 }
 
