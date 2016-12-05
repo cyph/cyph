@@ -779,10 +779,7 @@ html:not(.mobile) .cyph-not-found {
 	}
 }
 
-.help {
-	min-width: 60%;
-	height: 80%;
-
+cyph-help {
 	md-content {
 		width: 100%;
 		overflow-x: hidden;
@@ -839,7 +836,7 @@ html:not(.mobile) .cyph-not-found {
 	}
 }
 
-html:not(.mobile) .formatting-help {
+html:not(.mobile) cyph-help {
 	md-content {
 		padding-left: 10%;
 		padding-right: 10%;
@@ -850,7 +847,7 @@ html:not(.mobile) .formatting-help {
 	}
 }
 
-html.mobile .formatting-help {
+html.mobile cyph-help {
 	font-size: 75%;
 }
 

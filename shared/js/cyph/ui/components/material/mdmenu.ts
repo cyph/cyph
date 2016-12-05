@@ -2,12 +2,14 @@ import {
 	Directive,
 	DoCheck,
 	ElementRef,
+	EventEmitter,
 	Inject,
 	Injector,
 	Input,
 	OnChanges,
 	OnDestroy,
 	OnInit,
+	Output,
 	SimpleChanges
 } from '@angular/core';
 import {UpgradeComponent} from '@angular/upgrade/static';
@@ -29,6 +31,7 @@ export class MdMenu
 	public static readonly config			= {
 		bindings: {
 			class: '@',
+			init: '&',
 			mdPositionMode: '@'
 		},
 		/* tslint:disable-next-line:max-classes-per-file */
@@ -37,10 +40,17 @@ export class MdMenu
 			public readonly class: string;
 
 			/** @ignore */
+			public readonly init: ($event: any) => void;
+
+			/** @ignore */
 			public readonly mdPositionMode: string;
 
-			constructor ($element: JQuery) {
+			constructor ($scope: any, $element: JQuery) {
 				$element.removeAttr('class');
+
+				if (this.init) {
+					this.init($scope.$mdMenu);
+				}
 			}
 		},
 		template: `
@@ -57,6 +67,9 @@ export class MdMenu
 
 	/** @ignore */
 	@Input() public class: string;
+
+	/** @ignore */
+	@Output() public init: EventEmitter<any>;
 
 	/** @ignore */
 	@Input() public mdPositionMode: string;

@@ -28,8 +28,7 @@ export class DialogManager implements IDialogManager {
 	/** @inheritDoc */
 	public async baseDialog (
 		o: {
-			template?: string;
-			templateUrl?: string;
+			template: string;
 			locals?: any;
 			oncomplete?: Function;
 			onclose?: Function;
@@ -61,8 +60,7 @@ export class DialogManager implements IDialogManager {
 			],
 			escapeToClose: true,
 			onComplete: o.oncomplete,
-			template: o.template,
-			templateUrl: o.templateUrl
+			template: `<md-dialog>${o.template}</md-dialog>`
 		})));
 	}
 

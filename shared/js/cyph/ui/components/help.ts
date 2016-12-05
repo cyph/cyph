@@ -3,13 +3,13 @@ import {Util} from '../../util';
 
 
 /**
- * Angular component for the cyph not found screen.
+ * Angular component for help UI.
  */
 @Component({
-	selector: 'cyph-static-cyph-not-found',
-	templateUrl: '../../../../templates/staticcyphnotfound.html'
+	selector: 'cyph-help',
+	templateUrl: '../../../../templates/help.html'
 })
-export class StaticCyphNotFound {
+export class Help {
 	/** @ignore */
 	public cyph: any;
 

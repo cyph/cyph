@@ -1,5 +1,6 @@
 import {CommonModule} from '@angular/common';
 import {NgModule} from '@angular/core';
+import {FormsModule} from '@angular/forms';
 import {BrowserModule} from '@angular/platform-browser';
 import {UpgradeModule} from '@angular/upgrade/static';
 import {
@@ -10,8 +11,10 @@ import {
 	Checkout,
 	Contact,
 	FileInput,
+	Help,
 	LinkConnection,
 	Markdown,
+	Register,
 	SignupForm,
 	StaticCyphNotFound,
 	StaticFooter
@@ -66,8 +69,10 @@ import {AppComponent} from './appcomponent';
 		Checkout,
 		Contact,
 		FileInput,
+		Help,
 		LinkConnection,
 		Markdown,
+		Register,
 		SignupForm,
 		StaticCyphNotFound,
 		StaticFooter,
@@ -105,11 +110,14 @@ import {AppComponent} from './appcomponent';
 		MdTooltip
 	],
 	entryComponents: [
-		AppComponent
+		AppComponent,
+		Help,
+		Register
 	],
 	imports: [
 		BrowserModule,
 		CommonModule,
+		FormsModule,
 		UpgradeModule
 	]
 })

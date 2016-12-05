@@ -128,6 +128,10 @@ md-toast {
 	font-size: 80%;
 }
 
+.strike {
+	text-decoration: line-through;
+}
+
 md-toolbar, md-toolbar.md-default-theme:not(.md-menu-toolbar), md-toolbar:not(.md-menu-toolbar) {
 	background-color: #7d4fd3;
 	height: 40px !important;
@@ -318,9 +322,30 @@ html:not(.mobile) .platform-container.mobile .mobile-only {
 	display: initial;
 }
 
+/* Dialog size */
+
+md-dialog {
+	width: 65%;
+	height: 80%;
+}
+
+/* Material "sm" */
+@media (min-width: 600px) and (max-width: 959px) {
+	md-dialog {
+		width: 80%;
+	}
+}
+
+/* Material "xs" */
+@media (max-width: 599px) {
+	md-dialog {
+		width: 95%;
+	}
+}
+
 /* Moved beta signup stuff from cyph.com CSS */
 
-.beta-signup-form, .register {
+.beta-signup-form, cyph-register {
 	font-size: 15px;
 
 	[disabled] {

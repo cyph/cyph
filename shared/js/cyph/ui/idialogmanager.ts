@@ -20,8 +20,7 @@ export interface IDialogManager {
 	 */
 	baseDialog (
 		o: {
-			template?: string;
-			templateUrl?: string;
+			template: string;
 			locals?: any;
 			oncomplete?: Function;
 			onclose?: Function;

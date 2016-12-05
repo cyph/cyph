@@ -1,76 +1,71 @@
-<md-content
-	class='nano md-no-flicker'
-	layout='column'
-	layout-fill
-	flex
->
+<md2-content class='nano md-no-flicker flex layout-column layout-fill'>
 	<div class='nano-content'>
 		<div
-			class='login-form'
-			ng-show='$ctrl.ui.betaState === $ctrl.cyph.im.BetaStates.login'
-			ng-class='{checking: $ctrl.checking}'
-			layout='row'
-			layout-align='center center'
+			class='login-form layout-row layout-align-center-center'
+			*ngIf='ui.betaState === cyph.im.BetaStates.login'
+			[class.checking]='checking'
 		>
-			<md-card flex='75' class='md-padding'>
-				<md-card-title>
-					<md-card-title-text>
-						<span class='md-headline' cyph-translate>
+			<md2-card class='md-padding flex-75'>
+				<md2-card-title>
+					<md2-card-title-text>
+						<span class='md-headline' cyphTranslate>
 							Log In
 						</span>
-						<span class='md-subhead' cyph-translate>
+						<span class='md-subhead' cyphTranslate>
 							Welcome to Cyph! You can log in to your beta account here.
 						</span>
-					</md-card-title-text>
-				</md-card-title>
-				<md-card-content>
-					<form>
-						<div layout='row' layout-align='center center'>
-							<md-subheader
-								cyph-translate
-								ng-style='{visibility: $ctrl.error ? "visible" : "hidden"}'
+					</md2-card-title-text>
+				</md2-card-title>
+				<md2-card-content>
+					<form (submit)='onSubmit()'>
+						<div class='layout-row layout-align-center-center'>
+							<md2-subheader
+								cyphTranslate
+								[style.visibility]='error ? "visible" : "hidden"'
 							>
 								Invalid username or password.
-							</md-subheader>
+							</md2-subheader>
 						</div>
-						<div layout='row' layout-align='center center'>
-							<md-input-container class='md-block' flex='60'>
+						<div class='layout-row layout-align-center-center'>
+							<md2-input-container class='md-block flex-60'>
 								<input
-									ng-model='username'
+									[(ngModel)]='username'
+									name='username'
 									aria-label='Username'
-									cyph-translate
+									cyphTranslate
 									required
 								/>
-								<label cyph-translate>Username</label>
-							</md-input-container>
+								<label cyphTranslate>Username</label>
+							</md2-input-container>
 						</div>
-						<div layout='row' layout-align='center center'>
-							<md-input-container class='md-block' flex='60'>
+						<div class='layout-row layout-align-center-center'>
+							<md2-input-container class='md-block flex-60'>
 								<input
-									ng-model='password'
+									[(ngModel)]='password'
+									name='password'
 									type='password'
 									aria-label='Password'
-									cyph-translate
+									cyphTranslate
 									required
 								/>
-								<label cyph-translate>Password</label>
-							</md-input-container>
+								<label cyphTranslate>Password</label>
+							</md2-input-container>
 						</div>
-						<div layout='row' layout-align='center center'>
-							<md-button type='submit' aria-label='Log In' cyph-translate>
+						<div class='layout-row layout-align-center-center'>
+							<md2-button type='submit' ariaLabel='Log In' cyphTranslate>
 								Log In
-							</md-button>
+							</md2-button>
 						</div>
 					</form>
-				</md-card-content>
-				<md-progress-circular md-mode='indeterminate'></md-progress-circular>
-			</md-card>
+				</md2-card-content>
+				<md2-progress-circular mdMode='indeterminate'></md2-progress-circular>
+			</md2-card>
 		</div>
-		<div ng-show='$ctrl.ui.betaState === $ctrl.cyph.im.BetaStates.register' cyph-translate>
+		<div *ngIf='ui.betaState === cyph.im.BetaStates.register' cyphTranslate>
 			Registration screen
 		</div>
-		<div ng-show='$ctrl.ui.betaState === $ctrl.cyph.im.BetaStates.settings' cyph-translate>
+		<div *ngIf='ui.betaState === cyph.im.BetaStates.settings' cyphTranslate>
 			Settings screen
 		</div>
 	</div>
-</md-content>
+</md2-content>

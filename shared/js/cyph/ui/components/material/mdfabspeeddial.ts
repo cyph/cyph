@@ -30,7 +30,7 @@ export class MdFabSpeedDial
 		bindings: {
 			class: '@',
 			mdDirection: '@',
-			mdOpen: '<',
+			mdOpen: '<'
 		},
 		/* tslint:disable-next-line:max-classes-per-file */
 		controller: class {

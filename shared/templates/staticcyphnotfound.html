@@ -1,44 +1,39 @@
-<md-content
-	class='cyph-not-found nano md-no-flicker'
-	layout='column'
-	layout-fill
-	flex
->
+<md2-content class='cyph-not-found nano md-no-flicker flex layout-column layout-fill'>
 	<div class='nano-content'>
 		<div>
-			<h1 cyph-translate>
+			<h1 cyphTranslate>
 				I'm sorry, but your cyph is in another castle...
 			</h1>
 		</div>
-		<img src='/img/404.png' alt='Funny Mario reference' cyph-translate />
+		<img src='/img/404.png' alt='Funny Mario reference' cyphTranslate />
 		<div class='explanation'>
 			<p>
-				<span cyph-translate>Please</span>
+				<span cyphTranslate>Please</span>
 				<a
-					cyph-translate
+					cyphTranslate
 					target='_self'
-					ng-href='{{$ctrl.cyph.Env.newCyphUrl}}'
+					[href]='cyph.Env.newCyphUrl'
 				>try again</a>.
 			</p>
-			<p cyph-translate>Reasons why you may have landed here:</p>
+			<p cyphTranslate>Reasons why you may have landed here:</p>
 			<ul>
-				<li cyph-translate>
+				<li cyphTranslate>
 					The cyph you're looking for has expired
 				</li>
-				<li cyph-translate>
+				<li cyphTranslate>
 					The cyph you're looking for has already been connected to
 					(someone else got there first, or you clicked twice)
 				</li>
-				<li cyph-translate>
+				<li cyphTranslate>
 					A glitch in the matrix
 				</li>
-				<li cyph-translate>
+				<li cyphTranslate>
 					You're just guessing random URLs
 				</li>
-				<li cyph-translate>
+				<li cyphTranslate>
 					We broke something
 				</li>
 			</ul>
 		</div>
 	</div>
-</md-content>
+</md2-content>

@@ -1,21 +1,21 @@
 import {Component, Input} from '@angular/core';
 import {Util} from '../../util';
-import {IChat} from '../chat/ichat';
+import {ISignupForm} from '../isignupform';
 
 
 /**
- * Angular component for main chat UI.
+ * Angular component for register UI.
  */
 @Component({
-	selector: 'cyph-chat-main',
-	templateUrl: '../../../../templates/chatmain.html'
+	selector: 'cyph-register',
+	templateUrl: '../../../../templates/register.html'
 })
-export class ChatMain {
+export class Register {
 	/** @ignore */
-	@Input() public self: IChat;
+	@Input() public signupForm: ISignupForm;
 
 	/** @ignore */
-	@Input() public hideDisconnectMessage: boolean;
+	@Input() public invite: boolean;
 
 	/** @ignore */
 	public cyph: any;

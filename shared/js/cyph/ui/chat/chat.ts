@@ -235,7 +235,7 @@ export class Chat extends BaseButtonManager implements IChat {
 	public helpButton () : void {
 		this.baseButtonClick(() => {
 			this.dialogManager.baseDialog({
-				templateUrl: '../../../../templates/helpmodal.html'
+				template: `<cyph-help></cyph-help>`
 			});
 
 			Analytics.send({

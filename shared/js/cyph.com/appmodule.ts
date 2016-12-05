@@ -1,5 +1,6 @@
 import {CommonModule} from '@angular/common';
 import {NgModule} from '@angular/core';
+import {FormsModule} from '@angular/forms';
 import {BrowserModule} from '@angular/platform-browser';
 import {UpgradeModule} from '@angular/upgrade/static';
 import {
@@ -10,8 +11,10 @@ import {
 	Checkout,
 	Contact,
 	FileInput,
+	Help,
 	LinkConnection,
 	Markdown,
+	Register,
 	SignupForm,
 	StaticCyphNotFound,
 	StaticFooter
@@ -51,11 +54,10 @@ import {
 } from '../cyph/ui/components/material';
 import {Translate} from '../cyph/ui/directives';
 import {AppComponent} from './appcomponent';
-import {HomeComponent} from './homecomponent';
 
 
 /**
- * Angular module for Cyph home page.
+ * Angular module for Cyph UI.
  */
 @NgModule({
 	declarations: [
@@ -67,9 +69,10 @@ import {HomeComponent} from './homecomponent';
 		Checkout,
 		Contact,
 		FileInput,
-		HomeComponent,
+		Help,
 		LinkConnection,
 		Markdown,
+		Register,
 		SignupForm,
 		StaticCyphNotFound,
 		StaticFooter,
@@ -107,11 +110,14 @@ import {HomeComponent} from './homecomponent';
 		MdTooltip
 	],
 	entryComponents: [
-		AppComponent
+		AppComponent,
+		Help,
+		Register
 	],
 	imports: [
 		BrowserModule,
 		CommonModule,
+		FormsModule,
 		UpgradeModule
 	]
 })

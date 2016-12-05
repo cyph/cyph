@@ -28,19 +28,26 @@ export class MdSubheader
 	/** Component configuration. */
 	public static readonly config			= {
 		bindings: {
-			class: '@'
+			class: '@',
+			stickyState: '@'
 		},
 		/* tslint:disable-next-line:max-classes-per-file */
 		controller: class {
 			/** @ignore */
 			public readonly class: string;
 
+			/** @ignore */
+			public readonly stickyState: string;
+
 			constructor ($element: JQuery) {
 				$element.removeAttr('class');
 			}
 		},
 		template: `
-			<md-subheader ng-attr-class='{{$ctrl.class || ""}}'>
+			<md-subheader
+				ng-attr-class='{{$ctrl.class || ""}}'
+				ng-attr-sticky-state='{{$ctrl.stickyState}}'
+			>
 				<ng-transclude></ng-transclude>
 			</md-subheader>
 		`,
@@ -50,6 +57,9 @@ export class MdSubheader
 
 	/** @ignore */
 	@Input() public class: string;
+
+	/** @ignore */
+	@Input() public stickyState: string;
 
 	/** @ignore */
 	public ngDoCheck () : void {

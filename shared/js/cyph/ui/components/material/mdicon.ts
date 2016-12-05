@@ -29,16 +29,12 @@ export class MdIcon
 	public static readonly config			= {
 		bindings: {
 			class: '@',
-			mdFontSet: '@',
 			mdMenuAlignTarget: '@'
 		},
 		/* tslint:disable-next-line:max-classes-per-file */
 		controller: class {
 			/** @ignore */
 			public readonly class: string;
-
-			/** @ignore */
-			public readonly mdFontSet: string;
 
 			/** @ignore */
 			public readonly mdMenuAlignTarget: string;
@@ -49,8 +45,7 @@ export class MdIcon
 		},
 		template: `
 			<md-icon
-				ng-attr-class='{{$ctrl.class || ""}}'
-				ng-attr-md-font-set='{{$ctrl.mdFontSet}}'
+				ng-attr-class='material-icons {{$ctrl.class || ""}}'
 				ng-attr-md-menu-align-target='{{$ctrl.mdMenuAlignTarget}}'
 			>
 				<ng-transclude></ng-transclude>
@@ -62,9 +57,6 @@ export class MdIcon
 
 	/** @ignore */
 	@Input() public class: string;
-
-	/** @ignore */
-	@Input() public mdFontSet: string;
 
 	/** @ignore */
 	@Input() public mdMenuAlignTarget: string;

@@ -1,31 +1,30 @@
 <div class='chat-cyphertext nano'>
-	<md-content class='nano-content'>
-		<md-list layout='column'>
-			<md-list-item
-				class='message-item unread'
-				ng-repeat='message in $ctrl.self.cyphertext.messages'
-				layout='row'
+	<md2-content class='nano-content'>
+		<md2-list class='layout-column'>
+			<md2-list-item
+				class='message-item unread layout-row'
+				*ngFor='let message of self.cyphertext.messages'
 			>
 				<span class='message'>
-					<strong ng-if='::message.author === $ctrl.cyph.Session.Users.me'>
-						{{::$ctrl.cyph.Strings.me}}:
+					<strong *ngIf='message.author === cyph.Session.Users.me'>
+						{{cyph.Strings.me}}:
 					</strong>
-					<strong ng-if='::message.author !== $ctrl.cyph.Session.Users.me'>
-						{{::message.author}}:
+					<strong *ngIf='message.author !== cyph.Session.Users.me'>
+						{{message.author}}:
 					</strong>
-					<span flex>{{::message.text}}</span>
+					<span class='flex'>{{message.text}}</span>
 					<br />
 					<br />
 				</span>
-			</md-list-item>
-		</md-list>
-	</md-content>
-	<md-button
-		cyph-translate
-		aria-label='Close Cyphertext'
+			</md2-list-item>
+		</md2-list>
+	</md2-content>
+	<md2-button
+		cyphTranslate
+		ariaLabel='Close Cyphertext'
 		class='md-fab md-theme-grey close-button'
-		ng-click='$ctrl.self.cyphertext.hide()'
+		(click)='self.cyphertext.hide()'
 	>
 		<strong>&times;</strong>
-	</md-button>
+	</md2-button>
 </div>

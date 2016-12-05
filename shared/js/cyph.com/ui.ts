@@ -154,11 +154,14 @@ export class UI extends Cyph.UI.BaseButtonManager {
 			if (this.homeSection === HomeSections.register) {
 				this.dialogManager.baseDialog({
 					locals: {
-						cyph,
 						signupForm: this.signupForm
 					},
 					onclose: () => Cyph.UrlState.set(''),
-					templateUrl: '../../templates/register.html'
+					template: `
+						<cyph-register
+							signup-form='locals.signupForm'
+						></cyph-register>
+					`
 				});
 			}
 			else if (this.homeSection === HomeSections.invite) {
@@ -168,11 +171,15 @@ export class UI extends Cyph.UI.BaseButtonManager {
 
 				this.dialogManager.baseDialog({
 					locals: {
-						cyph,
 						signupForm: this.signupForm
 					},
 					onclose: () => Cyph.UrlState.set(''),
-					templateUrl: '../../templates/invite.html'
+					template: `
+						<cyph-register
+							invite='true'
+							signup-form='locals.signupForm'
+						></cyph-register>
+					`
 				});
 			}
 			else {

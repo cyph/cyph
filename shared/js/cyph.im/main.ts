@@ -51,50 +51,6 @@ angular.
 	]).
 	config(Cyph.Config.angularConfig.config).
 	component(
-		Cyph.UI.Components.Beta.title,
-		Cyph.UI.Components.Beta.config
-	).
-	component(
-		Cyph.UI.Components.ChatCyphertext.title,
-		Cyph.UI.Components.ChatCyphertext.config
-	).
-	component(
-		Cyph.UI.Components.ChatMain.title,
-		Cyph.UI.Components.ChatMain.config
-	).
-	component(
-		Cyph.UI.Components.ChatMessageBox.title,
-		Cyph.UI.Components.ChatMessageBox.config
-	).
-	component(
-		Cyph.UI.Components.Contact.title,
-		Cyph.UI.Components.Contact.config
-	).
-	component(
-		Cyph.UI.Components.FileInput.title,
-		Cyph.UI.Components.FileInput.config
-	).
-	component(
-		Cyph.UI.Components.LinkConnection.title,
-		Cyph.UI.Components.LinkConnection.config
-	).
-	component(
-		Cyph.UI.Components.Markdown.title,
-		Cyph.UI.Components.Markdown.config
-	).
-	component(
-		Cyph.UI.Components.SignupForm.title,
-		Cyph.UI.Components.SignupForm.config
-	).
-	component(
-		Cyph.UI.Components.StaticCyphNotFound.title,
-		Cyph.UI.Components.StaticCyphNotFound.config
-	).
-	component(
-		Cyph.UI.Components.StaticFooter.title,
-		Cyph.UI.Components.StaticFooter.config
-	).
-	component(
 		Cyph.UI.Components.Material.MdButton.title,
 		Cyph.UI.Components.Material.MdButton.config
 	).
@@ -219,8 +175,12 @@ angular.
 		Cyph.UI.Components.Material.MdTooltip.config
 	).
 	directive(
-		Cyph.UI.Directives.Translate.title,
-		Cyph.UI.Directives.Translate.config
+		'cyphHelp',
+		downgradeComponent({component: Cyph.UI.Components.Help})
+	).
+	directive(
+		'cyphRegister',
+		downgradeComponent({component: Cyph.UI.Components.Register})
 	).
 	directive(
 		'cyphApp',
