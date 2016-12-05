@@ -1,4 +1,5 @@
 import {Component, Input} from '@angular/core';
+import {Util} from '../../util';
 import {ISignupForm} from '../isignupform';
 
 
@@ -16,5 +17,14 @@ export class SignupForm {
 	/** @ignore */
 	@Input() public invite: boolean;
 
-	constructor () {}
+	/** @ignore */
+	public cyph: any;
+
+	constructor () { (async () => {
+		while (!cyph) {
+			await Util.sleep();
+		}
+
+		this.cyph	= cyph;
+	})(); }
 }
