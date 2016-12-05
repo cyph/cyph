@@ -1,5 +1,5 @@
 <div
-	class='chat-message-box platform-container'
+	class='chat-message-box'
 	[class.mobile]='self.isMobile'
 	*ngIf='
 		(cyph && self) &&
@@ -15,96 +15,97 @@
 		cyphTranslate
 	></textarea>
 
-	<div
-		class='message-box-button-group mobile-only'
-		[class.hidden]='self.currentMessage === ""'
-	>
-		<md2-button
-			ariaLabel='Send'
-			(click)='self.send()'
-			cyphTranslate
+	<div *ngIf='self.isMobile'>
+		<div
+			class='message-box-button-group'
+			[class.hidden]='self.currentMessage === ""'
 		>
-			<md2-icon class='grey'>send</md2-icon>
-		</md2-button>
-	</div>
-	<div
-		class='message-box-button-group mobile-only'
-		[class.hidden]='self.currentMessage !== ""'
-	>
-		<md2-button
-			ariaLabel='Video Call'
-			(click)='self.p2pManager.videoCallButton()'
-			[disabled]='!self.p2pManager.isEnabled'
-			*ngIf='!self.p2pManager.p2p.isActive'
-			cyphTranslate
+			<md2-button
+				ariaLabel='Send'
+				(click)='self.send()'
+				cyphTranslate
+			>
+				<md2-icon class='grey'>send</md2-icon>
+			</md2-button>
+		</div>
+		<div
+			class='message-box-button-group'
+			[class.hidden]='self.currentMessage !== ""'
 		>
-			<md2-icon class='grey'>videocam</md2-icon>
-		</md2-button>
-		<md2-button
-			ariaLabel='Voice Call'
-			(click)='self.p2pManager.voiceCallButton()'
-			[disabled]='!self.p2pManager.isEnabled'
-			*ngIf='!self.p2pManager.p2p.isActive'
-			cyphTranslate
-		>
-			<md2-icon class='grey'>phone</md2-icon>
-		</md2-button>
-		<md2-button
-			ariaLabel='Send File or Photo'
-			cyphTranslate
-		>
-			<md2-icon class='grey'>attach_file</md2-icon>
-			<cyph-file-input
-				(fileChange)='self.fileManager.send($event)'
-				[accept]='fileInputAccept'
-			></cyph-file-input>
-		</md2-button>
-	</div>
+			<md2-button
+				ariaLabel='Video Call'
+				(click)='self.p2pManager.videoCallButton()'
+				[disabled]='!self.p2pManager.isEnabled'
+				*ngIf='!self.p2pManager.p2p.isActive'
+				cyphTranslate
+			>
+				<md2-icon class='grey'>videocam</md2-icon>
+			</md2-button>
+			<md2-button
+				ariaLabel='Voice Call'
+				(click)='self.p2pManager.voiceCallButton()'
+				[disabled]='!self.p2pManager.isEnabled'
+				*ngIf='!self.p2pManager.p2p.isActive'
+				cyphTranslate
+			>
+				<md2-icon class='grey'>phone</md2-icon>
+			</md2-button>
+			<md2-button
+				ariaLabel='Send File or Photo'
+				cyphTranslate
+			>
+				<md2-icon class='grey'>attach_file</md2-icon>
+				<cyph-file-input
+					(fileChange)='self.fileManager.send($event)'
+					[accept]='fileInputAccept'
+				></cyph-file-input>
+			</md2-button>
+		</div>
 
-	<md2-menu
-		class='mobile-only'
-		(init)='$mdMenu = $event'
-		mdPositionMode='target-right target'
-	>
-		<md2-button
-			ariaLabel='Menu'
-			class='md-icon-button'
-			(click)='openMenu()'
-			cyphTranslate
+		<md2-menu
+			(init)='$mdMenu = $event'
+			mdPositionMode='target-right target'
 		>
-			<md2-icon>more_horiz</md2-icon>
-		</md2-button>
-		<md2-menu-content width='4'>
-			<md2-menu-item>
-				<md2-button
-					ariaLabel='Help'
-					(click)='self.helpButton()'
-					cyphTranslate
-				>
-					<md2-icon mdMenuAlignTarget>help_outline</md2-icon>
-					<span cyphTranslate>Help</span>
-				</md2-button>
-			</md2-menu-item>
-			<md2-menu-item>
-				<md2-button
-					ariaLabel='Disconnect'
-					(click)='self.disconnectButton()'
-					cyphTranslate
-				>
-					<md2-icon mdMenuAlignTarget>close</md2-icon>
-					<span cyphTranslate>Disconnect</span>
-				</md2-button>
-			</md2-menu-item>
-		</md2-menu-content>
-	</md2-menu>
+			<md2-button
+				ariaLabel='Menu'
+				class='md-icon-button'
+				(click)='openMenu()'
+				cyphTranslate
+			>
+				<md2-icon>more_horiz</md2-icon>
+			</md2-button>
+			<md2-menu-content width='4'>
+				<md2-menu-item>
+					<md2-button
+						ariaLabel='Help'
+						(click)='self.helpButton()'
+						cyphTranslate
+					>
+						<md2-icon mdMenuAlignTarget>help_outline</md2-icon>
+						<span cyphTranslate>Help</span>
+					</md2-button>
+				</md2-menu-item>
+				<md2-menu-item>
+					<md2-button
+						ariaLabel='Disconnect'
+						(click)='self.disconnectButton()'
+						cyphTranslate
+					>
+						<md2-icon mdMenuAlignTarget>close</md2-icon>
+						<span cyphTranslate>Disconnect</span>
+					</md2-button>
+				</md2-menu-item>
+			</md2-menu-content>
+		</md2-menu>
+	</div>
 
 	<md2-fab-speed-dial
 		mdDirection='up'
-		class='desktop-only md-fling md-fab-bottom-right'
+		class='md-fling md-fab-bottom-right'
 		[mdOpen]='isSpeedDialOpen'
 		(mouseenter)='isSpeedDialOpen = true'
 		(mouseleave)='isSpeedDialOpen = false'
-		*ngIf='isSpeedDialReady'
+		*ngIf='!self.isMobile && isSpeedDialReady'
 	>
 		<md2-fab-trigger>
 			<md2-button

@@ -18,7 +18,10 @@
 			</div>
 			<br />
 
-			<md2-input-container class='connect-link-input desktop-only md-input-has-value'>
+			<md2-input-container
+				class='connect-link-input md-input-has-value'
+				*ngIf='!cyph.Env.isMobile'
+			>
 				<input cyphTranslate [(ngModel)]='self.link' aria-label='Cyph link' />
 				<md2-button
 					class='copy'
@@ -30,7 +33,7 @@
 				</md2-button>
 			</md2-input-container>
 
-			<div class='connect-link-mobile mobile-only'>
+			<div class='connect-link-mobile' *ngIf='cyph.Env.isMobile'>
 				<a
 					class='connect-link-link'
 					[href]='self.link'

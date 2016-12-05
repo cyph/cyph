@@ -4,7 +4,7 @@
 			<ng-content></ng-content>
 		</div>
 		<div class='layout-row layout-align-center-stretch flex'>
-			<div class='desktop-only layout-column flex-50'>
+			<div class='layout-column flex-50' *ngIf='!cyph.Env.isMobile'>
 				<div class='layout-row layout-align-center-center'>
 					<md2-input-container class='md-block flex-80'>
 						<input

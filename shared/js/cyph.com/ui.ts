@@ -287,24 +287,6 @@ export class UI extends Cyph.UI.BaseButtonManager {
 			}
 
 
-			const wowDelay			= 'data-wow-delay';
-			const platformWowDelay	= Cyph.Env.platformString + '-' + wowDelay;
-
-			$('[' + platformWowDelay + ']').each((i: number, elem: HTMLElement) => {
-				const $this: JQuery	= $(elem);
-				$this.attr(wowDelay, $this.attr(platformWowDelay));
-			});
-
-			const platformClass: string	= Cyph.Env.platformString + '-class-';
-
-			$('[class*="' + platformClass + '"]').each((i: number, elem: HTMLElement) => {
-				const $this: JQuery	= $(elem);
-				$this.attr(
-					'class',
-					$this.attr('class').replace(new RegExp(platformClass, 'g'), '')
-				);
-			});
-
 			if (!Cyph.Env.isMobile) {
 				new (<any> self).WOW({live: true}).init();
 			}

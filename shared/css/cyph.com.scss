@@ -347,30 +347,6 @@ html.mobile #hero-section {
 	}
 }
 
-@media (min-width: 1230px) {
-	#main-toolbar {
-		.desktop-only {
-			display: initial;
-		}
-
-		.mobile-only {
-			display: none;
-		}
-	}
-}
-
-@media (max-width: 1229px) {
-	#main-toolbar {
-		.desktop-only {
-			display: none;
-		}
-
-		.mobile-only {
-			display: initial;
-		}
-	}
-}
-
 [md-component-id='main-toolbar-sidenav'] {
 	position: fixed;
 	height: 100%;

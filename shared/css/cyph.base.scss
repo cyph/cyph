@@ -304,22 +304,10 @@ pre, code {
 	}
 }
 
-/* Mobile and desktop classes */
+/* Desktop styling tweak */
 
 html:not(.mobile) * {
 	outline: none !important;
-}
-
-html.mobile .desktop-only,
-html:not(.mobile) .mobile-only,
-.platform-container.mobile .desktop-only,
-.platform-container:not(.mobile) .mobile-only {
-	display: none;
-}
-
-html.mobile .platform-container:not(.mobile) .desktop-only,
-html:not(.mobile) .platform-container.mobile .mobile-only {
-	display: initial;
 }
 
 /* Dialog size */

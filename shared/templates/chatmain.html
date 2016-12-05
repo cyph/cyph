@@ -1,5 +1,5 @@
 <div
-	class='chat-main platform-container layout-column layout-fill flex'
+	class='chat-main layout-column layout-fill flex'
 	[class.video]='self.p2pManager.p2p.isActive'
 	[class.mobile]='self.isMobile'
 	*ngIf='cyph && self'
@@ -254,22 +254,20 @@
 								></cyph-markdown>
 							</span>
 							<span class='message-timestamp flex'>
-								<span
-									class='mobile-only'
-									*ngIf='message.author === cyph.Session.Users.me'
-								>
+								<span *ngIf='
+									(self.isMobile || self.p2pManager.p2p.isActive) &&
+									message.author === cyph.Session.Users.me
+								'>
 									{{cyph.Strings.me}} &nbsp;&mdash;&nbsp;
 								</span>
 
 								{{message.timeString}}
 
-								<span
-									class='mobile-only'
-									*ngIf='
-										message.author !== cyph.Session.Users.me &&
-										message.author !== cyph.Session.Users.app
-									'
-								>
+								<span *ngIf='
+									(self.isMobile || self.p2pManager.p2p.isActive) &&
+									message.author !== cyph.Session.Users.me &&
+									message.author !== cyph.Session.Users.app
+								'>
 									&nbsp;&mdash;&nbsp; {{message.author}}
 								</span>
 							</span>

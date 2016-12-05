@@ -35,7 +35,7 @@
 				*ngIf='ui.state === cyph.im.States.chat'
 			></cyph-chat-message-box>
 
-			<cyph-static-footer></cyph-static-footer>
+			<cyph-static-footer *ngIf='!cyph.Env.isMobile'></cyph-static-footer>
 		</footer>
 	</section>
 

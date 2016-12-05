@@ -20,7 +20,7 @@
 				<a [href]='cyph.Env.newCyphUrl'>Start new cyph</a>
 			</md2-button>
 
-			<span class='link-wrapper-outer right desktop-only'>
+			<span class='link-wrapper-outer right hide show-gt-md'>
 				<span class='link-wrapper-inner' cyphTranslate>
 					<md2-button href='/intro'>Intro</md2-button>
 					<md2-button href='/features'>Features</md2-button>
@@ -28,8 +28,10 @@
 					<md2-button href='/gettingstarted'>Getting Started</md2-button>
 				</span>
 			</span>
-			<span class='desktop-only flex'></span>
-			<span class='link-wrapper-outer left desktop-only'>
+
+			<span class='flex'></span>
+
+			<span class='link-wrapper-outer left hide show-gt-md'>
 				<span class='link-wrapper-inner'>
 					<md2-button cyphTranslate href='/blog'>Blog</md2-button>
 					<md2-button cyphTranslate href='/faq'>FAQ</md2-button>
@@ -38,7 +40,7 @@
 				</span>
 			</span>
 
-			<span class='social-media desktop-only'>
+			<span class='social-media hide show-gt-md'>
 				<md2-button
 					cyphTranslate
 					ariaLabel='GitHub'
@@ -68,12 +70,11 @@
 				</md2-button>
 			</span>
 
-			<span class='mobile-only flex'></span>
 			<md2-button
 				cyphTranslate
 				ariaLabel='Menu'
 				(click)='ui.openMobileMenu()'
-				class='mobile-only'
+				class='hide-gt-md'
 			>
 				<img src='/img/icons/menu.png' alt='Menu' />
 			</md2-button>
@@ -245,15 +246,9 @@
 			</h1>
 
 			<div class='hero-container grid-container'>
-				<div class='layout-row'>
+				<div class='layout-row' *ngIf='!cyph.Env.isMobile'>
 					<div class='flex-25'></div>
-					<div
-						class='
-							wow desktop-only desktop-class-bounceInLeft
-							tablet-grid-25 mobile-grid-100
-						'
-						data-wow-delay='2250ms'
-					>
+					<div class='wow bounceInLeft' data-wow-delay='2250ms'>
 						<a href='/intro'>
 							<img
 								cyphTranslate
@@ -264,13 +259,7 @@
 						</a>
 						&nbsp;
 					</div>
-					<div
-						class='
-							wow desktop-only desktop-class-bounceInRight
-							tablet-grid-25 mobile-grid-100
-						'
-						data-wow-delay='2250ms'
-					>
+					<div class='wow bounceInRight' data-wow-delay='2250ms'>
 						<a href='/intro'>
 							<img
 								cyphTranslate
@@ -285,8 +274,7 @@
 				</div>
 				<div class='hero-description wow animated fadeIn' data-wow-delay='2500ms'>
 					<p cyphTranslate>
-						Just send a link &mdash;
-						no signups or downloads required!
+						Just send a link &mdash; no signups or downloads required!
 					</p>
 				</div>
 			</div>
@@ -381,18 +369,18 @@
 			</div>
 		</div>
 
-		<a class='nav-arrow desktop-only' href='/intro'>
+		<a class='nav-arrow' href='/intro' *ngIf='!cyph.Env.isMobile'>
 			<img cyphTranslate src='/img/icons/downarrow.png' alt='Down arrow' />
 		</a>
 	</section>
 
 	<section id='intro-section'>
-		<a class='nav-arrow desktop-only' href='/'>
+		<a class='nav-arrow' href='/' *ngIf='!cyph.Env.isMobile'>
 			<img cyphTranslate src='/img/icons/uparrow.png' alt='Up arrow' />
 		</a>
 
 		<div class='demo-root grid-container'>
-			<span class='desktop desktop-only'>
+			<span class='desktop' *ngIf='!cyph.Env.isMobile'>
 				<span *ngIf='cyph && ui && ui.cyphDemo && ui.cyphDemo.desktop'>
 					<div class='cyph-foreground'>
 						<cyph-chat-main
@@ -736,9 +724,8 @@
 			</p>
 			<div class='founder-photos grid-container'>
 				<div class='
-					wow desktop-class-bounceInLeft mobile-class-bounceInRight grid-20
-					prefix-20 suffix-20 tablet-grid-20 tablet-prefix-20 tablet-suffix-20
-					mobile-grid-100
+					wow bounceInLeft grid-20 prefix-20 suffix-20 tablet-grid-20
+					tablet-prefix-20 tablet-suffix-20 mobile-grid-100
 				'>
 					<span class='mobile-grid-33'>
 						<img
@@ -749,10 +736,7 @@
 					</span>
 					<div class='mobile-grid-66 name'>Ryan Lester, CEO</div>
 				</div>
-				<div class='
-					wow desktop-class-bounceInRight mobile-class-bounceInLeft grid-20
-					tablet-grid-20 mobile-grid-100
-				'>
+				<div class='wow bounceInRight grid-20 tablet-grid-20 mobile-grid-100'>
 					<span class='mobile-grid-33 mobile-push-66'>
 						<img
 							src='/img/josh.jpg'
@@ -849,8 +833,8 @@
 						<div class='feature layout-row'>
 							<md2-icon></md2-icon>
 							<h4 cyphTranslate>Beta Features, Plus:</h4>
-							<md2-icon class='desktop-only'>arrow_forward</md2-icon>
-							<md2-icon class='mobile-only'>arrow_downward</md2-icon>
+							<md2-icon *ngIf='!cyph.Env.isMobile'>arrow_forward</md2-icon>
+							<md2-icon *ngIf='cyph.Env.isMobile'>arrow_downward</md2-icon>
 						</div>
 						<hr />
 						<div class='feature indent layout-row'>
@@ -959,8 +943,8 @@
 							Securely send and receive patient files.
 						<p>
 						<div class='feature layout-row'>
-							<md2-icon class='desktop-only'>arrow_back</md2-icon>
-							<md2-icon class='mobile-only'>arrow_upward</md2-icon>
+							<md2-icon *ngIf='!cyph.Env.isMobile'>arrow_back</md2-icon>
+							<md2-icon *ngIf='cyph.Env.isMobile'>arrow_upward</md2-icon>
 							<h4 cyphTranslate>Beta Features, Plus:</h4>
 						</div>
 						<hr />
