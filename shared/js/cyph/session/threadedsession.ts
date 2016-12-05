@@ -29,12 +29,12 @@ export class ThreadedSession implements ISession {
 	}
 
 	/** @inheritDoc */
-	public off (event: string, handler: Function) : void {
+	public off<T> (event: string, handler: (data: T) => void) : void {
 		EventManager.off(event + this.id, handler);
 	}
 
 	/** @inheritDoc */
-	public on (event: string, handler: Function) : void {
+	public on<T> (event: string, handler: (data: T) => void) : void {
 		EventManager.on(event + this.id, handler);
 	}
 

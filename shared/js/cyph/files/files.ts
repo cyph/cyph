@@ -160,19 +160,16 @@ export class Files implements IFiles {
 			threadLocals
 		);
 
-		return new Promise<any[]>((resolve, reject) =>
-			EventManager.one(threadLocals.callbackId, (data: any[]) => {
-				thread.stop();
+		const data	= await EventManager.one<any[]>(threadLocals.callbackId);
 
-				const err	= data[0];
-				if (err) {
-					reject(err);
-				}
-				else {
-					resolve(data.slice(1));
-				}
-			})
-		);
+		thread.stop();
+
+		if (data[0]) {
+			throw data[0];
+		}
+		else {
+			return data.slice(1);
+		}
 	}
 
 
@@ -367,7 +364,7 @@ export class Files implements IFiles {
 			transfer
 		);
 
-		EventManager.one('transfer-' + transfer.id, (answer: boolean) => {
+		EventManager.one<boolean>('transfer-' + transfer.id).then(answer => {
 			transfer.answer	= answer;
 
 			this.triggerUIEvent(

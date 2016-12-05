@@ -91,7 +91,7 @@ export class EventManager {
 	 * @param event
 	 * @param handler
 	 */
-	public static off (event: string, handler?: Function) : void {
+	public static off<T> (event: string, handler?: (data: T) => void) : void {
 		if (!EventManager.handlers[event]) {
 			return;
 		}
@@ -110,7 +110,7 @@ export class EventManager {
 	 * @param event
 	 * @param handler
 	 */
-	public static on (event: string, handler: Function) : void {
+	public static on<T> (event: string, handler: (data: T) => void) : void {
 		if (!EventManager.handlers[event]) {
 			EventManager.handlers[event]	= [];
 			EventManager.indices[event]		= new Map<Function, number>();
@@ -127,18 +127,20 @@ export class EventManager {
 	}
 
 	/**
-	 * Attaches handler to event and removes after first execution.
+	 * Returns first occurrence of event.
 	 * @param event
-	 * @param handler
 	 */
-	public static one (event: string, handler: Function) : void {
-		let f: Function;
-		f	= (data: any) => {
-			EventManager.off(event, f);
-			handler(data);
-		};
+	public static async one<T> (event: string) : Promise<T> {
+		return new Promise<T>(resolve => {
+			let f: (data: T) => void;
 
-		EventManager.on(event, f);
+			f	= (data: T) => {
+				EventManager.off(event, f);
+				resolve(data);
+			};
+
+			EventManager.on(event, f);
+		});
 	}
 
 	/**

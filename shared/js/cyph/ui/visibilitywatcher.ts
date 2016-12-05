@@ -23,7 +23,7 @@ export class VisibilityWatcher {
 	 * Sets handler to run when visibility changes.
 	 * @param handler
 	 */
-	public static onchange (handler: Function) : void {
+	public static onchange<T> (handler: (data: T) => void) : void {
 		EventManager.on(VisibilityWatcher.visibilityChangeEvent, handler);
 	}
 

@@ -28,7 +28,7 @@ export class VirtualKeyboardWatcher {
 	 * Sets handler to run when keyboard status changes.
 	 * @param handler
 	 */
-	public static onchange (handler: Function) : void {
+	public static onchange<T> (handler: (data: T) => void) : void {
 		EventManager.on(VirtualKeyboardWatcher.keyboardChangeEvent, handler);
 	}
 

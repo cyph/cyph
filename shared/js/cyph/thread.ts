@@ -225,13 +225,10 @@ export class Thread implements IThread {
 			var threadSetupVars = ${JSON.stringify(threadSetupVars)};
 			${Thread.stringifyFunction(Thread.threadEnvSetup)}
 
-			Cyph.EventManager.one(
-				'${callbackId}',
-				function (locals) {
-					${Thread.stringifyFunction(f)}
-					${Thread.stringifyFunction(Thread.threadPostSetup)}
-				}
-			);
+			Cyph.EventManager.one('${callbackId}').then(function (locals) {
+				${Thread.stringifyFunction(f)}
+				${Thread.stringifyFunction(Thread.threadPostSetup)}
+			});
 
 			self.postMessage('ready');
 		`;
