@@ -14,8 +14,6 @@ import {MdInputContainer} from './mdinputcontainer';
 import {MdList} from './mdlist';
 import {MdListItem} from './mdlistitem';
 import {MdMenu} from './mdmenu';
-import {MdMenuContent} from './mdmenucontent';
-import {MdMenuItem} from './mdmenuitem';
 import {MdOption} from './mdoption';
 import {MdProgressCircular} from './mdprogresscircular';
 import {MdProgressLinear} from './mdprogresslinear';
@@ -47,8 +45,6 @@ export {
 	MdList,
 	MdListItem,
 	MdMenu,
-	MdMenuContent,
-	MdMenuItem,
 	MdOption,
 	MdProgressCircular,
 	MdProgressLinear,

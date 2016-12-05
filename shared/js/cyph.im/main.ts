@@ -115,14 +115,6 @@ angular.
 		Cyph.UI.Components.Material.MdMenu.config
 	).
 	component(
-		Cyph.UI.Components.Material.MdMenuContent.title,
-		Cyph.UI.Components.Material.MdMenuContent.config
-	).
-	component(
-		Cyph.UI.Components.Material.MdMenuItem.title,
-		Cyph.UI.Components.Material.MdMenuItem.config
-	).
-	component(
 		Cyph.UI.Components.Material.MdOption.title,
 		Cyph.UI.Components.Material.MdOption.config
 	).
