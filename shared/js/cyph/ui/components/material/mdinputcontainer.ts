@@ -39,7 +39,7 @@ export class MdInputContainer
 			constructor ($element: JQuery) { (async () => {
 				let $input: JQuery;
 				while (!$input || $input.length < 1) {
-					$input	= $element.find('input');
+					$input	= $element.find('input, select, textarea');
 					await Util.sleep();
 				}
 

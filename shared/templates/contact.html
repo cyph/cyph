@@ -3,7 +3,12 @@
 		<div class='layout-gt-xs-row'>
 			<md2-input-container childClass='md-block flex'>
 				<label cyphTranslate>Cyph team to contact</label>
-				<md2-select [(model)]='self.to' name='to'>
+				<md2-select
+					[(model)]='self.to'
+					name='to'
+					ariaLabel='Cyph team to contact'
+					cyphTranslate
+				>
 					<md2-option
 						*ngFor='let address of cyph.Config.cyphEmailAddresses'
 						[value]='address'

@@ -28,11 +28,15 @@ export class MdSelect
 	/** Component configuration. */
 	public static readonly config			= {
 		bindings: {
+			ariaLabel: '@',
 			childClass: '@',
 			model: '='
 		},
 		/* tslint:disable-next-line:max-classes-per-file */
 		controller: class {
+			/** @ignore */
+			public readonly ariaLabel: string;
+
 			/** @ignore */
 			public readonly childClass: string;
 
@@ -43,14 +47,19 @@ export class MdSelect
 		},
 		template: `
 			<md-select
+				ng-attr-aria-label='{{$ctrl.ariaLabel}}'
 				ng-class='$ctrl.childClass'
 				ng-model='$ctrl.model'
-				ng-transclude
-			></md-select>
+			>
+				<ng-transclude></ng-transclude>
+			</md-select>
 		`,
 		transclude: true
 	};
 
+
+	/** @ignore */
+	@Input() public ariaLabel: string;
 
 	/** @ignore */
 	@Input() public childClass: string;

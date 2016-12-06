@@ -45,8 +45,9 @@ export class MdOption
 			<md-option
 				ng-class='$ctrl.childClass'
 				ng-value='$ctrl.value'
-				ng-transclude
-			></md-option>
+			>
+				<ng-transclude></ng-transclude>
+			</md-option>
 		`,
 		transclude: true
 	};

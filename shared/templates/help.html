@@ -1,7 +1,7 @@
 <div *ngIf='cyph && ui'>
 	<md2-tabs mdDynamicHeight mdBorderBottom>
 		<md2-tab label='Formatting Help' cyphTranslate>
-			<p>
+			<p cyphTranslate>
 				<span>Cyph uses a version of Markdown called</span>
 				<a href='http://commonmark.org'>CommonMark</a>
 				<span>
@@ -9,10 +9,10 @@
 					including emojis and code fencing.
 				</span>
 			</p>
-			<p>
+			<p cyphTranslate>
 				The following examples are shamelessly copied from reddit:
 			</p>
-			<table>
+			<table cyphTranslate>
 				<tbody>
 					<tr>
 						<th>you type:</th>
@@ -105,10 +105,12 @@
 				</tbody>
 			</table>
 		</md2-tab>
-		<md2-tab label='Contact Cyph' [disabled]='ui.coBranded'>
-			<span>Please check out the</span>
-			<a [href]='cyph.Env.homeUrl + "faq"'>FAQs</a>
-			<span>first!</span>
+		<md2-tab label='Contact Cyph' [disabled]='ui.coBranded' cyphTranslate>
+			<div cyphTranslate>
+				<span>Please check out the</span>
+				<a [href]='cyph.Env.homeUrl + "faq"'>FAQs</a>
+				<span>first!</span>
+			</div>
 			<br />
 			<br />
 			<br />
