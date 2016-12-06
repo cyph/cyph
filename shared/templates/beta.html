@@ -27,29 +27,25 @@
 							</md2-subheader>
 						</div>
 						<div class='layout-row layout-align-center-center'>
-							<md2-input-container childClass='md-block flex-60'>
-								<input
-									[(ngModel)]='username'
-									name='username'
-									aria-label='Username'
-									cyphTranslate
-									required
-								/>
-								<label cyphTranslate>Username</label>
-							</md2-input-container>
+							<md2-input
+								cyphTranslate
+								childClass='md-block flex-60'
+								[(model)]='username'
+								formName='username'
+								label='Username'
+								[required]='true'
+							></md2-input>
 						</div>
 						<div class='layout-row layout-align-center-center'>
-							<md2-input-container childClass='md-block flex-60'>
-								<input
-									[(ngModel)]='password'
-									name='password'
-									type='password'
-									aria-label='Password'
-									cyphTranslate
-									required
-								/>
-								<label cyphTranslate>Password</label>
-							</md2-input-container>
+							<md2-input
+								cyphTranslate
+								childClass='md-block flex-60'
+								[(model)]='password'
+								formName='password'
+								type='password'
+								label='Password'
+								[required]='true'
+							></md2-input>
 						</div>
 						<div class='layout-row layout-align-center-center'>
 							<md2-button type='submit' ariaLabel='Log In' cyphTranslate>

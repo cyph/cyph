@@ -30,7 +30,7 @@ import {
 	MdContent,
 	MdFabSpeedDial,
 	MdIcon,
-	MdInputContainer,
+	MdInput,
 	MdList,
 	MdListItem,
 	MdMenu,
@@ -43,6 +43,7 @@ import {
 	MdSubheader,
 	MdSwitch,
 	MdTabs,
+	MdTextarea,
 	MdToolbar,
 	MdTooltip
 } from '../cyph/ui/components/material';
@@ -81,7 +82,7 @@ import {AppComponent} from './appcomponent';
 		MdContent,
 		MdFabSpeedDial,
 		MdIcon,
-		MdInputContainer,
+		MdInput,
 		MdList,
 		MdListItem,
 		MdMenu,
@@ -94,6 +95,7 @@ import {AppComponent} from './appcomponent';
 		MdSubheader,
 		MdSwitch,
 		MdTabs,
+		MdTextarea,
 		MdToolbar,
 		MdTooltip
 	],

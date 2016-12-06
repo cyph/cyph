@@ -1,54 +1,54 @@
 <div *ngIf='cyph && self'>
 	<form (submit)='send()' *ngIf='!self.sent'>
 		<div class='layout-gt-xs-row'>
-			<md2-input-container childClass='md-block flex'>
-				<label cyphTranslate>Cyph team to contact</label>
-				<md2-select
-					[(model)]='self.to'
-					name='to'
-					ariaLabel='Cyph team to contact'
-					cyphTranslate
+			<md2-select
+				cyphTranslate
+				childClass='md-block flex'
+				[(model)]='self.to'
+				formName='to'
+				label='Cyph team to contact'
+			>
+				<md2-option
+					*ngFor='let address of cyph.Config.cyphEmailAddresses'
+					[value]='address'
 				>
-					<md2-option
-						*ngFor='let address of cyph.Config.cyphEmailAddresses'
-						[value]='address'
-					>
-						{{address}}
-					</md2-option>
-				</md2-select>
-			</md2-input-container>
+					{{address}}
+				</md2-option>
+			</md2-select>
 		</div>
 		<div class='layout-row'>
-			<md2-input-container childClass='md-block flex'>
-				<input [(ngModel)]='self.fromName' name='name' aria-label='Name' cyphTranslate />
-				<label cyphTranslate>Name</label>
-			</md2-input-container>
-			<md2-input-container childClass='md-block flex'>
-				<input
-					[(ngModel)]='self.fromEmail'
-					name='email'
-					type='email'
-					aria-label='Email'
-					cyphTranslate
-					required
-				/>
-				<label cyphTranslate>Email</label>
-			</md2-input-container>
-		</div>
-		<md2-input-container childClass='md-block'>
-			<input [(ngModel)]='self.subject' name='subject' aria-label='Subject' cyphTranslate />
-			<label cyphTranslate>Subject</label>
-		</md2-input-container>
-		<md2-input-container childClass='md-block'>
-			<textarea
-				[(ngModel)]='self.message'
-				name='message'
-				aria-label='Message'
+			<md2-input
 				cyphTranslate
-				required
-			></textarea>
-			<label cyphTranslate>Message</label>
-		</md2-input-container>
+				childClass='md-block flex'
+				[(model)]='self.fromName'
+				formName='name'
+				label='Name'
+			></md2-input>
+			<md2-input
+				cyphTranslate
+				childClass='md-block flex'
+				[(model)]='self.fromEmail'
+				formName='email'
+				type='email'
+				label='Email'
+				[required]='true'
+			></md2-input>
+		</div>
+		<md2-input
+			cyphTranslate
+			childClass='md-block'
+			[(model)]='self.subject'
+			formName='subject'
+			label='Subject'
+		></md2-input>
+		<md2-textarea
+			cyphTranslate
+			childClass='md-block'
+			[(model)]='self.message'
+			formName='message'
+			label='Message'
+			[required]='true'
+		></md2-textarea>
 		<md2-button type='submit' ariaLabel='Send' cyphTranslate>
 			Send
 		</md2-button>

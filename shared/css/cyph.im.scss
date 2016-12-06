@@ -659,6 +659,10 @@ html.mobile button[disabled] {
 
 			@include transform(translateX(50%));
 		}
+
+		label {
+			display: none;
+		}
 	}
 
 	.connect-link-link {
@@ -1201,9 +1205,8 @@ html.mobile cyph-help {
 }
 
 .md-button.copy {
-	position: relative;
-	left: 28px;
-	top: -3px;
+	margin-right: calc(-50% - 45px);
+	margin-top: -99px;
 }
 
 /*** SpinKit animation: http://tobiasahlin.com/spinkit/ ***/

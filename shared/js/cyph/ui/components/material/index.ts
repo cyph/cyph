@@ -8,7 +8,7 @@ import {MdCardTitleText} from './mdcardtitletext';
 import {MdContent} from './mdcontent';
 import {MdFabSpeedDial} from './mdfabspeeddial';
 import {MdIcon} from './mdicon';
-import {MdInputContainer} from './mdinputcontainer';
+import {MdInput} from './mdinput';
 import {MdList} from './mdlist';
 import {MdListItem} from './mdlistitem';
 import {MdMenu} from './mdmenu';
@@ -21,6 +21,7 @@ import {MdSlider} from './mdslider';
 import {MdSubheader} from './mdsubheader';
 import {MdSwitch} from './mdswitch';
 import {MdTabs} from './mdtabs';
+import {MdTextarea} from './mdtextarea';
 import {MdToolbar} from './mdtoolbar';
 import {MdTooltip} from './mdtooltip';
 
@@ -36,7 +37,7 @@ export {
 	MdContent,
 	MdFabSpeedDial,
 	MdIcon,
-	MdInputContainer,
+	MdInput,
 	MdList,
 	MdListItem,
 	MdMenu,
@@ -49,6 +50,7 @@ export {
 	MdSubheader,
 	MdSwitch,
 	MdTabs,
+	MdTextarea,
 	MdToolbar,
 	MdTooltip
 };

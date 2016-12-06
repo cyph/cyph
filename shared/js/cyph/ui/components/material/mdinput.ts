@@ -14,16 +14,16 @@ import {UpgradeComponent} from '@angular/upgrade/static';
 
 
 /**
- * ng2 wrapper for Material1 md-input-container + md-select.
+ * ng2 wrapper for Material1 md-input-container + input.
  */
 @Directive({
 	/* tslint:disable-next-line:directive-selector */
-	selector: 'md2-select'
+	selector: 'md2-input'
 })
-export class MdSelect
+export class MdInput
 	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
 	/** Component title. */
-	public static readonly title: string	= 'md2Select';
+	public static readonly title: string	= 'md2Input';
 
 	/** Component configuration. */
 	public static readonly config			= {
@@ -33,7 +33,8 @@ export class MdSelect
 			formName: '@',
 			label: '@',
 			model: '=',
-			required: '<'
+			required: '<',
+			type: '@'
 		},
 		/* tslint:disable-next-line:max-classes-per-file */
 		controller: class {
@@ -55,23 +56,24 @@ export class MdSelect
 			/** @ignore */
 			public readonly required: boolean;
 
+			/** @ignore */
+			public readonly type: string;
+
 			constructor () {}
 		},
 		template: `
 			<md-input-container ng-class='$ctrl.childClass'>
 				<label>{{$ctrl.label}}</label>
-				<md-select
+				<input
 					ng-disabled='$ctrl.disabled'
 					ng-attr-name='{{$ctrl.formName}}'
 					ng-attr-aria-label='{{$ctrl.label}}'
 					ng-model='$ctrl.model'
 					ng-required='$ctrl.required'
-				>
-					<ng-transclude></ng-transclude>
-				</md-select>
+					ng-attr-type='{{$ctrl.type}}'
+				/>
 			</md-input-container>
-		`,
-		transclude: true
+		`
 	};
 
 
@@ -92,6 +94,9 @@ export class MdSelect
 
 	/** @ignore */
 	@Input() public required: boolean;
+
+	/** @ignore */
+	@Input() public type: string;
 
 	/** @ignore */
 	public ngDoCheck () : void {
@@ -117,6 +122,6 @@ export class MdSelect
 		@Inject(ElementRef) elementRef: ElementRef,
 		@Inject(Injector) injector: Injector
 	) {
-		super(MdSelect.title, elementRef, injector);
+		super(MdInput.title, elementRef, injector);
 	}
 }

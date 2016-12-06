@@ -18,11 +18,13 @@
 			</div>
 			<br />
 
-			<md2-input-container
-				childClass='connect-link-input md-input-has-value'
-				*ngIf='!cyph.Env.isMobile'
-			>
-				<input cyphTranslate [(ngModel)]='self.link' aria-label='Cyph link' />
+			<div *ngIf='!cyph.Env.isMobile'>
+				<md2-input
+					cyphTranslate
+					childClass='connect-link-input'
+					[(model)]='self.link'
+					label='Cyph link'
+				></md2-input>
 				<md2-button
 					childClass='copy'
 					ariaLabel='Copy to clipboard'
@@ -31,7 +33,7 @@
 				>
 					<md2-icon>content_copy</md2-icon>
 				</md2-button>
-			</md2-input-container>
+			</div>
 
 			<div class='connect-link-mobile' *ngIf='cyph.Env.isMobile'>
 				<a
@@ -106,10 +108,13 @@
 	</md2-switch>
 
 	<div class='advanced-features' *ngIf='self.advancedFeatures'>
-		<md2-input-container childClass='queued-message-box'>
-			<label cyphTranslate>Queue up first message</label>
-			<textarea rows='3' [(ngModel)]='queuedMessageDraft'></textarea>
-		</md2-input-container>
+		<md2-textarea
+			cyphTranslate
+			childClass='queued-message-box'
+			[(model)]='queuedMessageDraft'
+			label='Queue up first message'
+			rows='3'
+		></md2-textarea>
 		<div class='buttons'>
 			<md2-button (childClick)='self.chat.setQueuedMessage(queuedMessageDraft)'>
 				<md2-icon>save</md2-icon>

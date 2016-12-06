@@ -6,53 +6,45 @@
 		<div class='layout-row layout-align-center-stretch flex'>
 			<div class='layout-column flex-50' *ngIf='!cyph.Env.isMobile'>
 				<div class='layout-row layout-align-center-center'>
-					<md2-input-container childClass='md-block flex-80'>
-						<input
-							name='email'
-							type='email'
-							[(ngModel)]='self.data.email'
-							aria-label='Email'
-							cyphTranslate
-						/>
-						<label cyphTranslate>Email</label>
-					</md2-input-container>
+					<md2-input
+						cyphTranslate
+						childClass='md-block flex-80'
+						[(model)]='self.data.email'
+						formName='email'
+						type='email'
+						label='Email'
+					></md2-input>
 				</div>
 				<div class='layout-row layout-align-center-center'>
-					<md2-input-container childClass='md-block flex-80'>
-						<input
-							name='password'
-							type='password'
-							aria-label='Password'
-							cyphTranslate
-							disabled
-						/>
-						<label cyphTranslate>Password</label>
-					</md2-input-container>
+					<md2-input
+						cyphTranslate
+						childClass='md-block flex-80'
+						formName='password'
+						type='password'
+						label='Password'
+						[disabled]='true'
+					></md2-input>
 				</div>
 
 				<div layout='row' layout-align='center center'>
-					<md2-input-container childClass='md-block flex-80'>
-						<input
-							name='confirmPassword'
-							type='password'
-							aria-label='Confirm Password'
-							cyphTranslate
-							disabled
-						/>
-						<label cyphTranslate>Confirm Password</label>
-					</md2-input-container>
+					<md2-input
+						cyphTranslate
+						childClass='md-block flex-80'
+						formName='confirmPassword'
+						type='password'
+						label='Confirm Password'
+						[disabled]='true'
+					></md2-input>
 				</div>
 				<div *ngIf='invite' class='layout-row layout-align-center-center'>
-					<md2-input-container childClass='md-block flex-80'>
-						<input
-							name='inviteCode'
-							type='text'
-							[(ngModel)]='self.data.inviteCode'
-							aria-label='Invite Code'
-							cyphTranslate
-						/>
-						<label cyphTranslate>Invite Code</label>
-					</md2-input-container>
+					<md2-input
+						cyphTranslate
+						childClass='md-block flex-80'
+						[(model)]='self.data.inviteCode'
+						formName='inviteCode'
+						type='text'
+						label='Invite Code'
+					></md2-input>
 				</div>
 				<div class='register-button' class='layout-row layout-align-center-end'>
 					<md2-button
@@ -99,30 +91,26 @@
 		<div class='layout-row layout-align-center-center flex'>
 			<div class='layout-column flex'>
 				<div class='layout-row layout-align-center-center'>
-					<md2-input-container childClass='md-block flex-80'>
-						<input
-							name='email'
-							type='email'
-							[(ngModel)]='self.data.email'
-							aria-label='Email'
-							cyphTranslate
-							required
-						/>
-						<label cyphTranslate>Email</label>
-					</md2-input-container>
+					<md2-input
+						cyphTranslate
+						childClass='md-block flex-80'
+						[(model)]='self.data.email'
+						formName='email'
+						type='email'
+						label='Email'
+						[required]='true'
+					></md2-input>
 				</div>
 				<div *ngIf='invite' class='layout-row layout-align-center-center'>
-					<md2-input-container childClass='md-block flex-80'>
-						<input
-							name='inviteCode'
-							type='text'
-							[(ngModel)]='self.data.inviteCode'
-							aria-label='Invite Code'
-							cyphTranslate
-							required
-						/>
-						<label cyphTranslate>Invite Code</label>
-					</md2-input-container>
+					<md2-input
+						cyphTranslate
+						childClass='md-block flex-80'
+						[(model)]='self.data.inviteCode'
+						formName='inviteCode'
+						type='text'
+						label='Invite Code'
+						[required]='true'
+					></md2-input>
 				</div>
 				<div class='layout-row layout-align-center-end'>
 					<md2-button
@@ -141,15 +129,13 @@
 		<div class='layout-row layout-align-center-center flex'>
 			<div class='layout-column flex'>
 				<div class='layout-row layout-align-center-center'>
-					<md2-input-container childClass='md-block flex-80'>
-						<input
-							name='name'
-							[(ngModel)]='self.data.name'
-							aria-label='Name'
-							cyphTranslate
-						/>
-						<label cyphTranslate>Name (optional)</label>
-					</md2-input-container>
+					<md2-input
+						cyphTranslate
+						childClass='md-block flex-80'
+						[(model)]='self.data.name'
+						formName='name'
+						label='Name (optional)'
+					></md2-input>
 				</div>
 				<div class='layout-row layout-align-center-end'>
 					<md2-button

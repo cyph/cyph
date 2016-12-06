@@ -91,8 +91,8 @@ angular.
 		Cyph.UI.Components.Material.MdIcon.config
 	).
 	component(
-		Cyph.UI.Components.Material.MdInputContainer.title,
-		Cyph.UI.Components.Material.MdInputContainer.config
+		Cyph.UI.Components.Material.MdInput.title,
+		Cyph.UI.Components.Material.MdInput.config
 	).
 	component(
 		Cyph.UI.Components.Material.MdList.title,
@@ -141,6 +141,10 @@ angular.
 	component(
 		Cyph.UI.Components.Material.MdTabs.title,
 		Cyph.UI.Components.Material.MdTabs.config
+	).
+	component(
+		Cyph.UI.Components.Material.MdTextarea.title,
+		Cyph.UI.Components.Material.MdTextarea.config
 	).
 	component(
 		Cyph.UI.Components.Material.MdToolbar.title,
