@@ -15,20 +15,20 @@ export class Help {
 	public cyph: any;
 
 	/** @ignore */
-	public ui: any;
-
-	/** @ignore */
-	public tabLabels: string[]	= ui.coBranded ?
-		[Strings.formattingHelp] :
-		[Strings.formattingHelp, Strings.contactCyph]
-	;
+	public tabLabels: string[]	= [
+		Strings.formattingHelp,
+		Strings.contactCyph
+	];
 
 	constructor () { (async () => {
 		while (!cyph || !ui) {
 			await Util.sleep();
 		}
 
+		if (ui.coBranded) {
+			this.tabLabels.pop();
+		}
+
 		this.cyph	= cyph;
-		this.ui		= ui;
 	})(); }
 }

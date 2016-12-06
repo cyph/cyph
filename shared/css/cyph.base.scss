@@ -916,12 +916,9 @@ html {
 		}
 	}
 
-	md-dialog.fullscreen {
-		height: calc( 100% - 50px );
-		max-width: 100%;
-		width: calc(75% - 50px);
-		max-height: 100%;
-		transition: 1.5s;
+	md-dialog.full {
+		height: 100%;
+		width: 100%;
 	}
 
 	md-checkbox {

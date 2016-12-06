@@ -1,4 +1,4 @@
-<div *ngIf='cyph && ui'>
+<md2-content class='md-no-flicker' *ngIf='cyph'>
 	<md2-tabs [labels]='tabLabels'>
 		<div cyphTranslate>
 			<p>
@@ -117,4 +117,4 @@
 			<cyph-contact [self]='{to: "help"}'></cyph-contact>
 		</div>
 	</md2-tabs>
-</div>
+</md2-content>

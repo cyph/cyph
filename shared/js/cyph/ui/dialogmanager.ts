@@ -47,13 +47,7 @@ export class DialogManager implements IDialogManager {
 					}
 				],
 				escapeToClose: true,
-				template: `
-					<md-dialog>
-						<md-content class='md-no-flicker'>
-							${o.template}
-						</md-content>
-					</md-dialog>
-				`
+				template: o.template
 			}).then(() =>
 				true
 			).catch(() =>

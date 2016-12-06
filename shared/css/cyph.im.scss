@@ -780,11 +780,6 @@ html:not(.mobile) .cyph-not-found {
 }
 
 cyph-help {
-	md-content {
-		width: 100%;
-		overflow-x: hidden;
-	}
-
 	md-input, md-option {
 		background-color: rgba(180, 141, 255, 0.85);
 	}
@@ -837,11 +832,6 @@ cyph-help {
 }
 
 html:not(.mobile) cyph-help {
-	md-content {
-		padding-left: 10%;
-		padding-right: 10%;
-	}
-
 	td {
 		padding-left: 20px;
 	}
