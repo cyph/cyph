@@ -1,4 +1,5 @@
 import {Component} from '@angular/core';
+import {Strings} from '../../strings';
 import {Util} from '../../util';
 
 
@@ -15,6 +16,12 @@ export class Help {
 
 	/** @ignore */
 	public ui: any;
+
+	/** @ignore */
+	public tabLabels: string[]	= ui.coBranded ?
+		[Strings.formattingHelp] :
+		[Strings.formattingHelp, Strings.contactCyph]
+	;
 
 	constructor () { (async () => {
 		while (!cyph || !ui) {

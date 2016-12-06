@@ -19,6 +19,9 @@ export class Strings {
 	public static readonly connectedNotification: string	= Util.translate(`Connected!`);
 
 	/** @see Strings */
+	public static readonly contactCyph: string				= Util.translate(`Contact Cyph`);
+
+	/** @see Strings */
 	public static readonly continueDialogAction: string		= Util.translate(`continue`);
 
 	/** @see Strings */
@@ -78,6 +81,9 @@ export class Strings {
 	public static readonly fileTransferInitMe: string		= Util.translate(
 		`You are sending the file:`
 	);
+
+	/** @see Strings */
+	public static readonly formattingHelp: string	= Util.translate(`Formatting Help`);
 
 	/** @see Strings */
 	public static readonly friend: string	= Util.translate(`friend`);

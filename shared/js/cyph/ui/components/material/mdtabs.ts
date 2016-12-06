@@ -11,6 +11,7 @@ import {
 	SimpleChanges
 } from '@angular/core';
 import {UpgradeComponent} from '@angular/upgrade/static';
+import {Util} from '../../../util';
 
 
 /**
@@ -29,8 +30,7 @@ export class MdTabs
 	public static readonly config			= {
 		bindings: {
 			childClass: '@',
-			mdBorderBottom: '@',
-			mdDynamicHeight: '@'
+			labels: '<'
 		},
 		/* tslint:disable-next-line:max-classes-per-file */
 		controller: class {
@@ -38,20 +38,47 @@ export class MdTabs
 			public readonly childClass: string;
 
 			/** @ignore */
-			public readonly mdBorderBottom: string;
+			public readonly labels: string[];
 
-			/** @ignore */
-			public readonly mdDynamicHeight: string;
+			constructor ($element: JQuery) { (async () => {
+				let $placeholders: JQuery;
+				while (!$placeholders || $placeholders.length < 1) {
+					$placeholders	= $element.find('div.placeholder');
+					await Util.sleep(50);
+				}
 
-			constructor () {}
+				let $transclusions: JQuery;
+				while (!$transclusions || $transclusions.length < 1) {
+					$transclusions	= $element.children('ng-transclude').children();
+					await Util.sleep(50);
+				}
+
+				$placeholders.eq(0).append($transclusions.eq(0).detach());
+
+				while (!this.labels) {
+					await Util.sleep();
+				}
+
+				for (let i = 1 ; i < this.labels.length ; ++i) {
+					$placeholders.eq(i).append($transclusions.eq(i).detach());
+				}
+			})(); }
 		},
 		template: `
 			<md-tabs
+				md-border-bottom
+				md-dynamic-height
+				md-selected='$ctrl.selected'
 				ng-class='$ctrl.childClass'
-				ng-attr-md-border-bottom='{{$ctrl.mdBorderBottom}}'
-				ng-attr-md-dynamic-height='{{$ctrl.mdDynamicHeight}}'
-				ng-transclude
-			></md-tabs>
+			>
+				<md-tab
+					ng-repeat='label in $ctrl.labels'
+					ng-attr-label='{{label}}'
+				>
+					<div class='placeholder'></div>
+				</md-tab>
+			</md-tabs>
+			<ng-transclude style='display: none'></ng-transclude>
 		`,
 		transclude: true
 	};
@@ -61,10 +88,7 @@ export class MdTabs
 	@Input() public childClass: string;
 
 	/** @ignore */
-	@Input() public mdBorderBottom: string;
-
-	/** @ignore */
-	@Input() public mdDynamicHeight: string;
+	@Input() public labels: string[];
 
 	/** @ignore */
 	public ngDoCheck () : void {
