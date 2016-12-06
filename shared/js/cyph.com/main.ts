@@ -83,16 +83,8 @@ angular.
 		Cyph.UI.Components.Material.MdContent.config
 	).
 	component(
-		Cyph.UI.Components.Material.MdFabActions.title,
-		Cyph.UI.Components.Material.MdFabActions.config
-	).
-	component(
 		Cyph.UI.Components.Material.MdFabSpeedDial.title,
 		Cyph.UI.Components.Material.MdFabSpeedDial.config
-	).
-	component(
-		Cyph.UI.Components.Material.MdFabTrigger.title,
-		Cyph.UI.Components.Material.MdFabTrigger.config
 	).
 	component(
 		Cyph.UI.Components.Material.MdIcon.title,
@@ -145,10 +137,6 @@ angular.
 	component(
 		Cyph.UI.Components.Material.MdSwitch.title,
 		Cyph.UI.Components.Material.MdSwitch.config
-	).
-	component(
-		Cyph.UI.Components.Material.MdTab.title,
-		Cyph.UI.Components.Material.MdTab.config
 	).
 	component(
 		Cyph.UI.Components.Material.MdTabs.title,
