@@ -483,7 +483,7 @@ md-menu-item {
 	}
 }
 
-.chat-main:not(.mobile):not(.video) .message-item:not(.unread) {
+.chat-main:not(.mobile):not(.video) md2-list-item.read {
 	@include animation(inkRippleCheckbox 0.35s linear 0s 1 normal);
 }
 

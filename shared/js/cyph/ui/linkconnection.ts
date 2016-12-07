@@ -13,16 +13,16 @@ import {ILinkConnection} from './ilinkconnection';
 /** @inheritDoc */
 export class LinkConnection implements ILinkConnection {
 	/** @ignore */
-	private isAddingTime: boolean;
-
-	/** @ignore */
-	private isCopying: boolean;
-
-	/** @ignore */
 	private isWaiting: boolean;
 
 	/** @ignore */
 	private linkConstant: string;
+
+	/** @ignore */
+	private readonly addTimeLock: {}	= {};
+
+	/** @ignore */
+	private readonly copyLock: {}		= {};
 
 	/** @inheritDoc */
 	public readonly advancedFeatures: boolean;
@@ -56,21 +56,17 @@ export class LinkConnection implements ILinkConnection {
 	public async addTime (milliseconds: number) : Promise<void> {
 		this.timer.addTime(milliseconds);
 
-		if (this.isAddingTime) {
-			return;
-		}
-
-		this.isAddingTime	= true;
-
-		try {
-			await this.dialogManager.toast({
-				content: Strings.timeExtended,
-				delay: 2500
-			});
-		}
-		finally {
-			this.isAddingTime	= false;
-		}
+		return Util.lock(
+			this.addTimeLock,
+			async () => {
+				await this.dialogManager.toast({
+					content: Strings.timeExtended,
+					delay: 2500
+				});
+			},
+			true,
+			true
+		);
 	}
 
 	/** @inheritDoc */
@@ -118,22 +114,18 @@ export class LinkConnection implements ILinkConnection {
 
 	/** @inheritDoc */
 	public async copyToClipboard () : Promise<void> {
-		if (this.isCopying) {
-			return;
-		}
-
-		this.isCopying	= true;
-
-		try {
-			await clipboard.copy(this.linkConstant);
-			await this.dialogManager.toast({
-				content: Strings.linkCopied,
-				delay: 2500
-			});
-		}
-		finally {
-			this.isCopying	= false;
-		}
+		return Util.lock(
+			this.copyLock,
+			async () => {
+				await clipboard.copy(this.linkConstant);
+				await this.dialogManager.toast({
+					content: Strings.linkCopied,
+					delay: 2500
+				});
+			},
+			true,
+			true
+		);
 	}
 
 	/** @inheritDoc */

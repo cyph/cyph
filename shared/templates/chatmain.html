@@ -215,11 +215,13 @@
 		'
 	>
 		<md2-content class='nano-content' childClass='md-no-flicker'>
-			<md2-list childClass='layout-column'>
+			<md2-list class='layout-fill' childClass='layout-column'>
 				<md2-list-item
 					class='layout-column'
+					[attr.message-index]='i'
+					[class.read]='!message.unread'
 					[childClass]='
-						"message-item unread layout-row" +
+						"message-item layout-row" +
 						(
 							" author-" + (
 								cyph.Session.Users[message.author] ||
@@ -232,7 +234,7 @@
 								""
 						)
 					'
-					*ngFor='let message of self.messages'
+					*ngFor='let message of self.messages ; let i = index'
 				>
 					<div class='flex layout-column'>
 						<div class='layout-row'>

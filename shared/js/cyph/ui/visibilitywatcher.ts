@@ -15,6 +15,10 @@ export class VisibilityWatcher {
 
 	/** @ignore */
 	private static trigger (isVisible: boolean) : void {
+		if (VisibilityWatcher.isVisible === isVisible) {
+			return;
+		}
+
 		VisibilityWatcher.isVisible	= isVisible;
 		EventManager.trigger(VisibilityWatcher.visibilityChangeEvent, VisibilityWatcher.isVisible);
 	}
@@ -23,8 +27,15 @@ export class VisibilityWatcher {
 	 * Sets handler to run when visibility changes.
 	 * @param handler
 	 */
-	public static onchange<T> (handler: (data: T) => void) : void {
+	public static onChange (handler: (data: boolean) => void) : void {
 		EventManager.on(VisibilityWatcher.visibilityChangeEvent, handler);
+	}
+
+	/**
+	 * Waits for the visibility to change once.
+	 */
+	public static async waitForChange () : Promise<boolean> {
+		return EventManager.one<boolean>(VisibilityWatcher.visibilityChangeEvent);
 	}
 
 	/** @ignore */

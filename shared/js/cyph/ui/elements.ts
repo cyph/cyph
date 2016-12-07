@@ -37,9 +37,7 @@ export class Elements {
 	);
 
 	/** @see Elements */
-	public static readonly cyphertext			= Elements.get(
-		'.chat-cyphertext.curtain, .chat-cyphertext.curtain md-content'
-	);
+	public static readonly cyphertext			= Elements.get('.chat-cyphertext > md2-content');
 
 	/** @see Elements */
 	public static readonly footer				= Elements.get('#footer');
@@ -48,9 +46,7 @@ export class Elements {
 	public static readonly messageBox			= Elements.get('.message-box');
 
 	/** @see Elements */
-	public static readonly messageList			= Elements.get(
-		'.message-list, .message-list md-content'
-	);
+	public static readonly messageList			= Elements.get('.message-list > md2-content');
 
 	/** @see Elements */
 	public static readonly messageListInner		= Elements.get('.message-list md-list');

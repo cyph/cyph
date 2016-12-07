@@ -17,6 +17,10 @@ export class VirtualKeyboardWatcher {
 
 	/** @ignore */
 	private static trigger (isOpen: boolean) : void {
+		if (VirtualKeyboardWatcher.isOpen === isOpen) {
+			return;
+		}
+
 		VirtualKeyboardWatcher.isOpen	= isOpen;
 		EventManager.trigger(
 			VirtualKeyboardWatcher.keyboardChangeEvent,
@@ -28,8 +32,15 @@ export class VirtualKeyboardWatcher {
 	 * Sets handler to run when keyboard status changes.
 	 * @param handler
 	 */
-	public static onchange<T> (handler: (data: T) => void) : void {
+	public static onChange (handler: (data: boolean) => void) : void {
 		EventManager.on(VirtualKeyboardWatcher.keyboardChangeEvent, handler);
+	}
+
+	/**
+	 * Waits for the keyboard status to change once.
+	 */
+	public static async waitForChange () : Promise<boolean> {
+		return EventManager.one<boolean>(VirtualKeyboardWatcher.keyboardChangeEvent);
 	}
 
 	/** @ignore */

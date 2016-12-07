@@ -77,6 +77,7 @@ export class Chat extends BaseButtonManager implements IChat {
 		text: string;
 		timestamp: number;
 		timeString: string;
+		unread: boolean;
 	}[]	= [];
 
 	/** @inheritDoc */
@@ -136,7 +137,8 @@ export class Chat extends BaseButtonManager implements IChat {
 			text,
 			timestamp,
 			selfDestructTimer: <ITimer> null,
-			timeString: Util.getTimeString(timestamp)
+			timeString: Util.getTimeString(timestamp),
+			unread: author !== Users.app && author !== Users.me
 		};
 
 		this.messages.push(message);
@@ -441,8 +443,7 @@ export class Chat extends BaseButtonManager implements IChat {
 		);
 
 		this.scrollManager	= new ScrollManager(
-			this.dialogManager,
-			this.isMobile,
+			this,
 			this.elements,
 			messageCountInTitle
 		);
