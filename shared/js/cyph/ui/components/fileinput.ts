@@ -26,7 +26,10 @@ export class FileInput {
 		const input	= <HTMLInputElement> $input[0];
 
 		$input.
-			change(() => {
+			change(e => {
+				e.stopPropagation();
+				e.preventDefault();
+
 				if (input.files.length < 1 || !this.change) {
 					return;
 				}
