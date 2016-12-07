@@ -152,28 +152,41 @@ export class UI extends Cyph.UI.BaseButtonManager {
 			await Cyph.Util.sleep();
 
 			if (this.homeSection === HomeSections.register) {
-				this.dialogManager.baseDialog({
+				await this.dialogManager.baseDialog({
 					locals: {
-						cyph,
 						signupForm: this.signupForm
 					},
-					onclose: () => Cyph.UrlState.set(''),
-					templateUrl: '../../templates/register.html'
+					template: `
+						<md-dialog>
+							<cyph-register
+								[signup-form]='locals.signupForm'
+							></cyph-register>
+						</md-dialog>
+					`
 				});
+
+				Cyph.UrlState.set('');
 			}
 			else if (this.homeSection === HomeSections.invite) {
 				this.signupForm.data.inviteCode	=
 					Cyph.UrlState.get().split(HomeSections[HomeSections.invite] + '/')[1] || ''
 				;
 
-				this.dialogManager.baseDialog({
+				await this.dialogManager.baseDialog({
 					locals: {
-						cyph,
 						signupForm: this.signupForm
 					},
-					onclose: () => Cyph.UrlState.set(''),
-					templateUrl: '../../templates/invite.html'
+					template: `
+						<md-dialog>
+							<cyph-register
+								[invite]='true'
+								[signup-form]='locals.signupForm'
+							></cyph-register>
+						</md-dialog>
+					`
 				});
+
+				Cyph.UrlState.set('');
 			}
 			else {
 				this.scroll(
@@ -277,24 +290,6 @@ export class UI extends Cyph.UI.BaseButtonManager {
 				await Cyph.Util.sleep();
 			}
 
-
-			const wowDelay			= 'data-wow-delay';
-			const platformWowDelay	= Cyph.Env.platformString + '-' + wowDelay;
-
-			$('[' + platformWowDelay + ']').each((i: number, elem: HTMLElement) => {
-				const $this: JQuery	= $(elem);
-				$this.attr(wowDelay, $this.attr(platformWowDelay));
-			});
-
-			const platformClass: string	= Cyph.Env.platformString + '-class-';
-
-			$('[class*="' + platformClass + '"]').each((i: number, elem: HTMLElement) => {
-				const $this: JQuery	= $(elem);
-				$this.attr(
-					'class',
-					$this.attr('class').replace(new RegExp(platformClass, 'g'), '')
-				);
-			});
 
 			if (!Cyph.Env.isMobile) {
 				new (<any> self).WOW({live: true}).init();

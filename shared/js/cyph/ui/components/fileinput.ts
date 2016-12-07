@@ -1,104 +1,54 @@
-import {
-	Directive,
-	DoCheck,
-	ElementRef,
-	EventEmitter,
-	Inject,
-	Injector,
-	Input,
-	OnChanges,
-	OnDestroy,
-	OnInit,
-	Output,
-	SimpleChanges
-} from '@angular/core';
-import {UpgradeComponent} from '@angular/upgrade/static';
+import {Component, ElementRef, EventEmitter, Input, Output} from '@angular/core';
 import {Util} from '../../util';
 
 
 /**
  * Angular component for taking file input.
  */
-@Directive({
-	/* tslint:disable-next-line:directive-selector */
-	selector: 'cyph-file-input'
+@Component({
+	selector: 'cyph-file-input',
+	templateUrl: '../../../../templates/fileinput.html'
 })
-export class FileInput
-	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
-	/** Component title. */
-	public static readonly title: string	= 'cyphFileInput';
-
-	/** Component configuration. */
-	public static readonly config			= {
-		bindings: {
-			accept: '<',
-			fileChange: '&'
-		},
-		/* tslint:disable-next-line:max-classes-per-file */
-		controller: class {
-			/** @ignore */
-			public readonly accept: string;
-
-			/** @ignore */
-			public readonly fileChange: (o: {file: File}) => void;
-
-			constructor ($element: JQuery) {
-				const $input	= $element.children();
-				const input		= <HTMLInputElement> $input[0];
-
-				$input.
-					change(() => {
-						if (input.files.length < 1 || !this.fileChange) {
-							return;
-						}
-
-						this.fileChange({file: input.files[0]});
-						$input.val('');
-					}).
-					click(e => {
-						e.stopPropagation();
-						e.preventDefault();
-					}).
-					parent().parent().click(() =>
-						Util.triggerClick(input)
-					)
-				;
-			}
-		},
-		templateUrl: '../../../../templates/fileinput.html'
-	};
-
-
+export class FileInput {
 	/** @ignore */
 	@Input() public accept: string;
 
 	/** @ignore */
-	@Output() public fileChange: EventEmitter<File>;
+	@Output() public change: EventEmitter<File>	= new EventEmitter<File>();
 
-	/** @ignore */
-	public ngDoCheck () : void {
-		super.ngDoCheck();
-	}
+	constructor (elementRef: ElementRef) { (async () => {
+		let $input: JQuery;
+		while (!$input || $input.length < 1) {
+			$input	= $(elementRef.nativeElement).children();
+			await Util.sleep();
+		}
 
-	/** @ignore */
-	public ngOnChanges (changes: SimpleChanges) : void {
-		super.ngOnChanges(changes);
-	}
+		const input	= <HTMLInputElement> $input[0];
 
-	/** @ignore */
-	public ngOnDestroy () : void {
-		super.ngOnDestroy();
-	}
+		$input.
+			change(e => {
+				e.stopPropagation();
+				e.preventDefault();
 
-	/** @ignore */
-	public ngOnInit () : void {
-		super.ngOnInit();
-	}
+				if (input.files.length < 1 || !this.change) {
+					return;
+				}
 
-	constructor (
-		@Inject(ElementRef) elementRef: ElementRef,
-		@Inject(Injector) injector: Injector
-	) {
-		super(FileInput.title, elementRef, injector);
-	}
+				this.change.emit(input.files[0]);
+				$input.val('');
+			}).
+			click(e => {
+				e.stopPropagation();
+				e.preventDefault();
+			})
+		;
+
+		let $button: JQuery;
+		while (!$button || $button.length < 1) {
+			$button	= $input.closest('button');
+			await Util.sleep();
+		}
+
+		$button.click(() => Util.triggerClick(input));
+	})(); }
 }

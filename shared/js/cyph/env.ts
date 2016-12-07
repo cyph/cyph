@@ -113,9 +113,6 @@ export class Env extends EnvDeploy {
 		Env.homeUrl.split('/')[2].replace('www.', '') === Env.host
 	;
 
-	/** Either "mobile" or "desktop", depending on Env.isMobile. */
-	public static platformString: string		= Env.isMobile ? 'mobile' : 'desktop';
-
 	/** Base URI for sending an SMS. */
 	public static readonly smsUriBase: string	=
 		'sms:' +

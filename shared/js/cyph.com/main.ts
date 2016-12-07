@@ -16,7 +16,6 @@ import {AppModule} from './appmodule';
 import {CyphDemo} from './cyphdemo';
 import {Elements} from './elements';
 import {HomeSections, pageTitles, Promos, States} from './enums';
-import {HomeComponent} from './homecomponent';
 import {UI} from './ui';
 
 
@@ -52,48 +51,135 @@ angular.
 	]).
 	config(Cyph.Config.angularConfig.config).
 	component(
-		Cyph.UI.Components.ChatCyphertext.title,
-		Cyph.UI.Components.ChatCyphertext.config
+		Cyph.UI.Components.Material.MdButton.title,
+		Cyph.UI.Components.Material.MdButton.config
 	).
 	component(
-		Cyph.UI.Components.ChatMain.title,
-		Cyph.UI.Components.ChatMain.config
+		Cyph.UI.Components.Material.MdCard.title,
+		Cyph.UI.Components.Material.MdCard.config
 	).
 	component(
-		Cyph.UI.Components.ChatMessageBox.title,
-		Cyph.UI.Components.ChatMessageBox.config
+		Cyph.UI.Components.Material.MdCardContent.title,
+		Cyph.UI.Components.Material.MdCardContent.config
 	).
 	component(
-		Cyph.UI.Components.Checkout.title,
-		Cyph.UI.Components.Checkout.config
+		Cyph.UI.Components.Material.MdCardHeader.title,
+		Cyph.UI.Components.Material.MdCardHeader.config
 	).
 	component(
-		Cyph.UI.Components.Contact.title,
-		Cyph.UI.Components.Contact.config
+		Cyph.UI.Components.Material.MdCardHeaderText.title,
+		Cyph.UI.Components.Material.MdCardHeaderText.config
 	).
 	component(
-		Cyph.UI.Components.FileInput.title,
-		Cyph.UI.Components.FileInput.config
+		Cyph.UI.Components.Material.MdCardTitle.title,
+		Cyph.UI.Components.Material.MdCardTitle.config
 	).
 	component(
-		Cyph.UI.Components.Markdown.title,
-		Cyph.UI.Components.Markdown.config
+		Cyph.UI.Components.Material.MdCardTitleText.title,
+		Cyph.UI.Components.Material.MdCardTitleText.config
 	).
 	component(
-		Cyph.UI.Components.SignupForm.title,
-		Cyph.UI.Components.SignupForm.config
+		Cyph.UI.Components.Material.MdContent.title,
+		Cyph.UI.Components.Material.MdContent.config
 	).
 	component(
-		HomeComponent.title,
-		HomeComponent.config
+		Cyph.UI.Components.Material.MdFabSpeedDial.title,
+		Cyph.UI.Components.Material.MdFabSpeedDial.config
+	).
+	component(
+		Cyph.UI.Components.Material.MdIcon.title,
+		Cyph.UI.Components.Material.MdIcon.config
+	).
+	component(
+		Cyph.UI.Components.Material.MdInput.title,
+		Cyph.UI.Components.Material.MdInput.config
+	).
+	component(
+		Cyph.UI.Components.Material.MdList.title,
+		Cyph.UI.Components.Material.MdList.config
+	).
+	component(
+		Cyph.UI.Components.Material.MdListItem.title,
+		Cyph.UI.Components.Material.MdListItem.config
+	).
+	component(
+		Cyph.UI.Components.Material.MdMenu.title,
+		Cyph.UI.Components.Material.MdMenu.config
+	).
+	component(
+		Cyph.UI.Components.Material.MdOption.title,
+		Cyph.UI.Components.Material.MdOption.config
+	).
+	component(
+		Cyph.UI.Components.Material.MdProgressCircular.title,
+		Cyph.UI.Components.Material.MdProgressCircular.config
+	).
+	component(
+		Cyph.UI.Components.Material.MdProgressLinear.title,
+		Cyph.UI.Components.Material.MdProgressLinear.config
+	).
+	component(
+		Cyph.UI.Components.Material.MdSelect.title,
+		Cyph.UI.Components.Material.MdSelect.config
+	).
+	component(
+		Cyph.UI.Components.Material.MdSidenav.title,
+		Cyph.UI.Components.Material.MdSidenav.config
+	).
+	component(
+		Cyph.UI.Components.Material.MdSlider.title,
+		Cyph.UI.Components.Material.MdSlider.config
+	).
+	component(
+		Cyph.UI.Components.Material.MdSubheader.title,
+		Cyph.UI.Components.Material.MdSubheader.config
+	).
+	component(
+		Cyph.UI.Components.Material.MdSwitch.title,
+		Cyph.UI.Components.Material.MdSwitch.config
+	).
+	component(
+		Cyph.UI.Components.Material.MdTabs.title,
+		Cyph.UI.Components.Material.MdTabs.config
+	).
+	component(
+		Cyph.UI.Components.Material.MdTextarea.title,
+		Cyph.UI.Components.Material.MdTextarea.config
+	).
+	component(
+		Cyph.UI.Components.Material.MdToolbar.title,
+		Cyph.UI.Components.Material.MdToolbar.config
+	).
+	component(
+		Cyph.UI.Components.Material.MdTooltip.title,
+		Cyph.UI.Components.Material.MdTooltip.config
 	).
 	directive(
-		Cyph.UI.Directives.Translate.title,
-		Cyph.UI.Directives.Translate.config
+		'cyphFileInput',
+		downgradeComponent({
+			component: Cyph.UI.Components.FileInput,
+			inputs: ['accept'],
+			outputs: ['change']
+		})
+	).
+	directive(
+		'cyphHelp',
+		downgradeComponent({
+			component: Cyph.UI.Components.Help
+		})
+	).
+	directive(
+		'cyphRegister',
+		downgradeComponent({
+			component: Cyph.UI.Components.Register,
+			inputs: ['invite', 'signupForm']
+		})
 	).
 	directive(
 		'cyphApp',
-		downgradeComponent({component: AppComponent})
+		downgradeComponent({
+			component: AppComponent
+		})
 	)
 ;
 

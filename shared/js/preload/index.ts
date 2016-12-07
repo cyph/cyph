@@ -9,25 +9,14 @@ import {Elements} from '../cyph/ui/elements';
 import {Util} from '../cyph/util';
 
 
-/* Load assets only for the current platform */
-$(
-	'.' +
-	Env.platformString +
-	'-only [deferred-src], [deferred-src].' +
-	Env.platformString +
-	'-only'
-).each((i: number, elem: HTMLElement) => {
-	const $this: JQuery	= $(elem);
-
-	$this.attr('src', $this.attr('deferred-src'));
-});
-
 /* Mobile CSS class */
+
 if (Env.isMobile) {
 	Elements.html().addClass('mobile');
 }
 
-/* Polyfills */
+/* Polyfill */
+
 if (!HTMLElement.prototype.click) {
 	/* tslint:disable-next-line:only-arrow-functions */
 	HTMLElement.prototype.click	= function (this: HTMLElement) : void {

@@ -10,5 +10,5 @@ export interface IScrollManager {
 	 * @param shouldScrollCyphertext If true, scrolls cyphertext UI
 	 * instead of main message list
 	 */
-	scrollDown (shouldScrollCyphertext?: boolean) : void;
+	scrollDown (shouldScrollCyphertext?: boolean) : Promise<void>;
 }

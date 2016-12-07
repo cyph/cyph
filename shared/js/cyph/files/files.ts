@@ -160,19 +160,16 @@ export class Files implements IFiles {
 			threadLocals
 		);
 
-		return new Promise<any[]>((resolve, reject) =>
-			EventManager.one(threadLocals.callbackId, (data: any[]) => {
-				thread.stop();
+		const data	= await EventManager.one<any[]>(threadLocals.callbackId);
 
-				const err	= data[0];
-				if (err) {
-					reject(err);
-				}
-				else {
-					resolve(data.slice(1));
-				}
-			})
-		);
+		thread.stop();
+
+		if (data[0]) {
+			throw data[0];
+		}
+		else {
+			return data.slice(1);
+		}
 	}
 
 
@@ -252,8 +249,6 @@ export class Files implements IFiles {
 				));
 
 				if (ok) {
-					const transferIndex: number	= this.transfers.push(transfer) - 1;
-
 					/* Arbitrarily assume ~500 Kb/s for progress bar estimation */
 					const intervalId: number	= setInterval(
 						() => {
@@ -294,13 +289,20 @@ export class Files implements IFiles {
 					transfer.percentComplete	= 100;
 
 					Potassium.clearMemory(transfer.key);
-					setTimeout(() => this.transfers.splice(transferIndex, 1), 1000);
 
 					this.triggerUIEvent(
 						UIEvents.save,
 						transfer,
 						plaintext
 					);
+
+					await Util.sleep(1000);
+
+					for (let i = 0 ; i < this.transfers.length ; ++i) {
+						if (this.transfers[i] === transfer) {
+							this.transfers.splice(i, 1);
+						}
+					}
 				}
 				else {
 					this.triggerUIEvent(
@@ -367,7 +369,7 @@ export class Files implements IFiles {
 			transfer
 		);
 
-		EventManager.one('transfer-' + transfer.id, (answer: boolean) => {
+		EventManager.one<boolean>('transfer-' + transfer.id).then(answer => {
 			transfer.answer	= answer;
 
 			this.triggerUIEvent(

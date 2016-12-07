@@ -26,14 +26,14 @@ export interface ISession {
 	 * @param event
 	 * @param handler
 	 */
-	off (event: string, handler: Function) : void;
+	off<T> (event: string, handler: (data: T) => void) : void;
 
 	/**
 	 * Add event listener.
 	 * @param event
 	 * @param handler
 	 */
-	on (event: string, handler: Function) : void;
+	on<T> (event: string, handler: (data: T) => void) : void;
 
 	/**
 	 * Receive incoming cyphertext.

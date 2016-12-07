@@ -1,236 +1,114 @@
 <div
-	class='chat-message-box platform-container'
-	ng-class='{mobile: $ctrl.self.isMobile}'
-	ng-if='
-		$ctrl.self.state === $ctrl.cyph.UI.Chat.States.chat &&
-		$ctrl.self.session.state.isAlive
+	class='chat-message-box'
+	[class.mobile]='self.isMobile'
+	*ngIf='
+		(cyph && self) &&
+		self.state === cyph.UI.Chat.States.chat &&
+		self.session.state.isAlive
 	'
-	ng-cloak
 >
 	<textarea
 		class='message-box tabIndent'
-		ng-model='$ctrl.self.currentMessage'
-		ng-trim='false'
-		ng-change='$ctrl.self.messageChange()'
+		[(ngModel)]='self.currentMessage'
+		(ngModelChange)='self.messageChange()'
 		placeholder='Send a secure message...'
-		cyph-translate
+		cyphTranslate
 	></textarea>
 
-	<div
-		class='message-box-button-group mobile-only'
-		ng-class='{
-			"hidden": $ctrl.self.currentMessage === ""
-		}'
-	>
-		<md-button
-			aria-label='Send'
-			ng-click='$ctrl.self.send()'
-			cyph-translate
+	<div *ngIf='self.isMobile'>
+		<div
+			class='message-box-button-group'
+			[class.hidden]='self.currentMessage === ""'
 		>
-			<md-icon class='grey'>send</md-icon>
-		</md-button>
-	</div>
-	<div
-		class='message-box-button-group mobile-only'
-		ng-class='{
-			"hidden": $ctrl.self.currentMessage !== ""
-		}'
-	>
-		<md-button
-			aria-label='Video Call'
-			ng-click='$ctrl.self.p2pManager.videoCallButton()'
-			ng-disabled='!$ctrl.self.p2pManager.isEnabled'
-			ng-if='!$ctrl.self.p2pManager.p2p.isActive'
-			cyph-translate
-		>
-			<md-icon class='grey'>videocam</md-icon>
-		</md-button>
-		<md-button
-			aria-label='Voice Call'
-			ng-click='$ctrl.self.p2pManager.voiceCallButton()'
-			ng-disabled='!$ctrl.self.p2pManager.isEnabled'
-			ng-if='!$ctrl.self.p2pManager.p2p.isActive'
-			cyph-translate
-		>
-			<md-icon class='grey'>phone</md-icon>
-		</md-button>
-		<md-button
-			aria-label='Send File or Photo'
-			cyph-translate
-		>
-			<md-icon class='grey'>attach_file</md-icon>
-			<cyph-file-input
-				file-change='$ctrl.self.fileManager.send(file)'
-				accept='$ctrl.fileInputAccept'
-			></cyph-file-input>
-		</md-button>
-	</div>
-
-	<md-menu
-		class='mobile-only'
-		md-position-mode='target-right target'
-	>
-		<md-button
-			aria-label='Menu'
-			class='md-icon-button'
-			ng-click='$ctrl.openMenu($mdMenu, $event)'
-			cyph-translate
-		>
-			<md-icon>more_horiz</md-icon>
-		</md-button>
-		<md-menu-content width='4'>
-			<md-menu-item>
-				<md-button
-					aria-label='Help'
-					ng-click='$ctrl.self.helpButton()'
-					cyph-translate
-				>
-					<md-icon md-menu-align-target>help_outline</md-icon>
-					<span cyph-translate>Help</span>
-				</md-button>
-			</md-menu-item>
-			<md-menu-item>
-				<md-button
-					aria-label='Disconnect'
-					ng-click='$ctrl.self.disconnectButton()'
-					cyph-translate
-				>
-					<md-icon md-menu-align-target>close</md-icon>
-					<span cyph-translate>Disconnect</span>
-				</md-button>
-			</md-menu-item>
-		</md-menu-content>
-	</md-menu>
-
-	<md-fab-speed-dial
-		md-direction='up'
-		class='desktop-only md-fling md-fab-bottom-right'
-		md-open='$ctrl.isSpeedDialOpen'
-		ng-mouseenter='$ctrl.isSpeedDialOpen = true'
-		ng-mouseleave='$ctrl.isSpeedDialOpen = false'
-		ng-if='$ctrl.isSpeedDialReady'
-	>
-		<md-fab-trigger>
-			<md-button
-				aria-label='Menu'
-				class='md-fab'
-				cyph-translate
+			<md2-button
+				ariaLabel='Send'
+				(childClick)='self.send()'
+				cyphTranslate
 			>
-				<md-icon>add</md-icon>
-			</md-button>
-		</md-fab-trigger>
-		<md-fab-actions ng-if='!$ctrl.self.p2pManager.p2p.isActive'>
-			<md-button
-				aria-label='Send File or Photo'
-				class='md-fab md-raised md-mini'
-				cyph-translate
+				<md2-icon childClass='grey'>send</md2-icon>
+			</md2-button>
+		</div>
+		<div
+			class='message-box-button-group'
+			[class.hidden]='self.currentMessage !== ""'
+		>
+			<md2-button
+				ariaLabel='Video Call'
+				(childClick)='self.p2pManager.videoCallButton()'
+				[disabled]='!self.p2pManager.isEnabled'
+				*ngIf='!self.p2pManager.p2p.isActive'
+				cyphTranslate
 			>
-				<md-tooltip md-direction='left' cyph-translate>
-					Send File or Photo
-				</md-tooltip>
-				<md-icon>attach_file</md-icon>
+				<md2-icon childClass='grey'>videocam</md2-icon>
+			</md2-button>
+			<md2-button
+				ariaLabel='Voice Call'
+				(childClick)='self.p2pManager.voiceCallButton()'
+				[disabled]='!self.p2pManager.isEnabled'
+				*ngIf='!self.p2pManager.p2p.isActive'
+				cyphTranslate
+			>
+				<md2-icon childClass='grey'>phone</md2-icon>
+			</md2-button>
+			<md2-button
+				ariaLabel='Send File or Photo'
+				cyphTranslate
+			>
+				<md2-icon childClass='grey'>attach_file</md2-icon>
 				<cyph-file-input
-					file-change='$ctrl.self.fileManager.send(file)'
-					accept='$ctrl.fileInputAccept'
+					[accept]='fileAccept'
+					(change)='self.fileManager.send($event)'
 				></cyph-file-input>
-			</md-button>
-			<md-button
-				aria-label='Voice Call'
-				class='md-fab md-raised md-mini'
-				ng-click='$ctrl.self.p2pManager.voiceCallButton()'
-				ng-disabled='!$ctrl.self.p2pManager.isEnabled'
-				cyph-translate
-			>
-				<md-tooltip md-direction='left' cyph-translate>
-					Voice Call
-				</md-tooltip>
-				<md-icon>phone</md-icon>
-			</md-button>
-			<md-button
-				aria-label='Video Call'
-				class='md-fab md-raised md-mini'
-				ng-click='$ctrl.self.p2pManager.videoCallButton()'
-				ng-disabled='!$ctrl.self.p2pManager.isEnabled'
-				cyph-translate
-			>
-				<md-tooltip md-direction='left' cyph-translate>
-					Video Call
-				</md-tooltip>
-				<md-icon>videocam</md-icon>
-			</md-button>
-			<md-button
-				aria-label='Help'
-				class='dark md-fab md-raised md-mini'
-				ng-click='$ctrl.self.helpButton()'
-				cyph-translate
-			>
-				<md-tooltip md-direction='left' cyph-translate>
-					Help
-				</md-tooltip>
-				<md-icon>help_outline</md-icon>
-			</md-button>
-			<md-button
-				aria-label='Disconnect'
-				class='dark md-fab md-raised md-mini'
-				ng-click='$ctrl.self.disconnectButton()'
-				cyph-translate
-			>
-				<md-tooltip md-direction='left' cyph-translate>
-					Disconnect
-				</md-tooltip>
-				<md-icon>close</md-icon>
-			</md-button>
-		</md-fab-actions>
-		<md-fab-actions ng-if='$ctrl.self.p2pManager.p2p.isActive'>
-			<md-button
-				aria-label='Send File or Photo'
-				class='md-fab md-raised md-mini'
-				cyph-translate
-			>
-				<md-tooltip md-direction='left' cyph-translate>
-					Send File or Photo
-				</md-tooltip>
-				<md-icon>attach_file</md-icon>
-				<cyph-file-input
-					file-change='$ctrl.self.fileManager.send(file)'
-					accept='$ctrl.fileInputAccept'
-				></cyph-file-input>
-			</md-button>
-			<md-button
-				aria-label='Help'
-				class='dark md-fab md-raised md-mini'
-				ng-click='$ctrl.self.helpButton()'
-				cyph-translate
-			>
-				<md-tooltip md-direction='left' cyph-translate>
-					Help
-				</md-tooltip>
-				<md-icon>help_outline</md-icon>
-			</md-button>
-			<md-button
-				aria-label='Disconnect'
-				class='dark md-fab md-raised md-mini'
-				ng-click='$ctrl.self.disconnectButton()'
-				cyph-translate
-			>
-				<md-tooltip md-direction='left' cyph-translate>
-					Disconnect
-				</md-tooltip>
-				<md-icon>close</md-icon>
-			</md-button>
-		</md-fab-actions>
-	</md-fab-speed-dial>
+			</md2-button>
+		</div>
 
-	<md-subheader
-		class='new-messages md-subheader-colored md-sticky-clone'
-		ng-show='$ctrl.self.scrollManager.unreadMessages > 0'
-		sticky-state='active'
-		ng-click='$ctrl.self.scrollManager.scrollDown()'
-	>
-		<strong>&#8595;&nbsp;&nbsp;</strong>
-		<span>{{$ctrl.self.scrollManager.unreadMessages}}</span>
-		<span cyph-translate>new</span>
-		<span ng-if='$ctrl.self.scrollManager.unreadMessages === 1' cyph-translate>message</span>
-		<span ng-if='$ctrl.self.scrollManager.unreadMessages > 1' cyph-translate>messages</span>
-	</md-subheader>
+		<md2-menu
+			mdPositionMode='target-right target'
+			width='4'
+			[button]='menuButton'
+			[items]='menuItems'
+		></md2-menu>
+	</div>
+
+	<md2-fab-speed-dial
+		cyphTranslate
+		ariaLabel='Menu'
+		icon='add'
+		[buttons]='speedDialButtons'
+		mdDirection='up'
+		childClass='md-fling md-fab-bottom-right'
+		[mdOpen]='isSpeedDialOpen'
+		(mouseenter)='isSpeedDialOpen = true'
+		(mouseleave)='isSpeedDialOpen = false'
+		*ngIf='!self.isMobile && isSpeedDialReady && !self.p2pManager.p2p.isActive'
+	></md2-fab-speed-dial>
+	<md2-fab-speed-dial
+		cyphTranslate
+		ariaLabel='Menu'
+		icon='add'
+		[buttons]='speedDialButtonsP2P'
+		mdDirection='up'
+		childClass='md-fling md-fab-bottom-right'
+		[mdOpen]='isSpeedDialOpen'
+		(mouseenter)='isSpeedDialOpen = true'
+		(mouseleave)='isSpeedDialOpen = false'
+		*ngIf='!self.isMobile && isSpeedDialReady && self.p2pManager.p2p.isActive'
+	></md2-fab-speed-dial>
+
+	<md2-subheader
+		childClass='new-messages md-subheader-colored md-sticky-clone'
+		*ngIf='self.scrollManager.unreadMessages > 0'
+		stickyState='active'
+		(click)='self.scrollManager.scrollDown()'
+		[text]='
+			"↓  " +
+			self.scrollManager.unreadMessages +
+			" " + cyph.Strings.new + " " +
+			(
+				self.scrollManager.unreadMessages === 1 ?
+					cyph.Strings.message :
+					cyph.Strings.messages
+			)
+		'
+	></md2-subheader>
 </div>

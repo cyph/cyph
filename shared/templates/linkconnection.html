@@ -1,10 +1,5 @@
-<div
-	class='link-connection loading'
-	layout='column'
-	layout-fill
-	flex
->
-	<div flex></div>
+<div class='link-connection loading layout-column layout-fill flex' *ngIf='cyph && self'>
+	<div class='flex'></div>
 	<div class='logo-animation'>
 		<div></div>
 		<div></div>
@@ -13,131 +8,131 @@
 		<div></div>
 	</div>
 	<div>
-		<div ng-show='$ctrl.self.isPassive' cyph-translate>
+		<div *ngIf='self.isPassive' cyphTranslate>
 			Waiting for friend to join...
 		</div>
-		<div ng-hide='$ctrl.self.isPassive'>
-			<div cyph-translate>
+		<div *ngIf='!self.isPassive'>
+			<div cyphTranslate>
 				Send the link below to someone else. When they open it,
 				you'll be securely connected!
 			</div>
 			<br />
 
-			<md-input-container class='connect-link-input desktop-only'>
-				<input cyph-translate ng-model='$ctrl.self.link' aria-label='Cyph link' />
-				<md-button
-					class='copy'
-					aria-label='Copy to clipboard'
-					ng-click='$ctrl.self.copyToClipboard()'
-					cyph-translate
+			<div *ngIf='!cyph.Env.isMobile'>
+				<md2-input
+					cyphTranslate
+					childClass='connect-link-input'
+					[(model)]='self.link'
+					label='Cyph link'
+				></md2-input>
+				<md2-button
+					childClass='copy'
+					ariaLabel='Copy to clipboard'
+					(childClick)='self.copyToClipboard()'
+					cyphTranslate
 				>
-					<md-icon>content_copy</md-icon>
-				</md-button>
-			</md-input-container>
+					<md2-icon>content_copy</md2-icon>
+				</md2-button>
+			</div>
 
-			<div class='connect-link-mobile mobile-only'>
+			<div class='connect-link-mobile' *ngIf='cyph.Env.isMobile'>
 				<a
 					class='connect-link-link'
-					ng-href='{{$ctrl.self.link}}'
-				>{{$ctrl.self.link}}</a>
+					[href]='self.link'
+				>{{self.link}}</a>
 				<br />
 
-				<md-button
-					class='md-fab'
-					aria-label='SMS'
-					ng-href='{{$ctrl.cyph.Env.smsUriBase}}{{$ctrl.self.linkEncoded}}'
-					cyph-translate
+				<md2-button
+					childClass='md-fab'
+					ariaLabel='SMS'
+					[href]='cyph.Env.smsUriBase + self.linkEncoded'
+					cyphTranslate
 				>
-					<img src='/img/icons/sms.png' alt='SMS' cyph-translate />
-				</md-button>
+					<img src='/img/icons/sms.png' alt='SMS' cyphTranslate />
+				</md2-button>
 
 				<span class='divider'>
 					&nbsp;
 				</span>
 
-				<md-button
-					class='md-fab'
-					aria-label='Email'
+				<md2-button
+					childClass='md-fab'
+					ariaLabel='Email'
 					target='_self'
-					ng-href='mailto:?body={{$ctrl.self.linkEncoded}}'
-					cyph-translate
+					[href]='"mailto:?body=" + self.linkEncoded'
+					cyphTranslate
 				>
-					<img src='/img/icons/email.png' alt='Email' cyph-translate />
-				</md-button>
+					<img src='/img/icons/email.png' alt='Email' cyphTranslate />
+				</md2-button>
 
 				<span class='divider'>
 					&nbsp;
 				</span>
 
-				<md-button
-					class='md-fab'
-					aria-label='Copy to clipboard'
-					ng-click='$ctrl.self.copyToClipboard()'
-					cyph-translate
+				<md2-button
+					childClass='md-fab'
+					ariaLabel='Copy to clipboard'
+					(childClick)='self.copyToClipboard()'
+					cyphTranslate
 				>
-					<md-icon>content_copy</md-icon>
-				</md-button>
+					<md2-icon>content_copy</md2-icon>
+				</md2-button>
 			</div>
 		</div>
 
 		<br />
 		<div>
-			<span cyph-translate>
+			<span cyphTranslate>
 				Link expires in
 			</span>
 			<span class='countdown'>
-				{{$ctrl.self.timer.timestamp}}
+				{{self.timer.timestamp}}
 			</span>
-			<md-button
-				ng-click='$ctrl.self.addTime(60000)'
-				aria-label='Increase time by one minute'
+			<md2-button
+				(childClick)='self.addTime(60000)'
+				ariaLabel='Increase time by one minute'
 			>
-				<md-icon>alarm_add</md-icon>
-			</md-button>
+				<md2-icon>alarm_add</md2-icon>
+			</md2-button>
 		</div>
 	</div>
 
-	<md-switch
-		class='advanced-features-switch'
-		ng-if='$ctrl.enableAdvancedFeatures'
-		ng-model='$ctrl.self.advancedFeatures'
-		aria-label='Advanced Features'
-		cyph-translate
+	<md2-switch
+		childClass='advanced-features-switch'
+		*ngIf='enableAdvancedFeatures'
+		[(model)]='self.advancedFeatures'
+		ariaLabel='Advanced Features'
+		cyphTranslate
 	>
 		Advanced Features
-	</md-switch>
+	</md2-switch>
 
-	<div class='advanced-features' ng-show='$ctrl.self.advancedFeatures'>
-		<md-input-container class='queued-message-box'>
-			<label cyph-translate>Queue up first message</label>
-			<textarea
-				rows='3'
-				ng-model='$ctrl.queuedMessageDraft'
-			></textarea>
-		</md-input-container>
+	<div class='advanced-features' *ngIf='self.advancedFeatures'>
+		<md2-textarea
+			cyphTranslate
+			childClass='queued-message-box'
+			[(model)]='queuedMessageDraft'
+			label='Queue up first message'
+			rows='3'
+		></md2-textarea>
 		<div class='buttons'>
-			<md-button
-				ng-click='$ctrl.self.chat.setQueuedMessage(
-					$ctrl.queuedMessageDraft
-				)'
-			>
-				<md-icon>save</md-icon>
-			</md-button>
-			<md-button
-				class='self-destruct-button'
-				ng-click='$ctrl.self.chat.setQueuedMessage(
+			<md2-button (childClick)='self.chat.setQueuedMessage(queuedMessageDraft)'>
+				<md2-icon>save</md2-icon>
+			</md2-button>
+			<md2-button
+				childClass='self-destruct-button'
+				(childClick)='self.chat.setQueuedMessage(
 					undefined,
-					!$ctrl.self.chat.queuedMessageSelfDestruct
+					!self.chat.queuedMessageSelfDestruct
 				)'
 			>
-				<md-icon
-					ng-class='{
-						"active": $ctrl.self.chat.queuedMessageSelfDestruct === true
-					}'
-				>
+				<md2-icon [childClass]='
+					self.chat.queuedMessageSelfDestruct === true ? "active" : ""
+				'>
 					timer
-				</md-icon>
-			</div>
+				</md2-icon>
+			</md2-button>
+		</div>
 	</div>
-	<div flex></div>
+	<div class='flex'></div>
 </div>

@@ -1,53 +1,62 @@
-<div>
-	<form ng-submit='$ctrl.send()' ng-hide='$ctrl.self.sent'>
-		<div layout-gt-xs='row'>
-			<md-input-container class='md-block' flex>
-				<label cyph-translate>Cyph team to contact</label>
-				<md-select ng-model='$ctrl.self.to'>
-					<md-option
-						ng-repeat='address in $ctrl.cyph.Config.cyphEmailAddresses'
-						value='{{address}}'
-					>
-						{{address}}
-					</md-option>
-				</md-select>
-			</md-input-container>
+<div *ngIf='cyph && self'>
+	<form (submit)='send()' *ngIf='!self.sent'>
+		<div class='layout-gt-xs-row'>
+			<md2-select
+				cyphTranslate
+				class='flex'
+				childClass='md-block'
+				[(model)]='self.to'
+				formName='to'
+				label='Cyph team to contact'
+			>
+				<md2-option
+					*ngFor='let address of cyph.Config.cyphEmailAddresses'
+					[value]='address'
+				>
+					{{address}}
+				</md2-option>
+			</md2-select>
 		</div>
-		<div layout='row'>
-			<md-input-container class='md-block' flex>
-				<input ng-model='$ctrl.self.fromName' aria-label='Name' cyph-translate />
-				<label cyph-translate>Name</label>
-			</md-input-container>
-			<md-input-container class='md-block' flex>
-				<input
-					ng-model='$ctrl.self.fromEmail'
-					type='email'
-					aria-label='Email'
-					cyph-translate
-					required
-				/>
-				<label cyph-translate>Email</label>
-			</md-input-container>
+		<div class='layout-row'>
+			<md2-input
+				cyphTranslate
+				class='flex'
+				childClass='md-block'
+				[(model)]='self.fromName'
+				formName='name'
+				label='Name'
+			></md2-input>
+			<md2-input
+				cyphTranslate
+				class='flex'
+				childClass='md-block'
+				[(model)]='self.fromEmail'
+				formName='email'
+				type='email'
+				label='Email'
+				[required]='true'
+			></md2-input>
 		</div>
-		<md-input-container class='md-block'>
-			<input ng-model='$ctrl.self.subject' aria-label='Subject' cyph-translate />
-			<label cyph-translate>Subject</label>
-		</md-input-container>
-		<md-input-container class='md-block'>
-			<textarea
-				ng-model='$ctrl.self.message'
-				aria-label='Message'
-				cyph-translate
-				md-select-on-focus
-				required
-			></textarea>
-			<label cyph-translate>Message</label>
-		</md-input-container>
-		<md-button type='submit' aria-label='Send' cyph-translate>
+		<md2-input
+			cyphTranslate
+			childClass='md-block'
+			[(model)]='self.subject'
+			formName='subject'
+			label='Subject'
+		></md2-input>
+		<md2-textarea
+			cyphTranslate
+			childClass='md-block'
+			[(model)]='self.message'
+			formName='message'
+			label='Message'
+			[required]='true'
+		></md2-textarea>
+		<md2-button type='submit' ariaLabel='Send' cyphTranslate>
 			Send
-		</md-button>
+		</md2-button>
 	</form>
-	<div ng-show='$ctrl.self.sent' cyph-translate>
+	<div *ngIf='self.sent' cyphTranslate>
 		Your email has been sent! Someone on the team will get back to you shortly.
 	</div>
 </div>

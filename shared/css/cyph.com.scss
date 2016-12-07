@@ -287,8 +287,9 @@ html.mobile #hero-section {
 	border-left: 0px !important;
 	border-right: 0px !important;
 	display: inline-block;
-	@include transform(translateY(-5px));
 	width: 300px;
+
+	@include transform(translateY(-5px));
 }
 
 #main-toolbar {
@@ -342,30 +343,6 @@ html.mobile #hero-section {
 					display: block;
 				}
 			}
-		}
-	}
-}
-
-@media (min-width: 1230px) {
-	#main-toolbar {
-		.desktop-only {
-			display: initial;
-		}
-
-		.mobile-only {
-			display: none;
-		}
-	}
-}
-
-@media (max-width: 1229px) {
-	#main-toolbar {
-		.desktop-only {
-			display: none;
-		}
-
-		.mobile-only {
-			display: initial;
 		}
 	}
 }
@@ -640,9 +617,9 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 		padding: 0px;
 		overflow: hidden;
 
-		> .cyph-foreground {
+		.cyph-foreground {
 			font-size: 14px;
-			height: calc(100% + 2px);
+			height: calc(100% + 4px);
 			overflow: hidden;
 		}
 	}
@@ -663,7 +640,7 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 	> .desktop {
 		height: calc((100vw - 60px) * 0.47 * 0.565);
 		width: 47%;
-		margin-top: 64px;
+		margin-top: 62px;
 		left: 11.5%;
 
 		cyph-chat-main, cyph-chat-message-box {
@@ -725,7 +702,7 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 	> .mobile {
 		height: calc((100vw - 60px) * 0.26 * 1.78);
 		width: 26%;
-		margin-top: -60px;
+		margin-top: -62px;
 		left: 21.5%;
 
 		@include filter(blur(0px));

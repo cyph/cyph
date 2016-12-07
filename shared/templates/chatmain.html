@@ -1,23 +1,14 @@
 <div
-	class='chat-main platform-container'
-	ng-class='{
-		video: $ctrl.self.p2pManager.p2p.isActive,
-		mobile: $ctrl.self.isMobile
-	}'
-	layout='column'
-	layout-fill
-	flex
+	class='chat-main layout-column layout-fill flex'
+	[class.video]='self.p2pManager.p2p.isActive'
+	[class.mobile]='self.isMobile'
+	*ngIf='cyph && self'
 >
 	<div
-		class='cyph-view loading'
-		layout='column'
-		layout-fill
-		flex
-		ng-class='{
-			active: $ctrl.self.state === $ctrl.cyph.UI.Chat.States.keyExchange
-		}'
+		class='cyph-view loading layout-column layout-fill flex'
+		[class.active]='self.state === cyph.UI.Chat.States.keyExchange'
 	>
-		<div flex></div>
+		<div class='flex'></div>
 		<div class='logo-animation'>
 			<div></div>
 			<div></div>
@@ -25,324 +16,306 @@
 			<div></div>
 			<div></div>
 		</div>
-		<div cyph-translate>Initiating key exchange...</div>
-		<md-progress-linear
-			class='md-accent key-exchange-progress'
-			md-mode='determinate'
-			ng-value='$ctrl.self.keyExchangeProgress'
-		></md-progress-linear>
-		<div flex></div>
+		<div cyphTranslate>Initiating key exchange...</div>
+		<md2-progress-linear
+			childClass='md-accent key-exchange-progress'
+			mdMode='determinate'
+			[value]='self.keyExchangeProgress'
+		></md2-progress-linear>
+		<div class='flex'></div>
 	</div>
 
 	<div
-		class='cyph-view abort-screen loading'
-		layout='column'
-		layout-fill
-		flex
-		ng-class='{
-			active: $ctrl.self.state === $ctrl.cyph.UI.Chat.States.aborted
-		}'
+		class='cyph-view abort-screen loading layout-column layout-fill flex'
+		[class.active]='self.state === cyph.UI.Chat.States.aborted'
 	>
-		<div flex></div>
+		<div class='flex'></div>
 		<div class='image'>
-			<img src='/img/walken.png' alt='Definitely not Christopher Walken' />
+			<img src='/img/walken.png' alt='Definitely not Christopher Walken' cyphTranslate />
 		</div>
 		<div>
-			<div cyph-translate>This cyph has been aborted.</div>
+			<div cyphTranslate>This cyph has been aborted.</div>
 			<br />
-			<span cyph-translate>Please</span>
+			<span cyphTranslate>Please</span>
 			<a
-				cyph-translate
+				cyphTranslate
 				target='_self'
-				ng-href='{{$ctrl.cyph.Env.newCyphUrl}}'
+				[href]='cyph.Env.newCyphUrl'
 			>try again</a>.
 		</div>
-		<div flex></div>
+		<div class='flex'></div>
 	</div>
 
 	<div
-		class='cyph-view chat-begin-message loading'
-		layout='column'
-		layout-fill
-		flex
-		ng-class='{
-			active: $ctrl.self.state === $ctrl.cyph.UI.Chat.States.chatBeginMessage
-		}'
+		class='cyph-view chat-begin-message loading layout-column layout-fill flex'
+		[class.active]='self.state === cyph.UI.Chat.States.chatBeginMessage'
 	>
-		<div flex></div>
+		<div class='flex'></div>
 		<div class='logo-animation connected'></div>
-		<div cyph-translate>Securely Connected!</div>
-		<md-progress-linear
-			class='md-accent key-exchange-progress'
-			md-mode='determinate'
-			ng-value='100'
-		></md-progress-linear>
-		<div flex></div>
+		<div cyphTranslate>Securely Connected!</div>
+		<md2-progress-linear
+			childClass='md-accent key-exchange-progress'
+			mdMode='determinate'
+			[value]='100'
+		></md2-progress-linear>
+		<div class='flex'></div>
 	</div>
 
 	<div
-		class='cyph-view video-call'
-		flex
-		ng-class='{
-			"active": $ctrl.self.state === $ctrl.cyph.UI.Chat.States.chat,
-			"playing": $ctrl.self.p2pManager.p2p.isActive,
-			"sidebar-open": $ctrl.self.p2pManager.isSidebarOpen
-		}'
+		class='cyph-view video-call flex'
+		[class.active]='self.state === cyph.UI.Chat.States.chat'
+		[class.playing]='self.p2pManager.p2p.isActive'
+		[class.sidebar-open]='self.p2pManager.isSidebarOpen'
 	>
-		<a class='logo' rel='noreferrer' ng-href='{{$ctrl.cyph.Env.homeUrl}}'>
-			<img src='/img/betalogo.mobile.png' alt='Beta logo' />
+		<a class='logo' rel='noreferrer' [href]='cyph.Env.homeUrl'>
+			<img src='/img/betalogo.mobile.png' alt='Beta logo' cyphTranslate />
 		</a>
 		<div
 			class='friend stream'
-			ng-show='
-				$ctrl.self.p2pManager.p2p.incomingStream.video &&
-				!$ctrl.self.p2pManager.p2p.loading
+			*ngIf='
+				self.p2pManager.p2p.incomingStream.video &&
+				!self.p2pManager.p2p.loading
 			'
-			autoplay
 		></div>
 		<img
 			class='friend'
-			ng-show='!(
-				$ctrl.self.p2pManager.p2p.incomingStream.video ||
-				$ctrl.self.p2pManager.p2p.loading
+			*ngIf='!(
+				self.p2pManager.p2p.incomingStream.video ||
+				self.p2pManager.p2p.loading
 			)'
 			src='/img/voicecall.jpg'
 		/>
 		<video
 			class='me'
-			ng-show='$ctrl.self.p2pManager.p2p.outgoingStream.video'
+			*ngIf='self.p2pManager.p2p.outgoingStream.video'
 			autoplay
 			muted
 		></video>
 
-		<md-progress-circular
-			ng-show='$ctrl.self.p2pManager.p2p.loading'
-			md-mode='indeterminate'
-		></md-progress-circular>
+		<md2-progress-circular
+			*ngIf='self.p2pManager.p2p.loading'
+			mdMode='indeterminate'
+		></md2-progress-circular>
 
-		<md-button
-			cyph-translate
-			class='sidebar'
-			aria-label='Sidebar'
-			ng-click='$ctrl.self.p2pManager.toggleSidebar()'
+		<md2-button
+			cyphTranslate
+			childClass='sidebar'
+			ariaLabel='Sidebar'
+			(childClick)='self.p2pManager.toggleSidebar()'
 		>
-			<img src='/img/icons/chat.png' alt='Chat' />
-		</md-button>
+			<img src='/img/icons/chat.png' alt='Chat' cyphTranslate />
+		</md2-button>
 
 		<div class='buttons'>
-			<md-button
-				cyph-translate
-				class='md-fab video-call-button'
-				ng-click='$ctrl.self.p2pManager.videoCallButton()'
-				ng-attr-aria-label='{{
-					!$ctrl.self.p2pManager.p2p.outgoingStream.video ?
+			<md2-button
+				cyphTranslate
+				childClass='md-fab video-call-button'
+				(childClick)='self.p2pManager.videoCallButton()'
+				[ariaLabel]='
+					!self.p2pManager.p2p.outgoingStream.video ?
 						"Enable Camera" :
 						"Disable Camera"
-				}}'
+				'
 			>
 				<img
-					ng-show='!$ctrl.self.p2pManager.p2p.outgoingStream.video'
+					cyphTranslate
+					*ngIf='!self.p2pManager.p2p.outgoingStream.video'
 					src='/img/icons/video.on.png'
 					alt='Video on'
 				/>
 				<img
-					ng-show='$ctrl.self.p2pManager.p2p.outgoingStream.video'
+					cyphTranslate
+					*ngIf='self.p2pManager.p2p.outgoingStream.video'
 					src='/img/icons/video.off.png'
 					alt='Video off'
 				/>
-			</md-button>
-			<md-button
-				cyph-translate
-				class='md-fab voice-call-button'
-				ng-click='$ctrl.self.p2pManager.voiceCallButton()'
-				ng-attr-aria-label='{{
-					!$ctrl.self.p2pManager.p2p.outgoingStream.audio ?
+			</md2-button>
+			<md2-button
+				cyphTranslate
+				childClass='md-fab voice-call-button'
+				(childClick)='self.p2pManager.voiceCallButton()'
+				[ariaLabel]='
+					!self.p2pManager.p2p.outgoingStream.audio ?
 						"Enable Mic" :
 						"Disable Mic"
-				}}'
+				'
 			>
 				<img
-					ng-show='!$ctrl.self.p2pManager.p2p.outgoingStream.audio'
+					cyphTranslate
+					*ngIf='!self.p2pManager.p2p.outgoingStream.audio'
 					src='/img/icons/mic.on.png'
 					alt='Mic on'
 				/>
 				<img
-					ng-show='$ctrl.self.p2pManager.p2p.outgoingStream.audio'
+					cyphTranslate
+					*ngIf='self.p2pManager.p2p.outgoingStream.audio'
 					src='/img/icons/mic.off.png'
 					alt='Mic off'
 				/>
-			</md-button>
-			<md-button
-				cyph-translate
-				aria-label='End Call'
-				class='md-fab md-theme-grey close-button'
-				ng-click='$ctrl.self.p2pManager.closeButton()'
+			</md2-button>
+			<md2-button
+				cyphTranslate
+				ariaLabel='End Call'
+				childClass='md-fab md-theme-grey close-button'
+				(childClick)='self.p2pManager.closeButton()'
 			>
-				<md-icon>call_end</md-icon>
-			</md-button>
+				<md2-icon>call_end</md2-icon>
+			</md2-button>
 		</div>
 	</div>
 
 	<cyph-chat-message-box
 		class='video-call-message-box'
-		self='$ctrl.self'
+		[self]='self'
 	></cyph-chat-message-box>
 
 	<div
-		class='cyph-view transfer-list'
-		flex
-		ng-class='{
-			active: $ctrl.self.state === $ctrl.cyph.UI.Chat.States.chat
-		}'
+		class='cyph-view transfer-list flex'
+		[class.active]='self.state === cyph.UI.Chat.States.chat'
 	>
-		<md-content class='md-no-flicker'>
-			<md-list layout='column'>
-				<md-list-item
-					class='transfer'
-					ng-repeat='transfer in $ctrl.self.fileManager.files.transfers'
-					layout='row'
+		<md2-content childClass='md-no-flicker'>
+			<md2-list childClass='layout-column'>
+				<md2-list-item
+					class='layout-column'
+					childClass='transfer layout-row'
+					*ngFor='let transfer of self.fileManager.files.transfers'
 				>
-					<div layout='column' layout-align=' start' flex>
-						<div layout='row'>
-							<span ng-show='transfer.isOutgoing' cyph-translate>Sending</span>
-							<span ng-hide='transfer.isOutgoing' cyph-translate>Receiving</span>
+					<div class='layout-column layout-align-start-stretch flex'>
+						<div class='layout-row'>
+							<span *ngIf='transfer.isOutgoing' cyphTranslate>Sending</span>
+							<span *ngIf='!transfer.isOutgoing' cyphTranslate>Receiving</span>
 							&nbsp;
 							<span>
 								{{transfer.name}}
-								({{$ctrl.cyph.Util.readableByteLength(transfer.size)}}):
+								({{cyph.Util.readableByteLength(transfer.size)}}):
 							</span>
 						</div>
-						<md-progress-linear
-							md-mode='determinate'
-							value='{{transfer.percentComplete}}'
-							layout='row'
-						></md-progress-linear>
+						<md2-progress-linear
+							mdMode='determinate'
+							[value]='transfer.percentComplete'
+							childClass='layout-row'
+						></md2-progress-linear>
 					</div>
-				</md-list-item>
-			</md-list>
-		</md-content>
+				</md2-list-item>
+			</md2-list>
+		</md2-content>
 	</div>
 
 	<div
-		class='cyph-view message-list nano'
-		flex
-		ng-class='{
-			active: $ctrl.self.state === $ctrl.cyph.UI.Chat.States.chat
-		}'
-		ng-style='{
-			"margin-top":
+		class='cyph-view message-list nano flex'
+		[class.active]='self.state === cyph.UI.Chat.States.chat'
+		[style.margin-top]='
+			(
 				(
-					(
-						$ctrl.self.fileManager.files.transfers.length < 3 ?
-							$ctrl.self.fileManager.files.transfers.length :
-							3
-					) * 55
-				).toString() + "px"
-		}'
+					self.fileManager.files.transfers.length < 3 ?
+						self.fileManager.files.transfers.length :
+						3
+				) * 55
+			) + "px"
+		'
 	>
-		<md-content class='nano-content md-no-flicker'>
-			<md-list layout='column'>
-				<md-list-item
-					class='message-item unread'
-					ng-class='[
-						"author-" + (
-							$ctrl.cyph.Session.Users[message.author] ||
-							$ctrl.cyph.Session.Users.other
-						),
-						{
-							"self-destructed":
-								message.selfDestructTimer &&
-								message.selfDestructTimer.isComplete
-						}
-					]'
-					ng-repeat='message in $ctrl.self.messages'
-					layout='row'
+		<md2-content class='nano-content' childClass='md-no-flicker'>
+			<md2-list class='layout-fill' childClass='layout-column'>
+				<md2-list-item
+					class='layout-column'
+					[attr.message-index]='i'
+					[class.read]='!message.unread'
+					[childClass]='
+						"message-item layout-row" +
+						(
+							" author-" + (
+								cyph.Session.Users[message.author] ||
+								cyph.Session.Users.other
+							)
+						) +
+						(
+							message.selfDestructTimer && message.selfDestructTimer.isComplete ?
+								" self-destructed" :
+								""
+						)
+					'
+					*ngFor='let message of self.messages ; let i = index'
 				>
-					<div flex layout='column'>
-						<div layout='row'>
+					<div class='flex layout-column'>
+						<div class='layout-row'>
 							<span class='message'>
 								<strong
 									class='message-author'
-									ng-if='::message.author === $ctrl.cyph.Session.Users.me'
+									*ngIf='message.author === cyph.Session.Users.me'
 								>
-									{{::$ctrl.cyph.Strings.me}}:
+									{{cyph.Strings.me}}:
 								</strong>
 								<strong
 									class='message-author'
-									ng-if='::
-										message.author !== $ctrl.cyph.Session.Users.me &&
-										message.author !== $ctrl.cyph.Session.Users.app
+									*ngIf='
+										message.author !== cyph.Session.Users.me &&
+										message.author !== cyph.Session.Users.app
 									'
 								>
-									{{::message.author}}:
+									{{message.author}}:
 								</strong>
 								<cyph-markdown
 									class='message-text'
-									markdown='message.text'
-									ng-class='::{
-										"app-message":
-											message.author === $ctrl.cyph.Session.Users.app
-									}'
+									[markdown]='message.text'
+									[class.app-message]='message.author === cyph.Session.Users.app'
 								></cyph-markdown>
 							</span>
-							<span flex class='message-timestamp'>
-								<span
-									class='mobile-only'
-									ng-if='::message.author === $ctrl.cyph.Session.Users.me'
-								>
-									{{::$ctrl.cyph.Strings.me}} &nbsp;&mdash;&nbsp;
+							<span class='message-timestamp flex'>
+								<span *ngIf='
+									(self.isMobile || self.p2pManager.p2p.isActive) &&
+									message.author === cyph.Session.Users.me
+								'>
+									{{cyph.Strings.me}} &nbsp;&mdash;&nbsp;
 								</span>
 
-								{{::message.timeString}}
+								{{message.timeString}}
 
-								<span
-									class='mobile-only'
-									ng-if='::
-										message.author !== $ctrl.cyph.Session.Users.me &&
-										message.author !== $ctrl.cyph.Session.Users.app
-									'
-								>
-									&nbsp;&mdash;&nbsp; {{::message.author}}
+								<span *ngIf='
+									(self.isMobile || self.p2pManager.p2p.isActive) &&
+									message.author !== cyph.Session.Users.me &&
+									message.author !== cyph.Session.Users.app
+								'>
+									&nbsp;&mdash;&nbsp; {{message.author}}
 								</span>
 							</span>
 						</div>
 						<div
-							class='self-destruct-timer'
-							layout='row'
-							ng-show='message.selfDestructTimer'
+							class='self-destruct-timer layout-row'
+							*ngIf='message.selfDestructTimer'
 						>
-							<span cyph-translate>Message will self-destruct in</span>
+							<span cyphTranslate>Message will self-destruct in</span>
 							<span class='countdown'>{{message.selfDestructTimer.timestamp}}</span>
 						</div>
 					</div>
 					<div class='self-destruct-cover'></div>
-				</md-list-item>
+				</md2-list-item>
 
-				<md-list-item
-					class='friend-is-typing'
-					ng-class='{"show": $ctrl.self.isFriendTyping}'
-					layout='row'
+				<md2-list-item
+					class='layout-column'
+					[childClass]='
+						"friend-is-typing layout-row" +
+						(self.isFriendTyping ? " show" : "")
+					'
 				>
 					<span class='ellipsis-spinner'>
 						<div class='bounce1'></div>
 						<div class='bounce2'></div>
 						<div class='bounce3'></div>
 					</span>
-				</md-list-item>
+				</md2-list-item>
 
-				<md-list-item
-					class='chat-end-message'
-					ng-show='$ctrl.self.isDisconnected && !$ctrl.hideDisconnectMessage'
-					layout='row'
-					layout-align='center center'
+				<md2-list-item
+					class='layout-column'
+					childClass='chat-end-message layout-row layout-align-center-center'
+					*ngIf='self.isDisconnected && !hideDisconnectMessage'
 				>
-					<md-card flex='75' flex-gt-sm='50' class='md-padding'>
-						<md-card-content>
-							<ng-transclude></ng-transclude>
-						</md-card-content>
-					</md-card>
-				</md-list-item>
-			</md-list>
-		</md-content>
+					<md2-card childClass='md-padding flex-75 flex-gt-sm-50'>
+						<md2-card-content>
+							<ng-content></ng-content>
+						</md2-card-content>
+					</md2-card>
+				</md2-list-item>
+			</md2-list>
+		</md2-content>
 	</div>
 </div>

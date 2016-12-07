@@ -128,6 +128,10 @@ md-toast {
 	font-size: 80%;
 }
 
+.strike {
+	text-decoration: line-through;
+}
+
 md-toolbar, md-toolbar.md-default-theme:not(.md-menu-toolbar), md-toolbar:not(.md-menu-toolbar) {
 	background-color: #7d4fd3;
 	height: 40px !important;
@@ -187,7 +191,7 @@ cyph-file-input {
 	display: none;
 }
 
-cyph-markdown {
+cyph-markdown > span {
 	> p:only-child {
 		display: inline;
 	}
@@ -198,7 +202,7 @@ cyph-markdown {
 }
 
 html:not(.mobile) {
-	cyph-markdown {
+	cyph-markdown > span {
 		> :not(p), > p:not(:only-child) {
 			margin-left: 25px;
 		}
@@ -300,27 +304,15 @@ pre, code {
 	}
 }
 
-/* Mobile and desktop classes */
+/* Desktop styling tweak */
 
 html:not(.mobile) * {
 	outline: none !important;
 }
 
-html.mobile .desktop-only,
-html:not(.mobile) .mobile-only,
-.platform-container.mobile .desktop-only,
-.platform-container:not(.mobile) .mobile-only {
-	display: none;
-}
-
-html.mobile .platform-container:not(.mobile) .desktop-only,
-html:not(.mobile) .platform-container.mobile .mobile-only {
-	display: initial;
-}
-
 /* Moved beta signup stuff from cyph.com CSS */
 
-.beta-signup-form, .register {
+.beta-signup-form, cyph-register {
 	font-size: 15px;
 
 	[disabled] {
@@ -901,7 +893,7 @@ html {
 		text-decoration: none;
 	}
 
-	[layout-fill] {
+	.layout-fill {
 		min-height: 0px;
 		height: 100%;
 	}
@@ -924,12 +916,9 @@ html {
 		}
 	}
 
-	md-dialog.fullscreen {
-		height: calc( 100% - 50px );
-		max-width: 100%;
-		width: calc(75% - 50px);
-		max-height: 100%;
-		transition: 1.5s;
+	md-dialog.full {
+		height: 100%;
+		width: 100%;
 	}
 
 	md-checkbox {

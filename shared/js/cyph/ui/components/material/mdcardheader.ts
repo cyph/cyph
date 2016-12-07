@@ -4,49 +4,51 @@ import {
 	ElementRef,
 	Inject,
 	Injector,
+	Input,
 	OnChanges,
 	OnDestroy,
 	OnInit,
 	SimpleChanges
 } from '@angular/core';
 import {UpgradeComponent} from '@angular/upgrade/static';
-import {Util} from '../cyph/util';
 
 
 /**
- * Angular component for Cyph home page.
+ * ng2 wrapper for Material1 md-card-header.
  */
 @Directive({
 	/* tslint:disable-next-line:directive-selector */
-	selector: 'cyph-home'
+	selector: 'md2-card-header'
 })
-export class HomeComponent
+export class MdCardHeader
 	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
 	/** Component title. */
-	public static readonly title: string	= 'cyphHome';
+	public static readonly title: string	= 'md2CardHeader';
 
 	/** Component configuration. */
 	public static readonly config			= {
+		bindings: {
+			childClass: '@'
+		},
 		/* tslint:disable-next-line:max-classes-per-file */
 		controller: class {
 			/** @ignore */
-			public cyph: any;
+			public readonly childClass: string;
 
-			/** @ignore */
-			public ui: any;
-
-			constructor () { (async () => {
-				while (!cyph || !ui) {
-					await Util.sleep();
-				}
-
-				this.cyph	= cyph;
-				this.ui		= ui;
-			})(); }
+			constructor () {}
 		},
-		templateUrl: '../../templates/cyph.com.html'
+		template: `
+			<md-card-header
+				ng-class='$ctrl.childClass'
+				ng-transclude
+			></md-card-header>
+		`,
+		transclude: true
 	};
 
+
+	/** @ignore */
+	@Input() public childClass: string;
 
 	/** @ignore */
 	public ngDoCheck () : void {
@@ -72,6 +74,6 @@ export class HomeComponent
 		@Inject(ElementRef) elementRef: ElementRef,
 		@Inject(Injector) injector: Injector
 	) {
-		super(HomeComponent.title, elementRef, injector);
+		super(MdCardHeader.title, elementRef, injector);
 	}
 }

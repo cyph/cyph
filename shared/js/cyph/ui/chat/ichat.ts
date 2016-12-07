@@ -42,6 +42,7 @@ export interface IChat {
 		text: string;
 		timestamp: number;
 		timeString: string;
+		unread: boolean;
 	}[];
 
 	/** Cyphertext instance. */

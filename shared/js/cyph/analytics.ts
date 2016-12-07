@@ -59,7 +59,7 @@ export class Analytics {
 
 	/** @ignore */
 	/* tslint:disable-next-line:member-ordering */
-	public static readonly _	= (() => {
+	public static readonly _	= (async () => {
 		const appName: string		= Env.host;
 		const appVersion: string	= Env.isWeb ? 'Web' : 'Native';
 
@@ -126,13 +126,12 @@ export class Analytics {
 
 				document.body.appendChild(Analytics.analFrame);
 
-				$(() =>
-					$(Analytics.analFrame).one('load', async () => {
-						await Util.sleep();
-						Analytics.analFrameIsReady	= true;
-						Analytics.set({appName, appVersion});
-					})
-				);
+				await new Promise(resolve => $(() => resolve));
+				await new Promise(resolve => $(Analytics.analFrame).one('load', resolve));
+				await Util.sleep();
+
+				Analytics.analFrameIsReady	= true;
+				Analytics.set({appName, appVersion});
 			}
 			catch (_) {
 				Analytics.analFrameIsReady	= false;

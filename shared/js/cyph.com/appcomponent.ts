@@ -1,4 +1,6 @@
 import {Component} from '@angular/core';
+import {Util} from '../cyph/util';
+import {UI} from './ui';
 
 
 /**
@@ -6,6 +8,21 @@ import {Component} from '@angular/core';
  */
 @Component({
 	selector: 'cyph-app',
-	template: `<cyph-home></cyph-home>`
+	templateUrl: '../../templates/cyph.com.html'
 })
-export class AppComponent {}
+export class AppComponent {
+	/** @ignore */
+	public cyph: any;
+
+	/** @ignore */
+	public ui: UI;
+
+	constructor () { (async () => {
+		while (!cyph || !ui) {
+			await Util.sleep();
+		}
+
+		this.cyph	= cyph;
+		this.ui		= ui;
+	})(); }
+}

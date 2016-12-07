@@ -1,0 +1,128 @@
+import {
+	Directive,
+	DoCheck,
+	ElementRef,
+	Inject,
+	Injector,
+	Input,
+	OnChanges,
+	OnDestroy,
+	OnInit,
+	SimpleChanges
+} from '@angular/core';
+import {UpgradeComponent} from '@angular/upgrade/static';
+
+
+/**
+ * ng2 wrapper for Material1 md-slider.
+ */
+@Directive({
+	/* tslint:disable-next-line:directive-selector */
+	selector: 'md2-slider'
+})
+export class MdSlider
+	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
+	/** Component title. */
+	public static readonly title: string	= 'md2Slider';
+
+	/** Component configuration. */
+	public static readonly config			= {
+		bindings: {
+			ariaLabel: '@',
+			childClass: '@',
+			max: '<',
+			mdDiscrete: '@',
+			min: '<',
+			model: '=',
+			step: '<'
+		},
+		/* tslint:disable-next-line:max-classes-per-file */
+		controller: class {
+			/** @ignore */
+			public readonly ariaLabel: string;
+
+			/** @ignore */
+			public readonly childClass: string;
+
+			/** @ignore */
+			public readonly max: number;
+
+			/** @ignore */
+			public readonly mdDiscrete: number;
+
+			/** @ignore */
+			public readonly min: number;
+
+			/** @ignore */
+			public readonly model: number;
+
+			/** @ignore */
+			public readonly step: number;
+
+			constructor () {}
+		},
+		template: `
+			<md-slider
+				ng-attr-aria-label='{{$ctrl.ariaLabel}}'
+				ng-class='$ctrl.childClass'
+				ng-attr-max='{{$ctrl.max}}'
+				ng-attr-md-discrete='{{$ctrl.mdDiscrete}}'
+				ng-attr-min='{{$ctrl.min}}'
+				ng-model='$ctrl.model'
+				ng-attr-step='{{$ctrl.step}}'
+				aria-label='.'
+				ng-transclude
+			></md-slider>
+		`,
+		transclude: true
+	};
+
+
+	/** @ignore */
+	@Input() public ariaLabel: string;
+
+	/** @ignore */
+	@Input() public childClass: string;
+
+	/** @ignore */
+	@Input() public max: number;
+
+	/** @ignore */
+	@Input() public mdDiscrete: number;
+
+	/** @ignore */
+	@Input() public min: number;
+
+	/** @ignore */
+	@Input() public model: number;
+
+	/** @ignore */
+	@Input() public step: number;
+
+	/** @ignore */
+	public ngDoCheck () : void {
+		super.ngDoCheck();
+	}
+
+	/** @ignore */
+	public ngOnChanges (changes: SimpleChanges) : void {
+		super.ngOnChanges(changes);
+	}
+
+	/** @ignore */
+	public ngOnDestroy () : void {
+		super.ngOnDestroy();
+	}
+
+	/** @ignore */
+	public ngOnInit () : void {
+		super.ngOnInit();
+	}
+
+	constructor (
+		@Inject(ElementRef) elementRef: ElementRef,
+		@Inject(Injector) injector: Injector
+	) {
+		super(MdSlider.title, elementRef, injector);
+	}
+}

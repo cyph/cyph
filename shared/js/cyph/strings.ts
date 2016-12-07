@@ -19,6 +19,9 @@ export class Strings {
 	public static readonly connectedNotification: string	= Util.translate(`Connected!`);
 
 	/** @see Strings */
+	public static readonly contactCyph: string				= Util.translate(`Contact Cyph`);
+
+	/** @see Strings */
 	public static readonly continueDialogAction: string		= Util.translate(`continue`);
 
 	/** @see Strings */
@@ -39,6 +42,9 @@ export class Strings {
 
 	/** @see Strings */
 	public static readonly discard: string	= Util.translate(`discard`);
+
+	/** @see Strings */
+	public static readonly disconnect: string				= Util.translate(`Disconnect`);
 
 	/** @see Strings */
 	public static readonly disconnectConfirm: string		= Util.translate(
@@ -77,7 +83,13 @@ export class Strings {
 	);
 
 	/** @see Strings */
+	public static readonly formattingHelp: string	= Util.translate(`Formatting Help`);
+
+	/** @see Strings */
 	public static readonly friend: string	= Util.translate(`friend`);
+
+	/** @see Strings */
+	public static readonly help: string		= Util.translate(`Help`);
 
 	/** @see Strings */
 	public static readonly incomingFile: string	= Util.translate(`Incoming File:`);
@@ -104,6 +116,11 @@ export class Strings {
 	);
 
 	/** @see Strings */
+	public static readonly invalidCredentials: string	= Util.translate(
+		`Invalid username or password.`
+	);
+
+	/** @see Strings */
 	public static readonly linkCopied: string		= Util.translate(`Cyph link copied.`);
 
 	/** @see Strings */
@@ -111,6 +128,15 @@ export class Strings {
 
 	/** @see Strings */
 	public static readonly me: string	= Util.translate(`me`);
+
+	/** @see Strings */
+	public static readonly message: string	= Util.translate(`message`);
+
+	/** @see Strings */
+	public static readonly messages: string	= Util.translate(`messages`);
+
+	/** @see Strings */
+	public static readonly new: string		= Util.translate(`new`);
 
 	/** @see Strings */
 	public static readonly newMessageNotification: string	= Util.translate(`New message!`);

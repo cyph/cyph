@@ -1,5 +1,6 @@
 import {CommonModule} from '@angular/common';
 import {NgModule} from '@angular/core';
+import {FormsModule} from '@angular/forms';
 import {BrowserModule} from '@angular/platform-browser';
 import {UpgradeModule} from '@angular/upgrade/static';
 import {
@@ -10,19 +11,48 @@ import {
 	Checkout,
 	Contact,
 	FileInput,
+	Help,
 	LinkConnection,
 	Markdown,
+	Register,
 	SignupForm,
 	StaticCyphNotFound,
 	StaticFooter
 } from '../cyph/ui/components';
+import {
+	MdButton,
+	MdCard,
+	MdCardContent,
+	MdCardHeader,
+	MdCardHeaderText,
+	MdCardTitle,
+	MdCardTitleText,
+	MdContent,
+	MdFabSpeedDial,
+	MdIcon,
+	MdInput,
+	MdList,
+	MdListItem,
+	MdMenu,
+	MdOption,
+	MdProgressCircular,
+	MdProgressLinear,
+	MdSelect,
+	MdSidenav,
+	MdSlider,
+	MdSubheader,
+	MdSwitch,
+	MdTabs,
+	MdTextarea,
+	MdToolbar,
+	MdTooltip
+} from '../cyph/ui/components/material';
 import {Translate} from '../cyph/ui/directives';
 import {AppComponent} from './appcomponent';
-import {HomeComponent} from './homecomponent';
 
 
 /**
- * Angular module for Cyph home page.
+ * Angular module for Cyph UI.
  */
 @NgModule({
 	declarations: [
@@ -34,20 +64,51 @@ import {HomeComponent} from './homecomponent';
 		Checkout,
 		Contact,
 		FileInput,
-		HomeComponent,
+		Help,
 		LinkConnection,
 		Markdown,
+		Register,
 		SignupForm,
 		StaticCyphNotFound,
 		StaticFooter,
-		Translate
+		Translate,
+		MdButton,
+		MdCard,
+		MdCardContent,
+		MdCardHeader,
+		MdCardHeaderText,
+		MdCardTitle,
+		MdCardTitleText,
+		MdContent,
+		MdFabSpeedDial,
+		MdIcon,
+		MdInput,
+		MdList,
+		MdListItem,
+		MdMenu,
+		MdOption,
+		MdProgressCircular,
+		MdProgressLinear,
+		MdSelect,
+		MdSidenav,
+		MdSlider,
+		MdSubheader,
+		MdSwitch,
+		MdTabs,
+		MdTextarea,
+		MdToolbar,
+		MdTooltip
 	],
 	entryComponents: [
-		AppComponent
+		AppComponent,
+		FileInput,
+		Help,
+		Register
 	],
 	imports: [
 		BrowserModule,
 		CommonModule,
+		FormsModule,
 		UpgradeModule
 	]
 })

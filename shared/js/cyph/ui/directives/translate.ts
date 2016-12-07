@@ -11,8 +11,40 @@ import {Util} from '../../util';
 	selector: '[cyphTranslate]'
 })
 export class Translate {
-	/** Directive title. */
-	public static readonly title: string	= 'cyphTranslate';
+	/** @ignore */
+	private static handleElement (
+		nativeElement: HTMLElement,
+		renderer: Renderer
+	) : void {
+		const $element	= $(nativeElement);
+		const $children	= $element.children();
+
+		for (let attr of ['alt', 'aria-label', 'ariaLabel', 'content', 'label', 'placeholder']) {
+			Translate.translate(
+				$element.attr(attr),
+				translation => renderer.setElementAttribute(
+					nativeElement,
+					attr,
+					translation
+				)
+			);
+		}
+
+		if ($children.length > 0) {
+			for (let child of $children.not('[cyphTranslate]').toArray()) {
+				Translate.handleElement(child, renderer);
+			}
+		}
+		else {
+			Translate.translate(
+				$element.text(),
+				translation => renderer.setText(
+					nativeElement,
+					translation
+				)
+			);
+		}
+	}
 
 	/** @ignore */
 	private static translate (
@@ -32,63 +64,16 @@ export class Translate {
 		callback(translation);
 	}
 
-	/** Directive configuration. */
-	public static config () : angular.IDirective {
-		return {
-			controller: ['$element', Translate],
-			restrict: 'A'
-		};
-	}
 
-
-	constructor (elementRef: ElementRef, renderer?: Renderer) {
+	constructor (elementRef: ElementRef, renderer: Renderer) {
 		if (Env.language === Config.defaultLanguage) {
 			return;
-		}
-
-		/* Temporary polyfill for ng1 */
-		if (!renderer) {
-			elementRef	= <ElementRef> {
-				nativeElement: (<any> elementRef)[0]
-			};
-
-			renderer	= <Renderer> {
-				setElementAttribute: (nativeElement: any, attr: string, value: string) => {
-					$(nativeElement).attr(attr, value);
-				},
-				setText: (nativeElement: any, text: string) => {
-					$(nativeElement).text(text);
-				}
-			};
 		}
 
 		if (!elementRef.nativeElement) {
 			return;
 		}
 
-		const $element	= $(elementRef.nativeElement);
-
-		for (let attr of ['alt', 'aria-label', 'content', 'label', 'placeholder']) {
-			Translate.translate(
-				$element.attr(attr),
-				translation => renderer.setElementAttribute(
-					elementRef.nativeElement,
-					attr,
-					translation
-				)
-			);
-		}
-
-		if ($element.children().length > 0) {
-			return;
-		}
-
-		Translate.translate(
-			$element.text(),
-			translation => renderer.setText(
-				elementRef.nativeElement,
-				translation
-			)
-		);
+		Translate.handleElement(elementRef.nativeElement, renderer);
 	}
 }

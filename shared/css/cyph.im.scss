@@ -162,7 +162,7 @@ md-menu-item {
 	overflow-y: scroll;
 }
 
-.chat-main:not(.mobile) .message-list > md-content {
+.chat-main:not(.mobile) .message-list md-content {
 	padding-right: 10px;
 }
 
@@ -361,7 +361,7 @@ md-menu-item {
 .chat-main.mobile.video md-list {
 	padding-top: 0px;
 
-	> md-list-item:first-child {
+	> md2-list-item:first-child {
 		margin-top: 40px !important;
 	}
 }
@@ -483,7 +483,7 @@ md-menu-item {
 	}
 }
 
-.chat-main:not(.mobile):not(.video) .message-item:not(.unread) {
+.chat-main:not(.mobile):not(.video) md2-list-item.read {
 	@include animation(inkRippleCheckbox 0.35s linear 0s 1 normal);
 }
 
@@ -659,6 +659,10 @@ html.mobile button[disabled] {
 
 			@include transform(translateX(50%));
 		}
+
+		label {
+			display: none;
+		}
 	}
 
 	.connect-link-link {
@@ -779,22 +783,14 @@ html:not(.mobile) .cyph-not-found {
 	}
 }
 
-.help {
-	min-width: 60%;
-	height: 80%;
-
-	md-content {
-		width: 100%;
-		overflow-x: hidden;
-	}
-
+cyph-help {
 	md-input, md-option {
 		background-color: rgba(180, 141, 255, 0.85);
 	}
 
 	md-tabs {
 		.md-active {
-			color: white;
+			color: white !important;
 		}
 
 		md-tab-content {
@@ -839,18 +835,13 @@ html:not(.mobile) .cyph-not-found {
 	}
 }
 
-html:not(.mobile) .formatting-help {
-	md-content {
-		padding-left: 10%;
-		padding-right: 10%;
-	}
-
+html:not(.mobile) cyph-help {
 	td {
 		padding-left: 20px;
 	}
 }
 
-html.mobile .formatting-help {
+html.mobile cyph-help {
 	font-size: 75%;
 }
 
@@ -1024,7 +1015,7 @@ html.mobile .formatting-help {
 			}
 		}
 
-		> md-content {
+		md-content {
 			padding-right: 0px;
 			padding-bottom: 120px;
 		}
@@ -1100,10 +1091,6 @@ html.mobile .formatting-help {
 .chat-main:not(.mobile).video .video-call.active.playing {
 	~ .message-list .message-item {
 		font-size: initial;
-
-		.mobile-only {
-			display: initial;
-		}
 	}
 
 	~ .video-call-message-box {
@@ -1218,9 +1205,8 @@ html.mobile .formatting-help {
 }
 
 .md-button.copy {
-	position: relative;
-	left: 28px;
-	top: -3px;
+	margin-right: calc(-50% - 45px);
+	margin-top: -99px;
 }
 
 /*** SpinKit animation: http://tobiasahlin.com/spinkit/ ***/

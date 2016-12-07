@@ -1,77 +1,27 @@
-import {
-	Directive,
-	DoCheck,
-	ElementRef,
-	Inject,
-	Injector,
-	OnChanges,
-	OnDestroy,
-	OnInit,
-	SimpleChanges
-} from '@angular/core';
-import {UpgradeComponent} from '@angular/upgrade/static';
+import {Component} from '@angular/core';
 import {Util} from '../../util';
 
 
 /**
  * Angular component for static footer content.
  */
-@Directive({
-	/* tslint:disable-next-line:directive-selector */
-	selector: 'cyph-static-footer'
+@Component({
+	selector: 'cyph-static-footer',
+	templateUrl: '../../../../templates/staticfooter.html'
 })
-export class StaticFooter
-	extends UpgradeComponent implements DoCheck, OnChanges, OnInit, OnDestroy {
-	/** Component title. */
-	public static readonly title: string	= 'cyphStaticFooter';
-
-	/** Component configuration. */
-	public static readonly config			= {
-		/* tslint:disable-next-line:max-classes-per-file */
-		controller: class {
-			/** @ignore */
-			public cyph: any;
-
-			/** @ignore */
-			public ui: any;
-
-			constructor () { (async () => {
-				while (!cyph || !ui) {
-					await Util.sleep();
-				}
-
-				this.cyph	= cyph;
-				this.ui		= ui;
-			})(); }
-		},
-		templateUrl: '../../../../templates/staticfooter.html'
-	};
-
+export class StaticFooter {
+	/** @ignore */
+	public cyph: any;
 
 	/** @ignore */
-	public ngDoCheck () : void {
-		super.ngDoCheck();
-	}
+	public ui: any;
 
-	/** @ignore */
-	public ngOnChanges (changes: SimpleChanges) : void {
-		super.ngOnChanges(changes);
-	}
+	constructor () { (async () => {
+		while (!cyph || !ui) {
+			await Util.sleep();
+		}
 
-	/** @ignore */
-	public ngOnDestroy () : void {
-		super.ngOnDestroy();
-	}
-
-	/** @ignore */
-	public ngOnInit () : void {
-		super.ngOnInit();
-	}
-
-	constructor (
-		@Inject(ElementRef) elementRef: ElementRef,
-		@Inject(Injector) injector: Injector
-	) {
-		super(StaticFooter.title, elementRef, injector);
-	}
+		this.cyph	= cyph;
+		this.ui		= ui;
+	})(); }
 }

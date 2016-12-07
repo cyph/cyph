@@ -1,35 +1,42 @@
-<md-dialog class='register' flex='65' flex-sm='80' flex-xs='95'>
-	<md-content class='md-no-flicker'>
-		<md-card class='md-padding'>
-			<md-card-title>
-				<md-card-title-text>
-					<span class='md-headline' cyph-translate>
-						Register
-					</span>
-					<span class='md-subhead'>
-						<div ng-show='locals.signupForm.state === 1' cyph-translate>
+<md2-content class='md-no-flicker' *ngIf='cyph && signupForm'>
+	<md2-card childClass='md-padding'>
+		<md2-card-title>
+			<md2-card-title-text>
+				<span *ngIf='!invite' class='md-headline' cyphTranslate>
+					Register
+				</span>
+				<span *ngIf='invite' class='md-headline' cyphTranslate>
+					Register with Invite Code
+				</span>
+				<span class='md-subhead'>
+					<div *ngIf='signupForm.state === 1'>
+						<span *ngIf='!invite' cyphTranslate>
 							Enter your email address.
-						</div>
-						<div ng-show='locals.signupForm.state === 2' cyph-translate>
-							Thanks for signing up. Feel free to give us your name too.
-							Privacy is at the core of our ideology, so we'll never give
-							away your email address or personal details.
-						</div>
-					</span>
-				</md-card-title-text>
-			</md-card-title>
-			<md-card-content>
-				<cyph-signup-form self='locals.signupForm'></cyph-signup-form>
-			</md-card-content>
-		</md-card>
+						</span>
+						<span *ngIf='invite' cyphTranslate>
+							Enter your email address and invite code for priority access
+							on our waitlist.
+						</span>
+					</div>
+					<div *ngIf='signupForm.state === 2' cyphTranslate>
+						Thanks for signing up. Feel free to give us your name too.
+						Privacy is at the core of our ideology, so we'll never give
+						away your email address or personal details.
+					</div>
+				</span>
+			</md2-card-title-text>
+		</md2-card-title>
+		<md2-card-content>
+			<cyph-signup-form [self]='signupForm' [invite]='invite'></cyph-signup-form>
+		</md2-card-content>
+	</md2-card>
 
-		<div class='login-button' layout='row' layout-align='center center'>
-			<md-button
-				ng-href='{{locals.cyph.Env.newCyphBaseUrl}}#beta/login'
-				cyph-translate
-			>
-				Already have a Cyph account? Click here to login.
-			</md-button>
-		</div>
-	</md-content>
-</md-dialog>
+	<div class='login-button layout-row layout-align-center-center'>
+		<md2-button
+			[href]='cyph.Env.newCyphBaseUrl + "#beta/login"'
+			cyphTranslate
+		>
+			Already have a Cyph account? Click here to login.
+		</md2-button>
+	</div>
+</md2-content>

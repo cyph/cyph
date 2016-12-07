@@ -110,44 +110,6 @@ compile () {
 	output="${output}$(../../commands/tslint.sh 2>&1)"
 
 	if [ ! "${test}" ] ; then
-		for f in $(grep -rl templateUrl | grep '\.ts$') ; do
-			node -e "fs.writeFileSync(
-				'${f}',
-				fs.readFileSync('${f}').toString().replace(
-					/templateUrl: '(.*?)'/g,
-					(_, path) => {
-						const templatePath		= '${f}'.replace(
-							/[^\\/]+\\.ts\$/,
-							path
-						);
-
-						const stylesheetPath	= templatePath.
-							replace(/\.[A-Za-z]+$/, '.css').
-							replace('/templates/', '/css/components/')
-						;
-
-						return 'template: \`' +
-							(
-								(
-									fs.existsSync(stylesheetPath) ?
-										(
-											'<style>' +
-												child_process.spawnSync(
-													'cleancss',
-													[stylesheetPath]
-												).stdout.toString() +
-											'</style>'
-										) :
-										''
-								) +
-								fs.readFileSync(templatePath).toString()
-							).replace(/\\$\\{/g, '\\\\\${') +
-						'\`';
-					}
-				)
-			)"
-		done
-
 		for f in $tsfiles ; do
 			node -e "
 				const resolveReferences	= f => {

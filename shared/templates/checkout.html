@@ -1,31 +1,33 @@
 <form>
-	<div ng-hide='$ctrl.complete'>
+	<div *ngIf='!complete'>
 		<div class='checkout-ui'>
 			<div class='braintree'></div>
-			<div layout='row' layout-sm='column' layout-xs='column'>
-				<md-input-container class='md-block' flex>
-					<input ng-model='$ctrl.name' aria-label='Name' cyph-translate />
-					<label cyph-translate>Name</label>
-				</md-input-container>
-				<md-input-container class='md-block' flex>
-					<input
-						ng-model='$ctrl.email'
-						type='email'
-						aria-label='Email'
-						cyph-translate
-						required
-					/>
-					<label cyph-translate>Email</label>
-				</md-input-container>
+			<div class='layout-row layout-sm-column layout-xs-column'>
+				<md2-input
+					cyphTranslate
+					childClass='md-block flex'
+					[(model)]='name'
+					formName='name'
+					label='Name'
+				></md2-input>
+				<md2-input
+					cyphTranslate
+					childClass='md-block flex'
+					[(model)]='email'
+					formName='email'
+					type='email'
+					label='Email'
+					[required]='true'
+				></md2-input>
 			</div>
 		</div>
-		<md-button type='submit'>
-			<span cyph-translate>Confirm</span>
-			<span>${{$ctrl.amount}}</span>
-			<span cyph-translate>payment</span>
-		</md-button>
+		<md2-button type='submit'>
+			<span cyphTranslate>Confirm</span>
+			<span>${{amount}}</span>
+			<span cyphTranslate>payment</span>
+		</md2-button>
 	</div>
-	<div class='confirmation' ng-show='$ctrl.complete'>
-		<ng-transclude></ng-transclude>
+	<div class='confirmation' *ngIf='complete'>
+		<ng-content></ng-content>
 	</div>
 </form>
