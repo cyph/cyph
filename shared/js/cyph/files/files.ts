@@ -249,8 +249,6 @@ export class Files implements IFiles {
 				));
 
 				if (ok) {
-					const transferIndex: number	= this.transfers.push(transfer) - 1;
-
 					/* Arbitrarily assume ~500 Kb/s for progress bar estimation */
 					const intervalId: number	= setInterval(
 						() => {
@@ -291,13 +289,20 @@ export class Files implements IFiles {
 					transfer.percentComplete	= 100;
 
 					Potassium.clearMemory(transfer.key);
-					setTimeout(() => this.transfers.splice(transferIndex, 1), 1000);
 
 					this.triggerUIEvent(
 						UIEvents.save,
 						transfer,
 						plaintext
 					);
+
+					await Util.sleep(1000);
+
+					for (let i = 0 ; i < this.transfers.length ; ++i) {
+						if (this.transfers[i] === transfer) {
+							this.transfers.splice(i, 1);
+						}
+					}
 				}
 				else {
 					this.triggerUIEvent(
