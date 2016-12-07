@@ -83,6 +83,7 @@ export class MdButton
 				ng-attr-rel='{{$ctrl.rel}}'
 				ng-attr-target='{{$ctrl.target}}'
 				ng-attr-type='{{$ctrl.type}}'
+				aria-label='.'
 			>
 				<ng-transclude></ng-transclude>
 			</md-button>
@@ -96,6 +97,7 @@ export class MdButton
 				ng-attr-rel='{{$ctrl.rel}}'
 				ng-attr-target='{{$ctrl.target}}'
 				ng-attr-type='{{$ctrl.type}}'
+				aria-label='.'
 			>
 				<ng-transclude></ng-transclude>
 			</md-button>

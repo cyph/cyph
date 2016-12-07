@@ -116,6 +116,11 @@ export class Strings {
 	);
 
 	/** @see Strings */
+	public static readonly invalidCredentials: string	= Util.translate(
+		`Invalid username or password.`
+	);
+
+	/** @see Strings */
 	public static readonly linkCopied: string		= Util.translate(`Cyph link copied.`);
 
 	/** @see Strings */
@@ -123,6 +128,15 @@ export class Strings {
 
 	/** @see Strings */
 	public static readonly me: string	= Util.translate(`me`);
+
+	/** @see Strings */
+	public static readonly message: string	= Util.translate(`message`);
+
+	/** @see Strings */
+	public static readonly messages: string	= Util.translate(`messages`);
+
+	/** @see Strings */
+	public static readonly new: string		= Util.translate(`new`);
 
 	/** @see Strings */
 	public static readonly newMessageNotification: string	= Util.translate(`New message!`);

@@ -50,6 +50,7 @@ export class MdSwitch
 				ng-attr-aria-label='{{$ctrl.ariaLabel}}'
 				ng-class='$ctrl.childClass'
 				ng-model='$ctrl.model'
+				aria-label='.'
 				ng-transclude
 			></md-switch>
 		`,

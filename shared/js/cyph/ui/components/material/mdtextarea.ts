@@ -63,7 +63,6 @@ export class MdTextarea
 		},
 		template: `
 			<md-input-container ng-class='$ctrl.childClass'>
-				<label>{{$ctrl.label}}</label>
 				<textarea
 					ng-disabled='$ctrl.disabled'
 					ng-attr-name='{{$ctrl.formName}}'
@@ -71,7 +70,9 @@ export class MdTextarea
 					ng-model='$ctrl.model'
 					ng-required='$ctrl.required'
 					ng-attr-rows='{{$ctrl.rows}}'
+					aria-label='.'
 				></textarea>
+				<label>{{$ctrl.label}}</label>
 			</md-input-container>
 		`
 	};

@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {Util} from '../cyph/util';
+import {UI} from './ui';
 
 
 /**
@@ -14,7 +15,7 @@ export class AppComponent {
 	public cyph: any;
 
 	/** @ignore */
-	public ui: any;
+	public ui: UI;
 
 	constructor () { (async () => {
 		while (!cyph || !ui) {

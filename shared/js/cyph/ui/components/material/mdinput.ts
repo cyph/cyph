@@ -63,7 +63,6 @@ export class MdInput
 		},
 		template: `
 			<md-input-container ng-class='$ctrl.childClass'>
-				<label>{{$ctrl.label}}</label>
 				<input
 					ng-disabled='$ctrl.disabled'
 					ng-attr-name='{{$ctrl.formName}}'
@@ -71,7 +70,9 @@ export class MdInput
 					ng-model='$ctrl.model'
 					ng-required='$ctrl.required'
 					ng-attr-type='{{$ctrl.type}}'
+					aria-label='.'
 				/>
+				<label>{{$ctrl.label}}</label>
 			</md-input-container>
 		`
 	};

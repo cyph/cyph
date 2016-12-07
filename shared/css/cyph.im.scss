@@ -162,7 +162,7 @@ md-menu-item {
 	overflow-y: scroll;
 }
 
-.chat-main:not(.mobile) .message-list > md-content {
+.chat-main:not(.mobile) .message-list md-content {
 	padding-right: 10px;
 }
 
@@ -361,7 +361,7 @@ md-menu-item {
 .chat-main.mobile.video md-list {
 	padding-top: 0px;
 
-	> md-list-item:first-child {
+	> md2-list-item:first-child {
 		margin-top: 40px !important;
 	}
 }
@@ -1015,7 +1015,7 @@ html.mobile cyph-help {
 			}
 		}
 
-		> md-content {
+		md-content {
 			padding-right: 0px;
 			padding-bottom: 120px;
 		}

@@ -99,7 +99,11 @@ export class MdFabSpeedDial
 				md-open='$ctrl.mdOpen'
 			>
 				<md-fab-trigger>
-					<md-button ng-attr-aria-label='{{$ctrl.ariaLabel}}' class='md-fab'>
+					<md-button
+						ng-attr-aria-label='{{$ctrl.ariaLabel}}'
+						aria-label='.'
+						class='md-fab'
+					>
 						<md-icon>{{$ctrl.icon}}</md-icon>
 					</md-button>
 				</md-fab-trigger>

@@ -70,6 +70,7 @@ export class MdMenu
 					ng-attr-aria-label='{{$ctrl.button.label}}'
 					class='md-icon-button'
 					ng-click='$ctrl.button.click($mdMenu)'
+					aria-label='.'
 				>
 					<md-icon>{{$ctrl.button.icon}}</md-icon>
 				</md-button>
@@ -78,6 +79,7 @@ export class MdMenu
 						<md-button
 							ng-attr-aria-label='{{item.label}}'
 							ng-click='item.click()'
+							aria-label='.'
 						>
 							<md-icon md-menu-align-target>{{item.icon}}</md-icon>
 							<span>{{item.label}}</span>

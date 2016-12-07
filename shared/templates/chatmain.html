@@ -176,6 +176,7 @@
 		<md2-content childClass='md-no-flicker'>
 			<md2-list childClass='layout-column'>
 				<md2-list-item
+					class='layout-column'
 					childClass='transfer layout-row'
 					*ngFor='let transfer of self.fileManager.files.transfers'
 				>
@@ -213,9 +214,10 @@
 			) + "px"
 		'
 	>
-		<md2-content childClass='nano-content md-no-flicker'>
+		<md2-content class='nano-content' childClass='md-no-flicker'>
 			<md2-list childClass='layout-column'>
 				<md2-list-item
+					class='layout-column'
 					[childClass]='
 						"message-item unread layout-row" +
 						(
@@ -287,6 +289,7 @@
 				</md2-list-item>
 
 				<md2-list-item
+					class='layout-column'
 					[childClass]='
 						"friend-is-typing layout-row" +
 						(self.isFriendTyping ? " show" : "")
@@ -300,6 +303,7 @@
 				</md2-list-item>
 
 				<md2-list-item
+					class='layout-column'
 					childClass='chat-end-message layout-row layout-align-center-center'
 					*ngIf='self.isDisconnected && !hideDisconnectMessage'
 				>

@@ -100,11 +100,15 @@
 		*ngIf='self.scrollManager.unreadMessages > 0'
 		stickyState='active'
 		(click)='self.scrollManager.scrollDown()'
-	>
-		<strong>&#8595;&nbsp;&nbsp;</strong>
-		<span>{{self.scrollManager.unreadMessages}}</span>
-		<span cyphTranslate>new</span>
-		<span *ngIf='self.scrollManager.unreadMessages === 1' cyphTranslate>message</span>
-		<span *ngIf='self.scrollManager.unreadMessages > 1' cyphTranslate>messages</span>
-	</md2-subheader>
+		[text]='
+			"↓  " +
+			self.scrollManager.unreadMessages +
+			" " + cyph.Strings.new + " " +
+			(
+				self.scrollManager.unreadMessages === 1 ?
+					cyph.Strings.message :
+					cyph.Strings.messages
+			)
+		'
+	></md2-subheader>
 </div>

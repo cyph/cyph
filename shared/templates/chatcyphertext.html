@@ -1,7 +1,8 @@
 <div class='chat-cyphertext nano' *ngIf='cyph && self'>
-	<md2-content childClass='nano-content'>
+	<md2-content class='nano-content'>
 		<md2-list childClass='layout-column'>
 			<md2-list-item
+				class='layout-column'
 				childClass='message-item unread layout-row'
 				*ngFor='let message of self.cyphertext.messages'
 			>

@@ -59,16 +59,17 @@ export class MdSelect
 		},
 		template: `
 			<md-input-container ng-class='$ctrl.childClass'>
-				<label>{{$ctrl.label}}</label>
 				<md-select
 					ng-disabled='$ctrl.disabled'
 					ng-attr-name='{{$ctrl.formName}}'
 					ng-attr-aria-label='{{$ctrl.label}}'
 					ng-model='$ctrl.model'
 					ng-required='$ctrl.required'
+					aria-label='.'
 				>
 					<ng-transclude></ng-transclude>
 				</md-select>
+				<label>{{$ctrl.label}}</label>
 			</md-input-container>
 		`,
 		transclude: true

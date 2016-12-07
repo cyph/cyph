@@ -262,14 +262,6 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 
 			Elements.demoRoot().css('opacity', 1);
 
-			const $desktopFacebookPic: JQuery	= $(CyphDemo.facebookPicFrame);
-			const $mobileFacebookPic: JQuery	= $(CyphDemo.facebookPicFrame);
-
-			if (!Cyph.Env.isMobile) {
-				Elements.demoListDesktop().append($desktopFacebookPic);
-				Elements.demoListMobile().append($mobileFacebookPic);
-			}
-
 			setInterval(async () => this.resize(), 2000);
 
 			let mobileSession: Cyph.Session.ISession;
@@ -308,6 +300,21 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 				Elements.demoRootMobile()
 			);
 
+			const $desktopFacebookPic: JQuery	= $(CyphDemo.facebookPicFrame);
+			const $mobileFacebookPic: JQuery	= $(CyphDemo.facebookPicFrame);
+
+			if (!Cyph.Env.isMobile) {
+				while (
+					Elements.demoListDesktop().length < 1 ||
+					Elements.demoListMobile().length < 1
+				) {
+					await Cyph.Util.sleep();
+				}
+
+				Elements.demoListDesktop().append($desktopFacebookPic);
+				Elements.demoListMobile().append($mobileFacebookPic);
+			}
+
 			await Cyph.Util.sleep(7500);
 
 			const messages				= await CyphDemo.messages;
@@ -339,67 +346,63 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 				chat.currentMessage	= '';
 				chat.send(text);
 
-				if (!Cyph.Env.isMobile && text === facebookPicMessage) {
-					let facebookPic: JQuery;
+				if (Cyph.Env.isMobile || text !== facebookPicMessage) {
+					continue;
+				}
 
-					while (true) {
-						facebookPic	= Elements.demoRoot().find(
-							`.message-text > p > a > img:visible[src='${facebookPicUrl}']`
-						);
-
-						if (facebookPic && facebookPic.length > 0) {
-							break;
-						}
-
-						await Cyph.Util.sleep();
-					}
-
-					facebookPic.each(async (i: number, elem: HTMLElement) => {
-						const $this: JQuery			= $(elem);
-
-						const isDesktop: boolean	=
-							$this.
-								parentsUntil().
-								index(Elements.demoListDesktop()[0])
-							> -1
-						;
-
-						const $facebookPic: JQuery	=
-							isDesktop ?
-								$desktopFacebookPic :
-								$mobileFacebookPic
-						;
-
-						const $placeholder: JQuery	= $(
-							CyphDemo.facebookPicPlaceholder
-						);
-
-						$this.parent().replaceWith($placeholder);
-
-						await Cyph.Util.sleep();
-
-						const offset	= CyphDemo.getOffset(
-							$placeholder,
-							isDesktop ?
-								Elements.demoListDesktop() :
-								Elements.demoListMobile()
-						);
-
-						if (!isDesktop) {
-							offset.left	= Math.ceil(
-								offset.left / CyphDemo.mobileUIScale
-							);
-
-							offset.top	= Math.ceil(
-								offset.top / CyphDemo.mobileUIScale
-							);
-						}
-
-						$facebookPic.css(offset);
-					});
-
+				let $facebookPicImg: JQuery;
+				while (!$facebookPicImg || $facebookPicImg.length < 2) {
+					$facebookPicImg	= Elements.demoRoot().find(
+						`img:visible[src='${facebookPicUrl}']`
+					);
 					await Cyph.Util.sleep();
 				}
+
+				$facebookPicImg.each(async (i: number, elem: HTMLElement) => {
+					const $this: JQuery			= $(elem);
+
+					const isDesktop: boolean	=
+						$this.
+							parentsUntil().
+							index(Elements.demoListDesktop()[0])
+						> -1
+					;
+
+					const $facebookPic: JQuery	=
+						isDesktop ?
+							$desktopFacebookPic :
+							$mobileFacebookPic
+					;
+
+					const $placeholder: JQuery	= $(
+						CyphDemo.facebookPicPlaceholder
+					);
+
+					$this.parent().replaceWith($placeholder);
+
+					await Cyph.Util.sleep();
+
+					const offset	= CyphDemo.getOffset(
+						$placeholder,
+						isDesktop ?
+							Elements.demoListDesktop() :
+							Elements.demoListMobile()
+					);
+
+					if (!isDesktop) {
+						offset.left	= Math.ceil(
+							offset.left / CyphDemo.mobileUIScale
+						);
+
+						offset.top	= Math.ceil(
+							offset.top / CyphDemo.mobileUIScale
+						);
+					}
+
+					$facebookPic.css(offset);
+				});
+
+				await Cyph.Util.sleep();
 			}
 
 			await Cyph.Util.sleep(1000);

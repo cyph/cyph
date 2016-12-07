@@ -191,7 +191,7 @@ cyph-file-input {
 	display: none;
 }
 
-cyph-markdown {
+cyph-markdown > span {
 	> p:only-child {
 		display: inline;
 	}
@@ -202,7 +202,7 @@ cyph-markdown {
 }
 
 html:not(.mobile) {
-	cyph-markdown {
+	cyph-markdown > span {
 		> :not(p), > p:not(:only-child) {
 			margin-left: 25px;
 		}
@@ -893,7 +893,7 @@ html {
 		text-decoration: none;
 	}
 
-	[layout-fill] {
+	.layout-fill {
 		min-height: 0px;
 		height: 100%;
 	}

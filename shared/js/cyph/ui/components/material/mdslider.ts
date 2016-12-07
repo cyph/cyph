@@ -70,6 +70,7 @@ export class MdSlider
 				ng-attr-min='{{$ctrl.min}}'
 				ng-model='$ctrl.model'
 				ng-attr-step='{{$ctrl.step}}'
+				aria-label='.'
 				ng-transclude
 			></md-slider>
 		`,

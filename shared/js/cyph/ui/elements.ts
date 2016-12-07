@@ -38,7 +38,7 @@ export class Elements {
 
 	/** @see Elements */
 	public static readonly cyphertext			= Elements.get(
-		'.chat-cyphertext.curtain, .chat-cyphertext.curtain > md-content'
+		'.chat-cyphertext.curtain, .chat-cyphertext.curtain md-content'
 	);
 
 	/** @see Elements */
@@ -49,7 +49,7 @@ export class Elements {
 
 	/** @see Elements */
 	public static readonly messageList			= Elements.get(
-		'.message-list, .message-list > md-content'
+		'.message-list, .message-list md-content'
 	);
 
 	/** @see Elements */
