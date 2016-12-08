@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {Util} from '../../util';
+import {Env, env} from '../../env';
 
 
 /**
@@ -11,13 +11,7 @@ import {Util} from '../../util';
 })
 export class StaticCyphNotFound {
 	/** @ignore */
-	public cyph: any;
+	public env: Env	= env;
 
-	constructor () { (async () => {
-		while (!cyph) {
-			await Util.sleep();
-		}
-
-		this.cyph	= cyph;
-	})(); }
+	constructor () {}
 }

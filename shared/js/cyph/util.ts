@@ -1,6 +1,6 @@
-import {Config} from './config';
-import {Env} from './env';
-import {EventManager} from './eventmanager';
+import {config} from './config';
+import {env} from './env';
+import {eventManager} from './eventmanager';
 
 
 /**
@@ -8,7 +8,14 @@ import {EventManager} from './eventmanager';
  */
 export class Util {
 	/** @ignore */
-	private static readonly timestampData	= {
+	private static readonly openUrlThreadEvent: string	= 'openUrlThreadEvent';
+
+	/** @ignore */
+	private static readonly saveFileThreadEvent: string	= 'saveFileThreadEvent';
+
+
+	/** @ignore */
+	private readonly timestampData	= {
 		last: 0,
 		offset: 0,
 		subtime: 0
@@ -18,14 +25,14 @@ export class Util {
 	 * Sends an email to the Cyph team. "@cyph.com" may be omitted from o.to.
 	 * @param o
 	 */
-	public static email (o: {
+	public email (o: {
 		fromEmail?: string;
 		fromName?: string;
 		to?: string;
 		subject?: string;
 		message: string;
 	}) : void {
-		Util.request({
+		this.request({
 			data: {
 				key: 'HNz4JExN1MtpKz8uP2RD1Q',
 				message: {
@@ -36,8 +43,8 @@ export class Util {
 					subject: o.subject || 'New Cyph Email',
 					text: o.message + (
 						'\n\n\n---' +
-						'\n\n' + Env.userAgent +
-						'\n\n' + Env.language +
+						'\n\n' + env.userAgent +
+						'\n\n' + env.language +
 						'\n\n' + locationData.href
 					).replace(/\/#.*/g, ''),
 					to: [{
@@ -58,19 +65,19 @@ export class Util {
 	 * GUID will instead append a random 32-bit number to the current datetime.
 	 * @param length
 	 */
-	public static generateGuid (length: number = 0) : string {
+	public generateGuid (length: number = 0) : string {
 		if (length > 0) {
 			let guid	= '';
 
 			for (let i = 0 ; i < length ; ++i) {
-				guid += Config.guidAddressSpace[Util.random(Config.guidAddressSpace.length)];
+				guid += config.guidAddressSpace[this.random(config.guidAddressSpace.length)];
 			}
 
 			return guid;
 		}
 
 		return `${
-			Util.timestamp().toString()
+			this.timestamp().toString()
 		}-${
 			new Uint32Array(crypto.getRandomValues(new Uint32Array(1)).buffer)[0].toString()
 		}`;
@@ -79,7 +86,7 @@ export class Util {
 	/**
 	 * Returns a human-readable representation of the time (e.g. "3:37pm").
 	 */
-	public static getTimeString (timestamp?: number) : string {
+	public getTimeString (timestamp?: number) : string {
 		const date: Date		= new Date(timestamp);
 		const minute: string	= ('0' + date.getMinutes().toString()).slice(-2);
 		let hour: number		= date.getHours();
@@ -103,7 +110,7 @@ export class Util {
 	 * @param keysToTry
 	 * @param defaultValue
 	 */
-	public static getValue<T> (
+	public getValue<T> (
 		o: any,
 		keysToTry: string|string[],
 		defaultValue: T = null
@@ -143,7 +150,7 @@ export class Util {
 	 * @param shouldLock If set to false, will not lock.
 	 * @param tryOnce If set to true, will give up after first failed attempt to obtain lock.
 	 */
-	public static async lock<T> (
+	public async lock<T> (
 		lock: any,
 		f: () => Promise<T>,
 		shouldLock: boolean = true,
@@ -159,7 +166,7 @@ export class Util {
 
 		try {
 			while (lock.isOwned) {
-				await Util.sleep();
+				await this.sleep();
 			}
 
 			lock.isOwned	= true;
@@ -175,29 +182,29 @@ export class Util {
 	 * Opens the specified URL.
 	 * @param url
 	 */
-	public static async openUrl (url: string) : Promise<void> {
-		if (Env.isMainThread) {
-			const a: HTMLAnchorElement	= document.createElement('a');
-
-			a.href			= url;
-			a.target		= '_blank';
-			a.style.display	= 'none';
-
-			document.body.appendChild(a);
-			a.click();
-
-			await Util.sleep(120000);
-
-			document.body.removeChild(a);
-
-			try {
-				URL.revokeObjectURL(a.href);
-			}
-			catch (_) {}
+	public async openUrl (url: string) : Promise<void> {
+		if (!env.isMainThread) {
+			eventManager.trigger(Util.openUrlThreadEvent, url);
+			return;
 		}
-		else {
-			EventManager.callMainThread('cyph.Util.openUrl', [url]);
+
+		const a: HTMLAnchorElement	= document.createElement('a');
+
+		a.href			= url;
+		a.target		= '_blank';
+		a.style.display	= 'none';
+
+		document.body.appendChild(a);
+		a.click();
+
+		await this.sleep(120000);
+
+		document.body.removeChild(a);
+
+		try {
+			URL.revokeObjectURL(a.href);
 		}
+		catch (_) {}
 	}
 
 	/**
@@ -207,7 +214,7 @@ export class Util {
 	 * @returns If max is specified, returns integer in range [min, max);
 	 * otherwise, returns float in range [0, 1) (like Math.random).
 	 */
-	public static random (max?: number, min: number = 0) : number {
+	public random (max?: number, min: number = 0) : number {
 		const randomData: Uint16Array	= new Uint16Array(3);
 
 		crypto.getRandomValues(randomData);
@@ -218,11 +225,11 @@ export class Util {
 			randomData[i]	= 0;
 		}
 
-		if (max === Config.maxSafeUint) {
+		if (max === config.maxSafeUint) {
 			return randomUint;
 		}
 
-		const randomFloat: number	= randomUint / Config.maxSafeUint;
+		const randomFloat: number	= randomUint / config.maxSafeUint;
 
 		if (max === undefined) {
 			return randomFloat;
@@ -246,7 +253,7 @@ export class Util {
 	 * @param b Number of bytes.
 	 * @example 32483478 -> "30.97 MB".
 	 */
-	public static readableByteLength (b: number) : string {
+	public readableByteLength (b: number) : string {
 		const gb: number	= b / 1.074e+9;
 		const mb: number	= b / 1.049e+6;
 		const kb: number	= b / 1024;
@@ -270,7 +277,7 @@ export class Util {
 	 * strict jQuery.ajax compatibility (http://api.jquery.com/jquery.ajax/).
 	 * @param o
 	 */
-	public static async request (o: {
+	public async request (o: {
 		async?: boolean;
 		contentType?: string;
 		data?: any;
@@ -281,14 +288,14 @@ export class Util {
 		timeout?: number;
 		url: string;
 	}) : Promise<any> {
-		const async: boolean			= Util.getValue(o, 'async', true) !== false;
-		const discardErrors: boolean	= Util.getValue(o, 'discardErrors', false);
-		const method: string			= Util.getValue(o, 'method', 'GET');
-		const responseType: string		= Util.getValue(o, 'responseType', '');
-		const retries: number			= Util.getValue(o, 'retries', 0);
-		const timeout: number			= Util.getValue(o, 'timeout', 0);
-		let contentType: string			= Util.getValue(o, 'contentType', null);
-		let data: any					= Util.getValue<any>(o, 'data', '');
+		const async: boolean			= this.getValue(o, 'async', true) !== false;
+		const discardErrors: boolean	= this.getValue(o, 'discardErrors', false);
+		const method: string			= this.getValue(o, 'method', 'GET');
+		const responseType: string		= this.getValue(o, 'responseType', '');
+		const retries: number			= this.getValue(o, 'retries', 0);
+		const timeout: number			= this.getValue(o, 'timeout', 0);
+		let contentType: string			= this.getValue(o, 'contentType', null);
+		let data: any					= this.getValue<any>(o, 'data', '');
 		let url: string					= o.url;
 
 		return new Promise<any>((resolve, reject) => {
@@ -302,7 +309,7 @@ export class Util {
 			if (data && method === 'GET') {
 				url		+= '?' + (
 					typeof data === 'object' ?
-						Util.toQueryString(data) :
+						this.toQueryString(data) :
 						(<string> data.toString())
 				);
 
@@ -311,7 +318,7 @@ export class Util {
 			else if (typeof data === 'object') {
 				data	= contentType === 'application/json' ?
 					JSON.stringify(data) :
-					Util.toQueryString(data)
+					this.toQueryString(data)
 				;
 			}
 
@@ -367,7 +374,7 @@ export class Util {
 				throw err;
 			}
 
-			return Util.request(o);
+			return this.request(o);
 		});
 	}
 
@@ -376,13 +383,13 @@ export class Util {
 	 * @param f
 	 * @param retryIf If this is specified and returns false, f will not be retried.
 	 */
-	public static retryUntilComplete (
+	public retryUntilComplete (
 		f: (retry: (delay?: number) => void) => void,
 		retryIf?: () => boolean
 	) : void {
 		f((delay: number = 250) : void => {
 			if (!retryIf || retryIf()) {
-				const go	= () => Util.retryUntilComplete(f, retryIf);
+				const go	= () => this.retryUntilComplete(f, retryIf);
 				if (delay >= 0) {
 					setTimeout(go, delay);
 				}
@@ -398,7 +405,7 @@ export class Util {
 	 * @param f
 	 * @param maxAttempts
 	 */
-	public static async retryUntilSuccessful<T> (
+	public async retryUntilSuccessful<T> (
 		f: () => (T|Promise<T>),
 		maxAttempts: number = 10
 	) : Promise<T> {
@@ -411,7 +418,7 @@ export class Util {
 					throw err;
 				}
 				else {
-					await Util.sleep();
+					await this.sleep();
 				}
 			}
 		}
@@ -422,30 +429,30 @@ export class Util {
 	 * @param content
 	 * @param fileName
 	 */
-	public static async saveFile (content: Uint8Array, fileName?: string) : Promise<void> {
-		if (Env.isMainThread) {
-			const onbeforeunload	= self.onbeforeunload;
-			self.onbeforeunload		= null;
-
-			saveAs(
-				new Blob([content], {type: 'application/octet-stream'}),
-				fileName,
-				false
-			);
-
-			await Util.sleep();
-			self.onbeforeunload		= onbeforeunload;
+	public async saveFile (content: Uint8Array, fileName?: string) : Promise<void> {
+		if (!env.isMainThread) {
+			eventManager.trigger(Util.saveFileThreadEvent, {content, fileName});
+			return;
 		}
-		else {
-			EventManager.callMainThread('cyph.Util.saveFile', [content, fileName]);
-		}
+
+		const onbeforeunload	= self.onbeforeunload;
+		self.onbeforeunload		= null;
+
+		saveAs(
+			new Blob([content], {type: 'application/octet-stream'}),
+			fileName,
+			false
+		);
+
+		await this.sleep();
+		self.onbeforeunload		= onbeforeunload;
 	}
 
 	/**
 	 * Sleep for the specifed amount of time.
 	 * @param ms
 	 */
-	public static async sleep (ms: number = 250) : Promise<{}> {
+	public async sleep (ms: number = 250) : Promise<{}> {
 		return new Promise(resolve => setTimeout(() => resolve(), ms));
 	}
 
@@ -453,16 +460,16 @@ export class Util {
 	 * Returns current timestamp, with logic to correct for incorrect
 	 * local clocks and ensure each output is unique.
 	 */
-	public static timestamp () : number {
-		let timestamp: number	= Date.now() + Util.timestampData.offset;
+	public timestamp () : number {
+		let timestamp: number	= Date.now() + this.timestampData.offset;
 
-		if (timestamp === Util.timestampData.last) {
-			Util.timestampData.subtime += 0.01;
-			timestamp += Util.timestampData.subtime;
+		if (timestamp === this.timestampData.last) {
+			this.timestampData.subtime += 0.01;
+			timestamp += this.timestampData.subtime;
 		}
 		else {
-			Util.timestampData.last		= timestamp;
-			Util.timestampData.subtime	= 0;
+			this.timestampData.last		= timestamp;
+			this.timestampData.subtime	= 0;
 		}
 
 		return timestamp;
@@ -473,13 +480,13 @@ export class Util {
 	 * @param o
 	 * @param parent Ignore this (internal use).
 	 */
-	public static toQueryString (o: any, parent?: string) : string {
+	public toQueryString (o: any, parent?: string) : string {
 		return Object.keys(o).
 			map((k: string) => {
 				const key: string	= parent ? (parent + '[' + k + ']') : k;
 
 				return typeof o[k] === 'object' ?
-					Util.toQueryString(o[k], key) :
+					this.toQueryString(o[k], key) :
 					(
 						encodeURIComponent(key) +
 						'=' +
@@ -497,9 +504,9 @@ export class Util {
 	 * @param text
 	 * @param defaultValue Falls back to this if no translation exists.
 	 */
-	public static translate (text: string, defaultValue: string = text) : string {
-		return Util.getValue(
-			Util.getValue(translations, Env.language, {}),
+	public translate (text: string, defaultValue: string = text) : string {
+		return this.getValue(
+			this.getValue(translations, env.language, {}),
 			text,
 			defaultValue
 		);
@@ -509,22 +516,35 @@ export class Util {
 	 * Simulates a click on elem.
 	 * @param elem
 	 */
-	public static triggerClick (elem: HTMLElement) : void {
+	public triggerClick (elem: HTMLElement) : void {
 		const e: Event	= document.createEvent('MouseEvents');
 		e.initEvent('click', true, false);
 		elem.dispatchEvent(e);
 	}
 
-	/** @ignore */
-	/* tslint:disable-next-line:member-ordering */
-	public static readonly _	= (async () => {
+	constructor () { (async () => {
+		if (env.isMainThread) {
+			eventManager.on(Util.openUrlThreadEvent, (url: string) => this.openUrl(url));
+
+			eventManager.on(Util.saveFileThreadEvent, (o: {
+				content: Uint8Array;
+				fileName?: string;
+			}) => this.saveFile(
+				o.content,
+				o.fileName
+			));
+		}
+
 		try {
 			const serverTimestamp: number	= parseFloat(
-				await Util.request({url: Env.baseUrl + 'timestamp'})
+				await this.request({url: env.baseUrl + 'timestamp'})
 			);
 
-			Util.timestampData.offset	= serverTimestamp - Date.now();
+			this.timestampData.offset	= serverTimestamp - Date.now();
 		}
 		catch (_) {}
-	})();
+	})(); }
 }
+
+/** @see Util */
+export const util	= new Util();

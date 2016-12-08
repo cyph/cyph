@@ -1,40 +1,40 @@
-import {Lib} from '../lib';
-import {ImportHelper} from './importhelper';
+import {lib} from '../lib';
+import {importHelper} from './importhelper';
 
 
 /** Equivalent to sodium.crypto_secretbox. */
 export class SecretBox {
 	/** Algorithm name. */
-	public static readonly algorithm: string	= 'AES-GCM';
+	public readonly algorithm: string	= 'AES-GCM';
 
 	/** Additional data length. */
-	public static readonly aeadBytes: number	= 16;
+	public readonly aeadBytes: number	= 16;
 
 	/** Key length. */
-	public static readonly keyBytes: number		= 32;
+	public readonly keyBytes: number	= 32;
 
 	/** Nonce length. */
-	public static readonly nonceBytes: number	= 12;
+	public readonly nonceBytes: number	= 12;
 
 	/** Encrypts plaintext. */
-	public static async seal (
+	public async seal (
 		plaintext: Uint8Array,
 		nonce: Uint8Array,
 		key: Uint8Array,
 		additionalData: Uint8Array = new Uint8Array(
-			SecretBox.aeadBytes
+			this.aeadBytes
 		)
 	) : Promise<Uint8Array> {
 		return new Uint8Array(
-			await Lib.subtleCrypto.encrypt(
+			await lib.subtleCrypto.encrypt(
 				{
 					additionalData,
 					iv: nonce,
-					name: SecretBox.algorithm
+					name: this.algorithm
 				},
-				await ImportHelper.importRawKey(
+				await importHelper.importRawKey(
 					key,
-					SecretBox.algorithm,
+					this.algorithm,
 					'encrypt'
 				),
 				plaintext
@@ -43,28 +43,33 @@ export class SecretBox {
 	}
 
 	/** Decrypts cyphertext. */
-	public static async open (
+	public async open (
 		cyphertext: Uint8Array,
 		nonce: Uint8Array,
 		key: Uint8Array,
 		additionalData: Uint8Array = new Uint8Array(
-			SecretBox.aeadBytes
+			this.aeadBytes
 		)
 	) : Promise<Uint8Array> {
 		return new Uint8Array(
-			await Lib.subtleCrypto.decrypt(
+			await lib.subtleCrypto.decrypt(
 				{
 					additionalData,
 					iv: nonce,
-					name: SecretBox.algorithm
+					name: this.algorithm
 				},
-				await ImportHelper.importRawKey(
+				await importHelper.importRawKey(
 					key,
-					SecretBox.algorithm,
+					this.algorithm,
 					'decrypt'
 				),
 				cyphertext
 			)
 		);
 	}
+
+	constructor () {}
 }
+
+/** @see SecretBox */
+export const secretBox	= new SecretBox();

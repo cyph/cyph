@@ -1,6 +1,6 @@
-import {EventManager} from '../eventmanager';
+import {eventManager} from '../eventmanager';
 import {Thread} from '../thread';
-import {Util} from '../util';
+import {util} from '../util';
 import {threadedSessionEvents} from './enums';
 import {IMessage} from './imessage';
 import {ISession} from './isession';
@@ -30,12 +30,12 @@ export class ThreadedSession implements ISession {
 
 	/** @inheritDoc */
 	public off<T> (event: string, handler: (data: T) => void) : void {
-		EventManager.off(event + this.id, handler);
+		eventManager.off(event + this.id, handler);
 	}
 
 	/** @inheritDoc */
 	public on<T> (event: string, handler: (data: T) => void) : void {
-		EventManager.on(event + this.id, handler);
+		eventManager.on(event + this.id, handler);
 	}
 
 	/** @inheritDoc */
@@ -60,7 +60,7 @@ export class ThreadedSession implements ISession {
 
 	/** @inheritDoc */
 	public trigger (event: string, data?: any) : void {
-		EventManager.trigger(event + this.id, data);
+		eventManager.trigger(event + this.id, data);
 	}
 
 	/** @inheritDoc */
@@ -79,7 +79,7 @@ export class ThreadedSession implements ISession {
 		nativeCrypto: boolean = false,
 
 		/** @ignore */
-		private readonly id: string = Util.generateGuid()
+		private readonly id: string = util.generateGuid()
 	) {
 		this.on(
 			threadedSessionEvents.updateStateThread,

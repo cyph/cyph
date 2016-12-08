@@ -1,8 +1,8 @@
 import {UIEventCategories, UIEvents} from '../../p2p/enums';
 import {IP2P} from '../../p2p/ip2p';
 import {P2P} from '../../p2p/p2p';
-import {Events, Users} from '../../session/enums';
-import {Strings} from '../../strings';
+import {events, users} from '../../session/enums';
+import {strings} from '../../strings';
 import {BaseButtonManager} from '../basebuttonmanager';
 import {IDialogManager} from '../idialogmanager';
 import {ISidebar} from '../isidebar';
@@ -31,9 +31,9 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 	public disabledAlert () : void {
 		if (this.chat.isConnected && !this.isEnabled) {
 			this.dialogManager.alert({
-				content: Strings.p2pDisabled,
-				ok: Strings.ok,
-				title: Strings.p2pTitle
+				content: strings.p2pDisabled,
+				ok: strings.ok,
+				title: strings.p2pTitle
 			});
 		}
 	}
@@ -108,7 +108,7 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 		);
 
 		this.chat.session.on(
-			Events.p2pUI,
+			events.p2pUI,
 			async (e: {
 				category: UIEventCategories;
 				event: UIEvents;
@@ -122,22 +122,22 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 
 								if (isConnected) {
 									this.chat.addMessage(
-										Strings.p2pConnect,
-										Users.app,
+										strings.p2pConnect,
+										users.app,
 										undefined,
 										false
 									);
 								}
 								else {
 									this.dialogManager.alert({
-										content: Strings.p2pDisconnect,
-										ok: Strings.ok,
-										title: Strings.p2pTitle
+										content: strings.p2pDisconnect,
+										ok: strings.ok,
+										title: strings.p2pTitle
 									});
 
 									this.chat.addMessage(
-										Strings.p2pDisconnect,
-										Users.app,
+										strings.p2pDisconnect,
+										users.app,
 										undefined,
 										false
 									);
@@ -165,16 +165,16 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 								else {
 									callback(await this.dialogManager.confirm({
 										timeout,
-										cancel: Strings.decline,
+										cancel: strings.decline,
 										content: `${
-											Strings.p2pRequest
+											strings.p2pRequest
 										} ${
-											<string> ((<any> Strings)[callType + 'Call'] || '')
+											<string> ((<any> strings)[callType + 'Call'] || '')
 										}. ${
-											Strings.p2pWarning
+											strings.p2pWarning
 										}`,
-										ok: Strings.continueDialogAction,
-										title: Strings.p2pTitle
+										ok: strings.continueDialogAction,
+										title: strings.p2pTitle
 									}));
 								}
 
@@ -190,16 +190,16 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 								}
 								else {
 									callback(await this.dialogManager.confirm({
-										cancel: Strings.cancel,
+										cancel: strings.cancel,
 										content: `${
-											Strings.p2pInit
+											strings.p2pInit
 										} ${
-											<string> ((<any> Strings)[callType + 'Call'] || '')
+											<string> ((<any> strings)[callType + 'Call'] || '')
 										}. ${
-											Strings.p2pWarning
+											strings.p2pWarning
 										}`,
-										ok: Strings.continueDialogAction,
-										title: Strings.p2pTitle
+										ok: strings.continueDialogAction,
+										title: strings.p2pTitle
 									}));
 								}
 
@@ -207,8 +207,8 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 							}
 							case UIEvents.requestConfirmation: {
 								this.chat.addMessage(
-									Strings.p2pRequestConfirmation,
-									Users.app,
+									strings.p2pRequestConfirmation,
+									users.app,
 									undefined,
 									false
 								);
@@ -216,9 +216,9 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 							}
 							case UIEvents.requestRejection: {
 								this.dialogManager.alert({
-									content: Strings.p2pDeny,
-									ok: Strings.ok,
-									title: Strings.p2pTitle
+									content: strings.p2pDeny,
+									ok: strings.ok,
+									title: strings.p2pTitle
 								});
 								break;
 							}

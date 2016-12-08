@@ -4,7 +4,6 @@ import {FormsModule} from '@angular/forms';
 import {BrowserModule} from '@angular/platform-browser';
 import {UpgradeModule} from '@angular/upgrade/static';
 import {
-	Beta,
 	ChatCyphertext,
 	ChatMain,
 	ChatMessageBox,
@@ -57,7 +56,6 @@ import {AppComponent} from './appcomponent';
 @NgModule({
 	declarations: [
 		AppComponent,
-		Beta,
 		ChatCyphertext,
 		ChatMain,
 		ChatMessageBox,
@@ -115,4 +113,6 @@ import {AppComponent} from './appcomponent';
 export class AppModule {
 	/** @ignore */
 	public ngDoBootstrap () : void {}
+
+	constructor () {}
 }

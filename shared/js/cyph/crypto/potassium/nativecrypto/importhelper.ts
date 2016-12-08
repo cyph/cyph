@@ -1,5 +1,5 @@
-import {Lib} from '../lib';
-import {Util} from '../util';
+import {lib} from '../lib';
+import {util} from '../util';
 
 
 /**
@@ -7,12 +7,12 @@ import {Util} from '../util';
  */
 export class ImportHelper {
 	/** Converts raw byte array into CryptoKey object. */
-	public static async importRawKey (
+	public async importRawKey (
 		key: Uint8Array,
 		algorithm: any,
 		purpose: string
 	) : Promise<CryptoKey> {
-		return Lib.subtleCrypto.importKey(
+		return lib.subtleCrypto.importKey(
 			'raw',
 			new Uint8Array(key).buffer,
 			algorithm,
@@ -22,11 +22,11 @@ export class ImportHelper {
 	}
 
 	/** Converts CryptoKey object into raw byte array. */
-	public static async exportRawKey (
+	public async exportRawKey (
 		cryptoKey: CryptoKey,
 		algorithmName: string
 	) : Promise<Uint8Array> {
-		return Lib.subtleCrypto.exportKey(
+		return lib.subtleCrypto.exportKey(
 			'raw',
 			cryptoKey,
 			algorithmName
@@ -34,15 +34,15 @@ export class ImportHelper {
 	}
 
 	/** Converts JWK byte array into CryptoKey object. */
-	public static async importJWK (
+	public async importJWK (
 		key: Uint8Array,
 		algorithm: any,
 		purpose: string
 	) : Promise<CryptoKey> {
-		return Lib.subtleCrypto.importKey(
+		return lib.subtleCrypto.importKey(
 			'jwk',
 			JSON.parse(
-				Util.toString(
+				util.toString(
 					new Uint8Array(key.buffer, key.byteOffset, key.indexOf(0))
 				)
 			),
@@ -53,13 +53,13 @@ export class ImportHelper {
 	}
 
 	/** Converts CryptoKey object into JWK byte array. */
-	public static async exportJWK (
+	public async exportJWK (
 		cryptoKey: CryptoKey,
 		algorithmName: string
 	) : Promise<Uint8Array> {
-		return Util.fromString(
+		return util.fromString(
 			JSON.stringify(
-				await Lib.subtleCrypto.exportKey(
+				await lib.subtleCrypto.exportKey(
 					'jwk',
 					cryptoKey,
 					algorithmName
@@ -67,4 +67,9 @@ export class ImportHelper {
 			)
 		);
 	}
+
+	constructor () {}
 }
+
+/** @see ImportHelper */
+export const importHelper	= new ImportHelper();

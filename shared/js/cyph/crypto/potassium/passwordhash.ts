@@ -1,7 +1,7 @@
-import {Lib} from './lib';
+import {lib} from './lib';
 import * as NativeCrypto from './nativecrypto';
 import {SecretBox} from './secretbox';
-import {Util} from './util';
+import {util} from './util';
 
 
 /** Equivalent to sodium.crypto_pwhash. */
@@ -22,47 +22,73 @@ export class PasswordHash {
 			outputBytes: number,
 			opsLimit: number,
 			memLimit: number
-		) : Promise<Uint8Array> => Lib.sodium.crypto_pwhash_scryptsalsa208sha256(
-			outputBytes,
-			plaintext,
-			salt,
-			opsLimit,
-			memLimit
-		)
+		) : Promise<Uint8Array> =>
+			this.isNative ?
+				NativeCrypto.passwordHash.hash(
+					plaintext,
+					salt,
+					outputBytes,
+					opsLimit,
+					memLimit
+				) :
+				lib.sodium.crypto_pwhash_scryptsalsa208sha256(
+					outputBytes,
+					plaintext,
+					salt,
+					opsLimit,
+					memLimit
+				)
 	};
 
 	/** Algorithm name. */
-	public readonly algorithm: string			= 'scrypt';
+	public readonly algorithm: string			=
+		this.isNative ?
+			(
+				NativeCrypto.passwordHash.algorithm.name + '/' +
+				NativeCrypto.passwordHash.algorithm.hash.name
+			) :
+			'scrypt'
+	;
 
 	/** Moderate mem limit. */
 	public readonly memLimitInteractive: number	=
-		Lib.sodium.crypto_pwhash_scryptsalsa208sha256_MEMLIMIT_INTERACTIVE
+		this.isNative ?
+			NativeCrypto.passwordHash.memLimitInteractive :
+			lib.sodium.crypto_pwhash_scryptsalsa208sha256_MEMLIMIT_INTERACTIVE
 	;
 
 	/** Heavy mem limit. */
 	public readonly memLimitSensitive: number	=
-		134217728 /* 128 MB */
+		this.isNative ?
+			NativeCrypto.passwordHash.memLimitSensitive :
+			134217728 /* 128 MB */
 	;
 
 	/** Moderate ops limit. */
 	public readonly opsLimitInteractive: number	=
-		Lib.sodium.crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_INTERACTIVE
+		this.isNative ?
+			NativeCrypto.passwordHash.opsLimitInteractive :
+			lib.sodium.crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_INTERACTIVE
 	;
 
 	/** Heavy ops limit. */
 	public readonly opsLimitSensitive: number	=
-		Lib.sodium.crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_SENSITIVE
+		this.isNative ?
+			NativeCrypto.passwordHash.opsLimitSensitive :
+			lib.sodium.crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_SENSITIVE
 	;
 
 	/** Salt length. */
 	public readonly saltBytes: number			=
-		Lib.sodium.crypto_pwhash_scryptsalsa208sha256_SALTBYTES
+		this.isNative ?
+			NativeCrypto.passwordHash.saltBytes :
+			lib.sodium.crypto_pwhash_scryptsalsa208sha256_SALTBYTES
 	;
 
 	/** Hashes plaintext. */
 	public async hash (
 		plaintext: Uint8Array|string,
-		salt: Uint8Array = Util.randomBytes(
+		salt: Uint8Array = util.randomBytes(
 			this.saltBytes
 		),
 		outputBytes: number = this.secretBox.keyBytes,
@@ -79,14 +105,14 @@ export class PasswordHash {
 			salt: Uint8Array;
 		};
 	}> {
-		const plaintextBinary: Uint8Array	= Util.fromString(plaintext);
+		const plaintextBinary: Uint8Array	= util.fromString(plaintext);
 
 		try {
-			const algorithm: Uint8Array	= Util.fromString(
+			const algorithm: Uint8Array	= util.fromString(
 				this.algorithm
 			);
 
-			const metadata: Uint8Array	= Util.concatMemory(
+			const metadata: Uint8Array	= util.concatMemory(
 				false,
 				new Uint8Array(new Uint32Array([memLimit]).buffer),
 				new Uint8Array(new Uint32Array([opsLimit]).buffer),
@@ -114,11 +140,11 @@ export class PasswordHash {
 		}
 		finally {
 			if (clearInput) {
-				Util.clearMemory(plaintextBinary);
-				Util.clearMemory(salt);
+				util.clearMemory(plaintextBinary);
+				util.clearMemory(salt);
 			}
 			else if (typeof plaintext !== 'Uint8Array') {
-				Util.clearMemory(plaintextBinary);
+				util.clearMemory(plaintextBinary);
 			}
 		}
 	}
@@ -136,46 +162,22 @@ export class PasswordHash {
 			const saltBytes: number	= new Uint32Array(metadata.buffer, 2, 1)[0];
 
 			return {
-				algorithm: Util.toString(new Uint8Array(metadata.buffer, 12 + saltBytes)),
+				algorithm: util.toString(new Uint8Array(metadata.buffer, 12 + saltBytes)),
 				memLimit: new Uint32Array(metadata.buffer, 0, 1)[0],
 				opsLimit: new Uint32Array(metadata.buffer, 1, 1)[0],
 				salt: new Uint8Array(new Uint8Array(metadata.buffer, 12, saltBytes))
 			};
 		}
 		finally {
-			Util.clearMemory(metadata);
+			util.clearMemory(metadata);
 		}
 	}
 
 	constructor (
-		isNative: boolean,
+		/** @ignore */
+		private readonly isNative: boolean,
 
 		/** @ignore */
 		private readonly secretBox: SecretBox
-	) {
-		if (isNative) {
-			this.algorithm				=
-				NativeCrypto.PasswordHash.algorithm.name + '/' +
-				NativeCrypto.PasswordHash.algorithm.hash.name
-			;
-			this.memLimitInteractive	=
-				NativeCrypto.PasswordHash.memLimitInteractive
-			;
-			this.memLimitSensitive		=
-				NativeCrypto.PasswordHash.memLimitSensitive
-			;
-			this.opsLimitInteractive	=
-				NativeCrypto.PasswordHash.opsLimitInteractive
-			;
-			this.opsLimitSensitive		=
-				NativeCrypto.PasswordHash.opsLimitSensitive
-			;
-			this.saltBytes				=
-				NativeCrypto.PasswordHash.saltBytes
-			;
-			this.helpers.hash			=
-				NativeCrypto.PasswordHash.hash
-			;
-		}
-	}
+	) {}
 }

@@ -1,4 +1,3 @@
-import {Beta} from './beta';
 import {ChatCyphertext} from './chatcyphertext';
 import {ChatMain} from './chatmain';
 import {ChatMessageBox} from './chatmessagebox';
@@ -16,7 +15,6 @@ import {StaticFooter} from './staticfooter';
 
 
 export {
-	Beta,
 	ChatCyphertext,
 	ChatMain,
 	ChatMessageBox,

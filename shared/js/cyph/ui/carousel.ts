@@ -1,4 +1,5 @@
-import {Util} from '../util';
+import {util} from '../util';
+import {Elements} from './elements';
 
 
 /**
@@ -24,13 +25,15 @@ export class Carousel {
 	 */
 	public async setItem (itemNumber: number = this.itemNumber) : Promise<number> {
 		if (!this.logos || !this.quotes) {
-			do {
-				await Util.sleep();
-				this.logos	= this.rootElement.find('.logo');
-				this.quotes	= this.rootElement.find('.quote');
-			} while (this.logos.length < 1 || this.quotes.length < 1);
+			this.logos	= await Elements.waitForElement(
+				() => this.rootElement.find('.logo')
+			);
 
-			await Util.sleep(1000);
+			this.quotes	= await Elements.waitForElement(
+				() => this.rootElement.find('.quote')
+			);
+
+			await util.sleep(1000);
 		}
 
 		this.itemNumber	= itemNumber;
@@ -47,7 +50,7 @@ export class Carousel {
 			removeClass(Carousel.activeClass)
 		;
 
-		await Util.sleep(600);
+		await util.sleep(600);
 
 		const timeout	=
 			(this.quotes.eq(this.itemNumber).text().length + 10) * 50
@@ -76,10 +79,10 @@ export class Carousel {
 	) { (async () => {
 		const timeout	= await this.setItem(0);
 		callback();
-		await Util.sleep(timeout);
+		await util.sleep(timeout);
 
 		while (true) {
-			await Util.sleep(
+			await util.sleep(
 				this.rootElement.is(':appeared') ?
 					(await this.setItem()) :
 					500

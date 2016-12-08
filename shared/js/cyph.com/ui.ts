@@ -1,15 +1,29 @@
-import * as Cyph from '../cyph';
+import {config} from '../cyph/config';
+import {env} from '../cyph/env';
+import {BaseButtonManager} from '../cyph/ui/basebuttonmanager';
+import {Carousel} from '../cyph/ui/carousel';
+import * as Chat from '../cyph/ui/chat/enums';
+import * as CyphElements from '../cyph/ui/elements';
+import {IDialogManager} from '../cyph/ui/idialogmanager';
+import {ISidebar} from '../cyph/ui/isidebar';
+import {ISignupForm} from '../cyph/ui/isignupform';
+import {SignupForm} from '../cyph/ui/signupform';
+import {urlState} from '../cyph/urlstate';
+import {util} from '../cyph/util';
 import {CyphDemo} from './cyphdemo';
-import {Elements} from './elements';
+import {elements} from './elements';
 import {HomeSections, pageTitles, Promos, States} from './enums';
 
 
 /**
  * Controls the entire cyph.com UI.
  */
-export class UI extends Cyph.UI.BaseButtonManager {
+export class UI extends BaseButtonManager {
 	/** @ignore */
 	private static readonly linkInterceptSelector: string	= 'a[href^="/"]:not(a[href^="/blog"])';
+
+	/** Initialisation event. */
+	public static readonly uiInitEvent: string	= 'uiInitEvent';
 
 
 	/** UI state/view. */
@@ -86,13 +100,13 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	public readonly cyphDemo: CyphDemo;
 
 	/** Signup form to be displayed throughout the site. */
-	public readonly signupForm: Cyph.UI.ISignupForm;
+	public readonly signupForm: ISignupForm;
 
 	/** Carousel of features. */
-	public featureCarousel: Cyph.UI.Carousel;
+	public featureCarousel: Carousel;
 
 	/** Carousel of testimonials. */
-	public testimonialCarousel: Cyph.UI.Carousel;
+	public testimonialCarousel: Carousel;
 
 	/** @ignore */
 	private cycleFeatures () : void {
@@ -114,7 +128,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		if (href !== locationData.pathname || this.homeSection !== undefined) {
 			scrollDelay	= 0;
 
-			Cyph.UrlState.set(href);
+			urlState.set(href);
 		}
 
 		if (this.homeSection === undefined) {
@@ -123,23 +137,23 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	}
 
 	/** @ignore */
-	private async onUrlStateChange (urlState: string) : Promise<void> {
-		const urlStateSplit: string[]	= urlState.split('/');
-		const urlStateBase: string		= urlStateSplit[0];
+	private async onUrlStateChange (newUrlState: string) : Promise<void> {
+		const newUrlStateSplit: string[]	= newUrlState.split('/');
+		const newUrlStateBase: string		= newUrlStateSplit[0];
 
-		const state: States	= (<any> States)[urlStateBase];
-		const promo: Promos	= (<any> Promos)[urlStateBase];
+		const state: States	= (<any> States)[newUrlStateBase];
+		const promo: Promos	= (<any> Promos)[newUrlStateBase];
 
 		this.homeSection	= promo === undefined ?
-			(<any> HomeSections)[urlStateBase] :
+			(<any> HomeSections)[newUrlStateBase] :
 			HomeSections.promo
 		;
 
-		Cyph.UI.Elements.title().text(
-			(<any> pageTitles)[urlStateBase] || pageTitles.default
+		CyphElements.elements.title().text(
+			(<any> pageTitles)[newUrlStateBase] || pageTitles.default
 		);
 
-		Cyph.UrlState.set(urlState, true, true);
+		urlState.set(newUrlState, true, true);
 
 		if (this.homeSection !== undefined) {
 			this.changeState(States.home);
@@ -149,7 +163,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 				this.signupForm.promo	= Promos[promo];
 			}
 
-			await Cyph.Util.sleep();
+			await util.sleep();
 
 			if (this.homeSection === HomeSections.register) {
 				await this.dialogManager.baseDialog({
@@ -165,11 +179,11 @@ export class UI extends Cyph.UI.BaseButtonManager {
 					`
 				});
 
-				Cyph.UrlState.set('');
+				urlState.set('');
 			}
 			else if (this.homeSection === HomeSections.invite) {
 				this.signupForm.data.inviteCode	=
-					Cyph.UrlState.get().split(HomeSections[HomeSections.invite] + '/')[1] || ''
+					urlState.get().split(HomeSections[HomeSections.invite] + '/')[1] || ''
 				;
 
 				await this.dialogManager.baseDialog({
@@ -186,7 +200,7 @@ export class UI extends Cyph.UI.BaseButtonManager {
 					`
 				});
 
-				Cyph.UrlState.set('');
+				urlState.set('');
 			}
 			else {
 				this.scroll(
@@ -194,14 +208,14 @@ export class UI extends Cyph.UI.BaseButtonManager {
 					(
 						this.homeSection === HomeSections.gettingstarted ?
 							-1 :
-							Elements.mainToolbar().height()
+							elements.mainToolbar().height()
 					)
 				);
 			}
 		}
 		else if (state === States.contact) {
-			const to: string	= urlStateSplit[1];
-			if (Cyph.Config.cyphEmailAddresses.indexOf(to) > -1) {
+			const to: string	= newUrlStateSplit[1];
+			if (config.cyphEmailAddresses.indexOf(to) > -1) {
 				this.contactState.to	= to;
 			}
 
@@ -210,14 +224,14 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		else if (state !== undefined) {
 			this.changeState(state);
 		}
-		else if (urlStateBase === '') {
+		else if (newUrlStateBase === '') {
 			this.changeState(States.home);
 		}
-		else if (urlStateBase === Cyph.UrlState.states.notFound) {
+		else if (newUrlStateBase === urlState.states.notFound) {
 			this.changeState(States.error);
 		}
 		else {
-			Cyph.UrlState.set(Cyph.UrlState.states.notFound);
+			urlState.set(urlState.states.notFound);
 		}
 	}
 
@@ -229,10 +243,15 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	) : void {
 		const delay: number	=
 			delayFactor *
-			Math.abs(Cyph.UI.Elements.document().scrollTop() - position)
+			Math.abs(CyphElements.elements.document().scrollTop() - position)
 		;
 
-		Cyph.UI.Elements.html().add(Cyph.UI.Elements.body()).animate({scrollTop: position}, delay);
+		CyphElements.elements.html().add(
+			CyphElements.elements.body()
+		).animate(
+			{scrollTop: position},
+			delay
+		);
 
 		if (oncomplete) {
 			setTimeout(oncomplete, delay + 50);
@@ -261,67 +280,63 @@ export class UI extends Cyph.UI.BaseButtonManager {
 	}
 
 	constructor (
-		mobileMenu: () => Cyph.UI.ISidebar,
+		mobileMenu: () => ISidebar,
 
 		/** @ignore */
-		private readonly dialogManager: Cyph.UI.IDialogManager
+		private readonly dialogManager: IDialogManager
 	) {
 		super(mobileMenu);
 
-		this.signupForm	= new Cyph.UI.SignupForm();
+		this.signupForm	= new SignupForm();
 		this.cyphDemo	= new CyphDemo(this.dialogManager);
 
 		(async () => {
-			Cyph.UrlState.onchange(async (urlState) => this.onUrlStateChange(urlState));
+			urlState.onchange(async (newUrlState) => this.onUrlStateChange(newUrlState));
 
-			const urlState: string	= Cyph.UrlState.get();
+			const newUrlState: string	= urlState.get();
 			setTimeout(
-				() => Cyph.UrlState.set(urlState, true, false, false),
-				(<any> HomeSections)[urlState] === undefined ? 0 : 2500
+				() => urlState.set(newUrlState, true, false, false),
+				(<any> HomeSections)[newUrlState] === undefined ? 0 : 2500
 			);
 
-			while (
-				Elements.backgroundVideo().length < 1 ||
-				Elements.featuresSection().length < 1 ||
-				Elements.heroSection().length < 1 ||
-				Elements.mainToolbar().length < 1 ||
-				Elements.testimonialsSection().length < 1
-			) {
-				await Cyph.Util.sleep();
-			}
+			await CyphElements.Elements.waitForElement(elements.backgroundVideo);
+			await CyphElements.Elements.waitForElement(elements.featuresSection);
+			await CyphElements.Elements.waitForElement(elements.heroSection);
+			await CyphElements.Elements.waitForElement(elements.mainToolbar);
+			await CyphElements.Elements.waitForElement(elements.testimonialsSection);
 
 
-			if (!Cyph.Env.isMobile) {
+			if (!env.isMobile) {
 				new (<any> self).WOW({live: true}).init();
 			}
 
 
 			/* Disable background video on mobile */
 
-			if (Cyph.Env.isMobile) {
+			if (env.isMobile) {
 				const $mobilePoster: JQuery	= $(document.createElement('img'));
-				$mobilePoster.attr('src', Elements.backgroundVideo().attr('mobile-poster'));
+				$mobilePoster.attr('src', elements.backgroundVideo().attr('mobile-poster'));
 
-				Elements.backgroundVideo().replaceWith($mobilePoster).remove();
-				Elements.backgroundVideo	= () => $mobilePoster;
+				elements.backgroundVideo().replaceWith($mobilePoster).remove();
+				elements.backgroundVideo	= () => $mobilePoster;
 			}
 			else {
 				try {
-					(<HTMLVideoElement> Elements.backgroundVideo()[0]).currentTime	= 1.25;
+					(<HTMLVideoElement> elements.backgroundVideo()[0]).currentTime	= 1.25;
 				}
 				catch (_) {}
 
 				setTimeout(
-					() => (<any> Elements.backgroundVideo()).appear().
+					() => (<any> elements.backgroundVideo()).appear().
 						on('appear', () => {
 							try {
-								(<HTMLVideoElement> Elements.backgroundVideo()[0]).play();
+								(<HTMLVideoElement> elements.backgroundVideo()[0]).play();
 							}
 							catch (_) {}
 						}).
 						on('disappear', () => {
 							try {
-								(<HTMLVideoElement> Elements.backgroundVideo()[0]).pause();
+								(<HTMLVideoElement> elements.backgroundVideo()[0]).pause();
 							}
 							catch (_) {}
 						})
@@ -333,16 +348,16 @@ export class UI extends Cyph.UI.BaseButtonManager {
 
 			/* Carousels */
 
-			this.featureCarousel		= new Cyph.UI.Carousel(Elements.featuresSection());
+			this.featureCarousel		= new Carousel(elements.featuresSection());
 
-			this.testimonialCarousel	= new Cyph.UI.Carousel(
-				Elements.testimonialsSection(),
-				() => Elements.heroSection().css(
+			this.testimonialCarousel	= new Carousel(
+				elements.testimonialsSection(),
+				() => elements.heroSection().css(
 					'min-height',
 					`calc(100vh - ${40 + (
-						Cyph.Env.isMobile ?
+						env.isMobile ?
 							40 :
-							Elements.testimonialsSection().height()
+							elements.testimonialsSection().height()
 					)}px)`
 				)
 			);
@@ -350,22 +365,22 @@ export class UI extends Cyph.UI.BaseButtonManager {
 
 			/* Header / new cyph button animation */
 
-			Elements.mainToolbar().toggleClass(
+			elements.mainToolbar().toggleClass(
 				'new-cyph-expanded',
-				Cyph.UrlState.get() === ''
+				urlState.get() === ''
 			);
 
 			setTimeout(
 				() => setInterval(
-					() => Elements.mainToolbar().toggleClass(
+					() => elements.mainToolbar().toggleClass(
 						'new-cyph-expanded',
 						this.state === States.home && (
 							(
 								this.promo === Promos.none &&
-								!Cyph.Env.isMobile &&
-								Elements.heroText().is(':appeared')
+								!env.isMobile &&
+								elements.heroText().is(':appeared')
 							) ||
-							Cyph.UI.Elements.footer().is(':appeared')
+							CyphElements.elements.footer().is(':appeared')
 						)
 					),
 					500
@@ -376,9 +391,9 @@ export class UI extends Cyph.UI.BaseButtonManager {
 
 			/* Section sizing
 
-			if (!Cyph.Env.isMobile) {
+			if (!env.isMobile) {
 				setInterval(() =>
-					Elements.contentContainers().each((i: number, elem: HTMLElement) => {
+					elements.contentContainers().each((i: number, elem: HTMLElement) => {
 						const $this: JQuery	= $(elem);
 
 						$this.width(
@@ -422,18 +437,18 @@ export class UI extends Cyph.UI.BaseButtonManager {
 			});
 
 			setInterval(() => this.cycleFeatures(), 4200);
-			setTimeout(() => Cyph.UI.Elements.html().addClass('load-complete'), 750);
+			setTimeout(() => CyphElements.elements.html().addClass('load-complete'), 750);
 
 			/* Cyphertext easter egg */
 			/* tslint:disable-next-line:no-unused-new */
 			new (<any> self).Konami(() => {
-				Cyph.UrlState.set('intro');
-				Cyph.Util.retryUntilComplete(retry => {
+				urlState.set('intro');
+				util.retryUntilComplete(retry => {
 					if (
 						this.cyphDemo.desktop &&
-						this.cyphDemo.desktop.state === Cyph.UI.Chat.States.chat
+						this.cyphDemo.desktop.state === Chat.States.chat
 					) {
-						if (Cyph.Env.isMobile) {
+						if (env.isMobile) {
 							this.cyphDemo.mobile.cyphertext.show();
 						}
 						else {

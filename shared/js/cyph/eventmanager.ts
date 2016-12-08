@@ -1,6 +1,5 @@
-import {Env} from './env';
+import {env} from './env';
 import {IThread} from './ithread';
-import {Util} from './util';
 
 
 /**
@@ -8,100 +7,33 @@ import {Util} from './util';
  */
 export class EventManager {
 	/** @ignore */
-	private static readonly handlers: {[event: string]: Function[]}				= {};
+	private readonly handlers: {[event: string]: Function[]}			= {};
 
 	/** @ignore */
-	private static readonly indices: {[event: string]: Map<Function, number>}	= {};
+	private readonly indices: {[event: string]: Map<Function, number>}	= {};
 
 	/** @ignore */
-	private static readonly threadEventPrefix: string	= 'threadEventPrefix';
-
-	/** @ignore */
-	private static readonly untriggeredEvents: string	= 'untriggeredEvents';
-
-	/**
-	 * @ignore
-	 * (Used internally by EventManager and Thread for cross-thread event stuff.)
-	 */
-	public static readonly mainThreadEvents: string	= 'mainThreadEvents';
+	private readonly untriggeredEvents: string	= 'untriggeredEvents';
 
 	/** List of all active threads. */
-	public static readonly threads: IThread[]		= [];
-
-	/**
-	 * Sends command to the main thread.
-	 * @param method Fully qualified method name (e.g. "Cyph.EventManager.callMainThread").
-	 * @param args
-	 */
-	public static callMainThread (method: string, args: any[] = []) : void {
-		if (Env.isMainThread) {
-			for (let i = 0 ; i < args.length ; ++i) {
-				const callbackId: string	= (args[i] && args[i].callbackId) || '';
-
-				if (callbackId) {
-					args[i]	= (...threadArgs: any[]) => EventManager.trigger(
-						EventManager.threadEventPrefix + callbackId,
-						threadArgs
-					);
-				}
-			}
-
-			const methodSplit: string[]	= method.split('.');
-			const methodName: string	= methodSplit.slice(-1)[0];
-
-			/* Validate command against namespace whitelist, then execute */
-			if (['cyph', 'ui'].indexOf(methodSplit[0]) > -1) {
-				const methodObject: any	= methodSplit.
-					slice(0, -1).
-					reduce((o: any, k: string) : any => o[k], self)
-				;
-
-				methodObject[methodName].apply(methodObject, args);
-			}
-			else {
-				throw new Error(
-					`${method} not in whitelist. (args: ${JSON.stringify(args)})`
-				);
-			}
-		}
-		else {
-			for (let i = 0 ; i < args.length ; ++i) {
-				const arg	= args[i];
-
-				if (typeof arg !== 'function') {
-					continue;
-				}
-
-				const callbackId: string	= Util.generateGuid();
-
-				args[i]	= {callbackId};
-
-				EventManager.on(
-					EventManager.threadEventPrefix + callbackId,
-					(threadArgs: any[]) => arg.apply(null, threadArgs)
-				);
-			}
-
-			EventManager.trigger(EventManager.mainThreadEvents, {method, args});
-		}
-	}
+	public readonly threads: IThread[]		= [];
 
 	/**
 	 * Removes handler from event.
 	 * @param event
 	 * @param handler
 	 */
-	public static off<T> (event: string, handler?: (data: T) => void) : void {
-		if (!EventManager.handlers[event]) {
+	public off<T> (event: string, handler?: (data: T) => void) : void {
+		if (!this.handlers[event]) {
 			return;
 		}
 
-		EventManager.handlers[event].splice(EventManager.indices[event].get(handler), 1);
-		EventManager.indices[event].delete(handler);
+		this.handlers[event].splice(this.indices[event].get(handler), 1);
+		this.indices[event].delete(handler);
 
-		if (EventManager.handlers[event].length < 1) {
-			EventManager.handlers[event]	= null;
-			EventManager.indices[event]		= null;
+		if (this.handlers[event].length < 1) {
+			this.handlers[event]	= null;
+			this.indices[event]		= null;
 		}
 	}
 
@@ -110,19 +42,19 @@ export class EventManager {
 	 * @param event
 	 * @param handler
 	 */
-	public static on<T> (event: string, handler: (data: T) => void) : void {
-		if (!EventManager.handlers[event]) {
-			EventManager.handlers[event]	= [];
-			EventManager.indices[event]		= new Map<Function, number>();
+	public on<T> (event: string, handler: (data: T) => void) : void {
+		if (!this.handlers[event]) {
+			this.handlers[event]	= [];
+			this.indices[event]		= new Map<Function, number>();
 		}
 
-		if (EventManager.indices[event].has(handler)) {
+		if (this.indices[event].has(handler)) {
 			return;
 		}
 
-		EventManager.indices[event].set(
+		this.indices[event].set(
 			handler,
-			EventManager.handlers[event].push(handler) - 1
+			this.handlers[event].push(handler) - 1
 		);
 	}
 
@@ -130,16 +62,16 @@ export class EventManager {
 	 * Returns first occurrence of event.
 	 * @param event
 	 */
-	public static async one<T> (event: string) : Promise<T> {
+	public async one<T> (event: string) : Promise<T> {
 		return new Promise<T>(resolve => {
 			let f: (data: T) => void;
 
 			f	= (data: T) => {
-				EventManager.off(event, f);
+				this.off(event, f);
 				resolve(data);
 			};
 
-			EventManager.on(event, f);
+			this.on(event, f);
 		});
 	}
 
@@ -149,16 +81,16 @@ export class EventManager {
 	 * @param data
 	 * @param shouldTrigger Ignore this (used internally for cross-thread events).
 	 */
-	public static trigger (
+	public trigger<T> (
 		event: string,
-		data?: any,
-		shouldTrigger: boolean = Env.isMainThread
+		data?: T,
+		shouldTrigger: boolean = env.isMainThread
 	) : void {
 		if (!shouldTrigger) {
-			EventManager.trigger(EventManager.untriggeredEvents, {event, data}, true);
+			this.trigger(this.untriggeredEvents, {event, data}, true);
 		}
 		else {
-			for (let handler of (EventManager.handlers[event] || [])) {
+			for (let handler of (this.handlers[event] || [])) {
 				try {
 					handler(data);
 				}
@@ -167,8 +99,8 @@ export class EventManager {
 				}
 			}
 
-			if (Env.isMainThread) {
-				for (let thread of EventManager.threads) {
+			if (env.isMainThread) {
+				for (let thread of this.threads) {
 					try {
 						thread.postMessage({event, data, isThreadEvent: true});
 					}
@@ -178,35 +110,31 @@ export class EventManager {
 		}
 	}
 
-	/** @ignore */
-	/* tslint:disable-next-line:member-ordering */
-	public static readonly _	= (() => {
-		if (Env.isMainThread) {
-			EventManager.on(
-				EventManager.mainThreadEvents,
-				(o: {method: string; args: any[]}) =>
-					EventManager.callMainThread(o.method, o.args)
-			);
+	constructor () {
+		if (env.isMainThread) {
+			return;
 		}
-		else {
-			self.onmessage	= (e: MessageEvent) => {
-				const data: any	= e.data || {};
 
-				if (data.isThreadEvent) {
-					EventManager.trigger(data.event, data.data, true);
-				}
-				else if (onthreadmessage) {
-					onthreadmessage(e);
-				}
-			};
+		self.onmessage	= (e: MessageEvent) => {
+			const data: any	= e.data || {};
 
-			EventManager.on(
-				EventManager.untriggeredEvents,
-				(o: {event: string; data: any}) => self.postMessage(
-					{event: o.event, data: o.data, isThreadEvent: true},
-					undefined
-				)
-			);
-		}
-	})();
+			if (data.isThreadEvent) {
+				this.trigger(data.event, data.data, true);
+			}
+			else if (onthreadmessage) {
+				onthreadmessage(e);
+			}
+		};
+
+		this.on(
+			this.untriggeredEvents,
+			(o: {event: string; data: any}) => self.postMessage(
+				{event: o.event, data: o.data, isThreadEvent: true},
+				undefined
+			)
+		);
+	}
 }
+
+/** @see EventManager */
+export const eventManager	= new EventManager();

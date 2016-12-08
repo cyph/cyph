@@ -1,6 +1,7 @@
-import {Potassium} from './potassium';
+import {Potassium, potassium} from './potassium';
 
 
 export {
-	Potassium
+	Potassium,
+	potassium
 };

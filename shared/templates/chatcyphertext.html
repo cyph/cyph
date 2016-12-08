@@ -1,4 +1,4 @@
-<div class='chat-cyphertext nano' *ngIf='cyph && self'>
+<div class='chat-cyphertext nano' *ngIf='self'>
 	<md2-content class='nano-content'>
 		<md2-list childClass='layout-column'>
 			<md2-list-item
@@ -7,10 +7,10 @@
 				*ngFor='let message of self.cyphertext.messages'
 			>
 				<span class='message'>
-					<strong *ngIf='message.author === cyph.Session.Users.me'>
-						{{cyph.Strings.me}}:
+					<strong *ngIf='message.author === users.me'>
+						{{strings.me}}:
 					</strong>
-					<strong *ngIf='message.author !== cyph.Session.Users.me'>
+					<strong *ngIf='message.author !== users.me'>
 						{{message.author}}:
 					</strong>
 					<span class='flex'>{{message.text}}</span>

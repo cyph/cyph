@@ -1,4 +1,4 @@
-<div class='link-connection loading layout-column layout-fill flex' *ngIf='cyph && self'>
+<div class='link-connection loading layout-column layout-fill flex' *ngIf='self'>
 	<div class='flex'></div>
 	<div class='logo-animation'>
 		<div></div>
@@ -18,7 +18,7 @@
 			</div>
 			<br />
 
-			<div *ngIf='!cyph.Env.isMobile'>
+			<div *ngIf='!env.isMobile'>
 				<md2-input
 					cyphTranslate
 					childClass='connect-link-input'
@@ -35,7 +35,7 @@
 				</md2-button>
 			</div>
 
-			<div class='connect-link-mobile' *ngIf='cyph.Env.isMobile'>
+			<div class='connect-link-mobile' *ngIf='env.isMobile'>
 				<a
 					class='connect-link-link'
 					[href]='self.link'
@@ -45,7 +45,7 @@
 				<md2-button
 					childClass='md-fab'
 					ariaLabel='SMS'
-					[href]='cyph.Env.smsUriBase + self.linkEncoded'
+					[href]='env.smsUriBase + self.linkEncoded'
 					cyphTranslate
 				>
 					<img src='/img/icons/sms.png' alt='SMS' cyphTranslate />

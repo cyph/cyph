@@ -1,5 +1,9 @@
 import {Component} from '@angular/core';
-import {Util} from '../cyph/util';
+import {Config, config} from '../cyph/config';
+import {Env, env} from '../cyph/env';
+import {eventManager} from '../cyph/eventmanager';
+import {DialogManager} from '../cyph/ui/dialogmanager';
+import {Promos, States} from './enums';
 import {UI} from './ui';
 
 
@@ -12,17 +16,41 @@ import {UI} from './ui';
 })
 export class AppComponent {
 	/** @ignore */
-	public cyph: any;
+	private static uiInit	= eventManager.one<{
+		$mdDialog: ng.material.IDialogService;
+		$mdSidenav: ng.material.ISidenavService;
+		$mdToast: ng.material.IToastService;
+	}>(
+		UI.uiInitEvent
+	);
+
 
 	/** @ignore */
 	public ui: UI;
 
-	constructor () { (async () => {
-		while (!cyph || !ui) {
-			await Util.sleep();
-		}
+	/** @ignore */
+	public config: Config			= config;
 
-		this.cyph	= cyph;
-		this.ui		= ui;
+	/** @ignore */
+	public env: Env					= env;
+
+	/** @ignore */
+	public promos: typeof Promos	= Promos;
+
+	/** @ignore */
+	public states: typeof States	= States;
+
+	constructor () { (async () => {
+		const o	= await AppComponent.uiInit;
+
+		this.ui	= new UI(
+			() => o.$mdSidenav('main-toolbar-sidenav'),
+			new DialogManager(o.$mdDialog, o.$mdToast)
+		);
+
+		/* For testing and debugging */
+		if (env.isWeb) {
+			(<any> self).ui	= this.ui;
+		}
 	})(); }
 }

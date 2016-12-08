@@ -1,10 +1,12 @@
 import {Component, ElementRef, Input} from '@angular/core';
-import {Env} from '../../env';
-import {Strings} from '../../strings';
-import {Util} from '../../util';
+import {env} from '../../env';
+import {Strings, strings} from '../../strings';
+import {util} from '../../util';
+import {States} from '../chat/enums';
 import {IChat} from '../chat/ichat';
-import {VirtualKeyboardWatcher} from '../virtualkeyboardwatcher';
-import {VisibilityWatcher} from '../visibilitywatcher';
+import {Elements} from '../elements';
+import {virtualKeyboardWatcher} from '../virtualkeyboardwatcher';
+import {visibilityWatcher} from '../visibilitywatcher';
 
 
 /**
@@ -22,13 +24,16 @@ export class ChatMessageBox {
 	@Input() public fileAccept: string;
 
 	/** @ignore */
-	public cyph: any;
-
-	/** @ignore */
 	public isSpeedDialReady: boolean;
 
 	/** @ignore */
 	public isSpeedDialOpen: boolean	= true;
+
+	/** @ignore */
+	public states: typeof States	= States;
+
+	/** @ignore */
+	public strings: Strings			= strings;
 
 	/** @ignore */
 	public menuButton: {
@@ -38,7 +43,7 @@ export class ChatMessageBox {
 	}	= {
 		click: ($mdMenu: any) => this.openMenu($mdMenu),
 		icon: 'more_horiz',
-		label: Util.translate('Menu')
+		label: util.translate('Menu')
 	};
 
 	/** @ignore */
@@ -50,12 +55,12 @@ export class ChatMessageBox {
 		{
 			click: () => this.self.helpButton(),
 			icon: 'help_outline',
-			label: Strings.help
+			label: strings.help
 		},
 		{
 			click: () => this.self.disconnectButton(),
 			icon: 'close',
-			label: Strings.disconnect
+			label: strings.disconnect
 		}
 	];
 
@@ -95,14 +100,14 @@ export class ChatMessageBox {
 			class: 'dark',
 			click: () => this.self.helpButton(),
 			icon: 'help_outline',
-			label: Strings.help,
+			label: strings.help,
 			tooltipDirection: 'left'
 		},
 		{
 			class: 'dark',
 			click: () => this.self.disconnectButton(),
 			icon: 'close',
-			label: Strings.disconnect,
+			label: strings.disconnect,
 			tooltipDirection: 'left'
 		}
 	];
@@ -121,12 +126,12 @@ export class ChatMessageBox {
 	/** @ignore */
 	public async openMenu ($mdMenu: any) : Promise<void> {
 		/* Workaround for Angular Material menu bug */
-		if (Env.isMobile) {
+		if (env.isMobile) {
 			let $focused: JQuery;
 			do {
 				$focused	= $(':focus');
 				$focused.blur();
-				await Util.sleep();
+				await util.sleep();
 			} while ($focused.length > 0);
 		}
 
@@ -134,12 +139,6 @@ export class ChatMessageBox {
 	}
 
 	constructor (elementRef: ElementRef) { (async () => {
-		while (!cyph) {
-			await Util.sleep();
-		}
-
-		this.cyph	= cyph;
-
 		const $element	= $(elementRef.nativeElement);
 
 		/* Temporary workaround for Angular Material bug */
@@ -147,32 +146,30 @@ export class ChatMessageBox {
 		const isVideoCallMessageBox	= $element.hasClass('video-call-message-box');
 
 		while (
-			!VisibilityWatcher.isVisible ||
+			!visibilityWatcher.isVisible ||
 			!$element.is(':visible') ||
 			(
 				isVideoCallMessageBox &&
 				!this.self.p2pManager.isSidebarOpen
 			)
 		) {
-			await Util.sleep();
+			await util.sleep();
 		}
 
 		this.isSpeedDialReady	= true;
-		await Util.sleep(1000);
+		await util.sleep(1000);
 		this.isSpeedDialOpen	= false;
 
 		/* Allow enter press to submit, except on
 			mobile without external keyboard */
 
-		let $textarea: JQuery;
-		while (!$textarea || $textarea.length < 1) {
-			$textarea	= $element.find('textarea');
-			await Util.sleep();
-		}
+		const $textarea	= await Elements.waitForElement(
+			() => $element.find('textarea')
+		);
 
 		$textarea.keypress(e => {
 			if (
-				(Env.isMobile && VirtualKeyboardWatcher.isOpen) ||
+				(env.isMobile && virtualKeyboardWatcher.isOpen) ||
 				e.keyCode !== 13 ||
 				e.shiftKey
 			) {
@@ -188,16 +185,14 @@ export class ChatMessageBox {
 
 			let lastClick	= 0;
 
-			let $buttons: JQuery;
-			while (!$buttons || $buttons.length < 1) {
-				$buttons	= $element.find('.message-box-button-group .md-button');
-				await Util.sleep();
-			}
+			const $buttons	= await Elements.waitForElement(
+				() => $element.find('.message-box-button-group .md-button')
+			);
 
 			$textarea.on('mousedown', e => {
-				const now: number	= Util.timestamp();
+				const now: number	= util.timestamp();
 
-				if ($textarea.is(':focus') && !VirtualKeyboardWatcher.isOpen) {
+				if ($textarea.is(':focus') && !virtualKeyboardWatcher.isOpen) {
 					$textarea.blur();
 				}
 

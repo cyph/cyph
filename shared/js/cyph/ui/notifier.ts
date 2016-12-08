@@ -1,14 +1,14 @@
-import {Config} from '../config';
-import {Env} from '../env';
+import {config} from '../config';
+import {env} from '../env';
 import {INotifier} from './inotifier';
-import {VisibilityWatcher} from './visibilitywatcher';
+import {visibilityWatcher} from './visibilitywatcher';
 
 
 /** @inheritDoc */
 export class Notifier implements INotifier {
 	/** @ignore */
 	private static readonly audio: {play: Function}	= Audio ?
-		new Audio(Config.notifierConfig.audio) :
+		new Audio(config.notifierConfig.audio) :
 		{play: () => {}}
 	;
 
@@ -17,14 +17,14 @@ export class Notifier implements INotifier {
 		const options	= {
 			audio: <string> null,
 			body: message,
-			icon: Config.notifierConfig.icon,
-			lang: Env.language,
+			icon: config.notifierConfig.icon,
+			lang: env.language,
 			noscreen: false,
 			sticky: false
 		};
 
 		try {
-			callback(new (<any> self).Notification(Config.notifierConfig.title, options));
+			callback(new (<any> self).Notification(config.notifierConfig.title, options));
 
 			try {
 				Notifier.audio.play();
@@ -33,14 +33,14 @@ export class Notifier implements INotifier {
 		}
 		catch (_) {
 			try {
-				options.audio	= Config.notifierConfig.audio;
+				options.audio	= config.notifierConfig.audio;
 
 				(<any> navigator).serviceWorker.
-					register(Config.webSignConfig.serviceWorker).
+					register(config.webSignConfig.serviceWorker).
 					then((serviceWorkerRegistration: any) => {
 						try {
 							serviceWorkerRegistration.showNotification(
-								Config.notifierConfig.title,
+								config.notifierConfig.title,
 								options
 							);
 						}
@@ -62,7 +62,7 @@ export class Notifier implements INotifier {
 
 	/** @inheritDoc */
 	public notify (message: string) : void {
-		if (!this.disableNotify && !VisibilityWatcher.isVisible) {
+		if (!this.disableNotify && !visibilityWatcher.isVisible) {
 			this.disableNotify	= true;
 
 			Notifier.createNotification(message, (notification: any) => {
@@ -80,7 +80,7 @@ export class Notifier implements INotifier {
 	}
 
 	constructor () {
-		VisibilityWatcher.onChange((isVisible: boolean) => {
+		visibilityWatcher.onChange((isVisible: boolean) => {
 			if (isVisible) {
 				for (let notification of this.openNotifications) {
 					try {

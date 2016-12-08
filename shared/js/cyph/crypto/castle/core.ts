@@ -1,4 +1,4 @@
-import {Util} from '../../util';
+import {util} from '../../util';
 import {Potassium} from '../potassium';
 
 
@@ -21,7 +21,7 @@ export class Core {
 		outgoing: Uint8Array;
 	}> {
 		const alt: Uint8Array	= await potassium.hash.deriveKey(
-			Potassium.concatMemory(
+			potassium.concatMemory(
 				false,
 				secret,
 				new Uint8Array([1])
@@ -94,7 +94,7 @@ export class Core {
 				)
 			;
 
-			Potassium.clearMemory(this.ephemeralKeys.private);
+			this.potassium.clearMemory(this.ephemeralKeys.private);
 			this.ephemeralKeys.private	= null;
 
 			this.keys.push(await Core.newKeys(
@@ -105,7 +105,7 @@ export class Core {
 		}
 
 		if (outgoingPublicKey) {
-			return Potassium.concatMemory(
+			return this.potassium.concatMemory(
 				true,
 				new Uint8Array([1]),
 				outgoingPublicKey
@@ -122,7 +122,7 @@ export class Core {
 	 * @returns Plaintext.
 	 */
 	public async decrypt (cyphertext: Uint8Array) : Promise<DataView> {
-		return Util.lock(this.lock, async () => {
+		return util.lock(this.lock, async () => {
 			const messageId: Uint8Array	= new Uint8Array(cyphertext.buffer, 0, 8);
 			const encrypted: Uint8Array	= new Uint8Array(cyphertext.buffer, 8);
 
@@ -134,8 +134,8 @@ export class Core {
 
 					if (plaintext) {
 						this.keys.splice(i, 1);
-						Potassium.clearMemory(keys.incoming);
-						Potassium.clearMemory(keys.outgoing);
+						this.potassium.clearMemory(keys.incoming);
+						this.potassium.clearMemory(keys.outgoing);
 						continue;
 					}
 
@@ -149,7 +149,7 @@ export class Core {
 						messageId
 					);
 
-					Potassium.clearMemory(keys.incoming);
+					this.potassium.clearMemory(keys.incoming);
 					keys.incoming	= incomingKey;
 
 					let startIndex	= 1;
@@ -186,14 +186,14 @@ export class Core {
 		plaintext: Uint8Array,
 		messageId: Uint8Array
 	) : Promise<Uint8Array> {
-		return Util.lock(this.lock, async () => {
+		return util.lock(this.lock, async () => {
 			this.keys[0].outgoing	= await this.potassium.hash.deriveKey(
 				this.keys[0].outgoing,
 				undefined,
 				true
 			);
 
-			const fullPlaintext: Uint8Array	= Potassium.concatMemory(
+			const fullPlaintext: Uint8Array	= this.potassium.concatMemory(
 				false,
 				await this.ratchet(),
 				plaintext
@@ -205,7 +205,7 @@ export class Core {
 				messageId
 			);
 
-			Potassium.clearMemory(fullPlaintext);
+			this.potassium.clearMemory(fullPlaintext);
 
 			return cyphertext;
 		});

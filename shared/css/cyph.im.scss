@@ -1205,8 +1205,9 @@ html.mobile cyph-help {
 }
 
 .md-button.copy {
-	margin-right: calc(-50% - 45px);
-	margin-top: -99px;
+	position: absolute;
+
+	@include transform(translate(calc(25vw - 25px), -62px));
 }
 
 /*** SpinKit animation: http://tobiasahlin.com/spinkit/ ***/

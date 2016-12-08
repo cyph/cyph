@@ -1,11 +1,11 @@
-import {Lib} from '../lib';
-import {ImportHelper} from './importhelper';
+import {lib} from '../lib';
+import {importHelper} from './importhelper';
 
 
 /** Equivalent to sodium.crypto_onetimeauth. */
 export class OneTimeAuth {
 	/** Algorithm details. */
-	public static readonly algorithm: {
+	public readonly algorithm: {
 		hash: {name: string};
 		name: string;
 	}	= {
@@ -16,22 +16,22 @@ export class OneTimeAuth {
 	};
 
 	/** MAC length. */
-	public static readonly bytes: number	= 64;
+	public readonly bytes: number		= 64;
 
 	/** Key length. */
-	public static readonly keyBytes: number	= 64;
+	public readonly keyBytes: number	= 64;
 
 	/** Signs message. */
-	public static async sign (
+	public async sign (
 		message: Uint8Array,
 		key: Uint8Array
 	) : Promise<Uint8Array> {
 		return new Uint8Array(
-			await Lib.subtleCrypto.sign(
-				OneTimeAuth.algorithm,
-				await ImportHelper.importRawKey(
+			await lib.subtleCrypto.sign(
+				this.algorithm,
+				await importHelper.importRawKey(
 					key,
-					OneTimeAuth.algorithm,
+					this.algorithm,
 					'sign'
 				),
 				message
@@ -40,20 +40,25 @@ export class OneTimeAuth {
 	}
 
 	/** Verifies MAC. */
-	public static async verify (
+	public async verify (
 		mac: Uint8Array,
 		message: Uint8Array,
 		key: Uint8Array
 	) : Promise<boolean> {
-		return Lib.subtleCrypto.verify(
-			OneTimeAuth.algorithm,
-			await ImportHelper.importRawKey(
+		return lib.subtleCrypto.verify(
+			this.algorithm,
+			await importHelper.importRawKey(
 				key,
-				OneTimeAuth.algorithm,
+				this.algorithm,
 				'verify'
 			),
 			mac,
 			message
 		);
 	}
+
+	constructor () {}
 }
+
+/** @see OneTimeAuth */
+export const oneTimeAuth	= new OneTimeAuth();

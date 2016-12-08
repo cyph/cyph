@@ -1,10 +1,10 @@
-<div class='beta-signup-form' *ngIf='cyph && self'>
+<div class='beta-signup-form' *ngIf='self'>
 	<form (submit)='self.submit()' *ngIf='self.state === 0'>
 		<div class='layout-row layout-align-center-center flex'>
 			<ng-content></ng-content>
 		</div>
 		<div class='layout-row layout-align-center-stretch flex'>
-			<div class='layout-column flex-50' *ngIf='!cyph.Env.isMobile'>
+			<div class='layout-column flex-50' *ngIf='!env.isMobile'>
 				<div class='layout-row layout-align-center-center'>
 					<md2-input
 						cyphTranslate

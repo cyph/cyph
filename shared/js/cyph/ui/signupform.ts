@@ -1,7 +1,7 @@
-import {Analytics} from '../analytics';
-import {Env} from '../env';
-import {Util} from '../util';
-import {Elements} from './elements';
+import {analytics} from '../analytics';
+import {env} from '../env';
+import {util} from '../util';
+import {elements} from './elements';
 import {ISignupForm} from './isignupform';
 
 
@@ -17,7 +17,7 @@ export class SignupForm implements ISignupForm {
 	public readonly data	= {
 		email: <string> '',
 		inviteCode: <string> '',
-		language: <string> Env.fullLanguage,
+		language: <string> env.fullLanguage,
 		name: <string> ''
 	};
 
@@ -31,7 +31,7 @@ export class SignupForm implements ISignupForm {
 
 		setTimeout(
 			() => {
-				const $input: JQuery	= $(Elements.signupForm().selector).
+				const $input: JQuery	= $(elements.signupForm().selector).
 					filter(':visible').
 					find('input:visible:not([disabled])')
 				;
@@ -47,18 +47,18 @@ export class SignupForm implements ISignupForm {
 			return;
 		}
 
-		const signupResult: string	= await Util.request({
+		const signupResult: string	= await util.request({
 			data: this.data,
 			method: 'PUT',
 			retries: 3,
-			url: Env.baseUrl + 'signups'
+			url: env.baseUrl + 'signups'
 		});
 
 		if (signupResult !== 'set') {
 			return;
 		}
 
-		Analytics.send({
+		analytics.send({
 			eventAction: 'new',
 			eventCategory: 'signup',
 			eventValue: 1,
@@ -66,7 +66,7 @@ export class SignupForm implements ISignupForm {
 		});
 
 		if (this.promo) {
-			Analytics.send({
+			analytics.send({
 				hitType: 'social',
 				socialAction: 'signup',
 				socialNetwork: 'promo-' + this.promo,
@@ -76,6 +76,6 @@ export class SignupForm implements ISignupForm {
 	}
 
 	constructor () {
-		setTimeout(() => Elements.signupForm().addClass('visible'), 500);
+		setTimeout(() => elements.signupForm().addClass('visible'), 500);
 	}
 }

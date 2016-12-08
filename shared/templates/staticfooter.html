@@ -1,9 +1,9 @@
-<div class='footer flex layout-row' *ngIf='cyph && ui'>
+<div class='footer flex layout-row' *ngIf='chat'>
 	<div class='flex'></div>
 
-	<div class='layout-row' *ngIf='!ui.coBranded'>
+	<div class='layout-row' *ngIf='!coBranded'>
 		<p class='flex-nogrow layout-padding'>
-			<a [href]='cyph.Env.homeUrl'>
+			<a [href]='env.homeUrl'>
 				<span>&copy; Cyph 2016</span>
 					&nbsp;&nbsp;&nbsp;
 				<span cyphTranslate>(Patents Pending)</span>
@@ -11,48 +11,48 @@
 		</p>
 
 		<p class='flex-nogrow layout-padding'>
-			<a [href]='cyph.Env.homeUrl + "contact"' cyphTranslate>
+			<a [href]='env.homeUrl + "contact"' cyphTranslate>
 				Contact
 			</a>
 		</p>
 
 		<p class='flex-nogrow layout-padding'>
-			<a [href]='cyph.Env.homeUrl + "donate"' cyphTranslate>
+			<a [href]='env.homeUrl + "donate"' cyphTranslate>
 				Donate
 			</a>
 		</p>
 
 		<p class='flex-nogrow layout-padding'>
-			<strong *ngIf='!ui.chat.session.state.wasInitiatedByAPI' cyphTranslate>
+			<strong *ngIf='!chat.session.state.wasInitiatedByAPI' cyphTranslate>
 				- Individual Use Only -
 			</strong>
-			<strong *ngIf='ui.chat.session.state.wasInitiatedByAPI' cyphTranslate>
+			<strong *ngIf='chat.session.state.wasInitiatedByAPI' cyphTranslate>
 				- Cyph API -
 			</strong>
 		</p>
 
 		<p class='flex-nogrow layout-padding'>
-			<a [href]='cyph.Env.homeUrl + "pricing"' cyphTranslate>
+			<a [href]='env.homeUrl + "pricing"' cyphTranslate>
 				Business Pricing
 			</a>
 		</p>
 
 		<p class='flex-nogrow layout-padding'>
-			<a [href]='cyph.Env.homeUrl + "privacypolicy"' cyphTranslate>
+			<a [href]='env.homeUrl + "privacypolicy"' cyphTranslate>
 				Privacy Policy
 			</a>
 		</p>
 
 		<p class='flex-nogrow layout-padding'>
-			<a [href]='cyph.Env.homeUrl + "termsofservice"' cyphTranslate>
+			<a [href]='env.homeUrl + "termsofservice"' cyphTranslate>
 				Terms of Service
 			</a>
 		</p>
 	</div>
 
-	<div class='layout-row' *ngIf='ui.coBranded'>
+	<div class='layout-row' *ngIf='coBranded'>
 		<p class='powered-by-cyph flex-nogrow layout-padding'>
-			<a [href]='cyph.Env.homeUrl' class='small-font' cyphTranslate>
+			<a [href]='env.homeUrl' class='small-font' cyphTranslate>
 				Powered by Cyph
 			</a>
 		</p>

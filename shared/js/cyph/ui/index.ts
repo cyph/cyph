@@ -4,18 +4,18 @@ import * as Chat from './chat';
 import * as Components from './components';
 import {DialogManager} from './dialogmanager';
 import * as Directives from './directives';
-import {Elements} from './elements';
+import {Elements, elements} from './elements';
 import {IDialogManager} from './idialogmanager';
 import {ILinkConnection} from './ilinkconnection';
 import {INotifier} from './inotifier';
 import {ISidebar} from './isidebar';
 import {ISignupForm} from './isignupform';
 import {LinkConnection} from './linkconnection';
-import {NanoScroller} from './nanoscroller';
+import {nanoScroller} from './nanoscroller';
 import {Notifier} from './notifier';
 import {SignupForm} from './signupform';
-import {VirtualKeyboardWatcher} from './virtualkeyboardwatcher';
-import {VisibilityWatcher} from './visibilitywatcher';
+import {virtualKeyboardWatcher} from './virtualkeyboardwatcher';
+import {visibilityWatcher} from './visibilitywatcher';
 
 
 export {
@@ -23,17 +23,18 @@ export {
 	Carousel,
 	DialogManager,
 	Elements,
+	elements,
 	IDialogManager,
 	ILinkConnection,
 	INotifier,
 	ISidebar,
 	ISignupForm,
 	LinkConnection,
-	NanoScroller,
+	nanoScroller,
 	Notifier,
 	SignupForm,
-	VirtualKeyboardWatcher,
-	VisibilityWatcher,
+	virtualKeyboardWatcher,
+	visibilityWatcher,
 
 	Chat,
 	Components,

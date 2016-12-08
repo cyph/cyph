@@ -1,5 +1,6 @@
 import {Component, ElementRef, EventEmitter, Input, Output} from '@angular/core';
-import {Util} from '../../util';
+import {util} from '../../util';
+import {Elements} from '../elements';
 
 
 /**
@@ -17,11 +18,9 @@ export class FileInput {
 	@Output() public change: EventEmitter<File>	= new EventEmitter<File>();
 
 	constructor (elementRef: ElementRef) { (async () => {
-		let $input: JQuery;
-		while (!$input || $input.length < 1) {
-			$input	= $(elementRef.nativeElement).children();
-			await Util.sleep();
-		}
+		const $input	= await Elements.waitForElement(
+			() => $(elementRef.nativeElement).children()
+		);
 
 		const input	= <HTMLInputElement> $input[0];
 
@@ -43,12 +42,10 @@ export class FileInput {
 			})
 		;
 
-		let $button: JQuery;
-		while (!$button || $button.length < 1) {
-			$button	= $input.closest('button');
-			await Util.sleep();
-		}
+		const $button	= await Elements.waitForElement(
+			() => $input.closest('button')
+		);
 
-		$button.click(() => Util.triggerClick(input));
+		$button.click(() => util.triggerClick(input));
 	})(); }
 }

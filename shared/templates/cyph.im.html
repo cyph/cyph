@@ -1,30 +1,30 @@
-<span *ngIf='cyph && ui && ui.chat'>
+<span *ngIf='ui && ui.chat'>
 	<section id='main' class='cyph-foreground layout-fill layout-column'>
 		<cyph-chat-main
 			[self]='ui.chat'
 			[hideDisconnectMessage]='ui.coBranded'
-			[class.active]='ui.state === cyph.im.States.chat'
+			[class.active]='ui.state === states.chat'
 			class='cyph-view layout-fill layout-column flex'
 		>
 			<cyph-signup-form [self]='ui.signupForm'>
-				{{cyph.Strings.signupMessage1}}
-				{{cyph.Strings.signupMessage2}}
+				{{strings.signupMessage1}}
+				{{strings.signupMessage2}}
 			</cyph-signup-form>
 		</cyph-chat-main>
 
 		<cyph-link-connection
 			[self]='ui.cyphConnection'
-			[class.active]='ui.state === cyph.im.States.waitingForFriend'
+			[class.active]='ui.state === states.waitingForFriend'
 			class='cyph-view layout-fill layout-column flex'
 		></cyph-link-connection>
 
 		<cyph-static-cyph-not-found
-			[class.active]='ui.state === cyph.im.States.error'
+			[class.active]='ui.state === states.error'
 			class='cyph-view layout-fill layout-column flex'
 		></cyph-static-cyph-not-found>
 
 		<div
-			[class.active]='ui.state === cyph.im.States.blank'
+			[class.active]='ui.state === states.blank'
 			id='blank'
 			class='cyph-view layout-fill layout-column flex'
 		></div>
@@ -32,19 +32,23 @@
 		<footer>
 			<cyph-chat-message-box
 				[self]='ui.chat'
-				*ngIf='ui.state === cyph.im.States.chat'
+				*ngIf='ui.state === states.chat'
 			></cyph-chat-message-box>
 
-			<cyph-static-footer *ngIf='!cyph.Env.isMobile'></cyph-static-footer>
+			<cyph-static-footer
+				[chat]='ui.chat'
+				*ngIf='!env.isMobile'
+			></cyph-static-footer>
 		</footer>
 	</section>
 
 	<cyph-chat-cyphertext [self]='ui.chat'></cyph-chat-cyphertext>
 </span>
-<span *ngIf='cyph && ui && !ui.chat'>
+<span *ngIf='ui && !ui.chat'>
 	<section id='main' class='cyph-foreground layout-fill layout-column'>
 		<cyph-beta
-			[class.active]='ui.state === cyph.im.States.beta'
+			[ui]='ui'
+			[class.active]='ui.state === states.beta'
 			class='cyph-view layout-fill layout-column flex'
 		></cyph-beta>
 	</section>

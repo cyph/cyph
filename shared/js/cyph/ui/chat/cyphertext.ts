@@ -1,10 +1,10 @@
-import {Analytics} from '../../analytics';
-import {Events, Users} from '../../session/enums';
+import {analytics} from '../../analytics';
+import {events} from '../../session/enums';
 import {ISession} from '../../session/isession';
-import {Strings} from '../../strings';
-import {Util} from '../../util';
+import {strings} from '../../strings';
+import {util} from '../../util';
 import {BaseButtonManager} from '../basebuttonmanager';
-import {Elements} from '../elements';
+import {elements as cyphElements} from '../elements';
 import {IDialogManager} from '../idialogmanager';
 import {ISidebar} from '../isidebar';
 import {ICyphertext} from './icyphertext';
@@ -21,7 +21,7 @@ export class Cyphertext extends BaseButtonManager implements ICyphertext {
 	private showLock: boolean	= false;
 
 	/** @inheritDoc */
-	public readonly messages: {author: Users; text: string}[]	= [];
+	public readonly messages: {author: string; text: string}[]	= [];
 
 	/** @inheritDoc */
 	public hide () : void {
@@ -29,14 +29,14 @@ export class Cyphertext extends BaseButtonManager implements ICyphertext {
 			this.elements.everything().removeClass(Cyphertext.curtainClass);
 
 			(async () => {
-				await Util.sleep(2000);
+				await util.sleep(2000);
 
 				this.dialogManager.toast({
-					content: Strings.cypherToast3,
+					content: strings.cypherToast3,
 					delay: 1000
 				});
 
-				await Util.sleep(2000);
+				await util.sleep(2000);
 
 				/* Workaround for Angular Material bug */
 				$('md-toast:visible').remove();
@@ -64,18 +64,18 @@ export class Cyphertext extends BaseButtonManager implements ICyphertext {
 				this.showLock	= true;
 
 				await this.dialogManager.toast({
-					content: Strings.cypherToast1,
+					content: strings.cypherToast1,
 					delay: 2000
 				});
 
 				await this.dialogManager.toast({
-					content: Strings.cypherToast2,
+					content: strings.cypherToast2,
 					delay: 3000
 				});
 
 				this.elements.everything().addClass(Cyphertext.curtainClass);
 
-				Analytics.send({
+				analytics.send({
 					eventAction: 'show',
 					eventCategory: 'cyphertext',
 					eventValue: 1,
@@ -102,13 +102,13 @@ export class Cyphertext extends BaseButtonManager implements ICyphertext {
 		super(mobileMenu);
 
 		/* Close cyphertext on esc */
-		Elements.window().keyup(e => {
+		cyphElements.window().keyup(e => {
 			if (e.keyCode === 27) {
 				this.hide();
 			}
 		});
 
-		session.on(Events.cyphertext, (o: {cyphertext: string; author: string}) =>
+		session.on(events.cyphertext, (o: {cyphertext: string; author: string}) =>
 			this.log(o.cyphertext, o.author)
 		);
 	}

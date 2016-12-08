@@ -1,5 +1,5 @@
-import {Env} from './env';
-import {EventManager} from './eventmanager';
+import {env} from './env';
+import {eventManager} from './eventmanager';
 
 
 /**
@@ -7,10 +7,14 @@ import {EventManager} from './eventmanager';
  */
 export class UrlState {
 	/** @ignore */
-	private static readonly urlStateChangeEvent	= 'urlStateChangeEvent';
+	private static readonly setThreadEvent: string		= 'setThreadEvent';
+
+	/** @ignore */
+	private static readonly urlStateChangeEvent: string	= 'urlStateChangeEvent';
+
 
 	/** Generic/non-site-specific URL states. */
-	public static readonly states	= {
+	public readonly states	= {
 		notFound: '404'
 	};
 
@@ -18,7 +22,7 @@ export class UrlState {
 	 * Gets URL fragment or (if none exists) path without leading slash.
 	 * @param fragmentOnly If true, will only return fragment or empty string.
 	 */
-	public static get (fragmentOnly?: boolean) : string {
+	public get (fragmentOnly?: boolean) : string {
 		try {
 			const fragment: string	= locationData.hash.split('#')[1] || '';
 
@@ -36,16 +40,16 @@ export class UrlState {
 	/**
 	 * Gets URL fragment and splits with delimiter '/'.
 	 */
-	public static getSplit () : string[] {
-		return UrlState.get(true).split('/');
+	public getSplit () : string[] {
+		return this.get(true).split('/');
 	}
 
 	/**
 	 * Sets handler to run when URL changes.
 	 * @param handler
 	 */
-	public static onchange (handler: (urlState: string) => void) : void {
-		EventManager.on(UrlState.urlStateChangeEvent, () => handler(UrlState.get()));
+	public onchange (handler: (newUrlState: string) => void) : void {
+		eventManager.on(UrlState.urlStateChangeEvent, () => handler(this.get()));
 	}
 
 	/**
@@ -55,13 +59,13 @@ export class UrlState {
 	 * @param shouldNotTrigger If true, UrlState.onchange is not triggered.
 	 * @param redirectFallback If true, uses redirect-based history polyfill.
 	 */
-	public static set (
+	public set (
 		path: string,
 		shouldReplace?: boolean,
 		shouldNotTrigger?: boolean,
 		redirectFallback: boolean = true
 	) : void {
-		if (Env.isMainThread) {
+		if (env.isMainThread) {
 			for (let c of ['/', '#']) {
 				if (path[0] === c) {
 					path	= path.substring(1);
@@ -69,7 +73,7 @@ export class UrlState {
 			}
 
 			/* Force fragment-based paths when not on home site */
-			if (!Env.isHomeSite && path.length > 0) {
+			if (!env.isHomeSite && path.length > 0) {
 				path	= '#' + path;
 			}
 
@@ -85,7 +89,7 @@ export class UrlState {
 				}
 
 				if (!shouldNotTrigger) {
-					UrlState.trigger();
+					this.trigger();
 				}
 			}
 			else if (redirectFallback) {
@@ -98,25 +102,41 @@ export class UrlState {
 			}
 		}
 		else {
-			EventManager.callMainThread('cyph.UrlState.set', [
+			eventManager.trigger(UrlState.setThreadEvent, {
 				path,
-				shouldReplace,
+				redirectFallback,
 				shouldNotTrigger,
-				redirectFallback
-			]);
+				shouldReplace
+			});
 		}
 	}
 
 	/**
 	 * Triggers UrlState.onchange.
 	 */
-	public static trigger () : void {
-		EventManager.trigger(UrlState.urlStateChangeEvent);
+	public trigger () : void {
+		eventManager.trigger(UrlState.urlStateChangeEvent);
 	}
 
-	/** @ignore */
-	/* tslint:disable-next-line:member-ordering */
-	public static readonly _	= (() => {
-		self.onpopstate	= () => EventManager.trigger(UrlState.urlStateChangeEvent);
-	})();
+	constructor () {
+		if (env.isMainThread) {
+			eventManager.on(UrlState.setThreadEvent, (o: {
+				path: string;
+				redirectFallback?: boolean;
+				shouldNotTrigger?: boolean;
+				shouldReplace?: boolean;
+			}) => this.set(
+				o.path,
+				o.shouldReplace,
+				o.shouldNotTrigger,
+				o.redirectFallback
+			));
+		}
+		else {
+			self.onpopstate	= () => eventManager.trigger(UrlState.urlStateChangeEvent);
+		}
+	}
 }
+
+/** @see UrlState */
+export const urlState	= new UrlState();

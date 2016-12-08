@@ -1,5 +1,5 @@
-import {Config} from '../../config';
-import {Util} from '../../util';
+import {config} from '../../config';
+import {util} from '../../util';
 import {Potassium} from '../potassium';
 import {Core} from './core';
 import {ILocalUser} from './ilocaluser';
@@ -67,8 +67,8 @@ export class PairwiseSession {
 			keyPair
 		);
 
-		Potassium.clearMemory(keyPair.privateKey);
-		Potassium.clearMemory(keyPair.publicKey);
+		this.potassium.clearMemory(keyPair.privateKey);
+		this.potassium.clearMemory(keyPair.publicKey);
 
 		this.localUser	= null;
 
@@ -84,7 +84,7 @@ export class PairwiseSession {
 			remotePublicKey
 		);
 
-		Potassium.clearMemory(remotePublicKey);
+		this.potassium.clearMemory(remotePublicKey);
 
 		this.remoteUser	= null;
 
@@ -109,7 +109,7 @@ export class PairwiseSession {
 
 		try {
 			const cyphertextBytes: Uint8Array	=
-				Potassium.fromBase64(cyphertext)
+				this.potassium.fromBase64(cyphertext)
 			;
 
 			if (this.transport.cyphertextIntercepters.length > 0) {
@@ -138,7 +138,7 @@ export class PairwiseSession {
 			return;
 		}
 
-		Util.lock(this.receiveLock, async () => {
+		util.lock(this.receiveLock, async () => {
 			while (
 				this.incomingMessageId <= this.incomingMessagesMax &&
 				this.incomingMessages[this.incomingMessageId]
@@ -157,13 +157,13 @@ export class PairwiseSession {
 
 							/* Part 2 of handshake for Alice */
 							if (this.localUser) {
-								const oldPlaintext	= Potassium.toBytes(plaintext);
+								const oldPlaintext	= this.potassium.toBytes(plaintext);
 
 								plaintext	= new DataView((
 									await this.handshakeOpenSecret(oldPlaintext)
 								).buffer);
 
-								Potassium.clearMemory(oldPlaintext);
+								this.potassium.clearMemory(oldPlaintext);
 							}
 
 							/* Completion of handshake for Bob */
@@ -186,7 +186,7 @@ export class PairwiseSession {
 						}
 					}
 
-					Potassium.clearMemory(cyphertextBytes);
+					this.potassium.clearMemory(cyphertextBytes);
 				}
 
 				this.incomingMessages[this.incomingMessageId]	= null;
@@ -207,16 +207,16 @@ export class PairwiseSession {
 	 */
 	public async send (
 		plaintext: string,
-		timestamp: number = Util.timestamp()
+		timestamp: number = util.timestamp()
 	) : Promise<void> {
 		if (this.isAborted || !this.core) {
 			return;
 		}
 
-		const plaintextBytes: Uint8Array	= Potassium.fromString(plaintext);
+		const plaintextBytes: Uint8Array	= this.potassium.fromString(plaintext);
 
 		const id: Float64Array				= new Float64Array([
-			Util.random(Config.maxSafeUint)
+			util.random(config.maxSafeUint)
 		]);
 
 		const timestampBytes: Float64Array	= new Float64Array([
@@ -245,7 +245,7 @@ export class PairwiseSession {
 				)
 			);
 
-			let data: Uint8Array	= Potassium.concatMemory(
+			let data: Uint8Array	= this.potassium.concatMemory(
 				false,
 				id,
 				timestampBytes,
@@ -259,25 +259,25 @@ export class PairwiseSession {
 			if (this.remoteUser) {
 				const oldData	= data;
 				data			= await this.handshakeSendSecret(oldData);
-				Potassium.clearMemory(oldData);
+				this.potassium.clearMemory(oldData);
 			}
 
 			const messageId		= this.newMessageId();
 			const cyphertext	= await this.core.encrypt(data, messageId);
 
-			Potassium.clearMemory(data);
+			this.potassium.clearMemory(data);
 
 			this.transport.send(cyphertext, messageId);
 
 			i[0] += Transport.chunkLength;
 		}
 
-		Potassium.clearMemory(plaintextBytes);
-		Potassium.clearMemory(id);
-		Potassium.clearMemory(timestampBytes);
-		Potassium.clearMemory(numBytes);
-		Potassium.clearMemory(numChunks);
-		Potassium.clearMemory(i);
+		this.potassium.clearMemory(plaintextBytes);
+		this.potassium.clearMemory(id);
+		this.potassium.clearMemory(timestampBytes);
+		this.potassium.clearMemory(numBytes);
+		this.potassium.clearMemory(numChunks);
+		this.potassium.clearMemory(i);
 	}
 
 	constructor (
@@ -302,7 +302,7 @@ export class PairwiseSession {
 
 			let secret: Uint8Array;
 			if (isAlice) {
-				secret	= Potassium.randomBytes(
+				secret	= this.potassium.randomBytes(
 					potassium.ephemeralKeyExchange.secretBytes
 				);
 

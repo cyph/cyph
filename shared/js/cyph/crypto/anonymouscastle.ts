@@ -1,6 +1,6 @@
-import {State} from '../session/enums';
+import {state} from '../session/enums';
 import {ISession} from '../session/isession';
-import {Util} from '../util';
+import {util} from '../util';
 import {AnonymousLocalUser} from './castle/anonymouslocaluser';
 import {AnonymousRemoteUser} from './castle/anonymousremoteuser';
 import {PairwiseSession} from './castle/pairwisesession';
@@ -24,7 +24,7 @@ export class AnonymousCastle implements ICastle {
 	/** @inheritDoc */
 	public async send (
 		plaintext: string,
-		timestamp: number = Util.timestamp()
+		timestamp: number = util.timestamp()
 	) : Promise<void> {
 		return this.pairwiseSession.send(plaintext, timestamp);
 	}
@@ -45,7 +45,7 @@ export class AnonymousCastle implements ICastle {
 			session.state.sharedSecret
 		);
 
-		session.updateState(State.sharedSecret, '');
+		session.updateState(state.sharedSecret, '');
 
 		this.pairwiseSession	= new PairwiseSession(
 			potassium,

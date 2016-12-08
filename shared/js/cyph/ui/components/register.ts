@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {Util} from '../../util';
+import {Env, env} from '../../env';
 import {ISignupForm} from '../isignupform';
 
 
@@ -18,13 +18,7 @@ export class Register {
 	@Input() public invite: boolean;
 
 	/** @ignore */
-	public cyph: any;
+	public env: Env	= env;
 
-	constructor () { (async () => {
-		while (!cyph) {
-			await Util.sleep();
-		}
-
-		this.cyph	= cyph;
-	})(); }
+	constructor () {}
 }

@@ -1,7 +1,7 @@
-import {CastleEvents, Events, Users} from '../session/enums';
+import {CastleEvents, events, users} from '../session/enums';
 import {ISession} from '../session/isession';
-import {Strings} from '../strings';
-import {Util} from '../util';
+import {strings} from '../strings';
+import {util} from '../util';
 import {ICastle} from './icastle';
 
 
@@ -13,15 +13,15 @@ export class FakeCastle implements ICastle {
 	private static readonly delimiter: string		= '☁☁☁ PRAISE BE TO CYPH ☀☀☀';
 
 	/** @ignore */
-	private static readonly remoteUsername: string	= Strings.friend;
+	private static readonly remoteUsername: string	= strings.friend;
 
 	/** @ignore */
 	private static generateCyphertext () : string {
 		let cyphertext			= '';
-		const length: number	= Util.random(1024, 100);
+		const length: number	= util.random(1024, 100);
 
 		for (let i = 0 ; i < length ; ++i) {
-			cyphertext += String.fromCharCode(Util.random(123, 48));
+			cyphertext += String.fromCharCode(util.random(123, 48));
 		}
 
 		try {
@@ -39,16 +39,16 @@ export class FakeCastle implements ICastle {
 			cyphertext.split(FakeCastle.delimiter)
 		;
 
-		this.session.trigger(Events.cyphertext, {
+		this.session.trigger(events.cyphertext, {
 			author: FakeCastle.remoteUsername,
 			cyphertext: cyphertextSplit[0]
 		});
 
-		this.session.trigger(Events.castle, {
+		this.session.trigger(events.castle, {
 			data: {
 				author: FakeCastle.remoteUsername,
 				plaintext: cyphertextSplit[1],
-				timestamp: Util.timestamp()
+				timestamp: util.timestamp()
 			},
 			event: CastleEvents.receive
 		});
@@ -58,12 +58,12 @@ export class FakeCastle implements ICastle {
 	public async send (plaintext: string) : Promise<void> {
 		const cyphertext: string	= FakeCastle.generateCyphertext();
 
-		this.session.trigger(Events.cyphertext, {
+		this.session.trigger(events.cyphertext, {
 			cyphertext,
-			author: Users.me
+			author: users.me
 		});
 
-		this.session.trigger(Events.castle, {
+		this.session.trigger(events.castle, {
 			data: cyphertext + FakeCastle.delimiter + plaintext,
 			event: CastleEvents.send
 		});
@@ -74,7 +74,7 @@ export class FakeCastle implements ICastle {
 		private readonly session: ISession
 	) {
 		setTimeout(
-			() => this.session.trigger(Events.castle, {event: CastleEvents.connect}),
+			() => this.session.trigger(events.castle, {event: CastleEvents.connect}),
 			1000
 		);
 	}

@@ -1,4 +1,4 @@
-import {Util} from '../util';
+import {util} from '../util';
 import {ISidebar} from './isidebar';
 
 
@@ -14,10 +14,10 @@ export class BaseButtonManager {
 	 * Base logic shared by every button click (e.g. close sidenav).
 	 */
 	public async baseButtonClick (callback: Function) : Promise<void> {
-		return Util.lock(
+		return util.lock(
 			BaseButtonManager.buttonLock,
 			async () => {
-				await Util.sleep();
+				await util.sleep();
 				this.mobileMenu().close();
 
 				if (callback) {
@@ -33,7 +33,7 @@ export class BaseButtonManager {
 	 * Opens mobile sidenav menu.
 	 */
 	public async openMobileMenu () : Promise<void> {
-		await Util.sleep();
+		await util.sleep();
 		this.mobileMenu().open();
 	}
 

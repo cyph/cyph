@@ -1,4 +1,4 @@
-<div *ngIf='cyph && self'>
+<div *ngIf='self'>
 	<form (submit)='send()' *ngIf='!self.sent'>
 		<div class='layout-gt-xs-row'>
 			<md2-select
@@ -10,7 +10,7 @@
 				label='Cyph team to contact'
 			>
 				<md2-option
-					*ngFor='let address of cyph.Config.cyphEmailAddresses'
+					*ngFor='let address of config.cyphEmailAddresses'
 					[value]='address'
 				>
 					{{address}}

@@ -1,5 +1,6 @@
-import {Component} from '@angular/core';
-import {Util} from '../../util';
+import {Component, Input} from '@angular/core';
+import {Env, env} from '../../env';
+import {IChat} from '../chat/ichat';
 
 
 /**
@@ -11,17 +12,13 @@ import {Util} from '../../util';
 })
 export class StaticFooter {
 	/** @ignore */
-	public cyph: any;
+	@Input() public chat: IChat;
 
 	/** @ignore */
-	public ui: any;
+	public coBranded: boolean	= coBranded;
 
-	constructor () { (async () => {
-		while (!cyph || !ui) {
-			await Util.sleep();
-		}
+	/** @ignore */
+	public env: Env				= env;
 
-		this.cyph	= cyph;
-		this.ui		= ui;
-	})(); }
+	constructor () {}
 }

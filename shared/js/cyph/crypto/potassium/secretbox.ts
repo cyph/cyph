@@ -1,6 +1,6 @@
-import {Lib} from './lib';
+import {lib} from './lib';
 import * as NativeCrypto from './nativecrypto';
-import {Util} from './util';
+import {util} from './util';
 
 
 /** Equivalent to sodium.crypto_secretbox. */
@@ -21,40 +21,69 @@ export class SecretBox {
 			additionalData?: Uint8Array
 		) => Promise<Uint8Array>;
 	}	= {
-		nonceBytes: Lib.sodium.crypto_aead_chacha20poly1305_NPUBBYTES,
+		nonceBytes:
+			this.isNative ?
+				NativeCrypto.secretBox.nonceBytes :
+				lib.sodium.crypto_aead_chacha20poly1305_NPUBBYTES
+		,
 
 		open: async (
 			cyphertext: Uint8Array,
 			nonce: Uint8Array,
 			key: Uint8Array,
 			additionalData?: Uint8Array
-		) : Promise<Uint8Array> => Lib.sodium.crypto_aead_chacha20poly1305_decrypt(
-			null,
-			cyphertext,
-			additionalData,
-			nonce,
-			key
-		),
+		) : Promise<Uint8Array> =>
+			this.isNative ?
+				NativeCrypto.secretBox.open(
+					cyphertext,
+					nonce,
+					key,
+					additionalData
+				) :
+				lib.sodium.crypto_aead_chacha20poly1305_decrypt(
+					null,
+					cyphertext,
+					additionalData,
+					nonce,
+					key
+				)
+		,
 
 		seal: async (
 			plaintext: Uint8Array,
 			nonce: Uint8Array,
 			key: Uint8Array,
 			additionalData?: Uint8Array
-		) : Promise<Uint8Array> => Lib.sodium.crypto_aead_chacha20poly1305_encrypt(
-			plaintext,
-			additionalData,
-			null,
-			nonce,
-			key
-		)
+		) : Promise<Uint8Array> =>
+			this.isNative ?
+				NativeCrypto.secretBox.seal(
+					plaintext,
+					nonce,
+					key,
+					additionalData
+				) :
+				lib.sodium.crypto_aead_chacha20poly1305_encrypt(
+					plaintext,
+					additionalData,
+					null,
+					nonce,
+					key
+				)
 	};
 
 	/** Additional data length. */
-	public readonly aeadBytes: number	= Lib.sodium.crypto_aead_chacha20poly1305_ABYTES;
+	public readonly aeadBytes: number	=
+		this.isNative ?
+			NativeCrypto.secretBox.aeadBytes :
+			lib.sodium.crypto_aead_chacha20poly1305_ABYTES
+	;
 
 	/** Key length. */
-	public readonly keyBytes: number	= Lib.sodium.crypto_aead_chacha20poly1305_KEYBYTES;
+	public readonly keyBytes: number	=
+		this.isNative ?
+			NativeCrypto.secretBox.keyBytes :
+			lib.sodium.crypto_aead_chacha20poly1305_KEYBYTES
+	;
 
 	/** @ignore */
 	private getAdditionalData (input?: Uint8Array) : Uint8Array {
@@ -81,12 +110,12 @@ export class SecretBox {
 			throw new Error('Invalid key.');
 		}
 
-		const paddingLength: number			= Util.randomBytes(1)[0];
+		const paddingLength: number			= util.randomBytes(1)[0];
 
-		const paddedPlaintext: Uint8Array	= Util.concatMemory(
+		const paddedPlaintext: Uint8Array	= util.concatMemory(
 			false,
 			new Uint8Array([paddingLength]),
-			Util.randomBytes(paddingLength),
+			util.randomBytes(paddingLength),
 			plaintext
 		);
 
@@ -108,10 +137,10 @@ export class SecretBox {
 				this.getAdditionalData(additionalData)
 			);
 
-			Util.clearMemory(dataToEncrypt);
+			util.clearMemory(dataToEncrypt);
 		}
 
-		return Util.concatMemory(
+		return util.concatMemory(
 			true,
 			nonce,
 			symmetricCyphertext
@@ -162,7 +191,7 @@ export class SecretBox {
 					this.getAdditionalData(additionalData)
 				);
 
-				Util.clearMemory(dataToDecrypt);
+				util.clearMemory(dataToDecrypt);
 			}
 
 			const plaintext: Uint8Array			= new Uint8Array(new Uint8Array(
@@ -170,28 +199,21 @@ export class SecretBox {
 				1 + new Uint8Array(paddedPlaintext.buffer, 0, 1)[0]
 			));
 
-			Util.clearMemory(paddedPlaintext);
-			Util.clearMemory(cyphertext);
+			util.clearMemory(paddedPlaintext);
+			util.clearMemory(cyphertext);
 
 			return plaintext;
 		}
 		finally {
-			Util.clearMemory(cyphertext);
+			util.clearMemory(cyphertext);
 		}
 	}
 
 	constructor (
-		isNative: boolean,
+		/** @ignore */
+		private readonly isNative: boolean,
 
 		/** @ignore */
 		private readonly newNonce: (size: number) => Uint8Array
-	) {
-		if (isNative) {
-			this.helpers.nonceBytes	= NativeCrypto.SecretBox.nonceBytes;
-			this.aeadBytes			= NativeCrypto.SecretBox.aeadBytes;
-			this.keyBytes			= NativeCrypto.SecretBox.keyBytes;
-			this.helpers.seal		= NativeCrypto.SecretBox.seal;
-			this.helpers.open		= NativeCrypto.SecretBox.open;
-		}
-	}
+	) {}
 }

@@ -1,75 +1,91 @@
-import * as Cyph from '../cyph';
+import {config} from '../cyph/config';
+import {env} from '../cyph/env';
+import {P2P} from '../cyph/p2p/p2p';
+import {events} from '../cyph/session/enums';
+import {strings} from '../cyph/strings';
+import {BaseButtonManager} from '../cyph/ui/basebuttonmanager';
+import * as Chat from '../cyph/ui/chat';
+import {elements} from '../cyph/ui/elements';
+import {IDialogManager} from '../cyph/ui/idialogmanager';
+import {ILinkConnection} from '../cyph/ui/ilinkconnection';
+import {INotifier} from '../cyph/ui/inotifier';
+import {ISignupForm} from '../cyph/ui/isignupform';
+import {LinkConnection} from '../cyph/ui/linkconnection';
+import {SignupForm} from '../cyph/ui/signupform';
+import {urlState} from '../cyph/urlstate';
+import {util} from '../cyph/util';
 import {BetaStates, States, urlSections} from './enums';
 
 
 /**
  * Controls the entire cyph.im UI.
  */
-export class UI extends Cyph.UI.BaseButtonManager {
+export class UI extends BaseButtonManager {
+	/** Initialisation event. */
+	public static readonly uiInitEvent: string	= 'uiInitEvent';
+
+
 	/** UI state/view. */
 	public state: States			= States.none;
 
 	/** Beta page state/view. */
 	public betaState: BetaStates	= BetaStates.none;
 
-	/** Indicates whether this is a co-branded instance of Cyph. */
-	public readonly coBranded: boolean		= !!customBuild;
-
 	/** Chat UI. */
-	public chat: Cyph.UI.Chat.IChat;
+	public chat: Chat.IChat;
 
 	/** The link connection to join this cyph. */
-	public cyphConnection: Cyph.UI.ILinkConnection;
+	public cyphConnection: ILinkConnection;
 
 	/** Signup form to be displayed at the end of a cyph. */
-	public signupForm: Cyph.UI.ISignupForm;
+	public signupForm: ISignupForm;
 
 	/** @ignore */
-	private onUrlStateChange (urlState: string) : void {
-		if (urlState === urlSections.root) {
+	private onUrlStateChange (newUrlState: string) : void {
+		if (newUrlState === urlSections.root) {
 			return;
 		}
 
-		const urlStateSplit: string[]	= urlState.split('/');
+		const newUrlStateSplit: string[]	= newUrlState.split('/');
 
-		if (urlStateSplit[0] === urlSections.beta) {
-			this.betaState	= (<any> BetaStates)[urlStateSplit[1]];
+		if (newUrlStateSplit[0] === urlSections.beta) {
+			this.betaState	= (<any> BetaStates)[newUrlStateSplit[1]];
 			this.changeState(States.beta);
 		}
-		else if (urlState === Cyph.UrlState.states.notFound) {
+		else if (newUrlState === urlState.states.notFound) {
 			this.changeState(States.error);
 		}
 		else {
-			Cyph.UrlState.set(Cyph.UrlState.states.notFound);
+			urlState.set(urlState.states.notFound);
 			return;
 		}
 
-		Cyph.UrlState.set(urlState, true, true);
+		urlState.set(newUrlState, true, true);
 	}
 
 	/** @ignore */
 	private async startChat (initialCallType?: string) : Promise<void> {
-		let baseUrl: string	= Cyph.Env.newCyphBaseUrl;
+		let baseUrl: string	= env.newCyphBaseUrl;
 
 		if (initialCallType) {
-			const urlState: string	= Cyph.UrlState.get(true);
-			if (urlState.split('/').slice(-1)[0] === initialCallType) {
-				Cyph.UrlState.set(urlState + '/', true, true);
+			const newUrlState: string	= urlState.get(true);
+			if (newUrlState.split('/').slice(-1)[0] === initialCallType) {
+				urlState.set(newUrlState + '/', true, true);
 			}
 
 			baseUrl	= initialCallType === urlSections.video ?
-				Cyph.Env.cyphVideoBaseUrl :
-				Cyph.Env.cyphAudioBaseUrl
+				env.cyphVideoBaseUrl :
+				env.cyphAudioBaseUrl
 			;
 
 			/* If unsupported, warn and then close window */
-			if (!Cyph.P2P.P2P.isSupported) {
+			if (!P2P.isSupported) {
 				this.changeState(States.blank);
 
 				await this.dialogManager.alert({
-					content: Cyph.Strings.p2pDisabledLocal,
-					ok: Cyph.Strings.ok,
-					title: Cyph.Strings.p2pTitle
+					content: strings.p2pDisabledLocal,
+					ok: strings.ok,
+					title: strings.p2pTitle
 				});
 
 				self.close();
@@ -79,20 +95,20 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		}
 
 
-		this.chat			= new Cyph.UI.Chat.Chat(
+		this.chat			= new Chat.Chat(
 			this.dialogManager,
 			this.mobileMenu,
 			this.notifier,
 			true
 		);
 
-		this.cyphConnection	= new Cyph.UI.LinkConnection(
-			Cyph.Config.cyphCountdown,
+		this.cyphConnection	= new LinkConnection(
+			config.cyphCountdown,
 			this.chat,
 			this.dialogManager
 		);
 
-		this.signupForm		= new Cyph.UI.SignupForm();
+		this.signupForm		= new SignupForm();
 
 
 		if (initialCallType) {
@@ -100,24 +116,24 @@ export class UI extends Cyph.UI.BaseButtonManager {
 		}
 
 
-		this.chat.session.on(Cyph.Session.Events.abort, () => {
+		this.chat.session.on(events.abort, () => {
 			self.onbeforeunload	= null;
 			this.changeState(States.chat);
 		});
 
-		this.chat.session.on(Cyph.Session.Events.beginChatComplete, () => {
-			self.onbeforeunload	= () => Cyph.Strings.disconnectWarning;
+		this.chat.session.on(events.beginChatComplete, () => {
+			self.onbeforeunload	= () => strings.disconnectWarning;
 
 			if (initialCallType && this.chat.session.state.isAlice) {
 				this.chat.p2pManager.p2p.request(initialCallType);
 			}
 		});
 
-		this.chat.session.on(Cyph.Session.Events.beginWaiting, () =>
+		this.chat.session.on(events.beginWaiting, () =>
 			this.beginWaiting(baseUrl)
 		);
 
-		this.chat.session.on(Cyph.Session.Events.connect, () => {
+		this.chat.session.on(events.connect, () => {
 			this.changeState(States.chat);
 
 			if (this.cyphConnection) {
@@ -127,8 +143,8 @@ export class UI extends Cyph.UI.BaseButtonManager {
 			if (initialCallType) {
 				this.dialogManager.toast({
 					content: initialCallType === urlSections.video ?
-						Cyph.Strings.p2pWarningVideoPassive :
-						Cyph.Strings.p2pWarningAudioPassive
+						strings.p2pWarningVideoPassive :
+						strings.p2pWarningAudioPassive
 					,
 					delay: 5000
 				});
@@ -159,23 +175,23 @@ export class UI extends Cyph.UI.BaseButtonManager {
 
 	constructor (
 		/** @ignore */
-		private readonly dialogManager: Cyph.UI.IDialogManager,
+		private readonly dialogManager: IDialogManager,
 
 		/** @ignore */
-		private readonly notifier: Cyph.UI.INotifier
+		private readonly notifier: INotifier
 	) {
 		super();
 
-		Cyph.UrlState.onchange(urlState => this.onUrlStateChange(urlState));
+		urlState.onchange(newUrlState => this.onUrlStateChange(newUrlState));
 
 		self.onhashchange	= () => location.reload();
 		self.onpopstate		= null;
 
 
-		const urlSection: string	= Cyph.UrlState.getSplit()[0];
+		const urlSection: string	= urlState.getSplit()[0];
 
 		if (urlSection === urlSections.beta) {
-			Cyph.UrlState.trigger();
+			urlState.trigger();
 		}
 		else {
 			this.startChat(
@@ -187,21 +203,21 @@ export class UI extends Cyph.UI.BaseButtonManager {
 
 		(async () => {
 			while (this.state === States.none) {
-				await Cyph.Util.sleep();
+				await util.sleep();
 			}
 
-			await Cyph.Util.sleep();
+			await util.sleep();
 
-			Cyph.UI.Elements.html().addClass('load-complete');
+			elements.html().addClass('load-complete');
 		})();
 
 
 		/* Cyphertext easter egg */
 		/* tslint:disable-next-line:no-unused-new */
-		new (<any> self).Konami(() => Cyph.Util.retryUntilComplete(retry => {
+		new (<any> self).Konami(() => util.retryUntilComplete(retry => {
 			if (
 				this.chat &&
-				this.chat.state === Cyph.UI.Chat.States.chat
+				this.chat.state === Chat.States.chat
 			) {
 				this.chat.cyphertext.show();
 			}

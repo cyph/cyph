@@ -1,17 +1,17 @@
-import {Analytics} from '../analytics';
+import {analytics} from '../analytics';
 import {Channel} from '../channel/channel';
 import {IChannel} from '../channel/ichannel';
 import {LocalChannel} from '../channel/localchannel';
-import {Config} from '../config';
+import {config} from '../config';
 import {AnonymousCastle} from '../crypto/anonymouscastle';
 import {FakeCastle} from '../crypto/fakecastle';
 import {ICastle} from '../crypto/icastle';
-import {Env} from '../env';
-import {Errors} from '../errors';
-import {EventManager} from '../eventmanager';
-import {UrlState} from '../urlstate';
-import {Util} from '../util';
-import {CastleEvents, Events, rpcEvents, State, threadedSessionEvents} from './enums';
+import {env} from '../env';
+import {errors} from '../errors';
+import {eventManager} from '../eventmanager';
+import {urlState} from '../urlstate';
+import {util} from '../util';
+import {CastleEvents, events, rpcEvents, state, threadedSessionEvents} from './enums';
 import {IMessage} from './imessage';
 import {ISession} from './isession';
 import {Message} from './message';
@@ -28,10 +28,10 @@ export class Session implements ISession {
 	private readonly sendQueue: string[]						= [];
 
 	/** @ignore */
-	private lastIncomingMessageTimestamp: number				= Util.timestamp();
+	private lastIncomingMessageTimestamp: number				= util.timestamp();
 
 	/** @ignore */
-	private lastOutgoingMessageTimestamp: number				= Util.timestamp();
+	private lastOutgoingMessageTimestamp: number				= util.timestamp();
 
 	/** @ignore */
 	private pingPongTimeouts: number							= 0;
@@ -59,16 +59,16 @@ export class Session implements ISession {
 	private castleHandler (e: {event: CastleEvents; data?: any}) : void {
 		switch (e.event) {
 			case CastleEvents.abort: {
-				Errors.logAuthFail();
-				this.trigger(Events.connectFailure);
+				errors.logAuthFail();
+				this.trigger(events.connectFailure);
 				break;
 			}
 			case CastleEvents.connect: {
-				this.trigger(Events.beginChat);
+				this.trigger(events.beginChat);
 				break;
 			}
 			case CastleEvents.receive: {
-				this.lastIncomingMessageTimestamp	= Util.timestamp();
+				this.lastIncomingMessageTimestamp	= util.timestamp();
 
 				if (e.data) {
 					const messages: IMessage[]	= (() => {
@@ -132,15 +132,15 @@ export class Session implements ISession {
 		let nextPing	= 0;
 
 		while (this.state.isAlive) {
-			await Util.sleep(1000);
+			await util.sleep(1000);
 
-			const now	= Util.timestamp();
+			const now	= util.timestamp();
 
 			if (now - this.lastIncomingMessageTimestamp > 180000) {
 				if (this.pingPongTimeouts++ < 2) {
-					this.lastIncomingMessageTimestamp	= Util.timestamp();
+					this.lastIncomingMessageTimestamp	= util.timestamp();
 
-					Analytics.send({
+					analytics.send({
 						eventAction: 'detected',
 						eventCategory: 'ping-pong-timeout',
 						eventValue: 1,
@@ -152,7 +152,7 @@ export class Session implements ISession {
 			if (now > nextPing) {
 				this.send(new Message());
 
-				nextPing	= now + Util.random(90000, 30000);
+				nextPing	= now + util.random(90000, 30000);
 			}
 		}
 	}
@@ -170,13 +170,13 @@ export class Session implements ISession {
 
 	/** @ignore */
 	private sendHandler (messages: string[]) : void {
-		this.lastOutgoingMessageTimestamp	= Util.timestamp();
+		this.lastOutgoingMessageTimestamp	= util.timestamp();
 
 		for (let message of messages) {
 			this.channel.send(message);
 		}
 
-		Analytics.send({
+		analytics.send({
 			eventAction: 'sent',
 			eventCategory: 'message',
 			eventValue: messages.length,
@@ -191,26 +191,26 @@ export class Session implements ISession {
 			!descriptor ||
 
 			/* Too short */
-			descriptor.length < Config.secretLength ||
+			descriptor.length < config.secretLength ||
 
 			/* Contains invalid character(s) */
 			!descriptor.split('').reduce(
 				(isValid: boolean, c: string) : boolean =>
-					isValid && Config.guidAddressSpace.indexOf(c) > -1
+					isValid && config.guidAddressSpace.indexOf(c) > -1
 				,
 				true
 			)
 		) {
-			descriptor	= Util.generateGuid(Config.secretLength);
+			descriptor	= util.generateGuid(config.secretLength);
 		}
 
 		this.updateState(
-			State.cyphId,
-			descriptor.substr(0, Config.cyphIdLength)
+			state.cyphId,
+			descriptor.substr(0, config.cyphIdLength)
 		);
 
 		this.updateState(
-			State.sharedSecret,
+			state.sharedSecret,
 			this.state.sharedSecret || descriptor
 		);
 	}
@@ -227,22 +227,22 @@ export class Session implements ISession {
 
 		const handlers	= {
 			onclose: () => {
-				this.updateState(State.isAlive, false);
+				this.updateState(state.isAlive, false);
 
 				if (!this.isLocalSession) {
 					/* If aborting before the cyph begins,
 						block friend from trying to join */
-					Util.request({
+					util.request({
 						discardErrors: true,
 						method: 'POST',
-						url: Env.baseUrl + 'channels/' + this.state.cyphId
+						url: env.baseUrl + 'channels/' + this.state.cyphId
 					});
 				}
 
-				this.trigger(Events.closeChat);
+				this.trigger(events.closeChat);
 			},
 			onconnect: () => {
-				this.trigger(Events.connect);
+				this.trigger(events.connect);
 
 				if (this.isLocalSession) {
 					this.castle	= new FakeCastle(this);
@@ -253,15 +253,15 @@ export class Session implements ISession {
 			},
 			onmessage: (message: string) => this.receive(message),
 			onopen: async (isAlice: boolean) : Promise<void> => {
-				this.updateState(State.isAlice, isAlice);
+				this.updateState(state.isAlice, isAlice);
 
 				if (this.state.isAlice) {
-					this.trigger(Events.beginWaiting);
+					this.trigger(events.beginWaiting);
 				}
 				else if (!this.isLocalSession) {
 					this.pingPong();
 
-					Analytics.send({
+					analytics.send({
 						eventAction: 'started',
 						eventCategory: 'cyph',
 						eventValue: 1,
@@ -269,7 +269,7 @@ export class Session implements ISession {
 					});
 
 					if (this.state.wasInitiatedByAPI) {
-						Analytics.send({
+						analytics.send({
 							eventAction: 'started',
 							eventCategory: 'api-initiated-cyph',
 							eventValue: 1,
@@ -278,17 +278,17 @@ export class Session implements ISession {
 					}
 				}
 
-				this.on(Events.castle, (e: any) => this.castleHandler(e));
+				this.on(events.castle, (e: any) => this.castleHandler(e));
 
 				if (!this.isLocalSession) {
 					while (this.state.isAlive) {
-						await Util.sleep();
+						await util.sleep();
 
 						if (
 							this.sendQueue.length &&
 							(
 								this.sendQueue.length >= 4 ||
-								(Util.timestamp() - this.lastOutgoingMessageTimestamp) > 500
+								(util.timestamp() - this.lastOutgoingMessageTimestamp) > 500
 							)
 						) {
 							this.sendHandler(this.sendQueue.splice(0, 4));
@@ -314,12 +314,12 @@ export class Session implements ISession {
 
 	/** @inheritDoc */
 	public off<T> (event: string, handler: (data: T) => void) : void {
-		EventManager.off(event + this.id, handler);
+		eventManager.off(event + this.id, handler);
 	}
 
 	/** @inheritDoc */
 	public on<T> (event: string, handler: (data: T) => void) : void {
-		EventManager.on(event + this.id, handler);
+		eventManager.on(event + this.id, handler);
 	}
 
 	/** @inheritDoc */
@@ -358,7 +358,7 @@ export class Session implements ISession {
 
 				return v;
 			}),
-			Util.timestamp()
+			util.timestamp()
 		);
 	}
 
@@ -369,14 +369,14 @@ export class Session implements ISession {
 
 	/** @inheritDoc */
 	public trigger (event: string, data?: any) : void {
-		EventManager.trigger(event + this.id, data);
+		eventManager.trigger(event + this.id, data);
 	}
 
 	/** @inheritDoc */
 	public updateState (key: string, value: any) : void {
 		(<any> this.state)[key]	= value;
 
-		if (!Env.isMainThread) {
+		if (!env.isMainThread) {
 			this.trigger(threadedSessionEvents.updateStateThread, {key, value});
 		}
 	}
@@ -395,22 +395,22 @@ export class Session implements ISession {
 		nativeCrypto: boolean = false,
 
 		/** @ignore */
-		private readonly id: string = Util.generateGuid(),
+		private readonly id: string = util.generateGuid(),
 
 		localChannelCallback?: (localChannel: LocalChannel) => void
 	) { (async () => {
 		/* true = yes; false = no; null = maybe */
 		this.updateState(
-			State.isStartingNewCyph,
+			state.isStartingNewCyph,
 			!descriptor ?
 				true :
-				descriptor.length > Config.secretLength ?
+				descriptor.length > config.secretLength ?
 					null :
 					false
 		);
 
 		this.updateState(
-			State.wasInitiatedByAPI,
+			state.wasInitiatedByAPI,
 			this.state.isStartingNewCyph === null
 		);
 
@@ -418,7 +418,7 @@ export class Session implements ISession {
 
 
 		if (this.state.isStartingNewCyph !== false) {
-			this.trigger(Events.newCyph);
+			this.trigger(events.newCyph);
 		}
 
 		if (localChannelCallback) {
@@ -428,22 +428,22 @@ export class Session implements ISession {
 			const channelDescriptor: string	=
 				this.state.isStartingNewCyph === false ?
 					'' :
-					Util.generateGuid(Config.longSecretLength)
+					util.generateGuid(config.longSecretLength)
 			;
 
 			try {
 				this.setUpChannel(
-					await Util.request({
+					await util.request({
 						data: {channelDescriptor},
 						method: 'POST',
 						retries: 5,
-						url: Env.baseUrl + 'channels/' + this.state.cyphId
+						url: env.baseUrl + 'channels/' + this.state.cyphId
 					}),
 					nativeCrypto
 				);
 			}
 			catch (_) {
-				UrlState.set(UrlState.states.notFound);
+				urlState.set(urlState.states.notFound);
 			}
 		}
 	})(); }

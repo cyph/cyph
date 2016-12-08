@@ -1,6 +1,6 @@
-import {Analytics} from './analytics';
-import {Errors} from './errors';
-import {UrlState} from './urlstate';
+import {Analytics, analytics} from './analytics';
+import {Errors, errors} from './errors';
+import {UrlState, urlState} from './urlstate';
 
 import * as Channel from './channel';
 import * as Crypto from './crypto';
@@ -14,8 +14,11 @@ export * from './base';
 
 export {
 	Analytics,
+	analytics,
 	Errors,
+	errors,
 	UrlState,
+	urlState,
 
 	Channel,
 	Crypto,

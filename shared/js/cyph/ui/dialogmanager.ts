@@ -1,4 +1,4 @@
-import {Util} from '../util';
+import {util} from '../util';
 import {IDialogManager} from './idialogmanager';
 
 
@@ -15,7 +15,7 @@ export class DialogManager implements IDialogManager {
 			ok: string;
 		}
 	) : Promise<void> {
-		Util.lock(this.lock, async () =>
+		util.lock(this.lock, async () =>
 			this.$mdDialog.show(
 				this.$mdDialog.alert().
 					title(o.title).
@@ -35,7 +35,7 @@ export class DialogManager implements IDialogManager {
 		ok: boolean;
 		locals: any;
 	}> {
-		return Util.lock(
+		return util.lock(
 			this.lock,
 			async () => this.$mdDialog.show({
 				clickOutsideToClose: true,
@@ -69,7 +69,7 @@ export class DialogManager implements IDialogManager {
 			timeout?: number;
 		}
 	) : Promise<boolean> {
-		return Util.lock(this.lock, async () => {
+		return util.lock(this.lock, async () => {
 			const promise	= this.$mdDialog.show(
 				this.$mdDialog.confirm().
 					title(o.title).
@@ -108,7 +108,7 @@ export class DialogManager implements IDialogManager {
 			template: `<md-toast><div class='md-toast-content'>${o.content}</div></md-toast>`
 		});
 
-		await Util.sleep(o.delay + 500);
+		await util.sleep(o.delay + 500);
 	}
 
 	constructor (

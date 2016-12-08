@@ -1,83 +1,88 @@
-import * as Cyph from '../cyph';
+import * as CyphElements from '../cyph/ui/elements';
 
 
 /**
- * cyph.com-specific UI elements.
+ * cyph.com-specific UI this.
  */
 export class Elements {
 	/** @see Elements */
-	public static readonly bouncingDownArrow	= Cyph.UI.Elements.get('.bouncing-down-arrow');
+	public readonly bouncingDownArrow	= CyphElements.Elements.get('.bouncing-down-arrow');
 
 	/** @see Elements */
-	public static backgroundVideo				= Cyph.UI.Elements.get(
+	public backgroundVideo				= CyphElements.Elements.get(
 		'.hero-background > :first-child'
 	);
 
 	/** @see Elements */
-	public static readonly contactForm			= Cyph.UI.Elements.get('#contact cyph-contact');
+	public readonly contactForm			= CyphElements.Elements.get('#contact cyph-contact');
 
 	/** @see Elements */
-	public static readonly contentContainers	= Cyph.UI.Elements.get(
+	public readonly contentContainers	= CyphElements.Elements.get(
 		'.section-content-container'
 	);
 
 	/** @see Elements */
-	public static readonly demoRoot				= Cyph.UI.Elements.get('.demo-root');
+	public readonly demoRoot			= CyphElements.Elements.get('.demo-root');
 
 	/** @see Elements */
-	public static readonly demoListDesktop		= Cyph.UI.Elements.get(
+	public readonly demoListDesktop		= CyphElements.Elements.get(
 		'.demo-root > .desktop .message-list md-list'
 	);
 
 	/** @see Elements */
-	public static readonly demoRootDesktop		= Cyph.UI.Elements.get('.demo-root > .desktop');
+	public readonly demoRootDesktop		= CyphElements.Elements.get('.demo-root > .desktop');
 
 	/** @see Elements */
-	public static readonly demoListMobile		= Cyph.UI.Elements.get(
+	public readonly demoListMobile		= CyphElements.Elements.get(
 		'.demo-root > .mobile .message-list md-list'
 	);
 
 	/** @see Elements */
-	public static readonly demoRootMobile		= Cyph.UI.Elements.get('.demo-root > .mobile');
+	public readonly demoRootMobile		= CyphElements.Elements.get('.demo-root > .mobile');
 
 	/** @see Elements */
-	public static readonly featuresSection		= Cyph.UI.Elements.get('#features-section');
+	public readonly featuresSection		= CyphElements.Elements.get('#features-section');
 
 	/** @see Elements */
-	public static readonly fixedHeaderStuff		= Cyph.UI.Elements.get(
-		() => Elements.newCyph().add('#main-toolbar').add(Elements.bouncingDownArrow())
+	public readonly fixedHeaderStuff	= CyphElements.Elements.get(
+		() => this.newCyph().add('#main-toolbar').add(this.bouncingDownArrow())
 	);
 
 	/** @see Elements */
-	public static readonly heroSection			= Cyph.UI.Elements.get('#hero-section');
+	public readonly heroSection			= CyphElements.Elements.get('#hero-section');
 
 	/** @see Elements */
-	public static readonly heroText				= Cyph.UI.Elements.get('#hero-section .hero-text');
+	public readonly heroText			= CyphElements.Elements.get('#hero-section .hero-text');
 
 	/** @see Elements */
-	public static readonly mainToolbar			= Cyph.UI.Elements.get('#main-toolbar');
+	public readonly mainToolbar			= CyphElements.Elements.get('#main-toolbar');
 
 	/** @see Elements */
-	public static readonly newCyph				= Cyph.UI.Elements.get('#new-cyph');
+	public readonly newCyph				= CyphElements.Elements.get('#new-cyph');
 
 	/** @see Elements */
-	public static readonly newCyphParent		= Cyph.UI.Elements.get(
-		() => Elements.newCyph().parent()
+	public readonly newCyphParent		= CyphElements.Elements.get(
+		() => this.newCyph().parent()
 	);
 
 	/** @see Elements */
-	public static readonly promoLogo			= Cyph.UI.Elements.get('.promo-logo');
+	public readonly promoLogo			= CyphElements.Elements.get('.promo-logo');
 
 	/** @see Elements */
-	public static readonly screenshotLaptop		= Cyph.UI.Elements.get(
+	public readonly screenshotLaptop	= CyphElements.Elements.get(
 		'#hero-section .laptop.screenshot'
 	);
 
 	/** @see Elements */
-	public static readonly screenshotPhone		= Cyph.UI.Elements.get(
+	public readonly screenshotPhone		= CyphElements.Elements.get(
 		'#hero-section .phone.screenshot'
 	);
 
 	/** @see Elements */
-	public static readonly testimonialsSection	= Cyph.UI.Elements.get('#testimonials-section');
+	public readonly testimonialsSection	= CyphElements.Elements.get('#testimonials-section');
+
+	constructor () {}
 }
+
+/** @see Elements */
+export const elements	= new Elements();

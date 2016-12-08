@@ -1,5 +1,6 @@
 import {Component, Input} from '@angular/core';
-import {Util} from '../../util';
+import {Config, config} from '../../config';
+import {util} from '../../util';
 
 
 /**
@@ -21,23 +22,13 @@ export class Contact {
 	};
 
 	/** @ignore */
-	public cyph: any;
-
-	/** @ignore */
-	public ui: any;
+	public config: Config	= config;
 
 	/** @ignore */
 	public send () : void {
-		Util.email(this.self);
+		util.email(this.self);
 		this.self.sent	= true;
 	}
 
-	constructor () { (async () => {
-		while (!cyph || !ui) {
-			await Util.sleep();
-		}
-
-		this.cyph	= cyph;
-		this.ui		= ui;
-	})(); }
+	constructor () {}
 }

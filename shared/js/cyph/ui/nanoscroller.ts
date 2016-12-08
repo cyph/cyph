@@ -1,6 +1,6 @@
-import {Env} from '../env';
-import {Util} from '../util';
-import {Elements} from './elements';
+import {env} from '../env';
+import {util} from '../util';
+import {elements} from './elements';
 
 
 /**
@@ -9,24 +9,24 @@ import {Elements} from './elements';
  */
 export class NanoScroller {
 	/** Indicates whether NanoScroller is to be used. */
-	public static readonly isActive: boolean	= !Env.isMobile && !Env.isOSX;
+	private static readonly isActive: boolean	= !env.isMobile && !env.isOSX;
+
 
 	/**
 	 * Updates the state of all NanoScroller scrollbars.
 	 */
-	public static update () : void {
+	public update () : void {
 		if (NanoScroller.isActive) {
-			Util.getValue(
-				Elements.nanoScroller(),
+			util.getValue(
+				elements.nanoScroller(),
 				'nanoScroller',
 				() => {}
-			).call(Elements.nanoScroller());
+			).call(elements.nanoScroller());
 		}
 	}
 
-	/** @ignore */
-	/* tslint:disable-next-line:member-ordering */
-	public static readonly _	= (() => {
-		$(NanoScroller.update);
-	})();
+	constructor () {}
 }
+
+/** @see NanoScroller */
+export const nanoScroller	= new NanoScroller();

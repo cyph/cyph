@@ -1,13 +1,13 @@
-import {Analytics} from '../analytics';
-import {Config} from '../config';
-import {Potassium} from '../crypto/potassium';
-import {EventManager} from '../eventmanager';
-import {Firebase} from '../firebase';
-import {Events, rpcEvents} from '../session/enums';
+import {analytics} from '../analytics';
+import {config} from '../config';
+import {Potassium, potassium} from '../crypto/potassium';
+import {EventManager, eventManager} from '../eventmanager';
+import {firebaseApp} from '../firebaseapp';
+import {events, rpcEvents} from '../session/enums';
 import {ISession} from '../session/isession';
 import {Message} from '../session/message';
 import {Thread} from '../thread';
-import {Util} from '../util';
+import {util} from '../util';
 import {UIEvents} from './enums';
 import {IFiles} from './ifiles';
 import {ITransfer} from './itransfer';
@@ -30,26 +30,28 @@ export class Files implements IFiles {
 			callbackId?: string
 		}
 	) : Promise<Uint8Array[]> {
-		threadLocals.chunkSize	= Config.filesConfig.chunkSize;
-		threadLocals.callbackId	= 'files-' + Util.generateGuid();
+		threadLocals.chunkSize	= config.filesConfig.chunkSize;
+		threadLocals.callbackId	= 'files-' + util.generateGuid();
 
 		const thread	= new Thread(
 			/* tslint:disable-next-line:only-arrow-functions */
 			async function (
-				/* tslint:disable-next-line:variable-name */
-				Cyph: any,
-				/* tslint:disable-next-line:variable-name */
-				Potassium: any,
-				locals: any,
+				potassium: Potassium,
+				eventManager: EventManager,
+				locals: {
+					plaintext?: Uint8Array,
+					cyphertext?: Uint8Array,
+					key?: Uint8Array,
+					chunkSize?: number,
+					callbackId?: string
+				},
 				importScripts: Function
 			) : Promise<void> {
 				importScripts('/js/cyph/crypto/potassium/index.js');
 
-				const potassium: Potassium	= new Potassium();
-
 				/* Encrypt */
 				if (locals.plaintext) {
-					const key: Uint8Array	= Potassium.randomBytes(
+					const key: Uint8Array	= potassium.randomBytes(
 						potassium.secretBox.keyBytes
 					);
 
@@ -69,7 +71,7 @@ export class Files implements IFiles {
 							));
 						}
 						catch (err) {
-							Cyph.EventManager.trigger(
+							eventManager.trigger(
 								locals.callbackId,
 								[err.message, null, null]
 							);
@@ -95,10 +97,10 @@ export class Files implements IFiles {
 						cyphertext.set(chunk, j);
 						j += chunk.length;
 
-						Potassium.clearMemory(chunk);
+						potassium.clearMemory(chunk);
 					}
 
-					Cyph.EventManager.trigger(
+					eventManager.trigger(
 						locals.callbackId,
 						[null, cyphertext, key]
 					);
@@ -128,7 +130,7 @@ export class Files implements IFiles {
 							i += chunkSize;
 						}
 						catch (err) {
-							Cyph.EventManager.trigger(
+							eventManager.trigger(
 								locals.callbackId,
 								[err.message, null]
 							);
@@ -148,10 +150,10 @@ export class Files implements IFiles {
 						plaintext.set(chunk, j);
 						j += chunk.length;
 
-						Potassium.clearMemory(chunk);
+						potassium.clearMemory(chunk);
 					}
 
-					Cyph.EventManager.trigger(
+					eventManager.trigger(
 						locals.callbackId,
 						[null, plaintext]
 					);
@@ -160,7 +162,7 @@ export class Files implements IFiles {
 			threadLocals
 		);
 
-		const data	= await EventManager.one<any[]>(threadLocals.callbackId);
+		const data	= await eventManager.one<any[]>(threadLocals.callbackId);
 
 		thread.stop();
 
@@ -191,7 +193,7 @@ export class Files implements IFiles {
 			;
 		}
 		catch (_) {
-			return Potassium.fromString('File decryption failed.');
+			return potassium.fromString('File decryption failed.');
 		}
 	}
 
@@ -202,7 +204,7 @@ export class Files implements IFiles {
 	}> {
 		try {
 			if (this.nativePotassium) {
-				const key: Uint8Array	= Potassium.randomBytes(
+				const key: Uint8Array	= potassium.randomBytes(
 					this.nativePotassium.secretBox.keyBytes
 				);
 
@@ -257,14 +259,14 @@ export class Files implements IFiles {
 							}
 							else {
 								transfer.percentComplete +=
-									Util.random(100000, 25000) / transfer.size * 100
+									util.random(100000, 25000) / transfer.size * 100
 								;
 							}
 						},
 						1000
 					);
 
-					const cyphertext: Uint8Array	= new Uint8Array(await Util.request({
+					const cyphertext: Uint8Array	= new Uint8Array(await util.request({
 						responseType: 'arraybuffer',
 						retries: 5,
 						/* Temporary workaround while Firebase adds CORS support */
@@ -279,7 +281,7 @@ export class Files implements IFiles {
 						85
 					);
 
-					(await Firebase.app).storage().refFromURL(transfer.url).delete();
+					(await firebaseApp).storage().refFromURL(transfer.url).delete();
 
 					const plaintext: Uint8Array	= await this.decryptFile(
 						cyphertext,
@@ -288,7 +290,7 @@ export class Files implements IFiles {
 
 					transfer.percentComplete	= 100;
 
-					Potassium.clearMemory(transfer.key);
+					potassium.clearMemory(transfer.key);
 
 					this.triggerUIEvent(
 						UIEvents.save,
@@ -296,7 +298,7 @@ export class Files implements IFiles {
 						plaintext
 					);
 
-					await Util.sleep(1000);
+					await util.sleep(1000);
 
 					for (let i = 0 ; i < this.transfers.length ; ++i) {
 						if (this.transfers[i] === transfer) {
@@ -310,7 +312,7 @@ export class Files implements IFiles {
 						transfer
 					);
 
-					(await Firebase.app).storage().refFromURL(transfer.url).delete();
+					(await firebaseApp).storage().refFromURL(transfer.url).delete();
 				}
 			}
 		);
@@ -321,7 +323,7 @@ export class Files implements IFiles {
 		event: UIEvents,
 		...args: any[]
 	) : void {
-		this.session.trigger(Events.filesUI, {event, args});
+		this.session.trigger(events.filesUI, {event, args});
 	}
 
 	/** @inheritDoc */
@@ -332,10 +334,10 @@ export class Files implements IFiles {
 		image: boolean,
 		imageSelfDestructTimeout: number
 	) : Promise<void> {
-		if (plaintext.length > Config.filesConfig.maxSize) {
+		if (plaintext.length > config.filesConfig.maxSize) {
 			this.triggerUIEvent(UIEvents.tooLarge);
 
-			Analytics.send({
+			analytics.send({
 				eventAction: 'toolarge',
 				eventCategory: 'file',
 				eventValue: 1,
@@ -357,7 +359,7 @@ export class Files implements IFiles {
 
 		const transferIndex: number	= this.transfers.push(transfer) - 1;
 
-		Analytics.send({
+		analytics.send({
 			eventAction: 'send',
 			eventCategory: 'file',
 			eventValue: 1,
@@ -369,7 +371,7 @@ export class Files implements IFiles {
 			transfer
 		);
 
-		EventManager.one<boolean>('transfer-' + transfer.id).then(answer => {
+		eventManager.one<boolean>('transfer-' + transfer.id).then(answer => {
 			transfer.answer	= answer;
 
 			this.triggerUIEvent(
@@ -397,10 +399,10 @@ export class Files implements IFiles {
 		transfer.size	= o.cyphertext.length;
 		transfer.key	= o.key;
 
-		Util.retryUntilComplete(async (retry) => {
-			const path: string	= 'ephemeral/' +  Util.generateGuid();
+		util.retryUntilComplete(async (retry) => {
+			const path: string	= 'ephemeral/' + util.generateGuid();
 
-			uploadTask	= (await Firebase.app).storage().ref(path).put(new Blob([o.cyphertext]));
+			uploadTask	= (await firebaseApp).storage().ref(path).put(new Blob([o.cyphertext]));
 
 			uploadTask.on(
 				'state_changed',
@@ -439,7 +441,7 @@ export class Files implements IFiles {
 		;
 
 		if (isNativeCryptoSupported) {
-			this.session.on(Events.beginChat, () => this.session.send(
+			this.session.on(events.beginChat, () => this.session.send(
 				new Message(rpcEvents.files)
 			));
 		}
@@ -450,11 +452,11 @@ export class Files implements IFiles {
 			if (transfer.id) {
 				/* Outgoing file transfer acceptance or rejection */
 				if (transfer.answer === true || transfer.answer === false) {
-					EventManager.trigger('transfer-' + transfer.id, transfer.answer);
+					eventManager.trigger('transfer-' + transfer.id, transfer.answer);
 				}
 				/* Incoming file transfer */
 				else if (transfer.url) {
-					Util.retryUntilComplete(retry => {
+					util.retryUntilComplete(retry => {
 						if (downloadAnswers[transfer.id] === true) {
 							downloadAnswers[transfer.id]	= null;
 							this.receiveTransfer(transfer);

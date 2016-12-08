@@ -1,7 +1,7 @@
-import {Potassium} from './crypto/potassium';
-import {Env} from './env';
-import {EventManager} from './eventmanager';
-import {Util} from './util';
+import {potassium} from './crypto/potassium';
+import {env} from './env';
+import {eventManager} from './eventmanager';
+import {util} from './util';
 
 
 /**
@@ -10,70 +10,85 @@ import {Util} from './util';
  */
 export class Analytics {
 	/** @ignore */
-	private static analFrame: HTMLIFrameElement;
+	private static readonly baseEventSubmitThreadEvent: string	= 'baseEventSubmitThreadEvent';
+
 
 	/** @ignore */
-	private static analFrameIsReady: boolean;
+	private analFrame: HTMLIFrameElement;
+
+	/** @ignore */
+	private analFrameIsReady: boolean;
 
 	/**
 	 * Ignore this (used internally).
 	 * @param method
 	 * @param args
 	 */
-	public static baseEventSubmit (method: string, args: any[]) : void {
-		if (!Env.isMainThread) {
-			EventManager.callMainThread('cyph.Analytics.baseEventSubmit', [method, args]);
+	public async baseEventSubmit (method: string, args: any[]) : Promise<void> {
+		if (!env.isMainThread) {
+			eventManager.trigger(Analytics.baseEventSubmitThreadEvent, {args, method});
+			return;
 		}
-		else if (Analytics.analFrameIsReady) {
-			args.unshift(method);
 
-			try {
-				Analytics.analFrame.contentWindow.postMessage(
-					{args: JSON.stringify(args)},
-					'*'
-				);
-			}
-			catch (_) {}
-		}
-		else if (Analytics.analFrameIsReady !== false) {
+		while (!this.analFrameIsReady) {
 			/* Do nothing if explicitly set to false */
-			setTimeout(() => Analytics.baseEventSubmit(method, args), 50);
+			if (this.analFrameIsReady === false) {
+				return;
+			}
+
+			await util.sleep();
 		}
+
+		args.unshift(method);
+
+		try {
+			this.analFrame.contentWindow.postMessage(
+				{args: JSON.stringify(args)},
+				'*'
+			);
+		}
+		catch (_) {}
 	}
 
 	/**
 	 * Send event.
 	 * @param args
 	 */
-	public static send (...args: any[]) : void {
-		Analytics.baseEventSubmit('send', args);
+	public send (...args: any[]) : void {
+		this.baseEventSubmit('send', args);
 	}
 
 	/**
 	 * Set event.
 	 * @param args
 	 */
-	public static set (...args: any[]) : void {
-		Analytics.baseEventSubmit('set', args);
+	public set (...args: any[]) : void {
+		this.baseEventSubmit('set', args);
 	}
 
-	/** @ignore */
-	/* tslint:disable-next-line:member-ordering */
-	public static readonly _	= (async () => {
-		const appName: string		= Env.host;
-		const appVersion: string	= Env.isWeb ? 'Web' : 'Native';
+	constructor () { (async () => {
+		const appName: string		= env.host;
+		const appVersion: string	= env.isWeb ? 'Web' : 'Native';
 
-		if (Env.isOnion) {
-			Analytics.analFrameIsReady	= false;
+		if (env.isOnion || env.isLocalEnv) {
+			this.analFrameIsReady	= false;
 		}
-		else if (Env.isMainThread) {
+		else if (env.isMainThread) {
+			eventManager.on(Analytics.baseEventSubmitThreadEvent, (o: {
+				args: any[];
+				method: string;
+			}) => this.baseEventSubmit(
+				o.method,
+				o.args
+			));
+
 			try {
-				Analytics.analFrame	= document.createElement('iframe');
+				this.analFrame	= document.createElement('iframe');
 
-				(<any> Analytics.analFrame).sandbox	= 'allow-scripts allow-same-origin';
+				(<any> this.analFrame).sandbox	= 'allow-scripts allow-same-origin';
 
-				Analytics.analFrame.src	=
-					Env.baseUrl +
+				this.analFrame.src	=
+					env.baseUrl +
 					'analsandbox/' +
 					appName +
 					locationData.pathname +
@@ -89,7 +104,7 @@ export class Analytics {
 										document.referrer.match(/[0-9a-fA-F]+/g) || []
 									).map((s: string) => {
 										try {
-											return Potassium.toString(Potassium.fromHex(s));
+											return potassium.toString(potassium.fromHex(s));
 										}
 										catch (e) {
 											return '';
@@ -102,7 +117,7 @@ export class Analytics {
 										)
 									).split(/\&.*?=/g).map((s: string) => {
 										try {
-											return Potassium.toString(Potassium.fromBase64(s));
+											return potassium.toString(potassium.fromBase64(s));
 										}
 										catch (e) {
 											return '';
@@ -122,20 +137,23 @@ export class Analytics {
 					)
 				;
 
-				Analytics.analFrame.style.display	= 'none';
+				this.analFrame.style.display	= 'none';
 
-				document.body.appendChild(Analytics.analFrame);
+				document.body.appendChild(this.analFrame);
 
 				await new Promise(resolve => $(() => resolve));
-				await new Promise(resolve => $(Analytics.analFrame).one('load', resolve));
-				await Util.sleep();
+				await new Promise(resolve => $(this.analFrame).one('load', resolve));
+				await util.sleep();
 
-				Analytics.analFrameIsReady	= true;
-				Analytics.set({appName, appVersion});
+				this.analFrameIsReady	= true;
+				this.set({appName, appVersion});
 			}
 			catch (_) {
-				Analytics.analFrameIsReady	= false;
+				this.analFrameIsReady	= false;
 			}
 		}
-	})();
+	})(); }
 }
+
+/** @see Analytics */
+export const analytics	= new Analytics();

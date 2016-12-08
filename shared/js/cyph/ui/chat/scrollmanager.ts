@@ -1,7 +1,7 @@
-import {Util} from '../../util';
-import {Elements} from '../elements';
-import {NanoScroller} from '../nanoscroller';
-import {VisibilityWatcher} from '../visibilitywatcher';
+import {util} from '../../util';
+import {Elements as CyphElements, elements as cyphElements} from '../elements';
+import {nanoScroller} from '../nanoscroller';
+import {visibilityWatcher} from '../visibilitywatcher';
 import {IChat} from './ichat';
 import {IElements} from './ielements';
 import {IScrollManager} from './iscrollmanager';
@@ -15,8 +15,17 @@ export class ScrollManager implements IScrollManager {
 	/** @ignore */
 	private scrollDownLock: {}		= {};
 
+	/** @ignore */
+	private processedMessages: {[index: number]: boolean}	= {};
+
 	/** @inheritDoc */
 	public unreadMessages: number	= 0;
+
+	/** @ignore */
+	private appeared ($elem: JQuery) : boolean {
+		const offset	= $elem.offset();
+		return offset.top > 0 && offset.top < this.elements.messageList().height();
+	}
 
 	/** @ignore */
 	private async mutationObserverHandler (mutation: MutationRecord) : Promise<void> {
@@ -27,28 +36,35 @@ export class ScrollManager implements IScrollManager {
 		);
 
 		const messageIndex	= parseInt($elem.attr('message-index'), 10);
-		const message		= isNaN(messageIndex) ? null : this.chat.messages[messageIndex];
+
+		if (isNaN(messageIndex) || this.processedMessages[messageIndex]) {
+			return;
+		}
+		this.processedMessages[messageIndex]	= true;
+
+		const message		= this.chat.messages[messageIndex];
 
 		/* Process read-ness and scrolling */
 		if (message && message.unread) {
-			NanoScroller.update();
+			nanoScroller.update();
 
-			this.updateMessageCount();
-
-			if (!VisibilityWatcher.isVisible) {
-				await VisibilityWatcher.waitForChange();
+			if (!visibilityWatcher.isVisible) {
+				this.updateMessageCount();
+				await visibilityWatcher.waitForChange();
 			}
 
 			const currentScrollPosition: number	=
 				(<any> this.elements.messageList()).scrollPosition()
 			;
 
-			if (($elem.height() + 100) > currentScrollPosition) {
+			if (($elem.height() + 150) > currentScrollPosition) {
 				await this.scrollDown();
 			}
-			else if (!$elem.is(':appeared')) {
-				(<any> $elem).appear();
-				await new Promise(resolve => $elem.one('appear', resolve));
+			else {
+				this.updateMessageCount();
+				while (!this.appeared($elem)) {
+					await util.sleep();
+				}
 			}
 
 			message.unread	= false;
@@ -71,7 +87,7 @@ export class ScrollManager implements IScrollManager {
 					$this.detach();
 					$a.append($this);
 
-					Util.getValue(
+					util.getValue(
 						$a,
 						'magnificPopup',
 						(o: JQuery) => {}
@@ -87,7 +103,7 @@ export class ScrollManager implements IScrollManager {
 
 	/** @ignore */
 	private updateMessageCount () : void {
-		Util.lock(this.messageCountLock, async () => {
+		util.lock(this.messageCountLock, async () => {
 			this.unreadMessages	= this.chat.messages.filter(o => o.unread).length;
 
 			if (this.messageCountInTitle) {
@@ -97,16 +113,16 @@ export class ScrollManager implements IScrollManager {
 				);
 			}
 
-			await Util.sleep();
+			await util.sleep();
 		});
 	}
 
 	/** @inheritDoc */
 	public async scrollDown (shouldScrollCyphertext?: boolean) : Promise<void> {
-		return Util.lock(
+		return util.lock(
 			this.scrollDownLock,
 			async () => {
-				await Util.sleep();
+				await util.sleep();
 
 				const $elem	= shouldScrollCyphertext ?
 					this.elements.cyphertext() :
@@ -114,6 +130,12 @@ export class ScrollManager implements IScrollManager {
 				;
 
 				await $elem.animate({scrollTop: $elem[0].scrollHeight}, 350).promise();
+
+				for (let message of this.chat.messages) {
+					if (message.unread) {
+						message.unread	= false;
+					}
+				}
 			},
 			true,
 			true
@@ -134,9 +156,7 @@ export class ScrollManager implements IScrollManager {
 			this.elements.messageBox().focus(() => this.scrollDown());
 		}
 
-		while (this.elements.messageListInner().length < 1) {
-			await Util.sleep();
-		}
+		await CyphElements.waitForElement(this.elements.messageListInner);
 
 		new MutationObserver(mutations => {
 			for (let mutationRecord of mutations) {
@@ -149,9 +169,9 @@ export class ScrollManager implements IScrollManager {
 			subtree: true
 		});
 
-		NanoScroller.update();
+		nanoScroller.update();
 
 		/* Workaround for jQuery appear plugin */
-		this.elements.messageList().scroll(() => Elements.window().trigger('scroll'));
+		this.elements.messageList().scroll(() => cyphElements.window().trigger('scroll'));
 	})(); }
 }

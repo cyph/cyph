@@ -1,6 +1,6 @@
 import {Component, ElementRef, Input, OnChanges, SimpleChanges} from '@angular/core';
-import {Env} from '../../env';
-import {Util} from '../../util';
+import {env} from '../../env';
+import {util} from '../../util';
 
 
 /**
@@ -26,7 +26,7 @@ export class Markdown implements OnChanges {
 	/** @ignore */
 	public async ngOnChanges (changes: SimpleChanges) : Promise<void> {
 		if (this.markdown === null) {
-			await Util.sleep(10000);
+			await util.sleep(10000);
 
 			this.$element.
 				height(this.$element.height()).
@@ -77,9 +77,9 @@ export class Markdown implements OnChanges {
 			linkify: true,
 			quotes:
 				(
-					Env.language === 'ru' ?
+					env.language === 'ru' ?
 						'«»' :
-						Env.language === 'de' ?
+						env.language === 'de' ?
 							'„“' :
 							'“”'
 				) +

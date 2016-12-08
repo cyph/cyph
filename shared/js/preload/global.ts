@@ -29,20 +29,20 @@ for (let k of ['window', 'document']) {
 
 for (let k of [
 	'Audio',
-	'cyph',
 	'customBuild',
 	'customBuildFavicon',
 	'history',
 	'location',
 	'navigator',
 	'onthreadmessage',
-	'translations',
-	'ui'
+	'translations'
 ]) {
 	if (!(k in self)) {
 		(<any> self)[k]	= null;
 	}
 }
+
+(<any> self).coBranded		= !!customBuild;
 
 (<any> self).locationData	= typeof locationData !== 'undefined' ?
 	locationData :

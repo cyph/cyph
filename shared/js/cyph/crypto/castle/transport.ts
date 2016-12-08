@@ -1,6 +1,6 @@
-import {CastleEvents, Events, Users} from '../../session/enums';
+import {CastleEvents, events, users} from '../../session/enums';
 import {ISession} from '../../session/isession';
-import {Potassium} from '../potassium';
+import {potassium} from '../potassium';
 
 
 /**
@@ -28,12 +28,12 @@ export class Transport {
 
 	/** Trigger abortion event. */
 	public abort () : void {
-		this.session.trigger(Events.castle, {event: CastleEvents.abort});
+		this.session.trigger(events.castle, {event: CastleEvents.abort});
 	}
 
 	/** Trigger connection event. */
 	public connect () : void {
-		this.session.trigger(Events.castle, {event: CastleEvents.connect});
+		this.session.trigger(events.castle, {event: CastleEvents.connect});
 	}
 
 	/**
@@ -65,7 +65,7 @@ export class Transport {
 			return;
 		}
 
-		this.session.trigger(Events.cyphertext, {author, cyphertext});
+		this.session.trigger(events.cyphertext, {author, cyphertext});
 	}
 
 	/**
@@ -79,7 +79,7 @@ export class Transport {
 		plaintext: DataView,
 		author: string
 	) : void {
-		this.logCyphertext(Potassium.toBase64(cyphertext), author);
+		this.logCyphertext(potassium.toBase64(cyphertext), author);
 
 		const id: number		= plaintext.getFloat64(0, true);
 		const timestamp: number	= plaintext.getFloat64(8, true);
@@ -102,7 +102,7 @@ export class Transport {
 		const message	= this.receivedMessages[id];
 
 		message.data.set(chunk, index);
-		Potassium.clearMemory(plaintext);
+		potassium.clearMemory(plaintext);
 
 		if (++message.totalChunks !== numChunks) {
 			return;
@@ -111,17 +111,17 @@ export class Transport {
 		if (timestamp > this.lastIncomingMessageTimestamp) {
 			this.lastIncomingMessageTimestamp	= timestamp;
 
-			const messageData	= Potassium.toString(message.data);
+			const messageData	= potassium.toString(message.data);
 
 			if (messageData) {
-				this.session.trigger(Events.castle, {
+				this.session.trigger(events.castle, {
 					data: {author, timestamp, plaintext: messageData},
 					event: CastleEvents.receive
 				});
 			}
 		}
 
-		Potassium.clearMemory(message.data);
+		potassium.clearMemory(message.data);
 		this.receivedMessages[id]	= null;
 	}
 
@@ -134,24 +134,24 @@ export class Transport {
 		cyphertext: string|ArrayBufferView,
 		messageId?: ArrayBufferView
 	) : void {
-		const fullCyphertext: string	= Potassium.toBase64(
-			!messageId ? cyphertext : Potassium.concatMemory(
+		const fullCyphertext: string	= potassium.toBase64(
+			!messageId ? cyphertext : potassium.concatMemory(
 				true,
 				messageId,
-				Potassium.fromBase64(cyphertext)
+				potassium.fromBase64(cyphertext)
 			)
 		);
 
 		if (!messageId && typeof cyphertext !== 'string') {
-			Potassium.clearMemory(cyphertext);
+			potassium.clearMemory(cyphertext);
 		}
 
-		this.session.trigger(Events.castle, {
+		this.session.trigger(events.castle, {
 			data: fullCyphertext,
 			event: CastleEvents.send
 		});
 
-		this.logCyphertext(fullCyphertext, Users.me);
+		this.logCyphertext(fullCyphertext, users.me);
 	}
 
 	constructor (

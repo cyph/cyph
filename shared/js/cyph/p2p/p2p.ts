@@ -1,13 +1,13 @@
-import {Analytics} from '../analytics';
-import {Env} from '../env';
-import {EventManager} from '../eventmanager';
+import {analytics} from '../analytics';
+import {env} from '../env';
+import {eventManager} from '../eventmanager';
 import {Command} from '../session/command';
-import {Events, rpcEvents} from '../session/enums';
+import {events, rpcEvents} from '../session/enums';
 import {IMutex} from '../session/imutex';
 import {ISession} from '../session/isession';
 import {Message} from '../session/message';
 import {Mutex} from '../session/mutex';
-import {Util} from '../util';
+import {util} from '../util';
 import {UIEventCategories, UIEvents} from './enums';
 import {IP2P} from './ip2p';
 
@@ -67,7 +67,7 @@ export class P2P implements IP2P {
 			this.isAccepted				= false;
 			this.isActive				= false;
 
-			await Util.sleep(500);
+			await util.sleep(500);
 
 			this.incomingStream.audio	= false;
 			this.incomingStream.video	= false;
@@ -93,7 +93,7 @@ export class P2P implements IP2P {
 		},
 
 		webRTC: (data: {event: string; args: any[]}) : void => {
-			EventManager.trigger(
+			eventManager.trigger(
 				P2P.constants.webRTC + data.event,
 				data.args
 			);
@@ -146,7 +146,7 @@ export class P2P implements IP2P {
 						this.accept(command.method);
 						this.join();
 
-						Analytics.send({
+						analytics.send({
 							eventAction: 'start',
 							eventCategory: 'call',
 							eventLabel: command.method,
@@ -181,7 +181,7 @@ export class P2P implements IP2P {
 		event: UIEvents,
 		...args: any[]
 	) : void {
-		this.session.trigger(Events.p2pUI, {category, event, args});
+		this.session.trigger(events.p2pUI, {category, event, args});
 	}
 
 	/** @inheritDoc */
@@ -220,9 +220,9 @@ export class P2P implements IP2P {
 
 		let initialRefresh	= true;
 
-		const iceServers: string	= await Util.request({
+		const iceServers: string	= await util.request({
 			retries: 5,
-			url: Env.baseUrl + 'iceservers'
+			url: env.baseUrl + 'iceservers'
 		});
 
 		const events: string[]	= [];
@@ -232,7 +232,7 @@ export class P2P implements IP2P {
 			autoRemoveVideos: false,
 			autoRequestMedia: false,
 			connection: {
-				disconnect: () => events.forEach(event => EventManager.off(event)),
+				disconnect: () => events.forEach(event => eventManager.off(event)),
 				emit: (event: string, ...args: any[]) => {
 					const lastArg: any	= args.slice(-1)[0];
 
@@ -256,7 +256,7 @@ export class P2P implements IP2P {
 					const fullEvent: string	= P2P.constants.webRTC + event;
 					events.push(fullEvent);
 
-					EventManager.on(
+					eventManager.on(
 						fullEvent,
 						(args: any) => {
 							/* http://www.kapejod.org/en/2014/05/28/ */
@@ -309,7 +309,7 @@ export class P2P implements IP2P {
 			/* Possible edge case workaround */
 			if (initialRefresh) {
 				initialRefresh	= false;
-				await Util.sleep();
+				await util.sleep();
 				this.refresh();
 			}
 		});
@@ -348,14 +348,14 @@ export class P2P implements IP2P {
 						)
 					);
 
-					await Util.sleep();
+					await util.sleep();
 					this.triggerUIEvent(
 						UIEventCategories.request,
 						UIEvents.requestConfirmation
 					);
 
 					/* Time out if request hasn't been accepted within 10 minutes */
-					await Util.sleep(600000);
+					await util.sleep(600000);
 					if (!this.isActive) {
 						this.isAccepted	= false;
 					}
@@ -410,12 +410,12 @@ export class P2P implements IP2P {
 		this.mutex	= new Mutex(this.session);
 
 		if (P2P.isSupported) {
-			this.session.on(Events.beginChat, () => this.session.send(
+			this.session.on(events.beginChat, () => this.session.send(
 				new Message(rpcEvents.p2p, new Command())
 			));
 		}
 
-		this.session.on(Events.closeChat, () => this.close());
+		this.session.on(events.closeChat, () => this.close());
 
 		this.session.on(rpcEvents.p2p, (command: Command) => {
 			if (command.method) {

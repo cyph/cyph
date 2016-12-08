@@ -1,6 +1,6 @@
-import {Util} from '../util';
+import {util} from '../util';
 import {Command} from './command';
-import {Events, rpcEvents, Users} from './enums';
+import {events, rpcEvents, users} from './enums';
 import {IMutex} from './imutex';
 import {ISession} from './isession';
 import {Message} from './message';
@@ -27,14 +27,14 @@ export class Mutex implements IMutex {
 	/** @ignore */
 	private readonly commands	= {
 		release: () : void => {
-			if (this.owner !== Users.me) {
+			if (this.owner !== users.me) {
 				this.shiftRequester();
 			}
 		},
 
 		request: (purpose: string) : void => {
-			if (this.owner !== Users.me) {
-				this.owner		= Users.other;
+			if (this.owner !== users.me) {
+				this.owner		= users.other;
 				this.purpose	= purpose;
 
 				this.session.send(
@@ -45,7 +45,7 @@ export class Mutex implements IMutex {
 				);
 			}
 			else {
-				this.requester	= {user: Users.other, purpose};
+				this.requester	= {user: users.other, purpose};
 			}
 		}
 	};
@@ -71,13 +71,13 @@ export class Mutex implements IMutex {
 		let friendHadLockFirst	= false;
 		let friendLockpurpose	= '';
 
-		if (this.owner !== Users.me) {
+		if (this.owner !== users.me) {
 			if (!this.owner && this.session.state.isAlice) {
-				this.owner		= Users.me;
+				this.owner		= users.me;
 				this.purpose	= purpose;
 			}
 			else {
-				this.requester	= {user: Users.me, purpose};
+				this.requester	= {user: users.me, purpose};
 			}
 
 			this.session.send(
@@ -91,10 +91,10 @@ export class Mutex implements IMutex {
 			);
 		}
 
-		while (this.owner !== Users.me) {
-			await Util.sleep(250);
+		while (this.owner !== users.me) {
+			await util.sleep(250);
 
-			if (this.owner === Users.other) {
+			if (this.owner === users.other) {
 				friendHadLockFirst	= true;
 				friendLockpurpose	= this.purpose;
 			}
@@ -109,7 +109,7 @@ export class Mutex implements IMutex {
 
 	/** @inheritDoc */
 	public unlock () : void {
-		if (this.owner === Users.me) {
+		if (this.owner === users.me) {
 			this.shiftRequester();
 
 			this.session.send(
@@ -126,9 +126,9 @@ export class Mutex implements IMutex {
 		private readonly session: ISession
 	) {
 		this.session.on(rpcEvents.mutex, (command: Command) =>
-			Util.getValue(this.commands, command.method, (o: any) => {})(command.argument)
+			util.getValue(this.commands, command.method, (o: any) => {})(command.argument)
 		);
 
-		this.session.on(Events.closeChat, () => this.owner = Users.me);
+		this.session.on(events.closeChat, () => this.owner = users.me);
 	}
 }

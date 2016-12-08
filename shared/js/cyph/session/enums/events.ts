@@ -3,38 +3,43 @@
  */
 export class Events {
 	/** @see Events */
-	public static readonly abort: string				= 'abort';
+	public readonly abort: string				= 'abort';
 
 	/** @see Events */
-	public static readonly beginChat: string			= 'beginChat';
+	public readonly beginChat: string			= 'beginChat';
 
 	/** @see Events */
-	public static readonly beginChatComplete: string	= 'beginChatComplete';
+	public readonly beginChatComplete: string	= 'beginChatComplete';
 
 	/** @see Events */
-	public static readonly beginWaiting: string			= 'beginWaiting';
+	public readonly beginWaiting: string		= 'beginWaiting';
 
 	/** @see Events */
-	public static readonly castle: string				= 'castle';
+	public readonly castle: string				= 'castle';
 
 	/** @see Events */
-	public static readonly closeChat: string			= 'closeChat';
+	public readonly closeChat: string			= 'closeChat';
 
 	/** @see Events */
-	public static readonly connect: string				= 'connect';
+	public readonly connect: string				= 'connect';
 
 	/** @see Events */
-	public static readonly connectFailure: string		= 'connectFailure';
+	public readonly connectFailure: string		= 'connectFailure';
 
 	/** @see Events */
-	public static readonly cyphertext: string			= 'cyphertext';
+	public readonly cyphertext: string			= 'cyphertext';
 
 	/** @see Events */
-	public static readonly filesUI: string				= 'filesUI';
+	public readonly filesUI: string				= 'filesUI';
 
 	/** @see Events */
-	public static readonly newCyph: string				= 'newCyph';
+	public readonly newCyph: string				= 'newCyph';
 
 	/** @see Events */
-	public static readonly p2pUI: string				= 'p2pUI';
+	public readonly p2pUI: string				= 'p2pUI';
+
+	constructor () {}
 }
+
+/** @see Events */
+export const events	= new Events();

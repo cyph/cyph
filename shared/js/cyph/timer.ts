@@ -1,5 +1,5 @@
 import {ITimer} from './itimer';
-import {Util} from './util';
+import {util} from './util';
 
 
 /** @inheritDoc */
@@ -54,22 +54,22 @@ export class Timer implements ITimer {
 			return;
 		}
 
-		this.endTime	= Util.timestamp() + this.countdown;
+		this.endTime	= util.timestamp() + this.countdown;
 
 		for (
 			let timeRemaining = this.countdown;
 			timeRemaining > 0;
-			timeRemaining = this.endTime - Util.timestamp()
+			timeRemaining = this.endTime - util.timestamp()
 		) {
 			if (this.isStopped) {
 				return;
 			}
 
 			this.updateTimestamp(timeRemaining);
-			await Util.sleep(500);
+			await util.sleep(500);
 
 			if (timeRemaining < 1) {
-				await Util.sleep(1000);
+				await util.sleep(1000);
 			}
 		}
 

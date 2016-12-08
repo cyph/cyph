@@ -1,15 +1,15 @@
-import {Lib} from './lib';
-import {Util} from './util';
+import {lib} from './lib';
+import {util} from './util';
 
 
 /** Equivalent to sodium.crypto_generichash. */
 export class Hash {
 	/** Hash length. */
-	public readonly bytes: number	= Lib.superSphincs.hashBytes;
+	public readonly bytes: number	= lib.superSphincs.hashBytes;
 
 	/** Hashes plaintext. */
 	public async hash (plaintext: Uint8Array|string) : Promise<Uint8Array> {
-		return Lib.superSphincs.hash(plaintext, true);
+		return lib.superSphincs.hash(plaintext, true);
 	}
 
 	/** Stretches input to the specified number of bytes. */
@@ -22,17 +22,17 @@ export class Hash {
 			outputBytes	= input.length;
 		}
 
-		if (outputBytes > Lib.superSphincs.hashBytes) {
+		if (outputBytes > lib.superSphincs.hashBytes) {
 			throw new Error('Potassium.Hash.deriveKey output cannot exceed 64 bytes.');
 		}
 
 		const hash	= this.isNative ?
 			new Uint8Array((await this.hash(input)).buffer, 0, outputBytes) :
-			Lib.sodium.crypto_generichash(outputBytes, input)
+			lib.sodium.crypto_generichash(outputBytes, input)
 		;
 
 		if (clearInput) {
-			Util.clearMemory(input);
+			util.clearMemory(input);
 		}
 
 		return hash;

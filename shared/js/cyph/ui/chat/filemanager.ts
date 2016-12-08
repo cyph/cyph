@@ -1,12 +1,12 @@
-import {Config} from '../../config';
-import {Potassium} from '../../crypto/potassium';
+import {config} from '../../config';
+import {potassium} from '../../crypto/potassium';
 import {UIEvents} from '../../files/enums';
 import {Files} from '../../files/files';
 import {IFiles} from '../../files/ifiles';
 import {ITransfer} from '../../files/itransfer';
-import {Events, Users} from '../../session/enums';
-import {Strings} from '../../strings';
-import {Util} from '../../util';
+import {events, users} from '../../session/enums';
+import {strings} from '../../strings';
+import {util} from '../../util';
 import {IDialogManager} from '../idialogmanager';
 import {IChat} from './ichat';
 import {IFileManager} from './ifilemanager';
@@ -24,8 +24,8 @@ export class FileManager implements IFileManager {
 			<CanvasRenderingContext2D> canvas.getContext('2d')
 		;
 
-		let widthFactor: number		= Config.filesConfig.maxImageWidth / image.width;
-		let heightFactor: number	= Config.filesConfig.maxImageWidth / image.height;
+		let widthFactor: number		= config.filesConfig.maxImageWidth / image.width;
+		let heightFactor: number	= config.filesConfig.maxImageWidth / image.height;
 
 		if (widthFactor > 1) {
 			widthFactor		= 1;
@@ -69,7 +69,7 @@ export class FileManager implements IFileManager {
 	/** @ignore */
 	private addImage (transfer: ITransfer, plaintext: Uint8Array) : void {
 		this.chat.addMessage(
-			`![](data:${transfer.type};base64,${Potassium.toBase64(plaintext)})` +
+			`![](data:${transfer.type};base64,${potassium.toBase64(plaintext)})` +
 				`\n\n#### ${transfer.name}`
 			,
 			transfer.author,
@@ -122,7 +122,7 @@ export class FileManager implements IFileManager {
 		this.files	= new Files(this.chat.session);
 
 		this.chat.session.on(
-			Events.filesUI,
+			events.filesUI,
 			async (e: {
 				event: UIEvents;
 				args: any[];
@@ -137,13 +137,13 @@ export class FileManager implements IFileManager {
 						}
 						else {
 							const message: string	= transfer.answer ?
-								Strings.outgoingFileSaved :
-								Strings.outgoingFileRejected
+								strings.outgoingFileSaved :
+								strings.outgoingFileRejected
 							;
 
 							this.chat.addMessage(
 								`${message} ${transfer.name}`,
-								Users.app
+								users.app
 							);
 						}
 						break;
@@ -154,26 +154,26 @@ export class FileManager implements IFileManager {
 						const callback: (ok: boolean) => void	= e.args[2];
 
 						const title	=
-							`${Strings.incomingFile} ${transfer.name} ` +
-							`(${Util.readableByteLength(transfer.size)})`
+							`${strings.incomingFile} ${transfer.name} ` +
+							`(${util.readableByteLength(transfer.size)})`
 						;
 
 						callback(
-							(!isSave && transfer.size < Config.filesConfig.approvalLimit) ||
+							(!isSave && transfer.size < config.filesConfig.approvalLimit) ||
 							(isSave && transfer.image) ||
 							await this.dialogManager.confirm({
 								title,
 								cancel: isSave ?
-									Strings.discard :
-									Strings.reject
+									strings.discard :
+									strings.reject
 								,
 								content: isSave ?
-									Strings.incomingFileSave :
-									Strings.incomingFileDownload
+									strings.incomingFileSave :
+									strings.incomingFileDownload
 								,
 								ok: isSave ?
-									Strings.save :
-									Strings.accept
+									strings.save :
+									strings.accept
 							})
 						);
 						break;
@@ -182,8 +182,8 @@ export class FileManager implements IFileManager {
 						const transfer: ITransfer	= e.args[0];
 
 						this.chat.addMessage(
-							`${Strings.incomingFileRejected} ${transfer.name}`,
-							Users.app,
+							`${strings.incomingFileRejected} ${transfer.name}`,
+							users.app,
 							undefined,
 							false
 						);
@@ -197,31 +197,31 @@ export class FileManager implements IFileManager {
 							this.addImage(transfer, plaintext);
 						}
 						else {
-							Util.saveFile(plaintext, transfer.name);
+							util.saveFile(plaintext, transfer.name);
 						}
 						break;
 					}
 					case UIEvents.started: {
 						const transfer: ITransfer	= e.args[0];
 
-						const message: string	= transfer.author === Users.me ?
-							Strings.fileTransferInitMe :
-							Strings.fileTransferInitFriend
+						const message: string	= transfer.author === users.me ?
+							strings.fileTransferInitMe :
+							strings.fileTransferInitFriend
 						;
 
 						if (!transfer.image) {
 							this.chat.addMessage(
 								`${message} ${transfer.name}`,
-								Users.app
+								users.app
 							);
 						}
 						break;
 					}
 					case UIEvents.tooLarge: {
 						this.dialogManager.alert({
-							content: Strings.fileTooLarge,
-							ok: Strings.ok,
-							title: Strings.oopsTitle
+							content: strings.fileTooLarge,
+							ok: strings.ok,
+							title: strings.oopsTitle
 						});
 						break;
 					}

@@ -1,5 +1,5 @@
-import {Util} from '../util';
-import {Users} from './enums';
+import {util} from '../util';
+import {users} from './enums';
 import {IMessageData} from './imessagedata';
 
 
@@ -15,9 +15,9 @@ export class Command implements IMessageData {
 		public readonly argument: any = '',
 
 		/** @inheritDoc */
-		public readonly author: string = Users.me,
+		public readonly author: string = users.me,
 
 		/** @inheritDoc */
-		public readonly timestamp: number = Util.timestamp()
+		public readonly timestamp: number = util.timestamp()
 	) {}
 }

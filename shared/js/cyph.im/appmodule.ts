@@ -4,7 +4,6 @@ import {FormsModule} from '@angular/forms';
 import {BrowserModule} from '@angular/platform-browser';
 import {UpgradeModule} from '@angular/upgrade/static';
 import {
-	Beta,
 	ChatCyphertext,
 	ChatMain,
 	ChatMessageBox,
@@ -49,6 +48,7 @@ import {
 } from '../cyph/ui/components/material';
 import {Translate} from '../cyph/ui/directives';
 import {AppComponent} from './appcomponent';
+import {BetaComponent} from './betacomponent';
 
 
 /**
@@ -57,7 +57,7 @@ import {AppComponent} from './appcomponent';
 @NgModule({
 	declarations: [
 		AppComponent,
-		Beta,
+		BetaComponent,
 		ChatCyphertext,
 		ChatMain,
 		ChatMessageBox,
@@ -115,4 +115,6 @@ import {AppComponent} from './appcomponent';
 export class AppModule {
 	/** @ignore */
 	public ngDoBootstrap () : void {}
+
+	constructor () {}
 }

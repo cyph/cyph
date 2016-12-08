@@ -209,7 +209,15 @@ compile () {
 			{
 				cat preload/global.js;
 				cat $f.js.tmp | sed "0,/var ${m} =/s||self.${m} =|";
-				echo "${m} = ${m}.${m} || ${m};";
+				echo "(function () {
+					self.${m}Base	= self.${m};
+
+					var keys	= Object.keys(self.${m}Base);
+					for (var i = 0 ; i < keys.length ; ++i) {
+						var key		= keys[i];
+						self[key]	= self.${m}Base[key];
+					}
+				})();";
 			} | \
 				if [ "${watch}" ] ; then cat - ; else babel --presets es2015 --compact false ; fi | \
 				sed 's|use strict||g' \

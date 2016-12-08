@@ -1,4 +1,4 @@
-import {Strings} from '../../strings';
+import {strings} from '../../strings';
 import {Potassium} from '../potassium';
 import {IRemoteUser} from './iremoteuser';
 import {Transport} from './transport';
@@ -31,7 +31,7 @@ export class AnonymousRemoteUser implements IRemoteUser {
 			sharedSecret
 		);
 
-		Potassium.clearMemory(sharedSecret);
+		this.potassium.clearMemory(sharedSecret);
 
 		this.cyphertextPromise	= null;
 		this.sharedSecret		= null;
@@ -55,7 +55,7 @@ export class AnonymousRemoteUser implements IRemoteUser {
 		private sharedSecret: string,
 
 		/** @ignore */
-		private readonly username: string = Strings.friend
+		private readonly username: string = strings.friend
 	) {
 		this.cyphertextPromise	= this.transport.interceptIncomingCyphertext();
 	}

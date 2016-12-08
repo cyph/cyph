@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {Util} from '../../util';
+import {Env, env} from '../../env';
 import {ILinkConnection} from '../ilinkconnection';
 
 
@@ -18,16 +18,10 @@ export class LinkConnection {
 	@Input() public enableAdvancedFeatures: boolean;
 
 	/** @ignore */
-	public cyph: any;
+	public queuedMessageDraft: string	= '';
 
 	/** @ignore */
-	public queuedMessageDraft: string		= '';
+	public env: Env	= env;
 
-	constructor () { (async () => {
-		while (!cyph) {
-			await Util.sleep();
-		}
-
-		this.cyph	= cyph;
-	})(); }
+	constructor () {}
 }

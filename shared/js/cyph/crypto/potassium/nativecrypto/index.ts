@@ -1,12 +1,16 @@
-import {Box} from './box';
-import {OneTimeAuth} from './onetimeauth';
-import {PasswordHash} from './passwordhash';
-import {SecretBox} from './secretbox';
+import {Box, box} from './box';
+import {OneTimeAuth, oneTimeAuth} from './onetimeauth';
+import {PasswordHash, passwordHash} from './passwordhash';
+import {SecretBox, secretBox} from './secretbox';
 
 
 export {
 	Box,
+	box,
 	OneTimeAuth,
+	oneTimeAuth,
 	PasswordHash,
-	SecretBox
+	passwordHash,
+	SecretBox,
+	secretBox
 };

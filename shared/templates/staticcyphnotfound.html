@@ -1,7 +1,6 @@
 <md2-content
 	class='layout-fill'
 	childClass='cyph-not-found nano md-no-flicker flex layout-column'
-	*ngIf='cyph'
 >
 	<div class='nano-content'>
 		<div>
@@ -16,7 +15,7 @@
 				<a
 					cyphTranslate
 					target='_self'
-					[href]='cyph.Env.newCyphUrl'
+					[href]='env.newCyphUrl'
 				>try again</a>.
 			</p>
 			<p cyphTranslate>Reasons why you may have landed here:</p>

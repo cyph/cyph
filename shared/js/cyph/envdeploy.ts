@@ -1,6 +1,6 @@
 /* tslint:disable */
 
-import {Config} from './config';
+import {config} from './config';
 
 
 /**
@@ -9,90 +9,92 @@ import {Config} from './config';
  */
 export class EnvDeploy {
 	/** Indicates whether this is local dev environment. */
-	public static readonly isLocalEnv: boolean		= true;
+	public readonly isLocalEnv: boolean			= true;
 
 	/** Indicates whether this is our Tor site. */
-	public static readonly isOnion: boolean			=
+	public readonly isOnion: boolean			=
 		locationData.host.split('.').slice(-1)[0] === 'onion'
 	;
 
 	/** URL for backend API ("https://api.cyph.com/" or equivalent). */
-	public static readonly baseUrl: string			= EnvDeploy.isOnion ?
-		`https://api.${Config.onionRoot}/` :
+	public readonly baseUrl: string				= this.isOnion ?
+		`https://api.${config.onionRoot}/` :
 		`${locationData.protocol}//${locationData.hostname}:42000/`
 	;
 
 	/** URL for Cyph website ("https://www.cyph.com/" or equivalent). */
-	public static readonly homeUrl: string			= EnvDeploy.isOnion ?
-		`https://www.${Config.onionRoot}/` :
+	public readonly homeUrl: string				= this.isOnion ?
+		`https://www.${config.onionRoot}/` :
 		`${locationData.protocol}//${locationData.hostname}:42001/`
 	;
 
 	/** Base URL for a new cyph link ("https://cyph.im/" or equivalent). */
-	public static readonly newCyphBaseUrl: string	= customBuild ?
+	public readonly newCyphBaseUrl: string		= customBuild ?
 		`https://${customBuild}/` :
 		`${locationData.protocol}//${locationData.hostname}:42002/`
 	;
 
 	/** URL for starting a new cyph (same as newCyphBaseUrl except on Onion site). */
-	public static readonly newCyphUrl: string		= EnvDeploy.isOnion && !customBuild ?
-		`https://im.${Config.onionRoot}/` :
-		EnvDeploy.newCyphBaseUrl
+	public readonly newCyphUrl: string			= this.isOnion && !customBuild ?
+		`https://im.${config.onionRoot}/` :
+		this.newCyphBaseUrl
 	;
 
 	/** Base URL for Cyph account application ("https://cyph.io/" or equivalent). */
-	public static readonly cyphMeBaseUrl: string	= customBuild ?
-		`${EnvDeploy.newCyphBaseUrl}#me/` : 
+	public readonly cyphMeBaseUrl: string		= customBuild ?
+		`${this.newCyphBaseUrl}#me/` : 
 		`CYPH-ME/`
 	;
 
 	/** URL for Cyph account application (same as cyphMeBaseUrl except on Onion site). */
-	public static readonly cyphMeUrl: string		= EnvDeploy.isOnion && !customBuild ?
-		`https://me.${Config.onionRoot}/` :
-		EnvDeploy.cyphMeBaseUrl
+	public readonly cyphMeUrl: string			= this.isOnion && !customBuild ?
+		`https://me.${config.onionRoot}/` :
+		this.cyphMeBaseUrl
 	;
 
 	/** Base URL for a new file transfer cyph link ("https://cyph.io/" or equivalent). */
-	public static readonly cyphIoBaseUrl: string	= customBuild ?
-		`${EnvDeploy.newCyphBaseUrl}#io/` : 
+	public readonly cyphIoBaseUrl: string		= customBuild ?
+		`${this.newCyphBaseUrl}#io/` : 
 		`CYPH-IO/`
 	;
 
 	/** URL for starting a new file transfer cyph (same as cyphIoBaseUrl except on Onion site). */
-	public static readonly cyphIoUrl: string		= EnvDeploy.isOnion && !customBuild ?
-		`https://io.${Config.onionRoot}/` :
-		EnvDeploy.cyphIoBaseUrl
+	public readonly cyphIoUrl: string			= this.isOnion && !customBuild ?
+		`https://io.${config.onionRoot}/` :
+		this.cyphIoBaseUrl
 	;
 
 	/** Base URL for a new video cyph link ("https://cyph.video/" or equivalent). */
-	public static readonly cyphVideoBaseUrl: string	= customBuild ?
-		`${EnvDeploy.newCyphBaseUrl}#video/` : 
+	public readonly cyphVideoBaseUrl: string	= customBuild ?
+		`${this.newCyphBaseUrl}#video/` : 
 		`CYPH-VIDEO/`
 	;
 
 	/** URL for starting a new video cyph (same as cyphVideoBaseUrl except on Onion site). */
-	public static readonly cyphVideoUrl: string		= EnvDeploy.isOnion && !customBuild ?
-		`https://video.${Config.onionRoot}/` :
-		EnvDeploy.cyphVideoBaseUrl
+	public readonly cyphVideoUrl: string		= this.isOnion && !customBuild ?
+		`https://video.${config.onionRoot}/` :
+		this.cyphVideoBaseUrl
 	;
 
 	/** Base URL for a new audio cyph link ("https://cyph.audio/" or equivalent). */
-	public static readonly cyphAudioBaseUrl: string	= customBuild ?
-		`${EnvDeploy.newCyphBaseUrl}#audio/` : 
+	public readonly cyphAudioBaseUrl: string	= customBuild ?
+		`${this.newCyphBaseUrl}#audio/` : 
 		`CYPH-AUDIO/`
 	;
 
 	/** URL for starting a new audio cyph (same as cyphAudioBaseUrl except on Onion site). */
-	public static readonly cyphAudioUrl: string		= EnvDeploy.isOnion && !customBuild ?
-		`https://audio.${Config.onionRoot}/` :
-		EnvDeploy.cyphAudioBaseUrl
+	public readonly cyphAudioUrl: string		= this.isOnion && !customBuild ?
+		`https://audio.${config.onionRoot}/` :
+		this.cyphAudioBaseUrl
 	;
 
 	/** Endpoint for Firebase server. */
-	public static readonly firebaseEndpoint: string	=
+	public readonly firebaseEndpoint: string	=
 		`ws://${`${locationData.hostname}.home.`.replace('localhost.home.', '127.0.1')}:44000`
 	;
 
 	/** Content Security Policy defined in shared/csp. */
-	public static readonly CSP: string				= "DEFAULT_CSP";
+	public readonly CSP: string					= "DEFAULT_CSP";
+
+	constructor () {}
 }

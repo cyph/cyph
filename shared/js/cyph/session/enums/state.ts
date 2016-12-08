@@ -3,20 +3,25 @@
  */
 export class State {
 	/** @see State */
-	public static readonly cyphId: string				= 'cyphId';
+	public readonly cyphId: string				= 'cyphId';
 
 	/** @see State */
-	public static readonly isAlive: string				= 'isAlive';
+	public readonly isAlive: string				= 'isAlive';
 
 	/** @see State */
-	public static readonly isAlice: string				= 'isAlice';
+	public readonly isAlice: string				= 'isAlice';
 
 	/** @see State */
-	public static readonly isStartingNewCyph: string	= 'isStartingNewCyph';
+	public readonly isStartingNewCyph: string	= 'isStartingNewCyph';
 
 	/** @see State */
-	public static readonly sharedSecret: string			= 'sharedSecret';
+	public readonly sharedSecret: string		= 'sharedSecret';
 
 	/** @see State */
-	public static readonly wasInitiatedByAPI: string	= 'wasInitiatedByAPI';
+	public readonly wasInitiatedByAPI: string	= 'wasInitiatedByAPI';
+
+	constructor () {}
 }
+
+/** @see State */
+export const state	= new State();

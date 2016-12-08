@@ -1,9 +1,9 @@
-import {Analytics} from './analytics';
-import {Util} from './util';
+import {analytics} from './analytics';
+import {util} from './util';
 
 
 /**
- * Handles errors.
+ * Handles this.
  */
 export class Errors {
 	/**
@@ -14,19 +14,19 @@ export class Errors {
 	 * @param column
 	 * @param errorObject
 	 */
-	public static readonly log			= Errors.baseErrorLog(
+	public readonly log			= this.baseErrorLog(
 		'WARNING WARNING WARNING SOMETHING IS SRSLY FUCKED UP LADS'
 	);
 
 	/**
 	 * Logs chat authentication failure (attempted mitm and/or mistyped shared secret).
 	 */
-	public static readonly logAuthFail	= Errors.baseErrorLog(
+	public readonly logAuthFail	= this.baseErrorLog(
 		'AUTHENTICATION JUST FAILED FOR SOMEONE LADS'
 	);
 
 	/** @ignore */
-	private static baseErrorLog (
+	private baseErrorLog (
 		subject: string,
 		shouldIncludeBootstrapText?: boolean
 	) : Function {
@@ -53,22 +53,23 @@ export class Errors {
 			).replace(/\/#.*/g, '');
 
 			if (numEmails++ < 50) {
-				Util.email({
+				util.email({
 					message: exception,
 					subject: 'CYPH: ' + subject,
 					to: 'errors'
 				});
 			}
 
-			Analytics.send('exception', {
+			analytics.send('exception', {
 				exDescription: exception
 			});
 		};
 	}
 
-	/** @ignore */
-	/* tslint:disable-next-line:member-ordering */
-	public static readonly _	= (() => {
-		self.onerror	= <ErrorEventHandler> Errors.log;
-	})();
+	constructor () {
+		self.onerror	= <ErrorEventHandler> this.log;
+	}
 }
+
+/** @see Errors */
+export const errors	= new Errors();

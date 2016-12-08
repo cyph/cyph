@@ -1,11 +1,11 @@
-import {Env} from '../env';
+import {env} from '../env';
 import {ITimer} from '../itimer';
-import {Events} from '../session/enums';
-import {Strings} from '../strings';
+import {events} from '../session/enums';
+import {strings} from '../strings';
 import {Timer} from '../timer';
-import {Util} from '../util';
+import {util} from '../util';
 import {IChat} from './chat/ichat';
-import {Elements} from './elements';
+import {elements} from './elements';
 import {IDialogManager} from './idialogmanager';
 import {ILinkConnection} from './ilinkconnection';
 
@@ -41,12 +41,12 @@ export class LinkConnection implements ILinkConnection {
 
 	/** @ignore */
 	private selectLink () : void {
-		Util.getValue(
-			Elements.connectLinkInput()[0],
+		util.getValue(
+			elements.connectLinkInput()[0],
 			'setSelectionRange',
 			() => {}
 		).call(
-			Elements.connectLinkInput()[0],
+			elements.connectLinkInput()[0],
 			0,
 			this.linkConstant.length
 		);
@@ -56,11 +56,11 @@ export class LinkConnection implements ILinkConnection {
 	public async addTime (milliseconds: number) : Promise<void> {
 		this.timer.addTime(milliseconds);
 
-		return Util.lock(
+		return util.lock(
 			this.addTimeLock,
 			async () => {
 				await this.dialogManager.toast({
-					content: Strings.timeExtended,
+					content: strings.timeExtended,
 					delay: 2500
 				});
 			},
@@ -81,9 +81,9 @@ export class LinkConnection implements ILinkConnection {
 		this.link			= this.linkConstant;
 		this.isPassive		= isPassive;
 
-		if (Env.isMobile) {
+		if (env.isMobile) {
 			/* Only allow right-clicking (for copying the link) */
-			Elements.connectLinkLink().click(e => e.preventDefault());
+			elements.connectLinkLink().click(e => e.preventDefault());
 		}
 		else {
 			const linkInterval	= setInterval(
@@ -97,14 +97,14 @@ export class LinkConnection implements ILinkConnection {
 					}
 
 					this.link	= this.linkConstant;
-					Elements.connectLinkInput().focus();
+					elements.connectLinkInput().focus();
 					this.selectLink();
 				},
 				1000
 			);
 		}
 
-		this.chat.session.on(Events.connect, () => this.timer.stop());
+		this.chat.session.on(events.connect, () => this.timer.stop());
 		await this.timer.start();
 
 		if (this.isWaiting) {
@@ -114,12 +114,12 @@ export class LinkConnection implements ILinkConnection {
 
 	/** @inheritDoc */
 	public async copyToClipboard () : Promise<void> {
-		return Util.lock(
+		return util.lock(
 			this.copyLock,
 			async () => {
 				await clipboard.copy(this.linkConstant);
 				await this.dialogManager.toast({
-					content: Strings.linkCopied,
+					content: strings.linkCopied,
 					delay: 2500
 				});
 			},
@@ -136,7 +136,7 @@ export class LinkConnection implements ILinkConnection {
 		this.linkEncoded	= '';
 
 		/* Stop mobile browsers from keeping this selected */
-		Elements.connectLinkInput().blur();
+		elements.connectLinkInput().blur();
 	}
 
 	constructor (

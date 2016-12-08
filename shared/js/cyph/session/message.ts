@@ -1,5 +1,5 @@
-import {Util} from '../util';
-import {Users} from './enums';
+import {util} from '../util';
+import {users} from './enums';
 import {IMessage} from './imessage';
 import {IMessageData} from './imessagedata';
 
@@ -16,16 +16,16 @@ export class Message implements IMessage {
 		data?: any,
 
 		/** @inheritDoc */
-		public readonly id: string = Util.generateGuid()
+		public readonly id: string = util.generateGuid()
 	) {
 		this.data			= typeof data === 'object' ? data : {};
 
 		if (!this.data.author) {
-			this.data.author	= Users.me;
+			this.data.author	= users.me;
 		}
 
 		if (isNaN(this.data.timestamp)) {
-			this.data.timestamp	= Util.timestamp();
+			this.data.timestamp	= util.timestamp();
 		}
 	}
 }

@@ -10,154 +10,181 @@
 
 import {platformBrowser} from '@angular/platform-browser';
 import {downgradeComponent, UpgradeModule} from '@angular/upgrade/static';
-import * as Cyph from '../cyph';
+import {config} from '../cyph/config';
+import {env} from '../cyph/env';
+import {eventManager} from '../cyph/eventmanager';
+import {FileInput, Help, Register} from '../cyph/ui/components';
+import {
+	MdButton,
+	MdCard,
+	MdCardContent,
+	MdCardHeader,
+	MdCardHeaderText,
+	MdCardTitle,
+	MdCardTitleText,
+	MdContent,
+	MdFabSpeedDial,
+	MdIcon,
+	MdInput,
+	MdList,
+	MdListItem,
+	MdMenu,
+	MdOption,
+	MdProgressCircular,
+	MdProgressLinear,
+	MdSelect,
+	MdSidenav,
+	MdSlider,
+	MdSubheader,
+	MdSwitch,
+	MdTabs,
+	MdTextarea,
+	MdToolbar,
+	MdTooltip
+} from '../cyph/ui/components/material';
+import {elements} from '../cyph/ui/elements';
 import {loaded} from '../preload';
 import {AppComponent} from './appcomponent';
 import {AppModule} from './appmodule';
-import {BetaStates, States, urlSections} from './enums';
 import {UI} from './ui';
 
 
-if (Cyph.Env.isEdge) {
+if (env.isEdge) {
 	location.pathname	= '/unsupportedbrowser';
 }
 
 
-Cyph.UI.Elements.body().attr(
+elements.body().attr(
 	'ng-controller',
-	Cyph.Config.angularConfig.rootController
+	config.angularConfig.rootController
 );
 
 angular.
-	module(Cyph.Config.angularConfig.rootModule, ['ngMaterial']).
-	controller(Cyph.Config.angularConfig.rootController, [
+	module(config.angularConfig.rootModule, ['ngMaterial']).
+	controller(config.angularConfig.rootController, [
 		'$mdDialog',
 		'$mdToast',
 
-		($mdDialog, $mdToast) => {
-			cyph	= Cyph;
-			cyph.im	= {
-				BetaStates,
-				States,
-				UI,
-				urlSections
-			};
-
-			ui	= new UI(
-				new Cyph.UI.DialogManager($mdDialog, $mdToast),
-				new Cyph.UI.Notifier()
-			);
-		}
+		(
+			$mdDialog: ng.material.IDialogService,
+			$mdToast: ng.material.IToastService
+		) => eventManager.trigger(
+			UI.uiInitEvent,
+			{
+				$mdDialog,
+				$mdToast
+			}
+		)
 	]).
-	config(Cyph.Config.angularConfig.config).
+	config(config.angularConfig.config).
 	component(
-		Cyph.UI.Components.Material.MdButton.title,
-		Cyph.UI.Components.Material.MdButton.config
+		MdButton.title,
+		MdButton.config
 	).
 	component(
-		Cyph.UI.Components.Material.MdCard.title,
-		Cyph.UI.Components.Material.MdCard.config
+		MdCard.title,
+		MdCard.config
 	).
 	component(
-		Cyph.UI.Components.Material.MdCardContent.title,
-		Cyph.UI.Components.Material.MdCardContent.config
+		MdCardContent.title,
+		MdCardContent.config
 	).
 	component(
-		Cyph.UI.Components.Material.MdCardHeader.title,
-		Cyph.UI.Components.Material.MdCardHeader.config
+		MdCardHeader.title,
+		MdCardHeader.config
 	).
 	component(
-		Cyph.UI.Components.Material.MdCardHeaderText.title,
-		Cyph.UI.Components.Material.MdCardHeaderText.config
+		MdCardHeaderText.title,
+		MdCardHeaderText.config
 	).
 	component(
-		Cyph.UI.Components.Material.MdCardTitle.title,
-		Cyph.UI.Components.Material.MdCardTitle.config
+		MdCardTitle.title,
+		MdCardTitle.config
 	).
 	component(
-		Cyph.UI.Components.Material.MdCardTitleText.title,
-		Cyph.UI.Components.Material.MdCardTitleText.config
+		MdCardTitleText.title,
+		MdCardTitleText.config
 	).
 	component(
-		Cyph.UI.Components.Material.MdContent.title,
-		Cyph.UI.Components.Material.MdContent.config
+		MdContent.title,
+		MdContent.config
 	).
 	component(
-		Cyph.UI.Components.Material.MdFabSpeedDial.title,
-		Cyph.UI.Components.Material.MdFabSpeedDial.config
+		MdFabSpeedDial.title,
+		MdFabSpeedDial.config
 	).
 	component(
-		Cyph.UI.Components.Material.MdIcon.title,
-		Cyph.UI.Components.Material.MdIcon.config
+		MdIcon.title,
+		MdIcon.config
 	).
 	component(
-		Cyph.UI.Components.Material.MdInput.title,
-		Cyph.UI.Components.Material.MdInput.config
+		MdInput.title,
+		MdInput.config
 	).
 	component(
-		Cyph.UI.Components.Material.MdList.title,
-		Cyph.UI.Components.Material.MdList.config
+		MdList.title,
+		MdList.config
 	).
 	component(
-		Cyph.UI.Components.Material.MdListItem.title,
-		Cyph.UI.Components.Material.MdListItem.config
+		MdListItem.title,
+		MdListItem.config
 	).
 	component(
-		Cyph.UI.Components.Material.MdMenu.title,
-		Cyph.UI.Components.Material.MdMenu.config
+		MdMenu.title,
+		MdMenu.config
 	).
 	component(
-		Cyph.UI.Components.Material.MdOption.title,
-		Cyph.UI.Components.Material.MdOption.config
+		MdOption.title,
+		MdOption.config
 	).
 	component(
-		Cyph.UI.Components.Material.MdProgressCircular.title,
-		Cyph.UI.Components.Material.MdProgressCircular.config
+		MdProgressCircular.title,
+		MdProgressCircular.config
 	).
 	component(
-		Cyph.UI.Components.Material.MdProgressLinear.title,
-		Cyph.UI.Components.Material.MdProgressLinear.config
+		MdProgressLinear.title,
+		MdProgressLinear.config
 	).
 	component(
-		Cyph.UI.Components.Material.MdSelect.title,
-		Cyph.UI.Components.Material.MdSelect.config
+		MdSelect.title,
+		MdSelect.config
 	).
 	component(
-		Cyph.UI.Components.Material.MdSidenav.title,
-		Cyph.UI.Components.Material.MdSidenav.config
+		MdSidenav.title,
+		MdSidenav.config
 	).
 	component(
-		Cyph.UI.Components.Material.MdSlider.title,
-		Cyph.UI.Components.Material.MdSlider.config
+		MdSlider.title,
+		MdSlider.config
 	).
 	component(
-		Cyph.UI.Components.Material.MdSubheader.title,
-		Cyph.UI.Components.Material.MdSubheader.config
+		MdSubheader.title,
+		MdSubheader.config
 	).
 	component(
-		Cyph.UI.Components.Material.MdSwitch.title,
-		Cyph.UI.Components.Material.MdSwitch.config
+		MdSwitch.title,
+		MdSwitch.config
 	).
 	component(
-		Cyph.UI.Components.Material.MdTabs.title,
-		Cyph.UI.Components.Material.MdTabs.config
+		MdTabs.title,
+		MdTabs.config
 	).
 	component(
-		Cyph.UI.Components.Material.MdTextarea.title,
-		Cyph.UI.Components.Material.MdTextarea.config
+		MdTextarea.title,
+		MdTextarea.config
 	).
 	component(
-		Cyph.UI.Components.Material.MdToolbar.title,
-		Cyph.UI.Components.Material.MdToolbar.config
+		MdToolbar.title,
+		MdToolbar.config
 	).
 	component(
-		Cyph.UI.Components.Material.MdTooltip.title,
-		Cyph.UI.Components.Material.MdTooltip.config
+		MdTooltip.title,
+		MdTooltip.config
 	).
 	directive(
 		'cyphFileInput',
 		downgradeComponent({
-			component: Cyph.UI.Components.FileInput,
+			component: FileInput,
 			inputs: ['accept'],
 			outputs: ['change']
 		})
@@ -165,13 +192,13 @@ angular.
 	directive(
 		'cyphHelp',
 		downgradeComponent({
-			component: Cyph.UI.Components.Help
+			component: Help
 		})
 	).
 	directive(
 		'cyphRegister',
 		downgradeComponent({
-			component: Cyph.UI.Components.Register,
+			component: Register,
 			inputs: ['invite', 'signupForm']
 		})
 	).
@@ -191,7 +218,7 @@ angular.
 	).injector.get(UpgradeModule)
 ).bootstrap(
 	document.body,
-	[Cyph.Config.angularConfig.rootModule]
+	[config.angularConfig.rootModule]
 ))();
 
 

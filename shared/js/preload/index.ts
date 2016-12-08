@@ -4,15 +4,15 @@
  */
 
 
-import {Env} from '../cyph/env';
-import {Elements} from '../cyph/ui/elements';
-import {Util} from '../cyph/util';
+import {env} from '../cyph/env';
+import {elements} from '../cyph/ui/elements';
+import {util} from '../cyph/util';
 
 
 /* Mobile CSS class */
 
-if (Env.isMobile) {
-	Elements.html().addClass('mobile');
+if (env.isMobile) {
+	elements.html().addClass('mobile');
 }
 
 /* Polyfill */
@@ -21,7 +21,7 @@ if (!HTMLElement.prototype.click) {
 	/* tslint:disable-next-line:only-arrow-functions */
 	HTMLElement.prototype.click	= function (this: HTMLElement) : void {
 		/* tslint:disable-next-line:no-invalid-this */
-		Util.triggerClick(this);
+		util.triggerClick(this);
 	};
 }
 
@@ -38,7 +38,7 @@ $(() => {
 		$button.on('mouseup', () => setTimeout(() => elem.click(), 500));
 	});
 
-	if (!Env.isLocalEnv && !Env.isHomeSite) {
+	if (!env.isLocalEnv && !env.isHomeSite) {
 		/* In WebSigned environments, naked domain is canonical hostname */
 		if (locationData.host.indexOf('www.') === 0) {
 			locationData.host	= locationData.host.replace('www.', '');
@@ -47,8 +47,8 @@ $(() => {
 		/* In WebSigned environments, remove no-longer-necessary
 			'unsafe-inline' from CSP after application loads */
 		setTimeout(
-			() => Elements.head().append(
-				`<meta http-equiv="Content-Security-Policy" content="${Env.CSP}" />`
+			() => elements.head().append(
+				`<meta http-equiv="Content-Security-Policy" content="${env.CSP}" />`
 			),
 			10000
 		);
@@ -57,7 +57,7 @@ $(() => {
 	/* Try again if page takes too long to initialise */
 	setTimeout(
 		() => {
-			if (!Elements.html().hasClass('load-complete')) {
+			if (!elements.html().hasClass('load-complete')) {
 				location.reload();
 			}
 		},

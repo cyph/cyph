@@ -1,7 +1,7 @@
 import {Component, ElementRef, Input} from '@angular/core';
-import {Config} from '../../config';
-import {Env} from '../../env';
-import {Util} from '../../util';
+import {config} from '../../config';
+import {env} from '../../env';
+import {util} from '../../util';
 
 
 /**
@@ -31,9 +31,9 @@ export class Checkout {
 	public complete: boolean;
 
 	constructor (elementRef: ElementRef) { (async () => {
-		const token: string	= await Util.request({
+		const token: string	= await util.request({
 			retries: 5,
-			url: Env.baseUrl + Config.braintreeConfig.endpoint
+			url: env.baseUrl + config.braintreeConfig.endpoint
 		});
 
 		const checkoutUI: JQuery	= $(elementRef.nativeElement).find('.braintree');
@@ -44,7 +44,7 @@ export class Checkout {
 			container: checkoutUI[0],
 			enableCORS: true,
 			onPaymentMethodReceived: async (data: any) => {
-				const response: string	= await Util.request({
+				const response: string	= await util.request({
 					data: {
 						Amount: Math.floor(parseFloat(this.amount) * 100),
 						Category: this.category,
@@ -54,7 +54,7 @@ export class Checkout {
 						Nonce: data.nonce
 					},
 					method: 'POST',
-					url: Env.baseUrl + Config.braintreeConfig.endpoint
+					url: env.baseUrl + config.braintreeConfig.endpoint
 				});
 
 				if (JSON.parse(response).Status === 'authorized') {

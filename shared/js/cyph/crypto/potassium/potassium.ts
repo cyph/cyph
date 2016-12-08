@@ -6,7 +6,7 @@ import {OneTimeAuth} from './onetimeauth';
 import {PasswordHash} from './passwordhash';
 import {SecretBox} from './secretbox';
 import {Sign} from './sign';
-import {Util} from './util';
+import {Util, util} from './util';
 
 
 /**
@@ -18,10 +18,10 @@ export class Potassium extends Util {
 	/** Indicates whether native crypto API is supported in this environment. */
 	public static async isNativeCryptoSupported () : Promise<boolean> {
 		try {
-			await NativeCrypto.SecretBox.seal(
-				Potassium.randomBytes(1),
-				Potassium.randomBytes(NativeCrypto.SecretBox.nonceBytes),
-				Potassium.randomBytes(NativeCrypto.SecretBox.keyBytes)
+			await NativeCrypto.secretBox.seal(
+				util.randomBytes(1),
+				util.randomBytes(NativeCrypto.secretBox.nonceBytes),
+				util.randomBytes(NativeCrypto.secretBox.keyBytes)
 			);
 			return true;
 		}
@@ -58,10 +58,10 @@ export class Potassium extends Util {
 			throw new Error('Nonce size too small.');
 		}
 
-		return Potassium.concatMemory(
+		return util.concatMemory(
 			true,
 			new Uint32Array([this.counter++]),
-			Potassium.randomBytes(size - 4)
+			util.randomBytes(size - 4)
 		);
 	}
 
@@ -100,3 +100,6 @@ export class Potassium extends Util {
 		this.passwordHash			= new PasswordHash(this.isNative, this.secretBox);
 	}
 }
+
+/** Potassium instance with default parameters (non-native, counter 0). */
+export const potassium	= new Potassium();

@@ -1,5 +1,6 @@
 import {Component, Input} from '@angular/core';
-import {Util} from '../../util';
+import {Users, users} from '../../session/enums';
+import {Strings, strings} from '../../strings';
 import {IChat} from '../chat/ichat';
 
 
@@ -15,13 +16,10 @@ export class ChatCyphertext {
 	@Input() public self: IChat;
 
 	/** @ignore */
-	public cyph: any;
+	public strings: Strings	= strings;
 
-	constructor () { (async () => {
-		while (!cyph) {
-			await Util.sleep();
-		}
+	/** @ignore */
+	public users: Users		= users;
 
-		this.cyph	= cyph;
-	})(); }
+	constructor () {}
 }

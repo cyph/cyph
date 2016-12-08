@@ -1,5 +1,5 @@
-import {Users} from '../session/enums';
-import {Util} from '../util';
+import {users} from '../session/enums';
+import {util} from '../util';
 import {ITransfer} from './itransfer';
 
 
@@ -34,15 +34,15 @@ export class Transfer implements ITransfer {
 		public readonly percentComplete: number = 0,
 
 		/** @inheritDoc */
-		public readonly id: string = Util.generateGuid(),
+		public readonly id: string = util.generateGuid(),
 
 		/** @inheritDoc */
 		public readonly answer: boolean = null,
 
 		/** @inheritDoc */
-		public readonly author: string = Users.me,
+		public readonly author: string = users.me,
 
 		/** @inheritDoc */
-		public readonly timestamp: number = Util.timestamp()
+		public readonly timestamp: number = util.timestamp()
 	) {}
 }

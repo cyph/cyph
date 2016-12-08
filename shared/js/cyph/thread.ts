@@ -1,8 +1,8 @@
-import {Config} from './config';
-import {Env} from './env';
-import {EventManager} from './eventmanager';
+import {config} from './config';
+import {env} from './env';
+import {eventManager} from './eventmanager';
 import {IThread} from './ithread';
-import {Util} from './util';
+import {util} from './util';
 
 
 /** @inheritDoc */
@@ -44,8 +44,6 @@ export class Thread implements IThread {
 
 		importScripts('/lib/js/base.js');
 		importScripts('/js/cyph/base.js');
-		(<any> self).Cyph	= (<any> self).Base;
-		(<any> self).Base	= undefined;
 
 
 		/* Allow destroying the Thread object from within the thread */
@@ -178,9 +176,9 @@ export class Thread implements IThread {
 
 		this.worker	= null;
 
-		for (let i = 0 ; i < EventManager.threads.length ; ++i) {
-			if (EventManager.threads[i] === this) {
-				EventManager.threads.splice(i, 1);
+		for (let i = 0 ; i < eventManager.threads.length ; ++i) {
+			if (eventManager.threads[i] === this) {
+				eventManager.threads.splice(i, 1);
 			}
 		}
 	}
@@ -213,19 +211,19 @@ export class Thread implements IThread {
 				search: locationData.search
 			},
 			navigatorData: {
-				language: Env.fullLanguage,
-				userAgent: Env.userAgent
+				language: env.fullLanguage,
+				userAgent: env.userAgent
 			},
 			seed: Array.prototype.slice.apply(seedBytes)
 		};
 
-		const callbackId	= 'NewThread-' + Util.generateGuid();
+		const callbackId	= 'NewThread-' + util.generateGuid();
 
 		const threadBody	= `
 			var threadSetupVars = ${JSON.stringify(threadSetupVars)};
 			${Thread.stringifyFunction(Thread.threadEnvSetup)}
 
-			Cyph.EventManager.one('${callbackId}').then(function (locals) {
+			eventManager.one('${callbackId}').then(function (locals) {
 				${Thread.stringifyFunction(f)}
 				${Thread.stringifyFunction(Thread.threadPostSetup)}
 			});
@@ -262,7 +260,7 @@ export class Thread implements IThread {
 			}
 		}
 		catch (_) {
-			this.worker	= new Worker(Config.webSignConfig.workerHelper);
+			this.worker	= new Worker(config.webSignConfig.workerHelper);
 			this.worker.postMessage(threadBody);
 		}
 
@@ -274,19 +272,19 @@ export class Thread implements IThread {
 				}
 				catch (_) {}
 
-				EventManager.trigger(callbackId, locals);
+				eventManager.trigger(callbackId, locals);
 			}
 			else if (e.data === 'close') {
 				this.stop();
 			}
 			else if (e.data && e.data.isThreadEvent) {
-				EventManager.trigger(e.data.event, e.data.data);
+				eventManager.trigger(e.data.event, e.data.data);
 			}
 			else {
 				onmessage(e);
 			}
 		};
 
-		EventManager.threads.push(this);
+		eventManager.threads.push(this);
 	}
 }

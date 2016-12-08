@@ -1,7 +1,7 @@
 import {Directive, ElementRef, Renderer} from '@angular/core';
-import {Config} from '../../config';
-import {Env} from '../../env';
-import {Util} from '../../util';
+import {config} from '../../config';
+import {env} from '../../env';
+import {util} from '../../util';
 
 
 /**
@@ -55,7 +55,7 @@ export class Translate {
 			return;
 		}
 
-		const translation	= Util.translate(value.trim(), null);
+		const translation	= util.translate(value.trim(), null);
 
 		if (!translation) {
 			return;
@@ -66,7 +66,7 @@ export class Translate {
 
 
 	constructor (elementRef: ElementRef, renderer: Renderer) {
-		if (Env.language === Config.defaultLanguage) {
+		if (env.language === config.defaultLanguage) {
 			return;
 		}
 

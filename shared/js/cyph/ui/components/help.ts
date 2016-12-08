@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
-import {Strings} from '../../strings';
-import {Util} from '../../util';
+import {Env, env} from '../../env';
+import {strings} from '../../strings';
 
 
 /**
@@ -12,23 +12,13 @@ import {Util} from '../../util';
 })
 export class Help {
 	/** @ignore */
-	public cyph: any;
+	public tabLabels: string[]	= coBranded ?
+		[strings.formattingHelp] :
+		[strings.formattingHelp, strings.contactCyph]
+	;
 
 	/** @ignore */
-	public tabLabels: string[]	= [
-		Strings.formattingHelp,
-		Strings.contactCyph
-	];
+	public env: Env	= env;
 
-	constructor () { (async () => {
-		while (!cyph || !ui) {
-			await Util.sleep();
-		}
-
-		if (ui.coBranded) {
-			this.tabLabels.pop();
-		}
-
-		this.cyph	= cyph;
-	})(); }
+	constructor () {}
 }

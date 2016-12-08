@@ -1,14 +1,14 @@
-import {Lib} from '../lib';
-import {Util} from '../util';
-import {ImportHelper} from './importhelper';
-import {OneTimeAuth} from './onetimeauth';
-import {SecretBox} from './secretbox';
+import {lib} from '../lib';
+import {util} from '../util';
+import {importHelper} from './importhelper';
+import {oneTimeAuth} from './onetimeauth';
+import {secretBox} from './secretbox';
 
 
 /** Equivalent to sodium.crypto_box. */
 export class Box {
 	/** Algorithm details. */
-	public static readonly algorithm: {
+	public readonly algorithm: {
 		hash: {name: string};
 		modulusLength: number;
 		modulusLengthBytes: number;
@@ -25,71 +25,71 @@ export class Box {
 	};
 
 	/** Public key length. */
-	public static readonly publicKeyBytes: number	= 800;
+	public readonly publicKeyBytes: number	= 800;
 
 	/** Private key length. */
-	public static readonly privateKeyBytes: number	= 3250;
+	public readonly privateKeyBytes: number	= 3250;
 
 	/** Generates key pair. */
-	public static async keyPair () : Promise<{
+	public async keyPair () : Promise<{
 		keyType: string;
 		publicKey: Uint8Array;
 		privateKey: Uint8Array;
 	}> {
-		const keyPair: CryptoKeyPair	= await Lib.subtleCrypto.generateKey(
-			Box.algorithm,
+		const keyPair: CryptoKeyPair	= await lib.subtleCrypto.generateKey(
+			this.algorithm,
 			true,
 			['encrypt', 'decrypt']
 		);
 
-		const publicKey		= new Uint8Array(Box.publicKeyBytes);
-		const privateKey	= new Uint8Array(Box.privateKeyBytes);
+		const publicKey		= new Uint8Array(this.publicKeyBytes);
+		const privateKey	= new Uint8Array(this.privateKeyBytes);
 
-		publicKey.set(await ImportHelper.exportJWK(
+		publicKey.set(await importHelper.exportJWK(
 			keyPair.publicKey,
-			Box.algorithm.name
+			this.algorithm.name
 		));
 
-		privateKey.set(await ImportHelper.exportJWK(
+		privateKey.set(await importHelper.exportJWK(
 			keyPair.privateKey,
-			Box.algorithm.name
+			this.algorithm.name
 		));
 
 		return {
-			keyType: Box.algorithm.name,
+			keyType: this.algorithm.name,
 			publicKey,
 			privateKey
 		};
 	}
 
 	/** Encrypts plaintext. */
-	public static async seal (
+	public async seal (
 		plaintext: Uint8Array,
 		nonce: Uint8Array,
 		publicKey: Uint8Array
 	) : Promise<Uint8Array> {
-		const asymmetricPlaintext: Uint8Array	= Util.randomBytes(
-			SecretBox.keyBytes + OneTimeAuth.keyBytes
+		const asymmetricPlaintext: Uint8Array	= util.randomBytes(
+			secretBox.keyBytes + oneTimeAuth.keyBytes
 		);
 
 		const symmetricKey: Uint8Array			= new Uint8Array(
 			asymmetricPlaintext.buffer,
 			0,
-			SecretBox.keyBytes
+			secretBox.keyBytes
 		);
 
-		const symmetricCyphertext: Uint8Array	= await SecretBox.seal(
+		const symmetricCyphertext: Uint8Array	= await secretBox.seal(
 			plaintext,
 			nonce,
 			symmetricKey
 		);
 
 		const asymmetricCyphertext: Uint8Array	= new Uint8Array(
-			await Lib.subtleCrypto.encrypt(
-				Box.algorithm.name,
-				await ImportHelper.importJWK(
+			await lib.subtleCrypto.encrypt(
+				this.algorithm.name,
+				await importHelper.importJWK(
 					publicKey,
-					Box.algorithm,
+					this.algorithm,
 					'encrypt'
 				),
 				asymmetricPlaintext
@@ -98,17 +98,17 @@ export class Box {
 
 		const macKey: Uint8Array				= new Uint8Array(
 			asymmetricPlaintext.buffer,
-			SecretBox.keyBytes
+			secretBox.keyBytes
 		);
 
-		const mac: Uint8Array					= await OneTimeAuth.sign(
+		const mac: Uint8Array					= await oneTimeAuth.sign(
 			asymmetricCyphertext,
 			macKey
 		);
 
-		Util.clearMemory(asymmetricPlaintext);
+		util.clearMemory(asymmetricPlaintext);
 
-		return Util.concatMemory(
+		return util.concatMemory(
 			true,
 			asymmetricCyphertext,
 			mac,
@@ -117,7 +117,7 @@ export class Box {
 	}
 
 	/** Decrypts cyphertext. */
-	public static async open (
+	public async open (
 		cyphertext: Uint8Array,
 		nonce: Uint8Array,
 		keyPair: {publicKey: Uint8Array; privateKey: Uint8Array}
@@ -125,15 +125,15 @@ export class Box {
 		const asymmetricCyphertext: Uint8Array	= new Uint8Array(
 			cyphertext.buffer,
 			cyphertext.byteOffset,
-			Box.algorithm.modulusLengthBytes
+			this.algorithm.modulusLengthBytes
 		);
 
 		const asymmetricPlaintext: Uint8Array	= new Uint8Array(
-			await Lib.subtleCrypto.decrypt(
-				Box.algorithm.name,
-				await ImportHelper.importJWK(
+			await lib.subtleCrypto.decrypt(
+				this.algorithm.name,
+				await importHelper.importJWK(
 					keyPair.privateKey,
-					Box.algorithm,
+					this.algorithm,
 					'decrypt'
 				),
 				asymmetricCyphertext
@@ -143,49 +143,54 @@ export class Box {
 		const symmetricKey: Uint8Array			= new Uint8Array(
 			asymmetricPlaintext.buffer,
 			0,
-			SecretBox.keyBytes
+			secretBox.keyBytes
 		);
 
 		const symmetricCyphertext: Uint8Array	= new Uint8Array(
 			cyphertext.buffer,
 			cyphertext.byteOffset +
-				Box.algorithm.modulusLengthBytes +
-				OneTimeAuth.bytes
+				this.algorithm.modulusLengthBytes +
+				oneTimeAuth.bytes
 		);
 
 		const macKey: Uint8Array				= new Uint8Array(
 			asymmetricPlaintext.buffer,
-			SecretBox.keyBytes
+			secretBox.keyBytes
 		);
 
 		const mac: Uint8Array					= new Uint8Array(
 			cyphertext.buffer,
 			cyphertext.byteOffset +
-				Box.algorithm.modulusLengthBytes
+				this.algorithm.modulusLengthBytes
 			,
-			OneTimeAuth.bytes
+			oneTimeAuth.bytes
 		);
 
-		const plaintext: Uint8Array	= await SecretBox.open(
+		const plaintext: Uint8Array	= await secretBox.open(
 			symmetricCyphertext,
 			nonce,
 			symmetricKey
 		);
 
-		const isValid: boolean		= await OneTimeAuth.verify(
+		const isValid: boolean		= await oneTimeAuth.verify(
 			mac,
 			asymmetricCyphertext,
 			macKey
 		);
 
-		Util.clearMemory(asymmetricPlaintext);
+		util.clearMemory(asymmetricPlaintext);
 
 		if (isValid) {
 			return plaintext;
 		}
 		else {
-			Util.clearMemory(plaintext);
+			util.clearMemory(plaintext);
 			throw new Error('Invalid RSA cyphertext.');
 		}
 	}
+
+	constructor () {}
 }
+
+/** @see Box */
+export const box	= new Box();

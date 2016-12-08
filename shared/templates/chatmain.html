@@ -2,11 +2,11 @@
 	class='chat-main layout-column layout-fill flex'
 	[class.video]='self.p2pManager.p2p.isActive'
 	[class.mobile]='self.isMobile'
-	*ngIf='cyph && self'
+	*ngIf='self'
 >
 	<div
 		class='cyph-view loading layout-column layout-fill flex'
-		[class.active]='self.state === cyph.UI.Chat.States.keyExchange'
+		[class.active]='self.state === states.keyExchange'
 	>
 		<div class='flex'></div>
 		<div class='logo-animation'>
@@ -27,7 +27,7 @@
 
 	<div
 		class='cyph-view abort-screen loading layout-column layout-fill flex'
-		[class.active]='self.state === cyph.UI.Chat.States.aborted'
+		[class.active]='self.state === states.aborted'
 	>
 		<div class='flex'></div>
 		<div class='image'>
@@ -40,7 +40,7 @@
 			<a
 				cyphTranslate
 				target='_self'
-				[href]='cyph.Env.newCyphUrl'
+				[href]='env.newCyphUrl'
 			>try again</a>.
 		</div>
 		<div class='flex'></div>
@@ -48,7 +48,7 @@
 
 	<div
 		class='cyph-view chat-begin-message loading layout-column layout-fill flex'
-		[class.active]='self.state === cyph.UI.Chat.States.chatBeginMessage'
+		[class.active]='self.state === states.chatBeginMessage'
 	>
 		<div class='flex'></div>
 		<div class='logo-animation connected'></div>
@@ -63,11 +63,11 @@
 
 	<div
 		class='cyph-view video-call flex'
-		[class.active]='self.state === cyph.UI.Chat.States.chat'
+		[class.active]='self.state === states.chat'
 		[class.playing]='self.p2pManager.p2p.isActive'
 		[class.sidebar-open]='self.p2pManager.isSidebarOpen'
 	>
-		<a class='logo' rel='noreferrer' [href]='cyph.Env.homeUrl'>
+		<a class='logo' rel='noreferrer' [href]='env.homeUrl'>
 			<img src='/img/betalogo.mobile.png' alt='Beta logo' cyphTranslate />
 		</a>
 		<div
@@ -171,7 +171,7 @@
 
 	<div
 		class='cyph-view transfer-list flex'
-		[class.active]='self.state === cyph.UI.Chat.States.chat'
+		[class.active]='self.state === states.chat'
 	>
 		<md2-content childClass='md-no-flicker'>
 			<md2-list childClass='layout-column'>
@@ -187,7 +187,7 @@
 							&nbsp;
 							<span>
 								{{transfer.name}}
-								({{cyph.Util.readableByteLength(transfer.size)}}):
+								({{util.readableByteLength(transfer.size)}}):
 							</span>
 						</div>
 						<md2-progress-linear
@@ -203,7 +203,7 @@
 
 	<div
 		class='cyph-view message-list nano flex'
-		[class.active]='self.state === cyph.UI.Chat.States.chat'
+		[class.active]='self.state === states.chat'
 		[style.margin-top]='
 			(
 				(
@@ -224,8 +224,8 @@
 						"message-item layout-row" +
 						(
 							" author-" + (
-								cyph.Session.Users[message.author] ||
-								cyph.Session.Users.other
+								users[message.author] ||
+								users.other
 							)
 						) +
 						(
@@ -241,15 +241,15 @@
 							<span class='message'>
 								<strong
 									class='message-author'
-									*ngIf='message.author === cyph.Session.Users.me'
+									*ngIf='message.author === users.me'
 								>
-									{{cyph.Strings.me}}:
+									{{strings.me}}:
 								</strong>
 								<strong
 									class='message-author'
 									*ngIf='
-										message.author !== cyph.Session.Users.me &&
-										message.author !== cyph.Session.Users.app
+										message.author !== users.me &&
+										message.author !== users.app
 									'
 								>
 									{{message.author}}:
@@ -257,23 +257,23 @@
 								<cyph-markdown
 									class='message-text'
 									[markdown]='message.text'
-									[class.app-message]='message.author === cyph.Session.Users.app'
+									[class.app-message]='message.author === users.app'
 								></cyph-markdown>
 							</span>
 							<span class='message-timestamp flex'>
 								<span *ngIf='
 									(self.isMobile || self.p2pManager.p2p.isActive) &&
-									message.author === cyph.Session.Users.me
+									message.author === users.me
 								'>
-									{{cyph.Strings.me}} &nbsp;&mdash;&nbsp;
+									{{strings.me}} &nbsp;&mdash;&nbsp;
 								</span>
 
 								{{message.timeString}}
 
 								<span *ngIf='
 									(self.isMobile || self.p2pManager.p2p.isActive) &&
-									message.author !== cyph.Session.Users.me &&
-									message.author !== cyph.Session.Users.app
+									message.author !== users.me &&
+									message.author !== users.app
 								'>
 									&nbsp;&mdash;&nbsp; {{message.author}}
 								</span>

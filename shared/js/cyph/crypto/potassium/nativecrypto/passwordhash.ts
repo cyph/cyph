@@ -1,13 +1,13 @@
-import {Lib} from '../lib';
-import {Util} from '../util';
-import {ImportHelper} from './importhelper';
-import {SecretBox} from './secretbox';
+import {lib} from '../lib';
+import {util} from '../util';
+import {importHelper} from './importhelper';
+import {secretBox} from './secretbox';
 
 
 /** Equivalent to sodium.crypto_pwhash. */
 export class PasswordHash {
 	/** Algorithm details. */
-	public static readonly algorithm: {
+	public readonly algorithm: {
 		hash: {name: string};
 		name: string;
 	}	= {
@@ -18,45 +18,50 @@ export class PasswordHash {
 	};
 
 	/** Mem limit not used by PBKDF2. */
-	public static readonly memLimitInteractive: number	= 0;
+	public readonly memLimitInteractive: number	= 0;
 
 	/** Mem limit not used by PBKDF2. */
-	public static readonly memLimitSensitive: number	= 0;
+	public readonly memLimitSensitive: number	= 0;
 
 	/** Moderate ops limit. */
-	public static readonly opsLimitInteractive: number	= 250000;
+	public readonly opsLimitInteractive: number	= 250000;
 
 	/** Heavy ops limit. */
-	public static readonly opsLimitSensitive: number	= 2500000;
+	public readonly opsLimitSensitive: number	= 2500000;
 
 	/** Salt length. */
-	public static readonly saltBytes: number			= 32;
+	public readonly saltBytes: number			= 32;
 
 	/** Hashes plaintext. */
-	public static async hash (
+	public async hash (
 		plaintext: Uint8Array,
-		salt: Uint8Array = Util.randomBytes(
-			PasswordHash.saltBytes
+		salt: Uint8Array = util.randomBytes(
+			this.saltBytes
 		),
-		outputBytes: number = SecretBox.keyBytes,
-		opsLimit: number = PasswordHash.opsLimitInteractive,
-		memLimit: number = PasswordHash.memLimitInteractive
+		outputBytes: number = secretBox.keyBytes,
+		opsLimit: number = this.opsLimitInteractive,
+		memLimit: number = this.memLimitInteractive
 	) : Promise<Uint8Array> {
 		return new Uint8Array(
-			await Lib.subtleCrypto.deriveBits(
+			await lib.subtleCrypto.deriveBits(
 				{
 					salt,
-					hash: PasswordHash.algorithm.hash,
+					hash: this.algorithm.hash,
 					iterations: opsLimit,
-					name: PasswordHash.algorithm.name
+					name: this.algorithm.name
 				},
-				await ImportHelper.importRawKey(
+				await importHelper.importRawKey(
 					plaintext,
-					PasswordHash.algorithm,
+					this.algorithm,
 					'deriveBits'
 				),
 				outputBytes * 8
 			)
 		);
 	}
+
+	constructor () {}
 }
+
+/** @see PasswordHash */
+export const passwordHash	= new PasswordHash();

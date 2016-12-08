@@ -11,7 +11,8 @@ import {
 	SimpleChanges
 } from '@angular/core';
 import {UpgradeComponent} from '@angular/upgrade/static';
-import {Util} from '../../../util';
+import {util} from '../../../util';
+import {Elements} from '../../elements';
 
 
 /**
@@ -41,22 +42,18 @@ export class MdTabs
 			public readonly labels: string[];
 
 			constructor ($element: JQuery) { (async () => {
-				let $placeholders: JQuery;
-				while (!$placeholders || $placeholders.length < 1) {
-					$placeholders	= $element.find('div.placeholder');
-					await Util.sleep(50);
-				}
+				const $placeholders	= await Elements.waitForElement(
+					() => $element.find('div.placeholder')
+				);
 
-				let $transclusions: JQuery;
-				while (!$transclusions || $transclusions.length < 1) {
-					$transclusions	= $element.children('ng-transclude').children();
-					await Util.sleep(50);
-				}
+				const $transclusions	= await Elements.waitForElement(
+					() => $element.children('ng-transclude').children()
+				);
 
 				$placeholders.eq(0).append($transclusions.eq(0).detach());
 
 				while (!this.labels) {
-					await Util.sleep();
+					await util.sleep();
 				}
 
 				for (let i = 1 ; i < this.labels.length ; ++i) {

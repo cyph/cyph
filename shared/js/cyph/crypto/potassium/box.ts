@@ -1,8 +1,8 @@
-import {Lib} from './lib';
+import {lib} from './lib';
 import * as NativeCrypto from './nativecrypto';
 import {OneTimeAuth} from './onetimeauth';
 import {SecretBox} from './secretbox';
-import {Util} from './util';
+import {util} from './util';
 
 
 /** Equivalent to sodium.crypto_box. */
@@ -32,45 +32,76 @@ export class Box {
 			keyType: string;
 			publicKey: Uint8Array;
 			privateKey: Uint8Array;
-		}> => Lib.sodium.crypto_box_keypair(),
+		}> =>
+			this.isNative ?
+				NativeCrypto.box.keyPair() :
+				lib.sodium.crypto_box_keypair()
+		,
 
-		nonceBytes: Lib.sodium.crypto_box_NONCEBYTES,
+		nonceBytes:
+			this.isNative ?
+				NativeCrypto.secretBox.nonceBytes :
+				lib.sodium.crypto_box_NONCEBYTES
+		,
 
 		open: async (
 			cyphertext: Uint8Array,
 			nonce: Uint8Array,
 			keyPair: {publicKey: Uint8Array; privateKey: Uint8Array}
-		) : Promise<Uint8Array> => Lib.sodium.crypto_box_seal_open(
-			cyphertext,
-			keyPair.publicKey,
-			keyPair.privateKey
-		),
+		) : Promise<Uint8Array> =>
+			this.isNative ?
+				NativeCrypto.box.open(
+					cyphertext,
+					nonce,
+					keyPair
+				) :
+				lib.sodium.crypto_box_seal_open(
+					cyphertext,
+					keyPair.publicKey,
+					keyPair.privateKey
+				)
+		,
 
-		privateKeyBytes: Lib.sodium.crypto_box_SECRETKEYBYTES,
+		privateKeyBytes:
+			this.isNative ?
+				NativeCrypto.box.privateKeyBytes :
+				lib.sodium.crypto_box_SECRETKEYBYTES
+		,
 
-		publicKeyBytes: Lib.sodium.crypto_box_PUBLICKEYBYTES,
+		publicKeyBytes:
+			this.isNative ?
+				NativeCrypto.box.publicKeyBytes :
+				lib.sodium.crypto_box_PUBLICKEYBYTES
+		,
 
 		seal: async (
 			plaintext: Uint8Array,
 			nonce: Uint8Array,
 			publicKey: Uint8Array
-		) : Promise<Uint8Array> => Lib.sodium.crypto_box_seal(
-			plaintext,
-			publicKey
-		)
+		) : Promise<Uint8Array> =>
+			this.isNative ?
+				NativeCrypto.box.seal(
+					plaintext,
+					nonce,
+					publicKey
+				) :
+				lib.sodium.crypto_box_seal(
+					plaintext,
+					publicKey
+				)
 	};
 
 	/** Private key length. */
 	public readonly privateKeyBytes: number	=
-		Lib.mcEliece.privateKeyLength +
-		Lib.ntru.privateKeyLength +
+		lib.mcEliece.privateKeyLength +
+		lib.ntru.privateKeyLength +
 		this.helpers.privateKeyBytes
 	;
 
 	/** Public key length. */
 	public readonly publicKeyBytes: number	=
-		Lib.mcEliece.publicKeyLength +
-		Lib.ntru.publicKeyLength +
+		lib.mcEliece.publicKeyLength +
+		lib.ntru.publicKeyLength +
 		this.helpers.publicKeyBytes
 	;
 
@@ -121,7 +152,7 @@ export class Box {
 		);
 
 		if (!isValid) {
-			Util.clearMemory(innerKeys);
+			util.clearMemory(innerKeys);
 			throw new Error(`Invalid ${name} cyphertext.`);
 		}
 
@@ -143,7 +174,7 @@ export class Box {
 			throw new Error(`Not enough space for keys; must increase ${name} parameters.`);
 		}
 
-		const innerKeys: Uint8Array		= Util.randomBytes(plaintextBytes);
+		const innerKeys: Uint8Array		= util.randomBytes(plaintextBytes);
 
 		const symmetricKey: Uint8Array	= new Uint8Array(
 			innerKeys.buffer,
@@ -170,7 +201,7 @@ export class Box {
 		return {
 			innerKeys,
 			symmetricKey,
-			keyCyphertext: Util.concatMemory(
+			keyCyphertext: util.concatMemory(
 				true,
 				encryptedKeys,
 				mac
@@ -195,15 +226,15 @@ export class Box {
 					privateKey.byteOffset +
 						this.helpers.privateKeyBytes
 					,
-					Lib.mcEliece.privateKeyLength
+					lib.mcEliece.privateKeyLength
 				),
 				ntru: new Uint8Array(
 					privateKey.buffer,
 					privateKey.byteOffset +
 						this.helpers.privateKeyBytes +
-						Lib.mcEliece.privateKeyLength
+						lib.mcEliece.privateKeyLength
 					,
-					Lib.ntru.privateKeyLength
+					lib.ntru.privateKeyLength
 				)
 			},
 			public: !publicKey ? null : {
@@ -217,15 +248,15 @@ export class Box {
 					publicKey.byteOffset +
 						this.helpers.publicKeyBytes
 					,
-					Lib.mcEliece.publicKeyLength
+					lib.mcEliece.publicKeyLength
 				),
 				ntru: new Uint8Array(
 					publicKey.buffer,
 					publicKey.byteOffset +
 						this.helpers.publicKeyBytes +
-						Lib.mcEliece.publicKeyLength
+						lib.mcEliece.publicKeyLength
 					,
-					Lib.ntru.publicKeyLength
+					lib.ntru.publicKeyLength
 				)
 			}
 		};
@@ -239,19 +270,19 @@ export class Box {
 	}> {
 		const keyPairs	= {
 			classical: await this.helpers.keyPair(),
-			mcEliece: Lib.mcEliece.keyPair(),
-			ntru: Lib.ntru.keyPair()
+			mcEliece: lib.mcEliece.keyPair(),
+			ntru: lib.ntru.keyPair()
 		};
 
 		return {
 			keyType: 'potassium-box',
-			privateKey: Util.concatMemory(
+			privateKey: util.concatMemory(
 				true,
 				keyPairs.classical.privateKey,
 				keyPairs.mcEliece.privateKey,
 				keyPairs.ntru.privateKey
 			),
-			publicKey: Util.concatMemory(
+			publicKey: util.concatMemory(
 				true,
 				keyPairs.classical.publicKey,
 				keyPairs.mcEliece.publicKey,
@@ -270,15 +301,15 @@ export class Box {
 		const mcElieceData						= await this.publicKeyEncrypt(
 			keys.public.mcEliece,
 			'McEliece',
-			Lib.mcEliece.decryptedDataLength,
-			Lib.mcEliece.encrypt
+			lib.mcEliece.decryptedDataLength,
+			lib.mcEliece.encrypt
 		);
 
 		const ntruData							= await this.publicKeyEncrypt(
 			keys.public.ntru,
 			'NTRU',
-			Lib.ntru.decryptedDataLength,
-			Lib.ntru.encrypt
+			lib.ntru.decryptedDataLength,
+			lib.ntru.encrypt
 		);
 
 		const nonce: Uint8Array					= this.newNonce(this.helpers.nonceBytes);
@@ -297,10 +328,10 @@ export class Box {
 			mcElieceData.symmetricKey
 		);
 
-		Util.clearMemory(ntruData.innerKeys);
-		Util.clearMemory(mcElieceData.innerKeys);
+		util.clearMemory(ntruData.innerKeys);
+		util.clearMemory(mcElieceData.innerKeys);
 
-		return Util.concatMemory(
+		return util.concatMemory(
 			true,
 			mcElieceData.keyCyphertext,
 			ntruData.keyCyphertext,
@@ -322,17 +353,17 @@ export class Box {
 			new Uint8Array(
 				cyphertext.buffer,
 				cyphertextIndex,
-				Lib.mcEliece.encryptedDataLength +
+				lib.mcEliece.encryptedDataLength +
 					this.oneTimeAuth.bytes
 			),
 			keys.private.mcEliece,
 			'McEliece',
-			Lib.mcEliece.encryptedDataLength,
-			Lib.mcEliece.decrypt
+			lib.mcEliece.encryptedDataLength,
+			lib.mcEliece.decrypt
 		);
 
 		cyphertextIndex +=
-			Lib.mcEliece.encryptedDataLength +
+			lib.mcEliece.encryptedDataLength +
 			this.oneTimeAuth.bytes
 		;
 
@@ -340,17 +371,17 @@ export class Box {
 			new Uint8Array(
 				cyphertext.buffer,
 				cyphertextIndex,
-				Lib.ntru.encryptedDataLength +
+				lib.ntru.encryptedDataLength +
 					this.oneTimeAuth.bytes
 			),
 			keys.private.ntru,
 			'NTRU',
-			Lib.ntru.encryptedDataLength,
-			Lib.ntru.decrypt
+			lib.ntru.encryptedDataLength,
+			lib.ntru.decrypt
 		);
 
 		cyphertextIndex +=
-			Lib.ntru.encryptedDataLength +
+			lib.ntru.encryptedDataLength +
 			this.oneTimeAuth.bytes
 		;
 
@@ -386,16 +417,17 @@ export class Box {
 			}
 		);
 
-		Util.clearMemory(mcElieceData.innerKeys);
-		Util.clearMemory(ntruData.innerKeys);
-		Util.clearMemory(ntruCyphertext);
-		Util.clearMemory(classicalCyphertext);
+		util.clearMemory(mcElieceData.innerKeys);
+		util.clearMemory(ntruData.innerKeys);
+		util.clearMemory(ntruCyphertext);
+		util.clearMemory(classicalCyphertext);
 
 		return plaintext;
 	}
 
 	constructor (
-		isNative: boolean,
+		/** @ignore */
+		private readonly isNative: boolean,
 
 		/** @ignore */
 		private readonly newNonce: (size: number) => Uint8Array,
@@ -405,18 +437,5 @@ export class Box {
 
 		/** @ignore */
 		private readonly secretBox: SecretBox
-	) {
-		if (isNative) {
-			this.helpers.nonceBytes			= NativeCrypto.SecretBox.nonceBytes;
-			this.publicKeyBytes				-= this.helpers.publicKeyBytes;
-			this.helpers.publicKeyBytes		= NativeCrypto.Box.publicKeyBytes;
-			this.publicKeyBytes				+= this.helpers.publicKeyBytes;
-			this.privateKeyBytes			-= this.helpers.privateKeyBytes;
-			this.helpers.privateKeyBytes	= NativeCrypto.Box.privateKeyBytes;
-			this.privateKeyBytes			+= this.helpers.privateKeyBytes;
-			this.helpers.keyPair			= NativeCrypto.Box.keyPair;
-			this.helpers.seal				= NativeCrypto.Box.seal;
-			this.helpers.open				= NativeCrypto.Box.open;
-		}
-	}
+	) {}
 }

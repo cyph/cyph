@@ -1,17 +1,26 @@
-import * as Cyph from '../cyph';
-import {Elements} from './elements';
+import {LocalChannel} from '../cyph/channel/localchannel';
+import {env} from '../cyph/env';
+import {ISession} from '../cyph/session/isession';
+import {Session} from '../cyph/session/session';
+import {BaseButtonManager} from '../cyph/ui/basebuttonmanager';
+import {Chat} from '../cyph/ui/chat/chat';
+import {IChat} from '../cyph/ui/chat/ichat';
+import * as CyphElements from '../cyph/ui/elements';
+import {IDialogManager} from '../cyph/ui/idialogmanager';
+import {util} from '../cyph/util';
+import {elements} from './elements';
 
 
 /**
  * Controls the Cyph chat demo.
  */
-export class CyphDemo extends Cyph.UI.BaseButtonManager {
+export class CyphDemo extends BaseButtonManager {
 	/** @ignore */
 	private static readonly demoClass: string	= 'demo';
 
 	/** @ignore */
-	private static readonly facebookPicUrl: Promise<string>		= Cyph.Util.request({
-		url: Cyph.Env.isMobile ?
+	private static readonly facebookPicUrl: Promise<string>		= util.request({
+		url: env.isMobile ?
 			'/img/fbimagealt.txt' :
 			'/img/null.txt'
 	});
@@ -22,11 +31,11 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 	)();
 
 	/** @ignore */
-	private static facebookPicFrame: string			= Cyph.Env.isMobile ? '' : `
+	private static facebookPicFrame: string			= env.isMobile ? '' : `
 		<div class='facebook-pic image-frame real'>
 			<iframe
 				src='https://www.facebook.com/plugins/comments.php?href=https://www.${
-					Cyph.Util.generateGuid(Cyph.Util.random(20, 5))
+					util.generateGuid(util.random(20, 5))
 				}.com&width=1000'
 			></iframe>
 		</div>
@@ -112,26 +121,26 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 	private isActive: boolean;
 
 	/** Desktop chat UI. */
-	public desktop: Cyph.UI.Chat.IChat;
+	public desktop: IChat;
 
 	/** Mobile chat UI. */
-	public mobile: Cyph.UI.Chat.IChat;
+	public mobile: IChat;
 
 	/** @ignore */
 	private async resize (forceActive?: boolean) : Promise<void> {
 		const isActive: boolean	= forceActive || (
-			!Elements.heroText().is(':appeared') &&
-			Elements.demoRoot().is(':appeared')
+			!elements.heroText().is(':appeared') &&
+			elements.demoRoot().is(':appeared')
 		);
 
 		if (this.isActive !== isActive) {
-			if (!(<HTMLVideoElement> Elements.backgroundVideo()[0]).paused) {
+			if (!(<HTMLVideoElement> elements.backgroundVideo()[0]).paused) {
 				setTimeout(
 					() => {
 						try {
-							if (Elements.backgroundVideo().is(':appeared')) {
+							if (elements.backgroundVideo().is(':appeared')) {
 								try {
-									(<HTMLVideoElement> Elements.backgroundVideo()[0]).play();
+									(<HTMLVideoElement> elements.backgroundVideo()[0]).play();
 								}
 								catch (_) {}
 							}
@@ -143,28 +152,28 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 			}
 
 			try {
-				(<HTMLVideoElement> Elements.backgroundVideo()[0]).pause();
+				(<HTMLVideoElement> elements.backgroundVideo()[0]).pause();
 			}
 			catch (_) {}
 		}
 
 		this.isActive	= isActive;
 
-		await Cyph.Util.sleep();
+		await util.sleep();
 
-		if (Cyph.Env.isMobile) {
+		if (env.isMobile) {
 			return;
 		}
 
 		if (this.isActive) {
 			this.resizeDesktop();
-			await Cyph.Util.sleep(500);
+			await util.sleep(500);
 			this.resizeMobile();
 			return;
 		}
 
-		await Elements.screenshotLaptop().
-			add(Elements.screenshotPhone()).
+		await elements.screenshotLaptop().
+			add(elements.screenshotPhone()).
 			toArray().
 			reduce(
 				async (p: Promise<void>, elem: HTMLElement) => {
@@ -178,9 +187,9 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 						'width': ''
 					});
 
-					await Cyph.Util.sleep(500);
+					await util.sleep(500);
 					$this.removeClass(CyphDemo.demoClass);
-					await Cyph.Util.sleep(500);
+					await util.sleep(500);
 				},
 				Promise.resolve()
 			)
@@ -190,24 +199,24 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 	/** @ignore */
 	private resizeDesktop () : void {
 		const width: number		= Math.floor(
-			(Cyph.UI.Elements.window().width() - 70) * 0.47 / 0.75
+			(CyphElements.elements.window().width() - 70) * 0.47 / 0.75
 		);
 
 		const height: number	= width * 0.563;
 
-		Elements.screenshotLaptop().addClass(CyphDemo.demoClass).css({
+		elements.screenshotLaptop().addClass(CyphDemo.demoClass).css({
 			width,
 			'margin-left': Math.ceil(
-				Elements.demoRootDesktop().offset().left -
-				Elements.screenshotLaptop().offset().left -
+				elements.demoRootDesktop().offset().left -
+				elements.screenshotLaptop().offset().left -
 				width * 0.13 +
-				parseFloat(Elements.screenshotLaptop().css('margin-left'))
+				parseFloat(elements.screenshotLaptop().css('margin-left'))
 			),
 			'margin-top': Math.ceil(
-				Elements.demoRootDesktop().offset().top -
-				Elements.screenshotLaptop().offset().top -
+				elements.demoRootDesktop().offset().top -
+				elements.screenshotLaptop().offset().top -
 				height * 0.104 +
-				parseFloat(Elements.screenshotLaptop().css('margin-top'))
+				parseFloat(elements.screenshotLaptop().css('margin-top'))
 			)
 		});
 	}
@@ -215,148 +224,139 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 	/** @ignore */
 	private resizeMobile () : void {
 		const width: number		= Math.floor(
-			(Cyph.UI.Elements.window().width() - 70) * 0.26 / 1.404
+			(CyphElements.elements.window().width() - 70) * 0.26 / 1.404
 		);
 
 		const height: number	= width * 2.033;
 
-		Elements.screenshotPhone().addClass(CyphDemo.demoClass).css({
+		elements.screenshotPhone().addClass(CyphDemo.demoClass).css({
 			width,
 			'margin-left': Math.ceil(
-				Elements.demoRootMobile().offset().left -
-				Elements.screenshotPhone().offset().left -
+				elements.demoRootMobile().offset().left -
+				elements.screenshotPhone().offset().left -
 				width * 0.073 +
-				parseFloat(Elements.screenshotPhone().css('margin-left'))
+				parseFloat(elements.screenshotPhone().css('margin-left'))
 			),
 			'margin-top': Math.ceil(
-				Elements.demoRootMobile().offset().top -
-				Elements.screenshotPhone().offset().top -
+				elements.demoRootMobile().offset().top -
+				elements.screenshotPhone().offset().top -
 				height * 0.098 +
-				parseFloat(Elements.screenshotPhone().css('margin-top'))
+				parseFloat(elements.screenshotPhone().css('margin-top'))
 			)
 		});
 	}
 
-	constructor (dialogManager: Cyph.UI.IDialogManager) {
+	constructor (dialogManager: IDialogManager) {
 		super();
 
 		(async () => {
-			while (
-				Elements.demoRoot().length < 1 ||
-				Elements.heroText().length < 1
-			) {
-				await Cyph.Util.sleep();
+			await CyphElements.Elements.waitForElement(elements.demoRoot);
+			await CyphElements.Elements.waitForElement(elements.heroText);
+
+			await util.sleep(1000);
+
+			if (elements.heroText().is(':appeared')) {
+				(<any> elements.heroText()).appear();
+				await new Promise(resolve => elements.heroText().one('disappear', resolve));
 			}
 
-			(<any> Elements.demoRoot()).appear();
-			(<any> Elements.heroText()).appear();
-
-			await Cyph.Util.sleep(1000);
-			while (Elements.heroText().is(':appeared')) {
-				await Cyph.Util.sleep();
+			if (!elements.demoRoot().is(':appeared')) {
+				(<any> elements.demoRoot()).appear();
+				await new Promise(resolve => elements.demoRoot().one('appear', resolve));
 			}
 
-			await new Promise(resolve => Elements.demoRoot().one('appear', resolve));
-			await Cyph.Util.sleep(750);
+			await util.sleep(750);
 			await this.resize(true);
 
-			Elements.demoRoot().css('opacity', 1);
+			elements.demoRoot().css('opacity', 1);
 
 			setInterval(async () => this.resize(), 2000);
 
-			let mobileSession: Cyph.Session.ISession;
-			const desktopSession: Cyph.Session.ISession	= new Cyph.Session.Session(
+			let mobileSession: ISession;
+			const desktopSession: ISession	= new Session(
 				null,
 				false,
 				undefined,
-				(desktopChannel: Cyph.Channel.LocalChannel) => {
-					mobileSession	= new Cyph.Session.Session(
+				(desktopChannel: LocalChannel) => {
+					mobileSession	= new Session(
 						null,
 						false,
 						undefined,
-						(mobileChannel: Cyph.Channel.LocalChannel) =>
+						(mobileChannel: LocalChannel) =>
 							desktopChannel.connect(mobileChannel)
 					);
 				}
 			);
 
-			this.desktop	= new Cyph.UI.Chat.Chat(
+			this.desktop	= new Chat(
 				dialogManager,
 				() => ({close: () => {}, open: () => {}}),
 				{notify: (message: string) => {}},
 				false,
 				false,
 				desktopSession,
-				Elements.demoRootDesktop()
+				elements.demoRootDesktop()
 			);
 
-			this.mobile		= new Cyph.UI.Chat.Chat(
+			this.mobile		= new Chat(
 				dialogManager,
 				this.mobileMenu,
 				{notify: (message: string) => {}},
 				false,
 				true,
 				mobileSession,
-				Elements.demoRootMobile()
+				elements.demoRootMobile()
 			);
 
 			const $desktopFacebookPic: JQuery	= $(CyphDemo.facebookPicFrame);
 			const $mobileFacebookPic: JQuery	= $(CyphDemo.facebookPicFrame);
 
-			if (!Cyph.Env.isMobile) {
-				while (
-					Elements.demoListDesktop().length < 1 ||
-					Elements.demoListMobile().length < 1
-				) {
-					await Cyph.Util.sleep();
-				}
-
-				Elements.demoListDesktop().append($desktopFacebookPic);
-				Elements.demoListMobile().append($mobileFacebookPic);
+			if (!env.isMobile) {
+				await CyphElements.Elements.waitForElement(elements.demoListDesktop);
+				await CyphElements.Elements.waitForElement(elements.demoListMobile);
+				elements.demoListDesktop().append($desktopFacebookPic);
+				elements.demoListMobile().append($mobileFacebookPic);
 			}
 
-			await Cyph.Util.sleep(7500);
+			await util.sleep(7500);
 
 			const messages				= await CyphDemo.messages;
 			const facebookPicUrl		= await CyphDemo.facebookPicUrl;
 			const facebookPicMessage	= await CyphDemo.facebookPicMessage;
 
 			for (let message of messages) {
-				const chat: Cyph.UI.Chat.IChat	=
+				const chat: IChat	=
 					message.isMobile ?
 						this.mobile :
 						this.desktop
 				;
 
-				const text		= Cyph.Util.translate(message.text);
+				const text		= util.translate(message.text);
 				const maxDelay	= text.length > 15 ? 500 : 250;
 				const minDelay	= 125;
 
-				await Cyph.Util.sleep(Cyph.Util.random(maxDelay, minDelay));
+				await util.sleep(util.random(maxDelay, minDelay));
 
 				if (text !== facebookPicMessage) {
 					for (let c of text.split('')) {
 						chat.currentMessage += c;
-						await Cyph.Util.sleep(Cyph.Util.random(50, 10));
+						await util.sleep(util.random(50, 10));
 					}
 				}
 
-				await Cyph.Util.sleep(Cyph.Util.random(maxDelay, minDelay));
+				await util.sleep(util.random(maxDelay, minDelay));
 
 				chat.currentMessage	= '';
 				chat.send(text);
 
-				if (Cyph.Env.isMobile || text !== facebookPicMessage) {
+				if (env.isMobile || text !== facebookPicMessage) {
 					continue;
 				}
 
-				let $facebookPicImg: JQuery;
-				while (!$facebookPicImg || $facebookPicImg.length < 2) {
-					$facebookPicImg	= Elements.demoRoot().find(
-						`img:visible[src='${facebookPicUrl}']`
-					);
-					await Cyph.Util.sleep();
-				}
+				const $facebookPicImg	= await CyphElements.Elements.waitForElement(
+					() => elements.demoRoot().find(`img:visible[src='${facebookPicUrl}']`),
+					2
+				);
 
 				$facebookPicImg.each(async (i: number, elem: HTMLElement) => {
 					const $this: JQuery			= $(elem);
@@ -364,7 +364,7 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 					const isDesktop: boolean	=
 						$this.
 							parentsUntil().
-							index(Elements.demoListDesktop()[0])
+							index(elements.demoListDesktop()[0])
 						> -1
 					;
 
@@ -380,13 +380,13 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 
 					$this.parent().replaceWith($placeholder);
 
-					await Cyph.Util.sleep();
+					await util.sleep();
 
 					const offset	= CyphDemo.getOffset(
 						$placeholder,
 						isDesktop ?
-							Elements.demoListDesktop() :
-							Elements.demoListMobile()
+							elements.demoListDesktop() :
+							elements.demoListMobile()
 					);
 
 					if (!isDesktop) {
@@ -402,10 +402,10 @@ export class CyphDemo extends Cyph.UI.BaseButtonManager {
 					$facebookPic.css(offset);
 				});
 
-				await Cyph.Util.sleep();
+				await util.sleep();
 			}
 
-			await Cyph.Util.sleep(1000);
+			await util.sleep(1000);
 
 			this.desktop.currentMessage	= '';
 			this.mobile.currentMessage	= '';

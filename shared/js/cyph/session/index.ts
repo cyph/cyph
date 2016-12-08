@@ -1,5 +1,5 @@
 import {Command} from './command';
-import {CastleEvents, Events, rpcEvents, State, threadedSessionEvents, Users} from './enums';
+import {CastleEvents, events, rpcEvents, state, threadedSessionEvents, users} from './enums';
 import {IMessage} from './imessage';
 import {IMutex} from './imutex';
 import {ISession} from './isession';
@@ -11,7 +11,7 @@ import {Session} from './session';
 export {
 	CastleEvents,
 	Command,
-	Events,
+	events,
 	IMessage,
 	IMutex,
 	ISession,
@@ -19,7 +19,7 @@ export {
 	Mutex,
 	rpcEvents,
 	Session,
-	State,
+	state,
 	threadedSessionEvents,
-	Users
+	users
 };

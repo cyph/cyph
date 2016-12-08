@@ -1,9 +1,8 @@
 /**
  * @global
- * @deprecated
- * Object containing Cyph namespace.
+ * Indicates whether this is a co-branded instance of Cyph.
  */
-declare let cyph: any;
+declare let coBranded: boolean;
 
 /**
  * @global
@@ -46,10 +45,3 @@ declare let onthreadmessage: (e: MessageEvent) => any;
  * (populated during build process).
  */
 declare let translations: {[language: string]: {[text: string]: string}};
-
-/**
- * @global
- * @deprecated
- * Current UI object.
- */
-declare let ui: any;

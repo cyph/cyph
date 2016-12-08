@@ -1,8 +1,8 @@
 <section
 	id='main'
 	class='layout-column'
-	[class.unisection-mode]='ui.state !== cyph.com.States.home'
-	*ngIf='cyph && ui'
+	[class.unisection-mode]='ui.state !== states.home'
+	*ngIf='ui'
 >
 	<md2-toolbar childId='main-toolbar' childClass='wow animated fadeInDownBig'>
 		<div class='md-toolbar-tools'>
@@ -22,7 +22,7 @@
 				ariaLabel='Start new cyph'
 				childClass='breathe'
 			>
-				<a [href]='cyph.Env.newCyphUrl'>Start new cyph</a>
+				<a [href]='env.newCyphUrl'>Start new cyph</a>
 			</md2-button>
 
 			<span class='link-wrapper-outer right hide show-gt-md'>
@@ -184,48 +184,48 @@
 		<div class='hero-foreground'>
 			<div
 				id='promo-section'
-				*ngIf='ui.promo !== cyph.com.Promos.none'
+				*ngIf='ui.promo !== promos.none'
 				class='layout-row layout-align-center-center'
 			>
 				<md2-card
 					childClass='animated wow flex-33 flex-sm-66 flex-xs-100'
 					data-wow-delay='3000ms'
-					[class.bounceInLeft]='ui.promo === cyph.com.Promos.jjgo'
-					[class.bounceInDown]='ui.promo !== cyph.com.Promos.jjgo'
+					[class.bounceInLeft]='ui.promo === promos.jjgo'
+					[class.bounceInDown]='ui.promo !== promos.jjgo'
 				>
 					<md2-card-header>
 						<md2-card-header-text>
 							<img
-								[src]='"/img/thirdparty/" + cyph.com.Promos[ui.promo] + ".png"'
+								[src]='"/img/thirdparty/" + promos[ui.promo] + ".png"'
 							/>
 						</md2-card-header-text>
 					</md2-card-header>
 					<md2-card-content>
 						<p>
 							<span cyphTranslate>Welcome</span>
-							<span *ngIf='ui.promo === cyph.com.Promos.betalist'>
+							<span *ngIf='ui.promo === promos.betalist'>
 								Betalisters!
 							</span>
-							<span *ngIf='ui.promo !== cyph.com.Promos.betalist'>
-								<i *ngIf='ui.promo === cyph.com.Promos.penn'>
+							<span *ngIf='ui.promo !== promos.betalist'>
+								<i *ngIf='ui.promo === promos.penn'>
 									Penn's Sunday School
 								</i>
-								<i *ngIf='ui.promo === cyph.com.Promos.jjgo'>
+								<i *ngIf='ui.promo === promos.jjgo'>
 									Jordan, Jesse, Go!
 								</i>
-								<i *ngIf='ui.promo === cyph.com.Promos.ventura'>
+								<i *ngIf='ui.promo === promos.ventura'>
 									We The People
 								</i>
-								<i *ngIf='ui.promo === cyph.com.Promos.sawbones'>
+								<i *ngIf='ui.promo === promos.sawbones'>
 									Sawbones
 								</i>
-								<i *ngIf='ui.promo === cyph.com.Promos.judgejohn'>
+								<i *ngIf='ui.promo === promos.judgejohn'>
 									Judge John Hodgman
 								</i>
-								<i *ngIf='ui.promo === cyph.com.Promos.mybrother'>
+								<i *ngIf='ui.promo === promos.mybrother'>
 									My Brother, My Brother and Me
 								</i>
-								<i *ngIf='ui.promo === cyph.com.Promos.security'>
+								<i *ngIf='ui.promo === promos.security'>
 									The Security Brief
 								</i>
 								<span cyphTranslate>listeners!</span>
@@ -251,7 +251,7 @@
 			</h1>
 
 			<div class='hero-container grid-container'>
-				<div class='layout-row' *ngIf='!cyph.Env.isMobile'>
+				<div class='layout-row' *ngIf='!env.isMobile'>
 					<div class='flex-25'></div>
 					<div class='wow bounceInLeft' data-wow-delay='2250ms'>
 						<a href='/intro'>
@@ -374,19 +374,19 @@
 			</div>
 		</div>
 
-		<a class='nav-arrow' href='/intro' *ngIf='!cyph.Env.isMobile'>
+		<a class='nav-arrow' href='/intro' *ngIf='!env.isMobile'>
 			<img cyphTranslate src='/img/icons/downarrow.png' alt='Down arrow' />
 		</a>
 	</section>
 
 	<section id='intro-section'>
-		<a class='nav-arrow' href='/' *ngIf='!cyph.Env.isMobile'>
+		<a class='nav-arrow' href='/' *ngIf='!env.isMobile'>
 			<img cyphTranslate src='/img/icons/uparrow.png' alt='Up arrow' />
 		</a>
 
 		<div class='demo-root grid-container'>
-			<span class='desktop' *ngIf='!cyph.Env.isMobile'>
-				<span *ngIf='cyph && ui && ui.cyphDemo && ui.cyphDemo.desktop'>
+			<span class='desktop' *ngIf='!env.isMobile'>
+				<span *ngIf='ui && ui.cyphDemo && ui.cyphDemo.desktop'>
 					<div class='cyph-foreground'>
 						<cyph-chat-main
 							[self]='ui.cyphDemo.desktop'
@@ -408,7 +408,7 @@
 			</span>
 
 			<span class='mobile'>
-				<span *ngIf='cyph && ui && ui.cyphDemo && ui.cyphDemo.mobile'>
+				<span *ngIf='ui && ui.cyphDemo && ui.cyphDemo.mobile'>
 					<div class='cyph-foreground'>
 						<cyph-chat-main
 							[self]='ui.cyphDemo.mobile'
@@ -605,8 +605,8 @@
 							<a
 								class='oneline'
 								target='_blank'
-								[href]='"https://www." + cyph.Config.onionRoot'
-							>{{cyph.Config.onionRoot}}</a>
+								[href]='"https://www." + config.onionRoot'
+							>{{config.onionRoot}}</a>
 							<em>("cyph'd by hidden backbone host server")</em>.
 							<span cyphTranslate>
 								While this won't totally eliminate communication metadata
@@ -794,7 +794,7 @@
 
 	<section
 		id='pricing'
-		*ngIf='ui.state === cyph.com.States.pricing'
+		*ngIf='ui.state === states.pricing'
 		class='unisection'
 	>
 		<div id='business'>
@@ -838,8 +838,8 @@
 						<div class='feature layout-row'>
 							<md2-icon></md2-icon>
 							<h4 cyphTranslate>Beta Features, Plus:</h4>
-							<md2-icon *ngIf='!cyph.Env.isMobile'>arrow_forward</md2-icon>
-							<md2-icon *ngIf='cyph.Env.isMobile'>arrow_downward</md2-icon>
+							<md2-icon *ngIf='!env.isMobile'>arrow_forward</md2-icon>
+							<md2-icon *ngIf='env.isMobile'>arrow_downward</md2-icon>
 						</div>
 						<hr />
 						<div class='feature indent layout-row'>
@@ -930,8 +930,8 @@
 
 					<div class='price' (click)='ui.updateCart(
 						ui.betaPlan,
-						cyph.Config.pricingConfig.categories.enterprise.id,
-						cyph.Config.pricingConfig.categories.enterprise.items.beta.id
+						config.pricingConfig.categories.enterprise.id,
+						config.pricingConfig.categories.enterprise.items.beta.id
 					)'>
 						<span>${{ui.betaPlan}}</span>
 						<span cyphTranslate>(one time)</span>
@@ -948,8 +948,8 @@
 							Securely send and receive patient files.
 						<p>
 						<div class='feature layout-row'>
-							<md2-icon *ngIf='!cyph.Env.isMobile'>arrow_back</md2-icon>
-							<md2-icon *ngIf='cyph.Env.isMobile'>arrow_upward</md2-icon>
+							<md2-icon *ngIf='!env.isMobile'>arrow_back</md2-icon>
+							<md2-icon *ngIf='env.isMobile'>arrow_upward</md2-icon>
 							<h4 cyphTranslate>Beta Features, Plus:</h4>
 						</div>
 						<hr />
@@ -996,7 +996,7 @@
 
 	<section
 		id='error'
-		*ngIf='ui.state === cyph.com.States.error'
+		*ngIf='ui.state === states.error'
 		class='unisection'
 	>
 		<div>
@@ -1021,7 +1021,7 @@
 
 	<section
 		id='contact'
-		*ngIf='ui.state === cyph.com.States.contact'
+		*ngIf='ui.state === states.contact'
 		class='unisection'
 	>
 		<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' cyphTranslate>
@@ -1049,7 +1049,7 @@
 
 	<section
 		id='donate'
-		*ngIf='ui.state === cyph.com.States.donate'
+		*ngIf='ui.state === states.donate'
 		class='unisection'
 	>
 		<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' cyphTranslate>
@@ -1084,8 +1084,8 @@
 				<md2-button cyphTranslate childClass='donate-button' ariaLabel='Submit Donation'>
 					<a (click)='ui.updateCart(
 						ui.donationAmount,
-						cyph.Config.pricingConfig.categories.donation.id,
-						cyph.Config.pricingConfig.categories.donation.items.generic.id
+						config.pricingConfig.categories.donation.id,
+						config.pricingConfig.categories.donation.items.generic.id
 					)'>
 						Confirm Donation Amount
 					</a>
@@ -1096,7 +1096,7 @@
 
 	<section
 		id='checkout'
-		*ngIf='ui.state === cyph.com.States.checkout'
+		*ngIf='ui.state === states.checkout'
 		class='unisection'
 	>
 		<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' cyphTranslate>
@@ -1126,13 +1126,13 @@
 			>
 				<div
 					cyphTranslate
-					*ngIf='ui.cart[1] === cyph.Config.pricingConfig.categories.donation.id'
+					*ngIf='ui.cart[1] === config.pricingConfig.categories.donation.id'
 				>
 					Thank you for supporting Cyph!
 				</div>
 				<div
 					cyphTranslate
-					*ngIf='ui.cart[1] !== cyph.Config.pricingConfig.categories.donation.id'
+					*ngIf='ui.cart[1] !== config.pricingConfig.categories.donation.id'
 				>
 					Payment confirmed! Follow-up instructions will be sent via email.
 				</div>
@@ -1142,7 +1142,7 @@
 
 	<section
 		id='faq'
-		*ngIf='ui.state === cyph.com.States.faq'
+		*ngIf='ui.state === states.faq'
 		class='unisection'
 	>
 		<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' cyphTranslate>
@@ -1161,7 +1161,7 @@
 					<md2-card-content>
 						<p>
 							<span cyphTranslate>Simply go to</span>
-							<a [href]='cyph.Env.newCyphUrl'>cyph.im</a>
+							<a [href]='env.newCyphUrl'>cyph.im</a>
 							<span cyphTranslate>
 								or click the "start new cyph" button and a cyph link will
 								be generated for you to send to a friend. Text, email, or
@@ -1379,7 +1379,7 @@
 
 	<section
 		id='termsofservice'
-		*ngIf='ui.state === cyph.com.States.termsofservice'
+		*ngIf='ui.state === states.termsofservice'
 		class='unisection'
 	>
 		<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' cyphTranslate>
@@ -1521,7 +1521,7 @@
 
 	<section
 		id='privacypolicy'
-		*ngIf='ui.state === cyph.com.States.privacypolicy'
+		*ngIf='ui.state === states.privacypolicy'
 		class='unisection'
 	>
 		<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' cyphTranslate>

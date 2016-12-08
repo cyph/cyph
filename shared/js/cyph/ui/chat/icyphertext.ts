@@ -1,12 +1,9 @@
-import {Users} from '../../session/enums';
-
-
 /**
  * Represents cyphertext chat UI component.
  */
 export interface ICyphertext {
 	/** Cyphertext message list. */
-	readonly messages: {author: Users; text: string}[];
+	readonly messages: {author: string; text: string}[];
 
 	/**
 	 * Hides cyphertext UI.
@@ -18,7 +15,7 @@ export interface ICyphertext {
 	 * @param text
 	 * @param author
 	 */
-	log (text: string, author: Users) : void;
+	log (text: string, author: string) : void;
 
 	/**
 	 * Shows cyphertext UI.

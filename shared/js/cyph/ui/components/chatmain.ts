@@ -1,5 +1,9 @@
 import {Component, Input} from '@angular/core';
-import {Util} from '../../util';
+import {Env, env} from '../../env';
+import {Users, users} from '../../session/enums';
+import {Strings, strings} from '../../strings';
+import {Util, util} from '../../util';
+import {States} from '../chat/enums';
 import {IChat} from '../chat/ichat';
 
 
@@ -18,13 +22,19 @@ export class ChatMain {
 	@Input() public hideDisconnectMessage: boolean;
 
 	/** @ignore */
-	public cyph: any;
+	public env: Env					= env;
 
-	constructor () { (async () => {
-		while (!cyph) {
-			await Util.sleep();
-		}
+	/** @ignore */
+	public states: typeof States	= States;
 
-		this.cyph	= cyph;
-	})(); }
+	/** @ignore */
+	public strings: Strings			= strings;
+
+	/** @ignore */
+	public users: Users				= users;
+
+	/** @ignore */
+	public util: Util				= util;
+
+	constructor () {}
 }

@@ -1,11 +1,7 @@
 <div
 	class='chat-message-box'
 	[class.mobile]='self.isMobile'
-	*ngIf='
-		(cyph && self) &&
-		self.state === cyph.UI.Chat.States.chat &&
-		self.session.state.isAlive
-	'
+	*ngIf='self && self.state === states.chat && self.session.state.isAlive'
 >
 	<textarea
 		class='message-box tabIndent'
@@ -103,11 +99,11 @@
 		[text]='
 			"↓  " +
 			self.scrollManager.unreadMessages +
-			" " + cyph.Strings.new + " " +
+			" " + strings.new + " " +
 			(
 				self.scrollManager.unreadMessages === 1 ?
-					cyph.Strings.message :
-					cyph.Strings.messages
+					strings.message :
+					strings.messages
 			)
 		'
 	></md2-subheader>
