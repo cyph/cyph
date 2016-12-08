@@ -39,6 +39,11 @@ export class ThreadedSession implements ISession {
 	}
 
 	/** @inheritDoc */
+	public async one<T> (event: string) : Promise<T> {
+		return eventManager.one<T>(event + this.id);
+	}
+
+	/** @inheritDoc */
 	public receive (data: string) : void {
 		this.trigger(threadedSessionEvents.receive, {data});
 	}

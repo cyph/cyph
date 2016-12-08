@@ -1,4 +1,4 @@
-<div class='link-connection loading layout-column layout-fill flex' *ngIf='self'>
+<div class='link-connection loading layout-column layout-fill flex'>
 	<div class='flex'></div>
 	<div class='logo-animation'>
 		<div></div>
@@ -8,10 +8,10 @@
 		<div></div>
 	</div>
 	<div>
-		<div *ngIf='self.isPassive' cyphTranslate>
+		<div *ngIf='isPassive' cyphTranslate>
 			Waiting for friend to join...
 		</div>
-		<div *ngIf='!self.isPassive'>
+		<div *ngIf='!isPassive'>
 			<div cyphTranslate>
 				Send the link below to someone else. When they open it,
 				you'll be securely connected!
@@ -22,13 +22,13 @@
 				<md2-input
 					cyphTranslate
 					childClass='connect-link-input'
-					[(model)]='self.link'
+					[(model)]='link'
 					label='Cyph link'
 				></md2-input>
 				<md2-button
 					childClass='copy'
 					ariaLabel='Copy to clipboard'
-					(childClick)='self.copyToClipboard()'
+					(childClick)='copyToClipboard()'
 					cyphTranslate
 				>
 					<md2-icon>content_copy</md2-icon>
@@ -38,14 +38,14 @@
 			<div class='connect-link-mobile' *ngIf='env.isMobile'>
 				<a
 					class='connect-link-link'
-					[href]='self.link'
-				>{{self.link}}</a>
+					[href]='link'
+				>{{link}}</a>
 				<br />
 
 				<md2-button
 					childClass='md-fab'
 					ariaLabel='SMS'
-					[href]='env.smsUriBase + self.linkEncoded'
+					[href]='env.smsUriBase + linkEncoded'
 					cyphTranslate
 				>
 					<img src='/img/icons/sms.png' alt='SMS' cyphTranslate />
@@ -59,7 +59,7 @@
 					childClass='md-fab'
 					ariaLabel='Email'
 					target='_self'
-					[href]='"mailto:?body=" + self.linkEncoded'
+					[href]='"mailto:?body=" + linkEncoded'
 					cyphTranslate
 				>
 					<img src='/img/icons/email.png' alt='Email' cyphTranslate />
@@ -72,7 +72,7 @@
 				<md2-button
 					childClass='md-fab'
 					ariaLabel='Copy to clipboard'
-					(childClick)='self.copyToClipboard()'
+					(childClick)='copyToClipboard()'
 					cyphTranslate
 				>
 					<md2-icon>content_copy</md2-icon>
@@ -86,10 +86,10 @@
 				Link expires in
 			</span>
 			<span class='countdown'>
-				{{self.timer.timestamp}}
+				{{timer.timestamp}}
 			</span>
 			<md2-button
-				(childClick)='self.addTime(60000)'
+				(childClick)='addTime(60000)'
 				ariaLabel='Increase time by one minute'
 			>
 				<md2-icon>alarm_add</md2-icon>
@@ -100,14 +100,14 @@
 	<md2-switch
 		childClass='advanced-features-switch'
 		*ngIf='enableAdvancedFeatures'
-		[(model)]='self.advancedFeatures'
+		[(model)]='advancedFeatures'
 		ariaLabel='Advanced Features'
 		cyphTranslate
 	>
 		Advanced Features
 	</md2-switch>
 
-	<div class='advanced-features' *ngIf='self.advancedFeatures'>
+	<div class='advanced-features' *ngIf='advancedFeatures'>
 		<md2-textarea
 			cyphTranslate
 			childClass='queued-message-box'
@@ -116,18 +116,18 @@
 			rows='3'
 		></md2-textarea>
 		<div class='buttons'>
-			<md2-button (childClick)='self.chat.setQueuedMessage(queuedMessageDraft)'>
+			<md2-button (childClick)='chat.setQueuedMessage(queuedMessageDraft)'>
 				<md2-icon>save</md2-icon>
 			</md2-button>
 			<md2-button
 				childClass='self-destruct-button'
-				(childClick)='self.chat.setQueuedMessage(
+				(childClick)='chat.setQueuedMessage(
 					undefined,
-					!self.chat.queuedMessageSelfDestruct
+					!chat.queuedMessageSelfDestruct
 				)'
 			>
 				<md2-icon [childClass]='
-					self.chat.queuedMessageSelfDestruct === true ? "active" : ""
+					chat.queuedMessageSelfDestruct === true ? "active" : ""
 				'>
 					timer
 				</md2-icon>

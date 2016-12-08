@@ -280,7 +280,6 @@ export class Chat extends BaseButtonManager implements IChat {
 		}
 
 		if (message) {
-			this.scrollManager.scrollDown();
 			this.session.sendText(message, selfDestructTimeout);
 		}
 	}
@@ -454,18 +453,17 @@ export class Chat extends BaseButtonManager implements IChat {
 		(<any> self).tabIndent.renderAll();
 
 
-		this.session.on(events.beginChat, async () => this.begin());
+		this.session.one(events.beginChat).then(async () => this.begin());
 
-		this.session.on(events.closeChat, () => this.close());
+		this.session.one(events.closeChat).then(() => this.close());
 
-		this.session.on(events.connect, async () => {
+		this.session.one(events.connect).then(async () => {
 			this.changeState(States.keyExchange);
 
 			const interval		= 250;
 			const increment		= interval / Chat.approximateKeyExchangeTime;
-			const iterations	= Chat.approximateKeyExchangeTime / interval;
 
-			for (let i = 0 ; i < iterations ; ++i) {
+			while (this.keyExchangeProgress <= 100) {
 				await util.sleep(interval);
 				this.keyExchangeProgress += increment * 100;
 			}
@@ -473,7 +471,7 @@ export class Chat extends BaseButtonManager implements IChat {
 			this.keyExchangeProgress	= 100;
 		});
 
-		this.session.on(events.connectFailure, () => this.abortSetup());
+		this.session.one(events.connectFailure).then(() => this.abortSetup());
 
 		this.session.on(rpcEvents.text, async (o: {
 			text: string;

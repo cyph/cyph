@@ -24,7 +24,9 @@ export class PairwiseSession {
 	private readonly receiveLock: {}	= {};
 
 	/** @ignore */
-	private readonly incomingMessages: {[id: number]: Uint8Array[]}	= {};
+	private readonly incomingMessages: Map<number, Uint8Array[]>	=
+		new Map<number, Uint8Array[]>()
+	;
 
 	/** @ignore */
 	private core: Core;
@@ -125,11 +127,11 @@ export class PairwiseSession {
 					id
 				);
 
-				if (!this.incomingMessages[id]) {
-					this.incomingMessages[id]	= [];
+				if (!this.incomingMessages.has(id)) {
+					this.incomingMessages.set(id, []);
 				}
 
-				this.incomingMessages[id].push(cyphertextBytes);
+				this.incomingMessages.get(id).push(cyphertextBytes);
 			}
 		}
 		catch (_) {}
@@ -141,13 +143,13 @@ export class PairwiseSession {
 		util.lock(this.receiveLock, async () => {
 			while (
 				this.incomingMessageId <= this.incomingMessagesMax &&
-				this.incomingMessages[this.incomingMessageId]
+				this.incomingMessages.has(this.incomingMessageId)
 			) {
 				let success: boolean;
 
 				for (
 					let cyphertextBytes of
-					this.incomingMessages[this.incomingMessageId]
+					this.incomingMessages.get(this.incomingMessageId)
 				) {
 					if (!success) {
 						try {
@@ -189,7 +191,7 @@ export class PairwiseSession {
 					this.potassium.clearMemory(cyphertextBytes);
 				}
 
-				this.incomingMessages[this.incomingMessageId]	= null;
+				this.incomingMessages.delete(this.incomingMessageId);
 
 				if (!success) {
 					break;

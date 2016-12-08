@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input} from '@angular/core';
+import {Component, ElementRef, Input, OnInit} from '@angular/core';
 import {env} from '../../env';
 import {Strings, strings} from '../../strings';
 import {util} from '../../util';
@@ -16,7 +16,7 @@ import {visibilityWatcher} from '../visibilitywatcher';
 	selector: 'cyph-chat-message-box',
 	templateUrl: '../../../../templates/chatmessagebox.html'
 })
-export class ChatMessageBox {
+export class ChatMessageBox implements OnInit {
 	/** @ignore */
 	@Input() public self: IChat;
 
@@ -138,8 +138,9 @@ export class ChatMessageBox {
 		$mdMenu.open();
 	}
 
-	constructor (elementRef: ElementRef) { (async () => {
-		const $element	= $(elementRef.nativeElement);
+	/** @inheritDoc */
+	public async ngOnInit () : Promise<void> {
+		const $element	= $(this.elementRef.nativeElement);
 
 		/* Temporary workaround for Angular Material bug */
 
@@ -246,5 +247,10 @@ export class ChatMessageBox {
 				)
 			);
 		}
-	})(); }
+	}
+
+	constructor (
+		/** @ignore */
+		private readonly elementRef: ElementRef
+	) {}
 }

@@ -446,7 +446,7 @@ export class Files implements IFiles {
 			));
 		}
 
-		const downloadAnswers: {[id: string]: boolean}	= {};
+		const downloadAnswers	= new Map<string, boolean>();
 
 		this.session.on(rpcEvents.files, (transfer: ITransfer) => {
 			if (transfer.id) {
@@ -457,12 +457,12 @@ export class Files implements IFiles {
 				/* Incoming file transfer */
 				else if (transfer.url) {
 					util.retryUntilComplete(retry => {
-						if (downloadAnswers[transfer.id] === true) {
-							downloadAnswers[transfer.id]	= null;
-							this.receiveTransfer(transfer);
-						}
-						else if (downloadAnswers[transfer.id] !== false) {
+						if (!downloadAnswers.has(transfer.id)) {
 							retry();
+						}
+						else if (downloadAnswers.get(transfer.id)) {
+							downloadAnswers.delete(transfer.id);
+							this.receiveTransfer(transfer);
 						}
 					});
 				}
@@ -478,7 +478,7 @@ export class Files implements IFiles {
 						transfer,
 						false,
 						(ok: boolean) => {
-							downloadAnswers[transfer.id]	= ok;
+							downloadAnswers.set(transfer.id, ok);
 
 							if (!ok) {
 								this.triggerUIEvent(

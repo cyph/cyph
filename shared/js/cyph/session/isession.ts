@@ -36,6 +36,12 @@ export interface ISession {
 	on<T> (event: string, handler: (data: T) => void) : void;
 
 	/**
+	 * Returns first occurrence of event.
+	 * @param event
+	 */
+	one<T> (event: string) : Promise<T>;
+
+	/**
 	 * Receive incoming cyphertext.
 	 * @param data Data to be decrypted.
 	 */

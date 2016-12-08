@@ -9,7 +9,7 @@ html, body, #main {
 
 html:not(.mobile) {
 	#main {
-		padding: 15px 30px;
+		padding: 0px 30px 15px;
 	}
 
 	.md-button img {
@@ -356,6 +356,10 @@ md-menu-item {
 
 .chat-main .message-item .message {
 	max-width: 85%;
+}
+
+.chat-main:not(.mobile):not(.video) md-list {
+	padding-top: 15px;
 }
 
 .chat-main.mobile.video md-list {

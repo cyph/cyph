@@ -325,10 +325,16 @@ export class CyphDemo extends BaseButtonManager {
 			const facebookPicMessage	= await CyphDemo.facebookPicMessage;
 
 			for (let message of messages) {
-				const chat: IChat	=
+				const chat: IChat		=
 					message.isMobile ?
 						this.mobile :
 						this.desktop
+				;
+
+				const otherChat: IChat	=
+					message.isMobile ?
+						this.desktop :
+						this.mobile
 				;
 
 				const text		= util.translate(message.text);
@@ -348,6 +354,7 @@ export class CyphDemo extends BaseButtonManager {
 
 				chat.currentMessage	= '';
 				chat.send(text);
+				otherChat.scrollManager.scrollDown();
 
 				if (env.isMobile || text !== facebookPicMessage) {
 					continue;

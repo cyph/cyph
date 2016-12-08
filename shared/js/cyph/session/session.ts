@@ -22,7 +22,7 @@ import {Message} from './message';
  */
 export class Session implements ISession {
 	/** @ignore */
-	private readonly receivedMessages: {[id: string]: boolean}	= {};
+	private readonly receivedMessages: Map<string, boolean>		= new Map<string, boolean>();
 
 	/** @ignore */
 	private readonly sendQueue: string[]						= [];
@@ -159,12 +159,17 @@ export class Session implements ISession {
 
 	/** @ignore */
 	private receiveHandler (message: IMessage) : void {
-		if (!this.receivedMessages[message.id]) {
-			this.receivedMessages[message.id]	= true;
+		if (
+			this.receivedMessages.has(message.id) &&
+			this.receivedMessages.get(message.id)
+		) {
+			return;
+		}
 
-			if (message.event in rpcEvents) {
-				this.trigger(message.event, message.data);
-			}
+		this.receivedMessages.set(message.id, true);
+
+		if (message.event in rpcEvents) {
+			this.trigger(message.event, message.data);
 		}
 	}
 
@@ -320,6 +325,11 @@ export class Session implements ISession {
 	/** @inheritDoc */
 	public on<T> (event: string, handler: (data: T) => void) : void {
 		eventManager.on(event + this.id, handler);
+	}
+
+	/** @inheritDoc */
+	public async one<T> (event: string) : Promise<T> {
+		return eventManager.one<T>(event + this.id);
 	}
 
 	/** @inheritDoc */

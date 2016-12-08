@@ -6,11 +6,9 @@ import {DialogManager} from './dialogmanager';
 import * as Directives from './directives';
 import {Elements, elements} from './elements';
 import {IDialogManager} from './idialogmanager';
-import {ILinkConnection} from './ilinkconnection';
 import {INotifier} from './inotifier';
 import {ISidebar} from './isidebar';
 import {ISignupForm} from './isignupform';
-import {LinkConnection} from './linkconnection';
 import {nanoScroller} from './nanoscroller';
 import {Notifier} from './notifier';
 import {SignupForm} from './signupform';
@@ -25,11 +23,9 @@ export {
 	Elements,
 	elements,
 	IDialogManager,
-	ILinkConnection,
 	INotifier,
 	ISidebar,
 	ISignupForm,
-	LinkConnection,
 	nanoScroller,
 	Notifier,
 	SignupForm,

@@ -1,4 +1,3 @@
-import {config} from '../cyph/config';
 import {env} from '../cyph/env';
 import {P2P} from '../cyph/p2p/p2p';
 import {events} from '../cyph/session/enums';
@@ -7,10 +6,8 @@ import {BaseButtonManager} from '../cyph/ui/basebuttonmanager';
 import * as Chat from '../cyph/ui/chat';
 import {elements} from '../cyph/ui/elements';
 import {IDialogManager} from '../cyph/ui/idialogmanager';
-import {ILinkConnection} from '../cyph/ui/ilinkconnection';
 import {INotifier} from '../cyph/ui/inotifier';
 import {ISignupForm} from '../cyph/ui/isignupform';
-import {LinkConnection} from '../cyph/ui/linkconnection';
 import {SignupForm} from '../cyph/ui/signupform';
 import {urlState} from '../cyph/urlstate';
 import {util} from '../cyph/util';
@@ -34,8 +31,8 @@ export class UI extends BaseButtonManager {
 	/** Chat UI. */
 	public chat: Chat.IChat;
 
-	/** The link connection to join this cyph. */
-	public cyphConnection: ILinkConnection;
+	/** Base URL to use before the hash in new cyph link. */
+	public linkConnectionBaseUrl: string;
 
 	/** Signup form to be displayed at the end of a cyph. */
 	public signupForm: ISignupForm;
@@ -102,12 +99,6 @@ export class UI extends BaseButtonManager {
 			true
 		);
 
-		this.cyphConnection	= new LinkConnection(
-			config.cyphCountdown,
-			this.chat,
-			this.dialogManager
-		);
-
 		this.signupForm		= new SignupForm();
 
 
@@ -116,12 +107,12 @@ export class UI extends BaseButtonManager {
 		}
 
 
-		this.chat.session.on(events.abort, () => {
+		this.chat.session.one(events.abort).then(() => {
 			self.onbeforeunload	= null;
 			this.changeState(States.chat);
 		});
 
-		this.chat.session.on(events.beginChatComplete, () => {
+		this.chat.session.one(events.beginChatComplete).then(() => {
 			self.onbeforeunload	= () => strings.disconnectWarning;
 
 			if (initialCallType && this.chat.session.state.isAlice) {
@@ -129,16 +120,13 @@ export class UI extends BaseButtonManager {
 			}
 		});
 
-		this.chat.session.on(events.beginWaiting, () =>
-			this.beginWaiting(baseUrl)
-		);
+		this.chat.session.one(events.beginWaiting).then(() => {
+			this.linkConnectionBaseUrl	= baseUrl;
+			this.changeState(States.waitingForFriend);
+		});
 
-		this.chat.session.on(events.connect, () => {
+		this.chat.session.one(events.connect).then(() => {
 			this.changeState(States.chat);
-
-			if (this.cyphConnection) {
-				this.cyphConnection.stop();
-			}
 
 			if (initialCallType) {
 				this.dialogManager.toast({
@@ -153,19 +141,6 @@ export class UI extends BaseButtonManager {
 	}
 
 	/**
-	 * Initiates UI for sending cyph link to friend.
-	 */
-	public beginWaiting (baseUrl: string) : void {
-		this.cyphConnection.beginWaiting(
-			baseUrl,
-			this.chat.session.state.sharedSecret,
-			this.chat.session.state.wasInitiatedByAPI
-		);
-
-		this.changeState(States.waitingForFriend);
-	}
-
-	/**
 	 * Changes UI state.
 	 * @param state
 	 */
@@ -174,8 +149,8 @@ export class UI extends BaseButtonManager {
 	}
 
 	constructor (
-		/** @ignore */
-		private readonly dialogManager: IDialogManager,
+		/** @see IDialogManager */
+		public readonly dialogManager: IDialogManager,
 
 		/** @ignore */
 		private readonly notifier: INotifier

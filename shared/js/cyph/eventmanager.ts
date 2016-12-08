@@ -7,10 +7,13 @@ import {IThread} from './ithread';
  */
 export class EventManager {
 	/** @ignore */
-	private readonly handlers: {[event: string]: Function[]}			= {};
-
-	/** @ignore */
-	private readonly indices: {[event: string]: Map<Function, number>}	= {};
+	private readonly eventMappings: Map<string, {
+		handlers: Function[];
+		indices: Map<Function, number>;
+	}>	= new Map<string, {
+		handlers: Function[];
+		indices: Map<Function, number>;
+	}>();
 
 	/** @ignore */
 	private readonly untriggeredEvents: string	= 'untriggeredEvents';
@@ -24,16 +27,19 @@ export class EventManager {
 	 * @param handler
 	 */
 	public off<T> (event: string, handler?: (data: T) => void) : void {
-		if (!this.handlers[event]) {
+		if (!this.eventMappings.has(event)) {
 			return;
 		}
 
-		this.handlers[event].splice(this.indices[event].get(handler), 1);
-		this.indices[event].delete(handler);
+		const eventMapping	= this.eventMappings.get(event);
 
-		if (this.handlers[event].length < 1) {
-			this.handlers[event]	= null;
-			this.indices[event]		= null;
+		if (!handler || eventMapping.handlers.length < 1) {
+			this.eventMappings.delete(event);
+		}
+		else if (eventMapping.indices.has(handler)) {
+			const index	= eventMapping.indices.get(handler);
+			eventMapping.handlers.splice(index, 1);
+			eventMapping.indices.delete(handler);
 		}
 	}
 
@@ -43,23 +49,27 @@ export class EventManager {
 	 * @param handler
 	 */
 	public on<T> (event: string, handler: (data: T) => void) : void {
-		if (!this.handlers[event]) {
-			this.handlers[event]	= [];
-			this.indices[event]		= new Map<Function, number>();
+		if (!this.eventMappings.has(event)) {
+			this.eventMappings.set(event, {
+				handlers: [],
+				indices: new Map<Function, number>()
+			});
 		}
 
-		if (this.indices[event].has(handler)) {
+		const eventMapping	= this.eventMappings.get(event);
+
+		if (eventMapping.indices.has(handler)) {
 			return;
 		}
 
-		this.indices[event].set(
+		eventMapping.indices.set(
 			handler,
-			this.handlers[event].push(handler) - 1
+			eventMapping.handlers.push(handler) - 1
 		);
 	}
 
 	/**
-	 * Returns first occurrence of event.
+	 * Resolves on first occurrence of event.
 	 * @param event
 	 */
 	public async one<T> (event: string) : Promise<T> {
@@ -88,24 +98,30 @@ export class EventManager {
 	) : void {
 		if (!shouldTrigger) {
 			this.trigger(this.untriggeredEvents, {event, data}, true);
+			return;
 		}
-		else {
-			for (let handler of (this.handlers[event] || [])) {
-				try {
-					handler(data);
-				}
-				catch (err) {
-					setTimeout(() => { throw err; }, 0);
-				}
-			}
 
-			if (env.isMainThread) {
-				for (let thread of this.threads) {
-					try {
-						thread.postMessage({event, data, isThreadEvent: true});
-					}
-					catch (_) {}
+		if (env.isMainThread) {
+			for (let thread of this.threads) {
+				try {
+					thread.postMessage({event, data, isThreadEvent: true});
 				}
+				catch (_) {}
+			}
+		}
+
+		if (!this.eventMappings.has(event)) {
+			return;
+		}
+
+		const handlers	= this.eventMappings.get(event).handlers.slice(0);
+
+		for (let handler of handlers) {
+			try {
+				handler(data);
+			}
+			catch (err) {
+				setTimeout(() => { throw err; }, 0);
 			}
 		}
 	}

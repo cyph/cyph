@@ -29,7 +29,7 @@ export class FileInput {
 				e.stopPropagation();
 				e.preventDefault();
 
-				if (input.files.length < 1 || !this.change) {
+				if (input.files.length < 1) {
 					return;
 				}
 

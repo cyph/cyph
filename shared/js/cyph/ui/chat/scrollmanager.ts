@@ -13,10 +13,16 @@ export class ScrollManager implements IScrollManager {
 	private messageCountLock: {}	= {};
 
 	/** @ignore */
-	private scrollDownLock: {}		= {};
+	private scrollDownLocks: {
+		cyphertext: {};
+		messages: {};
+	}	= {
+		cyphertext: {},
+		messages: {}
+	};
 
 	/** @ignore */
-	private processedMessages: {[index: number]: boolean}	= {};
+	private processedMessages: Map<number, boolean>	= new Map<number, boolean>();
 
 	/** @inheritDoc */
 	public unreadMessages: number	= 0;
@@ -37,10 +43,10 @@ export class ScrollManager implements IScrollManager {
 
 		const messageIndex	= parseInt($elem.attr('message-index'), 10);
 
-		if (isNaN(messageIndex) || this.processedMessages[messageIndex]) {
+		if (isNaN(messageIndex) || this.processedMessages.has(messageIndex)) {
 			return;
 		}
-		this.processedMessages[messageIndex]	= true;
+		this.processedMessages.set(messageIndex, true);
 
 		const message		= this.chat.messages[messageIndex];
 
@@ -120,7 +126,10 @@ export class ScrollManager implements IScrollManager {
 	/** @inheritDoc */
 	public async scrollDown (shouldScrollCyphertext?: boolean) : Promise<void> {
 		return util.lock(
-			this.scrollDownLock,
+			shouldScrollCyphertext ?
+				this.scrollDownLocks.cyphertext :
+				this.scrollDownLocks.messages
+			,
 			async () => {
 				await util.sleep();
 
@@ -130,6 +139,10 @@ export class ScrollManager implements IScrollManager {
 				;
 
 				await $elem.animate({scrollTop: $elem[0].scrollHeight}, 350).promise();
+
+				if (shouldScrollCyphertext) {
+					return;
+				}
 
 				for (let message of this.chat.messages) {
 					if (message.unread) {

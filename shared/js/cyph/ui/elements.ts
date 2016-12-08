@@ -74,16 +74,6 @@ export class Elements {
 	public readonly buttons					= Elements.get('.md-button');
 
 	/** @see Elements */
-	public readonly connectLinkInput		= Elements.get(
-		'.link-connection .connect-link-input input'
-	);
-
-	/** @see Elements */
-	public readonly connectLinkLink			= Elements.get(
-		'.link-connection .connect-link-link'
-	);
-
-	/** @see Elements */
 	public readonly cyphertext				= Elements.get('.chat-cyphertext > md2-content');
 
 	/** @see Elements */

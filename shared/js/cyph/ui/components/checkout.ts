@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input} from '@angular/core';
+import {Component, ElementRef, Input, OnInit} from '@angular/core';
 import {config} from '../../config';
 import {env} from '../../env';
 import {util} from '../../util';
@@ -11,7 +11,7 @@ import {util} from '../../util';
 	selector: 'cyph-checkout',
 	templateUrl: '../../../../templates/checkout.html'
 })
-export class Checkout {
+export class Checkout implements OnInit {
 	/** @ignore */
 	@Input() public amount: string;
 
@@ -30,13 +30,14 @@ export class Checkout {
 	/** @ignore */
 	public complete: boolean;
 
-	constructor (elementRef: ElementRef) { (async () => {
+	/** @inheritDoc */
+	public async ngOnInit () : Promise<void> {
 		const token: string	= await util.request({
 			retries: 5,
 			url: env.baseUrl + config.braintreeConfig.endpoint
 		});
 
-		const checkoutUI: JQuery	= $(elementRef.nativeElement).find('.braintree');
+		const checkoutUI: JQuery	= $(this.elementRef.nativeElement).find('.braintree');
 
 		checkoutUI.html('');
 
@@ -62,5 +63,10 @@ export class Checkout {
 				}
 			}
 		});
-	})(); }
+	}
+
+	constructor (
+		/** @ignore */
+		private readonly elementRef: ElementRef
+	) {}
 }

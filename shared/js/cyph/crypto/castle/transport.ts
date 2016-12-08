@@ -19,9 +19,9 @@ export class Transport {
 	private lastIncomingMessageTimestamp: number	= 0;
 
 	/** @ignore */
-	private readonly receivedMessages: {
-		[id: number]: {data: Uint8Array; totalChunks: number}
-	}	= {};
+	private readonly receivedMessages: Map<number, {data: Uint8Array; totalChunks: number}>	=
+		new Map<number, {data: Uint8Array; totalChunks: number}>()
+	;
 
 	/** Queue of cyphertext interception handlers. */
 	public readonly cyphertextIntercepters: ((cyphertext: Uint8Array) => void)[]	= [];
@@ -92,14 +92,14 @@ export class Transport {
 			plaintext.byteOffset + 40
 		);
 
-		if (!this.receivedMessages[id]) {
-			this.receivedMessages[id]	= {
+		if (!this.receivedMessages.has(id)) {
+			this.receivedMessages.set(id, {
 				data: new Uint8Array(numBytes),
 				totalChunks: 0
-			};
+			});
 		}
 
-		const message	= this.receivedMessages[id];
+		const message	= this.receivedMessages.get(id);
 
 		message.data.set(chunk, index);
 		potassium.clearMemory(plaintext);
@@ -122,7 +122,7 @@ export class Transport {
 		}
 
 		potassium.clearMemory(message.data);
-		this.receivedMessages[id]	= null;
+		this.receivedMessages.delete(id);
 	}
 
 	/**

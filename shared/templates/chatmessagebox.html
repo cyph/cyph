@@ -1,7 +1,7 @@
 <div
 	class='chat-message-box'
 	[class.mobile]='self.isMobile'
-	*ngIf='self && self.state === states.chat && self.session.state.isAlive'
+	*ngIf='self.state === states.chat && self.session.state.isAlive'
 >
 	<textarea
 		class='message-box tabIndent'
