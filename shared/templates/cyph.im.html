@@ -1,4 +1,4 @@
-<span *ngIf='ui && ui.chat'>
+<span *ngIf='ui'>
 	<section id='main' class='cyph-foreground layout-fill layout-column'>
 		<cyph-chat-main
 			[self]='ui.chat'
@@ -29,6 +29,12 @@
 			class='cyph-view layout-fill layout-column flex'
 		></div>
 
+		<cyph-beta
+			[betaState]='ui.betaState'
+			[class.active]='ui.state === states.beta'
+			class='cyph-view layout-fill layout-column flex'
+		></cyph-beta>
+
 		<footer>
 			<cyph-chat-message-box
 				[self]='ui.chat'
@@ -36,20 +42,11 @@
 			></cyph-chat-message-box>
 
 			<cyph-static-footer
-				[chat]='ui.chat'
-				*ngIf='!env.isMobile'
+				[wasInitiatedByAPI]='ui.chat.session.state.wasInitiatedByAPI'
+				*ngIf='!env.isMobile && ui.chat'
 			></cyph-static-footer>
 		</footer>
 	</section>
 
 	<cyph-chat-cyphertext [self]='ui.chat'></cyph-chat-cyphertext>
-</span>
-<span *ngIf='ui && !ui.chat'>
-	<section id='main' class='cyph-foreground layout-fill layout-column'>
-		<cyph-beta
-			[ui]='ui'
-			[class.active]='ui.state === states.beta'
-			class='cyph-view layout-fill layout-column flex'
-		></cyph-beta>
-	</section>
 </span>

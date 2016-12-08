@@ -1,4 +1,4 @@
-<div class='footer flex layout-row' *ngIf='chat'>
+<div class='footer flex layout-row'>
 	<div class='flex'></div>
 
 	<div class='layout-row' *ngIf='!coBranded'>
@@ -23,10 +23,10 @@
 		</p>
 
 		<p class='flex-nogrow layout-padding'>
-			<strong *ngIf='!chat.session.state.wasInitiatedByAPI' cyphTranslate>
+			<strong *ngIf='!wasInitiatedByAPI' cyphTranslate>
 				- Individual Use Only -
 			</strong>
-			<strong *ngIf='chat.session.state.wasInitiatedByAPI' cyphTranslate>
+			<strong *ngIf='wasInitiatedByAPI' cyphTranslate>
 				- Cyph API -
 			</strong>
 		</p>

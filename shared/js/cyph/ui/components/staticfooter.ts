@@ -1,6 +1,5 @@
 import {Component, Input} from '@angular/core';
 import {Env, env} from '../../env';
-import {IChat} from '../chat/ichat';
 
 
 /**
@@ -12,7 +11,7 @@ import {IChat} from '../chat/ichat';
 })
 export class StaticFooter {
 	/** @ignore */
-	@Input() public chat: IChat;
+	@Input() public wasInitiatedByAPI: boolean;
 
 	/** @ignore */
 	public coBranded: boolean	= coBranded;

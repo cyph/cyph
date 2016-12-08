@@ -2,7 +2,6 @@ import {Component, Input} from '@angular/core';
 import {Strings, strings} from '../cyph/strings';
 import {util} from '../cyph/util';
 import {BetaStates} from './enums';
-import {UI} from './ui';
 
 
 /**
@@ -14,7 +13,7 @@ import {UI} from './ui';
 })
 export class BetaComponent {
 	/** @ignore */
-	@Input() public ui: UI;
+	@Input() public betaState: BetaStates;
 
 	/** @ignore */
 	public checking: boolean	= false;

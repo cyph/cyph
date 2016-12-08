@@ -1,12 +1,11 @@
 <md2-content
 	class='layout-fill'
 	childClass='nano md-no-flicker flex layout-column'
-	*ngIf='ui'
 >
 	<div class='nano-content'>
 		<div
 			class='login-form layout-row layout-align-center-center'
-			*ngIf='ui.betaState === betaStates.login'
+			*ngIf='betaState === betaStates.login'
 			[class.checking]='checking'
 		>
 			<md2-card class='md-padding flex-75'>
@@ -62,10 +61,10 @@
 				<md2-progress-circular mdMode='indeterminate'></md2-progress-circular>
 			</md2-card>
 		</div>
-		<div *ngIf='ui.betaState === betaStates.register' cyphTranslate>
+		<div *ngIf='betaState === betaStates.register' cyphTranslate>
 			Registration screen
 		</div>
-		<div *ngIf='ui.betaState === betaStates.settings' cyphTranslate>
+		<div *ngIf='betaState === betaStates.settings' cyphTranslate>
 			Settings screen
 		</div>
 	</div>
