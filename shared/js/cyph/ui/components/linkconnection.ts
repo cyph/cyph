@@ -1,4 +1,11 @@
-import {Component, ElementRef, Input, OnChanges, SimpleChanges} from '@angular/core';
+import {
+	ChangeDetectorRef,
+	Component,
+	ElementRef,
+	Input,
+	OnChanges,
+	SimpleChanges
+} from '@angular/core';
 import {config} from '../../config';
 import {Env, env} from '../../env';
 import {ITimer} from '../../itimer';
@@ -56,14 +63,14 @@ export class LinkConnection implements OnChanges {
 	/** URL-encoded version of this link (for sms and mailto links). */
 	public linkEncoded: string;
 
+	/** Counts down until link expires. */
+	public timer: ITimer;
+
 	/** @see Env */
 	public env: Env	= env;
 
 	/** Draft of queued message. */
 	public queuedMessageDraft: string	= '';
-
-	/** Counts down until link expires. */
-	public timer: ITimer				= new Timer(config.cyphCountdown);
 
 	/**
 	 * Extends the countdown duration.
@@ -158,6 +165,12 @@ export class LinkConnection implements OnChanges {
 			);
 		}
 
+		this.timer	= new Timer(
+			config.cyphCountdown,
+			false,
+			this.changeDetectorRef
+		);
+
 		this.chat.session.one(events.connect).then(() => {
 			isWaiting			= false;
 			this.link			= '';
@@ -176,6 +189,9 @@ export class LinkConnection implements OnChanges {
 
 	constructor (
 		/** @ignore */
-		private readonly elementRef: ElementRef
+		private readonly elementRef: ElementRef,
+
+		/** @ignore */
+		private readonly changeDetectorRef: ChangeDetectorRef
 	) {}
 }

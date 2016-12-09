@@ -165,10 +165,6 @@ export class ScrollManager implements IScrollManager {
 		/** @ignore */
 		private readonly messageCountInTitle?: boolean
 	) { (async () => {
-		if (this.chat.isMobile) {
-			this.elements.messageBox().focus(() => this.scrollDown());
-		}
-
 		await CyphElements.waitForElement(this.elements.messageListInner);
 
 		new MutationObserver(mutations => {

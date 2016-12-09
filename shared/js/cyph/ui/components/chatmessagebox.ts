@@ -230,6 +230,9 @@ export class ChatMessageBox implements OnInit {
 
 				e.stopPropagation();
 				e.preventDefault();
+			}).focus(async () => {
+				await util.sleep(750);
+				this.self.scrollManager.scrollDown();
 			});
 		}
 		else {
