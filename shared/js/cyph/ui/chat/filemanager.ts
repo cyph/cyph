@@ -88,7 +88,7 @@ export class FileManager implements IFileManager {
 		const plaintext	= await new Promise<Uint8Array>(resolve => {
 			const reader	= new FileReader();
 
-			if (image && file.type === 'image/gif') {
+			if (image && file.type !== 'image/gif') {
 				reader.onload	= () => {
 					const img	= document.createElement('img');
 					img.onload	= () => resolve(this.compressImage(img, file));
