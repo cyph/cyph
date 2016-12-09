@@ -358,7 +358,7 @@ md-menu-item {
 	max-width: 85%;
 }
 
-.chat-main:not(.mobile):not(.video) md-list {
+.chat-main:not(.mobile):not(.video) md-list > md2-list-item:first-child {
 	padding-top: 15px;
 }
 
