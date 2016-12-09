@@ -22,22 +22,22 @@ import {Message} from './message';
  */
 export class Session implements ISession {
 	/** @ignore */
-	private readonly receivedMessages: Set<string>				= new Set<string>();
+	private readonly receivedMessages: Set<string>	= new Set<string>();
 
 	/** @ignore */
-	private readonly sendQueue: string[]						= [];
+	private readonly sendQueue: string[]			= [];
 
 	/** @ignore */
-	private lastIncomingMessageTimestamp: number				= util.timestamp();
+	private lastIncomingMessageTimestamp: number	= util.timestamp();
 
 	/** @ignore */
-	private lastOutgoingMessageTimestamp: number				= util.timestamp();
+	private lastOutgoingMessageTimestamp: number	= util.timestamp();
 
 	/** @ignore */
-	private pingPongTimeouts: number							= 0;
+	private pingPongTimeouts: number				= 0;
 
 	/** @ignore */
-	private isLocalSession: boolean								= false;
+	private isLocalSession: boolean					= false;
 
 	/** @ignore */
 	private castle: ICastle;
