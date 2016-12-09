@@ -206,8 +206,8 @@
 		[style.margin-top]='
 			(
 				(
-					self.fileManager.files.transfers.length < 3 ?
-						self.fileManager.files.transfers.length :
+					self.fileManager.files.transfers.size < 3 ?
+						self.fileManager.files.transfers.size :
 						3
 				) * 55
 			) + "px"
