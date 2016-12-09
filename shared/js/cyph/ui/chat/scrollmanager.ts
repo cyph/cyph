@@ -22,7 +22,7 @@ export class ScrollManager implements IScrollManager {
 	};
 
 	/** @ignore */
-	private processedMessages: Map<number, boolean>	= new Map<number, boolean>();
+	private processedMessages: Set<number>	= new Set<number>();
 
 	/** @inheritDoc */
 	public unreadMessages: number	= 0;
@@ -46,7 +46,7 @@ export class ScrollManager implements IScrollManager {
 		if (isNaN(messageIndex) || this.processedMessages.has(messageIndex)) {
 			return;
 		}
-		this.processedMessages.set(messageIndex, true);
+		this.processedMessages.add(messageIndex);
 
 		const message		= this.chat.messages[messageIndex];
 

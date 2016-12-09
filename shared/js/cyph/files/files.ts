@@ -179,7 +179,7 @@ export class Files implements IFiles {
 	private nativePotassium: Potassium;
 
 	/** @inheritDoc */
-	public readonly transfers: ITransfer[]	= [];
+	public readonly transfers: Set<ITransfer>	= new Set<ITransfer>();
 
 	/** @ignore */
 	private async decryptFile (
@@ -300,11 +300,7 @@ export class Files implements IFiles {
 
 					await util.sleep(1000);
 
-					for (let i = 0 ; i < this.transfers.length ; ++i) {
-						if (this.transfers[i] === transfer) {
-							this.transfers.splice(i, 1);
-						}
-					}
+					this.transfers.delete(transfer);
 				}
 				else {
 					this.triggerUIEvent(
@@ -357,7 +353,7 @@ export class Files implements IFiles {
 			plaintext.length
 		);
 
-		const transferIndex: number	= this.transfers.push(transfer) - 1;
+		this.transfers.add(transfer);
 
 		analytics.send({
 			eventAction: 'send',
@@ -381,7 +377,7 @@ export class Files implements IFiles {
 			);
 
 			if (transfer.answer === false) {
-				this.transfers.splice(transferIndex, 1);
+				this.transfers.delete(transfer);
 
 				if (uploadTask) {
 					uploadTask.cancel();
@@ -426,7 +422,7 @@ export class Files implements IFiles {
 						transfer
 					));
 
-					this.transfers.splice(transferIndex, 1);
+					this.transfers.delete(transfer);
 				}
 			);
 		});

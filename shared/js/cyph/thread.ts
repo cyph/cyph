@@ -176,11 +176,7 @@ export class Thread implements IThread {
 
 		this.worker	= null;
 
-		for (let i = 0 ; i < eventManager.threads.length ; ++i) {
-			if (eventManager.threads[i] === this) {
-				eventManager.threads.splice(i, 1);
-			}
-		}
+		eventManager.threads.delete(this);
 	}
 
 	/**
@@ -285,6 +281,6 @@ export class Thread implements IThread {
 			}
 		};
 
-		eventManager.threads.push(this);
+		eventManager.threads.add(this);
 	}
 }

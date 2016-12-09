@@ -7,19 +7,13 @@ import {IThread} from './ithread';
  */
 export class EventManager {
 	/** @ignore */
-	private readonly eventMappings: Map<string, {
-		handlers: Function[];
-		indices: Map<Function, number>;
-	}>	= new Map<string, {
-		handlers: Function[];
-		indices: Map<Function, number>;
-	}>();
+	private readonly eventMappings: Map<string, Set<Function>>	= new Map<string, Set<Function>>();
 
 	/** @ignore */
 	private readonly untriggeredEvents: string	= 'untriggeredEvents';
 
 	/** List of all active threads. */
-	public readonly threads: IThread[]		= [];
+	public readonly threads: Set<IThread>		= new Set<IThread>();
 
 	/**
 	 * Removes handler from event.
@@ -33,13 +27,10 @@ export class EventManager {
 
 		const eventMapping	= this.eventMappings.get(event);
 
-		if (!handler || eventMapping.handlers.length < 1) {
+		eventMapping.delete(handler);
+
+		if (!handler || eventMapping.size < 1) {
 			this.eventMappings.delete(event);
-		}
-		else if (eventMapping.indices.has(handler)) {
-			const index	= eventMapping.indices.get(handler);
-			eventMapping.handlers.splice(index, 1);
-			eventMapping.indices.delete(handler);
 		}
 	}
 
@@ -50,22 +41,10 @@ export class EventManager {
 	 */
 	public on<T> (event: string, handler: (data: T) => void) : void {
 		if (!this.eventMappings.has(event)) {
-			this.eventMappings.set(event, {
-				handlers: [],
-				indices: new Map<Function, number>()
-			});
+			this.eventMappings.set(event, new Set<Function>());
 		}
 
-		const eventMapping	= this.eventMappings.get(event);
-
-		if (eventMapping.indices.has(handler)) {
-			return;
-		}
-
-		eventMapping.indices.set(
-			handler,
-			eventMapping.handlers.push(handler) - 1
-		);
+		this.eventMappings.get(event).add(handler);
 	}
 
 	/**
@@ -114,9 +93,7 @@ export class EventManager {
 			return;
 		}
 
-		const handlers	= this.eventMappings.get(event).handlers.slice(0);
-
-		for (let handler of handlers) {
+		for (let handler of Array.from(this.eventMappings.get(event))) {
 			try {
 				handler(data);
 			}

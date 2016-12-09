@@ -22,7 +22,7 @@ import {Message} from './message';
  */
 export class Session implements ISession {
 	/** @ignore */
-	private readonly receivedMessages: Map<string, boolean>		= new Map<string, boolean>();
+	private readonly receivedMessages: Set<string>				= new Set<string>();
 
 	/** @ignore */
 	private readonly sendQueue: string[]						= [];
@@ -159,14 +159,10 @@ export class Session implements ISession {
 
 	/** @ignore */
 	private receiveHandler (message: IMessage) : void {
-		if (
-			this.receivedMessages.has(message.id) &&
-			this.receivedMessages.get(message.id)
-		) {
+		if (this.receivedMessages.has(message.id)) {
 			return;
 		}
-
-		this.receivedMessages.set(message.id, true);
+		this.receivedMessages.add(message.id);
 
 		if (message.event in rpcEvents) {
 			this.trigger(message.event, message.data);
