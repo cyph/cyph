@@ -33,7 +33,7 @@ export class ScrollManager implements IScrollManager {
 		return offset.top > 0 && offset.top < this.elements.messageList().height();
 	}
 
-	/** @ignore */
+	/** Process read-ness and scrolling */
 	private async mutationObserverHandler (mutation: MutationRecord) : Promise<void> {
 		const $elem: JQuery	= $(
 			mutation.addedNodes.length > 0 ?
@@ -50,61 +50,33 @@ export class ScrollManager implements IScrollManager {
 
 		const message		= this.chat.messages[messageIndex];
 
-		/* Process read-ness and scrolling */
-		if (message && message.unread) {
-			nanoScroller.update();
+		if (!message || !message.unread) {
+			return;
+		}
 
-			if (!visibilityWatcher.isVisible) {
-				this.updateMessageCount();
-				await visibilityWatcher.waitForChange();
-			}
+		nanoScroller.update();
 
-			const currentScrollPosition: number	=
-				(<any> this.elements.messageList()).scrollPosition()
-			;
-
-			if (($elem.height() + 150) > currentScrollPosition) {
-				await this.scrollDown();
-			}
-			else {
-				this.updateMessageCount();
-				while (!this.appeared($elem)) {
-					await util.sleep();
-				}
-			}
-
-			message.unread	= false;
+		if (!visibilityWatcher.isVisible) {
 			this.updateMessageCount();
+			await visibilityWatcher.waitForChange();
 		}
 
-		/* Process image lightboxes */
-		else if ($elem.is('p:not(.processed)')) {
-			const $html: JQuery	= $($elem[0].outerHTML);
+		const currentScrollPosition: number	=
+			(<any> this.elements.messageList()).scrollPosition()
+		;
 
-			$html.find('img').each((i: number, elem: HTMLElement) => {
-				const $this: JQuery	= $(elem);
-
-				if ($this.parent().prop('tagName').toLowerCase() !== 'a') {
-					const $a: JQuery	= $(document.createElement('a'));
-
-					$a.attr('href', $this.attr('src'));
-
-					$this.before($a);
-					$this.detach();
-					$a.append($this);
-
-					util.getValue(
-						$a,
-						'magnificPopup',
-						(o: JQuery) => {}
-					).call($a, {type: 'image'});
-				}
-			});
-
-			$html.addClass('processed');
-
-			$elem.replaceWith($html);
+		if (($elem.height() + 150) > currentScrollPosition) {
+			await this.scrollDown();
 		}
+		else {
+			this.updateMessageCount();
+			while (!this.appeared($elem)) {
+				await util.sleep();
+			}
+		}
+
+		message.unread	= false;
+		this.updateMessageCount();
 	}
 
 	/** @ignore */

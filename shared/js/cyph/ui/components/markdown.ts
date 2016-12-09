@@ -21,9 +21,6 @@ export class Markdown implements OnChanges {
 	@Input() public markdown: string;
 
 	/** @ignore */
-	public html: string	= '';
-
-	/** @ignore */
 	public async ngOnChanges (changes: SimpleChanges) : Promise<void> {
 		if (this.markdown === null) {
 			await util.sleep(10000);
@@ -35,7 +32,7 @@ export class Markdown implements OnChanges {
 			;
 		}
 
-		this.html	= DOMPurify.sanitize(
+		const $html	= $(DOMPurify.sanitize(
 			this.markdownIt.render(this.markdown || '').
 
 				/* Merge blockquotes like reddit */
@@ -49,19 +46,34 @@ export class Markdown implements OnChanges {
 						img.src	= value;
 						return img.outerHTML;
 					}
-				).
-
-				/* Block window.opener in new window */
-				replace(
-					/\<a href=/g,
-					'<a rel="noreferrer" href='
 				)
 			,
 			{
 				FORBID_TAGS: ['style'],
 				SAFE_FOR_JQUERY: true
 			}
+		));
+
+		/* Block window.opener in new window */
+		$html.find('a').each((i: number, a: HTMLAnchorElement) =>
+			$(a).attr('rel', 'noreferrer')
 		);
+
+		/* Process image lightboxes */
+		$html.find('img').each((i: number, img: HTMLImageElement) => {
+			const $img	= $(img);
+			const $a	= $(document.createElement('a'));
+
+			$a.attr('href', $img.attr('src'));
+
+			$img.before($a);
+			$img.detach();
+			$a.append($img);
+
+			(<any> $a).magnificPopup({type: 'image'});
+		});
+
+		this.$element.empty().append($html);
 	}
 
 	constructor (elementRef: ElementRef) {

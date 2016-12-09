@@ -191,7 +191,7 @@ cyph-file-input {
 	display: none;
 }
 
-cyph-markdown > span {
+cyph-markdown {
 	> p:only-child {
 		display: inline;
 	}
@@ -202,7 +202,7 @@ cyph-markdown > span {
 }
 
 html:not(.mobile) {
-	cyph-markdown > span {
+	cyph-markdown {
 		> :not(p), > p:not(:only-child) {
 			margin-left: 25px;
 		}
