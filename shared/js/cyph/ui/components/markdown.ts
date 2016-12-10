@@ -17,7 +17,7 @@ export class Markdown implements OnChanges {
 	/** @ignore */
 	private readonly markdownIt: any;
 
-	/** @ignore */
+	/** String of Markdown to render as HTML and add to the DOM. */
 	@Input() public markdown: string;
 
 	/** @ignore */

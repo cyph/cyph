@@ -1,11 +1,5 @@
 /**
  * @global
- * Indicates whether this is a co-branded instance of Cyph.
- */
-declare let coBranded: boolean;
-
-/**
- * @global
  * If applicable, identifier of this custom build.
  */
 declare let customBuild: string;

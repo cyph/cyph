@@ -12,22 +12,22 @@ import {util} from '../../util';
 	templateUrl: '../../../../templates/checkout.html'
 })
 export class Checkout implements OnInit {
-	/** @ignore */
-	@Input() public amount: string;
+	/** Amount in dollars. */
+	@Input() public amount: number;
 
-	/** @ignore */
-	@Input() public category: string;
+	/** Item category ID number. */
+	@Input() public category: number;
 
-	/** @ignore */
+	/** Email address. */
 	@Input() public email: string;
 
-	/** @ignore */
-	@Input() public item: string;
+	/** Item ID number. */
+	@Input() public item: number;
 
-	/** @ignore */
+	/** Name. */
 	@Input() public name: string;
 
-	/** @ignore */
+	/** Indicates whether checkout is complete. */
 	public complete: boolean;
 
 	/** @inheritDoc */
@@ -47,7 +47,7 @@ export class Checkout implements OnInit {
 			onPaymentMethodReceived: async (data: any) => {
 				const response: string	= await util.request({
 					data: {
-						Amount: Math.floor(parseFloat(this.amount) * 100),
+						Amount: Math.floor(this.amount * 100),
 						Category: this.category,
 						Email: this.email,
 						Item: this.item,

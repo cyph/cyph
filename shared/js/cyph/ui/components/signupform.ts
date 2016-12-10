@@ -11,14 +11,14 @@ import {ISignupForm} from '../isignupform';
 	templateUrl: '../../../../templates/signupform.html'
 })
 export class SignupForm {
-	/** @ignore */
+	/** @see ISignupForm */
 	@Input() public self: ISignupForm;
 
-	/** @ignore */
+	/** Indicates whether or not to display invite-code-related UI. */
 	@Input() public invite: boolean;
 
-	/** @ignore */
-	public env: Env	= env;
+	/** @see Env */
+	public readonly env: Env	= env;
 
 	constructor () {}
 }

@@ -11,7 +11,7 @@ import {util} from '../../util';
 	templateUrl: '../../../../templates/contact.html'
 })
 export class Contact {
-	/** @ignore */
+	/** Contact form state. */
 	@Input() public self: {
 		fromEmail: string;
 		fromName: string;
@@ -21,10 +21,10 @@ export class Contact {
 		subject: string;
 	};
 
-	/** @ignore */
-	public config: Config	= config;
+	/** @see Config */
+	public readonly config: Config	= config;
 
-	/** @ignore */
+	/** Sends email. */
 	public send () : void {
 		util.email(this.self);
 		this.self.sent	= true;

@@ -15,26 +15,26 @@ import {IChat} from '../chat/ichat';
 	templateUrl: '../../../../templates/chatmain.html'
 })
 export class ChatMain {
-	/** @ignore */
+	/** @see IChat */
 	@Input() public self: IChat;
 
-	/** @ignore */
+	/** Indicates whether projected disconnection message should be hidden. */
 	@Input() public hideDisconnectMessage: boolean;
 
-	/** @ignore */
-	public env: Env					= env;
+	/** @see Env */
+	public readonly env: Env				= env;
 
-	/** @ignore */
-	public states: typeof States	= States;
+	/** @see States */
+	public readonly states: typeof States	= States;
 
-	/** @ignore */
-	public strings: Strings			= strings;
+	/** @see Strings */
+	public readonly strings: Strings		= strings;
 
-	/** @ignore */
-	public users: Users				= users;
+	/** @see Users */
+	public readonly users: Users			= users;
 
-	/** @ignore */
-	public util: Util				= util;
+	/** @see Util */
+	public readonly util: Util				= util;
 
 	constructor () {}
 }

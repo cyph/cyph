@@ -11,14 +11,14 @@ import {ISignupForm} from '../isignupform';
 	templateUrl: '../../../../templates/register.html'
 })
 export class Register {
-	/** @ignore */
+	/** @see ISignupForm */
 	@Input() public signupForm: ISignupForm;
 
-	/** @ignore */
+	/** @see SignupForm.invite */
 	@Input() public invite: boolean;
 
-	/** @ignore */
-	public env: Env	= env;
+	/** @see Env */
+	public readonly env: Env	= env;
 
 	constructor () {}
 }

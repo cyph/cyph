@@ -17,26 +17,26 @@ import {visibilityWatcher} from '../visibilitywatcher';
 	templateUrl: '../../../../templates/chatmessagebox.html'
 })
 export class ChatMessageBox implements OnInit {
-	/** @ignore */
+	/** @see IChat */
 	@Input() public self: IChat;
 
-	/** @ignore */
+	/** @see FileInput.accept */
 	@Input() public fileAccept: string;
 
-	/** @ignore */
+	/** Indicates whether speed dial should be displayed. */
 	public isSpeedDialReady: boolean;
 
-	/** @ignore */
+	/** Indicates whether speed dial is open. */
 	public isSpeedDialOpen: boolean	= true;
 
-	/** @ignore */
-	public states: typeof States	= States;
+	/** @see States */
+	public readonly states: typeof States	= States;
 
-	/** @ignore */
-	public strings: Strings			= strings;
+	/** @see Strings */
+	public readonly strings: Strings		= strings;
 
-	/** @ignore */
-	public menuButton: {
+	/** Button to open mobile menu. */
+	public readonly menuButton: {
 		click: ($mdMenu: any) => void,
 		icon: string,
 		label: string
@@ -46,8 +46,8 @@ export class ChatMessageBox implements OnInit {
 		label: util.translate('Menu')
 	};
 
-	/** @ignore */
-	public menuItems: {
+	/** Items inside mobile menu. */
+	public readonly menuItems: {
 		click: () => void,
 		icon: string,
 		label: string
@@ -64,8 +64,8 @@ export class ChatMessageBox implements OnInit {
 		}
 	];
 
-	/** @ignore */
-	public speedDialButtons: {
+	/** Speed dial buttons. */
+	public readonly speedDialButtons: {
 		class?: string;
 		click?: () => void;
 		disabled?: () => boolean;
@@ -112,8 +112,8 @@ export class ChatMessageBox implements OnInit {
 		}
 	];
 
-	/** @ignore */
-	public speedDialButtonsP2P: {
+	/** Speed dial buttons to display during voice/video call. */
+	public readonly speedDialButtonsP2P: {
 		click?: () => void;
 		disabled?: () => boolean;
 		fileAccept?: string;
@@ -123,7 +123,7 @@ export class ChatMessageBox implements OnInit {
 		tooltipDirection: string;
 	}[]	= this.speedDialButtons.filter(o => !o.disabled);
 
-	/** @ignore */
+	/** Opens mobile menu. */
 	public async openMenu ($mdMenu: any) : Promise<void> {
 		/* Workaround for Angular Material menu bug */
 		if (env.isMobile) {

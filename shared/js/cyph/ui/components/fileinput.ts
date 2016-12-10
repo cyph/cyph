@@ -11,10 +11,10 @@ import {Elements} from '../elements';
 	templateUrl: '../../../../templates/fileinput.html'
 })
 export class FileInput {
-	/** @ignore */
+	/** Optional file type restriction. */
 	@Input() public accept: string;
 
-	/** @ignore */
+	/** Handler for uploaded files. */
 	@Output() public change: EventEmitter<File>	= new EventEmitter<File>();
 
 	constructor (elementRef: ElementRef) { (async () => {

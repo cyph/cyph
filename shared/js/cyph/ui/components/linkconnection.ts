@@ -39,16 +39,16 @@ export class LinkConnection implements OnChanges {
 	/** @ignore */
 	private readonly copyLock: {}		= {};
 
-	/** @ignore */
+	/** Base URL to use before the hash in new link. */
 	@Input() public baseUrl: string;
 
-	/** @ignore */
+	/** @see IChat */
 	@Input() public chat: IChat;
 
-	/** @ignore */
+	/** @see IDialogManager */
 	@Input() public dialogManager: IDialogManager;
 
-	/** @ignore */
+	/** Indicates whether advanced features UI should be displayed. */
 	@Input() public enableAdvancedFeatures: boolean;
 
 	/** Indicates whether the advanced features menu is open. */
@@ -67,7 +67,7 @@ export class LinkConnection implements OnChanges {
 	public timer: ITimer;
 
 	/** @see Env */
-	public env: Env	= env;
+	public readonly env: Env	= env;
 
 	/** Draft of queued message. */
 	public queuedMessageDraft: string	= '';

@@ -10,14 +10,11 @@ import {Env, env} from '../../env';
 	templateUrl: '../../../../templates/staticfooter.html'
 })
 export class StaticFooter {
-	/** @ignore */
+	/** Indicates whether this cyph was initiated via the API. */
 	@Input() public wasInitiatedByAPI: boolean;
 
-	/** @ignore */
-	public coBranded: boolean	= coBranded;
-
-	/** @ignore */
-	public env: Env				= env;
+	/** @see Env */
+	public readonly env: Env	= env;
 
 	constructor () {}
 }

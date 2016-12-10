@@ -10,8 +10,8 @@ import {Env, env} from '../../env';
 	templateUrl: '../../../../templates/staticcyphnotfound.html'
 })
 export class StaticCyphNotFound {
-	/** @ignore */
-	public env: Env	= env;
+	/** @see Env */
+	public readonly env: Env	= env;
 
 	constructor () {}
 }

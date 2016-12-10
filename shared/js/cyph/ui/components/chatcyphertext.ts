@@ -12,14 +12,14 @@ import {IChat} from '../chat/ichat';
 	templateUrl: '../../../../templates/chatcyphertext.html'
 })
 export class ChatCyphertext {
-	/** @ignore */
+	/** @see IChat */
 	@Input() public self: IChat;
 
-	/** @ignore */
-	public strings: Strings	= strings;
+	/** @see Strings */
+	public readonly strings: Strings	= strings;
 
-	/** @ignore */
-	public users: Users		= users;
+	/** @see Users */
+	public readonly users: Users		= users;
 
 	constructor () {}
 }

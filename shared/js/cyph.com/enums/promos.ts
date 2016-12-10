@@ -1,5 +1,5 @@
 /**
- * Possible states of promo promo page.
+ * Possible states of promo page.
  */
 export enum Promos {
 	betalist,

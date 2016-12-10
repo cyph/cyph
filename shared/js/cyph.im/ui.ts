@@ -22,16 +22,16 @@ export class UI extends BaseButtonManager {
 	public static readonly uiInitEvent: string	= 'uiInitEvent';
 
 
-	/** UI state/view. */
+	/** @see States */
 	public state: States			= States.none;
 
-	/** Beta page state/view. */
+	/** @see BetaStates */
 	public betaState: BetaStates	= BetaStates.none;
 
-	/** Chat UI. */
+	/** @see Chat.IChat */
 	public chat: Chat.IChat;
 
-	/** Base URL to use before the hash in new cyph link. */
+	/** @see LinkConnection.baseUrl */
 	public linkConnectionBaseUrl: string;
 
 	/** Signup form to be displayed at the end of a cyph. */

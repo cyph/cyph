@@ -11,14 +11,14 @@ import {strings} from '../../strings';
 	templateUrl: '../../../../templates/help.html'
 })
 export class Help {
-	/** @ignore */
-	public tabLabels: string[]	= coBranded ?
+	/** List of labels for tabs to display. */
+	public readonly tabLabels: string[]	= env.coBranded ?
 		[strings.formattingHelp] :
 		[strings.formattingHelp, strings.contactCyph]
 	;
 
-	/** @ignore */
-	public env: Env	= env;
+	/** @see Env */
+	public readonly env: Env	= env;
 
 	constructor () {}
 }

@@ -42,8 +42,6 @@ for (let k of [
 	}
 }
 
-(<any> self).coBranded		= !!customBuild;
-
 (<any> self).locationData	= typeof locationData !== 'undefined' ?
 	locationData :
 	location

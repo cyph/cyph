@@ -33,6 +33,9 @@ export class Env extends EnvDeploy {
 		;
 	})();
 
+	/** Indicates whether this is a co-branded instance of Cyph. */
+	public readonly coBranded: boolean		= !!customBuild;
+
 	/** Indicates whether this is (the main thread of) a Web environment. */
 	public readonly isWeb: boolean			= IS_WEB;
 

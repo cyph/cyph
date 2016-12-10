@@ -26,13 +26,13 @@ export class UI extends BaseButtonManager {
 	public static readonly uiInitEvent: string	= 'uiInitEvent';
 
 
-	/** UI state/view. */
+	/** @see States */
 	public state: States				= States.home;
 
-	/** Promo promo page state/view. */
+	/** @see Promos */
 	public promo: Promos				= Promos.none;
 
-	/** Contact form state. */
+	/** @see Contact.self */
 	public readonly contactState		= {
 		fromEmail: <string> '',
 		fromName: <string> '',
@@ -93,10 +93,10 @@ export class UI extends BaseButtonManager {
 	/** Custom telehealth pricing: % discount for price break. */
 	public readonly telehealthDiscount: number		= 0.10;
 
-	/** Home page state/view. */
+	/** @see HomeSections */
 	public homeSection: HomeSections;
 
-	/** Cyph demo animation. */
+	/** @see CyphDemo */
 	public readonly cyphDemo: CyphDemo;
 
 	/** Signup form to be displayed throughout the site. */
