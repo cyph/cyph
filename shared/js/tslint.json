@@ -60,7 +60,7 @@
 
 		/* Functionality */
 
-		"ban": [true, ["require"], ["Math", "random"]],
+		"ban": [true, ["Math", "random"], ["require"], "setInterval", "setTimeout"],
 		"curly": true,
 		"forin": true,
 		"label-position": true,
