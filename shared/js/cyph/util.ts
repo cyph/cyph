@@ -104,46 +104,6 @@ export class Util {
 	}
 
 	/**
-	 * Safely tries to extract a value from o,
-	 * falling back to defaultValue if it doesn't exist.
-	 * @param o
-	 * @param keysToTry
-	 * @param defaultValue
-	 */
-	public getValue<T> (
-		o: any,
-		keysToTry: string|string[],
-		defaultValue: T = null
-	) : T {
-		if (!o) {
-			return defaultValue;
-		}
-
-		const keys: string[]	=
-			typeof keysToTry === 'string' ?
-				[keysToTry] :
-				keysToTry
-		;
-
-		const value: T	=
-			keys.length < 1 ?
-				null :
-				keys.reduce(
-					(v: T, k: string) : T =>
-						v !== null ?
-							v :
-							k in o ?
-								o[k] :
-								null
-					,
-					null
-				)
-		;
-
-		return value === null ? defaultValue : value;
-	}
-
-	/**
 	 * Executes a Promise within a mutual-exclusion lock.
 	 * @param lock
 	 * @param f
@@ -288,14 +248,14 @@ export class Util {
 		timeout?: number;
 		url: string;
 	}) : Promise<any> {
-		const async: boolean			= this.getValue(o, 'async', true) !== false;
-		const discardErrors: boolean	= this.getValue(o, 'discardErrors', false);
-		const method: string			= this.getValue(o, 'method', 'GET');
-		const responseType: string		= this.getValue(o, 'responseType', '');
-		const retries: number			= this.getValue(o, 'retries', 0);
-		const timeout: number			= this.getValue(o, 'timeout', 0);
-		let contentType: string			= this.getValue(o, 'contentType', null);
-		let data: any					= this.getValue<any>(o, 'data', '');
+		const async: boolean			= o.async !== false;
+		const discardErrors: boolean	= o.discardErrors === true;
+		const method: string			= o.method || 'GET';
+		const responseType: string		= o.responseType || '';
+		const retries: number			= isNaN(o.retries) ? 0 : o.retries;
+		const timeout: number			= isNaN(o.timeout) ? 0 : o.timeout;
+		let contentType: string			= o.contentType || '';
+		let data: any					= o.data || '';
 		let url: string					= o.url;
 
 		return new Promise<any>((resolve, reject) => {
@@ -505,11 +465,7 @@ export class Util {
 	 * @param defaultValue Falls back to this if no translation exists.
 	 */
 	public translate (text: string, defaultValue: string = text) : string {
-		return this.getValue(
-			this.getValue(translations, env.language, {}),
-			text,
-			defaultValue
-		);
+		return (translations[env.language] || {})[text] || defaultValue;
 	}
 
 	/**

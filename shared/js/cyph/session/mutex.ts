@@ -92,7 +92,7 @@ export class Mutex implements IMutex {
 		}
 
 		while (this.owner !== users.me) {
-			await util.sleep(250);
+			await util.sleep();
 
 			if (this.owner === users.other) {
 				friendHadLockFirst	= true;
@@ -125,9 +125,11 @@ export class Mutex implements IMutex {
 		/** @ignore */
 		private readonly session: ISession
 	) {
-		this.session.on(rpcEvents.mutex, (command: Command) =>
-			util.getValue(this.commands, command.method, (o: any) => {})(command.argument)
-		);
+		this.session.on(rpcEvents.mutex, (command: Command) => {
+			if (command.method in this.commands) {
+				(<any> this.commands)[command.method](command.argument);
+			}
+		});
 
 		this.session.on(events.closeChat, () => this.owner = users.me);
 	}

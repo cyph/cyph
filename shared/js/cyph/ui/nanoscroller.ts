@@ -1,5 +1,4 @@
 import {env} from '../env';
-import {util} from '../util';
 import {elements} from './elements';
 
 
@@ -17,11 +16,7 @@ export class NanoScroller {
 	 */
 	public update () : void {
 		if (NanoScroller.isActive) {
-			util.getValue(
-				elements.nanoScroller(),
-				'nanoScroller',
-				() => {}
-			).call(elements.nanoScroller());
+			(<any> elements.nanoScroller()).nanoScroller();
 		}
 	}
 
