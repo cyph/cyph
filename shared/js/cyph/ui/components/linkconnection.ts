@@ -144,14 +144,14 @@ export class LinkConnection implements OnChanges {
 
 			const connectLinkInput	= <HTMLInputElement> $connectLinkInput[0];
 
-			const linkInterval	= setInterval(
-				() => {
-					if (!isWaiting) {
-						clearInterval(linkInterval);
-						return;
-					}
-					else if (this.advancedFeatures) {
-						return;
+			/* Temporary workaround pending TypeScript fix. */
+			/* tslint:disable-next-line:ban  */
+			setTimeout(async () => {
+				while (isWaiting) {
+					await util.sleep(1000);
+
+					if (this.advancedFeatures) {
+						continue;
 					}
 
 					if (this.link !== this.linkConstant) {
@@ -160,9 +160,8 @@ export class LinkConnection implements OnChanges {
 
 					$connectLinkInput.focus();
 					connectLinkInput.setSelectionRange(0, this.linkConstant.length);
-				},
-				1000
-			);
+				}
+			});
 		}
 
 		this.timer	= new Timer(

@@ -45,7 +45,7 @@ export interface ISession {
 	 * Receive incoming cyphertext.
 	 * @param data Data to be decrypted.
 	 */
-	receive (data: string) : void;
+	receive (data: string) : Promise<void>;
 
 	/**
 	 * Send at least one message through the session.
@@ -57,7 +57,7 @@ export interface ISession {
 	 * Send at least one message through the session.
 	 * @param messages
 	 */
-	sendBase (messages: IMessage[]) : void;
+	sendBase (messages: IMessage[]) : Promise<void>;
 
 	/**
 	 * Shorthand for sending a user-facing chat message.

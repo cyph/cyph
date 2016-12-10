@@ -119,7 +119,7 @@ export class UI extends BaseButtonManager {
 	}
 
 	/** @ignore */
-	private linkClickHandler (e: Event) : void {
+	private async linkClickHandler (e: Event) : Promise<void> {
 		e.preventDefault();
 
 		const href		= $(e.currentTarget).attr('href');
@@ -132,7 +132,8 @@ export class UI extends BaseButtonManager {
 		}
 
 		if (this.homeSection === undefined) {
-			setTimeout(() => this.scroll(0), scrollDelay);
+			await util.sleep(scrollDelay);
+			this.scroll(0);
 		}
 	}
 
@@ -236,11 +237,11 @@ export class UI extends BaseButtonManager {
 	}
 
 	/** @ignore */
-	private scroll (
+	private async scroll (
 		position: number,
 		delayFactor: number = 0.75,
 		oncomplete?: Function
-	) : void {
+	) : Promise<void> {
 		const delay: number	=
 			delayFactor *
 			Math.abs(CyphElements.elements.document().scrollTop() - position)
@@ -254,7 +255,8 @@ export class UI extends BaseButtonManager {
 		);
 
 		if (oncomplete) {
-			setTimeout(oncomplete, delay + 50);
+			await util.sleep(delay + 50);
+			oncomplete();
 		}
 	}
 
@@ -294,11 +296,15 @@ export class UI extends BaseButtonManager {
 			urlState.onchange(async (newUrlState) => this.onUrlStateChange(newUrlState));
 
 			const newUrlState: string	= urlState.get();
-			setTimeout(
-				() => urlState.set(newUrlState, true, false, false),
-				(<any> HomeSections)[newUrlState] === undefined ? 0 : 2500
-			);
 
+			if ((<any> HomeSections)[newUrlState] !== undefined) {
+				await util.sleep(2500);
+			}
+
+			urlState.set(newUrlState, true, false, false);
+		})();
+
+		(async () => {
 			await CyphElements.Elements.waitForElement(elements.backgroundVideo);
 			await CyphElements.Elements.waitForElement(elements.featuresSection);
 			await CyphElements.Elements.waitForElement(elements.heroSection);
@@ -326,8 +332,10 @@ export class UI extends BaseButtonManager {
 				}
 				catch (_) {}
 
-				setTimeout(
-					() => (<any> elements.backgroundVideo()).appear().
+				(async () => {
+					await util.sleep(2000);
+
+					(<any> elements.backgroundVideo()).appear().
 						on('appear', () => {
 							try {
 								(<HTMLVideoElement> elements.backgroundVideo()[0]).play();
@@ -340,9 +348,8 @@ export class UI extends BaseButtonManager {
 							}
 							catch (_) {}
 						})
-					,
-					2000
-				);
+					;
+				})();
 			}
 
 
@@ -370,9 +377,15 @@ export class UI extends BaseButtonManager {
 				urlState.get() === ''
 			);
 
-			setTimeout(
-				() => setInterval(
-					() => elements.mainToolbar().toggleClass(
+			/* Temporary workaround pending TypeScript fix. */
+			/* tslint:disable-next-line:ban  */
+			setTimeout(async () => {
+				await util.sleep(3000);
+
+				while (true) {
+					await util.sleep(500);
+
+					elements.mainToolbar().toggleClass(
 						'new-cyph-expanded',
 						this.state === States.home && (
 							(
@@ -382,30 +395,32 @@ export class UI extends BaseButtonManager {
 							) ||
 							CyphElements.elements.footer().is(':appeared')
 						)
-					),
-					500
-				),
-				3000
-			);
+					);
+				}
+			});
 
 
 			/* Section sizing
 
 			if (!env.isMobile) {
-				setInterval(() =>
-					elements.contentContainers().each((i: number, elem: HTMLElement) => {
-						const $this: JQuery	= $(elem);
+				(async () => {
+					while (true) {
+						await util.sleep(2000);
 
-						$this.width(
-							($this[0].innerText || $this.text()).
-								split('\n').
-								map((s: string) => (s.match(/[A-Za-z0-9]/g) || []).length).
-								reduce((a: number, b: number) => Math.max(a, b))
-							*
-							parseInt($this.css('font-size'), 10) / 1.6
-						);
-					})
-				, 2000);
+						elements.contentContainers().each((i: number, elem: HTMLElement) => {
+							const $this: JQuery	= $(elem);
+
+							$this.width(
+								($this[0].innerText || $this.text()).
+									split('\n').
+									map((s: string) => (s.match(/[A-Za-z0-9]/g) || []).length).
+									reduce((a: number, b: number) => Math.max(a, b))
+								*
+								parseInt($this.css('font-size'), 10) / 1.6
+							);
+						});
+					}
+				})();
 			}
 			*/
 
@@ -436,13 +451,23 @@ export class UI extends BaseButtonManager {
 				subtree: true
 			});
 
-			setInterval(() => this.cycleFeatures(), 4200);
-			setTimeout(() => CyphElements.elements.html().addClass('load-complete'), 750);
+			/* Temporary workaround pending TypeScript fix. */
+			/* tslint:disable-next-line:ban  */
+			setTimeout(async () => {
+				while (true) {
+					await util.sleep(4200);
+					this.cycleFeatures();
+				}
+			});
+
+			await util.sleep(750);
+			CyphElements.elements.html().addClass('load-complete');
 
 			/* Cyphertext easter egg */
 			/* tslint:disable-next-line:no-unused-new */
 			new (<any> self).Konami(async () => {
 				urlState.set('intro');
+
 				while (
 					!this.cyphDemo.desktop ||
 					this.cyphDemo.desktop.state !== Chat.States.chat

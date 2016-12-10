@@ -78,18 +78,21 @@ export class DialogManager implements IDialogManager {
 					cancel(o.cancel)
 			);
 
-			const timeoutId	= 'timeout' in o ?
-				setTimeout(() => this.$mdDialog.cancel(promise), o.timeout) :
-				null
-			;
+			let hasReturned	= false;
+			if (!isNaN(o.timeout)) {
+				(async () => {
+					await util.sleep(o.timeout);
+					if (!hasReturned) {
+						this.$mdDialog.cancel(promise);
+					}
+				})();
+			}
 
 			try {
 				return (await promise.catch(_ => false));
 			}
 			finally {
-				if (timeoutId) {
-					clearTimeout(timeoutId);
-				}
+				hasReturned	= true;
 			}
 		});
 	}

@@ -72,10 +72,8 @@ export class FakeCastle implements ICastle {
 	constructor (
 		/** @ignore */
 		private readonly session: ISession
-	) {
-		setTimeout(
-			() => this.session.trigger(events.castle, {event: CastleEvents.connect}),
-			1000
-		);
-	}
+	) { (async () => {
+		await util.sleep(1000);
+		this.session.trigger(events.castle, {event: CastleEvents.connect});
+	})(); }
 }

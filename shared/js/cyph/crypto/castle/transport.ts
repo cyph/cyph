@@ -1,5 +1,6 @@
 import {CastleEvents, events, users} from '../../session/enums';
 import {ISession} from '../../session/isession';
+import {util} from '../../util';
 import {potassium} from '../potassium';
 
 
@@ -43,14 +44,12 @@ export class Transport {
 	public async interceptIncomingCyphertext (
 		timeout: number = 45000
 	) : Promise<Uint8Array> {
-		return new Promise<Uint8Array>((resolve, reject) => {
+		return new Promise<Uint8Array>(async (resolve, reject) => {
 			this.cyphertextIntercepters.push(resolve);
 
 			if (timeout) {
-				setTimeout(
-					() => reject('Cyphertext interception timeout.'),
-					timeout
-				);
+				await util.sleep(timeout);
+				reject('Cyphertext interception timeout.');
 			}
 		});
 	}

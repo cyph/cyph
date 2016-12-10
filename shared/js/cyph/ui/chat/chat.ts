@@ -447,11 +447,16 @@ export class Chat extends BaseButtonManager implements IChat {
 			messageCountInTitle
 		);
 
-
-		setInterval(() => this.messageChange(), 5000);
+		/* Temporary workaround pending TypeScript fix. */
+		/* tslint:disable-next-line:ban  */
+		setTimeout(async () => {
+			while (true) {
+				await util.sleep(5000);
+				this.messageChange();
+			}
+		});
 
 		(<any> self).tabIndent.renderAll();
-
 
 		this.session.one(events.beginChat).then(async () => this.begin());
 

@@ -29,6 +29,7 @@
 						) => {
 							/* Fake out 50 Mb/s connection */
 							while (snapshot.bytesTransferred < snapshot.totalBytes) {
+								/* tslint:disable-next-line:ban */
 								await new Promise(resolve => setTimeout(() => resolve(), 250));
 
 								snapshot.bytesTransferred	= Math.min(

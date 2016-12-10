@@ -390,8 +390,9 @@ export class Util {
 	 * Sleep for the specifed amount of time.
 	 * @param ms
 	 */
-	public async sleep (ms: number = 250) : Promise<{}> {
-		return new Promise(resolve => setTimeout(() => resolve(), ms));
+	public async sleep (ms: number = 250) : Promise<void> {
+		/* tslint:disable-next-line:ban */
+		return new Promise<void>(resolve => setTimeout(() => resolve(), ms));
 	}
 
 	/**

@@ -25,7 +25,7 @@ if (!HTMLElement.prototype.click) {
 	};
 }
 
-$(() => {
+$(async () => {
 	/* Support button-links */
 
 	$('button > a').each((i: number, elem: HTMLElement) => {
@@ -35,7 +35,10 @@ $(() => {
 		$this.css('pointer-events', 'none');
 
 		/* Using mouseup instead of click because of Angular Material weirdness */
-		$button.on('mouseup', () => setTimeout(() => elem.click(), 500));
+		$button.on('mouseup', async () => {
+			await util.sleep(500);
+			elem.click();
+		});
 	});
 
 	if (!env.isLocalEnv && !env.isHomeSite) {
@@ -46,23 +49,17 @@ $(() => {
 
 		/* In WebSigned environments, remove no-longer-necessary
 			'unsafe-inline' from CSP after application loads */
-		setTimeout(
-			() => elements.head().append(
-				`<meta http-equiv="Content-Security-Policy" content="${env.CSP}" />`
-			),
-			10000
+		await util.sleep(10000);
+		elements.head().append(
+			`<meta http-equiv="Content-Security-Policy" content="${env.CSP}" />`
 		);
 	}
 
 	/* Try again if page takes too long to initialise */
-	setTimeout(
-		() => {
-			if (!elements.html().hasClass('load-complete')) {
-				location.reload();
-			}
-		},
-		60000
-	);
+	await util.sleep(60000);
+	if (!elements.html().hasClass('load-complete')) {
+		location.reload();
+	}
 });
 
 

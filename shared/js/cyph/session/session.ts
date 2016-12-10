@@ -329,13 +329,12 @@ export class Session implements ISession {
 	}
 
 	/** @inheritDoc */
-	public receive (data: string) : void {
-		if (this.castle) {
-			this.castle.receive(data);
+	public async receive (data: string) : Promise<void> {
+		while (!this.castle) {
+			await util.sleep();
 		}
-		else {
-			setTimeout(() => this.receive(data), 1000);
-		}
+
+		this.castle.receive(data);
 	}
 
 	/** @inheritDoc */
@@ -344,10 +343,9 @@ export class Session implements ISession {
 	}
 
 	/** @inheritDoc */
-	public sendBase (messages: IMessage[]) : void {
-		if (!this.castle) {
-			setTimeout(() => this.sendBase(messages), 250);
-			return;
+	public async sendBase (messages: IMessage[]) : Promise<void> {
+		while (!this.castle) {
+			await util.sleep();
 		}
 
 		for (let message of messages) {

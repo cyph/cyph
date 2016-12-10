@@ -98,6 +98,7 @@ export class EventManager {
 				handler(data);
 			}
 			catch (err) {
+				/* tslint:disable-next-line:ban */
 				setTimeout(() => { throw err; }, 0);
 			}
 		}

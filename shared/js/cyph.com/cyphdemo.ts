@@ -135,20 +135,19 @@ export class CyphDemo extends BaseButtonManager {
 
 		if (this.isActive !== isActive) {
 			if (!(<HTMLVideoElement> elements.backgroundVideo()[0]).paused) {
-				setTimeout(
-					() => {
-						try {
-							if (elements.backgroundVideo().is(':appeared')) {
-								try {
-									(<HTMLVideoElement> elements.backgroundVideo()[0]).play();
-								}
-								catch (_) {}
+				(async () => {
+					await util.sleep(2000);
+
+					try {
+						if (elements.backgroundVideo().is(':appeared')) {
+							try {
+								(<HTMLVideoElement> elements.backgroundVideo()[0]).play();
 							}
+							catch (_) {}
 						}
-						catch (_) {}
-					},
-					2000
-				);
+					}
+					catch (_) {}
+				})();
 			}
 
 			try {
@@ -270,7 +269,14 @@ export class CyphDemo extends BaseButtonManager {
 
 			elements.demoRoot().css('opacity', 1);
 
-			setInterval(async () => this.resize(), 2000);
+			/* Temporary workaround pending TypeScript fix. */
+			/* tslint:disable-next-line:ban  */
+			setTimeout(async () => {
+				while (true) {
+					await util.sleep(2000);
+					this.resize();
+				}
+			});
 
 			let mobileSession: ISession;
 			const desktopSession: ISession	= new Session(

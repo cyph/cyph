@@ -252,19 +252,17 @@ export class Files implements IFiles {
 
 				if (ok) {
 					/* Arbitrarily assume ~500 Kb/s for progress bar estimation */
-					const intervalId: number	= setInterval(
-						() => {
-							if (transfer.percentComplete >= 100) {
-								clearInterval(intervalId);
-							}
-							else {
-								transfer.percentComplete +=
-									util.random(100000, 25000) / transfer.size * 100
-								;
-							}
-						},
-						1000
-					);
+					(async () => {
+						while (transfer.percentComplete < 100) {
+							await util.sleep(1000);
+
+							transfer.percentComplete +=
+								util.random(100000, 25000) / transfer.size * 100
+							;
+						}
+
+						transfer.percentComplete	= 100;
+					})();
 
 					const cyphertext: Uint8Array	= new Uint8Array(await util.request({
 						responseType: 'arraybuffer',

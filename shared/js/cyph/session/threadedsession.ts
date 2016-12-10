@@ -44,7 +44,7 @@ export class ThreadedSession implements ISession {
 	}
 
 	/** @inheritDoc */
-	public receive (data: string) : void {
+	public async receive (data: string) : Promise<void> {
 		this.trigger(threadedSessionEvents.receive, {data});
 	}
 
@@ -54,7 +54,7 @@ export class ThreadedSession implements ISession {
 	}
 
 	/** @inheritDoc */
-	public sendBase (messages: IMessage[]) : void {
+	public async sendBase (messages: IMessage[]) : Promise<void> {
 		this.trigger(threadedSessionEvents.send, {messages});
 	}
 
