@@ -223,7 +223,7 @@ md-menu-item {
 
 .transfer-list {
 	position: absolute !important;
-	width: 100%;
+	width: calc(100% - 3px);
 
 	md-content {
 		max-height: 165px;
@@ -238,6 +238,10 @@ md-menu-item {
 			}
 		}
 	}
+}
+
+.chat-main.mobile .transfer-list {
+	width: calc(100% - 30px);
 }
 
 .chat-main:not(.mobile):not(.video) .friend-is-typing {

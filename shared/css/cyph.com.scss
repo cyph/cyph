@@ -659,6 +659,11 @@ html.mobile #features-section .carousel.grid-container .logo.active > img {
 						@include transform(translateX(-50%) translateY(-60%));
 					}
 				}
+
+				.transfer-list {
+					width: calc(100% - 35px);
+					margin-top: -15px;
+				}
 			}
 
 			.chat-main.video .video-call.active.playing {
