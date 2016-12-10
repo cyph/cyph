@@ -66,13 +66,13 @@ export class ScrollManager implements IScrollManager {
 		;
 
 		if (($elem.height() + 150) > currentScrollPosition) {
-			await this.scrollDown();
+			this.scrollDown();
+			return;
 		}
-		else {
-			this.updateMessageCount();
-			while (!this.appeared($elem)) {
-				await util.sleep();
-			}
+
+		this.updateMessageCount();
+		while (!this.appeared($elem)) {
+			await util.sleep();
 		}
 
 		message.unread	= false;
@@ -121,6 +121,8 @@ export class ScrollManager implements IScrollManager {
 						message.unread	= false;
 					}
 				}
+
+				this.updateMessageCount();
 			},
 			true,
 			true

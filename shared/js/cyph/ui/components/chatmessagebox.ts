@@ -179,6 +179,7 @@ export class ChatMessageBox implements OnInit {
 
 			e.preventDefault();
 			this.self.send();
+			$textarea.val('');
 		});
 
 		if (this.self.isMobile) {

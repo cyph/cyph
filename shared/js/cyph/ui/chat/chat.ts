@@ -272,10 +272,8 @@ export class Chat extends BaseButtonManager implements IChat {
 	/** @inheritDoc */
 	public send (message?: string, selfDestructTimeout?: number) : void {
 		if (!message) {
-			message	= this.currentMessage;
-
+			message				= this.currentMessage;
 			this.currentMessage	= '';
-
 			this.messageChange();
 		}
 

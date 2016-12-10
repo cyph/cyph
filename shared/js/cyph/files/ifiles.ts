@@ -1,3 +1,4 @@
+import {ChangeDetectorRef} from '@angular/core';
 import {ITransfer} from './itransfer';
 
 
@@ -5,6 +6,9 @@ import {ITransfer} from './itransfer';
  * Manages file transfers.
  */
 export interface IFiles {
+	/** @ignore Temporary workaround. */
+	changeDetectorRef: ChangeDetectorRef;
+
 	/** In-progress file transfers. */
 	readonly transfers: Set<ITransfer>;
 

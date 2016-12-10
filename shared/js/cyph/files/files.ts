@@ -1,3 +1,4 @@
+import {ChangeDetectorRef} from '@angular/core';
 import {analytics} from '../analytics';
 import {config} from '../config';
 import {Potassium, potassium} from '../crypto/potassium';
@@ -179,6 +180,9 @@ export class Files implements IFiles {
 	private nativePotassium: Potassium;
 
 	/** @inheritDoc */
+	public changeDetectorRef: ChangeDetectorRef;
+
+	/** @inheritDoc */
 	public readonly transfers: Set<ITransfer>	= new Set<ITransfer>();
 
 	/** @ignore */
@@ -251,17 +255,18 @@ export class Files implements IFiles {
 				));
 
 				if (ok) {
+					this.transfers.add(transfer);
+
 					/* Arbitrarily assume ~500 Kb/s for progress bar estimation */
 					(async () => {
-						while (transfer.percentComplete < 100) {
+						while (transfer.percentComplete < 85) {
 							await util.sleep(1000);
 
 							transfer.percentComplete +=
 								util.random(100000, 25000) / transfer.size * 100
 							;
+							this.triggerChangeDetection();
 						}
-
-						transfer.percentComplete	= 100;
 					})();
 
 					const cyphertext: Uint8Array	= new Uint8Array(await util.request({
@@ -274,42 +279,31 @@ export class Files implements IFiles {
 						)
 					}));
 
-					transfer.percentComplete	= Math.max(
-						transfer.percentComplete,
-						85
-					);
-
 					(await firebaseApp).storage().refFromURL(transfer.url).delete();
 
-					const plaintext: Uint8Array	= await this.decryptFile(
-						cyphertext,
-						transfer.key
-					);
+					const plaintext: Uint8Array	= await this.decryptFile(cyphertext, transfer.key);
 
 					transfer.percentComplete	= 100;
-
+					this.triggerChangeDetection();
 					potassium.clearMemory(transfer.key);
-
-					this.triggerUIEvent(
-						UIEvents.save,
-						transfer,
-						plaintext
-					);
-
+					this.triggerUIEvent(UIEvents.save, transfer, plaintext);
 					await util.sleep(1000);
-
 					this.transfers.delete(transfer);
+					this.triggerChangeDetection();
 				}
 				else {
-					this.triggerUIEvent(
-						UIEvents.rejected,
-						transfer
-					);
-
+					this.triggerUIEvent(UIEvents.rejected, transfer);
 					(await firebaseApp).storage().refFromURL(transfer.url).delete();
 				}
 			}
 		);
+	}
+
+	/** @ignore */
+	private triggerChangeDetection () : void {
+		if (this.changeDetectorRef) {
+			this.changeDetectorRef.detectChanges();
+		}
 	}
 
 	/** @ignore */
@@ -376,6 +370,7 @@ export class Files implements IFiles {
 
 			if (transfer.answer === false) {
 				this.transfers.delete(transfer);
+				this.triggerChangeDetection();
 
 				if (uploadTask) {
 					uploadTask.cancel();
@@ -407,6 +402,7 @@ export class Files implements IFiles {
 						snapshot.totalBytes *
 						100
 					;
+					this.triggerChangeDetection();
 				},
 				(err: any) => resolve(transfer.answer === false),
 				() => {
@@ -418,6 +414,7 @@ export class Files implements IFiles {
 					));
 
 					this.transfers.delete(transfer);
+					this.triggerChangeDetection();
 					resolve(true);
 				}
 			));
@@ -458,10 +455,7 @@ export class Files implements IFiles {
 				}
 				/* Incoming file transfer request */
 				else {
-					this.triggerUIEvent(
-						UIEvents.started,
-						transfer
-					);
+					this.triggerUIEvent(UIEvents.started, transfer);
 
 					this.triggerUIEvent(
 						UIEvents.confirm,

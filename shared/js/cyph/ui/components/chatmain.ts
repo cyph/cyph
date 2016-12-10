@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {Env, env} from '../../env';
 import {Users, users} from '../../session/enums';
 import {Strings, strings} from '../../strings';
@@ -14,7 +14,7 @@ import {IChat} from '../chat/ichat';
 	selector: 'cyph-chat-main',
 	templateUrl: '../../../../templates/chatmain.html'
 })
-export class ChatMain {
+export class ChatMain implements OnInit {
 	/** @see IChat */
 	@Input() public self: IChat;
 
@@ -36,5 +36,13 @@ export class ChatMain {
 	/** @see Util */
 	public readonly util: Util				= util;
 
-	constructor () {}
+	/** @inheritDoc */
+	public ngOnInit () : void {
+		this.self.fileManager.files.changeDetectorRef	= this.changeDetectorRef;
+	}
+
+	constructor (
+		/** @ignore */
+		private readonly changeDetectorRef: ChangeDetectorRef
+	) {}
 }

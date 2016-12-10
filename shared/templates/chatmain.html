@@ -181,10 +181,14 @@
 				>
 					<div class='layout-column layout-align-start-stretch flex'>
 						<div class='layout-row'>
-							<span *ngIf='transfer.isOutgoing' cyphTranslate>Sending</span>
-							<span *ngIf='!transfer.isOutgoing' cyphTranslate>Receiving</span>
+							<span class='layout-column' *ngIf='transfer.isOutgoing' cyphTranslate>
+								Sending
+							</span>
+							<span class='layout-column' *ngIf='!transfer.isOutgoing' cyphTranslate>
+								Receiving
+							</span>
 							&nbsp;
-							<span>
+							<span class='flex layout-column'>
 								{{transfer.name}}
 								({{util.readableByteLength(transfer.size)}}):
 							</span>
@@ -209,7 +213,7 @@
 					self.fileManager.files.transfers.size < 3 ?
 						self.fileManager.files.transfers.size :
 						3
-				) * 55
+				) * 65
 			) + "px"
 		'
 	>

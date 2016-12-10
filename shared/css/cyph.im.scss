@@ -223,14 +223,16 @@ md-menu-item {
 
 .transfer-list {
 	position: absolute !important;
-	width: calc(100% - 3px);
 
 	md-content {
-		max-height: 165px;
+		max-height: 195px;
 
-		md-item {
-			height: 45px;
-			padding: 5px;
+		md-list-item {
+			height: 65px;
+
+			span {
+				word-wrap: break-word;
+			}
 
 			md-progress-linear {
 				padding: 20px;
@@ -238,6 +240,10 @@ md-menu-item {
 			}
 		}
 	}
+}
+
+.chat-main:not(.mobile) .transfer-list {
+	width: calc(100% - 3px);
 }
 
 .chat-main.mobile .transfer-list {
@@ -297,8 +303,6 @@ md-menu-item {
 		max-width: 100%;
 		padding-bottom: 5px;
 		word-wrap: break-word;
-
-		@include hyphens(auto);
 
 		> * {
 			padding-top: 5px;
@@ -362,11 +366,11 @@ md-menu-item {
 	max-width: 85%;
 }
 
-.chat-main:not(.mobile):not(.video) md-list > md2-list-item:first-child {
+.chat-main:not(.mobile):not(.video) .message-list md-list > md2-list-item:first-child {
 	padding-top: 15px;
 }
 
-.chat-main.mobile.video md-list {
+.chat-main.mobile.video .message-list md-list {
 	padding-top: 0px;
 
 	> md2-list-item:first-child {
