@@ -7,13 +7,19 @@ import {util} from './util';
  */
 export class Strings {
 	/** @see Strings */
-	public readonly accept: string		= util.translate(`accept`);
+	public readonly accept: string			= util.translate(`accept`);
 
 	/** @see Strings */
-	public readonly audioCall: string	= util.translate(`call`);
+	public readonly audioCall: string		= util.translate(`call`);
 
 	/** @see Strings */
-	public readonly cancel: string		= util.translate(`cancel`);
+	public readonly cameraDisable: string	= util.translate(`Disable Camera`);
+
+	/** @see Strings */
+	public readonly cameraEnable: string	= util.translate(`Enable Camera`);
+
+	/** @see Strings */
+	public readonly cancel: string			= util.translate(`cancel`);
 
 	/** @see Strings */
 	public readonly connectedNotification: string	= util.translate(`Connected!`);
@@ -134,6 +140,12 @@ export class Strings {
 
 	/** @see Strings */
 	public readonly messages: string	= util.translate(`messages`);
+
+	/** @see Strings */
+	public readonly micDisable: string	= util.translate(`Disable Mic`);
+
+	/** @see Strings */
+	public readonly micEnable: string	= util.translate(`Enable Mic`);
 
 	/** @see Strings */
 	public readonly new: string		= util.translate(`new`);

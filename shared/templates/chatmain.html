@@ -107,13 +107,12 @@
 
 		<div class='buttons'>
 			<md2-button
-				cyphTranslate
 				childClass='md-fab video-call-button'
 				(childClick)='self.p2pManager.videoCallButton()'
 				[ariaLabel]='
 					!self.p2pManager.p2p.outgoingStream.video ?
-						"Enable Camera" :
-						"Disable Camera"
+						strings.cameraEnable :
+						strings.cameraDisable
 				'
 			>
 				<img
@@ -130,13 +129,12 @@
 				/>
 			</md2-button>
 			<md2-button
-				cyphTranslate
 				childClass='md-fab voice-call-button'
 				(childClick)='self.p2pManager.voiceCallButton()'
 				[ariaLabel]='
 					!self.p2pManager.p2p.outgoingStream.audio ?
-						"Enable Mic" :
-						"Disable Mic"
+						strings.micEnable :
+						strings.micDisable
 				'
 			>
 				<img
