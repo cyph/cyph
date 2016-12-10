@@ -33,9 +33,6 @@ export class Config {
 		'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
 	];
 
-	/** Affiliate code for Amazon links in chat (used by UI.Affiliate). */
-	public readonly amazonAffiliateCode: string	= 'cyph-20';
-
 	/** Angular-related config. */
 	public readonly angularConfig	= {
 		config: [
