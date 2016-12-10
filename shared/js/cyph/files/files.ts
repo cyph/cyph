@@ -395,12 +395,13 @@ export class Files implements IFiles {
 		transfer.size	= o.cyphertext.length;
 		transfer.key	= o.key;
 
-		util.retryUntilComplete(async (retry) => {
+		let complete	= false;
+		while (!complete) {
 			const path: string	= 'ephemeral/' + util.generateGuid();
 
 			uploadTask	= (await firebaseApp).storage().ref(path).put(new Blob([o.cyphertext]));
 
-			uploadTask.on(
+			complete	= await new Promise<boolean>(resolve => uploadTask.on(
 				'state_changed',
 				(snapshot: firebase.UploadTaskSnapshot) => {
 					transfer.percentComplete	=
@@ -409,11 +410,7 @@ export class Files implements IFiles {
 						100
 					;
 				},
-				(err: any) => {
-					if (transfer.answer !== false) {
-						retry();
-					}
-				},
+				(err: any) => resolve(transfer.answer === false),
 				() => {
 					transfer.url	= uploadTask.snapshot.downloadURL;
 
@@ -423,9 +420,10 @@ export class Files implements IFiles {
 					));
 
 					this.transfers.delete(transfer);
+					resolve(true);
 				}
-			);
-		});
+			));
+		}
 	}
 
 	constructor (
@@ -444,7 +442,7 @@ export class Files implements IFiles {
 
 		const downloadAnswers	= new Map<string, boolean>();
 
-		this.session.on(rpcEvents.files, (transfer: ITransfer) => {
+		this.session.on(rpcEvents.files, async (transfer: ITransfer) => {
 			if (transfer.id) {
 				/* Outgoing file transfer acceptance or rejection */
 				if (transfer.answer === true || transfer.answer === false) {
@@ -452,15 +450,13 @@ export class Files implements IFiles {
 				}
 				/* Incoming file transfer */
 				else if (transfer.url) {
-					util.retryUntilComplete(retry => {
-						if (!downloadAnswers.has(transfer.id)) {
-							retry();
-						}
-						else if (downloadAnswers.get(transfer.id)) {
-							downloadAnswers.delete(transfer.id);
-							this.receiveTransfer(transfer);
-						}
-					});
+					while (!downloadAnswers.has(transfer.id)) {
+						await util.sleep();
+					}
+					if (downloadAnswers.get(transfer.id)) {
+						downloadAnswers.delete(transfer.id);
+						this.receiveTransfer(transfer);
+					}
 				}
 				/* Incoming file transfer request */
 				else {

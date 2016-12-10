@@ -441,25 +441,23 @@ export class UI extends BaseButtonManager {
 
 			/* Cyphertext easter egg */
 			/* tslint:disable-next-line:no-unused-new */
-			new (<any> self).Konami(() => {
+			new (<any> self).Konami(async () => {
 				urlState.set('intro');
-				util.retryUntilComplete(retry => {
-					if (
-						this.cyphDemo.desktop &&
-						this.cyphDemo.desktop.state === Chat.States.chat
-					) {
-						if (env.isMobile) {
-							this.cyphDemo.mobile.cyphertext.show();
-						}
-						else {
-							this.cyphDemo.desktop.cyphertext.show();
-							setTimeout(() => this.cyphDemo.mobile.cyphertext.show(), 8000);
-						}
-					}
-					else {
-						retry();
-					}
-				});
+				while (
+					!this.cyphDemo.desktop ||
+					this.cyphDemo.desktop.state !== Chat.States.chat
+				) {
+					await util.sleep();
+				}
+
+				if (env.isMobile) {
+					this.cyphDemo.mobile.cyphertext.show();
+				}
+				else {
+					this.cyphDemo.desktop.cyphertext.show();
+					await util.sleep(8000);
+					this.cyphDemo.mobile.cyphertext.show();
+				}
 			});
 		})();
 	}

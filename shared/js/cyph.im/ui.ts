@@ -189,16 +189,12 @@ export class UI extends BaseButtonManager {
 
 		/* Cyphertext easter egg */
 		/* tslint:disable-next-line:no-unused-new */
-		new (<any> self).Konami(() => util.retryUntilComplete(retry => {
-			if (
-				this.chat &&
-				this.chat.state === Chat.States.chat
-			) {
-				this.chat.cyphertext.show();
+		new (<any> self).Konami(async () => {
+			while (!this.chat || this.chat.state !== Chat.States.chat) {
+				await util.sleep();
 			}
-			else {
-				retry();
-			}
-		}));
+
+			this.chat.cyphertext.show();
+		});
 	}
 }

@@ -339,28 +339,6 @@ export class Util {
 	}
 
 	/**
-	 * Runs f and passes in a function to retry itself.
-	 * @param f
-	 * @param retryIf If this is specified and returns false, f will not be retried.
-	 */
-	public retryUntilComplete (
-		f: (retry: (delay?: number) => void) => void,
-		retryIf?: () => boolean
-	) : void {
-		f((delay: number = 250) : void => {
-			if (!retryIf || retryIf()) {
-				const go	= () => this.retryUntilComplete(f, retryIf);
-				if (delay >= 0) {
-					setTimeout(go, delay);
-				}
-				else {
-					go();
-				}
-			}
-		});
-	}
-
-	/**
 	 * Runs f until it returns with no errors.
 	 * @param f
 	 * @param maxAttempts
