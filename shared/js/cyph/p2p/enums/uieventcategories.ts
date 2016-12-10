@@ -1,7 +1,7 @@
 /**
  * P2P UI event categories.
  */
-export enum UIEventCategories {
+export const enum UIEventCategories {
 	base,
 	request
 }

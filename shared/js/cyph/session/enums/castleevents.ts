@@ -1,7 +1,7 @@
 /**
  * Castle-specific events (handled within Session).
  */
-export enum CastleEvents {
+export const enum CastleEvents {
 	abort,
 	connect,
 	receive,

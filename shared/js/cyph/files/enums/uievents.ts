@@ -1,7 +1,7 @@
 /**
  * File UI events.
  */
-export enum UIEvents {
+export const enum UIEvents {
 	completed,
 	confirm,
 	rejected,

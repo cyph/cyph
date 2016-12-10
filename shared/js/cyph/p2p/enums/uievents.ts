@@ -6,7 +6,7 @@
  * Request events: acceptConfirm, acceptConfirmation,
  * requestConfirm, requestConfirmation, requestRejection.
  */
-export enum UIEvents {
+export const enum UIEvents {
 	acceptConfirm,
 	acceptConfirmation,
 	connected,
