@@ -11,9 +11,9 @@ if [ ! "$source" -o ! "$target" ] ; then
 fi
 
 git fetch --all
-git checkout -b $sourceCamel --track $source
+git checkout $sourceCamel 2> /dev/null || git checkout -b $sourceCamel --track $source
 git pull
-git checkout -b $targetCamel --track $target
+git checkout $targetCamel 2> /dev/null || git checkout -b $targetCamel --track $target
 git pull
 git merge $source
 git commit -S -a -m merge
