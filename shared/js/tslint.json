@@ -97,7 +97,7 @@
 		"indent": [true, "tabs"],
 		"linebreak-style": [true, "LF"],
 		"max-classes-per-file": [true, 1],
-		"max-file-line-count": [true, 1000],
+		"max-file-line-count": [true, 500],
 		"max-line-length": [true, 100],
 		"no-default-export": true,
 		"no-mergeable-namespace": true,
