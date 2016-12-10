@@ -28,9 +28,9 @@ if (!HTMLElement.prototype.click) {
 $(async () => {
 	/* Support button-links */
 
-	$('button > a').each((i: number, elem: HTMLElement) => {
+	$('button a').each((i: number, elem: HTMLElement) => {
 		const $this: JQuery		= $(elem);
-		const $button: JQuery	= $this.parent();
+		const $button: JQuery	= $this.closest('button');
 
 		$this.css('pointer-events', 'none');
 
