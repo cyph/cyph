@@ -339,13 +339,10 @@ export class Chat extends BaseButtonManager implements IChat {
 		super(mobileMenu);
 
 		this.elements	= {
-			buttons: this.findElement(elements.buttons().selector),
 			cyphertext: this.findElement(elements.cyphertext().selector),
 			everything: this.findElement(elements.everything().selector),
-			messageBox: this.findElement(elements.messageBox().selector),
 			messageList: this.findElement(elements.messageList().selector),
 			messageListInner: this.findElement(elements.messageListInner().selector),
-			p2pFriendPlaceholder: this.findElement(elements.p2pFriendPlaceholder().selector),
 			p2pFriendStream: this.findElement(elements.p2pFriendStream().selector),
 			p2pMeStream: this.findElement(elements.p2pMeStream().selector),
 			title: this.findElement(elements.title().selector)

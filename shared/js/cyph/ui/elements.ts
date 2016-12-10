@@ -68,19 +68,10 @@ export class Elements {
 	public readonly everything				= Elements.get('*');
 
 	/** @see Elements */
-	public readonly affiliateCheckbox		= Elements.get('.amazon-link:visible md-checkbox');
-
-	/** @see Elements */
-	public readonly buttons					= Elements.get('.md-button');
-
-	/** @see Elements */
 	public readonly cyphertext				= Elements.get('.chat-cyphertext > md2-content');
 
 	/** @see Elements */
 	public readonly footer					= Elements.get('#footer');
-
-	/** @see Elements */
-	public readonly messageBox				= Elements.get('.message-box');
 
 	/** @see Elements */
 	public readonly messageList				= Elements.get('.message-list > md2-content');
@@ -90,9 +81,6 @@ export class Elements {
 
 	/** @see Elements */
 	public readonly nanoScroller			= Elements.get('.nano');
-
-	/** @see Elements */
-	public readonly p2pFriendPlaceholder	= Elements.get('.video-call .friend:not(.stream)');
 
 	/** @see Elements */
 	public readonly p2pFriendStream			= Elements.get('.video-call .friend.stream');
