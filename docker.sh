@@ -179,6 +179,9 @@ elif [ "${command}" == 'commit' ] ; then
 elif [ "${command}" == 'prodmerge' ] ; then
 	args='-it'
 
+elif [ "${command}" == 'betamerge' ] ; then
+	args='-it'
+
 elif [ "${command}" == 'backmerge' ] ; then
 	args='-it'
 
