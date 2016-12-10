@@ -17,7 +17,7 @@ export class Config {
 	/** Length of random IDs in cyph links. */
 	public readonly secretLength: number		= 25;
 
-	/** Length of random SQS queue IDs. */
+	/** Length of channel IDs. */
 	public readonly longSecretLength: number	= 52;
 
 	/**
