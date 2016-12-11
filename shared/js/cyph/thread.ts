@@ -210,7 +210,7 @@ export class Thread implements IThread {
 				language: env.fullLanguage,
 				userAgent: env.userAgent
 			},
-			seed: Array.prototype.slice.apply(seedBytes)
+			seed: Array.from(seedBytes)
 		};
 
 		const callbackId	= 'NewThread-' + util.generateGuid();
