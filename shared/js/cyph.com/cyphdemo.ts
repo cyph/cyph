@@ -112,7 +112,7 @@ export class CyphDemo extends BaseButtonManager {
 
 		return {
 			left: Math.floor(elemOffset.left - ancestorOffset.left),
-			top: Math.floor(elemOffset.top - ancestorOffset.top)
+			top: Math.floor(elemOffset.top - ancestorOffset.top) - 5
 		};
 	}
 
@@ -212,20 +212,18 @@ export class CyphDemo extends BaseButtonManager {
 				);
 			}
 
-			(<any> elements.heroText()).appear();
 			(<any> elements.demoRoot()).appear();
-
-			if (elements.heroText().is(':appeared')) {
-				await new Promise(resolve => elements.heroText().one('disappear', resolve));
-			}
-
-			await util.sleep();
+			(<any> elements.heroText()).appear();
 
 			if (!elements.demoRoot().is(':appeared')) {
 				await new Promise(resolve => elements.demoRoot().one('appear', resolve));
 			}
 
-			await util.sleep(500);
+			if (elements.heroText().is(':appeared')) {
+				await new Promise(resolve => elements.heroText().one('disappear', resolve));
+			}
+
+			await util.sleep(750);
 
 			if (!env.isMobile) {
 				await this.activeTransition(true);
