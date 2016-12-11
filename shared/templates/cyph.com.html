@@ -296,15 +296,23 @@
 	</section>
 
 	<section id='testimonials-section'>
-		<div class='carousel grid-container wow animated fadeIn' data-wow-delay='2750ms'>
-			<div class='grid-25 tablet-grid-25'>
-				<a class='logo' (click)='ui.testimonialCarousel.setItem(0)'>
+		<div class='carousel flex layout-column wow animated fadeIn' data-wow-delay='2750ms'>
+			<div class='logo-container flex layout-row'>
+				<a class='logo flex layout-column' (click)='ui.testimonialCarousel.setItem(0)'>
 					<img cyphTranslate src='/img/thirdparty/cure53.png' alt='Cure53 logo' />
+				</a>
+				<div class='flex-55 layout-column'></div>
+				<a class='logo flex layout-column' (click)='ui.testimonialCarousel.setItem(1)'>
+					<img
+						cyphTranslate
+						src='/img/thirdparty/upliftaero.png'
+						alt='Uplift Aeronautics logo'
+					/>
 				</a>
 			</div>
 
-			<div class='quote-container grid-50 tablet-grid-50'>
-				<div class='quote'>
+			<div class='quote-container flex layout-row'>
+				<div class='quote layout-column' [class.flex-50]='!env.isMobile'>
 					<div class='text' cyphTranslate>
 						Cyph provides security from a broad range of cryptographic attacks
 						and very strong client-side crypto. The general conclusion of the
@@ -340,7 +348,7 @@
 						>Open Technology Fund</a>)
 					</div>
 				</div>
-				<div class='quote'>
+				<div class='quote layout-column' [class.flex-50]='!env.isMobile'>
 					<div class='text' cyphTranslate>
 						I like the simple, nonintrusive interface and the single-minded
 						emphasis on doing one thing really well. We will definitely
@@ -361,16 +369,6 @@
 					</div>
 				</div>
 				&nbsp;
-			</div>
-
-			<div class='grid-25 tablet-grid-25'>
-				<a class='logo' (click)='ui.testimonialCarousel.setItem(1)'>
-					<img
-						cyphTranslate
-						src='/img/thirdparty/upliftaero.png'
-						alt='Uplift Aeronautics logo'
-					/>
-				</a>
 			</div>
 		</div>
 

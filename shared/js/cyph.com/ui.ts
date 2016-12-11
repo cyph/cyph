@@ -292,32 +292,29 @@ export class UI extends BaseButtonManager {
 		this.signupForm	= new SignupForm();
 		this.cyphDemo	= new CyphDemo(this.dialogManager);
 
+		if (!env.isMobile) {
+			new (<any> self).WOW({live: true}).init();
+		}
+
 		(async () => {
 			urlState.onchange(async (newUrlState) => this.onUrlStateChange(newUrlState));
 
 			const newUrlState: string	= urlState.get();
 
 			if ((<any> HomeSections)[newUrlState] !== undefined) {
-				await util.sleep(2500);
+				await CyphElements.Elements.waitForElement(
+					() => CyphElements.elements.html().filter('.load-complete')
+				);
+				await util.sleep(500);
 			}
 
 			urlState.set(newUrlState, true, false, false);
 		})();
 
 		(async () => {
-			await CyphElements.Elements.waitForElement(elements.backgroundVideo);
-			await CyphElements.Elements.waitForElement(elements.featuresSection);
-			await CyphElements.Elements.waitForElement(elements.heroSection);
-			await CyphElements.Elements.waitForElement(elements.mainToolbar);
-			await CyphElements.Elements.waitForElement(elements.testimonialsSection);
-
-
-			if (!env.isMobile) {
-				new (<any> self).WOW({live: true}).init();
-			}
-
-
 			/* Disable background video on mobile */
+
+			await CyphElements.Elements.waitForElement(elements.backgroundVideo);
 
 			if (env.isMobile) {
 				const $mobilePoster: JQuery	= $(document.createElement('img'));
@@ -332,50 +329,37 @@ export class UI extends BaseButtonManager {
 				}
 				catch (_) {}
 
-				(async () => {
-					await util.sleep(2000);
-
-					(<any> elements.backgroundVideo()).appear().
-						on('appear', () => {
-							try {
-								(<HTMLVideoElement> elements.backgroundVideo()[0]).play();
-							}
-							catch (_) {}
-						}).
-						on('disappear', () => {
-							try {
-								(<HTMLVideoElement> elements.backgroundVideo()[0]).pause();
-							}
-							catch (_) {}
-						})
-					;
-				})();
+				(<any> elements.backgroundVideo()).appear().
+					on('appear', () => {
+						try {
+							(<HTMLVideoElement> elements.backgroundVideo()[0]).play();
+						}
+						catch (_) {}
+					}).
+					on('disappear', () => {
+						try {
+							(<HTMLVideoElement> elements.backgroundVideo()[0]).pause();
+						}
+						catch (_) {}
+					})
+				;
 			}
-
 
 			/* Carousels */
 
-			this.featureCarousel		= new Carousel(elements.featuresSection());
+			await CyphElements.Elements.waitForElement(elements.featuresSection);
+			await CyphElements.Elements.waitForElement(elements.testimonialsSection);
 
+			this.featureCarousel		= new Carousel(elements.featuresSection(), true);
 			this.testimonialCarousel	= new Carousel(
 				elements.testimonialsSection(),
-				() => elements.heroSection().css(
-					'min-height',
-					`calc(100vh - ${40 + (
-						env.isMobile ?
-							40 :
-							elements.testimonialsSection().height()
-					)}px)`
-				)
+				env.isMobile
 			);
-
 
 			/* Header / new cyph button animation */
 
-			elements.mainToolbar().toggleClass(
-				'new-cyph-expanded',
-				urlState.get() === ''
-			);
+			await CyphElements.Elements.waitForElement(elements.mainToolbar);
+			elements.mainToolbar().toggleClass('new-cyph-expanded', urlState.get() === '');
 
 			/* Temporary workaround pending TypeScript fix. */
 			/* tslint:disable-next-line:ban  */
@@ -398,32 +382,6 @@ export class UI extends BaseButtonManager {
 					);
 				}
 			});
-
-
-			/* Section sizing
-
-			if (!env.isMobile) {
-				(async () => {
-					while (true) {
-						await util.sleep(2000);
-
-						elements.contentContainers().each((i: number, elem: HTMLElement) => {
-							const $this: JQuery	= $(elem);
-
-							$this.width(
-								($this[0].innerText || $this.text()).
-									split('\n').
-									map((s: string) => (s.match(/[A-Za-z0-9]/g) || []).length).
-									reduce((a: number, b: number) => Math.max(a, b))
-								*
-								parseInt($this.css('font-size'), 10) / 1.6
-							);
-						});
-					}
-				})();
-			}
-			*/
-
 
 			/* Avoid full page reloads */
 
@@ -460,10 +418,8 @@ export class UI extends BaseButtonManager {
 				}
 			});
 
-			await util.sleep(750);
-			CyphElements.elements.html().addClass('load-complete');
-
 			/* Cyphertext easter egg */
+
 			/* tslint:disable-next-line:no-unused-new */
 			new (<any> self).Konami(async () => {
 				urlState.set('intro');
@@ -484,6 +440,11 @@ export class UI extends BaseButtonManager {
 					this.cyphDemo.mobile.cyphertext.show();
 				}
 			});
+
+			/* Load complete */
+
+			await CyphElements.Elements.waitForElement(elements.heroSection);
+			CyphElements.elements.html().addClass('load-complete');
 		})();
 	}
 }

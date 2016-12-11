@@ -105,10 +105,11 @@ export class ScrollManager implements IScrollManager {
 			async () => {
 				await util.sleep();
 
-				const $elem	= shouldScrollCyphertext ?
-					this.elements.cyphertext() :
-					this.elements.messageList()
-				;
+				const $elem	= await CyphElements.waitForElement(
+					shouldScrollCyphertext ?
+						this.elements.cyphertext :
+						this.elements.messageList
+				);
 
 				await $elem.animate({scrollTop: $elem[0].scrollHeight}, 350).promise();
 

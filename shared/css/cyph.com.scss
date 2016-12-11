@@ -202,6 +202,7 @@ html.mobile #main-toolbar.new-cyph-expanded {
 }
 
 html.mobile #hero-section {
+	height: 85vh;
 	display: flex;
 
 	.hero-description {
@@ -221,39 +222,31 @@ html.mobile #hero-section {
 }
 
 .hero-container {
-	margin-top: 15px;
+	margin-top: 40px;
 
 	.screenshot {
-		display: block;
-		height: calc((50px + 3.7525vw) * 3 - 50px);
-		margin-top: 25px;
-		position: relative;
-	}
-
-	.screenshot {
-		@include transition(all 0.25s ease);
-
 		opacity: 0.15;
+		height: auto;
+		display: block;
+		position: relative;
+
+		@include transform-origin(top left);
+
+		@include transition(all 0.35s ease);
 
 		&.laptop {
-			height: calc((50px + 5.525vw) * 3 - 25px);
-
-			&:not(.demo):hover {
-				opacity: 0.9;
-
-				@include transition(all 0.75s ease);
-			}
+			width: calc((0.47 * (100vw - 60px) + 1px) * 1.33 * 0.73);
 		}
 
 		&.phone {
-			margin-left: auto;
-			margin-right: auto;
-			top: 100px;
+			width: calc((0.26 * 0.625 * (100vw - 60px) + 1px) * 1.13 * 0.5);
+
+			&:not(.demo) {
+				@include transform(translateY(100px));
+			}
 		}
 
 		&.demo {
-			position: absolute;
-			height: auto;
 			opacity: 1;
 		}
 
@@ -366,7 +359,7 @@ html.mobile #logo {
 	margin-left: 5px;
 }
 
-.carousel.grid-container {
+.carousel {
 	position: relative;
 	padding: 25px 0px;
 
@@ -459,7 +452,7 @@ html.mobile #logo {
 	}
 }
 
-html.mobile .carousel.grid-container {
+html.mobile .carousel {
 	.logo {
 		pointer-events: none;
 		position: absolute;
@@ -494,6 +487,10 @@ html.mobile .carousel.grid-container {
 		&:before, .text {
 			padding-top: 60px;
 		}
+
+		.extra {
+			margin-left: -12.5px;
+		}
 	}
 }
 
@@ -507,25 +504,6 @@ html.mobile .carousel.grid-container {
 	}
 }
 
-#testimonials-section .carousel.grid-container {
-	.quote-container {
-		.quote {
-			width: calc(50% - 50px);
-			margin-top: -10px;
-			margin-left: 25px;
-
-			&:before {
-				content: '\201c';
-				position: absolute;
-				font-family: Georgia, serif;
-				font-size: 100px;
-				margin-top: -20px;
-				margin-left: -50px;
-			}
-		}
-	}
-}
-
 #testimonials-section {
 	margin-top: -2px;
 
@@ -533,10 +511,60 @@ html.mobile .carousel.grid-container {
 		left: calc(50% - 20px);
 		top: calc(100% - 45px);
 	}
+
+	.carousel {
+		.quote-container {
+			margin-top: -10px;
+
+			.quote {
+				margin-left: 25px;
+
+				&:before {
+					content: '\201c';
+					position: absolute;
+					font-family: Georgia, serif;
+					font-size: 100px;
+					margin-top: -20px;
+					margin-left: -50px;
+				}
+			}
+		}
+	}
 }
 
-html.mobile #testimonials-section .carousel.grid-container .logo.active {
-	padding-bottom: 20px;
+html:not(.mobile) #testimonials-section .carousel {
+	.logo-container {
+		position: absolute;
+		width: 100%;
+	}
+
+	.quote-container {
+		margin-top: -10px;
+
+		.quote {
+			position: relative;
+
+			&:nth-child(1) {
+				@include transform(translateX(calc(50% + 25px)));
+			}
+
+			&:nth-child(2) {
+				@include transform(translateX(-50%));
+			}
+		}
+	}
+}
+
+html.mobile #testimonials-section .carousel {
+	.logo.active {
+		padding-bottom: 20px;
+	}
+
+	.quote-container {
+		.quote {
+			margin-left: 37.5px;
+		}
+	}
 }
 
 #about-section {
@@ -559,7 +587,7 @@ html.mobile #testimonials-section .carousel.grid-container .logo.active {
 #features-section {
 	padding-top: 0px !important;
 
-	.carousel.grid-container {
+	.carousel {
 		padding: 0px;
 		padding-left: 2.5vw;
 		margin-top: -20px;
@@ -579,7 +607,7 @@ html.mobile #testimonials-section .carousel.grid-container .logo.active {
 	}
 }
 
-html.mobile #features-section .carousel.grid-container .logo.active > img {
+html.mobile #features-section .carousel .logo.active > img {
 	opacity: 0.2;
 }
 

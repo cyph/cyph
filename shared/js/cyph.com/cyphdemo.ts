@@ -127,122 +127,69 @@ export class CyphDemo extends BaseButtonManager {
 	public mobile: IChat;
 
 	/** @ignore */
-	private async resize (forceActive?: boolean) : Promise<void> {
-		const isActive: boolean	= forceActive || (
-			!elements.heroText().is(':appeared') &&
-			elements.demoRoot().is(':appeared')
-		);
+	private async activeTransition (forceActiveState?: boolean) : Promise<void> {
+		const isActive: boolean	=
+			forceActiveState !== undefined ?
+				forceActiveState :
+				(!elements.heroText().is(':appeared') && elements.demoRoot().is(':appeared'))
+		;
 
-		if (this.isActive !== isActive) {
-			if (!(<HTMLVideoElement> elements.backgroundVideo()[0]).paused) {
-				(async () => {
-					await util.sleep(2000);
-
-					try {
-						if (elements.backgroundVideo().is(':appeared')) {
-							try {
-								(<HTMLVideoElement> elements.backgroundVideo()[0]).play();
-							}
-							catch (_) {}
-						}
-					}
-					catch (_) {}
-				})();
-			}
-
-			try {
-				(<HTMLVideoElement> elements.backgroundVideo()[0]).pause();
-			}
-			catch (_) {}
+		if (this.isActive === isActive) {
+			return;
 		}
 
 		this.isActive	= isActive;
 
-		await util.sleep();
-
-		if (env.isMobile) {
-			return;
-		}
-
 		if (this.isActive) {
-			this.resizeDesktop();
-			await util.sleep(500);
-			this.resizeMobile();
-			return;
-		}
-
-		await elements.screenshotLaptop().
-			add(elements.screenshotPhone()).
-			toArray().
-			reduce(
-				async (p: Promise<void>, elem: HTMLElement) => {
-					await p;
-
-					const $this: JQuery	= $(elem);
-
-					$this.css({
-						'margin-left': '',
-						'margin-top': '',
-						'width': ''
-					});
-
-					await util.sleep(500);
-					$this.removeClass(CyphDemo.demoClass);
-					await util.sleep(500);
+			for (let o of [
+				{
+					$root: elements.demoRootDesktop(),
+					$screenshot: elements.screenshotLaptop(),
+					multiplierHeight: 0.104,
+					multiplierWidth: 0.130,
+					scale: 0.73,
+					verticalOffset: 0
 				},
-				Promise.resolve()
-			)
-		;
-	}
+				{
+					$root: elements.demoRootMobile(),
+					$screenshot: elements.screenshotPhone(),
+					multiplierHeight: 0.098,
+					multiplierWidth: 0.081,
+					scale: 0.5,
+					verticalOffset: 100
+				}
+			]) {
+				const rootOffset	= o.$root.offset();
+				const offset		= o.$screenshot.offset();
+				const width			= o.$screenshot.width();
+				const height		= o.$screenshot.height();
 
-	/** @ignore */
-	private resizeDesktop () : void {
-		const width: number		= Math.floor(
-			(CyphElements.elements.window().width() - 70) * 0.47 / 0.75
-		);
-
-		const height: number	= width * 0.563;
-
-		elements.screenshotLaptop().addClass(CyphDemo.demoClass).css({
-			width,
-			'margin-left': Math.ceil(
-				elements.demoRootDesktop().offset().left -
-				elements.screenshotLaptop().offset().left -
-				width * 0.13 +
-				parseFloat(elements.screenshotLaptop().css('margin-left'))
-			),
-			'margin-top': Math.ceil(
-				elements.demoRootDesktop().offset().top -
-				elements.screenshotLaptop().offset().top -
-				height * 0.104 +
-				parseFloat(elements.screenshotLaptop().css('margin-top'))
-			)
-		});
-	}
-
-	/** @ignore */
-	private resizeMobile () : void {
-		const width: number		= Math.floor(
-			(CyphElements.elements.window().width() - 70) * 0.26 / 1.404
-		);
-
-		const height: number	= width * 2.033;
-
-		elements.screenshotPhone().addClass(CyphDemo.demoClass).css({
-			width,
-			'margin-left': Math.ceil(
-				elements.demoRootMobile().offset().left -
-				elements.screenshotPhone().offset().left -
-				width * 0.073 +
-				parseFloat(elements.screenshotPhone().css('margin-left'))
-			),
-			'margin-top': Math.ceil(
-				elements.demoRootMobile().offset().top -
-				elements.screenshotPhone().offset().top -
-				height * 0.098 +
-				parseFloat(elements.screenshotPhone().css('margin-top'))
-			)
-		});
+				o.$screenshot.addClass(CyphDemo.demoClass).css(
+					'transform',
+					`scale(${1 / o.scale}) ` +
+					`translateX(${Math.ceil(
+						(rootOffset.left * o.scale) -
+						(offset.left * o.scale) -
+						(width * o.multiplierWidth) +
+						1
+					)}px) ` +
+					`translateY(${Math.ceil(
+						(rootOffset.top * o.scale) -
+						(offset.top * o.scale) -
+						(height * o.multiplierHeight) +
+						(o.verticalOffset * o.scale) +
+						1
+					)}px)`
+				);
+			}
+		}
+		else {
+			const $screenshots	= elements.screenshotLaptop().add(elements.screenshotPhone());
+			$screenshots.removeAttr('style');
+			await util.sleep();
+			$screenshots.removeClass(CyphDemo.demoClass);
+			await util.sleep();
+		}
 	}
 
 	constructor (dialogManager: IDialogManager) {
@@ -252,31 +199,56 @@ export class CyphDemo extends BaseButtonManager {
 			await CyphElements.Elements.waitForElement(elements.demoRoot);
 			await CyphElements.Elements.waitForElement(elements.heroText);
 
-			await util.sleep(1000);
+			if (!env.isMobile) {
+				await CyphElements.Elements.waitForElement(() =>
+					elements.screenshotLaptop().filter((i: number, elem: HTMLElement) =>
+						$(elem).offset().left > 0
+					)
+				);
+				await CyphElements.Elements.waitForElement(() =>
+					elements.screenshotPhone().filter((i: number, elem: HTMLElement) =>
+						$(elem).offset().left < CyphElements.elements.window().width()
+					)
+				);
+			}
+
+			(<any> elements.heroText()).appear();
+			(<any> elements.demoRoot()).appear();
 
 			if (elements.heroText().is(':appeared')) {
-				(<any> elements.heroText()).appear();
 				await new Promise(resolve => elements.heroText().one('disappear', resolve));
 			}
 
 			if (!elements.demoRoot().is(':appeared')) {
-				(<any> elements.demoRoot()).appear();
 				await new Promise(resolve => elements.demoRoot().one('appear', resolve));
 			}
 
 			await util.sleep(750);
-			await this.resize(true);
+
+			if (!env.isMobile) {
+				await this.activeTransition(true);
+			}
 
 			elements.demoRoot().css('opacity', 1);
 
-			/* Temporary workaround pending TypeScript fix. */
-			/* tslint:disable-next-line:ban  */
-			setTimeout(async () => {
-				while (true) {
-					await util.sleep(2000);
-					this.resize();
-				}
-			});
+			if (!env.isMobile) {
+				elements.heroText().on('appear', () => this.activeTransition());
+				elements.heroText().on('disappear', () => this.activeTransition());
+				elements.demoRoot().on('appear', () => this.activeTransition());
+				elements.demoRoot().on('disappear', () => this.activeTransition());
+
+				let previousWidth	= CyphElements.elements.window().width();
+				CyphElements.elements.window().resize(async () => {
+					const width	= CyphElements.elements.window().width();
+					if (width === previousWidth) {
+						return;
+					}
+					previousWidth	= width;
+					this.activeTransition(false);
+					await util.sleep(1000);
+					this.activeTransition();
+				});
+			}
 
 			let mobileSession: ISession;
 			const desktopSession: ISession	= new Session(
@@ -324,7 +296,7 @@ export class CyphDemo extends BaseButtonManager {
 				elements.demoListMobile().append($mobileFacebookPic);
 			}
 
-			await util.sleep(7500);
+			await util.sleep(2500);
 
 			const messages				= await CyphDemo.messages;
 			const facebookPicUrl		= await CyphDemo.facebookPicUrl;
@@ -375,10 +347,7 @@ export class CyphDemo extends BaseButtonManager {
 					const $this: JQuery			= $(elem);
 
 					const isDesktop: boolean	=
-						$this.
-							parentsUntil().
-							index(elements.demoListDesktop()[0])
-						> -1
+						$this.parentsUntil().index(elements.demoListDesktop()[0]) > -1
 					;
 
 					const $facebookPic: JQuery	=

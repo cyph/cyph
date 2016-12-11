@@ -47,7 +47,7 @@ export class VirtualKeyboardWatcher {
 		/* http://stackoverflow.com/a/11650231/459881 */
 
 		/* Android */
-		elements.window().on('resize', () =>
+		elements.window().resize(() =>
 			this.trigger(
 				window.innerHeight < this.initialScreenSize
 			)

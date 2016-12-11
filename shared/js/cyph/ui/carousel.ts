@@ -23,7 +23,7 @@ export class Carousel {
 	 * Sets the active item to be displayed.
 	 * @param itemNumber
 	 */
-	public async setItem (itemNumber: number = this.itemNumber) : Promise<number> {
+	public async setItem (itemNumber: number = this.itemNumber) : Promise<void> {
 		if (!this.logos || !this.quotes) {
 			this.logos	= await Elements.waitForElement(
 				() => this.rootElement.find('.logo')
@@ -38,12 +38,14 @@ export class Carousel {
 
 		this.itemNumber	= itemNumber;
 
-		this.quotes.parent().height(
-			this.quotes.
-				toArray().
-				map((elem: HTMLElement) => $(elem).height()).
-				reduce((a: number, b: number) => Math.max(a, b))
-		);
+		if (this.autoResize) {
+			this.quotes.parent().height(
+				this.quotes.
+					toArray().
+					map((elem: HTMLElement) => $(elem).height()).
+					reduce((a: number, b: number) => Math.max(a, b))
+			);
+		}
 
 		this.logos.
 			add(this.quotes).
@@ -68,25 +70,25 @@ export class Carousel {
 			}
 		}
 
-		return timeout;
+		await util.sleep(timeout);
 	}
 
 	constructor (
 		/** @ignore */
 		private readonly rootElement: JQuery,
 
-		callback: Function = () => {}
+		/** @ignore */
+		private readonly autoResize?: boolean
 	) { (async () => {
-		const timeout	= await this.setItem(0);
-		callback();
-		await util.sleep(timeout);
+		await this.setItem(0);
 
 		while (true) {
-			await util.sleep(
-				this.rootElement.is(':appeared') ?
-					(await this.setItem()) :
-					500
-			);
+			if (this.rootElement.is(':appeared')) {
+				await this.setItem();
+			}
+			else {
+				await util.sleep(500);
+			}
 		}
 	})(); }
 }
