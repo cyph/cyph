@@ -54,10 +54,10 @@ export class Channel implements IChannel {
 	constructor (
 		channelName: string,
 		handlers: ({
-			onclose?: () => void;
-			onconnect?: () => void;
-			onmessage?: (message: string) => void;
-			onopen?: (isAlice: boolean) => void;
+			onClose?: () => void;
+			onConnect?: () => void;
+			onMessage?: (message: string) => void;
+			onOpen?: (isAlice: boolean) => void;
 		}) = {}
 	) { (async () => {
 		this.channelRef		= await util.retryUntilSuccessful(async () =>
@@ -91,40 +91,40 @@ export class Channel implements IChannel {
 			this.channelRef.onDisconnect().remove()
 		);
 
-		if (handlers.onopen) {
-			handlers.onopen(this.isAlice);
+		if (handlers.onOpen) {
+			handlers.onOpen(this.isAlice);
 		}
 
-		if (handlers.onconnect) {
+		if (handlers.onConnect) {
 			if (this.isAlice) {
 				util.retryUntilSuccessful(() =>
 					this.usersRef.on('child_added', (snapshot: firebase.DataSnapshot) => {
 						if (!this.isConnected && snapshot.key !== this.userId) {
 							this.isConnected	= true;
-							handlers.onconnect();
+							handlers.onConnect();
 						}
 					})
 				);
 			}
 			else {
-				handlers.onconnect();
+				handlers.onConnect();
 			}
 		}
 
-		if (handlers.onclose) {
+		if (handlers.onClose) {
 			util.retryUntilSuccessful(() =>
 				this.channelRef.on('value', async (snapshot: firebase.DataSnapshot) => {
 					if (await util.retryUntilSuccessful(() =>
 						!snapshot.exists() && !this.isClosed
 					)) {
 						this.isClosed	= true;
-						handlers.onclose();
+						handlers.onClose();
 					}
 				})
 			);
 		}
 
-		if (handlers.onmessage) {
+		if (handlers.onMessage) {
 			util.retryUntilSuccessful(() =>
 				this.messagesRef.on('child_added', async (snapshot: firebase.DataSnapshot) => {
 					const o	= await util.retryUntilSuccessful(() =>
@@ -132,7 +132,7 @@ export class Channel implements IChannel {
 					);
 
 					if (o.sender !== this.userId) {
-						handlers.onmessage(o.cyphertext);
+						handlers.onMessage(o.cyphertext);
 					}
 				})
 			);

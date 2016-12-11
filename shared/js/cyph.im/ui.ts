@@ -157,7 +157,7 @@ export class UI extends BaseButtonManager {
 	) {
 		super();
 
-		urlState.onchange(newUrlState => this.onUrlStateChange(newUrlState));
+		urlState.onChange(newUrlState => this.onUrlStateChange(newUrlState));
 
 		self.onhashchange	= () => location.reload();
 		self.onpopstate		= null;

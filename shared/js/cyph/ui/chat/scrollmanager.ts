@@ -34,13 +34,8 @@ export class ScrollManager implements IScrollManager {
 	}
 
 	/** Process read-ness and scrolling */
-	private async mutationObserverHandler (mutation: MutationRecord) : Promise<void> {
-		const $elem: JQuery	= $(
-			mutation.addedNodes.length > 0 ?
-				mutation.addedNodes[0] :
-				mutation.target
-		);
-
+	private async mutationObserverHandler (node: Node) : Promise<void> {
+		const $elem: JQuery	= $(node);
 		const messageIndex	= parseInt($elem.attr('message-index'), 10);
 
 		if (isNaN(messageIndex) || this.processedMessages.has(messageIndex)) {
@@ -144,7 +139,9 @@ export class ScrollManager implements IScrollManager {
 
 		new MutationObserver(mutations => {
 			for (let mutationRecord of mutations) {
-				this.mutationObserverHandler(mutationRecord);
+				for (let node of mutationRecord.addedNodes) {
+					this.mutationObserverHandler(node);
+				}
 			}
 		}).observe(this.elements.messageListInner()[0], {
 			attributes: false,

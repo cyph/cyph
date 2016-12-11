@@ -227,7 +227,7 @@ export class Session implements ISession {
 		}
 
 		const handlers	= {
-			onclose: () => {
+			onClose: () => {
 				this.updateState(state.isAlive, false);
 
 				if (!this.isLocalSession) {
@@ -242,7 +242,7 @@ export class Session implements ISession {
 
 				this.trigger(events.closeChat);
 			},
-			onconnect: () => {
+			onConnect: () => {
 				this.trigger(events.connect);
 
 				if (this.isLocalSession) {
@@ -252,8 +252,8 @@ export class Session implements ISession {
 					this.castle	= new AnonymousCastle(this, nativeCrypto);
 				}
 			},
-			onmessage: (message: string) => this.receive(message),
-			onopen: async (isAlice: boolean) : Promise<void> => {
+			onMessage: (message: string) => this.receive(message),
+			onOpen: async (isAlice: boolean) : Promise<void> => {
 				this.updateState(state.isAlice, isAlice);
 
 				if (this.state.isAlice) {

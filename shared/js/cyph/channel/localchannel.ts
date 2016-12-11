@@ -20,8 +20,8 @@ export class LocalChannel implements IChannel {
 
 		other.close();
 
-		if (this.handlers.onclose) {
-			this.handlers.onclose();
+		if (this.handlers.onClose) {
+			this.handlers.onClose();
 		}
 	}
 
@@ -41,12 +41,12 @@ export class LocalChannel implements IChannel {
 
 		this.other.connect(this);
 
-		if (this.handlers.onopen) {
-			this.handlers.onopen(isAlice);
+		if (this.handlers.onOpen) {
+			this.handlers.onOpen(isAlice);
 		}
 
-		if (this.handlers.onconnect) {
-			this.handlers.onconnect();
+		if (this.handlers.onConnect) {
+			this.handlers.onConnect();
 		}
 	}
 
@@ -57,11 +57,11 @@ export class LocalChannel implements IChannel {
 
 	/** @inheritDoc */
 	public send (message: string) : void {
-		if (!this.other || !this.other.handlers.onmessage) {
+		if (!this.other || !this.other.handlers.onMessage) {
 			return;
 		}
 
-		this.other.handlers.onmessage(message);
+		this.other.handlers.onMessage(message);
 	}
 
 	/**
@@ -69,10 +69,10 @@ export class LocalChannel implements IChannel {
 	 */
 	constructor (
 		public readonly handlers: ({
-			onclose?: () => void;
-			onconnect?: () => void;
-			onmessage?: (message: string) => void;
-			onopen?: (isAlice: boolean) => void;
+			onClose?: () => void;
+			onConnect?: () => void;
+			onMessage?: (message: string) => void;
+			onOpen?: (isAlice: boolean) => void;
 		}) = {}
 	) {}
 }

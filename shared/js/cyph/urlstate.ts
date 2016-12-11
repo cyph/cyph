@@ -48,7 +48,7 @@ export class UrlState {
 	 * Sets handler to run when URL changes.
 	 * @param handler
 	 */
-	public onchange (handler: (newUrlState: string) => void) : void {
+	public onChange (handler: (newUrlState: string) => void) : void {
 		eventManager.on(UrlState.urlStateChangeEvent, () => handler(this.get()));
 	}
 
@@ -56,7 +56,7 @@ export class UrlState {
 	 * Changes URL. If on WebSigned page, URL state is set as fragment.
 	 * @param path
 	 * @param shouldReplace If true, previous URL is erased from history.
-	 * @param shouldNotTrigger If true, UrlState.onchange is not triggered.
+	 * @param shouldNotTrigger If true, UrlState.onChange is not triggered.
 	 * @param redirectFallback If true, uses redirect-based history polyfill.
 	 */
 	public set (
@@ -112,7 +112,7 @@ export class UrlState {
 	}
 
 	/**
-	 * Triggers UrlState.onchange.
+	 * Triggers UrlState.onChange.
 	 */
 	public trigger () : void {
 		eventManager.trigger(UrlState.urlStateChangeEvent);

@@ -240,7 +240,7 @@ export class UI extends BaseButtonManager {
 	private async scroll (
 		position: number,
 		delayFactor: number = 0.75,
-		oncomplete?: Function
+		onComplete?: Function
 	) : Promise<void> {
 		const delay: number	=
 			delayFactor *
@@ -254,9 +254,9 @@ export class UI extends BaseButtonManager {
 			delay
 		);
 
-		if (oncomplete) {
+		if (onComplete) {
 			await util.sleep(delay + 50);
-			oncomplete();
+			onComplete();
 		}
 	}
 
@@ -297,7 +297,7 @@ export class UI extends BaseButtonManager {
 		}
 
 		(async () => {
-			urlState.onchange(async (newUrlState) => this.onUrlStateChange(newUrlState));
+			urlState.onChange(async (newUrlState) => this.onUrlStateChange(newUrlState));
 
 			const newUrlState: string	= urlState.get();
 

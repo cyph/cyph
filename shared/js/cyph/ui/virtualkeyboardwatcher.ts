@@ -54,10 +54,30 @@ export class VirtualKeyboardWatcher {
 		);
 
 		/* iOS */
-		$('input').on('focus blur', () => {
-			elements.window().scrollTop(10);
-			this.trigger(elements.window().scrollTop() > 0);
-			elements.window().scrollTop(0);
+		const inputSelector		= 'input, textarea';
+		const focusBlurListen	= ($elem: JQuery) =>
+			$elem.on('focus blur', () => {
+				elements.window().scrollTop(10);
+				this.trigger(elements.window().scrollTop() > 0);
+				elements.window().scrollTop(0);
+			})
+		;
+		focusBlurListen($(inputSelector));
+		new MutationObserver(mutations => {
+			focusBlurListen(
+				$(mutations.
+					map(mutationRecord => Array.from(mutationRecord.addedNodes)).
+					reduce((a, b) => a.concat(b), [])
+				).
+					find(inputSelector).
+					addBack().
+					filter(inputSelector)
+			);
+		}).observe(elements.body()[0], {
+			attributes: false,
+			characterData: false,
+			childList: true,
+			subtree: true
 		});
 	}
 }
