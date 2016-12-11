@@ -219,11 +219,13 @@ export class CyphDemo extends BaseButtonManager {
 				await new Promise(resolve => elements.heroText().one('disappear', resolve));
 			}
 
+			await util.sleep();
+
 			if (!elements.demoRoot().is(':appeared')) {
 				await new Promise(resolve => elements.demoRoot().one('appear', resolve));
 			}
 
-			await util.sleep(750);
+			await util.sleep(500);
 
 			if (!env.isMobile) {
 				await this.activeTransition(true);
