@@ -156,8 +156,12 @@ section#main {
 	}
 }
 
-html.mobile #main-toolbar.new-cyph-expanded {
-	#new-cyph {
+html.mobile #main-toolbar.new-cyph-expanded #new-cyph {
+	top: 12.5em;
+}
+
+@media all and (orientation: landscape) {
+	html.mobile #main-toolbar.new-cyph-expanded #new-cyph {
 		top: calc(50vh - 50px);
 	}
 }
@@ -202,7 +206,7 @@ html.mobile #main-toolbar.new-cyph-expanded {
 }
 
 html.mobile #hero-section {
-	height: 85vh;
+	height: 35em;
 	display: flex;
 
 	.hero-description {
@@ -855,7 +859,7 @@ html.mobile .md-open-menu-container {
 	height: calc(100vh - 158px);
 	min-height: 360px;
 	background-image: url(/img/cyphphoto.jpg);
-	background-size: 100%;
+	background-size: cover;
 	background-position-y: -10vw;
 
 	> .hero-text, > .section-content-container {
@@ -877,10 +881,6 @@ html.mobile .md-open-menu-container {
 	> .section-content-container {
 		top: calc(50% + 50px);
 	}
-}
-
-html.mobile #gettingstarted-section {
-	background-size: auto 100%;
 }
 
 #footer {
