@@ -23,5 +23,5 @@ export interface ICyphertext {
 	/**
 	 * Shows cyphertext UI.
 	 */
-	show () : void;
+	show () : Promise<void>;
 }

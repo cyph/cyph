@@ -3,16 +3,14 @@ import {IP2P} from '../../p2p/ip2p';
 import {P2P} from '../../p2p/p2p';
 import {events, users} from '../../session/enums';
 import {strings} from '../../strings';
-import {BaseButtonManager} from '../basebuttonmanager';
 import {IDialogManager} from '../idialogmanager';
-import {ISidebar} from '../isidebar';
 import {IChat} from './ichat';
 import {IElements} from './ielements';
 import {IP2PManager} from './ip2pmanager';
 
 
 /** @inheritDoc */
-export class P2PManager extends BaseButtonManager implements IP2PManager {
+export class P2PManager implements IP2PManager {
 	/** @inheritDoc */
 	public isSidebarOpen: boolean;
 
@@ -24,7 +22,7 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 
 	/** @inheritDoc */
 	public closeButton () : void {
-		this.baseButtonClick(() => this.p2p.close());
+		this.p2p.close();
 	}
 
 	/** @inheritDoc */
@@ -51,44 +49,40 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 
 	/** @inheritDoc */
 	public toggleSidebar () : void {
-		this.baseButtonClick(() => {
-			this.isSidebarOpen	= !this.isSidebarOpen;
-		});
+		this.isSidebarOpen	= !this.isSidebarOpen;
 	}
 
 	/** @inheritDoc */
 	public videoCallButton () : void {
-		this.baseButtonClick(() => {
-			if (this.isEnabled) {
-				if (!this.p2p.isActive) {
-					this.p2p.request(P2P.constants.video);
-				}
-				else {
-					this.p2p.toggle(undefined, P2P.constants.video);
-				}
-			}
-		});
+		if (!this.isEnabled) {
+			return;
+		}
+
+		if (!this.p2p.isActive) {
+			this.p2p.request(P2P.constants.video);
+		}
+		else {
+			this.p2p.toggle(undefined, P2P.constants.video);
+		}
 	}
 
 	/** @inheritDoc */
 	public voiceCallButton () : void {
-		this.baseButtonClick(() => {
-			if (this.isEnabled) {
-				if (!this.p2p.isActive) {
-					this.p2p.request(P2P.constants.audio);
-				}
-				else {
-					this.p2p.toggle(undefined, P2P.constants.audio);
-				}
-			}
-		});
+		if (!this.isEnabled) {
+			return;
+		}
+
+		if (!this.p2p.isActive) {
+			this.p2p.request(P2P.constants.audio);
+		}
+		else {
+			this.p2p.toggle(undefined, P2P.constants.audio);
+		}
 	}
 
 	constructor (
 		/** @ignore */
 		private readonly chat: IChat,
-
-		mobileMenu: () => ISidebar,
 
 		/** @ignore */
 		private readonly dialogManager: IDialogManager,
@@ -98,8 +92,6 @@ export class P2PManager extends BaseButtonManager implements IP2PManager {
 
 		forceTURN?: boolean
 	) {
-		super(mobileMenu);
-
 		this.p2p	= new P2P(
 			this.chat.session,
 			forceTURN,

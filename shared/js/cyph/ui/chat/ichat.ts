@@ -93,7 +93,7 @@ export interface IChat {
 	/**
 	 * After confirmation dialog, this kills the chat.
 	 */
-	disconnectButton () : void;
+	disconnectButton () : Promise<void>;
 
 	/**
 	 * Displays help information.

@@ -1,12 +1,10 @@
 import {config} from '../cyph/config';
 import {Email} from '../cyph/email';
 import {env} from '../cyph/env';
-import {BaseButtonManager} from '../cyph/ui/basebuttonmanager';
 import {Carousel} from '../cyph/ui/carousel';
 import * as Chat from '../cyph/ui/chat/enums';
 import * as CyphElements from '../cyph/ui/elements';
 import {IDialogManager} from '../cyph/ui/idialogmanager';
-import {ISidebar} from '../cyph/ui/isidebar';
 import {ISignupForm} from '../cyph/ui/isignupform';
 import {SignupForm} from '../cyph/ui/signupform';
 import {urlState} from '../cyph/urlstate';
@@ -19,7 +17,7 @@ import {HomeSections, pageTitles, Promos, States} from './enums';
 /**
  * Controls the entire cyph.com UI.
  */
-export class UI extends BaseButtonManager {
+export class UI {
 	/** @ignore */
 	private static readonly linkInterceptSelector: string	= 'a[href^="/"]:not(a[href^="/blog"])';
 
@@ -276,13 +274,9 @@ export class UI extends BaseButtonManager {
 	}
 
 	constructor (
-		mobileMenu: () => ISidebar,
-
 		/** @ignore */
 		private readonly dialogManager: IDialogManager
 	) {
-		super(mobileMenu);
-
 		this.signupForm	= new SignupForm();
 		this.cyphDemo	= new CyphDemo(this.dialogManager);
 

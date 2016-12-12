@@ -2,7 +2,6 @@ import {env} from '../cyph/env';
 import {P2P} from '../cyph/p2p/p2p';
 import {events} from '../cyph/session/enums';
 import {strings} from '../cyph/strings';
-import {BaseButtonManager} from '../cyph/ui/basebuttonmanager';
 import * as Chat from '../cyph/ui/chat';
 import {elements} from '../cyph/ui/elements';
 import {IDialogManager} from '../cyph/ui/idialogmanager';
@@ -17,7 +16,7 @@ import {BetaStates, States, urlSections} from './enums';
 /**
  * Controls the entire cyph.im UI.
  */
-export class UI extends BaseButtonManager {
+export class UI {
 	/** Initialisation event. */
 	public static readonly uiInitEvent: string	= 'uiInitEvent';
 
@@ -94,7 +93,6 @@ export class UI extends BaseButtonManager {
 
 		this.chat			= new Chat.Chat(
 			this.dialogManager,
-			this.mobileMenu,
 			this.notifier,
 			true
 		);
@@ -155,8 +153,6 @@ export class UI extends BaseButtonManager {
 		/** @ignore */
 		private readonly notifier: INotifier
 	) {
-		super();
-
 		urlState.onChange(newUrlState => this.onUrlStateChange(newUrlState));
 
 		self.onhashchange	= () => location.reload();

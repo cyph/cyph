@@ -3,6 +3,7 @@ import {Config, config} from '../cyph/config';
 import {Env, env} from '../cyph/env';
 import {eventManager} from '../cyph/eventmanager';
 import {DialogManager} from '../cyph/ui/dialogmanager';
+import {util} from '../cyph/util';
 import {Promos, States} from './enums';
 import {UI} from './ui';
 
@@ -26,6 +27,12 @@ export class AppComponent {
 
 
 	/** @ignore */
+	private sidenavLock: {}	= {};
+
+	/** @ignore */
+	public sidenav: () => ng.material.ISidenavObject;
+
+	/** @ignore */
 	public ui: UI;
 
 	/** @ignore */
@@ -40,13 +47,30 @@ export class AppComponent {
 	/** @ignore */
 	public states: typeof States	= States;
 
+	/** Closes mobile sidenav menu. */
+	public async closeSidenav () : Promise<void> {
+		return util.lock(
+			this.sidenavLock,
+			async () => {
+				await util.sleep();
+				this.sidenav().close();
+			},
+			undefined,
+			true
+		);
+	}
+
+	/** Opens mobile sidenav menu. */
+	public async openSidenav () : Promise<void> {
+		await util.sleep();
+		this.sidenav().open();
+	}
+
 	constructor () { (async () => {
 		const o	= await AppComponent.uiInit;
 
-		this.ui	= new UI(
-			() => o.$mdSidenav('main-toolbar-sidenav'),
-			new DialogManager(o.$mdDialog, o.$mdToast)
-		);
+		this.sidenav	= () => o.$mdSidenav('main-toolbar-sidenav');
+		this.ui			= new UI(new DialogManager(o.$mdDialog, o.$mdToast));
 
 		/* For testing and debugging */
 		if (env.isWeb) {

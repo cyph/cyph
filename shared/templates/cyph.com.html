@@ -78,7 +78,7 @@
 			<md2-button
 				cyphTranslate
 				ariaLabel='Menu'
-				(childClick)='ui.openMobileMenu()'
+				(childClick)='openSidenav()'
 				childClass='hide-gt-md'
 			>
 				<img src='/img/icons/menu.png' alt='Menu' />
@@ -91,17 +91,17 @@
 	<md2-sidenav mdComponentId='main-toolbar-sidenav' childClass='md-sidenav-right'>
 		<md2-content childClass='md-padding md-no-flicker'>
 			<div>
-				<md2-button cyphTranslate href='/intro' (childClick)='ui.baseButtonClick()'>
+				<md2-button cyphTranslate href='/intro' (childClick)='closeSidenav()'>
 					Intro
 				</md2-button>
 			</div>
 			<div>
-				<md2-button cyphTranslate href='/features' (childClick)='ui.baseButtonClick()'>
+				<md2-button cyphTranslate href='/features' (childClick)='closeSidenav()'>
 					Features
 				</md2-button>
 			</div>
 			<div>
-				<md2-button cyphTranslate href='/about' (childClick)='ui.baseButtonClick()'>
+				<md2-button cyphTranslate href='/about' (childClick)='closeSidenav()'>
 					About
 				</md2-button>
 			</div>
@@ -109,28 +109,28 @@
 				<md2-button
 					cyphTranslate
 					href='/gettingstarted'
-					(childClick)='ui.baseButtonClick()'
+					(childClick)='closeSidenav()'
 				>
 					Getting Started
 				</md2-button>
 			</div>
 			<div>
-				<md2-button cyphTranslate href='/blog' (childClick)='ui.baseButtonClick()'>
+				<md2-button cyphTranslate href='/blog' (childClick)='closeSidenav()'>
 					Blog
 				</md2-button>
 			</div>
 			<div>
-				<md2-button cyphTranslate href='/faq' (childClick)='ui.baseButtonClick()'>
+				<md2-button cyphTranslate href='/faq' (childClick)='closeSidenav()'>
 					FAQ
 				</md2-button>
 			</div>
 			<div>
-				<md2-button cyphTranslate href='/pricing' (childClick)='ui.baseButtonClick()'>
+				<md2-button cyphTranslate href='/pricing' (childClick)='closeSidenav()'>
 					Pricing
 				</md2-button>
 			</div>
 			<div>
-				<md2-button cyphTranslate href='/register' (childClick)='ui.baseButtonClick()'>
+				<md2-button cyphTranslate href='/register' (childClick)='closeSidenav()'>
 					Register
 				</md2-button>
 			</div>
@@ -140,7 +140,7 @@
 					rel='noreferrer'
 					href='https://github.com/cyph'
 					target='_blank'
-					(childClick)='ui.baseButtonClick()'
+					(childClick)='closeSidenav()'
 				>
 					<span class='image'>
 						<img src='/img/iconfinder/github.png' alt='GitHub icon' />
@@ -154,7 +154,7 @@
 					rel='noreferrer'
 					href='https://twitter.com/cyph'
 					target='_blank'
-					(childClick)='ui.baseButtonClick()'
+					(childClick)='closeSidenav()'
 				>
 					<span class='image'>
 						<img src='/img/iconfinder/twitter.png' alt='Twitter icon' />
@@ -168,7 +168,7 @@
 					rel='noreferrer'
 					href='https://www.facebook.com/pages/Cyph/299270843606014'
 					target='_blank'
-					(childClick)='ui.baseButtonClick()'
+					(childClick)='closeSidenav()'
 				>
 					<span class='image'>
 						<img src='/img/iconfinder/facebook.png' alt='Facebook icon' />

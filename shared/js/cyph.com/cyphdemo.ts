@@ -2,7 +2,6 @@ import {LocalChannel} from '../cyph/channel/localchannel';
 import {env} from '../cyph/env';
 import {ISession} from '../cyph/session/isession';
 import {Session} from '../cyph/session/session';
-import {BaseButtonManager} from '../cyph/ui/basebuttonmanager';
 import {Chat} from '../cyph/ui/chat/chat';
 import {IChat} from '../cyph/ui/chat/ichat';
 import * as CyphElements from '../cyph/ui/elements';
@@ -14,7 +13,7 @@ import {elements} from './elements';
 /**
  * Controls the Cyph chat demo.
  */
-export class CyphDemo extends BaseButtonManager {
+export class CyphDemo {
 	/** @ignore */
 	private static readonly demoClass: string	= 'demo';
 
@@ -192,205 +191,199 @@ export class CyphDemo extends BaseButtonManager {
 		}
 	}
 
-	constructor (dialogManager: IDialogManager) {
-		super();
+	constructor (dialogManager: IDialogManager) { (async () => {
+		await CyphElements.Elements.waitForElement(elements.demoRoot);
+		await CyphElements.Elements.waitForElement(elements.heroText);
 
-		(async () => {
-			await CyphElements.Elements.waitForElement(elements.demoRoot);
-			await CyphElements.Elements.waitForElement(elements.heroText);
+		if (!env.isMobile) {
+			await CyphElements.Elements.waitForElement(() =>
+				elements.screenshotLaptop().filter((i: number, elem: HTMLElement) =>
+					$(elem).offset().left > 0
+				)
+			);
+			await CyphElements.Elements.waitForElement(() =>
+				elements.screenshotPhone().filter((i: number, elem: HTMLElement) =>
+					$(elem).offset().left < CyphElements.elements.window().width()
+				)
+			);
+		}
 
-			if (!env.isMobile) {
-				await CyphElements.Elements.waitForElement(() =>
-					elements.screenshotLaptop().filter((i: number, elem: HTMLElement) =>
-						$(elem).offset().left > 0
-					)
-				);
-				await CyphElements.Elements.waitForElement(() =>
-					elements.screenshotPhone().filter((i: number, elem: HTMLElement) =>
-						$(elem).offset().left < CyphElements.elements.window().width()
-					)
-				);
-			}
+		(<any> elements.demoRoot()).appear();
+		(<any> elements.heroText()).appear();
 
-			(<any> elements.demoRoot()).appear();
-			(<any> elements.heroText()).appear();
+		if (!elements.demoRoot().is(':appeared')) {
+			await new Promise(resolve => elements.demoRoot().one('appear', resolve));
+		}
 
-			if (!elements.demoRoot().is(':appeared')) {
-				await new Promise(resolve => elements.demoRoot().one('appear', resolve));
-			}
+		if (elements.heroText().is(':appeared')) {
+			await new Promise(resolve => elements.heroText().one('disappear', resolve));
+		}
 
-			if (elements.heroText().is(':appeared')) {
-				await new Promise(resolve => elements.heroText().one('disappear', resolve));
-			}
+		await util.sleep(750);
 
-			await util.sleep(750);
+		if (!env.isMobile) {
+			await this.activeTransition(true);
+		}
 
-			if (!env.isMobile) {
-				await this.activeTransition(true);
-			}
+		elements.demoRoot().css('opacity', 1);
 
-			elements.demoRoot().css('opacity', 1);
+		if (!env.isMobile) {
+			elements.heroText().on('appear', () => this.activeTransition());
+			elements.heroText().on('disappear', () => this.activeTransition());
+			elements.demoRoot().on('appear', () => this.activeTransition());
+			elements.demoRoot().on('disappear', () => this.activeTransition());
 
-			if (!env.isMobile) {
-				elements.heroText().on('appear', () => this.activeTransition());
-				elements.heroText().on('disappear', () => this.activeTransition());
-				elements.demoRoot().on('appear', () => this.activeTransition());
-				elements.demoRoot().on('disappear', () => this.activeTransition());
-
-				let previousWidth	= CyphElements.elements.window().width();
-				CyphElements.elements.window().resize(async () => {
-					const width	= CyphElements.elements.window().width();
-					if (width === previousWidth) {
-						return;
-					}
-					previousWidth	= width;
-					this.activeTransition(false);
-					await util.sleep(1000);
-					this.activeTransition();
-				});
-			}
-
-			let mobileSession: ISession;
-			const desktopSession: ISession	= new Session(
-				null,
-				false,
-				undefined,
-				(desktopChannel: LocalChannel) => {
-					mobileSession	= new Session(
-						null,
-						false,
-						undefined,
-						(mobileChannel: LocalChannel) =>
-							desktopChannel.connect(mobileChannel)
-					);
+			let previousWidth	= CyphElements.elements.window().width();
+			CyphElements.elements.window().resize(async () => {
+				const width	= CyphElements.elements.window().width();
+				if (width === previousWidth) {
+					return;
 				}
-			);
+				previousWidth	= width;
+				this.activeTransition(false);
+				await util.sleep(1000);
+				this.activeTransition();
+			});
+		}
 
-			this.desktop	= new Chat(
-				dialogManager,
-				() => ({close: () => {}, open: () => {}}),
-				{notify: (message: string) => {}},
-				false,
-				false,
-				desktopSession,
-				elements.demoRootDesktop()
-			);
+		let mobileSession: ISession;
+		const desktopSession: ISession	= new Session(
+			null,
+			false,
+			undefined,
+			(desktopChannel: LocalChannel) => {
+				mobileSession	= new Session(
+					null,
+					false,
+					undefined,
+					(mobileChannel: LocalChannel) =>
+						desktopChannel.connect(mobileChannel)
+				);
+			}
+		);
 
-			this.mobile		= new Chat(
-				dialogManager,
-				this.mobileMenu,
-				{notify: (message: string) => {}},
-				false,
-				true,
-				mobileSession,
-				elements.demoRootMobile()
-			);
+		this.desktop	= new Chat(
+			dialogManager,
+			{notify: (message: string) => {}},
+			false,
+			false,
+			desktopSession,
+			elements.demoRootDesktop()
+		);
 
-			const $desktopFacebookPic: JQuery	= $(CyphDemo.facebookPicFrame);
-			const $mobileFacebookPic: JQuery	= $(CyphDemo.facebookPicFrame);
+		this.mobile		= new Chat(
+			dialogManager,
+			{notify: (message: string) => {}},
+			false,
+			true,
+			mobileSession,
+			elements.demoRootMobile()
+		);
 
-			if (!env.isMobile) {
-				await CyphElements.Elements.waitForElement(elements.demoListDesktop);
-				await CyphElements.Elements.waitForElement(elements.demoListMobile);
-				elements.demoListDesktop().append($desktopFacebookPic);
-				elements.demoListMobile().append($mobileFacebookPic);
+		const $desktopFacebookPic: JQuery	= $(CyphDemo.facebookPicFrame);
+		const $mobileFacebookPic: JQuery	= $(CyphDemo.facebookPicFrame);
+
+		if (!env.isMobile) {
+			await CyphElements.Elements.waitForElement(elements.demoListDesktop);
+			await CyphElements.Elements.waitForElement(elements.demoListMobile);
+			elements.demoListDesktop().append($desktopFacebookPic);
+			elements.demoListMobile().append($mobileFacebookPic);
+		}
+
+		await util.sleep(2500);
+
+		const messages				= await CyphDemo.messages;
+		const facebookPicUrl		= await CyphDemo.facebookPicUrl;
+		const facebookPicMessage	= await CyphDemo.facebookPicMessage;
+
+		for (let message of messages) {
+			const chat: IChat		=
+				message.isMobile ?
+					this.mobile :
+					this.desktop
+			;
+
+			const otherChat: IChat	=
+				message.isMobile ?
+					this.desktop :
+					this.mobile
+			;
+
+			const text		= util.translate(message.text);
+			const maxDelay	= text.length > 15 ? 500 : 250;
+			const minDelay	= 125;
+
+			await util.sleep(util.random(maxDelay, minDelay));
+
+			if (text !== facebookPicMessage) {
+				for (let c of text.split('')) {
+					chat.currentMessage += c;
+					await util.sleep(util.random(50, 10));
+				}
 			}
 
-			await util.sleep(2500);
+			await util.sleep(util.random(maxDelay, minDelay));
 
-			const messages				= await CyphDemo.messages;
-			const facebookPicUrl		= await CyphDemo.facebookPicUrl;
-			const facebookPicMessage	= await CyphDemo.facebookPicMessage;
+			chat.currentMessage	= '';
+			chat.send(text);
+			otherChat.scrollManager.scrollDown();
 
-			for (let message of messages) {
-				const chat: IChat		=
-					message.isMobile ?
-						this.mobile :
-						this.desktop
+			if (env.isMobile || text !== facebookPicMessage) {
+				continue;
+			}
+
+			const $facebookPicImg	= await CyphElements.Elements.waitForElement(
+				() => elements.demoRoot().find(`img:visible[src='${facebookPicUrl}']`),
+				2
+			);
+
+			$facebookPicImg.each(async (i: number, elem: HTMLElement) => {
+				const $this: JQuery			= $(elem);
+
+				const isDesktop: boolean	=
+					$this.parentsUntil().index(elements.demoListDesktop()[0]) > -1
 				;
 
-				const otherChat: IChat	=
-					message.isMobile ?
-						this.desktop :
-						this.mobile
+				const $facebookPic: JQuery	=
+					isDesktop ?
+						$desktopFacebookPic :
+						$mobileFacebookPic
 				;
 
-				const text		= util.translate(message.text);
-				const maxDelay	= text.length > 15 ? 500 : 250;
-				const minDelay	= 125;
-
-				await util.sleep(util.random(maxDelay, minDelay));
-
-				if (text !== facebookPicMessage) {
-					for (let c of text.split('')) {
-						chat.currentMessage += c;
-						await util.sleep(util.random(50, 10));
-					}
-				}
-
-				await util.sleep(util.random(maxDelay, minDelay));
-
-				chat.currentMessage	= '';
-				chat.send(text);
-				otherChat.scrollManager.scrollDown();
-
-				if (env.isMobile || text !== facebookPicMessage) {
-					continue;
-				}
-
-				const $facebookPicImg	= await CyphElements.Elements.waitForElement(
-					() => elements.demoRoot().find(`img:visible[src='${facebookPicUrl}']`),
-					2
+				const $placeholder: JQuery	= $(
+					CyphDemo.facebookPicPlaceholder
 				);
 
-				$facebookPicImg.each(async (i: number, elem: HTMLElement) => {
-					const $this: JQuery			= $(elem);
-
-					const isDesktop: boolean	=
-						$this.parentsUntil().index(elements.demoListDesktop()[0]) > -1
-					;
-
-					const $facebookPic: JQuery	=
-						isDesktop ?
-							$desktopFacebookPic :
-							$mobileFacebookPic
-					;
-
-					const $placeholder: JQuery	= $(
-						CyphDemo.facebookPicPlaceholder
-					);
-
-					$this.parent().replaceWith($placeholder);
-
-					await util.sleep();
-
-					const offset	= CyphDemo.getOffset(
-						$placeholder,
-						isDesktop ?
-							elements.demoListDesktop() :
-							elements.demoListMobile()
-					);
-
-					if (!isDesktop) {
-						offset.left	= Math.ceil(
-							offset.left / CyphDemo.mobileUIScale
-						);
-
-						offset.top	= Math.ceil(
-							offset.top / CyphDemo.mobileUIScale
-						);
-					}
-
-					$facebookPic.css(offset);
-				});
+				$this.parent().replaceWith($placeholder);
 
 				await util.sleep();
-			}
 
-			await util.sleep(1000);
+				const offset	= CyphDemo.getOffset(
+					$placeholder,
+					isDesktop ?
+						elements.demoListDesktop() :
+						elements.demoListMobile()
+				);
 
-			this.desktop.currentMessage	= '';
-			this.mobile.currentMessage	= '';
-		})();
-	}
+				if (!isDesktop) {
+					offset.left	= Math.ceil(
+						offset.left / CyphDemo.mobileUIScale
+					);
+
+					offset.top	= Math.ceil(
+						offset.top / CyphDemo.mobileUIScale
+					);
+				}
+
+				$facebookPic.css(offset);
+			});
+
+			await util.sleep();
+		}
+
+		await util.sleep(1000);
+
+		this.desktop.currentMessage	= '';
+		this.mobile.currentMessage	= '';
+	})(); }
 }

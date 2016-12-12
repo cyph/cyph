@@ -8,11 +8,9 @@ import {strings} from '../../strings';
 import {Timer} from '../../timer';
 import {urlState} from '../../urlstate';
 import {util} from '../../util';
-import {BaseButtonManager} from '../basebuttonmanager';
 import {elements, Elements} from '../elements';
 import {IDialogManager} from '../idialogmanager';
 import {INotifier} from '../inotifier';
-import {ISidebar} from '../isidebar';
 import {nanoScroller} from '../nanoscroller';
 import {Cyphertext} from './cyphertext';
 import {States} from './enums';
@@ -29,7 +27,7 @@ import {ScrollManager} from './scrollmanager';
 
 
 /** @inheritDoc */
-export class Chat extends BaseButtonManager implements IChat {
+export class Chat implements IChat {
 	/** @ignore */
 	private static readonly approximateKeyExchangeTime: number			= 15000;
 
@@ -212,32 +210,28 @@ export class Chat extends BaseButtonManager implements IChat {
 	}
 
 	/** @inheritDoc */
-	public disconnectButton () : void {
-		this.baseButtonClick(async () => {
-			if (await this.dialogManager.confirm({
-				cancel: strings.cancel,
-				content: strings.disconnectConfirm,
-				ok: strings.continueDialogAction,
-				title: strings.disconnectTitle
-			})) {
-				this.close();
-			}
-		});
+	public async disconnectButton () : Promise<void> {
+		if (await this.dialogManager.confirm({
+			cancel: strings.cancel,
+			content: strings.disconnectConfirm,
+			ok: strings.continueDialogAction,
+			title: strings.disconnectTitle
+		})) {
+			this.close();
+		}
 	}
 
 	/** @inheritDoc */
 	public helpButton () : void {
-		this.baseButtonClick(() => {
-			this.dialogManager.baseDialog({
-				template: `<md-dialog class='full'><cyph-help></cyph-help></md-dialog>`
-			});
+		this.dialogManager.baseDialog({
+			template: `<md-dialog class='full'><cyph-help></cyph-help></md-dialog>`
+		});
 
-			analytics.send({
-				eventAction: 'show',
-				eventCategory: 'help',
-				eventValue: 1,
-				hitType: 'event'
-			});
+		analytics.send({
+			eventAction: 'show',
+			eventCategory: 'help',
+			eventValue: 1,
+			hitType: 'event'
 		});
 	}
 
@@ -300,7 +294,6 @@ export class Chat extends BaseButtonManager implements IChat {
 
 	/**
 	 * @param dialogManager
-	 * @param mobileMenu
 	 * @param notifier
 	 * @param messageCountInTitle
 	 * @param isMobile
@@ -310,8 +303,6 @@ export class Chat extends BaseButtonManager implements IChat {
 	constructor (
 		/** @ignore */
 		private readonly dialogManager: IDialogManager,
-
-		mobileMenu: () => ISidebar,
 
 		/** @ignore */
 		private readonly notifier: INotifier,
@@ -326,8 +317,6 @@ export class Chat extends BaseButtonManager implements IChat {
 		/** @ignore */
 		private readonly rootElement: JQuery = elements.html()
 	) {
-		super(mobileMenu);
-
 		this.elements	= {
 			cyphertext: this.findElement(elements.cyphertext().selector),
 			everything: this.findElement(elements.everything().selector),
@@ -409,7 +398,6 @@ export class Chat extends BaseButtonManager implements IChat {
 
 		this.cyphertext		= new Cyphertext(
 			this.session,
-			this.mobileMenu,
 			this.dialogManager,
 			this.isMobile,
 			this.elements
@@ -417,7 +405,6 @@ export class Chat extends BaseButtonManager implements IChat {
 
 		this.p2pManager		= new P2PManager(
 			this,
-			this.mobileMenu,
 			this.dialogManager,
 			this.elements,
 			forceTURN
