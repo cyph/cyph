@@ -137,12 +137,7 @@ section#main {
 
 #main-toolbar.new-cyph-expanded {
 	#new-cyph {
-		font-size: 22px;
-		top: calc(50vh - 98px);
-		left: calc(50vw - 120px);
-		height: 76px;
-		width: 240px;
-		border-radius: 3px;
+		@include transform(translateY(calc(50vh - 50% - 5px)) scale(2));
 	}
 
 	.link-wrapper-outer {
@@ -156,13 +151,9 @@ section#main {
 	}
 }
 
-html.mobile #main-toolbar.new-cyph-expanded #new-cyph {
-	top: 12.5em;
-}
-
-@media all and (orientation: landscape) {
+@media all and (orientation: portrait) {
 	html.mobile #main-toolbar.new-cyph-expanded #new-cyph {
-		top: calc(50vh - 50px);
+		@include transform(translateY(calc(12.5em - 50% - 5px)) scale(2));
 	}
 }
 
