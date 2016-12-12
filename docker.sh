@@ -11,7 +11,8 @@ mkdir ~/.cyphbackup 2> /dev/null
 rm -rf ~/.cyphbackup/*
 cd ~/.cyphbackup
 git init > /dev/null
-for f in cyph ssh gitconfig gnupg ; do cp -a ~/.$f $f ; done
+for f in ssh gitconfig gnupg ; do cp -a ~/.$f $f ; done
+mkdir cyph ; find ~/.cyph -not -name cdn -mindepth 1 -maxdepth 1 -exec cp -a {} cyph/ \;
 git add .
 git commit --no-gpg-sign -a -m backup
 
