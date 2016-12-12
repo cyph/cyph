@@ -6,6 +6,7 @@ import {UpgradeModule} from '@angular/upgrade/static';
 import {
 	ChatCyphertext,
 	ChatMain,
+	ChatMessage,
 	ChatMessageBox,
 	Checkout,
 	Contact,
@@ -60,6 +61,7 @@ import {BetaComponent} from './betacomponent';
 		BetaComponent,
 		ChatCyphertext,
 		ChatMain,
+		ChatMessage,
 		ChatMessageBox,
 		Checkout,
 		Contact,

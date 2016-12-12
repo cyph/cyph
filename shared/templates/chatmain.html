@@ -217,84 +217,18 @@
 	>
 		<md2-content class='nano-content' childClass='md-no-flicker'>
 			<md2-list class='layout-fill' childClass='layout-column'>
-				<md2-list-item
-					class='layout-column'
+				<cyph-chat-message
+					class='layout-row'
 					[attr.message-index]='i'
-					[class.read]='!message.unread'
-					[childClass]='
-						"message-item layout-row" +
-						(
-							" author-" + (
-								users[message.author] ||
-								users.other
-							)
-						) +
-						(
-							message.selfDestructTimer && message.selfDestructTimer.isComplete ?
-								" self-destructed" :
-								""
-						)
-					'
+					[message]='message'
+					[mobile]='self.isMobile || self.p2pManager.p2p.isActive'
 					*ngFor='let message of self.messages ; let i = index'
-				>
-					<div class='flex layout-column'>
-						<div class='layout-row'>
-							<span class='message'>
-								<strong
-									class='message-author'
-									*ngIf='message.author === users.me'
-								>
-									{{strings.me}}:
-								</strong>
-								<strong
-									class='message-author'
-									*ngIf='
-										message.author !== users.me &&
-										message.author !== users.app
-									'
-								>
-									{{message.author}}:
-								</strong>
-								<cyph-markdown
-									class='message-text'
-									[markdown]='message.text'
-									[class.app-message]='message.author === users.app'
-								></cyph-markdown>
-							</span>
-							<span class='message-timestamp flex'>
-								<span *ngIf='
-									(self.isMobile || self.p2pManager.p2p.isActive) &&
-									message.author === users.me
-								'>
-									{{strings.me}} &nbsp;&mdash;&nbsp;
-								</span>
-
-								{{message.timeString}}
-
-								<span *ngIf='
-									(self.isMobile || self.p2pManager.p2p.isActive) &&
-									message.author !== users.me &&
-									message.author !== users.app
-								'>
-									&nbsp;&mdash;&nbsp; {{message.author}}
-								</span>
-							</span>
-						</div>
-						<div
-							class='self-destruct-timer layout-row'
-							*ngIf='message.selfDestructTimer'
-						>
-							<span cyphTranslate>Message will self-destruct in</span>
-							<span class='countdown'>{{message.selfDestructTimer.timestamp}}</span>
-						</div>
-					</div>
-					<div class='self-destruct-cover'></div>
-				</md2-list-item>
+				></cyph-chat-message>
 
 				<md2-list-item
-					class='layout-column'
+					class='layout-row'
 					[childClass]='
-						"friend-is-typing layout-row" +
+						"friend-is-typing" +
 						(self.isFriendTyping ? " show" : "")
 					'
 				>
@@ -306,8 +240,8 @@
 				</md2-list-item>
 
 				<md2-list-item
-					class='layout-column'
-					childClass='chat-end-message layout-row layout-align-center-center'
+					class='layout-row'
+					childClass='chat-end-message layout-align-center-center'
 					*ngIf='self.isDisconnected && !hideDisconnectMessage'
 				>
 					<md2-card class='flex flex-gt-sm-50' childClass='md-padding'>

@@ -2,8 +2,8 @@
 	<md2-content class='nano-content'>
 		<md2-list childClass='layout-column'>
 			<md2-list-item
-				class='layout-column'
-				childClass='message-item unread layout-row'
+				class='layout-row'
+				childClass='message-item unread flex layout-column'
 				*ngFor='let message of self.cyphertext.messages'
 			>
 				<span class='message'>

@@ -1,5 +1,6 @@
 import {ChatCyphertext} from './chatcyphertext';
 import {ChatMain} from './chatmain';
+import {ChatMessage} from './chatmessage';
 import {ChatMessageBox} from './chatmessagebox';
 import {Checkout} from './checkout';
 import {Contact} from './contact';
@@ -17,6 +18,7 @@ import {StaticFooter} from './staticfooter';
 export {
 	ChatCyphertext,
 	ChatMain,
+	ChatMessage,
 	ChatMessageBox,
 	Checkout,
 	Contact,
