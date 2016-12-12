@@ -1,4 +1,5 @@
 import {Config, config} from './config';
+import {Email} from './email';
 import {Env, env} from './env';
 import {EventManager, eventManager} from './eventmanager';
 import {firebaseApp} from './firebaseapp';
@@ -12,6 +13,7 @@ import {Util, util} from './util';
 export {
 	Config,
 	config,
+	Email,
 	Env,
 	env,
 	EventManager,

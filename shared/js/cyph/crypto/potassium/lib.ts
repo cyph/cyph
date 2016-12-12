@@ -1,3 +1,6 @@
+import {IKeyPair} from '../ikeypair';
+
+
 /**
  * Crypto lib dependencies with type definitions.
  */
@@ -11,7 +14,7 @@ export class Lib {
 
 		decrypt: (encrypted: Uint8Array|string, privateKey: Uint8Array) => Uint8Array;
 		encrypt: (message: Uint8Array|string, publicKey: Uint8Array) => Uint8Array;
-		keyPair: () => {privateKey: Uint8Array; publicKey: Uint8Array};
+		keyPair: () => IKeyPair;
 	}	= (<any> self).mceliece || (<any> {});
 
 	/** https://github.com/cyph/ntru.js */
@@ -23,7 +26,7 @@ export class Lib {
 
 		decrypt: (encrypted: Uint8Array|string, privateKey: Uint8Array) => Uint8Array;
 		encrypt: (message: Uint8Array|string, publicKey: Uint8Array) => Uint8Array;
-		keyPair: () => {privateKey: Uint8Array; publicKey: Uint8Array};
+		keyPair: () => IKeyPair;
 	}	= (<any> self).ntru || (<any> {});
 
 	/** https://github.com/cyph/rlwe.js */
@@ -32,7 +35,7 @@ export class Lib {
 		publicKeyLength: number;
 		secretLength: number;
 
-		aliceKeyPair: () => {privateKey: Uint8Array; publicKey: Uint8Array};
+		aliceKeyPair: () => IKeyPair;
 		aliceSecret: (publicKey: Uint8Array, privateKey: Uint8Array) => Uint8Array;
 		bobSecret: (alicePublicKey: Uint8Array) => {publicKey: Uint8Array; secret: Uint8Array};
 	}	= (<any> self).rlwe || (<any> {});
@@ -68,7 +71,7 @@ export class Lib {
 			publicNonce: Uint8Array,
 			key: Uint8Array
 		) => Uint8Array;
-		crypto_box_keypair: () => {keyType: string; privateKey: Uint8Array; publicKey: Uint8Array};
+		crypto_box_keypair: () => IKeyPair;
 		crypto_box_seal: (plaintext: Uint8Array, publicKey: Uint8Array) => Uint8Array;
 		crypto_box_seal_open: (
 			cyphertext: Uint8Array,
@@ -119,7 +122,7 @@ export class Lib {
 		publicKeyBytes: number;
 
 		hash: (message: Uint8Array|string, onlyBinary: boolean) => Uint8Array;
-		keyPair: () => Promise<{keyType: string; privateKey: Uint8Array; publicKey: Uint8Array}>;
+		keyPair: () => Promise<IKeyPair>;
 		open: (signed: Uint8Array|string, publicKey: Uint8Array) => Promise<string>;
 		sign: (message: Uint8Array|string, privateKey: Uint8Array) => Promise<string>;
 		signDetached: (message: Uint8Array|string, privateKey: Uint8Array) => Promise<string>;

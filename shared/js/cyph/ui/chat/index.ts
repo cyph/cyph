@@ -3,6 +3,7 @@ import {Cyphertext} from './cyphertext';
 import {States} from './enums';
 import {FileManager} from './filemanager';
 import {IChat} from './ichat';
+import {IChatMessage} from './ichatmessage';
 import {ICyphertext} from './icyphertext';
 import {IElements} from './ielements';
 import {IFileManager} from './ifilemanager';
@@ -16,6 +17,7 @@ export {
 	Chat,
 	Cyphertext,
 	IChat,
+	IChatMessage,
 	ICyphertext,
 	IElements,
 	IP2PManager,

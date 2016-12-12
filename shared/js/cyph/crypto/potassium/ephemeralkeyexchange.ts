@@ -1,3 +1,4 @@
+import {IKeyPair} from '../ikeypair';
 import {Hash} from './hash';
 import {lib} from './lib';
 import {util} from './util';
@@ -21,15 +22,8 @@ export class EphemeralKeyExchange {
 	public readonly secretBytes: number		= 64;
 
 	/** Generates Alice's key pair. */
-	public async aliceKeyPair () : Promise<{
-		keyType: string;
-		privateKey: Uint8Array;
-		publicKey: Uint8Array;
-	}> {
-		const rlweKeyPair: {
-			publicKey: Uint8Array;
-			privateKey: Uint8Array;
-		}	= lib.rlwe.aliceKeyPair();
+	public async aliceKeyPair () : Promise<IKeyPair> {
+		const rlweKeyPair: IKeyPair	= lib.rlwe.aliceKeyPair();
 
 		const sodiumPrivateKey: Uint8Array	= util.randomBytes(
 			lib.sodium.crypto_scalarmult_SCALARBYTES

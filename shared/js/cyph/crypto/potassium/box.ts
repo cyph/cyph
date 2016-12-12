@@ -1,3 +1,4 @@
+import {IKeyPair} from '../ikeypair';
 import {lib} from './lib';
 import * as NativeCrypto from './nativecrypto';
 import {OneTimeAuth} from './onetimeauth';
@@ -9,16 +10,12 @@ import {util} from './util';
 export class Box {
 	/** @ignore */
 	private readonly helpers: {
-		keyPair: () => Promise<{
-			keyType: string;
-			publicKey: Uint8Array;
-			privateKey: Uint8Array;
-		}>;
+		keyPair: () => Promise<IKeyPair>;
 		nonceBytes: number;
 		open: (
 			cyphertext: Uint8Array,
 			nonce: Uint8Array,
-			keyPair: {publicKey: Uint8Array; privateKey: Uint8Array}
+			keyPair: IKeyPair
 		) => Promise<Uint8Array>;
 		privateKeyBytes: number;
 		publicKeyBytes: number;
@@ -28,11 +25,7 @@ export class Box {
 			publicKey: Uint8Array
 		) => Promise<Uint8Array>;
 	}	= {
-		keyPair: async () : Promise<{
-			keyType: string;
-			publicKey: Uint8Array;
-			privateKey: Uint8Array;
-		}> =>
+		keyPair: async () : Promise<IKeyPair> =>
 			this.isNative ?
 				NativeCrypto.box.keyPair() :
 				lib.sodium.crypto_box_keypair()
@@ -47,7 +40,7 @@ export class Box {
 		open: async (
 			cyphertext: Uint8Array,
 			nonce: Uint8Array,
-			keyPair: {publicKey: Uint8Array; privateKey: Uint8Array}
+			keyPair: IKeyPair
 		) : Promise<Uint8Array> =>
 			this.isNative ?
 				NativeCrypto.box.open(
@@ -263,11 +256,7 @@ export class Box {
 	}
 
 	/** Generates key pair. */
-	public async keyPair () : Promise<{
-		keyType: string;
-		publicKey: Uint8Array;
-		privateKey: Uint8Array;
-	}> {
+	public async keyPair () : Promise<IKeyPair> {
 		const keyPairs	= {
 			classical: await this.helpers.keyPair(),
 			mcEliece: lib.mcEliece.keyPair(),
@@ -343,7 +332,7 @@ export class Box {
 	/** Decrypts cyphertext. */
 	public async open (
 		cyphertext: Uint8Array,
-		keyPair: {publicKey: Uint8Array; privateKey: Uint8Array}
+		keyPair: IKeyPair
 	) : Promise<Uint8Array> {
 		const keys	= this.splitKeys(keyPair.publicKey, keyPair.privateKey);
 

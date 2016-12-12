@@ -1,4 +1,5 @@
 import {config} from './config';
+import {Email} from './email';
 import {env} from './env';
 import {eventManager} from './eventmanager';
 
@@ -23,32 +24,26 @@ export class Util {
 
 	/**
 	 * Sends an email to the Cyph team. "@cyph.com" may be omitted from o.to.
-	 * @param o
+	 * @param email
 	 */
-	public email (o: {
-		fromEmail?: string;
-		fromName?: string;
-		to?: string;
-		subject?: string;
-		message: string;
-	}) : void {
+	public email (email: Email) : void {
 		this.request({
 			data: {
 				key: 'HNz4JExN1MtpKz8uP2RD1Q',
 				message: {
-					from_email: (o.fromEmail || 'test@mandrillapp.com').
+					from_email: (email.fromEmail || 'test@mandrillapp.com').
 						replace('@cyph.com', '@mandrillapp.com')
 					,
-					from_name: o.fromName || 'Mandrill',
-					subject: o.subject || 'New Cyph Email',
-					text: o.message + (
+					from_name: email.fromName || 'Mandrill',
+					subject: email.subject || 'New Cyph Email',
+					text: email.message + (
 						'\n\n\n---' +
 						'\n\n' + env.userAgent +
 						'\n\n' + env.language +
 						'\n\n' + locationData.href
 					).replace(/\/#.*/g, ''),
 					to: [{
-						email: (o.to || 'hello').replace('@cyph.com', '') + '@cyph.com',
+						email: (email.to || 'hello').replace('@cyph.com', '') + '@cyph.com',
 						type: 'to'
 					}]
 				}
@@ -57,6 +52,8 @@ export class Util {
 			method: 'POST',
 			url: 'https://mandrillapp.com/api/1.0/messages/send.json'
 		});
+
+		email.sent	= true;
 	}
 
 	/**

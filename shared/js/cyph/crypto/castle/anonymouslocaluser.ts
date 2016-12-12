@@ -1,3 +1,4 @@
+import {IKeyPair} from '../ikeypair';
 import {Potassium} from '../potassium';
 import {ILocalUser} from './ilocaluser';
 import {Transport} from './transport';
@@ -9,13 +10,10 @@ import {Transport} from './transport';
  */
 export class AnonymousLocalUser implements ILocalUser {
 	/** @ignore */
-	private keyPair: {publicKey: Uint8Array; privateKey: Uint8Array};
+	private keyPair: IKeyPair;
 
 	/** @inheritDoc */
-	public async getKeyPair () : Promise<{
-		publicKey: Uint8Array;
-		privateKey: Uint8Array;
-	}> {
+	public async getKeyPair () : Promise<IKeyPair> {
 		if (this.keyPair) {
 			return this.keyPair;
 		}

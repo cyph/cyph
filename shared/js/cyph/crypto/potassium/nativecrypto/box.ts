@@ -1,3 +1,4 @@
+import {IKeyPair} from '../../ikeypair';
 import {lib} from '../lib';
 import {util} from '../util';
 import {importHelper} from './importhelper';
@@ -31,11 +32,7 @@ export class Box {
 	public readonly privateKeyBytes: number	= 3250;
 
 	/** Generates key pair. */
-	public async keyPair () : Promise<{
-		keyType: string;
-		publicKey: Uint8Array;
-		privateKey: Uint8Array;
-	}> {
+	public async keyPair () : Promise<IKeyPair> {
 		const keyPair: CryptoKeyPair	= await lib.subtleCrypto.generateKey(
 			this.algorithm,
 			true,
@@ -120,7 +117,7 @@ export class Box {
 	public async open (
 		cyphertext: Uint8Array,
 		nonce: Uint8Array,
-		keyPair: {publicKey: Uint8Array; privateKey: Uint8Array}
+		keyPair: IKeyPair
 	) : Promise<Uint8Array> {
 		const asymmetricCyphertext: Uint8Array	= new Uint8Array(
 			cyphertext.buffer,

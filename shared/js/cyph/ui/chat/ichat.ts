@@ -1,6 +1,6 @@
-import {ITimer} from '../../itimer';
 import {ISession} from '../../session/isession';
 import {States} from './enums';
+import {IChatMessage} from './ichatmessage';
 import {ICyphertext} from './icyphertext';
 import {IFileManager} from './ifilemanager';
 import {IP2PManager} from './ip2pmanager';
@@ -36,14 +36,7 @@ export interface IChat {
 	readonly state: States;
 
 	/** Message list. */
-	readonly messages: {
-		author: string;
-		selfDestructTimer: ITimer;
-		text: string;
-		timestamp: number;
-		timeString: string;
-		unread: boolean;
-	}[];
+	readonly messages: IChatMessage[];
 
 	/** Cyphertext instance. */
 	readonly cyphertext: ICyphertext;

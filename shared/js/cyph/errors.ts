@@ -1,4 +1,5 @@
 import {analytics} from './analytics';
+import {Email} from './email';
 import {util} from './util';
 
 
@@ -53,11 +54,11 @@ export class Errors {
 			).replace(/\/#.*/g, '');
 
 			if (numEmails++ < 50) {
-				util.email({
-					message: exception,
-					subject: 'CYPH: ' + subject,
-					to: 'errors'
-				});
+				util.email(new Email(
+					'errors',
+					'CYPH: ' + subject,
+					exception
+				));
 			}
 
 			analytics.send('exception', {

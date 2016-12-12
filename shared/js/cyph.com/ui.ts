@@ -1,4 +1,5 @@
 import {config} from '../cyph/config';
+import {Email} from '../cyph/email';
 import {env} from '../cyph/env';
 import {BaseButtonManager} from '../cyph/ui/basebuttonmanager';
 import {Carousel} from '../cyph/ui/carousel';
@@ -32,15 +33,8 @@ export class UI extends BaseButtonManager {
 	/** @see Promos */
 	public promo: Promos				= Promos.none;
 
-	/** @see Contact.self */
-	public readonly contactState		= {
-		fromEmail: <string> '',
-		fromName: <string> '',
-		message: <string> '',
-		sent: <boolean> false,
-		subject: <string> '',
-		to: <string> 'hello'
-	};
+	/** @see Email */
+	public readonly contact: Email		= new Email('hello');
 
 	/** List of features to cycle through in hero section. */
 	public readonly features: string[]	= [
@@ -217,7 +211,7 @@ export class UI extends BaseButtonManager {
 		else if (state === States.contact) {
 			const to: string	= newUrlStateSplit[1];
 			if (config.cyphEmailAddresses.indexOf(to) > -1) {
-				this.contactState.to	= to;
+				this.contact.to	= to;
 			}
 
 			this.changeState(state);

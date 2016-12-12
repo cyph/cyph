@@ -1,5 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {Config, config} from '../../config';
+import {Email} from '../../email';
 import {util} from '../../util';
 
 
@@ -11,23 +12,15 @@ import {util} from '../../util';
 	templateUrl: '../../../../templates/contact.html'
 })
 export class Contact {
-	/** Contact form state. */
-	@Input() public self: {
-		fromEmail: string;
-		fromName: string;
-		message: string;
-		to: string;
-		sent: boolean;
-		subject: string;
-	};
+	/** @see IEmail */
+	@Input() public email: Email;
 
 	/** @see Config */
 	public readonly config: Config	= config;
 
 	/** Sends email. */
 	public send () : void {
-		util.email(this.self);
-		this.self.sent	= true;
+		util.email(this.email);
 	}
 
 	constructor () {}

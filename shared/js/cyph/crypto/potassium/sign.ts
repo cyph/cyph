@@ -1,3 +1,4 @@
+import {IKeyPair} from '../ikeypair';
 import {lib} from './lib';
 
 
@@ -13,11 +14,7 @@ export class Sign {
 	public readonly publicKeyBytes: number	= lib.superSphincs.publicKeyBytes;
 
 	/** Generates key pair. */
-	public async keyPair () : Promise<{
-		keyType: string;
-		privateKey: Uint8Array;
-		publicKey: Uint8Array;
-	}> {
+	public async keyPair () : Promise<IKeyPair> {
 		return lib.superSphincs.keyPair();
 	}
 

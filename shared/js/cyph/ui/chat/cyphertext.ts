@@ -7,6 +7,7 @@ import {BaseButtonManager} from '../basebuttonmanager';
 import {elements as cyphElements} from '../elements';
 import {IDialogManager} from '../idialogmanager';
 import {ISidebar} from '../isidebar';
+import {IChatMessage} from './ichatmessage';
 import {ICyphertext} from './icyphertext';
 import {IElements} from './ielements';
 
@@ -21,7 +22,7 @@ export class Cyphertext extends BaseButtonManager implements ICyphertext {
 	private showLock: boolean	= false;
 
 	/** @inheritDoc */
-	public readonly messages: {author: string; text: string}[]	= [];
+	public readonly messages: IChatMessage[]	= [];
 
 	/** @inheritDoc */
 	public hide () : void {
@@ -53,7 +54,15 @@ export class Cyphertext extends BaseButtonManager implements ICyphertext {
 				this.messages.shift();
 			}
 
-			this.messages.push({author, text});
+			const timestamp	= util.timestamp();
+
+			this.messages.push({
+				author,
+				text,
+				timestamp,
+				timeString: util.getTimeString(timestamp),
+				unread: false
+			});
 		}
 	}
 

@@ -1,9 +1,12 @@
+import {IKeyPair} from '../ikeypair';
+
+
 /**
  * Represents the local user in a Castle session.
  */
 export interface ILocalUser {
 	/** Potassium.Box key pair. */
-	getKeyPair () : Promise<{publicKey: Uint8Array; privateKey: Uint8Array}>;
+	getKeyPair () : Promise<IKeyPair>;
 
 	/** Encrypted secret from remote user. */
 	getRemoteSecret () : Promise<Uint8Array>;

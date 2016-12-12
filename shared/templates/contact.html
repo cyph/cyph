@@ -1,11 +1,11 @@
-<div *ngIf='self'>
-	<form (submit)='send()' *ngIf='!self.sent'>
+<div *ngIf='email'>
+	<form (submit)='send()' *ngIf='!email.sent'>
 		<div class='layout-gt-xs-row'>
 			<md2-select
 				cyphTranslate
 				class='flex'
 				childClass='md-block'
-				[(model)]='self.to'
+				[(model)]='email.to'
 				formName='to'
 				label='Cyph team to contact'
 			>
@@ -22,7 +22,7 @@
 				cyphTranslate
 				class='flex'
 				childClass='md-block'
-				[(model)]='self.fromName'
+				[(model)]='email.fromName'
 				formName='name'
 				label='Name'
 			></md2-input>
@@ -30,7 +30,7 @@
 				cyphTranslate
 				class='flex'
 				childClass='md-block'
-				[(model)]='self.fromEmail'
+				[(model)]='email.fromEmail'
 				formName='email'
 				type='email'
 				label='Email'
@@ -40,14 +40,14 @@
 		<md2-input
 			cyphTranslate
 			childClass='md-block'
-			[(model)]='self.subject'
+			[(model)]='email.subject'
 			formName='subject'
 			label='Subject'
 		></md2-input>
 		<md2-textarea
 			cyphTranslate
 			childClass='md-block'
-			[(model)]='self.message'
+			[(model)]='email.message'
 			formName='message'
 			label='Message'
 			[required]='true'
@@ -56,7 +56,7 @@
 			Send
 		</md2-button>
 	</form>
-	<div *ngIf='self.sent' cyphTranslate>
+	<div *ngIf='email.sent' cyphTranslate>
 		Your email has been sent! Someone on the team will get back to you shortly.
 	</div>
 </div>

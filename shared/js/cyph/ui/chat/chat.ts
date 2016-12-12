@@ -1,6 +1,5 @@
 import {analytics} from '../../analytics';
 import {env} from '../../env';
-import {ITimer} from '../../itimer';
 import {events, rpcEvents, users} from '../../session/enums';
 import {ISession} from '../../session/isession';
 import {Message} from '../../session/message';
@@ -19,6 +18,7 @@ import {Cyphertext} from './cyphertext';
 import {States} from './enums';
 import {FileManager} from './filemanager';
 import {IChat} from './ichat';
+import {IChatMessage} from './ichatmessage';
 import {ICyphertext} from './icyphertext';
 import {IElements} from './ielements';
 import {IFileManager} from './ifilemanager';
@@ -71,14 +71,7 @@ export class Chat extends BaseButtonManager implements IChat {
 	public state: States						= States.none;
 
 	/** @inheritDoc */
-	public readonly messages: {
-		author: string;
-		selfDestructTimer: ITimer;
-		text: string;
-		timestamp: number;
-		timeString: string;
-		unread: boolean;
-	}[]	= [];
+	public readonly messages: IChatMessage[]	= [];
 
 	/** @inheritDoc */
 	public readonly cyphertext: ICyphertext;
@@ -132,11 +125,10 @@ export class Chat extends BaseButtonManager implements IChat {
 			}
 		}
 
-		const message	= {
+		const message: IChatMessage	= {
 			author,
 			text,
 			timestamp,
-			selfDestructTimer: <ITimer> null,
 			timeString: util.getTimeString(timestamp),
 			unread: author !== users.app && author !== users.me
 		};

@@ -1,4 +1,5 @@
 import {Component} from '@angular/core';
+import {Email} from '../../email';
 import {Env, env} from '../../env';
 import {strings} from '../../strings';
 
@@ -17,8 +18,11 @@ export class Help {
 		[strings.formattingHelp, strings.contactCyph]
 	;
 
+	/** @see Email */
+	public readonly email: Email	= new Email('help');
+
 	/** @see Env */
-	public readonly env: Env	= env;
+	public readonly env: Env		= env;
 
 	constructor () {}
 }

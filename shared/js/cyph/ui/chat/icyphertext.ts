@@ -1,9 +1,12 @@
+import {IChatMessage} from './ichatmessage';
+
+
 /**
  * Represents cyphertext chat UI component.
  */
 export interface ICyphertext {
 	/** Cyphertext message list. */
-	readonly messages: {author: string; text: string}[];
+	readonly messages: IChatMessage[];
 
 	/**
 	 * Hides cyphertext UI.
