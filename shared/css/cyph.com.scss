@@ -889,6 +889,10 @@ html.mobile .md-open-menu-container {
 	}
 }
 
+html.mobile #gettingstarted-section {
+	height: 35em;
+}
+
 #footer {
 	padding: 40px;
 	background-color: rgba(97, 51, 163, 0.75);
@@ -960,7 +964,7 @@ html:not(.mobile) .section-content-container:not(.full) {
 	}
 }
 
-html.mobile {
+@media (max-width: 767px) {
 	.founder-photos {
 		margin-left: -20px;
 		width: calc(100% + 40px);
@@ -979,7 +983,7 @@ html.mobile {
 	}
 }
 
-html:not(.mobile) {
+@media (min-width: 768px) {
 	.founder-photos {
 		padding: 20px;
 
