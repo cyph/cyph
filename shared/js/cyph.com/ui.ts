@@ -362,7 +362,6 @@ export class UI {
 						this.state === States.home && (
 							(
 								this.promo === Promos.none &&
-								!env.isMobile &&
 								elements.heroText().is(':appeared')
 							) ||
 							CyphElements.elements.footer().is(':appeared')
