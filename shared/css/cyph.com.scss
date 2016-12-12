@@ -832,15 +832,19 @@ html.mobile #features-section .carousel .logo.active > img {
 	}
 }
 
-html.mobile .demo-root {
-	> .mobile {
-		height: calc(100vh - 60px);
-		width: calc(100% + 100px);
-		top: 0px;
-		left: -50px;
-		margin: auto;
+html.mobile .demo-root > .mobile {
+	height: 40em;
+	width: calc(100% + 100px);
+	top: 0px;
+	left: -50px;
+	margin: auto;
 
-		@include transform(scale(0.8));
+	@include transform(scale(0.8));
+}
+
+@media all and (orientation: landscape) {
+	html.mobile .demo-root > .mobile {
+		height: 20em;
 	}
 }
 
