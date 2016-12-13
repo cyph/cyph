@@ -93,6 +93,7 @@ tsbuild () {
 
 compile () {
 	cd "${dir}/shared"
+	outputDir="${dir}/shared/js"
 
 	if [ "${cloneworkingdir}" ] ; then
 		find . -mindepth 1 -maxdepth 1 -type d -not -name lib -exec bash -c '
@@ -173,7 +174,7 @@ compile () {
 						return translations;
 					}, {})
 			)};
-		`.trim())' > "${dir}/shared/js/translations.js"
+		`.trim())' > "${outputDir}/translations.js"
 
 		mangleExcept="$(
 			test "${minify}" && node -e "console.log(JSON.stringify('$({
@@ -264,10 +265,6 @@ compile () {
 		done
 		for f in $tsfiles ; do
 			m="$(modulename "${f}")"
-			outputDir="${dir}/shared/js"
-			outputFile="${outputDir}/${f}.js"
-
-			rm "${outputFile}" 2> /dev/null
 
 			if [ "${m}" == 'Main' ] ; then
 				cp "${f}.lib.js" "${outputDir}/${f}.lib.js" 2> /dev/null
@@ -275,7 +272,7 @@ compile () {
 
 			{
 				cat preload/global.js;
-				cat $f.tmp.js | sed "0,/var ${m} =/s||self.${m} =|";
+				cat "${f}.tmp.js" | sed "0,/var ${m} =/s||self.${m} =|";
 				echo "(function () {
 					self.${m}Base	= self.${m};
 
@@ -287,12 +284,12 @@ compile () {
 				})();";
 			} | \
 				sed 's|use strict||g' \
-			> "${outputFile}"
+			> "${outputDir}/${f}.js"
 
-			rm $f.tmp.js
+			rm "${f}.tmp.js"
 		done
 
-		for js in $(find . -name '*.js') ; do
+		for js in $(find . -name '*.js' -not -name 'translations.js') ; do
 			delete=true
 			for f in $tsfiles ; do
 				if [ "${js}" == "./${f}.js" -o "${js}" == "./${f}.lib.js" ] ; then
