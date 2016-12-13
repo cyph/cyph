@@ -1,8 +1,8 @@
 #!/bin/bash
 
-outputDir="$(pwd)"
+outputDir="$PWD"
 cd $(cd "$(dirname "$0")"; pwd)/..
-rootDir="$(pwd)"
+rootDir="$PWD"
 
 
 cloneworkingdir=''

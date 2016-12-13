@@ -1,6 +1,6 @@
 #!/bin/bash
 
-dir="$(pwd)"
+dir="$PWD"
 cd $(cd "$(dirname "$0")"; pwd)/..
 
 
@@ -35,7 +35,7 @@ for project in cyph.com cyph.im ; do
 done
 
 rm -rf $GOPATH/src/*
-for f in $(find $(pwd)/default -mindepth 1 -maxdepth 1 -type d) ; do
+for f in $(find $PWD/default -mindepth 1 -maxdepth 1 -type d) ; do
 	ln -s $f $GOPATH/src/$(echo "$f" | perl -pe 's/.*\///g') > /dev/null 2>&1 &
 done
 for f in $(find default -mindepth 1 -maxdepth 4 -type d) ; do
