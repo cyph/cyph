@@ -104,15 +104,14 @@ compile () {
 
 	for f in $scssfiles ; do
 		command=" \
-			cat ${f}.scss | \
-				scss -Icss \
+			scss -Icss ${f}.scss \
 				$(test "${minify}" && echo '| cleancss') \
 			> ${dir}/shared/${f}.css \
 		"
 		if [ "${watch}" ] ; then
-			$command &
+			eval "${command}" &
 		else
-			output="${output}$($command 2>&1)"
+			output="${output}$(eval "${command}" 2>&1)"
 		fi
 	done
 
@@ -182,6 +181,7 @@ compile () {
 					crypto
 					importScripts
 					locals
+					Wrapper_NgIf
 					Thread
 					threadSetupVars
 				';
