@@ -209,16 +209,31 @@ else
 fi
 
 
-# Blog
+# Blog + cache busting
 waitingForBlog=''
-if [ ! "${site}" -o "${site}" == cyph.com ] ; then
+if [ "${cacheBustedProjects}" ] ; then
 	waitingForBlog=true
 	bash -c "
-		rm -rf cyph.com/blog 2> /dev/null;
-		mkdir -p cyph.com/blog;
-		cd cyph.com/blog;
-		../../commands/wpstatic.sh '${homeURL}/blog' > ../.blog.output 2>&1;
-		touch ../.blog.done;
+		if [ ! '${site}' -o '${site}' == cyph.com ] ; then
+			rm -rf cyph.com/blog 2> /dev/null
+			mkdir -p cyph.com/blog
+			cd cyph.com/blog
+			../../commands/wpstatic.sh '${homeURL}/blog' > ../../.blog.output 2>&1
+			cd ../..
+		fi
+
+		while [ ! -f .build.done ] ; do sleep 1 ; done
+		rm .build.done
+
+		# Cache bust
+		for d in ${cacheBustedProjects} ; do
+			cd \$d
+			echo \"Cache bust \$(projectname \$d)\" > ../../.blog.output 2>&1
+			../commands/cachebust.js > ../../.blog.output 2>&1
+			cd ..
+		done
+
+		touch .blog.done
 	" &
 fi
 
@@ -270,32 +285,8 @@ for d in $compiledProjects ; do
 
 	cd ..
 done
+touch .build.done
 
-
-if [ "${waitingForBlog}" ] ; then
-	while true ; do
-		cat cyph.com/.blog.output
-		echo -n > cyph.com/.blog.output
-		if [ -f cyph.com/.blog.done ] ; then
-			break
-		fi
-		sleep 5
-	done
-	rm cyph.com/.blog.done cyph.com/.blog.output
-	if [ ! -f cyph.com/blog/index.html ] ; then
-		echo -e '\n\nStatic blog generation failed\n'
-		exit 1
-	fi
-fi
-
-
-# Cache bust
-for d in $cacheBustedProjects ; do
-	cd $d
-	echo "Cache bust $(projectname $d)"
-	../commands/cachebust.js
-	cd ..
-done
 
 # WebSign packaging
 if [ "${websign}" ] ; then
@@ -425,6 +416,23 @@ if [ "${websign}" ] ; then
 	done
 elif [ ! "${site}" -o "${site}" == cyph.im ] ; then
 	cp websign/js/workerhelper.js cyph.im/js/
+fi
+
+
+if [ "${waitingForBlog}" ] ; then
+	while true ; do
+		cat cyph.com/.blog.output
+		echo -n > cyph.com/.blog.output
+		if [ -f cyph.com/.blog.done ] ; then
+			break
+		fi
+		sleep 5
+	done
+	rm cyph.com/.blog.done cyph.com/.blog.output
+	if [ ! -f cyph.com/blog/index.html ] ; then
+		echo -e '\n\nStatic blog generation / cache busting failed\n'
+		exit 1
+	fi
 fi
 
 
