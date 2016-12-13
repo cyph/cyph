@@ -7,12 +7,18 @@ dir="$(pwd)"
 cloneworkingdir=''
 test=''
 watch=''
+minify=''
 
 if [ "${1}" == '--watch' ] ; then
 	watch=true
 	shift
-elif [ "${1}" != '--prod' ] ; then
+fi
+if [ "${1}" != '--prod' ] ; then
 	test=true
+	shift
+fi
+if [ "${1}" != '--no-minify' ] ; then
+	minify=true
 	shift
 fi
 if [ ! -d ~/.build ] ; then
@@ -97,7 +103,12 @@ compile () {
 	fi
 
 	for f in $scssfiles ; do
-		command="scss -Icss ${f}.scss ${dir}/shared/${f}.css"
+		command=" \
+			cat ${f}.scss | \
+				scss -Icss \
+				$(test "${minify}" && echo '| cleancss') \
+			> ${dir}/shared/${f}.css \
+		"
 		if [ "${watch}" ] ; then
 			$command &
 		else
@@ -165,6 +176,32 @@ compile () {
 			)};
 		`.trim())')"
 
+		mangleExcept="$(
+			test "${minify}" && node -e "console.log(JSON.stringify('$({
+				echo -e '
+					crypto
+					importScripts
+					locals
+					Thread
+					threadSetupVars
+				';
+				{
+					cat typings/globals.d.ts;
+					find ../lib/typings -name '*.ts' -type f -exec cat {} \;;
+				} |
+					grep -oP 'declare.*:' |
+					perl -pe 's/declare\s+.*?\s+(.*?):.*/\1/g' \
+				;
+				find . -name '*.ts' -type f -exec cat {} \; |
+					tr -d '\n' |
+					grep -oP 'new Thread\(.*?\;' |
+					perl -pe 's/\/\*.*?\*\///g' |
+					perl -pe 's/(.*)\{.*?;$/\1/g' |
+					grep -oP '[A-Za-z0-9_$]+' \
+				;
+			} | sort | uniq | tr '\n' ' ')'.trim().split(/\s+/)))"
+		)"
+
 		for f in $tsfiles ; do
 			m="$(modulename "${f}")"
 
@@ -180,15 +217,24 @@ compile () {
 						library: '${m}',
 						libraryTarget: 'var'
 					},
-					$(test "${m}" == 'Main' && echo "
-						plugins: [
+					plugins: [
+						$(test "${minify}" && echo "
+							new webpack.optimize.UglifyJsPlugin({
+								compress: false,
+								mangle: {
+									except: ${mangleExcept}
+								},
+								sourceMap: false
+							}),
+						")
+						$(test "${m}" == 'Main' && echo "
 							new webpack.optimize.CommonsChunkPlugin({
 								name: 'lib',
 								filename: './${f}.lib.js',
 								minChunks: module => /\/lib\//.test(module.resource)
 							})
-						]
-					")
+						")
+					]
 				};
 			EOM
 

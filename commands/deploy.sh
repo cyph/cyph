@@ -375,16 +375,9 @@ if [ "${compiledProjects}" ] ; then
 		mv js/cyph/thread.ts.new js/cyph/thread.ts
 	fi
 
-	../commands/build.sh --prod || exit;
+	../commands/build.sh --prod $(test "${simple}" && echo '--no-minify') || exit;
 
 	rm -rf js/node_modules lib/js/node_modules
-
-	if [ ! "${simple}" ] ; then
-		echo 'JS Minify'
-		find js -name '*.js' | xargs -I% uglifyjs '%' -o '%'
-		echo 'CSS Minify'
-		find css -name '*.css' | grep -v bourbon/ | xargs -I% cleancss -o '%' '%'
-	fi
 
 	cd ..
 fi
