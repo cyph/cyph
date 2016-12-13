@@ -9,7 +9,7 @@ echo -e '\n\nGenerating static blog\n'
 ssh -i ~/.ssh/id_rsa_docker -f -N -L 43000:localhost:43000 wordpress.internal.cyph.com > /dev/null 2>&1
 
 checklock () {
-	ssh -i ~/.ssh/id_rsa_docker wordpress.internal.cyph.com 'if [ -f lock ] ; then cat lock ; fi'
+	ssh -i ~/.ssh/id_rsa_docker wordpress.internal.cyph.com 'find lock -not -mmin +5 -exec cat {} \;'
 }
 
 claimlock () {
@@ -35,7 +35,7 @@ while [ ! -f wpstatic.zip ] ; do
 	command="$(node -e "
 		const browser	= new (require('zombie'));
 
-		setTimeout(() => process.exit(), 600000);
+		setTimeout(() => process.exit(), 1200000);
 
 		new Promise(resolve => browser.visit(
 			'http://localhost:43000/wp-admin/admin.php?page=simply-static_settings',
