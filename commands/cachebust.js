@@ -1,37 +1,37 @@
 #!/usr/bin/env node
 
-const superSphincs		= require("supersphincs");
+const superSphincs		= require('supersphincs');
 
-const filesToCacheBust	= child_process.spawnSync("find", [
-	"-L",
-	".",
-	"-type",
-	"f",
-	"-mindepth",
-	"2"
-]).stdout.toString().split("\n").filter(s => s).map(s => s.slice(2));
+const filesToCacheBust	= child_process.spawnSync('find', [
+	'-L',
+	'.',
+	'-type',
+	'f',
+	'-mindepth',
+	'2'
+]).stdout.toString().split('\n').filter(s => s).map(s => s.slice(2));
 
-const filesToModify		= child_process.spawnSync("find", [
-	".",
-	"-type",
-	"f",
-	"-and",
-	"\(",
-	"-name",
-	"*.html",
-	"-or",
-	"-name",
-	"*.js",
-	"-or",
-	"-name",
-	"*.css",
-	"\)"
-]).stdout.toString().split("\n").filter(s => s);
+const filesToModify		= child_process.spawnSync('find', [
+	'.',
+	'-type',
+	'f',
+	'-and',
+	'\(',
+	'-name',
+	'*.html',
+	'-or',
+	'-name',
+	'*.js',
+	'-or',
+	'-name',
+	'*.css',
+	'\)'
+]).stdout.toString().split('\n').filter(s => s);
 
 const fileContents		= {};
 const cacheBustedFiles	= {};
 
-const getFileName		= file => file.split("/").slice(-1)[0];
+const getFileName		= file => file.split('/').slice(-1)[0];
 
 
 Promise.all(filesToModify.map(file =>
@@ -68,7 +68,7 @@ Promise.all(filesToModify.map(file =>
 /* To save space, remove unused subresources under lib directory */
 then(() => Promise.all(
 	filesToCacheBust.filter(subresource =>
-		subresource.startsWith("lib/") &&
+		subresource.startsWith('lib/') &&
 		!cacheBustedFiles[getFileName(subresource)]
 	).map(subresource => new Promise(resolve =>
 		fs.unlink(subresource, resolve)
