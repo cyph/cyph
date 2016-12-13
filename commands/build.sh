@@ -25,7 +25,9 @@ if [ ! -d ~/.build ] ; then
 	cloneworkingdir=true
 fi
 
+tsfilesRoot="${outputDir}"
 if [ "${cloneworkingdir}" -o "${test}" -o "${watch}" -o "${outputDir}" == "${rootDir}" ] ; then
+	tsfilesRoot="${rootDir}"
 	outputDir="${rootDir}/shared"
 fi
 
@@ -37,9 +39,9 @@ fi
 
 tsfiles="$( \
 	{ \
-		find . -name '*.html' -not \( \
-			-path './.build/*' \
-			-or -path './websign/*' \
+		find ${tsfilesRoot} -name '*.html' -not \( \
+			-path "${tsfilesRoot}/.build/*" \
+			-or -path "${tsfilesRoot}/websign/*" \
 			-or -path '*/lib/*' \
 		\) -exec cat {} \; | \
 		grep -oP "src=(['\"])/js/.*?\1" & \
@@ -224,7 +226,6 @@ compile () {
 									exclude: /node_modules/,
 									loader: 'babel-loader',
 									query: {
-										cacheDirectory: true,
 										compact: false,
 										presets: ['es2015']
 									}
