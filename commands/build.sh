@@ -263,6 +263,12 @@ compile () {
 
 			webpack --config "${f}.webpack.js"
 		done
+
+		babel --presets es2015 --compact false preload/global.js -o preload/global.js
+		if [ "${minify}" ] ; then
+			uglifyjs preload/global.js -o preload/global.js
+		fi
+
 		for f in $tsfiles ; do
 			m="$(modulename "${f}")"
 
@@ -272,7 +278,7 @@ compile () {
 
 			{
 				cat preload/global.js;
-				cat "${f}.tmp.js" | sed "0,/var ${m} =/s||self.${m} =|";
+				cat "${f}.tmp.js" | sed "0,/var ${m}/s||self.${m}|";
 				echo "(function () {
 					self.${m}Base	= self.${m};
 
@@ -281,7 +287,9 @@ compile () {
 						var key		= keys[i];
 						self[key]	= self.${m}Base[key];
 					}
-				})();";
+				})();" |
+					if [ "${minify}" ] ; then uglifyjs ; else cat - ; fi \
+				;
 			} | \
 				sed 's|use strict||g' \
 			> "${outputDir}/${f}.js"
