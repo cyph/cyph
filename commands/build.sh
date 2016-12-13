@@ -211,29 +211,39 @@ compile () {
 						app: './${f}.js'
 					},
 					$(test "${watch}" || echo "
-						loaders: [
-							{
-								test: /\.js$/,
-								exclude: /node_modules/,
-								loader: 'babel-loader',
-								query: {
-									compact: false,
-									presets: ['es2015']
+						module: {
+							loaders: [
+								{
+									test: /\.js$/,
+									exclude: /node_modules/,
+									loader: 'babel-loader',
+									query: {
+										cacheDirectory: true,
+										compact: false,
+										presets: ['es2015']
+									}
 								}
-							}
-						],
+							]
+						},
 					")
 					output: {
-						filename: './${f}.js.tmp',
+						filename: './${f}.tmp.js',
 						library: '${m}',
 						libraryTarget: 'var'
 					},
 					plugins: [
 						$(test "${minify}" && echo "
+							new webpack.LoaderOptionsPlugin({
+								debug: false,
+								minimize: true
+							}),
 							new webpack.optimize.UglifyJsPlugin({
 								compress: false,
 								mangle: {
 									except: ${mangleExcept}
+								},
+								output: {
+									comments: false
 								},
 								sourceMap: false
 							}),
@@ -259,13 +269,13 @@ compile () {
 			rm "${outputFile}" 2> /dev/null
 
 			if [ "${m}" == 'Main' ] ; then
-				cp "${f}.lib.js" "${outputDir}/${f}.lib.js"
+				cp "${f}.lib.js" "${outputDir}/${f}.lib.js" 2> /dev/null
 				echo "${translations}" > "${outputFile}"
 			fi
 
 			{
 				cat preload/global.js;
-				cat $f.js.tmp | sed "0,/var ${m} =/s||self.${m} =|";
+				cat $f.tmp.js | sed "0,/var ${m} =/s||self.${m} =|";
 				echo "(function () {
 					self.${m}Base	= self.${m};
 
@@ -279,7 +289,7 @@ compile () {
 				sed 's|use strict||g' \
 			>> "${outputFile}"
 
-			rm $f.js.tmp
+			rm $f.tmp.js
 		done
 
 		for js in $(find . -name '*.js') ; do
