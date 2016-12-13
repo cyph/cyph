@@ -357,7 +357,7 @@ export class UI {
 				await util.sleep(3000);
 
 				while (true) {
-					await util.sleep();
+					await util.sleep(500);
 
 					const shouldExpand	= this.state === States.home && (
 						(
