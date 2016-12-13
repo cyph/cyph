@@ -8,15 +8,34 @@ echo -e '\n\nGenerating static blog\n'
 
 ssh -i ~/.ssh/id_rsa_docker -f -N -L 43000:localhost:43000 wordpress.internal.cyph.com > /dev/null 2>&1
 
+checklock () {
+	ssh -i ~/.ssh/id_rsa_docker wordpress.internal.cyph.com 'if [ -f lock ] ; then cat lock ; fi'
+}
+
+claimlock () {
+	ssh -i ~/.ssh/id_rsa_docker wordpress.internal.cyph.com "echo '${1}' > lock"
+}
+
+releaselock () {
+	ssh -i ~/.ssh/id_rsa_docker wordpress.internal.cyph.com 'rm lock'
+}
+
 while [ ! -f wpstatic.zip ] ; do
 	commandComment="# wpstatic-download $(node -e '
 		console.log(crypto.randomBytes(32).toString("hex"))
 	')"
 
+	while [ "$(checklock)" != "${commandComment}" ] ; do
+		if [ "$(checklock)" == "" ] ; then
+			claimlock "${commandComment}"
+		fi
+		sleep 10
+	done 
+
 	command="$(node -e "
 		const browser	= new (require('zombie'));
 
-		setTimeout(() => process.exit(), 300000);
+		setTimeout(() => process.exit(), 600000);
 
 		new Promise(resolve => browser.visit(
 			'http://localhost:43000/wp-admin/admin.php?page=simply-static_settings',
@@ -81,9 +100,13 @@ while [ ! -f wpstatic.zip ] ; do
 		});
 	" 2> /dev/null | tail -n1)"
 
+	releaselock
+
 	if [ "$(echo "${command}" | grep "${commandComment}")" ] ; then
 		echo -e "${command}\n"
 		eval "${command}"
+	else
+		sleep 1m
 	fi
 done
 
