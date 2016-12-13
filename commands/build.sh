@@ -1,7 +1,8 @@
 #!/bin/bash
 
+outputDir="$(pwd)"
 cd $(cd "$(dirname "$0")"; pwd)/..
-dir="$(pwd)"
+rootDir="$(pwd)"
 
 
 cloneworkingdir=''
@@ -22,6 +23,10 @@ fi
 
 if [ ! -d ~/.build ] ; then
 	cloneworkingdir=true
+fi
+
+if [ "${cloneworkingdir}" -o "${test}" -o "${watch}" -o "${outputDir}" == "${rootDir}" ] ; then
+	outputDir="${rootDir}/shared"
 fi
 
 if [ "${cloneworkingdir}" ] ; then
@@ -52,7 +57,7 @@ tsfiles="$( \
 
 cd shared
 
-scssfiles="$(find css -name '*.scss' | grep -v bourbon/ | perl -pe 's/(.*)\.scss/\1/g' | tr '\n' ' ')"
+scssfiles="$(cd css ; find . -name '*.scss' | grep -v bourbon/ | perl -pe 's/\.\/(.*)\.scss/\1/g' | tr '\n' ' ')"
 
 
 output=''
@@ -92,8 +97,7 @@ tsbuild () {
 }
 
 compile () {
-	cd "${dir}/shared"
-	outputDir="${dir}/shared/js"
+	cd "${outputDir}"
 
 	if [ "${cloneworkingdir}" ] ; then
 		find . -mindepth 1 -maxdepth 1 -type d -not -name lib -exec bash -c '
@@ -105,9 +109,9 @@ compile () {
 
 	for f in $scssfiles ; do
 		command=" \
-			scss -Icss ${f}.scss \
+			scss -Icss css/${f}.scss \
 				$(test "${minify}" && echo '| cleancss') \
-			> ${dir}/shared/${f}.css \
+			> ${outputDir}/css/${f}.css \
 		"
 		if [ "${watch}" ] ; then
 			eval "${command}" &
@@ -174,7 +178,7 @@ compile () {
 						return translations;
 					}, {})
 			)};
-		`.trim())' > "${outputDir}/translations.js"
+		`.trim())' > "${outputDir}/js/translations.js"
 
 		mangleExcept="$(
 			test "${minify}" && node -e "console.log(JSON.stringify('$({
@@ -273,8 +277,8 @@ compile () {
 			m="$(modulename "${f}")"
 
 			if [ "${m}" == 'Main' ] ; then
-				cat "${f}.lib.js" | sed 's|use strict||g' > "${f}.lib.new.js"
-				mv "${f}.lib.new.js" "${outputDir}/${f}.lib.js"
+				cat "${f}.lib.js" | sed 's|use strict||g' > "${f}.lib.js.new"
+				mv "${f}.lib.js.new" "${outputDir}/js/${f}.lib.js"
 			fi
 
 			{
@@ -293,9 +297,9 @@ compile () {
 				;
 			} | \
 				sed 's|use strict||g' \
-			> "${f}.new.js"
+			> "${f}.js.new"
 
-			mv "${f}.new.js" "${outputDir}/${f}.js"
+			mv "${f}.js.new" "${outputDir}/js/${f}.js"
 		done
 
 		for js in $(find . -name '*.js' -not -name 'translations.js') ; do
@@ -333,7 +337,7 @@ litedeploy () {
 }
 
 if [ "${watch}" ] ; then
-	eval "$(${dir}/commands/getgitdata.sh)"
+	eval "$(${rootDir}/commands/getgitdata.sh)"
 
 	liteDeployInterval=1800 # 30 minutes
 	SECONDS=$liteDeployInterval
@@ -348,12 +352,12 @@ if [ "${watch}" ] ; then
 		#if [ $SECONDS -gt $liteDeployInterval -a ! -d ~/.litedeploy ] ; then
 		#	echo -e "\n\n\nDeploying to lite env\n\n"
 		#	mkdir ~/.litedeploy
-		#	cp -rf "${dir}/default" "${dir}/cyph.im" ~/.litedeploy/
+		#	cp -rf "${rootDir}/default" "${rootDir}/cyph.im" ~/.litedeploy/
 		#	litedeploy &
 		#	SECONDS=0
 		#fi
 
-		cd "${dir}/shared"
+		cd "${rootDir}/shared"
 		inotifywait -r --exclude '(node_modules|sed.*|.*\.(css|js|map|tmp))$' css js templates
 	done
 else

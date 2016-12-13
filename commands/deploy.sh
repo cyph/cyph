@@ -7,6 +7,7 @@ originalArgs="${*}"
 
 cacheBustedProjects='cyph.com'
 compiledProjects='cyph.com cyph.im'
+webSignedProject='cyph.im'
 prodOnlyProjects='nakedredirect test websign'
 shortlinkProjects='io me video audio'
 site=''
@@ -334,9 +335,9 @@ else
 fi
 
 
+# Blog
 waitingForBlog=''
 if [ ! "${site}" -o "${site}" == cyph.com ] ; then
-	# Blog
 	waitingForBlog=true
 	bash -c "
 		rm -rf cyph.com/blog 2> /dev/null;
@@ -348,8 +349,8 @@ if [ ! "${site}" -o "${site}" == cyph.com ] ; then
 fi
 
 
+# WebSign project
 if [ ! "${site}" -o "${site}" == websign ] ; then
-	# WebSign project
 	cd websign
 	websignHashWhitelist="$(cat hashwhitelist.json)"
 	cp -rf ../shared/img ./
@@ -359,12 +360,15 @@ fi
 
 
 # Compile + translate + minify
-if [ "${compiledProjects}" ] ; then
-	cd shared
+for d in $compiledProjects ; do
+	project="$(projectname ${d})"
 
-	echo 'Compiling'
+	echo "Compiling ${project}"
 
-	if [ ! "${simple}" ] ; then
+	cp -rf shared/* ${d}/
+	cd ${d}
+
+	if [ "${websign}" -a "${d}" == "${webSignedProject}" ] ; then
 		# Block importScripts in Workers in WebSigned environments
 		cat js/cyph/thread.ts | \
 			tr '\n' '☁' | \
@@ -373,27 +377,79 @@ if [ "${compiledProjects}" ] ; then
 			grep -v oldImportScripts \
 		> js/cyph/thread.ts.new
 		mv js/cyph/thread.ts.new js/cyph/thread.ts
+
+		# Merge in base64'd images, fonts, video, and audio
+		node -e '
+			const datauri		= require("datauri");
+
+			const filesToMerge	= child_process.spawnSync("find", [
+				"audio",
+				"fonts",
+				"img",
+				"video",
+				"-type",
+				"f"
+			]).stdout.toString().split("\n").filter(s => s);
+
+			const filesToModify	= ["js", "css"].reduce((arr, ext) =>
+				arr.concat(
+					child_process.spawnSync("find", [
+						ext,
+						"-name",
+						"*." + ext,
+						"-type",
+						"f"
+					]).stdout.toString().split("\n")
+				),
+				["index.html"]
+			).filter(s => s);
+
+
+			for (let file of filesToModify) {
+				const originalContent	= fs.readFileSync(file).toString();
+				let content				= originalContent;
+
+				for (let subresource of filesToMerge) {
+					if (content.indexOf(subresource) < 0) {
+						continue;
+					}
+
+					const dataURI	= datauri.sync(subresource);
+
+					content	= content.
+						replace(
+							new RegExp(`(src|href|content)=(\\\\?['"'"'"])/?${subresource}\\\\?['"'"'"]`, "g"),
+							`WEBSIGN-SRI-DATA-START☁$2☁☁☁${dataURI}☁WEBSIGN-SRI-DATA-END`
+						).replace(
+							new RegExp(`/?${subresource}(\\?websign-sri-disable)?`, "g"),
+							dataURI
+						).replace(
+							/☁☁☁/g,
+							`☁${subresource}☁`
+						)
+					;
+				}
+
+				if (content !== originalContent) {
+					fs.writeFileSync(file, content);
+				}
+			}
+		'
 	fi
 
 	../commands/build.sh --prod $(test "${simple}" && echo '--no-minify') || exit;
 
 	rm -rf js/node_modules lib/js/node_modules
 
-	cd ..
-fi
-
-for d in $compiledProjects ; do
-	project="$(projectname $d)"
-
-	cp -rf shared/* ${d}/
-
-	find ${d}/css -name '*.scss' -or -name '*.map' -exec rm {} \;
-	find ${d}/js -name '*.ts' -or -name '*.ts.js' -name '*.map' -exec rm {} \;
+	find css -name '*.scss' -or -name '*.map' -exec rm {} \;
+	find js -name '*.ts' -or -name '*.ts.js' -name '*.map' -exec rm {} \;
 
 	if [ ! "${simple}" ] ; then
-		html-minifier --minify-js --minify-css --remove-comments --collapse-whitespace ${d}/index.html -o ${d}/index.html.new
-		mv ${d}/index.html.new ${d}/index.html
+		html-minifier --minify-js --minify-css --remove-comments --collapse-whitespace index.html -o index.html.new
+		mv index.html.new index.html
 	fi
+
+	cd ..
 done
 
 
@@ -414,9 +470,8 @@ if [ "${waitingForBlog}" ] ; then
 fi
 
 
+# Cache bust
 for d in $cacheBustedProjects ; do
-	# Cache bust
-
 	cd $d
 
 	echo "Cache bust $(projectname $d)"
@@ -501,9 +556,8 @@ for d in $cacheBustedProjects ; do
 	cd ..
 done
 
+# WebSign packaging
 if [ "${websign}" ] ; then
-	# WebSign packaging
-
 	if [ -d ~/.cyph/cdn ] ; then
 		bash -c 'cd ~/.cyph/cdn ; git reset --hard ; git clean -dfx ; git pull'
 		cp -rf ~/.cyph/cdn ./
@@ -513,67 +567,9 @@ if [ "${websign}" ] ; then
 		cp -rf cdn ~/.cyph/
 	fi
 
-	cd cyph.im
+	cd "${webSignedProject}"
 
 	echo "WebSign ${package}"
-
-	# Merge in base64'd images, fonts, video, and audio
-	node -e '
-		const datauri		= require("datauri");
-
-		const filesToMerge	= child_process.spawnSync("find", [
-			"audio",
-			"fonts",
-			"img",
-			"video",
-			"-type",
-			"f"
-		]).stdout.toString().split("\n").filter(s => s);
-
-		const filesToModify	= ["js", "css"].reduce((arr, ext) =>
-			arr.concat(
-				child_process.spawnSync("find", [
-					ext,
-					"-name",
-					"*." + ext,
-					"-type",
-					"f"
-				]).stdout.toString().split("\n")
-			),
-			["index.html"]
-		).filter(s => s);
-
-
-		for (let file of filesToModify) {
-			const originalContent	= fs.readFileSync(file).toString();
-			let content				= originalContent;
-
-			for (let subresource of filesToMerge) {
-				if (content.indexOf(subresource) < 0) {
-					continue;
-				}
-
-				const dataURI	= datauri.sync(subresource);
-
-				content	= content.
-					replace(
-						new RegExp(`(src|href|content)=(\\\\?['"'"'"])/?${subresource}\\\\?['"'"'"]`, "g"),
-						`WEBSIGN-SRI-DATA-START☁$2☁☁☁${dataURI}☁WEBSIGN-SRI-DATA-END`
-					).replace(
-						new RegExp(`/?${subresource}(\\?websign-sri-disable)?`, "g"),
-						dataURI
-					).replace(
-						/☁☁☁/g,
-						`☁${subresource}☁`
-					)
-				;
-			}
-
-			if (content !== originalContent) {
-				fs.writeFileSync(file, content);
-			}
-		}
-	'
 
 	# Merge imported libraries into threads
 	find js -name '*.js' | xargs -I% ../commands/websign/threadpack.js %
