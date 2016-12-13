@@ -6,18 +6,29 @@ destinationURL="$(echo "${1}" | perl -pe 's/.*?:\/\/(.*)/\1/')"
 
 echo -e '\n\nGenerating static blog\n'
 
-ssh -i ~/.ssh/id_rsa_docker -f -N -L 43000:localhost:43000 wordpress.internal.cyph.com > /dev/null 2>&1
-
 checklock () {
-	ssh -i ~/.ssh/id_rsa_docker wordpress.internal.cyph.com 'find lock -not -mmin +5 -exec cat {} \;'
+	ssh -i ~/.ssh/id_rsa_docker wordpress.internal.cyph.com '
+		find . -name "lock" -mmin +11 -mindepth 1 -maxdepth 1 -exec rm {} \; ;
+		if [ -f lock ] ; then cat lock ; fi
+	'
 }
 
 claimlock () {
-	ssh -i ~/.ssh/id_rsa_docker wordpress.internal.cyph.com "echo '${1}' > lock"
+	ssh -i ~/.ssh/id_rsa_docker wordpress.internal.cyph.com "
+		if [ ! -f lock ] ; then echo '${1}' > lock ; fi
+	"
 }
 
 releaselock () {
 	ssh -i ~/.ssh/id_rsa_docker wordpress.internal.cyph.com 'rm lock'
+}
+
+sshkill () {
+	ps ux |
+		grep -P 'ssh.*wordpress.internal.cyph.com' |
+		grep -v grep |
+		awk '{print $2}' |
+		xargs kill -9
 }
 
 while [ ! -f wpstatic.zip ] ; do
@@ -30,12 +41,15 @@ while [ ! -f wpstatic.zip ] ; do
 			claimlock "${commandComment}"
 		fi
 		sleep 10
-	done 
+	done
+
+	sshkill
+	ssh -i ~/.ssh/id_rsa_docker -f -N -L 43000:localhost:43000 wordpress.internal.cyph.com > /dev/null 2>&1
 
 	command="$(node -e "
 		const browser	= new (require('zombie'));
 
-		setTimeout(() => process.exit(), 1200000);
+		setTimeout(() => process.exit(), 600000);
 
 		new Promise(resolve => browser.visit(
 			'http://localhost:43000/wp-admin/admin.php?page=simply-static_settings',
@@ -270,3 +284,5 @@ for path in $(
 	wget --tries=50 "http://localhost:43000/${path}" -O "${path}.new"
 	mv "${path}.new" "${path}" 2> /dev/null
 done
+
+sshkill
