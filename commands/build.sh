@@ -46,6 +46,7 @@ tsfiles="$( \
 		uniq | \
 		grep -v 'Binary file' | \
 		grep -v 'main.lib' | \
+		grep -v 'translations' | \
 		tr ' ' '\n' \
 )"
 
@@ -154,7 +155,7 @@ compile () {
 	done
 
 	if [ ! "${test}" ] ; then
-		translations="$(node -e 'console.log(`
+		node -e 'console.log(`
 			self.translations = ${JSON.stringify(
 				child_process.spawnSync("find", [
 					"../../translations",
@@ -172,7 +173,7 @@ compile () {
 						return translations;
 					}, {})
 			)};
-		`.trim())')"
+		`.trim())' > "${dir}/shared/js/translations.js"
 
 		mangleExcept="$(
 			test "${minify}" && node -e "console.log(JSON.stringify('$({
@@ -270,7 +271,6 @@ compile () {
 
 			if [ "${m}" == 'Main' ] ; then
 				cp "${f}.lib.js" "${outputDir}/${f}.lib.js" 2> /dev/null
-				echo "${translations}" > "${outputFile}"
 			fi
 
 			{
@@ -287,7 +287,7 @@ compile () {
 				})();";
 			} | \
 				sed 's|use strict||g' \
-			>> "${outputFile}"
+			> "${outputFile}"
 
 			rm $f.tmp.js
 		done
