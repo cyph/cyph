@@ -123,7 +123,9 @@ RUN sudo npm -g install \
 	@angular/core@2.2.4 \
 	@angular/platform-browser@2.2.4 \
 	@angular/platform-server@2.2.4 \
+	babel-core@6.20.0 \
 	babel-cli@6.18.0 \
+	babel-loader@6.2.9 \
 	babel-preset-es2015@6.18.0 \
 	browserify@13.1.1 \
 	cheerio@0.22.0 \

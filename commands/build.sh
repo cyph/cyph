@@ -180,7 +180,6 @@ compile () {
 					crypto
 					importScripts
 					locals
-					Wrapper_NgIf
 					Thread
 					threadSetupVars
 				';
@@ -211,6 +210,19 @@ compile () {
 					entry: {
 						app: './${f}.js'
 					},
+					$(test "${watch}" || echo "
+						loaders: [
+							{
+								test: /\.js$/,
+								exclude: /node_modules/,
+								loader: 'babel-loader',
+								query: {
+									compact: false,
+									presets: ['es2015']
+								}
+							}
+						],
+					")
 					output: {
 						filename: './${f}.js.tmp',
 						library: '${m}',
@@ -247,7 +259,7 @@ compile () {
 			rm "${outputFile}" 2> /dev/null
 
 			if [ "${m}" == 'Main' ] ; then
-				babel --presets es2015 --compact false "${f}.lib.js" -o "${outputDir}/${f}.lib.js"
+				cp "${f}.lib.js" "${outputDir}/${f}.lib.js"
 				echo "${translations}" > "${outputFile}"
 			fi
 
@@ -264,7 +276,6 @@ compile () {
 					}
 				})();";
 			} | \
-				if [ "${watch}" ] ; then cat - ; else babel --presets es2015 --compact false ; fi | \
 				sed 's|use strict||g' \
 			>> "${outputFile}"
 
