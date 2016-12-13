@@ -391,7 +391,6 @@ for d in $compiledProjects ; do
 	find ${d}/js -name '*.ts' -or -name '*.ts.js' -name '*.map' -exec rm {} \;
 
 	if [ ! "${simple}" ] ; then
-		echo "HTML Minify ${project}"
 		html-minifier --minify-js --minify-css --remove-comments --collapse-whitespace ${d}/index.html -o ${d}/index.html.new
 		mv ${d}/index.html.new ${d}/index.html
 	fi
