@@ -229,7 +229,7 @@ compile () {
 						},
 					")
 					output: {
-						filename: './${f}.tmp.js',
+						filename: './${f}.js',
 						library: '${m}',
 						libraryTarget: 'var'
 					},
@@ -273,12 +273,13 @@ compile () {
 			m="$(modulename "${f}")"
 
 			if [ "${m}" == 'Main' ] ; then
-				cp "${f}.lib.js" "${outputDir}/${f}.lib.js" 2> /dev/null
+				cat "${f}.lib.js" | sed 's|use strict||g' > "${f}.lib.new.js"
+				mv "${f}.lib.new.js" "${outputDir}/${f}.lib.js"
 			fi
 
 			{
 				cat preload/global.js;
-				cat "${f}.tmp.js" | sed "0,/var ${m}/s||self.${m}|";
+				cat "${f}.js" | sed "0,/var ${m}/s||self.${m}|";
 				echo "(function () {
 					self.${m}Base	= self.${m};
 
@@ -292,9 +293,9 @@ compile () {
 				;
 			} | \
 				sed 's|use strict||g' \
-			> "${outputDir}/${f}.js"
+			> "${f}.new.js"
 
-			rm "${f}.tmp.js"
+			mv "${f}.new.js" "${outputDir}/${f}.js"
 		done
 
 		for js in $(find . -name '*.js' -not -name 'translations.js') ; do
