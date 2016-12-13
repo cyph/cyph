@@ -11,16 +11,15 @@ minify=''
 
 if [ "${1}" == '--watch' ] ; then
 	watch=true
-	shift
+else
+	if [ "${1}" != '--prod' ] ; then
+		test=true
+	fi
+	if [ "${1}" != '--no-minify' ] ; then
+		minify=true
+	fi
 fi
-if [ "${1}" != '--prod' ] ; then
-	test=true
-	shift
-fi
-if [ "${1}" != '--no-minify' ] ; then
-	minify=true
-	shift
-fi
+
 if [ ! -d ~/.build ] ; then
 	cloneworkingdir=true
 fi
