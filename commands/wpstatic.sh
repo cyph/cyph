@@ -8,7 +8,7 @@ echo -e '\n\nGenerating static blog\n'
 
 checklock () {
 	ssh -i ~/.ssh/id_rsa_docker wordpress.internal.cyph.com '
-		find . -name "lock" -mmin +11 -mindepth 1 -maxdepth 1 -exec rm {} \; ;
+		find . -name "lock" -mmin +6 -mindepth 1 -maxdepth 1 -exec rm {} \; ;
 		if [ -f lock ] ; then cat lock ; fi
 	'
 }
@@ -49,7 +49,7 @@ while [ ! -f wpstatic.zip ] ; do
 	command="$(node -e "
 		const browser	= new (require('zombie'));
 
-		setTimeout(() => process.exit(), 600000);
+		setTimeout(() => process.exit(), 300000);
 
 		new Promise(resolve => browser.visit(
 			'http://localhost:43000/wp-admin/admin.php?page=simply-static_settings',
