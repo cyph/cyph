@@ -153,7 +153,7 @@ section#main {
 
 @media all and (orientation: portrait) {
 	html.mobile #main-toolbar.new-cyph-expanded #new-cyph {
-		@include transform(translateY(calc(12.5em - 50% - 5px)) scale(2));
+		@include transform(translateY(25em) scale(2));
 	}
 }
 

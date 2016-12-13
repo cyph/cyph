@@ -347,7 +347,9 @@ export class UI {
 			/* Header / new cyph button animation */
 
 			await CyphElements.Elements.waitForElement(elements.mainToolbar);
-			elements.mainToolbar().toggleClass('new-cyph-expanded', urlState.get() === '');
+
+			let expanded	= urlState.get() === '';
+			elements.mainToolbar().toggleClass('new-cyph-expanded', expanded);
 
 			/* Temporary workaround pending TypeScript fix. */
 			/* tslint:disable-next-line:ban  */
@@ -355,18 +357,22 @@ export class UI {
 				await util.sleep(3000);
 
 				while (true) {
-					await util.sleep(500);
+					await util.sleep();
 
-					elements.mainToolbar().toggleClass(
-						'new-cyph-expanded',
-						this.state === States.home && (
-							(
-								this.promo === Promos.none &&
-								elements.heroText().is(':appeared')
-							) ||
-							CyphElements.elements.footer().is(':appeared')
-						)
+					const shouldExpand	= this.state === States.home && (
+						(
+							this.promo === Promos.none &&
+							elements.heroText().is(':appeared')
+						) ||
+						CyphElements.elements.footer().is(':appeared')
 					);
+
+					if (expanded === shouldExpand) {
+						continue;
+					}
+
+					expanded	= shouldExpand;
+					elements.mainToolbar().toggleClass('new-cyph-expanded', expanded);
 				}
 			});
 
