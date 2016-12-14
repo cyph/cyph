@@ -77,7 +77,7 @@ fi
 
 
 mkdir ~/.build
-cp -rf * ~/.build/
+cp -rf * .babelrc ~/.build/
 cd ~/.build
 
 mkdir geoisp.tmp

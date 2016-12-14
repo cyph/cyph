@@ -33,7 +33,7 @@ fi
 
 if [ "${cloneworkingdir}" ] ; then
 	mkdir ~/.build
-	cp -rf * ~/.build/
+	cp -rf * .babelrc ~/.build/
 	cd ~/.build/
 fi
 
