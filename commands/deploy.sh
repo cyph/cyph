@@ -273,6 +273,7 @@ for d in $compiledProjects ; do
 		mv js/cyph/thread.ts.new js/cyph/thread.ts
 
 		# Merge in base64'd images, fonts, video, and audio
+		mkdir .subresources
 		../commands/websign/subresourceinline.js
 	fi
 
@@ -323,7 +324,6 @@ if [ "${websign}" ] ; then
 
 	packages="${package}"
 
-	mkdir -p pkg/cyph.ws-subresources 2> /dev/null
 	cd pkg/cyph.ws-subresources
 	git clone --depth 1 git@github.com:cyph/custom-builds.git
 	rm -rf custom-builds/.git custom-builds/reference.json
@@ -337,7 +337,7 @@ if [ "${websign}" ] ; then
 		customBuildStylesheet="custom-builds/${customBuildBase}.css"
 		packages="${packages} ${customBuild}"
 
-		../../commands/custombuild.js \
+		../../commands/websign/custombuild.js \
 			"${customBuild}" \
 			"${customBuildAdditionalStyling}" \
 			"${customBuildBackground}" \

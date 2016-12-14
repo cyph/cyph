@@ -54,7 +54,7 @@ for (let file of filesToModify) {
 		if (content.indexOf('☁') > -1) {
 			content	= content.replace(/☁/g, subresource);
 
-			const fullPath	= `.subresources/${subresource}`;
+			const fullPath	= `${process.env.PWD}/.subresources/${subresource}`;
 			mkdirp.sync(fullPath.split('/').slice(0, -1).join('/'));
 			fs.writeFileSync(fullPath, dataURI);
 			fs.writeFileSync(fullPath + '.srihash', hash);
