@@ -41,8 +41,8 @@ const cacheBustedFiles	= {};
 const getFileName		= file => file.split('/').slice(-1)[0];
 
 
-Promise.all(filesToModify.map(file =>
-	new Promise((resolve, reject) => fs.readFile(file, (err, data) => {
+for (let file of filesToModify) {
+	await new Promise((resolve, reject) => fs.readFile(file, (err, data) => {
 		try {
 			fileContents[file]	= data.toString();
 			resolve();
@@ -50,37 +50,34 @@ Promise.all(filesToModify.map(file =>
 		catch (_) {
 			reject(err);
 		}
-	})).then(() =>
-		filesToCacheBust.reduce((p, subresource) => p.then(content => {
-			if (content.indexOf(subresource) < 0) {
-				return content;
-			}
+	}));
 
-			cacheBustedFiles[getFileName(subresource)]	= true;
+	let content	= fileContents[file];
 
-			return superSphincs.hash(
-				fs.readFileSync(subresource)
-			).then(hash =>
-				content.split(subresource).join(`${subresource}?${hash.hex}`)
-			);
-		}), Promise.resolve(fileContents[file])).then(content => {
-			if (content !== fileContents[file]) {
-				fileContents[file]	= content;
-				fs.writeFileSync(file, content);
-			}
-		})
-	)
-)).
+	for (let subresource of filesToCacheBust) {
+		if (content.indexOf(subresource) < 0) {
+			continue;
+		}
+
+		cacheBustedFiles[getFileName(subresource)]	= true;
+
+		const hash	= (await superSphincs.hash(fs.readFileSync(subresource))).hex;
+		content		= content.split(subresource).join(`${subresource}?${hash}`);
+	}
+
+	if (content !== fileContents[file]) {
+		fileContents[file]	= content;
+		fs.writeFileSync(file, content);
+	}
+}
 
 /* To save space, remove unused subresources under lib directory */
-then(() => Promise.all(
-	filesToCacheBust.filter(subresource =>
-		subresource.startsWith('lib/') &&
-		!cacheBustedFiles[getFileName(subresource)]
-	).map(subresource => new Promise(resolve =>
-		fs.unlink(subresource, resolve)
-	))
-));
+for (let subresource of filesToCacheBust.filter(subresource =>
+	subresource.startsWith('lib/') &&
+	!cacheBustedFiles[getFileName(subresource)]
+)) {
+	fs.unlink(subresource);
+}
 
 
 })();

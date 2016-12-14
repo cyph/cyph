@@ -25,7 +25,7 @@ const chunkSize		= 576;
 const interfaces	= os.networkInterfaces();
 const macAddress	= Buffer.from(
 	fs.readFileSync(
-		`${process.env['HOME']}/.cyph/agse.local.mac`
+		`${process.env.HOME}/.cyph/agse.local.mac`
 	).toString().trim()
 );
 
@@ -111,15 +111,21 @@ server.on('message', message => {
 			]).toString('base64').replace(/\s+/g, '')
 		);
 
-		superSphincs.importKeys({
-			public: {
-				rsa: publicKeys.rsa[rsaIndex],
-				sphincs: publicKeys.sphincs[sphincsIndex]
-			}
-		}).then(keyPair => Promise.all(signedItems.map(signed => superSphincs.open(
-			signed,
-			keyPair.publicKey
-		)))).then(openedItems => {
+		try {
+			const keyPair		= await superSphincs.importKeys({
+				public: {
+					rsa: publicKeys.rsa[rsaIndex],
+					sphincs: publicKeys.sphincs[sphincsIndex]
+				}
+			});
+
+			const openedItems	= await Promise.all(
+				signedItems.map(signed => superSphincs.open(
+					signed,
+					keyPair.publicKey
+				))
+			);
+
 			if (items.filter((o, i) => openedItems[i] !== o.inputData).length > 0) {
 				throw new Error('Incorrect signed data.');
 			}
@@ -142,10 +148,11 @@ server.on('message', message => {
 
 			console.log('Signing complete.');
 			process.exit(0);
-		}).catch(() => {
+		}
+		catch (_) {
 			console.error('Invalid signatures.');
 			process.exit(1);
-		});
+		}
 	}
 });
 

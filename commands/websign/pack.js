@@ -115,6 +115,4 @@ fs.writeFileSync(
 );
 
 
-})().catch(err =>
-	console.error(err)
-);
+})();

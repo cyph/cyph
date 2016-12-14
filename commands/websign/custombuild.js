@@ -60,63 +60,64 @@ const css	= compileSCSS(
 	\``)
 );
 
-superSphincs.hash(css).then(hash => {
-	$('title').text(htmlencode.htmlEncode(o.title));
+const hash	= (await superSphincs.hash(css)).hex;
 
-	if (o.colors.main) {
-		$('head').find(
-			'meta[name="theme-color"],' + 
-			'meta[name="msapplication-TileColor"]'
-		).
-			attr('content', o.colors.main)
-		;
 
-		$('head').append(`<style>
-			#pre-load {
-				background-color: ${o.colors.main} !important;
-			}
-		</style>`);
-	}
+$('title').text(htmlencode.htmlEncode(o.title));
 
+if (o.colors.main) {
 	$('head').find(
-		'link[type="image/png"],' + 
-		'meta[name="msapplication-TileImage"]'
+		'meta[name="theme-color"],' + 
+		'meta[name="msapplication-TileColor"]'
 	).
-		removeAttr('websign-sri-path').
-		removeAttr('websign-sri-hash').
-		removeAttr('href').
-		removeAttr('content').
-		addClass('custom-build-favicon')
+		attr('content', o.colors.main)
 	;
 
-	$('head').append(`<script>
-		self.customBuild		= '${args.customBuild}';
-		self.customBuildFavicon	= '${o.favicon}';
+	$('head').append(`<style>
+		#pre-load {
+			background-color: ${o.colors.main} !important;
+		}
+	</style>`);
+}
 
-		Array.prototype.slice.apply(
-			document.getElementsByClassName('custom-build-favicon')
-		).forEach(function (elem) {
-			if (elem instanceof HTMLLinkElement) {
-				elem.href		= self.customBuildFavicon;
-			}
-			else if (elem instanceof HTMLMetaElement) {
-				elem.content	= self.customBuildFavicon;
-			}
-		});
-	</script>`);
+$('head').find(
+	'link[type="image/png"],' + 
+	'meta[name="msapplication-TileImage"]'
+).
+	removeAttr('websign-sri-path').
+	removeAttr('websign-sri-hash').
+	removeAttr('href').
+	removeAttr('content').
+	addClass('custom-build-favicon')
+;
 
-	$('body').append(`
-		<link
-			rel='stylesheet'
-			websign-sri-path='${args.customBuildStylesheet}'
-			websign-sri-hash='${hash.hex}'
-		></link>
-	`);
+$('head').append(`<script>
+	self.customBuild		= '${args.customBuild}';
+	self.customBuildFavicon	= '${o.favicon}';
 
-	fs.writeFileSync(args.customBuildStylesheet, css);
-	fs.writeFileSync(args.customBuildStylesheet.srihash, hash.hex);
-	fs.writeFileSync(`../${args.customBuild}`, $.html().trim());
-});
+	Array.prototype.slice.apply(
+		document.getElementsByClassName('custom-build-favicon')
+	).forEach(function (elem) {
+		if (elem instanceof HTMLLinkElement) {
+			elem.href		= self.customBuildFavicon;
+		}
+		else if (elem instanceof HTMLMetaElement) {
+			elem.content	= self.customBuildFavicon;
+		}
+	});
+</script>`);
+
+$('body').append(`
+	<link
+		rel='stylesheet'
+		websign-sri-path='${args.customBuildStylesheet}'
+		websign-sri-hash='${hash}'
+	></link>
+`);
+
+fs.writeFileSync(args.customBuildStylesheet, css);
+fs.writeFileSync(args.customBuildStylesheet.srihash, hash);
+fs.writeFileSync(`../${args.customBuild}`, $.html().trim());
 
 
 })();
