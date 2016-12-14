@@ -250,17 +250,10 @@ fi
 
 # Compile + translate + minify
 for d in $compiledProjects ; do
-	project="$(projectname ${d})"
-
-	echo "Compiling ${project}"
+	echo "Compile $(projectname ${d})"
 
 	cp -rf shared/* ${d}/
 	cd ${d}
-
-	if [ ! "${simple}" ] ; then
-		html-minifier --minify-js --minify-css --remove-comments --collapse-whitespace index.html -o index.html.new
-		mv index.html.new index.html
-	fi
 
 	if [ "${websign}" -a "${d}" == "${webSignedProject}" ] ; then
 		# Block importScripts in Workers in WebSigned environments
@@ -282,6 +275,11 @@ for d in $compiledProjects ; do
 
 	find css -name '*.scss' -or -name '*.map' -exec rm {} \;
 	find js -name '*.ts' -or -name '*.ts.js' -name '*.map' -exec rm {} \;
+
+	if [ ! "${simple}" ] ; then
+		html-minifier --minify-js --minify-css --remove-comments --collapse-whitespace index.html -o index.html.new
+		mv index.html.new index.html
+	fi
 
 	cd ..
 done

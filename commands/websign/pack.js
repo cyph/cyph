@@ -14,10 +14,15 @@ import * as superSphincs from 'supersphincs';
 const args			= {
 	enableSRI: process.argv.indexOf('--sri') > -1,
 	enableMinify: process.argv.indexOf('--minify') > -1,
-	inputPath: process.argv.slice(-2)[0],
-	outputPath: process.argv.slice(-1)[0] 
+	inputPath: `${process.env.PWD}/process.argv.slice(-2)[0]`,
+	outputPath: `${process.env.PWD}/process.argv.slice(-1)[0]`
 };
 
+
+const subresourcePath	= `${args.outputPath}-subresources`;
+
+mkdirp.sync(args.outputPath);
+mkdirp.sync(subresourcePath);
 
 const html	= fs.readFileSync(args.inputPath).toString();
 const $		= cheerio.load(html);
@@ -61,7 +66,7 @@ for (let subresource of subresources) {
 	).join(' ');
 
 	if (subresource.enableSRI) {
-		const fullPath	= `${__dirname}/${args.outputPath}-subresources/${subresource.path}`;
+		const fullPath	= `${subresourcePath}/${subresource.path}`;
 		mkdirp.sync(fullPath.split('/').slice(0, -1).join('/'));
 		fs.writeFileSync(fullPath, subresource.content);
 		fs.writeFileSync(fullPath + '.srihash', subresource.hash);
