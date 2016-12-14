@@ -266,7 +266,7 @@ for d in $compiledProjects ; do
 		mv js/cyph/thread.ts.new js/cyph/thread.ts
 
 		# Handle Angular templates before AOT compilation
-		../commands/websign/subresourceinline.js ../pkg/cyph.ws-subresources
+		../commands/websign/subresourceinline.js --templates ../pkg/cyph.ws-subresources
 	fi
 
 	../commands/build.sh --prod $(test "${simple}" && echo '--no-minify') || exit;

@@ -12,7 +12,8 @@ import * as superSphincs from 'supersphincs';
 
 
 const args			= {
-	subresourcePath: `${process.env.PWD}/${process.argv[2]}`
+	modifyTemplates: process.argv.indexOf('--templates') > -1,
+	subresourcePath: `${process.env.PWD}/${process.argv.slice(-1)[0]}`
 };
 
 
@@ -25,11 +26,11 @@ const filesToMerge	= childProcess.spawnSync('find', [
 	'f'
 ]).stdout.toString().split('\n').filter(s => s);
 
-const filesToModify	= [
-	{dir: 'css', ext: 'css'},
-	{dir: 'templates', ext: 'html'},
-	{dir: 'js', ext: 'js'}
-].reduce((arr, o) =>
+const filesToModify	= (
+	args.modifyTemplates ?
+		[{dir: 'templates', ext: 'html'}] :
+		[{dir: 'css', ext: 'css'}, {dir: 'js', ext: 'js'}]
+).reduce((arr, o) =>
 	arr.concat(
 		childProcess.spawnSync('find', [
 			o.dir,
@@ -39,7 +40,7 @@ const filesToModify	= [
 			'f'
 		]).stdout.toString().split('\n')
 	),
-	['index.html']
+	(args.modifyTemplates ? [] : ['index.html'])
 ).filter(s => s);
 
 
