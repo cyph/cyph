@@ -1,4 +1,6 @@
-#!/usr/bin/env node
+#!/usr/bin/env babel-node
+(async () => {
+
 
 const fs			= require('fs');
 const read			= require('read');
@@ -62,3 +64,6 @@ new Promise((resolve, reject) => read({
 	console.error(err);
 	process.exit(1);
 });
+
+
+})();

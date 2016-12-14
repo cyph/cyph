@@ -1,4 +1,6 @@
-#!/usr/bin/env node
+#!/usr/bin/env babel-node
+(async () => {
+
 
 const cheerio		= require('cheerio');
 const fs			= require('fs');
@@ -178,3 +180,6 @@ Promise.resolve().then(() => {
 }).catch(err =>
 	console.error(err)
 );
+
+
+})();

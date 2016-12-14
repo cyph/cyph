@@ -1,4 +1,6 @@
-#!/usr/bin/env node
+#!/usr/bin/env babel-node
+(async () => {
+
 
 const superSphincs		= require('supersphincs');
 
@@ -74,3 +76,6 @@ then(() => Promise.all(
 		fs.unlink(subresource, resolve)
 	))
 ));
+
+
+})();

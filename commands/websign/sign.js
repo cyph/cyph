@@ -1,4 +1,6 @@
-#!/usr/bin/env node
+#!/usr/bin/env babel-node
+(async () => {
+
 
 const crypto		= require('crypto');
 const dgram			= require('dgram');
@@ -182,3 +184,6 @@ const sendData	= i => {
 };
 
 sendData(0);
+
+
+})();

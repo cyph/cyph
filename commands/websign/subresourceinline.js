@@ -1,4 +1,6 @@
-#!/usr/bin/env node
+#!/usr/bin/env babel-node
+(async () => {
+
 
 const datauri		= require('datauri');
 
@@ -54,3 +56,6 @@ for (let file of filesToModify) {
 		fs.writeFileSync(file, content);
 	}
 }
+
+
+})();

@@ -126,6 +126,8 @@ RUN sudo npm -g install \
 	babel-core@6.20.0 \
 	babel-cli@6.18.0 \
 	babel-loader@6.2.9 \
+	babel-plugin-syntax-async-functions@6.13.0 \
+	babel-plugin-transform-regenerator@6.20.0 \
 	babel-preset-es2015@6.18.0 \
 	browserify@13.1.1 \
 	cheerio@0.22.0 \

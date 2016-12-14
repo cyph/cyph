@@ -1,4 +1,6 @@
-#!/usr/bin/env node
+#!/usr/bin/env babel-node
+(async () => {
+
 
 const fs	= require('fs');
 
@@ -16,3 +18,6 @@ fs.writeFileSync(
 		).toString()
 	)
 );
+
+
+})();

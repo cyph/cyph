@@ -1,4 +1,6 @@
-#!/usr/bin/env node
+#!/usr/bin/env babel-node
+(async () => {
+
 
 const cheerio		= require('cheerio');
 const datauri		= require('datauri');
@@ -109,3 +111,6 @@ superSphincs.hash(css).then(hash => {
 	fs.writeFileSync(args.customBuildStylesheet.srihash, hash.hex);
 	fs.writeFileSync(`../${args.customBuild}`, $.html().trim());
 });
+
+
+})();
