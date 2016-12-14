@@ -14,8 +14,8 @@ import * as superSphincs from 'supersphincs';
 const args			= {
 	enableSRI: process.argv.indexOf('--sri') > -1,
 	enableMinify: process.argv.indexOf('--minify') > -1,
-	inputPath: `${process.env.PWD}/process.argv.slice(-2)[0]`,
-	outputPath: `${process.env.PWD}/process.argv.slice(-1)[0]`
+	inputPath: `${process.env.PWD}/${process.argv.slice(-2)[0]}`,
+	outputPath: `${process.env.PWD}/${process.argv.slice(-1)[0]}`
 };
 
 
