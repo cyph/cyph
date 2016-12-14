@@ -20,8 +20,6 @@ const args			= {
 
 
 const subresourcePath	= `${args.outputPath}-subresources`;
-
-await new Promise(resolve => mkdirp(args.outputPath, resolve));
 await new Promise(resolve => mkdirp(subresourcePath, resolve));
 
 const html	= fs.readFileSync(args.inputPath).toString();
