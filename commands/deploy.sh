@@ -307,6 +307,7 @@ if [ "${websign}" ] ; then
 	find js -name '*.js' | xargs -I% ../commands/websign/threadpack.js %
 
 	mkdir ../pkg
+	mv .subresources ../pkg/cyph.ws-subresources
 	../commands/websign/pack.js --sri --minify index.html ../pkg/cyph.ws
 
 	find . \

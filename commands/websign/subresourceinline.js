@@ -3,6 +3,8 @@
 
 
 const datauri		= require('datauri');
+const mkdirp		= require('mkdirp');
+const superSphincs	= require('supersphincs');
 
 const filesToMerge	= child_process.spawnSync('find', [
 	'audio',
@@ -37,19 +39,26 @@ for (let file of filesToModify) {
 		}
 
 		const dataURI	= datauri.sync(subresource);
+		const hash		= (await superSphincs.hash(dataURI)).hex;
 
 		content	= content.
 			replace(
 				new RegExp(`(src|href|content)=(\\\\?['"])/?${subresource}\\\\?['"]`, 'g'),
-				`WEBSIGN-SRI-DATA-START☁$2☁☁☁${dataURI}☁WEBSIGN-SRI-DATA-END`
+				`websign-sri-data websign-sri-path=$2☁$2 websign-sri-hash=$2${hash}$2`
 			).replace(
 				new RegExp(`/?${subresource}(\\?websign-sri-disable)?`, 'g'),
 				dataURI
-			).replace(
-				/☁☁☁/g,
-				`☁${subresource}☁`
 			)
 		;
+
+		if (content.indexOf('☁') > -1) {
+			content	= content.replace(/☁/g, subresource);
+
+			const fullPath	= `.subresources/${subresource}`;
+			mkdirp.sync(fullPath.split('/').slice(0, -1).join('/'));
+			fs.writeFileSync(fullPath, dataURI);
+			fs.writeFileSync(fullPath + '.srihash', hash);
+		}
 	}
 
 	if (content !== originalContent) {
