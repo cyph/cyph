@@ -13,12 +13,12 @@ import * as superSphincs from 'supersphincs';
 
 
 const args			= {
-	customBuild: process.argv[0],
-	customBuildAdditionalStyling: process.argv[1],
-	customBuildBackground: process.argv[2],
-	customBuildFavicon: process.argv[3],
-	customBuildStylesheet: process.argv[4],
-	customBuildTheme: process.argv[5]
+	customBuild: process.argv[2],
+	customBuildAdditionalStyling: process.argv[3],
+	customBuildBackground: process.argv[4],
+	customBuildFavicon: process.argv[5],
+	customBuildStylesheet: process.argv[6],
+	customBuildTheme: process.argv[7]
 };
 
 

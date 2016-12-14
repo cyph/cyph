@@ -64,7 +64,7 @@ const server		= dgram.createSocket('udp4');
 
 
 let incoming;
-server.on('message', message => {
+server.on('message', async (message) => {
 	const metadata		= new Uint32Array(message.buffer, 0, 3);
 
 	if (metadata[0] !== id) {
