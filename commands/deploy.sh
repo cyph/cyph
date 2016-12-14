@@ -226,9 +226,9 @@ if [ "${cacheBustedProjects}" ] ; then
 		rm .build.done
 
 		# Cache bust
+		echo 'Cache bust' > ../../.blog.output 2>&1
 		for d in ${cacheBustedProjects} ; do
 			cd \$d
-			echo \"Cache bust \$(projectname \$d)\" > ../../.blog.output 2>&1
 			../commands/cachebust.js > ../../.blog.output 2>&1
 			cd ..
 		done
