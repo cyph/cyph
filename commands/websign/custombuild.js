@@ -3,7 +3,7 @@
 
 import * as cheerio from 'cheerio';
 import * as childProcess from 'child_process';
-import * as datauri from 'datauri';
+import {default as datauri} from 'datauri';
 import * as fs from 'fs';
 import * as htmlencode from 'htmlencode';
 import * as superSphincs from 'supersphincs';

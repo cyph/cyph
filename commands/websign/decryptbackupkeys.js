@@ -3,7 +3,7 @@
 
 import * as fs from 'fs';
 import * as sodium from 'libsodium-wrappers';
-import * as read from 'read';
+import {default as read} from 'read';
 import * as superSphincs from 'supersphincs';
 
 
