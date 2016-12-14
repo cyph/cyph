@@ -4,7 +4,7 @@
 import * as childProcess from 'child_process';
 import {default as datauri} from 'datauri';
 import * as fs from 'fs';
-import * as mkdirp from 'mkdirp';
+import {default as mkdirp} from 'mkdirp';
 import * as superSphincs from 'supersphincs';
 
 
@@ -43,7 +43,7 @@ const filesToModify	= [
 ).filter(s => s);
 
 
-mkdirp.sync(args.subresourcePath);
+await new Promise(resolve => mkdirp(args.subresourcePath, resolve));
 
 for (let file of filesToModify) {
 	const originalContent	= fs.readFileSync(file).toString();
@@ -70,10 +70,12 @@ for (let file of filesToModify) {
 		if (content.indexOf('☁') > -1) {
 			content	= content.replace(/☁/g, subresource);
 
-			const fullPath	= `${args.subresourcePath}/${subresource}`;
-			mkdirp.sync(fullPath.split('/').slice(0, -1).join('/'));
-			fs.writeFileSync(fullPath, dataURI);
-			fs.writeFileSync(fullPath + '.srihash', hash);
+			const path			= `${args.subresourcePath}/${subresource}`;
+			const pathParent	= path.split('/').slice(0, -1).join('/');
+
+			await new Promise(resolve => mkdirp(pathParent, resolve));
+			fs.writeFileSync(path, dataURI);
+			fs.writeFileSync(path + '.srihash', hash);
 		}
 	}
 

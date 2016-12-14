@@ -4,7 +4,7 @@
 import {randomBytes} from 'crypto';
 import * as dgram from 'dgram';
 import * as fs from 'fs';
-import * as mkdirp from 'mkdirp';
+import {default as mkdirp} from 'mkdirp';
 import * as os from 'os';
 import * as superSphincs from 'supersphincs';
 
@@ -133,7 +133,7 @@ server.on('message', async (message) => {
 			for (let i = 0 ; i < items.length ; ++i) {
 				const outputDir	= items[i].outputDir;
 
-				mkdirp.sync(outputDir);
+				await new Promise(resolve => mkdirp(outputDir, resolve));
 
 				fs.writeFileSync(`${outputDir}/current`, timestamp);
 

@@ -4,7 +4,7 @@
 import * as cheerio from 'cheerio';
 import * as fs from 'fs';
 import * as htmlMinifier from 'html-minifier';
-import * as mkdirp from 'mkdirp';
+import {default as mkdirp} from 'mkdirp';
 import * as superSphincs from 'supersphincs';
 
 
@@ -21,8 +21,8 @@ const args			= {
 
 const subresourcePath	= `${args.outputPath}-subresources`;
 
-mkdirp.sync(args.outputPath);
-mkdirp.sync(subresourcePath);
+await new Promise(resolve => mkdirp(args.outputPath, resolve));
+await new Promise(resolve => mkdirp(subresourcePath, resolve));
 
 const html	= fs.readFileSync(args.inputPath).toString();
 const $		= cheerio.load(html);
@@ -66,10 +66,12 @@ for (let subresource of subresources) {
 	).join(' ');
 
 	if (subresource.enableSRI) {
-		const fullPath	= `${subresourcePath}/${subresource.path}`;
-		mkdirp.sync(fullPath.split('/').slice(0, -1).join('/'));
-		fs.writeFileSync(fullPath, subresource.content);
-		fs.writeFileSync(fullPath + '.srihash', subresource.hash);
+		const path			= `${subresourcePath}/${subresource.path}`;
+		const pathParent	= path.split('/').slice(0, -1).join('/');
+
+		await new Promise(resolve => mkdirp(pathParent, resolve));
+		fs.writeFileSync(path, subresource.content);
+		fs.writeFileSync(path + '.srihash', subresource.hash);
 	}
 
 	subresource.$elem.replaceWith(
