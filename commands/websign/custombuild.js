@@ -116,7 +116,7 @@ $('body').append(`
 `);
 
 fs.writeFileSync(args.customBuildStylesheet, css);
-fs.writeFileSync(args.customBuildStylesheet.srihash, hash);
+fs.writeFileSync(`${args.customBuildStylesheet}.srihash`, hash);
 fs.writeFileSync(`../${args.customBuild}`, $.html().trim());
 
 

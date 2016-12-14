@@ -1,7 +1,7 @@
 #!/usr/bin/env babel-node
 
 
-import * as crypto from 'crypto';
+import {randomBytes} from 'crypto';
 import * as dgram from 'dgram';
 import * as fs from 'fs';
 import * as mkdirp from 'mkdirp';
@@ -58,7 +58,7 @@ const dataToSign	= Buffer.from(JSON.stringify(
 	items.map(o => o.inputData)
 ));
 
-const id			= new Uint32Array(crypto.randomBytes(4).buffer)[0];
+const id			= new Uint32Array(randomBytes(4).buffer)[0];
 const client		= dgram.createSocket('udp4');
 const server		= dgram.createSocket('udp4');
 
