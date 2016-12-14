@@ -1,14 +1,17 @@
 #!/usr/bin/env babel-node
+
+
+import * as childProcess from 'child_process';
+import * as datauri from 'datauri';
+import * as fs from 'fs';
+import * as mkdirp from 'mkdirp';
+import * as superSphincs from 'supersphincs';
+
+
 (async () => {
 
 
-const child_process	= require('child_process');
-const datauri		= require('datauri');
-const fs			= require('fs');
-const mkdirp		= require('mkdirp');
-const superSphincs	= require('supersphincs');
-
-const filesToMerge	= child_process.spawnSync('find', [
+const filesToMerge	= childProcess.spawnSync('find', [
 	'audio',
 	'fonts',
 	'img',
@@ -19,7 +22,7 @@ const filesToMerge	= child_process.spawnSync('find', [
 
 const filesToModify	= ['js', 'css'].reduce((arr, ext) =>
 	arr.concat(
-		child_process.spawnSync('find', [
+		childProcess.spawnSync('find', [
 			ext,
 			'-name',
 			'*.' + ext,

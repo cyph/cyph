@@ -1,13 +1,16 @@
 #!/usr/bin/env babel-node
+
+
+import * as cheerio from 'cheerio';
+import * as childProcess from 'child_process';
+import * as datauri from 'datauri';
+import * as fs from 'fs';
+import * as htmlencode from 'htmlencode';
+import * as superSphincs from 'supersphincs';
+
+
 (async () => {
 
-
-const cheerio		= require('cheerio');
-const child_process	= require('child_process');
-const datauri		= require('datauri');
-const fs			= require('fs');
-const htmlencode	= require('htmlencode');
-const superSphincs	= require('supersphincs');
 
 const args			= {
 	customBuild: process.argv[0],
@@ -18,9 +21,10 @@ const args			= {
 	customBuildTheme: process.argv[5]
 };
 
+
 const compileSCSS	= scss =>
-	child_process.spawnSync('cleancss', [], {input:
-		child_process.spawnSync(
+	childProcess.spawnSync('cleancss', [], {input:
+		childProcess.spawnSync(
 			'scss',
 			['-s', '-I../../shared/css'],
 			{input: scss}

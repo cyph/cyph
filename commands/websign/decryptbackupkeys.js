@@ -1,11 +1,14 @@
 #!/usr/bin/env babel-node
+
+
+import * as fs from 'fs';
+import * as sodium from 'libsodium-wrappers';
+import * as read from 'read';
+import * as superSphincs from 'supersphincs';
+
+
 (async () => {
 
-
-const fs			= require('fs');
-const read			= require('read');
-const sodium		= require('libsodium-wrappers');
-const superSphincs	= require('supersphincs');
 
 const args			= {
 	backupPath: process.argv[2],

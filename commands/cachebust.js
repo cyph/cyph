@@ -1,12 +1,15 @@
 #!/usr/bin/env babel-node
+
+
+import * as childProcess from 'child_process';
+import * as fs from 'fs';
+import * as superSphincs from 'supersphincs';
+
+
 (async () => {
 
 
-const child_process		= require('child_process');
-const fs				= require('fs');
-const superSphincs		= require('supersphincs');
-
-const filesToCacheBust	= child_process.spawnSync('find', [
+const filesToCacheBust	= childProcess.spawnSync('find', [
 	'-L',
 	'.',
 	'-type',
@@ -15,7 +18,7 @@ const filesToCacheBust	= child_process.spawnSync('find', [
 	'2'
 ]).stdout.toString().split('\n').filter(s => s).map(s => s.slice(2));
 
-const filesToModify		= child_process.spawnSync('find', [
+const filesToModify		= childProcess.spawnSync('find', [
 	'.',
 	'-type',
 	'f',

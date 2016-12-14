@@ -1,8 +1,11 @@
 #!/usr/bin/env babel-node
+
+
+import * as fs from 'fs';
+
+
 (async () => {
 
-
-const fs	= require('fs');
 
 const args	= {
 	path: process.argv[2]

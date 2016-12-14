@@ -1,12 +1,15 @@
 #!/usr/bin/env babel-node
+
+
+import * as cheerio from 'cheerio';
+import * as fs from 'fs';
+import * as htmlMinifier from 'html-minifier';
+import * as mkdirp from 'mkdirp';
+import * as superSphincs from 'supersphincs';
+
+
 (async () => {
 
-
-const cheerio		= require('cheerio');
-const fs			= require('fs');
-const mkdirp		= require('mkdirp');
-const htmlMinifier	= require('html-minifier');
-const superSphincs	= require('supersphincs');
 
 const args			= {
 	enableSRI: process.argv.indexOf('--sri') > -1,

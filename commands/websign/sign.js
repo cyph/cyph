@@ -1,18 +1,22 @@
 #!/usr/bin/env babel-node
+
+
+import * as crypto from 'crypto';
+import * as dgram from 'dgram';
+import * as fs from 'fs';
+import * as mkdirp from 'mkdirp';
+import * as os from 'os';
+import * as superSphincs from 'supersphincs';
+
+
 (async () => {
 
-
-const crypto		= require('crypto');
-const dgram			= require('dgram');
-const fs			= require('fs');
-const mkdirp		= require('mkdirp');
-const os			= require('os');
-const superSphincs	= require('supersphincs');
 
 const args			= {
 	hashWhitelist: JSON.parse(process.argv[2]),
 	items: process.argv.slice(3).filter(s => s)
 };
+
 
 const remoteAddress	= '10.0.0.42';
 const port			= 31337;
