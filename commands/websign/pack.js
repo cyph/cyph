@@ -61,7 +61,7 @@ for (let subresource of subresources) {
 	).join(' ');
 
 	if (subresource.enableSRI) {
-		const fullPath	= `${process.env.PWD}/${args.outputPath}-subresources/${subresource.path}`;
+		const fullPath	= `${__dirname}/${args.outputPath}-subresources/${subresource.path}`;
 		mkdirp.sync(fullPath.split('/').slice(0, -1).join('/'));
 		fs.writeFileSync(fullPath, subresource.content);
 		fs.writeFileSync(fullPath + '.srihash', subresource.hash);

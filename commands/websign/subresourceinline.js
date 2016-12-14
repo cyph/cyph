@@ -11,6 +11,11 @@ import * as superSphincs from 'supersphincs';
 (async () => {
 
 
+const args			= {
+	subresourcePath: `${__dirname}/${process.argv[2]}`
+};
+
+
 const filesToMerge	= childProcess.spawnSync('find', [
 	'audio',
 	'fonts',
@@ -20,7 +25,7 @@ const filesToMerge	= childProcess.spawnSync('find', [
 	'f'
 ]).stdout.toString().split('\n').filter(s => s);
 
-const filesToModify	= ['js', 'css'].reduce((arr, ext) =>
+const filesToModify	= ['css', 'html', 'js'].reduce((arr, ext) =>
 	arr.concat(
 		childProcess.spawnSync('find', [
 			ext,
@@ -30,9 +35,11 @@ const filesToModify	= ['js', 'css'].reduce((arr, ext) =>
 			'f'
 		]).stdout.toString().split('\n')
 	),
-	['index.html']
+	[]
 ).filter(s => s);
 
+
+mkdirp.sync(args.subresourcePath);
 
 for (let file of filesToModify) {
 	const originalContent	= fs.readFileSync(file).toString();
@@ -59,7 +66,7 @@ for (let file of filesToModify) {
 		if (content.indexOf('☁') > -1) {
 			content	= content.replace(/☁/g, subresource);
 
-			const fullPath	= `${process.env.PWD}/.subresources/${subresource}`;
+			const fullPath	= `${args.subresourcePath}/${subresource}`;
 			mkdirp.sync(fullPath.split('/').slice(0, -1).join('/'));
 			fs.writeFileSync(fullPath, dataURI);
 			fs.writeFileSync(fullPath + '.srihash', hash);

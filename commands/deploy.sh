@@ -272,9 +272,8 @@ for d in $compiledProjects ; do
 		> js/cyph/thread.ts.new
 		mv js/cyph/thread.ts.new js/cyph/thread.ts
 
-		# Merge in base64'd images, fonts, video, and audio
-		mkdir .subresources
-		../commands/websign/subresourceinline.js
+		# Handle Angular templates before AOT compilation
+		../commands/websign/subresourceinline.js ../pkg/cyph.ws-subresources
 	fi
 
 	../commands/build.sh --prod $(test "${simple}" && echo '--no-minify') || exit;
@@ -307,8 +306,9 @@ if [ "${websign}" ] ; then
 	# Merge imported libraries into threads
 	find js -name '*.js' | xargs -I% ../commands/websign/threadpack.js %
 
-	mkdir ../pkg
-	mv .subresources ../pkg/cyph.ws-subresources
+	# Merge in base64'd images, fonts, video, and audio
+	../commands/websign/subresourceinline.js ../pkg/cyph.ws-subresources
+
 	../commands/websign/pack.js --sri --minify index.html ../pkg/cyph.ws
 
 	find . \
@@ -422,14 +422,14 @@ fi
 
 if [ "${waitingForBlog}" ] ; then
 	while true ; do
-		cat cyph.com/.blog.output
-		echo -n > cyph.com/.blog.output
-		if [ -f cyph.com/.blog.done ] ; then
+		cat .blog.output
+		echo -n > .blog.output
+		if [ -f .blog.done ] ; then
 			break
 		fi
 		sleep 5
 	done
-	rm cyph.com/.blog.done cyph.com/.blog.output
+	rm .blog.done .blog.output
 	if [ ! -f cyph.com/blog/index.html ] ; then
 		echo -e '\n\nStatic blog generation / cache busting failed\n'
 		exit 1
