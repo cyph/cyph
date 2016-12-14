@@ -1,8 +1,6 @@
 import {Carousel} from './carousel';
 import * as Chat from './chat';
-import * as Components from './components';
 import {DialogManager} from './dialogmanager';
-import * as Directives from './directives';
 import {Elements, elements} from './elements';
 import {IDialogManager} from './idialogmanager';
 import {INotifier} from './inotifier';
@@ -28,7 +26,5 @@ export {
 	virtualKeyboardWatcher,
 	visibilityWatcher,
 
-	Chat,
-	Components,
-	Directives
+	Chat
 };
