@@ -2,6 +2,8 @@
 (async () => {
 
 
+const child_process		= require('child_process');
+const fs				= require('fs');
 const superSphincs		= require('supersphincs');
 
 const filesToCacheBust	= child_process.spawnSync('find', [

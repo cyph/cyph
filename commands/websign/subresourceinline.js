@@ -2,7 +2,9 @@
 (async () => {
 
 
+const child_process	= require('child_process');
 const datauri		= require('datauri');
+const fs			= require('fs');
 const mkdirp		= require('mkdirp');
 const superSphincs	= require('supersphincs');
 

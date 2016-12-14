@@ -3,7 +3,9 @@
 
 
 const cheerio		= require('cheerio');
+const child_process	= require('child_process');
 const datauri		= require('datauri');
+const fs			= require('fs');
 const htmlencode	= require('htmlencode');
 const superSphincs	= require('supersphincs');
 
