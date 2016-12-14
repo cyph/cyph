@@ -13,7 +13,7 @@ fi
 if [ "${prodlike}" ] ; then
 	rm -rf .build 2> /dev/null
 	mkdir .build
-	cp -rf * .build/
+	cp -rf * .babelrc .build/
 	cd .build
 fi
 
