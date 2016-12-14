@@ -218,7 +218,7 @@ if [ "${cacheBustedProjects}" ] ; then
 			rm -rf cyph.com/blog 2> /dev/null
 			mkdir -p cyph.com/blog
 			cd cyph.com/blog
-			../../commands/wpstatic.sh '${homeURL}/blog' > ../../.blog.output 2>&1
+			../../commands/wpstatic.sh '${homeURL}/blog' >> ../../.blog.output 2>&1
 			cd ../..
 		fi
 
@@ -226,10 +226,10 @@ if [ "${cacheBustedProjects}" ] ; then
 		rm .build.done
 
 		# Cache bust
-		echo 'Cache bust' > .blog.output 2>&1
+		echo 'Cache bust' >> .blog.output 2>&1
 		for d in ${cacheBustedProjects} ; do
 			cd \$d
-			../commands/cachebust.js > ../.blog.output 2>&1
+			../commands/cachebust.js >> ../.blog.output 2>&1
 			cd ..
 		done
 
