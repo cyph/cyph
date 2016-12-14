@@ -265,8 +265,12 @@ for d in $compiledProjects ; do
 		> js/cyph/thread.ts.new
 		mv js/cyph/thread.ts.new js/cyph/thread.ts
 
-		# Handle Angular templates before AOT compilation
-		../commands/websign/subresourceinline.js --templates ../pkg/cyph.ws-subresources
+		# Merge in base64'd images, fonts, video, and audio
+		../commands/websign/subresourceinline.js ../pkg/cyph.ws-subresources
+
+		# Prevent embedded files from breaking build
+		cat js/tslint.json | perl -pe 's/("max-line-length": ).*/\1false,/g' > js/tslint.json.new
+		mv js/tslint.json.new js/tslint.json 
 	fi
 
 	../commands/build.sh --prod $(test "${simple}" && echo '--no-minify') || exit;
@@ -303,9 +307,6 @@ if [ "${websign}" ] ; then
 
 	# Merge imported libraries into threads
 	find js -name '*.js' | xargs -I% ../commands/websign/threadpack.js %
-
-	# Merge in base64'd images, fonts, video, and audio
-	../commands/websign/subresourceinline.js ../pkg/cyph.ws-subresources
 
 	../commands/websign/pack.js --sri --minify index.html ../pkg/cyph.ws
 

@@ -26,11 +26,11 @@ const filesToMerge	= childProcess.spawnSync('find', [
 	'f'
 ]).stdout.toString().split('\n').filter(s => s);
 
-const filesToModify	= (
-	args.modifyTemplates ?
-		[{dir: 'templates', ext: 'html'}] :
-		[{dir: 'css', ext: 'css'}, {dir: 'js', ext: 'js'}]
-).reduce((arr, o) =>
+const filesToModify	= [
+	{dir: 'css', ext: 'scss'},
+	{dir: 'js', ext: 'ts'},
+	{dir: 'templates', ext: 'html'}
+].reduce((arr, o) =>
 	arr.concat(
 		childProcess.spawnSync('find', [
 			o.dir,
@@ -40,7 +40,7 @@ const filesToModify	= (
 			'f'
 		]).stdout.toString().split('\n')
 	),
-	(args.modifyTemplates ? [] : ['index.html'])
+	['index.html']
 ).filter(s => s);
 
 
