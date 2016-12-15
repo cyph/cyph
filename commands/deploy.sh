@@ -426,13 +426,9 @@ if [ "${waitingForBlog}" ] ; then
 		if [ -f .blog.done ] ; then
 			break
 		fi
-		sleep 5
+		sleep 1
 	done
 	rm .blog.done .blog.output
-	if [ ! -f cyph.com/blog/index.html ] ; then
-		echo -e '\n\nStatic blog generation / cache busting failed\n'
-		exit 1
-	fi
 fi
 
 
