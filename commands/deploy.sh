@@ -249,6 +249,9 @@ fi
 
 
 # Compile + translate + minify
+if [ "${compiledProjects}" ] ; then
+	./commands/tslint.sh || exit
+fi
 for d in $compiledProjects ; do
 	echo "Compile $(projectname ${d})"
 
@@ -267,10 +270,6 @@ for d in $compiledProjects ; do
 
 		# Merge in base64'd images, fonts, video, and audio
 		../commands/websign/subresourceinline.js ../pkg/cyph.ws-subresources
-
-		# Prevent embedded files from breaking build
-		cat js/tslint.json | perl -pe 's/("max-line-length": ).*/\1false,/g' > js/tslint.json.new
-		mv js/tslint.json.new js/tslint.json 
 	fi
 
 	../commands/build.sh --prod $(test "${simple}" && echo '--no-minify') || exit;

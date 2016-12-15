@@ -124,9 +124,9 @@ compile () {
 
 	cd js
 
-	output="${output}$(../../commands/tslint.sh 2>&1)"
-
-	if [ ! "${test}" ] ; then
+	if [ "${test}" ] ; then
+		output="${output}$(../../commands/tslint.sh 2>&1)"
+	else
 		for f in $tsfiles ; do
 			node -e "
 				const resolveReferences	= f => {
