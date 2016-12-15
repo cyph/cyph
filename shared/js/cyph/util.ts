@@ -449,9 +449,9 @@ export class Util {
 
 	constructor () { (async () => {
 		if (env.isMainThread) {
-			eventManager.on(Util.openUrlThreadEvent, (url: string) => this.openUrl(url));
+			eventManager.on(Util.openUrlThreadEvent, async (url: string) => this.openUrl(url));
 
-			eventManager.on(Util.saveFileThreadEvent, (o: {
+			eventManager.on(Util.saveFileThreadEvent, async (o: {
 				content: Uint8Array;
 				fileName?: string;
 			}) => this.saveFile(

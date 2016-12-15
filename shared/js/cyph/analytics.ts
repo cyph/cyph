@@ -70,7 +70,7 @@ export class Analytics {
 			this.analFrameIsReady	= false;
 		}
 		else if (env.isMainThread) {
-			eventManager.on(Analytics.baseEventSubmitThreadEvent, (o: {
+			eventManager.on(Analytics.baseEventSubmitThreadEvent, async (o: {
 				args: any[];
 				method: string;
 			}) => this.baseEventSubmit(
@@ -137,8 +137,8 @@ export class Analytics {
 
 				document.body.appendChild(this.analFrame);
 
-				await new Promise(resolve => $(resolve));
-				await new Promise(resolve => $(this.analFrame).one('load', resolve));
+				await new Promise<void>(resolve => $(() => resolve()));
+				await new Promise<void>(resolve => $(this.analFrame).one('load', () => resolve()));
 				await util.sleep();
 
 				this.analFrameIsReady	= true;

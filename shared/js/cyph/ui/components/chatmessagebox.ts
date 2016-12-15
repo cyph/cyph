@@ -41,7 +41,7 @@ export class ChatMessageBox implements OnInit {
 		icon: string,
 		label: string
 	}	= {
-		click: ($mdMenu: any) => this.openMenu($mdMenu),
+		click: async ($mdMenu: any) => this.openMenu($mdMenu),
 		icon: 'more_horiz',
 		label: util.translate('Menu')
 	};
@@ -58,7 +58,7 @@ export class ChatMessageBox implements OnInit {
 			label: strings.help
 		},
 		{
-			click: () => this.self.disconnectButton(),
+			click: async () => this.self.disconnectButton(),
 			icon: 'close',
 			label: strings.disconnect
 		}
@@ -77,7 +77,7 @@ export class ChatMessageBox implements OnInit {
 	}[]	= [
 		{
 			fileAccept: this.fileAccept,
-			fileChange: ($event: File) => this.self.fileManager.send($event),
+			fileChange: async ($event: File) => this.self.fileManager.send($event),
 			icon: 'attach_file',
 			label: 'Send File or Photo',
 			tooltipDirection: 'left'
@@ -104,7 +104,7 @@ export class ChatMessageBox implements OnInit {
 			tooltipDirection: 'left'
 		},
 		{
-			click: () => this.self.disconnectButton(),
+			click: async () => this.self.disconnectButton(),
 			cssClass: 'dark',
 			icon: 'close',
 			label: strings.disconnect,

@@ -138,7 +138,7 @@ RUN sudo npm -g install \
 	image-type@2.1.0 \
 	html-minifier@3.2.3 \
 	rxjs@5.0.0-beta.12 \
-	tslint@4.0.2 \
+	tslint@4.1.0 \
 	tslint-microsoft-contrib@4.0.0 \
 	typescript@2.0.10 \
 	uglify-js@2.7.5 \

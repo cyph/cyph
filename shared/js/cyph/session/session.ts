@@ -252,7 +252,7 @@ export class Session implements ISession {
 					this.castle	= new AnonymousCastle(this, nativeCrypto);
 				}
 			},
-			onMessage: (message: string) => this.receive(message),
+			onMessage: async (message: string) => this.receive(message),
 			onOpen: async (isAlice: boolean) : Promise<void> => {
 				this.updateState(state.isAlice, isAlice);
 

@@ -1,7 +1,10 @@
+import {IRuleMetadata, RuleFailure} from 'tslint/lib/language/rule/rule';
+import {RuleWalker} from 'tslint/lib/language/walker';
+import {AbstractRule} from 'tslint/lib/rules';
 import * as ts from 'typescript';
-import {IRuleMetadata, Rules, RuleFailure, RuleWalker} from 'tslint';
 
-export class Rule extends Rules.AbstractRule {
+
+export class Rule extends AbstractRule {
 	public static metadata: IRuleMetadata	= {
 		ruleName: 'tab-equals',
 		description:

@@ -113,11 +113,11 @@ export class ThreadedSession implements ISession {
 					session.close()
 				);
 
-				session.on(locals.events.receive, (e: {data: string}) =>
+				session.on(locals.events.receive, async (e: {data: string}) =>
 					session.receive(e.data)
 				);
 
-				session.on(locals.events.send, (e: {messages: IMessage[]}) =>
+				session.on(locals.events.send, async (e: {messages: IMessage[]}) =>
 					session.sendBase(e.messages)
 				);
 
