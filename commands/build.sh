@@ -360,6 +360,7 @@ if [ "${watch}" ] ; then
 		output=''
 		compile
 		echo -e "${output}\n\n\nFinished building JS/CSS ($(expr $(date +%s) - $start)s)\n\n"
+		${rootDir}/commands/tslint.sh &
 
 		#if [ $SECONDS -gt $liteDeployInterval -a ! -d ~/.litedeploy ] ; then
 		#	echo -e "\n\n\nDeploying to lite env\n\n"
