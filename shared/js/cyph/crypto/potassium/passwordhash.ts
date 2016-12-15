@@ -143,7 +143,7 @@ export class PasswordHash {
 				util.clearMemory(plaintextBinary);
 				util.clearMemory(salt);
 			}
-			else if (typeof plaintext !== 'Uint8Array') {
+			else if (typeof plaintext === 'string') {
 				util.clearMemory(plaintextBinary);
 			}
 		}

@@ -2,12 +2,14 @@ import {
 	Directive,
 	DoCheck,
 	ElementRef,
+	EventEmitter,
 	Inject,
 	Injector,
 	Input,
 	OnChanges,
 	OnDestroy,
 	OnInit,
+	Output,
 	SimpleChanges
 } from '@angular/core';
 import {UpgradeComponent} from '@angular/upgrade/static';
@@ -57,6 +59,7 @@ export class MdInput
 			public readonly required: boolean;
 
 			/** @ignore */
+			/* tslint:disable-next-line:no-reserved-keywords */
 			public readonly type: string;
 
 			constructor () {}
@@ -94,27 +97,35 @@ export class MdInput
 	@Input() public model: string;
 
 	/** @ignore */
+	@Output() public modelChange: EventEmitter<string>;
+
+	/** @ignore */
 	@Input() public required: boolean;
 
 	/** @ignore */
+	/* tslint:disable-next-line:no-reserved-keywords */
 	@Input() public type: string;
 
 	/** @ignore */
+	/* tslint:disable-next-line:no-unnecessary-override */
 	public ngDoCheck () : void {
 		super.ngDoCheck();
 	}
 
 	/** @ignore */
+	/* tslint:disable-next-line:no-unnecessary-override */
 	public ngOnChanges (changes: SimpleChanges) : void {
 		super.ngOnChanges(changes);
 	}
 
 	/** @ignore */
+	/* tslint:disable-next-line:no-unnecessary-override */
 	public ngOnDestroy () : void {
 		super.ngOnDestroy();
 	}
 
 	/** @ignore */
+	/* tslint:disable-next-line:no-unnecessary-override */
 	public ngOnInit () : void {
 		super.ngOnInit();
 	}

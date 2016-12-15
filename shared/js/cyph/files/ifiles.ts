@@ -16,14 +16,14 @@ export interface IFiles {
 	 * Sends data as a file with the specified name.
 	 * @param plaintext
 	 * @param name
-	 * @param type
+	 * @param fileType
 	 * @param image
 	 * @param imageSelfDestructTimeout
 	 */
 	send (
 		plaintext: Uint8Array,
 		name: string,
-		type: string,
+		fileType: string,
 		image: boolean,
 		imageSelfDestructTimeout: number
 	) : void;

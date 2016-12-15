@@ -61,7 +61,7 @@ export class Errors {
 				));
 			}
 
-			analytics.send('exception', {
+			analytics.sendEvent('exception', {
 				exDescription: exception
 			});
 		};

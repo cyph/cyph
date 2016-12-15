@@ -1,6 +1,11 @@
-#!/usr/bin/env node
+#!/usr/bin/env babel-node
 
-const fs	= require('fs');
+
+import * as fs from 'fs';
+
+
+(async () => {
+
 
 const args	= {
 	path: process.argv[2]
@@ -16,3 +21,6 @@ fs.writeFileSync(
 		).toString()
 	)
 );
+
+
+})();

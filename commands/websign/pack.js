@@ -1,180 +1,123 @@
-#!/usr/bin/env node
+#!/usr/bin/env babel-node
 
-const cheerio		= require('cheerio');
-const fs			= require('fs');
-const mkdirp		= require('mkdirp');
-const htmlMinifier	= require('html-minifier');
-const superSphincs	= require('supersphincs');
+
+import * as cheerio from 'cheerio';
+import * as fs from 'fs';
+import * as htmlMinifier from 'html-minifier';
+import {default as mkdirp} from 'mkdirp';
+import * as superSphincs from 'supersphincs';
+
+
+(async () => {
+
 
 const args			= {
 	enableSRI: process.argv.indexOf('--sri') > -1,
 	enableMinify: process.argv.indexOf('--minify') > -1,
-	inputPath: process.argv.slice(-2)[0],
-	outputPath: process.argv.slice(-1)[0] 
+	inputPath: `${process.env.PWD}/${process.argv.slice(-2)[0]}`,
+	outputPath: `${process.env.PWD}/${process.argv.slice(-1)[0]}`
 };
 
 
-const writeSubresource	= (path, content, hash) => {
-	const fullPath	= `${args.outputPath}-subresources/${path}`;
-	mkdirp.sync(fullPath.split('/').slice(0, -1).join('/'));
+const subresourcePath	= `${args.outputPath}-subresources`;
+await new Promise(resolve => mkdirp(subresourcePath, resolve));
 
-	fs.writeFileSync(
-		fullPath,
-		content
-	);
+const html	= fs.readFileSync(args.inputPath).toString();
+const $		= cheerio.load(html);
 
-	fs.writeFileSync(
-		fullPath + '.srihash',
-		hash
-	);
-};
+const subresources	= await Promise.all(Array.from(
+	$('script[src], link[rel="stylesheet"][href]').map(async (_, elem) => {
+		const $elem		= $(elem);
+		const tagName	= $elem.prop('tagName').toLowerCase();
 
-const processDataSRI	= content => Promise.all((content.match(
-	/WEBSIGN-SRI-DATA-START☁.*?☁.*?☁data:.*?☁WEBSIGN-SRI-DATA-END/g
-) || []).map(match => {
-	const matchSplit	= match.split('☁');
-	const matchQuote	= matchSplit[1];
-	const matchPath		= matchSplit[2];
-	const matchData		= matchSplit[3];
+		const enableSRI	=
+			args.enableSRI &&
+			$elem.attr('websign-sri-disable') === undefined
+		;
 
-	return superSphincs.hash(matchData).then(hash => {
-		writeSubresource(matchPath, matchData, hash.hex);
+		const path		= $elem.attr(
+			tagName === 'script' ? 'src' : 'href'
+		).split('?')[0].replace(/^\//, '');
+
+		const content	= fs.readFileSync(path).toString().
+			replace(/\n\/\/# sourceMappingURL=.*?\.map/g, '').
+			replace(/\n\/*# sourceMappingURL=.*?\.map *\//g, '').
+			trim()
+		;
 
 		return {
-			fullMatch: match,
-			quote: matchQuote,
-			path: matchPath,
-			hash: hash.hex
+			$elem,
+			tagName,
+			enableSRI,
+			path,
+			content,
+			hash: (await superSphincs.hash(content)).hex
 		};
-	});
-})).then(results => results.reduce(
-	(newContent, result) => newContent.replace(
-		result.fullMatch,
-		`websign-sri-data ` +
-			`websign-sri-path=${result.quote}${result.path}${result.quote} ` +
-			`websign-sri-hash=${result.quote}${result.hash}${result.quote}`
-	),
-	content
+	})
 ));
 
+for (let subresource of subresources) {
+	const specialAttributes	= [
+		'websign-sri-include'
+	].map(s =>
+		subresource.$elem.attr(s) === undefined ? '' : s
+	).join(' ');
 
-Promise.resolve().then(() => {
-	const html	= fs.readFileSync(args.inputPath).toString();
+	if (subresource.enableSRI) {
+		const path			= `${subresourcePath}/${subresource.path}`;
+		const pathParent	= path.split('/').slice(0, -1).join('/');
 
-	if (args.enableSRI) {
-		return processDataSRI(html);
+		await new Promise(resolve => mkdirp(pathParent, resolve));
+		fs.writeFileSync(path, subresource.content);
+		fs.writeFileSync(path + '.srihash', subresource.hash);
 	}
 
-	return html;
-}).then(html => {
-	const $	= cheerio.load(html);
-
-	return Promise.all([$, Promise.all(Array.from(
-		$('script[src], link[rel="stylesheet"][href]').map((_, elem) => {
-			const $elem		= $(elem);
-			const tagName	= $elem.prop('tagName').toLowerCase();
-
-			const enableSRI	=
-				args.enableSRI &&
-				$elem.attr('websign-sri-disable') === undefined
-			;
-
-			const path		= $elem.attr(
-				tagName === 'script' ? 'src' : 'href'
-			).split('?')[0].replace(/^\//, '');
-
-			const content	= Promise.resolve().then(() => {
-				const s	= fs.readFileSync(path).toString().
-					replace(/\n\/\/# sourceMappingURL=.*?\.map/g, '').
-					replace(/\n\/*# sourceMappingURL=.*?\.map *\//g, '').
-					trim()
-				;
-
-				if (enableSRI) {
-					return processDataSRI(s);
-				}
-
-				return s;
-			});
-
-			return Promise.all([
-				$elem,
-				tagName,
-				enableSRI,
-				path,
-				content,
-				content.then(s => superSphincs.hash(s))
-			]);
-		})
-	))]);
-}).then(results => {
-	const $				= results[0];
-	const subresources	= results[1];
-
-	for (const subresource of subresources) {
-		const $elem		= subresource[0];
-		const tagName	= subresource[1];
-		const enableSRI	= subresource[2];
-		const path		= subresource[3];
-		const content	= subresource[4];
-		const hash		= subresource[5].hex;
-
-		const specialAttributes	= [
-			'websign-sri-include'
-		].map(s =>
-			$elem.attr(s) === undefined ? '' : s
-		).join(' ');
-
-		if (enableSRI) {
-			writeSubresource(path, content, hash);
-		}
-
-		$elem.replaceWith(
-			tagName === 'script' ?
-				(enableSRI ?
-					`
-						<script
-							websign-sri-path='${path}'
-							websign-sri-hash='${hash}'
-							${specialAttributes}
-						></script>
-					` :
-					`
-						<script ${specialAttributes}>${
-							content.replace(/<\/script>/g, '<\\/script>')
-						}</script>
-					`
-				) :
-				(enableSRI ?
-					`
-						<link
-							rel='stylesheet'
-							websign-sri-path='${path}'
-							websign-sri-hash='${hash}'
-							${specialAttributes}
-						></link>
-					` :
-					`
-						<style ${specialAttributes}>${content}</style>
-					`
-				)	
-		);
-	}
-
-
-	const output	= $.html().trim().replace(/use strict/g, '');
-
-	fs.writeFileSync(
-		args.outputPath,
-		args.enableMinify ?
-			htmlMinifier.minify(output, {
-				collapseWhitespace: true,
-				minifyCSS: false,
-				minifyJS: false,
-				removeComments: true
-			}) :
-			output
+	subresource.$elem.replaceWith(
+		subresource.tagName === 'script' ?
+			(subresource.enableSRI ?
+				`
+					<script
+						websign-sri-path='${subresource.path}'
+						websign-sri-hash='${subresource.hash}'
+						${specialAttributes}
+					></script>
+				` :
+				`
+					<script ${specialAttributes}>${
+						subresource.content.replace(/<\/script>/g, '<\\/script>')
+					}</script>
+				`
+			) :
+			(subresource.enableSRI ?
+				`
+					<link
+						rel='stylesheet'
+						websign-sri-path='${subresource.path}'
+						websign-sri-hash='${subresource.hash}'
+						${specialAttributes}
+					></link>
+				` :
+				`
+					<style ${specialAttributes}>${subresource.content}</style>
+				`
+			)	
 	);
-}).catch(err =>
-	console.error(err)
+}
+
+
+const output	= $.html().trim().replace(/use strict/g, '');
+
+fs.writeFileSync(
+	args.outputPath,
+	args.enableMinify ?
+		htmlMinifier.minify(output, {
+			collapseWhitespace: true,
+			minifyCSS: false,
+			minifyJS: false,
+			removeComments: true
+		}) :
+		output
 );
+
+
+})();

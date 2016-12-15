@@ -146,7 +146,7 @@ export class P2P implements IP2P {
 						this.accept(command.method);
 						this.join();
 
-						analytics.send({
+						analytics.sendEvent({
 							eventAction: 'start',
 							eventCategory: 'call',
 							eventLabel: command.method,

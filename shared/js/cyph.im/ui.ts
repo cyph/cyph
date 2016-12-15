@@ -52,11 +52,11 @@ export class UI {
 			this.changeState(States.error);
 		}
 		else {
-			urlState.set(urlState.states.notFound);
+			urlState.setUrl(urlState.states.notFound);
 			return;
 		}
 
-		urlState.set(newUrlState, true, true);
+		urlState.setUrl(newUrlState, true, true);
 	}
 
 	/** @ignore */
@@ -64,9 +64,9 @@ export class UI {
 		let baseUrl: string	= env.newCyphBaseUrl;
 
 		if (initialCallType) {
-			const newUrlState: string	= urlState.get(true);
+			const newUrlState: string	= urlState.getUrl(true);
 			if (newUrlState.split('/').slice(-1)[0] === initialCallType) {
-				urlState.set(newUrlState + '/', true, true);
+				urlState.setUrl(newUrlState + '/', true, true);
 			}
 
 			baseUrl	= initialCallType === urlSections.video ?
@@ -159,7 +159,7 @@ export class UI {
 		self.onpopstate		= null;
 
 
-		const urlSection: string	= urlState.getSplit()[0];
+		const urlSection: string	= urlState.getUrlSplit()[0];
 
 		if (urlSection === urlSections.beta) {
 			urlState.trigger();

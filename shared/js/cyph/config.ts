@@ -125,13 +125,6 @@ export class Config {
 		maxSize: 268435456
 	};
 
-	/** Notifier-related config (used by UI.Notifier). */
-	public readonly notifierConfig	= {
-		audio: '/audio/beep.mp3',
-		icon: customBuildFavicon || '/img/favicon/favicon-192x192.png',
-		title: 'Cyph'
-	};
-
 	/** WebSign-related config. */
 	public readonly webSignConfig	= {
 		serviceWorker: 'serviceworker.js',

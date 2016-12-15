@@ -7,19 +7,19 @@ import {util} from './util';
  */
 export class Strings {
 	/** @see Strings */
-	public readonly accept: string			= util.translate(`accept`);
+	public readonly accept: string					= util.translate(`accept`);
 
 	/** @see Strings */
-	public readonly audioCall: string		= util.translate(`call`);
+	public readonly audioCall: string				= util.translate(`call`);
 
 	/** @see Strings */
-	public readonly cameraDisable: string	= util.translate(`Disable Camera`);
+	public readonly cameraDisable: string			= util.translate(`Disable Camera`);
 
 	/** @see Strings */
-	public readonly cameraEnable: string	= util.translate(`Enable Camera`);
+	public readonly cameraEnable: string			= util.translate(`Enable Camera`);
 
 	/** @see Strings */
-	public readonly cancel: string			= util.translate(`cancel`);
+	public readonly cancel: string					= util.translate(`cancel`);
 
 	/** @see Strings */
 	public readonly connectedNotification: string	= util.translate(`Connected!`);
@@ -31,23 +31,23 @@ export class Strings {
 	public readonly continueDialogAction: string	= util.translate(`continue`);
 
 	/** @see Strings */
-	public readonly cypherToast1: string	= util.translate(
+	public readonly cypherToast1: string			= util.translate(
 		`Prepare to witness the amazing nuts and bolts of Cyph.`
 	);
 
 	/** @see Strings */
-	public readonly cypherToast2: string	= util.translate(
+	public readonly cypherToast2: string			= util.translate(
 		`This cyphertext is what outsiders spying on your traffic will see (nothing of value).`
 	);
 
 	/** @see Strings */
-	public readonly cypherToast3: string	= util.translate(`Thou art amazed.`);
+	public readonly cypherToast3: string			= util.translate(`Thou art amazed.`);
 
 	/** @see Strings */
-	public readonly decline: string	= util.translate(`decline`);
+	public readonly decline: string					= util.translate(`decline`);
 
 	/** @see Strings */
-	public readonly discard: string	= util.translate(`discard`);
+	public readonly discard: string					= util.translate(`discard`);
 
 	/** @see Strings */
 	public readonly disconnect: string				= util.translate(`Disconnect`);
@@ -63,18 +63,18 @@ export class Strings {
 	);
 
 	/** @see Strings */
-	public readonly disconnectTitle: string		= util.translate(`Disconnect`);
+	public readonly disconnectTitle: string			= util.translate(`Disconnect`);
 
 	/** @see Strings */
-	public readonly disconnectWarning: string	= util.translate(
+	public readonly disconnectWarning: string		= util.translate(
 		`After closing Cyph, your messages will no longer be retrievable.`
 	);
 
 	/** @see Strings */
-	public readonly fileCall: string		= util.translate(`file transfer`);
+	public readonly fileCall: string				= util.translate(`file transfer`);
 
 	/** @see Strings */
-	public readonly fileTooLarge: string	= util.translate(
+	public readonly fileTooLarge: string			= util.translate(
 		`The file that you are trying to send exceeds the 250 MB attachment limit.`
 	);
 
@@ -89,16 +89,16 @@ export class Strings {
 	);
 
 	/** @see Strings */
-	public readonly formattingHelp: string	= util.translate(`Formatting Help`);
+	public readonly formattingHelp: string			= util.translate(`Formatting Help`);
 
 	/** @see Strings */
-	public readonly friend: string	= util.translate(`friend`);
+	public readonly friend: string					= util.translate(`friend`);
 
 	/** @see Strings */
-	public readonly help: string	= util.translate(`Help`);
+	public readonly help: string					= util.translate(`Help`);
 
 	/** @see Strings */
-	public readonly incomingFile: string	= util.translate(`Incoming File:`);
+	public readonly incomingFile: string			= util.translate(`Incoming File:`);
 
 	/** @see Strings */
 	public readonly incomingFileDownload: string	= util.translate(
@@ -117,50 +117,50 @@ export class Strings {
 	);
 
 	/** @see Strings */
-	public readonly introductoryMessage: string	= util.translate(
+	public readonly introductoryMessage: string		= util.translate(
 		`You may now speak.`
 	);
 
 	/** @see Strings */
-	public readonly invalidCredentials: string	= util.translate(
+	public readonly invalidCredentials: string		= util.translate(
 		`Invalid username or password.`
 	);
 
 	/** @see Strings */
-	public readonly linkCopied: string		= util.translate(`Cyph link copied.`);
+	public readonly linkCopied: string				= util.translate(`Cyph link copied.`);
 
 	/** @see Strings */
-	public readonly linkExpiresAt: string	= util.translate(`Link expires at`);
+	public readonly linkExpiresAt: string			= util.translate(`Link expires at`);
 
 	/** @see Strings */
-	public readonly me: string	= util.translate(`me`);
+	public readonly me: string						= util.translate(`me`);
 
 	/** @see Strings */
-	public readonly message: string		= util.translate(`message`);
+	public readonly message: string					= util.translate(`message`);
 
 	/** @see Strings */
-	public readonly messages: string	= util.translate(`messages`);
+	public readonly messages: string				= util.translate(`messages`);
 
 	/** @see Strings */
-	public readonly micDisable: string	= util.translate(`Disable Mic`);
+	public readonly micDisable: string				= util.translate(`Disable Mic`);
 
 	/** @see Strings */
-	public readonly micEnable: string	= util.translate(`Enable Mic`);
+	public readonly micEnable: string				= util.translate(`Enable Mic`);
 
 	/** @see Strings */
-	public readonly new: string		= util.translate(`new`);
+	public readonly newString: string				= util.translate(`new`);
 
 	/** @see Strings */
 	public readonly newMessageNotification: string	= util.translate(`New message!`);
 
 	/** @see Strings */
-	public readonly no: string	= util.translate(`no`);
+	public readonly no: string						= util.translate(`no`);
 
 	/** @see Strings */
-	public readonly ok: string	= util.translate(`ok`);
+	public readonly ok: string						= util.translate(`ok`);
 
 	/** @see Strings */
-	public readonly oopsTitle: string	= util.translate(`Oops!`);
+	public readonly oopsTitle: string				= util.translate(`Oops!`);
 
 	/** @see Strings */
 	public readonly outgoingFileRejected: string	= util.translate(
@@ -168,42 +168,42 @@ export class Strings {
 	);
 
 	/** @see Strings */
-	public readonly outgoingFileSaved: string	= util.translate(
+	public readonly outgoingFileSaved: string		= util.translate(
 		`File transfer complete! Your friend has saved the following file:`
 	);
 
 	/** @see Strings */
-	public readonly p2pConnect: string	= util.translate(`Call has started.`);
+	public readonly p2pConnect: string				= util.translate(`Call has started.`);
 
 	/** @see Strings */
-	public readonly p2pDeny: string		= util.translate(
+	public readonly p2pDeny: string					= util.translate(
 		`Your "friend" has rejected your call.`
 	);
 
 	/** @see Strings */
-	public readonly p2pDisabled: string	= util.translate(
+	public readonly p2pDisabled: string				= util.translate(
 		`Your or your friend's browser may lack support for video calling. ` +
 		`Try again with the latest Chrome or Firefox.`
 	);
 
 	/** @see Strings */
-	public readonly p2pDisabledLocal: string	= util.translate(
+	public readonly p2pDisabledLocal: string		= util.translate(
 		`Your browser does not support voice or video calling. ` +
 		`Try again with the latest Chrome or Firefox.`
 	);
 
 	/** @see Strings */
-	public readonly p2pDisconnect: string	= util.translate(
+	public readonly p2pDisconnect: string			= util.translate(
 		`Call has been disconnected.`
 	);
 
 	/** @see Strings */
-	public readonly p2pInit: string		= util.translate(
+	public readonly p2pInit: string					= util.translate(
 		`You are about to initiate an encrypted`
 	);
 
 	/** @see Strings */
-	public readonly p2pRequest: string	= util.translate(
+	public readonly p2pRequest: string				= util.translate(
 		`Your friend has requested an encrypted`
 	);
 
@@ -213,10 +213,10 @@ export class Strings {
 	);
 
 	/** @see Strings */
-	public readonly p2pTitle: string	= util.translate(`Cyph Call`);
+	public readonly p2pTitle: string				= util.translate(`Cyph Call`);
 
 	/** @see Strings */
-	public readonly p2pWarning: string	= util.translate(
+	public readonly p2pWarning: string				= util.translate(
 		`This will involve sharing your IP address with your friend (which isn't a problem ` +
 		`unless you're actively hiding your current location from them). Continue?`
 	);
@@ -234,13 +234,13 @@ export class Strings {
 	);
 
 	/** @see Strings */
-	public readonly queuedMessageSaved: string	= util.translate(`Queued message saved.`);
+	public readonly queuedMessageSaved: string		= util.translate(`Queued message saved.`);
 
 	/** @see Strings */
-	public readonly reject: string	= util.translate(`reject`);
+	public readonly reject: string					= util.translate(`reject`);
 
 	/** @see Strings */
-	public readonly save: string	= util.translate(`save`);
+	public readonly save: string					= util.translate(`save`);
 
 	/** @see Strings */
 	public readonly selfDestructActivated: string	= util.translate(
@@ -253,27 +253,27 @@ export class Strings {
 	);
 
 	/** @see Strings */
-	public readonly signupMessage1: string	= util.translate(
+	public readonly signupMessage1: string			= util.translate(
 		`Enjoying the service? Join our waitlist for Cyph v2!`
 	);
 
 	/** @see Strings */
-	public readonly signupMessage2: string	= util.translate(
+	public readonly signupMessage2: string			= util.translate(
 		`More details are on the way, but the next version of Cyph will include ` +
 		`group messaging, user accounts, and encrypted chat history.`
 	);
 
 	/** @see Strings */
-	public readonly suregoahead: string		= util.translate(`sure, go ahead`);
+	public readonly suregoahead: string				= util.translate(`sure, go ahead`);
 
 	/** @see Strings */
-	public readonly timeExtended: string	= util.translate(`Added time to countdown.`);
+	public readonly timeExtended: string			= util.translate(`Added time to countdown.`);
 
 	/** @see Strings */
-	public readonly videoCall: string		= util.translate(`video call`);
+	public readonly videoCall: string				= util.translate(`video call`);
 
 	/** @see Strings */
-	public readonly warningTitle: string	= util.translate(`Warning`);
+	public readonly warningTitle: string			= util.translate(`Warning`);
 
 	constructor () {}
 }

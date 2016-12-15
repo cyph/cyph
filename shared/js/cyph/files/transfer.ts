@@ -10,7 +10,7 @@ export class Transfer implements ITransfer {
 		public readonly name: string = '',
 
 		/** @inheritDoc */
-		public readonly type: string = '',
+		public readonly fileType: string = '',
 
 		/** @inheritDoc */
 		public readonly image: boolean = false,

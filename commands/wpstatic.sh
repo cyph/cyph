@@ -6,17 +6,50 @@ destinationURL="$(echo "${1}" | perl -pe 's/.*?:\/\/(.*)/\1/')"
 
 echo -e '\n\nGenerating static blog\n'
 
-ssh -i ~/.ssh/id_rsa_docker -f -N -L 43000:localhost:43000 wordpress.internal.cyph.com > /dev/null 2>&1
+checklock () {
+	ssh -i ~/.ssh/id_rsa_docker wordpress.internal.cyph.com '
+		find . -name "lock" -mmin +21 -mindepth 1 -maxdepth 1 -exec rm {} \; ;
+		if [ -f lock ] ; then cat lock ; fi
+	'
+}
 
-while [ ! -f wpstatic.zip ] ; do
+claimlock () {
+	ssh -i ~/.ssh/id_rsa_docker wordpress.internal.cyph.com "
+		if [ ! -f lock ] ; then echo '${1}' > lock ; fi
+	"
+}
+
+releaselock () {
+	ssh -i ~/.ssh/id_rsa_docker wordpress.internal.cyph.com 'rm lock'
+}
+
+sshkill () {
+	ps ux |
+		grep -P 'ssh.*wordpress.internal.cyph.com' |
+		grep -v grep |
+		awk '{print $2}' |
+		xargs kill -9
+}
+
+while [ ! -f index.html ] ; do
 	commandComment="# wpstatic-download $(node -e '
 		console.log(crypto.randomBytes(32).toString("hex"))
 	')"
 
+	while [ "$(checklock)" != "${commandComment}" ] ; do
+		if [ "$(checklock)" == "" ] ; then
+			claimlock "${commandComment}"
+		fi
+		sleep 10
+	done
+
+	sshkill
+	ssh -i ~/.ssh/id_rsa_docker -f -N -L 43000:localhost:43000 wordpress.internal.cyph.com > /dev/null 2>&1
+
 	command="$(node -e "
 		const browser	= new (require('zombie'));
 
-		setTimeout(() => process.exit(), 300000);
+		setTimeout(() => process.exit(), 1200000);
 
 		new Promise(resolve => browser.visit(
 			'http://localhost:43000/wp-admin/admin.php?page=simply-static_settings',
@@ -81,14 +114,30 @@ while [ ! -f wpstatic.zip ] ; do
 		});
 	" 2> /dev/null | tail -n1)"
 
+	releaselock
+
 	if [ "$(echo "${command}" | grep "${commandComment}")" ] ; then
 		echo -e "${command}\n"
 		eval "${command}"
+	else
+		sleep 1m
 	fi
+
+	if [ ! -f wpstatic.zip ] ; then
+		continue
+	fi
+
+	mkdir tmp
+	unzip wpstatic.zip -d tmp
+
+	if [ -f tmp/index.html ] ; then
+		mv tmp/* ./
+	fi
+
+	rm -rf tmp wpstatic.zip
 done
 
-unzip wpstatic.zip
-rm -rf wpstatic.zip wp-admin wp-json $(find . -name '*.php')
+rm -rf wp-admin wp-json $(find . -name '*.php')
 
 for f in $(find . -type f) ; do
 	cat "${f}" |
@@ -247,3 +296,5 @@ for path in $(
 	wget --tries=50 "http://localhost:43000/${path}" -O "${path}.new"
 	mv "${path}.new" "${path}" 2> /dev/null
 done
+
+sshkill

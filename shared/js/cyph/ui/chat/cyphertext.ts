@@ -65,7 +65,7 @@ export class Cyphertext implements ICyphertext {
 
 		this.elements.everything().addClass(Cyphertext.curtainClass);
 
-		analytics.send({
+		analytics.sendEvent({
 			eventAction: 'show',
 			eventCategory: 'cyphertext',
 			eventValue: 1,

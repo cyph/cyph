@@ -26,7 +26,7 @@ export class PageTitles {
 	);
 
 	/** @see PageTitles */
-	public readonly default: string			= util.translate(
+	public readonly defaultTitle: string	= util.translate(
 		`Cyph – Encrypted Messenger`
 	);
 

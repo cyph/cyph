@@ -15,7 +15,7 @@ export class UrlSections {
 	public readonly video: string	= '';
 
 	constructor () {}
-};
+}
 
 /** @see UrlSections */
 export const urlSections	= new UrlSections();

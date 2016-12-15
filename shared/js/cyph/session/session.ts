@@ -140,7 +140,7 @@ export class Session implements ISession {
 				if (this.pingPongTimeouts++ < 2) {
 					this.lastIncomingMessageTimestamp	= util.timestamp();
 
-					analytics.send({
+					analytics.sendEvent({
 						eventAction: 'detected',
 						eventCategory: 'ping-pong-timeout',
 						eventValue: 1,
@@ -173,11 +173,11 @@ export class Session implements ISession {
 	private sendHandler (messages: string[]) : void {
 		this.lastOutgoingMessageTimestamp	= util.timestamp();
 
-		for (let message of messages) {
+		for (const message of messages) {
 			this.channel.send(message);
 		}
 
-		analytics.send({
+		analytics.sendEvent({
 			eventAction: 'sent',
 			eventCategory: 'message',
 			eventValue: messages.length,
@@ -262,7 +262,7 @@ export class Session implements ISession {
 				else if (!this.isLocalSession) {
 					this.pingPong();
 
-					analytics.send({
+					analytics.sendEvent({
 						eventAction: 'started',
 						eventCategory: 'cyph',
 						eventValue: 1,
@@ -270,7 +270,7 @@ export class Session implements ISession {
 					});
 
 					if (this.state.wasInitiatedByAPI) {
-						analytics.send({
+						analytics.sendEvent({
 							eventAction: 'started',
 							eventCategory: 'api-initiated-cyph',
 							eventValue: 1,
@@ -348,7 +348,7 @@ export class Session implements ISession {
 			await util.sleep();
 		}
 
-		for (let message of messages) {
+		for (const message of messages) {
 			if (message.event === rpcEvents.text) {
 				this.trigger(rpcEvents.text, message.data);
 			}
@@ -447,7 +447,7 @@ export class Session implements ISession {
 				);
 			}
 			catch (_) {
-				urlState.set(urlState.states.notFound);
+				urlState.setUrl(urlState.states.notFound);
 			}
 		}
 	})(); }

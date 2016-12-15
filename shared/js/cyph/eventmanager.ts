@@ -81,7 +81,7 @@ export class EventManager {
 		}
 
 		if (env.isMainThread) {
-			for (let thread of this.threads) {
+			for (const thread of this.threads) {
 				try {
 					thread.postMessage({event, data, isThreadEvent: true});
 				}
@@ -93,7 +93,7 @@ export class EventManager {
 			return;
 		}
 
-		for (let handler of Array.from(this.eventMappings.get(event))) {
+		for (const handler of Array.from(this.eventMappings.get(event))) {
 			try {
 				handler(data);
 			}

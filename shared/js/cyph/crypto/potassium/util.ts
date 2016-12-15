@@ -28,7 +28,7 @@ export class Util {
 		const out	= new Uint8Array(arrays.reduce((a, b) => a + b.byteLength, 0));
 		let index	= 0;
 
-		for (let a of arrays) {
+		for (const a of arrays) {
 			const array	= this.toBytes(a);
 			out.set(array, index);
 			index += array.length;

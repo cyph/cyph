@@ -88,7 +88,7 @@ export class Files implements IFiles {
 					);
 
 					let j	= 0;
-					for (let chunk of chunks) {
+					for (const chunk of chunks) {
 						cyphertext.set(
 							new Uint8Array(new Uint32Array([chunk.length]).buffer),
 							j
@@ -147,7 +147,7 @@ export class Files implements IFiles {
 					);
 
 					let j	= 0;
-					for (let chunk of chunks) {
+					for (const chunk of chunks) {
 						plaintext.set(chunk, j);
 						j += chunk.length;
 
@@ -318,14 +318,14 @@ export class Files implements IFiles {
 	public async send (
 		plaintext: Uint8Array,
 		name: string,
-		type: string,
+		fileType: string,
 		image: boolean,
 		imageSelfDestructTimeout: number
 	) : Promise<void> {
 		if (plaintext.length > config.filesConfig.maxSize) {
 			this.triggerUIEvent(UIEvents.tooLarge);
 
-			analytics.send({
+			analytics.sendEvent({
 				eventAction: 'toolarge',
 				eventCategory: 'file',
 				eventValue: 1,
@@ -339,7 +339,7 @@ export class Files implements IFiles {
 
 		const transfer: ITransfer	= new Transfer(
 			name,
-			type,
+			fileType,
 			image,
 			imageSelfDestructTimeout,
 			plaintext.length
@@ -347,7 +347,7 @@ export class Files implements IFiles {
 
 		this.transfers.add(transfer);
 
-		analytics.send({
+		analytics.sendEvent({
 			eventAction: 'send',
 			eventCategory: 'file',
 			eventValue: 1,

@@ -9,14 +9,14 @@ export class Elements {
 	 * jQuery wrapper that memoizes DOM elements for performance.
 	 * @param selector
 	 */
-	public static get (
+	public static getElement (
 		selector: string|HTMLElement|Window|Document|(() => JQuery)
 	) : () => JQuery {
 		let cache: JQuery;
 
 		const f	= typeof selector === 'function' ?
 			selector :
-			() => $(selector);
+			() => $(selector)
 		;
 
 		return () => {
@@ -50,49 +50,51 @@ export class Elements {
 
 
 	/** @see Elements */
-	public readonly window					= Elements.get(window);
+	public readonly window					= Elements.getElement(window);
 
 	/** @see Elements */
-	public readonly document				= Elements.get(document);
+	public readonly document				= Elements.getElement(document);
 
 	/** @see Elements */
-	public readonly html					= Elements.get('html');
+	public readonly html					= Elements.getElement('html');
 
 	/** @see Elements */
-	public readonly head					= Elements.get('head');
+	public readonly head					= Elements.getElement('head');
 
 	/** @see Elements */
-	public readonly body					= Elements.get('body');
+	public readonly body					= Elements.getElement('body');
 
 	/** @see Elements */
-	public readonly everything				= Elements.get('*');
+	public readonly everything				= Elements.getElement('*');
 
 	/** @see Elements */
-	public readonly cyphertext				= Elements.get('.chat-cyphertext > md2-content');
+	public readonly cyphertext				= Elements.getElement(
+		'.chat-cyphertext > md2-content'
+	);
 
 	/** @see Elements */
-	public readonly footer					= Elements.get('#footer');
+	public readonly footer					= Elements.getElement('#footer');
 
 	/** @see Elements */
-	public readonly messageList				= Elements.get('.message-list > md2-content');
+	public readonly messageList				= Elements.getElement('.message-list > md2-content');
 
 	/** @see Elements */
-	public readonly messageListInner		= Elements.get('.message-list md-list');
+	public readonly messageListInner		= Elements.getElement('.message-list md-list');
 
 	/** @see Elements */
-	public readonly nanoScroller			= Elements.get('.nano');
+	public readonly nanoScroller			= Elements.getElement('.nano');
 
 	/** @see Elements */
-	public readonly p2pFriendStream			= Elements.get('.video-call .friend.stream');
+	public readonly p2pFriendStream			= Elements.getElement('.video-call .friend.stream');
 
 	/** @see Elements */
-	public readonly p2pMeStream				= Elements.get('.video-call .me');
+	public readonly p2pMeStream				= Elements.getElement('.video-call .me');
 
 	/** @see Elements */
-	public readonly signupForm				= Elements.get('.beta-signup-form');
+	public readonly signupForm				= Elements.getElement('.beta-signup-form');
 
 	/** @see Elements */
-	public readonly title					= Elements.get('title');
+	public readonly title					= Elements.getElement('title');
 
 	constructor () {}
 }

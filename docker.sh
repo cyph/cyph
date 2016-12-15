@@ -5,7 +5,7 @@ cd $(cd "$(dirname "$0")"; pwd)
 
 # Backup before doing anything
 
-currentDir="$(pwd)"
+currentDir="$PWD"
 
 mkdir ~/.cyphbackup 2> /dev/null
 rm -rf ~/.cyphbackup/*
@@ -59,7 +59,7 @@ mounts=" \
 	-v $HOME/.gitconfig:/home/gibson/.gitconfig \
 	-v $HOME/.gnupg:/home/gibson/.gnupg.original \
 	-v $HOME/.ssh:/home/gibson/.ssh \
-	-v $(echo "$(pwd)://cyph" | sed 's/\/cygdrive/\//g') \
+	-v $(echo "$PWD://cyph" | sed 's/\/cygdrive/\//g') \
 "
 
 # Foreground by default

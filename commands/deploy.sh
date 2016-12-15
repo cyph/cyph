@@ -1,12 +1,13 @@
 #!/bin/bash
 
 cd $(cd "$(dirname "$0")"; pwd)/..
-dir="$(pwd)"
+dir="$PWD"
 originalArgs="${*}"
 
 
 cacheBustedProjects='cyph.com'
 compiledProjects='cyph.com cyph.im'
+webSignedProject='cyph.im'
 prodOnlyProjects='nakedredirect test websign'
 shortlinkProjects='io me video audio'
 site=''
@@ -76,7 +77,7 @@ fi
 
 
 mkdir ~/.build
-cp -rf * ~/.build/
+cp -rf * .babelrc ~/.build/
 cd ~/.build
 
 mkdir geoisp.tmp
@@ -113,132 +114,6 @@ projectname () {
 }
 
 package="$(projectname cyph.ws)"
-
-setredirect () {
-	cat > "${2}/index.html.tmp" <<- EOM
-		<html☁manifest='/appcache.appcache'>
-			<body>
-				<script>
-					try {
-						navigator.serviceWorker.
-							register('/serviceworker.js').
-							catch(function () {})
-						;
-					}
-					catch (_) {}
-				</script>
-				<script>
-					var☁isHiddenService	= location.host.split('.').slice(-1)[0] === 'onion';
-
-					$(if [ ! "${test}" ] ; then echo "
-						if (location.host.indexOf('www.') === 0) {
-							location.host	= location.host.replace('www.', '');
-						}
-						else☁if (
-							!isHiddenService &&
-							self.localStorage &&
-							!localStorage.webSignWWWPinned
-						) {
-							localStorage.webSignWWWPinned	= true;
-							location.host					= 'www.' + location.host;
-						}
-					" ; fi)
-
-					var☁path	= (
-						'/#' +
-						'$(if [ "${1}" ] ; then echo "${1}/" ; fi)' +
-						location.toString().
-							split(location.host)[1].
-							replace('#', '').
-							replace(/^\\//, '')
-					).replace(/\\/\$/, '');
-
-					var☁host	= '${package}';
-
-					if (isHiddenService) {
-						host	=
-							host.replace(/\\.ws\$/, '').replace(/\\./g, '_') +
-							'.cyphdbyhiddenbhs.onion'
-						;
-					}
-
-					location	= 'https://' + host + (path === '/#' ? '' : path);
-				</script>
-			</body>
-		</html>
-	EOM
-
-	cat > "${2}/appcache.appcache" <<- EOM
-		CACHE MANIFEST
-
-		CACHE:
-		/
-		/appcache.appcache
-		/serviceworker.js
-
-		NETWORK:
-		*
-	EOM
-
-	cat > "${2}/serviceworker.js" <<- EOM
-		var files	= [
-			'/',
-			'/appcache.appcache',
-			'/serviceworker.js'
-		].map(function (file) {
-			return new Request(file);
-		});
-
-		var root	= files[0].url.replace(/(.*)\\/\$/, '\$1');
-
-		self.addEventListener('install', function () {
-			Promise.all([
-				caches.open('cache'),
-				Promise.all(files.map(function (file) {
-					return fetch(file, {credentials: 'include'});
-				}))
-			]).then(function (results) {
-				var cache		= results[0];
-				var responses	= results[1];
-
-				for (var i = 0 ; i < responses.length ; ++i) {
-					cache.put(files[i], responses[i]);
-				}
-			});
-		});
-
-		self.addEventListener('fetch', function (e) {
-			/* Let requests to other origins pass through */
-			if (e.request.url.indexOf(root) !== 0) {
-				return;
-			}
-
-			return e.respondWith(
-				caches.match(e.request).then(function (cachedResponse) {
-					if (cachedResponse) {
-						return cachedResponse;
-					}
-
-					return Promise.all([
-						caches.open('cache'),
-						fetch(e.request.clone())
-					]).then(function (results) {
-						var cache		= results[0];
-						var response	= results[1];
-
-						cache.put(e.request, response.clone());
-
-						return response;
-					});
-				})
-			);
-		});
-	EOM
-
-	echo -n '<!DOCTYPE html>' > "${2}/index.html"
-	cat "${2}/index.html.tmp" | perl -pe 's/\s+//g' | tr '☁' ' ' >> "${2}/index.html"
-	rm "${2}/index.html.tmp"
-}
 
 
 if [ -d test ] ; then
@@ -334,22 +209,37 @@ else
 fi
 
 
+# Blog + cache busting
 waitingForBlog=''
-if [ ! "${site}" -o "${site}" == cyph.com ] ; then
-	# Blog
+if [ "${cacheBustedProjects}" ] ; then
 	waitingForBlog=true
 	bash -c "
-		rm -rf cyph.com/blog 2> /dev/null;
-		mkdir -p cyph.com/blog;
-		cd cyph.com/blog;
-		../../commands/wpstatic.sh '${homeURL}/blog' > ../.blog.output 2>&1;
-		touch ../.blog.done;
+		if [ ! '${site}' -o '${site}' == cyph.com ] ; then
+			rm -rf cyph.com/blog 2> /dev/null
+			mkdir -p cyph.com/blog
+			cd cyph.com/blog
+			../../commands/wpstatic.sh '${homeURL}/blog' >> ../../.blog.output 2>&1
+			cd ../..
+		fi
+
+		while [ ! -f .build.done ] ; do sleep 1 ; done
+		rm .build.done
+
+		# Cache bust
+		echo 'Cache bust' >> .blog.output 2>&1
+		for d in ${cacheBustedProjects} ; do
+			cd \$d
+			../commands/cachebust.js >> ../.blog.output 2>&1
+			cd ..
+		done
+
+		touch .blog.done
 	" &
 fi
 
 
+# WebSign project
 if [ ! "${site}" -o "${site}" == websign ] ; then
-	# WebSign project
 	cd websign
 	websignHashWhitelist="$(cat hashwhitelist.json)"
 	cp -rf ../shared/img ./
@@ -359,12 +249,13 @@ fi
 
 
 # Compile + translate + minify
-if [ "${compiledProjects}" ] ; then
-	cd shared
+for d in $compiledProjects ; do
+	echo "Compile $(projectname ${d})"
 
-	echo 'Compiling'
+	cp -rf shared/* ${d}/
+	cd ${d}
 
-	if [ ! "${simple}" ] ; then
+	if [ "${websign}" -a "${d}" == "${webSignedProject}" ] ; then
 		# Block importScripts in Workers in WebSigned environments
 		cat js/cyph/thread.ts | \
 			tr '\n' '☁' | \
@@ -373,145 +264,34 @@ if [ "${compiledProjects}" ] ; then
 			grep -v oldImportScripts \
 		> js/cyph/thread.ts.new
 		mv js/cyph/thread.ts.new js/cyph/thread.ts
+
+		# Merge in base64'd images, fonts, video, and audio
+		../commands/websign/subresourceinline.js ../pkg/cyph.ws-subresources
+
+		# Prevent embedded files from breaking build
+		cat js/tslint.json | perl -pe 's/("max-line-length": ).*/\1false,/g' > js/tslint.json.new
+		mv js/tslint.json.new js/tslint.json 
 	fi
 
-	../commands/build.sh --prod || exit;
+	../commands/build.sh --prod $(test "${simple}" && echo '--no-minify') || exit;
 
 	rm -rf js/node_modules lib/js/node_modules
 
+	find css -name '*.scss' -or -name '*.map' -exec rm {} \;
+	find js -name '*.ts' -or -name '*.ts.js' -name '*.map' -exec rm {} \;
+
 	if [ ! "${simple}" ] ; then
-		echo 'JS Minify'
-		find js -name '*.js' | xargs -I% uglifyjs '%' -o '%'
-		echo 'CSS Minify'
-		find css -name '*.css' | grep -v bourbon/ | xargs -I% cleancss -o '%' '%'
+		html-minifier --minify-js --minify-css --remove-comments --collapse-whitespace index.html -o index.html.new
+		mv index.html.new index.html
 	fi
 
 	cd ..
-fi
-
-for d in $compiledProjects ; do
-	project="$(projectname $d)"
-
-	cp -rf shared/* ${d}/
-
-	find ${d}/css -name '*.scss' -or -name '*.map' -exec rm {} \;
-	find ${d}/js -name '*.ts' -or -name '*.ts.js' -name '*.map' -exec rm {} \;
-
-	if [ ! "${simple}" ] ; then
-		echo "HTML Minify ${project}"
-		html-minifier --minify-js --minify-css --remove-comments --collapse-whitespace ${d}/index.html -o ${d}/index.html.new
-		mv ${d}/index.html.new ${d}/index.html
-	fi
 done
+touch .build.done
 
 
-if [ "${waitingForBlog}" ] ; then
-	while true ; do
-		cat cyph.com/.blog.output
-		echo -n > cyph.com/.blog.output
-		if [ -f cyph.com/.blog.done ] ; then
-			break
-		fi
-		sleep 5
-	done
-	rm cyph.com/.blog.done cyph.com/.blog.output
-	if [ ! -f cyph.com/blog/index.html ] ; then
-		echo -e '\n\nStatic blog generation failed\n'
-		exit 1
-	fi
-fi
-
-
-for d in $cacheBustedProjects ; do
-	# Cache bust
-
-	cd $d
-
-	echo "Cache bust $(projectname $d)"
-
-	node -e '
-		const superSphincs		= require("supersphincs");
-
-		const filesToCacheBust	= child_process.spawnSync("find", [
-			"-L",
-			".",
-			"-type",
-			"f",
-			"-mindepth",
-			"2"
-		]).stdout.toString().split("\n").filter(s => s).map(s => s.slice(2));
-
-		const filesToModify		= child_process.spawnSync("find", [
-			".",
-			"-type",
-			"f",
-			"-and",
-			"\(",
-			"-name",
-			"*.html",
-			"-or",
-			"-name",
-			"*.js",
-			"-or",
-			"-name",
-			"*.css",
-			"\)"
-		]).stdout.toString().split("\n").filter(s => s);
-
-		const fileContents		= {};
-		const cacheBustedFiles	= {};
-
-		const getFileName		= file => file.split("/").slice(-1)[0];
-
-
-		Promise.all(filesToModify.map(file =>
-			new Promise((resolve, reject) => fs.readFile(file, (err, data) => {
-				try {
-					fileContents[file]	= data.toString();
-					resolve();
-				}
-				catch (_) {
-					reject(err);
-				}
-			})).then(() =>
-				filesToCacheBust.reduce((p, subresource) => p.then(content => {
-					if (content.indexOf(subresource) < 0) {
-						return content;
-					}
-
-					cacheBustedFiles[getFileName(subresource)]	= true;
-
-					return superSphincs.hash(
-						fs.readFileSync(subresource)
-					).then(hash =>
-						content.split(subresource).join(`${subresource}?${hash.hex}`)
-					);
-				}), Promise.resolve(fileContents[file])).then(content => {
-					if (content !== fileContents[file]) {
-						fileContents[file]	= content;
-						fs.writeFileSync(file, content);
-					}
-				})
-			)
-		)).
-
-		/* To save space, remove unused subresources under lib directory */
-		then(() => Promise.all(
-			filesToCacheBust.filter(subresource =>
-				subresource.startsWith("lib/") &&
-				!cacheBustedFiles[getFileName(subresource)]
-			).map(subresource => new Promise(resolve =>
-				fs.unlink(subresource, resolve)
-			))
-		));
-	'
-
-	cd ..
-done
-
+# WebSign packaging
 if [ "${websign}" ] ; then
-	# WebSign packaging
-
 	if [ -d ~/.cyph/cdn ] ; then
 		bash -c 'cd ~/.cyph/cdn ; git reset --hard ; git clean -dfx ; git pull'
 		cp -rf ~/.cyph/cdn ./
@@ -521,72 +301,13 @@ if [ "${websign}" ] ; then
 		cp -rf cdn ~/.cyph/
 	fi
 
-	cd cyph.im
+	cd "${webSignedProject}"
 
 	echo "WebSign ${package}"
-
-	# Merge in base64'd images, fonts, video, and audio
-	node -e '
-		const datauri		= require("datauri");
-
-		const filesToMerge	= child_process.spawnSync("find", [
-			"audio",
-			"fonts",
-			"img",
-			"video",
-			"-type",
-			"f"
-		]).stdout.toString().split("\n").filter(s => s);
-
-		const filesToModify	= ["js", "css"].reduce((arr, ext) =>
-			arr.concat(
-				child_process.spawnSync("find", [
-					ext,
-					"-name",
-					"*." + ext,
-					"-type",
-					"f"
-				]).stdout.toString().split("\n")
-			),
-			["index.html"]
-		).filter(s => s);
-
-
-		for (let file of filesToModify) {
-			const originalContent	= fs.readFileSync(file).toString();
-			let content				= originalContent;
-
-			for (let subresource of filesToMerge) {
-				if (content.indexOf(subresource) < 0) {
-					continue;
-				}
-
-				const dataURI	= datauri.sync(subresource);
-
-				content	= content.
-					replace(
-						new RegExp(`(src|href|content)=(\\\\?['"'"'"])/?${subresource}\\\\?['"'"'"]`, "g"),
-						`WEBSIGN-SRI-DATA-START☁$2☁☁☁${dataURI}☁WEBSIGN-SRI-DATA-END`
-					).replace(
-						new RegExp(`/?${subresource}(\\?websign-sri-disable)?`, "g"),
-						dataURI
-					).replace(
-						/☁☁☁/g,
-						`☁${subresource}☁`
-					)
-				;
-			}
-
-			if (content !== originalContent) {
-				fs.writeFileSync(file, content);
-			}
-		}
-	'
 
 	# Merge imported libraries into threads
 	find js -name '*.js' | xargs -I% ../commands/websign/threadpack.js %
 
-	mkdir ../pkg
 	../commands/websign/pack.js --sri --minify index.html ../pkg/cyph.ws
 
 	find . \
@@ -602,7 +323,6 @@ if [ "${websign}" ] ; then
 
 	packages="${package}"
 
-	mkdir -p pkg/cyph.ws-subresources 2> /dev/null
 	cd pkg/cyph.ws-subresources
 	git clone --depth 1 git@github.com:cyph/custom-builds.git
 	rm -rf custom-builds/.git custom-builds/reference.json
@@ -616,108 +336,13 @@ if [ "${websign}" ] ; then
 		customBuildStylesheet="custom-builds/${customBuildBase}.css"
 		packages="${packages} ${customBuild}"
 
-		node -e "
-			const cheerio		= require('cheerio');
-			const datauri		= require('datauri');
-			const htmlencode	= require('htmlencode');
-			const superSphincs	= require('supersphincs');
-
-			const compileSCSS	= scss =>
-				child_process.spawnSync('cleancss', [], {input:
-					child_process.spawnSync(
-						'scss',
-						['-s', '-I../../shared/css'],
-						{input: scss}
-					).stdout.toString()
-				}).stdout.toString().trim()
-			;
-
-			const \$	= cheerio.load(fs.readFileSync('../cyph.ws').toString());
-
-			const o		= JSON.parse(
-				fs.readFileSync('${customBuildTheme}').toString()
-			);
-
-			o.background	= datauri.sync('${customBuildBackground}');
-			o.favicon		= datauri.sync('${customBuildFavicon}');
-
-			try {
-				o.additionalStyling	= compileSCSS(
-					fs.readFileSync('${customBuildAdditionalStyling}').toString()
-				);
-			}
-			catch (_) {}
-
-			const css	= compileSCSS(
-				eval(\`\\\`
-					@import 'bourbon/bourbon';
-
-					\${
-						fs.readFileSync(
-							'../../shared/css/custom-build.scss.template'
-						).toString().replace(/;/g, '!important;')
-					}
-				\\\`\`)
-			);
-
-			superSphincs.hash(css).then(hash => {
-				\$('title').text(htmlencode.htmlEncode(o.title));
-
-				if (o.colors.main) {
-					\$('head').find(
-						'meta[name=\"theme-color\"],' + 
-						'meta[name=\"msapplication-TileColor\"]'
-					).
-						attr('content', o.colors.main)
-					;
-
-					\$('head').append(\`<style>
-						#pre-load {
-							background-color: \${o.colors.main} !important;
-						}
-					</style>\`);
-				}
-
-				\$('head').find(
-					'link[type=\"image/png\"],' + 
-					'meta[name=\"msapplication-TileImage\"]'
-				).
-					removeAttr('websign-sri-path').
-					removeAttr('websign-sri-hash').
-					removeAttr('href').
-					removeAttr('content').
-					addClass('custom-build-favicon')
-				;
-
-				\$('head').append(\`<script>
-					self.customBuild		= '${customBuild}';
-					self.customBuildFavicon	= '\${o.favicon}';
-
-					Array.prototype.slice.apply(
-						document.getElementsByClassName('custom-build-favicon')
-					).forEach(function (elem) {
-						if (elem instanceof HTMLLinkElement) {
-							elem.href		= self.customBuildFavicon;
-						}
-						else if (elem instanceof HTMLMetaElement) {
-							elem.content	= self.customBuildFavicon;
-						}
-					});
-				</script>\`);
-
-				\$('body').append(\`
-					<link
-						rel='stylesheet'
-						websign-sri-path='${customBuildStylesheet}'
-						websign-sri-hash='\${hash.hex}'
-					></link>
-				\`);
-
-				fs.writeFileSync('${customBuildStylesheet}', css);
-				fs.writeFileSync('${customBuildStylesheet}.srihash', hash.hex);
-				fs.writeFileSync('../${customBuild}', \$.html().trim());
-			});
-		"
+		../../commands/websign/custombuild.js \
+			"${customBuild}" \
+			"${customBuildAdditionalStyling}" \
+			"${customBuildBackground}" \
+			"${customBuildFavicon}" \
+			"${customBuildStylesheet}" \
+			"${customBuildTheme}"
 
 		rm -rf ${d}
 	done
@@ -779,7 +404,7 @@ if [ "${websign}" ] ; then
 
 	# WebSign redirects
 
-	setredirect '' cyph.im
+	./commands/websign/createredirect.sh '' cyph.im "${package}" "${test}"
 
 	for suffix in $shortlinkProjects ; do
 		d=cyph.${suffix}
@@ -787,10 +412,23 @@ if [ "${websign}" ] ; then
 
 		mkdir $d
 		cat cyph.im/cyph-im.yaml | sed "s|cyph-im|${project}|g" > ${d}/${project}.yaml
-		setredirect ${suffix} ${d}
+		./commands/websign/createredirect.sh ${suffix} ${d} "${package}" "${test}"
 	done
 elif [ ! "${site}" -o "${site}" == cyph.im ] ; then
 	cp websign/js/workerhelper.js cyph.im/js/
+fi
+
+
+if [ "${waitingForBlog}" ] ; then
+	while true ; do
+		cat .blog.output
+		echo -n > .blog.output
+		if [ -f .blog.done ] ; then
+			break
+		fi
+		sleep 1
+	done
+	rm .blog.done .blog.output
 fi
 
 

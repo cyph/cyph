@@ -8,6 +8,9 @@ export interface ITransfer extends IMessageData {
 	/** If defined, indicates an acceptance or rejection of a file transfer. */
 	answer: boolean;
 
+	/** MIME type. */
+	readonly fileType: string;
+
 	/** Unique ID to represent this file transfer. */
 	readonly id: string;
 
@@ -31,9 +34,6 @@ export interface ITransfer extends IMessageData {
 
 	/** File size in bytes (e.g. 3293860). */
 	size: number;
-
-	/** MIME type. */
-	readonly type: string;
 
 	/** File URL. */
 	url: string;

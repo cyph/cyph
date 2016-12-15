@@ -140,7 +140,7 @@ export class CyphDemo {
 		this.isActive	= isActive;
 
 		if (this.isActive) {
-			for (let o of [
+			for (const o of [
 				{
 					$root: elements.demoRootDesktop(),
 					$screenshot: elements.screenshotLaptop(),
@@ -296,7 +296,7 @@ export class CyphDemo {
 		const facebookPicUrl		= await CyphDemo.facebookPicUrl;
 		const facebookPicMessage	= await CyphDemo.facebookPicMessage;
 
-		for (let message of messages) {
+		for (const message of messages) {
 			const chat: IChat		=
 				message.isMobile ?
 					this.mobile :
@@ -316,7 +316,7 @@ export class CyphDemo {
 			await util.sleep(util.random(maxDelay, minDelay));
 
 			if (text !== facebookPicMessage) {
-				for (let c of text.split('')) {
+				for (const c of text.split('')) {
 					chat.currentMessage += c;
 					await util.sleep(util.random(50, 10));
 				}

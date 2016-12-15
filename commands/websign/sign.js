@@ -1,16 +1,22 @@
-#!/usr/bin/env node
+#!/usr/bin/env babel-node
 
-const crypto		= require('crypto');
-const dgram			= require('dgram');
-const fs			= require('fs');
-const mkdirp		= require('mkdirp');
-const os			= require('os');
-const superSphincs	= require('supersphincs');
+
+import {randomBytes} from 'crypto';
+import * as dgram from 'dgram';
+import * as fs from 'fs';
+import {default as mkdirp} from 'mkdirp';
+import * as os from 'os';
+import * as superSphincs from 'supersphincs';
+
+
+(async () => {
+
 
 const args			= {
 	hashWhitelist: JSON.parse(process.argv[2]),
 	items: process.argv.slice(3).filter(s => s)
 };
+
 
 const remoteAddress	= '10.0.0.42';
 const port			= 31337;
@@ -19,7 +25,7 @@ const chunkSize		= 576;
 const interfaces	= os.networkInterfaces();
 const macAddress	= Buffer.from(
 	fs.readFileSync(
-		`${process.env['HOME']}/.cyph/agse.local.mac`
+		`${process.env.HOME}/.cyph/agse.local.mac`
 	).toString().trim()
 );
 
@@ -52,13 +58,13 @@ const dataToSign	= Buffer.from(JSON.stringify(
 	items.map(o => o.inputData)
 ));
 
-const id			= new Uint32Array(crypto.randomBytes(4).buffer)[0];
+const id			= new Uint32Array(randomBytes(4).buffer)[0];
 const client		= dgram.createSocket('udp4');
 const server		= dgram.createSocket('udp4');
 
 
 let incoming;
-server.on('message', message => {
+server.on('message', async (message) => {
 	const metadata		= new Uint32Array(message.buffer, 0, 3);
 
 	if (metadata[0] !== id) {
@@ -105,15 +111,21 @@ server.on('message', message => {
 			]).toString('base64').replace(/\s+/g, '')
 		);
 
-		superSphincs.importKeys({
-			public: {
-				rsa: publicKeys.rsa[rsaIndex],
-				sphincs: publicKeys.sphincs[sphincsIndex]
-			}
-		}).then(keyPair => Promise.all(signedItems.map(signed => superSphincs.open(
-			signed,
-			keyPair.publicKey
-		)))).then(openedItems => {
+		try {
+			const keyPair		= await superSphincs.importKeys({
+				public: {
+					rsa: publicKeys.rsa[rsaIndex],
+					sphincs: publicKeys.sphincs[sphincsIndex]
+				}
+			});
+
+			const openedItems	= await Promise.all(
+				signedItems.map(signed => superSphincs.open(
+					signed,
+					keyPair.publicKey
+				))
+			);
+
 			if (items.filter((o, i) => openedItems[i] !== o.inputData).length > 0) {
 				throw new Error('Incorrect signed data.');
 			}
@@ -121,7 +133,7 @@ server.on('message', message => {
 			for (let i = 0 ; i < items.length ; ++i) {
 				const outputDir	= items[i].outputDir;
 
-				mkdirp.sync(outputDir);
+				await new Promise(resolve => mkdirp(outputDir, resolve));
 
 				fs.writeFileSync(`${outputDir}/current`, timestamp);
 
@@ -136,10 +148,11 @@ server.on('message', message => {
 
 			console.log('Signing complete.');
 			process.exit(0);
-		}).catch(() => {
+		}
+		catch (_) {
 			console.error('Invalid signatures.');
 			process.exit(1);
-		});
+		}
 	}
 });
 
@@ -182,3 +195,6 @@ const sendData	= i => {
 };
 
 sendData(0);
+
+
+})();

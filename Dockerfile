@@ -123,22 +123,26 @@ RUN sudo npm -g install \
 	@angular/core@2.2.4 \
 	@angular/platform-browser@2.2.4 \
 	@angular/platform-server@2.2.4 \
+	babel-core@6.20.0 \
 	babel-cli@6.18.0 \
+	babel-loader@6.2.9 \
+	babel-plugin-syntax-async-functions@6.13.0 \
+	babel-plugin-transform-regenerator@6.20.0 \
 	babel-preset-es2015@6.18.0 \
 	browserify@13.1.1 \
 	cheerio@0.22.0 \
-	clean-css@3.4.21 \
-	codelyzer@2.0.0-beta.1 \
-	datauri@1.0.4  \
+	clean-css@3.4.22 \
+	codelyzer@2.0.0-beta.3 \
+	datauri@1.0.5  \
 	htmlencode@0.0.4  \
 	image-type@2.1.0 \
 	html-minifier@3.2.3 \
 	rxjs@5.0.0-beta.12 \
 	tslint@4.0.2 \
-	tslint-microsoft-contrib@2.0.13 \
+	tslint-microsoft-contrib@4.0.0 \
 	typescript@2.0.10 \
 	uglify-js@2.7.5 \
-	webpack@2.1.0-beta.27 \
+	webpack@2.2.0-rc.0 \
 	zone.js@0.7.2 \
 	browserstack \
 	firebase \

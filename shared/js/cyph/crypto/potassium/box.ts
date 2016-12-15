@@ -204,11 +204,11 @@ export class Box {
 
 	/** @ignore */
 	private splitKeys (publicKey?: Uint8Array, privateKey?: Uint8Array) : {
-		private: {classical: Uint8Array; mcEliece: Uint8Array; ntru: Uint8Array};
-		public: {classical: Uint8Array; mcEliece: Uint8Array; ntru: Uint8Array};
+		privateKey: {classical: Uint8Array; mcEliece: Uint8Array; ntru: Uint8Array};
+		publicKey: {classical: Uint8Array; mcEliece: Uint8Array; ntru: Uint8Array};
 	} {
 		return {
-			private: !privateKey ? null : {
+			privateKey: !privateKey ? null : {
 				classical: new Uint8Array(
 					privateKey.buffer,
 					privateKey.byteOffset,
@@ -230,7 +230,7 @@ export class Box {
 					lib.ntru.privateKeyLength
 				)
 			},
-			public: !publicKey ? null : {
+			publicKey: !publicKey ? null : {
 				classical: new Uint8Array(
 					publicKey.buffer,
 					publicKey.byteOffset,
@@ -288,14 +288,14 @@ export class Box {
 		const keys	= this.splitKeys(publicKey);
 
 		const mcElieceData						= await this.publicKeyEncrypt(
-			keys.public.mcEliece,
+			keys.publicKey.mcEliece,
 			'McEliece',
 			lib.mcEliece.decryptedDataLength,
 			lib.mcEliece.encrypt
 		);
 
 		const ntruData							= await this.publicKeyEncrypt(
-			keys.public.ntru,
+			keys.publicKey.ntru,
 			'NTRU',
 			lib.ntru.decryptedDataLength,
 			lib.ntru.encrypt
@@ -306,7 +306,7 @@ export class Box {
 		const classicalCyphertext: Uint8Array	= await this.helpers.seal(
 			plaintext,
 			nonce,
-			keys.public.classical
+			keys.publicKey.classical
 		);
 		const ntruCyphertext: Uint8Array		= await this.secretBox.seal(
 			classicalCyphertext,
@@ -345,7 +345,7 @@ export class Box {
 				lib.mcEliece.encryptedDataLength +
 					this.oneTimeAuth.bytes
 			),
-			keys.private.mcEliece,
+			keys.privateKey.mcEliece,
 			'McEliece',
 			lib.mcEliece.encryptedDataLength,
 			lib.mcEliece.decrypt
@@ -363,7 +363,7 @@ export class Box {
 				lib.ntru.encryptedDataLength +
 					this.oneTimeAuth.bytes
 			),
-			keys.private.ntru,
+			keys.privateKey.ntru,
 			'NTRU',
 			lib.ntru.encryptedDataLength,
 			lib.ntru.decrypt
@@ -401,8 +401,8 @@ export class Box {
 			classicalCyphertext,
 			nonce,
 			{
-				privateKey: keys.private.classical,
-				publicKey: keys.public.classical
+				privateKey: keys.privateKey.classical,
+				publicKey: keys.publicKey.classical
 			}
 		);
 

@@ -13,35 +13,30 @@ import {downgradeComponent, UpgradeModule} from '@angular/upgrade/static';
 import {config} from '../cyph/config';
 import {env} from '../cyph/env';
 import {eventManager} from '../cyph/eventmanager';
-import {FileInput, Help, Register} from '../cyph/ui/components';
-import {
-	MdButton,
-	MdCard,
-	MdCardContent,
-	MdCardHeader,
-	MdCardHeaderText,
-	MdCardTitle,
-	MdCardTitleText,
-	MdContent,
-	MdFabSpeedDial,
-	MdIcon,
-	MdInput,
-	MdList,
-	MdListItem,
-	MdMenu,
-	MdOption,
-	MdProgressCircular,
-	MdProgressLinear,
-	MdSelect,
-	MdSidenav,
-	MdSlider,
-	MdSubheader,
-	MdSwitch,
-	MdTabs,
-	MdTextarea,
-	MdToolbar,
-	MdTooltip
-} from '../cyph/ui/components/material';
+import {FileInput} from '../cyph/ui/components/fileinput';
+import {Help} from '../cyph/ui/components/help';
+import {MdButton} from '../cyph/ui/components/material/mdbutton';
+import {MdCard} from '../cyph/ui/components/material/mdcard';
+import {MdCardContent} from '../cyph/ui/components/material/mdcardcontent';
+import {MdCardHeader} from '../cyph/ui/components/material/mdcardheader';
+import {MdCardHeaderText} from '../cyph/ui/components/material/mdcardheadertext';
+import {MdCardTitle} from '../cyph/ui/components/material/mdcardtitle';
+import {MdCardTitleText} from '../cyph/ui/components/material/mdcardtitletext';
+import {MdContent} from '../cyph/ui/components/material/mdcontent';
+import {MdFabSpeedDial} from '../cyph/ui/components/material/mdfabspeeddial';
+import {MdIcon} from '../cyph/ui/components/material/mdicon';
+import {MdInput} from '../cyph/ui/components/material/mdinput';
+import {MdList} from '../cyph/ui/components/material/mdlist';
+import {MdListItem} from '../cyph/ui/components/material/mdlistitem';
+import {MdMenu} from '../cyph/ui/components/material/mdmenu';
+import {MdOption} from '../cyph/ui/components/material/mdoption';
+import {MdProgressCircular} from '../cyph/ui/components/material/mdprogresscircular';
+import {MdProgressLinear} from '../cyph/ui/components/material/mdprogresslinear';
+import {MdSelect} from '../cyph/ui/components/material/mdselect';
+import {MdSubheader} from '../cyph/ui/components/material/mdsubheader';
+import {MdSwitch} from '../cyph/ui/components/material/mdswitch';
+import {MdTabs} from '../cyph/ui/components/material/mdtabs';
+import {MdTextarea} from '../cyph/ui/components/material/mdtextarea';
 import {elements} from '../cyph/ui/elements';
 import {loaded} from '../preload';
 import {AppComponent} from './appcomponent';
@@ -150,14 +145,6 @@ angular.
 		MdSelect.config
 	).
 	component(
-		MdSidenav.title,
-		MdSidenav.config
-	).
-	component(
-		MdSlider.title,
-		MdSlider.config
-	).
-	component(
 		MdSubheader.title,
 		MdSubheader.config
 	).
@@ -173,14 +160,6 @@ angular.
 		MdTextarea.title,
 		MdTextarea.config
 	).
-	component(
-		MdToolbar.title,
-		MdToolbar.config
-	).
-	component(
-		MdTooltip.title,
-		MdTooltip.config
-	).
 	directive(
 		'cyphFileInput',
 		downgradeComponent({
@@ -193,13 +172,6 @@ angular.
 		'cyphHelp',
 		downgradeComponent({
 			component: Help
-		})
-	).
-	directive(
-		'cyphRegister',
-		downgradeComponent({
-			component: Register,
-			inputs: ['invite', 'signupForm']
 		})
 	).
 	directive(

@@ -88,7 +88,7 @@ export class Chat implements IChat {
 
 	/** @ignore */
 	private findElement (selector: string) : () => JQuery {
-		return Elements.get(() => this.rootElement.find(selector));
+		return Elements.getElement(() => this.rootElement.find(selector));
 	}
 
 	/** @inheritDoc */
@@ -227,7 +227,7 @@ export class Chat implements IChat {
 			template: `<md-dialog class='full'><cyph-help></cyph-help></md-dialog>`
 		});
 
-		analytics.send({
+		analytics.sendEvent({
 			eventAction: 'show',
 			eventCategory: 'help',
 			eventValue: 1,
@@ -334,10 +334,10 @@ export class Chat implements IChat {
 			this.session	= session;
 		}
 		else {
-			const newUrlState: string[]	= urlState.getSplit();
+			const newUrlState: string[]	= urlState.getUrlSplit();
 			let id: string				= newUrlState.slice(-1)[0];
 
-			urlState.set(newUrlState.slice(0, -1).join(''), true, true);
+			urlState.setUrl(newUrlState.slice(0, -1).join(''), true, true);
 
 			/* Modest branding API flag */
 			if (id[0] === '&') {
@@ -348,7 +348,7 @@ export class Chat implements IChat {
 
 				this.rootElement.addClass('modest');
 
-				analytics.send({
+				analytics.sendEvent({
 					eventAction: 'used',
 					eventCategory: 'modest-branding',
 					eventValue: 1,
@@ -365,7 +365,7 @@ export class Chat implements IChat {
 
 				forceTURN	= true;
 
-				analytics.send({
+				analytics.sendEvent({
 					eventAction: 'used',
 					eventCategory: 'force-turn',
 					eventValue: 1,
@@ -382,7 +382,7 @@ export class Chat implements IChat {
 
 				nativeCrypto	= true;
 
-				analytics.send({
+				analytics.sendEvent({
 					eventAction: 'used',
 					eventCategory: 'native-crypto',
 					eventValue: 1,

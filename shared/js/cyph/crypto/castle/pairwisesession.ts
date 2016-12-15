@@ -148,7 +148,7 @@ export class PairwiseSession {
 				let success: boolean;
 
 				for (
-					let cyphertextBytes of
+					const cyphertextBytes of
 					this.incomingMessages.get(this.incomingMessageId)
 				) {
 					if (!success) {

@@ -12,15 +12,15 @@ import {util} from '../../util';
 })
 export class Translate {
 	/** @ignore */
-	private static handleElement (
+	private handleElement (
 		nativeElement: HTMLElement,
 		renderer: Renderer
 	) : void {
 		const $element	= $(nativeElement);
 		const $children	= $element.children();
 
-		for (let attr of ['alt', 'aria-label', 'ariaLabel', 'content', 'label', 'placeholder']) {
-			Translate.translate(
+		for (const attr of ['alt', 'aria-label', 'ariaLabel', 'content', 'label', 'placeholder']) {
+			this.translate(
 				$element.attr(attr),
 				translation => renderer.setElementAttribute(
 					nativeElement,
@@ -31,12 +31,12 @@ export class Translate {
 		}
 
 		if ($children.length > 0) {
-			for (let child of $children.not('[cyphTranslate]').toArray()) {
-				Translate.handleElement(child, renderer);
+			for (const child of $children.not('[cyphTranslate]').toArray()) {
+				this.handleElement(child, renderer);
 			}
 		}
 		else {
-			Translate.translate(
+			this.translate(
 				$element.text(),
 				translation => renderer.setText(
 					nativeElement,
@@ -47,7 +47,7 @@ export class Translate {
 	}
 
 	/** @ignore */
-	private static translate (
+	private translate (
 		value: string,
 		callback: (translation: string) => void
 	) : void {
@@ -64,7 +64,6 @@ export class Translate {
 		callback(translation);
 	}
 
-
 	constructor (elementRef: ElementRef, renderer: Renderer) {
 		if (env.language === config.defaultLanguage) {
 			return;
@@ -74,6 +73,6 @@ export class Translate {
 			return;
 		}
 
-		Translate.handleElement(elementRef.nativeElement, renderer);
+		this.handleElement(elementRef.nativeElement, renderer);
 	}
 }

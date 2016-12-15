@@ -1,35 +1,47 @@
 #!/bin/bash
 
+outputDir="$PWD"
 cd $(cd "$(dirname "$0")"; pwd)/..
-dir="$(pwd)"
+rootDir="$PWD"
 
 
 cloneworkingdir=''
 test=''
 watch=''
+minify=''
 
 if [ "${1}" == '--watch' ] ; then
 	watch=true
-	shift
-elif [ "${1}" != '--prod' ] ; then
-	test=true
-	shift
+else
+	if [ "${1}" != '--prod' ] ; then
+		test=true
+	fi
+	if [ "${1}" != '--no-minify' ] ; then
+		minify=true
+	fi
 fi
+
 if [ ! -d ~/.build ] ; then
 	cloneworkingdir=true
 fi
 
+tsfilesRoot="${outputDir}"
+if [ "${cloneworkingdir}" -o "${test}" -o "${watch}" -o "${outputDir}" == "${rootDir}" ] ; then
+	tsfilesRoot="${rootDir}"
+	outputDir="${rootDir}/shared"
+fi
+
 if [ "${cloneworkingdir}" ] ; then
 	mkdir ~/.build
-	cp -rf * ~/.build/
+	cp -rf * .babelrc ~/.build/
 	cd ~/.build/
 fi
 
 tsfiles="$( \
 	{ \
-		find . -name '*.html' -not \( \
-			-path './.build/*' \
-			-or -path './websign/*' \
+		find ${tsfilesRoot} -name '*.html' -not \( \
+			-path "${tsfilesRoot}/.build/*" \
+			-or -path "${tsfilesRoot}/websign/*" \
 			-or -path '*/lib/*' \
 		\) -exec cat {} \; | \
 		grep -oP "src=(['\"])/js/.*?\1" & \
@@ -41,12 +53,13 @@ tsfiles="$( \
 		uniq | \
 		grep -v 'Binary file' | \
 		grep -v 'main.lib' | \
+		grep -v 'translations' | \
 		tr ' ' '\n' \
 )"
 
 cd shared
 
-scssfiles="$(find css -name '*.scss' | grep -v bourbon/ | perl -pe 's/(.*)\.scss/\1/g' | tr '\n' ' ')"
+scssfiles="$(cd css ; find . -name '*.scss' | grep -v bourbon/ | perl -pe 's/\.\/(.*)\.scss/\1/g' | tr '\n' ' ')"
 
 
 output=''
@@ -86,7 +99,7 @@ tsbuild () {
 }
 
 compile () {
-	cd "${dir}/shared"
+	cd "${outputDir}"
 
 	if [ "${cloneworkingdir}" ] ; then
 		find . -mindepth 1 -maxdepth 1 -type d -not -name lib -exec bash -c '
@@ -97,11 +110,15 @@ compile () {
 	fi
 
 	for f in $scssfiles ; do
-		command="scss -Icss ${f}.scss ${dir}/shared/${f}.css"
+		command=" \
+			scss -Icss css/${f}.scss \
+				$(test "${minify}" && echo '| cleancss') \
+			> ${outputDir}/css/${f}.css \
+		"
 		if [ "${watch}" ] ; then
-			$command &
+			eval "${command}" &
 		else
-			output="${output}$($command 2>&1)"
+			output="${output}$(eval "${command}" 2>&1)"
 		fi
 	done
 
@@ -145,7 +162,7 @@ compile () {
 	done
 
 	if [ ! "${test}" ] ; then
-		translations="$(node -e 'console.log(`
+		node -e 'console.log(`
 			self.translations = ${JSON.stringify(
 				child_process.spawnSync("find", [
 					"../../translations",
@@ -163,11 +180,39 @@ compile () {
 						return translations;
 					}, {})
 			)};
-		`.trim())')"
+		`.trim())' > "${outputDir}/js/translations.js"
+
+		mangleExcept="$(
+			test "${minify}" && node -e "console.log(JSON.stringify('$({
+				echo -e '
+					crypto
+					importScripts
+					locals
+					Thread
+					threadSetupVars
+				';
+				{
+					cat typings/globals.d.ts;
+					find ../lib/typings -name '*.ts' -type f -exec cat {} \;;
+				} |
+					grep -oP 'declare.*:' |
+					perl -pe 's/declare\s+.*?\s+(.*?):.*/\1/g' \
+				;
+				find . -name '*.ts' -type f -exec cat {} \; |
+					tr -d '\n' |
+					grep -oP 'new Thread\(.*?\;' |
+					perl -pe 's/\/\*.*?\*\///g' |
+					perl -pe 's/(.*)\{.*?;$/\1/g' |
+					grep -oP '[A-Za-z0-9_$]+' \
+				;
+			} | sort | uniq | tr '\n' ' ')'.trim().split(/\s+/)))"
+		)"
 
 		for f in $tsfiles ; do
 			m="$(modulename "${f}")"
 
+			# Don't use ".js" file extension for Webpack outputs. No idea
+			# why right now, but it breaks the module imports in Session.
 			cat > "${f}.webpack.js" <<- EOM
 				const webpack	= require('webpack');
 
@@ -175,58 +220,101 @@ compile () {
 					entry: {
 						app: './${f}.js'
 					},
+					$(test "${watch}" || echo "
+						module: {
+							rules: [
+								{
+									test: /\.js(\.tmp)?$/,
+									exclude: /node_modules/,
+									use: [
+										{
+											loader: 'babel-loader',
+											options: {
+												compact: false,
+												presets: [
+													['es2015', {modules: false}]
+												]
+											}
+										}
+									]
+								}
+							]
+						},
+					")
 					output: {
 						filename: './${f}.js.tmp',
 						library: '${m}',
 						libraryTarget: 'var'
 					},
-					$(test "${m}" == 'Main' && echo "
-						plugins: [
+					plugins: [
+						$(test "${minify}" && echo "
+							new webpack.LoaderOptionsPlugin({
+								debug: false,
+								minimize: true
+							}),
+							new webpack.optimize.UglifyJsPlugin({
+								compress: false,
+								mangle: {
+									except: ${mangleExcept}
+								},
+								output: {
+									comments: false
+								},
+								sourceMap: false,
+								test: /\.js(\.tmp)?$/
+							}),
+						")
+						$(test "${m}" == 'Main' && echo "
 							new webpack.optimize.CommonsChunkPlugin({
 								name: 'lib',
-								filename: './${f}.lib.js',
+								filename: './${f}.lib.js.tmp',
 								minChunks: module => /\/lib\//.test(module.resource)
 							})
-						]
-					")
+						")
+					]
 				};
 			EOM
 
 			webpack --config "${f}.webpack.js"
 		done
+
+		babel --presets es2015 --compact false preload/global.js -o preload/global.js
+		if [ "${minify}" ] ; then
+			uglifyjs preload/global.js -o preload/global.js
+		fi
+
 		for f in $tsfiles ; do
 			m="$(modulename "${f}")"
-			outputDir="${dir}/shared/js"
-			outputFile="${outputDir}/${f}.js"
-
-			rm "${outputFile}" 2> /dev/null
 
 			if [ "${m}" == 'Main' ] ; then
-				babel --presets es2015 --compact false "${f}.lib.js" -o "${outputDir}/${f}.lib.js"
-				echo "${translations}" > "${outputFile}"
+				cat "${f}.lib.js.tmp" | sed 's|use strict||g' > "${outputDir}/js/${f}.lib.js"
+				rm "${f}.lib.js.tmp"
 			fi
 
 			{
 				cat preload/global.js;
-				cat $f.js.tmp | sed "0,/var ${m} =/s||self.${m} =|";
-				echo "(function () {
-					self.${m}Base	= self.${m};
+				echo '(function () {'
+				cat "${f}.js.tmp";
+				echo "
+					self.${m}	= ${m};
 
-					var keys	= Object.keys(self.${m}Base);
+					var keys	= Object.keys(${m});
 					for (var i = 0 ; i < keys.length ; ++i) {
 						var key		= keys[i];
-						self[key]	= self.${m}Base[key];
+						self[key]	= ${m}[key];
 					}
-				})();";
+				" |
+					if [ "${minify}" ] ; then uglifyjs ; else cat - ; fi \
+				;
+				echo '})();'
 			} | \
-				if [ "${watch}" ] ; then cat - ; else babel --presets es2015 --compact false ; fi | \
 				sed 's|use strict||g' \
-			>> "${outputFile}"
+			> "${outputDir}/js/${f}.js"
 
-			rm $f.js.tmp
+			rm "${f}.js.tmp"
 		done
 
-		for js in $(find . -name '*.js') ; do
+		for js in $(find . -name '*.js' -not -name 'translations.js') ; do
 			delete=true
 			for f in $tsfiles ; do
 				if [ "${js}" == "./${f}.js" -o "${js}" == "./${f}.lib.js" ] ; then
@@ -261,7 +349,7 @@ litedeploy () {
 }
 
 if [ "${watch}" ] ; then
-	eval "$(${dir}/commands/getgitdata.sh)"
+	eval "$(${rootDir}/commands/getgitdata.sh)"
 
 	liteDeployInterval=1800 # 30 minutes
 	SECONDS=$liteDeployInterval
@@ -276,12 +364,12 @@ if [ "${watch}" ] ; then
 		#if [ $SECONDS -gt $liteDeployInterval -a ! -d ~/.litedeploy ] ; then
 		#	echo -e "\n\n\nDeploying to lite env\n\n"
 		#	mkdir ~/.litedeploy
-		#	cp -rf "${dir}/default" "${dir}/cyph.im" ~/.litedeploy/
+		#	cp -rf "${rootDir}/default" "${rootDir}/cyph.im" ~/.litedeploy/
 		#	litedeploy &
 		#	SECONDS=0
 		#fi
 
-		cd "${dir}/shared"
+		cd "${rootDir}/shared"
 		inotifywait -r --exclude '(node_modules|sed.*|.*\.(css|js|map|tmp))$' css js templates
 	done
 else

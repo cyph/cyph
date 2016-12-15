@@ -57,7 +57,7 @@ export class SignupForm implements ISignupForm {
 			return;
 		}
 
-		analytics.send({
+		analytics.sendEvent({
 			eventAction: 'new',
 			eventCategory: 'signup',
 			eventValue: 1,
@@ -65,7 +65,7 @@ export class SignupForm implements ISignupForm {
 		});
 
 		if (this.promo) {
-			analytics.send({
+			analytics.sendEvent({
 				hitType: 'social',
 				socialAction: 'signup',
 				socialNetwork: 'promo-' + this.promo,

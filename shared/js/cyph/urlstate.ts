@@ -22,7 +22,7 @@ export class UrlState {
 	 * Gets URL fragment or (if none exists) path without leading slash.
 	 * @param fragmentOnly If true, will only return fragment or empty string.
 	 */
-	public get (fragmentOnly?: boolean) : string {
+	public getUrl (fragmentOnly?: boolean) : string {
 		try {
 			const fragment: string	= locationData.hash.split('#')[1] || '';
 
@@ -40,8 +40,8 @@ export class UrlState {
 	/**
 	 * Gets URL fragment and splits with delimiter '/'.
 	 */
-	public getSplit () : string[] {
-		return this.get(true).split('/');
+	public getUrlSplit () : string[] {
+		return this.getUrl(true).split('/');
 	}
 
 	/**
@@ -49,7 +49,7 @@ export class UrlState {
 	 * @param handler
 	 */
 	public onChange (handler: (newUrlState: string) => void) : void {
-		eventManager.on(UrlState.urlStateChangeEvent, () => handler(this.get()));
+		eventManager.on(UrlState.urlStateChangeEvent, () => handler(this.getUrl()));
 	}
 
 	/**
@@ -59,14 +59,14 @@ export class UrlState {
 	 * @param shouldNotTrigger If true, UrlState.onChange is not triggered.
 	 * @param redirectFallback If true, uses redirect-based history polyfill.
 	 */
-	public set (
+	public setUrl (
 		path: string,
 		shouldReplace?: boolean,
 		shouldNotTrigger?: boolean,
 		redirectFallback: boolean = true
 	) : void {
 		if (env.isMainThread) {
-			for (let c of ['/', '#']) {
+			for (const c of ['/', '#']) {
 				if (path[0] === c) {
 					path	= path.substring(1);
 				}
@@ -125,7 +125,7 @@ export class UrlState {
 				redirectFallback?: boolean;
 				shouldNotTrigger?: boolean;
 				shouldReplace?: boolean;
-			}) => this.set(
+			}) => this.setUrl(
 				o.path,
 				o.shouldReplace,
 				o.shouldNotTrigger,

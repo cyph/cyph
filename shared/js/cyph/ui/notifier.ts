@@ -7,8 +7,15 @@ import {visibilityWatcher} from './visibilitywatcher';
 /** @inheritDoc */
 export class Notifier implements INotifier {
 	/** @ignore */
+	private static readonly config	= {
+		audio: '/audio/beep.mp3',
+		icon: customBuildFavicon || '/img/favicon/favicon-192x192.png',
+		title: 'Cyph'
+	};
+
+	/** @ignore */
 	private static readonly audio: {play: Function}	= Audio ?
-		new Audio(config.notifierConfig.audio) :
+		new Audio(Notifier.config.audio) :
 		{play: () => {}}
 	;
 
@@ -17,14 +24,14 @@ export class Notifier implements INotifier {
 		const options	= {
 			audio: <string> null,
 			body: message,
-			icon: config.notifierConfig.icon,
+			icon: Notifier.config.icon,
 			lang: env.language,
 			noscreen: false,
 			sticky: false
 		};
 
 		try {
-			callback(new (<any> self).Notification(config.notifierConfig.title, options));
+			callback(new (<any> self).Notification(Notifier.config.title, options));
 
 			try {
 				Notifier.audio.play();
@@ -33,14 +40,14 @@ export class Notifier implements INotifier {
 		}
 		catch (_) {
 			try {
-				options.audio	= config.notifierConfig.audio;
+				options.audio	= Notifier.config.audio;
 
 				(<any> navigator).serviceWorker.
 					register(config.webSignConfig.serviceWorker).
 					then((serviceWorkerRegistration: any) => {
 						try {
 							serviceWorkerRegistration.showNotification(
-								config.notifierConfig.title,
+								Notifier.config.title,
 								options
 							);
 						}
@@ -82,7 +89,7 @@ export class Notifier implements INotifier {
 	constructor () {
 		visibilityWatcher.onChange((isVisible: boolean) => {
 			if (isVisible) {
-				for (let notification of this.openNotifications) {
+				for (const notification of this.openNotifications) {
 					try {
 						notification.close();
 					}

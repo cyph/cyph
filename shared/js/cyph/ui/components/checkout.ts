@@ -39,7 +39,7 @@ export class Checkout implements OnInit {
 
 		const checkoutUI: JQuery	= $(this.elementRef.nativeElement).find('.braintree');
 
-		checkoutUI.html('');
+		checkoutUI.empty();
 
 		(<any> self).braintree.setup(token, 'dropin', {
 			container: checkoutUI[0],
