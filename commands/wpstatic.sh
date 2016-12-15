@@ -116,14 +116,12 @@ while [ ! -f index.html ] ; do
 		});
 	" 2> /dev/null | tail -n1)"
 
-	releaselock
-
 	if [ "$(echo "${command}" | grep "${commandComment}")" ] ; then
 		echo -e "${command}\n"
 		eval "${command}"
-	else
-		sleep 1m
 	fi
+
+	releaselock
 
 	if [ ! -f wpstatic.zip ] ; then
 		continue
