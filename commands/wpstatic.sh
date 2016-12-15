@@ -4,30 +4,35 @@ fullDestinationURL="${1}"
 destinationProtocol="$(echo "${1}" | perl -pe 's/(.*?:\/\/).*/\1/')"
 destinationURL="$(echo "${1}" | perl -pe 's/.*?:\/\/(.*)/\1/')"
 
+sshServer='wordpress.internal.cyph.com'
+sourcePort='43000'
+sourceOrigin="localhost:${sourcePort}"
+sourceURL="http://${sourceOrigin}"
+
 echo -e '\n\nGenerating static blog\n'
 
 checklock () {
-	ssh -i ~/.ssh/id_rsa_docker wordpress.internal.cyph.com '
+	ssh -i ~/.ssh/id_rsa_docker "${sshServer}" '
 		find . -name "lock" -mmin +21 -mindepth 1 -maxdepth 1 -exec rm {} \; ;
 		if [ -f lock ] ; then cat lock ; fi
 	'
 }
 
 claimlock () {
-	ssh -i ~/.ssh/id_rsa_docker wordpress.internal.cyph.com "
+	ssh -i ~/.ssh/id_rsa_docker "${sshServer}" "
 		if [ ! -f lock ] ; then echo '${1}' > lock ; fi
 	"
 }
 
 releaselock () {
-	ssh -i ~/.ssh/id_rsa_docker wordpress.internal.cyph.com '
+	ssh -i ~/.ssh/id_rsa_docker "${sshServer}" '
 		rm -f lock /var/www/html/wp-content/plugins/simply-static/static-files/*.zip
 	'
 }
 
 sshkill () {
 	ps ux |
-		grep -P 'ssh.*wordpress.internal.cyph.com' |
+		grep -P "ssh.*${sshServer}" |
 		grep -v grep |
 		awk '{print $2}' |
 		xargs kill -9
@@ -46,7 +51,7 @@ while [ ! -f index.html ] ; do
 	done
 
 	sshkill
-	ssh -i ~/.ssh/id_rsa_docker -f -N -L 43000:localhost:43000 wordpress.internal.cyph.com > /dev/null 2>&1
+	ssh -i ~/.ssh/id_rsa_docker -f -N -L "${sourcePort}:${sourceOrigin}" "${sshServer}" > /dev/null 2>&1
 
 	command="$(node -e "
 		const browser	= new (require('zombie'));
@@ -54,7 +59,7 @@ while [ ! -f index.html ] ; do
 		setTimeout(() => process.exit(), 1200000);
 
 		new Promise(resolve => browser.visit(
-			'http://localhost:43000/wp-admin/admin.php?page=simply-static_settings',
+			'${sourceURL}/wp-admin/admin.php?page=simply-static_settings',
 			resolve
 		)).then(() => new Promise(resolve => browser.
 			fill('log', 'admin').
@@ -67,7 +72,7 @@ while [ ! -f index.html ] ; do
 		)).then(() => {
 			const tryDownload	= () =>
 				new Promise(resolve => browser.visit(
-					'http://localhost:43000/wp-admin/admin.php?page=simply-static',
+					'${sourceURL}/wp-admin/admin.php?page=simply-static',
 					() => setTimeout(resolve, 5000)
 				)).then(() => new Promise(resolve =>
 					!browser.document.querySelectorAll('#generate:not(.hide)')[0] ?
@@ -278,11 +283,12 @@ grep -r '\.woff' |
 	grep -oP '(http)?(s)?(:)?//.*?\.woff' |
 	sort |
 	uniq |
-	xargs -I% bash -c '
-		path="fonts/$(node -e "require(\"supersphincs\").hash(\"%\").then(hash => console.log(hash.hex))").woff";
-		wget --tries=50 "%" -O ../$path;
-		grep -rl "%" | xargs sed -i "s|%|/blog/${path}|g";
-	'
+	xargs -I% bash -c "
+		url=\"\$(echo '%' | sed 's|${fullDestinationURL}|${sourceURL}|g')\";
+		path=\"fonts/\$(node -e \"require('supersphincs').hash('%').then(hash => console.log(hash.hex))\").woff\";
+		wget --tries=50 \"\${url}\" -O \"../\${path}\";
+		grep -rl '%' | xargs sed -i \"s|%|/blog/\${path}|g\";
+	"
 cd ..
 
 for path in $(
@@ -293,7 +299,7 @@ for path in $(
 ) ; do
 	parent="$(echo "${path}" | perl -pe 's/\/[^\/]+$//')"
 	mkdir -p "${parent}"
-	wget --tries=50 "http://localhost:43000/${path}" -O "${path}.new"
+	wget --tries=50 "${sourceURL}/${path}" -O "${path}.new"
 	mv "${path}.new" "${path}" 2> /dev/null
 done
 
