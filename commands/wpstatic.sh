@@ -20,7 +20,9 @@ claimlock () {
 }
 
 releaselock () {
-	ssh -i ~/.ssh/id_rsa_docker wordpress.internal.cyph.com 'rm lock'
+	ssh -i ~/.ssh/id_rsa_docker wordpress.internal.cyph.com '
+		rm -f lock /var/www/html/wp-content/plugins/simply-static/static-files/*.zip
+	'
 }
 
 sshkill () {
