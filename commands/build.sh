@@ -211,6 +211,8 @@ compile () {
 		for f in $tsfiles ; do
 			m="$(modulename "${f}")"
 
+			# Don't use ".js" file extension for Webpack outputs. No idea
+			# why right now, but it breaks the module imports in Session.
 			cat > "${f}.webpack.js" <<- EOM
 				const webpack	= require('webpack');
 
@@ -220,21 +222,27 @@ compile () {
 					},
 					$(test "${watch}" || echo "
 						module: {
-							loaders: [
+							rules: [
 								{
-									test: /\.js$/,
+									test: /\.js(\.tmp)?$/,
 									exclude: /node_modules/,
-									loader: 'babel-loader',
-									query: {
-										compact: false,
-										presets: ['es2015']
-									}
+									use: [
+										{
+											loader: 'babel-loader',
+											options: {
+												compact: false,
+												presets: [
+													['es2015', {modules: false}]
+												]
+											}
+										}
+									]
 								}
 							]
 						},
 					")
 					output: {
-						filename: './${f}.js',
+						filename: './${f}.js.tmp',
 						library: '${m}',
 						libraryTarget: 'var'
 					},
@@ -252,13 +260,14 @@ compile () {
 								output: {
 									comments: false
 								},
-								sourceMap: false
+								sourceMap: false,
+								test: /\.js(\.tmp)?$/
 							}),
 						")
 						$(test "${m}" == 'Main' && echo "
 							new webpack.optimize.CommonsChunkPlugin({
 								name: 'lib',
-								filename: './${f}.lib.js',
+								filename: './${f}.lib.js.tmp',
 								minChunks: module => /\/lib\//.test(module.resource)
 							})
 						")
@@ -278,29 +287,31 @@ compile () {
 			m="$(modulename "${f}")"
 
 			if [ "${m}" == 'Main' ] ; then
-				cat "${f}.lib.js" | sed 's|use strict||g' > "${f}.lib.js.new"
-				mv "${f}.lib.js.new" "${outputDir}/js/${f}.lib.js"
+				cat "${f}.lib.js.tmp" | sed 's|use strict||g' > "${outputDir}/js/${f}.lib.js"
+				rm "${f}.lib.js.tmp"
 			fi
 
 			{
 				cat preload/global.js;
-				cat "${f}.js" | sed "0,/var ${m}/s||self.${m}|";
-				echo "(function () {
-					self.${m}Base	= self.${m};
+				echo '(function () {'
+				cat "${f}.js.tmp";
+				echo "
+					self.${m}	= ${m};
 
-					var keys	= Object.keys(self.${m}Base);
+					var keys	= Object.keys(${m});
 					for (var i = 0 ; i < keys.length ; ++i) {
 						var key		= keys[i];
-						self[key]	= self.${m}Base[key];
+						self[key]	= ${m}[key];
 					}
-				})();" |
+				" |
 					if [ "${minify}" ] ; then uglifyjs ; else cat - ; fi \
 				;
+				echo '})();'
 			} | \
 				sed 's|use strict||g' \
-			> "${f}.js.new"
+			> "${outputDir}/js/${f}.js"
 
-			mv "${f}.js.new" "${outputDir}/js/${f}.js"
+			rm "${f}.js.tmp"
 		done
 
 		for js in $(find . -name '*.js' -not -name 'translations.js') ; do
