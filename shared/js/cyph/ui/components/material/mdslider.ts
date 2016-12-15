@@ -2,12 +2,14 @@ import {
 	Directive,
 	DoCheck,
 	ElementRef,
+	EventEmitter,
 	Inject,
 	Injector,
 	Input,
 	OnChanges,
 	OnDestroy,
 	OnInit,
+	Output,
 	SimpleChanges
 } from '@angular/core';
 import {UpgradeComponent} from '@angular/upgrade/static';
@@ -95,6 +97,9 @@ export class MdSlider
 
 	/** @ignore */
 	@Input() public model: number;
+
+	/** @ignore */
+	@Output() public modelChange: EventEmitter<number>;
 
 	/** @ignore */
 	@Input() public step: number;

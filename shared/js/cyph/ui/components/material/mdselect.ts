@@ -2,12 +2,14 @@ import {
 	Directive,
 	DoCheck,
 	ElementRef,
+	EventEmitter,
 	Inject,
 	Injector,
 	Input,
 	OnChanges,
 	OnDestroy,
 	OnInit,
+	Output,
 	SimpleChanges
 } from '@angular/core';
 import {UpgradeComponent} from '@angular/upgrade/static';
@@ -90,6 +92,9 @@ export class MdSelect
 
 	/** @ignore */
 	@Input() public model: string;
+
+	/** @ignore */
+	@Output() public modelChange: EventEmitter<string>;
 
 	/** @ignore */
 	@Input() public required: boolean;
