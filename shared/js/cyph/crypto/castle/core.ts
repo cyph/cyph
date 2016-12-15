@@ -1,4 +1,5 @@
 import {util} from '../../util';
+import {IKeyPair} from '../ikeypair';
 import {Potassium} from '../potassium';
 
 
@@ -40,12 +41,9 @@ export class Core {
 	private readonly lock: {}	= {};
 
 	/** @ignore */
-	private readonly ephemeralKeys: {
-		private: Uint8Array;
-		public: Uint8Array;
-	}	= {
-		private: null,
-		public: null
+	private readonly ephemeralKeys: IKeyPair	= {
+		privateKey: null,
+		publicKey: null
 	};
 
 	/** @ignore */
@@ -53,24 +51,24 @@ export class Core {
 		let outgoingPublicKey: Uint8Array;
 
 		/* Part 1: Alice (outgoing) */
-		if (this.isAlice && !this.ephemeralKeys.private && !incomingPublicKey) {
+		if (this.isAlice && !this.ephemeralKeys.privateKey && !incomingPublicKey) {
 			const ephemeralKeyPair		=
 				await this.potassium.ephemeralKeyExchange.aliceKeyPair()
 			;
 
-			this.ephemeralKeys.private	= ephemeralKeyPair.privateKey;
+			this.ephemeralKeys.privateKey	= ephemeralKeyPair.privateKey;
 			outgoingPublicKey			= ephemeralKeyPair.publicKey;
 		}
 
 		/* Part 2a: Bob (incoming) */
-		else if (!this.isAlice && !this.ephemeralKeys.public && incomingPublicKey) {
+		else if (!this.isAlice && !this.ephemeralKeys.publicKey && incomingPublicKey) {
 			const secretData			=
 				await this.potassium.ephemeralKeyExchange.bobSecret(
 					incomingPublicKey
 				)
 			;
 
-			this.ephemeralKeys.public	= secretData.publicKey;
+			this.ephemeralKeys.publicKey	= secretData.publicKey;
 
 			this.keys.push(await Core.newKeys(
 				this.potassium,
@@ -80,22 +78,22 @@ export class Core {
 		}
 
 		/* Part 2b: Bob (outgoing) */
-		else if (!this.isAlice && this.ephemeralKeys.public && !incomingPublicKey) {
-			outgoingPublicKey			= this.ephemeralKeys.public;
-			this.ephemeralKeys.public	= null;
+		else if (!this.isAlice && this.ephemeralKeys.publicKey && !incomingPublicKey) {
+			outgoingPublicKey			= this.ephemeralKeys.publicKey;
+			this.ephemeralKeys.publicKey	= null;
 		}
 
 		/* Part 3: Alice (incoming) */
-		else if (this.isAlice && this.ephemeralKeys.private && incomingPublicKey) {
+		else if (this.isAlice && this.ephemeralKeys.privateKey && incomingPublicKey) {
 			const secret: Uint8Array	=
 				await this.potassium.ephemeralKeyExchange.aliceSecret(
 					incomingPublicKey,
-					this.ephemeralKeys.private
+					this.ephemeralKeys.privateKey
 				)
 			;
 
-			this.potassium.clearMemory(this.ephemeralKeys.private);
-			this.ephemeralKeys.private	= null;
+			this.potassium.clearMemory(this.ephemeralKeys.privateKey);
+			this.ephemeralKeys.privateKey	= null;
 
 			this.keys.push(await Core.newKeys(
 				this.potassium,

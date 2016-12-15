@@ -69,7 +69,7 @@ export class FileManager implements IFileManager {
 	/** @ignore */
 	private addImage (transfer: ITransfer, plaintext: Uint8Array) : void {
 		this.chat.addMessage(
-			`![](data:${transfer.type};base64,${potassium.toBase64(plaintext)})` +
+			`![](data:${transfer.fileType};base64,${potassium.toBase64(plaintext)})` +
 				`\n\n#### ${transfer.name}`
 			,
 			transfer.author,

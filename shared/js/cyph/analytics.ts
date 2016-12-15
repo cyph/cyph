@@ -19,12 +19,8 @@ export class Analytics {
 	/** @ignore */
 	private analFrameIsReady: boolean;
 
-	/**
-	 * Ignore this (used internally).
-	 * @param method
-	 * @param args
-	 */
-	public async baseEventSubmit (method: string, args: any[]) : Promise<void> {
+	/** @ignore */
+	private async baseEventSubmit (method: string, args: any[]) : Promise<void> {
 		if (!env.isMainThread) {
 			eventManager.trigger(Analytics.baseEventSubmitThreadEvent, {args, method});
 			return;
@@ -54,7 +50,7 @@ export class Analytics {
 	 * Send event.
 	 * @param args
 	 */
-	public send (...args: any[]) : void {
+	public sendEvent (...args: any[]) : void {
 		this.baseEventSubmit('send', args);
 	}
 
@@ -62,7 +58,7 @@ export class Analytics {
 	 * Set event.
 	 * @param args
 	 */
-	public set (...args: any[]) : void {
+	public setEvent (...args: any[]) : void {
 		this.baseEventSubmit('set', args);
 	}
 
@@ -141,12 +137,12 @@ export class Analytics {
 
 				document.body.appendChild(this.analFrame);
 
-				await new Promise(resolve => $(() => resolve));
+				await new Promise(resolve => $(resolve));
 				await new Promise(resolve => $(this.analFrame).one('load', resolve));
 				await util.sleep();
 
 				this.analFrameIsReady	= true;
-				this.set({appName, appVersion});
+				this.setEvent({appName, appVersion});
 			}
 			catch (_) {
 				this.analFrameIsReady	= false;

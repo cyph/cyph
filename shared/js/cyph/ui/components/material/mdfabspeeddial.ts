@@ -42,8 +42,8 @@ export class MdFabSpeedDial
 
 			/** @ignore */
 			public readonly buttons: {
-				class?: string;
 				click?: () => void;
+				cssClass?: string;
 				disabled?: () => boolean;
 				fileAccept?: string;
 				fileChange?: ($event: File) => void;
@@ -111,7 +111,7 @@ export class MdFabSpeedDial
 					<md-button
 						ng-if='$ctrl.buttons[0]'
 						aria-label='{{$ctrl.buttons[0].label}}'
-						ng-class='$ctrl.buttons[0].class'
+						ng-class='$ctrl.buttons[0].cssClass'
 						ng-click='$ctrl.buttons[0].click && $ctrl.buttons[0].click()'
 						ng-disabled='$ctrl.buttons[0].disabled && $ctrl.buttons[0].disabled()'
 						class='md-fab md-raised md-mini'
@@ -129,7 +129,7 @@ export class MdFabSpeedDial
 					<md-button
 						ng-if='$ctrl.buttons[1]'
 						aria-label='{{$ctrl.buttons[1].label}}'
-						ng-class='$ctrl.buttons[1].class'
+						ng-class='$ctrl.buttons[1].cssClass'
 						ng-click='$ctrl.buttons[1].click && $ctrl.buttons[1].click()'
 						ng-disabled='$ctrl.buttons[1].disabled && $ctrl.buttons[1].disabled()'
 						class='md-fab md-raised md-mini'
@@ -147,7 +147,7 @@ export class MdFabSpeedDial
 					<md-button
 						ng-if='$ctrl.buttons[2]'
 						aria-label='{{$ctrl.buttons[2].label}}'
-						ng-class='$ctrl.buttons[2].class'
+						ng-class='$ctrl.buttons[2].cssClass'
 						ng-click='$ctrl.buttons[2].click && $ctrl.buttons[2].click()'
 						ng-disabled='$ctrl.buttons[2].disabled && $ctrl.buttons[2].disabled()'
 						class='md-fab md-raised md-mini'
@@ -165,7 +165,7 @@ export class MdFabSpeedDial
 					<md-button
 						ng-if='$ctrl.buttons[3]'
 						aria-label='{{$ctrl.buttons[3].label}}'
-						ng-class='$ctrl.buttons[3].class'
+						ng-class='$ctrl.buttons[3].cssClass'
 						ng-click='$ctrl.buttons[3].click && $ctrl.buttons[3].click()'
 						ng-disabled='$ctrl.buttons[3].disabled && $ctrl.buttons[3].disabled()'
 						class='md-fab md-raised md-mini'
@@ -183,7 +183,7 @@ export class MdFabSpeedDial
 					<md-button
 						ng-if='$ctrl.buttons[4]'
 						aria-label='{{$ctrl.buttons[4].label}}'
-						ng-class='$ctrl.buttons[4].class'
+						ng-class='$ctrl.buttons[4].cssClass'
 						ng-click='$ctrl.buttons[4].click && $ctrl.buttons[4].click()'
 						ng-disabled='$ctrl.buttons[4].disabled && $ctrl.buttons[4].disabled()'
 						class='md-fab md-raised md-mini'
@@ -201,7 +201,7 @@ export class MdFabSpeedDial
 					<md-button
 						ng-if='$ctrl.buttons[5]'
 						aria-label='{{$ctrl.buttons[5].label}}'
-						ng-class='$ctrl.buttons[5].class'
+						ng-class='$ctrl.buttons[5].cssClass'
 						ng-click='$ctrl.buttons[5].click && $ctrl.buttons[5].click()'
 						ng-disabled='$ctrl.buttons[5].disabled && $ctrl.buttons[5].disabled()'
 						class='md-fab md-raised md-mini'
@@ -227,8 +227,8 @@ export class MdFabSpeedDial
 
 	/** @ignore */
 	@Input() public buttons: {
-		class?: string;
 		click?: () => void;
+		cssClass?: string;
 		disabled?: () => boolean;
 		fileAccept?: string;
 		fileChange?: ($event: File) => void;
@@ -250,21 +250,25 @@ export class MdFabSpeedDial
 	@Input() public mdOpen: boolean;
 
 	/** @ignore */
+	/* tslint:disable-next-line:no-unnecessary-override */
 	public ngDoCheck () : void {
 		super.ngDoCheck();
 	}
 
 	/** @ignore */
+	/* tslint:disable-next-line:no-unnecessary-override */
 	public ngOnChanges (changes: SimpleChanges) : void {
 		super.ngOnChanges(changes);
 	}
 
 	/** @ignore */
+	/* tslint:disable-next-line:no-unnecessary-override */
 	public ngOnDestroy () : void {
 		super.ngOnDestroy();
 	}
 
 	/** @ignore */
+	/* tslint:disable-next-line:no-unnecessary-override */
 	public ngOnInit () : void {
 		super.ngOnInit();
 	}

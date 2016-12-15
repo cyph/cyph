@@ -21,13 +21,13 @@ catch (_) {}
 	typeof window === 'object'
 ;
 
-for (let k of ['window', 'document']) {
+for (const k of ['window', 'document']) {
 	if (!(k in self)) {
 		(<any> self)[k]	= self;
 	}
 }
 
-for (let k of [
+for (const k of [
 	'Audio',
 	'customBuild',
 	'customBuildFavicon',

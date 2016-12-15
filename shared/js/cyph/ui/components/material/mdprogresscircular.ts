@@ -67,21 +67,25 @@ export class MdProgressCircular
 	@Input() public value: number;
 
 	/** @ignore */
+	/* tslint:disable-next-line:no-unnecessary-override */
 	public ngDoCheck () : void {
 		super.ngDoCheck();
 	}
 
 	/** @ignore */
+	/* tslint:disable-next-line:no-unnecessary-override */
 	public ngOnChanges (changes: SimpleChanges) : void {
 		super.ngOnChanges(changes);
 	}
 
 	/** @ignore */
+	/* tslint:disable-next-line:no-unnecessary-override */
 	public ngOnDestroy () : void {
 		super.ngOnDestroy();
 	}
 
 	/** @ignore */
+	/* tslint:disable-next-line:no-unnecessary-override */
 	public ngOnInit () : void {
 		super.ngOnInit();
 	}

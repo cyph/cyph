@@ -112,7 +112,7 @@ export class ScrollManager implements IScrollManager {
 					return;
 				}
 
-				for (let message of this.chat.messages) {
+				for (const message of this.chat.messages) {
 					if (message.unread) {
 						message.unread	= false;
 					}
@@ -138,8 +138,8 @@ export class ScrollManager implements IScrollManager {
 		await CyphElements.waitForElement(this.elements.messageListInner);
 
 		new MutationObserver(mutations => {
-			for (let mutationRecord of mutations) {
-				for (let node of mutationRecord.addedNodes) {
+			for (const mutationRecord of mutations) {
+				for (const node of mutationRecord.addedNodes) {
 					this.mutationObserverHandler(node);
 				}
 			}

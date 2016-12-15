@@ -120,7 +120,7 @@ export class UI {
 		if (href !== locationData.pathname || this.homeSection !== undefined) {
 			scrollDelay	= 0;
 
-			urlState.set(href);
+			urlState.setUrl(href);
 		}
 
 		if (this.homeSection === undefined) {
@@ -143,10 +143,10 @@ export class UI {
 		;
 
 		CyphElements.elements.title().text(
-			(<any> pageTitles)[newUrlStateBase] || pageTitles.default
+			(<any> pageTitles)[newUrlStateBase] || pageTitles.defaultTitle
 		);
 
-		urlState.set(newUrlState, true, true);
+		urlState.setUrl(newUrlState, true, true);
 
 		if (this.homeSection !== undefined) {
 			this.changeState(States.home);
@@ -172,11 +172,11 @@ export class UI {
 					`
 				});
 
-				urlState.set('');
+				urlState.setUrl('');
 			}
 			else if (this.homeSection === HomeSections.invite) {
 				this.signupForm.data.inviteCode	=
-					urlState.get().split(HomeSections[HomeSections.invite] + '/')[1] || ''
+					urlState.getUrl().split(HomeSections[HomeSections.invite] + '/')[1] || ''
 				;
 
 				await this.dialogManager.baseDialog({
@@ -193,7 +193,7 @@ export class UI {
 					`
 				});
 
-				urlState.set('');
+				urlState.setUrl('');
 			}
 			else {
 				this.scroll(
@@ -224,7 +224,7 @@ export class UI {
 			this.changeState(States.error);
 		}
 		else {
-			urlState.set(urlState.states.notFound);
+			urlState.setUrl(urlState.states.notFound);
 		}
 	}
 
@@ -287,7 +287,7 @@ export class UI {
 		(async () => {
 			urlState.onChange(async (newUrlState) => this.onUrlStateChange(newUrlState));
 
-			const newUrlState: string	= urlState.get();
+			const newUrlState: string	= urlState.getUrl();
 
 			if ((<any> HomeSections)[newUrlState] !== undefined) {
 				await CyphElements.Elements.waitForElement(
@@ -296,7 +296,7 @@ export class UI {
 				await util.sleep(500);
 			}
 
-			urlState.set(newUrlState, true, false, false);
+			urlState.setUrl(newUrlState, true, false, false);
 		})();
 
 		(async () => {
@@ -348,7 +348,7 @@ export class UI {
 
 			await CyphElements.Elements.waitForElement(elements.mainToolbar);
 
-			let expanded	= urlState.get() === '';
+			let expanded	= urlState.getUrl() === '';
 			elements.mainToolbar().toggleClass('new-cyph-expanded', expanded);
 
 			/* Temporary workaround pending TypeScript fix. */
@@ -380,8 +380,8 @@ export class UI {
 
 			$(UI.linkInterceptSelector).click(e => this.linkClickHandler(e));
 			new MutationObserver(mutations => {
-				for (let mutation of mutations) {
-					for (let elem of mutation.addedNodes) {
+				for (const mutation of mutations) {
+					for (const elem of mutation.addedNodes) {
 						const $elem: JQuery	= $(elem);
 
 						if ($elem.is(UI.linkInterceptSelector)) {
@@ -415,7 +415,7 @@ export class UI {
 
 			/* tslint:disable-next-line:no-unused-new */
 			new (<any> self).Konami(async () => {
-				urlState.set('intro');
+				urlState.setUrl('intro');
 
 				while (
 					!this.cyphDemo.desktop ||

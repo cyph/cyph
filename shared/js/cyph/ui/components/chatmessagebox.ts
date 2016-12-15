@@ -66,8 +66,8 @@ export class ChatMessageBox implements OnInit {
 
 	/** Speed dial buttons. */
 	public readonly speedDialButtons: {
-		class?: string;
 		click?: () => void;
+		cssClass?: string;
 		disabled?: () => boolean;
 		fileAccept?: string;
 		fileChange?: ($event: File) => void;
@@ -97,15 +97,15 @@ export class ChatMessageBox implements OnInit {
 			tooltipDirection: 'left'
 		},
 		{
-			class: 'dark',
 			click: () => this.self.helpButton(),
+			cssClass: 'dark',
 			icon: 'help_outline',
 			label: strings.help,
 			tooltipDirection: 'left'
 		},
 		{
-			class: 'dark',
 			click: () => this.self.disconnectButton(),
+			cssClass: 'dark',
 			icon: 'close',
 			label: strings.disconnect,
 			tooltipDirection: 'left'

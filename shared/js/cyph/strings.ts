@@ -148,7 +148,7 @@ export class Strings {
 	public readonly micEnable: string				= util.translate(`Enable Mic`);
 
 	/** @see Strings */
-	public readonly new: string						= util.translate(`new`);
+	public readonly newString: string				= util.translate(`new`);
 
 	/** @see Strings */
 	public readonly newMessageNotification: string	= util.translate(`New message!`);

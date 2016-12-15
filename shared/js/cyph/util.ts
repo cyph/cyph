@@ -235,7 +235,6 @@ export class Util {
 	 * @param o
 	 */
 	public async request (o: {
-		async?: boolean;
 		contentType?: string;
 		data?: any;
 		discardErrors?: boolean;
@@ -245,7 +244,6 @@ export class Util {
 		timeout?: number;
 		url: string;
 	}) : Promise<any> {
-		const async: boolean			= o.async !== false;
 		const discardErrors: boolean	= o.discardErrors === true;
 		const method: string			= o.method || 'GET';
 		const responseType: string		= o.responseType || '';
@@ -255,6 +253,7 @@ export class Util {
 		let data: any					= o.data || '';
 		let url: string					= o.url;
 
+		/* tslint:disable-next-line:promise-must-complete */
 		return new Promise<any>((resolve, reject) => {
 			if (url.slice(-5) === '.json') {
 				contentType	= 'application/json';
@@ -282,44 +281,38 @@ export class Util {
 
 			const xhr: XMLHttpRequest	= new XMLHttpRequest();
 
-			const callback: Function	= () => (
-				xhr.status === 200 ?
-					resolve :
-					reject
-			)(
-				typeof xhr.response === 'string' ?
+			xhr.onreadystatechange = () => {
+				if (xhr.readyState !== 4) {
+					return;
+				}
+
+				const response: any	= typeof xhr.response === 'string' ?
 					xhr.response.trim() :
 					xhr.response
-			);
+				;
 
-			if (async) {
-				xhr.onreadystatechange = () => {
-					if (xhr.readyState === 4) {
-						callback();
-					}
-				};
-
-				try {
-					xhr.timeout = timeout;
+				if (xhr.status === 200) {
+					resolve(response);
 				}
-				catch (_) {}
-			}
+				else {
+					reject(response);
+				}
+			};
 
-			xhr.open(method, url, async);
-
-			if (async) {
-				xhr.responseType	= responseType;
+			try {
+				xhr.timeout = timeout;
 			}
+			catch (_) {}
+
+			xhr.open(method, url, true);
+
+			xhr.responseType	= responseType;
 
 			if (contentType) {
 				xhr.setRequestHeader('Content-Type', contentType);
 			}
 
 			xhr.send(data);
-
-			if (!async) {
-				callback();
-			}
 		}).catch(async (err) => {
 			if (retries > 0) {
 				--o.retries;
