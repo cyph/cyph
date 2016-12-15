@@ -445,17 +445,6 @@ if [ ! "${test}" ] ; then
 	done
 fi
 
-# Workaround for symlinks doubling up Google's count of the files toward its 10k limit
-find . -type l -not -path './cdn/*' -exec bash -c '
-	original="$(readlink "{}")";
-	parent="$(echo "{}" | perl -pe "s/(.*)\/.*?$/\1/g")";
-	name="$(echo "{}" | perl -pe "s/.*\/(.*?)$/\1/g")"
-
-	cd "${parent}"
-	rm "${name}"
-	mv "${original}" "${name}"
-' \;
-
 if [ "${test}" ] ; then
 	rm -rf $prodOnlyProjects
 fi
