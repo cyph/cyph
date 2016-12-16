@@ -116,13 +116,15 @@ section#main {
 	font-weight: 300;
 	position: fixed;
 	top: 5px;
-	left: calc(50% - 60px);
+	left: 50%;
 	height: 38px;
 	width: 120px;
 	padding: 0px;
 	border-radius: 1px;
 	box-shadow: 0px 4px 10px -1px rgba(0, 0, 0, 0.25);
 	background-color: #7d4fd3 !important;
+
+	@include transform(translateX(-50%));
 
 	@include transition(all 0.75s ease);
 
@@ -137,7 +139,7 @@ section#main {
 
 #main-toolbar.new-cyph-expanded {
 	#new-cyph {
-		@include transform(translateY(calc(50vh - 50% - 5px)) scale(2));
+		@include transform(translateX(-50%) translateY(calc(50vh - 50% - 5px)) scale(2));
 	}
 
 	.link-wrapper-outer {
@@ -153,7 +155,7 @@ section#main {
 
 @media all and (orientation: portrait) {
 	html.mobile #main-toolbar.new-cyph-expanded #new-cyph {
-		@include transform(translateY(25em) scale(2));
+		@include transform(translateX(-50%) translateY(25em) scale(2));
 	}
 }
 
