@@ -182,6 +182,11 @@ compile () {
 			)};
 		`.trim())' > "${outputDir}/js/translations.js"
 
+		babel --presets es2015 --compact false preload/global.js -o preload/global.js
+		if [ "${minify}" ] ; then
+			uglifyjs preload/global.js -o preload/global.js
+		fi
+
 		mangleExcept="$(
 			test "${minify}" && node -e "console.log(JSON.stringify('$({
 				echo -e '
@@ -191,6 +196,7 @@ compile () {
 					Thread
 					threadSetupVars
 				';
+				grep -oP '[A-Za-z_$][A-Za-z0-9_$]*' preload/global.js;
 				{
 					cat typings/globals.d.ts;
 					find ../lib/typings -name '*.ts' -type f -exec cat {} \;;
@@ -277,11 +283,6 @@ compile () {
 
 			webpack --config "${f}.webpack.js"
 		done
-
-		babel --presets es2015 --compact false preload/global.js -o preload/global.js
-		if [ "${minify}" ] ; then
-			uglifyjs preload/global.js -o preload/global.js
-		fi
 
 		for f in $tsfiles ; do
 			m="$(modulename "${f}")"
