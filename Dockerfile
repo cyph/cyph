@@ -117,12 +117,12 @@ RUN bash -c ' \
 '
 
 RUN sudo npm -g install \
-	@angular/common@2.2.4 \
-	@angular/compiler@2.2.4 \
-	@angular/compiler-cli@2.2.4 \
-	@angular/core@2.2.4 \
-	@angular/platform-browser@2.2.4 \
-	@angular/platform-server@2.2.4 \
+	@angular/common@2.3.1 \
+	@angular/compiler@2.3.1 \
+	@angular/compiler-cli@2.3.1 \
+	@angular/core@2.3.1 \
+	@angular/platform-browser@2.3.1 \
+	@angular/platform-server@2.3.1 \
 	babel-core@6.20.0 \
 	babel-cli@6.18.0 \
 	babel-loader@6.2.9 \
@@ -137,7 +137,7 @@ RUN sudo npm -g install \
 	htmlencode@0.0.4  \
 	image-type@2.1.0 \
 	html-minifier@3.2.3 \
-	rxjs@5.0.0-beta.12 \
+	rxjs@5.0.0-rc.4 \
 	tslint@4.1.0 \
 	tslint-microsoft-contrib@4.0.0 \
 	typescript@2.0.10 \
