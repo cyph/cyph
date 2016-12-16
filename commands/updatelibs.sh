@@ -90,6 +90,13 @@ jspm install -y \
 	npm:@angular/platform-browser-dynamic \
 	npm:@angular/router \
 	npm:@angular/upgrade \
+	npm:@types/angular \
+	npm:@types/angular-material \
+	npm:@types/angular-animate \
+	npm:@types/clipboard-js \
+	npm:@types/dompurify \
+	npm:@types/filesaver \
+	npm:@types/jquery \
 	npm:rxjs \
 	angular \
 	angular-material@master \
@@ -257,19 +264,8 @@ cp babel-polyfill/browser.js base.js
 
 cd ..
 
-rm -rf typings typings.json
-typings install --global --save \
-	dt~jquery \
-	dt~angular \
-	dt~angular-material \
-	dt~angular-animate \
-	dt~dompurify \
-	dt~filesaver \
-	dt~clipboard-js
-	# dt~webrtc/mediastream
-	# dt~webrtc/rtcpeerconnection
-
-mkdir typings/globals/firebase
+rm -rf typings
+mkdir -p typings/globals/firebase
 curl -s https://raw.githubusercontent.com/suhdev/firebase-3-typescript/master/firebase.d.ts | \
 	grep -v es6-promise.d.ts > typings/globals/firebase/index.d.ts
 echo '/// <reference path="globals/firebase/index.d.ts" />' >> typings/index.d.ts

@@ -155,7 +155,6 @@ RUN sudo npm -g install \
 	read \
 	supersphincs \
 	typedoc \
-	typings \
 	zombie
 
 
