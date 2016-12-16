@@ -6,6 +6,7 @@ import {
 	OnChanges,
 	SimpleChanges
 } from '@angular/core';
+import * as clipboard from '@types/clipboard-js';
 import {config} from '../../config';
 import {Env, env} from '../../env';
 import {ITimer} from '../../itimer';

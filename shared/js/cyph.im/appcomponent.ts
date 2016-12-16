@@ -18,8 +18,8 @@ import {UI} from './ui';
 export class AppComponent {
 	/** @ignore */
 	private static uiInit	= eventManager.one<{
-		$mdDialog: ng.material.IDialogService;
-		$mdToast: ng.material.IToastService;
+		$mdDialog: angular.material.IDialogService;
+		$mdToast: angular.material.IToastService;
 	}>(
 		UI.uiInitEvent
 	);

@@ -10,6 +10,7 @@
 
 import {platformBrowser} from '@angular/platform-browser';
 import {downgradeComponent, UpgradeModule} from '@angular/upgrade/static';
+import * as angular from '@types/angular';
 import {config} from '../cyph/config';
 import {env} from '../cyph/env';
 import {eventManager} from '../cyph/eventmanager';
@@ -61,8 +62,8 @@ angular.
 		'$mdToast',
 
 		(
-			$mdDialog: ng.material.IDialogService,
-			$mdToast: ng.material.IToastService
+			$mdDialog: angular.material.IDialogService,
+			$mdToast: angular.material.IToastService
 		) => eventManager.trigger(
 			UI.uiInitEvent,
 			{

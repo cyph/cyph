@@ -4,6 +4,9 @@
  */
 
 
+import * as DOMPurify from 'dompurify';
+
+
 /* Allowed URI schemes */
 const whitelist: string[]	= ['http', 'https', 'ftp'];
 

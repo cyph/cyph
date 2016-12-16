@@ -1,3 +1,4 @@
+import * as firebase from 'firebase';
 import {env} from './env';
 import {util} from './util';
 

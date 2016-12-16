@@ -1,3 +1,4 @@
+import * as firebase from 'firebase';
 import {firebaseApp} from '../firebaseapp';
 import {util} from '../util';
 import {IChannel} from './ichannel';

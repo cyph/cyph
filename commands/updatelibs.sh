@@ -92,7 +92,6 @@ jspm install -y \
 	npm:@angular/upgrade \
 	npm:@types/angular \
 	npm:@types/angular-material \
-	npm:@types/angular-animate \
 	npm:@types/clipboard-js \
 	npm:@types/dompurify \
 	npm:@types/filesaver \
@@ -238,6 +237,8 @@ sed -i 's|https://apis.google.com||g' firebase.js
 sed -i 's|iframe||g' firebase.js
 sed -i 's|IFRAME||g' firebase.js
 rm -rf node_modules
+curl -s https://raw.githubusercontent.com/suhdev/firebase-3-typescript/master/firebase.d.ts | \
+	grep -v es6-promise.d.ts > index.d.ts
 cd ..
 
 cd microlight
@@ -263,12 +264,6 @@ cd ..
 cp babel-polyfill/browser.js base.js
 
 cd ..
-
-rm -rf typings
-mkdir -p typings/globals/firebase
-curl -s https://raw.githubusercontent.com/suhdev/firebase-3-typescript/master/firebase.d.ts | \
-	grep -v es6-promise.d.ts > typings/globals/firebase/index.d.ts
-echo '/// <reference path="globals/firebase/index.d.ts" />' >> typings/index.d.ts
 
 
 mkdir ~/golibs

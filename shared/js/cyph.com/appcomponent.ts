@@ -18,9 +18,9 @@ import {UI} from './ui';
 export class AppComponent {
 	/** @ignore */
 	private static uiInit	= eventManager.one<{
-		$mdDialog: ng.material.IDialogService;
-		$mdSidenav: ng.material.ISidenavService;
-		$mdToast: ng.material.IToastService;
+		$mdDialog: angular.material.IDialogService;
+		$mdSidenav: angular.material.ISidenavService;
+		$mdToast: angular.material.IToastService;
 	}>(
 		UI.uiInitEvent
 	);
@@ -30,7 +30,7 @@ export class AppComponent {
 	private sidenavLock: {}	= {};
 
 	/** @ignore */
-	public sidenav: () => ng.material.ISidenavObject;
+	public sidenav: () => angular.material.ISidenavObject;
 
 	/** @ignore */
 	public ui: UI;
