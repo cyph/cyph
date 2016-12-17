@@ -234,9 +234,12 @@ cd node_modules/firebase
 npm install
 browserify firebase-node.js -o ../../firebase.js -s firebase
 cd ../..
-sed -i 's|https://apis.google.com||g' firebase.js
-sed -i 's|iframe||g' firebase.js
-sed -i 's|IFRAME||g' firebase.js
+cat firebase.js |
+	sed 's|https://apis.google.com||g' |
+	sed 's|iframe||gi' |
+	perl -pe "s/[A-Za-z0-9]+\([\"']\/js\/.*?.js.*?\)/null/g" \
+> firebase.js.new
+mv firebase.js.new firebase.js
 rm -rf node_modules
 cd ..
 
