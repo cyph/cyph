@@ -12,11 +12,16 @@ minify=''
 
 if [ "${1}" == '--watch' ] ; then
 	watch=true
+	shift
 else
-	if [ "${1}" != '--prod' ] ; then
+	if [ "${1}" == '--prod' ] ; then
+		shift
+	else
 		test=true
 	fi
-	if [ "${1}" != '--no-minify' ] ; then
+	if [ "${1}" == '--no-minify' ] ; then
+		shift
+	else
 		minify=true
 	fi
 fi
@@ -104,7 +109,7 @@ compile () {
 	if [ "${cloneworkingdir}" ] ; then
 		find . -mindepth 1 -maxdepth 1 -type d -not -name lib -exec bash -c '
 			rm -rf ~/.build/shared/{} 2> /dev/null;
-			cp -rf {} ~/.build/shared/;
+			cp -a {} ~/.build/shared/;
 		' \;
 		cd ~/.build/shared
 	fi
@@ -137,9 +142,7 @@ compile () {
 						/\/\/\/ <reference path=\"(.*)\".*/g,
 						(ref, sub) => sub.match(/\.d\.ts\$/) ?
 							ref :
-							\`export const _\${crypto.randomBytes(4).toString('hex')} = (() => {
-								\${resolveReferences(parent + '/' + sub)}
-							})();\`
+							resolveReferences(parent + '/' + sub)
 					);
 				};
 
@@ -188,31 +191,26 @@ compile () {
 		fi
 
 		mangleExcept="$(
-			test "${minify}" && node -e "console.log(JSON.stringify('$({
-				echo -e '
-					crypto
-					importScripts
-					locals
-					Thread
-					threadSetupVars
-				';
-				grep -oP '[A-Za-z_$][A-Za-z0-9_$]*' preload/global.js;
-				{
-					cat typings/globals.d.ts;
-					find ../lib/typings -name '*.ts' -type f -exec cat {} \;;
-				} |
-					grep -oP 'declare.*:' |
-					perl -pe 's/declare\s+.*?\s+(.*?):.*/\1/g' \
-				;
-				find . -name '*.ts' -type f -exec cat {} \; |
-					tr -d '\n' |
-					grep -oP 'new Thread\(.*?\;' |
-					perl -pe 's/\/\*.*?\*\///g' |
-					perl -pe 's/(.*)\{.*?;$/\1/g' |
-					grep -oP '[A-Za-z0-9_$]+' \
-				;
-			} | sort | uniq | tr '\n' ' ')'.trim().split(/\s+/)))"
+			test "${minify}" && node -e "console.log(JSON.stringify('$(
+				find . -name '*.js' -exec cat {} \; |
+					grep -oP '[A-Za-z_$][A-Za-z0-9_$]*' |
+					sort |
+					uniq |
+					tr '\n' ' '
+			)'.trim().split(/\s+/)))"
 		)"
+
+		typesRegex="s/^import.*from\s+[\\\"']($(echo -n "$({
+			ls ../lib/js/@types;
+			grep -P 'declare\s+module' ../lib/js/@types/*/index.d.ts |
+				perl -pe "s/.*[\\\"'](.*)[\\\"'].*/\1/g" \
+			;
+		} | sort | uniq)" | tr '\n' '|'))[\\\"'];$//g"
+
+		find . -name '*.js' -exec bash -c "
+			cat {} | perl -pe \"${typesRegex}\" > {}.new;
+			mv {}.new {};
+		" \;
 
 		for f in $tsfiles ; do
 			m="$(modulename "${f}")"
@@ -361,7 +359,7 @@ if [ "${watch}" ] ; then
 		output=''
 		compile
 		echo -e "${output}\n\n\nFinished building JS/CSS ($(expr $(date +%s) - $start)s)\n\n"
-		${rootDir}/commands/tslint.sh &
+		${rootDir}/commands/tslint.sh
 
 		#if [ $SECONDS -gt $liteDeployInterval -a ! -d ~/.litedeploy ] ; then
 		#	echo -e "\n\n\nDeploying to lite env\n\n"

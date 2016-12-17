@@ -237,9 +237,11 @@ sed -i 's|https://apis.google.com||g' firebase.js
 sed -i 's|iframe||g' firebase.js
 sed -i 's|IFRAME||g' firebase.js
 rm -rf node_modules
-curl -s https://raw.githubusercontent.com/suhdev/firebase-3-typescript/master/firebase.d.ts | \
-	grep -v es6-promise.d.ts > index.d.ts
 cd ..
+
+mkdir -p @types/firebase
+curl -s https://raw.githubusercontent.com/suhdev/firebase-3-typescript/master/firebase.d.ts | \
+	grep -v es6-promise.d.ts > @types/firebase/index.d.ts
 
 cd microlight
 uglifyjs microlight.js -m -o microlight.min.js

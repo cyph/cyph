@@ -1,3 +1,4 @@
+import * as angular from 'angular';
 import {util} from '../util';
 import {IDialogManager} from './idialogmanager';
 

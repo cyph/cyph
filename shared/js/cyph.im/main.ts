@@ -10,7 +10,7 @@
 
 import {platformBrowser} from '@angular/platform-browser';
 import {downgradeComponent, UpgradeModule} from '@angular/upgrade/static';
-import * as angular from '@types/angular';
+import * as angular from 'angular';
 import {config} from '../cyph/config';
 import {env} from '../cyph/env';
 import {eventManager} from '../cyph/eventmanager';

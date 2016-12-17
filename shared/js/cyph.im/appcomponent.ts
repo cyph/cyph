@@ -1,4 +1,5 @@
 import {Component} from '@angular/core';
+import * as angular from 'angular';
 import {Env, env} from '../cyph/env';
 import {eventManager} from '../cyph/eventmanager';
 import {Strings, strings} from '../cyph/strings';

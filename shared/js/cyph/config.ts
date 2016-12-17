@@ -1,3 +1,6 @@
+import * as angular from 'angular';
+
+
 /**
  * Static/constant configuration values.
  */
