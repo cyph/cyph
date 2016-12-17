@@ -857,7 +857,7 @@ html.mobile .md-open-menu-container {
 
 #gettingstarted-section {
 	height: calc(100vh - 158px);
-	min-height: 360px;
+	min-height: 400px;
 	background-image: url(/img/cyphphoto.jpg);
 	background-size: cover;
 	background-position-y: -10vw;
@@ -868,23 +868,23 @@ html.mobile .md-open-menu-container {
 		padding: 5px 10px;
 		margin: 0px;
 		text-align: center;
+		top: 50%;
 		left: 50%;
-
-		@include transform(translateX(-50%));
 	}
 
 	> .hero-text {
-		top: calc(50% - 150px);
 		width: auto;
+
+		@include transform(translateX(-50%) translateY(calc(-100% - 50px)));
 	}
 
 	> .section-content-container {
-		top: calc(50% + 50px);
+		@include transform(translateX(-50%) translateY(calc(100% + 10px)));
 	}
 }
 
 html.mobile #gettingstarted-section {
-	height: 35em;
+	height: 45em;
 }
 
 #footer {
