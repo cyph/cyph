@@ -203,7 +203,8 @@ compile () {
 		typesRegex="s/^import.*from\s+[\\\"']($(echo -n "$({
 			ls ../lib/js/@types;
 			grep -P 'declare\s+module' ../lib/js/@types/*/index.d.ts |
-				perl -pe "s/.*[\\\"'](.*)[\\\"'].*/\1/g" \
+				perl -pe "s/.*declare\s+module\s+(.*?)\s+.*/\1/g" |
+				sed "s/[\"']//g" \
 			;
 		} | sort | uniq)" | tr '\n' '|'))[\\\"'];$//g"
 
