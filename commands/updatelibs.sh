@@ -96,6 +96,7 @@ jspm install -y \
 	npm:@types/dompurify \
 	npm:@types/filesaver \
 	npm:@types/jquery \
+	npm:@types/makdown-it \
 	npm:rxjs \
 	angular \
 	angular-material@master \

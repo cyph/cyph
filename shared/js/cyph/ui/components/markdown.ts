@@ -1,4 +1,5 @@
 import {Component, ElementRef, Input, OnChanges, SimpleChanges} from '@angular/core';
+import {MarkdownIt} from 'markdown-it';
 import {env} from '../../env';
 import {util} from '../../util';
 
@@ -15,7 +16,7 @@ export class Markdown implements OnChanges {
 	private readonly $element: JQuery;
 
 	/** @ignore */
-	private readonly markdownIt: any;
+	private readonly markdownIt: MarkdownIt;
 
 	/** String of Markdown to render as HTML and add to the DOM. */
 	@Input() public markdown: string;
