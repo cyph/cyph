@@ -157,6 +157,7 @@ export class ChatMessageBox implements OnInit {
 			await util.sleep();
 		}
 
+		await util.sleep(500);
 		this.isSpeedDialReady	= true;
 		await util.sleep(1000);
 		this.isSpeedDialOpen	= false;
