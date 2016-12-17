@@ -26,7 +26,6 @@ import {MdInput} from '../cyph/ui/components/material/mdinput';
 import {MdList} from '../cyph/ui/components/material/mdlist';
 import {MdListItem} from '../cyph/ui/components/material/mdlistitem';
 import {MdMenu} from '../cyph/ui/components/material/mdmenu';
-import {MdOption} from '../cyph/ui/components/material/mdoption';
 import {MdProgressCircular} from '../cyph/ui/components/material/mdprogresscircular';
 import {MdProgressLinear} from '../cyph/ui/components/material/mdprogresslinear';
 import {MdSelect} from '../cyph/ui/components/material/mdselect';
@@ -76,7 +75,6 @@ import {BetaComponent} from './betacomponent';
 		MdList,
 		MdListItem,
 		MdMenu,
-		MdOption,
 		MdProgressCircular,
 		MdProgressLinear,
 		MdSelect,

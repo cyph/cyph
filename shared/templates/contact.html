@@ -8,14 +8,8 @@
 				[(model)]='email.to'
 				formName='to'
 				label='Cyph team to contact'
-			>
-				<md2-option
-					*ngFor='let address of config.cyphEmailAddresses'
-					[value]='address'
-				>
-					{{address}}
-				</md2-option>
-			</md2-select>
+				[options]='config.cyphEmailAddresses'
+			></md2-select>
 		</div>
 		<div class='layout-row'>
 			<md2-input

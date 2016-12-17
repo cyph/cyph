@@ -35,6 +35,7 @@ export class MdSelect
 			formName: '@',
 			label: '@',
 			model: '=',
+			options: '<',
 			required: '<'
 		},
 		/* tslint:disable-next-line:max-classes-per-file */
@@ -55,6 +56,9 @@ export class MdSelect
 			public readonly model: string;
 
 			/** @ignore */
+			public readonly options: string[];
+
+			/** @ignore */
 			public readonly required: boolean;
 
 			constructor () {}
@@ -69,12 +73,16 @@ export class MdSelect
 					ng-required='$ctrl.required'
 					aria-label='.'
 				>
-					<ng-transclude></ng-transclude>
+					<md-option
+						ng-repeat='option in $ctrl.options'
+						value='{{option}}'
+					>
+						{{option}}
+					</md-option>
 				</md-select>
 				<label>{{$ctrl.label}}</label>
 			</md-input-container>
-		`,
-		transclude: true
+		`
 	};
 
 
@@ -95,6 +103,9 @@ export class MdSelect
 
 	/** @ignore */
 	@Output() public modelChange: EventEmitter<string>;
+
+	/** @ignore */
+	@Input() public options: string[];
 
 	/** @ignore */
 	@Input() public required: boolean;
