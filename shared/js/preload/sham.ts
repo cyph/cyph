@@ -1,5 +1,6 @@
 /**
- * @file Fakes out Firebase (Storage only) for demo purposes.
+ * @file Fakes out stuff insecurely for demo purposes.
+ * (Should ONLY ever be used by cyph.com.)
  */
 
 
@@ -54,3 +55,6 @@ import * as firebase from 'firebase';
 		})
 	}]
 };
+
+
+(<any> self).sodium.memzero	= () => {};

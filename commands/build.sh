@@ -131,27 +131,6 @@ compile () {
 
 	if [ "${test}" ] ; then
 		output="${output}$(../../commands/tslint.sh 2>&1)"
-	else
-		for f in $tsfiles ; do
-			node -e "
-				const resolveReferences	= f => {
-					const path		= fs.realpathSync(f);
-					const parent	= path.split('/').slice(0, -1).join('/');
-
-					return fs.readFileSync(path).toString().trim().replace(
-						/\/\/\/ <reference path=\"(.*)\".*/g,
-						(ref, sub) => sub.match(/\.d\.ts\$/) ?
-							ref :
-							resolveReferences(parent + '/' + sub)
-					);
-				};
-
-				fs.writeFileSync(
-					'${f}.ts',
-					resolveReferences('${f}.ts')
-				);
-			"
-		done
 	fi
 
 	tsbuild $(echo "$tsfiles" | grep -vP '/main$')

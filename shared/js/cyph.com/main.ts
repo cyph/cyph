@@ -2,10 +2,6 @@
  * @file Entry point of cyph.com.
  */
 
-/// <reference path="../preload/unsupportedbrowsers.ts" />
-/// <reference path="../preload/fakecrypto.ts" />
-/// <reference path="../preload/fakefirebase.ts" />
-/// <reference path="../preload/jquery.ts" />
 
 import {platformBrowser} from '@angular/platform-browser';
 import {downgradeComponent, UpgradeModule} from '@angular/upgrade/static';

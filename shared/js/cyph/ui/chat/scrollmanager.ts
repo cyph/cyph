@@ -56,11 +56,16 @@ export class ScrollManager implements IScrollManager {
 			await visibilityWatcher.waitForChange();
 		}
 
-		const currentScrollPosition: number	=
-			(<any> this.elements.messageList()).scrollPosition()
+		const $messageList		= this.elements.messageList();
+		const scrollPosition	=
+			$messageList[0].scrollHeight -
+			(
+				$messageList[0].scrollTop +
+				$messageList[0].clientHeight
+			)
 		;
 
-		if (($elem.height() + 150) > currentScrollPosition) {
+		if (($elem.height() + 150) > scrollPosition) {
 			this.scrollDown();
 			return;
 		}

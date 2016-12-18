@@ -122,7 +122,6 @@ jspm install -y \
 	github:julianlam/tabIndent.js \
 	braintree=github:braintree/braintree-web@^2 \
 	babel-polyfill \
-	npm:mutationobserver-shim \
 	crypto/mceliece=github:cyph/mceliece.js \
 	crypto/ntru=github:cyph/ntru.js \
 	crypto/rlwe=github:cyph/rlwe.js \

@@ -3,9 +3,15 @@
  */
 
 
+let cryptoSupported	= false;
+try {
+	crypto.getRandomValues(new Uint8Array(1));
+	cryptoSupported	= true;
+}
+catch (_) {}
+
 if (!(
-	'crypto' in self &&
-	'getRandomValues' in (<any> self).crypto &&
+	cryptoSupported &&
 	'Worker' in self &&
 	'history' in self &&
 	'pushState' in (<any> self).history &&
@@ -14,7 +20,7 @@ if (!(
 	'localStorage' in self &&
 
 	/* Test for https://github.com/jedisct1/libsodium.js/issues/28 */
-	(<any> self).sodium.crypto_box_easy(
+	(!('sodium' in self) || (<any> self).sodium.crypto_box_easy(
 		new Uint8Array([
 			104, 101, 108, 108, 111
 		]),
@@ -31,7 +37,7 @@ if (!(
 			147, 57, 223, 131, 180, 150, 172, 229, 99, 71, 234, 252, 116, 75, 64
 		]),
 		'hex'
-	) === '7a47747857c2560f2dea0e5acca7497209465d5419'
+	) === '7a47747857c2560f2dea0e5acca7497209465d5419')
 )) {
 	location.pathname	= '/unsupportedbrowser';
 }
