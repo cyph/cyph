@@ -123,11 +123,11 @@ RUN sudo npm -g install \
 	@angular/core@2.3.1 \
 	@angular/platform-browser@2.3.1 \
 	@angular/platform-server@2.3.1 \
-	babel-core@6.20.0 \
+	babel-core@6.21.0 \
 	babel-cli@6.18.0 \
-	babel-loader@6.2.9 \
+	babel-loader@6.2.10 \
 	babel-plugin-syntax-async-functions@6.13.0 \
-	babel-plugin-transform-regenerator@6.20.0 \
+	babel-plugin-transform-regenerator@6.21.0 \
 	babel-preset-es2015@6.18.0 \
 	browserify@13.1.1 \
 	cheerio@0.22.0 \
@@ -138,7 +138,7 @@ RUN sudo npm -g install \
 	image-type@2.1.0 \
 	html-minifier@3.2.3 \
 	rxjs@5.0.0-rc.4 \
-	tslint@4.1.0 \
+	tslint@4.1.1 \
 	tslint-microsoft-contrib@4.0.0 \
 	typescript@2.0.10 \
 	uglify-js@2.7.5 \
