@@ -12,7 +12,7 @@ export class LocalChannel implements IChannel {
 	/** @inheritDoc */
 	public close () : void {
 		const other: LocalChannel	= this.other;
-		this.other	= null;
+		this.other	= undefined;
 
 		if (!other) {
 			return;

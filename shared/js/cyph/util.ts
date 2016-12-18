@@ -119,7 +119,7 @@ export class Util {
 		}
 
 		if (tryOnce && lock.isOwned) {
-			return null;
+			return undefined;
 		}
 
 		try {
@@ -270,7 +270,7 @@ export class Util {
 						(<string> data.toString())
 				);
 
-				data	= null;
+				data	= undefined;
 			}
 			else if (typeof data === 'object') {
 				data	= contentType === 'application/json' ?
@@ -319,7 +319,7 @@ export class Util {
 				--o.retries;
 			}
 			else if (discardErrors) {
-				return null;
+				return undefined;
 			}
 			else {
 				throw err;
@@ -365,7 +365,7 @@ export class Util {
 		}
 
 		const onbeforeunload	= self.onbeforeunload;
-		self.onbeforeunload		= null;
+		self.onbeforeunload		= undefined;
 
 		saveAs(
 			new Blob([content], {type: 'application/octet-stream'}),

@@ -55,7 +55,7 @@ export class Translate {
 			return;
 		}
 
-		const translation	= util.translate(value.trim(), null);
+		const translation	= util.translate(value.trim(), undefined);
 
 		if (!translation) {
 			return;

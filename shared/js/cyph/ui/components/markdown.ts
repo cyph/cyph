@@ -18,12 +18,18 @@ export class Markdown implements OnChanges {
 	/** @ignore */
 	private readonly markdownIt: MarkdownIt;
 
+	/** @ignore */
+	private initiated: boolean	= false;
+
 	/** String of Markdown to render as HTML and add to the DOM. */
 	@Input() public markdown: string;
 
 	/** @ignore */
 	public async ngOnChanges (changes: SimpleChanges) : Promise<void> {
-		if (this.markdown === null) {
+		if (this.markdown !== undefined) {
+			this.initiated	= true;
+		}
+		else if (this.initiated) {
 			await util.sleep(10000);
 
 			this.$element.

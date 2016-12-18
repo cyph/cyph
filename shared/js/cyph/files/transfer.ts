@@ -37,7 +37,7 @@ export class Transfer implements ITransfer {
 		public readonly id: string = util.generateGuid(),
 
 		/** @inheritDoc */
-		public readonly answer: boolean = null,
+		public readonly answer: boolean = undefined,
 
 		/** @inheritDoc */
 		public readonly author: string = users.me,

@@ -38,7 +38,7 @@ for (const k of [
 	'translations'
 ]) {
 	if (!(k in self)) {
-		(<any> self)[k]	= null;
+		(<any> self)[k]	= undefined;
 	}
 }
 

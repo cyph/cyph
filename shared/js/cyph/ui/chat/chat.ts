@@ -147,7 +147,7 @@ export class Chat implements IChat {
 			message.selfDestructTimer	= new Timer(selfDestructTimeout);
 			await message.selfDestructTimer.start();
 			await util.sleep(10000);
-			message.text	= null;
+			message.text	= undefined;
 		}
 	}
 

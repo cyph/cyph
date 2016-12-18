@@ -33,8 +33,8 @@ export class AnonymousRemoteUser implements IRemoteUser {
 
 		this.potassium.clearMemory(sharedSecret);
 
-		this.cyphertextPromise	= null;
-		this.sharedSecret		= null;
+		this.cyphertextPromise	= undefined;
+		this.sharedSecret		= undefined;
 
 		return this.publicKey;
 	}

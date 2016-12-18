@@ -75,7 +75,7 @@ export class Files implements IFiles {
 						catch (err) {
 							eventManager.trigger(
 								locals.callbackId,
-								[err.message, null, null]
+								[err.message, undefined, undefined]
 							);
 
 							return;
@@ -104,7 +104,7 @@ export class Files implements IFiles {
 
 					eventManager.trigger(
 						locals.callbackId,
-						[null, cyphertext, key]
+						[undefined, cyphertext, key]
 					);
 				}
 				/* Decrypt */
@@ -134,7 +134,7 @@ export class Files implements IFiles {
 						catch (err) {
 							eventManager.trigger(
 								locals.callbackId,
-								[err.message, null]
+								[err.message, undefined]
 							);
 
 							return;
@@ -157,7 +157,7 @@ export class Files implements IFiles {
 
 					eventManager.trigger(
 						locals.callbackId,
-						[null, plaintext]
+						[undefined, plaintext]
 					);
 				}
 			},
@@ -366,7 +366,7 @@ export class Files implements IFiles {
 			this.triggerUIEvent(
 				UIEvents.completed,
 				transfer,
-				transfer.image ? plaintext : null
+				transfer.image ? plaintext : undefined
 			);
 
 			if (transfer.answer === false) {

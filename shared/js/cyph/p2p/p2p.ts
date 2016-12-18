@@ -80,7 +80,7 @@ export class P2P implements IP2P {
 				this.webRTC.stopLocalVideo();
 				this.webRTC.leaveRoom();
 				this.webRTC.disconnect();
-				this.webRTC	= null;
+				this.webRTC	= undefined;
 			}
 
 			if (wasAccepted) {
@@ -237,7 +237,7 @@ export class P2P implements IP2P {
 					const lastArg: any	= args.slice(-1)[0];
 
 					if (event === 'join' && typeof lastArg === 'function') {
-						lastArg(null, {clients: {friend: {video: true}}});
+						lastArg(undefined, {clients: {friend: {video: true}}});
 					}
 					else {
 						this.session.send(

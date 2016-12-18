@@ -248,12 +248,12 @@ export class CyphDemo {
 
 		let mobileSession: ISession;
 		const desktopSession: ISession	= new Session(
-			null,
+			undefined,
 			false,
 			undefined,
 			(desktopChannel: LocalChannel) => {
 				mobileSession	= new Session(
-					null,
+					undefined,
 					false,
 					undefined,
 					(mobileChannel: LocalChannel) =>

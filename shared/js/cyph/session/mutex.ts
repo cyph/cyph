@@ -52,13 +52,13 @@ export class Mutex implements IMutex {
 
 	/** @ignore */
 	private shiftRequester () : void {
-		this.owner		= null;
-		this.purpose	= null;
+		this.owner		= undefined;
+		this.purpose	= undefined;
 
 		if (this.requester) {
 			this.owner		= this.requester.user;
 			this.purpose	= this.requester.purpose;
-			this.requester	= null;
+			this.requester	= undefined;
 		}
 	}
 

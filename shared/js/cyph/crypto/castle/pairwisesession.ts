@@ -72,7 +72,7 @@ export class PairwiseSession {
 		this.potassium.clearMemory(keyPair.privateKey);
 		this.potassium.clearMemory(keyPair.publicKey);
 
-		this.localUser	= null;
+		this.localUser	= undefined;
 
 		return secret;
 	}
@@ -88,7 +88,7 @@ export class PairwiseSession {
 
 		this.potassium.clearMemory(remotePublicKey);
 
-		this.remoteUser	= null;
+		this.remoteUser	= undefined;
 
 		return cyphertext;
 	}

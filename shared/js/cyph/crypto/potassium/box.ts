@@ -208,7 +208,7 @@ export class Box {
 		publicKey: {classical: Uint8Array; mcEliece: Uint8Array; ntru: Uint8Array};
 	} {
 		return {
-			privateKey: !privateKey ? null : {
+			privateKey: !privateKey ? undefined : {
 				classical: new Uint8Array(
 					privateKey.buffer,
 					privateKey.byteOffset,
@@ -230,7 +230,7 @@ export class Box {
 					lib.ntru.privateKeyLength
 				)
 			},
-			publicKey: !publicKey ? null : {
+			publicKey: !publicKey ? undefined : {
 				classical: new Uint8Array(
 					publicKey.buffer,
 					publicKey.byteOffset,

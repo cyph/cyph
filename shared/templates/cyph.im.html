@@ -16,9 +16,9 @@
 	</cyph-chat-main>
 
 	<cyph-link-connection
-		[baseUrl]='!!ui ? ui.linkConnectionBaseUrl : null'
-		[chat]='!!ui ? ui.chat : null'
-		[dialogManager]='!!ui ? ui.dialogManager : null'
+		[baseUrl]='!!ui ? ui.linkConnectionBaseUrl : undefined'
+		[chat]='!!ui ? ui.chat : undefined'
+		[dialogManager]='!!ui ? ui.dialogManager : undefined'
 		[class.active]='!!ui && ui.state === states.waitingForFriend'
 		class='cyph-view layout-fill layout-column flex'
 	></cyph-link-connection>
@@ -35,7 +35,7 @@
 	></div>
 
 	<cyph-beta
-		[betaState]='!!ui ? ui.betaState : null'
+		[betaState]='!!ui ? ui.betaState : undefined'
 		[class.active]='!!ui && ui.state === states.beta'
 		class='cyph-view layout-fill layout-column flex'
 	></cyph-beta>

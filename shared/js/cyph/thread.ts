@@ -125,7 +125,7 @@ export class Thread implements IThread {
 						return array;
 					},
 
-					subtle: <SubtleCrypto> null
+					subtle: <SubtleCrypto> undefined
 				};
 			})();
 		}
@@ -142,7 +142,7 @@ export class Thread implements IThread {
 
 		importScripts('/lib/js/firebase/firebase.js');
 
-		threadSetupVars	= null;
+		threadSetupVars	= undefined;
 	}
 
 	/** @ignore */
@@ -174,7 +174,7 @@ export class Thread implements IThread {
 			this.worker.terminate();
 		}
 
-		this.worker	= null;
+		this.worker	= undefined;
 
 		eventManager.threads.delete(this);
 	}

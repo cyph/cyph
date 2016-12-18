@@ -188,7 +188,7 @@ export class Session implements ISession {
 	/** @ignore */
 	private setDescriptor (descriptor?: string) : void {
 		if (
-			/* Empty/null string */
+			/* Empty/undefined string */
 			!descriptor ||
 
 			/* Too short */
@@ -403,19 +403,19 @@ export class Session implements ISession {
 
 		localChannelCallback?: (localChannel: LocalChannel) => void
 	) { (async () => {
-		/* true = yes; false = no; null = maybe */
+		/* true = yes; false = no; undefined = maybe */
 		this.updateState(
 			state.isStartingNewCyph,
 			!descriptor ?
 				true :
 				descriptor.length > config.secretLength ?
-					null :
+					undefined :
 					false
 		);
 
 		this.updateState(
 			state.wasInitiatedByAPI,
-			this.state.isStartingNewCyph === null
+			this.state.isStartingNewCyph === undefined
 		);
 
 		this.setDescriptor(descriptor);
@@ -426,7 +426,7 @@ export class Session implements ISession {
 		}
 
 		if (localChannelCallback) {
-			this.setUpChannel(null, nativeCrypto, localChannelCallback);
+			this.setUpChannel(undefined, nativeCrypto, localChannelCallback);
 		}
 		else {
 			const channelDescriptor: string	=

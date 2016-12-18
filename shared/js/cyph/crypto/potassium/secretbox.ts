@@ -41,7 +41,7 @@ export class SecretBox {
 					additionalData
 				) :
 				lib.sodium.crypto_aead_chacha20poly1305_decrypt(
-					null,
+					undefined,
 					cyphertext,
 					additionalData,
 					nonce,
@@ -65,7 +65,7 @@ export class SecretBox {
 				lib.sodium.crypto_aead_chacha20poly1305_encrypt(
 					plaintext,
 					additionalData,
-					null,
+					undefined,
 					nonce,
 					key
 				)
