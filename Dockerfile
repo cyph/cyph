@@ -131,7 +131,7 @@ RUN sudo npm -g install \
 	babel-preset-es2015@6.18.0 \
 	browserify@13.1.1 \
 	cheerio@0.22.0 \
-	clean-css@3.4.22 \
+	clean-css@3.4.23 \
 	codelyzer@2.0.0-beta.3 \
 	datauri@1.0.5  \
 	htmlencode@0.0.4  \
@@ -142,7 +142,7 @@ RUN sudo npm -g install \
 	tslint-microsoft-contrib@4.0.0 \
 	typescript@2.0.10 \
 	uglify-js@2.7.5 \
-	webpack@2.2.0-rc.0 \
+	webpack@2.2.0-rc.1 \
 	zone.js@0.7.2 \
 	browserstack \
 	firebase \
