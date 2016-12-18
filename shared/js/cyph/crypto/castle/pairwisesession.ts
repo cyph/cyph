@@ -32,6 +32,12 @@ export class PairwiseSession {
 	private core: Core;
 
 	/** @ignore */
+	private localUser: ILocalUser|undefined;
+
+	/** @ignore */
+	private remoteUser: IRemoteUser|undefined;
+
+	/** @ignore */
 	private isAborted: boolean;
 
 	/** @ignore */
@@ -62,6 +68,10 @@ export class PairwiseSession {
 
 	/** @ignore */
 	private async handshakeOpenSecret (cyphertext: Uint8Array) : Promise<Uint8Array> {
+		if (!this.localUser) {
+			throw new Error('Local user not found.');
+		}
+
 		const keyPair	= await this.localUser.getKeyPair();
 
 		const secret	= await this.potassium.box.open(
@@ -79,6 +89,10 @@ export class PairwiseSession {
 
 	/** @ignore */
 	private async handshakeSendSecret (secret: Uint8Array) : Promise<Uint8Array> {
+		if (!this.remoteUser) {
+			throw new Error('Remote user not found.');
+		}
+
 		const remotePublicKey	= await this.remoteUser.getPublicKey();
 
 		const cyphertext		= await this.potassium.box.seal(
@@ -115,8 +129,12 @@ export class PairwiseSession {
 			;
 
 			if (this.transport.cyphertextIntercepters.length > 0) {
-				this.transport.cyphertextIntercepters.shift()(cyphertextBytes);
-				return;
+				const cyphertextIntercepter	= this.transport.cyphertextIntercepters.shift();
+
+				if (cyphertextIntercepter) {
+					cyphertextIntercepter(cyphertextBytes);
+					return;
+				}
 			}
 
 			const id: number	= new Float64Array(cyphertextBytes.buffer, 0, 1)[0];
@@ -127,11 +145,13 @@ export class PairwiseSession {
 					id
 				);
 
+				const incomingMessages	= this.incomingMessages.get(id) || [];
+
 				if (!this.incomingMessages.has(id)) {
 					this.incomingMessages.set(id, []);
 				}
 
-				this.incomingMessages.get(id).push(cyphertextBytes);
+				incomingMessages.push(cyphertextBytes);
 			}
 		}
 		catch (_) {}
@@ -145,12 +165,15 @@ export class PairwiseSession {
 				this.incomingMessageId <= this.incomingMessagesMax &&
 				this.incomingMessages.has(this.incomingMessageId)
 			) {
-				let success: boolean;
+				let success	= false;
 
-				for (
-					const cyphertextBytes of
-					this.incomingMessages.get(this.incomingMessageId)
-				) {
+				const incomingMessages	= this.incomingMessages.get(this.incomingMessageId);
+
+				if (!incomingMessages) {
+					break;
+				}
+
+				for (const cyphertextBytes of incomingMessages) {
 					if (!success) {
 						try {
 							let plaintext: DataView	= await this.core.decrypt(
@@ -289,15 +312,16 @@ export class PairwiseSession {
 		/** @ignore */
 		private readonly transport: Transport,
 
-		/** @ignore */
-		private localUser: ILocalUser,
+		localUser: ILocalUser,
 
-		/** @ignore */
-		private remoteUser: IRemoteUser,
+		remoteUser: IRemoteUser,
 
 		isAlice: boolean
 	) { (async () => {
 		try {
+			this.localUser	= localUser;
+			this.remoteUser	= remoteUser;
+
 			this.remoteUsername	= this.remoteUser.getUsername();
 
 			await this.localUser.getKeyPair();

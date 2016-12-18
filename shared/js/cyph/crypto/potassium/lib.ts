@@ -58,16 +58,16 @@ export class Lib {
 		crypto_scalarmult_SCALARBYTES: number;
 
 		crypto_aead_chacha20poly1305_decrypt: (
-			secretNonce: Uint8Array,
+			secretNonce: Uint8Array|undefined,
 			cyphertext: Uint8Array,
-			additionalData: Uint8Array,
+			additionalData: Uint8Array|undefined,
 			publicNonce: Uint8Array,
 			key: Uint8Array
 		) => Uint8Array;
 		crypto_aead_chacha20poly1305_encrypt: (
 			plaintext: Uint8Array,
-			additionalData: Uint8Array,
-			secretNonce: Uint8Array,
+			additionalData: Uint8Array|undefined,
+			secretNonce: Uint8Array|undefined,
 			publicNonce: Uint8Array,
 			key: Uint8Array
 		) => Uint8Array;

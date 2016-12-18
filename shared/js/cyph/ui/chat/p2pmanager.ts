@@ -90,7 +90,7 @@ export class P2PManager implements IP2PManager {
 		/** @ignore */
 		private readonly elements: IElements,
 
-		forceTURN?: boolean
+		forceTURN: boolean = false
 	) {
 		this.p2p	= new P2P(
 			this.chat.session,

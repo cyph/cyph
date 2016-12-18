@@ -246,7 +246,7 @@ export class CyphDemo {
 			});
 		}
 
-		let mobileSession: ISession;
+		let mobileSession: ISession|undefined;
 		const desktopSession: ISession	= new Session(
 			undefined,
 			false,
@@ -270,6 +270,10 @@ export class CyphDemo {
 			desktopSession,
 			elements.demoRootDesktop()
 		);
+
+		while (mobileSession === undefined) {
+			await util.sleep();
+		}
 
 		this.mobile		= new Chat(
 			dialogManager,

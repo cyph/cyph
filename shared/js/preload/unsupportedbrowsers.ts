@@ -6,9 +6,9 @@
 const userAgent: string	= navigator.userAgent.toLowerCase();
 
 const isFirefoxOS: boolean		=
-	userAgent.match('firefox') &&
-	userAgent.match('mobile') &&
-	!userAgent.match('android')
+	/firefox/.test(userAgent) &&
+	/mobile/.test(userAgent) &&
+	!/android/.test(userAgent)
 ;
 
 const isOldIOS: boolean			=
@@ -17,8 +17,8 @@ const isOldIOS: boolean			=
 ;
 
 const isStockAndroid: boolean	=
-	userAgent.match('android') &&
-	!!userAgent.match(/version\/\d\.\d/)
+	/android/.test(userAgent) &&
+	/version\/\d\.\d/.test(userAgent)
 ;
 
 const isOldOpera: boolean		= /opera/.test(navigator.userAgent);

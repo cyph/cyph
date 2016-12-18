@@ -23,17 +23,18 @@ import {Transfer} from './transfer';
  */
 export class Files implements IFiles {
 	/** @ignore */
-	private static async cryptoThread (
-		threadLocals: {
-			plaintext?: Uint8Array,
-			cyphertext?: Uint8Array,
-			key?: Uint8Array,
-			chunkSize?: number,
-			callbackId?: string
-		}
-	) : Promise<Uint8Array[]> {
-		threadLocals.chunkSize	= config.filesConfig.chunkSize;
-		threadLocals.callbackId	= 'files-' + util.generateGuid();
+	private static async cryptoThread (o: {
+		cyphertext?: Uint8Array,
+		key?: Uint8Array,
+		plaintext?: Uint8Array
+	}) : Promise<Uint8Array[]> {
+		const threadLocals	= {
+			callbackId: 'files-' + util.generateGuid(),
+			chunkSize: config.filesConfig.chunkSize,
+			cyphertext: o.cyphertext,
+			key: o.key,
+			plaintext: o.plaintext
+		};
 
 		const thread	= new Thread(
 			/* tslint:disable-next-line:only-arrow-functions */
@@ -44,8 +45,8 @@ export class Files implements IFiles {
 					plaintext?: Uint8Array,
 					cyphertext?: Uint8Array,
 					key?: Uint8Array,
-					chunkSize?: number,
-					callbackId?: string
+					chunkSize: number,
+					callbackId: string
 				},
 				importScripts: Function
 			) : Promise<void> {
@@ -321,7 +322,7 @@ export class Files implements IFiles {
 		name: string,
 		fileType: string,
 		image: boolean,
-		imageSelfDestructTimeout: number
+		imageSelfDestructTimeout?: number
 	) : Promise<void> {
 		if (plaintext.length > config.filesConfig.maxSize) {
 			this.triggerUIEvent(UIEvents.tooLarge);

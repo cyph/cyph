@@ -97,7 +97,7 @@ export class ScrollManager implements IScrollManager {
 
 	/** @inheritDoc */
 	public async scrollDown (shouldScrollCyphertext?: boolean) : Promise<void> {
-		return util.lock(
+		return util.lockTryOnce(
 			shouldScrollCyphertext ?
 				this.scrollDownLocks.cyphertext :
 				this.scrollDownLocks.messages
@@ -124,9 +124,7 @@ export class ScrollManager implements IScrollManager {
 				}
 
 				this.updateMessageCount();
-			},
-			true,
-			true
+			}
 		);
 	}
 

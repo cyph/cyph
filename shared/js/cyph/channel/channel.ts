@@ -97,35 +97,41 @@ export class Channel implements IChannel {
 		}
 
 		if (handlers.onConnect) {
+			const onConnect	= handlers.onConnect;
+
 			if (this.isAlice) {
 				util.retryUntilSuccessful(() =>
 					this.usersRef.on('child_added', (snapshot: firebase.DataSnapshot) => {
 						if (!this.isConnected && snapshot.key !== this.userId) {
 							this.isConnected	= true;
-							handlers.onConnect();
+							onConnect();
 						}
 					})
 				);
 			}
 			else {
-				handlers.onConnect();
+				onConnect();
 			}
 		}
 
 		if (handlers.onClose) {
+			const onClose	= handlers.onClose;
+
 			util.retryUntilSuccessful(() =>
 				this.channelRef.on('value', async (snapshot: firebase.DataSnapshot) => {
 					if (await util.retryUntilSuccessful(() =>
 						!snapshot.exists() && !this.isClosed
 					)) {
 						this.isClosed	= true;
-						handlers.onClose();
+						onClose();
 					}
 				})
 			);
 		}
 
 		if (handlers.onMessage) {
+			const onMessage	= handlers.onMessage;
+
 			util.retryUntilSuccessful(() =>
 				this.messagesRef.on('child_added', async (snapshot: firebase.DataSnapshot) => {
 					const o	= await util.retryUntilSuccessful(() =>
@@ -133,7 +139,7 @@ export class Channel implements IChannel {
 					);
 
 					if (o.sender !== this.userId) {
-						handlers.onMessage(o.cyphertext);
+						onMessage(o.cyphertext);
 					}
 				})
 			);

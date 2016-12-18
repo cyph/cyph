@@ -203,55 +203,62 @@ export class Box {
 	}
 
 	/** @ignore */
-	private splitKeys (publicKey?: Uint8Array, privateKey?: Uint8Array) : {
-		privateKey: {classical: Uint8Array; mcEliece: Uint8Array; ntru: Uint8Array};
-		publicKey: {classical: Uint8Array; mcEliece: Uint8Array; ntru: Uint8Array};
+	private splitPrivateKey (privateKey: Uint8Array) : {
+		classical: Uint8Array;
+		mcEliece: Uint8Array;
+		ntru: Uint8Array;
 	} {
 		return {
-			privateKey: !privateKey ? undefined : {
-				classical: new Uint8Array(
-					privateKey.buffer,
-					privateKey.byteOffset,
+			classical: new Uint8Array(
+				privateKey.buffer,
+				privateKey.byteOffset,
+				this.helpers.privateKeyBytes
+			),
+			mcEliece: new Uint8Array(
+				privateKey.buffer,
+				privateKey.byteOffset +
 					this.helpers.privateKeyBytes
-				),
-				mcEliece: new Uint8Array(
-					privateKey.buffer,
-					privateKey.byteOffset +
-						this.helpers.privateKeyBytes
-					,
+				,
+				lib.mcEliece.privateKeyLength
+			),
+			ntru: new Uint8Array(
+				privateKey.buffer,
+				privateKey.byteOffset +
+					this.helpers.privateKeyBytes +
 					lib.mcEliece.privateKeyLength
-				),
-				ntru: new Uint8Array(
-					privateKey.buffer,
-					privateKey.byteOffset +
-						this.helpers.privateKeyBytes +
-						lib.mcEliece.privateKeyLength
-					,
-					lib.ntru.privateKeyLength
-				)
-			},
-			publicKey: !publicKey ? undefined : {
-				classical: new Uint8Array(
-					publicKey.buffer,
-					publicKey.byteOffset,
+				,
+				lib.ntru.privateKeyLength
+			)
+		};
+	}
+
+	/** @ignore */
+	private splitPublicKey (publicKey: Uint8Array) : {
+		classical: Uint8Array;
+		mcEliece: Uint8Array;
+		ntru: Uint8Array;
+	} {
+		return {
+			classical: new Uint8Array(
+				publicKey.buffer,
+				publicKey.byteOffset,
+				this.helpers.publicKeyBytes
+			),
+			mcEliece: new Uint8Array(
+				publicKey.buffer,
+				publicKey.byteOffset +
 					this.helpers.publicKeyBytes
-				),
-				mcEliece: new Uint8Array(
-					publicKey.buffer,
-					publicKey.byteOffset +
-						this.helpers.publicKeyBytes
-					,
+				,
+				lib.mcEliece.publicKeyLength
+			),
+			ntru: new Uint8Array(
+				publicKey.buffer,
+				publicKey.byteOffset +
+					this.helpers.publicKeyBytes +
 					lib.mcEliece.publicKeyLength
-				),
-				ntru: new Uint8Array(
-					publicKey.buffer,
-					publicKey.byteOffset +
-						this.helpers.publicKeyBytes +
-						lib.mcEliece.publicKeyLength
-					,
-					lib.ntru.publicKeyLength
-				)
-			}
+				,
+				lib.ntru.publicKeyLength
+			)
 		};
 	}
 
@@ -281,21 +288,18 @@ export class Box {
 	}
 
 	/** Encrypts plaintext. */
-	public async seal (
-		plaintext: Uint8Array,
-		publicKey: Uint8Array
-	) : Promise<Uint8Array> {
-		const keys	= this.splitKeys(publicKey);
+	public async seal (plaintext: Uint8Array, publicKey: Uint8Array) : Promise<Uint8Array> {
+		const publicSubKeys	= this.splitPublicKey(publicKey);
 
 		const mcElieceData						= await this.publicKeyEncrypt(
-			keys.publicKey.mcEliece,
+			publicSubKeys.mcEliece,
 			'McEliece',
 			lib.mcEliece.decryptedDataLength,
 			lib.mcEliece.encrypt
 		);
 
 		const ntruData							= await this.publicKeyEncrypt(
-			keys.publicKey.ntru,
+			publicSubKeys.ntru,
 			'NTRU',
 			lib.ntru.decryptedDataLength,
 			lib.ntru.encrypt
@@ -306,7 +310,7 @@ export class Box {
 		const classicalCyphertext: Uint8Array	= await this.helpers.seal(
 			plaintext,
 			nonce,
-			keys.publicKey.classical
+			publicSubKeys.classical
 		);
 		const ntruCyphertext: Uint8Array		= await this.secretBox.seal(
 			classicalCyphertext,
@@ -330,11 +334,9 @@ export class Box {
 	}
 
 	/** Decrypts cyphertext. */
-	public async open (
-		cyphertext: Uint8Array,
-		keyPair: IKeyPair
-	) : Promise<Uint8Array> {
-		const keys	= this.splitKeys(keyPair.publicKey, keyPair.privateKey);
+	public async open (cyphertext: Uint8Array, keyPair: IKeyPair) : Promise<Uint8Array> {
+		const privateSubKeys	= this.splitPrivateKey(keyPair.privateKey);
+		const publicSubKeys		= this.splitPublicKey(keyPair.publicKey);
 
 		let cyphertextIndex	= cyphertext.byteOffset;
 
@@ -345,7 +347,7 @@ export class Box {
 				lib.mcEliece.encryptedDataLength +
 					this.oneTimeAuth.bytes
 			),
-			keys.privateKey.mcEliece,
+			privateSubKeys.mcEliece,
 			'McEliece',
 			lib.mcEliece.encryptedDataLength,
 			lib.mcEliece.decrypt
@@ -363,7 +365,7 @@ export class Box {
 				lib.ntru.encryptedDataLength +
 					this.oneTimeAuth.bytes
 			),
-			keys.privateKey.ntru,
+			privateSubKeys.ntru,
 			'NTRU',
 			lib.ntru.encryptedDataLength,
 			lib.ntru.decrypt
@@ -401,8 +403,8 @@ export class Box {
 			classicalCyphertext,
 			nonce,
 			{
-				privateKey: keys.privateKey.classical,
-				publicKey: keys.publicKey.classical
+				privateKey: privateSubKeys.classical,
+				publicKey: publicSubKeys.classical
 			}
 		);
 

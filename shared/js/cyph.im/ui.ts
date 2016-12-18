@@ -106,7 +106,7 @@ export class UI {
 
 
 		this.chat.session.one(events.abort).then(() => {
-			self.onbeforeunload	= undefined;
+			self.onbeforeunload	= () => {};
 			this.changeState(States.chat);
 		});
 
@@ -156,7 +156,7 @@ export class UI {
 		urlState.onChange(newUrlState => this.onUrlStateChange(newUrlState));
 
 		self.onhashchange	= () => location.reload();
-		self.onpopstate		= undefined;
+		self.onpopstate		= () => {};
 
 
 		const urlSection: string	= urlState.getUrlSplit()[0];

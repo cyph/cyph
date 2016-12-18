@@ -50,14 +50,12 @@ export class AppComponent {
 
 	/** Closes mobile sidenav menu. */
 	public async closeSidenav () : Promise<void> {
-		return util.lock(
+		return util.lockTryOnce(
 			this.sidenavLock,
 			async () => {
 				await util.sleep();
 				this.sidenav().close();
-			},
-			undefined,
-			true
+			}
 		);
 	}
 

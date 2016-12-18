@@ -86,7 +86,7 @@ export class SecretBox {
 	;
 
 	/** @ignore */
-	private getAdditionalData (input?: Uint8Array) : Uint8Array {
+	private getAdditionalData (input?: Uint8Array) : Uint8Array|undefined {
 		if (!input || input.length === this.aeadBytes) {
 			return input;
 		}
@@ -121,7 +121,7 @@ export class SecretBox {
 
 		const nonce: Uint8Array	= this.newNonce(this.helpers.nonceBytes);
 
-		let symmetricCyphertext: Uint8Array;
+		let symmetricCyphertext: Uint8Array|undefined;
 
 		for (let i = 0 ; i < key.length ; i += this.keyBytes) {
 			const dataToEncrypt: Uint8Array	= symmetricCyphertext || paddedPlaintext;
@@ -138,6 +138,10 @@ export class SecretBox {
 			);
 
 			util.clearMemory(dataToEncrypt);
+		}
+
+		if (!symmetricCyphertext) {
+			throw new Error('Symmetric cyphertext empty.');
 		}
 
 		return util.concatMemory(
@@ -171,7 +175,7 @@ export class SecretBox {
 				this.helpers.nonceBytes
 			);
 
-			let paddedPlaintext: Uint8Array;
+			let paddedPlaintext: Uint8Array|undefined;
 
 			for (
 				let i = key.length - this.keyBytes;
@@ -192,6 +196,10 @@ export class SecretBox {
 				);
 
 				util.clearMemory(dataToDecrypt);
+			}
+
+			if (!paddedPlaintext) {
+				throw new Error('Padded plaintext empty.');
 			}
 
 			const plaintext: Uint8Array			= new Uint8Array(new Uint8Array(

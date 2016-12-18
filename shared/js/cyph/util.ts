@@ -84,7 +84,7 @@ export class Util {
 	/**
 	 * Returns a human-readable representation of the time (e.g. "3:37pm").
 	 */
-	public getTimeString (timestamp?: number) : string {
+	public getTimeString (timestamp: number) : string {
 		const date: Date		= new Date(timestamp);
 		const minute: string	= ('0' + date.getMinutes().toString()).slice(-2);
 		let hour: number		= date.getHours();
@@ -105,23 +105,8 @@ export class Util {
 	 * Executes a Promise within a mutual-exclusion lock.
 	 * @param lock
 	 * @param f
-	 * @param shouldLock If set to false, will not lock.
-	 * @param tryOnce If set to true, will give up after first failed attempt to obtain lock.
 	 */
-	public async lock<T> (
-		lock: any,
-		f: () => Promise<T>,
-		shouldLock: boolean = true,
-		tryOnce: boolean = false
-	) : Promise<T> {
-		if (!shouldLock) {
-			return f();
-		}
-
-		if (tryOnce && lock.isOwned) {
-			return undefined;
-		}
-
+	public async lock<T> (lock: any, f: () => Promise<T>) : Promise<T> {
 		try {
 			while (lock.isOwned) {
 				await this.sleep();
@@ -133,6 +118,18 @@ export class Util {
 		}
 		finally {
 			lock.isOwned	= false;
+		}
+	}
+
+	/**
+	 * Executes a Promise within a mutual-exclusion lock, but
+	 * will give up after first failed attempt to obtain lock.
+	 * @param lock
+	 * @param f
+	 */
+	public async lockTryOnce<T> (lock: any, f: () => Promise<T>) : Promise<T|void> {
+		if (!lock.isOwned) {
+			return this.lock(lock, f);
 		}
 	}
 
@@ -248,8 +245,8 @@ export class Util {
 		const discardErrors: boolean	= o.discardErrors === true;
 		const method: string			= o.method || 'GET';
 		const responseType: string		= o.responseType || '';
-		const retries: number			= isNaN(o.retries) ? 0 : o.retries;
-		const timeout: number			= isNaN(o.timeout) ? 0 : o.timeout;
+		const retries: number			= o.retries === undefined ? 0 : o.retries;
+		const timeout: number			= o.timeout === undefined ? 0 : o.timeout;
 		let contentType: string			= o.contentType || '';
 		let data: any					= o.data || '';
 		let url: string					= o.url;
@@ -358,14 +355,14 @@ export class Util {
 	 * @param content
 	 * @param fileName
 	 */
-	public async saveFile (content: Uint8Array, fileName?: string) : Promise<void> {
+	public async saveFile (content: Uint8Array, fileName: string) : Promise<void> {
 		if (!env.isMainThread) {
 			eventManager.trigger(Util.saveFileThreadEvent, {content, fileName});
 			return;
 		}
 
 		const onbeforeunload	= self.onbeforeunload;
-		self.onbeforeunload		= undefined;
+		self.onbeforeunload		= () => {};
 
 		saveAs(
 			new Blob([content], {type: 'application/octet-stream'}),
@@ -454,7 +451,7 @@ export class Util {
 
 			eventManager.on(Util.saveFileThreadEvent, async (o: {
 				content: Uint8Array;
-				fileName?: string;
+				fileName: string;
 			}) => this.saveFile(
 				o.content,
 				o.fileName

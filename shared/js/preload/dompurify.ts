@@ -20,24 +20,24 @@ DOMPurify.addHook('afterSanitizeAttributes', (node: HTMLElement) => {
 
 	/* Check all href attributes for validity */
 	if (node.hasAttribute('href')) {
-		anchor.href	= node.getAttribute('href');
-		if (!anchor.protocol.match(regex)) {
+		anchor.href	= node.getAttribute('href') || '';
+		if (!regex.test(anchor.protocol)) {
 			node.removeAttribute('href');
 		}
 	}
 
 	/* Check all action attributes for validity */
 	if (node.hasAttribute('action')) {
-		anchor.href	= node.getAttribute('action');
-		if (!anchor.protocol.match(regex)) {
+		anchor.href	= node.getAttribute('action') || '';
+		if (!regex.test(anchor.protocol)) {
 			node.removeAttribute('action');
 		}
 	}
 
 	/* Check all xlink:href attributes for validity */
 	if (node.hasAttribute('xlink:href')) {
-		anchor.href	= node.getAttribute('xlink:href');
-		if (!anchor.protocol.match(regex)) {
+		anchor.href	= node.getAttribute('xlink:href') || '';
+		if (!regex.test(anchor.protocol)) {
 			node.removeAttribute('xlink:href');
 		}
 	}

@@ -143,7 +143,11 @@ export class Chat implements IChat {
 			nanoScroller.update();
 		}
 
-		if (!isNaN(selfDestructTimeout) && selfDestructTimeout > 0) {
+		if (
+			selfDestructTimeout !== undefined &&
+			!isNaN(selfDestructTimeout) &&
+			selfDestructTimeout > 0
+		) {
 			message.selfDestructTimer	= new Timer(selfDestructTimeout);
 			await message.selfDestructTimer.start();
 			await util.sleep(10000);
@@ -327,8 +331,8 @@ export class Chat implements IChat {
 			title: this.findElement(elements.title().selector)
 		};
 
-		let forceTURN: boolean;
-		let nativeCrypto: boolean;
+		let forceTURN		= false;
+		let nativeCrypto	= false;
 
 		if (session) {
 			this.session	= session;

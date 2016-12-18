@@ -38,7 +38,7 @@ export class Elements {
 		f: () => JQuery,
 		length: number = 1
 	) : Promise<JQuery> {
-		let $elem: JQuery;
+		let $elem: JQuery|undefined;
 
 		while (!$elem || $elem.length < length) {
 			$elem	= f();

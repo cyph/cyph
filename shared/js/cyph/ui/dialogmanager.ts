@@ -80,7 +80,7 @@ export class DialogManager implements IDialogManager {
 			);
 
 			let hasReturned	= false;
-			if (!isNaN(o.timeout)) {
+			if (o.timeout !== undefined && !isNaN(o.timeout)) {
 				(async () => {
 					await util.sleep(o.timeout);
 					if (!hasReturned) {

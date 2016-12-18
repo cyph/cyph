@@ -80,22 +80,20 @@ export class LinkConnection implements OnChanges {
 	public async addTime (milliseconds: number) : Promise<void> {
 		this.timer.addTime(milliseconds);
 
-		return util.lock(
+		return util.lockTryOnce(
 			this.addTimeLock,
 			async () => {
 				await this.dialogManager.toast({
 					content: strings.timeExtended,
 					delay: 2500
 				});
-			},
-			true,
-			true
+			}
 		);
 	}
 
 	/** Copies link to clipboard. */
 	public async copyToClipboard () : Promise<void> {
-		return util.lock(
+		return util.lockTryOnce(
 			this.copyLock,
 			async () => {
 				await clipboard.copy(this.linkConstant);
@@ -103,9 +101,7 @@ export class LinkConnection implements OnChanges {
 					content: strings.linkCopied,
 					delay: 2500
 				});
-			},
-			true,
-			true
+			}
 		);
 	}
 

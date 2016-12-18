@@ -32,7 +32,7 @@ export class AnonymousLocalUser implements ILocalUser {
 
 		this.potassium.clearMemory(sharedSecret);
 
-		this.sharedSecret		= undefined;
+		this.sharedSecret	= '';
 
 		return this.keyPair;
 	}

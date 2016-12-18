@@ -3,6 +3,7 @@ import * as Castle from './castle';
 import {FakeCastle} from './fakecastle';
 import {ICastle} from './icastle';
 import {IKeyPair} from './ikeypair';
+import {IKeyPairMaybe} from './ikeypairmaybe';
 
 
 export * from './potassium';
@@ -12,6 +13,7 @@ export {
 	FakeCastle,
 	ICastle,
 	IKeyPair,
+	IKeyPairMaybe,
 
 	Castle
 };

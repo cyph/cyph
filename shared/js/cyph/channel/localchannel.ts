@@ -7,16 +7,16 @@ import {IChannel} from './ichannel';
  */
 export class LocalChannel implements IChannel {
 	/** @ignore */
-	private other: LocalChannel;
+	private other: LocalChannel|undefined;
 
 	/** @inheritDoc */
 	public close () : void {
-		const other: LocalChannel	= this.other;
-		this.other	= undefined;
-
-		if (!other) {
+		if (!this.other) {
 			return;
 		}
+
+		const other	= this.other;
+		this.other	= undefined;
 
 		other.close();
 

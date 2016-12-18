@@ -15,10 +15,10 @@ import * as firebase from 'firebase';
 					const snapshot: firebase.UploadTaskSnapshot	= {
 						bytesTransferred: 0,
 						downloadURL: URL.createObjectURL(blob),
-						metadata: undefined,
-						ref: undefined,
-						state: undefined,
-						task: undefined,
+						metadata: <firebase.FullMetadata> {},
+						ref: <firebase.StorageReference> {},
+						state: <firebase.TaskState> {},
+						task: <firebase.UploadTask> {},
 						totalBytes: blob.size
 					};
 

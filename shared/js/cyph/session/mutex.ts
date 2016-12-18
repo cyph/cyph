@@ -22,7 +22,7 @@ export class Mutex implements IMutex {
 	private purpose: string;
 
 	/** @ignore */
-	private requester: {user: string; purpose: string};
+	private requester: {user: string; purpose: string}|undefined;
 
 	/** @ignore */
 	private readonly commands	= {
@@ -52,8 +52,8 @@ export class Mutex implements IMutex {
 
 	/** @ignore */
 	private shiftRequester () : void {
-		this.owner		= undefined;
-		this.purpose	= undefined;
+		this.owner		= '';
+		this.purpose	= '';
 
 		if (this.requester) {
 			this.owner		= this.requester.user;
@@ -131,6 +131,8 @@ export class Mutex implements IMutex {
 			}
 		});
 
-		this.session.on(events.closeChat, () => this.owner = users.me);
+		this.session.on(events.closeChat, () => {
+			this.owner	= users.me;
+		});
 	}
 }

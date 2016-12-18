@@ -27,7 +27,13 @@ export class EventManager {
 
 		const eventMapping	= this.eventMappings.get(event);
 
-		eventMapping.delete(handler);
+		if (!eventMapping) {
+			return;
+		}
+
+		if (handler) {
+			eventMapping.delete(handler);
+		}
 
 		if (!handler || eventMapping.size < 1) {
 			this.eventMappings.delete(event);
@@ -44,7 +50,13 @@ export class EventManager {
 			this.eventMappings.set(event, new Set<Function>());
 		}
 
-		this.eventMappings.get(event).add(handler);
+		const eventMapping	= this.eventMappings.get(event);
+
+		if (!eventMapping) {
+			return;
+		}
+
+		eventMapping.add(handler);
 	}
 
 	/**
@@ -93,7 +105,13 @@ export class EventManager {
 			return;
 		}
 
-		for (const handler of Array.from(this.eventMappings.get(event))) {
+		const eventMapping	= this.eventMappings.get(event);
+
+		if (!eventMapping) {
+			return;
+		}
+
+		for (const handler of Array.from(eventMapping)) {
 			try {
 				handler(data);
 			}
@@ -120,11 +138,11 @@ export class EventManager {
 			}
 		};
 
+		/* This is DedicatedWorkerGlobalScope.postMessage(), not Window.postMessage() */
 		this.on(
 			this.untriggeredEvents,
-			(o: {event: string; data: any}) => self.postMessage(
-				{event: o.event, data: o.data, isThreadEvent: true},
-				undefined
+			(o: {event: string; data: any}) => (<any> self).postMessage(
+				{event: o.event, data: o.data, isThreadEvent: true}
 			)
 		);
 	}

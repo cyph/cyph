@@ -48,7 +48,8 @@ export class Thread implements IThread {
 
 		/* Allow destroying the Thread object from within the thread */
 
-		self.close	= () => self.postMessage('close', undefined);
+		/* This is DedicatedWorkerGlobalScope.postMessage(), not Window.postMessage() */
+		self.close	= () => (<any> self).postMessage('close');
 
 
 		/* Polyfills */
@@ -125,7 +126,7 @@ export class Thread implements IThread {
 						return array;
 					},
 
-					subtle: <SubtleCrypto> undefined
+					subtle: <SubtleCrypto> {}
 				};
 			})();
 		}
@@ -154,7 +155,7 @@ export class Thread implements IThread {
 
 
 	/** @ignore */
-	private worker: Worker;
+	private worker: Worker|undefined;
 
 	/** @inheritDoc */
 	public isAlive () : boolean {
@@ -251,7 +252,9 @@ export class Thread implements IThread {
 				this.worker	= new Worker(blobUrl);
 			}
 			catch (err) {
-				this.worker.terminate();
+				if (this.worker) {
+					this.worker.terminate();
+				}
 				throw err;
 			}
 		}

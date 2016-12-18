@@ -1,5 +1,5 @@
 import {util} from '../../util';
-import {IKeyPair} from '../ikeypair';
+import {IKeyPairMaybe} from '../ikeypairmaybe';
 import {Potassium} from '../potassium';
 
 
@@ -41,14 +41,14 @@ export class Core {
 	private readonly lock: {}	= {};
 
 	/** @ignore */
-	private readonly ephemeralKeys: IKeyPair	= {
+	private readonly ephemeralKeys: IKeyPairMaybe	= {
 		privateKey: undefined,
 		publicKey: undefined
 	};
 
 	/** @ignore */
 	private async ratchet (incomingPublicKey?: Uint8Array) : Promise<Uint8Array> {
-		let outgoingPublicKey: Uint8Array;
+		let outgoingPublicKey: Uint8Array|undefined;
 
 		/* Part 1: Alice (outgoing) */
 		if (this.isAlice && !this.ephemeralKeys.privateKey && !incomingPublicKey) {
@@ -124,7 +124,7 @@ export class Core {
 			const messageId: Uint8Array	= new Uint8Array(cyphertext.buffer, 0, 8);
 			const encrypted: Uint8Array	= new Uint8Array(cyphertext.buffer, 8);
 
-			let plaintext: DataView;
+			let plaintext: DataView|undefined;
 
 			for (let i = this.keys.length - 1 ; i >= 0 ; --i) {
 				try {

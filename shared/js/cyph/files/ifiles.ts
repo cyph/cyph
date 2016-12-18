@@ -25,6 +25,6 @@ export interface IFiles {
 		name: string,
 		fileType: string,
 		image: boolean,
-		imageSelfDestructTimeout: number
+		imageSelfDestructTimeout?: number
 	) : void;
 }

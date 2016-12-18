@@ -22,7 +22,7 @@ export class Notifier implements INotifier {
 	/** @ignore */
 	private static createNotification (message: string, callback: Function = () => {}) : void {
 		const options	= {
-			audio: <string> undefined,
+			audio: <string|undefined> undefined,
 			body: message,
 			icon: Notifier.config.icon,
 			lang: env.language,

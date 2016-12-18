@@ -6,7 +6,7 @@ import {IMessageData} from '../session/imessagedata';
  */
 export interface ITransfer extends IMessageData {
 	/** If defined, indicates an acceptance or rejection of a file transfer. */
-	answer: boolean;
+	answer: boolean|undefined;
 
 	/** MIME type. */
 	readonly fileType: string;

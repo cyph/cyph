@@ -45,13 +45,18 @@ export class Errors {
 				return;
 			}
 
-			const exception: string	= !errorMessage ? '' : (
-				errorMessage + '\n\n' +
-				'URL: ' + url + '\n' +
-				'Line: ' + line.toString() + '\n' +
-				'Column: ' + column.toString() + '\n\n' +
-				(<string> (errorObject ? errorObject.stack : ''))
-			).replace(/\/#.*/g, '');
+			const exception: string	= !errorMessage ? '' : `
+				${errorMessage}
+
+				URL: ${url}
+				Line: ${line === undefined ? '' : line.toString()}
+				Column: ${column === undefined ? '' : column.toString()}
+
+				${errorObject === undefined ? '' : <string> errorObject.stack}
+			`.replace(
+				/\/#.*/g,
+				''
+			);
 
 			if (numEmails++ < 50) {
 				util.email(new Email(

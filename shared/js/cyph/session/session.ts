@@ -159,12 +159,12 @@ export class Session implements ISession {
 
 	/** @ignore */
 	private receiveHandler (message: IMessage) : void {
-		if (this.receivedMessages.has(message.id)) {
+		if (!message.id || this.receivedMessages.has(message.id)) {
 			return;
 		}
 		this.receivedMessages.add(message.id);
 
-		if (message.event in rpcEvents) {
+		if (message.event && message.event in rpcEvents) {
 			this.trigger(message.event, message.data);
 		}
 	}
@@ -426,7 +426,7 @@ export class Session implements ISession {
 		}
 
 		if (localChannelCallback) {
-			this.setUpChannel(undefined, nativeCrypto, localChannelCallback);
+			this.setUpChannel('', nativeCrypto, localChannelCallback);
 		}
 		else {
 			const channelDescriptor: string	=
