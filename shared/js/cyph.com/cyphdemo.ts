@@ -197,12 +197,12 @@ export class CyphDemo {
 
 		if (!env.isMobile) {
 			await CyphElements.Elements.waitForElement(() =>
-				elements.screenshotLaptop().filter((i: number, elem: HTMLElement) =>
+				elements.screenshotLaptop().filter((_: number, elem: HTMLElement) =>
 					$(elem).offset().left > 0
 				)
 			);
 			await CyphElements.Elements.waitForElement(() =>
-				elements.screenshotPhone().filter((i: number, elem: HTMLElement) =>
+				elements.screenshotPhone().filter((_: number, elem: HTMLElement) =>
 					$(elem).offset().left < CyphElements.elements.window().width()
 				)
 			);
@@ -264,7 +264,7 @@ export class CyphDemo {
 
 		this.desktop	= new Chat(
 			dialogManager,
-			{notify: (message: string) => {}},
+			{notify: () => {}},
 			false,
 			false,
 			desktopSession,
@@ -277,7 +277,7 @@ export class CyphDemo {
 
 		this.mobile		= new Chat(
 			dialogManager,
-			{notify: (message: string) => {}},
+			{notify: () => {}},
 			false,
 			true,
 			mobileSession,
@@ -341,7 +341,7 @@ export class CyphDemo {
 				2
 			);
 
-			$facebookPicImg.each(async (i: number, elem: HTMLElement) => {
+			$facebookPicImg.each(async (_: number, elem: HTMLElement) => {
 				const $this: JQuery			= $(elem);
 
 				const isDesktop: boolean	=

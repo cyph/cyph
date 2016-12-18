@@ -25,7 +25,7 @@ export class Markdown implements OnChanges {
 	@Input() public markdown: string;
 
 	/** @ignore */
-	public async ngOnChanges (changes: SimpleChanges) : Promise<void> {
+	public async ngOnChanges (_CHANGES: SimpleChanges) : Promise<void> {
 		if (this.markdown !== undefined) {
 			this.initiated	= true;
 		}
@@ -48,7 +48,7 @@ export class Markdown implements OnChanges {
 				/* Images */
 				replace(
 					/!\<a href="(data:image\/(png|jpeg|gif)\;.*?)"><\/a>/g,
-					(match: string, value: string) => {
+					(_: string, value: string) => {
 						const img: HTMLImageElement	= document.createElement('img');
 						img.src	= value;
 						return img.outerHTML;
@@ -62,12 +62,12 @@ export class Markdown implements OnChanges {
 		));
 
 		/* Block window.opener in new window */
-		$html.find('a').each((i: number, a: HTMLAnchorElement) =>
+		$html.find('a').each((_: number, a: HTMLAnchorElement) =>
 			$(a).attr('rel', 'noreferrer')
 		);
 
 		/* Process image lightboxes */
-		$html.find('img').each((i: number, img: HTMLImageElement) => {
+		$html.find('img').each((_: number, img: HTMLImageElement) => {
 			const $img	= $(img);
 			const $a	= $(document.createElement('a'));
 

@@ -406,7 +406,7 @@ export class Files implements IFiles {
 					;
 					this.triggerChangeDetection();
 				},
-				(err: any) => resolve(transfer.answer === false),
+				() => resolve(transfer.answer === false),
 				() => {
 					transfer.url	= uploadTask.snapshot.downloadURL;
 

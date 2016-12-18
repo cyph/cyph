@@ -188,7 +188,7 @@ export class Thread implements IThread {
 	constructor (
 		f: Function,
 		locals: any = {},
-		onmessage: (e: MessageEvent) => any = e => {}
+		onmessage: (e: MessageEvent) => any = () => {}
 	) {
 		const seedBytes	= new Uint8Array(32);
 		crypto.getRandomValues(seedBytes);

@@ -28,7 +28,7 @@ if (!HTMLElement.prototype.click) {
 $(async () => {
 	/* Support button-links */
 
-	$('button a').each((i: number, elem: HTMLElement) => {
+	$('button a').each((_: number, elem: HTMLElement) => {
 		const $this: JQuery		= $(elem);
 		const $button: JQuery	= $this.closest('button');
 

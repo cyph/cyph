@@ -27,10 +27,7 @@ export class Errors {
 	);
 
 	/** @ignore */
-	private baseErrorLog (
-		subject: string,
-		shouldIncludeBootstrapText?: boolean
-	) : Function {
+	private baseErrorLog (subject: string) : Function {
 		let numEmails	= 0;
 
 		return (

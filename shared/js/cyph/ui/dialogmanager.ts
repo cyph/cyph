@@ -40,13 +40,9 @@ export class DialogManager implements IDialogManager {
 			this.lock,
 			async () => this.$mdDialog.show({
 				clickOutsideToClose: true,
-				controller: <any> [
-					'$scope',
-					'$mdDialog',
-					($scope: any, $mdDialog: angular.material.IDialogService) => {
-						$scope.locals	= o.locals;
-					}
-				],
+				controller: <any> ['$scope', ($scope: any) => {
+					$scope.locals	= o.locals;
+				}],
 				escapeToClose: true,
 				template: o.template
 			}).then(() =>

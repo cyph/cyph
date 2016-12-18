@@ -106,7 +106,7 @@ export class LinkConnection implements OnChanges {
 	}
 
 	/** @inheritDoc */
-	public async ngOnChanges (changes: SimpleChanges) : Promise<void> {
+	public async ngOnChanges (_CHANGES: SimpleChanges) : Promise<void> {
 		if (this.isInitiated || !this.baseUrl) {
 			return;
 		}

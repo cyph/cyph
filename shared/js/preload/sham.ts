@@ -26,9 +26,9 @@ import * as firebase from 'firebase';
 						snapshot,
 						cancel: () => {},
 						on: async (
-							_: string,
+							_EVENT_TYPE: string,
 							onStateChanged: (snapshot: firebase.UploadTaskSnapshot) => void,
-							onError: (err: any) => void,
+							_ON_ERROR: (err: any) => void,
 							onComplete: () => void
 						) => {
 							/* Fake out 50 Mb/s connection */

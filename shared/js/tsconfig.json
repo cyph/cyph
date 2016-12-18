@@ -14,7 +14,7 @@
 		"noImplicitThis": true,
 		"noImplicitUseStrict": true,
 		"noUnusedLocals": true,
-		"noUnusedParameters": false,
+		"noUnusedParameters": true,
 
 		 /* Temporary, pending Angular fix */
 		"skipLibCheck": true,

@@ -40,7 +40,7 @@ export class PasswordHash {
 		),
 		outputBytes: number = secretBox.keyBytes,
 		opsLimit: number = this.opsLimitInteractive,
-		memLimit: number = this.memLimitInteractive
+		_MEM_LIMIT: number = this.memLimitInteractive
 	) : Promise<Uint8Array> {
 		return new Uint8Array(
 			await lib.subtleCrypto.deriveBits(
