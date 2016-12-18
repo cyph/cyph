@@ -287,52 +287,6 @@ export class Box {
 		};
 	}
 
-	/** Encrypts plaintext. */
-	public async seal (plaintext: Uint8Array, publicKey: Uint8Array) : Promise<Uint8Array> {
-		const publicSubKeys	= this.splitPublicKey(publicKey);
-
-		const mcElieceData						= await this.publicKeyEncrypt(
-			publicSubKeys.mcEliece,
-			'McEliece',
-			lib.mcEliece.decryptedDataLength,
-			lib.mcEliece.encrypt
-		);
-
-		const ntruData							= await this.publicKeyEncrypt(
-			publicSubKeys.ntru,
-			'NTRU',
-			lib.ntru.decryptedDataLength,
-			lib.ntru.encrypt
-		);
-
-		const nonce: Uint8Array					= this.newNonce(this.helpers.nonceBytes);
-
-		const classicalCyphertext: Uint8Array	= await this.helpers.seal(
-			plaintext,
-			nonce,
-			publicSubKeys.classical
-		);
-		const ntruCyphertext: Uint8Array		= await this.secretBox.seal(
-			classicalCyphertext,
-			ntruData.symmetricKey
-		);
-		const mcElieceCyphertext: Uint8Array	= await this.secretBox.seal(
-			ntruCyphertext,
-			mcElieceData.symmetricKey
-		);
-
-		util.clearMemory(ntruData.innerKeys);
-		util.clearMemory(mcElieceData.innerKeys);
-
-		return util.concatMemory(
-			true,
-			mcElieceData.keyCyphertext,
-			ntruData.keyCyphertext,
-			nonce,
-			mcElieceCyphertext
-		);
-	}
-
 	/** Decrypts cyphertext. */
 	public async open (cyphertext: Uint8Array, keyPair: IKeyPair) : Promise<Uint8Array> {
 		const privateSubKeys	= this.splitPrivateKey(keyPair.privateKey);
@@ -414,6 +368,52 @@ export class Box {
 		util.clearMemory(classicalCyphertext);
 
 		return plaintext;
+	}
+
+	/** Encrypts plaintext. */
+	public async seal (plaintext: Uint8Array, publicKey: Uint8Array) : Promise<Uint8Array> {
+		const publicSubKeys	= this.splitPublicKey(publicKey);
+
+		const mcElieceData						= await this.publicKeyEncrypt(
+			publicSubKeys.mcEliece,
+			'McEliece',
+			lib.mcEliece.decryptedDataLength,
+			lib.mcEliece.encrypt
+		);
+
+		const ntruData							= await this.publicKeyEncrypt(
+			publicSubKeys.ntru,
+			'NTRU',
+			lib.ntru.decryptedDataLength,
+			lib.ntru.encrypt
+		);
+
+		const nonce: Uint8Array					= this.newNonce(this.helpers.nonceBytes);
+
+		const classicalCyphertext: Uint8Array	= await this.helpers.seal(
+			plaintext,
+			nonce,
+			publicSubKeys.classical
+		);
+		const ntruCyphertext: Uint8Array		= await this.secretBox.seal(
+			classicalCyphertext,
+			ntruData.symmetricKey
+		);
+		const mcElieceCyphertext: Uint8Array	= await this.secretBox.seal(
+			ntruCyphertext,
+			mcElieceData.symmetricKey
+		);
+
+		util.clearMemory(ntruData.innerKeys);
+		util.clearMemory(mcElieceData.innerKeys);
+
+		return util.concatMemory(
+			true,
+			mcElieceData.keyCyphertext,
+			ntruData.keyCyphertext,
+			nonce,
+			mcElieceCyphertext
+		);
 	}
 
 	constructor (

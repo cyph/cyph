@@ -7,11 +7,6 @@ export class Hash {
 	/** Hash length. */
 	public readonly bytes: number	= lib.superSphincs.hashBytes;
 
-	/** Hashes plaintext. */
-	public async hash (plaintext: Uint8Array|string) : Promise<Uint8Array> {
-		return lib.superSphincs.hash(plaintext, true);
-	}
-
 	/** Stretches input to the specified number of bytes. */
 	public async deriveKey (
 		input: Uint8Array,
@@ -36,6 +31,11 @@ export class Hash {
 		}
 
 		return hash;
+	}
+
+	/** Hashes plaintext. */
+	public async hash (plaintext: Uint8Array|string) : Promise<Uint8Array> {
+		return lib.superSphincs.hash(plaintext, true);
 	}
 
 	constructor (

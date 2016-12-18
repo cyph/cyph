@@ -100,57 +100,6 @@ export class SecretBox {
 		return output;
 	}
 
-	/** Encrypts plaintext. */
-	public async seal (
-		plaintext: Uint8Array,
-		key: Uint8Array,
-		additionalData?: Uint8Array
-	) : Promise<Uint8Array> {
-		if (key.length % this.keyBytes !== 0) {
-			throw new Error('Invalid key.');
-		}
-
-		const paddingLength: number			= util.randomBytes(1)[0];
-
-		const paddedPlaintext: Uint8Array	= util.concatMemory(
-			false,
-			new Uint8Array([paddingLength]),
-			util.randomBytes(paddingLength),
-			plaintext
-		);
-
-		const nonce: Uint8Array	= this.newNonce(this.helpers.nonceBytes);
-
-		let symmetricCyphertext: Uint8Array|undefined;
-
-		for (let i = 0 ; i < key.length ; i += this.keyBytes) {
-			const dataToEncrypt: Uint8Array	= symmetricCyphertext || paddedPlaintext;
-
-			symmetricCyphertext	= await this.helpers.seal(
-				dataToEncrypt,
-				nonce,
-				new Uint8Array(
-					key.buffer,
-					key.byteOffset + i,
-					this.keyBytes
-				),
-				this.getAdditionalData(additionalData)
-			);
-
-			util.clearMemory(dataToEncrypt);
-		}
-
-		if (!symmetricCyphertext) {
-			throw new Error('Symmetric cyphertext empty.');
-		}
-
-		return util.concatMemory(
-			true,
-			nonce,
-			symmetricCyphertext
-		);
-	}
-
 	/** Decrypts cyphertext. */
 	public async open (
 		cyphertext: Uint8Array,
@@ -215,6 +164,57 @@ export class SecretBox {
 		finally {
 			util.clearMemory(cyphertext);
 		}
+	}
+
+	/** Encrypts plaintext. */
+	public async seal (
+		plaintext: Uint8Array,
+		key: Uint8Array,
+		additionalData?: Uint8Array
+	) : Promise<Uint8Array> {
+		if (key.length % this.keyBytes !== 0) {
+			throw new Error('Invalid key.');
+		}
+
+		const paddingLength: number			= util.randomBytes(1)[0];
+
+		const paddedPlaintext: Uint8Array	= util.concatMemory(
+			false,
+			new Uint8Array([paddingLength]),
+			util.randomBytes(paddingLength),
+			plaintext
+		);
+
+		const nonce: Uint8Array	= this.newNonce(this.helpers.nonceBytes);
+
+		let symmetricCyphertext: Uint8Array|undefined;
+
+		for (let i = 0 ; i < key.length ; i += this.keyBytes) {
+			const dataToEncrypt: Uint8Array	= symmetricCyphertext || paddedPlaintext;
+
+			symmetricCyphertext	= await this.helpers.seal(
+				dataToEncrypt,
+				nonce,
+				new Uint8Array(
+					key.buffer,
+					key.byteOffset + i,
+					this.keyBytes
+				),
+				this.getAdditionalData(additionalData)
+			);
+
+			util.clearMemory(dataToEncrypt);
+		}
+
+		if (!symmetricCyphertext) {
+			throw new Error('Symmetric cyphertext empty.');
+		}
+
+		return util.concatMemory(
+			true,
+			nonce,
+			symmetricCyphertext
+		);
 	}
 
 	constructor (
