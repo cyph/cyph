@@ -83,8 +83,14 @@ modulename () {
 tsbuild () {
 	node -e "
 		const tsconfig	= JSON.parse(
-			fs.readFileSync('tsconfig.json').toString()
+			fs.readFileSync('tsconfig.json').toString().
+				split('\n').
+				filter(s => s.trim()[0] !== '/').
+				join('\n')
 		);
+
+		tsconfig.compilerOptions.alwaysStrict		= undefined;
+		tsconfig.compilerOptions.noUnusedParameters	= undefined;
 
 		tsconfig.compilerOptions.outDir	= '.';
 
