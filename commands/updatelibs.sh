@@ -11,9 +11,13 @@ clone () {
 	git clone \
 		-b $(
 			{
-				git ls-remote --tags ${repo};
-				echo '//master';
-			} | grep -v '{}' | awk -F'/' '{print $3}' | sort -V | tail -n1
+				echo master;
+				git ls-remote --tags ${repo} |
+					grep -v '{}' |
+					awk -F'/' '{print $3}' |
+					sort -V \
+				;
+			} | tail -n1
 		) \
 		--depth 1 \
 		--recursive \
@@ -96,7 +100,7 @@ jspm install -y \
 	npm:@types/dompurify \
 	npm:@types/filesaver \
 	npm:@types/jquery \
-	npm:@types/makdown-it \
+	npm:@types/markdown-it \
 	npm:rxjs \
 	angular \
 	angular-material@master \
