@@ -91,14 +91,11 @@ export class Transport {
 			plaintext.byteOffset + 40
 		);
 
-		const message	= this.receivedMessages.get(id) || {
-			data: new Uint8Array(numBytes),
-			totalChunks: 0
-		};
-
-		if (!this.receivedMessages.has(id)) {
-			this.receivedMessages.set(id, message);
-		}
+		const message			= util.getOrSetDefault(
+			this.receivedMessages,
+			id,
+			() => ({data: new Uint8Array(numBytes), totalChunks: 0})
+		);
 
 		message.data.set(chunk, index);
 		potassium.clearMemory(plaintext);

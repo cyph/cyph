@@ -1,5 +1,6 @@
 import {env} from './env';
 import {IThread} from './ithread';
+import {util} from './util';
 
 
 /**
@@ -21,13 +22,9 @@ export class EventManager {
 	 * @param handler
 	 */
 	public off<T> (event: string, handler?: (data: T) => void) : void {
-		if (!this.eventMappings.has(event)) {
-			return;
-		}
-
 		const eventMapping	= this.eventMappings.get(event);
 
-		if (!eventMapping) {
+		if (eventMapping === undefined) {
 			return;
 		}
 
@@ -46,17 +43,13 @@ export class EventManager {
 	 * @param handler
 	 */
 	public on<T> (event: string, handler: (data: T) => void) : void {
-		if (!this.eventMappings.has(event)) {
-			this.eventMappings.set(event, new Set<Function>());
-		}
-
-		const eventMapping	= this.eventMappings.get(event);
-
-		if (!eventMapping) {
-			return;
-		}
-
-		eventMapping.add(handler);
+		util.getOrSetDefault(
+			this.eventMappings,
+			event,
+			() => new Set<Function>()
+		).add(
+			handler
+		);
 	}
 
 	/**
@@ -101,13 +94,9 @@ export class EventManager {
 			}
 		}
 
-		if (!this.eventMappings.has(event)) {
-			return;
-		}
-
 		const eventMapping	= this.eventMappings.get(event);
 
-		if (!eventMapping) {
+		if (eventMapping === undefined) {
 			return;
 		}
 

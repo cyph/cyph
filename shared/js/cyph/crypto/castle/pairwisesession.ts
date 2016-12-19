@@ -145,13 +145,13 @@ export class PairwiseSession {
 					id
 				);
 
-				const incomingMessages	= this.incomingMessages.get(id) || [];
-
-				if (!this.incomingMessages.has(id)) {
-					this.incomingMessages.set(id, incomingMessages);
-				}
-
-				incomingMessages.push(cyphertextBytes);
+				util.getOrSetDefault(
+					this.incomingMessages,
+					id,
+					() => []
+				).push(
+					cyphertextBytes
+				);
 			}
 		}
 		catch (_) {}
@@ -161,17 +161,14 @@ export class PairwiseSession {
 		}
 
 		util.lock(this.receiveLock, async () => {
-			while (
-				this.incomingMessageId <= this.incomingMessagesMax &&
-				this.incomingMessages.has(this.incomingMessageId)
-			) {
-				let success	= false;
-
+			while (this.incomingMessageId <= this.incomingMessagesMax) {
 				const incomingMessages	= this.incomingMessages.get(this.incomingMessageId);
 
-				if (!incomingMessages) {
+				if (incomingMessages === undefined) {
 					break;
 				}
+
+				let success	= false;
 
 				for (const cyphertextBytes of incomingMessages) {
 					if (!success) {

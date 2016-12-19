@@ -82,6 +82,26 @@ export class Util {
 	}
 
 	/**
+	 * Gets a value from a map and sets a default value if none had previously been set.
+	 * @param map
+	 * @param key
+	 * @param defaultValue
+	 */
+	public getOrSetDefault<K, V> (map: Map<K, V>, key: K, defaultValue: () => V) : V {
+		if (!map.has(key)) {
+			map.set(key, defaultValue());
+		}
+
+		const value	= map.get(key);
+
+		if (value === undefined) {
+			throw new Error("Util.getOrSetDefault doesn't support nullable types.");
+		}
+
+		return value;
+	}
+
+	/**
 	 * Returns a human-readable representation of the time (e.g. "3:37pm").
 	 */
 	public getTimeString (timestamp: number) : string {
