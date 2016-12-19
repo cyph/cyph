@@ -148,7 +148,7 @@ export class PairwiseSession {
 				const incomingMessages	= this.incomingMessages.get(id) || [];
 
 				if (!this.incomingMessages.has(id)) {
-					this.incomingMessages.set(id, []);
+					this.incomingMessages.set(id, incomingMessages);
 				}
 
 				incomingMessages.push(cyphertextBytes);
