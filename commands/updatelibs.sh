@@ -32,15 +32,23 @@ clone () {
 mkdir -p ~/lib/js/crypto
 cd ~/lib/js
 
-echo "sodium = (function () {
-	$( \
-		curl -s https://raw.githubusercontent.com/jedisct1/libsodium.js/9a8b4f9/wrapper/wrap-template.js | \
-		tr '\n' '☁' | \
-		perl -pe 's/.*Codecs(.*?)Memory management.*/\1/g' | \
+echo "self.sodium = (function () {
+	$(
+		curl -s https://raw.githubusercontent.com/jedisct1/libsodium.js/9a8b4f9/wrapper/wrap-template.js |
+		tr '\n' '☁' |
+		perl -pe 's/.*Codecs(.*?)Memory management.*/\1/g' |
 		tr '☁' '\n' \
 	)
 
+	$(
+		curl -s https://raw.githubusercontent.com/jedisct1/libsodium.js/9a8b4f9/wrapper/wrap-template.js |
+		tr '\n' ' ' |
+		perl -pe 's/\s+/ /g' |
+		perl -pe 's/.*(function memzero.*?)\s+function.*/\1/g' \
+	)
+
 	return {
+		memzero: memzero,
 		from_base64: from_base64,
 		to_base64: to_base64,
 		from_hex: from_hex,
@@ -48,7 +56,7 @@ echo "sodium = (function () {
 		from_string: from_string,
 		to_string: to_string
 	};
-}());" | uglifyjs > sodiumcodecs.js
+}());" | uglifyjs > sodiumutil.js
 
 expect -c ' \
 	spawn jspm init; \
