@@ -36,7 +36,7 @@ const browsers	= [
 		resolution: '1024x768'
 	},
 	{
-		browserName: 'Chrome', // 'Edge',
+		browserName: 'Edge',
 		os: 'Windows',
 		os_version: '10',
 		resolution: '2048x1536'

@@ -7,7 +7,6 @@ import {platformBrowser} from '@angular/platform-browser';
 import {downgradeComponent, UpgradeModule} from '@angular/upgrade/static';
 import * as angular from 'angular';
 import {config} from '../cyph/config';
-import {env} from '../cyph/env';
 import {eventManager} from '../cyph/eventmanager';
 import {FileInput} from '../cyph/ui/components/fileinput';
 import {Help} from '../cyph/ui/components/help';
@@ -37,11 +36,6 @@ import {loaded} from '../preload';
 import {AppComponent} from './appcomponent';
 import {AppModule} from './appmodule';
 import {UI} from './ui';
-
-
-if (env.isEdge) {
-	location.pathname	= '/unsupportedbrowser';
-}
 
 
 elements.body().attr(
