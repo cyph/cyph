@@ -31,7 +31,7 @@ export class Channel implements IChannel {
 
 	/** @inheritDoc */
 	public close () : void {
-		util.retryUntilSuccessful(async () => this.channelRef.remove());
+		this.channelRef.remove();
 	}
 
 	/** @inheritDoc */
