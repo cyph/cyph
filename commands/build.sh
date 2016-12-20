@@ -171,10 +171,13 @@ compile () {
 		`.trim())' > "${outputDir}/js/translations.js"
 
 		tsbuild preload/global
-		babel --presets es2015 --compact false preload/global.js -o preload/global.js
-		if [ "${minify}" ] ; then
-			uglifyjs preload/global.js -o preload/global.js
-		fi
+		mv preload/global.js preload/global.js.tmp
+		cat preload/global.js.tmp |
+			babel --presets es2015 --compact false |
+			if [ "${minify}" ] ; then uglifyjs ; else cat - ; fi |
+			sed 's|use strict||g' \
+		> "${outputDir}/js/preload/global.js"
+		rm preload/global.js.tmp
 
 		mangleExcept="$(
 			test "${minify}" && node -e "console.log(JSON.stringify('$(
