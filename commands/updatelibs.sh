@@ -109,6 +109,8 @@ jspm install -y \
 	npm:@types/filesaver \
 	npm:@types/jquery \
 	npm:@types/markdown-it \
+	npm:@types/whatwg-fetch \
+	npm:@types/whatwg-streams \
 	npm:rxjs \
 	angular \
 	angular-material@master \

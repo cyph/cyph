@@ -24,7 +24,7 @@ export class Util {
 	};
 
 	/**
-	 * Sends an email to the Cyph team. "@cyph.com" may be omitted from o.to.
+	 * Sends an email to the Cyph team. "@cyph.com" may be omitted from email.to.
 	 * @param email
 	 */
 	public email (email: Email) : void {
@@ -247,103 +247,105 @@ export class Util {
 	}
 
 	/**
-	 * Performs HTTP requests (drop-in replacement for a subset of jQuery.ajax
-	 * without the DOM dependency). Any changes to this method should maintain
-	 * strict jQuery.ajax compatibility (http://api.jquery.com/jquery.ajax/).
+	 * Performs HTTP request.
 	 * @param o
 	 */
+	/* tslint:disable-next-line:cyclomatic-complexity */
 	public async request (o: {
 		contentType?: string;
 		data?: any;
 		discardErrors?: boolean;
 		method?: string;
-		responseType?: string;
+		responseType?: ''|'arraybuffer'|'blob'|'text';
 		retries?: number;
-		timeout?: number;
 		url: string;
 	}) : Promise<any> {
 		const discardErrors: boolean	= o.discardErrors === true;
 		const method: string			= o.method || 'GET';
 		const responseType: string		= o.responseType || '';
 		const retries: number			= o.retries === undefined ? 0 : o.retries;
-		const timeout: number			= o.timeout === undefined ? 0 : o.timeout;
 		let contentType: string			= o.contentType || '';
 		let data: any					= o.data || '';
 		let url: string					= o.url;
 
-		/* tslint:disable-next-line:promise-must-complete */
-		return new Promise<any>((resolve, reject) => {
-			if (url.slice(-5) === '.json') {
-				contentType	= 'application/json';
-			}
-			else if (!responseType || responseType === 'text') {
-				contentType	= 'application/x-www-form-urlencoded';
-			}
+		if (url.slice(-5) === '.json') {
+			contentType	= 'application/json';
+		}
+		else if (!responseType || responseType === 'text') {
+			contentType	= 'application/x-www-form-urlencoded';
+		}
 
-			if (data && method === 'GET') {
-				url		+= '?' + (
-					typeof data === 'object' ?
-						this.toQueryString(data) :
-						(<string> data.toString())
-				);
+		if (data && method === 'GET') {
+			url		+= '?' + (
+				typeof data === 'object' ?
+					this.toQueryString(data) :
+					(<string> data.toString())
+			);
 
-				data	= undefined;
-			}
-			else if (typeof data === 'object') {
-				data	= contentType === 'application/json' ?
-					JSON.stringify(data) :
-					this.toQueryString(data)
+			data	= undefined;
+		}
+		else if (typeof data === 'object') {
+			data	= contentType === 'application/json' ?
+				JSON.stringify(data) :
+				this.toQueryString(data)
+			;
+		}
+
+		let response: ArrayBuffer|Blob|string|undefined;
+		let statusOk	= false;
+
+		for (let i = 0 ; !statusOk && i < retries ; ++i) {
+			if (typeof fetch !== 'undefined') {
+				const res	= await fetch(url, {
+					method,
+					body: data,
+					headers: !contentType ? {} : {
+						'Content-Type': contentType
+					}
+				});
+
+				statusOk	= res.ok;
+				response	= responseType === 'arraybuffer' ?
+					await res.arrayBuffer() :
+					responseType === 'blob' ?
+						await res.blob() :
+						(await res.text()).trim()
 				;
-			}
-
-
-			const xhr: XMLHttpRequest	= new XMLHttpRequest();
-
-			xhr.onreadystatechange = () => {
-				if (xhr.readyState !== 4) {
-					return;
-				}
-
-				const response: any	= typeof xhr.response === 'string' ?
-					xhr.response.trim() :
-					xhr.response
-				;
-
-				if (xhr.status === 200) {
-					resolve(response);
-				}
-				else {
-					reject(response);
-				}
-			};
-
-			try {
-				xhr.timeout = timeout;
-			}
-			catch (_) {}
-
-			xhr.open(method, url, true);
-
-			xhr.responseType	= responseType;
-
-			if (contentType) {
-				xhr.setRequestHeader('Content-Type', contentType);
-			}
-
-			xhr.send(data);
-		}).catch(async (err) => {
-			if (retries > 0) {
-				--o.retries;
-			}
-			else if (discardErrors) {
-				return undefined;
 			}
 			else {
-				throw err;
-			}
+				const xhr: XMLHttpRequest	= new XMLHttpRequest();
+				xhr.responseType			= responseType;
 
-			return this.request(o);
-		});
+				/* tslint:disable-next-line:promise-must-complete */
+				const xhrComplete	= new Promise<void>(resolve => {
+					xhr.onreadystatechange	= () => {
+						if (xhr.readyState === 4) {
+							resolve();
+						}
+					};
+				});
+
+				xhr.open(method, url, true);
+				if (contentType) {
+					xhr.setRequestHeader('Content-Type', contentType);
+				}
+				xhr.send(data);
+				await xhrComplete;
+
+				statusOk	= xhr.status === 200;
+				response	= responseType === 'arraybuffer' || responseType === 'blob' ?
+					<ArrayBuffer|Blob> xhr.response :
+					xhr.responseText.trim()
+				;
+			}
+		}
+
+		if (statusOk) {
+			return response;
+		}
+		else if (!discardErrors) {
+			throw response;
+		}
 	}
 
 	/**
@@ -434,11 +436,7 @@ export class Util {
 
 				return typeof o[k] === 'object' ?
 					this.toQueryString(o[k], key) :
-					(
-						encodeURIComponent(key) +
-						'=' +
-						encodeURIComponent(o[k])
-					)
+					`${encodeURIComponent(key)}=${encodeURIComponent(o[k])}`
 				;
 			}).
 			join('&').
