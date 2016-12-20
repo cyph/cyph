@@ -173,10 +173,8 @@ const newCyphTest	= o => {
 			webdriver.until.elementLocated(webdriver.By.js(function () {
 				return self.$ && $('.message-item:visible').toArray().
 					filter(function (elem) {
-						return $(elem).text().
-							replace(/\s+/g, '').
-							indexOf('friend:balls') > -1
-						;
+						var text	= $(elem).text();
+						return text.indexOf('friend') > -1 && text.indexOf('balls') > -1;
 					})[0]
 				;
 			})),
