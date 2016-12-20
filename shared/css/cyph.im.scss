@@ -652,24 +652,34 @@ html.mobile button[disabled] {
 
 .link-connection {
 	.connect-link-input {
-		width: 100%;
+		position: relative;
 
-		input {
-			text-align: center;
-			margin-left: auto;
-			margin-right: auto;
-			background-color: #f1f1f1;
-			box-shadow: 0px 0px 10px #7239dd;
-			padding: 5px;
-			border: 1px solid #8b62d9 !important;
-			height: auto;
-			width: 50%;
+		md-input-container {
+			width: 100%;
 
-			@include transform(translateX(50%));
+			input {
+				text-align: center;
+				margin-left: auto;
+				margin-right: auto;
+				background-color: #f1f1f1;
+				box-shadow: 0px 0px 10px #7239dd;
+				padding: 5px;
+				border: 1px solid #8b62d9 !important;
+				height: auto;
+				width: 50%;
+
+				@include transform(translateX(50%));
+			}
+
+			label {
+				display: none;
+			}
 		}
 
-		label {
-			display: none;
+		.md-button {
+			position: absolute;
+			top: -3px;
+			right: calc(25% - 50px);
 		}
 	}
 
@@ -1210,12 +1220,6 @@ html.mobile cyph-help {
 .chat-main.mobile .self-destruct-timer {
 	font-size: 20px;
 	padding: 5px;
-}
-
-.md-button.copy {
-	position: absolute;
-
-	@include transform(translate(calc(25vw - 25px), -62px));
 }
 
 /*** SpinKit animation: http://tobiasahlin.com/spinkit/ ***/

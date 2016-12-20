@@ -18,7 +18,7 @@
 			</div>
 			<br />
 
-			<div *ngIf='!env.isMobile'>
+			<div class='connect-link-input' *ngIf='!env.isMobile'>
 				<md2-input
 					cyphTranslate
 					childClass='connect-link-input'
@@ -26,7 +26,6 @@
 					label='Cyph link'
 				></md2-input>
 				<md2-button
-					childClass='copy'
 					ariaLabel='Copy to clipboard'
 					(childClick)='copyToClipboard()'
 					cyphTranslate
