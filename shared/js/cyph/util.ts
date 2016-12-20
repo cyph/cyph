@@ -466,18 +466,6 @@ export class Util {
 	}
 
 	constructor () { (async () => {
-		if (env.isMainThread) {
-			eventManager.on(Util.openUrlThreadEvent, async (url: string) => this.openUrl(url));
-
-			eventManager.on(Util.saveFileThreadEvent, async (o: {
-				content: Uint8Array;
-				fileName: string;
-			}) => this.saveFile(
-				o.content,
-				o.fileName
-			));
-		}
-
 		try {
 			const serverTimestamp: number	= parseFloat(
 				await this.request({url: env.baseUrl + 'timestamp'})
@@ -486,6 +474,24 @@ export class Util {
 			this.timestampData.offset	= serverTimestamp - Date.now();
 		}
 		catch (_) {}
+
+		if (!env.isMainThread) {
+			return;
+		}
+
+		while (!eventManager) {
+			await this.sleep();
+		}
+
+		eventManager.on(Util.openUrlThreadEvent, async (url: string) => this.openUrl(url));
+
+		eventManager.on(Util.saveFileThreadEvent, async (o: {
+			content: Uint8Array;
+			fileName: string;
+		}) => this.saveFile(
+			o.content,
+			o.fileName
+		));
 	})(); }
 }
 
