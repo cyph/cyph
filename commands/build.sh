@@ -57,9 +57,9 @@ tsfiles="$( \
 		sort | \
 		uniq | \
 		grep -v 'Binary file' | \
+		grep -v 'preload/global' | \
 		grep -v 'main.lib' | \
-		grep -v 'translations' | \
-		tr ' ' '\n' \
+		grep -v 'translations' \
 )"
 
 cd shared
@@ -94,7 +94,7 @@ tsbuild () {
 
 		tsconfig.compilerOptions.outDir	= '.';
 
-		tsconfig.files	= 'preload/global ${*}'.
+		tsconfig.files	= 'typings/index.d ${*}'.
 			trim().
 			split(/\s+/).
 			map(f => f + '.ts')
@@ -170,6 +170,7 @@ compile () {
 			)};
 		`.trim())' > "${outputDir}/js/translations.js"
 
+		tsbuild preload/global
 		babel --presets es2015 --compact false preload/global.js -o preload/global.js
 		if [ "${minify}" ] ; then
 			uglifyjs preload/global.js -o preload/global.js
@@ -277,8 +278,7 @@ compile () {
 			fi
 
 			{
-				cat preload/global.js;
-				echo '(function () {'
+				echo '(function () {';
 				cat "${f}.js.tmp";
 				echo "
 					self.${m}	= ${m};
@@ -291,15 +291,18 @@ compile () {
 				" |
 					if [ "${minify}" ] ; then uglifyjs ; else cat - ; fi \
 				;
-				echo '})();'
-			} | \
+				echo '})();';
+			} |
 				sed 's|use strict||g' \
 			> "${outputDir}/js/${f}.js"
 
 			rm "${f}.js.tmp"
 		done
 
-		for js in $(find . -name '*.js' -not -name 'translations.js') ; do
+		for js in $(find . -name '*.js' -not \( \
+			-path './preload/global.js' -o \
+			-name 'translations.js' \
+		\)) ; do
 			delete=true
 			for f in $tsfiles ; do
 				if [ "${js}" == "./${f}.js" -o "${js}" == "./${f}.lib.js" ] ; then

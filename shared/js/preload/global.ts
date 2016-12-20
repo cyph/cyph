@@ -3,9 +3,6 @@
  */
 
 
-/// <reference path="../typings/main.d.ts" />
-
-
 try {
 	if (!self.crypto && (<any> self).msCrypto) {
 		(<any> self).crypto			= (<any> self).msCrypto;
