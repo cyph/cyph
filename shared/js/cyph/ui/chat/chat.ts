@@ -161,6 +161,9 @@ export class Chat implements IChat {
 			return;
 		}
 
+		/* Workaround for Safari bug that breaks initiating a new chat */
+		this.session.sendBase([]);
+
 		this.notifier.notify(strings.connectedNotification);
 		this.changeState(States.chatBeginMessage);
 
