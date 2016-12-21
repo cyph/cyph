@@ -265,7 +265,7 @@ export class Util {
 		const responseType: string		= o.responseType || '';
 		const retries: number			= o.retries === undefined ? 0 : o.retries;
 		let contentType: string			= o.contentType || '';
-		let data: any					= o.data || '';
+		let data: any					= o.data;
 		let url: string					= o.url;
 
 		if (url.slice(-5) === '.json') {
@@ -294,7 +294,7 @@ export class Util {
 		let response: ArrayBuffer|Blob|string|undefined;
 		let statusOk	= false;
 
-		for (let i = 0 ; !statusOk && i < retries ; ++i) {
+		for (let i = 0 ; !statusOk && i <= retries ; ++i) {
 			if (typeof fetch !== 'undefined') {
 				const res	= await fetch(url, {
 					method,
