@@ -82,7 +82,7 @@ then(function (continent) {
 		});
 	}
 	else {
-		return getCurrent('', 'cdn.cyphdbyhiddenbhs.onion/');
+		return getCurrent('', config.cdnUrlBaseOnion);
 	}
 }).catch(function () {
 	return {
