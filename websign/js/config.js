@@ -1,4 +1,4 @@
-var Config	= {
+var config	= {
 	abortText: 'Loading Cyph failed. Please try again later.',
 	cdnUrlBase: '.cdn.cyph.com/',
 	continentUrl: 'https://api.cyph.com/continent',

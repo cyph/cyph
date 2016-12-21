@@ -29,7 +29,7 @@ Promise.resolve().then(function () {
 		return null;
 	}
 
-	return fetch(Config.continentUrl).then(function (response) {
+	return fetch(config.continentUrl).then(function (response) {
 		return response.text();
 	}).then(function (s) {
 		return s.trim();
@@ -77,8 +77,8 @@ then(function (continent) {
 	}
 
 	if (continent) {
-		return getCurrent(continent, Config.cdnUrlBase).catch(function () {
-			return getCurrent(Config.defaultContinent, Config.cdnUrlBase);
+		return getCurrent(continent, config.cdnUrlBase).catch(function () {
+			return getCurrent(config.defaultContinent, config.cdnUrlBase);
 		});
 	}
 	else {
@@ -113,10 +113,10 @@ then(function (results) {
 
 	var packageData	= {
 		signed: packageLines[0],
-		rsaKey: Config.publicKeys.rsa[
+		rsaKey: config.publicKeys.rsa[
 			parseInt(packageLines[1], 10)
 		],
-		sphincsKey: Config.publicKeys.sphincs[
+		sphincsKey: config.publicKeys.sphincs[
 			parseInt(packageLines[2], 10)
 		]
 	};
@@ -178,7 +178,7 @@ catch(function () {
 }).then(function (package) {
 	return Promise.all([
 		package,
-		Promise.all(Config.files.map(function (file) {
+		Promise.all(config.files.map(function (file) {
 			return fetch(file).then(function (response) {
 				return response.text();
 			});
@@ -188,7 +188,7 @@ catch(function () {
 	var package			= results[0];
 	var fileContents	= results[1];
 
-	var bootstrapText	= Config.files.
+	var bootstrapText	= config.files.
 		map(function (file, i) {
 			return file + ':\n\n' + fileContents[i].trim();
 		}).
@@ -259,7 +259,7 @@ catch(function (err) {
 
 	if (!err || !err.webSignPanic) {
 		messageElement					= document.getElementById('pre-load-message');
-		messageElement.innerText		= Config.abortText;
+		messageElement.innerText		= config.abortText;
 	}
 	else {
 		messageElement					= document.getElementById('panic-message');
