@@ -77,11 +77,8 @@ export class FileManager implements IFileManager {
 			));
 		}
 		else {
-			/* https://stackoverflow.com/a/12300351/459881 */
-			return new Uint8Array(
-				atob(canvas.toDataURL(outputType, outputQuality).split(',')[1]).
-					split('').
-					map(s => s.charCodeAt(0))
+			return potassium.fromBase64(
+				canvas.toDataURL(outputType, outputQuality).split(',')[1]
 			);
 		}
 	}
