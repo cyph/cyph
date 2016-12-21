@@ -29,4 +29,4 @@ node -e '
 	);
 '
 
-rm .index.html.tmp
+rm -rf .index.html.tmp .index.html.tmp-subresources
