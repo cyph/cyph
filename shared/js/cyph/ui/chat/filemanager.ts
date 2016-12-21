@@ -46,24 +46,31 @@ export class FileManager implements IFileManager {
 			context.getImageData(0, 0, image.width, image.height).data[3] !== 255
 		;
 
-		return new Promise<Uint8Array>(resolve => {
-			const callback	= (blob: Blob) => {
-				const reader	= new FileReader();
-				reader.onload	= () => resolve(new Uint8Array(reader.result));
-				reader.readAsArrayBuffer(blob);
-			};
+		const outputType: string|undefined		= !hasTransparency ? 'image/jpeg' : undefined;
+		const outputQuality: number|undefined	= !hasTransparency ?
+			Math.min(960 / Math.max(canvas.width, canvas.height), 1) :
+			undefined
+		;
 
-			if (hasTransparency) {
-				canvas.toBlob(callback);
-			}
-			else {
-				canvas.toBlob(
-					callback,
-					'image/jpeg',
-					Math.min(960 / Math.max(canvas.width, canvas.height), 1)
-				);
-			}
-		});
+		if (canvas.toBlob) {
+			return new Promise<Uint8Array>(resolve => canvas.toBlob(
+				(blob: Blob) => {
+					const reader	= new FileReader();
+					reader.onload	= () => resolve(new Uint8Array(reader.result));
+					reader.readAsArrayBuffer(blob);
+				},
+				outputType,
+				outputQuality
+			));
+		}
+		else {
+			/* https://stackoverflow.com/a/12300351/459881 */
+			return new Uint8Array(
+				atob(canvas.toDataURL(outputType, outputQuality).split(',')[1]).
+					split('').
+					map(s => s.charCodeAt(0))
+			);
+		}
 	}
 
 	/** @ignore */
