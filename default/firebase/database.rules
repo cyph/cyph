@@ -23,7 +23,7 @@
 							"
 						},
 						"timestamp": {
-							".validate": "newData.isNumber() && newData.val() <= now"
+							".validate": "newData.isNumber() && newData.val() < (now + 2500)"
 						},
 
 						"$other": {
