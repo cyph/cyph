@@ -57,12 +57,6 @@ const subresources	= await Promise.all(Array.from(
 ));
 
 for (let subresource of subresources) {
-	const specialAttributes	= [
-		'websign-sri-include'
-	].map(s =>
-		subresource.$elem.attr(s) === undefined ? '' : s
-	).join(' ');
-
 	if (subresource.enableSRI) {
 		const path			= `${subresourcePath}/${subresource.path}`;
 		const pathParent	= path.split('/').slice(0, -1).join('/');
@@ -79,11 +73,10 @@ for (let subresource of subresources) {
 					<script
 						websign-sri-path='${subresource.path}'
 						websign-sri-hash='${subresource.hash}'
-						${specialAttributes}
 					></script>
 				` :
 				`
-					<script ${specialAttributes}>${
+					<script>${
 						subresource.content.replace(/<\/script>/g, '<\\/script>')
 					}</script>
 				`
@@ -94,11 +87,10 @@ for (let subresource of subresources) {
 						rel='stylesheet'
 						websign-sri-path='${subresource.path}'
 						websign-sri-hash='${subresource.hash}'
-						${specialAttributes}
 					></link>
 				` :
 				`
-					<style ${specialAttributes}>${subresource.content}</style>
+					<style>${subresource.content}</style>
 				`
 			)	
 	);

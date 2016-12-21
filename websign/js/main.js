@@ -225,32 +225,13 @@ catch(function () {
 
 /* Successfully execute package */
 then(function (package) {
-	var html	=
-		(package.
-			split('</html>').slice(0, -1).join('</html>').
-			split('</body>').slice(0, -1).join('</body>')
-		) +
-			Array.prototype.slice.apply(
-				document.querySelectorAll('script[websign-sri-include]')
-			).map(function (elem) { return elem.outerHTML }).join('') +
-			'<script>' +
-				'WebSignSRI(' +
-					'"' + localStorage.webSignCdnUrl + '"' +
-				').catch(function (err) {' +
-					'document.open("text/plain");' +
-					'document.write(err);' +
-					'document.close();' +
-				'});' +
-			'</script>' +
-		'</body></html>'
-	;
+	document.head.innerHTML	= package.split('<head>')[1].split('</head>')[0];
+	document.body.innerHTML	= package.split('<body>')[1].split('</body>')[0];
 
-	try {
-		document.open('text/html');
-		document.write(html);
-		document.close();
-	}
-	catch (_) {}
+	WebSignSRI(localStorage.webSignCdnUrl).catch(function (err) {
+		document.head.innerHTML		= '';
+		document.body.textContent	= err;
+	});
 }).
 
 /* Display either abortion screen or panic screen, depening on the error */
