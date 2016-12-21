@@ -18,6 +18,19 @@ export class FileManager implements IFileManager {
 	public readonly files: IFiles;
 
 	/** @ignore */
+	private addImage (transfer: ITransfer, plaintext: Uint8Array) : void {
+		this.chat.addMessage(
+			`![](data:${transfer.fileType};base64,${potassium.toBase64(plaintext)})` +
+				`\n\n#### ${transfer.name}`
+			,
+			transfer.author,
+			undefined,
+			undefined,
+			transfer.imageSelfDestructTimeout
+		);
+	}
+
+	/** @ignore */
 	private async compressImage (image: HTMLImageElement, file: File) : Promise<Uint8Array> {
 		const canvas: HTMLCanvasElement			= document.createElement('canvas');
 		const context: CanvasRenderingContext2D	=
@@ -71,19 +84,6 @@ export class FileManager implements IFileManager {
 					map(s => s.charCodeAt(0))
 			);
 		}
-	}
-
-	/** @ignore */
-	private addImage (transfer: ITransfer, plaintext: Uint8Array) : void {
-		this.chat.addMessage(
-			`![](data:${transfer.fileType};base64,${potassium.toBase64(plaintext)})` +
-				`\n\n#### ${transfer.name}`
-			,
-			transfer.author,
-			undefined,
-			undefined,
-			transfer.imageSelfDestructTimeout
-		);
 	}
 
 	/** @inheritDoc */

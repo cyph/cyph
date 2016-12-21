@@ -8,13 +8,6 @@ import {util} from './util';
 /** @inheritDoc */
 export class Thread implements IThread {
 	/** @ignore */
-	private static readonly blobBuilder: any	=
-		(<any> self).BlobBuilder ||
-		(<any> self).WebKitBlobBuilder ||
-		(<any> self).MozBlobBuilder
-	;
-
-	/** @ignore */
 	private static stringifyFunction (f: Function) : string {
 		const s: string	= f.toString();
 		return s.slice(s.indexOf('{'));
@@ -234,22 +227,14 @@ export class Thread implements IThread {
 			threadSetupVars.seed[i]	= 0;
 		}
 
-		let blob: Blob;
 		let blobUrl: string;
 
 		try {
-			try {
-				blob	= new Blob([threadBody], {type: 'application/javascript'});
-			}
-			catch (_) {
-				const blobBuilder	= new Thread.blobBuilder();
-				blobBuilder.append(threadBody);
-
-				blob	= blobBuilder.getBlob();
-			}
+			blobUrl	= URL.createObjectURL(
+				new Blob([threadBody], {type: 'application/javascript'})
+			);
 
 			try {
-				blobUrl		= URL.createObjectURL(blob);
 				this.worker	= new Worker(blobUrl);
 			}
 			catch (err) {
