@@ -12,6 +12,7 @@ catch (_) {}
 
 if (!(
 	cryptoSupported &&
+	'Promise' in self &&
 	'Worker' in self &&
 	'history' in self &&
 	'pushState' in (<any> self).history &&
