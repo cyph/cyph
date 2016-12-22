@@ -117,6 +117,7 @@ jspm install -y \
 	angular-aria \
 	angular-animate \
 	npm:dompurify \
+	fetch=github:github/fetch \
 	github:markdown-it/markdown-it \
 	github:markdown-it/markdown-it-sup \
 	github:markdown-it/markdown-it-emoji \
@@ -260,9 +261,9 @@ mkdir -p @types/firebase
 curl -s https://raw.githubusercontent.com/suhdev/firebase-3-typescript/master/firebase.d.ts | \
 	grep -v es6-promise.d.ts > @types/firebase/index.d.ts
 
-cd microlight
-uglifyjs microlight.js -m -o microlight.min.js
-cd ..
+uglifyjs fetch/fetch.js -m -o fetch/fetch.min.js
+
+uglifyjs microlight/microlight.js -m -o microlight/microlight.min.js
 
 cd andyet/simplewebrtc
 sed -i "s|require('./socketioconnection')|null|g" simplewebrtc.js

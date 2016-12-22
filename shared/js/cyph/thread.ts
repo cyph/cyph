@@ -135,6 +135,7 @@ export class Thread implements IThread {
 		importScripts('/lib/js/crypto/rlwe/dist/rlwe.js');
 		importScripts('/lib/js/crypto/supersphincs/dist/supersphincs.js');
 
+		importScripts('/lib/js/fetch/fetch.min.js');
 		importScripts('/lib/js/firebase/firebase.js');
 
 		threadSetupVars	= undefined;

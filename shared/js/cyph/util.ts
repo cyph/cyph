@@ -288,56 +288,30 @@ export class Util {
 		}
 
 		let response: ArrayBuffer|Blob|string|undefined;
+		let error: Error|undefined;
 		let statusOk	= false;
 
 		for (let i = 0 ; !statusOk && i <= retries ; ++i) {
-			if (typeof fetch !== 'undefined') {
-				try {
-					const res	= await fetch(url, {
-						method,
-						body: data,
-						headers: !contentType ? {} : {
-							'Content-Type': contentType
-						}
-					});
-
-					statusOk	= res.ok;
-					response	= responseType === 'arraybuffer' ?
-						await res.arrayBuffer() :
-						responseType === 'blob' ?
-							await res.blob() :
-							(await res.text()).trim()
-					;
-				}
-				catch (_) {
-					statusOk	= false;
-				}
-			}
-			else {
-				const xhr: XMLHttpRequest	= new XMLHttpRequest();
-				xhr.responseType			= responseType;
-
-				/* tslint:disable-next-line:promise-must-complete */
-				const xhrComplete	= new Promise<void>(resolve => {
-					xhr.onreadystatechange	= () => {
-						if (xhr.readyState === 4) {
-							resolve();
-						}
-					};
+			try {
+				const res	= await fetch(url, {
+					method,
+					body: data,
+					headers: !contentType ? {} : {
+						'Content-Type': contentType
+					}
 				});
 
-				xhr.open(method, url, true);
-				if (contentType) {
-					xhr.setRequestHeader('Content-Type', contentType);
-				}
-				xhr.send(data);
-				await xhrComplete;
-
-				statusOk	= xhr.status === 200;
-				response	= responseType === 'arraybuffer' || responseType === 'blob' ?
-					<ArrayBuffer|Blob> xhr.response :
-					xhr.responseText.trim()
+				statusOk	= res.ok;
+				response	= responseType === 'arraybuffer' ?
+					await res.arrayBuffer() :
+					responseType === 'blob' ?
+						await res.blob() :
+						(await res.text()).trim()
 				;
+			}
+			catch (err) {
+				error		= err;
+				statusOk	= false;
 			}
 		}
 
@@ -345,7 +319,7 @@ export class Util {
 			return response;
 		}
 		else if (!discardErrors) {
-			throw response;
+			throw error || response;
 		}
 	}
 
