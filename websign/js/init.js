@@ -15,6 +15,13 @@ try {
 }
 catch (_) {}
 
+var storage	= {};
+try {
+	localStorage.isPersistent	= 'true';
+	storage						= localStorage;
+}
+catch (_) {}
+
 if (!(
 	cryptoSupported &&
 	'Promise' in self &&
@@ -22,8 +29,7 @@ if (!(
 	'history' in self &&
 	'pushState' in self.history &&
 	'replaceState' in self.history &&
-	'MutationObserver' in self &&
-	'localStorage' in self
+	'MutationObserver' in self
 )) {
 	location.pathname	= '/unsupportedbrowser';
 }

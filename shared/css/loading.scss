@@ -32,10 +32,12 @@
 	> .transition {
 		@include animation(preloadfadeout 1s linear);
 
+		@include animation-delay(0.5s);
+
 		@include animation-fill-mode(forwards);
 
 		+ .loading > .logo-animation * {
-			@include animation-delay(1s);
+			@include animation-delay(1.5s);
 		}
 	}
 }
@@ -232,14 +234,9 @@ html.load-complete #pre-load {
 /*** SpinKit animation: http://tobiasahlin.com/spinkit/ ***/
 
 .double-bounce1, .double-bounce2 {
-	width: 100%;
-	height: 100%;
 	border-radius: 50%;
 	background-color: white;
 	opacity: 0.6;
-	position: absolute;
-	top: 0;
-	left: 0;
 
 	@include animation(preloadbounce 2s infinite ease-in-out);
 }

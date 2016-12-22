@@ -258,6 +258,7 @@ export class Files implements IFiles {
 
 				if (ok) {
 					this.transfers.add(transfer);
+					this.triggerChangeDetection();
 
 					/* Arbitrarily assume ~500 Kb/s for progress bar estimation */
 					(async () => {
@@ -348,6 +349,7 @@ export class Files implements IFiles {
 		);
 
 		this.transfers.add(transfer);
+		this.triggerChangeDetection();
 
 		analytics.sendEvent({
 			eventAction: 'send',

@@ -1,4 +1,4 @@
-#pre-load {
+#websign-load {
 	background-color: #8b62d9 !important;
 	position: fixed;
 	top: -1px;
@@ -7,15 +7,22 @@
 	height: 101%;
 	z-index: 999;
 }
-#pre-load > div:not(.message) {
+#websign-load > div.animation {
+	height: 100%;
+	width: 100%;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+}
+#websign-load > div.animation > * {
 	height: 60px;
 	width: 60px;
-	position: fixed;
+	position: absolute;
 	top: calc(50% - 30px);
 	left: calc(50% - 30px);
 }
-#pre-load > div.message {
-	position: fixed;
+#websign-load > div.message {
+	position: absolute;
 	top: calc(50% + 60px);
 	left: 25px;
 	z-index: 999;
@@ -25,14 +32,7 @@
 	opacity: 0.75;
 	font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif;
 }
-#pre-load.load-complete, html.load-complete #pre-load {
-	pointer-events: none;
-	opacity: 0;
-	-webkit-transition: opacity .25s linear;
-	-moz-transition: opacity .25s linear;
-	transition: opacity .25s linear;
-}
-#pre-load strong, #pre-load a {
+#websign-load strong, #websign-load a {
 	display: inline-block;
 	color: #8b62d9;
 	background-color: black;
@@ -53,7 +53,7 @@
 	-moz-animation-iteration-count: infinite;
 	animation-iteration-count: infinite;
 }
-#pre-load strong a {
+#websign-load strong a {
 	color: #f1f1f1;
 }
 
@@ -87,14 +87,9 @@
 
 
 .double-bounce1, .double-bounce2 {
-	width: 100%;
-	height: 100%;
 	border-radius: 50%;
 	background-color: #fff;
 	opacity: 0.6;
-	position: absolute;
-	top: 0px;
-	left: 0px;
 	-webkit-animation: preloadbounce 2s infinite ease-in-out;
 	-moz-animation: preloadbounce 2s infinite ease-in-out;
 	animation: preloadbounce 2s infinite ease-in-out;

@@ -9,9 +9,9 @@ var packageName		= isHiddenService ?
 if (location.host.indexOf('www.') === 0) {
 	location.host	= location.host.replace('www.', '');
 }
-else if (!isHiddenService && !localStorage.webSignWWWPinned) {
-	localStorage.webSignWWWPinned	= true;
-	location.host					= 'www.' + location.host;
+else if (!isHiddenService && !storage.webSignWWWPinned) {
+	storage.webSignWWWPinned	= true;
+	location.host				= 'www.' + location.host;
 }
 
 /* Initialize ServiceWorker where possible */
@@ -59,7 +59,7 @@ then(function (continent) {
 				var newTimestamp	= parseInt(s.trim(), 10);
 
 				var oldTimestamp	= parseInt(
-					localStorage.webSignPackageTimestamp,
+					storage.webSignPackageTimestamp,
 					10
 				);
 
@@ -86,9 +86,9 @@ then(function (continent) {
 	}
 }).catch(function () {
 	return {
-		cdnUrl: localStorage.webSignCdnUrl,
+		cdnUrl: storage.webSignCdnUrl,
 		packageTimestamp: parseInt(
-			localStorage.webSignPackageTimestamp,
+			storage.webSignPackageTimestamp,
 			10
 		)
 	};
@@ -163,10 +163,10 @@ then(function (results) {
 		throw 'Stale or invalid data.';
 	}
 
-	localStorage.webSignExpires				= opened.expires;
-	localStorage.webSignHashWhitelist		= JSON.stringify(opened.hashWhitelist);
-	localStorage.webSignPackageTimestamp	= opened.timestamp;
-	localStorage.webSignCdnUrl				= downloadMetadata.cdnUrl;
+	storage.webSignExpires			= opened.expires;
+	storage.webSignHashWhitelist	= JSON.stringify(opened.hashWhitelist);
+	storage.webSignPackageTimestamp	= opened.timestamp;
+	storage.webSignCdnUrl			= downloadMetadata.cdnUrl;
 
 	return opened.package;
 }).
@@ -205,12 +205,12 @@ catch(function () {
 	var bootstrapText	= results[1];
 	var hash			= results[2].hex;
 
-	localStorage.webSignHashOld	= localStorage.webSignHash;
-	localStorage.webSignHash	= hash;
+	storage.webSignHashOld	= storage.webSignHash;
+	storage.webSignHash		= hash;
 
-	var hashWhitelist	= JSON.parse(localStorage.webSignHashWhitelist);
+	var hashWhitelist	= JSON.parse(storage.webSignHashWhitelist);
 
-	if (!hashWhitelist[localStorage.webSignHash]) {
+	if (!hashWhitelist[storage.webSignHash]) {
 		throw {
 			webSignPanic: true,
 			bootstrapText: bootstrapText
@@ -228,7 +228,7 @@ then(function (package) {
 	document.head.innerHTML	= package.split('<head>')[1].split('</head>')[0];
 	document.body.innerHTML	= package.split('<body>')[1].split('</body>')[0];
 
-	WebSignSRI(localStorage.webSignCdnUrl).catch(function (err) {
+	webSignSRI(storage.webSignCdnUrl).catch(function (err) {
 		document.head.innerHTML		= '';
 		document.body.textContent	= err;
 	});
@@ -239,7 +239,7 @@ catch(function (err) {
 	var messageElement;
 
 	if (!err || !err.webSignPanic) {
-		messageElement					= document.getElementById('pre-load-message');
+		messageElement					= document.getElementById('websign-load-message');
 		messageElement.innerText		= config.abortText;
 	}
 	else {
@@ -266,10 +266,10 @@ catch(function (err) {
 						navigator.language + '\n\n' +
 						navigator.userAgent + '\n\n' +
 						location.toString().replace(/\/#.*/g, '') + '\n\n' +
-						'\n\ncdn url: ' + localStorage.webSignCdnUrl +
-						'\n\ncurrent bootstrap hash: ' + localStorage.webSignHash +
-						'\n\nprevious bootstrap hash: ' + localStorage.webSignHashOld +
-						'\n\npackage hash: ' + localStorage.webSignPackageHash +
+						'\n\ncdn url: ' + storage.webSignCdnUrl +
+						'\n\ncurrent bootstrap hash: ' + storage.webSignHash +
+						'\n\nprevious bootstrap hash: ' + storage.webSignHashOld +
+						'\n\npackage hash: ' + storage.webSignPackageHash +
 						'\n\n\n\n' + err.bootstrapText
 				}
 			})

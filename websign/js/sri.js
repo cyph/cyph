@@ -3,9 +3,9 @@
  * the upcoming Subresource Integrity standard.
  */
 
-function WebSignSRI (baseUrl) {
+function webSignSRI (baseUrl) {
 	new MutationObserver(function () {
-		WebSignSRI_Process(baseUrl);
+		webSignSRI_Process(baseUrl);
 	}).observe(document, {
 		childList: true,
 		attributes: false,
@@ -13,10 +13,10 @@ function WebSignSRI (baseUrl) {
 		subtree: true
 	});
 
-	return WebSignSRI_Process(baseUrl);
+	return webSignSRI_Process(baseUrl);
 }
 
-function WebSignSRI_Process (baseUrl) {
+function webSignSRI_Process (baseUrl) {
 	var outputIndex		= 0;
 	var outputElements	= [];
 

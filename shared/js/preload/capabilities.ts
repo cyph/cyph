@@ -17,8 +17,7 @@ if (!(
 	'history' in self &&
 	'pushState' in (<any> self).history &&
 	'replaceState' in (<any> self).history &&
-	'MutationObserver' in self &&
-	'localStorage' in self
+	'MutationObserver' in self
 )) {
 	location.pathname	= '/unsupportedbrowser';
 }
