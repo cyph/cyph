@@ -16,8 +16,14 @@ cat > "${domain}/index.html.tmp" <<- EOM
 					;
 				}
 				catch (_) {}
-			</script>
-			<script>
+
+				var☁storage	= {};
+				try {
+					localStorage.isPersistent	= 'true';
+					storage						= localStorage;
+				}
+				catch (_) {}
+
 				var☁isHiddenService	= location.host.split('.').slice(-1)[0] === 'onion';
 
 				$(if [ ! "${test}" ] ; then echo "
@@ -26,11 +32,11 @@ cat > "${domain}/index.html.tmp" <<- EOM
 					}
 					else☁if (
 						!isHiddenService &&
-						self.localStorage &&
-						!localStorage.webSignWWWPinned
+						storage.isPersistent &&
+						!storage.webSignWWWPinned
 					) {
-						localStorage.webSignWWWPinned	= true;
-						location.host					= 'www.' + location.host;
+						storage.webSignWWWPinned	= true;
+						location.host				= 'www.' + location.host;
 					}
 				" ; fi)
 
