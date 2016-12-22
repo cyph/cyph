@@ -9,7 +9,7 @@ var packageName		= isHiddenService ?
 if (location.host.indexOf('www.') === 0) {
 	location.host	= location.host.replace('www.', '');
 }
-else if (!isHiddenService && !storage.webSignWWWPinned) {
+else if (!isHiddenService && storage.isPersistent && !storage.webSignWWWPinned) {
 	storage.webSignWWWPinned	= true;
 	location.host				= 'www.' + location.host;
 }
