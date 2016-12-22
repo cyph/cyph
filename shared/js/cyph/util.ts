@@ -17,11 +17,7 @@ export class Util {
 
 
 	/** @ignore */
-	private readonly timestampData	= {
-		last: 0,
-		offset: 0,
-		subtime: 0
-	};
+	private readonly timestampData	= {last: 0, offset: 0, subtime: 0};
 
 	/**
 	 * Sends an email to the Cyph team. "@cyph.com" may be omitted from email.to.
@@ -296,21 +292,26 @@ export class Util {
 
 		for (let i = 0 ; !statusOk && i <= retries ; ++i) {
 			if (typeof fetch !== 'undefined') {
-				const res	= await fetch(url, {
-					method,
-					body: data,
-					headers: !contentType ? {} : {
-						'Content-Type': contentType
-					}
-				});
+				try {
+					const res	= await fetch(url, {
+						method,
+						body: data,
+						headers: !contentType ? {} : {
+							'Content-Type': contentType
+						}
+					});
 
-				statusOk	= res.ok;
-				response	= responseType === 'arraybuffer' ?
-					await res.arrayBuffer() :
-					responseType === 'blob' ?
-						await res.blob() :
-						(await res.text()).trim()
-				;
+					statusOk	= res.ok;
+					response	= responseType === 'arraybuffer' ?
+						await res.arrayBuffer() :
+						responseType === 'blob' ?
+							await res.blob() :
+							(await res.text()).trim()
+					;
+				}
+				catch (_) {
+					statusOk	= false;
+				}
 			}
 			else {
 				const xhr: XMLHttpRequest	= new XMLHttpRequest();
