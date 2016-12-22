@@ -9,18 +9,22 @@
 	height: 101%;
 	z-index: 999;
 
-	> .loading {
+	> .loading, > .transition {
 		height: 100%;
+		width: 100%;
+		position: absolute;
+		top: 0px;
+		left: 0px;
+	}
 
-		> .logo-animation {
-			margin-top: calc(33vh - 20px);
-		}
+	> .loading > .logo-animation {
+		margin-top: calc(33vh - 20px);
 	}
 
 	.double-bounce1, .double-bounce2 {
 		height: 60px;
 		width: 60px;
-		position: fixed;
+		position: absolute;
 		top: calc(50% - 30px);
 		left: calc(50% - 30px);
 	}
