@@ -56,7 +56,7 @@ $(async () => {
 	}
 
 	/* Try again if page takes too long to initialise */
-	await util.sleep(60000);
+	await util.sleep(120000);
 	if (!elements.html().hasClass('load-complete')) {
 		location.reload();
 	}
