@@ -272,15 +272,14 @@ export class Files implements IFiles {
 						}
 					})();
 
-					const cyphertext: Uint8Array	= new Uint8Array(await util.request({
-						responseType: 'arraybuffer',
+					const cyphertext: Uint8Array	= await util.requestBytes({
 						retries: 5,
 						/* Temporary workaround while Firebase adds CORS support */
 						url: (transfer.url || '').replace(
 							'firebasestorage.googleapis.com',
 							'api.cyph.com'
 						)
-					}));
+					});
 
 					(await firebaseApp).storage().refFromURL(transfer.url).delete();
 

@@ -234,10 +234,11 @@ export class Session implements ISession {
 					/* If aborting before the cyph begins,
 						block friend from trying to join */
 					util.request({
-						discardErrors: true,
 						method: 'POST',
 						url: env.baseUrl + 'channels/' + this.state.cyphId
-					});
+					}).catch(
+						() => {}
+					);
 				}
 
 				this.trigger(events.closeChat);

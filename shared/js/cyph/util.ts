@@ -20,6 +20,83 @@ export class Util {
 	private readonly timestampData	= {last: 0, offset: 0, subtime: 0};
 
 	/**
+	 * Performs HTTP request.
+	 * @param o
+	 * @param responseType
+	 * @param getResponseData
+	 */
+	private async baseRequest<T> (
+		o: {
+			contentType?: string;
+			data?: any;
+			discardErrors?: boolean;
+			method?: string;
+			retries?: number;
+			url: string;
+		},
+		responseType: string,
+		getResponseData: (res: Response) => Promise<T>
+	) : Promise<T> {
+		const method: string			= o.method || 'GET';
+		const retries: number			= o.retries === undefined ? 0 : o.retries;
+		let contentType: string			= o.contentType || '';
+		let data: any					= o.data;
+		let url: string					= o.url;
+
+		if (url.slice(-5) === '.json') {
+			contentType	= 'application/json';
+		}
+		else if (responseType === 'text') {
+			contentType	= 'application/x-www-form-urlencoded';
+		}
+
+		if (data && method === 'GET') {
+			url		+= '?' + (
+				typeof data === 'object' ?
+					this.toQueryString(data) :
+					(<string> data.toString())
+			);
+
+			data	= undefined;
+		}
+		else if (typeof data === 'object') {
+			data	= contentType === 'application/json' ?
+				JSON.stringify(data) :
+				this.toQueryString(data)
+			;
+		}
+
+		let response: T|undefined;
+		let error: Error|undefined;
+		let statusOk	= false;
+
+		for (let i = 0 ; !statusOk && i <= retries ; ++i) {
+			try {
+				const res	= await fetch(url, {
+					method,
+					body: data,
+					headers: !contentType ? {} : {
+						'Content-Type': contentType
+					}
+				});
+
+				statusOk	= res.ok;
+				response	= await getResponseData(res);
+			}
+			catch (err) {
+				error		= err;
+				statusOk	= false;
+			}
+		}
+
+		if (!statusOk || !response) {
+			throw error || response || new Error('Request failed.');
+		}
+
+		return response;
+	}
+
+	/**
 	 * Sends an email to the Cyph team. "@cyph.com" may be omitted from email.to.
 	 * @param email
 	 */
@@ -45,10 +122,11 @@ export class Util {
 					}]
 				}
 			},
-			discardErrors: true,
 			method: 'POST',
 			url: 'https://mandrillapp.com/api/1.0/messages/send.json'
-		});
+		}).catch(
+			() => {}
+		);
 
 		email.sent	= true;
 	}
@@ -246,81 +324,30 @@ export class Util {
 	 * Performs HTTP request.
 	 * @param o
 	 */
-	/* tslint:disable-next-line:cyclomatic-complexity */
 	public async request (o: {
 		contentType?: string;
 		data?: any;
-		discardErrors?: boolean;
 		method?: string;
-		responseType?: ''|'arraybuffer'|'blob'|'text';
 		retries?: number;
 		url: string;
-	}) : Promise<any> {
-		const discardErrors: boolean	= o.discardErrors === true;
-		const method: string			= o.method || 'GET';
-		const responseType: string		= o.responseType || '';
-		const retries: number			= o.retries === undefined ? 0 : o.retries;
-		let contentType: string			= o.contentType || '';
-		let data: any					= o.data;
-		let url: string					= o.url;
+	}) : Promise<string> {
+		return this.baseRequest(o, 'text', async (res) => (await res.text()).trim());
+	}
 
-		if (url.slice(-5) === '.json') {
-			contentType	= 'application/json';
-		}
-		else if (!responseType || responseType === 'text') {
-			contentType	= 'application/x-www-form-urlencoded';
-		}
-
-		if (data && method === 'GET') {
-			url		+= '?' + (
-				typeof data === 'object' ?
-					this.toQueryString(data) :
-					(<string> data.toString())
-			);
-
-			data	= undefined;
-		}
-		else if (typeof data === 'object') {
-			data	= contentType === 'application/json' ?
-				JSON.stringify(data) :
-				this.toQueryString(data)
-			;
-		}
-
-		let response: ArrayBuffer|Blob|string|undefined;
-		let error: Error|undefined;
-		let statusOk	= false;
-
-		for (let i = 0 ; !statusOk && i <= retries ; ++i) {
-			try {
-				const res	= await fetch(url, {
-					method,
-					body: data,
-					headers: !contentType ? {} : {
-						'Content-Type': contentType
-					}
-				});
-
-				statusOk	= res.ok;
-				response	= responseType === 'arraybuffer' ?
-					await res.arrayBuffer() :
-					responseType === 'blob' ?
-						await res.blob() :
-						(await res.text()).trim()
-				;
-			}
-			catch (err) {
-				error		= err;
-				statusOk	= false;
-			}
-		}
-
-		if (statusOk) {
-			return response;
-		}
-		else if (!discardErrors) {
-			throw error || response;
-		}
+	/**
+	 * Performs HTTP request.
+	 * @param o
+	 */
+	public async requestBytes (o: {
+		contentType?: string;
+		data?: any;
+		method?: string;
+		retries?: number;
+		url: string;
+	}) : Promise<Uint8Array> {
+		return this.baseRequest(o, 'arraybuffer', async (res) =>
+			new Uint8Array(await res.arrayBuffer())
+		);
 	}
 
 	/**

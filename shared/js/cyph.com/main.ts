@@ -207,9 +207,10 @@ angular.
 if (!env.isOnion) {
 	(async () => {
 		const response: string	= await util.request({
-			discardErrors: true,
 			url: `https://ping.${config.onionRoot}`
-		});
+		}).catch(
+			() => ''
+		);
 
 		if (response === 'pong') {
 			locationData.href	=
