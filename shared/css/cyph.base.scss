@@ -61,7 +61,7 @@ md-fab-actions .md-button {
 	}
 }
 
-md-fab-actions .md-button:not(.dark):not(.invert) md-icon, md-icon.grey {
+md-fab-actions .md-button:not(.dark):not(.invert) md-icon, .md-button.grey md-icon {
 	color: #757575 !important;
 }
 

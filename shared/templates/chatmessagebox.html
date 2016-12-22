@@ -18,10 +18,11 @@
 		>
 			<md2-button
 				ariaLabel='Send'
+				childClass='grey'
 				(childClick)='self.send()'
 				cyphTranslate
 			>
-				<md2-icon childClass='grey'>send</md2-icon>
+				<md2-icon>send</md2-icon>
 			</md2-button>
 		</div>
 		<div
@@ -30,27 +31,30 @@
 		>
 			<md2-button
 				ariaLabel='Video Call'
+				childClass='grey'
 				(childClick)='self.p2pManager.videoCallButton()'
 				[disabled]='!self.p2pManager.isEnabled'
 				*ngIf='!self.p2pManager.p2p.isActive'
 				cyphTranslate
 			>
-				<md2-icon childClass='grey'>videocam</md2-icon>
+				<md2-icon>videocam</md2-icon>
 			</md2-button>
 			<md2-button
 				ariaLabel='Voice Call'
+				childClass='grey'
 				(childClick)='self.p2pManager.voiceCallButton()'
 				[disabled]='!self.p2pManager.isEnabled'
 				*ngIf='!self.p2pManager.p2p.isActive'
 				cyphTranslate
 			>
-				<md2-icon childClass='grey'>phone</md2-icon>
+				<md2-icon>phone</md2-icon>
 			</md2-button>
 			<md2-button
 				ariaLabel='Send File or Photo'
+				childClass='grey'
 				cyphTranslate
 			>
-				<md2-icon childClass='grey'>attach_file</md2-icon>
+				<md2-icon>attach_file</md2-icon>
 				<cyph-file-input
 					[accept]='fileAccept'
 					(change)='self.fileManager.send($event)'

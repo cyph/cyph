@@ -34,16 +34,18 @@ ${!o.speedDialInvert ? '' : `
 	md-fab-actions .md-button {
 		background-color: #444;
 
-		md-icon:not(.dark):not(.invert), md-icon.grey {
-			color: #f1f1f1;
+		&.grey, &:not(.dark):not(.invert) {
+			md-icon {
+				color: #f1f1f1;
+			}
 		}
-	}
 
-	md-fab-actions .md-button.dark {
-		background-color: #fafafa;
+		&.dark {
+			background-color: #fafafa;
 
-		md-icon {
-			color: #757575;
+			md-icon {
+				color: #757575;
+			}
 		}
 	}
 `}
