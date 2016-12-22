@@ -1,7 +1,7 @@
 <section id='main' class='cyph-foreground layout-fill layout-column'>
 	<cyph-chat-main
 		[self]='ui.chat'
-		[hideDisconnectMessage]='ui.coBranded'
+		[hideDisconnectMessage]='env.coBranded'
 		[class.active]='ui.state === states.chat'
 		class='cyph-view layout-fill layout-column flex'
 		*ngIf='!!ui && !!ui.chat'
