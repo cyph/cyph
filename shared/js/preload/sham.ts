@@ -34,7 +34,9 @@ import * as firebase from 'firebase';
 							/* Fake out 50 Mb/s connection */
 							while (snapshot.bytesTransferred < snapshot.totalBytes) {
 								/* tslint:disable-next-line:ban */
-								await new Promise<void>(resolve => setTimeout(() => resolve(), 250));
+								await new Promise<void>(resolve => {
+									setTimeout(() => { resolve(); }, 250);
+								});
 
 								snapshot.bytesTransferred	= Math.min(
 									snapshot.bytesTransferred + 1638400,

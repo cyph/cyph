@@ -285,7 +285,7 @@ export class UI {
 		}
 
 		(async () => {
-			urlState.onChange(async (newUrlState) => this.onUrlStateChange(newUrlState));
+			urlState.onChange(newUrlState => { this.onUrlStateChange(newUrlState); });
 
 			const newUrlState: string	= urlState.getUrl();
 
@@ -378,19 +378,19 @@ export class UI {
 
 			/* Avoid full page reloads */
 
-			$(UI.linkInterceptSelector).click(async (e) => this.linkClickHandler(e));
+			$(UI.linkInterceptSelector).click(e => { this.linkClickHandler(e); });
 			new MutationObserver(mutations => {
 				for (const mutation of mutations) {
 					for (const elem of mutation.addedNodes) {
 						const $elem: JQuery	= $(elem);
 
 						if ($elem.is(UI.linkInterceptSelector)) {
-							$elem.click(async (e) => this.linkClickHandler(e));
+							$elem.click(e => { this.linkClickHandler(e); });
 						}
 						else {
 							$elem.
 								find(UI.linkInterceptSelector).
-								click(async (e) => this.linkClickHandler(e))
+								click(e => { this.linkClickHandler(e); })
 							;
 						}
 					}

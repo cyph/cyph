@@ -66,15 +66,15 @@ export class FileManager implements IFileManager {
 		;
 
 		if (canvas.toBlob) {
-			return new Promise<Uint8Array>(resolve => canvas.toBlob(
+			return new Promise<Uint8Array>(resolve => { canvas.toBlob(
 				(blob: Blob) => {
 					const reader	= new FileReader();
-					reader.onload	= () => resolve(new Uint8Array(reader.result));
+					reader.onload	= () => { resolve(new Uint8Array(reader.result)); };
 					reader.readAsArrayBuffer(blob);
 				},
 				outputType,
 				outputQuality
-			));
+			); });
 		}
 		else {
 			return potassium.fromBase64(
@@ -95,14 +95,14 @@ export class FileManager implements IFileManager {
 			if (image && file.type !== 'image/gif') {
 				reader.onload	= () => {
 					const img	= document.createElement('img');
-					img.onload	= () => resolve(this.compressImage(img, file));
+					img.onload	= () => { resolve(this.compressImage(img, file)); };
 					img.src		= reader.result;
 				};
 
 				reader.readAsDataURL(file);
 			}
 			else {
-				reader.onload	= () => resolve(new Uint8Array(reader.result));
+				reader.onload	= () => { resolve(new Uint8Array(reader.result)); };
 				reader.readAsArrayBuffer(file);
 			}
 		});

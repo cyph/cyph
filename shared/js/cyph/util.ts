@@ -404,7 +404,7 @@ export class Util {
 	 */
 	public async sleep (ms: number = 250) : Promise<void> {
 		/* tslint:disable-next-line:ban */
-		return new Promise<void>(resolve => setTimeout(() => resolve(), ms));
+		return new Promise<void>(resolve => { setTimeout(() => { resolve(); }, ms); });
 	}
 
 	/**
@@ -483,15 +483,14 @@ export class Util {
 			await this.sleep();
 		}
 
-		eventManager.on(Util.openUrlThreadEvent, async (url: string) => this.openUrl(url));
+		eventManager.on(Util.openUrlThreadEvent, (url: string) => { this.openUrl(url); });
 
-		eventManager.on(Util.saveFileThreadEvent, async (o: {
+		eventManager.on(Util.saveFileThreadEvent, (o: {
 			content: Uint8Array;
 			fileName: string;
-		}) => this.saveFile(
-			o.content,
-			o.fileName
-		));
+		}) => {
+			this.saveFile(o.content, o.fileName);
+		});
 	})(); }
 }
 

@@ -49,7 +49,10 @@ export class CyphDemo {
 	private static readonly mobileUIScale: number	= 0.625;
 
 	/** @ignore */
-	private static readonly messages: Promise<{text: string; isMobile: boolean}[]>	= (async () => [
+	private static readonly messages: Promise<{
+		text: string;
+		isMobile: boolean;
+	}[]>	= (async () => [
 		{
 			isMobile: true,
 			text: `why did we have to switch from Facebook?`
@@ -212,11 +215,15 @@ export class CyphDemo {
 		(<any> elements.heroText()).appear();
 
 		if (!elements.demoRoot().is(':appeared')) {
-			await new Promise<void>(resolve => elements.demoRoot().one('appear', () => resolve()));
+			await new Promise<void>(resolve => {
+				elements.demoRoot().one('appear', () => { resolve(); });
+			});
 		}
 
 		if (elements.heroText().is(':appeared')) {
-			await new Promise<void>(resolve => elements.heroText().one('disappear', () => resolve()));
+			await new Promise<void>(resolve => {
+				elements.heroText().one('disappear', () => { resolve(); });
+			});
 		}
 
 		await util.sleep(750);
@@ -228,10 +235,10 @@ export class CyphDemo {
 		elements.demoRoot().css('opacity', 1);
 
 		if (!env.isMobile) {
-			elements.heroText().on('appear', async () => this.activeTransition());
-			elements.heroText().on('disappear', async () => this.activeTransition());
-			elements.demoRoot().on('appear', async () => this.activeTransition());
-			elements.demoRoot().on('disappear', async () => this.activeTransition());
+			elements.heroText().on('appear', () => { this.activeTransition(); });
+			elements.heroText().on('disappear', () => { this.activeTransition(); });
+			elements.demoRoot().on('appear', () => { this.activeTransition(); });
+			elements.demoRoot().on('disappear', () => { this.activeTransition(); });
 
 			let previousWidth	= CyphElements.elements.window().width();
 			CyphElements.elements.window().resize(async () => {
@@ -256,8 +263,9 @@ export class CyphDemo {
 					undefined,
 					false,
 					undefined,
-					(mobileChannel: LocalChannel) =>
-						desktopChannel.connect(mobileChannel)
+					(mobileChannel: LocalChannel) => {
+						desktopChannel.connect(mobileChannel);
+					}
 				);
 			}
 		);
@@ -370,13 +378,8 @@ export class CyphDemo {
 				);
 
 				if (!isDesktop) {
-					offset.left	= Math.ceil(
-						offset.left / CyphDemo.mobileUIScale
-					);
-
-					offset.top	= Math.ceil(
-						offset.top / CyphDemo.mobileUIScale
-					);
+					offset.left	= Math.ceil(offset.left / CyphDemo.mobileUIScale);
+					offset.top	= Math.ceil(offset.top / CyphDemo.mobileUIScale);
 				}
 
 				$facebookPic.css(offset);

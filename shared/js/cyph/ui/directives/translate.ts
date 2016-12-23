@@ -22,11 +22,9 @@ export class Translate {
 		for (const attr of ['alt', 'aria-label', 'ariaLabel', 'content', 'label', 'placeholder']) {
 			this.translate(
 				$element.attr(attr),
-				translation => renderer.setElementAttribute(
-					nativeElement,
-					attr,
-					translation
-				)
+				translation => {
+					renderer.setElementAttribute(nativeElement, attr, translation);
+				}
 			);
 		}
 
@@ -38,10 +36,9 @@ export class Translate {
 		else {
 			this.translate(
 				$element.text(),
-				translation => renderer.setText(
-					nativeElement,
-					translation
-				)
+				translation => {
+					renderer.setText(nativeElement, translation);
+				}
 			);
 		}
 	}

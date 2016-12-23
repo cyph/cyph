@@ -92,8 +92,8 @@ export class Cyphertext implements ICyphertext {
 			}
 		});
 
-		session.on(events.cyphertext, (o: {cyphertext: string; author: string}) =>
-			this.log(o.cyphertext, o.author)
-		);
+		session.on(events.cyphertext, (o: {cyphertext: string; author: string}) => {
+			this.log(o.cyphertext, o.author);
+		});
 	}
 }

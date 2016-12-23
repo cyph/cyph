@@ -232,7 +232,7 @@ export class P2P implements IP2P {
 			autoRemoveVideos: false,
 			autoRequestMedia: false,
 			connection: {
-				disconnect: () => events.forEach(event => eventManager.off(event)),
+				disconnect: () => { events.forEach(event => { eventManager.off(event); }); },
 				emit: (event: string, ...args: any[]) => {
 					const lastArg: any	= args.slice(-1)[0];
 
@@ -410,12 +410,12 @@ export class P2P implements IP2P {
 		this.mutex	= new Mutex(this.session);
 
 		if (P2P.isSupported) {
-			this.session.on(events.beginChat, () => this.session.send(
-				new Message(rpcEvents.p2p, new Command())
-			));
+			this.session.on(events.beginChat, () => {
+				this.session.send(new Message(rpcEvents.p2p, new Command()));
+			});
 		}
 
-		this.session.on(events.closeChat, () => this.close());
+		this.session.on(events.closeChat, () => { this.close(); });
 
 		this.session.on(rpcEvents.p2p, (command: Command) => {
 			if (command.method) {

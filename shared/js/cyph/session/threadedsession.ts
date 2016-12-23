@@ -109,28 +109,28 @@ export class ThreadedSession implements ISession {
 					locals.id
 				);
 
-				session.on(locals.events.close, () =>
-					session.close()
-				);
+				session.on(locals.events.close, () => {
+					session.close();
+				});
 
-				session.on(locals.events.receive, async (e: {data: string}) =>
-					session.receive(e.data)
-				);
+				session.on(locals.events.receive, (e: {data: string}) => {
+					session.receive(e.data);
+				});
 
-				session.on(locals.events.send, async (e: {messages: IMessage[]}) =>
-					session.sendBase(e.messages)
-				);
+				session.on(locals.events.send, (e: {messages: IMessage[]}) => {
+					session.sendBase(e.messages);
+				});
 
 				session.on(locals.events.sendText, (e: {
 					text: string;
 					selfDestructTimeout?: number;
-				}) =>
-					session.sendText(e.text, e.selfDestructTimeout)
-				);
+				}) => {
+					session.sendText(e.text, e.selfDestructTimeout);
+				});
 
-				session.on(locals.events.updateState, (e: {key: string; value: any}) =>
-					session.updateState(e.key, e.value)
-				);
+				session.on(locals.events.updateState, (e: {key: string; value: any}) => {
+					session.updateState(e.key, e.value);
+				});
 			},
 			{
 				descriptor,

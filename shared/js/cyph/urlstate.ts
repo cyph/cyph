@@ -49,7 +49,7 @@ export class UrlState {
 	 * @param handler
 	 */
 	public onChange (handler: (newUrlState: string) => void) : void {
-		eventManager.on(UrlState.urlStateChangeEvent, () => handler(this.getUrl()));
+		eventManager.on(UrlState.urlStateChangeEvent, () => { handler(this.getUrl()); });
 	}
 
 	/**
@@ -125,15 +125,15 @@ export class UrlState {
 				redirectFallback?: boolean;
 				shouldNotTrigger?: boolean;
 				shouldReplace?: boolean;
-			}) => this.setUrl(
+			}) => { this.setUrl(
 				o.path,
 				o.shouldReplace,
 				o.shouldNotTrigger,
 				o.redirectFallback
-			));
+			); });
 		}
 		else {
-			self.onpopstate	= () => eventManager.trigger(UrlState.urlStateChangeEvent);
+			self.onpopstate	= () => { eventManager.trigger(UrlState.urlStateChangeEvent); };
 		}
 	}
 }

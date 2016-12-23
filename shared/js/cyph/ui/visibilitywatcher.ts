@@ -40,14 +40,14 @@ export class VisibilityWatcher {
 
 	constructor () {
 		if (env.isMobile) {
-			document.addEventListener('visibilitychange', () =>
-				this.trigger(!document.hidden)
-			);
+			document.addEventListener('visibilitychange', () => {
+				this.trigger(!document.hidden);
+			});
 		}
 		else {
 			elements.window().
-				focus(() => this.trigger(true)).
-				blur(() => this.trigger(false))
+				focus(() => { this.trigger(true); }).
+				blur(() => { this.trigger(false); })
 			;
 		}
 	}

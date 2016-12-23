@@ -52,13 +52,13 @@ angular.
 		(
 			$mdDialog: angular.material.IDialogService,
 			$mdToast: angular.material.IToastService
-		) => eventManager.trigger(
+		) => { eventManager.trigger(
 			UI.uiInitEvent,
 			{
 				$mdDialog,
 				$mdToast
 			}
-		)
+		); }
 	]).
 	config(config.angularConfig.config).
 	component(
@@ -168,7 +168,7 @@ angular.
 ;
 
 
-(async () => (
+(async () => { (
 	<UpgradeModule>
 	(
 		await platformBrowser().bootstrapModule(AppModule)
@@ -176,7 +176,7 @@ angular.
 ).bootstrap(
 	document.body,
 	[config.angularConfig.rootModule]
-))();
+); })();
 
 
 export {loaded};

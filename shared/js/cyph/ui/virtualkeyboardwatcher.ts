@@ -47,11 +47,9 @@ export class VirtualKeyboardWatcher {
 		/* http://stackoverflow.com/a/11650231/459881 */
 
 		/* Android */
-		elements.window().resize(() =>
-			this.trigger(
-				window.innerHeight < this.initialScreenSize
-			)
-		);
+		elements.window().resize(() => {
+			this.trigger(window.innerHeight < this.initialScreenSize);
+		});
 
 		/* iOS */
 		const inputSelector		= 'input, textarea';

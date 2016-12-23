@@ -41,7 +41,7 @@ export class ChatMessageBox implements OnInit {
 		icon: string,
 		label: string
 	}	= {
-		click: async ($mdMenu: any) => this.openMenu($mdMenu),
+		click: ($mdMenu: any) => { this.openMenu($mdMenu); },
 		icon: 'more_horiz',
 		label: util.translate('Menu')
 	};
@@ -53,12 +53,12 @@ export class ChatMessageBox implements OnInit {
 		label: string
 	}[]	= [
 		{
-			click: () => this.self.helpButton(),
+			click: () => { this.self.helpButton(); },
 			icon: 'help_outline',
 			label: strings.help
 		},
 		{
-			click: async () => this.self.disconnectButton(),
+			click: () => { this.self.disconnectButton(); },
 			icon: 'close',
 			label: strings.disconnect
 		}
@@ -77,34 +77,34 @@ export class ChatMessageBox implements OnInit {
 	}[]	= [
 		{
 			fileAccept: this.fileAccept,
-			fileChange: async ($event: File) => this.self.fileManager.send($event),
+			fileChange: ($event: File) => { this.self.fileManager.send($event); },
 			icon: 'attach_file',
 			label: 'Send File or Photo',
 			tooltipDirection: 'left'
 		},
 		{
-			click: () => this.self.p2pManager.voiceCallButton(),
+			click: () => { this.self.p2pManager.voiceCallButton(); },
 			disabled: () => !this.self.p2pManager.isEnabled,
 			icon: 'phone',
 			label: 'Voice Call',
 			tooltipDirection: 'left'
 		},
 		{
-			click: () => this.self.p2pManager.videoCallButton(),
+			click: () => { this.self.p2pManager.videoCallButton(); },
 			disabled: () => !this.self.p2pManager.isEnabled,
 			icon: 'videocam',
 			label: 'Video Call',
 			tooltipDirection: 'left'
 		},
 		{
-			click: () => this.self.helpButton(),
+			click: () => { this.self.helpButton(); },
 			cssClass: 'dark',
 			icon: 'help_outline',
 			label: strings.help,
 			tooltipDirection: 'left'
 		},
 		{
-			click: async () => this.self.disconnectButton(),
+			click: () => { this.self.disconnectButton(); },
 			cssClass: 'dark',
 			icon: 'close',
 			label: strings.disconnect,

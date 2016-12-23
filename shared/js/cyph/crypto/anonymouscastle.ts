@@ -18,7 +18,7 @@ export class AnonymousCastle implements ICastle {
 
 	/** @inheritDoc */
 	public receive (cyphertext: string) : void {
-		return this.pairwiseSession.receive(cyphertext);
+		this.pairwiseSession.receive(cyphertext);
 	}
 
 	/** @inheritDoc */

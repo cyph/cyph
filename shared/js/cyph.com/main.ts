@@ -59,14 +59,14 @@ angular.
 			$mdDialog: angular.material.IDialogService,
 			$mdSidenav: angular.material.ISidenavService,
 			$mdToast: angular.material.IToastService
-		) => eventManager.trigger(
+		) => { eventManager.trigger(
 			UI.uiInitEvent,
 			{
 				$mdDialog,
 				$mdSidenav,
 				$mdToast
 			}
-		)
+		); }
 	]).
 	config(config.angularConfig.config).
 	component(
@@ -191,7 +191,7 @@ angular.
 ;
 
 
-(async () => (
+(async () => { (
 	<UpgradeModule>
 	(
 		await platformBrowser().bootstrapModule(AppModule)
@@ -199,7 +199,7 @@ angular.
 ).bootstrap(
 	document.body,
 	[config.angularConfig.rootModule]
-))();
+); })();
 
 
 /* Redirect to Onion site when on Tor */

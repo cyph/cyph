@@ -439,9 +439,9 @@ export class Chat implements IChat {
 
 		(<any> self).tabIndent.renderAll();
 
-		this.session.one(events.beginChat).then(async () => this.begin());
+		this.session.one(events.beginChat).then(() => { this.begin(); });
 
-		this.session.one(events.closeChat).then(() => this.close());
+		this.session.one(events.closeChat).then(() => { this.close(); });
 
 		this.session.one(events.connect).then(async () => {
 			this.changeState(States.keyExchange);
@@ -457,25 +457,23 @@ export class Chat implements IChat {
 			this.keyExchangeProgress	= 100;
 		});
 
-		this.session.one(events.connectFailure).then(() => this.abortSetup());
+		this.session.one(events.connectFailure).then(() => { this.abortSetup(); });
 
-		this.session.on(rpcEvents.text, async (o: {
+		this.session.on(rpcEvents.text, (o: {
 			text: string;
 			author: string;
 			timestamp: number;
 			selfDestructTimeout?: number;
-		}) =>
-			this.addMessage(
-				o.text,
-				o.author,
-				o.timestamp,
-				undefined,
-				o.selfDestructTimeout
-			)
-		);
+		}) => { this.addMessage(
+			o.text,
+			o.author,
+			o.timestamp,
+			undefined,
+			o.selfDestructTimeout
+		); });
 
-		this.session.on(rpcEvents.typing, (o: {isTyping: boolean}) =>
-			this.setFriendTyping(o.isTyping)
-		);
+		this.session.on(rpcEvents.typing, (o: {isTyping: boolean}) => {
+			this.setFriendTyping(o.isTyping);
+		});
 	}
 }

@@ -407,7 +407,7 @@ export class Files implements IFiles {
 					;
 					this.triggerChangeDetection();
 				},
-				() => resolve(transfer.answer === false),
+				() => { resolve(transfer.answer === false); },
 				() => {
 					transfer.url	= uploadTask.snapshot.downloadURL;
 
@@ -433,9 +433,9 @@ export class Files implements IFiles {
 		;
 
 		if (isNativeCryptoSupported) {
-			this.session.on(events.beginChat, () => this.session.send(
-				new Message(rpcEvents.files)
-			));
+			this.session.on(events.beginChat, () => {
+				this.session.send(new Message(rpcEvents.files));
+			});
 		}
 
 		const downloadAnswers	= new Map<string, boolean>();

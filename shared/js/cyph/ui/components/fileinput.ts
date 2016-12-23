@@ -46,6 +46,6 @@ export class FileInput {
 			() => $input.closest('button')
 		);
 
-		$button.click(() => util.triggerClick(input));
+		$button.click(() => { util.triggerClick(input); });
 	})(); }
 }

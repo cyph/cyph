@@ -153,9 +153,9 @@ export class UI {
 		/** @ignore */
 		private readonly notifier: INotifier
 	) {
-		urlState.onChange(newUrlState => this.onUrlStateChange(newUrlState));
+		urlState.onChange(newUrlState => { this.onUrlStateChange(newUrlState); });
 
-		self.onhashchange	= () => location.reload();
+		self.onhashchange	= () => { location.reload(); };
 		self.onpopstate		= () => {};
 
 
