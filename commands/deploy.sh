@@ -439,7 +439,7 @@ if [ ! "${simple}" ] ; then
 fi
 
 # Temporary workaround for cache-busting reverse proxies
-if [ ! "${test}" ] ; then
+if [ ! "${test}" -a \( ! "${site}" -o "${site}" == cyph.im \) ] ; then
 	for project in cyph.im cyph.video ; do
 		cat $project/*.yaml | perl -pe 's/(service: cyph.*)/\1-update/' > $project/update.yaml
 	done
