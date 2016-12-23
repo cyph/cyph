@@ -40,7 +40,7 @@ export class Env extends EnvDeploy {
 	public readonly isWeb: boolean			= IS_WEB;
 
 	/** Indicates whether this is the main thread. */
-	public readonly isMainThread: boolean	= typeof importScripts !== 'function';
+	public readonly isMainThread: boolean	= typeof (<any> self).importScripts !== 'function';
 
 	/** Indicates whether this is Node.js/io.js. */
 	public readonly isNode: boolean		=

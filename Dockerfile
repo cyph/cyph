@@ -125,7 +125,6 @@ RUN sudo npm -g install \
 	@angular/platform-server@2.4.1 \
 	babel-core@6.21.0 \
 	babel-cli@6.18.0 \
-	babel-loader@6.2.10 \
 	babel-plugin-syntax-async-functions@6.13.0 \
 	babel-plugin-transform-regenerator@6.21.0 \
 	babel-preset-es2015@6.18.0 \

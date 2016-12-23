@@ -137,7 +137,7 @@ jspm install -y \
 	github:morr/jquery.appear \
 	github:julianlam/tabIndent.js \
 	braintree=github:braintree/braintree-web@^2 \
-	babel-polyfill \
+	github:zloirock/core-js \
 	crypto/mceliece=github:cyph/mceliece.js \
 	crypto/ntru=github:cyph/ntru.js \
 	crypto/rlwe=github:cyph/rlwe.js \
@@ -278,15 +278,8 @@ node build.js
 rm -rf node_modules
 cd ../..
 
-cd babel-polyfill
-mkdir node_modules
-npm install
-npm install process
-browserify dist/polyfill.min.js -o browser.js
-rm -rf node_modules
-cd ..
-
-cp babel-polyfill/browser.js base.js
+mv zloirock/core-js/client/shim.min.js base.js
+rm -rf zloirock
 
 cd ..
 

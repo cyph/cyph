@@ -86,7 +86,7 @@ export class EventManager {
 		}
 
 		if (env.isMainThread) {
-			for (const thread of this.threads) {
+			for (const thread of Array.from(this.threads)) {
 				try {
 					thread.postMessage({event, data, isThreadEvent: true});
 				}

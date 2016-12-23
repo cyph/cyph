@@ -5,6 +5,12 @@
 		"emitDecoratorMetadata": true,
 		"experimentalDecorators": true,
 		"forceConsistentCasingInFileNames": true,
+		"lib": [
+			"dom",
+			"dom.iterable",
+			"es6",
+			"scripthost"
+		],
 		"module": "es6",
 		"moduleResolution": "node",
 		"newLine": "LF",
@@ -20,7 +26,7 @@
 
 		"strictNullChecks": true,
 		"rootDir": ".",
-		"target": "es6"
+		"target": "es5"
 	},
 	"angularCompilerOptions": {
 		"genDir": ".",

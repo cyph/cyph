@@ -381,7 +381,7 @@ export class UI {
 			$(UI.linkInterceptSelector).click(e => { this.linkClickHandler(e); });
 			new MutationObserver(mutations => {
 				for (const mutation of mutations) {
-					for (const elem of mutation.addedNodes) {
+					for (const elem of Array.from(mutation.addedNodes)) {
 						const $elem: JQuery	= $(elem);
 
 						if ($elem.is(UI.linkInterceptSelector)) {

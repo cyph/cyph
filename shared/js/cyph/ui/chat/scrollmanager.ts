@@ -34,8 +34,8 @@ export class ScrollManager implements IScrollManager {
 	}
 
 	/** Process read-ness and scrolling */
-	private async mutationObserverHandler (node: Node) : Promise<void> {
-		const $elem: JQuery	= $(node);
+	private async mutationObserverHandler (elem: Node) : Promise<void> {
+		const $elem: JQuery	= $(elem);
 		const messageIndex	= parseInt($elem.attr('message-index'), 10);
 
 		if (isNaN(messageIndex) || this.processedMessages.has(messageIndex)) {
@@ -141,9 +141,9 @@ export class ScrollManager implements IScrollManager {
 		await CyphElements.waitForElement(this.elements.messageListInner);
 
 		new MutationObserver(mutations => {
-			for (const mutationRecord of mutations) {
-				for (const node of mutationRecord.addedNodes) {
-					this.mutationObserverHandler(node);
+			for (const mutation of mutations) {
+				for (const elem of Array.from(mutation.addedNodes)) {
+					this.mutationObserverHandler(elem);
 				}
 			}
 		}).observe(this.elements.messageListInner()[0], {
