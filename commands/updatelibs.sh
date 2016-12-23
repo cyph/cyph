@@ -123,6 +123,7 @@ jspm install -y \
 	github:markdown-it/markdown-it-emoji \
 	microlight=github:buu700/microlight \
 	github:andyet/simplewebrtc \
+	npm:webrtc-adapter \
 	npm:animate.css \
 	github:davidchambers/base64.js \
 	jquery \
@@ -264,6 +265,10 @@ curl -s https://raw.githubusercontent.com/suhdev/firebase-3-typescript/master/fi
 uglifyjs fetch/fetch.js -m -o fetch/fetch.min.js
 
 uglifyjs microlight/microlight.js -m -o microlight/microlight.min.js
+
+for f in webrtc-adapter/out/*.js ; do
+	uglifyjs "${f}" -m -o "$(echo "${f}" | sed 's/\.js$/.min.js/')"
+done
 
 cd andyet/simplewebrtc
 sed -i "s|require('./socketioconnection')|null|g" simplewebrtc.js
