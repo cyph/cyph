@@ -117,12 +117,12 @@ RUN bash -c ' \
 '
 
 RUN sudo npm -g install \
-	@angular/common@2.3.1 \
-	@angular/compiler@2.3.1 \
-	@angular/compiler-cli@2.3.1 \
-	@angular/core@2.3.1 \
-	@angular/platform-browser@2.3.1 \
-	@angular/platform-server@2.3.1 \
+	@angular/common@2.4.1 \
+	@angular/compiler@2.4.1 \
+	@angular/compiler-cli@2.4.1 \
+	@angular/core@2.4.1 \
+	@angular/platform-browser@2.4.1 \
+	@angular/platform-server@2.4.1 \
 	babel-core@6.21.0 \
 	babel-cli@6.18.0 \
 	babel-loader@6.2.10 \
@@ -132,18 +132,18 @@ RUN sudo npm -g install \
 	browserify@13.1.1 \
 	cheerio@0.22.0 \
 	clean-css@3.4.23 \
-	codelyzer@2.0.0-beta.3 \
+	codelyzer@2.0.0-beta.4 \
 	datauri@1.0.5  \
 	htmlencode@0.0.4  \
 	image-type@2.1.0 \
 	html-minifier@3.2.3 \
-	rxjs@5.0.0-rc.4 \
-	tslint@4.1.1 \
+	rxjs@5.0.2 \
+	tslint@4.2.0 \
 	tslint-microsoft-contrib@4.0.0 \
-	typescript@2.0.10 \
+	typescript@2.1.4 \
 	uglify-js@2.7.5 \
-	webpack@2.2.0-rc.1 \
-	zone.js@0.7.2 \
+	webpack@2.2.0-rc.2 \
+	zone.js@0.7.4 \
 	browserstack \
 	firebase \
 	firebase-server \
