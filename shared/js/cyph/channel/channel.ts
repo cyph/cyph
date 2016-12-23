@@ -31,7 +31,7 @@ export class Channel implements IChannel {
 
 	/** @inheritDoc */
 	public close () : void {
-		this.channelRef.remove();
+		util.retryUntilSuccessful(async () => this.channelRef.remove());
 	}
 
 	/** @inheritDoc */
@@ -41,11 +41,15 @@ export class Channel implements IChannel {
 
 	/** @inheritDoc */
 	public send (message: string) : void {
-		util.retryUntilSuccessful(() => this.messagesRef.push({
-			cyphertext: message,
-			sender: this.userId,
-			timestamp: util.timestamp()
-		}));
+		util.retryUntilSuccessful(async () =>
+			this.messagesRef.push({
+				cyphertext: message,
+				sender: this.userId,
+				timestamp: util.timestamp()
+			}).then(
+				() => {}
+			)
+		);
 	}
 
 	/**
@@ -72,8 +76,8 @@ export class Channel implements IChannel {
 			this.channelRef.child('users')
 		);
 
-		const userRef		= await util.retryUntilSuccessful(() =>
-			this.usersRef.push('')
+		const userRef		= await util.retryUntilSuccessful(async () =>
+			this.usersRef.push('').then(() => {})
 		);
 
 		this.userId			= userRef.key;
