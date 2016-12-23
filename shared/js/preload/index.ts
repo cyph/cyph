@@ -42,11 +42,6 @@ $(async () => {
 	});
 
 	if (!env.isLocalEnv && !env.isHomeSite) {
-		/* In WebSigned environments, naked domain is canonical hostname */
-		if (locationData.host.indexOf('www.') === 0) {
-			locationData.host	= locationData.host.replace('www.', '');
-		}
-
 		/* In WebSigned environments, remove no-longer-necessary
 			'unsafe-inline' from CSP after application loads */
 		await util.sleep(10000);
