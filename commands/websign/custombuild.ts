@@ -1,9 +1,9 @@
-#!/usr/bin/env babel-node
+#!/usr/bin/env ts-node
 
 
 import * as cheerio from 'cheerio';
 import * as childProcess from 'child_process';
-import {default as datauri} from 'datauri';
+import * as datauri from 'datauri';
 import * as fs from 'fs';
 import * as htmlencode from 'htmlencode';
 import * as superSphincs from 'supersphincs';

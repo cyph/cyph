@@ -77,7 +77,7 @@ fi
 
 
 mkdir ~/.build
-cp -rf * .babelrc ~/.build/
+cp -rf * ~/.build/
 cd ~/.build
 
 mkdir geoisp.tmp
@@ -229,7 +229,7 @@ if [ "${cacheBustedProjects}" ] ; then
 		echo 'Cache bust' >> .blog.output 2>&1
 		for d in ${cacheBustedProjects} ; do
 			cd \$d
-			../commands/cachebust.js >> ../.blog.output 2>&1
+			../commands/cachebust.ts >> ../.blog.output 2>&1
 			cd ..
 		done
 
@@ -243,7 +243,7 @@ if [ ! "${site}" -o "${site}" == websign ] ; then
 	cd websign
 	websignHashWhitelist="$(cat hashwhitelist.json)"
 	cp -rf ../shared/img ./
-	../commands/websign/pack.js index.html index.html
+	../commands/websign/pack.ts index.html index.html
 	cd ..
 fi
 
@@ -269,7 +269,7 @@ for d in $compiledProjects ; do
 		mv js/cyph/thread.ts.new js/cyph/thread.ts
 
 		# Merge in base64'd images, fonts, video, and audio
-		../commands/websign/subresourceinline.js ../pkg/cyph.ws-subresources
+		../commands/websign/subresourceinline.ts ../pkg/cyph.ws-subresources
 	fi
 
 	../commands/build.sh --prod $(test "${simple}" && echo '--no-minify') || exit;
@@ -305,9 +305,9 @@ if [ "${websign}" ] ; then
 	echo "WebSign ${package}"
 
 	# Merge imported libraries into threads
-	find js -name '*.js' | xargs -I% ../commands/websign/threadpack.js %
+	find js -name '*.js' | xargs -I% ../commands/websign/threadpack.ts %
 
-	../commands/websign/pack.js --sri --minify index.html ../pkg/cyph.ws
+	../commands/websign/pack.ts --sri --minify index.html ../pkg/cyph.ws
 
 	find . \
 		-mindepth 1 -maxdepth 1 \
@@ -335,7 +335,7 @@ if [ "${websign}" ] ; then
 		customBuildStylesheet="custom-builds/${customBuildBase}.css"
 		packages="${packages} ${customBuild}"
 
-		../../commands/websign/custombuild.js \
+		../../commands/websign/custombuild.ts \
 			"${customBuild}" \
 			"${customBuildAdditionalStyling}" \
 			"${customBuildBackground}" \
@@ -357,7 +357,7 @@ if [ "${websign}" ] ; then
 
 	echo "Starting signing process."
 
-	./commands/websign/sign.js "${websignHashWhitelist}" $(
+	./commands/websign/sign.ts "${websignHashWhitelist}" $(
 		for p in $packages ; do
 			echo -n "pkg/${p}=cdn/${p} "
 		done

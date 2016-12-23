@@ -1,10 +1,10 @@
-#!/usr/bin/env babel-node
+#!/usr/bin/env ts-node
 
 
 import * as cheerio from 'cheerio';
 import * as fs from 'fs';
 import * as htmlMinifier from 'html-minifier';
-import {default as mkdirp} from 'mkdirp';
+import * as mkdirp from 'mkdirp';
 import * as superSphincs from 'supersphincs';
 
 

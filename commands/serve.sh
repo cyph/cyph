@@ -13,7 +13,7 @@ fi
 if [ "${prodlike}" ] ; then
 	rm -rf .build 2> /dev/null
 	mkdir .build
-	cp -rf * .babelrc .build/
+	cp -rf * .build/
 	cd .build
 fi
 
@@ -74,12 +74,12 @@ if [ "${prodlike}" ] ; then
 	fi
 
 	cd shared
-	find js -name '*.js' | xargs -I% ../commands/websign/threadpack.js %
+	find js -name '*.js' | xargs -I% ../commands/websign/threadpack.ts %
 	cd ..
 
 	for d in cyph.im cyph.com ; do
 		cd $d
-		../commands/websign/pack.js index.html index.html
+		../commands/websign/pack.ts index.html index.html
 		cd ..
 	done
 

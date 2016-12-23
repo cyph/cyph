@@ -1,10 +1,10 @@
-#!/usr/bin/env babel-node
+#!/usr/bin/env ts-node
 
 
 import {randomBytes} from 'crypto';
 import * as dgram from 'dgram';
 import * as fs from 'fs';
-import {default as mkdirp} from 'mkdirp';
+import * as mkdirp from 'mkdirp';
 import * as os from 'os';
 import * as superSphincs from 'supersphincs';
 

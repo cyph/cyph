@@ -1,4 +1,4 @@
-#!/usr/bin/env babel-node
+#!/usr/bin/env ts-node
 
 
 import * as fs from 'fs';

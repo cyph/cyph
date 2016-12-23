@@ -123,11 +123,6 @@ RUN sudo npm -g install \
 	@angular/core@2.4.1 \
 	@angular/platform-browser@2.4.1 \
 	@angular/platform-server@2.4.1 \
-	babel-core@6.21.0 \
-	babel-cli@6.18.0 \
-	babel-plugin-syntax-async-functions@6.13.0 \
-	babel-plugin-transform-regenerator@6.21.0 \
-	babel-preset-es2015@6.18.0 \
 	browserify@13.1.1 \
 	cheerio@0.22.0 \
 	clean-css@3.4.23 \
@@ -137,6 +132,7 @@ RUN sudo npm -g install \
 	image-type@2.1.0 \
 	html-minifier@3.2.3 \
 	rxjs@5.0.2 \
+	ts-node@1.7.2 \
 	tslint@4.2.0 \
 	tslint-microsoft-contrib@4.0.0 \
 	typescript@2.1.4 \
@@ -155,6 +151,14 @@ RUN sudo npm -g install \
 	supersphincs \
 	typedoc \
 	zombie
+
+# Workaround because ts-node env var support doesn't seem to work
+RUN sudo bash -c " \
+	cd /usr/bin; \
+	mv ts-node ts-node-original; \
+	echo -e '#!/bin/bash\nts-node-original -D \$*' > ts-node; \
+	chmod +x ts-node; \
+"
 
 
 VOLUME /cyph

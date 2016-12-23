@@ -1,9 +1,9 @@
-#!/usr/bin/env babel-node
+#!/usr/bin/env ts-node
 
 
 import * as fs from 'fs';
 import * as sodium from 'libsodium-wrappers';
-import {default as read} from 'read';
+import * as read from 'read';
 import * as superSphincs from 'supersphincs';
 
 
