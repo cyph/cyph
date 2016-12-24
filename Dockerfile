@@ -158,9 +158,13 @@ RUN sudo npm -g install \
 
 # Workaround because ts-node env var support doesn't seem to work
 RUN sudo bash -c " \
+	mkdir -p /opt/ts-node/node_modules; \
+	cd /opt/ts-node; \
+	npm install typescript@2.1.4; \
+	chmod -R 777 .; \
 	cd /usr/bin; \
 	mv ts-node ts-node-original; \
-	echo -e '#!/bin/bash\nts-node-original -D \$*' > ts-node; \
+	echo -e '#!/bin/bash\nts-node-original -D -C /opt/ts-node/node_modules/typescript \$*' > ts-node; \
 	chmod +x ts-node; \
 "
 
