@@ -164,7 +164,7 @@ RUN sudo bash -c " \
 	chmod -R 777 .; \
 	cd /usr/bin; \
 	mv ts-node ts-node-original; \
-	echo -e '#!/bin/bash\nts-node-original -D -C /opt/ts-node/node_modules/typescript \$*' > ts-node; \
+	echo -e '#!/bin/bash\nts-node-original -D -C /opt/ts-node/node_modules/typescript \"\${@}\"' > ts-node; \
 	chmod +x ts-node; \
 "
 
