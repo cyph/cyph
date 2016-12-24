@@ -120,7 +120,7 @@ server.on('message', async (message) => {
 			});
 
 			const openedItems	= await Promise.all(
-				signedItems.map(signed => superSphincs.open(
+				signedItems.map(async (signed) => superSphincs.open(
 					signed,
 					keyPair.publicKey
 				))

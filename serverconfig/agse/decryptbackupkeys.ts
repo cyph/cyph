@@ -38,27 +38,31 @@ if (passwordSplit.length % 2 !== 0) {
 const aesPassword		= passwordSplit.slice(0, passwordMiddle).join(' ');
 const sodiumPassword	= passwordSplit.slice(passwordMiddle).join(' ');
 
-const keyPairs	= await Promise.all(JSON.parse(
-	sodium.crypto_secretbox_open_easy(
-		sodium.from_base64(fs.readFileSync(args.backupPath).toString()),
-		new Uint8Array(sodium.crypto_secretbox_NONCEBYTES),
-		sodium.crypto_pwhash_scryptsalsa208sha256(
-			sodium.crypto_secretbox_KEYBYTES,
-			sodiumPassword,
-			new Uint8Array(sodium.crypto_pwhash_scryptsalsa208sha256_SALTBYTES),
-			sodium.crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_SENSITIVE,
-			50331648
-		),
-		'text'
-	)
-).map(async (s) => superSphincs.exportKeys(await superSphincs.importKeys(
-	{
-		private: {
-			superSphincs: s
-		}
-	},
-	aesPassword
-))));
+const keyPairs	= await Promise.all(
+	JSON.parse(
+		sodium.crypto_secretbox_open_easy(
+			sodium.from_base64(fs.readFileSync(args.backupPath).toString()),
+			new Uint8Array(sodium.crypto_secretbox_NONCEBYTES),
+			sodium.crypto_pwhash_scryptsalsa208sha256(
+				sodium.crypto_secretbox_KEYBYTES,
+				sodiumPassword,
+				new Uint8Array(sodium.crypto_pwhash_scryptsalsa208sha256_SALTBYTES),
+				sodium.crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_SENSITIVE,
+				50331648
+			),
+			'text'
+		)
+	).map(async (superSphincsKeyString) => superSphincs.exportKeys(
+		await superSphincs.importKeys(
+			{
+				private: {
+					superSphincs: superSphincsKeyString
+				}
+			},
+			aesPassword
+		)
+	))
+);
 
 fs.writeFileSync(args.outputPath, JSON.stringify(keyPairs));
 

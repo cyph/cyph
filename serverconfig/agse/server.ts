@@ -74,8 +74,8 @@ while (!keyData) {
 		}
 
 		const allKeys	= await Promise.all(
-			Array(args.numActiveKeys).fill(0).map((_, i) =>
-				Promise.all(['rsa', 'sphincs'].map(keyType =>
+			Array(args.numActiveKeys).fill(0).map(async (_, i) =>
+				Promise.all(['rsa', 'sphincs'].map(async (keyType) =>
 					new Promise((resolve, reject) =>
 						db.get(keyType + i.toString(), (err, val) => {
 							if (err) {
@@ -230,7 +230,7 @@ server.on('message', async (message) => {
 		return;
 	}
 
-	const signatures	= await Promise.all(inputs.map(s =>
+	const signatures	= await Promise.all(inputs.map(async (s) =>
 		superSphincs.signDetached(s, keyData.keyPair.privateKey)
 	));
 
