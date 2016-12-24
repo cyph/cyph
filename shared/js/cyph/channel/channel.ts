@@ -76,13 +76,13 @@ export class Channel implements IChannel {
 			this.channelRef.child('users')
 		);
 
-		const userRef		= await util.retryUntilSuccessful(async () =>
-			this.usersRef.push('').then(() => {})
-		);
+		const userRef: firebase.ThenableReference	=
+			await util.retryUntilSuccessful(() => this.usersRef.push(''))
+		;
 
 		this.userId			= userRef.key;
 
-		util.retryUntilSuccessful(() => userRef.set(this.userId));
+		util.retryUntilSuccessful(async () => userRef.set(this.userId));
 
 		this.isAlice		=
 			Object.keys(
