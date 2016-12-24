@@ -266,9 +266,12 @@ uglifyjs fetch/fetch.js -m -o fetch/fetch.min.js
 
 uglifyjs microlight/microlight.js -m -o microlight/microlight.min.js
 
-for f in webrtc-adapter/out/*.js ; do
-	uglifyjs "${f}" -m -o "$(echo "${f}" | sed 's/\.js$/.min.js/')"
-done
+cd webrtc-adapter
+mkdir node_modules
+npm install
+webpack --optimize-minimize src/js/adapter_core.js adapter.js
+rm -rf node_modules out src
+cd ..
 
 cd andyet/simplewebrtc
 sed -i "s|require('./socketioconnection')|null|g" simplewebrtc.js
