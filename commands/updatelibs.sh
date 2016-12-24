@@ -269,7 +269,8 @@ uglifyjs microlight/microlight.js -m -o microlight/microlight.min.js
 cd webrtc-adapter
 mkdir node_modules
 npm install
-webpack --optimize-minimize src/js/adapter_core.js adapter.js
+webpack src/js/adapter_core.js adapter.js
+uglifyjs adapter.js -o adapter.js
 rm -rf node_modules out src
 cd ..
 
