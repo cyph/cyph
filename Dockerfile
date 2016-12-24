@@ -123,6 +123,10 @@ RUN sudo npm -g install \
 	@angular/core@2.4.1 \
 	@angular/platform-browser@2.4.1 \
 	@angular/platform-server@2.4.1 \
+	babel-core@6.21.0 \
+	babel-cli@6.18.0 \
+	babel-loader@6.2.10 \
+	babel-preset-es2015@6.18.0 \
 	browserify@13.1.1 \
 	cheerio@0.22.0 \
 	clean-css@3.4.23 \
@@ -133,9 +137,9 @@ RUN sudo npm -g install \
 	html-minifier@3.2.3 \
 	rxjs@5.0.2 \
 	ts-node@1.7.2 \
-	tslint@4.2.0 \
+	tslint@4.1.1 \
 	tslint-microsoft-contrib@4.0.0 \
-	typescript@2.1.4 \
+	typescript@2.0.10 \
 	uglify-js@2.7.5 \
 	webpack@2.2.0-rc.2 \
 	zone.js@0.7.4 \

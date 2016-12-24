@@ -92,9 +92,12 @@ tsbuild () {
 		tsconfig.compilerOptions.alwaysStrict		= undefined;
 		tsconfig.compilerOptions.noUnusedParameters	= undefined;
 
+		/* Pending TS 2.1 */
+		tsconfig.compilerOptions.lib				= undefined;
+
 		$(test "${watch}" && echo "
 			tsconfig.compilerOptions.lib			= undefined;
-			tsconfig.compilerOptions.target			= 'es6';
+			tsconfig.compilerOptions.target			= 'es2015';
 		")
 
 		tsconfig.compilerOptions.outDir	= '.';
@@ -178,6 +181,7 @@ compile () {
 		tsbuild preload/global
 		mv preload/global.js preload/global.js.tmp
 		cat preload/global.js.tmp |
+			babel --presets es2015 --compact false |
 			if [ "${minify}" ] ; then uglifyjs ; else cat - ; fi |
 			sed 's|use strict||g' \
 		> "${outputDir}/js/preload/global.js"
@@ -218,6 +222,27 @@ compile () {
 					entry: {
 						app: './${f}.js'
 					},
+					$(test "${watch}" || echo "
+						module: {
+							rules: [
+								{
+									test: /\.js(\.tmp)?$/,
+									exclude: /node_modules/,
+									use: [
+										{
+											loader: 'babel-loader',
+											options: {
+												compact: false,
+												presets: [
+													['es2015', {modules: false}]
+												]
+											}
+										}
+									]
+								}
+							]
+						},
+					")
 					output: {
 						filename: './${f}.js.tmp',
 						library: '${m}',

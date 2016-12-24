@@ -8,10 +8,10 @@
 		"lib": [
 			"dom",
 			"dom.iterable",
-			"es6",
+			"es2015",
 			"scripthost"
 		],
-		"module": "es6",
+		"module": "es2015",
 		"moduleResolution": "node",
 		"newLine": "LF",
 		"noFallthroughCasesInSwitch": true,
@@ -26,7 +26,7 @@
 
 		"strictNullChecks": true,
 		"rootDir": ".",
-		"target": "es5"
+		"target": "es2015"
 	},
 	"angularCompilerOptions": {
 		"genDir": ".",
