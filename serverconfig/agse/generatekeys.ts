@@ -59,11 +59,18 @@ const keyPairs	= await Promise.all(!args.keyBackupPath ?
 );
 
 const keyData	= await Promise.all(
-	keyPairs.map(async (keyPair, i) => superSphincs.exportKeys(
+	keyPairs.slice(0, args.numActiveKeys).map(async (keyPair, i) =>
+		superSphincs.exportKeys(
+			keyPair,
+			args.passwords[i]
+		)
+	)
+);
+
+const backupKeyData	= await Promise.all(
+	keyPairs.map(async (keyPair) => superSphincs.exportKeys(
 		keyPair,
-		i < args.numActiveKeys ?
-			args.passwords[i] :
-			args.backupPasswords.aes 
+		args.backupPasswords.aes 
 	))
 );
 
@@ -73,8 +80,8 @@ for (const keyPair of keyPairs) {
 }
 
 const publicKeys	= JSON.stringify({
-	rsa: keyData.map(o => o.public.rsa),
-	sphincs: keyData.map(o => o.public.sphincs)
+	rsa: backupKeyData.map(o => o.public.rsa),
+	sphincs: backupKeyData.map(o => o.public.sphincs)
 });
 
 const publicKeyHash	= (await superSphincs.hash(publicKeys)).hex;
@@ -100,7 +107,7 @@ if (args.keyBackupPath) {
 
 const backupKeys	= sodium.crypto_secretbox_easy(
 	sodium.from_string(JSON.stringify(
-		keyData.map(o => o.private.superSphincs)
+		backupKeyData.map(o => o.private.superSphincs)
 	)),
 	new Uint8Array(sodium.crypto_secretbox_NONCEBYTES),
 	sodium.crypto_pwhash_scryptsalsa208sha256(
