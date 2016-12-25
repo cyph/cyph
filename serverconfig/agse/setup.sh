@@ -59,6 +59,7 @@ npm -g install ts-node typescript xkcd-passphrase
 
 mkdir -p /tmp/agse
 cp "$(dirname "$0")"/* /tmp/agse/
+chmod -R 777 /tmp/agse
 
 if [ -f /tmp/agse/keybackup ] ; then
 	eval "$(/tmp/agse/getbackuppassword.ts)"
@@ -91,9 +92,7 @@ echo
 	"${backupPasswordAes}" \
 	"${backupPasswordSodium}"
 
-if [ -f /tmp/agse/keybackup ] ; then
-	rm /tmp/agse/keybackup
-else
+if [ ! -f /tmp/agse/keybackup ] ; then
 	echo
 	echo -n "Before committing, you must validate that the SHA-512 of "
 	echo -n "the public key JSON you've been emailed matches the above."
@@ -103,6 +102,8 @@ else
 	echo
 	read
 fi
+
+mv /tmp/agse/server.ts ./
 
 
 cat >> .bashrc <<- EOM
@@ -125,20 +126,19 @@ cat >> .bashrc <<- EOM
 			sleep 1
 		done
 
-		/tmp/agse/server.ts "${activeKeys}" "${localAddress}" "${remoteAddress}" "${port}"
+		./server.ts "${activeKeys}" "${localAddress}" "${remoteAddress}" "${port}"
 	fi
 EOM
 EndOfMessage
+chmod 777 /tmp/agse/setup.sh
 
-
-chmod -R 777 /tmp/agse
 
 mv /usr/bin/ts-node /usr/bin/ts-node-original
 echo -e '#!/bin/bash\nts-node-original -D "${@}"' > /usr/bin/ts-node
 chmod +x /usr/bin/ts-node
 
 su ${username} -c /tmp/agse/setup.sh
-rm /tmp/agse/setup.sh
+rm -rf /tmp/agse
 
 modprobe ecryptfs
 ecryptfs-migrate-home -u ${username}
