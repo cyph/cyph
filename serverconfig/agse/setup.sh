@@ -57,15 +57,19 @@ apt-get -y --force-yes install sudo nodejs ecryptfs-utils lsof
 
 npm -g install ts-node typescript xkcd-passphrase
 
-backupPasswordAes="$(xkcd-passphrase 256)"
-backupPasswordSodium="$(xkcd-passphrase 256)"
-echo "Password for backup keys is: ${backupPasswordAes} ${backupPasswordSodium}"
-echo -e '\nMemorize this and then hit enter to continue.'
-read
-reset
-
 mkdir -p /tmp/agse
 cp "$(dirname "$0")"/* /tmp/agse/
+
+if [ -f /tmp/agse/keybackup ] ; then
+	eval "$(/tmp/agse/getbackuppassword.ts)"
+else
+	backupPasswordAes="$(xkcd-passphrase 256)"
+	backupPasswordSodium="$(xkcd-passphrase 256)"
+	echo "Password for backup keys is: ${backupPasswordAes} ${backupPasswordSodium}"
+	echo -e '\nMemorize this and then hit enter to continue.'
+	read
+fi
+reset
 
 
 cat > /tmp/agse/setup.sh << EndOfMessage
@@ -79,6 +83,7 @@ echo
 /tmp/agse/generatekeys.ts \
 	"${activeKeys}" \
 	"${backupKeys}" \
+	"$(ls /tmp/agse/keybackup 2> /dev/null)" \
 	"${passwords[1]}" \
 	"${passwords[2]}" \
 	"${passwords[3]}" \
@@ -86,10 +91,18 @@ echo
 	"${backupPasswordAes}" \
 	"${backupPasswordSodium}"
 
-echo
-echo "Before committing, you must validate that the SHA-512 of the public key JSON you've been emailed matches the above."
-echo "Hit enter to continue after you've either done so or written the down the hash for validation at a later time."
-read
+if [ -f /tmp/agse/keybackup ] ; then
+	rm /tmp/agse/keybackup
+else
+	echo
+	echo -n "Before committing, you must validate that the SHA-512 of "
+	echo -n "the public key JSON you've been emailed matches the above."
+	echo
+	echo -n "Hit enter to continue after you've either done so or "
+	echo -n "written down the hash for validation at a later time."
+	echo
+	read
+fi
 
 
 cat >> .bashrc <<- EOM
