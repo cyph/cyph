@@ -1,10 +1,10 @@
-import {UIEvents} from './enums';
 import {Files} from './files';
 import {Transfer} from './transfer';
 
 
+export * from './enums';
+
 export {
 	Files,
-	Transfer,
-	UIEvents
+	Transfer
 };

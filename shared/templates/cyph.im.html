@@ -23,10 +23,10 @@
 		class='cyph-view layout-fill layout-column flex'
 	></cyph-link-connection>
 
-	<cyph-static-cyph-not-found
+	<cyph-not-found
 		[class.active]='!!ui && ui.state === states.error'
 		class='cyph-view layout-fill layout-column flex'
-	></cyph-static-cyph-not-found>
+	></cyph-not-found>
 
 	<div
 		[class.active]='!!ui && ui.state === states.blank'
@@ -46,10 +46,10 @@
 			*ngIf='!!ui && !!ui.chat && ui.state === states.chat'
 		></cyph-chat-message-box>
 
-		<cyph-static-footer
+		<cyph-footer
 			[wasInitiatedByAPI]='ui.chat.session.state.wasInitiatedByAPI'
 			*ngIf='!env.isMobile && !!ui && !!ui.chat'
-		></cyph-static-footer>
+		></cyph-footer>
 	</footer>
 </section>
 

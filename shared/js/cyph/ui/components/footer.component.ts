@@ -6,10 +6,10 @@ import {Env, env} from '../../env';
  * Angular component for static footer content.
  */
 @Component({
-	selector: 'cyph-static-footer',
-	templateUrl: '../../../../templates/staticfooter.html'
+	selector: 'cyph-footer',
+	templateUrl: '../../../../templates/footer.html'
 })
-export class StaticFooterComponent {
+export class FooterComponent {
 	/** Indicates whether this cyph was initiated via the API. */
 	@Input() public wasInitiatedByAPI: boolean;
 

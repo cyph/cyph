@@ -6,10 +6,10 @@ import {Env, env} from '../../env';
  * Angular component for the cyph not found screen.
  */
 @Component({
-	selector: 'cyph-static-cyph-not-found',
-	templateUrl: '../../../../templates/staticcyphnotfound.html'
+	selector: 'cyph-not-found',
+	templateUrl: '../../../../templates/notfound.html'
 })
-export class StaticCyphNotFoundComponent {
+export class NotFoundComponent {
 	/** @see Env */
 	public readonly env: Env	= env;
 

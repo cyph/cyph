@@ -9,6 +9,7 @@ import {ChatMessageComponent} from '../cyph/ui/components/chatmessage.component'
 import {ChatMessageBoxComponent} from '../cyph/ui/components/chatmessagebox.component';
 import {ContactComponent} from '../cyph/ui/components/contact.component';
 import {FileInputComponent} from '../cyph/ui/components/fileinput.component';
+import {FooterComponent} from '../cyph/ui/components/footer.component';
 import {HelpComponent} from '../cyph/ui/components/help.component';
 import {LinkConnectionComponent} from '../cyph/ui/components/linkconnection.component';
 import {MarkdownComponent} from '../cyph/ui/components/markdown.component';
@@ -39,9 +40,8 @@ import {MdSubheaderComponent} from '../cyph/ui/components/material/mdsubheader.c
 import {MdSwitchComponent} from '../cyph/ui/components/material/mdswitch.component';
 import {MdTabsComponent} from '../cyph/ui/components/material/mdtabs.component';
 import {MdTextareaComponent} from '../cyph/ui/components/material/mdtextarea.component';
+import {NotFoundComponent} from '../cyph/ui/components/notfound.component';
 import {SignupFormComponent} from '../cyph/ui/components/signupform.component';
-import {StaticCyphNotFoundComponent} from '../cyph/ui/components/staticcyphnotfound.component';
-import {StaticFooterComponent} from '../cyph/ui/components/staticfooter.component';
 import {TranslateDirective} from '../cyph/ui/directives/translate.directive';
 import {AppComponent} from './app.component';
 import {BetaComponent} from './beta.component';
@@ -64,8 +64,8 @@ import {BetaComponent} from './beta.component';
 		LinkConnectionComponent,
 		MarkdownComponent,
 		SignupFormComponent,
-		StaticCyphNotFoundComponent,
-		StaticFooterComponent,
+		NotFoundComponent,
+		FooterComponent,
 		TranslateDirective,
 		MdButtonComponent,
 		MdCardComponent,
