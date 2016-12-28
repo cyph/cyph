@@ -88,9 +88,71 @@ export class Chat {
 		return Elements.getElement(() => this.rootElement.find(selector));
 	}
 
+	/** Begins chat. */
+	private async begin () : Promise<void> {
+		if (this.state === States.aborted) {
+			return;
+		}
+
+		/* Workaround for Safari bug that breaks initiating a new chat */
+		this.session.sendBase([]);
+
+		if (this.notifier) {
+			this.notifier.notify(strings.connectedNotification);
+		}
+
+		this.state	= States.chatBeginMessage;
+
+		await util.sleep(3000);
+
+		if (<States> this.state === States.aborted) {
+			return;
+		}
+
+		this.session.trigger(events.beginChatComplete);
+
+		this.state	= States.chat;
+
+		this.addMessage(
+			strings.introductoryMessage,
+			users.app,
+			util.timestamp() - 30000,
+			false
+		);
+
+		this.isConnected	= true;
+
+		if (this.queuedMessage) {
+			this.send(
+				this.queuedMessage,
+				this.queuedMessageSelfDestruct ?
+					Chat.queuedMessageSelfDestructTimeout :
+					undefined
+			);
+		}
+	}
+
+	/** This kills the chat. */
+	private close () : void {
+		if (this.state === States.aborted) {
+			return;
+		}
+
+		this.setFriendTyping(false);
+
+		if (!this.isConnected) {
+			this.abortSetup();
+		}
+		else if (!this.isDisconnected) {
+			this.isDisconnected	= true;
+			this.addMessage(strings.disconnectNotification, users.app);
+			this.session.close();
+		}
+	}
+
 	/** Aborts the process of chat initialisation and authentication. */
 	public abortSetup () : void {
-		this.changeState(States.aborted);
+		this.state	= States.aborted;
 		this.session.trigger(events.abort);
 		this.session.close();
 	}
@@ -159,73 +221,6 @@ export class Chat {
 		}
 	}
 
-	/** Begins chat. */
-	public async begin () : Promise<void> {
-		if (this.state === States.aborted) {
-			return;
-		}
-
-		/* Workaround for Safari bug that breaks initiating a new chat */
-		this.session.sendBase([]);
-
-		if (this.notifier) {
-			this.notifier.notify(strings.connectedNotification);
-		}
-
-		this.changeState(States.chatBeginMessage);
-
-		await util.sleep(3000);
-
-		if (<States> this.state === States.aborted) {
-			return;
-		}
-
-		this.session.trigger(events.beginChatComplete);
-		this.changeState(States.chat);
-		this.addMessage(
-			strings.introductoryMessage,
-			users.app,
-			util.timestamp() - 30000,
-			false
-		);
-		this.setConnected();
-
-		if (this.queuedMessage) {
-			this.send(
-				this.queuedMessage,
-				this.queuedMessageSelfDestruct ?
-					Chat.queuedMessageSelfDestructTimeout :
-					undefined
-			);
-		}
-	}
-
-	/**
-	 * Changes chat UI state.
-	 * @param state
-	 */
-	public changeState (state: States) : void {
-		this.state	= state;
-	}
-
-	/** This kills the chat. */
-	public close () : void {
-		if (this.state === States.aborted) {
-			return;
-		}
-
-		this.setFriendTyping(false);
-
-		if (!this.isConnected) {
-			this.abortSetup();
-		}
-		else if (!this.isDisconnected) {
-			this.isDisconnected	= true;
-			this.addMessage(strings.disconnectNotification, users.app);
-			this.session.close();
-		}
-	}
-
 	/** After confirmation dialog, this kills the chat. */
 	public async disconnectButton () : Promise<void> {
 		if (await this.dialogManager.confirm({
@@ -290,13 +285,6 @@ export class Chat {
 		if (message) {
 			this.session.sendText(message, selfDestructTimeout);
 		}
-	}
-
-	/**
-	 * Sets this.isConnected to true.
-	 */
-	public setConnected () : void {
-		this.isConnected	= true;
 	}
 
 	/**
@@ -470,7 +458,7 @@ export class Chat {
 		this.session.one(events.closeChat).then(() => { this.close(); });
 
 		this.session.one(events.connect).then(async () => {
-			this.changeState(States.keyExchange);
+			this.state	= States.keyExchange;
 
 			const interval		= 250;
 			const increment		= interval / Chat.approximateKeyExchangeTime;

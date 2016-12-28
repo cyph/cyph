@@ -148,7 +148,7 @@ export class UI {
 		urlState.setUrl(newUrlState, true, true);
 
 		if (this.homeSection !== undefined) {
-			this.changeState(States.home);
+			this.state	= States.home;
 
 			if (promo) {
 				this.promo				= promo;
@@ -211,16 +211,16 @@ export class UI {
 				this.contact.to	= to;
 			}
 
-			this.changeState(state);
+			this.state	= state;
 		}
 		else if (state !== undefined) {
-			this.changeState(state);
+			this.state	= state;
 		}
 		else if (newUrlStateBase === '') {
-			this.changeState(States.home);
+			this.state	= States.home;
 		}
 		else if (newUrlStateBase === urlState.states.notFound) {
-			this.changeState(States.error);
+			this.state	= States.error;
 		}
 		else {
 			urlState.setUrl(urlState.states.notFound);
@@ -260,16 +260,7 @@ export class UI {
 		this.cart[0]	= amount;
 		this.cart[1]	= category;
 		this.cart[2]	= item;
-
-		this.changeState(States.checkout);
-	}
-
-	/**
-	 * Changes UI state.
-	 * @param state
-	 */
-	public changeState (state: States) : void {
-		this.state	= state;
+		this.state		= States.checkout;
 	}
 
 	constructor (

@@ -45,10 +45,10 @@ export class UI {
 
 		if (newUrlStateSplit[0] === urlSections.beta) {
 			this.betaState	= (<any> BetaStates)[newUrlStateSplit[1]];
-			this.changeState(States.beta);
+			this.state		= States.beta;
 		}
 		else if (newUrlState === urlState.states.notFound) {
-			this.changeState(States.error);
+			this.state		= States.error;
 		}
 		else {
 			urlState.setUrl(urlState.states.notFound);
@@ -75,7 +75,7 @@ export class UI {
 
 			/* If unsupported, warn and then close window */
 			if (!P2P.isSupported) {
-				this.changeState(States.blank);
+				this.state	= States.blank;
 
 				await this.dialogManager.alert({
 					content: strings.p2pDisabledLocal,
@@ -106,7 +106,7 @@ export class UI {
 
 		this.chat.session.one(events.abort).then(() => {
 			self.onbeforeunload	= () => {};
-			this.changeState(States.chat);
+			this.state			= States.chat;
 		});
 
 		this.chat.session.one(events.beginChatComplete).then(() => {
@@ -119,11 +119,11 @@ export class UI {
 
 		this.chat.session.one(events.beginWaiting).then(() => {
 			this.linkConnectionBaseUrl	= baseUrl;
-			this.changeState(States.waitingForFriend);
+			this.state					= States.waitingForFriend;
 		});
 
 		this.chat.session.one(events.connect).then(() => {
-			this.changeState(States.chat);
+			this.state	= States.chat;
 
 			if (initialCallType) {
 				this.dialogManager.toast({
@@ -135,14 +135,6 @@ export class UI {
 				});
 			}
 		});
-	}
-
-	/**
-	 * Changes UI state.
-	 * @param state
-	 */
-	public changeState (state: States) : void {
-		this.state	= state;
 	}
 
 	constructor (
