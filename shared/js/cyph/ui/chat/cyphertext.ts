@@ -3,9 +3,9 @@ import {events} from '../../session/enums';
 import {ISession} from '../../session/isession';
 import {strings} from '../../strings';
 import {util} from '../../util';
-import {DialogManager} from '../dialogmanager';
+import {DialogManager} from '../dialog-manager';
 import {elements as cyphElements} from '../elements';
-import {IChatMessage} from './ichatmessage';
+import {IChatMessage} from './ichat-message';
 import {IElements} from './ielements';
 
 

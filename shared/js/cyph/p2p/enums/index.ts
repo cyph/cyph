@@ -1,5 +1,5 @@
-import {UIEventCategories} from './uieventcategories';
-import {UIEvents} from './uievents';
+import {UIEventCategories} from './ui-event-categories';
+import {UIEvents} from './ui-events';
 
 
 export {

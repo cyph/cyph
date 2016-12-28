@@ -1,5 +1,5 @@
 import {util} from '../../util';
-import {IKeyPairMaybe} from '../ikeypairmaybe';
+import {IKeyPairMaybe} from '../ikey-pair-maybe';
 import {Potassium} from '../potassium';
 
 

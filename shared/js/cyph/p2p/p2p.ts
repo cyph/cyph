@@ -1,6 +1,6 @@
 import {analytics} from '../analytics';
 import {env} from '../env';
-import {eventManager} from '../eventmanager';
+import {eventManager} from '../event-manager';
 import {Command} from '../session/command';
 import {events, rpcEvents} from '../session/enums';
 import {IMutex} from '../session/imutex';

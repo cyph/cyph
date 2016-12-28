@@ -1,6 +1,6 @@
 import {config} from '../config';
 import {env} from '../env';
-import {visibilityWatcher} from './visibilitywatcher';
+import {visibilityWatcher} from './visibility-watcher';
 
 
 /**

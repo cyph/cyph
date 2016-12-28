@@ -1,6 +1,6 @@
 import {Analytics, analytics} from './analytics';
 import {Errors, errors} from './errors';
-import {UrlState, urlState} from './urlstate';
+import {UrlState, urlState} from './url-state';
 
 import * as Channel from './channel';
 import * as Crypto from './crypto';

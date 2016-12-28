@@ -1,6 +1,6 @@
 import {util} from '../util';
 import {users} from './enums';
-import {IMessageData} from './imessagedata';
+import {IMessageData} from './imessage-data';
 
 
 /**

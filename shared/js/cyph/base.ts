@@ -1,8 +1,8 @@
 import {Config, config} from './config';
 import {Email} from './email';
 import {Env, env} from './env';
-import {EventManager, eventManager} from './eventmanager';
-import {firebaseApp} from './firebaseapp';
+import {EventManager, eventManager} from './event-manager';
+import {firebaseApp} from './firebase-app';
 import {IThread} from './ithread';
 import {Strings, strings} from './strings';
 import {Timer} from './timer';

@@ -1,6 +1,6 @@
-import {BetaStates} from './betastates';
+import {BetaStates} from './beta-states';
 import {States} from './states';
-import {UrlSections, urlSections} from './urlsections';
+import {UrlSections, urlSections} from './url-sections';
 
 
 export {

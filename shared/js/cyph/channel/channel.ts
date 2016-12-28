@@ -1,5 +1,5 @@
 import * as firebase from 'firebase';
-import {firebaseApp} from '../firebaseapp';
+import {firebaseApp} from '../firebase-app';
 import {util} from '../util';
 import {IChannel} from './ichannel';
 

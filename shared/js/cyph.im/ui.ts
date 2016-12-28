@@ -3,11 +3,11 @@ import {P2P} from '../cyph/p2p/p2p';
 import {events} from '../cyph/session/enums';
 import {strings} from '../cyph/strings';
 import * as Chat from '../cyph/ui/chat';
-import {DialogManager} from '../cyph/ui/dialogmanager';
+import {DialogManager} from '../cyph/ui/dialog-manager';
 import {elements} from '../cyph/ui/elements';
 import {Notifier} from '../cyph/ui/notifier';
-import {SignupForm} from '../cyph/ui/signupform';
-import {urlState} from '../cyph/urlstate';
+import {SignupForm} from '../cyph/ui/signup-form';
+import {urlState} from '../cyph/url-state';
 import {util} from '../cyph/util';
 import {BetaStates, States, urlSections} from './enums';
 

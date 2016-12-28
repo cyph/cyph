@@ -1,9 +1,9 @@
-import {AnonymousCastle} from './anonymouscastle';
+import {AnonymousCastle} from './anonymous-castle';
 import * as Castle from './castle';
-import {FakeCastle} from './fakecastle';
+import {FakeCastle} from './fake-castle';
 import {ICastle} from './icastle';
-import {IKeyPair} from './ikeypair';
-import {IKeyPairMaybe} from './ikeypairmaybe';
+import {IKeyPair} from './ikey-pair';
+import {IKeyPairMaybe} from './ikey-pair-maybe';
 
 
 export * from './potassium';

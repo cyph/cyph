@@ -1,5 +1,5 @@
 import {users} from '../session/enums';
-import {IMessageData} from '../session/imessagedata';
+import {IMessageData} from '../session/imessage-data';
 import {util} from '../util';
 
 

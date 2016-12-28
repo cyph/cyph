@@ -3,22 +3,22 @@ import {env} from '../../env';
 import {events, rpcEvents, users} from '../../session/enums';
 import {ISession} from '../../session/isession';
 import {Message} from '../../session/message';
-import {ThreadedSession} from '../../session/threadedsession';
+import {ThreadedSession} from '../../session/threaded-session';
 import {strings} from '../../strings';
 import {Timer} from '../../timer';
-import {urlState} from '../../urlstate';
+import {urlState} from '../../url-state';
 import {util} from '../../util';
-import {DialogManager} from '../dialogmanager';
+import {DialogManager} from '../dialog-manager';
 import {elements, Elements} from '../elements';
-import {nanoScroller} from '../nanoscroller';
+import {nanoScroller} from '../nano-scroller';
 import {Notifier} from '../notifier';
 import {Cyphertext} from './cyphertext';
 import {States} from './enums';
-import {FileManager} from './filemanager';
-import {IChatMessage} from './ichatmessage';
+import {FileManager} from './file-manager';
+import {IChatMessage} from './ichat-message';
 import {IElements} from './ielements';
-import {P2PManager} from './p2pmanager';
-import {ScrollManager} from './scrollmanager';
+import {P2PManager} from './p2p-manager';
+import {ScrollManager} from './scroll-manager';
 
 
 /**

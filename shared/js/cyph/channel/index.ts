@@ -1,6 +1,6 @@
 import {Channel} from './channel';
 import {IChannel} from './ichannel';
-import {LocalChannel} from './localchannel';
+import {LocalChannel} from './local-channel';
 
 
 export {

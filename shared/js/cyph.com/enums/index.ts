@@ -1,5 +1,5 @@
-import {HomeSections} from './homesections';
-import {PageTitles, pageTitles} from './pagetitles';
+import {HomeSections} from './home-sections';
+import {PageTitles, pageTitles} from './page-titles';
 import {Promos} from './promos';
 import {States} from './states';
 

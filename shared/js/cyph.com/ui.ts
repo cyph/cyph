@@ -3,12 +3,12 @@ import {Email} from '../cyph/email';
 import {env} from '../cyph/env';
 import {Carousel} from '../cyph/ui/carousel';
 import * as Chat from '../cyph/ui/chat/enums';
-import {DialogManager} from '../cyph/ui/dialogmanager';
+import {DialogManager} from '../cyph/ui/dialog-manager';
 import * as CyphElements from '../cyph/ui/elements';
-import {SignupForm} from '../cyph/ui/signupform';
-import {urlState} from '../cyph/urlstate';
+import {SignupForm} from '../cyph/ui/signup-form';
+import {urlState} from '../cyph/url-state';
 import {util} from '../cyph/util';
-import {CyphDemo} from './cyphdemo';
+import {CyphDemo} from './cyph-demo';
 import {elements} from './elements';
 import {HomeSections, pageTitles, Promos, States} from './enums';
 

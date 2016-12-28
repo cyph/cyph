@@ -151,7 +151,7 @@ compile () {
 
 	for f in $(echo "$tsfiles" | grep -P '/main$') ; do
 		tsbuild $f
-		sed -i 's|./appmodule|./appmodule.ngfactory|g' "${f}.ts"
+		sed -i 's|./app.module|./app.module.ngfactory|g' "${f}.ts"
 		sed -i 's|AppModule|AppModuleNgFactory|g' "${f}.ts"
 		sed -i 's|bootstrapModule|bootstrapModuleFactory|g' "${f}.ts"
 		tsbuild $f

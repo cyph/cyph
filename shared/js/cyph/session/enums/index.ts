@@ -1,8 +1,8 @@
-import {CastleEvents} from './castleevents';
+import {CastleEvents} from './castle-events';
 import {Events, events} from './events';
-import {RpcEvents, rpcEvents} from './rpcevents';
+import {RpcEvents, rpcEvents} from './rpc-events';
 import {State, state} from './state';
-import {ThreadedSessionEvents, threadedSessionEvents} from './threadedsessionevents';
+import {ThreadedSessionEvents, threadedSessionEvents} from './threaded-session-events';
 import {Users, users} from './users';
 
 

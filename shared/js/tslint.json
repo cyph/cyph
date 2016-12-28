@@ -154,9 +154,9 @@
 
 		/* Codelyzer */
 
-		"component-class-suffix": false,
+		"component-class-suffix": true,
 		"component-selector": [true, "element", "cyph", "kebab-case"],
-		"directive-class-suffix": false,
+		"directive-class-suffix": true,
 		"directive-selector": [true, "attribute", "cyph", "camelCase"],
 		"import-destructuring-spacing": false,
 		"invoke-injectable": true,
