@@ -3,8 +3,8 @@ import {Env, env} from '../../env';
 import {Users, users} from '../../session/enums';
 import {Strings, strings} from '../../strings';
 import {Util, util} from '../../util';
+import {Chat} from '../chat/chat';
 import {States} from '../chat/enums';
-import {IChat} from '../chat/ichat';
 
 
 /**
@@ -16,7 +16,7 @@ import {IChat} from '../chat/ichat';
 })
 export class ChatMain implements OnInit {
 	/** @see IChat */
-	@Input() public self: IChat;
+	@Input() public self: Chat;
 
 	/** Indicates whether projected disconnection message should be hidden. */
 	@Input() public hideDisconnectMessage: boolean;

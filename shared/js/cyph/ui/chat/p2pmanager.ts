@@ -3,29 +3,34 @@ import {IP2P} from '../../p2p/ip2p';
 import {P2P} from '../../p2p/p2p';
 import {events, users} from '../../session/enums';
 import {strings} from '../../strings';
-import {IDialogManager} from '../idialogmanager';
-import {IChat} from './ichat';
+import {DialogManager} from '../dialogmanager';
+import {Chat} from './chat';
 import {IElements} from './ielements';
-import {IP2PManager} from './ip2pmanager';
 
 
-/** @inheritDoc */
-export class P2PManager implements IP2PManager {
-	/** @inheritDoc */
+/**
+ * Represents P2P component of chat UI.
+ */
+export class P2PManager {
+	/** Indicates whether sidebar is open. */
 	public isSidebarOpen: boolean;
 
-	/** @inheritDoc */
+	/** Indicates whether P2P is possible (i.e. both clients support WebRTC). */
 	public isEnabled: boolean	= false;
 
-	/** @inheritDoc */
+	/** @see IP2P */
 	public readonly p2p: IP2P;
 
-	/** @inheritDoc */
+	/**
+	 * Closes active P2P session.
+	 */
 	public closeButton () : void {
 		this.p2p.close();
 	}
 
-	/** @inheritDoc */
+	/**
+	 * If chat authentication is complete, this alerts that P2P is disabled.
+	 */
 	public disabledAlert () : void {
 		if (this.chat.isConnected && !this.isEnabled) {
 			this.dialogManager.alert({
@@ -36,23 +41,32 @@ export class P2PManager implements IP2PManager {
 		}
 	}
 
-	/** @inheritDoc */
+	/**
+	 * Sets this.isEnabled to true.
+	 */
 	public enable () : void {
 		this.isEnabled	= true;
 	}
 
-	/** @inheritDoc */
+	/**
+	 * Preemptively initiates call, bypassing any prerequisite dialogs and button clicks.
+	 */
 	public preemptivelyInitiate () : void {
 		this.isEnabled	= true;
 		this.p2p.accept();
 	}
 
-	/** @inheritDoc */
+	/**
+	 * Toggles visibility of sidebar containing chat UI.
+	 */
 	public toggleSidebar () : void {
 		this.isSidebarOpen	= !this.isSidebarOpen;
 	}
 
-	/** @inheritDoc */
+	/**
+	 * Attempts to toggle outgoing video stream,
+	 * requesting new P2P session if necessary.
+	 */
 	public videoCallButton () : void {
 		if (!this.isEnabled) {
 			return;
@@ -66,7 +80,10 @@ export class P2PManager implements IP2PManager {
 		}
 	}
 
-	/** @inheritDoc */
+	/**
+	 * Attempts to toggle outgoing audio stream,
+	 * requesting new P2P session if necessary.
+	 */
 	public voiceCallButton () : void {
 		if (!this.isEnabled) {
 			return;
@@ -82,10 +99,10 @@ export class P2PManager implements IP2PManager {
 
 	constructor (
 		/** @ignore */
-		private readonly chat: IChat,
+		private readonly chat: Chat,
 
 		/** @ignore */
-		private readonly dialogManager: IDialogManager,
+		private readonly dialogManager: DialogManager,
 
 		/** @ignore */
 		private readonly elements: IElements,

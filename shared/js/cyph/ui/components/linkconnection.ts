@@ -9,14 +9,13 @@ import {
 import * as clipboard from 'clipboard-js';
 import {config} from '../../config';
 import {Env, env} from '../../env';
-import {ITimer} from '../../itimer';
 import {events} from '../../session/enums';
 import {strings} from '../../strings';
 import {Timer} from '../../timer';
 import {util} from '../../util';
-import {IChat} from '../chat/ichat';
+import {Chat} from '../chat/chat';
+import {DialogManager} from '../dialogmanager';
 import {Elements} from '../elements';
-import {IDialogManager} from '../idialogmanager';
 
 
 /**
@@ -44,10 +43,10 @@ export class LinkConnection implements OnChanges {
 	@Input() public baseUrl: string;
 
 	/** @see IChat */
-	@Input() public chat: IChat;
+	@Input() public chat: Chat;
 
-	/** @see IDialogManager */
-	@Input() public dialogManager: IDialogManager;
+	/** @see DialogManager */
+	@Input() public dialogManager: DialogManager;
 
 	/** Indicates whether advanced features UI should be displayed. */
 	@Input() public enableAdvancedFeatures: boolean;
@@ -65,7 +64,7 @@ export class LinkConnection implements OnChanges {
 	public linkEncoded: string;
 
 	/** Counts down until link expires. */
-	public timer: ITimer;
+	public timer: Timer;
 
 	/** @see Env */
 	public readonly env: Env	= env;

@@ -2,8 +2,8 @@ import {Component, ElementRef, Input, OnInit} from '@angular/core';
 import {env} from '../../env';
 import {Strings, strings} from '../../strings';
 import {util} from '../../util';
+import {Chat} from '../chat/chat';
 import {States} from '../chat/enums';
-import {IChat} from '../chat/ichat';
 import {Elements} from '../elements';
 import {virtualKeyboardWatcher} from '../virtualkeyboardwatcher';
 import {visibilityWatcher} from '../visibilitywatcher';
@@ -18,7 +18,7 @@ import {visibilityWatcher} from '../visibilitywatcher';
 })
 export class ChatMessageBox implements OnInit {
 	/** @see IChat */
-	@Input() public self: IChat;
+	@Input() public self: Chat;
 
 	/** @see FileInput.accept */
 	@Input() public fileAccept: string;

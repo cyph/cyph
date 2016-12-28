@@ -1,10 +1,11 @@
 import {ChangeDetectorRef} from '@angular/core';
-import {ITimer} from './itimer';
 import {util} from './util';
 
 
-/** @inheritDoc */
-export class Timer implements ITimer {
+/**
+ * Represents a countdown timer.
+ */
+export class Timer {
 	/** @ignore */
 	private endTime: number;
 
@@ -17,10 +18,10 @@ export class Timer implements ITimer {
 	/** @ignore */
 	private isStopped: boolean;
 
-	/** @inheritDoc */
+	/** Indicates whether timer's countdown has completed. */
 	public isComplete: boolean;
 
-	/** @inheritDoc */
+	/** Human-readable string indicating remaining time. */
 	public timestamp: string;
 
 	/** @ignore */
@@ -44,7 +45,10 @@ export class Timer implements ITimer {
 		}
 	}
 
-	/** @inheritDoc */
+	/**
+	 * Extends the countdown duration.
+	 * @param milliseconds
+	 */
 	public addTime (milliseconds: number) : void {
 		this.countdown += milliseconds;
 
@@ -53,7 +57,10 @@ export class Timer implements ITimer {
 		}
 	}
 
-	/** @inheritDoc */
+	/**
+	 * Initiates countdown.
+	 * @returns Promise that resolves when countdown finishes or is stopped.
+	 */
 	public async start () : Promise<void> {
 		if (this.isStopped) {
 			return;
@@ -87,14 +94,14 @@ export class Timer implements ITimer {
 		;
 	}
 
-	/** @inheritDoc */
+	/** Stops countdown. */
 	public stop () : void {
 		this.isComplete	= true;
 		this.isStopped	= true;
 	}
 
 	constructor (
-		/** @inheritDoc */
+		/** Countdown duration in milliseconds. */
 		public countdown: number,
 
 		autostart?: boolean,

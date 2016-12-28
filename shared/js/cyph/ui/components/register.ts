@@ -1,6 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {Env, env} from '../../env';
-import {ISignupForm} from '../isignupform';
+import {SignupForm} from '../signupform';
 
 
 /**
@@ -12,7 +12,7 @@ import {ISignupForm} from '../isignupform';
 })
 export class Register {
 	/** @see ISignupForm */
-	@Input() public signupForm: ISignupForm;
+	@Input() public signupForm: SignupForm;
 
 	/** @see SignupForm.invite */
 	@Input() public invite: boolean;

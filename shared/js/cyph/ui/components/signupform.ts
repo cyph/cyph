@@ -1,6 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {Env, env} from '../../env';
-import {ISignupForm} from '../isignupform';
+import {SignupForm as SignupFormService} from '../signupform';
 
 
 /**
@@ -12,7 +12,7 @@ import {ISignupForm} from '../isignupform';
 })
 export class SignupForm {
 	/** @see ISignupForm */
-	@Input() public self: ISignupForm;
+	@Input() public self: SignupFormService;
 
 	/** Indicates whether or not to display invite-code-related UI. */
 	@Input() public invite: boolean;

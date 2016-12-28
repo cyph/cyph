@@ -2,18 +2,19 @@ import {analytics} from '../analytics';
 import {env} from '../env';
 import {util} from '../util';
 import {elements} from './elements';
-import {ISignupForm} from './isignupform';
 
 
-/** @inheritDoc */
-export class SignupForm implements ISignupForm {
-	/** @inheritDoc */
-	public readonly promo: string;
+/**
+ * Represents a form to register for cyph.me waitlist.
+ */
+export class SignupForm {
+	/** Used to track which users signed up through our promo page. */
+	public promo: string;
 
-	/** @inheritDoc */
+	/** Ordinal number indicating which screen of this form is active. */
 	public state: number	= 0;
 
-	/** @inheritDoc */
+	/** Signup data entered by user. */
 	public readonly data	= {
 		email: <string> '',
 		inviteCode: <string> '',
@@ -21,7 +22,9 @@ export class SignupForm implements ISignupForm {
 		name: <string> ''
 	};
 
-	/** @inheritDoc */
+	/**
+	 * Submits signup data to server.
+	 */
 	public async submit () : Promise<void> {
 		++this.state;
 

@@ -3,9 +3,8 @@ import {env} from '../cyph/env';
 import {ISession} from '../cyph/session/isession';
 import {Session} from '../cyph/session/session';
 import {Chat} from '../cyph/ui/chat/chat';
-import {IChat} from '../cyph/ui/chat/ichat';
+import {DialogManager} from '../cyph/ui/dialogmanager';
 import * as CyphElements from '../cyph/ui/elements';
-import {IDialogManager} from '../cyph/ui/idialogmanager';
 import {util} from '../cyph/util';
 import {elements} from './elements';
 
@@ -123,10 +122,10 @@ export class CyphDemo {
 	private isActive: boolean;
 
 	/** Desktop chat UI. */
-	public desktop: IChat;
+	public desktop: Chat;
 
 	/** Mobile chat UI. */
-	public mobile: IChat;
+	public mobile: Chat;
 
 	/** @ignore */
 	private async activeTransition (forceActiveState?: boolean) : Promise<void> {
@@ -194,7 +193,7 @@ export class CyphDemo {
 		}
 	}
 
-	constructor (dialogManager: IDialogManager) { (async () => {
+	constructor (dialogManager: DialogManager) { (async () => {
 		await CyphElements.Elements.waitForElement(elements.demoRoot);
 		await CyphElements.Elements.waitForElement(elements.heroText);
 
@@ -272,7 +271,7 @@ export class CyphDemo {
 
 		this.desktop	= new Chat(
 			dialogManager,
-			{notify: () => {}},
+			undefined,
 			false,
 			false,
 			desktopSession,
@@ -285,7 +284,7 @@ export class CyphDemo {
 
 		this.mobile		= new Chat(
 			dialogManager,
-			{notify: () => {}},
+			undefined,
 			false,
 			true,
 			mobileSession,
@@ -309,13 +308,13 @@ export class CyphDemo {
 		const facebookPicMessage	= await CyphDemo.facebookPicMessage;
 
 		for (const message of messages) {
-			const chat: IChat		=
+			const chat: Chat		=
 				message.isMobile ?
 					this.mobile :
 					this.desktop
 			;
 
-			const otherChat: IChat	=
+			const otherChat: Chat	=
 				message.isMobile ?
 					this.desktop :
 					this.mobile

@@ -11,17 +11,16 @@ import {Message} from '../session/message';
 import {Thread} from '../thread';
 import {util} from '../util';
 import {UIEvents} from './enums';
-import {IFiles} from './ifiles';
-import {ITransfer} from './itransfer';
 import {Transfer} from './transfer';
 
 
 /**
- * Standard IFiles implementation built on Firebase.
+ * Manages file transfers.
+ * Files are transmitted using Firebase Storage.
  * For encryption, native crypto is preferred when available,
  * but libsodium in a separate thread is used as a fallback.
  */
-export class Files implements IFiles {
+export class Files {
 	/** @ignore */
 	private static async cryptoThread (o: {
 		cyphertext?: Uint8Array,
@@ -181,11 +180,11 @@ export class Files implements IFiles {
 	/** @ignore */
 	private nativePotassium: Potassium;
 
-	/** @inheritDoc */
+	/** @ignore Temporary workaround. */
 	public changeDetectorRef: ChangeDetectorRef;
 
-	/** @inheritDoc */
-	public readonly transfers: Set<ITransfer>	= new Set<ITransfer>();
+	/** In-progress file transfers. */
+	public readonly transfers: Set<Transfer>	= new Set<Transfer>();
 
 	/** @ignore */
 	private async decryptFile (
@@ -240,7 +239,7 @@ export class Files implements IFiles {
 	}
 
 	/** @ignore */
-	private receiveTransfer (transfer: ITransfer) : void {
+	private receiveTransfer (transfer: Transfer) : void {
 		transfer.isOutgoing			= false;
 		transfer.percentComplete	= 0;
 
@@ -316,7 +315,14 @@ export class Files implements IFiles {
 		this.session.trigger(events.filesUI, {event, args});
 	}
 
-	/** @inheritDoc */
+	/**
+	 * Sends data as a file with the specified name.
+	 * @param plaintext
+	 * @param name
+	 * @param fileType
+	 * @param image
+	 * @param imageSelfDestructTimeout
+	 */
 	public async send (
 		plaintext: Uint8Array,
 		name: string,
@@ -339,7 +345,7 @@ export class Files implements IFiles {
 
 		let uploadTask: firebase.UploadTask;
 
-		const transfer: ITransfer	= new Transfer(
+		const transfer: Transfer	= new Transfer(
 			name,
 			fileType,
 			image,
@@ -440,7 +446,7 @@ export class Files implements IFiles {
 
 		const downloadAnswers	= new Map<string, boolean>();
 
-		this.session.on(rpcEvents.files, async (transfer: ITransfer) => {
+		this.session.on(rpcEvents.files, async (transfer: Transfer) => {
 			if (transfer.id) {
 				/* Outgoing file transfer acceptance or rejection */
 				if (transfer.answer === true || transfer.answer === false) {

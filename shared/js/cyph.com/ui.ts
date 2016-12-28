@@ -3,9 +3,8 @@ import {Email} from '../cyph/email';
 import {env} from '../cyph/env';
 import {Carousel} from '../cyph/ui/carousel';
 import * as Chat from '../cyph/ui/chat/enums';
+import {DialogManager} from '../cyph/ui/dialogmanager';
 import * as CyphElements from '../cyph/ui/elements';
-import {IDialogManager} from '../cyph/ui/idialogmanager';
-import {ISignupForm} from '../cyph/ui/isignupform';
 import {SignupForm} from '../cyph/ui/signupform';
 import {urlState} from '../cyph/urlstate';
 import {util} from '../cyph/util';
@@ -92,7 +91,7 @@ export class UI {
 	public readonly cyphDemo: CyphDemo;
 
 	/** Signup form to be displayed throughout the site. */
-	public readonly signupForm: ISignupForm;
+	public readonly signupForm: SignupForm;
 
 	/** Carousel of features. */
 	public featureCarousel: Carousel;
@@ -275,7 +274,7 @@ export class UI {
 
 	constructor (
 		/** @ignore */
-		private readonly dialogManager: IDialogManager
+		private readonly dialogManager: DialogManager
 	) {
 		this.signupForm	= new SignupForm();
 		this.cyphDemo	= new CyphDemo(this.dialogManager);

@@ -1,4 +1,4 @@
-import {ITimer} from '../../itimer';
+import {Timer} from '../../timer';
 
 
 /**
@@ -9,7 +9,7 @@ export interface IChatMessage {
 	author: string;
 
 	/** Timer for self-destruction. */
-	selfDestructTimer?: ITimer;
+	selfDestructTimer?: Timer;
 
 	/** Message text. */
 	text: string|undefined;

@@ -8,26 +8,23 @@ import {strings} from '../../strings';
 import {Timer} from '../../timer';
 import {urlState} from '../../urlstate';
 import {util} from '../../util';
+import {DialogManager} from '../dialogmanager';
 import {elements, Elements} from '../elements';
-import {IDialogManager} from '../idialogmanager';
-import {INotifier} from '../inotifier';
 import {nanoScroller} from '../nanoscroller';
+import {Notifier} from '../notifier';
 import {Cyphertext} from './cyphertext';
 import {States} from './enums';
 import {FileManager} from './filemanager';
-import {IChat} from './ichat';
 import {IChatMessage} from './ichatmessage';
-import {ICyphertext} from './icyphertext';
 import {IElements} from './ielements';
-import {IFileManager} from './ifilemanager';
-import {IP2PManager} from './ip2pmanager';
-import {IScrollManager} from './iscrollmanager';
 import {P2PManager} from './p2pmanager';
 import {ScrollManager} from './scrollmanager';
 
 
-/** @inheritDoc */
-export class Chat implements IChat {
+/**
+ * This is the entire end-to-end representation of a cyph.
+ */
+export class Chat {
 	/** @ignore */
 	private static readonly approximateKeyExchangeTime: number			= 15000;
 
@@ -47,43 +44,43 @@ export class Chat implements IChat {
 	/** @ignore */
 	private queuedMessage: string;
 
-	/** @inheritDoc */
+	/** Indicates whether authentication has completed (still true even after disconnect). */
 	public isConnected: boolean					= false;
 
-	/** @inheritDoc */
+	/** Indicates whether chat has been disconnected. */
 	public isDisconnected: boolean				= false;
 
-	/** @inheritDoc */
+	/** Indicates whether the other party is typing. */
 	public isFriendTyping: boolean				= false;
 
-	/** @inheritDoc */
+	/** Indicates whether the queued message is self-destructing. */
 	public queuedMessageSelfDestruct: boolean	= false;
 
-	/** @inheritDoc */
+	/** The current message being composed. */
 	public currentMessage: string				= '';
 
-	/** @inheritDoc */
+	/** Percentage complete with initial handshake (approximate / faked out). */
 	public keyExchangeProgress: number			= 0;
 
-	/** @inheritDoc */
+	/** Chat UI state/view. */
 	public state: States						= States.none;
 
-	/** @inheritDoc */
+	/** Message list. */
 	public readonly messages: IChatMessage[]	= [];
 
-	/** @inheritDoc */
-	public readonly cyphertext: ICyphertext;
+	/** @see Cyphertext */
+	public readonly cyphertext: Cyphertext;
 
-	/** @inheritDoc */
-	public readonly fileManager: IFileManager;
+	/** @see FileManager */
+	public readonly fileManager: FileManager;
 
-	/** @inheritDoc */
-	public readonly p2pManager: IP2PManager;
+	/** @see P2PManager */
+	public readonly p2pManager: P2PManager;
 
-	/** @inheritDoc */
-	public readonly scrollManager: IScrollManager;
+	/** @see ScrollManager */
+	public readonly scrollManager: ScrollManager;
 
-	/** @inheritDoc */
+	/** @see ISession */
 	public readonly session: ISession;
 
 	/** @ignore */
@@ -91,14 +88,21 @@ export class Chat implements IChat {
 		return Elements.getElement(() => this.rootElement.find(selector));
 	}
 
-	/** @inheritDoc */
+	/** Aborts the process of chat initialisation and authentication. */
 	public abortSetup () : void {
 		this.changeState(States.aborted);
 		this.session.trigger(events.abort);
 		this.session.close();
 	}
 
-	/** @inheritDoc */
+	/**
+	 * Adds a message to the chat.
+	 * @param text
+	 * @param author
+	 * @param timestamp If not set, will use Util.timestamp().
+	 * @param shouldNotify If true, a notification will be sent.
+	 * @param selfDestructTimeout
+	 */
 	public async addMessage (
 		text: string,
 		author: string,
@@ -114,7 +118,7 @@ export class Chat implements IChat {
 			await util.sleep(500);
 		}
 
-		if (shouldNotify !== false) {
+		if (this.notifier && shouldNotify !== false) {
 			if (author === users.app) {
 				this.notifier.notify(text);
 			}
@@ -155,7 +159,7 @@ export class Chat implements IChat {
 		}
 	}
 
-	/** @inheritDoc */
+	/** Begins chat. */
 	public async begin () : Promise<void> {
 		if (this.state === States.aborted) {
 			return;
@@ -164,7 +168,10 @@ export class Chat implements IChat {
 		/* Workaround for Safari bug that breaks initiating a new chat */
 		this.session.sendBase([]);
 
-		this.notifier.notify(strings.connectedNotification);
+		if (this.notifier) {
+			this.notifier.notify(strings.connectedNotification);
+		}
+
 		this.changeState(States.chatBeginMessage);
 
 		await util.sleep(3000);
@@ -193,12 +200,15 @@ export class Chat implements IChat {
 		}
 	}
 
-	/** @inheritDoc */
+	/**
+	 * Changes chat UI state.
+	 * @param state
+	 */
 	public changeState (state: States) : void {
 		this.state	= state;
 	}
 
-	/** @inheritDoc */
+	/** This kills the chat. */
 	public close () : void {
 		if (this.state === States.aborted) {
 			return;
@@ -216,7 +226,7 @@ export class Chat implements IChat {
 		}
 	}
 
-	/** @inheritDoc */
+	/** After confirmation dialog, this kills the chat. */
 	public async disconnectButton () : Promise<void> {
 		if (await this.dialogManager.confirm({
 			cancel: strings.cancel,
@@ -228,7 +238,7 @@ export class Chat implements IChat {
 		}
 	}
 
-	/** @inheritDoc */
+	/** Displays help information. */
 	public helpButton () : void {
 		this.dialogManager.baseDialog({
 			template: `<md-dialog class='full'><cyph-help></cyph-help></md-dialog>`
@@ -242,7 +252,10 @@ export class Chat implements IChat {
 		});
 	}
 
-	/** @inheritDoc */
+	/**
+	 * Checks for change to current message, and sends appropriate
+	 * typing indicator signals through session.
+	 */
 	public messageChange () : void {
 		const isMessageChanged: boolean	=
 			this.currentMessage !== '' &&
@@ -262,7 +275,11 @@ export class Chat implements IChat {
 		}
 	}
 
-	/** @inheritDoc */
+	/**
+	 * Sends a message.
+	 * @param message
+	 * @param selfDestructTimeout
+	 */
 	public send (message?: string, selfDestructTimeout?: number) : void {
 		if (!message) {
 			message				= this.currentMessage;
@@ -275,17 +292,26 @@ export class Chat implements IChat {
 		}
 	}
 
-	/** @inheritDoc */
+	/**
+	 * Sets this.isConnected to true.
+	 */
 	public setConnected () : void {
 		this.isConnected	= true;
 	}
 
-	/** @inheritDoc */
+	/**
+	 * Sets this.isFriendTyping to isFriendTyping.
+	 * @param isFriendTyping
+	 */
 	public setFriendTyping (isFriendTyping: boolean) : void {
 		this.isFriendTyping	= isFriendTyping;
 	}
 
-	/** @inheritDoc */
+	/**
+	 * Sets queued message to be sent after handshake.
+	 * @param messageText
+	 * @param selfDestruct
+	 */
 	public setQueuedMessage (messageText?: string, selfDestruct?: boolean) : void {
 		if (typeof messageText === 'string') {
 			this.queuedMessage	= messageText;
@@ -309,14 +335,14 @@ export class Chat implements IChat {
 	 */
 	constructor (
 		/** @ignore */
-		private readonly dialogManager: IDialogManager,
+		private readonly dialogManager: DialogManager,
 
 		/** @ignore */
-		private readonly notifier: INotifier,
+		private readonly notifier?: Notifier,
 
 		messageCountInTitle?: boolean,
 
-		/** @ignore */
+		/** Indicates whether the mobile chat UI is to be displayed. */
 		public readonly isMobile: boolean = env.isMobile,
 
 		session?: ISession,

@@ -2,9 +2,6 @@ import {Carousel} from './carousel';
 import * as Chat from './chat';
 import {DialogManager} from './dialogmanager';
 import {Elements, elements} from './elements';
-import {IDialogManager} from './idialogmanager';
-import {INotifier} from './inotifier';
-import {ISignupForm} from './isignupform';
 import {nanoScroller} from './nanoscroller';
 import {Notifier} from './notifier';
 import {SignupForm} from './signupform';
@@ -17,9 +14,6 @@ export {
 	DialogManager,
 	Elements,
 	elements,
-	IDialogManager,
-	INotifier,
-	ISignupForm,
 	nanoScroller,
 	Notifier,
 	SignupForm,

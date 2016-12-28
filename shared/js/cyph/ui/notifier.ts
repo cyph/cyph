@@ -1,11 +1,12 @@
 import {config} from '../config';
 import {env} from '../env';
-import {INotifier} from './inotifier';
 import {visibilityWatcher} from './visibilitywatcher';
 
 
-/** @inheritDoc */
-export class Notifier implements INotifier {
+/**
+ * Manages user-facing notifications.
+ */
+export class Notifier {
 	/** @ignore */
 	private static readonly config	= {
 		audio: '/audio/beep.mp3',
@@ -67,7 +68,10 @@ export class Notifier implements INotifier {
 	/** @ignore */
 	private readonly openNotifications: any[]	= [];
 
-	/** @inheritDoc */
+	/**
+	 * If user isn't currently viewing this window, sends notification.
+	 * @param message
+	 */
 	public notify (message: string) : void {
 		if (!this.disableNotify && !visibilityWatcher.isVisible) {
 			this.disableNotify	= true;

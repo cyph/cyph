@@ -3,23 +3,26 @@ import {events} from '../../session/enums';
 import {ISession} from '../../session/isession';
 import {strings} from '../../strings';
 import {util} from '../../util';
+import {DialogManager} from '../dialogmanager';
 import {elements as cyphElements} from '../elements';
-import {IDialogManager} from '../idialogmanager';
 import {IChatMessage} from './ichatmessage';
-import {ICyphertext} from './icyphertext';
 import {IElements} from './ielements';
 
 
-/** @inheritDoc */
-export class Cyphertext implements ICyphertext {
+/**
+ * Represents cyphertext chat UI component.
+ */
+export class Cyphertext {
 	/** @ignore */
 	private static readonly curtainClass: string	= 'curtain';
 
 
-	/** @inheritDoc */
+	/** Cyphertext message list. */
 	public readonly messages: IChatMessage[]	= [];
 
-	/** @inheritDoc */
+	/**
+	 * Hides cyphertext UI.
+	 */
 	public hide () : void {
 		if ($('.' + Cyphertext.curtainClass).length > 0) {
 			this.elements.everything().removeClass(Cyphertext.curtainClass);
@@ -31,7 +34,11 @@ export class Cyphertext implements ICyphertext {
 		}
 	}
 
-	/** @inheritDoc */
+	/**
+	 * Logs new cyphertext message.
+	 * @param text
+	 * @param author
+	 */
 	public log (text: string, author: string) : void {
 		if (text) {
 			/* Performance optimisation */
@@ -51,7 +58,9 @@ export class Cyphertext implements ICyphertext {
 		}
 	}
 
-	/** @inheritDoc */
+	/**
+	 * Shows cyphertext UI.
+	 */
 	public async show () : Promise<void> {
 		await this.dialogManager.toast({
 			content: strings.cypherToast1,
@@ -77,7 +86,7 @@ export class Cyphertext implements ICyphertext {
 		session: ISession,
 
 		/** @ignore */
-		private readonly dialogManager: IDialogManager,
+		private readonly dialogManager: DialogManager,
 
 		/** @ignore */
 		private readonly isMobile: boolean,

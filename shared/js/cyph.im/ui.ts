@@ -3,10 +3,9 @@ import {P2P} from '../cyph/p2p/p2p';
 import {events} from '../cyph/session/enums';
 import {strings} from '../cyph/strings';
 import * as Chat from '../cyph/ui/chat';
+import {DialogManager} from '../cyph/ui/dialogmanager';
 import {elements} from '../cyph/ui/elements';
-import {IDialogManager} from '../cyph/ui/idialogmanager';
-import {INotifier} from '../cyph/ui/inotifier';
-import {ISignupForm} from '../cyph/ui/isignupform';
+import {Notifier} from '../cyph/ui/notifier';
 import {SignupForm} from '../cyph/ui/signupform';
 import {urlState} from '../cyph/urlstate';
 import {util} from '../cyph/util';
@@ -28,13 +27,13 @@ export class UI {
 	public betaState: BetaStates	= BetaStates.none;
 
 	/** @see Chat.IChat */
-	public chat: Chat.IChat;
+	public chat: Chat.Chat;
 
 	/** @see LinkConnection.baseUrl */
 	public linkConnectionBaseUrl: string;
 
 	/** Signup form to be displayed at the end of a cyph. */
-	public signupForm: ISignupForm;
+	public signupForm: SignupForm;
 
 	/** @ignore */
 	private onUrlStateChange (newUrlState: string) : void {
@@ -147,11 +146,11 @@ export class UI {
 	}
 
 	constructor (
-		/** @see IDialogManager */
-		public readonly dialogManager: IDialogManager,
+		/** @see DialogManager */
+		public readonly dialogManager: DialogManager,
 
 		/** @ignore */
-		private readonly notifier: INotifier
+		private readonly notifier: Notifier
 	) {
 		urlState.onChange(newUrlState => { this.onUrlStateChange(newUrlState); });
 

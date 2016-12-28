@@ -2,23 +2,23 @@ import {config} from '../../config';
 import {potassium} from '../../crypto/potassium';
 import {UIEvents} from '../../files/enums';
 import {Files} from '../../files/files';
-import {IFiles} from '../../files/ifiles';
-import {ITransfer} from '../../files/itransfer';
+import {Transfer} from '../../files/transfer';
 import {events, users} from '../../session/enums';
 import {strings} from '../../strings';
 import {util} from '../../util';
-import {IDialogManager} from '../idialogmanager';
-import {IChat} from './ichat';
-import {IFileManager} from './ifilemanager';
+import {DialogManager} from '../dialogmanager';
+import {Chat} from './chat';
 
 
-/** @inheritDoc */
-export class FileManager implements IFileManager {
-	/** @inheritDoc */
-	public readonly files: IFiles;
+/**
+ * Manages files within a chat.
+ */
+export class FileManager {
+	/** @see Files */
+	public readonly files: Files;
 
 	/** @ignore */
-	private addImage (transfer: ITransfer, plaintext: Uint8Array) : void {
+	private addImage (transfer: Transfer, plaintext: Uint8Array) : void {
 		this.chat.addMessage(
 			`![](data:${transfer.fileType};base64,${potassium.toBase64(plaintext)})` +
 				`\n\n#### ${transfer.name}`
@@ -83,7 +83,13 @@ export class FileManager implements IFileManager {
 		}
 	}
 
-	/** @inheritDoc */
+	/**
+	 * Sends file.
+	 * @param file
+	 * @param image If true, file is processed as an image
+	 * (compressed and displayed in the message list).
+	 * @param imageSelfDestructTimeout
+	 */
 	public async send (
 		file: File,
 		image: boolean = file.type.indexOf('image/') === 0,
@@ -118,10 +124,10 @@ export class FileManager implements IFileManager {
 
 	constructor (
 		/** @ignore */
-		private readonly chat: IChat,
+		private readonly chat: Chat,
 
 		/** @ignore */
-		private readonly dialogManager: IDialogManager
+		private readonly dialogManager: DialogManager
 	) {
 		this.files	= new Files(this.chat.session);
 
@@ -133,7 +139,7 @@ export class FileManager implements IFileManager {
 			}) => {
 				switch (e.event) {
 					case UIEvents.completed: {
-						const transfer: ITransfer	= e.args[0];
+						const transfer: Transfer	= e.args[0];
 						const plaintext: Uint8Array	= e.args[1];
 
 						if (transfer.answer && transfer.image) {
@@ -153,7 +159,7 @@ export class FileManager implements IFileManager {
 						break;
 					}
 					case UIEvents.confirm: {
-						const transfer: ITransfer				= e.args[0];
+						const transfer: Transfer				= e.args[0];
 						const isSave: boolean					= e.args[1];
 						const callback: (ok: boolean) => void	= e.args[2];
 
@@ -183,7 +189,7 @@ export class FileManager implements IFileManager {
 						break;
 					}
 					case UIEvents.rejected: {
-						const transfer: ITransfer	= e.args[0];
+						const transfer: Transfer	= e.args[0];
 
 						this.chat.addMessage(
 							`${strings.incomingFileRejected} ${transfer.name}`,
@@ -194,7 +200,7 @@ export class FileManager implements IFileManager {
 						break;
 					}
 					case UIEvents.save: {
-						const transfer: ITransfer	= e.args[0];
+						const transfer: Transfer	= e.args[0];
 						const plaintext: Uint8Array	= e.args[1];
 
 						if (transfer.image) {
@@ -206,7 +212,7 @@ export class FileManager implements IFileManager {
 						break;
 					}
 					case UIEvents.started: {
-						const transfer: ITransfer	= e.args[0];
+						const transfer: Transfer	= e.args[0];
 
 						const message: string	= transfer.author === users.me ?
 							strings.fileTransferInitMe :

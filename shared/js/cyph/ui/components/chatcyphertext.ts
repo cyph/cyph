@@ -1,7 +1,7 @@
 import {Component, Input} from '@angular/core';
 import {Users, users} from '../../session/enums';
 import {Strings, strings} from '../../strings';
-import {IChat} from '../chat/ichat';
+import {Chat} from '../chat/chat';
 
 
 /**
@@ -13,7 +13,7 @@ import {IChat} from '../chat/ichat';
 })
 export class ChatCyphertext {
 	/** @see IChat */
-	@Input() public self: IChat;
+	@Input() public self: Chat;
 
 	/** @see Strings */
 	public readonly strings: Strings	= strings;

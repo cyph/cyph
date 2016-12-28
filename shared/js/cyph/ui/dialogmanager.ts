@@ -1,14 +1,18 @@
 import * as angular from 'angular';
 import {util} from '../util';
-import {IDialogManager} from './idialogmanager';
 
 
-/** @inheritDoc */
-export class DialogManager implements IDialogManager {
+/**
+ * Represents modal/dialog functionality.
+ */
+export class DialogManager {
 	/** @ignore */
 	private readonly lock: {}	= {};
 
-	/** @inheritDoc */
+	/**
+	 * Displays alert.
+	 * @param o
+	 */
 	public async alert (
 		o: {
 			title: string;
@@ -26,7 +30,10 @@ export class DialogManager implements IDialogManager {
 		);
 	}
 
-	/** @inheritDoc */
+	/**
+	 * Generic modal implementation that takes a template / content.
+	 * @param o
+	 */
 	public async baseDialog (
 		o: {
 			template: string;
@@ -56,7 +63,10 @@ export class DialogManager implements IDialogManager {
 		);
 	}
 
-	/** @inheritDoc */
+	/**
+	 * Displays interactive confirmation prompt.
+	 * @param o
+	 */
 	public async confirm (
 		o: {
 			title: string;
@@ -94,7 +104,10 @@ export class DialogManager implements IDialogManager {
 		});
 	}
 
-	/** @inheritDoc */
+	/**
+	 * Displays toast notification.
+	 * @param o
+	 */
 	public async toast (
 		o: {
 			content: string;

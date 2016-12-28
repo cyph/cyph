@@ -1,48 +1,50 @@
 import {users} from '../session/enums';
+import {IMessageData} from '../session/imessagedata';
 import {util} from '../util';
-import {ITransfer} from './itransfer';
 
 
-/** @inheritDoc */
-export class Transfer implements ITransfer {
+/**
+ * Represents an active file transfer.
+ */
+export class Transfer implements IMessageData {
 	constructor (
-		/** @inheritDoc */
+		/** File name. */
 		public readonly name: string = '',
 
-		/** @inheritDoc */
+		/** MIME type. */
 		public readonly fileType: string = '',
 
-		/** @inheritDoc */
+		/** Indicates whether file should be handled as an image. */
 		public readonly image: boolean = false,
 
-		/** @inheritDoc */
-		public readonly imageSelfDestructTimeout: number = 0,
+		/** If image is true, this will be used as a self-destruct timeout for the message. */
+		public imageSelfDestructTimeout: number = 0,
 
-		/** @inheritDoc */
-		public readonly size: number = 0,
+		/** File size in bytes (e.g. 3293860). */
+		public size: number = 0,
 
-		/** @inheritDoc */
-		public readonly key: Uint8Array = new Uint8Array(0),
+		/** Symmetric key used for encrypting file over the wire. */
+		public key: Uint8Array = new Uint8Array(0),
 
-		/** @inheritDoc */
-		public readonly isOutgoing: boolean = true,
+		/** Indicates whether file is being sent from this Cyph instance. */
+		public isOutgoing: boolean = true,
 
-		/** @inheritDoc */
-		public readonly url: string = '',
+		/** File URL. */
+		public url: string = '',
 
-		/** @inheritDoc */
-		public readonly percentComplete: number = 0,
+		/** Percentage completion of transfer. */
+		public percentComplete: number = 0,
 
-		/** @inheritDoc */
+		/** Unique ID to represent this file transfer. */
 		public readonly id: string = util.generateGuid(),
 
-		/** @inheritDoc */
-		public readonly answer: boolean|undefined = undefined,
+		/** If defined, indicates an acceptance or rejection of a file transfer. */
+		public answer: boolean|undefined = undefined,
 
 		/** @inheritDoc */
-		public readonly author: string = users.me,
+		public author: string = users.me,
 
 		/** @inheritDoc */
-		public readonly timestamp: number = util.timestamp()
+		public timestamp: number = util.timestamp()
 	) {}
 }

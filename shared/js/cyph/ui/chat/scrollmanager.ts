@@ -2,13 +2,14 @@ import {util} from '../../util';
 import {Elements as CyphElements, elements as cyphElements} from '../elements';
 import {nanoScroller} from '../nanoscroller';
 import {visibilityWatcher} from '../visibilitywatcher';
-import {IChat} from './ichat';
+import {Chat} from './chat';
 import {IElements} from './ielements';
-import {IScrollManager} from './iscrollmanager';
 
 
-/** @inheritDoc */
-export class ScrollManager implements IScrollManager {
+/**
+ * Manages scrolling and scroll-detection within a chat component.
+ */
+export class ScrollManager {
 	/** @ignore */
 	private messageCountLock: {}	= {};
 
@@ -24,7 +25,7 @@ export class ScrollManager implements IScrollManager {
 	/** @ignore */
 	private processedMessages: Set<number>	= new Set<number>();
 
-	/** @inheritDoc */
+	/** Number of messages that haven't appeared in viewport. */
 	public unreadMessages: number	= 0;
 
 	/** @ignore */
@@ -95,7 +96,11 @@ export class ScrollManager implements IScrollManager {
 		});
 	}
 
-	/** @inheritDoc */
+	/**
+	 * Scrolls to bottom of message list.
+	 * @param shouldScrollCyphertext If true, scrolls cyphertext UI
+	 * instead of main message list
+	 */
 	public async scrollDown (shouldScrollCyphertext?: boolean) : Promise<void> {
 		return util.lockTryOnce(
 			shouldScrollCyphertext ?
@@ -130,7 +135,7 @@ export class ScrollManager implements IScrollManager {
 
 	constructor (
 		/** @ignore */
-		private readonly chat: IChat,
+		private readonly chat: Chat,
 
 		/** @ignore */
 		private readonly elements: IElements,
