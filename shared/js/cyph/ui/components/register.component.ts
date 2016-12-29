@@ -1,6 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {Env, env} from '../../env';
-import {SignupForm} from '../signup-form';
+import {SignupService} from '../services/signup.service';
 
 
 /**
@@ -11,14 +11,14 @@ import {SignupForm} from '../signup-form';
 	templateUrl: '../../../../templates/register.html'
 })
 export class RegisterComponent {
-	/** @see ISignupForm */
-	@Input() public signupForm: SignupForm;
-
-	/** @see SignupForm.invite */
+	/** @see SignupFormComponent.invite */
 	@Input() public invite: boolean;
 
 	/** @see Env */
 	public readonly env: Env	= env;
 
-	constructor () {}
+	constructor (
+		/** @see SignupService */
+		public signupService: SignupService
+	) {}
 }

@@ -1,5 +1,5 @@
-<div class='beta-signup-form' *ngIf='self'>
-	<form (submit)='self.submit()' *ngIf='self.state === 0'>
+<div class='beta-signup-form'>
+	<form (submit)='submit()' *ngIf='signupService.state === 0'>
 		<div class='layout-row layout-align-center-center flex'>
 			<ng-content></ng-content>
 		</div>
@@ -10,7 +10,7 @@
 						cyphTranslate
 						class='flex-80'
 						childClass='md-block'
-						[(model)]='self.data.email'
+						[(model)]='signupService.data.email'
 						formName='email'
 						type='email'
 						label='Email'
@@ -44,7 +44,7 @@
 						cyphTranslate
 						class='flex-80'
 						childClass='md-block'
-						[(model)]='self.data.inviteCode'
+						[(model)]='signupService.data.inviteCode'
 						formName='inviteCode'
 						type='text'
 						label='Invite Code'
@@ -91,7 +91,7 @@
 		</div>
 	</form>
 
-	<form (submit)='self.submit()' *ngIf='self.state === 1'>
+	<form (submit)='submit()' *ngIf='signupService.state === 1'>
 		<div class='layout-row layout-align-center-center flex'>
 			<div class='layout-column flex'>
 				<div class='layout-row layout-align-center-center'>
@@ -99,7 +99,7 @@
 						cyphTranslate
 						class='flex-80'
 						childClass='md-block'
-						[(model)]='self.data.email'
+						[(model)]='signupService.data.email'
 						formName='email'
 						type='email'
 						label='Email'
@@ -111,7 +111,7 @@
 						cyphTranslate
 						class='flex-80'
 						childClass='md-block'
-						[(model)]='self.data.inviteCode'
+						[(model)]='signupService.data.inviteCode'
 						formName='inviteCode'
 						type='text'
 						label='Invite Code'
@@ -131,7 +131,7 @@
 		</div>
 	</form>
 
-	<form (submit)='self.submit()' *ngIf='self.state === 2'>
+	<form (submit)='submit()' *ngIf='signupService.state === 2'>
 		<div class='layout-row layout-align-center-center flex'>
 			<div class='layout-column flex'>
 				<div class='layout-row layout-align-center-center'>
@@ -139,7 +139,7 @@
 						cyphTranslate
 						class='flex-80'
 						childClass='md-block'
-						[(model)]='self.data.name'
+						[(model)]='signupService.data.name'
 						formName='name'
 						label='Name (optional)'
 					></md2-input>
@@ -157,13 +157,13 @@
 		</div>
 	</form>
 
-	<form (submit)='self.submit()' *ngIf='self.state === 3'>
+	<form (submit)='submit()' *ngIf='signupService.state === 3'>
 		<div class='layout-row layout-align-center-center flex'>
 			<div class='layout-column flex'>
 				<div class='layout-row layout-align-center-center'>
 					<p class='flex-80'>
 						<span cyphTranslate>Thanks for subscribing,</span>
-						<span>{{self.data.name}}!</span>
+						<span>{{signupService.data.name}}!</span>
 						<span cyphTranslate>We'll email you when your invite is ready.</span>
 					</p>
 				</div>

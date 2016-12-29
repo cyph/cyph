@@ -6,10 +6,7 @@
 		class='cyph-view layout-fill layout-column flex'
 		*ngIf='!!ui && !!ui.chat'
 	>
-		<cyph-signup-form
-			[self]='ui.signupForm'
-			*ngIf='!!ui && !!ui.signupForm'
-		>
+		<cyph-signup-form>
 			{{strings.signupMessage1}}
 			{{strings.signupMessage2}}
 		</cyph-signup-form>

@@ -1,11 +1,12 @@
 import {config} from '../cyph/config';
 import {Email} from '../cyph/email';
 import {env} from '../cyph/env';
+import {eventManager} from '../cyph/event-manager';
 import {Carousel} from '../cyph/ui/carousel';
 import * as Chat from '../cyph/ui/chat/enums';
 import {DialogManager} from '../cyph/ui/dialog-manager';
 import * as CyphElements from '../cyph/ui/elements';
-import {SignupForm} from '../cyph/ui/signup-form';
+import {SignupService} from '../cyph/ui/services/signup.service';
 import {urlState} from '../cyph/url-state';
 import {util} from '../cyph/util';
 import {CyphDemo} from './cyph-demo';
@@ -90,9 +91,6 @@ export class UI {
 	/** @see CyphDemo */
 	public readonly cyphDemo: CyphDemo;
 
-	/** Signup form to be displayed throughout the site. */
-	public readonly signupForm: SignupForm;
-
 	/** Carousel of features. */
 	public featureCarousel: Carousel;
 
@@ -152,21 +150,20 @@ export class UI {
 
 			if (promo) {
 				this.promo				= promo;
-				this.signupForm.promo	= Promos[promo];
+
+				eventManager.trigger(
+					SignupService.promoEvent,
+					Promos[promo]
+				);
 			}
 
 			await util.sleep();
 
 			if (this.homeSection === HomeSections.register) {
 				await this.dialogManager.baseDialog({
-					locals: {
-						signupForm: this.signupForm
-					},
 					template: `
 						<md-dialog>
-							<cyph-register
-								[signup-form]='locals.signupForm'
-							></cyph-register>
+							<cyph-register></cyph-register>
 						</md-dialog>
 					`
 				});
@@ -174,20 +171,15 @@ export class UI {
 				urlState.setUrl('');
 			}
 			else if (this.homeSection === HomeSections.invite) {
-				this.signupForm.data.inviteCode	=
+				eventManager.trigger(
+					SignupService.inviteEvent,
 					urlState.getUrl().split(HomeSections[HomeSections.invite] + '/')[1] || ''
-				;
+				);
 
 				await this.dialogManager.baseDialog({
-					locals: {
-						signupForm: this.signupForm
-					},
 					template: `
 						<md-dialog>
-							<cyph-register
-								[invite]='true'
-								[signup-form]='locals.signupForm'
-							></cyph-register>
+							<cyph-register [invite]='true'></cyph-register>
 						</md-dialog>
 					`
 				});
@@ -267,7 +259,6 @@ export class UI {
 		/** @ignore */
 		private readonly dialogManager: DialogManager
 	) {
-		this.signupForm	= new SignupForm();
 		this.cyphDemo	= new CyphDemo(this.dialogManager);
 
 		if (!env.isMobile) {

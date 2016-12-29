@@ -5,11 +5,11 @@ import {BetaStates} from './enums';
 
 
 /**
- * Angular component for the cyph beta screen.
+ * Angular component for the Cyph beta screen.
  */
 @Component({
 	selector: 'cyph-beta',
-	templateUrl: '../../templates/beta.html'
+	templateUrl: '../../templates/cyph.im/beta.html'
 })
 export class BetaComponent {
 	/** @ignore */

@@ -45,6 +45,15 @@ import {MdTextareaComponent} from '../cyph/ui/components/material/md-textarea.co
 import {NotFoundComponent} from '../cyph/ui/components/not-found.component';
 import {SignupFormComponent} from '../cyph/ui/components/signup-form.component';
 import {TranslateDirective} from '../cyph/ui/directives/translate.directive';
+import {ChatService} from '../cyph/ui/services/chat.service';
+import {DialogService} from '../cyph/ui/services/dialog.service';
+import {FileService} from '../cyph/ui/services/file.service';
+import {NotificationService} from '../cyph/ui/services/notification.service';
+import {P2pService} from '../cyph/ui/services/p2p.service';
+import {ScrollService} from '../cyph/ui/services/scroll.service';
+import {SignupService} from '../cyph/ui/services/signup.service';
+import {VirtualKeyboardWatcherService} from '../cyph/ui/services/virtual-keyboard-watcher.service';
+import {VisibilityWatcherService} from '../cyph/ui/services/visibility-watcher.service';
 import {AppComponent} from './app.component';
 import {BetaComponent} from './beta.component';
 
@@ -101,6 +110,17 @@ import {BetaComponent} from './beta.component';
 		CommonModule,
 		FormsModule,
 		UpgradeModule
+	],
+	providers: [
+		ChatService,
+		DialogService,
+		FileService,
+		NotificationService,
+		P2pService,
+		ScrollService,
+		SignupService,
+		VirtualKeyboardWatcherService,
+		VisibilityWatcherService
 	]
 })
 export class AppModule {

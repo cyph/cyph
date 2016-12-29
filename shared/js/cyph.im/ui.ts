@@ -6,7 +6,6 @@ import * as Chat from '../cyph/ui/chat';
 import {DialogManager} from '../cyph/ui/dialog-manager';
 import {elements} from '../cyph/ui/elements';
 import {Notifier} from '../cyph/ui/notifier';
-import {SignupForm} from '../cyph/ui/signup-form';
 import {urlState} from '../cyph/url-state';
 import {util} from '../cyph/util';
 import {BetaStates, States, urlSections} from './enums';
@@ -31,9 +30,6 @@ export class UI {
 
 	/** @see LinkConnection.baseUrl */
 	public linkConnectionBaseUrl: string;
-
-	/** Signup form to be displayed at the end of a cyph. */
-	public signupForm: SignupForm;
 
 	/** @ignore */
 	private onUrlStateChange (newUrlState: string) : void {
@@ -95,8 +91,6 @@ export class UI {
 			this.notifier,
 			true
 		);
-
-		this.signupForm		= new SignupForm();
 
 
 		if (initialCallType) {

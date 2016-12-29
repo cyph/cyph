@@ -14,7 +14,7 @@ import {UI} from './ui';
  */
 @Component({
 	selector: 'cyph-app',
-	templateUrl: '../../templates/cyph.im.html'
+	templateUrl: '../../templates/cyph.im/index.html'
 })
 export class AppComponent {
 	/** @ignore */
