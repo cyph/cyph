@@ -12,7 +12,7 @@ import {States} from '../chat/enums';
  */
 @Component({
 	selector: 'cyph-chat-main',
-	templateUrl: '../../../../templates/chatmain.html'
+	templateUrl: '../../../../templates/chat-main.html'
 })
 export class ChatMainComponent implements OnInit {
 	/** @see IChat */

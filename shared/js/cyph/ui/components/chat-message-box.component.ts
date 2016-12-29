@@ -14,7 +14,7 @@ import {visibilityWatcher} from '../visibility-watcher';
  */
 @Component({
 	selector: 'cyph-chat-message-box',
-	templateUrl: '../../../../templates/chatmessagebox.html'
+	templateUrl: '../../../../templates/chat-message-box.html'
 })
 export class ChatMessageBoxComponent implements OnInit {
 	/** @see IChat */

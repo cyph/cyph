@@ -9,7 +9,7 @@ import {Chat} from '../chat/chat';
  */
 @Component({
 	selector: 'cyph-chat-cyphertext',
-	templateUrl: '../../../../templates/chatcyphertext.html'
+	templateUrl: '../../../../templates/chat-cyphertext.html'
 })
 export class ChatCyphertextComponent {
 	/** @see IChat */

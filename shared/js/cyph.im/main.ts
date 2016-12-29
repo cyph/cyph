@@ -8,35 +8,37 @@ import {downgradeComponent, UpgradeModule} from '@angular/upgrade/static';
 import * as angular from 'angular';
 import {config} from '../cyph/config';
 import {eventManager} from '../cyph/event-manager';
-import {FileInputComponent} from '../cyph/ui/components/fileinput.component';
+import {FileInputComponent} from '../cyph/ui/components/file-input.component';
 import {HelpComponent} from '../cyph/ui/components/help.component';
-import {MdButtonComponent} from '../cyph/ui/components/material/mdbutton.component';
-import {MdCardComponent} from '../cyph/ui/components/material/mdcard.component';
-import {MdCardContentComponent} from '../cyph/ui/components/material/mdcardcontent.component';
-import {MdCardHeaderComponent} from '../cyph/ui/components/material/mdcardheader.component';
+import {MdButtonComponent} from '../cyph/ui/components/material/md-button.component';
+import {MdCardContentComponent} from '../cyph/ui/components/material/md-card-content.component';
 import {
 	MdCardHeaderTextComponent
-} from '../cyph/ui/components/material/mdcardheadertext.component';
-import {MdCardTitleComponent} from '../cyph/ui/components/material/mdcardtitle.component';
-import {MdCardTitleTextComponent} from '../cyph/ui/components/material/mdcardtitletext.component';
-import {MdContentComponent} from '../cyph/ui/components/material/mdcontent.component';
-import {MdFabSpeedDialComponent} from '../cyph/ui/components/material/mdfabspeeddial.component';
-import {MdIconComponent} from '../cyph/ui/components/material/mdicon.component';
-import {MdInputComponent} from '../cyph/ui/components/material/mdinput.component';
-import {MdListComponent} from '../cyph/ui/components/material/mdlist.component';
-import {MdListItemComponent} from '../cyph/ui/components/material/mdlistitem.component';
-import {MdMenuComponent} from '../cyph/ui/components/material/mdmenu.component';
+} from '../cyph/ui/components/material/md-card-header-text.component';
+import {MdCardHeaderComponent} from '../cyph/ui/components/material/md-card-header.component';
+import {
+	MdCardTitleTextComponent
+} from '../cyph/ui/components/material/md-card-title-text.component';
+import {MdCardTitleComponent} from '../cyph/ui/components/material/md-card-title.component';
+import {MdCardComponent} from '../cyph/ui/components/material/md-card.component';
+import {MdContentComponent} from '../cyph/ui/components/material/md-content.component';
+import {MdFabSpeedDialComponent} from '../cyph/ui/components/material/md-fab-speed-dial.component';
+import {MdIconComponent} from '../cyph/ui/components/material/md-icon.component';
+import {MdInputComponent} from '../cyph/ui/components/material/md-input.component';
+import {MdListItemComponent} from '../cyph/ui/components/material/md-list-item.component';
+import {MdListComponent} from '../cyph/ui/components/material/md-list.component';
+import {MdMenuComponent} from '../cyph/ui/components/material/md-menu.component';
 import {
 	MdProgressCircularComponent
-} from '../cyph/ui/components/material/mdprogresscircular.component';
+} from '../cyph/ui/components/material/md-progress-circular.component';
 import {
 	MdProgressLinearComponent
-} from '../cyph/ui/components/material/mdprogresslinear.component';
-import {MdSelectComponent} from '../cyph/ui/components/material/mdselect.component';
-import {MdSubheaderComponent} from '../cyph/ui/components/material/mdsubheader.component';
-import {MdSwitchComponent} from '../cyph/ui/components/material/mdswitch.component';
-import {MdTabsComponent} from '../cyph/ui/components/material/mdtabs.component';
-import {MdTextareaComponent} from '../cyph/ui/components/material/mdtextarea.component';
+} from '../cyph/ui/components/material/md-progress-linear.component';
+import {MdSelectComponent} from '../cyph/ui/components/material/md-select.component';
+import {MdSubheaderComponent} from '../cyph/ui/components/material/md-subheader.component';
+import {MdSwitchComponent} from '../cyph/ui/components/material/md-switch.component';
+import {MdTabsComponent} from '../cyph/ui/components/material/md-tabs.component';
+import {MdTextareaComponent} from '../cyph/ui/components/material/md-textarea.component';
 import {elements} from '../cyph/ui/elements';
 import {loaded} from '../preload';
 import {AppComponent} from './app.component';

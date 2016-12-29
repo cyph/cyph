@@ -8,7 +8,7 @@ import {SignupForm as SignupFormService} from '../signup-form';
  */
 @Component({
 	selector: 'cyph-signup-form',
-	templateUrl: '../../../../templates/signupform.html'
+	templateUrl: '../../../../templates/signup-form.html'
 })
 export class SignupFormComponent {
 	/** @see ISignupForm */

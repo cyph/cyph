@@ -8,7 +8,7 @@ import {Elements} from '../elements';
  */
 @Component({
 	selector: 'cyph-file-input',
-	templateUrl: '../../../../templates/fileinput.html'
+	templateUrl: '../../../../templates/file-input.html'
 })
 export class FileInputComponent {
 	/** Optional file type restriction. */

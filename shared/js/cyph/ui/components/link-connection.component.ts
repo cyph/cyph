@@ -24,7 +24,7 @@ import {Elements} from '../elements';
  */
 @Component({
 	selector: 'cyph-link-connection',
-	templateUrl: '../../../../templates/linkconnection.html'
+	templateUrl: '../../../../templates/link-connection.html'
 })
 export class LinkConnectionComponent implements OnChanges {
 	/** @ignore */

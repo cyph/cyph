@@ -7,7 +7,7 @@ import {Env, env} from '../../env';
  */
 @Component({
 	selector: 'cyph-not-found',
-	templateUrl: '../../../../templates/notfound.html'
+	templateUrl: '../../../../templates/not-found.html'
 })
 export class NotFoundComponent {
 	/** @see Env */

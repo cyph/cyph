@@ -9,7 +9,7 @@ import {IChatMessage} from '../chat/ichat-message';
  */
 @Component({
 	selector: 'cyph-chat-message',
-	templateUrl: '../../../../templates/chatmessage.html'
+	templateUrl: '../../../../templates/chat-message.html'
 })
 export class ChatMessageComponent {
 	/** @see IChatMessage */
