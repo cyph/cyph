@@ -8,7 +8,7 @@ import {elements} from './elements';
  */
 export class NanoScroller {
 	/** Indicates whether NanoScroller is to be used. */
-	private static readonly isActive: boolean	= !env.isMobile && !env.isOSX;
+	private static readonly isActive: boolean	= !env.isMobile && !env.isMacOS;
 
 
 	/**

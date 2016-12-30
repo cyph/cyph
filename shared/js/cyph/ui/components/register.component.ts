@@ -19,6 +19,6 @@ export class RegisterComponent {
 
 	constructor (
 		/** @see SignupService */
-		public signupService: SignupService
+		public readonly signupService: SignupService
 	) {}
 }

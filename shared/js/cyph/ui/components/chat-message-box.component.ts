@@ -5,8 +5,9 @@ import {util} from '../../util';
 import {Chat} from '../chat/chat';
 import {States} from '../chat/enums';
 import {Elements} from '../elements';
-import {virtualKeyboardWatcher} from '../virtual-keyboard-watcher';
-import {visibilityWatcher} from '../visibility-watcher';
+import {ScrollService} from '../services/scroll.service';
+import {VirtualKeyboardWatcherService} from '../services/virtual-keyboard-watcher.service';
+import {VisibilityWatcherService} from '../services/visibility-watcher.service';
 
 
 /**
@@ -147,7 +148,7 @@ export class ChatMessageBoxComponent implements OnInit {
 		const isVideoCallMessageBox	= $element.hasClass('video-call-message-box');
 
 		while (
-			!visibilityWatcher.isVisible ||
+			!this.visibilityWatcherService.isVisible ||
 			!$element.is(':visible') ||
 			(
 				isVideoCallMessageBox &&
@@ -171,7 +172,7 @@ export class ChatMessageBoxComponent implements OnInit {
 
 		$textarea.keypress(e => {
 			if (
-				(env.isMobile && virtualKeyboardWatcher.isOpen) ||
+				(env.isMobile && this.virtualKeyboardWatcherService.isOpen) ||
 				e.keyCode !== 13 ||
 				e.shiftKey
 			) {
@@ -195,7 +196,7 @@ export class ChatMessageBoxComponent implements OnInit {
 			$textarea.on('mousedown', e => {
 				const now: number	= util.timestamp();
 
-				if ($textarea.is(':focus') && !virtualKeyboardWatcher.isOpen) {
+				if ($textarea.is(':focus') && !this.virtualKeyboardWatcherService.isOpen) {
 					$textarea.blur();
 				}
 
@@ -234,7 +235,7 @@ export class ChatMessageBoxComponent implements OnInit {
 				e.preventDefault();
 			}).focus(async () => {
 				await util.sleep(750);
-				this.self.scrollManager.scrollDown();
+				this.scrollService.scrollDown();
 			});
 		}
 		else {
@@ -256,6 +257,15 @@ export class ChatMessageBoxComponent implements OnInit {
 
 	constructor (
 		/** @ignore */
-		private readonly elementRef: ElementRef
+		private readonly elementRef: ElementRef,
+
+		/** @ignore */
+		private readonly virtualKeyboardWatcherService: VirtualKeyboardWatcherService,
+
+		/** @ignore */
+		private readonly visibilityWatcherService: VisibilityWatcherService,
+
+		/** @ignore */
+		public readonly scrollService: ScrollService
 	) {}
 }

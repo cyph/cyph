@@ -97,15 +97,15 @@
 
 	<md2-subheader
 		childClass='new-messages md-subheader-colored md-sticky-clone'
-		*ngIf='self.scrollManager.unreadMessages > 0'
+		*ngIf='scrollService.unreadItemCount > 0'
 		stickyState='active'
-		(click)='self.scrollManager.scrollDown()'
+		(click)='scrollService.scrollDown()'
 		[text]='
 			"↓  " +
-			self.scrollManager.unreadMessages +
+			scrollService.unreadItemCount +
 			" " + strings.newString + " " +
 			(
-				self.scrollManager.unreadMessages === 1 ?
+				scrollService.unreadItemCount === 1 ?
 					strings.message :
 					strings.messages
 			)

@@ -54,8 +54,8 @@ export class Env extends EnvDeploy {
 	/** Indicates whether this is Edge. */
 	public readonly isEdge: boolean		= /edge\/\d+/.test(this.userAgent);
 
-	/** Indicates whether this is OS X. */
-	public readonly isOSX: boolean		= /mac os x/.test(this.userAgent);
+	/** Indicates whether this is macOS / OS X. */
+	public readonly isMacOS: boolean	= /mac os x/.test(this.userAgent);
 
 	/** Indicates whether this is Android. */
 	public readonly isAndroid: boolean	= /android/.test(this.userAgent);

@@ -4,6 +4,11 @@ import {Config, config} from '../cyph/config';
 import {Env, env} from '../cyph/env';
 import {eventManager} from '../cyph/event-manager';
 import {DialogManager} from '../cyph/ui/dialog-manager';
+import {DialogService} from '../cyph/ui/services/dialog.service';
+import {NotificationService} from '../cyph/ui/services/notification.service';
+import {SignupService} from '../cyph/ui/services/signup.service';
+import {VirtualKeyboardWatcherService} from '../cyph/ui/services/virtual-keyboard-watcher.service';
+import {VisibilityWatcherService} from '../cyph/ui/services/visibility-watcher.service';
 import {util} from '../cyph/util';
 import {Promos, States} from './enums';
 import {UI} from './ui';
@@ -13,6 +18,13 @@ import {UI} from './ui';
  * Angular component for Cyph home page.
  */
 @Component({
+	providers: [
+		DialogService,
+		NotificationService,
+		SignupService,
+		VirtualKeyboardWatcherService,
+		VisibilityWatcherService
+	],
 	selector: 'cyph-app',
 	templateUrl: '../../templates/cyph.com/index.html'
 })

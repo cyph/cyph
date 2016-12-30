@@ -41,9 +41,9 @@ export class SignupFormComponent implements OnInit {
 
 	constructor (
 		/** @ignore */
-		private elementRef: ElementRef,
+		private readonly elementRef: ElementRef,
 
 		/** @see SignupService */
-		public signupService: SignupService
+		public readonly signupService: SignupService
 	) {}
 }

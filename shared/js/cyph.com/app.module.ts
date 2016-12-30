@@ -1,7 +1,7 @@
 import {CommonModule} from '@angular/common';
 import {NgModule} from '@angular/core';
 import {FormsModule} from '@angular/forms';
-import {BrowserModule} from '@angular/platform-browser';
+import {BrowserModule, Title} from '@angular/platform-browser';
 import {UpgradeModule} from '@angular/upgrade/static';
 import {ChatCyphertextComponent} from '../cyph/ui/components/chat-cyphertext.component';
 import {ChatMainComponent} from '../cyph/ui/components/chat-main.component';
@@ -46,20 +46,11 @@ import {MdToolbarComponent} from '../cyph/ui/components/material/md-toolbar.comp
 import {RegisterComponent} from '../cyph/ui/components/register.component';
 import {SignupFormComponent} from '../cyph/ui/components/signup-form.component';
 import {TranslateDirective} from '../cyph/ui/directives/translate.directive';
-import {ChatService} from '../cyph/ui/services/chat.service';
-import {DialogService} from '../cyph/ui/services/dialog.service';
-import {FileService} from '../cyph/ui/services/file.service';
-import {NotificationService} from '../cyph/ui/services/notification.service';
-import {P2pService} from '../cyph/ui/services/p2p.service';
-import {ScrollService} from '../cyph/ui/services/scroll.service';
-import {SignupService} from '../cyph/ui/services/signup.service';
-import {VirtualKeyboardWatcherService} from '../cyph/ui/services/virtual-keyboard-watcher.service';
-import {VisibilityWatcherService} from '../cyph/ui/services/visibility-watcher.service';
 import {AppComponent} from './app.component';
 
 
 /**
- * Angular module for Cyph UI.
+ * Angular module for Cyph home page.
  */
 @NgModule({
 	declarations: [
@@ -113,15 +104,7 @@ import {AppComponent} from './app.component';
 		UpgradeModule
 	],
 	providers: [
-		ChatService,
-		DialogService,
-		FileService,
-		NotificationService,
-		P2pService,
-		ScrollService,
-		SignupService,
-		VirtualKeyboardWatcherService,
-		VisibilityWatcherService
+		Title
 	]
 })
 export class AppModule {

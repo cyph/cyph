@@ -2,6 +2,7 @@
 	<cyph-chat-main
 		[self]='ui.chat'
 		[hideDisconnectMessage]='env.coBranded'
+		[messageCountInTitle]='true'
 		[class.active]='ui.state === states.chat'
 		class='cyph-view layout-fill layout-column flex'
 		*ngIf='!!ui && !!ui.chat'

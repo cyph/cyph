@@ -219,10 +219,9 @@
 			<md2-list class='layout-fill' childClass='layout-column'>
 				<cyph-chat-message
 					class='layout-row'
-					[attr.message-index]='i'
 					[message]='message'
 					[mobile]='self.isMobile || self.p2pManager.p2p.isActive'
-					*ngFor='let message of self.messages ; let i = index'
+					*ngFor='let message of self.messages'
 				></cyph-chat-message>
 
 				<md2-list-item
