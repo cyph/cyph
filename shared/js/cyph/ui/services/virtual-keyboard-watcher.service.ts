@@ -8,7 +8,7 @@ import {eventManager} from '../../event-manager';
 @Injectable()
 export class VirtualKeyboardWatcherService {
 	/** @ignore */
-	private readonly initialScreenSize: number	= self.innerHeight;
+	private readonly initialScreenSize: number		= self.innerHeight;
 
 	/** @ignore */
 	private readonly keyboardChangeEvent: string	= 'keyboardChangeEvent';
@@ -33,7 +33,7 @@ export class VirtualKeyboardWatcherService {
 	 * Sets handler to run when keyboard status changes.
 	 * @param handler
 	 */
-	public onChange (handler: (data: boolean) => void) : void {
+	public onChange (handler: (isOpen: boolean) => void) : void {
 		eventManager.on(this.keyboardChangeEvent, handler);
 	}
 
