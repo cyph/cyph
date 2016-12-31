@@ -45,6 +45,7 @@ import {MdTabsComponent} from '../cyph/ui/components/material/md-tabs.component'
 import {MdTextareaComponent} from '../cyph/ui/components/material/md-textarea.component';
 import {NotFoundComponent} from '../cyph/ui/components/not-found.component';
 import {SignupFormComponent} from '../cyph/ui/components/signup-form.component';
+import {NanoScrollerDirective} from '../cyph/ui/directives/nano-scroller.directive';
 import {TranslateDirective} from '../cyph/ui/directives/translate.directive';
 import {MdDialogService} from '../cyph/ui/services/material/md-dialog.service';
 import {MdToastService} from '../cyph/ui/services/material/md-toast.service';
@@ -66,12 +67,13 @@ import {BetaComponent} from './beta.component';
 		ChatRootComponent,
 		ContactComponent,
 		FileInputComponent,
+		FooterComponent,
 		HelpComponent,
 		LinkConnectionComponent,
 		MarkdownComponent,
-		SignupFormComponent,
+		NanoScrollerDirective,
 		NotFoundComponent,
-		FooterComponent,
+		SignupFormComponent,
 		TranslateDirective,
 		MdButtonComponent,
 		MdCardComponent,

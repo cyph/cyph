@@ -203,7 +203,7 @@
 	</div>
 
 	<div
-		class='cyph-view message-list nano flex'
+		class='cyph-view message-list flex'
 		[class.active]='self.state === states.chat'
 		[style.margin-top]='
 			(
@@ -215,7 +215,7 @@
 			) + "px"
 		'
 	>
-		<md2-content class='nano-content' childClass='md-no-flicker'>
+		<md2-content cyphNanoScroller childClass='md-no-flicker'>
 			<md2-list class='layout-fill' childClass='layout-column'>
 				<cyph-chat-message
 					class='layout-row'

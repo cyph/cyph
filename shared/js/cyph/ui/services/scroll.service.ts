@@ -1,6 +1,5 @@
 import {Injectable} from '@angular/core';
 import {Title} from '@angular/platform-browser';
-import {env} from '../../env';
 import {util} from '../../util';
 import {VisibilityWatcherService} from './visibility-watcher.service';
 
@@ -49,8 +48,6 @@ export class ScrollService {
 		this.rootElement		= rootElement;
 		this.itemCountInTitle	= itemCountInTitle;
 
-		this.updateNanoScroller();
-
 		/* Workaround for jQuery appear plugin */
 		const $window	= $(window);
 		this.rootElement.scroll(() => $window.trigger('scroll'));
@@ -83,8 +80,6 @@ export class ScrollService {
 		while (!this.rootElement) {
 			await util.sleep();
 		}
-
-		this.updateNanoScroller();
 
 		if (item.unread) {
 			this.unreadItems.add(item);
@@ -121,18 +116,6 @@ export class ScrollService {
 	/** Number of items that haven't appeared in viewport. */
 	public get unreadItemCount () : number {
 		return this.unreadItems.size;
-	}
-
-	/**
-	 * Handles macOS-style scrollbars (generally intended for use
-	 * only when the scrollbar explicitly needs to be auto-hidden).
-	 */
-	public updateNanoScroller () : void {
-		if (env.isMobile || env.isMacOS || !env.isWeb) {
-			return;
-		}
-
-		(<any> $('.nano')).nanoScroller();
 	}
 
 	constructor (

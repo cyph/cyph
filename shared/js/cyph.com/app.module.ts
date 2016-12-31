@@ -46,6 +46,7 @@ import {MdTextareaComponent} from '../cyph/ui/components/material/md-textarea.co
 import {MdToolbarComponent} from '../cyph/ui/components/material/md-toolbar.component';
 import {RegisterComponent} from '../cyph/ui/components/register.component';
 import {SignupFormComponent} from '../cyph/ui/components/signup-form.component';
+import {NanoScrollerDirective} from '../cyph/ui/directives/nano-scroller.directive';
 import {TranslateDirective} from '../cyph/ui/directives/translate.directive';
 import {MdDialogService} from '../cyph/ui/services/material/md-dialog.service';
 import {MdSidenavService} from '../cyph/ui/services/material/md-sidenav.service';
@@ -69,6 +70,7 @@ import {AppComponent} from './app.component';
 		FileInputComponent,
 		HelpComponent,
 		MarkdownComponent,
+		NanoScrollerDirective,
 		RegisterComponent,
 		SignupFormComponent,
 		TranslateDirective,
