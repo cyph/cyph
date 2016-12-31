@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {env} from '../../env';
 import {eventManager} from '../../event-manager';
 
 
@@ -45,6 +46,10 @@ export class VirtualKeyboardWatcherService {
 	}
 
 	constructor () {
+		if (!env.isMobile) {
+			return;
+		}
+
 		/* http://stackoverflow.com/a/11650231/459881 */
 
 		const $window	= $(window);
@@ -58,6 +63,10 @@ export class VirtualKeyboardWatcherService {
 		const inputSelector		= 'input, textarea';
 		const focusBlurListen	= ($elem: JQuery) =>
 			$elem.on('focus blur', () => {
+				if (document.body.scrollHeight > $window.height()) {
+					return;
+				}
+
 				$window.scrollTop(10);
 				this.trigger($window.scrollTop() > 0);
 				$window.scrollTop(0);
