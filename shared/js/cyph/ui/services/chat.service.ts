@@ -7,6 +7,12 @@ import {Injectable} from '@angular/core';
 @Injectable()
 export class ChatService {
 	/** @ignore */
+	public forceTURN: boolean	= false;
+
+	/** @ignore */
+	public isConnected: boolean	= false;
+
+	/** @ignore */
 	public abortSetup () : void {
 		throw new Error('Not implemented.');
 	}

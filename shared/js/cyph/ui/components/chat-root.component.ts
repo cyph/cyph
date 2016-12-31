@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
 import {ChatService} from '../services/chat.service';
 import {FileService} from '../services/file.service';
-import {P2pService} from '../services/p2p.service';
+import {P2PService} from '../services/p2p.service';
 import {ScrollService} from '../services/scroll.service';
 import {SessionService} from '../services/session.service';
 
@@ -13,7 +13,7 @@ import {SessionService} from '../services/session.service';
 	providers: [
 		ChatService,
 		FileService,
-		P2pService,
+		P2PService,
 		ScrollService,
 		SessionService
 	],
