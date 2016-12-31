@@ -770,10 +770,10 @@ input.doctors {
 	pointer-events: none;
 	position: fixed;
 	z-index: 99;
-	top: 0px;
-	left: 0px;
-	width: 101%;
-	height: 101%;
+	top: -1px;
+	left: -1px;
+	width: calc(100% + 2px);
+	height: calc(100% + 2px);
 	font-size: 5vw;
 	padding: 15vh 15vw;
 	background-color: rgba(97, 51, 163, 0.75);

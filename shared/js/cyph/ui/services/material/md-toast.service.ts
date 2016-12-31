@@ -23,8 +23,8 @@ export class MdToastService {
 	}
 
 	/** @see angular.material.IToastService.hide */
-	public async hide (response?: any) : Promise<any> {
-		return (await (await MdToastService.$mdToast).hide(response));
+	public async hide (response?: any) : Promise<void> {
+		(await MdToastService.$mdToast).hide(response);
 	}
 
 	/** @see angular.material.IToastService.show */

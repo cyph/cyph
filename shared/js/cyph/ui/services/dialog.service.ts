@@ -122,7 +122,9 @@ export class DialogService {
 			hideDelay: o.delay,
 			position: o.position || 'top right',
 			template: `<md-toast><div class='md-toast-content'>${o.content}</div></md-toast>`
-		});
+		}).catch(
+			() => {}
+		);
 
 		await util.sleep(o.delay + 500);
 	}

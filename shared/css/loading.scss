@@ -5,8 +5,8 @@
 	position: fixed;
 	top: -1px;
 	left: -1px;
-	width: 101%;
-	height: 101%;
+	width: calc(100% + 2px);
+	height: calc(100% + 2px);
 	z-index: 999;
 
 	> .loading, > .transition {
