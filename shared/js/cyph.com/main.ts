@@ -8,7 +8,6 @@ import {downgradeComponent, UpgradeModule} from '@angular/upgrade/static';
 import * as angular from 'angular';
 import {config} from '../cyph/config';
 import {env} from '../cyph/env';
-import {eventManager} from '../cyph/event-manager';
 import {FileInputComponent} from '../cyph/ui/components/file-input.component';
 import {HelpComponent} from '../cyph/ui/components/help.component';
 import {MdButtonComponent} from '../cyph/ui/components/material/md-button.component';
@@ -48,7 +47,6 @@ import {util} from '../cyph/util';
 import {loaded} from '../preload';
 import {AppComponent} from './app.component';
 import {AppModule} from './app.module';
-import {UI} from './ui';
 
 
 elements.body().attr(
@@ -58,24 +56,7 @@ elements.body().attr(
 
 angular.
 	module(config.angularConfig.rootModule, ['ngMaterial']).
-	controller(config.angularConfig.rootController, [
-		'$mdDialog',
-		'$mdSidenav',
-		'$mdToast',
-
-		(
-			$mdDialog: angular.material.IDialogService,
-			$mdSidenav: angular.material.ISidenavService,
-			$mdToast: angular.material.IToastService
-		) => { eventManager.trigger(
-			UI.uiInitEvent,
-			{
-				$mdDialog,
-				$mdSidenav,
-				$mdToast
-			}
-		); }
-	]).
+	controller(config.angularConfig.rootController, []).
 	config(config.angularConfig.config).
 	component(
 		MdButtonComponent.title,

@@ -14,8 +14,8 @@ import {strings} from '../../strings';
 import {Timer} from '../../timer';
 import {util} from '../../util';
 import {Chat} from '../chat/chat';
-import {DialogManager} from '../dialog-manager';
 import {Elements} from '../elements';
+import {DialogService} from '../services/dialog.service';
 
 
 /**
@@ -44,9 +44,6 @@ export class LinkConnectionComponent implements OnChanges {
 
 	/** @see IChat */
 	@Input() public chat: Chat;
-
-	/** @see DialogManager */
-	@Input() public dialogManager: DialogManager;
 
 	/** Indicates whether advanced features UI should be displayed. */
 	@Input() public enableAdvancedFeatures: boolean;
@@ -82,7 +79,7 @@ export class LinkConnectionComponent implements OnChanges {
 		return util.lockTryOnce(
 			this.addTimeLock,
 			async () => {
-				await this.dialogManager.toast({
+				await this.dialogService.toast({
 					content: strings.timeExtended,
 					delay: 2500
 				});
@@ -96,7 +93,7 @@ export class LinkConnectionComponent implements OnChanges {
 			this.copyLock,
 			async () => {
 				await clipboard.copy(this.linkConstant);
-				await this.dialogManager.toast({
+				await this.dialogService.toast({
 					content: strings.linkCopied,
 					delay: 2500
 				});
@@ -184,9 +181,12 @@ export class LinkConnectionComponent implements OnChanges {
 
 	constructor (
 		/** @ignore */
+		private readonly changeDetectorRef: ChangeDetectorRef,
+
+		/** @ignore */
 		private readonly elementRef: ElementRef,
 
 		/** @ignore */
-		private readonly changeDetectorRef: ChangeDetectorRef
+		private readonly dialogService: DialogService
 	) {}
 }

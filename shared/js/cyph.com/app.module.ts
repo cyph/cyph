@@ -46,6 +46,9 @@ import {MdToolbarComponent} from '../cyph/ui/components/material/md-toolbar.comp
 import {RegisterComponent} from '../cyph/ui/components/register.component';
 import {SignupFormComponent} from '../cyph/ui/components/signup-form.component';
 import {TranslateDirective} from '../cyph/ui/directives/translate.directive';
+import {MdDialogService} from '../cyph/ui/services/material/md-dialog.service';
+import {MdSidenavService} from '../cyph/ui/services/material/md-sidenav.service';
+import {MdToastService} from '../cyph/ui/services/material/md-toast.service';
 import {AppComponent} from './app.component';
 
 
@@ -104,6 +107,9 @@ import {AppComponent} from './app.component';
 		UpgradeModule
 	],
 	providers: [
+		MdDialogService,
+		MdSidenavService,
+		MdToastService,
 		Title
 	]
 })

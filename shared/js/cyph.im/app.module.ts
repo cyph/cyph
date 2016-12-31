@@ -45,6 +45,8 @@ import {MdTextareaComponent} from '../cyph/ui/components/material/md-textarea.co
 import {NotFoundComponent} from '../cyph/ui/components/not-found.component';
 import {SignupFormComponent} from '../cyph/ui/components/signup-form.component';
 import {TranslateDirective} from '../cyph/ui/directives/translate.directive';
+import {MdDialogService} from '../cyph/ui/services/material/md-dialog.service';
+import {MdToastService} from '../cyph/ui/services/material/md-toast.service';
 import {AppComponent} from './app.component';
 import {BetaComponent} from './beta.component';
 
@@ -103,6 +105,8 @@ import {BetaComponent} from './beta.component';
 		UpgradeModule
 	],
 	providers: [
+		MdDialogService,
+		MdToastService,
 		Title
 	]
 })

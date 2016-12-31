@@ -265,7 +265,7 @@ export class ChatMessageBoxComponent implements OnInit {
 		/** @ignore */
 		private readonly visibilityWatcherService: VisibilityWatcherService,
 
-		/** @ignore */
+		/** @see ScrollService */
 		public readonly scrollService: ScrollService
 	) {}
 }

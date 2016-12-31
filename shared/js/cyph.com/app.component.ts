@@ -1,8 +1,7 @@
-import {Component} from '@angular/core';
+import {Component, Inject} from '@angular/core';
 import * as angular from 'angular';
 import {Config, config} from '../cyph/config';
 import {Env, env} from '../cyph/env';
-import {eventManager} from '../cyph/event-manager';
 import {DialogManager} from '../cyph/ui/dialog-manager';
 import {DialogService} from '../cyph/ui/services/dialog.service';
 import {NotificationService} from '../cyph/ui/services/notification.service';
@@ -29,16 +28,6 @@ import {UI} from './ui';
 	templateUrl: '../../templates/cyph.com/index.html'
 })
 export class AppComponent {
-	/** @ignore */
-	private static uiInit	= eventManager.one<{
-		$mdDialog: angular.material.IDialogService;
-		$mdSidenav: angular.material.ISidenavService;
-		$mdToast: angular.material.IToastService;
-	}>(
-		UI.uiInitEvent
-	);
-
-
 	/** @ignore */
 	private sidenavLock: {}	= {};
 
@@ -77,15 +66,17 @@ export class AppComponent {
 		this.sidenav().open();
 	}
 
-	constructor () { (async () => {
-		const o	= await AppComponent.uiInit;
-
-		this.sidenav	= () => o.$mdSidenav('main-toolbar-sidenav');
-		this.ui			= new UI(new DialogManager(o.$mdDialog, o.$mdToast));
+	constructor (
+		@Inject('MdDialogService') mdDialogService: angular.material.IDialogService,
+		@Inject('MdSidenavService') mdSidenavService: angular.material.ISidenavService,
+		@Inject('MdToastService') mdToastService: angular.material.IToastService
+	) {
+		this.sidenav	= () => mdSidenavService('main-toolbar-sidenav');
+		this.ui			= new UI(new DialogManager(mdDialogService, mdToastService));
 
 		/* For testing and debugging */
 		if (env.isWeb) {
 			(<any> self).ui	= this.ui;
 		}
-	})(); }
+	}
 }
