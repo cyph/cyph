@@ -7,6 +7,7 @@ import {ChatCyphertextComponent} from '../cyph/ui/components/chat-cyphertext.com
 import {ChatMainComponent} from '../cyph/ui/components/chat-main.component';
 import {ChatMessageBoxComponent} from '../cyph/ui/components/chat-message-box.component';
 import {ChatMessageComponent} from '../cyph/ui/components/chat-message.component';
+import {ChatRootComponent} from '../cyph/ui/components/chat-root.component';
 import {CheckoutComponent} from '../cyph/ui/components/checkout.component';
 import {ContactComponent} from '../cyph/ui/components/contact.component';
 import {FileInputComponent} from '../cyph/ui/components/file-input.component';
@@ -62,6 +63,7 @@ import {AppComponent} from './app.component';
 		ChatMainComponent,
 		ChatMessageComponent,
 		ChatMessageBoxComponent,
+		ChatRootComponent,
 		CheckoutComponent,
 		ContactComponent,
 		FileInputComponent,

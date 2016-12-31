@@ -1,56 +1,58 @@
-<section id='main' class='cyph-foreground layout-fill layout-column'>
-	<cyph-chat-main
-		[self]='ui.chat'
-		[hideDisconnectMessage]='env.coBranded'
-		[messageCountInTitle]='true'
-		[class.active]='ui.state === states.chat'
-		class='cyph-view layout-fill layout-column flex'
-		*ngIf='!!ui && !!ui.chat'
-	>
-		<cyph-signup-form>
-			{{strings.signupMessage1}}
-			{{strings.signupMessage2}}
-		</cyph-signup-form>
-	</cyph-chat-main>
-
-	<cyph-link-connection
-		[baseUrl]='!!ui ? ui.linkConnectionBaseUrl : undefined'
-		[chat]='!!ui ? ui.chat : undefined'
-		[class.active]='!!ui && ui.state === states.waitingForFriend'
-		class='cyph-view layout-fill layout-column flex'
-	></cyph-link-connection>
-
-	<cyph-not-found
-		[class.active]='!!ui && ui.state === states.error'
-		class='cyph-view layout-fill layout-column flex'
-	></cyph-not-found>
-
-	<div
-		[class.active]='!!ui && ui.state === states.blank'
-		id='blank'
-		class='cyph-view layout-fill layout-column flex'
-	></div>
-
-	<cyph-beta
-		[betaState]='!!ui ? ui.betaState : undefined'
-		[class.active]='!!ui && ui.state === states.beta'
-		class='cyph-view layout-fill layout-column flex'
-	></cyph-beta>
-
-	<footer>
-		<cyph-chat-message-box
+<cyph-chat-root>
+	<section id='main' class='cyph-foreground layout-fill layout-column'>
+		<cyph-chat-main
 			[self]='ui.chat'
-			*ngIf='!!ui && !!ui.chat && ui.state === states.chat'
-		></cyph-chat-message-box>
+			[hideDisconnectMessage]='env.coBranded'
+			[messageCountInTitle]='true'
+			[class.active]='ui.state === states.chat'
+			class='cyph-view layout-fill layout-column flex'
+			*ngIf='!!ui && !!ui.chat'
+		>
+			<cyph-signup-form>
+				{{strings.signupMessage1}}
+				{{strings.signupMessage2}}
+			</cyph-signup-form>
+		</cyph-chat-main>
 
-		<cyph-footer
-			[wasInitiatedByAPI]='ui.chat.session.state.wasInitiatedByAPI'
-			*ngIf='!env.isMobile && !!ui && !!ui.chat'
-		></cyph-footer>
-	</footer>
-</section>
+		<cyph-link-connection
+			[baseUrl]='!!ui ? ui.linkConnectionBaseUrl : undefined'
+			[chat]='!!ui ? ui.chat : undefined'
+			[class.active]='!!ui && ui.state === states.waitingForFriend'
+			class='cyph-view layout-fill layout-column flex'
+		></cyph-link-connection>
 
-<cyph-chat-cyphertext
-	[self]='ui.chat'
-	*ngIf='!!ui && !!ui.chat'
-></cyph-chat-cyphertext>
+		<cyph-not-found
+			[class.active]='!!ui && ui.state === states.error'
+			class='cyph-view layout-fill layout-column flex'
+		></cyph-not-found>
+
+		<div
+			[class.active]='!!ui && ui.state === states.blank'
+			id='blank'
+			class='cyph-view layout-fill layout-column flex'
+		></div>
+
+		<cyph-beta
+			[betaState]='!!ui ? ui.betaState : undefined'
+			[class.active]='!!ui && ui.state === states.beta'
+			class='cyph-view layout-fill layout-column flex'
+		></cyph-beta>
+
+		<footer>
+			<cyph-chat-message-box
+				[self]='ui.chat'
+				*ngIf='!!ui && !!ui.chat && ui.state === states.chat'
+			></cyph-chat-message-box>
+
+			<cyph-footer
+				[wasInitiatedByAPI]='ui.chat.session.state.wasInitiatedByAPI'
+				*ngIf='!env.isMobile && !!ui && !!ui.chat'
+			></cyph-footer>
+		</footer>
+	</section>
+
+	<cyph-chat-cyphertext
+		[self]='ui.chat'
+		*ngIf='!!ui && !!ui.chat'
+	></cyph-chat-cyphertext>
+</cyph-chat-root>

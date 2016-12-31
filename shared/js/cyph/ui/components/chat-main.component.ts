@@ -5,9 +5,6 @@ import {Strings, strings} from '../../strings';
 import {Util, util} from '../../util';
 import {Chat} from '../chat/chat';
 import {States} from '../chat/enums';
-import {ChatService} from '../services/chat.service';
-import {FileService} from '../services/file.service';
-import {P2pService} from '../services/p2p.service';
 import {ScrollService} from '../services/scroll.service';
 
 
@@ -15,12 +12,6 @@ import {ScrollService} from '../services/scroll.service';
  * Angular component for main chat UI.
  */
 @Component({
-	providers: [
-		ChatService,
-		FileService,
-		P2pService,
-		ScrollService
-	],
 	selector: 'cyph-chat-main',
 	templateUrl: '../../../../templates/chat-main.html'
 })
