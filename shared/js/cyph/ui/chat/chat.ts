@@ -10,7 +10,6 @@ import {urlState} from '../../url-state';
 import {util} from '../../util';
 import {DialogManager} from '../dialog-manager';
 import {elements, Elements} from '../elements';
-import {nanoScroller} from '../nano-scroller';
 import {Notifier} from '../notifier';
 import {Cyphertext} from './cyphertext';
 import {States} from './enums';
@@ -200,13 +199,8 @@ export class Chat {
 		this.messages.push(message);
 		this.messages.sort((a, b) => a.timestamp - b.timestamp);
 
-		this.scrollManager.scrollDown(true);
-
 		if (author === users.me) {
 			this.scrollManager.scrollDown();
-		}
-		else {
-			nanoScroller.update();
 		}
 
 		if (

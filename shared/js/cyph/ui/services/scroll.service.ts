@@ -39,7 +39,7 @@ export class ScrollService {
 		}
 
 		this.titleService.setTitle(
-			(this.unreadItemCount > 0 ? `(${this.unreadItems}) ` : '') +
+			(this.unreadItemCount > 0 ? `(${this.unreadItemCount.toString()}) ` : '') +
 			this.titleService.getTitle().replace(/^\(\d+\) /, '')
 		);
 	}
@@ -86,7 +86,9 @@ export class ScrollService {
 
 		this.updateNanoScroller();
 
-		this.unreadItems.add(item);
+		if (item.unread) {
+			this.unreadItems.add(item);
+		}
 
 		if (!this.visibilityWatcherService.isVisible) {
 			this.updateTitle();
