@@ -1,10 +1,11 @@
-import {Component, Inject} from '@angular/core';
-import * as angular from 'angular';
+import {Component} from '@angular/core';
 import {Env, env} from '../cyph/env';
 import {Strings, strings} from '../cyph/strings';
 import {DialogManager} from '../cyph/ui/dialog-manager';
 import {Notifier} from '../cyph/ui/notifier';
 import {DialogService} from '../cyph/ui/services/dialog.service';
+import {MdDialogService} from '../cyph/ui/services/material/md-dialog.service';
+import {MdToastService} from '../cyph/ui/services/material/md-toast.service';
 import {NotificationService} from '../cyph/ui/services/notification.service';
 import {SignupService} from '../cyph/ui/services/signup.service';
 import {VirtualKeyboardWatcherService} from '../cyph/ui/services/virtual-keyboard-watcher.service';
@@ -40,10 +41,7 @@ export class AppComponent {
 	/** @ignore */
 	public strings: Strings			= strings;
 
-	constructor (
-		@Inject('MdDialogService') mdDialogService: angular.material.IDialogService,
-		@Inject('MdToastService') mdToastService: angular.material.IToastService
-	) {
+	constructor (mdDialogService: MdDialogService, mdToastService: MdToastService) {
 		this.ui	= new UI(
 			new DialogManager(mdDialogService, mdToastService),
 			new Notifier()

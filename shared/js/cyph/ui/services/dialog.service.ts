@@ -1,5 +1,7 @@
-import {Inject, Injectable} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {util} from '../../util';
+import {MdDialogService} from './material/md-dialog.service';
+import {MdToastService} from './material/md-toast.service';
 
 
 /**
@@ -23,7 +25,7 @@ export class DialogService {
 	) : Promise<void> {
 		util.lock(this.lock, async () =>
 			this.mdDialogService.show(
-				this.mdDialogService.alert().
+				(await this.mdDialogService.alert()).
 					title(o.title).
 					textContent(o.content).
 					ok(o.ok)
@@ -79,7 +81,7 @@ export class DialogService {
 	) : Promise<boolean> {
 		return util.lock(this.lock, async () => {
 			const promise	= this.mdDialogService.show(
-				this.mdDialogService.confirm().
+				(await this.mdDialogService.confirm()).
 					title(o.title).
 					textContent(o.content).
 					ok(o.ok).
@@ -97,7 +99,7 @@ export class DialogService {
 			}
 
 			try {
-				return (await promise.catch(_ => false));
+				return (await promise.catch(() => false));
 			}
 			finally {
 				hasReturned	= true;
@@ -127,11 +129,9 @@ export class DialogService {
 
 	constructor (
 		/** @ignore */
-		@Inject('MdDialogService')
-		private readonly mdDialogService: angular.material.IDialogService,
+		private readonly mdDialogService: MdDialogService,
 
 		/** @ignore */
-		@Inject('MdToastService')
-		private readonly mdToastService: angular.material.IToastService
+		private readonly mdToastService: MdToastService
 	) {}
 }

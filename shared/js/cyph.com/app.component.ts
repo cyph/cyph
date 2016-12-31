@@ -1,9 +1,11 @@
-import {Component, Inject} from '@angular/core';
-import * as angular from 'angular';
+import {Component} from '@angular/core';
 import {Config, config} from '../cyph/config';
 import {Env, env} from '../cyph/env';
 import {DialogManager} from '../cyph/ui/dialog-manager';
 import {DialogService} from '../cyph/ui/services/dialog.service';
+import {MdDialogService} from '../cyph/ui/services/material/md-dialog.service';
+import {MdSidenavService} from '../cyph/ui/services/material/md-sidenav.service';
+import {MdToastService} from '../cyph/ui/services/material/md-toast.service';
 import {NotificationService} from '../cyph/ui/services/notification.service';
 import {SignupService} from '../cyph/ui/services/signup.service';
 import {VirtualKeyboardWatcherService} from '../cyph/ui/services/virtual-keyboard-watcher.service';
@@ -32,7 +34,7 @@ export class AppComponent {
 	private sidenavLock: {}	= {};
 
 	/** @ignore */
-	public sidenav: () => angular.material.ISidenavObject;
+	public sidenav: Promise<angular.material.ISidenavObject>;
 
 	/** @ignore */
 	public ui: UI;
@@ -55,7 +57,7 @@ export class AppComponent {
 			this.sidenavLock,
 			async () => {
 				await util.sleep();
-				this.sidenav().close();
+				(await this.sidenav).close();
 			}
 		);
 	}
@@ -63,15 +65,15 @@ export class AppComponent {
 	/** Opens mobile sidenav menu. */
 	public async openSidenav () : Promise<void> {
 		await util.sleep();
-		this.sidenav().open();
+		(await this.sidenav).open();
 	}
 
 	constructor (
-		@Inject('MdDialogService') mdDialogService: angular.material.IDialogService,
-		@Inject('MdSidenavService') mdSidenavService: angular.material.ISidenavService,
-		@Inject('MdToastService') mdToastService: angular.material.IToastService
+		mdDialogService: MdDialogService,
+		mdSidenavService: MdSidenavService,
+		mdToastService: MdToastService
 	) {
-		this.sidenav	= () => mdSidenavService('main-toolbar-sidenav');
+		this.sidenav	= mdSidenavService.getSidenav('main-toolbar-sidenav');
 		this.ui			= new UI(new DialogManager(mdDialogService, mdToastService));
 
 		/* For testing and debugging */

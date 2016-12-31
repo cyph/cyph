@@ -1,17 +1,20 @@
+import {Injectable} from '@angular/core';
+import {eventManager} from '../../../event-manager';
+
+
 /**
  * ng2 wrapper for Material1 $mdSidenav.
  */
-/* tslint:disable-next-line:no-stateless-class */
+@Injectable()
 export class MdSidenavService {
 	/** @ignore */
-	public static deps: string[]	= ['$injector'];
+	private static $mdSidenav	=
+		eventManager.one<angular.material.ISidenavService>('$mdSidenav')
+	;
 
-	/** @ignore */
-	public static provide: string	= 'MdSidenavService';
-
-	/** @ignore */
-	public static useFactory ($injector: any) : angular.material.ISidenavService {
-		return $injector.get('$mdSidenav');
+	/** @see angular.material.ISidenavService */
+	public async getSidenav (component: string) : Promise<angular.material.ISidenavObject> {
+		return (await (await MdSidenavService.$mdSidenav)(component, true));
 	}
 
 	constructor () {}

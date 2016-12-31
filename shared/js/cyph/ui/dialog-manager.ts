@@ -1,5 +1,6 @@
-import * as angular from 'angular';
 import {util} from '../util';
+import {MdDialogService} from './services/material/md-dialog.service';
+import {MdToastService} from './services/material/md-toast.service';
 
 
 /**
@@ -22,7 +23,7 @@ export class DialogManager {
 	) : Promise<void> {
 		util.lock(this.lock, async () =>
 			this.$mdDialog.show(
-				this.$mdDialog.alert().
+				(await this.$mdDialog.alert()).
 					title(o.title).
 					textContent(o.content).
 					ok(o.ok)
@@ -78,7 +79,7 @@ export class DialogManager {
 	) : Promise<boolean> {
 		return util.lock(this.lock, async () => {
 			const promise	= this.$mdDialog.show(
-				this.$mdDialog.confirm().
+				(await this.$mdDialog.confirm()).
 					title(o.title).
 					textContent(o.content).
 					ok(o.ok).
@@ -126,9 +127,9 @@ export class DialogManager {
 
 	constructor (
 		/** @ignore */
-		private readonly $mdDialog: angular.material.IDialogService,
+		private readonly $mdDialog: MdDialogService,
 
 		/** @ignore */
-		private readonly $mdToast: angular.material.IToastService
+		private readonly $mdToast: MdToastService
 	) {}
 }
