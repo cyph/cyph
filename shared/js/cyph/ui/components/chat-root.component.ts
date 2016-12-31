@@ -3,6 +3,7 @@ import {ChatService} from '../services/chat.service';
 import {FileService} from '../services/file.service';
 import {P2pService} from '../services/p2p.service';
 import {ScrollService} from '../services/scroll.service';
+import {SessionService} from '../services/session.service';
 
 
 /**
@@ -13,7 +14,8 @@ import {ScrollService} from '../services/scroll.service';
 		ChatService,
 		FileService,
 		P2pService,
-		ScrollService
+		ScrollService,
+		SessionService
 	],
 	selector: 'cyph-chat-root',
 	templateUrl: '../../../../templates/chat-root.html'
