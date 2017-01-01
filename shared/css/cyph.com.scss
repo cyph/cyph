@@ -1,23 +1,23 @@
 @import 'cyph.im';
 
-html, body, #main {
+body, #main {
 	max-width: initial !important;
 	max-height: initial !important;
 	overflow: initial;
 	padding-top: 0px !important;
 }
 
-html:not(.mobile) #main {
+body:not(.mobile) #main {
 	padding-bottom: initial;
 	padding-left: initial;
 	padding-right: initial;
 }
 
-html.load-complete #pre-load {
+body.load-complete #pre-load {
 	@include transition(opacity 0.25s linear);
 }
 
-html:not(.load-complete) {
+body:not(.load-complete) {
 	#main > section, footer {
 		display: none;
 	}
@@ -155,7 +155,7 @@ section#main {
 }
 
 @media all and (orientation: portrait) {
-	html.mobile #main-toolbar.new-cyph-expanded #new-cyph {
+	body.mobile #main-toolbar.new-cyph-expanded #new-cyph {
 		@include transform(translateX(-50%) translateY(25em) scale(2));
 	}
 }
@@ -199,7 +199,7 @@ section#main {
 	}
 }
 
-html.mobile #hero-section {
+body.mobile #hero-section {
 	height: 35em;
 	display: flex;
 
@@ -353,7 +353,7 @@ html.mobile #hero-section {
 	}
 }
 
-html.mobile #logo {
+body.mobile #logo {
 	margin-left: 5px;
 }
 
@@ -450,7 +450,7 @@ html.mobile #logo {
 	}
 }
 
-html.mobile .carousel {
+body.mobile .carousel {
 	.logo {
 		pointer-events: none;
 		position: absolute;
@@ -531,7 +531,7 @@ html.mobile .carousel {
 	}
 }
 
-html:not(.mobile) #testimonials-section .carousel {
+body:not(.mobile) #testimonials-section .carousel {
 	.logo-container {
 		position: absolute;
 		width: 100%;
@@ -554,7 +554,7 @@ html:not(.mobile) #testimonials-section .carousel {
 	}
 }
 
-html.mobile #testimonials-section .carousel {
+body.mobile #testimonials-section .carousel {
 	.logo.active {
 		padding-bottom: 20px;
 	}
@@ -608,7 +608,7 @@ html.mobile #testimonials-section .carousel {
 	}
 }
 
-html.mobile #features-section .carousel .logo.active > img {
+body.mobile #features-section .carousel .logo.active > img {
 	opacity: 0.2;
 }
 
@@ -826,7 +826,7 @@ html.mobile #features-section .carousel .logo.active > img {
 	}
 }
 
-html.mobile .demo-root > .mobile {
+body.mobile .demo-root > .mobile {
 	height: 40em;
 	width: calc(100% + 100px);
 	top: 0px;
@@ -837,7 +837,7 @@ html.mobile .demo-root > .mobile {
 }
 
 @media all and (orientation: landscape) {
-	html.mobile .demo-root > .mobile {
+	body.mobile .demo-root > .mobile {
 		height: 20em;
 	}
 }
@@ -849,7 +849,7 @@ html.mobile .demo-root > .mobile {
 	@include transform(scale(0.625) translateY(20px));
 }
 
-html.mobile .md-open-menu-container {
+body.mobile .md-open-menu-container {
 	right: 5vw;
 
 	@include transform(scale(0.8) translateY(30px));
@@ -883,7 +883,7 @@ html.mobile .md-open-menu-container {
 	}
 }
 
-html.mobile #gettingstarted-section {
+body.mobile #gettingstarted-section {
 	height: 45em;
 }
 
@@ -939,7 +939,7 @@ html.mobile #gettingstarted-section {
 	}
 }
 
-html:not(.mobile) .section-content-container:not(.full) {
+body:not(.mobile) .section-content-container:not(.full) {
 	max-width: 80%;
 }
 
@@ -1011,7 +1011,7 @@ html:not(.mobile) .section-content-container:not(.full) {
 #promo-section {
 	margin-top: 75px;
 
-	html.mobile & {
+	body.mobile & {
 		margin-top: 60px;
 	}
 

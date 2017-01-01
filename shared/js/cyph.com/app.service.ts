@@ -1,28 +1,25 @@
+import {Injectable} from '@angular/core';
+import {Title} from '@angular/platform-browser';
 import {config} from '../cyph/config';
 import {Email} from '../cyph/email';
 import {env} from '../cyph/env';
 import {eventManager} from '../cyph/event-manager';
-import {Carousel} from '../cyph/ui/carousel';
-import * as Chat from '../cyph/ui/chat/enums';
-import {DialogManager} from '../cyph/ui/dialog-manager';
-import * as CyphElements from '../cyph/ui/elements';
+import {DialogService} from '../cyph/ui/services/dialog.service';
 import {SignupService} from '../cyph/ui/services/signup.service';
 import {urlState} from '../cyph/url-state';
 import {util} from '../cyph/util';
-import {CyphDemo} from './cyph-demo';
+import {Carousel} from './carousel';
 import {elements} from './elements';
 import {HomeSections, pageTitles, Promos, States} from './enums';
 
 
 /**
- * Controls the entire cyph.com UI.
+ * Angular service for Cyph home page.
  */
-export class UI {
+@Injectable()
+export class AppService {
 	/** @ignore */
 	private static readonly linkInterceptSelector: string	= 'a[href^="/"]:not(a[href^="/blog"])';
-
-	/** Initialisation event. */
-	public static readonly uiInitEvent: string	= 'uiInitEvent';
 
 
 	/** @see States */
@@ -88,9 +85,6 @@ export class UI {
 	/** @see HomeSections */
 	public homeSection: HomeSections;
 
-	/** @see CyphDemo */
-	public readonly cyphDemo: CyphDemo;
-
 	/** Carousel of features. */
 	public featureCarousel: Carousel;
 
@@ -139,7 +133,7 @@ export class UI {
 			HomeSections.promo
 		;
 
-		CyphElements.elements.title().text(
+		this.titleService.setTitle(
 			(<any> pageTitles)[newUrlStateBase] || pageTitles.defaultTitle
 		);
 
@@ -160,7 +154,7 @@ export class UI {
 			await util.sleep();
 
 			if (this.homeSection === HomeSections.register) {
-				await this.dialogManager.baseDialog({
+				await this.dialogService.baseDialog({
 					template: `
 						<md-dialog>
 							<cyph-register></cyph-register>
@@ -176,7 +170,7 @@ export class UI {
 					urlState.getUrl().split(HomeSections[HomeSections.invite] + '/')[1] || ''
 				);
 
-				await this.dialogManager.baseDialog({
+				await this.dialogService.baseDialog({
 					template: `
 						<md-dialog>
 							<cyph-register [invite]='true'></cyph-register>
@@ -227,15 +221,10 @@ export class UI {
 	) : Promise<void> {
 		const delay: number	=
 			delayFactor *
-			Math.abs(CyphElements.elements.document().scrollTop() - position)
+			Math.abs($(document).scrollTop() - position)
 		;
 
-		CyphElements.elements.html().add(
-			CyphElements.elements.body()
-		).animate(
-			{scrollTop: position},
-			delay
-		);
+		$(document.body).animate({scrollTop: position}, delay);
 
 		if (onComplete) {
 			await util.sleep(delay + 50);
@@ -257,10 +246,11 @@ export class UI {
 
 	constructor (
 		/** @ignore */
-		private readonly dialogManager: DialogManager
-	) {
-		this.cyphDemo	= new CyphDemo(this.dialogManager);
+		private readonly dialogService: DialogService,
 
+		/** @ignore */
+		private readonly titleService: Title
+	) {
 		if (!env.isMobile) {
 			new (<any> self).WOW({live: true}).init();
 		}
@@ -271,9 +261,7 @@ export class UI {
 			const newUrlState: string	= urlState.getUrl();
 
 			if ((<any> HomeSections)[newUrlState] !== undefined) {
-				await CyphElements.Elements.waitForElement(
-					() => CyphElements.elements.html().filter('.load-complete')
-				);
+				await util.waitForIterable(() => $('body.load-complete'));
 				await util.sleep(500);
 			}
 
@@ -283,7 +271,7 @@ export class UI {
 		(async () => {
 			/* Disable background video on mobile */
 
-			await CyphElements.Elements.waitForElement(elements.backgroundVideo);
+			await util.waitForIterable(elements.backgroundVideo);
 
 			if (env.isMobile) {
 				const $mobilePoster: JQuery	= $(document.createElement('img'));
@@ -316,8 +304,8 @@ export class UI {
 
 			/* Carousels */
 
-			await CyphElements.Elements.waitForElement(elements.featuresSection);
-			await CyphElements.Elements.waitForElement(elements.testimonialsSection);
+			await util.waitForIterable(elements.featuresSection);
+			await util.waitForIterable(elements.testimonialsSection);
 
 			this.featureCarousel		= new Carousel(elements.featuresSection(), true);
 			this.testimonialCarousel	= new Carousel(
@@ -327,7 +315,7 @@ export class UI {
 
 			/* Header / new cyph button animation */
 
-			await CyphElements.Elements.waitForElement(elements.mainToolbar);
+			await util.waitForIterable(elements.mainToolbar);
 
 			let expanded	= urlState.getUrl() === '';
 			elements.mainToolbar().toggleClass('new-cyph-expanded', expanded);
@@ -345,7 +333,7 @@ export class UI {
 							this.promo === Promos.none &&
 							elements.heroText().is(':appeared')
 						) ||
-						CyphElements.elements.footer().is(':appeared')
+						elements.footer().is(':appeared')
 					);
 
 					if (expanded === shouldExpand) {
@@ -359,18 +347,18 @@ export class UI {
 
 			/* Avoid full page reloads */
 
-			$(UI.linkInterceptSelector).click(e => { this.linkClickHandler(e); });
+			$(AppService.linkInterceptSelector).click(e => { this.linkClickHandler(e); });
 			new MutationObserver(mutations => {
 				for (const mutation of mutations) {
 					for (const elem of Array.from(mutation.addedNodes)) {
 						const $elem: JQuery	= $(elem);
 
-						if ($elem.is(UI.linkInterceptSelector)) {
+						if ($elem.is(AppService.linkInterceptSelector)) {
 							$elem.click(e => { this.linkClickHandler(e); });
 						}
 						else {
 							$elem.
-								find(UI.linkInterceptSelector).
+								find(AppService.linkInterceptSelector).
 								click(e => { this.linkClickHandler(e); })
 							;
 						}
@@ -392,33 +380,10 @@ export class UI {
 				}
 			});
 
-			/* Cyphertext easter egg */
-
-			/* tslint:disable-next-line:no-unused-new */
-			new (<any> self).Konami(async () => {
-				urlState.setUrl('intro');
-
-				while (
-					!this.cyphDemo.desktop ||
-					this.cyphDemo.desktop.state !== Chat.States.chat
-				) {
-					await util.sleep();
-				}
-
-				if (env.isMobile) {
-					this.cyphDemo.mobile.cyphertext.show();
-				}
-				else {
-					this.cyphDemo.desktop.cyphertext.show();
-					await util.sleep(8000);
-					this.cyphDemo.mobile.cyphertext.show();
-				}
-			});
-
 			/* Load complete */
 
-			await CyphElements.Elements.waitForElement(elements.heroSection);
-			CyphElements.elements.html().addClass('load-complete');
+			await util.waitForIterable(elements.heroSection);
+			$(document.body).addClass('load-complete');
 		})();
 	}
 }

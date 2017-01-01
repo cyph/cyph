@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
 import {Email} from '../../email';
-import {Env, env} from '../../env';
 import {strings} from '../../strings';
+import {EnvService} from '../services/env.service';
 
 
 /**
@@ -13,16 +13,18 @@ import {strings} from '../../strings';
 })
 export class HelpComponent {
 	/** List of labels for tabs to display. */
-	public readonly tabLabels: string[]	= env.coBranded ?
-		[strings.formattingHelp] :
-		[strings.formattingHelp, strings.contactCyph]
-	;
+	public readonly tabLabels: string[];
 
 	/** @see Email */
 	public readonly email: Email	= new Email('help');
 
-	/** @see Env */
-	public readonly env: Env		= env;
-
-	constructor () {}
+	constructor (
+		/** @see EnvService */
+		public readonly envService: EnvService
+	) {
+		this.tabLabels	= this.envService.coBranded ?
+			[strings.formattingHelp] :
+			[strings.formattingHelp, strings.contactCyph]
+		;
+	}
 }

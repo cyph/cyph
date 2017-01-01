@@ -18,7 +18,7 @@
 			</div>
 			<br />
 
-			<div class='connect-link-input' *ngIf='!env.isMobile'>
+			<div class='connect-link-input' *ngIf='!envService.isMobile'>
 				<md2-input
 					cyphTranslate
 					childClass='connect-link-input'
@@ -34,7 +34,7 @@
 				</md2-button>
 			</div>
 
-			<div class='connect-link-mobile' *ngIf='env.isMobile'>
+			<div class='connect-link-mobile' *ngIf='envService.isMobile'>
 				<a
 					class='connect-link-link'
 					[href]='link'
@@ -44,7 +44,7 @@
 				<md2-button
 					childClass='md-fab'
 					ariaLabel='SMS'
-					[href]='env.smsUriBase + linkEncoded'
+					[href]='envService.smsUriBase + linkEncoded'
 					cyphTranslate
 				>
 					<img src='/img/icons/sms.png' alt='SMS' cyphTranslate />
@@ -115,18 +115,18 @@
 			rows='3'
 		></md2-textarea>
 		<div class='buttons'>
-			<md2-button (childClick)='chat.setQueuedMessage(queuedMessageDraft)'>
+			<md2-button (childClick)='chatService.setQueuedMessage(queuedMessageDraft)'>
 				<md2-icon>save</md2-icon>
 			</md2-button>
 			<md2-button
 				childClass='self-destruct-button'
-				(childClick)='chat.setQueuedMessage(
+				(childClick)='chatService.setQueuedMessage(
 					undefined,
-					!chat.queuedMessageSelfDestruct
+					!chatService.queuedMessageSelfDestruct
 				)'
 			>
 				<md2-icon [childClass]='
-					chat.queuedMessageSelfDestruct === true ? "active" : ""
+					chatService.queuedMessageSelfDestruct === true ? "active" : ""
 				'>
 					timer
 				</md2-icon>

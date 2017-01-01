@@ -1,5 +1,6 @@
-import {Component, Input} from '@angular/core';
-import {Env, env} from '../../env';
+import {Component} from '@angular/core';
+import {EnvService} from '../services/env.service';
+import {SessionService} from '../services/session.service';
 
 
 /**
@@ -10,11 +11,11 @@ import {Env, env} from '../../env';
 	templateUrl: '../../../../templates/footer.html'
 })
 export class FooterComponent {
-	/** Indicates whether this cyph was initiated via the API. */
-	@Input() public wasInitiatedByAPI: boolean;
+	constructor (
+		/** @see EnvService */
+		public readonly envService: EnvService,
 
-	/** @see Env */
-	public readonly env: Env	= env;
-
-	constructor () {}
+		/** @see SessionService */
+		public readonly sessionService: SessionService
+	) {}
 }

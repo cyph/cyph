@@ -8,14 +8,14 @@ import {
 } from '@angular/core';
 import * as clipboard from 'clipboard-js';
 import {config} from '../../config';
-import {Env, env} from '../../env';
 import {events} from '../../session/enums';
 import {strings} from '../../strings';
 import {Timer} from '../../timer';
 import {util} from '../../util';
-import {Chat} from '../chat/chat';
-import {Elements} from '../elements';
+import {ChatService} from '../services/chat.service';
 import {DialogService} from '../services/dialog.service';
+import {EnvService} from '../services/env.service';
+import {SessionService} from '../services/session.service';
 
 
 /**
@@ -42,9 +42,6 @@ export class LinkConnectionComponent implements OnChanges {
 	/** Base URL to use before the hash in new link. */
 	@Input() public baseUrl: string;
 
-	/** @see IChat */
-	@Input() public chat: Chat;
-
 	/** Indicates whether advanced features UI should be displayed. */
 	@Input() public enableAdvancedFeatures: boolean;
 
@@ -62,9 +59,6 @@ export class LinkConnectionComponent implements OnChanges {
 
 	/** Counts down until link expires. */
 	public timer: Timer;
-
-	/** @see Env */
-	public readonly env: Env	= env;
 
 	/** Draft of queued message. */
 	public queuedMessageDraft: string	= '';
@@ -113,17 +107,17 @@ export class LinkConnectionComponent implements OnChanges {
 		this.linkConstant	=
 			this.baseUrl +
 			(this.baseUrl.indexOf('#') > -1 ? '' : '#') +
-			this.chat.session.state.sharedSecret
+			this.sessionService.state.sharedSecret
 		;
 
 		this.linkEncoded	= encodeURIComponent(this.linkConstant);
 		this.link			= this.linkConstant;
-		this.isPassive		= this.chat.session.state.wasInitiatedByAPI;
+		this.isPassive		= this.sessionService.state.wasInitiatedByAPI;
 
 		const $element		= $(this.elementRef.nativeElement);
 
-		if (env.isMobile) {
-			const $connectLinkLink	= await Elements.waitForElement(
+		if (this.envService.isMobile) {
+			const $connectLinkLink	= await util.waitForIterable(
 				() => $element.find('.connect-link-link')
 			);
 
@@ -131,7 +125,7 @@ export class LinkConnectionComponent implements OnChanges {
 			$connectLinkLink.click(e => e.preventDefault());
 		}
 		else {
-			const $connectLinkInput	= await Elements.waitForElement(
+			const $connectLinkInput	= await util.waitForIterable(
 				() => $element.find('.connect-link-input input')
 			);
 
@@ -163,7 +157,7 @@ export class LinkConnectionComponent implements OnChanges {
 			this.changeDetectorRef
 		);
 
-		this.chat.session.one(events.connect).then(() => {
+		this.sessionService.one(events.connect).then(() => {
 			isWaiting			= false;
 			this.link			= '';
 			this.linkConstant	= '';
@@ -175,7 +169,7 @@ export class LinkConnectionComponent implements OnChanges {
 		await this.timer.start();
 
 		if (isWaiting) {
-			this.chat.abortSetup();
+			this.chatService.abortSetup();
 		}
 	}
 
@@ -187,6 +181,15 @@ export class LinkConnectionComponent implements OnChanges {
 		private readonly elementRef: ElementRef,
 
 		/** @ignore */
-		private readonly dialogService: DialogService
+		private readonly dialogService: DialogService,
+
+		/** @ignore */
+		private readonly sessionService: SessionService,
+
+		/** @see ChatService */
+		public readonly chatService: ChatService,
+
+		/** @see EnvService */
+		public readonly envService: EnvService
 	) {}
 }

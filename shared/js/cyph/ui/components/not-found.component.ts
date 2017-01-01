@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {Env, env} from '../../env';
+import {EnvService} from '../services/env.service';
 
 
 /**
@@ -10,8 +10,8 @@ import {Env, env} from '../../env';
 	templateUrl: '../../../../templates/not-found.html'
 })
 export class NotFoundComponent {
-	/** @see Env */
-	public readonly env: Env	= env;
-
-	constructor () {}
+	constructor (
+		/** @see EnvService */
+		public readonly envService: EnvService
+	) {}
 }

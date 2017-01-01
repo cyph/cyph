@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {Env, env} from '../../env';
+import {EnvService} from '../services/env.service';
 import {SignupService} from '../services/signup.service';
 
 
@@ -14,10 +14,10 @@ export class RegisterComponent {
 	/** @see SignupFormComponent.invite */
 	@Input() public invite: boolean;
 
-	/** @see Env */
-	public readonly env: Env	= env;
-
 	constructor (
+		/** @see EnvService */
+		public readonly envService: EnvService,
+
 		/** @see SignupService */
 		public readonly signupService: SignupService
 	) {}

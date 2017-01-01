@@ -1,5 +1,4 @@
-import {util} from '../util';
-import {Elements} from './elements';
+import {util} from '../cyph/util';
 
 
 /**
@@ -25,14 +24,8 @@ export class Carousel {
 	 */
 	public async setItem (itemNumber: number = this.itemNumber) : Promise<void> {
 		if (!this.logos || !this.quotes) {
-			this.logos	= await Elements.waitForElement(
-				() => this.rootElement.find('.logo')
-			);
-
-			this.quotes	= await Elements.waitForElement(
-				() => this.rootElement.find('.quote')
-			);
-
+			this.logos	= await util.waitForIterable(() => this.rootElement.find('.logo'));
+			this.quotes	= await util.waitForIterable(() => this.rootElement.find('.quote'));
 			await util.sleep(1000);
 		}
 

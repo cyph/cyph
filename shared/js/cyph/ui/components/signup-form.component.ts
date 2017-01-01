@@ -1,6 +1,6 @@
 import {Component, ElementRef, Input, OnInit} from '@angular/core';
-import {Env, env} from '../../env';
 import {util} from '../../util';
+import {EnvService} from '../services/env.service';
 import {SignupService} from '../services/signup.service';
 
 
@@ -14,9 +14,6 @@ import {SignupService} from '../services/signup.service';
 export class SignupFormComponent implements OnInit {
 	/** Indicates whether or not to display invite-code-related UI. */
 	@Input() public invite: boolean;
-
-	/** @see Env */
-	public readonly env: Env	= env;
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
@@ -42,6 +39,9 @@ export class SignupFormComponent implements OnInit {
 	constructor (
 		/** @ignore */
 		private readonly elementRef: ElementRef,
+
+		/** @see EnvService */
+		public readonly envService: EnvService,
 
 		/** @see SignupService */
 		public readonly signupService: SignupService

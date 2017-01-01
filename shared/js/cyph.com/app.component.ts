@@ -1,18 +1,17 @@
 import {Component} from '@angular/core';
 import {Config, config} from '../cyph/config';
 import {Env, env} from '../cyph/env';
-import {DialogManager} from '../cyph/ui/dialog-manager';
 import {DialogService} from '../cyph/ui/services/dialog.service';
-import {MdDialogService} from '../cyph/ui/services/material/md-dialog.service';
+import {EnvService} from '../cyph/ui/services/env.service';
 import {MdSidenavService} from '../cyph/ui/services/material/md-sidenav.service';
-import {MdToastService} from '../cyph/ui/services/material/md-toast.service';
 import {NotificationService} from '../cyph/ui/services/notification.service';
 import {SignupService} from '../cyph/ui/services/signup.service';
 import {VirtualKeyboardWatcherService} from '../cyph/ui/services/virtual-keyboard-watcher.service';
 import {VisibilityWatcherService} from '../cyph/ui/services/visibility-watcher.service';
 import {util} from '../cyph/util';
+import {AppService} from './app.service';
+import {DemoService} from './demo.service';
 import {Promos, States} from './enums';
-import {UI} from './ui';
 
 
 /**
@@ -20,7 +19,9 @@ import {UI} from './ui';
  */
 @Component({
 	providers: [
+		DemoService,
 		DialogService,
+		EnvService,
 		NotificationService,
 		SignupService,
 		VirtualKeyboardWatcherService,
@@ -35,9 +36,6 @@ export class AppComponent {
 
 	/** @ignore */
 	public sidenav: Promise<angular.material.ISidenavObject>;
-
-	/** @ignore */
-	public ui: UI;
 
 	/** @ignore */
 	public config: Config			= config;
@@ -69,16 +67,17 @@ export class AppComponent {
 	}
 
 	constructor (
-		mdDialogService: MdDialogService,
 		mdSidenavService: MdSidenavService,
-		mdToastService: MdToastService
+
+		/** @see AppService */
+		public appService: AppService,
+
+		/** @see DemoService */
+		public demoService: DemoService,
+
+		/** @see EnvService */
+		public envService: EnvService
 	) {
 		this.sidenav	= mdSidenavService.getSidenav('main-toolbar-sidenav');
-		this.ui			= new UI(new DialogManager(mdDialogService, mdToastService));
-
-		/* For testing and debugging */
-		if (env.isWeb) {
-			(<any> self).ui	= this.ui;
-		}
 	}
 }

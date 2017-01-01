@@ -1,25 +1,25 @@
 <div
 	class='chat-message-box'
-	[class.mobile]='self.isMobile'
-	*ngIf='self.state === states.chat && self.session.state.isAlive'
+	[class.mobile]='envService.isMobile'
+	*ngIf='chatService.state === states.chat && sessionService.state.isAlive'
 >
 	<textarea
 		class='message-box tabIndent'
-		[(ngModel)]='self.currentMessage'
-		(ngModelChange)='self.messageChange()'
+		[(ngModel)]='chatService.currentMessage'
+		(ngModelChange)='chatService.messageChange()'
 		placeholder='Send a secure message...'
 		cyphTranslate
 	></textarea>
 
-	<div *ngIf='self.isMobile'>
+	<div *ngIf='envService.isMobile'>
 		<div
 			class='message-box-button-group'
-			[class.hidden]='self.currentMessage === ""'
+			[class.hidden]='chatService.currentMessage === ""'
 		>
 			<md2-button
 				ariaLabel='Send'
 				childClass='grey'
-				(childClick)='self.send()'
+				(childClick)='chatService.send()'
 				cyphTranslate
 			>
 				<md2-icon>send</md2-icon>
@@ -27,14 +27,14 @@
 		</div>
 		<div
 			class='message-box-button-group'
-			[class.hidden]='self.currentMessage !== ""'
+			[class.hidden]='chatService.currentMessage !== ""'
 		>
 			<md2-button
 				ariaLabel='Video Call'
 				childClass='grey'
-				(childClick)='self.p2pManager.videoCallButton()'
-				[disabled]='!self.p2pManager.isEnabled'
-				*ngIf='!self.p2pManager.p2p.isActive'
+				(childClick)='p2pService.videoCallButton()'
+				[disabled]='!p2pService.isEnabled'
+				*ngIf='!p2pService.p2p.isActive'
 				cyphTranslate
 			>
 				<md2-icon>videocam</md2-icon>
@@ -42,9 +42,9 @@
 			<md2-button
 				ariaLabel='Voice Call'
 				childClass='grey'
-				(childClick)='self.p2pManager.voiceCallButton()'
-				[disabled]='!self.p2pManager.isEnabled'
-				*ngIf='!self.p2pManager.p2p.isActive'
+				(childClick)='p2pService.voiceCallButton()'
+				[disabled]='!p2pService.isEnabled'
+				*ngIf='!p2pService.p2p.isActive'
 				cyphTranslate
 			>
 				<md2-icon>phone</md2-icon>
@@ -57,7 +57,7 @@
 				<md2-icon>attach_file</md2-icon>
 				<cyph-file-input
 					[accept]='fileAccept'
-					(change)='self.fileManager.send($event)'
+					(change)='fileService.send($event)'
 				></cyph-file-input>
 			</md2-button>
 		</div>
@@ -80,7 +80,7 @@
 		[mdOpen]='isSpeedDialOpen'
 		(mouseenter)='isSpeedDialOpen = true'
 		(mouseleave)='isSpeedDialOpen = false'
-		*ngIf='!self.isMobile && isSpeedDialReady && !self.p2pManager.p2p.isActive'
+		*ngIf='!envService.isMobile && isSpeedDialReady && !p2pService.p2p.isActive'
 	></md2-fab-speed-dial>
 	<md2-fab-speed-dial
 		cyphTranslate
@@ -92,7 +92,7 @@
 		[mdOpen]='isSpeedDialOpen'
 		(mouseenter)='isSpeedDialOpen = true'
 		(mouseleave)='isSpeedDialOpen = false'
-		*ngIf='!self.isMobile && isSpeedDialReady && self.p2pManager.p2p.isActive'
+		*ngIf='!envService.isMobile && isSpeedDialReady && p2pService.p2p.isActive'
 	></md2-fab-speed-dial>
 
 	<md2-subheader

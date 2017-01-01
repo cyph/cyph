@@ -5,14 +5,13 @@
 
 
 import {env} from '../cyph/env';
-import {elements} from '../cyph/ui/elements';
 import {util} from '../cyph/util';
 
 
 /* Mobile CSS class */
 
 if (env.isMobile) {
-	elements.html().addClass('mobile');
+	$(document.body).addClass('mobile');
 }
 
 /* Polyfill */
@@ -45,14 +44,14 @@ $(async () => {
 		/* In WebSigned environments, remove no-longer-necessary
 			'unsafe-inline' from CSP after application loads */
 		await util.sleep(10000);
-		elements.head().append(
+		$(document.head).append(
 			`<meta http-equiv="Content-Security-Policy" content="${env.CSP}" />`
 		);
 	}
 
 	/* Try again if page takes too long to initialise */
 	await util.sleep(120000);
-	if (!elements.html().hasClass('load-complete')) {
+	if (!$(document.body).hasClass('load-complete')) {
 		location.reload();
 	}
 });

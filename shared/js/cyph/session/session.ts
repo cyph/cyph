@@ -339,12 +339,7 @@ export class Session implements ISession {
 	}
 
 	/** @inheritDoc */
-	public send (...messages: IMessage[]) : void {
-		this.sendBase(messages);
-	}
-
-	/** @inheritDoc */
-	public async sendBase (messages: IMessage[]) : Promise<void> {
+	public async send (...messages: IMessage[]) : Promise<void> {
 		while (!this.castle) {
 			await util.sleep();
 		}

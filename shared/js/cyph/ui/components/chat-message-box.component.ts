@@ -2,10 +2,13 @@ import {Component, ElementRef, Input, OnInit} from '@angular/core';
 import {env} from '../../env';
 import {Strings, strings} from '../../strings';
 import {util} from '../../util';
-import {Chat} from '../chat/chat';
 import {States} from '../chat/enums';
-import {Elements} from '../elements';
+import {ChatService} from '../services/chat.service';
+import {EnvService} from '../services/env.service';
+import {FileService} from '../services/file.service';
+import {P2PService} from '../services/p2p.service';
 import {ScrollService} from '../services/scroll.service';
+import {SessionService} from '../services/session.service';
 import {VirtualKeyboardWatcherService} from '../services/virtual-keyboard-watcher.service';
 import {VisibilityWatcherService} from '../services/visibility-watcher.service';
 
@@ -18,9 +21,6 @@ import {VisibilityWatcherService} from '../services/visibility-watcher.service';
 	templateUrl: '../../../../templates/chat-message-box.html'
 })
 export class ChatMessageBoxComponent implements OnInit {
-	/** @see IChat */
-	@Input() public self: Chat;
-
 	/** @see FileInput.accept */
 	@Input() public fileAccept: string;
 
@@ -54,12 +54,12 @@ export class ChatMessageBoxComponent implements OnInit {
 		label: string
 	}[]	= [
 		{
-			click: () => { this.self.helpButton(); },
+			click: () => { this.chatService.helpButton(); },
 			icon: 'help_outline',
 			label: strings.help
 		},
 		{
-			click: () => { this.self.disconnectButton(); },
+			click: () => { this.chatService.disconnectButton(); },
 			icon: 'close',
 			label: strings.disconnect
 		}
@@ -78,34 +78,34 @@ export class ChatMessageBoxComponent implements OnInit {
 	}[]	= [
 		{
 			fileAccept: this.fileAccept,
-			fileChange: ($event: File) => { this.self.fileManager.send($event); },
+			fileChange: ($event: File) => { this.fileService.send($event); },
 			icon: 'attach_file',
 			label: 'Send File or Photo',
 			tooltipDirection: 'left'
 		},
 		{
-			click: () => { this.self.p2pManager.voiceCallButton(); },
-			disabled: () => !this.self.p2pManager.isEnabled,
+			click: () => { this.p2pService.voiceCallButton(); },
+			disabled: () => !this.p2pService.isEnabled,
 			icon: 'phone',
 			label: 'Voice Call',
 			tooltipDirection: 'left'
 		},
 		{
-			click: () => { this.self.p2pManager.videoCallButton(); },
-			disabled: () => !this.self.p2pManager.isEnabled,
+			click: () => { this.p2pService.videoCallButton(); },
+			disabled: () => !this.p2pService.isEnabled,
 			icon: 'videocam',
 			label: 'Video Call',
 			tooltipDirection: 'left'
 		},
 		{
-			click: () => { this.self.helpButton(); },
+			click: () => { this.chatService.helpButton(); },
 			cssClass: 'dark',
 			icon: 'help_outline',
 			label: strings.help,
 			tooltipDirection: 'left'
 		},
 		{
-			click: () => { this.self.disconnectButton(); },
+			click: () => { this.chatService.disconnectButton(); },
 			cssClass: 'dark',
 			icon: 'close',
 			label: strings.disconnect,
@@ -152,7 +152,7 @@ export class ChatMessageBoxComponent implements OnInit {
 			!$element.is(':visible') ||
 			(
 				isVideoCallMessageBox &&
-				!this.self.p2pManager.isSidebarOpen
+				!this.p2pService.isSidebarOpen
 			)
 		) {
 			await util.sleep();
@@ -163,12 +163,9 @@ export class ChatMessageBoxComponent implements OnInit {
 		await util.sleep(1000);
 		this.isSpeedDialOpen	= false;
 
-		/* Allow enter press to submit, except on
-			mobile without external keyboard */
+		/* Allow enter press to submit, except on mobile without external keyboard */
 
-		const $textarea	= await Elements.waitForElement(
-			() => $element.find('textarea')
-		);
+		const $textarea	= await util.waitForIterable(() => $element.find('textarea'));
 
 		$textarea.keypress(e => {
 			if (
@@ -180,16 +177,16 @@ export class ChatMessageBoxComponent implements OnInit {
 			}
 
 			e.preventDefault();
-			this.self.send();
+			this.chatService.send();
 			$textarea.val('');
 		});
 
-		if (this.self.isMobile) {
+		if (this.envService.isMobile) {
 			/* Prevent jankiness upon message send on mobile */
 
 			let lastClick	= 0;
 
-			const $buttons	= await Elements.waitForElement(
+			const $buttons	= await util.waitForIterable(
 				() => $element.find('.message-box-button-group .md-button')
 			);
 
@@ -252,6 +249,10 @@ export class ChatMessageBoxComponent implements OnInit {
 					$textarea.val().split('\n').length
 				)
 			);
+
+			/* Allow tabbing for code indentation */
+
+			(<any> self).tabIndent.render($textarea[0]);
 		}
 	}
 
@@ -265,7 +266,22 @@ export class ChatMessageBoxComponent implements OnInit {
 		/** @ignore */
 		private readonly visibilityWatcherService: VisibilityWatcherService,
 
+		/** @see ChatService */
+		public readonly chatService: ChatService,
+
+		/** @see EnvService */
+		public readonly envService: EnvService,
+
+		/** @see FileService */
+		public readonly fileService: FileService,
+
+		/** @see P2PService */
+		public readonly p2pService: P2PService,
+
 		/** @see ScrollService */
-		public readonly scrollService: ScrollService
+		public readonly scrollService: ScrollService,
+
+		/** @see SessionService */
+		public readonly sessionService: SessionService
 	) {}
 }

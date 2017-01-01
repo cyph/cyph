@@ -1,13 +1,13 @@
 @import 'cyph.base';
 @import 'cyph.modest';
 
-html, body, #main {
+body, #main {
 	max-width: 100% !important;
 	max-height: 100% !important;
 	overflow: hidden;
 }
 
-html:not(.mobile) {
+body:not(.mobile) {
 	#main {
 		padding: 0px 30px 15px;
 	}
@@ -726,7 +726,7 @@ md-menu-item {
 	}
 }
 
-html.mobile .cyph-not-found {
+body.mobile .cyph-not-found {
 	padding: 5px;
 
 	h1 {
@@ -738,7 +738,7 @@ html.mobile .cyph-not-found {
 	}
 }
 
-html:not(.mobile) .cyph-not-found {
+body:not(.mobile) .cyph-not-found {
 	.explanation {
 		margin-left: auto;
 		margin-right: auto;
@@ -853,13 +853,13 @@ cyph-help {
 	}
 }
 
-html:not(.mobile) cyph-help {
+body:not(.mobile) cyph-help {
 	td {
 		padding-left: 20px;
 	}
 }
 
-html.mobile cyph-help {
+body.mobile cyph-help {
 	font-size: 75%;
 }
 

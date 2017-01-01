@@ -1,11 +1,11 @@
 <div
 	class='chat-main layout-column layout-fill flex'
-	[class.video]='self.p2pManager.p2p.isActive'
-	[class.mobile]='self.isMobile'
+	[class.video]='p2pService.p2p.isActive'
+	[class.mobile]='envService.isMobile'
 >
 	<div
 		class='cyph-view loading layout-column layout-fill flex'
-		[class.active]='self.state === states.keyExchange'
+		[class.active]='chatService.state === states.keyExchange'
 	>
 		<div class='flex'></div>
 		<div class='logo-animation'>
@@ -19,14 +19,14 @@
 		<md2-progress-linear
 			childClass='md-accent key-exchange-progress'
 			mdMode='determinate'
-			[value]='self.keyExchangeProgress'
+			[value]='chatService.keyExchangeProgress'
 		></md2-progress-linear>
 		<div class='flex'></div>
 	</div>
 
 	<div
 		class='cyph-view abort-screen loading layout-column layout-fill flex'
-		[class.active]='self.state === states.aborted'
+		[class.active]='chatService.state === states.aborted'
 	>
 		<div class='flex'></div>
 		<div class='image'>
@@ -39,7 +39,7 @@
 			<a
 				cyphTranslate
 				target='_self'
-				[href]='env.newCyphUrl'
+				[href]='envService.newCyphUrl'
 			>try again</a>.
 		</div>
 		<div class='flex'></div>
@@ -47,7 +47,7 @@
 
 	<div
 		class='cyph-view chat-begin-message loading layout-column layout-fill flex'
-		[class.active]='self.state === states.chatBeginMessage'
+		[class.active]='chatService.state === states.chatBeginMessage'
 	>
 		<div class='flex'></div>
 		<div class='logo-animation connected'></div>
@@ -62,37 +62,37 @@
 
 	<div
 		class='cyph-view video-call flex'
-		[class.active]='self.state === states.chat'
-		[class.playing]='self.p2pManager.p2p.isActive'
-		[class.sidebar-open]='self.p2pManager.isSidebarOpen'
+		[class.active]='chatService.state === states.chat'
+		[class.playing]='p2pService.p2p.isActive'
+		[class.sidebar-open]='p2pService.isSidebarOpen'
 	>
-		<a class='logo' rel='noreferrer' [href]='env.homeUrl'>
+		<a class='logo' rel='noreferrer' [href]='envService.homeUrl'>
 			<img src='/img/betalogo.mobile.png' alt='Beta logo' cyphTranslate />
 		</a>
 		<div
 			class='friend stream'
 			*ngIf='
-				self.p2pManager.p2p.incomingStream.video &&
-				!self.p2pManager.p2p.loading
+				p2pService.p2p.incomingStream.video &&
+				!p2pService.p2p.loading
 			'
 		></div>
 		<img
 			class='friend'
 			*ngIf='!(
-				self.p2pManager.p2p.incomingStream.video ||
-				self.p2pManager.p2p.loading
+				p2pService.p2p.incomingStream.video ||
+				p2pService.p2p.loading
 			)'
 			src='/img/voicecall.jpg'
 		/>
 		<video
 			class='me'
-			*ngIf='self.p2pManager.p2p.outgoingStream.video'
+			*ngIf='p2pService.p2p.outgoingStream.video'
 			autoplay
 			muted
 		></video>
 
 		<md2-progress-circular
-			*ngIf='self.p2pManager.p2p.loading'
+			*ngIf='p2pService.p2p.loading'
 			mdMode='indeterminate'
 		></md2-progress-circular>
 
@@ -100,7 +100,7 @@
 			cyphTranslate
 			childClass='sidebar'
 			ariaLabel='Sidebar'
-			(childClick)='self.p2pManager.toggleSidebar()'
+			(childClick)='p2pService.toggleSidebar()'
 		>
 			<img src='/img/icons/chat.png' alt='Chat' cyphTranslate />
 		</md2-button>
@@ -108,44 +108,44 @@
 		<div class='buttons'>
 			<md2-button
 				childClass='md-fab video-call-button'
-				(childClick)='self.p2pManager.videoCallButton()'
+				(childClick)='p2pService.videoCallButton()'
 				[ariaLabel]='
-					!self.p2pManager.p2p.outgoingStream.video ?
+					!p2pService.p2p.outgoingStream.video ?
 						strings.cameraEnable :
 						strings.cameraDisable
 				'
 			>
 				<img
 					cyphTranslate
-					*ngIf='!self.p2pManager.p2p.outgoingStream.video'
+					*ngIf='!p2pService.p2p.outgoingStream.video'
 					src='/img/icons/video.on.png'
 					alt='Video on'
 				/>
 				<img
 					cyphTranslate
-					*ngIf='self.p2pManager.p2p.outgoingStream.video'
+					*ngIf='p2pService.p2p.outgoingStream.video'
 					src='/img/icons/video.off.png'
 					alt='Video off'
 				/>
 			</md2-button>
 			<md2-button
 				childClass='md-fab voice-call-button'
-				(childClick)='self.p2pManager.voiceCallButton()'
+				(childClick)='p2pService.voiceCallButton()'
 				[ariaLabel]='
-					!self.p2pManager.p2p.outgoingStream.audio ?
+					!p2pService.p2p.outgoingStream.audio ?
 						strings.micEnable :
 						strings.micDisable
 				'
 			>
 				<img
 					cyphTranslate
-					*ngIf='!self.p2pManager.p2p.outgoingStream.audio'
+					*ngIf='!p2pService.p2p.outgoingStream.audio'
 					src='/img/icons/mic.on.png'
 					alt='Mic on'
 				/>
 				<img
 					cyphTranslate
-					*ngIf='self.p2pManager.p2p.outgoingStream.audio'
+					*ngIf='p2pService.p2p.outgoingStream.audio'
 					src='/img/icons/mic.off.png'
 					alt='Mic off'
 				/>
@@ -154,7 +154,7 @@
 				cyphTranslate
 				ariaLabel='End Call'
 				childClass='md-fab md-theme-grey close-button'
-				(childClick)='self.p2pManager.closeButton()'
+				(childClick)='p2pService.closeButton()'
 			>
 				<md2-icon>call_end</md2-icon>
 			</md2-button>
@@ -163,19 +163,18 @@
 
 	<cyph-chat-message-box
 		class='video-call-message-box'
-		[self]='self'
 	></cyph-chat-message-box>
 
 	<div
 		class='cyph-view transfer-list flex'
-		[class.active]='self.state === states.chat'
+		[class.active]='chatService.state === states.chat'
 	>
 		<md2-content childClass='md-no-flicker'>
 			<md2-list childClass='layout-column'>
 				<md2-list-item
 					class='layout-column'
 					childClass='layout-row'
-					*ngFor='let transfer of self.fileManager.files.transfers'
+					*ngFor='let transfer of fileService.files.transfers'
 				>
 					<div class='layout-column layout-align-start-stretch flex'>
 						<div class='layout-row'>
@@ -204,12 +203,12 @@
 
 	<div
 		class='cyph-view message-list flex'
-		[class.active]='self.state === states.chat'
+		[class.active]='chatService.state === states.chat'
 		[style.margin-top]='
 			(
 				(
-					self.fileManager.files.transfers.size < 3 ?
-						self.fileManager.files.transfers.size :
+					fileService.files.transfers.size < 3 ?
+						fileService.files.transfers.size :
 						3
 				) * 65
 			) + "px"
@@ -220,15 +219,15 @@
 				<cyph-chat-message
 					class='layout-row'
 					[message]='message'
-					[mobile]='self.isMobile || self.p2pManager.p2p.isActive'
-					*ngFor='let message of self.messages'
+					[mobile]='envService.isMobile || p2pService.p2p.isActive'
+					*ngFor='let message of chatService.messages'
 				></cyph-chat-message>
 
 				<md2-list-item
 					class='layout-row'
 					[childClass]='
 						"friend-is-typing" +
-						(self.isFriendTyping ? " show" : "")
+						(chatService.isFriendTyping ? " show" : "")
 					'
 				>
 					<span class='ellipsis-spinner'>
@@ -241,7 +240,7 @@
 				<md2-list-item
 					class='layout-row'
 					childClass='chat-end-message layout-align-center-center'
-					*ngIf='self.isDisconnected && !hideDisconnectMessage'
+					*ngIf='chatService.isDisconnected && !hideDisconnectMessage'
 				>
 					<md2-card class='flex flex-gt-sm-50' childClass='md-padding'>
 						<md2-card-content>

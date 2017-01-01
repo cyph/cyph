@@ -1,6 +1,5 @@
 import {Component, ElementRef, EventEmitter, Input, Output} from '@angular/core';
 import {util} from '../../util';
-import {Elements} from '../elements';
 
 
 /**
@@ -18,7 +17,7 @@ export class FileInputComponent {
 	@Output() public change: EventEmitter<File>	= new EventEmitter<File>();
 
 	constructor (elementRef: ElementRef) { (async () => {
-		const $input	= await Elements.waitForElement(
+		const $input	= await util.waitForIterable(
 			() => $(elementRef.nativeElement).children()
 		);
 
@@ -42,7 +41,7 @@ export class FileInputComponent {
 			})
 		;
 
-		const $button	= await Elements.waitForElement(
+		const $button	= await util.waitForIterable(
 			() => $input.closest('button')
 		);
 

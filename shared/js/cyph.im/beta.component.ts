@@ -1,5 +1,6 @@
-import {Component, Input} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {Strings, strings} from '../cyph/strings';
+import {urlState} from '../cyph/url-state';
 import {util} from '../cyph/util';
 import {BetaStates} from './enums';
 
@@ -11,7 +12,7 @@ import {BetaStates} from './enums';
 	selector: 'cyph-beta',
 	templateUrl: '../../templates/cyph.im/beta.html'
 })
-export class BetaComponent {
+export class BetaComponent implements OnInit {
 	/** @ignore */
 	@Input() public betaState: BetaStates;
 
@@ -44,6 +45,11 @@ export class BetaComponent {
 
 		this.checking	= false;
 		this.error		= true;
+	}
+
+	/** @inheritDoc */
+	public ngOnInit () : void {
+		urlState.trigger();
 	}
 
 	constructor () {}

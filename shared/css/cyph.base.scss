@@ -6,7 +6,7 @@
 	text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.004) !important;
 }
 
-html, body, #main, .cyph-foreground, md-sidenav {
+body, #main, .cyph-foreground, md-sidenav {
 	background-color: #8b62d9 !important;
 }
 
@@ -65,7 +65,7 @@ md-fab-actions .md-button:not(.dark):not(.invert) md-icon, .md-button.grey md-ic
 	color: #757575 !important;
 }
 
-html .md-button {
+body .md-button {
 	font-weight: normal;
 }
 
@@ -209,7 +209,7 @@ cyph-markdown {
 	}
 }
 
-html:not(.mobile) {
+body:not(.mobile) {
 	cyph-markdown {
 		> :not(p), > p:not(:only-child) {
 			margin-left: 25px;
@@ -256,7 +256,7 @@ pre, code {
 
 	@include transition(transform 2s cubic-bezier(1, 0, 0, 1));
 
-	&.curtain {
+	.curtain & {
 		@include transform(scaleY(0.1) translateY(-90%));
 	}
 }
@@ -314,7 +314,7 @@ pre, code {
 
 /* Desktop styling tweak */
 
-html:not(.mobile) * {
+body:not(.mobile) * {
 	outline: none !important;
 }
 
@@ -451,7 +451,7 @@ html:not(.mobile) * {
 	background-color: #86789F !important;
 }
 
-html.mobile .pricing-chart {
+body.mobile .pricing-chart {
 	md-input-container {
 		margin: 0% 0% 0% 5% !important;
 	}
@@ -639,11 +639,11 @@ md-icon.back.material-icons:hover {
 		cursor: pointer;
 	}
 
-	html.mobile & {
+	body.mobile & {
 		margin: 5% 1% 5% 1% !important;
 	}
 
-	html:not(.mobile) & {
+	body:not(.mobile) & {
 		width: 225px;
 	}
 }
@@ -826,7 +826,7 @@ input.doctors {
 	box-shadow: none !important;
 }
 
-html.mobile .mfp-content {
+body.mobile .mfp-content {
 	pointer-events: none !important;
 }
 
@@ -877,14 +877,14 @@ md-progress-linear {
 	max-width: initial;
 }
 
-html {
+body {
 	/*** Angular Material patches (from 0.4 to 0.6 upgrade) ***/
 
 	md-content.md-default-theme {
 		background-color: transparent;
 	}
 
-	html > body p {
+	> body p {
 		line-height: 135%;
 	}
 

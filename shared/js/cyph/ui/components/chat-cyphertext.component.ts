@@ -1,7 +1,7 @@
-import {Component, Input} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Users, users} from '../../session/enums';
 import {Strings, strings} from '../../strings';
-import {Chat} from '../chat/chat';
+import {CyphertextService} from '../services/cyphertext.service';
 
 
 /**
@@ -11,15 +11,25 @@ import {Chat} from '../chat/chat';
 	selector: 'cyph-chat-cyphertext',
 	templateUrl: '../../../../templates/chat-cyphertext.html'
 })
-export class ChatCyphertextComponent {
-	/** @see IChat */
-	@Input() public self: Chat;
-
+export class ChatCyphertextComponent implements OnInit {
 	/** @see Strings */
 	public readonly strings: Strings	= strings;
 
 	/** @see Users */
 	public readonly users: Users		= users;
 
-	constructor () {}
+	/** @inheritDoc */
+	public ngOnInit () : void {
+		/* Close cyphertext on esc */
+		$(window).keyup(e => {
+			if (e.keyCode === 27) {
+				this.cyphertextService.hide();
+			}
+		});
+	}
+
+	constructor (
+		/** @see CyphertextService */
+		public readonly cyphertextService: CyphertextService
+	) {}
 }

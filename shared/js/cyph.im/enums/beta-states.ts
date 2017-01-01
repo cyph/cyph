@@ -3,7 +3,6 @@
  */
 export enum BetaStates {
 	login,
-	none,
 	register,
 	settings
 }

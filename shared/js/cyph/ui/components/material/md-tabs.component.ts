@@ -12,7 +12,6 @@ import {
 } from '@angular/core';
 import {UpgradeComponent} from '@angular/upgrade/static';
 import {util} from '../../../util';
-import {Elements} from '../../elements';
 
 
 /**
@@ -43,11 +42,11 @@ export class MdTabsComponent
 			public readonly labels: string[];
 
 			constructor ($element: JQuery) { (async () => {
-				const $placeholders	= await Elements.waitForElement(
+				const $placeholders	= await util.waitForIterable(
 					() => $element.find('div.placeholder')
 				);
 
-				const $transclusions	= await Elements.waitForElement(
+				const $transclusions	= await util.waitForIterable(
 					() => $element.children('ng-transclude').children()
 				);
 

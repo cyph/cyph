@@ -4,7 +4,7 @@
 			<md2-list-item
 				class='layout-row'
 				childClass='message-item unread flex layout-column'
-				*ngFor='let message of self.cyphertext.messages'
+				*ngFor='let message of cyphertextService.messages'
 			>
 				<span class='message'>
 					<strong *ngIf='message.author === users.me'>
@@ -24,7 +24,7 @@
 		cyphTranslate
 		ariaLabel='Close Cyphertext'
 		childClass='md-fab md-theme-grey close-button'
-		(childClick)='self.cyphertext.hide()'
+		(childClick)='cyphertextService.hide()'
 	>
 		<strong>&times;</strong>
 	</md2-button>

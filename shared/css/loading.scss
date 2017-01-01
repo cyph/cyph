@@ -42,7 +42,7 @@
 	}
 }
 
-html.load-complete #pre-load {
+body.load-complete #pre-load {
 	pointer-events: none;
 	opacity: 0;
 }

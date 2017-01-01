@@ -1,71 +1,129 @@
 import {Injectable} from '@angular/core';
+import {analytics} from '../../analytics';
 import {IMessage} from '../../session/imessage';
+import {ISession} from '../../session/isession';
+import {ThreadedSession} from '../../session/threaded-session';
+import {AbstractSessionIdService} from './abstract-session-id.service';
 
 
 /**
- * Angular service that does $BALLS.
+ * Manages a session.
  */
 @Injectable()
 export class SessionService {
-	/** @ignore */
-	public readonly state	= {
-		cyphId: <string> '',
-		isAlice: <boolean> false,
-		isAlive: <boolean> true,
-		isStartingNewCyph: <boolean> false,
-		sharedSecret: <string> '',
-		wasInitiatedByAPI: <boolean> false
+	/** @see ISession */
+	public readonly session: ISession;
+
+	/** API flags passed into this session. */
+	public readonly apiFlags	= {
+		forceTURN: false,
+		modestBranding: false,
+		nativeCrypto: false
 	};
 
-	/** @ignore */
+	/** @see ISession.close */
 	public close () : void {
-		throw new Error('Not implemented.');
+		this.session.close();
 	}
 
-	/** @ignore */
-	public off<T> (_EVENT: string, _HANDLER: (data: T) => void) : void {
-		throw new Error('Not implemented.');
+	/** @see ISession.off */
+	public off<T> (event: string, handler: (data: T) => void) : void {
+		this.session.off<T>(event, handler);
 	}
 
-	/** @ignore */
-	public on<T> (_EVENT: string, _HANDLER: (data: T) => void) : void {
-		throw new Error('Not implemented.');
+	/** @see ISession.on */
+	public on<T> (event: string, handler: (data: T) => void) : void {
+		this.session.on<T>(event, handler);
 	}
 
-	/** @ignore */
-	public async one<T> (_EVENT: string) : Promise<T> {
-		throw new Error('Not implemented.');
+	/** @see ISession.one */
+	public async one<T> (event: string) : Promise<T> {
+		return this.session.one<T>(event);
 	}
 
-	/** @ignore */
-	public async receive (_DATA: string) : Promise<void> {
-		throw new Error('Not implemented.');
+	/** @see ISession.receive */
+	public async receive (data: string) : Promise<void> {
+		return this.session.receive(data);
 	}
 
-	/** @ignore */
-	public send (..._MESSAGES: IMessage[]) : void {
-		throw new Error('Not implemented.');
+	/** @see ISession.send */
+	public async send (...messages: IMessage[]) : Promise<void> {
+		return this.session.send(...messages);
 	}
 
-	/** @ignore */
-	public async sendBase (_MESSAGES: IMessage[]) : Promise<void> {
-		throw new Error('Not implemented.');
+	/** @see ISession.sendText */
+	public sendText (text: string, selfDestructTimeout?: number) : void {
+		this.session.sendText(text, selfDestructTimeout);
 	}
 
-	/** @ignore */
-	public sendText (_TEXT: string, _SELF_DESTRUCT_TIMEOUT?: number) : void {
-		throw new Error('Not implemented.');
+	/** @see ISession.state */
+	public get state () : {
+		cyphId: string;
+		isAlice: boolean;
+		isAlive: boolean;
+		isStartingNewCyph: boolean;
+		sharedSecret: string;
+		wasInitiatedByAPI: boolean;
+	} {
+		return this.session.state;
 	}
 
-	/** @ignore */
-	public trigger (_EVENT: string, _DATA?: any) : void {
-		throw new Error('Not implemented.');
+	/** @see ISession.trigger */
+	public trigger (event: string, data?: any) : void {
+		this.session.trigger(event, data);
 	}
 
-	/** @ignore */
-	public updateState (_KEY: string, _VALUE: any) : void {
-		throw new Error('Not implemented.');
+	/** @see ISession.updateState */
+	public updateState (key: string, value: any) : void {
+		this.session.updateState(key, value);
 	}
 
-	constructor () {}
+	constructor (abstractSessionIdService: AbstractSessionIdService) {
+		let id	= abstractSessionIdService.id;
+
+		/* API flags */
+		for (const flag of [
+			/* Modest branding */
+			{
+				analEvent: 'modest-branding',
+				character: '&',
+				set: () => { this.apiFlags.modestBranding = true; }
+			},
+			/* Force TURN */
+			{
+				analEvent: 'force-turn',
+				character: '$',
+				set: () => { this.apiFlags.forceTURN = true; }
+			},
+			/* Native crypto */
+			{
+				analEvent: 'native-crypto',
+				character: '%',
+				set: () => { this.apiFlags.nativeCrypto = true; }
+			}
+		]) {
+			if (id[0] !== flag.character) {
+				continue;
+			}
+
+			id	=
+				id.substring(1) +
+				(id.length > 1 ? 'a' : '')
+			;
+
+			flag.set();
+
+			analytics.sendEvent({
+				eventAction: 'used',
+				eventCategory: flag.analEvent,
+				eventValue: 1,
+				hitType: 'event'
+			});
+		}
+
+		this.session	= new ThreadedSession(
+			id,
+			this.apiFlags.nativeCrypto
+		);
+	}
 }

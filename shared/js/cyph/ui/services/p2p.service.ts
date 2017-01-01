@@ -43,7 +43,7 @@ export class P2PService {
 	public init (localVideo: () => JQuery, remoteVideo: () => JQuery) : void {
 		this.p2p	= new P2P(
 			this.sessionService,
-			this.chatService.forceTURN,
+			this.sessionService.apiFlags.forceTURN,
 			localVideo,
 			remoteVideo
 		);

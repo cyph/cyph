@@ -7,7 +7,6 @@ import * as Crypto from './crypto';
 import * as Files from './files';
 import * as P2P from './p2p';
 import * as Session from './session';
-import * as UI from './ui';
 
 
 export * from './base';
@@ -24,6 +23,5 @@ export {
 	Crypto,
 	Files,
 	P2P,
-	Session,
-	UI
+	Session
 };

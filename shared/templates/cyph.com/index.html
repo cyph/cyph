@@ -1,8 +1,7 @@
 <section
 	id='main'
 	class='layout-column'
-	[class.unisection-mode]='ui.state !== states.home'
-	*ngIf='ui'
+	[class.unisection-mode]='appService.state !== states.home'
 >
 	<md2-toolbar childId='main-toolbar' childClass='wow animated fadeInDownBig'>
 		<div class='md-toolbar-tools'>
@@ -22,7 +21,7 @@
 				ariaLabel='Start new cyph'
 				childClass='breathe'
 			>
-				<a [href]='env.newCyphUrl'>Start new cyph</a>
+				<a [href]='envService.newCyphUrl'>Start new cyph</a>
 			</md2-button>
 
 			<span class='link-wrapper-outer right hide show-gt-md'>
@@ -184,48 +183,48 @@
 		<div class='hero-foreground'>
 			<div
 				id='promo-section'
-				*ngIf='ui.promo !== promos.none'
+				*ngIf='appService.promo !== promos.none'
 				class='layout-row layout-align-center-center'
 			>
 				<md2-card
 					childClass='animated wow flex-33 flex-sm-66 flex-xs-100'
 					data-wow-delay='3000ms'
-					[class.bounceInLeft]='ui.promo === promos.jjgo'
-					[class.bounceInDown]='ui.promo !== promos.jjgo'
+					[class.bounceInLeft]='appService.promo === promos.jjgo'
+					[class.bounceInDown]='appService.promo !== promos.jjgo'
 				>
 					<md2-card-header>
 						<md2-card-header-text>
 							<img
-								[src]='"/img/thirdparty/" + promos[ui.promo] + ".png"'
+								[src]='"/img/thirdparty/" + promos[appService.promo] + ".png"'
 							/>
 						</md2-card-header-text>
 					</md2-card-header>
 					<md2-card-content>
 						<p>
 							<span cyphTranslate>Welcome</span>
-							<span *ngIf='ui.promo === promos.betalist'>
+							<span *ngIf='appService.promo === promos.betalist'>
 								Betalisters!
 							</span>
-							<span *ngIf='ui.promo !== promos.betalist'>
-								<i *ngIf='ui.promo === promos.penn'>
+							<span *ngIf='appService.promo !== promos.betalist'>
+								<i *ngIf='appService.promo === promos.penn'>
 									Penn's Sunday School
 								</i>
-								<i *ngIf='ui.promo === promos.jjgo'>
+								<i *ngIf='appService.promo === promos.jjgo'>
 									Jordan, Jesse, Go!
 								</i>
-								<i *ngIf='ui.promo === promos.ventura'>
+								<i *ngIf='appService.promo === promos.ventura'>
 									We The People
 								</i>
-								<i *ngIf='ui.promo === promos.sawbones'>
+								<i *ngIf='appService.promo === promos.sawbones'>
 									Sawbones
 								</i>
-								<i *ngIf='ui.promo === promos.judgejohn'>
+								<i *ngIf='appService.promo === promos.judgejohn'>
 									Judge John Hodgman
 								</i>
-								<i *ngIf='ui.promo === promos.mybrother'>
+								<i *ngIf='appService.promo === promos.mybrother'>
 									My Brother, My Brother and Me
 								</i>
-								<i *ngIf='ui.promo === promos.security'>
+								<i *ngIf='appService.promo === promos.security'>
 									The Security Brief
 								</i>
 								<span cyphTranslate>listeners!</span>
@@ -245,13 +244,13 @@
 			<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms'>
 				<span cyphTranslate>Secure your</span>
 				<span class='feature-cycle'>
-					{{ui.features[ui.featureIndex]}}
+					{{appService.features[appService.featureIndex]}}
 				</span>
 				<span cyphTranslate>in one click.</span>
 			</h1>
 
 			<div class='hero-container grid-container'>
-				<div class='layout-row' *ngIf='!env.isMobile'>
+				<div class='layout-row' *ngIf='!envService.isMobile'>
 					<div class='flex-25'></div>
 					<div class='wow bounceInLeft' data-wow-delay='2250ms'>
 						<a href='/intro'>
@@ -260,6 +259,7 @@
 								class='laptop screenshot'
 								src='/img/laptop-screenshot.png'
 								alt='Laptop displaying secure Cyph video call'
+								[class.demo]='demoService.isActive'
 							/>
 						</a>
 						&nbsp;
@@ -271,6 +271,7 @@
 								class='phone screenshot'
 								src='/img/phone-screenshot.png'
 								alt='Phone displaying secure Cyph video call'
+								[class.demo]='demoService.isActive'
 							/>
 						</a>
 						&nbsp;
@@ -298,11 +299,17 @@
 	<section id='testimonials-section'>
 		<div class='carousel flex layout-column wow animated fadeIn' data-wow-delay='2750ms'>
 			<div class='logo-container flex layout-row'>
-				<a class='logo flex layout-column' (click)='ui.testimonialCarousel.setItem(0)'>
+				<a
+					class='logo flex layout-column'
+					(click)='appService.testimonialCarousel.setItem(0)'
+				>
 					<img cyphTranslate src='/img/thirdparty/cure53.png' alt='Cure53 logo' />
 				</a>
 				<div class='flex-55 layout-column'></div>
-				<a class='logo flex layout-column' (click)='ui.testimonialCarousel.setItem(1)'>
+				<a
+					class='logo flex layout-column'
+					(click)='appService.testimonialCarousel.setItem(1)'
+				>
 					<img
 						cyphTranslate
 						src='/img/thirdparty/upliftaero.png'
@@ -312,7 +319,7 @@
 			</div>
 
 			<div class='quote-container flex layout-row'>
-				<div class='quote layout-column' [class.flex-50]='!env.isMobile'>
+				<div class='quote layout-column' [class.flex-50]='!envService.isMobile'>
 					<div class='text' cyphTranslate>
 						Cyph provides security from a broad range of cryptographic attacks
 						and very strong client-side crypto. The general conclusion of the
@@ -348,7 +355,7 @@
 						>Open Technology Fund</a>)
 					</div>
 				</div>
-				<div class='quote layout-column' [class.flex-50]='!env.isMobile'>
+				<div class='quote layout-column' [class.flex-50]='!envService.isMobile'>
 					<div class='text' cyphTranslate>
 						I like the simple, nonintrusive interface and the single-minded
 						emphasis on doing one thing really well. We will definitely
@@ -372,60 +379,17 @@
 			</div>
 		</div>
 
-		<a class='nav-arrow' href='/intro' *ngIf='!env.isMobile'>
+		<a class='nav-arrow' href='/intro' *ngIf='!envService.isMobile'>
 			<img cyphTranslate src='/img/icons/downarrow.png' alt='Down arrow' />
 		</a>
 	</section>
 
 	<section id='intro-section'>
-		<a class='nav-arrow' href='/' *ngIf='!env.isMobile'>
+		<a class='nav-arrow' href='/' *ngIf='!envService.isMobile'>
 			<img cyphTranslate src='/img/icons/uparrow.png' alt='Up arrow' />
 		</a>
 
-		<div class='demo-root grid-container'>
-			<span class='desktop' *ngIf='!env.isMobile'>
-				<cyph-chat-root *ngIf='ui && ui.cyphDemo && ui.cyphDemo.desktop'>
-					<div class='cyph-foreground'>
-						<cyph-chat-main
-							[self]='ui.cyphDemo.desktop'
-							class='flex layout-column layout-fill'
-						>
-							<span cyphTranslate>
-								We hope you enjoyed our quick demo! Just click
-								the "start new cyph" button to use it for real.
-							</span>
-						</cyph-chat-main>
-						<cyph-chat-message-box
-							[self]='ui.cyphDemo.desktop'
-						></cyph-chat-message-box>
-					</div>
-					<cyph-chat-cyphertext
-						[self]='ui.cyphDemo.desktop'
-					></cyph-chat-cyphertext>
-				</cyph-chat-root>
-			</span>
-
-			<span class='mobile'>
-				<cyph-chat-root *ngIf='ui && ui.cyphDemo && ui.cyphDemo.mobile'>
-					<div class='cyph-foreground'>
-						<cyph-chat-main
-							[self]='ui.cyphDemo.mobile'
-							class='flex layout-column layout-fill'
-						>
-							<span cyphTranslate>
-								Tell your friends.
-							</span>
-						</cyph-chat-main>
-						<cyph-chat-message-box
-							[self]='ui.cyphDemo.mobile'
-						></cyph-chat-message-box>
-					</div>
-					<cyph-chat-cyphertext
-						[self]='ui.cyphDemo.mobile'
-					></cyph-chat-cyphertext>
-				</cyph-chat-root>
-			</span>
-		</div>
+		<cyph-demo></cyph-demo>
 	</section>
 
 	<section id='features-section'>
@@ -433,7 +397,7 @@
 			<div class='grid-parent grid-33 tablet-grid-33'>
 				<div
 					class='grid-100 tablet-grid-100 logo logo-text'
-					(click)='ui.featureCarousel.setItem(0)'
+					(click)='appService.featureCarousel.setItem(0)'
 				>
 					<img
 						class='grid-25 tablet-grid-25'
@@ -449,7 +413,7 @@
 				</div>
 				<div
 					class='grid-100 tablet-grid-100 logo logo-text'
-					(click)='ui.featureCarousel.setItem(1)'
+					(click)='appService.featureCarousel.setItem(1)'
 				>
 					<img
 						class='grid-25 tablet-grid-25'
@@ -468,7 +432,7 @@
 			<div class='grid-parent grid-33 tablet-grid-33'>
 				<div
 					class='grid-100 tablet-grid-100 logo logo-text'
-					(click)='ui.featureCarousel.setItem(2)'
+					(click)='appService.featureCarousel.setItem(2)'
 				>
 					<img
 						class='grid-25 tablet-grid-25'
@@ -484,7 +448,7 @@
 				</div>
 				<div
 					class='grid-100 tablet-grid-100 logo logo-text'
-					(click)='ui.featureCarousel.setItem(3)'
+					(click)='appService.featureCarousel.setItem(3)'
 				>
 					<img
 						class='grid-25 tablet-grid-25'
@@ -503,7 +467,7 @@
 			<div class='grid-parent grid-33 tablet-grid-33'>
 				<div
 					class='grid-100 tablet-grid-100 logo logo-text'
-					(click)='ui.featureCarousel.setItem(4)'
+					(click)='appService.featureCarousel.setItem(4)'
 				>
 					<img
 						class='grid-25 tablet-grid-25'
@@ -519,7 +483,7 @@
 				</div>
 				<div
 					class='grid-100 tablet-grid-100 logo logo-text'
-					(click)='ui.featureCarousel.setItem(5)'
+					(click)='appService.featureCarousel.setItem(5)'
 				>
 					<img
 						class='grid-25 tablet-grid-25'
@@ -792,7 +756,7 @@
 
 	<section
 		id='pricing'
-		*ngIf='ui.state === states.pricing'
+		*ngIf='appService.state === states.pricing'
 		class='unisection'
 	>
 		<div id='business'>
@@ -804,7 +768,7 @@
 				Business Pricing
 			</h1>
 			<md2-icon
-				(click)='ui.business = false'
+				(click)='appService.business = false'
 				childClass='back animated fadeIn hide-sm hide-xs'
 			>
 				keyboard_backspace
@@ -836,8 +800,8 @@
 						<div class='feature layout-row'>
 							<md2-icon></md2-icon>
 							<h4 cyphTranslate>Beta Features, Plus:</h4>
-							<md2-icon *ngIf='!env.isMobile'>arrow_forward</md2-icon>
-							<md2-icon *ngIf='env.isMobile'>arrow_downward</md2-icon>
+							<md2-icon *ngIf='!envService.isMobile'>arrow_forward</md2-icon>
+							<md2-icon *ngIf='envService.isMobile'>arrow_downward</md2-icon>
 						</div>
 						<hr />
 						<div class='feature indent layout-row'>
@@ -926,12 +890,12 @@
 						</div>
 					</div>
 
-					<div class='price' (click)='ui.updateCart(
-						ui.betaPlan,
+					<div class='price' (click)='appService.updateCart(
+						appService.betaPlan,
 						config.pricingConfig.categories.enterprise.id,
 						config.pricingConfig.categories.enterprise.items.beta.id
 					)'>
-						<span>${{ui.betaPlan}}</span>
+						<span>${{appService.betaPlan}}</span>
 						<span cyphTranslate>(one time)</span>
 					</div>
 				</div>
@@ -946,8 +910,8 @@
 							Securely send and receive patient files.
 						<p>
 						<div class='feature layout-row'>
-							<md2-icon *ngIf='!env.isMobile'>arrow_back</md2-icon>
-							<md2-icon *ngIf='env.isMobile'>arrow_upward</md2-icon>
+							<md2-icon *ngIf='!envService.isMobile'>arrow_back</md2-icon>
+							<md2-icon *ngIf='envService.isMobile'>arrow_upward</md2-icon>
 							<h4 cyphTranslate>Beta Features, Plus:</h4>
 						</div>
 						<hr />
@@ -994,7 +958,7 @@
 
 	<section
 		id='error'
-		*ngIf='ui.state === states.error'
+		*ngIf='appService.state === states.error'
 		class='unisection'
 	>
 		<div>
@@ -1019,7 +983,7 @@
 
 	<section
 		id='contact'
-		*ngIf='ui.state === states.contact'
+		*ngIf='appService.state === states.contact'
 		class='unisection'
 	>
 		<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' cyphTranslate>
@@ -1027,7 +991,7 @@
 		</h1>
 		<div class='section-content-container'>
 			<p>
-				<cyph-contact [email]='ui.contact'></cyph-contact>
+				<cyph-contact [email]='appService.contact'></cyph-contact>
 			</p>
 			<p>
 				<span cyphTranslate>
@@ -1047,7 +1011,7 @@
 
 	<section
 		id='donate'
-		*ngIf='ui.state === states.donate'
+		*ngIf='appService.state === states.donate'
 		class='unisection'
 	>
 		<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' cyphTranslate>
@@ -1070,18 +1034,18 @@
 				<md2-slider
 					childClass='donation flex'
 					mdDiscrete
-					[(model)]='ui.donationAmount'
+					[(model)]='appService.donationAmount'
 					[step]='1'
 					[min]='1'
 					[max]='1337'
 					ariaLabel='Donation Amount'
 				></md2-slider>
 				<div class='donation flex-20 layout layout-align-center-center'>
-					${{ui.donationAmount}}
+					${{appService.donationAmount}}
 				</div>
 				<md2-button cyphTranslate childClass='donate-button' ariaLabel='Submit Donation'>
-					<a (click)='ui.updateCart(
-						ui.donationAmount,
+					<a (click)='appService.updateCart(
+						appService.donationAmount,
 						config.pricingConfig.categories.donation.id,
 						config.pricingConfig.categories.donation.items.generic.id
 					)'>
@@ -1094,7 +1058,7 @@
 
 	<section
 		id='checkout'
-		*ngIf='ui.state === states.checkout'
+		*ngIf='appService.state === states.checkout'
 		class='unisection'
 	>
 		<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' cyphTranslate>
@@ -1103,7 +1067,7 @@
 		<div class='layout-row layout-align-center-center'>
 			<div
 				class='cart empty flex-33 flex-sm-80 flex-xs-95'
-				*ngIf='!ui.cart'
+				*ngIf='!appService.cart'
 			>
 				<h3 cyphTranslate>
 					There's nothing in your cart. What are you even doing here?
@@ -1117,20 +1081,20 @@
 			</div>
 			<cyph-checkout
 				class='flex-33 flex-sm-80 flex-xs-95'
-				[amount]='ui.cart[0]'
-				[category]='ui.cart[1]'
-				[item]='ui.cart[2]'
-				*ngIf='ui.cart[0] !== 0'
+				[amount]='appService.cart[0]'
+				[category]='appService.cart[1]'
+				[item]='appService.cart[2]'
+				*ngIf='appService.cart[0] !== 0'
 			>
 				<div
 					cyphTranslate
-					*ngIf='ui.cart[1] === config.pricingConfig.categories.donation.id'
+					*ngIf='appService.cart[1] === config.pricingConfig.categories.donation.id'
 				>
 					Thank you for supporting Cyph!
 				</div>
 				<div
 					cyphTranslate
-					*ngIf='ui.cart[1] !== config.pricingConfig.categories.donation.id'
+					*ngIf='appService.cart[1] !== config.pricingConfig.categories.donation.id'
 				>
 					Payment confirmed! Follow-up instructions will be sent via email.
 				</div>
@@ -1140,7 +1104,7 @@
 
 	<section
 		id='faq'
-		*ngIf='ui.state === states.faq'
+		*ngIf='appService.state === states.faq'
 		class='unisection'
 	>
 		<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' cyphTranslate>
@@ -1159,7 +1123,7 @@
 					<md2-card-content>
 						<p>
 							<span cyphTranslate>Simply go to</span>
-							<a [href]='env.newCyphUrl'>cyph.im</a>
+							<a [href]='envService.newCyphUrl'>cyph.im</a>
 							<span cyphTranslate>
 								or click the "start new cyph" button and a cyph link will
 								be generated for you to send to a friend. Text, email, or
@@ -1377,7 +1341,7 @@
 
 	<section
 		id='termsofservice'
-		*ngIf='ui.state === states.termsofservice'
+		*ngIf='appService.state === states.termsofservice'
 		class='unisection'
 	>
 		<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' cyphTranslate>
@@ -1519,7 +1483,7 @@
 
 	<section
 		id='privacypolicy'
-		*ngIf='ui.state === states.privacypolicy'
+		*ngIf='appService.state === states.privacypolicy'
 		class='unisection'
 	>
 		<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' cyphTranslate>

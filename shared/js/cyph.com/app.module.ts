@@ -7,7 +7,6 @@ import {ChatCyphertextComponent} from '../cyph/ui/components/chat-cyphertext.com
 import {ChatMainComponent} from '../cyph/ui/components/chat-main.component';
 import {ChatMessageBoxComponent} from '../cyph/ui/components/chat-message-box.component';
 import {ChatMessageComponent} from '../cyph/ui/components/chat-message.component';
-import {ChatRootComponent} from '../cyph/ui/components/chat-root.component';
 import {CheckoutComponent} from '../cyph/ui/components/checkout.component';
 import {ContactComponent} from '../cyph/ui/components/contact.component';
 import {FileInputComponent} from '../cyph/ui/components/file-input.component';
@@ -52,6 +51,8 @@ import {MdDialogService} from '../cyph/ui/services/material/md-dialog.service';
 import {MdSidenavService} from '../cyph/ui/services/material/md-sidenav.service';
 import {MdToastService} from '../cyph/ui/services/material/md-toast.service';
 import {AppComponent} from './app.component';
+import {ChatRootComponent} from './chat-root.component';
+import {DemoComponent} from './demo.component';
 
 
 /**
@@ -67,6 +68,7 @@ import {AppComponent} from './app.component';
 		ChatRootComponent,
 		CheckoutComponent,
 		ContactComponent,
+		DemoComponent,
 		FileInputComponent,
 		HelpComponent,
 		MarkdownComponent,

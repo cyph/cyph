@@ -39,13 +39,12 @@ import {MdSubheaderComponent} from '../cyph/ui/components/material/md-subheader.
 import {MdSwitchComponent} from '../cyph/ui/components/material/md-switch.component';
 import {MdTabsComponent} from '../cyph/ui/components/material/md-tabs.component';
 import {MdTextareaComponent} from '../cyph/ui/components/material/md-textarea.component';
-import {elements} from '../cyph/ui/elements';
 import {loaded} from '../preload';
 import {AppComponent} from './app.component';
 import {AppModule} from './app.module';
 
 
-elements.body().attr(
+$(document.body).attr(
 	'ng-controller',
 	config.angularConfig.rootController
 );

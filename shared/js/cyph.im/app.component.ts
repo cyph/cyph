@@ -1,17 +1,13 @@
 import {Component} from '@angular/core';
-import {Env, env} from '../cyph/env';
 import {Strings, strings} from '../cyph/strings';
-import {DialogManager} from '../cyph/ui/dialog-manager';
-import {Notifier} from '../cyph/ui/notifier';
 import {DialogService} from '../cyph/ui/services/dialog.service';
-import {MdDialogService} from '../cyph/ui/services/material/md-dialog.service';
-import {MdToastService} from '../cyph/ui/services/material/md-toast.service';
+import {EnvService} from '../cyph/ui/services/env.service';
 import {NotificationService} from '../cyph/ui/services/notification.service';
 import {SignupService} from '../cyph/ui/services/signup.service';
 import {VirtualKeyboardWatcherService} from '../cyph/ui/services/virtual-keyboard-watcher.service';
 import {VisibilityWatcherService} from '../cyph/ui/services/visibility-watcher.service';
+import {AppService} from './app.service';
 import {States} from './enums';
-import {UI} from './ui';
 
 
 /**
@@ -19,7 +15,9 @@ import {UI} from './ui';
  */
 @Component({
 	providers: [
+		AppService,
 		DialogService,
+		EnvService,
 		NotificationService,
 		SignupService,
 		VirtualKeyboardWatcherService,
@@ -30,26 +28,16 @@ import {UI} from './ui';
 })
 export class AppComponent {
 	/** @ignore */
-	public ui: UI;
-
-	/** @ignore */
-	public env: Env					= env;
-
-	/** @ignore */
 	public states: typeof States	= States;
 
 	/** @ignore */
 	public strings: Strings			= strings;
 
-	constructor (mdDialogService: MdDialogService, mdToastService: MdToastService) {
-		this.ui	= new UI(
-			new DialogManager(mdDialogService, mdToastService),
-			new Notifier()
-		);
+	constructor (
+		/** @see AppService */
+		public appService: AppService,
 
-		/* For testing and debugging */
-		if (env.isWeb) {
-			(<any> self).ui	= this.ui;
-		}
-	}
+		/** @see EnvService */
+		public envService: EnvService
+	) {}
 }

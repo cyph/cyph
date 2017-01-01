@@ -49,12 +49,7 @@ export class ThreadedSession implements ISession {
 	}
 
 	/** @inheritDoc */
-	public send (...messages: IMessage[]) : void {
-		this.sendBase(messages);
-	}
-
-	/** @inheritDoc */
-	public async sendBase (messages: IMessage[]) : Promise<void> {
+	public async send (...messages: IMessage[]) : Promise<void> {
 		this.trigger(threadedSessionEvents.send, {messages});
 	}
 
@@ -118,7 +113,7 @@ export class ThreadedSession implements ISession {
 				});
 
 				session.on(locals.events.send, (e: {messages: IMessage[]}) => {
-					session.sendBase(e.messages);
+					session.send(...e.messages);
 				});
 
 				session.on(locals.events.sendText, (e: {
