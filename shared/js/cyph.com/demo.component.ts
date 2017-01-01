@@ -204,8 +204,6 @@ export class DemoComponent implements OnInit {
 			elements.demoListMobile().append($mobileFacebookPic);
 		}
 
-		await util.sleep(2500);
-
 		this.demoService.run(() => {
 			this.facebookJoke($desktopFacebookPic, $mobileFacebookPic);
 		});

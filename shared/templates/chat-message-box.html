@@ -34,7 +34,7 @@
 				childClass='grey'
 				(childClick)='p2pService.videoCallButton()'
 				[disabled]='!p2pService.isEnabled'
-				*ngIf='!p2pService.p2p.isActive'
+				*ngIf='!p2pService.isActive'
 				cyphTranslate
 			>
 				<md2-icon>videocam</md2-icon>
@@ -44,7 +44,7 @@
 				childClass='grey'
 				(childClick)='p2pService.voiceCallButton()'
 				[disabled]='!p2pService.isEnabled'
-				*ngIf='!p2pService.p2p.isActive'
+				*ngIf='!p2pService.isActive'
 				cyphTranslate
 			>
 				<md2-icon>phone</md2-icon>
@@ -80,7 +80,7 @@
 		[mdOpen]='isSpeedDialOpen'
 		(mouseenter)='isSpeedDialOpen = true'
 		(mouseleave)='isSpeedDialOpen = false'
-		*ngIf='!envService.isMobile && isSpeedDialReady && !p2pService.p2p.isActive'
+		*ngIf='!envService.isMobile && isSpeedDialReady && !p2pService.isActive'
 	></md2-fab-speed-dial>
 	<md2-fab-speed-dial
 		cyphTranslate
@@ -92,7 +92,7 @@
 		[mdOpen]='isSpeedDialOpen'
 		(mouseenter)='isSpeedDialOpen = true'
 		(mouseleave)='isSpeedDialOpen = false'
-		*ngIf='!envService.isMobile && isSpeedDialReady && p2pService.p2p.isActive'
+		*ngIf='!envService.isMobile && isSpeedDialReady && p2pService.isActive'
 	></md2-fab-speed-dial>
 
 	<md2-subheader

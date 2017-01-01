@@ -1,6 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ChatService} from '../cyph/ui/services/chat.service';
 import {CyphertextService} from '../cyph/ui/services/cyphertext.service';
+import {EnvService} from '../cyph/ui/services/env.service';
 import {FileService} from '../cyph/ui/services/file.service';
 import {P2PService} from '../cyph/ui/services/p2p.service';
 import {ScrollService} from '../cyph/ui/services/scroll.service';
@@ -17,6 +18,7 @@ import {LocalSessionService} from './local-session.service';
 	providers: [
 		ChatService,
 		CyphertextService,
+		EnvService,
 		FileService,
 		P2PService,
 		ScrollService,
@@ -33,8 +35,12 @@ export class ChatRootComponent implements OnInit {
 	@Input() public data: ChatData;
 
 	/** @inheritDoc */
-	public ngOnInit () : void {
-		this.localSessionService.session	= this.data.session;
+	public async ngOnInit () : Promise<void> {
+		this.envService.isMobile	= this.data.isMobile;
+		this.sessionService.session	= this.data.session;
+
+		await this.data.start;
+		await this.chatService.begin();
 
 		this.data.message.subscribe(s => {
 			if (s.length === 1) {
@@ -63,7 +69,10 @@ export class ChatRootComponent implements OnInit {
 		private readonly chatService: ChatService,
 
 		/** @ignore */
-		private readonly localSessionService: LocalSessionService,
+		private readonly envService: EnvService,
+
+		/** @ignore */
+		private readonly sessionService: SessionService,
 
 		/** @ignore */
 		private readonly scrollService: ScrollService,

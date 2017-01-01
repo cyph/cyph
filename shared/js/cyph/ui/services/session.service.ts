@@ -12,7 +12,7 @@ import {AbstractSessionIdService} from './abstract-session-id.service';
 @Injectable()
 export class SessionService {
 	/** @see ISession */
-	public readonly session: ISession;
+	public session: ISession;
 
 	/** API flags passed into this session. */
 	public readonly apiFlags	= {

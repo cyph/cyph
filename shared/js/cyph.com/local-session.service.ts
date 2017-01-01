@@ -2,10 +2,11 @@ import {Injectable} from '@angular/core';
 import {IMessage} from '../cyph/session/imessage';
 import {ISession} from '../cyph/session/isession';
 import {SessionService} from '../cyph/ui/services/session.service';
+import {util} from '../cyph/util';
 
 
 /**
- * Manages a session.
+ * Mocks session service and communicates locally.
  */
 @Injectable()
 export class LocalSessionService implements SessionService {
@@ -20,47 +21,43 @@ export class LocalSessionService implements SessionService {
 	};
 
 	/** @ignore */
-	private getSession () : ISession {
-		if (!this.session) {
-			throw new Error('Session not set.');
-		}
-
-		return this.session;
+	private async getSession () : Promise<ISession> {
+		return util.waitForValue(() => this.session);
 	}
 
 	/** @inheritDoc */
-	public close () : void {
-		this.getSession().close();
+	public async close () : Promise<void> {
+		(await this.getSession()).close();
 	}
 
 	/** @inheritDoc */
-	public off<T> (event: string, handler: (data: T) => void) : void {
-		this.getSession().off<T>(event, handler);
+	public async off<T> (event: string, handler: (data: T) => void) : Promise<void> {
+		(await this.getSession()).off<T>(event, handler);
 	}
 
 	/** @inheritDoc */
-	public on<T> (event: string, handler: (data: T) => void) : void {
-		this.getSession().on<T>(event, handler);
+	public async on<T> (event: string, handler: (data: T) => void) : Promise<void> {
+		(await this.getSession()).on<T>(event, handler);
 	}
 
 	/** @inheritDoc */
 	public async one<T> (event: string) : Promise<T> {
-		return this.getSession().one<T>(event);
+		return (await this.getSession()).one<T>(event);
 	}
 
 	/** @inheritDoc */
 	public async receive (data: string) : Promise<void> {
-		return this.getSession().receive(data);
+		(await this.getSession()).receive(data);
 	}
 
 	/** @inheritDoc */
 	public async send (...messages: IMessage[]) : Promise<void> {
-		return this.getSession().send(...messages);
+		(await this.getSession()).send(...messages);
 	}
 
 	/** @inheritDoc */
-	public sendText (text: string, selfDestructTimeout?: number) : void {
-		this.getSession().sendText(text, selfDestructTimeout);
+	public async sendText (text: string, selfDestructTimeout?: number) : Promise<void> {
+		(await this.getSession()).sendText(text, selfDestructTimeout);
 	}
 
 	/** @inheritDoc */
@@ -72,29 +69,24 @@ export class LocalSessionService implements SessionService {
 		sharedSecret: string;
 		wasInitiatedByAPI: boolean;
 	} {
-		try {
-			return this.getSession().state;
-		}
-		catch (_) {
-			return {
-				cyphId: '',
-				isAlice: false,
-				isAlive: false,
-				isStartingNewCyph: false,
-				sharedSecret: '',
-				wasInitiatedByAPI: false
-			};
-		}
+		return this.session ? this.session.state : {
+			cyphId: '',
+			isAlice: false,
+			isAlive: false,
+			isStartingNewCyph: false,
+			sharedSecret: '',
+			wasInitiatedByAPI: false
+		};
 	}
 
 	/** @inheritDoc */
-	public trigger (event: string, data?: any) : void {
-		this.getSession().trigger(event, data);
+	public async trigger (event: string, data?: any) : Promise<void> {
+		(await this.getSession()).trigger(event, data);
 	}
 
 	/** @inheritDoc */
-	public updateState (key: string, value: any) : void {
-		this.getSession().updateState(key, value);
+	public async updateState (key: string, value: any) : Promise<void> {
+		(await this.getSession()).updateState(key, value);
 	}
 
 	constructor () {}

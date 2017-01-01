@@ -12,6 +12,7 @@ import {util} from '../cyph/util';
 import {AppService} from './app.service';
 import {DemoService} from './demo.service';
 import {Promos, States} from './enums';
+import {SilentNotificationService} from './silent-notification.service';
 
 
 /**
@@ -19,13 +20,17 @@ import {Promos, States} from './enums';
  */
 @Component({
 	providers: [
+		AppService,
 		DemoService,
 		DialogService,
 		EnvService,
-		NotificationService,
 		SignupService,
 		VirtualKeyboardWatcherService,
-		VisibilityWatcherService
+		VisibilityWatcherService,
+		{
+			provide: NotificationService,
+			useClass: SilentNotificationService
+		}
 	],
 	selector: 'cyph-app',
 	templateUrl: '../../templates/cyph.com/index.html'

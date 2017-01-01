@@ -171,6 +171,11 @@ export class P2PService {
 		);
 	}
 
+	/** @see P2P.isActive */
+	public get isActive () : boolean {
+		return !!this.p2p && this.p2p.isActive;
+	}
+
 	/** Preemptively initiate call, bypassing any prerequisite dialogs and button clicks. */
 	public preemptivelyInitiate () : void {
 		this.isEnabled	= true;

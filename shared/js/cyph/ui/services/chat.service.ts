@@ -58,50 +58,6 @@ export class ChatService {
 	/** Message list. */
 	public readonly messages: IChatMessage[]	= [];
 
-	/** Begins chat. */
-	private async begin () : Promise<void> {
-		if (this.state === States.aborted) {
-			return;
-		}
-
-		/* Workaround for Safari bug that breaks initiating a new chat */
-		this.sessionService.send(...[]);
-
-		if (this.notificationService) {
-			this.notificationService.notify(strings.connectedNotification);
-		}
-
-		this.state	= States.chatBeginMessage;
-
-		await util.sleep(3000);
-
-		if (<States> this.state === States.aborted) {
-			return;
-		}
-
-		this.sessionService.trigger(events.beginChatComplete);
-
-		this.state	= States.chat;
-
-		this.addMessage(
-			strings.introductoryMessage,
-			users.app,
-			util.timestamp() - 30000,
-			false
-		);
-
-		this.isConnected	= true;
-
-		if (this.queuedMessage) {
-			this.send(
-				this.queuedMessage,
-				this.queuedMessageSelfDestruct ?
-					ChatService.queuedMessageSelfDestructTimeout :
-					undefined
-			);
-		}
-	}
-
 	/** This kills the chat. */
 	private close () : void {
 		if (this.state === States.aborted) {
@@ -183,6 +139,50 @@ export class ChatService {
 			await message.selfDestructTimer.start();
 			await util.sleep(10000);
 			message.text	= undefined;
+		}
+	}
+
+	/** Begins chat. */
+	public async begin () : Promise<void> {
+		if (this.state === States.aborted) {
+			return;
+		}
+
+		/* Workaround for Safari bug that breaks initiating a new chat */
+		this.sessionService.send(...[]);
+
+		if (this.notificationService) {
+			this.notificationService.notify(strings.connectedNotification);
+		}
+
+		this.state	= States.chatBeginMessage;
+
+		await util.sleep(3000);
+
+		if (<States> this.state === States.aborted) {
+			return;
+		}
+
+		this.sessionService.trigger(events.beginChatComplete);
+
+		this.state	= States.chat;
+
+		this.addMessage(
+			strings.introductoryMessage,
+			users.app,
+			util.timestamp() - 30000,
+			false
+		);
+
+		this.isConnected	= true;
+
+		if (this.queuedMessage) {
+			this.send(
+				this.queuedMessage,
+				this.queuedMessageSelfDestruct ?
+					ChatService.queuedMessageSelfDestructTimeout :
+					undefined
+			);
 		}
 	}
 

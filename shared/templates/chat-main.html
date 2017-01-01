@@ -1,6 +1,6 @@
 <div
 	class='chat-main layout-column layout-fill flex'
-	[class.video]='p2pService.p2p.isActive'
+	[class.video]='p2pService.isActive'
 	[class.mobile]='envService.isMobile'
 >
 	<div
@@ -63,8 +63,9 @@
 	<div
 		class='cyph-view video-call flex'
 		[class.active]='chatService.state === states.chat'
-		[class.playing]='p2pService.p2p.isActive'
+		[class.playing]='p2pService.isActive'
 		[class.sidebar-open]='p2pService.isSidebarOpen'
+		*ngIf='p2pService.p2p'
 	>
 		<a class='logo' rel='noreferrer' [href]='envService.homeUrl'>
 			<img src='/img/betalogo.mobile.png' alt='Beta logo' cyphTranslate />
@@ -163,6 +164,7 @@
 
 	<cyph-chat-message-box
 		class='video-call-message-box'
+		*ngIf='p2pService.isActive'
 	></cyph-chat-message-box>
 
 	<div
@@ -219,7 +221,7 @@
 				<cyph-chat-message
 					class='layout-row'
 					[message]='message'
-					[mobile]='envService.isMobile || p2pService.p2p.isActive'
+					[mobile]='envService.isMobile || p2pService.isActive'
 					*ngFor='let message of chatService.messages'
 				></cyph-chat-message>
 

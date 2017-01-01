@@ -111,6 +111,10 @@ export class DemoService {
 
 	/** Run the demo. */
 	public async run (facebookJoke: () => void) : Promise<void> {
+		this.desktop.resolveStart();
+		this.mobile.resolveStart();
+		await util.sleep(2500);
+
 		const messages				= await this.messages;
 		const facebookPicMessage	= await this.facebookPicMessage;
 
@@ -147,12 +151,12 @@ export class DemoService {
 	}
 
 	constructor () {
-		this.desktop	= new ChatData(new Session(
+		this.desktop	= new ChatData(false, new Session(
 			undefined,
 			false,
 			undefined,
 			(desktopChannel: LocalChannel) => {
-				this.mobile	= new ChatData(new Session(
+				this.mobile	= new ChatData(true, new Session(
 					undefined,
 					false,
 					undefined,

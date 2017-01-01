@@ -41,7 +41,7 @@ export class ChatMainComponent implements OnInit {
 		this.fileService.files.changeDetectorRef	= this.changeDetectorRef;
 
 		this.scrollService.init(
-			$(this.elementRef.nativeElement).find('.message-list > md2-content'),
+			$(this.elementRef.nativeElement).find('.message-list'),
 			this.messageCountInTitle
 		);
 	}

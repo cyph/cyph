@@ -89,7 +89,7 @@ export class Env extends EnvDeploy {
 	;
 
 	/** Indicates whether this is mobile. */
-	public readonly isMobile: boolean	=
+	public isMobile: boolean			=
 		this.isAndroid ||
 		this.isIOS ||
 		this.isWebOS ||

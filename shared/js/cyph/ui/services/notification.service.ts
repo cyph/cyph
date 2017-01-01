@@ -64,11 +64,11 @@ export class NotificationService {
 	}
 
 
-	/** @ignore */
-	private disableNotify: boolean				= false;
+	/** Indicates whether notifications are currently silenced. */
+	public disableNotify: boolean				= false;
 
-	/** @ignore */
-	private readonly openNotifications: any[]	= [];
+	/** Currently open notification objects. */
+	public readonly openNotifications: any[]	= [];
 
 	/**
 	 * If user isn't currently viewing this window, sends notification.
@@ -93,8 +93,8 @@ export class NotificationService {
 	}
 
 	constructor (
-		/** @ignore */
-		private readonly visibilityWatcherService: VisibilityWatcherService
+		/** @see VisibilityWatcherService */
+		public readonly visibilityWatcherService: VisibilityWatcherService
 	) {
 		this.visibilityWatcherService.onChange((isVisible: boolean) => {
 			if (isVisible) {
