@@ -12,7 +12,7 @@ export class UrlSections {
 	public readonly root: string	= '';
 
 	/** @see UrlSections */
-	public readonly video: string	= '';
+	public readonly video: string	= 'video';
 
 	constructor () {}
 }
