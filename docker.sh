@@ -177,6 +177,9 @@ elif [ "${command}" == 'commit' ] ; then
 
 	chmod -R 700 .
 
+elif [ "${command}" == 'publicmerge' ] ; then
+	args='-it'
+
 elif [ "${command}" == 'prodmerge' ] ; then
 	args='-it'
 
