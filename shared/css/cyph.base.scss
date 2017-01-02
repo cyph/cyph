@@ -6,7 +6,7 @@
 	text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.004) !important;
 }
 
-body, #main, .cyph-foreground, md-sidenav {
+html, body, #main, .cyph-foreground, md-sidenav {
 	background-color: #8b62d9 !important;
 }
 
@@ -881,7 +881,7 @@ md-progress-linear {
 	max-width: initial;
 }
 
-body {
+html {
 	/*** Angular Material patches (from 0.4 to 0.6 upgrade) ***/
 
 	md-content.md-default-theme {
