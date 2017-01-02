@@ -7,7 +7,6 @@ import {IMutex} from '../session/imutex';
 import {ISession} from '../session/isession';
 import {Message} from '../session/message';
 import {Mutex} from '../session/mutex';
-import {SessionService} from '../ui/services/session.service';
 import {util} from '../util';
 import {UIEventCategories, UIEvents} from './enums';
 import {IP2P} from './ip2p';
@@ -406,7 +405,7 @@ export class P2P implements IP2P {
 
 	constructor (
 		/** @ignore */
-		private readonly session: ISession|SessionService,
+		private readonly session: ISession,
 
 		/** @ignore */
 		private readonly forceTURN: boolean,

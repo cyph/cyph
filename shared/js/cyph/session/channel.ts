@@ -1,22 +1,12 @@
 import * as firebase from 'firebase';
 import {firebaseApp} from '../firebase-app';
 import {util} from '../util';
-import {IChannel} from './ichannel';
 
 
 /**
- * Standard IChannel implementation built on Firebase.
+ * Bidirectional network connection that sends and receives data (via Firebase).
  */
-export class Channel implements IChannel {
-	/** @ignore */
-	private isClosed: boolean		= false;
-
-	/** @ignore */
-	private isConnected: boolean	= false;
-
-	/** @ignore */
-	private isAlice: boolean		= false;
-
+export class Channel {
 	/** @ignore */
 	private channelRef: firebase.DatabaseReference;
 
@@ -29,17 +19,26 @@ export class Channel implements IChannel {
 	/** @ignore */
 	private userId: string;
 
-	/** @inheritDoc */
+	/** @ignore */
+	private isClosed: boolean		= false;
+
+	/** @ignore */
+	private isConnected: boolean	= false;
+
+	/** @ignore */
+	private isAlice: boolean		= false;
+
+	/** This kills the channel. */
 	public close () : void {
 		util.retryUntilSuccessful(async () => this.channelRef.remove());
 	}
 
-	/** @inheritDoc */
-	public isAlive () : boolean {
+	/** Indicates whether this channel is available for sending and receiving. */
+	public get isAlive () : boolean {
 		return !this.isClosed;
 	}
 
-	/** @inheritDoc */
+	/** Sends message through this channel. */
 	public send (message: string) : void {
 		util.retryUntilSuccessful(async () =>
 			this.messagesRef.push({

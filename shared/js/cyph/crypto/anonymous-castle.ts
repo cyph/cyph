@@ -1,4 +1,3 @@
-import {state} from '../session/enums';
 import {ISession} from '../session/isession';
 import {util} from '../util';
 import {AnonymousLocalUser} from './castle/anonymous-local-user';
@@ -44,8 +43,6 @@ export class AnonymousCastle implements ICastle {
 			transport,
 			session.state.sharedSecret
 		);
-
-		session.updateState(state.sharedSecret, '');
 
 		this.pairwiseSession	= new PairwiseSession(
 			potassium,

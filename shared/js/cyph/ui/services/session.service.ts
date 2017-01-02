@@ -1,71 +1,77 @@
 import {Injectable} from '@angular/core';
 import {analytics} from '../../analytics';
+import {eventManager} from '../../event-manager';
+import {events} from '../../session/enums';
 import {IMessage} from '../../session/imessage';
 import {ISession} from '../../session/isession';
-import {ThreadedSession} from '../../session/threaded-session';
+import {ISessionService} from '../../session/isession-service';
+import {Thread} from '../../thread';
+import {util} from '../../util';
 import {AbstractSessionIdService} from './abstract-session-id.service';
 
 
 /**
- * Manages a session.
+ * Manages a session in a separate thread.
  */
 @Injectable()
-export class SessionService {
-	/** @see ISession */
-	private readonly session: ISession;
+export class SessionService implements ISessionService {
+	/** @ignore */
+	private readonly thread: Thread;
 
-	/** API flags passed into this session. */
+	/** @ignore */
+	private readonly eventId: string	= util.generateGuid();
+
+	/** @ignore */
+	private readonly events		= {
+		close: 'close-SessionService',
+		send: 'send-SessionService'
+	};
+
+	/** @inheritDoc */
 	public readonly apiFlags	= {
 		forceTURN: false,
 		modestBranding: false,
 		nativeCrypto: false
 	};
 
-	/** @see ISession.close */
+	/** @inheritDoc */
+	public readonly state		= {
+		cyphId: '',
+		isAlice: false,
+		isAlive: true,
+		sharedSecret: '',
+		startingNewCyph: false,
+		wasInitiatedByAPI: false
+	};
+
+	/** @inheritDoc */
 	public close () : void {
-		this.session.close();
+		this.trigger(this.events.close);
 	}
 
-	/** @see ISession.off */
+	/** @inheritDoc */
 	public off<T> (event: string, handler: (data: T) => void) : void {
-		this.session.off<T>(event, handler);
+		eventManager.off<T>(event + this.eventId, handler);
 	}
 
-	/** @see ISession.on */
+	/** @inheritDoc */
 	public on<T> (event: string, handler: (data: T) => void) : void {
-		this.session.on<T>(event, handler);
+		eventManager.on<T>(event + this.eventId, handler);
 	}
 
-	/** @see ISession.one */
+	/** @inheritDoc */
 	public async one<T> (event: string) : Promise<T> {
-		return this.session.one<T>(event);
+		return eventManager.one<T>(event + this.eventId);
 	}
 
-	/** @see ISession.send */
-	public async send (...messages: IMessage[]) : Promise<void> {
-		return this.session.send(...messages);
+	/** @inheritDoc */
+	public send (...messages: IMessage[]) : void {
+		this.trigger(this.events.send, {messages});
 	}
 
-	/** @see ISession.sendText */
-	public sendText (text: string, selfDestructTimeout?: number) : void {
-		this.session.sendText(text, selfDestructTimeout);
-	}
-
-	/** @see ISession.state */
-	public get state () : {
-		cyphId: string;
-		isAlice: boolean;
-		isAlive: boolean;
-		isStartingNewCyph: boolean;
-		sharedSecret: string;
-		wasInitiatedByAPI: boolean;
-	} {
-		return this.session.state;
-	}
-
-	/** @see ISession.trigger */
+	/** @inheritDoc */
 	public trigger (event: string, data?: any) : void {
-		this.session.trigger(event, data);
+		eventManager.trigger(event + this.eventId, data);
 	}
 
 	constructor (abstractSessionIdService: AbstractSessionIdService) {
@@ -111,9 +117,59 @@ export class SessionService {
 			});
 		}
 
-		this.session	= new ThreadedSession(
-			id,
-			this.apiFlags.nativeCrypto
+		this.on(events.threadUpdate, (e: {
+			key: 'cyphId'|'isAlice'|'isAlive'|'sharedSecret'|'startingNewCyph'|'wasInitiatedByAPI';
+			value: boolean|string|undefined;
+		}) => {
+			if (
+				(e.key === 'cyphId' && typeof e.value === 'string') ||
+				(e.key === 'isAlice' && typeof e.value === 'boolean') ||
+				(e.key === 'isAlive' && typeof e.value === 'boolean') ||
+				(e.key === 'sharedSecret' && typeof e.value === 'string') ||
+				(
+					e.key === 'startingNewCyph' &&
+					(typeof e.value === 'boolean' || typeof e.value === 'undefined')
+				) ||
+				(e.key === 'wasInitiatedByAPI' && typeof e.value === 'boolean')
+			) {
+				/* Casting to any as a temporary workaround pending TS 2.1 */
+				(<any> this).state[e.key]	= e.value;
+			}
+			else {
+				throw new Error('Invalid value.');
+			}
+		});
+
+		this.thread	= new Thread(
+			/* tslint:disable-next-line:only-arrow-functions */
+			function (
+				/* tslint:disable-next-line:variable-name */
+				Session: any,
+				locals: any,
+				importScripts: Function
+			) : void {
+				importScripts('/js/cyph/session/session.js');
+
+				const session: ISession	= new Session(
+					locals.id,
+					locals.nativeCrypto,
+					locals.eventId
+				);
+
+				session.on(locals.events.close, () => {
+					session.close();
+				});
+
+				session.on(locals.events.send, (e: {messages: IMessage[]}) => {
+					session.send(...e.messages);
+				});
+			},
+			{
+				id,
+				eventId: this.eventId,
+				events: this.events,
+				nativeCrypto: this.apiFlags.nativeCrypto
+			}
 		);
 	}
 }

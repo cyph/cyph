@@ -3,6 +3,7 @@ import {potassium} from '../cyph/crypto/potassium';
 import {eventManager} from '../cyph/event-manager';
 import {events, rpcEvents, users} from '../cyph/session/enums';
 import {IMessage} from '../cyph/session/imessage';
+import {ISessionService} from '../cyph/session/isession-service';
 import {Message} from '../cyph/session/message';
 import {strings} from '../cyph/strings';
 import {EnvService} from '../cyph/ui/services/env.service';
@@ -14,7 +15,7 @@ import {ChatData} from './chat-data';
  * Mocks session service and communicates locally.
  */
 @Injectable()
-export class LocalSessionService {
+export class LocalSessionService implements ISessionService {
 	/** @ignore */
 	private chatData: ChatData;
 
@@ -29,17 +30,17 @@ export class LocalSessionService {
 	};
 
 	/** @inheritDoc */
-	public readonly state	= {
+	public readonly state		= {
 		cyphId: '',
 		isAlice: false,
 		isAlive: false,
-		isStartingNewCyph: false,
 		sharedSecret: '',
+		startingNewCyph: false,
 		wasInitiatedByAPI: false
 	};
 
 	/** @inheritDoc */
-	public async close () : Promise<void> {
+	public close () : void {
 		if (!this.state.isAlive) {
 			return;
 		}
@@ -85,12 +86,12 @@ export class LocalSessionService {
 	}
 
 	/** @inheritDoc */
-	public async off<T> (event: string, handler: (data: T) => void) : Promise<void> {
+	public off<T> (event: string, handler: (data: T) => void) : void {
 		eventManager.off(event + this.id, handler);
 	}
 
 	/** @inheritDoc */
-	public async on<T> (event: string, handler: (data: T) => void) : Promise<void> {
+	public on<T> (event: string, handler: (data: T) => void) : void {
 		eventManager.on(event + this.id, handler);
 	}
 
@@ -100,7 +101,7 @@ export class LocalSessionService {
 	}
 
 	/** @inheritDoc */
-	public async send (...messages: IMessage[]) : Promise<void> {
+	public send (...messages: IMessage[]) : void {
 		for (const message of messages) {
 			const cyphertext	= potassium.toBase64(
 				potassium.randomBytes(
@@ -123,12 +124,7 @@ export class LocalSessionService {
 	}
 
 	/** @inheritDoc */
-	public async sendText (text: string, selfDestructTimeout?: number) : Promise<void> {
-		this.send(new Message(rpcEvents.text, {text, selfDestructTimeout}));
-	}
-
-	/** @inheritDoc */
-	public async trigger (event: string, data?: any) : Promise<void> {
+	public trigger (event: string, data?: any) : void {
 		eventManager.trigger(event + this.id, data);
 	}
 
