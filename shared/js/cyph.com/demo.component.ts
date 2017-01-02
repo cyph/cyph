@@ -119,6 +119,9 @@ export class DemoComponent implements OnInit {
 
 			$pic.css(offset);
 		});
+
+		this.demoService.desktop.scrollDown.next();
+		this.demoService.mobile.scrollDown.next();
 	}
 
 	/** @ignore */

@@ -12,7 +12,7 @@ import {AbstractSessionIdService} from './abstract-session-id.service';
 @Injectable()
 export class SessionService {
 	/** @see ISession */
-	public session: ISession;
+	private readonly session: ISession;
 
 	/** API flags passed into this session. */
 	public readonly apiFlags	= {
@@ -41,11 +41,6 @@ export class SessionService {
 		return this.session.one<T>(event);
 	}
 
-	/** @see ISession.receive */
-	public async receive (data: string) : Promise<void> {
-		return this.session.receive(data);
-	}
-
 	/** @see ISession.send */
 	public async send (...messages: IMessage[]) : Promise<void> {
 		return this.session.send(...messages);
@@ -71,11 +66,6 @@ export class SessionService {
 	/** @see ISession.trigger */
 	public trigger (event: string, data?: any) : void {
 		this.session.trigger(event, data);
-	}
-
-	/** @see ISession.updateState */
-	public updateState (key: string, value: any) : void {
-		this.session.updateState(key, value);
 	}
 
 	constructor (abstractSessionIdService: AbstractSessionIdService) {

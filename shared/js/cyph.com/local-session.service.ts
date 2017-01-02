@@ -1,17 +1,25 @@
 import {Injectable} from '@angular/core';
+import {potassium} from '../cyph/crypto/potassium';
+import {eventManager} from '../cyph/event-manager';
+import {events, rpcEvents, users} from '../cyph/session/enums';
 import {IMessage} from '../cyph/session/imessage';
-import {ISession} from '../cyph/session/isession';
-import {SessionService} from '../cyph/ui/services/session.service';
+import {Message} from '../cyph/session/message';
+import {strings} from '../cyph/strings';
+import {EnvService} from '../cyph/ui/services/env.service';
 import {util} from '../cyph/util';
+import {ChatData} from './chat-data';
 
 
 /**
  * Mocks session service and communicates locally.
  */
 @Injectable()
-export class LocalSessionService implements SessionService {
-	/** @inheritDoc */
-	public session: ISession;
+export class LocalSessionService {
+	/** @ignore */
+	private chatData: ChatData;
+
+	/** @ignore */
+	private readonly id: string	= util.generateGuid();
 
 	/** @inheritDoc */
 	public readonly apiFlags	= {
@@ -20,74 +28,112 @@ export class LocalSessionService implements SessionService {
 		nativeCrypto: false
 	};
 
-	/** @ignore */
-	private async getSession () : Promise<ISession> {
-		return util.waitForValue(() => this.session);
-	}
+	/** @inheritDoc */
+	public readonly state	= {
+		cyphId: '',
+		isAlice: false,
+		isAlive: false,
+		isStartingNewCyph: false,
+		sharedSecret: '',
+		wasInitiatedByAPI: false
+	};
 
 	/** @inheritDoc */
 	public async close () : Promise<void> {
-		(await this.getSession()).close();
+		if (!this.state.isAlive) {
+			return;
+		}
+
+		this.state.isAlive	= false;
+
+		this.chatData.channelIncoming.complete();
+		this.chatData.channelOutgoing.complete();
+		this.trigger(events.closeChat);
+	}
+
+	/** Initialise service. */
+	public async init (chatData: ChatData) : Promise<void> {
+		this.chatData		= chatData;
+		this.state.isAlice	= this.envService.isMobile;
+		this.state.isAlive	= true;
+
+		this.chatData.channelIncoming.subscribe(
+			(message: IMessage&{data: {cyphertext: string}}) => {
+				if (!message.event) {
+					return;
+				}
+
+				message.data.author	= strings.friend;
+
+				if (message.event === events.cyphertext) {
+					this.trigger(events.cyphertext, {
+						author: message.data.author,
+						cyphertext: message.data.cyphertext
+					});
+				}
+				else if (message.event in rpcEvents) {
+					this.trigger(message.event, message.data);
+				}
+			},
+			undefined,
+			() => { this.close(); }
+		);
+
+		await this.chatData.start;
+
+		this.trigger(events.beginChat);
 	}
 
 	/** @inheritDoc */
 	public async off<T> (event: string, handler: (data: T) => void) : Promise<void> {
-		(await this.getSession()).off<T>(event, handler);
+		eventManager.off(event + this.id, handler);
 	}
 
 	/** @inheritDoc */
 	public async on<T> (event: string, handler: (data: T) => void) : Promise<void> {
-		(await this.getSession()).on<T>(event, handler);
+		eventManager.on(event + this.id, handler);
 	}
 
 	/** @inheritDoc */
 	public async one<T> (event: string) : Promise<T> {
-		return (await this.getSession()).one<T>(event);
-	}
-
-	/** @inheritDoc */
-	public async receive (data: string) : Promise<void> {
-		(await this.getSession()).receive(data);
+		return eventManager.one<T>(event + this.id);
 	}
 
 	/** @inheritDoc */
 	public async send (...messages: IMessage[]) : Promise<void> {
-		(await this.getSession()).send(...messages);
+		for (const message of messages) {
+			const cyphertext	= potassium.toBase64(
+				potassium.randomBytes(
+					util.random(1024, 100)
+				)
+			);
+
+			this.trigger(events.cyphertext, {
+				cyphertext,
+				author: users.me
+			});
+
+			if (message.event === rpcEvents.text) {
+				this.trigger(rpcEvents.text, message.data);
+			}
+
+			this.chatData.channelOutgoing.next(new Message(events.cyphertext, {cyphertext}));
+			this.chatData.channelOutgoing.next(message);
+		}
 	}
 
 	/** @inheritDoc */
 	public async sendText (text: string, selfDestructTimeout?: number) : Promise<void> {
-		(await this.getSession()).sendText(text, selfDestructTimeout);
-	}
-
-	/** @inheritDoc */
-	public get state () : {
-		cyphId: string;
-		isAlice: boolean;
-		isAlive: boolean;
-		isStartingNewCyph: boolean;
-		sharedSecret: string;
-		wasInitiatedByAPI: boolean;
-	} {
-		return this.session ? this.session.state : {
-			cyphId: '',
-			isAlice: false,
-			isAlive: false,
-			isStartingNewCyph: false,
-			sharedSecret: '',
-			wasInitiatedByAPI: false
-		};
+		this.send(new Message(rpcEvents.text, {text, selfDestructTimeout}));
 	}
 
 	/** @inheritDoc */
 	public async trigger (event: string, data?: any) : Promise<void> {
-		(await this.getSession()).trigger(event, data);
+		eventManager.trigger(event + this.id, data);
 	}
 
-	/** @inheritDoc */
-	public async updateState (key: string, value: any) : Promise<void> {
-		(await this.getSession()).updateState(key, value);
-	}
-
-	constructor () {}
+	constructor (
+		/** @ignore */
+		private readonly envService: EnvService
+	) {}
 }

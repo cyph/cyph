@@ -1,5 +1,5 @@
 import {Subject} from 'rxjs/Subject';
-import {ISession} from '../cyph/session/isession';
+import {IMessage} from '../cyph/session/imessage';
 
 
 /**
@@ -16,8 +16,11 @@ export class ChatData {
 		/** Indicates whether to display the mobile chat UI. */
 		public readonly isMobile: boolean,
 
-		/** @see ISession */
-		public readonly session: ISession,
+		/** Incoming end of local channel. */
+		public readonly channelIncoming: Subject<IMessage> = new Subject<IMessage>(),
+
+		/** Outgoing end of local channel. */
+		public readonly channelOutgoing: Subject<IMessage> = new Subject<IMessage>(),
 
 		/** Stream of messages to send. */
 		public readonly message: Subject<string> = new Subject<string>(),

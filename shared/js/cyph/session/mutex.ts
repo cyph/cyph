@@ -1,3 +1,4 @@
+import {SessionService} from '../ui/services/session.service';
 import {util} from '../util';
 import {Command} from './command';
 import {events, rpcEvents, users} from './enums';
@@ -123,7 +124,7 @@ export class Mutex implements IMutex {
 
 	constructor (
 		/** @ignore */
-		private readonly session: ISession
+		private readonly session: ISession|SessionService
 	) {
 		this.session.on(rpcEvents.mutex, (command: Command) => {
 			if (command.method in this.commands) {

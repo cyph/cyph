@@ -1,7 +1,5 @@
 import {Injectable} from '@angular/core';
-import {LocalChannel} from '../cyph/channel/local-channel';
 import {env} from '../cyph/env';
-import {Session} from '../cyph/session/session';
 import {urlState} from '../cyph/url-state';
 import {util} from '../cyph/util';
 import {ChatData} from './chat-data';
@@ -151,21 +149,12 @@ export class DemoService {
 	}
 
 	constructor () {
-		this.desktop	= new ChatData(false, new Session(
-			undefined,
-			false,
-			undefined,
-			(desktopChannel: LocalChannel) => {
-				this.mobile	= new ChatData(true, new Session(
-					undefined,
-					false,
-					undefined,
-					(mobileChannel: LocalChannel) => {
-						desktopChannel.connect(mobileChannel);
-					}
-				));
-			}
-		));
+		this.desktop	= new ChatData(false);
+		this.mobile		= new ChatData(
+			true,
+			this.desktop.channelOutgoing,
+			this.desktop.channelIncoming
+		);
 
 		/* Cyphertext easter egg */
 		/* tslint:disable-next-line:no-unused-new */

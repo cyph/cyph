@@ -1,10 +1,8 @@
 import {analytics} from '../analytics';
 import {Channel} from '../channel/channel';
 import {IChannel} from '../channel/ichannel';
-import {LocalChannel} from '../channel/local-channel';
 import {config} from '../config';
 import {AnonymousCastle} from '../crypto/anonymous-castle';
-import {FakeCastle} from '../crypto/fake-castle';
 import {ICastle} from '../crypto/icastle';
 import {env} from '../env';
 import {errors} from '../errors';
@@ -35,9 +33,6 @@ export class Session implements ISession {
 
 	/** @ignore */
 	private pingPongTimeouts: number				= 0;
-
-	/** @ignore */
-	private isLocalSession: boolean					= false;
 
 	/** @ignore */
 	private castle: ICastle;
@@ -112,12 +107,7 @@ export class Session implements ISession {
 			}
 			case CastleEvents.send: {
 				if (e.data) {
-					if (this.isLocalSession) {
-						this.sendHandler([e.data]);
-					}
-					else {
-						this.sendQueue.push(e.data);
-					}
+					this.sendQueue.push(e.data);
 				}
 				break;
 			}
@@ -217,41 +207,26 @@ export class Session implements ISession {
 	}
 
 	/** @ignore */
-	private setUpChannel (
-		channelDescriptor: string,
-		nativeCrypto: boolean,
-		localChannelCallback?: (localChannel: LocalChannel) => void
-	) : void {
-		if (localChannelCallback) {
-			this.isLocalSession	= true;
-		}
-
+	private setUpChannel (channelDescriptor: string, nativeCrypto: boolean) : void {
 		const handlers	= {
 			onClose: () => {
 				this.updateState(state.isAlive, false);
 
-				if (!this.isLocalSession) {
-					/* If aborting before the cyph begins,
-						block friend from trying to join */
-					util.request({
-						method: 'POST',
-						url: env.baseUrl + 'channels/' + this.state.cyphId
-					}).catch(
-						() => {}
-					);
-				}
+				/* If aborting before the cyph begins,
+					block friend from trying to join */
+				util.request({
+					method: 'POST',
+					url: env.baseUrl + 'channels/' + this.state.cyphId
+				}).catch(
+					() => {}
+				);
 
 				this.trigger(events.closeChat);
 			},
 			onConnect: () => {
 				this.trigger(events.connect);
 
-				if (this.isLocalSession) {
-					this.castle	= new FakeCastle(this);
-				}
-				else {
-					this.castle	= new AnonymousCastle(this, nativeCrypto);
-				}
+				this.castle	= new AnonymousCastle(this, nativeCrypto);
 			},
 			onMessage: (message: string) => { this.receive(message); },
 			onOpen: async (isAlice: boolean) : Promise<void> => {
@@ -260,7 +235,7 @@ export class Session implements ISession {
 				if (this.state.isAlice) {
 					this.trigger(events.beginWaiting);
 				}
-				else if (!this.isLocalSession) {
+				else {
 					this.pingPong();
 
 					analytics.sendEvent({
@@ -282,31 +257,23 @@ export class Session implements ISession {
 
 				this.on(events.castle, (e: any) => { this.castleHandler(e); });
 
-				if (!this.isLocalSession) {
-					while (this.state.isAlive) {
-						await util.sleep();
+				while (this.state.isAlive) {
+					await util.sleep();
 
-						if (
-							this.sendQueue.length &&
-							(
-								this.sendQueue.length >= 4 ||
-								(util.timestamp() - this.lastOutgoingMessageTimestamp) > 500
-							)
-						) {
-							this.sendHandler(this.sendQueue.splice(0, 4));
-						}
+					if (
+						this.sendQueue.length &&
+						(
+							this.sendQueue.length >= 4 ||
+							(util.timestamp() - this.lastOutgoingMessageTimestamp) > 500
+						)
+					) {
+						this.sendHandler(this.sendQueue.splice(0, 4));
 					}
 				}
 			}
 		};
 
-		if (localChannelCallback) {
-			this.channel	= new LocalChannel(handlers);
-			localChannelCallback(<LocalChannel> this.channel);
-		}
-		else {
-			this.channel	= new Channel(channelDescriptor, handlers);
-		}
+		this.channel	= new Channel(channelDescriptor, handlers);
 	}
 
 	/** @inheritDoc */
@@ -385,9 +352,6 @@ export class Session implements ISession {
 	 * @param descriptor Descriptor used for brokering the session.
 	 * @param nativeCrypto
 	 * @param id
-	 * @param localChannelCallback If set, will assume that this is a local
-	 * session and initiate a LocalChannel instance, passing it in to this
-	 * callback to be connected to a second local session's instance.
 	 */
 	constructor (
 		descriptor?: string,
@@ -395,9 +359,7 @@ export class Session implements ISession {
 		nativeCrypto: boolean = false,
 
 		/** @ignore */
-		private readonly id: string = util.generateGuid(),
-
-		localChannelCallback?: (localChannel: LocalChannel) => void
+		private readonly id: string = util.generateGuid()
 	) { (async () => {
 		/* true = yes; false = no; undefined = maybe */
 		this.updateState(
@@ -421,30 +383,25 @@ export class Session implements ISession {
 			this.trigger(events.newCyph);
 		}
 
-		if (localChannelCallback) {
-			this.setUpChannel('', nativeCrypto, localChannelCallback);
-		}
-		else {
-			const channelDescriptor: string	=
-				this.state.isStartingNewCyph === false ?
-					'' :
-					util.generateGuid(config.longSecretLength)
-			;
+		const channelDescriptor: string	=
+			this.state.isStartingNewCyph === false ?
+				'' :
+				util.generateGuid(config.longSecretLength)
+		;
 
-			try {
-				this.setUpChannel(
-					await util.request({
-						data: {channelDescriptor},
-						method: 'POST',
-						retries: 5,
-						url: env.baseUrl + 'channels/' + this.state.cyphId
-					}),
-					nativeCrypto
-				);
-			}
-			catch (_) {
-				urlState.setUrl(urlState.states.notFound);
-			}
+		try {
+			this.setUpChannel(
+				await util.request({
+					data: {channelDescriptor},
+					method: 'POST',
+					retries: 5,
+					url: env.baseUrl + 'channels/' + this.state.cyphId
+				}),
+				nativeCrypto
+			);
+		}
+		catch (_) {
+			urlState.setUrl(urlState.states.notFound);
 		}
 	})(); }
 }

@@ -65,6 +65,7 @@ export class ChatService {
 		}
 
 		this.setFriendTyping(false);
+		this.scrollService.scrollDown();
 
 		if (!this.isConnected) {
 			this.abortSetup();
@@ -98,7 +99,12 @@ export class ChatService {
 		shouldNotify: boolean = author !== users.me,
 		selfDestructTimeout?: number
 	) : Promise<void> {
-		if (this.state === States.aborted || !text || typeof text !== 'string') {
+		if (
+			this.state === States.aborted ||
+			this.isDisconnected ||
+			!text ||
+			typeof text !== 'string'
+		) {
 			return;
 		}
 

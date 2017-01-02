@@ -9,6 +9,7 @@ import {events, rpcEvents} from '../session/enums';
 import {ISession} from '../session/isession';
 import {Message} from '../session/message';
 import {Thread} from '../thread';
+import {SessionService} from '../ui/services/session.service';
 import {util} from '../util';
 import {UIEvents} from './enums';
 import {Transfer} from './transfer';
@@ -432,11 +433,9 @@ export class Files {
 
 	constructor (
 		/** @ignore */
-		private readonly session: ISession
+		private readonly session: ISession|SessionService
 	) { (async () => {
-		const isNativeCryptoSupported	=
-			await Potassium.isNativeCryptoSupported()
-		;
+		const isNativeCryptoSupported	= await Potassium.isNativeCryptoSupported();
 
 		if (isNativeCryptoSupported) {
 			this.session.on(events.beginChat, () => {
