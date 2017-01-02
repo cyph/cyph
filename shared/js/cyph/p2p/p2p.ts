@@ -227,6 +227,9 @@ export class P2P implements IP2P {
 
 		const events: string[]	= [];
 
+		const $localVideo	= await util.waitForIterable<JQuery>(this.localVideo);
+		const $remoteVideo	= await util.waitForIterable<JQuery>(this.remoteVideo);
+
 		const webRTC	= new (<any> self).SimpleWebRTC({
 			adjustPeerVolume: true,
 			autoRemoveVideos: false,
@@ -278,9 +281,9 @@ export class P2P implements IP2P {
 					);
 				}
 			},
-			localVideoEl: this.localVideo()[0],
+			localVideoEl: $localVideo[0],
 			media: this.outgoingStream,
-			remoteVideosEl: this.remoteVideo()[0]
+			remoteVideosEl: $remoteVideo[0]
 		});
 
 		webRTC.webrtc.config.peerConnectionConfig.iceServers	=
@@ -298,7 +301,7 @@ export class P2P implements IP2P {
 		);
 
 		webRTC.on('videoAdded', () => {
-			this.remoteVideo().find('video').slice(0, -1).remove();
+			$remoteVideo.find('video').slice(0, -1).remove();
 
 			this.loading	= false;
 		});

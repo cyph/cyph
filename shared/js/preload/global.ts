@@ -52,4 +52,4 @@ for (const k of [
 
 /* Make sure compiler adds necessary helpers to global scope in threads */
 
-(async () => {})();
+(async (..._) => {})(...Array.from([]));

@@ -59,7 +59,7 @@ export class AppService {
 		}
 
 		(async () => {
-			while (this.state === undefined) {
+			while (this.state === States.blank) {
 				await util.sleep();
 			}
 

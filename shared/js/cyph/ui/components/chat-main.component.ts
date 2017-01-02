@@ -40,8 +40,15 @@ export class ChatMainComponent implements OnInit {
 	public ngOnInit () : void {
 		this.fileService.files.changeDetectorRef	= this.changeDetectorRef;
 
+		const $element	= $(this.elementRef.nativeElement);
+
+		this.p2pService.init(
+			() => $element.find('.video-call .me'),
+			() => $element.find('.video-call .friend.stream')
+		);
+
 		this.scrollService.init(
-			$(this.elementRef.nativeElement).find('.message-list'),
+			$element.find('.message-list'),
 			this.messageCountInTitle
 		);
 	}
