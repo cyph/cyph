@@ -1,6 +1,1 @@
-import {UIEvents} from './ui-events';
-
-
-export {
-	UIEvents
-};
+export * from './ui-events';

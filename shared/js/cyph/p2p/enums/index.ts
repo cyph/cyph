@@ -1,8 +1,2 @@
-import {UIEventCategories} from './ui-event-categories';
-import {UIEvents} from './ui-events';
-
-
-export {
-	UIEventCategories,
-	UIEvents
-};
+export * from './ui-event-categories';
+export * from './ui-events';

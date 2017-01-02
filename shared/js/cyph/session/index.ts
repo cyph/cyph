@@ -1,24 +1,11 @@
-import {Channel} from './channel';
-import {Command} from './command';
-import {IMessage} from './imessage';
-import {IMessageData} from './imessage-data';
-import {IMutex} from './imutex';
-import {ISession} from './isession';
-import {Message} from './message';
-import {Mutex} from './mutex';
-import {Session} from './session';
-
-
+export * from './channel';
+export * from './command';
 export * from './enums';
-
-export {
-	Channel,
-	Command,
-	IMessage,
-	IMessageData,
-	IMutex,
-	ISession,
-	Message,
-	Mutex,
-	Session
-};
+export * from './imessage';
+export * from './imessage-data';
+export * from './imutex';
+export * from './isession';
+export * from './isession-service';
+export * from './message';
+export * from './mutex';
+export * from './session';

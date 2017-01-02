@@ -1,27 +1,9 @@
-import {Config, config} from './config';
-import {Email} from './email';
-import {Env, env} from './env';
-import {EventManager, eventManager} from './event-manager';
-import {firebaseApp} from './firebase-app';
-import {IThread} from './ithread';
-import {Strings, strings} from './strings';
-import {Timer} from './timer';
-import {Util, util} from './util';
-
-
-export {
-	Config,
-	config,
-	Email,
-	Env,
-	env,
-	EventManager,
-	eventManager,
-	firebaseApp,
-	IThread,
-	Strings,
-	strings,
-	Timer,
-	Util,
-	util
-};
+export * from './config';
+export * from './email';
+export * from './env';
+export * from './event-manager';
+export * from './firebase-app';
+export * from './ithread';
+export * from './strings';
+export * from './timer';
+export * from './util';

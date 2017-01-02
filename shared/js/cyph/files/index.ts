@@ -1,10 +1,3 @@
-import {Files} from './files';
-import {Transfer} from './transfer';
-
-
 export * from './enums';
-
-export {
-	Files,
-	Transfer
-};
+export * from './files';
+export * from './transfer';

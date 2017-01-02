@@ -1,6 +1,1 @@
-import {States} from './states';
-
-
-export {
-	States
-};
+export * from './states';

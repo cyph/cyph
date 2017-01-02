@@ -1,25 +1,11 @@
-import {Analytics, analytics} from './analytics';
-import {Errors, errors} from './errors';
-import {UrlState, urlState} from './url-state';
+export * from './analytics';
+export * from './base';
+export * from './errors';
+export * from './url-state';
 
 import * as Crypto from './crypto';
 import * as Files from './files';
 import * as P2P from './p2p';
 import * as Session from './session';
 
-
-export * from './base';
-
-export {
-	Analytics,
-	analytics,
-	Errors,
-	errors,
-	UrlState,
-	urlState,
-
-	Crypto,
-	Files,
-	P2P,
-	Session
-};
+export {Crypto, Files, P2P, Session};

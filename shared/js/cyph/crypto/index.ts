@@ -1,17 +1,9 @@
-import {AnonymousCastle} from './anonymous-castle';
-import * as Castle from './castle';
-import {ICastle} from './icastle';
-import {IKeyPair} from './ikey-pair';
-import {IKeyPairMaybe} from './ikey-pair-maybe';
-
-
+export * from './anonymous-castle';
+export * from './icastle';
+export * from './ikey-pair';
+export * from './ikey-pair-maybe';
 export * from './potassium';
 
-export {
-	AnonymousCastle,
-	ICastle,
-	IKeyPair,
-	IKeyPairMaybe,
+import * as Castle from './castle';
 
-	Castle
-};
+export {Castle};
