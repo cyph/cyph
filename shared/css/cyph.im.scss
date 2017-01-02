@@ -894,7 +894,7 @@ body.mobile cyph-help {
 		z-index: 1;
 	}
 
-	*, ~ *, ~ * :not(.md-fab-action-item) {
+	*, ~ *, ~ * :not(.md-fab-action-item):not(.self-destruct-cover) {
 		@include transition(transform 0.5s ease-in-out !important);
 	}
 
