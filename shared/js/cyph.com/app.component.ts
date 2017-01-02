@@ -1,18 +1,10 @@
 import {Component} from '@angular/core';
 import {ConfigService} from '../cyph/services/config.service';
-import {DialogService} from '../cyph/services/dialog.service';
 import {EnvService} from '../cyph/services/env.service';
 import {MdSidenavService} from '../cyph/services/material/md-sidenav.service';
-import {NotificationService} from '../cyph/services/notification.service';
-import {SignupService} from '../cyph/services/signup.service';
-import {StringsService} from '../cyph/services/strings.service';
-import {UrlStateService} from '../cyph/services/url-state.service';
-import {VirtualKeyboardWatcherService} from '../cyph/services/virtual-keyboard-watcher.service';
-import {VisibilityWatcherService} from '../cyph/services/visibility-watcher.service';
 import {util} from '../cyph/util';
 import {AppService} from './app.service';
 import {DemoService} from './demo.service';
-import {SilentNotificationService} from './silent-notification.service';
 
 
 /**
@@ -21,19 +13,7 @@ import {SilentNotificationService} from './silent-notification.service';
 @Component({
 	providers: [
 		AppService,
-		ConfigService,
 		DemoService,
-		DialogService,
-		EnvService,
-		SignupService,
-		StringsService,
-		UrlStateService,
-		VirtualKeyboardWatcherService,
-		VisibilityWatcherService,
-		{
-			provide: NotificationService,
-			useClass: SilentNotificationService
-		}
 	],
 	selector: 'cyph-app',
 	templateUrl: '../../templates/cyph.com/index.html'

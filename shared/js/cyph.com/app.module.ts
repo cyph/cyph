@@ -47,12 +47,22 @@ import {RegisterComponent} from '../cyph/components/register.component';
 import {SignupFormComponent} from '../cyph/components/signup-form.component';
 import {NanoScrollerDirective} from '../cyph/directives/nano-scroller.directive';
 import {TranslateDirective} from '../cyph/directives/translate.directive';
+import {ConfigService} from '../cyph/services/config.service';
+import {DialogService} from '../cyph/services/dialog.service';
+import {EnvService} from '../cyph/services/env.service';
 import {MdDialogService} from '../cyph/services/material/md-dialog.service';
 import {MdSidenavService} from '../cyph/services/material/md-sidenav.service';
 import {MdToastService} from '../cyph/services/material/md-toast.service';
+import {NotificationService} from '../cyph/services/notification.service';
+import {SignupService} from '../cyph/services/signup.service';
+import {StringsService} from '../cyph/services/strings.service';
+import {UrlStateService} from '../cyph/services/url-state.service';
+import {VirtualKeyboardWatcherService} from '../cyph/services/virtual-keyboard-watcher.service';
+import {VisibilityWatcherService} from '../cyph/services/visibility-watcher.service';
 import {AppComponent} from './app.component';
 import {ChatRootComponent} from './chat-root.component';
 import {DemoComponent} from './demo.component';
+import {SilentNotificationService} from './silent-notification.service';
 
 
 /**
@@ -113,10 +123,22 @@ import {DemoComponent} from './demo.component';
 		UpgradeModule
 	],
 	providers: [
+		ConfigService,
+		DialogService,
+		EnvService,
 		MdDialogService,
 		MdSidenavService,
 		MdToastService,
-		Title
+		SignupService,
+		StringsService,
+		Title,
+		UrlStateService,
+		VirtualKeyboardWatcherService,
+		VisibilityWatcherService,
+		{
+			provide: NotificationService,
+			useClass: SilentNotificationService
+		}
 	]
 })
 export class AppModule {
