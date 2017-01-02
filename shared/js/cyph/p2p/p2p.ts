@@ -332,9 +332,9 @@ export class P2P implements IP2P {
 					return;
 				}
 
-				const lockDetails	= await this.mutex.lock(P2P.constants.requestCall);
-
 				try {
+					const lockDetails	= await this.mutex.lock(P2P.constants.requestCall);
+
 					if (!lockDetails.wasFirstOfType) {
 						return;
 					}
@@ -353,16 +353,22 @@ export class P2P implements IP2P {
 						UIEventCategories.request,
 						UIEvents.requestConfirmation
 					);
-
-					/* Time out if request hasn't been accepted within 10 minutes */
-					await util.sleep(600000);
-					if (!this.isActive) {
-						this.isAccepted	= false;
-					}
 				}
 				finally {
 					this.mutex.unlock();
 				}
+
+				/* Time out if request hasn't been accepted within 10 minutes */
+
+				for (let seconds = 0 ; seconds < 600 ; ++seconds) {
+					if (this.isActive) {
+						return;
+					}
+
+					await util.sleep(1000);
+				}
+
+				this.isAccepted	= false;
 			}
 		);
 	}

@@ -71,22 +71,16 @@
 		</a>
 		<div
 			class='friend stream'
-			*ngIf='
-				self.p2pManager.p2p.incomingStream.video &&
-				!self.p2pManager.p2p.loading
-			'
+			[hidden]='!self.p2pManager.p2p.incomingStream.video || self.p2pManager.p2p.loading'
 		></div>
 		<img
 			class='friend'
-			*ngIf='!(
-				self.p2pManager.p2p.incomingStream.video ||
-				self.p2pManager.p2p.loading
-			)'
+			[hidden]='self.p2pManager.p2p.incomingStream.video || self.p2pManager.p2p.loading'
 			src='/img/voicecall.jpg'
 		/>
 		<video
 			class='me'
-			*ngIf='self.p2pManager.p2p.outgoingStream.video'
+			[hidden]='!self.p2pManager.p2p.outgoingStream.video'
 			autoplay
 			muted
 		></video>
@@ -117,13 +111,13 @@
 			>
 				<img
 					cyphTranslate
-					*ngIf='!self.p2pManager.p2p.outgoingStream.video'
+					[hidden]='self.p2pManager.p2p.outgoingStream.video'
 					src='/img/icons/video.on.png'
 					alt='Video on'
 				/>
 				<img
 					cyphTranslate
-					*ngIf='self.p2pManager.p2p.outgoingStream.video'
+					[hidden]='!self.p2pManager.p2p.outgoingStream.video'
 					src='/img/icons/video.off.png'
 					alt='Video off'
 				/>
@@ -139,13 +133,13 @@
 			>
 				<img
 					cyphTranslate
-					*ngIf='!self.p2pManager.p2p.outgoingStream.audio'
+					[hidden]='self.p2pManager.p2p.outgoingStream.audio'
 					src='/img/icons/mic.on.png'
 					alt='Mic on'
 				/>
 				<img
 					cyphTranslate
-					*ngIf='self.p2pManager.p2p.outgoingStream.audio'
+					[hidden]='!self.p2pManager.p2p.outgoingStream.audio'
 					src='/img/icons/mic.off.png'
 					alt='Mic off'
 				/>
