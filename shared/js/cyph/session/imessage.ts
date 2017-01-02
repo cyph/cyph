@@ -1,4 +1,4 @@
-import {IMessageData} from './imessagedata';
+import {IMessageData} from './imessage-data';
 
 
 /**

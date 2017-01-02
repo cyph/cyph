@@ -1,0 +1,31 @@
+<div class='chat-cyphertext'>
+	<md2-content cyphNanoScroller>
+		<md2-list childClass='layout-column'>
+			<md2-list-item
+				class='layout-row'
+				childClass='message-item unread flex layout-column'
+				*ngFor='let message of cyphertextService.messages'
+			>
+				<span class='message'>
+					<strong *ngIf='message.author === sessionService.users.me'>
+						{{stringsService.me}}:
+					</strong>
+					<strong *ngIf='message.author !== sessionService.users.me'>
+						{{message.author}}:
+					</strong>
+					<span class='flex'>{{message.text}}</span>
+					<br />
+					<br />
+				</span>
+			</md2-list-item>
+		</md2-list>
+	</md2-content>
+	<md2-button
+		cyphTranslate
+		ariaLabel='Close Cyphertext'
+		childClass='md-fab md-theme-grey close-button'
+		(childClick)='cyphertextService.hide()'
+	>
+		<strong>&times;</strong>
+	</md2-button>
+</div>

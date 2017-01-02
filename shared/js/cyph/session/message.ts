@@ -1,7 +1,7 @@
 import {util} from '../util';
 import {users} from './enums';
 import {IMessage} from './imessage';
-import {IMessageData} from './imessagedata';
+import {IMessageData} from './imessage-data';
 
 
 /** @inheritDoc */

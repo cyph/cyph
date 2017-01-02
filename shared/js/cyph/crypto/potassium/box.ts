@@ -1,8 +1,8 @@
-import {IKeyPair} from '../ikeypair';
+import {IKeyPair} from '../ikey-pair';
 import {lib} from './lib';
-import * as NativeCrypto from './nativecrypto';
-import {OneTimeAuth} from './onetimeauth';
-import {SecretBox} from './secretbox';
+import * as NativeCrypto from './native-crypto';
+import {OneTimeAuth} from './one-time-auth';
+import {SecretBox} from './secret-box';
 import {util} from './util';
 
 

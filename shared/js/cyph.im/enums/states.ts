@@ -6,6 +6,5 @@ export enum States {
 	blank,
 	chat,
 	error,
-	none,
 	waitingForFriend
 }

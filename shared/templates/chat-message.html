@@ -1,0 +1,72 @@
+<md2-list-item
+	class='layout-column flex'
+	[class.read]='!message.unread'
+	[childClass]='
+		"message-item layout-row" +
+		(
+			message.author === sessionService.users.me ?
+				" author-me" :
+				message.author === sessionService.users.app ?
+					" author-app" :
+					" author-other"
+		) +
+		(
+			message.selfDestructTimer && message.selfDestructTimer.isComplete ?
+				" self-destructed" :
+				""
+		)
+	'
+>
+	<div class='flex layout-column'>
+		<div class='layout-row'>
+			<span class='message'>
+				<strong
+					class='message-author'
+					*ngIf='!mobile && message.author === sessionService.users.me'
+				>
+					{{stringsService.me}}:
+				</strong>
+				<strong
+					class='message-author'
+					*ngIf='
+						!mobile &&
+						message.author !== sessionService.users.me &&
+						message.author !== sessionService.users.app
+					'
+				>
+					{{message.author}}:
+				</strong>
+				<cyph-markdown
+					class='message-text'
+					[markdown]='message.text'
+					[class.app-message]='message.author === sessionService.users.app'
+				></cyph-markdown>
+			</span>
+			<span class='message-timestamp flex'>
+				<span *ngIf='mobile && message.author === sessionService.users.me'>
+					{{stringsService.me}} &nbsp;&mdash;&nbsp;
+				</span>
+
+				{{message.timeString}}
+
+				<span
+					*ngIf='
+						mobile &&
+						message.author !== sessionService.users.me &&
+						message.author !== sessionService.users.app
+					'
+				>
+					&nbsp;&mdash;&nbsp; {{message.author}}
+				</span>
+			</span>
+		</div>
+		<div
+			class='self-destruct-timer layout-row'
+			*ngIf='message.selfDestructTimer'
+		>
+			<span cyphTranslate>Message will self-destruct in</span>
+			<span class='countdown'>{{message.selfDestructTimer.timestamp}}</span>
+		</div>
+	</div>
+	<div class='self-destruct-cover'></div>
+</md2-list-item>

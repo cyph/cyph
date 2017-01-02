@@ -2,7 +2,7 @@ import {saveAs} from 'file-saver';
 import {config} from './config';
 import {Email} from './email';
 import {env} from './env';
-import {eventManager} from './eventmanager';
+import {eventManager} from './event-manager';
 
 
 /**
@@ -19,12 +19,7 @@ export class Util {
 	/** @ignore */
 	private readonly timestampData	= {last: 0, offset: 0, subtime: 0};
 
-	/**
-	 * Performs HTTP request.
-	 * @param o
-	 * @param responseType
-	 * @param getResponseData
-	 */
+	/** Performs HTTP request. */
 	private async baseRequest<T> (
 		o: {
 			contentType?: string;
@@ -96,10 +91,7 @@ export class Util {
 		return response;
 	}
 
-	/**
-	 * Sends an email to the Cyph team. "@cyph.com" may be omitted from email.to.
-	 * @param email
-	 */
+	/** Sends an email to the Cyph team. "@cyph.com" may be omitted from email.to. */
 	public email (email: Email) : void {
 		this.request({
 			data: {
@@ -110,11 +102,9 @@ export class Util {
 					,
 					from_name: email.fromName || 'Mandrill',
 					subject: email.subject || 'New Cyph Email',
-					text: email.message + (
-						'\n\n\n---' +
-						'\n\n' + env.userAgent +
-						'\n\n' + env.language +
-						'\n\n' + locationData.href
+					text: (
+						`${email.message}\n\n\n---\n\n${env.userAgent}\n\n` +
+						`${env.language}\n\n${locationData.href}`
 					).replace(/\/#.*/g, ''),
 					to: [{
 						email: (email.to || 'hello').replace('@cyph.com', '') + '@cyph.com',
@@ -135,7 +125,6 @@ export class Util {
 	 * Randomly generates a GUID of specifed length using Config.guidAddressSpace.
 	 * If no valid length is specified, Config.guidAddressSpace is ignored and the
 	 * GUID will instead append a random 32-bit number to the current datetime.
-	 * @param length
 	 */
 	public generateGuid (length: number = 0) : string {
 		if (length > 0) {
@@ -155,12 +144,7 @@ export class Util {
 		}`;
 	}
 
-	/**
-	 * Gets a value from a map and sets a default value if none had previously been set.
-	 * @param map
-	 * @param key
-	 * @param defaultValue
-	 */
+	/** Gets a value from a map and sets a default value if none had previously been set. */
 	public getOrSetDefault<K, V> (map: Map<K, V>, key: K, defaultValue: () => V) : V {
 		if (!map.has(key)) {
 			map.set(key, defaultValue());
@@ -175,9 +159,7 @@ export class Util {
 		return value;
 	}
 
-	/**
-	 * Returns a human-readable representation of the time (e.g. "3:37pm").
-	 */
+	/** Returns a human-readable representation of the time (e.g. "3:37pm"). */
 	public getTimeString (timestamp: number) : string {
 		const date: Date		= new Date(timestamp);
 		const minute: string	= ('0' + date.getMinutes().toString()).slice(-2);
@@ -195,11 +177,7 @@ export class Util {
 		return `${hour.toString()}:${minute}${ampm}`;
 	}
 
-	/**
-	 * Executes a Promise within a mutual-exclusion lock.
-	 * @param lock
-	 * @param f
-	 */
+	/** Executes a Promise within a mutual-exclusion lock. */
 	public async lock<T> (lock: any, f: () => Promise<T>) : Promise<T> {
 		try {
 			while (lock.isOwned) {
@@ -218,8 +196,6 @@ export class Util {
 	/**
 	 * Executes a Promise within a mutual-exclusion lock, but
 	 * will give up after first failed attempt to obtain lock.
-	 * @param lock
-	 * @param f
 	 */
 	public async lockTryOnce<T> (lock: any, f: () => Promise<T>) : Promise<T|void> {
 		if (!lock.isOwned) {
@@ -227,11 +203,13 @@ export class Util {
 		}
 	}
 
-	/**
-	 * Opens the specified URL.
-	 * @param url
-	 */
+	/** Opens the specified URL. */
 	public async openUrl (url: string) : Promise<void> {
+		if (!env.isWeb) {
+			/* TODO: HANDLE NATIVE */
+			return;
+		}
+
 		if (!env.isMainThread) {
 			eventManager.trigger(Util.openUrlThreadEvent, url);
 			return;
@@ -320,10 +298,7 @@ export class Util {
 		return o.n.toFixed(2) + ' ' + o.s + 'B';
 	}
 
-	/**
-	 * Performs HTTP request.
-	 * @param o
-	 */
+	/** Performs HTTP request. */
 	public async request (o: {
 		contentType?: string;
 		data?: any;
@@ -334,10 +309,7 @@ export class Util {
 		return this.baseRequest(o, 'text', async (res) => (await res.text()).trim());
 	}
 
-	/**
-	 * Performs HTTP request.
-	 * @param o
-	 */
+	/** Performs HTTP request. */
 	public async requestBytes (o: {
 		contentType?: string;
 		data?: any;
@@ -350,11 +322,7 @@ export class Util {
 		);
 	}
 
-	/**
-	 * Runs f until it returns with no errors.
-	 * @param f
-	 * @param maxAttempts
-	 */
+	/** Runs f until it returns with no errors. */
 	public async retryUntilSuccessful<T> (
 		f: () => (T|Promise<T>),
 		maxAttempts: number = 10
@@ -374,11 +342,7 @@ export class Util {
 		}
 	}
 
-	/**
-	 * Opens the specified URL.
-	 * @param content
-	 * @param fileName
-	 */
+	/** Opens the specified URL. */
 	public async saveFile (content: Uint8Array, fileName: string) : Promise<void> {
 		if (!env.isMainThread) {
 			eventManager.trigger(Util.saveFileThreadEvent, {content, fileName});
@@ -398,10 +362,7 @@ export class Util {
 		self.onbeforeunload		= onbeforeunload;
 	}
 
-	/**
-	 * Sleep for the specifed amount of time.
-	 * @param ms
-	 */
+	/** Sleep for the specifed amount of time. */
 	public async sleep (ms: number = 250) : Promise<void> {
 		/* tslint:disable-next-line:ban */
 		return new Promise<void>(resolve => { setTimeout(() => { resolve(); }, ms); });
@@ -455,14 +416,39 @@ export class Util {
 		return (translations[env.language] || {})[text] || defaultValue;
 	}
 
-	/**
-	 * Simulates a click on elem.
-	 * @param elem
-	 */
+	/** Simulates a click on elem. */
 	public triggerClick (elem: HTMLElement) : void {
+		if (!env.isWeb) {
+			/* TODO: HANDLE NATIVE */
+			return;
+		}
+
 		const e: Event	= document.createEvent('MouseEvents');
 		e.initEvent('click', true, false);
 		elem.dispatchEvent(e);
+	}
+
+	/** Waits for iterable value to exist and have at least minLength elements. */
+	public async waitForIterable<T> (
+		f: () => T&{length: number}|undefined,
+		minLength: number = 1
+	) : Promise<T> {
+		return this.waitForValue<T&{length: number}>(f, value => value.length >= minLength);
+	}
+
+	/** Waits until value exists before resolving it in promise. */
+	public async waitForValue<T> (
+		f: () => T|undefined,
+		condition?: (value: T) => boolean
+	) : Promise<T> {
+		let value: T|undefined;
+
+		while (!value || (condition && !condition(value))) {
+			value	= f();
+			await this.sleep();
+		}
+
+		return value;
 	}
 
 	constructor () { (async () => {
@@ -485,10 +471,7 @@ export class Util {
 
 		eventManager.on(Util.openUrlThreadEvent, (url: string) => { this.openUrl(url); });
 
-		eventManager.on(Util.saveFileThreadEvent, (o: {
-			content: Uint8Array;
-			fileName: string;
-		}) => {
+		eventManager.on(Util.saveFileThreadEvent, (o: {content: Uint8Array; fileName: string}) => {
 			this.saveFile(o.content, o.fileName);
 		});
 	})(); }

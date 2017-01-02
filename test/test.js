@@ -166,7 +166,14 @@ const newCyphTest	= o => {
 	).then(() => new Promise(resolve =>
 		setTimeout(resolve, 10000)
 	)).then(() =>
-		driverScript(driver, function () { ui.chat.send('balls') })
+		driverScript(driver, function () {
+			try {
+				sendMessage('balls');
+			}
+			catch (_) {
+				ui.chat.send('balls');
+			}
+		})
 	).then(() =>
 		driverWait(
 			driver,

@@ -1,6 +1,6 @@
 import {config} from './config';
 import {env} from './env';
-import {eventManager} from './eventmanager';
+import {eventManager} from './event-manager';
 import {IThread} from './ithread';
 import {util} from './util';
 

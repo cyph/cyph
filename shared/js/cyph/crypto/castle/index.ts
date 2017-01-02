@@ -1,18 +1,7 @@
-import {AnonymousLocalUser} from './anonymouslocaluser';
-import {AnonymousRemoteUser} from './anonymousremoteuser';
-import {Core} from './core';
-import {ILocalUser} from './ilocaluser';
-import {IRemoteUser} from './iremoteuser';
-import {PairwiseSession} from './pairwisesession';
-import {Transport} from './transport';
-
-
-export {
-	AnonymousLocalUser,
-	AnonymousRemoteUser,
-	Core,
-	ILocalUser,
-	IRemoteUser,
-	PairwiseSession,
-	Transport
-};
+export * from './anonymous-local-user';
+export * from './anonymous-remote-user';
+export * from './core';
+export * from './ilocal-user';
+export * from './iremote-user';
+export * from './pairwise-session';
+export * from './transport';

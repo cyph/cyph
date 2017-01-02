@@ -1,0 +1,30 @@
+<div class='demo-root grid-container'>
+	<span class='desktop' *ngIf='!envService.isMobile'>
+		<cyph-chat-root [data]='demoService.desktop'>
+			<div class='cyph-foreground'>
+				<cyph-chat-main class='flex layout-column layout-fill'>
+					<span cyphTranslate>
+						We hope you enjoyed our quick demo! Just click
+						the "start new cyph" button to use it for real.
+					</span>
+				</cyph-chat-main>
+				<cyph-chat-message-box></cyph-chat-message-box>
+			</div>
+			<cyph-chat-cyphertext></cyph-chat-cyphertext>
+		</cyph-chat-root>
+	</span>
+
+	<span class='mobile'>
+		<cyph-chat-root [data]='demoService.mobile'>
+			<div class='cyph-foreground'>
+				<cyph-chat-main class='flex layout-column layout-fill'>
+					<span cyphTranslate>
+						Tell your friends.
+					</span>
+				</cyph-chat-main>
+				<cyph-chat-message-box></cyph-chat-message-box>
+			</div>
+			<cyph-chat-cyphertext></cyph-chat-cyphertext>
+		</cyph-chat-root>
+	</span>
+</div>

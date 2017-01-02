@@ -6,39 +6,45 @@
 import {platformBrowser} from '@angular/platform-browser';
 import {downgradeComponent, UpgradeModule} from '@angular/upgrade/static';
 import * as angular from 'angular';
+import {FileInputComponent} from '../cyph/components/file-input.component';
+import {HelpComponent} from '../cyph/components/help.component';
+import {MdButtonComponent} from '../cyph/components/material/md-button.component';
+import {MdCardContentComponent} from '../cyph/components/material/md-card-content.component';
+import {
+	MdCardHeaderTextComponent
+} from '../cyph/components/material/md-card-header-text.component';
+import {MdCardHeaderComponent} from '../cyph/components/material/md-card-header.component';
+import {
+	MdCardTitleTextComponent
+} from '../cyph/components/material/md-card-title-text.component';
+import {MdCardTitleComponent} from '../cyph/components/material/md-card-title.component';
+import {MdCardComponent} from '../cyph/components/material/md-card.component';
+import {MdContentComponent} from '../cyph/components/material/md-content.component';
+import {MdFabSpeedDialComponent} from '../cyph/components/material/md-fab-speed-dial.component';
+import {MdIconComponent} from '../cyph/components/material/md-icon.component';
+import {MdInputComponent} from '../cyph/components/material/md-input.component';
+import {MdListItemComponent} from '../cyph/components/material/md-list-item.component';
+import {MdListComponent} from '../cyph/components/material/md-list.component';
+import {MdMenuComponent} from '../cyph/components/material/md-menu.component';
+import {
+	MdProgressCircularComponent
+} from '../cyph/components/material/md-progress-circular.component';
+import {
+	MdProgressLinearComponent
+} from '../cyph/components/material/md-progress-linear.component';
+import {MdSelectComponent} from '../cyph/components/material/md-select.component';
+import {MdSubheaderComponent} from '../cyph/components/material/md-subheader.component';
+import {MdSwitchComponent} from '../cyph/components/material/md-switch.component';
+import {MdTabsComponent} from '../cyph/components/material/md-tabs.component';
+import {MdTextareaComponent} from '../cyph/components/material/md-textarea.component';
 import {config} from '../cyph/config';
-import {eventManager} from '../cyph/eventmanager';
-import {FileInput} from '../cyph/ui/components/fileinput';
-import {Help} from '../cyph/ui/components/help';
-import {MdButton} from '../cyph/ui/components/material/mdbutton';
-import {MdCard} from '../cyph/ui/components/material/mdcard';
-import {MdCardContent} from '../cyph/ui/components/material/mdcardcontent';
-import {MdCardHeader} from '../cyph/ui/components/material/mdcardheader';
-import {MdCardHeaderText} from '../cyph/ui/components/material/mdcardheadertext';
-import {MdCardTitle} from '../cyph/ui/components/material/mdcardtitle';
-import {MdCardTitleText} from '../cyph/ui/components/material/mdcardtitletext';
-import {MdContent} from '../cyph/ui/components/material/mdcontent';
-import {MdFabSpeedDial} from '../cyph/ui/components/material/mdfabspeeddial';
-import {MdIcon} from '../cyph/ui/components/material/mdicon';
-import {MdInput} from '../cyph/ui/components/material/mdinput';
-import {MdList} from '../cyph/ui/components/material/mdlist';
-import {MdListItem} from '../cyph/ui/components/material/mdlistitem';
-import {MdMenu} from '../cyph/ui/components/material/mdmenu';
-import {MdProgressCircular} from '../cyph/ui/components/material/mdprogresscircular';
-import {MdProgressLinear} from '../cyph/ui/components/material/mdprogresslinear';
-import {MdSelect} from '../cyph/ui/components/material/mdselect';
-import {MdSubheader} from '../cyph/ui/components/material/mdsubheader';
-import {MdSwitch} from '../cyph/ui/components/material/mdswitch';
-import {MdTabs} from '../cyph/ui/components/material/mdtabs';
-import {MdTextarea} from '../cyph/ui/components/material/mdtextarea';
-import {elements} from '../cyph/ui/elements';
+import {eventManager} from '../cyph/event-manager';
 import {loaded} from '../preload';
-import {AppComponent} from './appcomponent';
-import {AppModule} from './appmodule';
-import {UI} from './ui';
+import {AppComponent} from './app.component';
+import {AppModule} from './app.module';
 
 
-elements.body().attr(
+$(document.body).attr(
 	'ng-controller',
 	config.angularConfig.rootController
 );
@@ -52,103 +58,100 @@ angular.
 		(
 			$mdDialog: angular.material.IDialogService,
 			$mdToast: angular.material.IToastService
-		) => { eventManager.trigger(
-			UI.uiInitEvent,
-			{
-				$mdDialog,
-				$mdToast
-			}
-		); }
+		) => {
+			eventManager.trigger('$mdDialog', $mdDialog);
+			eventManager.trigger('$mdToast', $mdToast);
+		}
 	]).
 	config(config.angularConfig.config).
 	component(
-		MdButton.title,
-		MdButton.config
+		MdButtonComponent.title,
+		MdButtonComponent.config
 	).
 	component(
-		MdCard.title,
-		MdCard.config
+		MdCardComponent.title,
+		MdCardComponent.config
 	).
 	component(
-		MdCardContent.title,
-		MdCardContent.config
+		MdCardContentComponent.title,
+		MdCardContentComponent.config
 	).
 	component(
-		MdCardHeader.title,
-		MdCardHeader.config
+		MdCardHeaderComponent.title,
+		MdCardHeaderComponent.config
 	).
 	component(
-		MdCardHeaderText.title,
-		MdCardHeaderText.config
+		MdCardHeaderTextComponent.title,
+		MdCardHeaderTextComponent.config
 	).
 	component(
-		MdCardTitle.title,
-		MdCardTitle.config
+		MdCardTitleComponent.title,
+		MdCardTitleComponent.config
 	).
 	component(
-		MdCardTitleText.title,
-		MdCardTitleText.config
+		MdCardTitleTextComponent.title,
+		MdCardTitleTextComponent.config
 	).
 	component(
-		MdContent.title,
-		MdContent.config
+		MdContentComponent.title,
+		MdContentComponent.config
 	).
 	component(
-		MdFabSpeedDial.title,
-		MdFabSpeedDial.config
+		MdFabSpeedDialComponent.title,
+		MdFabSpeedDialComponent.config
 	).
 	component(
-		MdIcon.title,
-		MdIcon.config
+		MdIconComponent.title,
+		MdIconComponent.config
 	).
 	component(
-		MdInput.title,
-		MdInput.config
+		MdInputComponent.title,
+		MdInputComponent.config
 	).
 	component(
-		MdList.title,
-		MdList.config
+		MdListComponent.title,
+		MdListComponent.config
 	).
 	component(
-		MdListItem.title,
-		MdListItem.config
+		MdListItemComponent.title,
+		MdListItemComponent.config
 	).
 	component(
-		MdMenu.title,
-		MdMenu.config
+		MdMenuComponent.title,
+		MdMenuComponent.config
 	).
 	component(
-		MdProgressCircular.title,
-		MdProgressCircular.config
+		MdProgressCircularComponent.title,
+		MdProgressCircularComponent.config
 	).
 	component(
-		MdProgressLinear.title,
-		MdProgressLinear.config
+		MdProgressLinearComponent.title,
+		MdProgressLinearComponent.config
 	).
 	component(
-		MdSelect.title,
-		MdSelect.config
+		MdSelectComponent.title,
+		MdSelectComponent.config
 	).
 	component(
-		MdSubheader.title,
-		MdSubheader.config
+		MdSubheaderComponent.title,
+		MdSubheaderComponent.config
 	).
 	component(
-		MdSwitch.title,
-		MdSwitch.config
+		MdSwitchComponent.title,
+		MdSwitchComponent.config
 	).
 	component(
-		MdTabs.title,
-		MdTabs.config
+		MdTabsComponent.title,
+		MdTabsComponent.config
 	).
 	component(
-		MdTextarea.title,
-		MdTextarea.config
+		MdTextareaComponent.title,
+		MdTextareaComponent.config
 	).
 	directive(
 		'cyphFileInput',
 		downgradeComponent({
-			component: FileInput,
+			component: FileInputComponent,
 			inputs: ['accept'],
 			outputs: ['change']
 		})
@@ -156,7 +159,7 @@ angular.
 	directive(
 		'cyphHelp',
 		downgradeComponent({
-			component: Help
+			component: HelpComponent
 		})
 	).
 	directive(

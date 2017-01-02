@@ -1,7 +1,1 @@
-import {Potassium, potassium} from './potassium';
-
-
-export {
-	Potassium,
-	potassium
-};
+export * from './potassium';

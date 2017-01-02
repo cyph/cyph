@@ -70,7 +70,7 @@ scssfiles="$(cd css ; find . -name '*.scss' | grep -v bourbon/ | perl -pe 's/\.\
 output=''
 
 modulename () {
-	m="$(echo ${1} | perl -pe 's/.*\/([^\/]+)$/\u$1/')"
+	m="$(echo ${1} | perl -pe 's/.*\/([^\/]+)$/\u$1/' | perl -pe 's/[^A-Za-z0-9](.)?/\u$1/g')"
 	classM="$(grep -oiP "class\s+${m}" ${1}.ts | perl -pe 's/class\s+//')"
 
 	if [ "${classM}" ] ; then
@@ -151,7 +151,7 @@ compile () {
 
 	for f in $(echo "$tsfiles" | grep -P '/main$') ; do
 		tsbuild $f
-		sed -i 's|./appmodule|./appmodule.ngfactory|g' "${f}.ts"
+		sed -i 's|./app.module|./app.module.ngfactory|g' "${f}.ts"
 		sed -i 's|AppModule|AppModuleNgFactory|g' "${f}.ts"
 		sed -i 's|bootstrapModule|bootstrapModuleFactory|g' "${f}.ts"
 		tsbuild $f

@@ -1,4 +1,4 @@
-<md2-content class='md-no-flicker' *ngIf='signupForm'>
+<md2-content class='md-no-flicker'>
 	<md2-card childClass='md-padding'>
 		<md2-card-title>
 			<md2-card-title-text>
@@ -9,7 +9,7 @@
 					Register with Invite Code
 				</span>
 				<span class='md-subhead'>
-					<div *ngIf='signupForm.state === 1'>
+					<div *ngIf='signupService.state === 1'>
 						<span *ngIf='!invite' cyphTranslate>
 							Enter your email address.
 						</span>
@@ -18,7 +18,7 @@
 							on our waitlist.
 						</span>
 					</div>
-					<div *ngIf='signupForm.state === 2' cyphTranslate>
+					<div *ngIf='signupService.state === 2' cyphTranslate>
 						Thanks for signing up. Feel free to give us your name too.
 						Privacy is at the core of our ideology, so we'll never give
 						away your email address or personal details.
@@ -27,13 +27,13 @@
 			</md2-card-title-text>
 		</md2-card-title>
 		<md2-card-content>
-			<cyph-signup-form [self]='signupForm' [invite]='invite'></cyph-signup-form>
+			<cyph-signup-form [invite]='invite'></cyph-signup-form>
 		</md2-card-content>
 	</md2-card>
 
 	<div class='login-button layout-row layout-align-center-center'>
 		<md2-button
-			[href]='env.newCyphBaseUrl + "#beta/login"'
+			[href]='envService.newCyphBaseUrl + "#beta/login"'
 			cyphTranslate
 		>
 			Already have a Cyph account? Click here to login.

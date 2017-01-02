@@ -1,0 +1,114 @@
+<div
+	class='chat-message-box'
+	[class.mobile]='envService.isMobile'
+	*ngIf='chatService.state === chatService.states.chat && sessionService.state.isAlive'
+>
+	<textarea
+		class='message-box tabIndent'
+		[(ngModel)]='chatService.currentMessage'
+		(ngModelChange)='chatService.messageChange()'
+		placeholder='Send a secure message...'
+		cyphTranslate
+	></textarea>
+
+	<div *ngIf='envService.isMobile'>
+		<div
+			class='message-box-button-group'
+			[class.hidden]='chatService.currentMessage === ""'
+		>
+			<md2-button
+				ariaLabel='Send'
+				childClass='grey'
+				(childClick)='chatService.send()'
+				cyphTranslate
+			>
+				<md2-icon>send</md2-icon>
+			</md2-button>
+		</div>
+		<div
+			class='message-box-button-group'
+			[class.hidden]='chatService.currentMessage !== ""'
+		>
+			<md2-button
+				ariaLabel='Video Call'
+				childClass='grey'
+				(childClick)='p2pService.videoCallButton()'
+				[disabled]='!p2pService.isEnabled'
+				*ngIf='!p2pService.isActive'
+				cyphTranslate
+			>
+				<md2-icon>videocam</md2-icon>
+			</md2-button>
+			<md2-button
+				ariaLabel='Voice Call'
+				childClass='grey'
+				(childClick)='p2pService.voiceCallButton()'
+				[disabled]='!p2pService.isEnabled'
+				*ngIf='!p2pService.isActive'
+				cyphTranslate
+			>
+				<md2-icon>phone</md2-icon>
+			</md2-button>
+			<md2-button
+				ariaLabel='Send File or Photo'
+				childClass='grey'
+				cyphTranslate
+			>
+				<md2-icon>attach_file</md2-icon>
+				<cyph-file-input
+					[accept]='fileAccept'
+					(change)='fileService.send($event)'
+				></cyph-file-input>
+			</md2-button>
+		</div>
+
+		<md2-menu
+			mdPositionMode='target-right target'
+			width='4'
+			[button]='menuButton'
+			[items]='menuItems'
+		></md2-menu>
+	</div>
+
+	<md2-fab-speed-dial
+		cyphTranslate
+		ariaLabel='Menu'
+		icon='add'
+		[buttons]='speedDialButtons'
+		mdDirection='up'
+		childClass='md-fling md-fab-bottom-right'
+		[mdOpen]='isSpeedDialOpen'
+		(mouseenter)='isSpeedDialOpen = true'
+		(mouseleave)='isSpeedDialOpen = false'
+		*ngIf='!envService.isMobile && isSpeedDialReady && !p2pService.isActive'
+	></md2-fab-speed-dial>
+	<md2-fab-speed-dial
+		cyphTranslate
+		ariaLabel='Menu'
+		icon='add'
+		[buttons]='speedDialButtonsP2P'
+		mdDirection='up'
+		childClass='md-fling md-fab-bottom-right'
+		[mdOpen]='isSpeedDialOpen'
+		(mouseenter)='isSpeedDialOpen = true'
+		(mouseleave)='isSpeedDialOpen = false'
+		*ngIf='!envService.isMobile && isSpeedDialReady && p2pService.isActive'
+	></md2-fab-speed-dial>
+
+	<md2-subheader
+		childClass='new-messages md-subheader-colored md-sticky-clone'
+		*ngIf='scrollService.unreadItemCount > 0'
+		stickyState='active'
+		(click)='scrollService.scrollDown()'
+		[text]='
+			"↓  " +
+			scrollService.unreadItemCount +
+			" " + stringsService.newString + " " +
+			(
+				scrollService.unreadItemCount === 1 ?
+					stringsService.message :
+					stringsService.messages
+			)
+		'
+	></md2-subheader>
+</div>

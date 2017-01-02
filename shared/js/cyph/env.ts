@@ -1,5 +1,5 @@
 import {config} from './config';
-import {EnvDeploy} from './envdeploy';
+import {EnvDeploy} from './env-deploy';
 
 
 /**
@@ -54,8 +54,8 @@ export class Env extends EnvDeploy {
 	/** Indicates whether this is Edge. */
 	public readonly isEdge: boolean		= /edge\/\d+/.test(this.userAgent);
 
-	/** Indicates whether this is OS X. */
-	public readonly isOSX: boolean		= /mac os x/.test(this.userAgent);
+	/** Indicates whether this is macOS / OS X. */
+	public readonly isMacOS: boolean	= /mac os x/.test(this.userAgent);
 
 	/** Indicates whether this is Android. */
 	public readonly isAndroid: boolean	= /android/.test(this.userAgent);
@@ -89,7 +89,7 @@ export class Env extends EnvDeploy {
 	;
 
 	/** Indicates whether this is mobile. */
-	public readonly isMobile: boolean	=
+	public isMobile: boolean			=
 		this.isAndroid ||
 		this.isIOS ||
 		this.isWebOS ||
@@ -102,6 +102,7 @@ export class Env extends EnvDeploy {
 
 	/** Indicates whether this is a touchscreen environment. */
 	public readonly isTouch: boolean	= (() => {
+		/* TODO: HANDLE NATIVE */
 		try {
 			document.createEvent('TouchEvent');
 			return true;

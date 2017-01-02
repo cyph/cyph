@@ -1,10 +1,10 @@
 import {Box} from './box';
-import {EphemeralKeyExchange} from './ephemeralkeyexchange';
+import {EphemeralKeyExchange} from './ephemeral-key-exchange';
 import {Hash} from './hash';
-import * as NativeCrypto from './nativecrypto';
-import {OneTimeAuth} from './onetimeauth';
-import {PasswordHash} from './passwordhash';
-import {SecretBox} from './secretbox';
+import * as NativeCrypto from './native-crypto';
+import {OneTimeAuth} from './one-time-auth';
+import {PasswordHash} from './password-hash';
+import {SecretBox} from './secret-box';
 import {Sign} from './sign';
 import {Util, util} from './util';
 

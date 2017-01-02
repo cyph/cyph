@@ -1,4 +1,4 @@
-import {IKeyPair} from '../ikeypair';
+import {IKeyPair} from '../ikey-pair';
 import {lib} from './lib';
 
 

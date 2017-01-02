@@ -11,8 +11,8 @@ export interface ISession {
 		cyphId: string;
 		isAlice: boolean;
 		isAlive: boolean;
-		isStartingNewCyph: boolean;
 		sharedSecret: string;
+		startingNewCyph: boolean|undefined;
 		wasInitiatedByAPI: boolean;
 	};
 
@@ -42,29 +42,10 @@ export interface ISession {
 	one<T> (event: string) : Promise<T>;
 
 	/**
-	 * Receive incoming cyphertext.
-	 * @param data Data to be decrypted.
-	 */
-	receive (data: string) : Promise<void>;
-
-	/**
 	 * Send at least one message through the session.
 	 * @param messages
 	 */
 	send (...messages: IMessage[]) : void;
-
-	/**
-	 * Send at least one message through the session.
-	 * @param messages
-	 */
-	sendBase (messages: IMessage[]) : Promise<void>;
-
-	/**
-	 * Shorthand for sending a user-facing chat message.
-	 * @param text
-	 * @param selfDestructTimeout
-	 */
-	sendText (text: string, selfDestructTimeout?: number) : void;
 
 	/**
 	 * Trigger event, passing in optional data.
@@ -72,11 +53,4 @@ export interface ISession {
 	 * @param data
 	 */
 	trigger (event: string, data?: any) : void;
-
-	/**
-	 * Sets a value of this.state.
-	 * @param key
-	 * @param value
-	 */
-	updateState (key: string, value: any) : void;
 }
