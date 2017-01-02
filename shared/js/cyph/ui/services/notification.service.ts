@@ -1,56 +1,63 @@
 import {Injectable} from '@angular/core';
-import {config} from '../../config';
-import {env} from '../../env';
+import {INotificationService} from '../service-interfaces/inotification.service';
+import {ConfigService} from './config.service';
+import {EnvService} from './env.service';
 import {VisibilityWatcherService} from './visibility-watcher.service';
 
 
 /**
- * Manages user-facing notifications.
+ * @inheritDoc
  */
 @Injectable()
-export class NotificationService {
+export class NotificationService implements INotificationService {
 	/** @ignore */
-	private static readonly config	= {
+	private readonly config	= {
 		audio: '/audio/beep.mp3',
 		icon: customBuildFavicon || '/img/favicon/favicon-192x192.png',
 		title: 'Cyph'
 	};
 
 	/** @ignore */
-	private static readonly audio: {play: Function}	= Audio ?
-		new Audio(NotificationService.config.audio) :
+	private readonly audio: {play: Function}	= Audio ?
+		new Audio(this.config.audio) :
 		{play: () => {}}
 	;
 
+	/** Indicates whether notifications are currently silenced. */
+	private disableNotify: boolean				= false;
+
+	/** Currently open notification objects. */
+	private readonly openNotifications: any[]	= [];
+
 	/** @ignore */
-	private static createNotification (message: string, callback: Function = () => {}) : void {
+	private createNotification (message: string, callback: Function = () => {}) : void {
 		const options	= {
 			audio: <string|undefined> undefined,
 			body: message,
-			icon: NotificationService.config.icon,
-			lang: env.language,
+			icon: this.config.icon,
+			lang: this.envService.language,
 			noscreen: false,
 			sticky: false
 		};
 
 		try {
-			callback(new (<any> self).Notification(NotificationService.config.title, options));
+			callback(new (<any> self).Notification(this.config.title, options));
 
 			try {
-				NotificationService.audio.play();
+				this.audio.play();
 			}
 			catch (_) {}
 		}
 		catch (_) {
 			try {
-				options.audio	= NotificationService.config.audio;
+				options.audio	= this.config.audio;
 
 				(<any> navigator).serviceWorker.
-					register(config.webSignConfig.serviceWorker).
+					register(this.configService.webSignConfig.serviceWorker).
 					then((serviceWorkerRegistration: any) => {
 						try {
 							serviceWorkerRegistration.showNotification(
-								NotificationService.config.title,
+								this.config.title,
 								options
 							);
 						}
@@ -63,22 +70,12 @@ export class NotificationService {
 		}
 	}
 
-
-	/** Indicates whether notifications are currently silenced. */
-	public disableNotify: boolean				= false;
-
-	/** Currently open notification objects. */
-	public readonly openNotifications: any[]	= [];
-
-	/**
-	 * If user isn't currently viewing this window, sends notification.
-	 * @param message
-	 */
+	/** @inheritDoc */
 	public notify (message: string) : void {
 		if (!this.disableNotify && !this.visibilityWatcherService.isVisible) {
 			this.disableNotify	= true;
 
-			NotificationService.createNotification(message, (notification: any) => {
+			this.createNotification(message, (notification: any) => {
 				try {
 					this.openNotifications.push(notification);
 
@@ -93,8 +90,14 @@ export class NotificationService {
 	}
 
 	constructor (
-		/** @see VisibilityWatcherService */
-		public readonly visibilityWatcherService: VisibilityWatcherService
+		/** @ignore */
+		private readonly configService: ConfigService,
+
+		/** @ignore */
+		private readonly envService: EnvService,
+
+		/** @ignore */
+		private readonly visibilityWatcherService: VisibilityWatcherService
 	) {
 		this.visibilityWatcherService.onChange((isVisible: boolean) => {
 			if (isVisible) {

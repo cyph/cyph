@@ -30,6 +30,9 @@ export class Events {
 	public readonly cyphertext: string			= 'cyphertext';
 
 	/** @see Events */
+	public readonly cyphNotFound: string		= 'cyphNotFound';
+
+	/** @see Events */
 	public readonly filesUI: string				= 'filesUI';
 
 	/** @see Events */

@@ -1,12 +1,12 @@
 import {Injectable} from '@angular/core';
 import {analytics} from '../../analytics';
 import {eventManager} from '../../event-manager';
-import {events} from '../../session/enums';
+import {Events, events, RpcEvents, rpcEvents, Users, users} from '../../session/enums';
 import {IMessage} from '../../session/imessage';
 import {ISession} from '../../session/isession';
-import {ISessionService} from '../../session/isession-service';
 import {Thread} from '../../thread';
 import {util} from '../../util';
+import {ISessionService} from '../service-interfaces/isession-service';
 import {AbstractSessionIdService} from './abstract-session-id.service';
 
 
@@ -22,7 +22,7 @@ export class SessionService implements ISessionService {
 	private readonly eventId: string	= util.generateGuid();
 
 	/** @ignore */
-	private readonly events		= {
+	private readonly threadEvents		= {
 		close: 'close-SessionService',
 		send: 'send-SessionService'
 	};
@@ -45,8 +45,17 @@ export class SessionService implements ISessionService {
 	};
 
 	/** @inheritDoc */
+	public readonly events: Events			= events;
+
+	/** @inheritDoc */
+	public readonly rpcEvents: RpcEvents	= rpcEvents;
+
+	/** @inheritDoc */
+	public readonly users: Users			= users;
+
+	/** @inheritDoc */
 	public close () : void {
-		this.trigger(this.events.close);
+		this.trigger(this.threadEvents.close);
 	}
 
 	/** @inheritDoc */
@@ -66,7 +75,7 @@ export class SessionService implements ISessionService {
 
 	/** @inheritDoc */
 	public send (...messages: IMessage[]) : void {
-		this.trigger(this.events.send, {messages});
+		this.trigger(this.threadEvents.send, {messages});
 	}
 
 	/** @inheritDoc */
@@ -117,7 +126,7 @@ export class SessionService implements ISessionService {
 			});
 		}
 
-		this.on(events.threadUpdate, (e: {
+		this.on(this.events.threadUpdate, (e: {
 			key: 'cyphId'|'isAlice'|'isAlive'|'sharedSecret'|'startingNewCyph'|'wasInitiatedByAPI';
 			value: boolean|string|undefined;
 		}) => {
@@ -167,7 +176,7 @@ export class SessionService implements ISessionService {
 			{
 				id,
 				eventId: this.eventId,
-				events: this.events,
+				events: this.threadEvents,
 				nativeCrypto: this.apiFlags.nativeCrypto
 			}
 		);

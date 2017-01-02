@@ -1,7 +1,7 @@
 import {Component, Input} from '@angular/core';
-import {Config, config} from '../../config';
 import {Email} from '../../email';
 import {util} from '../../util';
+import {ConfigService} from '../services/config.service';
 
 
 /**
@@ -15,13 +15,13 @@ export class ContactComponent {
 	/** @see IEmail */
 	@Input() public email: Email;
 
-	/** @see Config */
-	public readonly config: Config	= config;
-
 	/** Sends email. */
 	public send () : void {
 		util.email(this.email);
 	}
 
-	constructor () {}
+	constructor (
+		/** @see ConfigService */
+		public readonly configService: ConfigService
+	) {}
 }

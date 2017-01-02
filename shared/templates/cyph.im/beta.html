@@ -5,7 +5,7 @@
 	<div cyphNanoScroller>
 		<div
 			class='login-form layout-row layout-align-center-center'
-			*ngIf='betaState === betaStates.login'
+			*ngIf='appService.betaState === appService.betaStates.login'
 			[class.checking]='checking'
 		>
 			<md2-card class='md-padding flex-75'>
@@ -25,7 +25,7 @@
 							<md2-subheader
 								cyphTranslate
 								[style.visibility]='error ? "visible" : "hidden"'
-								[text]='strings.invalidCredentials'
+								[text]='stringsService.invalidCredentials'
 							></md2-subheader>
 						</div>
 						<div class='layout-row layout-align-center-center'>
@@ -61,10 +61,10 @@
 				<md2-progress-circular mdMode='indeterminate'></md2-progress-circular>
 			</md2-card>
 		</div>
-		<div *ngIf='betaState === betaStates.register' cyphTranslate>
+		<div *ngIf='appService.betaState === appService.betaStates.register' cyphTranslate>
 			Registration screen
 		</div>
-		<div *ngIf='betaState === betaStates.settings' cyphTranslate>
+		<div *ngIf='appService.betaState === appService.betaStates.settings' cyphTranslate>
 			Settings screen
 		</div>
 	</div>

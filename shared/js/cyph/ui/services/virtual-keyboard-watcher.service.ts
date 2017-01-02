@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
-import {env} from '../../env';
 import {eventManager} from '../../event-manager';
+import {EnvService} from './env.service';
 
 
 /**
@@ -45,8 +45,11 @@ export class VirtualKeyboardWatcherService {
 		return eventManager.one<boolean>(this.keyboardChangeEvent);
 	}
 
-	constructor () {
-		if (!env.isMobile) {
+	constructor (
+		/** @ignore */
+		private readonly envService: EnvService
+	) {
+		if (!this.envService.isMobile) {
 			return;
 		}
 

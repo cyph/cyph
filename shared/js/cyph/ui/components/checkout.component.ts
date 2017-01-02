@@ -1,7 +1,7 @@
 import {Component, ElementRef, Input, OnInit} from '@angular/core';
-import {config} from '../../config';
-import {env} from '../../env';
 import {util} from '../../util';
+import {ConfigService} from '../services/config.service';
+import {EnvService} from '../services/env.service';
 
 
 /**
@@ -34,7 +34,7 @@ export class CheckoutComponent implements OnInit {
 	public async ngOnInit () : Promise<void> {
 		const token: string	= await util.request({
 			retries: 5,
-			url: env.baseUrl + config.braintreeConfig.endpoint
+			url: this.envService.baseUrl + this.configService.braintreeConfig.endpoint
 		});
 
 		const checkoutUI: JQuery	= $(this.elementRef.nativeElement).find('.braintree');
@@ -55,7 +55,7 @@ export class CheckoutComponent implements OnInit {
 						Nonce: data.nonce
 					},
 					method: 'POST',
-					url: env.baseUrl + config.braintreeConfig.endpoint
+					url: this.envService.baseUrl + this.configService.braintreeConfig.endpoint
 				});
 
 				if (JSON.parse(response).Status === 'authorized') {
@@ -67,6 +67,12 @@ export class CheckoutComponent implements OnInit {
 
 	constructor (
 		/** @ignore */
-		private readonly elementRef: ElementRef
+		private readonly elementRef: ElementRef,
+
+		/** @ignore */
+		private readonly configService: ConfigService,
+
+		/** @ignore */
+		private readonly envService: EnvService
 	) {}
 }

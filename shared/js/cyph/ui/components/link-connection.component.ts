@@ -7,15 +7,14 @@ import {
 	SimpleChanges
 } from '@angular/core';
 import * as clipboard from 'clipboard-js';
-import {config} from '../../config';
-import {events} from '../../session/enums';
-import {strings} from '../../strings';
 import {Timer} from '../../timer';
 import {util} from '../../util';
 import {ChatService} from '../services/chat.service';
+import {ConfigService} from '../services/config.service';
 import {DialogService} from '../services/dialog.service';
 import {EnvService} from '../services/env.service';
 import {SessionService} from '../services/session.service';
+import {StringsService} from '../services/strings.service';
 
 
 /**
@@ -74,7 +73,7 @@ export class LinkConnectionComponent implements OnChanges {
 			this.addTimeLock,
 			async () => {
 				await this.dialogService.toast({
-					content: strings.timeExtended,
+					content: this.stringsService.timeExtended,
 					delay: 2500
 				});
 			}
@@ -88,7 +87,7 @@ export class LinkConnectionComponent implements OnChanges {
 			async () => {
 				await clipboard.copy(this.linkConstant);
 				await this.dialogService.toast({
-					content: strings.linkCopied,
+					content: this.stringsService.linkCopied,
 					delay: 2500
 				});
 			}
@@ -152,12 +151,12 @@ export class LinkConnectionComponent implements OnChanges {
 		}
 
 		this.timer	= new Timer(
-			config.cyphCountdown,
+			this.configService.cyphCountdown,
 			false,
 			this.changeDetectorRef
 		);
 
-		this.sessionService.one(events.connect).then(() => {
+		this.sessionService.one(this.sessionService.events.connect).then(() => {
 			isWaiting			= false;
 			this.link			= '';
 			this.linkConstant	= '';
@@ -181,10 +180,16 @@ export class LinkConnectionComponent implements OnChanges {
 		private readonly elementRef: ElementRef,
 
 		/** @ignore */
+		private readonly configService: ConfigService,
+
+		/** @ignore */
 		private readonly dialogService: DialogService,
 
 		/** @ignore */
 		private readonly sessionService: SessionService,
+
+		/** @ignore */
+		private readonly stringsService: StringsService,
 
 		/** @see ChatService */
 		public readonly chatService: ChatService,

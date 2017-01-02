@@ -1,15 +1,14 @@
 import {Injectable} from '@angular/core';
-import {config} from '../../config';
 import {potassium} from '../../crypto/potassium';
 import {UIEvents} from '../../files/enums';
 import {Files} from '../../files/files';
 import {Transfer} from '../../files/transfer';
-import {events, users} from '../../session/enums';
-import {strings} from '../../strings';
 import {util} from '../../util';
 import {ChatService} from './chat.service';
+import {ConfigService} from './config.service';
 import {DialogService} from './dialog.service';
 import {SessionService} from './session.service';
+import {StringsService} from './strings.service';
 
 
 /**
@@ -40,8 +39,8 @@ export class FileService {
 			<CanvasRenderingContext2D> canvas.getContext('2d')
 		;
 
-		let widthFactor: number		= config.filesConfig.maxImageWidth / image.width;
-		let heightFactor: number	= config.filesConfig.maxImageWidth / image.height;
+		let widthFactor: number		= this.configService.filesConfig.maxImageWidth / image.width;
+		let heightFactor: number	= this.configService.filesConfig.maxImageWidth / image.height;
 
 		if (widthFactor > 1) {
 			widthFactor		= 1;
@@ -130,15 +129,21 @@ export class FileService {
 		private readonly chatService: ChatService,
 
 		/** @ignore */
+		private readonly configService: ConfigService,
+
+		/** @ignore */
 		private readonly dialogService: DialogService,
 
 		/** @ignore */
-		private readonly sessionService: SessionService
+		private readonly sessionService: SessionService,
+
+		/** @ignore */
+		private readonly stringsService: StringsService
 	) {
 		this.files	= new Files(this.sessionService);
 
 		this.sessionService.on(
-			events.filesUI,
+			this.sessionService.events.filesUI,
 			async (e: {
 				event: UIEvents;
 				args: any[];
@@ -153,13 +158,13 @@ export class FileService {
 						}
 						else {
 							const message: string	= transfer.answer ?
-								strings.outgoingFileSaved :
-								strings.outgoingFileRejected
+								this.stringsService.outgoingFileSaved :
+								this.stringsService.outgoingFileRejected
 							;
 
 							this.chatService.addMessage(
 								`${message} ${transfer.name}`,
-								users.app
+								this.sessionService.users.app
 							);
 						}
 						break;
@@ -170,26 +175,29 @@ export class FileService {
 						const callback: (ok: boolean) => void	= e.args[2];
 
 						const title	=
-							`${strings.incomingFile} ${transfer.name} ` +
+							`${this.stringsService.incomingFile} ${transfer.name} ` +
 							`(${util.readableByteLength(transfer.size)})`
 						;
 
 						callback(
-							(!isSave && transfer.size < config.filesConfig.approvalLimit) ||
+							(
+								!isSave &&
+								transfer.size < this.configService.filesConfig.approvalLimit
+							) ||
 							(isSave && transfer.image) ||
 							await this.dialogService.confirm({
 								title,
 								cancel: isSave ?
-									strings.discard :
-									strings.reject
+									this.stringsService.discard :
+									this.stringsService.reject
 								,
 								content: isSave ?
-									strings.incomingFileSave :
-									strings.incomingFileDownload
+									this.stringsService.incomingFileSave :
+									this.stringsService.incomingFileDownload
 								,
 								ok: isSave ?
-									strings.save :
-									strings.accept
+									this.stringsService.save :
+									this.stringsService.accept
 							})
 						);
 						break;
@@ -198,8 +206,8 @@ export class FileService {
 						const transfer: Transfer	= e.args[0];
 
 						this.chatService.addMessage(
-							`${strings.incomingFileRejected} ${transfer.name}`,
-							users.app,
+							`${this.stringsService.incomingFileRejected} ${transfer.name}`,
+							this.sessionService.users.app,
 							undefined,
 							false
 						);
@@ -220,24 +228,25 @@ export class FileService {
 					case UIEvents.started: {
 						const transfer: Transfer	= e.args[0];
 
-						const message: string	= transfer.author === users.me ?
-							strings.fileTransferInitMe :
-							strings.fileTransferInitFriend
+						const message: string	=
+							transfer.author === this.sessionService.users.me ?
+								this.stringsService.fileTransferInitMe :
+								this.stringsService.fileTransferInitFriend
 						;
 
 						if (!transfer.image) {
 							this.chatService.addMessage(
 								`${message} ${transfer.name}`,
-								users.app
+								this.sessionService.users.app
 							);
 						}
 						break;
 					}
 					case UIEvents.tooLarge: {
 						this.dialogService.alert({
-							content: strings.fileTooLarge,
-							ok: strings.ok,
-							title: strings.oopsTitle
+							content: this.stringsService.fileTooLarge,
+							ok: this.stringsService.ok,
+							title: this.stringsService.oopsTitle
 						});
 						break;
 					}

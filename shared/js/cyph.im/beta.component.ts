@@ -1,8 +1,8 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {Strings, strings} from '../cyph/strings';
-import {urlState} from '../cyph/url-state';
+import {Component, OnInit} from '@angular/core';
+import {StringsService} from '../cyph/ui/services/strings.service';
+import {UrlStateService} from '../cyph/ui/services/url-state.service';
 import {util} from '../cyph/util';
-import {BetaStates} from './enums';
+import {AppService} from './app.service';
 
 
 /**
@@ -14,9 +14,6 @@ import {BetaStates} from './enums';
 })
 export class BetaComponent implements OnInit {
 	/** @ignore */
-	@Input() public betaState: BetaStates;
-
-	/** @ignore */
 	public checking: boolean	= false;
 
 	/** @ignore */
@@ -27,12 +24,6 @@ export class BetaComponent implements OnInit {
 
 	/** @ignore */
 	public username: string		= '';
-
-	/** @ignore */
-	public betaStates: typeof BetaStates	= BetaStates;
-
-	/** @ignore */
-	public strings: Strings					= strings;
 
 	/** @ignore */
 	public async onSubmit () : Promise<void> {
@@ -49,8 +40,17 @@ export class BetaComponent implements OnInit {
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
-		urlState.trigger();
+		this.urlStateService.trigger();
 	}
 
-	constructor () {}
+	constructor (
+		/** @ignore */
+		private readonly urlStateService: UrlStateService,
+
+		/** @see AppService */
+		public readonly appService: AppService,
+
+		/** @see StringsService */
+		public readonly stringsService: StringsService
+	) {}
 }

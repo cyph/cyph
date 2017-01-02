@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
-import {env} from '../../env';
 import {eventManager} from '../../event-manager';
+import {EnvService} from './env.service';
 
 
 /**
@@ -39,8 +39,11 @@ export class VisibilityWatcherService {
 		return eventManager.one<boolean>(this.visibilityChangeEvent);
 	}
 
-	constructor () {
-		if (env.isMobile) {
+	constructor (
+		/** @ignore */
+		private readonly envService: EnvService
+	) {
+		if (this.envService.isMobile) {
 			document.addEventListener('visibilitychange', () => {
 				this.trigger(!document.hidden);
 			});

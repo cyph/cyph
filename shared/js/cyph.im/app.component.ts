@@ -1,13 +1,14 @@
 import {Component} from '@angular/core';
-import {Strings, strings} from '../cyph/strings';
+import {ConfigService} from '../cyph/ui/services/config.service';
 import {DialogService} from '../cyph/ui/services/dialog.service';
 import {EnvService} from '../cyph/ui/services/env.service';
 import {NotificationService} from '../cyph/ui/services/notification.service';
 import {SignupService} from '../cyph/ui/services/signup.service';
+import {StringsService} from '../cyph/ui/services/strings.service';
+import {UrlStateService} from '../cyph/ui/services/url-state.service';
 import {VirtualKeyboardWatcherService} from '../cyph/ui/services/virtual-keyboard-watcher.service';
 import {VisibilityWatcherService} from '../cyph/ui/services/visibility-watcher.service';
 import {AppService} from './app.service';
-import {States} from './enums';
 
 
 /**
@@ -16,10 +17,13 @@ import {States} from './enums';
 @Component({
 	providers: [
 		AppService,
+		ConfigService,
 		DialogService,
 		EnvService,
 		NotificationService,
 		SignupService,
+		StringsService,
+		UrlStateService,
 		VirtualKeyboardWatcherService,
 		VisibilityWatcherService
 	],
@@ -27,17 +31,14 @@ import {States} from './enums';
 	templateUrl: '../../templates/cyph.im/index.html'
 })
 export class AppComponent {
-	/** @ignore */
-	public states: typeof States	= States;
-
-	/** @ignore */
-	public strings: Strings			= strings;
-
 	constructor (
 		/** @see AppService */
-		public appService: AppService,
+		public readonly appService: AppService,
 
 		/** @see EnvService */
-		public envService: EnvService
+		public readonly envService: EnvService,
+
+		/** @see StringsService */
+		public readonly stringsService: StringsService
 	) {}
 }

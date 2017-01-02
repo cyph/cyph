@@ -1,11 +1,11 @@
-import {env} from './env';
-import {eventManager} from './event-manager';
+import {eventManager} from '../../event-manager';
+import {EnvService} from './env.service';
 
 
 /**
  * Manages URL state.
  */
-export class UrlState {
+export class UrlStateService {
 	/** @ignore */
 	private static readonly setThreadEvent: string		= 'setThreadEvent';
 
@@ -49,7 +49,7 @@ export class UrlState {
 	 * @param handler
 	 */
 	public onChange (handler: (newUrlState: string) => void) : void {
-		eventManager.on(UrlState.urlStateChangeEvent, () => { handler(this.getUrl()); });
+		eventManager.on(UrlStateService.urlStateChangeEvent, () => { handler(this.getUrl()); });
 	}
 
 	/**
@@ -65,7 +65,7 @@ export class UrlState {
 		shouldNotTrigger?: boolean,
 		redirectFallback: boolean = true
 	) : void {
-		if (env.isMainThread) {
+		if (this.envService.isMainThread) {
 			for (const c of ['/', '#']) {
 				if (path[0] === c) {
 					path	= path.substring(1);
@@ -73,7 +73,7 @@ export class UrlState {
 			}
 
 			/* Force fragment-based paths when not on home site */
-			if (!env.isHomeSite && path.length > 0) {
+			if (!this.envService.isHomeSite && path.length > 0) {
 				path	= '#' + path;
 			}
 
@@ -102,7 +102,7 @@ export class UrlState {
 			}
 		}
 		else {
-			eventManager.trigger(UrlState.setThreadEvent, {
+			eventManager.trigger(UrlStateService.setThreadEvent, {
 				path,
 				redirectFallback,
 				shouldNotTrigger,
@@ -115,12 +115,15 @@ export class UrlState {
 	 * Triggers UrlState.onChange.
 	 */
 	public trigger () : void {
-		eventManager.trigger(UrlState.urlStateChangeEvent);
+		eventManager.trigger(UrlStateService.urlStateChangeEvent);
 	}
 
-	constructor () {
-		if (env.isMainThread) {
-			eventManager.on(UrlState.setThreadEvent, (o: {
+	constructor (
+		/** @ignore */
+		private readonly envService: EnvService
+	) {
+		if (this.envService.isMainThread) {
+			eventManager.on(UrlStateService.setThreadEvent, (o: {
 				path: string;
 				redirectFallback?: boolean;
 				shouldNotTrigger?: boolean;
@@ -133,10 +136,7 @@ export class UrlState {
 			); });
 		}
 		else {
-			self.onpopstate	= () => { eventManager.trigger(UrlState.urlStateChangeEvent); };
+			self.onpopstate	= () => { eventManager.trigger(UrlStateService.urlStateChangeEvent); };
 		}
 	}
 }
-
-/** @see UrlState */
-export const urlState	= new UrlState();

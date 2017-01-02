@@ -1,7 +1,6 @@
 export * from './analytics';
 export * from './base';
 export * from './errors';
-export * from './url-state';
 
 import * as Crypto from './crypto';
 import * as Files from './files';

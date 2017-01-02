@@ -1,7 +1,7 @@
 <section
 	id='main'
 	class='layout-column'
-	[class.unisection-mode]='appService.state !== states.home'
+	[class.unisection-mode]='appService.state !== appService.states.home'
 >
 	<md2-toolbar childId='main-toolbar' childClass='wow animated fadeInDownBig'>
 		<div class='md-toolbar-tools'>
@@ -183,48 +183,52 @@
 		<div class='hero-foreground'>
 			<div
 				id='promo-section'
-				*ngIf='appService.promo !== promos.none'
+				*ngIf='appService.promo !== appService.promos.none'
 				class='layout-row layout-align-center-center'
 			>
 				<md2-card
 					childClass='animated wow flex-33 flex-sm-66 flex-xs-100'
 					data-wow-delay='3000ms'
-					[class.bounceInLeft]='appService.promo === promos.jjgo'
-					[class.bounceInDown]='appService.promo !== promos.jjgo'
+					[class.bounceInLeft]='appService.promo === appService.promos.jjgo'
+					[class.bounceInDown]='appService.promo !== appService.promos.jjgo'
 				>
 					<md2-card-header>
 						<md2-card-header-text>
 							<img
-								[src]='"/img/thirdparty/" + promos[appService.promo] + ".png"'
+								[src]='
+									"/img/thirdparty/" +
+									appService.promos[appService.promo] +
+									".png"
+								'
 							/>
 						</md2-card-header-text>
 					</md2-card-header>
 					<md2-card-content>
 						<p>
 							<span cyphTranslate>Welcome</span>
-							<span *ngIf='appService.promo === promos.betalist'>
+							<span *ngIf='appService.promo === appService.promos.betalist'>
 								Betalisters!
 							</span>
-							<span *ngIf='appService.promo !== promos.betalist'>
-								<i *ngIf='appService.promo === promos.penn'>
+							<span *ngIf='appService.promo !== appService.promos.betalist'>
+								<i *ngIf='appService.promo === appService.promos.penn'>
 									Penn's Sunday School
 								</i>
-								<i *ngIf='appService.promo === promos.jjgo'>
+								<i *ngIf='appService.promo === appService.promos.jjgo'>
 									Jordan, Jesse, Go!
 								</i>
-								<i *ngIf='appService.promo === promos.ventura'>
+								<i *ngIf='appService.promo === appService.promos.ventura'>
 									We The People
 								</i>
-								<i *ngIf='appService.promo === promos.sawbones'>
+								<i *ngIf='appService.promo === appService.promos.sawbones'>
 									Sawbones
 								</i>
-								<i *ngIf='appService.promo === promos.judgejohn'>
+								<i *ngIf='appService.promo === appService.promos.judgejohn'>
 									Judge John Hodgman
 								</i>
-								<i *ngIf='appService.promo === promos.mybrother'>
+								<i *ngIf='appService.promo === appService.promos.mybrother'>
 									My Brother, My Brother and Me
 								</i>
-								<i *ngIf='appService.promo === promos.security'>
+								<i *ngIf='appService.promo === appService.promos.security'>
 									The Security Brief
 								</i>
 								<span cyphTranslate>listeners!</span>
@@ -567,8 +571,8 @@
 							<a
 								class='oneline'
 								target='_blank'
-								[href]='"https://www." + config.onionRoot'
-							>{{config.onionRoot}}</a>
+								[href]='"https://www." + configService.onionRoot'
+							>{{configService.onionRoot}}</a>
 							<em>("cyph'd by hidden backbone host server")</em>.
 							<span cyphTranslate>
 								While this won't totally eliminate communication metadata
@@ -756,7 +760,7 @@
 
 	<section
 		id='pricing'
-		*ngIf='appService.state === states.pricing'
+		*ngIf='appService.state === appService.states.pricing'
 		class='unisection'
 	>
 		<div id='business'>
@@ -892,8 +896,8 @@
 
 					<div class='price' (click)='appService.updateCart(
 						appService.betaPlan,
-						config.pricingConfig.categories.enterprise.id,
-						config.pricingConfig.categories.enterprise.items.beta.id
+						configService.pricingConfig.categories.enterprise.id,
+						configService.pricingConfig.categories.enterprise.items.beta.id
 					)'>
 						<span>${{appService.betaPlan}}</span>
 						<span cyphTranslate>(one time)</span>
@@ -958,7 +962,7 @@
 
 	<section
 		id='error'
-		*ngIf='appService.state === states.error'
+		*ngIf='appService.state === appService.states.error'
 		class='unisection'
 	>
 		<div>
@@ -983,7 +987,7 @@
 
 	<section
 		id='contact'
-		*ngIf='appService.state === states.contact'
+		*ngIf='appService.state === appService.states.contact'
 		class='unisection'
 	>
 		<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' cyphTranslate>
@@ -1011,7 +1015,7 @@
 
 	<section
 		id='donate'
-		*ngIf='appService.state === states.donate'
+		*ngIf='appService.state === appService.states.donate'
 		class='unisection'
 	>
 		<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' cyphTranslate>
@@ -1046,8 +1050,8 @@
 				<md2-button cyphTranslate childClass='donate-button' ariaLabel='Submit Donation'>
 					<a (click)='appService.updateCart(
 						appService.donationAmount,
-						config.pricingConfig.categories.donation.id,
-						config.pricingConfig.categories.donation.items.generic.id
+						configService.pricingConfig.categories.donation.id,
+						configService.pricingConfig.categories.donation.items.generic.id
 					)'>
 						Confirm Donation Amount
 					</a>
@@ -1058,7 +1062,7 @@
 
 	<section
 		id='checkout'
-		*ngIf='appService.state === states.checkout'
+		*ngIf='appService.state === appService.states.checkout'
 		class='unisection'
 	>
 		<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' cyphTranslate>
@@ -1088,13 +1092,17 @@
 			>
 				<div
 					cyphTranslate
-					*ngIf='appService.cart[1] === config.pricingConfig.categories.donation.id'
+					*ngIf='
+						appService.cart[1] === configService.pricingConfig.categories.donation.id
+					'
 				>
 					Thank you for supporting Cyph!
 				</div>
 				<div
 					cyphTranslate
-					*ngIf='appService.cart[1] !== config.pricingConfig.categories.donation.id'
+					*ngIf='
+						appService.cart[1] !== configService.pricingConfig.categories.donation.id
+					'
 				>
 					Payment confirmed! Follow-up instructions will be sent via email.
 				</div>
@@ -1104,7 +1112,7 @@
 
 	<section
 		id='faq'
-		*ngIf='appService.state === states.faq'
+		*ngIf='appService.state === appService.states.faq'
 		class='unisection'
 	>
 		<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' cyphTranslate>
@@ -1341,7 +1349,7 @@
 
 	<section
 		id='termsofservice'
-		*ngIf='appService.state === states.termsofservice'
+		*ngIf='appService.state === appService.states.termsofservice'
 		class='unisection'
 	>
 		<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' cyphTranslate>
@@ -1483,7 +1491,7 @@
 
 	<section
 		id='privacypolicy'
-		*ngIf='appService.state === states.privacypolicy'
+		*ngIf='appService.state === appService.states.privacypolicy'
 		class='unisection'
 	>
 		<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' cyphTranslate>

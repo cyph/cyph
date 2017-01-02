@@ -7,6 +7,11 @@ import {util} from '../util';
  * Represents an active file transfer.
  */
 export class Transfer implements IMessageData {
+	/** @see util.readableByteLength */
+	public get readableByteLength () : string {
+		return util.readableByteLength(this.size);
+	}
+
 	constructor (
 		/** File name. */
 		public readonly name: string = '',

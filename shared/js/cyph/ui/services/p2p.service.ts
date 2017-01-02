@@ -2,11 +2,10 @@ import {Injectable} from '@angular/core';
 import {UIEventCategories, UIEvents} from '../../p2p/enums';
 import {IP2P} from '../../p2p/ip2p';
 import {P2P} from '../../p2p/p2p';
-import {events, users} from '../../session/enums';
-import {strings} from '../../strings';
 import {ChatService} from './chat.service';
 import {DialogService} from './dialog.service';
 import {SessionService} from './session.service';
+import {StringsService} from './strings.service';
 
 
 /**
@@ -32,9 +31,9 @@ export class P2PService {
 	public disabledAlert () : void {
 		if (this.chatService.isConnected && !this.isEnabled) {
 			this.dialogService.alert({
-				content: strings.p2pDisabled,
-				ok: strings.ok,
-				title: strings.p2pTitle
+				content: this.stringsService.p2pDisabled,
+				ok: this.stringsService.ok,
+				title: this.stringsService.p2pTitle
 			});
 		}
 	}
@@ -49,7 +48,7 @@ export class P2PService {
 		);
 
 		this.sessionService.on(
-			events.p2pUI,
+			this.sessionService.events.p2pUI,
 			async (e: {
 				category: UIEventCategories;
 				event: UIEvents;
@@ -63,22 +62,22 @@ export class P2PService {
 
 								if (isConnected) {
 									this.chatService.addMessage(
-										strings.p2pConnect,
-										users.app,
+										this.stringsService.p2pConnect,
+										this.sessionService.users.app,
 										undefined,
 										false
 									);
 								}
 								else {
 									this.dialogService.alert({
-										content: strings.p2pDisconnect,
-										ok: strings.ok,
-										title: strings.p2pTitle
+										content: this.stringsService.p2pDisconnect,
+										ok: this.stringsService.ok,
+										title: this.stringsService.p2pTitle
 									});
 
 									this.chatService.addMessage(
-										strings.p2pDisconnect,
-										users.app,
+										this.stringsService.p2pDisconnect,
+										this.sessionService.users.app,
 										undefined,
 										false
 									);
@@ -106,16 +105,19 @@ export class P2PService {
 								else {
 									callback(await this.dialogService.confirm({
 										timeout,
-										cancel: strings.decline,
+										cancel: this.stringsService.decline,
 										content: `${
-											strings.p2pRequest
+											this.stringsService.p2pRequest
 										} ${
-											<string> ((<any> strings)[callType + 'Call'] || '')
+											<string> (
+												(<any> this.stringsService)[callType + 'Call'] ||
+												''
+											)
 										}. ${
-											strings.p2pWarning
+											this.stringsService.p2pWarning
 										}`,
-										ok: strings.continueDialogAction,
-										title: strings.p2pTitle
+										ok: this.stringsService.continueDialogAction,
+										title: this.stringsService.p2pTitle
 									}));
 								}
 
@@ -131,16 +133,19 @@ export class P2PService {
 								}
 								else {
 									callback(await this.dialogService.confirm({
-										cancel: strings.cancel,
+										cancel: this.stringsService.cancel,
 										content: `${
-											strings.p2pInit
+											this.stringsService.p2pInit
 										} ${
-											<string> ((<any> strings)[callType + 'Call'] || '')
+											<string> (
+												(<any> this.stringsService)[callType + 'Call'] ||
+												''
+											)
 										}. ${
-											strings.p2pWarning
+											this.stringsService.p2pWarning
 										}`,
-										ok: strings.continueDialogAction,
-										title: strings.p2pTitle
+										ok: this.stringsService.continueDialogAction,
+										title: this.stringsService.p2pTitle
 									}));
 								}
 
@@ -148,8 +153,8 @@ export class P2PService {
 							}
 							case UIEvents.requestConfirmation: {
 								this.chatService.addMessage(
-									strings.p2pRequestConfirmation,
-									users.app,
+									this.stringsService.p2pRequestConfirmation,
+									this.sessionService.users.app,
 									undefined,
 									false
 								);
@@ -157,9 +162,9 @@ export class P2PService {
 							}
 							case UIEvents.requestRejection: {
 								this.dialogService.alert({
-									content: strings.p2pDeny,
-									ok: strings.ok,
-									title: strings.p2pTitle
+									content: this.stringsService.p2pDeny,
+									ok: this.stringsService.ok,
+									title: this.stringsService.p2pTitle
 								});
 								break;
 							}
@@ -174,6 +179,11 @@ export class P2PService {
 	/** @see P2P.isActive */
 	public get isActive () : boolean {
 		return !!this.p2p && this.p2p.isActive;
+	}
+
+	/** @see P2P.isSupported */
+	public get isSupported () : boolean {
+		return P2P.isSupported;
 	}
 
 	/** Preemptively initiate call, bypassing any prerequisite dialogs and button clicks. */
@@ -229,6 +239,9 @@ export class P2PService {
 		private readonly dialogService: DialogService,
 
 		/** @ignore */
-		private readonly sessionService: SessionService
+		private readonly sessionService: SessionService,
+
+		/** @ignore */
+		private readonly stringsService: StringsService
 	) {}
 }

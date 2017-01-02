@@ -1,7 +1,7 @@
 <div
 	class='chat-message-box'
 	[class.mobile]='envService.isMobile'
-	*ngIf='chatService.state === states.chat && sessionService.state.isAlive'
+	*ngIf='chatService.state === chatService.states.chat && sessionService.state.isAlive'
 >
 	<textarea
 		class='message-box tabIndent'
@@ -103,11 +103,11 @@
 		[text]='
 			"↓  " +
 			scrollService.unreadItemCount +
-			" " + strings.newString + " " +
+			" " + stringsService.newString + " " +
 			(
 				scrollService.unreadItemCount === 1 ?
-					strings.message :
-					strings.messages
+					stringsService.message :
+					stringsService.messages
 			)
 		'
 	></md2-subheader>

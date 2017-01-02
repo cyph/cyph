@@ -5,7 +5,7 @@
 >
 	<div
 		class='cyph-view loading layout-column layout-fill flex'
-		[class.active]='chatService.state === states.keyExchange'
+		[class.active]='chatService.state === chatService.states.keyExchange'
 	>
 		<div class='flex'></div>
 		<div class='logo-animation'>
@@ -26,7 +26,7 @@
 
 	<div
 		class='cyph-view abort-screen loading layout-column layout-fill flex'
-		[class.active]='chatService.state === states.aborted'
+		[class.active]='chatService.state === chatService.states.aborted'
 	>
 		<div class='flex'></div>
 		<div class='image'>
@@ -47,7 +47,7 @@
 
 	<div
 		class='cyph-view chat-begin-message loading layout-column layout-fill flex'
-		[class.active]='chatService.state === states.chatBeginMessage'
+		[class.active]='chatService.state === chatService.states.chatBeginMessage'
 	>
 		<div class='flex'></div>
 		<div class='logo-animation connected'></div>
@@ -62,7 +62,7 @@
 
 	<div
 		class='cyph-view video-call flex'
-		[class.active]='chatService.state === states.chat'
+		[class.active]='chatService.state === chatService.states.chat'
 		[class.playing]='p2pService.isActive'
 		[class.sidebar-open]='p2pService.isSidebarOpen'
 		*ngIf='p2pService.p2p'
@@ -106,8 +106,8 @@
 				(childClick)='p2pService.videoCallButton()'
 				[ariaLabel]='
 					!p2pService.p2p.outgoingStream.video ?
-						strings.cameraEnable :
-						strings.cameraDisable
+						stringsService.cameraEnable :
+						stringsService.cameraDisable
 				'
 			>
 				<img
@@ -128,8 +128,8 @@
 				(childClick)='p2pService.voiceCallButton()'
 				[ariaLabel]='
 					!p2pService.p2p.outgoingStream.audio ?
-						strings.micEnable :
-						strings.micDisable
+						stringsService.micEnable :
+						stringsService.micDisable
 				'
 			>
 				<img
@@ -163,7 +163,7 @@
 
 	<div
 		class='cyph-view transfer-list flex'
-		[class.active]='chatService.state === states.chat'
+		[class.active]='chatService.state === chatService.states.chat'
 	>
 		<md2-content childClass='md-no-flicker'>
 			<md2-list childClass='layout-column'>
@@ -183,7 +183,7 @@
 							&nbsp;
 							<span class='flex layout-column'>
 								{{transfer.name}}
-								({{util.readableByteLength(transfer.size)}}):
+								({{transfer.readableByteLength}}):
 							</span>
 						</div>
 						<md2-progress-linear
@@ -199,7 +199,7 @@
 
 	<div
 		class='cyph-view message-list flex'
-		[class.active]='chatService.state === states.chat'
+		[class.active]='chatService.state === chatService.states.chat'
 		[style.margin-top]='
 			(
 				(

@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
 import {analytics} from '../../analytics';
-import {env} from '../../env';
 import {eventManager} from '../../event-manager';
 import {util} from '../../util';
+import {EnvService} from './env.service';
 
 
 /**
@@ -21,7 +21,7 @@ export class SignupService {
 	public readonly data	= {
 		email: <string> '',
 		inviteCode: <string> '',
-		language: <string> env.fullLanguage,
+		language: <string> this.envService.fullLanguage,
 		name: <string> ''
 	};
 
@@ -47,7 +47,7 @@ export class SignupService {
 			data: this.data,
 			method: 'PUT',
 			retries: 3,
-			url: env.baseUrl + 'signups'
+			url: this.envService.baseUrl + 'signups'
 		});
 
 		if (signupResult !== 'set') {
@@ -71,7 +71,10 @@ export class SignupService {
 		}
 	}
 
-	constructor () {
+	constructor (
+		/** @ignore */
+		private readonly envService: EnvService
+	) {
 		eventManager.on(SignupService.inviteEvent, (inviteCode: string) => {
 			this.data.inviteCode	= inviteCode;
 		});

@@ -1,7 +1,7 @@
 import {Directive, ElementRef, Renderer} from '@angular/core';
-import {config} from '../../config';
-import {env} from '../../env';
 import {util} from '../../util';
+import {ConfigService} from '../services/config.service';
+import {EnvService} from '../services/env.service';
 
 
 /**
@@ -61,8 +61,13 @@ export class TranslateDirective {
 		callback(translation);
 	}
 
-	constructor (elementRef: ElementRef, renderer: Renderer) {
-		if (env.language === config.defaultLanguage) {
+	constructor (
+		elementRef: ElementRef,
+		renderer: Renderer,
+		configService: ConfigService,
+		envService: EnvService
+	) {
+		if (envService.language === configService.defaultLanguage) {
 			return;
 		}
 

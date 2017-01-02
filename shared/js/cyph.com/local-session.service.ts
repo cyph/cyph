@@ -1,12 +1,12 @@
 import {Injectable} from '@angular/core';
 import {potassium} from '../cyph/crypto/potassium';
 import {eventManager} from '../cyph/event-manager';
-import {events, rpcEvents, users} from '../cyph/session/enums';
+import {Events, events, RpcEvents, rpcEvents, Users, users} from '../cyph/session/enums';
 import {IMessage} from '../cyph/session/imessage';
-import {ISessionService} from '../cyph/session/isession-service';
 import {Message} from '../cyph/session/message';
-import {strings} from '../cyph/strings';
+import {ISessionService} from '../cyph/ui/service-interfaces/isession-service';
 import {EnvService} from '../cyph/ui/services/env.service';
+import {StringsService} from '../cyph/ui/services/strings.service';
 import {util} from '../cyph/util';
 import {ChatData} from './chat-data';
 
@@ -40,6 +40,15 @@ export class LocalSessionService implements ISessionService {
 	};
 
 	/** @inheritDoc */
+	public readonly events: Events			= events;
+
+	/** @inheritDoc */
+	public readonly rpcEvents: RpcEvents	= rpcEvents;
+
+	/** @inheritDoc */
+	public readonly users: Users			= users;
+
+	/** @inheritDoc */
 	public close () : void {
 		if (!this.state.isAlive) {
 			return;
@@ -64,7 +73,7 @@ export class LocalSessionService implements ISessionService {
 					return;
 				}
 
-				message.data.author	= strings.friend;
+				message.data.author	= this.stringsService.friend;
 
 				if (message.event === events.cyphertext) {
 					this.trigger(events.cyphertext, {
@@ -130,6 +139,9 @@ export class LocalSessionService implements ISessionService {
 
 	constructor (
 		/** @ignore */
-		private readonly envService: EnvService
+		private readonly envService: EnvService,
+
+		/** @ignore */
+		private readonly stringsService: StringsService
 	) {}
 }

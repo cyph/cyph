@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
 import {Email} from '../../email';
-import {strings} from '../../strings';
 import {EnvService} from '../services/env.service';
+import {StringsService} from '../services/strings.service';
 
 
 /**
@@ -19,12 +19,14 @@ export class HelpComponent {
 	public readonly email: Email	= new Email('help');
 
 	constructor (
+		stringsService: StringsService,
+
 		/** @see EnvService */
 		public readonly envService: EnvService
 	) {
 		this.tabLabels	= this.envService.coBranded ?
-			[strings.formattingHelp] :
-			[strings.formattingHelp, strings.contactCyph]
+			[stringsService.formattingHelp] :
+			[stringsService.formattingHelp, stringsService.contactCyph]
 		;
 	}
 }

@@ -1,6 +1,6 @@
 import {Directive, ElementRef, OnDestroy, OnInit} from '@angular/core';
-import {env} from '../../env';
 import {util} from '../../util';
+import {EnvService} from '../services/env.service';
 
 
 /**
@@ -21,7 +21,11 @@ export class NanoScrollerDirective implements OnDestroy, OnInit {
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
-		if (!this.elementRef.nativeElement || env.isMobile || env.isMacOS) {
+		if (
+			!this.elementRef.nativeElement ||
+			this.envService.isMobile ||
+			this.envService.isMacOS
+		) {
 			return;
 		}
 
@@ -42,6 +46,9 @@ export class NanoScrollerDirective implements OnDestroy, OnInit {
 
 	constructor (
 		/** @ignore */
-		private readonly elementRef: ElementRef
+		private readonly elementRef: ElementRef,
+
+		/** @ignore */
+		private readonly envService: EnvService
 	) {}
 }

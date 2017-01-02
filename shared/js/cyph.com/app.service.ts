@@ -1,12 +1,12 @@
 import {Injectable} from '@angular/core';
 import {Title} from '@angular/platform-browser';
-import {config} from '../cyph/config';
 import {Email} from '../cyph/email';
-import {env} from '../cyph/env';
 import {eventManager} from '../cyph/event-manager';
+import {ConfigService} from '../cyph/ui/services/config.service';
 import {DialogService} from '../cyph/ui/services/dialog.service';
+import {EnvService} from '../cyph/ui/services/env.service';
 import {SignupService} from '../cyph/ui/services/signup.service';
-import {urlState} from '../cyph/url-state';
+import {UrlStateService} from '../cyph/ui/services/url-state.service';
 import {util} from '../cyph/util';
 import {Carousel} from './carousel';
 import {elements} from './elements';
@@ -27,6 +27,12 @@ export class AppService {
 
 	/** @see Promos */
 	public promo: Promos				= Promos.none;
+
+	/** @see States */
+	public promos: typeof Promos		= Promos;
+
+	/** @see Promos */
+	public states: typeof States		= States;
 
 	/** @see Email */
 	public readonly contact: Email		= new Email('hello');
@@ -111,7 +117,7 @@ export class AppService {
 		if (href !== locationData.pathname || this.homeSection !== undefined) {
 			scrollDelay	= 0;
 
-			urlState.setUrl(href);
+			this.urlStateService.setUrl(href);
 		}
 
 		if (this.homeSection === undefined) {
@@ -137,7 +143,7 @@ export class AppService {
 			(<any> pageTitles)[newUrlStateBase] || pageTitles.defaultTitle
 		);
 
-		urlState.setUrl(newUrlState, true, true);
+		this.urlStateService.setUrl(newUrlState, true, true);
 
 		if (this.homeSection !== undefined) {
 			this.state	= States.home;
@@ -162,12 +168,14 @@ export class AppService {
 					`
 				});
 
-				urlState.setUrl('');
+				this.urlStateService.setUrl('');
 			}
 			else if (this.homeSection === HomeSections.invite) {
 				eventManager.trigger(
 					SignupService.inviteEvent,
-					urlState.getUrl().split(HomeSections[HomeSections.invite] + '/')[1] || ''
+					this.urlStateService.getUrl().split(
+						`${HomeSections[HomeSections.invite]}/`
+					)[1] || ''
 				);
 
 				await this.dialogService.baseDialog({
@@ -178,7 +186,7 @@ export class AppService {
 					`
 				});
 
-				urlState.setUrl('');
+				this.urlStateService.setUrl('');
 			}
 			else {
 				this.scroll(
@@ -193,7 +201,7 @@ export class AppService {
 		}
 		else if (state === States.contact) {
 			const to: string	= newUrlStateSplit[1];
-			if (config.cyphEmailAddresses.indexOf(to) > -1) {
+			if (this.configService.cyphEmailAddresses.indexOf(to) > -1) {
 				this.contact.to	= to;
 			}
 
@@ -205,11 +213,11 @@ export class AppService {
 		else if (newUrlStateBase === '') {
 			this.state	= States.home;
 		}
-		else if (newUrlStateBase === urlState.states.notFound) {
+		else if (newUrlStateBase === this.urlStateService.states.notFound) {
 			this.state	= States.error;
 		}
 		else {
-			urlState.setUrl(urlState.states.notFound);
+			this.urlStateService.setUrl(this.urlStateService.states.notFound);
 		}
 	}
 
@@ -246,26 +254,35 @@ export class AppService {
 
 	constructor (
 		/** @ignore */
+		private readonly configService: ConfigService,
+
+		/** @ignore */
 		private readonly dialogService: DialogService,
 
 		/** @ignore */
-		private readonly titleService: Title
+		private readonly envService: EnvService,
+
+		/** @ignore */
+		private readonly titleService: Title,
+
+		/** @ignore */
+		private readonly urlStateService: UrlStateService
 	) {
-		if (!env.isMobile) {
+		if (!this.envService.isMobile) {
 			new (<any> self).WOW({live: true}).init();
 		}
 
 		(async () => {
-			urlState.onChange(newUrlState => { this.onUrlStateChange(newUrlState); });
+			this.urlStateService.onChange(newUrlState => { this.onUrlStateChange(newUrlState); });
 
-			const newUrlState: string	= urlState.getUrl();
+			const newUrlState: string	= this.urlStateService.getUrl();
 
 			if ((<any> HomeSections)[newUrlState] !== undefined) {
 				await util.waitForIterable(() => $('body.load-complete'));
 				await util.sleep(500);
 			}
 
-			urlState.setUrl(newUrlState, true, false, false);
+			this.urlStateService.setUrl(newUrlState, true, false, false);
 		})();
 
 		(async () => {
@@ -273,7 +290,7 @@ export class AppService {
 
 			await util.waitForIterable(elements.backgroundVideo);
 
-			if (env.isMobile) {
+			if (this.envService.isMobile) {
 				const $mobilePoster: JQuery	= $(document.createElement('img'));
 				$mobilePoster.attr('src', elements.backgroundVideo().attr('mobile-poster'));
 
@@ -310,14 +327,14 @@ export class AppService {
 			this.featureCarousel		= new Carousel(elements.featuresSection(), true);
 			this.testimonialCarousel	= new Carousel(
 				elements.testimonialsSection(),
-				env.isMobile
+				this.envService.isMobile
 			);
 
 			/* Header / new cyph button animation */
 
 			await util.waitForIterable(elements.mainToolbar);
 
-			let expanded	= urlState.getUrl() === '';
+			let expanded	= this.urlStateService.getUrl() === '';
 			elements.mainToolbar().toggleClass('new-cyph-expanded', expanded);
 
 			/* Temporary workaround pending TypeScript fix. */

@@ -1,17 +1,17 @@
 import {Component} from '@angular/core';
-import {Config, config} from '../cyph/config';
-import {Env, env} from '../cyph/env';
+import {ConfigService} from '../cyph/ui/services/config.service';
 import {DialogService} from '../cyph/ui/services/dialog.service';
 import {EnvService} from '../cyph/ui/services/env.service';
 import {MdSidenavService} from '../cyph/ui/services/material/md-sidenav.service';
 import {NotificationService} from '../cyph/ui/services/notification.service';
 import {SignupService} from '../cyph/ui/services/signup.service';
+import {StringsService} from '../cyph/ui/services/strings.service';
+import {UrlStateService} from '../cyph/ui/services/url-state.service';
 import {VirtualKeyboardWatcherService} from '../cyph/ui/services/virtual-keyboard-watcher.service';
 import {VisibilityWatcherService} from '../cyph/ui/services/visibility-watcher.service';
 import {util} from '../cyph/util';
 import {AppService} from './app.service';
 import {DemoService} from './demo.service';
-import {Promos, States} from './enums';
 import {SilentNotificationService} from './silent-notification.service';
 
 
@@ -21,10 +21,13 @@ import {SilentNotificationService} from './silent-notification.service';
 @Component({
 	providers: [
 		AppService,
+		ConfigService,
 		DemoService,
 		DialogService,
 		EnvService,
 		SignupService,
+		StringsService,
+		UrlStateService,
 		VirtualKeyboardWatcherService,
 		VisibilityWatcherService,
 		{
@@ -40,19 +43,7 @@ export class AppComponent {
 	private sidenavLock: {}	= {};
 
 	/** @ignore */
-	public sidenav: Promise<angular.material.ISidenavObject>;
-
-	/** @ignore */
-	public config: Config			= config;
-
-	/** @ignore */
-	public env: Env					= env;
-
-	/** @ignore */
-	public promos: typeof Promos	= Promos;
-
-	/** @ignore */
-	public states: typeof States	= States;
+	private sidenav: Promise<angular.material.ISidenavObject>;
 
 	/** Closes mobile sidenav menu. */
 	public async closeSidenav () : Promise<void> {
@@ -75,13 +66,16 @@ export class AppComponent {
 		mdSidenavService: MdSidenavService,
 
 		/** @see AppService */
-		public appService: AppService,
+		public readonly appService: AppService,
+
+		/** @see ConfigService */
+		public readonly configService: ConfigService,
 
 		/** @see DemoService */
-		public demoService: DemoService,
+		public readonly demoService: DemoService,
 
 		/** @see EnvService */
-		public envService: EnvService
+		public readonly envService: EnvService
 	) {
 		this.sidenav	= mdSidenavService.getSidenav('main-toolbar-sidenav');
 	}

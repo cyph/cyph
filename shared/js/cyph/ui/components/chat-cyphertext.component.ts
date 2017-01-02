@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {Users, users} from '../../session/enums';
-import {Strings, strings} from '../../strings';
 import {CyphertextService} from '../services/cyphertext.service';
+import {SessionService} from '../services/session.service';
+import {StringsService} from '../services/strings.service';
 
 
 /**
@@ -12,12 +12,6 @@ import {CyphertextService} from '../services/cyphertext.service';
 	templateUrl: '../../../../templates/chat-cyphertext.html'
 })
 export class ChatCyphertextComponent implements OnInit {
-	/** @see Strings */
-	public readonly strings: Strings	= strings;
-
-	/** @see Users */
-	public readonly users: Users		= users;
-
 	/** @inheritDoc */
 	public ngOnInit () : void {
 		/* Close cyphertext on esc */
@@ -30,6 +24,12 @@ export class ChatCyphertextComponent implements OnInit {
 
 	constructor (
 		/** @see CyphertextService */
-		public readonly cyphertextService: CyphertextService
+		public readonly cyphertextService: CyphertextService,
+
+		/** @see SessionService */
+		public readonly sessionService: SessionService,
+
+		/** @see StringsService */
+		public readonly stringsService: StringsService
 	) {}
 }

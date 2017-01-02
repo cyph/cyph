@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {urlState} from '../cyph/url-state';
+import {UrlStateService} from '../cyph/ui/services/url-state.service';
 import {util} from '../cyph/util';
 import {BetaStates, States, urlSections} from './enums';
 
@@ -18,6 +18,12 @@ export class AppService {
 	/** @see LinkConnection.baseUrl */
 	public linkConnectionBaseUrl: string;
 
+	/** @see States */
+	public states: typeof States			= States;
+
+	/** @see BetaStates */
+	public betaStates: typeof BetaStates	= BetaStates;
+
 	/** @ignore */
 	private onUrlStateChange (newUrlState: string) : void {
 		if (newUrlState === urlSections.root) {
@@ -30,29 +36,34 @@ export class AppService {
 			this.betaState	= (<any> BetaStates)[newUrlStateSplit[1]];
 			this.state		= States.beta;
 		}
-		else if (newUrlState === urlState.states.notFound) {
+		else if (newUrlState === this.urlStateService.states.notFound) {
 			this.state		= States.error;
 		}
 		else {
-			urlState.setUrl(urlState.states.notFound);
+			this.urlStateService.setUrl(this.urlStateService.states.notFound);
 			return;
 		}
 
-		urlState.setUrl(newUrlState, true, true);
+		this.urlStateService.setUrl(newUrlState, true, true);
 	}
 
-	constructor () {
-		urlState.onChange(newUrlState => { this.onUrlStateChange(newUrlState); });
+	constructor (
+		/** @ignore */
+		private readonly urlStateService: UrlStateService
+	) {
+		this.urlStateService.onChange(newUrlState => {
+			this.onUrlStateChange(newUrlState);
+		});
 
 		self.onhashchange	= () => { location.reload(); };
 		self.onpopstate		= () => {};
 
 
-		const urlSection: string	= urlState.getUrlSplit()[0];
+		const urlSection: string	= this.urlStateService.getUrlSplit()[0];
 
 		if (urlSection === urlSections.beta) {
 			this.state	= States.beta;
-			urlState.trigger();
+			this.urlStateService.trigger();
 		}
 		else {
 			this.state	= States.blank;

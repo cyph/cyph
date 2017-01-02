@@ -1,7 +1,7 @@
 import {Component, ElementRef, Input, OnChanges, SimpleChanges} from '@angular/core';
 import {MarkdownIt} from 'markdown-it';
-import {env} from '../../env';
 import {util} from '../../util';
+import {EnvService} from '../services/env.service';
 
 
 /**
@@ -83,7 +83,7 @@ export class MarkdownComponent implements OnChanges {
 		this.$element.empty().append($html);
 	}
 
-	constructor (elementRef: ElementRef) {
+	constructor (elementRef: ElementRef, envService: EnvService) {
 		this.$element	= $(elementRef.nativeElement);
 
 		this.markdownIt	= new (<any> self).markdownit({
@@ -96,9 +96,9 @@ export class MarkdownComponent implements OnChanges {
 			linkify: true,
 			quotes:
 				(
-					env.language === 'ru' ?
+					envService.language === 'ru' ?
 						'«»' :
-						env.language === 'de' ?
+						envService.language === 'de' ?
 							'„“' :
 							'“”'
 				) +

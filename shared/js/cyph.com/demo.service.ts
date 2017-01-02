@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
-import {env} from '../cyph/env';
-import {urlState} from '../cyph/url-state';
+import {EnvService} from '../cyph/ui/services/env.service';
+import {UrlStateService} from '../cyph/ui/services/url-state.service';
 import {util} from '../cyph/util';
 import {ChatData} from './chat-data';
 import {HomeSections} from './enums';
@@ -16,7 +16,7 @@ export class DemoService {
 
 	/** Data URI to use for placeholder for Facebook joke. */
 	public readonly facebookPicUrl: Promise<string>		= util.request({
-		url: env.isMobile ?
+		url: this.envService.isMobile ?
 			'/img/fbimagealt.txt' :
 			'/img/null.txt'
 	});
@@ -27,7 +27,7 @@ export class DemoService {
 	)();
 
 	/** Frame containing Facebook profile picture. */
-	public readonly facebookPicFrame: string			= env.isMobile ? '' : `
+	public readonly facebookPicFrame: string			= this.envService.isMobile ? '' : `
 		<div class='facebook-pic image-frame real'>
 			<iframe
 				src='https://www.facebook.com/plugins/comments.php?href=https://www.${
@@ -129,7 +129,7 @@ export class DemoService {
 				chatData.message.next(text);
 				other.scrollDown.next();
 
-				if (!env.isMobile) {
+				if (!this.envService.isMobile) {
 					facebookJoke();
 					await util.sleep();
 				}
@@ -148,7 +148,12 @@ export class DemoService {
 		}
 	}
 
-	constructor () {
+	constructor (
+		urlStateService: UrlStateService,
+
+		/** @ignore */
+		private readonly envService: EnvService
+	) {
 		this.desktop	= new ChatData(false);
 		this.mobile		= new ChatData(
 			true,
@@ -159,13 +164,13 @@ export class DemoService {
 		/* Cyphertext easter egg */
 		/* tslint:disable-next-line:no-unused-new */
 		new (<any> self).Konami(async () => {
-			urlState.setUrl(HomeSections[HomeSections.intro]);
+			urlStateService.setUrl(HomeSections[HomeSections.intro]);
 
 			while (!this.isActive) {
 				await util.sleep();
 			}
 
-			if (env.isMobile) {
+			if (this.envService.isMobile) {
 				this.mobile.showCyphertext.next();
 			}
 			else {

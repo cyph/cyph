@@ -1,37 +1,37 @@
-<cyph-chat-root *ngIf='appService.state !== states.beta'>
+<cyph-chat-root *ngIf='appService.state !== appService.states.beta'>
 	<section id='main' class='cyph-foreground layout-fill layout-column'>
 		<cyph-chat-main
 			[hideDisconnectMessage]='envService.coBranded'
 			[messageCountInTitle]='true'
-			[class.active]='appService.state === states.chat'
+			[class.active]='appService.state === appService.states.chat'
 			class='cyph-view layout-fill layout-column flex'
 		>
 			<cyph-signup-form>
-				{{strings.signupMessage1}}
-				{{strings.signupMessage2}}
+				{{stringsService.signupMessage1}}
+				{{stringsService.signupMessage2}}
 			</cyph-signup-form>
 		</cyph-chat-main>
 
 		<cyph-link-connection
 			[baseUrl]='appService.linkConnectionBaseUrl'
-			[class.active]='appService.state === states.waitingForFriend'
+			[class.active]='appService.state === appService.states.waitingForFriend'
 			class='cyph-view layout-fill layout-column flex'
 		></cyph-link-connection>
 
 		<cyph-not-found
-			[class.active]='appService.state === states.error'
+			[class.active]='appService.state === appService.states.error'
 			class='cyph-view layout-fill layout-column flex'
 		></cyph-not-found>
 
 		<div
-			[class.active]='appService.state === states.blank'
+			[class.active]='appService.state === appService.states.blank'
 			id='blank'
 			class='cyph-view layout-fill layout-column flex'
 		></div>
 
 		<footer>
 			<cyph-chat-message-box
-				*ngIf='appService.state === states.chat'
+				*ngIf='appService.state === appService.states.chat'
 			></cyph-chat-message-box>
 
 			<cyph-footer
@@ -42,9 +42,10 @@
 
 	<cyph-chat-cyphertext></cyph-chat-cyphertext>
 </cyph-chat-root>
-<section id='main' class='layout-fill layout-column' *ngIf='appService.state === states.beta'>
-	<cyph-beta
-		[betaState]='appService.betaState'
-		class='cyph-view active layout-fill layout-column flex'
-	></cyph-beta>
+<section
+	id='main'
+	class='layout-fill layout-column'
+	*ngIf='appService.state === appService.states.beta'
+>
+	<cyph-beta></cyph-beta>
 </section>

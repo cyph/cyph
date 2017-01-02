@@ -1,11 +1,10 @@
 import {analytics} from '../../analytics';
-import {events} from '../../session/enums';
-import {strings} from '../../strings';
 import {util} from '../../util';
 import {IChatMessage} from '../chat/ichat-message';
 import {DialogService} from './dialog.service';
 import {EnvService} from './env.service';
 import {SessionService} from './session.service';
+import {StringsService} from './strings.service';
 
 
 /**
@@ -53,7 +52,7 @@ export class CyphertextService {
 		this.isVisible	= false;
 
 		this.dialogService.toast({
-			content: strings.cypherToast3,
+			content: this.stringsService.cypherToast3,
 			delay: 1000
 		});
 	}
@@ -61,12 +60,12 @@ export class CyphertextService {
 	/** Shows cyphertext UI. */
 	public async show () : Promise<void> {
 		await this.dialogService.toast({
-			content: strings.cypherToast1,
+			content: this.stringsService.cypherToast1,
 			delay: 2000
 		});
 
 		await this.dialogService.toast({
-			content: strings.cypherToast2,
+			content: this.stringsService.cypherToast2,
 			delay: 3000
 		});
 
@@ -87,10 +86,13 @@ export class CyphertextService {
 		private readonly dialogService: DialogService,
 
 		/** @ignore */
-		private readonly envService: EnvService
+		private readonly envService: EnvService,
+
+		/** @ignore */
+		private readonly stringsService: StringsService
 	) {
 		sessionService.on(
-			events.cyphertext,
+			sessionService.events.cyphertext,
 			(o: {cyphertext: string; author: string}) => this.log(o.cyphertext, o.author)
 		);
 	}

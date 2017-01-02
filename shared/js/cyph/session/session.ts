@@ -5,7 +5,6 @@ import {ICastle} from '../crypto/icastle';
 import {env} from '../env';
 import {errors} from '../errors';
 import {eventManager} from '../event-manager';
-import {urlState} from '../url-state';
 import {util} from '../util';
 import {Channel} from './channel';
 import {CastleEvents, events, rpcEvents} from './enums';
@@ -408,7 +407,7 @@ export class Session implements ISession {
 			);
 		}
 		catch (_) {
-			urlState.setUrl(urlState.states.notFound);
+			this.trigger(events.cyphNotFound);
 		}
 	})(); }
 }

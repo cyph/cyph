@@ -1,14 +1,12 @@
 import {Component, ElementRef, Input, OnInit} from '@angular/core';
-import {env} from '../../env';
-import {Strings, strings} from '../../strings';
 import {util} from '../../util';
-import {States} from '../chat/enums';
 import {ChatService} from '../services/chat.service';
 import {EnvService} from '../services/env.service';
 import {FileService} from '../services/file.service';
 import {P2PService} from '../services/p2p.service';
 import {ScrollService} from '../services/scroll.service';
 import {SessionService} from '../services/session.service';
+import {StringsService} from '../services/strings.service';
 import {VirtualKeyboardWatcherService} from '../services/virtual-keyboard-watcher.service';
 import {VisibilityWatcherService} from '../services/visibility-watcher.service';
 
@@ -30,12 +28,6 @@ export class ChatMessageBoxComponent implements OnInit {
 	/** Indicates whether speed dial is open. */
 	public isSpeedDialOpen: boolean	= true;
 
-	/** @see States */
-	public readonly states: typeof States	= States;
-
-	/** @see Strings */
-	public readonly strings: Strings		= strings;
-
 	/** Button to open mobile menu. */
 	public readonly menuButton: {
 		click: ($mdMenu: any) => void,
@@ -56,12 +48,12 @@ export class ChatMessageBoxComponent implements OnInit {
 		{
 			click: () => { this.chatService.helpButton(); },
 			icon: 'help_outline',
-			label: strings.help
+			label: this.stringsService.help
 		},
 		{
 			click: () => { this.chatService.disconnectButton(); },
 			icon: 'close',
-			label: strings.disconnect
+			label: this.stringsService.disconnect
 		}
 	];
 
@@ -101,14 +93,14 @@ export class ChatMessageBoxComponent implements OnInit {
 			click: () => { this.chatService.helpButton(); },
 			cssClass: 'dark',
 			icon: 'help_outline',
-			label: strings.help,
+			label: this.stringsService.help,
 			tooltipDirection: 'left'
 		},
 		{
 			click: () => { this.chatService.disconnectButton(); },
 			cssClass: 'dark',
 			icon: 'close',
-			label: strings.disconnect,
+			label: this.stringsService.disconnect,
 			tooltipDirection: 'left'
 		}
 	];
@@ -127,7 +119,7 @@ export class ChatMessageBoxComponent implements OnInit {
 	/** Opens mobile menu. */
 	public async openMenu ($mdMenu: any) : Promise<void> {
 		/* Workaround for Angular Material menu bug */
-		if (env.isMobile) {
+		if (this.envService.isMobile) {
 			let $focused: JQuery;
 			do {
 				$focused	= $(':focus');
@@ -169,7 +161,7 @@ export class ChatMessageBoxComponent implements OnInit {
 
 		$textarea.keypress(e => {
 			if (
-				(env.isMobile && this.virtualKeyboardWatcherService.isOpen) ||
+				(this.envService.isMobile && this.virtualKeyboardWatcherService.isOpen) ||
 				e.keyCode !== 13 ||
 				e.shiftKey
 			) {
@@ -282,6 +274,9 @@ export class ChatMessageBoxComponent implements OnInit {
 		public readonly scrollService: ScrollService,
 
 		/** @see SessionService */
-		public readonly sessionService: SessionService
+		public readonly sessionService: SessionService,
+
+		/** @see StringsService */
+		public readonly stringsService: StringsService
 	) {}
 }

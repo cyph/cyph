@@ -1,8 +1,6 @@
 import {Injectable} from '@angular/core';
 import {analytics} from '../../analytics';
-import {events, rpcEvents, users} from '../../session/enums';
 import {Message} from '../../session/message';
-import {strings} from '../../strings';
 import {Timer} from '../../timer';
 import {util} from '../../util';
 import {States} from '../chat/enums';
@@ -11,6 +9,7 @@ import {DialogService} from './dialog.service';
 import {NotificationService} from './notification.service';
 import {ScrollService} from './scroll.service';
 import {SessionService} from './session.service';
+import {StringsService} from './strings.service';
 
 
 /**
@@ -55,6 +54,9 @@ export class ChatService {
 	/** Chat UI state/view. */
 	public state: States						= States.none;
 
+	/** @see States */
+	public readonly states: typeof States		= States;
+
 	/** Message list. */
 	public readonly messages: IChatMessage[]	= [];
 
@@ -72,7 +74,10 @@ export class ChatService {
 		}
 		else if (!this.isDisconnected) {
 			this.isDisconnected	= true;
-			this.addMessage(strings.disconnectNotification, users.app);
+			this.addMessage(
+				this.stringsService.disconnectNotification,
+				this.sessionService.users.app
+			);
 			this.sessionService.close();
 		}
 	}
@@ -80,7 +85,7 @@ export class ChatService {
 	/** Aborts the process of chat initialisation and authentication. */
 	public abortSetup () : void {
 		this.state	= States.aborted;
-		this.sessionService.trigger(events.abort);
+		this.sessionService.trigger(this.sessionService.events.abort);
 		this.sessionService.close();
 	}
 
@@ -96,7 +101,7 @@ export class ChatService {
 		text: string,
 		author: string,
 		timestamp: number = util.timestamp(),
-		shouldNotify: boolean = author !== users.me,
+		shouldNotify: boolean = author !== this.sessionService.users.me,
 		selfDestructTimeout?: number
 	) : Promise<void> {
 		if (
@@ -108,16 +113,16 @@ export class ChatService {
 			return;
 		}
 
-		while (author !== users.app && !this.isConnected) {
+		while (author !== this.sessionService.users.app && !this.isConnected) {
 			await util.sleep(500);
 		}
 
 		if (this.notificationService && shouldNotify !== false) {
-			if (author === users.app) {
+			if (author === this.sessionService.users.app) {
 				this.notificationService.notify(text);
 			}
 			else {
-				this.notificationService.notify(strings.newMessageNotification);
+				this.notificationService.notify(this.stringsService.newMessageNotification);
 			}
 		}
 
@@ -126,13 +131,15 @@ export class ChatService {
 			text,
 			timestamp,
 			timeString: util.getTimeString(timestamp),
-			unread: author !== users.app && author !== users.me
+			unread:
+				author !== this.sessionService.users.app &&
+				author !== this.sessionService.users.me
 		};
 
 		this.messages.push(message);
 		this.messages.sort((a, b) => a.timestamp - b.timestamp);
 
-		if (author === users.me) {
+		if (author === this.sessionService.users.me) {
 			this.scrollService.scrollDown();
 		}
 
@@ -158,7 +165,7 @@ export class ChatService {
 		this.sessionService.send(...[]);
 
 		if (this.notificationService) {
-			this.notificationService.notify(strings.connectedNotification);
+			this.notificationService.notify(this.stringsService.connectedNotification);
 		}
 
 		this.state	= States.chatBeginMessage;
@@ -169,13 +176,13 @@ export class ChatService {
 			return;
 		}
 
-		this.sessionService.trigger(events.beginChatComplete);
+		this.sessionService.trigger(this.sessionService.events.beginChatComplete);
 
 		this.state	= States.chat;
 
 		this.addMessage(
-			strings.introductoryMessage,
-			users.app,
+			this.stringsService.introductoryMessage,
+			this.sessionService.users.app,
 			util.timestamp() - 30000,
 			false
 		);
@@ -195,10 +202,10 @@ export class ChatService {
 	/** After confirmation dialog, this kills the chat. */
 	public async disconnectButton () : Promise<void> {
 		if (await this.dialogService.confirm({
-			cancel: strings.cancel,
-			content: strings.disconnectConfirm,
-			ok: strings.continueDialogAction,
-			title: strings.disconnectTitle
+			cancel: this.stringsService.cancel,
+			content: this.stringsService.disconnectConfirm,
+			ok: this.stringsService.continueDialogAction,
+			title: this.stringsService.disconnectTitle
 		})) {
 			this.close();
 		}
@@ -234,7 +241,7 @@ export class ChatService {
 			this.isMessageChanged	= isMessageChanged;
 			this.sessionService.send(
 				new Message(
-					rpcEvents.typing,
+					this.sessionService.rpcEvents.typing,
 					{isTyping: this.isMessageChanged}
 				)
 			);
@@ -254,7 +261,7 @@ export class ChatService {
 		}
 
 		if (message) {
-			this.sessionService.send(new Message(rpcEvents.text, {
+			this.sessionService.send(new Message(this.sessionService.rpcEvents.text, {
 				selfDestructTimeout,
 				text: message
 			}));
@@ -278,7 +285,7 @@ export class ChatService {
 		if (typeof messageText === 'string') {
 			this.queuedMessage	= messageText;
 			this.dialogService.toast({
-				content: strings.queuedMessageSaved,
+				content: this.stringsService.queuedMessageSaved,
 				delay: 2500
 			});
 		}
@@ -298,7 +305,10 @@ export class ChatService {
 		private readonly scrollService: ScrollService,
 
 		/** @ignore */
-		private readonly sessionService: SessionService
+		private readonly sessionService: SessionService,
+
+		/** @ignore */
+		private readonly stringsService: StringsService
 	) {
 		/* Temporary workaround pending TypeScript fix. */
 		/* tslint:disable-next-line:ban  */
@@ -309,11 +319,15 @@ export class ChatService {
 			}
 		});
 
-		this.sessionService.one(events.beginChat).then(() => { this.begin(); });
+		this.sessionService.one(this.sessionService.events.beginChat).then(() => {
+			this.begin();
+		});
 
-		this.sessionService.one(events.closeChat).then(() => { this.close(); });
+		this.sessionService.one(this.sessionService.events.closeChat).then(() => {
+			this.close();
+		});
 
-		this.sessionService.one(events.connect).then(async () => {
+		this.sessionService.one(this.sessionService.events.connect).then(async () => {
 			this.state	= States.keyExchange;
 
 			const interval		= 250;
@@ -327,9 +341,11 @@ export class ChatService {
 			this.keyExchangeProgress	= 100;
 		});
 
-		this.sessionService.one(events.connectFailure).then(() => { this.abortSetup(); });
+		this.sessionService.one(this.sessionService.events.connectFailure).then(() => {
+			this.abortSetup();
+		});
 
-		this.sessionService.on(rpcEvents.text, (o: {
+		this.sessionService.on(this.sessionService.rpcEvents.text, (o: {
 			text: string;
 			author: string;
 			timestamp: number;
@@ -342,7 +358,7 @@ export class ChatService {
 			o.selfDestructTimeout
 		); });
 
-		this.sessionService.on(rpcEvents.typing, (o: {isTyping: boolean}) => {
+		this.sessionService.on(this.sessionService.rpcEvents.typing, (o: {isTyping: boolean}) => {
 			this.setFriendTyping(o.isTyping);
 		});
 	}
