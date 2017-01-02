@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {UrlStateService} from '../cyph/ui/services/url-state.service';
+import {UrlStateService} from '../cyph/services/url-state.service';
 import {util} from '../cyph/util';
 import {BetaStates, States, urlSections} from './enums';
 

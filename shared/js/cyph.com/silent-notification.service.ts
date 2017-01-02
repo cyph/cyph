@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {INotificationService} from '../cyph/ui/service-interfaces/inotification.service';
+import {INotificationService} from '../cyph/service-interfaces/inotification.service';
 
 
 /**

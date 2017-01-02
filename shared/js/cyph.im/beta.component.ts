@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {StringsService} from '../cyph/ui/services/strings.service';
-import {UrlStateService} from '../cyph/ui/services/url-state.service';
+import {StringsService} from '../cyph/services/strings.service';
+import {UrlStateService} from '../cyph/services/url-state.service';
 import {util} from '../cyph/util';
 import {AppService} from './app.service';
 

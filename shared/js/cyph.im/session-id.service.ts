@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
-import {AbstractSessionIdService} from '../cyph/ui/services/abstract-session-id.service';
-import {UrlStateService} from '../cyph/ui/services/url-state.service';
+import {AbstractSessionIdService} from '../cyph/services/abstract-session-id.service';
+import {UrlStateService} from '../cyph/services/url-state.service';
 
 
 /**

@@ -1,11 +1,11 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ChatService} from '../cyph/ui/services/chat.service';
-import {CyphertextService} from '../cyph/ui/services/cyphertext.service';
-import {EnvService} from '../cyph/ui/services/env.service';
-import {FileService} from '../cyph/ui/services/file.service';
-import {P2PService} from '../cyph/ui/services/p2p.service';
-import {ScrollService} from '../cyph/ui/services/scroll.service';
-import {SessionService} from '../cyph/ui/services/session.service';
+import {ChatService} from '../cyph/services/chat.service';
+import {CyphertextService} from '../cyph/services/cyphertext.service';
+import {EnvService} from '../cyph/services/env.service';
+import {FileService} from '../cyph/services/file.service';
+import {P2PService} from '../cyph/services/p2p.service';
+import {ScrollService} from '../cyph/services/scroll.service';
+import {SessionService} from '../cyph/services/session.service';
 import {ChatData} from './chat-data';
 import {LocalSessionService} from './local-session.service';
 

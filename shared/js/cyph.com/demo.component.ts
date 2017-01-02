@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {EnvService} from '../cyph/ui/services/env.service';
+import {EnvService} from '../cyph/services/env.service';
 import {util} from '../cyph/util';
 import {DemoService} from './demo.service';
 import {elements} from './elements';

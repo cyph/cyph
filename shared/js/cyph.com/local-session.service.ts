@@ -1,12 +1,12 @@
 import {Injectable} from '@angular/core';
 import {potassium} from '../cyph/crypto/potassium';
 import {eventManager} from '../cyph/event-manager';
+import {ISessionService} from '../cyph/service-interfaces/isession-service';
+import {EnvService} from '../cyph/services/env.service';
+import {StringsService} from '../cyph/services/strings.service';
 import {Events, events, RpcEvents, rpcEvents, Users, users} from '../cyph/session/enums';
 import {IMessage} from '../cyph/session/imessage';
 import {Message} from '../cyph/session/message';
-import {ISessionService} from '../cyph/ui/service-interfaces/isession-service';
-import {EnvService} from '../cyph/ui/services/env.service';
-import {StringsService} from '../cyph/ui/services/strings.service';
 import {util} from '../cyph/util';
 import {ChatData} from './chat-data';
 
