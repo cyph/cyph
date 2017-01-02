@@ -1,5 +1,5 @@
 import {Component, ElementRef, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {EnvService} from '../services/env.service';
+import {env} from '../env';
 import {util} from '../util';
 
 
@@ -19,7 +19,9 @@ export class FileInputComponent implements OnInit {
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
-		if (!this.elementRef.nativeElement || !this.envService.isWeb) {
+		/* Temporary workaround for DI bug in Upgrade module:
+			using env instead of envService here */
+		if (!this.elementRef.nativeElement || !env.isWeb) {
 			/* TODO: HANDLE NATIVE */
 			return;
 		}
@@ -57,9 +59,6 @@ export class FileInputComponent implements OnInit {
 
 	constructor (
 		/** @ignore */
-		private readonly elementRef: ElementRef,
-
-		/** @ignore */
-		private readonly envService: EnvService
+		private readonly elementRef: ElementRef
 	) {}
 }
