@@ -113,41 +113,46 @@ export class LinkConnectionComponent implements OnChanges {
 		this.link			= this.linkConstant;
 		this.isPassive		= this.sessionService.state.wasInitiatedByAPI;
 
-		const $element		= $(this.elementRef.nativeElement);
+		if (this.elementRef.nativeElement && this.envService.isWeb) {
+			const $element		= $(this.elementRef.nativeElement);
 
-		if (this.envService.isMobile) {
-			const $connectLinkLink	= await util.waitForIterable(
-				() => $element.find('.connect-link-link')
-			);
+			if (this.envService.isMobile) {
+				const $connectLinkLink	= await util.waitForIterable(
+					() => $element.find('.connect-link-link')
+				);
 
-			/* Only allow right-clicking (for copying the link) */
-			$connectLinkLink.click(e => e.preventDefault());
+				/* Only allow right-clicking (for copying the link) */
+				$connectLinkLink.click(e => e.preventDefault());
+			}
+			else {
+				const $connectLinkInput	= await util.waitForIterable(
+					() => $element.find('.connect-link-input input')
+				);
+
+				const connectLinkInput	= <HTMLInputElement> $connectLinkInput[0];
+
+				/* Temporary workaround pending TypeScript fix. */
+				/* tslint:disable-next-line:ban  */
+				setTimeout(async () => {
+					while (isWaiting) {
+						await util.sleep(1000);
+
+						if (this.advancedFeatures) {
+							continue;
+						}
+
+						if (this.link !== this.linkConstant) {
+							this.link	= this.linkConstant;
+						}
+
+						$connectLinkInput.focus();
+						connectLinkInput.setSelectionRange(0, this.linkConstant.length);
+					}
+				});
+			}
 		}
 		else {
-			const $connectLinkInput	= await util.waitForIterable(
-				() => $element.find('.connect-link-input input')
-			);
-
-			const connectLinkInput	= <HTMLInputElement> $connectLinkInput[0];
-
-			/* Temporary workaround pending TypeScript fix. */
-			/* tslint:disable-next-line:ban  */
-			setTimeout(async () => {
-				while (isWaiting) {
-					await util.sleep(1000);
-
-					if (this.advancedFeatures) {
-						continue;
-					}
-
-					if (this.link !== this.linkConstant) {
-						this.link	= this.linkConstant;
-					}
-
-					$connectLinkInput.focus();
-					connectLinkInput.setSelectionRange(0, this.linkConstant.length);
-				}
-			});
+			/* TODO: HANDLE NATIVE */
 		}
 
 		this.timer	= new Timer(

@@ -784,7 +784,7 @@ input.doctors {
 	font-family: Ubuntu !important;
 }
 
-.beta-signup-form.complete + div, .beta-signup-form.visible {
+.beta-signup-form.complete + div {
 	opacity: 1;
 
 	@include transition(opacity 500ms 1s linear);

@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, OnInit} from '@angular/core';
+import {Component, ElementRef, Input} from '@angular/core';
 import {EnvService} from '../services/env.service';
 import {SignupService} from '../services/signup.service';
 import {util} from '../util';
@@ -11,19 +11,18 @@ import {util} from '../util';
 	selector: 'cyph-signup-form',
 	templateUrl: '../../../templates/signup-form.html'
 })
-export class SignupFormComponent implements OnInit {
+export class SignupFormComponent {
 	/** Indicates whether or not to display invite-code-related UI. */
 	@Input() public invite: boolean;
-
-	/** @inheritDoc */
-	public async ngOnInit () : Promise<void> {
-		await util.sleep(500);
-		$(this.elementRef.nativeElement).addClass('visible');
-	}
 
 	/** @see SignupService.submit */
 	public async submit () : Promise<void> {
 		this.signupService.submit();
+
+		if (!this.elementRef.nativeElement || !this.envService.isWeb) {
+			/* TODO: HANDLE NATIVE */
+			return;
+		}
 
 		await util.sleep();
 

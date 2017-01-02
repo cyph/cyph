@@ -53,6 +53,11 @@ export class VirtualKeyboardWatcherService {
 			return;
 		}
 
+		if (!this.envService.isWeb) {
+			/* TODO: HANDLE NATIVE */
+			return;
+		}
+
 		/* http://stackoverflow.com/a/11650231/459881 */
 
 		const $window	= $(window);

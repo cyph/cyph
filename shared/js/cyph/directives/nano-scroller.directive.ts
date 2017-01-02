@@ -23,6 +23,7 @@ export class NanoScrollerDirective implements OnDestroy, OnInit {
 	public async ngOnInit () : Promise<void> {
 		if (
 			!this.elementRef.nativeElement ||
+			!this.envService.isWeb ||
 			this.envService.isMobile ||
 			this.envService.isMacOS
 		) {

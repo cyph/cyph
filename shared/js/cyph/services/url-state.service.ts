@@ -65,6 +65,11 @@ export class UrlStateService {
 		shouldNotTrigger?: boolean,
 		redirectFallback: boolean = true
 	) : void {
+		if (!this.envService.isWeb) {
+			/* TODO: HANDLE NATIVE */
+			return;
+		}
+
 		if (this.envService.isMainThread) {
 			for (const c of ['/', '#']) {
 				if (path[0] === c) {

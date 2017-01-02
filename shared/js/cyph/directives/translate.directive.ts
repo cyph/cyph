@@ -12,10 +12,7 @@ import {util} from '../util';
 })
 export class TranslateDirective {
 	/** @ignore */
-	private handleElement (
-		nativeElement: HTMLElement,
-		renderer: Renderer
-	) : void {
+	private handleElement (nativeElement: HTMLElement, renderer: Renderer) : void {
 		const $element	= $(nativeElement);
 		const $children	= $element.children();
 
@@ -44,10 +41,7 @@ export class TranslateDirective {
 	}
 
 	/** @ignore */
-	private translate (
-		value: string,
-		callback: (translation: string) => void
-	) : void {
+	private translate (value: string, callback: (translation: string) => void) : void {
 		if (!value) {
 			return;
 		}
@@ -71,7 +65,8 @@ export class TranslateDirective {
 			return;
 		}
 
-		if (!elementRef.nativeElement) {
+		if (!elementRef.nativeElement || !envService.isWeb) {
+			/* TODO: HANDLE NATIVE */
 			return;
 		}
 

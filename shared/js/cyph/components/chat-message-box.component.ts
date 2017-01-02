@@ -133,6 +133,11 @@ export class ChatMessageBoxComponent implements OnInit {
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
+		if (!this.elementRef.nativeElement || !this.envService.isWeb) {
+			/* TODO: HANDLE NATIVE */
+			return;
+		}
+
 		const $element	= $(this.elementRef.nativeElement);
 
 		/* Temporary workaround for Angular Material bug */

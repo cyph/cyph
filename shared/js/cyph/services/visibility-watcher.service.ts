@@ -43,6 +43,11 @@ export class VisibilityWatcherService {
 		/** @ignore */
 		private readonly envService: EnvService
 	) {
+		if (!this.envService.isWeb) {
+			/* TODO: HANDLE NATIVE */
+			return;
+		}
+
 		if (this.envService.isMobile) {
 			document.addEventListener('visibilitychange', () => {
 				this.trigger(!document.hidden);

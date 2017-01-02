@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, OnChanges, SimpleChanges} from '@angular/core';
+import {Component, ElementRef, Input, OnChanges, Renderer, SimpleChanges} from '@angular/core';
 import {MarkdownIt} from 'markdown-it';
 import {EnvService} from '../services/env.service';
 import {util} from '../util';
@@ -13,28 +13,33 @@ import {util} from '../util';
 })
 export class MarkdownComponent implements OnChanges {
 	/** @ignore */
-	private readonly $element: JQuery;
-
-	/** @ignore */
 	private readonly markdownIt: MarkdownIt;
 
 	/** @ignore */
 	private initiated: boolean	= false;
 
 	/** String of Markdown to render as HTML and add to the DOM. */
-	@Input() public markdown: string;
+	@Input() public markdown: string|undefined;
 
 	/** @ignore */
 	public async ngOnChanges (_CHANGES: SimpleChanges) : Promise<void> {
+		if (!this.elementRef.nativeElement || !this.envService.isWeb) {
+			/* TODO: HANDLE NATIVE */
+			this.renderer.setText(this.elementRef.nativeElement, this.markdown || '');
+			return;
+		}
+
+		const $element	= $(this.elementRef.nativeElement);
+
 		if (this.markdown !== undefined) {
 			this.initiated	= true;
 		}
 		else if (this.initiated) {
 			await util.sleep(10000);
 
-			this.$element.
-				height(this.$element.height()).
-				width(this.$element.width()).
+			$element.
+				height($element.height()).
+				width($element.width()).
 				css('display', 'inline-block')
 			;
 		}
@@ -80,17 +85,24 @@ export class MarkdownComponent implements OnChanges {
 			(<any> $a).magnificPopup({type: 'image'});
 		});
 
-		this.$element.empty().append($html);
+		$element.empty().append($html);
 	}
 
-	constructor (elementRef: ElementRef, envService: EnvService) {
-		this.$element	= $(elementRef.nativeElement);
+	constructor (
+		/** @ignore */
+		private readonly elementRef: ElementRef,
 
+		/** @ignore */
+		private readonly renderer: Renderer,
+
+		/** @ignore */
+		private readonly envService: EnvService
+	) {
 		this.markdownIt	= new (<any> self).markdownit({
 			breaks: true,
 			highlight: (s: string) => (<any> self).microlight.process(
 				s,
-				this.$element.css('color')
+				$(this.elementRef.nativeElement).css('color')
 			),
 			html: false,
 			linkify: true,

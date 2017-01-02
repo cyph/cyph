@@ -78,6 +78,12 @@ export class Analytics {
 				o.args
 			));
 
+			if (!env.isWeb) {
+				/* TODO: HANDLE NATIVE */
+				this.analFrameIsReady	= false;
+				return;
+			}
+
 			try {
 				this.analFrame	= document.createElement('iframe');
 

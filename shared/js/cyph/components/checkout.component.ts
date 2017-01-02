@@ -32,6 +32,11 @@ export class CheckoutComponent implements OnInit {
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
+		if (!this.elementRef.nativeElement || !this.envService.isWeb) {
+			/* TODO: HANDLE NATIVE */
+			return;
+		}
+
 		const token: string	= await util.request({
 			retries: 5,
 			url: this.envService.baseUrl + this.configService.braintreeConfig.endpoint

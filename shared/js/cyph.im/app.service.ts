@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {EnvService} from '../cyph/services/env.service';
 import {UrlStateService} from '../cyph/services/url-state.service';
 import {util} from '../cyph/util';
 import {BetaStates, States, urlSections} from './enums';
@@ -49,6 +50,9 @@ export class AppService {
 
 	constructor (
 		/** @ignore */
+		private readonly envService: EnvService,
+
+		/** @ignore */
 		private readonly urlStateService: UrlStateService
 	) {
 		this.urlStateService.onChange(newUrlState => {
@@ -76,7 +80,12 @@ export class AppService {
 
 			await util.sleep();
 
-			$(document.body).addClass('load-complete');
+			if (this.envService.isWeb) {
+				$(document.body).addClass('load-complete');
+			}
+			else {
+				return;
+			}
 		})();
 	}
 }

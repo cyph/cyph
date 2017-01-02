@@ -7,6 +7,7 @@ import {util} from '../util';
 import {ChatService} from './chat.service';
 import {ConfigService} from './config.service';
 import {DialogService} from './dialog.service';
+import {EnvService} from './env.service';
 import {SessionService} from './session.service';
 import {StringsService} from './strings.service';
 
@@ -100,7 +101,9 @@ export class FileService {
 		const plaintext	= await new Promise<Uint8Array>(resolve => {
 			const reader	= new FileReader();
 
-			if (image && file.type !== 'image/gif') {
+			if (image && file.type !== 'image/gif' && this.envService.isWeb) {
+				/* TODO: HANDLE NATIVE */
+
 				reader.onload	= () => {
 					const img	= document.createElement('img');
 					img.onload	= () => { resolve(this.compressImage(img, file)); };
@@ -133,6 +136,9 @@ export class FileService {
 
 		/** @ignore */
 		private readonly dialogService: DialogService,
+
+		/** @ignore */
+		private readonly envService: EnvService,
 
 		/** @ignore */
 		private readonly sessionService: SessionService,

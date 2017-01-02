@@ -205,6 +205,11 @@ export class Util {
 
 	/** Opens the specified URL. */
 	public async openUrl (url: string) : Promise<void> {
+		if (!env.isWeb) {
+			/* TODO: HANDLE NATIVE */
+			return;
+		}
+
 		if (!env.isMainThread) {
 			eventManager.trigger(Util.openUrlThreadEvent, url);
 			return;
@@ -413,6 +418,11 @@ export class Util {
 
 	/** Simulates a click on elem. */
 	public triggerClick (elem: HTMLElement) : void {
+		if (!env.isWeb) {
+			/* TODO: HANDLE NATIVE */
+			return;
+		}
+
 		const e: Event	= document.createEvent('MouseEvents');
 		e.initEvent('click', true, false);
 		elem.dispatchEvent(e);

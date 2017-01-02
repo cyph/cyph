@@ -102,6 +102,7 @@ export class Env extends EnvDeploy {
 
 	/** Indicates whether this is a touchscreen environment. */
 	public readonly isTouch: boolean	= (() => {
+		/* TODO: HANDLE NATIVE */
 		try {
 			document.createEvent('TouchEvent');
 			return true;

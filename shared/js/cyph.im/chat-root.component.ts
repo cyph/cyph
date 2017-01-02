@@ -39,7 +39,12 @@ export class ChatRootComponent implements OnInit {
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
 		if (this.sessionService.apiFlags.modestBranding) {
-			$(document.body).addClass('modest');
+			if (this.envService.isWeb) {
+				$(document.body).addClass('modest');
+			}
+			else {
+				/* TODO: HANDLE NATIVE */
+			}
 		}
 
 		const urlSection		= this.urlStateService.getUrlSplit()[0];

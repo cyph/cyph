@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Title} from '@angular/platform-browser';
 import {util} from '../util';
+import {EnvService} from './env.service';
 import {VisibilityWatcherService} from './visibility-watcher.service';
 
 
@@ -47,6 +48,11 @@ export class ScrollService {
 	public init (rootElement: JQuery, itemCountInTitle: boolean = false) : void {
 		this.rootElement		= rootElement;
 		this.itemCountInTitle	= itemCountInTitle;
+
+		if (!this.envService.isWeb) {
+			/* TODO: HANDLE NATIVE */
+			return;
+		}
 
 		/* Workaround for jQuery appear plugin */
 		const $window	= $(window);
@@ -119,6 +125,9 @@ export class ScrollService {
 	}
 
 	constructor (
+		/** @ignore */
+		private readonly envService: EnvService,
+
 		/** @ignore */
 		private readonly titleService: Title,
 

@@ -25,6 +25,11 @@ export class ChatMainComponent implements OnInit {
 	public ngOnInit () : void {
 		this.fileService.files.changeDetectorRef	= this.changeDetectorRef;
 
+		if (!this.elementRef.nativeElement || !this.envService.isWeb) {
+			/* TODO: HANDLE NATIVE */
+			return;
+		}
+
 		const $element	= $(this.elementRef.nativeElement);
 
 		this.p2pService.init(

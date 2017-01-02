@@ -1,4 +1,5 @@
-import {Component, ElementRef, EventEmitter, Input, Output} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {EnvService} from '../services/env.service';
 import {util} from '../util';
 
 
@@ -9,19 +10,25 @@ import {util} from '../util';
 	selector: 'cyph-file-input',
 	templateUrl: '../../../templates/file-input.html'
 })
-export class FileInputComponent {
+export class FileInputComponent implements OnInit {
 	/** Optional file type restriction. */
 	@Input() public accept: string;
 
 	/** Handler for uploaded files. */
 	@Output() public change: EventEmitter<File>	= new EventEmitter<File>();
 
-	constructor (elementRef: ElementRef) { (async () => {
+	/** @inheritDoc */
+	public async ngOnInit () : Promise<void> {
+		if (!this.elementRef.nativeElement || !this.envService.isWeb) {
+			/* TODO: HANDLE NATIVE */
+			return;
+		}
+
 		const $input	= await util.waitForIterable(
-			() => $(elementRef.nativeElement).children()
+			() => $(this.elementRef.nativeElement).children()
 		);
 
-		const input	= <HTMLInputElement> $input[0];
+		const input		= <HTMLInputElement> $input[0];
 
 		$input.
 			change(e => {
@@ -46,5 +53,13 @@ export class FileInputComponent {
 		);
 
 		$button.click(() => { util.triggerClick(input); });
-	})(); }
+	}
+
+	constructor (
+		/** @ignore */
+		private readonly elementRef: ElementRef,
+
+		/** @ignore */
+		private readonly envService: EnvService
+	) {}
 }
