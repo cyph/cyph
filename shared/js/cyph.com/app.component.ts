@@ -13,7 +13,7 @@ import {DemoService} from './demo.service';
 @Component({
 	providers: [
 		AppService,
-		DemoService,
+		DemoService
 	],
 	selector: 'cyph-app',
 	templateUrl: '../../templates/cyph.com/index.html'
