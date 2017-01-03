@@ -55,7 +55,7 @@ RUN echo '\
 \
 	export GOPATH="/home/gibson/go"; \
 	export CLOUDSDK_PYTHON="python2"; \
-	export CLOUD_PATHS="$(
+	export CLOUD_PATHS="$( \
 		echo -n "/google-cloud-sdk/bin:"; \
 		echo -n "/google-cloud-sdk/platform/google_appengine:"; \
 		echo -n "/google-cloud-sdk/platform/google_appengine/google/appengine/tools"; \
@@ -64,7 +64,7 @@ RUN echo '\
 	export ANDROID_HOME="/home/gibson/androidsdk"; \
 	export JAVA_HOME="$(update-alternatives --query javac | sed -n -e "s/Best: *\(.*\)\/bin\/javac/\\1/p")"; \
 \
-	export PATH="$(
+	export PATH="$( \
 		echo -n "/opt/local/bin:"; \
 		echo -n "/opt/local/sbin:"; \
 		echo -n "/usr/local/opt/go/libexec/bin:"; \
@@ -128,8 +128,6 @@ RUN rm ~/public.key
 RUN curl -sSL https://get.rvm.io | bash -s stable --ruby
 
 RUN bash -c 'source ~/.bashrc ; gem install sass'
-
-RUN rm -rf ~/.gnupg
 
 RUN wget "$( \
 	curl -s https://cloud.google.com/appengine/docs/go/download | \
@@ -208,6 +206,8 @@ RUN sudo bash -c " \
 	echo -e '#!/bin/bash\nts-node-original -D -C /opt/ts-node/node_modules/typescript \"\${@}\"' > ts-node; \
 	chmod +x ts-node; \
 "
+
+RUN rm -rf ~/.gnupg
 
 
 VOLUME /cyph
