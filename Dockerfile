@@ -55,12 +55,25 @@ RUN echo '\
 \
 	export GOPATH="/home/gibson/go"; \
 	export CLOUDSDK_PYTHON="python2"; \
-	export CLOUD_PATHS="/google-cloud-sdk/bin:/google-cloud-sdk/platform/google_appengine:/google-cloud-sdk/platform/google_appengine/google/appengine/tools"; \
+	export CLOUD_PATHS="$(
+		echo -n "/google-cloud-sdk/bin:"; \
+		echo -n "/google-cloud-sdk/platform/google_appengine:"; \
+		echo -n "/google-cloud-sdk/platform/google_appengine/google/appengine/tools"; \
+	)"; \
 \
 	export ANDROID_HOME="/home/gibson/androidsdk"; \
 	export JAVA_HOME="$(update-alternatives --query javac | sed -n -e "s/Best: *\(.*\)\/bin\/javac/\\1/p")"; \
 \
-	export PATH="/opt/local/bin:/opt/local/sbin:/usr/local/opt/go/libexec/bin:$CLOUD_PATHS:$GOPATH/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/tools:$PATH"; \
+	export PATH="$(
+		echo -n "/opt/local/bin:"; \
+		echo -n "/opt/local/sbin:"; \
+		echo -n "/usr/local/opt/go/libexec/bin:"; \
+		echo -n "$CLOUD_PATHS:"; \
+		echo -n "$GOPATH/bin:"; \
+		echo -n "$ANDROID_HOME/platform-tools:"; \
+		echo -n "$ANDROID_HOME/tools:"; \
+		echo -n "$PATH"; \
+	)"; \
 \
 	if [ ! -d ~/.gnupg -a -d ~/.gnupg.original ] ; then cp -a ~/.gnupg.original ~/.gnupg ; fi; \
 	export GPG_TTY="$(tty)"; \
