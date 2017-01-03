@@ -5,7 +5,7 @@ MAINTAINER Ryan Lester <hacker@linux.com>
 LABEL Name="cyph"
 
 RUN apt-get -y --force-yes update
-RUN apt-get -y --force-yes install curl lsb-release apt-transport-https
+RUN apt-get -y --force-yes install apt-transport-https curl lsb-release
 
 ENV debianVersion "echo $(lsb_release -c | awk '{print \$2}')"
 ENV debianBackports "${debianVersion}-backports"
@@ -18,52 +18,52 @@ RUN apt-get -y --force-yes update
 RUN apt-get -y --force-yes dist-upgrade
 
 RUN apt-get -y --force-yes -t $(eval "${debianBackports}") install \
-	nano \
-	nodejs \
-	golang-go \
-	python \
-	perl \
-	devscripts \
-	build-essential \
-	cmake \
+	apt-utils \
 	autoconf \
 	automake \
-	libtool \
+	build-essential \
+	cmake \
+	devscripts \
+	expect \
+	g++ \
 	git \
 	gnupg \
 	gnupg-agent \
-	pinentry-curses \
-	procps \
-	sudo \
-	apt-utils \
-	expect \
+	golang-go \
 	inotify-tools \
-	zopfli \
-	lib32z1 \
 	lib32ncurses5 \
+	lib32z1 \
 	libbz2-1.0:i386 \
 	libstdc++6:i386 \
-	g++ \
-	openjdk-8-jdk
+	libtool \
+	nano \
+	nodejs \
+	openjdk-8-jdk \
+	perl \
+	pinentry-curses \
+	procps \
+	python \
+	sudo \
+	zopfli
 
 
 RUN echo '\
-	source ~/emsdk_portable/emsdk_env.sh > /dev/null 2>&1; \
-	source ~/.rvm/scripts/rvm; \
+	source /home/gibson/emsdk_portable/emsdk_env.sh > /dev/null 2>&1; \
+	source /home/gibson/.rvm/scripts/rvm; \
 \
-	export NODE_PATH="/usr/lib/node_modules/"; \
+	export NODE_PATH="/usr/lib/node_modules"; \
 \
-	export GOPATH=$HOME/go; \
-	export CLOUDSDK_PYTHON=python2; \
+	export GOPATH="/home/gibson/go"; \
+	export CLOUDSDK_PYTHON="python2"; \
 	export CLOUD_PATHS="/google-cloud-sdk/bin:/google-cloud-sdk/platform/google_appengine:/google-cloud-sdk/platform/google_appengine/google/appengine/tools"; \
 \
-	export ANDROID_HOME=$HOME/androidsdk \
-	export JAVA_HOME=$(update-alternatives --query javac | sed -n -e "s/Best: *\(.*\)\/bin\/javac/\1/p") \
+	export ANDROID_HOME="/home/gibson/androidsdk"; \
+	export JAVA_HOME="$(update-alternatives --query javac | sed -n -e "s/Best: *\(.*\)\/bin\/javac/\\1/p")"; \
 \
-	export PATH="/opt/local/bin:/opt/local/sbin:/usr/local/opt/go/libexec/bin:$CLOUD_PATHS:$GOPATH/bin:$PATH"; \
+	export PATH="/opt/local/bin:/opt/local/sbin:/usr/local/opt/go/libexec/bin:$CLOUD_PATHS:$GOPATH/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/tools:$PATH"; \
 \
-	if [ ! -d ~/.gnupg ] ; then cp -a ~/.gnupg.original ~/.gnupg ; fi; \
-	export GPG_TTY=$(tty); \
+	if [ ! -d ~/.gnupg -a -d ~/.gnupg.original ] ; then cp -a ~/.gnupg.original ~/.gnupg ; fi; \
+	export GPG_TTY="$(tty)"; \
 	eval $(gpg-agent --daemon 2> /dev/null) > /dev/null 2>&1; \
 \
 	eval $(ssh-agent 2> /dev/null) > /dev/null 2>&1; \
@@ -72,24 +72,18 @@ RUN echo '\
 RUN echo 'gibson ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
 RUN useradd -ms /bin/bash gibson
 RUN mkdir -p /home/gibson
-RUN cp /.bashrc /home/gibson/
-RUN chmod 700 ~/.bashrc
+RUN cp -f /.bashrc /home/gibson/.bashrc
+RUN cp -f /.bashrc /root/.bashrc
+RUN chmod 700 /home/gibson/.bashrc
 USER gibson
 ENV HOME /home/gibson
 
-
-RUN wget "$( \
-	curl -s https://cloud.google.com/appengine/docs/go/download | \
-	grep -oP 'https://.*?go_appengine_sdk_linux_amd64.*?\.zip' | \
-	head -n1 \
-)" -O ~/go_appengine.zip
-RUN unzip ~/go_appengine.zip -d ~
-RUN rm ~/go_appengine.zip
 
 RUN bash -c ' \
 	cd; \
 	wget https://s3.amazonaws.com/mozilla-games/emscripten/releases/emsdk-portable.tar.gz; \
 	tar xzf emsdk-portable.tar.gz; \
+	rm emsdk-portable.tar.gz; \
 	cd emsdk_portable; \
 	./emsdk update; \
 	./emsdk install latest; \
@@ -99,23 +93,11 @@ RUN bash -c ' \
 
 RUN bash -c ' \
 	source ~/.bashrc; \
-	ln -s $NODE_PATH $HOME/node_modules; \
+	ln -s $NODE_PATH /home/gibson/node_modules; \
 	sudo ln -s $NODE_PATH /node_modules; \
 	mkdir -p /home/gibson/emsdk_portable/node/4.1.1_64bit/bin; \
 	ln -s /usr/bin/node /home/gibson/emsdk_portable/node/4.1.1_64bit/bin/node; \
 '
-
-RUN wget https://keybase.io/mpapis/key.asc -O ~/public.key
-RUN gpg --import ~/public.key
-RUN rm ~/public.key
-RUN curl -sSL https://get.rvm.io | bash -s stable --ruby
-
-RUN bash -c ' \
-	source ~/.bashrc; \
-	gem install sass; \
-'
-
-RUN rm -rf ~/.gnupg
 
 RUN bash -c ' \
 	cd; \
@@ -127,17 +109,35 @@ RUN bash -c ' \
 	rm -rf brotli; \
 '
 
+RUN wget https://keybase.io/mpapis/key.asc -O ~/public.key
+RUN gpg --import ~/public.key
+RUN rm ~/public.key
+RUN curl -sSL https://get.rvm.io | bash -s stable --ruby
+
+RUN bash -c 'source ~/.bashrc ; gem install sass'
+
+RUN rm -rf ~/.gnupg
+
+RUN wget "$( \
+	curl -s https://cloud.google.com/appengine/docs/go/download | \
+	grep -oP 'https://.*?go_appengine_sdk_linux_amd64.*?\.zip' | \
+	head -n1 \
+)" -O ~/go_appengine.zip
+RUN unzip ~/go_appengine.zip -d ~
+RUN rm ~/go_appengine.zip
+
 RUN mkdir ~/androidsdk
 RUN wget https://dl.google.com/android/repository/tools_r25.2.3-linux.zip -O ~/androidsdk.zip
 RUN unzip ~/androidsdk.zip -d ~/androidsdk
 RUN rm ~/androidsdk.zip
 
-RUN sudo ~/androidsdk/tools/android update sdk \
-	--filter tools,platform-tools,android-23,build-tools-23.0.3,extra-android-m2repository,extra-google-m2repository,extra-android-support \
+RUN bash -c 'source ~/.bashrc ; echo y | android update sdk \
+	--filter tools,platform-tools,android-22,build-tools-25.0.1,extra-android-m2repository,extra-google-m2repository,extra-android-support \
 	--all \
-	--no-ui
+	--no-ui \
+'
 
-RUN sudo npm -g --unsafe-perm install \
+RUN sudo bash -c 'source ~/.bashrc ; npm -g --unsafe-perm install \
 	@angular/common@2.4.1 \
 	@angular/compiler@2.4.1 \
 	@angular/compiler-cli@2.4.1 \
@@ -156,14 +156,14 @@ RUN sudo npm -g --unsafe-perm install \
 	htmlencode@0.0.4  \
 	image-type@2.1.0 \
 	html-minifier@3.2.3 \
-	nativescript@2.5.0-2016-12-23-7505 \
+	nativescript@2.5.0-2017-01-03-7551 \
 	rxjs@5.0.2 \
 	ts-node@1.7.2 \
 	tslint@4.1.1 \
 	tslint-microsoft-contrib@4.0.0 \
 	typescript@2.0.10 \
 	uglify-js@2.7.5 \
-	webpack@2.2.0-rc.2 \
+	webpack@2.2.0-rc.3 \
 	zone.js@0.7.4 \
 	browserstack \
 	firebase \
@@ -177,7 +177,8 @@ RUN sudo npm -g --unsafe-perm install \
 	read \
 	supersphincs \
 	typedoc \
-	zombie
+	zombie \
+'
 
 # Workaround because ts-node env var support doesn't seem to work
 RUN sudo bash -c " \
