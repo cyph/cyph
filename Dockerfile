@@ -7,15 +7,17 @@ LABEL Name="cyph"
 RUN apt-get -y --force-yes update
 RUN apt-get -y --force-yes install curl lsb-release apt-transport-https
 
-RUN echo " \
-	deb https://deb.nodesource.com/node_6.x $(lsb_release -c | awk '{print $2}') main \
-" >> /etc/apt/sources.list
+ENV debianVersion "echo $(lsb_release -c | awk '{print \$2}')"
+ENV debianBackports "${debianVersion}-backports"
+RUN dpkg --add-architecture i386
+RUN echo "deb http://ftp.debian.org/debian $(eval "${debianBackports}") main" >> /etc/apt/sources.list
+RUN echo "deb https://deb.nodesource.com/node_6.x $(eval "${debianVersion}") main" >> /etc/apt/sources.list
 RUN curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
 
 RUN apt-get -y --force-yes update
 RUN apt-get -y --force-yes dist-upgrade
 
-RUN apt-get -y --force-yes install \
+RUN apt-get -y --force-yes -t $(eval "${debianBackports}") install \
 	nano \
 	nodejs \
 	golang-go \
@@ -36,7 +38,13 @@ RUN apt-get -y --force-yes install \
 	apt-utils \
 	expect \
 	inotify-tools \
-	zopfli
+	zopfli \
+	lib32z1 \
+	lib32ncurses5 \
+	libbz2-1.0:i386 \
+	libstdc++6:i386 \
+	g++ \
+	openjdk-8-jdk
 
 
 RUN echo '\
@@ -48,6 +56,9 @@ RUN echo '\
 	export GOPATH=$HOME/go; \
 	export CLOUDSDK_PYTHON=python2; \
 	export CLOUD_PATHS="/google-cloud-sdk/bin:/google-cloud-sdk/platform/google_appengine:/google-cloud-sdk/platform/google_appengine/google/appengine/tools"; \
+\
+	export ANDROID_HOME=$HOME/androidsdk \
+	export JAVA_HOME=$(update-alternatives --query javac | sed -n -e "s/Best: *\(.*\)\/bin\/javac/\1/p") \
 \
 	export PATH="/opt/local/bin:/opt/local/sbin:/usr/local/opt/go/libexec/bin:$CLOUD_PATHS:$GOPATH/bin:$PATH"; \
 \
@@ -116,7 +127,17 @@ RUN bash -c ' \
 	rm -rf brotli; \
 '
 
-RUN sudo npm -g install \
+RUN mkdir ~/androidsdk
+RUN wget https://dl.google.com/android/repository/tools_r25.2.3-linux.zip -O ~/androidsdk.zip
+RUN unzip ~/androidsdk.zip -d ~/androidsdk
+RUN rm ~/androidsdk.zip
+
+RUN sudo ~/androidsdk/tools/android update sdk \
+	--filter tools,platform-tools,android-23,build-tools-23.0.3,extra-android-m2repository,extra-google-m2repository,extra-android-support \
+	--all \
+	--no-ui
+
+RUN sudo npm -g --unsafe-perm install \
 	@angular/common@2.4.1 \
 	@angular/compiler@2.4.1 \
 	@angular/compiler-cli@2.4.1 \
@@ -135,6 +156,7 @@ RUN sudo npm -g install \
 	htmlencode@0.0.4  \
 	image-type@2.1.0 \
 	html-minifier@3.2.3 \
+	nativescript@2.5.0-2016-12-23-7505 \
 	rxjs@5.0.2 \
 	ts-node@1.7.2 \
 	tslint@4.1.1 \
@@ -147,6 +169,7 @@ RUN sudo npm -g install \
 	firebase \
 	firebase-server \
 	glob \
+	gulp \
 	jspm \
 	libsodium-wrappers \
 	mkdirp \

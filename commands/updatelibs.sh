@@ -111,6 +111,7 @@ jspm install -y \
 	npm:@types/markdown-it \
 	npm:@types/whatwg-fetch \
 	npm:@types/whatwg-streams \
+	npm:nativescript-angular \
 	npm:rxjs \
 	angular \
 	angular-material@master \
