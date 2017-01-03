@@ -112,6 +112,7 @@ jspm install -y \
 	npm:@types/whatwg-fetch \
 	npm:@types/whatwg-streams \
 	npm:nativescript-angular \
+	npm:nativescript-theme-core \
 	npm:rxjs \
 	angular \
 	angular-material@master \
