@@ -1,3 +1,15 @@
+(function () {
+
+
+/* Initialize ServiceWorker where possible */
+try {
+	navigator.serviceWorker.
+		register('/serviceworker.js').
+		catch(function () {})
+	;
+}
+catch (_) {}
+
 var isHiddenService	= location.host.split('.').slice(-1)[0] === 'onion';
 
 var packageName		= isHiddenService ?
@@ -8,20 +20,12 @@ var packageName		= isHiddenService ?
 /* Set pin on www subdomain on first use, then force naked domain */
 if (location.host.indexOf('www.') === 0) {
 	location.host	= location.host.replace('www.', '');
+	return;
 }
 else if (!isHiddenService && storage.isPersistent && !storage.webSignWWWPinned) {
 	storage.webSignWWWPinned	= true;
 	location.host				= 'www.' + location.host;
 }
-
-/* Initialize ServiceWorker where possible */
-try {
-	navigator.serviceWorker.
-		register('/serviceworker.js').
-		catch(function () {})
-	;
-}
-catch (_) {}
 
 /* Get user's current location to choose optimal CDN node */
 Promise.resolve().then(function () {
@@ -286,3 +290,6 @@ catch(function (err) {
 		}
 	}
 });
+
+
+})();
