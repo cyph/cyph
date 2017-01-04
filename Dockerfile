@@ -163,6 +163,9 @@ RUN sudo bash -c 'source ~/.bashrc ; npm -g --unsafe-perm install \
 	babel-cli@6.18.0 \
 	babel-loader@6.2.10 \
 	babel-preset-es2015@6.18.0 \
+	babel-traverse@6.21.0 \
+	babel-types@6.21.0 \
+	babylon@6.14.1 \
 	browserify@13.1.1 \
 	cheerio@0.22.0 \
 	clean-css@3.4.23 \
@@ -171,6 +174,7 @@ RUN sudo bash -c 'source ~/.bashrc ; npm -g --unsafe-perm install \
 	htmlencode@0.0.4  \
 	image-type@2.1.0 \
 	html-minifier@3.2.3 \
+	lazy@1.0.11 \
 	nativescript@2.5.0-2017-01-03-7551 \
 	nativescript-dev-android-snapshot@0.0.5 \
 	nativescript-dev-typescript@0.3.5 \

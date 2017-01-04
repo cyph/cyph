@@ -113,6 +113,11 @@ jspm install -y \
 	npm:@types/whatwg-streams \
 	npm:nativescript-angular \
 	npm:nativescript-theme-core \
+	npm:reflect-metadata \
+	npm:tns-android \
+	npm:tns-core-modules \
+	npm:tns-core-modules-widgets \
+	npm:tns-ios \
 	npm:rxjs \
 	angular \
 	angular-material@master \
