@@ -172,6 +172,8 @@ RUN sudo bash -c 'source ~/.bashrc ; npm -g --unsafe-perm install \
 	image-type@2.1.0 \
 	html-minifier@3.2.3 \
 	nativescript@2.5.0-2017-01-03-7551 \
+	nativescript-dev-android-snapshot@0.0.5 \
+	nativescript-dev-typescript@0.3.5 \
 	rxjs@5.0.2 \
 	ts-node@1.7.2 \
 	tslint@4.1.1 \
@@ -206,6 +208,9 @@ RUN sudo bash -c " \
 	echo -e '#!/bin/bash\nts-node-original -D -C /opt/ts-node/node_modules/typescript \"\${@}\"' > ts-node; \
 	chmod +x ts-node; \
 "
+
+RUN tns error-reporting disable
+RUN tns usage-reporting disable
 
 RUN rm -rf ~/.gnupg
 
