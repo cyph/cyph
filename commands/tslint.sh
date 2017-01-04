@@ -12,8 +12,6 @@ output="$(
 		-r /usr/lib/node_modules/tslint-microsoft-contrib \
 		--project shared/js/tsconfig.json \
 		--type-check \
-		--noUnusedLocals \
-		--noUnusedParameters \
 		${*}
 )"
 
