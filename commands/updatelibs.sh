@@ -104,14 +104,13 @@ ln -s node_modules/core-js/client/shim.min.js base.js
 mkdir module_locks
 for f in firebase simplewebrtc webrtc-adapter ; do
 	mkdir "module_locks/${f}"
-	cp -a "node_modules/${f}" "module_locks/${f}.tmp"
-	cd "module_locks/${f}.tmp"
+	cd "node_modules/${f}"
 	mkdir node_modules
 	yarn install
-	mv yarn.lock package.json "../${f}/"
+	mv yarn.lock package.json "../../module_locks/${f}/"
 	cd ../..
-	rm -rf "module_locks/${f}.tmp"
 done
+rm -rf node_modules
 
 clone https://github.com/jedisct1/libsodium.js libsodium
 cd libsodium
@@ -231,5 +230,5 @@ for d in $(ls ~/golibs) ; do
 	cp -a ~/golibs/${d} default/
 done
 
-commands/getlibs.sh --skip-check
+commands/getlibs.sh
 commands/commit.sh updatelibs

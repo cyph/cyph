@@ -3,7 +3,7 @@
 cd $(cd "$(dirname "$0")"; pwd)/..
 cd shared/lib/js
 
-if [ "${1}" == '--skip-check' ] || yarn check > /dev/null 2>&1 ; then
+if yarn check > /dev/null 2>&1 ; then
 	exit 0
 fi
 
@@ -13,6 +13,7 @@ cd ..
 cp -a js .js.tmp
 cd .js.tmp
 
+git init
 yarn install --ignore-platform || exit 1
 
 cd node_modules
