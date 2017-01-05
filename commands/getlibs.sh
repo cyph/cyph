@@ -22,7 +22,7 @@ curl -s https://raw.githubusercontent.com/suhdev/firebase-3-typescript/master/fi
 uglifyjs whatwg-fetch/fetch.js -m -o whatwg-fetch/fetch.js
 
 cd firebase
-cp -f ../module_locks/firebase/* ./
+cp -f ../../module_locks/firebase/* ./
 mkdir node_modules
 yarn install
 browserify firebase-node.js -o firebase-node.tmp.js -s firebase
@@ -36,7 +36,7 @@ rm -rf node_modules firebase-node.tmp.js
 cd ..
 
 cd simplewebrtc
-cp -f ../module_locks/simplewebrtc/* ./
+cp -f ../../module_locks/simplewebrtc/* ./
 mkdir node_modules
 yarn install
 sed -i "s|require('./socketioconnection')|null|g" simplewebrtc.js
@@ -45,7 +45,7 @@ rm -rf node_modules
 cd ..
 
 cd webrtc-adapter
-cp -f ../module_locks/webrtc-adapter/* ./
+cp -f ../../module_locks/webrtc-adapter/* ./
 mkdir node_modules
 yarn install
 webpack src/js/adapter_core.js adapter.js
