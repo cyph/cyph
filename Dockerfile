@@ -12,7 +12,9 @@ ENV debianBackports "${debianVersion}-backports"
 RUN dpkg --add-architecture i386
 RUN echo "deb http://ftp.debian.org/debian $(eval "${debianBackports}") main" >> /etc/apt/sources.list
 RUN echo "deb https://deb.nodesource.com/node_6.x $(eval "${debianVersion}") main" >> /etc/apt/sources.list
+RUN echo 'deb https://dl.yarnpkg.com/debian/ stable main' >> /etc/apt/sources.list
 RUN curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
+RUN curl -s https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
 
 RUN apt-get -y --force-yes update
 RUN apt-get -y --force-yes dist-upgrade
@@ -44,6 +46,7 @@ RUN apt-get -y --force-yes -t $(eval "${debianBackports}") install \
 	procps \
 	python \
 	sudo \
+	yarn \
 	zopfli
 
 
@@ -175,7 +178,7 @@ RUN sudo bash -c 'source ~/.bashrc ; npm -g --unsafe-perm install \
 	image-type@2.1.0 \
 	html-minifier@3.2.3 \
 	lazy@1.0.11 \
-	nativescript@2.5.0-2017-01-03-7551 \
+	nativescript@2.4.2 \
 	nativescript-dev-android-snapshot@0.0.5 \
 	nativescript-dev-typescript@0.3.5 \
 	rxjs@5.0.2 \
@@ -191,7 +194,6 @@ RUN sudo bash -c 'source ~/.bashrc ; npm -g --unsafe-perm install \
 	firebase-server \
 	glob \
 	gulp \
-	jspm \
 	libsodium-wrappers \
 	mkdirp \
 	node-fetch \
@@ -205,7 +207,7 @@ RUN sudo bash -c 'source ~/.bashrc ; npm -g --unsafe-perm install \
 RUN sudo bash -c " \
 	mkdir -p /opt/ts-node/node_modules; \
 	cd /opt/ts-node; \
-	npm install typescript@2.1.4; \
+	yarn add typescript@2.1.4; \
 	chmod -R 777 .; \
 	cd /usr/bin; \
 	mv ts-node ts-node-original; \

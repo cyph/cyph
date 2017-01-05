@@ -29,178 +29,92 @@ clone () {
 
 ./commands/keycache.sh
 
-mkdir -p ~/lib/js/crypto
+mkdir -p ~/lib/js
 cd ~/lib/js
 
-echo "self.sodium = (function () {
-	$(
-		curl -s https://raw.githubusercontent.com/jedisct1/libsodium.js/9a8b4f9/wrapper/wrap-template.js |
-		tr '\n' '☁' |
-		perl -pe 's/.*Codecs(.*?)Memory management.*/\1/g' |
-		tr '☁' '\n' \
-	)
-
-	$(
-		curl -s https://raw.githubusercontent.com/jedisct1/libsodium.js/9a8b4f9/wrapper/wrap-template.js |
-		tr '\n' ' ' |
-		perl -pe 's/\s+/ /g' |
-		perl -pe 's/.*(function memzero.*?)\s+function.*/\1/g' \
-	)
-
-	return {
-		memzero: memzero,
-		from_base64: from_base64,
-		to_base64: to_base64,
-		from_hex: from_hex,
-		to_hex: to_hex,
-		from_string: from_string,
-		to_string: to_string
-	};
-}());" | uglifyjs > sodiumutil.js
-
-expect -c ' \
-	spawn jspm init; \
-	expect "Package.json file does not exist"; \
-	send "yes\n"; \
-	expect "prefix the jspm package.json"; \
-	send "yes\n"; \
-	expect "server baseURL"; \
-	send "./\n"; \
-	expect "jspm packages folder"; \
-	send "./\n"; \
-	expect "config file path"; \
-	send "./config.js\n"; \
-	expect "create it?"; \
-	send "yes\n"; \
-	expect "Enter client baseURL"; \
-	send "/\n"; \
-	expect "transpiler"; \
-	send "no\n"; \
-	interact; \
-'
-expect -c ' \
-	spawn jspm registry config github; \
-	expect "GitHub credentials"; \
-	send "yes\n"; \
-	expect "GitHub username"; \
-	send "'"$(head -n1 ~/.cyph/github.token)"'\n"; \
-	expect "GitHub password"; \
-	send "'"$(tail -n1 ~/.cyph/github.token)"'\n"; \
-	expect "test these credentials"; \
-	send "yes\n"; \
-	interact; \
-'
-jspm config registries.github.timeouts.download 600
-
-jspm install -y \
-	npm:@angular/common \
-	npm:@angular/compiler \
-	npm:@angular/core \
-	npm:@angular/forms \
-	npm:@angular/http \
-	npm:@angular/platform-browser \
-	npm:@angular/platform-browser-dynamic \
-	npm:@angular/router \
-	npm:@angular/upgrade \
-	npm:@types/angular \
-	npm:@types/angular-material \
-	npm:@types/clipboard-js \
-	npm:@types/dompurify \
-	npm:@types/filesaver \
-	npm:@types/jquery \
-	npm:@types/markdown-it \
-	npm:@types/whatwg-fetch \
-	npm:@types/whatwg-streams \
-	npm:nativescript-angular \
-	npm:nativescript-theme-core \
-	npm:reflect-metadata \
-	npm:tns-android \
-	npm:tns-core-modules \
-	npm:tns-core-modules-widgets \
-	npm:tns-ios \
-	npm:rxjs \
-	angular \
-	angular-material@master \
-	angular-aria \
-	angular-animate \
-	npm:dompurify \
-	fetch=github:github/fetch \
-	github:markdown-it/markdown-it \
-	github:markdown-it/markdown-it-sup \
-	github:markdown-it/markdown-it-emoji \
-	microlight=github:buu700/microlight \
-	github:andyet/simplewebrtc \
-	npm:webrtc-adapter \
-	npm:animate.css \
-	github:davidchambers/base64.js \
+yarn add --flat --ignore-platform \
+	@angular/common \
+	@angular/compiler \
+	@angular/core \
+	@angular/forms \
+	@angular/http \
+	@angular/platform-browser \
+	@angular/platform-browser-dynamic \
+	@angular/router \
+	@angular/upgrade \
+	@types/angular \
+	@types/angular-material \
+	@types/clipboard-js \
+	@types/dompurify \
+	@types/file-saver \
+	@types/jquery \
+	@types/markdown-it \
+	@types/whatwg-fetch \
+	@types/whatwg-streams \
+	angular@~1.5 \
+	angular-animate@~1.5 \
+	angular-aria@~1.5 \
+	animate.css \
+	Base64 \
+	braintree-web@^2 \
+	clipboard-js \
+	core-js \
+	dompurify \
+	file-saver \
+	firebase \
 	jquery \
-	npm:magnific-popup \
-	npm:file-saver \
-	npm:clipboard-js \
-	npm:nanoscroller \
-	npm:unsemantic \
-	github:snaptortoise/konami-js \
-	github:matthieua/wow \
-	github:morr/jquery.appear \
-	github:julianlam/tabIndent.js \
-	braintree=github:braintree/braintree-web@^2 \
-	github:zloirock/core-js \
-	crypto/mceliece=github:cyph/mceliece.js \
-	crypto/ntru=github:cyph/ntru.js \
-	crypto/rlwe=github:cyph/rlwe.js \
-	crypto/sidh=github:cyph/sidh.js \
-	crypto/supersphincs=github:cyph/supersphincs
-
-if (( $? )) ; then
+	konami-code.js \
+	magnific-popup \
+	markdown-it \
+	markdown-it-sup \
+	markdown-it-emoji \
+	mceliece-js \
+	microlight-string \
+	nanoscroller \
+	nativescript-angular \
+	nativescript-dev-android-snapshot \
+	nativescript-dev-typescript \
+	nativescript-theme-core \
+	ntru \
+	reflect-metadata \
+	rlwe \
+	sidh \
+	simplewebrtc \
+	sphincs \
+	supersphincs \
+	tab-indent \
+	tns-android \
+	tns-core-modules \
+	tns-core-modules-widgets \
+	tns-ios \
+	rxjs \
+	sodiumutil \
+	unsemantic \
+	webrtc-adapter \
+	whatwg-fetch \
+	wowjs \
+	zone.js \
+	https://github.com/angular/bower-material \
+	https://github.com/morr/jquery.appear \
+|| \
 	exit 1
-fi
 
-find jspm_packages -mindepth 1 -maxdepth 1 -type d -exec mv {} ./ \;
+ln -s node_modules/core-js/client/shim.min.js base.js
 
-bash -c "$(node -e '
-	const deps		= JSON.parse(
-		'"'$(cat package.json | tr '\n' ' ')'"'
-	).jspm.dependencies;
+mkdir module_locks
+for f in firebase simplewebrtc webrtc-adapter ; do
+	mkdir "module_locks/${f}"
+	cp -a "node_modules/${f}" "module_locks/${f}.tmp"
+	cd "module_locks/${f}.tmp"
+	mkdir node_modules
+	yarn install
+	mv yarn.lock package.json "../${f}/"
+	cd ../..
+	rm -rf "module_locks/${f}.tmp"
+done
 
-	const versionSplit	= path => {
-		const index	= path.lastIndexOf("@");
-		return [path.slice(0, index), path.slice(index + 1)];
-	};
+rm -rf hooks references.d.ts tsconfig.json 2> /dev/null
 
-	console.log(Object.keys(deps).map(k => {
-		const path			= deps[k].replace(":", "/");
-		const pathBase		= versionSplit(path)[0];
-		const pathSplit		= path.split("/");
-		const package		= versionSplit(pathSplit.slice(1).join("/"));
-
-		const findVersionCommand	=
-			`find ./${pathSplit[0]} -type d | ` +
-			`grep "${package[0]}@" | ` +
-			`perl -pe "s/.*@//g" | ` +
-			`grep -P "${package[1]}" | ` +
-			`grep -v /`
-		;
-
-		const mkdirCommand	= k.indexOf("/") > -1 ?
-			`mkdir -p "${k.split("/").slice(0, -1).join("/")}" ; ` :
-			``
-		;
-
-		return mkdirCommand + `mv "${pathBase}@$(${findVersionCommand})" "${k}"`;
-	}).join(" ; "));'
-)"
-
-rm -rf github npm config.js package.json jspm_packages 2> /dev/null
-
-find . -name '*@*.js' -type f -exec bash -c '
-	cat {} | perl -pe "s/(require\(\".*?):/\1\//g" > {}.new;
-	mv {}.new {};
-' \;
-
-
-clone https://github.com/angular/zone.js.git
-
-cd crypto
 clone https://github.com/jedisct1/libsodium.js libsodium
 cd libsodium
 cat > wrapper/symbols/crypto_stream_chacha20.json << EOM
@@ -246,51 +160,7 @@ make libsodium/configure
 make
 find dist -name '*.js' | xargs sed -i 's|use strict||g'
 rm -rf .git* *.tmp API.md browsers-test test libsodium
-cd ../..
-
-mkdir firebase
-cd firebase
-mkdir node_modules
-npm install firebase --save
-cd node_modules/firebase
-npm install
-browserify firebase-node.js -o ../../firebase.js -s firebase
-cd ../..
-cat firebase.js |
-	sed 's|https://apis.google.com||g' |
-	sed 's|iframe||gi' |
-	perl -pe "s/[A-Za-z0-9]+\([\"']\/js\/.*?.js.*?\)/null/g" \
-> firebase.js.new
-mv firebase.js.new firebase.js
-rm -rf node_modules
 cd ..
-
-mkdir -p @types/firebase
-curl -s https://raw.githubusercontent.com/suhdev/firebase-3-typescript/master/firebase.d.ts | \
-	grep -v es6-promise.d.ts > @types/firebase/index.d.ts
-
-uglifyjs fetch/fetch.js -m -o fetch/fetch.min.js
-
-uglifyjs microlight/microlight.js -m -o microlight/microlight.min.js
-
-cd webrtc-adapter
-mkdir node_modules
-npm install
-webpack src/js/adapter_core.js adapter.js
-uglifyjs adapter.js -o adapter.js
-rm -rf node_modules out src
-cd ..
-
-cd andyet/simplewebrtc
-sed -i "s|require('./socketioconnection')|null|g" simplewebrtc.js
-mkdir node_modules
-npm install
-node build.js
-rm -rf node_modules
-cd ../..
-
-mv zloirock/core-js/client/shim.min.js base.js
-rm -rf zloirock
 
 cd ..
 
@@ -357,13 +227,11 @@ find . -type f -name '*.go' -exec sed -i 's|func main|func functionRemoved|g' {}
 cd "${dir}"
 rm -rf shared/lib
 cp -a ~/lib shared/
-cd shared/lib/js
-ln -s . node_modules
-cd ../../..
 
 for d in $(ls ~/golibs) ; do
 	rm -rf default/${d} 2> /dev/null
 	cp -a ~/golibs/${d} default/
 done
 
+commands/getlibs.sh --skip-check
 commands/commit.sh updatelibs

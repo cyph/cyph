@@ -434,10 +434,6 @@ fi
 find . -mindepth 1 -maxdepth 1 -type d -not -name shared -exec cp -f shared/favicon.ico {}/ \;
 
 
-if [ ! "${simple}" ] ; then
-	rm -rf */lib/js/crypto
-fi
-
 # Temporary workaround for cache-busting reverse proxies
 if [ ! "${test}" -a \( ! "${site}" -o "${site}" == cyph.im \) ] ; then
 	for project in cyph.im cyph.video ; do
