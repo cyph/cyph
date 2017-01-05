@@ -113,8 +113,6 @@ for f in firebase simplewebrtc webrtc-adapter ; do
 	rm -rf "module_locks/${f}.tmp"
 done
 
-rm -rf hooks references.d.ts tsconfig.json 2> /dev/null
-
 clone https://github.com/jedisct1/libsodium.js libsodium
 cd libsodium
 cat > wrapper/symbols/crypto_stream_chacha20.json << EOM

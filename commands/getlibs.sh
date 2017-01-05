@@ -11,6 +11,8 @@ rm -rf node_modules 2> /dev/null
 
 yarn install --ignore-platform || exit 1
 
+rm -rf .jshintignore .jshintrc hooks references.d.ts tsconfig.json 2> /dev/null
+
 cd node_modules
 
 cp -a ../libsodium ./
