@@ -7,11 +7,13 @@ if [ "${1}" == '--skip-check' ] || yarn check > /dev/null 2>&1 ; then
 	exit 0
 fi
 
-rm -rf node_modules 2> /dev/null
+rm -rf node_modules ../.js.tmp 2> /dev/null
+
+cd ..
+cp -a js .js.tmp
+cd .js.tmp
 
 yarn install --ignore-platform || exit 1
-
-rm -rf .jshintignore .jshintrc hooks references.d.ts tsconfig.json 2> /dev/null
 
 cd node_modules
 
@@ -54,3 +56,8 @@ webpack src/js/adapter_core.js adapter.js
 uglifyjs adapter.js -o adapter.js
 rm -rf node_modules out src
 cd ..
+
+cd ../..
+
+mv .js.tmp/node_modules js/
+rm -rf .js.tmp
