@@ -18,19 +18,22 @@ const browsers	= [
 		resolution: '1024x768'
 	},
 	{
-		browserName: 'Chrome', // 'Firefox',
+		browserName: 'Firefox',
+		browser_version : '47.0',
 		os: 'OS X',
 		os_version: 'Yosemite',
 		resolution: '1280x960'
 	},
 	{
-		browserName: 'Edge', // 'Firefox',
+		browserName: 'Firefox',
+		browser_version : '47.0',
 		os: 'Windows',
 		os_version: '10',
 		resolution: '2048x1536'
 	},
 	{
-		browserName: 'Chrome', // 'Firefox',
+		browserName: 'Firefox',
+		browser_version : '47.0',
 		os: 'Windows',
 		os_version: 'XP',
 		resolution: '1024x768'
