@@ -14,7 +14,7 @@ RUN echo "deb http://ftp.debian.org/debian $(eval "${debianBackports}") main" >>
 RUN echo "deb https://deb.nodesource.com/node_6.x $(eval "${debianVersion}") main" >> /etc/apt/sources.list
 RUN echo 'deb https://dl.yarnpkg.com/debian/ stable main' >> /etc/apt/sources.list
 RUN curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
-RUN curl -s https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+RUN curl -s https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
 
 RUN apt-get -y --force-yes update
 RUN apt-get -y --force-yes dist-upgrade
