@@ -9,7 +9,7 @@ fi
 
 rm -rf node_modules 2> /dev/null
 
-yarn install --flat --ignore-platform
+yarn install --ignore-platform || exit 1
 
 cd node_modules
 

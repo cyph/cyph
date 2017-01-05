@@ -32,7 +32,7 @@ clone () {
 mkdir -p ~/lib/js
 cd ~/lib/js
 
-yarn add --flat --ignore-platform \
+yarn add --ignore-platform \
 	@angular/common \
 	@angular/compiler \
 	@angular/core \
