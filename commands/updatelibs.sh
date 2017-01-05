@@ -29,8 +29,8 @@ clone () {
 
 ./commands/keycache.sh
 
-mkdir -p ~/lib/js
-cd ~/lib/js
+mkdir -p ~/lib/js ~/tmplib/js
+cd ~/tmplib/js
 
 yarn add --ignore-platform \
 	@angular/common \
@@ -99,18 +99,21 @@ yarn add --ignore-platform \
 || \
 	exit 1
 
-ln -s node_modules/core-js/client/shim.min.js base.js
+cp yarn.lock package.json ~/lib/js/
 
-mkdir module_locks
+mkdir ~/lib/js/module_locks
 for f in firebase simplewebrtc webrtc-adapter ; do
-	mkdir "module_locks/${f}"
+	mkdir "~/lib/js/module_locks/${f}"
 	cd "node_modules/${f}"
 	mkdir node_modules
 	yarn install
-	mv yarn.lock package.json "../../module_locks/${f}/"
+	cp yarn.lock package.json "~/lib/js/module_locks/${f}/"
 	cd ../..
 done
-rm -rf node_modules
+
+cd ~/lib/js
+
+ln -s node_modules/core-js/client/shim.min.js base.js
 
 clone https://github.com/jedisct1/libsodium.js libsodium
 cd libsodium
