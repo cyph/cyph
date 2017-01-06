@@ -23,7 +23,7 @@ cp -a ../libsodium ./
 
 mkdir -p @types/libsodium
 cat > @types/libsodium/index.d.ts << EOM
-export interface ISodium {
+interface ISodium {
 	crypto_aead_chacha20poly1305_ABYTES: number;
 	crypto_aead_chacha20poly1305_KEYBYTES: number;
 	crypto_aead_chacha20poly1305_NPUBBYTES: number;
@@ -83,6 +83,11 @@ export interface ISodium {
 	) : Uint8Array;
 	crypto_scalarmult (privateKey: Uint8Array, publicKey: Uint8Array) : Uint8Array;
 	crypto_scalarmult_base (privateKey: Uint8Array) : Uint8Array;
+	crypto_stream_chacha20 (
+		outLength: number,
+		key: Uint8Array,
+		nonce: Uint8Array
+	) : Uint8Array;
 	from_base64 (s: string) : Uint8Array;
 	from_hex (s: string) : Uint8Array;
 	from_string (s: string) : Uint8Array;
@@ -93,7 +98,7 @@ export interface ISodium {
 	to_string (a: Uint8Array) : string;
 };
 
-export const sodium: ISodium;
+declare const sodium: ISodium;
 EOM
 
 for anyType in konami-code.js markdown-it-emoji markdown-it-sup simplewebrtc tab-indent wowjs ; do
@@ -124,6 +129,11 @@ uglifyjs jquery.appear/jquery.appear.js -m -o jquery.appear/jquery.appear.js
 uglifyjs nanoscroller/bin/javascripts/jquery.nanoscroller.js -m -o nanoscroller/bin/javascripts/jquery.nanoscroller.js
 uglifyjs whatwg-fetch/fetch.js -m -o whatwg-fetch/fetch.js
 
+for module in mceliece-js ntru rlwe sidh sphincs supersphincs ; do
+	sed -i 's|export const|declare const|g' ${module}/*.d.ts
+	sed -i 's|export ||g' ${module}/*.d.ts
+done
+
 echo "module.exports = Konami;" >> konami-code.js/konami.js
 echo "module.exports = tabIndent;" >> tab-indent/tabIndent.js
 echo "module.exports = this.WOW;" >> wowjs/dist/wow.js
@@ -134,23 +144,13 @@ cd firebase
 cp -f ../../module_locks/firebase/* ./
 mkdir node_modules
 yarn install
-browserify firebase-node.js -o firebase-node.tmp.js -s firebase
-cat firebase-node.tmp.js |
+browserify firebase-node.js -o firebase.tmp.js -s firebase
+cat firebase.tmp.js |
 	sed 's|https://apis.google.com||g' |
 	sed 's|iframe||gi' |
 	perl -pe "s/[A-Za-z0-9]+\([\"']\/js\/.*?.js.*?\)/null/g" \
-> firebase-node.js
-cp -f firebase-node.js firebase-browser.js
-rm -rf node_modules firebase-node.tmp.js
-cd ..
-
-cd webrtc-adapter
-cp -f ../../module_locks/webrtc-adapter/* ./
-mkdir node_modules
-yarn install
-webpack src/js/adapter_core.js adapter.js
-uglifyjs adapter.js -o adapter.js
-rm -rf node_modules out src
+> firebase.js
+rm -rf firebase.tmp.js node_modules
 cd ..
 
 cd ../..

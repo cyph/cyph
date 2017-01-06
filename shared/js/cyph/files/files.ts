@@ -1,5 +1,4 @@
 import {ChangeDetectorRef} from '@angular/core';
-import * as firebase from 'firebase';
 import {analytics} from '../analytics';
 import {config} from '../config';
 import {Potassium} from '../crypto/potassium';

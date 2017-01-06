@@ -1,5 +1,3 @@
-import {sodium} from 'libsodium';
-import {superSphincs} from 'supersphincs';
 import {potassiumUtil} from './potassium-util';
 
 

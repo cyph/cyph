@@ -94,9 +94,7 @@ export class Thread implements IThread {
 
 				return {
 					getRandomValues: (array: ArrayBufferView) => {
-						const sodium	= (<any> self).sodium;
-
-						if (sodium && sodium.crypto_stream_chacha20) {
+						if (typeof sodium !== 'undefined' && sodium.crypto_stream_chacha20) {
 							isActive	= true;
 						}
 						else if (!isActive) {
@@ -128,9 +126,14 @@ export class Thread implements IThread {
 		(<any> self).crypto	= crypto;
 
 		importScripts('/lib/js/node_modules/libsodium/dist/browsers-sumo/combined/sodium.js');
-		(<any> self).sodium.memzero(threadSetupVars.seed);
+		sodium.memzero(threadSetupVars.seed);
 
+		importScripts('/lib/js/node_modules/mceliece/dist/mceliece.js');
+		importScripts('/lib/js/node_modules/ntru/dist/ntru.js');
+		importScripts('/lib/js/node_modules/rlwe/dist/rlwe.js');
+		importScripts('/lib/js/node_modules/supersphincs/dist/supersphincs.js');
 		importScripts('/lib/js/node_modules/whatwg-fetch/fetch.js');
+		importScripts('/lib/js/node_modules/firebase/firebase.js');
 
 		threadSetupVars	= undefined;
 	}

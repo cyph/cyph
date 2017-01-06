@@ -1,6 +1,3 @@
-import {sodium} from 'libsodium';
-import {mceliece} from 'mceliece-js';
-import {ntru} from 'ntru';
 import {IKeyPair} from '../ikey-pair';
 import * as NativeCrypto from './native-crypto';
 import {OneTimeAuth} from './one-time-auth';

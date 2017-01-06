@@ -1,4 +1,3 @@
-import * as firebase from 'firebase';
 import {firebaseApp} from '../firebase-app';
 import {util} from '../util';
 

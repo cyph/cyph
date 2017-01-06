@@ -1,5 +1,3 @@
-import {sodium} from 'libsodium';
-import {rlwe} from 'rlwe';
 import {IKeyPair} from '../ikey-pair';
 import {Hash} from './hash';
 import {potassiumUtil} from './potassium-util';

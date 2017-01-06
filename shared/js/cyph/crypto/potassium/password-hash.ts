@@ -1,4 +1,3 @@
-import {sodium} from 'libsodium';
 import * as NativeCrypto from './native-crypto';
 import {potassiumUtil} from './potassium-util';
 import {SecretBox} from './secret-box';
