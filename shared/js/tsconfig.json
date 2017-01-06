@@ -1,22 +1,11 @@
 {
 	"compileOnSave": true,
 	"compilerOptions": {
+		/* Pending TS 2.1: "alwaysStrict": true, */
 		"emitDecoratorMetadata": true,
 		"experimentalDecorators": true,
 		"forceConsistentCasingInFileNames": true,
-
-		/*
-		Pending TS 2.1:
-
-		"alwaysStrict": true,
-		"lib": [
-			"dom",
-			"dom.iterable",
-			"es2015",
-			"scripthost"
-		],
-		*/
-
+		/* Pending TS 2.1: "lib": ["dom", "dom.iterable", "es2015", "scripthost"], */
 		"module": "es2015",
 		"moduleResolution": "node",
 		"newLine": "LF",
