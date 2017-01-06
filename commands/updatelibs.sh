@@ -102,13 +102,12 @@ yarn add --ignore-platform \
 
 cp yarn.lock package.json ~/lib/js/
 
-mkdir ~/lib/js/module_locks
 for f in firebase webrtc-adapter ; do
-	mkdir "~/lib/js/module_locks/${f}"
-	cd "node_modules/${f}"
+	mkdir -p ~/lib/js/module_locks/${f}
+	cd node_modules/${f}
 	mkdir node_modules
 	yarn install
-	cp yarn.lock package.json "~/lib/js/module_locks/${f}/"
+	cp yarn.lock package.json ~/lib/js/module_locks/${f}/
 	cd ../..
 done
 

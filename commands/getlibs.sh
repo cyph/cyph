@@ -128,7 +128,7 @@ echo "module.exports = Konami;" >> konami-code.js/konami.js
 echo "module.exports = tabIndent;" >> tab-indent/tabIndent.js
 echo "module.exports = this.WOW;" >> wowjs/dist/wow.js
 
-sed -i "s|require('./socketioconnection')|null|g" simplewebrtc.js
+sed -i "s|require('./socketioconnection')|null|g" simplewebrtc/simplewebrtc.js
 
 cd firebase
 cp -f ../../module_locks/firebase/* ./
