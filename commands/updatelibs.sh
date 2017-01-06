@@ -44,6 +44,7 @@ yarn add --ignore-platform \
 	@angular/upgrade \
 	@types/angular \
 	@types/angular-material \
+	@types/braintree-web \
 	@types/clipboard-js \
 	@types/dompurify \
 	@types/file-saver \
@@ -102,7 +103,7 @@ yarn add --ignore-platform \
 cp yarn.lock package.json ~/lib/js/
 
 mkdir ~/lib/js/module_locks
-for f in firebase simplewebrtc webrtc-adapter ; do
+for f in firebase webrtc-adapter ; do
 	mkdir "~/lib/js/module_locks/${f}"
 	cd "node_modules/${f}"
 	mkdir node_modules
@@ -149,6 +150,14 @@ cat > wrapper/symbols/crypto_stream_chacha20.json << EOM
 	"return": "_format_output(out, outputFormat)"
 }
 EOM
+node -e "
+	const package	= JSON.parse(fs.readFileSync('package.json').toString());
+
+	package.main	= 'dist/modules-sumo/libsodium-wrappers.js';
+	package.files	= [package.main];
+
+	fs.writeFileSync('package.json', JSON.stringify(package));
+"
 cat Makefile |
 	perl -pe 's/^(\s+).*--browser-tests.*/\1\@echo/g' |
 	perl -pe 's/^(\s+).*BROWSERS_TEST_DIR.*/\1\@echo/g' |
@@ -233,5 +242,5 @@ for d in $(ls ~/golibs) ; do
 	cp -a ~/golibs/${d} default/
 done
 
-commands/getlibs.sh
-commands/commit.sh updatelibs
+./commands/getlibs.sh
+./commands/commit.sh updatelibs

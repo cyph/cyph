@@ -1,4 +1,3 @@
-import {lib} from '../lib';
 import {importHelper} from './import-helper';
 
 
@@ -27,7 +26,7 @@ export class OneTimeAuth {
 		key: Uint8Array
 	) : Promise<Uint8Array> {
 		return new Uint8Array(
-			await lib.subtleCrypto.sign(
+			await crypto.subtle.sign(
 				this.algorithm,
 				await importHelper.importRawKey(
 					key,
@@ -45,7 +44,7 @@ export class OneTimeAuth {
 		message: Uint8Array,
 		key: Uint8Array
 	) : Promise<boolean> {
-		return lib.subtleCrypto.verify(
+		return crypto.subtle.verify(
 			this.algorithm,
 			await importHelper.importRawKey(
 				key,

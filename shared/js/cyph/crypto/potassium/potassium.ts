@@ -4,9 +4,9 @@ import {Hash} from './hash';
 import * as NativeCrypto from './native-crypto';
 import {OneTimeAuth} from './one-time-auth';
 import {PasswordHash} from './password-hash';
+import {PotassiumUtil, potassiumUtil} from './potassium-util';
 import {SecretBox} from './secret-box';
 import {Sign} from './sign';
-import {Util, util} from './util';
 
 
 /**
@@ -14,14 +14,14 @@ import {Util, util} from './util';
  * Outside of this class, libsodium and other cryptographic implementations
  * should generally not be called directly.
  */
-export class Potassium extends Util {
+export class Potassium extends PotassiumUtil {
 	/** Indicates whether native crypto API is supported in this environment. */
 	public static async isNativeCryptoSupported () : Promise<boolean> {
 		try {
 			await NativeCrypto.secretBox.seal(
-				util.randomBytes(1),
-				util.randomBytes(NativeCrypto.secretBox.nonceBytes),
-				util.randomBytes(NativeCrypto.secretBox.keyBytes)
+				potassiumUtil.randomBytes(1),
+				potassiumUtil.randomBytes(NativeCrypto.secretBox.nonceBytes),
+				potassiumUtil.randomBytes(NativeCrypto.secretBox.keyBytes)
 			);
 			return true;
 		}
@@ -58,10 +58,10 @@ export class Potassium extends Util {
 			throw new Error('Nonce size too small.');
 		}
 
-		return util.concatMemory(
+		return potassiumUtil.concatMemory(
 			true,
 			new Uint32Array([this.counter++]),
-			util.randomBytes(size - 4)
+			potassiumUtil.randomBytes(size - 4)
 		);
 	}
 

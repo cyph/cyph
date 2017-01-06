@@ -1,4 +1,5 @@
 import {Component, ElementRef, Input, OnInit} from '@angular/core';
+import * as braintree from 'braintree-web';
 import {ConfigService} from '../services/config.service';
 import {EnvService} from '../services/env.service';
 import {util} from '../util';
@@ -46,7 +47,8 @@ export class CheckoutComponent implements OnInit {
 
 		checkoutUI.empty();
 
-		(<any> self).braintree.setup(token, 'dropin', {
+		/* Temporarily <any> pending an upgrade to the Braintree v3 SDK */
+		(<any> braintree).setup(token, 'dropin', {
 			container: checkoutUI[0],
 			enableCORS: true,
 			onPaymentMethodReceived: async (data: any) => {

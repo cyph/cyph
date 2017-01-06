@@ -1,4 +1,4 @@
-import {lib} from './lib';
+import {sodium} from 'libsodium';
 import * as NativeCrypto from './native-crypto';
 
 
@@ -8,14 +8,14 @@ export class OneTimeAuth {
 	public readonly bytes: number		=
 		this.isNative ?
 			NativeCrypto.oneTimeAuth.bytes :
-			lib.sodium.crypto_onetimeauth_BYTES
+			sodium.crypto_onetimeauth_BYTES
 	;
 
 	/** Key length. */
 	public readonly keyBytes: number	=
 		this.isNative ?
 			NativeCrypto.oneTimeAuth.keyBytes :
-			lib.sodium.crypto_onetimeauth_KEYBYTES
+			sodium.crypto_onetimeauth_KEYBYTES
 	;
 
 	/** Signs message. */
@@ -28,7 +28,7 @@ export class OneTimeAuth {
 				message,
 				key
 			) :
-			lib.sodium.crypto_onetimeauth(
+			sodium.crypto_onetimeauth(
 				message,
 				key
 			)
@@ -47,7 +47,7 @@ export class OneTimeAuth {
 				message,
 				key
 			) :
-			lib.sodium.crypto_onetimeauth_verify(
+			sodium.crypto_onetimeauth_verify(
 				mac,
 				message,
 				key

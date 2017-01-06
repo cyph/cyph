@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {potassium} from '../cyph/crypto/potassium';
+import {potassiumUtil} from '../cyph/crypto/potassium/potassium-util';
 import {eventManager} from '../cyph/event-manager';
 import {ISessionService} from '../cyph/service-interfaces/isession-service';
 import {EnvService} from '../cyph/services/env.service';
@@ -112,8 +112,8 @@ export class LocalSessionService implements ISessionService {
 	/** @inheritDoc */
 	public send (...messages: IMessage[]) : void {
 		for (const message of messages) {
-			const cyphertext	= potassium.toBase64(
-				potassium.randomBytes(
+			const cyphertext	= potassiumUtil.toBase64(
+				potassiumUtil.randomBytes(
 					util.random(1024, 100)
 				)
 			);

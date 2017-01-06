@@ -1,3 +1,4 @@
+import * as SimpleWebRTC from 'simplewebrtc';
 import {analytics} from '../analytics';
 import {env} from '../env';
 import {eventManager} from '../event-manager';
@@ -28,7 +29,7 @@ export class P2P implements IP2P {
 	/** Indicates whether WebRTC is supported in the current environment. */
 	public static readonly isSupported: boolean	= (() => {
 		try {
-			return new (<any> self).SimpleWebRTC({
+			return new SimpleWebRTC({
 				connection: {on: () => {}}
 			}).capabilities.support;
 		}
@@ -230,7 +231,7 @@ export class P2P implements IP2P {
 		const $localVideo	= await util.waitForIterable<JQuery>(this.localVideo);
 		const $remoteVideo	= await util.waitForIterable<JQuery>(this.remoteVideo);
 
-		const webRTC	= new (<any> self).SimpleWebRTC({
+		const webRTC	= new SimpleWebRTC({
 			adjustPeerVolume: true,
 			autoRemoveVideos: false,
 			autoRequestMedia: false,

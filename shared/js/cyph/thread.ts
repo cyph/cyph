@@ -76,7 +76,7 @@ export class Thread implements IThread {
 		}
 
 		if (typeof atob === 'undefined' || typeof btoa === 'undefined') {
-			importScripts('/lib/js/davidchambers/base64.js/base64.min.js');
+			importScripts('/lib/js/node_modules/Base64/base64.js');
 		}
 
 		try {
@@ -127,16 +127,10 @@ export class Thread implements IThread {
 
 		(<any> self).crypto	= crypto;
 
-		importScripts('/lib/js/crypto/libsodium/dist/browsers-sumo/combined/sodium.min.js');
+		importScripts('/lib/js/node_modules/libsodium/dist/browsers-sumo/combined/sodium.js');
 		(<any> self).sodium.memzero(threadSetupVars.seed);
 
-		importScripts('/lib/js/crypto/mceliece/dist/mceliece.js');
-		importScripts('/lib/js/crypto/ntru/dist/ntru.js');
-		importScripts('/lib/js/crypto/rlwe/dist/rlwe.js');
-		importScripts('/lib/js/crypto/supersphincs/dist/supersphincs.js');
-
-		importScripts('/lib/js/fetch/fetch.min.js');
-		importScripts('/lib/js/firebase/firebase.js');
+		importScripts('/lib/js/node_modules/whatwg-fetch/fetch.js');
 
 		threadSetupVars	= undefined;
 	}

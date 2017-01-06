@@ -1,6 +1,5 @@
 import {IKeyPair} from '../../ikey-pair';
-import {lib} from '../lib';
-import {util} from '../util';
+import {potassiumUtil} from '../potassium-util';
 import {importHelper} from './import-helper';
 import {oneTimeAuth} from './one-time-auth';
 import {secretBox} from './secret-box';
@@ -33,7 +32,7 @@ export class Box {
 
 	/** Generates key pair. */
 	public async keyPair () : Promise<IKeyPair> {
-		const keyPair: CryptoKeyPair	= await lib.subtleCrypto.generateKey(
+		const keyPair: CryptoKeyPair	= await crypto.subtle.generateKey(
 			this.algorithm,
 			true,
 			['encrypt', 'decrypt']
@@ -65,7 +64,7 @@ export class Box {
 		nonce: Uint8Array,
 		publicKey: Uint8Array
 	) : Promise<Uint8Array> {
-		const asymmetricPlaintext: Uint8Array	= util.randomBytes(
+		const asymmetricPlaintext: Uint8Array	= potassiumUtil.randomBytes(
 			secretBox.keyBytes + oneTimeAuth.keyBytes
 		);
 
@@ -82,7 +81,7 @@ export class Box {
 		);
 
 		const asymmetricCyphertext: Uint8Array	= new Uint8Array(
-			await lib.subtleCrypto.encrypt(
+			await crypto.subtle.encrypt(
 				this.algorithm.name,
 				await importHelper.importJWK(
 					publicKey,
@@ -103,9 +102,9 @@ export class Box {
 			macKey
 		);
 
-		util.clearMemory(asymmetricPlaintext);
+		potassiumUtil.clearMemory(asymmetricPlaintext);
 
-		return util.concatMemory(
+		return potassiumUtil.concatMemory(
 			true,
 			asymmetricCyphertext,
 			mac,
@@ -126,7 +125,7 @@ export class Box {
 		);
 
 		const asymmetricPlaintext: Uint8Array	= new Uint8Array(
-			await lib.subtleCrypto.decrypt(
+			await crypto.subtle.decrypt(
 				this.algorithm.name,
 				await importHelper.importJWK(
 					keyPair.privateKey,
@@ -175,13 +174,13 @@ export class Box {
 			macKey
 		);
 
-		util.clearMemory(asymmetricPlaintext);
+		potassiumUtil.clearMemory(asymmetricPlaintext);
 
 		if (isValid) {
 			return plaintext;
 		}
 		else {
-			util.clearMemory(plaintext);
+			potassiumUtil.clearMemory(plaintext);
 			throw new Error('Invalid RSA cyphertext.');
 		}
 	}

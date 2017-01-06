@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import * as Konami from 'konami-code.js';
 import {EnvService} from '../cyph/services/env.service';
 import {UrlStateService} from '../cyph/services/url-state.service';
 import {util} from '../cyph/util';
@@ -163,7 +164,7 @@ export class DemoService {
 
 		/* Cyphertext easter egg */
 		/* tslint:disable-next-line:no-unused-new */
-		new (<any> self).Konami(async () => {
+		new Konami(async () => {
 			urlStateService.setUrl(HomeSections[HomeSections.intro]);
 
 			while (!this.isActive) {

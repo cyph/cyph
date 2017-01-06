@@ -1,21 +1,22 @@
+import {sodium} from 'libsodium';
+import {rlwe} from 'rlwe';
 import {IKeyPair} from '../ikey-pair';
 import {Hash} from './hash';
-import {lib} from './lib';
-import {util} from './util';
+import {potassiumUtil} from './potassium-util';
 
 
 /** Equivalent to sodium.crypto_scalarmult. */
 export class EphemeralKeyExchange {
 	/** Private key length. */
 	public readonly privateKeyBytes: number	=
-		lib.rlwe.privateKeyLength +
-		lib.sodium.crypto_scalarmult_SCALARBYTES
+		rlwe.privateKeyBytes +
+		sodium.crypto_scalarmult_SCALARBYTES
 	;
 
 	/** Public key length. */
 	public readonly publicKeyBytes: number	=
-		lib.rlwe.publicKeyLength +
-		lib.sodium.crypto_scalarmult_BYTES
+		rlwe.publicKeyBytes +
+		sodium.crypto_scalarmult_BYTES
 	;
 
 	/** Shared secret length. */
@@ -23,24 +24,24 @@ export class EphemeralKeyExchange {
 
 	/** Generates Alice's key pair. */
 	public async aliceKeyPair () : Promise<IKeyPair> {
-		const rlweKeyPair: IKeyPair	= lib.rlwe.aliceKeyPair();
+		const rlweKeyPair: IKeyPair	= rlwe.aliceKeyPair();
 
-		const sodiumPrivateKey: Uint8Array	= util.randomBytes(
-			lib.sodium.crypto_scalarmult_SCALARBYTES
+		const sodiumPrivateKey: Uint8Array	= potassiumUtil.randomBytes(
+			sodium.crypto_scalarmult_SCALARBYTES
 		);
 
 		const sodiumPublicKey: Uint8Array	=
-			lib.sodium.crypto_scalarmult_base(sodiumPrivateKey)
+			sodium.crypto_scalarmult_base(sodiumPrivateKey)
 		;
 
 		return {
 			keyType: 'potassium-ephemeral',
-			privateKey: util.concatMemory(
+			privateKey: potassiumUtil.concatMemory(
 				true,
 				rlweKeyPair.privateKey,
 				sodiumPrivateKey
 			),
-			publicKey: util.concatMemory(
+			publicKey: potassiumUtil.concatMemory(
 				true,
 				rlweKeyPair.publicKey,
 				sodiumPublicKey
@@ -56,37 +57,37 @@ export class EphemeralKeyExchange {
 		const rlwePublicKey		= new Uint8Array(
 			publicKey.buffer,
 			publicKey.byteOffset,
-			lib.rlwe.publicKeyLength
+			rlwe.publicKeyBytes
 		);
 		const sodiumPublicKey	= new Uint8Array(
 			publicKey.buffer,
-			publicKey.byteOffset + lib.rlwe.publicKeyLength,
-			lib.sodium.crypto_scalarmult_BYTES
+			publicKey.byteOffset + rlwe.publicKeyBytes,
+			sodium.crypto_scalarmult_BYTES
 		);
 
 		const rlwePrivateKey	= new Uint8Array(
 			privateKey.buffer,
 			privateKey.byteOffset,
-			lib.rlwe.privateKeyLength
+			rlwe.privateKeyBytes
 		);
 		const sodiumPrivateKey	= new Uint8Array(
 			privateKey.buffer,
-			privateKey.byteOffset + lib.rlwe.privateKeyLength,
-			lib.sodium.crypto_scalarmult_SCALARBYTES
+			privateKey.byteOffset + rlwe.privateKeyBytes,
+			sodium.crypto_scalarmult_SCALARBYTES
 		);
 
-		const rlweSecret: Uint8Array	= lib.rlwe.aliceSecret(
+		const rlweSecret: Uint8Array	= rlwe.aliceSecret(
 			rlwePublicKey,
 			rlwePrivateKey
 		);
 
-		const sodiumSecret: Uint8Array	= lib.sodium.crypto_scalarmult(
+		const sodiumSecret: Uint8Array	= sodium.crypto_scalarmult(
 			sodiumPrivateKey,
 			sodiumPublicKey
 		);
 
 		return this.hash.deriveKey(
-			util.concatMemory(
+			potassiumUtil.concatMemory(
 				true,
 				rlweSecret,
 				sodiumSecret
@@ -104,40 +105,40 @@ export class EphemeralKeyExchange {
 		const aliceRlwePublicKey	= new Uint8Array(
 			alicePublicKey.buffer,
 			alicePublicKey.byteOffset,
-			lib.rlwe.publicKeyLength
+			rlwe.publicKeyBytes
 		);
 		const aliceSodiumPublicKey	= new Uint8Array(
 			alicePublicKey.buffer,
-			alicePublicKey.byteOffset + lib.rlwe.publicKeyLength,
-			lib.sodium.crypto_scalarmult_BYTES
+			alicePublicKey.byteOffset + rlwe.publicKeyBytes,
+			sodium.crypto_scalarmult_BYTES
 		);
 
 		const rlweSecretData: {
 			publicKey: Uint8Array;
 			secret: Uint8Array;
-		}	= lib.rlwe.bobSecret(aliceRlwePublicKey);
+		}	= rlwe.bobSecret(aliceRlwePublicKey);
 
-		const sodiumPrivateKey: Uint8Array	= util.randomBytes(
-			lib.sodium.crypto_scalarmult_SCALARBYTES
+		const sodiumPrivateKey: Uint8Array	= potassiumUtil.randomBytes(
+			sodium.crypto_scalarmult_SCALARBYTES
 		);
 		const sodiumPublicKey: Uint8Array	=
-			lib.sodium.crypto_scalarmult_base(sodiumPrivateKey)
+			sodium.crypto_scalarmult_base(sodiumPrivateKey)
 		;
-		const sodiumSecret: Uint8Array		= lib.sodium.crypto_scalarmult(
+		const sodiumSecret: Uint8Array		= sodium.crypto_scalarmult(
 			sodiumPrivateKey,
 			aliceSodiumPublicKey
 		);
 
-		util.clearMemory(sodiumPrivateKey);
+		potassiumUtil.clearMemory(sodiumPrivateKey);
 
 		return {
-			publicKey: util.concatMemory(
+			publicKey: potassiumUtil.concatMemory(
 				true,
 				rlweSecretData.publicKey,
 				sodiumPublicKey
 			),
 			secret: await this.hash.deriveKey(
-				util.concatMemory(
+				potassiumUtil.concatMemory(
 					true,
 					rlweSecretData.secret,
 					sodiumSecret

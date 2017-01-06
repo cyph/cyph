@@ -2,7 +2,8 @@ import {ChangeDetectorRef} from '@angular/core';
 import * as firebase from 'firebase';
 import {analytics} from '../analytics';
 import {config} from '../config';
-import {Potassium, potassium} from '../crypto/potassium';
+import {Potassium} from '../crypto/potassium';
+import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {EventManager, eventManager} from '../event-manager';
 import {firebaseApp} from '../firebase-app';
 import {events, rpcEvents} from '../session/enums';
@@ -198,7 +199,7 @@ export class Files {
 			;
 		}
 		catch (_) {
-			return potassium.fromString('File decryption failed.');
+			return potassiumUtil.fromString('File decryption failed.');
 		}
 	}
 
@@ -209,7 +210,7 @@ export class Files {
 	}> {
 		try {
 			if (this.nativePotassium) {
-				const key: Uint8Array	= potassium.randomBytes(
+				const key: Uint8Array	= potassiumUtil.randomBytes(
 					this.nativePotassium.secretBox.keyBytes
 				);
 
@@ -286,7 +287,7 @@ export class Files {
 
 					transfer.percentComplete	= 100;
 					this.triggerChangeDetection();
-					potassium.clearMemory(transfer.key);
+					potassiumUtil.clearMemory(transfer.key);
 					this.triggerUIEvent(UIEvents.save, transfer, plaintext);
 					await util.sleep(1000);
 					this.transfers.delete(transfer);
@@ -343,7 +344,7 @@ export class Files {
 			return;
 		}
 
-		let uploadTask: firebase.UploadTask;
+		let uploadTask: firebase.storage.UploadTask;
 
 		const transfer: Transfer	= new Transfer(
 			name,
@@ -405,7 +406,7 @@ export class Files {
 
 			complete	= await new Promise<boolean>(resolve => uploadTask.on(
 				'state_changed',
-				(snapshot: firebase.UploadTaskSnapshot) => {
+				(snapshot: firebase.storage.UploadTaskSnapshot) => {
 					transfer.percentComplete	=
 						snapshot.bytesTransferred /
 						snapshot.totalBytes *
@@ -415,7 +416,7 @@ export class Files {
 				},
 				() => { resolve(transfer.answer === false); },
 				() => {
-					transfer.url	= uploadTask.snapshot.downloadURL;
+					transfer.url	= uploadTask.snapshot.downloadURL || '';
 
 					this.session.send(new Message(
 						rpcEvents.files,

@@ -75,6 +75,8 @@ if [ "${simple}" ] ; then
 	version="simple-${version}"
 fi
 
+./commands/getlibs.sh
+
 
 mkdir ~/.build
 cp -rf * ~/.build/

@@ -1,5 +1,4 @@
-import {lib} from '../lib';
-import {util} from '../util';
+import {potassiumUtil} from '../potassium-util';
 import {importHelper} from './import-helper';
 import {secretBox} from './secret-box';
 
@@ -35,7 +34,7 @@ export class PasswordHash {
 	/** Hashes plaintext. */
 	public async hash (
 		plaintext: Uint8Array,
-		salt: Uint8Array = util.randomBytes(
+		salt: Uint8Array = potassiumUtil.randomBytes(
 			this.saltBytes
 		),
 		outputBytes: number = secretBox.keyBytes,
@@ -43,7 +42,7 @@ export class PasswordHash {
 		_MEM_LIMIT: number = this.memLimitInteractive
 	) : Promise<Uint8Array> {
 		return new Uint8Array(
-			await lib.subtleCrypto.deriveBits(
+			await crypto.subtle.deriveBits(
 				{
 					salt,
 					hash: this.algorithm.hash,

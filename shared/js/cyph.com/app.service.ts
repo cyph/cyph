@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Title} from '@angular/platform-browser';
+import * as WOW from 'wowjs';
 import {Email} from '../cyph/email';
 import {eventManager} from '../cyph/event-manager';
 import {ConfigService} from '../cyph/services/config.service';
@@ -269,7 +270,7 @@ export class AppService {
 		private readonly urlStateService: UrlStateService
 	) {
 		if (!this.envService.isMobile) {
-			new (<any> self).WOW({live: true}).init();
+			new WOW({live: true}).init();
 		}
 
 		(async () => {

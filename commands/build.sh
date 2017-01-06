@@ -36,6 +36,8 @@ if [ "${cloneworkingdir}" -o "${test}" -o "${watch}" -o "${outputDir}" == "${roo
 	outputDir="${rootDir}/shared"
 fi
 
+./commands/getlibs.sh
+
 if [ "${cloneworkingdir}" ] ; then
 	mkdir ~/.build
 	cp -rf * ~/.build/
@@ -196,19 +198,6 @@ compile () {
 					tr '\n' ' '
 			)'.trim().split(/\s+/)))"
 		)"
-
-		typesRegex="s/^import.*from\s+[\\\"']($(echo -n "$({
-			ls ../lib/js/@types;
-			grep -P 'declare\s+module' ../lib/js/@types/*/index.d.ts |
-				perl -pe "s/.*declare\s+module\s+(.*?)\s+.*/\1/g" |
-				sed "s/[\"']//g" \
-			;
-		} | sort | uniq)" | tr '\n' '|'))[\\\"'];$//g"
-
-		find . -name '*.js' -exec bash -c "
-			cat {} | perl -pe \"${typesRegex}\" > {}.new;
-			mv {}.new {};
-		" \;
 
 		for f in $tsfiles ; do
 			m="$(modulename "${f}")"

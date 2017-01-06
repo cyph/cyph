@@ -1,7 +1,7 @@
-import {lib} from './lib';
+import {sodium} from 'libsodium';
 import * as NativeCrypto from './native-crypto';
+import {potassiumUtil} from './potassium-util';
 import {SecretBox} from './secret-box';
-import {util} from './util';
 
 
 /** Equivalent to sodium.crypto_pwhash. */
@@ -31,7 +31,7 @@ export class PasswordHash {
 					opsLimit,
 					memLimit
 				) :
-				lib.sodium.crypto_pwhash_scryptsalsa208sha256(
+				sodium.crypto_pwhash_scryptsalsa208sha256(
 					outputBytes,
 					plaintext,
 					salt,
@@ -54,7 +54,7 @@ export class PasswordHash {
 	public readonly memLimitInteractive: number	=
 		this.isNative ?
 			NativeCrypto.passwordHash.memLimitInteractive :
-			lib.sodium.crypto_pwhash_scryptsalsa208sha256_MEMLIMIT_INTERACTIVE
+			sodium.crypto_pwhash_scryptsalsa208sha256_MEMLIMIT_INTERACTIVE
 	;
 
 	/** Heavy mem limit. */
@@ -68,27 +68,27 @@ export class PasswordHash {
 	public readonly opsLimitInteractive: number	=
 		this.isNative ?
 			NativeCrypto.passwordHash.opsLimitInteractive :
-			lib.sodium.crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_INTERACTIVE
+			sodium.crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_INTERACTIVE
 	;
 
 	/** Heavy ops limit. */
 	public readonly opsLimitSensitive: number	=
 		this.isNative ?
 			NativeCrypto.passwordHash.opsLimitSensitive :
-			lib.sodium.crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_SENSITIVE
+			sodium.crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_SENSITIVE
 	;
 
 	/** Salt length. */
 	public readonly saltBytes: number			=
 		this.isNative ?
 			NativeCrypto.passwordHash.saltBytes :
-			lib.sodium.crypto_pwhash_scryptsalsa208sha256_SALTBYTES
+			sodium.crypto_pwhash_scryptsalsa208sha256_SALTBYTES
 	;
 
 	/** Hashes plaintext. */
 	public async hash (
 		plaintext: Uint8Array|string,
-		salt: Uint8Array = util.randomBytes(
+		salt: Uint8Array = potassiumUtil.randomBytes(
 			this.saltBytes
 		),
 		outputBytes: number = this.secretBox.keyBytes,
@@ -105,14 +105,14 @@ export class PasswordHash {
 			salt: Uint8Array;
 		};
 	}> {
-		const plaintextBinary: Uint8Array	= util.fromString(plaintext);
+		const plaintextBinary: Uint8Array	= potassiumUtil.fromString(plaintext);
 
 		try {
-			const algorithm: Uint8Array	= util.fromString(
+			const algorithm: Uint8Array	= potassiumUtil.fromString(
 				this.algorithm
 			);
 
-			const metadata: Uint8Array	= util.concatMemory(
+			const metadata: Uint8Array	= potassiumUtil.concatMemory(
 				false,
 				new Uint8Array(new Uint32Array([memLimit]).buffer),
 				new Uint8Array(new Uint32Array([opsLimit]).buffer),
@@ -140,11 +140,11 @@ export class PasswordHash {
 		}
 		finally {
 			if (clearInput) {
-				util.clearMemory(plaintextBinary);
-				util.clearMemory(salt);
+				potassiumUtil.clearMemory(plaintextBinary);
+				potassiumUtil.clearMemory(salt);
 			}
 			else if (typeof plaintext === 'string') {
-				util.clearMemory(plaintextBinary);
+				potassiumUtil.clearMemory(plaintextBinary);
 			}
 		}
 	}
@@ -162,14 +162,14 @@ export class PasswordHash {
 			const saltBytes: number	= new Uint32Array(metadata.buffer, 2, 1)[0];
 
 			return {
-				algorithm: util.toString(new Uint8Array(metadata.buffer, 12 + saltBytes)),
+				algorithm: potassiumUtil.toString(new Uint8Array(metadata.buffer, 12 + saltBytes)),
 				memLimit: new Uint32Array(metadata.buffer, 0, 1)[0],
 				opsLimit: new Uint32Array(metadata.buffer, 1, 1)[0],
 				salt: new Uint8Array(new Uint8Array(metadata.buffer, 12, saltBytes))
 			};
 		}
 		finally {
-			util.clearMemory(metadata);
+			potassiumUtil.clearMemory(metadata);
 		}
 	}
 

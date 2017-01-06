@@ -1,4 +1,3 @@
-import {lib} from '../lib';
 import {importHelper} from './import-helper';
 
 
@@ -26,7 +25,7 @@ export class SecretBox {
 		)
 	) : Promise<Uint8Array> {
 		return new Uint8Array(
-			await lib.subtleCrypto.encrypt(
+			await crypto.subtle.encrypt(
 				{
 					additionalData,
 					iv: nonce,
@@ -52,7 +51,7 @@ export class SecretBox {
 		)
 	) : Promise<Uint8Array> {
 		return new Uint8Array(
-			await lib.subtleCrypto.decrypt(
+			await crypto.subtle.decrypt(
 				{
 					additionalData,
 					iv: nonce,

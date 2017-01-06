@@ -3,6 +3,8 @@
 cd $(cd "$(dirname "$0")"; pwd)/..
 
 
+./commands/getlibs.sh
+
 tsc shared/tslint-rules/*.ts || exit 1
 
 output="$(
