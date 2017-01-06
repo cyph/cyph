@@ -14,6 +14,7 @@ cp -a js .js.tmp
 cd .js.tmp
 
 git init
+mkdir node_modules
 yarn install --ignore-platform || exit 1
 
 cd node_modules
