@@ -90,6 +90,7 @@ yarn add --ignore-platform \
 	tns-ios \
 	rxjs \
 	sodiumutil \
+	typescript@2.0.10 \
 	unsemantic \
 	webrtc-adapter \
 	whatwg-fetch \
