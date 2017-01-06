@@ -3,7 +3,7 @@
 cd $(cd "$(dirname "$0")"; pwd)/..
 cd shared/lib/js
 
-if yarn check > /dev/null 2>&1 ; then
+if diff yarn.lock node_modules/yarn.lock > /dev/null 2>&1 ; then
 	exit 0
 fi
 
@@ -157,3 +157,4 @@ cd ../..
 
 mv .js.tmp/node_modules js/
 rm -rf .js.tmp
+cp js/yarn.lock js/node_modules/
