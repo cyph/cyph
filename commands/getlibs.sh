@@ -113,10 +113,6 @@ done
 
 echo 'declare module "braintree-web" { export = braintree; }' >> @types/braintree-web/index.d.ts
 
-mv angular/angular.min.js angular/angular.js
-mv angular-animate/angular-animate.min.js angular-animate/angular-animate.js
-mv angular-aria/angular-aria.min.js angular-aria/angular-aria.js
-mv angular-material/angular-material.min.js angular-material/angular-material.js
 mv jquery/dist/jquery.min.js jquery/dist/jquery.js
 mv magnific-popup/dist/jquery.magnific-popup.min.js magnific-popup/dist/jquery.magnific-popup.js
 mv angular-material/angular-material.min.css angular-material/angular-material.css
@@ -133,10 +129,15 @@ for module in mceliece-js ntru rlwe sidh sphincs supersphincs ; do
 done
 
 echo "module.exports = Konami;" >> konami-code.js/konami.js
-echo "module.exports = tabIndent;" >> tab-indent/tabIndent.js
+echo "module.exports = tabIndent;" >> tab-indent/js/tabIndent.js
 echo "module.exports = this.WOW;" >> wowjs/dist/wow.js
 
+sed -i 's/saveAs\s*||/self.saveAs||/g' file-saver/*.js
+
 sed -i "s|require('./socketioconnection')|null|g" simplewebrtc/simplewebrtc.js
+
+cat wowjs/dist/wow.js | perl -pe 's/this\.([A-Z][a-z])/self.\1/g' > wowjs/dist/wow.js.new
+mv wowjs/dist/wow.js.new wowjs/dist/wow.js
 
 cd firebase
 cp -f ../../module_locks/firebase/* ./
@@ -148,6 +149,8 @@ cat firebase.tmp.js |
 	sed 's|iframe||gi' |
 	perl -pe "s/[A-Za-z0-9]+\([\"']\/js\/.*?.js.*?\)/null/g" \
 > firebase.js
+cp -f firebase.js firebase-browser.js
+cp -f firebase.js firebase-node.js
 rm -rf firebase.tmp.js node_modules
 cd ..
 

@@ -52,19 +52,6 @@ export class Potassium extends PotassiumUtil {
 	/** @see Sign */
 	public readonly sign: Sign;
 
-	/** @ignore */
-	private newNonce (size: number) : Uint8Array {
-		if (size < 4) {
-			throw new Error('Nonce size too small.');
-		}
-
-		return potassiumUtil.concatMemory(
-			true,
-			new Uint32Array([this.counter++]),
-			potassiumUtil.randomBytes(size - 4)
-		);
-	}
-
 	/** Indicates whether this Potassium instance is using native crypto. */
 	public native () : boolean {
 		return this.isNative;
@@ -83,23 +70,13 @@ export class Potassium extends PotassiumUtil {
 	) {
 		super();
 
-		const newNonce	= (size: number) => this.newNonce(size);
-
 		this.hash					= new Hash(this.isNative);
 		this.oneTimeAuth			= new OneTimeAuth(this.isNative);
-		this.secretBox				= new SecretBox(this.isNative, newNonce);
+		this.secretBox				= new SecretBox(this.isNative, this.counter);
 		this.sign					= new Sign();
 
-		this.box					= new Box(
-			this.isNative,
-			newNonce,
-			this.oneTimeAuth,
-			this.secretBox
-		);
+		this.box					= new Box(this.isNative, this.oneTimeAuth, this.secretBox);
 		this.ephemeralKeyExchange	= new EphemeralKeyExchange(this.hash);
 		this.passwordHash			= new PasswordHash(this.isNative, this.secretBox);
 	}
 }
-
-/** Potassium instance with default parameters (non-native, counter 0). */
-export const potassium	= new Potassium();

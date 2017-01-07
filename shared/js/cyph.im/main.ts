@@ -3,9 +3,14 @@
  */
 
 
+/* Workaround for bug in Angular UpgradeModule */
+import * as angular from 'angular';
+(<any> self).angular	= angular;
+
 import {platformBrowser} from '@angular/platform-browser';
 import {downgradeComponent, UpgradeModule} from '@angular/upgrade/static';
-import * as angular from 'angular';
+import 'angular-material';
+import 'zone.js';
 import {FileInputComponent} from '../cyph/components/file-input.component';
 import {HelpComponent} from '../cyph/components/help.component';
 import {MdButtonComponent} from '../cyph/components/material/md-button.component';
@@ -39,7 +44,7 @@ import {MdTabsComponent} from '../cyph/components/material/md-tabs.component';
 import {MdTextareaComponent} from '../cyph/components/material/md-textarea.component';
 import {config} from '../cyph/config';
 import {eventManager} from '../cyph/event-manager';
-import {loaded} from '../preload';
+import '../preload';
 import {AppComponent} from './app.component';
 import {AppModule} from './app.module';
 
@@ -180,6 +185,3 @@ angular.
 	document.body,
 	[config.angularConfig.rootModule]
 ); })();
-
-
-export {loaded};

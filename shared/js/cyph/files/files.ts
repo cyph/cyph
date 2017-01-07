@@ -1,7 +1,7 @@
 import {ChangeDetectorRef} from '@angular/core';
 import {analytics} from '../analytics';
 import {config} from '../config';
-import {Potassium} from '../crypto/potassium';
+import {Potassium, Potassium as CryptoPotassium, SecretBox} from '../crypto/potassium';
 import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {EventManager, eventManager} from '../event-manager';
 import {firebaseApp} from '../firebase-app';
@@ -15,9 +15,8 @@ import {Transfer} from './transfer';
 
 
 /**
- * Manages file transfers.
- * Files are transmitted using Firebase Storage.
- * For encryption, native crypto is preferred when available,
+ * Manages file transfers. Files are transmitted using Firebase Storage.
+ * For encryption, native crypto is preferred when available for performance reasons,
  * but libsodium in a separate thread is used as a fallback.
  */
 export class Files {
@@ -38,7 +37,8 @@ export class Files {
 		const thread	= new Thread(
 			/* tslint:disable-next-line:only-arrow-functions */
 			async function (
-				potassium: Potassium,
+				/* tslint:disable-next-line:variable-name */
+				Potassium: typeof CryptoPotassium,
 				eventManager: EventManager,
 				locals: {
 					plaintext?: Uint8Array,
@@ -50,6 +50,8 @@ export class Files {
 				importScripts: Function
 			) : Promise<void> {
 				importScripts('/js/cyph/crypto/potassium/index.js');
+
+				const potassium	= new Potassium();
 
 				/* Encrypt */
 				if (locals.plaintext) {
@@ -178,7 +180,7 @@ export class Files {
 
 
 	/** @ignore */
-	private nativePotassium: Potassium;
+	private nativeSecretBox: SecretBox;
 
 	/** @ignore Temporary workaround. */
 	public changeDetectorRef: ChangeDetectorRef;
@@ -192,8 +194,8 @@ export class Files {
 		key: Uint8Array
 	) : Promise<Uint8Array> {
 		try {
-			return this.nativePotassium ?
-				await this.nativePotassium.secretBox.open(cyphertext, key) :
+			return this.nativeSecretBox ?
+				await this.nativeSecretBox.open(cyphertext, key) :
 				(await Files.cryptoThread({cyphertext, key}))[0]
 			;
 		}
@@ -208,13 +210,13 @@ export class Files {
 		key: Uint8Array;
 	}> {
 		try {
-			if (this.nativePotassium) {
+			if (this.nativeSecretBox) {
 				const key: Uint8Array	= potassiumUtil.randomBytes(
-					this.nativePotassium.secretBox.keyBytes
+					this.nativeSecretBox.keyBytes
 				);
 
 				return {
-					cyphertext: await this.nativePotassium.secretBox.seal(
+					cyphertext: await this.nativeSecretBox.seal(
 						plaintext,
 						key
 					),
@@ -489,8 +491,8 @@ export class Files {
 				}
 			}
 			/* Negotiation on whether or not to use SubtleCrypto */
-			else if (isNativeCryptoSupported && !this.nativePotassium) {
-				this.nativePotassium	= new Potassium(true);
+			else if (isNativeCryptoSupported && !this.nativeSecretBox) {
+				this.nativeSecretBox	= new SecretBox(true);
 			}
 		});
 	})(); }

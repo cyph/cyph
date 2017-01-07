@@ -99,6 +99,19 @@ export class SecretBox {
 		return output;
 	}
 
+	/** Generates a new nonce. */
+	public newNonce (size: number) : Uint8Array {
+		if (size < 4) {
+			throw new Error('Nonce size too small.');
+		}
+
+		return potassiumUtil.concatMemory(
+			true,
+			new Uint32Array([this.counter++]),
+			potassiumUtil.randomBytes(size - 4)
+		);
+	}
+
 	/** Decrypts cyphertext. */
 	public async open (
 		cyphertext: Uint8Array,
@@ -221,6 +234,6 @@ export class SecretBox {
 		private readonly isNative: boolean,
 
 		/** @ignore */
-		private readonly newNonce: (size: number) => Uint8Array
+		private counter: number = 0
 	) {}
 }

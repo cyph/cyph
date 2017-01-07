@@ -387,7 +387,7 @@ export class Box {
 			ntru.encrypt
 		);
 
-		const nonce: Uint8Array					= this.newNonce(this.helpers.nonceBytes);
+		const nonce: Uint8Array					= this.secretBox.newNonce(this.helpers.nonceBytes);
 
 		const classicalCyphertext: Uint8Array	= await this.helpers.seal(
 			plaintext,
@@ -418,9 +418,6 @@ export class Box {
 	constructor (
 		/** @ignore */
 		private readonly isNative: boolean,
-
-		/** @ignore */
-		private readonly newNonce: (size: number) => Uint8Array,
 
 		/** @ignore */
 		private readonly oneTimeAuth: OneTimeAuth,

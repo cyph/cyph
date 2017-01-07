@@ -55,6 +55,3 @@ $(async () => {
 		location.reload();
 	}
 });
-
-
-export const loaded	= true;
