@@ -221,6 +221,17 @@ RUN tns usage-reporting disable
 RUN rm -rf ~/.gnupg
 
 
+#CIRCLECI:RUN mkdir -p ~/getlibs/shared/lib/js/module_locks/firebase
+#CIRCLECI:RUN echo 'GETLIBS_BASE64' | base64 --decode > ~/getlibs/shared/getlibs.sh
+#CIRCLECI:RUN echo 'PACKAGE_BASE64' | base64 --decode > ~/getlibs/shared/lib/js/package.json
+#CIRCLECI:RUN echo 'LOCK_BASE64' | base64 --decode > ~/getlibs/shared/lib/js/yarn.lock
+#CIRCLECI:RUN echo 'FB_PACKAGE_BASE64' | base64 --decode > ~/getlibs/shared/lib/js/module_locks/firebase/package.json
+#CIRCLECI:RUN echo 'FB_LOCK_BASE64' | base64 --decode > ~/getlibs/shared/lib/js/module_locks/firebase/yarn.lock
+#CIRCLECI:RUN chmod -R 777 ~/getlibs
+#CIRCLECI:RUN ~/getlibs/shared/getlibs.sh
+#CIRCLECI:RUN echo 'cp -a ~/getlibs/shared/lib/js/node_modules /cyph/shared/lib/js/' >> ~/.bashrc
+
+
 VOLUME /cyph
 VOLUME /home/gibson/.cyph
 VOLUME /home/gibson/.gitconfig
