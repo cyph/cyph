@@ -79,7 +79,11 @@ export class Errors {
 		self.onerror	= this.log;
 
 		try {
-			console.error	= this.log;
+			const oldConsoleError	= console.error;
+			console.error			= (errorMessage: string) => {
+				oldConsoleError(errorMessage);
+				this.log(errorMessage);
+			};
 		}
 		catch (_) {}
 
