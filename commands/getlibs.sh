@@ -113,24 +113,38 @@ done
 
 echo 'declare module "braintree-web" { export = braintree; }' >> @types/braintree-web/index.d.ts
 
-mv jquery/dist/jquery.min.js jquery/dist/jquery.js
-mv magnific-popup/dist/jquery.magnific-popup.min.js magnific-popup/dist/jquery.magnific-popup.js
-mv angular-material/angular-material.min.css angular-material/angular-material.css
-mv animate.css/animate.min.css animate.css/animate.css
+for f in \
+	jquery/dist/jquery.min.js \
+	jquery/dist/jquery.slim.js \
+	magnific-popup/dist/jquery.magnific-popup.min.js \
+	angular-material/angular-material.min.css \
+	animate.css/animate.min.css
+do
+	cp -f "${f}" "$(echo "${f}" | perl -pe 's/\.min(\.[a-z]+)$/\1/')"
+done
 
-uglifyjs Base64/base64.js -m -o Base64/base64.js
-uglifyjs jquery.appear/jquery.appear.js -m -o jquery.appear/jquery.appear.js
-uglifyjs nanoscroller/bin/javascripts/jquery.nanoscroller.js -m -o nanoscroller/bin/javascripts/jquery.nanoscroller.js
-uglifyjs whatwg-fetch/fetch.js -m -o whatwg-fetch/fetch.js
+for f in \
+	Base64/base64.js \
+	jquery.appear/jquery.appear.js \
+	nanoscroller/bin/javascripts/jquery.nanoscroller.jss \
+	whatwg-fetch/fetch.js
+do
+	uglifyjs "${f}" -m -o "${f}"
+done
 
 for module in mceliece-js ntru rlwe sidh sphincs supersphincs ; do
 	sed -i 's|export const|declare const|g' ${module}/*.d.ts
 	sed -i 's|export ||g' ${module}/*.d.ts
 done
 
-echo "module.exports = Konami;" >> konami-code.js/konami.js
-echo "module.exports = tabIndent;" >> tab-indent/js/tabIndent.js
-echo "module.exports = this.WOW;" >> wowjs/dist/wow.js
+for arr in \
+	'konami-code.js/konami.js Konami' \
+	'tab-indent/js/tabIndent.js tabIndent' \
+	'wowjs/dist/wow.js this.WOW'
+do
+	read -ra arr <<< "${arr}"
+	echo "module.exports = ${arr[1]};" >> "${arr[0]}"
+done
 
 sed -i 's/saveAs\s*||/self.saveAs||/g' file-saver/*.js
 
