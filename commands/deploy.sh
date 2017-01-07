@@ -144,11 +144,11 @@ if [ ! "${simple}" ] ; then
 
 	blogCSPSources="$(cat cyph.com/blogcsp | perl -pe 's/^(.*)$/https:\/\/\1 https:\/\/*.\1/g' | tr '\n' ' ')"
 
-	cat cyph.com/cyph-com.yaml | \
-		tr '\n' '☁' | \
-		perl -pe 's/(\/blog.*?connect-src '"'"'self'"'"' )(.*?frame-src )(.*?connect-src '"'"'self'"'"' )(.*?frame-src )(.*?connect-src '"'"'self'"'"' )(.*?frame-src )/\1☼ \2☼ \3☼ \4☼ \5☼ \6☼ /g' | \
-		sed "s|☼|${blogCSPSources}|g" | \
-		tr '☁' '\n' | \
+	cat cyph.com/cyph-com.yaml |
+		tr '\n' '☁' |
+		perl -pe 's/(\/blog.*?connect-src )(.*?frame-src )(.*?connect-src )(.*?frame-src )(.*?connect-src )(.*?frame-src )/\1☼\2☼\3☼\4☼\5☼\6☼/g' |
+		sed "s|☼|${blogCSPSources}|g" |
+		tr '☁' '\n' |
 		sed "s|Cache-Control: private, max-age=31536000|Cache-Control: public, max-age=31536000|g" \
 	> cyph.com/new.yaml
 	mv cyph.com/new.yaml cyph.com/cyph-com.yaml

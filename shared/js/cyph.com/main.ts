@@ -42,6 +42,7 @@ import {MdToolbarComponent} from '../cyph/components/material/md-toolbar.compone
 import {RegisterComponent} from '../cyph/components/register.component';
 import {config} from '../cyph/config';
 import {env} from '../cyph/env';
+import '../cyph/errors';
 import {eventManager} from '../cyph/event-manager';
 import {util} from '../cyph/util';
 import {loaded} from '../preload';
