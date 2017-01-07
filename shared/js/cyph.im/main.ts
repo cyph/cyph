@@ -7,6 +7,7 @@ import {platformBrowser} from '@angular/platform-browser';
 import {downgradeComponent, UpgradeModule} from '@angular/upgrade/static';
 import * as angular from 'angular';
 import {config} from '../cyph/config';
+import '../cyph/errors';
 import {eventManager} from '../cyph/eventmanager';
 import {FileInput} from '../cyph/ui/components/fileinput';
 import {Help} from '../cyph/ui/components/help';
