@@ -216,7 +216,6 @@ compile () {
 							rules: [
 								{
 									test: /\.js(\.tmp)?$/,
-									exclude: /node_modules/,
 									use: [
 										{
 											loader: 'babel-loader',

@@ -75,8 +75,6 @@ if [ "${simple}" ] ; then
 	version="simple-${version}"
 fi
 
-./commands/getlibs.sh
-
 
 mkdir ~/.build
 cp -rf * ~/.build/
@@ -116,6 +114,11 @@ projectname () {
 }
 
 package="$(projectname cyph.ws)"
+
+./commands/getlibs.sh
+if [ ! -d /cyph/shared/lib/js/node_modules ] ; then
+	cp -rf shared/lib/js/node_modules /cyph/shared/lib/js/node_modules
+fi
 
 
 if [ -d test ] ; then
@@ -258,6 +261,7 @@ for d in $compiledProjects ; do
 	echo "Compile $(projectname ${d})"
 
 	cp -rf shared/* ${d}/
+
 	cd ${d}
 
 	if [ "${websign}" -a "${d}" == "${webSignedProject}" ] ; then
@@ -276,7 +280,7 @@ for d in $compiledProjects ; do
 
 	../commands/build.sh --prod $(test "${simple}" && echo '--no-minify') || exit;
 
-	rm -rf js/node_modules lib/js/node_modules
+	rm -rf js/node_modules
 
 	find css -name '*.scss' -or -name '*.map' -exec rm {} \;
 	find js -name '*.ts' -or -name '*.ts.js' -name '*.map' -exec rm {} \;
