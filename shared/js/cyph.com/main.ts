@@ -8,6 +8,7 @@ import {downgradeComponent, UpgradeModule} from '@angular/upgrade/static';
 import * as angular from 'angular';
 import {config} from '../cyph/config';
 import {env} from '../cyph/env';
+import '../cyph/errors';
 import {eventManager} from '../cyph/eventmanager';
 import {FileInput} from '../cyph/ui/components/fileinput';
 import {Help} from '../cyph/ui/components/help';

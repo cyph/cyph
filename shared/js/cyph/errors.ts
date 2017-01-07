@@ -27,7 +27,13 @@ export class Errors {
 	);
 
 	/** @ignore */
-	private baseErrorLog (subject: string) : Function {
+	private baseErrorLog (subject: string) : (
+		errorMessage?: string,
+		url?: string,
+		line?: number,
+		column?: number,
+		errorObject?: any
+	) => void {
 		let numEmails	= 0;
 
 		return (
@@ -70,7 +76,14 @@ export class Errors {
 	}
 
 	constructor () {
-		self.onerror	= <ErrorEventHandler> this.log;
+		self.onerror	= this.log;
+
+		try {
+			console.error	= this.log;
+		}
+		catch (_) {}
+
+		(<any> self).onunhandledrejection	= (e: any) => this.log(e.reason);
 	}
 }
 
