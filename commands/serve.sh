@@ -3,6 +3,8 @@
 dir="$PWD"
 cd $(cd "$(dirname "$0")"; pwd)/..
 
+./commands/getlibs.sh
+
 
 prodlike=''
 if [ "${1}" == '--prodlike' ] ; then

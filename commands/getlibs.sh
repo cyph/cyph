@@ -1,6 +1,7 @@
 #!/bin/bash
 
 cd $(cd "$(dirname "$0")"; pwd)/..
+dir="$PWD"
 cd shared/lib/js
 
 if diff yarn.lock node_modules/yarn.lock > /dev/null 2>&1 ; then
@@ -167,3 +168,68 @@ cd ../..
 mv .js.tmp/node_modules js/
 rm -rf .js.tmp
 cp js/yarn.lock js/node_modules/
+
+
+# Go libs
+
+rm -rf go 2> /dev/null
+mkdir go
+cd go
+
+mkdir github.com
+cd github.com
+
+mkdir gorilla
+cd gorilla
+${dir}/commands/libclone.sh https://github.com/gorilla/context.git
+${dir}/commands/libclone.sh https://github.com/gorilla/mux.git
+cd ..
+
+mkdir lionelbarrow
+cd lionelbarrow
+${dir}/commands/libclone.sh https://github.com/lionelbarrow/braintree-go.git
+echo '
+func (g *Braintree) SetHTTPClient(client *http.Client) {
+	g.HttpClient = client
+}' >> braintree-go/braintree.go # Temporary workaround for GAE support
+cd ..
+
+mkdir microcosm-cc
+cd microcosm-cc
+${dir}/commands/libclone.sh https://github.com/microcosm-cc/bluemonday.git
+cd ..
+
+cd ..
+
+mkdir -p golang.org/x
+cd golang.org/x
+
+${dir}/commands/libclone.sh https://github.com/golang/net.git net.tmp
+mkdir net
+cd net.tmp
+mv AUTHORS CONTRIBUTING.md CONTRIBUTORS LICENSE PATENTS README html context ../net/
+cd ..
+rm -rf net.tmp
+
+${dir}/commands/libclone.sh https://github.com/golang/text.git
+
+${dir}/commands/libclone.sh https://github.com/golang/tools.git tools-tmp
+mkdir -p tools/go
+cd tools-tmp
+mv AUTHORS CONTRIBUTING.md CONTRIBUTORS LICENSE PATENTS README ../tools
+cd go
+mv ast buildutil loader ../../tools/go/
+cd ../..
+rm -rf tools-tmp
+find tools -name '*test*' -exec rm -rf {} \; 2> /dev/null
+
+cd ../..
+
+find . -name .git -exec rm -rf {} \; 2> /dev/null
+find . -type f -name '*_test.go' -exec rm {} \;
+find . -type f -name '*.go' -exec sed -i 's|func main|func functionRemoved|g' {} \;
+
+for d in * ; do
+	rm -rf ../../default/${d} 2> /dev/null
+	cp -rf ${d} ../../default/
+done

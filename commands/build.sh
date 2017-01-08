@@ -4,6 +4,8 @@ outputDir="$PWD"
 cd $(cd "$(dirname "$0")"; pwd)/..
 rootDir="$PWD"
 
+./commands/getlibs.sh
+
 
 cloneworkingdir=''
 test=''
@@ -35,8 +37,6 @@ if [ "${cloneworkingdir}" -o "${test}" -o "${watch}" -o "${outputDir}" == "${roo
 	tsfilesRoot="${rootDir}"
 	outputDir="${rootDir}/shared"
 fi
-
-./commands/getlibs.sh
 
 if [ "${cloneworkingdir}" ] ; then
 	mkdir ~/.build

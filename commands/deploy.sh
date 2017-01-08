@@ -4,6 +4,8 @@ cd $(cd "$(dirname "$0")"; pwd)/..
 dir="$PWD"
 originalArgs="${*}"
 
+./commands/getlibs.sh
+
 
 cacheBustedProjects='cyph.com'
 compiledProjects='cyph.com cyph.im'
@@ -114,11 +116,6 @@ projectname () {
 }
 
 package="$(projectname cyph.ws)"
-
-./commands/getlibs.sh
-if [ ! -d /cyph/shared/lib/js/node_modules ] ; then
-	cp -rf shared/lib/js/node_modules /cyph/shared/lib/js/node_modules
-fi
 
 
 if [ -d test ] ; then

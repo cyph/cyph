@@ -4,29 +4,6 @@ cd $(cd "$(dirname "$0")"; pwd)/..
 dir="$PWD"
 
 
-clone () {
-	repo="${1}"
-	outdir="${2}"
-
-	git clone \
-		-b $(
-			{
-				echo master;
-				git ls-remote --tags ${repo} |
-					grep -v '{}' |
-					awk -F'/' '{print $3}' |
-					sort -V \
-				;
-			} | tail -n1
-		) \
-		--depth 1 \
-		--recursive \
-		${repo} \
-		${outdir}
-
-	rm -rf ${outdir}/.git
-}
-
 ./commands/keycache.sh
 
 mkdir -p ~/lib/js ~/tmplib/js
@@ -56,6 +33,7 @@ yarn add --ignore-platform \
 	angular-animate@~1.5 \
 	angular-aria@~1.5 \
 	animate.css \
+	babel-polyfill \
 	Base64 \
 	braintree-web@^2 \
 	clipboard-js \
@@ -114,9 +92,10 @@ done
 
 cd ~/lib/js
 
-ln -s node_modules/core-js/client/shim.min.js base.js
+# Pending TS 2.1: ln -s node_modules/core-js/client/shim.min.js base.js
+ln -s node_modules/babel-polyfill/dist/polyfill.min.js base.js
 
-clone https://github.com/jedisct1/libsodium.js libsodium.build
+${dir}/commands/libclone.sh https://github.com/jedisct1/libsodium.js libsodium.build
 cd libsodium.build
 cat > wrapper/symbols/crypto_stream_chacha20.json << EOM
 {
@@ -166,76 +145,10 @@ mkdir libsodium
 mv libsodium.build/dist libsodium/
 rm -rf libsodium.build
 
-cd ..
-
-
-mkdir ~/golibs
-cd ~/golibs
-
-rm -rf github.com 2> /dev/null
-mkdir github.com
-cd github.com
-
-mkdir gorilla
-cd gorilla
-clone https://github.com/gorilla/context.git
-clone https://github.com/gorilla/mux.git
-cd ..
-
-mkdir lionelbarrow
-cd lionelbarrow
-clone https://github.com/lionelbarrow/braintree-go.git
-echo '
-func (g *Braintree) SetHTTPClient(client *http.Client) {
-	g.HttpClient = client
-}' >> braintree-go/braintree.go # Temporary workaround for GAE support
-cd ..
-
-mkdir microcosm-cc
-cd microcosm-cc
-clone https://github.com/microcosm-cc/bluemonday.git
-cd ..
-
-cd ..
-
-rm -rf golang.org 2> /dev/null
-mkdir -p golang.org/x
-cd golang.org/x
-
-clone https://github.com/golang/net.git net.tmp
-mkdir net
-cd net.tmp
-mv AUTHORS CONTRIBUTING.md CONTRIBUTORS LICENSE PATENTS README html context ../net/
-cd ..
-rm -rf net.tmp
-
-clone https://github.com/golang/text.git
-
-clone https://github.com/golang/tools.git tools-tmp
-mkdir -p tools/go
-cd tools-tmp
-mv AUTHORS CONTRIBUTING.md CONTRIBUTORS LICENSE PATENTS README ../tools
-cd go
-mv ast buildutil loader ../../tools/go/
-cd ../..
-rm -rf tools-tmp
-find tools -name '*test*' -exec rm -rf {} \; 2> /dev/null
-
-cd ../..
-
-find . -name .git -exec rm -rf {} \; 2> /dev/null
-find . -type f -name '*_test.go' -exec rm {} \;
-find . -type f -name '*.go' -exec sed -i 's|func main|func functionRemoved|g' {} \;
-
 
 cd "${dir}"
 rm -rf shared/lib
-cp -a ~/lib shared/
-
-for d in $(ls ~/golibs) ; do
-	rm -rf default/${d} 2> /dev/null
-	cp -a ~/golibs/${d} default/
-done
+mv ~/lib shared/
 
 ./commands/getlibs.sh
 ./commands/commit.sh updatelibs
