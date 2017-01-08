@@ -113,15 +113,9 @@ done
 
 echo 'declare module "braintree-web" { export = braintree; }' >> @types/braintree-web/index.d.ts
 
-for f in \
-	jquery/dist/jquery.min.js \
-	jquery/dist/jquery.slim.js \
-	magnific-popup/dist/jquery.magnific-popup.min.js \
-	angular-material/angular-material.min.css \
-	animate.css/animate.min.css
-do
-	cp -f "${f}" "$(echo "${f}" | perl -pe 's/\.min(\.[a-z]+)$/\1/')"
-done
+find . -type f | grep -P '.*\.min\.[a-z]+$' | xargs -I% bash -c '
+	cp -f "%" "$(echo "%" | perl -pe "s/\.min(\.[a-z]+)$/\1/")"
+'
 
 for f in \
 	Base64/base64.js \
