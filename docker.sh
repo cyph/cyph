@@ -110,7 +110,7 @@ elif [ "${command}" == 'kill' ] ; then
 	exit 0
 
 elif [ "${command}" == 'deploy' ] ; then
-	args='-it --privileged=true -p 31337:31337/udp'
+	args='--privileged=true -p 31337:31337/udp'
 
 	chmod -R 700 .
 
@@ -176,29 +176,12 @@ elif [ "${command}" == 'deploy' ] ; then
 	fi
 
 elif [ "${command}" == 'commit' ] ; then
-	args='-it'
-
 	chmod -R 700 .
-
-elif [ "${command}" == 'publicmerge' ] ; then
-	args='-it'
-
-elif [ "${command}" == 'prodmerge' ] ; then
-	args='-it'
-
-elif [ "${command}" == 'betamerge' ] ; then
-	args='-it'
-
-elif [ "${command}" == 'backmerge' ] ; then
-	args='-it'
 
 elif [ "${command}" == 'restart' ] ; then
 	stop
 	start
 	exit 0
-
-elif [ "${command}" == 'updatelibs' ] ; then
-	args='-it'
 
 elif [ "${command}" == 'make' ] ; then
 	stop
@@ -229,7 +212,7 @@ elif [ ! -f "${commandScript}" ] ; then
 	exit 1
 fi
 
-docker run \
+docker run -it \
 	$processType \
 	$mounts \
 	$args \
