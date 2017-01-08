@@ -3,6 +3,8 @@
 repo="${1}"
 outdir="${2}"
 
+mkdir -p ${outdir}
+
 git clone \
 	-b $(
 		{

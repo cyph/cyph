@@ -1,7 +1,6 @@
 #!/bin/bash
 
 cd $(cd "$(dirname "$0")"; pwd)/..
-dir="$PWD"
 cd shared/lib/js
 
 if diff yarn.lock node_modules/yarn.lock > /dev/null 2>&1 ; then
@@ -121,7 +120,7 @@ find . -type f | grep -P '.*\.min\.[a-z]+$' | xargs -I% bash -c '
 for f in \
 	Base64/base64.js \
 	jquery.appear/jquery.appear.js \
-	nanoscroller/bin/javascripts/jquery.nanoscroller.jss \
+	nanoscroller/bin/javascripts/jquery.nanoscroller.js \
 	whatwg-fetch/fetch.js
 do
 	uglifyjs "${f}" -m -o "${f}"
@@ -176,60 +175,40 @@ rm -rf go 2> /dev/null
 mkdir go
 cd go
 
-mkdir github.com
-cd github.com
+for arr in \
+	'gorilla/context github.com/gorilla/context' \
+	'gorilla/mux github.com/gorilla/mux' \
+	'lionelbarrow/braintree-go github.com/lionelbarrow/braintree-go' \
+	'microcosm-cc/bluemonday github.com/microcosm-cc/bluemonday' \
+	'golang/net golang.org/x/net.tmp' \
+	'golang/text golang.org/x/text' \
+	'golang/tools golang.org/x/tools.tmp'
+do
+	read -ra arr <<< "${arr}"
+	../../../commands/libclone.sh https://github.com/${arr[0]}.git ${arr[1]}
+done
 
-mkdir gorilla
-cd gorilla
-${dir}/commands/libclone.sh https://github.com/gorilla/context.git
-${dir}/commands/libclone.sh https://github.com/gorilla/mux.git
-cd ..
-
-mkdir lionelbarrow
-cd lionelbarrow
-${dir}/commands/libclone.sh https://github.com/lionelbarrow/braintree-go.git
+# Temporary workaround for GAE support
 echo '
 func (g *Braintree) SetHTTPClient(client *http.Client) {
 	g.HttpClient = client
-}' >> braintree-go/braintree.go # Temporary workaround for GAE support
-cd ..
+}' >> github.com/lionelbarrow/braintree-go/braintree.go
 
-mkdir microcosm-cc
-cd microcosm-cc
-${dir}/commands/libclone.sh https://github.com/microcosm-cc/bluemonday.git
-cd ..
+mkdir -p golang.org/x/net
+mv golang.org/x/net.tmp/context golang.org/x/net.tmp/html golang.org/x/net/
+rm -rf golang.org/x/net.tmp
 
-cd ..
+mkdir -p golang.org/x/tools/go
+mv golang.org/x/tools.tmp/go/ast golang.org/x/tools/go/
+mv golang.org/x/tools.tmp/go/buildutil golang.org/x/tools/go/
+mv golang.org/x/tools.tmp/go/loader golang.org/x/tools/go/
+rm -rf golang.org/x/tools.tmp
+find golang.org/x/tools -name '*test*' -exec rm -rf {} \; 2> /dev/null
 
-mkdir -p golang.org/x
-cd golang.org/x
-
-${dir}/commands/libclone.sh https://github.com/golang/net.git net.tmp
-mkdir net
-cd net.tmp
-mv AUTHORS CONTRIBUTING.md CONTRIBUTORS LICENSE PATENTS README html context ../net/
-cd ..
-rm -rf net.tmp
-
-${dir}/commands/libclone.sh https://github.com/golang/text.git
-
-${dir}/commands/libclone.sh https://github.com/golang/tools.git tools-tmp
-mkdir -p tools/go
-cd tools-tmp
-mv AUTHORS CONTRIBUTING.md CONTRIBUTORS LICENSE PATENTS README ../tools
-cd go
-mv ast buildutil loader ../../tools/go/
-cd ../..
-rm -rf tools-tmp
-find tools -name '*test*' -exec rm -rf {} \; 2> /dev/null
-
-cd ../..
-
-find . -name .git -exec rm -rf {} \; 2> /dev/null
 find . -type f -name '*_test.go' -exec rm {} \;
 find . -type f -name '*.go' -exec sed -i 's|func main|func functionRemoved|g' {} \;
 
 for d in * ; do
-	rm -rf ../../default/${d} 2> /dev/null
-	cp -rf ${d} ../../default/
+	rm -rf ../../../default/${d} 2> /dev/null
+	cp -rf ${d} ../../../default/
 done
