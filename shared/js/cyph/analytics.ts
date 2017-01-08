@@ -1,4 +1,4 @@
-import {potassium} from './crypto/potassium';
+import {potassiumUtil} from './crypto/potassium/potassium-util';
 import {env} from './env';
 import {eventManager} from './event-manager';
 import {util} from './util';
@@ -106,7 +106,7 @@ export class Analytics {
 										document.referrer.match(/[0-9a-fA-F]+/g) || []
 									).map((s: string) => {
 										try {
-											return potassium.toString(potassium.fromHex(s));
+											return potassiumUtil.toString(potassiumUtil.fromHex(s));
 										}
 										catch (e) {
 											return '';
@@ -119,7 +119,7 @@ export class Analytics {
 										)
 									).split(/\&.*?=/g).map((s: string) => {
 										try {
-											return potassium.toString(potassium.fromBase64(s));
+											return potassiumUtil.toString(potassiumUtil.fromBase64(s));
 										}
 										catch (e) {
 											return '';

@@ -8,7 +8,7 @@ import {UrlStateService} from '../cyph/services/url-state.service';
  */
 @Injectable()
 export class SessionIdService implements AbstractSessionIdService {
-	/** @see AbstractSessionIdService.id */
+	/** @inheritDoc */
 	public readonly id: string;
 
 	constructor (urlStateService: UrlStateService) {

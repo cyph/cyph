@@ -1,6 +1,5 @@
-import {lib} from './lib';
 import * as NativeCrypto from './native-crypto';
-import {util} from './util';
+import {potassiumUtil} from './potassium-util';
 
 
 /** Equivalent to sodium.crypto_secretbox. */
@@ -24,7 +23,7 @@ export class SecretBox {
 		nonceBytes:
 			this.isNative ?
 				NativeCrypto.secretBox.nonceBytes :
-				lib.sodium.crypto_aead_chacha20poly1305_NPUBBYTES
+				sodium.crypto_aead_chacha20poly1305_NPUBBYTES
 		,
 
 		open: async (
@@ -40,7 +39,7 @@ export class SecretBox {
 					key,
 					additionalData
 				) :
-				lib.sodium.crypto_aead_chacha20poly1305_decrypt(
+				sodium.crypto_aead_chacha20poly1305_decrypt(
 					undefined,
 					cyphertext,
 					additionalData,
@@ -62,7 +61,7 @@ export class SecretBox {
 					key,
 					additionalData
 				) :
-				lib.sodium.crypto_aead_chacha20poly1305_encrypt(
+				sodium.crypto_aead_chacha20poly1305_encrypt(
 					plaintext,
 					additionalData,
 					undefined,
@@ -75,14 +74,14 @@ export class SecretBox {
 	public readonly aeadBytes: number	=
 		this.isNative ?
 			NativeCrypto.secretBox.aeadBytes :
-			lib.sodium.crypto_aead_chacha20poly1305_ABYTES
+			sodium.crypto_aead_chacha20poly1305_ABYTES
 	;
 
 	/** Key length. */
 	public readonly keyBytes: number	=
 		this.isNative ?
 			NativeCrypto.secretBox.keyBytes :
-			lib.sodium.crypto_aead_chacha20poly1305_KEYBYTES
+			sodium.crypto_aead_chacha20poly1305_KEYBYTES
 	;
 
 	/** @ignore */
@@ -98,6 +97,19 @@ export class SecretBox {
 		const output: Uint8Array	= new Uint8Array(this.aeadBytes);
 		output.set(input);
 		return output;
+	}
+
+	/** Generates a new nonce. */
+	public newNonce (size: number) : Uint8Array {
+		if (size < 4) {
+			throw new Error('Nonce size too small.');
+		}
+
+		return potassiumUtil.concatMemory(
+			true,
+			new Uint32Array([this.counter++]),
+			potassiumUtil.randomBytes(size - 4)
+		);
 	}
 
 	/** Decrypts cyphertext. */
@@ -144,7 +156,7 @@ export class SecretBox {
 					this.getAdditionalData(additionalData)
 				);
 
-				util.clearMemory(dataToDecrypt);
+				potassiumUtil.clearMemory(dataToDecrypt);
 			}
 
 			if (!paddedPlaintext) {
@@ -156,13 +168,13 @@ export class SecretBox {
 				1 + new Uint8Array(paddedPlaintext.buffer, 0, 1)[0]
 			));
 
-			util.clearMemory(paddedPlaintext);
-			util.clearMemory(cyphertext);
+			potassiumUtil.clearMemory(paddedPlaintext);
+			potassiumUtil.clearMemory(cyphertext);
 
 			return plaintext;
 		}
 		finally {
-			util.clearMemory(cyphertext);
+			potassiumUtil.clearMemory(cyphertext);
 		}
 	}
 
@@ -176,12 +188,12 @@ export class SecretBox {
 			throw new Error('Invalid key.');
 		}
 
-		const paddingLength: number			= util.randomBytes(1)[0];
+		const paddingLength: number			= potassiumUtil.randomBytes(1)[0];
 
-		const paddedPlaintext: Uint8Array	= util.concatMemory(
+		const paddedPlaintext: Uint8Array	= potassiumUtil.concatMemory(
 			false,
 			new Uint8Array([paddingLength]),
-			util.randomBytes(paddingLength),
+			potassiumUtil.randomBytes(paddingLength),
 			plaintext
 		);
 
@@ -203,14 +215,14 @@ export class SecretBox {
 				this.getAdditionalData(additionalData)
 			);
 
-			util.clearMemory(dataToEncrypt);
+			potassiumUtil.clearMemory(dataToEncrypt);
 		}
 
 		if (!symmetricCyphertext) {
 			throw new Error('Symmetric cyphertext empty.');
 		}
 
-		return util.concatMemory(
+		return potassiumUtil.concatMemory(
 			true,
 			nonce,
 			symmetricCyphertext
@@ -222,6 +234,6 @@ export class SecretBox {
 		private readonly isNative: boolean,
 
 		/** @ignore */
-		private readonly newNonce: (size: number) => Uint8Array
+		private counter: number = 0
 	) {}
 }

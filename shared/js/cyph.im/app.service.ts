@@ -49,12 +49,17 @@ export class AppService {
 	}
 
 	constructor (
-		/** @ignore */
-		private readonly envService: EnvService,
+		envService: EnvService,
 
 		/** @ignore */
 		private readonly urlStateService: UrlStateService
 	) {
+		if (!envService.isWeb) {
+			/* TODO: HANDLE NATIVE */
+			this.state	= States.blank;
+			return;
+		}
+
 		this.urlStateService.onChange(newUrlState => {
 			this.onUrlStateChange(newUrlState);
 		});
@@ -80,12 +85,7 @@ export class AppService {
 
 			await util.sleep();
 
-			if (this.envService.isWeb) {
-				$(document.body).addClass('load-complete');
-			}
-			else {
-				return;
-			}
+			$(document.body).addClass('load-complete');
 		})();
 	}
 }

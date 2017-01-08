@@ -1,20 +1,20 @@
-import {lib} from './lib';
+import {sodiumUtil} from 'sodiumutil';
 
 
 /**
  * Miscellaneous helper functions for Potassium.
  */
-export class Util {
+export class PotassiumUtil {
 	/** Zeroes out memory. */
 	public clearMemory (a: ArrayBufferView) : void {
-		lib.sodium.memzero(
+		sodiumUtil.memzero(
 			this.toBytes(a)
 		);
 	}
 
 	/** Indicates whether two blocks of memory contain the same data. */
 	public compareMemory (a: ArrayBufferView, b: ArrayBufferView) : boolean {
-		return a.byteLength === b.byteLength && lib.sodium.memcmp(
+		return a.byteLength === b.byteLength && sodiumUtil.memcmp(
 			this.toBytes(a),
 			this.toBytes(b)
 		);
@@ -44,7 +44,7 @@ export class Util {
 	/** Converts base64 string into binary byte array. */
 	public fromBase64 (s: string|ArrayBufferView) : Uint8Array {
 		return typeof s === 'string' ?
-			lib.sodium.from_base64(s) :
+			sodiumUtil.from_base64(s) :
 			this.toBytes(s)
 		;
 	}
@@ -52,7 +52,7 @@ export class Util {
 	/** Converts hex string into binary byte array. */
 	public fromHex (s: string|ArrayBufferView) : Uint8Array {
 		return typeof s === 'string' ?
-			lib.sodium.from_hex(s) :
+			sodiumUtil.from_hex(s) :
 			this.toBytes(s)
 		;
 	}
@@ -60,7 +60,7 @@ export class Util {
 	/** Converts ASCII/Unicode string into binary byte array. */
 	public fromString (s: string|ArrayBufferView) : Uint8Array {
 		return typeof s === 'string' ?
-			lib.sodium.from_string(s) :
+			sodiumUtil.from_string(s) :
 			this.toBytes(s)
 		;
 	}
@@ -76,7 +76,7 @@ export class Util {
 	public toBase64 (a: ArrayBufferView|string) : string {
 		return typeof a === 'string' ?
 			a :
-			lib.sodium.to_base64(
+			sodiumUtil.to_base64(
 				this.toBytes(a)
 			).replace(/\s+/g, '')
 		;
@@ -91,7 +91,7 @@ export class Util {
 	public toHex (a: ArrayBufferView|string) : string {
 		return typeof a === 'string' ?
 			a :
-			lib.sodium.to_hex(this.toBytes(a))
+			sodiumUtil.to_hex(this.toBytes(a))
 		;
 	}
 
@@ -99,12 +99,12 @@ export class Util {
 	public toString (a: ArrayBufferView|string) : string {
 		return typeof a === 'string' ?
 			a :
-			lib.sodium.to_string(this.toBytes(a))
+			sodiumUtil.to_string(this.toBytes(a))
 		;
 	}
 
 	constructor () {}
 }
 
-/** @see Util */
-export const util	= new Util();
+/** @see PotassiumUtil */
+export const potassiumUtil	= new PotassiumUtil();

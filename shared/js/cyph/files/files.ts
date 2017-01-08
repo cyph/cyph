@@ -1,8 +1,8 @@
 import {ChangeDetectorRef} from '@angular/core';
-import * as firebase from 'firebase';
 import {analytics} from '../analytics';
 import {config} from '../config';
-import {Potassium, potassium} from '../crypto/potassium';
+import {Potassium, Potassium as CryptoPotassium, SecretBox} from '../crypto/potassium';
+import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {EventManager, eventManager} from '../event-manager';
 import {firebaseApp} from '../firebase-app';
 import {events, rpcEvents} from '../session/enums';
@@ -15,9 +15,8 @@ import {Transfer} from './transfer';
 
 
 /**
- * Manages file transfers.
- * Files are transmitted using Firebase Storage.
- * For encryption, native crypto is preferred when available,
+ * Manages file transfers. Files are transmitted using Firebase Storage.
+ * For encryption, native crypto is preferred when available for performance reasons,
  * but libsodium in a separate thread is used as a fallback.
  */
 export class Files {
@@ -38,7 +37,8 @@ export class Files {
 		const thread	= new Thread(
 			/* tslint:disable-next-line:only-arrow-functions */
 			async function (
-				potassium: Potassium,
+				/* tslint:disable-next-line:variable-name */
+				Potassium: typeof CryptoPotassium,
 				eventManager: EventManager,
 				locals: {
 					plaintext?: Uint8Array,
@@ -50,6 +50,8 @@ export class Files {
 				importScripts: Function
 			) : Promise<void> {
 				importScripts('/js/cyph/crypto/potassium/index.js');
+
+				const potassium	= new Potassium();
 
 				/* Encrypt */
 				if (locals.plaintext) {
@@ -178,7 +180,7 @@ export class Files {
 
 
 	/** @ignore */
-	private nativePotassium: Potassium;
+	private nativeSecretBox: SecretBox;
 
 	/** @ignore Temporary workaround. */
 	public changeDetectorRef: ChangeDetectorRef;
@@ -192,13 +194,13 @@ export class Files {
 		key: Uint8Array
 	) : Promise<Uint8Array> {
 		try {
-			return this.nativePotassium ?
-				await this.nativePotassium.secretBox.open(cyphertext, key) :
+			return this.nativeSecretBox ?
+				await this.nativeSecretBox.open(cyphertext, key) :
 				(await Files.cryptoThread({cyphertext, key}))[0]
 			;
 		}
 		catch (_) {
-			return potassium.fromString('File decryption failed.');
+			return potassiumUtil.fromString('File decryption failed.');
 		}
 	}
 
@@ -208,13 +210,13 @@ export class Files {
 		key: Uint8Array;
 	}> {
 		try {
-			if (this.nativePotassium) {
-				const key: Uint8Array	= potassium.randomBytes(
-					this.nativePotassium.secretBox.keyBytes
+			if (this.nativeSecretBox) {
+				const key: Uint8Array	= potassiumUtil.randomBytes(
+					this.nativeSecretBox.keyBytes
 				);
 
 				return {
-					cyphertext: await this.nativePotassium.secretBox.seal(
+					cyphertext: await this.nativeSecretBox.seal(
 						plaintext,
 						key
 					),
@@ -286,7 +288,7 @@ export class Files {
 
 					transfer.percentComplete	= 100;
 					this.triggerChangeDetection();
-					potassium.clearMemory(transfer.key);
+					potassiumUtil.clearMemory(transfer.key);
 					this.triggerUIEvent(UIEvents.save, transfer, plaintext);
 					await util.sleep(1000);
 					this.transfers.delete(transfer);
@@ -343,7 +345,7 @@ export class Files {
 			return;
 		}
 
-		let uploadTask: firebase.UploadTask;
+		let uploadTask: firebase.storage.UploadTask;
 
 		const transfer: Transfer	= new Transfer(
 			name,
@@ -405,7 +407,7 @@ export class Files {
 
 			complete	= await new Promise<boolean>(resolve => uploadTask.on(
 				'state_changed',
-				(snapshot: firebase.UploadTaskSnapshot) => {
+				(snapshot: firebase.storage.UploadTaskSnapshot) => {
 					transfer.percentComplete	=
 						snapshot.bytesTransferred /
 						snapshot.totalBytes *
@@ -415,7 +417,7 @@ export class Files {
 				},
 				() => { resolve(transfer.answer === false); },
 				() => {
-					transfer.url	= uploadTask.snapshot.downloadURL;
+					transfer.url	= uploadTask.snapshot.downloadURL || '';
 
 					this.session.send(new Message(
 						rpcEvents.files,
@@ -489,8 +491,8 @@ export class Files {
 				}
 			}
 			/* Negotiation on whether or not to use SubtleCrypto */
-			else if (isNativeCryptoSupported && !this.nativePotassium) {
-				this.nativePotassium	= new Potassium(true);
+			else if (isNativeCryptoSupported && !this.nativeSecretBox) {
+				this.nativeSecretBox	= new SecretBox(true);
 			}
 		});
 	})(); }

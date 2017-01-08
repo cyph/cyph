@@ -3,9 +3,14 @@
  */
 
 
+/* Workaround for bug in Angular UpgradeModule */
+import * as angular from 'angular';
+(<any> self).angular	= angular;
+
 import {platformBrowser} from '@angular/platform-browser';
 import {downgradeComponent, UpgradeModule} from '@angular/upgrade/static';
-import * as angular from 'angular';
+import 'angular-material';
+import 'zone.js';
 import {FileInputComponent} from '../cyph/components/file-input.component';
 import {HelpComponent} from '../cyph/components/help.component';
 import {MdButtonComponent} from '../cyph/components/material/md-button.component';
@@ -45,7 +50,7 @@ import {env} from '../cyph/env';
 import '../cyph/errors';
 import {eventManager} from '../cyph/event-manager';
 import {util} from '../cyph/util';
-import {loaded} from '../preload';
+import '../preload';
 import {AppComponent} from './app.component';
 import {AppModule} from './app.module';
 
@@ -225,6 +230,3 @@ if (!env.isOnion) {
 		}
 	})();
 }
-
-
-export {loaded};

@@ -16,3 +16,4 @@ npm-debug.log
 **/npm-debug.log
 node_modules
 **/node_modules
+shared/lib/.js.tmp

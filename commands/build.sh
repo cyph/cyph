@@ -36,6 +36,8 @@ if [ "${cloneworkingdir}" -o "${test}" -o "${watch}" -o "${outputDir}" == "${roo
 	outputDir="${rootDir}/shared"
 fi
 
+./commands/getlibs.sh
+
 if [ "${cloneworkingdir}" ] ; then
 	mkdir ~/.build
 	cp -rf * ~/.build/
@@ -46,11 +48,19 @@ tsfiles="$( \
 	{ \
 		find ${tsfilesRoot} -name '*.html' -not \( \
 			-path "${tsfilesRoot}/.build/*" \
+			-or -path "${tsfilesRoot}/default/*" \
+			-or -path "${tsfilesRoot}/native/*" \
 			-or -path "${tsfilesRoot}/websign/*" \
 			-or -path '*/lib/*' \
 		\) -exec cat {} \; | \
-		grep -oP "src=(['\"])/js/.*?\1" & \
-		grep -roP "importScripts\((['\"])/js/.*\1\)" shared/js & \
+			grep -oP "src=(['\"])/js/.*?\1" \
+		& \
+		find shared/js -name '*.ts' -not \( \
+			-name '*.ngfactory.ts' \
+			-or -name '*.ngmodule.ts' \
+		\) -exec cat {} \; |
+			grep -oP "importScripts\((['\"])/js/.*\1\)" \
+		& \
 		echo cyph/analytics; \
 	} | \
 		perl -pe "s/.*?['\"]\/js\/(.*)\.js.*/\1/g" | \
@@ -64,7 +74,11 @@ tsfiles="$( \
 
 cd shared
 
-scssfiles="$(cd css ; find . -name '*.scss' | grep -v bourbon/ | perl -pe 's/\.\/(.*)\.scss/\1/g' | tr '\n' ' ')"
+scssfiles="$(cd css ; find . -name '*.scss' |
+	grep -v bourbon/ |
+	perl -pe 's/\.\/(.*)\.scss/\1/g' |
+	tr '\n' ' '
+)"
 
 
 output=''
@@ -151,7 +165,7 @@ compile () {
 
 	for f in $(echo "$tsfiles" | grep -P '/main$') ; do
 		tsbuild $f
-		sed -i 's|./app.module|./app.module.ngfactory|g' "${f}.ts"
+		sed -i 's|\./app.module|\./app.module.ngfactory|g' "${f}.ts"
 		sed -i 's|AppModule|AppModuleNgFactory|g' "${f}.ts"
 		sed -i 's|bootstrapModule|bootstrapModuleFactory|g' "${f}.ts"
 		tsbuild $f
@@ -189,26 +203,16 @@ compile () {
 
 		mangleExcept="$(
 			test "${minify}" && node -e "console.log(JSON.stringify('$(
-				find . -name '*.js' -exec cat {} \; |
+				find . -name '*.js' -not \( \
+					-name '*.ngfactory.js' \
+					-or -name '*.ngmodule.js' \
+				\) -exec cat {} \; |
 					grep -oP '[A-Za-z_$][A-Za-z0-9_$]*' |
 					sort |
 					uniq |
 					tr '\n' ' '
 			)'.trim().split(/\s+/)))"
 		)"
-
-		typesRegex="s/^import.*from\s+[\\\"']($(echo -n "$({
-			ls ../lib/js/@types;
-			grep -P 'declare\s+module' ../lib/js/@types/*/index.d.ts |
-				perl -pe "s/.*declare\s+module\s+(.*?)\s+.*/\1/g" |
-				sed "s/[\"']//g" \
-			;
-		} | sort | uniq)" | tr '\n' '|'))[\\\"'];$//g"
-
-		find . -name '*.js' -exec bash -c "
-			cat {} | perl -pe \"${typesRegex}\" > {}.new;
-			mv {}.new {};
-		" \;
 
 		for f in $tsfiles ; do
 			m="$(modulename "${f}")"
@@ -227,7 +231,6 @@ compile () {
 							rules: [
 								{
 									test: /\.js(\.tmp)?$/,
-									exclude: /node_modules/,
 									use: [
 										{
 											loader: 'babel-loader',
@@ -311,8 +314,8 @@ compile () {
 		done
 
 		for js in $(find . -name '*.js' -not \( \
-			-path './preload/global.js' -o \
-			-name 'translations.js' \
+			-path './preload/global.js' \
+			-or -name 'translations.js' \
 		\)) ; do
 			delete=true
 			for f in $tsfiles ; do

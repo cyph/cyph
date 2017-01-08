@@ -4,9 +4,9 @@ import {Hash} from './hash';
 import * as NativeCrypto from './native-crypto';
 import {OneTimeAuth} from './one-time-auth';
 import {PasswordHash} from './password-hash';
+import {PotassiumUtil, potassiumUtil} from './potassium-util';
 import {SecretBox} from './secret-box';
 import {Sign} from './sign';
-import {Util, util} from './util';
 
 
 /**
@@ -14,14 +14,14 @@ import {Util, util} from './util';
  * Outside of this class, libsodium and other cryptographic implementations
  * should generally not be called directly.
  */
-export class Potassium extends Util {
+export class Potassium extends PotassiumUtil {
 	/** Indicates whether native crypto API is supported in this environment. */
 	public static async isNativeCryptoSupported () : Promise<boolean> {
 		try {
 			await NativeCrypto.secretBox.seal(
-				util.randomBytes(1),
-				util.randomBytes(NativeCrypto.secretBox.nonceBytes),
-				util.randomBytes(NativeCrypto.secretBox.keyBytes)
+				potassiumUtil.randomBytes(1),
+				potassiumUtil.randomBytes(NativeCrypto.secretBox.nonceBytes),
+				potassiumUtil.randomBytes(NativeCrypto.secretBox.keyBytes)
 			);
 			return true;
 		}
@@ -52,19 +52,6 @@ export class Potassium extends Util {
 	/** @see Sign */
 	public readonly sign: Sign;
 
-	/** @ignore */
-	private newNonce (size: number) : Uint8Array {
-		if (size < 4) {
-			throw new Error('Nonce size too small.');
-		}
-
-		return util.concatMemory(
-			true,
-			new Uint32Array([this.counter++]),
-			util.randomBytes(size - 4)
-		);
-	}
-
 	/** Indicates whether this Potassium instance is using native crypto. */
 	public native () : boolean {
 		return this.isNative;
@@ -83,23 +70,13 @@ export class Potassium extends Util {
 	) {
 		super();
 
-		const newNonce	= (size: number) => this.newNonce(size);
-
 		this.hash					= new Hash(this.isNative);
 		this.oneTimeAuth			= new OneTimeAuth(this.isNative);
-		this.secretBox				= new SecretBox(this.isNative, newNonce);
+		this.secretBox				= new SecretBox(this.isNative, this.counter);
 		this.sign					= new Sign();
 
-		this.box					= new Box(
-			this.isNative,
-			newNonce,
-			this.oneTimeAuth,
-			this.secretBox
-		);
+		this.box					= new Box(this.isNative, this.oneTimeAuth, this.secretBox);
 		this.ephemeralKeyExchange	= new EphemeralKeyExchange(this.hash);
 		this.passwordHash			= new PasswordHash(this.isNative, this.secretBox);
 	}
 }
-
-/** Potassium instance with default parameters (non-native, counter 0). */
-export const potassium	= new Potassium();

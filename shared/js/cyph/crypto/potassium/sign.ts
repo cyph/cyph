@@ -1,21 +1,20 @@
 import {IKeyPair} from '../ikey-pair';
-import {lib} from './lib';
 
 
 /** Equivalent to sodium.crypto_sign. */
 export class Sign {
 	/** Signature length. */
-	public readonly bytes: number			= lib.superSphincs.bytes;
+	public readonly bytes: number			= superSphincs.bytes;
 
 	/** Private key length. */
-	public readonly privateKeyBytes: number	= lib.superSphincs.privateKeyBytes;
+	public readonly privateKeyBytes: number	= superSphincs.privateKeyBytes;
 
 	/** Public key length. */
-	public readonly publicKeyBytes: number	= lib.superSphincs.publicKeyBytes;
+	public readonly publicKeyBytes: number	= superSphincs.publicKeyBytes;
 
 	/** Generates key pair. */
 	public async keyPair () : Promise<IKeyPair> {
-		return lib.superSphincs.keyPair();
+		return superSphincs.keyPair();
 	}
 
 	/** Verifies combined signature and returns original message. */
@@ -23,7 +22,7 @@ export class Sign {
 		signed: Uint8Array|string,
 		publicKey: Uint8Array
 	) : Promise<string> {
-		return lib.superSphincs.open(signed, publicKey);
+		return superSphincs.open(signed, publicKey);
 	}
 
 	/** Signs message and returns it combined with signature. */
@@ -31,7 +30,7 @@ export class Sign {
 		message: Uint8Array|string,
 		privateKey: Uint8Array
 	) : Promise<string> {
-		return lib.superSphincs.sign(message, privateKey);
+		return superSphincs.sign(message, privateKey);
 	}
 
 	/** Signs message and returns only the signature. */
@@ -39,7 +38,7 @@ export class Sign {
 		message: Uint8Array|string,
 		privateKey: Uint8Array
 	) : Promise<string> {
-		return lib.superSphincs.signDetached(message, privateKey);
+		return superSphincs.signDetached(message, privateKey);
 	}
 
 	/** Verifies signature. */
@@ -48,7 +47,7 @@ export class Sign {
 		message: Uint8Array|string,
 		publicKey: Uint8Array
 	) : Promise<boolean> {
-		return lib.superSphincs.verifyDetached(signature, message, publicKey);
+		return superSphincs.verifyDetached(signature, message, publicKey);
 	}
 
 	constructor () {}

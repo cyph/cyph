@@ -1,4 +1,3 @@
-import * as firebase from 'firebase';
 import {firebaseApp} from '../firebase-app';
 import {util} from '../util';
 
@@ -8,13 +7,13 @@ import {util} from '../util';
  */
 export class Channel {
 	/** @ignore */
-	private channelRef: firebase.DatabaseReference;
+	private channelRef: firebase.database.Reference;
 
 	/** @ignore */
-	private messagesRef: firebase.DatabaseReference;
+	private messagesRef: firebase.database.Reference;
 
 	/** @ignore */
-	private usersRef: firebase.DatabaseReference;
+	private usersRef: firebase.database.Reference;
 
 	/** @ignore */
 	private userId: string;
@@ -75,11 +74,11 @@ export class Channel {
 			this.channelRef.child('users')
 		);
 
-		const userRef: firebase.ThenableReference	=
+		const userRef: firebase.database.ThenableReference	=
 			await util.retryUntilSuccessful(() => this.usersRef.push(''))
 		;
 
-		this.userId			= userRef.key;
+		this.userId			= userRef.key || '';
 
 		util.retryUntilSuccessful(async () => userRef.set(this.userId));
 
@@ -104,7 +103,7 @@ export class Channel {
 
 			if (this.isAlice) {
 				util.retryUntilSuccessful(() =>
-					this.usersRef.on('child_added', (snapshot: firebase.DataSnapshot) => {
+					this.usersRef.on('child_added', (snapshot: firebase.database.DataSnapshot) => {
 						if (!this.isConnected && snapshot.key !== this.userId) {
 							this.isConnected	= true;
 							onConnect();
@@ -121,7 +120,7 @@ export class Channel {
 			const onClose	= handlers.onClose;
 
 			util.retryUntilSuccessful(() =>
-				this.channelRef.on('value', async (snapshot: firebase.DataSnapshot) => {
+				this.channelRef.on('value', async (snapshot: firebase.database.DataSnapshot) => {
 					if (await util.retryUntilSuccessful(() =>
 						!snapshot.exists() && !this.isClosed
 					)) {
@@ -136,7 +135,7 @@ export class Channel {
 			const onMessage	= handlers.onMessage;
 
 			util.retryUntilSuccessful(() =>
-				this.messagesRef.on('child_added', async (snapshot: firebase.DataSnapshot) => {
+				this.messagesRef.on('child_added', async (snapshot: firebase.database.DataSnapshot) => {
 					const o	= await util.retryUntilSuccessful(() =>
 						snapshot.val()
 					);

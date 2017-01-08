@@ -115,6 +115,11 @@ projectname () {
 
 package="$(projectname cyph.ws)"
 
+./commands/getlibs.sh
+if [ ! -d /cyph/shared/lib/js/node_modules ] ; then
+	cp -rf shared/lib/js/node_modules /cyph/shared/lib/js/node_modules
+fi
+
 
 if [ -d test ] ; then
 	sed -i "s|setOnerror()|$(cat test/setonerror.js | tr '\n' ' ')|g" test/test.js
@@ -256,6 +261,7 @@ for d in $compiledProjects ; do
 	echo "Compile $(projectname ${d})"
 
 	cp -rf shared/* ${d}/
+
 	cd ${d}
 
 	if [ "${websign}" -a "${d}" == "${webSignedProject}" ] ; then
@@ -274,7 +280,7 @@ for d in $compiledProjects ; do
 
 	../commands/build.sh --prod $(test "${simple}" && echo '--no-minify') || exit;
 
-	rm -rf js/node_modules lib/js/node_modules
+	rm -rf js/node_modules
 
 	find css -name '*.scss' -or -name '*.map' -exec rm {} \;
 	find js -name '*.ts' -or -name '*.ts.js' -name '*.map' -exec rm {} \;
@@ -433,10 +439,6 @@ fi
 
 find . -mindepth 1 -maxdepth 1 -type d -not -name shared -exec cp -f shared/favicon.ico {}/ \;
 
-
-if [ ! "${simple}" ] ; then
-	rm -rf */lib/js/crypto
-fi
 
 # Temporary workaround for cache-busting reverse proxies
 if [ ! "${test}" -a \( ! "${site}" -o "${site}" == cyph.im \) ] ; then

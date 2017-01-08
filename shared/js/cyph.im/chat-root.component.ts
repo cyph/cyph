@@ -1,4 +1,5 @@
 import {Component, OnInit} from '@angular/core';
+import * as Konami from 'konami-code.js';
 import {AbstractSessionIdService} from '../cyph/services/abstract-session-id.service';
 import {ChatService} from '../cyph/services/chat.service';
 import {CyphertextService} from '../cyph/services/cyphertext.service';
@@ -124,7 +125,7 @@ export class ChatRootComponent implements OnInit {
 
 		/* Cyphertext easter egg */
 		/* tslint:disable-next-line:no-unused-new */
-		new (<any> self).Konami(async () => {
+		new Konami(async () => {
 			while (this.chatService.state !== this.chatService.states.chat) {
 				await util.sleep();
 			}

@@ -3,6 +3,8 @@
 cd $(cd "$(dirname "$0")"; pwd)/..
 
 
+./commands/getlibs.sh
+
 tsc shared/tslint-rules/*.ts || exit 1
 
 output="$(
@@ -12,8 +14,6 @@ output="$(
 		-r /usr/lib/node_modules/tslint-microsoft-contrib \
 		--project shared/js/tsconfig.json \
 		--type-check \
-		--noUnusedLocals \
-		--noUnusedParameters \
 		${*}
 )"
 

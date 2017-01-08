@@ -1,7 +1,7 @@
 import {CastleEvents, events, users} from '../../session/enums';
 import {ISession} from '../../session/isession';
 import {util} from '../../util';
-import {potassium} from '../potassium';
+import {potassiumUtil} from '../potassium/potassium-util';
 
 
 /**
@@ -78,7 +78,7 @@ export class Transport {
 		plaintext: DataView,
 		author: string
 	) : void {
-		this.logCyphertext(potassium.toBase64(cyphertext), author);
+		this.logCyphertext(potassiumUtil.toBase64(cyphertext), author);
 
 		const id: number		= plaintext.getFloat64(0, true);
 		const timestamp: number	= plaintext.getFloat64(8, true);
@@ -98,7 +98,7 @@ export class Transport {
 		);
 
 		message.data.set(chunk, index);
-		potassium.clearMemory(plaintext);
+		potassiumUtil.clearMemory(plaintext);
 
 		if (++message.totalChunks !== numChunks) {
 			return;
@@ -107,7 +107,7 @@ export class Transport {
 		if (timestamp > this.lastIncomingMessageTimestamp) {
 			this.lastIncomingMessageTimestamp	= timestamp;
 
-			const messageData	= potassium.toString(message.data);
+			const messageData	= potassiumUtil.toString(message.data);
 
 			if (messageData) {
 				this.session.trigger(events.castle, {
@@ -117,7 +117,7 @@ export class Transport {
 			}
 		}
 
-		potassium.clearMemory(message.data);
+		potassiumUtil.clearMemory(message.data);
 		this.receivedMessages.delete(id);
 	}
 
@@ -130,16 +130,16 @@ export class Transport {
 		cyphertext: string|ArrayBufferView,
 		messageId?: ArrayBufferView
 	) : void {
-		const fullCyphertext: string	= potassium.toBase64(
-			!messageId ? cyphertext : potassium.concatMemory(
+		const fullCyphertext: string	= potassiumUtil.toBase64(
+			!messageId ? cyphertext : potassiumUtil.concatMemory(
 				true,
 				messageId,
-				potassium.fromBase64(cyphertext)
+				potassiumUtil.fromBase64(cyphertext)
 			)
 		);
 
 		if (!messageId && typeof cyphertext !== 'string') {
-			potassium.clearMemory(cyphertext);
+			potassiumUtil.clearMemory(cyphertext);
 		}
 
 		this.session.trigger(events.castle, {

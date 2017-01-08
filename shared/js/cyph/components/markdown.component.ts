@@ -1,5 +1,9 @@
 import {Component, ElementRef, Input, OnChanges, Renderer, SimpleChanges} from '@angular/core';
-import {MarkdownIt} from 'markdown-it';
+import * as DOMPurify from 'dompurify';
+import * as MarkdownIt from 'markdown-it';
+import * as markdownItEmoji from 'markdown-it-emoji';
+import * as markdownItSup from 'markdown-it-sup';
+import {microlight} from 'microlight-string';
 import {EnvService} from '../services/env.service';
 import {util} from '../util';
 
@@ -13,7 +17,7 @@ import {util} from '../util';
 })
 export class MarkdownComponent implements OnChanges {
 	/** @ignore */
-	private readonly markdownIt: MarkdownIt;
+	private readonly markdownIt: MarkdownIt.MarkdownIt;
 
 	/** @ignore */
 	private initiated: boolean	= false;
@@ -98,9 +102,9 @@ export class MarkdownComponent implements OnChanges {
 		/** @ignore */
 		private readonly envService: EnvService
 	) {
-		this.markdownIt	= new (<any> self).markdownit({
+		this.markdownIt	= new MarkdownIt({
 			breaks: true,
-			highlight: (s: string) => (<any> self).microlight.process(
+			highlight: (s: string) => microlight.process(
 				s,
 				$(this.elementRef.nativeElement).css('color')
 			),
@@ -119,8 +123,8 @@ export class MarkdownComponent implements OnChanges {
 			typographer: true
 		}).
 			disable('image').
-			use((<any> self).markdownitSup).
-			use((<any> self).markdownitEmoji)
+			use(markdownItEmoji).
+			use(markdownItSup)
 		;
 	}
 }

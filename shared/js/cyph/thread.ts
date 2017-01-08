@@ -76,7 +76,7 @@ export class Thread implements IThread {
 		}
 
 		if (typeof atob === 'undefined' || typeof btoa === 'undefined') {
-			importScripts('/lib/js/davidchambers/base64.js/base64.min.js');
+			importScripts('/lib/js/node_modules/Base64/base64.js');
 		}
 
 		try {
@@ -94,9 +94,7 @@ export class Thread implements IThread {
 
 				return {
 					getRandomValues: (array: ArrayBufferView) => {
-						const sodium	= (<any> self).sodium;
-
-						if (sodium && sodium.crypto_stream_chacha20) {
+						if (typeof sodium !== 'undefined' && sodium.crypto_stream_chacha20) {
 							isActive	= true;
 						}
 						else if (!isActive) {
@@ -127,16 +125,15 @@ export class Thread implements IThread {
 
 		(<any> self).crypto	= crypto;
 
-		importScripts('/lib/js/crypto/libsodium/dist/browsers-sumo/combined/sodium.min.js');
-		(<any> self).sodium.memzero(threadSetupVars.seed);
+		importScripts('/lib/js/node_modules/libsodium/dist/browsers-sumo/combined/sodium.js');
+		sodium.memzero(threadSetupVars.seed);
 
-		importScripts('/lib/js/crypto/mceliece/dist/mceliece.js');
-		importScripts('/lib/js/crypto/ntru/dist/ntru.js');
-		importScripts('/lib/js/crypto/rlwe/dist/rlwe.js');
-		importScripts('/lib/js/crypto/supersphincs/dist/supersphincs.js');
-
-		importScripts('/lib/js/fetch/fetch.min.js');
-		importScripts('/lib/js/firebase/firebase.js');
+		importScripts('/lib/js/node_modules/mceliece-js/dist/mceliece.js');
+		importScripts('/lib/js/node_modules/ntru/dist/ntru.js');
+		importScripts('/lib/js/node_modules/rlwe/dist/rlwe.js');
+		importScripts('/lib/js/node_modules/supersphincs/dist/supersphincs.js');
+		importScripts('/lib/js/node_modules/whatwg-fetch/fetch.js');
+		importScripts('/lib/js/node_modules/firebase/firebase.js');
 
 		threadSetupVars	= undefined;
 	}

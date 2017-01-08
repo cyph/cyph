@@ -4,21 +4,18 @@
  */
 
 
-import * as firebase from 'firebase';
-
-
 (<any> self).firebase	= {
 	apps: [{
 		storage: () => ({
 			ref: () => ({
 				put: (blob: Blob) => {
-					const snapshot: firebase.UploadTaskSnapshot	= {
+					const snapshot: firebase.storage.UploadTaskSnapshot	= {
 						bytesTransferred: 0,
 						downloadURL: URL.createObjectURL(blob),
-						metadata: <firebase.FullMetadata> {},
-						ref: <firebase.StorageReference> {},
-						state: <firebase.TaskState> {},
-						task: <firebase.UploadTask> {},
+						metadata: <firebase.storage.FullMetadata> {},
+						ref: <firebase.storage.Reference> {},
+						state: <firebase.storage.TaskState> {},
+						task: <firebase.storage.UploadTask> {},
 						totalBytes: blob.size
 					};
 
@@ -27,7 +24,9 @@ import * as firebase from 'firebase';
 						cancel: () => {},
 						on: async (
 							_EVENT_TYPE: string,
-							onStateChanged: (snapshot: firebase.UploadTaskSnapshot) => void,
+							onStateChanged:
+								(snapshot: firebase.storage.UploadTaskSnapshot) => void
+							,
 							_ON_ERROR: (err: any) => void,
 							onComplete: () => void
 						) => {
@@ -57,6 +56,3 @@ import * as firebase from 'firebase';
 		})
 	}]
 };
-
-
-(<any> self).sodium.memzero	= () => {};

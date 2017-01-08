@@ -1,4 +1,5 @@
 import {Component, ElementRef, Input, OnInit} from '@angular/core';
+import * as tabIndent from 'tab-indent';
 import {ChatService} from '../services/chat.service';
 import {EnvService} from '../services/env.service';
 import {FileService} from '../services/file.service';
@@ -249,7 +250,7 @@ export class ChatMessageBoxComponent implements OnInit {
 
 			/* Allow tabbing for code indentation */
 
-			(<any> self).tabIndent.render($textarea[0]);
+			tabIndent.render($textarea[0]);
 		}
 	}
 
