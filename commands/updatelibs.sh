@@ -159,7 +159,7 @@ mv Makefile.new Makefile
 make libsodium/configure
 # sed -i 's|TOTAL_MEMORY_SUMO=35000000|TOTAL_MEMORY_SUMO=150000000|g' libsodium/dist-build/emscripten.sh
 make
-find dist -name '*.min.js' -exec bash -c 'mv {} "$(echo "{}" | sed "s|.min||")"' \;
+find dist -name '*.min.js' -exec bash -c 'mv {} "$(echo "{}" | sed "s|\.min||")"' \;
 find dist -name '*.js' -exec sed -i 's|use strict||g' {} \;
 rm -rf .git* *.tmp API.md browsers-test test libsodium
 cd ..
