@@ -82,12 +82,12 @@ export class Errors {
 			const oldConsoleError	= console.error;
 			console.error			= (errorMessage: string) => {
 				oldConsoleError(errorMessage);
-				this.log(errorMessage);
+				self.onerror(errorMessage);
 			};
 		}
 		catch (_) {}
 
-		(<any> self).onunhandledrejection	= (e: any) => this.log(e.reason);
+		(<any> self).onunhandledrejection	= (e: any) => self.onerror(e.reason);
 	}
 }
 
