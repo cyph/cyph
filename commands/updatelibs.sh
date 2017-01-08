@@ -116,8 +116,8 @@ cd ~/lib/js
 
 ln -s node_modules/core-js/client/shim.min.js base.js
 
-clone https://github.com/jedisct1/libsodium.js libsodium
-cd libsodium
+clone https://github.com/jedisct1/libsodium.js libsodium.build
+cd libsodium.build
 cat > wrapper/symbols/crypto_stream_chacha20.json << EOM
 {
 	"name": "crypto_stream_chacha20",
@@ -161,8 +161,10 @@ make libsodium/configure
 make
 find dist -name '*.min.js' -exec bash -c 'mv {} "$(echo "{}" | sed "s|\.min||")"' \;
 find dist -name '*.js' -exec sed -i 's|use strict||g' {} \;
-rm -rf .git* *.tmp API.md browsers-test test libsodium
 cd ..
+mkdir libsodium
+mv libsodium.build/dist libsodium/
+rm -rf libsodium.build
 
 cd ..
 
