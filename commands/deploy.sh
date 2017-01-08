@@ -277,6 +277,7 @@ for d in $compiledProjects ; do
 
 	../commands/build.sh --prod $(test "${simple}" && echo '--no-minify') || exit;
 
+	mv .index.html index.html
 	rm -rf js/node_modules
 
 	find css -name '*.scss' -or -name '*.map' -exec rm {} \;

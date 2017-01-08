@@ -97,8 +97,10 @@ elif [ "${command}" == 'stopserve' ] ; then
 	killcontainer "$(containername serve)"
 	rm -rf \
 		*/.build.yaml \
+		*/.index.html \
 		cyph.com/blog \
 		shared/js/docs \
+		shared/js/*/pack \
 		$(find shared/css -name '*.css' -or -name '*.map') \
 		$(find shared/js -name '*.js' -or -name '*.map')
 	exit 0
