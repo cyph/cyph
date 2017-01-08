@@ -1,1 +1,1 @@
-node_modules/babel-polyfill/dist/polyfill.min.js
+node_modules/babel-polyfill/dist/polyfill.js

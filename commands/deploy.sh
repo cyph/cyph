@@ -385,7 +385,7 @@ if [ "${websign}" ] ; then
 		plink=$(echo $p | sed 's/\.ws$//')
 		if (echo $p | grep -P '\.ws$' > /dev/null) && ! [ -L $plink ] ; then
 			ln -s $p $plink
-			chmod 777 $plink
+			chmod 700 $plink
 			git add $plink
 			git commit -S -m $plink $plink > /dev/null 2>&1
 		fi
@@ -395,7 +395,7 @@ if [ "${websign}" ] ; then
 				zopfli -i1000 {}; \
 				bro --quality 99 --repeat 99 --input {} --output {}.br; \
 			fi; \
-			chmod 777 {}.gz {}.br; \
+			chmod 700 {}.gz {}.br; \
 			git add {}.gz {}.br; \
 			git commit -S -m "$(cat {}.srihash 2> /dev/null || date +%s)" {}.gz {}.br > /dev/null 2>&1; \
 		' \;

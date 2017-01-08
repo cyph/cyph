@@ -92,8 +92,8 @@ done
 
 cd ~/lib/js
 
-# Pending TS 2.1: ln -s node_modules/core-js/client/shim.min.js base.js
-ln -s node_modules/babel-polyfill/dist/polyfill.min.js base.js
+# Pending TS 2.1: ln -s node_modules/core-js/client/shim.js base.js
+ln -s node_modules/babel-polyfill/dist/polyfill.js base.js
 
 ${dir}/commands/libclone.sh https://github.com/jedisct1/libsodium.js libsodium.build
 cd libsodium.build
