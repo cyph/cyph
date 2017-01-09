@@ -47,6 +47,14 @@ export class ChatRootComponent implements OnInit {
 				/* TODO: HANDLE NATIVE */
 			}
 		}
+		if (this.sessionService.apiFlags.telehealth) {
+			if (this.envService.isWeb) {
+				$(document.body).addClass('telehealth');
+			}
+			else {
+				/* TODO: HANDLE NATIVE */
+			}
+		}
 
 		const urlSection		= this.urlStateService.getUrlSplit()[0];
 		const initialCallType	=
