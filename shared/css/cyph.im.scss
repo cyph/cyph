@@ -295,7 +295,7 @@ md-menu-item {
 .chat-main:not(.mobile):not(.video) .message-item.author-app .message {
 	width: 85%;
 
-	@include transform(translateX(7.5%));
+	@include transform(translateX(9.25%));
 }
 
 .message-list .message-item, .chat-cyphertext .message-item {
