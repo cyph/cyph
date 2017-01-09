@@ -542,8 +542,8 @@ konami-code.js@^1.4.7:
   resolved "https://registry.yarnpkg.com/konami-code.js/-/konami-code.js-1.4.7.tgz#60a7d147d7742dcfb1c122137e3696fd07650f20"
 
 linkify-it@^2.0.0:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/linkify-it/-/linkify-it-2.0.2.tgz#994629a4adfa5a7d34e08c075611575ab9b6fcfc"
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/linkify-it/-/linkify-it-2.0.3.tgz#d94a4648f9b1c179d64fa97291268bdb6ce9434f"
   dependencies:
     uc.micro "^1.0.1"
 
@@ -589,9 +589,9 @@ markdown-it@^8.2.2:
     mdurl "^1.0.1"
     uc.micro "^1.0.3"
 
-mceliece-js@^1.0.4:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/mceliece-js/-/mceliece-js-1.0.4.tgz#af2b261d3b6dc6822d4bc099d464bdc3a4ab4aac"
+mceliece@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/mceliece/-/mceliece-1.0.6.tgz#da66f1c3eedd5816a61ab1a422b3c2fa441914eb"
 
 mdurl@^1.0.1:
   version "1.0.1"
