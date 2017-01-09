@@ -126,7 +126,7 @@ do
 	uglifyjs "${f}" -m -o "${f}"
 done
 
-for module in mceliece-js ntru rlwe sidh sphincs supersphincs ; do
+for module in mceliece ntru rlwe sidh sphincs supersphincs ; do
 	sed -i 's|export const|declare const|g' ${module}/*.d.ts
 	sed -i 's|export ||g' ${module}/*.d.ts
 done
