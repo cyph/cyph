@@ -43,8 +43,12 @@ export class Errors {
 			column?: number,
 			errorObject?: any
 		) : void => {
-			/* Annoying useless iframe-related spam */
-			if (errorMessage === 'Script error.') {
+			if (
+				/* Annoying useless iframe-related spam */
+				errorMessage === 'Script error.' ||
+				/* Google Search iOS app bug */
+				errorMessage === "TypeError: null is not an object (evaluating 'elt.parentNode')"
+			) {
 				return;
 			}
 
@@ -81,7 +85,7 @@ export class Errors {
 		try {
 			const oldConsoleError	= console.error;
 			console.error			= (errorMessage: string) => {
-				oldConsoleError(errorMessage);
+				oldConsoleError.call(console, errorMessage);
 				self.onerror(errorMessage);
 			};
 		}

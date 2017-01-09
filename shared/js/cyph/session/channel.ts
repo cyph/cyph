@@ -29,7 +29,7 @@ export class Channel {
 
 	/** This kills the channel. */
 	public close () : void {
-		util.retryUntilSuccessful(async () => this.channelRef.remove());
+		this.channelRef.remove().catch(() => {});
 	}
 
 	/** Indicates whether this channel is available for sending and receiving. */

@@ -307,7 +307,7 @@ export class AppService {
 				(<any> elements.backgroundVideo()).appear().
 					on('appear', () => {
 						try {
-							(<HTMLVideoElement> elements.backgroundVideo()[0]).play();
+							(<any> elements.backgroundVideo()[0]).play().catch(() => {});
 						}
 						catch (_) {}
 					}).
