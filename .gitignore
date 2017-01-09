@@ -1,6 +1,5 @@
 .build
 **/.build.yaml
-**/.index.html
 *.mmdb
 **/*.mmdb
 .sass-cache
@@ -17,8 +16,9 @@ npm-debug.log
 **/npm-debug.log
 node_modules
 **/node_modules
-shared/lib/.js.tmp
 shared/js/**/pack
+shared/lib/.js.tmp
+shared/lib/js/base.js
 shared/lib/go
 default/github.com
 default/golang.org

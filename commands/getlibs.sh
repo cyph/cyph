@@ -168,6 +168,9 @@ mv .js.tmp/node_modules js/
 rm -rf .js.tmp
 cp js/yarn.lock js/node_modules/
 
+# Pending TS 2.1: cp js/node_modules/core-js/client/shim.js js/base.js
+cp js/node_modules/babel-polyfill/dist/polyfill.js js/base.js
+
 
 # Go libs
 

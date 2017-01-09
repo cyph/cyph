@@ -92,9 +92,6 @@ done
 
 cd ~/lib/js
 
-# Pending TS 2.1: ln -s node_modules/core-js/client/shim.js base.js
-ln -s node_modules/babel-polyfill/dist/polyfill.js base.js
-
 ${dir}/commands/libclone.sh https://github.com/jedisct1/libsodium.js libsodium.build
 cd libsodium.build
 cat > wrapper/symbols/crypto_stream_chacha20.json << EOM

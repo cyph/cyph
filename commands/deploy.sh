@@ -445,6 +445,13 @@ if [ ! "${test}" -a \( ! "${site}" -o "${site}" == cyph.im \) ] ; then
 	done
 fi
 
+# Workaround for error "Cannot upload file ... which has size ... greater than maximum allowed"
+if [ "${simple}" ] ; then
+	rm -rf */lib/go $(find . -type d -name node_modules -exec \
+		find {} -mindepth 1 -maxdepth 1 -type d -name 'tns*' -or -name 'nativescript*' \
+	\;)
+fi
+
 if [ "${test}" ] ; then
 	rm -rf $prodOnlyProjects
 fi
