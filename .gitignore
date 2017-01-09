@@ -17,6 +17,7 @@ npm-debug.log
 node_modules
 **/node_modules
 shared/lib/.js.tmp
+shared/lib/js/base.js
 shared/lib/go
 default/github.com
 default/golang.org

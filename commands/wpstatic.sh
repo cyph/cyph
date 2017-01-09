@@ -238,7 +238,6 @@ for f in $(find . -name '*.html') ; do node -e "
 		})))
 	).then(() =>\$('body').append(\`
 		<script src='/lib/js/base.js'></script>
-		<script src='/lib/js/sodiumutil.js'></script>
 		<script src='/js/preload/global.js'></script>
 		<script src='/js/cyph/analytics.js'></script>
 	\`)).then(() => fs.writeFileSync('${f}', htmlMinifier.minify(
