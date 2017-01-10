@@ -1,5 +1,6 @@
 .build
 **/.build.yaml
+**/.index.html
 *.mmdb
 **/*.mmdb
 .sass-cache
