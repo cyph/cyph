@@ -306,7 +306,7 @@ compile () {
 							";
 						})
 					],
-					$(test "${m}" == 'Main' && echo "
+					$(test "${test}" || test "${m}" == 'Main' && echo "
 						recordsOutputPath: '${records}'
 					")
 				}, (err, stats) => {$(test "${m}" == 'Main' && echo "

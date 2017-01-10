@@ -74,6 +74,7 @@ appserver --port 5002 --admin_port 6002 --host 0.0.0.0 --storage_path /tmp/cyph2
 
 if [ "${prodlike}" ] ; then
 	./commands/build.sh --prod
+	git checkout */webpack.json
 
 	if (( $? )) ; then
 		echo -e '\n\nBuild failed\n'
