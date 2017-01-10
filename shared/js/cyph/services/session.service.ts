@@ -31,7 +31,8 @@ export class SessionService implements ISessionService {
 	public readonly apiFlags	= {
 		forceTURN: false,
 		modestBranding: false,
-		nativeCrypto: false
+		nativeCrypto: false,
+		telehealth: false
 	};
 
 	/** @inheritDoc */
@@ -105,6 +106,12 @@ export class SessionService implements ISessionService {
 				analEvent: 'native-crypto',
 				character: '%',
 				set: () => { this.apiFlags.nativeCrypto = true; }
+			},
+			/* Telehealth */
+			{
+				analEvent: 'telehealth',
+				character: '@',
+				set: () => { this.apiFlags.telehealth = true; }
 			}
 		]) {
 			if (id[0] !== flag.character) {

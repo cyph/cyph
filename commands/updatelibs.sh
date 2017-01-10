@@ -47,7 +47,7 @@ yarn add --ignore-platform \
 	markdown-it \
 	markdown-it-sup \
 	markdown-it-emoji \
-	mceliece-js \
+	mceliece \
 	microlight-string \
 	nanoscroller \
 	nativescript-angular \

@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {Title} from '@angular/platform-browser';
 import {EnvService} from '../cyph/services/env.service';
 import {UrlStateService} from '../cyph/services/url-state.service';
 import {util} from '../cyph/util';
@@ -51,6 +52,8 @@ export class AppService {
 	constructor (
 		envService: EnvService,
 
+		titleService: Title,
+
 		/** @ignore */
 		private readonly urlStateService: UrlStateService
 	) {
@@ -59,6 +62,8 @@ export class AppService {
 			this.state	= States.blank;
 			return;
 		}
+
+		titleService.setTitle(util.translate(titleService.getTitle()));
 
 		this.urlStateService.onChange(newUrlState => {
 			this.onUrlStateChange(newUrlState);

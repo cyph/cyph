@@ -26,7 +26,8 @@ export class LocalSessionService implements ISessionService {
 	public readonly apiFlags	= {
 		forceTURN: false,
 		modestBranding: false,
-		nativeCrypto: false
+		nativeCrypto: false,
+		telehealth: false
 	};
 
 	/** @inheritDoc */

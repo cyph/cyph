@@ -8,9 +8,10 @@ import {ISession} from '../session/isession';
 export interface ISessionService extends ISession {
 	/** API flags passed into this session. */
 	readonly apiFlags: {
-		forceTURN: boolean,
-		modestBranding: boolean,
-		nativeCrypto: boolean
+		forceTURN: boolean;
+		modestBranding: boolean;
+		nativeCrypto: boolean;
+		telehealth: boolean;
 	};
 
 	/** @see Events */

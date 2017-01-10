@@ -11,24 +11,31 @@
 		<link rel='manifest' href='/manifest.json' />
 
 		<title>Cyph &ndash; Encrypted Messenger</title>
-		<meta
-			name='description'
-			content='Cyph secures your conversations against any threat, from lone hackers, to agencies armed with theoretical quantum attacks — no signup or downloads required. Cyph your friends. Reclaim your privacy.'
-		/>
+
+		<meta name='description' content='
+			Completely Private Voice and Video Chat. Cyph secures your conversations
+			against any threat, from lone hackers, to agencies armed with theoretical
+			quantum attacks — no signup or downloads required. Cyph your friends.
+			Reclaim your privacy.
+		' />
+
 		<meta property='og:title' content='Cyph &ndash; Encrypted Messenger' />
-		<meta
-			property='og:description'
-			content='Cyph secures your conversations against any threat, from lone hackers, to agencies armed with theoretical quantum attacks — no signup or downloads required. Cyph your friends. Reclaim your privacy.'
-		/>
+		<meta property='og:description' content='
+			Cyph secures your conversations against any threat, from lone hackers,
+			to agencies armed with theoretical quantum attacks — no signup or downloads
+			required. Cyph your friends. Reclaim your privacy.
+		' />
 		<meta property='og:image' content='https://www.cyph.com/img/metaimage.png' />
 		<meta property='og:url' content='https://www.cyph.com' />
 		<meta property='og:type' content='website' />
 
+		<link rel='icon' sizes='256x256' type='image/png' href='/img/favicon/favicon-256x256.png' />
 		<link rel='icon' sizes='192x192' type='image/png' href='/img/favicon/favicon-192x192.png' />
 		<link rel='icon' sizes='160x160' type='image/png' href='/img/favicon/favicon-160x160.png' />
 		<link rel='icon' sizes='96x96' type='image/png' href='/img/favicon/favicon-96x96.png' />
 		<link rel='icon' sizes='32x32' type='image/png' href='/img/favicon/favicon-32x32.png' />
 		<link rel='icon' sizes='16x16' type='image/png' href='/img/favicon/favicon-16x16.png' />
+		<link rel='shortcut icon' sizes='196x196' type='image/png' href='/img/favicon/favicon-196x196.png' />
 		<link rel='apple-touch-icon' sizes='180x180' type='image/png' href='/img/favicon/apple-touch-icon-180x180.png' />
 		<link rel='apple-touch-icon' sizes='152x152' type='image/png' href='/img/favicon/apple-touch-icon-152x152.png' />
 		<link rel='apple-touch-icon' sizes='144x144' type='image/png' href='/img/favicon/apple-touch-icon-144x144.png' />
@@ -38,36 +45,74 @@
 		<link rel='apple-touch-icon' sizes='72x72' type='image/png' href='/img/favicon/apple-touch-icon-72x72.png' />
 		<link rel='apple-touch-icon' sizes='60x60' type='image/png' href='/img/favicon/apple-touch-icon-60x60.png' />
 		<link rel='apple-touch-icon' sizes='57x57' type='image/png' href='/img/favicon/apple-touch-icon-57x57.png' />
+		<link rel='mask-icon' href='/img/favicon/mask.svg' color='#8b62d9' />
+		<meta name='application-name' content='Cyph' />
+		<meta name='msapplication-tooltip' content='Cyph — Encrypted Messenger' />
 		<meta name='msapplication-TileImage' content='/img/favicon/mstile-144x144.png' />
 		<meta name='msapplication-TileColor' content='#8b62d9' />
 		<meta name='theme-color' content='#8b62d9' />
+
+		<style>
+			body {
+				background-color: #8b62d9;
+				color: white;
+				font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif;
+			}
+
+			a {
+				color: white;
+			}
+
+			.content-wrapper {
+				display: table;
+				position: absolute;
+				height: calc(100% - 50px);
+				width: calc(100% - 50px);
+				margin: auto;
+				max-width: 750px;
+				top: 0px;
+				left: 0px;
+				right: 0px;
+			}
+			.content {
+				display: table-cell;
+				vertical-align: middle;
+				text-align: center;
+				font-size: 1.25em;
+			}
+			.content > img {
+				height: 8em;
+			}
+
+			.footer {
+				position: fixed;
+				bottom: 25px;
+				left: 25px;
+				width: calc(100% - 50px);
+				text-align: center;
+			}
+		</style>
+		
 	</head>
 	<body>
-		<div>
-			<p>
-				We're sorry, but you'll need a newer browser before you can use Cyph.
-			</p>
-			<p>
-				You're currently missing support for the
-				<a
-					href='http://developer.mozilla.org/en-US/docs/Web/API/Window.crypto'
-					target='_blank'
-				>Web Cryptography</a>
-				standard and/or other capabilities required to use Cyph.
-			</p>
-			<br />
-			<p>
-				Please install
-				<a href='https://firefox.com' target='_blank'><b>Mozilla Firefox</b></a>
-				(or upgrade to the latest version of your preferred browser) and try again.
-			</p>
-			<p>
-				Note that Internet Explorer versions below 11 and iOS versions below 8
-				are not possible for us to support.
-			</p>
+		<div class='content-wrapper'>
+			<div class='content'>
+				<img
+					src='/img/logo.white.vertical.png'
+					alt='Horizontal white Cyph logo with transparent background'
+				/>
+				<p>
+					Your browser is outdated and not supported for using Cyph.
+				</p>
+				<p>
+					Please install the latest version of
+					<a href='https://firefox.com' target='_blank'><b>Mozilla Firefox</b></a>,
+					Chrome, Safari, Edge, Opera, or any other modern browser and try again.
+				</p>
+			</div>
 		</div>
-		<div style='position:fixed;bottom:10px;width:100%;text-align:center;'>
-			&copy; Cyph 2016
+		<div class='footer'>
+			&copy; Cyph 2017
 				&nbsp;&bull;&nbsp;
 			<a href='https://twitter.com/cyph' target='_blank'>@cyph</a>
 				&nbsp;&bull;&nbsp;
@@ -76,6 +121,9 @@
 			<a href='tel:+19312974462' title='+1(931) 297 4462'>+1(931) CYPH INC</a>
 		</div>
 
-		<iframe src='https://api.cyph.com/anal/cyph.im/unsupportedbrowser' style='display: none'></iframe>
+		<iframe
+			src='https://api.cyph.com/analsandbox/cyph.ws/unsupportedbrowser'
+			style='display: none'
+		></iframe>
 	</body>
 </html>

@@ -128,7 +128,7 @@ export class Thread implements IThread {
 		importScripts('/lib/js/node_modules/libsodium/dist/browsers-sumo/combined/sodium.js');
 		sodium.memzero(threadSetupVars.seed);
 
-		importScripts('/lib/js/node_modules/mceliece-js/dist/mceliece.js');
+		importScripts('/lib/js/node_modules/mceliece/dist/mceliece.js');
 		importScripts('/lib/js/node_modules/ntru/dist/ntru.js');
 		importScripts('/lib/js/node_modules/rlwe/dist/rlwe.js');
 		importScripts('/lib/js/node_modules/supersphincs/dist/supersphincs.js');
