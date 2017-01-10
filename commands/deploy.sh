@@ -290,6 +290,11 @@ for d in $compiledProjects ; do
 
 	cd ..
 done
+if [ "${branch}" == 'staging' ] ; then
+	chmod 700 */webpack.json
+	git commit -m 'webpack.json update' */webpack.json
+	git push
+fi
 touch .build.done
 
 

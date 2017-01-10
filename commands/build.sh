@@ -225,48 +225,20 @@ compile () {
 			packdir="js/${mainparent}/pack"
 			packdirfull="${outputDir}/${packdir}"
 			records="${rootDir}/${mainparent}/webpack.json"
-			libs=''
 
 			if [ "${m}" == 'Main' ] ; then
 				rm -rf $packdirfull 2> /dev/null
 				mkdir $packdirfull
-
-				libs="$({
-					for d in cyph preload $mainparent ; do
-						find $d -name '*.ts' -not \( \
-							-name '*.component.ts' \
-							-or -name '*.module.ts' \
-						\) -exec cat {} \; |
-							grep -oP "^import .*'([^\.].*?)';$" |
-							perl -pe "s/.*?'(.*?)'.*/\1/g" \
-						;
-					done |
-						sort |
-						uniq \
-					;
-					find . \( \
-						-name '*.ngfactory.js' \
-						-or -name '*.ngmodule.js' \
-					\) -a \( \
-						-path './cyph/*' \
-						-or -path "./${mainparent}/*" \
-					\) |
-						sed 's|\.js$||g' \
-					;
-					echo ./cyph/thread;
-				})"
 			fi
 
 			# Don't use ".js" file extension for Webpack outputs. No idea
 			# why right now, but it breaks the module imports in Session.
-			cat > "${f}.webpack.js" <<- EOM
+			node -e "
+				const cheerio	= require('cheerio');
 				const webpack	= require('webpack');
 
-				module.exports	= {
+				webpack({
 					entry: {
-						$(test "${m}" == 'Main' && for lib in $libs ; do
-							echo "// '$(webpackname "${lib}")': '${lib}',"
-						done)
 						main: './${f}'
 					},
 					$(test "${watch}" || echo "
@@ -296,8 +268,8 @@ compile () {
 							libraryTarget: 'var'
 						")
 						$(test "${m}" == 'Main' && echo "
-							filename: '[name].js',
-							chunkFilename: '[name].js',
+							filename: '[chunkhash].js',
+							chunkFilename: '[chunkhash].js',
 							path: '${packdirfull}'
 						")
 					},
@@ -320,15 +292,6 @@ compile () {
 							}),
 						")
 						$(test "${m}" == 'Main' && {
-							for lib in $libs ; do
-								echo "
-									/* new webpack.optimize.CommonsChunkPlugin({
-										name: 'commons__$(webpackname "${lib}")',
-										filename: '[name].js.tmp',
-										chunks: ['main', '$(webpackname "${lib}")']
-									}), */
-								";
-							done;
 							echo "
 								new webpack.optimize.AggressiveSplittingPlugin({
 									minSize: 30000,
@@ -336,63 +299,45 @@ compile () {
 								}),
 							";
 							echo "
-								/* new webpack.optimize.CommonsChunkPlugin({
+								new webpack.optimize.CommonsChunkPlugin({
 									name: 'init',
 									minChunks: Infinity
-								}) */
+								})
 							";
 						})
 					],
 					$(test "${m}" == 'Main' && echo "
 						recordsOutputPath: '${records}'
 					")
-				};
-			EOM
+				}, (err, stats) => {$(test "${m}" == 'Main' && echo "
+					if (err) {
+						throw err;
+					}
 
-			webpack --config "${f}.webpack.js"
-			cp -f "${f}.webpack.js" /cyph/tmp/
+					const input		= '$(echo "${rootDir}/$(echo $f | sed 's/\/.*//')/index.html")';
+					const output	= input.replace(/index\.html\$/, '.index.html');
 
-			if [ "${m}" != 'Main' ] ; then
-				continue
-			fi
+					const \$	= cheerio.load(fs.readFileSync(input).toString());
 
-			# Temporary workaround for webpack issue
-			# cat "${packdirfull}/init.js.tmp" |
-			#	tr '\n' '☁' |
-			# 	perl -pe 's/var head.*?(var promise.*?)head.appendChild\(script\);/\1/g' |
-			# 	tr '☁' '\n' \
-			# > "${f}.js.tmp"
-			# echo >> "${f}.js.tmp"
+					\$('script[src=\"/js/${f}.js\"]').remove();
 
-			# mv "${packdirfull}/init.js" "${f}.js.tmp"
-			mv $(grep -rl webpackBootstrap $packdirfull) "${f}.js.tmp"
+					for (const chunk of stats.compilation.entrypoints.main.chunks) {
+						for (const file of chunk.files) {
+							\$('body').append( \`<script src='/${packdir}/\${file}'></script>\`);
+						}
+					}
 
-			# cat "${packdirfull}/main.js.tmp" >> "${f}.js.tmp"
-			# for tmp in ${packdirfull}/commons__*.js.tmp ; do
-			# for tmp in ${packdirfull}/*.js.tmp ; do
-			# 	mv $tmp "$(echo $tmp | sed 's|\.js\.tmp$|.js|')"
-			# done
-			# rm ${packdirfull}/*.js.tmp ${packdirfull}/.*.js.tmp
-
-			node -e "
-				const cheerio	= require('cheerio');
-
-				const libs		= '$(ls $packdirfull | tr '\n' ' ')'.trim().split(/\s+/).filter(s => s);
-				const input		= '$(echo "${rootDir}/$(echo $f | sed 's/\/.*//')/index.html")';
-				const output	= input.replace(/index\.html\$/, '.index.html');
-
-				const \$	= cheerio.load(fs.readFileSync(input).toString());
-
-				for (const lib of libs) {
-					\$('body').append( \`<script async src='/${packdir}/\${lib}'></script>\`);
-				}
-
-				fs.writeFileSync(output, \$.html().trim());
+					fs.writeFileSync(output, \$.html().trim());
+				")});
 			"
 		done
 
 		for f in $tsfiles ; do
 			m="$(modulename "${f}")"
+
+			if [ "${m}" == 'Main' ] ; then
+				continue
+			fi
 
 			{
 				echo '(function () {';
@@ -409,14 +354,13 @@ compile () {
 					if [ "${minify}" ] ; then uglifyjs ; else cat - ; fi \
 				;
 				echo '})();';
-			} |
-				sed 's|use strict||g' \
-			> "${outputDir}/js/${f}.js"
+			} \
+				> "${outputDir}/js/${f}.js"
 
 			rm "${f}.js.tmp"
 		done
 
-		for js in $(find . -name '*.js' -not \( \
+		for js in $(find . -type f -name '*.js' -not \( \
 			-path './preload/global.js' \
 			-or -name 'translations.js' \
 		\)) ; do
@@ -430,6 +374,10 @@ compile () {
 				rm "${js}"
 			fi
 		done
+
+		find "${outputDir}/js" -type f -name '*.js' -not -path '*/node_modules/*' -exec \
+			sed -i 's|use strict||g' {} \
+		\;
 	fi
 }
 
