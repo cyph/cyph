@@ -363,6 +363,7 @@ compile () {
 		for js in $(find . -type f -name '*.js' -not \( \
 			-path './preload/global.js' \
 			-or -name 'translations.js' \
+			-or -path './*/pack/*' \
 		\)) ; do
 			delete=true
 			for f in $tsfiles ; do
