@@ -37,7 +37,7 @@
 		@include animation-fill-mode(forwards);
 
 		+ .loading > .logo-animation * {
-			@include animation-delay(2s);
+			@include animation-delay(2.5s);
 		}
 	}
 }
@@ -49,7 +49,10 @@ body.load-complete #pre-load {
 
 .loading {
 	font-size: 20px;
-	padding: 10px;
+
+	cyph-app & {
+		padding: 10px;
+	}
 
 	> .image, > .logo-animation {
 		height: 33vh;
