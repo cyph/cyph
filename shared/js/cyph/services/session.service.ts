@@ -8,6 +8,7 @@ import {ISession} from '../session/isession';
 import {Thread} from '../thread';
 import {util} from '../util';
 import {AbstractSessionIdService} from './abstract-session-id.service';
+import {ConfigService} from './config.service';
 
 
 /**
@@ -84,46 +85,19 @@ export class SessionService implements ISessionService {
 		eventManager.trigger(event + this.eventId, data);
 	}
 
-	constructor (abstractSessionIdService: AbstractSessionIdService) {
-		let id	= abstractSessionIdService.id;
+	constructor (
+		abstractSessionIdService: AbstractSessionIdService,
+		configService: ConfigService
+	) {
+		const id	= abstractSessionIdService.id;
 
 		/* API flags */
-		for (const flag of [
-			/* Modest branding */
-			{
-				analEvent: 'modest-branding',
-				character: '&',
-				set: () => { this.apiFlags.modestBranding = true; }
-			},
-			/* Force TURN */
-			{
-				analEvent: 'force-turn',
-				character: '$',
-				set: () => { this.apiFlags.forceTURN = true; }
-			},
-			/* Native crypto */
-			{
-				analEvent: 'native-crypto',
-				character: '%',
-				set: () => { this.apiFlags.nativeCrypto = true; }
-			},
-			/* Telehealth */
-			{
-				analEvent: 'telehealth',
-				character: '@',
-				set: () => { this.apiFlags.telehealth = true; }
-			}
-		]) {
+		for (const flag of configService.apiFlags) {
 			if (id[0] !== flag.character) {
 				continue;
 			}
 
-			id	=
-				id.substring(1) +
-				(id.length > 1 ? 'a' : '')
-			;
-
-			flag.set();
+			flag.set(this);
 
 			analytics.sendEvent({
 				eventAction: 'used',

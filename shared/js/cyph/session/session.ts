@@ -174,11 +174,8 @@ export class Session implements ISession {
 	}
 
 	/** @ignore */
-	private setId (id?: string) : void {
+	private setId (flags: string, id: string) : void {
 		if (
-			/* Empty/undefined string */
-			!id ||
-
 			/* Too short */
 			id.length < config.secretLength ||
 
@@ -195,12 +192,12 @@ export class Session implements ISession {
 
 		this.updateState(
 			'cyphId',
-			id.substr(0, config.cyphIdLength)
+			id.substring(0, config.cyphIdLength)
 		);
 
 		this.updateState(
 			'sharedSecret',
-			this.state.sharedSecret || id
+			flags + (this.state.sharedSecret || id)
 		);
 	}
 
@@ -360,17 +357,27 @@ export class Session implements ISession {
 	 * @param eventId
 	 */
 	constructor (
-		id?: string,
+		id: string = '',
 
 		nativeCrypto: boolean = false,
 
 		/** @ignore */
 		private readonly eventId: string = util.generateGuid()
 	) { (async () => {
+		const flags	= (
+			id.match(
+				new RegExp(`^[\\${
+					config.apiFlags.map(o => o.character).join('\\')
+				}]+`)
+			) || ['']
+		)[0];
+
+		id	= id.substring(flags.length);
+
 		/* true = yes; false = no; undefined = maybe */
 		this.updateState(
 			'startingNewCyph',
-			!id ?
+			id.length < 1 ?
 				true :
 				id.length > config.secretLength ?
 					undefined :
@@ -382,7 +389,7 @@ export class Session implements ISession {
 			this.state.startingNewCyph === undefined
 		);
 
-		this.setId(id);
+		this.setId(flags, id);
 
 
 		if (this.state.startingNewCyph !== false) {

@@ -1,4 +1,5 @@
 import * as angular from 'angular';
+import {ISessionService} from './service-interfaces/isession-service';
 
 
 /**
@@ -34,6 +35,38 @@ export class Config {
 		'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E',
 		'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
 		'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
+	];
+
+	/** Configuration of available API flags. */
+	public readonly apiFlags	= [
+		{
+			analEvent: 'telehealth',
+			character: '@',
+			set: (sessionService: ISessionService) => {
+				sessionService.apiFlags.telehealth		= true;
+			}
+		},
+		{
+			analEvent: 'modest-branding',
+			character: '&',
+			set: (sessionService: ISessionService) => {
+				sessionService.apiFlags.modestBranding	= true;
+			}
+		},
+		{
+			analEvent: 'force-turn',
+			character: '$',
+			set: (sessionService: ISessionService) => {
+				sessionService.apiFlags.forceTURN 		= true;
+			}
+		},
+		{
+			analEvent: 'native-crypto',
+			character: '%',
+			set: (sessionService: ISessionService) => {
+				sessionService.apiFlags.nativeCrypto	= true;
+			}
+		}
 	];
 
 	/** Angular-related config. */
