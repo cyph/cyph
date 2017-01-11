@@ -306,9 +306,9 @@ compile () {
 							";
 						})
 					],
-					$(test "${test}" || test "${m}" == 'Main' && echo "
-						recordsOutputPath: '${records}'
-					")
+					$(if [ ! "${watch}" ] && [ "${m}" == 'Main' ] ; then
+						echo "recordsOutputPath: '${records}'"
+					fi)
 				}, (err, stats) => {$(test "${m}" == 'Main' && echo "
 					if (err) {
 						throw err;
