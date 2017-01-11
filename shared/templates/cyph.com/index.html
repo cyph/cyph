@@ -183,11 +183,11 @@
 		<div class='hero-foreground'>
 			<div
 				id='promo-section'
-				*ngIf='appService.promo !== appService.promos.none'
+				*ngIf='appService.promo !== undefined'
 				class='layout-row layout-align-center-center'
 			>
 				<md2-card
-					childClass='animated wow flex-33 flex-sm-66 flex-xs-100'
+					class='animated wow flex-33 flex-sm-66 flex-xs-100'
 					data-wow-delay='3000ms'
 					[class.bounceInLeft]='appService.promo === appService.promos.jjgo'
 					[class.bounceInDown]='appService.promo !== appService.promos.jjgo'

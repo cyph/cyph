@@ -26,9 +26,6 @@ export class AppService {
 	/** @see States */
 	public state: States				= States.home;
 
-	/** @see Promos */
-	public promo: Promos				= Promos.none;
-
 	/** @see States */
 	public promos: typeof Promos		= Promos;
 
@@ -92,6 +89,9 @@ export class AppService {
 	/** @see HomeSections */
 	public homeSection: HomeSections;
 
+	/** @see Promos */
+	public promo: Promos|undefined;
+
 	/** Carousel of features. */
 	public featureCarousel: Carousel;
 
@@ -132,8 +132,8 @@ export class AppService {
 		const newUrlStateSplit: string[]	= newUrlState.split('/');
 		const newUrlStateBase: string		= newUrlStateSplit[0];
 
-		const state: States	= (<any> States)[newUrlStateBase];
-		const promo: Promos	= (<any> Promos)[newUrlStateBase];
+		const state: States|undefined	= (<any> States)[newUrlStateBase];
+		const promo: Promos|undefined	= (<any> Promos)[newUrlStateBase];
 
 		this.homeSection	= promo === undefined ?
 			(<any> HomeSections)[newUrlStateBase] :
@@ -149,7 +149,7 @@ export class AppService {
 		if (this.homeSection !== undefined) {
 			this.state	= States.home;
 
-			if (promo) {
+			if (promo !== undefined) {
 				this.promo				= promo;
 
 				eventManager.trigger(
@@ -348,7 +348,7 @@ export class AppService {
 
 					const shouldExpand	= this.state === States.home && (
 						(
-							this.promo === Promos.none &&
+							this.promo === undefined &&
 							elements.heroText().is(':appeared')
 						) ||
 						elements.footer().is(':appeared')

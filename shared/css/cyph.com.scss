@@ -1024,6 +1024,10 @@ body:not(.mobile) .section-content-container:not(.full) {
 	#hero-section & + .hero-text {
 		margin-top: 20px;
 	}
+
+	img {
+		width: 100%;
+	}
 }
 
 #main.unisection-mode {

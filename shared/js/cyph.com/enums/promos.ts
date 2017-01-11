@@ -6,7 +6,6 @@ export enum Promos {
 	jjgo,
 	judgejohn,
 	mybrother,
-	none,
 	penn,
 	sawbones,
 	security,
