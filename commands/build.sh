@@ -240,7 +240,7 @@ compile () {
 					cp -f "${htmlinput}" "${htmloutput}"
 				fi
 
-				continue;
+				continue
 			fi
 
 			if [ "${m}" == 'Main' ] ; then
