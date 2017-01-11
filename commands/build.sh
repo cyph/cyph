@@ -225,6 +225,23 @@ compile () {
 			packdir="js/${mainparent}/pack"
 			packdirfull="${outputDir}/${packdir}"
 			records="${rootDir}/${mainparent}/webpack.json"
+			htmlinput="${rootDir}/$(echo "${f}" | sed 's/\/.*//')/index.html"
+			htmloutput="$(echo "${htmlinput}" | sed 's/index\.html$/.index.html/')"
+
+			if [ "${watch}" ] ; then
+				webpack \
+					--output-library-target var \
+					--output-library "${m}" \
+					"${f}.js" \
+					"${f}.js.tmp"
+
+				if [ "${m}" == 'Main' ] ; then
+					mv "${f}.js.tmp" "${outputDir}/js/${f}.js"
+					cp -f "${htmlinput}" "${htmloutput}"
+				fi
+
+				continue;
+			fi
 
 			if [ "${m}" == 'Main' ] ; then
 				rm -rf $packdirfull 2> /dev/null
@@ -241,26 +258,24 @@ compile () {
 					entry: {
 						main: './${f}'
 					},
-					$(test "${watch}" || echo "
-						module: {
-							rules: [
-								{
-									test: /\.js(\.tmp)?$/,
-									use: [
-										{
-											loader: 'babel-loader',
-											options: {
-												compact: false,
-												presets: [
-													['es2015', {modules: false}]
-												]
-											}
+					module: {
+						rules: [
+							{
+								test: /\.js(\.tmp)?$/,
+								use: [
+									{
+										loader: 'babel-loader',
+										options: {
+											compact: false,
+											presets: [
+												['es2015', {modules: false}]
+											]
 										}
-									]
-								}
-							]
-						},
-					")
+									}
+								]
+							}
+						]
+					},
 					output: {
 						$(test "${m}" == 'Main' || echo "
 							filename: './${f}.js.tmp',
@@ -306,18 +321,15 @@ compile () {
 							";
 						})
 					],
-					$(if [ ! "${watch}" ] && [ "${m}" == 'Main' ] ; then
-						echo "recordsOutputPath: '${records}'"
-					fi)
+					$(test "${m}" == 'Main' && echo "
+						recordsOutputPath: '${records}'
+					")
 				}, (err, stats) => {$(test "${m}" == 'Main' && echo "
 					if (err) {
 						throw err;
 					}
 
-					const input		= '$(echo "${rootDir}/$(echo $f | sed 's/\/.*//')/index.html")';
-					const output	= input.replace(/index\.html\$/, '.index.html');
-
-					const \$	= cheerio.load(fs.readFileSync(input).toString());
+					const \$	= cheerio.load(fs.readFileSync('${htmlinput}').toString());
 
 					\$('script[src=\"/js/${f}.js\"]').remove();
 
@@ -327,7 +339,7 @@ compile () {
 						}
 					}
 
-					fs.writeFileSync(output, \$.html().trim());
+					fs.writeFileSync('${htmloutput}', \$.html().trim());
 				")});
 			"
 		done
