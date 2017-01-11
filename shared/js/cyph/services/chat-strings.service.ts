@@ -10,13 +10,18 @@ import {StringsService} from './strings.service';
 @Injectable()
 export class ChatStringsService extends StringsService {
 	/** @see ChatStringsService */
-	public readonly friend: string	= util.translate(
-		!this.sessionService.apiFlags.telehealth ?
-			`friend` :
-			this.sessionService.state.isAlice ?
-				`patient` :
-				`doctor`
-	);
+	public get friend () : string {
+		return util.translate(
+			!this.sessionService.apiFlags.telehealth ?
+				`friend` :
+				this.sessionService.state.isAlice ?
+					`patient` :
+					`doctor`
+		);
+	}
+
+	/** @ignore */
+	public set friend (_: string) {}
 
 	constructor (
 		/** @ignore */
