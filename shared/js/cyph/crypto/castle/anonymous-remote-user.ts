@@ -1,4 +1,3 @@
-import {strings} from '../../strings';
 import {Potassium} from '../potassium';
 import {IRemoteUser} from './iremote-user';
 import {Transport} from './transport';
@@ -40,7 +39,7 @@ export class AnonymousRemoteUser implements IRemoteUser {
 	}
 
 	/** @inheritDoc */
-	public getUsername () : string {
+	public getUsername () : string|undefined {
 		return this.username;
 	}
 
@@ -55,7 +54,7 @@ export class AnonymousRemoteUser implements IRemoteUser {
 		private sharedSecret: string,
 
 		/** @ignore */
-		private readonly username: string = strings.friend
+		private readonly username?: string
 	) {
 		this.cyphertextPromise	= this.transport.interceptIncomingCyphertext();
 	}

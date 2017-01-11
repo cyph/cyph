@@ -4,6 +4,5 @@ export * from './env';
 export * from './event-manager';
 export * from './firebase-app';
 export * from './ithread';
-export * from './strings';
 export * from './timer';
 export * from './util';

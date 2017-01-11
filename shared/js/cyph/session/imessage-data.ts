@@ -3,7 +3,7 @@
  */
 export interface IMessageData {
 	/** Author of this message. */
-	author: string;
+	author: string|undefined;
 
 	/** Timestamp of this message. */
 	timestamp: number;

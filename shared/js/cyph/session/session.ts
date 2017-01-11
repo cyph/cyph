@@ -253,7 +253,9 @@ export class Session implements ISession {
 					}
 				}
 
-				this.on(events.castle, (e: any) => { this.castleHandler(e); });
+				this.on(events.castle, (e: {event: CastleEvents; data?: any}) =>
+					this.castleHandler(e)
+				);
 
 				while (this.state.isAlive) {
 					await util.sleep();

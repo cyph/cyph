@@ -347,12 +347,12 @@ export class ChatService {
 
 		this.sessionService.on(this.sessionService.rpcEvents.text, (o: {
 			text: string;
-			author: string;
+			author?: string;
 			timestamp: number;
 			selfDestructTimeout?: number;
 		}) => { this.addMessage(
 			o.text,
-			o.author,
+			o.author || this.stringsService.friend,
 			o.timestamp,
 			undefined,
 			o.selfDestructTimeout
