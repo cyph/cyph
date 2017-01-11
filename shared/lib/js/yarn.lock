@@ -141,8 +141,8 @@ angular-aria@~1.5:
   resolved "https://registry.yarnpkg.com/angular-aria/-/angular-aria-1.5.10.tgz#e182244a6c33400cafd9e45a518b797fa660c23a"
 
 "angular-material@https://github.com/angular/bower-material":
-  version "1.1.1-master-64b2621"
-  resolved "https://github.com/angular/bower-material#2a76dd1f1e5a58aaf91a6ace0fdedd64ce5e0a3f"
+  version "1.1.1-master-f8fd076"
+  resolved "https://github.com/angular/bower-material#d193b63e6e6734e32f7c89e234c8100237b867c6"
 
 angular@~1.5:
   version "1.5.10"
@@ -393,9 +393,9 @@ filetransfer@^2.0.4:
     iana-hashes "^1.0.0"
     wildemitter "1.x"
 
-firebase@^3.6.4:
-  version "3.6.4"
-  resolved "https://registry.yarnpkg.com/firebase/-/firebase-3.6.4.tgz#5c5b91d20f439b6f0a7aebe1b27c2db1a463e308"
+firebase@^3.6.5:
+  version "3.6.5"
+  resolved "https://registry.yarnpkg.com/firebase/-/firebase-3.6.5.tgz#e321da57c9c5b66e436432a3e15f1cf6d3b2f9a9"
   dependencies:
     dom-storage "2.0.2"
     faye-websocket "0.9.3"
@@ -603,9 +603,9 @@ mediastream-gain@^1.0.0:
   dependencies:
     webrtcsupport "^1.0.0"
 
-microlight-string@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/microlight-string/-/microlight-string-1.0.0.tgz#4aa1032e4225e45cd7aad3dcb792dce4b65105a5"
+microlight-string@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/microlight-string/-/microlight-string-1.0.1.tgz#f4b5c88b8f26807ebe41062892d1d909336461ff"
 
 minimalistic-assert@^1.0.0:
   version "1.0.0"
