@@ -291,11 +291,16 @@ for d in $compiledProjects ; do
 	cd ..
 done
 if [ "${branch}" == 'staging' ] ; then
-	chmod 700 */webpack.json
+	currentdir="$PWD"
+	for f in */webpack.json ; do
+		cp -f $f "${dir}/${f}"
+		chmod 700 "${dir}/${f}"
+	done
+	cd "${dir}"
 	git commit -m 'webpack.json update' */webpack.json
 	git push
-else
-	git checkout */webpack.json
+	cd "${currentdir}"
+	currentdir=''
 fi
 touch .build.done
 
