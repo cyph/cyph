@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import * as Konami from 'konami-code.js';
 import {AbstractSessionIdService} from '../cyph/services/abstract-session-id.service';
+import {ChatStringsService} from '../cyph/services/chat-strings.service';
 import {ChatService} from '../cyph/services/chat.service';
 import {CyphertextService} from '../cyph/services/cyphertext.service';
 import {DialogService} from '../cyph/services/dialog.service';
@@ -31,6 +32,10 @@ import {SessionIdService} from './session-id.service';
 		{
 			provide: AbstractSessionIdService,
 			useClass: SessionIdService
+		},
+		{
+			provide: StringsService,
+			useClass: ChatStringsService
 		}
 	],
 	selector: 'cyph-chat-root',
