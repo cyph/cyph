@@ -3,8 +3,8 @@
  */
 
 
-import '../preload';
 import * as firebase from 'firebase';
+import '../preload';
 (<any> self).firebase	= firebase;
 
 import {platformBrowser} from '@angular/platform-browser';

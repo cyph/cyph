@@ -5,19 +5,21 @@ cd $(cd "$(dirname "$0")"; pwd)/..
 ./commands/getlibs.sh
 
 
-tsc shared/tslint-rules/*.ts || exit 1
+tmpdir="$(mktemp -d)"
+cp -rL shared/js shared/tslint-rules "${tmpdir}/"
+cd "${tmpdir}"
+
+tsc tslint-rules/*.ts || exit 1
 
 output="$(
 	tslint \
-		-r shared/tslint-rules \
+		-r tslint-rules \
 		-r /usr/lib/node_modules/codelyzer \
 		-r /usr/lib/node_modules/tslint-microsoft-contrib \
-		--project shared/js/tsconfig.json \
+		--project js/tsconfig.json \
 		--type-check \
 		${*}
 )"
-
-rm shared/tslint-rules/*.js
 
 echo -e "${output}"
 exit ${#output}
