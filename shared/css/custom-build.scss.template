@@ -7,7 +7,8 @@ ${!o.colors.main ? '' : `
 `}
 
 ${!o.colors.text ? '' : `
-	&, body, #main, .cyph-foreground, .message-item * {
+	&, body, #main, .cyph-foreground, .message-item *,
+	.loading > :not(.image):not(.logo-animation) {
 		color: ${o.colors.text};
 	}
 `}
