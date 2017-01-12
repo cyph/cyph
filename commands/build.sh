@@ -40,7 +40,7 @@ fi
 
 if [ "${cloneworkingdir}" ] ; then
 	mkdir -p ~/.build/shared/lib/js/node_modules
-	cp -a translations ~/.build/
+	cp -a commands translations ~/.build/
 	cd shared
 	cp -a $(ls | grep -v lib) ~/.build/shared/
 	cd lib/js

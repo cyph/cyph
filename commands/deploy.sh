@@ -4,8 +4,6 @@ cd $(cd "$(dirname "$0")"; pwd)/..
 dir="$PWD"
 originalArgs="${*}"
 
-./commands/getlibs.sh
-
 
 cacheBustedProjects='cyph.com'
 compiledProjects='cyph.com cyph.im'
@@ -52,6 +50,8 @@ fi
 if [ "${websign}" ] ; then
 	./commands/keycache.sh
 fi
+
+./commands/getlibs.sh
 
 echo -e '\n\nInitial setup\n'
 
