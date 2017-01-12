@@ -39,8 +39,14 @@ if [ "${cloneworkingdir}" -o "${test}" -o "${watch}" -o "${outputDir}" == "${roo
 fi
 
 if [ "${cloneworkingdir}" ] ; then
-	mkdir ~/.build
-	cp -rf * ~/.build/
+	mkdir -p ~/.build/shared/lib/js/node_modules
+	cp -a translations ~/.build/
+	cd shared
+	cp -a $(ls | grep -v lib) ~/.build/shared/
+	cd lib/js
+	cp -a $(ls | grep -v node_modules) ~/.build/shared/lib/js/
+	cd node_modules
+	cp -a $(ls | grep -vP '^(tns|nativescript|typescript)') ~/.build/shared/lib/js/node_modules/
 	cd ~/.build/
 fi
 
@@ -57,7 +63,7 @@ tsfiles="$( \
 		\) -exec cat {} \; | \
 			grep -oP "src=(['\"])/js/.*?\1" \
 		& \
-		find shared/js -name '*.ts' -not \( \
+		find ${outputDir}/js -name '*.ts' -not \( \
 			-name '*.ngfactory.ts' \
 			-or -name '*.ngmodule.ts' \
 		\) -exec cat {} \; |
@@ -69,8 +75,9 @@ tsfiles="$( \
 		sort | \
 		uniq | \
 		grep -v 'Binary file' | \
-		grep -v 'preload/global' | \
-		grep -v 'translations' \
+		grep -vP '^preload/global$' | \
+		grep -vP '^translations$' | \
+		grep -vP '^typings$' \
 )"
 
 cd shared
@@ -100,6 +107,11 @@ webpackname () {
 }
 
 tsbuild () {
+	tmpdir="$(mktemp -d)"
+	currentdir="../../..${PWD}"
+
+	cp -rL .. "${tmpdir}/"
+
 	node -e "
 		const tsconfig	= JSON.parse(
 			fs.readFileSync('tsconfig.json').toString().
@@ -119,7 +131,8 @@ tsbuild () {
 			tsconfig.compilerOptions.target			= 'es2015';
 		")
 
-		tsconfig.compilerOptions.outDir	= '.';
+		tsconfig.compilerOptions.outDir			= '${currentdir}';
+		tsconfig.angularCompilerOptions.genDir	= '${currentdir}';
 
 		tsconfig.files	= 'typings/index.d ${*}'.
 			trim().
@@ -128,12 +141,20 @@ tsbuild () {
 		;
 
 		fs.writeFileSync(
-			'tsconfig.json',
+			'${tmpdir}/js/tsconfig.json',
 			JSON.stringify(tsconfig)
 		);
 	"
 
-	output="${output}$(ngc -p . 2>&1)"
+	cd "${tmpdir}/js"
+
+	if [ "${watch}" ] ; then
+		ngc -p .
+	else
+		output="${output}$(ngc -p . 2>&1)"
+	fi
+
+	cd "${currentdir}"
 }
 
 compile () {
@@ -148,15 +169,16 @@ compile () {
 	fi
 
 	for f in $scssfiles ; do
-		command=" \
-			scss -Icss css/${f}.scss \
-				$(test "${minify}" && echo '| cleancss') \
-			> ${outputDir}/css/${f}.css \
-		"
+		compileF () {
+			scss -Icss "css/${f}.scss" |
+				if [ "${minify}" ] ; then cleancss ; else cat - ; fi \
+			> "${outputDir}/css/${f}.css"
+		}
+
 		if [ "${watch}" ] ; then
-			eval "${command}" &
+			compileF &
 		else
-			output="${output}$(eval "${command}" 2>&1)"
+			output="${output}$(compileF 2>&1)"
 		fi
 	done
 
@@ -166,14 +188,32 @@ compile () {
 		output="${output}$(../../commands/tslint.sh 2>&1)"
 	fi
 
-	tsbuild $(echo "$tsfiles" | grep -vP '/main$')
+	compileNonMain () {
+		tsbuild $(echo "$tsfiles" | grep -vP '/main$')
+	}
+
+	if [ "${watch}" ] ; then
+		compileNonMain &
+	else
+		compileNonMain
+	fi
 
 	for f in $(echo "$tsfiles" | grep -P '/main$') ; do
-		tsbuild $f
-		sed -i 's|\./app.module|\./app.module.ngfactory|g' "${f}.ts"
-		sed -i 's|AppModule|AppModuleNgFactory|g' "${f}.ts"
-		sed -i 's|bootstrapModule|bootstrapModuleFactory|g' "${f}.ts"
-		tsbuild $f
+		compileF () {
+			tsbuild $f
+			rm "${f}.js"
+			sed -i 's|\./app.module|\./app.module.ngfactory|g' "${f}.ts"
+			sed -i 's|AppModule|AppModuleNgFactory|g' "${f}.ts"
+			sed -i 's|bootstrapModule|bootstrapModuleFactory|g' "${f}.ts"
+			tsbuild $f
+			touch "${f}.js"
+		}
+
+		if [ "${watch}" ] ; then
+			compileF &
+		else
+			compileF
+		fi
 	done
 
 	if [ ! "${test}" ] ; then
@@ -229,16 +269,29 @@ compile () {
 			htmloutput="$(echo "${htmlinput}" | sed 's/index\.html$/.index.html/')"
 
 			if [ "${watch}" ] ; then
-				webpack \
-					--output-library-target var \
-					--output-library "${m}" \
-					"${f}.js" \
-					"${f}.js.tmp"
+				{
+					waitForF () {
+						while [ ! -f "${f}.js" ] ; do
+							sleep 1
+						done
+					}
 
-				if [ "${m}" == 'Main' ] ; then
-					mv "${f}.js.tmp" "${outputDir}/js/${f}.js"
-					cp -f "${htmlinput}" "${htmloutput}"
-				fi
+					if [ "${m}" == 'Main' ] ; then
+						cp -f "${htmlinput}" "${htmloutput}"
+						waitForF
+						sleep 1
+					fi
+
+					waitForF
+
+					webpack \
+						--output-library-target var \
+						--output-library "${m}" \
+						"${f}.js" \
+						"${f}.js.tmp"
+
+					echo
+				} &
 
 				continue
 			fi
@@ -347,6 +400,16 @@ compile () {
 		for f in $tsfiles ; do
 			m="$(modulename "${f}")"
 
+			if [ "${watch}" ] ; then
+				while [ ! -f "${f}.js.tmp" ] ; do
+					sleep 1
+				done
+
+				if [ "${m}" == 'Main' ] ; then
+					mv "${f}.js.tmp" "${outputDir}/js/${f}.js"
+				fi
+			fi
+
 			if [ "${m}" == 'Main' ] ; then
 				continue
 			fi
@@ -371,6 +434,10 @@ compile () {
 
 			rm "${f}.js.tmp"
 		done
+
+		if [ "${watch}" ] ; then
+			return
+		fi
 
 		for js in $(find . -type f -name '*.js' -not \( \
 			-path './preload/global.js' \
@@ -423,10 +490,8 @@ if [ "${watch}" ] ; then
 	while true ; do
 		start="$(date +%s)"
 		echo -e '\n\n\nBuilding JS/CSS\n\n'
-		output=''
 		compile
-		echo -e "${output}\n\n\nFinished building JS/CSS ($(expr $(date +%s) - $start)s)\n\n"
-		${rootDir}/commands/tslint.sh
+		echo -e "\n\n\nFinished building JS/CSS ($(expr $(date +%s) - $start)s)\n\n"
 
 		#if [ $SECONDS -gt $liteDeployInterval -a ! -d ~/.litedeploy ] ; then
 		#	echo -e "\n\n\nDeploying to lite env\n\n"

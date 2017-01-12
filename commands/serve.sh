@@ -30,7 +30,7 @@ go_appserver () {
 
 
 for project in cyph.com cyph.im ; do
-	for d in $(find shared -mindepth 1 -maxdepth 1 -type d | sed 's/shared\///g') ; do
+	for d in $(find shared -mindepth 1 -maxdepth 1 -type d | sed 's|shared/||g') ; do
 		mkdir $project/$d 2> /dev/null
 		sudo mount -o bind shared/$d $project/$d
 	done
