@@ -156,20 +156,20 @@ RUN bash -c ' \
 '
 
 RUN sudo bash -c 'source ~/.bashrc ; npm -g --unsafe-perm install \
-	@angular/common@2.4.1 \
-	@angular/compiler@2.4.1 \
-	@angular/compiler-cli@2.4.1 \
-	@angular/core@2.4.1 \
-	@angular/platform-browser@2.4.1 \
-	@angular/platform-server@2.4.1 \
+	@angular/common@2.4.3 \
+	@angular/compiler@2.4.3 \
+	@angular/compiler-cli@2.4.3 \
+	@angular/core@2.4.3 \
+	@angular/platform-browser@2.4.3 \
+	@angular/platform-server@2.4.3 \
 	babel-core@6.21.0 \
 	babel-cli@6.18.0 \
 	babel-loader@6.2.10 \
 	babel-preset-es2015@6.18.0 \
 	babel-traverse@6.21.0 \
 	babel-types@6.21.0 \
-	babylon@6.14.1 \
-	browserify@13.1.1 \
+	babylon@6.15.0 \
+	browserify@13.3.0 \
 	cheerio@0.22.0 \
 	clean-css@3.4.23 \
 	codelyzer@2.0.0-beta.4 \
@@ -181,13 +181,13 @@ RUN sudo bash -c 'source ~/.bashrc ; npm -g --unsafe-perm install \
 	nativescript@2.4.2 \
 	nativescript-dev-android-snapshot@0.0.5 \
 	nativescript-dev-typescript@0.3.5 \
-	rxjs@5.0.2 \
-	ts-node@1.7.2 \
+	rxjs@5.0.3 \
+	ts-node@2.0.0 \
 	tslint@4.1.1 \
 	tslint-microsoft-contrib@4.0.0 \
 	typescript@2.0.10 \
 	uglify-js@2.7.5 \
-	webpack@2.2.0-rc.3 \
+	webpack@2.2.0-rc.4 \
 	zone.js@0.7.4 \
 	browserstack \
 	firebase \
