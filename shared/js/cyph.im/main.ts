@@ -3,13 +3,17 @@
  */
 
 
-/* Workaround for bug in Angular UpgradeModule */
-import * as angular from 'angular';
-(<any> self).angular	= angular;
+import '../preload';
+import * as firebase from 'firebase';
+(<any> self).firebase	= firebase;
 
 import {platformBrowser} from '@angular/platform-browser';
 import {downgradeComponent, UpgradeModule} from '@angular/upgrade/static';
+import * as angular from 'angular';
 import 'angular-material';
+import 'magnific-popup';
+import 'nanoscroller';
+import 'whatwg-fetch';
 import 'zone.js';
 import {FileInputComponent} from '../cyph/components/file-input.component';
 import {HelpComponent} from '../cyph/components/help.component';
@@ -45,7 +49,7 @@ import {MdTextareaComponent} from '../cyph/components/material/md-textarea.compo
 import {config} from '../cyph/config';
 import '../cyph/errors';
 import {eventManager} from '../cyph/event-manager';
-import '../preload';
+import '../translations';
 import {AppComponent} from './app.component';
 import {AppModule} from './app.module';
 

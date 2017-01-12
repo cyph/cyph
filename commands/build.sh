@@ -76,7 +76,6 @@ tsfiles="$( \
 		uniq | \
 		grep -v 'Binary file' | \
 		grep -vP '^preload/global$' | \
-		grep -vP '^translations$' | \
 		grep -vP '^typings$' \
 )"
 
@@ -186,6 +185,28 @@ compile () {
 
 	if [ "${test}" ] ; then
 		output="${output}$(../../commands/tslint.sh 2>&1)"
+	else
+		find . -type f -name '*.js' -exec rm {} \;
+
+		node -e 'console.log(`
+			self.translations = ${JSON.stringify(
+				child_process.spawnSync("find", [
+					"../../translations",
+					"-name",
+					"*.json"
+				]).stdout.toString().
+					split("\n").
+					filter(s => s).
+					map(file => ({
+						key: file.split("/").slice(-1)[0].split(".")[0],
+						value: JSON.parse(fs.readFileSync(file).toString())
+					})).
+					reduce((translations, o) => {
+						translations[o.key]	= o.value;
+						return translations;
+					}, {})
+			)};
+		`.trim())' > translations.js
 	fi
 
 	compileNonMain () {
@@ -217,32 +238,11 @@ compile () {
 	done
 
 	if [ ! "${test}" ] ; then
-		node -e 'console.log(`
-			self.translations = ${JSON.stringify(
-				child_process.spawnSync("find", [
-					"../../translations",
-					"-name",
-					"*.json"
-				]).stdout.toString().
-					split("\n").
-					filter(s => s).
-					map(file => ({
-						key: file.split("/").slice(-1)[0].split(".")[0],
-						value: JSON.parse(fs.readFileSync(file).toString())
-					})).
-					reduce((translations, o) => {
-						translations[o.key]	= o.value;
-						return translations;
-					}, {})
-			)};
-		`.trim())' > "${outputDir}/js/translations.js"
-
 		tsbuild preload/global
 		mv preload/global.js preload/global.js.tmp
 		cat preload/global.js.tmp |
 			babel --presets es2015 --compact false |
-			if [ "${minify}" ] ; then uglifyjs ; else cat - ; fi |
-			sed 's|use strict||g' \
+			if [ "${minify}" ] ; then uglifyjs ; else cat - ; fi \
 		> "${outputDir}/js/preload/global.js"
 		rm preload/global.js.tmp
 

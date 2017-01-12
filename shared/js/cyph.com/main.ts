@@ -3,13 +3,17 @@
  */
 
 
-/* Workaround for bug in Angular UpgradeModule */
-import * as angular from 'angular';
-(<any> self).angular	= angular;
+import '../preload';
+import '../preload/sham';
 
 import {platformBrowser} from '@angular/platform-browser';
 import {downgradeComponent, UpgradeModule} from '@angular/upgrade/static';
+import * as angular from 'angular';
 import 'angular-material';
+import 'jquery.appear';
+import 'magnific-popup';
+import 'nanoscroller';
+import 'whatwg-fetch';
 import 'zone.js';
 import {FileInputComponent} from '../cyph/components/file-input.component';
 import {HelpComponent} from '../cyph/components/help.component';
@@ -50,7 +54,7 @@ import {env} from '../cyph/env';
 import '../cyph/errors';
 import {eventManager} from '../cyph/event-manager';
 import {util} from '../cyph/util';
-import '../preload';
+import '../translations';
 import {AppComponent} from './app.component';
 import {AppModule} from './app.module';
 
