@@ -3,8 +3,11 @@
  */
 
 
-import '../preload';
+import '../preload/weblibs';
+
 import '../preload/sham';
+
+import '../preload';
 
 import {platformBrowser} from '@angular/platform-browser';
 import {downgradeComponent, UpgradeModule} from '@angular/upgrade/static';

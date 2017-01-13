@@ -4,8 +4,13 @@
 
 
 import * as firebase from 'firebase';
-import '../preload';
 (<any> self).firebase	= firebase;
+
+import '../preload/weblibs';
+
+import '../preload/custombuild';
+
+import '../preload';
 
 import {platformBrowser} from '@angular/platform-browser';
 import {downgradeComponent, UpgradeModule} from '@angular/upgrade/static';
