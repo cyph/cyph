@@ -37,7 +37,7 @@ if [ "${site}" ] ; then
 		done
 	done
 
-	if [ "${site}" != cyph.im ] ; then
+	if [ "${site}" != "${webSignedProject}" ] ; then
 		websign=''
 	fi
 fi
@@ -241,7 +241,7 @@ fi
 
 
 # WebSign project
-if [ ! "${site}" -o "${site}" == websign ] ; then
+if [ ! "${site}" -o "${site}" == websign -o "${site}" == "${webSignedProject}" ] ; then
 	cd websign
 	websignHashWhitelist="$(cat hashwhitelist.json)"
 	cp -rf ../shared/img ./
@@ -429,8 +429,8 @@ if [ "${websign}" ] ; then
 		cat cyph.im/cyph-im.yaml | sed "s|cyph-im|${project}|g" > ${d}/${project}.yaml
 		./commands/websign/createredirect.sh ${suffix} ${d} "${package}" "${test}"
 	done
-elif [ ! "${site}" -o "${site}" == cyph.im ] ; then
-	cp websign/js/workerhelper.js cyph.im/js/
+elif [ ! "${site}" -o "${site}" == "${webSignedProject}" ] ; then
+	cp websign/js/workerhelper.js "${webSignedProject}/js/"
 fi
 
 
