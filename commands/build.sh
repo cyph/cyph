@@ -107,7 +107,22 @@ webpackname () {
 
 tsbuild () {
 	tmpdir="$(mktemp -d)"
+	tmpjsdir="${tmpdir}/js"
 	currentdir="../../..${PWD}"
+	gettmpdir=''
+	logtmpdir=''
+	returntmpdir=''
+
+	if [ "${1}" == '--log-tmp-dir' ] ; then
+		shift
+		logtmpdir=true
+		returntmpdir=true
+	elif [ "${1}" == '--get-tmp-dir' ] ; then
+		shift
+		gettmpdir=true
+		returntmpdir=true
+		echo "${tmpjsdir}"
+	fi
 
 	cp -rL .. "${tmpdir}/"
 
@@ -130,8 +145,14 @@ tsbuild () {
 			tsconfig.compilerOptions.target			= 'es2015';
 		")
 
-		tsconfig.compilerOptions.outDir			= '${currentdir}';
-		tsconfig.angularCompilerOptions.genDir	= '${currentdir}';
+		$(test "${returntmpdir}" && echo "
+			tsconfig.compilerOptions.outDir			= '.';
+		")
+
+		$(test "${returntmpdir}" || echo "
+			tsconfig.compilerOptions.outDir			= '${currentdir}';
+			tsconfig.angularCompilerOptions.genDir	= '${currentdir}';
+		")
 
 		tsconfig.files	= 'typings/index.d ${*}'.
 			trim().
@@ -140,20 +161,26 @@ tsbuild () {
 		;
 
 		fs.writeFileSync(
-			'${tmpdir}/js/tsconfig.json',
+			'${tmpjsdir}/tsconfig.json',
 			JSON.stringify(tsconfig)
 		);
 	"
 
-	cd "${tmpdir}/js"
+	cd "${tmpjsdir}"
 
-	if [ "${watch}" ] ; then
+	if [ "${watch}" ] && [ ! "${gettmpdir}" ] ; then
 		ngc -p .
 	else
 		output="${output}$(ngc -p . 2>&1)"
 	fi
 
 	cd "${currentdir}"
+
+	if [ "${logtmpdir}" ] ; then
+		for f in ${*} ; do
+			echo "${tmpjsdir}" > "${f}.tmpdir"
+		done
+	fi
 }
 
 compile () {
@@ -209,31 +236,33 @@ compile () {
 		`.trim())' > translations.js
 	fi
 
-	compileNonMain () {
-		tsbuild $(echo "$tsfiles" | grep -vP '/main$')
-	}
+	nonmainfiles="$(echo "${tsfiles}" | grep -vP '/main$')"
 
 	if [ "${watch}" ] ; then
-		compileNonMain &
+		tsbuild --log-tmp-dir ${nonmainfiles} &
 	else
-		compileNonMain
+		tsbuild ${nonmainfiles}
 	fi
 
-	for f in $(echo "$tsfiles" | grep -P '/main$') ; do
-		compileF () {
-			tsbuild $f
-			rm "${f}.js"
+	for f in $(echo "${tsfiles}" | grep -P '/main$') ; do
+		aotreplace () {
 			sed -i 's|\./app.module|\./app.module.ngfactory|g' "${f}.ts"
 			sed -i 's|AppModule|AppModuleNgFactory|g' "${f}.ts"
 			sed -i 's|bootstrapModule|bootstrapModuleFactory|g' "${f}.ts"
-			tsbuild $f
-			touch "${f}.js"
 		}
 
 		if [ "${watch}" ] ; then
-			compileF &
+			{
+				startdir="${PWD}"
+				cd "$(tsbuild --get-tmp-dir "${f}")"
+				aotreplace
+				tsbuild --log-tmp-dir "${f}"
+				mv "${f}.tmpdir" "${startdir}/${f}.tmpdir"
+			} &
 		else
-			compileF
+			tsbuild "${f}"
+			aotreplace
+			tsbuild "${f}"
 		fi
 	done
 
@@ -270,25 +299,26 @@ compile () {
 
 			if [ "${watch}" ] ; then
 				{
-					waitForF () {
-						while [ ! -f "${f}.js" ] ; do
+					waitForTmpdir () {
+						while [ ! -f "${f}.tmpdir" ] ; do
 							sleep 1
 						done
 					}
 
+					currentdir="${PWD}"
+
 					if [ "${m}" == 'Main' ] ; then
 						cp -f "${htmlinput}" "${htmloutput}"
-						waitForF
-						sleep 1
 					fi
 
-					waitForF
+					waitForTmpdir
+					cd "$(cat "${f}.tmpdir")"
 
 					webpack \
 						--output-library-target var \
 						--output-library "${m}" \
 						"${f}.js" \
-						"${f}.js.tmp"
+						"${currentdir}/${f}.js.tmp"
 
 					echo
 				} &
