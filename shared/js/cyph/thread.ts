@@ -140,7 +140,7 @@ export class Thread implements IThread {
 
 	/** @ignore */
 	private static threadPostSetup () : void {
-		if (!self.onmessage) {
+		if (!self.onmessage && onthreadmessage) {
 			self.onmessage	= onthreadmessage;
 		}
 	}

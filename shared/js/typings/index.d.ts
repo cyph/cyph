@@ -11,13 +11,13 @@
  * @global
  * If applicable, identifier of this custom build.
  */
-declare let customBuild: string;
+declare let customBuild: string|undefined;
 
 /**
  * @global
  * If applicable, favicon for this custom build.
  */
-declare let customBuildFavicon: string;
+declare let customBuildFavicon: string|undefined;
 
 /**
  * @ignore
@@ -40,7 +40,7 @@ declare let navigatorData: Navigator;
  * @global
  * Event handler for messages to the current thread.
  */
-declare let onthreadmessage: (e: MessageEvent) => any;
+declare let onthreadmessage: ((e: MessageEvent) => any)|undefined;
 
 /**
  * @global

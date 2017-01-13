@@ -91,21 +91,10 @@ $('head').find(
 	addClass('custom-build-favicon')
 ;
 
-$('head').append(`<script>
-	self.customBuild		= '${args.customBuild}';
-	self.customBuildFavicon	= '${o.favicon}';
-
-	Array.prototype.slice.apply(
-		document.getElementsByClassName('custom-build-favicon')
-	).forEach(function (elem) {
-		if (elem instanceof HTMLLinkElement) {
-			elem.href		= self.customBuildFavicon;
-		}
-		else if (elem instanceof HTMLMetaElement) {
-			elem.content	= self.customBuildFavicon;
-		}
-	});
-</script>`);
+$('head').append(`
+	<meta name='custom-build' content='${args.customBuild}' />
+	<meta name='custom-build-favicon' content='${o.favicon}' />
+`);
 
 $('body').append(`
 	<link
