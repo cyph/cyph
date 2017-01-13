@@ -13,6 +13,9 @@ import {StringsService} from './strings.service';
  */
 @Injectable()
 export class P2PService {
+	/** @ignore */
+	private preemptivelyInitiated: boolean;
+
 	/** Indicates whether sidebar is open. */
 	public isSidebarOpen: boolean;
 
@@ -174,6 +177,10 @@ export class P2PService {
 				}
 			}
 		);
+
+		if (this.preemptivelyInitiated) {
+			this.p2p.accept();
+		}
 	}
 
 	/** @see P2P.isActive */
@@ -188,8 +195,7 @@ export class P2PService {
 
 	/** Preemptively initiate call, bypassing any prerequisite dialogs and button clicks. */
 	public preemptivelyInitiate () : void {
-		this.isEnabled	= true;
-		this.p2p.accept();
+		this.preemptivelyInitiated	= true;
 	}
 
 	/** Toggle visibility of sidebar containing chat UI. */
@@ -207,10 +213,10 @@ export class P2PService {
 		}
 
 		if (!this.p2p.isActive) {
-			this.p2p.request(P2P.constants.video);
+			this.p2p.request('video');
 		}
 		else {
-			this.p2p.toggle(undefined, P2P.constants.video);
+			this.p2p.toggle(undefined, 'video');
 		}
 	}
 
@@ -224,10 +230,10 @@ export class P2PService {
 		}
 
 		if (!this.p2p.isActive) {
-			this.p2p.request(P2P.constants.audio);
+			this.p2p.request('audio');
 		}
 		else {
-			this.p2p.toggle(undefined, P2P.constants.audio);
+			this.p2p.toggle(undefined, 'audio');
 		}
 	}
 

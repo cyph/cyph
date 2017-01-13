@@ -41,7 +41,7 @@ export class EnvDeploy {
 	;
 
 	/** Base URL for Cyph account application ("https://cyph.io/" or equivalent). */
-	public readonly cyphMeBaseUrl: string		= customBuild ?
+	public readonly cyphMeBaseUrl: string		= customBuild || this.isLocalEnv ?
 		`${this.newCyphBaseUrl}#me/` : 
 		`CYPH-ME/`
 	;
@@ -53,7 +53,7 @@ export class EnvDeploy {
 	;
 
 	/** Base URL for a new file transfer cyph link ("https://cyph.io/" or equivalent). */
-	public readonly cyphIoBaseUrl: string		= customBuild ?
+	public readonly cyphIoBaseUrl: string		= customBuild || this.isLocalEnv ?
 		`${this.newCyphBaseUrl}#io/` : 
 		`CYPH-IO/`
 	;
@@ -65,7 +65,7 @@ export class EnvDeploy {
 	;
 
 	/** Base URL for a new video cyph link ("https://cyph.video/" or equivalent). */
-	public readonly cyphVideoBaseUrl: string	= customBuild ?
+	public readonly cyphVideoBaseUrl: string	= customBuild || this.isLocalEnv ?
 		`${this.newCyphBaseUrl}#video/` : 
 		`CYPH-VIDEO/`
 	;
@@ -77,7 +77,7 @@ export class EnvDeploy {
 	;
 
 	/** Base URL for a new audio cyph link ("https://cyph.audio/" or equivalent). */
-	public readonly cyphAudioBaseUrl: string	= customBuild ?
+	public readonly cyphAudioBaseUrl: string	= customBuild || this.isLocalEnv ?
 		`${this.newCyphBaseUrl}#audio/` : 
 		`CYPH-AUDIO/`
 	;

@@ -7,7 +7,7 @@ import {IMessage} from '../session/imessage';
 import {ISession} from '../session/isession';
 import {Thread} from '../thread';
 import {util} from '../util';
-import {AbstractSessionIdService} from './abstract-session-id.service';
+import {AbstractSessionInitService} from './abstract-session-init.service';
 import {ConfigService} from './config.service';
 
 
@@ -86,16 +86,18 @@ export class SessionService implements ISessionService {
 	}
 
 	constructor (
-		abstractSessionIdService: AbstractSessionIdService,
+		abstractSessionInitService: AbstractSessionInitService,
 		configService: ConfigService
 	) {
-		const id	= abstractSessionIdService.id;
+		let id	= abstractSessionInitService.id;
 
 		/* API flags */
 		for (const flag of configService.apiFlags) {
 			if (id[0] !== flag.character) {
 				continue;
 			}
+
+			id	= id.substring(1);
 
 			flag.set(this);
 

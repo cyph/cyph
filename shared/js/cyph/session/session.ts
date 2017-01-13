@@ -174,7 +174,7 @@ export class Session implements ISession {
 	}
 
 	/** @ignore */
-	private setId (flags: string, id: string) : void {
+	private setId (id: string) : void {
 		if (
 			/* Too short */
 			id.length < config.secretLength ||
@@ -197,7 +197,7 @@ export class Session implements ISession {
 
 		this.updateState(
 			'sharedSecret',
-			flags + (this.state.sharedSecret || id)
+			this.state.sharedSecret || id
 		);
 	}
 
@@ -366,16 +366,6 @@ export class Session implements ISession {
 		/** @ignore */
 		private readonly eventId: string = util.generateGuid()
 	) { (async () => {
-		const flags	= (
-			id.match(
-				new RegExp(`^[\\${
-					config.apiFlags.map(o => o.character).join('\\')
-				}]+`)
-			) || ['']
-		)[0];
-
-		id	= id.substring(flags.length);
-
 		/* true = yes; false = no; undefined = maybe */
 		this.updateState(
 			'startingNewCyph',
@@ -391,7 +381,7 @@ export class Session implements ISession {
 			this.state.startingNewCyph === undefined
 		);
 
-		this.setId(flags, id);
+		this.setId(id);
 
 
 		if (this.state.startingNewCyph !== false) {

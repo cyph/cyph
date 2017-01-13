@@ -9,7 +9,7 @@ import {StringsService} from './strings.service';
  */
 @Injectable()
 export class ChatStringsService extends StringsService {
-	/** @see ChatStringsService */
+	/** @inheritDoc */
 	public get friend () : string {
 		return util.translate(
 			!this.sessionService.apiFlags.telehealth ?

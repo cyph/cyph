@@ -18,11 +18,9 @@ export class P2P implements IP2P {
 	/** Constant values used by P2P. */
 	public static readonly constants	= {
 		accept: 'accept',
-		audio: 'audio',
 		decline: 'decline',
 		kill: 'kill',
 		requestCall: 'requestCall',
-		video: 'video',
 		webRTC: 'webRTC'
 	};
 
@@ -122,10 +120,7 @@ export class P2P implements IP2P {
 		if (this.isAccepted && command.method in this.commands) {
 			(<any> this.commands)[command.method](command.argument);
 		}
-		else if (
-			command.method === P2P.constants.video ||
-			command.method === P2P.constants.audio
-		) {
+		else if (command.method === 'audio' || command.method === 'video') {
 			this.triggerUIEvent(
 				UIEventCategories.request,
 				UIEvents.acceptConfirm,
@@ -144,7 +139,14 @@ export class P2P implements IP2P {
 					);
 
 					if (ok) {
-						this.accept(command.method);
+						this.accept(
+							command.method === 'audio' ?
+								'audio' :
+								command.method === 'video' ?
+									'video' :
+									undefined
+						);
+
 						this.join();
 
 						analytics.sendEvent({
@@ -186,9 +188,9 @@ export class P2P implements IP2P {
 	}
 
 	/** @inheritDoc */
-	public accept (callType?: string) : void {
+	public accept (callType?: 'audio'|'video') : void {
 		this.isAccepted				= true;
-		this.outgoingStream.video	= callType === P2P.constants.video;
+		this.outgoingStream.video	= callType === 'video';
 		this.outgoingStream.audio	= true;
 	}
 
@@ -325,7 +327,7 @@ export class P2P implements IP2P {
 	}
 
 	/** @inheritDoc */
-	public request (callType: string) : void {
+	public request (callType: 'audio'|'video') : void {
 		this.triggerUIEvent(
 			UIEventCategories.request,
 			UIEvents.requestConfirm,
@@ -378,7 +380,7 @@ export class P2P implements IP2P {
 	}
 
 	/** @inheritDoc */
-	public toggle (shouldPause?: boolean, medium?: string) : void {
+	public toggle (shouldPause?: boolean, medium?: 'audio'|'video') : void {
 		if (!this.webRTC) {
 			return;
 		}

@@ -3,8 +3,7 @@ import {
 	Component,
 	ElementRef,
 	Input,
-	OnChanges,
-	SimpleChanges
+	OnInit
 } from '@angular/core';
 import * as clipboard from 'clipboard-js';
 import {ChatService} from '../services/chat.service';
@@ -25,10 +24,7 @@ import {util} from '../util';
 	selector: 'cyph-link-connection',
 	templateUrl: '../../../templates/link-connection.html'
 })
-export class LinkConnectionComponent implements OnChanges {
-	/** @ignore */
-	private isInitiated: boolean;
-
+export class LinkConnectionComponent implements OnInit {
 	/** @ignore */
 	private linkConstant: string;
 
@@ -37,9 +33,6 @@ export class LinkConnectionComponent implements OnChanges {
 
 	/** @ignore */
 	private readonly copyLock: {}		= {};
-
-	/** Base URL to use before the hash in new link. */
-	@Input() public baseUrl: string;
 
 	/** Indicates whether advanced features UI should be displayed. */
 	@Input() public enableAdvancedFeatures: boolean;
@@ -95,17 +88,14 @@ export class LinkConnectionComponent implements OnChanges {
 	}
 
 	/** @inheritDoc */
-	public async ngOnChanges (_CHANGES: SimpleChanges) : Promise<void> {
-		if (this.isInitiated || !this.baseUrl) {
-			return;
-		}
-
-		this.isInitiated	= true;
+	public async ngOnInit () : Promise<void> {
 		let isWaiting		= true;
 
+		await util.waitForValue(() => this.sessionService.state.sharedSecret);
+
 		this.linkConstant	=
-			this.baseUrl +
-			(this.baseUrl.indexOf('#') > -1 ? '' : '#') +
+			this.envService.newCyphUrl +
+			(this.envService.newCyphUrl.indexOf('#') > -1 ? '' : '#') +
 			this.sessionService.state.sharedSecret
 		;
 

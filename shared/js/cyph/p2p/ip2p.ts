@@ -18,7 +18,7 @@ export interface IP2P {
 	 * Accepts current call request (or preemptively accepts future call requests,
 	 * disabling the confirmation dialog).
 	 */
-	accept () : void;
+	accept (callType?: 'audio'|'video') : void;
 
 	/**
 	 * This kills the P2P session.
@@ -32,9 +32,9 @@ export interface IP2P {
 
 	/**
 	 * Sends a new call request to the other party.
-	 * @param callType Requested session type ("video" or "audio").
+	 * @param callType Requested session type.
 	 */
-	request (callType: string) : void;
+	request (callType: 'audio'|'video') : void;
 
 	/**
 	 * Pauses all or a subset of the current outgoing stream.
@@ -44,5 +44,5 @@ export interface IP2P {
 	 * that subset of the stream. If not specified, the entire stream
 	 * will be affected.
 	 */
-	toggle (shouldPause?: boolean, medium?: string) : void;
+	toggle (shouldPause?: boolean, medium?: 'audio'|'video') : void;
 }

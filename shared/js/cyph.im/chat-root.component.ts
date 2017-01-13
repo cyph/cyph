@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import * as Konami from 'konami-code.js';
-import {AbstractSessionIdService} from '../cyph/services/abstract-session-id.service';
+import {AbstractSessionInitService} from '../cyph/services/abstract-session-init.service';
+import {ChatEnvService} from '../cyph/services/chat-env.service';
 import {ChatStringsService} from '../cyph/services/chat-strings.service';
 import {ChatService} from '../cyph/services/chat.service';
 import {CyphertextService} from '../cyph/services/cyphertext.service';
@@ -14,8 +15,8 @@ import {StringsService} from '../cyph/services/strings.service';
 import {UrlStateService} from '../cyph/services/url-state.service';
 import {util} from '../cyph/util';
 import {AppService} from './app.service';
-import {States, urlSections} from './enums';
-import {SessionIdService} from './session-id.service';
+import {States} from './enums';
+import {SessionInitService} from './session-init.service';
 
 
 /**
@@ -30,8 +31,12 @@ import {SessionIdService} from './session-id.service';
 		ScrollService,
 		SessionService,
 		{
-			provide: AbstractSessionIdService,
-			useClass: SessionIdService
+			provide: AbstractSessionInitService,
+			useClass: SessionInitService
+		},
+		{
+			provide: EnvService,
+			useClass: ChatEnvService
 		},
 		{
 			provide: StringsService,
@@ -61,26 +66,13 @@ export class ChatRootComponent implements OnInit {
 			}
 		}
 
-		const urlSection		= this.urlStateService.getUrlSplit()[0];
-		const initialCallType	=
-			urlSection === urlSections.video || urlSection === urlSections.audio ?
-				urlSection :
-				''
-		;
+		this.urlStateService.setUrl(
+			this.envService.newCyphUrl.split(locationData.host).slice(-1)[0].replace(/\/$/, ''),
+			true,
+			true
+		);
 
-		let baseUrl: string	= this.envService.newCyphBaseUrl;
-
-		if (initialCallType) {
-			const newUrlState: string	= this.urlStateService.getUrl(true);
-			if (newUrlState.split('/').slice(-1)[0] === initialCallType) {
-				this.urlStateService.setUrl(newUrlState + '/', true, true);
-			}
-
-			baseUrl	= initialCallType === urlSections.video ?
-				this.envService.cyphVideoBaseUrl :
-				this.envService.cyphAudioBaseUrl
-			;
-
+		if (this.abstractSessionInitService.callType) {
 			/* If unsupported, warn and then close window */
 			if (!this.p2pService.isSupported) {
 				this.appService.state	= States.blank;
@@ -108,22 +100,21 @@ export class ChatRootComponent implements OnInit {
 		this.sessionService.one(this.sessionService.events.beginChatComplete).then(() => {
 			self.onbeforeunload	= () => this.stringsService.disconnectWarning;
 
-			if (initialCallType && this.sessionService.state.isAlice) {
-				this.p2pService.p2p.request(initialCallType);
+			if (this.abstractSessionInitService.callType && this.sessionService.state.isAlice) {
+				this.p2pService.p2p.request(this.abstractSessionInitService.callType);
 			}
 		});
 
 		this.sessionService.one(this.sessionService.events.beginWaiting).then(() => {
-			this.appService.linkConnectionBaseUrl	= baseUrl;
-			this.appService.state					= States.waitingForFriend;
+			this.appService.state	= States.waitingForFriend;
 		});
 
 		this.sessionService.one(this.sessionService.events.connect).then(() => {
 			this.appService.state	= States.chat;
 
-			if (initialCallType) {
+			if (this.abstractSessionInitService.callType) {
 				this.dialogService.toast({
-					content: initialCallType === urlSections.video ?
+					content: this.abstractSessionInitService.callType === 'video' ?
 						this.stringsService.p2pWarningVideoPassive :
 						this.stringsService.p2pWarningAudioPassive
 					,
@@ -155,6 +146,9 @@ export class ChatRootComponent implements OnInit {
 	}
 
 	constructor (
+		/** @ignore */
+		private readonly abstractSessionInitService: AbstractSessionInitService,
+
 		/** @ignore */
 		private readonly appService: AppService,
 

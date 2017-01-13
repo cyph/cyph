@@ -17,9 +17,6 @@ export class AppService {
 	/** @see BetaStates */
 	public betaState: BetaStates|undefined;
 
-	/** @see LinkConnection.baseUrl */
-	public linkConnectionBaseUrl: string;
-
 	/** @see States */
 	public states: typeof States			= States;
 

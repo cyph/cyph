@@ -1,4 +1,3 @@
-import * as angular from 'angular';
 import {ISessionService} from './service-interfaces/isession-service';
 
 
@@ -42,6 +41,9 @@ export class Config {
 		{
 			analEvent: 'telehealth',
 			character: '@',
+			get: (sessionService: ISessionService) : string =>
+				sessionService.apiFlags.telehealth ? this.apiFlags[0].character : ''
+			,
 			set: (sessionService: ISessionService) => {
 				sessionService.apiFlags.telehealth		= true;
 			}
@@ -49,6 +51,9 @@ export class Config {
 		{
 			analEvent: 'modest-branding',
 			character: '&',
+			get: (sessionService: ISessionService) : string =>
+				sessionService.apiFlags.modestBranding ? this.apiFlags[1].character : ''
+			,
 			set: (sessionService: ISessionService) => {
 				sessionService.apiFlags.modestBranding	= true;
 			}
@@ -56,6 +61,9 @@ export class Config {
 		{
 			analEvent: 'force-turn',
 			character: '$',
+			get: (sessionService: ISessionService) : string =>
+				sessionService.apiFlags.forceTURN ? this.apiFlags[2].character : ''
+			,
 			set: (sessionService: ISessionService) => {
 				sessionService.apiFlags.forceTURN 		= true;
 			}
@@ -63,6 +71,9 @@ export class Config {
 		{
 			analEvent: 'native-crypto',
 			character: '%',
+			get: (sessionService: ISessionService) : string =>
+				sessionService.apiFlags.nativeCrypto ? this.apiFlags[3].character : ''
+			,
 			set: (sessionService: ISessionService) => {
 				sessionService.apiFlags.nativeCrypto	= true;
 			}
