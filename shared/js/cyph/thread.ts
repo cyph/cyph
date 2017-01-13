@@ -49,13 +49,14 @@ export class Thread implements IThread {
 		/* Polyfills */
 
 		if (typeof console === 'undefined') {
-			console	= {
+			console	= <any> {
 				assert: () => {},
 				clear: () => {},
 				count: () => {},
 				debug: () => {},
 				dir: () => {},
 				dirxml: () => {},
+				dump: () => {},
 				error: () => {},
 				exception: () => {},
 				group: () => {},
