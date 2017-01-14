@@ -39,23 +39,18 @@ if [ "${cloneworkingdir}" -o "${test}" -o "${watch}" -o "${outputDir}" == "${roo
 fi
 
 if [ "${cloneworkingdir}" ] ; then
-	mkdir -p ~/.build/shared/lib/js/node_modules
-	cp -a commands translations ~/.build/
-	cd shared
-	cp -a $(ls | grep -v lib) ~/.build/shared/
-	cd lib/js
-	cp -a $(ls | grep -v node_modules) ~/.build/shared/lib/js/
-	cd node_modules
-	cp -a $(ls | grep -vP '^(tns|nativescript|typescript)') ~/.build/shared/lib/js/node_modules/
-	cd ~/.build/
+	mkdir ~/.build
+	cp -rf * ~/.build/
+	cd ~/.build
 fi
 
 tsfiles="$( \
 	{ \
 		find ${tsfilesRoot} -name '*.html' -not \( \
 			-path "${tsfilesRoot}/.build/*" \
+			-path "${tsfilesRoot}/.nativebuild/*" \
 			-or -path "${tsfilesRoot}/default/*" \
-			-or -path "${tsfilesRoot}/native/*" \
+			-or -path "${tsfilesRoot}/shared/templates/native/*" \
 			-or -path "${tsfilesRoot}/websign/*" \
 			-or -path '*/lib/*' \
 			-or -path '*/pack/*' \
@@ -82,7 +77,7 @@ tsfiles="$( \
 cd shared
 
 scssfiles="$(
-	find css -name '*.scss' -not \( -path 'css/bourbon/*' -or -path 'css/native/*' \) |
+	find css -name '*.scss' -not -path 'css/bourbon/*' |
 		perl -pe 's/css\/(.*)\.scss/\1/g' |
 		tr '\n' ' '
 )"
@@ -168,8 +163,6 @@ tsbuild () {
 
 	cd "${tmpjsdir}"
 
-	rm -rf native
-
 	if [ "${watch}" ] && [ ! "${gettmpdir}" ] ; then
 		ngc -p .
 	else
@@ -199,7 +192,7 @@ compile () {
 	for f in $scssfiles ; do
 		compileF () {
 			scss -Icss "css/${f}.scss" |
-				if [ "${minify}" ] ; then cleancss ; else cat - ; fi \
+				if [ "${minify}" ] ; then cleancss -s ; else cat - ; fi \
 			> "${outputDir}/css/${f}.css"
 		}
 
