@@ -1,0 +1,18 @@
+{
+	"nativescript": {
+		"id": "com.cyph.app"
+	},
+	"name": "cyph",
+	"main": "main.js",
+	"version": "1.0.0",
+	"author": "Cyph <native.app@cyph.com>",
+	"description": "Completely private voice and video chat.",
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/cyph/cyph"
+	},
+	"homepage": "https://www.cyph.com",
+	"android": {
+		"v8Flags": "--expose_gc"
+	}
+}

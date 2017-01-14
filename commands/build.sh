@@ -154,7 +154,7 @@ tsbuild () {
 			tsconfig.angularCompilerOptions.genDir	= '${currentdir}';
 		")
 
-		tsconfig.files	= 'typings/index.d ${*}'.
+		tsconfig.files	= 'typings/global.d typings/libs.d ${*}'.
 			trim().
 			split(/\s+/).
 			map(f => f + '.ts')
