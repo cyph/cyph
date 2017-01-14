@@ -73,7 +73,7 @@ export class ScrollService {
 				350
 			).promise();
 
-			for (const item of this.unreadItems) {
+			for (const item of Array.from(this.unreadItems)) {
 				item.unread	= false;
 			}
 			this.unreadItems.clear();

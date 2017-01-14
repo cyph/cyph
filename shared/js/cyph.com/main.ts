@@ -9,6 +9,7 @@ import '../preload/sham';
 
 import '../preload';
 
+import {enableProdMode} from '@angular/core';
 import {platformBrowser} from '@angular/platform-browser';
 import {downgradeComponent, UpgradeModule} from '@angular/upgrade/static';
 import * as angular from 'angular';
@@ -206,6 +207,8 @@ angular.
 	)
 ;
 
+
+enableProdMode();
 
 (async () => { (
 	<UpgradeModule>
