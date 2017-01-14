@@ -290,7 +290,7 @@ for d in $compiledProjects ; do
 
 	cd ..
 done
-if [ "${websign}" ] ; then
+if [ ! "${simple}" ] ; then
 	currentdir="$PWD"
 	for f in */webpack.json ; do
 		cp -f $f "${dir}/${f}"
