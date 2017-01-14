@@ -81,10 +81,10 @@ tsfiles="$( \
 
 cd shared
 
-scssfiles="$(cd css ; find . -name '*.scss' |
-	grep -v bourbon/ |
-	perl -pe 's/\.\/(.*)\.scss/\1/g' |
-	tr '\n' ' '
+scssfiles="$(
+	find css -name '*.scss' -not \( -path 'css/bourbon/*' -or -path 'css/native/*' \) |
+		perl -pe 's/css\/(.*)\.scss/\1/g' |
+		tr '\n' ' '
 )"
 
 
@@ -167,6 +167,8 @@ tsbuild () {
 	"
 
 	cd "${tmpjsdir}"
+
+	rm -rf native
 
 	if [ "${watch}" ] && [ ! "${gettmpdir}" ] ; then
 		ngc -p .
