@@ -1,11 +1,10 @@
 {
-	"compileOnSave": true,
 	"compilerOptions": {
-		/* Pending TS 2.1: "alwaysStrict": true, */
+		"alwaysStrict": true,
 		"emitDecoratorMetadata": true,
 		"experimentalDecorators": true,
 		"forceConsistentCasingInFileNames": true,
-		/* Pending TS 2.1: "lib": ["dom", "dom.iterable", "ES2015", "scripthost"], */
+		"lib": ["dom", "dom.iterable", "ES2015", "scripthost"],
 		"module": "es2015",
 		"moduleResolution": "node",
 		"newLine": "LF",
@@ -20,9 +19,19 @@
 		"skipLibCheck": true,
 
 		"strictNullChecks": true,
+		"outDir": ".",
 		"rootDir": ".",
-		"target": "es2015"
+		"target": "es5"
 	},
+	"files": [
+		"app/main.ts",
+		"app/js/preload/global.ts",
+		"app/js/cyph/base.ts",
+		"app/js/cyph/crypto/potassium/index.ts",
+		"app/js/cyph/session/session.ts",
+		"typings/global.d.ts",
+		"typings/libs.d.ts"
+	],
 	"angularCompilerOptions": {
 		"genDir": ".",
 		"skipMetadataEmit" : true
