@@ -290,7 +290,7 @@ for d in $compiledProjects ; do
 
 	cd ..
 done
-if [ "${branch}" == 'staging' ] ; then
+if [ "${websign}" ] ; then
 	currentdir="$PWD"
 	for f in */webpack.json ; do
 		cp -f $f "${dir}/${f}"
