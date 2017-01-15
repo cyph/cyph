@@ -45,9 +45,7 @@ fi
 if [ "${simple}" ] ; then
 	websign=''
 	cacheBustedProjects=''
-fi
-
-if [ "${websign}" ] ; then
+else
 	./commands/keycache.sh
 fi
 
