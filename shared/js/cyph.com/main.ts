@@ -233,8 +233,7 @@ if (!env.isOnion) {
 
 		if (response === 'pong') {
 			locationData.href	=
-				'https://' +
-				config.onionRoot +
+				`https://${config.onionRoot}/` +
 				locationData.href.split(locationData.host + '/')[1]
 			;
 		}
