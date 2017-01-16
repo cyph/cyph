@@ -156,20 +156,6 @@ RUN bash -c ' \
 	rm -rf $ANDROID_HOME/balls; \
 '
 
-# Workaround because ts-node env var support doesn't seem to work
-RUN sudo bash -c ' \
-	source ~/.bashrc; \
-	mkdir -p /opt/ts-node/node_modules; \
-	cd /opt/ts-node; \
-	yarn add typescript@2.1.5; \
-	chmod -R 777 .; \
-	cd /usr/bin; \
-	echo -e \
-		"#!/bin/bash\n${NODE_PATH}/.bin/ts-node -D -C /opt/ts-node/node_modules/typescript \"\${@}\"" \
-	> ts-node; \
-	chmod +x ts-node; \
-'
-
 RUN rm -rf ~/.gnupg
 
 

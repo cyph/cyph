@@ -146,20 +146,34 @@ sed -i "s|require('./socketioconnection')|null|g" simplewebrtc/simplewebrtc.js
 cat wowjs/dist/wow.js | perl -pe 's/this\.([A-Z][a-z])/self.\1/g' > wowjs/dist/wow.js.new
 mv wowjs/dist/wow.js.new wowjs/dist/wow.js
 
-cd firebase
-cp -f ../../module_locks/firebase/* ./
-mkdir node_modules
-yarn install
-../.bin/browserify firebase-node.js -o firebase.tmp.js -s firebase
-cat firebase.tmp.js |
+for f in package.json yarn.lock ; do
+	cat tslint/${f} | grep -v tslint-test-config-non-relative > ${f}.new
+	mv ${f}.new tslint/${f}
+done
+
+node -e '
+	const package	= JSON.parse(fs.readFileSync("ts-node/package.json").toString());
+	package.scripts.prepublish	= undefined;
+	fs.writeFileSync("ts-node/package.json", JSON.stringify(package));
+'
+
+for d in firebase ts-node tslint ; do
+	cd ${d}
+	cp -f ../../module_locks/${d}/* ./
+	mkdir node_modules 2> /dev/null
+	yarn install
+	cd ..
+done
+
+./.bin/browserify firebase/firebase-node.js -o firebase/firebase.tmp.js -s firebase
+cat firebase/firebase.tmp.js |
 	sed 's|https://apis.google.com||g' |
 	sed 's|iframe||gi' |
 	perl -pe "s/[A-Za-z0-9]+\([\"']\/js\/.*?.js.*?\)/null/g" \
-> firebase.js
-cp -f firebase.js firebase-browser.js
-cp -f firebase.js firebase-node.js
-rm -rf firebase.tmp.js node_modules
-cd ..
+> firebase/firebase.js
+cp -f firebase/firebase.js firebase/firebase-browser.js
+cp -f firebase/firebase.js firebase/firebase-node.js
+rm -rf firebase/firebase.tmp.js firebase/node_modules
 
 cd ../..
 

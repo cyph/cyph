@@ -140,7 +140,7 @@ export class ChatRootComponent implements OnInit {
 		/* For automated tests */
 		if (this.envService.isWeb) {
 			(<any> self).sendMessage	=
-				(message: string) => this.chatService.send(message)
+				(message: string) => { this.chatService.send(message); }
 			;
 		}
 	}

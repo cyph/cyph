@@ -74,8 +74,7 @@ if [ "${simple}" ] ; then
 fi
 
 
-mkdir ~/.build
-cp -rf * ~/.build/
+./commands/copyworkspace.sh ~/.build
 cd ~/.build
 
 mkdir geoisp.tmp
