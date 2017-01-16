@@ -1,10 +1,10 @@
 {
 	"compilerOptions": {
-		"alwaysStrict": true,
+		/* Pending TS 2.1: "alwaysStrict": true, */
 		"emitDecoratorMetadata": true,
 		"experimentalDecorators": true,
 		"forceConsistentCasingInFileNames": true,
-		"lib": ["dom", "dom.iterable", "ES2015", "scripthost"],
+		/* Pending TS 2.1: "lib": ["dom", "dom.iterable", "ES2015", "scripthost"], */
 		"module": "es2015",
 		"moduleResolution": "node",
 		"newLine": "LF",
@@ -13,7 +13,7 @@
 		"noImplicitReturns": true,
 		"noImplicitThis": true,
 		"noUnusedLocals": true,
-		"noUnusedParameters": true,
+		/* Removed for Angular AOT: "noUnusedParameters": true, */
 
 		 /* Temporary, pending Angular fix */
 		"skipLibCheck": true,
@@ -21,7 +21,7 @@
 		"strictNullChecks": true,
 		"outDir": ".",
 		"rootDir": ".",
-		"target": "es5"
+		"target": "es2015"
 	},
 	"files": [
 		"app/main.ts",
