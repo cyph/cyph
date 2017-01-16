@@ -2,8 +2,6 @@
 
 cd $(cd "$(dirname "$0")"; pwd)/..
 
-./commands/getlibs.sh
-
 
 tmpdir="$(mktemp -d)"
 cp -rL shared/js shared/tslint-rules "${tmpdir}/"

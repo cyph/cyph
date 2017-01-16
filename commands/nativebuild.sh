@@ -3,8 +3,6 @@
 cd $(cd "$(dirname "$0")"; pwd)/..
 dir="$PWD"
 
-./commands/getlibs.sh
-
 
 cd
 tns create cyph --ng --appid com.cyph.app

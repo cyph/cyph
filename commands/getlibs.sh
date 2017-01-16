@@ -1,15 +1,14 @@
 #!/bin/bash
 
 cd $(cd "$(dirname "$0")"; pwd)/..
-cd shared/lib/js
+cd shared/lib
 
-if diff yarn.lock node_modules/yarn.lock > /dev/null 2>&1 ; then
+if diff js/yarn.lock js/node_modules/yarn.lock > /dev/null 2>&1 ; then
 	exit 0
 fi
 
-rm -rf node_modules ../.js.tmp 2> /dev/null
+rm -rf js/node_modules .js.tmp 2> /dev/null
 
-cd ..
 cp -a js .js.tmp
 cd .js.tmp
 
@@ -123,7 +122,7 @@ for f in \
 	nanoscroller/bin/javascripts/jquery.nanoscroller.js \
 	whatwg-fetch/fetch.js
 do
-	uglifyjs "${f}" -m -o "${f}"
+	./.bin/uglifyjs "${f}" -m -o "${f}"
 done
 
 for module in mceliece ntru rlwe sidh sphincs supersphincs ; do
@@ -151,7 +150,7 @@ cd firebase
 cp -f ../../module_locks/firebase/* ./
 mkdir node_modules
 yarn install
-browserify firebase-node.js -o firebase.tmp.js -s firebase
+../.bin/browserify firebase-node.js -o firebase.tmp.js -s firebase
 cat firebase.tmp.js |
 	sed 's|https://apis.google.com||g' |
 	sed 's|iframe||gi' |

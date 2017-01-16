@@ -193,7 +193,13 @@ elif [ "${command}" == 'make' ] ; then
 		$mounts \
 		--name="${interactiveContainer}" \
 		"${image}_base" \
-		/bin/bash -c 'gcloud auth login'
+		bash -c ' \
+			source ~/.bashrc; \
+			/cyph/commands/getlibs.sh; \
+			tns error-reporting disable; \
+			tns usage-reporting disable; \
+			gcloud auth login; \
+		'
 	docker commit "${interactiveContainer}" "${image}"
 	docker rm -f "${interactiveContainer}"
 
@@ -218,6 +224,6 @@ docker run -it \
 	$args \
 	--name="$(containername "${command}")" \
 	"${image}" \
-	bash -c "source ~/.bashrc ; /cyph/${commandScript} $*"
+	bash -c "source ~/.bashrc ; /cyph/commands/getlibs.sh ; /cyph/${commandScript} $*"
 
 defaultsleep
