@@ -54,7 +54,7 @@ RUN echo '\
 	source /home/gibson/emsdk_portable/emsdk_env.sh > /dev/null 2>&1; \
 	source /home/gibson/.rvm/scripts/rvm; \
 \
-	export NODE_PATH="/usr/lib/node_modules"; \
+	export NODE_PATH="/cyph/shared/lib/js/node_modules"; \
 \
 	export GOPATH="/home/gibson/go"; \
 	export CLOUDSDK_PYTHON="python2"; \
@@ -71,11 +71,12 @@ RUN echo '\
 		echo -n "/opt/local/bin:"; \
 		echo -n "/opt/local/sbin:"; \
 		echo -n "/usr/local/opt/go/libexec/bin:"; \
-		echo -n "$CLOUD_PATHS:"; \
-		echo -n "$GOPATH/bin:"; \
-		echo -n "$ANDROID_HOME/platform-tools:"; \
-		echo -n "$ANDROID_HOME/tools:"; \
-		echo -n "$PATH"; \
+		echo -n "${CLOUD_PATHS}:"; \
+		echo -n "${GOPATH}/bin:"; \
+		echo -n "${ANDROID_HOME}/platform-tools:"; \
+		echo -n "${ANDROID_HOME}/tools:"; \
+		echo -n "${PATH}:"; \
+		echo -n "${NODE_PATH}/.bin"; \
 	)"; \
 \
 	if [ ! -d ~/.gnupg -a -d ~/.gnupg.original ] ; then cp -a ~/.gnupg.original ~/.gnupg ; fi; \
@@ -155,68 +156,19 @@ RUN bash -c ' \
 	rm -rf $ANDROID_HOME/balls; \
 '
 
-RUN sudo bash -c 'source ~/.bashrc ; npm -g --unsafe-perm install \
-	@angular/common@2.4.3 \
-	@angular/compiler@2.4.3 \
-	@angular/compiler-cli@2.4.3 \
-	@angular/core@2.4.3 \
-	@angular/platform-browser@2.4.3 \
-	@angular/platform-server@2.4.3 \
-	babel-core@6.21.0 \
-	babel-cli@6.18.0 \
-	babel-loader@6.2.10 \
-	babel-preset-es2015@6.18.0 \
-	babel-traverse@6.21.0 \
-	babel-types@6.21.0 \
-	babylon@6.15.0 \
-	browserify@13.3.0 \
-	cheerio@0.22.0 \
-	clean-css@3.4.23 \
-	codelyzer@2.0.0-beta.4 \
-	datauri@1.0.5  \
-	htmlencode@0.0.4  \
-	image-type@2.1.0 \
-	html-minifier@3.2.3 \
-	lazy@1.0.11 \
-	nativescript@2.4.2 \
-	nativescript-dev-android-snapshot@0.0.5 \
-	nativescript-dev-typescript@0.3.5 \
-	rxjs@5.0.3 \
-	ts-node@2.0.0 \
-	tslint@4.1.1 \
-	tslint-microsoft-contrib@4.0.0 \
-	typescript@2.0.10 \
-	uglify-js@2.7.5 \
-	webpack@2.2.0-rc.4 \
-	zone.js@0.7.4 \
-	browserstack \
-	firebase \
-	firebase-server \
-	glob \
-	gulp \
-	libsodium-wrappers \
-	mkdirp \
-	node-fetch \
-	read \
-	supersphincs \
-	typedoc \
-	zombie \
-'
-
 # Workaround because ts-node env var support doesn't seem to work
-RUN sudo bash -c " \
+RUN sudo bash -c ' \
+	source ~/.bashrc; \
 	mkdir -p /opt/ts-node/node_modules; \
 	cd /opt/ts-node; \
-	yarn add typescript@2.1.4; \
+	yarn add typescript@2.1.5; \
 	chmod -R 777 .; \
 	cd /usr/bin; \
-	mv ts-node ts-node-original; \
-	echo -e '#!/bin/bash\nts-node-original -D -C /opt/ts-node/node_modules/typescript \"\${@}\"' > ts-node; \
+	echo -e \
+		"#!/bin/bash\n${NODE_PATH}/.bin/ts-node -D -C /opt/ts-node/node_modules/typescript \"\${@}\"" \
+	> ts-node; \
 	chmod +x ts-node; \
-"
-
-RUN tns error-reporting disable
-RUN tns usage-reporting disable
+'
 
 RUN rm -rf ~/.gnupg
 

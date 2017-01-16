@@ -4,8 +4,6 @@ outputDir="$PWD"
 cd $(cd "$(dirname "$0")"; pwd)/..
 rootDir="$PWD"
 
-./commands/getlibs.sh
-
 
 cloneworkingdir=''
 test=''

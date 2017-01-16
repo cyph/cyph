@@ -49,8 +49,6 @@ else
 	./commands/keycache.sh
 fi
 
-./commands/getlibs.sh
-
 echo -e '\n\nInitial setup\n'
 
 # Branch config setup

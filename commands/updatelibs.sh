@@ -12,11 +12,13 @@ cd ~/tmplib/js
 yarn add --ignore-platform \
 	@angular/common \
 	@angular/compiler \
+	@angular/compiler-cli \
 	@angular/core \
 	@angular/forms \
 	@angular/http \
 	@angular/platform-browser \
 	@angular/platform-browser-dynamic \
+	@angular/platform-server \
 	@angular/router \
 	@angular/upgrade \
 	@types/angular \
@@ -33,32 +35,59 @@ yarn add --ignore-platform \
 	angular-animate@~1.5 \
 	angular-aria@~1.5 \
 	animate.css \
+	babel-cli \
+	babel-core \
+	babel-loader \
 	babel-polyfill \
+	babel-preset-es2015 \
+	babel-traverse \
+	babel-types \
+	babylon \
 	Base64 \
 	braintree-web@^2 \
+	browserify \
+	browserstack \
+	cheerio \
+	clean-css \
 	clipboard-js \
+	codelyzer \
 	core-js \
+	datauri \
 	dompurify \
 	file-saver \
 	firebase \
+	firebase-server \
+	glob \
+	gulp \
+	html-minifier \
+	htmlencode \
+	image-type \
 	jquery \
 	konami-code.js \
+	lazy \
+	libsodium-wrappers \
 	magnific-popup \
 	markdown-it \
-	markdown-it-sup \
 	markdown-it-emoji \
+	markdown-it-sup \
 	mceliece \
 	microlight-string \
+	mkdirp \
 	nanoscroller \
+	nativescript \
 	nativescript-angular \
 	nativescript-dev-android-snapshot \
 	nativescript-dev-typescript \
 	nativescript-theme-core \
+	node-fetch \
 	ntru \
+	read \
 	reflect-metadata \
 	rlwe \
+	rxjs \
 	sidh \
 	simplewebrtc \
+	sodiumutil \
 	sphincs \
 	supersphincs \
 	tab-indent \
@@ -66,13 +95,18 @@ yarn add --ignore-platform \
 	tns-core-modules \
 	tns-core-modules-widgets \
 	tns-ios \
-	rxjs \
-	sodiumutil \
+	ts-node \
+	tslint@4.1.1 \
+	tslint-microsoft-contrib \
+	typedoc \
 	typescript@2.0.10 \
+	uglify-js \
 	unsemantic \
+	webpack@beta \
 	webrtc-adapter \
 	whatwg-fetch \
 	wowjs \
+	zombie \
 	zone.js \
 	https://github.com/angular/bower-material \
 	https://github.com/morr/jquery.appear \
