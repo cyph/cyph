@@ -96,7 +96,7 @@ yarn add --ignore-platform \
 	tns-core-modules-widgets \
 	tns-ios \
 	ts-node \
-	tslint@4.1.1 \
+	tslint \
 	tslint-microsoft-contrib \
 	typedoc \
 	typescript@2.0.10 \
@@ -115,12 +115,23 @@ yarn add --ignore-platform \
 
 cp yarn.lock package.json ~/lib/js/
 
-for f in firebase ; do
-	mkdir -p ~/lib/js/module_locks/${f}
-	cd node_modules/${f}
-	mkdir node_modules
+for f in package.json yarn.lock ; do
+	cat node_modules/tslint/${f} | grep -v tslint-test-config-non-relative > ${f}.new
+	mv ${f}.new node_modules/tslint/${f}
+done
+
+node -e '
+	const package	= JSON.parse(fs.readFileSync("node_modules/ts-node/package.json").toString());
+	package.scripts.prepublish	= undefined;
+	fs.writeFileSync("node_modules/ts-node/package.json", JSON.stringify(package));
+'
+
+for d in firebase ts-node tslint ; do
+	mkdir -p ~/lib/js/module_locks/${d}
+	cd node_modules/${d}
+	mkdir node_modules 2> /dev/null
 	yarn install
-	cp yarn.lock package.json ~/lib/js/module_locks/${f}/
+	cp yarn.lock package.json ~/lib/js/module_locks/${d}/
 	cd ../..
 done
 

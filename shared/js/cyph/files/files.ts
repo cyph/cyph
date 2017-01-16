@@ -310,7 +310,7 @@ export class Files {
 	}
 
 	/** @ignore */
-	private triggerUIEvent(
+	private triggerUIEvent (
 		event: UIEvents,
 		...args: any[]
 	) : void {

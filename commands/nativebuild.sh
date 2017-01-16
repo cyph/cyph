@@ -31,7 +31,6 @@ for d in $(ls ../node_modules | grep -v '@types') .bin ; do
 	mv "../node_modules/${d}" node_modules/
 done
 cp -rf ../../shared/js/typings ./
-cp ../../shared/js/tsconfig.native.json tsconfig.json
 cp -rf ../../shared/js/native/* app/
 cp -rf ../../shared/css/native/* app/
 cp -rf ../../shared/templates/native app/templates
@@ -87,6 +86,39 @@ cat node_modules/tns-core-modules/tns-core-modules.base.d.ts |
 echo \
 	"/// <reference path=\"../node_modules/tns-core-modules/tns-core-modules.tmp.d.ts\" />" \
 >> typings/libs.d.ts
+
+node -e "
+	const tsconfig	= JSON.parse(
+		fs.readFileSync('../../shared/js/tsconfig.json').toString().
+			split('\n').
+			filter(s => s.trim()[0] !== '/').
+			join('\n')
+	);
+
+	/* Temporary, pending TS 2.1 */
+	tsconfig.compilerOptions.alwaysStrict		= undefined;
+	tsconfig.compilerOptions.lib				= undefined;
+	tsconfig.compilerOptions.target				= 'es2015';
+
+	/* For Angular AOT */
+	tsconfig.compilerOptions.noUnusedParameters	= undefined;
+
+	tsconfig.compilerOptions.outDir				= '.';
+
+	tsconfig.files	= [
+		'app/main.ts',
+		'app/js/preload/global.ts',
+		'app/js/cyph/base.ts',
+		'app/js/cyph/crypto/potassium/index.ts',
+		'app/js/cyph/session/session.ts',
+		'typings/index.d.ts'
+	];
+
+	fs.writeFileSync(
+		'tsconfig.json',
+		JSON.stringify(tsconfig)
+	);
+"
 
 ./node_modules/.bin/ngc -p .
 sed -i 's|\./app.module|\./app.module.ngfactory|g' app/main.ts

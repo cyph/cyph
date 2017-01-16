@@ -37,8 +37,7 @@ if [ "${cloneworkingdir}" -o "${test}" -o "${watch}" -o "${outputDir}" == "${roo
 fi
 
 if [ "${cloneworkingdir}" ] ; then
-	mkdir ~/.build
-	cp -rf * ~/.build/
+	./commands/copyworkspace.sh ~/.build
 	cd ~/.build
 fi
 
@@ -117,7 +116,7 @@ tsbuild () {
 		echo "${tmpjsdir}"
 	fi
 
-	cp -rL .. "${tmpdir}/"
+	cp -rf .. "${tmpdir}/"
 
 	node -e "
 		const tsconfig	= JSON.parse(
@@ -127,11 +126,13 @@ tsbuild () {
 				join('\n')
 		);
 
+		/* Temporary, pending TS 2.1 */
 		tsconfig.compilerOptions.alwaysStrict		= undefined;
-		tsconfig.compilerOptions.noUnusedParameters	= undefined;
-
-		/* Pending TS 2.1 */
 		tsconfig.compilerOptions.lib				= undefined;
+		tsconfig.compilerOptions.target				= 'es2015';
+
+		/* For Angular AOT */
+		tsconfig.compilerOptions.noUnusedParameters	= undefined;
 
 		$(test "${watch}" && echo "
 			tsconfig.compilerOptions.lib			= undefined;
@@ -147,7 +148,7 @@ tsbuild () {
 			tsconfig.angularCompilerOptions.genDir	= '${currentdir}';
 		")
 
-		tsconfig.files	= 'typings/global.d typings/libs.d ${*}'.
+		tsconfig.files	= 'typings/index.d ${*}'.
 			trim().
 			split(/\s+/).
 			map(f => f + '.ts')

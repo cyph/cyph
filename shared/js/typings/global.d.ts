@@ -11,12 +11,6 @@ declare let customBuild: string|undefined;
 declare let customBuildFavicon: string|undefined;
 
 /**
- * @global
- * Global namespace in Node.js and NativeScript.
- */
-declare let global: any;
-
-/**
  * @ignore
  */
 declare let IS_WEB: boolean;

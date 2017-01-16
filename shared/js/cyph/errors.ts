@@ -91,7 +91,7 @@ export class Errors {
 		}
 		catch (_) {}
 
-		(<any> self).onunhandledrejection	= (e: any) => self.onerror(e.reason);
+		(<any> self).onunhandledrejection	= (e: any) => { self.onerror(e.reason); };
 	}
 }
 
