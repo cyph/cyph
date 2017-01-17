@@ -1,7 +1,5 @@
 #!/bin/bash
 
-cd $(cd "$(dirname "$0")"; pwd)/..
-
 
 exclude='shared'
 globalmodules=''
@@ -18,6 +16,10 @@ fi
 rm -rf "${1}" 2> /dev/null
 mkdir -p "${1}/shared"
 dir="$(realpath "${1}")"
+
+
+cd $(cd "$(dirname "$0")"; pwd)/..
+
 
 cp -rf $(ls | grep -vP "^(${exclude})\$") "${dir}/"
 cd shared

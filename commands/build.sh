@@ -146,7 +146,10 @@ tsbuild () {
 
 	cd "${tmpjsdir}"
 
-	cp -rf /node_modules ./
+	if [ ! -d node_modules ] ; then
+		mkdir node_modules
+		cp -rf /node_modules/.bin /node_modules/@angular node_modules/
+	fi
 
 	if [ "${watch}" ] && [ ! "${gettmpdir}" ] ; then
 		./node_modules/.bin/ngc -p .
@@ -167,7 +170,7 @@ compile () {
 	cd "${outputDir}"
 
 	if [ "${cloneworkingdir}" ] ; then
-		../commands/copyworkspace.sh --client-only ~/.build
+		../commands/copyworkspace.sh --client-only --global-modules ~/.build
 		cd ~/.build/shared
 	fi
 
@@ -509,7 +512,15 @@ if [ "${watch}" ] ; then
 		#fi
 
 		cd "${rootDir}/shared"
-		inotifywait -r --exclude '(node_modules|sed.*|.*\.(css|js|map|tmp))$' css js templates
+
+		while true ; do
+			fsevent="$(
+				inotifywait -r --exclude '(bourbon|sed.*|.*\.(css|js|map|tmp))$' css js templates
+			)"
+			if ! echo "${fsevent}" | grep -P '(OPEN|ISDIR)' > /dev/null ; then
+				break
+			fi
+		done
 	done
 else
 	compile

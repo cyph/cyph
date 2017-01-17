@@ -27,6 +27,62 @@ defaultsleep () {
 	sleep 2
 }
 
+editimage () {
+	if
+		[ "${3}" ] &&
+		[ "$(docker run -it $mounts "${1}" bash -c "if ${3} ; then echo X ; fi")" != 'X' ]
+	then
+		return
+	fi
+
+	tmpContainer="$(containername tmp)"
+	docker rm -f "${tmpContainer}" 2> /dev/null
+	docker run -it \
+		$mounts \
+		--name="${tmpContainer}" \
+		"${1}" \
+		bash -c "${2}"
+	docker commit "${tmpContainer}" "${image}"
+	docker rm -f "${tmpContainer}"
+}
+
+getlibs () {
+	editimage "${1}" \
+		'
+			sudo apt-get -y --force-yes update
+			sudo apt-get -y --force-yes dist-upgrade
+			touch ~/.updated
+		' \
+		'
+			[ ! -f ~/.updated ] || test "$(find ~/.updated -mtime +3)"
+		'
+
+	docker run -it \
+		$processType \
+		$mounts \
+		"${1}" \
+		bash -c "source ~/.bashrc ; /cyph/commands/getlibs.sh"
+
+	editimage "${1}" \
+		'
+			sudo rm -rf /node_modules 2> /dev/null
+			sudo cp -rf /cyph/shared/lib/js/node_modules /
+			sudo chmod -R 777 /node_modules
+
+			source ~/.bashrc
+			rm -rf ${GOPATH}/src/*
+			for f in $(find /cyph/default -mindepth 1 -maxdepth 1 -type d) ; do
+				ln -s ${f} ${GOPATH}/src/$(echo "${f}" | perl -pe "s/.*\///g") > /dev/null 2>&1
+			done
+			for f in $(find /cyph/default -mindepth 1 -maxdepth 4 -type d) ; do
+				go install $(echo "${f}" | sed "s|/cyph/default/||") > /dev/null 2>&1
+			done
+		' \
+		'
+			! cmp /cyph/shared/lib/js/yarn.lock /node_modules/yarn.lock > /dev/null 2>&1
+		'
+}
+
 killcontainer () {
 	docker ps -a | grep "${1}" | awk '{print $1}' | xargs -I% bash -c 'docker kill -s 9 % ; docker rm %'
 }
@@ -46,25 +102,6 @@ stop () {
 		sudo killall docker > /dev/null 2>&1
 		defaultsleep
 	fi
-}
-
-editimage () {
-	if
-		[ "${3}" ] &&
-		[ "$(docker run -it $mounts "${1}" bash -c "if ${3} ; then echo X ; fi")" != 'X' ]
-	then
-		return
-	fi
-
-	tmpContainer="$(containername tmp)"
-	docker rm -f "${tmpContainer}" 2> /dev/null
-	docker run -it \
-		$mounts \
-		--name="${tmpContainer}" \
-		"${1}" \
-		bash -c "${2}"
-	docker commit "${tmpContainer}" "${image}"
-	docker rm -f "${tmpContainer}"
 }
 
 image="cyph/$(
@@ -206,11 +243,9 @@ elif [ "${command}" == 'make' ] ; then
 	start
 	docker build -t "${image}_base" .
 
-	editimage "${image}_base" '
+	getlibs "${image}_base"
+	editimage "${image}" '
 		source ~/.bashrc
-		/cyph/commands/getlibs.sh
-		sudo cp -rf /cyph/shared/lib/js/node_modules /
-		sudo chmod -R 777 /node_modules
 		tns error-reporting disable
 		tns usage-reporting disable
 		gcloud auth login
@@ -231,31 +266,7 @@ elif [ ! -f "${commandScript}" ] ; then
 	exit 1
 fi
 
-editimage "${image}" \
-	'
-		sudo apt-get -y --force-yes update
-		sudo apt-get -y --force-yes dist-upgrade
-		touch ~/.updated
-	' \
-	'
-		[ ! -f ~/.updated ] || test "$(find ~/.updated -mtime +3)"
-	'
-
-docker run -it \
-	$processType \
-	$mounts \
-	"${image}" \
-	bash -c "source ~/.bashrc ; /cyph/commands/getlibs.sh"
-
-editimage "${image}" \
-	'
-		sudo rm -rf /node_modules 2> /dev/null
-		sudo cp -rf /cyph/shared/lib/js/node_modules /
-		sudo chmod -R 777 /node_modules
-	' \
-	'
-		! cmp /cyph/shared/lib/js/yarn.lock /node_modules/yarn.lock > /dev/null 2>&1
-	'
+getlibs "${image}"
 
 docker run -it \
 	$processType \
