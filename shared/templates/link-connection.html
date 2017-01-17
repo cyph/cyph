@@ -1,21 +1,24 @@
 <div class='link-connection loading layout-column layout-fill flex'>
 	<div class='flex'></div>
-	<div class='logo-animation'>
+	<div *ngIf='!sessionService.apiFlags.telehealth' class='logo-animation'>
 		<div></div>
 		<div></div>
 		<div></div>
 		<div></div>
 		<div></div>
 	</div>
+	<div *ngIf='sessionService.apiFlags.telehealth' class='telehealth-logo'>
+		<img src='/img/icons/logo.telehealth.icon.png'/>
+	</div>
 	<div>
-		<div *ngIf='isPassive' cyphTranslate>
+		<span *ngIf='isPassive' cyphTranslate>
 			Waiting for friend to join...
-		</div>
+		</span>
 		<div *ngIf='!isPassive'>
-			<div cyphTranslate>
-				Send the link below to someone else. When they open it,
-				you'll be securely connected!
-			</div>
+			<span cyphTranslate>
+				Send the link below to the patient. When they open it, your telehealth session will begin.
+			</span>
+			<br />
 			<br />
 
 			<div class='connect-link-input' *ngIf='!envService.isMobile'>
@@ -80,7 +83,7 @@
 		</div>
 
 		<br />
-		<div *ngIf='timer'>
+		<div class='timer' *ngIf='timer'>
 			<span cyphTranslate>
 				Link expires in
 			</span>
