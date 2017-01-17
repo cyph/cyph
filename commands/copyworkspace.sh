@@ -3,9 +3,15 @@
 cd $(cd "$(dirname "$0")"; pwd)/..
 
 
-serverdir=''
+exclude='shared'
+globalmodules=''
+
 if [ "${1}" == '--client-only' ] ; then
-	serverdir='default'
+	exclude="${exclude}|default"
+	shift
+fi
+if [ "${1}" == '--global-modules' ] ; then
+	globalmodules='true'
 	shift
 fi
 
@@ -13,9 +19,11 @@ rm -rf "${1}" 2> /dev/null
 mkdir -p "${1}/shared"
 dir="$(realpath "${1}")"
 
-cp -rf $(ls | grep -vP "^(shared|${serverdir})\$") "${dir}/"
+cp -rf $(ls | grep -vP "^(${exclude})\$") "${dir}/"
 cd shared
 cp -rf $(ls | grep -v lib) "${dir}/shared/"
 rm -rf "${dir}/shared/js/node_modules" 2> /dev/null
 
-sed -i "s|\"../node_modules|\"/node_modules|g" "${dir}/shared/js/typings/libs.d.ts"
+if [ "${globalmodules}" ] ; then
+	sed -i "s|\"../node_modules|\"/node_modules|g" "${dir}/shared/js/typings/libs.d.ts"
+fi

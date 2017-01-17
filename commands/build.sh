@@ -146,10 +146,12 @@ tsbuild () {
 
 	cd "${tmpjsdir}"
 
+	cp -rf /node_modules ./
+
 	if [ "${watch}" ] && [ ! "${gettmpdir}" ] ; then
-		ngc -p .
+		./node_modules/.bin/ngc -p .
 	else
-		output="${output}$(ngc -p . 2>&1)"
+		output="${output}$(./node_modules/.bin/ngc -p . 2>&1)"
 	fi
 
 	cd "${currentdir}"

@@ -15,34 +15,37 @@ node -e '
 mkdir node_modules 2> /dev/null
 yarn install
 tns platform add android --sdk 22
-cd
 
-rm -rf "${dir}/.nativebuild" 2> /dev/null
-mv cyph "${dir}/.nativebuild"
-cd "${dir}/.nativebuild"
+cp -rf node_modules node_modules.old
+rm -rf node_modules/@types 2> /dev/null
+for d in $(ls -a /node_modules) ; do
+	if [ ! -d "node_modules/${d}" ] ; then
+		cp -rf "/node_modules/${d}" node_modules/
+	fi
+done
 
 mkdir -p tmp/app
 mv app/App_Resources tmp/app/
 cd tmp
 
-cp ../../shared/lib/js/base.js ./
+cp ${dir}/shared/lib/js/base.js ./
 mv ../node_modules ./
-cp -rf ../../shared/js/typings ./
-cp -rf ../../shared/js/native/* app/
-cp -rf ../../shared/css/native/* app/
-cp -rf ../../shared/templates/native app/templates
+cp -rf ${dir}/shared/js/typings ./
+cp -rf ${dir}/shared/js/native/* app/
+cp -rf ${dir}/shared/css/native/* app/
+cp -rf ${dir}/shared/templates/native app/templates
 
 rm -rf app/js
 mkdir -p app/js/cyph.im app/js/preload
-cp ../../shared/js/preload/global.ts app/js/preload/
-cp -rf ../../shared/js/cyph.im/enums app/js/cyph.im/
-cp -rf ../../shared/js/cyph app/js/
+cp ${dir}/shared/js/preload/global.ts app/js/preload/
+cp -rf ${dir}/shared/js/cyph.im/enums app/js/cyph.im/
+cp -rf ${dir}/shared/js/cyph app/js/
 rm -rf app/js/cyph/components/material
 rm -rf app/js/cyph/components/checkout.component.ts
 rm -rf app/js/cyph/components/register.component.ts
 
 find app -type f -name '*.scss' -exec bash -c '
-	scss -I../../shared/css "{}" "$(echo "{}" | sed "s/\.scss$/.css/")"
+	scss -I${dir}/shared/css "{}" "$(echo "{}" | sed "s/\.scss$/.css/")"
 ' \;
 
 getmodules () {
@@ -86,7 +89,7 @@ echo \
 
 node -e "
 	const tsconfig	= JSON.parse(
-		fs.readFileSync('../../shared/js/tsconfig.json').toString().
+		fs.readFileSync('${dir}/shared/js/tsconfig.json').toString().
 			split('\n').
 			filter(s => s.trim()[0] !== '/').
 			join('\n')
@@ -242,5 +245,9 @@ cd ..
 rm -rf app hooks/before-prepare/nativescript-dev-typescript.js
 mkdir app
 mv tmp/main.*.js tmp/app/App_Resources tmp/app/app.css tmp/app/package.json app/
-mv tmp/node_modules ./
+mv node_modules.old node_modules
 rm -rf tmp
+
+cd
+rm -rf ${dir}/.nativebuild 2> /dev/null
+mv cyph ${dir}/.nativebuild

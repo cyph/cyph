@@ -11,7 +11,7 @@ if [ "${1}" == '--fix' ] ; then
 	cp tslint-rules/*.ts ${tslintrules}/
 else
 	tmpdir="$(mktemp -d)"
-	./commands/copyworkspace.sh --client-only "${tmpdir}"
+	./commands/copyworkspace.sh --client-only --global-modules "${tmpdir}"
 	cd "${tmpdir}/shared"
 fi
 
