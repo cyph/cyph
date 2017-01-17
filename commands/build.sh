@@ -170,14 +170,14 @@ compile () {
 	cd "${outputDir}"
 
 	if [ "${cloneworkingdir}" ] ; then
-		mv ~/.build/shared/js/node_modules ~/node_modules.bak
+		mv ~/.build/shared/js/node_modules ~/.node_modules.bak
 		find . -mindepth 1 -maxdepth 1 -type d -not -name lib -exec bash -c '
 			rm -rf ~/.build/shared/{} 2> /dev/null;
 			cp -a {} ~/.build/shared/;
 		' \;
 		cd ~/.build/shared
 		rm js/node_modules 2> /dev/null
-		mv ~/.build/shared/js/node_modules.bak js/
+		mv ~/.node_modules.bak js/node_modules
 	fi
 
 	for f in $scssfiles ; do

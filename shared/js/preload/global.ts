@@ -3,8 +3,8 @@
  */
 
 
-if (typeof self === 'undefined' && typeof (<any> this).global !== 'undefined') {
-	(<any> this).global.self	= (<any> this).global;
+if (typeof self === 'undefined' && typeof global !== 'undefined') {
+	(<any> global).self	= global;
 }
 
 try {
