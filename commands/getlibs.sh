@@ -172,7 +172,6 @@ cat firebase/firebase.tmp.js |
 	perl -pe "s/[A-Za-z0-9]+\([\"']\/js\/.*?.js.*?\)/null/g" \
 > firebase/firebase.js
 cp -f firebase/firebase.js firebase/firebase-browser.js
-cp -f firebase/firebase.js firebase/firebase-node.js
 rm -rf firebase/firebase.tmp.js firebase/node_modules
 
 cd ../..
