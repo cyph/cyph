@@ -181,15 +181,15 @@ export class LinkConnectionComponent implements OnInit {
 		private readonly dialogService: DialogService,
 
 		/** @ignore */
-		private readonly sessionService: SessionService,
-
-		/** @ignore */
 		private readonly stringsService: StringsService,
 
 		/** @see ChatService */
 		public readonly chatService: ChatService,
 
 		/** @see EnvService */
-		public readonly envService: EnvService
+		public readonly envService: EnvService,
+
+		/** @see SessionService */
+		public readonly sessionService: SessionService
 	) {}
 }
