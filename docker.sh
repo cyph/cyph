@@ -48,6 +48,21 @@ stop () {
 	fi
 }
 
+editcontainer () {
+	if [ "${3}" ] && [ ! "$(docker run -it ${mounts} "${1}" bash -c "${3}")" ] ; then
+		return
+	fi
+
+	tmpContainer="$(containername tmp)"
+	docker rm -f "${tmpContainer}" 2> /dev/null
+	docker run -it \
+		${mounts} \
+		--name="${tmpContainer}" \
+		"${1}" \
+		bash -c "${2}"
+	docker commit "${tmpContainer}" "${image}"
+	docker rm -f "${tmpContainer}"
+}
 
 image="cyph/$(
 	git describe --tags --exact-match 2> /dev/null ||
@@ -188,20 +203,13 @@ elif [ "${command}" == 'make' ] ; then
 	start
 	docker build -t "${image}_base" .
 
-	interactiveContainer="$(containername interactive)"
-	docker run -it \
-		$mounts \
-		--name="${interactiveContainer}" \
-		"${image}_base" \
-		bash -c ' \
-			source ~/.bashrc; \
-			/cyph/commands/getlibs.sh; \
-			tns error-reporting disable; \
-			tns usage-reporting disable; \
-			gcloud auth login; \
-		'
-	docker commit "${interactiveContainer}" "${image}"
-	docker rm -f "${interactiveContainer}"
+	editcontainer "${image}_base" '
+		source ~/.bashrc;
+		/cyph/commands/getlibs.sh;
+		tns error-reporting disable;
+		tns usage-reporting disable;
+		gcloud auth login;
+	'
 
 	exit 0
 
@@ -218,9 +226,23 @@ elif [ ! -f "${commandScript}" ] ; then
 	exit 1
 fi
 
+editcontainer "${image}" \
+	'
+		source ~/.bashrc;
+		sudo apt-get -y --force-yes update;
+		sudo apt-get -y --force-yes dist-upgrade;
+		touch ~/.updated;
+	' \
+	'
+		source ~/.bashrc;
+		if [ ! -f ~/.updated ] || test "$(find ~/.updated -mtime +3)" ; then
+			echo update
+		fi;
+	'
+
 docker run -it \
 	$processType \
-	$mounts \
+	${mounts} \
 	$args \
 	--name="$(containername "${command}")" \
 	"${image}" \
