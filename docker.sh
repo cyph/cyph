@@ -48,15 +48,18 @@ stop () {
 	fi
 }
 
-editcontainer () {
-	if [ "${3}" ] && [ ! "$(docker run -it ${mounts} "${1}" bash -c "${3}")" ] ; then
+editimage () {
+	if
+		[ "${3}" ] &&
+		[ "$(docker run -it $mounts "${1}" bash -c "if ${3} ; then echo X ; fi")" != 'X' ]
+	then
 		return
 	fi
 
 	tmpContainer="$(containername tmp)"
 	docker rm -f "${tmpContainer}" 2> /dev/null
 	docker run -it \
-		${mounts} \
+		$mounts \
 		--name="${tmpContainer}" \
 		"${1}" \
 		bash -c "${2}"
@@ -203,12 +206,14 @@ elif [ "${command}" == 'make' ] ; then
 	start
 	docker build -t "${image}_base" .
 
-	editcontainer "${image}_base" '
-		source ~/.bashrc;
-		/cyph/commands/getlibs.sh;
-		tns error-reporting disable;
-		tns usage-reporting disable;
-		gcloud auth login;
+	editimage "${image}_base" '
+		source ~/.bashrc
+		/cyph/commands/getlibs.sh
+		sudo cp -rf /cyph/shared/lib/js/node_modules /
+		sudo chmod -R 777 /node_modules
+		tns error-reporting disable
+		tns usage-reporting disable
+		gcloud auth login
 	'
 
 	exit 0
@@ -226,26 +231,38 @@ elif [ ! -f "${commandScript}" ] ; then
 	exit 1
 fi
 
-editcontainer "${image}" \
+editimage "${image}" \
 	'
-		source ~/.bashrc;
-		sudo apt-get -y --force-yes update;
-		sudo apt-get -y --force-yes dist-upgrade;
-		touch ~/.updated;
+		sudo apt-get -y --force-yes update
+		sudo apt-get -y --force-yes dist-upgrade
+		touch ~/.updated
 	' \
 	'
-		source ~/.bashrc;
-		if [ ! -f ~/.updated ] || test "$(find ~/.updated -mtime +3)" ; then
-			echo update
-		fi;
+		[ ! -f ~/.updated ] || test "$(find ~/.updated -mtime +3)"
 	'
 
 docker run -it \
 	$processType \
-	${mounts} \
+	$mounts \
+	"${image}" \
+	bash -c "source ~/.bashrc ; /cyph/commands/getlibs.sh"
+
+editimage "${image}" \
+	'
+		sudo rm -rf /node_modules 2> /dev/null
+		sudo cp -rf /cyph/shared/lib/js/node_modules /
+		sudo chmod -R 777 /node_modules
+	' \
+	'
+		! cmp /cyph/shared/lib/js/yarn.lock /node_modules/yarn.lock > /dev/null 2>&1
+	'
+
+docker run -it \
+	$processType \
+	$mounts \
 	$args \
 	--name="$(containername "${command}")" \
 	"${image}" \
-	bash -c "source ~/.bashrc ; /cyph/commands/getlibs.sh ; /cyph/${commandScript} $*"
+	bash -c "source ~/.bashrc ; /cyph/${commandScript} $*"
 
 defaultsleep

@@ -14,14 +14,6 @@ node -e '
 '
 mkdir node_modules 2> /dev/null
 yarn install
-tmpdir="$(mktemp -d)"
-${dir}/commands/copyworkspace.sh "${tmpdir}"
-rm -rf node_modules/@types 2> /dev/null
-for d in $(ls "${tmpdir}/shared/js/node_modules") ; do
-	if [ ! -d "node_modules/${d}" ] ; then
-		mv "${tmpdir}/shared/js/node_modules/${d}" node_modules/
-	fi
-done
 tns platform add android --sdk 22
 cd
 
@@ -202,7 +194,8 @@ for platform in android ios ; do
 				],
 				modules: [
 					'node_modules/tns-core-modules',
-					'node_modules'
+					'node_modules',
+					'/node_modules'
 				]
 			}
 		};

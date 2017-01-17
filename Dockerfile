@@ -54,8 +54,6 @@ RUN echo '\
 	source /home/gibson/emsdk_portable/emsdk_env.sh > /dev/null 2>&1; \
 	source /home/gibson/.rvm/scripts/rvm; \
 \
-	export NODE_MODULES="/cyph/shared/lib/js/node_modules"; \
-\
 	export GOPATH="/home/gibson/go"; \
 	export CLOUDSDK_PYTHON="python2"; \
 	export CLOUD_PATHS="$( \
@@ -76,7 +74,7 @@ RUN echo '\
 		echo -n "${ANDROID_HOME}/platform-tools:"; \
 		echo -n "${ANDROID_HOME}/tools:"; \
 		echo -n "${PATH}:"; \
-		echo -n "${NODE_MODULES}/.bin"; \
+		echo -n "/node_modules/.bin"; \
 	)"; \
 \
 	if [ ! -d ~/.gnupg -a -d ~/.gnupg.original ] ; then cp -a ~/.gnupg.original ~/.gnupg ; fi; \
@@ -172,7 +170,8 @@ RUN rm -rf ~/.gnupg
 #CIRCLECI:RUN git clone --depth 1 https://github.com/jedisct1/libsodium.js ~/getlibs/shared/lib/js/libsodium
 #CIRCLECI:RUN chmod -R 777 ~/getlibs
 #CIRCLECI:RUN ~/getlibs/shared/getlibs.sh
-#CIRCLECI:RUN echo 'cp -a ~/getlibs/shared/lib/js/node_modules /cyph/shared/lib/js/' >> ~/.bashrc
+#CIRCLECI:RUN sudo mv ~/getlibs/shared/lib/js/node_modules /
+#CIRCLECI:RUN sudo chmod -R 777 /node_modules
 
 
 VOLUME /cyph

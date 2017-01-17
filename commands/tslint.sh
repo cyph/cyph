@@ -11,11 +11,10 @@ if [ "${1}" == '--fix' ] ; then
 	cp tslint-rules/*.ts ${tslintrules}/
 else
 	tmpdir="$(mktemp -d)"
-	./commands/copyworkspace.sh "${tmpdir}"
+	./commands/copyworkspace.sh --client-only "${tmpdir}"
 	cd "${tmpdir}/shared"
 fi
 
-cp -rf js/node_modules ${tslintrules}/
 tsc --skipLibCheck ${tslintrules}/*.ts || exit 1
 
 node -e "
@@ -42,8 +41,8 @@ node -e "
 output="$(
 	tslint \
 		-r "${tslintrules}" \
-		-r "js/node_modules/codelyzer" \
-		-r "js/node_modules/tslint-microsoft-contrib" \
+		-r "/node_modules/codelyzer" \
+		-r "/node_modules/tslint-microsoft-contrib" \
 		--project js/tsconfig.tslint.json \
 		--type-check \
 		${*}

@@ -36,11 +36,6 @@ if [ "${cloneworkingdir}" -o "${test}" -o "${watch}" -o "${outputDir}" == "${roo
 	outputDir="${rootDir}/shared"
 fi
 
-if [ "${cloneworkingdir}" ] ; then
-	./commands/copyworkspace.sh ~/.build
-	cd ~/.build
-fi
-
 tsfiles="$(
 	{
 		cat cyph.com/*.html cyph.im/*.html | grep -oP "src=(['\"])/js/.*?\1";
@@ -152,9 +147,9 @@ tsbuild () {
 	cd "${tmpjsdir}"
 
 	if [ "${watch}" ] && [ ! "${gettmpdir}" ] ; then
-		./node_modules/.bin/ngc -p .
+		ngc -p .
 	else
-		output="${output}$(./node_modules/.bin/ngc -p . 2>&1)"
+		output="${output}$(ngc -p . 2>&1)"
 	fi
 
 	cd "${currentdir}"
@@ -170,14 +165,8 @@ compile () {
 	cd "${outputDir}"
 
 	if [ "${cloneworkingdir}" ] ; then
-		mv ~/.build/shared/js/node_modules ~/.node_modules.bak
-		find . -mindepth 1 -maxdepth 1 -type d -not -name lib -exec bash -c '
-			rm -rf ~/.build/shared/{} 2> /dev/null;
-			cp -a {} ~/.build/shared/;
-		' \;
+		./commands/copyworkspace.sh --client-only ~/.build
 		cd ~/.build/shared
-		rm js/node_modules 2> /dev/null
-		mv ~/.node_modules.bak js/node_modules
 	fi
 
 	for f in $scssfiles ; do
