@@ -13,7 +13,7 @@ node -e '
 	fs.writeFileSync("package.json", JSON.stringify(package));
 '
 mkdir node_modules 2> /dev/null
-yarn install
+npm install
 tns platform add android --sdk 22
 
 cp -rf node_modules node_modules.old
