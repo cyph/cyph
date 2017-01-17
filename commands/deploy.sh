@@ -273,7 +273,6 @@ for d in $compiledProjects ; do
 	../commands/build.sh --prod $(test "${simple}" && echo '--no-minify') || exit;
 
 	mv .index.html index.html
-	rm -rf js/node_modules
 
 	find css -name '*.scss' -or -name '*.map' -exec rm {} \;
 	find js -name '*.ts' -or -name '*.ts.js' -name '*.map' -exec rm {} \;
@@ -450,13 +449,6 @@ if [ ! "${test}" -a \( ! "${site}" -o "${site}" == cyph.im \) ] ; then
 	for project in cyph.im cyph.video ; do
 		cat $project/*.yaml | perl -pe 's/(service: cyph.*)/\1-update/' > $project/update.yaml
 	done
-fi
-
-# Workaround for error "Cannot upload file ... which has size ... greater than maximum allowed"
-if [ "${simple}" ] ; then
-	rm -rf */lib/go $(find . -type d -name node_modules -exec \
-		find {} -mindepth 1 -maxdepth 1 -type d -name 'tns*' -or -name 'nativescript*' \
-	\;)
 fi
 
 if [ "${test}" ] ; then

@@ -11,7 +11,7 @@ if [ "${1}" == '--prodlike' ] ; then
 fi
 
 if [ "${prodlike}" ] ; then
-	./commands/copyworkspace.sh .build
+	./commands/copyworkspace.sh --client-only .build
 	cd .build
 fi
 
@@ -40,7 +40,7 @@ for f in $(find default -mindepth 1 -maxdepth 4 -type d) ; do
 	go install $(echo "$f" | sed 's|default/||') > /dev/null 2>&1 & 
 done
 
-bash -c "cd '${NODE_MODULES}/..' ; node -e 'new (require(\"firebase-server\"))(44000)'" &
+node -e 'new (require("firebase-server"))(44000)' &
 
 cd cyph.com
 rm -rf blog 2> /dev/null
