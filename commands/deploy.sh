@@ -285,7 +285,7 @@ for d in $compiledProjects ; do
 	cd ..
 done
 if [ ! "${simple}" ] ; then
-	currentdir="$PWD"
+	currentDir="$PWD"
 	for f in */webpack.json ; do
 		cp -f $f "${dir}/${f}"
 		chmod 700 "${dir}/${f}"
@@ -293,8 +293,8 @@ if [ ! "${simple}" ] ; then
 	cd "${dir}"
 	git commit -m 'webpack.json update' */webpack.json
 	git push
-	cd "${currentdir}"
-	currentdir=''
+	cd "${currentDir}"
+	currentDir=''
 fi
 touch .build.done
 

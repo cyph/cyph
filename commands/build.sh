@@ -84,7 +84,7 @@ webpackname () {
 tsbuild () {
 	tmpdir="$(mktemp -d)"
 	tmpjsdir="${tmpdir}/js"
-	currentdir="../../..${PWD}"
+	currentDir="../../..${PWD}"
 	gettmpdir=''
 	logtmpdir=''
 	returntmpdir=''
@@ -128,8 +128,8 @@ tsbuild () {
 		")
 
 		$(test "${returntmpdir}" || echo "
-			tsconfig.compilerOptions.outDir			= '${currentdir}';
-			tsconfig.angularCompilerOptions.genDir	= '${currentdir}';
+			tsconfig.compilerOptions.outDir			= '${currentDir}';
+			tsconfig.angularCompilerOptions.genDir	= '${currentDir}';
 		")
 
 		tsconfig.files	= 'typings/index.d ${*}'.
@@ -157,7 +157,7 @@ tsbuild () {
 		output="${output}$(./node_modules/.bin/ngc -p . 2>&1)"
 	fi
 
-	cd "${currentdir}"
+	cd "${currentDir}"
 
 	if [ "${logtmpdir}" ] ; then
 		for f in ${*} ; do
@@ -285,7 +285,7 @@ compile () {
 						done
 					}
 
-					currentdir="${PWD}"
+					currentDir="${PWD}"
 
 					if [ "${m}" == 'Main' ] ; then
 						cp -f "${htmlinput}" "${htmloutput}"
@@ -298,7 +298,7 @@ compile () {
 						--output-library-target var \
 						--output-library "${m}" \
 						"${f}.js" \
-						"${currentdir}/${f}.js.tmp"
+						"${currentDir}/${f}.js.tmp"
 
 					echo
 				} &
