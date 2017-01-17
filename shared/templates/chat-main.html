@@ -32,7 +32,7 @@
 		<div class='image'>
 			<img src='/img/walken.png' alt='Definitely not Christopher Walken' cyphTranslate />
 		</div>
-		<div>
+		<div *ngIf='!sessionService.apiFlags.telehealth'>
 			<span cyphTranslate>This cyph has been aborted.</span>
 			<br />
 			<span cyphTranslate>Please</span>
@@ -42,6 +42,22 @@
 				[href]='envService.newCyphUrl + "/"'
 			>try again</a>.
 		</div>
+		<div *ngIf='sessionService.apiFlags.telehealth'>
+			<span cyphTranslate>This telehealth session has been aborted.</span>
+			<br />
+			<span cyphTranslate>
+			<div *ngIf='sessionService.state.isAlice'>
+				<span cyphTranslate> If this was a mistake or error, you may generate a new link and </span>
+				<a
+					cyphTranslate
+					target='_self'
+					[href]='envService.newCyphUrl + "/"'
+				>try again</a>.
+			</div>
+			<div *ngIf='!sessionService.state.isAlice'>
+				<span cyphTranslate> If this was a mistake or error, your practitoner will send you a new link.</span>
+			</div>
+		</div>		
 		<div class='flex'></div>
 	</div>
 
