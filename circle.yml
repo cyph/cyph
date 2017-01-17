@@ -33,9 +33,7 @@ dependencies:
               ).
               replace(
                   /FB_LOCK_BASE64/g,
-                  fs.readFileSync(
-                      "shared/lib/js/module_locks/firebase/yarn.lock"
-                  ).toString("base64")
+                  "Cg=="
               ).
               replace(
                   /TSN_PACKAGE_BASE64/g,
@@ -45,9 +43,7 @@ dependencies:
               ).
               replace(
                   /TSN_LOCK_BASE64/g,
-                  fs.readFileSync(
-                      "shared/lib/js/module_locks/ts-node/yarn.lock"
-                  ).toString("base64")
+                  "Cg=="
               ).
               replace(
                   /TSL_PACKAGE_BASE64/g,
@@ -57,9 +53,7 @@ dependencies:
               ).
               replace(
                   /TSL_LOCK_BASE64/g,
-                  fs.readFileSync(
-                      "shared/lib/js/module_locks/tslint/yarn.lock"
-                  ).toString("base64")
+                  "Cg=="
               ).
               replace(
                   /PACKAGE_BASE64/g,
@@ -69,9 +63,7 @@ dependencies:
               ).
               replace(
                   /LOCK_BASE64/g,
-                  fs.readFileSync(
-                      "shared/lib/js/yarn.lock"
-                  ).toString("base64")
+                  "Cg=="
               )
       )'
     - docker build --rm=false -t ${DOCKER_IMAGE} .
