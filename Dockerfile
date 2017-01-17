@@ -163,6 +163,10 @@ RUN rm -rf ~/.gnupg
 #CIRCLECI:RUN echo 'LOCK_BASE64' | base64 --decode > ~/getlibs/shared/lib/js/yarn.lock
 #CIRCLECI:RUN echo 'FB_PACKAGE_BASE64' | base64 --decode > ~/getlibs/shared/lib/js/module_locks/firebase/package.json
 #CIRCLECI:RUN echo 'FB_LOCK_BASE64' | base64 --decode > ~/getlibs/shared/lib/js/module_locks/firebase/yarn.lock
+#CIRCLECI:RUN echo 'TSN_PACKAGE_BASE64' | base64 --decode > ~/getlibs/shared/lib/js/module_locks/ts-node/package.json
+#CIRCLECI:RUN echo 'TSN_LOCK_BASE64' | base64 --decode > ~/getlibs/shared/lib/js/module_locks/ts-node/yarn.lock
+#CIRCLECI:RUN echo 'TSL_PACKAGE_BASE64' | base64 --decode > ~/getlibs/shared/lib/js/module_locks/tslint/package.json
+#CIRCLECI:RUN echo 'TSL_LOCK_BASE64' | base64 --decode > ~/getlibs/shared/lib/js/module_locks/tslint/yarn.lock
 #CIRCLECI:RUN git clone --depth 1 https://github.com/jedisct1/libsodium.js ~/getlibs/shared/lib/js/libsodium
 #CIRCLECI:RUN chmod -R 777 ~/getlibs
 #CIRCLECI:RUN ~/getlibs/shared/getlibs.sh
