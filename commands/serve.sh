@@ -71,7 +71,7 @@ mkdir /tmp/cyph0
 go_appserver --port 5000 --admin_port 6000 --host 0.0.0.0 --storage_path /tmp/cyph0 default/.build.yaml
 
 {
-	sleep 75;
+	sleep 90;
 
 	mkdir /tmp/cyph1;
 	appserver --port 5001 --admin_port 6001 --host 0.0.0.0 --storage_path /tmp/cyph1 cyph.com/.build.yaml;
