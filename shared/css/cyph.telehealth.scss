@@ -42,7 +42,15 @@ body.telehealth {
 		box-shadow: none;
 	}
 
-	span {
+	.chat-message-box textarea {
+ 	   background-color: rgba(75, 67, 89, 0.25);
+	}
+
+	textarea::-webkit-input-placeholder, textarea::moz-placeholder, textarea:ms-input-placeholder {
+		color: black !important;
+	}
+
+	span, a, p, h1, h2, h3, cyph-help {
 		color: #8B62D9 !important;
 		font-weight: 400;
 	}
