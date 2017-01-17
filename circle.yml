@@ -1,6 +1,8 @@
 machine:
   environment:
     DOCKER_IMAGE: cyph/circleci:${CIRCLE_BRANCH}
+  node:
+    version: 6.9.4
   services:
     - docker
 
