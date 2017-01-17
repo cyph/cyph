@@ -15,6 +15,10 @@ dependencies:
     - sed -i "s|GETLIBS_BASE64|$(base64 commands/getlibs.sh | tr -d '\n')|g" Dockerfile
     - sed -i "s|FB_PACKAGE_BASE64|$(base64 shared/lib/js/module_locks/firebase/package.json | tr -d '\n')|g" Dockerfile
     - sed -i "s|FB_LOCK_BASE64|$(base64 shared/lib/js/module_locks/firebase/yarn.lock | tr -d '\n')|g" Dockerfile
+    - sed -i "s|TSN_PACKAGE_BASE64|$(base64 shared/lib/js/module_locks/ts-node/package.json | tr -d '\n')|g" Dockerfile
+    - sed -i "s|TSN_LOCK_BASE64|$(base64 shared/lib/js/module_locks/ts-node/yarn.lock | tr -d '\n')|g" Dockerfile
+    - sed -i "s|TSL_PACKAGE_BASE64|$(base64 shared/lib/js/module_locks/tslint/package.json | tr -d '\n')|g" Dockerfile
+    - sed -i "s|TSL_LOCK_BASE64|$(base64 shared/lib/js/module_locks/tslint/yarn.lock | tr -d '\n')|g" Dockerfile
     - sed -i "s|PACKAGE_BASE64|$(base64 shared/lib/js/package.json | tr -d '\n')|g" Dockerfile
     - sed -i "s|LOCK_BASE64|$(base64 shared/lib/js/yarn.lock | tr -d '\n')|g" Dockerfile
     - docker build --rm=false -t ${DOCKER_IMAGE} .
