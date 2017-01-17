@@ -40,7 +40,7 @@ for f in $(find default -mindepth 1 -maxdepth 4 -type d) ; do
 	go install $(echo "$f" | sed 's|default/||') > /dev/null 2>&1 & 
 done
 
-node -e 'new (require("firebase-server"))(44000)' &
+bash -c "cd '${NODE_MODULES}/..' ; node -e 'new (require(\"firebase-server\"))(44000)'" &
 
 cd cyph.com
 rm -rf blog 2> /dev/null

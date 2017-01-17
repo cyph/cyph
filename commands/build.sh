@@ -41,34 +41,23 @@ if [ "${cloneworkingdir}" ] ; then
 	cd ~/.build
 fi
 
-tsfiles="$( \
-	{ \
-		find ${tsfilesRoot} -name '*.html' -not \( \
-			-path "${tsfilesRoot}/.build/*" \
-			-path "${tsfilesRoot}/.nativebuild/*" \
-			-or -path "${tsfilesRoot}/default/*" \
-			-or -path "${tsfilesRoot}/shared/templates/native/*" \
-			-or -path "${tsfilesRoot}/websign/*" \
-			-or -path '*/lib/*' \
-			-or -path '*/pack/*' \
-			-or -name '.index.html' \
-		\) -exec cat {} \; | \
-			grep -oP "src=(['\"])/js/.*?\1" \
-		& \
+tsfiles="$(
+	{
+		cat cyph.com/*.html cyph.im/*.html | grep -oP "src=(['\"])/js/.*?\1";
 		find ${outputDir}/js -name '*.ts' -not \( \
 			-name '*.ngfactory.ts' \
 			-or -name '*.ngmodule.ts' \
 		\) -exec cat {} \; |
 			grep -oP "importScripts\((['\"])/js/.*\1\)" \
-		& \
-		echo cyph/analytics; \
+		;
+		echo cyph/analytics;
 	} | \
-		perl -pe "s/.*?['\"]\/js\/(.*)\.js.*/\1/g" | \
-		sort | \
-		uniq | \
-		grep -v 'Binary file' | \
-		grep -vP '^preload/global$' | \
-		grep -vP '^typings$' \
+		perl -pe "s/.*?['\"]\/js\/(.*)\.js.*/\1/g" |
+		sort |
+		uniq |
+		grep -v 'Binary file' |
+		grep -vP '^preload/global$' |
+		grep -vP '^typings$'
 )"
 
 cd shared
@@ -163,9 +152,9 @@ tsbuild () {
 	cd "${tmpjsdir}"
 
 	if [ "${watch}" ] && [ ! "${gettmpdir}" ] ; then
-		ngc -p .
+		./node_modules/.bin/ngc -p .
 	else
-		output="${output}$(ngc -p . 2>&1)"
+		output="${output}$(./node_modules/.bin/ngc -p . 2>&1)"
 	fi
 
 	cd "${currentdir}"
@@ -181,11 +170,14 @@ compile () {
 	cd "${outputDir}"
 
 	if [ "${cloneworkingdir}" ] ; then
+		mv ~/.build/shared/js/node_modules ~/node_modules.bak
 		find . -mindepth 1 -maxdepth 1 -type d -not -name lib -exec bash -c '
 			rm -rf ~/.build/shared/{} 2> /dev/null;
 			cp -a {} ~/.build/shared/;
 		' \;
 		cd ~/.build/shared
+		rm js/node_modules 2> /dev/null
+		mv ~/.build/shared/js/node_modules.bak js/
 	fi
 
 	for f in $scssfiles ; do

@@ -12,7 +12,16 @@ node -e '
 	package.dependencies["@angular/compiler-cli"]	= package.dependencies["@angular/compiler"];
 	fs.writeFileSync("package.json", JSON.stringify(package));
 '
-npm install
+mkdir node_modules 2> /dev/null
+yarn install
+tmpdir="$(mktemp -d)"
+${dir}/commands/copyworkspace.sh "${tmpdir}"
+rm -rf node_modules/@types 2> /dev/null
+for d in $(ls "${tmpdir}/shared/js/node_modules") ; do
+	if [ ! -d "node_modules/${d}" ] ; then
+		mv "${tmpdir}/shared/js/node_modules/${d}" node_modules/
+	fi
+done
 tns platform add android --sdk 22
 cd
 
@@ -25,11 +34,7 @@ mv app/App_Resources tmp/app/
 cd tmp
 
 cp ../../shared/lib/js/base.js ./
-cp -rf ../../shared/lib/js/node_modules ./
-for d in $(ls ../node_modules | grep -v '@types') .bin ; do
-	rm -rf "node_modules/${d}" 2> /dev/null
-	mv "../node_modules/${d}" node_modules/
-done
+mv ../node_modules ./
 cp -rf ../../shared/js/typings ./
 cp -rf ../../shared/js/native/* app/
 cp -rf ../../shared/css/native/* app/
@@ -241,7 +246,7 @@ for platform in android ios ; do
 done
 
 cd ..
-rm -rf app node_modules hooks/before-prepare/nativescript-dev-typescript.js
+rm -rf app hooks/before-prepare/nativescript-dev-typescript.js
 mkdir app
 mv tmp/main.*.js tmp/app/App_Resources tmp/app/app.css tmp/app/package.json app/
 mv tmp/node_modules ./

@@ -54,7 +54,7 @@ RUN echo '\
 	source /home/gibson/emsdk_portable/emsdk_env.sh > /dev/null 2>&1; \
 	source /home/gibson/.rvm/scripts/rvm; \
 \
-	export NODE_PATH="/cyph/shared/lib/js/node_modules"; \
+	export NODE_MODULES="/cyph/shared/lib/js/node_modules"; \
 \
 	export GOPATH="/home/gibson/go"; \
 	export CLOUDSDK_PYTHON="python2"; \
@@ -76,7 +76,7 @@ RUN echo '\
 		echo -n "${ANDROID_HOME}/platform-tools:"; \
 		echo -n "${ANDROID_HOME}/tools:"; \
 		echo -n "${PATH}:"; \
-		echo -n "${NODE_PATH}/.bin"; \
+		echo -n "${NODE_MODULES}/.bin"; \
 	)"; \
 \
 	if [ ! -d ~/.gnupg -a -d ~/.gnupg.original ] ; then cp -a ~/.gnupg.original ~/.gnupg ; fi; \
@@ -110,8 +110,6 @@ RUN bash -c ' \
 
 RUN bash -c ' \
 	source ~/.bashrc; \
-	ln -s $NODE_PATH /home/gibson/node_modules; \
-	sudo ln -s $NODE_PATH /node_modules; \
 	mkdir -p /home/gibson/emsdk_portable/node/4.1.1_64bit/bin; \
 	ln -s /usr/bin/node /home/gibson/emsdk_portable/node/4.1.1_64bit/bin/node; \
 '
