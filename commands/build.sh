@@ -165,7 +165,7 @@ compile () {
 	cd "${outputDir}"
 
 	if [ "${cloneworkingdir}" ] ; then
-		../commands/copyworkspace.sh --client-only --global-modules ~/.build
+		../commands/copyworkspace.sh --client-only ~/.build
 		cd ~/.build/shared
 	fi
 
