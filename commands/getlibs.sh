@@ -161,7 +161,7 @@ node -e '
 	fs.writeFileSync("ts-node/package.json", JSON.stringify(package));
 '
 
-for d in firebase ts-node tslint ; do
+for d in firebase firebase-server ts-node tslint ; do
 	cd ${d}
 	cp -f ../../module_locks/${d}/* ./
 	mkdir node_modules 2> /dev/null
@@ -171,6 +171,7 @@ done
 
 ./.bin/browserify firebase/firebase-node.js -o firebase/firebase.js -s firebase
 cp -f firebase/firebase.js firebase/firebase-browser.js
+cp -f firebase/firebase.js firebase/firebase-node.js
 rm -rf firebase/node_modules
 
 mv .bin/ts-node .bin/ts-node-original

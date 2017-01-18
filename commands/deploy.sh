@@ -211,6 +211,10 @@ waitingForBlog=''
 if [ "${cacheBustedProjects}" ] ; then
 	waitingForBlog=true
 	bash -c "
+		if [ '${websign}' ] ; then
+			while [ ! -f .build.done ] ; do sleep 1 ; done
+		fi
+
 		if [ ! '${site}' -o '${site}' == cyph.com ] ; then
 			rm -rf cyph.com/blog 2> /dev/null
 			mkdir -p cyph.com/blog
