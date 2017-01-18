@@ -52,7 +52,8 @@ tsfiles="$(
 		uniq |
 		grep -v 'Binary file' |
 		grep -vP '^preload/global$' |
-		grep -vP '^typings$'
+		grep -vP '^typings$' |
+		xargs -I% bash -c "ls '${outputDir}/js/%.ts' > /dev/null 2>&1 && echo '%'"
 )"
 
 cd shared
