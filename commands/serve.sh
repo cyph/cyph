@@ -11,7 +11,7 @@ if [ "${1}" == '--prodlike' ] ; then
 fi
 
 if [ "${prodlike}" ] ; then
-	./commands/copyworkspace.sh --client-only .build
+	./commands/copyworkspace.sh .build
 	cd .build
 fi
 
@@ -45,7 +45,7 @@ for project in cyph.com cyph.im ; do
 	ln -s /node_modules node_modules
 	cd ../lib/js
 	ln -s /node_modules node_modules
-	ln -s ../../../shared/lib/js/base.js base.js
+	cp ../../../shared/lib/js/base.js base.js
 	cd ../../..
 done
 
@@ -82,7 +82,6 @@ go_appserver --port 5000 --admin_port 6000 --host 0.0.0.0 --storage_path /tmp/cy
 
 if [ "${prodlike}" ] ; then
 	./commands/build.sh --prod
-	git checkout */webpack.json
 
 	if (( $? )) ; then
 		echo -e '\n\nBuild failed\n'

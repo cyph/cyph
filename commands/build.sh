@@ -255,18 +255,24 @@ compile () {
 		> "${outputDir}/js/preload/global.js"
 		rm preload/global.js.tmp
 
-		mangleExcept="$(
-			test "${minify}" && node -e "console.log(JSON.stringify('$(
-				find . -name '*.js' -not \( \
-					-name '*.ngfactory.js' \
-					-or -name '*.ngmodule.js' \
-				\) -exec cat {} \; |
-					grep -oP '[A-Za-z_$][A-Za-z0-9_$]*' |
-					sort |
-					uniq |
-					tr '\n' ' '
-			)'.trim().split(/\s+/)))"
-		)"
+		if [ "${minify}" ] ; then
+			find . -name '*.js' -not \( \
+				-name '*.ngfactory.js' \
+				-or -name '*.ngmodule.js' \
+			\) -exec cat {} \; |
+				grep -oP '[A-Za-z_$][A-Za-z0-9_$]*' |
+				sort |
+				uniq |
+				tr '\n' ' ' \
+			> /tmp/mangle
+
+			node -e "fs.writeFileSync(
+				'/tmp/mangle.json',
+				JSON.stringify(
+					fs.readFileSync('/tmp/mangle').toString().trim().split(/\s+/)
+				)
+			)"
+		fi
 
 		for f in $tsfiles ; do
 			m="$(modulename "${f}")"
@@ -360,7 +366,9 @@ compile () {
 							new webpack.optimize.UglifyJsPlugin({
 								compress: false,
 								mangle: {
-									except: ${mangleExcept}
+									except: JSON.parse(
+										fs.readFileSync('/tmp/mangle.json').toString()
+									)
 								},
 								output: {
 									comments: false
