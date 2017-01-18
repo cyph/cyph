@@ -172,6 +172,7 @@ RUN rm -rf ~/.gnupg
 #CIRCLECI:RUN ~/getlibs/shared/getlibs.sh
 #CIRCLECI:RUN sudo mv ~/getlibs/shared/lib/js/node_modules /
 #CIRCLECI:RUN sudo chmod -R 777 /node_modules
+#CIRCLECI:RUN echo 'cp /node_modules/babel-polyfill/dist/polyfill.js /cyph/shared/lib/js/base.js' >> ~/.bashrc
 
 
 VOLUME /cyph
