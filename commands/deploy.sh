@@ -284,7 +284,9 @@ for d in $compiledProjects ; do
 
 	../commands/build.sh --prod $(test "${simple}" && echo '--no-minify') || exit;
 
-	mv .index.html index.html
+	if [ -f .index.html ] ; then
+		mv .index.html index.html
+	fi
 
 	find css -name '*.scss' -or -name '*.map' -exec rm {} \;
 	find js -name '*.ts' -or -name '*.ts.js' -name '*.map' -exec rm {} \;
