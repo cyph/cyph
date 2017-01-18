@@ -2,14 +2,9 @@
 
 
 exclude='shared'
-globalmodules=''
 
 if [ "${1}" == '--client-only' ] ; then
 	exclude="${exclude}|default"
-	shift
-fi
-if [ "${1}" == '--global-modules' ] ; then
-	globalmodules='true'
 	shift
 fi
 
@@ -30,6 +25,4 @@ cp lib/js/base.js "${dir}/shared/lib/js/"
 cd "${dir}/shared/lib/js"
 ln -s /node_modules node_modules
 
-if [ "${globalmodules}" ] ; then
-	sed -i "s|\"../node_modules|\"/node_modules|g" "${dir}/shared/js/typings/libs.d.ts"
-fi
+sed -i "s|\"../node_modules|\"/node_modules|g" "${dir}/shared/js/typings/libs.d.ts"
