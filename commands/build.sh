@@ -84,8 +84,8 @@ webpackname () {
 
 tsbuild () {
 	tmpDir="$(mktemp -d)"
-	tmpjsdir="${tmpDir}/js"
-	currentDir="../../..${PWD}"
+	tmpJsDir="${tmpDir}/js"
+	currentDir="$(realpath --relative-to="${tmpJsDir}" "${PWD}")"
 	getTmpDir=''
 	logTmpDir=''
 	returnTmpDir=''
@@ -98,7 +98,7 @@ tsbuild () {
 		shift
 		getTmpDir=true
 		returnTmpDir=true
-		echo "${tmpjsdir}"
+		echo "${tmpJsDir}"
 	fi
 
 	cp -rf .. "${tmpDir}/"
@@ -140,12 +140,12 @@ tsbuild () {
 		;
 
 		fs.writeFileSync(
-			'${tmpjsdir}/tsconfig.json',
+			'${tmpJsDir}/tsconfig.json',
 			JSON.stringify(tsconfig)
 		);
 	"
 
-	cd "${tmpjsdir}"
+	cd "${tmpJsDir}"
 
 	if [ "${watch}" ] && [ ! "${getTmpDir}" ] ; then
 		./node_modules/.bin/ngc -p .
@@ -157,7 +157,7 @@ tsbuild () {
 
 	if [ "${logTmpDir}" ] ; then
 		for f in ${*} ; do
-			echo "${tmpjsdir}" > "${f}.tmpDir"
+			echo "${tmpJsDir}" > "${f}.tmpDir"
 		done
 	fi
 }
