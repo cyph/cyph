@@ -211,6 +211,8 @@ waitingForBlog=''
 if [ "${cacheBustedProjects}" ] ; then
 	waitingForBlog=true
 	bash -c "
+		touch .blog.output
+
 		if [ '${websign}' ] ; then
 			while [ ! -f .build.done ] ; do sleep 1 ; done
 		fi
