@@ -454,13 +454,13 @@ compile () {
 				while [ ! -f "${f}.js.tmp" ] ; do
 					sleep 1
 				done
-
-				if [ "${m}" == 'Main' ] ; then
-					mv "${f}.js.tmp" "${outputDir}/js/${f}.js"
-				fi
 			fi
 
 			if [ "${m}" == 'Main' ] ; then
+				if [ -f "${f}.js.tmp" ] ; then
+					mv "${f}.js.tmp" "${outputDir}/js/${f}.js"
+				fi
+
 				continue
 			fi
 

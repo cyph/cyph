@@ -7,6 +7,7 @@ originalArgs="${*}"
 
 cacheBustedProjects='cyph.com cyph.im'
 compiledProjects='cyph.com cyph.im'
+allCompiledProjects="${compiledProjects}"
 webSignedProject='cyph.im'
 prodOnlyProjects='nakedredirect test websign'
 shortlinkProjects='io me video audio'
@@ -262,7 +263,7 @@ for d in $compiledProjects ; do
 
 	cd ${d}
 
-	for altD in $compiledProjects ; do
+	for altD in $allCompiledProjects ; do
 		if [ "${d}" == "${altD}" ] ; then
 			continue
 		fi
