@@ -10,9 +10,9 @@ if [ "${1}" == '--fix' ] ; then
 	tslintrules="$(mktemp -d)"
 	cp tslint-rules/*.ts ${tslintrules}/
 else
-	tmpdir="$(mktemp -d)"
-	./commands/copyworkspace.sh --client-only "${tmpdir}"
-	cd "${tmpdir}/shared"
+	tmpDir="$(mktemp -d)"
+	./commands/copyworkspace.sh --client-only "${tmpDir}"
+	cd "${tmpDir}/shared"
 fi
 
 tsc --skipLibCheck ${tslintrules}/*.ts || exit 1
