@@ -178,6 +178,10 @@ done
 cp -f firebase/firebase.js firebase/firebase-browser.js
 rm -rf firebase/node_modules
 
+mv .bin/ts-node .bin/ts-node-original
+echo -e '#!/bin/bash\nts-node-original -D "${@}"' > .bin/ts-node
+chmod +x .bin/ts-node
+
 cd ../..
 
 mv .js.tmp/node_modules js/
