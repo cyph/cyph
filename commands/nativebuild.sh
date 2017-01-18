@@ -157,10 +157,17 @@ for platform in android ios ; do
 
 		module.exports	= {
 			entry: {
-				app: './app/main.js'
+				app: './app/main'
 			},
 			externals: {
-				simplewebrtc: '{}'
+				mceliece: 'mceliece',
+				ntru: 'ntru',
+				rlwe: 'rlwe',
+				sidh: 'sidh',
+				simplewebrtc: '{}',
+				sodium: 'sodium',
+				sphincs: 'sphincs',
+				supersphincs: 'supersphincs'
 			},
 			module: {
 				rules: [

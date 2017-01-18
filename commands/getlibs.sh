@@ -22,7 +22,7 @@ cp -a ../libsodium ./
 
 mkdir -p @types/libsodium
 cat > @types/libsodium/index.d.ts << EOM
-interface ISodium {
+export interface ISodium {
 	crypto_aead_chacha20poly1305_ABYTES: number;
 	crypto_aead_chacha20poly1305_KEYBYTES: number;
 	crypto_aead_chacha20poly1305_NPUBBYTES: number;
@@ -97,7 +97,7 @@ interface ISodium {
 	to_string (a: Uint8Array) : string;
 };
 
-declare const sodium: ISodium;
+export const sodium: ISodium;
 EOM
 
 for anyType in konami-code.js markdown-it-emoji markdown-it-sup simplewebrtc tab-indent wowjs ; do
@@ -123,11 +123,6 @@ for f in \
 	whatwg-fetch/fetch.js
 do
 	./.bin/uglifyjs "${f}" -m -o "${f}"
-done
-
-for module in mceliece ntru rlwe sidh sphincs supersphincs ; do
-	sed -i 's|export const|declare const|g' ${module}/*.d.ts
-	sed -i 's|export ||g' ${module}/*.d.ts
 done
 
 for arr in \
