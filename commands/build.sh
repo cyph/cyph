@@ -146,11 +146,6 @@ tsbuild () {
 
 	cd "${tmpjsdir}"
 
-	if [ ! -d node_modules ] ; then
-		mkdir node_modules
-		cp -rf /node_modules/.bin /node_modules/@angular node_modules/
-	fi
-
 	if [ "${watch}" ] && [ ! "${gettmpdir}" ] ; then
 		./node_modules/.bin/ngc -p .
 	else
@@ -214,6 +209,11 @@ compile () {
 					}, {})
 			)};
 		`.trim())' > translations.js
+	fi
+
+	if [ ! -d node_modules ] ; then
+		mkdir node_modules
+		cp -rf /node_modules/.bin /node_modules/@angular node_modules/
 	fi
 
 	nonmainfiles="$(echo "${tsfiles}" | grep -vP '/main$')"
