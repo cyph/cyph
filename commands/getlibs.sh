@@ -161,18 +161,25 @@ node -e '
 	fs.writeFileSync("ts-node/package.json", JSON.stringify(package));
 '
 
+currentDir="${PWD}"
 for d in firebase firebase-server ts-node tslint ; do
-	cd ${d}
-	cp -f ../../module_locks/${d}/* ./
+	tmpDir="$(mktemp -d)"
+	mv "${d}" "${tmpDir}/"
+	cd "${tmpDir}/${d}"
+	cp -f "${currentDir}/../module_locks/${d}/*" ./
 	mkdir node_modules 2> /dev/null
 	yarn install
-	cd ..
-done
 
-./.bin/browserify firebase/firebase-node.js -o firebase/firebase.js -s firebase
-cp -f firebase/firebase.js firebase/firebase-browser.js
-cp -f firebase/firebase.js firebase/firebase-node.js
-rm -rf firebase/node_modules
+	if [ "${d}" == 'firebase' ] ; then
+		"${currentDir}/.bin/browserify" firebase-node.js -o firebase.js -s firebase
+		cp -f firebase.js firebase-browser.js
+		cp -f firebase.js firebase-node.js
+		rm -rf node_modules
+	fi
+
+	cd "${currentDir}"
+	mv "${tmpDir}/${d}" ./
+done
 
 mv .bin/ts-node .bin/ts-node-original
 echo -e '#!/bin/bash\nts-node-original -D "${@}"' > .bin/ts-node
