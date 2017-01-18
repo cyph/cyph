@@ -29,8 +29,15 @@ defaultsleep () {
 
 editimage () {
 	if
-		[ "${3}" ] &&
-		[ "$(docker run -it $mounts "${1}" bash -c "if ${3} ; then echo X ; fi")" != 'X' ]
+		[ "${2}" ] &&
+		[ \
+			"$(docker run -it $mounts "${image}" bash -c "
+				if ${2}
+				then
+					echo -n dothemove
+				fi
+			")" != 'dothemove' \
+		]
 	then
 		return
 	fi
@@ -40,14 +47,14 @@ editimage () {
 	docker run -it \
 		$mounts \
 		--name="${tmpContainer}" \
-		"${1}" \
-		bash -c "${2}"
+		"${image}" \
+		bash -c "${1}"
 	docker commit "${tmpContainer}" "${image}"
 	docker rm -f "${tmpContainer}"
 }
 
 getlibs () {
-	editimage "${1}" \
+	editimage \
 		'
 			sudo apt-get -y --force-yes update
 			sudo apt-get -y --force-yes dist-upgrade
@@ -60,10 +67,10 @@ getlibs () {
 	docker run -it \
 		$processType \
 		$mounts \
-		"${1}" \
+		"${image}" \
 		bash -c "source ~/.bashrc ; /cyph/commands/getlibs.sh"
 
-	editimage "${1}" \
+	editimage \
 		'
 			sudo rm -rf /node_modules 2> /dev/null
 			sudo cp -rf /cyph/shared/lib/js/node_modules /
@@ -241,10 +248,10 @@ elif [ "${command}" == 'restart' ] ; then
 elif [ "${command}" == 'make' ] ; then
 	stop
 	start
-	docker build -t "${image}_base" .
+	docker build -t "${image}" .
 
-	getlibs "${image}_base"
-	editimage "${image}" '
+	getlibs
+	editimage '
 		source ~/.bashrc
 		tns error-reporting disable
 		tns usage-reporting disable
@@ -266,7 +273,7 @@ elif [ ! -f "${commandScript}" ] ; then
 	exit 1
 fi
 
-getlibs "${image}"
+getlibs
 
 docker run -it \
 	$processType \
