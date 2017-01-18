@@ -3,7 +3,8 @@
 
 import * as childProcess from 'child_process';
 import * as fs from 'fs';
-import * as superSphincs from 'supersphincs';
+import * as mkdirp from 'mkdirp';
+import {superSphincs} from 'supersphincs';
 
 
 (async () => {
@@ -71,12 +72,21 @@ for (let file of filesToModify) {
 	}
 }
 
-/* To save space, remove unused subresources under lib directory */
+
+const localModulesPath	= 'lib/js/node_modules';
+const globalModulesPath	= '/node_modules';
+
+fs.unlinkSync(localModulesPath);
+
 for (let subresource of filesToCacheBust.filter(subresource =>
-	subresource.startsWith('lib/') &&
-	!cacheBustedFiles[getFileName(subresource)]
+	subresource.startsWith(`${localModulesPath}/`) &&
+	cacheBustedFiles[getFileName(subresource)]
 )) {
-	fs.unlink(subresource);
+	mkdirp.sync(subresource.split('/').slice(0, -1).join('/'));
+	childProcess.spawnSync('cp', [
+		subresource.replace(new RegExp(`^${localModulesPath}`), globalModulesPath),
+		subresource
+	]);
 }
 
 

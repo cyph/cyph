@@ -26,44 +26,34 @@ dependencies:
                   ).toString("base64")
               ).
               replace(
-                  /FB_PACKAGE_BASE64/g,
+                  /FB_BASE64/g,
                   fs.readFileSync(
                       "shared/lib/js/module_locks/firebase/package.json"
                   ).toString("base64")
               ).
               replace(
-                  /FB_LOCK_BASE64/g,
-                  "Cg=="
+                  /FBS_BASE64/g,
+                  fs.readFileSync(
+                      "shared/lib/js/module_locks/firebase-server/package.json"
+                  ).toString("base64")
               ).
               replace(
-                  /TSN_PACKAGE_BASE64/g,
+                  /TSN_BASE64/g,
                   fs.readFileSync(
                       "shared/lib/js/module_locks/ts-node/package.json"
                   ).toString("base64")
               ).
               replace(
-                  /TSN_LOCK_BASE64/g,
-                  "Cg=="
-              ).
-              replace(
-                  /TSL_PACKAGE_BASE64/g,
+                  /TSL_BASE64/g,
                   fs.readFileSync(
                       "shared/lib/js/module_locks/tslint/package.json"
                   ).toString("base64")
-              ).
-              replace(
-                  /TSL_LOCK_BASE64/g,
-                  "Cg=="
               ).
               replace(
                   /PACKAGE_BASE64/g,
                   fs.readFileSync(
                       "shared/lib/js/package.json"
                   ).toString("base64")
-              ).
-              replace(
-                  /LOCK_BASE64/g,
-                  "Cg=="
               )
       )'
     - docker build --rm=false -t ${DOCKER_IMAGE} .
