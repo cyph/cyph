@@ -156,6 +156,7 @@ RUN rm -rf ~/.gnupg
 
 
 #CIRCLECI:RUN mkdir -p ~/getlibs/shared/lib/js/module_locks/firebase
+#CIRCLECI:RUN mkdir -p ~/getlibs/shared/lib/js/module_locks/firebase-server
 #CIRCLECI:RUN mkdir -p ~/getlibs/shared/lib/js/module_locks/ts-node
 #CIRCLECI:RUN mkdir -p ~/getlibs/shared/lib/js/module_locks/tslint
 #CIRCLECI:RUN echo 'GETLIBS_BASE64' | base64 --decode > ~/getlibs/shared/getlibs.sh
