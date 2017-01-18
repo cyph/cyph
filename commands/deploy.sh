@@ -5,7 +5,7 @@ dir="$PWD"
 originalArgs="${*}"
 
 
-cacheBustedProjects='cyph.com'
+cacheBustedProjects='cyph.com cyph.im'
 compiledProjects='cyph.com cyph.im'
 webSignedProject='cyph.im'
 prodOnlyProjects='nakedredirect test websign'
@@ -44,8 +44,8 @@ fi
 
 if [ "${simple}" ] ; then
 	websign=''
-	cacheBustedProjects=''
 else
+	cacheBustedProjects="$(echo "${cacheBustedProjects}" | sed "s|${webSignedProject}||")"
 	./commands/keycache.sh
 fi
 
@@ -215,7 +215,7 @@ if [ "${cacheBustedProjects}" ] ; then
 			while [ ! -f .build.done ] ; do sleep 1 ; done
 		fi
 
-		if [ ! '${site}' -o '${site}' == cyph.com ] ; then
+		if [ ! '${site}' -o '${site}' == cyph.com ] && [ ! '${simple}' ] ; then
 			rm -rf cyph.com/blog 2> /dev/null
 			mkdir -p cyph.com/blog
 			cd cyph.com/blog
