@@ -406,26 +406,26 @@ compile () {
 								sourceMap: false,
 								test: /\.js(\.tmp)?$/
 							}),
+							$(test "${m}" == 'Main' && {
+								echo "
+									new webpack.optimize.AggressiveSplittingPlugin({
+										minSize: 30000,
+										maxSize: 50000
+									}),
+								";
+								echo "
+									new webpack.optimize.CommonsChunkPlugin({
+										name: 'init',
+										minChunks: Infinity
+									})
+								";
+							})
 						")
-						$(test "${m}" == 'Main' && {
-							echo "
-								new webpack.optimize.AggressiveSplittingPlugin({
-									minSize: 30000,
-									maxSize: 50000
-								}),
-							";
-							echo "
-								new webpack.optimize.CommonsChunkPlugin({
-									name: 'init',
-									minChunks: Infinity
-								})
-							";
-						})
 					],
 					$(test "${m}" == 'Main' && echo "
 						recordsOutputPath: '${records}'
 					")
-				}, (err, stats) => {$(test "${m}" == 'Main' && echo "
+				}, (err, stats) => {$(if [ "${m}" == 'Main' -a "${minify}" ] ; then echo "
 					if (err) {
 						throw err;
 					}
@@ -441,7 +441,7 @@ compile () {
 					}
 
 					fs.writeFileSync('${htmloutput}', \$.html().trim());
-				")});
+				" ; fi)});
 			"
 		done
 
