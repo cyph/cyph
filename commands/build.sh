@@ -333,14 +333,11 @@ compile () {
 				continue
 			fi
 
-			if [ "${m}" == 'Main' ] ; then
-				rm -rf $packdirfull 2> /dev/null
-				mkdir $packdirfull
-			fi
-
 			enablesplit=''
 			if [ "${m}" == 'Main' -a "${minify}" ] ; then
 				enablesplit=true
+				rm -rf $packdirfull 2> /dev/null
+				mkdir $packdirfull
 			fi
 
 			# Don't use ".js" file extension for Webpack outputs. No idea
@@ -381,7 +378,7 @@ compile () {
 						]
 					},
 					output: {
-						$(test "${m}" == 'Main' || echo "
+						$(test "${enablesplit}" || echo "
 							filename: './${f}.js.tmp',
 							library: '${m}',
 							libraryTarget: 'var'
