@@ -300,11 +300,31 @@ compile () {
 					waitForTmpdir
 					cd "$(cat "${f}.tmpdir")"
 
-					webpack \
-						--output-library-target var \
-						--output-library "${m}" \
-						"${f}.js" \
-						"${currentDir}/${f}.js.tmp"
+					cat > webpack.js <<- EOM
+						const webpack	= require('webpack');
+
+						module.exports	= {
+							entry: {
+								app: './${f}'
+							},
+							externals: {
+								mceliece: 'mceliece',
+								ntru: 'ntru',
+								rlwe: 'rlwe',
+								sidh: 'sidh',
+								sodium: 'sodium',
+								sphincs: 'sphincs',
+								supersphincs: 'supersphincs'
+							},
+							output: {
+								filename: '${currentDir}/${f}.js.tmp',
+								library: '${m}',
+								libraryTarget: 'var'
+							}
+						};
+					EOM
+
+					webpack --config webpack.js
 
 					echo
 				} &
@@ -326,6 +346,15 @@ compile () {
 				webpack({
 					entry: {
 						main: './${f}'
+					},
+					externals: {
+						mceliece: 'mceliece',
+						ntru: 'ntru',
+						rlwe: 'rlwe',
+						sidh: 'sidh',
+						sodium: 'sodium',
+						sphincs: 'sphincs',
+						supersphincs: 'supersphincs'
 					},
 					module: {
 						rules: [

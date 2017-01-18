@@ -1,3 +1,4 @@
+import {sodium} from 'libsodium';
 import {config} from './config';
 import {env} from './env';
 import {eventManager} from './event-manager';
