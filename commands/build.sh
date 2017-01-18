@@ -83,25 +83,25 @@ webpackname () {
 }
 
 tsbuild () {
-	tmpdir="$(mktemp -d)"
-	tmpjsdir="${tmpdir}/js"
+	tmpDir="$(mktemp -d)"
+	tmpjsdir="${tmpDir}/js"
 	currentDir="../../..${PWD}"
-	gettmpdir=''
-	logtmpdir=''
-	returntmpdir=''
+	getTmpDir=''
+	logTmpDir=''
+	returnTmpDir=''
 
 	if [ "${1}" == '--log-tmp-dir' ] ; then
 		shift
-		logtmpdir=true
-		returntmpdir=true
+		logTmpDir=true
+		returnTmpDir=true
 	elif [ "${1}" == '--get-tmp-dir' ] ; then
 		shift
-		gettmpdir=true
-		returntmpdir=true
+		getTmpDir=true
+		returnTmpDir=true
 		echo "${tmpjsdir}"
 	fi
 
-	cp -rf .. "${tmpdir}/"
+	cp -rf .. "${tmpDir}/"
 
 	node -e "
 		const tsconfig	= JSON.parse(
@@ -124,11 +124,11 @@ tsbuild () {
 			tsconfig.compilerOptions.target			= 'es2015';
 		")
 
-		$(test "${returntmpdir}" && echo "
+		$(test "${returnTmpDir}" && echo "
 			tsconfig.compilerOptions.outDir			= '.';
 		")
 
-		$(test "${returntmpdir}" || echo "
+		$(test "${returnTmpDir}" || echo "
 			tsconfig.compilerOptions.outDir			= '${currentDir}';
 			tsconfig.angularCompilerOptions.genDir	= '${currentDir}';
 		")
@@ -147,7 +147,7 @@ tsbuild () {
 
 	cd "${tmpjsdir}"
 
-	if [ "${watch}" ] && [ ! "${gettmpdir}" ] ; then
+	if [ "${watch}" ] && [ ! "${getTmpDir}" ] ; then
 		./node_modules/.bin/ngc -p .
 	else
 		output="${output}$(./node_modules/.bin/ngc -p . 2>&1)"
@@ -155,9 +155,9 @@ tsbuild () {
 
 	cd "${currentDir}"
 
-	if [ "${logtmpdir}" ] ; then
+	if [ "${logTmpDir}" ] ; then
 		for f in ${*} ; do
-			echo "${tmpjsdir}" > "${f}.tmpdir"
+			echo "${tmpjsdir}" > "${f}.tmpDir"
 		done
 	fi
 }
@@ -238,7 +238,7 @@ compile () {
 				cd "$(tsbuild --get-tmp-dir "${f}")"
 				aotreplace
 				tsbuild --log-tmp-dir "${f}"
-				mv "${f}.tmpdir" "${startdir}/${f}.tmpdir"
+				mv "${f}.tmpDir" "${startdir}/${f}.tmpDir"
 			} &
 		else
 			tsbuild "${f}"
@@ -286,8 +286,8 @@ compile () {
 
 			if [ "${watch}" ] ; then
 				{
-					waitForTmpdir () {
-						while [ ! -f "${f}.tmpdir" ] ; do
+					waitForTmpDir () {
+						while [ ! -f "${f}.tmpDir" ] ; do
 							sleep 1
 						done
 					}
@@ -298,8 +298,8 @@ compile () {
 						cp -f "${htmlinput}" "${htmloutput}"
 					fi
 
-					waitForTmpdir
-					cd "$(cat "${f}.tmpdir")"
+					waitForTmpDir
+					cd "$(cat "${f}.tmpDir")"
 
 					cat > webpack.js <<- EOM
 						const webpack	= require('webpack');
