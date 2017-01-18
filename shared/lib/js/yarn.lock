@@ -96,9 +96,9 @@
   dependencies:
     "@types/angular" "*"
 
-"@types/angular@*", "@types/angular@^1.6.1":
-  version "1.6.1"
-  resolved "https://registry.yarnpkg.com/@types/angular/-/angular-1.6.1.tgz#c42e6614171abc8c83089605aacaf434b0e22808"
+"@types/angular@*", "@types/angular@^1.6.2":
+  version "1.6.2"
+  resolved "https://registry.yarnpkg.com/@types/angular/-/angular-1.6.2.tgz#a5c323ea5d4426ad18984cc8167fa091f7c8201b"
   dependencies:
     "@types/jquery" "*"
 
@@ -1244,13 +1244,12 @@ bufferpack@0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/bufferpack/-/bufferpack-0.0.6.tgz#fb3d8738a0e1e4e03bcff99f9a75f9ec18a9d73e"
 
-bufferutil@1.0.x, "bufferutil@https://github.com/telerik/bufferutil/tarball/v1.0.1.4":
+bufferutil@1.0.x:
   version "1.0.1"
-  resolved "https://github.com/telerik/bufferutil/tarball/v1.0.1.4#7b50375e84662abcf2aec3015dfa335b48db652a"
+  resolved "https://registry.yarnpkg.com/bufferutil/-/bufferutil-1.0.1.tgz#0c53a9ffe8d616c4e2df27d00b808f7a25501e3b"
   dependencies:
     bindings "1.2.x"
-    nan "^2.0.5"
-    prebuilt "https://github.com/tailsu/node-prebuilt/tarball/master"
+    nan "1.6.x"
 
 bufferutil@1.2.x:
   version "1.2.1"
@@ -1258,6 +1257,14 @@ bufferutil@1.2.x:
   dependencies:
     bindings "1.2.x"
     nan "^2.0.5"
+
+"bufferutil@https://github.com/telerik/bufferutil/tarball/v1.0.1.4":
+  version "1.0.1"
+  resolved "https://github.com/telerik/bufferutil/tarball/v1.0.1.4#7b50375e84662abcf2aec3015dfa335b48db652a"
+  dependencies:
+    bindings "1.2.x"
+    nan "^2.0.5"
+    prebuilt "https://github.com/tailsu/node-prebuilt/tarball/master"
 
 builtin-modules@^1.0.0:
   version "1.1.1"
@@ -2377,9 +2384,9 @@ firebase-server@^0.7.1:
     targaryen "2.0.0"
     ws "1.1.1"
 
-firebase@^3.6.5:
-  version "3.6.5"
-  resolved "https://registry.yarnpkg.com/firebase/-/firebase-3.6.5.tgz#e321da57c9c5b66e436432a3e15f1cf6d3b2f9a9"
+firebase@^3.6.6:
+  version "3.6.6"
+  resolved "https://registry.yarnpkg.com/firebase/-/firebase-3.6.6.tgz#3062036e6f47e78a23f300cd168eda1bc02a5908"
   dependencies:
     dom-storage "2.0.2"
     faye-websocket "0.9.3"
@@ -3419,8 +3426,8 @@ jsonify@~0.0.0:
   resolved "https://registry.yarnpkg.com/jsonify/-/jsonify-0.0.0.tgz#2c74b6ee41d93ca51b7b5aaee8f503631d252a73"
 
 jsonparse@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/jsonparse/-/jsonparse-1.2.0.tgz#5c0c5685107160e72fe7489bddea0b44c2bc67bd"
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/jsonparse/-/jsonparse-1.3.0.tgz#85fc245b1d9259acc6941960b905adf64e7de0e8"
 
 jsonpointer@^4.0.0:
   version "4.0.1"
@@ -4159,17 +4166,21 @@ mute-stream@~0.0.4:
   version "0.0.7"
   resolved "https://registry.yarnpkg.com/mute-stream/-/mute-stream-0.0.7.tgz#3075ce93bc21b8fab43e1bc4da7e8115ed1e7bab"
 
-nan@2, nan@^2.0.5, nan@^2.3.0, nan@~2.3.3:
+nan@1.6.x:
+  version "1.6.2"
+  resolved "https://registry.yarnpkg.com/nan/-/nan-1.6.2.tgz#2657d1c43b00f1e847e083832285b7d8f5ba8ec8"
+
+nan@2, nan@~2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/nan/-/nan-2.4.0.tgz#fb3c59d45fe4effe215f0b890f8adf6eb32d2232"
+
+nan@^2.0.5, nan@^2.3.0, nan@~2.3.3:
   version "2.3.5"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.3.5.tgz#822a0dc266290ce4cd3a12282ca3e7e364668a08"
 
 nan@~2.0.0:
   version "2.0.9"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.0.9.tgz#d02a770f46778842cceb94e17cab31ffc7234a05"
-
-nan@~2.4.0:
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/nan/-/nan-2.4.0.tgz#fb3c59d45fe4effe215f0b890f8adf6eb32d2232"
 
 nanoscroller@^0.8.7:
   version "0.8.7"
@@ -5466,13 +5477,13 @@ right-align@^0.1.1:
   dependencies:
     align-text "^0.1.1"
 
-rimraf@2, rimraf@^2.5.2, rimraf@~2.5.1, rimraf@~2.5.2, rimraf@~2.5.4:
+rimraf@2, rimraf@^2.2.8, rimraf@^2.5.2, rimraf@~2.5.1, rimraf@~2.5.2, rimraf@~2.5.4:
   version "2.5.4"
   resolved "https://registry.yarnpkg.com/rimraf/-/rimraf-2.5.4.tgz#96800093cbf1a0c86bd95b4625467535c29dfa04"
   dependencies:
     glob "^7.0.5"
 
-rimraf@^2.2.8, rimraf@~2.2.6:
+rimraf@~2.2.6:
   version "2.2.8"
   resolved "https://registry.yarnpkg.com/rimraf/-/rimraf-2.2.8.tgz#e439be2aaee327321952730f99a8929e4fc50582"
 
@@ -5752,8 +5763,8 @@ source-map-resolve@^0.3.0:
     urix "~0.1.0"
 
 source-map-support@^0.4.0, source-map-support@^0.4.2:
-  version "0.4.9"
-  resolved "https://registry.yarnpkg.com/source-map-support/-/source-map-support-0.4.9.tgz#45eaa04f067e049d987b27599ed014a37750aaff"
+  version "0.4.10"
+  resolved "https://registry.yarnpkg.com/source-map-support/-/source-map-support-0.4.10.tgz#d7b19038040a14c0837a18e630a196453952b378"
   dependencies:
     source-map "^0.5.3"
 
@@ -6382,13 +6393,12 @@ user-home@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/user-home/-/user-home-1.1.1.tgz#2b5be23a32b63a7c9deb8d0f28d485724a3df190"
 
-utf-8-validate@1.0.x, "utf-8-validate@https://github.com/telerik/utf-8-validate/tarball/v1.0.1.4":
+utf-8-validate@1.0.x:
   version "1.0.1"
-  resolved "https://github.com/telerik/utf-8-validate/tarball/v1.0.1.4#da5692feb4278ef2865f631a3bf288262a1f5340"
+  resolved "https://registry.yarnpkg.com/utf-8-validate/-/utf-8-validate-1.0.1.tgz#d15eb67e28f6bb93c9401eeb7eac7030a183e8d1"
   dependencies:
     bindings "1.2.x"
-    nan "^2.0.5"
-    prebuilt "https://github.com/tailsu/node-prebuilt/tarball/master"
+    nan "1.6.x"
 
 utf-8-validate@1.2.x:
   version "1.2.2"
@@ -6396,6 +6406,14 @@ utf-8-validate@1.2.x:
   dependencies:
     bindings "~1.2.1"
     nan "~2.4.0"
+
+"utf-8-validate@https://github.com/telerik/utf-8-validate/tarball/v1.0.1.4":
+  version "1.0.1"
+  resolved "https://github.com/telerik/utf-8-validate/tarball/v1.0.1.4#da5692feb4278ef2865f631a3bf288262a1f5340"
+  dependencies:
+    bindings "1.2.x"
+    nan "^2.0.5"
+    prebuilt "https://github.com/tailsu/node-prebuilt/tarball/master"
 
 utf8@2.1.0:
   version "2.1.0"
@@ -6516,8 +6534,8 @@ webpack-sources@^0.1.4:
     source-map "~0.5.3"
 
 webpack@beta:
-  version "2.2.0-rc.7"
-  resolved "https://registry.yarnpkg.com/webpack/-/webpack-2.2.0-rc.7.tgz#08199749827fe2c21e2ddeb1615893b2b6dde40a"
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/webpack/-/webpack-2.2.0.tgz#09246336b5581c9002353f75bcadb598a648f977"
   dependencies:
     acorn "^4.0.4"
     acorn-dynamic-import "^2.0.0"
@@ -6546,9 +6564,15 @@ webrtc-adapter@^1.0, webrtc-adapter@^1.0.1:
   dependencies:
     sdp "^1.0.0"
 
-webrtc-adapter@^2.0.0, webrtc-adapter@^2.0.2, webrtc-adapter@^2.1.0:
+webrtc-adapter@^2.0.0, webrtc-adapter@^2.0.2:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/webrtc-adapter/-/webrtc-adapter-2.1.0.tgz#612b5bc6ce8e73c9d0660038a21f9255a867bf3e"
+  dependencies:
+    sdp "^1.0.0"
+
+webrtc-adapter@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/webrtc-adapter/-/webrtc-adapter-3.0.0.tgz#995bb89c9c8a730d0cae229ba0130f6f637d63d5"
   dependencies:
     sdp "^1.0.0"
 
@@ -6851,6 +6875,6 @@ zombie@^5.0.5:
     tough-cookie "^2.2.0"
     ws "^1.0.1"
 
-zone.js@^0.7.5:
-  version "0.7.5"
-  resolved "https://registry.yarnpkg.com/zone.js/-/zone.js-0.7.5.tgz#bca7cce46ba3216e8631cff36591c4e62cb27104"
+zone.js@^0.7.6:
+  version "0.7.6"
+  resolved "https://registry.yarnpkg.com/zone.js/-/zone.js-0.7.6.tgz#fbbc39d3e0261d0986f1ba06306eb3aeb0d22009"
