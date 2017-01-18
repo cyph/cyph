@@ -256,6 +256,14 @@ for d in $compiledProjects ; do
 
 	cd ${d}
 
+	for altD in $compiledProjects ; do
+		if [ "${d}" == "${altD}" ] ; then
+			continue
+		fi
+
+		find js -mindepth 1 -maxdepth 1 -type d -name "${altD}" -exec rm -rf {} \;
+	done
+
 	if [ "${websign}" -a "${d}" == "${webSignedProject}" ] ; then
 		# Block importScripts in Workers in WebSigned environments
 		cat js/cyph/thread.ts | \
