@@ -287,9 +287,7 @@ for d in $compiledProjects ; do
 
 	../commands/build.sh --prod $(test "${simple}" && echo '--no-minify') || exit;
 
-	if [ -f .index.html ] ; then
-		mv .index.html index.html
-	fi
+	mv .index.html index.html
 
 	rm -rf css/bourbon js/node_modules
 	find css -type f \( -name '*.scss' -or -name '*.map' \) -exec rm {} \;

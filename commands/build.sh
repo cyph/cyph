@@ -337,10 +337,14 @@ compile () {
 			fi
 
 			enablesplit=''
-			if [ "${m}" == 'Main' -a "${minify}" ] ; then
-				enablesplit=true
-				rm -rf $packdirfull 2> /dev/null
-				mkdir $packdirfull
+			if [ "${m}" == 'Main' ] ; then
+				if [ "${minify}" ] ; then
+					enablesplit=true
+					rm -rf $packdirfull 2> /dev/null
+					mkdir $packdirfull
+				else
+					cp -f "${htmlinput}" "${htmloutput}"
+				fi
 			fi
 
 			# Don't use ".js" file extension for Webpack outputs. No idea
@@ -430,7 +434,7 @@ compile () {
 							";
 						})
 					],
-					$(test "${m}" == 'Main' && echo "
+					$(test "${enablesplit}" && echo "
 						recordsOutputPath: '${records}'
 					")
 				}, (err, stats) => {$(test "${enablesplit}" && echo "
@@ -473,7 +477,7 @@ compile () {
 			{
 				echo '(function () {';
 				cat "${f}.js.tmp";
-				test "${m}" == 'Main' || echo "
+				echo "
 					self.${m}	= ${m};
 
 					var keys	= Object.keys(${m});
