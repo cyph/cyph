@@ -8,12 +8,15 @@
 		[class.active]='chatService.state === chatService.states.keyExchange'
 	>
 		<div class='flex'></div>
-		<div class='logo-animation'>
+		<div *ngIf='!sessionService.apiFlags.telehealth' class='logo-animation'>
 			<div></div>
 			<div></div>
 			<div></div>
 			<div></div>
 			<div></div>
+		</div>
+		<div *ngIf='sessionService.apiFlags.telehealth' class='telehealth-logo'>
+			<img src='/img/icons/logo.telehealth.icon.png'/>
 		</div>
 		<span cyphTranslate>Initiating key exchange...</span>
 		<md2-progress-linear
@@ -30,7 +33,7 @@
 	>
 		<div class='flex'></div>
 		<div class='image'>
-			<img src='/img/walken.png' alt='Definitely not Christopher Walken' cyphTranslate />
+			<img *ngIf='!sessionService.apiFlags.telehealth' src='/img/walken.png' alt='Definitely not Christopher Walken' cyphTranslate />
 		</div>
 		<div *ngIf='!sessionService.apiFlags.telehealth'>
 			<span cyphTranslate>This cyph has been aborted.</span>
@@ -65,7 +68,10 @@
 		[class.active]='chatService.state === chatService.states.chatBeginMessage'
 	>
 		<div class='flex'></div>
-		<div class='logo-animation connected'></div>
+		<div *ngIf='!sessionService.apiFlags.telehealth' class='logo-animation connected'></div>
+		<div *ngIf='sessionService.apiFlags.telehealth' class='telehealth-logo'>
+			<img src='/img/icons/logo.telehealth.icon.png'/>
+		</div>
 		<span cyphTranslate>Securely Connected!</span>
 		<md2-progress-linear
 			childClass='md-accent key-exchange-progress'
