@@ -161,12 +161,12 @@ for platform in android ios ; do
 			},
 			externals: {
 				jquery: 'undefined',
+				libsodium: 'self.sodium',
 				mceliece: 'self.mceliece',
 				ntru: 'self.ntru',
 				rlwe: 'self.rlwe',
 				sidh: 'self.sidh',
 				simplewebrtc: '{}',
-				sodium: 'self.sodium',
 				sphincs: 'self.sphincs',
 				supersphincs: 'self.superSphincs'
 			},
