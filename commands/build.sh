@@ -309,13 +309,13 @@ compile () {
 								app: './${f}'
 							},
 							externals: {
-								mceliece: 'mceliece',
-								ntru: 'ntru',
-								rlwe: 'rlwe',
-								sidh: 'sidh',
-								sodium: 'sodium',
-								sphincs: 'sphincs',
-								supersphincs: 'supersphincs'
+								mceliece: 'self.mceliece',
+								ntru: 'self.ntru',
+								rlwe: 'self.rlwe',
+								sidh: 'self.sidh',
+								sodium: 'self.sodium',
+								sphincs: 'self.sphincs',
+								supersphincs: 'self.superSphincs'
 							},
 							output: {
 								filename: '${currentDir}/${f}.js.tmp',
@@ -351,13 +351,13 @@ compile () {
 						main: './${f}'
 					},
 					externals: {
-						mceliece: 'mceliece',
-						ntru: 'ntru',
-						rlwe: 'rlwe',
-						sidh: 'sidh',
-						sodium: 'sodium',
-						sphincs: 'sphincs',
-						supersphincs: 'supersphincs'
+						mceliece: 'self.mceliece',
+						ntru: 'self.ntru',
+						rlwe: 'self.rlwe',
+						sidh: 'self.sidh',
+						sodium: 'self.sodium',
+						sphincs: 'self.sphincs',
+						supersphincs: 'self.superSphincs'
 					},
 					module: {
 						rules: [
