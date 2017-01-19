@@ -3,19 +3,11 @@
 cd $(cd "$(dirname "$0")"; pwd)/..
 
 
-tslintrules='tslint-rules'
+tmpDir="$(mktemp -d)"
+./commands/copyworkspace.sh --client-only "${tmpDir}"
+cd "${tmpDir}/shared"
 
-if [ "${1}" == '--fix' ] ; then
-	cd shared
-	tslintrules="$(mktemp -d)"
-	cp tslint-rules/*.ts ${tslintrules}/
-else
-	tmpDir="$(mktemp -d)"
-	./commands/copyworkspace.sh --client-only "${tmpDir}"
-	cd "${tmpDir}/shared"
-fi
-
-tsc --skipLibCheck ${tslintrules}/*.ts || exit 1
+tsc --skipLibCheck tslint-rules/*.ts || exit 1
 
 node -e "
 	const tsconfig	= JSON.parse(
@@ -40,15 +32,12 @@ node -e "
 
 output="$(
 	tslint \
-		-r "${tslintrules}" \
-		-r "/node_modules/codelyzer" \
-		-r "/node_modules/tslint-microsoft-contrib" \
+		-r tslint-rules \
+		-r /node_modules/codelyzer \
+		-r /node_modules/tslint-microsoft-contrib \
 		--project js/tsconfig.tslint.json \
-		--type-check \
-		${*}
+		--type-check
 )"
-
-rm js/tsconfig.tslint.json
 
 echo -e "${output}"
 exit ${#output}
