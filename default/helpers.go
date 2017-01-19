@@ -67,6 +67,10 @@ var braintreePrivateKey = os.Getenv("BRAINTREE_PRIVATE_KEY")
 var prefineryKey = os.Getenv("PREFINERY_KEY")
 
 func geolocate(h HandlerArgs) (string, string) {
+	if appengine.IsDevAppServer() {
+		return "", config.DefaultContinent
+	}
+
 	record, err := countrydb.Country(getIP(h))
 	if err != nil {
 		return "", config.DefaultContinent
@@ -100,6 +104,10 @@ func getSignupFromRequest(h HandlerArgs) map[string]interface{} {
 }
 
 func getOrg(h HandlerArgs) string {
+	if appengine.IsDevAppServer() {
+		return ""
+	}
+
 	record, err := orgdb.ISP(getIP(h))
 	if err != nil {
 		return ""

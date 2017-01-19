@@ -194,7 +194,8 @@ for platform in android ios ; do
 				setImmediate: false
 			},
 			output: {
-				filename: './app/main.${platform}.js'
+				filename: 'app/main.${platform}.js',
+				path: '.'
 			},
 			resolve: {
 				extensions: [
