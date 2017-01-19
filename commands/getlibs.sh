@@ -165,8 +165,8 @@ currentDir="${PWD}"
 for d in firebase firebase-server ts-node tslint ; do
 	tmpDir="$(mktemp -d)"
 	mv "${d}" "${tmpDir}/"
+	cp -f "../module_locks/${d}/*" "${tmpDir}/${d}/"
 	cd "${tmpDir}/${d}"
-	cp -f "${currentDir}/../module_locks/${d}/*" ./
 	mkdir node_modules 2> /dev/null
 	yarn install
 
