@@ -89,6 +89,7 @@ go_appserver --port 5000 --admin_port 6000 --host 0.0.0.0 --storage_path /tmp/cy
 } &
 
 if [ "${prodlike}" ] ; then
+	start="$(date +%s)"
 	./commands/build.sh --prod
 
 	if (( $? )) ; then
@@ -100,7 +101,7 @@ if [ "${prodlike}" ] ; then
 	find js -name '*.js' | xargs -I% ../commands/websign/threadpack.ts %
 	cd ..
 
-	echo -e "\n\n\nLocal env ready\n\n"
+	echo -e "\n\n\nLocal env ready ($(expr $(date +%s) - $start)s)\n\n"
 	sleep infinity
 else
 	# bash -c 'sleep 90 ; ./commands/docs.sh > /dev/null 2>&1' &
