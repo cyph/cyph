@@ -92,12 +92,6 @@ if [ "${prodlike}" ] ; then
 	find js -name '*.js' | xargs -I% ../commands/websign/threadpack.ts %
 	cd ..
 
-	for d in cyph.im cyph.com ; do
-		cd $d
-		../commands/websign/pack.ts .index.html .index.html
-		cd ..
-	done
-
 	echo -e "\n\n\nLocal env ready\n\n"
 	sleep infinity
 else
