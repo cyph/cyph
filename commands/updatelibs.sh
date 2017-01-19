@@ -103,7 +103,7 @@ yarn add --ignore-platform \
 	typescript@2.0.10 \
 	uglify-js \
 	unsemantic \
-	webpack@beta \
+	webpack@2.2.0-rc.4 \
 	webrtc-adapter \
 	whatwg-fetch \
 	wowjs \
