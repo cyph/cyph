@@ -80,7 +80,7 @@ body.load-complete #pre-load {
 			background-color: transparent;
 			background-repeat: no-repeat;
 			background-size: 33vh 33vh;
-			background-image: url(/img/icons/logo.purple.icon.png);
+			background-image: url(/img/icons/logo.white.icon.png);
 			opacity: 0;
 
 			@include animation-iteration-count(infinite !important);
@@ -147,6 +147,8 @@ body.load-complete #pre-load {
 
 			@include animation(logo4 1890ms step-end);
 		}
+		
+		
 	}
 
 	> :not(.image):not(.logo-animation) {
