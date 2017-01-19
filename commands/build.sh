@@ -48,12 +48,12 @@ tsfiles="$(
 		echo cyph/analytics;
 	} | \
 		perl -pe "s/.*?['\"]\/js\/(.*)\.js.*/\1/g" |
-		sort |
-		uniq |
 		grep -v 'Binary file' |
 		grep -vP '^preload/global$' |
 		grep -vP '^typings$' |
-		xargs -I% bash -c "ls '${outputDir}/js/%.ts' > /dev/null 2>&1 && echo '%'"
+		xargs -I% bash -c "ls '${outputDir}/js/%.ts' > /dev/null 2>&1 && echo '%'" |
+		sort |
+		uniq
 )"
 
 cd shared
@@ -157,7 +157,7 @@ tsbuild () {
 
 	if [ "${logTmpDir}" ] ; then
 		for f in ${*} ; do
-			echo "${tmpJsDir}" > "${f}.tmpDir"
+			echo "${tmpJsDir}" > "${f}.tmpdir"
 		done
 	fi
 }
@@ -238,7 +238,7 @@ compile () {
 				cd "$(tsbuild --get-tmp-dir "${f}")"
 				aotreplace
 				tsbuild --log-tmp-dir "${f}"
-				mv "${f}.tmpDir" "${startdir}/${f}.tmpDir"
+				mv "${f}.tmpdir" "${startdir}/${f}.tmpdir"
 			} &
 		else
 			tsbuild "${f}"
@@ -287,7 +287,7 @@ compile () {
 			if [ "${watch}" ] ; then
 				{
 					waitForTmpDir () {
-						while [ ! -f "${f}.tmpDir" ] ; do
+						while [ ! -f "${f}.tmpdir" ] ; do
 							sleep 1
 						done
 					}
@@ -299,9 +299,9 @@ compile () {
 					fi
 
 					waitForTmpDir
-					cd "$(cat "${f}.tmpDir")"
+					cd "$(cat "${f}.tmpdir")"
 
-					cat > webpack.js <<- EOM
+					cat > "${f}.webpack.js" <<- EOM
 						const webpack	= require('webpack');
 
 						module.exports	= {
@@ -321,14 +321,15 @@ compile () {
 								supersphincs: 'self.superSphincs'
 							},
 							output: {
-								filename: '${currentDir}/${f}.js.tmp',
+								filename: '${f}.js.tmp',
 								library: '${m}',
-								libraryTarget: 'var'
+								libraryTarget: 'var',
+								path: '${currentDir}'
 							}
 						};
 					EOM
 
-					webpack --config webpack.js
+					webpack --config "${f}.webpack.js"
 
 					echo
 				} &
@@ -389,9 +390,10 @@ compile () {
 					},
 					output: {
 						$(test "${enablesplit}" || echo "
-							filename: './${f}.js.tmp',
+							filename: '${f}.js.tmp',
 							library: '${m}',
-							libraryTarget: 'var'
+							libraryTarget: 'var',
+							path: '.'
 						")
 						$(test "${enablesplit}" && echo "
 							filename: '[chunkhash].js',
