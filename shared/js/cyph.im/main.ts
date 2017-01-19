@@ -3,11 +3,6 @@
  */
 
 
-import * as firebase from 'firebase';
-(<any> self).firebase	= firebase;
-
-import '../preload/weblibs';
-
 import '../preload/custombuild';
 
 import '../preload';
@@ -17,6 +12,7 @@ import {platformBrowser} from '@angular/platform-browser';
 import {downgradeComponent, UpgradeModule} from '@angular/upgrade/static';
 import * as angular from 'angular';
 import 'angular-material';
+import * as $ from 'jquery';
 import 'magnific-popup';
 import 'nanoscroller';
 import 'whatwg-fetch';

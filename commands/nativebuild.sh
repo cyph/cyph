@@ -160,6 +160,7 @@ for platform in android ios ; do
 				app: './app/main'
 			},
 			externals: {
+				jquery: 'undefined',
 				mceliece: 'self.mceliece',
 				ntru: 'self.ntru',
 				rlwe: 'self.rlwe',

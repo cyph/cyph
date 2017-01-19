@@ -1,4 +1,5 @@
 import {Component, OnInit} from '@angular/core';
+import * as $ from 'jquery';
 import * as Konami from 'konami-code.js';
 import {AbstractSessionInitService} from '../cyph/services/abstract-session-init.service';
 import {ChatEnvService} from '../cyph/services/chat-env.service';

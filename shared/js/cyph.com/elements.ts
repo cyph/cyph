@@ -1,3 +1,6 @@
+import * as $ from 'jquery';
+
+
 /**
  * DOM elements.
  */

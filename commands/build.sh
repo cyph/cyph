@@ -309,6 +309,9 @@ compile () {
 								app: './${f}'
 							},
 							externals: {
+								angular: 'self.angular',
+								firebase: 'self.firebase',
+								jquery: 'self.jquery',
 								mceliece: 'self.mceliece',
 								ntru: 'self.ntru',
 								rlwe: 'self.rlwe',
@@ -351,6 +354,9 @@ compile () {
 						main: './${f}'
 					},
 					externals: {
+						angular: 'self.angular',
+						firebase: 'self.firebase',
+						jquery: 'self.jquery',
 						mceliece: 'self.mceliece',
 						ntru: 'self.ntru',
 						rlwe: 'self.rlwe',
