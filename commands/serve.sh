@@ -10,6 +10,12 @@ if [ "${1}" == '--prodlike' ] ; then
 	shift
 fi
 
+blog=''
+if [ "${1}" == '--blog' ] ; then
+	blog=true
+	shift
+fi
+
 if [ "${prodlike}" ] ; then
 	./commands/copyworkspace.sh .build
 	cd .build
@@ -51,12 +57,14 @@ done
 
 node -e 'new (require("firebase-server"))(44000)' &
 
-# cd cyph.com
-# rm -rf blog 2> /dev/null
-# mkdir blog
-# cd blog
-# ../../commands/wpstatic.sh http://localhost:42001/blog > /dev/null 2>&1 &
-# cd ../..
+if [ "${blog}" ] ; then
+	cd cyph.com
+	rm -rf blog 2> /dev/null
+	mkdir blog
+	cd blog
+	../../commands/wpstatic.sh http://localhost:42001/blog > /dev/null 2>&1 &
+	cd ../..
+fi
 
 cp -f default/app.yaml default/.build.yaml
 cp -f cyph.com/cyph-com.yaml cyph.com/.build.yaml
