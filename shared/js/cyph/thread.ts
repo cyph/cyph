@@ -1,4 +1,3 @@
-import {sodium} from 'libsodium';
 import {config} from './config';
 import {env} from './env';
 import {eventManager} from './event-manager';
@@ -96,7 +95,10 @@ export class Thread implements IThread {
 
 				return {
 					getRandomValues: (array: ArrayBufferView) => {
-						if (typeof sodium !== 'undefined' && sodium.crypto_stream_chacha20) {
+						if (
+							typeof (<any> self).sodium !== 'undefined' &&
+							(<any> self).sodium.crypto_stream_chacha20
+						) {
 							isActive	= true;
 						}
 						else if (!isActive) {
@@ -108,14 +110,14 @@ export class Thread implements IThread {
 
 						++nonce[nonce[0] === 4294967295 ? 0 : 1];
 
-						const newBytes: Uint8Array	= sodium.crypto_stream_chacha20(
+						const newBytes: Uint8Array	= (<any> self).sodium.crypto_stream_chacha20(
 							array.byteLength,
 							key,
 							new Uint8Array(nonce.buffer)
 						);
 
 						new Uint8Array(array.buffer).set(newBytes);
-						sodium.memzero(newBytes);
+						(<any> self).sodium.memzero(newBytes);
 
 						return array;
 					},
@@ -128,7 +130,7 @@ export class Thread implements IThread {
 		(<any> self).crypto	= crypto;
 
 		importScripts('/lib/js/node_modules/libsodium/dist/browsers-sumo/combined/sodium.js');
-		sodium.memzero(threadSetupVars.seed);
+		(<any> self).sodium.memzero(threadSetupVars.seed);
 
 		importScripts('/lib/js/node_modules/mceliece/dist/mceliece.js');
 		importScripts('/lib/js/node_modules/ntru/dist/ntru.js');
