@@ -6,6 +6,7 @@ import {
 	OnInit
 } from '@angular/core';
 import * as clipboard from 'clipboard-js';
+import * as $ from 'jquery';
 import {ChatService} from '../services/chat.service';
 import {ConfigService} from '../services/config.service';
 import {DialogService} from '../services/dialog.service';

@@ -1,4 +1,5 @@
 import {Component, OnInit} from '@angular/core';
+import * as $ from 'jquery';
 import {CyphertextService} from '../services/cyphertext.service';
 import {EnvService} from '../services/env.service';
 import {SessionService} from '../services/session.service';
