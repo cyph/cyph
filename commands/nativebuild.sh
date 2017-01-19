@@ -160,14 +160,14 @@ for platform in android ios ; do
 				app: './app/main'
 			},
 			externals: {
-				mceliece: 'mceliece',
-				ntru: 'ntru',
-				rlwe: 'rlwe',
-				sidh: 'sidh',
+				mceliece: 'self.mceliece',
+				ntru: 'self.ntru',
+				rlwe: 'self.rlwe',
+				sidh: 'self.sidh',
 				simplewebrtc: '{}',
-				sodium: 'sodium',
-				sphincs: 'sphincs',
-				supersphincs: 'supersphincs'
+				sodium: 'self.sodium',
+				sphincs: 'self.sphincs',
+				supersphincs: 'self.superSphincs'
 			},
 			module: {
 				rules: [
