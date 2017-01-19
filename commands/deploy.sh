@@ -291,8 +291,9 @@ for d in $compiledProjects ; do
 		mv .index.html index.html
 	fi
 
-	find css -name '*.scss' -or -name '*.map' -exec rm {} \;
-	find js -name '*.ts' -or -name '*.ts.js' -name '*.map' -exec rm {} \;
+	rm -rf css/bourbon js/node_modules
+	find css -type f \( -name '*.scss' -or -name '*.map' \) -exec rm {} \;
+	find js -type f \( -name '*.ts' -or -name '*.map' \) -exec rm {} \;
 
 	if [ ! "${simple}" ] ; then
 		html-minifier --minify-js --minify-css --remove-comments --collapse-whitespace index.html -o index.html.new
