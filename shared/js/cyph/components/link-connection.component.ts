@@ -163,6 +163,7 @@ export class LinkConnectionComponent implements OnInit {
 		await this.timer.start();
 
 		if (isWaiting) {
+			isWaiting	= false;
 			this.chatService.abortSetup();
 		}
 	}
