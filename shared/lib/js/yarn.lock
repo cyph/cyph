@@ -2,79 +2,79 @@
 # yarn lockfile v1
 
 
-"@angular/common@^2.4.3":
-  version "2.4.3"
-  resolved "https://registry.yarnpkg.com/@angular/common/-/common-2.4.3.tgz#78d96bd2f8a1a105f635cd25e362ba5704b47f56"
+"@angular/common@^2.4.4":
+  version "2.4.4"
+  resolved "https://registry.yarnpkg.com/@angular/common/-/common-2.4.4.tgz#039520c6395476d7f35ca250973dfef946c62831"
 
 "@angular/common@~2.3.1":
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/@angular/common/-/common-2.3.1.tgz#146c2ed44e02b0f291dd9d4b2e5e2a693057e9bc"
 
-"@angular/compiler-cli@^2.4.3":
-  version "2.4.3"
-  resolved "https://registry.yarnpkg.com/@angular/compiler-cli/-/compiler-cli-2.4.3.tgz#8339c2f428d29df3ea0eac17f08d296fc87eb160"
+"@angular/compiler-cli@^2.4.4":
+  version "2.4.4"
+  resolved "https://registry.yarnpkg.com/@angular/compiler-cli/-/compiler-cli-2.4.4.tgz#726598f850e599677fa1638d1728096384665a63"
   dependencies:
     "@angular/tsc-wrapped" "0.5.1"
     minimist "^1.2.0"
     reflect-metadata "^0.1.2"
 
-"@angular/compiler@^2.4.3":
-  version "2.4.3"
-  resolved "https://registry.yarnpkg.com/@angular/compiler/-/compiler-2.4.3.tgz#76a41916f90eda66643107740c4a9ae45cb7a6c1"
+"@angular/compiler@^2.4.4":
+  version "2.4.4"
+  resolved "https://registry.yarnpkg.com/@angular/compiler/-/compiler-2.4.4.tgz#86b861685ebc4c7b19b1133bf8c5bf4d28c71475"
 
 "@angular/compiler@~2.3.1":
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/@angular/compiler/-/compiler-2.3.1.tgz#0c57f848e41432bac3201c29b645dd4dd099d2f9"
 
-"@angular/core@^2.4.3":
-  version "2.4.3"
-  resolved "https://registry.yarnpkg.com/@angular/core/-/core-2.4.3.tgz#a72a13bb9f01659b8388558cd6e3a570a8434b1c"
+"@angular/core@^2.4.4":
+  version "2.4.4"
+  resolved "https://registry.yarnpkg.com/@angular/core/-/core-2.4.4.tgz#eafef7bbdefea321fa5e79998bb2f6707c70729d"
 
 "@angular/core@~2.3.1":
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/@angular/core/-/core-2.3.1.tgz#be6e91fdfdd7498506604263e051797cf67a47be"
 
-"@angular/forms@^2.4.3":
-  version "2.4.3"
-  resolved "https://registry.yarnpkg.com/@angular/forms/-/forms-2.4.3.tgz#0b4f59b8074e3d0fe987781e0f2af1ca1eec212b"
+"@angular/forms@^2.4.4":
+  version "2.4.4"
+  resolved "https://registry.yarnpkg.com/@angular/forms/-/forms-2.4.4.tgz#9679ca369d5bc2968ee1a67634ac221d75487364"
 
 "@angular/forms@~2.3.1":
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/@angular/forms/-/forms-2.3.1.tgz#2177e0513c5177fc6e4d140473e7b9f0b9dfd069"
 
-"@angular/http@^2.4.3":
-  version "2.4.3"
-  resolved "https://registry.yarnpkg.com/@angular/http/-/http-2.4.3.tgz#d8afca7362efb010600fde02360e01e848579be6"
+"@angular/http@^2.4.4":
+  version "2.4.4"
+  resolved "https://registry.yarnpkg.com/@angular/http/-/http-2.4.4.tgz#e41a9808eeec9cfdf3d5f9f92d0041b5c041fd60"
 
 "@angular/http@~2.3.1":
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/@angular/http/-/http-2.3.1.tgz#3dda85771dccea49d5e08a47366a7168e3435141"
 
-"@angular/platform-browser-dynamic@^2.4.3":
-  version "2.4.3"
-  resolved "https://registry.yarnpkg.com/@angular/platform-browser-dynamic/-/platform-browser-dynamic-2.4.3.tgz#d65cc9bc4487e2a86e2c6f6641c711fccfa90c5a"
+"@angular/platform-browser-dynamic@^2.4.4":
+  version "2.4.4"
+  resolved "https://registry.yarnpkg.com/@angular/platform-browser-dynamic/-/platform-browser-dynamic-2.4.4.tgz#b5948cf2cac33c9634a400a7ece8fb5600f83107"
 
 "@angular/platform-browser-dynamic@~2.3.1":
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/@angular/platform-browser-dynamic/-/platform-browser-dynamic-2.3.1.tgz#d01f3c0c25c628be83c308e83d53128222f558fa"
 
-"@angular/platform-browser@^2.4.3":
-  version "2.4.3"
-  resolved "https://registry.yarnpkg.com/@angular/platform-browser/-/platform-browser-2.4.3.tgz#eba8588d2fffc39d0b85a9180c297d9ca2f1f3a4"
+"@angular/platform-browser@^2.4.4":
+  version "2.4.4"
+  resolved "https://registry.yarnpkg.com/@angular/platform-browser/-/platform-browser-2.4.4.tgz#0bff3512d00b199211ff28df0aa5c6841718a19c"
 
 "@angular/platform-browser@~2.3.1":
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/@angular/platform-browser/-/platform-browser-2.3.1.tgz#114309150876188e0df8841b20ca2359fd5e7cad"
 
-"@angular/platform-server@^2.4.3":
-  version "2.4.3"
-  resolved "https://registry.yarnpkg.com/@angular/platform-server/-/platform-server-2.4.3.tgz#207af33919733696976b29bfc03c265a551dd05f"
+"@angular/platform-server@^2.4.4":
+  version "2.4.4"
+  resolved "https://registry.yarnpkg.com/@angular/platform-server/-/platform-server-2.4.4.tgz#2fc2d0b4ac29c8f08a3702a8da3ab79933b737d0"
   dependencies:
     parse5 "^2.2.1"
 
-"@angular/router@^3.4.3":
-  version "3.4.3"
-  resolved "https://registry.yarnpkg.com/@angular/router/-/router-3.4.3.tgz#19846caa1f87d9b83f005f45a2be15b6744db8fd"
+"@angular/router@^3.4.4":
+  version "3.4.4"
+  resolved "https://registry.yarnpkg.com/@angular/router/-/router-3.4.4.tgz#8564889d5bf322a1a4b679bd82c053df03eabb72"
 
 "@angular/router@~3.3.1":
   version "3.3.1"
@@ -86,9 +86,9 @@
   dependencies:
     tsickle "^0.2"
 
-"@angular/upgrade@^2.4.3":
-  version "2.4.3"
-  resolved "https://registry.yarnpkg.com/@angular/upgrade/-/upgrade-2.4.3.tgz#6c172e2ee287be49939ea64d4fcfe44265d8f0c2"
+"@angular/upgrade@^2.4.4":
+  version "2.4.4"
+  resolved "https://registry.yarnpkg.com/@angular/upgrade/-/upgrade-2.4.4.tgz#707614dfbed4cb6d021e53ecd62a2f449442d590"
 
 "@types/angular-material@^1.1.44":
   version "1.1.44"
@@ -273,8 +273,8 @@ angular-aria@~1.5:
   resolved "https://registry.yarnpkg.com/angular-aria/-/angular-aria-1.5.11.tgz#26963ac336891ced7b199e59afd7e9b25e53d6a6"
 
 "angular-material@https://github.com/angular/bower-material":
-  version "1.1.1-master-f8fd076"
-  resolved "https://github.com/angular/bower-material#d193b63e6e6734e32f7c89e234c8100237b867c6"
+  version "1.1.1-master-5b799e2"
+  resolved "https://github.com/angular/bower-material#65cb306aba71a6a0ba9802afbbb03e3a22d2d08e"
 
 angular@~1.5:
   version "1.5.11"
@@ -1244,12 +1244,13 @@ bufferpack@0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/bufferpack/-/bufferpack-0.0.6.tgz#fb3d8738a0e1e4e03bcff99f9a75f9ec18a9d73e"
 
-bufferutil@1.0.x:
+bufferutil@1.0.x, "bufferutil@https://github.com/telerik/bufferutil/tarball/v1.0.1.4":
   version "1.0.1"
-  resolved "https://registry.yarnpkg.com/bufferutil/-/bufferutil-1.0.1.tgz#0c53a9ffe8d616c4e2df27d00b808f7a25501e3b"
+  resolved "https://github.com/telerik/bufferutil/tarball/v1.0.1.4#7b50375e84662abcf2aec3015dfa335b48db652a"
   dependencies:
     bindings "1.2.x"
-    nan "1.6.x"
+    nan "^2.0.5"
+    prebuilt "https://github.com/tailsu/node-prebuilt/tarball/master"
 
 bufferutil@1.2.x:
   version "1.2.1"
@@ -1257,14 +1258,6 @@ bufferutil@1.2.x:
   dependencies:
     bindings "1.2.x"
     nan "^2.0.5"
-
-"bufferutil@https://github.com/telerik/bufferutil/tarball/v1.0.1.4":
-  version "1.0.1"
-  resolved "https://github.com/telerik/bufferutil/tarball/v1.0.1.4#7b50375e84662abcf2aec3015dfa335b48db652a"
-  dependencies:
-    bindings "1.2.x"
-    nan "^2.0.5"
-    prebuilt "https://github.com/tailsu/node-prebuilt/tarball/master"
 
 builtin-modules@^1.0.0:
   version "1.1.1"
@@ -1432,13 +1425,7 @@ cli-color@0.3.2:
     memoizee "0.3.x"
     timers-ext "0.1.x"
 
-cli-table@^0.3.1:
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/cli-table/-/cli-table-0.3.1.tgz#f53b05266a8b1a0b934b3d0821e6e2dc5914ae23"
-  dependencies:
-    colors "1.0.3"
-
-"cli-table@https://github.com/telerik/cli-table/tarball/v0.3.1.2":
+cli-table@^0.3.1, "cli-table@https://github.com/telerik/cli-table/tarball/v0.3.1.2":
   version "0.3.1"
   resolved "https://github.com/telerik/cli-table/tarball/v0.3.1.2#07e13c3118154c53893d3be7a7e08d990e86d859"
   dependencies:
@@ -2791,6 +2778,10 @@ graceful-fs@~1.2.0:
 "graceful-readlink@>= 1.0.0":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/graceful-readlink/-/graceful-readlink-1.0.1.tgz#4cafad76bc62f02fa039b2f94e9a3dd3a391a725"
+
+granim@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/granim/-/granim-1.0.6.tgz#149064977b91ae3f0aec8e930da3f73ed18865b2"
 
 gulp-util@^3.0.0:
   version "3.0.8"
@@ -4172,21 +4163,17 @@ mute-stream@~0.0.4:
   version "0.0.7"
   resolved "https://registry.yarnpkg.com/mute-stream/-/mute-stream-0.0.7.tgz#3075ce93bc21b8fab43e1bc4da7e8115ed1e7bab"
 
-nan@1.6.x:
-  version "1.6.2"
-  resolved "https://registry.yarnpkg.com/nan/-/nan-1.6.2.tgz#2657d1c43b00f1e847e083832285b7d8f5ba8ec8"
-
-nan@2, nan@~2.4.0:
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/nan/-/nan-2.4.0.tgz#fb3c59d45fe4effe215f0b890f8adf6eb32d2232"
-
-nan@^2.0.5, nan@^2.3.0, nan@~2.3.3:
+nan@2, nan@^2.0.5, nan@^2.3.0, nan@~2.3.3:
   version "2.3.5"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.3.5.tgz#822a0dc266290ce4cd3a12282ca3e7e364668a08"
 
 nan@~2.0.0:
   version "2.0.9"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.0.9.tgz#d02a770f46778842cceb94e17cab31ffc7234a05"
+
+nan@~2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/nan/-/nan-2.4.0.tgz#fb3c59d45fe4effe215f0b890f8adf6eb32d2232"
 
 nanoscroller@^0.8.7:
   version "0.8.7"
@@ -5051,11 +5038,11 @@ public-encrypt@^4.0.0:
     parse-asn1 "^5.0.0"
     randombytes "^2.0.1"
 
-punycode@1.3.2, punycode@^1.3.2:
+punycode@1.3.2:
   version "1.3.2"
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-1.3.2.tgz#9653a036fb7c1ee42342f2325cceefea3926c48d"
 
-punycode@^1.2.4, punycode@^1.4.1:
+punycode@^1.2.4, punycode@^1.3.2, punycode@^1.4.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-1.4.1.tgz#c0d5a63b2718800ad8e1eb0fa5269c84dd41845e"
 
@@ -6399,12 +6386,13 @@ user-home@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/user-home/-/user-home-1.1.1.tgz#2b5be23a32b63a7c9deb8d0f28d485724a3df190"
 
-utf-8-validate@1.0.x:
+utf-8-validate@1.0.x, "utf-8-validate@https://github.com/telerik/utf-8-validate/tarball/v1.0.1.4":
   version "1.0.1"
-  resolved "https://registry.yarnpkg.com/utf-8-validate/-/utf-8-validate-1.0.1.tgz#d15eb67e28f6bb93c9401eeb7eac7030a183e8d1"
+  resolved "https://github.com/telerik/utf-8-validate/tarball/v1.0.1.4#da5692feb4278ef2865f631a3bf288262a1f5340"
   dependencies:
     bindings "1.2.x"
-    nan "1.6.x"
+    nan "^2.0.5"
+    prebuilt "https://github.com/tailsu/node-prebuilt/tarball/master"
 
 utf-8-validate@1.2.x:
   version "1.2.2"
@@ -6412,14 +6400,6 @@ utf-8-validate@1.2.x:
   dependencies:
     bindings "~1.2.1"
     nan "~2.4.0"
-
-"utf-8-validate@https://github.com/telerik/utf-8-validate/tarball/v1.0.1.4":
-  version "1.0.1"
-  resolved "https://github.com/telerik/utf-8-validate/tarball/v1.0.1.4#da5692feb4278ef2865f631a3bf288262a1f5340"
-  dependencies:
-    bindings "1.2.x"
-    nan "^2.0.5"
-    prebuilt "https://github.com/tailsu/node-prebuilt/tarball/master"
 
 utf8@2.1.0:
   version "2.1.0"
@@ -6532,16 +6512,16 @@ webidl-conversions@^2.0.0:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/webidl-conversions/-/webidl-conversions-2.0.1.tgz#3bf8258f7d318c7443c36f2e169402a1a6703506"
 
-webpack-sources@^0.1.4:
+webpack-sources@^0.1.0:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/webpack-sources/-/webpack-sources-0.1.4.tgz#ccc2c817e08e5fa393239412690bb481821393cd"
   dependencies:
     source-list-map "~0.1.7"
     source-map "~0.5.3"
 
-webpack@beta:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/webpack/-/webpack-2.2.0.tgz#09246336b5581c9002353f75bcadb598a648f977"
+webpack@2.2.0-rc.4:
+  version "2.2.0-rc.4"
+  resolved "https://registry.yarnpkg.com/webpack/-/webpack-2.2.0-rc.4.tgz#3d4bd04976be45fcb20c0eab7fe5a96f5ad53068"
   dependencies:
     acorn "^4.0.4"
     acorn-dynamic-import "^2.0.0"
@@ -6561,7 +6541,7 @@ webpack@beta:
     tapable "~0.2.5"
     uglify-js "^2.7.5"
     watchpack "^1.2.0"
-    webpack-sources "^0.1.4"
+    webpack-sources "^0.1.0"
     yargs "^6.0.0"
 
 webrtc-adapter@^1.0, webrtc-adapter@^1.0.1:
@@ -6576,9 +6556,9 @@ webrtc-adapter@^2.0.0, webrtc-adapter@^2.0.2:
   dependencies:
     sdp "^1.0.0"
 
-webrtc-adapter@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/webrtc-adapter/-/webrtc-adapter-3.0.0.tgz#995bb89c9c8a730d0cae229ba0130f6f637d63d5"
+webrtc-adapter@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/webrtc-adapter/-/webrtc-adapter-3.1.0.tgz#18991415851d486a96153df3338a7215bf9039b2"
   dependencies:
     sdp "^1.0.0"
 
