@@ -58,6 +58,7 @@ yarn add --ignore-platform \
 	firebase \
 	firebase-server \
 	glob \
+	granim \
 	gulp \
 	html-minifier \
 	htmlencode \
