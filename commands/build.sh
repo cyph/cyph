@@ -311,7 +311,7 @@ compile () {
 							externals: {
 								angular: 'self.angular',
 								firebase: 'self.firebase',
-								jquery: 'self.jquery',
+								jquery: 'self.jQuery',
 								mceliece: 'self.mceliece',
 								ntru: 'self.ntru',
 								rlwe: 'self.rlwe',
@@ -356,7 +356,7 @@ compile () {
 					externals: {
 						angular: 'self.angular',
 						firebase: 'self.firebase',
-						jquery: 'self.jquery',
+						jquery: 'self.jQuery',
 						mceliece: 'self.mceliece',
 						ntru: 'self.ntru',
 						rlwe: 'self.rlwe',
