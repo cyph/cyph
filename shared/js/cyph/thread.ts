@@ -37,7 +37,6 @@ export class Thread implements IThread {
 
 		importScripts('/lib/js/base.js');
 		importScripts('/js/preload/global.js');
-		importScripts('/js/cyph/base.js');
 
 
 		/* Allow destroying the Thread object from within the thread */
@@ -138,6 +137,8 @@ export class Thread implements IThread {
 		importScripts('/lib/js/node_modules/supersphincs/dist/supersphincs.js');
 		importScripts('/lib/js/node_modules/whatwg-fetch/fetch.js');
 		importScripts('/lib/js/node_modules/firebase/firebase.js');
+
+		importScripts('/js/cyph/base.js');
 
 		threadSetupVars	= undefined;
 	}
