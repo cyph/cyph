@@ -185,7 +185,7 @@ if [ "${test}" ] ; then
 		ls */*.yaml | xargs -I% sed -i 's|max-age=31536000|max-age=0|g' %
 	fi
 
-	if [ "${branch}" != 'master' -a "${branch}" != 'beta' -a "${branch}" != 'staging' ] ; then
+	if [ "${simple}" ] ; then
 		for yaml in `ls */cyph*.yaml` ; do
 			cat $yaml | perl -pe 's/(- url: .*)/\1\n  login: admin/g' > $yaml.new
 			mv $yaml.new $yaml
