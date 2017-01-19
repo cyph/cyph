@@ -42,8 +42,6 @@ const filesToModify		= childProcess.spawnSync('find', [
 const fileContents		= {};
 const cacheBustedFiles	= {};
 
-const getFileName		= file => file.split('/').slice(-1)[0];
-
 
 for (let file of filesToModify) {
 	await new Promise((resolve, reject) => fs.readFile(file, (err, data) => {
@@ -63,7 +61,7 @@ for (let file of filesToModify) {
 			continue;
 		}
 
-		cacheBustedFiles[getFileName(subresource)]	= true;
+		cacheBustedFiles[subresource]	= true;
 
 		const hash	= (await superSphincs.hash(fs.readFileSync(subresource))).hex;
 		content		= content.split(subresource).join(`${subresource}?${hash}`);
@@ -83,7 +81,7 @@ fs.unlinkSync(localModulesPath);
 
 for (let subresource of filesToCacheBust.filter(subresource =>
 	subresource.startsWith(`${localModulesPath}/`) &&
-	cacheBustedFiles[getFileName(subresource)]
+	cacheBustedFiles[subresource]
 )) {
 	mkdirp.sync(subresource.split('/').slice(0, -1).join('/'));
 	childProcess.spawnSync('cp', [
