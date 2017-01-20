@@ -1,4 +1,5 @@
 import {Component, ElementRef, Input, OnInit} from '@angular/core';
+import * as $ from 'jquery';
 import * as tabIndent from 'tab-indent';
 import {ChatService} from '../services/chat.service';
 import {EnvService} from '../services/env.service';

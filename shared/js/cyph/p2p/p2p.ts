@@ -179,7 +179,7 @@ export class P2P implements IP2P {
 	}
 
 	/** @ignore */
-	private triggerUIEvent(
+	private triggerUIEvent (
 		category: UIEventCategories,
 		event: UIEvents,
 		...args: any[]

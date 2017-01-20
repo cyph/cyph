@@ -33,6 +33,15 @@ export class ChatEnvService extends EnvService {
 	/** @ignore */
 	public set newCyphUrl (_: string) {}
 
+	/** @inheritDoc */
+	public get newCyphUrlRedirect () : string {
+		const newCyphUrl	= this.newCyphUrl;
+		return newCyphUrl.indexOf('#') > -1 ? `${newCyphUrl}/` : newCyphUrl;
+	}
+
+	/** @ignore */
+	public set newCyphUrlRedirect (_: string) {}
+
 	constructor (
 		/** @ignore */
 		private readonly abstractSessionInitService: AbstractSessionInitService,

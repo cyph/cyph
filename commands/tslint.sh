@@ -2,23 +2,41 @@
 
 cd $(cd "$(dirname "$0")"; pwd)/..
 
-./commands/getlibs.sh
 
+tmpDir="$(mktemp -d)"
+./commands/copyworkspace.sh --client-only "${tmpDir}"
+cd "${tmpDir}/shared"
 
-tmpdir="$(mktemp -d)"
-cp -rL shared/js shared/tslint-rules "${tmpdir}/"
-cd "${tmpdir}"
+tsc --skipLibCheck tslint-rules/*.ts || exit 1
 
-tsc tslint-rules/*.ts || exit 1
+node -e "
+	const tsconfig	= JSON.parse(
+		fs.readFileSync('js/tsconfig.json').toString().
+			split('\n').
+			filter(s => s.trim()[0] !== '/').
+			join('\n')
+	);
+
+	tsconfig.files	= [
+		'cyph.com/main.ts',
+		'cyph.im/main.ts',
+		'native/main.ts',
+		'typings/index.d.ts'
+	];
+
+	fs.writeFileSync(
+		'js/tsconfig.tslint.json',
+		JSON.stringify(tsconfig)
+	);
+"
 
 output="$(
 	tslint \
 		-r tslint-rules \
-		-r /usr/lib/node_modules/codelyzer \
-		-r /usr/lib/node_modules/tslint-microsoft-contrib \
-		--project js/tsconfig.json \
-		--type-check \
-		${*}
+		-r /node_modules/codelyzer \
+		-r /node_modules/tslint-microsoft-contrib \
+		--project js/tsconfig.tslint.json \
+		--type-check
 )"
 
 echo -e "${output}"
