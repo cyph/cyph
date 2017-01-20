@@ -428,8 +428,8 @@ compile () {
 							path: '.'
 						")
 						$(test "${enablesplit}" && echo "
-							filename: '[chunkhash].js',
-							chunkFilename: '[chunkhash].js',
+							filename: '[name].js',
+							chunkFilename: '[name].js',
 							path: '${packdirfull}'
 						")
 					},
