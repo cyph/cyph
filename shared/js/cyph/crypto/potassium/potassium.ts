@@ -1,58 +1,40 @@
 import {Box} from './box';
 import {EphemeralKeyExchange} from './ephemeral-key-exchange';
 import {Hash} from './hash';
-import * as NativeCrypto from './native-crypto';
+import {IPotassium} from './ipotassium';
 import {OneTimeAuth} from './one-time-auth';
 import {PasswordHash} from './password-hash';
-import {PotassiumUtil, potassiumUtil} from './potassium-util';
+import {PotassiumUtil} from './potassium-util';
 import {SecretBox} from './secret-box';
 import {Sign} from './sign';
 
 
 /**
- * libsodium-inspired wrapper for the post-quantum primitives used by Cyph.
- * Outside of this class, libsodium and other cryptographic implementations
- * should generally not be called directly.
+ * @inheritDoc
  */
-export class Potassium extends PotassiumUtil {
-	/** Indicates whether native crypto API is supported in this environment. */
-	public static async isNativeCryptoSupported () : Promise<boolean> {
-		try {
-			await NativeCrypto.secretBox.seal(
-				potassiumUtil.randomBytes(1),
-				potassiumUtil.randomBytes(NativeCrypto.secretBox.nonceBytes),
-				potassiumUtil.randomBytes(NativeCrypto.secretBox.keyBytes)
-			);
-			return true;
-		}
-		catch (_) {
-			return false;
-		}
-	}
-
-
-	/** @see Box */
+export class Potassium extends PotassiumUtil implements IPotassium {
+	/** @inheritDoc */
 	public readonly box: Box;
 
-	/** @see EphemeralKeyExchange */
+	/** @inheritDoc */
 	public readonly ephemeralKeyExchange: EphemeralKeyExchange;
 
-	/** @see Hash */
+	/** @inheritDoc */
 	public readonly hash: Hash;
 
-	/** @see OneTimeAuth */
+	/** @inheritDoc */
 	public readonly oneTimeAuth: OneTimeAuth;
 
-	/** @see PasswordHash */
+	/** @inheritDoc */
 	public readonly passwordHash: PasswordHash;
 
-	/** @see SecretBox */
+	/** @inheritDoc */
 	public readonly secretBox: SecretBox;
 
-	/** @see Sign */
+	/** @inheritDoc */
 	public readonly sign: Sign;
 
-	/** Indicates whether this Potassium instance is using native crypto. */
+	/** @inheritDoc */
 	public native () : boolean {
 		return this.isNative;
 	}

@@ -6,6 +6,7 @@ import {
 	OnInit
 } from '@angular/core';
 import * as clipboard from 'clipboard-js';
+import * as $ from 'jquery';
 import {ChatService} from '../services/chat.service';
 import {ConfigService} from '../services/config.service';
 import {DialogService} from '../services/dialog.service';
@@ -93,6 +94,12 @@ export class LinkConnectionComponent implements OnInit {
 
 		await util.waitForValue(() => this.sessionService.state.sharedSecret);
 
+		this.isPassive		= this.sessionService.state.wasInitiatedByAPI;
+
+		if (this.isPassive || !this.sessionService.state.startingNewCyph) {
+			return;
+		}
+
 		this.linkConstant	=
 			this.envService.newCyphUrl +
 			(this.envService.newCyphUrl.indexOf('#') > -1 ? '' : '#') +
@@ -101,7 +108,6 @@ export class LinkConnectionComponent implements OnInit {
 
 		this.linkEncoded	= encodeURIComponent(this.linkConstant);
 		this.link			= this.linkConstant;
-		this.isPassive		= this.sessionService.state.wasInitiatedByAPI;
 
 		if (this.elementRef.nativeElement && this.envService.isWeb) {
 			const $element		= $(this.elementRef.nativeElement);
@@ -163,6 +169,7 @@ export class LinkConnectionComponent implements OnInit {
 		await this.timer.start();
 
 		if (isWaiting) {
+			isWaiting	= false;
 			this.chatService.abortSetup();
 		}
 	}

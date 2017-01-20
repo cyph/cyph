@@ -1,3 +1,4 @@
+import {sodium} from 'libsodium';
 import * as NativeCrypto from './native-crypto';
 
 

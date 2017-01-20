@@ -1,4 +1,5 @@
 import {sodiumUtil} from 'sodiumutil';
+import * as NativeCrypto from './native-crypto';
 
 
 /**
@@ -63,6 +64,21 @@ export class PotassiumUtil {
 			sodiumUtil.from_string(s) :
 			this.toBytes(s)
 		;
+	}
+
+	/** Indicates whether native crypto API is supported in this environment. */
+	public async isNativeCryptoSupported () : Promise<boolean> {
+		try {
+			await NativeCrypto.secretBox.seal(
+				this.randomBytes(1),
+				this.randomBytes(NativeCrypto.secretBox.nonceBytes),
+				this.randomBytes(NativeCrypto.secretBox.keyBytes)
+			);
+			return true;
+		}
+		catch (_) {
+			return false;
+		}
 	}
 
 	/** Returns array of n random bytes. */

@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import * as $ from 'jquery';
 import {eventManager} from '../event-manager';
 import {EnvService} from './env.service';
 

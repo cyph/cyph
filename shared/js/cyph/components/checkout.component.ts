@@ -1,5 +1,6 @@
 import {Component, ElementRef, Input, OnInit} from '@angular/core';
 import * as braintree from 'braintree-web';
+import * as $ from 'jquery';
 import {ConfigService} from '../services/config.service';
 import {EnvService} from '../services/env.service';
 import {util} from '../util';

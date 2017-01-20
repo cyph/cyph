@@ -5,7 +5,7 @@ import * as childProcess from 'child_process';
 import * as datauri from 'datauri';
 import * as fs from 'fs';
 import * as mkdirp from 'mkdirp';
-import * as superSphincs from 'supersphincs';
+import {superSphincs} from 'supersphincs';
 
 
 (async () => {
