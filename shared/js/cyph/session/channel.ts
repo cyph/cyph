@@ -46,7 +46,11 @@ export class Channel {
 
 	/** Sends message through this channel. */
 	public send (message: string) : void {
-		util.retryUntilSuccessful(async () =>
+		util.retryUntilSuccessful(async () => {
+			if (this.isClosed) {
+				return;
+			}
+
 			this.messagesRef.push({
 				cyphertext: message,
 				sender: this.userId,
@@ -54,7 +58,7 @@ export class Channel {
 			}).then(
 				() => {}
 			)
-		);
+		});
 	}
 
 	/**

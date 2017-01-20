@@ -254,7 +254,7 @@ fi
 
 # Compile + translate + minify
 if [ "${compiledProjects}" ] ; then
-	./commands/tslint.sh || exit
+	./commands/lint.sh || exit
 fi
 for d in $compiledProjects ; do
 	echo "Compile $(projectname ${d})"
