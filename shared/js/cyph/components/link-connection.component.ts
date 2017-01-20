@@ -96,7 +96,7 @@ export class LinkConnectionComponent implements OnInit {
 
 		this.isPassive		= this.sessionService.state.wasInitiatedByAPI;
 
-		if (this.isPassive || !this.sessionService.state.isAlice) {
+		if (this.isPassive || !this.sessionService.state.startingNewCyph) {
 			return;
 		}
 
