@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Title} from '@angular/platform-browser';
+import * as $ from 'jquery';
 import * as WOW from 'wowjs';
 import {Email} from '../cyph/email';
 import {eventManager} from '../cyph/event-manager';

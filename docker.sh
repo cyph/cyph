@@ -27,6 +27,69 @@ defaultsleep () {
 	sleep 2
 }
 
+editimage () {
+	if
+		[ "${2}" ] &&
+		[ \
+			"$(docker run -it $mounts "${image}" bash -c "
+				if ${2}
+				then
+					echo -n dothemove
+				fi
+			")" != 'dothemove' \
+		]
+	then
+		return
+	fi
+
+	tmpContainer="$(containername tmp)"
+	docker rm -f "${tmpContainer}" 2> /dev/null
+	docker run -it \
+		$mounts \
+		--name="${tmpContainer}" \
+		"${image}" \
+		bash -c "${1}"
+	docker commit "${tmpContainer}" "${image}"
+	docker rm -f "${tmpContainer}"
+}
+
+getlibs () {
+	editimage \
+		'
+			sudo apt-get -y --force-yes update
+			sudo apt-get -y --force-yes dist-upgrade
+			touch ~/.updated
+		' \
+		'
+			[ ! -f ~/.updated ] || test "$(find ~/.updated -mtime +3)"
+		'
+
+	docker run -it \
+		$processType \
+		$mounts \
+		"${image}" \
+		bash -c "source ~/.bashrc ; /cyph/commands/getlibs.sh"
+
+	editimage \
+		'
+			sudo rm -rf /node_modules 2> /dev/null
+			sudo cp -rf /cyph/shared/lib/js/node_modules /
+			sudo chmod -R 777 /node_modules
+
+			source ~/.bashrc
+			rm -rf ${GOPATH}/src/*
+			for f in $(find /cyph/default -mindepth 1 -maxdepth 1 -type d) ; do
+				ln -s ${f} ${GOPATH}/src/$(echo "${f}" | perl -pe "s/.*\///g") > /dev/null 2>&1
+			done
+			for f in $(find /cyph/default -mindepth 1 -maxdepth 4 -type d) ; do
+				go install $(echo "${f}" | sed "s|/cyph/default/||") > /dev/null 2>&1
+			done
+		' \
+		'
+			! cmp /cyph/shared/lib/js/yarn.lock /node_modules/yarn.lock > /dev/null 2>&1
+		'
+}
+
 killcontainer () {
 	docker ps -a | grep "${1}" | awk '{print $1}' | xargs -I% bash -c 'docker kill -s 9 % ; docker rm %'
 }
@@ -47,7 +110,6 @@ stop () {
 		defaultsleep
 	fi
 }
-
 
 image="cyph/$(
 	git describe --tags --exact-match 2> /dev/null ||
@@ -186,16 +248,15 @@ elif [ "${command}" == 'restart' ] ; then
 elif [ "${command}" == 'make' ] ; then
 	stop
 	start
-	docker build -t "${image}_base" .
+	docker build -t "${image}" .
 
-	interactiveContainer="$(containername interactive)"
-	docker run -it \
-		$mounts \
-		--name="${interactiveContainer}" \
-		"${image}_base" \
-		/bin/bash -c 'gcloud auth login'
-	docker commit "${interactiveContainer}" "${image}"
-	docker rm -f "${interactiveContainer}"
+	getlibs
+	editimage '
+		source ~/.bashrc
+		tns error-reporting disable
+		tns usage-reporting disable
+		gcloud auth login
+	'
 
 	exit 0
 
@@ -211,6 +272,8 @@ elif [ ! -f "${commandScript}" ] ; then
 	echo fak u gooby
 	exit 1
 fi
+
+getlibs
 
 docker run -it \
 	$processType \

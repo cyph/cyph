@@ -1,4 +1,5 @@
 import {ChangeDetectorRef, Component, ElementRef, Input, OnInit} from '@angular/core';
+import * as $ from 'jquery';
 import {ChatService} from '../services/chat.service';
 import {EnvService} from '../services/env.service';
 import {FileService} from '../services/file.service';

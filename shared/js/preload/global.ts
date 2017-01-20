@@ -4,7 +4,7 @@
 
 
 if (typeof self === 'undefined' && typeof global !== 'undefined') {
-	global.self	= global;
+	(<any> global).self	= global;
 }
 
 try {

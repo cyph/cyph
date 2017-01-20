@@ -1,3 +1,4 @@
+import * as $ from 'jquery';
 import {potassiumUtil} from './crypto/potassium/potassium-util';
 import {env} from './env';
 import {eventManager} from './event-manager';

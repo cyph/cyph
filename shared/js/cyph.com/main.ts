@@ -3,10 +3,6 @@
  */
 
 
-import '../preload/weblibs';
-
-import '../preload/sham';
-
 import '../preload';
 
 import {enableProdMode} from '@angular/core';
@@ -14,6 +10,7 @@ import {platformBrowser} from '@angular/platform-browser';
 import {downgradeComponent, UpgradeModule} from '@angular/upgrade/static';
 import * as angular from 'angular';
 import 'angular-material';
+import * as $ from 'jquery';
 import 'jquery.appear';
 import 'magnific-popup';
 import 'nanoscroller';

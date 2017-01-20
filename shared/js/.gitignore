@@ -2,3 +2,4 @@
 **/*.map
 **/*.tmp
 docs
+tsconfig.tslint.json

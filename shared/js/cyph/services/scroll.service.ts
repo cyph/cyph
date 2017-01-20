@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Title} from '@angular/platform-browser';
+import * as $ from 'jquery';
 import {util} from '../util';
 import {EnvService} from './env.service';
 import {VisibilityWatcherService} from './visibility-watcher.service';
