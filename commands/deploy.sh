@@ -259,7 +259,10 @@ fi
 for d in $compiledProjects ; do
 	echo "Compile $(projectname ${d})"
 
-	cp -rf shared/* ${d}/
+	for sharedResource in $(ls shared) ; do
+		rm -rf ${d}/${sharedResource} 2> /dev/null
+		cp -rf shared/${sharedResource} ${d}/
+	done
 
 	cd ${d}
 
