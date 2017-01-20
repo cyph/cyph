@@ -1,8 +1,9 @@
 import {ChangeDetectorRef} from '@angular/core';
 import {analytics} from '../analytics';
 import {config} from '../config';
-import {Potassium, Potassium as CryptoPotassium, SecretBox} from '../crypto/potassium';
+import {IPotassium} from '../crypto/potassium/ipotassium';
 import {potassiumUtil} from '../crypto/potassium/potassium-util';
+import {SecretBox} from '../crypto/potassium/secret-box';
 import {EventManager, eventManager} from '../event-manager';
 import {firebaseApp} from '../firebase-app';
 import {events, rpcEvents} from '../session/enums';
@@ -38,7 +39,7 @@ export class Files {
 			/* tslint:disable-next-line:only-arrow-functions */
 			async function (
 				/* tslint:disable-next-line:variable-name */
-				Potassium: typeof CryptoPotassium,
+				Potassium: any,
 				eventManager: EventManager,
 				locals: {
 					plaintext?: Uint8Array,
@@ -51,7 +52,7 @@ export class Files {
 			) : Promise<void> {
 				importScripts('/js/cyph/crypto/potassium/index.js');
 
-				const potassium	= new Potassium();
+				const potassium: IPotassium	= new Potassium();
 
 				/* Encrypt */
 				if (locals.plaintext) {
@@ -436,7 +437,7 @@ export class Files {
 		/** @ignore */
 		private readonly session: ISession
 	) { (async () => {
-		const isNativeCryptoSupported	= await Potassium.isNativeCryptoSupported();
+		const isNativeCryptoSupported	= await potassiumUtil.isNativeCryptoSupported();
 
 		if (isNativeCryptoSupported) {
 			this.session.on(events.beginChat, () => {
