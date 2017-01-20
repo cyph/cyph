@@ -475,17 +475,9 @@ export class Files {
 							downloadAnswers.set(transfer.id, ok);
 
 							if (!ok) {
-								this.triggerUIEvent(
-									UIEvents.rejected,
-									transfer
-								);
-
+								this.triggerUIEvent(UIEvents.rejected, transfer);
 								transfer.answer	= false;
-
-								this.session.send(new Message(
-									rpcEvents.files,
-									transfer
-								));
+								this.session.send(new Message(rpcEvents.files, transfer));
 							}
 						}
 					);
