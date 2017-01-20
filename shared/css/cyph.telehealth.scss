@@ -18,7 +18,6 @@ body.telehealth {
 			}
 		}
 
-
 		.chat-sidebar .md-button:not(.md-fab) {
 			border: solid 1px rgba(255, 255, 255, 0.5);
 			border-radius: 0px;
@@ -28,25 +27,23 @@ body.telehealth {
 		.video-call:not(.playing) .close-button {
 			color: #4D5062 !important;
 			box-shadow: none !important;
-		
 		}
 
-	.connect-link-mobile md-icon {
-    	color: white !important;
-	}
-
+		.connect-link-mobile md-icon {
+			color: white !important;
+		}
 	}
 
 	.chat-message-box:not(.mobile) .message-box:focus {
- 		box-shadow: 0 0 10px #E7C447;
-    	border: 1px solid #E7C447;
+		box-shadow: 0 0 10px #E7C447;
+		border: 1px solid #E7C447;
 	}
 
 	.message-item {
 		background-color: transparent;
 		box-shadow: none;
 	}
-	
+
 	.message-item.author-other:after {
 		border-color: transparent #4D5062 !important;
 	}
@@ -69,8 +66,7 @@ body.telehealth {
 		opacity: 0.75;
 	}
 
-			
-	.logo-animation{
+	.logo-animation {
 		display: none !important;
 	}
 
@@ -82,11 +78,13 @@ body.telehealth {
 		//visibility: hidden;
 		//margin-bottom: -75px;
 		color: #4D5062;
+
 		.icons {
 			right: 12px;
 			bottom: 7px;
 			position: fixed;
 		}
+
 		.powered-by-cyph {
 			top: 15px;
 			position: relative;
@@ -104,30 +102,37 @@ body.telehealth {
 body.telehealth:not(.mobile) {
 	.chat-message-box {
 		textarea {
- 			background-color: rgba(77, 80, 98, 0.33) !important;
+			background-color: rgba(77, 80, 98, 0.33) !important;
 		}
 
-		textarea::-webkit-input-placeholder { /* WebKit browsers */
-			color:    #4D5062 !important;
+		textarea::-webkit-input-placeholder {
+			/* WebKit browsers */
+			color: #4D5062 !important;
 		}
-		textarea:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
-			color:    #4D5062 !important;
+
+		textarea:-moz-placeholder {
+			/* Mozilla Firefox 4 to 18 */
+			color: #4D5062 !important;
 		}
-		textarea::-moz-placeholder { /* Mozilla Firefox 19+ */
-			color:    #4D5062 !important;
+
+		textarea::-moz-placeholder {
+			/* Mozilla Firefox 19+ */
+			color: #4D5062 !important;
 		}
-		textarea:-ms-input-placeholder { /* Internet Explorer 10+ */
-			color:    #4D5062 !important;
+
+		textarea:-ms-input-placeholder {
+			/* Internet Explorer 10+ */
+			color: #4D5062 !important;
 		}
 	}
 
 	md-icon {
-			color: #4D5062 !important;
+		color: #4D5062 !important;
 	}
 }
 
 body.telehealth.mobile {
 	md-icon.material-icons {
-   		color: #4D5062 !important;
+		color: #4D5062 !important;
 	}
 }
