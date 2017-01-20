@@ -39,5 +39,18 @@ output="$(
 		--type-check
 )"
 
+output="${output}$(
+	find templates -type f -name '*.html' -not -path 'templates/native/*' -exec node -e '
+		require("htmllint")(
+			fs.readFileSync("{}").toString(),
+			JSON.parse(fs.readFileSync("templates/htmllint.json").toString())
+		).then(result => {
+			if (result.length !== 0) {
+				console.log("{}: " + JSON.stringify(result) + "\n\n");
+			}
+		})
+	' \;
+)"
+
 echo -e "${output}"
 exit ${#output}
