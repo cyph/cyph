@@ -94,6 +94,12 @@ export class LinkConnectionComponent implements OnInit {
 
 		await util.waitForValue(() => this.sessionService.state.sharedSecret);
 
+		this.isPassive		= this.sessionService.state.wasInitiatedByAPI;
+
+		if (this.isPassive || !this.sessionService.state.isAlice) {
+			return;
+		}
+
 		this.linkConstant	=
 			this.envService.newCyphUrl +
 			(this.envService.newCyphUrl.indexOf('#') > -1 ? '' : '#') +
@@ -102,7 +108,6 @@ export class LinkConnectionComponent implements OnInit {
 
 		this.linkEncoded	= encodeURIComponent(this.linkConstant);
 		this.link			= this.linkConstant;
-		this.isPassive		= this.sessionService.state.wasInitiatedByAPI;
 
 		if (this.elementRef.nativeElement && this.envService.isWeb) {
 			const $element		= $(this.elementRef.nativeElement);
