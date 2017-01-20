@@ -269,11 +269,13 @@ compile () {
 		rm preload/global.js.tmp
 
 		if [ "${minify}" ] ; then
-			find . -name '*.js' -not \( \
-				-name '*.ngfactory.js' \
-				-or -name '*.ngmodule.js' \
-			\) -exec cat {} \; |
-				grep -oP '[A-Za-z_$][A-Za-z0-9_$]*' |
+			for d in . "${outputDir}/js" ; do
+				find "${d}" -name '*.js' -not \( \
+					-name '*.ngfactory.js' \
+					-or -name '*.ngmodule.js' \
+				\) -exec cat {} \; |
+					grep -oP '[A-Za-z_$][A-Za-z0-9_$]*'
+			done |
 				sort |
 				uniq |
 				tr '\n' ' ' \
@@ -490,7 +492,7 @@ compile () {
 
 					for (const chunk of stats.compilation.entrypoints.main.chunks) {
 						for (const file of chunk.files) {
-							\$('body').append( \`<script src='/${packdir}/\${file}'></script>\`);
+							\$('body').append(\`<script src='/${packdir}/\${file}'></script>\`);
 						}
 					}
 
