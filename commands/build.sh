@@ -187,7 +187,7 @@ compile () {
 	cd js
 
 	if [ "${test}" ] ; then
-		output="${output}$(../../commands/tslint.sh 2>&1)"
+		output="${output}$(../../commands/lint.sh 2>&1)"
 	else
 		find . -type f -name '*.js' -exec rm {} \;
 

@@ -62,6 +62,7 @@ yarn add --ignore-platform \
 	gulp \
 	html-minifier \
 	htmlencode \
+	htmllint \
 	image-type \
 	jquery \
 	konami-code.js \
