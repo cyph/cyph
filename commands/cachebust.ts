@@ -3,7 +3,8 @@
 
 import * as childProcess from 'child_process';
 import * as fs from 'fs';
-import * as superSphincs from 'supersphincs';
+import * as mkdirp from 'mkdirp';
+import {superSphincs} from 'supersphincs';
 
 
 (async () => {
@@ -22,6 +23,9 @@ const filesToModify		= childProcess.spawnSync('find', [
 	'.',
 	'-type',
 	'f',
+	'-not',
+	'-path',
+	'./lib/*',
 	'-and',
 	'\(',
 	'-name',
@@ -37,8 +41,6 @@ const filesToModify		= childProcess.spawnSync('find', [
 
 const fileContents		= {};
 const cacheBustedFiles	= {};
-
-const getFileName		= file => file.split('/').slice(-1)[0];
 
 
 for (let file of filesToModify) {
@@ -59,7 +61,7 @@ for (let file of filesToModify) {
 			continue;
 		}
 
-		cacheBustedFiles[getFileName(subresource)]	= true;
+		cacheBustedFiles[subresource]	= true;
 
 		const hash	= (await superSphincs.hash(fs.readFileSync(subresource))).hex;
 		content		= content.split(subresource).join(`${subresource}?${hash}`);
@@ -71,12 +73,21 @@ for (let file of filesToModify) {
 	}
 }
 
-/* To save space, remove unused subresources under lib directory */
+
+const localModulesPath	= 'lib/js/node_modules';
+const globalModulesPath	= '/node_modules';
+
+fs.unlinkSync(localModulesPath);
+
 for (let subresource of filesToCacheBust.filter(subresource =>
-	subresource.startsWith('lib/') &&
-	!cacheBustedFiles[getFileName(subresource)]
+	subresource.startsWith(`${localModulesPath}/`) &&
+	cacheBustedFiles[subresource]
 )) {
-	fs.unlink(subresource);
+	mkdirp.sync(subresource.split('/').slice(0, -1).join('/'));
+	childProcess.spawnSync('cp', [
+		subresource.replace(new RegExp(`^${localModulesPath}`), globalModulesPath),
+		subresource
+	]);
 }
 
 

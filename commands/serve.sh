@@ -3,8 +3,6 @@
 dir="$PWD"
 cd $(cd "$(dirname "$0")"; pwd)/..
 
-./commands/getlibs.sh
-
 
 prodlike=''
 if [ "${1}" == '--prodlike' ] ; then
@@ -12,46 +10,61 @@ if [ "${1}" == '--prodlike' ] ; then
 	shift
 fi
 
+blog=''
+if [ "${1}" == '--blog' ] ; then
+	blog=true
+	shift
+fi
+
 if [ "${prodlike}" ] ; then
-	rm -rf .build 2> /dev/null
-	mkdir .build
-	cp -rf * .build/
+	./commands/copyworkspace.sh .build
 	cd .build
 fi
 
 
 appserver () {
-	sudo /google-cloud-sdk/bin/dev_appserver.py $* > /dev/null 2>&1 &
+	/google-cloud-sdk/bin/dev_appserver.py --skip_sdk_update_check ${*} > /dev/null 2>&1 &
 }
 
 go_appserver () {
-	yes | sudo ~/go_appengine/dev_appserver.py $* &
+	~/go_appengine/dev_appserver.py --skip_sdk_update_check ${*} &
 }
 
 
 for project in cyph.com cyph.im ; do
-	for d in $(find shared -mindepth 1 -maxdepth 1 -type d | sed 's|shared/||g') ; do
-		mkdir $project/$d 2> /dev/null
-		sudo mount -o bind shared/$d $project/$d
+	cd ${project}
+	for d in $(ls ../shared) ; do
+		rm -rf ${d} 2> /dev/null
+		ln -s ../shared/${d} ${d}
+		if ! grep ${d} .gitignore > /dev/null 2>&1 ; then
+			{ cat .gitignore 2> /dev/null; echo ${d}; } | sort > .gitignore.new
+			mv .gitignore.new .gitignore
+			chmod 700 .gitignore
+		fi
 	done
-done
-
-rm -rf $GOPATH/src/*
-for f in $(find $PWD/default -mindepth 1 -maxdepth 1 -type d) ; do
-	ln -s $f $GOPATH/src/$(echo "$f" | perl -pe 's/.*\///g') > /dev/null 2>&1 &
-done
-for f in $(find default -mindepth 1 -maxdepth 4 -type d) ; do
-	go install $(echo "$f" | sed 's|default/||') > /dev/null 2>&1 & 
+	rm js lib
+	mkdir -p js lib/js
+	cd js
+	for d in $(ls ../../shared/js | grep -v node_modules) ; do
+		ln -s ../../shared/js/${d} ${d}
+	done
+	ln -s /node_modules node_modules
+	cd ../lib/js
+	ln -s /node_modules node_modules
+	cp ../../../shared/lib/js/base.js base.js
+	cd ../../..
 done
 
 node -e 'new (require("firebase-server"))(44000)' &
 
-cd cyph.com
-rm -rf blog 2> /dev/null
-mkdir blog
-cd blog
-../../commands/wpstatic.sh http://localhost:42001/blog > /dev/null 2>&1 &
-cd ../..
+if [ "${blog}" ] ; then
+	cd cyph.com
+	rm -rf blog 2> /dev/null
+	mkdir blog
+	cd blog
+	../../commands/wpstatic.sh http://localhost:42001/blog > /dev/null 2>&1 &
+	cd ../..
+fi
 
 cp -f default/app.yaml default/.build.yaml
 cp -f cyph.com/cyph-com.yaml cyph.com/.build.yaml
@@ -61,20 +74,23 @@ for f in */.build.yaml ; do sed -i 's|index.html|.index.html|g' $f ; done
 
 cat ~/.cyph/default.vars >> default/.build.yaml
 cat ~/.cyph/braintree.sandbox >> default/.build.yaml
-cp ~/.cyph/*.mmdb default/
 
 mkdir /tmp/cyph0
 go_appserver --port 5000 --admin_port 6000 --host 0.0.0.0 --storage_path /tmp/cyph0 default/.build.yaml
 
-mkdir /tmp/cyph1
-appserver --port 5001 --admin_port 6001 --host 0.0.0.0 --storage_path /tmp/cyph1 cyph.com/.build.yaml
+{
+	sleep 90;
 
-mkdir /tmp/cyph2
-appserver --port 5002 --admin_port 6002 --host 0.0.0.0 --storage_path /tmp/cyph2 cyph.im/.build.yaml
+	mkdir /tmp/cyph1;
+	appserver --port 5001 --admin_port 6001 --host 0.0.0.0 --storage_path /tmp/cyph1 cyph.com/.build.yaml;
+
+	mkdir /tmp/cyph2;
+	appserver --port 5002 --admin_port 6002 --host 0.0.0.0 --storage_path /tmp/cyph2 cyph.im/.build.yaml;
+} &
 
 if [ "${prodlike}" ] ; then
+	start="$(date +%s)"
 	./commands/build.sh --prod
-	git checkout */webpack.json
 
 	if (( $? )) ; then
 		echo -e '\n\nBuild failed\n'
@@ -85,13 +101,7 @@ if [ "${prodlike}" ] ; then
 	find js -name '*.js' | xargs -I% ../commands/websign/threadpack.ts %
 	cd ..
 
-	for d in cyph.im cyph.com ; do
-		cd $d
-		../commands/websign/pack.ts .index.html .index.html
-		cd ..
-	done
-
-	echo -e "\n\n\nLocal env ready\n\n"
+	echo -e "\n\n\nLocal env ready ($(expr $(date +%s) - $start)s)\n\n"
 	sleep infinity
 else
 	# bash -c 'sleep 90 ; ./commands/docs.sh > /dev/null 2>&1' &

@@ -6,7 +6,7 @@ import * as dgram from 'dgram';
 import * as fs from 'fs';
 import * as mkdirp from 'mkdirp';
 import * as os from 'os';
-import * as superSphincs from 'supersphincs';
+import {superSphincs} from 'supersphincs';
 
 
 (async () => {

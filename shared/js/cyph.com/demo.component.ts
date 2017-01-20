@@ -1,4 +1,5 @@
 import {Component, OnInit} from '@angular/core';
+import * as $ from 'jquery';
 import {EnvService} from '../cyph/services/env.service';
 import {util} from '../cyph/util';
 import {DemoService} from './demo.service';

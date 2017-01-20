@@ -1,15 +1,14 @@
 #!/bin/bash
 
 cd $(cd "$(dirname "$0")"; pwd)/..
-cd shared/lib/js
+cd shared/lib
 
-if diff yarn.lock node_modules/yarn.lock > /dev/null 2>&1 ; then
+if diff js/yarn.lock js/node_modules/yarn.lock > /dev/null 2>&1 ; then
 	exit 0
 fi
 
-rm -rf node_modules ../.js.tmp 2> /dev/null
+rm -rf js/node_modules .js.tmp 2> /dev/null
 
-cd ..
 cp -a js .js.tmp
 cd .js.tmp
 
@@ -23,7 +22,7 @@ cp -a ../libsodium ./
 
 mkdir -p @types/libsodium
 cat > @types/libsodium/index.d.ts << EOM
-interface ISodium {
+export interface ISodium {
 	crypto_aead_chacha20poly1305_ABYTES: number;
 	crypto_aead_chacha20poly1305_KEYBYTES: number;
 	crypto_aead_chacha20poly1305_NPUBBYTES: number;
@@ -98,7 +97,7 @@ interface ISodium {
 	to_string (a: Uint8Array) : string;
 };
 
-declare const sodium: ISodium;
+export const sodium: ISodium;
 EOM
 
 for anyType in konami-code.js markdown-it-emoji markdown-it-sup simplewebrtc tab-indent wowjs ; do
@@ -123,12 +122,7 @@ for f in \
 	nanoscroller/bin/javascripts/jquery.nanoscroller.js \
 	whatwg-fetch/fetch.js
 do
-	uglifyjs "${f}" -m -o "${f}"
-done
-
-for module in mceliece ntru rlwe sidh sphincs supersphincs ; do
-	sed -i 's|export const|declare const|g' ${module}/*.d.ts
-	sed -i 's|export ||g' ${module}/*.d.ts
+	./.bin/uglifyjs "${f}" -m -o "${f}"
 done
 
 for arr in \
@@ -147,20 +141,49 @@ sed -i "s|require('./socketioconnection')|null|g" simplewebrtc/simplewebrtc.js
 cat wowjs/dist/wow.js | perl -pe 's/this\.([A-Z][a-z])/self.\1/g' > wowjs/dist/wow.js.new
 mv wowjs/dist/wow.js.new wowjs/dist/wow.js
 
-cd firebase
-cp -f ../../module_locks/firebase/* ./
-mkdir node_modules
-yarn install
-browserify firebase-node.js -o firebase.tmp.js -s firebase
-cat firebase.tmp.js |
-	sed 's|https://apis.google.com||g' |
-	sed 's|iframe||gi' |
-	perl -pe "s/[A-Za-z0-9]+\([\"']\/js\/.*?.js.*?\)/null/g" \
-> firebase.js
-cp -f firebase.js firebase-browser.js
-cp -f firebase.js firebase-node.js
-rm -rf firebase.tmp.js node_modules
-cd ..
+for f in $(find firebase -type f -name '*.js') ; do
+	cat ${f} |
+		sed 's|https://apis.google.com||g' |
+		sed 's|iframe||gi' |
+		perl -pe "s/[A-Za-z0-9]+\([\"']\/js\/.*?.js.*?\)/null/g" \
+	> ${f}.new
+	mv ${f}.new ${f}
+done
+
+for f in package.json yarn.lock ; do
+	cat tslint/${f} | grep -v tslint-test-config-non-relative > ${f}.new
+	mv ${f}.new tslint/${f}
+done
+
+node -e '
+	const package	= JSON.parse(fs.readFileSync("ts-node/package.json").toString());
+	package.scripts.prepublish	= undefined;
+	fs.writeFileSync("ts-node/package.json", JSON.stringify(package));
+'
+
+currentDir="${PWD}"
+for d in firebase firebase-server ts-node tslint ; do
+	tmpDir="$(mktemp -d)"
+	mv "${d}" "${tmpDir}/"
+	cp -f ../module_locks/${d}/* "${tmpDir}/${d}/"
+	cd "${tmpDir}/${d}"
+	mkdir node_modules 2> /dev/null
+	yarn install
+
+	if [ "${d}" == 'firebase' ] ; then
+		"${currentDir}/.bin/browserify" firebase-node.js -o firebase.js -s firebase
+		cp -f firebase.js firebase-browser.js
+		cp -f firebase.js firebase-node.js
+		rm -rf node_modules
+	fi
+
+	cd "${currentDir}"
+	mv "${tmpDir}/${d}" ./
+done
+
+mv .bin/ts-node .bin/ts-node-original
+echo -e '#!/bin/bash\nts-node-original -D "${@}"' > .bin/ts-node
+chmod +x .bin/ts-node
 
 cd ../..
 
