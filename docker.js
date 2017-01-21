@@ -7,27 +7,32 @@ const fs			= require('fs');
 const os			= require('os');
 const path			= require('path');
 
-const badNewlineFix	= s => s.replace(/\r/g, '');
-
-const cat			= f => fs.readFileSync(f).toString().trim();
+const cat			= f => {
+	try {
+		fs.readFileSync(f).toString().trim();
+	}
+	catch (_) {
+		return '';
+	}
+};
 
 const exec			= command => childProcess.execSync(
-	badNewlineFix(command),
+	command,
 	{cwd: __dirname}
 ).toString().trim();
 
 const spawn			= (command, args) => (
 	childProcess.spawnSync(
-		badNewlineFix(command),
-		args.map(badNewlineFix),
+		command,
+		args,
 		{cwd: __dirname}
 	).stdout || ''
 ).toString().trim();
 
 const spawnAsync	= (command, args) => new Promise(resolve =>
 	childProcess.spawn(
-		badNewlineFix(command),
-		args.map(badNewlineFix),
+		command,
+		args,
 		{cwd: __dirname, stdio: 'inherit'}
 	).on(
 		'exit',
@@ -37,7 +42,7 @@ const spawnAsync	= (command, args) => new Promise(resolve =>
 
 const runScript		= script => {
 	const tmpFile	= path.join(os.tmpdir(), crypto.randomBytes(32).toString('hex'));
-	fs.writeFileSync(tmpFile, badNewlineFix(script));
+	fs.writeFileSync(tmpFile, script);
 	return spawnAsync('bash', tmpFile);
 };
 
@@ -150,14 +155,19 @@ const shellScripts			= {
 			[ ! -f ~/.updated ] || test "$(find ~/.updated -mtime +3)"
 		`
 	},
+	badNewlineFix: !isWindows ? '' : `
+		find /cyph/commands -type f -exec sed -i 's/\\r//g' {} \\;
+	`,
 	command: `
 		source ~/.bashrc
+		${badNewlineFix}
 		/cyph/commands/${args.command}.sh ${
 			process.argv.slice(3).filter(s => s !== '--background').join(' ')
 		}
 	`,
 	getLibs: `
 		source ~/.bashrc
+		${badNewlineFix}
 		/cyph/commands/getlibs.sh
 	`,
 	libUpdate: {
