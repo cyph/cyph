@@ -1,3 +1,4 @@
+import {superSphincs} from 'supersphincs';
 import {IKeyPair} from '../ikey-pair';
 
 

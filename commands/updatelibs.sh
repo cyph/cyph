@@ -12,11 +12,13 @@ cd ~/tmplib/js
 yarn add --ignore-platform \
 	@angular/common \
 	@angular/compiler \
+	@angular/compiler-cli \
 	@angular/core \
 	@angular/forms \
 	@angular/http \
 	@angular/platform-browser \
 	@angular/platform-browser-dynamic \
+	@angular/platform-server \
 	@angular/router \
 	@angular/upgrade \
 	@types/angular \
@@ -33,32 +35,61 @@ yarn add --ignore-platform \
 	angular-animate@~1.5 \
 	angular-aria@~1.5 \
 	animate.css \
+	babel-cli \
+	babel-core \
+	babel-loader \
 	babel-polyfill \
+	babel-preset-es2015 \
+	babel-traverse \
+	babel-types \
+	babylon \
 	Base64 \
 	braintree-web@^2 \
+	browserify \
+	browserstack \
+	cheerio \
+	clean-css \
 	clipboard-js \
+	codelyzer \
 	core-js \
+	datauri \
 	dompurify \
 	file-saver \
 	firebase \
+	firebase-server \
+	glob \
+	granim \
+	gulp \
+	html-minifier \
+	htmlencode \
+	htmllint \
+	image-type \
 	jquery \
 	konami-code.js \
+	lazy \
+	libsodium-wrappers \
 	magnific-popup \
 	markdown-it \
-	markdown-it-sup \
 	markdown-it-emoji \
+	markdown-it-sup \
 	mceliece \
 	microlight-string \
+	mkdirp \
 	nanoscroller \
+	nativescript \
 	nativescript-angular \
 	nativescript-dev-android-snapshot \
 	nativescript-dev-typescript \
 	nativescript-theme-core \
+	node-fetch \
 	ntru \
+	read \
 	reflect-metadata \
 	rlwe \
+	rxjs \
 	sidh \
 	simplewebrtc \
+	sodiumutil \
 	sphincs \
 	supersphincs \
 	tab-indent \
@@ -66,13 +97,18 @@ yarn add --ignore-platform \
 	tns-core-modules \
 	tns-core-modules-widgets \
 	tns-ios \
-	rxjs \
-	sodiumutil \
+	ts-node \
+	tslint \
+	tslint-microsoft-contrib \
+	typedoc \
 	typescript@2.0.10 \
+	uglify-js \
 	unsemantic \
+	webpack@^2 \
 	webrtc-adapter \
 	whatwg-fetch \
 	wowjs \
+	zombie \
 	zone.js \
 	https://github.com/angular/bower-material \
 	https://github.com/morr/jquery.appear \
@@ -81,12 +117,23 @@ yarn add --ignore-platform \
 
 cp yarn.lock package.json ~/lib/js/
 
-for f in firebase ; do
-	mkdir -p ~/lib/js/module_locks/${f}
-	cd node_modules/${f}
-	mkdir node_modules
+for f in package.json yarn.lock ; do
+	cat node_modules/tslint/${f} | grep -v tslint-test-config-non-relative > ${f}.new
+	mv ${f}.new node_modules/tslint/${f}
+done
+
+node -e '
+	const package	= JSON.parse(fs.readFileSync("node_modules/ts-node/package.json").toString());
+	package.scripts.prepublish	= undefined;
+	fs.writeFileSync("node_modules/ts-node/package.json", JSON.stringify(package));
+'
+
+for d in firebase firebase-server ts-node tslint ; do
+	mkdir -p ~/lib/js/module_locks/${d}
+	cd node_modules/${d}
+	mkdir node_modules 2> /dev/null
 	yarn install
-	cp yarn.lock package.json ~/lib/js/module_locks/${f}/
+	cp yarn.lock package.json ~/lib/js/module_locks/${d}/
 	cd ../..
 done
 

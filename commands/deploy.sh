@@ -5,8 +5,9 @@ dir="$PWD"
 originalArgs="${*}"
 
 
-cacheBustedProjects='cyph.com'
+cacheBustedProjects='cyph.com cyph.im'
 compiledProjects='cyph.com cyph.im'
+allCompiledProjects="${compiledProjects}"
 webSignedProject='cyph.im'
 prodOnlyProjects='nakedredirect test websign'
 shortlinkProjects='io me video audio'
@@ -44,12 +45,10 @@ fi
 
 if [ "${simple}" ] ; then
 	websign=''
-	cacheBustedProjects=''
 else
+	cacheBustedProjects="$(echo "${cacheBustedProjects}" | sed "s|${webSignedProject}||")"
 	./commands/keycache.sh
 fi
-
-./commands/getlibs.sh
 
 echo -e '\n\nInitial setup\n'
 
@@ -76,8 +75,7 @@ if [ "${simple}" ] ; then
 fi
 
 
-mkdir ~/.build
-cp -rf * ~/.build/
+./commands/copyworkspace.sh ~/.build
 cd ~/.build
 
 mkdir geoisp.tmp
@@ -187,12 +185,12 @@ if [ "${test}" ] ; then
 		ls */*.yaml | xargs -I% sed -i 's|max-age=31536000|max-age=0|g' %
 	fi
 
-	if [ "${branch}" != 'master' -a "${branch}" != 'beta' -a "${branch}" != 'staging' ] ; then
-		for yaml in `ls */cyph*.yaml` ; do
-			cat $yaml | perl -pe 's/(- url: .*)/\1\n  login: admin/g' > $yaml.new
-			mv $yaml.new $yaml
-		done
-	fi
+	# if [ "${simple}" ] ; then
+	# 	for yaml in `ls */cyph*.yaml` ; do
+	# 		cat $yaml | perl -pe 's/(- url: .*)/\1\n  login: admin/g' > $yaml.new
+	# 		mv $yaml.new $yaml
+	# 	done
+	# fi
 else
 	sed -i "s|http://localhost:42000|https://api.cyph.com|g" default/config.go
 	ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|${defaultHost}42000|https://api.cyph.com|g" %
@@ -214,7 +212,13 @@ waitingForBlog=''
 if [ "${cacheBustedProjects}" ] ; then
 	waitingForBlog=true
 	bash -c "
-		if [ ! '${site}' -o '${site}' == cyph.com ] ; then
+		touch .blog.output
+
+		if [ '${websign}' ] ; then
+			while [ ! -f .build.done ] ; do sleep 1 ; done
+		fi
+
+		if [ ! '${site}' -o '${site}' == cyph.com ] && [ ! '${simple}' ] ; then
 			rm -rf cyph.com/blog 2> /dev/null
 			mkdir -p cyph.com/blog
 			cd cyph.com/blog
@@ -250,14 +254,25 @@ fi
 
 # Compile + translate + minify
 if [ "${compiledProjects}" ] ; then
-	./commands/tslint.sh || exit
+	./commands/lint.sh || exit
 fi
 for d in $compiledProjects ; do
 	echo "Compile $(projectname ${d})"
 
-	cp -rf shared/* ${d}/
+	for sharedResource in $(ls shared) ; do
+		rm -rf ${d}/${sharedResource} 2> /dev/null
+		cp -rf shared/${sharedResource} ${d}/
+	done
 
 	cd ${d}
+
+	for altD in $allCompiledProjects ; do
+		if [ "${d}" == "${altD}" ] ; then
+			continue
+		fi
+
+		find js -mindepth 1 -maxdepth 1 -type d -name "${altD}" -exec rm -rf {} \;
+	done
 
 	if [ "${websign}" -a "${d}" == "${webSignedProject}" ] ; then
 		# Block importScripts in Workers in WebSigned environments
@@ -276,10 +291,10 @@ for d in $compiledProjects ; do
 	../commands/build.sh --prod $(test "${simple}" && echo '--no-minify') || exit;
 
 	mv .index.html index.html
-	rm -rf js/node_modules
 
-	find css -name '*.scss' -or -name '*.map' -exec rm {} \;
-	find js -name '*.ts' -or -name '*.ts.js' -name '*.map' -exec rm {} \;
+	rm -rf css/bourbon js/node_modules
+	find css -type f \( -name '*.scss' -or -name '*.map' \) -exec rm {} \;
+	find js -type f \( -name '*.ts' -or -name '*.map' \) -exec rm {} \;
 
 	if [ ! "${simple}" ] ; then
 		html-minifier --minify-js --minify-css --remove-comments --collapse-whitespace index.html -o index.html.new
@@ -289,7 +304,7 @@ for d in $compiledProjects ; do
 	cd ..
 done
 if [ ! "${simple}" ] ; then
-	currentdir="$PWD"
+	currentDir="$PWD"
 	for f in */webpack.json ; do
 		cp -f $f "${dir}/${f}"
 		chmod 700 "${dir}/${f}"
@@ -297,8 +312,8 @@ if [ ! "${simple}" ] ; then
 	cd "${dir}"
 	git commit -m 'webpack.json update' */webpack.json
 	git push
-	cd "${currentdir}"
-	currentdir=''
+	cd "${currentDir}"
+	currentDir=''
 fi
 touch .build.done
 
@@ -453,13 +468,6 @@ if [ ! "${test}" -a \( ! "${site}" -o "${site}" == cyph.im \) ] ; then
 	for project in cyph.im cyph.video ; do
 		cat $project/*.yaml | perl -pe 's/(service: cyph.*)/\1-update/' > $project/update.yaml
 	done
-fi
-
-# Workaround for error "Cannot upload file ... which has size ... greater than maximum allowed"
-if [ "${simple}" ] ; then
-	rm -rf */lib/go $(find . -type d -name node_modules -exec \
-		find {} -mindepth 1 -maxdepth 1 -type d -name 'tns*' -or -name 'nativescript*' \
-	\;)
 fi
 
 if [ "${test}" ] ; then

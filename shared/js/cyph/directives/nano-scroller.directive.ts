@@ -1,4 +1,5 @@
 import {Directive, ElementRef, OnDestroy, OnInit} from '@angular/core';
+import * as $ from 'jquery';
 import {EnvService} from '../services/env.service';
 import {util} from '../util';
 

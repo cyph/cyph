@@ -29,6 +29,13 @@ export class Channel {
 
 	/** This kills the channel. */
 	public close () : void {
+		if (this.isClosed) {
+			return;
+		}
+
+		this.isClosed	= true;
+
+		this.handlers.onClose();
 		this.channelRef.remove().catch(() => {});
 	}
 
@@ -39,7 +46,11 @@ export class Channel {
 
 	/** Sends message through this channel. */
 	public send (message: string) : void {
-		util.retryUntilSuccessful(async () =>
+		util.retryUntilSuccessful(async () => {
+			if (this.isClosed) {
+				return;
+			}
+
 			this.messagesRef.push({
 				cyphertext: message,
 				sender: this.userId,
@@ -47,7 +58,7 @@ export class Channel {
 			}).then(
 				() => {}
 			)
-		);
+		});
 	}
 
 	/**
@@ -56,12 +67,12 @@ export class Channel {
 	 */
 	constructor (
 		channelName: string,
-		handlers: ({
-			onClose?: () => void;
-			onConnect?: () => void;
-			onMessage?: (message: string) => void;
-			onOpen?: (isAlice: boolean) => void;
-		}) = {}
+		private handlers: ({
+			onClose: () => void;
+			onConnect: () => void;
+			onMessage: (message: string) => void;
+			onOpen: (isAlice: boolean) => void;
+		})
 	) { (async () => {
 		this.channelRef		= await util.retryUntilSuccessful(async () =>
 			(await firebaseApp).database().ref('channels').child(channelName)
@@ -94,57 +105,43 @@ export class Channel {
 			this.channelRef.onDisconnect().remove()
 		);
 
-		if (handlers.onOpen) {
-			handlers.onOpen(this.isAlice);
+		this.handlers.onOpen(this.isAlice);
+
+		if (this.isAlice) {
+			util.retryUntilSuccessful(() =>
+				this.usersRef.on('child_added', (snapshot: firebase.database.DataSnapshot) => {
+					if (!this.isConnected && snapshot.key !== this.userId) {
+						this.isConnected	= true;
+						this.handlers.onConnect();
+					}
+				})
+			);
+		}
+		else {
+			this.handlers.onConnect();
 		}
 
-		if (handlers.onConnect) {
-			const onConnect	= handlers.onConnect;
+		util.retryUntilSuccessful(() =>
+			this.channelRef.on('value', async (snapshot: firebase.database.DataSnapshot) => {
+				if (await util.retryUntilSuccessful(() =>
+					!snapshot.exists() && !this.isClosed
+				)) {
+					this.isClosed	= true;
+					this.handlers.onClose();
+				}
+			})
+		);
 
-			if (this.isAlice) {
-				util.retryUntilSuccessful(() =>
-					this.usersRef.on('child_added', (snapshot: firebase.database.DataSnapshot) => {
-						if (!this.isConnected && snapshot.key !== this.userId) {
-							this.isConnected	= true;
-							onConnect();
-						}
-					})
+		util.retryUntilSuccessful(() =>
+			this.messagesRef.on('child_added', async (snapshot: firebase.database.DataSnapshot) => {
+				const o	= await util.retryUntilSuccessful(() =>
+					snapshot.val()
 				);
-			}
-			else {
-				onConnect();
-			}
-		}
 
-		if (handlers.onClose) {
-			const onClose	= handlers.onClose;
-
-			util.retryUntilSuccessful(() =>
-				this.channelRef.on('value', async (snapshot: firebase.database.DataSnapshot) => {
-					if (await util.retryUntilSuccessful(() =>
-						!snapshot.exists() && !this.isClosed
-					)) {
-						this.isClosed	= true;
-						onClose();
-					}
-				})
-			);
-		}
-
-		if (handlers.onMessage) {
-			const onMessage	= handlers.onMessage;
-
-			util.retryUntilSuccessful(() =>
-				this.messagesRef.on('child_added', async (snapshot: firebase.database.DataSnapshot) => {
-					const o	= await util.retryUntilSuccessful(() =>
-						snapshot.val()
-					);
-
-					if (o.sender !== this.userId) {
-						onMessage(o.cyphertext);
-					}
-				})
-			);
-		}
+				if (o.sender !== this.userId) {
+					this.handlers.onMessage(o.cyphertext);
+				}
+			})
+		);
 	})(); }
 }

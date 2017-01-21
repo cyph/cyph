@@ -1,5 +1,6 @@
 import {Component, ElementRef, Input, OnChanges, Renderer, SimpleChanges} from '@angular/core';
 import * as DOMPurify from 'dompurify';
+import * as $ from 'jquery';
 import * as MarkdownIt from 'markdown-it';
 import * as markdownItEmoji from 'markdown-it-emoji';
 import * as markdownItSup from 'markdown-it-sup';

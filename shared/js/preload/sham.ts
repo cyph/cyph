@@ -4,6 +4,9 @@
  */
 
 
+import * as firebase from 'firebase';
+
+
 (<any> self).firebase	= {
 	apps: [{
 		storage: () => ({
