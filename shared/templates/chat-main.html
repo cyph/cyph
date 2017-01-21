@@ -100,7 +100,9 @@
 		*ngIf='p2pService.p2p'
 	>
 		<a class='logo' rel='noreferrer' [href]='envService.homeUrl'>
-			<img src='/img/betalogo.mobile.png' alt='Beta logo' cyphTranslate />
+			<img *ngIf='!sessionService.apiFlags.telehealth' src='/img/betalogo.mobile.png' alt='Beta logo' cyphTranslate />
+			<img *ngIf='sessionService.apiFlags.telehealth' src='/img/telehealth.video.logo.png' alt='Cyph Telehealth Logo' cyphTranslate />
+
 		</a>
 		<div
 			class='friend stream'
