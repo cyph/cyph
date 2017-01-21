@@ -43,7 +43,7 @@ const spawnAsync	= (command, args) => new Promise(resolve =>
 const runScript		= script => {
 	const tmpFile	= path.join(os.tmpdir(), crypto.randomBytes(32).toString('hex'));
 	fs.writeFileSync(tmpFile, script);
-	return spawnAsync('bash', tmpFile);
+	return spawnAsync('bash', [tmpFile]);
 };
 
 
