@@ -229,6 +229,8 @@ const backup			= () => {
 	);
 };
 
+const containerName		= command => `${image}_${command}`.replace(/\//g, '_');
+
 const dockerRun			= (command, name, background, noCleanup, additionalArgs, getOutput) => {
 	const processArgs	= [
 		'run',
@@ -258,8 +260,6 @@ const dockerRun			= (command, name, background, noCleanup, additionalArgs, getOu
 	}
 };
 
-const getContainerName	= command => `${image}_${command}`.replace(/\//g, '_');
-
 const editImage			= (command, condition) => Promise.resolve().then(() => {
 	if (
 		condition &&
@@ -275,7 +275,7 @@ const editImage			= (command, condition) => Promise.resolve().then(() => {
 		return;
 	}
 
-	const tmpContainer	= getContainerName('tmp');
+	const tmpContainer	= containerName('tmp');
 
 	spawn('docker', ['rm', '-f', tmpContainer]);
 
@@ -384,7 +384,7 @@ switch (args.command) {
 		break;
 
 	case 'stopserve':
-		killContainer(getContainerName('serve'));
+		killContainer(containerName('serve'));
 
 		if (isWindows) {
 			break;
@@ -409,7 +409,7 @@ initPromise.then(() => {
 	pullUpdates().then(() =>
 		dockerRun(
 			shellScripts.command,
-			getContainerName(args.command),
+			containerName(args.command),
 			args.background,
 			false,
 			commandAdditionalArgs
