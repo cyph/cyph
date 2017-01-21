@@ -7,7 +7,14 @@ const fs			= require('fs');
 const os			= require('os');
 const path			= require('path');
 
-const cat			= f => fs.readFileSync(f).toString().trim();
+const cat			= f => {
+	try {
+		fs.readFileSync(f).toString().trim();
+	}
+	catch (_) {
+		return '';
+	}
+};
 
 const exec			= command => childProcess.execSync(
 	command,
