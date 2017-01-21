@@ -46,7 +46,7 @@ output="${output}$(
 			JSON.parse(fs.readFileSync("templates/htmllint.json").toString())
 		).then(result => {
 			if (result.length !== 0) {
-				console.log("{}: " + JSON.stringify(result) + "\n\n");
+				console.log("{}: " + JSON.stringify(result, undefined, "\t") + "\n\n");
 			}
 		})
 	' \;
