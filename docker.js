@@ -99,6 +99,10 @@ const mounts				= [
 	(a, b) => a.concat(b), []
 );
 
+const badNewlineFix			= !isWindows ? '' : `
+	find /cyph/commands -type f -exec sed -i 's/\\r//g' {} \\;
+`;
+
 const shellScripts			= {
 	agseInit: `
 		echo 'Need root for AGSE connection setup.'
@@ -155,9 +159,6 @@ const shellScripts			= {
 			[ ! -f ~/.updated ] || test "$(find ~/.updated -mtime +3)"
 		`
 	},
-	badNewlineFix: !isWindows ? '' : `
-		find /cyph/commands -type f -exec sed -i 's/\\r//g' {} \\;
-	`,
 	command: `
 		source ~/.bashrc
 		${badNewlineFix}
