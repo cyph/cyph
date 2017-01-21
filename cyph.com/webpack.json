@@ -27,14 +27,14 @@
       "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/core/src/linker/template_ref.js": 23,
       "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/forms/src/directives/control_container.js": 24,
       "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/forms/src/directives/control_value_accessor.js": 25,
-      "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/utils.js": 26,
-      "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/utils.js": 27,
-      "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/utils.js": 28,
-      "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!cyph/components/material/md-button.component.js": 29,
-      "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!cyph/directives/translate.directive.ngfactory.js": 30,
-      "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/core/src/di.js": 31,
-      "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/core/src/linker/view_container.js": 32,
-      "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/utils.js": 33,
+      "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/utils.js": 26,
+      "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/utils.js": 27,
+      "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!cyph/components/material/md-button.component.js": 28,
+      "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!cyph/directives/translate.directive.ngfactory.js": 29,
+      "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/core/src/di.js": 30,
+      "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/core/src/linker/view_container.js": 31,
+      "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/utils.js": 32,
+      "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/utils.js": 33,
       "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/utils.js": 34,
       "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/webpack/buildin/global.js": 35,
       "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!cyph/services/scroll.service.js": 36,
@@ -1208,11 +1208,9 @@
     {
       "modules": [
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/token.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/mockconsole/mockconsole.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_inline/emphasis.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_inline/strikethrough.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_inline/autolink.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_inline/balance_pairs.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_core/smartquotes.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_inline/entity.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_inline/escape.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_inline/html_inline.js",
@@ -1221,15 +1219,13 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_inline/newline.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_inline/state_inline.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_inline/text.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_inline/text_collapse.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/mdurl/decode.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/mdurl/encode.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/mdurl/format.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/mdurl/parse.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/mediastream-gain/mediastream-gain.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/edge/getusermedia.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/safari/safari_shim.js"
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rxjs/symbol/observable.js"
       ],
-      "hash": "36eb1250b34087dfcbbdd1a5e3f54b52",
+      "hash": "caef0762ea8ac9e935d2f5fcf153f688",
       "id": 0
     },
     {
@@ -1252,29 +1248,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/core/src/animation/view_animation_map.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/core/src/zone.js"
       ],
-      "hash": "ed5258d36521091122c0152e0afd4e6b",
+      "hash": "8f0066d673ede7313f184f6198e89cfb",
       "id": 1
-    },
-    {
-      "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_block/fence.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_block/heading.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_block/html_block.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_block/lheading.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_block/list.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_block/paragraph.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_block/reference.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_block/state_block.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_block/table.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_core/linkify.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_core/replacements.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_core/smartquotes.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_core/state_core.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_inline/backticks.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_inline/text_collapse.js"
-      ],
-      "hash": "ee0e867b113ebc67ba06ff38f2da17a3",
-      "id": 2
     },
     {
       "modules": [
@@ -1294,8 +1269,47 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/forms/src/directives/normalize_validator.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/forms/src/version.js"
       ],
-      "hash": "20dc7427730b0cc8dbb2809dae3cbe8a",
+      "hash": "b18906b32ea985587f0cf43c690aa58a",
+      "id": 2
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/mockconsole/mockconsole.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_block/blockquote.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_block/html_block.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_block/lheading.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_block/list.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_block/paragraph.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_block/reference.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_block/state_block.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_block/table.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_core/linkify.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_core/replacements.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_inline/autolink.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_inline/backticks.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_inline/balance_pairs.js"
+      ],
+      "hash": "89175da7d2c03a9ed651fa2767caa0b6",
       "id": 3
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/process/browser.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/nanoscroller/bin/javascripts/jquery.nanoscroller.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/mediastream-gain/mediastream-gain.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/mediastream-gain/node_modules/webrtcsupport/index-browser.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/microlight-string/microlight.min.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/punycode/punycode.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/adapter_core.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/edge/getusermedia.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/safari/safari_shim.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rxjs/SubjectSubscription.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rxjs/operator/toPromise.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rxjs/util/ObjectUnsubscribedError.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rxjs/util/isObject.js"
+      ],
+      "hash": "8017e6eafb3426ed7cbef6ba85614e8a",
+      "id": 4
     },
     {
       "modules": [
@@ -1313,8 +1327,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/core/src/metadata/di.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/core/src/metadata/ng_module.js"
       ],
-      "hash": "7b9e7e616785b0ab0d9a61bbde872e36",
-      "id": 4
+      "hash": "8f3a8e9c5417d891615fde604ae64826",
+      "id": 5
     },
     {
       "modules": [
@@ -1332,8 +1346,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/core/src/linker/element_injector.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/uc.micro/categories/Cf/regex.js"
       ],
-      "hash": "24505c02ed98d798daad48d84bd53ef5",
-      "id": 5
+      "hash": "37bf66ac9df2af52e3637fb8c8e06ec2",
+      "id": 6
     },
     {
       "modules": [
@@ -1351,8 +1365,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/common/src/pipes/slice_pipe.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/common/src/pipes/uppercase_pipe.js"
       ],
-      "hash": "6a2ff9819b56295998647ed2be3b324b",
-      "id": 6
+      "hash": "825c66f677bd17a97ac6f228ebec385c",
+      "id": 7
     },
     {
       "modules": [
@@ -1370,8 +1384,26 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!cyph/chat/enums/states.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!cyph/session/enums/castle-events.js"
       ],
-      "hash": "c9e1c94ba7cc42999d92c7af67d7378a",
-      "id": 7
+      "hash": "0c49cbdbb264251ed0a2699bb5028cfb",
+      "id": 8
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/ruler.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/index.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/parser_core.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/parser_inline.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/presets/commonmark.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/presets/default.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/presets/zero.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/renderer.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_block/fence.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_block/heading.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_core/state_core.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/mdurl/format.js"
+      ],
+      "hash": "d09b4766d987592fac9e2a4052a964c4",
+      "id": 9
     },
     {
       "modules": [
@@ -1388,25 +1420,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!cyph/components/material/md-card-title.component.ngfactory.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!cyph/session/enums/events.js"
       ],
-      "hash": "a642d97b8f0c7aaa28222933a955d16d",
-      "id": 8
-    },
-    {
-      "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/utils.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/jquery.appear/jquery.appear.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/getscreenmedia/getscreenmedia.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/adapter_core.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/chrome/getusermedia.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/firefox/getusermedia.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/getusermedia/index-browser.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/common/html_blocks.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_core/inline.js"
-      ],
-      "hash": "6540131a6f74968ba0e24ece8a4c79a3",
-      "id": 9
+      "hash": "91e034d464e490abca2c860df2dd09bc",
+      "id": 10
     },
     {
       "modules": [
@@ -1422,8 +1437,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/platform-browser/src/dom/debug/by.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/platform-browser/src/facade/browser.js"
       ],
-      "hash": "97400f30e3d97daf27ae8c92824ab3b6",
-      "id": 10
+      "hash": "ee94db5a43e2c3431fa03af46159cf04",
+      "id": 11
     },
     {
       "modules": [
@@ -1439,8 +1454,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/forms/src/forms.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/platform-browser/src/browser/tools/tools.js"
       ],
-      "hash": "a88575c8d3c125eaf6b5aaa6a4064660",
-      "id": 11
+      "hash": "aa79b9ac60195be81eb3d49d9b2f4cc2",
+      "id": 12
     },
     {
       "modules": [
@@ -1456,24 +1471,24 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!cyph/firebase-app.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rxjs/observable/fromPromise.js"
       ],
-      "hash": "2bf8ad3319720dd626b01e8a9888be98",
-      "id": 12
+      "hash": "cfa1bbe344bdcf6596f9c76cecdd8e07",
+      "id": 13
     },
     {
       "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/utils.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rxjs/Subject.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rxjs/Observable.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rxjs/Subscriber.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/chrome/getusermedia.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/firefox/getusermedia.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rxjs/SubjectSubscription.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rxjs/operator/toPromise.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rxjs/util/isObject.js"
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/utils.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/getscreenmedia/getscreenmedia.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/adapter_core.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/chrome/getusermedia.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/firefox/getusermedia.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/getusermedia/index-browser.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/adapter_core.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/uc.micro/index.js"
       ],
-      "hash": "adc2b49050fefd83fbc1a47acefe9ac2",
-      "id": 13
+      "hash": "a283a48b59cdf7989f4f34945a64c796",
+      "id": 14
     },
     {
       "modules": [
@@ -1488,8 +1503,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/upgrade/src/aot/downgrade_injectable.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/edge/getusermedia.js"
       ],
-      "hash": "0277aa5bb881d58ea8b6a905a82402c2",
-      "id": 14
+      "hash": "0205799c842d51b1570e4ff5422a84e2",
+      "id": 15
     },
     {
       "modules": [
@@ -1504,8 +1519,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/platform-browser/src/facade/collection.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/platform-browser/src/private_export.js"
       ],
-      "hash": "51ef6e911a14e7fe14cf7c000641225e",
-      "id": 15
+      "hash": "efeb6f996e2ed5bb8b8bb080db64d339",
+      "id": 16
     },
     {
       "modules": [
@@ -1520,8 +1535,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/core/src/change_detection.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/core/src/render.js"
       ],
-      "hash": "a52b723e88e9fb67d383be8e5e287baf",
-      "id": 16
+      "hash": "8d5f7c9e7f3dbc7722b2d3680f802c08",
+      "id": 17
     },
     {
       "modules": [
@@ -1536,8 +1551,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!cyph/p2p/p2p.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/common/src/common.js"
       ],
-      "hash": "f071c9998b29ae8bf99917fc743d26a7",
-      "id": 17
+      "hash": "786b0ad2aee6a45840e1c2ef6570d81d",
+      "id": 18
     },
     {
       "modules": [
@@ -1552,8 +1567,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!cyph/files/transfer.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rxjs/util/isArray.js"
       ],
-      "hash": "66d9ef4db26ea110fc2d37615085f680",
-      "id": 18
+      "hash": "b561078281408de01c41604bcd3e1c67",
+      "id": 19
     },
     {
       "modules": [
@@ -1568,8 +1583,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!cyph/components/material/md-menu.component.ngfactory.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/helpers/index.js"
       ],
-      "hash": "536877df88cc8530366037ef4a56191a",
-      "id": 19
+      "hash": "fa396d1ce74113ec4d244becd73e7e13",
+      "id": 20
     },
     {
       "modules": [
@@ -1584,23 +1599,38 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!externals/firebase.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!externals/libsodium.js"
       ],
-      "hash": "901f15b2489a4b1cbae8250048d2a83f",
-      "id": 20
+      "hash": "261a7c7f15880ae800888541ce67dd6e",
+      "id": 21
     },
     {
       "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/webpack/buildin/global.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/simplewebrtc/simplewebrtc.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/sodiumutil/dist/sodiumutil.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/tab-indent/js/tabIndent.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/traceablepeerconnection/index.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/chrome/getusermedia.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rxjs/Subscription.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/sdp-jingle-json/lib/senders.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rtcpeerconnection/rtcpeerconnection.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rxjs/util/toSubscriber.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rxjs/util/tryCatch.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/sdp-jingle-json/index.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/adapter_core.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/edge/getusermedia.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/safari/safari_shim.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/util/support/isBufferBrowser.js"
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/util/node_modules/inherits/inherits_browser.js"
       ],
-      "hash": "bf7b38e33be5cf72243d687a37d35869",
-      "id": 21
+      "hash": "d639d275ece320fe7a19199b11770153",
+      "id": 22
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/utils.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rxjs/Subject.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rxjs/Observable.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/chrome/getusermedia.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/firefox/getusermedia.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rxjs/observable/PromiseObservable.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rxjs/util/UnsubscriptionError.js"
+      ],
+      "hash": "01ab9c931b513302ed041b7e384b52b7",
+      "id": 23
     },
     {
       "modules": [
@@ -1612,10 +1642,10 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/linkify-it/index.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/linkify-it/lib/re.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it-emoji/lib/replace.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/helpers/parse_link_destination.js"
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it-sup/index.js"
       ],
-      "hash": "190b70cada616a02f841c7246e3dfd4e",
-      "id": 22
+      "hash": "cdd89f0ea2c631bb4b06dd346fe322d8",
+      "id": 24
     },
     {
       "modules": [
@@ -1629,8 +1659,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/adapter_core.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/chrome/getusermedia.js"
       ],
-      "hash": "a6894f6be5fd74c882c2ce718f555726",
-      "id": 23
+      "hash": "d90dd324e6cbbdd8787d57197e7c8200",
+      "id": 25
     },
     {
       "modules": [
@@ -1644,8 +1674,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/forms/src/form_providers.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/platform-browser/src/browser/location/history.js"
       ],
-      "hash": "6fc1df66821ed9ace78febc817263334",
-      "id": 24
+      "hash": "73ebdb93fd35f60fa52f3b764c1f02c0",
+      "id": 26
     },
     {
       "modules": [
@@ -1659,8 +1689,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/forms/src/private_import_core.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/core/src/profile/wtf_impl.js"
       ],
-      "hash": "45112d62a57439d4c12af3f078408814",
-      "id": 25
+      "hash": "25b855e51af7e562bcd249517d2be031",
+      "id": 27
     },
     {
       "modules": [
@@ -1674,8 +1704,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/core/src/metadata/directives.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/core/src/platform_core_providers.js"
       ],
-      "hash": "1b73dfd696494b788b7c9e7964d0ad89",
-      "id": 26
+      "hash": "91ab14593a02fd8bd49870175041859a",
+      "id": 28
     },
     {
       "modules": [
@@ -1689,8 +1719,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/common/src/location/hash_location_strategy.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/common/src/location/path_location_strategy.js"
       ],
-      "hash": "f7615e642580486c06e5ad2b522fe7a8",
-      "id": 27
+      "hash": "7a65c4e90d91443833de2daad72211ab",
+      "id": 29
     },
     {
       "modules": [
@@ -1704,8 +1734,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!cyph/components/material/md-subheader.component.ngfactory.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!cyph/components/material/md-tabs.component.ngfactory.js"
       ],
-      "hash": "8d415e3876a8e0e0e86150a1c228a688",
-      "id": 28
+      "hash": "9f63479befdb6ec44121e392242095b1",
+      "id": 30
     },
     {
       "modules": [
@@ -1719,50 +1749,50 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!cyph/components/material/md-select.component.ngfactory.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/core/src/util.js"
       ],
-      "hash": "3ff3068a9d40329fdc5b4ad2c134009d",
-      "id": 29
-    },
-    {
-      "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rxjs/util/root.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/sdp-jingle-json/lib/senders.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rtcpeerconnection/rtcpeerconnection.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rxjs/observable/PromiseObservable.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rxjs/util/toSubscriber.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/sdp-jingle-json/index.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/sdp-jingle-json/lib/parsers.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/util/node_modules/inherits/inherits_browser.js"
-      ],
-      "hash": "f556c8258f70373a8c3ee7ea7d1af123",
-      "id": 30
-    },
-    {
-      "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/process/browser.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/nanoscroller/bin/javascripts/jquery.nanoscroller.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/mediastream-gain/node_modules/webrtcsupport/index-browser.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/microlight-string/microlight.min.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/punycode/punycode.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/adapter_core.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rxjs/symbol/observable.js"
-      ],
-      "hash": "56d281690f52de44f0fb3dae76043f6c",
+      "hash": "a140f3e7c550759bdd2b838102a9ca6a",
       "id": 31
     },
     {
       "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/ruler.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/index.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/parser_inline.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/presets/zero.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/renderer.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_block/blockquote.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_block/code.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_block/hr.js"
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/utils.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/webpack/buildin/global.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/util/util.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/webrtcsupport/index-browser.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/uc.micro/categories/P/regex.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/chrome/getusermedia.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js"
       ],
-      "hash": "e5aae61a7890a835a21c01062e640952",
+      "hash": "3ef1c0425f92e762ad31dcacdcbbee6b",
       "id": 32
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/sdp/sdp.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/webpack/buildin/module.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/sdp-jingle-json/lib/parsers.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/sdp-jingle-json/lib/tojson.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/sdp-jingle-json/lib/tosdp.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/simplewebrtc/peer.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/safari/safari_shim.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/util/support/isBufferBrowser.js"
+      ],
+      "hash": "3e3d0e8a22ae25382b89808d1faa501c",
+      "id": 33
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/common/utils.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/common/html_re.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/magnific-popup/dist/jquery.magnific-popup.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/localmedia/index.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/helpers/parse_link_destination.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/helpers/parse_link_label.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/helpers/parse_link_title.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_block/code.js"
+      ],
+      "hash": "04f07f5f94a6e3852df800a8b41afa7a",
+      "id": 34
     },
     {
       "modules": [
@@ -1773,10 +1803,10 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/getscreenmedia/node_modules/getusermedia/getusermedia.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/edge/getusermedia.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/safari/safari_shim.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_core/block.js"
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_core/inline.js"
       ],
-      "hash": "9bc788963d1477ae397a46fedc2f174c",
-      "id": 33
+      "hash": "4fb835c090b3ddb4c72f445711585ef3",
+      "id": 35
     },
     {
       "modules": [
@@ -1789,8 +1819,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/forms/src/directives.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/forms/index.js"
       ],
-      "hash": "99a86c3c6a82c601b7cc4f6243adf0d1",
-      "id": 34
+      "hash": "387ecb7a938691320c8dbb754361676e",
+      "id": 36
     },
     {
       "modules": [
@@ -1803,8 +1833,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/core/src/core.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/core/src/core_private_export.js"
       ],
-      "hash": "302985e8383a0800d20a82db2dac30b2",
-      "id": 35
+      "hash": "32f8b4c79eb5bc7b001dc5b18e95de3c",
+      "id": 37
     },
     {
       "modules": [
@@ -1817,21 +1847,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!cyph.com/enums/page-titles.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/angular-animate/index.js"
       ],
-      "hash": "f70b648cd4dfef44f70667ce3f1e40f0",
-      "id": 36
-    },
-    {
-      "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/utils.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/wildemitter/wildemitter.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/util/util.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/webrtcsupport/index-browser.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/whatwg-fetch/fetch.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/firefox/firefox_shim.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/firefox/getusermedia.js"
-      ],
-      "hash": "fb3f3e7e26c1f756d924089b6695ed2e",
-      "id": 37
+      "hash": "10feaed512787d58d864db853f42daf6",
+      "id": 38
     },
     {
       "modules": [
@@ -1843,8 +1860,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/platform-browser/src/private_import_core.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/platform-browser/src/platform-browser.js"
       ],
-      "hash": "6a36cf35f7d092e88d84a315cf637c6c",
-      "id": 38
+      "hash": "e70b24ae20712bf8d8106928110441da",
+      "id": 39
     },
     {
       "modules": [
@@ -1856,8 +1873,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/forms/src/directives/select_multiple_control_value_accessor.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/platform-browser/src/version.js"
       ],
-      "hash": "454203d4c8a05ff42abff96098e81660",
-      "id": 39
+      "hash": "e10b7a18ee073cd9282a38b366fecda6",
+      "id": 40
     },
     {
       "modules": [
@@ -1869,8 +1886,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!cyph/services/virtual-keyboard-watcher.service.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!cyph/services/url-state.service.js"
       ],
-      "hash": "4bfab1923a3fbfc98f112d764c0d8314",
-      "id": 40
+      "hash": "a8deb0c91d9a9bb85a1b8bacda894845",
+      "id": 41
     },
     {
       "modules": [
@@ -1882,8 +1899,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/uc.micro/categories/Z/regex.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/common/src/private_import_core.js"
       ],
-      "hash": "02df9448edc2006b524ccdeb5817383a",
-      "id": 41
+      "hash": "6f11b5e29e3f92ece3a178c74b556656",
+      "id": 42
     },
     {
       "modules": [
@@ -1895,8 +1912,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!cyph/session/enums/rpc-events.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it-emoji/lib/render.js"
       ],
-      "hash": "a362f74dcadc4f1ac5b86ca22f4489cc",
-      "id": 42
+      "hash": "c44d38afd32d28a75b95f5f7f27fd7ed",
+      "id": 43
     },
     {
       "modules": [
@@ -1908,31 +1925,19 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/angular-aria/index.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/index.js"
       ],
-      "hash": "5cdab8147aa7a42ae12e0e097da7afd3",
-      "id": 43
-    },
-    {
-      "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/sdp/sdp.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/sdp-jingle-json/lib/tojson.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/sdp-jingle-json/lib/tosdp.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/simplewebrtc/peer.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/simplewebrtc/webrtc.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/adapter_core.js"
-      ],
-      "hash": "2ea660dfb7a882869dcfc391b0fff2b0",
+      "hash": "48e1a5d106e95869f6826cbab2c711d5",
       "id": 44
     },
     {
       "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/common/utils.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/magnific-popup/dist/jquery.magnific-popup.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/localmedia/index.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/helpers/parse_link_label.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/helpers/parse_link_title.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/parser_block.js"
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/simplewebrtc/simplewebrtc.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/simplewebrtc/webrtc.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/sodiumutil/dist/sodiumutil.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/tab-indent/js/tabIndent.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/traceablepeerconnection/index.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/firefox/getusermedia.js"
       ],
-      "hash": "ee206618ab042a995793bcfd7bfff7f9",
+      "hash": "5276ad95daededfadf235a3aab8eb906",
       "id": 45
     },
     {
@@ -1942,9 +1947,9 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/attachmediastream/node_modules/webrtc-adapter/src/js/safari/safari_shim.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/edge/getusermedia.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/safari/safari_shim.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/uc.micro/index.js"
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_core/block.js"
       ],
-      "hash": "deb22e5cb5487ca03f614267382dd5cf",
+      "hash": "cefd444198798e37655f498af1e24d23",
       "id": 46
     },
     {
@@ -1968,7 +1973,7 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!cyph/crypto/potassium/native-crypto/password-hash.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/core/src/animation/animation_keyframe.js"
       ],
-      "hash": "2f5bbd73dcbdab2ac2c4090a0d241810",
+      "hash": "a3e0bf96f731f1e73a32d8a70032936e",
       "id": 48
     },
     {
@@ -1980,41 +1985,19 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!cyph/components/checkout.component.ngfactory.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!cyph/components/material/md-card-header-text.component.ngfactory.js"
       ],
-      "hash": "06bbd4a300a910b14ae1cae5249763a4",
+      "hash": "92d6bf165c2f511df52fc79b3ad3ee08",
       "id": 49
     },
     {
       "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rxjs/Subscription.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/edge/edge_shim.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rxjs/util/ObjectUnsubscribedError.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rxjs/util/UnsubscriptionError.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rxjs/util/tryCatch.js"
-      ],
-      "hash": "2a89521eb13981432b30d9cc0cf5c86c",
-      "id": 50
-    },
-    {
-      "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/lodash.clonedeep/index.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/parser_core.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/presets/commonmark.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/presets/default.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/edge/edge_shim.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it-emoji/lib/normalize_opts.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/common/html_blocks.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_core/normalize.js"
       ],
-      "hash": "7eab0d2099daf01d579ee2888acbd645",
-      "id": 51
-    },
-    {
-      "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/edge/edge_shim.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/adapter_core.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/chrome/getusermedia.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it-emoji/lib/data/shortcuts.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it-emoji/lib/normalize_opts.js"
-      ],
-      "hash": "c0e8f4de3d267f270a4c25db70959bb5",
-      "id": 52
+      "hash": "77ead608434010c7fdffdb20c60c0722",
+      "id": 50
     },
     {
       "modules": [
@@ -2024,8 +2007,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rxjs/symbol/rxSubscriber.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/core/src/debug/debug_renderer.js"
       ],
-      "hash": "865ef461f6ab8adda90187c6975a367e",
-      "id": 53
+      "hash": "1cc36ac5b68abd86ce0c61c8635b1387",
+      "id": 51
     },
     {
       "modules": [
@@ -2035,8 +2018,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/core/src/animation/metadata.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/core/src/change_detection/differs/default_keyvalue_differ.js"
       ],
-      "hash": "864a81bccd46a1c27bf4d1ac2d8cdc25",
-      "id": 54
+      "hash": "b488edcc66a45450d475a86ccfe92721",
+      "id": 52
     },
     {
       "modules": [
@@ -2046,8 +2029,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/common/src/directives/ng_style.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/common/src/directives/ng_template_outlet.js"
       ],
-      "hash": "cffd137c1c8e15e12cf1fd3b1895df8a",
-      "id": 55
+      "hash": "af6ac55d01137938977a0d6e29df69e0",
+      "id": 53
     },
     {
       "modules": [
@@ -2057,28 +2040,18 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/common/src/directives/ng_for.ngfactory.js",
         "../../../../../node_modules/webpack/buildin/amd-define.js"
       ],
-      "hash": "bdb318f52bc63a90648957ab1d23ed76",
-      "id": 56
+      "hash": "cf229972cf204548bc7973cb47e0b02e",
+      "id": 54
     },
     {
       "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/uc.micro/categories/P/regex.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/webpack/buildin/module.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/edge/edge_shim.js"
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/jquery.appear/jquery.appear.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/getscreenmedia/node_modules/webrtc-adapter/src/js/edge/edge_shim.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/chrome/getusermedia.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it-emoji/lib/data/shortcuts.js"
       ],
-      "hash": "acffeb2fcc820489ce120252fdcba0df",
-      "id": 57
-    },
-    {
-      "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/common/html_re.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/edge/edge_shim.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it-sup/index.js"
-      ],
-      "hash": "35451e1c86c333727cfd2ee4d17319f8",
-      "id": 58
+      "hash": "d75dbf89e31b3f7796ec05e210635e6e",
+      "id": 55
     },
     {
       "modules": [
@@ -2087,8 +2060,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/file-saver/FileSaver.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it-emoji/index.js"
       ],
-      "hash": "494a38cc4dca3ef85a81f8d760df97a6",
-      "id": 59
+      "hash": "f28da4f5089cad85be3fe79cb6e404e8",
+      "id": 56
     },
     {
       "modules": [
@@ -2097,8 +2070,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/common/src/directives/index.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!cyph/files/files.js"
       ],
-      "hash": "720ae02cd5566247396d84bdd36a381a",
-      "id": 60
+      "hash": "17d3d7955a56d336dc27dc5dc455925e",
+      "id": 57
     },
     {
       "modules": [
@@ -2107,8 +2080,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!cyph/components/material/md-card-header.component.ngfactory.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!cyph/services/abstract-session-init.service.js"
       ],
-      "hash": "6495d3ba05fbed671a1265c2b56e62cd",
-      "id": 61
+      "hash": "ac03a1f74e7d099aba99b7dbc0fc4c42",
+      "id": 58
     },
     {
       "modules": [
@@ -2117,8 +2090,8 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!cyph/components/contact.component.ngfactory.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/common/src/version.js"
       ],
-      "hash": "c7c2d1dce080fefd024fc250e830780c",
-      "id": 62
+      "hash": "7e5606a95cbee4808013cbef7672734f",
+      "id": 59
     },
     {
       "modules": [
@@ -2127,7 +2100,34 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!cyph/components/markdown.component.ngfactory.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!node_modules/@angular/common/src/location/index.js"
       ],
-      "hash": "d11ec0d35bad33d5c3bd578ef7f4c091",
+      "hash": "5acb958c9d1e9a233b4369cd3629260e",
+      "id": 60
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/wildemitter/wildemitter.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/wowjs/dist/wow.js",
+        "../../../../../node_modules/markdown-it-emoji/lib/data/full.json"
+      ],
+      "hash": "4bcac98b9f155bb3df65cafa41c1e6ff",
+      "id": 61
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rxjs/util/root.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rxjs/Subscriber.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/edge/edge_shim.js"
+      ],
+      "hash": "90a7fd5a7f08e673be30e2c2249c8e41",
+      "id": 62
+    },
+    {
+      "modules": [
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/lodash.clonedeep/index.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/parser_block.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_block/hr.js"
+      ],
+      "hash": "cf7e3e27cd9662eeb292ccd8f5b619df",
       "id": 63
     },
     {
@@ -2141,17 +2141,17 @@
     },
     {
       "modules": [
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/zone.js/dist/zone.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/wowjs/dist/wow.js"
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/whatwg-fetch/fetch.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/traceablepeerconnection/node_modules/webrtc-adapter/src/js/edge/edge_shim.js"
       ],
-      "hash": "c5067ee57987d051aa3d1ab442f583d9",
+      "hash": "788f905fe9a6ee0cf1b199bd4a8d592b",
       "id": 65
     },
     {
       "modules": [
-        "../../../../../node_modules/entities/maps/entities.json"
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/zone.js/dist/zone.js"
       ],
-      "hash": "55455d4268deccca76a5053a92cb91b8",
+      "hash": "855bdb834c2d43afbaae0a21a6946119",
       "id": 67
     },
     {
@@ -2165,14 +2165,14 @@
       "modules": [
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/angular-material/angular-material.js"
       ],
-      "hash": "ed7d51fbf0b10ecaaedb3c8d9f275765",
+      "hash": "591549a526b4cd6f2b7ed60f8a1474fb",
       "id": 69
     },
     {
       "modules": [
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!translations.js"
       ],
-      "hash": "eeed1f3ecb4bbc7077178ac0ea48d195",
+      "hash": "ebb067842a2efa1766a0f0140f7b4cf7",
       "id": 70
     },
     {
@@ -2186,28 +2186,28 @@
       "modules": [
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!cyph/components/signup-form.component.ngfactory.js"
       ],
-      "hash": "b8599fecb062663c8d9ebe30830d02bd",
+      "hash": "5cf2ad50073d06a8570248e8a19af477",
       "id": 72
     },
     {
       "modules": [
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!cyph/components/chat-message-box.component.ngfactory.js"
       ],
-      "hash": "3a8395006e4396e85573cbf5872d0ee4",
+      "hash": "01343fc8f15857b089741877e495dd5d",
       "id": 73
     },
     {
       "modules": [
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!cyph/components/chat-main.component.ngfactory.js"
       ],
-      "hash": "32280fb6c25f5d2e7226cfd7698a2ab6",
+      "hash": "9e3d7e6053a70c49f16cd31f2375d52e",
       "id": 74
     },
     {
       "modules": [
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!cyph.com/app.component.ngfactory.js"
       ],
-      "hash": "0ddef2db55a762468eb96d116961ab79",
+      "hash": "02db18724d1d65ac50acccafe324ffb4",
       "id": 75
     }
   ]
