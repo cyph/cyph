@@ -39,7 +39,7 @@
     "browserify": "^13.3.0",
     "browserstack": "^1.5.0",
     "cheerio": "^0.22.0",
-    "clean-css": "^3.4.23",
+    "clean-css": "^3.4.24",
     "clipboard-js": "^0.3.2",
     "codelyzer": "^2.0.0-beta.4",
     "core-js": "^2.4.1",
