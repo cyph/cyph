@@ -97,6 +97,16 @@ body.telehealth {
 	.abort-screen .image {
 		display: none;
 	}
+
+	.chat-main.video .video-call.active.playing ~ .message-list {
+		background-color: rgba(187, 168, 223, 0.8) !important;
+	}
+
+	span.message-timestamp.flex,
+	cyph-markdown.message-text.app-message p {
+		color: #f3f3f3 !important;
+	}
+
 }
 
 body.telehealth:not(.mobile) {
