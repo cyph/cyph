@@ -84,7 +84,11 @@ const isAgseDeploy			=
 
 const image					= 'cyph/' + (
 	spawn('git', ['describe', '--tags', '--exact-match']) ||
-	spawn('git', ['branch']).split(/\s+/)[1].toLowerCase()
+	spawn('git', ['branch']).
+		split('\n').
+		filter(s => s.indexOf('*') === 0)[0].
+		split(/\s+/)[1].
+		toLowerCase()
 );
 
 const mounts				= [
@@ -337,6 +341,7 @@ if (isWindows && isAgseDeploy) {
 	throw new Error('AGSE not yet supported on Windows.');
 }
 
+let exitCleanup	= () => {};
 let initPromise	= Promise.resolve();
 
 switch (args.command) {
@@ -350,6 +355,7 @@ switch (args.command) {
 		commandAdditionalArgs.push('-p');
 		commandAdditionalArgs.push('31337:31337/udp');
 
+		exitCleanup	= () => fs.appendFileSync(agseTempFile);
 		initPromise	= runScript(shellScripts.agseInit);
 		break;
 
@@ -410,6 +416,10 @@ switch (args.command) {
 		}
 }
 
+process.on('exit', exitCleanup);
+process.on('SIGINT', exitCleanup);
+process.on('uncaughtException', exitCleanup);
+
 initPromise.then(() => {
 	if (!commandScriptExists) {
 		return;
@@ -417,19 +427,11 @@ initPromise.then(() => {
 
 	backup();
 
-	pullUpdates().then(() =>
-		dockerRun(
-			shellScripts.command,
-			containerName(args.command),
-			args.background,
-			false,
-			commandAdditionalArgs
-		)
-	).catch(err => {
-		console.error(err);
-	}).then(() => {
-		if (isAgseDeploy) {
-			fs.appendFileSync(agseTempFile);
-		}
-	});
+	pullUpdates().then(() => dockerRun(
+		shellScripts.command,
+		containerName(args.command),
+		args.background,
+		false,
+		commandAdditionalArgs
+	));
 });
