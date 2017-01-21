@@ -155,14 +155,19 @@ const shellScripts			= {
 			[ ! -f ~/.updated ] || test "$(find ~/.updated -mtime +3)"
 		`
 	},
+	badNewlineFix: !isWindows ? '' : `
+		find /cyph/commands -type f -exec sed -i 's/\\r//g' {} \\;
+	`,
 	command: `
 		source ~/.bashrc
+		${badNewlineFix}
 		/cyph/commands/${args.command}.sh ${
 			process.argv.slice(3).filter(s => s !== '--background').join(' ')
 		}
 	`,
 	getLibs: `
 		source ~/.bashrc
+		${badNewlineFix}
 		/cyph/commands/getlibs.sh
 	`,
 	libUpdate: {
