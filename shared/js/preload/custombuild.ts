@@ -3,6 +3,9 @@
  */
 
 
+import * as $ from 'jquery';
+
+
 customBuild			= $('meta[name="custom-build"]').attr('content');
 customBuildFavicon	= $('meta[name="custom-build-favicon"]').attr('content');
 

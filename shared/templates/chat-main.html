@@ -16,7 +16,7 @@
 			<div></div>
 		</div>
 		<div *ngIf='sessionService.apiFlags.telehealth' class='telehealth-logo'>
-			<img src='/img/icons/logo.telehealth.icon.png'/>
+			<img src='/img/icons/logo.telehealth.icon.png' alt='Telehealth logo' />
 		</div>
 		<span cyphTranslate>Initiating key exchange...</span>
 		<md2-progress-linear
@@ -33,7 +33,12 @@
 	>
 		<div class='flex'></div>
 		<div class='image'>
-			<img *ngIf='!sessionService.apiFlags.telehealth' src='/img/walken.png' alt='Definitely not Christopher Walken' cyphTranslate />
+			<img
+				*ngIf='!sessionService.apiFlags.telehealth'
+				src='/img/walken.png'
+				alt='Definitely not Christopher Walken'
+				cyphTranslate
+			/>
 		</div>
 		<div *ngIf='!sessionService.apiFlags.telehealth'>
 			<span cyphTranslate>This cyph has been aborted.</span>
@@ -42,22 +47,28 @@
 			<a
 				cyphTranslate
 				target='_self'
-				[href]='envService.newCyphUrl + "/"'
+				[href]='envService.newCyphUrlRedirect'
 			>try again</a>.
 		</div>
 		<div *ngIf='sessionService.apiFlags.telehealth'>
 			<span cyphTranslate>This telehealth session has been aborted.</span>
 			<br />
 			<div *ngIf='sessionService.state.isAlice'>
-				<span cyphTranslate> If this was a mistake or error, you may generate a new link and </span>
+				<span cyphTranslate>
+					If this was a mistake or error,
+					you may generate a new link and
+				</span>
 				<a
 					cyphTranslate
 					target='_self'
-					[href]='envService.newCyphUrl + "/"'
+					[href]='envService.newCyphUrlRedirect'
 				>try again</a>.
 			</div>
 			<div *ngIf='!sessionService.state.isAlice'>
-				<span cyphTranslate> If this was a mistake or error, your practitoner will send you a new link.</span>
+				<span cyphTranslate>
+					If this was a mistake or error,
+					your practitoner will send you a new link.
+				</span>
 			</div>
 		</div>		
 		<div class='flex'></div>
@@ -70,7 +81,7 @@
 		<div class='flex'></div>
 		<div *ngIf='!sessionService.apiFlags.telehealth' class='logo-animation connected'></div>
 		<div *ngIf='sessionService.apiFlags.telehealth' class='telehealth-logo'>
-			<img src='/img/icons/logo.telehealth.icon.png'/>
+			<img src='/img/icons/logo.telehealth.icon.png' alt='Telehealth logo' />
 		</div>
 		<span cyphTranslate>Securely Connected!</span>
 		<md2-progress-linear
@@ -99,6 +110,7 @@
 			class='friend'
 			[hidden]='p2pService.p2p.incomingStream.video || p2pService.p2p.loading'
 			src='/img/voicecall.jpg'
+			alt='Voice call'
 		/>
 		<video
 			class='me'

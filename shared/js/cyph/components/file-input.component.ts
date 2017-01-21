@@ -1,4 +1,5 @@
 import {Component, ElementRef, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import * as $ from 'jquery';
 import {EnvService} from '../services/env.service';
 import {util} from '../util';
 

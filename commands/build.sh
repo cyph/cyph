@@ -4,8 +4,6 @@ outputDir="$PWD"
 cd $(cd "$(dirname "$0")"; pwd)/..
 rootDir="$PWD"
 
-./commands/getlibs.sh
-
 
 cloneworkingdir=''
 test=''
@@ -38,40 +36,24 @@ if [ "${cloneworkingdir}" -o "${test}" -o "${watch}" -o "${outputDir}" == "${roo
 	outputDir="${rootDir}/shared"
 fi
 
-if [ "${cloneworkingdir}" ] ; then
-	mkdir ~/.build
-	cp -rf * ~/.build/
-	cd ~/.build
-fi
-
-tsfiles="$( \
-	{ \
-		find ${tsfilesRoot} -name '*.html' -not \( \
-			-path "${tsfilesRoot}/.build/*" \
-			-path "${tsfilesRoot}/.nativebuild/*" \
-			-or -path "${tsfilesRoot}/default/*" \
-			-or -path "${tsfilesRoot}/shared/templates/native/*" \
-			-or -path "${tsfilesRoot}/websign/*" \
-			-or -path '*/lib/*' \
-			-or -path '*/pack/*' \
-			-or -name '.index.html' \
-		\) -exec cat {} \; | \
-			grep -oP "src=(['\"])/js/.*?\1" \
-		& \
+tsfiles="$(
+	{
+		cat cyph.com/*.html cyph.im/*.html | grep -oP "src=(['\"])/js/.*?\1";
 		find ${outputDir}/js -name '*.ts' -not \( \
 			-name '*.ngfactory.ts' \
 			-or -name '*.ngmodule.ts' \
 		\) -exec cat {} \; |
 			grep -oP "importScripts\((['\"])/js/.*\1\)" \
-		& \
-		echo cyph/analytics; \
+		;
+		echo cyph/analytics;
 	} | \
-		perl -pe "s/.*?['\"]\/js\/(.*)\.js.*/\1/g" | \
-		sort | \
-		uniq | \
-		grep -v 'Binary file' | \
-		grep -vP '^preload/global$' | \
-		grep -vP '^typings$' \
+		perl -pe "s/.*?['\"]\/js\/(.*)\.js.*/\1/g" |
+		grep -v 'Binary file' |
+		grep -vP '^preload/global$' |
+		grep -vP '^typings$' |
+		xargs -I% bash -c "ls '${outputDir}/js/%.ts' > /dev/null 2>&1 && echo '%'" |
+		sort |
+		uniq
 )"
 
 cd shared
@@ -101,25 +83,25 @@ webpackname () {
 }
 
 tsbuild () {
-	tmpdir="$(mktemp -d)"
-	tmpjsdir="${tmpdir}/js"
-	currentdir="../../..${PWD}"
-	gettmpdir=''
-	logtmpdir=''
-	returntmpdir=''
+	tmpDir="$(mktemp -d)"
+	tmpJsDir="${tmpDir}/js"
+	currentDir="$(realpath --relative-to="${tmpJsDir}" "${PWD}")"
+	getTmpDir=''
+	logTmpDir=''
+	returnTmpDir=''
 
 	if [ "${1}" == '--log-tmp-dir' ] ; then
 		shift
-		logtmpdir=true
-		returntmpdir=true
+		logTmpDir=true
+		returnTmpDir=true
 	elif [ "${1}" == '--get-tmp-dir' ] ; then
 		shift
-		gettmpdir=true
-		returntmpdir=true
-		echo "${tmpjsdir}"
+		getTmpDir=true
+		returnTmpDir=true
+		echo "${tmpJsDir}"
 	fi
 
-	cp -rL .. "${tmpdir}/"
+	cp -rf .. "${tmpDir}/"
 
 	node -e "
 		const tsconfig	= JSON.parse(
@@ -129,51 +111,53 @@ tsbuild () {
 				join('\n')
 		);
 
+		/* Temporary, pending TS 2.1 */
 		tsconfig.compilerOptions.alwaysStrict		= undefined;
-		tsconfig.compilerOptions.noUnusedParameters	= undefined;
-
-		/* Pending TS 2.1 */
 		tsconfig.compilerOptions.lib				= undefined;
+		tsconfig.compilerOptions.target				= 'es2015';
+
+		/* For Angular AOT */
+		tsconfig.compilerOptions.noUnusedParameters	= undefined;
 
 		$(test "${watch}" && echo "
 			tsconfig.compilerOptions.lib			= undefined;
 			tsconfig.compilerOptions.target			= 'es2015';
 		")
 
-		$(test "${returntmpdir}" && echo "
+		$(test "${returnTmpDir}" && echo "
 			tsconfig.compilerOptions.outDir			= '.';
 		")
 
-		$(test "${returntmpdir}" || echo "
-			tsconfig.compilerOptions.outDir			= '${currentdir}';
-			tsconfig.angularCompilerOptions.genDir	= '${currentdir}';
+		$(test "${returnTmpDir}" || echo "
+			tsconfig.compilerOptions.outDir			= '${currentDir}';
+			tsconfig.angularCompilerOptions.genDir	= '${currentDir}';
 		")
 
-		tsconfig.files	= 'typings/global.d typings/libs.d ${*}'.
+		tsconfig.files	= 'typings/index.d ${*}'.
 			trim().
 			split(/\s+/).
 			map(f => f + '.ts')
 		;
 
 		fs.writeFileSync(
-			'${tmpjsdir}/tsconfig.json',
+			'${tmpJsDir}/tsconfig.json',
 			JSON.stringify(tsconfig)
 		);
 	"
 
-	cd "${tmpjsdir}"
+	cd "${tmpJsDir}"
 
-	if [ "${watch}" ] && [ ! "${gettmpdir}" ] ; then
-		ngc -p .
+	if [ "${watch}" ] && [ ! "${getTmpDir}" ] ; then
+		./node_modules/.bin/ngc -p .
 	else
-		output="${output}$(ngc -p . 2>&1)"
+		output="${output}$(./node_modules/.bin/ngc -p . 2>&1)"
 	fi
 
-	cd "${currentdir}"
+	cd "${currentDir}"
 
-	if [ "${logtmpdir}" ] ; then
+	if [ "${logTmpDir}" ] ; then
 		for f in ${*} ; do
-			echo "${tmpjsdir}" > "${f}.tmpdir"
+			echo "${tmpJsDir}" > "${f}.tmpdir"
 		done
 	fi
 }
@@ -182,10 +166,7 @@ compile () {
 	cd "${outputDir}"
 
 	if [ "${cloneworkingdir}" ] ; then
-		find . -mindepth 1 -maxdepth 1 -type d -not -name lib -exec bash -c '
-			rm -rf ~/.build/shared/{} 2> /dev/null;
-			cp -a {} ~/.build/shared/;
-		' \;
+		../commands/copyworkspace.sh --client-only ~/.build
 		cd ~/.build/shared
 	fi
 
@@ -206,7 +187,7 @@ compile () {
 	cd js
 
 	if [ "${test}" ] ; then
-		output="${output}$(../../commands/tslint.sh 2>&1)"
+		output="${output}$(../../commands/lint.sh 2>&1)"
 	else
 		find . -type f -name '*.js' -exec rm {} \;
 
@@ -229,6 +210,23 @@ compile () {
 					}, {})
 			)};
 		`.trim())' > translations.js
+
+		mkdir externals
+		echo 'module.exports = self.angular;' > externals/angular.js
+		echo 'module.exports = self.firebase;' > externals/firebase.js
+		echo 'module.exports = self.jQuery;' > externals/jquery.js
+		echo 'module.exports = {sodium: self.sodium};' > externals/libsodium.js
+		echo 'module.exports = {mceliece: self.mceliece};' > externals/mceliece.js
+		echo 'module.exports = {ntru: self.ntru};' > externals/ntru.js
+		echo 'module.exports = {rlwe: self.rlwe};' > externals/rlwe.js
+		echo 'module.exports = {sidh: self.sidh};' > externals/sidh.js
+		echo 'module.exports = {sphincs: self.sphincs};' > externals/sphincs.js
+		echo 'module.exports = {superSphincs: self.superSphincs};' > externals/supersphincs.js
+	fi
+
+	if [ ! -d node_modules ] ; then
+		mkdir node_modules
+		cp -rf /node_modules/.bin /node_modules/@angular node_modules/
 	fi
 
 	nonmainfiles="$(echo "${tsfiles}" | grep -vP '/main$')"
@@ -270,18 +268,26 @@ compile () {
 		> "${outputDir}/js/preload/global.js"
 		rm preload/global.js.tmp
 
-		mangleExcept="$(
-			test "${minify}" && node -e "console.log(JSON.stringify('$(
-				find . -name '*.js' -not \( \
+		if [ "${minify}" ] ; then
+			for d in . "${outputDir}/js" ; do
+				find "${d}" -name '*.js' -not \( \
 					-name '*.ngfactory.js' \
 					-or -name '*.ngmodule.js' \
 				\) -exec cat {} \; |
-					grep -oP '[A-Za-z_$][A-Za-z0-9_$]*' |
-					sort |
-					uniq |
-					tr '\n' ' '
-			)'.trim().split(/\s+/)))"
-		)"
+					grep -oP '[A-Za-z_$][A-Za-z0-9_$]*'
+			done |
+				sort |
+				uniq |
+				tr '\n' ' ' \
+			> /tmp/mangle
+
+			node -e "fs.writeFileSync(
+				'/tmp/mangle.json',
+				JSON.stringify(
+					fs.readFileSync('/tmp/mangle').toString().trim().split(/\s+/)
+				)
+			)"
+		fi
 
 		for f in $tsfiles ; do
 			m="$(modulename "${f}")"
@@ -294,26 +300,66 @@ compile () {
 
 			if [ "${watch}" ] ; then
 				{
-					waitForTmpdir () {
+					waitForTmpDir () {
 						while [ ! -f "${f}.tmpdir" ] ; do
 							sleep 1
 						done
 					}
 
-					currentdir="${PWD}"
+					currentDir="${PWD}"
 
 					if [ "${m}" == 'Main' ] ; then
 						cp -f "${htmlinput}" "${htmloutput}"
 					fi
 
-					waitForTmpdir
+					waitForTmpDir
 					cd "$(cat "${f}.tmpdir")"
 
-					webpack \
-						--output-library-target var \
-						--output-library "${m}" \
-						"${f}.js" \
-						"${currentdir}/${f}.js.tmp"
+					cat > "${f}.webpack.js" <<- EOM
+						const webpack	= require('webpack');
+
+						module.exports	= {
+							entry: {
+								app: './${f}'
+							},
+							/*
+								externals: {
+									angular: 'self.angular',
+									firebase: 'self.firebase',
+									jquery: 'self.jQuery',
+									libsodium: '{sodium: self.sodium}',
+									mceliece: '{mceliece: self.mceliece}',
+									ntru: '{ntru: self.ntru}',
+									rlwe: '{rlwe: self.rlwe}',
+									sidh: '{sidh: self.sidh}',
+									sphincs: '{sphincs: self.sphincs}',
+									supersphincs: '{superSphincs: self.superSphincs}'
+								},
+							*/
+							output: {
+								filename: '${f}.js.tmp',
+								library: '${m}',
+								libraryTarget: 'var',
+								path: '${currentDir}'
+							},
+							resolve: {
+								alias: {
+									angular: '${PWD}/externals/angular.js',
+									firebase: '${PWD}/externals/firebase.js',
+									jquery: '${PWD}/externals/jquery.js',
+									libsodium: '${PWD}/externals/libsodium.js',
+									mceliece: '${PWD}/externals/mceliece.js',
+									ntru: '${PWD}/externals/ntru.js',
+									rlwe: '${PWD}/externals/rlwe.js',
+									sidh: '${PWD}/externals/sidh.js',
+									sphincs: '${PWD}/externals/sphincs.js',
+									supersphincs: '${PWD}/externals/supersphincs.js'
+								}
+							}
+						};
+					EOM
+
+					webpack --config "${f}.webpack.js"
 
 					echo
 				} &
@@ -321,9 +367,15 @@ compile () {
 				continue
 			fi
 
+			enablesplit=''
 			if [ "${m}" == 'Main' ] ; then
-				rm -rf $packdirfull 2> /dev/null
-				mkdir $packdirfull
+				if [ "${minify}" ] ; then
+					enablesplit=true
+					rm -rf $packdirfull 2> /dev/null
+					mkdir $packdirfull
+				else
+					cp -f "${htmlinput}" "${htmloutput}"
+				fi
 			fi
 
 			# Don't use ".js" file extension for Webpack outputs. No idea
@@ -336,6 +388,20 @@ compile () {
 					entry: {
 						main: './${f}'
 					},
+					/*
+						externals: {
+							angular: 'self.angular',
+							firebase: 'self.firebase',
+							jquery: 'self.jQuery',
+							libsodium: '{sodium: self.sodium}',
+							mceliece: '{mceliece: self.mceliece}',
+							ntru: '{ntru: self.ntru}',
+							rlwe: '{rlwe: self.rlwe}',
+							sidh: '{sidh: self.sidh}',
+							sphincs: '{sphincs: self.sphincs}',
+							supersphincs: '{superSphincs: self.superSphincs}'
+						},
+					*/
 					module: {
 						rules: [
 							{
@@ -355,14 +421,15 @@ compile () {
 						]
 					},
 					output: {
-						$(test "${m}" == 'Main' || echo "
-							filename: './${f}.js.tmp',
+						$(test "${enablesplit}" || echo "
+							filename: '${f}.js.tmp',
 							library: '${m}',
-							libraryTarget: 'var'
+							libraryTarget: 'var',
+							path: '.'
 						")
-						$(test "${m}" == 'Main' && echo "
-							filename: '[chunkhash].js',
-							chunkFilename: '[chunkhash].js',
+						$(test "${enablesplit}" && echo "
+							filename: '[name].js',
+							chunkFilename: '[name].js',
 							path: '${packdirfull}'
 						")
 					},
@@ -375,7 +442,9 @@ compile () {
 							new webpack.optimize.UglifyJsPlugin({
 								compress: false,
 								mangle: {
-									except: ${mangleExcept}
+									except: JSON.parse(
+										fs.readFileSync('/tmp/mangle.json').toString()
+									)
 								},
 								output: {
 									comments: false
@@ -384,25 +453,35 @@ compile () {
 								test: /\.js(\.tmp)?$/
 							}),
 						")
-						$(test "${m}" == 'Main' && {
-							echo "
-								new webpack.optimize.AggressiveSplittingPlugin({
-									minSize: 30000,
-									maxSize: 50000
-								}),
-							";
-							echo "
-								new webpack.optimize.CommonsChunkPlugin({
-									name: 'init',
-									minChunks: Infinity
-								})
-							";
-						})
+						$(test "${enablesplit}" && echo "
+							new webpack.optimize.AggressiveSplittingPlugin({
+								minSize: 30000,
+								maxSize: 50000
+							}),
+							new webpack.optimize.CommonsChunkPlugin({
+								name: 'init',
+								minChunks: Infinity
+							})
+						")
 					],
-					$(test "${m}" == 'Main' && echo "
-						recordsOutputPath: '${records}'
+					$(test "${enablesplit}" && echo "
+						recordsOutputPath: '${records}',
 					")
-				}, (err, stats) => {$(test "${m}" == 'Main' && echo "
+					resolve: {
+						alias: {
+							angular: '${PWD}/externals/angular.js',
+							firebase: '${PWD}/externals/firebase.js',
+							jquery: '${PWD}/externals/jquery.js',
+							libsodium: '${PWD}/externals/libsodium.js',
+							mceliece: '${PWD}/externals/mceliece.js',
+							ntru: '${PWD}/externals/ntru.js',
+							rlwe: '${PWD}/externals/rlwe.js',
+							sidh: '${PWD}/externals/sidh.js',
+							sphincs: '${PWD}/externals/sphincs.js',
+							supersphincs: '${PWD}/externals/supersphincs.js'
+						}
+					}
+				}, (err, stats) => {$(test "${enablesplit}" && echo "
 					if (err) {
 						throw err;
 					}
@@ -413,7 +492,7 @@ compile () {
 
 					for (const chunk of stats.compilation.entrypoints.main.chunks) {
 						for (const file of chunk.files) {
-							\$('body').append( \`<script src='/${packdir}/\${file}'></script>\`);
+							\$('body').append(\`<script src='/${packdir}/\${file}'></script>\`);
 						}
 					}
 
@@ -429,20 +508,20 @@ compile () {
 				while [ ! -f "${f}.js.tmp" ] ; do
 					sleep 1
 				done
-
-				if [ "${m}" == 'Main' ] ; then
-					mv "${f}.js.tmp" "${outputDir}/js/${f}.js"
-				fi
 			fi
 
 			if [ "${m}" == 'Main' ] ; then
+				if [ -f "${f}.js.tmp" ] ; then
+					mv "${f}.js.tmp" "${outputDir}/js/${f}.js"
+				fi
+
 				continue
 			fi
 
 			{
 				echo '(function () {';
 				cat "${f}.js.tmp";
-				test "${m}" == 'Main' || echo "
+				echo "
 					self.${m}	= ${m};
 
 					var keys	= Object.keys(${m});
@@ -527,7 +606,15 @@ if [ "${watch}" ] ; then
 		#fi
 
 		cd "${rootDir}/shared"
-		inotifywait -r --exclude '(node_modules|sed.*|.*\.(css|js|map|tmp))$' css js templates
+
+		while true ; do
+			fsevent="$(
+				inotifywait -r --exclude '(bourbon|sed.*|.*\.(css|js|map|tmp))$' css js templates
+			)"
+			if ! echo "${fsevent}" | grep -P '(OPEN|ISDIR)' > /dev/null ; then
+				break
+			fi
+		done
 	done
 else
 	compile

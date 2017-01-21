@@ -25,7 +25,7 @@
 			"constructor"
 		]}],
 		"no-any": false,
-		/* Pending TS 2.1: "no-empty-interface": true, */
+		"no-empty-interface": true,
 		"no-inferrable-types": [true, "ignore-params"],
 		"no-internal-module": true,
 		"no-magic-numbers": false,
@@ -58,6 +58,7 @@
 				"variable-declaration": "onespace"
 			}
 		],
+		"unified-signatures": true,
 
 
 		/* Functionality */
@@ -82,18 +83,19 @@
 		"no-null-keyword": true,
 		"no-shadowed-variable": true,
 		"no-string-literal": true,
-		/* Pending TS 2.1: "no-string-throw": true, */
+		"no-string-throw": true,
 		"no-unsafe-finally": true,
 		"no-unused-expression": true,
 		"no-unused-new": true,
 		"no-use-before-declare": true,
 		"no-var-keyword": true,
-		/* Pending TS 2.1: "no-void-expression": true, */
+		"no-void-expression": true,
 		"radix": true,
 		"restrict-plus-operands": true,
 		"strict-boolean-expressions": false,
 		"switch-default": false,
 		"triple-equals": true,
+		"typeof-compare": true,
 		"use-isnan": true,
 
 
@@ -119,14 +121,15 @@
 
 		"align": [true, "arguments", "parameters", "statements"],
 		"array-type": [true, "array"],
-		/* Pending TS 2.1: "arrow-parens": [true, "ban-single-arg-parens"], */
-		/* Pending TS 2.1: "callable-types": true, */
+		"arrow-parens": [true, "ban-single-arg-parens"],
+		"callable-types": true,
 		"class-name": true,
 		"comment-format": [true, "check-space", "check-uppercase"],
-		"completed-docs": true,
+		/* Pending fix: "completed-docs": true, */
 		"file-header": false,
+		"import-spacing": true,
 		"interface-name": [true, "always-prefix"],
-		/* Pending TS 2.1: "interface-over-type-literal": true, */
+		"interface-over-type-literal": true,
 		"jsdoc-format": true,
 		"new-parens": true,
 		"no-angle-bracket-type-assertion": false,
@@ -139,6 +142,7 @@
 		"ordered-imports": true,
 		"quotemark": [true, "single", "avoid-escape"],
 		"semicolon": [true, "always"],
+		"space-before-function-paren": [true, "always"],
 		"variable-name": [true, "ban-keywords", "check-format"],
 		"whitespace": [
 			true,
@@ -161,11 +165,11 @@
 		"import-destructuring-spacing": false,
 		"invoke-injectable": true,
 		"no-access-missing-member": true,
-		"no-attribute-parameter-decorator": true,
+		/* Pending fix: "no-attribute-parameter-decorator": true, */
 		"no-forward-ref": true,
 		"no-input-rename": true,
 		"no-output-rename": true,
-		"no-unused-css": true,
+		/* Pending fix: "no-unused-css": true, */
 		"pipe-impure": true,
 		"pipe-naming": [true, "camelCase", "cyph"],
 		"templates-use-public": true,
@@ -180,7 +184,7 @@
 
 		"export-name": false,
 		"insecure-random": true,
-		"max-func-body-length": [true, 200],
+		/* Pending fix: "max-func-body-length": [true, 200], */
 		"no-banned-terms": true,
 		"no-constant-condition": false,
 		"no-delete-expression": true,

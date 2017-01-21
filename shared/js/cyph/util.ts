@@ -306,7 +306,7 @@ export class Util {
 		retries?: number;
 		url: string;
 	}) : Promise<string> {
-		return this.baseRequest(o, 'text', async (res) => (await res.text()).trim());
+		return this.baseRequest(o, 'text', async res => (await res.text()).trim());
 	}
 
 	/** Performs HTTP request. */
@@ -317,7 +317,7 @@ export class Util {
 		retries?: number;
 		url: string;
 	}) : Promise<Uint8Array> {
-		return this.baseRequest(o, 'arraybuffer', async (res) =>
+		return this.baseRequest(o, 'arraybuffer', async res =>
 			new Uint8Array(await res.arrayBuffer())
 		);
 	}
