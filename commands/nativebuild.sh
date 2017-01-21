@@ -45,7 +45,7 @@ rm -rf app/js/cyph/components/checkout.component.ts
 rm -rf app/js/cyph/components/register.component.ts
 
 find app -type f -name '*.scss' -exec bash -c '
-	scss -I${dir}/shared/css "{}" "$(echo "{}" | sed "s/\.scss$/.css/")"
+	scss -C -I${dir}/shared/css "{}" "$(echo "{}" | sed "s/\.scss$/.css/")"
 ' \;
 
 getmodules () {
