@@ -1,129 +1,34 @@
 # Cyph
 
-To work locally with the Cyph repository, you'll first need to install [Docker](http://www.docker.com/).
+[Cyph](https://www.cyph.com) is a secure communication tool designed to be
+extremely friendly for users of any technical skill level, providing such
+features as video calling and file transfers to both individuals and businesses.
 
----
+The major advantage of Cyph over alternatives is that it can run right in your
+browser. Having solved this problem (see #1 below) gives Cyph a uniquely smooth
+user onboarding experience — just open the website, no app install required —
+and also enables simple API integrations such as
+[Hint's telehealth implementation](http://support.hint.com/knowledgebase/articles/863355)
+through our cross-language SDK.
 
-To build for the first time, run the following command inside your local Cyph repository:
+As to the level of security provided:
 
-	docker build -t cyph/<branch> .
+1. The research that led to our patent-pending in-browser
+[code signing](https://en.wikipedia.org/wiki/Code_signing) technology,
+WebSign, was recently validated by the security industry in the course of our
+successful talks at Black Hat 2016 and DEF CON 24. Before these talks, code
+signing a web application was considered an
+[intractable problem](https://news.ycombinator.com/item?id=7903720) — at the time
+precluding the web as a platform for secure communication.
 
-Alternatively, in Unix-like environments, you can run:
+2. Cyph was audited by the pentesting firm [Cure53](https://cure53.de) against a threat
+model focusing on nation-state-level attacks, who concluded, "Cyph provides security from
+a broad range of cryptographic attacks and very strong client-side crypto. The general
+conclusion of the test is that no major issues in regards to application security or
+cryptographic implementations could be spotted in spite of a thorough audit."
 
-	make
-
-To blow out all Cyph-related images/containers/processes when you're done:
-
-	make clean
-
----
-
-To start a local environment:
-
-	docker run --privileged=true -d \
-		-p 42000:5000 -p 42001:5001 -p 42002:5002 -p 43000:4568 \
-		-v /path/to/current/directory:/cyph \
-		cyph/<branch> ./serve.sh
-
-Alternatively, in Unix-like environments, you can run:
-
-	./docker.sh serve
-
-To kill it:
-
-	./docker.sh kill
-
-Open ports:
-
-* backend: http://localhost:42000
-
-* cyph.com: http://localhost:42001
-
-* cyph.im: http://localhost:42002
-
-* SQS: http://localhost:43000
-
----
-
-To deploy to production, first make sure you're Ryan or Josh, then run:
-
-	docker run -it \
-		-v $HOME/.cyph:/home/gibson/.cyph \
-		-v $HOME/.gitconfig:/home/gibson/.gitconfig \
-		-v $HOME/.gnupg:/home/gibson/.gnupg \
-		-v $HOME/.ssh:/home/gibson/.ssh \
-		-v /path/to/current/directory:/cyph \
-		cyph/<branch> ./deploy.sh --prod
-
-Alternatively, in Unix-like environments, you can run:
-
-	./docker.sh deploy --prod
-
----
-
-Other available commands:
-
-* Verify that codes compile:  
-	`./docker.sh build --test`  
-	or:  
-	`docker run \`  
-	`-v /path/to/current/directory:/cyph \`  
-	`cyph/<branch> ./build.sh --test`
-
-* Commit local changes:  
-	`./docker.sh commit <comment>`  
-	or:  
-	`docker run \`  
-	`-v $HOME/.gitconfig:/home/gibson/.gitconfig \`  
-	`-v $HOME/.ssh:/home/gibson/.ssh \`  
-	`-v /path/to/current/directory:/cyph \`  
-	`cyph/<branch> ./commit.sh <comment>`
-
-* Back merge changes from internal/prod to internal/master to current fork/branch:  
-	`./docker.sh backmerge`  
-	or:  
-	`docker run \`  
-	`-v $HOME/.gitconfig:/home/gibson/.gitconfig \`  
-	`-v $HOME/.ssh:/home/gibson/.ssh \`  
-	`-v /path/to/current/directory:/cyph \`  
-	`cyph/<branch> ./backmerge.sh <comment>`
-
-* Merge changes from internal/master to internal/prod and cyph/cyph:  
-	`./docker.sh prodmerge`  
-	or:  
-	`docker run \`  
-	`-v $HOME/.gitconfig:/home/gibson/.gitconfig \`  
-	`-v $HOME/.ssh:/home/gibson/.ssh \`  
-	`-v /path/to/current/directory:/cyph \`  
-	`cyph/<branch> ./prodmerge.sh <comment>`
-
-* Generate documentation (served in local environment at /js/docs/index.html):  
-	`./docker.sh docs`  
-	or:  
-	`docker run \`  
-	`-v /path/to/current/directory:/cyph \`  
-	`cyph/<branch> ./docs.sh`
-
-* Update libraries in client code:  
-	`./docker.sh updatelibs`  
-	or:  
-	`docker run \`  
-	`-v /path/to/current/directory:/cyph \`  
-	`cyph/<branch> ./updatelibs.sh`
-
-* Compute hash of current WebSign bootstrap:  
-	`./docker.sh websignhash <project> # e.g. cyph.im`  
-	or:  
-	`docker run \`  
-	`-v /path/to/current/directory:/cyph \`  
-	`cyph/<branch> ./websignhash.sh <project>`
-
----
-
-For development, the following Sublime Text plugins are recommended:
-
-* [TypeScript](https://packagecontrol.io/packages/TypeScript)
-
-* [GoSublime](https://packagecontrol.io/packages/GoSublime)
-
-* [Sass](https://packagecontrol.io/packages/Sass)
+3. In addition to strong confidentiality measures like end-to-end encryption, we're
+the only credible solution currently addressing the future threat of
+[quantum computing](https://uwaterloo.ca/institute-for-quantum-computing/quantum-computing-101)
+— far beyond any present-day regulatory requirements like HIPAA, but worth covering
+our bases on given [the NSA's announcement](https://www.fredericjacobs.com/blog/2016/01/27/NSA-QC).
