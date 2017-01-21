@@ -26,7 +26,7 @@ const compileSCSS	= scss =>
 	childProcess.spawnSync('cleancss', [], {input:
 		childProcess.spawnSync(
 			'scss',
-			['-s', '-I../../shared/css'],
+			['-s', '-C', '-I../../shared/css'],
 			{input: scss}
 		).stdout.toString()
 	}).stdout.toString().trim()
