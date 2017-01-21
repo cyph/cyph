@@ -246,8 +246,8 @@ ajv-keywords@^1.1.1:
   resolved "https://registry.yarnpkg.com/ajv-keywords/-/ajv-keywords-1.5.0.tgz#c11e6859eafff83e0dafc416929472eca946aa2c"
 
 ajv@^4.7.0:
-  version "4.10.4"
-  resolved "https://registry.yarnpkg.com/ajv/-/ajv-4.10.4.tgz#c0974dd00b3464984892d6010aa9c2c945933254"
+  version "4.11.2"
+  resolved "https://registry.yarnpkg.com/ajv/-/ajv-4.11.2.tgz#f166c3c11cbc6cb9dcc102a5bcfe5b72c95287e6"
   dependencies:
     co "^4.6.0"
     json-stable-stringify "^1.0.1"
@@ -273,8 +273,8 @@ angular-aria@~1.5:
   resolved "https://registry.yarnpkg.com/angular-aria/-/angular-aria-1.5.11.tgz#26963ac336891ced7b199e59afd7e9b25e53d6a6"
 
 "angular-material@https://github.com/angular/bower-material":
-  version "1.1.1-master-685b902"
-  resolved "https://github.com/angular/bower-material#5999593889c0b1465c1519be242b27ade83f6b07"
+  version "1.1.1-master-2c9a5cc"
+  resolved "https://github.com/angular/bower-material#30b627604fa4e06715f2a3235a2a2a2e6bd517d1"
 
 angular@~1.5:
   version "1.5.11"
@@ -1406,9 +1406,9 @@ cipher-base@^1.0.0, cipher-base@^1.0.1:
   dependencies:
     inherits "^2.0.1"
 
-clean-css@3.4.x, clean-css@^3.4.23:
-  version "3.4.23"
-  resolved "https://registry.yarnpkg.com/clean-css/-/clean-css-3.4.23.tgz#604fbbca24c12feb59b02f00b84f1fb7ded6d001"
+clean-css@3.4.x, clean-css@^3.4.24:
+  version "3.4.24"
+  resolved "https://registry.yarnpkg.com/clean-css/-/clean-css-3.4.24.tgz#89f5a5e9da37ae02394fe049a41388abbe72c3b5"
   dependencies:
     commander "2.8.x"
     source-map "0.4.x"
@@ -1740,8 +1740,8 @@ cssesc@^0.1.0:
   resolved "https://registry.yarnpkg.com/cssesc/-/cssesc-0.1.0.tgz#c814903e45623371a0477b40109aaafbeeaddbb4"
 
 cssom@0.3.x, "cssom@>= 0.3.0 < 0.4.0":
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/cssom/-/cssom-0.3.1.tgz#c9e37ef2490e64f6d1baa10fda852257082c25d3"
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/cssom/-/cssom-0.3.2.tgz#b8036170c79f07a90ff2f16e22284027a243848b"
 
 "cssstyle@>= 0.2.29 < 0.3.0":
   version "0.2.37"
@@ -5011,11 +5011,11 @@ public-encrypt@^4.0.0:
     parse-asn1 "^5.0.0"
     randombytes "^2.0.1"
 
-punycode@1.3.2, punycode@^1.3.2:
+punycode@1.3.2:
   version "1.3.2"
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-1.3.2.tgz#9653a036fb7c1ee42342f2325cceefea3926c48d"
 
-punycode@^1.2.4, punycode@^1.4.1:
+punycode@^1.2.4, punycode@^1.3.2, punycode@^1.4.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-1.4.1.tgz#c0d5a63b2718800ad8e1eb0fa5269c84dd41845e"
 
