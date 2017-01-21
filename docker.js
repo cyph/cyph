@@ -9,7 +9,7 @@ const path			= require('path');
 
 const cat			= f => {
 	try {
-		fs.readFileSync(f).toString().trim();
+		return fs.readFileSync(f).toString().trim();
 	}
 	catch (_) {
 		return '';
