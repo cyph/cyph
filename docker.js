@@ -7,26 +7,29 @@ const fs			= require('fs');
 const os			= require('os');
 const path			= require('path');
 
+const badNewlineFix	= s => s.replace(/\r/g, '');
+
 const cat			= f => fs.readFileSync(f).toString().trim();
 
 const exec			= command => childProcess.execSync(
-	command,
+	badNewlineFix(command),
 	{cwd: __dirname}
 ).toString().trim();
 
 const spawn			= (command, args) => (
 	childProcess.spawnSync(
-		command,
-		args,
+		badNewlineFix(command),
+		args.map(badNewlineFix),
 		{cwd: __dirname}
 	).stdout || ''
 ).toString().trim();
 
 const spawnAsync	= (command, args) => new Promise(resolve =>
-	childProcess.spawn(command, args, {
-		cwd: __dirname,
-		stdio: 'inherit'
-	}).on(
+	childProcess.spawn(
+		badNewlineFix(command),
+		args.map(badNewlineFix),
+		{cwd: __dirname, stdio: 'inherit'}
+	).on(
 		'exit',
 		() => { resolve(); }
 	)
@@ -34,7 +37,7 @@ const spawnAsync	= (command, args) => new Promise(resolve =>
 
 const runScript		= script => {
 	const tmpFile	= path.join(os.tmpdir(), crypto.randomBytes(32).toString('hex'));
-	fs.writeFileSync(tmpFile, script);
+	fs.writeFileSync(tmpFile, badNewlineFix(script));
 	return spawnAsync('bash', tmpFile);
 };
 
