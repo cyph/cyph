@@ -102,8 +102,25 @@ const mounts				= [
 	(a, b) => a.concat(b), []
 );
 
-const badNewlineFix			= !isWindows ? '' : `
+const windowsWorkaround		= !isWindows ? '' : `
 	find /cyph/commands -type f -exec sed -i 's/\\r//g' {} \\;
+
+	sudo mv /bin/ln /bin/ln.old
+	echo '
+		#!/bin/bash
+
+		if [ "\${1}" != '-s' -o "\${#}" != '3' ] ; then
+			/bin/ln.old "\${@}"
+		elif [ -f "\${2}" ] ; then
+			cp -f "\${2}" "\${3}"
+		else
+			rm -rf "\${3}" 2> /dev/null
+			mkdir "\${3}"
+			sudo mount -o bind "\${2}" "\${3}"
+		fi
+	' |
+		sudo tee -a /bin/ln > /dev/null
+	sudo chmod +x /bin/ln
 `;
 
 const shellScripts			= {
@@ -164,14 +181,14 @@ const shellScripts			= {
 	},
 	command: `
 		source ~/.bashrc
-		${badNewlineFix}
+		${windowsWorkaround}
 		/cyph/commands/${args.command}.sh ${
 			process.argv.slice(3).filter(s => s !== '--background').join(' ')
 		}
 	`,
 	getLibs: `
 		source ~/.bashrc
-		${badNewlineFix}
+		${windowsWorkaround}
 		/cyph/commands/getlibs.sh
 	`,
 	libUpdate: {
@@ -183,7 +200,7 @@ const shellScripts			= {
 			source ~/.bashrc
 			rm -rf \${GOPATH}/src/*
 			for f in $(find /cyph/default -mindepth 1 -maxdepth 1 -type d) ; do
-				ln -s \${f} \${GOPATH}/src/$(echo "\${f}" | perl -pe 's/.*\\///g') > /dev/null 2>&1
+				cp -rf \${f} \${GOPATH}/src/$(echo "\${f}" | perl -pe 's/.*\\///g') > /dev/null 2>&1
 			done
 			for f in $(find /cyph/default -mindepth 1 -maxdepth 4 -type d) ; do
 				go install $(echo "\${f}" | sed 's|/cyph/default/||') > /dev/null 2>&1

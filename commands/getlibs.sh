@@ -1,14 +1,17 @@
 #!/bin/bash
 
 cd $(cd "$(dirname "$0")"; pwd)/..
-cd shared/lib
+dir="$PWD"
 
-if diff js/yarn.lock js/node_modules/yarn.lock > /dev/null 2>&1 ; then
+
+if cmp shared/lib/js/yarn.lock shared/lib/js/node_modules/yarn.lock > /dev/null 2>&1 ; then
 	exit 0
 fi
 
-rm -rf js/node_modules .js.tmp 2> /dev/null
+rm -rf shared/lib/go shared/lib/js/node_modules 2> /dev/null
 
+cp -a shared/lib ~/tmplib
+cd ~/tmplib
 cp -a js .js.tmp
 cd js
 
@@ -196,9 +199,6 @@ cp js/yarn.lock js/node_modules/
 cp js/node_modules/babel-polyfill/dist/polyfill.js js/base.js
 
 
-# Go libs
-
-rm -rf go 2> /dev/null
 mkdir go
 cd go
 
@@ -212,7 +212,7 @@ for arr in \
 	'golang/tools golang.org/x/tools.tmp'
 do
 	read -ra arr <<< "${arr}"
-	../../../commands/libclone.sh https://github.com/${arr[0]}.git ${arr[1]}
+	${dir}/commands/libclone.sh https://github.com/${arr[0]}.git ${arr[1]}
 done
 
 # Temporary workaround for GAE support
@@ -235,6 +235,11 @@ find golang.org/x/tools -name '*test*' -exec rm -rf {} \; 2> /dev/null
 find . -type f -name '*_test.go' -exec rm {} \;
 find . -type f -name '*.go' -exec sed -i 's|func main|func functionRemoved|g' {} \;
 
+
+cd
+rm -rf ${dir}/shared/lib
+cp -aL tmplib ${dir}/shared/lib
+cd ${dir}/shared/lib/go
 for d in * ; do
 	rm -rf ../../../default/${d} 2> /dev/null
 	cp -rf ${d} ../../../default/

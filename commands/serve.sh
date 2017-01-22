@@ -42,7 +42,8 @@ for project in cyph.com cyph.im ; do
 			chmod 700 .gitignore
 		fi
 	done
-	rm js lib
+	sudo umount js lib 2> /dev/null
+	rm -rf js lib
 	mkdir -p js lib/js
 	cd js
 	for d in $(ls ../../shared/js | grep -v node_modules) ; do
