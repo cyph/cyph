@@ -147,11 +147,13 @@ tsbuild () {
 
 	cd "${tmpJsDir}"
 
-	if [ "${watch}" ] && [ ! "${getTmpDir}" ] ; then
-		./node_modules/.bin/ngc -p .
-	else
-		output="${output}$(./node_modules/.bin/ngc -p . 2>&1)"
-	fi
+	echo -e "\nCompile ${*}\n$({
+		time if [ "${watch}" ] && [ ! "${getTmpDir}" ] ; then
+			./node_modules/.bin/ngc -p .
+		else
+			output="${output}$(./node_modules/.bin/ngc -p . 2>&1)"
+		fi
+	} 2>&1)\n" 1>&2
 
 	cd "${currentDir}"
 
@@ -380,7 +382,7 @@ compile () {
 
 			# Don't use ".js" file extension for Webpack outputs. No idea
 			# why right now, but it breaks the module imports in Session.
-			node -e "
+			echo -e "\nPack ${f}\n$({time node -e "
 				const cheerio	= require('cheerio');
 				const webpack	= require('webpack');
 
@@ -498,7 +500,7 @@ compile () {
 
 					fs.writeFileSync('${htmloutput}', \$.html().trim());
 				")});
-			"
+			"} 2>&1)\n" 1>&2
 		done
 
 		for f in $tsfiles ; do
