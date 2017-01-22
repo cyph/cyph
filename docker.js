@@ -87,9 +87,8 @@ const image					= 'cyph/' + (
 	spawn('git', ['branch']).
 		split('\n').
 		filter(s => s.indexOf('*') === 0)[0].
-		split(/\s+/)[1].
-		toLowerCase()
-);
+		split(/\s+/)[1]
+).toLowerCase();
 
 const mounts				= [
 	`${__dirname}:/cyph`,
