@@ -60,6 +60,7 @@ yarn add --ignore-platform \
 	glob \
 	granim \
 	gulp \
+	highlight.js \
 	html-minifier \
 	htmlencode \
 	htmllint \

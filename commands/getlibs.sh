@@ -171,7 +171,7 @@ for d in firebase firebase-server ts-node tslint ; do
 	cp -f ../module_locks/${d}/* "${tmpDir}/${d}/"
 	cd "${tmpDir}/${d}"
 	mkdir node_modules 2> /dev/null
-	yarn install
+	yarn install --ignore-platform
 
 	if [ "${d}" == 'firebase' ] ; then
 		"${currentDir}/.bin/browserify" firebase-node.js -o firebase.js -s firebase
@@ -187,6 +187,10 @@ done
 mv .bin/ts-node .bin/ts-node-original
 echo -e '#!/bin/bash\nts-node-original -D "${@}"' > .bin/ts-node
 chmod +x .bin/ts-node
+
+# Workaround for lib bugs
+cp -f highlight.js/styles/ir-black.css nodobjc/docs/assets/ir_black.css
+cp -f highlight.js/styles/solarized-light.css ref/docs/stylesheets/hightlight.css
 
 cd ../..
 
