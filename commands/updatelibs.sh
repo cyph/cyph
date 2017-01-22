@@ -195,6 +195,7 @@ rm -rf libsodium.build
 cd "${dir}"
 rm -rf shared/lib
 mv ~/lib shared/
+rm -rf ~/tmplib
 
 ./commands/getlibs.sh
 ./commands/commit.sh updatelibs

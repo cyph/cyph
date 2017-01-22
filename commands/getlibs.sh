@@ -10,8 +10,8 @@ fi
 
 rm -rf shared/lib/go shared/lib/js/node_modules 2> /dev/null
 
-cp -a shared/lib ~/tmplib
-cd ~/tmplib
+cp -a shared/lib ~/lib
+cd ~/lib
 cp -a js .js.tmp
 cd js
 
@@ -242,7 +242,8 @@ find . -type f -name '*.go' -exec sed -i 's|func main|func functionRemoved|g' {}
 
 cd
 rm -rf ${dir}/shared/lib
-cp -aL tmplib ${dir}/shared/lib
+cp -aL lib ${dir}/shared/
+rm -rf lib
 cd ${dir}/shared/lib/go
 for d in * ; do
 	rm -rf ../../../default/${d} 2> /dev/null
