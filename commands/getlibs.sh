@@ -10,7 +10,7 @@ fi
 rm -rf js/node_modules .js.tmp 2> /dev/null
 
 cp -a js .js.tmp
-cd .js.tmp
+cd js
 
 git init
 mkdir node_modules
@@ -187,8 +187,9 @@ chmod +x .bin/ts-node
 
 cd ../..
 
-mv .js.tmp/node_modules js/
-rm -rf .js.tmp
+mv js/node_modules .js.tmp/
+rm -rf js
+mv .js.tmp js
 cp js/yarn.lock js/node_modules/
 
 # Pending TS 2.1: cp js/node_modules/core-js/client/shim.js js/base.js
