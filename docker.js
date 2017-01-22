@@ -7,7 +7,14 @@ const fs			= require('fs');
 const os			= require('os');
 const path			= require('path');
 
-const cat			= f => fs.readFileSync(f).toString().trim();
+const cat			= f => {
+	try {
+		return fs.readFileSync(f).toString().trim();
+	}
+	catch (_) {
+		return '';
+	}
+};
 
 const exec			= command => childProcess.execSync(
 	command,
@@ -23,10 +30,11 @@ const spawn			= (command, args) => (
 ).toString().trim();
 
 const spawnAsync	= (command, args) => new Promise(resolve =>
-	childProcess.spawn(command, args, {
-		cwd: __dirname,
-		stdio: 'inherit'
-	}).on(
+	childProcess.spawn(
+		command,
+		args,
+		{cwd: __dirname, stdio: 'inherit'}
+	).on(
 		'exit',
 		() => { resolve(); }
 	)
@@ -35,7 +43,7 @@ const spawnAsync	= (command, args) => new Promise(resolve =>
 const runScript		= script => {
 	const tmpFile	= path.join(os.tmpdir(), crypto.randomBytes(32).toString('hex'));
 	fs.writeFileSync(tmpFile, script);
-	return spawnAsync('bash', tmpFile);
+	return spawnAsync('bash', [tmpFile]);
 };
 
 
@@ -76,7 +84,11 @@ const isAgseDeploy			=
 
 const image					= 'cyph/' + (
 	spawn('git', ['describe', '--tags', '--exact-match']) ||
-	spawn('git', ['branch']).split(/\s+/)[1].toLowerCase()
+	spawn('git', ['branch']).
+		split('\n').
+		filter(s => s.indexOf('*') === 0)[0].
+		split(/\s+/)[1].
+		toLowerCase()
 );
 
 const mounts				= [
@@ -90,6 +102,10 @@ const mounts				= [
 ).reduce(
 	(a, b) => a.concat(b), []
 );
+
+const badNewlineFix			= !isWindows ? '' : `
+	find /cyph/commands -type f -exec sed -i 's/\\r//g' {} \\;
+`;
 
 const shellScripts			= {
 	agseInit: `
@@ -149,12 +165,14 @@ const shellScripts			= {
 	},
 	command: `
 		source ~/.bashrc
+		${badNewlineFix}
 		/cyph/commands/${args.command}.sh ${
 			process.argv.slice(3).filter(s => s !== '--background').join(' ')
 		}
 	`,
 	getLibs: `
 		source ~/.bashrc
+		${badNewlineFix}
 		/cyph/commands/getlibs.sh
 	`,
 	libUpdate: {
@@ -226,6 +244,8 @@ const backup			= () => {
 	);
 };
 
+const containerName		= command => `${image}_${command}`.replace(/\//g, '_');
+
 const dockerRun			= (command, name, background, noCleanup, additionalArgs, getOutput) => {
 	const processArgs	= [
 		'run',
@@ -255,8 +275,6 @@ const dockerRun			= (command, name, background, noCleanup, additionalArgs, getOu
 	}
 };
 
-const getContainerName	= command => `${image}_${command}`.replace(/\//g, '_');
-
 const editImage			= (command, condition) => Promise.resolve().then(() => {
 	if (
 		condition &&
@@ -272,7 +290,7 @@ const editImage			= (command, condition) => Promise.resolve().then(() => {
 		return;
 	}
 
-	const tmpContainer	= getContainerName('tmp');
+	const tmpContainer	= containerName('tmp');
 
 	spawn('docker', ['rm', '-f', tmpContainer]);
 
@@ -323,6 +341,7 @@ if (isWindows && isAgseDeploy) {
 	throw new Error('AGSE not yet supported on Windows.');
 }
 
+let exitCleanup	= () => {};
 let initPromise	= Promise.resolve();
 
 switch (args.command) {
@@ -336,6 +355,7 @@ switch (args.command) {
 		commandAdditionalArgs.push('-p');
 		commandAdditionalArgs.push('31337:31337/udp');
 
+		exitCleanup	= () => fs.appendFileSync(agseTempFile);
 		initPromise	= runScript(shellScripts.agseInit);
 		break;
 
@@ -381,7 +401,7 @@ switch (args.command) {
 		break;
 
 	case 'stopserve':
-		killContainer(getContainerName('serve'));
+		killContainer(containerName('serve'));
 
 		if (isWindows) {
 			break;
@@ -396,6 +416,10 @@ switch (args.command) {
 		}
 }
 
+process.on('exit', exitCleanup);
+process.on('SIGINT', exitCleanup);
+process.on('uncaughtException', exitCleanup);
+
 initPromise.then(() => {
 	if (!commandScriptExists) {
 		return;
@@ -403,19 +427,11 @@ initPromise.then(() => {
 
 	backup();
 
-	pullUpdates().then(() =>
-		dockerRun(
-			shellScripts.command,
-			getContainerName(args.command),
-			args.background,
-			false,
-			commandAdditionalArgs
-		)
-	).catch(err => {
-		console.error(err);
-	}).then(() => {
-		if (isAgseDeploy) {
-			fs.appendFileSync(agseTempFile);
-		}
-	});
+	pullUpdates().then(() => dockerRun(
+		shellScripts.command,
+		containerName(args.command),
+		args.background,
+		false,
+		commandAdditionalArgs
+	));
 });
