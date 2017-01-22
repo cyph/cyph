@@ -101,7 +101,7 @@ tsbuild () {
 		echo "${tmpJsDir}"
 	fi
 
-	cp -rf .. "${tmpDir}/"
+	rsync -rq .. "${tmpDir}" --exclude lib/js/node_modules
 
 	node -e "
 		const tsconfig	= JSON.parse(

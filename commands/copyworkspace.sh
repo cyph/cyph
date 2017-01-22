@@ -1,27 +1,31 @@
 #!/bin/bash
 
 
-exclude='shared'
-
+clientOnly=''
 if [ "${1}" == '--client-only' ] ; then
-	exclude="${exclude}|default"
+	clientOnly=true
 	shift
 fi
 
+source="$(cd "$(dirname "$0")/.." ; pwd)/"
+
+sudo umount "${1}/shared/lib/js/node_modules" 2> /dev/null
 rm -rf "${1}" 2> /dev/null
 mkdir -p "${1}/shared"
 dir="$(realpath "${1}")"
 
+rsync -rq "${source}" "${dir}" \
+	--exclude shared/lib/js/libsodium \
+	$(test "${clientOnly}" && echo '--exclude default') \
+	$(ls -a "${source}" | grep -P '^\.[^\.]+' | xargs -I% echo -n '--exclude % ') \
+	$( \
+		find "${source}" -maxdepth 4 -name node_modules -not \( \
+			-path '*/node_modules/*' \
+			-or -path "${source}.*/*" \
+		\) |
+			sed "s|${source}|--exclude |g"
+	)
 
-cd $(cd "$(dirname "$0")"; pwd)/..
-
-
-cp -rf $(ls | grep -vP "^(${exclude})\$") "${dir}/"
-cd shared
-cp -rf $(ls | grep -v lib) "${dir}/shared/"
-rm -rf "${dir}/shared/js/node_modules" 2> /dev/null
-mkdir -p "${dir}/shared/lib/js"
-cp lib/js/base.js "${dir}/shared/lib/js/"
 cd "${dir}/shared/lib/js"
 ln -s /node_modules node_modules
 
