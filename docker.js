@@ -86,7 +86,7 @@ const image					= 'cyph/' + (
 	spawn('git', ['describe', '--tags', '--exact-match']) ||
 	spawn('git', ['branch']).
 		split('\n').
-		filter(s => s.indexOf('*') === 0)[0].
+		filter(s => s && s.indexOf('*') === 0)[0].
 		split(/\s+/)[1]
 ).toLowerCase();
 
@@ -442,6 +442,7 @@ initPromise.then(() => {
 	}
 
 	backup();
+	killContainer(containerName(args.command));
 
 	pullUpdates().then(() => dockerRun(
 		shellScripts.command,
