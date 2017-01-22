@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd "$(cd "$(dirname "$0")"; pwd)/../../websign"
+cd "$(cd "$(dirname "$0")" ; pwd)/../../websign"
 
 ../commands/websign/pack.ts index.html .index.html.tmp
 
