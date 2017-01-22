@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd $(cd "$(dirname "$0")"; pwd)/..
+cd $(cd "$(dirname "$0")" ; pwd)/..
 
 
 rm .git/index.lock 2> /dev/null

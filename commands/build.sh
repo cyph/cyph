@@ -1,7 +1,7 @@
 #!/bin/bash
 
 outputDir="$PWD"
-cd $(cd "$(dirname "$0")"; pwd)/..
+cd $(cd "$(dirname "$0")" ; pwd)/..
 rootDir="$PWD"
 
 

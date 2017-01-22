@@ -1,7 +1,7 @@
 #!/bin/bash
 
 dir="$PWD"
-cd $(cd "$(dirname "$0")"; pwd)/..
+cd $(cd "$(dirname "$0")" ; pwd)/..
 
 
 prodlike=''
