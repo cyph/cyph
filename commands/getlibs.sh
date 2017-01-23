@@ -4,7 +4,7 @@ cd $(cd "$(dirname "$0")" ; pwd)/..
 dir="$PWD"
 
 
-rm -rf shared/lib/go shared/lib/js/node_modules 2> /dev/null
+rm -rf shared/lib/go shared/lib/js/base.js shared/lib/js/node_modules 2> /dev/null
 
 cp -a shared/lib ~/lib
 cd ~/lib
