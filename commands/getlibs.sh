@@ -189,8 +189,9 @@ echo -e '#!/bin/bash\nts-node-original -D "${@}"' > .bin/ts-node
 chmod +x .bin/ts-node
 
 # Workaround for lib bugs
-cp -f highlight.js/styles/ir-black.css nodobjc/docs/assets/ir_black.css
-cp -f highlight.js/styles/solarized-light.css ref/docs/stylesheets/hightlight.css
+rm nodobjc/docs/assets/ir_black.css ref/docs/stylesheets/hightlight.css
+cp highlight.js/styles/ir-black.css nodobjc/docs/assets/ir_black.css
+cp highlight.js/styles/solarized-light.css ref/docs/stylesheets/hightlight.css
 
 find .bin -type l -exec node -e '
 	const bin	= fs.readlinkSync("{}");
