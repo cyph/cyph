@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd $(cd "$(dirname "$0")"; pwd)/..
+cd $(cd "$(dirname "$0")" ; pwd)/..
 dir="$PWD"
 
 
@@ -60,6 +60,7 @@ yarn add --ignore-platform \
 	glob \
 	granim \
 	gulp \
+	highlight.js \
 	html-minifier \
 	htmlencode \
 	htmllint \
@@ -194,6 +195,7 @@ rm -rf libsodium.build
 cd "${dir}"
 rm -rf shared/lib
 mv ~/lib shared/
+rm -rf ~/tmplib
 
 ./commands/getlibs.sh
 ./commands/commit.sh updatelibs

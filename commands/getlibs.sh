@@ -1,16 +1,15 @@
 #!/bin/bash
 
-cd $(cd "$(dirname "$0")"; pwd)/..
-cd shared/lib
+cd $(cd "$(dirname "$0")" ; pwd)/..
+dir="$PWD"
 
-if diff js/yarn.lock js/node_modules/yarn.lock > /dev/null 2>&1 ; then
-	exit 0
-fi
 
-rm -rf js/node_modules .js.tmp 2> /dev/null
+rm -rf shared/lib/go shared/lib/js/node_modules 2> /dev/null
 
+cp -a shared/lib ~/lib
+cd ~/lib
 cp -a js .js.tmp
-cd .js.tmp
+cd js
 
 git init
 mkdir node_modules
@@ -168,7 +167,7 @@ for d in firebase firebase-server ts-node tslint ; do
 	cp -f ../module_locks/${d}/* "${tmpDir}/${d}/"
 	cd "${tmpDir}/${d}"
 	mkdir node_modules 2> /dev/null
-	yarn install
+	yarn install --ignore-platform
 
 	if [ "${d}" == 'firebase' ] ; then
 		"${currentDir}/.bin/browserify" firebase-node.js -o firebase.js -s firebase
@@ -185,19 +184,22 @@ mv .bin/ts-node .bin/ts-node-original
 echo -e '#!/bin/bash\nts-node-original -D "${@}"' > .bin/ts-node
 chmod +x .bin/ts-node
 
+# Workaround for lib bugs
+rm nodobjc/docs/assets/ir_black.css ref/docs/stylesheets/hightlight.css
+cp highlight.js/styles/ir-black.css nodobjc/docs/assets/ir_black.css
+cp highlight.js/styles/solarized-light.css ref/docs/stylesheets/hightlight.css
+
 cd ../..
 
-mv .js.tmp/node_modules js/
-rm -rf .js.tmp
+mv js/node_modules .js.tmp/
+rm -rf js
+mv .js.tmp js
 cp js/yarn.lock js/node_modules/
 
 # Pending TS 2.1: cp js/node_modules/core-js/client/shim.js js/base.js
 cp js/node_modules/babel-polyfill/dist/polyfill.js js/base.js
 
 
-# Go libs
-
-rm -rf go 2> /dev/null
 mkdir go
 cd go
 
@@ -211,7 +213,7 @@ for arr in \
 	'golang/tools golang.org/x/tools.tmp'
 do
 	read -ra arr <<< "${arr}"
-	../../../commands/libclone.sh https://github.com/${arr[0]}.git ${arr[1]}
+	${dir}/commands/libclone.sh https://github.com/${arr[0]}.git ${arr[1]}
 done
 
 # Temporary workaround for GAE support
@@ -234,6 +236,15 @@ find golang.org/x/tools -name '*test*' -exec rm -rf {} \; 2> /dev/null
 find . -type f -name '*_test.go' -exec rm {} \;
 find . -type f -name '*.go' -exec sed -i 's|func main|func functionRemoved|g' {} \;
 
+
+cd
+rm -rf ${dir}/shared/lib
+cp -aL lib ${dir}/shared/
+sudo rm -rf /node_modules
+sudo mv lib/js/node_modules /
+sudo chmod -R 777 /node_modules
+rm -rf lib
+cd ${dir}/shared/lib/go
 for d in * ; do
 	rm -rf ../../../default/${d} 2> /dev/null
 	cp -rf ${d} ../../../default/

@@ -173,8 +173,6 @@ RUN rm -rf ~/.gnupg
 #CIRCLECI:RUN git clone --depth 1 https://github.com/jedisct1/libsodium.js ~/getlibs/shared/lib/js/libsodium
 #CIRCLECI:RUN chmod -R 777 ~/getlibs
 #CIRCLECI:RUN ~/getlibs/shared/getlibs.sh
-#CIRCLECI:RUN sudo mv ~/getlibs/shared/lib/js/node_modules /
-#CIRCLECI:RUN sudo chmod -R 777 /node_modules
 #CIRCLECI:RUN echo 'cp /node_modules/babel-polyfill/dist/polyfill.js /cyph/shared/lib/js/base.js' >> ~/.bashrc
 
 

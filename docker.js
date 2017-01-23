@@ -86,10 +86,9 @@ const image					= 'cyph/' + (
 	spawn('git', ['describe', '--tags', '--exact-match']) ||
 	spawn('git', ['branch']).
 		split('\n').
-		filter(s => s.indexOf('*') === 0)[0].
-		split(/\s+/)[1].
-		toLowerCase()
-);
+		filter(s => s && s.indexOf('*') === 0)[0].
+		split(/\s+/)[1]
+).toLowerCase();
 
 const mounts				= [
 	`${__dirname}:/cyph`,
@@ -103,8 +102,25 @@ const mounts				= [
 	(a, b) => a.concat(b), []
 );
 
-const badNewlineFix			= !isWindows ? '' : `
+const windowsWorkaround		= !isWindows ? '' : `
 	find /cyph/commands -type f -exec sed -i 's/\\r//g' {} \\;
+
+	sudo mv /bin/ln /bin/ln.old
+	echo '
+		#!/bin/bash
+
+		if [ "\${1}" != '-s' -o "\${#}" != '3' ] ; then
+			/bin/ln.old "\${@}"
+		elif [ -f "\${2}" ] ; then
+			cp -f "\${2}" "\${3}"
+		else
+			rm -rf "\${3}" 2> /dev/null
+			mkdir "\${3}"
+			sudo mount -o bind "\${2}" "\${3}"
+		fi
+	' |
+		sudo tee -a /bin/ln > /dev/null
+	sudo chmod +x /bin/ln
 `;
 
 const shellScripts			= {
@@ -165,26 +181,20 @@ const shellScripts			= {
 	},
 	command: `
 		source ~/.bashrc
-		${badNewlineFix}
+		${windowsWorkaround}
 		/cyph/commands/${args.command}.sh ${
 			process.argv.slice(3).filter(s => s !== '--background').join(' ')
 		}
 	`,
-	getLibs: `
-		source ~/.bashrc
-		${badNewlineFix}
-		/cyph/commands/getlibs.sh
-	`,
 	libUpdate: {
 		command: `
-			sudo rm -rf /node_modules 2> /dev/null
-			sudo cp -rf /cyph/shared/lib/js/node_modules /
-			sudo chmod -R 777 /node_modules
-
 			source ~/.bashrc
+			${windowsWorkaround}
+			/cyph/commands/getlibs.sh
+
 			rm -rf \${GOPATH}/src/*
 			for f in $(find /cyph/default -mindepth 1 -maxdepth 1 -type d) ; do
-				ln -s \${f} \${GOPATH}/src/$(echo "\${f}" | perl -pe 's/.*\\///g') > /dev/null 2>&1
+				cp -rf \${f} \${GOPATH}/src/$(echo "\${f}" | perl -pe 's/.*\\///g') > /dev/null 2>&1
 			done
 			for f in $(find /cyph/default -mindepth 1 -maxdepth 4 -type d) ; do
 				go install $(echo "\${f}" | sed 's|/cyph/default/||') > /dev/null 2>&1
@@ -249,6 +259,7 @@ const containerName		= command => `${image}_${command}`.replace(/\//g, '_');
 const dockerRun			= (command, name, background, noCleanup, additionalArgs, getOutput) => {
 	const processArgs	= [
 		'run',
+		'--privileged=true',
 		getOutput ? '-i' : '-it'
 	].concat(
 		name ? [`--name=${name}`] : []
@@ -318,8 +329,6 @@ const killEverything	= () => killContainer('cyph');
 
 const pullUpdates		= () => {
 	return editImage(shellScripts.aptUpdate.command, shellScripts.aptUpdate.condition).then(() =>
-		dockerRun(shellScripts.getLibs, undefined, undefined, true)
-	).then(() =>
 		editImage(shellScripts.libUpdate.command, shellScripts.libUpdate.condition)
 	);
 };
@@ -346,8 +355,6 @@ let initPromise	= Promise.resolve();
 
 switch (args.command) {
 	case 'deploy':
-		commandAdditionalArgs.push('--privileged=true');
-
 		if (!isAgseDeploy) {
 			break;
 		}
@@ -426,12 +433,19 @@ initPromise.then(() => {
 	}
 
 	backup();
+	killContainer(containerName(args.command));
 
-	pullUpdates().then(() => dockerRun(
-		shellScripts.command,
-		containerName(args.command),
-		args.background,
-		false,
-		commandAdditionalArgs
-	));
+	pullUpdates().then(() => {
+		if (shellScripts.command === 'getlibs') {
+			return;
+		}
+
+		dockerRun(
+			shellScripts.command,
+			containerName(args.command),
+			args.background,
+			false,
+			commandAdditionalArgs
+		);
+	});
 });
