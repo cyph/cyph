@@ -1,5 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-/*
 import {AppService} from './app.service';
 import {States} from './js/cyph.im/enums';
 import {AbstractSessionInitService} from './js/cyph/services/abstract-session-init.service';
@@ -15,14 +14,12 @@ import {ScrollService} from './js/cyph/services/scroll.service';
 import {SessionService} from './js/cyph/services/session.service';
 import {StringsService} from './js/cyph/services/strings.service';
 import {SessionInitService} from './session-init.service';
-*/
 
 
 /**
  * Angular component for chat UI root to share services.
  */
 @Component({
-	/*
 	providers: [
 		ChatService,
 		CyphertextService,
@@ -43,14 +40,12 @@ import {SessionInitService} from './session-init.service';
 			useClass: ChatStringsService
 		}
 	],
-	*/
 	selector: 'cyph-chat-root',
 	templateUrl: './templates/chat-root.html'
 })
 export class ChatRootComponent implements OnInit {
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
-		/*
 		if (this.abstractSessionInitService.callType) {
 			if (!this.p2pService.isSupported) {
 				this.appService.state	= States.blank;
@@ -100,29 +95,28 @@ export class ChatRootComponent implements OnInit {
 				});
 			}
 		});
-		*/
 	}
 
-	constructor (/*
-		/** @ignore *
+	constructor (
+		/** @ignore */
 		private readonly abstractSessionInitService: AbstractSessionInitService,
 
-		/** @ignore *
+		/** @ignore */
 		private readonly appService: AppService,
 
-		/** @ignore *
+		/** @ignore */
 		private readonly dialogService: DialogService,
 
-		/** @ignore *
+		/** @ignore */
 		private readonly p2pService: P2PService,
 
-		/** @ignore *
+		/** @ignore */
 		private readonly sessionService: SessionService,
 
-		/** @ignore *
+		/** @ignore */
 		private readonly stringsService: StringsService,
 
-		/** @see CyphertextService *
+		/** @see CyphertextService */
 		public readonly cyphertextService: CyphertextService
-	*/) {}
+	) {}
 }
