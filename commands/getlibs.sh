@@ -4,10 +4,6 @@ cd $(cd "$(dirname "$0")" ; pwd)/..
 dir="$PWD"
 
 
-if cmp shared/lib/js/yarn.lock shared/lib/js/node_modules/yarn.lock > /dev/null 2>&1 ; then
-	exit 0
-fi
-
 rm -rf shared/lib/go shared/lib/js/node_modules 2> /dev/null
 
 cp -a shared/lib ~/lib
@@ -193,14 +189,6 @@ rm nodobjc/docs/assets/ir_black.css ref/docs/stylesheets/hightlight.css
 cp highlight.js/styles/ir-black.css nodobjc/docs/assets/ir_black.css
 cp highlight.js/styles/solarized-light.css ref/docs/stylesheets/hightlight.css
 
-find .bin -type l -exec node -e '
-	const bin	= fs.readlinkSync("{}");
-
-	fs.unlinkSync("{}");
-	fs.writeFileSync("{}", `#!/bin/bash\n\$(cd "\$(dirname "\$0")" ; pwd)/${bin} "\${@}"\n`);
-	fs.chmodSync("{}", 0777);
-' \;
-
 cd ../..
 
 mv js/node_modules .js.tmp/
@@ -252,6 +240,9 @@ find . -type f -name '*.go' -exec sed -i 's|func main|func functionRemoved|g' {}
 cd
 rm -rf ${dir}/shared/lib
 cp -aL lib ${dir}/shared/
+sudo rm -rf /node_modules
+sudo mv lib/js/node_modules /
+sudo chmod -R 777 /node_modules
 rm -rf lib
 cd ${dir}/shared/lib/go
 for d in * ; do

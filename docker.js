@@ -186,18 +186,12 @@ const shellScripts			= {
 			process.argv.slice(3).filter(s => s !== '--background').join(' ')
 		}
 	`,
-	getLibs: `
-		source ~/.bashrc
-		${windowsWorkaround}
-		/cyph/commands/getlibs.sh
-	`,
 	libUpdate: {
 		command: `
-			sudo rm -rf /node_modules 2> /dev/null
-			sudo cp -rf /cyph/shared/lib/js/node_modules /
-			sudo chmod -R 777 /node_modules
-
 			source ~/.bashrc
+			${windowsWorkaround}
+			/cyph/commands/getlibs.sh
+
 			rm -rf \${GOPATH}/src/*
 			for f in $(find /cyph/default -mindepth 1 -maxdepth 1 -type d) ; do
 				cp -rf \${f} \${GOPATH}/src/$(echo "\${f}" | perl -pe 's/.*\\///g') > /dev/null 2>&1
@@ -334,8 +328,6 @@ const killEverything	= () => killContainer('cyph');
 
 const pullUpdates		= () => {
 	return editImage(shellScripts.aptUpdate.command, shellScripts.aptUpdate.condition).then(() =>
-		dockerRun(shellScripts.getLibs, undefined, undefined, true)
-	).then(() =>
 		editImage(shellScripts.libUpdate.command, shellScripts.libUpdate.condition)
 	);
 };
