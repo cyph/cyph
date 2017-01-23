@@ -257,7 +257,7 @@ if [ "${compiledProjects}" ] ; then
 	./commands/lint.sh || exit
 fi
 for d in $compiledProjects ; do
-	echo "Compile $(projectname ${d})"
+	echo "Build $(projectname ${d})"
 
 	for sharedResource in $(ls shared) ; do
 		rm -rf ${d}/${sharedResource} 2> /dev/null
