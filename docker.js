@@ -259,6 +259,7 @@ const containerName		= command => `${image}_${command}`.replace(/\//g, '_');
 const dockerRun			= (command, name, background, noCleanup, additionalArgs, getOutput) => {
 	const processArgs	= [
 		'run',
+		'--privileged=true',
 		getOutput ? '-i' : '-it'
 	].concat(
 		name ? [`--name=${name}`] : []
@@ -354,8 +355,6 @@ let initPromise	= Promise.resolve();
 
 switch (args.command) {
 	case 'deploy':
-		commandAdditionalArgs.push('--privileged=true');
-
 		if (!isAgseDeploy) {
 			break;
 		}

@@ -147,13 +147,15 @@ tsbuild () {
 
 	cd "${tmpJsDir}"
 
-	echo -e "\nCompile ${*}\n$({
+	{
 		time if [ "${watch}" ] && [ ! "${getTmpDir}" ] ; then
-			./node_modules/.bin/ngc -p .
+			./node_modules/@angular/compiler-cli/src/main.js -p .
 		else
-			output="${output}$(./node_modules/.bin/ngc -p . 2>&1)"
+			output="${output}$(./node_modules/@angular/compiler-cli/src/main.js -p . 2>&1)"
 		fi
-	} 2>&1)\n" 1>&2
+	} > build.log 2>&1
+
+	echo -e "\nCompile ${*}\n$(cat build.log)\n" 1>&2
 
 	cd "${currentDir}"
 
@@ -228,7 +230,7 @@ compile () {
 
 	if [ ! -d node_modules ] ; then
 		mkdir node_modules
-		cp -rf /node_modules/.bin /node_modules/@angular node_modules/
+		cp -rf /node_modules/@angular node_modules/
 	fi
 
 	nonmainfiles="$(echo "${tsfiles}" | grep -vP '/main$')"
