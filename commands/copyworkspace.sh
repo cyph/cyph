@@ -14,7 +14,7 @@ rm -rf "${1}" 2> /dev/null
 mkdir -p "${1}/shared"
 dir="$(realpath "${1}")"
 
-rsync -rq "${source}" "${dir}" \
+rsync -rLq "${source}" "${dir}" \
 	--exclude shared/lib/js/libsodium \
 	$(test "${clientOnly}" && echo '--exclude default') \
 	$(ls -a "${source}" | grep -P '^\.[^\.]+' | xargs -I% echo -n '--exclude % ') \
