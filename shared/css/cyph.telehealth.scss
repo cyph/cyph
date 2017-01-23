@@ -1,11 +1,11 @@
 body.telehealth {
 	&, #main, md-sidenav, md-dialog, .chat-begin-message, md-toolbar, md-toolbar.md-default-theme {
-		background-color: #7a7c8b !important;
+		background-color: #eeecf1 !important;
 	}
 
 	#main {
 		.chat-sidebar .md-button, .chat-message-box:not(.mobile) .md-button, .video-call:not(.playing) .close-button {
-			background-color: #7a7c8b !important;
+			background-color: #eeecf1 !important;
 
 			&:hover {
 				background-color: #b7bccb !important;
@@ -13,12 +13,8 @@ body.telehealth {
 
 			&[disabled], &[disabled]:hover {
 				box-shadow: none !important;
-				border: solid 1px #5F5F5F !important;
+				border: solid 1px #E7C447 !important;
 				background-color: transparent !important;
-			}
-
-			md-icon {
-				color: #f1f1f1 !important;
 			}
 		}
 
@@ -29,9 +25,18 @@ body.telehealth {
 		}
 
 		.video-call:not(.playing) .close-button {
-			color: white !important;
+			color: #4D5062 !important;
 			box-shadow: none !important;
 		}
+
+		.connect-link-mobile md-icon {
+			color: white !important;
+		}
+	}
+
+	.chat-message-box:not(.mobile) .message-box:focus {
+		box-shadow: 0 0 10px #E7C447;
+		border: 1px solid #E7C447;
 	}
 
 	.message-item {
@@ -39,9 +44,51 @@ body.telehealth {
 		box-shadow: none;
 	}
 
+	.message-item.author-other:after {
+		border-color: transparent #4D5062 !important;
+	}
+
+	.message-item.author-other:before {
+		box-shadow: 5px 1px 5px #4D5062 !important;
+	}
+
+	textarea::-webkit-input-placeholder, textarea::moz-placeholder, textarea:ms-input-placeholder {
+		color: black !important;
+	}
+
+	span, a, p, h1, h2, h3, cyph-help {
+		color: #4D5062 !important;
+		font-weight: 400;
+	}
+
+	.md-bar2 {
+		background-color: #E7C447 !important;
+		opacity: 0.75;
+	}
+
+	.logo-animation {
+		display: none !important;
+	}
+
+	.telehealth-logo img {
+		width: 42vh;
+	}
+
 	.footer {
-		visibility: hidden;
-		margin-bottom: -75px;
+		//visibility: hidden;
+		//margin-bottom: -75px;
+		color: #4D5062;
+
+		.icons {
+			right: 12px;
+			bottom: 7px;
+			position: fixed;
+		}
+
+		.powered-by-cyph {
+			top: 15px;
+			position: relative;
+		}
 	}
 
 	.message-list:after,
@@ -49,5 +96,53 @@ body.telehealth {
 	.chat-sidebar:not(.show-chat) .logo,
 	.abort-screen .image {
 		display: none;
+	}
+
+	.chat-main.video .video-call.active.playing ~ .message-list {
+		background-color: rgba(187, 168, 223, 0.8) !important;
+	}
+
+	span.message-timestamp.flex,
+	cyph-markdown.message-text.app-message p {
+		color: #f3f3f3 !important;
+	}
+
+}
+
+body.telehealth:not(.mobile) {
+	.chat-message-box {
+		textarea {
+			background-color: rgba(77, 80, 98, 0.33) !important;
+		}
+
+		textarea::-webkit-input-placeholder {
+			/* WebKit browsers */
+			color: #4D5062 !important;
+		}
+
+		textarea:-moz-placeholder {
+			/* Mozilla Firefox 4 to 18 */
+			color: #4D5062 !important;
+		}
+
+		textarea::-moz-placeholder {
+			/* Mozilla Firefox 19+ */
+			color: #4D5062 !important;
+		}
+
+		textarea:-ms-input-placeholder {
+			/* Internet Explorer 10+ */
+			color: #4D5062 !important;
+		}
+	}
+
+	md-icon {
+		color: #4D5062 !important;
+	}
+}
+
+body.telehealth.mobile {
+	md-icon.material-icons {
+		color: #4D5062 !important;
 	}
 }

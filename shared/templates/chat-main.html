@@ -8,14 +8,17 @@
 		[class.active]='chatService.state === chatService.states.keyExchange'
 	>
 		<div class='flex'></div>
-		<div class='logo-animation'>
+		<div *ngIf='!sessionService.apiFlags.telehealth' class='logo-animation'>
 			<div></div>
 			<div></div>
 			<div></div>
 			<div></div>
 			<div></div>
 		</div>
-		<div cyphTranslate>Initiating key exchange...</div>
+		<div *ngIf='sessionService.apiFlags.telehealth' class='telehealth-logo'>
+			<img src='/img/icons/logo.telehealth.icon.png' alt='Telehealth logo' />
+		</div>
+		<span cyphTranslate>Initiating key exchange...</span>
 		<md2-progress-linear
 			childClass='md-accent key-exchange-progress'
 			mdMode='determinate'
@@ -30,10 +33,15 @@
 	>
 		<div class='flex'></div>
 		<div class='image'>
-			<img src='/img/walken.png' alt='Definitely not Christopher Walken' cyphTranslate />
+			<img
+				*ngIf='!sessionService.apiFlags.telehealth'
+				src='/img/walken.png'
+				alt='Definitely not Christopher Walken'
+				cyphTranslate
+			/>
 		</div>
-		<div>
-			<div cyphTranslate>This cyph has been aborted.</div>
+		<div *ngIf='!sessionService.apiFlags.telehealth'>
+			<span cyphTranslate>This cyph has been aborted.</span>
 			<br />
 			<span cyphTranslate>Please</span>
 			<a
@@ -42,6 +50,27 @@
 				[href]='envService.newCyphUrlRedirect'
 			>try again</a>.
 		</div>
+		<div *ngIf='sessionService.apiFlags.telehealth'>
+			<span cyphTranslate>This telehealth session has been aborted.</span>
+			<br />
+			<div *ngIf='sessionService.state.isAlice'>
+				<span cyphTranslate>
+					If this was a mistake or error,
+					you may generate a new link and
+				</span>
+				<a
+					cyphTranslate
+					target='_self'
+					[href]='envService.newCyphUrlRedirect'
+				>try again</a>.
+			</div>
+			<div *ngIf='!sessionService.state.isAlice'>
+				<span cyphTranslate>
+					If this was a mistake or error,
+					your practitoner will send you a new link.
+				</span>
+			</div>
+		</div>		
 		<div class='flex'></div>
 	</div>
 
@@ -50,8 +79,11 @@
 		[class.active]='chatService.state === chatService.states.chatBeginMessage'
 	>
 		<div class='flex'></div>
-		<div class='logo-animation connected'></div>
-		<div cyphTranslate>Securely Connected!</div>
+		<div *ngIf='!sessionService.apiFlags.telehealth' class='logo-animation connected'></div>
+		<div *ngIf='sessionService.apiFlags.telehealth' class='telehealth-logo'>
+			<img src='/img/icons/logo.telehealth.icon.png' alt='Telehealth logo' />
+		</div>
+		<span cyphTranslate>Securely Connected!</span>
 		<md2-progress-linear
 			childClass='md-accent key-exchange-progress'
 			mdMode='determinate'
@@ -68,7 +100,18 @@
 		*ngIf='p2pService.p2p'
 	>
 		<a class='logo' rel='noreferrer' [href]='envService.homeUrl'>
-			<img src='/img/betalogo.mobile.png' alt='Beta logo' cyphTranslate />
+			<img 
+				*ngIf='!sessionService.apiFlags.telehealth'
+				src='/img/betalogo.mobile.png'
+				alt='Beta logo'
+				cyphTranslate
+			/>
+			<img
+				*ngIf='sessionService.apiFlags.telehealth'
+				src='/img/telehealth.video.logo.png'
+				alt='Telehealth logo'
+				cyphTranslate
+			/>
 		</a>
 		<div
 			class='friend stream'
