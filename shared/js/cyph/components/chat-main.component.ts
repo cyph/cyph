@@ -5,6 +5,7 @@ import {EnvService} from '../services/env.service';
 import {FileService} from '../services/file.service';
 import {P2PService} from '../services/p2p.service';
 import {ScrollService} from '../services/scroll.service';
+import {SessionService} from '../services/session.service';
 import {StringsService} from '../services/strings.service';
 
 
@@ -65,6 +66,9 @@ export class ChatMainComponent implements OnInit {
 
 		/** @see P2PService */
 		public readonly p2pService: P2PService,
+
+		/** @see SessionService */
+		public readonly sessionService: SessionService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
