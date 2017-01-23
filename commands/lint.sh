@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd $(cd "$(dirname "$0")"; pwd)/..
+cd $(cd "$(dirname "$0")" ; pwd)/..
 
 
 tmpDir="$(mktemp -d)"
@@ -30,16 +30,14 @@ node -e "
 	);
 "
 
-output="$(
+output="$({
 	tslint \
 		-r tslint-rules \
 		-r /node_modules/codelyzer \
 		-r /node_modules/tslint-microsoft-contrib \
 		--project js/tsconfig.tslint.json \
-		--type-check
-)"
-
-output="${output}$(
+		--type-check \
+	;
 	find templates -type f -name '*.html' -not -path 'templates/native/*' -exec node -e '
 		require("htmllint")(
 			fs.readFileSync("{}").toString(),
@@ -49,8 +47,8 @@ output="${output}$(
 				console.log("{}: " + JSON.stringify(result, undefined, "\t") + "\n\n");
 			}
 		})
-	' \;
-)"
+	' \;;
+})"
 
 echo -e "${output}"
 exit ${#output}
