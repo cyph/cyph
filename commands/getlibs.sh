@@ -192,6 +192,14 @@ chmod +x .bin/ts-node
 cp -f highlight.js/styles/ir-black.css nodobjc/docs/assets/ir_black.css
 cp -f highlight.js/styles/solarized-light.css ref/docs/stylesheets/hightlight.css
 
+find .bin -type l -exec node -e '
+	const bin	= fs.readlinkSync("{}");
+
+	fs.unlinkSync("{}");
+	fs.writeFileSync("{}", `#!/bin/bash\n\$(cd "\$(dirname "\$0")" ; pwd)/${bin} "\${@}"\n`);
+	fs.chmodSync("{}", 0777);
+' \;
+
 cd ../..
 
 mv js/node_modules .js.tmp/
