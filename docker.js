@@ -436,11 +436,17 @@ initPromise.then(() => {
 	backup();
 	killContainer(containerName(args.command));
 
-	pullUpdates().then(() => dockerRun(
-		shellScripts.command,
-		containerName(args.command),
-		args.background,
-		false,
-		commandAdditionalArgs
-	));
+	pullUpdates().then(() => {
+		if (shellScripts.command === 'getlibs') {
+			return;
+		}
+
+		dockerRun(
+			shellScripts.command,
+			containerName(args.command),
+			args.background,
+			false,
+			commandAdditionalArgs
+		);
+	});
 });
