@@ -388,7 +388,6 @@ switch (args.command) {
 		break;
 
 	case 'serve':
-		commandAdditionalArgs.push('--privileged=true');
 		commandAdditionalArgs.push('-p');
 		commandAdditionalArgs.push('42000:5000');
 		commandAdditionalArgs.push('-p');
