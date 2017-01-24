@@ -1,21 +1,22 @@
 * text=auto
 
-* text eol=lf
-.* text eol lf
-
-*.eot binary
-*.gif binary
-*.ico binary
-*.jpeg binary
-*.jpg binary
-*.mov binary
-*.mp3 binary
-*.mp4 binary
-*.ogg binary
-*.ogv binary
-*.png binary
-*.ttf binary
-*.webm binary
-*.webp binary
-*.woff binary
-*.xcf binary
+*.appcache text eol=lf
+*.css text eol=lf
+.gitattributes text eol=lf
+.gitignore text eol=lf
+*.go text eol=lf
+*.html text eol=lf
+*.js text eol=lf
+*.json text eol=lf
+*.lock text eol=lf
+*.md text eol=lf
+*.rules text eol=lf
+*.scss text eol=lf
+*.sh text eol=lf
+*.svg text eol=lf
+*.template text eol=lf
+*.ts text eol=lf
+*.txt text eol=lf
+*.xml text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
