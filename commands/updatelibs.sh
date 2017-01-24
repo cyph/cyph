@@ -49,7 +49,7 @@ yarn add --ignore-platform \
 	browserify \
 	browserstack \
 	cheerio \
-	clean-css \
+	clean-css-cli \
 	clipboard-js \
 	codelyzer \
 	core-js \
