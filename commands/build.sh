@@ -599,6 +599,7 @@ if [ "${watch}" ] ; then
 		start="$(date +%s)"
 		echo -e '\n\n\nBuilding JS/CSS\n\n'
 		compile
+		touch ~/.build.done
 		echo -e "\n\n\nFinished building JS/CSS ($(expr $(date +%s) - $start)s)\n\n"
 
 		#if [ $SECONDS -gt $liteDeployInterval -a ! -d ~/.litedeploy ] ; then
