@@ -103,8 +103,6 @@ const mounts				= [
 );
 
 const windowsWorkaround		= !isWindows ? '' : `
-	find /cyph/commands -type f -exec sed -i 's/\\r//g' {} \\;
-
 	sudo mv /bin/ln /bin/ln.old
 	echo '
 		#!/bin/bash
