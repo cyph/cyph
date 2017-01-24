@@ -599,7 +599,7 @@ if [ "${watch}" ] ; then
 		start="$(date +%s)"
 		echo -e '\n\n\nBuilding JS/CSS\n\n'
 		compile
-		touch ~/.build.done
+		touch ~/.initialbuild.done
 		echo -e "\n\n\nFinished building JS/CSS ($(expr $(date +%s) - $start)s)\n\n"
 
 		#if [ $SECONDS -gt $liteDeployInterval -a ! -d ~/.litedeploy ] ; then
@@ -617,6 +617,7 @@ if [ "${watch}" ] ; then
 				inotifywait -r --exclude '(sed.*|.*\.(css|js|map|tmp))$' css js templates
 			)"
 			if ! echo "${fsevent}" | grep -P '(OPEN|ISDIR)' > /dev/null ; then
+				echo "${fsevent}"
 				break
 			fi
 		done
