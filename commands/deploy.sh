@@ -292,7 +292,7 @@ for d in $compiledProjects ; do
 
 	mv .index.html index.html
 
-	rm -rf css/bourbon js/node_modules
+	rm -rf js/node_modules
 	find css -type f \( -name '*.scss' -or -name '*.map' \) -exec rm {} \;
 	find js -type f \( -name '*.ts' -or -name '*.map' \) -exec rm {} \;
 

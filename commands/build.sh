@@ -59,7 +59,7 @@ tsfiles="$(
 cd shared
 
 scssfiles="$(
-	find css -name '*.scss' -not -path 'css/bourbon/*' |
+	find css -name '*.scss' |
 		perl -pe 's/css\/(.*)\.scss/\1/g' |
 		tr '\n' ' '
 )"
@@ -614,7 +614,7 @@ if [ "${watch}" ] ; then
 
 		while true ; do
 			fsevent="$(
-				inotifywait -r --exclude '(css/bourbon/.*|sed.*|.*\.(css|js|map|tmp))$' css js templates
+				inotifywait -r --exclude '(sed.*|.*\.(css|js|map|tmp))$' css js templates
 			)"
 			if ! echo "${fsevent}" | grep -P '(OPEN|ISDIR)' > /dev/null ; then
 				break
