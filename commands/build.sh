@@ -614,7 +614,7 @@ if [ "${watch}" ] ; then
 
 		while true ; do
 			fsevent="$(
-				inotifywait -r --exclude '(bourbon|sed.*|.*\.(css|js|map|tmp))$' css js templates
+				inotifywait -r --exclude '(css/bourbon/.*|sed.*|.*\.(css|js|map|tmp))$' css js templates
 			)"
 			if ! echo "${fsevent}" | grep -P '(OPEN|ISDIR)' > /dev/null ; then
 				break
