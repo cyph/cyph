@@ -50,7 +50,7 @@ catch (_) {}
 
 const css	= compileSCSS(
 	eval(`\`
-		@import 'bourbon/bourbon';
+		@import '/node_modules/bourbon/app/assets/stylesheets/bourbon';
 
 		${
 			fs.readFileSync(
