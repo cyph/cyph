@@ -1,3 +1,4 @@
+import {Injectable} from '@angular/core';
 import {analytics} from '../analytics';
 import {IChatMessage} from '../chat/ichat-message';
 import {util} from '../util';
@@ -10,6 +11,7 @@ import {StringsService} from './strings.service';
 /**
  * Manages cyphertext chat UI.
  */
+@Injectable()
 export class CyphertextService {
 	/** Indicates whether cyphertext should be displayed. */
 	public isVisible: boolean	= false;
