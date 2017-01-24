@@ -148,8 +148,8 @@ tsbuild () {
 	cd "${tmpJsDir}"
 
 	{
-		time if [ "${watch}" ] && [ ! "${getTmpDir}" ] ; then
-			./node_modules/@angular/compiler-cli/src/main.js -p .
+		time if [ "${watch}" ] ; then
+			tsc -p .
 		else
 			output="${output}$(./node_modules/@angular/compiler-cli/src/main.js -p . 2>&1)"
 		fi
@@ -228,7 +228,16 @@ compile () {
 		echo 'module.exports = {superSphincs: self.superSphincs};' > externals/supersphincs.js
 	fi
 
-	if [ ! -d node_modules ] ; then
+	if [ "${watch}" ] ; then
+		find . -type f -name main.ts -exec bash -c "
+			cat '{}' |
+				grep -v enableProdMode |
+				sed 's|platformBrowser|platformBrowserDynamic|g' |
+				sed 's|platform-browser|platform-browser-dynamic|g' \
+			> '{}.new'
+			mv '{}.new' '{}'
+		" \;
+	elif [ ! -d node_modules ] ; then
 		mkdir node_modules
 		cp -rf /node_modules/@angular node_modules/
 	fi
@@ -242,23 +251,13 @@ compile () {
 	fi
 
 	for f in $(echo "${tsfiles}" | grep -P '/main$') ; do
-		aotreplace () {
+		if [ "${watch}" ] ; then
+			tsbuild --log-tmp-dir "${f}" &
+		else
+			tsbuild "${f}"
 			sed -i 's|\./app.module|\./app.module.ngfactory|g' "${f}.ts"
 			sed -i 's|AppModule|AppModuleNgFactory|g' "${f}.ts"
 			sed -i 's|bootstrapModule|bootstrapModuleFactory|g' "${f}.ts"
-		}
-
-		if [ "${watch}" ] ; then
-			{
-				startdir="${PWD}"
-				cd "$(tsbuild --get-tmp-dir "${f}")"
-				aotreplace
-				tsbuild --log-tmp-dir "${f}"
-				mv "${f}.tmpdir" "${startdir}/${f}.tmpdir"
-			} &
-		else
-			tsbuild "${f}"
-			aotreplace
 			tsbuild "${f}"
 		fi
 	done
