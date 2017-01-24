@@ -1,3 +1,4 @@
+import {Injectable} from '@angular/core';
 import {eventManager} from '../event-manager';
 import {EnvService} from './env.service';
 
@@ -5,6 +6,7 @@ import {EnvService} from './env.service';
 /**
  * Manages URL state.
  */
+@Injectable()
 export class UrlStateService {
 	/** @ignore */
 	private static readonly setThreadEvent: string		= 'setThreadEvent';
