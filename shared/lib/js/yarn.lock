@@ -1243,12 +1243,13 @@ bufferpack@0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/bufferpack/-/bufferpack-0.0.6.tgz#fb3d8738a0e1e4e03bcff99f9a75f9ec18a9d73e"
 
-bufferutil@1.0.x:
+bufferutil@1.0.x, "bufferutil@https://github.com/telerik/bufferutil/tarball/v1.0.1.4":
   version "1.0.1"
-  resolved "https://registry.yarnpkg.com/bufferutil/-/bufferutil-1.0.1.tgz#0c53a9ffe8d616c4e2df27d00b808f7a25501e3b"
+  resolved "https://github.com/telerik/bufferutil/tarball/v1.0.1.4#7b50375e84662abcf2aec3015dfa335b48db652a"
   dependencies:
     bindings "1.2.x"
-    nan "1.6.x"
+    nan "^2.0.5"
+    prebuilt "https://github.com/tailsu/node-prebuilt/tarball/master"
 
 bufferutil@1.2.x:
   version "1.2.1"
@@ -1256,14 +1257,6 @@ bufferutil@1.2.x:
   dependencies:
     bindings "1.2.x"
     nan "^2.0.5"
-
-"bufferutil@https://github.com/telerik/bufferutil/tarball/v1.0.1.4":
-  version "1.0.1"
-  resolved "https://github.com/telerik/bufferutil/tarball/v1.0.1.4#7b50375e84662abcf2aec3015dfa335b48db652a"
-  dependencies:
-    bindings "1.2.x"
-    nan "^2.0.5"
-    prebuilt "https://github.com/tailsu/node-prebuilt/tarball/master"
 
 builtin-modules@^1.0.0:
   version "1.1.1"
@@ -1410,6 +1403,13 @@ cipher-base@^1.0.0, cipher-base@^1.0.1:
   dependencies:
     inherits "^2.0.1"
 
+clean-css-cli@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/clean-css-cli/-/clean-css-cli-4.0.0.tgz#741002759ba139137c0906d43486e6e03eb13cd3"
+  dependencies:
+    clean-css "4.x"
+    commander "2.x"
+
 clean-css@3.4.x:
   version "3.4.24"
   resolved "https://registry.yarnpkg.com/clean-css/-/clean-css-3.4.24.tgz#89f5a5e9da37ae02394fe049a41388abbe72c3b5"
@@ -1417,7 +1417,7 @@ clean-css@3.4.x:
     commander "2.8.x"
     source-map "0.4.x"
 
-clean-css@^4.0.0:
+clean-css@4.x:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/clean-css/-/clean-css-4.0.0.tgz#5737f76156696ef2ccfba44c877694d830ba29ca"
   dependencies:
@@ -1558,7 +1558,7 @@ commander@2.8.x:
   dependencies:
     graceful-readlink ">= 1.0.0"
 
-commander@2.9.x, commander@^2.8.1, commander@^2.9.0:
+commander@2.9.x, commander@2.x, commander@^2.8.1, commander@^2.9.0:
   version "2.9.0"
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.9.0.tgz#9c99094176e12240cb22d6c5146098400fe0f7d4"
   dependencies:
@@ -4159,17 +4159,17 @@ nan@1.6.x:
   version "1.6.2"
   resolved "https://registry.yarnpkg.com/nan/-/nan-1.6.2.tgz#2657d1c43b00f1e847e083832285b7d8f5ba8ec8"
 
-nan@2, nan@^2.0.5, nan@^2.3.0, nan@~2.3.3:
+nan@2, nan@~2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/nan/-/nan-2.4.0.tgz#fb3c59d45fe4effe215f0b890f8adf6eb32d2232"
+
+nan@^2.0.5, nan@^2.3.0, nan@~2.3.3:
   version "2.3.5"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.3.5.tgz#822a0dc266290ce4cd3a12282ca3e7e364668a08"
 
 nan@~2.0.0:
   version "2.0.9"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.0.9.tgz#d02a770f46778842cceb94e17cab31ffc7234a05"
-
-nan@~2.4.0:
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/nan/-/nan-2.4.0.tgz#fb3c59d45fe4effe215f0b890f8adf6eb32d2232"
 
 nanoscroller@^0.8.7:
   version "0.8.7"
@@ -5040,11 +5040,11 @@ public-encrypt@^4.0.0:
     parse-asn1 "^5.0.0"
     randombytes "^2.0.1"
 
-punycode@1.3.2:
+punycode@1.3.2, punycode@^1.3.2:
   version "1.3.2"
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-1.3.2.tgz#9653a036fb7c1ee42342f2325cceefea3926c48d"
 
-punycode@^1.2.4, punycode@^1.3.2, punycode@^1.4.1:
+punycode@^1.2.4, punycode@^1.4.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-1.4.1.tgz#c0d5a63b2718800ad8e1eb0fa5269c84dd41845e"
 
