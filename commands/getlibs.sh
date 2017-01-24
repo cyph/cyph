@@ -244,7 +244,10 @@ sudo rm -rf /node_modules
 sudo mv lib/js/node_modules /
 sudo chmod -R 777 /node_modules
 rm -rf lib
-cd ${dir}/shared/lib/go
+cd ${dir}/shared/lib
+rm -rf ../css/bourbon 2> /dev/null
+cp -rf js/node_modules/bourbon/app/assets/stylesheets ../css/bourbon
+cd go
 for d in * ; do
 	rm -rf ../../../default/${d} 2> /dev/null
 	cp -rf ${d} ../../../default/
