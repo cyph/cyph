@@ -599,6 +599,7 @@ if [ "${watch}" ] ; then
 		start="$(date +%s)"
 		echo -e '\n\n\nBuilding JS/CSS\n\n'
 		compile
+		touch ~/.build.done
 		echo -e "\n\n\nFinished building JS/CSS ($(expr $(date +%s) - $start)s)\n\n"
 
 		#if [ $SECONDS -gt $liteDeployInterval -a ! -d ~/.litedeploy ] ; then
@@ -613,7 +614,7 @@ if [ "${watch}" ] ; then
 
 		while true ; do
 			fsevent="$(
-				inotifywait -r --exclude '(bourbon|sed.*|.*\.(css|js|map|tmp))$' css js templates
+				inotifywait -r --exclude '(css/bourbon/.*|sed.*|.*\.(css|js|map|tmp))$' css js templates
 			)"
 			if ! echo "${fsevent}" | grep -P '(OPEN|ISDIR)' > /dev/null ; then
 				break
