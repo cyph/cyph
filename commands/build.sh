@@ -177,7 +177,7 @@ compile () {
 	for f in $scssfiles ; do
 		compileF () {
 			scss -C -Icss "css/${f}.scss" |
-				if [ "${minify}" ] ; then cleancss -s ; else cat - ; fi \
+				if [ "${minify}" ] ; then cleancss --inline none ; else cat - ; fi \
 			> "${outputDir}/css/${f}.css"
 		}
 
