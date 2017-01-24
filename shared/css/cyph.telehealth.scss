@@ -52,8 +52,10 @@ body.telehealth {
 		box-shadow: 5px 1px 5px #4D5062 !important;
 	}
 
-	textarea::-webkit-input-placeholder, textarea::moz-placeholder, textarea:ms-input-placeholder {
-		color: black !important;
+	textarea {
+		@include placeholder {
+			color: black !important;
+		}
 	}
 
 	span, a, p, h1, h2, h3, cyph-help {
@@ -115,24 +117,10 @@ body.telehealth:not(.mobile) {
 			background-color: rgba(77, 80, 98, 0.33) !important;
 		}
 
-		textarea::-webkit-input-placeholder {
-			/* WebKit browsers */
-			color: #4D5062 !important;
-		}
-
-		textarea:-moz-placeholder {
-			/* Mozilla Firefox 4 to 18 */
-			color: #4D5062 !important;
-		}
-
-		textarea::-moz-placeholder {
-			/* Mozilla Firefox 19+ */
-			color: #4D5062 !important;
-		}
-
-		textarea:-ms-input-placeholder {
-			/* Internet Explorer 10+ */
-			color: #4D5062 !important;
+		textarea {
+			@include placeholder {
+				color: #4D5062 !important;
+			}
 		}
 	}
 
