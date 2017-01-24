@@ -1045,21 +1045,16 @@ body:not(.mobile) .section-content-container:not(.full) {
 	}
 }
 
-div.donation {
-	position: relative;
-	float: right;
-	margin-top: -42px;
+.donation-amount {
 	font-family: Ubuntu;
 	font-size: 24px;
+	padding-top: 8px;
+	padding-left: 20px;
 }
 
 .donate-button {
 	display: block;
 	margin-top: -15px;
-}
-
-md-slider.donation {
-	width: 91%;
 }
 
 md-slider .md-sign:after {

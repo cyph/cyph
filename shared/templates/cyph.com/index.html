@@ -1022,21 +1022,25 @@
 			Donate
 		</h1>
 		<div class='section-content-container'>
-			<div>
-				<span cyphTranslate>
-					If you'd like to help support our mission, you may donate
-					via the form below or use the Bitcoin address
-				</span>
-				<a
-					target='_self'
-					href='bitcoin:1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd'
-				>1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd</a>.
-				<p cyphTranslate>
-					All donations will go directly toward the development of
-					native mobile apps and Cyph accounts.
-				</p>
+			<div class='layout-row'>
+				<div>
+					<span cyphTranslate>
+						If you'd like to help support our mission, you may donate
+						via the form below or use the Bitcoin address
+					</span>
+					<a
+						target='_self'
+						href='bitcoin:1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd'
+					>1Cyph47AKhyG8mP9SPxd2ELTB2iGyJjfnd</a>.
+				</div>
+			</div>
+			<p class='layout-row' cyphTranslate>
+				All donations will go directly toward the development of
+				native mobile apps and Cyph accounts.
+			</p>
+			<div class='layout-row'>
 				<md2-slider
-					childClass='donation flex'
+					class='flex layout-column'
 					mdDiscrete
 					[(model)]='appService.donationAmount'
 					[step]='1'
@@ -1044,19 +1048,24 @@
 					[max]='1337'
 					ariaLabel='Donation Amount'
 				></md2-slider>
-				<div class='donation flex-20 layout layout-align-center-center'>
+				<div class='donation-amount layout-column'>
 					${{appService.donationAmount}}
 				</div>
-				<md2-button cyphTranslate childClass='donate-button' ariaLabel='Submit Donation'>
-					<a (click)='appService.updateCart(
-						appService.donationAmount,
-						configService.pricingConfig.categories.donation.id,
-						configService.pricingConfig.categories.donation.items.generic.id
-					)'>
-						Confirm Donation Amount
-					</a>
-				</md2-button>
 			</div>
+			<md2-button
+				class='layout-row'
+				childClass='donate-button'
+				ariaLabel='Submit Donation'
+				cyphTranslate
+			>
+				<a (click)='appService.updateCart(
+					appService.donationAmount,
+					configService.pricingConfig.categories.donation.id,
+					configService.pricingConfig.categories.donation.items.generic.id
+				)'>
+					Confirm Donation Amount
+				</a>
+			</md2-button>
 		</div>
 	</section>
 
