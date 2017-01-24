@@ -74,10 +74,8 @@ export class MdSliderComponent
 				ng-model='$ctrl.model'
 				ng-attr-step='{{$ctrl.step}}'
 				aria-label='.'
-				ng-transclude
 			></md-slider>
-		`,
-		transclude: true
+		`
 	};
 
 
