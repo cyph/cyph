@@ -2165,14 +2165,14 @@
       "modules": [
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/angular-material/angular-material.js"
       ],
-      "hash": "591549a526b4cd6f2b7ed60f8a1474fb",
+      "hash": "1b907cfed65db175c3a4bd00bd9fb995",
       "id": 69
     },
     {
       "modules": [
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!translations.js"
       ],
-      "hash": "ebb067842a2efa1766a0f0140f7b4cf7",
+      "hash": "22b093d2eb9c25fa165109f6e5c5941d",
       "id": 70
     },
     {

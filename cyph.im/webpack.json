@@ -2134,14 +2134,14 @@
       "modules": [
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/angular-material/angular-material.js"
       ],
-      "hash": "5014bf0eeb78f90f021e481b551a6a5a",
+      "hash": "ae1ee48bcd668c540298608d64a50b3f",
       "id": 68
     },
     {
       "modules": [
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!translations.js"
       ],
-      "hash": "02752a9c3d5fce7c6151320845fce445",
+      "hash": "e220dd1afe80de77eea4921c4f120d45",
       "id": 69
     },
     {

@@ -103,8 +103,6 @@ const mounts				= [
 );
 
 const windowsWorkaround		= !isWindows ? '' : `
-	find /cyph/commands -type f -exec sed -i 's/\\r//g' {} \\;
-
 	sudo mv /bin/ln /bin/ln.old
 	echo '
 		#!/bin/bash
@@ -388,7 +386,6 @@ switch (args.command) {
 		break;
 
 	case 'serve':
-		commandAdditionalArgs.push('--privileged=true');
 		commandAdditionalArgs.push('-p');
 		commandAdditionalArgs.push('42000:5000');
 		commandAdditionalArgs.push('-p');
