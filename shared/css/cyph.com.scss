@@ -108,6 +108,7 @@ section#main {
 .hero-foreground {
 	z-index: 3;
 	position: relative;
+	width: 100%;
 }
 
 #new-cyph {
@@ -115,9 +116,9 @@ section#main {
 	font-size: 0.5em;
 	font-weight: 300;
 	position: fixed;
-	top: 0.5em;
+	top: 0.35em;
 	left: 50%;
-	height: 3.4em;
+	height: 3.5em;
 	width: 10.7em;
 	padding: 0px;
 	margin: 0px;
@@ -140,7 +141,7 @@ section#main {
 
 #main-toolbar.new-cyph-expanded {
 	#new-cyph {
-		@include transform(translateX(-50%) translateY(calc(50vh - 50% - 0.5em)) scale(2));
+		@include transform(translateX(-50%) translateY(calc(50vh - 50% - 0.35em)) scale(2));
 	}
 
 	.link-wrapper-outer {
@@ -154,7 +155,18 @@ section#main {
 	}
 }
 
+body.mobile #main-toolbar #new-cyph {
+	top: 0.6em;
+	height: 3.8em
+}
+
 @media all and (orientation: portrait) {
+	body.mobile #main-toolbar.new-cyph-expanded #new-cyph {
+		@include transform(translateX(-50%) translateY(30em) scale(2));
+	}
+}
+
+@media all and (orientation: landscape) {
 	body.mobile #main-toolbar.new-cyph-expanded #new-cyph {
 		@include transform(translateX(-50%) translateY(25em) scale(2));
 	}
@@ -206,7 +218,6 @@ body:not(.mobile) #hero-section {
 	.hero-foreground {
 		top: 50%;
 		left: 0px;
-		width: 100%;
 		position: absolute;
 
 		@include transform(translateY(-50%));
