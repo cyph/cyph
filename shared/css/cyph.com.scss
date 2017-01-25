@@ -112,13 +112,13 @@ section#main {
 
 #new-cyph {
 	font-family: Ubuntu;
-	font-size: 11px;
+	font-size: 0.5em;
 	font-weight: 300;
 	position: fixed;
-	top: 5px;
+	top: 0.5em;
 	left: 50%;
-	height: 38px;
-	width: 120px;
+	height: 3.4em;
+	width: 10.7em;
 	padding: 0px;
 	margin: 0px;
 	border-radius: 1px;
@@ -140,16 +140,16 @@ section#main {
 
 #main-toolbar.new-cyph-expanded {
 	#new-cyph {
-		@include transform(translateX(-50%) translateY(calc(50vh - 50% - 5px)) scale(2));
+		@include transform(translateX(-50%) translateY(calc(50vh - 50% - 0.5em)) scale(2));
 	}
 
 	.link-wrapper-outer {
 		&.right {
-			@include transform(translateX(60px));
+			@include transform(translateX(3em));
 		}
 
 		&.left {
-			@include transform(translateX(-60px));
+			@include transform(translateX(-3em));
 		}
 	}
 }
@@ -165,7 +165,7 @@ section#main {
 	text-align: center;
 	margin-top: 25px;
 	margin-bottom: 0px;
-	font-size: 42px;
+	font-size: 3em;
 	font-weight: 100;
 
 	.subtitle {
@@ -196,6 +196,19 @@ section#main {
 				margin-top: 0px;
 			}
 		}
+	}
+}
+
+body:not(.mobile) #hero-section {
+	height: calc(100vh - 200px);
+	min-height: 50em;
+
+	.hero-foreground {
+		top: 50%;
+		left: 50%;
+		position: absolute;
+
+		@include transform(translateX(-50%) translateY(-50%));
 	}
 }
 
@@ -258,7 +271,7 @@ body.mobile #hero-section {
 /* Targeting screens smaller than what Unsemantic considers a "tablet" */
 @media (max-width: 767px) {
 	.hero-text {
-		font-size: 32px;
+		font-size: 2.3em;
 	}
 
 	.hero-container {
@@ -278,7 +291,7 @@ body.mobile #hero-section {
 	border-left: 0px !important;
 	border-right: 0px !important;
 	display: inline-block;
-	width: 300px;
+	width: 6.85em;
 
 	@include transform(translateY(-5px));
 }
@@ -288,7 +301,7 @@ body.mobile #hero-section {
 	z-index: 11;
 	top: 0px;
 	left: 0px;
-	height: 50px !important;
+	height: 2.5em !important;
 	background-color: rgba(97, 51, 163, 0.75);
 
 	.md-toolbar-tools {
@@ -302,12 +315,16 @@ body.mobile #hero-section {
 		}
 
 		.link-wrapper-outer {
-			width: calc(50% - 191px);
+			width: calc(50% - 9.55em);
 			text-align: center;
 
 			.link-wrapper-inner {
 				margin-left: auto;
 				margin-right: auto;
+
+				.md-button {
+					font-size: 1rem;
+				}
 			}
 
 			&.left {
@@ -395,7 +412,7 @@ body.mobile #logo {
 			height: 115px;
 
 			h3.title {
-				font-size: 16px;
+				font-size: 1.15em;
 				font-weight: 300;
 				line-height: 135%;
 				text-decoration: none;
@@ -435,7 +452,7 @@ body.mobile #logo {
 			}
 
 			.text {
-				font-size: 16px;
+				font-size: 1.15em;
 				line-height: 150%;
 			}
 
@@ -522,9 +539,9 @@ body.mobile .carousel {
 					content: '\201c';
 					position: absolute;
 					font-family: Georgia, serif;
-					font-size: 100px;
-					margin-top: -20px;
-					margin-left: -50px;
+					font-size: 7.2em;
+					margin-top: -0.2em;
+					margin-left: -0.5em;
 				}
 			}
 		}
@@ -647,7 +664,7 @@ body.mobile #features-section .carousel .logo.active > img {
 		overflow: hidden;
 
 		.cyph-foreground {
-			font-size: 14px;
+			font-size: 1em;
 			height: calc(100% + 4px);
 			overflow: hidden;
 		}
@@ -1047,7 +1064,7 @@ body:not(.mobile) .section-content-container:not(.full) {
 
 .donation-amount {
 	font-family: Ubuntu;
-	font-size: 24px;
+	font-size: 1.75em;
 	padding-top: 8px;
 	padding-left: 20px;
 }
@@ -1105,7 +1122,6 @@ md-slider .md-focus-thumb {
 
 md-slider .md-sign .md-thumb-text {
 	z-index: 1;
-	font-size: 13px;
 }
 
 input.donation {
