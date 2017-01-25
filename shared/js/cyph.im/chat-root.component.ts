@@ -68,7 +68,11 @@ export class ChatRootComponent implements OnInit {
 		}
 
 		this.urlStateService.setUrl(
-			this.envService.newCyphUrl.split(locationData.host).slice(-1)[0].replace(/\/$/, ''),
+			this.envService.newCyphBaseUrl.
+				split(locationData.host).
+				slice(-1)[0].
+				replace(/\/$/, '')
+			,
 			true,
 			true
 		);

@@ -28,64 +28,62 @@ export class EnvDeploy {
 		`${locationData.protocol}//${locationData.hostname}:42001/`
 	;
 
-	/** Base URL for a new cyph link ("https://cyph.im/" or equivalent). */
+	/** Base URL for a new cyph link ("https://cyph.ws/" or equivalent). */
 	public readonly newCyphBaseUrl: string		= customBuild ?
 		`https://${customBuild}/` :
 		`${locationData.protocol}//${locationData.hostname}:42002/`
 	;
 
-	/** URL for starting a new cyph (same as newCyphBaseUrl except on Onion site). */
-	public readonly newCyphUrl: string			= this.isOnion && !customBuild ?
-		`https://im.${config.onionRoot}/` :
-		this.newCyphBaseUrl
+	/** URL for starting a new cyph ("https://cyph.im/" or equivalent). */
+	public readonly newCyphUrl: string			= customBuild || this.isLocalEnv ?
+		this.newCyphBaseUrl :
+		this.isOnion ?
+			`https://im.${config.onionRoot}/` :
+			`CYPH-IM/`
 	;
 
-	/** Base URL for Cyph account application ("https://cyph.io/" or equivalent). */
-	public readonly cyphMeBaseUrl: string		= customBuild || this.isLocalEnv ?
-		`${this.newCyphBaseUrl}#me/` : 
-		`CYPH-ME/`
+	/** Base URL for a new me cyph link ("https://cyph.ws/#me/" or equivalent). */
+	public readonly cyphMeBaseUrl: string		= `${this.newCyphBaseUrl}#me/`;
+
+	/** URL for starting a new me cyph ("https://cyph.me/" or equivalent). */
+	public readonly cyphMeUrl: string			= customBuild || this.isLocalEnv ?
+		this.cyphMeBaseUrl :
+		this.isOnion ?
+			`https://me.${config.onionRoot}/` :
+			`CYPH-ME/`
 	;
 
-	/** URL for Cyph account application (same as cyphMeBaseUrl except on Onion site). */
-	public readonly cyphMeUrl: string			= this.isOnion && !customBuild ?
-		`https://me.${config.onionRoot}/` :
-		this.cyphMeBaseUrl
+	/** Base URL for a new io cyph link ("https://cyph.ws/#io/" or equivalent). */
+	public readonly cyphIoBaseUrl: string		= `${this.newCyphBaseUrl}#io/`;
+
+	/** URL for starting a new io cyph ("https://cyph.io/" or equivalent). */
+	public readonly cyphIoUrl: string			= customBuild || this.isLocalEnv ?
+		this.cyphIoBaseUrl :
+		this.isOnion ?
+			`https://io.${config.onionRoot}/` :
+			`CYPH-IO/`
 	;
 
-	/** Base URL for a new file transfer cyph link ("https://cyph.io/" or equivalent). */
-	public readonly cyphIoBaseUrl: string		= customBuild || this.isLocalEnv ?
-		`${this.newCyphBaseUrl}#io/` : 
-		`CYPH-IO/`
+	/** Base URL for a new video cyph link ("https://cyph.ws/#video/" or equivalent). */
+	public readonly cyphVideoBaseUrl: string	= `${this.newCyphBaseUrl}#video/`;
+
+	/** URL for starting a new video cyph ("https://cyph.video/" or equivalent). */
+	public readonly cyphVideoUrl: string		= customBuild || this.isLocalEnv ?
+		this.cyphVideoBaseUrl :
+		this.isOnion ?
+			`https://video.${config.onionRoot}/` :
+			`CYPH-VIDEO/`
 	;
 
-	/** URL for starting a new file transfer cyph (same as cyphIoBaseUrl except on Onion site). */
-	public readonly cyphIoUrl: string			= this.isOnion && !customBuild ?
-		`https://io.${config.onionRoot}/` :
-		this.cyphIoBaseUrl
-	;
+	/** Base URL for a new audio cyph link ("https://cyph.ws/#audio/" or equivalent). */
+	public readonly cyphAudioBaseUrl: string	= `${this.newCyphBaseUrl}#audio/`;
 
-	/** Base URL for a new video cyph link ("https://cyph.video/" or equivalent). */
-	public readonly cyphVideoBaseUrl: string	= customBuild || this.isLocalEnv ?
-		`${this.newCyphBaseUrl}#video/` : 
-		`CYPH-VIDEO/`
-	;
-
-	/** URL for starting a new video cyph (same as cyphVideoBaseUrl except on Onion site). */
-	public readonly cyphVideoUrl: string		= this.isOnion && !customBuild ?
-		`https://video.${config.onionRoot}/` :
-		this.cyphVideoBaseUrl
-	;
-
-	/** Base URL for a new audio cyph link ("https://cyph.audio/" or equivalent). */
-	public readonly cyphAudioBaseUrl: string	= customBuild || this.isLocalEnv ?
-		`${this.newCyphBaseUrl}#audio/` : 
-		`CYPH-AUDIO/`
-	;
-
-	/** URL for starting a new audio cyph (same as cyphAudioBaseUrl except on Onion site). */
-	public readonly cyphAudioUrl: string		= this.isOnion && !customBuild ?
-		`https://audio.${config.onionRoot}/` :
-		this.cyphAudioBaseUrl
+	/** URL for starting a new audio cyph ("https://cyph.audio/" or equivalent). */
+	public readonly cyphAudioUrl: string		= customBuild || this.isLocalEnv ?
+		this.cyphAudioBaseUrl :
+		this.isOnion ?
+			`https://audio.${config.onionRoot}/` :
+			`CYPH-AUDIO/`
 	;
 
 	/** Endpoint for Firebase server. */

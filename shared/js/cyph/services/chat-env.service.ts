@@ -11,23 +11,39 @@ import {SessionService} from './session.service';
  */
 @Injectable()
 export class ChatEnvService extends EnvService {
-	/** EnvService.newCyphUrl adjusted for session API flags and initial call type. */
-	public get newCyphUrl () : string {
+	private newCyphUrlHelper (base: boolean) : string {
+		if (!this.configService) {
+			return base ? env.newCyphBaseUrl : env.newCyphUrl;
+		}
+
 		const flags		=
 			this.configService.apiFlags.map(o => o.get(this.sessionService)).join('')
 		;
 
 		const baseUrl	=
 			this.abstractSessionInitService.callType === 'audio' ?
-				env.cyphAudioBaseUrl :
+				(base ? env.cyphAudioBaseUrl : env.cyphAudioUrl) :
 				this.abstractSessionInitService.callType === 'video' ?
-					env.cyphVideoBaseUrl :
-					env.newCyphUrl
+					(base ? env.cyphVideoBaseUrl : env.cyphVideoUrl) :
+					(base ? env.newCyphBaseUrl : env.newCyphUrl)
 		;
 
 		const divider	= baseUrl.indexOf('#') < 0 ? '#' : '';
 
 		return flags.length > 0 ? `${baseUrl}${divider}${flags}` : baseUrl;
+	}
+
+	/** EnvService.newCyphBaseUrl adjusted for session API flags and initial call type. */
+	public get newCyphBaseUrl () : string {
+		return this.newCyphUrlHelper(true);
+	}
+
+	/** @ignore */
+	public set newCyphBaseUrl (_: string) {}
+
+	/** EnvService.newCyphUrl adjusted for session API flags and initial call type. */
+	public get newCyphUrl () : string {
+		return this.newCyphUrlHelper(false);
 	}
 
 	/** @ignore */
@@ -36,7 +52,7 @@ export class ChatEnvService extends EnvService {
 	/** @inheritDoc */
 	public get newCyphUrlRedirect () : string {
 		const newCyphUrl	= this.newCyphUrl;
-		return newCyphUrl.indexOf('#') > -1 ? `${newCyphUrl}/` : newCyphUrl;
+		return newCyphUrl.indexOf(`${locationData.host}/#`) > -1 ? `${newCyphUrl}/` : newCyphUrl;
 	}
 
 	/** @ignore */
