@@ -179,7 +179,7 @@
 	</md2-sidenav>
 
 
-	<section id='hero-section'>
+	<section id='hero-section' [class.promo]='appService.promo !== undefined'>
 		<div class='hero-foreground'>
 			<div
 				id='promo-section'
@@ -193,7 +193,7 @@
 					[class.bounceInDown]='appService.promo !== appService.promos.jjgo'
 				>
 					<md2-card-header>
-						<md2-card-header-text>
+						<md2-card-header-text class='flex'>
 							<img
 								alt='Promo image'
 								[src]='
@@ -246,47 +246,49 @@
 				</md2-card>
 			</div>
 
-			<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms'>
-				<span cyphTranslate>Secure your</span>
-				<span class='feature-cycle'>
-					{{appService.features[appService.featureIndex]}}
-				</span>
-				<span cyphTranslate>in one click.</span>
-			</h1>
+			<div class='hero-foreground-main'>
+				<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms'>
+					<span cyphTranslate>Secure your</span>
+					<span class='feature-cycle'>
+						{{appService.features[appService.featureIndex]}}
+					</span>
+					<span cyphTranslate>in one click.</span>
+				</h1>
 
-			<div class='hero-container grid-container'>
-				<div class='layout-row' *ngIf='!envService.isMobile'>
-					<div class='flex-25'></div>
-					<div class='wow bounceInLeft' data-wow-delay='2250ms'>
-						<a href='/intro'>
-							<img
-								cyphTranslate
-								class='laptop screenshot'
-								src='/img/laptop-screenshot.png'
-								alt='Laptop displaying secure Cyph video call'
-								[class.demo]='demoService.isActive'
-							/>
-						</a>
-						&nbsp;
+				<div class='hero-container grid-container'>
+					<div class='layout-row' *ngIf='!envService.isMobile'>
+						<div class='flex-25'></div>
+						<div class='wow bounceInLeft' data-wow-delay='2250ms'>
+							<a href='/intro'>
+								<img
+									cyphTranslate
+									class='laptop screenshot'
+									src='/img/laptop-screenshot.png'
+									alt='Laptop displaying secure Cyph video call'
+									[class.demo]='demoService.isActive'
+								/>
+							</a>
+							&nbsp;
+						</div>
+						<div class='wow bounceInRight' data-wow-delay='2250ms'>
+							<a href='/intro'>
+								<img
+									cyphTranslate
+									class='phone screenshot'
+									src='/img/phone-screenshot.png'
+									alt='Phone displaying secure Cyph video call'
+									[class.demo]='demoService.isActive'
+								/>
+							</a>
+							&nbsp;
+						</div>
+						<div class='flex-25'></div>
 					</div>
-					<div class='wow bounceInRight' data-wow-delay='2250ms'>
-						<a href='/intro'>
-							<img
-								cyphTranslate
-								class='phone screenshot'
-								src='/img/phone-screenshot.png'
-								alt='Phone displaying secure Cyph video call'
-								[class.demo]='demoService.isActive'
-							/>
-						</a>
-						&nbsp;
+					<div class='hero-description wow animated fadeIn' data-wow-delay='2500ms'>
+						<p cyphTranslate>
+							Just send a link &mdash; no signups or downloads required!
+						</p>
 					</div>
-					<div class='flex-25'></div>
-				</div>
-				<div class='hero-description wow animated fadeIn' data-wow-delay='2500ms'>
-					<p cyphTranslate>
-						Just send a link &mdash; no signups or downloads required!
-					</p>
 				</div>
 			</div>
 		</div>

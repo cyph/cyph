@@ -215,12 +215,39 @@ body:not(.mobile) #hero-section {
 	height: calc(100vh - 200px);
 	min-height: 50em;
 
-	.hero-foreground {
-		top: 50%;
-		left: 0px;
-		position: absolute;
+	&.promo {
+		min-height: 75em;
 
-		@include transform(translateY(-50%));
+		.hero-foreground {
+			height: calc(100% - 15em);
+
+			.hero-foreground-main {
+				top: calc(50% + 15em);
+			}
+		}
+	}
+
+	.hero-foreground {
+		height: 100%;
+
+		.hero-foreground-main {
+			top: 50%;
+			left: 0px;
+			width: 100%;
+			position: absolute;
+
+			@include transform(translateY(-50%));
+		}
+	}
+}
+
+@media (min-width: 1920px) {
+	body:not(.mobile) #hero-section {
+		min-height: 55em;
+
+		&.promo {
+			min-height: 85em;
+		}
 	}
 }
 
