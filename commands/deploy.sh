@@ -170,6 +170,7 @@ if [ "${test}" ] ; then
 	ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|${defaultHost}42000|https://${version}-dot-cyphme.appspot.com|g" %
 	ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|${defaultHost}42001|https://${version}-dot-cyph-com-dot-cyphme.appspot.com|g" %
 	ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|${defaultHost}42002|${newCyphURL}|g" %
+	ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|CYPH-IM|https://${version}-dot-cyph-im-dot-cyphme.appspot.com|g" %
 	ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|CYPH-IO|https://${version}-dot-cyph-io-dot-cyphme.appspot.com|g" %
 	ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|CYPH-ME|https://${version}-dot-cyph-me-dot-cyphme.appspot.com|g" %
 	ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|CYPH-VIDEO|https://${version}-dot-cyph-video-dot-cyphme.appspot.com|g" %
@@ -192,7 +193,8 @@ else
 	sed -i "s|http://localhost:42000|https://api.cyph.com|g" default/config.go
 	ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|${defaultHost}42000|https://api.cyph.com|g" %
 	ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|${defaultHost}42001|https://www.cyph.com|g" %
-	ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|${defaultHost}42002|https://cyph.im|g" %
+	ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|${defaultHost}42002|https://cyph.ws|g" %
+	ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|CYPH-IM|https://cyph.im|g" %
 	ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|CYPH-IO|https://cyph.io|g" %
 	ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|CYPH-ME|https://cyph.me|g" %
 	ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|CYPH-VIDEO|https://cyph.video|g" %
