@@ -21,6 +21,8 @@ if [ "${prodlike}" ] ; then
 	cd .build
 fi
 
+eval "$(./commands/getgitdata.sh)"
+
 
 appserver () {
 	/google-cloud-sdk/bin/dev_appserver.py --skip_sdk_update_check ${*} > /dev/null 2>&1 &
@@ -74,7 +76,12 @@ cp -f cyph.im/cyph-im.yaml cyph.im/.build.yaml
 for f in */.build.yaml ; do sed -i 's|index.html|.index.html|g' $f ; done
 
 cat ~/.cyph/default.vars >> default/.build.yaml
-cat ~/.cyph/braintree.sandbox >> default/.build.yaml
+if [ "${branch}" == 'prod' ] ; then
+	echo '  PROD: true' >> default/.build.yaml
+	cat ~/.cyph/braintree.prod >> default/.build.yaml
+else
+	cat ~/.cyph/braintree.sandbox >> default/.build.yaml
+fi
 
 mkdir /tmp/cyph0;
 go_appserver --port 5000 --admin_port 6000 --host 0.0.0.0 --storage_path /tmp/cyph0 default/.build.yaml;

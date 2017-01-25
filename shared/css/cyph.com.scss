@@ -205,10 +205,11 @@ body:not(.mobile) #hero-section {
 
 	.hero-foreground {
 		top: 50%;
-		left: 50%;
+		left: 0px;
+		width: 100%;
 		position: absolute;
 
-		@include transform(translateX(-50%) translateY(-50%));
+		@include transform(translateY(-50%));
 	}
 }
 

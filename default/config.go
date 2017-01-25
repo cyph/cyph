@@ -14,7 +14,6 @@ var config = struct {
 	DefaultContinent           string
 	EmailAddress               string
 	HSTSHeader                 string
-	IsProd                     bool
 	MaxChannelDescriptorLength int
 	MaxSignupValueLength       int
 	MemcacheExpiration         time.Duration
@@ -71,8 +70,6 @@ var config = struct {
 	"Cyph <hello@cyph.com>",
 
 	"max-age=31536000; includeSubdomains; preload",
-
-	false, /* IsProd */
 
 	/* With the current list of AWS regions,
 	no descriptor will exceed this length */
