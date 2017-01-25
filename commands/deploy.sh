@@ -300,7 +300,7 @@ for d in $compiledProjects ; do
 
 	cd ..
 done
-if [ ! "${simple}" ] ; then
+if [ ! "${test}" ] ; then
 	currentDir="$PWD"
 	for f in */webpack.json ; do
 		cp -f $f "${dir}/${f}"
