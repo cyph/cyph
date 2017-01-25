@@ -19,7 +19,7 @@ body:not(.mobile) {
 }
 
 .cyph-foreground {
-	font-size: 15px;
+	font-size: 1.08em;
 }
 
 .link-connection .connect-link-mobile {
@@ -86,9 +86,9 @@ input, textarea {
 .chat-message-box.mobile {
 	.message-box {
 		width: calc(100% + 4px);
-		height: 50px;
-		font-size: 17px;
-		line-height: 22px;
+		height: 2.96em;
+		font-size: 1.12em;
+		line-height: 1.5em;
 		padding: 13px;
 		padding-right: 60px;
 		margin-left: -2px;
@@ -135,14 +135,13 @@ md-menu-item {
 
 .message-box-button-group {
 	position: absolute;
-	bottom: -2px;
+	top: 0.15em;
 	right: 10px;
 
 	.md-button {
 		opacity: 0.75;
 		z-index: 35;
-		font-size: 38px;
-		height: 38px;
+		height: 2.72em;
 		padding-left: 0px;
 		padding-right: 0px;
 		pointer-events: none;
@@ -150,6 +149,7 @@ md-menu-item {
 		@include transition(transform 0.35s linear);
 
 		md-icon {
+			font-size: 1.72em;
 			width: 100%;
 			height: 100%;
 			display: block;
@@ -275,7 +275,7 @@ md-menu-item {
 }
 
 .footer {
-	font-size: 14px;
+	font-size: 1rem;
 }
 
 .message-item.author-me {
@@ -395,7 +395,7 @@ md-menu-item {
 		margin-left: auto;
 		margin-right: auto;
 		margin-top: 5px;
-		font-size: 18px;
+		font-size: 1.2em;
 
 		.message {
 			width: 100%;
@@ -410,7 +410,7 @@ md-menu-item {
 		.message-timestamp {
 			position: absolute;
 			bottom: 5px;
-			font-size: 10px;
+			font-size: 0.55em;
 			color: #dddddd;
 			text-align: initial;
 		}
@@ -531,15 +531,6 @@ md-menu-item {
 
 		video {
 			@include transform(scaleX(-1));
-		}
-
-		.close-button {
-			position: absolute;
-			top: 10px;
-			right: 10px;
-			width: 44px;
-			height: 44px;
-			font-size: 25px;
 		}
 
 		md-progress-circular {
@@ -728,10 +719,12 @@ md-menu-item {
 }
 
 body.mobile .cyph-not-found {
-	padding: 5px;
+	> .nano-content {
+		padding: 5px;
+	}
 
 	h1 {
-		font-size: 20px;
+		font-size: 1.5em;
 	}
 
 	img {
@@ -758,7 +751,6 @@ body:not(.mobile) .cyph-not-found {
 	left: -1px;
 	width: calc(100% + 2px);
 	height: calc(100% + 2px);
-	font-size: 13px;
 	font-family: 'Ubuntu Mono', monospace;
 	background-color: #141414;
 	color: #3bfc34;
@@ -787,19 +779,7 @@ body:not(.mobile) .cyph-not-found {
 	background-color: #202020 !important;
 	box-shadow: rgba(25, 130, 25, 0.13725) 0px 0px 4px 0px, rgba(25, 130, 25, 0.27843) 0px 4px 8px 0px !important;
 	font-family: 'Ubuntu Mono', monospace !important;
-	font-size: 30px;
-}
-
-.chat-begin-message {
-	font-family: Ubuntu, sans-serif;
-	text-align: center;
-	font-size: 20px;
-	font-weight: 300;
-	background-color: #8b62d9 !important;
-
-	&:not(.active) {
-		@include animation(none !important);
-	}
+	font-size: 2.1em;
 }
 
 cyph-help {
@@ -1212,14 +1192,14 @@ body.mobile cyph-help {
 }
 
 .self-destruct-timer {
-	font-size: 32px;
+	font-size: 2.3rem;
 	text-align: center;
 	padding: 20px;
 	display: block;
 }
 
 .chat-main.mobile .self-destruct-timer {
-	font-size: 20px;
+	font-size: 1.43rem;
 	padding: 5px;
 }
 
