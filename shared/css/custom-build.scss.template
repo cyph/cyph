@@ -7,7 +7,9 @@ ${!o.colors.main ? '' : `
 `}
 
 ${!o.colors.text ? '' : `
-	&, body, #main, .cyph-foreground, .message-item *, .loading :not(.image):not(.logo-animation) {
+	&, body, #main, .cyph-foreground, .message-item *,
+	.loading :not(.image):not(.logo-animation):not(md-icon),
+	.loading .md-button:not(.md-fab) md-icon {
 		color: ${o.colors.text};
 	}
 `}
