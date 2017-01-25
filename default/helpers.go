@@ -57,6 +57,8 @@ var sanitizer = bluemonday.StrictPolicy()
 var countrydb, _ = geoip2.Open("GeoIP2-Country.mmdb")
 var orgdb, _ = geoip2.Open("GeoIP2-ISP.mmdb")
 
+var isProd = len(os.Getenv("PROD")) > 0
+
 var twilioSID = os.Getenv("TWILIO_SID")
 var twilioAuthToken = os.Getenv("TWILIO_AUTH_TOKEN")
 
@@ -130,7 +132,7 @@ func getIP(h HandlerArgs) []byte {
 func braintreeInit(h HandlerArgs) *braintree.Braintree {
 	env := braintree.Sandbox
 
-	if config.IsProd {
+	if isProd {
 		env = braintree.Production
 	}
 
