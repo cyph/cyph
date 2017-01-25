@@ -98,6 +98,7 @@ cat ~/.cyph/default.vars >> default/app.yaml
 cat ~/.cyph/test.vars >> test/test.yaml
 cp ~/.cyph/GeoIP2-Country.mmdb default/
 if [ "${branch}" == 'staging' ] ; then
+	echo '  PROD: true' >> default/app.yaml
 	cat ~/.cyph/braintree.prod >> default/app.yaml
 else
 	cat ~/.cyph/braintree.sandbox >> default/app.yaml
@@ -155,10 +156,6 @@ fi
 defaultHost='${locationData.protocol}//${locationData.hostname}:'
 ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i 's|isLocalEnv: boolean\s*= true|isLocalEnv: boolean\t= false|g' %
 ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s/ws:\/\/.*:44000/https:\/\/cyphme.firebaseio.com/g" %
-
-if [ "${branch}" == 'staging' ] ; then
-	sed -i "s|false, /* IsProd */|true,|g" default/config.go
-fi
 
 if [ "${test}" ] ; then
 	newCyphURL="https://${version}.cyph.ws"
