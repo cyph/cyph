@@ -501,8 +501,8 @@
       "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/mediastream-gain/mediastream-gain.js": 497,
       "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/mediastream-gain/node_modules/webrtcsupport/index-browser.js": 498,
       "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/microlight-string/microlight.min.js": 499,
-      "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/node-libs-browser/node_modules/punycode/punycode.js": 500,
-      "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/node-libs-browser/node_modules/timers-browserify/main.js": 501,
+      "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/node-libs-browser/node_modules/timers-browserify/main.js": 500,
+      "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/punycode/punycode.js": 501,
       "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/adapter_core.js": 502,
       "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js": 503,
       "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/chrome/getusermedia.js": 504,
@@ -1596,7 +1596,7 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!cyph/env-deploy.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!cyph/files/transfer.js"
       ],
-      "hash": "5718df131a19c1d31cba5d51b48dd069",
+      "hash": "70087b1ef93c4c561d94b01024b2adaf",
       "id": 22
     },
     {
@@ -1643,7 +1643,7 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_block/heading.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_block/hr.js"
       ],
-      "hash": "c5d56f4ac4b51fa72aef8936053f39e4",
+      "hash": "75fbc52edecc8d092bf5d69ac34d9d05",
       "id": 25
     },
     {
@@ -1794,13 +1794,13 @@
       "modules": [
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/process/browser.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/nanoscroller/bin/javascripts/jquery.nanoscroller.js",
-        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/node-libs-browser/node_modules/punycode/punycode.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/node-libs-browser/node_modules/timers-browserify/main.js",
+        "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/punycode/punycode.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/adapter_core.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rtcpeerconnection/node_modules/webrtc-adapter/src/js/chrome/chrome_shim.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/rxjs/symbol/observable.js"
       ],
-      "hash": "2685c1efbf73a47360999fab27e61539",
+      "hash": "a65ae286ceece821016d471666f32797",
       "id": 36
     },
     {
@@ -1970,7 +1970,7 @@
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/getusermedia/node_modules/webrtc-adapter/src/js/edge/getusermedia.js",
         "../../../../../node_modules/babel-loader/lib/index.js?{\"compact\":false,\"presets\":[[\"es2015\",{\"modules\":false}]]}!../../../../../node_modules/markdown-it/lib/rules_core/block.js"
       ],
-      "hash": "19e909bf3bf59af1c9cec283ffcaa970",
+      "hash": "bed5373b6be246799d5f2ccbc95ea6f5",
       "id": 50
     },
     {
