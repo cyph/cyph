@@ -86,19 +86,11 @@ tsbuild () {
 	tmpDir="$(mktemp -d)"
 	tmpJsDir="${tmpDir}/js"
 	currentDir="$(realpath --relative-to="${tmpJsDir}" "${PWD}")"
-	getTmpDir=''
 	logTmpDir=''
-	returnTmpDir=''
 
 	if [ "${1}" == '--log-tmp-dir' ] ; then
-		shift
 		logTmpDir=true
-		returnTmpDir=true
-	elif [ "${1}" == '--get-tmp-dir' ] ; then
 		shift
-		getTmpDir=true
-		returnTmpDir=true
-		echo "${tmpJsDir}"
 	fi
 
 	rsync -rq .. "${tmpDir}" --exclude lib/js/node_modules
@@ -124,11 +116,11 @@ tsbuild () {
 			tsconfig.compilerOptions.target			= 'es2015';
 		")
 
-		$(test "${returnTmpDir}" && echo "
+		$(test "${logTmpDir}" && echo "
 			tsconfig.compilerOptions.outDir			= '.';
 		")
 
-		$(test "${returnTmpDir}" || echo "
+		$(test "${logTmpDir}" || echo "
 			tsconfig.compilerOptions.outDir			= '${currentDir}';
 			tsconfig.angularCompilerOptions.genDir	= '${currentDir}';
 		")
