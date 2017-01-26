@@ -6,6 +6,7 @@ import {FileService} from '../services/file.service';
 import {P2PService} from '../services/p2p.service';
 import {ScrollService} from '../services/scroll.service';
 import {StringsService} from '../services/strings.service';
+import {UtilService} from '../services/util.service';
 
 
 /**
@@ -67,6 +68,9 @@ export class ChatMainComponent implements OnInit {
 		public readonly p2pService: P2PService,
 
 		/** @see StringsService */
-		public readonly stringsService: StringsService
+		public readonly stringsService: StringsService,
+
+		/** @see UtilService */
+		public readonly utilService: UtilService
 	) {}
 }

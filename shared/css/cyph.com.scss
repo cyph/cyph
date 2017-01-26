@@ -116,7 +116,7 @@ section#main {
 	font-size: 0.5em;
 	font-weight: 300;
 	position: fixed;
-	top: 0.35em;
+	top: 0.5em;
 	left: 50%;
 	height: 3.5em;
 	width: 10.7em;
@@ -141,7 +141,7 @@ section#main {
 
 #main-toolbar.new-cyph-expanded {
 	#new-cyph {
-		@include transform(translateX(-50%) translateY(calc(50vh - 50% - 0.35em)) scale(2));
+		@include transform(translateX(-50%) translateY(calc(50vh - 50% - 0.5em)) scale(2));
 	}
 
 	.link-wrapper-outer {
@@ -827,6 +827,10 @@ body.mobile #features-section .carousel .logo.active > img {
 				text-align: center;
 				font-size: 135%;
 			}
+		}
+
+		cyph-chat-message-box .message-box {
+			overflow: hidden;
 		}
 	}
 

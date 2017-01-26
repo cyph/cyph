@@ -51,13 +51,11 @@ export class Channel {
 				return;
 			}
 
-			this.messagesRef.push({
+			await this.messagesRef.push({
 				cyphertext: message,
 				sender: this.userId,
 				timestamp: util.timestamp()
-			}).then(
-				() => {}
-			)
+			});
 		});
 	}
 
