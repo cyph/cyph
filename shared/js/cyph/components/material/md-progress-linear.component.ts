@@ -51,11 +51,8 @@ export class MdProgressLinearComponent
 				ng-class='$ctrl.childClass'
 				ng-attr-md-mode='{{$ctrl.mdMode}}'
 				ng-value='$ctrl.value'
-			>
-				<ng-transclude></ng-transclude>
-			</md-progress-linear>
-		`,
-		transclude: true
+			></md-progress-linear>
+		`
 	};
 
 

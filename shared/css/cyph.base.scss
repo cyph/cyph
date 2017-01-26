@@ -798,9 +798,25 @@ md-progress-linear {
 	.md-container {
 		background-color: rgba(197, 202, 233, 0.4);
 
-		.md-bar {
+		.md-bar2 {
 			background-color: #f1f1f1;
+			visibility: hidden;
+
+			&[style*="transform"] {
+				visibility: visible;
+				@include animation(mdProgressLinearVisibilityDelay 0.5s linear);
+			}
 		}
+	}
+}
+
+md2-progress-linear[mdMode='determinate'] .md-bar1 {
+	display: none;
+}
+
+@include keyframes(mdProgressLinearVisibilityDelay) {
+	0%, 100% {
+		visibility: hidden;
 	}
 }
 

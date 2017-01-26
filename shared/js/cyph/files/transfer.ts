@@ -7,11 +7,6 @@ import {util} from '../util';
  * Represents an active file transfer.
  */
 export class Transfer implements IMessageData {
-	/** @see util.readableByteLength */
-	public get readableByteLength () : string {
-		return util.readableByteLength(this.size);
-	}
-
 	constructor (
 		/** File name. */
 		public readonly name: string = '',
@@ -23,13 +18,13 @@ export class Transfer implements IMessageData {
 		public readonly image: boolean = false,
 
 		/** If image is true, this will be used as a self-destruct timeout for the message. */
-		public imageSelfDestructTimeout: number = 0,
+		public readonly imageSelfDestructTimeout: number = 0,
 
 		/** File size in bytes (e.g. 3293860). */
-		public size: number = 0,
+		public readonly size: number = 0,
 
 		/** Symmetric key used for encrypting file over the wire. */
-		public key: Uint8Array = new Uint8Array(0),
+		public readonly key: Uint8Array = new Uint8Array(0),
 
 		/** Indicates whether file is being sent from this Cyph instance. */
 		public isOutgoing: boolean = true,

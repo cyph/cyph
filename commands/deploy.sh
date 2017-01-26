@@ -319,14 +319,16 @@ touch .build.done
 
 # WebSign packaging
 if [ "${websign}" ] ; then
-	if [ -d ~/.cyph/cdn ] ; then
-		bash -c 'cd ~/.cyph/cdn ; git reset --hard ; git clean -dfx ; git pull'
-		cp -rf ~/.cyph/cdn ./
-	else
-		git clone git@github.com:cyph/cdn.git
-		rm -rf ~/.cyph/cdn 2> /dev/null
-		cp -rf cdn ~/.cyph/
-	fi
+	for repo in cdn custom-builds ; do
+		if [ -d ~/.cyph/${repo} ] ; then
+			bash -c "cd ~/.cyph/${repo} ; git reset --hard ; git clean -dfx ; git pull"
+			cp -rf ~/.cyph/${repo} ./
+		else
+			git clone git@github.com:cyph/${repo}.git
+			rm -rf ~/.cyph/${repo} 2> /dev/null
+			cp -rf ${repo} ~/.cyph/
+		fi
+	done
 
 	cd "${webSignedProject}"
 
@@ -351,7 +353,7 @@ if [ "${websign}" ] ; then
 	packages="${package}"
 
 	cd pkg/cyph.ws-subresources
-	git clone --depth 1 git@github.com:cyph/custom-builds.git
+	mv ../../custom-builds ./
 	rm -rf custom-builds/.git custom-builds/reference.json
 	for d in $(find custom-builds -mindepth 1 -maxdepth 1 -type d) ; do
 		customBuildBase="$(echo "${d}" | perl -pe 's/.*\/(.*)$/\1/')"

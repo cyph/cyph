@@ -55,6 +55,7 @@ import {NotificationService} from '../cyph/services/notification.service';
 import {SignupService} from '../cyph/services/signup.service';
 import {StringsService} from '../cyph/services/strings.service';
 import {UrlStateService} from '../cyph/services/url-state.service';
+import {UtilService} from '../cyph/services/util.service';
 import {VirtualKeyboardWatcherService} from '../cyph/services/virtual-keyboard-watcher.service';
 import {VisibilityWatcherService} from '../cyph/services/visibility-watcher.service';
 import {AppComponent} from './app.component';
@@ -128,6 +129,7 @@ import {ChatRootComponent} from './chat-root.component';
 		StringsService,
 		Title,
 		UrlStateService,
+		UtilService,
 		VirtualKeyboardWatcherService,
 		VisibilityWatcherService
 	]

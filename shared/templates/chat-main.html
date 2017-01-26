@@ -227,7 +227,7 @@
 							&nbsp;
 							<span class='flex layout-column'>
 								{{transfer.name}}
-								({{transfer.readableByteLength}}):
+								({{utilService.readableByteLength(transfer.size)}}):
 							</span>
 						</div>
 						<md2-progress-linear
