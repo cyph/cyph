@@ -348,12 +348,15 @@ export class Files {
 
 		let uploadTask: firebase.storage.UploadTask;
 
+		const o	= await this.encryptFile(plaintext);
+
 		const transfer: Transfer	= new Transfer(
 			name,
 			fileType,
 			image,
 			imageSelfDestructTimeout,
-			plaintext.length
+			o.cyphertext.length,
+			o.key
 		);
 
 		this.transfers.add(transfer);
@@ -394,11 +397,6 @@ export class Files {
 			rpcEvents.files,
 			transfer
 		));
-
-		const o	= await this.encryptFile(plaintext);
-
-		transfer.size	= o.cyphertext.length;
-		transfer.key	= o.key;
 
 		let complete	= false;
 		while (!complete) {

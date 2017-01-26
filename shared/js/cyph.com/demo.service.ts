@@ -16,11 +16,13 @@ export class DemoService {
 	public isActive: boolean	= false;
 
 	/** Data URI to use for placeholder for Facebook joke. */
-	public readonly facebookPicUrl: Promise<string>		= util.request({
-		url: this.envService.isMobile ?
-			'/img/fbimagealt.txt' :
-			'/img/null.txt'
-	});
+	public readonly facebookPicUrl: Promise<string>		= (
+		!this.envService.isMobile ?
+			Promise.reject('') :
+			util.request({retries: 5, url: '/img/fbimagealt.txt'})
+	).catch(
+		() => 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs='
+	);
 
 	/** Complete message to use as placeholder for Facebook joke. */
 	public readonly facebookPicMessage: Promise<string>	= (async () =>

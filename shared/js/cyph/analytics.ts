@@ -41,7 +41,7 @@ export class Analytics {
 		try {
 			this.analFrame.contentWindow.postMessage(
 				{args: JSON.stringify(args)},
-				'*'
+				env.baseUrl.slice(0, -1)
 			);
 		}
 		catch (_) {}

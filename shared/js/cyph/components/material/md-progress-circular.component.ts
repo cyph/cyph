@@ -50,11 +50,8 @@ export class MdProgressCircularComponent
 			<md-progress-circular
 				ng-class='$ctrl.childClass'
 				ng-value='$ctrl.value'
-			>
-				<ng-transclude></ng-transclude>
-			</md-progress-circular>
-		`,
-		transclude: true
+			></md-progress-circular>
+		`
 	};
 
 
