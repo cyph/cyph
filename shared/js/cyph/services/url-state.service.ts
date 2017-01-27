@@ -141,8 +141,7 @@ export class UrlStateService {
 				o.shouldNotTrigger,
 				o.redirectFallback
 			); });
-		}
-		else {
+
 			self.onpopstate	= () => { eventManager.trigger(UrlStateService.urlStateChangeEvent); };
 		}
 	}
