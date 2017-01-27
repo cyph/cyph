@@ -30,14 +30,12 @@
 	}
 
 	> .transition {
-		@include animation(preloadfadeout 1s linear);
+		opacity: 0;
 
-		@include animation-delay(1s);
-
-		@include animation-fill-mode(forwards);
+		@include animation(preloadfadeout 2s linear);
 
 		+ .loading > .logo-animation * {
-			@include animation-delay(2.5s);
+			@include animation-delay(2s);
 		}
 	}
 }
@@ -224,8 +222,12 @@ body.load-complete #pre-load {
 
 
 @include keyframes(preloadfadeout) {
-	0% {
+	0%, 25% {
 		opacity: 1;
+	}
+
+	50% {
+		opacity: 0.8;
 	}
 
 	100% {

@@ -802,8 +802,9 @@ md-progress-linear {
 			background-color: #f1f1f1;
 			visibility: hidden;
 
-			&[style*="transform"] {
+			&[style*='transform'] {
 				visibility: visible;
+
 				@include animation(mdProgressLinearVisibilityDelay 0.5s linear);
 			}
 		}
@@ -819,6 +820,7 @@ md2-progress-linear[mdMode='determinate'] .md-bar1 {
 		visibility: hidden;
 	}
 }
+
 
 .corner-image-left {
 	position: absolute;
