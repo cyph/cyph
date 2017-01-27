@@ -44,14 +44,25 @@ function webSignSRI_Process (baseUrl) {
 		var path			= getAndRemoveAttribute(elem, 'websign-sri-path');
 		var isDataResource	= getAndRemoveAttribute(elem, 'websign-sri-data') !== null;
 
-		return fetch(
-			baseUrl +
-			path.replace(/^\//, '') +
-			'?' +
-			expectedHash
-		).then(function (response) {
-			return response.text();
-		}).then(function (s) {
+		var getContent		= function (retries) {
+			return fetch(
+				baseUrl +
+				path.replace(/^\//, '') +
+				'?' +
+				expectedHash
+			).then(function (response) {
+				return response.text();
+			}).catch(function (err) {
+				if (retries < 5) {
+					return getContent(retries + 1);
+				}
+				else {
+					return Promise.reject(err);
+				}
+			});
+		};
+
+		return getContent(0).then(function (s) {
 			var content	= s.trim();
 
 			return Promise.all([
