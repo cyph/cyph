@@ -460,7 +460,7 @@ compile () {
 						")
 					],
 					$(test "${enablesplit}" && echo "
-						recordsOutputPath: '${records}',
+						recordsPath: '${records}',
 					")
 					resolve: {
 						alias: {
