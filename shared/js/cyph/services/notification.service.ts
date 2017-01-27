@@ -30,7 +30,7 @@ export class NotificationService implements INotificationService {
 	private readonly openNotifications: any[]	= [];
 
 	/** @ignore */
-	private createNotification (message: string, callback: Function = () => {}) : void {
+	private async createNotification (message: string) : Promise<any> {
 		const options	= {
 			audio: <string|undefined> undefined,
 			body: message,
@@ -41,51 +41,52 @@ export class NotificationService implements INotificationService {
 		};
 
 		try {
-			callback(new (<any> self).Notification(this.config.title, options));
+			const notification	= new (<any> self).Notification(this.config.title, options);
 
 			try {
 				this.audio.play();
 			}
 			catch (_) {}
+
+			return notification;
 		}
 		catch (_) {
-			try {
-				options.audio	= this.config.audio;
+			options.audio	= this.config.audio;
 
-				(<any> navigator).serviceWorker.
-					register(this.configService.webSignConfig.serviceWorker).
-					then((serviceWorkerRegistration: any) => {
-						try {
-							serviceWorkerRegistration.showNotification(
-								this.config.title,
-								options
-							);
-						}
-						catch (_) {}
-					}).
-					catch(() => {})
-				;
-			}
-			catch (_) {}
+			const serviceWorkerRegistration	= await (<any> navigator).serviceWorker.
+				register(this.configService.webSignConfig.serviceWorker)
+			;
+
+			return serviceWorkerRegistration.showNotification(
+				this.config.title,
+				options
+			);
 		}
 	}
 
 	/** @inheritDoc */
-	public notify (message: string) : void {
+	public async notify (message: string) : Promise<void> {
+		try {
+			if ((await (<any> self).Notification.requestPermission()) === 'denied') {
+				return;
+			}
+		}
+		catch (_) {}
+
 		if (!this.disableNotify && !this.visibilityWatcherService.isVisible) {
 			this.disableNotify	= true;
 
-			this.createNotification(message, (notification: any) => {
-				try {
-					this.openNotifications.push(notification);
+			try {
+				const notification		= await this.createNotification(message);
 
-					notification.onclick	= () => {
-						notification.close();
-						self.focus();
-					};
-				}
-				catch (_) {}
-			});
+				notification.onclick	= () => {
+					notification.close();
+					self.focus();
+				};
+
+				this.openNotifications.push(notification);
+			}
+			catch (_) {}
 		}
 	}
 
