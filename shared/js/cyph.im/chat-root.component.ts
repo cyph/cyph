@@ -8,6 +8,7 @@ import {ChatService} from '../cyph/services/chat.service';
 import {CyphertextService} from '../cyph/services/cyphertext.service';
 import {DialogService} from '../cyph/services/dialog.service';
 import {EnvService} from '../cyph/services/env.service';
+import {FaviconService} from '../cyph/services/favicon.service';
 import {FileService} from '../cyph/services/file.service';
 import {P2PService} from '../cyph/services/p2p.service';
 import {ScrollService} from '../cyph/services/scroll.service';
@@ -61,6 +62,7 @@ export class ChatRootComponent implements OnInit {
 		if (this.sessionService.apiFlags.telehealth) {
 			if (this.envService.isWeb) {
 				$(document.body).addClass('telehealth');
+				this.faviconService.setFavicon('telehealth');
 			}
 			else {
 				/* TODO: HANDLE NATIVE */
@@ -165,6 +167,9 @@ export class ChatRootComponent implements OnInit {
 
 		/** @ignore */
 		private readonly envService: EnvService,
+
+		/** @ignore */
+		private readonly faviconService: FaviconService,
 
 		/** @ignore */
 		private readonly p2pService: P2PService,
