@@ -892,14 +892,20 @@ body.mobile #features-section .carousel .logo.active > img {
 	}
 }
 
-body.mobile .demo-root > .mobile {
-	height: 40em;
-	width: calc(100% + 100px);
-	top: 0px;
-	left: -50px;
-	margin: auto;
+body.mobile .demo-root {
+	> .desktop {
+		display: none;
+	}
 
-	@include transform(scale(0.8));
+	> .mobile {
+		height: 40em;
+		width: calc(100% + 100px);
+		top: 0px;
+		left: -50px;
+		margin: auto;
+
+		@include transform(scale(0.8));
+	}
 }
 
 @media all and (orientation: landscape) {
