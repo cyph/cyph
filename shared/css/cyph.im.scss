@@ -135,8 +135,11 @@ md-menu-item {
 
 .message-box-button-group {
 	position: absolute;
-	top: 0.15em;
+	top: 50%;
 	right: 10px;
+	z-index: 30;
+
+	@include transform(translateY(-50%));
 
 	.md-button {
 		opacity: 0.75;
@@ -149,7 +152,7 @@ md-menu-item {
 		@include transition(transform 0.35s linear);
 
 		md-icon {
-			font-size: 1.72em;
+			font-size: 1.72rem;
 			width: 100%;
 			height: 100%;
 			display: block;
