@@ -138,6 +138,7 @@ md-menu-item {
 	top: 50%;
 	right: 10px;
 	z-index: 30;
+	pointer-events: none;
 
 	@include transform(translateY(-50%));
 
