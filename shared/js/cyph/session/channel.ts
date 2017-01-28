@@ -1,3 +1,4 @@
+import {errors} from '../errors';
 import {firebaseApp} from '../firebase-app';
 import {util} from '../util';
 
@@ -45,18 +46,24 @@ export class Channel {
 	}
 
 	/** Sends message through this channel. */
-	public send (message: string) : void {
-		util.retryUntilSuccessful(async () => {
-			if (this.isClosed) {
-				return;
-			}
+	public async send (message: string) : Promise<void> {
+		try {
+			await util.retryUntilSuccessful(async () => {
+				if (this.isClosed) {
+					return;
+				}
 
-			await this.messagesRef.push({
-				cyphertext: message,
-				sender: this.userId,
-				timestamp: util.timestamp()
+				await this.messagesRef.push({
+					cyphertext: message,
+					sender: this.userId,
+					timestamp: util.timestamp()
+				});
 			});
-		});
+		}
+		catch (err) {
+			errors.log('Failed to send.');
+			throw err;
+		}
 	}
 
 	/**
@@ -79,6 +86,7 @@ export class Channel {
 		this.messagesRef	= await util.retryUntilSuccessful(() =>
 			this.channelRef.child('messages')
 		);
+
 		this.usersRef		= await util.retryUntilSuccessful(() =>
 			this.channelRef.child('users')
 		);
@@ -89,7 +97,7 @@ export class Channel {
 
 		this.userId			= userRef.key || '';
 
-		util.retryUntilSuccessful(async () => userRef.set(this.userId));
+		await util.retryUntilSuccessful(async () => userRef.set(this.userId));
 
 		this.isAlice		=
 			Object.keys(
@@ -120,21 +128,16 @@ export class Channel {
 		}
 
 		util.retryUntilSuccessful(() =>
-			this.channelRef.on('value', async (snapshot: firebase.database.DataSnapshot) => {
-				if (await util.retryUntilSuccessful(() =>
-					!snapshot.exists() && !this.isClosed
-				)) {
-					this.isClosed	= true;
-					this.handlers.onClose();
+			this.channelRef.on('value', (snapshot: firebase.database.DataSnapshot) => {
+				if (!snapshot.exists()) {
+					this.close();
 				}
 			})
 		);
 
 		util.retryUntilSuccessful(() =>
-			this.messagesRef.on('child_added', async (snapshot: firebase.database.DataSnapshot) => {
-				const o	= await util.retryUntilSuccessful(() =>
-					snapshot.val()
-				);
+			this.messagesRef.on('child_added', (snapshot: firebase.database.DataSnapshot) => {
+				const o: any	= snapshot.val();
 
 				if (o.sender !== this.userId) {
 					this.handlers.onMessage(o.cyphertext);
