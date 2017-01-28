@@ -58,7 +58,7 @@ for project in cyph.com cyph.im ; do
 	cd ../../..
 done
 
-node -e 'new (require("firebase-server"))(44000)' &
+node /node_modules/.bin/firebase-server -p 44000 &
 
 if [ "${blog}" ] ; then
 	cd cyph.com

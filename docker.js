@@ -402,7 +402,7 @@ switch (args.command) {
 			console.log(`${projects[i]}: ${base}:4200${i}`);
 		}
 
-		console.log(`docs: ${base}:42001/js/docs/index.html`);
+		console.log(`docs: ${base}:42001/js/docs/index.html\n\n`);
 		break;
 
 	case 'stopserve':
