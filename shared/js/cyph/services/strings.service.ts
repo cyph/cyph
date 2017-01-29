@@ -132,6 +132,11 @@ export class StringsService {
 	public readonly linkCopied: string				= util.translate(`Cyph link copied.`);
 
 	/** @see StringsService */
+	public readonly linkCopyFail: string			= util.translate(
+		`Automated clipboard copy unsupported in this browser.`
+	);
+
+	/** @see StringsService */
 	public readonly linkExpiresAt: string			= util.translate(`Link expires at`);
 
 	/** @see StringsService */
