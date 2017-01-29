@@ -78,13 +78,13 @@ export class LinkConnectionComponent implements OnInit {
 	public async copyToClipboard () : Promise<void> {
 		return util.lockTryOnce(
 			this.copyLock,
-			async () => {
-				await clipboard.copy(this.linkConstant);
-				await this.dialogService.toast({
-					content: this.stringsService.linkCopied,
-					delay: 2500
-				});
-			}
+			async () => this.dialogService.toast({
+				content: await clipboard.copy(this.linkConstant).
+					then(() => this.stringsService.linkCopied).
+					catch(() => this.stringsService.linkCopyFail)
+				,
+				delay: 2500
+			})
 		);
 	}
 

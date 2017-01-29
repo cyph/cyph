@@ -16,7 +16,8 @@ export class Errors {
 	 * @param errorObject
 	 */
 	public readonly log			= this.baseErrorLog(
-		'WARNING WARNING WARNING SOMETHING IS SRSLY FUCKED UP LADS'
+		'WARNING WARNING WARNING SOMETHING IS SRSLY FUCKED UP LADS',
+		true
 	);
 
 	/**
@@ -27,7 +28,7 @@ export class Errors {
 	);
 
 	/** @ignore */
-	private baseErrorLog (subject: string) : (
+	private baseErrorLog (subject: string, requireErrorMessage?: boolean) : (
 		errorMessage?: string,
 		url?: string,
 		line?: number,
@@ -44,6 +45,7 @@ export class Errors {
 			errorObject?: any
 		) : void => {
 			if (
+				(requireErrorMessage && !errorMessage) ||
 				/* Annoying useless iframe-related spam */
 				errorMessage === 'Script error.' ||
 				/* Google Search iOS app bug */
