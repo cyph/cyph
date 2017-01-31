@@ -18,8 +18,9 @@ if (env.isMobile) {
 
 /* Polyfill */
 
+/* tslint:disable-next-line:no-unbound-method */
 if (!HTMLElement.prototype.click) {
-	/* tslint:disable-next-line:only-arrow-functions */
+	/* tslint:disable-next-line:only-arrow-functions no-unbound-method */
 	HTMLElement.prototype.click	= function (this: HTMLElement) : void {
 		/* tslint:disable-next-line:no-invalid-this */
 		util.triggerClick(this);

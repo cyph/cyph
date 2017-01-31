@@ -306,7 +306,7 @@ export class Box {
 			privateSubKeys.mcEliece,
 			'McEliece',
 			mceliece.cyphertextBytes,
-			mceliece.decrypt
+			(c: Uint8Array, sk: Uint8Array) => mceliece.decrypt(c, sk)
 		);
 
 		cyphertextIndex +=
@@ -324,7 +324,7 @@ export class Box {
 			privateSubKeys.ntru,
 			'NTRU',
 			ntru.cyphertextBytes,
-			ntru.decrypt
+			(c: Uint8Array, sk: Uint8Array) => ntru.decrypt(c, sk)
 		);
 
 		cyphertextIndex +=
@@ -380,14 +380,14 @@ export class Box {
 			publicSubKeys.mcEliece,
 			'McEliece',
 			mceliece.plaintextBytes,
-			mceliece.encrypt
+			(p: Uint8Array, pk: Uint8Array) => mceliece.encrypt(p, pk)
 		);
 
 		const ntruData							= await this.publicKeyEncrypt(
 			publicSubKeys.ntru,
 			'NTRU',
 			ntru.plaintextBytes,
-			ntru.encrypt
+			(p: Uint8Array, pk: Uint8Array) => ntru.encrypt(p, pk)
 		);
 
 		const nonce: Uint8Array					= this.secretBox.newNonce(this.helpers.nonceBytes);

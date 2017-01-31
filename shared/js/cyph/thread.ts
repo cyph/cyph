@@ -42,11 +42,13 @@ export class Thread implements IThread {
 		/* Allow destroying the Thread object from within the thread */
 
 		/* This is DedicatedWorkerGlobalScope.postMessage(), not Window.postMessage() */
+		/* tslint:disable-next-line:no-unbound-method */
 		self.close	= () => (<any> self).postMessage('close');
 
 
 		/* Polyfills */
 
+		/* tslint:disable-next-line:strict-type-predicates */
 		if (typeof console === 'undefined') {
 			console	= <any> {
 				assert: () => {},
@@ -75,6 +77,7 @@ export class Thread implements IThread {
 			};
 		}
 
+		/* tslint:disable-next-line:strict-type-predicates */
 		if (typeof atob === 'undefined' || typeof btoa === 'undefined') {
 			importScripts('/lib/js/node_modules/Base64/base64.js');
 		}
@@ -215,11 +218,17 @@ export class Thread implements IThread {
 
 		const threadBody	= `
 			var threadSetupVars = ${JSON.stringify(threadSetupVars)};
-			${Thread.stringifyFunction(Thread.threadEnvSetup)}
+			${
+				/* tslint:disable-next-line:no-unbound-method */
+				Thread.stringifyFunction(Thread.threadEnvSetup)
+			}
 
 			eventManager.one('${callbackId}').then(function (locals) {
 				${Thread.stringifyFunction(f)}
-				${Thread.stringifyFunction(Thread.threadPostSetup)}
+				${
+					/* tslint:disable-next-line:no-unbound-method */
+					Thread.stringifyFunction(Thread.threadPostSetup)
+				}
 			});
 
 			self.postMessage('ready');
