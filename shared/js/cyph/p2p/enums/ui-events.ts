@@ -1,8 +1,8 @@
 /**
  * P2P UI events.
- * 
+ *
  * Base events: connected, enable, videoToggle.
- * 
+ *
  * Request events: acceptConfirm, acceptConfirmation,
  * requestConfirm, requestConfirmation, requestRejection.
  */

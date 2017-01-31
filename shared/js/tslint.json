@@ -26,7 +26,7 @@
 		]}],
 		"no-any": false,
 		"no-empty-interface": true,
-		"no-inferrable-types": [true, "ignore-params"],
+		/* Pending palantir/tslint/issues/2158: "no-inferrable-types": [true, "ignore-params"], */
 		"no-internal-module": true,
 		"no-magic-numbers": false,
 		"no-namespace": true,
