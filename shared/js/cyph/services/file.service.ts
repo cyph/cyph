@@ -68,6 +68,7 @@ export class FileService {
 			undefined
 		;
 
+		/* tslint:disable-next-line:no-unbound-method */
 		if (canvas.toBlob) {
 			return new Promise<Uint8Array>(resolve => { canvas.toBlob(
 				(blob: Blob) => {

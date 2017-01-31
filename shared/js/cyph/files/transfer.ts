@@ -39,6 +39,7 @@ export class Transfer implements IMessageData {
 		public readonly id: string = util.generateGuid(),
 
 		/** If defined, indicates an acceptance or rejection of a file transfer. */
+		/* tslint:disable-next-line:no-unnecessary-initializer */
 		public answer: boolean|undefined = undefined,
 
 		/** @inheritDoc */

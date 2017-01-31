@@ -4,6 +4,8 @@ cd $(cd "$(dirname "$0")" ; pwd)/..
 dir="$PWD"
 
 
+nativePlugins="$(cat shared/js/native/plugins.list)"
+
 rm -rf shared/lib/go shared/lib/js/base.js shared/lib/js/node_modules 2> /dev/null
 
 cp -a shared/lib ~/lib
@@ -14,6 +16,7 @@ cd js
 git init
 mkdir node_modules
 yarn install --ignore-platform || exit 1
+yarn add --ignore-platform --ignore-scripts ${nativePlugins} || exit 1
 
 cd node_modules
 
@@ -167,7 +170,7 @@ for d in firebase firebase-server ts-node tslint ; do
 	cp -f ../module_locks/${d}/* "${tmpDir}/${d}/"
 	cd "${tmpDir}/${d}"
 	mkdir node_modules 2> /dev/null
-	yarn install --ignore-platform
+	yarn install --ignore-platform || exit 1
 
 	if [ "${d}" == 'firebase' ] ; then
 		"${currentDir}/.bin/browserify" firebase-node.js -o firebase.js -s firebase
