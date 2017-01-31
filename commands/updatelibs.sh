@@ -134,7 +134,7 @@ for d in firebase firebase-server ts-node tslint ; do
 	mkdir -p ~/lib/js/module_locks/${d}
 	cd node_modules/${d}
 	mkdir node_modules 2> /dev/null
-	yarn install
+	yarn install || exit 1
 	cp yarn.lock package.json ~/lib/js/module_locks/${d}/
 	cd ../..
 done
