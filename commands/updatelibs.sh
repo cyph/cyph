@@ -9,7 +9,7 @@ dir="$PWD"
 mkdir -p ~/lib/js ~/tmplib/js
 cd ~/tmplib/js
 
-yarn add --ignore-platform \
+yarn add --ignore-platform --ignore-scripts \
 	@angular/common \
 	@angular/compiler \
 	@angular/compiler-cli \

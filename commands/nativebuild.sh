@@ -4,6 +4,8 @@ cd $(cd "$(dirname "$0")" ; pwd)/..
 dir="$PWD"
 
 
+plugins="$(cat shared/js/native/plugins.list)"
+
 cd
 tns create cyph --ng --appid com.cyph.app
 cd cyph
@@ -15,6 +17,9 @@ node -e '
 mkdir node_modules 2> /dev/null
 npm install
 tns platform add android --sdk 22
+
+cp ${dir}/shared/js/native/firebase.nativescript.json ./
+for plugin in ${plugins} ; do tns plugin add ${plugin} < /dev/null ; done
 
 cp -rf node_modules node_modules.old
 rm -rf node_modules/@types 2> /dev/null
@@ -160,6 +165,9 @@ for platform in android ios ; do
 				app: './app/main'
 			},
 			externals: {
+				$(for plugin in ${plugins} ; do echo "
+					'${plugin}': \"require('${plugin}')\",
+				" ; done)
 				jquery: 'undefined',
 				libsodium: 'self.sodium',
 				mceliece: 'self.mceliece',
