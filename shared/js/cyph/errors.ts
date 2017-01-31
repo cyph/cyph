@@ -85,7 +85,9 @@ export class Errors {
 		self.onerror	= this.log;
 
 		try {
+			/* tslint:disable-next-line:no-unbound-method */
 			const oldConsoleError	= console.error;
+			/* tslint:disable-next-line:no-unbound-method */
 			console.error			= (errorMessage: string) => {
 				oldConsoleError.call(console, errorMessage);
 				self.onerror(errorMessage);

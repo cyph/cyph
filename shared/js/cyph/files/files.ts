@@ -383,7 +383,7 @@ export class Files {
 				transfer.image ? plaintext : undefined
 			);
 
-			if (transfer.answer === false) {
+			if (!transfer.answer) {
 				this.transfers.delete(transfer);
 				this.triggerChangeDetection();
 
