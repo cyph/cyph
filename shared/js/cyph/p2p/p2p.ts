@@ -380,9 +380,9 @@ export class P2P implements IP2P {
 	}
 
 	/** @inheritDoc */
-	public toggle (shouldPause?: boolean, medium?: 'audio'|'video') : void {
-		if (!this.webRTC) {
-			return;
+	public async toggle (shouldPause?: boolean, medium?: 'audio'|'video') : Promise<void> {
+		while (!(this.webRTC && this.webRTC.connection)) {
+			await util.sleep();
 		}
 
 		if (shouldPause !== true && shouldPause !== false) {

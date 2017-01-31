@@ -9,7 +9,7 @@ dir="$PWD"
 mkdir -p ~/lib/js ~/tmplib/js
 cd ~/tmplib/js
 
-yarn add --ignore-platform \
+yarn add --ignore-platform --ignore-scripts \
 	@angular/common \
 	@angular/compiler \
 	@angular/compiler-cli \
@@ -134,7 +134,8 @@ for d in firebase firebase-server ts-node tslint ; do
 	mkdir -p ~/lib/js/module_locks/${d}
 	cd node_modules/${d}
 	mkdir node_modules 2> /dev/null
-	yarn install
+	sed -i 's|https://https://|https://|g' yarn.lock 2> /dev/null
+	yarn install --ignore-platform || exit 1
 	cp yarn.lock package.json ~/lib/js/module_locks/${d}/
 	cd ../..
 done

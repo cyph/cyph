@@ -88,7 +88,7 @@ export class AppService {
 	public readonly telehealthDiscount: number		= 0.10;
 
 	/** @see HomeSections */
-	public homeSection: HomeSections;
+	public homeSection: HomeSections|undefined;
 
 	/** @see Promos */
 	public promo: Promos|undefined;

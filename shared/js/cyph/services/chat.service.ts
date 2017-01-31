@@ -104,12 +104,7 @@ export class ChatService {
 		shouldNotify: boolean = author !== this.sessionService.users.me,
 		selfDestructTimeout?: number
 	) : Promise<void> {
-		if (
-			this.state === States.aborted ||
-			this.isDisconnected ||
-			!text ||
-			typeof text !== 'string'
-		) {
+		if (this.state === States.aborted || this.isDisconnected || !text) {
 			return;
 		}
 
@@ -117,7 +112,7 @@ export class ChatService {
 			await util.sleep(500);
 		}
 
-		if (this.notificationService && shouldNotify !== false) {
+		if (this.notificationService && shouldNotify) {
 			if (author === this.sessionService.users.app) {
 				this.notificationService.notify(text);
 			}
@@ -346,17 +341,23 @@ export class ChatService {
 		});
 
 		this.sessionService.on(this.sessionService.rpcEvents.text, (o: {
-			text: string;
 			author?: string;
+			text?: string;
 			timestamp: number;
 			selfDestructTimeout?: number;
-		}) => { this.addMessage(
-			o.text,
-			o.author || this.stringsService.friend,
-			o.timestamp,
-			undefined,
-			o.selfDestructTimeout
-		); });
+		}) => {
+			if (typeof o.text !== 'string') {
+				return;
+			}
+
+			this.addMessage(
+				o.text,
+				o.author || this.stringsService.friend,
+				o.timestamp,
+				undefined,
+				o.selfDestructTimeout
+			);
+		});
 
 		this.sessionService.on(this.sessionService.rpcEvents.typing, (o: {isTyping: boolean}) => {
 			this.setFriendTyping(o.isTyping);

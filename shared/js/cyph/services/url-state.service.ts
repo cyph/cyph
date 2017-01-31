@@ -87,25 +87,15 @@ export class UrlStateService {
 			/* Force absolute paths */
 			path	= '/' + path;
 
-			if (history && history.pushState) {
-				if (shouldReplace && history.replaceState) {
-					history.replaceState({}, '', path);
-				}
-				else {
-					history.pushState({}, '', path);
-				}
-
-				if (!shouldNotTrigger) {
-					this.trigger();
-				}
+			if (shouldReplace) {
+				history.replaceState({}, '', path);
 			}
-			else if (redirectFallback) {
-				if (shouldReplace) {
-					location.replace(path);
-				}
-				else {
-					location.pathname	= path;
-				}
+			else {
+				history.pushState({}, '', path);
+			}
+
+			if (!shouldNotTrigger) {
+				this.trigger();
 			}
 		}
 		else {
