@@ -7,7 +7,7 @@ tmpDir="$(mktemp -d)"
 ./commands/copyworkspace.sh --client-only "${tmpDir}"
 cd "${tmpDir}/shared"
 
-tsc --skipLibCheck tslint-rules/*.ts || exit 1
+/node_modules/tslint/node_modules/.bin/tsc --skipLibCheck tslint-rules/*.ts || exit 1
 
 node -e "
 	const tsconfig	= JSON.parse(

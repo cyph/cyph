@@ -7,7 +7,7 @@ dir="$PWD"
 plugins="$(cat shared/js/native/plugins.list)"
 
 cd
-tns create cyph --ng --appid com.cyph.app
+tns create cyph --ng --appid com.cyph.app || exit 1
 cd cyph
 node -e '
 	const package	= JSON.parse(fs.readFileSync("package.json").toString());
@@ -15,11 +15,11 @@ node -e '
 	fs.writeFileSync("package.json", JSON.stringify(package));
 '
 mkdir node_modules 2> /dev/null
-npm install
-tns platform add android --sdk 22
+npm install || exit 1
+tns platform add android --sdk 22 || exit 1
 
 cp ${dir}/shared/js/native/firebase.nativescript.json ./
-for plugin in ${plugins} ; do tns plugin add ${plugin} < /dev/null ; done
+for plugin in ${plugins} ; do tns plugin add ${plugin} < /dev/null || exit 1 ; done
 
 cp -rf node_modules node_modules.old
 rm -rf node_modules/@types 2> /dev/null
