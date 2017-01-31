@@ -21,8 +21,12 @@ dependencies:
               replace(/#CIRCLECI:/g, "").
               replace(
                   /GETLIBS_BASE64/g,
-                  fs.readFileSync(
-                      "commands/getlibs.sh"
+                  new Buffer(
+                      fs.readFileSync("commands/getlibs.sh").
+                          toString().
+                          split("\n").
+                          filter(s => s.indexOf("nativePlugins") < 0).
+                          join("\n")
                   ).toString("base64")
               ).
               replace(
