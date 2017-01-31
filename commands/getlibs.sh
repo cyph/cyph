@@ -20,6 +20,9 @@ yarn add --ignore-platform --ignore-scripts ${nativePlugins} || exit 1
 
 cd node_modules
 
+# Workaround pending TS 2.1
+echo > @types/lodash/index.d.ts
+
 cp -a ../libsodium ./
 
 mkdir -p @types/libsodium
