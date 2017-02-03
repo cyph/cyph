@@ -26,15 +26,19 @@ const compileSCSS	= scss =>
 	childProcess.spawnSync('cleancss', [], {input:
 		childProcess.spawnSync(
 			'scss',
-			['-s', '-C', '-I../../shared/css'],
-			{input: scss}
+			['-s', '-C'],
+			{input: `
+				@import '/node_modules/bourbon/app/assets/stylesheets/bourbon';
+
+				${scss}
+			`}
 		).stdout.toString()
 	}).stdout.toString().trim()
 ;
 
 const $	= cheerio.load(fs.readFileSync('../cyph.ws').toString());
 
-const o		= JSON.parse(
+const o	= JSON.parse(
 	fs.readFileSync(args.customBuildTheme).toString()
 );
 
@@ -49,15 +53,14 @@ try {
 catch (_) {}
 
 const css	= compileSCSS(
-	eval(`\`
-		@import '/node_modules/bourbon/app/assets/stylesheets/bourbon';
-
-		${
-			fs.readFileSync(
-				'../../shared/css/custom-build.scss.template'
-			).toString().replace(/;/g, '!important;')
-		}
-	\``)
+	eval('`' +
+		fs.readFileSync(
+			'../../shared/css/custom-build.scss.template'
+		).
+			toString().
+			replace(/;/g, '!important;').
+			replace(/(@include .*)\)!important;/g, '$1!important);')
+	+ '`')
 );
 
 const hash	= (await superSphincs.hash(css)).hex;
@@ -73,11 +76,17 @@ if (o.colors.main) {
 		attr('content', o.colors.main)
 	;
 
-	$('head').append(`<style>
+	$('head').append('<style>' + compileSCSS(`
 		#pre-load {
 			background-color: ${o.colors.main} !important;
 		}
-	</style>`);
+
+		${!o.loadingAnimationInvert ? '' : `
+			#pre-load > .transition, .loading > .logo-animation > * {
+				@include filter(brightness(90%) invert(100%));
+			}
+		`}
+	`) + '</style>');
 }
 
 $('head').find(
