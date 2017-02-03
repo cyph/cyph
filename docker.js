@@ -170,7 +170,7 @@ const shellScripts			= {
 	aptUpdate: {
 		command: `
 			sudo apt-get -y --force-yes update
-			sudo apt-get -y --force-yes dist-upgrade
+			sudo apt-get -y --force-yes upgrade
 			touch ~/.updated
 		`,
 		condition: `
