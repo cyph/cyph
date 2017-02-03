@@ -228,7 +228,7 @@ const backup			= () => {
 	}
 
 	for (const d of fs.readdirSync(backupDir).filter(d => d !== '.git')) {
-		spawn('rm' ['-rf', path.join(backupDir, d)]);
+		spawn('rm', ['-rf', path.join(backupDir, d)]);
 	}
 
 	childProcess.spawnSync('git', ['init'], {cwd: backupDir});
@@ -238,11 +238,11 @@ const backup			= () => {
 	catch (_) {}
 
 	for (const d of backupTargets) {
-		spawn('cp' ['-a', path.join(homeDir, `.${d}`), path.join(backupDir, d)]);
+		spawn('cp', ['-a', path.join(homeDir, `.${d}`), path.join(backupDir, d)]);
 	}
 
 	for (const d of fs.readdirSync(path.join(homeDir, '.cyph')).filter(d => d !== 'cdn')) {
-		spawn('cp' ['-a', path.join(homeDir, '.cyph', d), path.join(backupDir, 'cyph', d)]);
+		spawn('cp', ['-a', path.join(homeDir, '.cyph', d), path.join(backupDir, 'cyph', d)]);
 	}
 
 	childProcess.spawnSync('git', ['add', '.'], {cwd: backupDir});
