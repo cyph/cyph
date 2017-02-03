@@ -44,7 +44,7 @@ yarn add --ignore-platform --ignore-scripts \
 	babel-types \
 	babylon \
 	Base64 \
-	bourbon \
+	bourbon@4.2.7 \
 	braintree-web@^2 \
 	browserify \
 	browserstack \
