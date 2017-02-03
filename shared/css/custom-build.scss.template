@@ -32,12 +32,6 @@ ${!o.background ? '' : `
 	}
 `}
 
-${!o.loadingAnimationInvert ? '' : `
-	#pre-load > .transition, .loading > .logo-animation > * {
-		@include filter(brightness(90%) invert(100%));
-	}
-`}
-
 ${!o.speedDialInvert ? '' : `
 	md-fab-actions .md-button {
 		background-color: #444;
