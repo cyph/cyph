@@ -81,9 +81,9 @@ if (o.colors.main) {
 			background-color: ${o.colors.main} !important;
 		}
 
-		${!o.loadingAnimationInvert ? '' : `
+		${!o.loadingAnimationFilter ? '' : `
 			#pre-load > .transition, .loading > .logo-animation > * {
-				@include filter(brightness(90%) invert(100%));
+				@include filter(${o.loadingAnimationFilter});
 			}
 		`}
 	`) + '</style>');
