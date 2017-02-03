@@ -137,21 +137,6 @@ RUN wget "$( \
 RUN unzip ~/go_appengine.zip -d ~
 RUN rm ~/go_appengine.zip
 
-RUN mkdir ~/androidsdk
-RUN wget https://dl.google.com/android/repository/tools_r25.2.3-linux.zip -O ~/androidsdk.zip
-RUN unzip ~/androidsdk.zip -d ~/androidsdk
-RUN rm ~/androidsdk.zip
-
-RUN bash -c ' \
-	source ~/.bashrc; \
-	mv $ANDROID_HOME/tools $ANDROID_HOME/balls; \
-	ln -s $ANDROID_HOME/balls $ANDROID_HOME/tools; \
-	echo y | $ANDROID_HOME/balls/android update sdk --all --no-ui \
-		--filter tools,platform-tools,android-22,build-tools-25.0.1,extra-android-m2repository,extra-google-m2repository \
-	; \
-	rm -rf $ANDROID_HOME/balls; \
-'
-
 RUN rm -rf ~/.gnupg
 
 

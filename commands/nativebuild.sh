@@ -16,7 +16,6 @@ node -e '
 '
 mkdir node_modules 2> /dev/null
 npm install || exit 1
-tns platform add android --sdk 22 || exit 1
 
 cp ${dir}/shared/js/native/firebase.nativescript.json ./
 for plugin in ${plugins} ; do tns plugin add ${plugin} < /dev/null || exit 1 ; done
@@ -70,27 +69,13 @@ getmodules () {
 
 getbadimports () {
 	grep -rP "^import .* from [\"']" app |
-		grep -v 'js/' |
+		grep -vP '^app/js/' |
 		grep '\.ts:' |
 		perl -pe "s/.* from [\"'](.*?)[\"'].*/\1/g" |
-		grep -P "^($(
-			echo -n "$(
-				getmodules tns-core-modules |
-				grep '/' |
-				sed 's|^tns-core-modules/|../|g'
-			)" |
-				tr '\n' '|'
-		))" |
+		grep -P "^($(echo -n "$(getmodules tns-core-modules | grep '/')" | tr '\n' '|'))" |
 		sort |
 		uniq
 }
-
-cat node_modules/tns-core-modules/tns-core-modules.base.d.ts |
-	grep -v 'declarations\.d\.ts' \
-> node_modules/tns-core-modules/tns-core-modules.tmp.d.ts
-echo \
-	"/// <reference path=\"../node_modules/tns-core-modules/tns-core-modules.tmp.d.ts\" />" \
->> typings/libs.d.ts
 
 node -e "
 	const tsconfig	= JSON.parse(
@@ -100,13 +85,21 @@ node -e "
 			join('\n')
 	);
 
-	/* Temporary, pending TS 2.1 */
-	tsconfig.compilerOptions.alwaysStrict		= undefined;
-	tsconfig.compilerOptions.lib				= undefined;
-	tsconfig.compilerOptions.target				= 'es2015';
-
 	/* For Angular AOT */
 	tsconfig.compilerOptions.noUnusedParameters	= undefined;
+
+	tsconfig.compilerOptions.baseUrl			= '.';
+	tsconfig.compilerOptions.paths				= {
+		$(
+			getmodules tns-core-modules |
+				sed 's|^tns-core-modules/||g' |
+				grep / |
+				xargs -I% echo '"%": ["node_modules/tns-core-modules/%"],' |
+				perl -pe 's/([^\/]+)\/\g1/\1/g' |
+				sort |
+				uniq
+		)
+	};
 
 	tsconfig.compilerOptions.outDir				= '.';
 
@@ -130,31 +123,36 @@ sed -i 's|\./app.module|\./app.module.ngfactory|g' app/main.ts
 sed -i 's|AppModule|AppModuleNgFactory|g' app/main.ts
 sed -i 's|bootstrapModule|bootstrapModuleFactory|g' app/main.ts
 for module in $(getbadimports) ; do
-	mkdir -p "app/${module}" 2> /dev/null
-	node -e "
-		console.log(
-			fs.readFileSync(
-				'node_modules/tns-core-modules$(
-					echo "${module}" | perl -pe 's/\.\.(\/.*)?(\/[^\/\s]+)$/\1\2\2/'
-				).d.ts'
-			).toString().
-				split('{').
-				slice(1).
-				join('{').
-				split('}').
-				slice(0, -1).
-				join('}')
-		)
-	" > "app/${module}/index.d.ts"
-done
-./node_modules/.bin/ngc -p .
-rm tsconfig.json node_modules/tns-core-modules/tns-core-modules.tmp.d.ts
-for module in $(getbadimports) ; do
-	moduleRegex="$(echo "${module}" | sed 's|^\.\./|\\.\\./|')"
-	for f in $(grep -rl "${moduleRegex}" app) ; do
-		sed -i "s|${moduleRegex}|$(echo "${module}" | sed 's|^\.\./||')|g" ${f}
+	newModuleParent="${PWD}/node_modules/${module}"
+	oldModule="${newModuleParent}"
+	newModule1="${newModuleParent}/index"
+	newModule2="$(echo "${newModuleParent}" | sed 's|[^/]*$||')index"
+
+	if [ ! -f "${oldModule}.d.ts" ] ; then
+		continue
+	fi
+
+	node -e "fs.writeFileSync(
+		'${oldModule}.d.ts',
+		fs.readFileSync('${oldModule}.d.ts').toString().
+			split('{').
+			slice(1).
+			join('{').
+			split('}').
+			slice(0, -1).
+			join('}')
+	)"
+
+	mkdir -p "${newModuleParent}" 2> /dev/null
+
+	for newModule in "${newModule1}" "${newModule2}" ; do
+		for ext in d.ts android.js ios.js js ; do
+			ln -s "${oldModule}.${ext}" "${newModule}.${ext}" 2> /dev/null
+		done
 	done
 done
+./node_modules/.bin/ngc -p .
+rm tsconfig.json
 
 for platform in android ios ; do
 	cat > webpack.js <<- EOM
