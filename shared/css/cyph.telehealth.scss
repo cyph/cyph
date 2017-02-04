@@ -141,30 +141,32 @@ body.telehealth.mobile {
 		color: #4D5062 !important;
 	}
 
-	.chat-main.mobile .message-item.author-me, .chat-main.video .video-call.active.playing ~ .message-list .message-item.author-me {
-		background-color: rgba(231, 196, 70, 0.95);
-	}
+	.chat-main.mobile { 
+		.message-item.author-me, .chat-main.video .video-call.active.playing ~ .message-list .message-item.author-me {
+			background-color: rgba(231, 196, 70, 0.95);
+		}
 
-	.chat-main.mobile .message-item.author-other, .chat-main.video .video-call.active.playing ~ .message-list .message-item.author-other {
-		margin-left: 5%;
-		background-color: rgba(231, 196, 70, 0.95);
-	}
+		.message-item.author-other, .chat-main.video .video-call.active.playing ~ .message-list .message-item.author-other {
+			margin-left: 5%;
+			background-color: rgba(231, 196, 70, 0.95);
+		}
 
-	.chat-main.mobile .message-item.author-me:after, .chat-main.video .video-call.active.playing ~ .message-list .message-item.author-me:after {
-		border-color: transparent rgba(231, 196, 70, 0.95) !important;
-		right: -11px;
-	}
+		.message-item.author-me:after, .chat-main.video .video-call.active.playing ~ .message-list .message-item.author-me:after {
+			border-color: transparent rgba(231, 196, 70, 0.95) !important;
+			right: -11px;
+		}
 
-	.chat-main.mobile .message-item.author-other:after, .chat-main.video .video-call.active.playing ~ .message-list .message-item.author-other:after {
-		border-color: transparent rgba(231, 196, 70, 0.95) !important;
-		left: -10px;
-	}
+		.message-item.author-other:after, .chat-main.video .video-call.active.playing ~ .message-list .message-item.author-other:after {
+			border-color: transparent rgba(231, 196, 70, 0.95) !important;
+			left: -10px;
+		}
 
-	.chat-main.mobile .message-item.author-other .message-timestamp, .chat-main.video .video-call.active.playing ~ .message-list .message-item.author-other .message-timestamp {
-		color: #4D5062 !important;
-	}
+		.message-item.author-other .message-timestamp, .chat-main.video .video-call.active.playing ~ .message-list .message-item.author-other .message-timestamp {
+			color: #4D5062 !important;
+		}
 
-	.chat-main.mobile .message-item.author-me .message-timestamp, .chat-main.video .video-call.active.playing ~ .message-list .message-item.author-me .message-timestamp {
-    	color: #4D5062 !important;
+		.message-item.author-me .message-timestamp, .chat-main.video .video-call.active.playing ~ .message-list .message-item.author-me .message-timestamp {
+			color: #4D5062 !important;
+		}
 	}
 }
