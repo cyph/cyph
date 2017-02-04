@@ -60,9 +60,14 @@ body.telehealth {
 		}
 	}
 
-	span, a, p, h1, h2, h3, cyph-help {
+	span, a, p, h1, h2, h3, li, cyph-help {
 		color: #4D5062 !important;
 		font-weight: 400;
+	}
+
+	.not-found img {
+		-webkit-filter: brightness(0.5);
+		filter: brightness(0.5);
 	}
 
 	.md-bar2 {
