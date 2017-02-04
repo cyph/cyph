@@ -11,8 +11,11 @@
 		<img src='/img/logo.telehealth.icon.png' alt='Telehealth logo' />
 	</div>
 	<div>
-		<span *ngIf='isPassive' cyphTranslate>
+		<span *ngIf='isPassive && !sessionService.apiFlags.telehealth' cyphTranslate>
 			Waiting for user to join...
+		</span>
+		<span *ngIf='isPassive && sessionService.apiFlags.telehealth' cyphTranslate>
+			You have successfully checked in. Your telehealth session will begin when the other party connects.
 		</span>
 		<div *ngIf='!isPassive'>
 			<span *ngIf='sessionService.apiFlags.telehealth' cyphTranslate>
