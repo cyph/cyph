@@ -54,8 +54,9 @@ export class MdSwitchComponent
 				ng-class='$ctrl.childClass'
 				ng-model='$ctrl.model'
 				aria-label='.'
-				ng-transclude
-			></md-switch>
+			>
+				<ng-transclude></ng-transclude>
+			</md-switch>
 		`,
 		transclude: true
 	};
