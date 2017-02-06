@@ -14,6 +14,7 @@ import {util} from '../util';
  */
 @Component({
 	selector: 'cyph-markdown',
+	styleUrls: ['../../css/components/markdown.css'],
 	templateUrl: '../../../templates/markdown.html'
 })
 export class MarkdownComponent implements OnChanges {
@@ -89,6 +90,10 @@ export class MarkdownComponent implements OnChanges {
 
 			(<any> $a).magnificPopup({type: 'image'});
 		});
+
+		if (this.envService.isMobile) {
+			$html.addClass('mobile');
+		}
 
 		$element.empty().append($html);
 	}

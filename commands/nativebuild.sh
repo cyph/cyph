@@ -36,8 +36,10 @@ cp ${dir}/shared/lib/js/base.js ./
 mv ../node_modules ./
 cp -rf ${dir}/shared/js/typings ./
 cp -rf ${dir}/shared/js/native/* app/
-cp -rf ${dir}/shared/css/native/* app/
+cp -rf ${dir}/shared/css/native app/css
 cp -rf ${dir}/shared/templates/native app/templates
+mv app/css/app.scss app/
+mv app/css app/js/
 
 rm -rf app/js
 mkdir -p app/js/cyph.im app/js/preload

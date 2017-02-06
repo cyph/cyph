@@ -687,211 +687,6 @@ body.mobile #features-section .carousel .logo.active > img {
 	}
 }
 
-.demo-root {
-	opacity: 0;
-
-	@include transition(opacity 0.75s 0.5s ease);
-
-	&, > * {
-		position: relative;
-		z-index: 3;
-	}
-
-	> * {
-		float: left;
-		padding: 0px;
-		overflow: hidden;
-
-		.cyph-foreground {
-			font-size: 1em;
-			height: calc(100% + 4px);
-			overflow: hidden;
-		}
-	}
-
-	.message-list:after {
-		width: 16.5em;
-		height: 16.5em;
-	}
-
-	.logo-animation.connected {
-		height: 8em;
-		width: 8em;
-		min-height: 8em;
-		min-width: 8em;
-		background-size: 8em 8em;
-	}
-
-	> .desktop {
-		height: calc((100vw - 60px) * 0.47 * 0.565);
-		width: 47%;
-		margin-top: 62px;
-		left: 11.5%;
-
-		cyph-chat-main, cyph-chat-message-box {
-			margin-left: 17.5px;
-			width: calc(100% - 25px);
-		}
-
-		cyph-chat-main {
-			height: calc(100% - 70px);
-
-			.chat-main {
-				.message-list {
-					font-size: 90%;
-
-					&:after {
-						@include transform(translateX(-50%) translateY(-60%));
-					}
-				}
-
-				.transfer-list {
-					width: calc(100% - 35px);
-				}
-			}
-
-			.chat-main.video .video-call.active.playing {
-				~ .message-list {
-					width: 20vw;
-				}
-
-				~ .video-call-message-box {
-					right: calc(-20vw - 10px);
-					width: calc(20vw + 10px);
-				}
-
-				&.sidebar-open {
-					.logo, .buttons, .sidebar, ~ .message-list, ~ .video-call-message-box {
-						@include transform(translateX(-20vw));
-					}
-
-					.me {
-						@include transform(translateX(-20vw) scaleX(-1) !important);
-					}
-				}
-			}
-		}
-
-		cyph-chat-message-box {
-			margin-top: -10px;
-			display: block;
-
-			.message-box {
-				min-height: 60px;
-			}
-
-			md-fab-speed-dial {
-				bottom: -30px;
-
-				@include transform(scale(0.8));
-			}
-		}
-	}
-
-	> .mobile {
-		height: calc((100vw - 60px) * 0.26 * 1.78);
-		width: 26%;
-		margin-top: -62px;
-		left: 21.5%;
-
-		@include filter(blur(0px));
-
-		@include transform(scale(0.625));
-
-		cyph-chat-main {
-			height: calc(100% - 50px);
-
-			.chat-main.video .video-call.active.playing {
-				~ .message-list {
-					width: calc(30vw - 150px);
-				}
-
-				~ .video-call-message-box {
-					right: calc(150px - 30vw);
-					width: calc(30vw - 150px);
-				}
-
-				&.sidebar-open {
-					.logo, .buttons, .sidebar, ~ .message-list, ~ .video-call-message-box {
-						@include transform(translateX(calc(150px - 30vw)));
-					}
-
-					.me {
-						@include transform(translateX(calc(150px - 30vw)) scaleX(-1) !important);
-					}
-				}
-			}
-
-			.chat-end-message md2-card {
-				max-width: 100%;
-				text-align: center;
-				font-size: 135%;
-			}
-		}
-
-		cyph-chat-message-box .message-box {
-			overflow: hidden;
-		}
-	}
-
-	.facebook-pic {
-		width: 105px !important;
-		max-width: 105px !important;
-		height: 100px !important;
-		pointer-events: none;
-	}
-
-	.facebook-pic.real {
-		position: absolute;
-		top: -200px;
-		width: 106px !important;
-		height: 106px !important;
-		max-width: 106px !important;
-
-		> iframe {
-			width: 1000px;
-			margin-top: -55px;
-			margin-left: 608px;
-
-			@include transform(scale(2.25));
-		}
-	}
-
-	.chat-cyphertext {
-		position: absolute;
-	}
-
-	cyph-chat-main .chat-main.video {
-		.video-call.active.playing {
-			&, .logo, .me, .sidebar, .buttons, ~ .message-list, ~ .video-call-message-box {
-				position: absolute;
-			}
-
-			.logo {
-				top: 17.5%;
-				left: 15px;
-			}
-
-			.me {
-				bottom: 13%;
-				right: 0px;
-				width: 15%;
-			}
-
-			.sidebar {
-				display: none;
-				top: 17.5%;
-				right: 15px;
-			}
-
-			.buttons {
-				left: calc(50% - 100px);
-				bottom: calc(17.5% + 25px);
-			}
-		}
-	}
-}
-
 body.mobile .demo-root {
 	> .desktop {
 		display: none;
@@ -1183,4 +978,343 @@ input.donation {
 	float: right;
 	margin-right: 103px;
 	top: -37px;
+}
+
+.pricing-chart .md-button .md-icon {
+	line-height: 20px !important;
+	font-size: 72px !important;
+}
+
+.pricing-chart .md-button, #new-cyph-footer {
+	font-family: Ubuntu !important;
+	line-height: 50px !important;
+	font-size: 18px !important;
+	box-shadow: 0px 4px 10px -1px rgba(0, 0, 0, 0.25) !important;
+}
+
+#individual {
+	text-align: left;
+
+	.laptop {
+		img {
+			margin: 8% 0% 0% -2%;
+		}
+	}
+
+	.signup-form {
+		* {
+			.md-input-container {
+				margin: 0px !important;
+			}
+		}
+
+		input {
+			width: 220px !important;
+			margin: 1px 25px -5px -8px;
+		}
+
+		.md-input-container[disabled] label {
+			color: #999;
+		}
+
+		input[disabled] {
+			background-color: #86789F !important;
+			color: #999;
+			cursor: not-allowed;
+			margin-bottom: -15px;
+			margin-top: 0px;
+		}
+
+		.buttons {
+			margin-left: 20px;
+		}
+	}
+}
+
+.buttons *[disabled] {
+	cursor: not-allowed;
+	background-color: #86789F !important;
+}
+
+body.mobile .pricing-chart {
+	md-input-container {
+		margin: 0% 0% 0% 5% !important;
+	}
+
+	.buttons {
+		margin: 5% 0% !important;
+	}
+}
+
+.pricing-chart {
+	text-align: center;
+	margin: auto auto 35px auto;
+
+	.buttons {
+		margin: -10px auto auto auto;
+	}
+
+	/*:first-child {
+		margin-left: auto !important;
+	}
+	:last-child {
+		margin-right: auto !important;
+	}*/
+	.md-button {
+		width: 100px;
+		background-color: #392859;
+		height: 100px;
+
+		md-icon {
+			transform: scale(5);
+			top: 42px;
+			position: relative;
+		}
+	}
+
+	md-input-container {
+		margin: 0 !important;
+	}
+
+	md-input-container .md-input {
+		/* -webkit-order: 2; */
+		-ms-flex-order: 2;
+
+		/* order: 2; */
+		/* display: block; */
+		background-color: #BBA8DF;
+
+		//margin: 10px !important;
+		/* margin-top: 0; */
+		/* background: 0 0; */
+		padding: 2px 2px 1px;
+
+		/* border-width: 0 0 1px; */
+		line-height: 26px;
+
+		/* height: 30px; */
+		-ms-flex-preferred-size: 26px;
+
+		/* border-radius: 0; */
+		/* border-style: solid; */
+		width: 100%;
+
+		/* box-sizing: border-box; */
+		/* float: left; */
+	}
+}
+
+.pricing-chart.individual .md-button {
+	width: auto !important;
+	height: auto !important;
+	margin: 5px 0px 15px 0px;
+	padding: 5px 15px 5px 15px !important;
+	background-color: #392859;
+}
+
+.pricing-chart button md-icon.ng-scope.material-icons {
+	color: white;
+	transform: scale(4.5);
+	position: relative;
+	top: 40px;
+}
+
+md-icon.back.material-icons {
+	transform: scale(3.5);
+	position: relative;
+	z-index: 999;
+	margin-left: 50px;
+	opacity: 0.85;
+
+	/* Temporary */
+	visibility: hidden;
+}
+
+md-icon.back.material-icons:hover {
+	opacity: 1 !important;
+	cursor: pointer;
+}
+
+.pricing {
+	background-color: #624599 !important;
+	opacity: 0.75;
+	height: auto;
+	margin: auto 1% auto 1%;
+
+	a {
+		text-decoration: none !important;
+	}
+
+	md-icon {
+		font-size: 2.3em;
+		width: 1em;
+		height: 1em;
+		margin: 0px 15px 10px 10px;
+		position: relative;
+	}
+
+	h3 {
+		text-align: center;
+		background-color: #392859 !important;
+		width: 108%;
+		left: -4%;
+		opacity: 1 !important;
+		top: -5px;
+		line-height: 3;
+		position: relative;
+	}
+
+	span {
+		text-align: center;
+		position: relative;
+	}
+
+	.features {
+		height: 69%;
+
+		.feature {
+			h4 {
+				position: relative;
+				margin: 5px 0px 0px -9px;
+				letter-spacing: -0.35px;
+			}
+		}
+
+		p:first-child {
+			margin: 5px 10px 15px 12px;
+		}
+
+		p {
+			text-align: center;
+		}
+
+		hr {
+			opacity: 0.25;
+			color: #000;
+			margin: -11px 20px 10px 20px;
+		}
+
+		.indent {
+			margin: -3.5px 0px -3.5px 22px !important;
+		}
+	}
+
+	.pricing:first-child {
+		margin-left: auto !important;
+	}
+
+	.pricing:last-child {
+		margin-right: auto !important;
+	}
+
+	.price {
+		width: 90%;
+		text-align: center;
+		font-weight: 400;
+		font-size: 1.5em;
+		margin: 5px 10px 15px 12px !important;
+		margin: auto;
+		background-color: #7B56BF !important;
+		line-height: 2;
+	}
+
+	.price:hover {
+		background-color: #B48DFF !important;
+		transition: 0.5s;
+		cursor: pointer;
+	}
+
+	body.mobile & {
+		margin: 5% 1% 5% 1% !important;
+	}
+
+	body:not(.mobile) & {
+		width: 225px;
+	}
+}
+
+.pricing.custom {
+	width: 90%;
+	margin: 32px auto;
+	position: relative;
+
+	h3 {
+		width: 104% !important;
+		left: -2%;
+	}
+
+	.price {
+		width: 175px !important;
+		margin: 32px auto;
+		position: relative;
+	}
+}
+
+.pricing-chart.individual.layout-row .layout-column {
+	text-align: right;
+}
+
+.pricing-chart .md-button.back {
+	width: 75%;
+	background-color: #392859;
+	margin: 20px 0px -10px 0px;
+}
+
+.features .icons h4 {
+	width: 68%;
+	float: left;
+	margin-left: 6px;
+	position: relative;
+	top: -28px;
+}
+
+button.pricing {
+	position: relative !important;
+	left: 0px !important;
+}
+
+#business .laptop {
+	left: -8%;
+	position: absolute;
+	top: 18%;
+}
+
+#business .doctor {
+	left: 65%;
+	position: absolute;
+	top: 10%;
+	z-index: -1;
+}
+
+/* Checkout Page */
+.cart {
+	position: relative;
+	top: calc(50vh - 210px);
+
+	.empty {
+		font-size: 1.14rem;
+	}
+}
+
+.corner-image-left {
+	position: absolute;
+	width: 45%;
+	z-index: 0;
+	left: -21%;
+	top: 69%;
+}
+
+#telehealth.bg-image {
+	left: 5% !important;
+	top: 12% !important;
+}
+
+.bg-image {
+	position: absolute;
+	opacity: 0.5;
+
+	img {
+		position: absolute;
+		opacity: 0.35;
+	}
 }

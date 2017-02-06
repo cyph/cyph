@@ -1,5 +1,6 @@
 <md2-list-item
 	class='layout-column flex'
+	[class.mobile]='envService.isMobile'
 	[class.read]='!message.unread'
 	[childClass]='
 		"message-item layout-row" +

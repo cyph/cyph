@@ -1,0 +1,30 @@
+.chat-cyphertext {
+	z-index: 1;
+	position: fixed;
+	top: -1px;
+	left: -1px;
+	width: calc(100% + 2px);
+	height: calc(100% + 2px);
+	font-family: 'Ubuntu Mono', monospace;
+	background-color: #141414;
+	color: #3bfc34;
+
+	md-content {
+		padding: 30px 12.5%;
+	}
+
+	.close-button {
+		color: inherit !important;
+		position: absolute;
+		top: 30px;
+		right: 5%;
+	}
+
+	.message-item {
+		margin-left: 0px;
+	}
+}
+
+.chat-cyphertext:not(.nano) {
+	overflow-y: scroll;
+}

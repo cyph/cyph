@@ -1,0 +1,59 @@
+md-input, md-option {
+	background-color: rgba(180, 141, 255, 0.85);
+}
+
+md-tabs {
+	.md-active {
+		color: white !important;
+	}
+
+	md-tab-content {
+		margin: 25px;
+	}
+
+	md-ink-bar {
+		background-color: rgba(0, 0, 0, 0.5);
+	}
+}
+
+.md-button {
+	background-color: rgba(0, 0, 0, 0.5);
+	padding: 5px;
+}
+
+pre {
+	margin: 1px;
+}
+
+table {
+	table-layout: fixed;
+	width: 100%;
+	overflow-x: hidden;
+
+	th, td {
+		width: 50%;
+		padding-bottom: 20px;
+		vertical-align: top;
+	}
+
+	th {
+		font-family: Ubuntu;
+		font-weight: normal;
+		font-size: 115%;
+		text-align: left;
+	}
+}
+
+.spaces {
+	background-color: rgba(0, 0, 0, 0.1);
+}
+
+:host > :not(.mobile) {
+	td {
+		padding-left: 20px;
+	}
+}
+
+:host > .mobile {
+	font-size: 75%;
+}
