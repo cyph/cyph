@@ -10,6 +10,7 @@ import {util} from '../util';
  */
 @Component({
 	selector: 'cyph-signup-form',
+	styleUrls: ['../../css/components/signup-form.css'],
 	templateUrl: '../../../templates/signup-form.html'
 })
 export class SignupFormComponent {

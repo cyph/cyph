@@ -11,6 +11,7 @@ import {elements} from './elements';
  */
 @Component({
 	selector: 'cyph-demo',
+	styleUrls: ['../css/components/cyph.com/demo.css'],
 	templateUrl: '../../templates/cyph.com/demo.html'
 })
 export class DemoComponent implements OnInit {

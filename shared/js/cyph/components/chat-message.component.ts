@@ -12,6 +12,7 @@ import {StringsService} from '../services/strings.service';
  */
 @Component({
 	selector: 'cyph-chat-message',
+	styleUrls: ['../../css/components/chat-message.css'],
 	templateUrl: '../../../templates/chat-message.html'
 })
 export class ChatMessageComponent implements OnInit {
@@ -36,10 +37,10 @@ export class ChatMessageComponent implements OnInit {
 		private readonly elementRef: ElementRef,
 
 		/** @ignore */
-		private readonly envService: EnvService,
-
-		/** @ignore */
 		private readonly scrollService: ScrollService,
+
+		/** @see EnvService */
+		public readonly envService: EnvService,
 
 		/** @see SessionService */
 		public readonly sessionService: SessionService,

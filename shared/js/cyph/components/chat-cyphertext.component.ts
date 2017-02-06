@@ -11,6 +11,7 @@ import {StringsService} from '../services/strings.service';
  */
 @Component({
 	selector: 'cyph-chat-cyphertext',
+	styleUrls: ['../../css/components/chat-cyphertext.css'],
 	templateUrl: '../../../templates/chat-cyphertext.html'
 })
 export class ChatCyphertextComponent implements OnInit {

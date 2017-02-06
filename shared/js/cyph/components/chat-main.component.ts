@@ -15,6 +15,7 @@ import {UtilService} from '../services/util.service';
  */
 @Component({
 	selector: 'cyph-chat-main',
+	styleUrls: ['../../css/components/chat-main.css'],
 	templateUrl: '../../../templates/chat-main.html'
 })
 export class ChatMainComponent implements OnInit {

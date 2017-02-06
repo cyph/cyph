@@ -139,6 +139,8 @@ tsbuild () {
 
 	cd "${tmpJsDir}"
 
+	if [ ! -d css ] ; then mv ../css ./ ; fi
+
 	{
 		time if [ "${watch}" ] ; then
 			tsc -p .
@@ -168,9 +170,22 @@ compile () {
 
 	for f in $scssfiles ; do
 		compileF () {
-			scss -C -Icss "css/${f}.scss" |
+			isComponent="$(echo "${f}" | grep '^components/' > /dev/null && echo true)"
+
+			{
+				echo '@import "/node_modules/bourbon/app/assets/stylesheets/bourbon";';
+				if [ "${isComponent}" ] ; then
+					echo ':host /deep/ {'
+					cat "css/${f}.scss" | sed 's|:host|\&|g'
+					echo '}'
+				else
+					cat "css/${f}.scss"
+				fi;
+			} |
+				scss -s -C -Icss |
 				if [ "${minify}" ] ; then cleancss --inline none ; else cat - ; fi \
-			> "${outputDir}/css/${f}.css"
+			> "css/${f}.css"
+			cp -f "css/${f}.css" "${outputDir}/css/${f}.css"
 		}
 
 		if [ "${watch}" ] ; then
