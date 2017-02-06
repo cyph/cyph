@@ -120,45 +120,80 @@ export class Config {
 	};
 
 	/** Pricing-related config. */
-	public readonly pricingConfig	= {
+	public readonly pricingConfig: {
+		categories: {[category: string]: {
+			id: number;
+			items: {[item: string]: {
+				amount: number;
+				id: number;
+			}};
+		}};
+	}	= {
 		categories: {
 			accounting: {
 				id: 5,
 				items: {
-					generic: {id: 0}
+					generic: {
+						amount: 1,
+						id: 0
+					}
 				}
 			},
 			donation: {
 				id: 0,
 				items: {
-					generic: {id: 0}
+					generic: {
+						amount: 1,
+						id: 0
+					}
 				}
 			},
 			enterprise: {
 				id: 2,
 				items: {
-					basics: {id: 1},
-					beta: {id: 0},
-					works: {id: 2}
+					basics: {
+						amount: 1,
+						id: 1
+					},
+					beta: {
+						amount: 499,
+						id: 0
+					},
+					works: {
+						amount: 1,
+						id: 2
+					}
 				}
 			},
 			individual: {
 				id: 1,
 				items: {
-					pro: {id: 0}
+					pro: {
+						amount: 1,
+						id: 0
+					}
 				}
 			},
 			legal: {
 				id: 4,
 				items: {
-					generic: {id: 0}
+					generic: {
+						amount: 1,
+						id: 0
+					}
 				}
 			},
 			telehealth: {
 				id: 3,
 				items: {
-					small: {id: 1},
-					solo: {id: 0}
+					singlePractitioner: {
+						amount: 250,
+						id: 0
+					},
+					smallPractice: {
+						amount: 1000,
+						id: 1
+					}
 				}
 			}
 		}
