@@ -897,7 +897,7 @@
 					</div>
 
 					<div class='price' (click)='appService.updateCart(
-						appService.betaPlan,
+						configService.pricingConfig.categories.enterprise.items.beta.amount,
 						configService.pricingConfig.categories.enterprise.id,
 						configService.pricingConfig.categories.enterprise.items.beta.id
 					)'>

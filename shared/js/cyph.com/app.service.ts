@@ -46,46 +46,22 @@ export class AppService {
 	];
 
 	/** Current feature displayed in hero section. */
-	public featureIndex: number			= 0;
+	public featureIndex: number				= 0;
 
 	/** Donation amount in dollars. */
-	public readonly donationAmount: number			= 10;
+	public readonly donationAmount: number	= 10;
 
 	/** Individual pricing state. */
-	public readonly individual: boolean				= false;
+	public readonly individual: boolean		= false;
 
 	/** Business pricing state. */
-	public readonly business: boolean				= false;
+	public readonly business: boolean		= false;
 
 	/** Telehealth pricing state. */
-	public readonly telehealth: boolean				= false;
+	public readonly telehealth: boolean		= false;
 
 	/** Amount, category, and item respectively in cart. */
-	public readonly cart: number[]					= [0, 0, 0];
-
-	/** Beta plan price in dollars. */
-	public readonly betaPlan: number				= 499;
-
-	/** Business pricing: "The Basics" plan. */
-	public readonly theBasics: number				= 99;
-
-	/** Business pricing: "The Works" plan. */
-	public readonly theWorks: number				= 499;
-
-	/** Telehealth pricing: single-practicioner plan. */
-	public readonly telehealthSingle: number		= 499;
-
-	/** Custom telehealth pricing: number of doctors. */
-	public readonly doctors: number					= 5;
-
-	/** Custom telehealth pricing: price per doctor. */
-	public readonly pricePerDoctor: number			= 350;
-
-	/** Custom telehealth pricing: number of doctors required for price break. */
-	public readonly telehealthPriceBreak: number	= 5;
-
-	/** Custom telehealth pricing: % discount for price break. */
-	public readonly telehealthDiscount: number		= 0.10;
+	public readonly cart: number[]			= [0, 0, 0];
 
 	/** @see HomeSections */
 	public homeSection: HomeSections|undefined;
@@ -201,6 +177,24 @@ export class AppService {
 				);
 			}
 		}
+		else if (state === States.checkout) {
+			try {
+				const category: string	= newUrlStateSplit[1];
+				const item: string		= newUrlStateSplit[2].replace(
+					/-(.)/g,
+					(_, s) => s.toUpperCase()
+				);
+
+				this.updateCart(
+					this.configService.pricingConfig.categories[category].items[item].amount,
+					this.configService.pricingConfig.categories[category].id,
+					this.configService.pricingConfig.categories[category].items[item].id
+				);
+			}
+			catch (_) {
+				this.urlStateService.setUrl(this.urlStateService.states.notFound);
+			}
+		}
 		else if (state === States.contact) {
 			const to: string	= newUrlStateSplit[1];
 			if (this.configService.cyphEmailAddresses.indexOf(to) > -1) {
@@ -243,11 +237,7 @@ export class AppService {
 	}
 
 	/** Update cart and open checkout screen. */
-	public updateCart (
-		amount: number,
-		category: number,
-		item: number
-	) : void {
+	public updateCart (amount: number, category: number, item: number) : void {
 		this.cart[0]	= amount;
 		this.cart[1]	= category;
 		this.cart[2]	= item;
