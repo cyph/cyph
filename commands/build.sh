@@ -251,6 +251,21 @@ compile () {
 			> '{}.new'
 			mv '{}.new' '{}'
 		" \;
+
+		for resource in css templates ; do
+			find . -type f -name '*.ts' -exec bash -c "
+				if grep '${resource}' '{}' > /dev/null ; then
+					cat '{}' |
+						perl -pe \"s/'(\\.\\.\\/)+${resource}/ \
+							location.pathname.slice(1).replace( \
+								\\/[^\\\\\\\\\/]+(\\\\\\\\\/|\\\\$)\\/g, \
+								'..\\/' \
+							) + '${resource}/g\" \
+					> '{}.new'
+					mv '{}.new' '{}'
+				fi
+			" \;
+		done
 	elif [ ! -d node_modules ] ; then
 		mkdir node_modules
 		cp -rf /node_modules/@angular node_modules/
