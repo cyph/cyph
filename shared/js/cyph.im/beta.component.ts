@@ -10,7 +10,7 @@ import {AppService} from './app.service';
  */
 @Component({
 	selector: 'cyph-beta',
-	styleUrls: ['../../css/components/cyph.im/beta.css'],
+	styleUrls: ['../css/components/cyph.im/beta.css'],
 	templateUrl: '../../templates/cyph.im/beta.html'
 })
 export class BetaComponent implements OnInit {

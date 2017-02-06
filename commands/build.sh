@@ -139,7 +139,14 @@ tsbuild () {
 
 	cd "${tmpJsDir}"
 
-	if [ ! -d css ] ; then mv ../css ./ ; fi
+	if [ ! -d css ] ; then
+		mv ../css ./
+	else
+		find ../css -type f -name '*.css' -exec bash -c '
+			mkdir -p "$(echo "{}" | sed "s/^\.//" | sed "s/[^\/]*$//")";
+			mv "{}" "$(echo "{}" | sed "s/^\.//")";
+		' \;
+	fi
 
 	{
 		time if [ "${watch}" ] ; then
