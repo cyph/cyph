@@ -105,7 +105,7 @@ export interface ISodium {
 export const sodium: ISodium;
 EOM
 
-for anyType in konami-code.js markdown-it-emoji markdown-it-sup simplewebrtc tab-indent wowjs ; do
+for anyType in granim konami-code.js markdown-it-emoji markdown-it-sup simplewebrtc tab-indent wowjs ; do
 	mkdir -p "@types/${anyType}"
 	echo "
 		declare module '${anyType}' {
