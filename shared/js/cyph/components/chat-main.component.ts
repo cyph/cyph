@@ -28,23 +28,22 @@ export class ChatMainComponent implements OnInit {
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
-
-		var granimInstance = new Granim({
-			element: '#canvas-basic',
-			name: 'basic-gradient',
+		const granimInstance = new Granim({
 			direction: 'radial',
-			opacity: [1, 1],
+			element: '#canvas-basic',
 			isPausedWhenNotInView: true,
+			name: 'basic-gradient',
+			opacity: [1, 1],
 			states : {
-				"default-state": {
+				'default-state': {
 					gradients: [
 						['#624599', '#392859'],
 						['#9368E6', '#624599']
 					],
-					transitionSpeed: 3500,
-					loop: true
+					loop: true,
+					transitionSpeed: 3500
 				},
-				"telehealth": {
+				'telehealth': {
 					gradients: [
 						['#eeecf1', '#FBF8FE'],
 						['#FBF8FE', '#eeecf1']
