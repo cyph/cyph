@@ -61,7 +61,12 @@ export class AppService {
 	public readonly telehealth: boolean		= false;
 
 	/** Amount, category, and item respectively in cart. */
-	public readonly cart: number[]			= [0, 0, 0];
+	public cart: {
+		amount: number;
+		category: number;
+		item: number;
+		subscription: boolean;
+	};
 
 	/** @see HomeSections */
 	public homeSection: HomeSections|undefined;
@@ -185,10 +190,15 @@ export class AppService {
 					(_, s) => s.toUpperCase()
 				);
 
+				const amount	=
+					this.configService.pricingConfig.categories[category].items[item].amount
+				;
+
 				this.updateCart(
-					this.configService.pricingConfig.categories[category].items[item].amount,
+					amount,
 					this.configService.pricingConfig.categories[category].id,
-					this.configService.pricingConfig.categories[category].items[item].id
+					this.configService.pricingConfig.categories[category].items[item].id,
+					amount > 0
 				);
 			}
 			catch (_) {
@@ -237,11 +247,20 @@ export class AppService {
 	}
 
 	/** Update cart and open checkout screen. */
-	public updateCart (amount: number, category: number, item: number) : void {
-		this.cart[0]	= amount;
-		this.cart[1]	= category;
-		this.cart[2]	= item;
-		this.state		= States.checkout;
+	public updateCart (
+		amount: number,
+		category: number,
+		item: number,
+		subscription?: boolean
+	) : void {
+		this.cart	= {
+			amount,
+			category,
+			item,
+			subscription: subscription === true
+		};
+
+		this.state	= States.checkout;
 	}
 
 	constructor (
