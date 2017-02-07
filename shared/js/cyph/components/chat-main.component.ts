@@ -1,4 +1,5 @@
 import {ChangeDetectorRef, Component, ElementRef, Input, OnInit} from '@angular/core';
+import * as Granim from 'granim';
 import * as $ from 'jquery';
 import {ChatService} from '../services/chat.service';
 import {EnvService} from '../services/env.service';
@@ -27,6 +28,33 @@ export class ChatMainComponent implements OnInit {
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
+
+		var granimInstance = new Granim({
+			element: '#canvas-basic',
+			name: 'basic-gradient',
+			direction: 'radial',
+			opacity: [1, 1],
+			isPausedWhenNotInView: true,
+			states : {
+				"default-state": {
+					gradients: [
+						['#624599', '#392859'],
+						['#9368E6', '#624599']
+					],
+					transitionSpeed: 3500,
+					loop: true
+				},
+				"connected": {
+					gradients: [
+						['#624599', '#392859'],
+						['#9368E6', '#624599']
+					],
+					transitionSpeed: 750,
+					loop: true
+				}
+			}
+		});
+
 		this.fileService.files.changeDetectorRef	= this.changeDetectorRef;
 
 		if (!this.elementRef.nativeElement || !this.envService.isWeb) {
