@@ -113,7 +113,6 @@ body.telehealth {
 	cyph-markdown.message-text.app-message p {
 		color: #f3f3f3 !important;
 	}
-
 }
 
 body.telehealth:not(.mobile) {
@@ -139,7 +138,7 @@ body.telehealth.mobile {
 		color: #4D5062 !important;
 	}
 
-	.chat-main.mobile { 
+	.chat-main.mobile {
 		.message-item.author-me, .chat-main.video .video-call.active.playing ~ .message-list .message-item.author-me {
 			background-color: rgba(231, 196, 70, 0.95);
 		}

@@ -65,9 +65,9 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 
 	if subscription {
 		customer, err := bt.Customer().Create(&braintree.Customer{
-			Email:      email,
-			FirstName:  firstName,
-			LastName:   lastName,
+			Email:     email,
+			FirstName: firstName,
+			LastName:  lastName,
 		})
 
 		if err != nil {
