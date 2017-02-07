@@ -28,7 +28,16 @@ func init() {
 }
 
 func braintreeCheckout(h HandlerArgs) (interface{}, int) {
+	email := sanitize(h.Request.PostFormValue("Email"))
+	name := sanitize(h.Request.PostFormValue("Name"))
 	nonce := sanitize(h.Request.PostFormValue("Nonce"))
+
+	names := strings.SplitN(name, " ", 2)
+	firstName := names[0]
+	lastName := ""
+	if len(names) > 1 {
+		lastName = names[1]
+	}
 
 	planId := ""
 	if category, err := strconv.ParseInt(sanitize(h.Request.PostFormValue("Category")), 10, 64); err == nil {
@@ -43,36 +52,81 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		return err.Error(), http.StatusTeapot
 	}
 
-	bt := braintreeInit(h)
-
-	tx, err := bt.Transaction().Create(&braintree.Transaction{
-		Type:               "sale",
-		Amount:             braintree.NewDecimal(amount, 2),
-		PaymentMethodNonce: nonce,
-	})
-
+	subscriptionString := sanitize(h.Request.PostFormValue("Subscription"))
+	subscription, err := strconv.ParseBool(subscriptionString)
 	if err != nil {
 		return err.Error(), http.StatusTeapot
 	}
 
-	bt.Transaction().SubmitForSettlement(tx.Id)
+	bt := braintreeInit(h)
 
-	txJson, _ := json.Marshal(tx)
+	txLog := ""
+	success := false
+
+	if subscription {
+		customer, err := bt.Customer().Create(&braintree.Customer{
+			Email:      email,
+			FirstName:  firstName,
+			LastName:   lastName,
+		})
+
+		if err != nil {
+			return err.Error(), http.StatusTeapot
+		}
+
+		creditCard, err := bt.CreditCard().Create(&braintree.CreditCard{
+			CustomerId:         customer.Id,
+			PaymentMethodNonce: nonce,
+		})
+
+		if err != nil {
+			return err.Error(), http.StatusTeapot
+		}
+
+		tx, err := bt.Subscription().Create(&braintree.Subscription{
+			PaymentMethodToken: creditCard.Token,
+			PlanId:             planId,
+		})
+
+		if err != nil {
+			return err.Error(), http.StatusTeapot
+		}
+
+		success = tx.Status == braintree.SubscriptionStatusActive
+	} else {
+		tx, err := bt.Transaction().Create(&braintree.Transaction{
+			Type:               "sale",
+			Amount:             braintree.NewDecimal(amount, 2),
+			PaymentMethodNonce: nonce,
+		})
+
+		if err != nil {
+			return err.Error(), http.StatusTeapot
+		}
+
+		bt.Transaction().SubmitForSettlement(tx.Id)
+
+		success = tx.Status == "authorized"
+
+		txJson, _ := json.Marshal(tx)
+		txLog = string(txJson)
+	}
 
 	mail.SendToAdmins(h.Context, &mail.Message{
 		Sender:  "Cyph Sales <hello@cyph.com>",
 		Subject: "SALE SALE SALE",
 		Body: ("" +
-			string(txJson) +
-			"\n\nNonce: " + nonce +
-			"\n\nPlan ID: " + planId +
-			"\n\nAmount: " + amountString +
-			"\n\nName: " + sanitize(h.Request.PostFormValue("Name")) +
-			"\n\nEmail: " + sanitize(h.Request.PostFormValue("Email")) +
+			"Nonce: " + nonce +
+			"\nPlan ID: " + planId +
+			"\nAmount: " + amountString +
+			"\nSubscription: " + subscriptionString +
+			"\nName: " + name +
+			"\nEmail: " + email +
+			"\n\n" + txLog +
 			""),
 	})
 
-	return tx, http.StatusOK
+	return success, http.StatusOK
 }
 
 func braintreeToken(h HandlerArgs) (interface{}, int) {
