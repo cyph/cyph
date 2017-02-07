@@ -1,6 +1,6 @@
 <cyph-chat-root *ngIf='appService.state !== appService.states.beta'>
 	<section id='main' class='cyph-foreground layout-fill layout-column'>
-		<canvas id="canvas-basic">balls</canvas>
+		<canvas id='canvas-basic'></canvas>
 		<cyph-chat-main
 			[hideDisconnectMessage]='envService.coBranded'
 			[messageCountInTitle]='true'
