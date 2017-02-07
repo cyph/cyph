@@ -28,7 +28,7 @@ export class ChatMainComponent implements OnInit {
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
-		const granimInstance = new Granim({
+		const granimInstance	= new Granim({
 			direction: 'radial',
 			element: '#canvas-basic',
 			isPausedWhenNotInView: true,
@@ -44,14 +44,14 @@ export class ChatMainComponent implements OnInit {
 					transitionSpeed: 3500
 				},
 				'telehealth': {
+					direction: 'diagonal',
 					gradients: [
 						['#eeecf1', '#FBF8FE'],
 						['#FBF8FE', '#eeecf1']
 					],
+					loop: true,
 					opacity: [0.75, 0.5],
-					direction: 'diagonal',
-					transitionSpeed: 2500,
-					loop: true
+					transitionSpeed: 2500
 				}
 			}
 		});
