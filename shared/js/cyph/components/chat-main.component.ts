@@ -44,16 +44,22 @@ export class ChatMainComponent implements OnInit {
 					transitionSpeed: 3500,
 					loop: true
 				},
-				"connected": {
+				"telehealth": {
 					gradients: [
-						['#624599', '#392859'],
-						['#9368E6', '#624599']
+						['#eeecf1', '#FBF8FE'],
+						['#FBF8FE', '#eeecf1']
 					],
-					transitionSpeed: 750,
+					opacity: [0.75, 0.5],
+					direction: 'diagonal',
+					transitionSpeed: 2500,
 					loop: true
 				}
 			}
 		});
+
+		if (this.sessionService.apiFlags.telehealth) {
+			granimInstance.changeState('telehealth');
+		}
 
 		this.fileService.files.changeDetectorRef	= this.changeDetectorRef;
 
