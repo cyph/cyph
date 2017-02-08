@@ -21,6 +21,9 @@ export class CheckoutComponent implements OnInit {
 	/** Item category ID number. */
 	@Input() public category: number;
 
+	/** Company. */
+	@Input() public company: string;
+
 	/** Email address. */
 	@Input() public email: string;
 
@@ -61,6 +64,7 @@ export class CheckoutComponent implements OnInit {
 					data: {
 						Amount: Math.floor(this.amount * 100),
 						Category: this.category,
+						Company: this.company || "",
 						Email: this.email,
 						Item: this.item,
 						Name: this.name,
