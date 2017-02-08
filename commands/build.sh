@@ -600,31 +600,8 @@ compile () {
 	fi
 }
 
-litedeploy () {
-	cd ~/.litedeploy
-
-	version="lite-${username}-${branch}"
-	deployedBackend="https://${version}-dot-cyphme.appspot.com"
-	localBackend='${locationData.protocol}//${locationData.hostname}:42000'
-
-	sed -i "s|staging|${version}|g" default/config.go
-	sed -i "s|${localBackend}|${deployedBackend}|g" cyph.im/js/cyph.im/main.js
-	cat cyph.im/cyph-im.yaml | perl -pe 's/(- url: .*)/\1\n  login: admin/g' > yaml.new
-	mv yaml.new cyph.im/cyph-im.yaml
-
-	gcloud app deploy --quiet --no-promote --project cyphme --version $version */*.yaml
-
-	cd
-	rm -rf ~/.litedeploy
-
-	echo -e "\n\n\nFinished deploying\n\n"
-}
-
 if [ "${watch}" ] ; then
 	eval "$(${rootDir}/commands/getgitdata.sh)"
-
-	liteDeployInterval=1800 # 30 minutes
-	SECONDS=$liteDeployInterval
 
 	while true ; do
 		start="$(date +%s)"
@@ -632,14 +609,6 @@ if [ "${watch}" ] ; then
 		compile
 		touch ~/.initialbuild.done
 		echo -e "\n\n\nFinished building JS/CSS ($(expr $(date +%s) - $start)s)\n\n"
-
-		#if [ $SECONDS -gt $liteDeployInterval -a ! -d ~/.litedeploy ] ; then
-		#	echo -e "\n\n\nDeploying to lite env\n\n"
-		#	mkdir ~/.litedeploy
-		#	cp -rf "${rootDir}/default" "${rootDir}/cyph.im" ~/.litedeploy/
-		#	litedeploy &
-		#	SECONDS=0
-		#fi
 
 		cd "${rootDir}/shared"
 
