@@ -217,7 +217,7 @@ if [ "${cacheBustedProjects}" ] ; then
 			while [ ! -f .build.done ] ; do sleep 1 ; done
 		fi
 
-		if [ ! '${site}' -o '${site}' == cyph.com ] && [ ! '${simple}' ] ; then
+		if [ ! '${site}' ] || ( [ '${site}' == cyph.com ] && [ ! '${simple}' ] ) ; then
 			rm -rf cyph.com/blog 2> /dev/null
 			mkdir -p cyph.com/blog
 			cd cyph.com/blog
@@ -242,7 +242,7 @@ fi
 
 
 # WebSign project
-if [ ! "${site}" -o "${site}" == websign -o "${site}" == "${webSignedProject}" ] ; then
+if [ ! "${site}" ] || ( [ "${site}" == websign ] || [ "${site}" == "${webSignedProject}" ] ) ; then
 	cd websign
 	websignHashWhitelist="$(cat hashwhitelist.json)"
 	cp -rf ../shared/img ./
@@ -456,7 +456,7 @@ if [ "${websign}" ] ; then
 		cat cyph.im/cyph-im.yaml | sed "s|cyph-im|${project}|g" > ${d}/${project}.yaml
 		./commands/websign/createredirect.sh ${suffix} ${d} "${package}" "${test}"
 	done
-elif [ ! "${site}" -o "${site}" == "${webSignedProject}" ] ; then
+elif [ ! "${site}" ] || [ "${site}" == "${webSignedProject}" ] ; then
 	cp websign/js/workerhelper.js "${webSignedProject}/js/"
 fi
 
@@ -478,7 +478,7 @@ find . -mindepth 1 -maxdepth 1 -type d -not -name shared -exec cp -f shared/favi
 
 
 # Temporary workaround for cache-busting reverse proxies
-if [ ! "${test}" -a \( ! "${site}" -o "${site}" == cyph.im \) ] ; then
+if [ ! "${test}" ] && ( [ ! "${site}" ] || [ "${site}" == cyph.im ] ) ; then
 	for project in cyph.im cyph.video ; do
 		cat $project/*.yaml | perl -pe 's/(service: cyph.*)/\1-update/' > $project/update.yaml
 	done
