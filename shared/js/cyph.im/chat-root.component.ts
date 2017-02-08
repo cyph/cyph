@@ -61,7 +61,7 @@ export class ChatRootComponent implements OnInit {
 			states : {
 				'default-state': {
 					gradients: [
-						['#392859', '#624599',],
+						['#392859', '#624599'],
 						['#9368E6', '#624599']
 					],
 					loop: true,
