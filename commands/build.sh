@@ -192,7 +192,10 @@ compile () {
 				scss -s -C -Icss |
 				if [ "${minify}" ] ; then cleancss --inline none ; else cat - ; fi \
 			> "css/${f}.css"
-			cp -f "css/${f}.css" "${outputDir}/css/${f}.css"
+
+			if ! cmp "css/${f}.css" "${outputDir}/css/${f}.css" > /dev/null 2>&1 ; then
+				cp -f "css/${f}.css" "${outputDir}/css/${f}.css"
+			fi
 		}
 
 		if [ "${watch}" ] ; then
