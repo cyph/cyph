@@ -117,9 +117,14 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		txLog = string(txJson)
 	}
 
+	subject := "SALE SALE SALE"
+	if !isProd {
+		subject = "[sandbox] " + subject
+	}
+
 	mail.SendToAdmins(h.Context, &mail.Message{
 		Sender:  "Cyph Sales <hello@cyph.com>",
-		Subject: "SALE SALE SALE",
+		Subject: subject,
 		Body: ("" +
 			"Nonce: " + nonce +
 			"\nPlan ID: " + planId +
