@@ -25,7 +25,10 @@ eval "$(./commands/getgitdata.sh)"
 
 
 appserver () {
-	/google-cloud-sdk/bin/dev_appserver.py --skip_sdk_update_check ${*} > /dev/null 2>&1 &
+	/google-cloud-sdk/bin/dev_appserver.py \
+		--automatic_restart=false \
+		--skip_sdk_update_check ${*} \
+	> /dev/null 2>&1 &
 }
 
 go_appserver () {
@@ -86,15 +89,11 @@ fi
 mkdir /tmp/cyph0;
 go_appserver --port 5000 --admin_port 6000 --host 0.0.0.0 --storage_path /tmp/cyph0 default/.build.yaml;
 
-{
-	while [ ! -f ~/.initialbuild.done ] ; do sleep 1 ; done;
+mkdir /tmp/cyph1;
+appserver --port 5001 --admin_port 6001 --host 0.0.0.0 --storage_path /tmp/cyph1 cyph.com/.build.yaml;
 
-	mkdir /tmp/cyph1;
-	appserver --port 5001 --admin_port 6001 --host 0.0.0.0 --storage_path /tmp/cyph1 cyph.com/.build.yaml;
-
-	mkdir /tmp/cyph2;
-	appserver --port 5002 --admin_port 6002 --host 0.0.0.0 --storage_path /tmp/cyph2 cyph.im/.build.yaml;
-} &
+mkdir /tmp/cyph2;
+appserver --port 5002 --admin_port 6002 --host 0.0.0.0 --storage_path /tmp/cyph2 cyph.im/.build.yaml;
 
 if [ "${prodlike}" ] ; then
 	start="$(date +%s)"
