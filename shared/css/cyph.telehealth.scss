@@ -44,6 +44,16 @@ body.telehealth {
 		box-shadow: none;
 	}
 
+	.message-item.author-me {
+		background-color: transparent !important;
+		box-shadow: none !important;
+	}
+
+	.message-item.author-other {
+		background-color: transparent !important;
+		box-shadow: none !important;
+	}
+
 	.message-item.author-other:after {
 		border-color: transparent #4D5062 !important;
 	}
