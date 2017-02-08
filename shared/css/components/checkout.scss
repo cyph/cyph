@@ -26,3 +26,8 @@
 
 	@include transform(translateY(-50%));
 }
+
+.retry {
+	cursor: pointer;
+	text-decoration: underline;
+}

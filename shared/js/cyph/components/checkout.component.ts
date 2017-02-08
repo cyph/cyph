@@ -39,12 +39,17 @@ export class CheckoutComponent implements OnInit {
 	/** Indicates whether checkout is complete. */
 	public complete: boolean;
 
+	/** Indicates whether checkout is complete. */
+	public success: boolean;
+
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
 		if (!this.elementRef.nativeElement || !this.envService.isWeb) {
 			/* TODO: HANDLE NATIVE */
 			return;
 		}
+
+		this.complete	= false;
 
 		const token: string	= await util.request({
 			retries: 5,
@@ -59,8 +64,9 @@ export class CheckoutComponent implements OnInit {
 		(<any> braintree).setup(token, 'dropin', {
 			container: checkoutUI[0],
 			enableCORS: true,
+			onError: () => {},
 			onPaymentMethodReceived: async (data: any) => {
-				this.complete	= 'true' === await util.request({
+				this.success	= 'true' === await util.request({
 					data: {
 						Amount: Math.floor(this.amount * 100),
 						Category: this.category,
@@ -73,7 +79,11 @@ export class CheckoutComponent implements OnInit {
 					},
 					method: 'POST',
 					url: this.envService.baseUrl + this.configService.braintreeConfig.endpoint
-				});
+				}).catch(
+					() => ''
+				);
+
+				this.complete	= true;
 			}
 		});
 	}
