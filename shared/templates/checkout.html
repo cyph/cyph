@@ -37,7 +37,10 @@
 		<md2-button type='submit'>
 			<span cyphTranslate>Confirm</span>
 			<span>${{amount}}</span>
-			<span cyphTranslate>payment</span>
+			<span>
+				<span *ngIf='!subscription' cyphTranslate>payment</span>
+				<span *ngIf='subscription' cyphTranslate>monthly subscription</span>
+			</span>
 		</md2-button>
 	</div>
 	<div class='confirmation' *ngIf='complete'>
