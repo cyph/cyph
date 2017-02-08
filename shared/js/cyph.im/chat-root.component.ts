@@ -1,4 +1,5 @@
 import {Component, OnInit} from '@angular/core';
+import * as Granim from 'granim';
 import * as $ from 'jquery';
 import * as Konami from 'konami-code.js';
 import {AbstractSessionInitService} from '../cyph/services/abstract-session-init.service';
@@ -51,6 +52,34 @@ import {SessionInitService} from './session-init.service';
 export class ChatRootComponent implements OnInit {
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
+		const granim	= !this.envService.isWeb ? undefined : new Granim({
+			direction: 'radial',
+			element: '#canvas-basic',
+			isPausedWhenNotInView: true,
+			name: 'basic-gradient',
+			opacity: [1, 1],
+			states : {
+				'default-state': {
+					gradients: [
+						['#624599', '#392859'],
+						['#9368E6', '#624599']
+					],
+					loop: true,
+					transitionSpeed: 3500
+				},
+				'telehealth': {
+					direction: 'diagonal',
+					gradients: [
+						['#eeecf1', '#FBF8FE'],
+						['#FBF8FE', '#eeecf1']
+					],
+					loop: true,
+					opacity: [0.75, 0.5],
+					transitionSpeed: 2500
+				}
+			}
+		});
+
 		if (this.sessionService.apiFlags.modestBranding) {
 			if (this.envService.isWeb) {
 				$(document.body).addClass('modest');
@@ -63,6 +92,7 @@ export class ChatRootComponent implements OnInit {
 			if (this.envService.isWeb) {
 				$(document.body).addClass('telehealth');
 				this.faviconService.setFavicon('telehealth');
+				granim.changeState('telehealth');
 			}
 			else {
 				/* TODO: HANDLE NATIVE */
