@@ -28,6 +28,7 @@ func init() {
 }
 
 func braintreeCheckout(h HandlerArgs) (interface{}, int) {
+	company := sanitize(h.Request.PostFormValue("Company"))
 	email := sanitize(h.Request.PostFormValue("Email"))
 	name := sanitize(h.Request.PostFormValue("Name"))
 	nonce := sanitize(h.Request.PostFormValue("Nonce"))
@@ -51,6 +52,9 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	if err != nil {
 		return err.Error(), http.StatusTeapot
 	}
+	if amount < 1 {
+		return "Invalid amount.", http.StatusTeapot
+	}
 
 	subscriptionString := sanitize(h.Request.PostFormValue("Subscription"))
 	subscription, err := strconv.ParseBool(subscriptionString)
@@ -65,6 +69,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 
 	if subscription {
 		customer, err := bt.Customer().Create(&braintree.Customer{
+			Company:   company,
 			Email:     email,
 			FirstName: firstName,
 			LastName:  lastName,
@@ -93,6 +98,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		}
 
 		success = tx.Status == braintree.SubscriptionStatusActive
+		txLog = "Subscription"
 	} else {
 		tx, err := bt.Transaction().Create(&braintree.Transaction{
 			Type:               "sale",
@@ -107,7 +113,6 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		bt.Transaction().SubmitForSettlement(tx.Id)
 
 		success = tx.Status == "authorized"
-
 		txJson, _ := json.Marshal(tx)
 		txLog = string(txJson)
 	}
@@ -120,6 +125,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 			"\nPlan ID: " + planId +
 			"\nAmount: " + amountString +
 			"\nSubscription: " + subscriptionString +
+			"\nCompany: " + company +
 			"\nName: " + name +
 			"\nEmail: " + email +
 			"\n\n" + txLog +

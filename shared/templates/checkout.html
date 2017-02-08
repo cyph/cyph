@@ -10,6 +10,7 @@
 					[(model)]='name'
 					formName='name'
 					label='Name'
+					[required]='true'
 				></md2-input>
 				<md2-input
 					cyphTranslate
@@ -20,6 +21,16 @@
 					type='email'
 					label='Email'
 					[required]='true'
+				></md2-input>
+			</div>
+			<div class='layout-row layout-sm-column layout-xs-column'>
+				<md2-input
+					cyphTranslate
+					class='layout-column layout-sm-row layout-xs-row md-block flex'
+					childClass='flex'
+					[(model)]='company'
+					formName='company'
+					label='Company (optional)'
 				></md2-input>
 			</div>
 		</div>
