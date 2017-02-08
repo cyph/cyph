@@ -1,4 +1,5 @@
 import {ChangeDetectorRef, Component, ElementRef, Input, OnInit} from '@angular/core';
+import * as Granim from 'granim';
 import * as $ from 'jquery';
 import {ChatService} from '../services/chat.service';
 import {EnvService} from '../services/env.service';
@@ -27,6 +28,38 @@ export class ChatMainComponent implements OnInit {
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
+		const granimInstance	= new Granim({
+			direction: 'radial',
+			element: '#canvas-basic',
+			isPausedWhenNotInView: true,
+			name: 'basic-gradient',
+			opacity: [1, 1],
+			states : {
+				'default-state': {
+					gradients: [
+						['#624599', '#392859'],
+						['#9368E6', '#624599']
+					],
+					loop: true,
+					transitionSpeed: 3500
+				},
+				'telehealth': {
+					direction: 'diagonal',
+					gradients: [
+						['#eeecf1', '#FBF8FE'],
+						['#FBF8FE', '#eeecf1']
+					],
+					loop: true,
+					opacity: [0.75, 0.5],
+					transitionSpeed: 2500
+				}
+			}
+		});
+
+		if (this.sessionService.apiFlags.telehealth) {
+			granimInstance.changeState('telehealth');
+		}
+
 		this.fileService.files.changeDetectorRef	= this.changeDetectorRef;
 
 		if (!this.elementRef.nativeElement || !this.envService.isWeb) {
