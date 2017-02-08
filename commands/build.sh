@@ -168,6 +168,8 @@ tsbuild () {
 }
 
 compile () {
+	type="${1}"
+
 	cd "${outputDir}"
 
 	if [ "${cloneworkingdir}" ] ; then
@@ -175,35 +177,41 @@ compile () {
 		cd ~/.build/shared
 	fi
 
-	for f in $scssfiles ; do
-		compileF () {
-			isComponent="$(echo "${f}" | grep '^components/' > /dev/null && echo true)"
+	if [ ! "${type}" -o "${type}" == css ] ; then
+		for f in $scssfiles ; do
+			compileF () {
+				isComponent="$(echo "${f}" | grep '^components/' > /dev/null && echo true)"
 
-			{
-				echo '@import "/node_modules/bourbon/app/assets/stylesheets/bourbon";';
-				if [ "${isComponent}" ] ; then
-					echo ':host /deep/ {'
-					cat "css/${f}.scss" | sed 's|:host|\&|g'
-					echo '}'
-				else
-					cat "css/${f}.scss"
-				fi;
-			} |
-				scss -s -C -Icss |
-				if [ "${minify}" ] ; then cleancss --inline none ; else cat - ; fi \
-			> "css/${f}.css"
+				{
+					echo '@import "/node_modules/bourbon/app/assets/stylesheets/bourbon";';
+					if [ "${isComponent}" ] ; then
+						echo ':host /deep/ {'
+						cat "css/${f}.scss" | sed 's|:host|\&|g'
+						echo '}'
+					else
+						cat "css/${f}.scss"
+					fi;
+				} |
+					scss -s -C -Icss |
+					if [ "${minify}" ] ; then cleancss --inline none ; else cat - ; fi \
+				> "css/${f}.css"
 
-			if ! cmp "css/${f}.css" "${outputDir}/css/${f}.css" > /dev/null 2>&1 ; then
-				cp -f "css/${f}.css" "${outputDir}/css/${f}.css"
+				if ! cmp "css/${f}.css" "${outputDir}/css/${f}.css" > /dev/null 2>&1 ; then
+					cp -f "css/${f}.css" "${outputDir}/css/${f}.css"
+				fi
+			}
+
+			if [ "${watch}" ] ; then
+				compileF &
+			else
+				output="${output}$(compileF 2>&1)"
 			fi
-		}
+		done
+	fi
 
-		if [ "${watch}" ] ; then
-			compileF &
-		else
-			output="${output}$(compileF 2>&1)"
-		fi
-	done
+	if [ "${type}" -a "${type}" != js ] ; then
+		return
+	fi
 
 	cd js
 
@@ -603,25 +611,34 @@ compile () {
 if [ "${watch}" ] ; then
 	eval "$(${rootDir}/commands/getgitdata.sh)"
 
-	while true ; do
-		start="$(date +%s)"
-		echo -e '\n\n\nBuilding JS/CSS\n\n'
-		compile
-		touch ~/.initialbuild.done
-		echo -e "\n\n\nFinished building JS/CSS ($(expr $(date +%s) - $start)s)\n\n"
-
-		cd "${rootDir}/shared"
+	for type in js css ; do
+		typeUppercase="$(echo ${type} | tr '[:lower:]' '[:upper:]')"
 
 		while true ; do
-			fsevent="$(
-				inotifywait -r --exclude '(sed.*|.*\.(css|js|map|tmp))$' css js templates
-			)"
-			if ! echo "${fsevent}" | grep -P '(OPEN|ISDIR)' > /dev/null ; then
-				echo "${fsevent}"
-				break
+			start="$(date +%s)"
+			echo -e "\n\n\nBuilding ${typeUppercase}\n\n"
+			compile "${type}"
+			echo -e "\n\n\nFinished building ${typeUppercase} ($(expr $(date +%s) - ${start})s)\n\n"
+
+			if [ "${type}" == js ] ; then
+				touch ~/.initialbuild.done
 			fi
-		done
+
+			cd "${rootDir}/shared"
+
+			while true ; do
+				fsevent="$(
+					inotifywait -r --exclude '(sed.*|.*\.(css|js|map|tmp))$' "${type}"
+				)"
+				if ! echo "${fsevent}" | grep -P '(OPEN|ISDIR)' > /dev/null ; then
+					echo "${fsevent}"
+					break
+				fi
+			done
+		done &
 	done
+
+	sleep Infinity
 else
 	compile
 fi
