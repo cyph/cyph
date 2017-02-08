@@ -139,19 +139,19 @@ tsbuild () {
 
 	cd "${tmpJsDir}"
 
-	if [ ! -d css ] ; then
-		mv ../css ./
-	else
-		find ../css -type f -name '*.css' -exec bash -c '
-			mkdir -p "$(echo "{}" | sed "s/^\.//" | sed "s/[^\/]*$//")";
-			mv "{}" "$(echo "{}" | sed "s/^\.//")";
-		' \;
-	fi
-
 	{
 		time if [ "${watch}" ] ; then
 			tsc -p .
 		else
+			if [ ! -d css ] ; then
+				mv ../css ./
+			else
+				find ../css -type f -name '*.css' -exec bash -c '
+					mkdir -p "$(echo "{}" | sed "s/^\.//" | sed "s/[^\/]*$//")";
+					mv "{}" "$(echo "{}" | sed "s/^\.//")";
+				' \;
+			fi
+
 			output="${output}$(./node_modules/@angular/compiler-cli/src/main.js -p . 2>&1)"
 		fi
 	} > build.log 2>&1
@@ -177,7 +177,7 @@ compile () {
 		cd ~/.build/shared
 	fi
 
-	if [ ! "${type}" -o "${type}" == css ] ; then
+	if [ ! "${type}" ] || [ "${type}" == css ] ; then
 		for f in $scssfiles ; do
 			compileF () {
 				isComponent="$(echo "${f}" | grep '^components/' > /dev/null && echo true)"
@@ -626,7 +626,7 @@ if [ "${watch}" ] ; then
 				fsevent="$(
 					inotifywait -r --exclude '(sed.*|.*\.(css|js|map|tmp))$' "${type}"
 				)"
-				if ! echo "${fsevent}" | grep -P '(OPEN|ISDIR)' > /dev/null ; then
+				if ! echo "${fsevent}" | grep -P '(ACCESS|CLOSE|OPEN|ISDIR)' > /dev/null ; then
 					echo "${fsevent}"
 					break
 				fi
