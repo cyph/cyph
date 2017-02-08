@@ -16,7 +16,14 @@ dir="$(realpath "${1}")"
 
 rsync -rLq "${source}" "${dir}" \
 	--exclude shared/lib/js/libsodium \
-	$(test "${clientOnly}" && echo '--exclude default') \
+	$(if [ "${clientOnly}" ] ; then
+		echo -n '--exclude default --exclude shared/lib/go '
+		find "${source}" -mindepth 2 -maxdepth 2 \
+			\( -path "${source}cyph.com/*" -o -path "${source}cyph.im/*" \) \
+			-a -not -name index.html \
+		|
+			sed "s|^${source}|--exclude |g"
+	fi) \
 	$(ls -a "${source}" | grep -P '^\.[^\.]+' | xargs -I% echo -n '--exclude % ') \
 	$( \
 		find "${source}" -maxdepth 4 -name node_modules -not \( \
