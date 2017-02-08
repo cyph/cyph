@@ -620,10 +620,6 @@ if [ "${watch}" ] ; then
 			compile "${type}"
 			echo -e "\n\n\nFinished building ${typeUppercase} ($(expr $(date +%s) - ${start})s)\n\n"
 
-			if [ "${type}" == js ] ; then
-				touch ~/.initialbuild.done
-			fi
-
 			cd "${rootDir}/shared"
 
 			while true ; do
