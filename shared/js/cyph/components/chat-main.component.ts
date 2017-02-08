@@ -37,11 +37,11 @@ export class ChatMainComponent implements OnInit {
 			states : {
 				'default-state': {
 					gradients: [
-						['#624599', '#392859'],
+						['#392859', '#624599',],
 						['#9368E6', '#624599']
 					],
 					loop: true,
-					transitionSpeed: 3500
+					transitionSpeed: 5000
 				},
 				'telehealth': {
 					direction: 'diagonal',
