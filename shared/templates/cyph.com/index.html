@@ -1096,15 +1096,17 @@
 			</div>
 			<cyph-checkout
 				class='flex-33 flex-sm-80 flex-xs-95'
-				[amount]='appService.cart[0]'
-				[category]='appService.cart[1]'
-				[item]='appService.cart[2]'
-				*ngIf='appService.cart[0] !== 0'
+				[amount]='appService.cart.amount'
+				[category]='appService.cart.category'
+				[item]='appService.cart.item'
+				[subscription]='appService.cart.subscription'
+				*ngIf='appService.cart'
 			>
 				<div
 					cyphTranslate
 					*ngIf='
-						appService.cart[1] === configService.pricingConfig.categories.donation.id
+						appService.cart.category ===
+						configService.pricingConfig.categories.donation.id
 					'
 				>
 					Thank you for supporting Cyph!
@@ -1112,7 +1114,8 @@
 				<div
 					cyphTranslate
 					*ngIf='
-						appService.cart[1] !== configService.pricingConfig.categories.donation.id
+						appService.cart.category !==
+						configService.pricingConfig.categories.donation.id
 					'
 				>
 					Payment confirmed! Follow-up instructions will be sent via email.

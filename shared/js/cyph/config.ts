@@ -134,7 +134,7 @@ export class Config {
 				id: 5,
 				items: {
 					generic: {
-						amount: 1,
+						amount: 0,
 						id: 0
 					}
 				}
@@ -143,7 +143,7 @@ export class Config {
 				id: 0,
 				items: {
 					generic: {
-						amount: 1,
+						amount: 0,
 						id: 0
 					}
 				}
@@ -152,7 +152,7 @@ export class Config {
 				id: 2,
 				items: {
 					basics: {
-						amount: 1,
+						amount: 0,
 						id: 1
 					},
 					beta: {
@@ -160,7 +160,7 @@ export class Config {
 						id: 0
 					},
 					works: {
-						amount: 1,
+						amount: 0,
 						id: 2
 					}
 				}
@@ -169,7 +169,7 @@ export class Config {
 				id: 1,
 				items: {
 					pro: {
-						amount: 1,
+						amount: 0,
 						id: 0
 					}
 				}
@@ -178,7 +178,7 @@ export class Config {
 				id: 4,
 				items: {
 					generic: {
-						amount: 1,
+						amount: 0,
 						id: 0
 					}
 				}

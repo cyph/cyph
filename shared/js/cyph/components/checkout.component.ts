@@ -30,6 +30,9 @@ export class CheckoutComponent implements OnInit {
 	/** Name. */
 	@Input() public name: string;
 
+	/** Indicates whether this will be a recurring purchase. */
+	@Input() public subscription: boolean;
+
 	/** Indicates whether checkout is complete. */
 	public complete: boolean;
 
@@ -54,22 +57,19 @@ export class CheckoutComponent implements OnInit {
 			container: checkoutUI[0],
 			enableCORS: true,
 			onPaymentMethodReceived: async (data: any) => {
-				const response: string	= await util.request({
+				this.complete	= 'true' === await util.request({
 					data: {
 						Amount: Math.floor(this.amount * 100),
 						Category: this.category,
 						Email: this.email,
 						Item: this.item,
 						Name: this.name,
-						Nonce: data.nonce
+						Nonce: data.nonce,
+						Subscription: this.subscription
 					},
 					method: 'POST',
 					url: this.envService.baseUrl + this.configService.braintreeConfig.endpoint
 				});
-
-				if (JSON.parse(response).Status === 'authorized') {
-					this.complete	= true;
-				}
 			}
 		});
 	}
