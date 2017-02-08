@@ -70,7 +70,7 @@ export class CheckoutComponent implements OnInit {
 					data: {
 						Amount: Math.floor(this.amount * 100),
 						Category: this.category,
-						Company: this.company || "",
+						Company: this.company || '',
 						Email: this.email,
 						Item: this.item,
 						Name: this.name,
