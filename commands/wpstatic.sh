@@ -334,7 +334,9 @@ if [ "${getRoot}" ] ; then
 	grep -rl /blog/root root | xargs sed -i 's|/blog/root||g'
 
 	# One-off edge cases; should find a better general solution later
-	grep -rl /blog/checkout root | xargs sed -i 's|/blog/checkout|/checkout|g'
+	for page in checkout contact ; do
+		grep -rl /blog/${page} root | xargs sed -i "s|/blog/${page}|/${page}|g"
+	done
 	grep -rlP '/blog/?"' root | xargs sed -i 's|/blog/*"|/"|g'
 
 	yamlFile="../.build.yaml"
