@@ -63,18 +63,18 @@ done
 
 node /node_modules/.bin/firebase-server -p 44000 &
 
+cp -f default/app.yaml default/.build.yaml
+cp -f cyph.com/cyph-com.yaml cyph.com/.build.yaml
+cp -f cyph.im/cyph-im.yaml cyph.im/.build.yaml
+
 if [ "${blog}" ] ; then
 	cd cyph.com
 	rm -rf blog 2> /dev/null
 	mkdir blog
 	cd blog
-	../../commands/wpstatic.sh http://localhost:42001 > /dev/null 2>&1 &
+	../../commands/wpstatic.sh http://localhost:42001 &
 	cd ../..
 fi
-
-cp -f default/app.yaml default/.build.yaml
-cp -f cyph.com/cyph-com.yaml cyph.com/.build.yaml
-cp -f cyph.im/cyph-im.yaml cyph.im/.build.yaml
 
 for f in */.build.yaml ; do sed -i 's|index.html|.index.html|g' $f ; done
 
