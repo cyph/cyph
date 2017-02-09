@@ -148,6 +148,7 @@ while [ ! -f index.html ] ; do
 	rm -rf tmp wpstatic.zip
 done
 
+rm -rf root
 rm -rf wp-admin wp-json $(find . -name '*.php')
 
 for f in $(find . -type f) ; do
