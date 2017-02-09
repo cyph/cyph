@@ -7,9 +7,10 @@ if [ "${1}" == '--no-root' ] ; then
 	shift
 fi
 
-fullDestinationURL="${1}/blog"
-destinationProtocol="$(echo "${1}" | perl -pe 's/(.*?:\/\/).*/\1/')"
-destinationURL="$(echo "${1}" | perl -pe 's/.*?:\/\/(.*)/\1/')"
+rootURL="${1}"
+fullDestinationURL="${rootURL}/blog"
+destinationProtocol="$(echo "${fullDestinationURL}" | perl -pe 's/(.*?:\/\/).*/\1/')"
+destinationURL="$(echo "${fullDestinationURL}" | perl -pe 's/.*?:\/\/(.*)/\1/')"
 
 sshServer='wordpress.internal.cyph.com'
 sourcePort='43000'
@@ -265,7 +266,7 @@ for f in $(find . -name '*.html') ; do node -e "
 	)));
 " ; done
 
-sed -i "s|https://fonts.googleapis.com/css|${fullDestinationURL}/$(grep -rl 'local(.Ubuntu.)')" \
+sed -i "s|https://fonts.googleapis.com/css|${fullDestinationURL}/$(grep -rl 'local(.Ubuntu.)')|g" \
 	wp-content/plugins/pricing-table-by-supsystic/js/table.min.js
 
 grep -rl "'//' + disqus_shortname" |
@@ -295,21 +296,25 @@ for f in $(grep -rl https://platform.twitter.com) ; do
 	" |
 		xargs -I% wget --tries=50 "https://platform.twitter.com/js/%" -O "js/platform.twitter.com/js/%"
 
-	sed -i 's|https://platform.twitter.com|/blog/js/platform.twitter.com|g' $f
+	sed -i 's|https://platform.twitter.com|/blog/js/platform.twitter.com|g' ${f}
 done
 
 cd css
-ls | xargs sed -i 's|\.\./fonts|${sourceURL}/fonts|g'
-grep -r '\.woff' |
-	grep -oP '(http)?(s)?(:)?//.*?\.woff' |
-	sort |
-	uniq |
-	xargs -I% bash -c "
-		url=\"\$(echo '%' | sed 's|${fullDestinationURL}|${sourceURL}|g')\";
-		path=\"fonts/\$(node -e \"require('supersphincs').hash('%').then(hash => console.log(hash.hex))\").woff\";
-		wget --tries=50 \"\${url}\" -O \"../\${path}\";
-		grep -rl '%' | xargs sed -i \"s|%|/blog/\${path}|g\";
-	"
+ls | xargs sed -i "s|\.\./fonts|${sourceURL}/wp-content/themes/cedar/assets/fonts|g"
+for type in eot svg ttf woff woff2 ; do
+	grep -r "\.${type}" |
+		grep -oP "(http)?(s)?(:)?//[A-Za-z0-9\./:?=_-]*?\.${type}" |
+		sort |
+		uniq |
+		xargs -I% bash -c "
+			url=\"\$(echo '%' | sed 's|${fullDestinationURL}|${sourceURL}|g')\";
+			path=\"fonts/\$(node -e \" \
+				require('supersphincs').hash('%').then(hash => console.log(hash.hex)) \
+			\").${type}\";
+			wget --tries=50 \"\${url}\" -O \"../\${path}\";
+			grep -rl '%' | xargs sed -i \"s|%|/blog/\${path}|g\";
+		"
+done
 cd ..
 
 for path in $(
@@ -330,7 +335,12 @@ if [ "${getRoot}" ] ; then
 
 	# One-off edge cases; should find a better general solution later
 	grep -rl /blog/checkout root | xargs sed -i 's|/blog/checkout|/checkout|g'
-	grep -rl '/blog/"' root | xargs sed -i 's|/blog/"|/"|g'
+	grep -rlP '/blog/?"' root | xargs sed -i 's|/blog/*"|/"|g'
+
+	yamlFile="../.build.yaml"
+	if [ ! -f "${yamlFile}" ] ; then
+		yamlFile="$(ls ../*.yaml)"
+	fi
 
 	yaml="$(cat ../*.yaml | tr '\n' '\r')"
 	wpstaticYaml="$(echo "${yaml}" | grep -oP '# WPSTATIC.*?\r\r')"
