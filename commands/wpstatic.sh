@@ -70,29 +70,17 @@ while [ ! -f index.html ] ; do
 			fill('destination_host', '${destinationURL}').
 			pressButton('Save Changes', resolve)
 		)).then(() => {
+			let hasInitiated	= false;
+
 			const tryDownload	= () =>
 				new Promise(resolve => browser.visit(
 					'${sourceURL}/wp-admin/admin.php?page=simply-static',
 					() => setTimeout(resolve, 5000)
-				)).then(() => new Promise(resolve =>
-					!browser.document.querySelectorAll('#generate:not(.hide)')[0] ?
-						resolve() :
-						browser.pressButton(
-							'Generate Static Files',
-							() => setTimeout(resolve, 5000)
-						)
-				)).
-				catch(() => {}).
-				then(() => new Promise(resolve =>
-					!browser.document.querySelectorAll('#resume:not(.hide)')[0] ?
-						resolve() :
-						browser.pressButton(
-							'Resume',
-							() => setTimeout(resolve, 5000)
-						)
-				)).
-				catch(() => {}).
-				then(() => {
+				)).then(() => {
+					if (!hasInitiated) {
+						return;
+					}
+
 					const a	= browser.document.querySelectorAll(
 						'a[href*=\".zip\"]'
 					)[0];
@@ -107,12 +95,30 @@ while [ ! -f index.html ] ; do
 					;
 
 					browser.tabs.closeAll();
-
-					setTimeout(() => {
-						console.log(command);
-						process.exit();
-					}, 1000);
-				}).catch(() =>
+					console.log(command);
+					process.exit();
+				}).then(() => new Promise(resolve =>
+					!browser.document.querySelectorAll('#generate:not(.hide)')[0] ?
+						resolve() :
+						browser.pressButton(
+							'Generate Static Files',
+							() => setTimeout(() => {
+								hasInitiated	= true;
+								resolve();
+							}, 5000)
+						)
+				)).
+				catch(() => {}).
+				then(() => new Promise(resolve =>
+					!browser.document.querySelectorAll('#resume:not(.hide)')[0] ?
+						resolve() :
+						browser.pressButton(
+							'Resume',
+							() => setTimeout(resolve, 5000)
+						)
+				)).
+				catch(() => {}).
+				then(() =>
 					setTimeout(tryDownload, 10000)
 				)
 			;
