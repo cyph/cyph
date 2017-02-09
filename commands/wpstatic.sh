@@ -1,5 +1,12 @@
 #!/bin/bash
 
+
+getRoot=true
+if [ "${1}" == '--no-root' ] ; then
+	getRoot=''
+	shift
+fi
+
 fullDestinationURL="${1}"
 destinationProtocol="$(echo "${1}" | perl -pe 's/(.*?:\/\/).*/\1/')"
 destinationURL="$(echo "${1}" | perl -pe 's/.*?:\/\/(.*)/\1/')"
@@ -148,7 +155,6 @@ while [ ! -f index.html ] ; do
 	rm -rf tmp wpstatic.zip
 done
 
-rm -rf root
 rm -rf wp-admin wp-json $(find . -name '*.php')
 
 for f in $(find . -type f) ; do
@@ -310,5 +316,14 @@ for path in $(
 	wget --tries=50 "${sourceURL}/${path}" -O "${path}.new"
 	mv "${path}.new" "${path}" 2> /dev/null
 done
+
+if [ "${getRoot}" ] ; then
+	rm root/index.html
+	grep -rl /blog/root root | xargs sed -i 's|/blog/root||g'
+	mv root/* ../
+	rmdir root
+else
+	rm -rf root
+fi
 
 sshkill
