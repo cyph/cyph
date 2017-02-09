@@ -320,6 +320,15 @@ done
 if [ "${getRoot}" ] ; then
 	rm root/index.html
 	grep -rl /blog/root root | xargs sed -i 's|/blog/root||g'
+
+	yaml="$(cat ../*.yaml | tr '\n' '\r')"
+	wpstaticYaml="$(echo "${yaml}" | grep -oP '# WPSTATIC.*?\r\r')"
+
+	for path in blog $(ls root) ; do
+		yaml="${yaml//"${wpstaticYaml}"/"${wpstaticYaml}${wpstaticYaml//PATH/"${path}"}"}"
+	done
+
+	echo "${yaml//"${wpstaticYaml}"/}" | tr '\r' '\n' > ../*.yaml
 	mv root/* ../
 	rmdir root
 else

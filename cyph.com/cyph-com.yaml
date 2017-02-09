@@ -23,12 +23,6 @@ handlers:
   secure: always
   # default_headers Cache-Control
 
-- url: /blog[/]?
-  static_files: blog/index.html
-  upload: blog/index.html
-  secure: always
-  # default_headers Cache-Control
-
 - url: /(.*\..*)
   static_files: \1
   upload: .*
@@ -37,9 +31,15 @@ handlers:
   ### Access-Control-Allow-Origin: "*"
   ### Access-Control-Allow-Methods: GET, OPTIONS
 
-- url: /blog/(.*?)[/]?
-  static_files: blog/\1/index.html
-  upload: blog/.*
+# WPSTATIC
+- url: /PATH[/]?
+  static_files: PATH/index.html
+  upload: PATH/index.html
+  secure: always
+  # default_headers Cache-Control
+- url: /PATH/(.*?)[/]?
+  static_files: PATH/\1/index.html
+  upload: PATH/.*
   secure: always
   # default_headers Cache-Control
 

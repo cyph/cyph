@@ -12,7 +12,7 @@ import {UrlStateService} from '../cyph/services/url-state.service';
 import {util} from '../cyph/util';
 import {Carousel} from './carousel';
 import {elements} from './elements';
-import {HomeSections, pageTitles, Promos, States} from './enums';
+import {HomeSections, pageTitles, Promos, States, wpstaticPages} from './enums';
 
 
 /**
@@ -21,7 +21,9 @@ import {HomeSections, pageTitles, Promos, States} from './enums';
 @Injectable()
 export class AppService {
 	/** @ignore */
-	private static readonly linkInterceptSelector: string	= 'a[href^="/"]:not(a[href^="/blog"])';
+	private static readonly linkInterceptSelector: string	=
+		'a[href^="/"]' + wpstaticPages.map(s => `:not(a[href^='/${s}'])`).join('')
+	;
 
 
 	/** @see States */
