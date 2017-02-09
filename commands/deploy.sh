@@ -221,7 +221,7 @@ if [ "${cacheBustedProjects}" ] ; then
 			rm -rf cyph.com/blog 2> /dev/null
 			mkdir -p cyph.com/blog
 			cd cyph.com/blog
-			../../commands/wpstatic.sh '${homeURL}/blog' >> ../../.wpstatic.output 2>&1
+			../../commands/wpstatic.sh '${homeURL}' >> ../../.wpstatic.output 2>&1
 			cd ../..
 		fi
 

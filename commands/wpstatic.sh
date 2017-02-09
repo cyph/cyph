@@ -7,7 +7,7 @@ if [ "${1}" == '--no-root' ] ; then
 	shift
 fi
 
-fullDestinationURL="${1}"
+fullDestinationURL="${1}/blog"
 destinationProtocol="$(echo "${1}" | perl -pe 's/(.*?:\/\/).*/\1/')"
 destinationURL="$(echo "${1}" | perl -pe 's/.*?:\/\/(.*)/\1/')"
 
