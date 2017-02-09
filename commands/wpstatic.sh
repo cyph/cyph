@@ -220,7 +220,10 @@ for f in $(find . -name '*.html') ; do node -e "
 			'img[src]:not([src^=\"/blog\"]):not([src^=\"${fullDestinationURL}\"]), ' +
 			'script[src]:not([src^=\"/blog\"]):not([src^=\"${fullDestinationURL}\"]), ' +
 			'link[rel=\"stylesheet\"][href]:not([href^=\"/blog\"]):not([href^=\"${fullDestinationURL}\"])'
-		).toArray().map(elem => Promise.resolve().then(() => {
+		).toArray().concat(
+			/* Workaround for Supsystic table plugin dynamically generating this client-side */
+			\$('<link href=\"https://fonts.googleapis.com/css?family=Ubuntu\" />')
+		).map(elem => Promise.resolve().then(() => {
 			elem	= \$(elem);
 
 			const tagName	= elem.prop('tagName').toLowerCase();
@@ -262,6 +265,9 @@ for f in $(find . -name '*.html') ; do node -e "
 	)));
 " ; done
 
+sed -i "s|https://fonts.googleapis.com/css|${fullDestinationURL}/$(grep -rl 'local(.Ubuntu.)')" \
+	wp-content/plugins/pricing-table-by-supsystic/js/table.min.js
+
 grep -rl "'//' + disqus_shortname" |
 	xargs sed -i "s|'//' + disqus_shortname|'/blog/js/' + disqus_shortname|g"
 
@@ -293,6 +299,7 @@ for f in $(grep -rl https://platform.twitter.com) ; do
 done
 
 cd css
+ls | xargs sed -i 's|\.\./fonts|${sourceURL}/fonts|g'
 grep -r '\.woff' |
 	grep -oP '(http)?(s)?(:)?//.*?\.woff' |
 	sort |
@@ -320,6 +327,10 @@ done
 if [ "${getRoot}" ] ; then
 	rm root/index.html
 	grep -rl /blog/root root | xargs sed -i 's|/blog/root||g'
+
+	# One-off edge cases; should find a better general solution later
+	grep -rl /blog/checkout root | xargs sed -i 's|/blog/checkout|/checkout|g'
+	grep -rl '/blog/"' root | xargs sed -i 's|/blog/"|/"|g'
 
 	yaml="$(cat ../*.yaml | tr '\n' '\r')"
 	wpstaticYaml="$(echo "${yaml}" | grep -oP '# WPSTATIC.*?\r\r')"
