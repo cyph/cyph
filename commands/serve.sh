@@ -68,7 +68,7 @@ if [ "${blog}" ] ; then
 	rm -rf blog 2> /dev/null
 	mkdir blog
 	cd blog
-	../../commands/wpstatic.sh http://localhost:42001/blog > /dev/null 2>&1 &
+	../../commands/wpstatic.sh http://localhost:42001 > /dev/null 2>&1 &
 	cd ../..
 fi
 
