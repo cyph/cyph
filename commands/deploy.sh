@@ -139,14 +139,14 @@ if [ ! "${simple}" ] ; then
 	ls */*.yaml | xargs -I% sed -i "s|${defaultCSPString}|\"${webSignCSP}\"|g" %
 	ls shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|${defaultCSPString}|${fullCSP}|g" %
 
-	# Expand connect-src and frame-src on blog to support social media widgets and stuff
+	# Expand connect-src and frame-src on wpstatic pages to support social media widgets and stuff
 
-	blogCSPSources="$(cat cyph.com/blogcsp | perl -pe 's/^(.*)$/https:\/\/\1 https:\/\/*.\1/g' | tr '\n' ' ')"
+	wpstaticCSPSources="$(cat cyph.com/wpstaticcsp | perl -pe 's/^(.*)$/https:\/\/\1 https:\/\/*.\1/g' | tr '\n' ' ')"
 
 	cat cyph.com/cyph-com.yaml |
 		tr '\n' '☁' |
-		perl -pe 's/(\/blog.*?connect-src )(.*?frame-src )(.*?connect-src )(.*?frame-src )(.*?connect-src )(.*?frame-src )/\1☼\2☼\3☼\4☼\5☼\6☼/g' |
-		sed "s|☼|${blogCSPSources}|g" |
+		perl -pe 's/(\/PATH.*?connect-src )(.*?frame-src )(.*?connect-src )(.*?frame-src )(.*?connect-src )(.*?frame-src )/\1☼\2☼\3☼\4☼\5☼\6☼/g' |
+		sed "s|☼|${wpstaticCSPSources}|g" |
 		tr '☁' '\n' |
 		sed "s|Cache-Control: private, max-age=31536000|Cache-Control: public, max-age=31536000|g" \
 	> cyph.com/new.yaml
@@ -206,12 +206,12 @@ else
 fi
 
 
-# Blog + cache busting
-waitingForBlog=''
+# wpstatic + cache busting
+waitingForWpstatic=''
 if [ "${cacheBustedProjects}" ] ; then
-	waitingForBlog=true
+	waitingForWpstatic=true
 	bash -c "
-		touch .blog.output
+		touch .wpstatic.output
 
 		if [ '${websign}' ] ; then
 			while [ ! -f .build.done ] ; do sleep 1 ; done
@@ -221,7 +221,7 @@ if [ "${cacheBustedProjects}" ] ; then
 			rm -rf cyph.com/blog 2> /dev/null
 			mkdir -p cyph.com/blog
 			cd cyph.com/blog
-			../../commands/wpstatic.sh '${homeURL}/blog' >> ../../.blog.output 2>&1
+			../../commands/wpstatic.sh '${homeURL}/blog' >> ../../.wpstatic.output 2>&1
 			cd ../..
 		fi
 
@@ -229,14 +229,14 @@ if [ "${cacheBustedProjects}" ] ; then
 		rm .build.done
 
 		# Cache bust
-		echo 'Cache bust' >> .blog.output 2>&1
+		echo 'Cache bust' >> .wpstatic.output 2>&1
 		for d in ${cacheBustedProjects} ; do
 			cd \$d
-			../commands/cachebust.ts >> ../.blog.output 2>&1
+			../commands/cachebust.ts >> ../.wpstatic.output 2>&1
 			cd ..
 		done
 
-		touch .blog.done
+		touch .wpstatic.done
 	" &
 fi
 
@@ -461,16 +461,16 @@ elif [ ! "${site}" ] || [ "${site}" == "${webSignedProject}" ] ; then
 fi
 
 
-if [ "${waitingForBlog}" ] ; then
+if [ "${waitingForWpstatic}" ] ; then
 	while true ; do
-		cat .blog.output
-		echo -n > .blog.output
-		if [ -f .blog.done ] ; then
+		cat .wpstatic.output
+		echo -n > .wpstatic.output
+		if [ -f .wpstatic.done ] ; then
 			break
 		fi
 		sleep 1
 	done
-	rm .blog.done .blog.output
+	rm .wpstatic.done .wpstatic.output
 fi
 
 
