@@ -95,6 +95,7 @@ yarn add --ignore-platform --ignore-scripts \
 	sphincs \
 	supersphincs \
 	tab-indent \
+	textillate \
 	tns-android \
 	tns-core-modules \
 	tns-core-modules-widgets \
