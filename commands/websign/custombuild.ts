@@ -82,7 +82,8 @@ if (o.colors.main) {
 		}
 
 		${!o.loadingAnimationFilter ? '' : `
-			#pre-load > .transition, .loading > .logo-animation > * {
+			#pre-load > .transition, .loading > .logo-animation > *,
+			.loading > .logo-animation.connected, md-progress-linear {
 				@include filter(${o.loadingAnimationFilter});
 			}
 		`}
