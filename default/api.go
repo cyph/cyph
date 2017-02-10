@@ -28,10 +28,10 @@ func init() {
 }
 
 func braintreeCheckout(h HandlerArgs) (interface{}, int) {
-	company := sanitize(h.Request.PostFormValue("Company"))
-	email := sanitize(h.Request.PostFormValue("Email"))
-	name := sanitize(h.Request.PostFormValue("Name"))
-	nonce := sanitize(h.Request.PostFormValue("Nonce"))
+	company := sanitize(h.Request.PostFormValue("company"))
+	email := sanitize(h.Request.PostFormValue("email"))
+	name := sanitize(h.Request.PostFormValue("name"))
+	nonce := sanitize(h.Request.PostFormValue("nonce"))
 
 	names := strings.SplitN(name, " ", 2)
 	firstName := names[0]
@@ -41,13 +41,13 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	}
 
 	planId := ""
-	if category, err := strconv.ParseInt(sanitize(h.Request.PostFormValue("Category")), 10, 64); err == nil {
-		if item, err := strconv.ParseInt(sanitize(h.Request.PostFormValue("Item")), 10, 64); err == nil {
+	if category, err := strconv.ParseInt(sanitize(h.Request.PostFormValue("category")), 10, 64); err == nil {
+		if item, err := strconv.ParseInt(sanitize(h.Request.PostFormValue("item")), 10, 64); err == nil {
 			planId = strconv.FormatInt(category, 10) + "-" + strconv.FormatInt(item, 10)
 		}
 	}
 
-	amountString := sanitize(h.Request.PostFormValue("Amount"))
+	amountString := sanitize(h.Request.PostFormValue("amount"))
 	amount, err := strconv.ParseInt(amountString, 10, 64)
 	if err != nil {
 		return err.Error(), http.StatusTeapot
@@ -56,7 +56,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		return "Invalid amount.", http.StatusTeapot
 	}
 
-	subscriptionString := sanitize(h.Request.PostFormValue("Subscription"))
+	subscriptionString := sanitize(h.Request.PostFormValue("subscription"))
 	subscription, err := strconv.ParseBool(subscriptionString)
 	if err != nil {
 		return err.Error(), http.StatusTeapot
