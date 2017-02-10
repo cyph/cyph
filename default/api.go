@@ -19,6 +19,7 @@ func init() {
 	handleFuncs("/channels/{id}", Handlers{methods.POST: channelSetup})
 	handleFuncs("/continent", Handlers{methods.GET: getContinent})
 	handleFuncs("/iceservers", Handlers{methods.GET: getIceServers})
+	handleFuncs("/preauth", Handlers{methods.POST: preAuth})
 	handleFuncs("/signups", Handlers{methods.PUT: signup})
 	handleFuncs("/timestamp", Handlers{methods.GET: getTimestamp})
 
@@ -99,6 +100,14 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 
 		success = tx.Status == braintree.SubscriptionStatusActive
 		txLog = "Subscription"
+
+		if success {
+			/* TODO:
+				* Generate API key
+				* Store API key : customer ID mapping in datastore
+				* Append API key to txLog
+			*/
+		}
 	} else {
 		tx, err := bt.Transaction().Create(&braintree.Transaction{
 			Type:               "sale",
@@ -161,6 +170,12 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 	channelDescriptor := ""
 	status := http.StatusOK
 
+	/* TODO:
+		* Get required restricted features from form data
+		* If there are any, ensure that they're all in the preauth list before continuing
+		* If id is preauthenticated and client is Alice, increment list of cyphs for this customer
+	*/
+
 	if len(id) == config.AllowedCyphIdLength && config.AllowedCyphIds.MatchString(id) {
 		if item, err := memcache.Get(h.Context, id); err != memcache.ErrCacheMiss {
 			oldValue := item.Value
@@ -209,6 +224,21 @@ func getIceServers(h HandlerArgs) (interface{}, int) {
 
 func getTimestamp(h HandlerArgs) (interface{}, int) {
 	return strconv.FormatInt(time.Now().UnixNano()/1000000, 10), http.StatusOK
+}
+
+func preAuth(h HandlerArgs) (interface{}, int) {
+	apiKey := sanitize(h.Request.PostFormValue("apiKey"))
+	id := sanitize(h.Request.PostFormValue("id"))
+
+	/* TODO:
+		* Get Braintree customer ID from datastore
+		* Get Braintree subscription data (customer.CreditCards -> Subscriptions)
+		* Compile list of plan IDs of all valid subscriptions
+		* Based on plan ID list, create of restricted features this customer can access
+		* Save mapping of id : feature access list to datastore
+	*/
+
+	return "", http.StatusOK
 }
 
 func signup(h HandlerArgs) (interface{}, int) {
