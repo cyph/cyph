@@ -118,8 +118,8 @@ func geolocate(h HandlerArgs) (string, string) {
 func getSignupFromRequest(h HandlerArgs) map[string]interface{} {
 	country, _ := geolocate(h)
 
-	signup := make(map[string]interface{})
-	profile := make(map[string]interface{})
+	signup := map[string]interface{}{}
+	profile := map[string]interface{}{}
 
 	profile["country"] = country
 	profile["first_name"] = sanitize(h.Request.PostFormValue("name"), config.MaxSignupValueLength)
