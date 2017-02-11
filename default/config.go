@@ -10,6 +10,7 @@ var config = struct {
 	AllowedCyphIdLength        int
 	AllowedMethods             string
 	AllowedHosts               map[string]none
+	AnalId                     string
 	ApiKeyByteLength           int
 	Continents                 map[string]none
 	DefaultContinent           string
@@ -56,6 +57,8 @@ var config = struct {
 		"staging-dot-cyph-audio-dot-cyphme.appspot.com": empty,
 		"staging-dot-cyphme.appspot.com":                empty,
 	},
+
+	"UA-56220601-1",
 
 	16,
 

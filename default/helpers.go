@@ -3,6 +3,7 @@ package main
 import (
 	"appengine"
 	"appengine/urlfetch"
+	"bytes"
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
@@ -14,7 +15,9 @@ import (
 	"io/ioutil"
 	"net"
 	"net/http"
+	"net/url"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -216,6 +219,34 @@ func getTwilioToken(h HandlerArgs) map[string]interface{} {
 	} else {
 		return getTwilioToken(h)
 	}
+}
+
+func trackEvent(h HandlerArgs, category, action, label string, value int) error {
+	data := url.Values{}
+
+    data.Set("v", "1")
+    data.Set("tid", config.AnalId)
+    data.Set("cid", "555")
+    data.Set("t", "event")
+    data.Set("ec", category)
+    data.Set("ea", action)
+    data.Set("el", label)
+    data.Set("ev", strconv.Itoa(value))
+
+	req, err := http.NewRequest(
+		methods.POST,
+		"https://www.google-analytics.com/collect",
+		bytes.NewBufferString(data.Encode()),
+	)
+
+	if err != nil {
+		return err
+	}
+
+	client := urlfetch.Client(h.Context)
+	_, err = client.Do(req)
+
+	return err
 }
 
 func handleFunc(pattern string, handler Handler) {
