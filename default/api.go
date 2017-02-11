@@ -330,6 +330,8 @@ func preAuth(h HandlerArgs) (interface{}, int) {
 		return err.Error(), http.StatusInternalServerError
 	}
 
+	trackEvent(h, "session", "preauth", apiKey, 1)
+
 	return "", http.StatusOK
 }
 
