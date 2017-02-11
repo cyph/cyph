@@ -10,6 +10,7 @@ var config = struct {
 	AllowedCyphIdLength        int
 	AllowedMethods             string
 	AllowedHosts               map[string]none
+	ApiKeyByteLength           int
 	Continents                 map[string]none
 	DefaultContinent           string
 	EmailAddress               string
@@ -18,6 +19,7 @@ var config = struct {
 	MaxSignupValueLength       int
 	MemcacheExpiration         time.Duration
 	NewCyphTimeout             int64
+	Plans                      map[string]Plan
 	RootURL                    string
 }{
 	regexp.MustCompile("[A-Za-z0-9]{7}"),
@@ -55,6 +57,8 @@ var config = struct {
 		"staging-dot-cyphme.appspot.com":                empty,
 	},
 
+	16,
+
 	map[string]none{
 		"af": empty,
 		/* "an": empty, */
@@ -80,6 +84,57 @@ var config = struct {
 	(48 * time.Hour),
 
 	600,
+
+	map[string]Plan{
+		"2-0": Plan{
+			ApiFeatures: map[string]bool{
+				"api": true,
+				"disableP2P": true,
+				"modestBranding": true,
+				"nativeCrypto": true,
+				"telehealth": false,
+				"video": true,
+				"voice": true,
+			},
+			SessionCountLimit: -1,
+		},
+		"2-1": Plan{
+			ApiFeatures: map[string]bool{
+				"api": true,
+				"disableP2P": false,
+				"modestBranding": false,
+				"nativeCrypto": false,
+				"telehealth": false,
+				"video": false,
+				"voice": false,
+			},
+			SessionCountLimit: 100,
+		},
+		"3-0": Plan{
+			ApiFeatures: map[string]bool{
+				"api": true,
+				"disableP2P": false,
+				"modestBranding": true,
+				"nativeCrypto": false,
+				"telehealth": true,
+				"video": true,
+				"voice": true,
+			},
+			SessionCountLimit: 100,
+		},
+		"3-1": Plan{
+			ApiFeatures: map[string]bool{
+				"api": true,
+				"disableP2P": false,
+				"modestBranding": true,
+				"nativeCrypto": false,
+				"telehealth": true,
+				"video": true,
+				"voice": true,
+			},
+			SessionCountLimit: 1000,
+		},
+	},
 
 	"http://localhost:42000",
 }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"appengine/datastore"
 	"appengine/mail"
 	"appengine/memcache"
 	"appengine/urlfetch"
@@ -69,6 +70,12 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	success := false
 
 	if subscription {
+		apiKey, err := generateApiKey()
+
+		if err != nil {
+			return err.Error(), http.StatusTeapot
+		}
+
 		customer, err := bt.Customer().Create(&braintree.Customer{
 			Company:   company,
 			Email:     email,
@@ -99,14 +106,23 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		}
 
 		success = tx.Status == braintree.SubscriptionStatusActive
-		txLog = "Subscription"
+		txLog = "Subscription " + tx.Status
 
 		if success {
-			/* TODO:
-				* Generate API key
-				* Store API key : customer ID mapping in datastore
-				* Append API key to txLog
-			*/
+			txLog = txLog + "\nAPI key: " + apiKey + "\nCustomer ID: " + customer.Id
+
+			_, err := datastore.Put(
+				h.Context,
+				datastore.NewKey(h.Context, "Customer", apiKey, 0, nil),
+				&Customer{
+					ApiKey:      apiKey,
+					BraintreeId: customer.Id,
+				},
+			)
+
+			if err != nil {
+				txLog = "\n\nERROR: " + err.Error()
+			}
 		}
 	} else {
 		tx, err := bt.Transaction().Create(&braintree.Transaction{
@@ -166,15 +182,34 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 		return "", http.StatusNotFound
 	}
 
-	id := h.Vars["id"]
+	id := sanitize(h.Vars["id"])
+	jsonApiFeatures := []byte(sanitize(h.Request.PostFormValue("apiFeatures")))
+
+	if len(jsonApiFeatures) > 0 {
+		preAuthorizedCyph := &PreAuthorizedCyph{}
+
+		err := datastore.Get(
+			h.Context,
+			datastore.NewKey(h.Context, "PreAuthorizedCyph", id, 0, nil),
+			preAuthorizedCyph,
+		)
+
+		if err != nil {
+			return "Unauthorized API usage.", http.StatusForbidden
+		}
+
+		var apiFeatures map[string]bool
+		json.Unmarshal(jsonApiFeatures, &apiFeatures)
+
+		for feature, isRequired := range apiFeatures {
+			if isRequired && !preAuthorizedCyph.ApiFeatures[feature] {
+				return "API feature " + feature + " not available.", http.StatusForbidden
+			}
+		}
+	}
+
 	channelDescriptor := ""
 	status := http.StatusOK
-
-	/* TODO:
-		* Get required restricted features from form data
-		* If there are any, ensure that they're all in the preauth list before continuing
-		* If id is preauthenticated and client is Alice, increment list of cyphs for this customer
-	*/
 
 	if len(id) == config.AllowedCyphIdLength && config.AllowedCyphIds.MatchString(id) {
 		if item, err := memcache.Get(h.Context, id); err != memcache.ErrCacheMiss {
@@ -230,13 +265,80 @@ func preAuth(h HandlerArgs) (interface{}, int) {
 	apiKey := sanitize(h.Request.PostFormValue("apiKey"))
 	id := sanitize(h.Request.PostFormValue("id"))
 
-	/* TODO:
-		* Get Braintree customer ID from datastore
-		* Get Braintree subscription data (customer.CreditCards -> Subscriptions)
-		* Compile list of plan IDs of all valid subscriptions
-		* Based on plan ID list, create of restricted features this customer can access
-		* Save mapping of id : feature access list to datastore
-	*/
+	customer := &Customer{}
+	customerKey := datastore.NewKey(h.Context, "Customer", apiKey, 0, nil)
+
+	if err := datastore.Get(h.Context, customerKey, customer); err != nil {
+		return "Invalid API key.", http.StatusNotFound
+	}
+
+	bt := braintreeInit(h)
+	braintreeCustomer, err := bt.Customer().Find(customer.BraintreeId)
+
+	if err != nil {
+		return err.Error(), http.StatusTeapot
+	}
+
+	apiFeatures := map[string]bool{}
+	sessionCountLimit := int64(0)
+
+	for i := range braintreeCustomer.CreditCards.CreditCard {
+		creditCard := braintreeCustomer.CreditCards.CreditCard[i]
+		for j := range creditCard.Subscriptions.Subscription {
+			subscription := creditCard.Subscriptions.Subscription[j]
+			if subscription.Status != braintree.SubscriptionStatusActive {
+				continue
+			}
+
+			plan, ok := config.Plans[subscription.PlanId]
+			if !ok {
+				continue
+			}
+
+			for feature, isAvailable := range plan.ApiFeatures {
+				if isAvailable {
+					apiFeatures[feature] = true
+				}
+			}
+
+			if plan.SessionCountLimit > sessionCountLimit {
+				sessionCountLimit = plan.SessionCountLimit
+			}
+		}
+	}
+
+	now := time.Now()
+	lastSession := time.Unix(customer.LastSession, 0)
+
+	if now.Year() > lastSession.Year() || now.Month() > lastSession.Month() {
+		customer.SessionCount = 0
+	}
+
+	if customer.SessionCount > sessionCountLimit {
+		return "Session limit exceeded.", http.StatusForbidden
+	}
+
+	customer.LastSession = now.Unix()
+	customer.SessionCount += 1
+
+	_, err = datastore.PutMulti(
+		h.Context,
+		[]*datastore.Key{
+			customerKey,
+			datastore.NewKey(h.Context, "PreAuthorizedCyph", id, 0, nil),
+		},
+		[]interface{}{
+			customer,
+			&PreAuthorizedCyph{
+				ApiFeatures: apiFeatures,
+				Id: id,
+			},
+		},
+	)
+
+	if err != nil {
+		return err.Error(), http.StatusInternalServerError
+	}
 
 	return "", http.StatusOK
 }

@@ -3,6 +3,8 @@ package main
 import (
 	"appengine"
 	"appengine/urlfetch"
+	"crypto/rand"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"geoip2"
@@ -24,6 +26,23 @@ type HandlerArgs struct {
 }
 type Handler func(HandlerArgs) (interface{}, int)
 type Handlers map[string]Handler
+
+type Customer struct {
+	ApiKey       string
+	BraintreeId  string
+	LastSession  int64
+	SessionCount int64
+}
+
+type Plan struct {
+	ApiFeatures       map[string]bool
+	SessionCountLimit int64
+}
+
+type PreAuthorizedCyph struct {
+	ApiFeatures       map[string]bool
+	Id                string
+}
 
 type none struct{}
 
@@ -67,6 +86,14 @@ var braintreePublicKey = os.Getenv("BRAINTREE_PUBLIC_KEY")
 var braintreePrivateKey = os.Getenv("BRAINTREE_PRIVATE_KEY")
 
 var prefineryKey = os.Getenv("PREFINERY_KEY")
+
+func generateApiKey() (string, error) {
+	bytes := make([]byte, config.ApiKeyByteLength)
+	if _, err := rand.Read(bytes); err != nil {
+		return "", err
+	}
+	return hex.EncodeToString(bytes), nil
+}
 
 func geolocate(h HandlerArgs) (string, string) {
 	if appengine.IsDevAppServer() {
