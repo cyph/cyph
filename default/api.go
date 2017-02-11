@@ -185,12 +185,9 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 	id := sanitize(h.Vars["id"])
 	proFeatures := getProFeaturesFromRequest(h)
 	preAuthorizedCyph := &PreAuthorizedCyph{}
+	preAuthorizedCyphKey := datastore.NewKey(h.Context, "PreAuthorizedCyph", id, 0, nil)
 
-	datastore.Get(
-		h.Context,
-		datastore.NewKey(h.Context, "PreAuthorizedCyph", id, 0, nil),
-		preAuthorizedCyph,
-	)
+	datastore.Get(h.Context, preAuthorizedCyphKey, preAuthorizedCyph)
 
 	for feature, isRequired := range proFeatures {
 		if isRequired && !preAuthorizedCyph.ProFeatures[feature] {
@@ -203,6 +200,8 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 
 	if len(id) == config.AllowedCyphIdLength && config.AllowedCyphIds.MatchString(id) {
 		if item, err := memcache.Get(h.Context, id); err != memcache.ErrCacheMiss {
+			datastore.Delete(h.Context, preAuthorizedCyphKey)
+
 			oldValue := item.Value
 			item.Value = []byte{}
 
