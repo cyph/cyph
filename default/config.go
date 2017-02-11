@@ -71,8 +71,6 @@ var config = struct {
 
 	"max-age=31536000; includeSubdomains; preload",
 
-	/* With the current list of AWS regions,
-	no descriptor will exceed this length */
 	90,
 
 	/* Max length of a valid email address, but also happened
