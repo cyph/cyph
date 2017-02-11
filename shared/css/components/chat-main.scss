@@ -391,20 +391,6 @@
 	width: 75%;
 }
 
-.new-messages {
-	background-color: white !important;
-	color: #8b62d9 !important;
-	width: 100%;
-	text-align: center;
-	margin-top: -20px;
-	cursor: pointer;
-	z-index: 4 !important;
-}
-
-.new-messages:after {
-	width: 100%;
-}
-
 /*** New fullscreen video UI ***/
 
 .chat-main.video .video-call.active.playing {

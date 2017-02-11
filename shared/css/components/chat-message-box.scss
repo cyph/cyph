@@ -43,6 +43,20 @@
 		}
 	}
 
+	.new-messages {
+		background-color: white !important;
+		color: #8b62d9 !important;
+		width: 100%;
+		text-align: center;
+		margin-top: -20px;
+		cursor: pointer;
+		z-index: 4 !important;
+
+		&:after {
+			width: 100%;
+		}
+	}
+
 	&:not(.mobile) {
 		.message-box {
 			@include transition(all 0.35s ease-in-out);
