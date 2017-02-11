@@ -13,12 +13,22 @@ RUN dpkg --add-architecture i386
 RUN echo "deb http://ftp.debian.org/debian $(eval "${debianBackports}") main" >> /etc/apt/sources.list
 RUN echo "deb https://deb.nodesource.com/node_6.x $(eval "${debianVersion}") main" >> /etc/apt/sources.list
 RUN echo 'deb https://dl.yarnpkg.com/debian/ stable main' >> /etc/apt/sources.list
+RUN echo 'deb http://httpredir.debian.org/debian unstable main' >> /etc/apt/sources.list
 RUN curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
 RUN curl -s https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
 
-RUN apt-get -y --force-yes update
-RUN apt-get -y --force-yes dist-upgrade
+RUN echo 'Package: *' > /etc/apt/preferences.d/unstable
+RUN echo 'Pin: release a=unstable' >> /etc/apt/preferences.d/unstable
+RUN echo 'Pin-Priority: 100' >> /etc/apt/preferences.d/unstable
+RUN echo >> /etc/apt/preferences.d/unstable
+RUN echo 'Package: haxe neko libneko*' >> /etc/apt/preferences.d/unstable
+RUN echo 'Pin: release a=unstable' >> /etc/apt/preferences.d/unstable
+RUN echo 'Pin-Priority: 999' >> /etc/apt/preferences.d/unstable
 
+RUN apt-get -y --force-yes update
+RUN apt-get -y --force-yes upgrade
+
+RUN apt-get -y --force-yes install haxe
 RUN apt-get -y --force-yes -t $(eval "${debianBackports}") install \
 	apt-utils \
 	autoconf \
@@ -38,6 +48,7 @@ RUN apt-get -y --force-yes -t $(eval "${debianBackports}") install \
 	libbz2-1.0:i386 \
 	libstdc++6:i386 \
 	libtool \
+	mono-complete \
 	nano \
 	nodejs \
 	openjdk-8-jdk \
@@ -121,6 +132,13 @@ RUN bash -c ' \
 	cd; \
 	rm -rf brotli; \
 '
+
+RUN mkdir ~/haxelib
+RUN haxelib setup ~/haxelib
+RUN haxelib install hxcpp
+RUN haxelib install hxcs
+RUN haxelib install hxjava
+RUN haxelib install hxnodejs
 
 RUN wget https://keybase.io/mpapis/key.asc -O ~/public.key
 RUN gpg --import ~/public.key

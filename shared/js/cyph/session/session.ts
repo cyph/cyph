@@ -11,6 +11,7 @@ import {CastleEvents, events, rpcEvents} from './enums';
 import {IMessage} from './imessage';
 import {ISession} from './isession';
 import {Message} from './message';
+import {ProFeatures} from './profeatures';
 
 
 /**
@@ -355,13 +356,13 @@ export class Session implements ISession {
 
 	/**
 	 * @param id Descriptor used for brokering the session.
-	 * @param nativeCrypto
+	 * @param proFeatures
 	 * @param eventId
 	 */
 	constructor (
 		id: string = '',
 
-		nativeCrypto: boolean = false,
+		proFeatures: ProFeatures,
 
 		/** @ignore */
 		private readonly eventId: string = util.generateGuid()
@@ -369,17 +370,14 @@ export class Session implements ISession {
 		/* true = yes; false = no; undefined = maybe */
 		this.updateState(
 			'startingNewCyph',
-			id.length < 1 ?
-				true :
-				id.length > config.secretLength ?
-					undefined :
+			proFeatures.api ?
+				undefined :
+				id.length < 1 ?
+					true :
 					false
 		);
 
-		this.updateState(
-			'wasInitiatedByAPI',
-			this.state.startingNewCyph === undefined
-		);
+		this.updateState('wasInitiatedByAPI', proFeatures.api);
 
 		this.setId(id);
 
@@ -397,12 +395,12 @@ export class Session implements ISession {
 		try {
 			this.setUpChannel(
 				await util.request({
-					data: {channelDescriptor},
+					data: {channelDescriptor, proFeatures},
 					method: 'POST',
 					retries: 5,
 					url: env.baseUrl + 'channels/' + this.state.cyphId
 				}),
-				nativeCrypto
+				proFeatures.nativeCrypto
 			);
 		}
 		catch (_) {

@@ -58,10 +58,10 @@ export class Errors {
 				${errorMessage}
 
 				URL: ${url}
-				Line: ${line === undefined ? '' : line.toString()}
-				Column: ${column === undefined ? '' : column.toString()}
+				Line: ${line === undefined || isNaN(line) ? '' : line.toString()}
+				Column: ${column === undefined || isNaN(column) ? '' : column.toString()}
 
-				${errorObject === undefined ? '' : <string> errorObject.stack}
+				${!errorObject ? '' : <string> errorObject.stack}
 			`.replace(
 				/\/#.*/g,
 				''
