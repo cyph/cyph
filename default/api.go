@@ -189,8 +189,11 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 
 	datastore.Get(h.Context, preAuthorizedCyphKey, preAuthorizedCyph)
 
+	var preAuthorizedProFeatures map[string]bool
+	json.Unmarshal(preAuthorizedCyph.ProFeatures, &preAuthorizedProFeatures)
+
 	for feature, isRequired := range proFeatures {
-		if isRequired && !preAuthorizedCyph.ProFeatures[feature] {
+		if isRequired && !preAuthorizedProFeatures[feature] {
 			return "Pro feature " + feature + " not available.", http.StatusForbidden
 		}
 	}
@@ -310,6 +313,11 @@ func preAuth(h HandlerArgs) (interface{}, int) {
 	customer.LastSession = now.Unix()
 	customer.SessionCount += 1
 
+	proFeaturesJson, err := json.Marshal(proFeatures)
+	if err != nil {
+		return err.Error(), http.StatusInternalServerError
+	}
+
 	_, err = datastore.PutMulti(
 		h.Context,
 		[]*datastore.Key{
@@ -319,7 +327,7 @@ func preAuth(h HandlerArgs) (interface{}, int) {
 		[]interface{}{
 			customer,
 			&PreAuthorizedCyph{
-				ProFeatures: proFeatures,
+				ProFeatures: proFeaturesJson,
 				Id:          id,
 			},
 		},
