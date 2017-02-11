@@ -3,6 +3,9 @@ package main
 import (
 	"appengine"
 	"appengine/urlfetch"
+	"bytes"
+	"crypto/rand"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"geoip2"
@@ -12,7 +15,9 @@ import (
 	"io/ioutil"
 	"net"
 	"net/http"
+	"net/url"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -24,6 +29,23 @@ type HandlerArgs struct {
 }
 type Handler func(HandlerArgs) (interface{}, int)
 type Handlers map[string]Handler
+
+type Customer struct {
+	ApiKey       string
+	BraintreeId  string
+	LastSession  int64
+	SessionCount int64
+}
+
+type Plan struct {
+	ProFeatures       map[string]bool
+	SessionCountLimit int64
+}
+
+type PreAuthorizedCyph struct {
+	ProFeatures map[string]bool
+	Id          string
+}
 
 type none struct{}
 
@@ -68,6 +90,14 @@ var braintreePrivateKey = os.Getenv("BRAINTREE_PRIVATE_KEY")
 
 var prefineryKey = os.Getenv("PREFINERY_KEY")
 
+func generateApiKey() (string, error) {
+	bytes := make([]byte, config.ApiKeyByteLength)
+	if _, err := rand.Read(bytes); err != nil {
+		return "", err
+	}
+	return hex.EncodeToString(bytes), nil
+}
+
 func geolocate(h HandlerArgs) (string, string) {
 	if appengine.IsDevAppServer() {
 		return "", config.DefaultContinent
@@ -88,11 +118,23 @@ func geolocate(h HandlerArgs) (string, string) {
 	return country, continent
 }
 
+func getProFeaturesFromRequest(h HandlerArgs) map[string]bool {
+	return map[string]bool{
+		"api":            sanitize(h.Request.PostFormValue("proFeatures[api]")) == "true",
+		"disableP2P":     sanitize(h.Request.PostFormValue("proFeatures[disableP2P]")) == "true",
+		"modestBranding": sanitize(h.Request.PostFormValue("proFeatures[modestBranding]")) == "true",
+		"nativeCrypto":   sanitize(h.Request.PostFormValue("proFeatures[nativeCrypto]")) == "true",
+		"telehealth":     sanitize(h.Request.PostFormValue("proFeatures[telehealth]")) == "true",
+		"video":          sanitize(h.Request.PostFormValue("proFeatures[video]")) == "true",
+		"voice":          sanitize(h.Request.PostFormValue("proFeatures[voice]")) == "true",
+	}
+}
+
 func getSignupFromRequest(h HandlerArgs) map[string]interface{} {
 	country, _ := geolocate(h)
 
-	signup := make(map[string]interface{})
-	profile := make(map[string]interface{})
+	signup := map[string]interface{}{}
+	profile := map[string]interface{}{}
 
 	profile["country"] = country
 	profile["first_name"] = sanitize(h.Request.PostFormValue("name"), config.MaxSignupValueLength)
@@ -177,6 +219,34 @@ func getTwilioToken(h HandlerArgs) map[string]interface{} {
 	} else {
 		return getTwilioToken(h)
 	}
+}
+
+func trackEvent(h HandlerArgs, category, action, label string, value int) error {
+	data := url.Values{}
+
+	data.Set("v", "1")
+	data.Set("tid", config.AnalId)
+	data.Set("cid", "555")
+	data.Set("t", "event")
+	data.Set("ec", category)
+	data.Set("ea", action)
+	data.Set("el", label)
+	data.Set("ev", strconv.Itoa(value))
+
+	req, err := http.NewRequest(
+		methods.POST,
+		"https://www.google-analytics.com/collect",
+		bytes.NewBufferString(data.Encode()),
+	)
+
+	if err != nil {
+		return err
+	}
+
+	client := urlfetch.Client(h.Context)
+	_, err = client.Do(req)
+
+	return err
 }
 
 func handleFunc(pattern string, handler Handler) {

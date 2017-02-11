@@ -68,14 +68,14 @@ export class CheckoutComponent implements OnInit {
 			onPaymentMethodReceived: async (data: any) => {
 				this.success	= 'true' === await util.request({
 					data: {
-						Amount: Math.floor(this.amount * 100),
-						Category: this.category,
-						Company: this.company || '',
-						Email: this.email,
-						Item: this.item,
-						Name: this.name,
-						Nonce: data.nonce,
-						Subscription: this.subscription
+						amount: Math.floor(this.amount * 100),
+						category: this.category,
+						company: this.company || '',
+						email: this.email,
+						item: this.item,
+						name: this.name,
+						nonce: data.nonce,
+						subscription: this.subscription
 					},
 					method: 'POST',
 					url: this.envService.baseUrl + this.configService.braintreeConfig.endpoint

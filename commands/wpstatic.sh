@@ -329,16 +329,16 @@ for path in $(
 	mv "${path}.new" "${path}" 2> /dev/null
 done
 
+rm root/index.html
+grep -rl /blog/root root | xargs sed -i 's|/blog/root||g'
+
+# One-off edge cases; should find a better general solution later
+for page in checkout contact ; do
+	grep -rl /blog/${page} root | xargs sed -i "s|/blog/${page}|/${page}|g"
+done
+{ grep -rlP '/blog/?"' root; echo index.html; } | xargs sed -i 's|/blog/*"|/"|g'
+
 if [ "${getRoot}" ] ; then
-	rm root/index.html
-	grep -rl /blog/root root | xargs sed -i 's|/blog/root||g'
-
-	# One-off edge cases; should find a better general solution later
-	for page in checkout contact ; do
-		grep -rl /blog/${page} root | xargs sed -i "s|/blog/${page}|/${page}|g"
-	done
-	grep -rlP '/blog/?"' root | xargs sed -i 's|/blog/*"|/"|g'
-
 	yamlFile="../.build.yaml"
 	if [ ! -f "${yamlFile}" ] ; then
 		yamlFile="$(ls ../*.yaml)"

@@ -46,7 +46,7 @@ export class SignupService {
 		const signupResult: string	= await util.request({
 			data: this.data,
 			method: 'PUT',
-			retries: 3,
+			retries: 5,
 			url: this.envService.baseUrl + 'signups'
 		});
 
