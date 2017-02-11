@@ -1,5 +1,6 @@
 import {Events, RpcEvents, Users} from '../session/enums';
 import {ISession} from '../session/isession';
+import {ProFeatures} from '../session/profeatures';
 
 
 /**
@@ -16,6 +17,9 @@ export interface ISessionService extends ISession {
 
 	/** @see Events */
 	readonly events: Events;
+
+	/** @see ProFeatures */
+	readonly proFeatures: ProFeatures;
 
 	/** @see RpcEvents */
 	readonly rpcEvents: RpcEvents;

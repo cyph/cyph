@@ -183,28 +183,18 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 	}
 
 	id := sanitize(h.Vars["id"])
-	jsonProFeatures := []byte(sanitize(h.Request.PostFormValue("proFeatures")))
+	proFeatures := getProFeaturesFromRequest(h)
+	preAuthorizedCyph := &PreAuthorizedCyph{}
 
-	if len(jsonProFeatures) > 0 {
-		preAuthorizedCyph := &PreAuthorizedCyph{}
+	datastore.Get(
+		h.Context,
+		datastore.NewKey(h.Context, "PreAuthorizedCyph", id, 0, nil),
+		preAuthorizedCyph,
+	)
 
-		err := datastore.Get(
-			h.Context,
-			datastore.NewKey(h.Context, "PreAuthorizedCyph", id, 0, nil),
-			preAuthorizedCyph,
-		)
-
-		if err != nil {
-			return "Unauthorized API usage.", http.StatusForbidden
-		}
-
-		var proFeatures map[string]bool
-		json.Unmarshal(jsonProFeatures, &proFeatures)
-
-		for feature, isRequired := range proFeatures {
-			if isRequired && !preAuthorizedCyph.ProFeatures[feature] {
-				return "Pro feature " + feature + " not available.", http.StatusForbidden
-			}
+	for feature, isRequired := range proFeatures {
+		if isRequired && !preAuthorizedCyph.ProFeatures[feature] {
+			return "Pro feature " + feature + " not available.", http.StatusForbidden
 		}
 	}
 
@@ -225,7 +215,7 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 				}
 			}
 		} else {
-			channelDescriptor = h.Request.FormValue("channelDescriptor")
+			channelDescriptor = sanitize(h.Request.FormValue("channelDescriptor"))
 
 			if len(channelDescriptor) > config.MaxChannelDescriptorLength {
 				channelDescriptor = ""

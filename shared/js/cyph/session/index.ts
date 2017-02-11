@@ -4,6 +4,7 @@ export * from './enums';
 export * from './imessage';
 export * from './imessage-data';
 export * from './imutex';
+export * from './profeatures';
 export * from './isession';
 export * from './message';
 export * from './mutex';
