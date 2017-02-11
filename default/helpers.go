@@ -35,12 +35,12 @@ type Customer struct {
 }
 
 type Plan struct {
-	ApiFeatures       map[string]bool
+	ProFeatures       map[string]bool
 	SessionCountLimit int64
 }
 
 type PreAuthorizedCyph struct {
-	ApiFeatures map[string]bool
+	ProFeatures map[string]bool
 	Id          string
 }
 
