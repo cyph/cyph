@@ -405,49 +405,6 @@
 	width: 100%;
 }
 
-.cyph-not-found {
-	h1 {
-		text-align: center;
-		font-family: Ubuntu, sans-serif;
-	}
-
-	img {
-		margin-left: auto;
-		margin-right: auto;
-		display: block;
-	}
-
-	li {
-		margin-bottom: 15px;
-	}
-}
-
-.chat-main.mobile .cyph-not-found {
-	> .nano-content {
-		padding: 5px;
-	}
-
-	h1 {
-		font-size: 1.5em;
-	}
-
-	img {
-		width: 100%;
-	}
-}
-
-.chat-main:not(.mobile) .cyph-not-found {
-	.explanation {
-		margin-left: auto;
-		margin-right: auto;
-		width: 75%;
-	}
-
-	img {
-		width: 75%;
-	}
-}
-
 /*** New fullscreen video UI ***/
 
 .chat-main.video .video-call.active.playing {

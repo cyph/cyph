@@ -1,8 +1,5 @@
-<md2-content
-	class='layout-fill'
-	childClass='cyph-not-found md-no-flicker flex layout-column'
->
-	<div class='not-found' cyphNanoScroller>
+<md2-content class='layout-fill' childClass='md-no-flicker flex layout-column'>
+	<div class='not-found' [class.mobile]='envService.isMobile' cyphNanoScroller>
 		<div>
 			<h1 cyphTranslate>
 				I'm sorry, but your cyph is in another castle...
