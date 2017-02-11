@@ -396,5 +396,5 @@ func signup(h HandlerArgs) (interface{}, int) {
 		return "set", http.StatusOK
 	}
 
-	return "fail", http.StatusInternalServerError
+	return "Signup failed.", http.StatusInternalServerError
 }
