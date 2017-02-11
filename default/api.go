@@ -291,7 +291,7 @@ func preAuth(h HandlerArgs) (interface{}, int) {
 				}
 			}
 
-			if plan.SessionCountLimit > sessionCountLimit {
+			if plan.SessionCountLimit > sessionCountLimit || plan.SessionCountLimit == -1 {
 				sessionCountLimit = plan.SessionCountLimit
 			}
 		}
@@ -304,7 +304,7 @@ func preAuth(h HandlerArgs) (interface{}, int) {
 		customer.SessionCount = 0
 	}
 
-	if customer.SessionCount > sessionCountLimit {
+	if customer.SessionCount > sessionCountLimit && sessionCountLimit != -1 {
 		return "Session limit exceeded.", http.StatusForbidden
 	}
 
