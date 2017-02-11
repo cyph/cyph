@@ -331,7 +331,7 @@ func preAuth(h HandlerArgs) (interface{}, int) {
 			customer,
 			&PreAuthorizedCyph{
 				ApiFeatures: apiFeatures,
-				Id: id,
+				Id:          id,
 			},
 		},
 	)

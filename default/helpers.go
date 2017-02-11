@@ -40,8 +40,8 @@ type Plan struct {
 }
 
 type PreAuthorizedCyph struct {
-	ApiFeatures       map[string]bool
-	Id                string
+	ApiFeatures map[string]bool
+	Id          string
 }
 
 type none struct{}
