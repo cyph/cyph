@@ -183,9 +183,9 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 	}
 
 	id := sanitize(h.Vars["id"])
-	jsonApiFeatures := []byte(sanitize(h.Request.PostFormValue("apiFeatures")))
+	jsonProFeatures := []byte(sanitize(h.Request.PostFormValue("proFeatures")))
 
-	if len(jsonApiFeatures) > 0 {
+	if len(jsonProFeatures) > 0 {
 		preAuthorizedCyph := &PreAuthorizedCyph{}
 
 		err := datastore.Get(
@@ -198,12 +198,12 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 			return "Unauthorized API usage.", http.StatusForbidden
 		}
 
-		var apiFeatures map[string]bool
-		json.Unmarshal(jsonApiFeatures, &apiFeatures)
+		var proFeatures map[string]bool
+		json.Unmarshal(jsonProFeatures, &proFeatures)
 
-		for feature, isRequired := range apiFeatures {
-			if isRequired && !preAuthorizedCyph.ApiFeatures[feature] {
-				return "API feature " + feature + " not available.", http.StatusForbidden
+		for feature, isRequired := range proFeatures {
+			if isRequired && !preAuthorizedCyph.ProFeatures[feature] {
+				return "Pro feature " + feature + " not available.", http.StatusForbidden
 			}
 		}
 	}
@@ -279,7 +279,7 @@ func preAuth(h HandlerArgs) (interface{}, int) {
 		return err.Error(), http.StatusTeapot
 	}
 
-	apiFeatures := map[string]bool{}
+	proFeatures := map[string]bool{}
 	sessionCountLimit := int64(0)
 
 	for i := range braintreeCustomer.CreditCards.CreditCard {
@@ -295,9 +295,9 @@ func preAuth(h HandlerArgs) (interface{}, int) {
 				continue
 			}
 
-			for feature, isAvailable := range plan.ApiFeatures {
+			for feature, isAvailable := range plan.ProFeatures {
 				if isAvailable {
-					apiFeatures[feature] = true
+					proFeatures[feature] = true
 				}
 			}
 
@@ -330,7 +330,7 @@ func preAuth(h HandlerArgs) (interface{}, int) {
 		[]interface{}{
 			customer,
 			&PreAuthorizedCyph{
-				ApiFeatures: apiFeatures,
+				ProFeatures: proFeatures,
 				Id:          id,
 			},
 		},

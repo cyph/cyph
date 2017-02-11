@@ -87,7 +87,7 @@ var config = struct {
 
 	map[string]Plan{
 		"2-0": Plan{
-			ApiFeatures: map[string]bool{
+			ProFeatures: map[string]bool{
 				"api":            true,
 				"disableP2P":     true,
 				"modestBranding": true,
@@ -99,7 +99,7 @@ var config = struct {
 			SessionCountLimit: -1,
 		},
 		"2-1": Plan{
-			ApiFeatures: map[string]bool{
+			ProFeatures: map[string]bool{
 				"api":            true,
 				"disableP2P":     false,
 				"modestBranding": false,
@@ -111,7 +111,7 @@ var config = struct {
 			SessionCountLimit: 100,
 		},
 		"3-0": Plan{
-			ApiFeatures: map[string]bool{
+			ProFeatures: map[string]bool{
 				"api":            true,
 				"disableP2P":     false,
 				"modestBranding": true,
@@ -123,7 +123,7 @@ var config = struct {
 			SessionCountLimit: 100,
 		},
 		"3-1": Plan{
-			ApiFeatures: map[string]bool{
+			ProFeatures: map[string]bool{
 				"api":            true,
 				"disableP2P":     false,
 				"modestBranding": true,
