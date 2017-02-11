@@ -115,6 +115,18 @@ func geolocate(h HandlerArgs) (string, string) {
 	return country, continent
 }
 
+func getProFeaturesFromRequest(h HandlerArgs) map[string]bool {
+	return map[string]bool{
+		"api":            sanitize(h.Request.PostFormValue("proFeatures[api]")) == "true",
+		"disableP2P":     sanitize(h.Request.PostFormValue("proFeatures[disableP2P]")) == "true",
+		"modestBranding": sanitize(h.Request.PostFormValue("proFeatures[modestBranding]")) == "true",
+		"nativeCrypto":   sanitize(h.Request.PostFormValue("proFeatures[nativeCrypto]")) == "true",
+		"telehealth":     sanitize(h.Request.PostFormValue("proFeatures[telehealth]")) == "true",
+		"video":          sanitize(h.Request.PostFormValue("proFeatures[video]")) == "true",
+		"voice":          sanitize(h.Request.PostFormValue("proFeatures[voice]")) == "true",
+	}
+}
+
 func getSignupFromRequest(h HandlerArgs) map[string]interface{} {
 	country, _ := geolocate(h)
 

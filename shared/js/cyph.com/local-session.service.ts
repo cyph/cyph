@@ -7,6 +7,7 @@ import {StringsService} from '../cyph/services/strings.service';
 import {Events, events, RpcEvents, rpcEvents, Users, users} from '../cyph/session/enums';
 import {IMessage} from '../cyph/session/imessage';
 import {Message} from '../cyph/session/message';
+import {ProFeatures} from '../cyph/session/profeatures';
 import {util} from '../cyph/util';
 import {ChatData} from './chat-data';
 
@@ -108,6 +109,11 @@ export class LocalSessionService implements ISessionService {
 	/** @inheritDoc */
 	public async one<T> (event: string) : Promise<T> {
 		return eventManager.one<T>(event + this.id);
+	}
+
+	/** @inheritDoc */
+	public get proFeatures () : ProFeatures {
+		return new ProFeatures();
 	}
 
 	/** @inheritDoc */
