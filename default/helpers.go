@@ -224,14 +224,14 @@ func getTwilioToken(h HandlerArgs) map[string]interface{} {
 func trackEvent(h HandlerArgs, category, action, label string, value int) error {
 	data := url.Values{}
 
-    data.Set("v", "1")
-    data.Set("tid", config.AnalId)
-    data.Set("cid", "555")
-    data.Set("t", "event")
-    data.Set("ec", category)
-    data.Set("ea", action)
-    data.Set("el", label)
-    data.Set("ev", strconv.Itoa(value))
+	data.Set("v", "1")
+	data.Set("tid", config.AnalId)
+	data.Set("cid", "555")
+	data.Set("t", "event")
+	data.Set("ec", category)
+	data.Set("ea", action)
+	data.Set("el", label)
+	data.Set("ev", strconv.Itoa(value))
 
 	req, err := http.NewRequest(
 		methods.POST,
