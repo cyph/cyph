@@ -4,14 +4,14 @@ import {SignupService} from '../services/signup.service';
 
 
 /**
- * Angular component for register UI.
+ * Angular component for beta register UI.
  */
 @Component({
-	selector: 'cyph-register',
-	styleUrls: ['../../css/components/register.css'],
-	templateUrl: '../../../templates/register.html'
+	selector: 'cyph-beta-register',
+	styleUrls: ['../../css/components/beta-register.css'],
+	templateUrl: '../../../templates/beta-register.html'
 })
-export class RegisterComponent {
+export class BetaRegisterComponent {
 	/** @see SignupFormComponent.invite */
 	@Input() public invite: boolean;
 
