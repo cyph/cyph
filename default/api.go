@@ -191,7 +191,7 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 	err := datastore.Get(h.Context, preAuthorizedCyphKey, preAuthorizedCyph)
 
 	/* Discard pre-authorization after two days */
-	if err == nil && now - preAuthorizedCyph.Timestamp > 172800 {
+	if err == nil && now-preAuthorizedCyph.Timestamp > 172800 {
 		datastore.Delete(h.Context, preAuthorizedCyphKey)
 		return "Pre-authorization expired.", http.StatusForbidden
 	}
