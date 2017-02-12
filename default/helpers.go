@@ -43,8 +43,9 @@ type Plan struct {
 }
 
 type PreAuthorizedCyph struct {
-	ProFeatures []byte // map[string]bool
 	Id          string
+	ProFeatures []byte
+	Timestamp   int64
 }
 
 type none struct{}
