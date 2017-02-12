@@ -3,6 +3,11 @@
 	childClass='md-no-flicker flex layout-column'
 >
 	<div cyphNanoScroller>
+		<cyph-contacts
+			class='cyph-view layout-fill layout-column flex'
+			*ngIf='appService.betaState === appService.betaStates.contacts'
+		></cyph-contacts>
+
 		<div
 			class='login-form layout-row layout-align-center-center'
 			*ngIf='appService.betaState === appService.betaStates.login'
@@ -61,9 +66,16 @@
 				<md2-progress-circular mdMode='indeterminate'></md2-progress-circular>
 			</md2-card>
 		</div>
+
+		<cyph-profile
+			class='cyph-view layout-fill layout-column flex'
+			*ngIf='appService.betaState === appService.betaStates.profile'
+		></cyph-profile>
+
 		<div *ngIf='appService.betaState === appService.betaStates.register' cyphTranslate>
 			Registration screen
 		</div>
+
 		<div *ngIf='appService.betaState === appService.betaStates.settings' cyphTranslate>
 			Settings screen
 		</div>
