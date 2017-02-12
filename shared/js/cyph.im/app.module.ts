@@ -8,6 +8,7 @@ import {ChatMainComponent} from '../cyph/components/chat-main.component';
 import {ChatMessageBoxComponent} from '../cyph/components/chat-message-box.component';
 import {ChatMessageComponent} from '../cyph/components/chat-message.component';
 import {ContactComponent} from '../cyph/components/contact.component';
+import {ContactsComponent} from '../cyph/components/contacts.component';
 import {FileInputComponent} from '../cyph/components/file-input.component';
 import {FooterComponent} from '../cyph/components/footer.component';
 import {HelpComponent} from '../cyph/components/help.component';
@@ -43,6 +44,7 @@ import {MdSwitchComponent} from '../cyph/components/material/md-switch.component
 import {MdTabsComponent} from '../cyph/components/material/md-tabs.component';
 import {MdTextareaComponent} from '../cyph/components/material/md-textarea.component';
 import {NotFoundComponent} from '../cyph/components/not-found.component';
+import {ProfileComponent} from '../cyph/components/profile.component';
 import {SignupFormComponent} from '../cyph/components/signup-form.component';
 import {NanoScrollerDirective} from '../cyph/directives/nano-scroller.directive';
 import {TranslateDirective} from '../cyph/directives/translate.directive';
@@ -77,6 +79,7 @@ import {ChatRootComponent} from './chat-root.component';
 		ChatMessageBoxComponent,
 		ChatRootComponent,
 		ContactComponent,
+		ContactsComponent,
 		FileInputComponent,
 		FooterComponent,
 		HelpComponent,
@@ -84,6 +87,7 @@ import {ChatRootComponent} from './chat-root.component';
 		MarkdownComponent,
 		NanoScrollerDirective,
 		NotFoundComponent,
+		ProfileComponent,
 		SignupFormComponent,
 		TranslateDirective,
 		MdButtonComponent,
