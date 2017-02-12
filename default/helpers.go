@@ -71,6 +71,8 @@ var methods = struct {
 
 var empty = struct{}{}
 
+var namespace = strings.Split(strings.Split(config.RootURL, "/")[2], ":")[0]
+
 var router = mux.NewRouter()
 var isRouterActive = false
 
@@ -278,7 +280,13 @@ func handleFuncs(pattern string, handlers Handlers) {
 				responseBody = config.AllowedMethods
 				responseCode = http.StatusOK
 			} else {
-				responseBody, responseCode = handler(HandlerArgs{appengine.NewContext(r), r, w, mux.Vars(r)})
+				context, err := appengine.Namespace(appengine.NewContext(r), namespace)
+				if err != nil {
+					responseBody = "Failed to create context."
+					responseCode = http.StatusInternalServerError
+				} else {
+					responseBody, responseCode = handler(HandlerArgs{context, r, w, mux.Vars(r)})
+				}
 			}
 
 			w.WriteHeader(responseCode)
