@@ -1,17 +1,19 @@
 import {Component, OnInit} from '@angular/core';
+import {StringsService} from '../cyph/services/strings.service';
+import {UrlStateService} from '../cyph/services/url-state.service';
+import {util} from '../cyph/util';
 import {AppService} from './app.service';
-import {StringsService} from './js/cyph/services/strings.service';
-import {util} from './js/cyph/util';
 
 
 /**
- * Angular component for the Cyph beta screen.
+ * Angular component for the Cyph account screen.
  */
 @Component({
-	selector: 'cyph-beta',
-	templateUrl: './templates/app/beta.html'
+	selector: 'cyph-account',
+	styleUrls: ['../css/components/cyph.im/account.css'],
+	templateUrl: '../../templates/cyph.im/account.html'
 })
-export class BetaComponent implements OnInit {
+export class AccountComponent implements OnInit {
 	/** @ignore */
 	public checking: boolean	= false;
 
@@ -38,9 +40,14 @@ export class BetaComponent implements OnInit {
 	}
 
 	/** @inheritDoc */
-	public ngOnInit () : void {}
+	public ngOnInit () : void {
+		this.urlStateService.trigger();
+	}
 
 	constructor (
+		/** @ignore */
+		private readonly urlStateService: UrlStateService,
+
 		/** @see AppService */
 		public readonly appService: AppService,
 

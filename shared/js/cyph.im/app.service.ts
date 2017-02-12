@@ -4,7 +4,7 @@ import * as $ from 'jquery';
 import {EnvService} from '../cyph/services/env.service';
 import {UrlStateService} from '../cyph/services/url-state.service';
 import {util} from '../cyph/util';
-import {BetaStates, States, urlSections} from './enums';
+import {AccountStates, States, urlSections} from './enums';
 
 
 /**
@@ -15,14 +15,14 @@ export class AppService {
 	/** @see States */
 	public state: States;
 
-	/** @see BetaStates */
-	public betaState: BetaStates|undefined;
+	/** @see AccountStates */
+	public accountState: AccountStates|undefined;
 
 	/** @see States */
-	public states: typeof States			= States;
+	public states: typeof States				= States;
 
-	/** @see BetaStates */
-	public betaStates: typeof BetaStates	= BetaStates;
+	/** @see AccountStates */
+	public accountStates: typeof AccountStates	= AccountStates;
 
 	/** @ignore */
 	private onUrlStateChange (newUrlState: string) : void {
@@ -32,9 +32,9 @@ export class AppService {
 
 		const newUrlStateSplit: string[]	= newUrlState.split('/');
 
-		if (newUrlStateSplit[0] === urlSections.beta) {
-			this.betaState	= (<any> BetaStates)[newUrlStateSplit[1]];
-			this.state		= States.beta;
+		if (newUrlStateSplit[0] === urlSections.account) {
+			this.accountState	= (<any> AccountStates)[newUrlStateSplit[1]];
+			this.state		= States.account;
 		}
 		else if (newUrlState === this.urlStateService.states.notFound) {
 			this.state		= States.error;
@@ -73,8 +73,8 @@ export class AppService {
 
 		const urlSection: string	= this.urlStateService.getUrlSplit()[0];
 
-		if (urlSection === urlSections.beta) {
-			this.state	= States.beta;
+		if (urlSection === urlSections.account) {
+			this.state	= States.account;
 			this.urlStateService.trigger();
 		}
 		else {

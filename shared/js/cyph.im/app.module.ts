@@ -61,8 +61,8 @@ import {UrlStateService} from '../cyph/services/url-state.service';
 import {UtilService} from '../cyph/services/util.service';
 import {VirtualKeyboardWatcherService} from '../cyph/services/virtual-keyboard-watcher.service';
 import {VisibilityWatcherService} from '../cyph/services/visibility-watcher.service';
+import {AccountComponent} from './account.component';
 import {AppComponent} from './app.component';
-import {BetaComponent} from './beta.component';
 import {ChatRootComponent} from './chat-root.component';
 
 
@@ -71,8 +71,8 @@ import {ChatRootComponent} from './chat-root.component';
  */
 @NgModule({
 	declarations: [
+		AccountComponent,
 		AppComponent,
-		BetaComponent,
 		ChatCyphertextComponent,
 		ChatMainComponent,
 		ChatMessageComponent,
