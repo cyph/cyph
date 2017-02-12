@@ -184,10 +184,17 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 
 	id := sanitize(h.Vars["id"])
 	proFeatures := getProFeaturesFromRequest(h)
+	now := time.Now().Unix()
 	preAuthorizedCyph := &PreAuthorizedCyph{}
 	preAuthorizedCyphKey := datastore.NewKey(h.Context, "PreAuthorizedCyph", id, 0, nil)
 
-	datastore.Get(h.Context, preAuthorizedCyphKey, preAuthorizedCyph)
+	err := datastore.Get(h.Context, preAuthorizedCyphKey, preAuthorizedCyph)
+
+	/* Discard pre-authorization after two days */
+	if err == nil && now - preAuthorizedCyph.Timestamp > 172800 {
+		datastore.Delete(h.Context, preAuthorizedCyphKey)
+		return "Pre-authorization expired.", http.StatusForbidden
+	}
 
 	var preAuthorizedProFeatures map[string]bool
 	json.Unmarshal(preAuthorizedCyph.ProFeatures, &preAuthorizedProFeatures)
@@ -212,7 +219,7 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 				valueLines := strings.Split(string(oldValue), "\n")
 				timestamp, _ := strconv.ParseInt(valueLines[0], 10, 64)
 
-				if time.Now().Unix()-timestamp < config.NewCyphTimeout {
+				if now-timestamp < config.NewCyphTimeout {
 					channelDescriptor = valueLines[1]
 				}
 			}
@@ -226,7 +233,7 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 			if channelDescriptor != "" {
 				memcache.Set(h.Context, &memcache.Item{
 					Key:        id,
-					Value:      []byte(strconv.FormatInt(time.Now().Unix(), 10) + "\n" + channelDescriptor),
+					Value:      []byte(strconv.FormatInt(now, 10) + "\n" + channelDescriptor),
 					Expiration: config.MemcacheExpiration,
 				})
 			}
@@ -327,8 +334,9 @@ func preAuth(h HandlerArgs) (interface{}, int) {
 		[]interface{}{
 			customer,
 			&PreAuthorizedCyph{
-				ProFeatures: proFeaturesJson,
 				Id:          id,
+				ProFeatures: proFeaturesJson,
+				Timestamp:   customer.LastSession,
 			},
 		},
 	)
