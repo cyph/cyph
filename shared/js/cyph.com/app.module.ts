@@ -3,6 +3,7 @@ import {NgModule} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {BrowserModule, Title} from '@angular/platform-browser';
 import {UpgradeModule} from '@angular/upgrade/static';
+import {BetaRegisterComponent} from '../cyph/components/beta-register.component';
 import {ChatCyphertextComponent} from '../cyph/components/chat-cyphertext.component';
 import {ChatMainComponent} from '../cyph/components/chat-main.component';
 import {ChatMessageBoxComponent} from '../cyph/components/chat-message-box.component';
@@ -43,7 +44,6 @@ import {MdSubheaderComponent} from '../cyph/components/material/md-subheader.com
 import {MdTabsComponent} from '../cyph/components/material/md-tabs.component';
 import {MdTextareaComponent} from '../cyph/components/material/md-textarea.component';
 import {MdToolbarComponent} from '../cyph/components/material/md-toolbar.component';
-import {RegisterComponent} from '../cyph/components/register.component';
 import {SignupFormComponent} from '../cyph/components/signup-form.component';
 import {NanoScrollerDirective} from '../cyph/directives/nano-scroller.directive';
 import {TranslateDirective} from '../cyph/directives/translate.directive';
@@ -72,6 +72,7 @@ import {SilentNotificationService} from './silent-notification.service';
 @NgModule({
 	declarations: [
 		AppComponent,
+		BetaRegisterComponent,
 		ChatCyphertextComponent,
 		ChatMainComponent,
 		ChatMessageComponent,
@@ -84,7 +85,6 @@ import {SilentNotificationService} from './silent-notification.service';
 		HelpComponent,
 		MarkdownComponent,
 		NanoScrollerDirective,
-		RegisterComponent,
 		SignupFormComponent,
 		TranslateDirective,
 		MdButtonComponent,
@@ -113,9 +113,9 @@ import {SilentNotificationService} from './silent-notification.service';
 	],
 	entryComponents: [
 		AppComponent,
+		BetaRegisterComponent,
 		FileInputComponent,
-		HelpComponent,
-		RegisterComponent
+		HelpComponent
 	],
 	imports: [
 		BrowserModule,

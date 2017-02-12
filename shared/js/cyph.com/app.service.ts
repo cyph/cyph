@@ -148,7 +148,7 @@ export class AppService {
 				await this.dialogService.baseDialog({
 					template: `
 						<md-dialog>
-							<cyph-register></cyph-register>
+							<cyph-beta-register></cyph-beta-register>
 						</md-dialog>
 					`
 				});
@@ -166,7 +166,7 @@ export class AppService {
 				await this.dialogService.baseDialog({
 					template: `
 						<md-dialog>
-							<cyph-register [invite]='true'></cyph-register>
+							<cyph-beta-register [invite]='true'></cyph-beta-register>
 						</md-dialog>
 					`
 				});

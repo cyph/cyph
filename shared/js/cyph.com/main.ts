@@ -16,6 +16,7 @@ import 'magnific-popup';
 import 'nanoscroller';
 import 'whatwg-fetch';
 import 'zone.js';
+import {BetaRegisterComponent} from '../cyph/components/beta-register.component';
 import {FileInputComponent} from '../cyph/components/file-input.component';
 import {HelpComponent} from '../cyph/components/help.component';
 import {MdButtonComponent} from '../cyph/components/material/md-button.component';
@@ -49,7 +50,6 @@ import {MdSubheaderComponent} from '../cyph/components/material/md-subheader.com
 import {MdTabsComponent} from '../cyph/components/material/md-tabs.component';
 import {MdTextareaComponent} from '../cyph/components/material/md-textarea.component';
 import {MdToolbarComponent} from '../cyph/components/material/md-toolbar.component';
-import {RegisterComponent} from '../cyph/components/register.component';
 import {config} from '../cyph/config';
 import {env} from '../cyph/env';
 import '../cyph/errors';
@@ -176,6 +176,13 @@ angular.
 		MdToolbarComponent.config
 	).
 	directive(
+		'cyphBetaRegister',
+		downgradeComponent({
+			component: BetaRegisterComponent,
+			inputs: ['invite', 'signupForm']
+		})
+	).
+	directive(
 		'cyphFileInput',
 		downgradeComponent({
 			component: FileInputComponent,
@@ -187,13 +194,6 @@ angular.
 		'cyphHelp',
 		downgradeComponent({
 			component: HelpComponent
-		})
-	).
-	directive(
-		'cyphRegister',
-		downgradeComponent({
-			component: RegisterComponent,
-			inputs: ['invite', 'signupForm']
 		})
 	).
 	directive(
