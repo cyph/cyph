@@ -3,12 +3,16 @@ import {NgModule} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {BrowserModule, Title} from '@angular/platform-browser';
 import {UpgradeModule} from '@angular/upgrade/static';
+import {AccountContactsComponent} from '../cyph/components/account-contacts.component';
+import {AccountLoginComponent} from '../cyph/components/account-login.component';
+import {AccountProfileComponent} from '../cyph/components/account-profile.component';
+import {AccountRegisterComponent} from '../cyph/components/account-register.component';
+import {AccountSettingsComponent} from '../cyph/components/account-settings.component';
 import {ChatCyphertextComponent} from '../cyph/components/chat-cyphertext.component';
 import {ChatMainComponent} from '../cyph/components/chat-main.component';
 import {ChatMessageBoxComponent} from '../cyph/components/chat-message-box.component';
 import {ChatMessageComponent} from '../cyph/components/chat-message.component';
 import {ContactComponent} from '../cyph/components/contact.component';
-import {ContactsComponent} from '../cyph/components/contacts.component';
 import {FileInputComponent} from '../cyph/components/file-input.component';
 import {FooterComponent} from '../cyph/components/footer.component';
 import {HelpComponent} from '../cyph/components/help.component';
@@ -44,7 +48,6 @@ import {MdSwitchComponent} from '../cyph/components/material/md-switch.component
 import {MdTabsComponent} from '../cyph/components/material/md-tabs.component';
 import {MdTextareaComponent} from '../cyph/components/material/md-textarea.component';
 import {NotFoundComponent} from '../cyph/components/not-found.component';
-import {ProfileComponent} from '../cyph/components/profile.component';
 import {SignupFormComponent} from '../cyph/components/signup-form.component';
 import {NanoScrollerDirective} from '../cyph/directives/nano-scroller.directive';
 import {TranslateDirective} from '../cyph/directives/translate.directive';
@@ -72,6 +75,11 @@ import {ChatRootComponent} from './chat-root.component';
 @NgModule({
 	declarations: [
 		AccountComponent,
+		AccountContactsComponent,
+		AccountLoginComponent,
+		AccountProfileComponent,
+		AccountRegisterComponent,
+		AccountSettingsComponent,
 		AppComponent,
 		ChatCyphertextComponent,
 		ChatMainComponent,
@@ -79,7 +87,6 @@ import {ChatRootComponent} from './chat-root.component';
 		ChatMessageBoxComponent,
 		ChatRootComponent,
 		ContactComponent,
-		ContactsComponent,
 		FileInputComponent,
 		FooterComponent,
 		HelpComponent,
@@ -87,7 +94,6 @@ import {ChatRootComponent} from './chat-root.component';
 		MarkdownComponent,
 		NanoScrollerDirective,
 		NotFoundComponent,
-		ProfileComponent,
 		SignupFormComponent,
 		TranslateDirective,
 		MdButtonComponent,
