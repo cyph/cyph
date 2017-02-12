@@ -1,4 +1,4 @@
-<cyph-chat-root *ngIf='appService.state !== appService.states.beta'>
+<cyph-chat-root *ngIf='appService.state !== appService.states.account'>
 	<section id='main' class='cyph-foreground layout-fill layout-column'>
 		<canvas id='canvas-basic'></canvas>
 		<cyph-chat-main
@@ -45,7 +45,7 @@
 <section
 	id='main'
 	class='layout-fill layout-column'
-	*ngIf='appService.state === appService.states.beta'
+	*ngIf='appService.state === appService.states.account'
 >
-	<cyph-beta></cyph-beta>
+	<cyph-account></cyph-account>
 </section>

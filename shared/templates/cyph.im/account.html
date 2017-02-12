@@ -1,12 +1,12 @@
 <div cyphNanoScroller>
 	<cyph-contacts
 		class='layout-fill layout-column flex'
-		*ngIf='appService.betaState === appService.betaStates.contacts'
+		*ngIf='appService.accountState === appService.accountStates.contacts'
 	></cyph-contacts>
 
 	<div
 		class='login-form layout-row layout-align-center-center'
-		*ngIf='appService.betaState === appService.betaStates.login'
+		*ngIf='appService.accountState === appService.accountStates.login'
 		[class.checking]='checking'
 	>
 		<md2-card class='md-padding flex-75'>
@@ -65,14 +65,14 @@
 
 	<cyph-profile
 		class='layout-fill layout-column flex'
-		*ngIf='appService.betaState === appService.betaStates.profile'
+		*ngIf='appService.accountState === appService.accountStates.profile'
 	></cyph-profile>
 
-	<div *ngIf='appService.betaState === appService.betaStates.register' cyphTranslate>
+	<div *ngIf='appService.accountState === appService.accountStates.register' cyphTranslate>
 		Registration screen
 	</div>
 
-	<div *ngIf='appService.betaState === appService.betaStates.settings' cyphTranslate>
+	<div *ngIf='appService.accountState === appService.accountStates.settings' cyphTranslate>
 		Settings screen
 	</div>
 </div>

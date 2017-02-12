@@ -3,8 +3,8 @@ import {NgModule, NO_ERRORS_SCHEMA} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {Title} from '@angular/platform-browser';
 import {NativeScriptModule} from 'nativescript-angular/platform';
+import {AccountComponent} from './account.component';
 import {AppComponent} from './app.component';
-import {BetaComponent} from './beta.component';
 import {ChatRootComponent} from './chat-root.component';
 import {ChatCyphertextComponent} from './js/cyph/components/chat-cyphertext.component';
 import {ChatMainComponent} from './js/cyph/components/chat-main.component';
@@ -38,8 +38,8 @@ import {VisibilityWatcherService} from './js/cyph/services/visibility-watcher.se
 @NgModule({
 	bootstrap: [AppComponent],
 	declarations: [
+		AccountComponent,
 		AppComponent,
-		BetaComponent,
 		ChatCyphertextComponent,
 		ChatMainComponent,
 		ChatMessageComponent,

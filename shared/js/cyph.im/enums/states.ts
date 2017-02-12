@@ -2,7 +2,7 @@
  * Possible states of cyph.im UI.
  */
 export enum States {
-	beta,
+	account,
 	blank,
 	chat,
 	error,

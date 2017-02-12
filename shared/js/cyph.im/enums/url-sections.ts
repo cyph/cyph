@@ -3,7 +3,7 @@
  */
 export class UrlSections {
 	/** @see UrlSections */
-	public readonly beta: string	= 'beta';
+	public readonly account: string	= 'account';
 
 	/** @see UrlSections */
 	public readonly root: string	= '';
