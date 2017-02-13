@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
-import {IUser} from '../account/iuser';
 import {userPresence} from '../account/enums';
-import {AccountAuthService} from './account-auth.service';
+import {IUser} from '../account/iuser';
 import {util} from '../util';
+import {AccountAuthService} from './account-auth.service';
 
 
 /**
