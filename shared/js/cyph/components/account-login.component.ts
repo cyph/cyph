@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
+import {AccountAuthService} from '../services/account-auth.service';
 import {EnvService} from '../services/env.service';
 import {StringsService} from '../services/strings.service';
-import {util} from '../util';
 
 
 /**
@@ -13,32 +13,35 @@ import {util} from '../util';
 	templateUrl: '../../../templates/account-login.html'
 })
 export class AccountLoginComponent {
-	/** @ignore */
+	/** Indicates whether login attempt is in progress. */
 	public checking: boolean	= false;
 
-	/** @ignore */
+	/** Indicates whether the last login attempt has failed. */
 	public error: boolean		= false;
 
-	/** @ignore */
+	/** Password to be used for login attempt. */
 	public password: string		= '';
 
-	/** @ignore */
+	/** Username to be used for login attempt. */
 	public username: string		= '';
 
-	/** @ignore */
-	public async onSubmit () : Promise<void> {
-		/* TODO: stop blatantly lying to people */
-
+	/** Initiate login attempt. */
+	public async submit () : Promise<void> {
 		this.checking	= true;
 		this.error		= false;
-
-		await util.sleep(util.random(4000, 1500));
-
+		this.error		= !(await this.accountAuthService.login(this.username, this.password));
 		this.checking	= false;
-		this.error		= true;
+
+		if (!this.error) {
+			this.password	= '';
+			this.username	= '';
+		}
 	}
 
 	constructor (
+		/** @see AccountAuthService */
+		public readonly accountAuthService: AccountAuthService,
+
 		/** @see EnvService */
 		public readonly envService: EnvService,
 

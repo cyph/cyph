@@ -1,4 +1,6 @@
 import {Component} from '@angular/core';
+import {AccountAuthService} from '../services/account-auth.service';
+import {AccountContactsService} from '../services/account-contacts.service';
 import {EnvService} from '../services/env.service';
 
 
@@ -12,6 +14,12 @@ import {EnvService} from '../services/env.service';
 })
 export class AccountContactsComponent {
 	constructor (
+		/** @see AccountAuthService */
+		public readonly accountAuthService: AccountAuthService,
+
+		/** @see AccountContactsService */
+		public readonly accountContactsComponent: AccountContactsService,
+
 		/** @see EnvService */
 		public readonly envService: EnvService
 	) {}
