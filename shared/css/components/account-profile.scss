@@ -6,6 +6,13 @@
     transform: translateY(-50%);
 }
 
+
+:host {
+    background-image: url(/img/cyph.brick.pattern.png);
+    background-repeat: repeat;
+}
+
+
 .profile {
 	width: 100vh;
 	margin-left: auto;
