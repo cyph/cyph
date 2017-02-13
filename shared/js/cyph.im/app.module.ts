@@ -51,6 +51,9 @@ import {NotFoundComponent} from '../cyph/components/not-found.component';
 import {SignupFormComponent} from '../cyph/components/signup-form.component';
 import {NanoScrollerDirective} from '../cyph/directives/nano-scroller.directive';
 import {TranslateDirective} from '../cyph/directives/translate.directive';
+import {AccountAuthService} from '../cyph/services/account-auth.service';
+import {AccountContactsService} from '../cyph/services/account-contacts.service';
+import {AccountProfileService} from '../cyph/services/account-profile.service';
 import {ConfigService} from '../cyph/services/config.service';
 import {DialogService} from '../cyph/services/dialog.service';
 import {EnvService} from '../cyph/services/env.service';
@@ -130,6 +133,9 @@ import {ChatRootComponent} from './chat-root.component';
 		UpgradeModule
 	],
 	providers: [
+		AccountAuthService,
+		AccountContactsService,
+		AccountProfileService,
 		ConfigService,
 		DialogService,
 		EnvService,
