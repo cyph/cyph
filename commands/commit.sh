@@ -14,9 +14,9 @@ git commit -S -a -m "${*}"
 
 # Automated cleanup and beautification
 
-find . -name '*.go' | grep -v github.com | xargs -I% gofmt -w "%"
+find . -type f -name '*.go' | grep -v github.com | xargs -I% gofmt -w "%"
 
-ls shared/css/*.scss | xargs -I% bash -c '
+find shared/css -type f -name '*.scss' | xargs -I% bash -c '
 sass-convert --from scss --to scss --dasherize --indent t % | awk "{
 if (\$1 != \"/*\")
 	gsub(/\"/, \"'"'"'\", \$0)
