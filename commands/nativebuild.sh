@@ -20,6 +20,10 @@ npm install || exit 1
 cp ${dir}/shared/js/native/firebase.nativescript.json ./
 for plugin in ${plugins} ; do tns plugin add ${plugin} < /dev/null || exit 1 ; done
 
+# Temporary workaround pending NativeScript updating to TS >= 2.2
+rm -rf node_modules/typescript
+cp -rf /node_modules/typescript node_modules/
+
 cp -rf node_modules node_modules.old
 rm -rf node_modules/@types 2> /dev/null
 for d in $(ls -a /node_modules) ; do
@@ -39,7 +43,6 @@ cp -rf ${dir}/shared/js/native/* app/
 cp -rf ${dir}/shared/css/native app/css
 cp -rf ${dir}/shared/templates/native app/templates
 mv app/css/app.scss app/
-mv app/css app/js/
 
 rm -rf app/js
 mkdir -p app/js/cyph.im app/js/preload
@@ -49,9 +52,10 @@ cp -rf ${dir}/shared/js/cyph app/js/
 rm -rf app/js/cyph/components/material
 rm -rf app/js/cyph/components/checkout.component.ts
 rm -rf app/js/cyph/components/register.component.ts
+mv app/css app/js/
 
 find app -type f -name '*.scss' -exec bash -c '
-	scss -C -I${dir}/shared/css "{}" "$(echo "{}" | sed "s/\.scss$/.css/")"
+	scss -C "{}" "$(echo "{}" | sed "s/\.scss$/.css/")"
 ' \;
 
 getmodules () {
@@ -119,6 +123,7 @@ node -e "
 		JSON.stringify(tsconfig)
 	);
 "
+
 
 ./node_modules/.bin/ngc -p .
 sed -i 's|\./app.module|\./app.module.ngfactory|g' app/main.ts
@@ -209,7 +214,8 @@ for platform in android ios ; do
 	# ../commands/websign/threadpack.ts app/main.${platform}.js
 
 	cp base.js main.${platform}.js
-	echo app/js/preload/global.js >> main.${platform}.js
+	echo >> main.${platform}.js
+	cat app/js/preload/global.js >> main.${platform}.js
 	cat >> main.${platform}.js <<- EOM
 		/* Temporary workaround pending APPS-35 */
 		self.firebase	= {
