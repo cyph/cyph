@@ -103,11 +103,6 @@ tsbuild () {
 				join('\n')
 		);
 
-		/* Temporary, pending TS 2.1 */
-		tsconfig.compilerOptions.alwaysStrict		= undefined;
-		tsconfig.compilerOptions.lib				= undefined;
-		tsconfig.compilerOptions.target				= 'es2015';
-
 		/* For Angular AOT */
 		tsconfig.compilerOptions.noUnusedParameters	= undefined;
 
@@ -306,7 +301,6 @@ compile () {
 		tsbuild preload/global
 		mv preload/global.js preload/global.js.tmp
 		cat preload/global.js.tmp |
-			babel --presets es2015 --compact false |
 			if [ "${minify}" ] ; then uglifyjs ; else cat - ; fi \
 		> "${outputDir}/js/preload/global.js"
 		rm preload/global.js.tmp
@@ -445,24 +439,6 @@ compile () {
 							supersphincs: '{superSphincs: self.superSphincs}'
 						},
 					*/
-					module: {
-						rules: [
-							{
-								test: /\.js(\.tmp)?$/,
-								use: [
-									{
-										loader: 'babel-loader',
-										options: {
-											compact: false,
-											presets: [
-												['es2015', {modules: false}]
-											]
-										}
-									}
-								]
-							}
-						]
-					},
 					output: {
 						$(test "${enablesplit}" || echo "
 							filename: '${f}.js.tmp',

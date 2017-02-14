@@ -293,7 +293,7 @@ export class Session implements ISession {
 			) ||
 			(key === 'wasInitiatedByAPI' && typeof value === 'boolean')
 		) {
-			/* Casting to any as a temporary workaround pending TS 2.1 */
+			/* Casting to any as a temporary workaround pending TypeScript fix */
 			(<any> this).state[key]	= value;
 		}
 		else {

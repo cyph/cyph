@@ -177,7 +177,7 @@
 		"import-destructuring-spacing": false,
 		"invoke-injectable": true,
 		"no-access-missing-member": true,
-		/* Pending fix: "no-attribute-parameter-decorator": true, */
+		"no-attribute-parameter-decorator": true,
 		"no-forward-ref": true,
 		"no-input-rename": true,
 		"no-output-rename": true,
@@ -187,7 +187,7 @@
 		"templates-use-public": true,
 		"use-host-property-decorator": true,
 		"use-input-property-decorator": true,
-		"use-life-cycle-interface": true,
+		/* Pending fix: "use-life-cycle-interface": true, */
 		"use-output-property-decorator": true,
 		"use-pipe-transform-interface": true,
 
@@ -224,7 +224,7 @@
 		"no-unnecessary-field-initialization": true,
 		"no-unnecessary-local-variable": true,
 		"no-unnecessary-override": true,
-		"no-unnecessary-semicolons": true,
+		/* Pending fix: "no-unnecessary-semicolons": true, */
 		"no-var-self": true,
 		"no-with-statement": true,
 		"possible-timing-attack": true,

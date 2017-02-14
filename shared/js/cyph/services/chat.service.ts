@@ -305,14 +305,12 @@ export class ChatService {
 		/** @ignore */
 		private readonly stringsService: StringsService
 	) {
-		/* Temporary workaround pending TypeScript fix. */
-		/* tslint:disable-next-line:ban  */
-		setTimeout(async () => {
+		(async () => {
 			while (true) {
 				await util.sleep(5000);
 				this.messageChange();
 			}
-		});
+		})();
 
 		this.sessionService.one(this.sessionService.events.beginChat).then(() => {
 			this.begin();

@@ -146,7 +146,7 @@ export class SessionService implements ISessionService {
 				) ||
 				(e.key === 'wasInitiatedByAPI' && typeof e.value === 'boolean')
 			) {
-				/* Casting to any as a temporary workaround pending TS 2.1 */
+				/* Casting to any as a temporary workaround pending TypeScript fix */
 				(<any> this).state[e.key]	= e.value;
 			}
 			else {

@@ -178,24 +178,6 @@ for platform in android ios ; do
 				sphincs: 'self.sphincs',
 				supersphincs: 'self.superSphincs'
 			},
-			module: {
-				rules: [
-					{
-						test: /\.js$/,
-						use: [
-							{
-								loader: 'babel-loader',
-								options: {
-									compact: false,
-									presets: [
-										['es2015', {modules: false}]
-									]
-								}
-							}
-						]
-					}
-				]
-			},
 			node: {
 				http: false,
 				timers: false,
@@ -227,7 +209,7 @@ for platform in android ios ; do
 	# ../commands/websign/threadpack.ts app/main.${platform}.js
 
 	cp base.js main.${platform}.js
-	babel --presets es2015 --compact false app/js/preload/global.js >> main.${platform}.js
+	echo app/js/preload/global.js >> main.${platform}.js
 	cat >> main.${platform}.js <<- EOM
 		/* Temporary workaround pending APPS-35 */
 		self.firebase	= {

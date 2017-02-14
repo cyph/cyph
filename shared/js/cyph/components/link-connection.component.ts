@@ -128,9 +128,7 @@ export class LinkConnectionComponent implements OnInit {
 
 				const connectLinkInput	= <HTMLInputElement> $connectLinkInput[0];
 
-				/* Temporary workaround pending TypeScript fix. */
-				/* tslint:disable-next-line:ban  */
-				setTimeout(async () => {
+				(async () => {
 					while (isWaiting) {
 						await util.sleep(1000);
 
@@ -145,7 +143,7 @@ export class LinkConnectionComponent implements OnInit {
 						$connectLinkInput.focus();
 						connectLinkInput.setSelectionRange(0, this.linkConstant.length);
 					}
-				});
+				})();
 			}
 		}
 		else {
