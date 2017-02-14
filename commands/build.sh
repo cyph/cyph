@@ -197,7 +197,7 @@ compile () {
 			}
 
 			if [ "${watch}" ] ; then
-				compileF &
+				compileF
 			else
 				output="${output}$(compileF 2>&1)"
 			fi
