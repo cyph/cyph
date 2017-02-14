@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
+import * as Granim from 'granim';
+import {EnvService} from '../cyph/services/env.service';
 import {UrlStateService} from '../cyph/services/url-state.service';
 import {AppService} from './app.service';
-import {EnvService} from '../cyph/services/env.service';
-import * as Granim from 'granim';
 
 /**
  * Angular component for the Cyph account screen.
@@ -15,8 +15,15 @@ import * as Granim from 'granim';
 export class AccountComponent implements OnInit {
 	/** @inheritDoc */
 	public ngOnInit () : void {
+		if (!this.envService.isWeb) {
+			/* TODO: HANDLE NATIVE */
+			return;
+		}
+
 		this.urlStateService.trigger();
-		const granim	= !this.envService.isWeb ? undefined : new Granim({
+
+		/* tslint:disable-next-line:no-unused-new */
+		new Granim({
 			direction: 'radial',
 			element: '.cyph-gradient',
 			isPausedWhenNotInView: true,
