@@ -93,6 +93,10 @@ var braintreePrivateKey = os.Getenv("BRAINTREE_PRIVATE_KEY")
 
 var prefineryKey = os.Getenv("PREFINERY_KEY")
 
+func isValidCyphId(id string) bool {
+	return len(id) == config.AllowedCyphIdLength && config.AllowedCyphIds.MatchString(id)
+}
+
 func generateApiKey() (string, error) {
 	bytes := make([]byte, config.ApiKeyByteLength)
 	if _, err := rand.Read(bytes); err != nil {
