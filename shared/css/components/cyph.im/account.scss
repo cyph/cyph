@@ -1,3 +1,12 @@
+// Scrollfix to pin Cyph background/gradient - add all account component selectors here
+cyph-account-contacts,
+cyph-account-login,
+cyph-account-profile,
+cyph-account-register,
+cyph-account-settings {
+	overflow: scroll;
+}
+
 .cyph-gradient {
 	display: block;
 	width: 100%;
