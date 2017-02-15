@@ -1,1 +1,20 @@
+:host h1{
+	text-align: center;
+}
+.contacts{
+	margin-left: auto;
+	margin-right: auto;
+	position: relative;
 
+	.contact {	
+		span, h2, h3 {
+			text-align: center;
+		}
+		.avatar {
+			width: 42px;
+			height: 42px;
+			background-color: #f3f3f3;
+			border-radius: 50%;
+		}
+	}
+}
