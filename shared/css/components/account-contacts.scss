@@ -7,8 +7,15 @@
 	position: relative;
 
 	.contact {	
+		margin: 10px;
 		span, h2, h3 {
 			text-align: center;
+		}
+		.name{
+			margin: auto 15px auto 15px;
+		}
+		.username{
+			margin: 13px 13px 13px 0px;
 		}
 		.avatar {
 			width: 42px;
