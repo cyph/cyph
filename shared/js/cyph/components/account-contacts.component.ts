@@ -18,7 +18,7 @@ export class AccountContactsComponent {
 		public readonly accountAuthService: AccountAuthService,
 
 		/** @see AccountContactsService */
-		public readonly accountContactsComponent: AccountContactsService,
+		public readonly accountContactsService: AccountContactsService,
 
 		/** @see EnvService */
 		public readonly envService: EnvService
