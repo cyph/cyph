@@ -1,9 +1,9 @@
 @mixin vertical-align {
-    position: relative;
-    top: 50%;
-    -webkit-transform: translateY(-50%);
-    -ms-transform: translateY(-50%);
-    transform: translateY(-50%);
+	position: relative;
+	top: 50%;
+	-webkit-transform: translateY(-50%);
+	-ms-transform: translateY(-50%);
+	transform: translateY(-50%);
 }
 
 :host h1 {
@@ -14,11 +14,13 @@ md2-button {
 	button {
 		margin: 0px !important;
 	}
+
 	.chat, .message {
 		font-size: 23px !important;
 		top: 2px;
 		position: relative;
 	}
+
 	.material-icons {
 		font-size: 30px;
 	}
@@ -44,8 +46,9 @@ md2-button {
 			text-align: center;
 		}
 
-		.user{
-			@include vertical-align();
+		.user {
+			@include vertical-align;
+
 			max-height: 42px;
 			margin-left: 10px;
 			margin-right: 10px;
@@ -79,15 +82,19 @@ md2-button {
 			background-color: #f3f3f3;
 			border-radius: 50%;
 		}
+
 		.avatar.online {
 			border: 5px solid rgba(56, 140, 71, 0.9) !important;
 		}
+
 		.avatar.away {
 			border: 5px solid rgba(247, 184, 1, 0.9) !important;
 		}
+
 		.avatar.busy {
 			border: 5px solid rgba(255, 28, 28, 0.9) !important;
 		}
+
 		.avatar.offline {
 			border: 5px solid rgba(40, 38, 44, 0.9) !important;
 		}
