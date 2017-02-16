@@ -23,18 +23,31 @@
 		}
 
 		.status {
+			margin-top: 21px !important;
 			margin-left: 2.5px !important;
 		}
 
 		.username {
-			margin: 13px 13px 13px 0px;
+			margin: 21px 13px 13px 0px;
 		}
 
 		.avatar {
-			width: 42px;
-			height: 42px;
+			width: 60px;
+			height: 60px;
 			background-color: #f3f3f3;
 			border-radius: 50%;
+		}
+		.avatar.online {
+			border: 5px solid rgba(56, 140, 71, 0.9) !important;
+		}
+		.avatar.away {
+			border: 5px solid rgba(247, 184, 1, 0.9) !important;
+		}
+		.avatar.busy {
+			border: 5px solid rgba(255, 28, 28, 0.9) !important;
+		}
+		.avatar.offline {
+			border: 5px solid rgba(40, 38, 44, 0.9) !important;
 		}
 	}
 }

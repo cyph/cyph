@@ -7,7 +7,7 @@
 					*ngFor='let contact of accountContactsService.contacts'
 				>
 					<div class='layout-row layout-align-start-stretch flex'>
-						<img class='avatar' src='{{contact.avatar}}' alt='User Avatar' />
+						<img class='avatar {{getStatus(contact.status)}}' src='{{contact.avatar}}' alt='User Avatar'/>
 						<h2 class='name layout-row'>
 							{{contact.name}}
 						</h2>
