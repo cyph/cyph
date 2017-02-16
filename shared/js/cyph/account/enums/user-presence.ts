@@ -8,6 +8,7 @@ export enum UserPresence {
 	online
 }
 
+/** UserPresence values in sorting order for UI. */
 export const userPresence	= [
 	UserPresence.online,
 	UserPresence.away,
