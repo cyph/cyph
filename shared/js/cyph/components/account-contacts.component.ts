@@ -2,6 +2,7 @@ import {Component} from '@angular/core';
 import {AccountAuthService} from '../services/account-auth.service';
 import {AccountContactsService} from '../services/account-contacts.service';
 import {EnvService} from '../services/env.service';
+import {UserPresence} from '../account/enums';
 
 
 /**
@@ -15,21 +16,7 @@ import {EnvService} from '../services/env.service';
 export class AccountContactsComponent {
 	/** @inheritDoc */
 	public getStatus (statusEnum: number) : string {
-		if (statusEnum === 3) {
-			return 'online';
-		}
-		if (statusEnum === 0) {
-			return 'away';
-		}
-		if (statusEnum === 1) {
-			return 'busy';
-		}
-		if (statusEnum === 2) {
-			return 'offline';
-		}
-		else {
-			return 'undefined status';
-		}
+		return UserPresence[statusEnum];
 	}
 	constructor (
 		/** @see AccountAuthService */
