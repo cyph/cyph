@@ -15,7 +15,7 @@ import {UserPresence} from '../account/enums';
 })
 export class AccountContactsComponent {
 	/** @inheritDoc */
-	public getStatus (statusEnum: number) : string {
+	public getStatus (statusEnum: UserPresence) : string {
 		return UserPresence[statusEnum];
 	}
 	constructor (
