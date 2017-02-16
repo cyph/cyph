@@ -13,6 +13,24 @@ import {EnvService} from '../services/env.service';
 	templateUrl: '../../../templates/account-contacts.html'
 })
 export class AccountContactsComponent {
+	/** @inheritDoc */
+	public getStatus (statusEnum){
+		if (statusEnum == 3){
+			return "online";
+		}
+		if (statusEnum == 0){
+			return "away";
+		}
+		if (statusEnum == 1){
+			return "busy";
+		}
+		if (statusEnum == 2){
+			return "offline";
+		}
+		else {
+			return
+		}
+	}
 	constructor (
 		/** @see AccountAuthService */
 		public readonly accountAuthService: AccountAuthService,

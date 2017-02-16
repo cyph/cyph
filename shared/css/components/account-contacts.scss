@@ -11,8 +11,14 @@
 		span, h2, h3 {
 			text-align: center;
 		}
-		.name{
+		.name, .status {
 			margin: auto 15px auto 15px;
+		}
+		.username {
+			margin-right: 2.5px !important;
+		}
+		.status {
+			margin-left: 2.5px !important;
 		}
 		.username{
 			margin: 13px 13px 13px 0px;
