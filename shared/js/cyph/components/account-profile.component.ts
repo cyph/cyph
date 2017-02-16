@@ -3,6 +3,7 @@ import {AccountAuthService} from '../services/account-auth.service';
 import {AccountProfileService} from '../services/account-profile.service';
 import {EnvService} from '../services/env.service';
 
+
 /**
  * Angular component for account profile UI.
  */
@@ -12,10 +13,6 @@ import {EnvService} from '../services/env.service';
 	templateUrl: '../../../templates/account-profile.html'
 })
 export class AccountProfileComponent {
-	/** @inheritDoc */
-	public ngOnInit () : void {
-	}
-
 	constructor (
 		/** @see AccountAuthService */
 		public readonly accountAuthService: AccountAuthService,

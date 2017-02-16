@@ -14,10 +14,11 @@ import {EnvService} from '../services/env.service';
 	templateUrl: '../../../templates/account-contacts.html'
 })
 export class AccountContactsComponent {
-	/** @inheritDoc */
+	/** Returns string representation of status. */
 	public getStatus (statusEnum: UserPresence) : string {
 		return UserPresence[statusEnum];
 	}
+
 	constructor (
 		/** @see AccountAuthService */
 		public readonly accountAuthService: AccountAuthService,
