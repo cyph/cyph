@@ -1,28 +1,35 @@
-:host h1{
+:host h1 {
 	text-align: center;
 }
-.contacts{
+
+.contacts {
 	margin-left: auto;
 	margin-right: auto;
 	position: relative;
 
-	.contact {	
+	.contact {
 		margin: 10px;
+
 		span, h2, h3 {
 			text-align: center;
 		}
+
 		.name, .status {
 			margin: auto 15px auto 15px;
 		}
+
 		.username {
 			margin-right: 2.5px !important;
 		}
+
 		.status {
 			margin-left: 2.5px !important;
 		}
-		.username{
+
+		.username {
 			margin: 13px 13px 13px 0px;
 		}
+
 		.avatar {
 			width: 42px;
 			height: 42px;
