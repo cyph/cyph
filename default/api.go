@@ -20,7 +20,7 @@ func init() {
 	handleFuncs("/channels/{id}", Handlers{methods.POST: channelSetup})
 	handleFuncs("/continent", Handlers{methods.GET: getContinent})
 	handleFuncs("/iceservers", Handlers{methods.GET: getIceServers})
-	handleFuncs("/preauth", Handlers{methods.POST: preAuth})
+	handleFuncs("/preauth/{id}", Handlers{methods.POST: preAuth})
 	handleFuncs("/signups", Handlers{methods.PUT: signup})
 	handleFuncs("/timestamp", Handlers{methods.GET: getTimestamp})
 
@@ -264,11 +264,17 @@ func getTimestamp(h HandlerArgs) (interface{}, int) {
 }
 
 func preAuth(h HandlerArgs) (interface{}, int) {
-	apiKey := sanitize(h.Request.PostFormValue("apiKey"))
-	id := sanitize(h.Request.PostFormValue("id"))
+	id := sanitize(h.Vars["id"])
 
 	if !isValidCyphId(id) {
 		return "Invalid ID.", http.StatusForbidden
+	}
+
+	var apiKey string
+	if authHeader, ok := h.Request.Header["Authorization"]; ok && len(authHeader) > 0 {
+		apiKey = sanitize(authHeader[0])
+	} else {
+		return "Must include an API key.", http.StatusForbidden
 	}
 
 	customer := &Customer{}
