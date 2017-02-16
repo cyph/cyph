@@ -25,8 +25,17 @@
 							cyphTranslate
 							class='layout-row'
 							ariaLabel='Send Message'
+							*ngIf='contact.status != 3'
 						>
-							<i class='material-icons' alt='Send Message'>email</i>
+							<i class='message material-icons' alt='Send Message'>email</i>
+						</md2-button>
+						<md2-button
+							cyphTranslate
+							class='layout-row'
+							ariaLabel='Send Message'
+							*ngIf='contact.status === 3'
+						>
+							<i class='chat material-icons' alt='Start Chat'>chat_bubble</i>
 						</md2-button>
 						<md2-button
 							cyphTranslate
