@@ -2,11 +2,12 @@
 	<h1>Contacts</h1>
 			<md2-list class='contacts' childClass='layout-column'>
 				<md2-list-item
-					class='contact layout-column animated flipInY'
+					class='contact layout-column'
 					childClass='layout-row'
-					*ngFor='let contact of accountContactsService.contacts'
+					*ngFor='let contact of accountContactsService.contacts; let i = index'
+					[attr.data-index]='i'
 				>
-					<div class='wrapper layout-row layout-align-start-stretch flex'>
+					<div class='wrapper layout-row layout-align-start-stretch flex animated flipInY _{{i}}'>
 						<div class='layout-column'>
 							<img
 								class='avatar'

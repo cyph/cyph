@@ -32,10 +32,6 @@ md2-button {
 	position: relative;
 
 	.wrapper {
-		height: 75px;
-	}
-
-	.contact {
 		margin: 2px;
 		background-color: rgba(57, 40, 89, 0.65);
 		padding: 10px;
@@ -47,8 +43,7 @@ md2-button {
 		}
 
 		.user {
-			@include vertical-align;
-
+			margin-top: 15px;
 			max-height: 42px;
 			margin-left: 10px;
 			margin-right: 10px;
