@@ -14,21 +14,21 @@ import {EnvService} from '../services/env.service';
 })
 export class AccountContactsComponent {
 	/** @inheritDoc */
-	public getStatus (statusEnum){
-		if (statusEnum == 3){
-			return "online";
+	public getStatus (statusEnum: number) : string {
+		if (statusEnum === 3) {
+			return 'online';
 		}
-		if (statusEnum == 0){
-			return "away";
+		if (statusEnum === 0) {
+			return 'away';
 		}
-		if (statusEnum == 1){
-			return "busy";
+		if (statusEnum === 1) {
+			return 'busy';
 		}
-		if (statusEnum == 2){
-			return "offline";
+		if (statusEnum === 2) {
+			return 'offline';
 		}
 		else {
-			return
+			return 'undefined status';
 		}
 	}
 	constructor (
