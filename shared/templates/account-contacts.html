@@ -9,8 +9,9 @@
 					<div class='wrapper layout-row layout-align-start-stretch flex'>
 						<div class='layout-column'>
 							<img
-								class='avatar {{getStatus(contact.status)}}'
-								src='{{contact.avatar}}' 
+								class='avatar'
+								[ngClass]='getStatus(contact.status)'
+								[src]='contact.avatar'
 								alt='User Avatar'
 							/>
 							<h4 class='status'>
@@ -29,7 +30,7 @@
 							cyphTranslate
 							class='layout-row'
 							ariaLabel='Send Message'
-							*ngIf='contact.status != 3'
+							*ngIf='contact.status !== 3'
 						>
 							<i class='message material-icons' alt='Send Message'>email</i>
 						</md2-button>
