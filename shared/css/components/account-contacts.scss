@@ -8,7 +8,11 @@
 	position: relative;
 
 	.contact {
-		margin: 10px;
+		margin: 2px;
+		background-color: rgba(57, 40, 89, 0.65);
+		padding: 10px;
+		border-radius: 8px;
+		border: 3px solid rgba(57, 40, 89, 0.35) !important;
 
 		span, h2, h3 {
 			text-align: center;
