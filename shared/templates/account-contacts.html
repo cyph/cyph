@@ -6,31 +6,38 @@
 					childClass='layout-row'
 					*ngFor='let contact of accountContactsService.contacts'
 				>
-					<div class='layout-row layout-align-start-stretch flex'>
-						<img class='avatar {{getStatus(contact.status)}}' src='{{contact.avatar}}' alt='User Avatar'/>
-						<h2 class='name layout-row'>
-							{{contact.name}}
-						</h2>
-						<h3 class='username layout-row'>
-							{{contact.username}} 
-						</h3>
-						<h3 class='status layout-row'>
-							- {{getStatus(contact.status)}}
-						</h3>
+					<div class='wrapper layout-row layout-align-start-stretch flex'>
+						<div class='layout-column'>
+							<img class='avatar {{getStatus(contact.status)}}' src='{{contact.avatar}}' alt='User Avatar'/>
+							<h4 class='status'>
+								{{getStatus(contact.status)}}
+							</h4>
+						</div>
+						<div class='user layout-column flex'>
+							<h2 class='name'>
+								{{contact.name}}
+							</h2>
+							<span class='username'>
+								{{contact.username}} 
+							</span>
+						</div>
 						<md2-button
 							cyphTranslate
+							class='layout-row'
 							ariaLabel='Send Message'
 						>
 							<i class='material-icons' alt='Send Message'>email</i>
 						</md2-button>
 						<md2-button
 							cyphTranslate
+							class='layout-row'
 							ariaLabel='Video Call'
 						>
 							<i class='material-icons' alt='Video Call'>videocam</i>
 						</md2-button>
 						<md2-button
 							cyphTranslate
+							class='layout-row'
 							ariaLabel='Send File'
 						>
 							<i class='material-icons' alt='Send File'>attachment</i>

@@ -1,11 +1,32 @@
+@mixin vertical-align {
+    position: relative;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+
 :host h1 {
 	text-align: center;
+}
+
+md2-button {
+	button {
+		margin: 0px !important;
+	}
+	.material-icons {
+		font-size: 30px;
+	}
 }
 
 .contacts {
 	margin-left: auto;
 	margin-right: auto;
 	position: relative;
+
+	.wrapper {
+		height: 75px;
+	}
 
 	.contact {
 		margin: 2px;
@@ -18,21 +39,33 @@
 			text-align: center;
 		}
 
+		.user{
+			@include vertical-align();
+			max-height: 42px;
+			margin-left: 10px;
+			margin-right: 10px;
+		}
+
+		.name {
+			max-width: 175px;
+		}
+
 		.name, .status {
-			margin: auto 15px auto 15px;
+			margin: 0px;
 		}
 
 		.username {
-			margin-right: 2.5px !important;
+			margin-right: 0px !important;
 		}
 
 		.status {
-			margin-top: 21px !important;
-			margin-left: 2.5px !important;
+			margin-top: 5px !important;
+			margin-bottom: -5px !important;
+			text-align: center;
 		}
 
 		.username {
-			margin: 21px 13px 13px 0px;
+			margin: 0px;
 		}
 
 		.avatar {
