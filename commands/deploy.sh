@@ -253,7 +253,7 @@ fi
 
 # Compile + translate + minify
 if [ "${compiledProjects}" ] ; then
-	./commands/lint.sh || exit
+	./commands/lint.sh || exit 1
 fi
 for d in $compiledProjects ; do
 	echo "Build $(projectname ${d})"
@@ -287,7 +287,7 @@ for d in $compiledProjects ; do
 		../commands/websign/subresourceinline.ts ../pkg/cyph.ws-subresources
 	fi
 
-	../commands/build.sh --prod $(test "${simple}" && echo '--no-minify') || exit;
+	../commands/build.sh --prod $(test "${simple}" && echo '--no-minify') || exit 1
 
 	mv .index.html index.html
 
