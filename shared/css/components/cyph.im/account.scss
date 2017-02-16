@@ -8,7 +8,7 @@
 }
 
 $interval: 0.25s;
-$classesToAdd: 10;
+$classesToAdd: 15;
 
 @for $i from 1 to $classesToAdd + 1 {
 	._#{$i} {
