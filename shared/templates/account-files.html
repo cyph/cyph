@@ -1,0 +1,32 @@
+<div>
+	<h1>Cyph.io</h1>
+	<md2-list class='files' childClass='layout-column'>
+		<md2-list-item
+			class='contact layout-column'
+			childClass='layout-row'
+			*ngFor='let myFile of accountFilesService.myFiles; let i = index'
+			[attr.data-index]='i'
+		>
+			<div class='wrapper layout-row layout-align-start-stretch flex animated flipInY _{{i}}'>
+				<div class='user layout-column flex'>
+					<h2 class='name'>
+						{{myFile.name}}
+					</h2>
+					<span class='type'>
+						{{myFile.type}} 
+					</span>
+					<span class='size'>
+						{{myFile.size}} 
+					</span>
+				</div>
+				<md2-button
+					cyphTranslate
+					class='layout-row'
+					ariaLabel='Download File'
+				>
+					<i class='material-icons' alt='Download File'>download</i>
+				</md2-button>
+			</div>
+		</md2-list-item>
+	</md2-list>
+</div>

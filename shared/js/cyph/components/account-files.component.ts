@@ -11,7 +11,7 @@ import {EnvService} from '../services/env.service';
 @Component({
 	selector: 'cyph-account-files',
 	styleUrls: ['../../css/components/account-files.css'],
-	templateUrl: '../../../templates/account-file-upload.html'
+	templateUrl: '../../../templates/account-files.html'
 })
 export class AccountFilesComponent {
 

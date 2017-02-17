@@ -4,7 +4,7 @@ import {AccountAuthService} from './account-auth.service';
 
 
 /**
- * @see Account contacts service.
+ * @see Account file service.
  */
 @Injectable()
 export class AccountFilesService {
@@ -22,6 +22,6 @@ export class AccountFilesService {
 
 	constructor (
 		/** @ignore */
-		private accountAuthService: AccountAuthService
+		private readonly accountAuthService: AccountAuthService
 	) {}
 }
