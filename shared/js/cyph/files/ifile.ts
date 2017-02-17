@@ -6,7 +6,7 @@ export interface IFile {
 	name: string;
 
 	/** File type */
-	type: string;
+	filetype: string;
 
 	/** Where to find the file */
 	location: string;
