@@ -14,14 +14,13 @@ import {EnvService} from '../services/env.service';
 	templateUrl: '../../../templates/account-files.html'
 })
 export class AccountFilesComponent {
-
 	constructor (
 		/** @see AccountAuthService */
 		public readonly accountAuthService: AccountAuthService,
 
 		/** @see AccountContactsService */
 		public readonly accountContactsService: AccountContactsService,
-		
+
 		/** @see AccountFilesService */
 		public readonly accountFilesService: AccountFilesService,
 
